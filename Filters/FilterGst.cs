@@ -90,7 +90,7 @@ namespace Beagle.Filters {
 			src.Link(spider);
 		
 			Caps caps = Caps.FromString("audio/x-raw-int");
-			spider.LinkFiltered(sink, caps);
+			spider.LinkFiltered(sink, ref caps);
 
 			src.Location = FileInfo.FullName;
 			sink.SignalHandoffs = true;
