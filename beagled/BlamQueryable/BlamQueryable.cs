@@ -56,9 +56,7 @@ namespace Beagle.Daemon.BlamQueryable {
 		private void StartWorker ()
 		{
 			Inotify.EventType mask;
-			mask = Inotify.EventType.CreateFile
-				| Inotify.EventType.DeleteFile
-				| Inotify.EventType.Modify;
+			mask = Inotify.EventType.CloseWrite;
 
 			wdBlam = Inotify.Watch (blamDir, mask);
 
