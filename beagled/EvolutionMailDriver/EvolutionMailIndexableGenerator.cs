@@ -442,6 +442,7 @@ namespace Beagle.Daemon {
 		private static GConf.Client gconf_client = null;
 
 		private FileInfo summary_info;
+		private string imap_name;
 		private Camel.Summary summary;
 		private IEnumerator summary_enumerator;
 		private ICollection accounts;
@@ -493,7 +494,7 @@ namespace Beagle.Daemon {
 
 			int imap_start_idx = dir_name.IndexOf (".evolution/mail/imap/") + 21;
 			string imap_start = dir_name.Substring (imap_start_idx);
-			string imap_name = imap_start.Substring (0, imap_start.IndexOf ('/'));
+			this.imap_name = imap_start.Substring (0, imap_start.IndexOf ('/'));
 
 			lock (this) {
 				GLib.Idle.Add (new GLib.IdleHandler (this.GConfReady));
@@ -528,20 +529,20 @@ namespace Beagle.Daemon {
 					continue;
 
 				// Escape out additional @s in the name.  I hate the class libs so much.
-				int lastIdx = imap_name.LastIndexOf ('@');
-				if (imap_name.IndexOf ('@') != lastIdx) {
-					string toEscape = imap_name.Substring (0, lastIdx);
-					imap_name = toEscape.Replace ("@", "%40") + imap_name.Substring (lastIdx);
+				int lastIdx = this.imap_name.LastIndexOf ('@');
+				if (this.imap_name.IndexOf ('@') != lastIdx) {
+					string toEscape = this.imap_name.Substring (0, lastIdx);
+					this.imap_name = toEscape.Replace ("@", "%40") + this.imap_name.Substring (lastIdx);
 				}
 
-				if (imap_url.InnerText.StartsWith ("imap://" + imap_name)) {
+				if (imap_url.InnerText.StartsWith ("imap://" + this.imap_name)) {
 					this.account_name = uid;
 					break;
 				}
 			}
 
 			if (account_name == null) {
-				EvolutionMailQueryable.log.Info ("Unable to determine account name for {0}", imap_name);
+				EvolutionMailQueryable.log.Info ("Unable to determine account name for {0}", this.imap_name);
 				return false;
 			}
 
@@ -701,7 +702,7 @@ namespace Beagle.Daemon {
 
 			indexable.AddProperty (Property.NewKeyword ("dc:title", messageInfo.subject));
 
-			indexable.AddProperty (Property.NewKeyword ("fixme:account",  this.account_name));
+			indexable.AddProperty (Property.NewKeyword ("fixme:account",  this.imap_name));
                         indexable.AddProperty (Property.NewKeyword ("fixme:folder",   this.folder_name));
 			indexable.AddProperty (Property.NewKeyword ("fixme:subject",  messageInfo.subject));
                         indexable.AddProperty (Property.NewKeyword ("fixme:to",       messageInfo.to));
