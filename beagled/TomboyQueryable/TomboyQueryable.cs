@@ -44,7 +44,7 @@ namespace Beagle.Daemon.TomboyQueryable {
 		int wdNotes = -1;
 		int wdBackup = -1;
 
-		public TomboyQueryable () : base (Path.Combine (PathFinder.RootDir, "TomboyIndex"))
+		public TomboyQueryable () : base ("TomboyIndex")
 		{
 			notesDir = Path.Combine (Environment.GetEnvironmentVariable ("HOME"), ".tomboy");
 			backupDir = Path.Combine (notesDir, "Backup");

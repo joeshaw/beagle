@@ -47,7 +47,7 @@ namespace Beagle.Daemon.MonodocQueryable {
 
 		string monodocDir;
 
-		public MonodocQueryable () : base (Path.Combine (PathFinder.RootDir, "MondocIndex"))
+		public MonodocQueryable () : base ("MondocIndex")
 		{
 			monodocDir = "/usr/lib/monodoc/sources"; // FIXME Make use of autoconf
 		}

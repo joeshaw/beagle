@@ -55,7 +55,7 @@ namespace Beagle.Daemon.EvolutionDataServerQueryable {
 		private Evolution.Book addressbook = null;
 		private Evolution.BookView book_view;
 
-		public EvolutionDataServerQueryable () : base (Path.Combine (PathFinder.RootDir, "AddressbookIndex"))
+		public EvolutionDataServerQueryable () : base ("AddressbookIndex")
 		{
 			string dir = Path.Combine (PathFinder.RootDir, "AddressbookIndex");
 			photo_dir = Path.Combine (dir, "Photos");

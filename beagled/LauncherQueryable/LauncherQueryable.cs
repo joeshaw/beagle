@@ -45,7 +45,7 @@ namespace Beagle.Daemon.LauncherQueryable {
 		string home;
 		FileStream LauncherDB;
 
-		public LauncherQueryable () : base (Path.Combine (PathFinder.RootDir, "LauncherIndex"))
+		public LauncherQueryable () : base ("LauncherIndex")
 		{
 			Dirs = new ArrayList ();
 			// Add GNOME dirs

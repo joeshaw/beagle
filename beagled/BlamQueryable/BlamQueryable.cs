@@ -48,7 +48,7 @@ namespace Beagle.Daemon.BlamQueryable {
 
 		int wdBlam = -1;
 
-		public BlamQueryable () : base (Path.Combine (PathFinder.RootDir, "BlamIndex"))
+		public BlamQueryable () : base ("BlamIndex")
 		{
 			blamDir = Path.Combine (Path.Combine (Environment.GetEnvironmentVariable ("HOME"), ".gnome2"), "blam");
 		}
