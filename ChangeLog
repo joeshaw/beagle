@@ -1,3 +1,11 @@
+2004-10-19  Robert Love  <rml@novell.com>
+
+	* beagled/Filter.cs: move the FlushCache inside of the NULL check,
+	  along with the Close. A bigger question, though, is why can the
+	  FileStream ever be NULL here?
+	* life: This is my last ChangeLog entry since no one else is keeping
+	  them.  I really just want to fit in, be accepted, be one of the gang.
+
 2004-10-18  Robert Love  <rml@novell.com>
 
 	* glue/inotify-glue.c: clean this up; remove some cruft; do error

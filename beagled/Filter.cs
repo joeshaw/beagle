@@ -314,12 +314,13 @@ namespace Beagle.Daemon {
 			if (currentReader != null)
 				currentReader.Close ();
 
-			// Give the OS a hint that we don't need
-			// to keep this file around in the page cache.
-			FileAdvise.FlushCache (currentStream);
-
-			if (currentStream != null)
+			if (currentStream != null) {
+				// Give the OS a hint that we don't need to
+				// to keep the file around in the page cache
+				FileAdvise.FlushCache (currentStream);
+				// And then close the file
 				currentStream.Close ();
+			}
 
 			if (tempFile != null)
 				File.Delete (tempFile);
