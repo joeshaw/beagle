@@ -11,6 +11,8 @@ using System;
 using System.IO;
 using System.Diagnostics;
 
+using Beagle.Util;
+
 namespace Beagle.Filters {
 
 	public class FilterPdf : Beagle.Daemon.Filter {
@@ -34,7 +36,13 @@ namespace Beagle.Filters {
 			pc.StartInfo.RedirectStandardInput = false;
 			pc.StartInfo.RedirectStandardOutput = true;
 			pc.StartInfo.UseShellExecute = false;
-			pc.Start ();
+			try {
+				pc.Start ();
+			} catch (System.ComponentModel.Win32Exception) {
+				Logger.Log.Warn ("Unable to find pdfinfo in path; PDF file not indexed.");
+				Finished ();
+				return;
+			}
 			
 			// add pdftotext's output to pool
 			StreamReader pout = pc.StandardOutput;
@@ -87,18 +95,23 @@ namespace Beagle.Filters {
 			Process pc = new Process ();
 			pc.StartInfo.FileName = "pdftotext";
 			// FIXME: We probably need to quote special chars in the path
-			pc.StartInfo.Arguments = String.Format ("-enc UTF-8 \"{0}\" -", FileInfo.FullName);
+			pc.StartInfo.Arguments = String.Format ("-nopgbrk -enc UTF-8 \"{0}\" -", FileInfo.FullName);
 			pc.StartInfo.RedirectStandardInput = false;
 			pc.StartInfo.RedirectStandardOutput = true;
 			pc.StartInfo.UseShellExecute = false;
-			pc.Start ();
+			try {
+				pc.Start ();
+			} catch (System.ComponentModel.Win32Exception) {
+				Logger.Log.Warn ("Unable to find pdftotext in path; PDF file not indexed.");
+				Finished ();
+				return;
+			}
 
 			// add pdftotext's output to pool
 			StreamReader pout = pc.StandardOutput;
 			AppendText (pout.ReadToEnd ());
 			pout.Close ();
 			pc.Close ();
-			
 			Finished ();
 		}
 	}

@@ -361,13 +361,13 @@ namespace Beagle.Daemon {
 
 			indexable.AddProperty (Property.New ("fixme:client", "evolution"));
 
-			indexable.AddProperty (Property.NewKeyword ("dc:title",       message.Subject));
+			indexable.AddProperty (Property.NewKeyword ("dc:title",       GMime.Utils.HeaderDecodePhrase (message.Subject)));
 
 			indexable.AddProperty (Property.NewKeyword ("fixme:account",  "Local"));
                         indexable.AddProperty (Property.NewKeyword ("fixme:folder",   this.folder_name));
-			indexable.AddProperty (Property.NewKeyword ("fixme:subject",  message.Subject));
+			indexable.AddProperty (Property.NewKeyword ("fixme:subject",  GMime.Utils.HeaderDecodePhrase (message.Subject)));
                         indexable.AddProperty (Property.NewKeyword ("fixme:to",       message.GetRecipientsAsString (GMime.Message.RecipientType.To)));
-			indexable.AddProperty (Property.NewKeyword ("fixme:from",     message.Sender));
+			indexable.AddProperty (Property.NewKeyword ("fixme:from",     GMime.Utils.HeaderDecodePhrase (message.Sender)));
 			indexable.AddProperty (Property.NewKeyword ("fixme:cc",       message.GetRecipientsAsString (GMime.Message.RecipientType.Cc)));
 
 			if (this.folder_name == "Sent")
@@ -380,7 +380,7 @@ namespace Beagle.Daemon {
 
 			if (list_id != null) {
 				// FIXME: Might need some additional parsing.
-				indexable.AddProperty (Property.NewKeyword ("fixme:mlist", list_id));
+				indexable.AddProperty (Property.NewKeyword ("fixme:mlist", GMime.Utils.HeaderDecodePhrase (list_id)));
 			}
 
 			if (this.folder_name == "Sent")

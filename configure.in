@@ -193,7 +193,7 @@ AC_SUBST(LIBGECKOGLUE_LIBS)
 
 dnl -------------------------------------------------------
 
-PKG_CHECK_MODULES(BEAGLE_UI, gtk-sharp glade-sharp gecko-sharp = 0.6 gnome-sharp dbus-sharp >= 0.23 gconf-sharp gmime-sharp)
+PKG_CHECK_MODULES(BEAGLE_UI, gtk-sharp glade-sharp gecko-sharp = 0.6 gnome-sharp dbus-sharp >= 0.23 gconf-sharp gmime-sharp >= 2.1.11)
 AC_SUBST(BEAGLE_UI_LIBS)
 
 dnl ----------------------------------------------
@@ -255,7 +255,7 @@ AM_CONDITIONAL(ENABLE_GSF_SHARP, test "x$enable_gsf_sharp" = "xyes")
 PKG_CHECK_MODULES(GST_SHARP, gst-sharp, enable_gst_sharp=yes, enable_gst_sharp=no)
 AM_CONDITIONAL(ENABLE_GST_SHARP, test "x$enable_gst_sharp" = "xyes")
 
-PKG_CHECK_MODULES(BEAGLED, gmime-sharp gtk-sharp dbus-sharp >= 0.23 gconf-sharp)
+PKG_CHECK_MODULES(BEAGLED, gmime-sharp >= 2.1.11 gtk-sharp dbus-sharp >= 0.23 gconf-sharp)
 BEAGLED_LIBS="$BEAGLED_LIBS $EVO_SHARP_LIBS $GSF_SHARP_LIBS"
 AC_SUBST(BEAGLED_LIBS)
 
