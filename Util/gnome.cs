@@ -9,6 +9,7 @@
 //
 
 using Gtk;
+using GLib;
 using System;
 using System.Runtime.InteropServices;
 
@@ -19,9 +20,9 @@ namespace Beagle.Util {
 		public class Mime {
 		
 			[DllImport ("libgnomevfs-2")] extern static bool gnome_vfs_init ();
-			[DllImport ("libgnomevfs-2")] extern static string gnome_vfs_get_mime_type (string text_uri);
-			[DllImport ("libgnomevfs-2")] extern static string gnome_vfs_get_mime_type_for_data (byte[] data, int length);
-			[DllImport ("libgnomevfs-2")] extern static string gnome_vfs_mime_type_from_name_or_default (string filename, string defaultv);
+			[DllImport ("libgnomevfs-2")] extern static IntPtr gnome_vfs_get_mime_type (string text_uri);
+			[DllImport ("libgnomevfs-2")] extern static IntPtr gnome_vfs_get_mime_type_for_data (byte[] data, int length);
+			[DllImport ("libgnomevfs-2")] extern static IntPtr gnome_vfs_mime_type_from_name_or_default (string filename, string defaultv);
 
 			static Mime ()
 			{
@@ -30,19 +31,19 @@ namespace Beagle.Util {
 
 			public static string GetMimeType (string text_uri)
 			{
-				string mimeType = gnome_vfs_get_mime_type (text_uri);
+				string mimeType = GLib.Marshaller.PtrToStringGFree (gnome_vfs_get_mime_type (text_uri));
 				return mimeType;
 				
 			}
 			
 			public static string GetMimeTypeFromData (byte[] buffer, int buffSize, string text_uri)
 			{
-				string guessedType = gnome_vfs_get_mime_type_for_data (buffer, buffSize);
+				string guessedType = Marshal.PtrToStringAnsi (gnome_vfs_get_mime_type_for_data (buffer, buffSize));
 				if (text_uri != null 
 				    && (guessedType == "text/plain"
 					|| guessedType == "application/octet-stream"
 					|| guessedType == "application/zip"))
-					guessedType = gnome_vfs_mime_type_from_name_or_default (text_uri, guessedType);
+					guessedType = Marshal.PtrToStringAnsi (gnome_vfs_mime_type_from_name_or_default (text_uri, guessedType));
 				return guessedType;
 			}
 		}
@@ -226,10 +227,17 @@ namespace Beagle.Util {
 		}
 
 		[DllImport ("libgnomeui-2")]
-			extern static string gnome_vfs_escape_path_string (string uri);
+			extern static IntPtr gnome_vfs_escape_path_string (string uri);
 
 		[DllImport ("libgnomeui-2")]
-			extern static string gnome_thumbnail_factory_lookup (IntPtr factory, string uri, int mtime);
+			extern static IntPtr gnome_thumbnail_factory_lookup (IntPtr factory, string uri, int mtime);
+
+		static string GnomeThumbnailFactoryLookup (IntPtr factory,
+							   string uri,
+							   int mtime)
+		{
+			return GLib.Marshaller.PtrToStringGFree (gnome_thumbnail_factory_lookup (factory, uri, mtime));
+		}
 
 		[DllImport ("libgnomeui-2")]
 			extern static IntPtr gnome_thumbnail_factory_generate_thumbnail (IntPtr factory, string uri, string mime_type); 
@@ -247,10 +255,10 @@ namespace Beagle.Util {
 			extern static IntPtr gnome_icon_theme_new ();
 
 		[DllImport ("libgnomeui-2")]
-			extern static string gnome_icon_theme_lookup_icon (IntPtr theme, string icon_name, int size, IntPtr icon_data, out int base_size);
+			extern static IntPtr gnome_icon_theme_lookup_icon (IntPtr theme, string icon_name, int size, IntPtr icon_data, out int base_size);
 
 		[DllImport ("libgnomeui-2")]
-			extern static string gnome_icon_lookup (IntPtr theme, IntPtr factory, string uri,
+			extern static IntPtr gnome_icon_lookup (IntPtr theme, IntPtr factory, string uri,
 										  string custom_icon, IntPtr file_info_handle,
 										  string mime_type, LookupFlags flags,
 										  out LookupResultFlags flags_result);
@@ -258,9 +266,20 @@ namespace Beagle.Util {
 		static IntPtr icon_theme = gnome_icon_theme_new ();
 		static ThumbnailFactory thumbnail_factory = new ThumbnailFactory (ThumbnailFactory.ThumbnailSize.NORMAL);
 
+		public static string LookupName (string name)
+		{
+			return LookupName (name, 48);
+		}
+
+		public static string LookupName (string name, int size)
+		{
+			int base_size;
+			return GLib.Marshaller.PtrToStringGFree (gnome_icon_theme_lookup_icon (icon_theme, name, size, (IntPtr) 0, out base_size));
+		}
+
 		public static string Lookup (string uri, string custom_icon, VFS.FileInfo fi, string mime_type)
 		{
-			string euri = gnome_vfs_escape_path_string (uri);
+			string euri = GLib.Marshaller.PtrToStringGFree (gnome_vfs_escape_path_string (uri));
 			string icon_data = null;
 
 			if (uri.StartsWith ("/"))
@@ -285,18 +304,18 @@ namespace Beagle.Util {
 					gnome_thumbnail_factory_has_valid_failed_thumbnail (thumbnail_factory.handle, euri, mtime) ||
 					gnome_thumbnail_factory_has_valid_failed_thumbnail (thumbnail_factory.handle, euri, mtime) ) ) {
 
-					icon_data = gnome_thumbnail_factory_lookup (thumbnail_factory.handle, uri, mtime);
+					icon_data = GnomeThumbnailFactoryLookup (thumbnail_factory.handle, uri, mtime);
 					if (icon_data == null)
-						icon_data = gnome_thumbnail_factory_lookup (thumbnail_factory.handle, uri, mtime);
+						icon_data = GnomeThumbnailFactoryLookup (thumbnail_factory.handle, uri, mtime);
 					if (icon_data == null)
-						icon_data = gnome_thumbnail_factory_lookup (thumbnail_factory.handle, euri, mtime);
+						icon_data = GnomeThumbnailFactoryLookup (thumbnail_factory.handle, euri, mtime);
 					if (icon_data == null)
-						icon_data = gnome_thumbnail_factory_lookup (thumbnail_factory.handle, euri, mtime);
+						icon_data = GnomeThumbnailFactoryLookup (thumbnail_factory.handle, euri, mtime);
 
 					if (icon_data == null) {
 						IntPtr p = gnome_thumbnail_factory_generate_thumbnail (thumbnail_factory.handle, uri, mime_type);
 						gnome_thumbnail_factory_save_thumbnail (thumbnail_factory.handle, p, uri, mtime);
-						icon_data = gnome_thumbnail_factory_lookup (thumbnail_factory.handle, uri, mtime);
+						icon_data = GnomeThumbnailFactoryLookup (thumbnail_factory.handle, uri, mtime);
 					}
 				}
 			}
@@ -304,7 +323,7 @@ namespace Beagle.Util {
 			if (icon_data == null || icon_data.IndexOf ("/") != 0) {
 				LookupResultFlags out_flags;
 				int base_size;
-				string icon_name = gnome_icon_lookup (
+				string icon_name = GLib.Marshaller.PtrToStringGFree (gnome_icon_lookup (
 							       icon_theme,
 							       thumbnail_factory.handle,
 							       uri,
@@ -312,8 +331,8 @@ namespace Beagle.Util {
 							       fi == null ? (IntPtr) 0 : fi.handle,
 							       mime_type,
 						   	    LookupFlags.SHOW_SMALL_IMAGES_AS_THEMSELVES,
-						      	 out out_flags);
-				icon_data = gnome_icon_theme_lookup_icon (icon_theme, icon_name, 48, (IntPtr) 0, out base_size);
+							       out out_flags));
+				icon_data = GLib.Marshaller.PtrToStringGFree (gnome_icon_theme_lookup_icon (icon_theme, icon_name, 48, (IntPtr) 0, out base_size));
 			}
 
 			return icon_data;

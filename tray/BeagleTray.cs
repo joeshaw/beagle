@@ -32,9 +32,6 @@ namespace Beagle
 		int              w_width = 400;
                 int              w_height = 400;
 	
-		Gtk.TreeView     tree;
-		Gtk.ListStore    store;
-
 		public BeagleTray ()
 		{
 			glass_icon = GuiUtils.GetMiniIcon ("trayicon.png");
@@ -97,19 +94,18 @@ namespace Beagle
 			entry.CanFocus = true;
 			win.Focus = entry;
 
-			//                        canvas = new TileCanvas ();
-                                                                                                                                                             
-			//                        root = new SimpleRootTile ();
-			//                        canvas.Root = root;
+			canvas = new TileCanvas ();
+			canvas.ShowAll ();
+			vbox.PackStart (canvas, true, true, 3);
 
-			MakeHitTree ();
+			win.Realize ();
+			canvas.Realize ();
 
-                        swin = new Gtk.ScrolledWindow ();
-                        swin.Add (tree);
-
-			tree.ShowAll ();
-                                                                                                                                                            
-			vbox.PackStart (swin, true, true, 0);
+			root = new SimpleRootTile ();
+			canvas.Root = root;
+			
+                        //swin = new Gtk.ScrolledWindow ();
+                        //swin.Add (canvas);
 
 			return win;
 		}
@@ -165,69 +161,13 @@ namespace Beagle
                                                                                                                                                              
                 private void OnHitAdded (Query source, Hit hit)
                 {
-                        AddHitToTreeView (hit);
+			root.Add (hit);
                 }
                                                                                                                                                              
                 private void OnHitSubtracted (Query source, Uri uri)
                 {
                         root.Subtract (uri);
                 }
-
-	        private void MakeHitTree ()
-	        {
-			Type [] types = new Type [] {
-				typeof (string),     // type
-				typeof (string),     // name
-				typeof (string),     // change date
-			};
-
-			store = new Gtk.ListStore (types);
-			store.SetSortFunc (0 /* sort by type */,
-					   new Gtk.TreeIterCompareFunc (CompareHits),
-					   IntPtr.Zero, 
-					   null);
-
-			tree = new Gtk.TreeView (store);
-			tree.HeadersVisible = true;
-			tree.RulesHint = true;
-
-			Gtk.CellRenderer renderer;
-
-			Gtk.TreeViewColumn title = new Gtk.TreeViewColumn ();
-			renderer = new Gtk.CellRendererText ();
-			title.Title = "Match";
-			title.Sizing = Gtk.TreeViewColumnSizing.Autosize;
-			title.Resizable = true;
-			
-			title.PackStart (renderer, false);
-			title.AddAttribute (renderer, "text", 1 /* title */);
-
-			title.SortColumnId = 1; /* title */
-			tree.AppendColumn (title);
-
-			Gtk.TreeViewColumn change = new Gtk.TreeViewColumn ();
-			change.Title = "Last Changed";
-			change.Sizing = Gtk.TreeViewColumnSizing.Autosize;
-			change.Resizable = true;
-
-			renderer = new Gtk.CellRendererText ();
-			renderer.Data ["xalign"] = 1.0;
-			change.PackStart (renderer, false);
-			change.AddAttribute (renderer, "text", 2 /* change date */);
-
-			change.SortColumnId = 2; /* change date */
-			tree.AppendColumn (change);
-
-			Gtk.TreeViewColumn typecol = new Gtk.TreeViewColumn ();
-			typecol.Title = "Type";
-			typecol.PackStart (renderer, false);
-			typecol.AddAttribute (renderer, "text", 0 /* type */);
-
-			typecol.SortColumnId = 3; /* title */
-			tree.AppendColumn (typecol);
-
-			//			tree.RowActivated += new Gtk.RowActivatedHandler (OnRowActivated);
-		}
 
 		int CompareHits (Gtk.TreeModel model, Gtk.TreeIter a, Gtk.TreeIter b)
 		{
@@ -240,36 +180,6 @@ namespace Beagle
 				return -1;
 			else
 				return String.Compare (hit_a.Type, hit_b.Type);
-		}
-
-		string PrettyPrintDate (DateTime date)
-		{
-			DateTime now = DateTime.Now;
-			string short_time = date.ToShortTimeString ();
-
-			if (date.Year == now.Year) {
-				if (date.DayOfYear == now.DayOfYear)
-					return String.Format ("Today, {0}", short_time);
-				else if (date.DayOfYear == now.DayOfYear - 1)
-					return String.Format ("Yesterday, {0}", short_time);
-				else if (date.DayOfYear > now.DayOfYear - 6)
-					return String.Format ("{0} days ago, {1}", 
-							      now.DayOfYear - date.DayOfYear,
-							      short_time);
-				else
-					return date.ToString ("MMMM d, h:mm tt");
-			} else
-				return date.ToString ("MMMM d yyyy, h:mm tt");
-		}
-		    
-		void AddHitToTreeView (Hit hit)
-		{
-			string nice_date = PrettyPrintDate (hit.Timestamp);
-
-			Gtk.TreeIter iter = store.Append ();
-			store.SetValue (iter, 0 /* icon */, hit.Type);
-			store.SetValue (iter, 1 /* title */, hit.FileName);
-			store.SetValue (iter, 2 /* change date */, nice_date);
 		}
 
 		private string delayedQuery = null;
@@ -307,8 +217,6 @@ namespace Beagle
                 {
                         entry.Text = searchString;
 
-			store.Clear ();
-                                                                                                                                                             
                         if (query != null) {
 				try {
 					query.Cancel ();
@@ -334,11 +242,16 @@ namespace Beagle
 
 				return;
 			}
-                                                                                                                                                             
+
                         query.HitAddedEvent += OnHitAdded;
                         query.HitSubtractedEvent += OnHitSubtracted;
-                                                                                                                                                             
+			
+			root.Query = query;
+			root.Open ();
+				
                         query.Start ();
+
+
                 }
 
 

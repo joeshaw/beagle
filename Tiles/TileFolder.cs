@@ -34,52 +34,25 @@ namespace Beagle.Tile {
 
 	[HitFlavor (Name="Folders", Rank=600, Emblem="emblem-folder.png", Color="#f5f5fe",
 		    Uri="file://*", MimeType="inode/directory")]
-	public class TileFolder : TileFromTemplate {
-
-		Hit hit;
-
-		public TileFolder (Hit _hit) : base ("template-folder.html")
+	public class TileFolder : TileFromHitTemplate {
+		public TileFolder (Hit _hit) : base (_hit, 
+						     "template-folder.html")
 		{
-			hit = _hit;
 		}
 
-		override protected string ExpandKey (string key)
+		protected override void PopulateTemplate ()
 		{
-			switch (key) {
-			case "FileName":
-				return hit.FileName;
-
-			case "LastWriteTime":
-				return BU.StringFu.DateTimeToFuzzy (hit.FileSystemInfo.LastWriteTime);
-
-			case "Contents":
-				int n = hit.DirectoryInfo.GetFileSystemInfos().Length;
-				if (n == 0)
-					return "Empty";
-				else if (n == 1)
-					return "Contains 1 Item";
-				else
-					return "Contains " + n + " Items";
-			}
-
-			return null;
+			base.PopulateTemplate ();
+			
+			string str;
+			int n = Hit.DirectoryInfo.GetFileSystemInfos().Length;
+			if (n == 0)
+				str =  "Empty";
+			else if (n == 1)
+				str = "Contains 1 Item";
+			else
+				str = "Contains " + n + " Items";
+			Template["Contents"] = str;
 		}
-		
-		private void OpenFolder ()
-		{
-			OpenHitWithDefaultAction (hit);
-		}
-
-		override protected bool RenderKey (string key, TileRenderContext ctx)
-		{
-			if (key == "Icon") {
-				ctx.Image ("icon-folder.png",
-					   new TileActionHandler (OpenFolder));
-				return true;
-			}
-
-			return base.RenderKey (key, ctx);
-		}
-
 	}
 }

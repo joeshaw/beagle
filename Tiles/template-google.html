@@ -1,15 +1,12 @@
-<!-- <table cellpadding="4" width="300"> -->
-<table cellpadding="4" width="100%" height="100%">
-	<tr valign="top">
-		<td>
-			<a href="@Uri@"><img src="icon-web.png" border="0"></a>
-		</td>
-		<td>
-			<font size="2"><a href="@Uri@">@Title@</a></font><br>
-			<font size="1">
-			@Snippet@<br>
-				<font color="#008200">@Uri@ - @CachedSize@</font>		
-			</font>
-		</td>
-	</tr>
-</table>
+<tr>
+  <td class="icon">
+    <span><a href="@Uri@"><img src="@image%icon-web.png@"></a></span>
+  </td>
+  <td class="content">
+    <div class="name"><a href="@Uri@">@Title@</a></div>
+    @Snippet@
+    <ul class="actions">
+      <li><a href="@Uri@">Open</a></li>
+    </div>
+  </td>
+</tr>

@@ -34,75 +34,38 @@ namespace Beagle.Tile {
 
 	abstract public class TileFromTemplate : Tile {
 
-		private ArrayList templateLines = new ArrayList ();
+		private Template template = null;
+		private bool populated = false;
+		private string template_resource;
 
-		public TileFromTemplate (string templateResource) : base ()
+		public TileFromTemplate (string resource) : base ()
 		{
-			// We look for the resource in the assembly that contains
-			// the type's definition.
-			Assembly assembly = Assembly.GetAssembly (this.GetType ());
-			Stream stream = assembly.GetManifestResourceStream (templateResource);
-
-			if (stream == null)
-				throw new Exception (String.Format ("No such resource: {0}", templateResource));
-
-			StreamReader sr = new StreamReader (stream);
-			string line;
-			while ((line = sr.ReadLine ()) != null)
-				templateLines.Add (line);
+			template_resource = resource;
 		}
 
-		virtual protected string ExpandKey (string key)
-		{
-			return null;
-		}
-
-		virtual protected bool RenderKey (string key, TileRenderContext ctx)
-		{
-			return false;
-		}
-
-		private void RenderLine (string line, TileRenderContext ctx)
-		{
-			ctx.Checkpoint ();
-
-			int i = 0;
-			while (i < line.Length) {
-				int j = line.IndexOf ('@', i);
-				if (j == -1)
-					break;
-				int k = line.IndexOf ('@', j+1);
-				if (k == -1)
-					break;
-
-				if (j > i)
-					ctx.Write (line.Substring (i, j-i));
-
-				string key = line.Substring (j+1, k-j-1);
-				string expansion;
-
-				if (key == "") {
-					ctx.Write ("@");
-				} else if ((expansion = ExpandKey (key)) != null) {
-					ctx.Write (expansion);
-				} else if (! RenderKey (key, ctx)) {
-					ctx.Undo ();
-					return;
+		protected Template Template {
+			get {
+				if (template == null) {
+					template = new Template (template_resource);
+					Template["TileId"] = UniqueKey;
+					Template["action:"] = "action:" + UniqueKey + "!";
 				}
-				i = k+1;
+
+				return template;
 			}
-
-			if (i < line.Length)
-				ctx.Write (line.Substring (i));
-			ctx.Write ("\n");
 		}
 
-		override public void Render (TileRenderContext ctx)
+		protected abstract void PopulateTemplate ();
+		
+		public override void Render (TileRenderContext ctx)
 		{
-			foreach (string line in templateLines)
-				RenderLine (line, ctx);
+			if (!populated) {
+				PopulateTemplate ();
+				populated = true;
+			}
+			
+			ctx.Write (Template.ToString ());
 		}
-
 	}
 
 }

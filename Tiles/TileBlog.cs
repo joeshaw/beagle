@@ -34,21 +34,46 @@ namespace Beagle.Tile {
 
 	[HitFlavor (Name="Blogs", Rank=800, Emblem="emblem-blog.png", Color="#f5f5fe",
 		    Type="Blog")]
-	public class TileBlog : TileFromTemplate {
-
-		Hit hit;
-
-		public TileBlog (Hit _hit) : base ("template-blog.html")
+	public class TileBlog : TileFromHitTemplate {
+		public TileBlog (Hit _hit) : base (_hit, "template-blog.html")
 		{
-			hit = _hit;
+		}
+
+		protected override void PopulateTemplate ()
+		{
+			base.PopulateTemplate ();
+
+			// Hacky: if an image exists for this blog entry,
+			// load it into a pixbuf to find the size and
+			// scale the image if it is too big.
+			Stream fs = ImageStream ();
+			if (fs != null) {
+				string height = "";
+				Gdk.Pixbuf pixbuf = new Gdk.Pixbuf (fs);
+				if (pixbuf.Width > pixbuf.Height) {
+					if (pixbuf.Width > 48)
+						height = "width=\"48\"";
+				} else {
+					if (pixbuf.Height > 48)
+						height = "height=\"48\"";
+				}
+				
+				Template["height"] = height;
+				fs.Close ();
+				
+				
+				Template["Icon"] = Images.GetHtmlSource (Hit ["fixme:cachedimg"],
+									 BU.GnomeIconLookup.GetFileMimeType (Hit ["fixme:cachedimg"]));
+				
+			}
 		}
 
 		private Stream ImageStream ()
 		{
-			if (hit == null)
+			if (Hit == null)
 				return null;
 
-			string path = hit ["fixme:cachedimg"];
+			string path = Hit ["fixme:cachedimg"];
 
 			if (path == null || ! File.Exists (path))
 				return null;
@@ -59,62 +84,5 @@ namespace Beagle.Tile {
 					       FileShare.Read);
 		}
 
-		override public bool HandleUrlRequest (string url, Gtk.HTMLStream stream)
-		{
-			if (url == "icon-blog.png") {
-				Stream fs = ImageStream ();
-				if (fs != null) {
-					byte[] buffer = new byte [8192];
-					int n;
-					while ( (n = fs.Read (buffer, 0, 8192)) != 0 )
-						stream.Write (buffer, n);
-					fs.Close ();
-					return true;
-				}
-			}
-			
-			return false;
-		}
-
-		override protected string ExpandKey (string key)
-		{
-			switch (key) {
-			case "Published":
-				DateTime dt = BU.StringFu.StringToDateTime (hit ["fixme:published"]);
-				return BU.StringFu.DateTimeToFuzzy (dt);
-			}
-
-			return hit [key];
-		}
-
-		override protected bool RenderKey (string key, TileRenderContext ctx)
-		{
-			if (key == "Icon") {
-
-				int w = -1, h = -1;
-
-				// Hacky: if an image exists for this blog entry,
-				// load it into a pixbuf to find the size and
-				// scale the image if it is too big.
-				Stream fs = ImageStream ();
-				if (fs != null) {
-					Gdk.Pixbuf pixbuf = new Gdk.Pixbuf (fs);
-					if (pixbuf.Width > pixbuf.Height) {
-						if (pixbuf.Width > 48)
-							w = 48;
-					} else {
-						if (pixbuf.Height > 48)
-							h = 48;
-					}
-
-					fs.Close ();
-				}
-				
-				ctx.Image ("icon-blog.png", w, h, null);
-				return true;
-			}
-
-			return base.RenderKey (key, ctx);
-		}
 	}
 }

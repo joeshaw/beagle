@@ -33,76 +33,53 @@ namespace Beagle.Tile {
 
 	[HitFlavor (Name="Email", Rank=1100, Emblem="emblem-mail-message.png", Color="#f5f5f5",
 		    Type="MailMessage")]
-	public class TileMailMessage : TileFromTemplate {
-
-		Hit hit;
-
-		public TileMailMessage (Hit _hit) : base ("template-mail-message.html")
+	public class TileMailMessage : TileFromHitTemplate {
+		public TileMailMessage (Hit _hit) : base (_hit,
+							  "template-mail-message.html")
 		{
-			hit = _hit;
 		}
 
-		override protected string ExpandKey (string key)
+		protected override void PopulateTemplate ()
 		{
-			bool sent = (hit ["fixme:isSent"] != null);
+			base.PopulateTemplate ();
+
+                        bool sent = (Hit ["fixme:isSent"] != null);
+
 			string str;
 
-			switch (key) {
-			case "Subject":
-				str = hit ["fixme:subject"];
-				if (str == null)
-					str = "<i>No Subject</i>";
-				if (hit ["_IsDeleted"] != null)
-					str = "<strike>" + str + "</strike>";
-				return str;
-				
-			case "Folder":
-				return hit ["fixme:folder"];
+			str = Hit ["fixme:subject"];
+			if (str == null)
+				str = "<i>No Subject</i>";
+			if (Hit ["_IsDeleted"] != null)
+				str = "<strike>" + str + "</strike>";
+			Template["Subject"] = str;
 
-			case "ToFrom":
-				return sent ? "To" : "From";
+			Template["ToFrom"] = sent ? "To" : "From";
+			Template["Who"] = sent ? Hit ["fixme:to"] : Hit ["fixme:from"];
+			Template["When"] = sent ? Hit ["fixme:sentdate"] : Hit ["fixme:received"];
 
-			case "Who":
-				return sent ? hit ["fixme:to"] : hit ["fixme:from"];
+			string icon;
+			if (Hit ["fixme:isAnswered"] != null)
+				icon = Images.GetHtmlSource ("mail-replied.png", 
+							     "image/png");
+			else if (Hit ["fixme:isSeen"] != null)
+				icon = Images.GetHtmlSource ("mail-read.png",
+							     "image/png");
+			else
+				icon = Images.GetHtmlSource ("mail.png",
+							     "image/png");
+			Template["Icon"] = icon;
+			if (Hit ["fixme:isFlagged"] != null)
+				Template["FollowupIcon"] = Images.GetHtmlSource ("flag-for-followup.png", "image/png");
+			if (Hit ["fixme:hasAttachments"] != null)
+				Template["AttachmentIcon"] = Images.GetHtmlSource ("attachment.png", "image/png");
 
-			case "When":
-				str = sent ? hit ["fixme:sentdate"] : hit ["fixme:received"];
-				return BU.StringFu.DateTimeToFuzzy (BU.StringFu.StringToDateTime (str));
-			}
-
-			return null;
 		}
-		
-		private void OpenMessage ()
+
+		[TileAction]
+		public void OpenMailMessage () 
 		{
-			OpenHitWithDefaultAction (hit);
+			System.Console.WriteLine ("Opening mail message!");
 		}
-
-		override protected bool RenderKey (string key, TileRenderContext ctx)
-		{
-			if (key == "Icon") {
-				string icon;
-
-				if (hit ["fixme:isAnswered"] != null)
-					icon = "mail-replied.png";
-				else if (hit ["fixme:isSeen"] != null)
-					icon = "mail-read.png";
-				else
-					icon = "mail.png";
-
-				ctx.Image (icon, new TileActionHandler (OpenMessage));
-
-				if (hit ["fixme:isFlagged"] != null)
-					ctx.Image ("flag-for-followup.png");
-
-				if (hit ["fixme:hasAttachments"] != null)
-					ctx.Image ("attachment.png");
-
-				return true;
-			}
-
-			return base.RenderKey (key, ctx);
-		}
-
 	}
 }

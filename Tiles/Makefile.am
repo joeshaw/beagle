@@ -3,18 +3,21 @@ CSC = mcs -g
 
 TARGET = Tiles.dll
 
-CSFLAGS = -target:library
+CSFLAGS = -target:library -warn:4
 
 CSFILES =					\
 	$(srcdir)/SimpleRootTile.cs		\
 	$(srcdir)/HitFlavor.cs			\
 	$(srcdir)/HitToHitFlavor.cs		\
+	$(srcdir)/Template.cs                   \
+	$(srcdir)/TileActionAttribute.cs        \
 	$(srcdir)/Tile.cs			\
-	$(srcdir)/TileMenuContext.cs		\
 	$(srcdir)/TileRenderContext.cs		\
+	$(srcdir)/TileStyleAttribute.cs         \
 	$(srcdir)/TileCanvas.cs			\
 	$(srcdir)/TileHitCollection.cs		\
 	$(srcdir)/TileFromTemplate.cs		\
+	$(srcdir)/TileFromHitTemplate.cs	\
 	$(srcdir)/TileContact.cs		\
 	$(srcdir)/TileFile.cs			\
 	$(srcdir)/TileFolder.cs			\
@@ -39,7 +42,9 @@ ASSEMBLIES = 					\
 	$(LOCAL_ASSEMBLIES:%=-r:%)
 
 RESOURCEFILES =					\
-	$(srcdir)/template-hit-collection.html	\
+	$(srcdir)/template-page.css		\
+	$(srcdir)/template-head.html            \
+	$(srcdir)/template-foot.html            \
 	$(srcdir)/template-contact.html		\
 	$(srcdir)/template-file.html		\
 	$(srcdir)/template-folder.html		\

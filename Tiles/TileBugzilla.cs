@@ -32,23 +32,10 @@ namespace Beagle.Tile {
 		    Emblem="emblem-google.png",
 		    Rank=100,
 		    Type="Bugzilla")]
-	public class TileBugzilla : TileFromTemplate {
-
-		Hit hit;
-
-		public TileBugzilla (Hit _hit) : base ("template-bugzilla.html")
+	public class TileBugzilla : TileFromHitTemplate {
+		public TileBugzilla (Hit _hit) : base (_hit, 
+						       "template-bugzilla.html")
 		{
-			hit = _hit;
 		}
-
-		override protected string ExpandKey (string key)
-		{
-			if (key == "Uri")
-				return hit.Uri.ToString ();
-			return hit [key];
-		}
-
-		
-
 	}
 }

@@ -27,23 +27,97 @@
 using System;
 using System.Collections;
 using System.Diagnostics;
+using System.Reflection;
 using System.IO;
 using System.Text;
+using Gecko;
 
 namespace Beagle.Tile {
 
-	public class TileCanvas : Gtk.HTML {
+	public class TileCanvas : Gecko.WebControl {
 
 		public event EventHandler PreRenderEvent;
 		public event EventHandler PostRenderEvent;
 
 		public TileCanvas () : base ()
 		{
-			UrlRequested += new Gtk.UrlRequestedHandler (OnUrlRequested);
-			LinkClicked += new Gtk.LinkClickedHandler (OnLinkClicked);
-			IframeCreated += new Gtk.IframeCreatedHandler (OnIframeCreated);
+			OpenUri += OnOpenUri;
+		}
 
-			AttachSignalHandlers (this);
+		private void DispatchAction (string tile_id,
+					     string action)
+		{
+			Tile t = GetTile (tile_id);
+			
+			if (t == null)
+				return;
+
+
+			MethodInfo info = t.GetType().GetMethod (action,
+								 BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance,
+								 null,
+								 CallingConventions.Any,
+								 new Type[] {},
+								 null);
+			if (info == null) {
+				Console.WriteLine ("Couldn't find method called {0}", action);
+				return;
+			}
+			object[] attrs = info.GetCustomAttributes (false);
+			foreach (object attr in attrs) {
+				if (attr is TileActionAttribute) {
+					info.Invoke (t, null);
+					return;
+				}
+			}
+			Console.WriteLine ("{0} does not have the TileAction attribute");
+		}
+
+		private void OnOpenUri (object o, OpenUriArgs args)
+		{
+			string uri = args.AURI;
+			System.Console.WriteLine ("Open URI: {0}", args.AURI);
+			
+			args.RetVal = true;
+
+			if (DoAction (uri))
+				return;
+
+			if (uri.StartsWith ("action:")) {
+				int pos1 = "action:".Length;
+				int pos2 = uri.IndexOf ("!");
+				if (pos2 > 0) {
+					string tile_id = uri.Substring (pos1, pos2 - pos1);
+					string action = uri.Substring (pos2 + 1);
+					DispatchAction (tile_id, action);
+				}
+			}
+
+			string command = null;
+			string commandArgs = null;
+
+			if (uri.StartsWith ("http://")) {
+				command = "gnome-open";
+				commandArgs = uri;
+			} else if (uri.StartsWith ("mailto:")) {
+				command = "evolution";
+				commandArgs = uri;
+			}
+
+			if (command != null) {
+				Process p = new Process ();
+				p.StartInfo.UseShellExecute = false;
+				p.StartInfo.FileName = command;
+				if (args != null)
+					p.StartInfo.Arguments = commandArgs;
+				try {
+					p.Start ();
+				} catch { }
+				return;
+			}
+
+					
+			return;
 		}
 
 		/////////////////////////////////////////////////
@@ -73,8 +147,8 @@ namespace Beagle.Tile {
 		private string AddAction (TileActionHandler handler)
 		{
 			if (handler == null)
-				return "_action_:NULL";
-			string key = "_action_:" + actionId.ToString ();
+				return "dynaction:NULL";
+			string key = "dynaction:" + actionId.ToString ();
 			++actionId;
 			actionTable [key] = handler;
 			return key;
@@ -82,7 +156,7 @@ namespace Beagle.Tile {
 
 		private bool IsActionKey (string key)
 		{
-			return key.StartsWith ("_action_:");
+			return key.StartsWith ("dynaction:");
 		}
 		
 		private bool DoAction (string key)
@@ -94,7 +168,6 @@ namespace Beagle.Tile {
 			}
 			return false;
 		}
-
 
 		/////////////////////////////////////////////////
 
@@ -120,195 +193,10 @@ namespace Beagle.Tile {
 
 		/////////////////////////////////////////////////
 
-		private void OnUrlRequested (object o, Gtk.UrlRequestedArgs args)
-		{
-			string name = args.Url;
-			Tile tile = null;
-
-			if (name.Length > 0 && name [0] == ':') {
-				int i = name.IndexOf (':', 1);
-				if (i != -1) {
-					string tileKey = name.Substring (1, i-1);
-					tile = GetTile (tileKey);
-					name = args.Url.Substring (i+1);
-
-				}
-			}
-
-			// If this Url request originates from an iframe,
-			// we respond by painting the tile into the HTMLStream.
-			if (tile != null && name == "_iframe_") {
-				PaintTile (tile, args.Handle);
-				return;
-			}
-
-			// Give the original tile an opportunity to
-			// service the Url request.
-			if (tile != null && tile.HandleUrlRequest (name, args.Handle))
-				return;
-
-			// Maybe this is an image: try the image barn
-			Stream s = Images.GetStream (name);
-			if (s != null) {
-				byte[] buffer = new byte [8192];
-				int n;
-				while ( (n = s.Read (buffer, 0, 8192)) != 0)
-					args.Handle.Write (buffer, n);
-				return;
-			}
-
-			Console.WriteLine ("Unhandled Url '{0}'", name);
-		}
-
-		private void OnLinkClicked (object o, Gtk.LinkClickedArgs args)
-		{
-			if (DoAction (args.Url))
-				return;
-
-			string command = null;
-			string commandArgs = null;
-
-			if (args.Url.StartsWith ("http://")) {
-				command = "gnome-open";
-				commandArgs = args.Url;
-			} else if (args.Url.StartsWith ("mailto:")) {
-				command = "evolution";
-				commandArgs = args.Url;
-			}
-
-			if (command != null) {
-				Process p = new Process ();
-				p.StartInfo.UseShellExecute = false;
-				p.StartInfo.FileName = command;
-				if (args != null)
-					p.StartInfo.Arguments = commandArgs;
-				try {
-					p.Start ();
-				} catch { }
-				return;
-			}
-		}
-
-		private void OnIframeCreated (object o, Gtk.IframeCreatedArgs args)
-		{
-			Gtk.HTML iframe = args.Iframe;
-			AttachSignalHandlers (iframe);
-		}
-
-		/////////////////////////////////////////////////
-
-		private void AttachSignalHandlers (Gtk.Widget w)
-		{
-			w.ButtonPressEvent += new Gtk.ButtonPressEventHandler (OnButtonPressEvent);
-			w.PopupMenu += new Gtk.PopupMenuHandler (OnPopupMenu);
-		}
-
-		private Tile TileFromEventSource (object o)
-		{
-			Gtk.HTML src = (Gtk.HTML) o;
-			string url = src.Base;
-			if (url.EndsWith (":_iframe_"))
-				url = url.Substring (1, url.Length - ":_iframe_".Length - 1);
-			Tile tile = GetTile (url);
-			if (tile == null)
-				Console.WriteLine ("Unable to map event to tile! (base='{0}')",
-						   url);
-			return tile;
-		}
-
-		private void OnButtonPressEvent (object o, Gtk.ButtonPressEventArgs args)
-		{
-			Gdk.EventButton ev = (Gdk.EventButton) args.Event;
-			Tile tile = TileFromEventSource (o);
-			if (tile != null && ev.Button == 3)
-				DoPopupMenu (tile, ev.Button, ev.Time);
-		}
-
-		private void OnPopupMenu (object o, Gtk.PopupMenuArgs args)
-		{
-			Tile tile = TileFromEventSource (o);
-			if (tile != null)
-				DoPopupMenu (tile, 0, Gtk.Global.CurrentEventTime);
-		}
-
-		/////////////////////////////////////////////////
-
-		private class ActionWrapper {
-
-			TileActionHandler handler;
-
-			public ActionWrapper (TileActionHandler _handler)
-			{
-				handler = _handler;
-			}
-
-			public void AsEventHandler (object sender, EventArgs e)
-			{
-				handler ();
-			}
-		}
-
-		private class TileCanvasMenuContext : TileMenuContext {
-			ArrayList items = new ArrayList ();
-
-			public ICollection Items {
-				get { return items; }
-			}
-
-			override public void Add (string icon, string label,
-						  TileActionHandler handler)
-			{
-				Gtk.Widget img = null;
-				if (icon != null)
-					img = Images.GetWidget (icon);
-
-				Gtk.MenuItem item;
-				if (img != null) {
-					Gtk.ImageMenuItem imgItem;
-					imgItem = new Gtk.ImageMenuItem (label);
-					imgItem.Image = img;
-					item = imgItem;
-					items.Add (item);
-				} else {
-					item = new Gtk.MenuItem (label);
-					items.Add (item);
-				}
-
-				if (handler != null) {
-					ActionWrapper thunk = new ActionWrapper (handler);
-					item.Activated += new EventHandler (thunk.AsEventHandler);
-				}
-
-				item.Sensitive = (handler != null);
-			}
-
-		}
-
-		private void DoPopupMenu (Tile tile, uint button, uint activateTime)
-		{
-			TileCanvasMenuContext ctx = new TileCanvasMenuContext ();
-			tile.PopupMenu (ctx);
-			if (ctx.Items.Count == 0)
-				return;
-
-			Gtk.Menu menu = new Gtk.Menu ();
-			foreach (Gtk.MenuItem mi in ctx.Items) {
-				menu.Append (mi);
-				mi.ShowAll ();
-			}
-
-			menu.ShowAll ();
-			menu.Popup (null, null, null, (IntPtr) 0,  button, activateTime);
-		}
-
-		/////////////////////////////////////////////////
-
 		private class TileCanvasRenderContext : TileRenderContext {
 
 			TileCanvas canvas;
 			Tile tileMain;
-			StringBuilder html = new StringBuilder ();
-			string checkpoint = null;
 
 			public TileCanvasRenderContext (TileCanvas _canvas, Tile _tile)
 			{
@@ -317,99 +205,97 @@ namespace Beagle.Tile {
 				canvas.CacheTile (tileMain);
 			}
 
-			public string Html {
-				get { return html.ToString (); }
-			}
-
 			override public void Write (string markup)
 			{
-				html.Append (markup);
+				canvas.AppendData (markup);
 			}
 
-			override public void Link (string label, TileActionHandler handler)
+			override public void Link (string label, 
+						   TileActionHandler handler)
 			{
 				string key = canvas.AddAction (handler);
 				Write ("<a href=\"{0}\">{1}</a>", key, label);
 			}
 
-			override public void Image (string name, int width, int height,
-						    TileActionHandler handler)
-			{
-				if (handler != null) {
-					string key = canvas.AddAction (handler);
-					Write ("<a href=\"{0}\">", key);
-				}
-				Write ("<img src=\":{0}:{1}\"", tileMain.UniqueKey, name);
-				if (width > 0)
-					Write (" width=\"{0}\"", width);
-				if (height > 0)
-					Write (" height=\"{0}\"", height);
-				Write (" border=\"0\">");
-				if (handler != null)
-					Write ("</a>");
-			}
-
 			override public void Tile (Tile tile)
 			{
 				canvas.CacheTile (tile);
-				if (tile.RenderInline) {
-					TileCanvasRenderContext ctx;
-					ctx = new TileCanvasRenderContext (canvas, tile);
-					tile.Render (ctx);
-					html.Append (ctx.Html);
-				} else {
-					Write ("<iframe");
-					Write (" src=\":{0}:_iframe_\"", tile.UniqueKey);
-					Write (" marginwidth=\"0\"");
-					Write (" marginheight=\"1\"");
-					Write (" frameborder=\"0\"");
-					Write ("></iframe>");
-				}
+				tile.Render (this);
 			}
+		}
 
-			override public void Checkpoint ()
-			{
-				checkpoint = html.ToString ();
-			}
 
-			override public void Undo ()
-			{
-				if (checkpoint != null) {
-					html = new StringBuilder (checkpoint);
-					checkpoint = null;
+
+		private void RenderStyleResource (TileRenderContext ctx,
+						  string resource_name)
+		{
+			Template t = new Template (resource_name);
+			ctx.Write (t.ToString ());
+		}
+		
+		private static ArrayList style_attributes = null;
+		static private void ScanAssembly (Assembly assembly)
+		{
+			style_attributes = new ArrayList ();
+			foreach (Type type in assembly.GetTypes ()) {
+				if (type.IsSubclassOf (typeof (Tile))) {
+					foreach (object obj in Attribute.GetCustomAttributes (type)) {
+						if (obj is TileStyleAttribute) {
+							style_attributes.Add (obj);
+						}
+					}
 				}
 			}
 		}
 
-		private void PaintTile (Tile tile, Gtk.HTMLStream stream)
+		private void RenderStyles (TileRenderContext ctx)
 		{
-			stream.Write ("<html><body>");
-			if (tile != null) {
-				TileCanvasRenderContext ctx;
-				ctx = new TileCanvasRenderContext (this, tile);
-				tile.Render (ctx);
-				stream.Write (ctx.Html);
+			if (style_attributes == null) 
+				ScanAssembly (Assembly.GetExecutingAssembly ());
+
+			foreach (TileStyleAttribute attr in style_attributes) {
+				RenderStyleResource (ctx,
+						     attr.Resource);
 			}
-			stream.Write ("</body></html>");
+		}
+
+		private void PaintTile (Tile tile)
+		{
+			TileCanvasRenderContext ctx;
+			ctx = new TileCanvasRenderContext (this, 
+							   tile);
+								   
+			ctx.Write ("<style type=\"text/css\" media=\"screen\">");
+
+			RenderStyles (ctx);
+			
+			ctx.Write ("</style>");
+
+			if (tile != null) {
+				tile.Render (ctx);
+			}
+
 		}
 
 		/////////////////////////////////////////////////
 
 		private void DoRender ()
 		{
+			System.Console.WriteLine ("Rendering");
 			if (PreRenderEvent != null)
 				PreRenderEvent (this, new EventArgs ());
 				
 			ClearActions ();
 			ClearTiles ();
 
-			Gtk.HTMLStream stream = this.Begin ("", "text/html", Gtk.HTMLBeginFlags.Scroll);
-			PaintTile (root, stream);
-			this.End (stream, Gtk.HTMLStreamStatus.Ok);
+			OpenStream ("http://localhost/", "text/html");
+			PaintTile (root);
+			CloseStream ();
 
 			if (PostRenderEvent != null)
 				PostRenderEvent (this, new EventArgs ());
 
+			System.Console.WriteLine ("Done Rendering");
 		}
 
 		/////////////////////////////////////////////////

@@ -34,46 +34,45 @@ namespace Beagle.Tile {
 
 	[HitFlavor (Name="People", Rank=1200, Emblem="emblem-contact.png", Color="#eeeebd",
 		    Type="Contact")]
-	public class TileContact : TileFromTemplate {
-
-		Hit hit;
-
-		public TileContact (Hit _hit) : base ("template-contact.html")
+	public class TileContact : TileFromHitTemplate {
+		public TileContact (Hit _hit) : base (_hit,
+						      "template-contact.html")
 		{
-			hit = _hit;
 		}
 
-		override public bool HandleUrlRequest (string url, Gtk.HTMLStream stream)
+		protected override void PopulateTemplate ()
 		{
-			// Try to short-circuit the request for contact-icon.png,
-			// replacing it w/ a photo of the contact.
-			if (url == "contact-icon.png") {
-				byte[] data = (byte[]) hit.GetData ("Photo");
-				if (data != null) {
-					stream.Write (data, data.Length);
-					return true;
+			base.PopulateTemplate ();
+
+			byte[] data = (byte[]) Hit.GetData ("Photo");
+
+			if (data != null) {
+				string height = "";
+
+				// bad hack to scale the image 
+				MemoryStream stream = new MemoryStream (data);
+				Gdk.Pixbuf pixbuf = new Gdk.Pixbuf (stream);
+				if (pixbuf.Width > pixbuf.Height) {
+					if (pixbuf.Width > 128)
+						height = "width=\"128\"";
+				} else {
+					if (pixbuf.Height > 128)
+						height = "height=\"128\"";
 				}
+				stream.Close ();
+
+				Template["height"] = height;
+				Template["Icon"] = Images.GetHtmlSource (data,
+									 "image/png");
+
+
+			} else {
+				Template["height"] = "";
+				Template["Icon"] = Images.GetHtmlSource ("contact-icon.png",
+									 "image/png");
 			}
-
-			return false;
-		}
-
-		override protected string ExpandKey (string key)
-		{
-			return hit [key];
-		}
-		
-		override protected bool RenderKey (string key, TileRenderContext ctx)
-		{
-			if (key == "Icon") {
-				int w = -1;
-				if (hit.GetData ("Photo") != null)
-					w = 128;
-				ctx.Image ("contact-icon.png", w, -1, null);
-				return true;
-			}
-
-			return base.RenderKey (key, ctx);
+			
 		}
 	}
 }
+	

@@ -1,30 +1,43 @@
-<table bgcolor="#dddddd" cellpadding="0" cellspacing="1" width="100%" height="100%">
-  <tr valign="top">
-    <td>
+<tr>
+  <td class="icon">
+    <span><a href="@Uri@">
+    <img src="@stock%gnome-gaim@">
+    </a></span>
+  </td>
+  <td class="content">
+    <div class="name"><a href="@action:@OpenDefault">Conversation with @speakingalias@</a></div>
+    <ul class="actions">
+      <li id="email"><a href="@action:@Forward">Send Mail</a></li>
+      <li id="message"><a href="@action:@SendIm">Send IM</a>
+@Presence@
+</li>
+    </ul>
+    </div>
+  </td>
+</tr>
+
+
+<!--<table bgcolor="#dddddd" cellpadding="0" cellspacing="1" width="100%" height="100%">-->
+<!--  <tr valign="top">-->
+<!--    <td>-->
       <!-- # actual content -->
 
-      <table bgcolor="#c6de34" cellpadding="3" cellspacing="0" width="100%" height="100%">
-	<tr>
-	  <td valign="middle" align="left">
-	    <a href="@Uri@"><img src="im-aim.png" border="0"></a></td>
-	  <td align="left" valign="middle">
-	    <a href="@Uri@"><font size="2">
-	      IM with <strong>@fixme:speakingto@</strong></font></a>
-	  </td>
-	</tr>
-	<tr>
-	  <td valign="top" bgcolor="#e9f59f" align="right" colspan="2">
-	    <font size="1">@nice_starttime@ (@nice_duration@)</font></td>
-	</tr>
-	<tr>
-	  <td bgcolor="#ffffff" colspan="2">
-	    <font size="1">@snippet@</font>
-	  </td>
-	</tr>
-      </table>
-      
-      <!-- # end actual content -->
-
-    </td>
-  </tr>
-</table>
+<!--      <table bgcolor="#c6de34" cellpadding="3" cellspacing="0" width="100%" height="100%">-->
+<!--	<tr>-->
+<!--	  <td valign="middle" align="left">-->
+<!--	    <a href="@Uri@"><img src="@image%im-aim.png@" border="0"></a></td>-->
+<!--	  <td align="left" valign="middle">-->
+<!--	    <a href="@Uri@"><font size="2">-->
+<!--	      IM with <strong>@speakingalias@</strong></font></a>-->
+<!--	  </td>-->
+<!--	</tr>-->
+<!--	<tr>-->
+<!--	  <td valign="top" bgcolor="#e9f59f" align="right" colspan="2">-->
+<!--	    <font size="1">@date%fixme:starttime@ (@nice_duration@)</font></td>-->
+<!--	</tr>-->
+<!--	<tr>-->
+<!--	  <td bgcolor="#ffffff" colspan="2">-->
+<!--	    <font size="1">@snippet@</font>-->
+<!--	  </td>-->
+<!--	</tr>-->
+<!--      </table>-->

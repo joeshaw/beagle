@@ -43,6 +43,9 @@ namespace Beagle {
 				name = name.Substring ("file://".Length);
 				if (File.Exists (name))
 					stream = File.OpenRead (name);
+			} else if (name.StartsWith ("/")) {
+				if (File.Exists (name))
+					stream = File.OpenRead (name);
 			} else {
 				Assembly assembly = Assembly.GetExecutingAssembly ();
 				stream = assembly.GetManifestResourceStream (name);
@@ -101,5 +104,43 @@ namespace Beagle {
 			Gdk.Pixbuf pixbuf = GetPixbuf (name, maxWidth, maxHeight);
 			return pixbuf != null ? new Gtk.Image (pixbuf) : null;
 		}
+
+		static public string GetHtmlSource (byte[] binary_data, 
+						    string mime_type) 
+		{
+				string base64_string = 
+					System.Convert.ToBase64String(binary_data, 
+								      0,
+								      binary_data.Length);
+				
+				
+				string data = "data:" + mime_type + ";base64," + base64_string;
+				return data;
+		}
+
+		static public string GetHtmlSource (string name, 
+						    string mime_type) 
+		{
+			if (name.StartsWith ("file://")) {
+				return name;
+			} else {
+				Stream stream;
+
+				if (mime_type == null || mime_type == "")
+					throw new ArgumentException ();
+
+				// FIXME: it's probably worth caching these,
+				// since they'll probably be repeated a lot
+
+				stream = GetStream (name);
+
+				byte[] binary_data = new Byte[stream.Length];
+				long bytes_read = stream.Read(binary_data, 0,
+							      (int)stream.Length);
+				stream.Close ();
+				
+				return GetHtmlSource (binary_data, mime_type);
+			}
+		} 
 	}
 }

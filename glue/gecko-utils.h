@@ -1,9 +1,8 @@
+// -*- Mode: C; tab-width: 8; indent-tabs-mode: t; c-basic-offset: 8 -*- */
 //
-// TileFile.cs
+// Copyright (C) 2004 Imendio AB
+// Copyright (C) 2004 Marco Pesenti Gritti
 //
-// Copyright (C) 2004 Novell, Inc.
-//
-
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
 // copy of this software and associated documentation files (the "Software"),
@@ -22,43 +21,26 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
 // FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
-//
 
-using System;
-using System.Diagnostics;
-using System.IO;
+#ifndef __BLAM_GECKO_UTILS_H__
+#define __BLAM_GECKO_UTILS_H__
 
-using BU = Beagle.Util;
+G_BEGIN_DECLS
 
-namespace Beagle.Tile {
+enum {
+	BLAM_GECKO_PREF_FONT_VARIABLE = 1,
+	BLAM_GECKO_PREF_FONT_FIXED = 2
+};
 
-	[HitFlavor (Name="Files", Rank=300, Emblem="emblem-file.png", Color="#f5f5fe",
-		    Type="File"),
-	 HitFlavor (Name="Files", Rank=300, Emblem="emblem-file.png", Color="#f5f5fe",
-		    Uri="file://*")]
-	public class TileFile : TileFromHitTemplate {
-		public TileFile (Hit _hit) : base (_hit,
-						   "template-file.html")
-		{
-		}
+void            blam_gecko_utils_set_font      (gint          font_type,
+                                                const gchar  *fontname);
 
-		protected override void PopulateTemplate ()
-		{
-			base.PopulateTemplate ();
+void            blam_gecko_utils_init_services (void);
+void            blam_gecko_utils_set_proxy     (gboolean      use_proxy, 
+                                                gchar *       host,
+                                                gint          port);
 
-			if (Hit.FileInfo == null) {
-				Console.WriteLine ("FileInfo is null");
-				return;
-			}
+G_END_DECLS
 
-			Gtk.IconSize size = (Gtk.IconSize) 48;
-			string path = BU.GnomeIconLookup.LookupMimeIcon (Hit.MimeType,
-									 size);
-			if (path != null) {
-				Template["Icon"] = Images.GetHtmlSource ("file://" + path,
-									 BU.GnomeIconLookup.GetFileMimeType (path));
-			}
-		}
-	}
-}
-	
+#endif /* __DH_HTML_H__ */
+

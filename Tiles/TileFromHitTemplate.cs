@@ -32,33 +32,36 @@ using BU = Beagle.Util;
 
 namespace Beagle.Tile {
 
-	[HitFlavor (Name="Files", Rank=300, Emblem="emblem-file.png", Color="#f5f5fe",
-		    Type="File"),
-	 HitFlavor (Name="Files", Rank=300, Emblem="emblem-file.png", Color="#f5f5fe",
-		    Uri="file://*")]
-	public class TileFile : TileFromHitTemplate {
-		public TileFile (Hit _hit) : base (_hit,
-						   "template-file.html")
+	public class TileFromHitTemplate : TileFromTemplate {
+
+		Hit hit;
+
+		public TileFromHitTemplate (Hit _hit, 
+					    string template) : base (template)
 		{
+			hit = _hit;
 		}
 
 		protected override void PopulateTemplate ()
 		{
-			base.PopulateTemplate ();
+			Template.AddHit (hit);
 
-			if (Hit.FileInfo == null) {
-				Console.WriteLine ("FileInfo is null");
-				return;
-			}
+			if (hit.FileInfo != null) {
+				Template["LastWriteTime"] = hit.FileInfo.LastWriteTime.ToString ();
+				Template["Length"] = BU.StringFu.FileLengthToString (hit.FileInfo.Length);
+			} 
+		}
 
-			Gtk.IconSize size = (Gtk.IconSize) 48;
-			string path = BU.GnomeIconLookup.LookupMimeIcon (Hit.MimeType,
-									 size);
-			if (path != null) {
-				Template["Icon"] = Images.GetHtmlSource ("file://" + path,
-									 BU.GnomeIconLookup.GetFileMimeType (path));
+		public Hit Hit {
+			get { 
+				return hit;
 			}
+		}
+
+		[TileAction]
+		private void OpenDefault () 
+		{
+			hit.OpenWithDefaultAction ();
 		}
 	}
 }
-	

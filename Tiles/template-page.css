@@ -1,0 +1,111 @@
+body, html {
+  background: white;
+  margin: 0;
+  padding: 0;
+  font-family: Segoe, Trebuchet MS, Lucida, Sans-Serif;
+  text-align: left;
+}
+
+a, a:visited { 
+  text-decoration: none;
+  color: #2b5a8a;
+}
+
+a:hover { 
+  text-decoration: underline;
+}
+
+img { 
+  border: 0px;
+}
+
+table { 
+  width: 100%;
+  border-collapse: collapse;
+}
+
+tr {
+  border-bottom: 1px dashed #999999;
+}
+
+tr:hover {
+  background: #f9f9f9;
+}
+
+tr:hover .icon { 
+  background-color: #ddddd0;
+}
+
+td {
+  padding: 6px;  
+}
+
+td.icon { 
+  background-color: #eeeee0;
+  width: 1%;
+  height: 80px;
+  text-align: center;
+  vertical-align: center;
+}
+
+td.content { 
+  padding-left: 18px;
+}
+
+#hilight {
+  color: #cc9900;
+}
+
+.name { 
+  font-size: 1.2em;
+  font-weight: bold;
+  color: black;
+  line-height: 1.5em;
+}
+
+.actions { 
+  font-size:0.8em;
+}
+
+ul, li { 
+  display: inline;
+  margin-left: 6px;
+  padding: 0px;
+}
+
+.actions li {
+  display: inline;
+  padding-left: 20px;
+  padding-right: 6px;
+  background: url(@stock%stock_right@) no-repeat;
+  -moz-opacity: 0.2;
+}
+
+tr:hover .actions li { 
+  -moz-opacity: 1.0;
+}
+
+#phone {
+  background: url(@stock%stock_landline-phone@) no-repeat;
+}
+
+#email {
+  background: url(@stock%stock_mail@) no-repeat;
+}
+
+#email-forward {
+  background: url(@stock%stock_mail-forward@) no-repeat;
+}
+
+#email-reply {
+  background: url(@stock%stock_mail-reply@) no-repeat;
+}
+
+#message {
+  background: url(@image%im-aim.png@) no-repeat;
+}
+
+td.footer { 
+  text-align: right;
+  border-bottom: solid 1px white;
+}

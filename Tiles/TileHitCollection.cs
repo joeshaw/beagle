@@ -29,27 +29,10 @@ using System.Collections;
 
 namespace Beagle.Tile {
 
-	public class TileHitCollection : TileFromTemplate, IComparable {
+	[TileStyle (Resource="template-page.css")]
+	public class TileHitCollection : Tile {
 
-		string name;
-		string icon;
-		string color;
-		int    rank;
-		int    columns;
-
-		public TileHitCollection (string _name, 
-					  string _icon,
-					  string _color,
-					  int    _rank,
-					  int    _columns) : base ("template-hit-collection.html")
-		{
-			name = _name;
-			icon = _icon;
-			color = _color;
-			rank = _rank;
-			columns = _columns;
-
-			EnableInlineRendering ();
+		public TileHitCollection () {
 		}
 
 		private class HitTilePair : IComparable {
@@ -102,6 +85,7 @@ namespace Beagle.Tile {
 			get { return LastDisplayed != (hits.Count - 1); }
 		}
 
+		[TileAction]
 		public void PageForward ()
 		{
 			firstDisplayed += maxDisplayed;
@@ -116,6 +100,7 @@ namespace Beagle.Tile {
 			get { return FirstDisplayed > 0; }
 		}
 
+		[TileAction]
 		public void PageBack ()
 		{
 			firstDisplayed -= maxDisplayed;
@@ -163,113 +148,57 @@ namespace Beagle.Tile {
 			get { return hits.Count == 0; }
 		}
 
-		override protected string ExpandKey (string key)
+		protected void PopulateTemplate (Template t)
 		{
-			switch (key) {
-				
-			case "Name":
-				return name;
-				
-			case "Color":
-				return color;
 
-			case "NumberOfMatches":
-				if (hits.Count > 1)
-					return hits.Count + " Matches";
-				else
-					return hits.Count + " Match";
+			t["TileId"] = UniqueKey;
+			t["action:"] = "action:" + UniqueKey + "!"
+;
+			if (hits.Count > 1)
+				t["NumberOfMatches"] = hits.Count + " Matches";
+			else
+				t["NumberOfMatches"] = hits.Count + " Match";
 
-			case "DisplayedMatches":
-				if (hits.Count == 1 || ! (CanPageForward ||CanPageBack))
-					return "";
-				return String.Format ("Displaying Matches {0} to {1}",
-						      FirstDisplayed+1, LastDisplayed+1);
-			}
+			if (hits.Count == 1 || ! (CanPageForward ||CanPageBack))
+				t["DisplayedMatches"] = "";
+			else 
+				t["DisplayedMatches"] = String.Format ("Displaying Matches {0} to {1}",
+								       FirstDisplayed+1, LastDisplayed+1);				
+
 			
-			return base.ExpandKey (key);
+
+			if (CanPageForward) 
+				t["CanPageForward"] = " ";
+			if (CanPageBack) 
+				t["CanPageBack"] = "";
+			if (CanPageBack && CanPageForward) 
+				t["CanPageBoth"] = "";
 		}
 
 		private void RenderTiles (TileRenderContext ctx)
 		{
 			int i = FirstDisplayed;
 			int i1 = LastDisplayed;
-			int counter = 0;
 
-			double widthPerc = 100.0 / columns;
-			//string td = String.Format ("<td valign=\"top\" width=\"{0}%\">", widthPerc);
-			string td = "<td valign=\"top\" height=\"100%\" width=\"100%\">";
-
-			//ctx.Write ("<table width=\"100%\">");
-			ctx.Write ("<table>");
 			while (i <= i1) {
 				HitTilePair pair = (HitTilePair) hits [i];
-				if (counter == 0)
-					ctx.Write ("<tr>");
-				ctx.Write (td);
 				ctx.Tile (pair.Tile);
-				ctx.Write ("</td>");
-
 				++i;
-
-				++counter;
-				if (counter == columns) {
-					ctx.Write ("</tr>");
-					counter = 0;
-				}
 			}
 
-			// If necessarry, pad the table w/ empty cells and
-			// end the row.
-			if (counter > 0) {
-				while (counter < columns) {
-					ctx.Write (td + "<table width=\"100%\"><tr><td>&nbsp;</td></tr></table></td>");
-					++counter;
-				}
-				ctx.Write ("</tr>");
-			}
-			ctx.Write ("</table>");
 		}
 
-		override protected bool RenderKey (string key, TileRenderContext ctx)
+		public override void Render (TileRenderContext ctx)
 		{
-			if (key == "Icon" && icon != null) {
-				ctx.Image (icon, 24, 24, null);
-				return true;
-			}
+			Template t = new Template ("template-head.html");
+			PopulateTemplate (t);
+			ctx.Write (t.ToString ());
 
-			if (key == "Tiles") {
-				RenderTiles (ctx);
-				return true;
-			}
-
-			if (key == "BackLink" && CanPageBack) {
-				ctx.Link ("&lt;&lt; Previous Matches ",
-					  new TileActionHandler (PageBack));
-				return true;
-			}
+			RenderTiles (ctx);
 			
-			if (key == "ForwardLink" && CanPageForward) {
-				ctx.Link ("Next Matches &gt;&gt;",
-					  new TileActionHandler (PageForward));
-				return true;
-			}
-
-			if (key == "BothLinks" && (CanPageForward || CanPageBack)) {
-				RenderKey ("BackLink", ctx);
-				ctx.Write ("&nbsp;&nbsp;");
-				RenderKey ("ForwardLink", ctx);
-				return true;
-			}
-
-			return base.RenderKey (key, ctx);
+			t = new Template ("template-foot.html");
+			PopulateTemplate (t);
+			ctx.Write (t.ToString ());
 		}
-
-		public int CompareTo (object obj)
-		{
-			TileHitCollection other = (TileHitCollection) obj;
-			//return other.MaxScore.CompareTo (MaxScore);
-			return other.rank.CompareTo (rank);
-		}
-
 	}
 }

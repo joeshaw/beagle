@@ -35,40 +35,17 @@ namespace Beagle.Tile {
 
 	[HitFlavor (Name="Notes", Rank=1000, Emblem="emblem-note.png", Color="#f5f5fe",
 		    Type="Note")]
-	public class TileNote : TileFromTemplate {
-
-		Hit hit;
-
-		public TileNote (Hit _hit) : base ("template-note.html")
+	public class TileNote : TileFromHitTemplate {
+		public TileNote (Hit _hit) : base (_hit,
+						   "template-note.html")
 		{
-			hit = _hit;
 		}
 
-		override protected string ExpandKey (string key)
-		{
-			switch (key) {
-			case "Modified":
-				DateTime dt = BU.StringFu.StringToDateTime (hit ["fixme:modified"]);
-				return BU.StringFu.DateTimeToFuzzy (dt);
-			}
-
-			return hit [key];
-		}
-
-		override protected bool RenderKey (string key, TileRenderContext ctx)
-		{
-			if (key == "Icon") {
-				ctx.Image ("note.png", new TileActionHandler (OpenNote));
-				return true;
-			}
-
-			return base.RenderKey (key, ctx);
-		}
-
+		[TileAction]
 		public void OpenNote ()
 		{
 			string args = String.Format ("--open-note {0} --highlight-search \"{1}\"",
-						     hit.Uri, String.Join (" ", Query.Text));
+						     Hit.Uri, String.Join (" ", Query.Text));
 			
 			Process p = new Process ();
 			p.StartInfo.UseShellExecute = false;
@@ -82,4 +59,5 @@ namespace Beagle.Tile {
 			}
 		}
 	}
+	
 }

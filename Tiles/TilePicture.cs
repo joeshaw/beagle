@@ -34,68 +34,18 @@ namespace Beagle.Tile {
 
 	[HitFlavor (Name="Pictures", Rank=500, Emblem="emblem-picture.png", Color="#f5f5fe",
 		    Type="File", MimeType="image/*")]
-	public class TilePicture : TileFromTemplate {
-
-		Hit hit;
-
-		public TilePicture (Hit _hit) : base ("template-picture.html")
-		{
-			hit = _hit;
+	public class TilePicture : TileFromHitTemplate {
+		public TilePicture (Hit _hit) : base (_hit,
+						      "template-picture.html")
+		{			
 		}
 
-		override public bool HandleUrlRequest (string url, Gtk.HTMLStream stream)
+		protected override void PopulateTemplate ()
 		{
-			// Try to short-circuit the request for document.png,
-			// replacing it w/ the appropriate icon for the hit's mime type.
-			if (url == "document.png") {
-				Stream icon = new FileStream (hit.Path, FileMode.Open, FileAccess.Read);
-				byte[] buffer = new byte [8192];
-				int n;
-				while ((n = icon.Read (buffer, 0, 8192)) != 0)
-					stream.Write (buffer, n);
-				return true;
-			}
+			base.PopulateTemplate ();
 
-			return false;
+			Template["Thumbnail"] = Images.GetHtmlSource (Hit.Uri.ToString (),
+								      Hit.MimeType);
 		}
-
-		override protected string ExpandKey (string key)
-		{
-			switch (key) {
-			case "FileName":
-				return hit.FileName;
-
-			case "LastWriteTime":
-				return BU.StringFu.DateTimeToFuzzy (hit.FileInfo.LastWriteTime);
-
-			case "Length":
-				return BU.StringFu.FileLengthToString (hit.FileInfo.Length);
-
-			case "ColorType":
-				// FIXME: This gets set for pngs, but we have to fake it
-				// for jpegs
-				if (hit ["_ColorType"] != null)
-					return hit ["_ColorType"];
-				return null;
-			}
-
-			return hit [key];
-		}
-		
-		private void OpenPicture ()
-		{
-			OpenHitWithDefaultAction (hit);
-		}
-
-		override protected bool RenderKey (string key, TileRenderContext ctx)
-		{
-			if (key == "Thumbnail") {
-				ctx.Image ("document.png", 64, -1, new TileActionHandler (OpenPicture));
-				return true;
-			}
-
-			return base.RenderKey (key, ctx);
-		}
-
 	}
 }

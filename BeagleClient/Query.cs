@@ -86,6 +86,8 @@ namespace Beagle
 
 		private void OnHitsAddedAsXml (QueryProxy sender, string hitsXml)
 		{
+			System.Console.WriteLine ("Hits added");
+
 			ArrayList hits = Hit.ReadHitXml (hitsXml);
 			
 			if (HitAddedEvent != null && hits.Count > 0) {

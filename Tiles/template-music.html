@@ -1,17 +1,15 @@
-<table bgcolor="#ddddde" cellspacing="1" width="100%" height="100%">
-<tr valign="top"><td>
-<table bgcolor="#f5f5fe" cellpadding="2" width="100%" height="100%">
-<tr valign="top">
-<td>@Icon@</a></td>
-<td>
-<font size="2"><strong>@fixme:Song@</strong></font><br>
-<font size="1">
-<i>@fixme:Artist@</i><br>
-@fixme:Album@<br>
-@Length@<br>
-</font>
-</td>
+<tr>
+  <td class="icon">
+    <span><a href="@action:@OpenDefault"><img src="@image%music.png@"></a></span>
+  </td>
+  <td class="content">
+    <div class="name"><a href="@action:@OpenDefault">@fixme:song@</a> 
+by @fixme:artist@
+</div>
+    <ul class="actions">
+      <li><a href="@action:@OpenDefault">Open</a></li>
+      <li id="email"><a href="@action:@SendTo">Send to..</a></li>
+      </ul>
+    </div>
+  </td>
 </tr>
-</table>
-</td></tr>
-</table>

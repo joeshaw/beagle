@@ -46,10 +46,7 @@ namespace Beagle.Tile {
 				++uidSrc;
 				uid = uidSrc;
 			}
-			
-			if (Environment.GetEnvironmentVariable ("BEAGLE_USE_IFRAMES") != null)
-				renderInline = false;
-		}
+		}			
 
 		public string UniqueKey {
 			get { return "_tile_" + uid; }
@@ -62,27 +59,11 @@ namespace Beagle.Tile {
 
 		////////////////////////
 
-		bool renderInline = true; // FIXME: should be false by default
-		public bool RenderInline {
-			get { return renderInline; }
-		}
-
-		protected void EnableInlineRendering ()
-		{
-				renderInline = true;
-
-		}
-	       
-
 		abstract public void Render (TileRenderContext ctx);
 
 		////////////////////////
 
-		virtual public void PopupMenu (TileMenuContext ctx) { }
-
-		////////////////////////
-
-		virtual public bool HandleUrlRequest (string url, Gtk.HTMLStream stream)
+		virtual public bool HandleUrlRequest (string url)
 		{
 			return false;
 		}
@@ -109,7 +90,6 @@ namespace Beagle.Tile {
 
 		protected void OpenHitWithDefaultAction (Hit hit) 
 		{
-			string message;
 			try {
 				hit.OpenWithDefaultAction ();
 			} catch (Exception e) {

@@ -18,6 +18,7 @@ CSFILES = 			        	\
 	$(srcdir)/ExtendedAttribute.cs  	\
 	$(srcdir)/FileSystem.cs			\
 	$(srcdir)/FSpotTools.cs         	\
+	$(srcdir)/GeckoUtils.cs                 \
 	$(srcdir)/GtkUtils.cs			\
 	$(srcdir)/gnome.cs              	\
 	$(srcdir)/Id3.cs                	\

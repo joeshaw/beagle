@@ -34,14 +34,14 @@ using Beagle;
 namespace Beagle.Tile {
 
 	public class SimpleRootTile : Tile {
-
-		Hashtable tileTable = new Hashtable ();
+		private TileHitCollection hit_collection = null;
 		string errorString;
 		bool offerDaemonRestart;
 
 		public void Open ()
 		{
-			tileTable = new Hashtable ();
+			hit_collection = new TileHitCollection ();
+
 			Changed ();
 		}
 
@@ -49,30 +49,18 @@ namespace Beagle.Tile {
 			get { return offerDaemonRestart; }
 			set { offerDaemonRestart = value; }
 		}
-
+		
 		public void Add (Hit hit)
 		{
 			HitFlavor flavor = HitToHitFlavor.Get (hit);
 			if (flavor == null)
 				return;
 
-			TileHitCollection hitCollection = (TileHitCollection) tileTable [flavor.Name];
-
-			if (hitCollection == null) {
-				hitCollection = new TileHitCollection (flavor.Name,
-								       flavor.Emblem,
-								       flavor.Color,
-								       flavor.Rank,
-								       flavor.Columns);
-				
-				tileTable [flavor.Name] = hitCollection;
-			}
-
 			object[] args = new object [1];
 			args[0] = hit;
 			Tile tile = (Tile) Activator.CreateInstance (flavor.TileType, args);
 			tile.Query = this.Query;
-			hitCollection.Add (hit, tile);
+			hit_collection.Add (hit, tile);
 			Console.WriteLine ("+ {0}", hit.Uri);
 			Changed ();
 		}
@@ -81,9 +69,8 @@ namespace Beagle.Tile {
 		{
 			bool changed = false;
 
-			foreach (TileHitCollection hitCollection in tileTable.Values)
-				if (hitCollection.Subtract (uri))
-					changed = true;
+			if (hit_collection.Subtract (uri))
+				changed = true;
 
 			if (changed) {
 				Console.WriteLine ("- {0}", uri);
@@ -101,7 +88,7 @@ namespace Beagle.Tile {
 		{
 			// If we're running uninstalled (in the source tree), then run
 			// the uninstalled daemon.  Otherwise run the installed daemon.
-
+			
 			string bestpath = System.Environment.GetCommandLineArgs () [0];
 			string bestdir = System.IO.Path.GetDirectoryName (bestpath);
 
@@ -124,8 +111,6 @@ namespace Beagle.Tile {
 
 		override public void Render (TileRenderContext ctx)
 		{
-			Console.WriteLine ("Render!");
-
 			if (errorString != null) {
 				ctx.Write (errorString);
 				if (offerDaemonRestart) {
@@ -137,21 +122,8 @@ namespace Beagle.Tile {
 				return;
 			}
 
-			ArrayList array = new ArrayList ();
-
-			foreach (TileHitCollection tile in tileTable.Values)
-				if (! tile.IsEmpty)
-					array.Add (tile);
-
-			array.Sort ();
-
-			bool first = true;
-			foreach (TileHitCollection tile in array) {
-				if (! first)
-					ctx.Write ("<br>");
-				first = false;
-				ctx.Tile (tile);
-			}
+			if (hit_collection != null)
+				ctx.Tile (hit_collection);
 		}
 	}
 }

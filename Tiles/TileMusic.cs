@@ -33,69 +33,11 @@ using BU = Beagle.Util;
 namespace Beagle.Tile {
 
 	[HitFlavor (Name="Music", Rank=400, Emblem="emblem-music.png", Color="#f5f5fe",
-		    Type="File", MimeType="audio/x-mp3")]
-	public class TileMusic : TileFromTemplate {
-
-		Hit hit;
-
-		public TileMusic (Hit _hit) : base ("template-music.html")
+		    Type="File", MimeType="audio/mpeg")]
+	public class TileMusic : TileFromHitTemplate {
+		public TileMusic (Hit _hit) : base (_hit, 
+						    "template-music.html")
 		{
-			hit = _hit;
 		}
-
-#if false
-		override public bool HandleUrlRequest (string url, Gtk.HTMLStream stream)
-		{
-			// Try to short-circuit the request for document.png,
-			// replacing it w/ the appropriate icon for the hit's mime type.
-			if (url == "document.png") {
-				Gtk.IconSize size = (Gtk.IconSize) 48;
-				string path = BU.GnomeIconLookup.LookupMimeIcon (hit.MimeType,
-										 size);
-				if (path == null)
-					return false;
-				Stream icon = new FileStream (path, FileMode.Open, FileAccess.Read);
-				byte[] buffer = new byte [8192];
-				int n;
-				while ((n = icon.Read (buffer, 0, 8192)) != 0)
-					stream.Write (buffer, n);
-				return true;
-			}
-
-			return false;
-		}
-#endif
-
-		override protected string ExpandKey (string key)
-		{
-			switch (key) {
-			case "FileName":
-				return hit.FileName;
-
-			case "LastWriteTime":
-				return BU.StringFu.DateTimeToFuzzy (hit.FileInfo.LastWriteTime);
-
-			case "Length":
-				return BU.StringFu.FileLengthToString (hit.FileInfo.Length);
-			}
-
-			return hit [key];
-		}
-		
-		private void OpenMusic ()
-		{
-			OpenHitWithDefaultAction (hit);
-		}
-
-		override protected bool RenderKey (string key, TileRenderContext ctx)
-		{
-			if (key == "Icon") {
-				ctx.Image ("music.png", new TileActionHandler (OpenMusic));
-				return true;
-			}
-
-			return base.RenderKey (key, ctx);
-		}
-
 	}
 }

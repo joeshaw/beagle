@@ -32,23 +32,10 @@ namespace Beagle.Tile {
 		    Emblem="emblem-google.png",
 		    Rank=200,
 		    Type="Google")]
-	public class TileGoogle : TileFromTemplate {
-
-		Hit hit;
-
-		public TileGoogle (Hit _hit) : base ("template-google.html")
+	public class TileGoogle : TileFromHitTemplate {
+		public TileGoogle (Hit _hit) : base (_hit,
+						     "template-google.html")
 		{
-			hit = _hit;
 		}
-
-		override protected string ExpandKey (string key)
-		{
-			if (key == "Uri")
-				return hit.Uri.ToString ();
-			return hit [key];
-		}
-
-		
-
 	}
 }

@@ -46,7 +46,8 @@ WRAPPER_SED = sed 					\
 	-e "s|\@pkglibdir\@|$(pkglibdir)|g"		\
 	-e "s|\@libdir\@|$(libdir)|g"			\
 	-e "s|\@gacprefix\@|$(GAC_PREFIX)|g"		\
-	-e "s|\@target\@|$(TARGET)|g"
+	-e "s|\@target\@|$(TARGET)|g"                   \
+	-e "s|\@mozillahome\@|$(MOZILLA_HOME)|g"
 
 $(WRAPPER): $(srcdir)/$(WRAPPER).in
 	$(WRAPPER_SED) < $^ > $@

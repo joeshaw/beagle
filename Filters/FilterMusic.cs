@@ -36,6 +36,7 @@ namespace Beagle.Filters {
 		public FilterMusic ()
 		{
 			AddSupportedMimeType ("audio/x-mp3");
+			AddSupportedMimeType ("audio/mpeg");
 		}
 
 		protected override void DoPullProperties ()

@@ -73,10 +73,14 @@ namespace Best {
 			content.Show ();
 			Add (main);
 			main.Show ();
+			main.Realize ();
+			canvas.Realize ();
 
-			const double GOLDEN = 1.61803399;
-			DefaultHeight = 500;
-			DefaultWidth = (int) (DefaultHeight * GOLDEN);
+			root = new SimpleRootTile ();
+			canvas.Root = root;
+
+			DefaultWidth = 500;
+			DefaultHeight = 600;
 
 			accel_group = new Gtk.AccelGroup ();
 			this.AddAccelGroup (accel_group);
@@ -194,19 +198,18 @@ namespace Best {
 			entryLine.PackStart (button, false, false, 3);
 
 			canvas = new TileCanvas ();
+			canvas.Show ();
 
-			root = new SimpleRootTile ();
-			canvas.Root = root;
-
-			swin = new Gtk.ScrolledWindow ();
-			swin.Add (canvas);
+			//swin = new Gtk.ScrolledWindow ();
+			//swin.Add (canvas);
 
 			VBox contents = new VBox (false, 3);
 			contents.PackStart (entryLine, false, true, 3);
-			contents.PackStart (swin, true, true, 3);
+			//			contents.PackStart (swin, true, true, 3);
+			contents.PackStart (canvas, true, true, 3);
 
 			entryLine.ShowAll ();
-			swin.ShowAll ();
+			canvas.ShowAll ();
 
 			return contents;
 		}

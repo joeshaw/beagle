@@ -32,13 +32,6 @@ namespace Beagle.Tile {
 
 		abstract public void Write (string markup);
 
-		abstract public void Link  (string label, TileActionHandler handler);
-
-		abstract public void Image (string name, int width, int height,
-					    TileActionHandler handler);
-
-		abstract public void Tile  (Tile tile);
-
 		// Convenience functions
 
 		public void Write (string format, params object[] args)
@@ -51,20 +44,8 @@ namespace Beagle.Tile {
 			Write (format, args);
 			Write ("<br>");
 		}
-		
-		public void Image (string name)
-		{
-			Image (name, -1, -1, null);
-		}
 
-		public void Image (string name, TileActionHandler handler)
-		{
-			Image (name, -1, -1, handler);
-		}
-
-		// Don't call these unless you really know what you are doing!
-		abstract public void Checkpoint ();
-		abstract public void Undo ();
-
+		public abstract void Link (string message, TileActionHandler handler);
+		public abstract void Tile (Tile tile);
 	}
 }

@@ -32,20 +32,10 @@ namespace Beagle.Tile {
 		    Rank=700,
 		    Emblem="icon-web.png",
 		    Type="WebHistory")]
-	public class TileWebHistory : TileFromTemplate {
-
-		Hit hit;
-
-		public TileWebHistory (Hit _hit) : base ("template-web-history.html")
+	public class TileWebHistory : TileFromHitTemplate {
+		public TileWebHistory (Hit _hit) : base (_hit,
+							 "template-web-history.html")
 		{
-			hit = _hit;
-		}
-
-		override protected string ExpandKey (string key)
-		{
-			if (key == "Uri")
-				return hit.Uri.ToString ();
-			return hit [key];
 		}
 	}
 }

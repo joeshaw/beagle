@@ -33,21 +33,36 @@ namespace Beagle.Tile {
 
 	[HitFlavor (Name="Conversations", Rank=900, Emblem="emblem-im-log.png", Color="#e5f5ef",
 		    Type="IMLog")]
-	public class TileImLog : TileFromTemplate {
-
-		Hit hit;
-		BU.ImBuddy buddy = null;
-		static BU.GaimBuddyListReader list = null;
+	public class TileImLog : TileFromHitTemplate {
+		private BU.ImBuddy buddy = null;
+		private static BU.GaimBuddyListReader list = null;
 		
-		public TileImLog (Hit _hit) : base ("template-im-log.html")
+		public TileImLog (Hit _hit) : base (_hit,
+						    "template-im-log.html")
 		{
 			if (list == null) {
 				list = new BU.GaimBuddyListReader ();
 			}
 
-			hit = _hit;
+			buddy = list.Search (Hit ["fixme:speakingto"]);
+		}
 
-			buddy = list.Search (hit ["fixme:speakingto"]);
+		protected override void PopulateTemplate ()
+		{
+			base.PopulateTemplate ();
+
+			Template["nice_duration"] = 
+				BU.StringFu.DurationToPrettyString (
+					   BU.StringFu.StringToDateTime (Hit ["fixme:endtime"]),
+					   BU.StringFu.StringToDateTime (Hit ["fixme:starttime"]));
+#if false
+			Template["snippet"] = getSnippet ();
+#endif
+
+			if (buddy != null && buddy.Alias != "")
+				Template["speakingalias"] = buddy.Alias;
+			else 
+				Template["speakingalias"] = Hit["fixme:speakingto"];
 		}
 
 		private string HighlightOrNull (string haystack, string [] needles)
@@ -62,6 +77,7 @@ namespace Beagle.Tile {
 			string hili = haystack;
 			bool dirty = false;
 			int hicolor = -1;
+
 			foreach (string needle in needles) {
 				string h_up = hili.ToUpper ();
 				string n_up = needle.ToUpper ();
@@ -85,7 +101,6 @@ namespace Beagle.Tile {
 			}
 
 			if (dirty) {
-				Console.WriteLine ("Hi: " + hili);
 				return hili;
 			}
 			else
@@ -94,17 +109,21 @@ namespace Beagle.Tile {
 
 		private string getSnippet ()
 		{
-			ICollection logs = BU.GaimLog.ScanLog (new FileInfo (hit ["fixme:file"]));
+			ICollection logs = BU.GaimLog.ScanLog (new FileInfo (Hit ["fixme:file"]));
 
 			string snip = "";
 			
 			foreach (BU.ImLog log in logs) {
 					foreach (BU.ImLog.Utterance utt in log.Utterances) {
+						// FIXME: Query.Text is broken for me
+#if false
 						string s = HighlightOrNull (utt.Text, Query.Text);
+#else
+						string s = utt.Text;
+#endif
 						if (s != null) {
 							if (snip != "")
-								snip += " ... ";
-							    
+								snip += " ... ";							    
 							snip += s;
 						}
 						
@@ -112,28 +131,7 @@ namespace Beagle.Tile {
 			}
 
 			return snip.Substring (0, System.Math.Min (256, snip.Length));
-		}
-			
-		override protected string ExpandKey (string key)
-		{
-			if (key == "Uri")
-				return hit.Uri.ToString ();
-			if (key == "nice_starttime")
-				return BU.StringFu.DateTimeToPrettyString (
-					   BU.StringFu.StringToDateTime (hit ["fixme:starttime"]));
-			if (key == "nice_duration")
-				return BU.StringFu.DurationToPrettyString (
-					   BU.StringFu.StringToDateTime (hit ["fixme:endtime"]),
-					   BU.StringFu.StringToDateTime (hit ["fixme:starttime"]));
-			if (key == "snippet")
-				return getSnippet ();
-			if (key == "fixme:speakingto") {
-				if (buddy != null && buddy.Alias != "")
-					return buddy.Alias;
-				return hit ["fixme:speakingto"];
-			}
 
-			return hit [key];
 		}
 	}
 }

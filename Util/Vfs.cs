@@ -113,7 +113,7 @@ public enum GnomeIconLookupResultsFlags
 public class GnomeIconLookup{
 
 	[DllImport("libgnomeui-2")]
-	static extern string gnome_icon_lookup (IntPtr icon_theme, 
+	static extern IntPtr gnome_icon_lookup (IntPtr icon_theme, 
 						IntPtr thumbnail_factory,
 						string uri,
 						string custim_icon,
@@ -122,7 +122,7 @@ public class GnomeIconLookup{
 						GnomeIconLookupFlags flags,
 						ref GnomeIconLookupResultsFlags result);
 	[DllImport("libgnomeui-2")]
-	static extern string gnome_icon_theme_lookup_icon (IntPtr icon_theme,
+	static extern IntPtr gnome_icon_theme_lookup_icon (IntPtr icon_theme,
 						string icon_name,
 						IconSize icon_size,
 						ref IntPtr icon_data,
@@ -135,7 +135,12 @@ public class GnomeIconLookup{
 	static extern IntPtr gnome_icon_theme_new ();
 	
 	[DllImport("libgnomevfs-2")]
-	static extern string gnome_vfs_mime_type_from_name (string mime_type);
+	static extern IntPtr gnome_vfs_mime_type_from_name (string mime_type);
+
+	[DllImport("libgnomevfs-2")]
+	static extern IntPtr gnome_vfs_get_file_mime_type (string filename,
+							   IntPtr optional_stat_info,
+							   bool suffix_only);
 
 	[DllImport("libgnomevfs-2")]
 	static extern IntPtr gnome_vfs_application_registry_get_applications(string mime_type);
@@ -157,7 +162,7 @@ public class GnomeIconLookup{
 			return String.Empty;
 		}
 		
-		icon_name=gnome_icon_lookup(
+		icon_name=GLib.Marshaller.PtrToStringGFree (gnome_icon_lookup(
 			icon_theme,
 			IntPtr.Zero,
 			String.Empty,
@@ -165,16 +170,16 @@ public class GnomeIconLookup{
 			IntPtr.Zero,
 			mime,
 			GnomeIconLookupFlags.None, 
-			ref result);
+			ref result));
 			
 		if(icon_name.Length>0)
 		{
-			icon_path=gnome_icon_theme_lookup_icon (
+			icon_path=GLib.Marshaller.PtrToStringGFree (gnome_icon_theme_lookup_icon (
 				icon_theme,
 				icon_name,
 				size,
 				ref icon_data,
-				ref base_size);
+				ref base_size));
 			if(icon_data!=IntPtr.Zero)
 				gnome_icon_data_free(icon_data);
 		}	
@@ -183,7 +188,7 @@ public class GnomeIconLookup{
 	
 	public static string LookupFileIcon(string file,IconSize size)
 	{
-		string mime = gnome_vfs_mime_type_from_name(file);
+		string mime = Marshal.PtrToStringAnsi (gnome_vfs_mime_type_from_name(file));
 		
 		if(mime.Length>0)
 			return LookupMimeIcon(mime,size);
@@ -193,7 +198,12 @@ public class GnomeIconLookup{
 	
 	public static string GetMimeType(string file)
 	{
-		return gnome_vfs_mime_type_from_name(file);
+		return Marshal.PtrToStringAnsi (gnome_vfs_mime_type_from_name(file));
+	}
+
+	public static string GetFileMimeType (string file)
+	{
+		return Marshal.PtrToStringAnsi (gnome_vfs_get_file_mime_type (file, (IntPtr)null, false));
 	}
 	
 	public static GLib.List GetApplications(string mime_type)

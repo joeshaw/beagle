@@ -29,6 +29,7 @@ using System.Collections;
 using System.Globalization;
 using System.IO;
 using System.Text;
+using System.Xml;
 
 namespace Beagle.Util {
 
@@ -308,5 +309,95 @@ namespace Beagle.Util {
 						      uid);
 			}
 		}
+
+                static string [] replacements = new string [] {
+                        "&amp;", "&lt;", "&gt;", "&quot;", "&apos;",
+                        "&#xD;", "&#xA;"};
+
+                static private StringBuilder cachedStringBuilder;
+                static private char QuoteChar = '\"';
+
+                private static bool IsInvalid (int ch)
+                {
+                        switch (ch) {
+                        case 9:
+                        case 10:
+                        case 13:
+                                return false;
+                        }
+                        if (ch < 32)
+                                return true;
+                        if (ch < 0xD800)
+                                return false;
+                        if (ch < 0xE000)
+                                return true;
+                        if (ch < 0xFFFE)
+                                return false;
+                        if (ch < 0x10000)
+                                return true;
+                        if (ch < 0x110000)
+                                return false;
+                        else
+                                return true;
+                }
+		
+		static public string EscapeStringForHtml (string source, bool skipQuotations)
+		{
+                        int start = 0;
+                        int pos = 0;
+                        int count = source.Length;
+                        char invalid = ' ';
+                        for (int i = 0; i < count; i++) {
+                                switch (source [i]) {
+                                case '&':  pos = 0; break;
+                                case '<':  pos = 1; break;
+                                case '>':  pos = 2; break;
+                                case '\"':
+                                        if (skipQuotations) continue;
+                                        if (QuoteChar == '\'') continue;
+                                        pos = 3; break;
+                                case '\'':
+                                        if (skipQuotations) continue;
+                                        if (QuoteChar == '\"') continue;
+                                        pos = 4; break;
+                                case '\r':
+                                        if (skipQuotations) continue;
+                                        pos = 5; break;
+                                case '\n':
+                                        if (skipQuotations) continue;
+                                        pos = 6; break;
+                                default:
+                                        if (IsInvalid (source [i])) {
+                                                invalid = source [i];
+                                                pos = -1;
+                                                break;
+                                        }
+                                        else
+                                                continue;
+                                }
+                                if (cachedStringBuilder == null)
+                                        cachedStringBuilder = new StringBuilder
+						();
+                                cachedStringBuilder.Append (source.Substring (start, i - start));
+                                if (pos < 0) {
+                                        cachedStringBuilder.Append ("&#x");
+                                        if (invalid < (char) 255)
+                                                cachedStringBuilder.Append (((int) invalid).ToString ("X02", CultureInfo.InvariantCulture));
+                                        else
+                                                cachedStringBuilder.Append (((int) invalid).ToString ("X04", CultureInfo.InvariantCulture));
+                                        cachedStringBuilder.Append (";");
+                                }
+                                else
+                                        cachedStringBuilder.Append (replacements [pos]);
+                                start = i + 1;
+                        }
+                        if (start == 0)
+                                return source;
+                        else if (start < count)
+                                cachedStringBuilder.Append (source.Substring (start, count - start));
+                        string s = cachedStringBuilder.ToString ();
+                        cachedStringBuilder.Length = 0;
+                        return s;
+		} 
 	}
 }

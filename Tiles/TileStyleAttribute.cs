@@ -1,5 +1,5 @@
 //
-// TileFile.cs
+// TileStyleAttribute.cs
 //
 // Copyright (C) 2004 Novell, Inc.
 //
@@ -25,40 +25,19 @@
 //
 
 using System;
-using System.Diagnostics;
-using System.IO;
 
-using BU = Beagle.Util;
-
-namespace Beagle.Tile {
-
-	[HitFlavor (Name="Files", Rank=300, Emblem="emblem-file.png", Color="#f5f5fe",
-		    Type="File"),
-	 HitFlavor (Name="Files", Rank=300, Emblem="emblem-file.png", Color="#f5f5fe",
-		    Uri="file://*")]
-	public class TileFile : TileFromHitTemplate {
-		public TileFile (Hit _hit) : base (_hit,
-						   "template-file.html")
+namespace Beagle.Tile 
+{
+	[AttributeUsage (AttributeTargets.Class)]
+	public class TileStyleAttribute : Attribute {
+		public TileStyleAttribute () 
 		{
 		}
 
-		protected override void PopulateTemplate ()
-		{
-			base.PopulateTemplate ();
-
-			if (Hit.FileInfo == null) {
-				Console.WriteLine ("FileInfo is null");
-				return;
-			}
-
-			Gtk.IconSize size = (Gtk.IconSize) 48;
-			string path = BU.GnomeIconLookup.LookupMimeIcon (Hit.MimeType,
-									 size);
-			if (path != null) {
-				Template["Icon"] = Images.GetHtmlSource ("file://" + path,
-									 BU.GnomeIconLookup.GetFileMimeType (path));
-			}
+		private string resource;
+		public string Resource {
+			get { return resource; }
+			set { resource = value; }
 		}
-	}
+	}	
 }
-	
