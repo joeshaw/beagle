@@ -145,6 +145,17 @@ namespace Beagle.Daemon.EvolutionMailDriver {
 				} else if (SupportedContentType (part.ContentType)) {
 					MemoryStream stream = new MemoryStream (part.GetData ());
 					StreamReader reader = new StreamReader (stream);
+
+					// If this is the first part, we need to skip past the
+					// message headers --- we want to store that data in
+					// properties, not index it as text.
+					if (this.reader.Count == 0) {
+						string line;
+						do {
+							line = reader.ReadLine ();
+						} while (line != null && line != "");
+					}
+
 					this.reader.Add (reader);
 				} 
 
@@ -629,10 +640,11 @@ namespace Beagle.Daemon.EvolutionMailDriver {
 			if (this.summary_enumerator.MoveNext ())
 				return true;
 
-			// FIXME: This is kind of a hack, but it's the only way with the IndexableGenerator
-			// to handle our removals.
 			foreach (string uid in this.deleted_list) {
 				Uri uri = EvolutionMailQueryable.EmailUri (this.account_name, this.folder_name, uid);
+
+				// FIXME: This is kind of a hack, but it's the only way
+				// with the IndexableGenerator to handle our removals.
 				Scheduler.Task task = this.Queryable.NewRemoveTask (uri);
 				task.Priority = Scheduler.Priority.Immediate;
 				this.Queryable.ThisScheduler.Add (task);
@@ -695,9 +707,14 @@ namespace Beagle.Daemon.EvolutionMailDriver {
 			return indexable;
 		}
 
+		private Uri CamelMessageUri (Camel.MessageInfo message_info)
+		{
+			return EvolutionMailQueryable.EmailUri (this.account_name, this.folder_name, message_info.uid);			
+		}
+
 		private Indexable CamelMessageToIndexable (Camel.MessageInfo messageInfo, TextReader msgReader)
 		{
-			System.Uri uri = EvolutionMailQueryable.EmailUri (this.account_name, this.folder_name, messageInfo.uid);
+			Uri uri = CamelMessageUri (messageInfo);
 			Indexable indexable = new Indexable (uri);
 
 			indexable.Timestamp = messageInfo.Date;
