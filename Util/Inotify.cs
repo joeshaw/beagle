@@ -184,7 +184,8 @@ namespace Beagle.Util {
 		{
 			int wd = -1;
 
-			path = Path.GetFullPath (path);
+			if (!Path.IsPathRooted (path))
+				path = Path.GetFullPath (path);
 
 			bool is_directory = false;
 			if (Directory.Exists (path))

@@ -310,7 +310,6 @@ namespace Beagle.Daemon.FileSystemQueryable {
 
 		//////////////////////////////////////////////////////////////////////////
 
-		private Hashtable dir_by_path = new Hashtable ();
 		private Hashtable dir_by_wd = new Hashtable ();
 		private ArrayList dir_array = new ArrayList ();
 
@@ -338,7 +337,6 @@ namespace Beagle.Daemon.FileSystemQueryable {
 				DirectoryInfo info = new DirectoryInfo (path);
 				if (info.Exists) {
 					WatchedDirectory dir = new WatchedDirectory (Driver, path);
-					dir_by_path [dir.Path] = dir;
 					dir_by_wd [dir.WatchDescriptor] = dir;
 					dir_array.Add (dir);
 
