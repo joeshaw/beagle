@@ -65,7 +65,7 @@ namespace Best {
 			}
 		}
 
-		static void NoTrayWindowDeleteEvent (object o, EventArgs args)
+		static void NoTrayWindowDeleteEvent (object o, Gtk.DeleteEventArgs args)
 		{
 			Application.Quit ();
 		}
@@ -99,7 +99,7 @@ namespace Best {
 				win.Show ();
 				win.Present ();
 				win.FocusEntry ();
-				win.DeleteEvent += NoTrayWindowDeleteEvent;
+				win.DeleteEvent += new Gtk.DeleteEventHandler (NoTrayWindowDeleteEvent);
 			}
 			
 			best.Run ();
