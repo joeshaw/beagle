@@ -202,7 +202,8 @@ namespace Beagle.Tile {
 			}
 		}
 
-		protected void SendImAim (string screenname)
+		protected void SendIm (string protocol,
+				       string screename)
 		{
 			if (screenname == null || screenname == "")
 				return;
@@ -211,7 +212,7 @@ namespace Beagle.Tile {
 			Process p = new Process ();
 			p.StartInfo.UseShellExecute = false;
 			p.StartInfo.FileName        = "gaim-remote";
-			p.StartInfo.Arguments       = "uri aim:goim?screenname=" + screenname;
+			p.StartInfo.Arguments       = "uri " + "protocol" + " :goim?screenname=" + screenname;
 
 			try {
 				p.Start () ;
@@ -220,24 +221,34 @@ namespace Beagle.Tile {
 			}
 		}
 
+		protected void SendImAim (string screenname)
+		{
+			SendIm ("aim", screename);
+		}
+
 		protected void SendImIcq (string screenname)
 		{
+			SendIm ("icq", screename);
 		}
 
 		protected void SendImJabber (string screenname)
 		{
+			SendIm ("jabber", screename);
 		}
 
 		protected void SendImMsn (string screenname)
 		{
+			SendIm ("msn", screename);
 		}
 
 		protected void SendImYahoo (string screenname)
 		{
+			SendIm ("yahoo", screename);
 		}
 
 		protected void SendImGroupwise (string screenname)
 		{
+			SendIm ("novell", screename);
 		}			
 	}
 }
