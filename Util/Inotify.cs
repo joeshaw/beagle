@@ -302,7 +302,6 @@ namespace Beagle.Util {
 		static unsafe void SnarfWorker ()
 		{
 			const int max_snarf = 1024;
-			//inotify_event* buffer = stackalloc inotify_event [max_snarf];
 			inotify_event[] buffer = new inotify_event [max_snarf];
 
 	

@@ -204,10 +204,9 @@ blamqueryable = $(srcdir)/BlamQueryable
 BLAM_QUERYABLE_CSFILES =				\
 	$(blamqueryable)/BlamQueryable.cs
 
-
 #	$(WEB_HISTORY_QUERYABLE_CSFILES)	\
-#	$(TOMBOY_QUERYABLE_CSFILES)		\
 #	$(EVO_MAIL_DRIVER_CSFILES)		\
+#	$(TOMBOY_QUERYABLE_CSFILES)		\
 #
 
 DAEMON_DLL_CSFILES = 				\

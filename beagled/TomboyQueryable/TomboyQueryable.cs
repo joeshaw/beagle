@@ -59,17 +59,17 @@ namespace Beagle.Daemon.TomboyQueryable {
 			if (! (Directory.Exists (notesDir) && Directory.Exists (backupDir)))
 				return;
 			
-			InotifyEventType mask;
-			mask = InotifyEventType.MovedTo
-				| InotifyEventType.MovedFrom
-				| InotifyEventType.CreateFile
-				| InotifyEventType.DeleteFile
-				| InotifyEventType.Modify;
+			Inotify.EventType mask;
+			mask = Inotify.EventType.MovedTo
+				| Inotify.EventType.MovedFrom
+				| Inotify.EventType.CreateFile
+				| Inotify.EventType.DeleteFile
+				| Inotify.EventType.Modify;
 
 			wdNotes = Inotify.Watch (notesDir, mask);
 			wdBackup = Inotify.Watch (backupDir, mask);
 
-			Inotify.InotifyEvent += new InotifyHandler (OnInotifyEvent);
+			Inotify.Event += OnInotifyEvent;
 
 			// Crawl all of our existing notes to make sure that
 			// everything is up-to-date.
@@ -80,7 +80,7 @@ namespace Beagle.Daemon.TomboyQueryable {
 			DirectoryInfo dir = new DirectoryInfo (notesDir);
 			foreach (FileInfo file in dir.GetFiles ()) {
 				if (file.Extension == ".note") {
-					IndexNote (file, 0);
+					IndexNote (file, Scheduler.Priority.Delayed);
 					++count;
 				}
 			}
@@ -91,8 +91,8 @@ namespace Beagle.Daemon.TomboyQueryable {
 		private void OnInotifyEvent (int wd,
 					     string path,
 					     string subitem,
-					     InotifyEventType type,
-					     int cookie)
+					     Inotify.EventType type,
+					     uint cookie)
 		{
 			if (wd != wdNotes && wd != wdBackup)
 				return;
@@ -107,12 +107,12 @@ namespace Beagle.Daemon.TomboyQueryable {
 			if (Path.GetExtension (subitem) != ".note")
 				return;
 			
-			if (wd == wdNotes && type == InotifyEventType.MovedTo) {
-				IndexNote (new FileInfo (Path.Combine (path, subitem)), 100);
+			if (wd == wdNotes && type == Inotify.EventType.MovedTo) {
+				IndexNote (new FileInfo (Path.Combine (path, subitem)), Scheduler.Priority.Immediate);
 				Console.WriteLine ("Indexed {0}", Path.Combine (path, subitem));
 			}
 
-			if (wd == wdBackup && type == InotifyEventType.MovedTo) {
+			if (wd == wdBackup && type == Inotify.EventType.MovedTo) {
 				string oldPath = Path.Combine (notesDir, subitem);
 				RemoveNote (oldPath);
 				Console.WriteLine ("Removing {0}", oldPath);
@@ -120,9 +120,12 @@ namespace Beagle.Daemon.TomboyQueryable {
 
 		}
 
-		private static Indexable NoteToIndexable (Note note)
+		private static Indexable NoteToIndexable (FileInfo file, Note note)
 		{
 			Indexable indexable = new Indexable (note.Uri);
+
+			indexable.ContentUri = UriFu.PathToFileUri (file.FullName);
+
 			indexable.Timestamp = note.timestamp;
 			indexable.Type = "Note";
 
@@ -139,9 +142,9 @@ namespace Beagle.Daemon.TomboyQueryable {
 			return indexable;
 		}
 
-		private void IndexNote (FileInfo file, int priority)
+		private void IndexNote (FileInfo file, Scheduler.Priority priority)
 		{
-			if (Driver.IsUpToDate (file))
+			if (Driver.IsUpToDate (file.FullName))
 				return;
 
 			// Try and parse a Note from the given path
@@ -150,14 +153,21 @@ namespace Beagle.Daemon.TomboyQueryable {
 				return;
 			
 			// A Note was returned; add it to the index
-			Indexable indexable = NoteToIndexable (note);
-			Driver.ScheduleAddAndMark (indexable, priority, file);
+			Indexable indexable = NoteToIndexable (file, note);
+			
+			Scheduler.Task task = NewAddTask (indexable);
+			task.Priority = priority;
+			task.SubPriority = 0;
+			ThisScheduler.Add (task);
 		}
 		
 		private void RemoveNote (string path)
 		{
 			Uri uri = UriFu.PathToFileUri (path);
-			Driver.ScheduleDelete (uri, 100);
+			Scheduler.Task task = NewRemoveTask (uri);
+			task.Priority = Scheduler.Priority.Immediate;
+			task.SubPriority = 0;
+			ThisScheduler.Add (task);
 		}
 	}
 }
