@@ -67,12 +67,12 @@ namespace Beagle.Daemon {
 			// other than the ranks.  This is a hack.
 			hit.ScoreRaw    = 0.2f / (1 + rank);
 
-			hit ["Summary"]        = res.summary;
-			hit ["Snippet"]        = res.snippet;
-			hit ["Title"]          = res.title;
-			hit ["CachedSize"]     = res.cachedSize;
-			hit ["HostName"]       = res.hostName;
-			hit ["DirectoryTitle"] = res.directoryTitle;
+			hit.AddValue ("Summary", res.summary);
+			hit.AddValue ("Snippet", res.snippet);
+			hit.AddValue ("Title", res.title);
+			hit.AddValue ("CachedSize", res.cachedSize);
+			hit.AddValue ("HostName", res.hostName);
+			hit.AddValue ("DirectoryTitle", res.directoryTitle);
 
 			return hit;
 		}
@@ -125,7 +125,11 @@ namespace Beagle.Daemon {
 
 		public string GetSnippet (QueryBody body, Hit hit)
 		{
-			return hit ["Snippet"];
+			// FIXME: Assuming "Snippet" will have only one entry.
+			// Suppose, if it contains more than one entry,
+			// use *hit ["Snippet"]* directly and iterate through
+			// the returned IList.
+			return hit.GetValueAsString ("Snippet");
 		}
 
 		public int GetItemCount ()

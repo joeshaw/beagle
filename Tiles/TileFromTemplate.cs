@@ -52,7 +52,8 @@ namespace Beagle.Tile {
 
 					if (this.Uri != null && this.Query != null) {
 						try {
-							Template["Snippet"] = this.Query.GetSnippet (this.Uri);
+							string snippet = this.Query.GetSnippet (this.Uri);
+							Template["Snippet"] = snippet;
 						} catch { }
 					}
 				}

@@ -49,7 +49,8 @@ namespace Beagle.Tile {
 			string thumbnail = Thumbnail.PathForUri (Hit.Uri.ToString (), ThumbnailSize.Normal);
 
 			if (File.Exists (thumbnail))
-				Template["Thumbnail"] = Images.GetHtmlSource (new Uri (thumbnail).ToString (), Hit.MimeType);
+				Template["Thumbnail"] =
+					Images.GetHtmlSource (new Uri (thumbnail).ToString (), Hit.MimeType);
 			else
 				Template["Thumbnail"] = Images.GetHtmlSource (Hit.Uri.ToString (), Hit.MimeType);
 		}

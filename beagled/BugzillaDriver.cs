@@ -164,11 +164,11 @@ namespace Beagle.Daemon {
                         hit.Source   = "Bugzilla";
 			hit.ScoreRaw = 1.0;
 
-                        hit ["Number"]  = bug_num;
-                        hit ["Product"] = product;
-                        hit ["Owner"]   = owner;
-                        hit ["Summary"] = summary;
-                        hit ["Status"]  = status;
+                        hit.AddValue ("Number", bug_num);
+                        hit.AddValue ("Product", product);
+                        hit.AddValue ("Owner", owner);
+                        hit.AddValue ("Summary", summary);
+                        hit.AddValue ("Status", status);
                                                                                                                                                              
                         return hit;
                 }

@@ -51,8 +51,8 @@ namespace Beagle.Tile {
 		{
 			Process p = new Process ();
 			p.StartInfo.UseShellExecute = true;
-			p.StartInfo.FileName = hit ["fixme:Exec"];
-			Console.WriteLine ("LAUNCHER: going to run {0}", hit ["fixme:Exec"]);
+			p.StartInfo.FileName = hit.GetValueAsString ("fixme:Exec");
+			Console.WriteLine ("LAUNCHER: going to run {0}", hit.GetValueAsString ("fixme:Exec"));
 			try {
 				p.Start ();
 			} catch (Exception e) {
@@ -65,7 +65,7 @@ namespace Beagle.Tile {
 			if (hit == null)
 				return null;
 
-			string path = hit ["fixme:Icon"];
+			string path = hit.GetValueAsString ("fixme:Icon");
 			if (path == null)
 				return null;
 			if (path.StartsWith ("/")) {
@@ -75,19 +75,17 @@ namespace Beagle.Tile {
 				IconTheme icon_theme = new IconTheme ();
 				int base_size;
 
-				if (hit ["fixme:Icon"].EndsWith (".png")) 
+				if (path.EndsWith (".png"))
 					return icon_theme.LookupIcon (path.Substring (0, path.Length-4), -1, IconData.Zero, out base_size);
 				else
 					return icon_theme.LookupIcon (path, -1, IconData.Zero, out base_size);
 			}
 		}
-
+		
 		protected override void PopulateTemplate ()
 		{
 			base.PopulateTemplate ();
-
 			Template["Icon"] = Images.GetHtmlSource (ImagePath (), Hit.MimeType);
-
 		}
 
 	}		

@@ -27,8 +27,10 @@
 using System;
 using System.Diagnostics;
 using System.IO;
+using System.Text;
+using System.Collections;
 
-using BU = Beagle.Util;
+using Beagle.Util;
 
 namespace Beagle.Tile {
 
@@ -52,16 +54,83 @@ namespace Beagle.Tile {
 		protected override void PopulateTemplate ()
 		{
 			base.PopulateTemplate ();
+			StringBuilder sb;
+			ICollection content = null;
+			string strTemp;
 			
-			if (Hit ["fixme:title"] == null || Hit ["fixme:title"] == "")
-				Template ["Title"] = Hit ["fixme:splitname"];
-			else
-				Template ["Title"] = Hit ["fixme:title"];
+			content = Hit["fixme:title"];
+			Template["Title"] = Hit.GetValueAsString ("fixme:splitname");
+			Template["Subtitles"] = "abc";
+			int i = 0;
+			sb = new StringBuilder();
+			foreach (string str in content) {
+				//  Use the first title in the list as Title of the tile
+				if ((i == 0) && (str.Trim().Length > 0))
+					Template["Title"] = str;
+				else {
+					sb.Append (str);
+					sb.Append (" - ");
+				}
+				i++;
+			}
+			if (sb.Length >= 3) {
+				sb.Length = sb.Length -3;
+				sb.Append (".");
+			}
+			if (sb.Length > 1)
+				Template["Subtitles"] = sb.ToString();
 
-			if (Hit ["fixme:artist"] == null || Hit ["fixme:artist"] == "")
-				Template ["Artist"] = "Unknown Artist";
-			else
-				Template ["Artist"] = Hit ["fixme:artist"];
+			//Setup the year
+			content = Hit["fixme:year"];
+			Template["Year"] = " ";
+			if (content.Count > 0) {
+				strTemp = StringFu.GetListValueAsString (content, "(", ")", ',');
+				if (strTemp.Length > 3)
+					Template ["Year"] = strTemp;
+			}
+			
+			//Setup the track nb
+			content = Hit["fixme:tracknumber"];
+			bool hasTrack = false;
+			Template["Track"] = " ";
+			if (content.Count == 0)
+				hasTrack = false;
+			else {
+				strTemp = StringFu.GetListValueAsString (content, "Track ", "", ',');
+				if (strTemp.Length > ("Track "+" ").Length)
+					Template["Track"] = strTemp;
+				hasTrack = true;	
+			}
+
+			//Setup the Album
+			content = Hit["fixme:album"];
+			Template["Album"] = "Unknown Album";
+			if (content.Count > 0) {
+				string strOn; 
+				strOn = hasTrack ? "on " : "On ";
+				strTemp = StringFu.GetListValueAsString (content, strOn, "", ',');
+				if (strTemp.Length > (strOn+" ").Length)
+					Template["Album"] = strTemp;
+			}
+			
+			
+			//Setup artists
+			content = Hit["fixme:artist"];
+			Template["Artists"] = "Unknown Artist";
+			if (content.Count > 0) {
+				strTemp = StringFu.GetListValueAsString (content, "", "", ',');
+				if (strTemp.Length > 1)
+					Template["Artists"] = strTemp;
+			}
+			
+			//Setup genre
+			content = Hit["fixme:genre"];
+			Template["Genre"] = " ";
+			if (content.Count > 0) {
+				strTemp = StringFu.GetListValueAsString (content, "Filed under ", ".", ',');
+				if (strTemp.Length > ("Filed under "+"."+" ").Length)
+					Template["Genre"] = strTemp;
+			}
 		}
 		
 		[TileAction]

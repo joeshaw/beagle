@@ -78,7 +78,7 @@ class QueryTool {
 					Console.WriteLine ("  Rev: {0}", hit.Revision);
 				
 				foreach (String key in hit.Keys)
-					Console.WriteLine ("    {0} = {1}", key, hit [key]);
+					Console.WriteLine ("    {0} = {1}", key, hit.GetValueAsString (key));
 				
 				Console.WriteLine ();
 			}

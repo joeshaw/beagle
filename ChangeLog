@@ -1,3 +1,12 @@
+2005-02-13  Veerapuram Varadhan	 <vvaradhan@novell.com>
+
+	* BeagleClient/Hit.cs, Tiles/Tile*.cs, tools/Query.cs,
+	beagled/LuceneDriver.cs, beagled/LuceneQueryable.cs,
+	beagled/GaimLogQueryable/GaimLogQueryable.cs,
+	beagled/GoogleDriver.cs, beagled/BugzillaDriver.cs,
+	Util/StringFu.cs: Beagle supports storing/retrieving multiple
+	properties with same name.
+
 2005-02-10  Veerapuram Varadhan	 <vvaradhan@novell.com>
 
 	* Filters/FilterDOC.cs, glue/wv1-glue.c: Fix for

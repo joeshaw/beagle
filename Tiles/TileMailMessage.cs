@@ -58,26 +58,33 @@ namespace Beagle.Tile {
 		{
 			base.PopulateTemplate ();
 
-                        bool sent = (Hit ["fixme:isSent"] != null);
+                        bool sent = (Hit.GetValueAsString ("fixme:isSent") != null);
 
 			string str;
 
-			str = Hit ["fixme:subject"];
+			str = Hit.GetValueAsString ("fixme:subject");
 			if (str == null)
 				str = "<i>No Subject</i>";
 			if (Hit ["_IsDeleted"] != null)
 				str = "<strike>" + str + "</strike>";
 			Template["Subject"] = str;
 
-			Template["ToFrom"] = sent ? "To" : "From";
+			str = sent ? "To" : "From";
+			Template["ToFrom"] = str;
 
 			if (sent) {
 				// Limit the number of recipients to 3, so the
 				// tile doesn't look terrible.
-				ICollection list = InternetAddress.ParseString (Hit ["fixme:to"]);
+				// FIXME: Now all the "Hit" properties are lists, so
+				// fixme:to can also be a list of receipient-ids.
+				// This call to parse the "comma" separated "fixme:to" and
+				// return a single-list can be avoided.
+				string to;
+				to = Hit.GetValueAsString ("fixme:to");
+				ICollection list = InternetAddress.ParseString (to);
 
 				if (list.Count <= 3)
-					Template["Who"] = Hit["fixme:to"];
+					Template["Who"] = to;
 				else {
 					StringBuilder sb = new StringBuilder ();
 
@@ -96,18 +103,18 @@ namespace Beagle.Tile {
 					Template["Who"] = sb.ToString ();
 				}
 			} else
-				Template["Who"] = Hit ["fixme:from"];
+				Template["Who"] = Hit.GetValueAsString ("fixme:from");
 
-			Template["Folder"] = Hit ["fixme:folder"];
-			Template["Account"] = Hit ["fixme:account"];
+			Template["Folder"] = Hit.GetValueAsString ("fixme:folder");
+			Template["Account"] = Hit.GetValueAsString ("fixme:account");
 			Template["SentReceived"] = sent ? "Sent" : "Received";
-			Template["When"] = sent ? Hit ["fixme:sentdate"] : Hit ["fixme:received"];
+			Template["When"] = sent ? Hit.GetValueAsString ("fixme:sentdate") : Hit.GetValueAsString ("fixme:received");
 
 			string icon;
-			if (Hit ["fixme:isAnswered"] != null)
+			if (Hit.GetValueAsString ("fixme:isAnswered") != null)
 				icon = Images.GetHtmlSourceForStock ("stock_mail-replied", 
 								     48);
-			else if (Hit ["fixme:isSeen"] != null)
+			else if (Hit.GetValueAsString ("fixme:isSeen") != null)
 				icon = Images.GetHtmlSourceForStock ("stock_mail-open",
 								     48);
 			else
@@ -115,9 +122,9 @@ namespace Beagle.Tile {
 								     48);
 
 			Template["Icon"] = icon;
-			if (Hit ["fixme:isFlagged"] != null)
+			if (Hit.GetValueAsString ("fixme:isFlagged") != null)
 				Template["FollowupIcon"] = Images.GetHtmlSourceForStock ("stock_mail-priority-high", 16);
-			if (Hit ["fixme:hasAttachments"] != null)
+			if (Hit.GetValueAsString ("fixme:hasAttachments") != null)
 				Template["AttachmentIcon"] = Images.GetHtmlSourceForStock ("stock_attach", 16);
 
 			GetImNames (Template["Who"]);
@@ -205,8 +212,8 @@ namespace Beagle.Tile {
 		[TileAction]
 		public void Mail ()
 		{
-                        bool sent = (Hit ["fixme:isSent"] != null);
-			string address = sent ? Hit ["fixme:to"] : Hit ["fixme:from"];
+                        bool sent = (Hit .GetValueAsString ("fixme:isSent") != null);
+			string address = sent ? Hit.GetValueAsString ("fixme:to") : Hit.GetValueAsString ("fixme:from");
 			
 			Process p = new Process ();
 			p.StartInfo.UseShellExecute = false;

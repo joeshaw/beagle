@@ -51,7 +51,7 @@ namespace Beagle.Tile {
 			Process p = new Process ();
 			p.StartInfo.UseShellExecute = false;
 			p.StartInfo.FileName = "monodoc";
-			p.StartInfo.Arguments = Hit ["fixme:name"];
+			p.StartInfo.Arguments = Hit.GetValueAsString ("fixme:name");
 
 			try {
 				p.Start ();

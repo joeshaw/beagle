@@ -447,5 +447,98 @@ namespace Beagle.Util {
 		{
 			return CountWords (str, -1);
 		}
+		
+
+		static public string Escape (char ch)
+		{
+			return String.Format ("%{0}", Convert.ToByte (ch));
+		}
+
+		private static StringBuilder ret = new StringBuilder ();
+		static public string DeEscape (string str, string escDelim)
+		{
+			string deEscDelim = null;
+		
+			ret.Remove (0, ret.Length);
+			deEscDelim = String.Format ("{0}", Convert.ToChar (Convert.ToByte (escDelim.Substring (1))));
+			ret.Append (str);
+			ret.Replace (escDelim, deEscDelim);
+			return ret.ToString ();
+		}
+		
+		static public string GetListValueAsString (ICollection list, char delimiter)
+		{
+			int i = 0;
+			string str1;
+
+			StringBuilder ret = new StringBuilder ();
+			foreach (string str in list) {
+				str1 = str;
+				if (str1.Length > 0) {
+					while ((i = str1.IndexOf (delimiter)) != -1) {
+						if (i > 0)
+							ret.Append (str1.Substring (0, i));
+						ret.Append (Escape (str1 [i]));
+						str1 = str1.Substring (i+1);
+					}
+					ret.Append (str1);
+					ret.Append (delimiter);
+					ret.Append (delimiter);
+				}
+			}
+			if (ret.Length > 2)
+				ret.Length -= 2;
+
+			return ret.ToString ().Trim ();
+		}
+
+		private static StringBuilder token = new StringBuilder ();
+		static public string[] SplitDelimitedString (string src, char delimiter)
+		{
+			string esc = null;
+			string str = null;
+			int i = -1;
+
+			ArrayList ret = new ArrayList (5);
+			esc = Escape (delimiter);
+			
+			token.Remove (0, token.Length);
+			while ((i = src.IndexOf (delimiter)) != -1) {
+				if (src[i+1] == delimiter) {
+					token.Append (src.Substring (0, i));
+					str = token.ToString ();
+					token.Remove (0, token.Length);
+
+					token.Append (DeEscape (str, esc));
+
+					ret.Add (token.ToString ());
+					src = src.Substring (i+2);
+					token.Remove (0, token.Length);
+				} else {
+					token.Append (src.Substring (0, i+1));
+					src = src.Substring (i+1);
+				}
+			}
+			token.Append (src);
+			str = token.ToString ();
+			token.Remove (0, token.Length);
+			token.Append (DeEscape (str, esc));
+			ret.Add (token.ToString ());
+			return ret.ToArray (typeof (string)) as string[];
+		}
+		
+		static public string GetListValueAsString (ICollection list, 
+							   string prefix, 
+							   string suffix, 
+							   char delimiter)
+		{
+			if (prefix == null)
+				prefix = "";
+
+			if (suffix == null)
+				suffix = "";
+
+			return (prefix+GetListValueAsString (list, delimiter)+suffix);
+		}
 	}
 }

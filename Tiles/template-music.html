@@ -2,14 +2,20 @@
   <td class="icon">
     <span><a href="@action:@Open"><img src="@image%music.png@"></a></span>
   </td>
+      
   <td class="content">
     <div class="name">
-		<a href="@action:@Open">@Title@</a>, by @Artist@
+    <a href="@action:@Open">@Title@</a><span style="padding-left: 5em; font-size: 0.7em;">@Subtitles@</span><br/>
+		By @Artists@
 	</div>
+    
     <div class="date">
-		Track @fixme:tracknumber@
-		from "@fixme:album@"
+		@Track@ @Album@ @Year@
 	</div>
+    
+    <div class="snippet">
+       	@Genre@ @fixme:comment@
+    </div>
     
     <ul class="actions">
       <li><a href="@action:@Open">Open</a></li>

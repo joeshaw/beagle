@@ -69,8 +69,11 @@ namespace Beagle.Tile {
 
 		public void AddValues (IDictionary values)
 		{
-			foreach (string key in values.Keys)
-				this.values[key] = values[key];
+			ICollection propValues = null;
+			foreach (string key in values.Keys) {
+				this.values[key] = BU.StringFu.GetListValueAsString (values[key] as ICollection, ',');
+				Console.WriteLine ("Key: {0}, Value: {1}", key, this.values[key]);
+			}
 			dirty = true;
 		}
 

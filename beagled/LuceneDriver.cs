@@ -650,6 +650,11 @@ namespace Beagle.Daemon {
 			
 			// FIXME: We need to deal with duplicate properties in some
 			// sort of sane way.
+			
+			//Normally according to lucene docs:
+			// "Adds a field to a document. Several fields may be added with
+			// the same name. In this case, if the fields are indexed, their
+			// text is treated as though appended for the purposes of search."
 			foreach (Property prop in indexable.Properties) {
 				if (prop.Value != null) {
 					f = Field.Keyword (ToLucenePropertyKey (prop.Key),
@@ -859,7 +864,7 @@ namespace Beagle.Daemon {
 			foreach (Field ff in doc.Fields ()) {
 				string key = FromLucenePropertyKey (ff.Name ());
 				if (key != null)
-					hit [key] = ff.StringValue ();
+					hit.AddValue (key, ff.StringValue ());
 			}
 			
 			return hit;

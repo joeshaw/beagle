@@ -80,7 +80,7 @@ namespace Beagle.Tile {
 		[TileAction]
 		public void Reveal ()
 		{
-			OpenFolder (Hit ["fixme:directory"]);
+			OpenFolder (Hit.GetValueAsString ("fixme:directory"));
 		}
 	}
 }

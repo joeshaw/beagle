@@ -45,11 +45,14 @@ namespace Beagle.Tile {
 			
 			protected override void PopulateTemplate ()
 			{
+				string str = null;
 				base.PopulateTemplate ();
-				if (Hit ["dc:title"] == null || Hit ["dc:title"] == "")
-					Template ["Title"] = Hit ["fixme:splitname"];
+				str = Hit.GetValueAsString ("dc:title");
+				if (str.Length > 0)
+					Template ["Title"] = Hit.GetValueAsString ("fixme:splitname");
 				else
-					Template ["Title"] = Hit ["dc:title"];
+					Template ["Title"] = str;
+
 			}
 		}
 }

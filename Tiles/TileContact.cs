@@ -25,6 +25,7 @@
 //
 
 using System;
+using System.Collections;
 using System.Diagnostics;
 using System.IO;
 
@@ -52,9 +53,10 @@ namespace Beagle.Tile {
 		{
 			base.PopulateTemplate ();
 
-			string photo_filename = Hit["Photo"];
+			string photo_filename = null;
+			photo_filename =  Hit.GetValueAsString ("Photo");
 
-			if (photo_filename != null) {
+			if (photo_filename.Length > 0) {
 				System.Console.WriteLine ("photo: {0}", photo_filename);
 				string height = "";
 				
@@ -75,23 +77,23 @@ namespace Beagle.Tile {
 				Template["Icon"] = StringFu.PathToQuotedFileUri (photo_filename);
 			} else {
 				Template["size_adjustment"] = "";
-				Template["Icon"] = default_contact_icon_data;
+				Template["Icon"] =  default_contact_icon_data;
 			}
 
-			if (Hit["fixme:ImAim"] != null)
+			if (Hit.GetValueAsString ("fixme:ImAim").Length > 0)
 				Template["CanSendIm"] = "";
 		}
 
 		[TileAction]
 		public void SendMailEmail1 ()
 		{
-			SendMailToAddress (Hit ["fixme:Email1"], null);
+			SendMailToAddress (Hit.GetValueAsString ("fixme:Email1"), null);
 		}
 
 		[TileAction]
 		public void SendImAim ()
 		{
-			SendImAim (Hit["fixme:ImAim"]);
+			SendImAim (Hit.GetValueAsString ("fixme:ImAim"));
 		}
 	}
 }
