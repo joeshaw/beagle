@@ -1,3 +1,9 @@
+2005-01-19  Veerapuram Varadhan	 <vvaradhan@novell.com>
+
+	* Filters/FilterPPT.cs: Validations on special characters.
+	Fix for parsing PPTs exported from OO.o.
+	Fix for meta-data retrieval.
+
 2005-01-12  Veerapuram Varadhan	 <vvaradhan@novell.com>
 
 	* configure.in, beagled/Makefile.am: Mozilla backend is optional

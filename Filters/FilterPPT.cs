@@ -373,12 +373,11 @@ namespace Beagle.Filters {
     
 	public class FilterPPT : FilterOle {
 
-		bool read_text;
-		int slide_count;
-
+		int textType;
 		public FilterPPT () 
 		{
 			AddSupportedMimeType ("application/vnd.ms-powerpoint");
+			textType = -1;
 		}
 
 		private int ParseElement (Gsf.Input stream)
@@ -389,40 +388,63 @@ namespace Beagle.Filters {
 			RecordType.TypeCode opcode = (RecordType.TypeCode) GetInt16(data, 2);
 			int length = GetInt32(data, 4);
 			RecordType type = RecordType.Find (opcode);
+
+			// Process the container tree
 			if (type.is_container) {
 				int length_remaining = length;
-				if (opcode == RecordType.TypeCode.SlideListWithText) {
-					slide_count = 0;
-				}
-				while (length_remaining > 0) {
-					int elem_length = ParseElement(stream);
-					if (elem_length == 0)
-						return 0;
-					length_remaining -= elem_length;
+
+				if (opcode == RecordType.TypeCode.MainMaster) {
+					// Ignore MainMaster container as it contains
+					// just a master-slide view and no user data.
+					stream.Seek (length_remaining, SeekOrigin.Current);
+				} else {
+					while (length_remaining > 0) {
+						int elem_length = ParseElement(stream);
+						if (elem_length == 0)
+							return 0;
+						length_remaining -= elem_length;
+					}
 				}
 			} else {
 				if (length != 0) {
 					System.Text.Encoding encoding = null;
 
 					if (opcode == RecordType.TypeCode.TextBytesAtom) {
-						encoding = System.Text.Encoding.GetEncoding (28591);
+						//encoding = System.Text.Encoding.GetEncoding (28591);
+						encoding = System.Text.Encoding.UTF8;
 					} else if (opcode == RecordType.TypeCode.TextCharsAtom) {
 						encoding = System.Text.Encoding.Unicode;
-					} else if (opcode == RecordType.TypeCode.SlidePersistAtom) {
-						slide_count ++;
 					}
-
-					if (encoding != null && read_text) {
+					
+					if (encoding != null && textType != 3) {
+						StringBuilder strData = new StringBuilder () ;
 						data = stream.Read(length);
 						if (data == null)
 							return 0;
-						AppendText (encoding.GetString (data));
+						// Replace all ^M with "whitespace",
+						// because of which the contents were not properly 
+						// been appended to the text pool.
+						strData.Append (encoding.GetString (data).Replace ('\r', ' '));
+
+						// Replace all ^K with "whitespace",
+						// because of which the contents were not properly 
+						// been appended to the text pool.
+						strData.Replace ((char)0x0B, (char)0x20);
+						
+						AppendText (strData.ToString());
 						AppendWhiteSpace ();
+					}  else if (opcode == RecordType.TypeCode.TextHeaderAtom) {
+						data = stream.Read (4);
+						textType = GetInt32 (data, 0);
 					} else {
 						stream.Seek(length, SeekOrigin.Current);
 					}
 				}
 			}
+
+			// length = RecordHeader.recLen
+			// 8 = sizeof (RecordHeader)
+			// Every Atom/container is preceded by a RecordHeader
 			return length + 8;
 		}
 		
@@ -465,14 +487,14 @@ namespace Beagle.Filters {
 					AddProperty (Beagle.Property.New ("dc:description", str));
 
 				str = null;
-				prop = sumMeta.GetProp ("keywords");
+				prop = sumMeta.GetProp ("gsf:keywords");
 				if (prop != null)
 					str = Gsf.Global.GetPropValStr (prop);
 				if (str != null && str.Length > 0)
 					AddProperty (Beagle.Property.New ("fixme:keywords", str));
 
 				str = null;
-				prop = sumMeta.GetProp ("creator");
+				prop = sumMeta.GetProp ("gsf:creator");
 				if (prop != null)
 					str = Gsf.Global.GetPropValStr (prop);
 				if (str != null && str.Length > 0)
@@ -481,14 +503,14 @@ namespace Beagle.Filters {
 			
 			if (docSumMeta != null) {
 				str = null;
-				prop = docSumMeta.GetProp ("company");
+				prop = docSumMeta.GetProp ("gsf:company");
 				if (prop != null)
 					str = Gsf.Global.GetPropValStr (prop);
 				if (str != null && str.Length > 0)
 					AddProperty (Beagle.Property.New ("fixme:company", str));
 
 				str = null;
-				prop = docSumMeta.GetProp ("slide-count");
+				prop = docSumMeta.GetProp ("gsf:slide-count");
 				if (prop != null)
 					str = Gsf.Global.GetPropValStr (prop);
 				if (str != null && str.Length > 0)
@@ -520,10 +542,19 @@ namespace Beagle.Filters {
 
 		override protected void DoPull ()
 		{
-			read_text = true;
 			Input stream = file.ChildByName ("PowerPoint Document");
 
-			ParseElement(stream);
+			// The parsing was getting terminated when "EndDocument"
+			// container was parsed.  We need to continue our 
+			// parsing till the end of the file, since, some of the
+			// slides do persist after the actual "Document" 
+			// container.
+			// PPTs exported from OO.o actually writes almost all the slides
+			// after "Document" container.
+			// And certain PPTs do have some slides in after
+			// "Document" container.
+			while (!stream.Eof)
+				ParseElement(stream);
 			Finished();
 		}
 	}
