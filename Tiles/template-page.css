@@ -26,7 +26,7 @@ table {
 }
 
 tr {
-  border-bottom: 1px dashed #999999;
+  border-bottom: 1px dotted #999999;
 }
 
 tr:hover {
@@ -65,7 +65,7 @@ td.icon {
 
 td.content { 
   padding-left: 12px;
-  vertical-align: middle;  
+  vertical-align: top;  
 }
 
 #hilight {
