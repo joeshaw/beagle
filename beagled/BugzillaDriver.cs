@@ -36,7 +36,7 @@ using Beagle.Util;
 
 namespace Beagle.Daemon {
 
-	[QueryableFlavor (Name="Bugzilla", Domain=QueryDomain.Global)]
+	[QueryableFlavor (Name="Bugzilla", Domain=QueryDomain.Global, RequireInotify=false)]
 	public class BugzillaDriver : IQueryable {
 
 		private string bugzilla_host = "http://bugzilla.ximian.com";

@@ -388,6 +388,7 @@ LIFEREA_QUERYABLE_CSFILES =				\
 
 launcherqueryable = $(srcdir)/LauncherQueryable
 LAUNCHER_QUERYABLE_CSFILES =				\
+	$(launcherqueryable)/LauncherCrawler.cs		\
 	$(launcherqueryable)/LauncherQueryable.cs
 
 
@@ -448,7 +449,6 @@ DAEMON_DLL_LOCAL_ASSEMBLIES =		\
 	../Util/Util.dll		\
 	../BeagleClient/Beagle.dll	\
 	./$(PLUGIN_TARGET)
-	
 
 DAEMON_DLL_ASSEMBLIES = 			\
 	$(BEAGLED_LIBS)                 	\
@@ -539,8 +539,8 @@ SUBDIRS = webserver
 BG_XSP_TARGET = webserver/bgXsp.dll
 
 WEBSVC_LOCAL_ASSEMBLIES =			\
- 	../Util/Util.dll		\
- 	../images/Images.dll		\
+	../Util/Util.dll		\
+	../images/Images.dll		\
 	../BeagleClient/Beagle.dll      \
 	../Tiles/Tiles.dll		\
 	BeagleDaemonPlugins.dll \

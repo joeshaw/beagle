@@ -36,7 +36,7 @@ using Beagle.Util;
 
 namespace Beagle.Daemon.LauncherQueryable {
 
-	[QueryableFlavor (Name="Launcher", Domain=QueryDomain.Local)]
+	[QueryableFlavor (Name="Launcher", Domain=QueryDomain.Local, RequireInotify=false)]
 	public class LauncherQueryable : LuceneQueryable {
 
 		private static Logger log = Logger.Get ("LauncherQueryable");
@@ -44,6 +44,8 @@ namespace Beagle.Daemon.LauncherQueryable {
 		Hashtable watched = new Hashtable ();
 		string home;
 		FileStream LauncherDB;
+		int polling_interval_in_hours = 1;
+		LauncherCrawler crawler;
 
 		public LauncherQueryable () : base ("LauncherIndex")
 		{
@@ -71,15 +73,48 @@ namespace Beagle.Daemon.LauncherQueryable {
 		public override void Start ()
 		{
 			base.Start ();
-			Inotify.Event += OnInotifyEvent;
-			log.Info ("Scanning Launchers");
+
+			log.Info ("Starting launcher backend");
 			Stopwatch timer = new Stopwatch ();
 			timer.Start ();
-			int LaunchersFound = 0;
-			foreach (String dir in Dirs)
-				LaunchersFound += Watch (dir);
+
+			if (Inotify.Enabled) {
+				Inotify.Event += OnInotifyEvent;
+
+				log.Info ("Scanning Launchers");
+				int launchers_found = 0;
+				foreach (String dir in Dirs)
+					launchers_found += Watch (dir);
+
+				log.Info ("Found {0} Launchers in {1}", launchers_found, timer);
+			}
+
+			this.crawler = new LauncherCrawler (Dirs);
+			Crawl ();
+
+			if (!Inotify.Enabled) {
+				Scheduler.Task task = Scheduler.TaskFromHook (new Scheduler.TaskHook (CrawlHook));
+				task.Tag = "Crawling system launchers";
+				ThisScheduler.Add (task);
+			}
+
 			timer.Stop ();
-			log.Info ("Found {0} Launchers in {1}",LaunchersFound, timer);
+			log.Info ("Launcher backend worker thread done in {0}", timer);
+		}
+
+		private void Crawl ()
+		{
+			this.crawler.Crawl ();
+  	                
+			foreach (FileInfo file in crawler.Launchers)
+				IndexLauncher (file, Scheduler.Priority.Delayed);
+		}
+
+		private void CrawlHook (Scheduler.Task task)
+		{
+			Crawl ();
+			task.Reschedule = true;
+			task.TriggerTime = DateTime.Now.AddHours (this.polling_interval_in_hours);
 		}
 
 		private int Watch (string path)

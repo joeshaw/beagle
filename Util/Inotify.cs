@@ -127,7 +127,7 @@ namespace Beagle.Util {
 
 			dev_inotify = Syscall.open ("/dev/inotify", OpenFlags.O_RDONLY);
 			if (dev_inotify == -1)
-				Logger.Log.Debug ("Could not open /dev/inotify");
+				Logger.Log.Warn ("Could not open /dev/inotify");
 		}
 
 		static public bool Enabled {

@@ -42,7 +42,7 @@ using LNS = Lucene.Net.Search;
 
 namespace Beagle.Daemon.EvolutionDataServerQueryable {
 
-	[QueryableFlavor (Name="EvolutionDataServer", Domain=QueryDomain.Local)]
+	[QueryableFlavor (Name="EvolutionDataServer", Domain=QueryDomain.Local, RequireInotify=false)]
 	public class EvolutionDataServerQueryable : LuceneQueryable {
 		private static Logger log = Logger.Get ("addressbook");
 		//private Scheduler.Priority priority = Scheduler.Priority.Immediate;
