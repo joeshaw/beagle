@@ -36,7 +36,7 @@ class IndexFilesTool {
 
     static void Main (String[] args) {
 
-	Content.RegisterEverythingByHand ();
+	Content.RegisterEverythingByHand (); // FIXME: this sucks
 
 	ArrayList array = new ArrayList ();
 

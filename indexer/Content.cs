@@ -66,8 +66,6 @@ namespace Dewey {
 	public void AppendBody (String _body) {
 	    if (body == null)
 		body = new StringBuilder ("");
-	    else
-		body.Append (" ");
 	    body.Append (_body);
 	}
 
@@ -80,8 +78,6 @@ namespace Dewey {
 	public void AppendHotBody (String _body) {
 	    if (hot_body == null)
 		hot_body = new StringBuilder ("");
-	    else
-		hot_body.Append (" ");
 	    hot_body.Append (_body);
 	}
 	
