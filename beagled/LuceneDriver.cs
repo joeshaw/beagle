@@ -299,7 +299,7 @@ namespace Beagle.Daemon {
 			// Skip symlinks.  FIXME: This is probably the wrong thing
 			// to do, but it doesn't seem possible to attach
 			// extended attributes to them.
-			if (IsSymLink (fsinfo)) {
+			if (FileSystem.IsSymLink (fsinfo.FullName)) {
 				log.Debug ("{0} is a symlink... skipping", fsinfo.FullName);				
 				return false;
 			}
@@ -1263,15 +1263,6 @@ namespace Beagle.Daemon {
 			if (key.StartsWith (propPrefix))
 				return key.Substring (propPrefix.Length);
 			return null;
-		}
-
-		// Check if a file is a symlink.
-		private static bool IsSymLink (FileSystemInfo info)
-		{
-			Stat stat = new Stat ();
-			Syscall.lstat (info.FullName, out stat);
-			int mode = (int) stat.Mode & (int)StatModeMasks.TypeMask;
-			return mode == (int) StatMode.SymLink;
 		}
 	}
 }

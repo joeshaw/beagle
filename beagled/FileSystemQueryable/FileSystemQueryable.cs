@@ -42,15 +42,17 @@ namespace Beagle.Daemon.FileSystemQueryable {
 
 		private static Logger log = Logger.Get ("FileSystemQueryable");
 
-		FileNameFilter filter;
-		CrawlQueue crawlQ;
+		private FileNameFilter filter;
+		private CrawlQueue crawlQ;
+		private EventStatistics eventStats;
 
 		public FileSystemQueryable () : base (Path.Combine (PathFinder.RootDir, "FileSystemIndex"))
 		{
 			string home = Environment.GetEnvironmentVariable ("HOME");
-			
-			filter = new FileNameFilter ();
+
+			filter = new FileNameFilter ();			
 			crawlQ = new CrawlQueue (filter, Driver, log);
+			eventStats = new EventStatistics ();
 
 			TraverseDirectory (home, true);
 
@@ -123,7 +125,8 @@ namespace Beagle.Daemon.FileSystemQueryable {
 						crawlQ.ScheduleCrawl (path, 0);
 
 					foreach (DirectoryInfo subdir in dir.GetDirectories ()) {
-						if (! filter.Ignore (subdir.FullName))
+						if (! filter.Ignore (subdir.FullName)
+						    && ! FileSystem.IsSymLink (subdir.FullName))
 							queue.Enqueue (subdir.FullName);
 					}
 				}
@@ -168,6 +171,8 @@ namespace Beagle.Daemon.FileSystemQueryable {
 
 			}
 
+			eventStats.AddEvent (path);
+
 			// Try to crawl any path we see activity in.
 			// We only crawl each directory once, but that is enforced
 			// inside of the CrawlQueue.
@@ -181,6 +186,7 @@ namespace Beagle.Daemon.FileSystemQueryable {
 			case InotifyEventType.DeleteSubdir:
 			case InotifyEventType.DeleteFile:
 				crawlQ.ForgetPath (fullPath);
+				eventStats.ForgetPath (fullPath);
 				Driver.ScheduleDeleteFile (fullPath, 100);
 				break;
 

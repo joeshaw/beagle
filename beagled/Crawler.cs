@@ -176,24 +176,13 @@ namespace Beagle.Daemon {
 		// Implementation Details
 		//
 
-
-		// Check if a file is a symlink.
-		private static bool IsSymLink (FileSystemInfo info)
-		{
-			Stat stat = new Stat ();
-			Syscall.lstat (info.FullName, out stat);
-			int mode = (int) stat.Mode & (int)StatModeMasks.TypeMask;
-			return mode == (int) StatMode.SymLink;
-		}
-
-
 		// Check if a file needs to be crawled.
 		private bool NeedsCrawl (FileSystemInfo info)
 		{
 			if (! info.Exists)
 				return false;
 
-			if (IsSymLink (info))
+			if (BU.FileSystem.IsSymLink (info.FullName))
 				return false;
 
 			if (BU.ExtendedAttribute.Check (info, fingerprint))

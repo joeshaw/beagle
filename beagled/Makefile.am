@@ -174,15 +174,14 @@ LUCENE_CSFILES =							\
 
 fsqueryabledir = $(srcdir)/FileSystemQueryable
 FILE_SYSTEM_QUERYABLE_CSFILES =				\
-	$(fsqueryabledir)/FileSystemQueryable.cs	\
+	$(fsqueryabledir)/CrawlQueue.cs			\
+	$(fsqueryabledir)/EventStatistics.cs		\
 	$(fsqueryabledir)/FileNameFilter.cs		\
-	$(fsqueryabledir)/CrawlQueue.cs
-
+	$(fsqueryabledir)/FileSystemQueryable.cs
 
 webhistqueryable = $(srcdir)/WebHistoryQueryable
 WEB_HISTORY_QUERYABLE_CSFILES =				\
 	$(webhistqueryable)/WebHistoryQueryable.cs
-
 
 gaimlogqueryable = $(srcdir)/GaimLogQueryable
 GAIM_LOG_QUERYABLE_CSFILES =				\
