@@ -1,0 +1,11 @@
+
+Searchomatic takes the contents of the the primary selection and starts
+a search for that string with Best.
+
+For a good time:
+
+(1) Go to System->Personal Settings
+(2) Select Shortcuts
+(3) Bind some unused key-combination to the Search action
+(4) Replace gnome-search-tool with a symlink to best
+
