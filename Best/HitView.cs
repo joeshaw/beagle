@@ -77,7 +77,7 @@ namespace Best {
 				command = app.command;
 				arguments = hit.Uri.Substring (7);
 			} else if (hit.Uri.StartsWith ("http://")) {
-				command = "epiphany";
+				command = "gnome-open";
 				arguments = hit.Uri;
 			} else if (hit.Uri.StartsWith ("email://")) {
 				command = "evolution-1.5";
