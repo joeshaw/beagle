@@ -70,7 +70,9 @@ EXTRA_DIST =				\
 	$(WRAPPER_IN)			\
 	$(QUERY_CSFILES)		\
 	$(INDEX_WEB_CONTENT_CSFILES)	\
-	beagle-ping
+	beagle-ping			\
+	beagle-shutdown			\
+	beagle-status
 
 CLEANFILES = 				\
 	$(TARGETS)			\
