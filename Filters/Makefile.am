@@ -30,7 +30,8 @@ CSFILES = 				\
 	$(srcdir)/FilterPng.cs		\
 	$(srcdir)/FilterText.cs	        \
 	$(srcdir)/FilterSource.cs	\
-	$(srcdir)/FilterRTF.cs
+	$(srcdir)/FilterRTF.cs		\
+	$(srcdir)/FilterTexi.cs		
 
 LOCAL_ASSEMBLIES =				\
 	../Util/Util.dll			\
