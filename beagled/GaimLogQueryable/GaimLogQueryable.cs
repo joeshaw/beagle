@@ -201,20 +201,18 @@ namespace Beagle.Daemon.GaimLogQueryable {
 			// FIXME: This is very lame, and doesn't do the
 			// right thing w/ stemming, word boundaries, etc.
 			foreach (ImLog.Utterance utt in log.Utterances) {
-				string text = utt.Text.ToLower ();
+				string lower_text = utt.Text.ToLower ();
+				string text = utt.Text;
 				int i = -1;
-				string match = null;
 				foreach (string query_text in body.Text) {
-					i = text.IndexOf (query_text.ToLower ());
+					i = lower_text.IndexOf (query_text.ToLower ());
 					if (i >= 0) {
-						match = query_text;
-						break;
+						text = String.Concat (text.Substring (0, i), "<b>", text.Substring (i, query_text.Length), "</b>", text.Substring (i + query_text.Length));
+						lower_text = text.ToLower ();
 					}
 				}
-				if (i >= 0) {
-					text = utt.Text;
-					return text.Substring (0, i) + "<b>" + match + "</b>" + text.Substring (i + match.Length);
-				}
+				if (i >= 0)
+					return text;
 			}
 
 			// If all else fails, return the log's generic snippet
