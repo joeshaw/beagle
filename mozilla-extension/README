@@ -1,0 +1,28 @@
+
+Beagle Extension: Index webpages you visit using the Beagle Indexing Engine.
+An Extension for the Firefox Browser.  
+
+Installing:
+	Open the generated beagle.xsi in Firefox or Mozilla.  
+	This will fire the Extension Manager.
+
+Notes:
+	Executes beagle-index-url located in $PATH, passing the URI and a path
+	to a temporary file containing the URI's content.  beagle-index-url 
+	should delete this file once it is finished indexing.
+
+TODO:
+	- make install rule for installing to global extensions 
+	  directory (can be done without running mozilla?)
+	- need better icons
+	- only index content on initial visit to a page
+	- send HTTP headers to beagle-index-url?
+	- remove context menu and preferences?
+	- improve warnings
+	- call beagle-index-url with page title and mime-type
+	- watch for beagle-index-url error and clean up tempfile
+	- save tempfile in safer place and with better name
+	- include install.js for older versions of Firefox (<0.9)
+
+-- Alex Graveley (Tue Jul 27, 2004)
+
