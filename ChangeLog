@@ -1,3 +1,7 @@
+2005-04-05  Adam Weinberger  <adamw@gnome.org>
+
+	* configure.in: Added en_CA to ALL_LINGUAS.
+
 2005-04-05  Veerapuram Varadhan  <vvaradhan@novell.com>
 
 	* beagled/Filter.cs: Third round of optimization. Mainly a FIXME

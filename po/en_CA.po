@@ -1,0 +1,198 @@
+# Canadian English translation for beagle
+# Copyright (C) 2005 Adam Weinberger and the GNOME Foundation
+# This file is distributed under the same licence as the beagle package.
+# Adam Weinberger <adamw@gnome.org>, 2005.
+#
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: beagle\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2005-04-05 13:55-0400\n"
+"PO-Revision-Date: 2005-04-05 13:55-0400\n"
+"Last-Translator: Adam Weinberger <adamw@gnome.org>\n"
+"Language-Team: Canadian English <adamw@gnome.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#: ../Best/Best.cs:120
+msgid ""
+"If you're wondering whether Best is working check your notification area "
+"(system tray)"
+msgstr ""
+"If you're wondering whether Best is working check your notification area "
+"(system tray)"
+
+#: ../Best/BestTray.cs:164
+msgid "No Recent Searches"
+msgstr "No Recent Searches"
+
+#: ../Best/BestTray.cs:179
+msgid "Quit"
+msgstr "Quit"
+
+#: ../Best/BestWindow.cs:302
+msgid "Anywhere"
+msgstr "Anywhere"
+
+#: ../Best/BestWindow.cs:304
+msgid "in Files"
+msgstr "in Files"
+
+#: ../Best/BestWindow.cs:306
+msgid "in Addressbook"
+msgstr "in Addressbook"
+
+#: ../Best/BestWindow.cs:308
+msgid "in Mail"
+msgstr "in Mail"
+
+#: ../Best/BestWindow.cs:310
+msgid "in Web Pages"
+msgstr "in Web Pages"
+
+#: ../Best/BestWindow.cs:312
+msgid "in Chats"
+msgstr "in Chats"
+
+#: ../Best/BestWindow.cs:328
+msgid "Search terms:"
+msgstr "Search terms:"
+
+#: ../Best/BestWindow.cs:345
+msgid "Find"
+msgstr "Find"
+
+#: ../Best/BestWindow.cs:362
+msgid "Show More Results"
+msgstr "Show More Results"
+
+#: ../Best/BestWindow.cs:368
+msgid "Show Previous Results"
+msgstr "Show Previous Results"
+
+#: ../Best/BestWindow.cs:402
+msgid "No results."
+msgstr "No results."
+
+#. To translators: {0} is the current count of results shown of {1} in total, this is the message that is initially shown
+#. when results are returned to the user.
+#: ../Best/BestWindow.cs:406
+#, csharp-format
+msgid "Best <b>{0} results of {1}</b> are shown."
+msgstr "Best <b>{0} results of {1}</b> are shown."
+
+#. To translators: {0} to {1} is the interval of results currently shown of {2} results in total
+#: ../Best/BestWindow.cs:411
+#, csharp-format
+msgid "Results <b>{0} through {1} of {2}</b> are shown."
+msgstr "Results <b>{0} through {1} of {2}</b> are shown."
+
+#. To translators: {0} represents the current query keywords
+#: ../Best/BestWindow.cs:550
+#, csharp-format
+msgid ""
+"The query for <i>{0}</i> failed.<br>The likely cause is that the beagle "
+"daemon isn't running."
+msgstr ""
+"The query for <i>{0}</i> failed.<br>The likely cause is that the beagle "
+"daemon isn't running."
+
+#. To translators: {0} represents the current query keywords
+#: ../Best/BestWindow.cs:555
+#, csharp-format
+msgid ""
+"The query for <i>{0}</i> failed.<br>The session bus isn't running.  See "
+"http://beaglewiki.org/index.php/Installing%20Beagle for information on "
+"setting up a session bus."
+msgstr ""
+"The query for <i>{0}</i> failed.<br>The session bus isn't running.  See "
+"http://beaglewiki.org/index.php/Installing%20Beagle for information on "
+"setting up a session bus."
+
+#. To translators: {0} represents the current query keywords, {1} contains the errormessage
+#: ../Best/BestWindow.cs:559
+#, csharp-format
+msgid "The query for <i>{0}</i> failed with error:<br>{1}<br>"
+msgstr "The query for <i>{0}</i> failed with error:<br>{1}<br>"
+
+#: ../Tiles/TileDocs.cs:75
+msgid "Pages:"
+msgstr "Pages:"
+
+#: ../Tiles/TileDocs.cs:79
+msgid "Words:"
+msgstr "Words:"
+
+#: ../Tiles/TileFolder.cs:51
+msgid "Empty"
+msgstr "Empty"
+
+#: ../Tiles/TileFolder.cs:53
+#, csharp-format
+msgid "Contains {0} Item"
+msgid_plural "Contains {0} Items"
+msgstr[0] "Contains {0} Item"
+msgstr[1] "Contains {0} Items"
+
+#: ../Tiles/TileMailMessage.cs:68
+msgid "No Subject"
+msgstr "No Subject"
+
+#: ../Tiles/TileMailMessage.cs:73
+msgid "To"
+msgstr "To"
+
+#: ../Tiles/TileMailMessage.cs:73
+msgid "From"
+msgstr "From"
+
+#: ../Tiles/TileMailMessage.cs:104
+msgid "Sent"
+msgstr "Sent"
+
+#: ../Tiles/TileMailMessage.cs:104
+msgid "Received"
+msgstr "Received"
+
+#: ../Util/StringFu.cs:65
+msgid "Today"
+msgstr "Today"
+
+#: ../Util/StringFu.cs:67
+msgid "Yesterday"
+msgstr "Yesterday"
+
+#. To translators: {0} is the time of the day, eg. 13:45
+#: ../Util/StringFu.cs:95
+#, csharp-format
+msgid "Today, {0}"
+msgstr "Today, {0}"
+
+#. To translators: {0} is the time of the day, eg. 13:45
+#: ../Util/StringFu.cs:98
+#, csharp-format
+msgid "Yesterday, {0}"
+msgstr "Yesterday, {0}"
+
+#. To translators: {0} is the number of days that have passed, {1} is the time of the day, eg. 13:45
+#: ../Util/StringFu.cs:101
+#, csharp-format
+msgid "{0} days ago, {1}"
+msgstr "{0} days ago, {1}"
+
+#: ../Util/StringFu.cs:119
+#, csharp-format
+msgid "{0} hour"
+msgid_plural "{0} hours"
+msgstr[0] "{0} hour"
+msgstr[1] "{0} hours"
+
+#: ../Util/StringFu.cs:126
+#, csharp-format
+msgid "{0} minute"
+msgid_plural "{0} minutes"
+msgstr[0] "{0} minute"
+msgstr[1] "{0} minutes"
