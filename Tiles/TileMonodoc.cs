@@ -28,15 +28,13 @@ using System;
 using System.Diagnostics;
 using System.IO;
 
-using BU = Beagle.Util;
-
 namespace Beagle.Tile {
 
-	[HitFlavor (Name="Blogs", Rank=800, Emblem="emblem-blog.png", Color="#f5f5fe",
-		    Type="Blog")]
-	public class TileBlog : TileFromHitTemplate 
+	[HitFlavor (Name="Documentation", Rank=800, Emblem="icon-monodoc.png", Color="#f5f5fe",
+		    Type="Monodoc")]
+	public class TileMonodoc : TileFromHitTemplate 
 	{
-		public TileBlog (Hit _hit) : base (_hit, "template-blog.html")
+		public TileMonodoc (Hit _hit) : base (_hit, "template-monodoc.html")
 		{
 		}
 
@@ -44,19 +42,22 @@ namespace Beagle.Tile {
 		{
 			base.PopulateTemplate ();
 
-			string path = Hit ["fixme:cachedimg"];
-
-			if (path != null && File.Exists (path))
-				Template["Icon"] = Images.GetHtmlSource (path, null);
-			else
-				Template["Icon"] = Images.GetHtmlSource ("icon-blog", "text/html");
+			Template["Icon"] = Images.GetHtmlSource ("icon-monodoc", "text/html");
 		}
 
 		[TileAction]
 		public override void Open ()
                 {
-			// We should prolly have blam or other aggregator handle rss:// urls, until then...
-			Gnome.Url.Show(Hit["fixme:itemuri"]);
+			Process p = new Process ();
+			p.StartInfo.UseShellExecute = false;
+			p.StartInfo.FileName = "monodoc";
+			p.StartInfo.Arguments = Hit ["fixme:name"];
+
+			try {
+				p.Start ();
+			} catch (Exception e) {
+				Console.WriteLine ("Error in Open: " + e);
+			}
 		}
 	}
 }
