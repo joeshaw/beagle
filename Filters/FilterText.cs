@@ -47,8 +47,9 @@ namespace Beagle.Filters {
 		override protected void DoPull ()
 		{
 			string str = reader.ReadLine ();
-			if (str != null)
+			if (str != null) {
 				AppendContent (str + "\n");
+			}
 		}
 	}
  }

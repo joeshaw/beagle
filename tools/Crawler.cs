@@ -266,13 +266,13 @@ class CrawlerTool {
 			
 			foreach (FileInfo file in info.GetFiles ()) {
 				if (! noindex.IsMatch (file.Name)) {
-					try {
+					//try {
 						String uri = "file://" + file.FullName;
 						CrawlFile (file, (Hit) hitHash [uri]);
 						hitHash.Remove (uri);
-					} catch (Exception e) {
-						Console.WriteLine ("Caught exception while crawling file '" + file.Name + "':\n" + e.Message);
-					}
+						//} catch (Exception e) {
+						//Console.WriteLine ("Caught exception while crawling file '" + file.Name + "':\n" + e.Message);
+						//}
 				}
 			}
 				
@@ -280,13 +280,13 @@ class CrawlerTool {
 
 				foreach (DirectoryInfo subdir in info.GetDirectories ()) {
 					if (! noindex.IsMatch (subdir.Name)) {
-						try {
+						//try {
 							String uri = "file://" + subdir.FullName;
 							CrawlDirectory (subdir, (Hit) hitHash [uri], maxRecursion - 1);
 							hitHash.Remove (uri);
-						} catch (Exception e) {
-							Console.WriteLine ("Caught exception while crawling directory '" + subdir.Name + "':\n" + e.Message);
-						}
+							//} catch (Exception e) {
+							//Console.WriteLine ("Caught exception while crawling directory '" + subdir.Name + "':\n" + e.Message);
+							//}
 					}
 				}
 			}
@@ -354,15 +354,15 @@ class CrawlerTool {
 			string path = Path.Combine (HomeDir, ".recently-used");
 			XmlDocument doc;
 
-			try {
+			//try {
 				if (!File.Exists (path))
 					return;
 				doc = new XmlDocument ();
 				doc.Load (path);
-			} catch {
-				Console.WriteLine ("No File: {0}", path);
-				return;
-			}
+				//} catch {
+				//Console.WriteLine ("No File: {0}", path);
+				//return;
+				//}
 			XmlNodeList nodes = doc.SelectNodes ("/RecentFiles/RecentItem/URI");
 
 			foreach (XmlNode node in nodes)

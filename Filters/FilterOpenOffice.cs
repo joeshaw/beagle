@@ -115,7 +115,6 @@ namespace Beagle.Filters {
 
 		void WalkContentNodes (XmlNode node)
 		{
-			Console.WriteLine ("{0} {1}", node, node.NodeType);
 			switch (node.NodeType) {
 		
 			case XmlNodeType.Element:
@@ -172,7 +171,6 @@ namespace Beagle.Filters {
 				
 			case XmlNodeType.Text:
 				String text = node.Value;
-				Console.WriteLine (text);
 				AppendContent (text);
 				break;
 			}

@@ -148,10 +148,12 @@ namespace Beagle.Filters {
 		
 		private string PullContent ()
 		{
-			if (content == null)
+			if (content == null) {
 				DoPull ();
-			if (content == null)
+			}
+			if (content == null) {
 				return null;
+			}
 			string str = content.ToString ();
 			content = null;
 			return str;

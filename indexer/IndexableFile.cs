@@ -76,7 +76,7 @@ namespace Beagle {
 				HotContentReader = filter.HotContent;
 				foreach (String key in filter.Keys)
 					this [key] = filter [key];
-				stream.Close ();
+				//stream.Close ();
 			}
 
 			if (isDirectory) {

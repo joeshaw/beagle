@@ -167,52 +167,52 @@ namespace Beagle {
 		private Analyzer NewAnalyzer ()
 		{
 			return new BeagleAnalyzer ();
-		}
+		 }
 
-		//////////////////////////
+		 //////////////////////////
 
-		private String ToLucenePropertyKey (String key)
-		{
-			return "_" + key;
-		}
-	
-		private Document ToLuceneDocument (Indexable indexable)
-		{
-			indexable.Build ();
+		 private String ToLucenePropertyKey (String key)
+		 {
+			 return "_" + key;
+		 }
 
-			Document doc = new Document ();
-			Field f;
-			String str;
+		 private Document ToLuceneDocument (Indexable indexable)
+		 {
+			 indexable.Build ();
 
-			// First we add the Indexable's 'canonical' properties
-			// to the Document.
-			
-			f = Field.Keyword ("Uri", indexable.Uri);
-			doc.Add (f);
-			
-			f = Field.Keyword ("Type", indexable.Type);
-			doc.Add (f);
+			 Document doc = new Document ();
+			 Field f;
+			 String str;
 
-			if (indexable.MimeType != null) {
-				f = Field.Keyword ("MimeType", indexable.MimeType);
-				doc.Add (f);
-			}
-	    
-			if (indexable.ValidTimestamp) {
-				str = BU.StringFu.DateTimeToString (indexable.Timestamp);
-				f = Field.Keyword ("Timestamp", str);
-				doc.Add (f);
-			}
-			
-			if (indexable.ValidRevision) {
-				f = Field.UnIndexed ("Revision",
-						     RevisionToString (indexable.Revision));
-				doc.Add (f);
-			}
+			 // First we add the Indexable's 'canonical' properties
+			 // to the Document.
 
-			if (indexable.ContentReader != null) {
-				f = Field.Text ("Content", indexable.ContentReader);
-				doc.Add (f);
+			 f = Field.Keyword ("Uri", indexable.Uri);
+			 doc.Add (f);
+
+			 f = Field.Keyword ("Type", indexable.Type);
+			 doc.Add (f);
+
+			 if (indexable.MimeType != null) {
+				 f = Field.Keyword ("MimeType", indexable.MimeType);
+				 doc.Add (f);
+			 }
+
+			 if (indexable.ValidTimestamp) {
+				 str = BU.StringFu.DateTimeToString (indexable.Timestamp);
+				 f = Field.Keyword ("Timestamp", str);
+				 doc.Add (f);
+			 }
+
+			 if (indexable.ValidRevision) {
+				 f = Field.UnIndexed ("Revision",
+						      RevisionToString (indexable.Revision));
+				 doc.Add (f);
+			 }
+
+			 if (indexable.ContentReader != null) {
+				 f = Field.Text ("Content", indexable.ContentReader);
+				 doc.Add (f);
 			} else if (indexable.Content != null) {
 				f = Field.UnStored ("Content", indexable.Content);
 				doc.Add (f);
@@ -410,11 +410,11 @@ namespace Beagle {
 				log.Log ("Inserting {0} (type={1})",
 					 indexable.Uri, indexable.Type);
 				Document doc = null;
-				try {
+				//try {
 					doc = ToLuceneDocument (indexable);
-				} catch (Exception e) {
-					log.Log (e);
-				}
+					//} catch (Exception e) {
+					//log.Log (e);
+					//}
 				if (doc != null)
 					writer.AddDocument (doc);
 			}
