@@ -84,8 +84,8 @@ class QueryTool {
 
 	static bool QuitIfNoRecentResults ()
 	{
-		if ((DateTime.Now - lastQueryTime).Milliseconds > 150) {
-			Console.WriteLine ("No results in 150 milliseconds.  Quitting.");
+		if ((DateTime.Now - lastQueryTime).Milliseconds > 1000) {
+			Console.WriteLine ("No results in one second.  Quitting.");
 			Gtk.Application.Quit ();
 		}
 
