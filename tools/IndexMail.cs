@@ -593,6 +593,7 @@ namespace IndexMailTool {
 		{
 			foreach (Indexable i in toIndex)
 				indexer.Index (i);
+			toIndex = new ArrayList ();
 		}
 			
 
