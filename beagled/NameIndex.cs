@@ -184,7 +184,9 @@ namespace Beagle.Daemon {
 		{
 			if (unique_id == Guid.Empty) {
 				string msg = String.Format ("Attempt to add '{0}' to the NameIndex with unique_id=Guid.Empty", name);
-				throw new Exception (msg);
+				//throw new Exception (msg);
+				Logger.Log.Debug (msg);
+				return;
 			}
 
 			if (Debug && name != null)
@@ -200,8 +202,12 @@ namespace Beagle.Daemon {
 
 		public void Remove (Guid unique_id)
 		{
-			if (unique_id == Guid.Empty)
-				throw new Exception ("Attempt to remove unique_id=Guid.Empty from the NameIndex");
+			if (unique_id == Guid.Empty) {
+				string msg = "Attempt to remove unique_id=Guid.Empty from the NameIndex";
+				//throw new Exception ("Attempt to remove unique_id=Guid.Empty from the NameIndex");
+				Logger.Log.Debug (msg);
+				return;
+			}
 
 			if (Debug)
 				Logger.Log.Debug ("NameIndex.Remove: {0}",
