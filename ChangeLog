@@ -1,3 +1,8 @@
+2004-10-18  Robert Love  <rml@novell.com>
+
+	* glue/inotify-glue.c: clean this up; remove some cruft; do error
+	  checking on the read (removes a FIXME)
+
 2004-10-17  Todd Berman  <tberman@off.net>
 
 	* AUTHORS: Changing my email to reflect something that might reach me.
