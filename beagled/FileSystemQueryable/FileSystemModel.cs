@@ -1,0 +1,791 @@
+//
+// FileSystemModel.cs
+//
+// Copyright (C) 2005 Novell, Inc.
+//
+
+//
+// Permission is hereby granted, free of charge, to any person obtaining a
+// copy of this software and associated documentation files (the "Software"),
+// to deal in the Software without restriction, including without limitation
+// the rights to use, copy, modify, merge, publish, distribute, sublicense,
+// and/or sell copies of the Software, and to permit persons to whom the
+// Software is furnished to do so, subject to the following conditions:
+//
+// The above copyright notice and this permission notice shall be included in
+// all copies or substantial portions of the Software.
+//
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+// FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
+// DEALINGS IN THE SOFTWARE.
+//
+
+using System;
+using System.Collections;
+using System.Text;
+
+using Beagle.Daemon;
+using Beagle.Util;
+
+namespace Beagle.Daemon.FileSystemQueryable {
+
+	public class FileSystemModel {
+
+		public enum State {
+			Clean     = 0,
+			Unknown   = 1,
+			Dirty     = 2,
+			Unscanned = 3
+		}
+
+		public class Directory : IComparable {
+			
+			protected object big_lock;
+			protected string name;
+			protected string parent_name; // non-null only for roots of directory trees
+			protected State state = State.Unscanned;
+			protected object watch_handle;
+			protected DateTime last_crawl_time;
+			protected DateTime last_activity_time;
+
+			protected string cached_full_name;
+			protected int cached_depth = -1;
+
+			protected Directory parent;
+			protected Hashtable children = null;
+
+			protected Directory (object big_lock)
+			{
+				this.big_lock = big_lock;
+			}
+
+			public string Name {
+				get { return name; }
+			}
+
+			public string FullName {
+				get { 
+					lock (big_lock) {
+						if (cached_full_name == null) {
+							string directly_above = parent_name;
+							if (directly_above == null && parent != null) {
+								// FIXME: what if parent is null
+								directly_above = parent.FullName;
+							}
+							if (directly_above == null)
+								directly_above = "(null)";
+							cached_full_name = System.IO.Path.Combine (directly_above, name);
+						}
+						return cached_full_name;
+					}
+				}
+			}
+
+
+			public bool FullNameIsCached { // Sort of hacky
+				get { return cached_full_name != null; }
+			}
+		
+			public int Depth {
+				get {
+					lock (big_lock) {
+						if (cached_depth < 0) {
+							if (parent == null)
+								cached_depth = 0;
+							else
+								cached_depth = 1 + parent.Depth;
+						}
+						return cached_depth;
+					}
+				}
+			}
+
+			public State State {
+				get { return state; }
+			}
+
+			public bool NeedsCrawl {
+				get { 
+					lock (big_lock) {
+						return state == State.Dirty || state == State.Unknown;
+					}
+				}
+			}
+
+			public object WatchHandle {
+				get { return watch_handle; }
+			}
+
+			public bool IsWatched {
+				get { return watch_handle != null; }
+			}
+
+			public Directory Parent {
+				get { return parent; }
+			}
+			
+			public bool IsRoot {
+				get { return parent_name != null; }
+			}
+
+			public DateTime LastCrawlTime {
+				get { return last_crawl_time; }
+			}
+
+			public DateTime LastActivityTime {
+				get { return last_activity_time; }
+			}
+
+			///////////////////////////////////////////////////////////
+
+			public Directory GetChildByName (string child_name)
+			{
+				lock (big_lock) {
+					if (children != null)
+						return children [child_name] as Directory;
+					return null;
+				}
+			}
+
+			public bool HasChildByName (string child_name)
+			{
+				lock (big_lock) {
+					return children != null && children.Contains (child_name);
+				}
+			}
+
+			public int ChildCount {
+				get { 
+					lock (big_lock) {
+						return children != null ? children.Count : 0;
+					}
+				}
+			}
+
+			// We want to always return an empty list if we have no children, not null
+			public ICollection Children {
+				get { 
+					lock (big_lock) {
+						return children != null ? children.Values : new ArrayList ();
+					}
+				}
+			}
+
+			protected int CompareTo_Unlocked (object obj)
+			{
+				Directory other = obj as Directory;
+				if (other == null)
+					return 1;
+
+				int cmp;
+
+				cmp = DateTime.Compare (this.last_activity_time,
+							other.last_activity_time);
+				if (cmp != 0)
+					return cmp;
+
+				cmp = this.state - other.state;
+				if (cmp != 0)
+					return cmp;
+
+				cmp = other.Depth - this.Depth;
+				if (cmp != 0)
+					return cmp;
+				
+				cmp = DateTime.Compare (other.last_crawl_time,
+							this.last_crawl_time);
+				if (cmp != 0)
+					return cmp;
+				
+				return other.Name.CompareTo (this.Name);
+			}
+
+			public int CompareTo (object obj)
+			{
+				lock (big_lock)
+					return CompareTo_Unlocked (obj);
+			}
+			
+
+			///////////////////////////////////////////////////////////
+
+			public void Spew ()
+			{
+				lock (big_lock) {
+					Console.WriteLine ("    Name: {0}", this.Name);
+					Console.WriteLine ("   State: {0}", this.State);
+					Console.WriteLine ("FullName: {0}", this.FullName);
+					Console.WriteLine ("   Depth: {0}", this.Depth);
+				}
+			}
+			
+		}
+	
+
+		private class DirectoryPrivate : Directory {
+
+			public bool NeedsFinalWatches = true;
+
+			public DirectoryPrivate (object big_lock) : base (big_lock)
+			{
+
+			}
+
+			public string RootParentName {
+				get { return parent_name; }
+			}
+
+			public void SetState (State state)
+			{
+				this.state = state;
+			}
+
+			public void SetLastCrawlTime (DateTime dt)
+			{
+				this.last_crawl_time = dt;
+			}
+
+			public void SetWatchHandle (object handle)
+			{
+				this.watch_handle = handle;
+			}
+
+			public void SetFromFileAttributes (FileAttributesStore fa_store)
+			{
+				FileAttributes attr = fa_store.Read (FullName);
+				if (attr != null) {
+					last_crawl_time = attr.LastIndexedTime;
+				}
+			}
+
+			public void ReportActivity ()
+			{
+				last_activity_time = DateTime.Now;
+			}
+
+			public void InitRoot (string parent_name, string name)
+			{
+				this.parent_name = parent_name;
+				this.name = name;
+			}
+
+			public void Rename_Unlocked (string new_name)
+			{
+				if (name != new_name) {
+					name = new_name;
+					ClearCachedName_Unlocked ();
+				}
+			}
+
+			protected void ClearCached_Unlocked () 
+			{
+				if (cached_full_name != null || cached_depth >= 0) {
+					cached_full_name = null;
+					cached_depth = -1;
+				}
+
+				foreach (DirectoryPrivate priv in Children)
+					priv.ClearCached_Unlocked ();
+			}
+
+			protected void ClearCachedName_Unlocked () 
+			{
+				if (cached_full_name != null) {
+					cached_full_name = null;
+					foreach (DirectoryPrivate priv in Children)
+						priv.ClearCachedName_Unlocked ();
+				}
+			}
+
+			public void Detatch_Unlocked ()
+			{
+				if (parent != null) {
+					((DirectoryPrivate) parent).children.Remove (Name);
+					parent = null;
+					ClearCached_Unlocked ();
+				}
+			}
+	
+			public void AddChild_Unlocked (Directory new_child)
+			{
+				DirectoryPrivate new_child_priv = (DirectoryPrivate) new_child;
+
+				if (new_child.IsRoot)
+					throw new Exception ("Attempt to add a root directory as a child: " + new_child.FullName);
+				if (new_child_priv.parent != null)
+					throw new Exception ("Attempt to add an already-attached directory as a child: " + new_child.FullName);
+				if (this == new_child) 
+					throw new Exception ("Attempt to add " + Name + " as a child to itself");
+				
+				if (children != null && children.Contains (new_child.Name)) {
+					string msg = String.Format ("Can't add '{0}' below '{1}', a subdir of that name already exists",
+								    new_child.Name, FullName);
+					throw new Exception (msg);
+				}
+
+				new_child_priv.parent = this;
+				
+				if (children == null)
+					children = new Hashtable ();
+				children [new_child.Name] = new_child;
+			}
+
+			public Directory SearchForNextToCrawl_Unlocked (Directory candidate)
+			{
+				if (this.NeedsCrawl && (candidate == null || this.CompareTo_Unlocked (candidate) > 0))
+					candidate = this;
+				if (this.children != null) {
+					foreach (DirectoryPrivate subdir in this.children.Values)
+						candidate = subdir.SearchForNextToCrawl_Unlocked (candidate);
+				}
+				return candidate;
+			}
+
+			public void CountUncrawled_Unlocked (ref int uncrawled, ref int dirty)
+			{
+				if (NeedsCrawl) {
+					++uncrawled;
+					if (state == State.Dirty)
+						++dirty;
+				}
+
+				if (this.children != null) {
+					foreach (DirectoryPrivate subdir in this.children.Values) {
+						int child_uncrawled = 0;
+						int child_dirty = 0;
+						subdir.CountUncrawled_Unlocked (ref child_uncrawled, ref child_dirty);
+						uncrawled += child_uncrawled;
+						dirty += child_dirty;
+					}
+				}
+			}
+
+			public void PutDirectoriesInArray_Unlocked (ArrayList array)
+			{
+				if (NeedsCrawl)
+					array.Add (this);
+				if (this.children != null) {
+					foreach (DirectoryPrivate subdir in this.children.Values)
+						subdir.PutDirectoriesInArray_Unlocked (array);
+				}
+			}
+		}
+		
+
+		///////////////////////////////////////////////////////////////////////////
+		///////////////////////////////////////////////////////////////////////////
+		///////////////////////////////////////////////////////////////////////////
+		
+
+		object big_lock = new object ();
+		ArrayList roots = new ArrayList ();
+		Hashtable path_cache = new Hashtable ();
+		Queue to_be_scanned = new Queue ();
+		FileNameFilter filter = new FileNameFilter ();
+		FileAttributesStore fa_store = null;
+		IFileEventBackend event_backend;
+		int needs_crawl_count = 0;
+		int block_activity = 0;
+
+		public FileSystemModel (FileAttributesStore fa_store,
+					IFileEventBackend event_backend)
+		{
+			this.fa_store = fa_store;
+			this.event_backend = event_backend;
+		}
+
+		public ICollection Roots {
+			// We return a copy of the list of roots to avoid locking issues.
+			// In practice this shouldn't be a problem.
+			get { lock (big_lock) return roots.Clone () as ArrayList; }
+		}
+
+		public Directory AddRoot (string path)
+		{
+			// Remove trailing directory separators, which cause Path.FileName
+			// to return the empty string.
+			// (The below would be a stupid way to implement this if we ever expected
+			// to have to remove multiple trailing separators.)
+			while (path.Length > 0 && path [path.Length-1] == System.IO.Path.DirectorySeparatorChar)
+				path = path.Substring (0, path.Length-1);
+
+			Logger.Log.Debug ("Adding root {0}", path);
+				
+			DirectoryPrivate root = new DirectoryPrivate (big_lock);
+			root.InitRoot (System.IO.Path.GetDirectoryName (path), 
+				       System.IO.Path.GetFileName (path));
+			root.SetFromFileAttributes (fa_store);
+			
+			bool fire_scan_event = false;
+			lock (big_lock) {
+				// FIXME: We also should make sure the path is not a parent or child
+				// of any existing root.
+				foreach (Directory existing_root in roots) {
+					if (existing_root.FullName == root.FullName) {
+						throw new Exception ("Attempt to re-add root " + root.FullName);
+						// FIXME: Is there a case where we would
+						// want to just return existing_root?
+					}
+				}
+				roots.Add (root);
+				to_be_scanned.Enqueue (root);
+				if (to_be_scanned.Count == 1)
+					fire_scan_event = true;
+
+				path_cache [root.FullName] = root;
+			}
+
+			if (fire_scan_event && NeedsScanEvent != null)
+				NeedsScanEvent (this);
+
+			return root;
+		}
+
+		///////////////////////////////////////////////////////////////////////////
+
+		public Directory GetDirectoryByPath (string path)
+		{
+			// FIXME: We should probably canonize the path and
+			// make sure that it is not relative.
+			lock (big_lock) {
+				Directory dir = path_cache [path] as Directory;
+				if (dir == null) {
+
+					// Find the directory by walking the appropriate tree
+
+					string orig_path = path;
+					
+					// First, split the path up
+					ArrayList path_parts = new ArrayList ();
+					while (path != null) {
+						string part = System.IO.Path.GetFileName (path);
+						if (part.Length == 0) {
+							path_parts.Add (path);
+							break;
+						}
+						path = System.IO.Path.GetDirectoryName (path);
+						path_parts.Add (part);
+					}
+					path_parts.Reverse ();
+
+
+					int i = 0;
+
+					// Next, find the correct root
+					path = "";
+					for (i = 0; i < path_parts.Count && dir == null; ++i) {
+						path = System.IO.Path.Combine (path, (string) path_parts [i]);
+						foreach (Directory root in roots) {
+							if (root.FullName == path) {
+								dir = root;
+								break;
+							}
+						}
+					}
+
+					// Now walk down the root to find the directory
+					for (; i < path_parts.Count && dir != null; ++i) {
+						dir = dir.GetChildByName ((string) path_parts [i]);
+					}
+
+					// If we found it, cache it
+					if (dir != null)
+						path_cache [orig_path] = dir;
+				}
+
+				return dir;
+			}
+		}
+
+		private void RecursivelyRemoveFromPathCache_Unlocked (DirectoryPrivate priv)
+		{
+			if (priv.FullNameIsCached) {
+				path_cache.Remove (priv.FullName);
+				foreach (Directory subdir in priv.Children)
+					RecursivelyRemoveFromPathCache_Unlocked ((DirectoryPrivate) subdir);
+			}
+		}
+
+		///////////////////////////////////////////////////////////////////////////
+
+		public bool Ignore (string path)
+		{
+			return filter.Ignore (path) || FileSystem.IsSymLink (path);
+		}
+
+		public bool IsUpToDate (string path)
+		{
+			return this.fa_store.IsUpToDate (path);
+		}
+
+		///////////////////////////////////////////////////////////////////////////
+
+		public delegate void NeedsScanHandler (FileSystemModel source);
+		public event NeedsScanHandler NeedsScanEvent;
+
+		public bool NeedsScan {
+			get { lock (big_lock) { return to_be_scanned.Count > 0; } }
+		}
+
+		private void ScanOne_Unlocked (Directory dir)
+		{
+			DirectoryPrivate priv = (DirectoryPrivate) dir;
+
+			if (dir.State == State.Unscanned)
+				priv.SetWatchHandle (event_backend.WatchDirectories (priv.FullName));
+
+			Hashtable known_children = null;
+			if (dir.State != State.Unscanned) {
+				known_children = new Hashtable ();
+				foreach (Directory kid in dir.Children)
+					known_children [kid.Name] = true;
+			}
+
+			System.IO.DirectoryInfo info = new System.IO.DirectoryInfo (priv.FullName);
+			foreach (System.IO.DirectoryInfo subinfo in info.GetDirectories ()) {
+				if (! Ignore (subinfo.FullName)) {
+					if (! priv.HasChildByName (subinfo.Name))
+						AddChild_Unlocked (priv, subinfo.Name);
+				}
+				if (known_children != null)
+					known_children.Remove (subinfo.Name);
+			}
+
+			if (known_children != null) {
+				foreach (string lost_child_name in known_children.Keys) {
+					Directory lost_child = priv.GetChildByName (lost_child_name);
+					Delete (lost_child);
+				}
+			}
+
+			//if (dir.State == State.Unscanned)
+			//priv.SetWatchHandle (event_backend.WatchFiles (priv.FullName, priv.WatchHandle));
+
+			// If the LastWriteTime is more recent than the LastCrawlTime, we
+			// know that a file was added to or deleted from that directory,
+			// so we mark it as dirty.
+			// Otherwise we can't be sure if anything changed in that directory,
+			// so we mark it as unknown.
+			if (info.LastWriteTime > dir.LastCrawlTime)
+				priv.SetState (State.Dirty);
+			else
+				priv.SetState (State.Unknown);
+
+			++needs_crawl_count;
+		}
+
+		public void ScanAll ()
+		{
+			Stopwatch sw = new Stopwatch ();
+			sw.Start ();
+
+			ArrayList need_watches = new ArrayList ();
+
+			int count = 0;
+			bool fire_crawl_event = false;
+			lock (big_lock) {
+				int old_needs_crawl_count = needs_crawl_count;
+				while (true) {
+					Directory dir;
+					if (to_be_scanned.Count == 0)
+						break;
+					dir = to_be_scanned.Dequeue () as Directory;
+					ScanOne_Unlocked (dir);
+					need_watches.Add (dir);
+					++count;
+				}
+
+				foreach (DirectoryPrivate priv in need_watches) {
+					if (priv.NeedsFinalWatches) {
+						priv.SetWatchHandle (event_backend.WatchFiles (priv.FullName, priv.WatchHandle));
+						priv.NeedsFinalWatches = false;
+					}
+				}
+
+				if (old_needs_crawl_count == 0 && needs_crawl_count > 0)
+					fire_crawl_event = true;
+			}
+			
+			if (fire_crawl_event && NeedsCrawlEvent != null)
+				NeedsCrawlEvent (this);
+
+			Logger.Log.Debug ("Scanned {0} subdirs in {1}", count, sw);
+		}
+
+		///////////////////////////////////////////////////////////////////////////
+
+		public delegate void NeedsCrawlHandler (FileSystemModel source);
+		
+		public event NeedsCrawlHandler NeedsCrawlEvent;
+
+		public bool NeedsCrawl {
+			get { return needs_crawl_count > 0; }
+		}
+
+		// FIXME: This is inefficient, since we need to walk the entire data structure
+		// to find the next directory to crawl.
+		public Directory GetNextDirectoryToCrawl ()
+		{
+			Directory next_to_crawl = null;
+			lock (big_lock) {
+				if (needs_crawl_count == 0)
+					return null;
+				foreach (DirectoryPrivate root in roots)
+					next_to_crawl = root.SearchForNextToCrawl_Unlocked (next_to_crawl);
+			}
+			
+			return next_to_crawl;
+		}
+
+		public void GetUncrawledCounts (out int uncrawled, out int dirty)
+		{
+			uncrawled = 0;
+			dirty = 0;
+			lock (big_lock) {
+				foreach (DirectoryPrivate root in roots)
+					root.CountUncrawled_Unlocked (ref uncrawled, ref dirty);
+			}
+		}
+
+		public ICollection GetAllDirectories ()
+		{
+			ArrayList array = new ArrayList ();
+			lock (big_lock) {
+				foreach (DirectoryPrivate root in roots)
+					root.PutDirectoriesInArray_Unlocked (array);
+				array.Sort ();
+				array.Reverse ();
+			}
+			return array;
+		}
+
+		public void MarkAsCrawled (Directory dir, DateTime crawl_time)
+		{
+			DirectoryPrivate priv = (DirectoryPrivate) dir;
+
+			lock (big_lock) {
+				if (! priv.NeedsCrawl)
+					return;
+				priv.SetLastCrawlTime (crawl_time);
+				// FIXME: What if the directory changes between now and the
+				// crawl time... there is a race here.
+				if (priv.IsWatched) {
+					priv.SetState (State.Clean);
+					--needs_crawl_count;
+				} else {
+					// Re-scan post-crawl
+					ScanOne_Unlocked (priv);
+					if (priv.NeedsFinalWatches) {
+						priv.SetWatchHandle (event_backend.WatchFiles (priv.FullName, priv.WatchHandle));
+						priv.NeedsFinalWatches = false;
+					}
+
+					// Unwatched directory can never be clean
+					priv.SetState (State.Unknown);
+				}					
+
+				FileAttributes attr = fa_store.ReadOrCreate (priv.FullName);
+				attr.LastIndexedTime = priv.LastCrawlTime;
+
+				// FIXME: We should check the return value and make sure that
+				// the write succeeds.  (But what is the right behavior if it
+				// fails?)
+				fa_store.Write (attr);
+				
+			}
+		}
+
+		public void ReportActivity (Directory dir)
+		{
+			lock (big_lock) {
+				if (block_activity == 0)
+					((DirectoryPrivate) dir).ReportActivity ();
+			}
+		}
+
+		///////////////////////////////////////////////////////////////////////////
+
+		private void AddChild_Unlocked (DirectoryPrivate parent, string child_name)
+		{
+			DirectoryPrivate child = new DirectoryPrivate (big_lock);
+			child.Rename_Unlocked (child_name);
+			parent.AddChild_Unlocked (child);
+			child.SetFromFileAttributes (fa_store);
+			to_be_scanned.Enqueue (child);
+					
+		}
+
+		public void AddChild (Directory parent, string child_name)
+		{
+			DirectoryPrivate priv = (DirectoryPrivate) parent;
+			bool fire_scan_event = false;
+			lock (big_lock) {
+				AddChild_Unlocked (priv, child_name);
+				if (to_be_scanned.Count == 1)
+					fire_scan_event = true;
+			}
+			if (fire_scan_event && NeedsScanEvent != null)
+				NeedsScanEvent (this);
+		}
+		
+		public void Delete (Directory dir)
+		{			
+			DirectoryPrivate priv = (DirectoryPrivate) dir;
+			
+			lock (big_lock) {
+				RecursivelyRemoveFromPathCache_Unlocked (priv);
+				priv.Detatch_Unlocked ();
+			}
+		}
+
+		public void Rename (Directory dir, string new_name)
+		{
+			DirectoryPrivate priv = (DirectoryPrivate) dir;
+
+			lock (big_lock) {
+				RecursivelyRemoveFromPathCache_Unlocked (priv);
+				priv.Rename_Unlocked (new_name);
+			}
+		}
+
+		public void Move (Directory dir, Directory new_parent)
+		{
+			DirectoryPrivate priv = (DirectoryPrivate) dir;
+			DirectoryPrivate new_parent_priv = (DirectoryPrivate) new_parent;
+			
+			lock (big_lock) {
+				RecursivelyRemoveFromPathCache_Unlocked (priv);
+				priv.Detatch_Unlocked ();
+				new_parent_priv.AddChild_Unlocked (priv);
+			}
+		}
+
+		public void DoSpew (Directory dir)
+		{
+			StringBuilder builder = new StringBuilder ();
+			builder.Append (dir.IsRoot ? ">>> " : "    ");
+			builder.Append (' ', dir.Depth * 4);
+			builder.Append (dir.IsRoot ? dir.FullName : dir.Name);
+			Console.WriteLine (builder.ToString ());
+			foreach (Directory subdir in dir.Children)
+				DoSpew (subdir);
+		}
+
+		public void Spew ()
+		{
+			lock (big_lock) {
+				foreach (Directory dir in roots) {
+					DoSpew (dir);
+					Console.WriteLine ();
+				}
+			}
+		}
+
+		//////////////////////////////////////////////////////////////////////////////////
+		
+	}
+}

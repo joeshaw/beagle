@@ -391,7 +391,7 @@ namespace Beagle.Daemon {
 #if DBUS_IS_BROKEN_BROKEN_BROKEN
 				HoistHitsSubtractedAsStringEvent (uri_str);
 #else
-				HitsSubtractedAsStringEvent (this, UriFu.UrisToString (toSubtract));
+				HitsSubtractedAsStringEvent (this, uri_str);
 #endif
 			}
 			

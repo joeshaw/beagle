@@ -112,16 +112,21 @@ namespace Beagle.Util {
 
 		static Inotify ()
 		{
+			log = Logger.Get ("Inotify");
+
+			if (Environment.GetEnvironmentVariable ("BEAGLE_DISABLE_INOTIFY") != null) {
+				Logger.Log.Debug ("BEAGLE_DISABLE_INOTIFY is set");
+				return;
+			}
+
 			inotify_glue_init ();
 
 			dev_inotify = Syscall.open ("/dev/inotify", OpenFlags.O_RDONLY);
 			if (dev_inotify == -1)
-				throw new Exception ("Could not open /dev/inotify");
-
-			log = Logger.Get ("Inotify");
+				Logger.Log.Debug ("Could not open /dev/inotify");
 		}
 
-		static bool Enabled {
+		static public bool Enabled {
 			get { return dev_inotify >= 0; }
 		}
 
@@ -295,6 +300,9 @@ namespace Beagle.Util {
 
 		static public void Start ()
 		{
+			if (! Enabled)
+				return;
+
 			lock (event_queue) {
 				if (snarf_thread != null)
 					return;
@@ -311,6 +319,9 @@ namespace Beagle.Util {
 
 		static public void Stop ()
 		{
+			if (! Enabled)
+				return;
+
 			lock (event_queue) {
 				running = false;
 				Monitor.Pulse (event_queue);

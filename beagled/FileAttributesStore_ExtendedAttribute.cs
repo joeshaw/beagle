@@ -84,6 +84,8 @@ namespace Beagle.Daemon {
 				return attr;
 
 			} catch (Exception e) {
+				Logger.Log.Debug ("Caught exception reading EAs from {0}", path);
+				Logger.Log.Debug (e);
 				// FIXME: Do something smarter with the exception.
 				return null;
 			}
@@ -113,6 +115,8 @@ namespace Beagle.Daemon {
 				
 				return true;
 			} catch (Exception e) {
+				Logger.Log.Debug ("Caught exception writing EAs to {0}", attr.Path);
+				Logger.Log.Debug (e);
 				// FIXME: Do something smarter with the exception.
 				return false;
 			}

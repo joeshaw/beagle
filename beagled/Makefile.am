@@ -1,6 +1,9 @@
 
-CSC = mcs -g
+# Warnings we don't want to see
+# 0067 = event defined but not used
+# 0618 = Mono.Posix.Syscall is obsolete
 
+CSC = mcs -g -nowarn:0067,0618
 
 PLUGIN_TARGET = BeagleDaemonPlugins.dll
 
@@ -343,11 +346,15 @@ DAEMON_DLL_TARGET = BeagleDaemonLib.dll
 DAEMON_DLL_CSFLAGS = -target:library $(BEAGLE_DEFINES)
 
 fsqueryabledir = $(srcdir)/FileSystemQueryable
-FILE_SYSTEM_QUERYABLE_CSFILES =				\
-	$(fsqueryabledir)/FileNameFilter.cs		\
-	$(fsqueryabledir)/LastCrawlTime.cs		\
-	$(fsqueryabledir)/WatchedDirectory.cs		\
-	$(fsqueryabledir)/FileSystemQueryable.cs
+FILE_SYSTEM_QUERYABLE_CSFILES =					\
+	$(fsqueryabledir)/CrawlTask.cs				\
+	$(fsqueryabledir)/DirectoryIndexableGenerator.cs	\
+	$(fsqueryabledir)/FileNameFilter.cs			\
+	$(fsqueryabledir)/FileSystemModel.cs			\
+	$(fsqueryabledir)/FileSystemQueryable.cs		\
+	$(fsqueryabledir)/FileSystemWatcherBackend.cs		\
+	$(fsqueryabledir)/IFileEventBackend.cs			\
+	$(fsqueryabledir)/InotifyBackend.cs
 
 webhistqueryable = $(srcdir)/WebHistoryQueryable
 WEB_HISTORY_QUERYABLE_CSFILES =				\

@@ -178,7 +178,6 @@ namespace Beagle.Daemon {
 			UpToTheMainLoop up = UpToTheMainLoop.NewAdd (Proxy, indexable);
 			up.Run ();
 #else
-			Logger.Log.Debug ("+++ {0}", indexable.ToString ()); 
 			Proxy.Add (indexable.ToString ());
 #endif
 			++add_remove_count;

@@ -41,17 +41,37 @@ namespace Beagle.Daemon {
 
 		public FileAttributes Read (string path)
 		{
-			return ifas.Read (path);
+			lock (this) {
+				return ifas.Read (path);
+			}
+		}
+
+		public FileAttributes ReadOrCreate (string path)
+		{
+			lock (this) {
+				FileAttributes attr = ifas.Read (path);
+				if (attr == null) {
+					attr = new FileAttributes ();
+					attr.UniqueId = Guid.NewGuid ().ToString ();
+					attr.Path = path;
+					ifas.Write (attr);
+				}
+				return attr;
+			}
 		}
 
 		public bool Write (FileAttributes attr)
 		{
-			return ifas.Write (attr);
+			lock (this) {
+				return ifas.Write (attr);
+			}
 		}
 
 		public void Drop (string path)
 		{
-			ifas.Drop (path);
+			lock (this) {
+				ifas.Drop (path);
+			}
 		}
 
 		//////////////////////////////////////////////////////////
@@ -62,7 +82,8 @@ namespace Beagle.Daemon {
 
 			attr = Read (path);
 			
-			// FIXME: This check is incomplete
+			// FIXME: This check is incomplete, we should also check
+			// filter names, filter versions, etc.
 			return attr != null
 				&& attr.Path == path
 				&& FileSystem.GetLastWriteTime (path) <= attr.LastWriteTime;
@@ -70,12 +91,8 @@ namespace Beagle.Daemon {
 
 		public void AttachTimestamp (string path, DateTime mtime)
 		{
-			FileAttributes attr = new FileAttributes ();
+			FileAttributes attr = ReadOrCreate (path);
 
-			// FIXME?: we just assume that there won't be collisions.
-			attr.UniqueId = Guid.NewGuid ().ToString ();
-
-			attr.Path = path;
 			attr.LastWriteTime = mtime;
 			attr.LastIndexedTime = DateTime.Now;
 

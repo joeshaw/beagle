@@ -440,6 +440,9 @@ namespace Beagle.Daemon {
 						// This means that the generator didn't have an indexable
 						// to return this time through, but it does not mean that
 						// its processing queue is empty.
+						// FIXME: Shouldn't we just break if generated is null?
+						// Right now we just call GetNextIndexable a bunch of times
+						// when we don't have more work to do.
 						if (generated != null) {
 							queryable.CacheIndexableInfo (generated);
 							indexer.Add (generated);

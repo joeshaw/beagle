@@ -136,6 +136,7 @@ namespace Beagle.Daemon.FileSystemQueryable {
 						   "*.so",
 						   "*.exe",
 						   "*.dll",
+						   "*.mdb",
 						   "*.com",
 						   "*.csproj",
 						   "*.dsp",
