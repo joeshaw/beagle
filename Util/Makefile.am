@@ -11,24 +11,27 @@ GOOGLE_CS   = GoogleSearch.cs
 $(GOOGLE_CS): $(GOOGLE_WSDL)
 	wsdl -namespace:Beagle.Util -out:$@ $^
 
-CSFILES = 				\
-	$(srcdir)/camel.cs		\
-	$(srcdir)/gnome.cs		\
-	$(srcdir)/Vfs.cs		\
+CSFILES = 			        \
+	$(srcdir)/camel.cs              \
+	$(srcdir)/ExtendedAttribute.cs  \
 	$(srcdir)/FileMatcher.cs        \
-	$(srcdir)/FSpotTools.cs		\
-	$(srcdir)/Id3.cs		\
-	$(srcdir)/ImLog.cs		\
-	$(srcdir)/Logger.cs		\
-	$(srcdir)/MultiReader.cs	\
-	$(srcdir)/NautilusTools.cs	\
-	$(srcdir)/PullingReader.cs	\
-	$(srcdir)/StringFu.cs
+	$(srcdir)/FSpotTools.cs         \
+	$(srcdir)/gnome.cs              \
+	$(srcdir)/Id3.cs                \
+	$(srcdir)/ImLog.cs              \
+	$(srcdir)/Logger.cs             \
+	$(srcdir)/MultiReader.cs        \
+	$(srcdir)/NautilusTools.cs      \
+	$(srcdir)/PageCache.cs          \
+	$(srcdir)/PullingReader.cs      \
+	$(srcdir)/StringFu.cs           \
+	$(srcdir)/Vfs.cs
 
 ASSEMBLIES =				\
 	$(BEAGLE_UI_LIBS)		\
 	-r:System.Web.Services		\
-	-r:Mono.Data.SqliteClient
+	-r:Mono.Data.SqliteClient	\
+	-r:Mono.Posix
 
 
 $(TARGET): $(CSFILES) $(GOOGLE_CS)
