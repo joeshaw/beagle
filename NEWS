@@ -1,4 +1,14 @@
 
+Version 0.0.1
+June 10, 2004
+
+* Worked around Mono GC issues.
+* Enabled stemming.
+* Better relevancy computations.
+* Distinguish between sent and received e-mail.
+* Searchomatic!
+* Added logging of indexing operations.
+
 
 Version 0.0.0 (Initial release)
 June 3, 2004
