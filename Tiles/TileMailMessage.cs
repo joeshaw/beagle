@@ -44,12 +44,12 @@ namespace Beagle.Tile {
 
 		override protected string ExpandKey (string key)
 		{
-			bool sent = (hit ["_IsSent"] != null);
+			bool sent = (hit ["fixme:isSent"] != null);
 			string str;
 
 			switch (key) {
 			case "Subject":
-				str = hit ["Subject"];
+				str = hit ["fixme:subject"];
 				if (str == null)
 					str = "<i>No Subject</i>";
 				if (hit ["_IsDeleted"] != null)
@@ -57,16 +57,16 @@ namespace Beagle.Tile {
 				return str;
 				
 			case "Folder":
-				return hit ["Folder"];
+				return hit ["fixme:folder"];
 
 			case "ToFrom":
 				return sent ? "To" : "From";
 
 			case "Who":
-				return sent ? hit ["To"] : hit ["From"];
+				return sent ? hit ["fixme:to"] : hit ["fixme:from"];
 
 			case "When":
-				str = sent ? hit ["SentDate"] : hit ["Received"];
+				str = sent ? hit ["fixme:sentdate"] : hit ["fixme:received"];
 				return BU.StringFu.DateTimeToFuzzy (BU.StringFu.StringToDateTime (str));
 			}
 
@@ -83,19 +83,19 @@ namespace Beagle.Tile {
 			if (key == "Icon") {
 				string icon;
 
-				if (hit ["_IsAnswered"] != null)
+				if (hit ["fixme:isAnswered"] != null)
 					icon = "mail-replied.png";
-				else if (hit ["_IsSeen"] != null)
+				else if (hit ["fixme:isSeen"] != null)
 					icon = "mail-read.png";
 				else
 					icon = "mail.png";
 
 				ctx.Image (icon, new TileActionHandler (OpenMessage));
 
-				if (hit ["_IsFlagged"] != null)
+				if (hit ["fixme:isFlagged"] != null)
 					ctx.Image ("flag-for-followup.png");
 
-				if (hit ["_HasAttachments"] != null)
+				if (hit ["fixme:hasAttachments"] != null)
 					ctx.Image ("attachment.png");
 
 				return true;
