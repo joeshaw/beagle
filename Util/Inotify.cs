@@ -200,11 +200,13 @@ namespace Beagle.Util {
 			watchedByPath.Remove (info.Path);
 		}
 
-		public static void Ignore (string path)
+		public static int Ignore (string path)
 		{
 			EnabledCheck ();
 
 			path = Path.GetFullPath (path);
+
+			int wd = 0;
 
 			lock (theLock) {
 				
@@ -214,7 +216,9 @@ namespace Beagle.Util {
 				// If we aren't actually watching that path,
 				// silently return.
 				if (info == null) 
-					return;
+					return 0;
+
+				wd = info.Wd;
 
 				int retval = inotify_glue_ignore (fd, info.Wd);
 				if (retval < 0) {
@@ -224,6 +228,8 @@ namespace Beagle.Util {
 
 				Forget (info);
 			}
+
+			return wd;
 		}
 
 		// FIXME: If we move a directory that is being watched, the
@@ -293,9 +299,30 @@ namespace Beagle.Util {
 
 		static void Main (string [] args)
 		{
-			Inotify.Verbose = true; 
-			foreach (string arg in args)
-				Inotify.Watch (arg, InotifyEventType.All);
+			Queue to_watch = new Queue ();
+			bool recursive = false;
+
+			foreach (string arg in args) {
+				if (arg == "-r" || arg == "--recursive")
+					recursive = true;
+				else
+					to_watch.Enqueue (arg);
+			}
+
+			while (to_watch.Count > 0) {
+				string path = (string) to_watch.Dequeue ();
+
+				Console.WriteLine ("Watching {0}", path);
+				Inotify.Watch (path, InotifyEventType.All);
+
+				if (recursive) {
+					DirectoryInfo dir = new DirectoryInfo (path);
+					foreach (DirectoryInfo subdir in dir.GetDirectories ())
+						to_watch.Enqueue (subdir.FullName);
+				}
+			}
+
+			Inotify.Verbose = true;
 
 			while (Inotify.Enabled && Inotify.WatchCount > 0)
 				Thread.Sleep (1000);
