@@ -44,11 +44,9 @@ namespace Beagle.Daemon.FileSystemQueryable {
 
 		FileNameFilter filter;
 		CrawlQueue crawlQ;
-		Hashtable dirtyFiles = new Hashtable ();
 
 		public FileSystemQueryable () : base (Path.Combine (PathFinder.RootDir, "FileSystemIndex"))
 		{
-
 			string home = Environment.GetEnvironmentVariable ("HOME");
 			
 			filter = new FileNameFilter ();
@@ -88,12 +86,11 @@ namespace Beagle.Daemon.FileSystemQueryable {
 		private void Watch (string path)
 		{
 			Inotify.Watch (path, 
-				       InotifyEventType.CreateSubdir
-				       | InotifyEventType.CreateFile
-				       | InotifyEventType.Modify
+				       InotifyEventType.Open
+				       | InotifyEventType.CreateSubdir
 				       | InotifyEventType.DeleteSubdir
 				       | InotifyEventType.DeleteFile
-				       | InotifyEventType.Close
+				       | InotifyEventType.CloseWrite
 				       | InotifyEventType.QueueOverflow);
 		}
 
@@ -163,11 +160,6 @@ namespace Beagle.Daemon.FileSystemQueryable {
 				TraverseDirectory (fullPath, false);
 				return;
 				
-			case InotifyEventType.CreateFile:
-			case InotifyEventType.Modify:
-				dirtyFiles [fullPath] = true;
-				return;
-
 			case InotifyEventType.QueueOverflow:
 				// If the queue overflows, we can't make any
 				// assumptions about the state of the file system.
@@ -190,16 +182,10 @@ namespace Beagle.Daemon.FileSystemQueryable {
 			case InotifyEventType.DeleteFile:
 				crawlQ.ForgetPath (fullPath);
 				Driver.ScheduleDeleteFile (fullPath, 100);
-				dirtyFiles.Remove (fullPath);
 				break;
 
-			case InotifyEventType.Close:
-				if (dirtyFiles.Contains (fullPath)) {
-					Driver.ScheduleAddFile (FileSystem.New (fullPath), 100);
-					dirtyFiles.Remove (fullPath);
-				} else {
-					log.Debug ("{0} is not dirty", fullPath);
-				}
+			case InotifyEventType.CloseWrite:
+				Driver.ScheduleAddFile (FileSystem.New (fullPath), 100);
 				break;
 
 			}
