@@ -96,6 +96,7 @@ namespace Beagle.Daemon {
 			RemoteIndexerProxy proxy;
 			int magic_code;
 			string data;
+			string data2;
 			bool finished;
 
 			static public UpToTheMainLoop NewAdd (RemoteIndexerProxy proxy, Indexable indexable)
@@ -112,7 +113,7 @@ namespace Beagle.Daemon {
 				UpToTheMainLoop up = new UpToTheMainLoop ();
 				up.proxy = proxy;
 				up.magic_code = 1;
-				up.data = uri.ToString ();
+				up.data = UriFu.UriToSerializableString (uri);
 				return up;
 			}
 
@@ -132,24 +133,43 @@ namespace Beagle.Daemon {
 				return up;
 			}
 
+			static public UpToTheMainLoop NewRename (RemoteIndexerProxy proxy, Uri old_uri, Uri new_uri)
+			{
+				UpToTheMainLoop up = new UpToTheMainLoop ();
+				up.proxy = proxy;
+				up.magic_code = 4;
+				up.data = UriFu.UriToSerializableString (old_uri);
+				up.data2 = UriFu.UriToSerializableString (new_uri);
+				return up;
+			}
+
 			private bool IdleHandler ()
 			{
 				lock (this) {
 					if (! Shutdown.ShutdownRequested) {
 
-						switch (magic_code) {
-						case 0:
-							proxy.Add (data);
-							break;
-						case 1:
-							proxy.Remove (data);
-							break;
-						case 2:
-							proxy.Flush ();
-							break;
-						case 3:
-							proxy.Close ();
-							break;
+						try {
+							switch (magic_code) {
+							case 0:
+								proxy.Add (data);
+								break;
+							case 1:
+								proxy.Remove (data);
+								break;
+							case 2:
+								proxy.Flush ();
+								break;
+							case 3:
+								proxy.Close ();
+								break;
+								
+							case 4:
+								proxy.Rename (data, data2);
+								break;
+							}
+						} catch (Exception ex) {
+							Logger.Log.Debug ("Caught exception in RemoteIndexer.IdleHandler");
+							Logger.Log.Debug (ex);
 						}
 					}
 
@@ -217,7 +237,23 @@ namespace Beagle.Daemon {
 #else
 			RemoteIndexerProxy p = Proxy;
 			if (p != null) {
-				p.Remove (uri.ToString ());
+				p.Remove (UriFu.UriToSerializableString (uri));
+				++add_remove_count;
+			}
+#endif
+		}
+
+		public void Rename (Uri old_uri, Uri new_uri)
+		{
+#if DBUS_IS_BROKEN_BROKEN_BROKEN
+			UpToTheMainLoop up = UpToTheMainLoop.NewRename (Proxy, old_uri, new_uri);
+			if (up.Run ())
+				++add_remove_count;
+#else
+			RemoteIndexerProxy p = Proxy;
+			if (p != null) {
+				p.Rename (UriFu.UriToSerializableString (old_uri),
+					  UriFu.UriToSerializableString (new_uri));
 				++add_remove_count;
 			}
 #endif
@@ -225,6 +261,8 @@ namespace Beagle.Daemon {
 
 		public void Flush ()
 		{
+			Logger.Log.Debug ("RemoteIndexer.Flush");
+
 			if (add_remove_count == 0) {
 #if DBUS_IS_BROKEN_BROKEN_BROKEN
 				UpToTheMainLoop up = UpToTheMainLoop.NewClose (Proxy);
@@ -268,13 +306,15 @@ namespace Beagle.Daemon {
 			return p != null ? p.GetItemCount () : -1;
 		}
 
-		private void OnProxyChanged (string list_of_added_uris_as_string,
-					     string list_of_removed_uris_as_string)
+		private void OnProxyChanged (string list_of_added_uris_as_str,
+					     string list_of_removed_uris_as_str,
+					     string list_of_renamed_uris_as_str)
 		{
 			if (ChangedEvent != null)
 				ChangedEvent (this,
-					      UriFu.StringToUris (list_of_added_uris_as_string),
-					      UriFu.StringToUris (list_of_removed_uris_as_string));
+					      UriFu.StringToUris (list_of_added_uris_as_str),
+					      UriFu.StringToUris (list_of_removed_uris_as_str),
+					      UriFu.StringToUris (list_of_renamed_uris_as_str));
 		}
 
 		private void OnFlushComplete ()

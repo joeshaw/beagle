@@ -28,16 +28,21 @@ using System;
 using System.Collections;
 
 namespace Beagle.Daemon {
-
+	
+	// Renamed Uris are interleaved: old uri #1, new uri #1, old uri #2, new uri #2, ...
+	// Yes, I know that is ugly.
 	public delegate void IIndexerChangedHandler (IIndexer source,
 						     ICollection list_of_added_uris,
-						     ICollection list_of_removed_uris);
+						     ICollection list_of_removed_uris,
+						     ICollection list_of_renamed_uris);
 
 	public interface IIndexer {
 
 		void Add (Indexable indexable);
 
 		void Remove (Uri uri);
+
+		void Rename (Uri old_uri, Uri new_uri);
 
 		void Flush ();
 

@@ -50,6 +50,8 @@ namespace Beagle.IndexHelper {
 		public override event ChangedHandler ChangedEvent;
 		public override event FlushCompleteHandler FlushCompleteEvent;
 
+		static object [] empty_collection = new object [0];
+
 		public RemoteIndexerImpl (string name, IIndexer indexer, NameIndex name_index)
 		{
 			this.name = name;
@@ -68,10 +70,16 @@ namespace Beagle.IndexHelper {
 			public RemoteIndexerImpl Sender;
 			public string AddedUris;
 			public string RemovedUris;
+			public string RenamedUris;
 
 			private bool IdleHandler ()
 			{
-				Sender.ChangedEvent (AddedUris, RemovedUris);
+				try {
+					Sender.ChangedEvent (AddedUris, RemovedUris, RenamedUris);
+				} catch (Exception ex) {
+					Logger.Log.Debug ("Caught exception in RemoteIndexerImpl.HoistChanged.IdleHandler"); 
+					Logger.Log.Debug (ex);
+				}
 				return false;
 			}
 
@@ -82,21 +90,24 @@ namespace Beagle.IndexHelper {
 		}
 #endif
 
-		private void OnIndexerChanged (IIndexer source,
-					       ICollection list_of_added_uris,
-					       ICollection list_of_removed_uris)
+		public void OnIndexerChanged (IIndexer source,
+					      ICollection list_of_added_uris,
+					      ICollection list_of_removed_uris,
+					      ICollection list_of_renamed_uris)
 		{
 			string added_uris_str = UriFu.UrisToString (list_of_added_uris);
 			string removed_uris_str = UriFu.UrisToString (list_of_removed_uris);
+			string renamed_uris_str = UriFu.UrisToString (list_of_renamed_uris);
 
 #if DBUS_IS_BROKEN_BROKEN_BROKEN
 			HoistChanged hoist = new HoistChanged ();
 			hoist.Sender = this;
 			hoist.AddedUris = added_uris_str;
 			hoist.RemovedUris = removed_uris_str;
+			hoist.RenamedUris = renamed_uris_str;
 			hoist.Run ();
 #else
-			this.ChangedEvent (added_uris_str, removed_uris_str);
+			this.ChangedEvent (added_uris_str, removed_uris_str, renamed_uris_str);
 #endif
 		}
 
@@ -109,6 +120,11 @@ namespace Beagle.IndexHelper {
 			public ArrayList ToBeAdded = new ArrayList ();
 			public ArrayList ToBeRemoved = new ArrayList ();
 
+			// pseudo-FIXME:
+			// Right now we can only handle one rename at a time
+			public Uri OldUri;
+			public Uri NewUri;
+
 #if DBUS_IS_BROKEN_BROKEN_BROKEN
 			private bool FlushCompleteIdleHandler ()
 			{
@@ -118,31 +134,69 @@ namespace Beagle.IndexHelper {
 			}
 #endif
 
+			public void AddToBeRenamed (Uri old_uri, Uri new_uri)
+			{
+				if (OldUri != null || NewUri != null) {
+					Logger.Log.Error ("Called NextFlush.AddToBeRenamed twice on the same object!");
+					return;
+				}
+
+				OldUri = old_uri;
+				NewUri = new_uri;
+			}
+
 			public void DoFlush ()
 			{
-				foreach (Indexable indexable in ToBeAdded) {
-					Indexer.Add (indexable);
+				if (OldUri != null && NewUri != null) {
+
+					// This is the code for dealing with renames
+					
 					if (NameIndex != null
-					    && indexable.Uri.Scheme == "uid"
-					    && indexable.ContentUri.IsFile) {
-						Guid uid = GuidFu.FromUri (indexable.Uri);
-						string name = Path.GetFileName (indexable.ContentUri.LocalPath);
+					    && OldUri.Scheme == "uid"
+					    && NewUri.IsFile) {
+						Guid uid = GuidFu.FromUri (OldUri);
+						string name = Path.GetFileName (NewUri.LocalPath);
 						NameIndex.Add (uid, name);
 					}
-				}
 
-				foreach (Uri uri in ToBeRemoved) {
-					Indexer.Remove (uri);
-					if (NameIndex != null && uri.Scheme == "uid") {
-						Guid uid = GuidFu.FromUri (uri);
-						NameIndex.Remove (uid);
+				} else {
+
+					// ...and this is for adds and removals
+
+					foreach (Indexable indexable in ToBeAdded) {
+						Indexer.Add (indexable);
+						if (NameIndex != null
+						    && indexable.Uri.Scheme == "uid"
+						    && indexable.ContentUri.IsFile) {
+							Guid uid = GuidFu.FromUri (indexable.Uri);
+							string name = Path.GetFileName (indexable.ContentUri.LocalPath);
+							NameIndex.Add (uid, name);
+						}
 					}
+					
+					foreach (Uri uri in ToBeRemoved) {
+						Indexer.Remove (uri);
+						if (NameIndex != null && uri.Scheme == "uid") {
+							Guid uid = GuidFu.FromUri (uri);
+							NameIndex.Remove (uid);
+						}
+					}
+					
+					Indexer.Flush ();
+
 				}
-
-				Indexer.Flush ();
-
+					
 				if (NameIndex != null)
 					NameIndex.Flush ();
+
+				if (OldUri != null && NewUri != null) {
+					Uri [] renamed_uris = new Uri [2];
+					renamed_uris [0] = OldUri;
+					renamed_uris [1] = NewUri;
+
+					// Fire the change notification
+					Impl.OnIndexerChanged (null, empty_collection, empty_collection, renamed_uris);
+				}
 
 				if (Impl.CloseIfQueued ())
 					return;
@@ -263,7 +317,7 @@ namespace Beagle.IndexHelper {
 				Logger.Log.Debug ("CloseIfQueued on {0}", name);
 				safe_to_close = true;
 				if (queued_close) {
-					Logger.Log.Debug ("Actuallyed Closed on CloseIfQueued on {0}", name);
+					Logger.Log.Debug ("Actually Closed on CloseIfQueued on {0}", name);
 					CloseUnlocked ();
 					return true;
 				}
@@ -286,6 +340,20 @@ namespace Beagle.IndexHelper {
 			if (indexer != null) {
 				Uri uri = UriFu.UriStringToUri (uri_as_str);
 				next_flush.ToBeRemoved.Add (uri);
+			}
+		}
+
+		override public void Rename (string old_uri_as_str, string new_uri_as_str)
+		{
+			Uri old_uri = UriFu.UriStringToUri (old_uri_as_str);
+			Uri new_uri = UriFu.UriStringToUri (new_uri_as_str);
+
+			if (name_index != null) {
+				Logger.Log.Debug ("RENAME {0} => {1}", old_uri, new_uri);
+				next_flush.AddToBeRenamed (old_uri, new_uri);
+			} else {
+				Logger.Log.Error ("Called RemoteIndexerImpl.Rename when name_index == null");
+				Logger.Log.Error ("old_uri={0}, new_uri={1}", old_uri, new_uri);
 			}
 		}
 		

@@ -107,7 +107,7 @@ namespace Beagle.Util {
 
 			foreach (Uri uri in list_of_uris) {
 				sb.Append (" ");
-				sb.Append (uri.ToString ().Replace (" ", "%20"));
+				sb.Append (UriToSerializableString (uri).Replace (" ", "%20"));
 			}
 
 			return sb.ToString ();

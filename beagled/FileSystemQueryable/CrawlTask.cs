@@ -33,15 +33,12 @@ namespace Beagle.Daemon.FileSystemQueryable {
 
 	public class CrawlTask : Scheduler.Task {
 
-		LuceneQueryable queryable;
-		FileSystemModel model;
+		FileSystemQueryable queryable;
 		IIndexableGenerator current_generator;
 
-		public CrawlTask (LuceneQueryable queryable,
-				  FileSystemModel model)
+		public CrawlTask (FileSystemQueryable queryable)
 		{
 			this.queryable = queryable;
-			this.model = model;
 			this.Tag = "File System Crawler";
 			this.Priority = Scheduler.Priority.Generator;
 		}
@@ -67,6 +64,8 @@ namespace Beagle.Daemon.FileSystemQueryable {
 				Reschedule = true;
 				return;
 			}
+
+			FileSystemModel model = queryable.Model;
 
 			current_generator = null;
 
@@ -99,7 +98,7 @@ namespace Beagle.Daemon.FileSystemQueryable {
 									    new Scheduler.Hook (closure.Hook));
 
 			// Construct an indexable generator and add it to the scheduler
-			current_generator = new DirectoryIndexableGenerator (model, next_dir);
+			current_generator = new DirectoryIndexableGenerator (queryable, next_dir);
 			Scheduler.Task task = queryable.NewAddTask (current_generator);
 			task.AddTaskGroup (group);
 			ThisScheduler.Add (task, Scheduler.AddType.OptionallyReplaceExisting);

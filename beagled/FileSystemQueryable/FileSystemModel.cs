@@ -283,6 +283,16 @@ namespace Beagle.Daemon.FileSystemQueryable {
 			public void Rename_Unlocked (string new_name)
 			{
 				if (name != new_name) {
+					
+					if (Parent != null) {
+						DirectoryPrivate priv_parent = Parent as DirectoryPrivate;
+						priv_parent.children.Remove (name);
+						priv_parent.children [new_name] = this;
+					} else {
+						// FIXME: This is a root that is being renamed
+						// We should handle that case.
+					}
+
 					name = new_name;
 					ClearCachedName_Unlocked ();
 				}
@@ -397,8 +407,10 @@ namespace Beagle.Daemon.FileSystemQueryable {
 
 
 		object big_lock = new object ();
+		string fingerprint;
 		ArrayList roots = new ArrayList ();
 		Hashtable path_cache = new Hashtable ();
+		Hashtable by_unique_id = new Hashtable ();
 		Queue to_be_scanned = new Queue ();
 		FileNameFilter filter = new FileNameFilter ();
 
@@ -416,6 +428,7 @@ namespace Beagle.Daemon.FileSystemQueryable {
 					IFileEventBackend event_backend)
 		{
 			this.event_backend = event_backend;
+			this.fingerprint = index_fingerprint;
 
 			unique_id_store = new UniqueIdStore (index_directory, index_fingerprint);
 			name_index = new NameIndex (index_directory, index_fingerprint);
@@ -449,6 +462,7 @@ namespace Beagle.Daemon.FileSystemQueryable {
 			DirectoryPrivate root = new DirectoryPrivate (big_lock);
 			root.InitRoot (System.IO.Path.GetDirectoryName (path), 
 				       System.IO.Path.GetFileName (path));
+			by_unique_id [root.UniqueId] = root;
 			
 			FileAttributes attr = backing_store.ReadOrCreate (path);
 			root.SetFromFileAttributes (attr);
@@ -480,6 +494,11 @@ namespace Beagle.Daemon.FileSystemQueryable {
 		}
 
 		///////////////////////////////////////////////////////////////////////////
+
+		public Directory GetDirectoryByUniqueId (Guid uid)
+		{
+			return by_unique_id [uid] as Directory;
+		}
 
 		public Directory GetDirectoryByPath (string path)
 		{
@@ -546,14 +565,69 @@ namespace Beagle.Daemon.FileSystemQueryable {
 
 		///////////////////////////////////////////////////////////////////////////
 
+		public enum RequiredAction {
+			None,
+			Index,
+			Rename
+		}
+		
+		// When we return RequiredAction.Rename, previous_path is set to the last
+		// known name.  Otherwise it is null.
+		public RequiredAction DetermineRequiredAction (string path, out string previous_path)
+		{
+			Logger.Log.Debug ("*** What should we do with {0}?", path);
+			previous_path = null;
+
+			if (Ignore (path)) {
+				Logger.Log.Debug ("*** Ignoring {0}", path);
+				return RequiredAction.None;
+			}
+
+			FileAttributes attr = this.backing_store.Read (path);
+			if (attr == null) {
+				Logger.Log.Debug ("*** No attributes on {0}", path);
+				return RequiredAction.Index;
+			}
+
+			Mono.Posix.Stat stat;
+			try {
+				Mono.Posix.Syscall.stat (path, out stat);
+			} catch (Exception ex) {
+				Logger.Log.Debug ("Caught exception stating {0}", path);
+				Logger.Log.Debug (ex);
+				return RequiredAction.None;
+			}
+
+			// If the file has changed since we put on the
+			// attributes, index.
+			if (attr.LastWriteTime < stat.MTime) {
+				Logger.Log.Debug ("*** mtime has changed on {0}", path);
+				return RequiredAction.Index;
+			}
+
+			// If the inode has changed since it was last
+			// indexed, we might have been moved.
+			if (attr.LastIndexedTime < stat.CTime) {
+				string path_from_uid = PathFromUid (attr.UniqueId);
+				Logger.Log.Debug ("CTime check {0} {1} '{2}'", attr.LastIndexedTime, stat.CTime, path_from_uid);
+				if (path_from_uid == null) {
+					Logger.Log.Debug ("*** Unfamiliar Uid, indexing {0}", path);
+					return RequiredAction.Index;
+				} else if (path_from_uid != path) {
+					Logger.Log.Debug ("*** Path has changed, renaming {0} => {1}", previous_path, path);
+					previous_path = path_from_uid;
+					return RequiredAction.Rename;
+				}
+			}
+
+			Logger.Log.Debug ("*** Doing nothing to {0}", path);
+
+			return RequiredAction.None;
+		}
+
 		public bool Ignore (string path)
 		{
 			return filter.Ignore (path) || FileSystem.IsSymLink (path);
-		}
-
-		public bool IsUpToDate (string path)
-		{
-			return this.backing_store.IsUpToDate (path);
 		}
 
 		///////////////////////////////////////////////////////////////////////////
@@ -754,6 +828,7 @@ namespace Beagle.Daemon.FileSystemQueryable {
 			DirectoryPrivate child = new DirectoryPrivate (big_lock);
 			child.Rename_Unlocked (child_name);
 			parent.AddChild_Unlocked (child);
+			by_unique_id [child.UniqueId] = child;
 
 			FileAttributes attr = backing_store.ReadOrCreate (child.FullName);
 			child.SetFromFileAttributes (attr);
@@ -781,6 +856,9 @@ namespace Beagle.Daemon.FileSystemQueryable {
 			DirectoryPrivate priv = (DirectoryPrivate) dir;
 			
 			lock (big_lock) {
+				by_unique_id.Remove (priv.UniqueId);
+				unique_id_store.Drop (priv.UniqueId);
+
 				RecursivelyRemoveFromPathCache_Unlocked (priv);
 				priv.Detatch_Unlocked ();
 			}
@@ -793,6 +871,12 @@ namespace Beagle.Daemon.FileSystemQueryable {
 			lock (big_lock) {
 				RecursivelyRemoveFromPathCache_Unlocked (priv);
 				priv.Rename_Unlocked (new_name);
+
+				// Write the new name out to the store
+				unique_id_store.Add (priv.UniqueId, 
+						     priv.Parent != null ? priv.Parent.UniqueId : Guid.Empty,
+						     new_name,
+						     true);
 			}
 		}
 
@@ -805,6 +889,9 @@ namespace Beagle.Daemon.FileSystemQueryable {
 				RecursivelyRemoveFromPathCache_Unlocked (priv);
 				priv.Detatch_Unlocked ();
 				new_parent_priv.AddChild_Unlocked (priv);
+
+				// Write the new parent dir out to the store
+				unique_id_store.Add (priv.UniqueId, new_parent.UniqueId, priv.Name, true);
 			}
 		}
 
@@ -841,10 +928,12 @@ namespace Beagle.Daemon.FileSystemQueryable {
 
 		//////////////////////////////////////////////////////////////////////////////////
 
-		
-		// Map between internal and external Uris.
+		public string PathFromUid (Guid uid)
+		{
+			return unique_id_store.GetPathById (uid);
+		}
 
-		public Uri PathToInternalUri (string path)
+		public Guid PathToUid (string path)
 		{
 			Guid unique_id;
 
@@ -861,7 +950,15 @@ namespace Beagle.Daemon.FileSystemQueryable {
 				Directory dir = GetDirectoryByPath (dir_name);
 				unique_id = unique_id_store.GetIdByNameAndParentId (file_name, dir.UniqueId);
 			}
-			return GuidFu.ToUri (unique_id);
+
+			return unique_id;
+		}
+		
+		// Map between internal and external Uris.
+
+		public Uri PathToInternalUri (string path)
+		{
+			return GuidFu.ToUri (PathToUid (path));
 		}
 
 		public Uri ToInternalUri (Uri external_uri)
@@ -916,7 +1013,17 @@ namespace Beagle.Daemon.FileSystemQueryable {
 
 		public void Drop (string path)
 		{
+			Guid unique_id = PathToUid (path);
+			unique_id_store.Drop (unique_id);
+
 			backing_store.Drop (path);
+		}
+
+		//////////////////////////////////////////////////////////////////////////////////
+
+		public void DropUid (Guid unique_id)
+		{
+			unique_id_store.Drop (unique_id);
 		}
 		
 	}

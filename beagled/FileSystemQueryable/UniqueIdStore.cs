@@ -60,7 +60,7 @@ namespace Beagle.Daemon.FileSystemQueryable {
 				// FIXME: There should probably be some indexes on this db,
 				// at least for the id and name/parent_id.
 				DoNonQuery ("CREATE TABLE unique_ids (                     " +
-					    "  id              STRING NOT NULL,            " +
+					    "  id              STRING UNIQUE NOT NULL,     " +
 					    "  parent_id       STRING,                     " +
 					    "  name            STRING NOT NULL,            " +
 					    "  please_cache    BOOL                        " +

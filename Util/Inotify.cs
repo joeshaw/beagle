@@ -604,7 +604,7 @@ namespace Beagle.Util {
 			}
 
 			Inotify.Start ();
-			Inotify.Verbose = false;
+			Inotify.Verbose = true;
 
 			while (Inotify.Enabled && Inotify.WatchCount > 0)
 				Thread.Sleep (1000);

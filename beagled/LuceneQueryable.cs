@@ -136,15 +136,79 @@ namespace Beagle.Daemon {
 
 		/////////////////////////////////////////
 
+		protected virtual void AbusiveAddHook (Uri uri)
+		{
+
+		}
+
+		protected virtual void AbusiveRemoveHook (Uri uri)
+		{
+
+		}
+
+		protected virtual void AbusiveRenameHook (Uri old_uri, Uri new_uri)
+		{
+
+		}
+
+		/////////////////////////////////////////
+
+		// *** FIXME *** FIXME *** FIXME *** FIXME ***
+		// When we rename a directory, we need to somehow
+		// propagate change information to files under that
+		// directory.  Example: say that file foo is in
+		// directory bar, and there is an open query that
+		// matches foo.  The tile probably says something
+		// like "foo, in folder bar".
+		// Then assume I rename bar to baz.  That notification
+		// will go out, so a query matching bar will get
+		// updated... but the query matching foo will not.
+		// What should really happen is that the tile
+		// should change to say "foo, in folder baz".
+		// But making that work will require some hacking
+		// on the QueryResults.
+		// *** FIXME *** FIXME *** FIXME *** FIXME ***
+
 		private class ChangeData : IQueryableChangeData {
 			public ICollection AddedUris;
 			public ICollection RemovedUris;
 		}
 
-		private void OnIndexerChanged (IIndexer     source,
-					       ICollection  list_of_added_uris,
-					       ICollection  list_of_removed_uris)
+		private void OnIndexerChanged (IIndexer    source,
+					       ICollection list_of_added_uris,
+					       ICollection list_of_removed_uris,
+					       ICollection list_of_renamed_uris)
 		{
+			// If we have renamed uris, synthesize some approproate
+			// ChangeData.
+			// Right now we assume that there will never be adds/removes
+			// and renames in the same event.  That is true now, but could
+			// change in the future.
+			if (list_of_renamed_uris != null && list_of_renamed_uris.Count > 0) {
+
+				IEnumerator x = list_of_renamed_uris.GetEnumerator ();
+
+				while (x.MoveNext ()) {
+					Uri old_uri = x.Current as Uri;
+					if (from_internal_uris != null)
+						old_uri = from_internal_uris (old_uri);
+					if (x.MoveNext ()) {
+						Uri new_uri = x.Current as Uri;
+
+						AbusiveRenameHook (old_uri, new_uri);
+
+						Logger.Log.Debug ("*** Faking change data {0} => {1}", old_uri, new_uri);
+
+						ChangeData fake_change_data = new ChangeData ();
+						fake_change_data.AddedUris = new Uri [1] { new_uri };
+						fake_change_data.RemovedUris = new Uri [1] { old_uri };
+						QueryDriver.QueryableChanged (this, fake_change_data);
+					}
+				}
+
+				return;
+			}
+
 			// Walk across the list of removed Uris and drop them
 			// from the text cache.
 			foreach (Uri uri in list_of_removed_uris) {
@@ -155,10 +219,14 @@ namespace Beagle.Daemon {
 			// files with the cached timestamp.
 			foreach (Uri uri in list_of_added_uris) {
 				UseCachedIndexableInfo (uri);
+				AbusiveAddHook (uri);
 			}
 
 			// Propagate the event up through the Queryable.
 			ChangeData change_data = new ChangeData ();
+
+			// Keep a copy of the original list of Uris to remove
+			ICollection original_list_of_removed_uris = list_of_removed_uris;
 
 			// If necessary, remap Uris
 			if (from_internal_uris != null) {
@@ -178,6 +246,14 @@ namespace Beagle.Daemon {
 			
 			change_data.AddedUris = list_of_added_uris;
 			change_data.RemovedUris = list_of_removed_uris;
+
+			// We want to make sure all of our remappings are done
+			// before calling this hook, since it can (and should)
+			// break the link between uids and paths.
+			foreach (Uri uri in original_list_of_removed_uris) {
+				AbusiveRemoveHook (uri);
+			}
+
 			QueryDriver.QueryableChanged (this, change_data);
 		}
 
@@ -208,11 +284,13 @@ namespace Beagle.Daemon {
 			bool is_valid = HitIsValid (uri);
 
 			if (! is_valid) {
+
 				// FIXME: There is probably a race here --- what if the hit
 				// becomes valid sometime between calling HitIsValid
 				// and the removal task being executed?
 				if (to_internal_uris != null)
 					uri = to_internal_uris (uri);
+
 				Scheduler.Task task = NewRemoveTask (uri);
 				ThisScheduler.Add (task, Scheduler.AddType.DeferToExisting);
 			}
@@ -395,6 +473,21 @@ namespace Beagle.Daemon {
 			return task;
 		}
 
+		// old_uri should be an internal Uri
+		// new_uri should be an external Uri
+		public Scheduler.Task NewRenameTask (Uri old_uri, Uri new_uri)
+		{
+			LuceneTask task;
+			if (to_internal_uris != null)
+				old_uri = to_internal_uris (old_uri);
+			task = new LuceneTask (this, this.indexer, old_uri, new_uri);
+
+			// To avoid grouping with anything else, we create our own collector
+			task.Collector = new LuceneTaskCollector (indexer);
+			
+			return task;
+		}
+
 		public Scheduler.Task NewTaskFromHook (Scheduler.TaskHook hook)
 		{
 			Scheduler.Task task = Scheduler.TaskFromHook (hook);
@@ -447,8 +540,10 @@ namespace Beagle.Daemon {
 			// If non-null, add this Indexable
 			Indexable indexable = null;
 
-			// If non-null, remove this Uri
+			// If uri != null && other_uri == null, remove uri
+			// If both are non-null, rename uri => other_uri
 			Uri uri = null;
+			Uri other_uri = null;
 
 			// If non-null, add this IIndexableGenerator
 			IIndexableGenerator generator = null;
@@ -483,6 +578,17 @@ namespace Beagle.Daemon {
 				this.Weight = 0.499999;
 			}
 
+			public LuceneTask (LuceneQueryable queryable, IIndexer indexer, Uri old_uri, Uri new_uri) // Rename
+			{
+				this.queryable = queryable;
+				this.indexer = indexer;
+				this.uri = old_uri;
+				this.other_uri = new_uri;
+
+				this.Tag = String.Format ("{0} => {1}", old_uri, new_uri);
+				this.Weight = 0.1; // In theory renames are light-weight
+			}
+
 			public LuceneTask (LuceneQueryable queryable, IIndexer indexer, IIndexableGenerator generator) // Add Many
 			{
 				this.queryable = queryable;
@@ -502,6 +608,8 @@ namespace Beagle.Daemon {
 						queryable.CacheIndexableInfo (indexable);
 						indexer.Add (indexable);
 					}
+				} else if (uri != null && other_uri != null) {
+					indexer.Rename (uri, other_uri);
 				} else if (uri != null) {
 					indexer.Remove (uri);
 				} else if (generator != null) {

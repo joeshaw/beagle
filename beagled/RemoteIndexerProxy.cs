@@ -45,6 +45,9 @@ namespace Beagle.Daemon {
 		public abstract void Remove (string uri_as_str);
 
 		[Method]
+		public abstract void Rename (string old_uri_as_str, string new_uri_as_str);
+
+		[Method]
 		public abstract void Flush ();
 
 		[Method]
@@ -53,8 +56,9 @@ namespace Beagle.Daemon {
 		[Method]
 		public abstract void Close ();
 
-		public delegate void ChangedHandler (string list_of_added_uris_as_string,
-						     string list_of_removed_uris_as_string);
+		public delegate void ChangedHandler (string list_of_added_uris_as_str,
+						     string list_of_removed_uris_as_str,
+						     string list_of_renamed_uris_as_str);
 
 		[Signal]
 		public virtual event ChangedHandler ChangedEvent;

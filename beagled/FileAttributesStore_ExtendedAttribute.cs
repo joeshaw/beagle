@@ -51,7 +51,6 @@ namespace Beagle.Daemon {
 
 		const string fingerprint_attr = "Fingerprint";
 		const string unique_id_attr = "Uid";
-		const string path_attr = "Name";
 		const string last_mtime_attr = "MTime";
 		const string last_indexed_attr = "IndexTime";
 		const string filter_attr = "Filter";
@@ -74,7 +73,7 @@ namespace Beagle.Daemon {
 				string uid_str = ExtendedAttribute.Get (path, unique_id_attr);
 				attr.UniqueId = GuidFu.FromShortString (uid_str);
 
-				attr.Path = ExtendedAttribute.Get (path, path_attr);
+				attr.Path = path;
 				attr.LastWriteTime = StringFu.StringToDateTime (ExtendedAttribute.Get (path, last_mtime_attr));
 				
 				attr.LastIndexedTime = StringFu.StringToDateTime (ExtendedAttribute.Get (path, last_indexed_attr));
@@ -106,7 +105,6 @@ namespace Beagle.Daemon {
 				ExtendedAttribute.Set (attr.Path, fingerprint_attr, tmp);
 
 				ExtendedAttribute.Set (attr.Path, unique_id_attr, GuidFu.ToShortString (attr.UniqueId));
-				ExtendedAttribute.Set (attr.Path, path_attr, attr.Path);
 				ExtendedAttribute.Set (attr.Path, last_mtime_attr,
 						       StringFu.DateTimeToString (attr.LastWriteTime));
 
@@ -138,7 +136,6 @@ namespace Beagle.Daemon {
 			try {
 				ExtendedAttribute.Remove (path, fingerprint_attr);
 				ExtendedAttribute.Remove (path, unique_id_attr);
-				ExtendedAttribute.Remove (path, path_attr);
 				ExtendedAttribute.Remove (path, last_mtime_attr);
 				ExtendedAttribute.Remove (path, last_indexed_attr);
 				ExtendedAttribute.Remove (path, filter_attr);

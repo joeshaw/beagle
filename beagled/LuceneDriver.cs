@@ -241,6 +241,8 @@ namespace Beagle.Daemon {
 		// Public Indexing API
 		//
 
+		static object [] empty_collection = new object [0];
+
 		public void Add (Indexable indexable)
 		{
 			Uri uri = indexable.Uri;
@@ -261,6 +263,13 @@ namespace Beagle.Daemon {
 				pending_by_uri [uri] = null;
 				++pending_removals;
 			}
+		}
+
+		public void Rename (Uri old_uri, Uri new_uri)
+		{
+			Logger.Log.Error ("**** LuceneDriver does not support Rename!");
+			Logger.Log.Error ("**** old_uri={0}", old_uri);
+			Logger.Log.Error ("**** new_uri={0}", new_uri);
 		}
 
 		public int PendingAdds {
@@ -366,7 +375,7 @@ namespace Beagle.Daemon {
 
 			// Step #3: Fire off an event telling what we just did.
 			if (ChangedEvent != null) {
-				ChangedEvent (this, added_uris, removed_uris);
+				ChangedEvent (this, added_uris, removed_uris, empty_collection);
 			}
 
 			lock (pending_by_uri)
@@ -400,32 +409,9 @@ namespace Beagle.Daemon {
 			Stopwatch watch = new Stopwatch ();
 			watch.Start ();
 
-			bool optimize_in_process = true;
-
-#if false
-			if (optimizer_path != null) {
-				try {
-					// Try to optimize in an external process
-					Process p = new Process ();
-					p.StartInfo.UseShellExecute = true;
-					p.StartInfo.FileName = optimizer_path;
-					p.StartInfo.Arguments = StorePath;
-					p.Start ();
-					p.WaitForExit ();
-					optimize_in_process = false;
-				} catch (Exception ex) {
-					Log.Debug ("Caught exception while running beagle-index-optimizer");
-					Log.Debug (ex);
-				}
-			}
-#endif
-
-			if (optimize_in_process) {
-				Log.Debug ("Optimizing in-process.");
-				IndexWriter writer = new IndexWriter (Store, null, false);
-				writer.Optimize ();
-				writer.Close ();
-			}
+			IndexWriter writer = new IndexWriter (Store, null, false);
+			writer.Optimize ();
+			writer.Close ();
 
 			watch.Stop ();
 

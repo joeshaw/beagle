@@ -35,15 +35,16 @@ namespace Beagle.Daemon.FileSystemQueryable {
 
 	public class DirectoryIndexableGenerator : IIndexableGenerator {
 
+		FileSystemQueryable queryable;
 		FileSystemModel model;
 		FileSystemModel.Directory directory;
 		IEnumerator files;
 		bool done = false;
 
-		public DirectoryIndexableGenerator (FileSystemModel model,
+		public DirectoryIndexableGenerator (FileSystemQueryable queryable,
 						    FileSystemModel.Directory directory)
 		{
-			this.model = model;
+			this.queryable = queryable;
 			this.directory = directory;
 
 			if (this.directory == null)
@@ -53,6 +54,29 @@ namespace Beagle.Daemon.FileSystemQueryable {
 				files = info.GetFiles ().GetEnumerator ();
 			}
 		}
+
+		// return null if we don't need to index that file
+		private Indexable BuildIndexableForPath (string path)
+		{
+			FileSystemModel model = queryable.Model;
+
+			FileSystemModel.RequiredAction action;
+			string old_path;
+
+			action = model.DetermineRequiredAction (path, out old_path);
+			
+			if (action == FileSystemModel.RequiredAction.None)
+				return null;
+
+			if (action == FileSystemModel.RequiredAction.Rename) {
+				queryable.Rename (old_path, path, Scheduler.Priority.Delayed);
+				return null;
+			}
+			
+			Uri file_uri = UriFu.PathToFileUri (path);
+			Uri internal_uri = model.ToInternalUri (file_uri);
+			return FileSystemQueryable.FileToIndexable (file_uri, internal_uri, true);
+		}
 		
 		public Indexable GetNextIndexable ()
 		{
@@ -61,23 +85,15 @@ namespace Beagle.Daemon.FileSystemQueryable {
 
 			while (files.MoveNext ()) {
 				FileInfo f = files.Current as FileInfo;
-				if (! model.Ignore (f.FullName) && ! model.IsUpToDate (f.FullName)) {
-					Uri file_uri = UriFu.PathToFileUri (f.FullName);
-					Uri internal_uri = model.ToInternalUri (file_uri);
-					return FileSystemQueryable.FileToIndexable (file_uri, internal_uri, true);
-				}
+				Indexable indexable = BuildIndexableForPath (f.FullName);
+				if (indexable != null)
+					return indexable;
 			}
 
 			done = true;
 
 			// Finally, try to index the directory itself
-			if (! model.Ignore (directory.FullName) && ! model.IsUpToDate (directory.FullName)) {
-				Uri file_uri = UriFu.PathToFileUri (directory.FullName);
-				Uri internal_uri = model.ToInternalUri (file_uri);
-				return FileSystemQueryable.FileToIndexable (file_uri, internal_uri, true);
-			}
-
-			return null;
+			return BuildIndexableForPath (directory.FullName);
 		}
 
 		public bool HasNextIndexable ()

@@ -79,36 +79,6 @@ namespace Beagle.Daemon.FileSystemQueryable {
 
 		//////////////////////////////////////////////////////////////////////////
 
-		private FileNameFilter filter = new FileNameFilter ();
-
-		private bool IgnoreFile (string path)
-		{
-			if (FileSystem.IsSymLink (path))
-				return true;
-
-			if (filter.Ignore (path))
-				return true;
-			
-			return false;
-		}
-
-		public bool FileNeedsIndexing (string path)
-		{
-			if (! FileSystem.Exists (path))
-				return false;
-
-			if (FileSystem.IsSymLink (path))
-				return false;
-
-			if (filter.Ignore (path))
-				return false;
-
-			if (this.FileAttributesStore.IsUpToDate (path))
-				return false;
-			
-			return true;
-		}
-
 		public static Indexable FileToIndexable (Uri file_uri, Uri internal_uri, bool crawl_mode)
 		{
 			Indexable indexable = new FilteredIndexable (file_uri, crawl_mode);
@@ -121,18 +91,29 @@ namespace Beagle.Daemon.FileSystemQueryable {
 
 		public void Add (string path)
 		{
-			if (FileNeedsIndexing (path)) {
-				Scheduler.Task task;
-				Indexable indexable;
-				
-				Uri file_uri = UriFu.PathToFileUri (path);
-				Uri internal_uri = model.ToInternalUri (file_uri);
-				indexable = FileToIndexable (file_uri, internal_uri, false);
-				task = NewAddTask (indexable);
-				task.Priority = Scheduler.Priority.Immediate;
-				
-				ThisScheduler.Add (task);
+			FileSystemModel.RequiredAction action;
+			string old_path;
+
+			action = Model.DetermineRequiredAction (path, out old_path);
+			
+			if (action == FileSystemModel.RequiredAction.None)
+				return;
+
+			if (action == FileSystemModel.RequiredAction.Rename) {
+				Rename (old_path, path);
+				return;
 			}
+
+			Scheduler.Task task;
+			Indexable indexable;
+				
+			Uri file_uri = UriFu.PathToFileUri (path);
+			Uri internal_uri = model.ToInternalUri (file_uri);
+			indexable = FileToIndexable (file_uri, internal_uri, false);
+			task = NewAddTask (indexable);
+			task.Priority = Scheduler.Priority.Immediate;
+			
+			ThisScheduler.Add (task);
 		}
 
 		public void Remove (string path)
@@ -142,6 +123,70 @@ namespace Beagle.Daemon.FileSystemQueryable {
 			task = NewRemoveTask (uri);
 			task.Priority = Scheduler.Priority.Immediate;
 			ThisScheduler.Add (task);
+		}
+
+		public void Rename (string old_path, string new_path, Scheduler.Priority priority)
+		{
+			Uri old_uri = UriFu.PathToFileUri (old_path);
+			Uri new_uri = UriFu.PathToFileUri (new_path);
+			Scheduler.Task task;
+			task = NewRenameTask (old_uri, new_uri);
+			task.Priority = priority;
+			ThisScheduler.Add (task);
+		}
+
+		public void Rename (string old_path, string new_path)
+		{
+			Rename (old_path, new_path, Scheduler.Priority.Immediate);
+		}
+
+		//////////////////////////////////////////////////////////////////////////
+
+		override protected void AbusiveRemoveHook (Uri uri)
+		{
+			Logger.Log.Debug ("AbusiveRemoveHook: uri={0}", uri);
+			Model.DropUid (GuidFu.FromUri (uri));
+		}
+
+		override protected void AbusiveRenameHook (Uri old_uri, Uri new_uri)
+		{
+			Logger.Log.Debug ("AbusiveRenameHook: old_uri={0}", old_uri);
+
+			// If the thing being renamed is a directory, we have to update
+			// our model.
+			FileSystemModel.Directory dir = Model.GetDirectoryByPath (old_uri.LocalPath);
+
+			if (dir != null) {
+
+				Logger.Log.Debug ("AbusiveRenameHook: found directory");
+			
+				string new_dirname = Path.GetDirectoryName (new_uri.LocalPath);
+				string new_filename = Path.GetFileName (new_uri.LocalPath);
+
+				FileSystemModel.Directory new_parent = Model.GetDirectoryByPath (new_dirname);
+
+				Logger.Log.Debug ("AbusiveRenameHook: new_parent={0}", new_parent.FullName);
+			
+				if (dir.Name != new_filename) {
+					Logger.Log.Debug ("AbusiveRenameHook: new name is {0}", new_filename);
+					Model.Rename (dir, new_filename);
+				}
+
+				if (dir.Parent != new_parent) {
+					Logger.Log.Debug ("AbusiveRenameHook: new parent is {0}", new_parent.FullName);
+					Model.Move (dir, new_parent);
+				}
+			}
+
+			// Attach the current time as the last index time.
+			// We didn't actually index anything, of course, but we
+			// need to update this time so that future ctime checks
+			// will be accurate.
+			// This will also make the necessary adjustments to
+			// the unique ID store.
+			FileAttributes attr = FileAttributesStore.Read (new_uri.LocalPath);
+			attr.LastIndexedTime = DateTime.Now;
+			FileAttributesStore.Write (attr);
 		}
 
 		//////////////////////////////////////////////////////////////////////////
@@ -158,7 +203,7 @@ namespace Beagle.Daemon.FileSystemQueryable {
 		// launch a crawling task.
 		private void OnModelNeedsCrawl (FileSystemModel source)
 		{
-			CrawlTask task = new CrawlTask (this, source);
+			CrawlTask task = new CrawlTask (this);
 			ThisScheduler.Add (task, Scheduler.AddType.DeferToExisting);
 		}
 
