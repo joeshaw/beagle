@@ -1,4 +1,7 @@
-extensiondir = $(libdir)/epiphany/extensions
+
+# The extension needs to installed into Epiphany's prefix,
+# not Dewey's prefix.
+extensiondir = $(EPIPHANY_PREFIX)/lib/epiphany/extensions
 
 INCLUDES =				\
 	$(EPIPHANY_DEPENDENCY_CFLAGS)	\

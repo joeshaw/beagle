@@ -49,6 +49,9 @@ PKG_CHECK_MODULES(EPIPHANY_DEPENDENCY, \
 AC_SUBST(EPIPHANY_DEPENDENCY_CFLAGS)
 AC_SUBST(EPIPHANY_DEPENDENCY_LIBS)
 
+EPIPHANY_PREFIX="`$PKG_CONFIG --variable=prefix epiphany-1.2`"
+AC_SUBST(EPIPHANY_PREFIX)
+
 if test "x$have_epiphany_dependencies" = "xno"; then
    enable_epiphany_extension="no (missing dependencies)"
 else
