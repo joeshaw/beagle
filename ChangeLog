@@ -1,4 +1,8 @@
-2004-10-07  Chris Lahey  <clahey@ximian.com>
+2004-10-08  Christopher James Lahey  <clahey@ximian.com>
+
+	* images/Makefile.am, tools/Makefile.am: Fixed make distcheck.
+
+2004-10-07  Christopher James Lahey  <clahey@ximian.com>
 
 	* Util/Archive.cs: Unified interface for pulling data from an
 	archive file (gz, tar, bz2, zip).

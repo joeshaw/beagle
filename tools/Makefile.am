@@ -122,7 +122,8 @@ EXTRA_DIST =				\
 	$(QUERY_CSFILES)		\
 	$(INDEX_WEB_CONTENT_CSFILES)	\
 	$(INDEX_MAIL_CSFILES)		\
-	$(UPDATE_SCRIPT).in
+	$(UPDATE_SCRIPT).in		\
+	beagle-ping
 
 CLEANFILES = 				\
 	$(TARGETS)			\

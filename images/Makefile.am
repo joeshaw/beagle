@@ -55,6 +55,7 @@ RESOURCEFILES =					\
 	$(srcdir)/status-away.png		\
 	$(srcdir)/status-online.png		\
 	$(srcdir)/stock.png			\
+	$(srcdir)/trayicon.png			\
 	$(srcdir)/white.png
 
 # Makefile-fu to map /path/filename to -resource:/path/filename,filename
