@@ -25,6 +25,7 @@
 //
 
 using System;
+using BU = Beagle.Util;
 
 namespace Beagle.Tile {
 
@@ -39,10 +40,21 @@ namespace Beagle.Tile {
 			hit = _hit;
 		}
 
+		private string niceTime (string str)
+		{
+			DateTime dt = BU.StringFu.StringToDateTime (str);
+			return dt.ToString ();
+		}
+
 		override protected string ExpandKey (string key)
 		{
 			if (key == "Uri")
 				return hit.Uri.ToString ();
+			if (key == "nice_starttime")
+				return niceTime (hit ["fixme:starttime"]);
+			if (key == "nice_endtime")
+				return niceTime (hit ["fixme:endtime"]);
+
 			return hit [key];
 		}
 	}
