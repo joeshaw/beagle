@@ -27,7 +27,10 @@ namespace Dewey {
 
 		private const int VERSION = 1;
 
-		public IndexDriver () { }
+		public IndexDriver ()
+		{
+			BootstrapIndex ();
+		}
 
 		//////////////////////////
 		
@@ -121,11 +124,11 @@ namespace Dewey {
 			}
 
 			if (! indexExists)
-				Console.WriteLine ("Creating index.");
+				Spew ("Creating index.");
 			else if (! versionExists)
-				Console.WriteLine ("No version information.  Purging index.");
+				Spew ("No version information.  Purging index.");
 			else
-				Console.WriteLine ("Index format is obsolete.  Purging index.");
+				Spew ("Index format is obsolete.  Purging index.");
 
 			// If this looks like an old-style (pre-.dewey/Index) set-up,
 			// blow away everything in sight.
@@ -320,8 +323,6 @@ namespace Dewey {
 		// Add a set of items to the index
 		public void Add (IEnumerable indexables)
 		{
-			BootstrapIndex ();
-
 			ArrayList toBeDeleted = new ArrayList ();
 			ArrayList toBeInserted = new ArrayList ();
 
@@ -417,8 +418,6 @@ namespace Dewey {
 
 		private IEnumerable Query (Query query, int step)
 		{
-			BootstrapIndex ();
-
 			if (step > 0)
 				Spew ("Query Step {0}", step);
 
