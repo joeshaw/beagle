@@ -17,11 +17,11 @@
  * such as IN_CREATE, IN_DELETE, IN_OPEN, IN_CLOSE, ..., relative to the wd.
  */
 struct inotify_event {
-	__s32 wd;	/* watch descriptor */
-	__u32 mask;	/* watch mask */
-	__u32 cookie;	/* cookie used for synchronizing two events */
-	size_t len;	/* length (including nulls) of name */
-	char name[0];	/* stub for possible name */
+	__s32		wd;		/* watch descriptor */
+	__u32		mask;		/* watch mask */
+	__u32		cookie;		/* cookie to synchronize two events */
+	size_t		len;		/* length (including nulls) of name */
+	char		name[0];	/* stub for possible name */
 };
 
 /*
@@ -30,8 +30,8 @@ struct inotify_event {
  * Pass to the inotify device via the INOTIFY_WATCH ioctl
  */
 struct inotify_watch_request {
-	char *name;	/* directory name */
-	__u32 mask;	/* event mask */
+	char		*name;		/* filename name */
+	__u32		mask;		/* event mask */
 };
 
 /* the following are legal, implemented events */
@@ -67,12 +67,7 @@ struct inotify_watch_request {
 #include <linux/dcache.h>
 #include <linux/fs.h>
 #include <linux/config.h>
-
-struct inotify_inode_data {
-	struct list_head watches;	/* list of watches on this inode */
-	spinlock_t lock;		/* lock protecting the struct */
-	atomic_t count;			/* ref count */
-};
+#include <asm/atomic.h>
 
 #ifdef CONFIG_INOTIFY
 
@@ -82,7 +77,7 @@ extern void inotify_dentry_parent_queue_event(struct dentry *, __u32, __u32,
 					      const char *);
 extern void inotify_super_block_umount(struct super_block *);
 extern void inotify_inode_is_dead(struct inode *);
-extern __u32 inotify_get_cookie(void);
+extern u32 inotify_get_cookie(void);
 
 #else
 
@@ -106,7 +101,7 @@ static inline void inotify_inode_is_dead(struct inode *inode)
 {
 }
 
-static inline __u32 inotify_get_cookie(void)
+static inline u32 inotify_get_cookie(void)
 {
 	return 0;
 }
