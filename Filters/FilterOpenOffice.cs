@@ -131,11 +131,18 @@ namespace Beagle.Filters {
 		}
 
 		private Stack hot_nodes = new Stack ();
+		private Stack span_nodes = new Stack ();
+		private Stack part_hot_nodes = new Stack ();
+
 		bool WalkContentNodes (XmlReader reader)
 		{
 			// total number of elements to read per-pull
 			const int total_elements = 10;
 			int num_elements = 0;
+
+			// to handle partially formatted texts.
+			bool isPartiallyHot = false;
+			bool isTextSpanned = false;
 
 			while (reader.Read ()) {
 				switch (reader.NodeType) {
@@ -145,6 +152,17 @@ namespace Beagle.Filters {
 							AppendWhiteSpace ();
 						if (NodeBreaksTextAfter (reader.Name))
 							AppendWhiteSpace ();
+
+						// We check for a "whitespace" to identify
+						// partially formatted texts.
+						// In case if a *paragraph* ends with a *HOT* text
+						// we should be able to reset it.
+						// If "partiallyHot" flag is set, reset the *HOT*ness.
+						isPartiallyHot = false;
+						if (part_hot_nodes.Count > 0)
+							isPartiallyHot = (bool) part_hot_nodes.Pop ();
+						if (isPartiallyHot)
+							HotDown ();
 						continue;
 					}
 
@@ -152,6 +170,13 @@ namespace Beagle.Filters {
 						StudyStyleNode (reader); 
 						continue;
 					}
+
+					// Mark text as spanned
+					if (reader.Name == "text:span") {
+						isTextSpanned = true;
+						span_nodes.Push (isTextSpanned);
+					}
+					
 					// A node is hot if:
 					// (1) It's name is hot
 					// (2) It is flagged with a hot style
@@ -172,11 +197,10 @@ namespace Beagle.Filters {
 								break;
 							}
 							has_attr = reader.MoveToNextAttribute ();
-						
 						}
 						reader.MoveToElement();
 					} 
-
+					
 					hot_nodes.Push (isHot);
 				
 					if (isHot)
@@ -188,16 +212,65 @@ namespace Beagle.Filters {
 					if (NodeBreaksTextBefore (reader.Name))
 						AppendWhiteSpace ();
 					break;
+
 				case XmlNodeType.Text:
+
+					bool is_text_hot =  (bool) hot_nodes.Peek ();
+					
+					isPartiallyHot = false;
+					isTextSpanned = false;
+
+					if (part_hot_nodes.Count > 0)
+						isPartiallyHot = (bool) part_hot_nodes.Pop ();
+
+					if (span_nodes.Count > 0)
+						isTextSpanned = (bool) span_nodes.Peek ();
+
 					string text = reader.Value;
+
+					// Partially formatted texts are called *partiallyHot* texts.
+					// In case of partially Hot texts, 
+					//     (i) find the first occurrance of 
+					//         whitespace (ie.)
+					//             <continuation-of-partially-hot-text><whitespace><normaltext>
+					//     (ii) Add <continuation-of-partially-hot-text> to the textpool, 
+					//          which will eventually add it to hotpool, since HotUp is not reset.
+					//     (iii) call HotDown() to reset *HOT*ness.
+					if (isPartiallyHot) {
+						int index;
+						string strPartialText = null;
+						index = text.IndexOf (' ');
+						if (index > 0) {
+							strPartialText = text.Substring (0, index);
+							text = text.Substring (index);
+						}
+						if (strPartialText != null)
+							AppendText (strPartialText);
+						HotDown ();
+					} else 	if (is_text_hot && isTextSpanned && !text.EndsWith (" ")) {
+						isPartiallyHot = true;
+						part_hot_nodes.Push (isPartiallyHot);
+					}
 					AppendText (text);
 					break;
+
 				case XmlNodeType.EndElement:
+					if (reader.Name == "text:span")
+						span_nodes.Pop ();
+					
 					if (NodeBreaksTextAfter (reader.Name))
 						AppendWhiteSpace ();
 
 					bool is_hot = (bool) hot_nodes.Pop ();
-					if (is_hot)
+					isPartiallyHot = false;
+
+					if (part_hot_nodes.Count > 0)
+						isPartiallyHot = (bool) part_hot_nodes.Peek ();
+
+					// If text is *partiallyHot* do not reset
+					// the *HOT*ness, which will eventually be get reset
+					// when it finds an empty node or a text with whitespace.
+					if (is_hot && !isPartiallyHot)
 						HotDown ();
 				
 					if (NodeIsFreezing (reader.Name))
@@ -281,7 +354,7 @@ namespace Beagle.Filters {
 					reader.Read ();
 
 					AddProperty (Beagle.Property.New ("dc:subject",
-										 reader.Value));
+									  reader.Value));
 					break;
 					
 				case "meta:document-statistic":
@@ -306,7 +379,7 @@ namespace Beagle.Filters {
 
 					if (reader.Value != "") {
 						AddProperty (Beagle.Property.New ("fixme:UserDefined-" + name,
-											 reader.Value));
+										  reader.Value));
 					}
 					break;
 					

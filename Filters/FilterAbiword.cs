@@ -81,16 +81,11 @@ namespace Beagle.Filters {
 				return false;
 
 			propsTokens = props.Split (';');
-//					Console.WriteLine ("props={0}, tokens:{1}", props, propsTokens.Length);
 
 			if (propsTokens.Length > 0) {
 				for (int i = 0; i < propsTokens.Length; i++) {
 					
 					propAndValue = propsTokens[i].Split (':');
-//					Console.WriteLine ("{0} : {1} : {2} : {3}", propsTokens[i],
-//							   propsTokens.Length,
-//							   propAndValue[0],
-//							   propAndValue[1]);
 					switch (propAndValue[0].Trim()) {
 					case "font-weight": 
 						if (propAndValue[1] == "bold")
@@ -313,16 +308,31 @@ namespace Beagle.Filters {
 
 		String FileName = null;
 		XmlTextReader reader = null;
-		
+		ZipFile zip  = null;
+
 		override protected void DoOpen (FileInfo info)
 		{
 			hotStyles = new Hashtable ();
 			FileName = info.FullName;
+			//zip = new GZipFile (FileName);
 		}
 
 		override protected void DoPullProperties ()
 		{
-			XmlReader reader = new XmlTextReader (FileName);
+			string name = null;
+
+			if (zip != null) {
+				name = Path.GetFileNameWithoutExtension (FileName);
+				
+				//GZipEntry entry = zip.GetEntry (name+".abw");
+				//if (entry == null) {
+				//	Console.WriteLine ("No zip entry found!!");
+				//	return;
+				//}
+				//Stream meta_stream = zip.GetInputStream (entry);
+				//reader = new XmlTextReader (meta_stream);
+			} else 
+				reader = new XmlTextReader (FileName);
 			ExtractMetadata (reader);
 			reader.Close ();
 			reader = null;
