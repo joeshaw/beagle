@@ -120,8 +120,6 @@ namespace Beagle
 		private void OnHitsSubtractedAsString (QueryProxy sender, string uriString)
 		{
 			if (HitsSubtractedEvent != null && uriString.Length > 0) {
-				string[] uris = uriString.Split ('|');
-
 				ICollection uri_collection = UriFu.StringToUris (uriString);
 
 				if (uri_collection != null)
