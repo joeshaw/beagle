@@ -229,6 +229,9 @@ namespace Beagle.Daemon.FileSystemQueryable {
 
 		private PerDirectoryInfo GetPerDirectoryInfo (string dir)
 		{
+			if (dir == null)
+				return null;
+
 			PerDirectoryInfo info;
 			lock (perDirectoryCache) {
 				info = perDirectoryCache [dir] as PerDirectoryInfo;
@@ -260,7 +263,7 @@ namespace Beagle.Daemon.FileSystemQueryable {
 			string dir = Path.GetDirectoryName (path);
 			PerDirectoryInfo perDir = GetPerDirectoryInfo (dir);
 
-			if (perDir.Ignore (name))
+			if (perDir == null || perDir.Ignore (name))
 				return true;
 
 			// A file should be ignored if any of its parent directories
