@@ -37,7 +37,7 @@ AC_SUBST(ATK_LIBS)
 
 dnl ----------------------------------------------
 
-EVOLUTION_SHARP_REQUIRED_VERSION=0.3
+EVOLUTION_SHARP_REQUIRED_VERSION=0.5
 PKG_CHECK_MODULES(EVO_SHARP,						\
                   evolution-sharp >= $EVOLUTION_SHARP_REQUIRED_VERSION, \
                   enable_evo_sharp=yes,					\
