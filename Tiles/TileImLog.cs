@@ -51,10 +51,13 @@ namespace Beagle.Tile {
 		{
 			base.PopulateTemplate ();
 
-			Template["nice_duration"] = 
+			Template["nice_duration"] = "(" +
 				BU.StringFu.DurationToPrettyString (
 					   BU.StringFu.StringToDateTime (Hit ["fixme:endtime"]),
-					   BU.StringFu.StringToDateTime (Hit ["fixme:starttime"]));
+					   BU.StringFu.StringToDateTime (Hit ["fixme:starttime"])) + ")";
+			if (Template ["nice_duration"] == "()")
+				Template ["nice_duration"] = "";
+			
 #if false
 			Template["snippet"] = getSnippet ();
 #endif
