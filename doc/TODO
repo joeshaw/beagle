@@ -3,60 +3,58 @@ Filters
 =======
 
 We need filters:
-   MS Word/Powerpoint/Excel (Bindings for libgsf would help)
-   RTF
-   Abiword
-   Gnumeric
-   mp3, ogg (and any other audio format that can carry metadata)
-   pdf, postscript
-   png, jpeg (and any other image format that can carry metadata)
-   dvi (and maybe .tex -- we could just strip out the markup)
-   Man pages
-   Texinfo
-   XML documentation format used by MonoDoc
-   Code (throw away the code, extract comments and maybe strings)
 
-The OpenOffice filter needs to read the embedded metadata.  (This
-is blocking on bug 57907.)
+   - MS Word/Powerpoint/Excel (clahey has bindings in Mono cvs for
+     libgsf)
+   - RTF
+   - mp3, ogg (and any other audio format that can carry metadata)
+   - pdf, postscript
+   - png, jpeg (and any other image format that can carry metadata)
+   - dvi (and maybe .tex -- we could just strip out the markup)
+   - Man pages
+   - Texinfo
+   - XML documentation format used by MonoDoc
+   - Code (throw away the code, extract comments and maybe strings)
+   - Abiword
+   - Gnumeric
 
-The OpenOffice filter should notice when files are encrypted and fail
-gracefully.
+- The OpenOffice filter needs to read the embedded metadata. 
+
+- The OpenOffice filter should notice when files are encrypted and fail
+  gracefully.
 
 
 Indexing
 ========
 
-IndexableFile should store more file properties:
-   Ownership
-   Permissions
+Filesystem
+----------
 
-IndexMail needs to support IMAP.  The necessary changes to support Evo 1.5
-IMAP summaries have been made to camel.cs --- it is solely a question of
-walking ~/.evolution/mail/imap and doing the right thing.
+* It would be cool if the crawler could descend into
+  compressed/tarred/zipped files.  Perhaps it could use the GNOME VFS
+  methods for this?
 
-The crawler should have a fast 'partial crawl' mode which searches a random
-subset of the user's tree.  Ideally it would keep track of which directories
-contain files that change frequently, and have a higher probability of
-checking those during a partial crawl.
+* IndexableFile should store more file properties:
+     Ownership
+     Permissions
+     MTIME
 
-It would be cool if the crawler could descend into compressed/tarred/zipped
-files.
+Misc
+----
 
-It would also be cool if the mail crawler could index MIME attachments
-on mails in an mbox.  The mail indexer today just indexes the
-text/plain parts of a mail; at the very least it could index the HTML
-parts of a mail message.
+* A relatively easy project for someone would be to write a little
+  viewer for IM Logs that could be launched by clicking on an IM Log
+  tile.  There is code in Util/ImLog.cs for parsing gaim logs.
 
-A relatively easy project for someone would be to write a little viewer for IM
-Logs that could be launched by clicking on an IM Log tile.  There is code in
-Util/ImLog.cs for parsing gaim logs.
+Mail
+----
 
-How we deal with locking the lucene index is fairly stupid.  Right now we
-time out after 30 seconds of not being able to get the lock.  But since the
-lockfiles contain the locking processes PID and a timestamp, we should be
-able to:
-  (1) Fail immediately if the locking process no longer exists.
-  (2) Fail immediately if the process exists but the lock is too old
-      (i.e. more than a few hours?)
-  (3) Wait more-or-less indefinitely otherwise.
+* IndexMail needs to support IMAP.  The necessary changes to support
+  Evo 1.5 IMAP summaries have been made to camel.cs --- it is solely a
+  question of walking ~/.evolution/mail/imap and doing the right thing.
+
+* It would also be cool if the mail crawler could index MIME attachments
+  on mails in an mbox.  The mail indexer today just indexes the
+  text/plain parts of a mail; at the very least it could index the
+  HTML parts of a mail message.
 
