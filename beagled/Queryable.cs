@@ -64,7 +64,6 @@ namespace Beagle.Daemon {
 			
 		public bool AcceptQuery (QueryBody body)
 		{
-			Console.WriteLine ("{0}: {1}", Name, Domain);
 			return body != null
 				&& ! body.IsEmpty
 				&& body.AllowsSource (Name)
