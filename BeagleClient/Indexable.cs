@@ -205,8 +205,6 @@ namespace Beagle {
 
 			ContentUri = "file://" + filename;
 			DeleteContent = true;
-
-			Console.WriteLine ("saved to {0}", ContentUri);
 		}
 
 		public void RestoreStream () 
@@ -216,8 +214,6 @@ namespace Beagle {
 		public void ReadFromXml (string text)
 		{
 			XmlTextReader reader = new XmlTextReader (new StringReader (text));
-			Console.WriteLine ("reading {0}", text);
-			
 			ReadFromXml (reader);
 		}
 
@@ -261,8 +257,6 @@ namespace Beagle {
 			
 			writer.Close ();
 			stringWriter.Close ();
-
-			Console.WriteLine (stringWriter.ToString ());
 
 			return stringWriter.ToString ();
 		}

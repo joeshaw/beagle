@@ -32,11 +32,109 @@ using System.IO;
 using System.Text;
 using System.Text.RegularExpressions;
 
-using Beagle.Core;
+using Beagle;
 using BU = Beagle.Util;
 using Camel = Beagle.Util.Camel;
 
 namespace IndexMailTool {
+
+	public class PathFinder {
+
+		private PathFinder () { }
+
+		static public String RootDir {
+			get {
+				String homedir = Environment.GetEnvironmentVariable ("HOME");
+				String dir = Path.Combine (homedir, ".beagle-mail-crawler");
+				if (! Directory.Exists (dir)) {
+					Directory.CreateDirectory (dir);
+					// Make sure that ~/.beagle directory is only
+					// readable by the owner.
+					Mono.Posix.Syscall.chmod (dir,
+								  (Mono.Posix.FileMode) 448);
+				}
+				return dir;
+
+			}
+		}
+
+		static public String LogDir {
+			get {
+				string dir = Path.Combine (RootDir, "Log");
+				if (! Directory.Exists (dir))
+					Directory.CreateDirectory (dir);
+				return dir;
+			}
+		}
+
+		static private String AppDir {
+			get {
+				String dir = Path.Combine (RootDir, "App");
+				if (! Directory.Exists (dir))
+					Directory.CreateDirectory (dir);
+				return dir;
+			}
+		}
+
+		// We probably shouldn't expose this.  Use it only for good, not
+		// for evil.
+		static public String AppDataFileName (String appName, String dataName)
+		{
+			// FIXME: should make sure appName & dataName don't
+			// contain evil characters.
+			return Path.Combine (AppDir,
+					     String.Format ("{0}_-_-{1}", appName, dataName));
+		}
+
+		
+		static public bool HaveAppData (String appName, String dataName)
+		{
+			return File.Exists (AppDataFileName (appName, dataName));
+		}
+
+		static public Stream ReadAppData (String appName, String dataName)
+		{
+			return new FileStream (AppDataFileName (appName, dataName),
+					       FileMode.Open,
+					       FileAccess.Read);
+		}
+
+		static public String ReadAppDataLine (String appName, String dataName)
+		{
+			if (! HaveAppData (appName, dataName))
+				return null;
+
+			StreamReader sr = new StreamReader (ReadAppData (appName, dataName));
+			String line = sr.ReadLine ();
+			sr.Close ();
+
+			return line;
+		}
+
+		static public Stream WriteAppData (String appName, String dataName)
+		{
+			return new FileStream (AppDataFileName (appName, dataName),
+					       FileMode.Create,
+					       FileAccess.Write);
+		}
+
+		static public void WriteAppDataLine (String appName, String dataName, String line)
+		{
+			if (line == null) {
+				String fileName = AppDataFileName (appName, dataName); 
+				if (File.Exists (fileName))
+					File.Delete (fileName);
+				return;
+			}
+
+			StreamWriter sw = new StreamWriter (WriteAppData (appName, dataName));
+			sw.WriteLine (line);
+			sw.Close ();
+		}
+	}
+
+
+
 
 	public class LineReader {
 		
@@ -396,8 +494,6 @@ namespace IndexMailTool {
 	//////////////////////////////////////////////////////////////////	
 
 	public class IndexableMail : Indexable {
-
-		ArrayList props = new ArrayList ();
 		MailMessage message;
 
 		public IndexableMail (String accountId,
@@ -408,60 +504,55 @@ namespace IndexMailTool {
 			Uri = String.Format ("email://{0}/{1};uid={2}",
 					     accountId, folderName, messageInfo.uid);
 			Type = "MailMessage";
-			MimeType = null;
+			MimeType = "text/plain";
 
 			this.message = message;
 			Timestamp = messageInfo.Date;
 
 			// Assemble the metadata
-			props.Add (Property.New ("fixme:folder", folderName));
-			props.Add (Property.New ("fixme:subject", messageInfo.subject));
-			props.Add (Property.New ("fixme:to", messageInfo.to));
-			props.Add (Property.New ("fixme:from", messageInfo.from));
-			props.Add (Property.New ("fixme:cc", messageInfo.cc));
-			props.Add (Property.NewDate ("fixme:received", messageInfo.received));
-			props.Add (Property.NewDate ("fixme:sentdate", messageInfo.sent));
-			props.Add (Property.New ("fixme:mlist", messageInfo.mlist));
+			AddProperty (Property.New ("fixme:folder", folderName));
+			AddProperty (Property.New ("fixme:subject", messageInfo.subject));
+			AddProperty (Property.New ("fixme:to", messageInfo.to));
+			AddProperty (Property.New ("fixme:from", messageInfo.from));
+			AddProperty (Property.New ("fixme:cc", messageInfo.cc));
+			AddProperty (Property.NewDate ("fixme:received", messageInfo.received));
+			AddProperty (Property.NewDate ("fixme:sentdate", messageInfo.sent));
+			AddProperty (Property.New ("fixme:mlist", messageInfo.mlist));
 
 			if (folderName == "Sent")
-				props.Add (Property.NewFlag ("fixme:isSent"));
+				AddProperty (Property.NewFlag ("fixme:isSent"));
 
-			props.Add (Property.NewKeyword ("fixme:flags", messageInfo.flags));
+			AddProperty (Property.NewKeyword ("fixme:flags", messageInfo.flags));
 			
 			if (messageInfo.IsAnswered)
-				props.Add (Property.NewFlag ("fixme:isAnswered"));
+				AddProperty (Property.NewFlag ("fixme:isAnswered"));
 
 			if (messageInfo.IsDeleted)
-				props.Add (Property.NewFlag ("fixme:isDeleted"));
+				AddProperty (Property.NewFlag ("fixme:isDeleted"));
 
 			if (messageInfo.IsDraft)
-				props.Add (Property.NewFlag ("fixme:isDraft"));
+				AddProperty (Property.NewFlag ("fixme:isDraft"));
 
 			if (messageInfo.IsFlagged)
-				props.Add (Property.NewFlag ("fixme:isFlagged"));
+				AddProperty (Property.NewFlag ("fixme:isFlagged"));
 			
 			if (messageInfo.IsSeen)
-				props.Add (Property.NewFlag ("fixme:isSeen"));
+				AddProperty (Property.NewFlag ("fixme:isSeen"));
 
 			if (messageInfo.HasAttachments)
-				props.Add (Property.NewFlag ("fixme:hasAttachments"));
+				AddProperty (Property.NewFlag ("fixme:hasAttachments"));
 
 			if (messageInfo.IsAnsweredAll)
-				props.Add (Property.NewFlag ("fixme:isAnsweredAll"));
-		}
+				AddProperty (Property.NewFlag ("fixme:isAnsweredAll"));
 
-		override public TextReader GetTextReader ()
-		{
 			// Assemble the content, if we have any
 			if (message != null) {
 				BU.MultiReader multi = new BU.MultiReader ();
 				foreach (MailBody body in message.Bodies)
 					BodyToMultiReader (body, multi);
 				if (multi.Count > 0)
-					return multi;
+					SetTextReader (multi);
 			}
-
-			return null;
 		}
 
 		void BodyToMultiReader (MailBody body, BU.MultiReader multi)
@@ -487,7 +578,7 @@ namespace IndexMailTool {
 
 	public class MailScanner {
 
-		IndexDriver driver = new IndexDriver ();
+		Indexer indexer = Indexer.Get ();
 		ArrayList toIndex = new ArrayList ();
 		int count = 0;
 		private bool dumbterm = false;
@@ -498,21 +589,26 @@ namespace IndexMailTool {
 				dumbterm = true;
 		}
 
+		private void IndexList (ICollection indexables) 
+		{
+			foreach (Indexable i in toIndex)
+				indexer.Index (i);
+		}
+			
+
 		private void Schedule (Indexable indexable)
 		{
 			toIndex.Add (indexable);
 			++count;
 			if (toIndex.Count > 1000) {
-				driver.Add (toIndex);
-				driver.Optimize ();
-				toIndex.Clear ();
+				IndexList (toIndex);
 			}
 		}
 
 		public void Flush ()
 		{
 			if (toIndex.Count > 0)
-				driver.Add (toIndex);
+				IndexList (toIndex);
 		}
 
 		//////////////////////////
@@ -597,9 +693,9 @@ namespace IndexMailTool {
 
 					// Parse an RFC 2822 message from the array of lines
 					MailMessage msg = new MailMessage (reader, mi.size);
-
-					//Console.WriteLine ("From: {0}", mi.from);
-					//Console.WriteLine ("Subject: {0}", mi.subject);
+					
+					Console.WriteLine ("From: {0}", mi.from);
+					Console.WriteLine ("Subject: {0}", mi.subject);
 
 					Schedule (new IndexableMail ("local@local",
 								     folderName,
@@ -614,8 +710,8 @@ namespace IndexMailTool {
 			if (mboxStream != null)
 				mboxStream.Close ();
 
-			if (latestTime != lastTime)
-				PathFinder.WriteAppDataLine ("IndexMail", dataName, latestTime.Ticks.ToString ());
+			//			if (latestTime != lastTime)
+				//				PathFinder.WriteAppDataLine ("IndexMail", dataName, latestTime.Ticks.ToString ());
 		}
 
 	}

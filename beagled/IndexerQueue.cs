@@ -106,10 +106,10 @@ namespace Beagle.Daemon
 			
 			System.Console.WriteLine ("flushing {0}", toIndex.Count);
 
+			ArrayList toCleanup = toIndex;
 			toIndex = CallPreIndexingEvent (toIndex); 
 			if (toIndex.Count > 0) {
 				driver.QuickAdd (toIndex);
-				CleanupContent (toIndex);
 				didSomething = true;
 			}
 			
@@ -128,6 +128,8 @@ namespace Beagle.Daemon
 			}
 
 			CallPostIndexingEvent (toIndex);
+
+			CleanupContent (toCleanup);
 
 			System.Console.WriteLine ("done flushing", toIndex.Count);
 		}
