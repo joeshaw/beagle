@@ -85,9 +85,12 @@ namespace Beagle.Daemon.EvolutionMailDriver {
 					if (file.Name == "summary") {
 						if (FileIsInteresting (file))
 							summaries.Add (file);
-					} else if (File.Exists (file.FullName + ".ev-summary")) {
-						if (FileIsInteresting (file))
-							mboxes.Add (file);
+					} else if (file.Extension == ".ev-summary") {
+						string mbox_name = Path.Combine (file.DirectoryName,
+										 Path.GetFileNameWithoutExtension (file.Name));
+						FileInfo mbox_file = new FileInfo (mbox_name);
+						if (FileIsInteresting (mbox_file))
+							mboxes.Add (mbox_file);
 					}
 				}
 			}
