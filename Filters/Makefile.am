@@ -28,10 +28,9 @@ CSFILES = 				\
 	$(srcdir)/FilterOpenOffice.cs	\
 	$(srcdir)/FilterPdf.cs		\
 	$(srcdir)/FilterPng.cs		\
-	$(srcdir)/FilterText.cs	       \
-	$(srcdir)/FilterSource.cs     
-
-
+	$(srcdir)/FilterText.cs	        \
+	$(srcdir)/FilterSource.cs	\
+	$(srcdir)/FilterRTF.cs
 
 LOCAL_ASSEMBLIES =				\
 	../Util/Util.dll			\
