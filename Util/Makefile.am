@@ -36,6 +36,7 @@ CSFILES = 			        	\
 	$(srcdir)/Scheduler.cs			\
 	$(srcdir)/Stopwatch.cs			\
 	$(srcdir)/StringFu.cs           	\
+	$(srcdir)/StringMatcher.cs		\
 	$(srcdir)/SystemInformation.cs		\
 	$(srcdir)/UriFu.cs			\
 	$(srcdir)/Vfs.cs                        \
