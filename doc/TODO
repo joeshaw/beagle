@@ -44,8 +44,7 @@ checking those during a partial crawl.
 It would be cool if the crawler could descend into compressed/tarred/zipped
 files.
 
-
-
-   
-   
-   
+It would also be cool if the mail crawler could index MIME attachments
+on mails in an mbox.  The mail indexer today just indexes the
+text/plain parts of a mail; at the very least it could index the HTML
+parts of a mail message.
