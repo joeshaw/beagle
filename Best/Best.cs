@@ -20,6 +20,8 @@ namespace Best {
 	
 	class Best {
 
+		static public string DefaultWindowTitle = "Beagle Search (alpha)";
+
 		static void PrintUsageAndExit ()
 		{
 			string usage =

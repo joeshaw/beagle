@@ -73,7 +73,7 @@ namespace Best {
 
 		void CreateWindow (string query)
 		{
-			Title = "Beagle Search (beta)";
+			Title = Best.DefaultWindowTitle;
 
 			DeleteEvent += new DeleteEventHandler (this.DoDelete);
 			MapEvent += new MapEventHandler (MapIt);
