@@ -148,6 +148,11 @@ namespace Beagle.Daemon {
 		{
 			return "FIXME: Needs Status";
 		}
+
+		public int GetItemCount ()
+		{
+			return -1;
+		}
 	}
 
 	public class NetworkPeer
