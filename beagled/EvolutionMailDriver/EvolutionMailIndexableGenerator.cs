@@ -507,7 +507,12 @@ namespace Beagle.Daemon.EvolutionMailDriver {
 			string imap_start = dir_name.Substring (imap_start_idx);
 			this.imap_name = imap_start.Substring (0, imap_start.IndexOf ('/'));
 
-			this.accounts = (ICollection) GConfThreadHelper.Get ("/apps/evolution/mail/accounts");
+			try {
+				this.accounts = (ICollection) GConfThreadHelper.Get ("/apps/evolution/mail/accounts");
+			} catch (GConf.NoSuchKeyException) {
+				EvolutionMailQueryable.log.Warn ("There are no configured evolution accounts, ignoring {0}", this.imap_name);
+				return false;
+			}
 
 			foreach (string xml in this.accounts) {
 				XmlDocument xmlDoc = new XmlDocument ();
