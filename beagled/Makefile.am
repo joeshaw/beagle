@@ -378,10 +378,12 @@ $(DAEMON_DLL_TARGET): $(DAEMON_DLL_CSFILES) $(DAEMON_DLL_LOCAL_ASSEMBLIES)
 ###
 
 if ENABLE_WEBSERVICES
-SUBDIRS = webserver
+SUBDIRS = WebServices
 endif
 
-BEAGLE_XSP_TARGET = webserver/BeagleXsp.dll
+webservicesdir = $(srcdir)/WebServices
+
+BEAGLE_XSP_TARGET = $(webservicesdir)/WebServer/BeagleXsp.dll
 
 WEBSERVICES_BACKEND_LOCAL_ASSEMBLIES =			\
 	../Util/Util.dll		\
@@ -397,16 +399,17 @@ WEBSERVICES_BACKEND_ASSEMBLIES = \
 	-r:System.Web 				\
 	-r:System.Runtime.Remoting
 
-WEBSERVICES_BACKEND_TARGET  = BeagleWebServicesBackEnd.dll
-WEBSERVICES_BACKEND_CSFILES = $(srcdir)/WebBackEnd.cs $(srcdir)/WebServiceBackEnd.cs
+WEBSERVICES_BACKEND_ASSEMBLY  = BeagleWebServicesBackEnd.dll
+WEBSERVICES_BACKEND_TARGET  = $(webservicesdir)/$(WEBSERVICES_BACKEND_ASSEMBLY)
+WEBSERVICES_BACKEND_CSFILES = $(webservicesdir)/WebBackEnd.cs $(webservicesdir)/WebServiceBackEnd.cs
 
 WEBSERVICES_CSFLAGS = -target:library -noconfig
 
 $(WEBSERVICES_BACKEND_TARGET): $(WEBSERVICES_BACKEND_CSFILES) $(WEBSERVICES_BACKEND_LOCAL_ASSEMBLIES)
 	$(CSC) -o $@ $(WEBSERVICES_CSFLAGS) $(WEBSERVICES_BACKEND_CSFILES) $(WEBSERVICES_BACKEND_ASSEMBLIES)
 
-WEBSERVICES_FRONTEND_TARGET = BeagleWebServicesFrontEnd.dll
-WEBSERVICES_FRONTEND_CSFILES = $(srcdir)/WebFrontEnd.cs $(srcdir)/WebServiceFrontEnd.cs
+WEBSERVICES_FRONTEND_TARGET = $(webservicesdir)/BeagleWebServicesFrontEnd.dll
+WEBSERVICES_FRONTEND_CSFILES = $(webservicesdir)/WebFrontEnd.cs $(webservicesdir)/WebServiceFrontEnd.cs
 
 WEBSERVICES_FRONTEND_ASSEMBLIES = 	\
 	$(WEBSERVICES_BACKEND_ASSEMBLIES) 	\
@@ -416,10 +419,10 @@ WEBSERVICES_FRONTEND_ASSEMBLIES = 	\
 $(WEBSERVICES_FRONTEND_TARGET): $(WEBSERVICES_FRONTEND_CSFILES) $(WEBSERVICES_BACKEND_TARGET)
 	$(CSC) -o $@ $(WEBSERVICES_CSFLAGS) $(WEBSERVICES_FRONTEND_CSFILES) $(WEBSERVICES_FRONTEND_ASSEMBLIES)
 
-WEBSERVICES_RESOURCES = $(srcdir)/search.aspx \
-						$(srcdir)/search.asmx \
-						$(srcdir)/web.config  \
-						$(srcdir)/dog.png
+WEBSERVICES_RESOURCES = $(webservicesdir)/search.aspx \
+						$(webservicesdir)/search.asmx \
+						$(webservicesdir)/web.config  \
+						$(webservicesdir)/dog.png
 						
 XSP_DIR = /usr/local/share/doc/xsp/test/beagle
 XSPBIN_DIR = $(XSP_DIR)/bin
@@ -738,7 +741,7 @@ install-data-local: $(ALL_TARGETS)
 	$(INSTALL_DATA) $(INDEX_HELPER_TARGET) $(DESTDIR)$(pkglibdir)/$(INDEX_HELPER_TARGET)
 	$(INSTALL_SCRIPT) $(INDEX_HELPER_WRAPPER) $(DESTDIR)$(pkglibdir)/$(INDEX_HELPER_WRAPPER)
 if ENABLE_WEBSERVICES
-	$(INSTALL_DATA) $(WEBSERVICES_BACKEND_TARGET) $(DESTDIR)$(pkglibdir)/$(WEBSERVICES_BACKEND_TARGET)
+	$(INSTALL_DATA) $(WEBSERVICES_BACKEND_TARGET) $(DESTDIR)$(pkglibdir)/$(WEBSERVICES_BACKEND_ASSEMBLY)
 	$(mkinstalldirs) $(XSP_DIR)
 	$(INSTALL_DATA) $(WEBSERVICES_RESOURCES) $(XSP_DIR)
 	$(mkinstalldirs) $(XSPBIN_DIR)
@@ -748,7 +751,7 @@ endif
 
 uninstall-local:
 if ENABLE_WEBSERVICES
-	rm -f $(DESTDIR)$(pkglibdir)/$(WEBSERVICES_BACKEND_TARGET)
+	rm -f $(DESTDIR)$(pkglibdir)/$(WEBSERVICES_BACKEND_ASSEMBLY)
 	rm -rf $(XSP_DIR)
 endif
 	rm -f $(DESTDIR)$(pkglibdir)/$(PLUGIN_TARGET)
@@ -774,8 +777,7 @@ COND_CS_FILES = \
 	$(srcdir)/NetworkService.cs	\
 	$(srcdir)/NetworkDriver.cs	\
 	$(MOZILLA_QUERYABLE_CSFILES)	\
-	$(srcdir)/WebBackEnd.cs		\
-	$(srcdir)/WebServiceBackEnd.cs
+	$(WEBSERVICES_BACKEND_CSFILES)
 
 EXTRA_DIST = \
 	$(EXTSTR_IN)			\

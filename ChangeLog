@@ -1,3 +1,8 @@
+2005-03-31  Vijay K. Nanjundaswamy <knvijay@novell.com>
+
+	* configure.in, beagled/Makefile.am: Changes to work with webservices code moved into a sub-folder
+	* WebServices code: Moved into a new sub-folder named WebServices within beagled n
+
 2005-03-31  Veerapuram Varadhan  <vvaradhan@novell.com>
 
 	* beagled/Filter.cs: Defined a new variant of AppendText() with
