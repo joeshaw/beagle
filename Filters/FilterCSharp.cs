@@ -53,14 +53,13 @@ namespace Beagle.Filters {
 		public FilterCSharp ()
 		{
 			AddSupportedMimeType ("text/x-csharp");
-
 		}
 
 		override protected void DoOpen (FileInfo info)
 		{
 			foreach (string keyword in strKeyWords)
 				KeyWordsHash [keyword] = true;
-			SrcLangType = LangType.C_Style;
+			SrcLangType = LangType.C_Sharp_Style;
 		}
 
 		override protected void DoPull ()

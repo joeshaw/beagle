@@ -1,3 +1,10 @@
+2005-01-15  Veerapuram Varadhan	 <vvaradhan@novell.com>
+
+	* Filters/FilterSource.cs: Defined a style for C#.
+	C# doesn't allow spanning of single-line-comment-to-multiple-lines.
+
+	* Filters/FilterCSharp.cs: Langtype is C_Sharp_Style.
+	
 2005-01-10  Veerapuram Varadhan	 <vvaradhan@novell.com>
 
 	* glue/wv1-glue.c: Separate out the wvInit() call, should be

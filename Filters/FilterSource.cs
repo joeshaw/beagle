@@ -36,6 +36,7 @@ namespace Beagle.Filters {
 		protected enum LangType {
 			None,
 			C_Style,
+			C_Sharp_Style,
 			Python_Style,
 			Fortran_Style,
 			Pascal_Style
@@ -81,6 +82,7 @@ namespace Beagle.Filters {
 			for (index = 0; index < str.Length; index++) {
 				if ((str[index] == '/' || str[index] == '*') &&
 				    (SrcLangType == LangType.C_Style ||
+				     SrcLangType == LangType.C_Sharp_Style ||
 				     SrcLangType == LangType.Pascal_Style)) {		
 					splCharSeq += str[index];
 					
@@ -212,8 +214,10 @@ namespace Beagle.Filters {
 				// if a single-line-comment ends with a "\", 
 				// the lines that follows it are also considered as a comment,
 				// till a line with out a "\" is found
-				if (SrcLineType == LineType.SingleLineComment &&
-				    str[str.Length - 1] != '\\')
+				// C# doesn't follow this syntax.
+				if (SrcLangType == LangType.C_Sharp_Style ||
+				    (SrcLineType == LineType.SingleLineComment &&
+				     str.Length > 0 && str[str.Length - 1] != '\\'))
 					SrcLineType = LineType.None;
 			} else if (SrcLangType == LangType.Python_Style) {
 				if (token.Length > 0 && !Char.IsDigit (token[0])) {
