@@ -39,6 +39,7 @@ libinotifyglue_la_SOURCES =	\
 	inotify-glue.c
 
 libsysteminfoglue_la_SOURCES =	\
+	screensaver-glue.c	\
 	vmsize-glue.c
 
 libsysteminfoglue_la_LIBADD = @X_LIBS@
