@@ -225,11 +225,11 @@ install-data-local: $(PLUGIN_TARGET) $(DAEMON_TARGET)
 uninstall-local:
 	rm -f $(DESTDIR)$(bindir)/$(TARGET)
 
-bin_SCRIPTS = $(WRAPPER)
+bin_SCRIPTS = $(DAEMON_WRAPPER)
 
-$(WRAPPER): $(srcdir)/$(WRAPPER).in
+$(DAEMON_WRAPPER): $(srcdir)/$(DAEMON_WRAPPER).in
 	sed -e "s|\@prefix\@|$(prefix)|g" -e "s|\@pkglibdir\@|$(pkglibdir)|g" -e "s|\@target\@|$(TARGET)|g" -e "s|\@gacprefix\@|$(GAC_PREFIX)|g" < $^ > $@
-	chmod +x $(WRAPPER)
+	chmod +x $(DAEMON_WRAPPER)
 
 noinst_SCRIPTS=testclient
 
@@ -242,13 +242,13 @@ EXTRA_DIST =			\
 	$(PLUGIN_CSFILES)	\
 	$(DAEMON_CSFILES)	\
 	$(EXTSTR_IN)		\
-	$(WRAPPER).in   	\
+	$(DAEMON_WRAPPER).in   	\
 	TestClient.cs
 
 CLEANFILES =			\
 	$(PLUGIN_TARGET)       	\
 	$(DAEMON_TARGET)       	\
 	$(EXTSTR)		\
-	$(WRAPPER)      	\
+	$(DAEMON_WRAPPER)      	\
 	testclient      	\
 	TestClient.exe
