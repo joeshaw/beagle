@@ -173,7 +173,17 @@ namespace Best {
 		private void DoSearch (object o, EventArgs args)
 		{
 			root.Open ();
-			Search (entry.Text);
+			try {
+				Search (entry.Text);
+			}
+			catch (Exception e)
+			{
+				if (e.ToString ().IndexOf ("com.novell.Beagle") != -1)
+					root.Error ("The query for <i>" + entry.Text + "</i> failed." +
+						    "<br>The likely cause is that the beagle deamon isn't running.");
+				else
+					root.Error ("The query for <i>" + entry.Text + "</i> failed with error:<br><br>" + e);
+			}
 		}
 
 		//////////////////////////
