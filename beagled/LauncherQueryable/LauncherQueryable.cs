@@ -185,6 +185,9 @@ namespace Beagle.Daemon.LauncherQueryable {
 			indexable.Timestamp = file.LastWriteTime;
 			indexable.Type = "Launcher";
 			indexable.MimeType = "application/x-desktop";
+			
+			// desktop files must have a name
+			bool have_name = false;
 
 			String line;
 			while ((line = reader.ReadLine ()) != null)  {
@@ -193,16 +196,26 @@ namespace Beagle.Daemon.LauncherQueryable {
 					continue;
 				if (!sline[1].Equals (""))  {
 					// FIXME:  add other language support
-					if ((sline[0].Equals ("Exec")) || (sline[0].Equals ("Icon")) || (sline[0].Equals ("Name")) || (sline[0].Equals ("Comment"))) {
+					if (sline[0].Equals ("Exec")
+					    || sline[0].Equals ("Icon")
+					    || sline[0].Equals ("Name")
+					    || sline[0].Equals ("Comment")) {
+
+						if (sline[0].Equals ("Name"))
+							have_name = true;
+
 						StringBuilder property = new StringBuilder ("fixme:");
 						indexable.AddProperty (Beagle.Property.NewKeyword (property.Append(sline[0]).ToString (), sline[1]));
 					}
 				}
 			}
 			reader.Close ();
-			Scheduler.Task task = NewAddTask (indexable);
-			task.Priority = priority;
-			ThisScheduler.Add (task);
+			
+			if (have_name) {
+				    Scheduler.Task task = NewAddTask (indexable);
+				    task.Priority = priority;
+				    ThisScheduler.Add (task);
+			}
 		}
 	}
 }
