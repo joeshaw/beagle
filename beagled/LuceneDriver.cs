@@ -87,6 +87,24 @@ namespace Beagle.Daemon {
 			if (indexExists && ! fingerprintExists)
 				indexExists = false;
 
+			// If the index seems to exist but contains dangling locks,
+			// declare the index non-existent.
+			if (indexExists) {
+				DirectoryInfo lockDirInfo = new DirectoryInfo (lockDir);
+				if (! lockDirInfo.Exists)
+					indexExists = false;
+				else {
+					foreach (FileInfo info in lockDirInfo.GetFiles ()) {
+						if (info.Name.IndexOf (".lock") != -1) {
+							indexExists = false;
+							break;
+						}
+					}
+					if (! indexExists)
+						Console.WriteLine ("Found dangling locks in {0}", lockDir);
+				}
+			}
+
 			if (indexExists) {
 				// Read in the fingerprint
 				StreamReader sr = new StreamReader (fingerprintFile);
@@ -94,8 +112,10 @@ namespace Beagle.Daemon {
 
 			} else {
 				// Purge the directory if it exists.
-				if (Directory.Exists (dir))
+				if (Directory.Exists (dir)) {
+					Console.WriteLine ("Purging {0}", dir);
 					Directory.Delete (dir, true);
+				}
 
 				// Create all directories.
 				Directory.CreateDirectory (dir);
