@@ -188,7 +188,7 @@ AC_SUBST(MOZILLA_WARN_CXXFLAGS)
 dnl ----------------------------------------------
 
 AC_ARG_ENABLE([mozilla-backend],
-        [  --enable-mozilla-backend       Enable Network Service ],
+        [  --enable-mozilla-backend       Enable the Mozilla Backend ],
         enable_mozilla_backend=yes,
         enable_mozilla_backend=no)
 
