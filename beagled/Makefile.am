@@ -283,7 +283,6 @@ DAEMON_CSFILES =				\
 DAEMON_LOCAL_ASSEMBLIES =			\
 	../Util/Util.dll			\
 	../BeagleClient/Beagle.dll		\
-	../Indexer/Indexer.dll			\
 	./$(PLUGIN_TARGET)			\
 	./$(DAEMON_DLL_TARGET)
 
