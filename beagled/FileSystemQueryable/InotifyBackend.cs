@@ -87,8 +87,7 @@ namespace Beagle.Daemon.FileSystemQueryable {
 					     string            path,
 					     string            subitem,
 					     string            srcpath,
-					     Inotify.EventType type,
-					     uint              cookie)
+					     Inotify.EventType type)
 		{
 			// Filter out any events on unfamiliar watches
 			if (! watching.Contains (wd))

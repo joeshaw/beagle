@@ -154,8 +154,7 @@ namespace Beagle.Daemon.EvolutionMailDriver {
 					     string path,
 					     string subitem,
 					     string srcpath,
-					     Inotify.EventType type,
-					     uint cookie)
+					     Inotify.EventType type)
 		{
 			if (subitem == "" || ! watched.Contains (wd))
 				return;

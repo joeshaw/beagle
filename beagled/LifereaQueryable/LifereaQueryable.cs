@@ -117,8 +117,7 @@ namespace Beagle.Daemon.LifereaQueryable {
 					     string path,
 					     string subitem,
 					     string srcpath,
-					     Inotify.EventType type,
-					     uint cookie)
+					     Inotify.EventType type)
 		{
 			if (wd != liferea_wd)
 				return;

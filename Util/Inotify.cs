@@ -40,7 +40,7 @@ namespace Beagle.Util {
 
 	public class Inotify {
 
-		public delegate void Handler (int wd, string path, string subitem, string srcpath, EventType type, uint cookie);
+		public delegate void Handler (int wd, string path, string subitem, string srcpath, EventType type);
 
 		public static event Handler Event;
 
@@ -154,16 +154,21 @@ namespace Beagle.Util {
 		static Watched   last_watched = null;
 
 		private class PendingMove {
-			public string    SrcPath;
+			public Watched   Watch;
+			public string    SrcName;
+			public DateTime  Time;
 			public uint      Cookie;
 
-			public PendingMove (string srcpath, uint cookie) {
-				SrcPath = srcpath;
+			public PendingMove (Watched watched, string srcname, DateTime time, uint cookie) {
+				Watch = watched;
+				SrcName = srcname;
+				Time = time;
 				Cookie = cookie;
 			}
 		}
 
-		static Hashtable cookie_hash = new Hashtable();
+		static Hashtable cookie_hash = new Hashtable ();
+		static ArrayList cookie_list = new ArrayList ();
 
 		static public int WatchCount {
 			get { return watched_by_wd.Count; }
@@ -274,7 +279,6 @@ namespace Beagle.Util {
 			path = Path.GetFullPath (path);
 
 			lock (watched_by_wd) {
-
 				Watched watched;
 				watched = watched_by_path [path] as Watched;
 
@@ -448,17 +452,53 @@ namespace Beagle.Util {
 			MoveWatch (start, dstpath);
 		}
 
+		static private void SendEvent (Watched watched, string filename, string srcpath, EventType mask)
+		{
+			// Does the watch care about this event?
+			if ((watched.Mask & mask) == 0)
+				return;
+
+			if (Verbose) {
+				Console.WriteLine ("*** inotify: {0} {1} {2} {3} {4}",
+						   mask, watched.Wd, watched.Path,
+						   filename != "" ? filename : "\"\"",
+						   srcpath != null ? "(from " + srcpath + ")" : "");
+			}
+
+			if (Event != null) {
+				try {
+					Event (watched.Wd, watched.Path, filename, srcpath, mask);
+				} catch (Exception e) {
+					Logger.Log.Error ("Caught exception inside Inotify.Event");
+					Logger.Log.Error (e); 
+				}
+			}
+		}
+
 		static void DispatchWorker ()
 		{
 			Encoding filename_encoding = Encoding.UTF8;
-			string srcpath = null;
 
 			while (running) {
 				queued_event qe;
 
 				lock (event_queue) {
-					while (event_queue.Count == 0 && running)
-						Monitor.Wait (event_queue);
+					while (event_queue.Count == 0 && running) {
+						// Find all unmatched MovedFrom events and process them.  We expire in
+						// five seconds.  This is quite conservative, but what is the rush?
+						// Would be nice to not do this here and not have to wake up every 5 secs
+						for (int i = 0; i < cookie_list.Count; i++) {
+							PendingMove pending = cookie_list[i] as PendingMove;
+							if (pending.Time.AddSeconds (5) < DateTime.Now) {
+								SendEvent (pending.Watch, pending.SrcName, null,
+									   EventType.MovedFrom);
+								cookie_hash.Remove (pending);
+								cookie_list.Remove (pending);
+							}
+						}
+
+						Monitor.Wait (event_queue, 5);			
+					}
 					if (!running)
 						break;
 					qe = (queued_event) event_queue.Dequeue ();
@@ -481,43 +521,48 @@ namespace Beagle.Util {
 				// (regardless of the actual watched.Mask) and fix up watched.Path and the
 				// path of all subdirectories.
 				//
+				// We also have to handle unmatched events.  As we presume MovedTo always
+				// follows MovedFrom, we only need to handle unmatched MoveFrom's
+				// explicitly (unmatched MovedFrom's have srcpath=null in Inotify.Event).
+				// We handle the expiration process above, in the idle loop.
+				//
 				// Unfortunately, we have to handle the Directory.Exists() test a bit
 				// roundabout, because watched.Path during MovedFrom no longer exists.
 				if (qe.iev.mask == EventType.MovedFrom) {
-					srcpath = Path.Combine (watched.Path, filename);
-					PendingMove pending = new PendingMove (srcpath, qe.iev.cookie);
+					PendingMove pending = new PendingMove (watched, filename, DateTime.Now,
+									       qe.iev.cookie);
 					cookie_hash [pending.Cookie] = pending;
-					//continue; // Wait for a possible matching MovedTo
+					cookie_list.Add (pending);
+					continue; // Wait for a possible matching MovedTo
 				}
+				string srcpath = null;
 				if (qe.iev.mask == EventType.MovedTo) {
 					PendingMove pending = cookie_hash [qe.iev.cookie] as PendingMove;
 					if (pending != null) {
 						string dstpath = Path.Combine (watched.Path, filename);
-						srcpath = pending.SrcPath;
+						srcpath = Path.Combine (pending.Watch.Path, pending.SrcName);
 						if (Directory.Exists (dstpath))
 							HandleMove (srcpath, dstpath);
 						cookie_hash.Remove (pending);
+						cookie_list.Remove (pending);
 					}
-				}
 
-				// If this event matches the watches mask, handle it
-				if ((watched.Mask & qe.iev.mask) != 0) {
-					if (Verbose) {
-						Console.WriteLine ("*** inotify: {0} {1} {2} {3} {4} ({5})",
-								   qe.iev.mask, watched.Wd, watched.Path,
-								   filename != "" ? filename : "\"\"", qe.iev.cookie,
-								   srcpath != null ? srcpath : "na");
-					}
-					if (Event != null) {
-						try {
-							Event (watched.Wd, watched.Path, filename, srcpath,
-							       qe.iev.mask, qe.iev.cookie);
-						} catch (Exception e) {
-							Logger.Log.Error ("Caught exception inside Inotify.Event");
-							Logger.Log.Error (e); 
+					// This gets prettier and prettier.  Like my Ex-Wife.  Since we delay
+					// unmatched MovedFrom events until they expire, a MovedFrom+MovedTo
+					// combination on the same file out and back into a watched directory
+					// can race and arrive as MovedTo+MovedFrom.  That is bad.
+					for (int i = 0; i < cookie_list.Count; i++) {
+						PendingMove race = cookie_list[i] as PendingMove;
+						if (race.Watch.Wd == watched.Wd && race.SrcName == filename) {
+							// Expire this MovedFrom and send it out right immediately
+							SendEvent (race.Watch, race.SrcName, null, EventType.MovedFrom);
+							cookie_hash.Remove (race);
+							cookie_list.Remove (race);
 						}
 					}
 				}
+
+				SendEvent (watched, filename, srcpath, qe.iev.mask);
 
 				// If a directory we are watching gets ignored, we need
 				// to remove it from the watchedByFoo hashes.
@@ -559,7 +604,7 @@ namespace Beagle.Util {
 			}
 
 			Inotify.Start ();
-			Inotify.Verbose = true;
+			Inotify.Verbose = false;
 
 			while (Inotify.Enabled && Inotify.WatchCount > 0)
 				Thread.Sleep (1000);
