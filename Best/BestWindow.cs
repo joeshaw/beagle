@@ -238,6 +238,8 @@ namespace Best {
 		{
 			entry.Text = searchString;
 			Query query = new Query (searchString);
+			query.AddDomain (QueryDomain.Neighorhood);
+			query.AddDomain (QueryDomain.Global);
 
 			if (result != null)
 				result.Cancel ();

@@ -176,8 +176,10 @@ namespace Beagle {
 			int counter = 0;
 
 			double widthPerc = 100.0 / columns;
-			string td = String.Format ("<td width=\"{0}%\">", widthPerc);
+			//string td = String.Format ("<td width=\"{0}%\">", widthPerc);
+			string td = "<td>";
 
+			//ctx.Write ("<table width=\"100%\">");
 			ctx.Write ("<table>");
 			while (i <= i1) {
 				HitTilePair pair = (HitTilePair) hits [i];
@@ -200,7 +202,7 @@ namespace Beagle {
 			// end the row.
 			if (counter > 0) {
 				while (counter < columns) {
-					ctx.Write (td + "&nbsp;</td>");
+					ctx.Write (td + "<table width=\"100%\"><tr><td>&nbsp;</td></tr></table></td>");
 					++counter;
 				}
 				ctx.Write ("</tr>");
@@ -229,6 +231,13 @@ namespace Beagle {
 			if (key == "ForwardLink" && CanPageForward) {
 				ctx.Link ("Next Matches &gt;&gt;",
 					  new TileActionHandler (PageForward));
+				return true;
+			}
+
+			if (key == "BothLinks" && (CanPageForward || CanPageBack)) {
+				RenderKey ("BackLink", ctx);
+				ctx.Write ("&nbsp;&nbsp;");
+				RenderKey ("ForwardLink", ctx);
 				return true;
 			}
 
