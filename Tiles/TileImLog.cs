@@ -42,9 +42,57 @@ namespace Beagle.Tile {
 
 		private string niceTime (string str)
 		{
-			DateTime dt = BU.StringFu.StringToDateTime (str);
-			return dt.ToString ();
+			DateTime date = BU.StringFu.StringToDateTime (str);
+
+			DateTime now = DateTime.Now;
+			string short_time = date.ToShortTimeString ();
+
+			if (date.Year == now.Year) {
+				if (date.DayOfYear == now.DayOfYear)
+					return String.Format ("Today, {0}", short_time);
+				else if (date.DayOfYear == now.DayOfYear - 1)
+					return String.Format ("Yesterday, {0}", short_time);
+				else if (date.DayOfYear > now.DayOfYear - 6)
+					return String.Format ("{0} days ago, {1}",
+							      now.DayOfYear - date.DayOfYear,
+							      short_time);
+				else
+					return date.ToString ("MMMM d, h:mm tt");
+			}
+
+			return date.ToString ("MMMM d yyyy, h:mm tt");
 		}
+		
+		public string niceDuration (string end_str, string start_str)
+		{
+			DateTime end_time   = BU.StringFu.StringToDateTime (end_str);
+			DateTime start_time = BU.StringFu.StringToDateTime (start_str);
+
+			TimeSpan span = end_time - start_time;
+
+			string span_str = ""; 
+
+			if (span.Hours > 0) {
+				if (span.Hours == 1)
+					span_str = "1 hour";
+				else
+					span_str = String.Format ("{0} hours", span.Hours);
+
+				if (span.Minutes > 0)
+					span_str += ", ";
+			}
+
+			if (span.Minutes > 0) {
+				if (span.Minutes == 1)
+					span_str += "1 minute";
+				else
+					span_str += String.Format ("{0} minutes", span.Minutes);
+			}
+					
+			
+			return span_str;
+		}
+
 
 		override protected string ExpandKey (string key)
 		{
@@ -52,8 +100,9 @@ namespace Beagle.Tile {
 				return hit.Uri.ToString ();
 			if (key == "nice_starttime")
 				return niceTime (hit ["fixme:starttime"]);
-			if (key == "nice_endtime")
-				return niceTime (hit ["fixme:endtime"]);
+			if (key == "nice_duration")
+				return niceDuration (hit ["fixme:endtime"],
+						     hit ["fixme:starttime"]);
 
 			return hit [key];
 		}
