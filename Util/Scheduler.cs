@@ -745,15 +745,25 @@ namespace Beagle.Util {
 
 				// If we actually found tasks we like, do them now.
 				if (collection.Count > 0) {
-					// FIXME: we should catch any exceptions thrown by pre_hook,
-					// post_hook or task.DoTask.
 					DateTime t1 = DateTime.Now;
-					if (pre_hook != null)
-						pre_hook ();
+					if (pre_hook != null) {
+						try {
+							pre_hook ();
+						} catch (Exception ex) {
+							Logger.Log.Error ("Caught exception in pre_hook '{0}'", pre_hook);
+							Logger.Log.Error (ex);
+						}
+					}
 					foreach (Task task in collection)
 						task.DoTask ();
-					if (post_hook != null)
-						post_hook ();
+					if (post_hook != null) {
+						try {
+							post_hook ();
+						} catch (Exception ex) {
+							Logger.Log.Error ("Caught exception in post_hook '{0}'", post_hook);
+							Logger.Log.Error (ex);
+						}
+					}
 					DateTime t2 = DateTime.Now;
 
 					duration_of_last_task = (t2 - t1).TotalSeconds;

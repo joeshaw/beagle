@@ -236,10 +236,12 @@ namespace Beagle.Daemon {
 
 			if (filter != null) {
 
+#if false // For now we explicitly ignore SnippetMode
 				if (filter.SnippetMode) {
 					TextWriter writer = TextCache.GetWriter (Uri);
 					filter.AttachSnippetWriter (writer);
 				}
+#endif
 
 				if (crawl_mode)
 					filter.EnableCrawlMode ();
