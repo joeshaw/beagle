@@ -221,12 +221,18 @@ namespace Beagle {
 				doc.Add (f);
 			}
 
-			if (indexable.Content != null) {
+			if (indexable.ContentReader != null) {
+				f = Field.Text ("Content", indexable.ContentReader);
+				doc.Add (f);
+			} else if (indexable.Content != null) {
 				f = Field.UnStored ("Content", indexable.Content);
 				doc.Add (f);
 			}
 			
-			if (indexable.HotContent != null) {
+			if (indexable.HotContentReader != null) {
+				f = Field.Text ("HotContent", indexable.HotContentReader);
+				doc.Add (f);
+			} else if (indexable.HotContent != null) {
 				f = Field.UnStored ("HotContent", indexable.HotContent);
 				doc.Add (f);
 			}

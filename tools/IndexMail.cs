@@ -33,6 +33,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 
 using Beagle;
+using BU = Beagle.Util;
 using Camel = Beagle.Util.Camel;
 
 namespace IndexMailTool {
@@ -217,7 +218,7 @@ namespace IndexMailTool {
 		
 		MailHeaderList headers = null;
 		ArrayList alternatives = null;
-		ArrayList body = new ArrayList ();
+		Queue body = new Queue ();
 
 		public MailHeaderList Headers {
 			get { return headers; }
@@ -229,6 +230,13 @@ namespace IndexMailTool {
 
 		public ICollection Body {
 			get { return body; }
+		}
+
+		public string Pull ()
+		{
+			if (body.Count > 0)
+				return (string) body.Dequeue ();
+			return null;
 		}
 
 		public String this [String key] {
@@ -287,7 +295,7 @@ namespace IndexMailTool {
 				while ((line = reader.ReadLine ()) != null) {
 					if (line == boundaryFirst || line == boundaryLast)
 						break;
-					body.Add (line);
+					body.Enqueue (line);
 				}
 
 				// Gobble trailing whitespace
@@ -430,37 +438,29 @@ namespace IndexMailTool {
 
 			// Assemble the content, if we have any
 			if (message != null) {
-				StringBuilder contentBuilder = new StringBuilder ();
+				BU.MultiReader multi = new BU.MultiReader ();
 				foreach (MailBody body in message.Bodies)
-					AddContent (body, contentBuilder);
-				Content = contentBuilder.ToString ();
+					BodyToMultiReader (body, multi);
+				if (multi.Count > 0)
+					ContentReader = multi;
 			}
 		}
 
-		void AddContent (MailBody body, StringBuilder contentBuilder)
+		void BodyToMultiReader (MailBody body, BU.MultiReader multi)
 		{
 			if (body.Alternatives != null
 			    && body.Alternatives.Count > 0) {
-				foreach (MailBody alt in body.Alternatives)
+				foreach (MailBody alt in body.Alternatives) {
 					if (alt != null 
 					    && alt.Headers != null 
 					    && alt.Headers.ContentType == "text/plain")
-						AddContent (alt, contentBuilder);
+						BodyToMultiReader (alt, multi);
+				}
 			}
 
 			if (body.Headers == null
-			    || body.Headers.ContentType == "text/plain") {
-				foreach (String line in body.Body) {
-					// Trim off >-quoting
-					String x = line.Trim ();
-					while (x.Length > 0 && x [0] == '>')
-						x = x.Substring (1).Trim ();
-					if (x.Length > 0) {
-						contentBuilder.Append (x);
-						contentBuilder.Append (" ");
-					}
-				}
-			}
+			    || body.Headers.ContentType == "text/plain")
+				multi.Add (new BU.PullingReader (new BU.PullingReader.Pull (body.Pull)));
 		}
 
 	}

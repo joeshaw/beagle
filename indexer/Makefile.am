@@ -10,7 +10,6 @@ CSFILES = 				\
 	$(srcdir)/Versioned.cs		\
 	$(srcdir)/Indexable.cs		\
 	$(srcdir)/IndexableFile.cs	\
-	$(srcdir)/IndexableHttp.cs	\
 	$(srcdir)/Query.cs		\
 	$(srcdir)/Hit.cs		\
 	$(srcdir)/IQueryResult.cs	\

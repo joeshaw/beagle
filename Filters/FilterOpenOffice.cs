@@ -220,12 +220,19 @@ namespace Beagle.Filters {
 				node = node.NextSibling;
 			}
 		}
-		
-		override protected void Read (Stream stream)
+
+		ZipFile zip = null;
+
+		override protected void DoOpen (Stream stream)
 		{
 			hotStyles = new Hashtable ();
-			
-			ZipFile zip = new ZipFile (stream);
+			zip = new ZipFile (stream);
+		}
+
+		override protected void DoPull ()
+		{
+			if (zip == null)
+				return;
 			
 			ZipEntry entry = zip.GetEntry ("content.xml");
 			if (entry != null) {
@@ -242,6 +249,8 @@ namespace Beagle.Filters {
 				doc.Load (meta_stream);
 				ExtractMetadata (doc);
 			}
+
+			zip = null;
 		}
 	}
 }

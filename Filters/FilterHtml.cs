@@ -160,11 +160,20 @@ namespace Beagle.Filters {
 			}
 		}
 
-		override protected void Read (Stream stream)
+		HtmlDocument doc = null;
+
+		override protected void DoOpen (Stream stream)
 		{
-			HtmlDocument doc = new HtmlDocument ();
+			doc = new HtmlDocument ();
 			doc.Load (stream);
-			WalkNodes (doc.DocumentNode);
+		}
+
+		override protected void DoPull ()
+		{
+			if (doc != null) {
+				WalkNodes (doc.DocumentNode);
+				doc = null;
+			}
 		}
 		
 	}

@@ -50,9 +50,8 @@ class IndexWebContentTool {
 			
 			Filter filter = Filter.FilterFromMimeType ("text/html");
 			filter.Open (contentStream);
-			Content = filter.Content;
-			HotContent = filter.HotContent;
-			filter.Close ();
+			ContentReader = filter.Content;
+			HotContentReader = filter.HotContent;
 		}
 	}
 

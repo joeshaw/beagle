@@ -73,12 +73,37 @@ class ExtractContentTool {
 
 			filter.Open (stream);
 	    
-			Console.WriteLine ("");
+			Console.WriteLine ();
 
 			Console.WriteLine ("Filename: " + arg);
 			Console.WriteLine ("  Flavor: " + filter.Flavor);
 
-			Console.WriteLine ("");
+			Console.WriteLine ();
+
+			TextReader reader;
+
+			reader = filter.Content;
+			if (reader == null)
+				Console.WriteLine ("No Content.");
+			else {
+				string line;
+				Console.WriteLine ("Content:");
+				while ((line = reader.ReadLine ()) != null)
+					Console.WriteLine (line);
+			}
+
+			Console.WriteLine ();
+
+			reader = filter.HotContent;
+			if (reader == null)
+				Console.WriteLine ("No HotContent.");
+			else {
+				string line;
+				Console.WriteLine ("HotContent:");
+				while ((line = reader.ReadLine ()) != null)
+					Console.WriteLine (line);
+			}
+			Console.WriteLine ();
 
 			if (filter.Keys.Count == 0)
 				Console.WriteLine ("No metadata.");
@@ -86,23 +111,6 @@ class ExtractContentTool {
 				foreach (String key in filter.Keys)
 					Console.WriteLine (key + " = " + filter [key]);
 
-			Console.WriteLine ("");
-
-			if (filter.Content == null)
-				Console.WriteLine ("No Content.");
-			else
-				Console.WriteLine ("Content: " + filter.Content);
-
-			Console.WriteLine ("");
-
-			if (filter.HotContent == null)
-				Console.WriteLine ("No HotContent.");
-			else
-				Console.WriteLine ("HotContent: " + filter.HotContent);
-
-			Console.WriteLine ("");
-
-			filter.Close ();
 		}
 	}
 }

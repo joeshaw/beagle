@@ -32,7 +32,7 @@ using System.Text;
 
 namespace Beagle {
 
-	public class Indexable : Versioned, IDisposable {
+	public class Indexable : Versioned {
 
 		// The URI of the item being indexed.
 		private String uri = null;
@@ -49,37 +49,19 @@ namespace Beagle {
 		private String content = null;
 		private String hotContent = null;
 
+		private TextReader contentReader = null;
+		private TextReader hotContentReader = null;
+
 		private bool built = false;
-		private bool locked = false;
-
-		//////////////////////////
-
-		public void Lockdown ()
-		{
-			if (uri == null)
-				throw new Exception ("Locking Hit with undefined Uri");
-			if (type == null)
-				throw new Exception ("Locking Indexable with undefined Type");
-			locked = true;
-		}
-
-		void CheckLock ()
-		{
-			if (locked)
-				throw new Exception ("Attempt to modify locked indexable '" + uri + "'");
-		}
 		
 		//////////////////////////
-		
+
 		virtual protected void DoBuild () { }
 
 		public void Build ()
 		{
 			if (! built) {
-				bool lockedSave = locked;
-				locked = false;
 				DoBuild ();
-				locked = lockedSave;
 				built = true;
 			}
 		}
@@ -88,17 +70,17 @@ namespace Beagle {
 
 		public String Uri { 
 			get { return uri; }
-			set { CheckLock (); uri = value; }
+			set { uri = value; }
 		}
 
 		public String Type {
 			get { return type; }
-			set { CheckLock ();  type = value; }
+			set { type = value; }
 		}
 
 		public String MimeType {
 			get { return mimeType; }
-			set { CheckLock (); mimeType = value; }
+			set { mimeType = value; }
 		}
 
 		//////////////////////////
@@ -114,7 +96,6 @@ namespace Beagle {
 		public String this [String key] {
 			get { return (String) properties [key]; }
 			set {
-				CheckLock ();
 				if (value == null || value == "") {
 					if (properties.Contains (key))
 						properties.Remove (key);
@@ -140,14 +121,24 @@ namespace Beagle {
 
 		//////////////////////////
 
-		virtual public String Content {
+		public String Content {
 			get { return content; }
-			set { CheckLock (); content = value; }
+			set { content = value; }
 		}
 
-		virtual public String HotContent {
+		public String HotContent {
 			get { return hotContent; }
-			set { CheckLock (); hotContent = value; }
+			set { hotContent = value; }
+		}
+
+		public TextReader ContentReader {
+			get { return contentReader; }
+			set { contentReader = value; }
+		}
+
+		public TextReader HotContentReader {
+			get { return hotContentReader; }
+			set { hotContentReader = value; }
 		}
 
 		//////////////////////////
@@ -155,18 +146,6 @@ namespace Beagle {
 		public override int GetHashCode ()
 		{
 			return uri.GetHashCode () ^ type.GetHashCode ();
-		}
-
-		//////////////////////////
-
-		// IDisposable interface
-
-		public void Dispose ()
-		{
-			properties = null;
-			content = null;
-			hotContent = null;
-			built = false;
 		}
 	}
 }

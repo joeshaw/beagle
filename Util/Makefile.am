@@ -11,12 +11,14 @@ GOOGLE_CS   = GoogleSearch.cs
 $(GOOGLE_CS): $(GOOGLE_WSDL)
 	wsdl -namespace:Beagle.Util -out:$@ $^
 
-CSFILES = 			\
-	$(srcdir)/camel.cs	\
-	$(srcdir)/gnome.cs	\
-	$(srcdir)/Vfs.cs	\
-	$(srcdir)/ImLog.cs	\
-	$(srcdir)/Logger.cs
+CSFILES = 				\
+	$(srcdir)/camel.cs		\
+	$(srcdir)/gnome.cs		\
+	$(srcdir)/Vfs.cs		\
+	$(srcdir)/ImLog.cs		\
+	$(srcdir)/Logger.cs		\
+	$(srcdir)/MultiReader.cs	\
+	$(srcdir)/PullingReader.cs
 
 ASSEMBLIES =			\
 	$(BEAGLE_UI_LIBS)		\

@@ -34,7 +34,7 @@ using System.Reflection;
 
 namespace Beagle.Filters {
 
-	abstract public class Filter {
+	public abstract class Filter {
 
 		// Derived classes always must have a constructor that
 		// takes no arguments.
@@ -139,23 +139,36 @@ namespace Beagle.Filters {
 		}
 		
 		//////////////////////////
+
+		protected virtual void DoOpen (Stream stream) { }
+
+		protected abstract void DoPull ();
+
+		//////////////////////////
 		
-		static String CleanUp (StringBuilder builder)
+		private string PullContent ()
 		{
-			if (builder == null)
+			if (content == null)
+				DoPull ();
+			if (content == null)
 				return null;
-			String str = builder.ToString ();
-			str = Regex.Replace (str, "\\s{2,}", " ");
-			str = str.Trim ();
+			string str = content.ToString ();
+			content = null;
 			return str;
 		}
 		
-		public String Content {
-			get { return CleanUp (content); }
+		public TextReader Content {
+			get { return new Beagle.Util.PullingReader (new Beagle.Util.PullingReader.Pull (PullContent)); }
 		}
 
-		public String HotContent {
-			get { return CleanUp (hot); }
+		public TextReader HotContent {
+			get {
+				if (hot == null)
+					return null;
+				StringReader sr = new StringReader (hot.ToString ());
+				hot = null;
+				return sr;
+			}
 		}
 
 		public IDictionary Properties {
@@ -180,10 +193,6 @@ namespace Beagle.Filters {
 
 		//////////////////////////
 
-		abstract protected void Read (Stream stream);
-		
-		//////////////////////////
-
 		public void Open (Stream stream)
 		{
 			content = null;
@@ -192,27 +201,10 @@ namespace Beagle.Filters {
 						    new CaseInsensitiveComparer ());
 			hotCount = 0;
 			freezeCount = 0;
-			
-			if (stream != null)
-				Read (stream);
+
+			DoOpen (stream);
 		}
 
-		public void Open (String path)
-		{
-			Stream stream = new FileStream (path,
-							FileMode.Open,
-							FileAccess.Read);
-			Open (stream);
-			stream.Close ();
-		}
-		
-		public void Close ()
-		{
-			content = null;
-			hot = null;
-			properties = null;
-		}
-		
 		//////////////////////////
 
 		static SortedList registry = null;

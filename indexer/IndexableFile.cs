@@ -61,10 +61,8 @@ namespace Beagle {
 			filter.Open (stream);
 			foreach (String key in filter.Keys)
 				this [key] = filter [key];
-			Content = filter.Content;
-			HotContent = filter.HotContent;
-			filter.Close ();
-			stream.Close ();
+			ContentReader = filter.Content;
+			HotContentReader = filter.HotContent;
 
 			FileInfo info = new FileInfo (path);
 			this ["_Directory"] = info.DirectoryName;

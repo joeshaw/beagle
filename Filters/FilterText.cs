@@ -31,17 +31,24 @@ using System.IO;
 namespace Beagle.Filters {
 
 	public class FilterText : Filter {
-	
+
 		public FilterText ()
 		{
 			AddSupportedMimeType ("text/plain");
 		}
 
-		override protected void Read (Stream stream) 
+		StreamReader reader;
+
+		override protected void DoOpen (Stream stream)
 		{
-			StreamReader reader = new StreamReader (stream);
-			String text = reader.ReadToEnd ();
-			AppendContent (text);
+			reader = new StreamReader (stream);
+		}
+		
+		override protected void DoPull ()
+		{
+			string str = reader.ReadLine ();
+			if (str != null)
+				AppendContent (str + "\n");
 		}
 	}
  }
