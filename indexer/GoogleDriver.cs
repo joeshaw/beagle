@@ -55,9 +55,10 @@ namespace Beagle {
 		public bool AcceptQuery (Query query)
 		{
 			// Reject queries if the key isn't set.
-			if (googleKey == null) {
+			if (googleKey == null || googleKey == "") {
 				if (showNoKeyMessage) {
-					Console.WriteLine ("To query Google, set the GOOGLE_WEB_API_KEY environment variable.");
+					Console.WriteLine ("To query Google, put your Google key into the GOOGLE_WEB_API_KEY environment variable.");
+					Console.WriteLine ("To get a Google key, go to http://api.google.com/createkey");
 					showNoKeyMessage = false;
 				}
 				return false;

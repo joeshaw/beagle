@@ -14,11 +14,13 @@ using Beagle;
 
 namespace Best {
 
-	public class HitContainer : Gtk.VBox {
+	public class HitContainer : Gtk.HBox {
 
 		bool open = false;
 		int count = 0;
-		const int MAXCOUNT = 20;
+		int maxHitsPerType = 10;
+
+		Hashtable hitsByType;
 		
 		ArrayList pendingHits = new ArrayList ();
 		uint pendingIdle;
@@ -34,25 +36,9 @@ namespace Best {
 			foreach (Widget w in Children)
 				Remove (w);
 
-			count = 0;
 			open = true;
-		}
-
-		private bool DoPending ()
-		{
-			lock (pendingHits) {
-				foreach (Hit hit in pendingHits) {
-					if (count < MAXCOUNT) {
-						Widget w = new HitView (hit);
-						PackStart (w, false, true, 2);
-						w.ShowAll ();
-						++count;
-					}
-				}
-				pendingHits.Clear ();
-				pendingIdle = 0;
-			}
-			return false;
+			count = 0;
+			hitsByType = new Hashtable ();
 		}
 
 		public void Add (Hit hit)
@@ -62,12 +48,15 @@ namespace Best {
 				return;
 			}
 
-			lock (pendingHits) {
-				if (count >= MAXCOUNT)
-					return;
-				pendingHits.Add (hit);
-				if (pendingIdle == 0)
-					pendingIdle = GLib.Idle.Add (new GLib.IdleHandler (DoPending));
+			lock (hitsByType) {
+				++count;
+				ArrayList hits = (ArrayList) hitsByType [hit.Type];
+				if (hits == null) {
+					hits = new ArrayList ();
+					hitsByType [hit.Type] = hits;
+				}
+				if (hits.Count < maxHitsPerType)
+					hits.Add (hit);
 			}
 		}
 
@@ -77,7 +66,26 @@ namespace Best {
 				Widget w = new Label ("No matches!");
 				PackStart (w, true, true, 3);
 				w.ShowAll ();
+			} else {
+				// This isn't optimal, but at least it presents
+				// the renderers in a semi-consistent order that
+				// doesn't depend on Hashtable internals...
+				ArrayList keys = new ArrayList ();
+				foreach (String key in hitsByType.Keys)
+					keys.Add (key);
+				keys.Sort ();
+
+				foreach (String key in keys) {
+					HitRenderer renderer = HitRenderer.FindRendererByType (key);
+					ScrolledWindow sw = new ScrolledWindow ();
+					Widget w = renderer.Widget;
+					sw.Add (w);
+					PackStart (sw, true, true, 3);
+					renderer.RenderHits ((ArrayList) hitsByType [key]);
+					sw.ShowAll ();
+				}
 			}
+
 			return false;
 		}
 

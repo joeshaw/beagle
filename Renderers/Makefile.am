@@ -9,6 +9,7 @@ CSFILES = 					\
 	$(srcdir)/HitRenderer.cs		\
 	$(srcdir)/HitRendererHtml.cs		\
 	$(srcdir)/DefaultHitRenderer.cs		\
+	$(srcdir)/ContactHitRenderer.cs		\
 	$(srcdir)/FileHitRenderer.cs		\
 	$(srcdir)/MailMessageHitRenderer.cs	\
 	$(srcdir)/WebLinkHitRenderer.cs
