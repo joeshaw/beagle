@@ -158,23 +158,43 @@ namespace Beagle.Util {
 
 		private static string StripTags (string line)
 		{
-			int i, j;
-			while (true) {
-				i = line.IndexOf ('<');
-
-				if (i == -1)
+			int first = line.IndexOf ('<');
+			if (first == -1)
+				return line;
+			
+			StringBuilder builder = new StringBuilder ();
+			int i = 0;
+			while (i < line.Length) {
+				
+				int j;
+				if (first == -1) {
+					j = line.IndexOf ('<', i);
+				} else {
+					j = first;
+					first = -1;
+				}
+				
+				int k = -1;
+				if (j != -1) {
+					k = line.IndexOf ('>', j);
+					
+					// If a "<" is unmatched, preserve it, and the
+					// rest of the line
+					if (k == -1)
+						j = -1;
+				}
+				
+				if (j == -1) {
+					builder.Append (line, i, line.Length - i);
 					break;
-
-				j = line.IndexOf ('>', i);
-
-				// If a "<" is unmatched, preserve it, and the
-				// rest of the line
-                                if (j == -1)
-					break;
-                               
-				line = line.Substring (0, i) + line.Substring (j+1);
+				}
+				
+				builder.Append (line, i, j-i);
+				
+				i = k+1;
 			}
-			return line;
+			
+			return builder.ToString ();
 		}
 
 		private static bool IsNewConversation (string line)
@@ -348,7 +368,7 @@ namespace Beagle.Util {
 
 				// Could the second line ever start w/ < in a non-html log?
 				// I hope not!
-				bool isHtml = line.StartsWith ("<");
+				bool isHtml = line.Length > 0 && line [0] == '<';
 				
 				while ((line = sr.ReadLine ()) != null) {
 					if (isHtml)
