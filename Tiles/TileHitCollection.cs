@@ -34,16 +34,19 @@ namespace Beagle.Tile {
 		string name;
 		string icon;
 		string color;
+		int    rank;
 		int    columns;
 
 		public TileHitCollection (string _name, 
 					  string _icon,
 					  string _color,
+					  int    _rank,
 					  int    _columns) : base ("template-hit-collection.html")
 		{
 			name = _name;
 			icon = _icon;
 			color = _color;
+			rank = _rank;
 			columns = _columns;
 
 			EnableInlineRendering ();
@@ -264,7 +267,8 @@ namespace Beagle.Tile {
 		public int CompareTo (object obj)
 		{
 			TileHitCollection other = (TileHitCollection) obj;
-			return other.MaxScore.CompareTo (MaxScore);
+			//return other.MaxScore.CompareTo (MaxScore);
+			return other.rank.CompareTo (rank);
 		}
 
 	}

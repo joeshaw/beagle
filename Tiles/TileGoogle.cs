@@ -28,7 +28,9 @@ using System;
 
 namespace Beagle.Tile {
 
-	[HitFlavor (Name="Google", Emblem="emblem-google.png",
+	[HitFlavor (Name="Google", 
+		    Emblem="emblem-google.png",
+		    Rank=200,
 		    Type="Google")]
 	public class TileGoogle : TileFromTemplate {
 

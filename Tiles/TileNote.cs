@@ -33,7 +33,7 @@ using BU = Beagle.Util;
 
 namespace Beagle.Tile {
 
-	[HitFlavor (Name="Notes", Emblem="emblem-note.png", Color="#f5f5fe",
+	[HitFlavor (Name="Notes", Rank=1000, Emblem="emblem-note.png", Color="#f5f5fe",
 		    Type="Note")]
 	public class TileNote : TileFromTemplate {
 

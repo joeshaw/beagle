@@ -29,7 +29,7 @@ using BU = Beagle.Util;
 
 namespace Beagle.Tile {
 
-	[HitFlavor (Name="Conversations", Emblem="emblem-im-log.png", Color="#e5f5ef",
+	[HitFlavor (Name="Conversations", Rank=900, Emblem="emblem-im-log.png", Color="#e5f5ef",
 		    Type="IMLog")]
 	public class TileImLog : TileFromTemplate {
 

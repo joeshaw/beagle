@@ -62,6 +62,7 @@ namespace Beagle.Tile {
 				hitCollection = new TileHitCollection (flavor.Name,
 								       flavor.Emblem,
 								       flavor.Color,
+								       flavor.Rank,
 								       flavor.Columns);
 				
 				tileTable [flavor.Name] = hitCollection;

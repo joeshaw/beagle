@@ -32,9 +32,9 @@ using BU = Beagle.Util;
 
 namespace Beagle.Tile {
 
-	[HitFlavor (Name="Files", Emblem="emblem-file.png", Color="#f5f5fe",
+	[HitFlavor (Name="Files", Rank=300, Emblem="emblem-file.png", Color="#f5f5fe",
 		    Type="File"),
-	 HitFlavor (Name="Files", Emblem="emblem-file.png", Color="#f5f5fe",
+	 HitFlavor (Name="Files", Rank=300, Emblem="emblem-file.png", Color="#f5f5fe",
 		    Uri="file://*")]
 	public class TileFile : TileFromTemplate {
 

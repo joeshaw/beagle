@@ -32,7 +32,7 @@ using BU = Beagle.Util;
 
 namespace Beagle.Tile {
 
-	[HitFlavor (Name="Folders", Emblem="emblem-folder.png", Color="#f5f5fe",
+	[HitFlavor (Name="Folders", Rank=600, Emblem="emblem-folder.png", Color="#f5f5fe",
 		    Uri="file://*", MimeType="inode/directory")]
 	public class TileFolder : TileFromTemplate {
 

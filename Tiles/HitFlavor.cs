@@ -37,6 +37,7 @@ namespace Beagle.Tile {
 		public string Emblem;
 		public string Color;
 		public int    Columns = 3;
+		public int    Rank = 0;
 		public Type   TileType;
 
 		private string uri;

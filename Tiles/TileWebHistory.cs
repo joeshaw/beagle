@@ -28,7 +28,9 @@ using System;
 
 namespace Beagle.Tile {
 
-	[HitFlavor (Name="Pages You've Viewed", Emblem="icon-web.png",
+	[HitFlavor (Name="Pages You've Viewed",
+		    Rank=700,
+		    Emblem="icon-web.png",
 		    Type="WebHistory")]
 	public class TileWebHistory : TileFromTemplate {
 

@@ -32,7 +32,7 @@ using BU = Beagle.Util;
 
 namespace Beagle.Tile {
 
-	[HitFlavor (Name="People", Emblem="emblem-contact.png", Color="#eeeebd",
+	[HitFlavor (Name="People", Rank=1200, Emblem="emblem-contact.png", Color="#eeeebd",
 		    Type="Contact")]
 	public class TileContact : TileFromTemplate {
 

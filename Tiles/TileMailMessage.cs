@@ -31,7 +31,7 @@ using BU = Beagle.Util;
 
 namespace Beagle.Tile {
 
-	[HitFlavor (Name="Email", Emblem="emblem-mail-message.png", Color="#f5f5f5",
+	[HitFlavor (Name="Email", Rank=1100, Emblem="emblem-mail-message.png", Color="#f5f5f5",
 		    Type="MailMessage")]
 	public class TileMailMessage : TileFromTemplate {
 
