@@ -1,5 +1,10 @@
 2004-12-07  Tuomas Kuosmanen  <tigert@novell.com>
 
+	* Tiles/template-mail-message.html: Added the folder info, I'll
+	need to use it for a bit before I hopefully come up with a better
+	way of displaying the information without wasting a lot of screen
+	space.
+
 	* Tiles/TileMailMessage.cs: eeks, I touched c-sharp with bare
 	hands! Hopefully the patch works. Should fix #160321 and #160324
 
