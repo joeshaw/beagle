@@ -115,7 +115,9 @@ namespace Beagle.Tile {
 					p.StartInfo.Arguments = commandArgs;
 				try {
 					p.Start ();
-				} catch { }
+				} catch (Exception e) {
+					Console.WriteLine ("Unable to run {0}: {1}", command, e);
+				}
 				return;
 			}
 

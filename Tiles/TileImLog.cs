@@ -199,7 +199,11 @@ namespace Beagle.Tile {
 			p.StartInfo.FileName = "beagle-imlogviewer";
 			p.StartInfo.Arguments = Hit ["fixme:file"];
 
-			p.Start ();
+			try {
+				p.Start ();
+			} catch (Exception e) {
+				Console.WriteLine ("Unable to run {0}: {1}", p.StartInfo.FileName, e.Message);
+			}
 		}
 
 		[TileAction]

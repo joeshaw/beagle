@@ -608,8 +608,15 @@ namespace Beagle.Daemon.EvolutionMailDriver {
 				}
 			}
 
-			if (this.summary == null)
-				this.summary = Camel.Summary.load (this.summary_info.FullName);
+			if (this.summary == null) {
+				try {
+					this.summary = Camel.Summary.load (this.summary_info.FullName);
+				} catch (Exception e) {
+					EvolutionMailQueryable.log.Warn ("Unable to index {0}: {1}", this.folder_name,
+									 e.Message);
+					return false;
+				}
+			}
 
 			if (this.summary_enumerator == null)
 				this.summary_enumerator = this.summary.GetEnumerator ();

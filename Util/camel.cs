@@ -407,6 +407,12 @@ public abstract class Summary : IEnumerable {
 		public ImapSummaryHeader (FileStream f) : base (f)
 		{
 			int version = Decode.FixedInt (f);
+
+			// Right now we only support summary versions 1 and 3
+			// (which according to fejj are identical)
+			if (version != 1 && version != 3)
+				throw new Exception ("Incompatible summary version: " + version);
+
 			int validity = Decode.FixedInt (f);
 		}
 	}

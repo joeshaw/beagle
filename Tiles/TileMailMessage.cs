@@ -194,7 +194,12 @@ namespace Beagle.Tile {
 			p.StartInfo.FileName = "evolution";
 			p.StartInfo.Arguments = "'" + Hit.Uri + "'";
 
-			p.Start ();
+			try {
+				p.Start ();
+			} catch (System.ComponentModel.Win32Exception e) {
+				Console.WriteLine ("Unable to run {0}: {1}", p.StartInfo.FileName, e.Message);
+			}
+				
 		}
 
 		[TileAction]
@@ -208,7 +213,11 @@ namespace Beagle.Tile {
 			p.StartInfo.FileName = "evolution";
 			p.StartInfo.Arguments = "'mailto:" + address + "'";
 
-			p.Start ();			
+			try {
+				p.Start ();			
+			} catch (System.ComponentModel.Win32Exception e) {
+				Console.WriteLine ("Unable to run {0}: {1}", p.StartInfo.FileName, e.Message);
+			}
 		}
 
 #if ENABLE_EVO_SHARP

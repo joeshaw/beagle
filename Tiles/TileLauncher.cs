@@ -53,7 +53,11 @@ namespace Beagle.Tile {
 			p.StartInfo.UseShellExecute = true;
 			p.StartInfo.FileName = hit ["fixme:Exec"];
 			Console.WriteLine ("LAUNCHER: going to run {0}", hit ["fixme:Exec"]);
-			p.Start ();
+			try {
+				p.Start ();
+			} catch (Exception e) {
+				Console.WriteLine ("Unable to run {0}: {1}", p.StartInfo.FileName, e.Message);
+			}
 		}
 
 		private string ImagePath ()
