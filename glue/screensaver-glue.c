@@ -33,11 +33,25 @@
 #include <X11/Xlib.h>
 #include <X11/extensions/scrnsaver.h>
 
+
+
 int screensaver_info (int *state, int *kind, unsigned long *til_or_since, unsigned long *idle)
 {
     XScreenSaverInfo ss_info;
+    int retval;
+    static int inited = 0;
 
-    if (XScreenSaverQueryInfo (GDK_DISPLAY (), DefaultRootWindow (GDK_DISPLAY ()), &ss_info) != 0) {
+    /* FIXME: This should be called somewhere else. */
+    if (! inited) {
+        gdk_threads_init ();
+        inited = 1;
+    }
+
+    gdk_threads_enter ();
+    retval = XScreenSaverQueryInfo (GDK_DISPLAY (), DefaultRootWindow (GDK_DISPLAY ()), &ss_info);
+    gdk_threads_leave ();
+
+    if (retval != 0) {
         *state = ss_info.state;
         *kind = ss_info.kind;
         *til_or_since = ss_info.til_or_since;
