@@ -39,7 +39,7 @@ namespace Beagle.Daemon {
 		private QueryResult result = null;
 		private string id;
 
-		private Hashtable allHits = new Hashtable ();
+		private Hashtable allHits = UriFu.NewHashtable ();
 		
 		public override event StartedHandler StartedEvent;
 		public override event HitsAddedAsBinaryHandler HitsAddedAsBinaryEvent;
@@ -172,7 +172,7 @@ namespace Beagle.Daemon {
 
 				Logger.Log.Debug ("*** Got invalid hit: uri={0}", uri);
 				Logger.Log.Debug ("*** Valid Hits:");
-				foreach (string x in result.HitUris)
+				foreach (Uri x in result.HitUris)
 					Logger.Log.Debug ("***    {0}", x);
 
 			} else {

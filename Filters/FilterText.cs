@@ -36,6 +36,7 @@ namespace Beagle.Filters {
 		{
 			AddSupportedMimeType ("text/plain");
 			SnippetMode = true;
+			OriginalIsText = true;
 		}
 
 		override protected void DoPull ()

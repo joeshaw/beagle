@@ -38,13 +38,13 @@ namespace Beagle.Daemon {
 		Queryable queryable;
 
 		ArrayList hit_array = new ArrayList ();
-		Hashtable by_uri = new Hashtable ();
+		Hashtable by_uri =UriFu.NewHashtable ();
 
 		const double epsilon = 1e-8;
 		double cutoff_score = epsilon;
 
-		public Hashtable added_hits = new Hashtable ();
-		public Hashtable subtracted_uris = new Hashtable ();
+		public Hashtable added_hits = UriFu.NewHashtable ();
+		public Hashtable subtracted_uris = UriFu.NewHashtable ();
 
 		public HitRegulator (Queryable queryable)
 		{
@@ -70,7 +70,7 @@ namespace Beagle.Daemon {
 				Hit low_hit;
 				for (int j = max_n_hits; j < hit_array.Count; ++j) {
 					low_hit = hit_array [j] as Hit;
-					by_uri.Remove (low_hit.Uri.ToString ());
+					by_uri.Remove (low_hit.Uri);
 					added_hits.Remove (low_hit.Uri);
 				}
 				hit_array.RemoveRange (max_n_hits, hit_array.Count - max_n_hits);
@@ -80,21 +80,21 @@ namespace Beagle.Daemon {
 				//Logger.Log.Debug ("cutoff score is {0:0.00000}", cutoff_score);
 			}
 			
-			by_uri [hit.Uri.ToString ()] = hit;
-			added_hits [hit.Uri.ToString ()] = hit;
+			by_uri [hit.Uri] = hit;
+			added_hits [hit.Uri] = hit;
 			
 			return true;
 		}
 
 		public void Subtract (Uri uri)
 		{
-			Hit hit = by_uri [uri.ToString ()] as Hit;
+			Hit hit = by_uri [uri] as Hit;
 			if (hit != null) {
 				int i = hit_array.BinarySearch (hit);
 				if (i >= 0) {
 					hit_array.RemoveAt (i);
-					added_hits.Remove (uri.ToString ());
-					subtracted_uris [uri.ToString ()] = uri;
+					added_hits.Remove (uri);
+					subtracted_uris [uri] = uri;
 				}
 			}
 		}

@@ -25,6 +25,7 @@
 //
 
 using System;
+using System.Collections;
 
 namespace Beagle.Util {
 
@@ -36,6 +37,34 @@ namespace Beagle.Util {
 		{
 			string uriStr = StringFu.PathToQuotedFileUri (path);
 			return new Uri (uriStr, true);
+		}
+
+		//////////////////////////////////
+
+		public class Comparer : IComparer
+		{
+			public int Compare(object uri1, object uri2)
+			{
+				return String.Compare(uri1.ToString(), uri2.ToString());
+			}
+		}
+
+		public class Hasher : IHashCodeProvider
+		{
+			public int GetHashCode(object o)
+			{
+				return o.ToString().GetHashCode();
+			}
+		}
+
+		static Comparer the_comparer = new Comparer ();
+		static Hasher the_hasher = new Hasher ();
+
+		// Returns a hash table that does the right thing when
+		// the key is a Uri.
+		static public Hashtable NewHashtable ()
+		{
+			return new Hashtable (the_hasher, the_comparer);
 		}
 
 	}

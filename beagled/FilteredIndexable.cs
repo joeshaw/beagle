@@ -237,8 +237,12 @@ namespace Beagle.Daemon {
 				filter.Identifier = ContentUri.LocalPath;
 
 				if (filter.SnippetMode) {
-					TextWriter writer = TextCache.GetWriter (Uri);
-					filter.AttachSnippetWriter (writer);
+					if (filter.OriginalIsText) {
+						TextCache.MarkAsSelfCached (Uri);
+					} else {
+						TextWriter writer = TextCache.GetWriter (Uri);
+						filter.AttachSnippetWriter (writer);
+					}
 				}
 				
 				if (crawl_mode)

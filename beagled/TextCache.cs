@@ -37,6 +37,8 @@ namespace Beagle.Daemon {
 
 	public class TextCache {
 
+		const string SELF_CACHE_TAG = "*self*";
+
 		static string text_cache_dir;
 		static SqliteConnection connection;
 
@@ -74,6 +76,11 @@ namespace Beagle.Daemon {
 			}
 		}
 
+		private static string UriToString (Uri uri)
+		{
+			return uri.ToString ().Replace ("'", "''");
+		}
+
 		private static SqliteCommand NewCommand (string format, params object [] args)
 		{
 			SqliteCommand command;
@@ -90,14 +97,24 @@ namespace Beagle.Daemon {
 			command.Dispose ();
 		}
 
-		private static string LookupPathUnlocked (Uri uri, bool create_if_not_found)
+		private static void Insert (Uri uri, string filename)
+		{
+			DoNonQuery ("INSERT OR REPLACE INTO uri_index (uri, filename) VALUES ('{0}', '{1}')",
+				    UriToString (uri), filename);
+		}
+
+		private static string LookupPathUnlocked (Uri uri,
+							  bool create_if_not_found,
+							  out bool is_self_cached)
 		{
 			SqliteCommand command;
 			SqliteDataReader reader;
 			string path = null;
 
+			is_self_cached = false;
+
 			command = NewCommand ("SELECT filename FROM uri_index WHERE uri='{0}'", 
-			                      uri.ToString ().Replace ("'", "''"));
+			                      UriToString (uri));
 			reader = command.ExecuteReader ();
 			if (reader.Read ())
 				path = reader [0].ToString ();
@@ -107,8 +124,16 @@ namespace Beagle.Daemon {
 			if (path == null && create_if_not_found) {
 				string guid = Guid.NewGuid ().ToString ();
 				path = Path.Combine (guid.Substring (0, 2), guid.Substring (2));
-				DoNonQuery ("INSERT INTO uri_index (uri, filename) VALUES ('{0}', '{1}')", 
-				            uri.ToString ().Replace ("'", "''") , path);
+				Insert (uri, path);
+			}
+
+			if (path == SELF_CACHE_TAG) {
+				if (! uri.IsFile) {
+					string msg = String.Format ("Non-file uri {0} flagged as self-cached", uri);
+					throw new Exception (msg);
+				}
+				is_self_cached = true;
+				return uri.LocalPath;
 			}
 
 			return path != null ? Path.Combine (text_cache_dir, path) : null;
@@ -116,8 +141,21 @@ namespace Beagle.Daemon {
 
 		public static string LookupPath (Uri uri, bool create_if_not_found)
 		{
-			lock (connection)
-				return LookupPathUnlocked (uri, create_if_not_found);
+			lock (connection) {
+				bool is_self_cached;
+				return LookupPathUnlocked (uri, create_if_not_found, out is_self_cached);
+			}
+		}
+
+		public static void MarkAsSelfCached (Uri uri)
+		{
+			if (! uri.IsFile) {
+				string msg = String.Format ("Only file URIs can be self-cached ({0})", uri);
+				throw new Exception (msg);
+			}
+
+			lock (connection) 
+				Insert (uri, SELF_CACHE_TAG);
 		}
 
 		public static TextWriter GetWriter (Uri uri)
@@ -153,11 +191,13 @@ namespace Beagle.Daemon {
 		public static void Delete (Uri uri)
 		{
 			lock (connection) {
-				string path = LookupPathUnlocked (uri, false);
+				bool is_self_cached;
+				string path = LookupPathUnlocked (uri, false, out is_self_cached);
 				if (path != null) {
 					DoNonQuery ("DELETE FROM uri_index WHERE uri='{0}' AND filename='{1}'", 
-					            uri.ToString ().Replace ("'", "''"), path); 
-					File.Delete (path);
+					            UriToString (uri), path);
+					if (! is_self_cached)
+						File.Delete (path);
 				}
 			}
 		}

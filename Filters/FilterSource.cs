@@ -62,6 +62,9 @@ namespace Beagle.Filters {
 			StrConstIdentifier = " ";
 
 			KeyWordsHash = new Hashtable ();
+
+			SnippetMode = true;
+			OriginalIsText = true;
 		}
 
 		// Tokenize the passed string and add the relevant 

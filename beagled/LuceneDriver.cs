@@ -83,7 +83,6 @@ namespace Beagle.Daemon {
 						Process p = new Process ();
 						p.StartInfo.UseShellExecute = true;
 						p.StartInfo.FileName = optimizer_path;
-						p.StartInfo.Arguments = "bogus";
 						p.Start ();
 						p.WaitForExit ();
 					} catch (Exception ex) {
@@ -115,7 +114,7 @@ namespace Beagle.Daemon {
 		//    out of order' exceptions in some cases)
 		private const int VERSION = 7;
 
-		private Hashtable pending_by_uri = new Hashtable ();
+		private Hashtable pending_by_uri = UriFu.NewHashtable ();
 		private int pending_adds = 0;
 		private int pending_removals = 0;
 		private int cycles_since_last_optimization = 0;

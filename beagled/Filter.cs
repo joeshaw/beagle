@@ -187,11 +187,17 @@ namespace Beagle.Daemon {
 		//////////////////////////
 		
 		private bool snippetMode = false;
+		private bool originalIsText = false;
 		private TextWriter snippetWriter = null;
 
 		public bool SnippetMode {
 			get { return snippetMode; }
 			set { snippetMode = value; }
+		}
+
+		public bool OriginalIsText {
+			get { return originalIsText; }
+			set { originalIsText = value; }
 		}
 		
 		public void AttachSnippetWriter (TextWriter writer)

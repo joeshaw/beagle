@@ -54,7 +54,7 @@ namespace Beagle.Daemon {
 		int workers = 0;
 		bool cancelled = false;
 		Hashtable hit_regulators = new Hashtable ();
-		Hashtable uri_hash = new Hashtable ();
+		Hashtable uri_hash = UriFu.NewHashtable ();
 		DateTime started_time;
 		DateTime finished_time;
 		Hashtable per_worker_started_time = new Hashtable ();
@@ -110,7 +110,7 @@ namespace Beagle.Daemon {
 					return;
 		
 				foreach (Hit hit in some_hits)
-					uri_hash [hit.Uri.ToString ()] = hit;
+					uri_hash [hit.Uri] = hit;
 				
 				if (HitsAddedEvent != null)
 					HitsAddedEvent (this, some_hits);
@@ -132,9 +132,9 @@ namespace Beagle.Daemon {
 
 				// We only get to subtract a URI if it was previously added.
 				foreach (Uri uri in some_uris) {
-					if (uri_hash.Contains (uri.ToString ())) {
+					if (uri_hash.Contains (uri)) {
 						filtered_uris.Add (uri);
-						uri_hash.Remove (uri.ToString ());
+						uri_hash.Remove (uri);
 					}
 				}
 
@@ -160,7 +160,7 @@ namespace Beagle.Daemon {
 		// Given the Uri of a Hit contained in the QueryResult, return that Hit.
 		public Hit GetHitFromUri (Uri uri)
 		{
-			return uri_hash [uri.ToString ()] as Hit;
+			return uri_hash [uri] as Hit;
 		}
 
 		public ICollection HitUris {
