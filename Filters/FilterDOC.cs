@@ -122,26 +122,30 @@ namespace Beagle.Filters {
 			string str = null;
 			string strHot = null;
 
-			if (dataLen > 0){
-				data = new byte[dataLen];
-				Marshal.Copy (byteArray, data, 0, dataLen);
-			}
+			try {
+				if (dataLen > 0){
+					data = new byte[dataLen];
+					Marshal.Copy (byteArray, data, 0, dataLen);
+				}
 			
-			if (data != null)
-				str = System.Text.Encoding.UTF8.GetString (data, 0, dataLen);
+				if (data != null)
+					str = System.Text.Encoding.UTF8.GetString (data, 0, dataLen);
 
-			data = null;
-			if (hotDataLen > 0) {
-				data = new byte [hotDataLen];
-				Marshal.Copy (byteHotArray, data, 0, hotDataLen);
+				data = null;
+				if (hotDataLen > 0) {
+					data = new byte [hotDataLen];
+					Marshal.Copy (byteHotArray, data, 0, hotDataLen);
+				}
+				if (data != null)
+					strHot = System.Text.Encoding.UTF8.GetString (data, 0, hotDataLen);
+			
+				AppendText (str, strHot);
+			
+				if (appendStructBrk)
+					AppendStructuralBreak ();
+			} catch (Exception e) {
+				Logger.Log.Debug ("Exception occurred in Word-Doc filter. {0}", e);
 			}
-			if (data != null)
-				strHot = System.Text.Encoding.UTF8.GetString (data, 0, hotDataLen);
-			
-			AppendText (str, strHot);
-			
-			if (appendStructBrk)
-				AppendStructuralBreak ();
   		}
 
 		override protected void DoOpen (FileInfo info)
@@ -244,7 +248,7 @@ namespace Beagle.Filters {
 			else if (ret == -3)
 				Logger.Log.Error ("Unable to initiate the parser for {0}", FileName);
 			stopwatch.Stop ();
-			Logger.Log.Info ("FilterDoc extraction done in {0}", stopwatch);
+			Logger.Log.Info ("Word document extraction done in {0}", stopwatch);
 			Finished ();
 		}
 	}

@@ -123,7 +123,7 @@ class ExtractContentTool {
 				else
 					Console.WriteLine ();
 			}
-
+			
 			reader = indexable.GetHotTextReader ();
 			if (reader != null) {
 				string line;
@@ -141,6 +141,7 @@ class ExtractContentTool {
 				else
 					Console.WriteLine ();
 			}
+			
 		}
 	}
 }

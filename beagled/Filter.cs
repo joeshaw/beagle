@@ -229,10 +229,38 @@ namespace Beagle.Daemon {
 		
 		public void AppendText (string str, string strHot)
 		{
+			if (!IsFrozen && str != null && str != "") {
+				
+				// FIXME: Do we need to handle '\n' in any 
+				// other way?
+				int i = 0;
+				string line;
+				string[] lines = str.Split ('\n');
+				for (i = 0; i < lines.Length; i++) {
+					line = lines[i].Trim();
+					if (line.Length > 0) {
+						ReallyAppendText (line, null);
+						AppendStructuralBreak ();
+					}
+				}
+			}
+			ReallyAppendText (null, strHot);
+		}
+		
+		public void AppendText (string str)
+		{
+			//Logger.Log.Debug ("AppendText (\"{0}\")", str);
+			if (! IsFrozen && str != null && str != "")
+				AppendText (str, IsHot ? str : null);
+		}
+
+		// Does adding text to to text/hot pools respectively.
+		private void ReallyAppendText (string str, string strHot)
+		{
 			if (!IsFrozen && strHot != null && strHot != "")
 				hotPool.Add (strHot.Trim()+" ");
 
-			if (!IsFrozen && str != null && str != "") {
+			if (str != null) {
 				textPool.Add (str);
 
 				int pool_size = 0;
@@ -254,20 +282,6 @@ namespace Beagle.Daemon {
 				last_was_structural_break = false;
 			}
 		}
-
-		public void AppendText (string str)
-		{
-			//Logger.Log.Debug ("AppendText (\"{0}\")", str);
-			if (! IsFrozen && str != null && str != "") {
-
-				// FIXME: We should be smarter about newlines
-				if (str.IndexOf ('\n') != -1)
-					str = str.Replace ("\n", " ");
-
-				AppendText (str, IsHot ? str : null);
-			}
-		}
-
 		private bool NeedsWhiteSpace (ArrayList array)
 		{
 			if (array.Count == 0)

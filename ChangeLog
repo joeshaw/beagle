@@ -1,3 +1,13 @@
+2005-04-05  Veerapuram Varadhan  <vvaradhan@novell.com>
+
+	* beagled/Filter.cs: Third round of optimization. Mainly a FIXME
+	fix in AppendText () related to '\n'.
+
+	* Filters/FilterDOC.cs: A try-catch in IndexText.
+
+	* glue/wv1-glue.c: Reduce the round-trips by "bufferred-calls" to
+	IndexText.
+	
 2005-04-05  Vijay K. Nanjundaswamy <knvijay@novell.com>
 
 	* beagled/WebServices: Moved dog.png image file to images folder.

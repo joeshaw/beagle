@@ -31,6 +31,17 @@
 
 #include <wv.h>
 
+/* Number of structural-break'ed text-chunks to hold
+ * in the text/hot pools, before sending them for
+ * indexing.  Increasing the number will give good
+ * performance w.r.t for indexing, however, may take
+ * large-chunk-of-memory to hold that much data and
+ * depends on the length of each structurally-broken
+ * lines.
+ */
+#define BUFFERED_STRUCT_BREAK 12
+
+
 /* Callback to Handle "text" (or words) extracted out of 
  * M$ Word documents 
  *
@@ -70,12 +81,17 @@ typedef struct _UserData {
 
   /* buffer to hold text */
   GString* txtWord;
-
-    /* buffer to hold hot-pool-text */
-    GString* txtHotPool;
-
-    /* buffer to hold normal-pool-text */
-    GString* txtPool;
+  
+  /* buffer to hold hot-pool-text */
+  GString* txtHotPool;
+  
+  /* buffer to hold normal-pool-text */
+  GString* txtPool;
+  
+  /* hold number of "structural breaks" encountered
+   * since last-update-to-filter.
+   */
+  short structBrkCount;
 
   wvTextHandlerCallback WordHandler;
   
@@ -115,7 +131,7 @@ append_char (UserData * ud, U16 ch)
     break;
 
   case 0x20: /* space */
-    g_string_append_c (ud->txtWord, ch);
+      g_string_append_c (ud->txtWord, ch);
     break;
   default: 
     len =  g_unichar_to_utf8 (ch, tmpBuf);
@@ -137,21 +153,31 @@ append_char (UserData * ud, U16 ch)
   }
 
   if (ch == 0x00 || ch == 0x20) {
-      if (ud->bWasHot) 
-	  g_string_append (ud->txtHotPool, ud->txtWord->str);
-      g_string_append (ud->txtPool, ud->txtWord->str);
+    if (ud->bWasHot)
+      g_string_append (ud->txtHotPool, ud->txtWord->str);
 
- /*      printf ("TxtPool: %s\n", ud->txtPool->str);       */
-/*       printf ("HotTxtPool: %s\n", ud->txtHotPool->str); */
+    g_string_append (ud->txtPool, ud->txtWord->str);
 
-      if (bNeedStructBrk) {
-	  (*(ud->WordHandler))(ud->txtPool->str, ud->txtPool->len, 
-			       ud->txtHotPool->str, ud->txtHotPool->len, bNeedStructBrk);
-	  g_string_erase (ud->txtPool, 0, -1);
-	  g_string_erase (ud->txtHotPool, 0, -1);
-      }
-      g_string_erase (ud->txtWord, 0, -1);
-      ud->bWasHot = 0;
+    /*      printf ("TxtWord: %s\n", ud->txtWord->str);
+	    printf ("TxtPool: %s\n", ud->txtPool->str);       
+	    printf ("HotTxtPool: %s\n", ud->txtHotPool->str);
+    */
+
+    if (bNeedStructBrk) {
+      g_string_append_c (ud->txtPool, '\n');
+      g_string_append_c (ud->txtHotPool, ' ');
+      ud->structBrkCount++;
+    }
+
+    if (ud->structBrkCount >= BUFFERED_STRUCT_BREAK) {
+      (*(ud->WordHandler))(ud->txtPool->str, ud->txtPool->len, 
+			   ud->txtHotPool->str, ud->txtHotPool->len, bNeedStructBrk);
+      g_string_erase (ud->txtPool, 0, -1);
+      g_string_erase (ud->txtHotPool, 0, -1);
+      ud->structBrkCount = 0;
+    }
+    g_string_erase (ud->txtWord, 0, -1);
+    ud->bWasHot = 0;
   }  
 }
 
@@ -381,9 +407,12 @@ eleProc (wvParseStruct * ps, wvTag tag, void *props, int dirty)
 static int
 docProc (wvParseStruct * ps, wvTag tag)
 {
+  UserData *ud = (UserData *) ps->userData;
   switch (tag)
     {
     case DOCEND:
+      /* flush the text/hot pools at the EOD */
+      ud->structBrkCount = BUFFERED_STRUCT_BREAK;
       append_char (ps->userData, 0x00);
       break;
 
