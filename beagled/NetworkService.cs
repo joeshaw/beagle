@@ -68,8 +68,6 @@ namespace Beagle.Daemon
 
 		public NetworkService (int localPort)
 		{
-			this.queryDriver = queryDriver;
-
 			if (localPort != 0)
 				this.localPort = localPort;
 
