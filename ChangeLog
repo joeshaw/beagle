@@ -1,5 +1,10 @@
 2005-01-20  Veerapuram Varadhan	 <vvaradhan@novell.com>
 
+	* Filters/FilterPPT.cs: Identify Title, Sub-title, and other
+	special sections in a Slide and mark them HOT.
+	
+2005-01-20  Veerapuram Varadhan	 <vvaradhan@novell.com>
+
 	* beagled/SnippetFu.cs: Length of the tags ("<b>"+"</b>") is 7.
 	
 2005-01-19  Veerapuram Varadhan	 <vvaradhan@novell.com>

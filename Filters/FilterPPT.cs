@@ -373,11 +373,24 @@ namespace Beagle.Filters {
     
 	public class FilterPPT : FilterOle {
 
-		int textType;
+		private enum TextType {
+			Invalid = -1,
+			Title,
+			Body,
+			Notes,
+			NotUsed,
+			Other,
+			CenterBody,
+			CenterTitle,
+			HalfBody,
+			QuarterBody
+		};
+
+		TextType textType;
 		public FilterPPT () 
 		{
 			AddSupportedMimeType ("application/vnd.ms-powerpoint");
-			textType = -1;
+			textType = TextType.Invalid;
 		}
 
 		private int ParseElement (Gsf.Input stream)
@@ -416,7 +429,7 @@ namespace Beagle.Filters {
 						encoding = System.Text.Encoding.Unicode;
 					}
 					
-					if (encoding != null && textType != 3) {
+					if (encoding != null && textType != TextType.NotUsed) {
 						StringBuilder strData = new StringBuilder () ;
 						data = stream.Read(length);
 						if (data == null)
@@ -431,11 +444,18 @@ namespace Beagle.Filters {
 						// been appended to the text pool.
 						strData.Replace ((char)0x0B, (char)0x20);
 						
+						if (textType == TextType.Title ||
+						    textType == TextType.CenterBody ||
+						    textType == TextType.CenterTitle)
+							HotUp ();
 						AppendText (strData.ToString());
-						AppendWhiteSpace ();
+						if (IsHot)
+							HotDown ();
+						else
+							AppendWhiteSpace ();
 					}  else if (opcode == RecordType.TypeCode.TextHeaderAtom) {
 						data = stream.Read (4);
-						textType = GetInt32 (data, 0);
+						textType = (TextType) GetInt32 (data, 0);
 					} else {
 						stream.Seek(length, SeekOrigin.Current);
 					}
