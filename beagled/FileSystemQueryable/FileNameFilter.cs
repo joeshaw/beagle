@@ -32,6 +32,15 @@ using System.IO;
 namespace Beagle.Daemon.FileSystemQueryable {
 
 	public class FileNameFilter {
+		
+		static string home_dir;
+		Hashtable ignore_cache = new Hashtable ();
+
+		static FileNameFilter ()
+		{
+			home_dir = Environment.GetEnvironmentVariable ("HOME");
+		}
+
 
 		private class Pattern {
 			private string exactMatch;
@@ -156,8 +165,7 @@ namespace Beagle.Daemon.FileSystemQueryable {
 			
 			// Read the ~/.neverindex file, which contains patterns
 			// for files that should always be ignored.
-			string home = Environment.GetEnvironmentVariable ("HOME");
-			string neverindex = Path.Combine (home, ".neverindex");
+			string neverindex = Path.Combine (home_dir, ".neverindex");
 			ArrayList patterns = LoadPatterns (neverindex);
 			if (patterns != null) {
 				foreach (Pattern pattern in patterns)
@@ -261,26 +269,38 @@ namespace Beagle.Daemon.FileSystemQueryable {
 		// we could avoid walking up the chain of directories.
 		public bool Ignore (string path)
 		{
-			path = Path.GetFullPath (path);
+			if (! Path.IsPathRooted (path))
+				path = Path.GetFullPath (path);
+			
+			if (ignore_cache.Contains (path))
+				return (bool) ignore_cache [path];
 
-			if (path == Environment.GetEnvironmentVariable ("HOME"))
+			if (path == home_dir) {
+				ignore_cache [path] = false;
 				return false;
+			}
 
 			string name = Path.GetFileName (path);
 
 			foreach (Pattern pattern in defaultPatternsToIgnore)
-				if (pattern.IsMatch (name))
+				if (pattern.IsMatch (name)) {
+					ignore_cache [path] = true;
 					return true;
+				}
 
 			string dir = Path.GetDirectoryName (path);
 			PerDirectoryInfo perDir = GetPerDirectoryInfo (dir);
 
-			if (perDir == null || perDir.Ignore (name))
+			if (perDir == null || perDir.Ignore (name)) {
+				ignore_cache [path] = true;
 				return true;
+			}
 
 			// A file should be ignored if any of its parent directories
 			// is ignored.
-			return Ignore (dir);
+			bool rv = Ignore (dir);
+			ignore_cache [path] = rv;
+			return rv;
 		}
 
 		public bool Ignore (FileSystemInfo info)

@@ -468,9 +468,15 @@ namespace Beagle.Daemon {
 			}
 
 			Log.Debug ("Optimizing...");
+
+			Stopwatch watch = new Stopwatch ();
+			watch.Start ();
 			IndexWriter writer = new IndexWriter (Store, null, false);
 			writer.Optimize ();
 			writer.Close ();
+			watch.Stop ();
+
+			Log.Debug ("Optimization time: {0}", watch);
 
 			lock (pending_by_uri) {
 				optimizing = false;
