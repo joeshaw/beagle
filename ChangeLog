@@ -1,3 +1,8 @@
+2004-11-10  Tuomas Kuosmanen  <tigert@novell.com>
+
+	* Tiles/template-mail-message.html: added date display and content
+	snippet dummy example (to be implemented in mail messages)
+
 2004-11-09  Tuomas Kuosmanen  <tigert@novell.com>
 
 	* Tiles/template-page.css: prettified stuff, indented the contents
