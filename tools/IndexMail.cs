@@ -1,4 +1,4 @@
- //
+//
 // IndexMail.cs
 //
 // Copyright (C) 2004 Novell, Inc.
@@ -36,6 +36,50 @@ using Beagle;
 using Camel = Beagle.Util.Camel;
 
 namespace IndexMailTool {
+
+	public class LineReader {
+		
+		TextReader reader;
+		Stack lineStack = new Stack ();
+		long totalBytes = 0;
+		long maxBytes = -1;
+
+		public LineReader (TextReader _reader)
+		{
+			reader = _reader;
+		}
+
+		public long MaxBytes {
+			get { return maxBytes; }
+			set { totalBytes = 0; maxBytes = value; }
+		}
+
+		public string ReadLine ()
+		{
+			string line;
+
+			if (lineStack.Count > 0) {
+				line = (string) lineStack.Pop ();
+				//Console.WriteLine ("Popped '{0}'", line);
+				return line;
+			}
+
+			if (maxBytes > 0 && totalBytes >= maxBytes)
+				return null;
+
+			line = reader.ReadLine ();
+			if (line != null)
+				totalBytes += line.Length + 1;
+			//Console.WriteLine ("Read '{0}'", line == null ? "(null)" : line);
+			return line;
+		}
+
+		public void UnReadLine (string line)
+		{
+			//Console.WriteLine ("Unread '{0}'", line);
+			lineStack.Push (line);
+		}
+	}
 
 
 	public class MailHeader {
@@ -144,13 +188,12 @@ namespace IndexMailTool {
 			}
 		}
 		
-		public int Parse (IList lines, int i)
+		public void Parse (LineReader reader)
 		{
 			MailHeader header = null;
+			string line;
 			
-			while (i < lines.Count) {
-				String line = (String) lines [i];
-				++i;
+			while ((line = reader.ReadLine ()) != null) {
 				if (line == "") {
 					break;
 				} else if (header != null && (line [0] == '\t' || line [0] == ' ')) {
@@ -163,8 +206,6 @@ namespace IndexMailTool {
 				}
 			}
 			Add (header);
-			
-			return i;
 		}
 	}
 
@@ -199,69 +240,68 @@ namespace IndexMailTool {
 			get { return headers == null ? null : headers.Boundary; }
 		}
 
-		public int Parse (IList lines, int i, String boundary)
+		public void Parse (LineReader reader, String boundary)
 		{
-			String boundaryFirst = null;
-			String boundaryLast = null;
+			string boundaryFirst = null;
+			string boundaryLast = null;
 			if (boundary != null) {
 				headers = new MailHeaderList ();
-				i = headers.Parse (lines, i);
+				headers.Parse (reader);
 				boundaryFirst = "--" + boundary;
 				boundaryLast = boundaryFirst + "--";
 			}
 
 			if (headers != null
 			    && headers.ContentType == "multipart/alternative") {
-				String subBoundary = headers.Boundary;
-				String subBoundaryFirst = "--" + subBoundary;
-				String subBoundaryLast = subBoundaryFirst + "--";
+				string subBoundary = headers.Boundary;
+				string subBoundaryFirst = "--" + subBoundary;
+				string subBoundaryLast = subBoundaryFirst + "--";
+
+				string line;
 
 				// Skip past first sub-boundary
-				while (i < lines.Count) {
-					String line = (String) lines [i];
+				while ((line = reader.ReadLine ()) != null) {
 					if (line == subBoundaryFirst || line == subBoundaryLast) {
-						++i;
+						line = null;
 						break;
 					}
-					if (line != "")
+					if (line != "") {
+						reader.UnReadLine (line);
 						break;
-					++i;
+					}
 				}
 
 				alternatives = new ArrayList ();
-				while (i < lines.Count) {
-					String line = (String) lines [i];
+				while ((line = reader.ReadLine ()) != null) {
 					if (line == boundaryFirst || line == boundaryLast) {
-						++i;
 						break;
 					}
+					reader.UnReadLine (line);
 					MailBody subBody = new MailBody ();
-					i = subBody.Parse (lines, i, subBoundary);
+					subBody.Parse (reader, subBoundary);
 					alternatives.Add (subBody);
 				}
 
 			} else {
-				while (i < lines.Count) {
-					String line = (String) lines [i];
-					++i;
+				string line;
+				while ((line = reader.ReadLine ()) != null) {
 					if (line == boundaryFirst || line == boundaryLast)
 						break;
 					body.Add (line);
 				}
 
 				// Gobble trailing whitespace
-				while (i < lines.Count) {
-					if ((String) lines [i] != "")
+				while ((line = reader.ReadLine ()) != null) {
+					if (line != "") {
+						reader.UnReadLine (line);
 						break;
-					++i;
+					}
 				}
 
 
 			}
-
-			return i;
 		}
-
+		
 		public void Describe ()
 		{
 			if (headers != null)
@@ -272,8 +312,11 @@ namespace IndexMailTool {
 					alt.Describe ();
 				Console.WriteLine ("End of Alternatives");
 			}
-			if (body.Count > 0)
+			if (body.Count > 0) {
+				foreach (string line in body)
+					Console.WriteLine ("[{0}]", line);
 				Console.WriteLine ("Lines: {0}", body.Count);
+			}
 		}
 	}
 
@@ -302,40 +345,39 @@ namespace IndexMailTool {
 			get { return bodies; }
 		}
 
-		public MailMessage (IList lines)
+		public MailMessage (LineReader reader, long size)
 		{
 			// First, process the From_ line.
-			String fromLine = (String) lines [0];
+			String fromLine = reader.ReadLine ();
 			int fromSplit = fromLine.IndexOf (' ', 5);
 			fromSender = fromLine.Substring (5, fromSplit-5);
 			fromTime = fromLine.Substring (fromSplit+1);
 
+			reader.MaxBytes = size;
+
 			// Next, read the headers
-			int i = headers.Parse (lines, 1);
+			headers.Parse (reader);
 
 			// Is this a multi-part message?
 			String boundary = headers.Boundary;
 			bool isMultipart = (boundary != null);
 
+			string line;
+
 			// If this is a multi-part message, skip everything
 			// up to the first boundary;
 			if (isMultipart) {
-				while (i < lines.Count) {
-					String line = (String) lines [i];
-					++i;
+				while ((line = reader.ReadLine ()) != null) {
 					if (line == "--" + boundary)
 						break;
 				}
-			} else {
-				// Otherwise, just skip the blank line after the
-				// mail headers.
-				++i;
-			}
+			} 
 			
 			// Finally, read in the message bodies.
-			while (i < lines.Count) {
+			while ((line = reader.ReadLine ()) != null) {
+				reader.UnReadLine (line);
 				MailBody body = new MailBody ();
-				i = body.Parse (lines, i, boundary);
+				body.Parse (reader, boundary);
 				bodies.Add (body);
 			}
 		}
@@ -519,13 +561,14 @@ namespace IndexMailTool {
 					// Seek to the beginning of this message
 					mboxStream.Seek (mi.from_pos, SeekOrigin.Begin);
 
-					// Read the message and split the text into lines
-					byte[] msgBytes = new byte [mi.size];
-					mboxStream.Read (msgBytes, 0, (int) mi.size);
-					String[] lines = encoding.GetString (msgBytes).Split ('\n');
+					TextReader textReader = new StreamReader (mboxStream, encoding);
+					LineReader reader = new LineReader (textReader);
 
 					// Parse an RFC 2822 message from the array of lines
-					MailMessage msg = new MailMessage (lines);
+					MailMessage msg = new MailMessage (reader, mi.size);
+
+					//Console.WriteLine ("From: {0}", mi.from);
+					//Console.WriteLine ("Subject: {0}", mi.subject);
 
 					Schedule (new IndexableMail ("local@local",
 								     folderName,
