@@ -124,6 +124,9 @@ namespace Beagle.Daemon.BlamQueryable {
 			
 			foreach (Channel channel in collection.Channels)	{
 
+				if (channel.Items == null)
+					continue;
+
 				foreach(Item item in channel.Items) {
 					Indexable indexable = new Indexable (
 						new Uri (channel.Url.Replace ("http://", "rss://") + ";item=" + item.Id));
