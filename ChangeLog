@@ -1,3 +1,8 @@
+2005-01-12  Veerapuram Varadhan	 <vvaradhan@novell.com>
+
+	* configure.in, beagled/Makefile.am: Mozilla backend is optional
+	now.
+
 2005-01-11  Veerapuram Varadhan	 <vvaradhan@novell.com>
 
 	* Tiles/TileDocs.cs, Tiles/template-docs.html: beautification.

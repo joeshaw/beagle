@@ -369,11 +369,6 @@ EVO_MAIL_QUERYABLE_CSFILES =				\
 	$(evomailqueryable)/EvolutionMailDriver.cs	\
 	$(evomailqueryable)/EvolutionMailIndexableGenerator.cs
 
-mozillaqueryable = $(srcdir)/MozillaQueryable
-MOZILLA_QUERYABLE_CSFILES =				\
-	$(mozillaqueryable)/MozillaQueryable.cs
-
-
 blamqueryable = $(srcdir)/BlamQueryable
 BLAM_QUERYABLE_CSFILES =				\
 	$(blamqueryable)/BlamQueryable.cs
@@ -394,7 +389,6 @@ DAEMON_DLL_CSFILES = 						\
 	$(GAIM_LOG_QUERYABLE_CSFILES)				\
 	$(BLAM_QUERYABLE_CSFILES)				\
 	$(EVO_MAIL_QUERYABLE_CSFILES)				\
-	$(MOZILLA_QUERYABLE_CSFILES)				\
 	$(WEB_HISTORY_QUERYABLE_CSFILES)			\
 	$(srcdir)/BugzillaDriver.cs 				\
 	$(srcdir)/Crawler.cs					\
@@ -460,6 +454,14 @@ if ENABLE_RENDEZVOUS
 DAEMON_DLL_CSFLAGS += -define:ENABLE_RENDEZVOUS
 DAEMON_DLL_ASSEMBLIES += $(RENDEZVOUS_LIBS)
 endif
+endif
+
+if ENABLE_MOZILLA_BACKEND
+mozillaqueryable = $(srcdir)/MozillaQueryable
+MOZILLA_QUERYABLE_CSFILES =				\
+	$(mozillaqueryable)/MozillaQueryable.cs
+DAEMON_DLL_CSFILES +=					\
+	$(MOZILLA_QUERYABLE_CSFILES)
 endif
 
 
@@ -563,7 +565,8 @@ COND_CS_FILES = \
 	$(AUTHENTICATORS_CSFILES) 			\
 	$(srcdir)/NetworkHandler.cs			\
 	$(srcdir)/NetworkService.cs			\
-	$(srcdir)/NetworkDriver.cs
+	$(srcdir)/NetworkDriver.cs			\
+	$(MOZILLA_QUERYABLE_CSFILES)
 
 EXTRA_DIST =				\
 	$(PLUGIN_CSFILES)		\
