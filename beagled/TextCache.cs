@@ -48,7 +48,10 @@ namespace Beagle.Daemon {
 
 			// Create our cache subdirectories.
 			for (int i = 0; i < 256; ++i) {
-				string subdir = Path.Combine (text_cache_dir, i.ToString ("x"));
+				string subdir = i.ToString ("x");
+				if (i < 16)
+					subdir = "0" + subdir;
+				subdir = Path.Combine (text_cache_dir, subdir);
 				if (! Directory.Exists (subdir))
 					Directory.CreateDirectory (subdir);
 			}
