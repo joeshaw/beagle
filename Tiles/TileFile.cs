@@ -59,12 +59,13 @@ namespace Beagle.Tile {
 			Gtk.IconSize size = (Gtk.IconSize) 48;
 			string path = BU.GnomeIconLookup.LookupMimeIcon (Hit.MimeType,
 									 size);
-			if (path != null && path != "") {
-				Template["Icon"] = Images.GetHtmlSource (path,
-									 BU.GnomeIconLookup.GetFileMimeType (path));
-			} else {	
+			string icon = Images.GetHtmlSource (path,
+								 BU.GnomeIconLookup.GetFileMimeType (path));
+
+			if (icon != null)
+				Template["Icon"] = icon;
+			else
 				Template ["Icon"] = Images.GetHtmlSource ("document", "image/png");
-			}
 		}
 
 		[TileAction]

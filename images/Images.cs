@@ -140,7 +140,7 @@ namespace Beagle {
 		static public string GetHtmlSource (string name, 
 						    string mime_type) 
 		{
-			if (name == null) {
+			if (name == null || name.Length == 0) {
 				return null;
 			} else if (name.StartsWith ("file://")) {
 				return name;
@@ -156,6 +156,8 @@ namespace Beagle {
 				// since they'll probably be repeated a lot
 
 				stream = GetStream (name);
+				if (stream == null)
+					return null;
 
 				byte[] binary_data = new Byte[stream.Length];
 				long bytes_read = stream.Read(binary_data, 0,

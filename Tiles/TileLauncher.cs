@@ -85,8 +85,12 @@ namespace Beagle.Tile {
 		protected override void PopulateTemplate ()
 		{
 			base.PopulateTemplate ();
+			String icon = Images.GetHtmlSource (ImagePath (), Hit.MimeType);
 
-			Template["Icon"] = Images.GetHtmlSource (ImagePath (), Hit.MimeType);
+			if (icon != null)
+				Template["Icon"] = icon;
+			else
+				Template["Icon"] = Images.GetHtmlSource ("document", "image/png");
 
 		}
 
