@@ -48,6 +48,7 @@ namespace Beagle.Filters {
 		{
 			string str = reader.ReadLine ();
 			if (str == null) {
+				reader.Close ();
 				Finished ();
 			} else {
 				AppendText (str);

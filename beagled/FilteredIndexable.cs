@@ -87,17 +87,11 @@ namespace Beagle.Daemon {
 				throw new IOException ("No such file: " + path);
 			}
 
-			if (!ValidTimestamp) {
-				DateTime nautilusTime = BU.NautilusTools.GetMetaFileTime (path);
-				if (nautilusTime > modifiedTime) {
-					modifiedTime = nautilusTime;
-				}
-				Timestamp = modifiedTime;
-				System.Console.WriteLine ("not a valid timestamp for {0}: {1}", Uri, Timestamp);
-
-			} else {
-				System.Console.WriteLine ("valid timestamp");
+			DateTime nautilusTime = BU.NautilusTools.GetMetaFileTime (path);
+			if (nautilusTime > modifiedTime) {
+				modifiedTime = nautilusTime;
 			}
+			Timestamp = modifiedTime;
 
 			string dirName = null;
 			string parentName = null;
@@ -202,7 +196,7 @@ namespace Beagle.Daemon {
 
 			flavor = Flavor.FromMimeType (MimeType);
 			filter = Filter.FromFlavor (flavor);
-			
+
 			if (filter != null) {
 				filter.Open (new FileInfo (path));
 				foreach (Property prop in filter.Properties)
