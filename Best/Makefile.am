@@ -7,22 +7,19 @@ WRAPPER = best
 CSFLAGS = -target:exe
 
 CSFILES =		\
-	Vfs.cs		\
 	Best.cs		\
 	BestWindow.cs	\
 	HitContainer.cs	\
 	HitView.cs
 
-ASSEMBLIES =			\
-	-r:glib-sharp		\
-	-r:gtk-sharp		\
-	-r:gnome-sharp		\
-	-L ../Lucene.Net	\
-	-r:Lucene.Net		\
-	-L ../Filters		\
-	-r:Filters		\
-	-L ../indexer		\
-	-r:Indexer
+ASSEMBLIES =				\
+	-r:glib-sharp.dll		\
+	-r:gtk-sharp.dll		\
+	-r:gnome-sharp.dll		\
+	-r:../Util/Util.dll		\
+	-r:../Lucene.Net/Lucene.Net.dll	\
+	-r:../Filters/Filters.dll	\
+	-r:../indexer/Indexer.dll
 
 $(TARGET): $(CSFILES)
 	$(CSC) -o $@ $(CSFLAGS) $(CSFILES) $(ASSEMBLIES)

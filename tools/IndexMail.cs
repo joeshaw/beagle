@@ -12,6 +12,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 
 using Dewey;
+using Camel = Dewey.Util.Camel;
 
 namespace IndexMailTool {
 
@@ -151,7 +152,7 @@ namespace IndexMailTool {
 
 
 	public class MailBody {
-
+		
 		MailHeaderList headers = null;
 		ArrayList alternatives = null;
 		ArrayList body = new ArrayList ();
@@ -280,123 +281,6 @@ namespace IndexMailTool {
 			get { return bodies; }
 		}
 
-		static String[] dayNames = new String [7] { "sun", "mon", "tue", "wed", "thu", "fri", "sat" };
-
-		static String[] monthNames = new String [13] {	"!!!", "jan", "feb", "mar", "apr",
-								"may", "jun", "jul", "aug", "sep",
-								"oct", "nov", "dec" };
-
-		bool dateCached = false;
-		DateTime date;
-
-		public DateTime Date {
-			get {
-				if (dateCached)
-					return date;
-
-				String dateStr = headers ["Date"];
-
-				Debug.Assert (dateStr != null);
-				
-				int i;
-				
-				// If there is a comma in there, it should be
-				// preceeded by the day of the week.  We don't
-				// need it, so we strip it out.
-				i = dateStr.IndexOf (',');
-				if (i != -1) {
-					dateStr = dateStr.Substring (i+1).Trim ();
-				} else {
-					// There might be a day of the week, but w/o
-					// a comma.  Check for that.
-					String front = dateStr.Substring (0, 3).ToLower ();
-					foreach (String dn in dayNames) {
-						if (front == dn) {
-							dateStr = dateStr.Substring (3).Trim ();
-							break;
-						}
-					}
-				}
-				
-				// Collapse adjacent spaces.  Not particularly
-				// efficient, but maybe faster that using a regex.
-				while (dateStr.IndexOf ("  ") != -1)
-					dateStr = dateStr.Replace ("  ", " ");
-				
-				String[] parts = dateStr.Split (' ');
-
-				if (parts.Length < 3) {
-					Console.WriteLine ("(a) Totally broken date string: '{0}'", dateStr);
-					return new DateTime ();
-				}
-
-				int day = 0, month = 0, year = 0;
-				
-				if (parts [1].Length >= 3) {
-					String monthStr = parts [1].Substring (0, 3).ToLower ();
-					for (i = 1; i < monthNames.Length; ++i)
-						if (monthStr == monthNames [i]) {
-							month = i;
-							break;
-						}
-				}
-
-				if (month == 0) {
-					Console.WriteLine ("(b) Totally broken date string: '{0}'", dateStr);
-					return new DateTime ();
-				} else {
-					try {
-						day = int.Parse (parts [0]);
-						year = int.Parse (parts [2]);
-					} catch {
-						Console.WriteLine ("(c) Totally broken date string '{0}'", dateStr);
-						return new DateTime ();
-					}
-					
-					if (year < 50)
-						year += 2000;
-					else if (year < 100)
-						year += 1900;
-
-					if (day < 1 || day > DateTime.DaysInMonth (year, month)) {
-						Console.WriteLine ("(d) Totally broken date string '{0}'", dateStr);
-						return new DateTime ();
-					}
-				}
-				
-				
-				int hours = -1, minutes = -1, seconds = -1;
-				// Now the time.  It is in the part that contains a ':'.
-				for (i = 0; i < parts.Length; ++i)
-					if (parts [i].IndexOf (':') != -1) {
-						String[] timeparts = parts [i].Split (':');
-						if (timeparts.Length != 3) {
-							Console.WriteLine ("(e) Totally broken date string '{0}'", dateStr);
-							return new DateTime ();
-						}
-
-						try {
-							hours = int.Parse (timeparts [0]);
-							minutes = int.Parse (timeparts [1]);
-							seconds = int.Parse (timeparts [2]);
-						} catch {
-							Console.WriteLine ("(f) Totally broken date string '{0}'", dateStr);
-							return new DateTime ();
-						}
-						break;
-					}
-				
-				date = new DateTime (year, month, day, hours, minutes, seconds);
-				dateCached = true;
-
-				return date;
-			}
-		}
-
-		public bool ValidDate {
-			get { return Date.Ticks != 0; }
-		}
-		
 		public MailMessage (IList lines)
 		{
 			// First, process the From_ line.
@@ -442,32 +326,35 @@ namespace IndexMailTool {
 
 	public class IndexableMail : Indexable {
 
-		StringBuilder contentBuilder = new StringBuilder ();
+		StringBuilder contentBuilder = null; 
 
-		public IndexableMail (String folderName, MailMessage message)
+		public IndexableMail (String accountId,
+				      String folderName,
+				      Camel.MessageInfo messageInfo,
+				      MailMessage message)
 		{
-			String xEv = message ["X-Evolution"];
-			int i = xEv.IndexOf ('-');
-			String uidStr = xEv.Substring (0, i);
-			int uid = Convert.ToInt32 (uidStr, 16);
-
-			// FIXME: The Uri is totally fake.
-			uri = String.Format ("email://local@local/{0};uid={1}", folderName, uid);
+			uri = String.Format ("email://{0}/{1};uid={2}", accountId, folderName, messageInfo.uid);
 			domain = "Mail";
 			mimeType = "text/plain"; // FIXME: what about html mail?
 
-			timestamp = message.Date;
+			timestamp = messageInfo.received;
 
 			needPreload = false;
 
 			// Assemble the metadata
-			SetMetadata ("to", message ["To"]);
-			SetMetadata ("from", message ["From"]);
-			SetMetadata ("subject", message ["Subject"]);
+			SetMetadata ("subject", messageInfo.subject);
+			SetMetadata ("to", messageInfo.from);
+			SetMetadata ("from", messageInfo.to);
+			SetMetadata ("cc", messageInfo.cc);
+			SetMetadata ("mlist", messageInfo.mlist);
+			SetMetadata ("flags", Convert.ToString (messageInfo.flags));
 
-			// Assemble the content
-			foreach (MailBody body in message.Bodies)
-				AddContent (body);
+			// Assemble the content, if we have any
+			if (message != null) {
+				contentBuilder = new StringBuilder ();
+				foreach (MailBody body in message.Bodies)
+					AddContent (body);
+			}
 		}
 
 		void AddContent (MailBody body)
@@ -495,86 +382,27 @@ namespace IndexMailTool {
 		}
 
 		override public String Content {
-			get { return contentBuilder.ToString (); }
+			get { return contentBuilder == null ? null : contentBuilder.ToString (); }
 		}
 
 	}
 
 	//////////////////////////////////////////////////////////////////	
 
-	public class MboxScanner {
-
-		public MboxScanner ()
-		{
-
-		}
+	public class MailScanner {
 
 		IndexDriver driver = new IndexDriver ();
 		ArrayList toIndex = new ArrayList ();
 		int count = 0;
 
-		private void ProcessMessage (String folderName, MailMessage msg)
+		private void Schedule (Indexable indexable)
 		{
-			// Silently drop messages with mangled dates
-			if (! msg.ValidDate)
-				return;
-
-			Indexable indexable = new IndexableMail (folderName, msg);
-
 			toIndex.Add (indexable);
-			if (toIndex.Count > 100) {
+			++count;
+			if (toIndex.Count > 5000) {
 				driver.Add (toIndex);
 				toIndex.Clear ();
 			}
-
-			++count;
-			if ((count & 255) == 0)
-				Console.WriteLine (count);
-
-
-		}
-
-		bool IsQuotedFrom (String line)
-		{
-			if (line.Length == 0)
-				return false;
-
-			if (line [0] != '>')
-				return false;
-
-			int i = 1;
-			while (i < line.Length && line [i] == '>')
-				++i;
-
-			return line.Substring (i).StartsWith ("From");
-		}
-
-		public void Load (String folderName, String filename)
-		{
-			StreamReader sr = new StreamReader (filename);
-
-			String line;
-			ArrayList lines = new ArrayList ();
-			bool first = true;
-			while ((line = sr.ReadLine ()) != null) {
-				if (line.StartsWith ("From ")) {
-					// Throw away any lines that
-					// precede the first From_ line
-					if (! first)
-						ProcessMessage (folderName, new MailMessage (lines));
-					first = false;
-					lines.Clear ();
-					
-				} else if (IsQuotedFrom (line)) {
-					// Unquote quoted from lines
-					line = line.Substring (1);
-				}
-
-				lines.Add (line);
-			}
-
-			if (lines.Count > 0)
-				ProcessMessage (folderName, new MailMessage (lines));
 		}
 
 		public void Flush ()
@@ -583,30 +411,127 @@ namespace IndexMailTool {
 				driver.Add (toIndex);
 		}
 
+		//////////////////////////
+
+		public void MessageStatus (String str)
+		{
+			Console.Write ("\x1b[1G{0}\x1b[0K", str); // terminal-fu!
+		}
+
+		public void MessageStatus (String format, params object[] args)
+		{
+			MessageStatus (String.Format (format, args));
+		}
+
+		public void MessageFinished (String str)
+		{
+			Console.WriteLine ("\x1b[1G{0}\x1b[0K", str); // terminal-fu!
+		}
+
+		public void MessageFinished (String format, params object[] args)
+		{
+			MessageFinished (String.Format (format, args));
+		}
+
+		//////////////////////////
+
+		public void ScanMbox (String folderName, String mboxFile, String summaryFile)
+		{
+			Camel.Summary summary = Camel.Summary.load (summaryFile);
+
+			String dataName = "lastScan-" + folderName;
+
+			DateTime lastTime = new DateTime (0);
+			String lastTimeStr = PathFinder.ReadAppDataLine ("IndexMail", dataName);
+			if (lastTimeStr != null)
+				lastTime = DateTime.Parse (lastTimeStr);
+
+			DateTime latestTime = lastTime;
+
+			ASCIIEncoding encoding = new ASCIIEncoding ();
+			Stream mboxStream = null;
+
+			/* FIXME: Problems with basing everything off of the summary
+			   (1) We don't notice when messages are expunged -- they will stay in the index.
+			   (2) We don't notice changes in the flags.
+			*/
+
+			int count = 0, indexedCount = 0;
+			foreach (Camel.MBoxMessageInfo mi in summary.messages) {
+
+				if ((count & 15) == 0)
+					MessageStatus ("{0}: indexed {1} messages ({2}/{3} {4:###.0}%)",
+						       folderName, indexedCount,
+						       count, summary.header.count, 
+						       100.0 * count / summary.header.count);
+				++count;
+
+				if (lastTime < mi.received) {
+
+					if (latestTime < mi.received)
+						latestTime = mi.received;
+
+					// If we haven't open the mbox yet, do it now
+					if (mboxStream == null)
+						mboxStream = new FileStream (mboxFile, FileMode.Open, FileAccess.Read);
+					
+					// Seek to the beginning of this message
+					mboxStream.Seek (mi.from_pos, SeekOrigin.Begin);
+
+					// Read the message and split the text into lines
+					byte[] msgBytes = new byte [mi.size];
+					mboxStream.Read (msgBytes, 0, (int) mi.size);
+					String[] lines = encoding.GetString (msgBytes).Split ('\n');
+
+					// Parse an RFC 2822 message from the array of lines
+					MailMessage msg = new MailMessage (lines);
+
+					Schedule (new IndexableMail ("local@local",
+								     folderName,
+								     mi,
+								     msg));
+					++indexedCount;
+				}
+			}
+
+			MessageFinished ("{0}: indexed {1} of {2} messages", folderName, indexedCount, count);
+
+			if (mboxStream != null)
+				mboxStream.Close ();
+
+			if (latestTime != lastTime)
+				PathFinder.WriteAppDataLine ("IndexMail", dataName, latestTime.ToString ());
+		}
+
 	}
 
 	class IndexMailTool {
 
 		static void Main (String[] args)
 		{
-			MboxScanner mbox = new MboxScanner ();
-			
-			String home = Environment.GetEnvironmentVariable ("HOME");
-			String local = Path.Combine (home, "evolution/local");
+			String local = Environment.GetEnvironmentVariable ("HOME");
+			local = Path.Combine (local, ".evolution/mail/local");
 			if (! Directory.Exists (local)) {
 				Console.WriteLine ("Can't find {0}", local);
 				return;
 			}
 
+			MailScanner scanner = new MailScanner ();
+
 			DirectoryInfo dir = new DirectoryInfo (local);
+			
+			foreach (FileInfo f in dir.GetFiles ()) {
+				if (Path.GetExtension (f.Name) == ".ev-summary") {
+					String folderName = Path.GetFileNameWithoutExtension (f.Name);
+					String summaryFile = f.FullName;
+					String mboxFile = Path.Combine (local, folderName);
 
-			foreach (DirectoryInfo folder in dir.GetDirectories ()) {
-				String mboxFile = Path.Combine (folder.FullName, "mbox");
-				if (File.Exists (mboxFile))
-					mbox.Load (folder.Name, mboxFile);
+					if (File.Exists (mboxFile) && folderName.ToLower () != "spam")
+						scanner.ScanMbox (folderName, mboxFile, summaryFile);
+				}
 			}
-
-			mbox.Flush ();
+			
+			scanner.Flush ();
 		}
 	}
 }

@@ -101,7 +101,6 @@ namespace Lucene.Net.Store
 
 			while (!locked) 
 			{
-				Console.WriteLine ("Waiting {0}/{1}", sleepCount, maxSleepCount);
 				// FIXED trow@ximian.com 2004 May 8
 				// Lock would time out before first sleep if maxSleepCount == 1
 				if (sleepCount == maxSleepCount) 

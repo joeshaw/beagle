@@ -1,25 +1,19 @@
 
 CSC = mcs -g
 
-TARGET = Indexer.dll
+TARGET = Util.dll
 
 CSFLAGS = -target:library
 
 CSFILES = 			\
-	PathFinder.cs		\
-	Versioned.cs		\
-	Indexable.cs		\
-	IndexableFile.cs	\
-	IndexableHttp.cs	\
-	Query.cs		\
-	Hit.cs			\
-	IndexDriver.cs
+	camel.cs		\
+	gnome.cs		\
+	Vfs.cs
 
-ASSEMBLIES = 				\
-	-r:ICSharpCode.SharpZipLib	\
-	-r:../Util/Util.dll		\
-	-r:../Lucene.Net/Lucene.Net.dll	\
-	-r:../Filters/Filters.dll
+ASSEMBLIES =			\
+	-r:glib-sharp.dll	\
+	-r:gtk-sharp.dll	\
+	-r:gnome-sharp.dll		
 
 $(TARGET): $(CSFILES)
 	$(CSC) -o $@ $(CSFLAGS) $(CSFILES) $(ASSEMBLIES)

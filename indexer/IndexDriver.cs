@@ -30,6 +30,8 @@ namespace Dewey {
 		// 2: Changed format of timestamp strings
 		private const int VERSION = 2;
 
+		//////////////////////////
+
 		public IndexDriver ()
 		{
 			BootstrapIndex ();
@@ -39,7 +41,7 @@ namespace Dewey {
 
 		//////////////////////////
 		
-		public bool Debug = true;
+		public bool Debug = (Environment.GetEnvironmentVariable ("DEWEY_DEBUG_INDEX") != null);
 		
 		protected void Spew (String str)
 		{
@@ -79,21 +81,9 @@ namespace Dewey {
 
 		//////////////////////////
 
-		private String RootDir {
-			get {
-				String homedir = Environment.GetEnvironmentVariable ("HOME");
-				String dir = Path.Combine (homedir, ".dewey");
-				if (! Directory.Exists (dir))
-					Directory.CreateDirectory (dir);
-				// FIXME: We should set some reasonable permissions on the
-				// .dewey directory.
-				return dir;
-			}
-		}
-
 		private String IndexDir {
 			get {
-				String dir = Path.Combine (RootDir, "Index");
+				String dir = Path.Combine (PathFinder.RootDir, "Index");
 				if (! Directory.Exists (dir))
 					Directory.CreateDirectory (dir);
 				return dir;
@@ -106,7 +96,7 @@ namespace Dewey {
 		// trouble.
 		private String LockDir {
 			get {
-				String dir = Path.Combine (RootDir, "Locks");
+				String dir = Path.Combine (PathFinder.RootDir, "Locks");
 				if (! Directory.Exists (dir))
 					Directory.CreateDirectory (dir);
 				return dir;
@@ -120,13 +110,13 @@ namespace Dewey {
 			// just return.
 
 			String indexTestFile = Path.Combine (IndexDir, "segments");
-			String versionFile = Path.Combine (RootDir, "indexVersion");
+			String versionFile = Path.Combine (PathFinder.RootDir, "indexVersion");
 
 			bool indexExists = File.Exists (indexTestFile);
-			bool versionExists = File.Exists (versionFile);
+			bool versionExists = PathFinder.HaveAppData ("__Index", "version");
+			
 			if (indexExists && versionExists) {
-				StreamReader sr = new StreamReader (versionFile);
-				String line = sr.ReadLine ();
+				String line = PathFinder.ReadAppDataLine ("__Index", "version");
 				if (line == Convert.ToString (VERSION))
 					return;
 			}
@@ -140,8 +130,8 @@ namespace Dewey {
 
 			// If this looks like an old-style (pre-.dewey/Index) set-up,
 			// blow away everything in sight.
-			if (File.Exists (Path.Combine (RootDir, "segments")))
-				Directory.Delete (RootDir, true);
+			if (File.Exists (Path.Combine (PathFinder.RootDir, "segments")))
+				Directory.Delete (PathFinder.RootDir, true);
 			else {
 				// Purge exist index-related directories.
 				Directory.Delete (IndexDir, true);
@@ -153,9 +143,7 @@ namespace Dewey {
 			writer.Close ();
 
 			// Write out the correct version information.
-			StreamWriter sw = new StreamWriter (versionFile);
-			sw.WriteLine (Convert.ToString (VERSION));
-			sw.Close ();
+			PathFinder.WriteAppDataLine ("__Index", "version", Convert.ToString (VERSION));
 		}
 
 		//////////////////////////
@@ -312,7 +300,7 @@ namespace Dewey {
 		}
 
 		Random optimizeTest = new Random ();
-		private void DoInsert (IEnumerable indexables)
+		private void DoInsert (IEnumerable indexables, bool allowOptimization)
 		{
 			Analyzer analyzer = NewAnayzer ();
 			IndexWriter writer = new IndexWriter (IndexDir, analyzer, false);
@@ -329,18 +317,26 @@ namespace Dewey {
 				}
 			}
 			// optimization is expensive
-			// FIXME: this is just asking for trouble
-			const int INSERTS_PER_OPTIMIZATION = 100;
-			if (optimizeTest.Next (INSERTS_PER_OPTIMIZATION) < count) {
-				Spew ("Optimizing...");
-				writer.Optimize ();
-				Spew ("Optimization complete.");
+			if (allowOptimization) {
+				// FIXME: this is just asking for trouble
+				const int INSERTS_PER_OPTIMIZATION = 100;
+				if (optimizeTest.Next (INSERTS_PER_OPTIMIZATION) < count) {
+					Spew ("Optimizing...");
+					writer.Optimize ();
+					Spew ("Optimization complete.");
+				}
 			}
 			writer.Close ();
 		}
 
-		// Add a set of items to the index
 		public void Add (IEnumerable indexables)
+		{
+			// Allow optimization by default
+			Add (indexables, true);
+		}
+
+		// Add a set of items to the index
+		public void Add (IEnumerable indexables, bool allowOptimization)
 		{
 			ArrayList preloaded = new ArrayList ();
 			ArrayList toBeDeleted = new ArrayList ();
@@ -380,35 +376,16 @@ namespace Dewey {
 				bool needsInsertion = true;
 				
 				for (int i = 0; i < nHits; ++i) {
-
-					int oldId = uriHits.Id (i);					
-					Document oldDoc = uriHits.Doc (i);
-					String oldTsStr = oldDoc.Get ("Timestamp");
-					String oldRevStr = oldDoc.Get ("Revision");
-					
-					// First, try comparing the timestamps.
-					if (oldTsStr != null) {
-						DateTime oldTs = StringToTimestamp (oldTsStr);
-						if (! indexable.IsNewerThan (oldTs)) {
-							needsInsertion = false;
-							break;
-						}
+					Hit hit = FromLuceneHit (uriHits, i);
+					if (indexable.IsNewerThan (hit)) {
+						// Schedule the old document's removal
+						toBeDeleted.Add (hit.Id);
+					} else {
+						needsInsertion = false;
+						break;
 					}
-					
-					// Next, try comparing the revisions.
-					if (oldRevStr != null) {
-						long oldRev = StringToRevision (oldRevStr);
-						if (! indexable.IsNewerThan (oldRev)) {
-							needsInsertion = false;
-							break;
-						}
-					}
-
-					// If we reach this point, the indexable is more
-					// recent than oldDoc.  Schedule oldDoc's removal.
-					toBeDeleted.Add (oldId);
 				}
-		    
+						
 				if (needsInsertion) {
 					if (nHits > 0)
 						Spew ("Re-scheduling {0}", indexable.Uri);
@@ -424,13 +401,44 @@ namespace Dewey {
 				DoDelete (toBeDeleted);
 
 			if (toBeInserted.Count > 0)
-				DoInsert (toBeInserted);
+				DoInsert (toBeInserted, allowOptimization);
 		}
 	
 		// Add a single item to the index
 		public void Add (Indexable indexable)
 		{
 			Add (new Indexable[] { indexable });
+		}
+
+		public void Optimize ()
+		{
+			IndexWriter writer = new IndexWriter (IndexDir, NewAnayzer (), false);
+			writer.Optimize ();
+			writer.Close ();
+		}
+
+		public Hit QueryByUri (String uri)
+		{
+			Term term = new Term ("Uri", uri);
+			LNS.Query uriQuery = new LNS.TermQuery (term);
+
+			LNS.Searcher searcher = new LNS.IndexSearcher (IndexDir);
+			LNS.Hits uriHits = searcher.Search (uriQuery);
+			searcher.Close ();
+
+			int nHits = uriHits.Length ();
+			Hit hit = null;
+
+			if (nHits > 0) {
+				hit = FromLuceneHit (uriHits, 0);
+				for (int i = 1; i < nHits; ++i) {
+					Hit altHit = FromLuceneHit (uriHits, i);
+					if (altHit.IsNewerThan (hit))
+						hit = altHit;
+				}
+			}
+
+			return hit;
 		}
 
 		public IEnumerable Query (Query query)

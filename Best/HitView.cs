@@ -50,7 +50,8 @@ namespace Best {
 			String command = null, arguments = null;
 
 			if (hit.Uri.StartsWith ("file://")) {
-				GnomeVFSMimeApplication app = GnomeIconLookup.GetDefaultAction (hit.MimeType);
+				Dewey.Util.GnomeVFSMimeApplication app;
+				app = Dewey.Util.GnomeIconLookup.GetDefaultAction (hit.MimeType);
 				command = app.command;
 				arguments = hit.Uri.Substring (7);
 			} else if (hit.Uri.StartsWith ("http://")) {
@@ -70,9 +71,10 @@ namespace Best {
 
 		private Widget BuildIcon ()
 		{
-			String iconPath = GnomeIconLookup.LookupMimeIcon (hit.MimeType, (Gtk.IconSize) 48);
+			String iconPath = Dewey.Util.GnomeIconLookup.LookupMimeIcon (hit.MimeType, (Gtk.IconSize) 48);
 			Widget icon = new Image (iconPath);
 			return icon;
+			return null;
 		}
 
 		private void AddText (String text)

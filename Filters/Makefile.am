@@ -19,7 +19,6 @@ HAP_CSFILES =					\
 
 CSFILES = 			\
 	$(HAP_CSFILES)		\
-	gnome.cs		\
 	Flavor.cs		\
 	Filter.cs		\
 	FilterHtml.cs		\
@@ -27,8 +26,9 @@ CSFILES = 			\
 	FilterText.cs
 
 ASSEMBLIES =				\
-	-r:gtk-sharp			\
-	-r:ICSharpCode.SharpZipLib
+	-r:gtk-sharp.dll		\
+	-r:ICSharpCode.SharpZipLib	\
+	-r:../Util/Util.dll
 
 $(TARGET): $(CSFILES)
 	$(CSC) -o $@ $(CSFLAGS) $(CSFILES) $(ASSEMBLIES)

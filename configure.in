@@ -67,6 +67,7 @@ dnl ----------------------------------------------
 
 AC_OUTPUT([
 Makefile
+Util/Makefile
 Lucene.Net/Makefile
 Filters/Makefile
 indexer/Makefile

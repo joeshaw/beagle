@@ -29,7 +29,7 @@ using Gtk;
 using GLib;
 using System.Runtime.InteropServices;
 
-namespace Best {
+namespace Dewey.Util {
 
 public enum GnomeVFSMimeApplicationArgumentType
 {
@@ -110,7 +110,7 @@ public enum GnomeIconLookupResultsFlags
 	Thumbnail
 }
 
-class GnomeIconLookup{
+public class GnomeIconLookup{
 
 	[DllImport("libgnomeui-2")]
 	static extern string gnome_icon_lookup (IntPtr icon_theme, 

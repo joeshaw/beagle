@@ -43,6 +43,8 @@ namespace Dewey {
 		}
 
 		virtual protected void SetMetadata (String key, String val) {
+			if (key == null || val == null)
+				return;
 			if (metadata == null)
 				metadata = new Hashtable ();
 			metadata [key.ToLower ()] = val;

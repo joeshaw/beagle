@@ -1,5 +1,6 @@
 
 SUBDIRS = 			\
+	Util			\
 	Lucene.Net 		\
 	Filters 		\
 	indexer 		\

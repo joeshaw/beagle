@@ -1,13 +1,11 @@
 
 CSC = mcs -g
 
-ASSEMBLIES =			\
-	-L ../Lucene.Net	\
-	-r:Lucene.Net		\
-	-L ../Filters		\
-	-r:Filters		\
-	-L ../indexer		\
-	-r:Indexer
+ASSEMBLIES =				\
+	-r:../Util/Util.dll		\
+	-r:../Lucene.Net/Lucene.Net.dll	\
+	-r:../Filters/Filters.dll	\
+	-r:../indexer/Indexer.dll
 
 WRAPPER_IN = wrapper.in
 
@@ -21,6 +19,7 @@ $(CRAWLER_TARGET): $(CRAWLER_CSFILES)
 
 $(CRAWLER_WRAPPER): $(WRAPPER_IN)
 	sed -e "s|\@prefix\@|$(prefix)|g" -e "s|\@pkglibdir\@|$(pkglibdir)|g" -e "s|\@target\@|$(CRAWLER_TARGET)|g" < $(srcdir)/$(WRAPPER_IN) > $(CRAWLER_WRAPPER)
+	chmod +x $(CRAWLER_WRAPPER)
 
 
 CRAWLER_RSS20_TARGET = CrawlerRSS20.exe
@@ -32,7 +31,7 @@ $(CRAWLER_RSS20_TARGET): $(CRAWLER_RSS20_CSFILES)
 
 $(CRAWLER_RSS20_WRAPPER): $(WRAPPER_IN)
 	sed -e "s|\@prefix\@|$(prefix)|g" -e "s|\@pkglibdir\@|$(pkglibdir)|g" -e "s|\@target\@|$(CRAWLER_RSS20_TARGET)|g" < $(srcdir)/$(WRAPPER_IN) > $(CRAWLER_RSS20_WRAPPER)
-
+	chmod +x $(CRAWLER_RSS20_WRAPPER)
 
 QUERY_TARGET  = Query.exe
 QUERY_WRAPPER = dewey-query
@@ -43,6 +42,7 @@ $(QUERY_TARGET): $(QUERY_CSFILES)
 
 $(QUERY_WRAPPER): $(WRAPPER_IN)
 	sed -e "s|\@prefix\@|$(prefix)|g" -e "s|\@pkglibdir\@|$(pkglibdir)|g" -e "s|\@target\@|$(QUERY_TARGET)|g" < $(srcdir)/$(WRAPPER_IN) > $(QUERY_WRAPPER)
+	chmod +x $(QUERY_WRAPPER)
 
 
 EXTRACT_CONTENT_TARGET  = ExtractContent.exe
@@ -54,6 +54,7 @@ $(EXTRACT_CONTENT_TARGET): $(EXTRACT_CONTENT_CSFILES)
 
 $(EXTRACT_CONTENT_WRAPPER): $(WRAPPER_IN)
 	sed -e "s|\@prefix\@|$(prefix)|g" -e "s|\@pkglibdir\@|$(pkglibdir)|g" -e "s|\@target\@|$(EXTRACT_CONTENT_TARGET)|g" < $(srcdir)/$(WRAPPER_IN) > $(EXTRACT_CONTENT_WRAPPER)
+	chmod +x $(EXTRACT_CONTENT_WRAPPER)
 
 
 INDEX_WEB_CONTENT_TARGET = IndexWebContent.exe
@@ -65,6 +66,7 @@ $(INDEX_WEB_CONTENT_TARGET): $(INDEX_WEB_CONTENT_CSFILES)
 
 $(INDEX_WEB_CONTENT_WRAPPER): $(WRAPPER_IN)
 	sed -e "s|\@prefix\@|$(prefix)|g" -e "s|\@pkglibdir\@|$(pkglibdir)|g" -e "s|\@target\@|$(INDEX_WEB_CONTENT_TARGET)|g" < $(srcdir)/$(WRAPPER_IN) > $(INDEX_WEB_CONTENT_WRAPPER)
+	chmod +x $(INDEX_WEB_CONTENT_WRAPPER)
 
 
 INDEX_MAIL_TARGET = IndexMail.exe
@@ -76,6 +78,7 @@ $(INDEX_MAIL_TARGET): $(INDEX_MAIL_CSFILES)
 
 $(INDEX_MAIL_WRAPPER): $(WRAPPER_IN)
 	sed -e "s|\@prefix\@|$(prefix)|g" -e "s|\@pkglibdir\@|$(pkglibdir)|g" -e "s|\@target\@|$(INDEX_MAIL_TARGET)|g" < $(srcdir)/$(WRAPPER_IN) > $(INDEX_MAIL_WRAPPER)
+	chmod +x $(INDEX_MAIL_WRAPPER)
 
 
 

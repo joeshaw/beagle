@@ -12,7 +12,7 @@ using Gtk;
 using System;
 using System.Runtime.InteropServices;
 
-namespace Dewey.Filters {
+namespace Dewey.Util {
 
 	namespace VFS {
 
