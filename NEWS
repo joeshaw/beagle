@@ -7,6 +7,8 @@ February 16, 2005
 * Properly open sub-subdirectories in the mail backend (Lukas)
 * Fixed inotify_snarf_events to report zero events read in
   the event of a timeout (Jon Trowbridge)
+* Work around D-BUS bugs by hoisting a few more calls up into
+  the main loop (Jon)
 
 ------------------------------------------------------
 

@@ -24,6 +24,8 @@
 // DEALINGS IN THE SOFTWARE.
 //
 
+#define DBUS_IS_BROKEN_BROKEN_BROKEN
+
 using System;
 using System.Collections;
 using System.IO;
@@ -139,7 +141,11 @@ namespace Beagle.Daemon {
 		public override void Start ()
 		{
 			if (StartedEvent != null)
+#if DBUS_IS_BROKEN_BROKEN_BROKEN
+				HoistStartedEvent ();
+#else
 				StartedEvent (this);
+#endif
 
 			AttachResult ();
 
@@ -220,6 +226,131 @@ namespace Beagle.Daemon {
 
 		//////////////////////////////////////////////////////
 
+#if DBUS_IS_BROKEN_BROKEN_BROKEN
+		//
+		// This works around d-bus bugs by hoisting signal emissions
+		// into the main loop.
+		//
+
+		public void FireStartedEvent ()
+		{
+			StartedEvent (this);
+		}
+
+		public void FireCancelledEvent ()
+		{
+			CancelledEvent (this);
+		}
+
+		public void FireFinishedEvent ()
+		{
+			FinishedEvent (this);
+		}
+
+		public void FireHitsAddedAsBinaryEvent (string arg)
+		{
+			HitsAddedAsBinaryEvent (this, arg);
+		}
+
+		public void FireHitsSubtractedAsStringEvent (string arg)
+		{
+			HitsSubtractedAsStringEvent (this, arg);
+		}
+
+		private class SignalHoister {
+
+			public enum SignalType {
+				Started,
+				Cancelled,
+				Finished,
+				HitsAdded,
+				HitsSubtracted
+			}
+
+			public SignalType Type;
+			public QueryImpl Sender;
+			public string Arg;
+
+			private bool IdleHandler ()
+			{
+				switch (this.Type) {
+
+				case SignalType.Started:
+					Sender.FireStartedEvent ();
+					break;
+
+				case SignalType.Cancelled:
+					Sender.FireCancelledEvent ();
+					break;
+
+				case SignalType.Finished:
+					Sender.FireFinishedEvent ();
+					break;
+
+				case SignalType.HitsAdded:
+					Sender.FireHitsAddedAsBinaryEvent (Arg);
+					break;
+
+				case SignalType.HitsSubtracted:
+					Sender.FireHitsSubtractedAsStringEvent (Arg);
+					break;
+				}
+
+				return false;
+			}
+
+			public void Run ()
+			{
+				GLib.Idle.Add (new GLib.IdleHandler (IdleHandler));
+			}
+		}
+
+		public void HoistStartedEvent ()
+		{
+			SignalHoister signal = new SignalHoister ();
+			signal.Type = SignalHoister.SignalType.Started;
+			signal.Sender = this;
+			signal.Run ();
+		}
+
+		public void HoistCancelledEvent ()
+		{
+			SignalHoister signal = new SignalHoister ();
+			signal.Type = SignalHoister.SignalType.Cancelled;
+			signal.Sender = this;
+			signal.Run ();
+		}
+
+		public void HoistFinishedEvent ()
+		{
+			SignalHoister signal = new SignalHoister ();
+			signal.Type = SignalHoister.SignalType.Finished;
+			signal.Sender = this;
+			signal.Run ();
+		}
+
+		public void HoistHitsAddedAsBinaryEvent (string arg)
+		{
+			SignalHoister signal = new SignalHoister ();
+			signal.Type = SignalHoister.SignalType.HitsAdded;
+			signal.Sender = this;
+			signal.Arg = arg;
+			signal.Run ();
+		}
+
+		public void HoistHitsSubtractedAsStringEvent (string arg)
+		{
+			SignalHoister signal = new SignalHoister ();
+			signal.Type = SignalHoister.SignalType.HitsSubtracted;
+			signal.Sender = this;
+			signal.Arg = arg;
+			signal.Run ();
+		}
+#endif
+				
+
+		//////////////////////////////////////////////////////
+
 		//
 		// QueryResult event handlers
 		//
@@ -257,11 +388,23 @@ namespace Beagle.Daemon {
 				allHits[hit.Uri] = hit;
 			}
 			
-			if (HitsSubtractedAsStringEvent != null && toSubtract.Count > 0)
+			if (HitsSubtractedAsStringEvent != null && toSubtract.Count > 0) {
+				string uri_str = UriFu.UrisToString (toSubtract);
+#if DBUS_IS_BROKEN_BROKEN_BROKEN
+				HoistHitsSubtractedAsStringEvent (uri_str);
+#else
 				HitsSubtractedAsStringEvent (this, UriFu.UrisToString (toSubtract));
-
-			if (HitsAddedAsBinaryEvent != null && someHits.Count > 0)
-				HitsAddedAsBinaryEvent (this, HitsToBinary (someHits));
+#endif
+			}
+			
+			if (HitsAddedAsBinaryEvent != null && someHits.Count > 0) {
+				string hits_binary = HitsToBinary (someHits);
+#if DBUS_IS_BROKEN_BROKEN_BROKEN
+				HoistHitsAddedAsBinaryEvent (hits_binary);
+#else
+				HitsAddedAsBinaryEvent (this, hits_binary);
+#endif
+			}
 
 		}
 
@@ -271,7 +414,11 @@ namespace Beagle.Daemon {
 				return;
 
 			if (FinishedEvent != null) 
+#if DBUS_IS_BROKEN_BROKEN_BROKEN
+				HoistFinishedEvent ();
+#else
 				FinishedEvent (this);
+#endif
 		}
 
 		private void OnHitsSubtractedFromResult (QueryResult source, ICollection someUris)
@@ -287,8 +434,14 @@ namespace Beagle.Daemon {
 					allHits.Remove (uri);
 				}
 			}
-			if (HitsSubtractedAsStringEvent != null && toSubtract.Count > 0)
-				HitsSubtractedAsStringEvent (this, UriFu.UrisToString (toSubtract));			
+			if (HitsSubtractedAsStringEvent != null && toSubtract.Count > 0) {
+				string uri_str = UriFu.UrisToString (toSubtract);
+#if DBUS_IS_BROKEN_BROKEN_BROKEN
+				HoistHitsSubtractedAsStringEvent (uri_str);
+#else
+				HitsSubtractedAsStringEvent (this, uri_str);
+#endif
+			}
 		}
 
 		private void OnCancelledResult (QueryResult source) 
@@ -297,7 +450,11 @@ namespace Beagle.Daemon {
 				return;
 
 			if (CancelledEvent != null)
+#if DBUS_IS_BROKEN_BROKEN_BROKEN
+				HoistCancelledEvent ();
+#else
 				CancelledEvent (this);
+#endif
 		}
 
 		//////////////////////////////////////////////////////

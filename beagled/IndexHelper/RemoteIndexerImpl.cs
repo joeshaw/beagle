@@ -59,12 +59,41 @@ namespace Beagle.IndexHelper {
 			next_flush = NewNextFlush ();
 		}
 
+#if DBUS_IS_BROKEN_BROKEN_BROKEN
+		private class HoistChanged {
+			public RemoteIndexerImpl Sender;
+			public string AddedUris;
+			public string RemovedUris;
+
+			private bool IdleHandler ()
+			{
+				Sender.ChangedEvent (AddedUris, RemovedUris);
+				return false;
+			}
+
+			public void Run ()
+			{
+				GLib.Idle.Add (new GLib.IdleHandler (IdleHandler));
+			}
+		}
+#endif
+
 		private void OnIndexerChanged (IIndexer source,
 					       ICollection list_of_added_uris,
 					       ICollection list_of_removed_uris)
 		{
-			this.ChangedEvent (UriFu.UrisToString (list_of_added_uris),
-					   UriFu.UrisToString (list_of_removed_uris));
+			string added_uris_str = UriFu.UrisToString (list_of_added_uris);
+			string removed_uris_str = UriFu.UrisToString (list_of_removed_uris);
+
+#if DBUS_IS_BROKEN_BROKEN_BROKEN
+			HoistChanged hoist = new HoistChanged ();
+			hoist.Sender = this;
+			hoist.AddedUris = added_uris_str;
+			hoist.RemovedUris = removed_uris_str;
+			hoist.Run ();
+#else
+			this.ChangedEvent (added_uris_str, removed_uris_str);
+#endif
 		}
 
 		/////////////////////////////////////////////////////////////////////////////////////
