@@ -44,7 +44,7 @@ namespace Beagle.Filters {
 				return;
 			}
 			
-			// add pdftotext's output to pool
+			// add pdfinfo's output to pool
 			StreamReader pout = pc.StandardOutput;
 			string str = null;
 			string[] tokens = null;
@@ -109,7 +109,15 @@ namespace Beagle.Filters {
 
 			// add pdftotext's output to pool
 			StreamReader pout = pc.StandardOutput;
-			AppendText (pout.ReadToEnd ());
+
+			// FIXME:  I don't think this is really required
+			// Line by line parsing, however, we have to make
+			// sure, that "pdftotext" doesn't output any "New-lines".
+			string str;
+			while ((str = pout.ReadLine()) != null) {
+				AppendText (str);
+				AppendStructuralBreak ();
+			}
 			pout.Close ();
 			pc.Close ();
 			Finished ();

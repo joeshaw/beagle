@@ -154,8 +154,10 @@ namespace Beagle.Filters {
 						inSection = true;
 
 					} else 	if (reader.IsEmptyElement) {
-						if (NodeBreaksTextAfter (reader.Name))
+						if (NodeBreaksTextAfter (reader.Name)) {
 							AppendWhiteSpace ();
+							AppendStructuralBreak ();
+						}
 						continue;
 					}
 
@@ -194,8 +196,10 @@ namespace Beagle.Filters {
 					AppendText (text);
 					break;
 				case XmlNodeType.EndElement:
-					if (NodeBreaksTextAfter (reader.Name))
+					if (NodeBreaksTextAfter (reader.Name)) {
 						AppendWhiteSpace ();
+						AppendStructuralBreak ();
+					}
 
 					bool is_hot = (bool) hot_nodes.Pop ();
 					if (is_hot)

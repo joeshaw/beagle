@@ -1,9 +1,18 @@
+2005-01-08  Veerapuram Varadhan	 <vvaradhan@novell.com>
+
+	* glue/wv1-glue.c: Handle partially formatted texts.
+	Mark partially-formatted-texts as HOT.
+	* Filters/FilterDOC.cs, Filters/FilterRTF.cs,
+	Filters/FilterAbiword.cs, Filters/FilterPdf.cs: Added support for
+	"Structural Break"s which is needed for proper snippet support.
+	This supplements a partial fix to Bug#166648.
+	
 2005-01-05  Veerapuram Varadhan	 <vvaradhan@novell.com>
 
 	* beagled/Filter.cs: Few tweaks on Hot pool.
-	* Filter/FilterOpenOffice.cs: More elegant(?) logic to handle
+	* Filters/FilterOpenOffice.cs: More elegant(?) logic to handle
 	wierd combination of text-formatting, fixes Bug#157100.
-	* Filter/FilterRTF.cs: Metadata info can be anywhere in the
+	* Filters/FilterRTF.cs: Metadata info can be anywhere in the
 	document.  Commented out the "file-offset" positioning after
 	reading meta-data.
 	* Best/Best.cs: Added a console message to guide users to look at
@@ -11,18 +20,18 @@
 	
 2005-01-04  Veerapuram Varadhan	 <vvaradhan@novell.com>
 
-	* Filter/FilterPPT.cs: Validate the Ole stream before using it.
+	* Filters/FilterPPT.cs: Validate the Ole stream before using it.
 	Fixes Bug#:166265. Now, FilterPPT directly derives from B.D.F and
 	not from FilterOle.
-	* Filter/FilterOle.cs: Removed from the repository.
-	* Filter/Makefile.am: ditto.
-	* Filter/FilterOpenOffice.cs: Catch and Log the exceptions.
+	* Filters/FilterOle.cs: Removed from the repository.
+	* Filters/Makefile.am: ditto.
+	* Filters/FilterOpenOffice.cs: Catch and Log the exceptions.
 	* beagled/Filter.cs: Uncomment the return statement in
 	GetHotTextReader ()
 	
 2005-01-03  Veerapuram Varadhan	 <vvaradhan@novell.com>
 
-	* Filter/FilterPdf.cs: Fix for Bug#:166040. Filename parameter for
+	* Filters/FilterPdf.cs: Fix for Bug#:166040. Filename parameter for
 	pdfinfo command should be tagged between a pair of "".
 	
 2005-01-28  Robert Love  <rml@novell.com>
@@ -33,7 +42,7 @@
 
 2005-01-28  Veerapuram Varadhan	 <vvaradhan@novell.com>
 
-	* Filter/FilterOpenOffice.cs: Fix for Bug#:162910.
+	* Filters/FilterOpenOffice.cs: Fix for Bug#:162910.
 	table-count is improperly shown as spreadsheet-count in 
 	Sxw.
 	

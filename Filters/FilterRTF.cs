@@ -376,6 +376,7 @@ namespace Beagle.Filters {
 						if (str.Length > 0)
 							str.Append (' ');
 						AddTextForIndexing (str);
+						AppendStructuralBreak ();
 					}
 					if (hotStyleCount > 0
 					    && groupCount <= hotStyleCount) {

@@ -40,7 +40,7 @@
  *          (bold, italic, underline, superscript, subscript)
  */
 
-typedef void (* wvTextHandlerCallback) (U8* text, int len, U8 hotText);
+typedef void (* wvTextHandlerCallback) (U8* text, int len, U8 hotText, U8 needStructBrk);
 
 typedef struct _UserData {
   /* formatting variables */
@@ -60,6 +60,11 @@ typedef struct _UserData {
 
   /* beagle specifc formats */
   U8 bIsHot;
+
+  /* beagle specifc formats - for partially formatted
+   *  texts.
+   */
+  U8 bWasHot;
 
   /* buffer to hold text */
   GString* txtWord;
@@ -85,23 +90,23 @@ typedef struct _UserData {
 void
 append_char (UserData * ud, U16 ch)
 {
-  int hotText;
   char tmpBuf[64];
   int len = 0;
+  U8 bNeedStructBrk = 0;
 
   if (ud->bIgnore)
     return;
 
   switch (ch) {
-  case 0x20: /* space */
   case 0x0B: /* hard line break */
   case 0x0D: /* paragraph end */
   case 0x0C:
   case '\n': /* new-line */
-    if (ch != '\n')
-      ch = 0x20;
-    else
-      ch = '\n';
+    bNeedStructBrk = 1;
+    ch = 0x00;
+    break;
+
+  case 0x20: /* space */
     g_string_append_c (ud->txtWord, ch);
     break;
   default: 
@@ -109,10 +114,11 @@ append_char (UserData * ud, U16 ch)
     g_string_append_len (ud->txtWord, tmpBuf, len);
     break;
   }
-    if (ch == 0x00 || ch == '\n' || ch == 0x20) {
-      (*(ud->WordHandler))(ud->txtWord->str, ud->txtWord->len, ud->bIsHot);
-      g_string_erase (ud->txtWord, 0, -1);
-    }  
+  if (ch == 0x00 || ch == 0x20) {
+    (*(ud->WordHandler))(ud->txtWord->str, ud->txtWord->len, ud->bWasHot, bNeedStructBrk);
+    g_string_erase (ud->txtWord, 0, -1);
+    ud->bWasHot = 0;
+  }  
 }
 
 /*
@@ -137,13 +143,14 @@ fill_UserData (UserData * ud, CHP * chp, wvParseStruct * ps)
   ud->bIsSup = (chp->iss == 1);
   ud->bIsSub = (chp->iss == 2);
 
-  if (ud->bIsBold 
-      || ud->bIsItalic 
-      || ud->bIsUl 
-      || ud->bIsSup 
-      || ud->bIsSub
-      || ud->bIsSplStyle)
-    ud->bIsHot = 1;
+  if ((ud->bIsBold 
+       || ud->bIsItalic 
+       || ud->bIsUl 
+       || ud->bIsSup 
+       || ud->bIsSub
+       || ud->bIsSplStyle) &&
+      (!ud->bIgnore))
+      ud->bIsHot = 1;
   else
     ud->bIsHot = 0;
 }
@@ -189,6 +196,17 @@ charProc (wvParseStruct * ps, U16 eachchar, U8 chartype, U16 lid)
 
   if (eachchar == 0x14)
     return 0;
+
+  /* To handle partially-formatted-texts, Bug#157100,
+   * which is applicable to all word-processor-generated
+   * documents.
+   * 
+   * ud->bIsHot is updated for every CHARPROPBEGIN element
+   * ud->bWasHot is updated on reading every *word*.
+ */
+  UserData *ud = (UserData *) ps->userData;
+  if (!ud->bWasHot)
+    ud->bWasHot = ud->bIsHot;
 
   append_char (ps->userData, eachchar);
   return 0;
@@ -301,9 +319,13 @@ eleProc (wvParseStruct * ps, wvTag tag, void *props, int dirty)
       fill_UserData (ud, achp, ps);
       break;
 
+
+      /* Do not call fill_UserData, as it resets the 
+       * *Hot* flag in the ud structure.
+       */
     case CHARPROPEND:
       achp = (CHP *) props;
-      fill_UserData (ud, achp, ps);
+      /*fill_UserData (ud, achp, ps);*/
       break;
 
     default:

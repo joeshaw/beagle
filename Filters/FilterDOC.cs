@@ -41,8 +41,8 @@ namespace Beagle.Filters {
 
 		//////////////////////////////////////////////////////////
 
-		private delegate void TextHandlerCallback (IntPtr byteArray, int dataLen, bool hotText);
-		//private delegate void TextHandlerCallback (string data, int dataLen, bool hotText);
+		private delegate void TextHandlerCallback (IntPtr byteArray, int dataLen, 
+							   bool hotText, bool appendStructBrk);
 		
 		[DllImport ("wv1glue")]
 		private static extern int wv1_glue_init_doc_parsing (string fname, TextHandlerCallback callback);
@@ -108,15 +108,20 @@ namespace Beagle.Filters {
 			SnippetMode = true;
 		}
 		
-  		private void IndexText (IntPtr byteArray, int dataLen, bool hotText)
+  		private void IndexText (IntPtr byteArray, int dataLen, 
+					bool hotText, bool appendStructBrk)
   		{
 			if (byteArray != IntPtr.Zero) {
 				byte[] data = new byte[dataLen];
 				Marshal.Copy (byteArray, data, 0, dataLen);
+
 				if (hotText)
 					HotUp();
+
 				AppendText (System.Text.Encoding.UTF8.GetString(data, 0, dataLen));
-			
+				if (appendStructBrk)
+					AppendStructuralBreak ();
+
 				if (hotText)
 					HotDown();
 			}
