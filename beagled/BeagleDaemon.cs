@@ -144,6 +144,7 @@ namespace Beagle.Daemon {
 			bool arg_no_fork = false;
 			bool arg_debug = false;
 			bool arg_network = false;
+			int arg_port = 0;
 
 			int i = 0;
 			while (i < args.Length) {
@@ -185,6 +186,15 @@ namespace Beagle.Daemon {
 
 				case "--enable-network":
 					arg_network = true;
+					break;
+
+				case "--port":
+					try {
+						arg_port = Convert.ToInt32(next_arg);
+					} catch (Exception e) {
+						Console.WriteLine("Ignoring malformed port argument '{0}'",next_arg);
+					}
+					++i; // we used next_arg
 					break;
 
 				default:
@@ -279,7 +289,7 @@ namespace Beagle.Daemon {
 			if (arg_network) {
 				try {
 					// Set up network service
-					network = new NetworkService(queryDriver);
+					network = new NetworkService(queryDriver, arg_port);
 					network.Start ();
 				} catch {
 					Logger.Log.Error ("Could not initialize network service"); 

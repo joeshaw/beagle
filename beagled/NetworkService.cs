@@ -67,9 +67,12 @@ namespace Beagle.Daemon
 		string localAddress = "EVO";
 		static string serviceName = "beagle._tcp.local";
 
-		public NetworkService (QueryDriver queryDriver)
+		public NetworkService (QueryDriver queryDriver, int localPort)
 		{
 			this.queryDriver = queryDriver;
+
+			if (localPort != 0)
+				this.localPort = localPort;
 
 			authenticators = new ArrayList();
 		}		
@@ -82,13 +85,12 @@ namespace Beagle.Daemon
 
 			ScanForAuthenticators ();
 
-			// FIXME Yeah, right
 			try {
 				server = new TcpListener (localPort); 
 				server.Start();
-			} catch {
-				server = new TcpListener (++localPort);
-				server.Start ();
+			} catch (Exception e) {
+				log.Error("Network service could not be started: {0}",e);
+				return;
 			}
 		       
 			serverThread = new Thread (new ThreadStart (Listen));
