@@ -246,7 +246,7 @@ GAIM_LOG_QUERYABLE_CSFILES =				\
 
 edsqueryable = $(srcdir)/EvolutionDataServerQueryable
 EDS_QUERYABLE_CSFILES =                                 \
-	$(edsqueryable)/EvolutionDataServerQueryable.cs 
+	$(edsqueryable)/EvolutionDataServerQueryable.cs
 
 tomboyqueryable = $(srcdir)/TomboyQueryable
 TOMBOY_QUERYABLE_CSFILES =				\
@@ -389,13 +389,13 @@ WEBSERVICES_BACKEND_LOCAL_ASSEMBLIES =			\
 	../BeagleClient/Beagle.dll      \
 	../Tiles/Tiles.dll		\
 	BeagleDaemonPlugins.dll \
-	BeagleDaemonLib.dll 
+	BeagleDaemonLib.dll
 
 WEBSERVICES_BACKEND_ASSEMBLIES = \
 	$(WEBSERVICES_BACKEND_LOCAL_ASSEMBLIES:%=-r:%)	\
 	-r:System				\
 	-r:System.Web 				\
-	-r:System.Runtime.Remoting	
+	-r:System.Runtime.Remoting
 
 WEBSERVICES_BACKEND_TARGET  = BeagleWebServicesBackEnd.dll
 WEBSERVICES_BACKEND_CSFILES = $(srcdir)/WebBackEnd.cs $(srcdir)/WebServiceBackEnd.cs
@@ -405,17 +405,22 @@ WEBSERVICES_CSFLAGS = -target:library -noconfig
 $(WEBSERVICES_BACKEND_TARGET): $(WEBSERVICES_BACKEND_CSFILES) $(WEBSERVICES_BACKEND_LOCAL_ASSEMBLIES)
 	$(CSC) -o $@ $(WEBSERVICES_CSFLAGS) $(WEBSERVICES_BACKEND_CSFILES) $(WEBSERVICES_BACKEND_ASSEMBLIES)
 
-WEBSERVICES_FRONTEND_TARGET = BeagleWebServicesFrontEnd.dll 
+WEBSERVICES_FRONTEND_TARGET = BeagleWebServicesFrontEnd.dll
 WEBSERVICES_FRONTEND_CSFILES = $(srcdir)/WebFrontEnd.cs $(srcdir)/WebServiceFrontEnd.cs
 
 WEBSERVICES_FRONTEND_ASSEMBLIES = 	\
 	$(WEBSERVICES_BACKEND_ASSEMBLIES) 	\
 	-r:$(WEBSERVICES_BACKEND_TARGET) 	\
-	-r:System.Web.Services 
+	-r:System.Web.Services
 
 $(WEBSERVICES_FRONTEND_TARGET): $(WEBSERVICES_FRONTEND_CSFILES) $(WEBSERVICES_BACKEND_TARGET)
 	$(CSC) -o $@ $(WEBSERVICES_CSFLAGS) $(WEBSERVICES_FRONTEND_CSFILES) $(WEBSERVICES_FRONTEND_ASSEMBLIES)
 
+WEBSERVICES_RESOURCES = $(srcdir)/search.aspx \
+						$(srcdir)/search.asmx \
+						$(srcdir)/web.config  \
+						$(srcdir)/dog.png
+						
 XSP_DIR = /usr/local/share/doc/xsp/test/beagle
 XSPBIN_DIR = $(XSP_DIR)/bin
 
@@ -442,7 +447,7 @@ DAEMON_LOCAL_ASSEMBLIES =			\
 	../Util/Util.dll			\
 	../BeagleClient/Beagle.dll		\
 	./$(PLUGIN_TARGET)			\
-	./$(DAEMON_DLL_TARGET)			
+	./$(DAEMON_DLL_TARGET)
 
 DAEMON_ASSEMBLIES =				\
 	$(BEAGLED_LIBS)				\
@@ -465,7 +470,7 @@ DAEMON_LOCAL_ASSEMBLIES += 		\
 	$(WEBSERVICES_FRONTEND_TARGET)		\
 	$(BEAGLE_XSP_TARGET)
 
-DAEMON_ASSEMBLIES += -r:System.Runtime.Remoting		
+DAEMON_ASSEMBLIES += -r:System.Runtime.Remoting
 endif
 
 $(DAEMON_TARGET): $(DAEMON_CSFILES) $(DAEMON_LOCAL_ASSEMBLIES)
@@ -491,7 +496,7 @@ indexhelperdir = $(srcdir)/IndexHelper
 
 INDEX_HELPER_CSFILES =	\
 	$(indexhelperdir)/IndexHelper.cs	\
-	$(indexhelperdir)/RemoteIndexerImpl.cs	
+	$(indexhelperdir)/RemoteIndexerImpl.cs
 
 INDEX_HELPER_LOCAL_ASSEMBLIES =	\
 	../Util/Util.dll		\
@@ -735,7 +740,7 @@ install-data-local: $(ALL_TARGETS)
 if ENABLE_WEBSERVICES
 	$(INSTALL_DATA) $(WEBSERVICES_BACKEND_TARGET) $(DESTDIR)$(pkglibdir)/$(WEBSERVICES_BACKEND_TARGET)
 	$(mkinstalldirs) $(XSP_DIR)
-	$(INSTALL_DATA) search.asmx search.aspx web.config dog.png $(XSP_DIR)
+	$(INSTALL_DATA) $(WEBSERVICES_RESOURCES) $(XSP_DIR)
 	$(mkinstalldirs) $(XSPBIN_DIR)
 	$(INSTALL_DATA) ../Util/Util.dll ../images/Images.dll ../BeagleClient/Beagle.dll ../Tiles/Tiles.dll BeagleDaemonPlugins.dll BeagleDaemonLib.dll $(XSPBIN_DIR)
 	$(INSTALL_DATA) $(WEBSERVICES_FRONTEND_TARGET) $(WEBSERVICES_BACKEND_TARGET) $(XSPBIN_DIR)
@@ -769,8 +774,8 @@ COND_CS_FILES = \
 	$(srcdir)/NetworkService.cs	\
 	$(srcdir)/NetworkDriver.cs	\
 	$(MOZILLA_QUERYABLE_CSFILES)	\
-	$(srcdir)/beagledWeb.cs		\
-	$(srcdir)/beagledWebSvc.cs
+	$(srcdir)/WebBackEnd.cs		\
+	$(srcdir)/WebServiceBackEnd.cs
 
 EXTRA_DIST = \
 	$(EXTSTR_IN)			\
@@ -789,7 +794,8 @@ EXTRA_DIST = \
 	$(NAME_INDEX_CSFILES)		\
 	$(FS_SANITY_CHECK_CSFILES)	\
 	$(WEBSERVICES_BACKEND_CSFILES)		\
-	$(WEBSERVICES_FRONTEND_CSFILES)
+	$(WEBSERVICES_FRONTEND_CSFILES)		\
+	$(WEBSERVICES_RESOURCES)
 
 CLEANFILES = \
 	$(EXTSTR)			\

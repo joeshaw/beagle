@@ -1,3 +1,9 @@
+2005-03-31  Vijay K. Nanjundaswamy <knvijay@novell.com>
+
+	* beagled/Makefile.am: Fixes in COND_CS_FILES and EXTRA_DIST to include
+          all resources needed for web-services, in a Beagle distribution. Fixes
+	  http://bugzilla.gnome.org/show_bug.cgi?id=171996
+
 2005-03-31  Veerapuram Varadhan  <vvaradhan@novell.com>
 
 	* beagled/Filter.cs: Added AppendTextToHotPool() for optimization
