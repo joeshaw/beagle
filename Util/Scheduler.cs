@@ -318,8 +318,14 @@ namespace Beagle.Util {
 					throw new Exception ("Tried to touch a finished TaskGroup");
 
 				if (! touched) {
-					if (pre_hook != null)
-						pre_hook ();
+					if (pre_hook != null) {
+						try {
+							pre_hook ();
+						} catch (Exception ex) {
+							Logger.Log.Warn ("Caught exception in pre_hook of task group '{0}'", Name);
+							Logger.Log.Warn (ex);
+						}
+					}
 					touched = true;
 				}
 			}
@@ -333,8 +339,14 @@ namespace Beagle.Util {
 				// Only fire our post-hook if the pre-hook fired
 				// (or would have fired, had it been non-null)
 				if (task_count == 0 && touched) {
-					if (post_hook != null)
-						post_hook ();
+					if (post_hook != null) {
+						try {
+							post_hook ();
+						} catch (Exception ex) {
+							Logger.Log.Warn ("Caught exception in post_hook of task group '{0}'", Name);
+							Logger.Log.Warn (ex);
+						}
+					}
 					finished = true;
 				}
 			}
@@ -546,6 +558,7 @@ namespace Beagle.Util {
 				rate_factor = 0;
 				break;
 
+			case Priority.Generator:
 			case Priority.Delayed:
 				rate_factor = idle_scale * default_delayed_rate_factor;
 				break;
@@ -900,3 +913,4 @@ namespace Beagle.Util {
 	}
 #endif
 }
+	

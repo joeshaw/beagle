@@ -75,6 +75,10 @@ namespace Beagle.Tile {
 
 				string data_chunk;
 				data_chunk = Images.GetHtmlSource (data, "image/jpeg");
+				// FIXME: We shouldn't drop an image it its data: block
+				// is too big.  It would make more sense to either:
+				//  (a) Get the data into gecko by some other means.
+				//  (b) Scale down the image before base64-encoding it.
 				if (data_chunk.Length  < 65000) {
 					Template["size_adjustment"] = size_adjustment;
 					Template["Icon"] = data_chunk;
