@@ -47,6 +47,7 @@ namespace Beagle.Util {
 		public DateTime StartTime;
 		public DateTime EndTime;
 		public DateTime Timestamp;
+		public string   Snippet;
 
 		public string SpeakingTo;
 		public string Identity;
@@ -98,6 +99,10 @@ namespace Beagle.Util {
 			}
 		}
 
+		protected IList RawUtterances {
+			get { return utterances; }
+		}
+
 		protected void AddUtterance (DateTime timestamp,
 					     String   who,
 					     String   text)
@@ -124,6 +129,11 @@ namespace Beagle.Util {
 				Utterance utt = (Utterance) utterances [utterances.Count - 1];
 				utt.Text += "\n" + text;
 			}
+		}
+
+		protected void ClearUtterances ()
+		{
+			utterances.Clear ();
 		}
 
 		protected abstract void Load ();
@@ -201,23 +211,89 @@ namespace Beagle.Util {
 
 		///////////////////////////////////////
 
+		private static int CountWords (string str)
+		{
+			const int max_words = 15;
+
+			if (str == null)
+				return 0;
+
+			bool last_was_white = true;
+			int words = 0;
+			for (int i = 0; i < str.Length; ++i) {
+				if (Char.IsWhiteSpace (str [i])) {
+					last_was_white = true;
+				} else {
+					if (last_was_white) {
+						++words;
+						if (words >= max_words)
+							break;
+					}
+					last_was_white = false;
+				}
+			}
+
+			return words;
+		}
+
+		private bool TrySnippet ()
+		{
+			int best_word_count = 0;
+
+			foreach (Utterance utt in RawUtterances) {
+
+				string possible_snippet = utt.Text.Trim ();
+
+				int word_count = CountWords (possible_snippet);
+				if (word_count > best_word_count) {
+					Snippet = possible_snippet;
+					best_word_count = word_count;
+				}
+
+				// FIXME: We should try to avoid breaking mid-word
+				if (Snippet != null && Snippet.Length > 50)
+					Snippet = Snippet.Substring (0, 50) + "...";
+
+				if (word_count > 3)
+					return true;
+			}
+
+			return false;
+		}
+
+		// FIXME: The ending timestamp in the log will be inaccurate
+		// until Load is called... before that, the ending time will
+		// come from the timestamp of the snippet-line.
+
+		private void SetSnippet ()
+		{
+			LoadWithTermination (new LoadTerminator (TrySnippet));
+		}
+
+		///////////////////////////////////////
+
 		private GaimLog (string file, long offset) : base ("gaim", file, offset)
-		{ }
+		{ 
+			SetSnippet ();
+		}
 
 		private GaimLog (string file) : base ("gaim", file)
-		{ }
+		{ 
+			SetSnippet ();
+		}
 
-
-		private void ProcessLine (string line)
+		// Return true if a new utterance is now available,
+		// and false if the previous utterance was changed.
+		private bool ProcessLine (string line)
 		{
 			if (! line.StartsWith ("(")) {
 				AppendToPreviousUtterance (line);
-				return;
+				return false;
 			}
 			int j = line.IndexOf (')');
 			if (j == -1) {
 				AppendToPreviousUtterance (line);
-				return;
+				return false;
 			}
 			string whenStr = line.Substring (1, j-1);
 			string[] whenSplit = whenStr.Split (':');
@@ -230,7 +306,7 @@ namespace Beagle.Util {
 				// If something goes wrong, this line probably
 				// spills over from the previous one.
 				AppendToPreviousUtterance (line);
-				return;
+				return false;
 			}
 
 			line = line.Substring (j+1).Trim ();
@@ -248,14 +324,24 @@ namespace Beagle.Util {
 
 			int i = line.IndexOf (':');
 			if (i == -1)
-				return;
+				return false;
 			string alias = line.Substring (0, i);
 			string text = line.Substring (i+1).Trim ();
 
 			AddUtterance (when, alias, text);
+
+			return true;
 		}
 
+		protected delegate bool LoadTerminator ();
+
 		protected override void Load ()
+		{
+			ClearUtterances ();
+			LoadWithTermination (null);
+		}
+
+		protected void LoadWithTermination (LoadTerminator terminator)
 		{
 			FileStream fs;
 			StreamReader sr;
@@ -289,8 +375,13 @@ namespace Beagle.Util {
 				
 					if (IsNewConversation (line))
 						break;
-
-					ProcessLine (line);
+					
+					// Only check termination when a new Utterance has become
+					// available.
+					if (ProcessLine (line)
+					    && terminator != null
+					    && terminator ())
+						break;
 				}
 			}
 

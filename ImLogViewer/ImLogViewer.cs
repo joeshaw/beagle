@@ -3,7 +3,7 @@
 //
 // Lukas Lipka <lukas@pmad.net>
 //
-// Copyright (C) 2004 Novell, Inc.
+// Copyright (C) 2005 Novell, Inc.
 //
 
 using System;
@@ -18,27 +18,9 @@ using Beagle.Util;
 
 namespace ImLogViewer {
 
-	public class StoreLog : IComparable {
-		public StoreLog () { }
-		
-		public DateTime Timestamp;
-		public string Snippet;
-		
-		public ImLog ImLog;
-
-		public int CompareTo (object obj)
-		{
-			StoreLog other = obj as StoreLog;
-			if (other == null)
-				return 1;
-
-			// Sort into reverse chronological order
-			return other.Timestamp.CompareTo (this.Timestamp);
-		}
-	}
-	
 	public class GaimLogViewer {
-		
+
+
 		[Widget] TreeView logsviewer;
 		[Widget] ScrolledWindow logwindow;
 		[Widget] Button   searchbutton;
@@ -167,39 +149,28 @@ namespace ImLogViewer {
 			}
 		}
 
+		private class ReverseLogComparer : IComparer {
+			
+			public int Compare (object x, object y)
+			{
+				return ((ImLog) y).StartTime.CompareTo (((ImLog) x).StartTime);
+			}
+		}
+
+		static ReverseLogComparer rev_cmp = new ReverseLogComparer ();
+
 		private void PopulateTimeline (TreeIter parent, ArrayList list, string dateformat)
 		{
-			list.Sort ();
-			foreach (StoreLog log in list) {
+			list.Sort (rev_cmp);
+			foreach (ImLog log in list) {
+				string date_str = log.StartTime.ToString (dateformat);
 				TreeIter iter;
-				iter = treeStore.AppendValues (parent, log.Timestamp.ToString (dateformat), log.Snippet, log);
-				if (! have_first_selection_iter || log.ImLog.LogFile == first_selected_log) {
+				iter = treeStore.AppendValues (parent, date_str, log.Snippet, log);
+				if (! have_first_selection_iter || log.LogFile == first_selected_log) {
 					have_first_selection_iter = true;
 					first_selection_iter = iter;
 				}
 			}
-		}
-		
-		public StoreLog ImLogParse (ImLog imlog)
-		{
-			StoreLog log = new StoreLog ();
-			log.ImLog = imlog;
-			log.Timestamp = imlog.StartTime;
-			
-			string snippet = "";
-			
-			foreach (ImLog.Utterance utt in imlog.Utterances) {
-				if (snippet == null || snippet == "")
-					snippet =  utt.Text;
-				
-				string[] words = utt.Text.Split (' ');
-				
-				if (words.Length > 3)  { snippet = utt.Text; break; }
-			}
-
-			log.Snippet = snippet;
-			
-			return log;
 		}
 		
 		private void IndexLogs () {
@@ -207,18 +178,15 @@ namespace ImLogViewer {
 			
 			foreach (string file in files) {
 
-				// FIXME: gratuitous debug spew
-				Console.WriteLine (file);
 
 				ICollection logs = GaimLog.ScanLog (new FileInfo (file));
 				
-				foreach (ImLog gaimlog in logs) {
+				foreach (ImLog log in logs) {
 
 					if (speaking_to == null)
-						speaking_to = gaimlog.SpeakingTo;
+						speaking_to = log.SpeakingTo;
 
-					StoreLog log = ImLogParse (gaimlog);
-					timeline.Add (log, log.Timestamp);
+					timeline.Add (log, log.StartTime);
 				}
 			}
 		}
@@ -237,7 +205,9 @@ namespace ImLogViewer {
 
 			foreach (ImLog.Utterance utt in im_log.Utterances) {
 				//FIXME: We strip tags here!
-				html.Append ("<p><b>" + utt.Who + ":</b>&nbsp;" + utt.Text + "</p>\n");
+				string who = utt.Who;
+				who = who.Replace (" ", "&nbsp;");
+				html.Append ("<p><b>" + who + ":</b> " + utt.Text + "</p>\n");
 			}
 				
 			gecko.RenderData(html.ToString (), "file://"+im_log.LogFile, "text/html");
@@ -256,11 +226,8 @@ namespace ImLogViewer {
 			TreeModel model;
 			
 			if (((TreeSelection)o).GetSelected (out model, out iter)) {
-				StoreLog log = model.GetValue (iter, 2) as StoreLog;
-				if (log != null)
-					RenderConversation (log.ImLog);
-				else
-					RenderConversation (null);
+				ImLog log = model.GetValue (iter, 2) as ImLog;
+				RenderConversation (log);
 			}
 		}
 		
