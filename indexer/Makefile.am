@@ -3,10 +3,16 @@ CSC = mcs -g
 
 TARGET = Indexer.dll
 
-CSFLAGS = -target:library
+CSFLAGS = 					\
+	-target:library				\
+	-define:PREFIX=$(prefix)		\
+	-define:PKGLIBDIR=$(pkglibdir)
 
 CSFILES = 				\
 	$(srcdir)/PathFinder.cs		\
+	$(srcdir)/Property.cs		\
+	$(srcdir)/Flavor.cs		\
+	$(srcdir)/Filter.cs		\
 	$(srcdir)/Versioned.cs		\
 	$(srcdir)/Indexable.cs		\
 	$(srcdir)/IndexableFile.cs	\
@@ -21,10 +27,11 @@ CSFILES = 				\
 	$(srcdir)/IndexDriver.cs	\
 	$(srcdir)/GoogleDriver.cs
 
+
 LOCAL_ASSEMBLIES =			\
 	../Util/Util.dll		\
-	../Lucene.Net/Lucene.Net.dll	\
-	../Filters/Filters.dll
+	../Lucene.Net/Lucene.Net.dll
+
 
 ASSEMBLIES = 				\
 	-r:Mono.Posix			\
@@ -40,9 +47,16 @@ CSFILES += $(srcdir)/EvolutionDataServerDriver.cs
 ASSEMBLIES += $(EVO_SHARP_LIBS)
 endif
 
+EXTSTR = ExternalStringsHack.cs
+EXTSTR_IN = $(srcdir)/$(EXTSTR).in
 
-$(TARGET): $(CSFILES) $(LOCAL_ASSEMBLIES) $(RESOURCES)
-	$(CSC) -o $@ $(CSFLAGS) $(CSFILES) $(ASSEMBLIES) $(RESOURCES)
+$(EXTSTR): $(EXTSTR_IN)
+	sed	-e "s|\@prefix\@|$(prefix)|g"		\
+		-e "s|\@pkglibdir\@|$(pkglibdir)|g"	\
+		< $^ > $@
+
+$(TARGET): $(CSFILES) $(EXTSTR) $(LOCAL_ASSEMBLIES) $(RESOURCES)
+	$(CSC) -o $@ $(CSFLAGS) $(CSFILES) $(EXTSTR) $(ASSEMBLIES) $(RESOURCES)
 
 all: $(TARGET)
 
@@ -54,7 +68,9 @@ uninstall-local:
 	rm -f $(DESTDIR)$(pkglibdir)/$(TARGET)
 
 EXTRA_DIST =		\
-	$(CSFILES)
+	$(CSFILES)	\
+	$(EXTSTR_IN)
 
 CLEANFILES =		\
-	$(TARGET)
+	$(TARGET)	\
+	$(EXTSTR)

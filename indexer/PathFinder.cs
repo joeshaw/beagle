@@ -34,6 +34,18 @@ namespace Beagle {
 
 		private PathFinder () { }
 
+		static private string Prefix {
+			get { return ExternalStringsHack.Prefix; }
+		}
+
+		static private string PkgLibDir {
+			get { return ExternalStringsHack.PkgLibDir; }
+		}
+
+		static public string FilterDir {
+			get { return Path.Combine (PkgLibDir, "Filters"); }
+		}
+
 		static public String RootDir {
 			get {
 				String homedir = Environment.GetEnvironmentVariable ("HOME");

@@ -43,15 +43,6 @@ namespace Beagle {
 		// If applicable, otherwise set to null.
 		private String mimeType = null;
 
-		private Hashtable properties = new Hashtable (new CaseInsensitiveHashCodeProvider (),
-							      new CaseInsensitiveComparer ());
-
-		private String content = null;
-		private String hotContent = null;
-
-		private TextReader contentReader = null;
-		private TextReader hotContentReader = null;
-
 		private bool built = false;
 		
 		//////////////////////////
@@ -85,60 +76,41 @@ namespace Beagle {
 
 		//////////////////////////
 
-		public IDictionary Properties {
-			get { return properties; }
+		virtual public TextReader GetTextReader ()
+		{
+			return null;
 		}
 
-		public ICollection Keys {
-			get { return properties.Keys; }
+		virtual public TextReader GetHotTextReader ()
+		{
+			return null;
 		}
 
-		public String this [String key] {
-			get { return (String) properties [key]; }
-			set {
-				if (value == null || value == "") {
-					if (properties.Contains (key))
-						properties.Remove (key);
-					return;
-				}
-				properties [key] = value as String;
-			}
-		}
-
-		public String PropertiesAsString {
-			get {
-				StringBuilder propStr = null;
-				foreach (String key in Keys) {
-					if (propStr == null)
-						propStr = new StringBuilder ("");
-					else
-						propStr.Append (" ");
-					propStr.Append (this [key]);
-				}
-				return propStr == null ? "" : propStr.ToString ();
-			}
+		virtual public IEnumerable Properties {
+			get { return null; }
 		}
 
 		//////////////////////////
 
-		public String Content {
-			get { return content; }
-			set { content = value; }
+		private string PropertiesAsString (bool keywords)
+		{
+			StringBuilder sb = new StringBuilder ();
+			foreach (Property prop in Properties) {
+				if (keywords ? prop.IsKeyword : ! prop.IsKeyword) {
+					if (sb.Length > 0)
+						sb.Append (" ");
+					sb.Append (prop.Value);
+				}
+			}
+			return sb.ToString ();
 		}
 
-		public String HotContent {
-			get { return hotContent; }
-			set { hotContent = value; }
+		public string TextPropertiesAsString {
+			get { return PropertiesAsString (false); }
 		}
 
-		public TextReader ContentReader {
-			get { return contentReader; }
-			set { contentReader = value; }
-		}
-
-		public TextReader HotContentReader {
-			get { return hotContentReader; }
-			set { hotContentReader = value; }
+		public string KeywordPropertiesAsString {
+			get { return PropertiesAsString (true); }
 		}
 
 		//////////////////////////

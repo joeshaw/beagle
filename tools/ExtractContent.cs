@@ -26,91 +26,85 @@
 
 
 using System;
+using System.Collections;
 using System.IO;
 using System.Net;
 
-using Beagle.Filters;
+using Beagle;
 
 class ExtractContentTool {
 
 	static void Main (String[] args)
 	{
+		bool firstArg = true;
+
 		foreach (String arg in args) {
 			
-			Filter filter;
-			Stream stream;
+			IndexableFile indexable;
 
-			if (arg.StartsWith ("http://")) {
-				HttpWebRequest req = (HttpWebRequest) WebRequest.Create (arg);
-				req.UserAgent = "Beagle.ExtractContent";
-				HttpWebResponse resp = (HttpWebResponse) req.GetResponse ();
-				if (resp.StatusCode != HttpStatusCode.OK)
-					throw new Exception (String.Format ("{0} returned {1}: {2}",
-									    resp.StatusCode,
-									    resp.StatusDescription));
-				String mimeType = resp.ContentType;
-				int i = mimeType.IndexOf (";");
-				if (i != -1)
-					mimeType = mimeType.Substring (0, i);
-				filter = Filter.FilterFromMimeType (mimeType);
+			indexable = new IndexableFile (arg);
+			indexable.Build ();
 
-				if (filter == null) {
-					Console.WriteLine ("\nNo filter for mime type '{0}'\n", mimeType);
-					continue;
-				}
-
-				stream = resp.GetResponseStream ();
-			} else {
-				filter = Filter.FilterFromPath (arg);
-				
-				if (filter == null) {
-					Flavor flavor = Flavor.FromPath (arg);
-					Console.WriteLine ("{0}: No filter for {1}", arg, flavor);
-					continue;
-				}
-				stream = new FileStream (arg, FileMode.Open, FileAccess.Read);
+			if (!firstArg) {
+				Console.WriteLine ();
+				Console.WriteLine ("-----------------------------------------");
+				Console.WriteLine ();
 			}
-
-			filter.Open (stream);
-	    
-			Console.WriteLine ();
+			firstArg = false;
 
 			Console.WriteLine ("Filename: " + arg);
-			Console.WriteLine ("  Flavor: " + filter.Flavor);
+			Console.WriteLine ("  Flavor: " + indexable.Flavor);
+			if (! indexable.HaveFilter)
+				Console.WriteLine ("No filter!");
 
 			Console.WriteLine ();
 
 			TextReader reader;
+			bool first;
 
-			reader = filter.Content;
-			if (reader == null)
-				Console.WriteLine ("No Content.");
-			else {
+			first = true;
+			foreach (Property prop in indexable.Properties) {
+				if (first) {
+					Console.WriteLine ("Properties:");
+					first = false;
+				}
+				Console.WriteLine ("{0} = {1}", prop.Key, prop.Value);
+			}
+			if (! first)
+				Console.WriteLine ();
+
+
+			reader = indexable.GetTextReader ();
+			if (reader != null) {
 				string line;
-				Console.WriteLine ("Content:");
-				while ((line = reader.ReadLine ()) != null)
+				first = true;
+				while ((line = reader.ReadLine ()) != null) {
+					if (first) {
+						Console.WriteLine ("Content:");
+						first = false;
+					}
 					Console.WriteLine (line);
+				}
+
+				if (! first)
+					Console.WriteLine ();
 			}
 
-			Console.WriteLine ();
-
-			reader = filter.HotContent;
-			if (reader == null)
-				Console.WriteLine ("No HotContent.");
-			else {
+			reader = indexable.GetHotTextReader ();
+			if (reader != null) {
 				string line;
-				Console.WriteLine ("HotContent:");
-				while ((line = reader.ReadLine ()) != null)
+				first = true;
+				while ((line = reader.ReadLine ()) != null) {
+					if (first) {
+						Console.WriteLine ("HotContent:");
+						first = false;
+					}
 					Console.WriteLine (line);
+				}
+
+				if (! first)
+					Console.WriteLine ();
 			}
-			Console.WriteLine ();
-
-			if (filter.Keys.Count == 0)
-				Console.WriteLine ("No metadata.");
-			else
-				foreach (String key in filter.Keys)
-					Console.WriteLine (key + " = " + filter [key]);
-
 		}
 	}
 }

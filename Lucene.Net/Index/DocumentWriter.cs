@@ -115,18 +115,18 @@ namespace Lucene.Net.Index
 			// sort postingTable into an array
 			Posting[] postings = SortPostingTable();
 
-			/*
-			for (int i = 0; i < postings.length; i++) {
+#if false
+			for (int i = 0; i < postings.Length; i++) {
 			  Posting posting = postings[i];
-			  System.out.print(posting.term);
-			  System.out.print(" freq=" + posting.freq);
-			  System.out.print(" pos=");
-			  System.out.print(posting.positions[0]);
+			  Console.WriteLine (posting.term);
+			  Console.WriteLine (" freq=" + posting.freq);
+			  Console.Write (" pos=");
+			  Console.Write (posting.positions[0]);
 			  for (int j = 1; j < posting.freq; j++)
-			System.out.print("," + posting.positions[j]);
-			  System.out.println("");
+				  Console.Write ("," + posting.positions[j]);
+			  Console.WriteLine ();
 			}
-			*/
+#endif
 
 			// write postings
 			WritePostings(postings, segment);

@@ -234,7 +234,6 @@ namespace Beagle.Util {
 			}
 			builder.Append (path);
 			
-			Console.WriteLine (builder.ToString ());
 			return builder.ToString ();
 
 		}

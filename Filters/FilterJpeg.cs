@@ -38,8 +38,11 @@ namespace Beagle.Filters {
 			AddSupportedMimeType ("image/jpeg");
 		}
 
-		protected override void DoOpen (Stream stream)
+		// FIXME: This is not particularly efficient
+		protected override void DoPullProperties ()
 		{
+			Stream stream = CurrentFileInfo.Open (FileMode.Open);
+
 			bool seenSofn = false;
 			int x, y, len, marker;
 
@@ -77,17 +80,9 @@ namespace Beagle.Filters {
 					byte[] commentData = new byte [len-2];
 					stream.Read (commentData, 0, len-2);
 
-
 					Encoding enc = new ASCIIEncoding ();
-					string str = enc.GetString (commentData);
-
-					string comments = this ["Comments"];
-					if (comments == null)
-						comments = str;
-					else
-						comments = comments + " " + str;
-
-					this ["Comments"] = comments;
+					string comment = enc.GetString (commentData);
+					AddProperty (Property.New ("fixme:comment", comment));
 							   
 				} else if ((! seenSofn)
 				    && 0xc0 <= marker
@@ -119,10 +114,17 @@ namespace Beagle.Filters {
 					if (components == -1)
 						return;
 
-					this ["_BitDepth"] = precision.ToString ();
-					this ["_Width"] = width.ToString ();
-					this ["_Height"] = height.ToString ();
-					this ["_Components"] = components.ToString ();
+					AddProperty (Property.NewKeyword ("fixme:bitdepth",
+									  precision));
+					
+					AddProperty (Property.NewKeyword ("fixme:width",
+									  width));
+
+					AddProperty (Property.NewKeyword ("fixme:height",
+									  height));
+
+					AddProperty (Property.NewKeyword ("fixme:components",
+									  components));
 
 					seenSofn = true;
 				} else {
@@ -131,7 +133,5 @@ namespace Beagle.Filters {
 				}
 			}
 		}
-			
-		protected override void DoPull () { }
 	}
 }

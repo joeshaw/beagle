@@ -1,4 +1,6 @@
 
+FILTERDIR = $(pkglibdir)/Filters
+
 CSC = mcs -g
 
 TARGET = Filters.dll
@@ -19,17 +21,19 @@ HAP_CSFILES =						\
 
 CSFILES = 				\
 	$(HAP_CSFILES)			\
-	$(srcdir)/Flavor.cs		\
-	$(srcdir)/Filter.cs		\
 	$(srcdir)/FilterHtml.cs		\
 	$(srcdir)/FilterJpeg.cs		\
 	$(srcdir)/FilterMusic.cs	\
 	$(srcdir)/FilterOpenOffice.cs	\
 	$(srcdir)/FilterPng.cs		\
-	$(srcdir)/FilterText.cs
+	$(srcdir)/FilterText.cs	
+
+
 
 LOCAL_ASSEMBLIES =			\
-	../Util/Util.dll
+	../Util/Util.dll		\
+	../Lucene.Net/Lucene.Net.dll	\
+	../indexer/Indexer.dll
 
 ASSEMBLIES =				\
 	$(BEAGLE_UI_LIBS)		\
@@ -45,11 +49,11 @@ $(TARGET): $(CSFILES)
 all: $(TARGET)
 
 install-data-local: $(TARGET)
-	$(mkinstalldirs) $(DESTDIR)$(pkglibdir)
-	$(INSTALL_DATA) $(TARGET) $(DESTDIR)$(pkglibdir)/$(TARGET)
+	$(mkinstalldirs) $(DESTDIR)$(FILTERDIR)
+	$(INSTALL_DATA) $(TARGET) $(DESTDIR)$(FILTERDIR)/$(TARGET)
 
 uninstall-local:
-	rm -f $(DESTDIR)$(pkglibdir)/$(TARGET)
+	rm -f $(DESTDIR)$(FILTERDIR)/$(TARGET)
 
 EXTRA_DIST =		\
 	$(CSFILES)

@@ -26,16 +26,18 @@
 
 
 using System;
+using System.Collections;
 using System.IO;
 
 using Beagle;
-using Beagle.Filters;
 
 class IndexWebContentTool {
 
 	public class IndexableWeb : Indexable {
 		
-		String content, hotContent;
+		Stream stream;
+		ArrayList properties = new ArrayList ();
+		Filter filter;
 		
 		public IndexableWeb (String uri,
 				     String title,
@@ -46,12 +48,34 @@ class IndexWebContentTool {
 			MimeType = "text/html";
 			Timestamp = DateTime.Now;
 
-			this ["title"] = title;
-			
-			Filter filter = Filter.FilterFromMimeType ("text/html");
-			filter.Open (contentStream);
-			ContentReader = filter.Content;
-			HotContentReader = filter.HotContent;
+			stream = contentStream;
+
+			Console.WriteLine (uri);
+			Console.WriteLine (title);
+			Console.WriteLine ();
+
+			properties.Add (Property.New ("dc:title", title));
+
+			filter = Filter.FilterFromMimeType ("text/html");
+		}
+
+		override public IEnumerable Properties {
+			get { return properties; }
+		}
+
+		override protected void DoBuild ()
+		{
+			filter.Open (stream);
+		}
+
+		override public TextReader GetTextReader ()
+		{
+			return filter.GetTextReader ();
+		}
+
+		override public TextReader GetHotTextReader ()
+		{
+			return filter.GetHotTextReader ();
 		}
 	}
 

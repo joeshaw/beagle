@@ -28,7 +28,7 @@
 using System;
 using System.IO;
 
-namespace Beagle.Filters {
+namespace Beagle {
 
 	public class Flavor : IComparable {
 

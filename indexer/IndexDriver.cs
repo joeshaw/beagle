@@ -56,7 +56,11 @@ namespace Beagle {
 		// 4: Schema changed for files to include _Directory property
 		// 5: Changed analyzer to support stemming.  Bumped version # to
 		//    force everyone to re-index.
+		// 6: lots of schema changes as part of general post-guadec
+		//    refactoring
 		private const int VERSION = 5;
+
+		const string propPrefix = "prop:";
 
 		private Beagle.Util.Logger log = null;
 
@@ -170,80 +174,79 @@ namespace Beagle {
 			return new BeagleAnalyzer ();
 		 }
 
-		 //////////////////////////
-
-		 private String ToLucenePropertyKey (String key)
-		 {
-			 return "_" + key;
-		 }
-
-		 private Document ToLuceneDocument (Indexable indexable)
-		 {
-			 indexable.Build ();
-
-			 Document doc = new Document ();
-			 Field f;
-			 String str;
-
-			 // First we add the Indexable's 'canonical' properties
-			 // to the Document.
-
-			 f = Field.Keyword ("Uri", indexable.Uri);
-			 doc.Add (f);
-
-			 f = Field.Keyword ("Type", indexable.Type);
-			 doc.Add (f);
-
-			 if (indexable.MimeType != null) {
-				 f = Field.Keyword ("MimeType", indexable.MimeType);
-				 doc.Add (f);
-			 }
-
-			 if (indexable.ValidTimestamp) {
-				 str = BU.StringFu.DateTimeToString (indexable.Timestamp);
-				 f = Field.Keyword ("Timestamp", str);
-				 doc.Add (f);
-			 }
-
-			 if (indexable.ValidRevision) {
-				 f = Field.UnIndexed ("Revision",
-						      RevisionToString (indexable.Revision));
-				 doc.Add (f);
-			 }
-
-			 if (indexable.ContentReader != null) {
-				 f = Field.Text ("Content", indexable.ContentReader);
-				 doc.Add (f);
-			} else if (indexable.Content != null) {
-				f = Field.UnStored ("Content", indexable.Content);
-				doc.Add (f);
-			}
-			
-			if (indexable.HotContentReader != null) {
-				f = Field.Text ("HotContent", indexable.HotContentReader);
-				doc.Add (f);
-			} else if (indexable.HotContent != null) {
-				f = Field.UnStored ("HotContent", indexable.HotContent);
-				doc.Add (f);
-			}
-			
-			if (indexable.PropertiesAsString != null) {
-				f = Field.UnStored ("Properties", indexable.PropertiesAsString);
-				doc.Add (f);
-			}
-			
-			foreach (String key in indexable.Keys) {
-				// Namespace keys before storing them in the document.
-				String docKey = ToLucenePropertyKey (key);
-				String value = indexable [key];
+		//////////////////////////
 		
-				// If the key starts with _, treat it as
-				// a keyword.
-				if (key.Length > 0 && key [0] == '_')
-					f = Field.Keyword (docKey, value);
-				else
-					f = Field.Text (docKey, value);
+		private String ToLucenePropertyKey (String key)
+		{
+			return propPrefix + key;
+		}
+
+		private Document ToLuceneDocument (Indexable indexable)
+		{
+			indexable.Build ();
+			
+			Document doc = new Document ();
+			Field f;
+			String str;
+			TextReader reader;
+
+			// First we add the Indexable's 'canonical' properties
+			// to the Document.
+			
+			f = Field.Keyword ("Uri", indexable.Uri);
+			doc.Add (f);
+
+			f = Field.Keyword ("Type", indexable.Type);
+			doc.Add (f);
+			
+			if (indexable.MimeType != null) {
+				f = Field.Keyword ("MimeType", indexable.MimeType);
 				doc.Add (f);
+			}
+			
+			if (indexable.ValidTimestamp) {
+				str = BU.StringFu.DateTimeToString (indexable.Timestamp);
+				f = Field.Keyword ("Timestamp", str);
+				doc.Add (f);
+			}
+			
+			if (indexable.ValidRevision) {
+				f = Field.UnIndexed ("Revision",
+						     RevisionToString (indexable.Revision));
+				doc.Add (f);
+			}
+			
+			reader = indexable.GetTextReader ();
+			Console.WriteLine ("reader={0}", reader);
+			if (reader != null) {
+				f = Field.Text ("Text", reader);
+				doc.Add (f);
+			}
+			
+			reader = indexable.GetHotTextReader ();
+			if (reader != null) {
+				f = Field.Text ("HotText", reader);
+				doc.Add (f);
+			}
+
+			f = Field.UnStored ("PropertiesText",
+					    indexable.TextPropertiesAsString);
+			doc.Add (f);
+
+			// FIXME: We shouldn't apply stemming, etc. when dealing
+			// with this field.
+			f = Field.UnStored ("PropertiesKeyword",
+					    indexable.KeywordPropertiesAsString);
+			doc.Add (f);
+			
+			// FIXME: We need to deal with duplicate properties in some
+			// sort of sane way.
+			foreach (Property prop in indexable.Properties) {
+				if (prop.Value != null) {
+					f = Field.Keyword (ToLucenePropertyKey (prop.Key),
+							   prop.Value);
+					doc.Add (f);
+				}
 			}
 			
 			return doc;
@@ -306,28 +309,36 @@ namespace Beagle {
 			
 			if (query.Text.Count > 0) {
 				Analyzer analyzer = NewAnalyzer ();
-				LNS.BooleanQuery textQuery = new LNS.BooleanQuery ();
-				LNS.Query metaQuery;
-				metaQuery = ToCoreLuceneQuery (query, "Properties", analyzer);
-				if (metaQuery == null)
-					return null;
-				metaQuery.SetBoost (2.5f);
-				textQuery.Add (metaQuery, false, false);
+				LNS.BooleanQuery contentQuery = new LNS.BooleanQuery ();
+
+				LNS.Query propTQuery;
+				propTQuery = ToCoreLuceneQuery (query, "PropertiesText", analyzer);
+				if (propTQuery != null) {
+					propTQuery.SetBoost (2.5f);
+					contentQuery.Add (propTQuery, false, false);
+				}
+
+				LNS.Query propKQuery;
+				propKQuery = ToCoreLuceneQuery (query, "PropertiesKeyword", analyzer);
+				if (propKQuery != null) {
+					propKQuery.SetBoost (2.5f);
+					contentQuery.Add (propKQuery, false, false);
+				}
 				
 				LNS.Query hotQuery;
-				hotQuery = ToCoreLuceneQuery (query, "HotContent", analyzer);
-				if (hotQuery == null)
-					return null;
-				hotQuery.SetBoost (1.75f);
-				textQuery.Add (hotQuery, false, false);		
+				hotQuery = ToCoreLuceneQuery (query, "HotText", analyzer);
+				if (hotQuery != null) {
+					hotQuery.SetBoost (1.75f);
+					contentQuery.Add (hotQuery, false, false);		
+				}
 				
-				LNS.Query contentQuery;
-				contentQuery = ToCoreLuceneQuery (query, "Content", analyzer);
-				if (contentQuery == null)
-					return null;
-				textQuery.Add (contentQuery, false, false);
+				LNS.Query textQuery;
+				textQuery = ToCoreLuceneQuery (query, "Text", analyzer);
+				if (textQuery != null) {
+					contentQuery.Add (textQuery, false, false);
+				}
 
-				luceneQuery.Add (textQuery, true, false);
+				luceneQuery.Add (contentQuery, true, false);
 			}
 
 			// If mime types are specified, we must match one of them.
@@ -378,9 +389,9 @@ namespace Beagle {
 			
 			foreach (Field ff in doc.Fields ()) {
 				String key = ff.Name ();
-				// Non-property metadata keys always start with _.
-				if (key.Length > 1 && key [0] == '_') {
-					String realKey = key.Substring (1);
+				// Non-core properties always start with prop:.
+				if (key.StartsWith (propPrefix)) {
+					String realKey = key.Substring (propPrefix.Length);
 					hit [realKey] = ff.StringValue ();
 				}
 			}
@@ -416,6 +427,8 @@ namespace Beagle {
 				} catch (Exception e) {
 					log.Log (e);
 					Console.WriteLine ("unable to convert {0} (type={1}) to a lucene document", indexable.Uri, indexable.Type);
+					Console.WriteLine (e.Message);
+					Console.WriteLine (e.StackTrace);
 				}
 				if (doc != null)
 					writer.AddDocument (doc);

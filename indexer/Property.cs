@@ -1,5 +1,5 @@
 //
-// FilterText.cs
+// Property.cs
 //
 // Copyright (C) 2004 Novell, Inc.
 //
@@ -24,35 +24,62 @@
 // DEALINGS IN THE SOFTWARE.
 //
 
-
 using System;
-using System.IO;
+using BU = Beagle.Util;
 
-namespace Beagle.Filters {
+namespace Beagle {
+	
+	public class Property {
 
-	public class FilterText : Filter {
+		bool   isKeyword;
+		string key;
+		string value;
 
-		public FilterText ()
-		{
-			AddSupportedMimeType ("text/plain");
+		public bool IsKeyword {
+			get { return isKeyword; }
 		}
 
-		StreamReader reader;
+		public string Key {
+			get { return key; }
+		}
 
-		override protected void DoOpen (FileInfo info)
-		{
-			reader = info.OpenText ();
+		public string Value {
+			get { return value; }
 		}
 		
-		override protected void DoPull ()
+		/////////////////////////////////////
+
+		protected Property () { }
+
+		static public Property New (string key, object value)
 		{
-			string str = reader.ReadLine ();
-			if (str == null) {
-				Finished ();
-			} else {
-				AppendText (str);
-				AppendWhiteSpace ();
-			}
+			Property p = new Property ();
+			p.isKeyword = false;
+			p.key = key;
+			p.value = value != null ? value.ToString () : null;
+			return p;
+		}
+
+		static public Property NewKeyword (string key, object value)
+		{
+			Property p = Property.New (key, value);
+			p.isKeyword = true;
+			return p;
+		}
+
+		static public Property NewBool (string key, bool value)
+		{
+			return NewKeyword (key, value ? "true" : "false");
+		}
+
+		static public Property NewFlag (string key)
+		{
+			return NewBool (key, true);
+		}
+
+		static public Property NewDate (string key, DateTime dt)
+		{
+			return NewKeyword (key, BU.StringFu.DateTimeToString (dt));
 		}
 	}
 }

@@ -1,6 +1,6 @@
-AC_INIT(Filters/Filter.cs)
+AC_INIT(indexer/Filter.cs)
 AC_CANONICAL_SYSTEM
-AM_INIT_AUTOMAKE(beagle, 0.0.2)
+AM_INIT_AUTOMAKE(beagle, 0.0.3)
 AM_MAINTAINER_MODE
 
 AC_PROG_INSTALL
@@ -30,6 +30,13 @@ PKG_CHECK_MODULES(EVO_SHARP,						\
 AC_SUBST(EVO_SHARP_LIBS)
 
 AM_CONDITIONAL(ENABLE_EVO_SHARP, test "x$enable_evo_sharp" = "xyes")
+
+dnl ----------------------------------------------
+
+dnl beagled
+
+PKG_CHECK_MODULES(BEAGLED, dbus-sharp)
+AC_SUBST(BEAGLED_LIBS)
 
 dnl ----------------------------------------------
 
@@ -77,7 +84,6 @@ fi
 
 AM_CONDITIONAL(ENABLE_EPIPHANY_EXTENSION, test "x$enable_epiphany_extension" = "xyes")
 
-
 dnl ----------------------------------------------
 
 dnl Searchomatic
@@ -102,8 +108,8 @@ images/Makefile
 templates/Makefile
 Util/Makefile
 Lucene.Net/Makefile
-Filters/Makefile
 indexer/Makefile
+Filters/Makefile
 Tiles/Makefile
 tools/Makefile
 Best/Makefile

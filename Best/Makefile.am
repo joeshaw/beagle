@@ -15,7 +15,6 @@ LOCAL_ASSEMBLIES =			\
 	../Util/Util.dll		\
 	../images/Images.dll		\
 	../Lucene.Net/Lucene.Net.dll	\
-	../Filters/Filters.dll		\
 	../indexer/Indexer.dll		\
 	../Tiles/Tiles.dll
 

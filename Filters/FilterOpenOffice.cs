@@ -131,7 +131,7 @@ namespace Beagle.Filters {
 							if (hotStyles.Contains (attr.Value))
 								isHot = true;
 							break;
-			    }
+						}
 					}
 				}
 				if (isHot)
@@ -171,7 +171,7 @@ namespace Beagle.Filters {
 				
 			case XmlNodeType.Text:
 				String text = node.Value;
-				AppendContent (text);
+				AppendText (text);
 				break;
 			}
 			
@@ -188,29 +188,35 @@ namespace Beagle.Filters {
 				switch (node.Name) {
 					
 				case "dc:title":
-					this ["Title"] = node.InnerText;
+					AddProperty (Property.New ("dc:title",
+								   node.InnerText));
 					break;
 
 				case "dc:description":
-					this ["Description"] = node.InnerText;
+					AddProperty (Property.New ("dc:description",
+								   node.InnerText));
 					break;
 
 				case "dc:subject":
-					this ["Subject"] = node.InnerText;
+					AddProperty (Property.New ("dc:subject",
+								   node.InnerText));
 					break;
 					
 				case "meta:document-statistic":
 					XmlAttributeCollection attr = node.Attributes;
-					if (attr ["meta:page-count"] != null)
-						this ["_PageCount"] = attr ["meta:page-count"].Value;
-					if (attr ["meta:word-count"] != null)
-						this ["_WordCount"] = attr ["meta:word-count"].Value;
+					if (attr ["fixme:page-count"] != null)
+						AddProperty (Property.NewKeyword ("fixme:page-count",
+										  attr ["meta:page-count"].Value));
+					if (attr ["fixme:word-count"] != null)
+						AddProperty (Property.NewKeyword ("fixme:word-count",
+										  attr ["meta:word-count"].Value));
 					break;
 
 				case "meta:user-defined":
 					if (node.InnerText != "") {
 						string name = node.Attributes ["meta:name"].Value;
-						this ["UserDefined:" + name] = node.InnerText;
+						AddProperty (Property.New ("fixme:UserDefined-" + name,
+									   node.InnerText));
 					}
 					break;
 					
@@ -222,17 +228,27 @@ namespace Beagle.Filters {
 
 		ZipFile zip = null;
 
-		override protected void DoOpen (Stream stream)
+		override protected void DoOpen (FileInfo info)
 		{
 			hotStyles = new Hashtable ();
-			zip = new ZipFile (stream);
+			zip = new ZipFile (info.FullName);
+		}
+
+		override protected void DoPullProperties ()
+		{
+			ZipEntry entry = zip.GetEntry ("meta.xml");
+			if (entry != null) {
+				Stream meta_stream = zip.GetInputStream (entry);
+				XmlDocument doc = new XmlDocument ();
+				doc.Load (meta_stream);
+				ExtractMetadata (doc);
+			} else {
+				Console.WriteLine ("No meta.xml!");
+			}
 		}
 
 		override protected void DoPull ()
 		{
-			if (zip == null)
-				return;
-			
 			ZipEntry entry = zip.GetEntry ("content.xml");
 			if (entry != null) {
 				Stream content_stream = zip.GetInputStream (entry);
@@ -241,15 +257,7 @@ namespace Beagle.Filters {
 				WalkContentNodes (doc.DocumentElement);
 			}
 			
-			entry = zip.GetEntry ("meta.xml");
-			if (entry != null) {
-				Stream meta_stream = zip.GetInputStream (entry);
-				XmlDocument doc = new XmlDocument ();
-				doc.Load (meta_stream);
-				ExtractMetadata (doc);
-			}
-
-			zip = null;
+			Finished ();
 		}
 	}
 }

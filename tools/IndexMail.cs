@@ -397,6 +397,9 @@ namespace IndexMailTool {
 
 	public class IndexableMail : Indexable {
 
+		ArrayList props = new ArrayList ();
+		MailMessage message;
+
 		public IndexableMail (String accountId,
 				      String folderName,
 				      Camel.MessageInfo messageInfo,
@@ -407,46 +410,58 @@ namespace IndexMailTool {
 			Type = "MailMessage";
 			MimeType = null;
 
+			this.message = message;
 			Timestamp = messageInfo.Date;
 
 			// Assemble the metadata
-			this ["Folder"] = folderName;
-			this ["Subject"] = messageInfo.subject;
-			this ["To"] =  messageInfo.to;
-			this ["From"] = messageInfo.from;
-			this ["Cc"] = messageInfo.cc;
-			this ["Received"] = BU.StringFu.DateTimeToString (messageInfo.received);
-			this ["SentDate"] = BU.StringFu.DateTimeToString (messageInfo.sent);
-			this ["Mlist"] = messageInfo.mlist;
+			props.Add (Property.New ("fixme:folder", folderName));
+			props.Add (Property.New ("fixme:subject", messageInfo.subject));
+			props.Add (Property.New ("fixme:to", messageInfo.to));
+			props.Add (Property.New ("fixme:from", messageInfo.from));
+			props.Add (Property.New ("fixme:cc", messageInfo.cc));
+			props.Add (Property.NewDate ("fixme:received", messageInfo.received));
+			props.Add (Property.NewDate ("fixme:sentdate", messageInfo.sent));
+			props.Add (Property.New ("fixme:mlist", messageInfo.mlist));
 
 			if (folderName == "Sent")
-				this ["_IsSent"] = "1";
+				props.Add (Property.NewFlag ("fixme:isSent"));
 
-			this ["_Flags"] = Convert.ToString (messageInfo.flags);
+			props.Add (Property.NewKeyword ("fixme:flags", messageInfo.flags));
 			
 			if (messageInfo.IsAnswered)
-				this ["_IsAnswered"] = "1";
-			if (messageInfo.IsDeleted)
-				this ["_IsDeleted"] = "1";
-			if (messageInfo.IsDraft)
-				this ["_IsDraft"] = "1";
-			if (messageInfo.IsFlagged)
-				this ["_IsFlagged"] = "1";
-			if (messageInfo.IsSeen)
-				this ["_IsSeen"] = "1";
-			if (messageInfo.HasAttachments)
-				this ["_HasAttachments"] = "1";
-			if (messageInfo.IsAnsweredAll)
-				this ["_IsAnsweredAll"] = "1";
+				props.Add (Property.NewFlag ("fixme:isAnswered"));
 
+			if (messageInfo.IsDeleted)
+				props.Add (Property.NewFlag ("fixme:isDeleted"));
+
+			if (messageInfo.IsDraft)
+				props.Add (Property.NewFlag ("fixme:isDraft"));
+
+			if (messageInfo.IsFlagged)
+				props.Add (Property.NewFlag ("fixme:isFlagged"));
+			
+			if (messageInfo.IsSeen)
+				props.Add (Property.NewFlag ("fixme:isSeen"));
+
+			if (messageInfo.HasAttachments)
+				props.Add (Property.NewFlag ("fixme:hasAttachments"));
+
+			if (messageInfo.IsAnsweredAll)
+				props.Add (Property.NewFlag ("fixme:isAnsweredAll"));
+		}
+
+		override public TextReader GetTextReader ()
+		{
 			// Assemble the content, if we have any
 			if (message != null) {
 				BU.MultiReader multi = new BU.MultiReader ();
 				foreach (MailBody body in message.Bodies)
 					BodyToMultiReader (body, multi);
 				if (multi.Count > 0)
-					ContentReader = multi;
+					return multi;
 			}
+
+			return null;
 		}
 
 		void BodyToMultiReader (MailBody body, BU.MultiReader multi)

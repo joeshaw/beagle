@@ -7,8 +7,8 @@ SUBDIRS = 			\
 	templates		\
 	Util			\
 	Lucene.Net 		\
-	Filters 		\
 	indexer 		\
+	Filters 		\
 	Tiles			\
 	tools 			\
 	Best			\

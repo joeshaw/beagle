@@ -8,7 +8,7 @@ ORIGDIR=`pwd`
 cd $srcdir
 PROJECT=beagle
 TEST_TYPE=-f
-FILE=Filters/Filter.cs
+FILE=indexer/Filter.cs
 
 DIE=0
 

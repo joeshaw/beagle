@@ -108,7 +108,7 @@ namespace Beagle.Filters {
 				    && subnode.Name == "title") {
 					String title = WalkChildNodesForText (subnode);
 					title = HtmlEntity.DeEntitize (title);
-					this ["Title"] = title;
+					AddProperty (Property.New ("dc:title", title));
 				}
 			}
 		}
@@ -129,13 +129,13 @@ namespace Beagle.Filters {
 						AppendWhiteSpace ();
 					if (isHot)
 						HotDown ();
-				}
+				}				
 				break;
 				
 			case HtmlNodeType.Text:
 				String text = ((HtmlTextNode)node).Text;
 				text = HtmlEntity.DeEntitize (text);
-				AppendContent (text);
+				AppendText (text);
 				break;
 				
 			}
@@ -160,20 +160,13 @@ namespace Beagle.Filters {
 			}
 		}
 
-		HtmlDocument doc = null;
-
-		override protected void DoOpen (Stream stream)
+		override protected void DoOpen (FileInfo info)
 		{
-			doc = new HtmlDocument ();
-			doc.Load (stream);
-		}
-
-		override protected void DoPull ()
-		{
-			if (doc != null) {
+			HtmlDocument doc = new HtmlDocument ();
+			doc.Load (info.Open (FileMode.Open));
+			if (doc != null)
 				WalkNodes (doc.DocumentNode);
-				doc = null;
-			}
+			Finished ();
 		}
 		
 	}

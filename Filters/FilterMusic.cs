@@ -38,8 +38,10 @@ namespace Beagle.Filters {
 			AddSupportedMimeType ("audio/x-mp3");
 		}
 
-		protected override void DoOpen (Stream stream)
+		protected override void DoPullProperties ()
 		{
+			Stream stream = CurrentFileInfo.Open (FileMode.Open);
+
 			BU.Id3Info info;
 
 			info = BU.Id3v2.Read (stream);
@@ -48,20 +50,21 @@ namespace Beagle.Filters {
 			if (info == null)
 				return;
 
-			this ["_ID3"] = info.Version;
-			this ["Artist"] = info.Artist;
-			this ["Album"]  = info.Album;
-			this ["Song"]   = info.Song;
-			this ["Comment"] = info.Comment;
-			if (info.Track > 0)
-				this ["_Track"] = info.Track.ToString ();
-			if (info.Year > 0)
-				this ["_Year"] = info.Year.ToString ();
-			if (info.HasPicture)
-				this ["_HasPicture"] = "1";
-		}
+			AddProperty (Property.NewKeyword ("fixme:id3version", info.Version));
 
-		protected override void DoPull ()
-		{ }
+			AddProperty (Property.New ("fixme:artist",  info.Artist));
+			AddProperty (Property.New ("fixme:album",   info.Album));
+			AddProperty (Property.New ("fixme:song",    info.Song));
+			AddProperty (Property.New ("fixme:comment", info.Comment));
+
+			if (info.Track > 0)
+				AddProperty (Property.NewKeyword ("fixme:track", info.Track));
+
+			if (info.Year > 0)
+				AddProperty (Property.NewKeyword ("fixme:year", info.Year));
+
+			if (info.HasPicture)
+				AddProperty (Property.NewBool ("fixme:haspicture", true));
+		}
 	}
 }

@@ -37,7 +37,9 @@ namespace Beagle.Filters {
 			AddSupportedMimeType ("image/png");
 		}
 
-		protected override void DoOpen (Stream stream)
+		private byte[] buffer;
+
+		protected override void DoOpen (FileInfo info)
 		{
 			//  8 bytes of signature
 			// IHDR chunk:
@@ -46,8 +48,12 @@ namespace Beagle.Filters {
 			// 13 bytes of chunk data
 			// total: 29 bytes
 
-			byte[] buffer = new byte [29];
-			stream.Read (buffer, 0, 29);
+			Stream stream = info.Open (FileMode.Open);
+			buffer = new byte [29];
+			if (stream.Read (buffer, 0, 29) != 29) {
+				Finished ();
+				return;
+			}
 
 			// Check the signature --- no harm in being paranoid
 			if (buffer [0] != 137 || buffer [1] != 80
@@ -55,45 +61,54 @@ namespace Beagle.Filters {
 			    || buffer [4] != 13 || buffer [5] != 10
 			    || buffer [6] != 26 || buffer [7] != 10) {
 				//Console.WriteLine ("Bad signature!");
+				Finished ();
 				return;
 			}
 
 			if (buffer [12] != 73 || buffer [13] != 72
 			    || buffer [14] != 68 || buffer [15] != 82) {
 				//Console.WriteLine ("First chunk is not IHDR!");
+				Finished ();
 				return;
 			}
-
+		}
+		
+		protected override void DoPullProperties ()
+		{
 			int width = buffer [18] * 256 + buffer [19];
 			int height = buffer [22] * 256 + buffer [23];
 
-			this ["_Width"] = width.ToString ();
-			this ["_Height"] = height.ToString ();
-
-			this ["_BitDepth"] = buffer [24].ToString ();
+			AddProperty (Property.NewKeyword ("fixme:width", width));
+			AddProperty (Property.NewKeyword ("fixme:height", height));
+			AddProperty (Property.NewKeyword ("fixme:bitdepth", buffer [24]));
 
 			string colorType = null;
+			bool hasAlpha = false;
 			switch (buffer [25]) {
 			case 0:
 				colorType = "Greyscale";
+				hasAlpha = false;
 				break;
 			case 2:
 				colorType = "Truecolor";
+				hasAlpha = false;
 				break;
 			case 3:
 				colorType = "Indexed";
+				hasAlpha = false;
 				break;
 			case 4:
-				colorType = "Greyscale with alpha";
+				colorType = "Greyscale";
+				hasAlpha = true;
 				break;
 			case 6:
-				colorType = "Truecolor with alpha";
+				colorType = "Truecolor";
+				hasAlpha = true;
 				break;
 			}
-			this ["_ColorType"] = colorType;
-				
+
+			AddProperty (Property.NewKeyword ("fixme:colortype", colorType));
+			AddProperty (Property.NewBool ("fixme:hasalpha", hasAlpha));
 		}
-		
-		protected override void DoPull () { }
 	}
 }

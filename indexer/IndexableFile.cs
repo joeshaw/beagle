@@ -29,7 +29,6 @@ using System;
 using System.Collections;
 using System.IO;
 
-using Beagle.Filters;
 using BU = Beagle.Util;
 
 namespace Beagle {
@@ -40,6 +39,7 @@ namespace Beagle {
 		Flavor flavor;
 		Filter filter;
 		String path;
+		ArrayList properties = new ArrayList ();
 
 		public IndexableFile (String _path)
 		{
@@ -67,29 +67,35 @@ namespace Beagle {
 
 		override protected void DoBuild ()
 		{
+			FileInfo info = new FileInfo (path);
 			if (filter != null) {
-				Stream stream;
-				stream = new FileStream (path, FileMode.Open, FileAccess.Read);
-				filter.Open (stream);
-				ContentReader = filter.Content;
-				HotContentReader = filter.HotContent;
-				foreach (String key in filter.Keys)
-					this [key] = filter [key];
-				//stream.Close ();
+				filter.Open (info);
+				foreach (Property prop in filter.Properties)
+					properties.Add (prop);
 			}
 
+			string dirName = null, parentName = null;
+
 			if (isDirectory) {
-				DirectoryInfo info = new DirectoryInfo (path);
-				info = info.Parent;
-				if (info != null) {
-					this ["_Directory"] = info.FullName;
-					this ["ParentSplitName"] = String.Join (" ", BU.StringFu.FuzzySplit (info.Name));
+				DirectoryInfo dirInfo = new DirectoryInfo (path);
+				dirInfo = dirInfo.Parent;
+				if (dirInfo != null) {
+					dirName = dirInfo.FullName;
+					parentName = dirInfo.Name;
 				}
 			} else {
-				FileInfo info = new FileInfo (path);
-				this ["_Directory"] = info.DirectoryName;
-				this ["ParentSplitName"] = String.Join (" ", BU.StringFu.FuzzySplit (Path.GetFileName (info.DirectoryName)));
+				dirName = info.DirectoryName;
+				parentName = info.DirectoryName;
 			}
+
+			if (dirName != null)
+				properties.Add (Property.NewKeyword ("fixme:directory", dirName));
+
+			if (parentName != null) {
+				string split = String.Join (" ", BU.StringFu.FuzzySplit (parentName));
+				properties.Add (Property.New ("fixme:parentsplitname", split));
+			}
+
 
 			// Try to strip off the extension in a semi-intelligent way,
 			// and then fuzzy-split the file name and store it in a property.
@@ -116,31 +122,63 @@ namespace Beagle {
 				name = Path.GetFileNameWithoutExtension (path);
 			else
 				name = Path.GetFileName (path);
-			this ["SplitName"] = String.Join (" ", BU.StringFu.FuzzySplit (name));
+			properties.Add (Property.New ("fixme:splitname",
+						      String.Join (" ", BU.StringFu.FuzzySplit (name))));
 
-			this ["_NautilusEmblem"] = BU.NautilusTools.GetEmblem (path);
-			this ["NautilusNotes"] = BU.NautilusTools.GetNotes (path);
+
+			// Attach Nautilus metadata to the file
+			// FIXME: This should be in the metadata store, not attached
+			// to the indexed document.
+
+			string nautilusEmblem = BU.NautilusTools.GetEmblem (path);
+			if (nautilusEmblem != null)
+				properties.Add (Property.NewKeyword ("fixme:nautilus/emblem",
+								     nautilusEmblem));
+				
+			string nautilusNotes = BU.NautilusTools.GetNotes (path);
+			if (nautilusNotes != null)
+				properties.Add (Property.New ("fixme:nautilus/notes", nautilusNotes));
+						      
 
 			// Check for FSpot metadata on images.
-			// This is fairly hacky --- we need some sort of unified metadata
-			// system for the desktop.
+			// FIXME: This should also be in the metadata store.
 			if (MimeType.StartsWith ("image/")) {
 				BU.FSpotTools.Photo photo = BU.FSpotTools.GetPhoto (path);
 				if (photo != null) {
-					this ["FSpot.Description"] = photo.Description;
+					if (photo.Description != null)
+						properties.Add (Property.New ("fixme:fspot/description",
+									      photo.Description));
 
 					// FIXME: This is a bit weird, since stemming is applied to
 					// the list of tags. .. but I'm not sure if there is a clean way
 					// to do it.
 					string tagStr = "";
-					foreach (BU.FSpotTools.Tag tag in photo.Tags) {
-						if (tagStr.Length > 0)
-							tagStr += " :: "; // just a weird separator
-						tagStr += tag.Name;
-					}
-					this ["FSpot.Tags"] = tagStr;
+					foreach (BU.FSpotTools.Tag tag in photo.Tags)
+						properties.Add (Property.NewKeyword ("fixme:fspot/tag", tag.Name));
 				}
 			}
+		}
+
+		override public TextReader GetTextReader ()
+		{
+			return filter != null ? filter.GetTextReader () : null;
+		}
+
+		override public TextReader GetHotTextReader ()
+		{
+			return filter != null ? filter.GetHotTextReader () : null;
+		}
+
+		override public IEnumerable Properties {
+			get { return properties; }
+		}
+
+		public bool HaveFilter {
+			get { return filter != null; }
+		}
+
+		public Flavor Flavor {
+			get { return flavor; }
 		}
 	}
 

@@ -37,6 +37,8 @@ namespace IndexGaimLogs {
 	class IndexableImLog : Indexable {
 		
 		private ImLog log;
+		private ArrayList properties = new ArrayList ();
+		private TextReader reader = null;
 	        public bool verbose = false;
 
        		private void VerbosePrint (String text)
@@ -56,19 +58,18 @@ namespace IndexGaimLogs {
 			Timestamp = log.Timestamp;
 			Type = "IMLog";
 
-			this ["File"] = log.LogFile;
-			if (log.LogOffset > 0)
-				this ["Offset"] = log.LogOffset.ToString ();
-			this ["Protocol"] = log.Protocol;
-			this ["StartTime"] = log.StartTime.ToString ();
-			this ["SpeakingTo"] = log.SpeakingTo;
-			this ["Identity"] = log.Identity;
+			properties.Add (Property.NewKeyword ("fixme:file", log.LogFile));
+			properties.Add (Property.NewKeyword ("fixme:offset", log.LogOffset));
+			properties.Add (Property.NewDate ("fixme:starttime", log.StartTime));
+			properties.Add (Property.NewKeyword ("fixme:speakingto", log.SpeakingTo));
+			properties.Add (Property.NewKeyword ("fixme:identity", log.Identity));
 		}
 
 		override protected void DoBuild ()
 		{
 			log.Load ();
-			this ["EndTime"] = log.EndTime.ToString ();
+
+			properties.Add (Property.NewDate ("fixme:endtime", log.EndTime));
 
 			StringBuilder text = new StringBuilder ();
 			foreach (ImLog.Utterance utt in log.Utterances) {
@@ -77,9 +78,18 @@ namespace IndexGaimLogs {
 				text.Append (" ");
 			}
 
-			Content = text.ToString ();
-
+			reader = new StringReader (text.ToString ());
+			Console.WriteLine (text.ToString ());
 			VerbosePrint ("Indexing conversation");
+		}
+
+		override public TextReader GetTextReader ()
+		{
+			return reader;
+		}
+
+		override public IEnumerable Properties {
+			get { return properties; }
 		}
 	}
 
