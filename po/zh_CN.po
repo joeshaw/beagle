@@ -1,0 +1,178 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# Funda Wang <fundawang@linux.net.cn>, 2005.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: beagle HEAD\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2005-04-05 02:39+0200\n"
+"PO-Revision-Date: 2005-04-05 12:39+0800\n"
+"Last-Translator: Funda Wang <fundawang@linux.net.cn>\n"
+"Language-Team: zh_CN <i18n-translation@lists.linux.net.cn>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: Best/Best.cs:120
+msgid ""
+"If you're wondering whether Best is working check your notification area "
+"(system tray)"
+msgstr ""
+
+#: Best/BestTray.cs:164
+msgid "No Recent Searches"
+msgstr "没有最近的搜索"
+
+#: Best/BestTray.cs:179
+msgid "Quit"
+msgstr "退出"
+
+#: Best/BestWindow.cs:302
+msgid "Anywhere"
+msgstr "任何地方"
+
+#: Best/BestWindow.cs:304
+msgid "in Files"
+msgstr "文件中"
+
+#: Best/BestWindow.cs:306
+msgid "in Addressbook"
+msgstr "地址簿中"
+
+#: Best/BestWindow.cs:308
+msgid "in Mail"
+msgstr "邮件中"
+
+#: Best/BestWindow.cs:310
+msgid "in Web Pages"
+msgstr "网页中"
+
+#: Best/BestWindow.cs:312
+msgid "in Chats"
+msgstr "聊天记录中"
+
+#: Best/BestWindow.cs:328
+msgid "Search terms:"
+msgstr "搜索条件："
+
+#: Best/BestWindow.cs:345
+msgid "Find"
+msgstr "查找"
+
+#: Best/BestWindow.cs:362
+msgid "Show More Results"
+msgstr "显示更多结果"
+
+#: Best/BestWindow.cs:368
+msgid "Show Previous Results"
+msgstr "显示上页结果"
+
+#: Best/BestWindow.cs:402
+msgid "No results."
+msgstr "无结果。"
+
+#: Best/BestWindow.cs:404
+#, csharp-format
+msgid "Best <b>{0} results of {1}</b> are shown."
+msgstr ""
+
+#: Best/BestWindow.cs:408
+#, csharp-format
+msgid "Results <b>{0} through {1} of {2}</b> are shown."
+msgstr ""
+
+#: Best/BestWindow.cs:546
+#, csharp-format
+msgid ""
+"The query for <i>{0}</i> failed.<br>The likely cause is that the beagle "
+"daemon isn't running."
+msgstr ""
+
+#: Best/BestWindow.cs:550
+#, csharp-format
+msgid ""
+"The query for <i>{0}</i> failed.<br>The session bus isn't running.  See "
+"http://beaglewiki.org/index.php/Installing%20Beagle for information on "
+"setting up a session bus."
+msgstr ""
+
+#: Best/BestWindow.cs:553
+#, csharp-format
+msgid "The query for <i>{0}</i> failed with error:<br>{1}<br>"
+msgstr ""
+
+#: Tiles/TileDocs.cs:75
+msgid "Pages:"
+msgstr "页数："
+
+#: Tiles/TileDocs.cs:79
+msgid "Words:"
+msgstr "单词数："
+
+#: Tiles/TileFolder.cs:51
+msgid "Empty"
+msgstr "空"
+
+#: Tiles/TileFolder.cs:53
+msgid "Contains 1 Item"
+msgstr "包含一项"
+
+#: Tiles/TileFolder.cs:55
+#, csharp-format
+msgid "Contains {0} Items"
+msgstr "包含 {0} 项"
+
+#: Tiles/TileMailMessage.cs:68
+msgid "<i>No Subject</i>"
+msgstr "<i>无主题</i>"
+
+#: Tiles/TileMailMessage.cs:73
+msgid "To"
+msgstr "寄给"
+
+#: Tiles/TileMailMessage.cs:73
+msgid "From"
+msgstr "来自"
+
+#: Tiles/TileMailMessage.cs:104
+msgid "Sent"
+msgstr "发送时间"
+
+#: Tiles/TileMailMessage.cs:104
+msgid "Received"
+msgstr "接收时间"
+
+#: Util/StringFu.cs:65
+msgid "Today"
+msgstr "今天"
+
+#: Util/StringFu.cs:67
+msgid "Yesterday"
+msgstr "昨天"
+
+#: Util/StringFu.cs:94
+#, csharp-format
+msgid "Today, {0}"
+msgstr "今天 {0}"
+
+#: Util/StringFu.cs:96
+#, csharp-format
+msgid "Yesterday, {0}"
+msgstr "昨天 {0}"
+
+#: Util/StringFu.cs:98
+#, csharp-format
+msgid "{0} days ago, {1}"
+msgstr "{0} 天前 {1}"
+
+#: Util/StringFu.cs:118
+#, csharp-format
+msgid "{0} hours"
+msgstr "{0} 个小时"
+
+#: Util/StringFu.cs:128
+#, csharp-format
+msgid "{0} minutes"
+msgstr "{0} 分钟"
