@@ -15,6 +15,7 @@ CSFILES =					\
 	$(srcdir)/TileMailMessage.cs
 
 ASSEMBLIES = 					\
+	$(EVO_SHARP_LIBS)			\
 	$(BEAGLE_UI_LIBS)			\
 	-r:../Util/Util.dll			\
 	-r:../images/Images.dll			\
