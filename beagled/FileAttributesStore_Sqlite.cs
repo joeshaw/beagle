@@ -248,7 +248,7 @@ namespace Beagle.Daemon {
 			string filename = Path.GetFileName (path);
 			command = QueryCommand ("directory='{0}' AND filename='{1}'",
 						directory.Replace ("'", "''"),
-						filename.Replace ("'", "''");
+						filename.Replace ("'", "''"));
 			reader = command.ExecuteReader ();
 
 			FileAttributes attr = null;
