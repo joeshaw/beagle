@@ -34,6 +34,7 @@ namespace Beagle.Tile {
 	[HitFlavor (Name="Email", Rank=1100, Emblem="emblem-mail-message.png", Color="#f5f5f5",
 		    Type="MailMessage")]
 	public class TileMailMessage : TileFromHitTemplate {
+
 #if ENABLE_EVO_SHARP
 		string aim_name;
 		string groupwise_name;
@@ -41,7 +42,10 @@ namespace Beagle.Tile {
 		string jabber_name;
 		string msn_name;
 		string yahoo_name;
+
+		static bool ebook_failed = false;
 #endif
+
 		public TileMailMessage (Hit _hit) : base (_hit,
 							  "template-mail-message.html")
 		{
@@ -86,11 +90,11 @@ namespace Beagle.Tile {
 
 			GetImNames (Template["Who"]);
 
+#if ENABLE_EVO_SHARP
 			if (aim_name != null)
 				Template["CanSendIm"] = "";
+#endif
 		}
-
-		static bool ebook_failed = false;
 
 		private string GetEmail (string who)
 		{
@@ -174,21 +178,23 @@ namespace Beagle.Tile {
 			p.Start ();			
 		}
 
+#if ENABLE_EVO_SHARP
 		[TileAction]
 		public void SendIm () 
 		{
 			if (aim_name != null) 
 				SendImAim (aim_name);
 			if (groupwise_name != null) 
-				SendImGroupwise (aim_name);
+				SendImGroupwise (groupwise_name);
 			if (icq_name != null) 
-				SendImIcq (aim_name);
+				SendImIcq (icq_name);
 			if (jabber_name != null) 
-				SendImJabber (aim_name);
+				SendImJabber (jabber_name);
 			if (msn_name != null) 
-				SendImMsn (aim_name);
+				SendImMsn (msn_name);
 			if (yahoo_name != null) 
-				SendImYahoo (aim_name);
+				SendImYahoo (yahoo_name);
 		}
+#endif
 	}
 }
