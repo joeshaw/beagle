@@ -38,7 +38,7 @@ class QueryTool {
 	static int count = 0;
 	static Query query = null;
 
-	static void WriteHit (Hit hit)
+	static void OnHitAdded (Query source, Hit hit)
 	{
 		Console.WriteLine ("  Uri: {0}", hit.Uri);
 		Console.WriteLine (" Type: {0}", hit.Type);
@@ -54,36 +54,16 @@ class QueryTool {
 			Console.WriteLine ("    {0} = {1}", key, hit [key]);
 
 		Console.WriteLine ();
+
+		++count;
 	}
 
-	static void OnGotHits (ICollection hits)
+	static void OnHitSubtracted (Query source, Uri uri)
 	{
-		foreach (Hit hit in hits) {
-			WriteHit (hit);
-			++count;
-		}
-	}
+		Console.WriteLine ("Subtracted Uri '{0}'", uri);
+		Console.WriteLine ();
 
-	static void QuitWithCount (string type)
-	{
-		Console.WriteLine ("{0} after {1} hit{2}.",
-				   type,
-				   count,
-				   count != 1 ? "s" : "");
-	}
-
-	static void OnFinished ()
-	{
-		Console.WriteLine ("Finished after {0} hits.", count);
-		query.Dispose ();
-		Gtk.Application.Quit ();
-	}
-
-	static void OnCancelled ()
-	{
-		Console.WriteLine ("Cancelled after {0} hits.", count);
-		query.Dispose ();
-		Gtk.Application.Quit ();
+		--count;
 	}
 
 	static void Main (string[] args) 
@@ -91,9 +71,8 @@ class QueryTool {
 		Gtk.Application.Init ();
 
 		query = Beagle.Factory.NewQuery ();
-		query.GotHitsEvent += OnGotHits;
-		query.FinishedEvent += OnFinished;
-		query.CancelledEvent += OnCancelled;
+		query.HitAddedEvent += OnHitAdded;
+		query.HitSubtractedEvent += OnHitSubtracted;
 
 		int i = 0;
 		while (i < args.Length) {

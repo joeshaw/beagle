@@ -153,8 +153,6 @@ namespace Best {
 			entryLine.PackStart (button, false, false, 3);
 
 			canvas = new TileCanvas ();
-			canvas.PreRenderEvent += new EventHandler (OnPreRender);
-			canvas.PostRenderEvent += new EventHandler (OnPostRender);
 
 			root = new BestRootTile ();
 			canvas.Root = root;
@@ -187,42 +185,14 @@ namespace Best {
 
 		//////////////////////////
 
-		private void OnGotHits (ICollection hits)
+		private void OnHitAdded (Query source, Hit hit)
 		{
-			foreach (Hit hit in hits)
-				root.Add (hit);
+			root.Add (hit);
 		}
 
-		private void OnFinished ()
+		private void OnHitSubtracted (Query source, Uri uri)
 		{
-			Console.WriteLine ("Finished!");
-			root.Close ();
-		}
-
-		private void OnCancelled ()
-		{
-			Console.WriteLine ("Cancelled!");
-			root.Close ();
-		}
-
-		private void OnPreRender (object obj, EventArgs args)
-		{
-			if (swin == null)
-				return;
-			Gtk.Adjustment adj = swin.Vadjustment;
-			if (adj == null)
-				return;
-			// FIXME!
-		}
-		
-		private void OnPostRender (object obj, EventArgs args)
-		{
-			if (swin == null)
-				return;
-			Gtk.Adjustment adj = swin.Vadjustment;
-			if (adj == null)
-				return;
-			// FIXME!
+			root.Subtract (uri);
 		}
 
 		private void Search (String searchString)
@@ -231,9 +201,8 @@ namespace Best {
 
 			if (query != null) {
 				query.Cancel ();
-				query.GotHitsEvent -= OnGotHits;
-				query.FinishedEvent -= OnFinished;
-				query.CancelledEvent -= OnCancelled;
+				query.HitAddedEvent -= OnHitAdded;
+				query.HitSubtractedEvent -= OnHitSubtracted;
 				query.Dispose ();
 			}
 
@@ -244,9 +213,8 @@ namespace Best {
 
 			query.AddText (searchString);
 
-			query.GotHitsEvent += OnGotHits;
-			query.FinishedEvent += OnFinished;
-			query.CancelledEvent += OnCancelled;
+			query.HitAddedEvent += OnHitAdded;
+			query.HitSubtractedEvent += OnHitSubtracted;
 
 			root.Open ();
 

@@ -62,19 +62,21 @@ namespace Beagle
 		[Method]
 		public abstract void CloseQuery ();
 
-		public delegate void GotHitsXmlHandler (string hitsXml);
+		public delegate void StartedHandler (QueryProxy sender);
 		[Signal]
-		public virtual event GotHitsXmlHandler GotHitsXmlEvent;
+		public virtual event StartedHandler StartedEvent;
 
-		public delegate void FinishedHandler ();
+		public delegate void HitsAddedAsXmlHandler (QueryProxy sender, string hitsXml);
 		[Signal]
-		public virtual event FinishedHandler FinishedEvent;
+		public virtual event HitsAddedAsXmlHandler HitsAddedAsXmlEvent;
 
-		public delegate void CancelledHandler ();
+		public delegate void HitsSubtractedAsStringHandler (QueryProxy sender, string uriList);
+		[Signal]
+		public virtual event HitsSubtractedAsStringHandler HitsSubtractedAsStringEvent;
+
+		public delegate void CancelledHandler (QueryProxy sender);
 		[Signal]
 		public virtual event CancelledHandler CancelledEvent;
-		
-
 
 	}
 }

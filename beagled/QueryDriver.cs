@@ -95,7 +95,6 @@ namespace Beagle.Daemon {
 				IQueryable queryable;
 				queryable = (IQueryable) Activator.CreateInstance (qi.Type);
 				queryables.Add (queryable);
-				Console.WriteLine ("Constructed {0}", queryable.Name);
 			}
 		}
 
@@ -103,73 +102,37 @@ namespace Beagle.Daemon {
 
 			IQueryable queryable;
 			QueryBody body;
-			QueryResult result;
 			
 			public QueryClosure (IQueryable  _queryable,
-					     QueryBody   _body,
-					     QueryResult _result)
+					     QueryBody   _body)
 			{
 				queryable = _queryable;
 				body      = _body;
-				result    = _result;
 			}
 
-			public void Start ()
+			public void Worker (QueryResult result)
 			{
-				try {
-					queryable.DoQuery (body, result);
-				} catch (Exception e) {
-					Console.WriteLine ("Query to '{0}' failed with exception:\n{1}:\n{2}", queryable.Name, e.Message, e.StackTrace);
-							   
-				}
-				result.WorkerFinished ();
+				queryable.DoQuery (body, result);
 			}
 		}
 
-		class QueryStartClosure {
-			
-			QueryBody body;
-			IEnumerable queryables;
-			QueryResult result;
+		public void DoQuery (QueryBody body, QueryResult result)
+		{
+			// The extra pair of calls to WorkerStart/WorkerFinished ensures that
+			// the QueryResult will fire the StartedEvent and FinishedEvent,
+			// even if no queryable accepts the query.
+			result.WorkerStart ();
 
-			public QueryStartClosure (QueryBody   _body,
-						  IEnumerable _queryables)
-			{
-				body = _body;
-				queryables = _queryables;
-			}
-
-			public void Start (QueryResult result)
-			{
-				// Our iteration over the queryables is preceeded by
-				// a call to WorkerStart and followed by a call to
-				// WorkerFinished.  This ensures that the QueryResult
-				// enters the started and finished states, even if
-				// none of the queryables accept the query.
-				result.WorkerStart ();
-				if (! body.IsEmpty) {
-					foreach (IQueryable queryable in queryables) {
-						if (queryable.AcceptQuery (body)) {
-							QueryClosure qc = new QueryClosure (queryable,
-											    body,
-											    result);
-							Thread th = new Thread (new ThreadStart (qc.Start));
-							
-							result.WorkerStart ();
-							th.Start ();
-						}
+			if (! body.IsEmpty) {
+				foreach (IQueryable queryable in queryables) {
+					if (queryable.AcceptQuery (body)) {
+						QueryClosure qc = new QueryClosure (queryable, body);
+						result.AttachWorker (new QueryResult.QueryWorker (qc.Worker));
 					}
 				}
-				result.WorkerFinished ();
 			}
-		}
-
-		public QueryResult DoQuery (QueryBody body)
-		{
-			QueryStartClosure qsc = new QueryStartClosure (body, queryables);
-			QueryResult.QueryStart start = new QueryResult.QueryStart (qsc.Start);
-			QueryResult result = new QueryResult (start);
-			return result;
+			
+			result.WorkerFinished ();
 		}
 	}
 }

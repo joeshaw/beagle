@@ -27,6 +27,7 @@
 using System;
 using System.Collections;
 using System.IO;
+using System.Text;
 using System.Xml;
 
 using BU = Beagle.Util;
@@ -34,12 +35,13 @@ using BU = Beagle.Util;
 namespace Beagle.Daemon {
 
 	public class QueryImpl : Beagle.QueryProxy {
-		private QueryBody body;
 		private QueryDriver driver;
-		private QueryResult result;
-
-		public override event GotHitsXmlHandler GotHitsXmlEvent;
-		public override event FinishedHandler FinishedEvent;
+		private QueryBody body;
+		private QueryResult result = null;
+		
+		public override event StartedHandler StartedEvent;
+		public override event HitsAddedAsXmlHandler HitsAddedAsXmlEvent;
+		public override event HitsSubtractedAsStringHandler HitsSubtractedAsStringEvent;
 		public override event CancelledHandler CancelledEvent;
 		
 		public delegate void ClosedHandler (QueryImpl sender);
@@ -47,8 +49,32 @@ namespace Beagle.Daemon {
 
 		public QueryImpl (QueryDriver _driver)
 		{
-			body = new QueryBody ();
 			driver = _driver;
+			body = new QueryBody ();
+		}
+
+		private void DisconnectResult ()
+		{
+			if (result != null) {
+				result.HitsAddedEvent -= OnHitsAddedToResult;
+				result.HitsSubtractedEvent -= OnHitsSubtractedFromResult;
+				result.CancelledEvent -= OnCancelledResult;
+
+				result.Cancel ();
+
+				result = null;
+			}
+		}
+
+		private void AttachResult ()
+		{
+			DisconnectResult ();
+
+			result = new QueryResult ();
+
+			result.HitsAddedEvent += OnHitsAddedToResult;
+			result.HitsSubtractedEvent += OnHitsSubtractedFromResult;
+			result.CancelledEvent += OnCancelledResult;
 		}
 
 		public override void AddText (string text)
@@ -80,43 +106,31 @@ namespace Beagle.Daemon {
 		{
 			System.Console.WriteLine ("starting query");
 			
-			if (result != null) {
-				return;
-			}
-			
-			result = driver.DoQuery (body);
+			if (StartedEvent != null)
+				StartedEvent (this);
 
-			result.GotHitsEvent += OnGotHitsXml;
-			result.FinishedEvent += OnFinished;
-			result.CancelledEvent += OnCancelled;
+			AttachResult ();
 
-			result.Start ();
+			driver.DoQuery (body, result);
 		}
-
-		private void Cancel (bool disconnectHandlers)
-		{
-			if (disconnectHandlers) {
-			    result.FinishedEvent -= OnFinished;
-			    result.CancelledEvent -= OnCancelled;
-			    result.GotHitsEvent -= OnGotHitsXml;
-			}
-
-			if (!result.Finished) {
-				result.Cancel ();
-			}
-		} 
 
 		public override void Cancel ()
 		{
-			Cancel (false);
+			DisconnectResult ();
 		}
 
 		public override void CloseQuery () 
 		{
-			Cancel (true);
+			DisconnectResult ();
 			if (ClosedEvent != null)
 				ClosedEvent (this);
 		}
+
+		//////////////////////////////////////////////////////
+		
+		///
+		/// QueryResult event handlers
+		///
 
 		private string HitsToXml (ICollection hits)
 		{
@@ -137,33 +151,45 @@ namespace Beagle.Daemon {
 			return stringWriter.ToString ();
 		}
 		
-
-		private void OnGotHitsXml (QueryResult src,
-					   QueryResult.GotHitsArgs args)
+		private void OnHitsAddedToResult (QueryResult source, ICollection someHits)
 		{
-			System.Console.WriteLine ("Got {0} Hits", args.Count);
-			if (src != result)
+			if (source != result)
 				return;
 
-			string hits = HitsToXml (args.Hits);
-			GotHitsXmlEvent (hits);
+			if (HitsAddedAsXmlEvent != null)
+				HitsAddedAsXmlEvent (this, HitsToXml (someHits));
 		}
 
-		private void OnFinished (QueryResult src) 
+		private string UrisToString (ICollection uris)
 		{
-			if (src != result)
+			StringBuilder builder = null;
+			foreach (Uri uri in uris) {
+				if (builder == null)
+					builder = new StringBuilder ("");
+				else
+					builder.Append (" ");
+				builder.Append (uri.ToString ());
+			}
+			return builder  != null ? builder.ToString () : "";
+		}
+
+		private void OnHitsSubtractedFromResult (QueryResult source, ICollection someUris)
+		{
+			if (source != result)
 				return;
-			System.Console.WriteLine ("Finished");
-			FinishedEvent ();
+
+			if (HitsSubtractedAsStringEvent != null)
+				HitsSubtractedAsStringEvent (this, UrisToString (someUris));
 		}
 
-		private void OnCancelled (QueryResult src) 
+		private void OnCancelledResult (QueryResult source) 
 		{
-			if (src != result) 
+			if (source != result) 
 				return;
 
 			System.Console.WriteLine ("Cancelled");
-			CancelledEvent ();
+			if (CancelledEvent != null)
+				CancelledEvent (this);
 		}
 	}
 }

@@ -65,9 +65,9 @@ namespace Best {
 			Changed ();
 		}
 
-		public void Close ()
+		public void Subtract (Uri uri)
 		{
-
+			Console.WriteLine ("Subtracted {0}", uri);
 		}
 
 		override public void Render (TileRenderContext ctx)

@@ -43,5 +43,8 @@ namespace Beagle.Daemon {
 
 		// Add should be a no-op if Cancelled is true.
 		void Add (ICollection someHits);
+
+		// Subtract should be a no-op if Cancelled is true.
+		void Subtract (ICollection someUris);
 	}
 }

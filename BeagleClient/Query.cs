@@ -24,20 +24,32 @@
 // DEALINGS IN THE SOFTWARE.
 //
 
+using System;
+using System.Collections;
+using DBus;
+
 namespace Beagle
 {
-	using System.Collections;
-	using DBus;
-	using System;
 
 	public abstract class Query : QueryProxy, IDisposable {
-		public delegate void GotHitsHandler (ICollection hits);
 
-		public virtual event GotHitsHandler GotHitsEvent;
+		public delegate void HitAddedHandler (Query source, Hit hit);
+		public virtual event HitAddedHandler HitAddedEvent;
+
+		public delegate void HitSubtractedHandler (Query source, Uri uri);
+		public virtual event HitSubtractedHandler HitSubtractedEvent;
+
+		private bool cancelled = false;
 
 		public Query ()
 		{
-			GotHitsXmlEvent += OnGotHitsXml;
+			HitsAddedAsXmlEvent += OnHitsAddedAsXml;
+			HitsSubtractedAsStringEvent += OnHitsSubtractedAsString;
+			CancelledEvent += OnCancelled;
+		}
+
+		public bool IsCancelled {
+			get { return cancelled; }
 		}
 
 		public void Dispose () {
@@ -50,13 +62,23 @@ namespace Beagle
 			CloseQuery ();
 		}
 
-		private void OnGotHitsXml (string hitsXml)
+		private void OnHitsAddedAsXml (QueryProxy sender, string hitsXml)
 		{
-			if (GotHitsEvent != null) {
+			if (HitAddedEvent != null) {
 				ArrayList hits = Hit.ReadHitXml (hitsXml);
-				GotHitsEvent (hits);
+				foreach (Hit hit in hits)
+					HitAddedEvent (this, hit);
 			}
 		}
 
+		private void OnHitsSubtractedAsString (QueryProxy sender, string uriList)
+		{
+
+		}
+
+		private void OnCancelled (QueryProxy sender)
+		{
+			cancelled = true;
+		}
 	}
 }
