@@ -90,7 +90,7 @@ namespace Beagle.Daemon {
 			command.Dispose ();
 		}
 
-		public static string LookupPath (Uri uri, bool create_if_not_found)
+		private static string LookupPathUnlocked (Uri uri, bool create_if_not_found)
 		{
 			SqliteCommand command;
 			SqliteDataReader reader;
@@ -110,6 +110,12 @@ namespace Beagle.Daemon {
 			}
 
 			return path != null ? Path.Combine (text_cache_dir, path) : null;
+		}
+
+		public static string LookupPath (Uri uri, bool create_if_not_found)
+		{
+			lock (connection)
+				return LookupPathUnlocked (uri, create_if_not_found);
 		}
 
 		public static TextWriter GetWriter (Uri uri)
@@ -144,10 +150,12 @@ namespace Beagle.Daemon {
 
 		public static void Delete (Uri uri)
 		{
-			string path = LookupPath (uri, false);
-			if (path != null) {
-				DoNonQuery ("DELETE FROM uri_index WHERE uri='{0}' AND filename='{1}'", uri, path); 
-				File.Delete (path);
+			lock (connection) {
+				string path = LookupPathUnlocked (uri, false);
+				if (path != null) {
+					DoNonQuery ("DELETE FROM uri_index WHERE uri='{0}' AND filename='{1}'", uri, path); 
+					File.Delete (path);
+				}
 			}
 		}
 	}

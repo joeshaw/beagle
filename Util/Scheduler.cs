@@ -34,11 +34,15 @@ namespace Beagle.Util {
 	public class Scheduler {
 
 		static private bool no_delays = false;
+		static private bool immediate_priority_only = false;
 
 		static Scheduler ()
 		{
 			if (Environment.GetEnvironmentVariable ("EXERCISE_THE_DOG") != null)
 				no_delays = true;
+			
+			if (Environment.GetEnvironmentVariable ("BEAGLE_IMMEDIATE_PRIORITY_ONLY") != null)
+				immediate_priority_only = true;
 		}
 
 		//////////////////////////////////////////////////////////////////////////////
@@ -404,6 +408,10 @@ namespace Beagle.Util {
 
 			lock (task_queue) {
 				if (task != null) {
+					
+					if (immediate_priority_only && task.Priority != Priority.Immediate)
+						return false;
+
 					old_task = task_by_tag [task.Tag] as Task;
 					if (old_task == task)
 						return true;

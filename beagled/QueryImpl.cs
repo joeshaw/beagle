@@ -172,7 +172,7 @@ namespace Beagle.Daemon {
 
 				Logger.Log.Debug ("*** Got invalid hit: uri={0}", uri);
 				Logger.Log.Debug ("*** Valid Hits:");
-				foreach (Uri x in result.HitUris)
+				foreach (string x in result.HitUris)
 					Logger.Log.Debug ("***    {0}", x);
 
 			} else {

@@ -132,9 +132,9 @@ namespace Beagle.Daemon {
 
 				// We only get to subtract a URI if it was previously added.
 				foreach (Uri uri in some_uris) {
-					if (uri_hash.Contains (uri)) {
+					if (uri_hash.Contains (uri.ToString ())) {
 						filtered_uris.Add (uri);
-						uri_hash.Remove (uri);
+						uri_hash.Remove (uri.ToString ());
 					}
 				}
 

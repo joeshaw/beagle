@@ -45,6 +45,7 @@ namespace Beagle.Daemon.EvolutionDataServerQueryable {
 	[QueryableFlavor (Name="EvolutionDataServer", Domain=QueryDomain.Local)]
 	public class EvolutionDataServerQueryable : LuceneQueryable {
 		private static Logger log = Logger.Get ("addressbook");
+		//private Scheduler.Priority priority = Scheduler.Priority.Immediate;
 		private Scheduler.Priority priority = Scheduler.Priority.Delayed;
 
 		private string this_instance;

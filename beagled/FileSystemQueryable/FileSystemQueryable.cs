@@ -513,9 +513,9 @@ namespace Beagle.Daemon.FileSystemQueryable {
 			double m = 1.0;
 			
 			double days = (DateTime.Now - info.LastWriteTime).TotalDays;
-			// Boost relevancy if the file has been touched within the last seven days.
+			// Maximize relevancy if the file has been touched within the last seven days.
 			if (0 <= days && days < 7)
-				return 1.2;
+				return 1.0;
 
 			DateTime dt = info.LastAccessTime;
 			if (dt < info.LastWriteTime)
