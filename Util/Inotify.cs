@@ -33,24 +33,25 @@ using System.Runtime.InteropServices;
 using System.Threading;
 
 namespace Beagle.Util {
-
+	
 	[Flags]
 	public enum InotifyEventType : uint {
 		Access         = 0x00000001, // File was accessed
 		Modify         = 0x00000002, // File was modified
 		Attrib         = 0x00000004, // File changed attributes
-		Close          = 0x00000008, // File was closed
-		Open           = 0x00000010, // File was opened
-		MovedFrom      = 0x00000020, // File was moved from X
-		MovedTo        = 0x00000040, // File was moved to Y
-		DeleteSubdir   = 0x00000080, // Subdir was deleted
-		DeleteFile     = 0x00000100, // Subfile was deleted
-		CreateSubdir   = 0x00000200, // Subdir was created
-		CreateFile     = 0x00000400, // Subfile was created
-		DeleteSelf     = 0x00000800, // Self was deleted
-		Unmount        = 0x00001000, // Backing fs was unmounted
-		QueueOverflow  = 0x00002000, // Event queue overflowed
-		Ignored        = 0x00004000, // File is no longer being watched
+		CloseWrite     = 0x00000008, // Writable file was closed
+		CloseNoWrite   = 0x00000010, // Non-writable file was close
+		Open           = 0x00000020, // File was opened
+		MovedFrom      = 0x00000040, // File was moved from X
+		MovedTo        = 0x00000080, // File was moved to Y
+		DeleteSubdir   = 0x00000100, // Subdir was deleted
+		DeleteFile     = 0x00000200, // Subfile was deleted
+		CreateSubdir   = 0x00000400, // Subdir was created
+		CreateFile     = 0x00000800, // Subfile was created
+		DeleteSelf     = 0x00001000, // Self was deleted
+		Unmount        = 0x00002000, // Backing fs was unmounted
+		QueueOverflow  = 0x00004000, // Event queue overflowed
+		Ignored        = 0x00008000, // File is no longer being watched
 		All            = 0xffffffff
 	}
 
