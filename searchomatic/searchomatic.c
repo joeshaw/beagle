@@ -55,7 +55,7 @@ text_received_cb (GtkClipboard *clipboard, const char *text, gpointer data)
         g_strstrip (cpy);
         
         /* Searchs for best in the PATH. */
-        execlp ("best", "best", cpy, NULL);
+        execlp ("best", "best", "--no-tray", cpy, NULL);
     }
 
     gtk_exit (0);
