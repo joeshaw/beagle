@@ -47,13 +47,6 @@ namespace Beagle.Filters {
 			SnippetMode = true;
 		}
 		
-		static String FindAttribute (XmlNode node,
-					     String attributeName)
-		{
-			XmlAttribute attr = node.Attributes [attributeName];
-			return attr == null ? null : attr.Value;
-		}
-
 		static String FindChildAttribute (XmlNode node,
 						  String nodeName,
 						  String attributeName)
@@ -69,23 +62,32 @@ namespace Beagle.Filters {
 			return null;
 		}
 
-		void StudyStyleNode (XmlNode node)
+		void StudyStyleNode (XmlReader reader)
 		{
-			String styleName = FindAttribute (node, "style:name");
-			String styleParent = FindAttribute (node, "style:parent-style-name");
+			string style_name = reader.GetAttribute ("style:name");
+			string style_parent = reader.GetAttribute ("style:parent-style-name");
 
-			String weight = FindChildAttribute (node,
-							    "style:properties",
-							    "fo:font-weight");
-			String underline = FindChildAttribute (node,
-							       "style:properties",
-							       "style:text-underline");
+			string weight = null;
+			string underline = null;
+			int original_depth = reader.Depth;
 
-			if ((styleParent != null && styleParent.StartsWith("Heading"))
+			if (!reader.IsEmptyElement) {
+				reader.Read ();
+				while (reader.Depth > original_depth) {
+					if (reader.NodeType == XmlNodeType.Element
+					    && reader.Name == "style:properties") {
+						weight = reader.GetAttribute ("fo:font-weight");
+						underline = reader.GetAttribute ("style:text-underline");
+					}
+					reader.Read ();
+				}
+			}
+
+			if ((style_parent != null && style_parent.StartsWith("Heading"))
 			    || weight == "bold" 
 			    || (underline != null && underline != "none")) {
 				
-				hotStyles[styleName] = true;
+				hotStyles[style_name] = true;
 			}
 		}
 
@@ -114,116 +116,140 @@ namespace Beagle.Filters {
 				|| nodeName == "table:table-cell";
 		}
 
-		void WalkContentNodes (XmlNode node)
+		private Stack hot_nodes = new Stack ();
+		bool WalkContentNodes (XmlReader reader)
 		{
-			switch (node.NodeType) {
-		
+			// total number of elements to read per-pull
+			const int total_elements = 10;
+			int num_elements = 0;
+
+			while (reader.Read ()) {
+			switch (reader.NodeType) {
 			case XmlNodeType.Element:
+				if (reader.IsEmptyElement) {
+					if (NodeBreaksTextBefore (reader.Name))
+						AppendWhiteSpace ();
+					if (NodeBreaksTextAfter (reader.Name))
+						AppendWhiteSpace ();
+					continue;
+				}
+
+				if (reader.Name == "style:style") {
+					StudyStyleNode (reader); 
+					continue;
+				}
 
 				// A node is hot if:
 				// (1) It's name is hot
 				// (2) It is flagged with a hot style
 				bool isHot = false;
-				if (NodeIsHot (node.Name)) {
+				if (NodeIsHot (reader.Name)) {
 					isHot = true;
 				} else {
-					foreach (XmlAttribute attr in node.Attributes) {
-						if (attr.Name.EndsWith(":style-name")) {
-							if (hotStyles.Contains (attr.Value))
+					bool has_attr = reader.MoveToFirstAttribute ();
+					while (has_attr) {
+						if (reader.Name.EndsWith(":style-name")) {
+							if (hotStyles.Contains (reader.Value))
 								isHot = true;
 							break;
 						}
+						has_attr = reader.MoveToNextAttribute ();
+
 					}
-				}
+					reader.MoveToElement();
+				}				
+
+				hot_nodes.Push (isHot);
+				
 				if (isHot)
 					HotUp ();
 				
-				bool isFreezing = false;
-				if (NodeIsFreezing (node.Name))
-					isFreezing = true;
-				if (isFreezing)
+				if (NodeIsFreezing (reader.Name))
 					FreezeUp ();
 				
-				if (NodeBreaksTextBefore (node.Name))
+				if (NodeBreaksTextBefore (reader.Name))
 					AppendWhiteSpace ();
-				
-				switch (node.Name) {
-					
-				case "style:style":
-					StudyStyleNode (node);
-					break;
-
-				default:
-					foreach (XmlNode subnode in node.ChildNodes)
-						WalkContentNodes (subnode);
-					break;
-				}
-				
-				if (NodeBreaksTextAfter (node.Name))
-					AppendWhiteSpace ();
-				
-				if (isHot)
-					HotDown ();
-				
-				if (isFreezing)
-					FreezeDown ();
-				
 				break;
-				
 			case XmlNodeType.Text:
-				String text = node.Value;
+				string text = reader.Value;
 				AppendText (text);
 				break;
+			case XmlNodeType.EndElement:
+				if (NodeBreaksTextAfter (reader.Name))
+					AppendWhiteSpace ();
+
+				bool is_hot = (bool) hot_nodes.Pop ();
+				if (is_hot)
+					HotDown ();
+				
+				if (NodeIsFreezing (reader.Name))
+					FreezeDown ();
+				break;
 			}
-			
+			num_elements++;
+			if (num_elements >= total_elements) {
+				return false;
+			}
+			} 
+			return true;
 		}
 
-		private void ExtractMetadata (XmlDocument doc)
+		private void ExtractMetadata (XmlReader reader)
 		{
-			XmlNode node;
+			do {
+				reader.Read ();
+			} while (reader.Depth < 2);
 
-			node = doc.DocumentElement.FirstChild.FirstChild;
+			while (reader.Depth >= 2) {
+				if (reader.Depth != 2 || reader.NodeType != XmlNodeType.Element) {
+					reader.Read ();
+					continue;
+				}
 
-			while (node != null) {
-
-				switch (node.Name) {
+				switch (reader.Name) {
 					
 				case "dc:title":
+					reader.Read ();
 					AddProperty (Beagle.Property.New ("dc:title",
-									  node.InnerText));
+									  reader.Value));
 					break;
 
 				case "dc:description":
+					reader.Read ();
+					
 					AddProperty (Beagle.Property.New ("dc:description",
-									  node.InnerText));
+									  reader.Value));
 					break;
 
 				case "dc:subject":
+					reader.Read ();
+
 					AddProperty (Beagle.Property.New ("dc:subject",
-										 node.InnerText));
+										 reader.Value));
 					break;
 					
 				case "meta:document-statistic":
-					XmlAttributeCollection attr = node.Attributes;
-					if (attr ["fixme:page-count"] != null)
-						AddProperty (Beagle.Property.NewKeyword ("fixme:page-count",
-												attr ["meta:page-count"].Value));
-					if (attr ["fixme:word-count"] != null)
-						AddProperty (Beagle.Property.NewKeyword ("fixme:word-count",
-												attr ["meta:word-count"].Value));
+					string attr = reader.GetAttribute ("meta:page-count");
+					if (attr != null)
+						AddProperty (Beagle.Property.NewKeyword ("fixme:page-count", attr));
+					attr = reader.GetAttribute ("meta:word-count");
+					if (attr != null)
+						AddProperty (Beagle.Property.NewKeyword ("fixme:word-count", attr));
 					break;
 
 				case "meta:user-defined":
-					if (node.InnerText != "") {
-						string name = node.Attributes ["meta:name"].Value;
+					string name = reader.GetAttribute ("meta:name");
+					reader.Read ();
+
+					if (reader.Value != "") {
 						AddProperty (Beagle.Property.New ("fixme:UserDefined-" + name,
-											 node.InnerText));
+											 reader.Value));
 					}
 					break;
 					
 				}
 				
-				node = node.NextSibling;
+				reader.Read ();
 			}
 		}
 
@@ -240,25 +266,30 @@ namespace Beagle.Filters {
 			ZipEntry entry = zip.GetEntry ("meta.xml");
 			if (entry != null) {
 				Stream meta_stream = zip.GetInputStream (entry);
-				XmlDocument doc = new XmlDocument ();
-				doc.Load (meta_stream);
-				ExtractMetadata (doc);
+				XmlReader reader = new XmlTextReader (meta_stream);
+				ExtractMetadata (reader);
 			} else {
 				Console.WriteLine ("No meta.xml!");
 			}
 		}
 
+		XmlReader content_reader = null;
 		override protected void DoPull ()
 		{
-			ZipEntry entry = zip.GetEntry ("content.xml");
-			if (entry != null) {
-				Stream content_stream = zip.GetInputStream (entry);
-				XmlDocument doc = new XmlDocument ();
-				doc.Load (content_stream);
-				WalkContentNodes (doc.DocumentElement);
+			if (content_reader == null) {
+				ZipEntry entry = zip.GetEntry ("content.xml");
+				if (entry != null) {
+					Stream content_stream = zip.GetInputStream (entry);
+					content_reader = new XmlTextReader (content_stream);
+				}
+			}				
+			if (content_reader == null) {
+				Finished ();
+				return;
 			}
-			
-			Finished ();
+
+			if (WalkContentNodes (content_reader))
+				Finished ();
 		}
 	}
 }

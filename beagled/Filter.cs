@@ -162,7 +162,7 @@ namespace Beagle.Daemon {
 		private bool NeedsWhiteSpace (ArrayList array)
 		{
 			if (array.Count == 0)
-				return false;
+				return true;
 			
 			string last = (string) array [array.Count-1];
 			if (last.Length > 0
