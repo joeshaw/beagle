@@ -29,6 +29,8 @@ using Gtk;
 using Beagle;
 using System.Reflection;
 using System;
+using System.IO;
+using Mono.Posix;
 
 namespace Beagle.Daemon {
 	class BeagleDaemon {
@@ -56,8 +58,45 @@ namespace Beagle.Daemon {
 						 indexerQueue);
 		}
 
+		private static bool Daemonize ()
+		{
+			Directory.SetCurrentDirectory ("/");
+
+			int pid = Syscall.fork ();
+
+			switch (pid) {
+			case -1: // error
+				Console.WriteLine ("Error trying to daemonize");
+				return false;
+
+			case 0: // child
+				int fd = Syscall.open ("/dev/null", OpenFlags.O_RDWR);
+
+				if (fd >= 0) {
+					Syscall.dup2 (fd, 0);
+					Syscall.dup2 (fd, 1);
+					Syscall.dup2 (fd, 2);
+				}
+
+				Syscall.umask (022);
+				Syscall.setsid ();
+				break;
+
+			default: // parent
+				Syscall.exit (0);
+				break;
+			}
+
+			return true;
+		}
+
 		public static int Main (string[] args)
 		{
+			if (Array.IndexOf (args, "--nofork") == -1) {
+				if (!Daemonize ())
+					return 1;
+			}
+
 			Application.Init ();
 			Connection connection = Bus.GetSessionBus ();
 
