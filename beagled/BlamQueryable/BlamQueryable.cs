@@ -101,6 +101,7 @@ namespace Beagle.Daemon.BlamQueryable {
 			FileInfo file = new FileInfo (Path.Combine (blamDir, "collection.xml"));
 
 			ChannelCollection collection = null;
+
 			try {
 				collection = ChannelCollection.LoadFromFile (file.FullName);
 			} catch (Exception e) {
@@ -111,17 +112,20 @@ namespace Beagle.Daemon.BlamQueryable {
 			if (collection == null)
 				return;
 
-			log.Info ("Scanning blogs...");
+			log.Info ("Scanning Weblogs");
 			Stopwatch stopwatch = new Stopwatch ();
 			int blogCount = 0, itemCount = 0;
 			stopwatch.Start ();
+
+			Scheduler.TaskGroup group = NewMarkingTaskGroup (file.FullName, file.LastWriteTime);
 			
 			foreach(Channel channel in collection.Channels)	{
 
 				// FIXME: Only index channels and items that have been modified
 				
 				foreach(Item item in channel.Items) {
-					Indexable indexable = new Indexable (new Uri (channel.Url.Replace ("http://", "rss://") + ";item=" + item.Id));
+					Indexable indexable = new Indexable (
+						new Uri (channel.Url.Replace ("http://", "rss://") + ";item=" + item.Id));
 					indexable.MimeType = "text/html";
 					indexable.Type = "Blog";
 					indexable.Timestamp = item.PubDate;
@@ -129,6 +133,8 @@ namespace Beagle.Daemon.BlamQueryable {
 					indexable.AddProperty(Property.NewKeyword ("dc:title", item.Title));
 					indexable.AddProperty(Property.NewKeyword ("fixme:author", item.Author));
 					indexable.AddProperty(Property.NewDate ("fixme:published", item.PubDate));
+					indexable.AddProperty(Property.NewKeyword ("fixme:itemuri", item.Link));
+					indexable.AddProperty(Property.NewKeyword ("fixme:webloguri", channel.Url));
 
 					int i;
 					string img = null;
@@ -150,8 +156,12 @@ namespace Beagle.Daemon.BlamQueryable {
 					// FIXME Use FilterHtml to mark "hot" words in content
 					StringReader reader = new StringReader (item.Text);
 					indexable.SetTextReader (reader);
-					
-					Driver.ScheduleAddAndMark (indexable, 0,file);
+
+					Scheduler.Task task = NewAddTask (indexable);
+					task.Priority = Scheduler.Priority.Delayed;
+					task.SubPriority = 0;
+					task.AddTaskGroup (group);
+					ThisScheduler.Add (task);
 					
 					++itemCount;
 				}
@@ -160,7 +170,7 @@ namespace Beagle.Daemon.BlamQueryable {
 			}
 			
 			stopwatch.Stop ();
-			log.Info ("Scanned {0} items in {1} blogs in {2}", 
+			log.Info ("Found {0} items in {1} weblogs in {2}", 
 				  itemCount, blogCount, stopwatch);
 		}
 	}
