@@ -149,6 +149,11 @@ namespace Beagle.Tile {
 			string argument;
 			string command = command_fallback;
 			bool expects_uris = expects_uris_fallback;
+
+			if (hit.MimeType == "inode/directory") {
+				OpenFolder (hit.Uri.LocalPath);
+				return;
+			}
 			
 			BU.GnomeVFSMimeApplication app;
 			app = BU.GnomeIconLookup.GetDefaultAction (hit.MimeType);
