@@ -40,6 +40,7 @@ RESOURCEFILES =					\
 	$(srcdir)/gnome-error.png		\
 	$(srcdir)/gnome-gaim.png		\
 	$(srcdir)/icon-blog.png			\
+	$(srcdir)/icon-monodoc.png		\
 	$(srcdir)/icon-bookmark.png		\
 	$(srcdir)/icon-folder.png		\
 	$(srcdir)/icon-history.png		\
