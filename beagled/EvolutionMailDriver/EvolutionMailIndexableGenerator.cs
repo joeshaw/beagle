@@ -137,15 +137,17 @@ namespace Beagle.Daemon.EvolutionMailDriver {
 				if (part is GMime.MessagePart) {
 					GMime.MessagePart msg_part = (GMime.MessagePart) part;
 
-					this.OnEachPart (msg_part.Message.MimePart);
+					using (GMime.Message message = msg_part.Message) {
+						using (GMime.Object subpart = message.MimePart)
+							this.OnEachPart (subpart);
+					}
 				} else if (part is GMime.Multipart) {
 					GMime.Multipart multipart = (GMime.Multipart) part;
 
 					int num_parts = multipart.Number;
 					for (int i = 0; i < num_parts; i++) {
-						GMime.Object subpart = multipart.GetPart (i);
-
-						this.OnEachPart (subpart);
+						using (GMime.Object subpart = multipart.GetPart (i))
+							this.OnEachPart (subpart);
 					}
 				} else if (SupportedContentType (part.ContentType)) {
 					MemoryStream stream = new MemoryStream (part.GetData ());
@@ -174,7 +176,8 @@ namespace Beagle.Daemon.EvolutionMailDriver {
 				// from a single indexable.
 				PartHandler handler = new PartHandler ();
 				//message.ForeachPart (new GMime.PartFunc (handler.OnEachPart));
-				handler.OnEachPart (message.MimePart);
+				using (GMime.Object mime_part = message.MimePart)
+					handler.OnEachPart (mime_part);
 				return handler.reader;
 			}
 
@@ -329,7 +332,9 @@ namespace Beagle.Daemon.EvolutionMailDriver {
 				this.mbox_stream.Close ();
 
 				this.mbox_fd = -1;
+				this.mbox_stream.Dispose ();
 				this.mbox_stream = null;
+				this.mbox_parser.Dispose ();
 				this.mbox_parser = null;
 				
 				EvolutionMailQueryable.log.Debug ("{0}: Finished indexing {1} messages",
@@ -345,37 +350,37 @@ namespace Beagle.Daemon.EvolutionMailDriver {
 
 		public override Indexable GetNextIndexable ()
 		{
-			GMime.Message message = this.mbox_parser.ConstructMessage ();
+			using (GMime.Message message = this.mbox_parser.ConstructMessage ()) {
+				++this.count;
 
-			++this.count;
-
-			// Work around what I think is a bug in GMime: If you
-			// have a zero-byte file or seek to the end of a
-			// file, parser.Eos () will return true until it
-			// actually tries to read something off the wire.
-			// Since parser.ConstructMessage() always returns a
-			// message (which may also be a bug), we'll often get
-			// one empty message which we need to deal with here.
-			//
-			// Check if its empty by seeing if the Headers
-			// property is null or empty.
-			if (message.Headers == null || message.Headers == "")
-				return null;
-
-			string x_evolution = message.GetHeader ("X-Evolution");
-			if (x_evolution == null || x_evolution == "") {
-				EvolutionMailQueryable.log.Info ("{0}: Message at offset {1} has no X-Evolution header!",
-								 this.folder_name, this.mbox_parser.FromOffset);
-				return null;
+				// Work around what I think is a bug in GMime: If you
+				// have a zero-byte file or seek to the end of a
+				// file, parser.Eos () will return true until it
+				// actually tries to read something off the wire.
+				// Since parser.ConstructMessage() always returns a
+				// message (which may also be a bug), we'll often get
+				// one empty message which we need to deal with here.
+				//
+				// Check if its empty by seeing if the Headers
+				// property is null or empty.
+				if (message.Headers == null || message.Headers == "")
+					return null;
+				
+				string x_evolution = message.GetHeader ("X-Evolution");
+				if (x_evolution == null || x_evolution == "") {
+					EvolutionMailQueryable.log.Info ("{0}: Message at offset {1} has no X-Evolution header!",
+									 this.folder_name, this.mbox_parser.FromOffset);
+					return null;
+				}
+				
+				string uid_str = x_evolution.Substring (0, x_evolution.IndexOf ('-'));
+				string uid = Convert.ToUInt32 (uid_str, 16).ToString (); // ugh.
+				
+				Indexable indexable = this.GMimeMessageToIndexable (uid, message);
+				++this.indexed_count;
+				
+				return indexable;
 			}
-
-			string uid_str = x_evolution.Substring (0, x_evolution.IndexOf ('-'));
-			string uid = Convert.ToUInt32 (uid_str, 16).ToString (); // ugh.
-
-			Indexable indexable = this.GMimeMessageToIndexable (uid, message);
-			++this.indexed_count;
-
-			return indexable;
 		}
 
 		private Indexable GMimeMessageToIndexable (string uid, GMime.Message message)
@@ -415,7 +420,7 @@ namespace Beagle.Daemon.EvolutionMailDriver {
 				indexable.AddProperty (Property.NewDate ("fixme:sentdate", message.Date));
 			else
 				indexable.AddProperty (Property.NewDate ("fixme:received", message.Date));
-
+			
 #if false
 			// FIXME - XXX
                         indexable.AddProperty (Property.NewKeyword ("fixme:flags",    messageInfo.flags));
@@ -444,7 +449,8 @@ namespace Beagle.Daemon.EvolutionMailDriver {
 			if (messageInfo.IsAnsweredAll)
 				indexable.AddProperty (Property.NewFlag ("fixme:isAnsweredAll"));
 #endif
-	                indexable.SetTextReader (PartHandler.GetReader (message));
+
+			indexable.SetTextReader (PartHandler.GetReader (message));
 
 			return indexable;
 		}
@@ -685,11 +691,15 @@ namespace Beagle.Daemon.EvolutionMailDriver {
 
 			GMime.StreamFs stream = new GMime.StreamFs (fd);
 			GMime.Parser parser = new GMime.Parser (stream);
-			GMime.Message message = parser.ConstructMessage ();
 
-			MultiReader reader = PartHandler.GetReader (message);
+			MultiReader reader = null;
+
+			using (GMime.Message message = parser.ConstructMessage ())
+				reader = PartHandler.GetReader (message);
 
 			stream.Close ();
+			stream.Dispose ();
+			parser.Dispose ();
 
 			return reader;
 		}
