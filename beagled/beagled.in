@@ -1,7 +1,12 @@
 #!/bin/sh
 
 if [ -e ./@target@ ] && [ -e ./Makefile.am ] ; then
-    echo "Running uninstalled @target@ in the foreground."
+    echo "Running uninstalled @target@."
+
+    # When we run uninstalled, run in the foreground by default.
+    fg_default=1
+
+    TARGET_EXE="./@target@"
 
     export MONO_PATH="../Util:../BeagleClient:$MONO_PATH"
     export LD_LIBRARY_PATH="../glue/.libs:$LD_LIBRARY_PATH"
@@ -12,17 +17,52 @@ if [ -e ./@target@ ] && [ -e ./Makefile.am ] ; then
     else
 	export BEAGLE_FILTER_PATH="../Filters"
     fi
-
-    TARGET_EXE="./@target@"
-    EXTRA_ARGS="--nofork --out"
 else
+
+    # Otherwise default to running in the background
+    fg_default=0
+
+    TARGET_EXE="@pkglibdir@/@target@"
+
     export MONO_PATH="@pkglibdir@:$MONO_PATH"
     export LD_LIBRARY_PATH="@pkglibdir@:$LD_LIBRARY_PATH"
-    TARGET_EXE="@pkglibdir@/@target@"
-    EXTRA_ARGS=""
 fi
 
 export MONO_GAC_PREFIX="@gacprefix@:$MONO_GAC_PREFIX"
 export LD_LIBRARY_PATH="/opt/gnome/lib/evolution/2.0:$LD_LIBRARY_PATH"
 
-exec -a mono-beagled mono --debug $MONO_EXTRA_ARGS $TARGET_EXE $EXTRA_ARGS "$@"
+# Inspect the arguments passed in by the user to decide whether
+# or not we should run in the foreground.
+fg=$fg_default
+need_fgbg_arg=1
+for i in $@; do
+    if [ "z$i" = "z--fg" -o "z$i" = "z--foreground" ] ; then
+	fg=1
+	need_fgbg_arg=0
+    elif [ "z$i" = "z--bg" -o "z$i" = "z--background" ] ; then
+	fg=0
+	need_fgbg_arg=0
+    fi
+done
+
+
+# If necessary, append a --fg or --bg at the end of the command line so that
+# the daemon can know whether or not it is running in the background.
+FGBG_ARG=""
+if [ $need_fgbg_arg -eq 1 ]; then
+    if [ $fg -eq 1 ]; then
+	FGBG_ARG="--fg";
+    else
+	FGBG_ARG="--bg";
+    fi
+fi
+
+CMDLINE="mono --debug $MONO_EXTRA_ARGS $TARGET_EXE $@ $FGBG_ARG"
+
+PROCESS_NAME="mono-beagled"
+
+if [ $fg -eq 1 ]; then
+    exec -a $PROCESS_NAME $CMDLINE
+else
+    exec -a $PROCESS_NAME $CMDLINE &
+fi

@@ -29,7 +29,6 @@ using Gtk;
 using System.Reflection;
 using System;
 using System.IO;
-using Mono.Posix;
 using Beagle.Util;
 using System.Collections;
 
@@ -43,62 +42,54 @@ namespace Beagle.Daemon {
 		private static NetworkService network = null;
 #endif
 
-		private static bool Daemonize ()
-		{
-			Directory.SetCurrentDirectory ("/");
+		private static void SetupLog (string log_path) {
 
-			int pid = Syscall.fork ();
-
-			switch (pid) {
-			case -1: // error
-				Console.WriteLine ("Error trying to daemonize");
-				return false;
-
-			case 0: // child
-				int fd = Syscall.open ("/dev/null", OpenFlags.O_RDWR);
+			if (log_path != null) {
 				
-				if (fd >= 0) {
-					Syscall.dup2 (fd, 0);
-					Syscall.dup2 (fd, 1);
-					Syscall.dup2 (fd, 2);
-				}
+				// Open the log file and set it as the default
+				// destination for log messages.
+				// Also redirect stdout and stderr to the same file.
+				FileStream log_stream = new FileStream (log_path,
+									FileMode.Append,
+									FileAccess.Write,
+									FileShare.Write);
+				TextWriter log_writer = new StreamWriter (log_stream);
 
-				Syscall.umask (022);
-				Syscall.setsid ();
-				break;
+				log_writer.WriteLine ("----------------------------------------------");
 
-			default: // parent
-				Syscall.exit (0);
-				break;
+				Logger.DefaultWriter = log_writer;
+				Console.SetOut (log_writer);
+				Console.SetError (log_writer);
+
+				// Also redirect stdin to /dev/null
+				FileStream dev_null_stream = new FileStream ("/dev/null",
+									     FileMode.Open,
+									     FileAccess.Read,
+									     FileShare.ReadWrite);
+				TextReader dev_null_reader = new StreamReader (dev_null_stream);
+				Console.SetIn (dev_null_reader);
 			}
 
-			return true;
-		}
-
-		private static void SetupLog (string logPath) {
-			if (logPath != null) {
-				FileStream fs = new FileStream (logPath,
-								System.IO.FileMode.Append,
-								FileAccess.Write);
-				Logger.DefaultWriter = new StreamWriter (fs);
-			}
-
+			// Parse the contents of the BEAGLE_DEBUG environment variable
+			// and adjust the default log levels accordingly.
 			string debug = System.Environment.GetEnvironmentVariable ("BEAGLE_DEBUG");
 			if (debug != null) {
 				string[] debugArgs = debug.Split (',');
 				foreach (string arg in debugArgs) {
-					if (arg == "all") {
+					if (arg.Trim () == "all") {
 						Logger.DefaultLevel = LogLevel.Debug;
 					}
 				}
 				
-				foreach (string arg in debugArgs) {
-					if (arg == "all")
+				foreach (string arg_raw in debugArgs) {
+					string arg = arg_raw.Trim ();
+
+					if (arg.Length == 0 || arg == "all")
 						continue;
 
 					if (arg[0] == '-') {
-						string logName = arg.Substring (1);
-						Logger log = Logger.Get (logName);
+						string log_name = arg.Substring (1);
+						Logger log = Logger.Get (log_name);
 						log.Level = LogLevel.Info;
 					} else {
 						Logger log = Logger.Get (arg);
@@ -106,18 +97,21 @@ namespace Beagle.Daemon {
 					}
 				}
 			}
+
+			Logger.Log.Info ("Starting Beagle Daemon");
+			Logger.Log.Debug ("Command Line: {0}",
+					  Environment.CommandLine != null ? Environment.CommandLine : "(null)");
+
+
 		}
 
 		private static void OnServiceOwnerChanged (string serviceName,
 							   string oldOwner,
 							   string newOwner)
 		{
-			if (serviceName == "com.novell.Beagle") {
-
-				if (newOwner == "") {
-					DBusisms.BusDriver.ServiceOwnerChanged -= OnServiceOwnerChanged;
-					Application.Quit ();
-				}
+			if (serviceName == "com.novell.Beagle" && newOwner == "") {
+				DBusisms.BusDriver.ServiceOwnerChanged -= OnServiceOwnerChanged;
+				Application.Quit ();
 			}
 		}
 
@@ -127,10 +121,10 @@ namespace Beagle.Daemon {
 			DBus.Service service = DBus.Service.Get (DBusisms.Connection, "com.novell.Beagle");
 			DBusisms.BusDriver.ServiceOwnerChanged += OnServiceOwnerChanged;
 			do {
-				Ping proxy = (Ping)service.GetObject (typeof (Ping), "/com/novell/Beagle/Ping");
+				Ping proxy = (Ping) service.GetObject (typeof (Ping), "/com/novell/Beagle/Ping");
 				proxy.Shutdown ();
 				Application.Run ();
-			} while (!DBusisms.InitService ());
+			} while (! DBusisms.InitService ());
 
 			return 0;
 		} 
@@ -140,10 +134,9 @@ namespace Beagle.Daemon {
 			// Process the command-line arguments
 
 			bool arg_replace = false;
-			bool arg_out = false;
-			bool arg_no_fork = false;
 			bool arg_debug = false;
 			bool arg_network = false;
+			bool arg_fg = false;
 			int arg_port = 0;
 
 			int i = 0;
@@ -155,21 +148,22 @@ namespace Beagle.Daemon {
 
 				switch (arg) {
 
+				case "--fg":
+				case "--foreground":
+					arg_fg = true;
+					break;
+
+				case "--bg":
+				case "--background":
+					arg_fg = false;
+					break;
+
 				case "--replace":
 					arg_replace = true;
 					break;
 
-				case "--out":
-					arg_out = true;
-					break;
-
 				case "--debug":
 					arg_debug = true;
-					break;
-
-				case "--nofork":
-				case "--no-fork":
-					arg_no_fork = true;
 					break;
 
 				case "--allow-backend":
@@ -204,37 +198,37 @@ namespace Beagle.Daemon {
 				}
 			}
 
+			// Initialize logging.
 			// If we saw the --debug arg, set the default logging level
 			// accordingly.
 
 			if (arg_debug)
 				Logger.DefaultLevel = LogLevel.Debug;
 
-
-			// Start the Global Scheduler
-			Scheduler.Global.Start ();
-
-			// Start our Inotify threads
-			Inotify.Start ();
-
+			if (arg_fg) {
+				// If we are running in the foreground, we want to log to stdout.
+				SetupLog (null);
+			} else {
+				// Otherwise if we are running in the background, we want to
+				// log to the logfile.
+				string logPath = Path.Combine (PathFinder.LogDir, "Beagle");
+				SetupLog (logPath);
+			}
 
 			Stopwatch stopwatch = new Stopwatch ();
-
-			QueryDriver queryDriver;
 
 			try {
 				DBusisms.Init ();
 				Application.Init ();
 
-				// Construct a query driver.  Among other things, this
-				// loads and initializes all of the IQueryables.
-				queryDriver = new QueryDriver ();
 				
 				if (!DBusisms.InitService ()) {
 					if (arg_replace) {
 						ReplaceExisting ();
 					} else {
-						System.Console.WriteLine ("Could not register com.novell.Beagle service.  There is probably another beagled instance running.  Use --replace to replace the running service");
+						Logger.Log.Fatal ("Could not register com.novell.Beagle service.  "
+								  + "There is probably another beagled instance running.  "
+								  + "Use --replace to replace the running service");
 						return 1;
 					}
 				}
@@ -244,28 +238,20 @@ namespace Beagle.Daemon {
 				stopwatch.Start ();
 				
 			} catch (DBus.DBusException e) {
-				System.Console.WriteLine ("Couldn't connect to the session bus.  See http://beaglewiki.org/index.php/Installing%20Beagle for information on setting up a session bus.");
-				System.Console.WriteLine (e);
+				Logger.Log.Fatal ("Couldn't connect to the session bus.  "
+						  + "See http://beaglewiki.org/index.php/Installing%20Beagle "
+						  + "for information on setting up a session bus.");
+				Logger.Log.Fatal (e);
 				return 1;
 			} catch (Exception e) {
-				System.Console.WriteLine ("Could not initialize Beagle's bus connection:\n{0}", e);
+				Logger.Log.Fatal ("Could not initialize Beagle's bus connection.");
+				Logger.Log.Fatal (e);
 				return 1;
 			}
 
-			try {
-				// FIXME: this could be better, but I don't want to
-				// deal with serious cmdline parsing today
-				if (arg_out) {
-					SetupLog (null);
-				} else {
-					string logPath = Path.Combine (PathFinder.LogDir,
-								       "Beagle");
-					SetupLog (logPath);
-				}
-			} catch (Exception e) {
-				System.Console.WriteLine ("Couldn't initialize logging.  This could mean that another Beagle instance is running: {0}", e);
-				return 1;
-			}
+			// Construct a query driver.
+			QueryDriver queryDriver;
+			queryDriver = new QueryDriver ();
 
 			try {
 				// Construct and register our ping object.
@@ -284,7 +270,8 @@ namespace Beagle.Daemon {
 			} catch (Exception e) {
 				Logger.Log.Fatal ("Could not initialize Beagle:\n{0}", e);
 				return 1;
-			}	
+			}
+
 #if ENABLE_NETWORK
 			if (arg_network) {
 				try {
@@ -295,30 +282,32 @@ namespace Beagle.Daemon {
 					Logger.Log.Error ("Could not initialize network service"); 
 				}
 			}
+
 #endif
+			// Start the Global Scheduler thread
+			Scheduler.Global.Start ();
+
+			// Start our Inotify threads
+			Inotify.Start ();
+
+			// Actually start up our QueryDriver.
+			queryDriver.Start ();
+
 			// Test if the FileAdvise stuff is working: This will print a
 			// warning if not.  The actual advice calls will fail silently.
 			FileAdvise.TestAdvise ();
 
-			Logger.Log.Info ("Beagle daemon started"); 
-
-			if (! arg_no_fork) {
-				if (! Daemonize ())
-					return 1;
-			}
-
 			Shutdown.ShutdownEvent += OnShutdown;
-
-			queryDriver.Start ();
 
 			stopwatch.Stop ();
 
-			Logger.Log.Info ("Ready to accept requests after {0}", 
-				  stopwatch);
+			Logger.Log.Debug ("Ready to accept requests after {0}", 
+					 stopwatch);
+			
 			// Start our event loop.
 			Application.Run ();
 
-			Logger.Log.Info ("done");
+			Logger.Log.Debug ("Leaving BeagleDaemon.Main");
 
 			// Exiting will close the dbus connection, which
 			// will release the com.novell.beagle service.

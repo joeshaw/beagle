@@ -96,9 +96,8 @@ namespace Beagle.Util {
 
 		private string GetStamp ()
                 {
-			return string.Format ("{0}[{1}] {2} ",
+			return string.Format ("{0} {1} ",
 					      Process.GetCurrentProcess().Id,
-					      Environment.CommandLine,
 					      DateTime.Now.ToString ("yy-MM-dd HH.mm.ss.ff"));
 		}
 
