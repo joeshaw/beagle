@@ -108,7 +108,7 @@ namespace Beagle.Filters {
 				    && subnode.Name == "title") {
 					String title = WalkChildNodesForText (subnode);
 					title = HtmlEntity.DeEntitize (title);
-					AddProperty (Beagle.Daemon.Property.New ("dc:title", title));
+					AddProperty (Beagle.Property.New ("dc:title", title));
 				}
 			}
 		}

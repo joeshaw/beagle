@@ -54,6 +54,9 @@ namespace Beagle {
 		// List of Property objects
 		private ArrayList properties = new ArrayList ();
 
+		// A stream of the content to index
+		private TextReader textReader;
+
 		//////////////////////////
 
 		public Indexable (string _uri) {
@@ -105,6 +108,11 @@ namespace Beagle {
 		public virtual TextReader GetTextReader ()
 		{
 			return null;
+		}
+		
+		public void SetTextReader (TextReader reader)
+		{ 
+			textReader = reader;
 		}
 
 		public virtual TextReader GetHotTextReader ()
@@ -174,6 +182,35 @@ namespace Beagle {
 			writer.WriteEndElement ();
 			
 			writer.WriteEndElement ();
+		}
+
+		public void StoreStream () {
+			if (textReader == null)
+				return;
+
+			string filename = Path.GetTempFileName ();
+			FileStream fileStream = File.OpenWrite (filename);
+			BufferedStream bufferedStream = new BufferedStream (fileStream);
+			StreamWriter writer = new StreamWriter (bufferedStream);
+			char []buffer = new char[1024];
+			
+			int read = textReader.Read (buffer, 0, 1024);
+			
+			while (read > 0) {
+				writer.Write (buffer, 0, read);
+				read = textReader.Read (buffer, 0, 1024);
+			}
+			
+			writer.Close ();
+
+			ContentUri = "file://" + filename;
+			DeleteContent = true;
+
+			Console.WriteLine ("saved to {0}", ContentUri);
+		}
+
+		public void RestoreStream () 
+		{
 		}
 
 		public void ReadFromXml (string text)

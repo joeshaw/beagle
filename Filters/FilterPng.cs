@@ -78,9 +78,9 @@ namespace Beagle.Filters {
 			int width = buffer [18] * 256 + buffer [19];
 			int height = buffer [22] * 256 + buffer [23];
 
-			AddProperty (Beagle.Daemon.Property.NewKeyword ("fixme:width", width));
-			AddProperty (Beagle.Daemon.Property.NewKeyword ("fixme:height", height));
-			AddProperty (Beagle.Daemon.Property.NewKeyword ("fixme:bitdepth", buffer [24]));
+			AddProperty (Beagle.Property.NewKeyword ("fixme:width", width));
+			AddProperty (Beagle.Property.NewKeyword ("fixme:height", height));
+			AddProperty (Beagle.Property.NewKeyword ("fixme:bitdepth", buffer [24]));
 
 			string colorType = null;
 			bool hasAlpha = false;
@@ -107,8 +107,8 @@ namespace Beagle.Filters {
 				break;
 			}
 
-			AddProperty (Beagle.Daemon.Property.NewKeyword ("fixme:colortype", colorType));
-			AddProperty (Beagle.Daemon.Property.NewBool ("fixme:hasalpha", hasAlpha));
+			AddProperty (Beagle.Property.NewKeyword ("fixme:colortype", colorType));
+			AddProperty (Beagle.Property.NewBool ("fixme:hasalpha", hasAlpha));
 		}
 	}
 }

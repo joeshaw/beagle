@@ -86,8 +86,8 @@ namespace Beagle.Filters {
 						continue;
 					}
 					foreach (Match theMatch in matches) {
-						AddProperty (Beagle.Daemon.Property.New ("dc:title",
-											 theMatch.Groups ["title"]));
+						AddProperty (Beagle.Property.New ("dc:title",
+										  theMatch.Groups ["title"]));
 					}
                       		} else {
                       			// A "regular" string

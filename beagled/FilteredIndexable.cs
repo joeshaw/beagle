@@ -41,6 +41,7 @@ namespace Beagle.Daemon {
 		public FilteredIndexable (string _uri) : base (_uri)
 		{
 			BuildFromFile ();
+			Build ();
 		}
 
 		protected FilteredIndexable ()
@@ -53,15 +54,16 @@ namespace Beagle.Daemon {
 			FilteredIndexable indexable = new FilteredIndexable ();
 			indexable.ReadFromXml (xml);
 			indexable.BuildFromFile ();
+			indexable.Build ();
 			return indexable;
 		}
 
 		static string[] longExtensions = {".html" };
-
+		
 		private void BuildFromFile ()
 		{
 			Console.WriteLine ("Uri: {0}", Uri);
-			if (!Uri.StartsWith ("file://")) {
+			if (Type != "File" || !Uri.StartsWith ("file://") || ContentUri != Uri) {
 				return;
 			}
 
@@ -78,24 +80,18 @@ namespace Beagle.Daemon {
 				if (Timestamp == new DateTime (0))
 					Timestamp = Directory.GetLastWriteTime (path);
 			} else if (File.Exists (path)) {
-				flavor = Flavor.FromPath (path);
-				filter = Filter.FromFlavor (flavor);
-				if (MimeType == null)
-					MimeType = flavor.MimeType;
+				if (MimeType == null) {
+					MimeType = Beagle.Util.VFS.Mime.GetMimeType (path);
+				}
 				if (Timestamp == new DateTime (0)) 
 					File.GetLastWriteTime (path);
 			} else {
 				throw new Exception ("No such file: " + path);
 			}
 
+			string dirName = null;
+			string parentName = null;
 			FileInfo info = new FileInfo (path);
-			if (filter != null) {
-				filter.Open (info);
-				foreach (Property prop in filter.Properties)
-					AddProperty (prop);
-			}
-
-			string dirName = null, parentName = null;
 
 			if (isDirectory) {
 				DirectoryInfo dirInfo = new DirectoryInfo (path);
@@ -177,6 +173,32 @@ namespace Beagle.Daemon {
 					foreach (BU.FSpotTools.Tag tag in photo.Tags)
 						AddProperty (Property.NewKeyword ("fixme:fspot/tag", tag.Name));
 				}
+			}
+			
+		}
+		
+		private void Build () {
+			if (MimeType == null) {
+				throw new Exception ("Unknown mime type");
+			}
+			
+			System.Console.WriteLine ("Content Uri: {0}", ContentUri);
+
+			// Currently only index file content
+			if (!ContentUri.StartsWith ("file://")) {
+				return;
+			}
+
+			string path = ContentUri.Substring ("file://".Length);
+
+			flavor = Flavor.FromMimeType (MimeType);
+			filter = Filter.FromFlavor (flavor);
+			
+			if (filter != null) {
+				Console.WriteLine ("Filtering {0}", path);
+				filter.Open (new FileInfo (path));
+				foreach (Property prop in filter.Properties)
+					AddProperty (prop);
 			}
 		}
 

@@ -82,7 +82,7 @@ namespace Beagle.Filters {
 
 					Encoding enc = new ASCIIEncoding ();
 					string comment = enc.GetString (commentData);
-					AddProperty (Beagle.Daemon.Property.New ("fixme:comment", comment));
+					AddProperty (Beagle.Property.New ("fixme:comment", comment));
 							   
 				} else if ((! seenSofn)
 				    && 0xc0 <= marker
@@ -114,16 +114,16 @@ namespace Beagle.Filters {
 					if (components == -1)
 						return;
 
-					AddProperty (Beagle.Daemon.Property.NewKeyword ("fixme:bitdepth",
+					AddProperty (Beagle.Property.NewKeyword ("fixme:bitdepth",
 											precision));
 					
-					AddProperty (Beagle.Daemon.Property.NewKeyword ("fixme:width",
+					AddProperty (Beagle.Property.NewKeyword ("fixme:width",
 											width));
 
-					AddProperty (Beagle.Daemon.Property.NewKeyword ("fixme:height",
+					AddProperty (Beagle.Property.NewKeyword ("fixme:height",
 											height));
 
-					AddProperty (Beagle.Daemon.Property.NewKeyword ("fixme:components",
+					AddProperty (Beagle.Property.NewKeyword ("fixme:components",
 											components));
 
 					seenSofn = true;

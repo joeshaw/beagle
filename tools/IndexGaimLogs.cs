@@ -29,11 +29,12 @@ using System.Collections;
 using System.IO;
 using System.Text;
 
-using Beagle.Core;
+using Beagle;
 using Beagle.Util;
 
 namespace IndexGaimLogs {
 
+#if false
 	class IndexableImLog : Indexable {
 		
 		private ImLog log;
@@ -51,36 +52,10 @@ namespace IndexGaimLogs {
 			
 		public IndexableImLog (ImLog _log, bool _verbose) 
 		{
-			log = _log;
-			verbose = _verbose;
-
-			Uri = log.Uri;
-			Timestamp = log.Timestamp;
-			Type = "IMLog";
-
-			properties.Add (Property.NewKeyword ("fixme:file", log.LogFile));
-			properties.Add (Property.NewKeyword ("fixme:offset", log.LogOffset));
-			properties.Add (Property.NewDate ("fixme:starttime", log.StartTime));
-			properties.Add (Property.NewKeyword ("fixme:speakingto", log.SpeakingTo));
-			properties.Add (Property.NewKeyword ("fixme:identity", log.Identity));
 		}
 
 		override protected void DoBuild ()
 		{
-			log.Load ();
-
-			properties.Add (Property.NewDate ("fixme:endtime", log.EndTime));
-
-			StringBuilder text = new StringBuilder ();
-			foreach (ImLog.Utterance utt in log.Utterances) {
-				//Console.WriteLine ("[{0}][{1}]", utt.Who, utt.Text);
-				text.Append (utt.Text);
-				text.Append (" ");
-			}
-
-			reader = new StringReader (text.ToString ());
-			Console.WriteLine (text.ToString ());
-			VerbosePrint ("Indexing conversation");
 		}
 
 		override public TextReader GetTextReader ()
@@ -92,15 +67,49 @@ namespace IndexGaimLogs {
 			get { return properties; }
 		}
 	}
-
+#endif
 	class IndexGaimLogsTool {
 
 		static ArrayList indexables = new ArrayList ();
 	        static bool verbose = false;
 
+		static Indexable CreateIndexable (ImLog log) {
+			Indexable indexable = new Indexable (log.Uri);
+			indexable.Timestamp = log.Timestamp;
+			indexable.Type = "IMLog";
+
+			// We don't have a specific mime type for this
+			// blob, but a mime type must be specified for
+			// indexables that provide a stream
+			indexable.MimeType = "text/plain";
+			
+			indexable.AddProperty (Property.NewKeyword ("fixme:file", log.LogFile));
+			indexable.AddProperty (Property.NewKeyword ("fixme:offset", log.LogOffset));
+			indexable.AddProperty (Property.NewDate ("fixme:starttime", log.StartTime));
+			indexable.AddProperty (Property.NewKeyword ("fixme:speakingto", log.SpeakingTo));
+			indexable.AddProperty (Property.NewKeyword ("fixme:identity", log.Identity));
+
+			log.Load ();
+
+			indexable.AddProperty (Property.NewDate ("fixme:endtime", log.EndTime));
+
+			StringBuilder text = new StringBuilder ();
+			foreach (ImLog.Utterance utt in log.Utterances) {
+				//Console.WriteLine ("[{0}][{1}]", utt.Who, utt.Text);
+				text.Append (utt.Text);
+				text.Append (" ");
+			}
+
+			StringReader reader = new StringReader (text.ToString ());
+			indexable.SetTextReader (reader);
+			Console.WriteLine (text.ToString ());
+
+			return indexable;
+		}
+
 		static void AddLog (ImLog log)
 		{
-			indexables.Add (new IndexableImLog (log, verbose));
+			indexables.Add (CreateIndexable (log));
 		}
 
 		static void Main (string[] args)
@@ -119,13 +128,14 @@ namespace IndexGaimLogs {
 			scan.Scan (dir, new ImLog.Sink (AddLog));
 
 			if (indexables.Count > 0) {
-			        Console.WriteLine ("Creating driver");
-				IndexDriver driver = new IndexDriver ();
-				
-			        Console.WriteLine ("Adding indexables");
-				driver.Add (indexables);
-			        Console.WriteLine ("Optimizing");
-				driver.Optimize ();
+				Console.WriteLine ("Creating indexer"); 
+				Indexer indexer = Indexer.Get ();
+
+				Console.WriteLine ("Adding indexables");
+				foreach (Indexable indexable in indexables) {
+					indexer.Index (indexable);
+				}
+				Console.WriteLine ("done");
 			}
 		}
 	}

@@ -188,34 +188,34 @@ namespace Beagle.Filters {
 				switch (node.Name) {
 					
 				case "dc:title":
-					AddProperty (Beagle.Daemon.Property.New ("dc:title",
-										 node.InnerText));
+					AddProperty (Beagle.Property.New ("dc:title",
+									  node.InnerText));
 					break;
 
 				case "dc:description":
-					AddProperty (Beagle.Daemon.Property.New ("dc:description",
-										 node.InnerText));
+					AddProperty (Beagle.Property.New ("dc:description",
+									  node.InnerText));
 					break;
 
 				case "dc:subject":
-					AddProperty (Beagle.Daemon.Property.New ("dc:subject",
+					AddProperty (Beagle.Property.New ("dc:subject",
 										 node.InnerText));
 					break;
 					
 				case "meta:document-statistic":
 					XmlAttributeCollection attr = node.Attributes;
 					if (attr ["fixme:page-count"] != null)
-						AddProperty (Beagle.Daemon.Property.NewKeyword ("fixme:page-count",
+						AddProperty (Beagle.Property.NewKeyword ("fixme:page-count",
 												attr ["meta:page-count"].Value));
 					if (attr ["fixme:word-count"] != null)
-						AddProperty (Beagle.Daemon.Property.NewKeyword ("fixme:word-count",
+						AddProperty (Beagle.Property.NewKeyword ("fixme:word-count",
 												attr ["meta:word-count"].Value));
 					break;
 
 				case "meta:user-defined":
 					if (node.InnerText != "") {
 						string name = node.Attributes ["meta:name"].Value;
-						AddProperty (Beagle.Daemon.Property.New ("fixme:UserDefined-" + name,
+						AddProperty (Beagle.Property.New ("fixme:UserDefined-" + name,
 											 node.InnerText));
 					}
 					break;

@@ -88,6 +88,19 @@ namespace Beagle.Daemon
 			return ret;
 		}
 
+		private void CleanupContent (ArrayList toIndex) {
+			foreach (Indexable indexable in toIndex) {
+				if (indexable.DeleteContent) {
+					string path = indexable.ContentUri;
+					if (path.StartsWith ("file://")) {
+						path = path.Substring ("file://".Length);
+					}
+					Console.WriteLine ("deleting {0}", path);
+					System.IO.File.Delete (path);
+				}
+			}
+		}
+
 		void Flush (ArrayList toIndex, ArrayList toRemove) {
 			bool didSomething = false;
 			
@@ -96,6 +109,7 @@ namespace Beagle.Daemon
 			toIndex = CallPreIndexingEvent (toIndex); 
 			if (toIndex.Count > 0) {
 				driver.QuickAdd (toIndex);
+				CleanupContent (toIndex);
 				didSomething = true;
 			}
 			

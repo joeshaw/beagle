@@ -35,6 +35,7 @@ namespace Beagle
 		public abstract void Index (string indexableAsXml);
 
 		public void Index (Indexable indexable) {
+			indexable.StoreStream ();
 			Index (indexable.ToXml ());
 		}
 

@@ -50,21 +50,21 @@ namespace Beagle.Filters {
 			if (info == null)
 				return;
 
-			AddProperty (Beagle.Daemon.Property.NewKeyword ("fixme:id3version", info.Version));
+			AddProperty (Beagle.Property.NewKeyword ("fixme:id3version", info.Version));
 
-			AddProperty (Beagle.Daemon.Property.New ("fixme:artist",  info.Artist));
-			AddProperty (Beagle.Daemon.Property.New ("fixme:album",   info.Album));
-			AddProperty (Beagle.Daemon.Property.New ("fixme:song",    info.Song));
-			AddProperty (Beagle.Daemon.Property.New ("fixme:comment", info.Comment));
+			AddProperty (Beagle.Property.New ("fixme:artist",  info.Artist));
+			AddProperty (Beagle.Property.New ("fixme:album",   info.Album));
+			AddProperty (Beagle.Property.New ("fixme:song",    info.Song));
+			AddProperty (Beagle.Property.New ("fixme:comment", info.Comment));
 
 			if (info.Track > 0)
-				AddProperty (Beagle.Daemon.Property.NewKeyword ("fixme:track", info.Track));
+				AddProperty (Beagle.Property.NewKeyword ("fixme:track", info.Track));
 
 			if (info.Year > 0)
-				AddProperty (Beagle.Daemon.Property.NewKeyword ("fixme:year", info.Year));
+				AddProperty (Beagle.Property.NewKeyword ("fixme:year", info.Year));
 
 			if (info.HasPicture)
-				AddProperty (Beagle.Daemon.Property.NewBool ("fixme:haspicture", true));
+				AddProperty (Beagle.Property.NewBool ("fixme:haspicture", true));
 		}
 	}
 }
