@@ -149,9 +149,9 @@ namespace Beagle.Daemon.LauncherQueryable {
 			}
 				
 			/* I'm convinced it is a launcher */
-			Indexable indexable = new Indexable ( new Uri ("file://" + file.ToString ())); 
+			Indexable indexable = new Indexable (UriFu.PathToFileUri (file.FullName));
 
-			indexable.Timestamp = File.GetLastWriteTime (file.ToString ());
+			indexable.Timestamp = file.LastWriteTime;
 			indexable.Type = "Launcher";
 			indexable.MimeType = "application/x-desktop";
 

@@ -46,7 +46,7 @@ namespace Beagle.Daemon.WebHistoryQueryable {
 			
 			public override void Index (string xml)
 			{
-				Indexable indexable = FilteredIndexable.NewFromIndexableXml (xml);
+				Indexable indexable = FilteredIndexable.NewFromEitherXml (xml);
 				Scheduler.Task task = queryable.NewAddTask (indexable);
 				task.Priority = Scheduler.Priority.Immediate;
 				queryable.ThisScheduler.Add (task);

@@ -175,10 +175,12 @@ namespace Beagle {
 
 				reader = new StreamReader (stream);
 
-#if false				
-				if (DeleteContent)
+				Console.WriteLine ("Uri: {0}", Uri);
+				Console.WriteLine ("Cnt: {0}", uri);
+
+				// Paranoia: never delete the thing we are actually indexing.
+				if (DeleteContent && uri != Uri)
 					File.Delete (uri.LocalPath);
-#endif
 			}
 
 			return reader;
@@ -277,13 +279,15 @@ namespace Beagle {
 		}
 
 		public void StoreStream () {
-			if (textReader != null)
+			if (textReader != null) {
 				ContentUri = TextReaderToTempFileUri (textReader);
+				DeleteContent = true;
+			}
 
-			if (hotTextReader != null)
+			if (hotTextReader != null) {
 				HotContentUri = TextReaderToTempFileUri (hotTextReader);
-
-			DeleteContent = true;
+				DeleteContent = true;
+			}
 		}
 
 		//////////////////////////
