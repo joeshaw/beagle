@@ -140,7 +140,9 @@ namespace Beagle {
 		static public string GetHtmlSource (string name, 
 						    string mime_type) 
 		{
-			if (name.StartsWith ("file://")) {
+			if (name == null) {
+				return null;
+			} else if (name.StartsWith ("file://")) {
 				return name;
 			} else if (name.StartsWith ("/")) {
 				return StringFu.PathToQuotedFileUri (name);
