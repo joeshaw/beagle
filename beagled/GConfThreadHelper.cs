@@ -38,6 +38,7 @@ namespace Beagle.Daemon {
 		private string path;
 		private object data;
 		private bool finished;
+		private Exception ex;
 
 		private GConfThreadHelper (string path)
 		{			
@@ -51,7 +52,12 @@ namespace Beagle.Daemon {
 				if (gconf_client == null)
 					gconf_client = new GConf.Client ();
 
-				this.data = gconf_client.Get (this.path);
+				try {
+					this.data = gconf_client.Get (this.path);
+				} catch (Exception ex) {
+					this.ex = ex;
+				}
+
 				this.finished = true;
 				Monitor.Pulse (lock_obj);
 			}
@@ -71,6 +77,9 @@ namespace Beagle.Daemon {
 				while (! helper.finished
 				       && ! Shutdown.ShutdownRequested)
 					Monitor.Wait (lock_obj, one_second);
+
+				if (helper.ex != null)
+					throw helper.ex;
 
 				return helper.data;
 			}

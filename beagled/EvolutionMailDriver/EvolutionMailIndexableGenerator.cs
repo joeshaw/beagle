@@ -520,7 +520,8 @@ namespace Beagle.Daemon.EvolutionMailDriver {
 
 			try {
 				this.accounts = (ICollection) GConfThreadHelper.Get ("/apps/evolution/mail/accounts");
-			} catch (GConf.NoSuchKeyException) {
+			} catch (Exception ex) {
+				EvolutionMailQueryable.log.Warn ("Caught exception in Setup(): " + ex.Message);
 				EvolutionMailQueryable.log.Warn ("There are no configured evolution accounts, ignoring {0}", this.imap_name);
 				return false;
 			}

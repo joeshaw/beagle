@@ -1,3 +1,9 @@
+2005-02-17  Veerapuram Varadhan	 <vvaradhan@novell.com>
+
+	* glue/wv1-glue.c: Fix for
+	http://bugzilla.gnome.org/show_bug.cgi?id=170124. Do not strip out
+	non-iso-printable characters.
+	
 2005-02-13  Veerapuram Varadhan	 <vvaradhan@novell.com>
 
 	* Tiles/TileMusic.cs: Show audio/media filename if "fixme:title"

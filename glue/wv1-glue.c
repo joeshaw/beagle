@@ -124,13 +124,15 @@ append_char (UserData * ud, U16 ch)
      *  to get rid of unwanted characters, especially
      *  some graphic symbols used in a document. 
      *  Ex: a tick mark, a smiley blah blah blah...
-     *  I think handling for such wierd stuff needs to be
-     *  done by Filter.cs, thus we don't have to repeat 
-     *  the same for other filters as well. ;-)
+     *  in a much sane way without blocking 
+     *  printable-non-iso characters ;)
      */
-    for (i = 0; i < len; i++)
+    /*
+      for (i = 0; i < len; i++)
       if (tmpBuf[i] > 0)
-	g_string_append_c (ud->txtWord, tmpBuf[i]);
+      g_string_append_c (ud->txtWord, tmpBuf[i]);
+    */
+    g_string_append_len (ud->txtWord, tmpBuf, len);
     break;
   }
 
