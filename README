@@ -26,6 +26,7 @@ Beagle can index and search:
  * Your e-mail (as long as you are using mboxes and Evolution 1.5)
  * Your web browsing (if the epiphany extension is installed
    in the right place)
+ * Your Gaim IM logs
 
 Beagle can also search:
  * Your addressbook (as long as you are using a very, very new
