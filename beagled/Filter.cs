@@ -406,7 +406,7 @@ namespace Beagle.Daemon {
 			int count = 0;
 
 			foreach (Type t in assembly.GetTypes ()) {
-				if (t.IsSubclassOf (typeof (Filter))) {
+				if (t.IsSubclassOf (typeof (Filter)) && ! t.IsAbstract) {
 					Filter filter = (Filter) Activator.CreateInstance (t);
 					bool first = true;
 					foreach (Flavor flavor in filter.SupportedFlavors) {
