@@ -430,8 +430,8 @@ namespace Beagle.Daemon {
 
 		public bool NeedsOptimize {
 			get { 
-				// FIXME: 107 is a totally arbitrary number.
-				return adds_since_last_optimization + removals_since_last_optimization > 107;
+				// FIXME: 47 is a totally arbitrary number.
+				return adds_since_last_optimization + removals_since_last_optimization > 47;
 			}
 		}
 
