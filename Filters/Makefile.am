@@ -26,6 +26,7 @@ CSFILES = 				\
 	$(srcdir)/FilterMan.cs		\
 	$(srcdir)/FilterMusic.cs	\
 	$(srcdir)/FilterOpenOffice.cs	\
+	$(srcdir)/FilterPdf.cs		\
 	$(srcdir)/FilterPng.cs		\
 	$(srcdir)/FilterText.cs	
 
