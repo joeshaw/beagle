@@ -6,6 +6,8 @@
 <!ENTITY beagle.pref.label                       "Beagle Preferences">
 <!ENTITY beagle.pref.context.label               "Context Menu Options">
 <!ENTITY beagle.pref.context.active.label        "Add Beagle options to context menu">
-<!ENTITY beagle.pref.context.sep.a.label         "Insert a Separator Before Context Items">
-<!ENTITY beagle.pref.context.sep.b.label         "Insert a Separator After Context Items">
 <!ENTITY beagle.pref.security.active.label       "Index pages with secure content">
+<!ENTITY beagle.pref.filter.label                "Do not index web pages from these domains">
+<!ENTITY beagle.pref.filter.host.label           "Domain:">
+<!ENTITY beagle.pref.filter.host.add.label       "Add Domain">
+<!ENTITY beagle.pref.filter.host.remove.label    "Remove Domain">

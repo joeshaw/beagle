@@ -9,20 +9,9 @@ var gPref = Components.classes['@mozilla.org/preferences-service;1'].getService(
 // Declare form variables.
 var _elementIDs = [
   'beagle.context.active',
-  'beagle.context.sep.a',
-  'beagle.context.sep.b',
   'beagle.security.active',
+  'beagle.security.filters'
 ];
-
-function beaglePrefsFlip()
-{
-  // Handle enabling/disabling prefs based on settings
-  /*
-  var bPref = document.getElementById('beagle.context.active').checked;
-  document.getElementById('beagle.context.sep.a').disabled = !(bPref);
-  document.getElementById('beagle.context.sep.b').disabled = !(bPref);
-  */
-}
 
 function beaglePrefsInit()
 {
@@ -58,9 +47,24 @@ function beaglePrefsInit()
         catch(e) { element.value = ''; }
       }
     }
+    else if (element.id == 'beagle.security.filters')
+    {
+      try {
+        var val = gPref.getCharPref("beagle.security.filters");
+        var items = val.split(';');
+        var listbox = document.getElementById('beagle.security.filters');
+
+        for (var j = 0; j < items.length; j++){
+          if(items[j] != ''){
+            var item = listbox.appendItem(items[j], items[j]);
+          }
+        }
+      } catch(e) {
+          // We don't seem to care about this.
+      }
+    }
   }
 
-  beaglePrefsFlip();
 }
 
 function beaglePrefsSave()
@@ -91,7 +95,7 @@ function beaglePrefsSave()
         var sPref = element.value.replace(/^[0]*/);
         var sWork = "0123456789";
 
-        for (j = 0; j < sPref.length; j++)
+        for (var j = 0; j < sPref.length; j++)
         {
           if (sWork.indexOf(sPref.charAt(j)) == -1) bOkay = false;
           else cPref = cPref + sPref.charAt(j);
@@ -107,7 +111,50 @@ function beaglePrefsSave()
         gPref.setCharPref(elementID, element.value);
       }
     }
+    else if (element.id == 'beagle.security.filters')
+    {
+      var val = "";
+      for (var j = 0; j < element.getRowCount(); j++){
+        var listitem = element.getItemAtIndex(j);
+        val += listitem.value + ";";
+      }
+      gPref.setCharPref(element.id, val);
+    }
   }
+}
 
-  beaglePrefsFlip();
+function beaglePrefsAddFilter() {
+  var filter = document.getElementById('beagle.filter');
+  var listbox = document.getElementById('beagle.security.filters');
+  if (filter.value != ''){
+      listbox.appendItem(filter.value, filter.value);
+  }
+  filter.value = '';
+}
+
+function beaglePrefsRemoveFilter() {
+  var listbox = document.getElementById('beagle.security.filters');
+  listbox.removeItemAt(listbox.selectedIndex);
+}
+
+function updateFilterAddButton() {
+  var button = document.getElementById('beagle.filter.add');
+  var filter = document.getElementById('beagle.filter');
+
+  if (filter.value != ''){
+    button.disabled = false;
+  } else {
+    button.disabled = true;
+  }
+}
+
+function updateFilterRemoveButton() {
+  var button = document.getElementById('beagle.filter.remove');
+  var listbox = document.getElementById('beagle.security.filters');
+
+  if (listbox.selectedCount > 0){
+    button.disabled = false;
+  } else {
+    button.disabled = true;
+  }
 }

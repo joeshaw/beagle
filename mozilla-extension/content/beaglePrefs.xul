@@ -13,11 +13,13 @@
   title="&beagle.pref.label;"
   xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
 
-  <script type="application/x-javascript" src="chrome://beagle/content/beaglePrefs.js" />
+  <script type="application/x-javascript" 
+      src="chrome://beagle/content/beaglePrefs.js" />
+
+  <dialogheader title="&beagle.pref.label;"/>
 
   <groupbox>
-    <caption label="&beagle.pref.label;" />
-
+    <caption label="General" />
     <checkbox 
       id="beagle.context.active" 
       label="&beagle.pref.context.active.label;"
@@ -27,24 +29,6 @@
       type="checkbox" 
     />
 
-<!-- showing options for separators is hella lame -->
-<!--
-    <checkbox id="beagle.context.sep.a" 
-      class="indent"
-      label="&beagle.pref.context.sep.a.label;"
-      prefattribute="checked" 
-      preftype="bool" 
-      type="checkbox" 
-    />
-    <checkbox id="beagle.context.sep.b" 
-      class="indent"
-      label="&beagle.pref.context.sep.b.label;"
-      prefattribute="checked" 
-      preftype="bool" 
-      type="checkbox" 
-    />
--->
-
     <checkbox 
       id="beagle.security.active" 
       label="&beagle.pref.security.active.label;"
@@ -52,6 +36,27 @@
       preftype="bool" 
       type="checkbox" 
     />
+  </groupbox>
+
+  <groupbox>
+
+    <caption label="&beagle.pref.filter.label;" />
+    <label control="host-filter" value="&beagle.pref.filter.host.label;"/>
+    <textbox id="beagle.filter" oninput="updateFilterAddButton();"/>
+    <hbox>
+        <button id="beagle.filter.add" 
+            label="&beagle.pref.filter.host.add.label;"
+            disabled="true" 
+            oncommand="beaglePrefsAddFilter();"/>
+        <button id="beagle.filter.remove"
+            disabled="true" 
+            label="&beagle.pref.filter.host.remove.label;"
+            oncommand="beaglePrefsRemoveFilter(); updateFilterRemoveButton();"/>
+    </hbox>
+
+    <listbox id="beagle.security.filters"
+        onclick="updateFilterRemoveButton();">
+    </listbox>
 
   </groupbox>
 

@@ -120,6 +120,21 @@ function beagleShouldIndex(page)
     return false;
   }
 
+  try {
+    fPref = gPref.getCharPref('beagle.security.filters');
+    var filtered = fPref.split(';');
+    for (j = 0; j < filtered.length; j++){
+      if (filtered[j] == page.location.host){
+        dump("beagleShouldIndex: filtered host: " + page.location.host + '\n');
+        gBeagleRunStatus = -2;
+        beagleUpdateStatus ();
+        return false;
+      }
+    }
+  } catch (e) {
+    // Do nothing..
+  }
+
   if (page.location.protocol == "https:") {
 	var bPref;
 
