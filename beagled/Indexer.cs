@@ -30,15 +30,6 @@ using Beagle.Core;
 using Beagle;
 namespace BeagleDaemon
 {
-	public class PreIndexHandlerArgs {
-		public bool shouldIndex;
-		public Indexable indexable;
-	}
-
-	public class PostIndexHandlerArgs {
-		public bool failure;
-		public Indexable indexable;
-	}
 
 	public class Indexer : Beagle.Indexer 
 	{

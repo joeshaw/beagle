@@ -24,7 +24,14 @@
 using Beagle.Core;
 
 namespace BeagleDaemon {
-	abstract class PreIndexHandler {
+
+	public class PreIndexHandlerArgs {
+		public bool shouldIndex;
+		public Indexable indexable;
+	}
+
+
+	public abstract class PreIndexHandler {
 		public abstract void Run (PreIndexHandlerArgs args);
 	}
 }

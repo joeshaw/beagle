@@ -23,8 +23,15 @@
 
 using Beagle.Core;
 
-namespace BeagleDaemon {
-	abstract class PostIndexHandler {
+namespace BeagleDaemon 
+{
+
+	public class PostIndexHandlerArgs {
+		public bool failure;
+		public Indexable indexable;
+	}
+
+	public abstract class PostIndexHandler {
 		public abstract void Run (PostIndexHandlerArgs args);
 	}
 }

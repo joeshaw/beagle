@@ -32,11 +32,10 @@ CSFILES = 				\
 
 
 
-LOCAL_ASSEMBLIES =			\
-	../Util/Util.dll		\
-	../Lucene.Net/Lucene.Net.dll	\
-	../BeagleClient/Beagle.dll      \
-	../indexer/Indexer.dll
+LOCAL_ASSEMBLIES =				\
+	../Util/Util.dll			\
+	../BeagleClient/Beagle.dll		\
+	../beagled/BeagleDaemonPlugins.dll	
 
 ASSEMBLIES =				\
 	$(BEAGLE_UI_LIBS)		\

@@ -1,14 +1,53 @@
 
 CSC = mcs -g
 
-TARGET = BeagleDaemon.exe
-WRAPPER = beagled
 
-CSFLAGS = 				\
+EXTSTR = ExternalStringsHack.cs
+EXTSTR_IN = $(srcdir)/$(EXTSTR).in
+
+$(EXTSTR): $(EXTSTR_IN)
+	sed	-e "s|\@prefix\@|$(prefix)|g"		\
+		-e "s|\@pkglibdir\@|$(pkglibdir)|g"	\
+		< $^ > $@
+
+
+
+PLUGIN_TARGET = BeagleDaemonPlugins.dll
+
+PLUGIN_CFLAGS = -target:library
+
+PLUGIN_CSFILES =			\
+	$(srcdir)/PathFinder.cs		\
+	$(srcdir)/Property.cs		\
+	$(srcdir)/Flavor.cs		\
+	$(srcdir)/Filter.cs		\
+	$(srcdir)/Indexable.cs		\
+	$(srcdir)/PreIndexHandler.cs	\
+	$(srcdir)/PostIndexHandler.cs
+
+PLUGIN_LOCAL_ASSEMBLIES =		\
+	../Util/Util.dll		\
+	../BeagleClient/Beagle.dll
+
+PLUGIN_ASSEMBLIES =				\
+	-r:Mono.Posix				\
+	$(PLUGIN_LOCAL_ASSEMBLIES:%=-r:%)
+
+$(PLUGIN_TARGET): $(PLUGIN_CSFILES) $(EXTSTR) $(PLUGIN_LOCAL_ASSEMBLIES)
+	$(CSC) -o $@ $(PLUGIN_CFLAGS) $(PLUGIN_CSFILES) $(EXTSTR) $(PLUGIN_ASSEMBLIES)
+
+
+
+DAEMON_TARGET = BeagleDaemon.exe
+
+DAEMON_WRAPPER = beagled
+
+DAEMON_CSFLAGS = 			\
 	-target:exe			\
 	-main:BeagleDaemon.BeagleDaemon
 
 lucenedir = $(srcdir)/Lucene.Net
+
 LUCENE_CSFILES =								\
 	$(lucenedir)/AssemblyInfo.cs					\
 	$(lucenedir)/Analysis/Analyzer.cs				\
@@ -129,14 +168,8 @@ LUCENE_CSFILES =								\
 	$(lucenedir)/Util/Number.cs					\
 	$(lucenedir)/Util/PriorityQueue.cs
 
-
-CSFILES = 				\
+DAEMON_CSFILES = 				\
 	$(LUCENE_CSFILES)		\
-	$(srcdir)/PathFinder.cs		\
-	$(srcdir)/Property.cs		\
-	$(srcdir)/Flavor.cs		\
-	$(srcdir)/Filter.cs		\
-	$(srcdir)/Indexable.cs		\
 	$(srcdir)/IndexableFile.cs	\
 	$(srcdir)/Query.cs		\
 	$(srcdir)/Relevancy.cs		\
@@ -151,51 +184,41 @@ CSFILES = 				\
 	$(srcdir)/Indexer.cs            \
 	$(srcdir)/LiveQuery.cs          \
 	$(srcdir)/NoIndexFileHandler.cs \
-	$(srcdir)/PreIndexHandler.cs    \
-	$(srcdir)/PostIndexHandler.cs   \
 	$(srcdir)/QueryManager.cs
 
-LOCAL_ASSEMBLIES =			\
+DAEMON_LOCAL_ASSEMBLIES =		\
 	../Util/Util.dll		\
 	../BeagleClient/Beagle.dll
 
-ASSEMBLIES = 				\
-	$(BEAGLED_LIBS)                 \
-	-r:Mono.Posix			\
-	-r:System.Runtime.Remoting	\
-	-r:ICSharpCode.SharpZipLib.dll	\
-	$(LOCAL_ASSEMBLIES:%=-r:%)
-
-RESOURCES =
+DAEMON_ASSEMBLIES = 				\
+	$(DAEMON_LOCAL_ASSEMBLIES:%=-r:%)	\
+	$(BEAGLED_LIBS)                 	\
+	-r:Mono.Posix				\
+	-r:System.Runtime.Remoting		\
+	-r:ICSharpCode.SharpZipLib.dll		\
+	-r:./$(PLUGIN_TARGET)
 
 
 if ENABLE_EVO_SHARP
-CSFLAGS += -define:ENABLE_EVO_SHARP
-CSFILES += $(srcdir)/EvolutionDataServerDriver.cs
-ASSEMBLIES += $(EVO_SHARP_LIBS)
+DAEMON_CSFLAGS += -define:ENABLE_EVO_SHARP
+DAEMON_CSFILES += $(srcdir)/EvolutionDataServerDriver.cs
+DAEMON_ASSEMBLIES += $(EVO_SHARP_LIBS)
 endif
 
 
-EXTSTR = ExternalStringsHack.cs
-EXTSTR_IN = $(srcdir)/$(EXTSTR).in
 
-$(EXTSTR): $(EXTSTR_IN)
-	sed	-e "s|\@prefix\@|$(prefix)|g"		\
-		-e "s|\@pkglibdir\@|$(pkglibdir)|g"	\
-		< $^ > $@
+$(DAEMON_TARGET): $(DAEMON_CSFILES) $(DAEMON_LOCAL_ASSEMBLIES)
+	$(CSC) -o $@ $(DAEMON_CSFLAGS) $(DAEMON_CSFILES) $(DAEMON_ASSEMBLIES)
 
+#TestClient.exe: TestClient.cs 
+#	$(CSC) -o $@ $(CSFLAGS) TestClient.cs $(ASSEMBLIES)
 
-$(TARGET): $(CSFILES) $(EXTSTR) $(LOCAL_ASSEMBLIES) $(RESOURCES)
-	$(CSC) -o $@ $(CSFLAGS) $(CSFILES) $(EXTSTR) $(ASSEMBLIES) $(RESOURCES)
-
-TestClient.exe: TestClient.cs 
-	$(CSC) -o $@ $(CSFLAGS) TestClient.cs $(ASSEMBLIES)
-
-all: $(TARGET)
+all: $(PLUGIN_TARGET) $(DAEMON_TARGET)
 
 install-data-local: $(TARGET)
 	$(mkinstalldirs) $(DESTDIR)$(pkglibdir)
-	$(INSTALL_DATA) $(TARGET) $(DESTDIR)$(pkglibdir)/$(TARGET)
+	$(INSTALL_DATA) $(TARGET) $(DESTDIR)$(pkglibdir)/$(PLUGIN_TARGET)
+	$(INSTALL_DATA) $(TARGET) $(DESTDIR)$(pkglibdir)/$(DAEMON_TARGET)
 
 uninstall-local:
 	rm -f $(DESTDIR)$(bindir)/$(TARGET)
@@ -213,15 +236,17 @@ testclient: $(srcdir)/testclient.in
 	chmod +x testclient
 
 
-EXTRA_DIST =		\
-	$(CSFILES)      \
-	$(EXTSTR_IN)	\
-	$(WRAPPER).in   \
+EXTRA_DIST =			\
+	$(PLUGIN_CSFILES)	\
+	$(DAEMON_CSFILES)	\
+	$(EXTSTR_IN)		\
+	$(WRAPPER).in   	\
 	TestClient.cs
 
-CLEANFILES =		\
-	$(TARGET)       \
-	$(EXTSTR)	\
-	$(WRAPPER)      \
-	testclient      \
+CLEANFILES =			\
+	$(PLUGIN_TARGET)       	\
+	$(DAEMON_TARGET)       	\
+	$(EXTSTR)		\
+	$(WRAPPER)      	\
+	testclient      	\
 	TestClient.exe
