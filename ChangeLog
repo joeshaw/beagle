@@ -1,3 +1,8 @@
+2005-04-05  Vijay K. Nanjundaswamy <knvijay@novell.com>
+
+	* WebServices/WebServiceBackEnd.cs: Updated TokenGenerator method
+	  to use System.Guid
+	  
 2005-04-05  Christopher Orr  <chris@protactin.co.uk>
 
 	* configure.in: Added en_GB to ALL_LINGUAS.
@@ -30,6 +35,7 @@
 
 	* beagled/WebServices: Moved dog.png image file to images folder.
           Replaced search.aspx with search.aspx.in. 
+
 	* beagled/Makefile.am: Script to generate search.aspx from search.aspx.in and determine XSP_DIR, based on prefix specified.
  
 2005-04-05  Frank Arnold  <farnold@cvs.gnome.org>

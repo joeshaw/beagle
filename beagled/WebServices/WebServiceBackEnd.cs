@@ -369,27 +369,13 @@ namespace Beagle.WebService {
 		private string TokenGenerator() 
 		{
 			const int TOKEN_LEN = 15; 
-			
+
 			Random r = new Random();
-			string token = "";
-			char c; int i;
-			int multiplier;
+			string token = ((Char)((int)((26 * r.NextDouble()) + 'a')) + System.Guid.NewGuid().ToString()).Substring (0, TOKEN_LEN); 
 
-			token += (Char)((int)((26 * r.NextDouble()) + 'a'));
+			char alpha = (Char)((int)((26 * r.NextDouble()) + 'a'));
 
-			for (i = 1; i < TOKEN_LEN; i++)  {
-		
-				switch (((int)(1 + r.NextDouble() * 10)) % 3)
-				{
-					case 0: c = 'a'; multiplier = 26; break;
-					case 1: c = 'A'; multiplier = 26; break;	
-					case 2: c = '0'; multiplier = 10; break;
-					default: c = '0'; multiplier = 10; break;
-				}
-		
-				token += (char)(r.NextDouble() * multiplier + c);
-			}
-			return token;
+			return (token.Replace('-', alpha));
 		}
     }	
 }
