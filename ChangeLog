@@ -1,5 +1,10 @@
 2005-03-29  Veerapuram Varadhan  <vvaradhan@novell.com>
 
+	* Tiles/template-mail-message.html: Fix for Subject of "deleted"
+	mails shows <strike></strike> markup tags.
+	
+2005-03-29  Veerapuram Varadhan  <vvaradhan@novell.com>
+
 	Patch from Chris Schneider <cschneid@colostate.edu>
 	* Filters/FilterPerl.cs: Bad "elseif" keyword in perl keyword
 	list.  Fixes http://bugzilla.gnome.org/show_bug.cgi?id=171175.
