@@ -7,23 +7,23 @@
 //
 
 //
-// Permission is hereby granted, free of charge, to any person obtaining a copy
-// of this software and associated documentation files (the "Software"), to deal
-// in the Software without restriction, including without limitation the rights
-// to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-// copies of the Software, and to permit persons to whom the Software is
-// furnished to do so, subject to the following conditions:
+// Permission is hereby granted, free of charge, to any person obtaining a
+// copy of this software and associated documentation files (the "Software"),
+// to deal in the Software without restriction, including without limitation
+// the rights to use, copy, modify, merge, publish, distribute, sublicense,
+// and/or sell copies of the Software, and to permit persons to whom the
+// Software is furnished to do so, subject to the following conditions:
 //
-// The above copyright notice and this permission notice shall be included in all
-// copies or substantial portions of the Software.
+// The above copyright notice and this permission notice shall be included in
+// all copies or substantial portions of the Software.
 //
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 // IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 // FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
 // AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-// SOFTWARE.
+// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+// FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
+// DEALINGS IN THE SOFTWARE.
 //
 
 
@@ -38,7 +38,7 @@ namespace Beagle {
 		int maxResults = 5;
 
 		GoogleSearchService gss = new GoogleSearchService ();
-		String googleKey;
+		string googleKey;
 
 		public GoogleDriver ()
 		{
@@ -70,12 +70,23 @@ namespace Beagle {
 
 		static bool showNoKeyMessage = true;
 
-		public String Name {
+		public string Name {
 			get { return "Google"; }
 		}
 
 		public bool AcceptQuery (Query query)
 		{
+			if (! query.HasText)
+				return false;
+
+			if (! query.AllowsDomain (QueryDomain.Global))
+				return false;
+
+			// FIXME: This is a meta-FIXME, since this is a bad assumption
+			// because the mime-type setting FIXME above.
+			if (! query.AllowsMimeType ("text/html"))
+				return false;
+
 			// Reject queries if the key isn't set.
 			if (googleKey == null || googleKey == "") {
 				if (showNoKeyMessage) {
@@ -85,6 +96,7 @@ namespace Beagle {
 				}
 				return false;
 			}
+
 			return true;
 		}
 
@@ -93,7 +105,7 @@ namespace Beagle {
 		{
 			// FIXME: stop using the abusive query api
 			GoogleSearchResult gsr = gss.doGoogleSearch (googleKey,
-								     query.AbusivePeekInsideQuery,
+								     query.QuotedText,
 								     0, maxResults,
 								     false, "", false, "", "", "");
 

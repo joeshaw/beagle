@@ -34,19 +34,21 @@ namespace Beagle {
 	public class QueryDriver {
 
 		ArrayList queryables = new ArrayList ();
-		
-		public void Add (IQueryable iq)
-		{
-			queryables.Add (iq);
-		}
 
-		public void AutoPopulateHack ()
+		// FIXME: There should be a way to control which
+		// drivers are part of the QueryDriver.
+		public QueryDriver ()
 		{
 			Add (new IndexDriver ());
 			Add (new GoogleDriver ());
 #if ENABLE_EVO_SHARP
 			Add (new EvolutionDataServerDriver ());
 #endif
+		}
+		
+		public void Add (IQueryable iq)
+		{
+			queryables.Add (iq);
 		}
 
 		class QueryClosure {
@@ -97,15 +99,18 @@ namespace Beagle {
 				// enters the started and finished states, even if
 				// none of the queryables accept the query.
 				result.WorkerStart ();
-				foreach (IQueryable queryable in queryables) {
-					if (! query.IsEmpty && queryable.AcceptQuery (query)) {
-						QueryClosure qc = new QueryClosure (queryable,
-										    query,
-										    result);
-						Thread th = new Thread (new ThreadStart (qc.Start));
-						
-						result.WorkerStart ();
-						th.Start ();
+				if (! query.IsEmpty) {
+					foreach (IQueryable queryable in queryables) {
+						if (queryable.AcceptQuery (query)) {
+							Console.WriteLine ("Querying '{0}'", queryable);
+							QueryClosure qc = new QueryClosure (queryable,
+											    query,
+											    result);
+							Thread th = new Thread (new ThreadStart (qc.Start));
+							
+							result.WorkerStart ();
+							th.Start ();
+						}
 					}
 				}
 				result.WorkerFinished ();

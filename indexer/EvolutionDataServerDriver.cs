@@ -137,6 +137,12 @@ namespace Beagle {
 
 		public bool AcceptQuery (Query query)
 		{
+			if (! query.HasText)
+				return false;
+
+			if (! query.AllowsDomain (QueryDomain.Local))
+				return false;
+
 			return true;
 		}
 
@@ -145,10 +151,10 @@ namespace Beagle {
 			// FIXME: Evolution.BookQuery's bindings are all
 			// screwed up, so we can't construct compound queries.
 			// This will have to do for now.
-			Evolution.BookQuery[] ebqs = new Evolution.BookQuery [query.Parts.Count];
-			for (int i = 0; i < query.Parts.Count; ++i) {
-				string part = (string) query.Parts [i];
-				ebqs [i] = Evolution.BookQuery.AnyFieldContains (part);
+			Evolution.BookQuery[] ebqs = new Evolution.BookQuery [query.Text.Count];
+			for (int i = 0; i < query.Text.Count; ++i) {
+				string text = (string) query.Text [i];
+				ebqs [i] = Evolution.BookQuery.AnyFieldContains (text);
 			}
 
 			Evolution.BookQuery bq;

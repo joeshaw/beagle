@@ -84,7 +84,6 @@ namespace Beagle {
 
 		override protected bool RenderKey (string key, TileRenderContext ctx)
 		{
-			Console.WriteLine ("Rendering key '{0}'", key);
 			if (key == "Icon") {
 				string icon;
 

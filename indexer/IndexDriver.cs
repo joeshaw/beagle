@@ -5,23 +5,23 @@
 //
 
 //
-// Permission is hereby granted, free of charge, to any person obtaining a copy
-// of this software and associated documentation files (the "Software"), to deal
-// in the Software without restriction, including without limitation the rights
-// to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-// copies of the Software, and to permit persons to whom the Software is
-// furnished to do so, subject to the following conditions:
+// Permission is hereby granted, free of charge, to any person obtaining a
+// copy of this software and associated documentation files (the "Software"),
+// to deal in the Software without restriction, including without limitation
+// the rights to use, copy, modify, merge, publish, distribute, sublicense,
+// and/or sell copies of the Software, and to permit persons to whom the
+// Software is furnished to do so, subject to the following conditions:
 //
-// The above copyright notice and this permission notice shall be included in all
-// copies or substantial portions of the Software.
+// The above copyright notice and this permission notice shall be included in
+// all copies or substantial portions of the Software.
 //
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 // IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 // FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
 // AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-// SOFTWARE.
+// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+// FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
+// DEALINGS IN THE SOFTWARE.
 //
 
 
@@ -253,11 +253,11 @@ namespace Beagle {
 						     Analyzer analyzer)
 		{
 			LNS.BooleanQuery luceneQuery = null;
-			foreach (string part in query.Parts) {
+			foreach (string text in query.Text) {
 
 				// Use the analyzer to extract the query's tokens.
 				// Code taken from Lucene's query parser.
-				TokenStream source = analyzer.TokenStream (field, new StringReader (part));
+				TokenStream source = analyzer.TokenStream (field, new StringReader (text));
 				ArrayList tokens = new ArrayList ();
 
 				while (true) {
@@ -301,28 +301,44 @@ namespace Beagle {
 		
 		private LNS.Query ToLuceneQuery (Query query)
 		{
-			Analyzer analyzer = NewAnalyzer ();
 			LNS.BooleanQuery luceneQuery = new LNS.BooleanQuery ();
 			
-			LNS.Query metaQuery;
-			metaQuery = ToCoreLuceneQuery (query, "Properties", analyzer);
-			if (metaQuery == null)
-				return null;
-			metaQuery.SetBoost (2.5f);
-			luceneQuery.Add (metaQuery, false, false);
+			if (query.Text.Count > 0) {
+				Analyzer analyzer = NewAnalyzer ();
+				LNS.BooleanQuery textQuery = new LNS.BooleanQuery ();
+				LNS.Query metaQuery;
+				metaQuery = ToCoreLuceneQuery (query, "Properties", analyzer);
+				if (metaQuery == null)
+					return null;
+				metaQuery.SetBoost (2.5f);
+				textQuery.Add (metaQuery, false, false);
+				
+				LNS.Query hotQuery;
+				hotQuery = ToCoreLuceneQuery (query, "HotContent", analyzer);
+				if (hotQuery == null)
+					return null;
+				hotQuery.SetBoost (1.75f);
+				textQuery.Add (hotQuery, false, false);		
+				
+				LNS.Query contentQuery;
+				contentQuery = ToCoreLuceneQuery (query, "Content", analyzer);
+				if (contentQuery == null)
+					return null;
+				textQuery.Add (contentQuery, false, false);
 
-			LNS.Query hotQuery;
-			hotQuery = ToCoreLuceneQuery (query, "HotContent", analyzer);
-			if (hotQuery == null)
-				return null;
-			hotQuery.SetBoost (1.75f);
-			luceneQuery.Add (hotQuery, false, false);
-		
-			LNS.Query contentQuery;
-			contentQuery = ToCoreLuceneQuery (query, "Content", analyzer);
-			if (contentQuery == null)
-				return null;
-			luceneQuery.Add (contentQuery, false, false);
+				luceneQuery.Add (textQuery, true, false);
+			}
+
+			// If mime types are specified, we must match one of them.
+			if (query.MimeTypes.Count > 0) {
+				LNS.BooleanQuery mimeTypeQuery = new LNS.BooleanQuery ();
+				foreach (string mimeType in query.MimeTypes) {
+					Term t = new Term ("MimeType", mimeType);
+					LNS.Query q = new LNS.TermQuery (t);
+					mimeTypeQuery.Add (q, false, false);
+				}
+				luceneQuery.Add (mimeTypeQuery, true, false);
+			}
 			
 			return luceneQuery;
 		}
@@ -559,6 +575,10 @@ namespace Beagle {
 
 		public bool AcceptQuery (Query query)
 		{
+			if (! query.AllowsDomain (QueryDomain.Local)) {
+				return false;
+			}
+
 			return true;
 		}
 

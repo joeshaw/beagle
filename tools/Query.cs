@@ -31,6 +31,7 @@ using System.Threading;
 using Gtk;
 
 using Beagle;
+using BU = Beagle.Util;
 
 class QueryTool {
 
@@ -52,14 +53,23 @@ class QueryTool {
 		Console.WriteLine ();
 	}
 
-	static void Main (String[] args) 
+	static void Main (string[] args) 
 	{
 		Gtk.Application.Init ();
 
 		QueryDriver driver = new QueryDriver ();
-		driver.AutoPopulateHack ();
+		Query query = new Query ();
 
-		Query query = new Query (String.Join (" ", args));
+		int i = 0;
+		while (i < args.Length) {
+			if (args [i].StartsWith ("mimetype:")) {
+				string mt = args [i].Substring ("mimetype:".Length);
+				query.AddMimeType (mt);
+			} else {
+				query.AddTextRaw (args [i]);
+			}
+			++i;
+		}
 
 		QueryResult result = driver.Query (query);
 		result.Start ();
@@ -72,9 +82,6 @@ class QueryTool {
 		}
 
 		Console.WriteLine ("Total hits: {0}", result.Count);
-
-		// FIXME: Works around mono dangling thread bug.
-		Environment.Exit (0);
 	}
 
 
