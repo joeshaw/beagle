@@ -1031,7 +1031,7 @@ namespace Beagle.Daemon {
 			while (term_enum.Next ()) {
 				term = term_enum.Term ();
 				int freq = term_enum.DocFreq ();
-				writer.WriteLine ("{0} {1} {2}", term.Field (), term.Text (), freq);
+				writer.WriteLine ("{0} {1} {2}", term.Field (), freq, term.Text ());
 
 			}
 			reader.Close ();

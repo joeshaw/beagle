@@ -71,7 +71,7 @@ namespace Beagle.Daemon {
 			if (create_new_db) {
 				DoNonQuery ("CREATE TABLE uri_index (            " +
 					    "  uri      STRING UNIQUE NOT NULL,  " +
-					    "  filename STRING UNIQUE NOT NULL   " +
+					    "  filename STRING NOT NULL          " +
 					    ")");
 			}
 		}
@@ -154,7 +154,7 @@ namespace Beagle.Daemon {
 				throw new Exception (msg);
 			}
 
-			lock (connection) 
+			lock (connection)
 				Insert (uri, SELF_CACHE_TAG);
 		}
 

@@ -242,7 +242,6 @@ namespace Beagle.IndexHelper {
 			if (indexer != null) {
 				Indexable indexable = FilteredIndexable.NewFromEitherXml (indexable_as_xml);
 				next_flush.ToBeAdded.Add (indexable);
-				safe_to_close = false;
 			}
 		}
 
@@ -251,13 +250,13 @@ namespace Beagle.IndexHelper {
 			if (indexer != null) {
 				Uri uri = new Uri (uri_as_str, true);
 				next_flush.ToBeRemoved.Add (uri);
-				safe_to_close = false;
 			}
 		}
 		
 		override public void Flush ()
 		{
 			if (indexer != null) {
+				safe_to_close = false;
 				NextFlush this_flush = next_flush;
 				next_flush = NewNextFlush ();
 				indexer.Flush ();

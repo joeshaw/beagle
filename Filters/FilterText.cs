@@ -39,7 +39,7 @@ namespace Beagle.Filters {
 			OriginalIsText = true;
 		}
 
-		const long LENGTH_CUTOFF = 1024 * 1024 * 10; // 10 Mb
+		const long LENGTH_CUTOFF = 1024 * 1024 * 5; // 5 Mb
 
 		override protected void DoOpen (FileInfo file)
 		{

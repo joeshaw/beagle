@@ -162,7 +162,7 @@ namespace Beagle.Filters {
 
 		void AddTextForIndexing (string paramStr)
 		{
-			bool is_text_hot =  (bool) hot_nodes.Peek ();
+			bool is_text_hot = hot_nodes.Count > 0 ? (bool) hot_nodes.Peek () : false;
 			int sindex = 0;
 			string strTemp;
 			bool wasHot = false;
@@ -205,7 +205,7 @@ namespace Beagle.Filters {
 			// Enable *HOT* just before appending the text
 			// because, there can be some *Partial Texts* without
 			// *HOT* styles that needs to be appended.
-			if ((bool)hot_nodes.Peek() == true) {
+			if (hot_nodes.Count > 0 && (bool) hot_nodes.Peek() == true) {
 				if (!IsHot)
 					HotUp ();
 				bPartHotStyle = true;
@@ -324,7 +324,11 @@ namespace Beagle.Filters {
 					else if (NodeBreaksTextAfter (reader.Name))
 						AppendWhiteSpace ();
 
-					bool is_hot = (bool) hot_nodes.Pop ();
+					bool is_hot = false;
+					if (hot_nodes.Count > 0)
+						is_hot = (bool) hot_nodes.Pop ();
+					else
+						Logger.Log.Debug ("FilterOpenOffice: hot_nodes underflow in {0}", reader.Name);
 					
 					if (hot_container_nodes.Count > 0) {
 						string hot_container_tag = (string) hot_container_nodes.Peek ();

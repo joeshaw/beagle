@@ -114,6 +114,11 @@ namespace Beagle.Daemon.EvolutionMailDriver {
 			}
 		}
 
+		static public bool SupportedContentType (GMime.ContentType type)
+		{
+			return type.Type == "text" || type.Type == "Text" || type.Type == "TEXT";
+		}
+
 		protected class PartHandler {
 			private MultiReader reader = null;
 			private int depth = 0;
@@ -137,11 +142,11 @@ namespace Beagle.Daemon.EvolutionMailDriver {
 					GMime.Multipart multipart = (GMime.Multipart) part;
 
 					multipart.ForeachPart (new GMime.PartFunc (this.OnEachPart));
-				} else {
+				} else if (SupportedContentType (part.ContentType)) {
 					MemoryStream stream = new MemoryStream (part.GetData ());
 					StreamReader reader = new StreamReader (stream);
 					this.reader.Add (reader);
-				}
+				} 
 
 				--depth;
 			}

@@ -474,14 +474,27 @@ namespace Beagle.Daemon {
 			return null;
 		}
 
+		private string PullTextCarefully (ArrayList array)
+		{
+			string text = null;
+			try {	
+				text = PullFromArray (array);
+			} catch (Exception ex) {
+				Logger.Log.Debug ("Caught exception while pulling text in filter '{0}'", Name);
+				Logger.Log.Debug (ex);
+			}
+			return text;
+
+		}
+
 		private string PullText ()
 		{
-			return PullFromArray (textPool);
+			return PullTextCarefully (textPool);
 		}
 
 		private string PullHotText ()
 		{
-			return PullFromArray (hotPool);
+			return PullTextCarefully (hotPool);
 		}
 
 		public TextReader GetTextReader ()
