@@ -3,7 +3,7 @@ LIBFLAGS =			\
 	-target:exe		\
 	-L ../Lucene.Net	\
 	-r:Lucene.Net		\
-	-L ../filters		\
+	-L ../Filters		\
 	-r:Filters		\
 	-L ../indexer		\
 	-r:Indexer
