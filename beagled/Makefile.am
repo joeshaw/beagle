@@ -194,6 +194,7 @@ DAEMON_DLL_CSFILES = 				\
 	$(WEB_HISTORY_QUERYABLE_CSFILES)	\
 	$(GAIM_LOG_QUERYABLE_CSFILES)		\
 	$(srcdir)/DBusisms.cs			\
+	$(srcdir)/Ping.cs			\
 	$(srcdir)/FactoryImpl.cs		\
 	$(srcdir)/Relevancy.cs			\
 	$(srcdir)/IQueryResult.cs		\

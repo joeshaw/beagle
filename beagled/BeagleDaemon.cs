@@ -80,6 +80,10 @@ namespace Beagle.Daemon {
 			// service, and set up a BusDriver.
 			DBusisms.Init ();
 
+			// Construct and register our ping object.
+			Ping ping = new Ping ();
+			DBusisms.Service.RegisterObject (ping, "/com/novell/Beagle/Ping");
+
 			// Construct a query driver.  Among other things, this
 			// loads and initializes all of the IQueryables.
 			QueryDriver queryDriver = new QueryDriver ();

@@ -101,7 +101,10 @@ WRAPPERS = 				\
 
 #$(CRAWLER_RSS20_WRAPPER)	
 
-bin_SCRIPTS = $(WRAPPERS) $(UPDATE_SCRIPT)
+bin_SCRIPTS = 			\
+	$(WRAPPERS) 		\
+	$(UPDATE_SCRIPT)	\
+	beagle-ping
 
 all: $(TARGETS) $(WRAPPERS) $(UPDATE_SCRIPT)
 
