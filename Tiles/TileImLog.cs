@@ -52,7 +52,8 @@ namespace Beagle.Tile {
 			}
 
 			buddy = list.Search (Hit ["fixme:speakingto"]);
-			email = GetEmailForIm (Hit ["fixme:speakingto"]);
+			if (buddy != null)
+				email = GetEmailForName (buddy.Alias);
 		}
 
 		protected override void PopulateTemplate ()
@@ -95,18 +96,24 @@ namespace Beagle.Tile {
 		static bool ebook_failed = false;
 #endif
 
-		private string GetEmailForIm (string im)
+		private string GetEmailForName (string name)
 		{
 #if ENABLE_EVO_SHARP
+			if (name == null)
+				return null;
+
 			Evolution.Book addressbook = null;
+
 
 			// If we've previously failed to open the
 			// addressbook, don't keep trying.
 			if (ebook_failed)
 				return null;
 
-			if (buddy_emails.Contains (im)) {
-				string str = (string)buddy_emails[im];
+			// We keep a little cache so we don't have to query
+			// the addressbook too often.
+			if (buddy_emails.Contains (name)) {
+				string str = (string)buddy_emails[name];
 				return str != "" ? str : null;
 			}
 
@@ -122,25 +129,18 @@ namespace Beagle.Tile {
 
 			// Do a search.
 			string qstr =
-				String.Format ("(or " +
-					           "(is \"im_aim\" \"{0}\") " + 
-					           "(is \"im_yahoo\" \"{0}\") " +
-					           "(is \"im_msn\" \"{0}\") " + 
-					           "(is \"im_icq\" \"{0}\") " +
-					           "(is \"im_jabber\" \"{0}\") " + 
-					           "(is \"im_groupwise\" \"{0}\") " +
-					       ")",
-					       im);
+				String.Format ("(is \"full_name\" \"{0}\")", name);
 
 			Evolution.BookQuery query = Evolution.BookQuery.FromString (qstr);
 			Evolution.Contact [] matches = addressbook.GetContacts (query);
 			foreach (Evolution.Contact c in matches) {
 				Console.WriteLine ("FIXME: querying the evolution addressbook instead of using Lucene, this is slow and dumb");
-				Console.WriteLine ("Got match: " + c.FullName);
-				buddy_emails[im] = c.Email1;
+				Console.WriteLine ("Got match: {0} {1}", c.FullName, c.Email1);
+				if (c.Email1 != null)
+					buddy_emails[name] = c.Email1;
 				return c.Email1;
 			}
-			buddy_emails[im] = "";
+			buddy_emails[name] = "";
 #endif
 
 			return null;

@@ -162,6 +162,7 @@ namespace Beagle.Tile {
 
 			System.Console.WriteLine ("Looking for im name for {0}",
 						  email);
+			System.Console.WriteLine ("FIXME: This query is using the Evolution addressbook instead of querying Beagle directly.  This is slow, dumb, etc.");
 
 			string qstr = 
 				String.Format ("(is \"email\" \"{0}\")", email);
