@@ -137,6 +137,10 @@ namespace Camel {
 		{
 			return String.Format ("From: {0}\nTo: {1}\nSubject: {2}\nUID: {3}\n", from, to, subject, uid);
 		}
+
+		public DateTime Date {
+			get { return received.Ticks != 0 ? received : sent; }
+		}
 	}
 
 	public class MBoxMessageInfo : MessageInfo {
@@ -341,8 +345,12 @@ namespace Camel {
 			byte [] b = new byte [4];
 
 			f.Read (b, 0, 4);
+			long seconds = (b [0] << 24) | (b [1] << 16) | (b [2] << 8) | b [3];
 
-			return new DateTime (UnixBaseTicks).AddSeconds ((b [0] << 24) | (b [1] << 16) | (b [2] << 8) | b [3]);
+			if (seconds == 0)
+				return new DateTime (0);
+
+			return new DateTime (UnixBaseTicks).AddSeconds (seconds);
 		}
 
 		public static uint Offset (FileStream f)

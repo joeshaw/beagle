@@ -40,6 +40,11 @@ class IndexWebContentTool {
 		String uri = args[0];
 		String title = args[1];
 
+		// For security/privacy reasons, we don't index any
+		// SSL-encrypted pages.
+		if (uri.StartsWith ("https://"))
+			return;
+
 		Indexable indexable = new IndexableWeb (uri, title,
 							Console.OpenStandardInput ());
 

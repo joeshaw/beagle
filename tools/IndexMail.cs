@@ -336,7 +336,7 @@ namespace IndexMailTool {
 			Type = "MailMessage";
 			MimeType = null;
 
-			Timestamp = messageInfo.received;
+			Timestamp = messageInfo.Date;
 
 			// Assemble the metadata
 			this ["Folder"] = folderName;
@@ -344,6 +344,7 @@ namespace IndexMailTool {
 			this ["To"] =  messageInfo.to;
 			this ["From"] = messageInfo.from;
 			this ["Cc"] = messageInfo.cc;
+			this ["Received"] = messageInfo.received.ToString ();
 			this ["Sent"] = messageInfo.sent.ToString ();
 			this ["Mlist"] = messageInfo.mlist;
 			this ["Flags"] = Convert.ToString (messageInfo.flags);
@@ -464,10 +465,10 @@ namespace IndexMailTool {
 						       100.0 * count / summary.header.count);
 				++count;
 
-				if (lastTime < mi.received) {
+				if (lastTime < mi.Date) {
 
-					if (latestTime < mi.received)
-						latestTime = mi.received;
+					if (latestTime < mi.Date)
+						latestTime = mi.Date;
 
 					// If we haven't open the mbox yet, do it now
 					if (mboxStream == null)

@@ -12,6 +12,6 @@ program named 'beagle-epiphany-index' into the user's path can spy on all of
 their web traffic.  
 
 There is also the issue of private information (account numbers, etc.) ending
-up in the index.  Maybe the default behavior should be to not index https://
-sites.
+up in the index.  To try to avoid this, beagle-epiphany-index will not index
+https:// URIs.
 
