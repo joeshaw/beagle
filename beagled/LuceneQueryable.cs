@@ -124,10 +124,7 @@ namespace Beagle.Daemon {
 				added_uris = change_data.AddedUris;
 			}
 
-			ICollection hits = Driver.DoQuery (body, added_uris, new LuceneDriver.UriFilter (HitIsValid));
-
-			if (hits != null && hits.Count > 0)
-				query_result.Add (hits);
+			Driver.DoQuery (body, query_result, added_uris, new LuceneDriver.UriFilter (HitIsValid));
 		}
 
 		/////////////////////////////////////////

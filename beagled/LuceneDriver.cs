@@ -440,7 +440,7 @@ namespace Beagle.Daemon {
 
 		/////////////////////////////////////////////////////
 
-		public ICollection DoQuery (QueryBody body, ICollection list_of_uris, UriFilter uri_filter)
+		public void DoQuery (QueryBody body, IQueryResult result, ICollection list_of_uris, UriFilter uri_filter)
 		{
 			LNS.Searcher searcher = new LNS.IndexSearcher (Store);
 			LNS.Query query = ToLuceneQuery (body, list_of_uris);
@@ -449,7 +449,7 @@ namespace Beagle.Daemon {
 			int n_hits = hits.Length ();
 
 			if (n_hits == 0)
-				return new Hit [0];
+				return;
 
 			ArrayList filtered_hits = new ArrayList ();
 			for (int i = 0; i < n_hits; ++i) {
@@ -462,11 +462,15 @@ namespace Beagle.Daemon {
 				Hit hit = FromLuceneDocToHit (doc, hits.Id (i), hits.Score (i));
 				if (hit != null)
 					filtered_hits.Add (hit);
+
+				if ((i + 1) % 200 == 0) {
+					result.Add (filtered_hits);
+					filtered_hits = new ArrayList ();
+				}
 			}
+			result.Add (filtered_hits);
 
 			searcher.Close ();
-
-			return filtered_hits;
 		}
 
 		public ICollection DoQueryByUri (ICollection list_of_uris)
