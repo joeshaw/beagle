@@ -29,18 +29,13 @@ using System;
 using System.Collections;
 using System.IO;
 
-using Beagle.Core;
+using Beagle;
 
 class IndexWebContentTool {
 
 	public class IndexableWeb : Indexable {
-		
-		Stream stream;
-		ArrayList properties = new ArrayList ();
-		Filter filter;
-		
-		public IndexableWeb (String uri,
-				     String title,
+		public IndexableWeb (string uri,
+				     string title,
 				     Stream contentStream)
 		{
 			Uri = uri;
@@ -48,32 +43,25 @@ class IndexWebContentTool {
 			MimeType = "text/html";
 			Timestamp = DateTime.Now;
 
-			stream = contentStream;
+			System.Console.WriteLine ("getting reader");
+			SetTextReader (new StreamReader (contentStream));
 
 			if (title != null) 
-				properties.Add (Property.New ("dc:title", title));
-
-			filter = Filter.FilterFromMimeType ("text/html");
+				AddProperty (Property.New ("dc:title", title));
 		}
 
-		override public IEnumerable Properties {
-			get { return properties; }
-		}
-
-		override protected void DoBuild ()
+		public IndexableWeb (string uri,
+				     string title,
+				     string filename,
+				     bool deleteSource)
 		{
-			Console.WriteLine ("Filter: " + filter);
-			filter.Open (stream);
-		}
-
-		override public TextReader GetTextReader ()
-		{
-			return filter.GetTextReader ();
-		}
-
-		override public TextReader GetHotTextReader ()
-		{
-			return filter.GetHotTextReader ();
+			Uri = uri;
+			Type = "WebHistory";
+			MimeType = "text/html";
+			Timestamp = DateTime.Now;
+			
+			ContentUri = "file://" + Path.GetFullPath (filename);
+			DeleteContent = deleteSource;
 		}
 	}
 
@@ -140,14 +128,17 @@ class IndexWebContentTool {
 		Indexable indexable;
 
 		if (sourcefile != null) {
+			
 			if (!File.Exists (sourcefile)) {
 				Console.WriteLine ("ERROR: sourcefile '{0}' does not exist!",
 						   sourcefile);
 				Environment.Exit (1);
 			}
 
-			Stream sourcestream = File.Open (sourcefile, FileMode.Open);
-			indexable = new IndexableWeb (uri, title, sourcestream);
+			indexable = new IndexableWeb (uri, 
+						      title, 
+						      sourcefile,
+						      deletesourcefile);
 		} else {
 			Stream stdin = Console.OpenStandardInput ();
 			if (stdin == null) {
@@ -160,18 +151,13 @@ class IndexWebContentTool {
 		}
 
 		try {
-			IndexDriver driver = new IndexDriver ();
-			driver.Add (indexable);
+			Indexer indexer = Indexer.Get ();
+			System.Console.WriteLine ("Indexing");
+			indexer.Index (indexable);
 		} catch (Exception e) {
 			Console.WriteLine ("ERROR: Indexing failed:");
 			Console.Write (e);
 			Environment.Exit (1);
-		} finally {
-			// If passed --deletesourcefile, delete sourcefile after indexing
-			if (sourcefile != null && deletesourcefile) {
-				Console.WriteLine ("IndexWebContent.exe: Removing source file.");
-				File.Delete (sourcefile);
-			}
 		}
 	}
 }

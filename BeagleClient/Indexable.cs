@@ -107,7 +107,7 @@ namespace Beagle {
 
 		public virtual TextReader GetTextReader ()
 		{
-			return null;
+			return textReader;
 		}
 		
 		public void SetTextReader (TextReader reader)
@@ -192,13 +192,14 @@ namespace Beagle {
 			FileStream fileStream = File.OpenWrite (filename);
 			BufferedStream bufferedStream = new BufferedStream (fileStream);
 			StreamWriter writer = new StreamWriter (bufferedStream);
-			char []buffer = new char[1024];
+			const int BUFFER_SIZE = 1892;
+			char []buffer = new char[BUFFER_SIZE];
 			
-			int read = textReader.Read (buffer, 0, 1024);
+			int read = textReader.Read (buffer, 0, BUFFER_SIZE);
 			
 			while (read > 0) {
 				writer.Write (buffer, 0, read);
-				read = textReader.Read (buffer, 0, 1024);
+				read = textReader.Read (buffer, 0, BUFFER_SIZE);
 			}
 			
 			writer.Close ();
@@ -214,6 +215,7 @@ namespace Beagle {
 		public void ReadFromXml (string text)
 		{
 			XmlTextReader reader = new XmlTextReader (new StringReader (text));
+			System.Console.WriteLine ("{0}", text);
 			ReadFromXml (reader);
 		}
 
