@@ -1,3 +1,9 @@
+2004-11-09  Tuomas Kuosmanen  <tigert@novell.com>
+
+	* Tiles/template-page.css: prettified stuff, indented the contents
+	relative to the title line, so it is easier to scan through the
+	list..
+
 2004-11-04  Tuomas Kuosmanen  <tigert@tigert.priv>
 
 	* Tiles/template-page.css (tr): removed the extra padding from the

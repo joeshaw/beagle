@@ -55,41 +55,48 @@ td.content {
 }
 
 #hilight {
-  background-color: #cc9900;
+  background-color: #ffee66;
+  color: #000000;
+  padding-left: 2px;
+  padding-right: 2px;
+  margin-left: -2px;
+  margin-right: -2px;
 }
 
 .name { 
-  font-size: 1.2em;
+  font-size: 1.1em;
   font-weight: bold;
   color: black;
-  line-height: 1.5em;
 }
 
 .date { 
-  font-size: 1em;
+  font-size: 0.8em;
   color: black;
+  margin-bottom: 0.6em;
+  margin-top: 0.2em;
+  margin-left: 16px;
 }
 
 .snippet { 
-  font-size: 1em;
+  font-size: 0.8em;
   color: gray;
+  margin-left:16px;
 }
 
-ul, li { 
-  margin-left: 6px;
+ul, li {
+  margin-left: 8px;
   padding: 0px;
 }
 
 .actions { 
   font-size:0.8em;
+  line-height: 1.5em;
 }
 
 .actions li {
   display: inline;
-  padding-top: 3px;
-  padding-bottom: 3px;
   padding-left: 20px;
-  padding-right: 6px;
+  padding-right: 12px;
   background: url(@stock%stock_right@) no-repeat;
   -moz-opacity: 0.2;
 }
@@ -115,7 +122,7 @@ tr:hover .actions li {
 }
 
 #message {
-  background: url(@image%im-aim.png@) no-repeat;
+  background: url(@stock%im-yahoo@) no-repeat;
 }
 
 #reveal {
