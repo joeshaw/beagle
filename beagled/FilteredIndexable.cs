@@ -39,11 +39,16 @@ namespace Beagle.Daemon {
 
 		Flavor flavor;
 		Filter filter;
+		bool crawl_mode;
 
-		public FilteredIndexable (Uri _uri) : base (_uri)
+		public FilteredIndexable (Uri uri, bool crawl_mode) : base (uri)
 		{
+			this.crawl_mode = crawl_mode;
 			BuildFromFile ();
 		}
+
+		public FilteredIndexable (Uri uri) : this (uri, false)
+		{ }
 
 		public FilteredIndexable ()
 		{
@@ -229,6 +234,8 @@ namespace Beagle.Daemon {
 			filter = Filter.FromFlavor (flavor);
 
 			if (filter != null) {
+				if (crawl_mode)
+					filter.EnableCrawlMode ();
 				filter.Open (new FileInfo (path));
 				foreach (Property prop in filter.Properties)
 					AddProperty (prop);

@@ -80,10 +80,10 @@ namespace Beagle.Daemon.FileSystemQueryable {
 			return true;
 		}
 
-		private static Indexable FileToIndexable (string path)
+		private static Indexable FileToIndexable (string path, bool crawl_mode)
 		{
 			Uri uri = UriFu.PathToFileUri (path);
-			return new FilteredIndexable (uri);
+			return new FilteredIndexable (uri, crawl_mode);
 		}
 
 		//////////////////////////////////////////////////////////////////////////
@@ -94,7 +94,7 @@ namespace Beagle.Daemon.FileSystemQueryable {
 				Scheduler.Task task;
 				Indexable indexable;
 
-				indexable = FileToIndexable (path);
+				indexable = FileToIndexable (path, false);
 				task = NewAddTask (indexable);
 				task.Priority = Scheduler.Priority.Immediate;
 				
@@ -127,7 +127,8 @@ namespace Beagle.Daemon.FileSystemQueryable {
 			// Index the directory itself...
 			if (FileNeedsIndexing (dir.Path)) {
 				
-				indexable = FileToIndexable (dir.Path);
+				/* Enable crawl mode on the indexable */
+				indexable = FileToIndexable (dir.Path, true);
 				
 				task = NewAddTask (indexable);
 				task.AddTaskGroup (group);
@@ -143,7 +144,8 @@ namespace Beagle.Daemon.FileSystemQueryable {
 			foreach (FileInfo file in info.GetFiles ()) {
 				if (FileNeedsIndexing (file.FullName)) {
 					
-					indexable = FileToIndexable (file.FullName);
+					/* Enable crawl mode */
+					indexable = FileToIndexable (file.FullName, true);
 				
 					task = NewAddTask (indexable);
 					task.AddTaskGroup (group);
