@@ -272,12 +272,6 @@ LAUNCHER_QUERYABLE_CSFILES =				\
 	$(launcherqueryable)/LauncherCrawler.cs		\
 	$(launcherqueryable)/LauncherQueryable.cs
 
-
-
-#	$(EVO_MAIL_DRIVER_CSFILES)		\
-#		$(TOMBOY_QUERYABLE_CSFILES)		\
-#
-
 #calendarqueryable = $(srcdir)/CalendarQueryable
 #CALENDAR_QUERYABLE_CSFILES =				\
 #	$(calendarqueryable)/CalendarQueryable.cs	\
