@@ -42,6 +42,8 @@ namespace Beagle.IndexHelper {
 		IIndexer indexer;
 		NextFlush next_flush;
 		bool is_open;
+		bool queued_close;
+		bool safe_to_close;
 		
 		public override event ChangedHandler ChangedEvent;
 		public override event FlushCompleteHandler FlushCompleteEvent;
@@ -77,6 +79,7 @@ namespace Beagle.IndexHelper {
 			private bool FlushCompleteIdleHandler ()
 			{
 				Impl.FlushComplete ();
+				Impl.CloseIfQueued ();
 				return false;
 			}
 #endif
@@ -88,6 +91,8 @@ namespace Beagle.IndexHelper {
 				foreach (Uri uri in ToBeRemoved)
 					Indexer.Remove (uri);
 				Indexer.Flush ();
+				if (Impl.CloseIfQueued ())
+					return;
 #if DBUS_IS_BROKEN_BROKEN_BROKEN
 				GLib.Idle.Add (new GLib.IdleHandler (FlushCompleteIdleHandler));
 #else
@@ -108,6 +113,7 @@ namespace Beagle.IndexHelper {
 		{
 			Logger.Log.Debug ("Flush Complete!");
 			FlushCompleteEvent ();
+			CloseIfQueued ();
 		}
 		
 
@@ -130,11 +136,11 @@ namespace Beagle.IndexHelper {
 			return path;
 		}
 
-		static public void UnconditionallyCloseAll ()
+		static public void QueueCloseForAll ()
 		{
-			Logger.Log.Debug ("RemoteIndexerImpl.UnconditionallyCloseAll");
+			Logger.Log.Debug ("RemoteIndexerImpl.QueueCloseForAll called");
 			foreach (RemoteIndexerImpl impl in remote_indexer_cache.Values)
-				impl.Close ();
+				impl.QueueClose ();
 		}
 
 		/////////////////////////////////////////////////////////////////////////////////////
@@ -142,23 +148,56 @@ namespace Beagle.IndexHelper {
 		override public bool Open ()
 		{
 			lock (this) {
-				Logger.Log.Debug ("Open!");
+				Logger.Log.Debug ("Open on {0}", name);
 				if (is_open)
 					return true; // FIXME: Is this right?  Does it matter?
 				is_open = true;
+				safe_to_close = false;
 				return Shutdown.WorkerStart (this, name);
+			}
+		}
+
+		private void CloseUnlocked ()
+		{
+			Logger.Log.Debug ("Close on {0}", name);
+			if (is_open) {
+				Shutdown.WorkerFinished (this);
+				is_open = false;
+				queued_close = false;
 			}
 		}
 
 		override public void Close ()
 		{
+			lock (this)
+				CloseUnlocked ();
+		}
+
+		private void QueueClose ()
+		{
 			lock (this) {
-				Logger.Log.Debug ("Close!");
-				if (is_open) {
-					Shutdown.WorkerFinished (this);
-					is_open = false;
+				if (safe_to_close) {
+					Logger.Log.Debug ("Safe-to-close QueueClosed on {0}", name);
+					CloseUnlocked ();
+				} else if (is_open) {
+					Logger.Log.Debug ("QueueClosed on {0}", name);
+					queued_close = true;
 				}
 			}
+		}
+
+		private bool CloseIfQueued ()
+		{
+			lock (this) {
+				Logger.Log.Debug ("CloseIfQueued on {0}", name);
+				safe_to_close = true;
+				if (queued_close) {
+					Logger.Log.Debug ("Actuallyed Closed on CloseIfQueued on {0}", name);
+					CloseUnlocked ();
+					return true;
+				}
+			}
+			return false;
 		}
 
 		/////////////////////////////////////////////////////////////////////////////////////

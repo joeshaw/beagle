@@ -59,23 +59,27 @@ namespace Beagle.Daemon {
 
 		private RemoteIndexerProxy Proxy {
 			get {
-				if (proxy == null) {
-					proxy = IndexHelperFu.NewRemoteIndexerProxy (remote_index_name);
-					proxy.ChangedEvent += OnProxyChanged;
-					proxy.FlushCompleteEvent += OnFlushComplete;
-					add_remove_count = 0;
+				lock (this) {
+					if (proxy == null) {
+						proxy = IndexHelperFu.NewRemoteIndexerProxy (remote_index_name);
+						proxy.ChangedEvent += OnProxyChanged;
+						proxy.FlushCompleteEvent += OnFlushComplete;
+						add_remove_count = 0;
+					}
+					
+					return proxy;
 				}
-
-				return proxy;
 			}
 		}
 
 		private void UnsetProxy ()
 		{
-			if (proxy != null) {
-				proxy.ChangedEvent -= OnProxyChanged;
-				proxy.FlushCompleteEvent -= OnFlushComplete;
-				proxy = null;
+			lock (this) {
+				if (proxy != null) {
+					proxy.ChangedEvent -= OnProxyChanged;
+					proxy.FlushCompleteEvent -= OnFlushComplete;
+					proxy = null;
+				}
 			}
 		}
 

@@ -101,11 +101,15 @@ namespace Beagle.IndexHelper {
 			if (name != Beagle.DBusisms.Name)
 				return;
 
+#if false
+			// FIXME: This is disabled for now.  We'll let BeagleDaemonWatcherTimeoutHandler
+			// deal with our shutdowns for us.
 			if (new_owner == "") {
-				Logger.Log.Debug ("Shutting down on OnNameOwnerChanged");
-				RemoteIndexerImpl.UnconditionallyCloseAll ();
-				Shutdown.BeginShutdown ();
+				RemoteIndexerImpl.QueueCloseForAll ();
+				Thread th = new Thread (new ThreadStart (Shutdown.BeginShutdown));
+				th
 			}
+#endif
 		}
 
 		static bool BeagleDaemonWatcherTimeoutHandler ()
@@ -116,7 +120,7 @@ namespace Beagle.IndexHelper {
 			// dbus or dbus-sharp bug.
 			if (! Beagle.Daemon.DBusisms.TestService (Beagle.DBusisms.Name)) {
 				Logger.Log.Debug ("Shutting down on failed TestService in BeagleDaemonWatcherTimeoutHandler");
-				RemoteIndexerImpl.UnconditionallyCloseAll ();
+				RemoteIndexerImpl.QueueCloseForAll ();
 				Shutdown.BeginShutdown ();
 				return false;
 			}
