@@ -107,11 +107,8 @@ namespace Best {
 		{
 			if (!win.WindowIsVisible) {
 				win.Show ();
-				win.Move (PosX, PosY);
-				win.Present ();
 				win.FocusEntry ();
 			} else {
-				win.GetPosition (out PosX, out PosY);
 				win.Hide ();
 			}
 		}
@@ -122,11 +119,8 @@ namespace Best {
 			if (eb.Button == 1) {
 				if (! win.WindowIsVisible) {
 					win.Show ();
-					win.Move (PosX, PosY);
-					win.Present ();
 					win.FocusEntry ();
 				} else {
-					win.GetPosition (out PosX, out PosY);
 					win.Hide ();
 				}
 			} else {
@@ -153,9 +147,6 @@ namespace Best {
 						
 			if (! win.Visible) {
 				win.Show ();
-				win.Move (PosX, PosY);
-				win.Present ();
-				
 				win.QuickSearch (quickQuery);
 			} else {
 				win.QuickSearch (quickQuery);

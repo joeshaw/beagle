@@ -148,6 +148,34 @@ namespace Best {
 
 		//////////////////////////
 
+		int posX = 0, posY = 0;
+
+		public new void Show ()
+		{
+			base.Show ();	
+			
+			Move (posX, posY);
+			Present ();
+		}
+
+		public new void Hide ()
+		{
+			// FIXME: Hack, why does Hide () gets invoked twice, the second time with (0,0) as window position?
+			
+			int new_posX = 0, new_posY = 0;
+
+			GetPosition (out new_posX, out new_posY);
+
+			if (new_posX != 0 &&  new_posY != 0) {
+				posX = new_posX;
+				posY = new_posY;
+			}
+
+			base.Hide ();
+		}
+
+		//////////////////////////
+
 		Query query = null;
 		string hit_type = null;
 		
@@ -175,7 +203,7 @@ namespace Best {
 		public bool WindowIsVisible;
 
 		private void MapIt (object o, MapEventArgs args)
-		{
+		{			
 			WindowIsVisible = true;
 		}
 
