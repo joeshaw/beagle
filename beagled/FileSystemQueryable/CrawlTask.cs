@@ -25,6 +25,7 @@
 //
 
 using System;
+using System.IO;
 
 using Beagle.Util;
 using Beagle.Daemon;
@@ -80,6 +81,25 @@ namespace Beagle.Daemon.FileSystemQueryable {
 
 			Logger.Log.Debug ("Crawl Task Scheduling {0} (state={1})", next_dir.FullName, next_dir.State);
 
+			// Check the next directory for new subdirectories.  If we find any,
+			// add them to the model.
+			try {
+				DirectoryInfo next_dir_info = new DirectoryInfo (next_dir.FullName);
+				foreach (DirectoryInfo subdir in next_dir_info.GetDirectories ()) {
+					Logger.Log.Debug ("Looking at {0} in {1}", subdir.Name, next_dir_info.FullName);
+					if (! next_dir.HasChildWithName (subdir.Name)
+					    && ! model.Ignore (subdir.FullName)) {
+						Logger.Log.Debug ("Found new subdir {0} under {1}",
+								  subdir.Name, next_dir.FullName);
+						model.AddChild (next_dir, subdir.Name);
+					}
+				}
+			} catch (DirectoryNotFoundException ex) {
+				Logger.Log.Debug ("Caught exception, deleting {0} from model", next_dir.FullName);
+				model.Delete (next_dir);
+				next_dir = null;
+			}
+
 			// We want this task to get re-scheduled after it is run.
 			Reschedule = true;
 
@@ -87,6 +107,9 @@ namespace Beagle.Daemon.FileSystemQueryable {
 			// maybe wait a little bit extra.
 			if (Environment.GetEnvironmentVariable ("BEAGLE_EXERCISE_THE_DOG") == null)
 				TriggerTime = DateTime.Now.AddSeconds (5);
+
+			if (next_dir == null)
+				return;
 
 			// Set up a task group to mark the time on the directory
 			// after we finish crawling it.

@@ -314,7 +314,7 @@ namespace Beagle.Daemon.FileSystemQueryable {
 		public void Drop (Guid id)
 		{
 			if (Debug)
-				Logger.Log.Debug ("UniqueIdStore.Drop: {0}", id);
+				Logger.Log.Debug ("UniqueIdStore.Drop: {0}", GuidFu.ToShortString (id));
 			
 			lock (connection) {
 				DoNonQuery ("DELETE FROM unique_ids WHERE id='{0}'", GuidFu.ToShortString (id));

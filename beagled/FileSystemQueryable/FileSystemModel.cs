@@ -35,6 +35,8 @@ namespace Beagle.Daemon.FileSystemQueryable {
 
 	public class FileSystemModel : IFileAttributesStore {
 
+		static public bool Debug = true;
+
 		public enum State {
 			Clean         = 0,
 			PossiblyClean = 1, // It was clean last time we checked...
@@ -201,12 +203,12 @@ namespace Beagle.Daemon.FileSystemQueryable {
 				if (cmp != 0)
 					return cmp;
 
-				cmp = other.Depth - this.Depth;
-				if (cmp != 0)
-					return cmp;
-				
 				cmp = DateTime.Compare (other.last_crawl_time,
 							this.last_crawl_time);
+				if (cmp != 0)
+					return cmp;
+
+				cmp = other.Depth - this.Depth;
 				if (cmp != 0)
 					return cmp;
 				
@@ -593,17 +595,20 @@ namespace Beagle.Daemon.FileSystemQueryable {
 		// known name.  Otherwise it is null.
 		public RequiredAction DetermineRequiredAction (string path, out string previous_path)
 		{
-			Logger.Log.Debug ("*** What should we do with {0}?", path);
+			if (Debug)
+				Logger.Log.Debug ("*** What should we do with {0}?", path);
 			previous_path = null;
 
 			if (Ignore (path)) {
-				Logger.Log.Debug ("*** Ignoring {0}", path);
+				if (Debug)
+					Logger.Log.Debug ("*** Ignoring {0}", path);
 				return RequiredAction.None;
 			}
 
 			FileAttributes attr = this.backing_store.Read (path);
 			if (attr == null) {
-				Logger.Log.Debug ("*** No attributes on {0}", path);
+				if (Debug)
+					Logger.Log.Debug ("*** No attributes on {0}", path);
 				return RequiredAction.Index;
 			}
 
@@ -619,7 +624,8 @@ namespace Beagle.Daemon.FileSystemQueryable {
 			// If the file has changed since we put on the
 			// attributes, index.
 			if (attr.LastWriteTime < stat.MTime) {
-				Logger.Log.Debug ("*** mtime has changed on {0}", path);
+				if (Debug)
+					Logger.Log.Debug ("*** mtime has changed on {0}", path);
 				return RequiredAction.Index;
 			}
 
@@ -627,18 +633,22 @@ namespace Beagle.Daemon.FileSystemQueryable {
 			// indexed, we might have been moved.
 			if (attr.LastIndexedTime < stat.CTime) {
 				string path_from_uid = PathFromUid (attr.UniqueId);
-				Logger.Log.Debug ("CTime check {0} {1} '{2}'", attr.LastIndexedTime, stat.CTime, path_from_uid);
+				if (Debug)
+					Logger.Log.Debug ("CTime check {0} {1} '{2}'", attr.LastIndexedTime, stat.CTime, path_from_uid);
 				if (path_from_uid == null) {
-					Logger.Log.Debug ("*** Unfamiliar Uid, indexing {0}", path);
+					if (Debug)
+						Logger.Log.Debug ("*** Unfamiliar Uid, indexing {0}", path);
 					return RequiredAction.Index;
 				} else if (path_from_uid != path) {
-					Logger.Log.Debug ("*** Path has changed, renaming {0} => {1}", previous_path, path);
+					if (Debug)
+						Logger.Log.Debug ("*** Path has changed, renaming {0} => {1}", previous_path, path);
 					previous_path = path_from_uid;
 					return RequiredAction.Rename;
 				}
 			}
 
-			Logger.Log.Debug ("*** Doing nothing to {0}", path);
+			if (Debug)
+				Logger.Log.Debug ("*** Doing nothing to {0}", path);
 
 			return RequiredAction.None;
 		}
