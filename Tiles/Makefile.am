@@ -18,6 +18,7 @@ CSFILES =					\
 	$(srcdir)/TileFile.cs			\
 	$(srcdir)/TileFolder.cs			\
 	$(srcdir)/TileGoogle.cs			\
+	$(srcdir)/TileBugzilla.cs		\
 	$(srcdir)/TileImLog.cs			\
 	$(srcdir)/TileMailMessage.cs		\
 	$(srcdir)/TileMusic.cs			\
@@ -41,6 +42,7 @@ RESOURCEFILES =					\
 	$(srcdir)/template-file.html		\
 	$(srcdir)/template-folder.html		\
 	$(srcdir)/template-google.html		\
+	$(srcdir)/template-bugzilla.html	\
 	$(srcdir)/template-im-log.html		\
 	$(srcdir)/template-mail-message.html	\
 	$(srcdir)/template-music.html		\
