@@ -1,5 +1,14 @@
 2005-02-23  Veerapuram Varadhan	 <vvaradhan@novell.com>
 
+	* Filters/FilterPPT.cs: A probable correct way of opening the
+	stream irrespective of the versions of file.  Also, enable it for
+	showing snippets.
+	* Filters/FilterOpenOffice.cs: Fix part of
+	http://bugzilla.gnome.org/show_bug.cgi?id=157100, index
+	hyperlinks.
+
+2005-02-23  Veerapuram Varadhan	 <vvaradhan@novell.com>
+
 	* Filters/FilterPPT.cs: Fix for
 	http://bugzilla.gnome.org/show_bug.cgi?id=168028.  Implemented
 	support for *DUAL STORAGE* PPT files.

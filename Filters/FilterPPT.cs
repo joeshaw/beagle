@@ -395,6 +395,7 @@ namespace Beagle.Filters {
 			textType = TextType.Invalid;
 			file = null;
 			FileName = null;
+			SnippetMode = true;
 		}
 
 		private int ParseElement (Input stream)
@@ -456,7 +457,7 @@ namespace Beagle.Filters {
 						if (IsHot)
 							HotDown ();
 						else
-							AppendWhiteSpace ();
+							AppendStructuralBreak ();
 					}  else if (opcode == RecordType.TypeCode.TextHeaderAtom) {
 						data = stream.Read (4);
 						textType = (TextType) GetInt32 (data, 0);
@@ -576,23 +577,7 @@ namespace Beagle.Filters {
 				return;
 
 			Input stream = null;
-			Input dualStorTemp = null;
-			Infile dualStorageFile = null;
-			
-			// PPT 95/97-2000 format contains a "PP97_DUALSTORAGE", which is required
-			// to index PPT 97-2000 files.
-			// We don't support PPT 95 files, however, we happily accept patches ;-)
-
-			if ((dualStorTemp = file.ChildByName ("PP97_DUALSTORAGE")) != null) {
-				// "PP97_DUALSTORAGE" is a storage containing some streams
-				if (dualStorTemp.Handle != IntPtr.Zero)
-					dualStorageFile = (Gsf.Infile) GLib.Object.GetObject (dualStorTemp.Handle);
-				if (dualStorageFile != null)
-					stream = dualStorageFile.ChildByName ("PowerPoint Document");
-			} else if ((dualStorTemp = file.ChildByName ("Header")) != null) {
-				Logger.Log.Error ("{0} is a PPT 95 file.  Beagle does not support PPT 95 files. Skipping...", FileName);
-			} else
-				stream = file.ChildByName ("PowerPoint Document");
+			stream = file.ChildByName ("PowerPoint Document");
 
 			if (stream != null) {
 
@@ -622,8 +607,24 @@ namespace Beagle.Filters {
 			if (input != null) {
 				input = input.Uncompress();
 				file = new InfileMSOle (input);
-			} else 
+			} else {
 				Logger.Log.Error ("Unable to open {0}", info.FullName);
+				Finished ();
+			}
+
+			// PPT 95/97-2000 format contains a "PP97_DUALSTORAGE", which is required
+			// to index PPT 97-2000 files.
+			// We don't support PPT 95 files, however, we happily accept patches ;-)
+
+			Input dualStorTemp = null;
+			if ((dualStorTemp = file.ChildByName ("PP97_DUALSTORAGE")) != null) {
+				// "PP97_DUALSTORAGE" is a storage containing some streams
+				if (dualStorTemp.Handle != IntPtr.Zero)
+					file = (Gsf.Infile) GLib.Object.GetObject (dualStorTemp.Handle);
+			} else if ((dualStorTemp = file.ChildByName ("Header")) != null) {
+				Logger.Log.Error ("{0} is a PPT 95 file.  Beagle does not support PPT 95 files. Skipping...", FileName);
+				Finished ();
+			}
 		}
 
 		// FIXME: These are utility functions and can be useful 

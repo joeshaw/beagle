@@ -99,11 +99,18 @@ namespace Beagle.Filters {
 				hotStyles[style_name] = true;
 		}
 
+		static bool NodeIsLink (String nodeName)
+		{
+			return nodeName == "text:a";
+		}
+
 		static bool NodeIsHot (String nodeName)
 		{
 			return nodeName == "text:h";
 		}
 
+		// These container tags allows multiple-lines of texts and 
+		// all of them should be marked *HOT* and hence called Container ;-)
 		static bool NodeIsHotContainer (String nodeName)
 		{
 			return nodeName == "office:annotation" ||
@@ -258,6 +265,11 @@ namespace Beagle.Filters {
 						isHot = true;
 					} else if (NodeIsHotContainer (reader.Name)) {
 						hot_container_nodes.Push (reader.Name);
+					} else if (NodeIsLink (reader.Name)) {
+						string attr = reader.GetAttribute ("xlink:href");
+						AppendText (attr);
+						AppendWhiteSpace ();
+						continue;
 					} else {
 						bool has_attr = reader.MoveToFirstAttribute ();
 						while (has_attr) {
