@@ -149,7 +149,7 @@ namespace Beagle.Daemon {
 		{
 			while (! Shutdown.ShutdownRequested) {
 				Logger.Log.Debug ("Memory usage: VmSize={0}  GC.GetTotalMemory={1}",
-						  SystemInformation.VmSize (),
+						  SystemInformation.VmSize,
 						  GC.GetTotalMemory (false));
 				Thread.Sleep (1000);
 			}

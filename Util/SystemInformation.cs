@@ -105,7 +105,7 @@ namespace Beagle.Util {
 			External = 2
 		}
 
-		[DllImport ("libscreensaverglue.so")]
+		[DllImport ("libsysteminfoglue.so")]
 		extern static unsafe int screensaver_info (ScreenSaverState *state,
 							   ScreenSaverKind *kind,
 							   ulong *til_or_since,
@@ -205,40 +205,26 @@ namespace Beagle.Util {
 
 		///////////////////////////////////////////////////////////////
 
-		static public int VmSize ()
-		{
-			string filename = String.Format ("/proc/{0}/status",
-							 Mono.Posix.Syscall.getpid ());
-			TextReader reader = new StreamReader (filename);
+		[DllImport ("libsysteminfoglue.so")]
+		extern static int get_vmsize ();
 
-			int vm_size = -1;
-
-			string line;
-			while ( (line = reader.ReadLine ()) != null) {
-				if (line.Substring (0, 7) == "VmSize:") {
-					line = line.Substring (7, line.Length - 10).Trim ();
-					vm_size = Int32.Parse (line);
-					break;
-				}
-			}
-			reader.Close ();
-
-			return vm_size;
+		static public int VmSize {
+			get { return get_vmsize (); }
 		}
-			
 
 #if false
 		static void Main ()
 		{
 			Gtk.Application.Init ();
 			while (true) {
-				Console.WriteLine ("{0} {1} {2} {3} {4} {5}",
+				Console.WriteLine ("{0} {1} {2} {3} {4} {5} {6}",
 						   LoadAverageOneMinute,
 						   LoadAverageFiveMinute,
 						   LoadAverageFifteenMinute,
 						   ScreenSaverRunning,
 						   InputIdleTime,
-						   UsingBattery);
+						   UsingBattery,
+						   VmSize);
 				System.Threading.Thread.Sleep (1000);
 			}
 		}

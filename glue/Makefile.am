@@ -24,7 +24,7 @@ gluelibdir = $(pkglibdir)
 
 gluelib_LTLIBRARIES = 		\
 	libinotifyglue.la 	\
-	libscreensaverglue.la	\
+	libsysteminfoglue.la	\
 	libgeckoglue.la         \
 	libkeyglue.la		\
 	libtrayiconglue.la
@@ -38,10 +38,10 @@ libinotifyglue_la_SOURCES =	\
 	inotify.h		\
 	inotify-glue.c
 
-libscreensaverglue_la_SOURCES = \
-	screensaver-glue.c
+libsysteminfoglue_la_SOURCES =	\
+	vmsize-glue.c
 
-libscreensaverglue_la_LIBADD = @X_LIBS@
+libsysteminfoglue_la_LIBADD = @X_LIBS@
 
 libgeckoglue_la_SOURCES=        \
 	gecko-utils.h           \

@@ -1,7 +1,7 @@
 /* -*- Mode: C; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4 -*- */
 
 /*
- * screensaver-glue.c
+ * vmsize-glue.c
  *
  * Copyright (C) 2004 Novell, Inc.
  *
@@ -27,38 +27,46 @@
  * DEALINGS IN THE SOFTWARE.
  */
 
-#include <gdk/gdk.h>
-#include <gdk/gdkx.h>
-#include <X11/Xlib.h>
-#include <X11/extensions/scrnsaver.h>
+#include <string.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <fcntl.h>
+#include <unistd.h>
+#include <stdlib.h>
 
+/*
+  FIXME: It is not safe to call this function from multiple threads.
+*/
 
-int 
-screensaver_info (int *state, int *kind, unsigned long *til_or_since, unsigned long *idle)
+int
+get_vmsize (void)
 {
-    XScreenSaverInfo ss_info;
-    int retval;
-    static int inited = 0;
+    static char proc_filename[64] = {'\0'};
+    static char buffer [1024];
+    int fd;
+    int vmsize = -1;
 
-    /* FIXME: This should be called somewhere else. */
-    if (! inited) {
-        gdk_threads_init ();
-        inited = 1;
+    if (proc_filename[0] == '\0')
+        snprintf (proc_filename, 64, "/proc/%d/status", getpid ());
+
+    fd = open (proc_filename, O_RDONLY);
+    if (fd >= 0) {
+        if (read (fd, buffer, sizeof (buffer)) > 0) {
+            char *pos = strstr (buffer, "VmSize:");
+            char *endpos = NULL;
+            if (pos != NULL && strlen (pos) > 7) {
+                pos += 7;
+                while (*pos && isspace (*pos))
+                    ++pos;
+                if (*pos != '\0') {
+                    vmsize = (int) strtol (pos, &endpos, 10);
+                    if (pos == endpos || *endpos != ' ')
+                        vmsize = -1;
+                }
+            }
+        }
+        close (fd);
     }
 
-    gdk_threads_enter ();
-    retval = XScreenSaverQueryInfo (GDK_DISPLAY (), DefaultRootWindow (GDK_DISPLAY ()), &ss_info);
-    gdk_threads_leave ();
-
-    if (retval != 0) {
-        *state = ss_info.state;
-        *kind = ss_info.kind;
-        *til_or_since = ss_info.til_or_since;
-        *idle = ss_info.idle;
-        return 1;
-    } else {
-        return 0;
-    }
+    return vmsize;
 }
-
-
