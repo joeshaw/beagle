@@ -32,11 +32,10 @@ using System;
 using System.IO;
 using System.Text;
 using System.Text.RegularExpressions;
-using Beagle.Core;
 
 namespace Beagle.Filters {
 
-	public class FilterMan : Filter {
+	public class FilterMan : Beagle.Daemon.Filter {
 		StreamReader reader;
 		
 		public FilterMan ()
@@ -87,8 +86,8 @@ namespace Beagle.Filters {
 						continue;
 					}
 					foreach (Match theMatch in matches) {
-						AddProperty (Property.New ("dc:title",
-									   theMatch.Groups ["title"]));
+						AddProperty (Beagle.Daemon.Property.New ("dc:title",
+											 theMatch.Groups ["title"]));
 					}
                       		} else {
                       			// A "regular" string

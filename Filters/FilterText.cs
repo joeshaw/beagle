@@ -27,11 +27,10 @@
 
 using System;
 using System.IO;
-using Beagle.Core;
 
 namespace Beagle.Filters {
 
-	public class FilterText : Filter {
+	public class FilterText : Beagle.Daemon.Filter {
 
 		public FilterText ()
 		{

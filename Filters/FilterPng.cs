@@ -27,11 +27,10 @@
 using System;
 using System.IO;
 using BU = Beagle.Util;
-using Beagle.Core;
 
 namespace Beagle.Filters {
 	
-	public class FilterPng : Filter {
+	public class FilterPng : Beagle.Daemon.Filter {
 
 		public FilterPng ()
 		{
@@ -79,9 +78,9 @@ namespace Beagle.Filters {
 			int width = buffer [18] * 256 + buffer [19];
 			int height = buffer [22] * 256 + buffer [23];
 
-			AddProperty (Property.NewKeyword ("fixme:width", width));
-			AddProperty (Property.NewKeyword ("fixme:height", height));
-			AddProperty (Property.NewKeyword ("fixme:bitdepth", buffer [24]));
+			AddProperty (Beagle.Daemon.Property.NewKeyword ("fixme:width", width));
+			AddProperty (Beagle.Daemon.Property.NewKeyword ("fixme:height", height));
+			AddProperty (Beagle.Daemon.Property.NewKeyword ("fixme:bitdepth", buffer [24]));
 
 			string colorType = null;
 			bool hasAlpha = false;
@@ -108,8 +107,8 @@ namespace Beagle.Filters {
 				break;
 			}
 
-			AddProperty (Property.NewKeyword ("fixme:colortype", colorType));
-			AddProperty (Property.NewBool ("fixme:hasalpha", hasAlpha));
+			AddProperty (Beagle.Daemon.Property.NewKeyword ("fixme:colortype", colorType));
+			AddProperty (Beagle.Daemon.Property.NewBool ("fixme:hasalpha", hasAlpha));
 		}
 	}
 }

@@ -27,12 +27,11 @@
 using System;
 using System.IO;
 using System.Text;
-using Beagle.Core;
 using BU = Beagle.Util;
 
 namespace Beagle.Filters {
 	
-	public class FilterJpeg : Filter {
+	public class FilterJpeg : Beagle.Daemon.Filter {
 
 		public FilterJpeg ()
 		{
@@ -83,7 +82,7 @@ namespace Beagle.Filters {
 
 					Encoding enc = new ASCIIEncoding ();
 					string comment = enc.GetString (commentData);
-					AddProperty (Property.New ("fixme:comment", comment));
+					AddProperty (Beagle.Daemon.Property.New ("fixme:comment", comment));
 							   
 				} else if ((! seenSofn)
 				    && 0xc0 <= marker
@@ -115,17 +114,17 @@ namespace Beagle.Filters {
 					if (components == -1)
 						return;
 
-					AddProperty (Property.NewKeyword ("fixme:bitdepth",
-									  precision));
+					AddProperty (Beagle.Daemon.Property.NewKeyword ("fixme:bitdepth",
+											precision));
 					
-					AddProperty (Property.NewKeyword ("fixme:width",
-									  width));
+					AddProperty (Beagle.Daemon.Property.NewKeyword ("fixme:width",
+											width));
 
-					AddProperty (Property.NewKeyword ("fixme:height",
-									  height));
+					AddProperty (Beagle.Daemon.Property.NewKeyword ("fixme:height",
+											height));
 
-					AddProperty (Property.NewKeyword ("fixme:components",
-									  components));
+					AddProperty (Beagle.Daemon.Property.NewKeyword ("fixme:components",
+											components));
 
 					seenSofn = true;
 				} else {

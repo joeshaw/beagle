@@ -30,13 +30,12 @@ using System.Collections;
 using System.IO;
 using System.Text;
 using System.Xml;
-using Beagle.Core;
 
 using ICSharpCode.SharpZipLib.Zip;
 
 namespace Beagle.Filters {
     
-	public class FilterOpenOffice : Filter {
+	public class FilterOpenOffice : Beagle.Daemon.Filter {
 
 		Hashtable hotStyles;
 		
@@ -189,35 +188,35 @@ namespace Beagle.Filters {
 				switch (node.Name) {
 					
 				case "dc:title":
-					AddProperty (Property.New ("dc:title",
-								   node.InnerText));
+					AddProperty (Beagle.Daemon.Property.New ("dc:title",
+										 node.InnerText));
 					break;
 
 				case "dc:description":
-					AddProperty (Property.New ("dc:description",
-								   node.InnerText));
+					AddProperty (Beagle.Daemon.Property.New ("dc:description",
+										 node.InnerText));
 					break;
 
 				case "dc:subject":
-					AddProperty (Property.New ("dc:subject",
-								   node.InnerText));
+					AddProperty (Beagle.Daemon.Property.New ("dc:subject",
+										 node.InnerText));
 					break;
 					
 				case "meta:document-statistic":
 					XmlAttributeCollection attr = node.Attributes;
 					if (attr ["fixme:page-count"] != null)
-						AddProperty (Property.NewKeyword ("fixme:page-count",
-										  attr ["meta:page-count"].Value));
+						AddProperty (Beagle.Daemon.Property.NewKeyword ("fixme:page-count",
+												attr ["meta:page-count"].Value));
 					if (attr ["fixme:word-count"] != null)
-						AddProperty (Property.NewKeyword ("fixme:word-count",
-										  attr ["meta:word-count"].Value));
+						AddProperty (Beagle.Daemon.Property.NewKeyword ("fixme:word-count",
+												attr ["meta:word-count"].Value));
 					break;
 
 				case "meta:user-defined":
 					if (node.InnerText != "") {
 						string name = node.Attributes ["meta:name"].Value;
-						AddProperty (Property.New ("fixme:UserDefined-" + name,
-									   node.InnerText));
+						AddProperty (Beagle.Daemon.Property.New ("fixme:UserDefined-" + name,
+											 node.InnerText));
 					}
 					break;
 					

@@ -26,13 +26,12 @@
 
 using System;
 using System.IO;
-using Beagle.Core;
 
 using BU = Beagle.Util;
 
 namespace Beagle.Filters {
 
-	public class FilterMusic : Filter {
+	public class FilterMusic : Beagle.Daemon.Filter {
 
 		public FilterMusic ()
 		{
@@ -51,21 +50,21 @@ namespace Beagle.Filters {
 			if (info == null)
 				return;
 
-			AddProperty (Property.NewKeyword ("fixme:id3version", info.Version));
+			AddProperty (Beagle.Daemon.Property.NewKeyword ("fixme:id3version", info.Version));
 
-			AddProperty (Property.New ("fixme:artist",  info.Artist));
-			AddProperty (Property.New ("fixme:album",   info.Album));
-			AddProperty (Property.New ("fixme:song",    info.Song));
-			AddProperty (Property.New ("fixme:comment", info.Comment));
+			AddProperty (Beagle.Daemon.Property.New ("fixme:artist",  info.Artist));
+			AddProperty (Beagle.Daemon.Property.New ("fixme:album",   info.Album));
+			AddProperty (Beagle.Daemon.Property.New ("fixme:song",    info.Song));
+			AddProperty (Beagle.Daemon.Property.New ("fixme:comment", info.Comment));
 
 			if (info.Track > 0)
-				AddProperty (Property.NewKeyword ("fixme:track", info.Track));
+				AddProperty (Beagle.Daemon.Property.NewKeyword ("fixme:track", info.Track));
 
 			if (info.Year > 0)
-				AddProperty (Property.NewKeyword ("fixme:year", info.Year));
+				AddProperty (Beagle.Daemon.Property.NewKeyword ("fixme:year", info.Year));
 
 			if (info.HasPicture)
-				AddProperty (Property.NewBool ("fixme:haspicture", true));
+				AddProperty (Beagle.Daemon.Property.NewBool ("fixme:haspicture", true));
 		}
 	}
 }

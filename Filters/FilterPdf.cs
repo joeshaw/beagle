@@ -10,11 +10,10 @@
 using System;
 using System.IO;
 using System.Diagnostics;
-using Beagle.Core;
 
 namespace Beagle.Filters {
 
-	public class FilterPdf : Filter {
+	public class FilterPdf : Beagle.Daemon.Filter {
 
 		public FilterPdf ()
 		{
