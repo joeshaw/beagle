@@ -238,7 +238,7 @@ namespace Beagle.Tile {
 			Process p = new Process ();
 			p.StartInfo.UseShellExecute = false;
 			p.StartInfo.FileName        = "gaim-remote";
-			p.StartInfo.Arguments       = "uri " + protocol + " :goim?screenname=" + screenname;
+			p.StartInfo.Arguments       = "uri " + protocol + ":goim?screenname=" + screenname;
 
 			try {
 				p.Start () ;

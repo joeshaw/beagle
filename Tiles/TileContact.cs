@@ -89,7 +89,7 @@ namespace Beagle.Tile {
 		}
 
 		[TileAction]
-		public void SendIm ()
+		public void SendImAim ()
 		{
 			SendImAim (Hit["fixme:ImAim"]);
 		}
