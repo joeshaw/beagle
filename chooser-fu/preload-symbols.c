@@ -29,6 +29,8 @@
 #include <config.h>
 #endif
 
+#include <dlfcn.h>
+#include <gtk/gtk.h>
 #include "gtkfilesystembeagle.h"
 
 GtkFileSystem *
@@ -36,5 +38,24 @@ _gtk_file_system_create (const char *file_system_name)
 {
     g_print ("Using Beagle File Chooser Hack\n");
     return gtk_file_system_beagle_new ();
+}
+
+GtkWidget *
+_gtk_file_chooser_default_new (const char *file_system)
+{
+    void *chooser_default = NULL;
+    GtkWidget *label;
+    GtkWidget *chooser;
+
+    if (chooser_default == NULL) {
+        void *gtk_handle = dlopen ("/opt/gnome/lib/libgtk-x11-2.0.so", RTLD_LAZY);
+        g_assert (gtk_handle != NULL);
+        chooser_default = dlsym (gtk_handle, "_gtk_file_chooser_default_new");
+        g_assert (chooser_default != NULL);
+    }
+
+    chooser = ((GtkWidget *(*)(const char *)) chooser_default) (file_system);
+
+    return chooser;
 }
 

@@ -35,6 +35,8 @@ namespace Beagle {
 
 		public string Name;
 		public string Emblem;
+		public string Color;
+		public int    Columns = 3;
 		public Type   TileType;
 
 		private string uri;

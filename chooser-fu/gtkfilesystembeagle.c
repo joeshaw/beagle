@@ -107,6 +107,7 @@ struct _GtkFileFolderUnixClass
   GObjectClass parent_class;
 };
 
+static time_t search_string_time = 0;
 static gchar *search_string = NULL;
 
 struct _GtkFileFolderUnix
@@ -370,7 +371,7 @@ is_search_volume (GtkFileSystemVolume *volume)
 static gboolean
 is_search_path (const GtkFilePath *path)
 {
-  return ! strcmp (gtk_file_path_get_string (path), SEARCH_MAGIC);
+  return ! strncmp (gtk_file_path_get_string (path), SEARCH_MAGIC, strlen (SEARCH_MAGIC));
 }
 
 static GSList *
@@ -467,12 +468,18 @@ gtk_file_system_unix_get_folder (GtkFileSystem     *file_system,
   char *filename_copy;
   time_t now = time (NULL);
 
+  g_print ("Get folder [%s]\n", gtk_file_path_get_string (path));
+
   system_unix = GTK_FILE_SYSTEM_UNIX (file_system);
 
 	if (is_search_path (path))
 	{
-		if (search_string == NULL) {
+    time_t now;
+    time (&now);
+		if (search_string == NULL || difftime (now, search_string_time) > 2) {
+      g_free (search_string);
 			search_string = get_search_string ();
+      time (&search_string_time);
 		}
 
 		folder_unix = g_object_new (GTK_TYPE_FILE_FOLDER_UNIX, NULL);
@@ -655,7 +662,14 @@ gtk_file_system_unix_volume_get_base_path (GtkFileSystem        *file_system,
 																					 GtkFileSystemVolume  *volume)
 {
 	if (is_search_volume (volume)) {
-		return gtk_file_path_new_dup (SEARCH_MAGIC);
+    /* Yet another ugly hack: by having the magic search volume
+       return a differently-named folder every time, it forces the
+       path-navigation button in the chooser to be refreshed
+       if you conduct multiple searches from inside of one chooser. */
+    static int magic_counter = 0;
+    char *path = g_strdup_printf ("%s:%d", SEARCH_MAGIC, magic_counter);
+    ++magic_counter;
+		return gtk_file_path_new_steal (path);
 	} else {
 		return gtk_file_path_new_dup ("/");
 	}
@@ -1734,6 +1748,7 @@ gtk_file_folder_unix_get_info (GtkFileFolder      *folder,
 			gtk_file_info_set_is_hidden (info, FALSE);
 			gtk_file_info_set_is_folder (info, FALSE);
 			gtk_file_info_set_mime_type (info, beagle_hit_get_mime_type (hit));
+      gtk_file_info_set_modification_time (info, beagle_hit_get_timestamp (hit));
       g_free (uri);
 			return info;
 		}
@@ -1856,13 +1871,16 @@ gtk_file_folder_unix_list_children (GtkFileFolder  *folder,
   GtkFileFolderUnix *folder_unix = GTK_FILE_FOLDER_UNIX (folder);
   GSList *l;
 
+  g_print ("List Children\n");
+
 	if (folder_unix->search_magic)
 	{
-    if (search_string != NULL)
+    if (search_string != NULL) {
       folder_unix->query_result = beagle_query (search_string);
+      time (&search_string_time);
+    }
 		*children = NULL;
     beagle_query_result_list_children (folder_unix->query_result, children);
-		search_string = NULL;
 		return TRUE;
 	}
 

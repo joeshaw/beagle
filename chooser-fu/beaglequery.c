@@ -30,6 +30,9 @@
 #endif
 #include "beaglequery.h"
 
+#define _XOPEN_SOURCE /* glibc2 needs this */
+#include <time.h>
+
 void
 beagle_hit_free (BeagleHit *hit)
 {
@@ -144,6 +147,12 @@ beagle_query (const char *query_string)
             current_hit->source = g_strdup (query_ptr + 5);
         } else if (! strncmp (query_ptr, "Score: ", 7)) {
             current_hit->score = atof (query_ptr + 7);
+        } else if (! strncmp (query_ptr, "Time: ", 6)) {
+            struct tm tm;
+            time_t t;
+            if (strptime (query_ptr + 6, "%m/%d/%Y %I:%M:%S %p", &tm) != NULL) {
+                current_hit->timestamp = mktime (&tm);
+            }
         }
         
         /* FIXME: We should also read in the properties */

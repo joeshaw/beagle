@@ -29,14 +29,16 @@
 #define __BEAGLEQUERY_H__
 
 #include <glib.h>
+#include <time.h>
 
 typedef struct _BeagleHit BeagleHit;
 struct _BeagleHit {
-    char *uri;
-    char *type;
-    char *mime_type;
-    char *source;
-    float score;
+    char  *uri;
+    char  *type;
+    char  *mime_type;
+    char  *source;
+    float  score;
+    time_t timestamp;
 };
 
 void beagle_hit_free (BeagleHit *);
@@ -46,6 +48,7 @@ void beagle_hit_free (BeagleHit *);
 #define beagle_hit_get_mime_type(hit) ((hit)->mime_type)
 #define beagle_hit_get_source(hit)    ((hit)->source)
 #define beagle_hit_get_score(hit)     ((hit)->score)
+#define beagle_hit_get_timestamp(hit) ((hit)->timestamp)
 
 
 

@@ -28,7 +28,7 @@ using System;
 
 namespace Beagle {
 
-	[HitFlavor (Name="Conversations", Emblem="gnome-gaim.png",
+	[HitFlavor (Name="Conversations", Emblem="emblem-im-log.png", Color="#e5f5ef",
 		    Type="IMLog")]
 	public class TileImLog : TileFromTemplate {
 

@@ -31,7 +31,7 @@ using BU = Beagle.Util;
 
 namespace Beagle {
 
-	[HitFlavor (Name="Email", Emblem="mail-message-icon.png",
+	[HitFlavor (Name="Email", Emblem="emblem-mail-message.png", Color="#f5f5f5",
 		    Type="MailMessage")]
 	public class TileMailMessage : TileFromTemplate {
 
@@ -50,6 +50,8 @@ namespace Beagle {
 			switch (key) {
 			case "Subject":
 				str = hit ["Subject"];
+				if (str == null)
+					str = "<i>No Subject</i>";
 				if (hit ["_IsDeleted"] != null)
 					str = "<strike>" + str + "</strike>";
 				return str;

@@ -35,6 +35,7 @@ using Mono.Posix;
 
 using Beagle.Filters;
 using Beagle;
+using BU = Beagle.Util;
 
 class CrawlerTool { 
 
@@ -185,8 +186,13 @@ class CrawlerTool {
 			if (IsSymLink (info.FullName))
 				return;
 
+			DateTime changeTime = info.LastWriteTime;
+			DateTime nautilusTime = BU.NautilusTools.GetMetaFileTime (info.FullName);
+			if (nautilusTime > changeTime)
+				changeTime = nautilusTime;
+
 			// If the file isn't newer that the hit, don't even bother...
-			if (hit != null && ! hit.IsObsoletedBy (info.LastWriteTime)) {
+			if (hit != null && ! hit.IsObsoletedBy (changeTime)) {
 				++skippedCount;
 				return;
 			}

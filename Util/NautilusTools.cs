@@ -29,6 +29,7 @@ using System.IO;
 using System.Text;
 using System.Xml;
 using System.Collections;
+using System.Collections.Specialized;
 using System.Text.RegularExpressions;
 using System.Runtime.InteropServices;
 
@@ -36,49 +37,85 @@ namespace Beagle.Util {
 
 	public class NautilusTools {
 
-		private NautilusTools () { } // This class is static
-		
-		[DllImport ("libgnomeui-2")]
-			extern static string gnome_vfs_escape_string (string uri);
-			
-		public static string GetEmblem (string path) {
+		private class XmlDocCacheItem {
+			public XmlDocument doc;
+			public DateTime timestamp;
+		}
 
-			// Allow us to pass in file:// Uris.
+		static private Hashtable cache = new Hashtable ();
+
+		private NautilusTools () { } // This class is static
+
+		static private string GetMetaFileName (string path)
+		{
+			string nautilusDir = Environment.GetEnvironmentVariable ("HOME") +
+				"/.nautilus/metafiles/file:%2F%2F";
+
 			if (path.StartsWith ("file://"))
 				path = path.Substring ("file://".Length);
-			
-			FileInfo info = new FileInfo (path);
-			StringBuilder newpath = new StringBuilder (Environment.GetEnvironmentVariable ("HOME"));
-			newpath.Append ("/.nautilus/metafiles/file:%2F%2F");
-		
-			path = Path.GetDirectoryName (path);
-			path = gnome_vfs_escape_string (path);
-		
-			newpath.Append (path);
-			newpath.Append (".xml");
-				
-			XmlDocument doc = new XmlDocument ();
-			StreamReader sr = null;
-			//Console.WriteLine ("FILE:  {0}", newpath.ToString ());
-			try {
-				sr = new StreamReader(newpath.ToString ());
-				doc.Load (sr);
-				} catch (Exception e) {
-					//Console.WriteLine ("Nautlius: {0}, {1}", newpath.ToString (), e.Message);
-					return null;
+			path = Path.GetDirectoryName (Path.GetFullPath (path));
+			path = path.Replace ("/", "%2F");
+
+			string name = nautilusDir + path + ".xml";
+
+			return File.Exists (name) ? name : null;
+		}
+
+		static public DateTime GetMetaFileTime (string path)
+		{
+			path = GetMetaFileName (path);
+			return path != null ? File.GetLastWriteTime (path) : new DateTime ();
+		}
+
+		static private XmlNode GetMetaFileNode (string path)
+		{
+			string metaFile = GetMetaFileName (path);
+			if (metaFile == null)
+				return null;
+
+			DateTime lastWrite = File.GetLastWriteTime (metaFile);
+
+			string name = Path.GetFileName (path);
+
+			XmlDocCacheItem cached = (XmlDocCacheItem) cache [metaFile];
+			XmlDocument doc;
+			if (cached == null || lastWrite > cached.timestamp) {
+				doc = new XmlDocument ();
+				doc.Load (new StreamReader (metaFile));
+
+				cached = new XmlDocCacheItem ();
+				cached.doc = doc;
+				cached.timestamp = lastWrite;
+				cache [metaFile] = cached;
+
+			} else {
+				doc = cached.doc;
 			}
-			XmlNodeList nodes = doc.SelectNodes ("/directory/file");
-			foreach (XmlNode node in nodes) {
-				//Console.WriteLine ("{0} :: {1}", info.Name, node.Attributes[0].Value);	
-				if (info.Name.CompareTo (node.Attributes[0].Value) == 0) {
-					if (node.FirstChild.Name.CompareTo("keyword") == 0) {
-						//Console.WriteLine ("{0}", node.FirstChild.Attributes[0].Value);
-						return node.FirstChild.Attributes[0].Value;
-					}
-				}
-			}
-			return null;
-	 	}
-	 	
+						
+			string xpath = String.Format ("/directory/file[@name=\"{0}\"]", name);
+			return doc.SelectSingleNode (xpath);
+		}
+
+		static public string GetEmblem (string path)
+		{
+			XmlNode node = GetMetaFileNode (path);
+			if (node == null)
+				return null;
+			XmlNode subnode = node.SelectSingleNode ("keyword");
+			if (subnode == null)
+				return null;
+
+			XmlNode attr = subnode.Attributes.GetNamedItem ("name");
+			return attr != null ? attr.Value : null;
+		}
+
+		static public string GetNotes (string path)
+		{
+			XmlNode node = GetMetaFileNode (path);
+			if (node == null)
+				return null;
+			XmlNode attr = node.Attributes.GetNamedItem ("annotation");
+			return attr != null ? attr.Value : null;
+		}
 	}
 }

@@ -43,6 +43,8 @@ namespace Beagle {
 
 		// FIXME: This is not a good default
 		QueryDomain domainFlags = QueryDomain.Local | QueryDomain.Neighorhood | QueryDomain.Global;
+		// FIXME: This is a good default when on an airplane.
+		//QueryDomain domainFlags = QueryDomain.Local; 
 
 		ArrayList text = new ArrayList ();
 		ArrayList mimeTypes = new ArrayList ();

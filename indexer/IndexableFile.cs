@@ -44,7 +44,10 @@ namespace Beagle {
 		public IndexableFile (String _path)
 		{
 			path = Path.GetFullPath (_path);
-			Uri = "file://" + path;
+			
+			System.Uri uri = new System.Uri (path);
+			Uri = uri.AbsoluteUri;
+
 			Type = "File";
 
 			if (Directory.Exists (path)) {
@@ -79,11 +82,14 @@ namespace Beagle {
 			if (isDirectory) {
 				DirectoryInfo info = new DirectoryInfo (path);
 				info = info.Parent;
-				if (info != null)
+				if (info != null) {
 					this ["_Directory"] = info.FullName;
+					this ["ParentSplitName"] = String.Join (" ", BU.StringFu.FuzzySplit (info.Name));
+				}
 			} else {
 				FileInfo info = new FileInfo (path);
 				this ["_Directory"] = info.DirectoryName;
+				this ["ParentSplitName"] = String.Join (" ", BU.StringFu.FuzzySplit (Path.GetFileName (info.DirectoryName)));
 			}
 
 			// Try to strip off the extension in a semi-intelligent way,
@@ -113,9 +119,8 @@ namespace Beagle {
 				name = Path.GetFileName (path);
 			this ["SplitName"] = String.Join (" ", BU.StringFu.FuzzySplit (name));
 
-			// FIXME: there is more information that we could attach
-			// * Filesystem-level metadata
-			// * Nautilus emblems
+			this ["_NautilusEmblem"] = BU.NautilusTools.GetEmblem (path);
+			this ["NautilusNotes"] = BU.NautilusTools.GetNotes (path);
 		}
 	}
 

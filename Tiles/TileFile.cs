@@ -32,8 +32,10 @@ using BU = Beagle.Util;
 
 namespace Beagle {
 
-	[HitFlavor (Name="Files", Emblem="document.png", Type="File"),
-	 HitFlavor (Name="Files", Emblem="document.png", Uri="file://*")]
+	[HitFlavor (Name="Files", Emblem="emblem-file.png", Color="#f5f5fe",
+		    Type="File"),
+	 HitFlavor (Name="Files", Emblem="emblem-file.png", Color="#f5f5fe",
+		    Uri="file://*")]
 	public class TileFile : TileFromTemplate {
 
 		Hit hit;

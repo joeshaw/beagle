@@ -31,13 +31,20 @@ namespace Beagle {
 
 	public class TileHitCollection : TileFromTemplate, IComparable {
 
-		string name = null;
-		string icon = null;
+		string name;
+		string icon;
+		string color;
+		int    columns;
 
-		public TileHitCollection (string _name, string _icon) : base ("template-hit-collection.html")
+		public TileHitCollection (string _name, 
+					  string _icon,
+					  string _color,
+					  int    _columns) : base ("template-hit-collection.html")
 		{
 			name = _name;
 			icon = _icon;
+			color = _color;
+			columns = _columns;
 
 			EnableInlineRendering ();
 		}
@@ -139,46 +146,89 @@ namespace Beagle {
 		override protected string ExpandKey (string key)
 		{
 			switch (key) {
-
+				
 			case "Name":
 				return name;
+				
+			case "Color":
+				return color;
 
-			case "DisplayedInfo":
-				if (hits.Count == 0)
-					return null;
-				return String.Format ("{0} to {1} of {2}",
-						      FirstDisplayed+1, LastDisplayed+1,
-						      hits.Count);
+			case "NumberOfMatches":
+				if (hits.Count > 1)
+					return hits.Count + " Matches";
+				else
+					return hits.Count + " Match";
+
+			case "DisplayedMatches":
+				if (hits.Count == 1)
+					return "";
+				return String.Format ("Displaying Matches {0} to {1}",
+						      FirstDisplayed+1, LastDisplayed+1);
 			}
 			
 			return base.ExpandKey (key);
 		}
 
+		private void RenderTiles (TileRenderContext ctx)
+		{
+			int i = FirstDisplayed;
+			int i1 = LastDisplayed;
+			int counter = 0;
+
+			double widthPerc = 100.0 / columns;
+			string td = String.Format ("<td width=\"{0}%\">", widthPerc);
+
+			ctx.Write ("<table>");
+			while (i <= i1) {
+				HitTilePair pair = (HitTilePair) hits [i];
+				if (counter == 0)
+					ctx.Write ("<tr>");
+				ctx.Write (td);
+				ctx.Tile (pair.Tile);
+				ctx.Write ("</td>");
+
+				++i;
+
+				++counter;
+				if (counter == columns) {
+					ctx.Write ("</tr>");
+					counter = 0;
+				}
+			}
+
+			// If necessarry, pad the table w/ empty cells and
+			// end the row.
+			if (counter > 0) {
+				while (counter < columns) {
+					ctx.Write (td + "&nbsp;</td>");
+					++counter;
+				}
+				ctx.Write ("</tr>");
+			}
+			ctx.Write ("</table>");
+		}
+
 		override protected bool RenderKey (string key, TileRenderContext ctx)
 		{
 			if (key == "Icon" && icon != null) {
-				ctx.Image (icon, 32, 32, null);
+				ctx.Image (icon, 24, 24, null);
 				return true;
 			}
 
 			if (key == "Tiles") {
-				int i = FirstDisplayed;
-				int i1 = LastDisplayed;
-				while (i <= i1) {
-					HitTilePair pair = (HitTilePair) hits [i];
-					ctx.Tile (pair.Tile);
-					++i;
-				}
+				RenderTiles (ctx);
 				return true;
 			}
 
 			if (key == "BackLink" && CanPageBack) {
-				ctx.Link ("Back", new TileActionHandler (PageBack));
+				ctx.Link ("&lt;&lt; Previous Matches ",
+					  new TileActionHandler (PageBack));
 				return true;
 			}
 			
 			if (key == "ForwardLink" && CanPageForward) {
-				ctx.Link ("Forward", new TileActionHandler (PageForward));
+				ctx.Link ("Next Matches &gt;&gt;",
+					  new TileActionHandler (PageForward));
 				return true;
 			}
 

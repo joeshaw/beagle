@@ -49,8 +49,32 @@ namespace Beagle.Util {
 
 		static public string DateTimeToFuzzy (DateTime dt)
 		{
-			// FIXME: not particularly fuzzy
-			return dt.ToString ();
+			DateTime today = DateTime.Today;
+			TimeSpan sinceToday = today - dt;
+			
+			string date = null, time = null;
+
+			if (sinceToday.TotalDays <= 0)
+				date = "Today";
+			else if (sinceToday.TotalDays < 1)
+				date = "Yesterday";
+			else if (today.Year == dt.Year)
+				date = dt.ToString ("MMM d");
+			else
+				date = dt.ToString ("MMM d, yyyy");
+			
+			time = dt.ToString ("h:mm tt");
+
+			string fuzzy;
+
+			if (date != null && time != null)
+				fuzzy = date + ", " + time;
+			else if (date != null)
+				fuzzy = date;
+			else 
+				fuzzy = time;
+
+			return fuzzy;
 		}
 
 		static public string FileLengthToString (long len)

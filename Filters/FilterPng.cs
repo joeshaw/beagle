@@ -36,7 +36,7 @@ namespace Beagle.Filters {
 		{
 			AddSupportedMimeType ("image/png");
 		}
-		
+
 		protected override void DoOpen (Stream stream)
 		{
 			//  8 bytes of signature

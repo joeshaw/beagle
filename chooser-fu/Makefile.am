@@ -4,6 +4,7 @@ INCLUDES = 				\
 	$(CHOOSER_FU_CFLAGS)
 
 lib_LTLIBRARIES = libbeaglechooserhack.la
+
 libbeaglechooserhack_la_SOURCES =	\
 	beaglequery.h		\
 	beaglequery.c		\
@@ -18,6 +19,7 @@ libbeaglechooserhack_la_SOURCES =	\
 	gtkfilesystembeagle.h	\
 	gtkfilesystembeagle.c	\
 	preload-symbols.c
+
 libbeaglechooserhack_la_LIBADD = $(CHOOSER_FU_LIBS)
 
 

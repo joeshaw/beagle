@@ -403,7 +403,7 @@ namespace Beagle {
 			ClearActions ();
 			ClearTiles ();
 
-			Gtk.HTMLStream stream = this.Begin ();
+			Gtk.HTMLStream stream = this.Begin ("", "text/html", Gtk.HTMLBeginFlags.Scroll);
 			PaintTile (root, stream);
 			this.End (stream, Gtk.HTMLStreamStatus.Ok);
 

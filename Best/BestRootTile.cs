@@ -49,7 +49,11 @@ namespace Best {
 			TileHitCollection hitCollection = (TileHitCollection) tileTable [flavor.Name];
 
 			if (hitCollection == null) {
-				hitCollection = new TileHitCollection (flavor.Name, flavor.Emblem);
+				hitCollection = new TileHitCollection (flavor.Name,
+								       flavor.Emblem,
+								       flavor.Color,
+								       flavor.Columns);
+				
 				tileTable [flavor.Name] = hitCollection;
 			}
 
@@ -74,8 +78,13 @@ namespace Best {
 
 			array.Sort ();
 
-			foreach (TileHitCollection tile in array)
+			bool first = true;
+			foreach (TileHitCollection tile in array) {
+				if (! first)
+					ctx.Write ("<br>");
+				first = false;
 				ctx.Tile (tile);
+			}
 		}
 	}
 }

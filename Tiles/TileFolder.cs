@@ -32,7 +32,8 @@ using BU = Beagle.Util;
 
 namespace Beagle {
 
-	[HitFlavor (Name="Folders", Emblem="document.png", Uri="file://*", MimeType="inode/directory")]
+	[HitFlavor (Name="Folders", Emblem="emblem-folder.png", Color="#f5f5fe",
+		    Uri="file://*", MimeType="inode/directory")]
 	public class TileFolder : TileFromTemplate {
 
 		Hit hit;
@@ -71,7 +72,7 @@ namespace Beagle {
 			Process p = new Process ();
 			p.StartInfo.UseShellExecute = false;
 			p.StartInfo.FileName = "nautilus";
-			p.StartInfo.Arguments = hit.Path;
+			p.StartInfo.Arguments = hit.Uri;
 			try {
 				p.Start ();
 			} catch { }

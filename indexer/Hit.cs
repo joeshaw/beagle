@@ -121,8 +121,9 @@ namespace Beagle {
 			if (special != SpecialType.Unknown)
 				return;
 
-			if (Uri.StartsWith ("file://")) {
-				path = Uri.Substring ("file://".Length);
+			System.Uri uri = new System.Uri (Uri);
+			if (uri.IsFile) {
+				path = uri.LocalPath;
 				if (File.Exists (path))
 					special = SpecialType.File;
 				else if (Directory.Exists (path))
