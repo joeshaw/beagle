@@ -67,11 +67,15 @@ namespace Beagle.Daemon.MailQueryable {
 			if (event_type == FileSystemEventType.Created || event_type == FileSystemEventType.Changed) {
 				FileInfo file = new FileInfo (new_path);
 
-				if (file != null) {
-					if (Path.GetExtension (file.Name) == ".ev_summary")
-						this.IndexMbox (file);
-					else if (file.Name == "summary")
-						this.IndexImap (file);
+				try {
+					if (file != null) {
+						if (Path.GetExtension (file.Name) == ".ev_summary")
+							this.IndexMbox (file);
+						else if (file.Name == "summary")
+							this.IndexImap (file);
+					}
+				} catch (Exception e) {
+					Logger.Log.Error ("Unable to index mail: {0}", e);
 				}
 			} else if (event_type == FileSystemEventType.Deleted) {
 				// FIXME
@@ -146,7 +150,7 @@ namespace Beagle.Daemon.MailQueryable {
 			// (2) We don't notice changes in the flags.
 
 			int count = 0, indexedCount = 0;
-			foreach (Camel.MBoxMessageInfo mi in summary.messages) {
+			foreach (Camel.MBoxMessageInfo mi in summary) {
 
 				if ((count & 1500) == 0) {
 					Logger.Log.Debug ("{0}: indexed {1} messages ({2}/{3} {4:###.0}%)",
@@ -220,7 +224,7 @@ namespace Beagle.Daemon.MailQueryable {
 
 			int count = 0, index_count = 0;
 
-			foreach (Camel.ImapMessageInfo mi in summary.messages) {
+			foreach (Camel.ImapMessageInfo mi in summary) {
 				if ((count & 1500) == 0) {
 					Logger.Log.Debug ("{0}: indexed {1} messages ({2}/{3} {4:###.0}%)",
 							  folder_name, index_count,

@@ -28,59 +28,136 @@ namespace Camel {
 		UNKNOWN_8    = 1<<8
 	}
 	
-public class Summary { 
-	    public SummaryHeader header;
-	    public MessageInfo [] messages;
+public abstract class Summary : IEnumerable { 
+	public SummaryHeader header;
+	internal string filename;
 
-	    public static Summary load (string file) 
-	    {
+	public static Summary load (string file) 
+	{
 		Summary s;
 		if (file.EndsWith ("/summary")) { 
-		    s = new ImapSummary (file);
+			s = new ImapSummary ();
 		} else {
-		    s = new MBoxSummary (file);
+			s = new MBoxSummary ();
 		}
+		s.filename = file;
+		FileStream f = File.OpenRead (file);
+		s.header = s.ReadHeader (f);
+		f.Close ();
+		
 		return s;
-	    }
 	}
+	
+	public IEnumerator GetEnumerator () {
+		return new SummaryEnumerator (this);
+	}
+	
+	protected abstract SummaryHeader ReadHeader (FileStream f);
+	protected abstract MessageInfo ReadMessageInfo (FileStream f);
+	
+	private class SummaryEnumerator : IEnumerator, IDisposable {
+		FileStream f = null;
+		SummaryHeader header;
+		Summary s;
+		int index;
+		MessageInfo info;
+		public SummaryEnumerator (Summary s) {
+			this.s = s;
+			index = -1;
+		}
+		
+		public void Dispose () 
+		{
+			if (f != null) {
+				f.Close ();
+				f = null;
+			}
+			GC.SuppressFinalize (this);
+		}
+		
+		~SummaryEnumerator () 
+		{
+			if (f != null) {
+				f.Close ();
+			}
+		}
+		
+		public bool MoveNext () {
+			++index;
+			if (index == 0) {
+				f = File.OpenRead (s.filename);
+				header = s.ReadHeader (f);
+			}
+			
+			if (index >= header.count) {
+				if (f != null) {
+					f.Close ();
+					f = null;
+				}
+				return false;
+			} else {
+				info = null;
+				while (info == null && index < header.count) {
+					try {
+						info = s.ReadMessageInfo (f);
+					} catch (Exception e) {
+						Logger.Log.Warn ("Skipping bogus message " +
+								 "[file={0}, index={1}, error={2}]",
+								 s.filename, index, e.ToString());
+						
+						info = null;
+						++index;
+					}
+				}
+				
+				return (info != null);
+			}
+		}
+			
+		public object Current {
+			get { return info; }
+		}
+		
+		public void Reset () 
+		{
+			f.Close ();
+			f = null;
+			index = -1;
+		}
+	}
+}
 
 	public class MBoxSummary: Summary {
-		public MBoxSummary (string file)
+		public MBoxSummary ()
 		{
-			using (FileStream f = File.OpenRead (file)){
-				header = new MBoxSummaryHeader (f);
+		}
 
-				messages = new MessageInfo [header.count];
-				
-				for (int i = 0; i < header.count; i++){
-					messages [i] = new MBoxMessageInfo (f);
-				}
-			}
+		protected override SummaryHeader ReadHeader (FileStream f)
+		{
+			return new MBoxSummaryHeader (f);
+		}
+
+		protected override MessageInfo ReadMessageInfo (FileStream f)
+		{
+			return new MBoxMessageInfo (f);
 		}
 	}
 
 	public class ImapSummary: Summary {
-		public ImapSummary (string file)
+		public ImapSummary ()
 		{
-			using (FileStream f = File.OpenRead (file)){
-				header = new ImapSummaryHeader (f);
-
-				ArrayList msgs = new ArrayList ();
-				for (int i = 0; i < header.count; i++){
-					try {
-						msgs.Add(new ImapMessageInfo (f));
-					} catch (Exception e) {
-						Logger.Log.Warn ("Skipping bogus message " +
-										 "[file={0}, index={1}, error={2}]",
-										 file, i, e.ToString());
-					}
-				}
-
-				messages = new MessageInfo [msgs.Count];
-				msgs.CopyTo (messages);
-			}
 		}
-	}
+
+		protected override SummaryHeader ReadHeader (FileStream f)
+		{
+			return new ImapSummaryHeader (f);
+		}
+
+		protected override MessageInfo ReadMessageInfo (FileStream f)
+		{
+			return new ImapMessageInfo (f);
+		}
+ 	}
 
 	public class MessageInfo {
 		public string uid, subject, from, to, cc, mlist;
@@ -429,8 +506,8 @@ public class Summary {
 				file = args [0];
 			
 			Summary s = Summary.load (file);
-			for (int i = 0; i < s.header.count; i++) {
-			    Console.WriteLine(s.messages [i]);
+			foreach (MessageInfo m in s) {
+				Console.WriteLine(m);
 			}
 			
 		}

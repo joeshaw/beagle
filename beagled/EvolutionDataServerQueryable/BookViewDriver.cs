@@ -135,8 +135,6 @@ namespace Beagle.Daemon.EvolutionDataServerQueryable {
 		void OnContactsAdded (object o,
 				      Evolution.ContactsAddedArgs args)
 		{
-			System.Console.WriteLine ("contact added");
-		
 			ArrayList array = new ArrayList ();
 		
 			foreach (Evolution.Contact contact in args.Contacts) {
@@ -150,8 +148,6 @@ namespace Beagle.Daemon.EvolutionDataServerQueryable {
 		void OnContactsRemoved (object o,
 					Evolution.ContactsRemovedArgs args)
 		{
-			System.Console.WriteLine ("contact removed");
-		
 			// FIXME: This is a temporary workaround for the 
 			// fact that the evolution bindings return a 
 			// GLib.List with an object type, but there
@@ -178,7 +174,6 @@ namespace Beagle.Daemon.EvolutionDataServerQueryable {
 		void OnSequenceComplete (object o, 
 					 Evolution.SequenceCompleteArgs args)
 		{
-			System.Console.WriteLine ("sequence complete");
 			lock (this) {
 				Monitor.Pulse (this);
 			}
