@@ -104,9 +104,12 @@ namespace Beagle.Daemon {
 				if (matches == null)
 					matches = word_matches;
 				else {
-					foreach (string m in matches) {
-						if (word_matches.BinarySearch (m) < 0)
-							matches.Remove (m);
+					// Remove duplicates
+					foreach (Uri m in matches) {
+						foreach (Uri m2 in word_matches) {
+							if (m2 == m)
+								matches.Remove (m);
+						}
 					}
 				}
 
