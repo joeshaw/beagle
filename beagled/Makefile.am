@@ -362,7 +362,8 @@ WEB_HISTORY_QUERYABLE_CSFILES =				\
 
 gaimlogqueryable = $(srcdir)/GaimLogQueryable
 GAIM_LOG_QUERYABLE_CSFILES =				\
-	$(gaimlogqueryable)/GaimLogQueryable.cs
+	$(gaimlogqueryable)/GaimLogQueryable.cs		\
+	$(gaimlogqueryable)/GaimLogCrawler.cs
 
 edsqueryable = $(srcdir)/EvolutionDataServerQueryable
 EDS_QUERYABLE_CSFILES =                                 \
@@ -390,6 +391,10 @@ LIFEREA_QUERYABLE_CSFILES =				\
 launcherqueryable = $(srcdir)/LauncherQueryable
 LAUNCHER_QUERYABLE_CSFILES =				\
 	$(launcherqueryable)/LauncherQueryable.cs
+
+monodocqueryable = $(srcdir)/MonodocQueryable
+MONODOC_QUERYABLE_CSFILES =				\
+	$(monodocqueryable)/MonodocQueryable.cs
 
 
 

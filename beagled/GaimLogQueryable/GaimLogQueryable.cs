@@ -35,31 +35,56 @@ using Beagle.Util;
 
 namespace Beagle.Daemon.GaimLogQueryable {
 
-	[QueryableFlavor (Name="IMLog", Domain=QueryDomain.Local)]
+	[QueryableFlavor (Name="IMLog", Domain=QueryDomain.Local, RequireInotify=false)]
 	public class GaimLogQueryable : LuceneQueryable {
 
 		private static Logger log = Logger.Get ("GaimLogQueryable");
+
 		private string config_dir, log_dir;
+
+		private int polling_interval_in_seconds = 60;
 		
 		Hashtable watched = new Hashtable ();
+
+		private GaimLogCrawler crawler;
 
 		public GaimLogQueryable () : base ("GaimLogIndex")
 		{
 			config_dir = Path.Combine (PathFinder.HomeDir, ".gaim");
 			log_dir = Path.Combine (config_dir, "logs");
 		}
+
+		/////////////////////////////////////////////////
 					
 		private void StartWorker() 
-		{
-			// Check to see if ~/.gaim/logs exists
-			if (! Directory.Exists (this.log_dir)) {
-				log.Warn ("IM: {0} not found, watching for it.", this.log_dir);
-				GLib.Timeout.Add (60000, new GLib.TimeoutHandler (CheckForLogs));
+		{		
+			if (! Directory.Exists (log_dir)) {
+				GLib.Timeout.Add (60000, new GLib.TimeoutHandler (CheckForExistence));
 				return;
 			}
-			
-			Inotify.Event += OnInotifyEvent;
-			ScanLogs ();
+
+			log.Info ("Starting Gaim log backend");
+
+			Stopwatch stopwatch = new Stopwatch ();
+			stopwatch.Start ();
+
+			if (Inotify.Enabled) {
+				Inotify.Event += OnInotifyEvent;
+				Watch (log_dir);
+			}
+
+			crawler = new GaimLogCrawler (log_dir);
+			Crawl ();
+
+			if (!Inotify.Enabled) {
+				Scheduler.Task task = Scheduler.TaskFromHook (new Scheduler.TaskHook (CrawlHook));
+                                task.Tag = "Crawling ~/.gaim/logs to find new logfiles";
+                                ThisScheduler.Add (task);
+			}
+
+			stopwatch.Stop ();
+
+			log.Info ("Gaim log backend worker thread done in {0}", stopwatch); 
 		}
 		
 		public override void Start () 
@@ -69,21 +94,26 @@ namespace Beagle.Daemon.GaimLogQueryable {
 			ExceptionHandlingThread.Start (new ThreadStart (StartWorker));
 		}
 
-		// Scan the logs directory for logs.
-		private void ScanLogs ()
-		{
-			int file_count;
-			
-			log.Info ("IM: Scanning IM Logs in {0}", log_dir);
-			Stopwatch timer = new Stopwatch ();
-			timer.Start ();
-			file_count = Watch (log_dir);
-			timer.Stop ();
-			log.Info ("IM: Found {0} logs in {1}", file_count, timer);		
-		}
+		/////////////////////////////////////////////////
+
+		private void Crawl ()
+                {
+                        crawler.Crawl ();
+                        foreach (FileInfo file in crawler.Logs) {			    
+                                IndexLog (file.FullName, Scheduler.Priority.Delayed);
+			}
+                }
+
+                private void CrawlHook (Scheduler.Task task)
+                {
+                        Crawl ();
+                        task.Reschedule = true;
+                        task.TriggerTime = DateTime.Now.AddSeconds (polling_interval_in_seconds);
+                }
+
+		/////////////////////////////////////////////////
 
 		// Sets up an Inotify watch on all subdirectories withing ~/.gaim/logs
-		// Also indexes the existing log files.
 		private int Watch (string path)
 		{
 			DirectoryInfo root = new DirectoryInfo (path);
@@ -107,12 +137,6 @@ namespace Beagle.Daemon.GaimLogQueryable {
 				
 				watched [wd] = true;
 
-				// Index the existing files.
-				foreach (FileInfo file in dir.GetFiles ()) {
- 					IndexLog (file.FullName, Scheduler.Priority.Delayed);
-					++file_count;
-				}
-
 				// Add all subdirectories to the queue so their files can be indexed.
 				foreach (DirectoryInfo subdir in dir.GetDirectories ())
 					queue.Enqueue (subdir);
@@ -121,15 +145,19 @@ namespace Beagle.Daemon.GaimLogQueryable {
 			return file_count;
 		}
 		
-		private bool CheckForLogs ()
-		{
-			if (! Directory.Exists (this.log_dir))
-				return true; // continue polling
+		/////////////////////////////////////////////////
 
-			// Otherwise, stop polling and start indexing
-			StartWorker ();
+		private bool CheckForExistence ()
+		{
+			if (!Directory.Exists (log_dir))
+				return true;
+
+			this.Start ();
+
 			return false;
 		}
+
+		/////////////////////////////////////////////////
 
 		private void OnInotifyEvent (int wd,
 					     string path,
@@ -153,7 +181,8 @@ namespace Beagle.Daemon.GaimLogQueryable {
 					break;
 			}
 		}
-		
+
+		/////////////////////////////////////////////////
 		
 		private static Indexable ImLogToIndexable (ImLog log)
 		{
