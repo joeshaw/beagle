@@ -1,0 +1,15 @@
+using System;
+
+namespace Beagle {
+
+	internal class ExternalStringsHack {
+
+		static public string Prefix {
+			get { return "@prefix@"; }
+		}
+
+		static public string PkgLibDir {
+			get { return "@pkglibdir@"; }
+		}
+	}	  
+}
