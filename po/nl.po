@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: beagle\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2005-03-26 13:16+0100\n"
+"POT-Creation-Date: 2005-04-05 21:56+0200\n"
 "PO-Revision-Date: 2005-04-05 21:45+0100\n"
 "Last-Translator: Wouter Bolsterlee <uws+gnome@xs4all.nl>\n"
 "Language-Team: Dutch <vertaling@nl.linux.org>\n"
@@ -16,207 +16,339 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: Best/Best.cs:120
+#: ../Best/Best.cs:120
 msgid ""
 "If you're wondering whether Best is working check your notification area "
 "(system tray)"
-msgstr "Als je je afvraagt of Best werkt, controleer dan je mededelingengebied "
+msgstr ""
+"Als je je afvraagt of Best werkt, controleer dan je mededelingengebied "
 "(system tray)"
 
-#: Best/BestTray.cs:164
+#: ../Best/BestTray.cs:164
 msgid "No Recent Searches"
 msgstr "Geen recente zoekopdrachten"
 
-#: Best/BestTray.cs:179
+#: ../Best/BestTray.cs:179
 msgid "Quit"
 msgstr "Afsluiten"
 
-#: Best/BestWindow.cs:302
+#: ../Best/BestWindow.cs:302
 msgid "Anywhere"
 msgstr "Overal"
 
-#: Best/BestWindow.cs:304
+#: ../Best/BestWindow.cs:304
 msgid "in Files"
 msgstr "in bestanden"
 
-#: Best/BestWindow.cs:306
+#: ../Best/BestWindow.cs:306
 msgid "in Addressbook"
 msgstr "in adresboek"
 
-#: Best/BestWindow.cs:308
+#: ../Best/BestWindow.cs:308
 msgid "in Mail"
 msgstr "in e-mail"
 
-#: Best/BestWindow.cs:310
+#: ../Best/BestWindow.cs:310
 msgid "in Web Pages"
 msgstr "in webpagina's"
 
-#: Best/BestWindow.cs:312
+#: ../Best/BestWindow.cs:312
 msgid "in Chats"
 msgstr "in chats"
 
-#: Best/BestWindow.cs:328
+#: ../Best/BestWindow.cs:328
 msgid "Search terms:"
 msgstr "Zoektermen:"
 
-#: Best/BestWindow.cs:345
+#: ../Best/BestWindow.cs:345
 msgid "Find"
 msgstr "Zoeken"
 
-#: Best/BestWindow.cs:362
+#: ../Best/BestWindow.cs:362
 msgid "Show More Results"
 msgstr "Meer resultaten tonen"
 
-#: Best/BestWindow.cs:368
+#: ../Best/BestWindow.cs:368
 msgid "Show Previous Results"
 msgstr "Vorige resultaten tonen"
 
-#: Best/BestWindow.cs:402
+#: ../Best/BestWindow.cs:402
 msgid "No results."
 msgstr "Geen resultaten."
 
+#. To translators: {0} is the current count of results shown of {1} in total, this is the message that is initially shown
+#. when results are returned to the user.
+#: ../Best/BestWindow.cs:406
 #, csharp-format
 msgid "Best <b>{0} results of {1}</b> are shown."
 msgstr "Beste <b>{0} van {1} resultaten</b> worden getoond."
 
+#. To translators: {0} to {1} is the interval of results currently shown of {2} results in total
+#: ../Best/BestWindow.cs:411
 #, csharp-format
 msgid "Results <b>{0} through {1} of {2}</b> are shown."
 msgstr "Resultaten <b>{0} tot {1} van {2} totaal</b> worden getoond."
 
+#. To translators: {0} represents the current query keywords
+#: ../Best/BestWindow.cs:550
 #, csharp-format
 msgid ""
 "The query for <i>{0}</i> failed.<br>The likely cause is that the beagle "
 "daemon isn't running."
 msgstr ""
-"De zoekopdracht naar <i>{0}</i> is mislukt. Waarschijnlijk komt dit doordat"
-"de beagle-daemon niet actief is."
+"De zoekopdracht naar <i>{0}</i> is mislukt. Waarschijnlijk komt dit "
+"doordatde beagle-daemon niet actief is."
 
+#. To translators: {0} represents the current query keywords
+#: ../Best/BestWindow.cs:555
 #, csharp-format
 msgid ""
 "The query for <i>{0}</i> failed.<br>The session bus isn't running.  See "
 "http://beaglewiki.org/index.php/Installing%20Beagle for information on "
 "setting up a session bus."
 msgstr ""
-"De zoekopdracht naar <i>{0}</i> is mislukt. <br>De sessiebus is niet"
-"actief. Zie http://beaglewiki.org/index.php/Installing%20Beagle voor"
-"meer informatie over het activeren van een sessiebus."
+"De zoekopdracht naar <i>{0}</i> is mislukt. <br>De sessiebus is nietactief. "
+"Zie http://beaglewiki.org/index.php/Installing%20Beagle voormeer informatie "
+"over het activeren van een sessiebus."
 
+#. To translators: {0} represents the current query keywords, {1} contains the errormessage
+#: ../Best/BestWindow.cs:559
 #, csharp-format
 msgid "The query for <i>{0}</i> failed with error:<br>{1}<br>"
 msgstr "De zoekopdracht naar <i>{0}</i> is mislukt met de fout:<br>{1}<br>"
 
-#: Tiles/TileDocs.cs:75
+#: ../Tiles/TileDocs.cs:75
 msgid "Pages:"
 msgstr "Pagina's:"
 
-#: Tiles/TileDocs.cs:79
+#: ../Tiles/TileDocs.cs:79
 msgid "Words:"
 msgstr "Woorden:"
 
-#: Tiles/TileFolder.cs:51
+#: ../Tiles/TileFolder.cs:51
 msgid "Empty"
 msgstr "Leeg"
 
-#: Tiles/TileFolder.cs:55
+#: ../Tiles/TileFolder.cs:53
 #, csharp-format
 msgid "Contains {0} Item"
 msgid_plural "Contains {0} Items"
 msgstr[0] "Bevat {0} item"
 msgstr[1] "Bevat {0} items"
 
-#: Tiles/TileMailMessage.cs:68
-msgid "<i>No Subject</i>"
-msgstr "<i>Geen onderwerp</i>"
+#: ../Tiles/TileMailMessage.cs:68
+msgid "No Subject"
+msgstr "Geen onderwerp"
 
-#: Tiles/TileMailMessage.cs:73
+#: ../Tiles/TileMailMessage.cs:73
 msgid "To"
 msgstr "Aan"
 
-#: Tiles/TileMailMessage.cs:73
+#: ../Tiles/TileMailMessage.cs:73
 msgid "From"
 msgstr "Van"
 
-#: Tiles/TileMailMessage.cs:104
+#: ../Tiles/TileMailMessage.cs:104
 msgid "Sent"
 msgstr "Verzonden"
 
-#: Tiles/TileMailMessage.cs:104
+#: ../Tiles/TileMailMessage.cs:104
 msgid "Received"
 msgstr "Ontvangen"
 
-#: Util/StringFu.cs:65
-msgid "Today"
-msgstr "Vandaag"
+#. For translators: From template Tiles/template-docs.html
+#. For translators: From template Tiles/template-folder.html
+#. For translators: From template Tiles/template-file.html
+#. For translators: From template Tiles/template-picture.html
+#. For translators: From template Tiles/template-presentation.html
+#: ../Tiles/TranslationHack.cs:6 ../Tiles/TranslationHack.cs:24
+#: ../Tiles/TranslationHack.cs:28 ../Tiles/TranslationHack.cs:60
+#: ../Tiles/TranslationHack.cs:70
+msgid "in folder"
+msgstr "in map"
 
-#: Util/StringFu.cs:67
-msgid "Yesterday"
-msgstr "Gisteren"
+#. For translators: From template Tiles/template-docs.html
+#. For translators: From template Tiles/template-file.html
+#. For translators: From template Tiles/template-presentation.html
+#: ../Tiles/TranslationHack.cs:8 ../Tiles/TranslationHack.cs:30
+#: ../Tiles/TranslationHack.cs:72
+msgid "Last modified"
+msgstr "Laatste wijziging"
 
+#. For translators: From template Tiles/template-docs.html
+#. For translators: From template Tiles/template-presentation.html
+#: ../Tiles/TranslationHack.cs:10 ../Tiles/TranslationHack.cs:74
+msgid "Title:"
+msgstr "Titel:"
 
-#: Util/StringFu.cs:95
-#, csharp-format
-msgid "Today, {0}"
-msgstr "Vandaag, {0}"
+#. For translators: From template Tiles/template-docs.html
+#. For translators: From template Tiles/template-presentation.html
+#: ../Tiles/TranslationHack.cs:12 ../Tiles/TranslationHack.cs:76
+msgid "Author:"
+msgstr "Auteur:"
 
-#: Util/StringFu.cs:96
-#, csharp-format
-msgid "Yesterday, {0}"
-msgstr "Gisteren, {0}"
+#. For translators: From template Tiles/template-docs.html
+#. For translators: From template Tiles/template-launcher.html
+#. For translators: From template Tiles/template-folder.html
+#. For translators: From template Tiles/template-file.html
+#. For translators: From template Tiles/template-im-log.html
+#. For translators: From template Tiles/template-mail-message.html
+#. For translators: From template Tiles/template-music.html
+#. For translators: From template Tiles/template-note.html
+#. For translators: From template Tiles/template-picture.html
+#. For translators: From template Tiles/template-presentation.html
+#. For translators: From template Tiles/template-web-history.html
+#. For translators: From template Tiles/template-blog.html
+#: ../Tiles/TranslationHack.cs:14 ../Tiles/TranslationHack.cs:22
+#: ../Tiles/TranslationHack.cs:26 ../Tiles/TranslationHack.cs:32
+#: ../Tiles/TranslationHack.cs:38 ../Tiles/TranslationHack.cs:42
+#: ../Tiles/TranslationHack.cs:50 ../Tiles/TranslationHack.cs:58
+#: ../Tiles/TranslationHack.cs:64 ../Tiles/TranslationHack.cs:80
+#: ../Tiles/TranslationHack.cs:88 ../Tiles/TranslationHack.cs:94
+msgid "Open"
+msgstr "Openen"
 
-#: Util/StringFu.cs:98
-#, csharp-format
-msgid "{0} days ago, {1}"
-msgstr "{0} dagen geleden, om {1}"
+#. For translators: From template Tiles/template-docs.html
+#. For translators: From template Tiles/template-file.html
+#. For translators: From template Tiles/template-picture.html
+#. For translators: From template Tiles/template-presentation.html
+#: ../Tiles/TranslationHack.cs:16 ../Tiles/TranslationHack.cs:34
+#: ../Tiles/TranslationHack.cs:66 ../Tiles/TranslationHack.cs:82
+msgid "Send to..."
+msgstr "Sturen naar..."
 
-#: Util/StringFu.cs:118
-#, csharp-format
-msgid "{0} hours"
-msgid_plural "{0} hours"
-msgstr[0] "{0} uur"
-msgstr[1] "{0} uren"
+#. For translators: From template Tiles/template-docs.html
+#. For translators: From template Tiles/template-file.html
+#. For translators: From template Tiles/template-music.html
+#. For translators: From template Tiles/template-picture.html
+#. For translators: From template Tiles/template-presentation.html
+#: ../Tiles/TranslationHack.cs:18 ../Tiles/TranslationHack.cs:36
+#: ../Tiles/TranslationHack.cs:54 ../Tiles/TranslationHack.cs:68
+#: ../Tiles/TranslationHack.cs:84
+msgid "Reveal in file manager"
+msgstr "Toon in bestandsbeheer"
 
-#: Util/StringFu.cs:128
-#, csharp-format
-msgid "{0} minutes"
-msgid_plural "{0} minutes"
-msgstr[0] "{0} minuut"
-msgstr[1] "{0} minuten"
+#. For translators: From template Tiles/template-launcher.html
+#: ../Tiles/TranslationHack.cs:20
+msgid "Application:"
+msgstr "Toepassing:"
 
 #
 # Common stuff for the templates
 #
+#. For translators: From template Tiles/template-mail-message.html
+#: ../Tiles/TranslationHack.cs:40
 msgid "Folder:"
 msgstr "Map:"
 
-msgid "Open"
-msgstr "Openen"
+#. For translators: From template Tiles/template-mail-message.html
+#: ../Tiles/TranslationHack.cs:44
+msgid "Send IM"
+msgstr "IM sturen"
 
-msgid "Send to..."
-msgstr "Sturen naar..."
+#. For translators: From template Tiles/template-music.html
+#: ../Tiles/TranslationHack.cs:46
+msgid "Track"
+msgstr "Nummer"
 
-msgid "in folder"
-msgstr "in map"
+#. For translators: From template Tiles/template-music.html
+#: ../Tiles/TranslationHack.cs:48
+msgid "from"
+msgstr "van"
 
-msgid "Last modified"
-msgstr "Laatste wijziging"
+#. For translators: From template Tiles/template-music.html
+#: ../Tiles/TranslationHack.cs:52
+msgid "Enqueue"
+msgstr "Toevoegen"
 
+#. For translators: From template Tiles/template-note.html
+#: ../Tiles/TranslationHack.cs:56
 msgid "last modified"
 msgstr "laatste wijziging"
 
-msgid "Reveal in file manager"
-msgstr "Toon in bestandsbeheer"
+#. For translators: From template Tiles/template-picture.html
+#: ../Tiles/TranslationHack.cs:62
+msgid "Modified:"
+msgstr "Laatste wijziging:"
 
-msgid "Title:"
-msgstr "Titel:"
+#. For translators: From template Tiles/template-presentation.html
+#: ../Tiles/TranslationHack.cs:78
+msgid "Slides:"
+msgstr "Pagina's:"
 
-msgid "Author:"
-msgstr "Auteur:"
+#. For translators: From template Tiles/template-web-history.html
+#: ../Tiles/TranslationHack.cs:86
+msgid "Last viewed:"
+msgstr "Laatste bezoek:"
 
+#. For translators: From template Tiles/template-blog.html
+#: ../Tiles/TranslationHack.cs:90
 msgid "Weblog:"
 msgstr "Weblog:"
 
+#. For translators: From template Tiles/template-blog.html
+#: ../Tiles/TranslationHack.cs:92
 msgid "Published:"
-msgstr "Gepubliceerd:"
+msgstr "Geplaatst:"
 
-msgid "Application:"
-msgstr "Toepassing:"
+#: ../Util/ExifData.cs:226
+msgid "Image Directory"
+msgstr "Afbeeldingenmap"
+
+#: ../Util/ExifData.cs:228
+msgid "Thumbnail Directory"
+msgstr "Miniatuurvoorbeeldmap"
+
+#: ../Util/ExifData.cs:230
+msgid "Exif Directory"
+msgstr "Exif-map"
+
+#: ../Util/ExifData.cs:232
+msgid "GPS Directory"
+msgstr "GPS-map"
+
+#: ../Util/ExifData.cs:234
+msgid "InterOperability Directory"
+msgstr "InterOperability-map"
+
+#: ../Util/ExifData.cs:236
+msgid "Unknown Directory"
+msgstr "Onbekende map"
+
+#: ../Util/StringFu.cs:65
+msgid "Today"
+msgstr "Vandaag"
+
+#: ../Util/StringFu.cs:67
+msgid "Yesterday"
+msgstr "Gisteren"
+
+#. To translators: {0} is the time of the day, eg. 13:45
+#: ../Util/StringFu.cs:95
+#, csharp-format
+msgid "Today, {0}"
+msgstr "Vandaag, om {0}"
+
+#. To translators: {0} is the time of the day, eg. 13:45
+#: ../Util/StringFu.cs:98
+#, csharp-format
+msgid "Yesterday, {0}"
+msgstr "Gisteren, om {0}"
+
+#. To translators: {0} is the number of days that have passed, {1} is the time of the day, eg. 13:45
+#: ../Util/StringFu.cs:101
+#, csharp-format
+msgid "{0} days ago, {1}"
+msgstr "{0} dagen geleden, om {1}"
+
+#: ../Util/StringFu.cs:119
+msgid "{0} hour"
+msgid_plural "{0} hours"
+msgstr[0] "{0} uur"
+msgstr[1] "{0} uren"
+
+#: ../Util/StringFu.cs:126
+msgid "{0} minute"
+msgid_plural "{0} minutes"
+msgstr[0] "{0} minuut"
+msgstr[1] "{0} minuten"
