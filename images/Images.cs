@@ -124,8 +124,8 @@ namespace Beagle {
 							      0,
 							      binary_data.Length);
 			
-			
 			string data = "data:" + mime_type + ";base64," + base64_string;
+
 			return data;
 		}
 

@@ -35,6 +35,14 @@ namespace Beagle.Tile {
 	[HitFlavor (Name="People", Rank=1200, Emblem="emblem-contact.png", Color="#eeeebd",
 		    Type="Contact")]
 	public class TileContact : TileFromHitTemplate {
+
+		static string default_contact_icon_data;
+
+		static TileContact ()
+		{
+			default_contact_icon_data = Images.GetHtmlSource ("contact-icon.png", "image/png");
+		}
+
 		public TileContact (Hit _hit) : base (_hit,
 						      "template-contact.html")
 		{
@@ -44,33 +52,39 @@ namespace Beagle.Tile {
 		{
 			base.PopulateTemplate ();
 
+			bool use_generic_icon = true;
+
 			byte[] data = (byte[]) Hit.GetData ("Photo");
 
 			if (data != null) {
 				Console.WriteLine ("Got photo for {0}", Hit.Uri);
-				string height = "";
+				string size_adjustment = "";
 
 				// bad hack to scale the image 
 				MemoryStream stream = new MemoryStream (data);
 				Gdk.Pixbuf pixbuf = new Gdk.Pixbuf (stream);
+				Console.WriteLine ("Build pixbuf {0} {1}x{2}", pixbuf, pixbuf.Width, pixbuf.Height);
 				if (pixbuf.Width > pixbuf.Height) {
 					if (pixbuf.Width > 80)
-						height = "width=\"80\"";
+						size_adjustment = "width=\"80\"";
 				} else {
 					if (pixbuf.Height > 80)
-						height = "height=\"80\"";
+						size_adjustment = "height=\"80\"";
 				}
 				stream.Close ();
 
-				Template["height"] = height;
-				Template["Icon"] = Images.GetHtmlSource (data,
-									 "image/png");
+				string data_chunk;
+				data_chunk = Images.GetHtmlSource (data, "image/jpeg");
+				if (data_chunk.Length  < 65000) {
+					Template["size_adjustment"] = size_adjustment;
+					Template["Icon"] = data_chunk;
+					use_generic_icon = false;
+				}
+			}
 
-
-			} else {
-				Template["height"] = "";
-				Template["Icon"] = Images.GetHtmlSource ("contact-icon.png",
-									 "image/png");
+			if (use_generic_icon) {
+				Template["size_adjustment"] = "";
+				Template["Icon"] = default_contact_icon_data;
 			}
 
 			if (Hit["fixme:ImAim"] != null)
