@@ -228,6 +228,13 @@ EVO_SHARP_PREFIX=`$PKG_CONFIG --variable=prefix evolution-sharp`
 
 dnl ----------------------------------------------
 
+AC_ARG_ENABLE([dbus-workarounds],
+	[ --disable-dbus-workarounds    Disable D-BUS Workarounds ],
+	 use_dbus_workarounds=no,
+	 use_dbus_workarounds=yes)
+
+dnl ----------------------------------------------                              
+
 AC_ARG_ENABLE([network],
         [  --enable-network       Enable Network Service ],
         enable_network=yes,
@@ -265,6 +272,10 @@ AM_CONDITIONAL(ENABLE_GST_SHARP, test "x$enable_gst_sharp" = "xyes")
 
 dnl ----------------------------------------------
 
+dnl Needed to index jpeg metadata
+PKG_CHECK_MODULES(LIBEXIF, libexif >= 0.5)
+PKG_CHECK_MODULES(LIBEXIF, libexif >= 0.6, have_old_libexif=no, have_old_libexif=yes)
+
 PKG_CHECK_MODULES(BEAGLED, gmime-sharp >= 2.1.11 gtk-sharp dbus-sharp >= 0.23.1 gconf-sharp)
 BEAGLED_LIBS="$BEAGLED_LIBS $EVO_SHARP_LIBS $GSF_SHARP_LIBS"
 AC_SUBST(BEAGLED_LIBS)
@@ -293,8 +304,12 @@ else
 	BEAGLE_DEFINES=""
 fi
 
-if test "$dbus_broken" = "yes"; then
+if test "$dbus_broken" = "yes" -o "$use_dbus_workarounds" = "yes" ; then
 	BEAGLE_DEFINES="$BEAGLE_DEFINES -define:DBUS_IS_BROKEN_BROKEN_BROKEN"
+fi
+
+if test "$have_old_libexif" = "yes"; then
+    BEAGLE_DEFINES="$BEAGLE_DEFINES -define:HAVE_OLD_LIBEXIF"
 fi
 
 AC_SUBST(BEAGLE_DEFINES)
@@ -426,6 +441,7 @@ beagle.spec
 
 echo "
 	Prefix:			${prefix}
+	D-BUS Workarounds?      ${use_dbus_workarounds}
 	Evolution-Sharp?	${enable_evo_sharp}
 	gsf-sharp?		${enable_gsf_sharp}
 	gst-sharp?		${enable_gst_sharp}
