@@ -153,8 +153,6 @@ namespace Beagle.Daemon {
 				     IQueryResult result,
 				     IQueryableChangeData changeData)
 		{
-			return;
-
 			// FIXME: Evolution.BookQuery's bindings are all
 			// screwed up, so we can't construct compound queries.
 			// This will have to do for now.

@@ -133,6 +133,34 @@ namespace Beagle.Daemon {
 
 		/////////////////////////////////////////////////////
 
+		static object numberOfWorkersLock = new object ();
+		static int numberOfWorkers = 0;
+
+		static void WorkerBegin ()
+		{
+			lock (numberOfWorkersLock) {
+				++numberOfWorkers;
+			}
+		}
+
+		static void WorkerEnd ()
+		{
+			lock (numberOfWorkersLock) {
+				--numberOfWorkers;
+			}
+		}
+
+		static bool MultipleWorkers {
+			get { 
+				lock (numberOfWorkersLock) {
+					return numberOfWorkers > 1;
+				}
+			}
+		}
+		
+
+		/////////////////////////////////////////////////////
+
 		//
 		// The Index's Fingerprint
 		//
@@ -500,6 +528,8 @@ namespace Beagle.Daemon {
 			if (pendingAdds.Count == 0)
 				return;
 
+			WorkerBegin ();
+
 			Console.WriteLine ("Flushing {0} Adds", pendingAdds.Count);
 
 			IndexWriter writer = new IndexWriter (Store, Analyzer, false);
@@ -523,15 +553,27 @@ namespace Beagle.Daemon {
 						item.PostIndexHook (this, indexable.Uri);
 					++sinceOptimization;
 
-					// Stop and catch our breath for 51ms every 11 documents
-					// 51 and 11 are, of course, completely abritrary.
-					++sleepCounter;
-					if (sleepCounter == 11) {
-						Thread.Sleep (51);
+					if (MultipleWorkers) {
+						// If there are multiple threads indexing at the same time,
+						// sleep for 46ms after indexing every document.  Hopefully
+						// this will keep the daemon from making the system unusable.
+						// 46 is a random number.
+						Thread.Sleep (46);
 						sleepCounter = 0;
+					} else {
+						// Otherwise, if we are the only thread we stop and catch our breath
+						// for 51ms every 6 documents.
+						// 51 and 6 are, of course, completely abritrary.
+						++sleepCounter;
+						if (sleepCounter == 6) {
+							Thread.Sleep (51);
+							sleepCounter = 0;
+						}
 					}
 				}
 			}
+
+			WorkerEnd ();
 
 			Console.WriteLine ("Done Adding");
 
