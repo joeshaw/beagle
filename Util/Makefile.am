@@ -31,6 +31,7 @@ CSFILES = 			        	\
 	$(srcdir)/PullingReader.cs      	\
 	$(srcdir)/Stopwatch.cs			\
 	$(srcdir)/StringFu.cs           	\
+	$(srcdir)/TaskManager.cs		\
 	$(srcdir)/ThreadedPriorityQueue.cs	\
 	$(srcdir)/UriFu.cs			\
 	$(srcdir)/Vfs.cs

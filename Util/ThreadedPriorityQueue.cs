@@ -63,6 +63,9 @@ namespace Beagle.Util {
 
 		public void Start ()
 		{
+			if (thread != null)
+				return;
+
 			thread = new Thread (new ThreadStart (QueueWorker));
 			thread.Start ();
 		}
@@ -201,7 +204,6 @@ namespace Beagle.Util {
 
 		private void QueueWorker ()
 		{
-			
 			WorkerStartArgs args = new WorkerStartArgs ();
 			if (WorkerStartEvent != null) 
 				WorkerStartEvent (this, args);
