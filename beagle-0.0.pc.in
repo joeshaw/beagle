@@ -7,5 +7,5 @@ Name: Beagle
 Description: We Index Your Life
 Version: @VERSION@
 Requires: dbus-sharp
-Libs: -r:${dlldir}/Beagle.dll
+Libs: -r:${dlldir}/Beagle.dll -r:${dlldir}/Util.dll
 
