@@ -1,3 +1,0 @@
-#!/bin/sh
-
-MONO_PATH=../Lucene.Net:../Filters:../indexer:../Util mono --debug $@
