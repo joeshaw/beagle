@@ -339,7 +339,7 @@ namespace Best {
 					label = String.Format ("Results <b>{0} through {1} of {2} in this category</b> are shown.",
 							       root.HitCollection.FirstDisplayed + 1, 
 							       root.HitCollection.LastDisplayed + 1,
-							       root.HitCollection.NumResults);
+							       root.HitCollection.NumDisplayableResults);
 			}
 
 			page_label.Markup = label;
