@@ -47,6 +47,7 @@ rm -rf $RPM_BUILD_ROOT
 %{_prefix}/lib/epiphany/extensions/*beagle*
 %{_prefix}/lib/*beagle*
 %{_prefix}/lib/pkgconfig/beagle*
+%{_prefix}/man/man1/beagle*
 
 %changelog
 * Thu Aug 27 2004 Nat Friedman <nat@novell.com>

@@ -763,6 +763,9 @@ if ENABLE_WEBSVC
 ALL_TARGETS += $(WEB_FRONT_END_TARGET)
 endif
 
+man_MANS = 				\
+	beagled.1
+
 all: $(ALL_TARGETS)
 
 install-data-local: $(ALL_TARGETS)
@@ -822,7 +825,8 @@ EXTRA_DIST = \
 	$(EXTSTR_IN)			\
 	$(WRAPPER_IN)   		\
 	$(DAEMON_WRAPPER_IN)		\
-	$(COND_CS_FILES)
+	$(COND_CS_FILES)		\
+	$(man_MANS)
 
 
 CLEANFILES = \

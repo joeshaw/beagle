@@ -46,10 +46,13 @@ $(WRAPPER): $(srcdir)/$(WRAPPER).in
 desktopdir = $(datadir)/applications
 desktop_DATA = best.desktop
 
+man_MANS = best.1
+
 EXTRA_DIST =		\
 	$(CSFILES)	\
 	$(WRAPPER).in	\
-	$(desktop_DATA)
+	$(desktop_DATA) \
+	$(man_MANS)
 
 CLEANFILES =		\
 	$(TARGET)	\

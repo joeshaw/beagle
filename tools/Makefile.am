@@ -70,6 +70,11 @@ bin_SCRIPTS = 			\
 	beagle-shutdown		\
 	beagle-status
 
+man_MANS = 			\
+	beagle-query.1		\
+	beagle-shutdown.1	\
+	beagle-status.1
+
 all: $(TARGETS) $(WRAPPERS)
 
 install-data-local: $(TARGETS)
@@ -84,6 +89,7 @@ EXTRA_DIST =				\
 	$(QUERY_CSFILES)		\
 	$(INDEX_WEB_CONTENT_CSFILES)	\
 	$(EXERCISE_FILE_SYSTEM_CSFILES)	\
+	$(man_MANS)			\
 	beagle-index-info		\
 	beagle-ping			\
 	beagle-shutdown			\

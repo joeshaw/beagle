@@ -19,8 +19,16 @@ GNOME program.
 .B --verbose 
 Print detailed information about each hit.
 .TP
+.B --live-query 
+Enable live queries. This argument keeps beagle-query running, continuously
+feeding new matching hits as the system gets aware of them.
+.TP
 .B --mime=\fImimetype\fP
 Constrain search results to this mime type.  This argument can be
+specified multiple times.
+.TP
+.B --type=\fItype\fP
+Constrain search results to this item type.  This argument can be
 specified multiple times.
 .TP
 .B --source=\fIsource\fP

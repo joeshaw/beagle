@@ -24,8 +24,34 @@ only infrequently.
 .BR beagled
 has many options, although most are for debugging and fine-tuning execution and
 are thus not required for standard use.
-.PP
-TODO: Fill in the options here
+.TP
+.B --foreground|--fg
+If specified, execute the Beagle daemon in the background.
+.TP
+.B --background|--bg
+If specified, execute the Beagle daemon in the background (default).
+.TP
+.B --replace
+If specified, the daemon tries to shutdown and replace any other Beagle daemon
+already running.
+.TP
+.B --debug
+Enable extensive logging suited for general debugging purposes.
+.TP
+.B --debug-memory
+Enable extensive logging suited for memory debugging purposes.
+.TP
+.B --allow-backend \flbackend\fP
+Constrain the Beagle daemon to only use specified backends. This argument can
+be used multiple times.
+.TP
+.B --deny-backend \flbackend\fP
+Constrain the Beagle daemon by disabling specified backends. This argument can
+be used multiple times.
+.TP
+.B --disable-scheduler
+Disable the internal scheduler and thus refrain the Beagle daemon from
+performing any crawling or indexing. Search facilities will remain enabled.
 .SH AUTHOR
 Novell, Inc.
 .SH "REPORTING BUGS"
