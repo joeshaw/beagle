@@ -1,7 +1,10 @@
 //
-// FlacReader.cs
+// FlacReader.cs : Reads a flac tag from a given stream
 //
-// Copyright (C) Raphaël Slinckx
+// Author:
+//		Raphaël Slinckx <raf.raf@wol.be>
+//
+// Copyright 2004 (C) Raphaël Slinckx (ported from http://entagged.sourceforge.net)
 //
 
 //
@@ -29,197 +32,94 @@ using System.IO;
 using System.Text;
 using System.Collections;
 
-namespace Beagle.Util.FlacReader {
+namespace Beagle.Util.AudioUtil {
 
-	public class Tag {
-		protected Hashtable fields;
-
-		public Tag () {
-			fields = new Hashtable ();
-			fields["TITLE"] = "";
-			fields["ALBUM"] = "";
-			fields["ARTIST"] = "";
-			fields["GENRE"] = "";
-			fields["TRACK"] = "";
-			fields["YEAR"] = "";
-			fields["COMMENT"] = "";
-			fields["VENDOR"] = "";
-		}
+	namespace Flac {
 		
-		public string Title {
-			get {
-				return (string) fields["TITLE"];
-			}
-			set {
-				if (value == null)
-					fields["TITLE"] = "";
-				fields["TITLE"] = value;
-			}
-		}
-		
-		public string Album {
-			get {
-				return (string) fields["ALBUM"];
-			}
-			set {
-				if (value == null)
-					fields["ALBUM"] = "";
-				fields["ALBUM"] = value;
-			}
+		public class MetadataBlockHeader {
 			
-		}
-		
-		public string Artist {
-			get {
-				return (string) fields["ARTIST"];
-			}
-			set {
-				if (value == null)
-					fields["ARTIST"] = "";
-				fields["ARTIST"] = value;
-			}
+			public const int STREAMINFO=0, PADDING=1, APPLICATION=2, SEEKTABLE=3, VORBIS_COMMENT=4, CUESHEET=5, UNKNOWN=6;
+			private int blockType, dataLength;
+			private bool lastBlock;
+			private byte[] data;
+			private byte[] bytes;
 			
-		}
-		
-		public string Genre {
-			get {
-				return (string) fields["GENRE"];
-			}
-			set {
-				if (value == null)
-					fields["GENRE"] = "";
-				fields["GENRE"] = value;
-			}
-		}
-		
-		public string Track {
-			get {
-				return (string) fields["TRACK"];
-			}
-			set {
-				if (value == null)
-					fields["TRACK"] = "";
-				fields["TRACK"] = value;
-			}
-		}
-		
-		public string Year {
-			get {
-				return (string) fields["YEAR"];
-			}
-			set {
-				if (value == null)
-					fields["YEAR"] = "";
-				fields["YEAR"] = value;
-			}
-		}
-		
-		public string Comment {
-			get {
-				return (string) fields["COMMENT"];
-			}
-			set {
-				if (value == null)
-					fields["COMMENT"] = "";
-				fields["COMMENT"] = value;
-			}
-		}
-		
-		public string Vendor {
-			get {
-				return (string) fields["VENDOR"];
-			}
-			set {
-				if (value == null)
-					fields["VENDOR"] = "";
-				fields["VENDOR"] = value;
-			}
-		}
-	}
-
-	public class MetadataBlockHeader {
-		
-		public const int STREAMINFO=0, PADDING=1, APPLICATION=2, SEEKTABLE=3, VORBIS_COMMENT=4, CUESHEET=5, UNKNOWN=6;
-		private int blockType, dataLength;
-		private bool lastBlock;
-		private byte[] data;
-		private byte[] bytes;
-		
-		public MetadataBlockHeader (byte[] b) {
-			this.bytes = b;
-			
-			lastBlock = ( (b[0] & 0x80) >> 7 ) == 1;
-			
-			int type = b[0] & 0x7F;
-			switch (type) {
-				case 0: blockType = STREAMINFO; break;
-				case 1: blockType = PADDING; break;
-				case 2: blockType = APPLICATION; break;
-				case 3: blockType = SEEKTABLE; break;
-				case 4: blockType = VORBIS_COMMENT; break;
-				case 5: blockType = CUESHEET; break;
-				default: blockType = UNKNOWN; break;
-			}
-			
-			dataLength = (u (b[1])<<16) + (u (b[2])<<8) + (u (b[3]));
-			
-			data = new byte[4];
-			data[0] = (byte) (data[0] & 0x7F);
-			for (int i = 1; i < 4; i ++) {
-				data[i] = b[i];
-			}
-		}
-	
-		public int DataLength {
-			get {
-				return dataLength;
-			}
-		}
-		
-		public int BlockType {
-			get {
-				return blockType;
-			}
-		}
-		
-		public string BlockTypeString {
-			get {
-				switch (blockType) {
-					case 0: return "STREAMINFO";
-					case 1: return "PADDING";
-					case 2: return "APPLICATION";
-					case 3: return "SEEKTABLE";
-					case 4: return "VORBIS_COMMENT";
-					case 5: return "CUESHEET";
-					default: return "UNKNOWN-RESERVED";
+			public MetadataBlockHeader (byte[] b) {
+				this.bytes = b;
+				
+				lastBlock = ( (b[0] & 0x80) >> 7 ) == 1;
+				
+				int type = b[0] & 0x7F;
+				switch (type) {
+					case 0: blockType = STREAMINFO; break;
+					case 1: blockType = PADDING; break;
+					case 2: blockType = APPLICATION; break;
+					case 3: blockType = SEEKTABLE; break;
+					case 4: blockType = VORBIS_COMMENT; break;
+					case 5: blockType = CUESHEET; break;
+					default: blockType = UNKNOWN; break;
+				}
+				
+				dataLength = (u (b[1])<<16) + (u (b[2])<<8) + (u (b[3]));
+				
+				data = new byte[4];
+				data[0] = (byte) (data[0] & 0x7F);
+				for (int i = 1; i < 4; i ++) {
+					data[i] = b[i];
 				}
 			}
-		}
 		
-		public bool IsLastBlock {
-			get {
-				return lastBlock;
+			public int DataLength {
+				get {
+					return dataLength;
+				}
 			}
-		}
-		
-		public byte[] Data {
-			get {
-				return data;
+			
+			public int BlockType {
+				get {
+					return blockType;
+				}
 			}
-		}
-		
-		private int u (int i) {
-			return i & 0xFF;
+			
+			public string BlockTypeString {
+				get {
+					switch (blockType) {
+						case 0: return "STREAMINFO";
+						case 1: return "PADDING";
+						case 2: return "APPLICATION";
+						case 3: return "SEEKTABLE";
+						case 4: return "VORBIS_COMMENT";
+						case 5: return "CUESHEET";
+						default: return "UNKNOWN-RESERVED";
+					}
+				}
+			}
+			
+			public bool IsLastBlock {
+				get {
+					return lastBlock;
+				}
+			}
+			
+			public byte[] Data {
+				get {
+					return data;
+				}
+			}
+			
+			private int u (int i) {
+				return i & 0xFF;
+			}
 		}
 	}
-
 
 	public class FlacTagReader {
 		
 		private ASCIIEncoding ascii = new ASCIIEncoding ();
 		private UTF8Encoding utf = new UTF8Encoding ();
 		
-		public Tag read (Stream fs) {
+		public Tag Read (Stream fs) 
+		{
 			//Begins tag parsing-------------------------------------
 			if (fs.Length < 4) {
 				//Empty File
@@ -241,13 +141,13 @@ namespace Beagle.Util.FlacReader {
 			while (!isLastBlock) {
 				b = new byte[4];
 				fs.Read (b, 0, 4);
-				MetadataBlockHeader mbh = new MetadataBlockHeader (b);
+				Flac.MetadataBlockHeader mbh = new Flac.MetadataBlockHeader (b);
 			
 				switch (mbh.BlockType) {
 					//We got a vorbis comment block, parse it
-					case MetadataBlockHeader.VORBIS_COMMENT:
+					case Flac.MetadataBlockHeader.VORBIS_COMMENT:
 						//We have it, so no need to go further
-						return handleVorbisComment (mbh, fs);
+						return HandleVorbisComment (mbh, fs);
 					
 					//This is not a vorbis comment block, we skip to next block
 					default:
@@ -262,7 +162,8 @@ namespace Beagle.Util.FlacReader {
 			throw new Exception ("FLAC Tag could not be found or read..");
 		}
 		
-		private Tag handleVorbisComment (MetadataBlockHeader mbh, Stream fs) {
+		private Tag HandleVorbisComment (Flac.MetadataBlockHeader mbh, Stream fs) 
+		{
 			Tag tag = new Tag ();
 			byte[] b = new byte [mbh.DataLength];
 			fs.Read (b, 0, b.Length);

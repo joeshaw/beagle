@@ -1,4 +1,40 @@
-2004-12-07  Veerapuram Varadhan <vvaradhan@novell.com>
+2004-12-10  Veerapuram Varadhan	 <vvaradhan@novell.com>
+
+	* Filters/Makefile.am, Util/Makefile.am, beagled/Makefile.am:
+	Included "conditionally" compiled sources to EXTRA_DIST.
+
+2004-12-10  Veerapuram Varadhan	 <vvaradhan@novell.com>
+	
+	* From a patch by Raphaël Slinckx <raf.raf@wol.be>
+
+	* Filters/FilterMusic.cs: Abstract base class for all audio file
+	filters.
+
+	* Filters/FilterFlac.cs: DoPullProperties() is implemented by base
+	class.
+
+ 	* Filters/Makefile.am: Added FilterApe.cs, FilterMp3.cs,
+	FilterOgg.cs, FilterMpc.cs
+
+	* Util/Makefile.am: Added ApeReader.cs, Mp3Reader.cs,
+	OggReader.cs, Tag.cs
+
+	* Util/FlacReader.cs: Now belongs to BU.AudioUtil namespace.
+	
+	* Util/Makefile.am: Removed Id3.cs
+
+	* Util/Id3.cs: Removed from the repository.
+
+	* Filters/FilterApe.cs: Added
+	* Filters/FilterMp3.cs: Added
+	* Filters/FilterOgg.cs: Added
+	* Filters/FilterMpc.cs: Added
+	* Util/ApeReader.cs: Added
+	* Util/Mp3Reader.cs: Added
+	* Util/OggReader.cs: Added
+	* Util/Tag.cs: Added
+	
+2004-12-07  Veerapuram Varadhan	 <vvaradhan@novell.com>
 
 	* Filters/FilterOpenOffice.cs: Count slides.  Support for
 	annotations and more *HOT* styles.

@@ -1,5 +1,5 @@
 //
-// FilterFlac.cs : Register for reading of flac files
+// FilterOgg.cs : Register for reading of ogg files
 //
 // Author:
 //		Raphaël Slinckx <raf.raf@wol.be>
@@ -7,6 +7,7 @@
 // Copyright 2004 (C) Raphaël Slinckx
 //
 
+//
 // Permission is hereby granted, free of charge, to any person obtaining a
 // copy of this software and associated documentation files (the "Software"),
 // to deal in the Software without restriction, including without limitation
@@ -28,14 +29,13 @@
 
 using System;
 using System.IO;
-
 using Beagle.Util.AudioUtil;
 
 namespace Beagle.Filters {
 
-	public class FilterFlac : FilterMusic {
+	public class FilterOgg : FilterMusic {
 		
-		private FlacTagReader reader = new FlacTagReader ();
+		private OggTagReader reader = new OggTagReader ();
 		
 		protected override Tag GetTag (Stream s)
 		{
@@ -44,7 +44,7 @@ namespace Beagle.Filters {
 		
 		protected override void RegisterSupportedTypes ()
 		{
-			AddSupportedMimeType ("audio/x-flac");
+			AddSupportedMimeType ("application/ogg");
 		}
 	}
 }

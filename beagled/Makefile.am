@@ -554,6 +554,12 @@ uninstall-local:
 bin_SCRIPTS = $(DAEMON_WRAPPER)
 noinst_SCRIPTS=$(EXTRACT_CONTENT_WRAPPER) 
 
+COND_CS_FILES = \
+	$(AUTHENTICATORS_CSFILES) 			\
+	$(srcdir)/NetworkHandler.cs			\
+	$(srcdir)/NetworkService.cs			\
+	$(srcdir)/NetworkDriver.cs
+
 EXTRA_DIST =				\
 	$(PLUGIN_CSFILES)		\
 	$(DAEMON_DLL_CSFILES)		\
@@ -561,7 +567,8 @@ EXTRA_DIST =				\
 	$(EXTRACT_CONTENT_CSFILES)	\
 	$(EXTSTR_IN)			\
 	$(WRAPPER_IN)   		\
-	$(DAEMON_WRAPPER_IN)
+	$(DAEMON_WRAPPER_IN)		\
+	$(COND_CS_FILES)
 
 CLEANFILES =				\
 	$(PLUGIN_TARGET)       		\

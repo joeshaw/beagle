@@ -22,7 +22,6 @@ HAP_CSFILES =						\
 CSFILES = 				\
 	$(HAP_CSFILES)			\
 	$(srcdir)/FilterHtml.cs		\
-	$(srcdir)/FilterFlac.cs		\
 	$(srcdir)/FilterJpeg.cs		\
 	$(srcdir)/FilterMan.cs		\
 	$(srcdir)/FilterOpenOffice.cs	\
@@ -30,7 +29,7 @@ CSFILES = 				\
 	$(srcdir)/FilterPng.cs		\
 	$(srcdir)/FilterText.cs	        \
 	$(srcdir)/FilterSource.cs	\
-	$(srcdir)/FilterRTF.cs
+	$(srcdir)/FilterRTF.cs	
 
 if ENABLE_GSF_SHARP
 CSFILES += 				\
@@ -43,7 +42,12 @@ CSFILES +=				\
 	$(srcdir)/FilterGst.cs
 else
 CSFILES +=				\
-	$(srcdir)/FilterMusic.cs
+	$(srcdir)/FilterMusic.cs	\
+	$(srcdir)/FilterFlac.cs		\
+	$(srcdir)/FilterApe.cs		\
+	$(srcdir)/FilterMp3.cs		\
+	$(srcdir)/FilterOgg.cs		\
+	$(srcdir)/FilterMpc.cs
 endif
 
 if ENABLE_WV1
@@ -81,8 +85,21 @@ install-data-local: $(TARGET)
 uninstall-local:
 	rm -f $(DESTDIR)$(FILTERDIR)/$(TARGET)
 
+COND_CS_FILES = \
+	$(srcdir)/FilterOle.cs		\
+	$(srcdir)/FilterPPT.cs		\
+	$(srcdir)/FilterDOC.cs		\
+	$(srcdir)/FilterGst.cs		\
+	$(srcdir)/FilterMusic.cs	\
+	$(srcdir)/FilterFlac.cs		\
+	$(srcdir)/FilterApe.cs		\
+	$(srcdir)/FilterMp3.cs		\
+	$(srcdir)/FilterOgg.cs		\
+	$(srcdir)/FilterMpc.cs
+
 EXTRA_DIST =		\
-	$(CSFILES)
+	$(CSFILES)	\
+	$(COND_CS_FILES)
 
 CLEANFILES =		\
 	$(TARGET)	\

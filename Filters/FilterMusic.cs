@@ -1,7 +1,12 @@
 //
-// FilterMusic.cs
+// FilterMusic.cs : This is the parent class of every audio tag-reading class
+//                  It will retreive the tag from the subclass, then fill the
+//                  beagle property as needed.
 //
-// Copyright (C) 2004 Novell, Inc.
+// Author:
+//		Raphaël Slinckx <raf.raf@wol.be>
+//
+// Copyright 2004 (C) Raphaël Slinckx
 //
 
 //
@@ -26,45 +31,65 @@
 
 using System;
 using System.IO;
-
-using BU = Beagle.Util;
+using Beagle.Util.AudioUtil;
 
 namespace Beagle.Filters {
 
-	public class FilterMusic : Beagle.Daemon.Filter {
-
+	public abstract class FilterMusic : Beagle.Daemon.Filter {
+	
+		private static Beagle.Util.Logger log = Beagle.Util.Logger.Get ("FilterMusic");
+		
 		public FilterMusic ()
 		{
-			AddSupportedMimeType ("audio/x-mp3");
-			AddSupportedMimeType ("audio/mpeg");
+			RegisterSupportedTypes ();
 		}
+		
+		protected abstract Tag GetTag (Stream s);
+		
+		protected abstract void RegisterSupportedTypes ();
 
 		protected override void DoPullProperties ()
 		{
-			BU.Id3Info info;
-
-			info = BU.Id3v2.Read (Stream);
-			if (info == null)
-				info = BU.Id3v1.Read (Stream);
-			if (info == null)
+			Tag tag = null;
+			try {
+				tag = GetTag (Stream);
+			} catch (Exception e) {
+				//FIXME: Is it better to throw an exception here ?
+				Finished();
 				return;
+			}
+			
+			log.Debug ("{0}", tag);
+			
+			//FIXME: Do we need to check for non-null empty values ?
+			//This should be done in Beagle.Property.New I think..
+			
+			if (tag.Artist.Length > 0)
+				AddProperty (Beagle.Property.New ("fixme:artist",  tag.Artist));
 
-			AddProperty (Beagle.Property.NewKeyword ("fixme:id3version", info.Version));
+			if (tag.Album.Length > 0)
+				AddProperty (Beagle.Property.New ("fixme:album",   tag.Album));
+			
+			if (tag.Title.Length > 0)
+				AddProperty (Beagle.Property.New ("fixme:song",    tag.Title));
 
-			AddProperty (Beagle.Property.New ("fixme:artist",  info.Artist));
-			AddProperty (Beagle.Property.New ("fixme:album",   info.Album));
-			AddProperty (Beagle.Property.New ("fixme:song",    info.Song));
-			AddProperty (Beagle.Property.New ("fixme:comment", info.Comment));
+			if (tag.Comment.Length > 0)
+				AddProperty (Beagle.Property.New ("fixme:comment", tag.Comment));
 
-			if (info.Track > 0)
-				AddProperty (Beagle.Property.NewKeyword ("fixme:track", info.Track));
+			if (tag.Track.Length > 0)
+				AddProperty (Beagle.Property.NewKeyword ("fixme:track", tag.Track));
 
-			if (info.Year > 0)
-				AddProperty (Beagle.Property.NewKeyword ("fixme:year", info.Year));
+			if (tag.Year.Length > 0)
+				AddProperty (Beagle.Property.NewKeyword ("fixme:year",  tag.Year));
 
+			if (tag.Genre.Length > 0)
+				AddProperty (Beagle.Property.NewKeyword ("fixme:genre", tag.Genre));
+			
+			/* TBA
 			if (info.HasPicture)
-				AddProperty (Beagle.Property.NewBool ("fixme:haspicture", true));
-
+-                               AddProperty (Beagle.Property.NewBool ("fixme:haspicture", true));
+			*/
+			
 			Finished ();
 		}
 	}

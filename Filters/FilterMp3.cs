@@ -1,5 +1,6 @@
 //
-// FilterFlac.cs : Register for reading of flac files
+// FilterMp3.cs : Register for reading of mp3 files, id3v2 is read, then missing
+//                 infos are filled with id3v1 values.
 //
 // Author:
 //		Raphaël Slinckx <raf.raf@wol.be>
@@ -7,6 +8,7 @@
 // Copyright 2004 (C) Raphaël Slinckx
 //
 
+//
 // Permission is hereby granted, free of charge, to any person obtaining a
 // copy of this software and associated documentation files (the "Software"),
 // to deal in the Software without restriction, including without limitation
@@ -28,23 +30,29 @@
 
 using System;
 using System.IO;
-
 using Beagle.Util.AudioUtil;
 
 namespace Beagle.Filters {
 
-	public class FilterFlac : FilterMusic {
+	public class FilterMp3 : FilterMusic {
 		
-		private FlacTagReader reader = new FlacTagReader ();
+		private Id3v1TagReader Id3v1Reader = new Id3v1TagReader ();
+		private Id3v2TagReader Id3v2Reader = new Id3v2TagReader ();
 		
-		protected override Tag GetTag (Stream s)
+		
+		protected override Tag GetTag(Stream s)
 		{
-			return reader.Read (s);
+			Tag v2 = Id3v2Reader.Read ((FileStream)s);
+			Tag v1 = Id3v1Reader.Read ((FileStream)s);
+			
+			v2.Merge (v1);
+			return v2;
 		}
 		
-		protected override void RegisterSupportedTypes ()
+		protected override void RegisterSupportedTypes()
 		{
-			AddSupportedMimeType ("audio/x-flac");
+			AddSupportedMimeType ("audio/x-mp3");
+			AddSupportedMimeType ("audio/mpeg");
 		}
 	}
 }

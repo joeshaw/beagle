@@ -17,14 +17,12 @@ CSFILES = 			        	\
 	$(srcdir)/ExifData.cs			\
 	$(srcdir)/ExtendedAttribute.cs  	\
 	$(srcdir)/FileSystem.cs			\
-	$(srcdir)/FlacReader.cs			\
 	$(srcdir)/FrequencyStatistics.cs	\
 	$(srcdir)/FSpotTools.cs         	\
 	$(srcdir)/GConfThreadHelper.cs          \
 	$(srcdir)/GeckoUtils.cs                 \
 	$(srcdir)/GtkUtils.cs			\
 	$(srcdir)/gnome.cs              	\
-	$(srcdir)/Id3.cs                	\
 	$(srcdir)/ImLog.cs              	\
 	$(srcdir)/ImBuddy.cs              	\
 	$(srcdir)/Inotify.cs			\
@@ -40,7 +38,16 @@ CSFILES = 			        	\
 	$(srcdir)/SystemInformation.cs		\
 	$(srcdir)/UriFu.cs			\
 	$(srcdir)/Vfs.cs                        \
-	$(srcdir)/XKeybinder.cs
+	$(srcdir)/XKeybinder.cs			
+
+if ! ENABLE_GST_SHARP
+CSFILES +=					\
+	$(srcdir)/ApeReader.cs			\
+	$(srcdir)/Mp3Reader.cs			\
+	$(srcdir)/FlacReader.cs			\
+	$(srcdir)/OggReader.cs			\
+	$(srcdir)/Tag.cs			
+endif
 
 ASSEMBLIES =					\
 	$(BEAGLE_UI_LIBS)			\
@@ -61,9 +68,17 @@ install-data-local: $(TARGET)
 uninstall-local:
 	rm -f $(DESTDIR)$(pkglibdir)/$(TARGET)
 
+COND_CS_FILES =	\
+	$(srcdir)/ApeReader.cs	\
+	$(srcdir)/Mp3Reader.cs	\
+	$(srcdir)/FlacReader.cs	\
+	$(srcdir)/OggReader.cs	\
+	$(srcdir)/Tag.cs
+
 EXTRA_DIST =		\
 	$(GOOGLE_WSDL)	\
-	$(CSFILES)
+	$(CSFILES)	\
+	$(COND_CS_FILES)
 
 CLEANFILES =		\
 	$(GOOGLE_CS)	\
