@@ -28,6 +28,7 @@ using System;
 using System.Collections;
 using System.IO;
 using System.Reflection;
+using System.Text;
 using System.Threading;
 
 
@@ -212,6 +213,27 @@ namespace Beagle.Daemon.FileSystemQueryable {
 				break;
 
 			}
+		}
+
+		//////////////////////////////////////////////////////////////////////////
+
+		public override string GetHumanReadableStatus ()
+		{
+			StringBuilder builder = new StringBuilder ();
+			string str;
+
+			builder.Append ("Crawl Queue:\n");
+			str = String.Format ("{0} pending director{1} to crawl.\n",
+					     crawlQ.PendingCount,
+					     crawlQ.PendingCount == 1 ? "y" : "ies");
+			builder.Append (str);
+			crawlQ.GetHumanReadableStatus (builder);
+
+			builder.Append ("\n\n");
+			builder.Append ("Indexing Queue:\n");
+			builder.Append (base.GetHumanReadableStatus ());
+
+			return builder.ToString ();
 		}
 
 

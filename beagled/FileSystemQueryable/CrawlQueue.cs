@@ -153,6 +153,28 @@ namespace Beagle.Daemon.FileSystemQueryable {
 			return pending;
 		}
 
+		private void CullPending ()
+		{
+			Hashtable seen = new Hashtable ();
+			int i = 0;
+			// Warning: this does not lock anything!
+			while (i < allPending.Count) {
+				Pending pending = allPending [i] as Pending;
+				if (pending == null
+				    || crawledPaths.Contains (pending.Path)
+				    || seen.Contains (pending.Path))
+					allPending.RemoveAt (i);
+				else {
+					++i;
+					seen [pending.Path] = true;
+				}
+			}
+		}
+
+		public int PendingCount {
+			get { return allPending.Count; }
+		}
+
 		/////////////////////////////////////////////////////////////////
 
 		public void ScheduleCrawl (string path, int priority)
@@ -206,6 +228,9 @@ namespace Beagle.Daemon.FileSystemQueryable {
 				if (crawledPaths.Contains (path))
 					return true;
 				crawledPaths [path] = true;
+
+				// FIXME: This is O(N) in the # of pending items
+				CullPending ();
 			}
 
 			DirectoryInfo dir = new DirectoryInfo (path);
