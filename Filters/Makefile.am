@@ -19,11 +19,6 @@ HAP_CSFILES =						\
 	$(srcdir)/HtmlAgilityPack/MixedCodeDocument.cs	\
 	$(srcdir)/HtmlAgilityPack/tools.cs
 
-
-# FilterAbiword has been temporarily removed
-# because of bug 170082.
-#	$(srcdir)/FilterAbiword.cs	
-
 CSFILES = 				\
 	$(HAP_CSFILES)			\
 	$(srcdir)/FilterHtml.cs		\
@@ -43,7 +38,8 @@ CSFILES = 				\
 	$(srcdir)/FilterPerl.cs		\
 	$(srcdir)/FilterPhp.cs		\
 	$(srcdir)/FilterFortran.cs	\
-	$(srcdir)/FilterPascal.cs	
+	$(srcdir)/FilterPascal.cs	\
+	$(srcdir)/FilterAbiword.cs
 
 if ENABLE_GSF_SHARP
 CSFILES += 				\

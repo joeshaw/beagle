@@ -32,6 +32,7 @@ using System.Collections;
 using System.IO;
 using System.Text;
 using System.Xml;
+using Beagle.Util;
 
 using ICSharpCode.SharpZipLib.GZip;
 
@@ -49,25 +50,26 @@ namespace Beagle.Filters {
 		}
 
 		// Process the <styles> ... </styles> nodes.
-		void StudyStyleNode (XmlReader reader)
+		void StudyStyleNode (XmlTextReader reader)
 		{
 			string styleName = null;
 			string temp = null;
-			
-			do {
+			int original_depth = reader.Depth;
+
+			if (!reader.IsEmptyElement) {
 				reader.Read ();
-				if (reader.NodeType == XmlNodeType.Element) {
-					styleName = reader.GetAttribute ("name");
-					if (styleName != null)
-						temp = styleName.ToUpper();
-					
-					if (temp != null && 
-					    (temp.IndexOf ("HEAD") > -1 ||
-					     temp.IndexOf ("NOTE") > -1))
-						hotStyles [styleName] = true;
+				while (reader.Depth > original_depth) {
+					if (reader.NodeType == XmlNodeType.Element 
+					    && reader.Name == "s") {
+						styleName = reader.GetAttribute ("name");
+						if (styleName != null && 
+						    (styleName.ToLower().IndexOf ("head") > -1 ||
+						     styleName.ToLower().IndexOf ("note") > -1))
+							hotStyles [styleName] = true;
+					}
+					reader.Read ();
 				}
-			} while (reader.Name != "styles" && 
-				 reader.NodeType != XmlNodeType.EndElement);
+			} 
 		}
 
 		// Process the props="blah:blah; blah:blah;" values
@@ -125,12 +127,11 @@ namespace Beagle.Filters {
 
 		// Walk through the <section> ... </section> nodes
 		// and extract the texts.
-		bool WalkContentNodes (XmlReader reader)
+		bool WalkContentNodes (XmlTextReader reader)
 		{
 			// total number of elements to read per-pull
 			const int total_elements = 10;
 			int num_elements = 0;
-			
 			while (reader.Read ()) {
 				if (reader.Name == "styles" && 
 				    reader.NodeType == XmlNodeType.Element) {
@@ -219,17 +220,23 @@ namespace Beagle.Filters {
 			return true;
 		}
 
-		private void ExtractMetadata (XmlReader reader)
+		private void ExtractMetadata (XmlTextReader reader)
 		{
 			string key = null;
-			do {
-				reader.Read ();
-			} while (reader.Name != "metadata");
+			bool found = false;
+			int depth = -1;
 
-			reader.Read ();
+			while (reader.Read()) {
+				if (!found && reader.Name == "metadata" && reader.NodeType == XmlNodeType.Element) {
+					found = true;
+					depth = reader.Depth;
+					continue;
+				}
+				
+				if (found && reader.Name == "metadata" && reader.NodeType == XmlNodeType.EndElement)
+					break;
 
-			while (reader.Name != "metadata") {
-				if (reader.Name == "m") {
+				if (found && reader.Name == "m" && reader.Depth > depth) {
 					key = reader.GetAttribute ("key");
 					switch (key) {
 					case "abiword.generator":
@@ -303,36 +310,49 @@ namespace Beagle.Filters {
 						break;
 					}
 				}
-				reader.Read ();
 			}
 		}
 
-		String FileName = null;
+		XmlTextReader reader = null;
 		override protected void DoOpen (FileInfo info)
 		{
 			hotStyles = new Hashtable ();
-			FileName = info.FullName;
+			reader = new XmlTextReader (info.FullName);
 		}
 
 		override protected void DoPullProperties ()
 		{
-			XmlReader reader = null;
-			reader = new XmlTextReader (FileName);
-			ExtractMetadata (reader);
+			XmlTextReader metaReader = new XmlTextReader (FileInfo.FullName);
+			try {
+				ExtractMetadata (metaReader);
+				metaReader.Close ();
+			} catch (Exception e) {
+				metaReader.Close ();
+				Finished ();
+				Logger.Log.Error ("Exception occurred while reading meta-data from {0}",
+						 FileInfo.FullName);
+				Logger.Log.Debug (e);
+			}
 		}
-		XmlReader contentReader = null;
+
 		override protected void DoPull ()
 		{
-			if (contentReader == null)
-				contentReader = new XmlTextReader (FileName);
-
-			if (contentReader == null) {
+			if (reader == null) {
 				Finished ();
 				return;
 			}
-
-			if (WalkContentNodes (contentReader))
+			try {
+				if (WalkContentNodes (reader)) {
+					reader.Close ();
+					Finished ();
+				}
+			} catch (Exception e) {
+				reader.Close ();
 				Finished ();
+				Logger.Log.Error ("Exception occurred while reading contents from {0}",
+						  FileInfo.FullName);
+				Logger.Log.Debug (e);
+			}
 		}
 	}
 }

@@ -1,5 +1,12 @@
 2005-03-29  Veerapuram Varadhan  <vvaradhan@novell.com>
 
+	* Filters/FilterAbiword.cs: More careful validations. Fixes
+	http://bugzilla.gnome.org/show_bug.cgi?id=170082
+
+	* Filters/Makefile.am: Enable FilterAbiword.cs to get compiled.
+	
+2005-03-29  Veerapuram Varadhan  <vvaradhan@novell.com>
+
 	* Tiles/template-mail-message.html: Fix for Subject of "deleted"
 	mails shows <strike></strike> markup tags.
 	
