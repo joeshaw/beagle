@@ -37,7 +37,7 @@ namespace Beagle.Daemon.FileSystemQueryable {
 
 	public class UniqueIdStore {
 
-		static public bool Debug = true;
+		static public bool Debug = false;
 
 		const int VERSION = 1;
 

@@ -173,14 +173,12 @@ namespace Lucene.Net.Store
                                         if (user_name == null)
                                                 user_name = "unknown";
                                         TempDirectoryName = "/tmp/" + user_name + "-lucene.net";
-					Beagle.Util.Logger.Log.Debug ("Auto-setting TempDirectoryName");
                                 }
                                 return tempDirectoryName;
                         }
 			
                         set {
                                 tempDirectoryName = value;
-				Beagle.Util.Logger.Log.Debug ("Set TempDirectoryName to {0}", tempDirectoryName);
                                 if (! System.IO.Directory.Exists (tempDirectoryName))
                                         System.IO.Directory.CreateDirectory (tempDirectoryName);
                         }
@@ -545,8 +543,8 @@ namespace Lucene.Net.Store
 		}
 
 		// ADDED trow 4 June 2004
-		//static public Beagle.Util.Logger Logger = null;
-		static public Beagle.Util.Logger Logger = Beagle.Util.Logger.Log;
+		static public Beagle.Util.Logger Logger = null;
+		//static public Beagle.Util.Logger Logger = Beagle.Util.Logger.Log;
 		static private void Log (string format, params object[] args)
 		{
 			if (Logger != null)

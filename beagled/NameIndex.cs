@@ -46,7 +46,7 @@ namespace Beagle.Daemon {
 
 	public class NameIndex {
 
-		static public bool Debug = true;
+		static public bool Debug = false;
 
 		// This is just a standard analyzer combined with the Porter stemmer.
 		// FIXME: This assumes everything being indexed is in English!
