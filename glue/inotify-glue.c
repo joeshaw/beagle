@@ -42,9 +42,10 @@
 #define SYSFS_MAX_USER_WATCHES  SYSFS_PREFIX "/max_user_watches"
 #define SYSFS_MAX_QUEUED_EVENTS SYSFS_PREFIX "/max_queued_events"
 
-static int max_user_devices = 8;	/* This is the pre-sysfs default */
-static int max_user_watches = 8192;	/* This is the pre-sysfs default */
-static int max_queued_events = 256;	/* This is the pre-sysfs default */
+/* Inotify sysfs knobs, initialized to their pre-sysfs defaults */
+static int max_user_devices = 8;
+static int max_user_watches = 8192;
+static unsigned int max_queued_events = 256;
 
 /* Paranoid code to read an integer from a sysfs (well, any) file. */
 static void
@@ -84,7 +85,7 @@ int
 inotify_glue_watch (int fd, const char *filename, __u32 mask)
 {
 	struct inotify_watch_request iwr;
-	int wd;
+	__s32 wd;
 
 	iwr.mask = mask;
 	iwr.name = strdup (filename);
@@ -94,12 +95,8 @@ inotify_glue_watch (int fd, const char *filename, __u32 mask)
 	}
 
 	wd = ioctl (fd, INOTIFY_WATCH, &iwr);
-	if (wd < 0) {
-		fprintf (stderr,
-			 "ioctl(%d, INOTIFY_WATCH, {%s, %d}) failed", fd,
-			 iwr.name, iwr.mask);
+	if (wd < 0)
 		perror ("ioctl");
-	}
 
 	free (iwr.name);
 
@@ -108,24 +105,22 @@ inotify_glue_watch (int fd, const char *filename, __u32 mask)
 
 
 int
-inotify_glue_ignore (int fd, int wd)
+inotify_glue_ignore (int fd, __s32 wd)
 {
 	int ret;
 
 	ret = ioctl (fd, INOTIFY_IGNORE, &wd);
-	if (ret < 0) {
-		fprintf (stderr, "ioctl(%d, INOTIFY_IGNORE, %d) failed",
-			 fd, wd);
+	if (ret < 0)
 		perror ("ioctl");
-	}
 
 	return ret;
 }
 
 
-#define MAX_PENDING_PAUSE_COUNT    5
-#define PENDING_PAUSE_MICROSECONDS 2000
-#define PENDING_THRESHOLD(qsize)   ((qsize) >> 1)
+#define MAX_PENDING_COUNT           5
+#define PENDING_PAUSE_MICROSECONDS  2000
+#define PENDING_THRESHOLD(qsize)    ((qsize) >> 1)
+#define PENDING_MARGINAL_COST(p)    ((unsigned int)(1 << (p)++))
 
 void
 inotify_snarf_events (int fd, int timeout_secs, int *nr, void **buffer_out)
@@ -133,7 +128,7 @@ inotify_snarf_events (int fd, int timeout_secs, int *nr, void **buffer_out)
 	struct timeval timeout;
 	fd_set read_fds;
 	int select_retval;
-	int pending, prev_pending, pending_pause_count;
+	unsigned int prev_pending = 0, pending_count = 0;
 	static struct inotify_event *buffer = NULL;
 	static size_t buffer_size;
 
@@ -172,10 +167,8 @@ inotify_snarf_events (int fd, int timeout_secs, int *nr, void **buffer_out)
 	 * If there are some events (but not too many!) ready, wait a
 	 * bit more to see if more events come in. */
 
-	prev_pending = 0;
-	pending_pause_count = 0;
-
-	while (pending_pause_count < MAX_PENDING_PAUSE_COUNT) {
+	while (pending_count < MAX_PENDING_COUNT) {
+		unsigned int pending;
 
 		if (ioctl (fd, FIONREAD, &pending) == -1)
 			break;
@@ -188,11 +181,10 @@ inotify_snarf_events (int fd, int timeout_secs, int *nr, void **buffer_out)
 
 		/* With each successive iteration, the minimum rate for
 		 * further sleep doubles. */
-		if (pending - prev_pending < (1 << pending_pause_count))
+		if (pending-prev_pending < PENDING_MARGINAL_COST(pending_count))
 			break;
 
 		prev_pending = pending;
-		++pending_pause_count;
 
 		timeout.tv_sec = 0;
 		timeout.tv_usec = PENDING_PAUSE_MICROSECONDS;
