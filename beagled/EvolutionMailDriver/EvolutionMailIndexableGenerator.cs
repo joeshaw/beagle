@@ -137,11 +137,16 @@ namespace Beagle.Daemon.EvolutionMailDriver {
 				if (part is GMime.MessagePart) {
 					GMime.MessagePart msg_part = (GMime.MessagePart) part;
 
-					msg_part.Message.ForeachPart (new GMime.PartFunc (this.OnEachPart));
+					this.OnEachPart (msg_part.Message.MimePart);
 				} else if (part is GMime.Multipart) {
 					GMime.Multipart multipart = (GMime.Multipart) part;
 
-					multipart.ForeachPart (new GMime.PartFunc (this.OnEachPart));
+					int num_parts = multipart.Number;
+					for (int i = 0; i < num_parts; i++) {
+						GMime.Object subpart = multipart.GetPart (i);
+
+						this.OnEachPart (subpart);
+					}
 				} else if (SupportedContentType (part.ContentType)) {
 					MemoryStream stream = new MemoryStream (part.GetData ());
 					StreamReader reader = new StreamReader (stream);
