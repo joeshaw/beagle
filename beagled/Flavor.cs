@@ -86,7 +86,7 @@ namespace Beagle.Daemon {
 		}
 
 		public String Extension {
-			get { return Extension; }
+			get { return extension; }
 		}
 		
 		int PatternCount {
