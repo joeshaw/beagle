@@ -1,5 +1,6 @@
 //
-// Best.c
+// Best.cs
+// Bleeding Edge Search Tool: Beagle search GUI
 //
 // Nat Friedman <nat@novell.com>
 //
@@ -54,6 +55,8 @@ namespace Best {
 					PrintUsageAndExit ();
 					return;
 				default:
+					if (query.Length != 0)
+						query += " ";
 					query += args [i];
 					break;
 				}
@@ -73,10 +76,12 @@ namespace Best {
 
 			// Create the window.
 			BestWindow win;
-			if (query != "")
+			if (query != "") {
 				win = new BestWindow (query);
-			else
+				win.Show ();
+			} else {
 				win = new BestWindow ();
+			}
 
 			// Create the tray icon.
 			if (doTray) {

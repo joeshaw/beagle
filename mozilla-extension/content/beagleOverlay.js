@@ -180,10 +180,11 @@ function beaglePageLoad(event)
   }
 }
 
-function beagleRunBest(url)
+function beagleRunBest(query)
 {
   try {
-    var retval = gFile.spawn(gBeagleBestPath, ['--url', url]);
+    dump("Running best with query: "+ query +"\n");
+    var retval = gFile.spawn(gBeagleBestPath, ["", query]);
     if (retval) 
       alert("Error running best: " + retval);
   } catch(e) {
