@@ -31,6 +31,7 @@ Daemon/Infrastructure:
   status in a timeout (Jon)
 * Added a new property type: properties that are stored but not
   searched by standard queries (Jon)
+* Don't allow beagled to run as root (Daniel)
 
 Backends:
 * Lots of file system backend fixes.  In particular, moving and
@@ -67,6 +68,8 @@ Filters:
   filter (Joe)
 * Better handling of GSF exceptions in the PPT filter (Varadhan)
 * Index non-ISO characters in Word documents (Varadhan)
+* In the OOo filter, keep proper track of "hot" content in the presence of
+  links (Varadhan)
 
 UI/tools:
 * Make PageUp and PageDown work in Best (Wouter Bolsterlee)
