@@ -38,7 +38,7 @@ namespace Beagle.Daemon.FileSystemQueryable {
 	[QueryableFlavor (Name="FileSystemQueryable", Domain=QueryDomain.Local)]
 	public class FileSystemQueryable : LuceneQueryable {
 
-		private Indexer indexer;
+		private IndexerImpl indexer;
 
 		FileSystemEventMonitor monitor = new FileSystemEventMonitor ();
 		BU.FileMatcher doNotIndex = new BU.FileMatcher ();
@@ -46,7 +46,7 @@ namespace Beagle.Daemon.FileSystemQueryable {
 		public FileSystemQueryable () : base ("FileSystemQueryable",
 						      Path.Combine (PathFinder.RootDir, "FileSystemIndex"))
 		{
-			indexer = new Indexer (Driver);
+			indexer = new IndexerImpl (Driver);
 			
 			DBusisms.Service.RegisterObject (indexer,
 							 Beagle.DBusisms.IndexerPath);

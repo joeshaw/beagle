@@ -1,5 +1,5 @@
 //
-// Indexer.cs
+// IndexerImpl.cs
 //
 // Copyright (C) 2004 Novell, Inc.
 //
@@ -32,12 +32,12 @@ using Beagle.Daemon;
 
 namespace Beagle.Daemon.FileSystemQueryable
 {
-	public class Indexer : Beagle.IndexerProxy
+	public class IndexerImpl : Beagle.IndexerProxy
 	{
 		LuceneDriver driver;
 		
 
-		public Indexer (LuceneDriver _driver)
+		public IndexerImpl (LuceneDriver _driver)
 		{
 			driver = _driver;
 		}

@@ -176,7 +176,7 @@ fsqueryabledir = $(srcdir)/FileSystemQueryable
 FILE_SYSTEM_QUERYABLE_CSFILES =				\
 	$(fsqueryabledir)/FileSystemQueryable.cs	\
 	$(fsqueryabledir)/FileSystemEventMonitor.cs	\
-	$(fsqueryabledir)/Indexer.cs
+	$(fsqueryabledir)/IndexerImpl.cs
 
 
 DAEMON_DLL_CSFILES = 				\

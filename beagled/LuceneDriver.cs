@@ -57,19 +57,16 @@ namespace Beagle.Daemon {
 		// 6: lots of schema changes as part of the general refactoring
 		private const int VERSION = 6;
 
-		public LuceneDriver (Lucene.Net.Store.Directory store)
-		{
-			Store = store;
-		}
-
 		public LuceneDriver (string dir)
 		{
 			string versionFile = Path.Combine (dir, "version");
+			string fingerprintFile = Path.Combine (dir, "fingerprint");
 			string lockDir = Path.Combine (dir, "Locks");
 			string indexDir = Path.Combine (dir, "Index");
 			string indexTestFile = Path.Combine (indexDir, "segments");
 
 			bool versionExists = File.Exists (versionFile);
+			bool fingerprintExists = File.Exists (fingerprintFile);
 			bool indexExists = File.Exists (indexTestFile);
 
 			// Check the index's version number.  If it is wrong,
@@ -82,7 +79,18 @@ namespace Beagle.Daemon {
 				if (versionStr != Convert.ToString (VERSION))
 					indexExists = false;
 			}
-			if (! indexExists) {
+
+			// If there is no fingerprint file, declare the index
+			// non-existent.
+			if (indexExists && ! fingerprintExists)
+				indexExists = false;
+
+			if (indexExists) {
+				// Read in the fingerprint
+				StreamReader sr = new StreamReader (fingerprintFile);
+				fingerprint = sr.ReadLine ();
+
+			} else {
 				// Purge the directory if it exists.
 				if (Directory.Exists (dir))
 					Directory.Delete (dir, true);
@@ -92,12 +100,18 @@ namespace Beagle.Daemon {
 				Directory.CreateDirectory (lockDir);
 				Directory.CreateDirectory (indexDir);
 
-				// Write out our version information
-				StreamWriter sw = new StreamWriter (versionFile, false);
-				sw.WriteLine ("{0}", VERSION);
+				StreamWriter sw;
+
+				// Generate a fingerprint and write it out
+				fingerprint = DateTime.Now.Ticks.ToString ();
+				sw = new StreamWriter (fingerprintFile, false);
+				sw.WriteLine (fingerprint);
 				sw.Close ();
 
-
+				// Write out our version information
+				sw = new StreamWriter (versionFile, false);
+				sw.WriteLine ("{0}", VERSION);
+				sw.Close ();
 			}
 
 			Lucene.Net.Store.FSDirectory store;
@@ -111,6 +125,18 @@ namespace Beagle.Daemon {
 				IndexWriter writer = new IndexWriter (Store, null, true);
 				writer.Close ();
 			}
+		}
+
+		/////////////////////////////////////////////////////
+
+		//
+		// The Index's Fingerprint
+		//
+		
+		private string fingerprint = null;
+
+		public string Fingerprint {
+			get { return fingerprint; }
 		}
 
 		/////////////////////////////////////////////////////
