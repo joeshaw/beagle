@@ -112,6 +112,11 @@ namespace Beagle.Daemon {
 						if (! UseQueryable (flavor.Name))
 							continue;
 
+						if (flavor.RequireInotify && ! Inotify.Enabled) {
+							Logger.Log.Debug ("Can't start backend '{0}' without inotify",  flavor.Name);
+							continue;
+						}
+
 						IQueryable iq = null;
 						try {
 							iq = Activator.CreateInstance (type) as IQueryable;

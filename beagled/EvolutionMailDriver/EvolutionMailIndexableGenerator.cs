@@ -33,11 +33,13 @@ using System.Threading;
 using System.Xml;
 
 using Beagle.Util;
+using Beagle.Daemon;
+
 using Camel = Beagle.Util.Camel;
 using GConf;
 using Mono.Posix;
 
-namespace Beagle.Daemon {
+namespace Beagle.Daemon.EvolutionMailDriver {
 
 	public abstract class EvolutionMailIndexableGenerator : IIndexableGenerator {
 

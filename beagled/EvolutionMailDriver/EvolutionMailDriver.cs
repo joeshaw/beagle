@@ -34,42 +34,12 @@ using System.Threading;
 using Beagle.Util;
 using Camel = Beagle.Util.Camel;
 
-namespace Beagle.Daemon {
+namespace Beagle.Daemon.EvolutionMailDriver {
 
-	internal class MailCrawler : Crawler {
-		
-		EvolutionMailQueryable queryable;
-
-		public MailCrawler (EvolutionMailQueryable queryable, string fingerprint) : base (fingerprint)
-		{
-			this.queryable = queryable;
-		}
-
-		protected override bool SkipByName (FileSystemInfo info)
-		{
-			// Don't skip directories...
-			if (info as DirectoryInfo != null)
-				return false;
-
-			if (info.Name != "summary" && !File.Exists (info.FullName + ".ev-summary"))
-				return true;
-
-			return false;
-		}
-
-		protected override void CrawlFile (FileSystemInfo info)
-		{
-			FileInfo file = info as FileInfo;
-
-			if (info.Name == "summary")
-				this.queryable.IndexSummary (file);
-			else if (File.Exists (info.FullName + ".ev-summary"))
-				this.queryable.IndexMbox (file);
-		}
-	}
-
-	[QueryableFlavor (Name="Mail", Domain=QueryDomain.Local)]
+	[QueryableFlavor (Name="Mail", Domain=QueryDomain.Local, RequireInotify=false)]
 	public class EvolutionMailQueryable : LuceneQueryable {
+
+		public int polling_interval_in_seconds = 60;
 
 		public static Logger log = Logger.Get ("mail");
 
@@ -84,6 +54,22 @@ namespace Beagle.Daemon {
 		{
 		}
 
+		private void Crawl ()
+		{
+			crawler.Crawl ();
+			foreach (FileInfo file in crawler.Summaries)
+				IndexSummary (file);
+			foreach (FileInfo file in crawler.Mboxes)
+				IndexMbox (file);
+		}
+
+		private void CrawlHook (Scheduler.Task task)
+		{
+			Crawl ();
+			task.Reschedule = true;
+			task.TriggerTime = DateTime.Now.AddSeconds (polling_interval_in_seconds);
+		}
+
 		private void StartWorker ()
 		{
 			Logger.Log.Info ("Starting Evolution mail backend");
@@ -95,16 +81,21 @@ namespace Beagle.Daemon {
 			string imap_path = Path.Combine (PathFinder.HomeDir, ".evolution/mail/imap");
 
 			// Get notification when an index or summary file changes
-			Inotify.Event += OnInotifyEvent;
-			Watch (local_path);
-			Watch (imap_path);
+			if (Inotify.Enabled) {
+				Inotify.Event += OnInotifyEvent;
+				Watch (local_path);
+				Watch (imap_path);
+			}
 
-			this.crawler = new MailCrawler (this, this.Driver.Fingerprint);
-			Shutdown.ShutdownEvent += OnShutdown;
+			crawler = new MailCrawler ();
+			Crawl ();
 
-			this.crawler.ScheduleCrawl (new DirectoryInfo (local_path), -1);
-			this.crawler.ScheduleCrawl (new DirectoryInfo (imap_path), -1);
-			this.crawler.StopWhenEmpty ();
+			// If we don't have inotify, we have to poll the file system.  Ugh.
+			if (! Inotify.Enabled) {
+				Scheduler.Task task = Scheduler.TaskFromHook (new Scheduler.TaskHook (CrawlHook));
+				task.Tag = "Crawling ~/.evolution to find summary changes";
+				ThisScheduler.Add (task);
+			}
 
 			stopwatch.Stop ();
 			Logger.Log.Info ("Evolution mail driver worker thread done in {0}",
@@ -113,14 +104,10 @@ namespace Beagle.Daemon {
 
 		public override void Start () 
 		{
+			Logger.Log.Info ("Starting Evolution mail backend");
 			base.Start ();
 			
 			ExceptionHandlingThread.Start (new ThreadStart (StartWorker));
-		}
-
-		private void OnShutdown ()
-		{
-			this.crawler.Stop ();
 		}
 
 		private void Watch (string path)

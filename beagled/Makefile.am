@@ -373,9 +373,10 @@ TOMBOY_QUERYABLE_CSFILES =				\
 	$(tomboyqueryable)/TomboyQueryable.cs
 
 evomailqueryable = $(srcdir)/EvolutionMailDriver
-EVO_MAIL_QUERYABLE_CSFILES =				\
-	$(evomailqueryable)/EvolutionMailDriver.cs	\
-	$(evomailqueryable)/EvolutionMailIndexableGenerator.cs
+EVO_MAIL_QUERYABLE_CSFILES =					\
+	$(evomailqueryable)/EvolutionMailDriver.cs		\
+	$(evomailqueryable)/EvolutionMailIndexableGenerator.cs	\
+	$(evomailqueryable)/MailCrawler.cs
 
 blamqueryable = $(srcdir)/BlamQueryable
 BLAM_QUERYABLE_CSFILES =				\
@@ -412,7 +413,6 @@ DAEMON_DLL_CSFILES = 						\
 	$(LAUNCHER_QUERYABLE_CSFILES)				\
 	$(TOMBOY_QUERYABLE_CSFILES)				\
 	$(srcdir)/BugzillaDriver.cs 				\
-	$(srcdir)/Crawler.cs					\
 	$(srcdir)/DBusisms.cs					\
 	$(srcdir)/FactoryImpl.cs				\
 	$(srcdir)/FileAttributes.cs				\

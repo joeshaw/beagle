@@ -36,10 +36,11 @@ namespace Beagle.Daemon.FileSystemQueryable {
 	public class FileSystemModel {
 
 		public enum State {
-			Clean     = 0,
-			Unknown   = 1,
-			Dirty     = 2,
-			Unscanned = 3
+			Clean         = 0,
+			PossiblyClean = 1, // It was clean last time we checked...
+			Unknown       = 2,
+			Dirty         = 3,
+			Unscanned     = 4
 		}
 
 		public class Directory : IComparable {
@@ -111,7 +112,9 @@ namespace Beagle.Daemon.FileSystemQueryable {
 			public bool NeedsCrawl {
 				get { 
 					lock (big_lock) {
-						return state == State.Dirty || state == State.Unknown;
+						return state == State.Dirty
+							|| state == State.Unknown
+							|| state == State.PossiblyClean;
 					}
 				}
 			}
@@ -685,7 +688,7 @@ namespace Beagle.Daemon.FileSystemQueryable {
 					}
 
 					// Unwatched directory can never be clean
-					priv.SetState (State.Unknown);
+					priv.SetState (State.PossiblyClean);
 				}					
 
 				FileAttributes attr = fa_store.ReadOrCreate (priv.FullName);

@@ -84,6 +84,11 @@ namespace Beagle.Daemon.FileSystemQueryable {
 			// We want this task to get re-scheduled after it is run.
 			Reschedule = true;
 
+			// ...but if we are crawling a possibly-clean directory,
+			// maybe wait a little bit extra.
+			// FIXME: This will not respect BEAGLE_EXERCISE_THE_DOG
+			TriggerTime = DateTime.Now.AddSeconds (5);
+
 			// Set up a task group to mark the time on the directory
 			// after we finish crawling it.
 			PostCrawlClosure closure = new PostCrawlClosure ();

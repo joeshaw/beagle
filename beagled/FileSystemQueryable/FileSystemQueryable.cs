@@ -38,7 +38,7 @@ using Beagle.Util;
 
 namespace Beagle.Daemon.FileSystemQueryable {
 
-	[QueryableFlavor (Name="Files", Domain=QueryDomain.Local)]
+	[QueryableFlavor (Name="Files", Domain=QueryDomain.Local, RequireInotify=false)]
 	public class FileSystemQueryable : LuceneQueryable {
 
 		private static Logger log = Logger.Get ("FileSystemQueryable");
