@@ -1,3 +1,7 @@
+2005-04-06  Takeshi AIHANA <aihana@gnome.gr.jp>
+
+	* configure.in: Added 'ja' (Japanese) to ALL_LINGUAS.
+
 2005-04-05  Vijay K. Nanjundaswamy <knvijay@novell.com>
 
 	* WebServices/WebServiceBackEnd.cs: Updated TokenGenerator method
