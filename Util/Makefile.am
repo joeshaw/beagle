@@ -6,9 +6,9 @@ TARGET = Util.dll
 CSFLAGS = -target:library
 
 CSFILES = 			\
-	camel.cs		\
-	gnome.cs		\
-	Vfs.cs
+	$(srcdir)/camel.cs	\
+	$(srcdir)/gnome.cs	\
+	$(srcdir)/Vfs.cs
 
 ASSEMBLIES =			\
 	-r:glib-sharp.dll	\
@@ -23,6 +23,9 @@ all: $(TARGET)
 install-data-local: $(TARGET)
 	$(mkinstalldirs) $(DESTDIR)$(pkglibdir)
 	$(INSTALL_DATA) $(TARGET) $(DESTDIR)$(pkglibdir)/$(TARGET)
+
+uninstall-local:
+	rm -f $(DESTDIR)$(pkglibdir)/$(TARGET)
 
 EXTRA_DIST =		\
 	$(CSFILES)

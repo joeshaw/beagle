@@ -79,7 +79,6 @@ dewey-0.0.pc
 
 echo "
 	Prefix:			${prefix}
-	DLL Install Dir:	${pkglibdir}
 	Epiphany Extension?	${enable_epiphany_extension}
 
 "

@@ -1,7 +1,10 @@
 
 # The extension needs to installed into Epiphany's prefix,
-# not Dewey's prefix.
-extensiondir = $(EPIPHANY_PREFIX)/lib/epiphany/extensions
+# not Dewey's prefix.  
+#extensiondir = $(EPIPHANY_PREFIX)/lib/epiphany/extensions
+
+# ...but that causes problems w/ make distcheck.
+extensiondir = $(pkglibdir)/extensions
 
 INCLUDES =				\
 	$(EPIPHANY_DEPENDENCY_CFLAGS)	\

@@ -5,15 +5,15 @@ TARGET = Indexer.dll
 
 CSFLAGS = -target:library
 
-CSFILES = 			\
-	PathFinder.cs		\
-	Versioned.cs		\
-	Indexable.cs		\
-	IndexableFile.cs	\
-	IndexableHttp.cs	\
-	Query.cs		\
-	Hit.cs			\
-	IndexDriver.cs
+CSFILES = 				\
+	$(srcdir)/PathFinder.cs		\
+	$(srcdir)/Versioned.cs		\
+	$(srcdir)/Indexable.cs		\
+	$(srcdir)/IndexableFile.cs	\
+	$(srcdir)/IndexableHttp.cs	\
+	$(srcdir)/Query.cs		\
+	$(srcdir)/Hit.cs		\
+	$(srcdir)/IndexDriver.cs
 
 ASSEMBLIES = 				\
 	-r:ICSharpCode.SharpZipLib	\
@@ -29,6 +29,9 @@ all: $(TARGET)
 install-data-local: $(TARGET)
 	$(mkinstalldirs) $(DESTDIR)$(pkglibdir)
 	$(INSTALL_DATA) $(TARGET) $(DESTDIR)$(pkglibdir)/$(TARGET)
+
+uninstall-local:
+	rm -f $(DESTDIR)$(pkglibdir)/$(TARGET)
 
 EXTRA_DIST =		\
 	$(CSFILES)

@@ -6,24 +6,24 @@ TARGET = Filters.dll
 CSFLAGS = -target:library
 
 # Found at http://sharptoolbox.madgeek.com/
-HAP_CSFILES =					\
-	HtmlAgilityPack/crc32.cs		\
-	HtmlAgilityPack/Header.cs		\
-	HtmlAgilityPack/HtmlAttribute.cs	\
-	HtmlAgilityPack/HtmlDocument.cs		\
-	HtmlAgilityPack/HtmlEntity.cs		\
-	HtmlAgilityPack/HtmlNode.cs		\
-	HtmlAgilityPack/HtmlNodeNavigator.cs	\
-	HtmlAgilityPack/MixedCodeDocument.cs	\
-	HtmlAgilityPack/tools.cs
+HAP_CSFILES =						\
+	$(srcdir)/HtmlAgilityPack/crc32.cs		\
+	$(srcdir)/HtmlAgilityPack/Header.cs		\
+	$(srcdir)/HtmlAgilityPack/HtmlAttribute.cs	\
+	$(srcdir)/HtmlAgilityPack/HtmlDocument.cs	\
+	$(srcdir)/HtmlAgilityPack/HtmlEntity.cs		\
+	$(srcdir)/HtmlAgilityPack/HtmlNode.cs		\
+	$(srcdir)/HtmlAgilityPack/HtmlNodeNavigator.cs	\
+	$(srcdir)/HtmlAgilityPack/MixedCodeDocument.cs	\
+	$(srcdir)/HtmlAgilityPack/tools.cs
 
-CSFILES = 			\
-	$(HAP_CSFILES)		\
-	Flavor.cs		\
-	Filter.cs		\
-	FilterHtml.cs		\
-	FilterOpenOffice.cs	\
-	FilterText.cs
+CSFILES = 				\
+	$(HAP_CSFILES)			\
+	$(srcdir)/Flavor.cs		\
+	$(srcdir)/Filter.cs		\
+	$(srcdir)/FilterHtml.cs		\
+	$(srcdir)/FilterOpenOffice.cs	\
+	$(srcdir)/FilterText.cs
 
 ASSEMBLIES =				\
 	-r:gtk-sharp.dll		\
@@ -38,6 +38,9 @@ all: $(TARGET)
 install-data-local: $(TARGET)
 	$(mkinstalldirs) $(DESTDIR)$(pkglibdir)
 	$(INSTALL_DATA) $(TARGET) $(DESTDIR)$(pkglibdir)/$(TARGET)
+
+uninstall-local:
+	rm -f $(DESTDIR)$(pkglibdir)/$(TARGET)
 
 EXTRA_DIST =		\
 	$(CSFILES)

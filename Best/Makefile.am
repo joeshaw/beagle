@@ -6,11 +6,11 @@ WRAPPER = best
 
 CSFLAGS = -target:exe
 
-CSFILES =		\
-	Best.cs		\
-	BestWindow.cs	\
-	HitContainer.cs	\
-	HitView.cs
+CSFILES =				\
+	$(srcdir)/Best.cs		\
+	$(srcdir)/BestWindow.cs		\
+	$(srcdir)/HitContainer.cs	\
+	$(srcdir)/HitView.cs
 
 ASSEMBLIES =				\
 	-r:glib-sharp.dll		\
