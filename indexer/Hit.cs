@@ -156,6 +156,10 @@ namespace Beagle {
 			get { SpecialHandling (); return path; }
 		}
 
+		public string PathQuoted {
+			get { return Path.Replace (" ", "\\ "); }
+		}
+
 		public string FileName {
 			get { return Path != null ? System.IO.Path.GetFileName (Path) : null; }
 		}

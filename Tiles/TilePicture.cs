@@ -91,7 +91,7 @@ namespace Beagle {
 			Process p = new Process ();
 			p.StartInfo.UseShellExecute = false;
 			p.StartInfo.FileName = app.command;
-			p.StartInfo.Arguments = hit.Path;
+			p.StartInfo.Arguments = hit.PathQuoted;
 			try {
 				p.Start ();
 			} catch { }
