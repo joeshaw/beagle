@@ -1,5 +1,11 @@
 2005-02-10  Veerapuram Varadhan	 <vvaradhan@novell.com>
 
+	* Filters/FilterDOC.cs, glue/wv1-glue.c: Fix for
+	http://bugzilla.gnome.org/show_bug.cgi?id=169758. Reduce the
+	number of round trips between managed and unmanaged code.
+	
+2005-02-10  Veerapuram Varadhan	 <vvaradhan@novell.com>
+
 	* Filters/FilterPPT.cs: Fix for PPT 4.0 files.
 	
 2005-03-10  Daniel Drake <dsd@gentoo.org>

@@ -42,7 +42,8 @@ namespace Beagle.Filters {
 		//////////////////////////////////////////////////////////
 
 		private delegate void TextHandlerCallback (IntPtr byteArray, int dataLen, 
-							   bool hotText, bool appendStructBrk);
+							   IntPtr byteHotArray, int hotDataLen,
+							   bool appendStructBrk);
 		
 		[DllImport ("wv1glue")]
 		private static extern int wv1_init ();
@@ -114,23 +115,37 @@ namespace Beagle.Filters {
 		}
 		
   		private void IndexText (IntPtr byteArray, int dataLen, 
-					bool hotText, bool appendStructBrk)
+					IntPtr byteHotArray, int hotDataLen,
+					bool appendStructBrk)
   		{
-			if (byteArray != IntPtr.Zero) {
-				byte[] data = new byte[dataLen];
+			byte[] data = null;
+			string str;
+
+			if (dataLen > 0){
+				data = new byte[dataLen];
 				Marshal.Copy (byteArray, data, 0, dataLen);
-
-				if (hotText)
-					HotUp();
-
-				AppendText (System.Text.Encoding.UTF8.GetString(data, 0, dataLen));
-				if (appendStructBrk)
-					AppendStructuralBreak ();
-
-				if (hotText)
-					HotDown();
 			}
+			
+			if (data != null) {
+				str = System.Text.Encoding.UTF8.GetString (data, 0, dataLen);
+				AppendText (str);
+			}
+
+			data = null;
+			if (hotDataLen > 0) {
+				data = new byte [hotDataLen];
+				Marshal.Copy (byteHotArray, data, 0, hotDataLen);
+			}
+			if (data != null) {
+				HotUp();
+				str = System.Text.Encoding.UTF8.GetString (data, 0, hotDataLen);
+				AppendText (str);
+				HotDown ();
+			}
+			if (appendStructBrk)
+				AppendStructuralBreak ();
   		}
+
 		override protected void DoOpen (FileInfo info)
 		{
 			FileName = info.FullName;
@@ -220,6 +235,9 @@ namespace Beagle.Filters {
 				wv1_Initted = true;
 			}
 
+			Stopwatch stopwatch = new Stopwatch ();
+			stopwatch.Start ();
+
 			ret = wv1_glue_init_doc_parsing (FileName, textHandler);
 			if (ret == -2)
 				Logger.Log.Error ("{0} : is password protected", FileName);
@@ -227,6 +245,8 @@ namespace Beagle.Filters {
 				Logger.Log.Error ("{0} : Unable to read", FileName);
 			else if (ret == -3)
 				Logger.Log.Error ("Unable to initiate the parser for {0}", FileName);
+			stopwatch.Stop ();
+			Console.WriteLine ("FilterDoc extraction done in {0}", stopwatch);
 			Finished ();
 		}
 	}

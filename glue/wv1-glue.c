@@ -40,7 +40,9 @@
  *          (bold, italic, underline, superscript, subscript)
  */
 
-typedef void (* wvTextHandlerCallback) (U8* text, int len, U8 hotText, U8 needStructBrk);
+typedef void (* wvTextHandlerCallback) (U8* text, int len, 
+					U8* hotText, int hotLen, 
+					U8 needStructBrk);
 
 typedef struct _UserData {
   /* formatting variables */
@@ -68,6 +70,12 @@ typedef struct _UserData {
 
   /* buffer to hold text */
   GString* txtWord;
+
+    /* buffer to hold hot-pool-text */
+    GString* txtHotPool;
+
+    /* buffer to hold normal-pool-text */
+    GString* txtPool;
 
   wvTextHandlerCallback WordHandler;
   
@@ -125,10 +133,24 @@ append_char (UserData * ud, U16 ch)
 	g_string_append_c (ud->txtWord, tmpBuf[i]);
     break;
   }
+
   if (ch == 0x00 || ch == 0x20) {
-    (*(ud->WordHandler))(ud->txtWord->str, ud->txtWord->len, ud->bWasHot, bNeedStructBrk);
-    g_string_erase (ud->txtWord, 0, -1);
-    ud->bWasHot = 0;
+      if (ud->bWasHot) 
+	  g_string_append (ud->txtHotPool, ud->txtWord->str);
+      else
+	  g_string_append (ud->txtPool, ud->txtWord->str);
+
+ /*      printf ("TxtPool: %s\n", ud->txtPool->str);       */
+/*       printf ("HotTxtPool: %s\n", ud->txtHotPool->str); */
+
+      if (bNeedStructBrk || ud->bWasHot) {
+	  (*(ud->WordHandler))(ud->txtPool->str, ud->txtPool->len, 
+			       ud->txtHotPool->str, ud->txtHotPool->len, bNeedStructBrk);
+	  g_string_erase (ud->txtPool, 0, -1);
+	  g_string_erase (ud->txtHotPool, 0, -1);
+      }
+      g_string_erase (ud->txtWord, 0, -1);
+      ud->bWasHot = 0;
   }  
 }
 
@@ -430,8 +452,9 @@ wv1_glue_init_doc_parsing (char* fname, wvTextHandlerCallback callback)
   memset (&ud, 0, sizeof (UserData));
   ud.WordHandler = callback;
   ud.txtWord = g_string_sized_new (32);
+  ud.txtHotPool = g_string_sized_new (1024);
+  ud.txtPool = g_string_sized_new (1024);
   ps.userData = &ud;
-
 
   wvSetElementHandler (&ps, eleProc);
   wvSetDocumentHandler (&ps, docProc);
@@ -445,6 +468,12 @@ wv1_glue_init_doc_parsing (char* fname, wvTextHandlerCallback callback)
   
   /* free userdata memory */
   g_string_free (ud.txtWord, TRUE);
+
+  /* free text pool memory */
+  g_string_free (ud.txtPool, TRUE);
+
+  /* free hot text pool memory */
+  g_string_free (ud.txtHotPool, TRUE);
 
   return 0;
 }
