@@ -20,7 +20,7 @@ namespace Best {
 		int count = 0;
 		const int MAXCOUNT = 50;
 		
-		public HitContainer () : base (false, 3)
+		public HitContainer () : base (false, 1)
 		{
 			
 		}
@@ -44,7 +44,7 @@ namespace Best {
 
 			if (count < MAXCOUNT) {
 				Widget w = new HitView (hit);
-				PackStart (w, false, true, 3);
+				PackStart (w, false, true, 2);
 				w.ShowAll ();
 				++count;
 			}

@@ -33,6 +33,8 @@ namespace Dewey {
 		public IndexDriver ()
 		{
 			BootstrapIndex ();
+
+			IndexWriter.WRITE_LOCK_TIMEOUT = 30/*seconds*/ * 1000;
 		}
 
 		//////////////////////////
@@ -257,6 +259,8 @@ namespace Dewey {
 		private Hit FromLuceneHit (LNS.Hits luceneHits, int i)
 		{
 			Hit hit = new Hit ();
+
+			hit.Id = luceneHits.Id (i);
 			
 			Document doc = luceneHits.Doc (i);
 			String str;
@@ -299,14 +303,11 @@ namespace Dewey {
 		
 		//////////////////////////
 
-		private void DoDelete (IEnumerable uris) 
+		private void DoDelete (IEnumerable ids) 
 		{
 			IndexReader reader = IndexReader.Open (IndexDir);
-			foreach (String uri in uris) {
-				Term term = new Term ("Uri", uri);
-				Spew ("Removing {0}", uri);
-				reader.Delete (term);
-			}
+			foreach (int id in ids)
+				reader.Delete (id);
 			reader.Close ();
 		}
 
@@ -375,15 +376,11 @@ namespace Dewey {
 				bool needsInsertion = true;
 				
 				for (int i = 0; i < nHits; ++i) {
-					
-					Document doc = uriHits.Doc (i);
-					String oldTsStr = doc.Get ("Timestamp");
-					String oldRevStr = doc.Get ("Revision");
-					
-					// If there is no timestamp or revision #, always
-					// re-index
-					if (oldTsStr == null && oldRevStr == null)
-						continue;
+
+					int oldId = uriHits.Id (i);					
+					Document oldDoc = uriHits.Doc (i);
+					String oldTsStr = oldDoc.Get ("Timestamp");
+					String oldRevStr = oldDoc.Get ("Revision");
 					
 					// First, try comparing the timestamps.
 					if (oldTsStr != null) {
@@ -402,15 +399,17 @@ namespace Dewey {
 							break;
 						}
 					}
+
+					// If we reach this point, the indexable is more
+					// recent than oldDoc.  Schedule oldDoc's removal.
+					toBeDeleted.Add (oldId);
 				}
 		    
 				if (needsInsertion) {
-					if (nHits > 0) {
+					if (nHits > 0)
 						Spew ("Re-scheduling {0}", indexable.Uri);
-						toBeDeleted.Add (indexable.Uri);
-					} else {
+					else
 						Spew ("Scheduling {0}", indexable.Uri);
-					}
 					toBeInserted.Add (indexable);
 				} else {
 					Spew ("Skipping {0}", indexable.Uri);
@@ -440,7 +439,7 @@ namespace Dewey {
 			int nHits = luceneHits.Length ();
 
 			Hashtable seen = new Hashtable ();
-			ArrayList hits = new ArrayList ();
+			ArrayList toBeDeleted = new ArrayList ();
 
 			for (int i = 0; i < nHits; ++i) {
 				Hit hit = FromLuceneHit (luceneHits, i);
@@ -451,13 +450,15 @@ namespace Dewey {
 				Hit prev = (Hit) seen [hit.Uri];
 				if (prev != null) {
 					if (prev.IsObsoletedBy (hit)) {
-						// FIXME: prev needs to be removed from the index
+						// prev needs to be removed from the index
+						seen.Remove (hit.Uri);
+						toBeDeleted.Add (prev.Id);
 					} else {
-						// FIXME: hit needs to be removed from the index
+						// hit needs to be removed from the index
+						toBeDeleted.Add (hit.Id);
 						continue;
 					}
 				}
-				seen [hit.Uri] = hit;
 
 				// Check that file:// hits still exist and haven't
 				// changed since they were last indexed.
@@ -477,20 +478,23 @@ namespace Dewey {
 							// then be written out to disk.
 						}
 					} else {
-						// File has disappeared since being indexed.
-						// FIXME: remove it from the index.
+						// File has disappeared since being indexed,
+						// so we remove it from the index.
 						Spew ("Lost {0}", hit.Uri);
+						toBeDeleted.Add (hit.Id);
 						continue;
 					}
 				}
 
-
-				hits.Add (hit);
+				seen [hit.Uri] = hit;
 			}
 
 			searcher.Close ();
 
-			return hits;
+			if (toBeDeleted.Count > 0)
+				DoDelete (toBeDeleted);
+
+			return seen.Values;
 		}
 	}
 

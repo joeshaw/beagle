@@ -94,12 +94,22 @@ namespace Lucene.Net.Store
 			bool locked = Obtain();
 			int maxSleepCount = (int)(lockWaitTimeout / LOCK_POLL_INTERVAL);
 			int sleepCount = 0;
+
+			// FIXED trow@ximian.com 2004 May 8
+			// We shouldn't just fail right away if lockWaitTimeout < LOCK_POLL_INTERVAL.
+			maxSleepCount = Math.Max (maxSleepCount, 1);
+
 			while (!locked) 
 			{
-				if (++sleepCount == maxSleepCount) 
+				Console.WriteLine ("Waiting {0}/{1}", sleepCount, maxSleepCount);
+				// FIXED trow@ximian.com 2004 May 8
+				// Lock would time out before first sleep if maxSleepCount == 1
+				if (sleepCount == maxSleepCount) 
 				{
 					throw new IOException("Lock obtain timed out");
 				}
+				++sleepCount;
+
 				try 
 				{
 					Thread.Sleep(LOCK_POLL_INTERVAL);

@@ -11,6 +11,8 @@ namespace Dewey {
     
 	public class Hit : Versioned, IComparable {
 	
+		int id = 0; /* some sort of unique ID, or 0 if undefined */
+
 		String uri;
 		String domain = "unknown";
 		String mimeType = "application/octet-stream";
@@ -40,6 +42,11 @@ namespace Dewey {
 		}
 
 		//////////////////////////
+
+		public int Id {
+			get { return id; }
+			set { checkLock (); id = value; }
+		}
 
 		public String Uri {
 			get { return uri; }
