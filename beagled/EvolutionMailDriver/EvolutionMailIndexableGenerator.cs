@@ -418,7 +418,8 @@ namespace Beagle.Daemon {
 			EvolutionMailQueryable.log.Debug ("{0}: indexed {1} messages",
 							  this.folder_name, this.indexed_count);
 
-			this.MboxLastOffset = this.mbox_parser.FromOffset;
+			if (this.mbox_parser != null)
+				this.MboxLastOffset = this.mbox_parser.FromOffset;
 		}
 
 		public override string GetTarget ()
