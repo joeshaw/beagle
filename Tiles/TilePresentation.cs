@@ -49,8 +49,6 @@ namespace Beagle.Tile {
 				base.PopulateTemplate ();
 				str = Hit.GetValueAsString ("dc:title");
 				if (str.Length > 0)
-					Template ["Title"] = Hit.GetValueAsString ("fixme:splitname");
-				else
 					Template ["Title"] = str;
 
 			}

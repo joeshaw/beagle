@@ -57,10 +57,12 @@ namespace Beagle.Tile {
 			StringBuilder sb;
 			ICollection content = null;
 			string strTemp;
+			Uri uri;
 			
 			content = Hit["fixme:title"];
-			Template["Title"] = Hit.GetValueAsString ("fixme:splitname");
-			Template["Subtitles"] = "abc";
+			uri = Hit.Uri;
+			Template["Title"] = Path.GetFileName (UriFu.LocalPathFromUri (uri));
+			Template["Subtitles"] = " ";
 			int i = 0;
 			sb = new StringBuilder();
 			foreach (string str in content) {

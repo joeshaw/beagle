@@ -71,6 +71,14 @@ namespace Beagle.Util {
 				return uri.ToString ();
 		}
 
+
+		static public String LocalPathFromUri (Uri uri)
+		{
+			if (uri.IsFile) 
+				return uri.LocalPath;
+			else
+				return "";
+		}
 		//////////////////////////////////
 
 		public class Comparer : IComparer

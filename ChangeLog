@@ -1,5 +1,13 @@
 2005-02-13  Veerapuram Varadhan	 <vvaradhan@novell.com>
 
+	* Tiles/TileDocs.cs, Tiles/TilePresentation.cs: Do not show
+	"Title" in the Tile, if the document doesn't have any Title.
+
+	* Tiles/TileMusic.cs: If "Title" tag is not available, display the
+	file-name as title.
+	
+2005-02-13  Veerapuram Varadhan	 <vvaradhan@novell.com>
+
 	* Filters/FilterPPT.cs: Catch the exceptions and log the message..
 	
 2005-02-13  Veerapuram Varadhan	 <vvaradhan@novell.com>

@@ -60,9 +60,7 @@ namespace Beagle.Tile {
 
 				base.PopulateTemplate ();
 				str = Hit.GetValueAsString ("dc:title");
-				if (str.Length < 1)
-					Template ["Title"] = Hit.GetValueAsString ("fixme:splitname");
-				else
+				if (str.Length > 0)
 					Template ["Title"] = str;
 
 				str = Hit.GetValueAsString ("fixme:page-count");
