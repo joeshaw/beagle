@@ -84,23 +84,6 @@ extern void inotify_dentry_parent_queue_event(struct dentry *, __u32, __u32,
 extern void inotify_super_block_umount(struct super_block *);
 extern void inotify_inode_is_dead(struct inode *);
 extern __u32 inotify_get_cookie(void);
-extern __u32 setattr_mask_inotify(unsigned int);
-
-/* this could be kstrdup if only we could add that to lib/string.c */
-static inline char * inotify_oldname_init(struct dentry *old_dentry)
-{
-	char *old_name;
-
-	old_name = kmalloc(strlen(old_dentry->d_name.name) + 1, GFP_KERNEL);
-	if (old_name)
-		strcpy(old_name, old_dentry->d_name.name);
-	return old_name;
-}
-
-static inline void inotify_oldname_free(const char *old_name)
-{
-	kfree(old_name);
-}
 
 #else
 
@@ -124,21 +107,7 @@ static inline void inotify_inode_is_dead(struct inode *inode)
 {
 }
 
-static inline char * inotify_oldname_init(struct dentry *old_dentry)
-{
-	return NULL;
-}
-
 static inline __u32 inotify_get_cookie(void)
-{
-	return 0;
-}
-
-static inline void inotify_oldname_free(const char *old_name)
-{
-}
-
-static inline int setattr_mask_inotify(unsigned int ia_mask)
 {
 	return 0;
 }
