@@ -43,9 +43,13 @@ $(WRAPPER): $(srcdir)/$(WRAPPER).in
 	sed -e "s|\@prefix\@|$(prefix)|g" -e "s|\@pkglibdir\@|$(pkglibdir)|g" -e "s|\@target\@|$(TARGET)|g" -e "s|\@gacprefix\@|$(GAC_PREFIX)|g" -e "s|\@mozillahome\@|$(MOZILLA_HOME)|g" < $^ > $@
 	chmod +x $(WRAPPER)
 
+desktopdir = $(datadir)/applications
+desktop_DATA = best.desktop
+
 EXTRA_DIST =		\
 	$(CSFILES)	\
-	$(WRAPPER).in
+	$(WRAPPER).in	\
+	$(desktop_DATA)
 
 CLEANFILES =		\
 	$(TARGET)	\

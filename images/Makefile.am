@@ -14,6 +14,7 @@ ASSEMBLIES =			\
 
 RESOURCEFILES =					\
 	$(srcdir)/attachment.png		\
+	$(srcdir)/best.png			\
 	$(srcdir)/bookmark.png			\
 	$(srcdir)/book.png			\
 	$(srcdir)/bug.png			\
@@ -21,7 +22,6 @@ RESOURCEFILES =					\
 	$(srcdir)/contact-phone.png		\
 	$(srcdir)/default.png			\
 	$(srcdir)/document.png			\
-	$(srcdir)/dog.png			\
 	$(srcdir)/emblem-bugzilla.png		\
 	$(srcdir)/emblem-blog.png		\
 	$(srcdir)/emblem-contact.png		\
@@ -82,7 +82,10 @@ install-data-local: $(TARGET)
 uninstall-local:
 	rm -f $(DESTDIR)$(pkglibdir)/$(TARGET)
 
-EXTRA_DIST = $(CSFILES) $(RESOURCEFILES)
+icondir = $(datadir)/pixmaps
+icon_DATA = best.png
+
+EXTRA_DIST = $(CSFILES) $(RESOURCEFILES) $(icon_DATA)
 
 CLEANFILES = \
 	$(TARGET) 	\
