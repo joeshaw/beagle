@@ -36,7 +36,7 @@ class CrawlerTool {
 		static void Crawl (string path)
 		{
 			path = Path.GetFullPath (path);
-			Console.WriteLine ("Crawing {0}", path);
+			Console.WriteLine ("Crawling {0}", path);
 			Beagle.FileSystemIndexer.Crawl (path);
 		}
 
