@@ -27,6 +27,8 @@ namespace Dewey {
 	    }
 
 	    protected override bool ThisEndElementWillFlush () {
+		if (Name == "text:p")
+		    return true;
 		return false;
 	    }
 	}
@@ -47,7 +49,7 @@ namespace Dewey {
 	    entry = zip.GetEntry ("content.xml");
 	    stream = zip.GetInputStream (entry);
 	    XmlContentReader xcr = new OpenOfficeReader (stream, this);
-	    xcr.Debug = true;
+	    //xcr.Debug = true;
 	    xcr.DoWork ();
 	    return true; // FIXME: should check for errors
 	}
