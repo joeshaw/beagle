@@ -345,12 +345,7 @@ uninstall-local:
 	rm -f $(DESTDIR)$(pkglibdir)/$(DAEMON_TARGET)
 
 bin_SCRIPTS = $(DAEMON_WRAPPER)
-noinst_SCRIPTS=testclient $(EXTRACT_CONTENT_WRAPPER) 
-
-testclient: $(srcdir)/testclient.in
-	sed -e "s|\@prefix\@|$(prefix)|g" -e "s|\@pkglibdir\@|$(pkglibdir)|g" -e "s|\@target\@|TestClient.exe|g" < $^ > $@
-	chmod +x testclient
-
+noinst_SCRIPTS=$(EXTRACT_CONTENT_WRAPPER) 
 
 EXTRA_DIST =				\
 	$(PLUGIN_CSFILES)		\
@@ -359,9 +354,7 @@ EXTRA_DIST =				\
 	$(EXTRACT_CONTENT_CSFILES)	\
 	$(EXTSTR_IN)			\
 	$(WRAPPER_IN)   		\
-	$(DAEMON_WRAPPER_IN)		\
-	testclient.in			\
-	TestClient.cs
+	$(DAEMON_WRAPPER_IN)
 
 CLEANFILES =				\
 	$(PLUGIN_TARGET)       		\
@@ -370,6 +363,4 @@ CLEANFILES =				\
 	$(EXTSTR)			\
 	$(DAEMON_WRAPPER)      		\
 	$(EXTRACT_CONTENT_TARGET)	\
-	$(EXTRACT_CONTENT_WRAPPER)	\
-	testclient      		\
-	TestClient.exe
+	$(EXTRACT_CONTENT_WRAPPER)
