@@ -32,7 +32,7 @@ namespace Beagle
 {
 	public class DBusisms {
 
-		static public readonly string ServiceName = "com.novell.Beagle";
+		static public readonly string Name = "com.novell.Beagle";
 		static public readonly string FactoryPath = "/com/novell/Beagle/Factory";
 		static public readonly string RemoteControlPath = "/com/novell/Beagle/RemoteControl";
 		static public readonly string WebHistoryIndexerPath = "/com/novell/Beagle/WebHistoryIndexer";
@@ -62,8 +62,12 @@ namespace Beagle
 		internal static Service Service {
 			get {
 				if (service == null) {
-					Driver.ServiceOwnerChanged += OnServiceOwnerChanged;
-					service = DBus.Service.Get (Connection, ServiceName);
+#if HAVE_OLD_DBUS
+					Driver.ServiceOwnerChanged += OnNameOwnerChanged;
+#else
+					Driver.NameOwnerChanged += OnNameOwnerChanged;
+#endif
+					service = DBus.Service.Get (Connection, Name);
 				}
 				return service;
 			}
@@ -78,11 +82,11 @@ namespace Beagle
 			}
 		}
 
-		internal static void OnServiceOwnerChanged (string serviceName,
-							    string oldOwner,
-							    string newOwner)
+		internal static void OnNameOwnerChanged (string name,
+							 string oldOwner,
+							 string newOwner)
 		{
-			if (serviceName == ServiceName) {
+			if (name == Name) {
 
 				if (oldOwner == "") { // New service added
 					//System.Console.WriteLine ("BeagleDaemon up");

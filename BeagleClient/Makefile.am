@@ -6,7 +6,8 @@ TARGET = Beagle.dll
 CSFLAGS = 					\
 	-target:library				\
 	-define:PREFIX=$(prefix)		\
-	-define:PKGLIBDIR=$(pkglibdir)
+	-define:PKGLIBDIR=$(pkglibdir)		\
+	$(BEAGLE_DEFINES)
 
 CSFILES = 					\
 	$(srcdir)/DBusisms.cs			\

@@ -340,7 +340,7 @@ LUCENE_CSFILES = $(LUCENE_1_4_CSFILES)
 
 DAEMON_DLL_TARGET = BeagleDaemonLib.dll
 
-DAEMON_DLL_CSFLAGS = -target:library
+DAEMON_DLL_CSFLAGS = -target:library $(BEAGLE_DEFINES)
 
 fsqueryabledir = $(srcdir)/FileSystemQueryable
 FILE_SYSTEM_QUERYABLE_CSFILES =				\
@@ -497,7 +497,8 @@ $(DAEMON_WRAPPER): $(srcdir)/$(DAEMON_WRAPPER_IN)
 
 
 DAEMON_CSFLAGS =				\
-	-target:exe
+	-target:exe				\
+	$(BEAGLE_DEFINES)
 
 #	-main:BeagleDaemon.BeagleDaemon
 

@@ -68,10 +68,15 @@ namespace Beagle.Daemon {
 		
 		public static bool InitService () {
 			if (service == null) {
-				if (Service.Exists (connection, Beagle.DBusisms.ServiceName)) {
+#if HAVE_OLD_DBUS
+				if (Service.Exists (connection, Beagle.DBusisms.Name))
+#else
+				if (Service.HasOwner (connection, Beagle.DBusisms.Name))
+#endif
+                                {
 					return false;
 				}
-				service = new Service (connection, Beagle.DBusisms.ServiceName);
+				service = new Service (connection, Beagle.DBusisms.Name);
 				return true;
 			} else {
 				return true;

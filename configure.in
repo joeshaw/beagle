@@ -202,7 +202,7 @@ AC_SUBST(LIBGECKOGLUE_LIBS)
 
 dnl -------------------------------------------------------
 
-PKG_CHECK_MODULES(BEAGLE_UI, gtk-sharp glade-sharp gecko-sharp = 0.6 gnome-sharp dbus-sharp = 0.23 gconf-sharp gmime-sharp)
+PKG_CHECK_MODULES(BEAGLE_UI, gtk-sharp glade-sharp gecko-sharp = 0.6 gnome-sharp dbus-sharp >= 0.23 gconf-sharp gmime-sharp)
 AC_SUBST(BEAGLE_UI_LIBS)
 
 dnl ----------------------------------------------
@@ -264,13 +264,32 @@ AM_CONDITIONAL(ENABLE_GSF_SHARP, test "x$enable_gsf_sharp" = "xyes")
 PKG_CHECK_MODULES(GST_SHARP, gst-sharp, enable_gst_sharp=yes, enable_gst_sharp=no)
 AM_CONDITIONAL(ENABLE_GST_SHARP, test "x$enable_gst_sharp" = "xyes")
 
-PKG_CHECK_MODULES(BEAGLED, gmime-sharp gtk-sharp dbus-sharp = 0.23 gconf-sharp)
+PKG_CHECK_MODULES(BEAGLED, gmime-sharp gtk-sharp dbus-sharp >= 0.23 gconf-sharp)
 BEAGLED_LIBS="$BEAGLED_LIBS $EVO_SHARP_LIBS $GSF_SHARP_LIBS"
 AC_SUBST(BEAGLED_LIBS)
 
 DBUS_PREFIX=`$PKG_CONFIG --variable=prefix dbus-sharp`
 GSF_SHARP_PREFIX=`$PKG_CONFIG --variable=prefix gsf-sharp`
 GMIME_SHARP_PREFIX=`$PKG_CONFIG --variable=prefix gmime-sharp`
+
+AC_MSG_CHECKING(for older dbus API)
+LDFLAGS_save="$LDFLAGS"
+LDFLAGS="$LDFLAGS `pkg-config --libs dbus-1`"
+AC_TRY_LINK_FUNC(dbus_message_iter_get_boolean,[
+	AC_MSG_RESULT(yes)
+	have_old_dbus=yes
+],[
+	AC_MSG_RESULT(no)
+	have_old_dbus=no
+])
+LDFLAGS="$LDFLAGS_save"
+
+if test "$have_old_dbus" = "yes"; then
+	BEAGLE_DEFINES="-define:HAVE_OLD_DBUS"
+else
+	BEAGLE_DEFINES=""
+fi
+AC_SUBST(BEAGLE_DEFINES)
 
 dnl ----------------------------------------------
 

@@ -34,7 +34,11 @@ namespace Beagle.Daemon {
 
 		public FactoryImpl ()
 		{
-			DBusisms.BusDriver.ServiceOwnerChanged += this.OnServiceOwnerChanged;
+#if HAVE_OLD_DBUS
+			DBusisms.BusDriver.ServiceOwnerChanged += this.OnNameOwnerChanged;
+#else
+			DBusisms.BusDriver.NameOwnerChanged += this.OnNameOwnerChanged;
+#endif
 		}
 
 		////////////////////////////////////////////////////
@@ -45,10 +49,10 @@ namespace Beagle.Daemon {
 		{
 			string path;
 			lock (this) {
-				path = String.Format ("/com/novell/Beagle/{0}/{1}-{2}",
-						      obj.GetType (),
+				path = String.Format ("/com/novell/Beagle/{0}/{1}_{2}",
+						      obj.GetType ().ToString ().Replace ('.', '_'),
 						      path_counter,
-						      Guid.NewGuid ().ToString ());
+						      Guid.NewGuid ().ToString ().Replace ('-', '_'));
 				++path_counter;
 			}
 
@@ -59,14 +63,14 @@ namespace Beagle.Daemon {
 			return path;
 		}
 
-		private void OnServiceOwnerChanged (string serviceName,
-						    string oldOwner,
-						    string newOwner)
+		private void OnNameOwnerChanged (string name,
+						 string oldOwner,
+						 string newOwner)
 		{
 			// Clean up associated objects if a base service is deleted.
-			if (newOwner == "" && serviceName == oldOwner) {
-				//Logger.Log.Debug ("Cleaning up objects associated with '{0}'", serviceName);
-				DBusisms.UnregisterByOwner (serviceName);
+			if (newOwner == "" && name == oldOwner) {
+				//Logger.Log.Debug ("Cleaning up objects associated with '{0}'", name);
+				DBusisms.UnregisterByOwner (name);
 			}
 		}
 
@@ -79,7 +83,7 @@ namespace Beagle.Daemon {
 
 		override public string NewQueryPath ()
 		{
-			QueryImpl queryImpl = new QueryImpl (Guid.NewGuid ().ToString ());
+			QueryImpl queryImpl = new QueryImpl (Guid.NewGuid ().ToString ().Replace ('-', '_'));
 			// When a query is closed, we need to unregister it
 			// and do any necessary local clean-up.
 			queryImpl.ClosedEvent += OnClosedHandler;

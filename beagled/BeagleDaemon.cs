@@ -117,12 +117,16 @@ namespace Beagle.Daemon {
 
 		}
 
-		private static void OnServiceOwnerChanged (string serviceName,
-							   string oldOwner,
-							   string newOwner)
+		private static void OnNameOwnerChanged (string name,
+							string oldOwner,
+							string newOwner)
 		{
-			if (serviceName == "com.novell.Beagle" && newOwner == "") {
-				DBusisms.BusDriver.ServiceOwnerChanged -= OnServiceOwnerChanged;
+			if (name == "com.novell.Beagle" && newOwner == "") {
+#if HAVE_OLD_DBUS
+				DBusisms.BusDriver.ServiceOwnerChanged -= OnNameOwnerChanged;
+#else
+				DBusisms.BusDriver.NameOwnerChanged -= OnNameOwnerChanged;
+#endif
 				Application.Quit ();
 			}
 		}
@@ -132,7 +136,11 @@ namespace Beagle.Daemon {
 		{
 			Logger.Log.Info ("Attempting to replace another beagled.");
 			DBus.Service service = DBus.Service.Get (DBusisms.Connection, "com.novell.Beagle");
-			DBusisms.BusDriver.ServiceOwnerChanged += OnServiceOwnerChanged;
+#if HAVE_OLD_DBUS
+			DBusisms.BusDriver.ServiceOwnerChanged += OnNameOwnerChanged;
+#else
+			DBusisms.BusDriver.NameOwnerChanged += OnNameOwnerChanged;
+#endif
 			do {
 				Logger.Log.Info ("Building Remote Control Proxy");
 				RemoteControlProxy proxy = RemoteControl.GetProxy (service);
