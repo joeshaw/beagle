@@ -31,7 +31,7 @@ namespace Beagle
 		Gtk.Entry 	 entry;
 		int              w_width = 400;
                 int              w_height = 400;
-	
+
 		public BeagleTray ()
 		{
 			glass_icon = GuiUtils.GetMiniIcon ("trayicon.png");
@@ -84,7 +84,7 @@ namespace Beagle
 						   Gtk.AccelFlags.Visible);
 
 			Box vbox = new Gtk.VBox (false, 2);
-			
+
 			entry = new Gtk.Entry();
 			entry.MaxLength = 100;	
 			entry.Activated += new EventHandler (DoSearch);

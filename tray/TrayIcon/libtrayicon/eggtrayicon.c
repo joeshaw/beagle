@@ -27,7 +27,8 @@
 #include <gdk/gdkx.h>
 #include <X11/Xatom.h>
 
-#ifndef EGG_COMPILATION
+
+#if 0
 #ifndef _
 #define _(x) dgettext (GETTEXT_PACKAGE, x)
 #define N_(x) x
@@ -81,7 +82,8 @@ egg_tray_icon_get_type (void)
 	NULL, /* class_data */
 	sizeof (EggTrayIcon),
 	0,    /* n_preallocs */
-	(GInstanceInitFunc) egg_tray_icon_init
+	(GInstanceInitFunc) egg_tray_icon_init,
+	NULL
       };
 
       our_type = g_type_register_static (GTK_TYPE_PLUG, "EggTrayIcon", &our_info, 0);
@@ -194,14 +196,15 @@ egg_tray_icon_get_orientation_property (EggTrayIcon *icon)
 }
 
 static GdkFilterReturn
-egg_tray_icon_manager_filter (GdkXEvent *xevent, GdkEvent *event, gpointer user_data)
+egg_tray_icon_manager_filter (GdkXEvent *xevent, GdkEvent *event G_GNUC_UNUSED,
+			      gpointer user_data)
 {
   EggTrayIcon *icon = user_data;
   XEvent *xev = (XEvent *)xevent;
 
   if (xev->xany.type == ClientMessage &&
       xev->xclient.message_type == icon->manager_atom &&
-      xev->xclient.data.l[1] == icon->selection_atom)
+      (unsigned int) xev->xclient.data.l[1] == icon->selection_atom)
     {
       egg_tray_icon_update_manager_window (icon);
     }
@@ -371,18 +374,6 @@ egg_tray_icon_realize (GtkWidget *widget)
   /* Add a root window filter so that we get changes on MANAGER */
   gdk_window_add_filter (root_window,
 			 egg_tray_icon_manager_filter, icon);
-}
-
-EggTrayIcon *
-egg_tray_icon_new_for_xscreen (Screen *xscreen, const char *name)
-{
-  GdkDisplay *display;
-  GdkScreen *screen;
-
-  display = gdk_x11_lookup_xdisplay (DisplayOfScreen (xscreen));
-  screen = gdk_display_get_screen (display, XScreenNumberOfScreen (xscreen));
-
-  return egg_tray_icon_new_for_screen (screen, name);
 }
 
 EggTrayIcon *
