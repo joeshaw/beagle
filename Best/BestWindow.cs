@@ -61,7 +61,7 @@ namespace Best {
 		
 		public void FocusEntry () {
 			entry.SelectRegion (0, -1);
-			entry.GrabFocus ();
+			entry.GtkEntry.GrabFocus ();
 		}
 
 		public void FocusEntryHandler (object o, EventArgs args) {
