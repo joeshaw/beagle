@@ -280,7 +280,7 @@ namespace Beagle.Daemon.FileSystemQueryable {
 	}		
 
 
-#if true
+#if false
 	class Test {
 		static void Main (string [] args)
 		{

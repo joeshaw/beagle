@@ -43,8 +43,11 @@ namespace Beagle.Util {
 			return dt.ToString (timeFormat);
 		}
 
-                static public DateTime StringToDateTime (String str)
+                static public DateTime StringToDateTime (string str)
                 {
+			if (str == null || str == "")
+				return new DateTime ();
+
 			return DateTime.ParseExact (str, timeFormat, CultureInfo.CurrentCulture);
                 }
 

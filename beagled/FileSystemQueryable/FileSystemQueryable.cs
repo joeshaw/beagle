@@ -54,7 +54,7 @@ namespace Beagle.Daemon.FileSystemQueryable {
 			filter = new FileNameFilter ();
 			crawlQ = new CrawlQueue (filter, Driver, log);
 
-			TraverseDirectory (home);
+			TraverseDirectory (home, true);
 
 			// Crawl a few important directories right away, just to be sure.
 			// FIXME: This list shouldn't be hard-wired
@@ -79,12 +79,18 @@ namespace Beagle.Daemon.FileSystemQueryable {
 		private void Watch (string path)
 		{
 			Inotify.Watch (path, 
-				       InotifyEventType.All & (~ InotifyEventType.Access));
+				       InotifyEventType.CreateSubdir
+				       | InotifyEventType.CreateFile
+				       | InotifyEventType.Modify
+				       | InotifyEventType.DeleteSubdir
+				       | InotifyEventType.DeleteFile
+				       | InotifyEventType.Close
+				       | InotifyEventType.QueueOverflow);
 		}
 
 		// Do a breadth-first traversal of the home directory,
 		// setting up watches and scheduling crawls.
-		private void TraverseDirectory (string root)
+		private void TraverseDirectory (string root, bool isInitial)
 		{
 			Queue queue = new Queue ();
 			int count = 0;
@@ -104,6 +110,11 @@ namespace Beagle.Daemon.FileSystemQueryable {
 					blockedPaths [path] = true;
 					watchedPaths [path] = true;
 					Watch (path);
+
+					if (isInitial)
+						crawlQ.RegisterDirectory (path);
+					else
+						crawlQ.ScheduleCrawl (path, 0);
 
 					foreach (DirectoryInfo subdir in dir.GetDirectories ()) {
 						if (! filter.Ignore (subdir.FullName))
@@ -139,7 +150,7 @@ namespace Beagle.Daemon.FileSystemQueryable {
 			switch (type) {
 
 			case InotifyEventType.CreateSubdir:
-				TraverseDirectory (fullPath);
+				TraverseDirectory (fullPath, false);
 				return;
 				
 			case InotifyEventType.CreateFile:
@@ -158,7 +169,9 @@ namespace Beagle.Daemon.FileSystemQueryable {
 			// Try to crawl any path we see activity in.
 			// We only crawl each directory once, but that is enforced
 			// inside of the CrawlQueue.
-			crawlQ.ScheduleCrawl (path, 0);
+			if (subitem != "") {
+				crawlQ.ScheduleCrawl (path, 0);
+			}
 
 			// Handle the events that trigger indexing operations.
 			switch (type) {
