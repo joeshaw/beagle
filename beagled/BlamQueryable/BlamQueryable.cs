@@ -82,7 +82,8 @@ namespace Beagle.Daemon.BlamQueryable {
 				fsw.EnableRaisingEvents = true;
 			}
 
-			Index ();
+			if (File.Exists (Path.Combine (blam_dir, blam_file)))
+				Index ();
 		}
 
 		private bool CheckForExistence ()

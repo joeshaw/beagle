@@ -46,8 +46,11 @@ namespace Beagle.Daemon.EvolutionMailDriver {
 			string local_path = Path.Combine (PathFinder.HomeDir, ".evolution/mail/local");
 			string imap_path = Path.Combine (PathFinder.HomeDir, ".evolution/mail/imap");
 			
-			roots.Add (local_path);
-			roots.Add (imap_path);
+			if (Directory.Exists (local_path))
+				roots.Add (local_path);
+
+			if (Directory.Exists (imap_path))
+				roots.Add (imap_path);
 		}
 
 		private bool FileIsInteresting (FileInfo file)
