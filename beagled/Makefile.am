@@ -195,10 +195,10 @@ tomboyqueryable = $(srcdir)/TomboyQueryable
 TOMBOY_QUERYABLE_CSFILES =				\
 	$(tomboyqueryable)/TomboyQueryable.cs
 
-evomaildriver = $(srcdir)/EvolutionMailDriver
-EVO_MAIL_DRIVER_CSFILES =				\
-	$(evomaildriver)/CamelIndexDriver.cs		\
-	$(evomaildriver)/EvolutionMailDriver.cs
+evomailqueryable = $(srcdir)/EvolutionMailDriver
+EVO_MAIL_QUERYABLE_CSFILES =				\
+	$(evomailqueryable)/CamelIndexDriver.cs		\
+	$(evomailqueryable)/EvolutionMailDriver.cs
 
 blamqueryable = $(srcdir)/BlamQueryable
 BLAM_QUERYABLE_CSFILES =				\
@@ -214,6 +214,7 @@ DAEMON_DLL_CSFILES = 				\
 	$(FILE_SYSTEM_QUERYABLE_CSFILES)	\
 	$(GAIM_LOG_QUERYABLE_CSFILES)		\
 	$(BLAM_QUERYABLE_CSFILES)		\
+	$(EVO_MAIL_QUERYABLE_CSFILES)		\
 	$(srcdir)/BugzillaDriver.cs 		\
 	$(srcdir)/Crawler.cs			\
 	$(srcdir)/DBusisms.cs			\

@@ -84,7 +84,7 @@ namespace Beagle {
 			writer.Write (id);
 			writer.Write (uri.ToString ());
 			writer.Write (type);
-			writer.Write (mimeType);
+			writer.Write (mimeType == null ? "" : mimeType);
 			writer.Write (source);
 			writer.Write (scoreRaw);
 			writer.Write (scoreMultiplier);
@@ -114,6 +114,8 @@ namespace Beagle {
 			hit.uri = new Uri (reader.ReadString ());
 			hit.type = reader.ReadString ();
 			hit.mimeType = reader.ReadString ();
+			if (hit.mimeType == "")
+				hit.mimeType = null;
 			hit.source = reader.ReadString ();
 			hit.scoreRaw = reader.ReadSingle ();
 			hit.scoreMultiplier = reader.ReadSingle ();

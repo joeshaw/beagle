@@ -55,7 +55,7 @@ namespace Beagle.Daemon {
 			get { return driver; }
 		}
 
-		protected Scheduler ThisScheduler {
+		public Scheduler ThisScheduler {
 			get { return scheduler; }
 		}
 
@@ -100,9 +100,9 @@ namespace Beagle.Daemon {
 			return true;
 		}
 
-		public void DoQuery (QueryBody            body,
-				     IQueryResult         query_result,
-				     IQueryableChangeData i_change_data)
+		public virtual void DoQuery (QueryBody            body,
+					     IQueryResult         query_result,
+					     IQueryableChangeData i_change_data)
 		{
 			ChangeData change_data = (ChangeData) i_change_data;
 
@@ -263,12 +263,19 @@ namespace Beagle.Daemon {
 					bool finished = false;
 
 					for (int count = 0; count < hard_wired_generation_count; ++count) {
-						Indexable generated = generator.GetNextIndexable ();
-						if (generated == null) {
+						if (!generator.HasNextIndexable ()) {
 							finished = true;
 							break;
 						}
-						driver.Add (generated);
+
+						Indexable generated = generator.GetNextIndexable ();
+
+						// Note that the indexable generator can return null.
+						// This means that the generator didn't have an indexable
+						// to return this time through, but it does not mean that
+						// its processing queue is empty.
+						if (generated != null)
+							driver.Add (generated);
 					}
 
 					if (! finished) {

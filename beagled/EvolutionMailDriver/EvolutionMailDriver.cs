@@ -76,7 +76,7 @@ namespace Beagle.Daemon {
 
 	internal class EvolutionMailIndexableGenerator : IIndexableGenerator {
 
-		private LuceneDriver driver;
+		private EvolutionMailQueryable queryable;
 		private FileInfo summaryInfo;
 		private Camel.Summary summary;
 		private IEnumerator summaryEnumerator;
@@ -86,9 +86,9 @@ namespace Beagle.Daemon {
 		private ArrayList deletedList;
 		private int count, indexedCount;
 
-		public EvolutionMailIndexableGenerator (LuceneDriver driver, FileInfo summaryInfo)
+		public EvolutionMailIndexableGenerator (EvolutionMailQueryable queryable, FileInfo summaryInfo)
 		{
-			this.driver = driver;
+			this.queryable = queryable;
 			this.summaryInfo = summaryInfo;
 		}
 
@@ -216,7 +216,7 @@ namespace Beagle.Daemon {
 			string timeStr;
 
 			try {
-				timeStr = ExtendedAttribute.Get (this.summaryInfo, "LastCrawl");
+				timeStr = ExtendedAttribute.Get (this.summaryInfo.FullName, "LastCrawl");
 			} catch {
 				EvolutionMailQueryable.log.Debug ("Unable to get last crawl time on {0}",
 								  this.summaryInfo.FullName);
@@ -263,8 +263,9 @@ namespace Beagle.Daemon {
 			// to handle our removals.
 			foreach (string uid in this.deletedList) {
 				Uri uri = EvolutionMailQueryable.EmailUri (this.accountName, this.folderName, uid);
-
-				this.driver.ScheduleDelete (uri, 1);
+				Scheduler.Task task = this.queryable.NewRemoveTask (uri);
+				task.Priority = Scheduler.Priority.Immediate;
+				this.queryable.ThisScheduler.Add (task);
 			}
 
 			EvolutionMailQueryable.log.Debug ("{0}: Finished indexing {1} ({2}/{3} {4:###.0}%)",
@@ -275,7 +276,7 @@ namespace Beagle.Daemon {
 			this.SaveCache ();
 				
 			try {
-				ExtendedAttribute.Set (this.summaryInfo, "LastCrawl",
+				ExtendedAttribute.Set (this.summaryInfo.FullName, "LastCrawl",
 						       StringFu.DateTimeToString (DateTime.Now));
 			} catch {
 				EvolutionMailQueryable.log.Debug ("Unable to set last crawl time on {0}",
@@ -388,7 +389,7 @@ namespace Beagle.Daemon {
 			string imap_path = Path.Combine (home, ".evolution/mail/imap");
 
 			// Get notification when an index or summary file changes
-			Inotify.InotifyEvent += new InotifyHandler (OnInotifyEvent);
+			Inotify.Event += OnInotifyEvent;
 			Watch (local_path);
 			Watch (imap_path);
 
@@ -429,9 +430,9 @@ namespace Beagle.Daemon {
 				DirectoryInfo dir = queue.Dequeue () as DirectoryInfo;
 				
 				int wd = Inotify.Watch (dir.FullName,
-							InotifyEventType.CreateSubdir
-							| InotifyEventType.DeleteSubdir
-							| InotifyEventType.MovedTo);
+							Inotify.EventType.CreateSubdir
+							| Inotify.EventType.DeleteSubdir
+							| Inotify.EventType.MovedTo);
 				watched [wd] = dir.FullName;
 
 				foreach (DirectoryInfo subdir in dir.GetDirectories ())
@@ -448,8 +449,8 @@ namespace Beagle.Daemon {
 		private void OnInotifyEvent (int wd,
 					     string path,
 					     string subitem,
-					     InotifyEventType type,
-					     int cookie)
+					     Inotify.EventType type,
+					     uint cookie)
 		{
 			if (subitem == "" || ! watched.Contains (wd))
 				return;
@@ -458,15 +459,15 @@ namespace Beagle.Daemon {
 
 			switch (type) {
 				
-			case InotifyEventType.CreateSubdir:
+			case Inotify.EventType.CreateSubdir:
 				Watch (fullPath);
 				break;
 
-			case InotifyEventType.DeleteSubdir:
+			case Inotify.EventType.DeleteSubdir:
 				Ignore (fullPath);
 				break;
 
-			case InotifyEventType.MovedTo:
+			case Inotify.EventType.MovedTo:
 				if (Path.GetExtension (fullPath) == ".ev-summary" || subitem == "summary") {
 					log.Info ("reindexing updated summary: {0}", fullPath);
 					this.IndexSummary (new FileInfo (fullPath));
@@ -528,7 +529,7 @@ namespace Beagle.Daemon {
 				return;
 
 			// Now create a CamelIndexDriver and pass it off there
-			CamelIndexDriver driver = new CamelIndexDriver (this, body, result);
+			CamelIndexDriver driver = new CamelIndexDriver (this, this.Driver, body, result);
 
 			if (Shutdown.ShutdownRequested)
 				return;
@@ -538,8 +539,11 @@ namespace Beagle.Daemon {
 
 		public void IndexSummary (FileInfo summaryInfo)
 		{
-			EvolutionMailIndexableGenerator generator = new EvolutionMailIndexableGenerator (Driver, summaryInfo);
-			Driver.ScheduleAdd (generator);
+			EvolutionMailIndexableGenerator generator = new EvolutionMailIndexableGenerator (this, summaryInfo);
+			Scheduler.Task task;
+			task = NewAddTask (generator);
+			task.Priority = Scheduler.Priority.Delayed;
+			ThisScheduler.Add (task);
 		}
 
 		public static Uri EmailUri (string accountName, string folderName, string uid)

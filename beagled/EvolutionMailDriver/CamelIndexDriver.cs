@@ -125,6 +125,7 @@ namespace Beagle.Daemon {
 		private static Logger log = Logger.Get ("mail");
 
 		private EvolutionMailQueryable queryable;
+		private LuceneDriver driver;
 		private QueryBody queryBody;
 		private IQueryResult queryResult;
 		private Hashtable recentHits = new Hashtable ();
@@ -132,16 +133,18 @@ namespace Beagle.Daemon {
 		private ArrayList indexes = new ArrayList ();
 		private Hashtable indexStatus = new Hashtable ();
 
-		public CamelIndexDriver (EvolutionMailQueryable queryable, QueryBody body, IQueryResult result)
+		public CamelIndexDriver (EvolutionMailQueryable queryable, LuceneDriver driver,
+					 QueryBody body, IQueryResult result)
 		{
 			this.queryable = queryable;
+			this.driver = driver;
 			this.queryBody = body;
 			this.queryResult = result;
 
 			string home = Environment.GetEnvironmentVariable ("HOME");
 			string local_path = Path.Combine (home, ".evolution/mail/local");
 
-			Inotify.InotifyEvent += new InotifyHandler (OnInotifyEvent);
+			Inotify.Event += OnInotifyEvent;
 			Watch (local_path);
 
 			QueryResult queryResult = (QueryResult) result;
@@ -176,9 +179,9 @@ namespace Beagle.Daemon {
 				DirectoryInfo dir = queue.Dequeue () as DirectoryInfo;
 				
 				int wd = Inotify.Watch (dir.FullName,
-							InotifyEventType.CreateSubdir
-							| InotifyEventType.Modify
-							| InotifyEventType.MovedTo);
+							Inotify.EventType.CreateSubdir
+							| Inotify.EventType.Modify
+							| Inotify.EventType.MovedTo);
 				watched [wd] = dir.FullName;
 				this.indexes.AddRange (Directory.GetFiles (dir.FullName, "*.ibex.index"));
 
@@ -200,8 +203,8 @@ namespace Beagle.Daemon {
 		private void OnInotifyEvent (int wd,
 					     string path,
 					     string subitem,
-					     InotifyEventType type,
-					     int cookie)
+					     Inotify.EventType type,
+					     uint cookie)
 		{
 			if (subitem == "" || ! watched.Contains (wd))
 				return;
@@ -210,11 +213,11 @@ namespace Beagle.Daemon {
 
 			switch (type) {
 				
-			case InotifyEventType.CreateSubdir:
+			case Inotify.EventType.CreateSubdir:
 				Watch (fullPath);
 				break;
 
-			case InotifyEventType.DeleteSubdir:
+			case Inotify.EventType.DeleteSubdir:
 				Ignore (fullPath);
 				break;
 
@@ -224,7 +227,7 @@ namespace Beagle.Daemon {
 			// been changed, add it to the hash table with a value of false.  When
 			// the summary gets updated, change the value to true.  When the
 			// index is updated again, we know that it's ok to rerun the query.
-			case InotifyEventType.MovedTo:
+			case Inotify.EventType.MovedTo:
 				
 				if (Path.GetExtension (fullPath) == ".ev-summary") {
 					string indexPath = Path.ChangeExtension (fullPath, ".ibex.index");
@@ -236,7 +239,7 @@ namespace Beagle.Daemon {
 				}
 				break;
 
-			case InotifyEventType.Modify:
+			case Inotify.EventType.Modify:
 
 				if (Path.GetExtension (fullPath) == ".index") {
 					if (!this.indexStatus.ContainsKey (fullPath)) {
@@ -332,7 +335,7 @@ namespace Beagle.Daemon {
 				index.Dispose ();
 			}			
 
-			hits.AddRange (this.queryable.Driver.QueryByUri (matches));
+			hits.AddRange (this.driver.DoQueryByUri (matches));
 
 			ArrayList filteredHits = new ArrayList ();
 			Hashtable newRecentHits = new Hashtable ();
