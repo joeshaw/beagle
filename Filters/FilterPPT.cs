@@ -480,7 +480,7 @@ namespace Beagle.Filters {
 				sumMeta = Msole.MetadataReadReal (sumStream);
 			else
 				Logger.Log.Error ("SummaryInformationStream not found in {0}", FileName);
-			
+
 			DocMetaData docSumMeta = null;
 			if (docSumStream != null)
 				docSumMeta = Msole.MetadataReadReal (docSumStream);
@@ -546,20 +546,23 @@ namespace Beagle.Filters {
 			Input sumStream = null;
 			Input docSumStream = null;
 			string str = null;
+			string strTemp = null;
 			int childCount = 0;
 			int found = 0;
 			
 			if (file == null)
 				return;
 
+			// FIXME: Should try to use Encoding instead of 
+			// string.IndexOf ()... Hacky stuff ;-)
 			childCount = file.NumChildren();
 			for (int i = 0; i < childCount && found != 2; i++) {
-				str = file.NameByIndex (i);
-				if (string.Compare (str, "SummaryInformation") == 0) {
+				str = file.NameByIndex (i);	
+				if (str.IndexOf ("SummaryInformation") > -1 && found < 1) {
 					sumStream = file.ChildByIndex (i);
 					found = 1;
 				}
-				else if (string.Compare (str, "DocumentSummaryInformation") == 0) {
+				else if (str.IndexOf ("DocumentSummaryInformation") > -1) {
 					docSumStream = file.ChildByIndex (i);
 					found = 2;
 				}

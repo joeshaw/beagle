@@ -1,15 +1,20 @@
-2005-01-16  Veerapuram Varadhan	 <vvaradhan@novell.com>
+2005-02-23  Veerapuram Varadhan	 <vvaradhan@novell.com>
+
+	* Filters/FilterPPT.cs: Fix for
+	http://bugzilla.gnome.org/show_bug.cgi?id=168238
+	
+2005-02-16  Veerapuram Varadhan	 <vvaradhan@novell.com>
 
 	* Filters/FilterGst.cs: Fix for compiler error.
 	
-2005-01-15  Veerapuram Varadhan	 <vvaradhan@novell.com>
+2005-02-15  Veerapuram Varadhan	 <vvaradhan@novell.com>
 
 	* Filters/FilterSource.cs: Defined a style for C#.
 	C# doesn't allow spanning of single-line-comment-to-multiple-lines.
 
 	* Filters/FilterCSharp.cs: Langtype is C_Sharp_Style.
 	
-2005-01-10  Veerapuram Varadhan	 <vvaradhan@novell.com>
+2005-02-10  Veerapuram Varadhan	 <vvaradhan@novell.com>
 
 	* glue/wv1-glue.c: Separate out the wvInit() call, should be
 	called only one through-out the scope of an application.
@@ -17,7 +22,7 @@
 	* Filters/FilterDOC.cs: Track wvInit() call through a static
 	member.  This also fixes Bug#:166150
 	
-2005-01-09  Veerapuram Varadhan	 <vvaradhan@novell.com>
+2005-02-09  Veerapuram Varadhan	 <vvaradhan@novell.com>
 
 	* beagled/SnippetFu.cs: Fix for
 	http://bugzilla.gnome.org/show_bug.cgi?id=166648. Trim the
@@ -26,7 +31,7 @@
 	* Filters/FilterRTF.cs: Fix for
 	http://bugzilla.gnome.org/show_bug.cgi?id=166768
 	
-2005-01-08  Veerapuram Varadhan	 <vvaradhan@novell.com>
+2005-02-08  Veerapuram Varadhan	 <vvaradhan@novell.com>
 
 	* glue/wv1-glue.c: Handle partially formatted texts.
 	Mark partially-formatted-texts as HOT.
@@ -35,7 +40,7 @@
 	"Structural Break"s which is needed for proper snippet support.
 	This supplements a partial fix to Bug#166648.
 	
-2005-01-05  Veerapuram Varadhan	 <vvaradhan@novell.com>
+2005-02-05  Veerapuram Varadhan	 <vvaradhan@novell.com>
 
 	* beagled/Filter.cs: Few tweaks on Hot pool.
 	* Filters/FilterOpenOffice.cs: More elegant(?) logic to handle
@@ -46,7 +51,7 @@
 	* Best/Best.cs: Added a console message to guide users to look at
 	their Systray for Best icon.
 	
-2005-01-04  Veerapuram Varadhan	 <vvaradhan@novell.com>
+2005-02-04  Veerapuram Varadhan	 <vvaradhan@novell.com>
 
 	* Filters/FilterPPT.cs: Validate the Ole stream before using it.
 	Fixes Bug#:166265. Now, FilterPPT directly derives from B.D.F and
@@ -57,7 +62,7 @@
 	* beagled/Filter.cs: Uncomment the return statement in
 	GetHotTextReader ()
 	
-2005-01-03  Veerapuram Varadhan	 <vvaradhan@novell.com>
+2005-02-03  Veerapuram Varadhan	 <vvaradhan@novell.com>
 
 	* Filters/FilterPdf.cs: Fix for Bug#:166040. Filename parameter for
 	pdfinfo command should be tagged between a pair of "".
