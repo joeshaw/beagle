@@ -79,8 +79,8 @@ namespace Best {
 			root = new SimpleRootTile ();
 			canvas.Root = root;
 
-			DefaultWidth = 500;
-			DefaultHeight = 600;
+			DefaultWidth = 600;
+			DefaultHeight = 500;
 
 			accel_group = new Gtk.AccelGroup ();
 			this.AddAccelGroup (accel_group);
@@ -101,6 +101,8 @@ namespace Best {
 			Best.IncRef ();
 
 			DBusisms.BeagleDown += OnBeagleDown;
+
+			UpdatePage ();
 		}
 
 		private void SetBusy (bool busy)
@@ -166,6 +168,18 @@ namespace Best {
 			Close ();
 		}
 
+		private void DoForwardClicked (object o, EventArgs args)
+		{
+			root.HitCollection.PageForward ();
+			UpdatePage ();
+		}
+
+		private void DoBackClicked (object o, EventArgs args)
+		{
+			root.HitCollection.PageBack ();
+			UpdatePage ();
+		}
+
 		//////////////////////////
 
 		private Gtk.Entry entry;
@@ -173,6 +187,26 @@ namespace Best {
 		private Gtk.ScrolledWindow swin;
 		private TileCanvas canvas;
 		private SimpleRootTile root;
+		private Gtk.Label page_label;
+		private Gtk.Button back_button;
+		private Gtk.Button forward_button;
+
+		private Gtk.Button StockButton (string stockid, string label)
+		{
+			Gtk.HBox button_contents = new HBox (false, 0);
+			button_contents.Show ();
+			Gtk.Widget button_image = new Gtk.Image (stockid, Gtk.IconSize.Button);
+			button_image.Show ();
+			button_contents.PackStart (button_image, false, false, 1);
+			Gtk.Label button_label = new Gtk.Label (label);
+			button_label.Show ();
+			button_contents.PackStart (button_label, false, false, 1);
+			
+			Gtk.Button button = new Gtk.Button ();
+			button.Add (button_contents);
+
+			return button;
+		}
 
 		private Gtk.Widget CreateContents ()
 		{
@@ -200,18 +234,55 @@ namespace Best {
 			canvas = new TileCanvas ();
 			canvas.Show ();
 
-			//swin = new Gtk.ScrolledWindow ();
-			//swin.Add (canvas);
+			HBox pager = new HBox ();
+			page_label = new Label ();
+			page_label.Show ();
+			pager.PackStart (page_label, false, false, 3);
+
+			forward_button = StockButton ("gtk-go-forward", 
+						      "Show More Results");
+			forward_button.Show ();
+			forward_button.Clicked += new EventHandler (DoForwardClicked);
+			pager.PackEnd (forward_button, false, false, 3);
+
+			back_button = StockButton ("gtk-go-back",
+						   "Show Previous Results");
+			back_button.Show ();
+
+			back_button.Clicked += new EventHandler (DoBackClicked);
+			pager.PackEnd (back_button, false, false, 3);
+
+			pager.Show ();
 
 			VBox contents = new VBox (false, 3);
 			contents.PackStart (entryLine, false, true, 3);
-			//			contents.PackStart (swin, true, true, 3);
 			contents.PackStart (canvas, true, true, 3);
+			contents.PackStart (pager, false, false, 3);
 
 			entryLine.ShowAll ();
 			canvas.ShowAll ();
 
 			return contents;
+		}
+
+		private void UpdatePage ()
+		{
+			back_button.Sensitive = root.HitCollection.CanPageBack;
+			forward_button.Sensitive = root.HitCollection.CanPageForward;
+
+			string label;
+			if (root.HitCollection.NumResults == 0)
+				label = "No results.";
+			else if (root.HitCollection.FirstDisplayed == 0) 
+				label = String.Format ("Best <b>{0} results of {1}</b> are shown.", 
+						       root.HitCollection.LastDisplayed + 1,
+						       root.HitCollection.NumResults);
+			else 
+				label = String.Format ("Results <b>{0} through {1} of {2}</b> are shown.",
+						       root.HitCollection.FirstDisplayed + 1, 
+						       root.HitCollection.LastDisplayed + 1,
+						       root.HitCollection.NumResults);						       
+			page_label.Markup = label;
 		}
 
 		private string delayedQuery = null;
@@ -253,6 +324,7 @@ namespace Best {
 				} else
 					root.Error ("The query for <i>" + entry.Text + "</i> failed with error:<br><br>" + e);
 			}
+			UpdatePage ();
 		}
 
 		//////////////////////////
@@ -268,11 +340,13 @@ namespace Best {
 		private void OnHitAdded (Query source, Hit hit)
 		{
 			root.Add (hit);
+			UpdatePage ();
 		}
 
 		private void OnHitSubtracted (Query source, Uri uri)
 		{
 			root.Subtract (uri);
+			UpdatePage ();
 		}
 
 		private void OnFinished (QueryProxy source)

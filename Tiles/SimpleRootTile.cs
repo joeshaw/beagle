@@ -34,17 +34,20 @@ using Beagle;
 namespace Beagle.Tile {
 
 	public class SimpleRootTile : Tile {
-		private TileHitCollection hit_collection = null;
+		private TileHitCollection hit_collection = new TileHitCollection ();
 		string errorString;
 		bool offerDaemonRestart;
 
 		public void Open ()
 		{
-			hit_collection = new TileHitCollection ();
-
+			hit_collection.Clear ();
 			Changed ();
 		}
 
+		public TileHitCollection HitCollection {
+			get { return hit_collection; }
+		}
+		
 		public bool OfferDaemonRestart {
 			get { return offerDaemonRestart; }
 			set { offerDaemonRestart = value; }

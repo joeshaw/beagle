@@ -81,6 +81,10 @@ namespace Beagle.Tile {
 			get { return Math.Min (firstDisplayed + maxDisplayed, hits.Count) - 1; }
 		}
 
+		public int NumResults {
+			get { return hits.Count; }
+		} 
+
 		public bool CanPageForward {
 			get { return LastDisplayed != (hits.Count - 1); }
 		}
@@ -89,8 +93,6 @@ namespace Beagle.Tile {
 		public void PageForward ()
 		{
 			firstDisplayed += maxDisplayed;
-			if (firstDisplayed + maxDisplayed > hits.Count)
-				firstDisplayed = hits.Count - maxDisplayed;
 			if (firstDisplayed < 0)
 				firstDisplayed = 0;
 			Changed ();
@@ -115,6 +117,7 @@ namespace Beagle.Tile {
 			lock (this) {
 				if (hits.Count > 0) {
 					hits.Clear ();
+					firstDisplayed = 0;
 					changed = true;
 				}
 			}
@@ -180,7 +183,7 @@ namespace Beagle.Tile {
 			int i = FirstDisplayed;
 			int i1 = LastDisplayed;
 
-			while (i <= i1) {
+			while (i <= i1 && i < NumResults) {
 				HitTilePair pair = (HitTilePair) hits [i];
 				ctx.Tile (pair.Tile);
 				++i;
