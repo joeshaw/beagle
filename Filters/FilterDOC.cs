@@ -1,5 +1,4 @@
 //
-//
 // FilterDOC.cs : Trivial implementation of a MS Word-document filter.
 //                This filter uses wv1 library - http://wvware.sourceforge.net/
 //

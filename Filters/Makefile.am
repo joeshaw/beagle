@@ -29,7 +29,8 @@ CSFILES = 				\
 	$(srcdir)/FilterPng.cs		\
 	$(srcdir)/FilterText.cs	        \
 	$(srcdir)/FilterSource.cs	\
-	$(srcdir)/FilterRTF.cs	
+	$(srcdir)/FilterRTF.cs		\
+	$(srcdir)/FilterAbiword.cs
 
 if ENABLE_GSF_SHARP
 CSFILES += 				\
