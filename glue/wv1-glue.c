@@ -356,6 +356,18 @@ docProc (wvParseStruct * ps, wvTag tag)
 }
 
 /*
+ * wv1_init (): Initialize the wv1 library
+ * NOTE: Do not call this more than once for an application.
+ */
+
+int
+wv1_init ()
+{
+  return (wvInit());
+}
+
+
+/*
  * wv1_glue_init_doc_parsing: Initiates the document parsing 
  * procedure.  Sets up all the required handlers and the parser.
  * 
@@ -372,7 +384,7 @@ int
 wv1_glue_init_doc_parsing (char* fname, wvTextHandlerCallback callback)
 {
   FILE *input;
-  int ret;
+  int ret = 0;
 
   wvParseStruct ps;
   char *dir = NULL;
@@ -384,12 +396,16 @@ wv1_glue_init_doc_parsing (char* fname, wvTextHandlerCallback callback)
       return -1;
   fclose (input);
 
-  wvInit ();
   ret = wvInitParser (&ps, fname);
   if (ret & 0x8000)
-    return -2;
+    ret = -2;
   else if (ret) 
-    return -3;
+    ret = -3;
+
+  if (ret) {
+    wvOLEFree (&ps);
+    return ret;
+  }
 
   ps.filename = fname;
   ps.dir = dir;

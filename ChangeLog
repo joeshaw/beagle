@@ -1,8 +1,17 @@
+2005-01-10  Veerapuram Varadhan	 <vvaradhan@novell.com>
+
+	* glue/wv1-glue.c: Separate out the wvInit() call, should be
+	called only one through-out the scope of an application.
+
+	* Filters/FilterDOC.cs: Track wvInit() call through a static
+	member.  This also fixes Bug#:166150
+	
 2005-01-09  Veerapuram Varadhan	 <vvaradhan@novell.com>
 
 	* beagled/SnippetFu.cs: Fix for
 	http://bugzilla.gnome.org/show_bug.cgi?id=166648. Trim the
 	final snippet to the allowed-length.
+
 	* Filters/FilterRTF.cs: Fix for
 	http://bugzilla.gnome.org/show_bug.cgi?id=166768
 	

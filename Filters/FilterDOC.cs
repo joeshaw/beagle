@@ -45,6 +45,9 @@ namespace Beagle.Filters {
 							   bool hotText, bool appendStructBrk);
 		
 		[DllImport ("wv1glue")]
+		private static extern int wv1_init ();
+
+		[DllImport ("wv1glue")]
 		private static extern int wv1_glue_init_doc_parsing (string fname, TextHandlerCallback callback);
 
 		[DllImport ("wv1glue")]
@@ -99,6 +102,8 @@ namespace Beagle.Filters {
 		private static extern void wv1_glue_close_stream (IntPtr oleStream, IntPtr summary);
 
 		//////////////////////////////////////////////////////////
+
+		static bool wv1_Initted = false;
 
 		public FilterDOC () 
 		{
@@ -209,9 +214,13 @@ namespace Beagle.Filters {
 			int ret;
 			TextHandlerCallback textHandler;
 			textHandler = new TextHandlerCallback (IndexText);
-			
-			ret = wv1_glue_init_doc_parsing (FileName, textHandler);
 
+			if (!wv1_Initted) {
+				wv1_init ();
+				wv1_Initted = true;
+			}
+
+			ret = wv1_glue_init_doc_parsing (FileName, textHandler);
 			if (ret == -2)
 				Logger.Log.Error ("{0} : is password protected", FileName);
 			else if (ret == -1)
