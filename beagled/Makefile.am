@@ -201,6 +201,10 @@ mailqueryable = $(srcdir)/MailQueryable
 MAIL_QUERYABLE_CSFILES =				\
 	$(mailqueryable)/MailQueryable.cs
 
+blamqueryable = $(srcdir)/BlamQueryable
+BLAM_QUERYABLE_CSFILES =				\
+	$(blamqueryable)/BlamQueryable.cs
+
 DAEMON_DLL_CSFILES = 				\
 	$(LUCENE_CSFILES)			\
 	$(FILE_SYSTEM_QUERYABLE_CSFILES)	\
@@ -208,6 +212,7 @@ DAEMON_DLL_CSFILES = 				\
 	$(GAIM_LOG_QUERYABLE_CSFILES)		\
 	$(TOMBOY_QUERYABLE_CSFILES)		\
 	$(MAIL_QUERYABLE_CSFILES)		\
+	$(BLAM_QUERYABLE_CSFILES)		\
 	$(srcdir)/DBusisms.cs			\
 	$(srcdir)/Ping.cs			\
 	$(srcdir)/Shutdown.cs			\
