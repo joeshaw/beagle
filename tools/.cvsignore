@@ -2,7 +2,7 @@
 *.dll
 Makefile
 Makefile.in
-dewey-crawler
+dewey-index-files
 dewey-crawler-rss-2.0
 dewey-query
 dewey-extract-content

@@ -6,6 +6,7 @@
 
 using System;
 using System.Collections;
+using System.Threading;
 
 using Dewey;
 
@@ -31,18 +32,26 @@ class QueryTool {
 
 	static void Main (String[] args) 
 	{
-		IndexDriver driver = new IndexDriver ();
+		QueryDriver driver = new QueryDriver ();
+		driver.AutoPopulateHack ();
 
 		Query query = new Query (String.Join (" ", args));
 
-		IEnumerable hits = driver.Query (query);
+		QueryResult result = driver.Query (query);
+		result.Start ();
 
-		int count = 0;
-		foreach (Hit hit in hits) {
+		Thread.Sleep (1000);
+		result.Wait ();
+
+		foreach (Hit hit in result.Hits) {
 			WriteHit (hit);
-			++count;
 		}
 
-		Console.WriteLine ("Total hits: {0}", count);
+		Console.WriteLine ("Total hits: {0}", result.Count);
+
+		// FIXME: Works around mono dangling thread bug.
+		Environment.Exit (0);
 	}
+
+
 }

@@ -12,7 +12,7 @@ using Dewey.Util;
 
 namespace Dewey {
 
-	public class GoogleDriver {
+	public class GoogleDriver : IQueryable {
 
 		int maxResults = 5;
 
@@ -31,7 +31,6 @@ namespace Dewey {
 			hit.Uri      = res.URL;
 			hit.Type     = "WebLink";
 			hit.MimeType = "text/html"; // FIXME
-			hit.Source   = "Google";
 
 			// FIXME: We can't really compare scores if the Hits
 			// come from different sources.  This is a hack.
@@ -44,26 +43,32 @@ namespace Dewey {
 			hit ["HostName"]       = res.hostName;
 			hit ["DirectoryTitle"] = res.directoryTitle;
 
-			hit.Lockdown ();
-
 			return hit;
 		}
 
 		static bool showNoKeyMessage = true;
-		
-		// FIXME: Should be async, etc.
-		public IEnumerable Query (Query query)
-		{
-			ArrayList hits = new ArrayList ();
 
-			// If the google key isn't set, just return the empty array.
+		public String Name {
+			get { return "Google"; }
+		}
+
+		public bool AcceptQuery (Query query)
+		{
+			// Reject queries if the key isn't set.
 			if (googleKey == null) {
 				if (showNoKeyMessage) {
 					Console.WriteLine ("To query Google, set the GOOGLE_WEB_API_KEY environment variable.");
 					showNoKeyMessage = false;
 				}
-				return hits;
+				return false;
 			}
+			return true;
+		}
+
+
+		public ICollection Query (Query query)
+		{
+			ArrayList hits = new ArrayList ();
 
 			GoogleSearchResult result = gss.doGoogleSearch (googleKey,
 									query.AbusivePeekInsideQuery,

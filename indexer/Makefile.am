@@ -13,6 +13,9 @@ CSFILES = 				\
 	$(srcdir)/IndexableHttp.cs	\
 	$(srcdir)/Query.cs		\
 	$(srcdir)/Hit.cs		\
+	$(srcdir)/QueryResult.cs	\
+	$(srcdir)/IQueryable.cs		\
+	$(srcdir)/QueryDriver.cs	\
 	$(srcdir)/IndexDriver.cs	\
 	$(srcdir)/GoogleDriver.cs
 

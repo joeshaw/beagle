@@ -23,6 +23,8 @@ namespace Best {
 
 		//////////////////////////
 
+		QueryDriver driver;
+
 		private BestWindow () : base (WindowType.Toplevel)
 		{
 			Title = "Bleeding-Edge Search Tool";
@@ -40,6 +42,9 @@ namespace Best {
 			const double GOLDEN = 1.61803399;
 			DefaultWidth = 300;
 			DefaultHeight = (int) (DefaultWidth * GOLDEN);
+
+			driver = new QueryDriver ();
+			driver.AutoPopulateHack ();
 
 			Best.IncRef ();
 		}
@@ -131,17 +136,38 @@ namespace Best {
 			Destroy ();
 		}
 
-		private IndexDriver driver = new IndexDriver ();
+		//////////////////////////
+
+		private void OnGotHits (object src, QueryResult.GotHitsArgs args)
+		{
+			Console.WriteLine ("Got {0} Hits!", args.Count);
+			foreach (Hit hit in args.Hits)
+				hitContainer.Add (hit);
+		}
+
+		private void OnFinished (object src)
+		{
+			Console.WriteLine ("Finished!");
+			hitContainer.Close ();
+		}
 
 		private void Search (String searchString)
 		{
 			Query query = new Query (searchString);
-			IEnumerable AllHits = driver.Query (query);
+			QueryResult result;
 
-			hitContainer.Open ();
-			foreach (Hit hit in AllHits)
-				hitContainer.Add (hit);
-			hitContainer.Close ();
+			result = driver.Query (query);
+			result.GotHitsEvent += OnGotHits;
+			result.FinishedEvent += OnFinished;
+
+			hitContainer.Open ();						
+			result.Start ();
+
+
+			//foreach (Hit hit in result.Hits)
+			//hitContainer.Add (hit);
+			//hitContainer.Close ();
+
 		}
 	}
 }

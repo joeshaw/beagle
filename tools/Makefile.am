@@ -11,7 +11,7 @@ WRAPPER_IN = wrapper.in
 
 
 CRAWLER_TARGET  = Crawler.exe
-CRAWLER_WRAPPER = dewey-crawler
+CRAWLER_WRAPPER = dewey-index-files
 CRAWLER_CSFILES =$(srcdir)/Crawler.cs
 
 $(CRAWLER_TARGET): $(CRAWLER_CSFILES)

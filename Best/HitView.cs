@@ -57,6 +57,9 @@ namespace Best {
 			} else if (hit.Uri.StartsWith ("http://")) {
 				command = "epiphany";
 				arguments = hit.Uri;
+			} else if (hit.Uri.StartsWith ("email://")) {
+				command = "evolution-1.5";
+				arguments = hit.Uri;
 			}
 			
 			if (command != null && arguments != null) {
@@ -74,7 +77,6 @@ namespace Best {
 			String iconPath = Dewey.Util.GnomeIconLookup.LookupMimeIcon (hit.MimeType, (Gtk.IconSize) 48);
 			Widget icon = new Image (iconPath);
 			return icon;
-			return null;
 		}
 
 		private void AddText (String text)
@@ -107,7 +109,6 @@ namespace Best {
 
 				AddMarkup ("<i>" + dir + "</i>");
 				AddMarkup (name);
-				AddMarkup ("Mime Type: " + hit.MimeType);
 				AddMarkup ("<small>Last modified " + hit.Timestamp.ToString ("g") + "</small>");
 				return;
 			}
@@ -121,7 +122,13 @@ namespace Best {
 				return;
 			}
 
-			AddMarkup (hit.Uri);
+			if (hit.Type == "MailMessage") {
+				AddText (hit ["Subject"]);
+				AddText ("From: " + hit ["From"]);
+				AddMarkup ("<small>" + hit.Timestamp + "</small>");
+				return;
+			}
+
 		}
 	}
 }

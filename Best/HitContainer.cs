@@ -18,7 +18,10 @@ namespace Best {
 
 		bool open = false;
 		int count = 0;
-		const int MAXCOUNT = 50;
+		const int MAXCOUNT = 20;
+		
+		ArrayList pendingHits = new ArrayList ();
+		uint pendingIdle;
 		
 		public HitContainer () : base (false, 1)
 		{
@@ -35,6 +38,23 @@ namespace Best {
 			open = true;
 		}
 
+		private bool DoPending ()
+		{
+			lock (pendingHits) {
+				foreach (Hit hit in pendingHits) {
+					if (count < MAXCOUNT) {
+						Widget w = new HitView (hit);
+						PackStart (w, false, true, 2);
+						w.ShowAll ();
+						++count;
+					}
+				}
+				pendingHits.Clear ();
+				pendingIdle = 0;
+			}
+			return false;
+		}
+
 		public void Add (Hit hit)
 		{
 			if (! open) {
@@ -42,23 +62,29 @@ namespace Best {
 				return;
 			}
 
-			if (count < MAXCOUNT) {
-				Widget w = new HitView (hit);
-				PackStart (w, false, true, 2);
-				w.ShowAll ();
-				++count;
+			lock (pendingHits) {
+				if (count >= MAXCOUNT)
+					return;
+				pendingHits.Add (hit);
+				if (pendingIdle == 0)
+					pendingIdle = GLib.Idle.Add (new GLib.IdleHandler (DoPending));
 			}
 		}
 
-		// Call Close when you are done adding hits.
-		public void Close ()
+		private bool DoClose ()
 		{
 			if (count == 0) {
 				Widget w = new Label ("No matches!");
 				PackStart (w, true, true, 3);
 				w.ShowAll ();
 			}
+			return false;
+		}
 
+		// Call Close when you are done adding hits.
+		public void Close ()
+		{
+			GLib.Idle.Add (new GLib.IdleHandler (DoClose));
 			open = false;
 		}
 	}

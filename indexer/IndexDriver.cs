@@ -24,7 +24,7 @@ using LNS = Lucene.Net.Search;
 
 namespace Dewey {
 
-	public class IndexDriver {
+	public class IndexDriver : IQueryable {
 
 		// 1: Original
 		// 2: Changed format of timestamp strings
@@ -245,8 +245,6 @@ namespace Dewey {
 			Hit hit = new Hit ();
 
 			hit.Id = luceneHits.Id (i);
-
-			hit.Source = "IndexUser"; // FIXME: in the long run, this can't be hard-wired
 			
 			Document doc = luceneHits.Doc (i);
 			String str;
@@ -283,7 +281,6 @@ namespace Dewey {
 				}
 			}
 			
-			hit.Lockdown ();
 			return hit;
 		}
 		
@@ -434,7 +431,16 @@ namespace Dewey {
 			return hit;
 		}
 
-		public IEnumerable Query (Query query)
+		public String Name {
+			get { return "Lucene"; }
+		}
+
+		public bool AcceptQuery (Query query)
+		{
+			return true;
+		}
+
+		public ICollection Query (Query query)
 		{
 			Analyzer analyzer = NewAnayzer ();
 			LNS.Query luceneQuery = ToLuceneQuery (query, analyzer);
