@@ -9,12 +9,14 @@ using System.Collections;
 
 namespace Beagle {
 
+	public delegate void HitCollector (ICollection hits);
+
 	public interface IQueryable {
 
 		String Name { get; }
 
 		bool AcceptQuery (Query query);
 
-		ICollection Query (Query query);
+		void Query (Query query, HitCollector collector);
 	}
 }

@@ -436,7 +436,7 @@ namespace Beagle {
 			return true;
 		}
 
-		public ICollection Query (Query query)
+		public void Query (Query query, HitCollector collector)
 		{
 			Analyzer analyzer = NewAnayzer ();
 			LNS.Query luceneQuery = ToLuceneQuery (query, analyzer);
@@ -507,7 +507,7 @@ namespace Beagle {
 				hits.Add (hit);
 			hits.Sort ();
 
-			return hits;
+			collector (hits);
 		}
 	}
 

@@ -43,18 +43,26 @@ namespace Beagle {
 				result    = _result;
 			}
 
-			public void Start ()
+			void Collect (ICollection hits)
 			{
-				ICollection hits = queryable.Query (query);
-				
 				// Make sure that hits are properly sourced and locked.
 				foreach (Hit hit in hits) {
 					if (hit.Source == null)
 						hit.Source = queryable.Name;
 					hit.Lockdown ();
 				}
-
+				
 				result.Add (hits);
+			}
+
+			public void Start ()
+			{
+				try {
+					queryable.Query (query, new HitCollector (Collect));
+				} catch (Exception e) {
+					Console.WriteLine ("Query to '{0}' failed with exception:\n{1}", queryable.Name, e.Message);
+							   
+				}
 				result.WorkerFinished ();
 			}
 		}

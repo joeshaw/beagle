@@ -114,7 +114,7 @@ namespace Beagle {
 			return true;
 		}
 
-		public ICollection Query (Query query)
+		public void Query (Query query, HitCollector collector)
 		{
 			Evolution.BookQuery bq;
 			bq = Evolution.BookQuery.AnyFieldContains (query.AbusivePeekInsideQuery);
@@ -129,7 +129,7 @@ namespace Beagle {
 				array.Add (hit);
 			}
 				
-			return array;
+			collector (array);
 		}
 
 	}

@@ -66,15 +66,14 @@ namespace Beagle {
 		}
 
 
-		public ICollection Query (Query query)
+		public void Query (Query query, HitCollector collector)
 		{
-			ArrayList hits = new ArrayList ();
-
 			GoogleSearchResult result = gss.doGoogleSearch (googleKey,
 									query.AbusivePeekInsideQuery,
 									0, maxResults,
 									false, "", false, "", "", "");
 
+			ArrayList hits = new ArrayList ();
 			int rank = 0;
 			foreach (ResultElement elt in result.resultElements) {
 				Hit hit = FromGoogleResultElement (elt, rank);
@@ -82,7 +81,7 @@ namespace Beagle {
 				hits.Add (hit);
 			}
 
-			return hits;
+			collector (hits);
 		}
 
 	}

@@ -34,6 +34,7 @@ $(CRAWLER_RSS20_WRAPPER): $(WRAPPER_IN)
 	sed -e "s|\@prefix\@|$(prefix)|g" -e "s|\@pkglibdir\@|$(pkglibdir)|g" -e "s|\@target\@|$(CRAWLER_RSS20_TARGET)|g" < $(srcdir)/$(WRAPPER_IN) > $(CRAWLER_RSS20_WRAPPER)
 	chmod +x $(CRAWLER_RSS20_WRAPPER)
 
+
 QUERY_TARGET  = Query.exe
 QUERY_WRAPPER = beagle-query
 QUERY_CSFILES = $(srcdir)/Query.cs
@@ -82,6 +83,11 @@ $(INDEX_MAIL_WRAPPER): $(WRAPPER_IN)
 	chmod +x $(INDEX_MAIL_WRAPPER)
 
 
+UPDATE_SCRIPT = beagle-update-index
+
+$(UPDATE_SCRIPT): $(UPDATE_SCRIPT).in
+	sed -e "s|\@prefix\@|$(prefix)|g" < $(srcdir)/$^ > $@
+	chmod +x $@
 
 TARGETS = 				\
 	$(CRAWLER_TARGET)		\
@@ -99,9 +105,9 @@ WRAPPERS = 				\
 	$(INDEX_WEB_CONTENT_WRAPPER)	\
 	$(INDEX_MAIL_WRAPPER)
 
-bin_SCRIPTS = $(WRAPPERS)
+bin_SCRIPTS = $(WRAPPERS) $(UPDATE_SCRIPT)
 
-all: $(TARGETS) $(WRAPPERS)
+all: $(TARGETS) $(WRAPPERS) $(UPDATE_SCRIPT)
 
 install-data-local: $(TARGETS)
 	$(mkinstalldirs) $(DESTDIR)$(pkglibdir)
