@@ -1,13 +1,17 @@
+/* -*- Mode: javascript; indent-tabs-mode: nil; c-basic-offset: 2 -*- */
 /*
  * Beagle Extension: Index webpages you visit using the Beagle Indexing Engine.
  * An Extension for the Firefox (and Mozilla?) Browser.
  */
 
-// Load jslib parts used in file execution
-var gFile = new FileUtils();
-
 // Initiate a new preference instance.
 var gPref = Components.classes['@mozilla.org/preferences-service;1'].getService(Components.interfaces.nsIPrefBranch);
+var gEnv = Components.classes["@mozilla.org/process/environment;1"].getService(Components.interfaces.nsIEnvironment);
+
+// Load jslib parts used in file execution
+var gFile = new FileUtils();
+var gPath = gEnv.get("HOME") + "/.beagle/firefox";
+var gDir = new Dir(gPath);
 
 // Create the global variables
 var gBeagleRunStatus = 0;
@@ -16,8 +20,7 @@ var gBeagleBestPath;
 
 function beagleFindFileInPath(filename)
 {
-  var env = Components.classes["@mozilla.org/process/environment;1"].getService(Components.interfaces.nsIEnvironment);
-  var path = env.get("PATH");
+  var path = gEnv.get("PATH");
   if (path) {
     var split = path.split(':');
     var idx = 0;
@@ -32,13 +35,13 @@ function beagleFindFileInPath(filename)
 
 function beagleInit()
 {
-	dump ("beagleInit started!");
+  dump ("beagleInit started!\n");
 
   gBeagleIndexerPath = beagleFindFileInPath("beagle-index-url");
   gBeagleBestPath = beagleFindFileInPath("best");
 
-	dump ("beagleInit: Found beagle-index-url: " + gBeagleIndexerPath);
-	dump ("beagleInit: Found best: " + gBeagleBestPath);
+  dump ("beagleInit: Found beagle-index-url: " + gBeagleIndexerPath + "\n");
+  dump ("beagleInit: Found best: " + gBeagleBestPath + "\n");
 
   // Create eventlistener to trigger when context menu is invoked.
   if (gBeagleBestPath) {
@@ -57,7 +60,7 @@ function beagleInit()
       document.getElementById("appcontent").addEventListener("load", 
 							     beaglePageLoad, 
 							     true);
-	    	dump ("beagleInit : Listening to document['appcontent'].load\n");
+    dump ("beagleInit : Listening to document['appcontent'].load\n");
   } else {
     gBeagleRunStatus = "beagle-index-url not found in $PATH";
     beagleUpdateStatus ();
@@ -116,7 +119,7 @@ function beagleShouldIndex(page)
       !page.location || 
       page.location == 'about:blank' || 
       !page.location.href) {
-    dump("beagleShouldIndex: strange page: " + page);
+    dump("beagleShouldIndex: strange page: " + page + "\n");
     return false;
   }
 
@@ -164,17 +167,25 @@ function beaglePageLoad(event)
   if (!beagleShouldIndex (page))
     return;
 
-	dump("beaglePageLoad : storing page: " + page.location.href);
+  dump("beaglePageLoad : storing page: " + page.location.href + "\n");
 
-  // FIXME: this should be in a safer directory and hash the url as well
-  var hash = new Date().getMilliseconds ();
-  var tmpfilepath = "/tmp/firefox-beagle-" + hash + ".html";
+  if (!gFile.exists(gPath)) {
+    try {
+      gDir.create ();
+      dump ("beagleInit: Created .beagle/firefox\n");
+    } catch(e) {
+      dump ("beagleInit: Unable to create .beagle/firefox: " + e + "\n");
+    }
+  }
+
+  var hash = hex_md5(page.location.href);
+  var tmpfilepath = gPath + "/firefox-beagle-" + hash + ".html";
 
   try {
     beagleWriteContent(page, tmpfilepath);
-    	dump ("beaglePageLoad: beagleWriteContent sucessful!");
-    beagleRunIndexer(page.location.href, tmpfilepath);
-    	dump ("beaglePageLoad: beagleRunIndexer sucessful!");
+    dump ("beaglePageLoad: beagleWriteContent sucessful!\n");
+    beagleRunIndexer(page.location.href, page.title, tmpfilepath);
+    dump ("beaglePageLoad: beagleRunIndexer sucessful!\n");
   } catch (ex) {
     alert ("beaglePageLoad: beagleWriteContent failed: " + ex);
   }
@@ -183,7 +194,7 @@ function beaglePageLoad(event)
 function beagleRunBest(query)
 {
   try {
-    dump("Running best with query: "+ query +"\n");
+    dump("Running best with query: "+ query + "\n");
     var retval = gFile.spawn(gBeagleBestPath, ["", query]);
     if (retval) 
       alert("Error running best: " + retval);
@@ -192,19 +203,34 @@ function beagleRunBest(query)
   }
 }
 
-function beagleRunIndexer(url, filepath)
+function beagleRunIndexer(url, title, filepath)
 {
   try {
     var retval = gFile.spawn(gBeagleIndexerPath, 
 			    ["--url", url, 
+                             "--title", title,
 			     "--sourcefile", filepath, 
 			     "--deletesourcefile"]);
     if (retval) {
       alert("Error running beagle-index-url: " + retval);
+
+      try {
+        gFile.remove(filepath);
+      } catch(e) {
+        alert("Couldn't remove " + filepath + ": " + e);
+      }
+
       gBeagleRunStatus = retval;
     }
   } catch(e) {
     alert("Caught error from beagle-index-url: " + e);
+
+    try {
+      gFile.remove(filepath);
+    } catch(e) {
+      alert("Couldn't remove " + filepath + ": " + e);
+    }
+
     gBeagleRunStatus = e;
   }
 

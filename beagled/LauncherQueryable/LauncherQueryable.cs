@@ -196,16 +196,20 @@ namespace Beagle.Daemon.LauncherQueryable {
 					continue;
 				if (!sline[1].Equals (""))  {
 					// FIXME:  add other language support
-					if (sline[0].Equals ("Exec")
-					    || sline[0].Equals ("Icon")
-					    || sline[0].Equals ("Name")
-					    || sline[0].Equals ("Comment")) {
+					switch (sline[0]) {
+					case "Exec":
+					case "Icon":
+						indexable.AddProperty (Beagle.Property.NewUnsearched ("fixme:" + sline[0], sline[1]));
+						break;
 
-						if (sline[0].Equals ("Name"))
-							have_name = true;
-
-						StringBuilder property = new StringBuilder ("fixme:");
-						indexable.AddProperty (Beagle.Property.NewKeyword (property.Append(sline[0]).ToString (), sline[1]));
+					case "Name":
+						have_name = true;
+						indexable.AddProperty (Beagle.Property.NewKeyword ("fixme:" + sline[0], sline[1]));
+						break;
+						
+					case "Comment":
+						indexable.AddProperty (Beagle.Property.NewKeyword ("fixme:" + sline[0], sline[1]));
+						break;
 					}
 				}
 			}

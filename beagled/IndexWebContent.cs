@@ -1,7 +1,7 @@
 //
 // IndexWebContent.cs
 //
-// Copyright (C) 2004 Novell, Inc.
+// Copyright (C) 2004-2005 Novell, Inc.
 //
 
 //
@@ -30,6 +30,7 @@ using System.Collections;
 using System.IO;
 
 using Beagle;
+using Beagle.Daemon;
 using BU = Beagle.Util;
 
 class IndexWebContentTool {
@@ -105,9 +106,9 @@ class IndexWebContentTool {
 		if (uri.Scheme == Uri.UriSchemeMailto)
 			return;
 
-		Indexable indexable;
+		FilteredIndexable indexable;
 		
-		indexable = new Indexable (uri);
+		indexable = new FilteredIndexable (uri);
 		indexable.Type = "WebHistory";
 		indexable.MimeType = "text/html";
 		indexable.Timestamp = DateTime.Now;
@@ -143,6 +144,12 @@ class IndexWebContentTool {
 		} catch (Exception e) {
 			Console.WriteLine ("ERROR: Indexing failed:");
 			Console.Write (e);
+
+			// Still clean up after ourselves, even if we couldn't
+			// index the content.
+			if (deletesourcefile)
+				File.Delete (sourcefile);
+
 			Environment.Exit (1);
 		}
 	}

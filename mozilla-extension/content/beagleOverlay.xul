@@ -13,6 +13,7 @@
 <script type="application/x-javascript" src="chrome://beagle/content/jslib/io/dir.js"/>
 <script type="application/x-javascript" src="chrome://beagle/content/jslib/io/dirUtils.js"/>
 
+<script type="application/x-javascript" src="chrome://beagle/content/md5.js" />
 <script type="application/x-javascript" src="chrome://beagle/content/beagleOverlay.js" />
 
 <popup id="contentAreaContextMenu">
