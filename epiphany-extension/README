@@ -15,9 +15,10 @@ There is also the issue of private information (account numbers, etc.) ending
 up in the index.  Maybe the default behavior should be to not index https://
 sites.
 
-There is currently no automatic way to install the extension after it has been
-built.  On SuSE 9.1, you can install it with:
-# cp .libs/libdeweyextension.so /opt/gnome/lib/epiphany/extensions
+Note: The extension will get install into Epiphany's prefix, not Dewey's.
+Since Epiphany probably lives under /usr or /opt/gnome, that means you'll
+need to be root to 'make install', even if you are installing Dewey into a
+prefix under your home directory.
 
 
 
