@@ -45,7 +45,7 @@ namespace Beagle.Filters {
 				Finished ();
 			} else {
 				AppendText (str);
-				AppendWhiteSpace ();
+				AppendStructuralBreak ();
 			}
 		}
 	}

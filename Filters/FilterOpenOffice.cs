@@ -120,14 +120,18 @@ namespace Beagle.Filters {
 
 		static bool NodeBreaksTextAfter (String nodeName)
 		{
+			return  nodeName == "text:s"
+				|| nodeName == "text:tab-stop"
+				|| nodeName == "table:table-cell"
+				|| nodeName == "office:annotation";
+		}
+
+		static bool NodeBreaksStructureAfter (String nodeName)
+		{
 			return nodeName == "text:p"
 				|| nodeName == "text:h"
-				|| nodeName == "text:s"
-				|| nodeName == "text:tab-stop"
 				|| nodeName == "text:footnote"
-				|| nodeName == "table:table-cell"
-				|| nodeName == "text:endnote"
-				|| nodeName == "office:annotation";
+				|| nodeName == "text:endnote";
 		}
 
 		private Stack hot_nodes = new Stack ();
@@ -148,10 +152,15 @@ namespace Beagle.Filters {
 				switch (reader.NodeType) {
 				case XmlNodeType.Element:
 					if (reader.IsEmptyElement) {
-						if (NodeBreaksTextBefore (reader.Name))
-							AppendWhiteSpace ();
-						if (NodeBreaksTextAfter (reader.Name))
-							AppendWhiteSpace ();
+
+						if (NodeBreaksStructureAfter (reader.Name))
+							AppendStructuralBreak ();
+						else {
+							if (NodeBreaksTextBefore (reader.Name))
+								AppendWhiteSpace ();
+							if (NodeBreaksTextAfter (reader.Name))
+								AppendWhiteSpace ();
+						}
 
 						// We check for a "whitespace" to identify
 						// partially formatted texts.
@@ -268,7 +277,9 @@ namespace Beagle.Filters {
 					if (reader.Name == "text:span")
 						span_nodes.Pop ();
 
-					if (NodeBreaksTextAfter (reader.Name))
+					if (NodeBreaksStructureAfter (reader.Name))
+						AppendStructuralBreak ();
+					else if (NodeBreaksTextAfter (reader.Name))
 						AppendWhiteSpace ();
 
 					if (reader.Name == "text:p") {

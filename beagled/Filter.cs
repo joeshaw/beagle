@@ -183,6 +183,8 @@ namespace Beagle.Daemon {
 		private ArrayList hotPool;
 		private ArrayList propertyPool;
 
+		private bool last_was_structural_break = true;
+
 		public void AppendText (string str)
 		{
 			//Logger.Log.Debug ("AppendText (\"{0}\")", str);
@@ -196,6 +198,8 @@ namespace Beagle.Daemon {
 					hotPool.Add (str);
 				if (snippetWriter != null)
 					snippetWriter.Write (str);
+
+				last_was_structural_break = false;
 			}
 		}
 
@@ -214,11 +218,15 @@ namespace Beagle.Daemon {
 
 		public void AppendWhiteSpace ()
 		{
+			if (last_was_structural_break)
+				return;
+
 			//Logger.Log.Debug ("AppendWhiteSpace ()");
 			if (NeedsWhiteSpace (textPool)) {
 				textPool.Add (" ");
 				if (snippetWriter != null)
 					snippetWriter.Write (" ");
+				last_was_structural_break = false;
 			}
 			if (NeedsWhiteSpace (hotPool))
 				hotPool.Add (" ");
@@ -231,10 +239,12 @@ namespace Beagle.Daemon {
 				propertyPool.Add (prop);
 		}
 
-		public void AddStructuralBreak ()
+		public void AppendStructuralBreak ()
 		{
-			if (snippetWriter != null)
+			if (snippetWriter != null && ! last_was_structural_break) {
 				snippetWriter.WriteLine ();
+				last_was_structural_break = true;
+			}
 		}
 
 		//////////////////////////

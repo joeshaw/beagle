@@ -69,7 +69,10 @@ namespace Beagle.Daemon {
 		// 5: Changed analyzer to support stemming.  Bumped version # to
 		//    force everyone to re-index.
 		// 6: lots of schema changes as part of the general refactoring
-		private const int VERSION = 6;
+		// 7: incremented to force a re-index after our upgrade to lucene 1.4
+		//    (in theory the file formats are compatible, we are seeing 'term
+		//    out of order' exceptions in some cases)
+		private const int VERSION = 7;
 
 		private Hashtable pending_by_uri = new Hashtable ();
 		private int pending_adds = 0;
@@ -902,6 +905,19 @@ namespace Beagle.Daemon {
 					theAnalyzer = new BeagleAnalyzer ();
 				return theAnalyzer;
 			}
+		}
+
+		/////////////////////////////////////////////////////
+
+		//
+		// Access to the Stemmer
+		//
+
+		static PorterStemmer stemmer = new PorterStemmer ();
+
+		static public string Stem (string str)
+		{
+			return stemmer.Stem (str);
 		}
 
 		/////////////////////////////////////////////////////
