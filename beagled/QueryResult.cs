@@ -32,31 +32,7 @@ using System.Threading;
 using Beagle.Util;
 namespace Beagle.Daemon {
 
-	public class QueryResult : IQueryResult, IDisposable {
-
-		class QueryWorkerClosure {
-			IQueryWorker worker;
-			QueryResult result;
-
-			public QueryWorkerClosure (IQueryWorker _worker, QueryResult _result)
-			{
-				worker = _worker;
-				result = _result;
-			}
-
-			public void Start ()
-			{
-				try {
-					worker.PerformWork (result);
-				} catch (Exception e) {
-					Logger.Log.Error ("QueryWorker '{0}' failed with exception:\n{1}:\n{2}",
-							  worker, e.Message, e.StackTrace);
-				}
-				result.WorkerFinished (worker);
-			}
-		}
-
-		//////////////////////////////////
+	public class QueryResult : IDisposable {
 
 		public delegate void StartedHandler (QueryResult source);
 		public event StartedHandler StartedEvent;
@@ -77,6 +53,12 @@ namespace Beagle.Daemon {
 
 		int workers = 0;
 		bool cancelled = false;
+		Hashtable hit_regulators = new Hashtable ();
+		Hashtable uri_hash = new Hashtable ();
+		DateTime started_time;
+		DateTime finished_time;
+		Hashtable per_worker_started_time = new Hashtable ();
+
 
 		public QueryResult ()
 		{
@@ -92,6 +74,20 @@ namespace Beagle.Daemon {
 					return;
 				cancelled = true;
 			}	
+		}
+
+		//////////////////////////////////
+
+		public HitRegulator GetHitRegulator (Queryable queryable)
+		{
+			lock (hit_regulators) {
+				HitRegulator hr = hit_regulators [queryable] as HitRegulator;
+				if (hr == null) {
+					hr = new HitRegulator ();
+					hit_regulators [queryable] = hr;
+				}
+				return hr;
+			}
 		}
 
 		//////////////////////////////////
@@ -116,7 +112,7 @@ namespace Beagle.Daemon {
 			}
 		}
 
-		public void Add (ICollection someHits)
+		public void Add (ICollection some_hits)
 		{
 			lock (this) {
 				if (cancelled)
@@ -124,22 +120,18 @@ namespace Beagle.Daemon {
 
 				Debug.Assert (workers > 0, "Adding Hits to idle QueryResult");
 
-				if (someHits.Count == 0)
+				if (some_hits.Count == 0)
 					return;
 		
-				ArrayList filteredHits = new ArrayList ();
-
-				foreach (Hit hit in someHits) {
-					if (hit.IsValid && Relevancy.AdjustScore (hit))
-						filteredHits.Add (hit);
-				}
+				foreach (Hit hit in some_hits)
+					uri_hash [hit.Uri] = true;
 				
 				if (HitsAddedEvent != null)
-					HitsAddedEvent (this, filteredHits);
+					HitsAddedEvent (this, some_hits);
 			}
 		}
 
-		public void Subtract (ICollection someUris)
+		public void Subtract (ICollection some_uris)
 		{
 			lock (this) {
 				if (cancelled)
@@ -147,11 +139,42 @@ namespace Beagle.Daemon {
 
 				Debug.Assert (workers > 0, "Subtracting Hits from idle QueryResult");
 
-				if (someUris.Count == 0)
+				if (some_uris.Count == 0)
 					return;
 
+				ArrayList filtered_uris = new ArrayList ();
+
+				// We only get to subtract a URI if it was previously added.
+				foreach (Uri uri in some_uris)
+					if (uri_hash.Contains (uri))
+						filtered_uris.Add (uri);
+
 				if (HitsSubtractedEvent != null)
-					HitsSubtractedEvent (this, someUris);
+					HitsSubtractedEvent (this, filtered_uris);
+			}
+		}
+
+		//////////////////////////////////////////////////////////////////////////////////////
+
+		class QueryWorkerClosure {
+			IQueryWorker worker;
+			QueryResult result;
+
+			public QueryWorkerClosure (IQueryWorker _worker, QueryResult _result)
+			{
+				worker = _worker;
+				result = _result;
+			}
+
+			public void Start ()
+			{
+				try {
+					worker.DoWork ();
+				} catch (Exception e) {
+					Logger.Log.Error ("QueryWorker '{0}' threw an exception", worker);
+					Logger.Log.Error (e);
+				}
+				result.WorkerFinished (worker);
 			}
 		}
 
@@ -165,7 +188,7 @@ namespace Beagle.Daemon {
 				qwc = new QueryWorkerClosure (worker, this);
 
 				// QueryDriver has an enclosing WorkerStart,
-				// so if we call WorkerStartin this tread, 
+				// so if we call WorkerStart in this thread, 
 				// all the workers will have a chance 
 				// to start before Finished is called
 				
@@ -182,9 +205,16 @@ namespace Beagle.Daemon {
 		{
 			if (!Shutdown.WorkerStart (o))
 				return false;
+
+			DateTime now = DateTime.Now;
+			per_worker_started_time [o] = now;
 			++workers;
-			if (workers == 1 && StartedEvent != null)
-				StartedEvent (this);
+			if (workers == 1) {
+				started_time = now;
+				if (StartedEvent != null) 
+					StartedEvent (this);
+			}
+
 
 			return true;
 			
@@ -203,7 +233,15 @@ namespace Beagle.Daemon {
 				Debug.Assert (workers > 0, "Too many calls to WorkerFinished");
 				--workers;
 
+				DateTime then = (DateTime) per_worker_started_time [o];
+				DateTime now = DateTime.Now;
+
+				//Logger.Log.Debug ("{0} finished in {1:0.00}s", o, (now - then).TotalSeconds);
+
 				if (workers == 0) {
+					finished_time = now;
+					Logger.Log.Debug ("Last worker finished {0:0.00}s after start",
+							  (finished_time - started_time).TotalSeconds);
 					if (FinishedEvent != null)
 						FinishedEvent (this);
 					Monitor.Pulse (this);

@@ -52,8 +52,8 @@ namespace Beagle {
 		private string source = null;
 
 		// High scores imply greater relevance.
-		private float scoreRaw = 0.0f;
-		private float scoreMultiplier = 1.0f;
+		private double scoreRaw = 0.0;
+		private double scoreMultiplier = 1.0;
 
 		private Hashtable properties = new Hashtable (new CaseInsensitiveHashCodeProvider (), 
 							      new CaseInsensitiveComparer ());
@@ -117,8 +117,8 @@ namespace Beagle {
 			if (hit.mimeType == "")
 				hit.mimeType = null;
 			hit.source = reader.ReadString ();
-			hit.scoreRaw = reader.ReadSingle ();
-			hit.scoreMultiplier = reader.ReadSingle ();
+			hit.scoreRaw = reader.ReadDouble ();
+			hit.scoreMultiplier = reader.ReadDouble ();
 
 			int numProps = reader.ReadInt32 ();
 			for (int i = 0; i < numProps; i++) {
@@ -165,18 +165,28 @@ namespace Beagle {
 			set { source = value; }
 		}
 
-		public float Score {
+		public double Score {
 			get { return scoreRaw * scoreMultiplier; }
 		}
 
-		public float ScoreRaw {
+		public double ScoreRaw {
 			get { return scoreRaw; }
 			set { scoreRaw = value; }
 		}
 
-		public float ScoreMultiplier {
+		public double ScoreMultiplier {
 			get { return scoreMultiplier; }
-			set { scoreMultiplier = value; }
+			set { 
+				scoreMultiplier = value;
+				if (scoreMultiplier < 0) {
+					BU.Logger.Log.Warn ("Invalid ScoreMultiplier={0} for {1}", scoreMultiplier, Uri);
+					scoreMultiplier = 0;
+				} else if (scoreMultiplier > 1) {
+					BU.Logger.Log.Warn ("Invalid ScoreMultiplier={0} for {1}", scoreMultiplier, Uri);
+					scoreMultiplier = 1;
+
+				}
+			}
 		}
 
 		//////////////////////////

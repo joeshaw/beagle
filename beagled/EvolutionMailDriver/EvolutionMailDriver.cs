@@ -216,7 +216,13 @@ namespace Beagle.Daemon {
 		{
 			return new Uri (String.Format ("email://{0}/{1};uid={2}",
 						       accountName, folderName, uid));
-		}		
+		}
+
+		override protected double RelevancyMultiplier (Hit hit)
+		{
+			return HalfLifeMultiplierFromProperty (hit, 0.25,
+							       "fixme:received", "fixme:sentdate");
+		}
 	}
 
 }

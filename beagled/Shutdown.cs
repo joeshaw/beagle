@@ -52,7 +52,7 @@ namespace Beagle.Daemon {
 				++refcount;
 				workers[o] = refcount;
 
-				Logger.Log.Debug ("worker added: {0}", o);
+				//Logger.Log.Debug ("worker added: {0}", o);
 			}
 			return true;
 		}
@@ -71,7 +71,7 @@ namespace Beagle.Daemon {
 					workers.Remove (o);
 				else 
 					workers[o] = refcount;
-				Logger.Log.Debug ("worker removed: {0}", o);
+				//Logger.Log.Debug ("worker removed: {0}", o);
 
 				Monitor.Pulse (shutdownLock);
 			}

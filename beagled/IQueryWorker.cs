@@ -27,6 +27,6 @@
 namespace Beagle.Daemon 
 {
 	public interface IQueryWorker {
-		void PerformWork (QueryResult result);
+		void DoWork ();
 	}
 }

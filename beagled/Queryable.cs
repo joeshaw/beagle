@@ -33,12 +33,7 @@ using Beagle;
 
 namespace Beagle.Daemon {
 
-	public delegate void QueryableChangedHandler (Queryable source,
-						      IQueryableChangeData changeData);
-
 	public class Queryable {
-
-		public event QueryableChangedHandler ChangedEvent;
 
 		private QueryableFlavor flavor;
 		private IQueryable iqueryable;
@@ -48,8 +43,6 @@ namespace Beagle.Daemon {
 		{
 			flavor = _flavor;
 			iqueryable = _iqueryable;
-
-			iqueryable.ChangedEvent += OnIChangedEvent;
 		}
 		
 		public void Start ()
@@ -74,11 +67,6 @@ namespace Beagle.Daemon {
 				&& iqueryable.AcceptQuery (body);
 		}
 
-		public string GetHumanReadableStatus ()
-		{
-			return iqueryable.GetHumanReadableStatus ();
-		}
-
 		public int GetItemCount ()
 		{
 			int n = -1;
@@ -91,52 +79,14 @@ namespace Beagle.Daemon {
 			return n;
 		}
 
-		//////////////////////////////////////////////////////////////
-
-		private void OnIChangedEvent (IQueryable source, IQueryableChangeData changeData)
+		public void DoQuery (QueryBody body, IQueryResult result, IQueryableChangeData change_data)
 		{
-			if (source != iqueryable)
-				return;
-			if (ChangedEvent != null)
-				ChangedEvent (this, changeData);
-		}
-
-		//////////////////////////////////////////////////////////////
-
-		private class QueryClosure : IQueryWorker{
-
-			private Queryable queryable;
-			private QueryBody body;
-			private IQueryableChangeData changeData;
-			
-			public QueryClosure (Queryable            _queryable,
-					     QueryBody            _body,
-					     IQueryableChangeData _changeData)
-			{
-				queryable  = _queryable;
-				body       = _body;
-				changeData = _changeData;
+			try {
+				iqueryable.DoQuery (body, result, change_data);
+			} catch (Exception ex) {
+				Logger.Log.Warn ("Caught exception calling DoQuery on '{0}'", Name);
+				Logger.Log.Warn (ex);
 			}
-
-			public void PerformWork (QueryResult result)
-			{
-				queryable.iqueryable.DoQuery (body, result, changeData);
-			}
-
-			public override string ToString ()
-			{
-				return "QueryWorker: " + queryable.iqueryable.ToString ();
-			}
-		}
-
-
-		public void DoQuery (QueryBody body,
-				     QueryResult result,
-				     IQueryableChangeData data)
-		{
-			QueryClosure qc;
-			qc = new QueryClosure (this, body, data);
-			result.AttachWorker (qc);
 		}
 	}
 }

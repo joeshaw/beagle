@@ -179,5 +179,11 @@ namespace Beagle.Daemon.GaimLogQueryable {
 				ThisScheduler.Add (task);
 			}
 		}
+
+		override protected double RelevancyMultiplier (Hit hit)
+		{
+			return HalfLifeMultiplierFromProperty (hit, 0.25,
+							       "fixme:endtime", "fixme:starttime");
+		}
 	}
 }

@@ -91,6 +91,7 @@ namespace Beagle.Daemon {
 		}
 	}
 
+	/* PORTED */
 	public class RelevancyRule_FileWriteTime : RelevancyRule {
 		
 		public override bool IsApplicable (Hit hit)
@@ -108,6 +109,7 @@ namespace Beagle.Daemon {
 		}
 	}
 
+	/* PORTED */
 	public class RelevancyRule_EmailTime : RelevancyRule {
 
 		public override bool IsApplicable (Hit hit)
@@ -136,6 +138,7 @@ namespace Beagle.Daemon {
 		}
 	}
 
+	/* PORTED */
 	public class RelevancyRule_IMLogTime : RelevancyRule {
 
 		public override bool IsApplicable (Hit hit)

@@ -37,6 +37,8 @@ namespace Beagle.Daemon {
 	
 	public class QueryDriver {
 
+		// Enable or Disable specific Queryables by name
+
 		static ArrayList allowed_queryables = new ArrayList ();
 		static ArrayList denied_queryables = new ArrayList ();
 		
@@ -72,7 +74,13 @@ namespace Beagle.Daemon {
 
 		}
 
+		//////////////////////////////////////////////////////////////////////////////////////
+
+		// Use introspection to find all classes that implement IQueryable, the construct
+		// associated Queryables objects.
+
 		static ArrayList queryables = new ArrayList ();
+		static Hashtable iqueryable_to_queryable = new Hashtable ();
 
 		static bool ThisApiSoVeryIsBroken (Type m, object criteria)
 		{
@@ -115,6 +123,7 @@ namespace Beagle.Daemon {
 						if (iq != null) {
 							Queryable q = new Queryable (flavor, iq);
 							queryables.Add (q);
+							iqueryable_to_queryable [iq] = q;
 							++count;
 							break;
 						}
@@ -124,18 +133,6 @@ namespace Beagle.Daemon {
 			Logger.Log.Debug ("Found {0} types in {1}", count, assembly.FullName);
 		}
 
-		////////////////////////////////////////////////////////
-
-		public delegate void ChangedHandler (Queryable            queryable,
-						     IQueryableChangeData changeData);
-
-		static public event ChangedHandler ChangedEvent;
-
-		static object worker_lock = new object ();
-
-
-		// FIXME: There should be a way to disconnect this OnQueryableChanged
-		// from the ChangedEvents.
 		static public void Start ()
 		{
 			ScanAssembly (Assembly.GetExecutingAssembly ());
@@ -147,56 +144,87 @@ namespace Beagle.Daemon {
 					ScanAssembly (Assembly.LoadFile (assembly.ToString ()));
 			}
 				
-			foreach (Queryable q in queryables) {
-				q.ChangedEvent += OnQueryableChanged;
+			foreach (Queryable q in queryables)
 				q.Start ();
+		}
+
+		////////////////////////////////////////////////////////
+
+		public delegate void ChangedHandler (Queryable            queryable,
+						     IQueryableChangeData changeData);
+
+		static public event ChangedHandler ChangedEvent;
+
+		// A method to fire the ChangedEvent event.
+		static public void QueryableChanged (IQueryable           iqueryable,
+						     IQueryableChangeData change_data)
+		{
+			if (ChangedEvent != null) {
+				Queryable queryable = iqueryable_to_queryable [iqueryable] as Queryable;
+				ChangedEvent (queryable, change_data);
+			}
+		}
+
+		////////////////////////////////////////////////////////
+
+		private class QueryClosure : IQueryWorker {
+
+			Queryable queryable;
+			QueryBody body;
+			QueryResult result;
+			IQueryableChangeData change_data;
+			
+			public QueryClosure (Queryable            queryable,
+					     QueryBody            body,
+					     QueryResult          result,
+					     IQueryableChangeData change_data)
+			{
+				this.queryable = queryable;
+				this.body = body;
+				this.result = result;
+				this.change_data = change_data;
+			}
+
+			public void DoWork ()
+			{
+				HitRegulator regulator = result.GetHitRegulator (queryable);
+				queryable.DoQuery (body, regulator, change_data);
+				regulator.Flush (result);
+			}
+		}
+
+		static public void DoOneQuery (Queryable            queryable,
+					       QueryBody            body,
+					       QueryResult          result,
+					       IQueryableChangeData change_data)
+		{
+			if (queryable.AcceptQuery (body)) {
+				QueryClosure qc = new QueryClosure (queryable, body, result, change_data);
+				result.AttachWorker (qc);
 			}
 		}
 
 		static public void DoQuery (QueryBody body, QueryResult result)
 		{
-			// The extra pair of calls to WorkerStart/WorkerFinished ensures that
-			// the QueryResult will fire the StartedEvent and FinishedEvent,
-			// even if no queryable accepts the query.
-			if (!result.WorkerStart (worker_lock)) {
-				return;
-			}
-			
-			try {
-				foreach (Queryable queryable in queryables) {
-					if (queryable.AcceptQuery (body))
-						queryable.DoQuery (body, result, null);
-				}
-			} finally {
-				result.WorkerFinished (worker_lock);
-			}
-		}
+			// The extra pair of calls to WorkerStart/WorkerFinished ensures:
+			// (1) that the QueryResult will fire the StartedEvent
+			// and FinishedEvent, even if no queryable accepts the
+			// query.
+			// (2) that the FinishedEvent will only get called when all of the
+			// backends have had time to finish.
 
-		static private void OnQueryableChanged (Queryable            source,
-							IQueryableChangeData changeData)
-		{
-			if (ChangedEvent != null)
-				ChangedEvent (source, changeData);
+			object dummy_worker = new object ();
+
+			if (! result.WorkerStart (dummy_worker))
+				return;
+			
+			foreach (Queryable queryable in queryables)
+				DoOneQuery (queryable, body, result, null);
+			
+			result.WorkerFinished (dummy_worker);
 		}
 
 		////////////////////////////////////////////////////////
-
-		static public string GetHumanReadableStatus ()
-		{
-			StringBuilder builder = new StringBuilder ("\n");
-
-			foreach (Queryable q in queryables) {
-				if (builder.Length > 1)
-					builder.Append ("\n--------------------------------------\n\n");
-				builder.Append (q.Name);
-				builder.Append (":\n");
-				builder.Append (q.GetHumanReadableStatus ());
-				builder.Append ("\n");
-			}
-			builder.Append ("\n");
-			
-			return builder.ToString ();
-		}
 
 		static public string GetIndexInformation ()
 		{

@@ -68,7 +68,7 @@ namespace Beagle.Tile {
 		Template head_template;
 		Template foot_template;
 
-		public float MaxScore {
+		public double MaxScore {
 			get {
 				if (all_hits.Count == 0)
 					return 0;

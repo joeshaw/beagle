@@ -30,22 +30,15 @@ using System.Collections;
 
 namespace Beagle.Daemon {
 
-	public delegate void IQueryableChangedHandler (IQueryable source,
-						       IQueryableChangeData changeData);
-
 	public interface IQueryable {
-
-		event IQueryableChangedHandler ChangedEvent;
 
 		void Start ();
 
 		bool AcceptQuery (QueryBody body);
 
 		void DoQuery (QueryBody body,
-			      IQueryResult queryResult,
+			      IQueryResult result,
 			      IQueryableChangeData data);
-
-		string GetHumanReadableStatus ();
 
 		// Returns the total number of items in this Queryable's index,
 		// or a value < 0 if that number is unknown or undefined.

@@ -34,8 +34,6 @@ namespace Beagle.Daemon {
 
 	public class LuceneQueryable : IQueryable {
 		
-		public event IQueryableChangedHandler ChangedEvent;
-
 		private Scheduler scheduler = Scheduler.Global;
 
 		private string index_dir;
@@ -87,13 +85,11 @@ namespace Beagle.Daemon {
 					      ICollection  list_of_added_uris,
 					      ICollection  list_of_removed_uris)
 		{
-			if (ChangedEvent != null) {
-				ChangeData change_data = new ChangeData ();
-				change_data.AddedUris = list_of_added_uris;
-				change_data.RemovedUris = list_of_removed_uris;
+			ChangeData change_data = new ChangeData ();
+			change_data.AddedUris = list_of_added_uris;
+			change_data.RemovedUris = list_of_removed_uris;
 
-				ChangedEvent (this, change_data);
-			}
+			QueryDriver.QueryableChanged (this, change_data);
 		}
 
 		/////////////////////////////////////////
@@ -117,6 +113,61 @@ namespace Beagle.Daemon {
 			return true;
 		}
 
+		/////////////////////////////////////////
+
+		virtual protected double RelevancyMultiplier (Hit hit)
+		{
+			return 1.0;
+		}
+
+		static protected double HalfLifeMultiplier (DateTime dt, int half_life_days)
+		{
+			double days = Math.Abs ((DateTime.Now - dt).TotalDays);
+			if (days < 0)
+				return 1.0f;
+			return Math.Pow (0.5, days / (double) half_life_days);
+		}
+
+		// FIXME: A decaying half-life is a little sketchy, since data
+		// will eventually decay beyond the epsilon and be dropped
+		// from the results entirely, which is almost never what we
+		// want, particularly in searches with a few number of
+		// results.  But with a default half-life of 6 months, it'll
+		// take over 13 years to fully decay outside the epsilon on
+		// this multiplier alone.
+		static protected double HalfLifeMultiplier (DateTime time)
+		{
+			// Default relevancy half-life is six months.
+			return HalfLifeMultiplier (time, 182);
+		}
+
+		static protected double HalfLifeMultiplierFromProperty (Hit hit,
+									double default_multiplier,
+									params object [] properties)
+		{
+			double best_m = -1.0;
+
+			foreach (object obj in properties) {
+				string key = obj as string;
+				string val = hit [key];
+				if (val != null) {
+					DateTime dt = StringFu.StringToDateTime (val);
+					double this_m;
+					this_m = HalfLifeMultiplier (dt, 182);  /* 182 days == six months */
+					if (this_m > best_m)
+						best_m = this_m;
+				}
+			}
+
+			if (best_m < 0)
+				best_m = default_multiplier;
+			return best_m;
+		}
+
+
+
+		/////////////////////////////////////////
+
 		public virtual void DoQuery (QueryBody            body,
 					     IQueryResult         query_result,
 					     IQueryableChangeData i_change_data)
@@ -127,12 +178,11 @@ namespace Beagle.Daemon {
 
 			if (change_data != null) {
 
-				if (change_data.RemovedUris != null
-				    && change_data.RemovedUris.Count > 0) {
-					query_result.Subtract (change_data.RemovedUris);
-				}
+				if (change_data.RemovedUris != null)
+					foreach (Uri uri in change_data.RemovedUris)
+						query_result.Subtract (uri);
 
-				// If nothing was added, bale out at this point: this change
+				// If nothing was added, we can safely return now: this change
 				// cannot have any further effect on an outstanding live query.
 				if (change_data.AddedUris == null
 				    || change_data.AddedUris.Count == 0)
@@ -141,15 +191,14 @@ namespace Beagle.Daemon {
 				added_uris = change_data.AddedUris;
 			}
 
-			Driver.DoQuery (body, query_result, added_uris, new LuceneDriver.UriFilter (HitIsValid));
+			Driver.DoQuery (body, 
+					query_result,
+					added_uris,
+					new LuceneDriver.UriFilter (HitIsValid),
+					new LuceneDriver.RelevancyMultiplier (RelevancyMultiplier));
 		}
 
 		/////////////////////////////////////////
-
-		public virtual string GetHumanReadableStatus ()
-		{
-			return "implement me!";
-		}
 
 		public virtual int GetItemCount ()
 		{

@@ -41,10 +41,6 @@ namespace Beagle.Daemon {
 
 		private string bugzilla_host = "http://bugzilla.ximian.com";
 
-		// This event is never fired, but needs to be here for us
-		// to fully implement the IQueryable interface.
-		public event IQueryableChangedHandler ChangedEvent;
-
 		int maxResults = 5;
 
 
@@ -72,19 +68,13 @@ namespace Beagle.Daemon {
 				     IQueryResult result,
 				     IQueryableChangeData changeData)
 		{
-			ArrayList hits = new ArrayList ();
-
 			Logger.Log.Debug ("Kicking off a bugzilla query");
 			// FIXME - hard coding the url here
                         XmlDocument xml = GetBugzillaXml (body.QuotedText);
                         if (xml != null) {
-                                                                                                                                                             
-                        	Hit hit = XmlBugToHit (xml, body.QuotedText);
-                        	if (hit != null)
-                        	{
-					hits.Add (hit);
-                        	}
-				result.Add (hits);
+				Hit hit = XmlBugToHit (xml, body.QuotedText);
+				if (hit != null)
+					result.Add (hit);
 			}
                                                                                                                                                              
 		}
@@ -168,7 +158,7 @@ namespace Beagle.Daemon {
                         hit.Type     = "Bugzilla";
                         hit.MimeType = "text/html"; // FIXME
                         hit.Source   = "Bugzilla";
-			hit.ScoreRaw = 1.0F;
+			hit.ScoreRaw = 1.0;
 
                         hit ["Number"]  = bug_num;
                         hit ["Product"] = product;
@@ -219,11 +209,6 @@ namespace Beagle.Daemon {
                         }
                         return false;
                 }
-
-		public string GetHumanReadableStatus ()
-		{
-			return "FIXME: Needs Status";
-		}
 
 		public int GetItemCount ()
 		{

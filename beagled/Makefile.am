@@ -407,6 +407,7 @@ DAEMON_DLL_CSFILES = 						\
 	$(srcdir)/FilterFactory.cs				\
 	$(srcdir)/FilteredIndexable.cs				\
 	$(srcdir)/GoogleDriver.cs				\
+	$(srcdir)/HitRegulator.cs				\
 	$(srcdir)/IDBusObject.cs				\
 	$(srcdir)/IFileAttributesStore.cs			\
 	$(srcdir)/IQueryResult.cs				\
@@ -420,7 +421,6 @@ DAEMON_DLL_CSFILES = 						\
 	$(srcdir)/QueryResult.cs				\
 	$(srcdir)/Queryable.cs					\
 	$(srcdir)/QueryableFlavor.cs				\
-	$(srcdir)/Relevancy.cs					\
 	$(srcdir)/RemoteControlImpl.cs				\
 	$(srcdir)/Shutdown.cs					\
 	$(srcdir)/TextCache.cs

@@ -144,11 +144,6 @@ namespace Beagle.Daemon {
 			}
 		}
 
-		public string GetHumanReadableStatus ()
-		{
-			return "FIXME: Needs Status";
-		}
-
 		public int GetItemCount ()
 		{
 			return -1;

@@ -508,9 +508,22 @@ namespace Beagle.Daemon.FileSystemQueryable {
 
 		//////////////////////////////////////////////////////////////////////////
 
-		public override string GetHumanReadableStatus ()
+		protected override double RelevancyMultiplier (Hit hit)
 		{
-			return "FIXME!";
+			FileSystemInfo info = hit.FileSystemInfo;
+
+			double m = 1.0;
+			
+			double days = (DateTime.Now - info.LastWriteTime).TotalDays;
+			// Boost relevancy if the file has been touched within the last seven days.
+			if (0 <= days && days < 7)
+				return 1.2;
+
+			DateTime dt = info.LastAccessTime;
+			if (dt < info.LastWriteTime)
+				dt = info.LastWriteTime;
+
+			return HalfLifeMultiplier (dt);
 		}
 	}
 }

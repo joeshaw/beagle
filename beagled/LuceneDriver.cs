@@ -52,6 +52,7 @@ namespace Beagle.Daemon {
 	public class LuceneDriver {
 
 		public delegate bool UriFilter (Uri uri);
+		public delegate double RelevancyMultiplier (Hit hit);
 
 
 		public delegate void ChangedHandler (LuceneDriver source,
@@ -82,6 +83,34 @@ namespace Beagle.Daemon {
 		{
 			Setup (dir);
 		}
+
+		/////////////////////////////////////////////////////
+
+		//
+		// The Lucene Store
+		//
+
+		private Lucene.Net.Store.Directory ourStore = null;
+		private string ourStorePath = null;
+		
+
+		public Lucene.Net.Store.Directory Store {
+			get { return ourStore; }
+#if false
+			set {
+				if (ourStore != null)
+					throw new Exception ("Attempt to attach a second store to a LuceneDriver");
+				ourStore = (Lucene.Net.Store.Directory) value;
+			}
+#endif
+		}
+
+		public string StorePath {
+			get { return ourStorePath; }
+		}
+
+		/////////////////////////////////////////////////////
+
 
 		private void Setup (string dir)
 		{
@@ -167,8 +196,10 @@ namespace Beagle.Daemon {
 			Lucene.Net.Store.FSDirectory store;
 			store = Lucene.Net.Store.FSDirectory.GetDirectory (indexDir, false);
 			store.TempDirectoryName = lockDir;
+			ourStore = store;
+			ourStorePath = indexDir;
 
-			Store = store;
+			//Store = store;
 
 			// Before we start, optimize the index.  We want to do
 			// this every time at start-up to help avoid running
@@ -251,24 +282,6 @@ namespace Beagle.Daemon {
 
 		/////////////////////////////////////////////////////
 		
-		//
-		// The Lucene Store
-		//
-
-		private Lucene.Net.Store.Directory ourStore = null;
-
-		public Lucene.Net.Store.Directory Store {
-			get { return ourStore; }
-
-			set {
-				if (ourStore != null)
-					throw new Exception ("Attempt to attach a second store to a LuceneDriver");
-				ourStore = (Lucene.Net.Store.Directory) value;
-			}
-		}
-
-		/////////////////////////////////////////////////////
-
 		//
 		// Public Indexing API
 		//
@@ -471,8 +484,19 @@ namespace Beagle.Daemon {
 
 		/////////////////////////////////////////////////////
 
-		public void DoQuery (QueryBody body, IQueryResult result, ICollection list_of_uris, UriFilter uri_filter)
+		// Returns the lowest matching score before the results are
+		// truncated.
+		public void DoQuery (QueryBody           body,
+				     IQueryResult        result,
+				     ICollection         list_of_uris,
+				     UriFilter           uri_filter,
+				     RelevancyMultiplier relevancy_multiplier)
 		{
+			double t_lucene;
+			double t_assembly;
+
+			Stopwatch sw = new Stopwatch ();
+			sw.Start ();
 			IndexReader reader = IndexReader.Open (Store);
 			if (last_item_count == -1)
 				last_item_count = reader.NumDocs ();
@@ -481,32 +505,57 @@ namespace Beagle.Daemon {
 			LNS.Query query = ToLuceneQuery (body, list_of_uris);
 
 			LNS.Hits hits = searcher.Search (query);
-			int n_hits = hits.Length ();
+			sw.Stop ();
 
+			t_lucene = sw.ElapsedTime;
+
+			//////////////////////////////////////
+
+			sw.Reset ();
+			sw.Start ();
+
+			int n_hits = hits.Length ();
 			if (n_hits == 0)
 				return;
 
-			ArrayList filtered_hits = new ArrayList ();
+			ArrayList top_hits = new ArrayList ();
 			for (int i = 0; i < n_hits; ++i) {
 				Document doc = hits.Doc (i);
+
 				if (uri_filter != null) {
 					Uri uri = UriFromLuceneDoc (doc);
 					if (! uri_filter (uri))
 						continue;
 				}
-				Hit hit = FromLuceneDocToHit (doc, hits.Id (i), hits.Score (i));
-				if (hit != null)
-					filtered_hits.Add (hit);
 
-				if ((i + 1) % 200 == 0) {
-					result.Add (filtered_hits);
-					filtered_hits = new ArrayList ();
+				double score = (double) hits.Score (i);
+
+				if (result.WillReject (score)) {
+					log.Debug ("Terminating DoQuery at {0} of {1}", i, n_hits);
+					break;
 				}
-			}
-			result.Add (filtered_hits);
 
-			// The call to searcher.Close () closes the IndexReader.
+				Hit hit = FromLuceneDocToHit (doc, hits.Id (i), score);
+
+				if (relevancy_multiplier != null) {
+					double m = relevancy_multiplier (hit);
+					hit.ScoreMultiplier = (float) m;
+				}
+				
+				result.Add (hit);
+			}
+
+			sw.Stop ();
+			
+			t_assembly = sw.ElapsedTime;
+
+			//////////////////////////////////////
+
+			// The call to searcher.Close () also closes the IndexReader.
 			searcher.Close ();
+
+			log.Debug ("{0}: n_hits={1} lucene={2:0.00}s  assembly={3:0.00}s",
+				   StorePath, n_hits, t_lucene, t_assembly);
 		}
 
 		public ICollection DoQueryByUri (ICollection list_of_uris)
@@ -802,7 +851,7 @@ namespace Beagle.Daemon {
 
 		}
 
-		private Hit FromLuceneDocToHit (Document doc, int id, float score)
+		private Hit FromLuceneDocToHit (Document doc, int id, double score)
 		{
 			Hit hit = new Hit ();
 

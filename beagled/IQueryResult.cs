@@ -39,12 +39,10 @@ namespace Beagle.Daemon {
 
 	public interface IQueryResult {
 
-		bool Cancelled { get; }
+		void Add (Hit hit);
 
-		// Add should be a no-op if Cancelled is true.
-		void Add (ICollection someHits);
+		void Subtract (Uri uri);
 
-		// Subtract should be a no-op if Cancelled is true.
-		void Subtract (ICollection someUris);
+		bool WillReject (double score);
 	}
 }

@@ -30,6 +30,10 @@ else
     export LD_LIBRARY_PATH="@pkglibdir@:$LD_LIBRARY_PATH"
 fi
 
+# This disables mono's emulation of the win32 file locking semantics,
+# which substantially speeds up lucene.
+export MONO_DISABLE_SHM=1
+
 export MONO_GAC_PREFIX="@gacprefix@:$MONO_GAC_PREFIX"
 export LD_LIBRARY_PATH="/opt/gnome/lib/evolution/2.0:$LD_LIBRARY_PATH"
 

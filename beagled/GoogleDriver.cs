@@ -36,10 +36,6 @@ namespace Beagle.Daemon {
 	[QueryableFlavor (Name="Google", Domain=QueryDomain.Global)]
 	public class GoogleDriver : IQueryable {
 
-		// This event is never fired, but needs to be here for us
-		// to fully implement the IQueryable interface.
-		public event IQueryableChangedHandler ChangedEvent;
-
 		int maxResults = 5;
 
 		GoogleSearchService gss = new GoogleSearchService ();
@@ -119,20 +115,12 @@ namespace Beagle.Daemon {
 								     0, maxResults,
 								     false, "", false, "", "", "");
 
-			ArrayList hits = new ArrayList ();
 			int rank = 0;
 			foreach (ResultElement elt in gsr.resultElements) {
 				Hit hit = FromGoogleResultElement (elt, rank);
 				++rank;
-				hits.Add (hit);
+				result.Add (hit);
 			}
-
-			result.Add (hits);
-		}
-
-		public string GetHumanReadableStatus ()
-		{
-			return "FIXME: Needs Status";
 		}
 
 		public int GetItemCount ()

@@ -52,7 +52,6 @@ namespace Beagle.Daemon {
 		{
 			this.id = id;
 
-
 			body = new QueryBody ();
 		}
 
@@ -291,8 +290,8 @@ namespace Beagle.Daemon {
 
 		private void OnQueryDriverChanged (Queryable queryable, IQueryableChangeData changeData)
 		{
-			if (result != null && queryable.AcceptQuery (body))
-				queryable.DoQuery (body, result, changeData);
+			if (result != null)
+				QueryDriver.DoOneQuery (queryable, body, result, changeData);
 		}
 	}
 }
