@@ -1,3 +1,8 @@
+2004-10-14  Robert Love  <rml@novell.com>
+
+	* Util/FileAdvise.cs: new file, implementing the advice stuff
+	* Util/Makefile.am: build FileAdvise.cs
+
 2004-10-14  Tuomas Kuosmanen  <tigert@novell.com>
 
 	* Tiles/template-im-log.html: stylized a bit, added area for

@@ -13,6 +13,7 @@ $(GOOGLE_CS): $(GOOGLE_WSDL)
 
 CSFILES = 			        	\
 	$(srcdir)/camel.cs              	\
+	$(srcdir)/FileAdvise.cs			\
 	$(srcdir)/ExifData.cs			\
 	$(srcdir)/ExtendedAttribute.cs  	\
 	$(srcdir)/FileSystem.cs			\

@@ -36,7 +36,7 @@ using BU = Beagle.Util;
 namespace Beagle.Daemon {
 
 	public abstract class Crawler {
-		
+
 		private static BU.Logger log = BU.Logger.Get ("crawler");
 
 		private string fingerprint;
@@ -95,7 +95,7 @@ namespace Beagle.Daemon {
 		}
 
 		/////////////////////////////////////////////////////////////
-		
+
 		//
 		// Public API
 		//
@@ -168,7 +168,7 @@ namespace Beagle.Daemon {
 		}
 
 		protected abstract void CrawlFile (FileSystemInfo info);
-		
+
 
 		/////////////////////////////////////////////////////////////
 
