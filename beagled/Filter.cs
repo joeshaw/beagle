@@ -31,7 +31,7 @@ using System.IO;
 using System.Text;
 using System.Reflection;
 
-using BU = Beagle.Util;
+using Beagle.Util;
 
 namespace Beagle.Daemon {
 
@@ -153,6 +153,11 @@ namespace Beagle.Daemon {
 				propertyPool.Add (prop);
 		}
 
+		public void AddStructuralBreak ()
+		{
+			// FIXME: Do something!
+		}
+
 		//////////////////////////
 
 		private bool isFinished = false;
@@ -195,8 +200,10 @@ namespace Beagle.Daemon {
 		*/
 
 		private bool isOpen = false;
-		private FileInfo currentInfo;
 		private string tempFile = null;
+		private FileInfo currentInfo = null;
+		private FileStream currentStream = null;
+		private StreamReader currentReader = null;
 
 		public void Open (Stream stream)
 		{
@@ -225,6 +232,20 @@ namespace Beagle.Daemon {
 			propertyPool = new ArrayList ();
 
 			currentInfo = info;
+
+			// Open a stream for this file.
+			currentStream = new FileStream (info.FullName,
+							FileMode.Open,
+							FileAccess.Read,
+							FileShare.Read);
+
+			// Give the OS a hint that we will be reading this
+			// file soon.
+			FileAdvise.PreLoad (currentStream);
+
+			// Our default assumption is sequential reads.
+			// FIXME: Is this the right thing to do here?
+			FileAdvise.IncreaseReadAhead (currentStream);
 			
 			DoOpen (info);
 			isOpen = true;
@@ -240,6 +261,15 @@ namespace Beagle.Daemon {
 				return;
 			}
 
+			// Close and reset our TextReader
+			if (currentReader != null) {
+				currentReader.Close ();
+				currentReader = null; 
+			}
+
+			// Seek back to the beginning of our stream
+			currentStream.Seek (0, SeekOrigin.Begin);
+
 			DoPullSetup ();
 			if (IsFinished) {
 				isOpen = false;
@@ -247,8 +277,23 @@ namespace Beagle.Daemon {
 			}
 		}
 
-		public FileInfo CurrentFileInfo {
+		public FileInfo FileInfo {
 			get { return currentInfo; }
+		}
+
+		public Stream Stream {
+			get { return currentStream; }
+		}
+
+		public TextReader TextReader {
+			get {
+				if (currentReader == null
+				    && currentStream != null) {
+					currentReader = new StreamReader (currentStream);
+				}
+
+				return currentReader;
+			}
 		}
 
 		private bool Pull () 
@@ -266,6 +311,16 @@ namespace Beagle.Daemon {
 
 		public void Cleanup ()
 		{
+			if (currentReader != null)
+				currentReader.Close ();
+
+			// Give the OS a hint that we don't need
+			// to keep this file around in the page cache.
+			FileAdvise.FlushCache (currentStream);
+
+			if (currentStream != null)
+				currentStream.Close ();
+
 			if (tempFile != null)
 				File.Delete (tempFile);
 		}
@@ -293,12 +348,12 @@ namespace Beagle.Daemon {
 
 		public TextReader GetTextReader ()
 		{
-			return new BU.PullingReader (new BU.PullingReader.Pull (PullText));
+			return new PullingReader (new PullingReader.Pull (PullText));
 		}
 
 		public TextReader GetHotTextReader ()
 		{
-			return new BU.PullingReader (new BU.PullingReader.Pull (PullHotText));
+			return new PullingReader (new PullingReader.Pull (PullHotText));
 		}
 
 		public IEnumerable Properties {

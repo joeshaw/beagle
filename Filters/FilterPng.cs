@@ -48,11 +48,8 @@ namespace Beagle.Filters {
 			// 13 bytes of chunk data
 			// total: 29 bytes
 
-			Stream stream = info.Open (FileMode.Open,
-						   FileAccess.Read,
-						   FileShare.Read);
 			buffer = new byte [29];
-			if (stream.Read (buffer, 0, 29) != 29) {
+			if (Stream.Read (buffer, 0, 29) != 29) {
 				Finished ();
 				return;
 			}

@@ -25,14 +25,11 @@ namespace Beagle.Filters {
 
 		protected override void DoPull ()
 		{
-			// get full file path from Filter
-			string path = CurrentFileInfo.Directory +"/"+ CurrentFileInfo.Name;
-
 			// create new external process
 			Process pc = new Process ();
 			pc.StartInfo.FileName = "pdftotext";
 			// FIXME: We probably need to quote special chars in the path
-			pc.StartInfo.Arguments = "-enc UTF-8 \""+ path +"\" -";
+			pc.StartInfo.Arguments = String.Format ("-enc UTF-8 \"{0}\" -", FileInfo.FullName);
 			pc.StartInfo.RedirectStandardInput = false;
 			pc.StartInfo.RedirectStandardOutput = true;
 			pc.StartInfo.UseShellExecute = false;

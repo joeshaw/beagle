@@ -37,6 +37,7 @@ class QueryTool {
 
 	static int count = 0;
 	static Query query = null;
+	static DateTime queryStartTime;
 	static DateTime lastQueryTime = DateTime.Now;
 
 	// CLI args
@@ -46,6 +47,11 @@ class QueryTool {
 	static void OnHitAdded (Query source, Hit hit)
 	{
 		lastQueryTime = DateTime.Now;
+
+		if (count == 0 && verbose) {
+			Console.WriteLine ("First hit returned in {0:0.000}s",
+					   (lastQueryTime - queryStartTime).TotalSeconds);
+		}
 
 		if (verbose)
 			Console.WriteLine ("  Uri: {0}", hit.Uri);
@@ -83,6 +89,8 @@ class QueryTool {
 
 	static void OnFinished (QueryProxy query)
 	{
+		if (verbose)
+			Console.WriteLine ("Elapsed time: {0:0.000}s", (DateTime.Now - queryStartTime).TotalSeconds);
 		Gtk.Application.Quit ();
 	}
 
@@ -127,6 +135,9 @@ class QueryTool {
 			query.FinishedEvent += OnFinished;
 
 		query.Start ();
+
+		queryStartTime = DateTime.Now;
+
 		Gtk.Application.Run ();
 	}
 

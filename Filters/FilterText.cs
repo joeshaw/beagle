@@ -37,23 +37,10 @@ namespace Beagle.Filters {
 			AddSupportedMimeType ("text/plain");
 		}
 
-		StreamReader reader;
-
-		override protected void DoOpen (FileInfo info)
-		{
-			Stream stream;
-			stream = new FileStream (info.FullName,
-						 FileMode.Open,
-						 FileAccess.Read,
-						 FileShare.Read);
-			reader = new StreamReader (stream);
-		}
-		
 		override protected void DoPull ()
 		{
-			string str = reader.ReadLine ();
+			string str = TextReader.ReadLine ();
 			if (str == null) {
-				reader.Close ();
 				Finished ();
 			} else {
 				AppendText (str);

@@ -152,10 +152,6 @@ namespace Beagle.Util {
 				Console.WriteLine ("[{0}]", line);
 			}
 
-			
-
-
-
 		}
 	}
 }

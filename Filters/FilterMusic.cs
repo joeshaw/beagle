@@ -40,13 +40,11 @@ namespace Beagle.Filters {
 
 		protected override void DoPullProperties ()
 		{
-			Stream stream = CurrentFileInfo.Open (FileMode.Open);
-
 			BU.Id3Info info;
 
-			info = BU.Id3v2.Read (stream);
+			info = BU.Id3v2.Read (Stream);
 			if (info == null)
-				info = BU.Id3v1.Read (stream);
+				info = BU.Id3v1.Read (Stream);
 			if (info == null)
 				return;
 
@@ -65,6 +63,8 @@ namespace Beagle.Filters {
 
 			if (info.HasPicture)
 				AddProperty (Beagle.Property.NewBool ("fixme:haspicture", true));
+
+			Finished ();
 		}
 	}
 }

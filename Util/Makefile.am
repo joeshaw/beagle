@@ -29,15 +29,13 @@ CSFILES = 			        	\
 	$(srcdir)/MultiReader.cs        	\
 	$(srcdir)/NautilusTools.cs      	\
 	$(srcdir)/Note.cs               	\
-	$(srcdir)/PageCache.cs          	\
 	$(srcdir)/PullingReader.cs      	\
 	$(srcdir)/Stopwatch.cs			\
 	$(srcdir)/StringFu.cs           	\
 	$(srcdir)/TaskManager.cs		\
 	$(srcdir)/ThreadedPriorityQueue.cs	\
 	$(srcdir)/UriFu.cs			\
-	$(srcdir)/Vfs.cs			\
-	$(srcdir)/../beagled/FileSystemEventMonitor.cs
+	$(srcdir)/Vfs.cs
 
 ASSEMBLIES =					\
 	$(BEAGLE_UI_LIBS)			\

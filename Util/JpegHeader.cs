@@ -132,10 +132,21 @@ public class JpegHeader {
 	System.Collections.Hashtable app_marker_hash = new System.Collections.Hashtable ();
 	System.Collections.ArrayList marker_list = new System.Collections.ArrayList ();	
 
-	public JpegHeader (string filename) 
+	public JpegHeader (string filename)
 	{
 		//System.Console.WriteLine ("opening {0}", filename);
 		System.IO.FileStream stream = new System.IO.FileStream (filename, System.IO.FileMode.Open);
+		LoadFromStream (stream);
+		stream.Close ();
+	}
+
+	public JpegHeader (System.IO.Stream stream)
+	{
+		LoadFromStream (stream);
+	}
+	
+	private void LoadFromStream (System.IO.Stream stream)
+	{
 		byte [] length_data = new byte [2];
 		
 		if (stream.ReadByte () != 0xff || (JpegMarker)stream.ReadByte () != JpegMarker.Soi)

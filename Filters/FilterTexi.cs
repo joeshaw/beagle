@@ -34,7 +34,12 @@ using System.Text.RegularExpressions;
 namespace Beagle.Filters {
 
 	public class FilterTexi : Beagle.Daemon.Filter {
-		StreamReader reader;
+
+		static string [] texiKeywords = {"@c ", "\\input ", "@setfilename", "@settitle",
+						 "@setchapternewpage", "@ifinfo", "@end", "@titlepage",
+						 "@sp", "@comment", "@center", "@page", "@vskip", "@node",
+						 "@chapter", "@cindex", "@enumerate", "@item", "@code",
+						 "@printindex", "@contents", "@bye"};
 		
 		public FilterTexi ()
 		{
@@ -45,37 +50,16 @@ namespace Beagle.Filters {
 		FIXME:
 		Other texi keywords and formatting tags needs to be handled.
 		*/
-		protected void ParseTexiFile (StreamReader reader)
-		{
-			string str;
-			string [] texiKeywords = {"@c ", "\\input ", "@setfilename", "@settitle",
-							"@setchapternewpage", "@ifinfo", "@end", "@titlepage",
-							"@sp", "@comment", "@center", "@page", "@vskip", "@node",
-							"@chapter", "@cindex", "@enumerate", "@item", "@code",
-							"@printindex", "@contents", "@bye"};
-						
-			str = reader.ReadToEnd ();
-			for (int i=0; i<texiKeywords.Length; i++) {
-				str = str.Replace (texiKeywords[i], "");
-			}
-			AppendText (str);
-			AppendWhiteSpace ();
-			Finished ();
-		}
-
-		override protected void DoOpen (FileInfo info)
-		{
-			Stream stream;
-			stream = new FileStream (info.FullName,
-						 FileMode.Open,
-						 FileAccess.Read,
-						 FileShare.Read);
-			reader = new StreamReader (stream);
-		}
-
 		override protected void DoPull ()
 		{
-			ParseTexiFile (reader);
+			string line;
+						
+			line = TextReader.ReadLine ();
+			foreach (string keyword in texiKeywords)
+				line = line.Replace (keyword, "");
+
+			AppendText (line);
+			AppendWhiteSpace ();
 		}
 	}
 }

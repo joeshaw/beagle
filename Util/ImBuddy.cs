@@ -29,8 +29,6 @@ using System.Collections;
 using System.Xml;
 using System.IO;
 
-using Beagle.Daemon;
-
 namespace Beagle.Util {
 
 	public class ImBuddy {
@@ -105,40 +103,35 @@ namespace Beagle.Util {
 	
 	public class GaimBuddyListReader : ImBuddyListReader {
 
-		FileSystemEventMonitor monitor = null;
 		string buddyListPath;
 		string buddyListDir;
+		int myWatchDescriptor = -1;
 
 		public GaimBuddyListReader ()
 		{
 			string home = Environment.GetEnvironmentVariable ("HOME");
 			buddyListDir = Path.Combine (home, ".gaim");
-			DirectoryInfo gaimDir = new DirectoryInfo (buddyListDir);
-
 			buddyListPath = Path.Combine (buddyListDir, "blist.xml");
-			Read ();
 
-			monitor = new FileSystemEventMonitor ();
-			monitor.FileSystemEvent += OnFileSystemEvent;
-			monitor.Subscribe (gaimDir, false);
+			Read ();
 			
+			myWatchDescriptor = Inotify.Watch (buddyListPath, InotifyEventType.CloseWrite);
+			Inotify.InotifyEvent += OnInotifyEvent;
 		}
 
 		~GaimBuddyListReader ()
 		{
-			DirectoryInfo gaimDir = new DirectoryInfo (buddyListDir);
-			monitor.Unsubscribe (gaimDir);
+			Inotify.InotifyEvent -= OnInotifyEvent;
 		}
 	
-		protected void OnFileSystemEvent (FileSystemEventMonitor monitor,
-						  FileSystemEventType eventType,
-						  string oldPath,
-						  string newPath)
+		protected void OnInotifyEvent (int wd,
+					       string path,
+					       string subitem,
+					       InotifyEventType type,
+					       int cookie)
 		{
-			if (oldPath == buddyListPath || newPath == buddyListPath) {
+			if (wd == myWatchDescriptor)
 				Read ();
-			}
-				
 		}
 
 		private string Format (string name) {

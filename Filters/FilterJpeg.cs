@@ -41,7 +41,7 @@ namespace Beagle.Filters {
 		// FIXME: This is not particularly efficient
 		protected override void DoPullProperties ()
 		{
-			JpegHeader header = new JpegHeader (CurrentFileInfo.FullName);
+			JpegHeader header = new JpegHeader (Stream);
 			byte [] data = header.GetRawExif ();
 			if (data == null || data.Length == 0)
 				return;
@@ -109,6 +109,8 @@ namespace Beagle.Filters {
 				dt = ExifData.DateTimeFromString (str);
 				AddProperty (Beagle.Property.NewDate ("exif:DateTime", dt));
 			}
+
+			Finished (); // That's all folks...
 		}
 	}
 }

@@ -40,7 +40,6 @@ using System.Text.RegularExpressions;
 namespace Beagle.Filters {
 
 	public class FilterRTF : Beagle.Daemon.Filter {
-		StreamReader reader;
 		
 		public FilterRTF ()
 		{
@@ -53,7 +52,7 @@ namespace Beagle.Filters {
 			that can look like text and but not.
 			Ex: font names
 		*/
-		protected void ParseRTFFile (StreamReader reader)
+		protected void ParseRTFFile (TextReader reader)
 		{
 			string str;
 			string[] tokens;
@@ -96,19 +95,9 @@ namespace Beagle.Filters {
 			Finished ();
 		}
 
-		override protected void DoOpen (FileInfo info)
-		{
-			Stream stream;
-			stream = new FileStream (info.FullName,
-						 FileMode.Open,
-						 FileAccess.Read,
-						 FileShare.Read);
-			reader = new StreamReader (stream);
-		}
-
 		override protected void DoPull ()
 		{
-			ParseRTFFile (reader);
+			ParseRTFFile (TextReader);
 		}
 	}
 }

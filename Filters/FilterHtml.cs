@@ -163,7 +163,7 @@ namespace Beagle.Filters {
 		override protected void DoOpen (FileInfo info)
 		{
 			HtmlDocument doc = new HtmlDocument ();
-			doc.Load (info.Open (FileMode.Open, FileAccess.Read, FileShare.Read));
+			doc.Load (Stream);
 			if (doc != null)
 				WalkNodes (doc.DocumentNode);
 			Finished ();

@@ -33,6 +33,71 @@ namespace Beagle.Filters {
 
 	public class FilterSource : Beagle.Daemon.Filter {
 
+		static string  [] cKeyWords  = {"auto", "break", "case", "char", "const", 
+						"continue", "default", "do", "double", "else",
+						"enum", "extern", "float", "for", "goto",
+						"if", "int", "long", "register", "return", "short",
+						"signed", "sizeof", "static", "strcut", "switch", "typedef",
+						"union", "unsigned", "void", "volatile", "while" };
+			
+		
+		static string [] cppKeyWords = {"asm", "auto", "bool", "break", "case", "catch", "char",
+						"class", "const", "const_cast", "continue", "default", "delete",
+						"do", "double", "dynamic_cast", "else", "enum", "explicit", 
+						"export", "extern", "false", "float", "for", "friend", "goto",
+						"if", "int", "long", "mutable", "namespace", "new", "operator",
+						"private", "public", "protected", "register", 
+						"reinterpret_cast", "return", "short", "signed", "sizeof", 
+						"static", "static_cast", "struct", "switch", "template", 
+						"this", "throw", "true" ,"try", "typedef", "typeid", 
+						"typename", "union", "unsigned", "using", "virtual",
+						"void", "volatile", "wchar_t"};
+						 
+		static string [] javaKeyWords = {"abstract", "boolean", "break", "byte", "case", "catch",
+						 "char", "class", "const", "continue", "default", "do",
+						 "double", "else", "extends", "final", "finally", "float", 
+						 "for", "goto", "if", "implements", "import", "instanceof", 
+						 "int", "interface", "long", "native", "new", "package", 
+						 "private", "protected", "public", "return", "short", "static", 
+						 "strictfp", "super", "switch", "synchronized", "this", "throw",
+						 "throws", "transient", "try", "void", "volatile", "while" };
+		
+		static string [] csharpKeyWords = {"abstract",  "as",  "base", "bool",  "break", 
+						   "byte",  "case",  "catch",  "char", "checked", 
+						   "class", "const", "continue", "decimal", "default", 
+						   "delegate",  "do",  "double",  "else",  "enum", 
+						   "event", "explicit",  "extern", "false", "finally", 
+						   "fixed", "float", "for", "foreach", "goto", 
+						   "if", "implicit", "in",  "int", "interface", 
+						   "internal",  "is",  "lock",  "long",  "namespace", 
+						   "new",  "null",  "object", "operator", "out", 
+						   "override", "params", "private", "protected", "public", 
+						   "readonly", "ref", "return", "sbyte", "sealed", 
+						   "short", "sizeof", "stackalloc", "static", "string", 
+						   "struct", "switch", "this", "throw", "true", 
+						   "try", "typeof", "uint", "ulong", "unchecked", 
+						   "unsafe", "ushort", "using", "virtual", "void", 
+						   "volatile", "while"}; 
+
+		static string [] pythonKeyWords = {"and", "assert", "break", "class", "continue", "def", 
+						   "del", "elif", "else", "except", "exec", "finally", 
+						   "for", "from", "global", "if", "import", "in", "is",
+						   "lambda", "not", "or", "pass", "print", "raise", "return", 
+						   "try", "while", "yield"};
+
+		private enum LineType {
+			SingleLineComment,
+			BlockComment,
+			StringConstant, 
+			None
+		}
+		
+		private enum LangType {
+			C_Style,
+			Python,
+			None
+		}
+		
 		LineType SrcLineType;
 		LangType SrcLangType;
 		Hashtable KeyWordsHash;
@@ -52,64 +117,11 @@ namespace Beagle.Filters {
 			AddSupportedMimeType ("text/x-c++src");
 		}
 
-		StreamReader reader;
-
 		override protected void DoOpen (FileInfo info)
 		{
 			int index;
 			string [] KeyWords = {" "};
 
-			string  [] cKeyWords  = {"auto", "break", "case", "char", "const", 
-						 "continue", "default", "do", "double", "else",
-						 "enum", "extern", "float", "for", "goto",
-						 "if", "int", "long", "register", "return", "short",
-						 "signed", "sizeof", "static", "strcut", "switch", "typedef",
-						 "union", "unsigned", "void", "volatile", "while" };
-			
-
-			string [] cppKeyWords = {"asm", "auto", "bool", "break", "case", "catch", "char",
-						 "class", "const", "const_cast", "continue", "default", "delete",
-						 "do", "double", "dynamic_cast", "else", "enum", "explicit", 
-						 "export", "extern", "false", "float", "for", "friend", "goto",
-						 "if", "int", "long", "mutable", "namespace", "new", "operator",
-						 "private", "public", "protected", "register", 
-						 "reinterpret_cast", "return", "short", "signed", "sizeof", 
-						 "static", "static_cast", "struct", "switch", "template", 
-						 "this", "throw", "true" ,"try", "typedef", "typeid", 
-						 "typename", "union", "unsigned", "using", "virtual",
-						 "void", "volatile", "wchar_t"};
-						 
-		        string [] javaKeyWords = {"abstract", "boolean", "break", "byte", "case", "catch",
-						  "char", "class", "const", "continue", "default", "do",
-						  "double", "else", "extends", "final", "finally", "float", 
-						  "for", "goto", "if", "implements", "import", "instanceof", 
-						  "int", "interface", "long", "native", "new", "package", 
-						  "private", "protected", "public", "return", "short", "static", 
-						  "strictfp", "super", "switch", "synchronized", "this", "throw",
-						  "throws", "transient", "try", "void", "volatile", "while" };
-
-			string [] csharpKeyWords = {"abstract",  "as",  "base", "bool",  "break", 
-	                                            "byte",  "case",  "catch",  "char", "checked", 
-						    "class", "const", "continue", "decimal", "default", 
-						    "delegate",  "do",  "double",  "else",  "enum", 
-						    "event", "explicit",  "extern", "false", "finally", 
-					            "fixed", "float", "for", "foreach", "goto", 
-						    "if", "implicit", "in",  "int", "interface", 
-						    "internal",  "is",  "lock",  "long",  "namespace", 
-						    "new",  "null",  "object", "operator", "out", 
-						    "override", "params", "private", "protected", "public", 
-						    "readonly", "ref", "return", "sbyte", "sealed", 
-						    "short", "sizeof", "stackalloc", "static", "string", 
-						    "struct", "switch", "this", "throw", "true", 
-						    "try", "typeof", "uint", "ulong", "unchecked", 
-						    "unsafe", "ushort", "using", "virtual", "void", 
-						    "volatile", "while"}; 
-
-			string [] pythonKeyWords = {"and", "assert", "break", "class", "continue", "def", 
-						    "del", "elif", "else", "except", "exec", "finally", 
-						    "for", "from", "global", "if", "import", "in", "is",
-						    "lambda", "not", "or", "pass", "print", "raise", "return", 
-						    "try", "while", "yield"};
 
 			switch (Flavor.MimeType) {
 			case "text/x-csrc":
@@ -135,16 +147,8 @@ namespace Beagle.Filters {
 			}
 
 			KeyWordsHash = new Hashtable ();
-			for (index = 0; index < KeyWords.Length; index ++)
-				KeyWordsHash.Add (KeyWords[index], KeyWords[index]);
-
-			Stream stream;
-			stream = new FileStream (info.FullName,
-						 FileMode.Open,
-						 FileAccess.Read,
-						 FileShare.Read);
-			reader = new StreamReader (stream);
-
+			foreach (string keyword in KeyWords)
+				KeyWordsHash [keyword] = true;
 		}
 
 		// Tokenize the passed string and add the relevant 
@@ -303,37 +307,13 @@ namespace Beagle.Filters {
 			}
 		}
 
-		protected void parseSourceFile (StreamReader reader)
+		override protected void DoPull ()
 		{
-			string str = "";
-			str = reader.ReadLine ();
+			string str = TextReader.ReadLine ();
 			if (str == null)
 				Finished ();
 			else
 				ExtractTokens (str);
-		}
-		
-		override protected void DoPull ()
-		{
-			parseSourceFile (reader);
-		}
-		
-		override protected void DoClose ()
-		{
-			KeyWordsHash.Clear ();
-			reader.Close ();
-		}
-		private enum LineType {
-			SingleLineComment,
-			BlockComment,
-			StringConstant, 
-			None
-		}
-		
-		private enum LangType {
-			C_Style,
-			Python,
-			None
 		}
 	}
 }
