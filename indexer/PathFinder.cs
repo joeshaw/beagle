@@ -59,7 +59,9 @@ namespace Beagle {
 			}
 		}
 
-		static private String AppDataFileName (String appName, String dataName)
+		// We probably shouldn't expose this.  Use it only for good, not
+		// for evil.
+		static public String AppDataFileName (String appName, String dataName)
 		{
 			// FIXME: should make sure appName & dataName don't
 			// contain evil characters.

@@ -101,9 +101,9 @@ namespace Beagle {
 			string icon = CompositeEmblemIcon (Favicons.GetIconPath (hit.Uri));
 
 			string Title = (string)hit ["Title"];
-			string Score = Convert.ToString (hit ["Score"]);
+			string Score = Convert.ToString (hit.Score);
 			if (Score == null || Score == "")
-				Score = "0";
+				Score = "n/a";
 
 			xw.WriteStartElement ("tr");
 
@@ -129,14 +129,12 @@ namespace Beagle {
 			xw.WriteStartElement ("td");
 			xw.WriteAttributeString ("valign", "top");
 
-			xw.WriteStartElement ("a");
-			xw.WriteAttributeString ("href", hit.Uri);
-			xw.WriteAttributeString ("style", "text-decoration: none;");
-			xw.WriteString (Title);
+			xw.WriteRaw (Title);
 
 			xw.WriteStartElement ("font");
+			xw.WriteAttributeString ("size", "-2");
 			xw.WriteAttributeString ("color", "#666666");
-			xw.WriteString (" (" + Score + ")");
+			xw.WriteString (" (score=" + Score + ")");
 			xw.WriteEndElement ();	// font
 
 			xw.WriteStartElement ("br");
@@ -145,10 +143,12 @@ namespace Beagle {
 			xw.WriteStartElement ("font");
 			xw.WriteAttributeString ("size", "-1");
 			xw.WriteAttributeString ("color", "#666666");
+			xw.WriteStartElement ("a");
+			xw.WriteAttributeString ("href", hit.Uri);
+			xw.WriteAttributeString ("style", "text-decoration: none;");
 			xw.WriteString (hit.Uri);
-			xw.WriteEndElement ();	// font
-
 			xw.WriteEndElement ();	// a
+			xw.WriteEndElement ();	// font
 
 			xw.WriteEndElement (); 	// td
 
@@ -203,11 +203,8 @@ namespace Beagle {
 			                     255);     // Alpha
 
 			emblem = System.IO.Path.GetFileName (emblem);
-			string home = Environment.GetEnvironmentVariable ("HOME");
-			emblem = System.IO.Path.Combine (System.IO.Path.Combine (home,
-			         String.Format (".dashboard/tmp/")),
-			         "emblem-" + emblem.ToString());
-
+			emblem = PathFinder.AppDataFileName ("transient:WebLinkHitRenderer",
+							     "emblem-" + emblem);
 			bookmark.Savev (emblem, "png", null, null);
 			return emblem;
 		}

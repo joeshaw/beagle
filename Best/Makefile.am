@@ -23,8 +23,11 @@ ASSEMBLIES =				\
 	-r:../indexer/Indexer.dll	\
 	-r:../Renderers/Renderers.dll
 
+RESOURCES =
+
+
 $(TARGET): $(CSFILES)
-	$(CSC) -o $@ $(CSFLAGS) $(CSFILES) $(ASSEMBLIES)
+	$(CSC) -o $@ $(CSFLAGS) $^ $(ASSEMBLIES) $(RESOURCES)
 
 all: $(TARGET)
 
@@ -34,8 +37,8 @@ install-data-local: $(TARGET)
 
 bin_SCRIPTS = $(WRAPPER)
 
-$(WRAPPER): $(WRAPPER).in
-	sed -e "s|\@prefix\@|$(prefix)|g" -e "s|\@pkglibdir\@|$(pkglibdir)|g" -e "s|\@target\@|$(TARGET)|g" < $(srcdir)/$(WRAPPER).in > $(WRAPPER)
+$(WRAPPER): $(srcdir)/$(WRAPPER).in
+	sed -e "s|\@prefix\@|$(prefix)|g" -e "s|\@pkglibdir\@|$(pkglibdir)|g" -e "s|\@target\@|$(TARGET)|g" < $^ > $@
 	chmod +x $(WRAPPER)
 
 EXTRA_DIST =		\

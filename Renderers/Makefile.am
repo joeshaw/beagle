@@ -38,20 +38,21 @@ RESOURCES =                                                  			\
 	-resource:$(imagedir)/book.png,book.png         			\
 	-resource:$(imagedir)/stock.png,stock.png				\
 	-resource:$(imagedir)/globe.png,globe.png				\
-	-resource:$(imagedir)/default.png,default.png			\
+	-resource:$(imagedir)/default.png,default.png				\
 	-resource:$(imagedir)/stock.png,stock.png				\
-        -resource:$(imagedir)/evolution.png,evolution.png  		\
+        -resource:$(imagedir)/evolution.png,evolution.png  			\
         -resource:$(imagedir)/music.png,music.png				\
 	-resource:$(imagedir)/mail.png,mail.png         			\
-        -resource:$(imagedir)/attachment.png,attachment.png		\
+        -resource:$(imagedir)/attachment.png,attachment.png			\
         -resource:$(imagedir)/flag-for-followup.png,flag-for-followup.png	\
-        -resource:$(imagedir)/mail-new.png,mail-new.png			\
-        -resource:$(imagedir)/mail-replied.png,mail-replied.png		\
+        -resource:$(imagedir)/mail-new.png,mail-new.png				\
+        -resource:$(imagedir)/mail-replied.png,mail-replied.png			\
         -resource:$(imagedir)/mail-read.png,mail-read.png			\
 	-resource:$(imagedir)/rss.png,rss.png
 
+
 $(TARGET): $(CSFILES)
-	$(CSC) -o $@ $(CSFLAGS) $^ $(ASSEMBLIES) $(RESOURCES)
+	$(CSC) -o $@ $(CSFLAGS) $^ $(ASSEMBLIES) $(RESOURCES) 
 
 all: $(TARGET)
 

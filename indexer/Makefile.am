@@ -26,6 +26,9 @@ ASSEMBLIES = 				\
 	-r:../Lucene.Net/Lucene.Net.dll	\
 	-r:../Filters/Filters.dll
 
+RESOURCES =
+
+
 if ENABLE_EVO_SHARP
 CSFLAGS += -define:ENABLE_EVO_SHARP
 CSFILES += $(srcdir)/EvolutionDataServerDriver.cs
@@ -35,7 +38,7 @@ endif
 
 
 $(TARGET): $(CSFILES)
-	$(CSC) -o $@ $(CSFLAGS) $(CSFILES) $(ASSEMBLIES)
+	$(CSC) -o $@ $(CSFLAGS) $(CSFILES) $(ASSEMBLIES) $(RESOURCES)
 
 all: $(TARGET)
 

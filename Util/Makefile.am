@@ -20,10 +20,13 @@ ASSEMBLIES =			\
 	-r:System.Web.Services	\
 	-r:glib-sharp.dll	\
 	-r:gtk-sharp.dll	\
-	-r:gnome-sharp.dll		
+	-r:gnome-sharp.dll
+
+RESOURCES =
+
 
 $(TARGET): $(CSFILES) $(GOOGLE_CS)
-	$(CSC) -o $@ $(CSFLAGS) $^ $(ASSEMBLIES)
+	$(CSC) -o $@ $(CSFLAGS) $^ $(ASSEMBLIES) $(RESOURCES)
 
 all: $(TARGET)
 

@@ -107,7 +107,7 @@ namespace Beagle {
 			string Text    = hit.FileName;
 			string Icon    = BU.GnomeIconLookup.LookupMimeIcon (hit.MimeType,
 									    (Gtk.IconSize) 48);
-			string Score   = Convert.ToString (hit ["Score"]);
+			string Score   = Convert.ToString (hit.Score);
 			if (Score == null || Score == "")
 				Score = "n/a";
 

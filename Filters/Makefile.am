@@ -30,8 +30,11 @@ ASSEMBLIES =				\
 	-r:ICSharpCode.SharpZipLib	\
 	-r:../Util/Util.dll
 
+RESOURCES =
+
+
 $(TARGET): $(CSFILES)
-	$(CSC) -o $@ $(CSFLAGS) $(CSFILES) $(ASSEMBLIES)
+	$(CSC) -o $@ $(CSFLAGS) $(CSFILES) $(ASSEMBLIES) $(RESOURCES)
 
 all: $(TARGET)
 
