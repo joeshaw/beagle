@@ -43,6 +43,8 @@ using MA=Mono.ASPNET;
 namespace Beagle.Daemon {
 	class BeagleDaemon {
 
+		public static Thread MainLoopThread = null;
+
 		private static FactoryImpl factory = null;
 
 #if ENABLE_NETWORK
@@ -290,6 +292,8 @@ namespace Beagle.Daemon {
 				}
 			}
 
+			MainLoopThread = Thread.CurrentThread;
+
 			// Initialize logging.
 			// If we saw the --debug arg, set the default logging level
 			// accordingly.
@@ -330,7 +334,7 @@ namespace Beagle.Daemon {
 			try {
 				Logger.Log.Debug ("Initializing D-BUS");
 				DBusisms.Init ();
-				Application.Init ();
+				Application.InitCheck ("beagled", ref args);
 
 				Logger.Log.Debug ("Acquiring {0} D-BUS service", Beagle.DBusisms.Name);
 				if (!DBusisms.InitService (Beagle.DBusisms.Name)) {
