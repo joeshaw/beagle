@@ -212,14 +212,13 @@ namespace Best {
 		{
 			Gtk.HBox entryLine = new HBox (false, 3);
 
-			Gtk.Label words = new Gtk.Label ("Enter search terms:");
+			Gtk.Label words = new Gtk.Label ("Search terms:");
 			entryLine.PackStart (words, false, false, 3);
 			
 			entry = new Gtk.Entry ();
 			entry.Activated += new EventHandler (this.DoSearch);
 			entryLine.PackStart (entry, true, true, 3);
 
-			
 			Gtk.HBox buttonContents = new HBox (false, 0);
 			Gtk.Widget buttonImg = Beagle.Images.GetWidget ("icon-search.png");
 			buttonContents.PackStart (buttonImg, false, false, 1);
