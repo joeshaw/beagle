@@ -17,6 +17,7 @@ CSFILES = 			        	\
 	$(srcdir)/ExifData.cs			\
 	$(srcdir)/ExtendedAttribute.cs  	\
 	$(srcdir)/FileSystem.cs			\
+	$(srcdir)/FrequencyStatistics.cs	\
 	$(srcdir)/FSpotTools.cs         	\
 	$(srcdir)/GeckoUtils.cs                 \
 	$(srcdir)/GtkUtils.cs			\
@@ -31,9 +32,10 @@ CSFILES = 			        	\
 	$(srcdir)/NautilusTools.cs      	\
 	$(srcdir)/Note.cs               	\
 	$(srcdir)/PullingReader.cs      	\
+	$(srcdir)/Scheduler.cs			\
 	$(srcdir)/Stopwatch.cs			\
 	$(srcdir)/StringFu.cs           	\
-	$(srcdir)/TaskManager.cs		\
+	$(srcdir)/SystemInformation.cs		\
 	$(srcdir)/ThreadedPriorityQueue.cs	\
 	$(srcdir)/UriFu.cs			\
 	$(srcdir)/Vfs.cs
