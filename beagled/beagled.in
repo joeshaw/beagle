@@ -90,3 +90,15 @@ if [ $fg -eq 1 ]; then
 else
     exec -a $PROCESS_NAME $CMDLINE &
 fi
+
+# If beagled (in --bg mode) has exited with some errors, we need 
+# to inform the users about the same. This 500 milli-seconds sleep
+# is to wait for the daemon to start and exit, in case of errors ;)
+# Fixes http://bugzilla.gnome.org/show_bug.cgi?id=171975
+
+sleep 0.5
+
+BEAGLED_PID=`pidof -s $PROCESS_NAME`
+if [ x$BEAGLED_PID == x ] && [ $fg -ne 1 ]; then
+    echo "Beagle Daemon exited with errors.  See ~/.beagle/Log/current-Beagle for more details."
+fi

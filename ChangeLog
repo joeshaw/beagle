@@ -1,3 +1,8 @@
+2005-03-29  Veerapuram Varadhan  <vvaradhan@novell.com>
+
+	* beagled/beagled.in: Be more verbose when beagled exits with
+	errors when run in --bg mode.
+	
 2005-03-29  Vijay K. Nanjundaswamy <knvijay@novell.com>
 
 	* WebServices: Changes in Web, Web-Services code to ensure file
