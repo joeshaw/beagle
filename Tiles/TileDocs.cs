@@ -36,6 +36,8 @@ namespace Beagle.Tile {
 	[HitFlavor (Name="Docs", Rank=400, Emblem="", Color="#f5f5fe",
 		    Type="File", MimeType="application/vnd.sun.xml.writer")]
 	[HitFlavor (Name="Docs", Rank=400, Emblem="", Color="#f5f5fe",
+		    Type="File", MimeType = "application/vnd.sun.xml.writer.template")]
+	[HitFlavor (Name="Docs", Rank=400, Emblem="", Color="#f5f5fe",
 		    Type="File", MimeType="application/msword")]
 	[HitFlavor (Name="Docs", Rank=400, Emblem="", Color="#f5f5fe",
 		    Type="File", MimeType="application/vnd.ms-word")]
@@ -47,6 +49,12 @@ namespace Beagle.Tile {
 		    Type="File", MimeType="application/x-abiword")]
 	[HitFlavor (Name="Docs", Rank=400, Emblem="", Color="#f5f5fe",
 		    Type="File", MimeType="application/rtf")]
+		
+	// OO 2.0 (writer) formats
+	[HitFlavor (Name="Docs", Rank=400, Emblem="", Color="#f5f5fe",
+		    Type="File", MimeType="application/vnd.oasis.opendocument.text")]
+	[HitFlavor (Name="Docs", Rank=400, Emblem="", Color="#f5f5fe",
+		    Type="File", MimeType = "application/vnd.oasis.opendocument.text.template")]
 		
 		public class TileDocs : TileFile {
 			public TileDocs (Hit _hit) : base (_hit, "template-docs.html")

@@ -35,7 +35,15 @@ namespace Beagle.Tile {
 	[HitFlavor (Name="Presentations", Rank=400, Emblem="", Color="#f5f5fe",
 		    Type="File", MimeType="application/vnd.sun.xml.impress")]
 	[HitFlavor (Name="Presentations", Rank=400, Emblem="", Color="#f5f5fe",
+		    Type="File", MimeType="application/vnd.sun.xml.impress.template")]
+	[HitFlavor (Name="Presentations", Rank=400, Emblem="", Color="#f5f5fe",
 		    Type="File", MimeType="application/vnd.ms-powerpoint")]
+		// OO 2.0 (presentation) formats
+	[HitFlavor (Name="Presentations", Rank=400, Emblem="", Color="#f5f5fe",
+		    Type="File", MimeType="application/vnd.oasis.opendocument.presentation")]
+	[HitFlavor (Name="Presentations", Rank=400, Emblem="", Color="#f5f5fe",
+		    Type="File", MimeType="application/vnd.oasis.opendocument.presentation.template")]
+		
 		
 		public class TilePresentation : TileFile {
 			public TilePresentation (Hit _hit) : base (_hit, 
