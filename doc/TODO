@@ -18,8 +18,6 @@ We need filters:
    - Abiword
    - Gnumeric
 
-- The OpenOffice filter needs to read the embedded metadata. 
-
 - The OpenOffice filter should notice when files are encrypted and fail
   gracefully.
 
@@ -34,10 +32,6 @@ Filesystem
   compressed/tarred/zipped files.  Perhaps it could use the GNOME VFS
   methods for this?
 
-* IndexableFile should store more file properties:
-     Ownership
-     Permissions
-     MTIME
 
 Misc
 ----
@@ -48,6 +42,8 @@ Misc
 
 * Backends should be able to publish information to be returned by "ping".
 
+* We need better configure-time checks for missing dependencies.
+
 * A relatively easy project for someone would be to write a little
   viewer for IM Logs that could be launched by clicking on an IM Log
   tile.  There is code in Util/ImLog.cs for parsing gaim logs.
@@ -55,11 +51,7 @@ Misc
 Mail
 ----
 
-* MailQueryable needs to support IMAP.  The necessary changes to support
-  Evo 1.5 IMAP summaries have been made to camel.cs --- it is solely a
-  question of walking ~/.evolution/mail/imap and doing the right thing.
-
-* It would also be cool if the mail crawler could index MIME attachments
+* It would be cool if the mail crawler could index MIME attachments
   on mails in an mbox.  The mail indexer today just indexes the
   text/plain parts of a mail; at the very least it could index the
   HTML parts of a mail message.
