@@ -71,6 +71,12 @@ namespace Beagle.Tile {
 		{
 			SendMailToAddress (null, String.Format ("'{0}'", Hit.Uri));
 		}
+
+		[TileAction]
+		public void Reveal ()
+		{
+			OpenFolder (Hit ["fixme:directory"]);
+		}
 	}
 }
 	

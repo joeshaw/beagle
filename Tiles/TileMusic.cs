@@ -40,6 +40,14 @@ namespace Beagle.Tile {
 		{
 		}
 
+		protected override void PopulateTemplate ()
+		{
+			base.PopulateTemplate ();
+
+			if (Hit ["fixme:song"] == null || Hit ["fixme:song"] == "")
+				Template ["Song"] = Hit ["fixme:splitname"];
+		}
+
 		[TileAction]
 		public override void Open ()
 		{

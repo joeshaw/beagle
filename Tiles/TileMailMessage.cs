@@ -68,6 +68,7 @@ namespace Beagle.Tile {
 			else
 				icon = Images.GetHtmlSource ("mail.png",
 							     "image/png");
+
 			Template["Icon"] = icon;
 			if (Hit ["fixme:isFlagged"] != null)
 				Template["FollowupIcon"] = Images.GetHtmlSource ("flag-for-followup.png", "image/png");

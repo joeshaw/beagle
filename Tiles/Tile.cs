@@ -111,6 +111,23 @@ namespace Beagle.Tile {
 			System.Console.WriteLine ("Warning: Open method not implemented for this tile type");
 		}
 
+		protected void OpenFolder (string path)
+		{
+			if (path == null || path == "")
+				return;
+			
+			Process p = new Process ();
+			p.StartInfo.UseShellExecute = false;
+			p.StartInfo.FileName = "nautilus";
+			p.StartInfo.Arguments = path;
+
+			try {
+				p.Start ();
+			} catch (Exception e) {
+				Console.WriteLine ("Cannot open folder in Nautilus: " + e);
+			}
+		}
+
 		protected void OpenFromMime (Hit hit)
 		{
 			OpenFromMime (hit, null, false);
@@ -151,7 +168,11 @@ namespace Beagle.Tile {
 			p.StartInfo.FileName = command;
 			p.StartInfo.Arguments = argument;
 
-			p.Start ();
+			try {
+				p.Start ();
+			} catch (Exception e) {
+				Console.WriteLine ("Error in OpenFromMime: " + e);
+			}
 		}
 
 		protected void SendMailToAddress (string email, string attach)
