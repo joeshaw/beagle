@@ -172,6 +172,22 @@ namespace Beagle.Daemon {
 			return true;
 		}
 
+		// Schedule all non-valid Uris for removal.
+		private bool HitIsValidOrElse (Uri uri)
+		{
+			bool is_valid = HitIsValid (uri);
+
+			if (! is_valid) {
+				// FIXME: There is probably a race here --- what if the hit
+				// becomes valid sometime between calling HitIsValid
+				// and the removal task being executed?
+				Scheduler.Task task = NewRemoveTask (uri);
+				ThisScheduler.Add (task, Scheduler.AddType.DeferToExisting);
+			}
+
+			return is_valid;
+		}
+
 		/////////////////////////////////////////
 
 		virtual protected double RelevancyMultiplier (Hit hit)
@@ -253,7 +269,7 @@ namespace Beagle.Daemon {
 			Driver.DoQuery (body, 
 					query_result,
 					added_uris,
-					new LuceneDriver.UriFilter (HitIsValid),
+					new LuceneDriver.UriFilter (HitIsValidOrElse),
 					new LuceneDriver.RelevancyMultiplier (RelevancyMultiplier));
 		}
 

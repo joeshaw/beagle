@@ -248,7 +248,7 @@ namespace Beagle.IndexHelper {
 		override public void Remove (string uri_as_str)
 		{
 			if (indexer != null) {
-				Uri uri = new Uri (uri_as_str, true);
+				Uri uri = UriFu.UriStringToUri (uri_as_str);
 				next_flush.ToBeRemoved.Add (uri);
 			}
 		}
