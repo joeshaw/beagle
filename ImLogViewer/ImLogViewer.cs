@@ -19,8 +19,7 @@ using Beagle.Util;
 namespace ImLogViewer {
 
 	public class GaimLogViewer {
-
-
+		[Widget] Window window1;
 		[Widget] TreeView logsviewer;
 		[Widget] ScrolledWindow logwindow;
 		[Widget] Button   searchbutton;
@@ -66,11 +65,31 @@ namespace ImLogViewer {
 			this.title.Markup = str;
 		}
 		
+		Gtk.AccelGroup accel_group;
+		GlobalKeybinder global_keys;
+
 		private void ShowWindow (string speaker) {
 			Application.Init();
 			
 			Glade.XML gxml = new Glade.XML (null, "ImLogViewer.glade", "window1", null);
 			gxml.Autoconnect (this);
+
+			accel_group = new Gtk.AccelGroup ();
+			window1.AddAccelGroup (accel_group);
+			global_keys = new GlobalKeybinder (accel_group);
+
+
+			// Close window (Ctrl-W)
+			global_keys.AddAccelerator (new EventHandler (this.HideWindow),
+						    (uint) Gdk.Key.w, 
+						    Gdk.ModifierType.ControlMask,
+						    Gtk.AccelFlags.Visible);
+
+			// Close window (Escape)
+			global_keys.AddAccelerator (new EventHandler (this.HideWindow),
+						    (uint) Gdk.Key.Escape, 
+						    0,
+						    Gtk.AccelFlags.Visible);
 
 			gecko = new Gecko.WebControl();
 			logwindow.AddWithViewport(gecko);
@@ -82,7 +101,7 @@ namespace ImLogViewer {
 			
 			this.renderer = new CellRendererText();
 			
-			//FIXME: Hide the expanders in the timeline
+			//FIXME: Hide the expanders in the timeline widget
 			/*TreeViewColumn hidden = logsviewer.AppendColumn ("HiddenExpander", renderer , "text", 3);
 			  hidden.Visible = false;
 			  logsviewer.ExpanderColumn = hidden;*/
@@ -200,7 +219,7 @@ namespace ImLogViewer {
 			StringBuilder html = new StringBuilder ();
 
 			foreach (ImLog.Utterance utt in im_log.Utterances) {
-				//FIXME: We strip tags here!
+				//FIXME: We strip html tags here!
 				string who = utt.Who;
 				who = who.Replace (" ", "&nbsp;");
 				html.Append ("<p><b>" + who + ":</b> " + utt.Text + "</p>\n");
@@ -209,7 +228,12 @@ namespace ImLogViewer {
 			gecko.RenderData(html.ToString (), "file://"+im_log.LogFile, "text/html");
 			
 		}
-		
+
+		private void HideWindow (object o, EventArgs args)
+		{
+			Application.Quit ();
+		}
+
 		private void OnWindowDeleteEvent (object o, DeleteEventArgs args)
 		{
 			Application.Quit ();

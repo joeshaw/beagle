@@ -4,7 +4,7 @@
 
 using System;
 
-namespace Beagle
+namespace Beagle.Util
 {
 	public class GuiUtils 
 	{

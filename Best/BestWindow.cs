@@ -32,6 +32,7 @@ using Gnome;
 using Gtk;
 
 using Beagle;
+using BU = Beagle.Util;
 using Beagle.Tile;
 
 namespace Best {
@@ -67,6 +68,9 @@ namespace Best {
 			FocusEntry ();
 		}
 
+		Gtk.AccelGroup accel_group;
+		BU.GlobalKeybinder global_keys;
+
 		void CreateWindow (string query)
 		{
 			Title = "Bleeding-Edge Search Tool";
@@ -93,7 +97,7 @@ namespace Best {
 
 			accel_group = new Gtk.AccelGroup ();
 			this.AddAccelGroup (accel_group);
-			global_keys = new GlobalKeybinder (accel_group);
+			global_keys = new BU.GlobalKeybinder (accel_group);
 
 			// Close window (Ctrl-W)
 			global_keys.AddAccelerator (new EventHandler (this.HideWindowHandler),
@@ -132,8 +136,6 @@ namespace Best {
 
 		Query query = null;
 		string hit_type = null;
-		Gtk.AccelGroup accel_group;
-		GlobalKeybinder global_keys;
 		
 		private void SetBusy (bool busy)
 		{
