@@ -57,7 +57,7 @@ td.icon {
 }
 
 .icon img[src$='.jpg'], img[src$='.jpeg'], img[src*='.thumbnails'] {
-  max-width: 96px;
+  max-width: 48px;
   border: 1px dotted #bbb;
   padding: 4px;
   background: #f9f9f9;
