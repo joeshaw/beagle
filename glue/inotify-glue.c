@@ -90,7 +90,7 @@ inotify_glue_watch (int fd, const char *filename, unsigned long mask)
 
 	wd = ioctl (fd, INOTIFY_WATCH, &iwr);
 	if (wd < 0) {
-		fprintf (stderr, "ioctl(%d, INOTIFY_WATCH, {%s, %ld}) failed",
+		fprintf (stderr, "ioctl(%d, INOTIFY_WATCH, {%s, %d}) failed",
 		        fd, iwr.dirname, iwr.mask);
 		perror ("ioctl");
 	}
