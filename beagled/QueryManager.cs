@@ -63,7 +63,7 @@ namespace Beagle.Daemon
 
 		public override string NewRdfSink ()
 		{
-			RdfSinkImpl sink = new RdfSinkImpl (new Beagle.RdfSource.GotRdfXmlHandler (SomeRdfXmlWasSunk));
+			RdfSinkImpl sink = new RdfSinkImpl (new Beagle.GotRdfXmlHandler (SomeRdfXmlWasSunk));
 			return sink.Path;
 		}
 

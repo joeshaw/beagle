@@ -29,10 +29,13 @@ namespace Beagle {
 	using DBus;
 
 	[Interface ("com.novell.Beagle.RdfSink")]
-	public abstract class RdfSink {
+	public abstract class RdfSink : IRdfSink {
 
 		[Method]
 		public abstract void AddRdfXml (string rdfXml);
+
+		[Method]
+		public abstract void Finished ();
 
 		static public RdfSink New ()
 		{

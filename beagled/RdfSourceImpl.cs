@@ -54,8 +54,8 @@ namespace Beagle.Daemon {
 			get { return path; }
 		}
 
-		public override event Beagle.RdfSource.GotRdfXmlHandler GotRdfXmlEvent;
-		public override event Beagle.RdfSource.FinishedHandler FinishedEvent;
+		public override event Beagle.GotRdfXmlHandler   GotRdfXmlEvent;
+		public override event Beagle.RdfFinishedHandler RdfFinishedEvent;
 
 		public override void Start ()
 		{
@@ -84,7 +84,7 @@ namespace Beagle.Daemon {
 		{
 			if (! finished) {
 				finished = true;
-				FinishedEvent ();
+				RdfFinishedEvent ();
 			}
 		}
 

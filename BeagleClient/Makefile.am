@@ -13,6 +13,7 @@ CSFILES = 				\
 	$(srcdir)/Hit.cs                \
 	$(srcdir)/Indexable.cs          \
 	$(srcdir)/Indexer.cs            \
+	$(srcdir)/IRdf.cs		\
 	$(srcdir)/Property.cs           \
 	$(srcdir)/QueryManager.cs	\
 	$(srcdir)/Query.cs              \

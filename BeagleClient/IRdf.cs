@@ -1,5 +1,5 @@
 //
-// RdfSinkImpl.cs
+// IRdf.cs
 //
 // Copyright (C) 2004 Novell, Inc.
 //
@@ -24,44 +24,19 @@
 // DEALINGS IN THE SOFTWARE.
 //
 
-using DBus;
-using System;
+namespace Beagle {
 
-namespace Beagle.Daemon {
+	public delegate void GotRdfXmlHandler   (string rdfXml);
+	public delegate void RdfFinishedHandler ();
 
-	public class RdfSinkImpl : Beagle.RdfSink {
+	public interface IRdfSource {
+		void Start ();
+		event GotRdfXmlHandler   GotRdfXmlEvent;
+		event RdfFinishedHandler RdfFinishedEvent;
+	}
 
-		static object counterLock = new object ();
-		static int counter = 1;
-
-		string path;
-		Beagle.GotRdfXmlHandler handler;
-
-		public RdfSinkImpl (Beagle.GotRdfXmlHandler handler)
-		{
-			this.handler = handler;
-			
-			lock (counterLock) {
-				path = "/com/novell/Beagle/RdfSink/Obj" + counter;
-				++counter;
-			}
-
-			DBusisms.Service.RegisterObject (this, Path);
-		}
-
-		public string Path {
-			get { return path; }
-		}
-
-		public override void AddRdfXml (string rdfXml)
-		{
-			if (handler != null)
-				handler (rdfXml);
-		}
-
-		public override void Finished ()
-		{
-			// FIXME!
-		}
+	public interface IRdfSink {
+		void AddRdfXml (string rdfXml);
+		void Finished ();
 	}
 }
