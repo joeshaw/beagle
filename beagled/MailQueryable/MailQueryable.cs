@@ -42,18 +42,19 @@ namespace Beagle.Daemon.MailQueryable {
 						Path.Combine (PathFinder.RootDir, "MailIndex"))
 		{
 			string home = Environment.GetEnvironmentVariable ("HOME");
-			DirectoryInfo mail_dir = new DirectoryInfo (Path.Combine (home, ".evolution/mail/local"));
+			DirectoryInfo local_dir = new DirectoryInfo (Path.Combine (home, ".evolution/mail/local"));
 
 			// Crawl mail
 			MailCrawler crawler = new MailCrawler (this);
-			crawler.ScheduleCrawl (mail_dir, -1);
-			//crawler.StopWhenEmpty ();
+			crawler.ScheduleCrawl (local_dir, -1);
+
+			DirectoryInfo imap_dir = new DirectoryInfo (Path.Combine (home, ".evolution/mail/imap"));
+			crawler.ScheduleCrawl (imap_dir, -1);
 			
 			FileSystemEventMonitor monitor = new FileSystemEventMonitor ();
 			monitor.FileSystemEvent += OnFileSystemEvent;
-			monitor.Subscribe (mail_dir, true);
-
-			// FIXME: Set up FileSystemEventMonitor
+			monitor.Subscribe (local_dir, true);
+			//monitor.Subscribe (imap_dir, true);
 		}
 
 		private void OnFileSystemEvent (FileSystemEventMonitor monitor,
@@ -64,9 +65,12 @@ namespace Beagle.Daemon.MailQueryable {
 			if (event_type == FileSystemEventType.Created || event_type == FileSystemEventType.Changed) {
 				FileInfo file = new FileInfo (new_path);
 
-				if (file != null && Path.GetExtension (file.Name) == ".ev-summary")
-					this.IndexMbox (file);
-
+				if (file != null) {
+					if (Path.GetExtension (file.Name) == ".ev_summary")
+						this.IndexMbox (file);
+					else if (file.Name == "summary")
+						this.IndexImap (file);
+				}
 			} else if (event_type == FileSystemEventType.Deleted) {
 				// FIXME
 			}
@@ -87,7 +91,7 @@ namespace Beagle.Daemon.MailQueryable {
 				if (info as DirectoryInfo != null)
 					return false;
 
-				if (Path.GetExtension (info.Name) != ".ev-summary")
+				if (Path.GetExtension (info.Name) != ".ev-summary" && info.Name != "summary")
 					return true;
 
 				return false;
@@ -100,7 +104,10 @@ namespace Beagle.Daemon.MailQueryable {
 				if (file == null)
 					return;
 
-				this.queryable.IndexMbox (file);
+				if (Path.GetExtension (info.Name) == ".ev-summary")
+					this.queryable.IndexMbox (file);
+				else if (info.Name == "summary")
+					this.queryable.IndexImap (file);
 			}
 		}
 
@@ -164,7 +171,7 @@ namespace Beagle.Daemon.MailQueryable {
 					Console.WriteLine ("From: {0}", mi.from);
 					Console.WriteLine ("Subject: {0}", mi.subject);
 
-					Driver.ScheduleAdd (MailToIndexable (folderName, mi, msg));
+					Driver.ScheduleAdd (MailToIndexable ("local@local", folderName, mi, msg));
 					++indexedCount;
 				}
 			}
@@ -176,6 +183,81 @@ namespace Beagle.Daemon.MailQueryable {
 
 			if (latestTime != lastTime)
 				PathFinder.WriteAppDataLine ("MailIndex", dataName, latestTime.Ticks.ToString ());
+		}
+
+		
+		public void IndexImap (FileInfo summary_file)
+		{
+			string dir_name = summary_file.DirectoryName;
+			string folder_name = dir_name.Substring (dir_name.LastIndexOf ('/') + 1);
+
+			int account_start_idx = dir_name.IndexOf (".evolution/mail/imap/") + 21;
+			string account_start = dir_name.Substring (account_start_idx);
+			string account_name = account_start.Substring (0, account_start.IndexOf ('/'));
+
+			Console.WriteLine ("*** Being asked to index {0}", summary_file);
+
+			Camel.Summary summary = Camel.Summary.load (summary_file.FullName);
+
+			String data_name = "lastScan-" + folder_name;
+
+			DateTime last_time = new DateTime (0);
+			String last_time_str = PathFinder.ReadAppDataLine ("MailIndex", data_name);
+			if (last_time_str != null) {
+				try {
+					long ticks = long.Parse (last_time_str);
+					last_time = new DateTime (ticks);
+				} catch { }
+			}
+
+			DateTime latest_time = last_time;
+
+			int count = 0, index_count = 0;
+
+			foreach (Camel.ImapMessageInfo mi in summary.messages) {
+				if ((count & 15) == 0) {
+					Console.WriteLine ("{0}: indexed {1} messages ({2}/{3} {4:###.0}%)",
+							   folder_name, index_count,
+							   count, summary.header.count, 
+							   100.0 * count / summary.header.count);
+				}
+				++count;
+				
+				if (last_time < mi.Date) {
+
+					if (latest_time < mi.Date)
+						latest_time = mi.Date;
+
+					Console.WriteLine ("From: {0}", mi.from);
+					Console.WriteLine ("Subject: {0}", mi.subject);
+
+					Stream message_stream = null;
+					MailMessage msg = null;
+
+					// FIXME: Multipart
+					string path = Path.Combine (summary_file.DirectoryName, mi.uid + ".");
+
+					if (File.Exists (path)) {
+						message_stream = new FileStream (path, FileMode.Open, FileAccess.Read);
+						TextReader text_reader = new StreamReader (message_stream,
+											   new ASCIIEncoding ());
+						LineReader line_reader = new LineReader (text_reader);
+
+						msg = new MailMessage (line_reader, mi.size);
+					}
+
+					Driver.ScheduleAdd (MailToIndexable (account_name, folder_name, mi, msg));
+					++index_count;
+
+					if (message_stream != null)
+						message_stream.Close ();
+				}
+			}
+
+			Console.WriteLine ("{0}: indexed {1} of {2} messages", folder_name, index_count, count);
+
+			if (latest_time != last_time)
+				PathFinder.WriteAppDataLine ("MailIndex", data_name, latest_time.Ticks.ToString ());
 		}
 
                 private static void BodyToMultiReader (MailBody body, Beagle.Util.MultiReader multi)
@@ -194,11 +276,11 @@ namespace Beagle.Daemon.MailQueryable {
                                 multi.Add (new Beagle.Util.PullingReader (new Beagle.Util.PullingReader.Pull (body.Pull)));
                 }
 
-		private static Indexable MailToIndexable (string folderName, Camel.MessageInfo messageInfo,
-							  MailMessage message)
+		private static Indexable MailToIndexable (string accountName, string folderName,
+							  Camel.MessageInfo messageInfo, MailMessage message)
 		{
-			System.Uri uri = new Uri (String.Format ("email://local@local/{0};uid={1}",
-								 folderName, messageInfo.uid));
+			System.Uri uri = new Uri (String.Format ("email://{0}/{1};uid={2}",
+								 accountName, folderName, messageInfo.uid));
 			Indexable indexable = new Indexable (uri);
 
 			indexable.Timestamp = messageInfo.Date;
