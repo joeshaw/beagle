@@ -34,6 +34,14 @@ $(EXTSTR): $(EXTSTR_IN)
 
 $(PLUGIN_TARGET): $(PLUGIN_CSFILES) $(EXTSTR) $(PLUGIN_LOCAL_ASSEMBLIES)
 	$(CSC) -o $@ $(PLUGIN_CFLAGS) $(PLUGIN_CSFILES) $(EXTSTR) $(PLUGIN_ASSEMBLIES)
+############################################################
+
+WRAPPER_IN = wrapper.in
+WRAPPER_SED = sed 					\
+	-e "s|\@prefix\@|$(prefix)|g"			\
+	-e "s|\@pkglibdir\@|$(pkglibdir)|g"		\
+	-e "s|\@libdir\@|$(libdir)|g"			\
+	-e "s|\@gacprefix\@|$(GAC_PREFIX)|g"
 
 
 ############################################################
@@ -213,12 +221,12 @@ $(DAEMON_DLL_TARGET): $(DAEMON_DLL_CSFILES) $(DAEMON_DLL_LOCAL_ASSEMBLIES)
 
 
 DAEMON_WRAPPER = beagled
+DAEMON_TARGET = BeagleDaemon.exe
 
-$(DAEMON_WRAPPER): $(srcdir)/$(DAEMON_WRAPPER).in
-	sed -e "s|\@prefix\@|$(prefix)|g" -e "s|\@pkglibdir\@|$(pkglibdir)|g" -e "s|\@target\@|$(DAEMON_TARGET)|g" -e "s|\@gacprefix\@|$(GAC_PREFIX)|g" < $^ > $@
+$(DAEMON_WRAPPER): $(srcdir)/$(WRAPPER_IN)
+	$(WRAPPER_SED) -e "s|\@target\@|$(DAEMON_TARGET)|g" < $(srcdir)/$^ > $@
 	chmod +x $(DAEMON_WRAPPER)
 
-DAEMON_TARGET = BeagleDaemon.exe
 
 DAEMON_CSFLAGS =				\
 	-target:exe
@@ -247,10 +255,42 @@ $(DAEMON_TARGET): $(DAEMON_CSFILES) $(DAEMON_LOCAL_ASSEMBLIES)
 
 ############################################################
 
+EXTRACT_CONTENT_WRAPPER = beagle-extract-content
+EXTRACT_CONTENT_TARGET = ExtractContent.exe
 
-all: $(PLUGIN_TARGET) $(DAEMON_DLL_TARGET) $(DAEMON_TARGET)
+$(EXTRACT_CONTENT_WRAPPER): $(srcdir)/$(WRAPPER_IN)
+	$(WRAPPER_SED) -e "s|\@target\@|$(EXTRACT_CONTENT_TARGET)|g" < $(srcdir)/$^ > $@
+	chmod +x $(EXTRACT_CONTENT_WRAPPER)
 
-install-data-local: $(PLUGIN_TARGET) $(DAEMON_DLL_TARGET) $(DAEMON_TARGET)
+
+EXTRACT_CONTENT_CSFLAGS =				\
+	-target:exe
+
+EXTRACT_CONTENT_CSFILES =				\
+	$(srcdir)/ExtractContent.cs
+
+EXTRACT_CONTENT_LOCAL_ASSEMBLIES =		\
+	../Util/Util.dll			\
+	../BeagleClient/Beagle.dll		\
+	./$(PLUGIN_TARGET)			\
+	./$(DAEMON_DLL_TARGET)
+
+EXTRACT_CONTENT_ASSEMBLIES =				\
+	$(BEAGLED_LIBS)				\
+	$(DAEMON_LOCAL_ASSEMBLIES:%=-r:%)	\
+	-r:Mono.Posix				\
+	-r:System.Runtime.Remoting		\
+	-r:ICSharpCode.SharpZipLib.dll
+
+$(EXTRACT_CONTENT_TARGET): $(EXTRACT_CONTENT_CSFILES) $(EXTRACT_CONTENT_LOCAL_ASSEMBLIES)
+	$(CSC) -o $@ $(EXTRACT_CONTENT_CSFLAGS) $(EXTRACT_CONTENT_CSFILES) $(EXTRACT_CONTENT_ASSEMBLIES)
+
+############################################################
+
+
+all: $(PLUGIN_TARGET) $(DAEMON_DLL_TARGET) $(DAEMON_TARGET) $(EXTRACT_CONTENT_TARGET)
+
+install-data-local: $(PLUGIN_TARGET) $(DAEMON_DLL_TARGET) $(DAEMON_TARGET) $(EXTRACT_CONTENT_TARGET)
 	$(mkinstalldirs) $(DESTDIR)$(pkglibdir)
 	$(INSTALL_DATA) $(PLUGIN_TARGET) $(DESTDIR)$(pkglibdir)/$(PLUGIN_TARGET)
 	$(INSTALL_DATA) $(DAEMON_DLL_TARGET) $(DESTDIR)$(pkglibdir)/$(DAEMON_DLL_TARGET)
@@ -260,7 +300,7 @@ uninstall-local:
 	rm -f $(DESTDIR)$(bindir)/$(DAEMON_TARGET)
 
 bin_SCRIPTS = $(DAEMON_WRAPPER)
-noinst_SCRIPTS=testclient
+noinst_SCRIPTS=testclient $(EXTRACT_CONTENT_WRAPPER) 
 
 testclient: $(srcdir)/testclient.in
 	sed -e "s|\@prefix\@|$(prefix)|g" -e "s|\@pkglibdir\@|$(pkglibdir)|g" -e "s|\@target\@|TestClient.exe|g" < $^ > $@
@@ -272,7 +312,7 @@ EXTRA_DIST =			\
 	$(DAEMON_DLL_CSFILES)	\
 	$(DAEMON_CSFILES)	\
 	$(EXTSTR_IN)		\
-	$(DAEMON_WRAPPER).in   	\
+	$(WRAPPER_IN)   	\
 	TestClient.cs
 
 CLEANFILES =			\
@@ -281,5 +321,6 @@ CLEANFILES =			\
 	$(DAEMON_TARGET)       	\
 	$(EXTSTR)		\
 	$(DAEMON_WRAPPER)      	\
+	$(EXTRACT_CONTENT_WRAPPER) \
 	testclient      	\
 	TestClient.exe
