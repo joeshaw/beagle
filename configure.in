@@ -1,6 +1,6 @@
 AC_INIT(beagled/BeagleDaemon.cs)
 AC_CANONICAL_SYSTEM
-AM_INIT_AUTOMAKE(beagle, 0.0.4)
+AM_INIT_AUTOMAKE(beagle, 0.0.5)
 AM_MAINTAINER_MODE
 AM_CONFIG_HEADER(config.h)
 
@@ -243,6 +243,7 @@ AC_SUBST(BEAGLED_LIBS)
 
 DBUS_PREFIX=`$PKG_CONFIG --variable=prefix dbus-sharp`
 GSF_SHARP_PREFIX=`$PKG_CONFIG --variable=prefix gsf-sharp`
+GMIME_SHARP_PREFIX=`$PKG_CONFIG --variable=prefix gmime-sharp`
 
 dnl ----------------------------------------------
 
@@ -329,7 +330,10 @@ AC_SUBST(CHOOSER_FU_LIBS)
 dnl ----------------------------------------------
 
 dnl Prefixes for helper scripts
-GAC_PREFIX="$DBUS_PREFIX:$EVO_SHARP_PREFIX:$GSF_SHARP_PREFIX:$RENDEZVOUS_PREFIX"
+GAC_PREFIX="$DBUS_PREFIX:$EVO_SHARP_PREFIX:$GSF_SHARP_PREFIX:$GMIME_SHARP_PREFIX:$RENDEZVOUS_PREFIX"
+dnl Remove duplicate prefixes
+GAC_PREFIX="`echo $GAC_PREFIX | sed -e 's|:|\n|g' | sort | uniq | tr '\n' ':'`"
+dnl Remove stray :s
 GAC_PREFIX="`echo $GAC_PREFIX | sed -e 's|::\+|:|g' -e 's|^:\+||' -e 's|:\+$||'`"
 AC_SUBST(GAC_PREFIX)
 
