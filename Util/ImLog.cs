@@ -142,9 +142,17 @@ namespace Beagle.Util {
 			int i, j;
 			while (true) {
 				i = line.IndexOf ('<');
+
 				if (i == -1)
 					break;
+
 				j = line.IndexOf ('>', i);
+
+				// If a "<" is unmatched, preserve it, and the
+				// rest of the line
+                                if (j == -1)
+					break;
+                               
 				line = line.Substring (0, i) + line.Substring (j+1);
 			}
 			return line;
