@@ -473,7 +473,18 @@ namespace Beagle.Filters {
 			hotStyles = new Hashtable ();
 			try {
 				zip = new ZipFile (info.FullName);
-				if (MimeType == "application/vnd.oasis.opendocument.text")
+
+				// FIXME: Can this *big* if be replaced with something like,
+				// "if (MimeType.IndexOf ("application/vnd.oasis.opendocument.") > -1)"?
+				// Hmm.. evaluate before finalizing it. :-)
+
+				if ((MimeType == "application/vnd.oasis.opendocument.text")
+				    || (MimeType == "application/vnd.oasis.opendocument.text")
+				    || (MimeType == "application/vnd.oasis.opendocument.text-template")
+				    || (MimeType == "application/vnd.oasis.opendocument.spreadsheet")
+				    || (MimeType == "application/vnd.oasis.opendocument.spreadsheet-template")
+				    || (MimeType == "application/vnd.oasis.opendocument.presentation")
+				    || (MimeType == "application/vnd.oasis.opendocument.presentation-template"))
 					odtFormat = true;
 			} catch (Exception e) {
 				Logger.Log.Error ("Unable to open {0}.  Probably an invalid OpenOffice document.");

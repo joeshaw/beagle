@@ -1,3 +1,7 @@
+2005-02-18  Veerapuram Varadhan	 <vvaradhan@novell.com>
+
+	* Filters/FilterOpenOffice.cs: More odt-mime-type changes.
+	
 2005-02-17  Veerapuram Varadhan	 <vvaradhan@novell.com>
 
 	* glue/wv1-glue.c: Fix for
