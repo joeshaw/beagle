@@ -43,7 +43,7 @@ struct inotify_watch_request {
 #define IN_OPEN			0x00000020	/* File was opened */
 #define IN_MOVED_FROM		0x00000040	/* File was moved from X */
 #define IN_MOVED_TO		0x00000080	/* File was moved to Y */
-#define IN_DELETE_SUBDIR	0x00000100	/* Subdir was deleted */ 
+#define IN_DELETE_SUBDIR	0x00000100	/* Subdir was deleted */
 #define IN_DELETE_FILE		0x00000200	/* Subfile was deleted */
 #define IN_CREATE_SUBDIR	0x00000400	/* Subdir was created */
 #define IN_CREATE_FILE		0x00000800	/* Subfile was created */
@@ -75,7 +75,7 @@ extern void inotify_inode_queue_event(struct inode *, __u32, __u32,
 				      const char *);
 extern void inotify_dentry_parent_queue_event(struct dentry *, __u32, __u32,
 					      const char *);
-extern void inotify_super_block_umount(struct super_block *);
+extern void inotify_unmount_inodes(struct list_head *);
 extern void inotify_inode_is_dead(struct inode *);
 extern u32 inotify_get_cookie(void);
 
@@ -93,7 +93,7 @@ static inline void inotify_dentry_parent_queue_event(struct dentry *dentry,
 {
 }
 
-static inline void inotify_super_block_umount(struct super_block *sb)
+static inline void inotify_unmount_inodes(struct list_head *list)
 {
 }
 
