@@ -41,16 +41,12 @@ namespace Beagle.Daemon.EvolutionMailDriver {
 		ArrayList summaries = new ArrayList ();
 		ArrayList mboxes = new ArrayList ();
 		
-		public MailCrawler ()
+		public MailCrawler (params string[] paths)
 		{
-			string local_path = Path.Combine (PathFinder.HomeDir, ".evolution/mail/local");
-			string imap_path = Path.Combine (PathFinder.HomeDir, ".evolution/mail/imap");
-			
-			if (Directory.Exists (local_path))
-				roots.Add (local_path);
-
-			if (Directory.Exists (imap_path))
-				roots.Add (imap_path);
+			foreach (string p in paths) {
+				if (Directory.Exists (p))
+					roots.Add (p);
+			}
 		}
 
 		private bool FileIsInteresting (FileInfo file)

@@ -32,20 +32,36 @@ public abstract class Summary : IEnumerable {
 	public SummaryHeader header;
 	internal string filename;
 
-	public static Summary load (string file) 
+	public static Summary LoadMBoxSummary (string file)
 	{
-		Summary s;
-		if (file.EndsWith ("/summary")) { 
-			s = new ImapSummary ();
-		} else {
-			s = new MBoxSummary ();
-		}
-		s.filename = file;
-		FileStream f = File.OpenRead (file);
-		s.header = s.ReadHeader (f);
-		f.Close ();
-		
+		Summary s = new MBoxSummary ();
+		s.Load (file);
+
 		return s;
+	}
+
+	public static Summary LoadImapSummary (string file)
+	{
+		Summary s = new ImapSummary ();
+		s.Load (file);
+
+		return s;
+	}
+
+	public static Summary LoadImap4Summary (string file)
+	{
+		Summary s = new Imap4Summary ();
+		s.Load (file);
+
+		return s;
+	}
+
+	private void Load (string file)
+	{
+		this.filename = file;
+		FileStream f = File.OpenRead (file);
+		this.header = this.ReadHeader (f);
+		f.Close ();
 	}
 	
 	public IEnumerator GetEnumerator () {
@@ -155,9 +171,25 @@ public abstract class Summary : IEnumerable {
 
 		protected override MessageInfo ReadMessageInfo (FileStream f)
 		{
-			return new ImapMessageInfo (f);
+			return new ImapMessageInfo (f, true);
 		}
  	}
+
+	public class Imap4Summary : Summary {
+		public Imap4Summary ()
+		{
+		}
+
+		protected override SummaryHeader ReadHeader (FileStream f)
+		{
+			return new ImapSummaryHeader (f);
+		}
+
+		protected override MessageInfo ReadMessageInfo (FileStream f)
+		{
+			return new ImapMessageInfo (f, false);
+		}
+	}
 
 	public class MessageInfo {
 		public string uid, subject, from, to, cc, mlist;
@@ -295,10 +327,12 @@ public abstract class Summary : IEnumerable {
 	public class ImapMessageInfo : MessageInfo {
 		public uint server_flags;
 		
-		public ImapMessageInfo (FileStream f) : base (f)
+		public ImapMessageInfo (FileStream f, bool content_info_load) : base (f)
 		{
 			server_flags = Decode.UInt (f);
-			PerformContentInfoLoad (f);
+
+			if (content_info_load)
+				PerformContentInfoLoad (f);
 		}
 
 		public override string ToString ()
@@ -408,10 +442,12 @@ public abstract class Summary : IEnumerable {
 		{
 			int version = Decode.FixedInt (f);
 
-			// Right now we only support summary versions 1 and 3
-			// (which according to fejj are identical)
-			if (version != 1 && version != 3)
-				throw new Exception ("Incompatible summary version: " + version);
+			// Right now we only support summary versions 1 through 3
+			if (version > 3)
+				throw new Exception (String.Format ("Reported summary version ({0}) is too new", version));
+
+			if (version == 2)
+				Decode.FixedInt (f);
 
 			int validity = Decode.FixedInt (f);
 		}
@@ -511,7 +547,7 @@ public abstract class Summary : IEnumerable {
 			else
 				file = args [0];
 			
-			Summary s = Summary.load (file);
+			Summary s = Summary.LoadMBoxSummary (file);
 			foreach (MessageInfo m in s) {
 				Console.WriteLine(m);
 			}

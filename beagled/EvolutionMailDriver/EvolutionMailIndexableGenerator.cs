@@ -483,10 +483,16 @@ namespace Beagle.Daemon.EvolutionMailDriver {
 	}
 
 	public class EvolutionMailIndexableGeneratorImap : EvolutionMailIndexableGenerator {
+		private enum ImapBackendType {
+			Imap,
+			Imap4
+		};
+
 		private static GConf.Client gconf_client = null;
 
 		private FileInfo summary_info;
 		private string imap_name;
+		private ImapBackendType backend_type;
 		private Camel.Summary summary;
 		private IEnumerator summary_enumerator;
 		private ICollection accounts;
@@ -521,8 +527,18 @@ namespace Beagle.Daemon.EvolutionMailDriver {
 		protected override bool Setup ()
 		{
 			string dir_name = summary_info.DirectoryName;
+			int imap_start_idx;
 
-			int imap_start_idx = dir_name.IndexOf (".evolution/mail/imap/") + 21;
+			int idx = dir_name.IndexOf (".evolution/mail/imap4/");
+
+			if (idx >= 0) {
+				this.backend_type = ImapBackendType.Imap4;
+				imap_start_idx = idx + 22;
+			} else {
+				this.backend_type = ImapBackendType.Imap;
+				imap_start_idx = dir_name.IndexOf (".evolution/mail/imap/") + 21;
+			}
+
 			string imap_start = dir_name.Substring (imap_start_idx);
 			this.imap_name = imap_start.Substring (0, imap_start.IndexOf ('/'));
 
@@ -572,7 +588,13 @@ namespace Beagle.Daemon.EvolutionMailDriver {
 					this.imap_name = toEscape.Replace ("@", "%40") + this.imap_name.Substring (lastIdx);
 				}
 
-				if (imap_url.InnerText.StartsWith ("imap://" + this.imap_name + "/")) {
+				string backend_url_prefix;
+				if (this.backend_type == ImapBackendType.Imap)
+					backend_url_prefix = "imap";
+				else
+					backend_url_prefix = "imap4";
+
+				if (imap_url.InnerText.StartsWith (backend_url_prefix + "://" + this.imap_name + "/")) {
 					this.account_name = uid;
 					break;
 				}
@@ -655,7 +677,10 @@ namespace Beagle.Daemon.EvolutionMailDriver {
 
 			if (this.summary == null) {
 				try {
-					this.summary = Camel.Summary.load (this.summary_info.FullName);
+					if (this.backend_type == ImapBackendType.Imap)
+						this.summary = Camel.Summary.LoadImapSummary (this.summary_info.FullName);
+					else
+						this.summary = Camel.Summary.LoadImap4Summary (this.summary_info.FullName);
 				} catch (Exception e) {
 					EvolutionMailQueryable.log.Warn ("Unable to index {0}: {1}", this.folder_name,
 									 e.Message);
@@ -716,6 +741,13 @@ namespace Beagle.Daemon.EvolutionMailDriver {
 			return reader;
 		}
 
+		// Kind of nasty, but we need the function.
+		[System.Runtime.InteropServices.DllImport("libglib-2.0.so.0")]
+		static extern int g_str_hash (string str);
+
+		// Stolen from deep within e-d-s's camel-data-cache.c  Very evil.
+		private const int CAMEL_DATA_CACHE_MASK = ((1 << 6) - 1);
+
 		public override Indexable GetNextIndexable ()
 		{
 			Indexable indexable = null;
@@ -724,13 +756,28 @@ namespace Beagle.Daemon.EvolutionMailDriver {
 
 			++this.count;
 
+			// Try to load the cached message data off disk
 			if (this.mapping[mi.uid] == null || (uint) mapping[mi.uid] != mi.flags) {
 				TextReader msgReader = null;
-				string msg_file = Path.Combine (summary_info.DirectoryName, mi.uid + ".");
+				string msg_file;
+
+				if (this.backend_type == ImapBackendType.Imap)
+					msg_file = Path.Combine (summary_info.DirectoryName, mi.uid + ".");
+				else {
+					// This is taken from e-d-s's camel-data-cache.c.  No doubt
+					// NotZed would scream bloody murder if he saw this here.
+					int hash = (g_str_hash (mi.uid) >> 5) & CAMEL_DATA_CACHE_MASK;
+					string cache_path = String.Format ("cache/{0:x}/{1}", hash, mi.uid);
+					msg_file = Path.Combine (summary_info.DirectoryName, cache_path);
+					Console.WriteLine ("msg file is: {0}", msg_file);
+				}
 				
-				// FIXME - XXX
-				if (File.Exists (msg_file))
+				// FIXME - Filters really need to be rearchitected so that we can
+				// pass multiple attachments of different types into the indexable.
+				if (File.Exists (msg_file)) {
 					msgReader = GetMessageData (msg_file);
+					Console.WriteLine ("Got it: {0}", msg_file);
+				}
 
 				indexable = this.CamelMessageToIndexable (mi, msgReader);
 
@@ -745,7 +792,7 @@ namespace Beagle.Daemon.EvolutionMailDriver {
 
 		private Uri CamelMessageUri (Camel.MessageInfo message_info)
 		{
-			return EvolutionMailQueryable.EmailUri (this.account_name, this.folder_name, message_info.uid);			
+			return EvolutionMailQueryable.EmailUri (this.account_name, this.folder_name, message_info.uid);
 		}
 
 		private Indexable CamelMessageToIndexable (Camel.MessageInfo messageInfo, TextReader msgReader)

@@ -42,7 +42,7 @@ namespace Beagle.Daemon.EvolutionMailDriver {
 		public int polling_interval_in_seconds = 60;
 
 		public static Logger log = Logger.Get ("mail");
-		private string local_path, imap_path;
+		private string local_path, imap_path, imap4_path;
 
 		private SortedList watched = new SortedList ();
 		private MailCrawler crawler;
@@ -55,6 +55,7 @@ namespace Beagle.Daemon.EvolutionMailDriver {
 		{
 			this.local_path = Path.Combine (PathFinder.HomeDir, ".evolution/mail/local");
 			this.imap_path = Path.Combine (PathFinder.HomeDir, ".evolution/mail/imap");
+			this.imap4_path = Path.Combine (PathFinder.HomeDir, ".evolution/mail/imap4");
 		}
 
 		private void Crawl ()
@@ -93,10 +94,11 @@ namespace Beagle.Daemon.EvolutionMailDriver {
 				Inotify.Event += OnInotifyEvent;
 				Watch (this.local_path);
 				Watch (this.imap_path);
+				Watch (this.imap4_path);
 			}
 
 			Logger.Log.Debug ("Starting mail crawl");
-			crawler = new MailCrawler ();
+			crawler = new MailCrawler (this.local_path, this.imap_path, this.imap4_path);
 			Crawl ();
 			Logger.Log.Debug ("Mail crawl finished");
 
