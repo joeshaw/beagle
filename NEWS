@@ -1,3 +1,61 @@
+
+Version 0.0.5
+January 26, 2005
+
+Daemon:
+* Dot Lucene 1.4.3 (Joe)
+* Snippets in Files, IM logs, and Tomboy Notes (Jon)
+* Improved interaction with Mono GC (Jon Trowbridge, Joe Shaw, Ben Maurer)
+* Query infrastructure improvements (Jon)
+* Dynamic backend loading (Fredrik Hedberg)
+* Large queries are now much faster (Joe, Jon)
+* Better handling of index optimize operations (Joe)
+* Faster IM log parsing (Jon)
+* Properly quote SQLite queries (Edward Cho, Chris Orr)
+* Work around .NET Uri class weirdness (Adam Lofts)
+
+Backends:
+* Liferea backend (Carl-Emil Lagerstedt)
+* Launcher backend (Joe Gasiorek)
+* Thunderbird backend (Fredrik)
+* The Tomboy backend works again (Robert Love)
+
+Filters:
+* Better infrastructure for source code filters (Veerapuram Varadhan)
+* Abiword filter (Varadhan)
+* Fortran filter (Vishravars)
+* Pascal filter (Veerapuram Varadhan)
+* PHP filter (Vishravars)
+* Improved RTF filter (Varadhan)
+* Improved PPT filter (Varadhan)
+
+UI:
+* IM log viewer (Lukas Lipka, Tuomas Kuosmanen)
+* Right-click menu for Best (Shobith Alva)
+* Document tile enhancements (Varadhan)
+* Remember Best's position (Joe G.)
+* Fix search entry focus problem (Stephen Solka)
+* Client-side hit filtering (Nat Friedman)
+* Calendar tile (Lukas)
+* Fixed images under Mozilla 1.7 (Joe)
+* Better addressbook look-ups (Nat)
+* Use freedesktop-spec thumbnails (Fredrik) 
+* IM fields in contact tile (Nat)
+
+Everything Else:
+* Build fixes (Everyone)
+* Newletter (Joe G.)
+* Wiki wrangling (Joe G.)
+* Snapshot Resurrection (Joe)
+* Inotify hacking (Robert)
+* D-BUS hacking (Joe)
+* GMime hacking (Joe)
+* Win32 porting (Fredrik)
+* All the stuff I forgot (All the people I forgot)
+
+
+------------------------------------------------------
+
 Version 0.0.4
 December 10, 2004
 

@@ -160,8 +160,6 @@ namespace Beagle.Daemon {
 			command.Dispose ();
 		}
 
-	
-
 		private SqliteCommand QueryCommand (string where_format, params object [] where_args)
 		{
 			SqliteCommand command;
@@ -242,24 +240,27 @@ namespace Beagle.Daemon {
 			if (! GetPathFlag (path))
 				return null;
 
+			FileAttributes attr = null;
+
 			// We need to quote any 's that appear in the strings
 			// (int particular, in the path)
 			string directory = Path.GetDirectoryName (path);
 			string filename = Path.GetFileName (path);
-			command = QueryCommand ("directory='{0}' AND filename='{1}'",
-						directory.Replace ("'", "''"),
-						filename.Replace ("'", "''"));
-			reader = command.ExecuteReader ();
-
-			FileAttributes attr = null;
-			if (reader.Read ()) {
-				attr = GetFromReader (reader);
-
-				if (reader.Read ())
-					throw new Exception ("Matched multiple items when only expecting one: path=" + path);
+			lock (connection) {
+				command = QueryCommand ("directory='{0}' AND filename='{1}'",
+							directory.Replace ("'", "''"),
+							filename.Replace ("'", "''"));
+				reader = command.ExecuteReader ();
+				
+				if (reader.Read ()) {
+					attr = GetFromReader (reader);
+					
+					if (reader.Read ())
+						throw new Exception ("Matched multiple items when only expecting one: path=" + path);
+				}
+				reader.Close ();
+				command.Dispose ();
 			}
-			reader.Close ();
-			command.Dispose ();
 
 			if (attr == null)
 				SetPathFlag (path, false);
@@ -273,14 +274,16 @@ namespace Beagle.Daemon {
 
 			// We need to quote any 's that appear in the strings
 			// (in particular, in the path)
-			DoNonQuery ("INSERT OR REPLACE INTO file_attributes " +
-				    " (unique_id, directory, filename, last_mtime, last_indexed, filter_name, filter_version) " +
-				    " VALUES ('{0}', '{1}', '{2}', '{3}', '{4}', '{5}', '{6}')",
-				    fa.UniqueId, fa.Directory.Replace ("'", "''"), fa.Filename.Replace ("'", "''"),
-				    StringFu.DateTimeToString (fa.LastWriteTime),
-				    StringFu.DateTimeToString (fa.LastIndexedTime),
-				    fa.FilterName,
-				    fa.FilterVersion);
+			lock (connection) {
+				DoNonQuery ("INSERT OR REPLACE INTO file_attributes " +
+					    " (unique_id, directory, filename, last_mtime, last_indexed, filter_name, filter_version) " +
+					    " VALUES ('{0}', '{1}', '{2}', '{3}', '{4}', '{5}', '{6}')",
+					    fa.UniqueId, fa.Directory.Replace ("'", "''"), fa.Filename.Replace ("'", "''"),
+					    StringFu.DateTimeToString (fa.LastWriteTime),
+					    StringFu.DateTimeToString (fa.LastIndexedTime),
+					    fa.FilterName,
+					    fa.FilterVersion);
+			}
 			return true;
 		}
 
@@ -293,9 +296,11 @@ namespace Beagle.Daemon {
 			// (in particular, in the path)
 			string directory = Path.GetDirectoryName (path);
 			string filename = Path.GetFileName (path);
-			DoNonQuery ("DELETE FROM file_attributes WHERE directory='{0}' AND filename='{1}'",
-					directory.Replace ("'", "''"),
-				    filename.Replace ("'", "''"));
+			lock (connection) {
+				DoNonQuery ("DELETE FROM file_attributes WHERE directory='{0}' AND filename='{1}'",
+					    directory.Replace ("'", "''"),
+					    filename.Replace ("'", "''"));
+			}
 		}
 	}
 }
