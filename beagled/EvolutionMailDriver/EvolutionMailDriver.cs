@@ -32,11 +32,13 @@ using System.IO;
 using System.Runtime.InteropServices;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Text;
+using System.Xml;
 
 using Mono.Posix;
 
 using Beagle.Util;
 using Camel = Beagle.Util.Camel;
+using GConf;
 
 namespace Beagle.Daemon {
 
@@ -356,16 +358,57 @@ namespace Beagle.Daemon {
 
 		public void IndexSummary (FileInfo summaryInfo)
 		{
-			string accountName, folderName;
+			string accountName = null, folderName;
 			bool getCachedContent = false;
 
 			if (summaryInfo.Name == "summary") {
 				string dirName = summaryInfo.DirectoryName;
 
-				int accountStartIdx = dirName.IndexOf (".evolution/mail/imap/") + 21;
-				string accountStart = dirName.Substring (accountStartIdx);
-				
-				accountName = accountStart.Substring (0, accountStart.IndexOf ('/'));
+				int imapStartIdx = dirName.IndexOf (".evolution/mail/imap/") + 21;
+				string imapStart = dirName.Substring (imapStartIdx);
+				string imapName = imapStart.Substring (0, imapStart.IndexOf ('/'));
+
+				GConf.Client gc = new GConf.Client ();
+				ICollection accounts = (ICollection) gc.Get ("/apps/evolution/mail/accounts");
+
+				foreach (string xml in accounts) {
+					XmlDocument xmlDoc = new XmlDocument ();
+
+					xmlDoc.LoadXml (xml);
+
+					XmlNode account = xmlDoc.SelectSingleNode ("//account");
+					
+					if (account == null)
+						continue;
+
+					string uid = null;
+
+					foreach (XmlAttribute attr in account.Attributes) {
+						if (attr.Name == "uid") {
+							uid = attr.InnerText;
+							break;
+						}
+					}
+
+					if (uid == null)
+						continue;
+
+					XmlNode imap_url = xmlDoc.SelectSingleNode ("//source/url");
+
+					if (imap_url == null)
+						continue;
+
+					if (imap_url.InnerText.StartsWith ("imap://" + imapName)) {
+						accountName = uid;
+						break;
+					}
+				}
+
+				if (accountName == null) {
+					log.Debug ("Unable to determine account name for {0}", imapName);
+					return;
+				}
+
 				folderName = dirName.Substring (dirName.LastIndexOf ('/') + 1);
 				getCachedContent = true;
 			} else {
@@ -375,11 +418,13 @@ namespace Beagle.Daemon {
 			}
 
 			if (folderName.ToLower() == "spam" || folderName.ToLower() == "junk") {
-				log.Info ("Skipping spam/junk folder in {0}", accountName);
+				log.Debug ("Skipping spam/junk folder in {0}", accountName);
 				return;
 			}
 
-			log.Info ("Going to index summary {0}", folderName);
+			Stopwatch watch = new Stopwatch ();
+			watch.Start();
+			log.Info ("Going to index IMAP summary for {0}", folderName);
 
 			Stream statusStream;
 			BinaryFormatter formatter;
@@ -446,8 +491,9 @@ namespace Beagle.Daemon {
 				++deletedCount;
 			}
 
-			log.Info ("{0}: indexed {1} of {2} messages; removed {3} expunged messages",
-				  folderName, indexedCount, count, deletedCount);
+			watch.Stop ();
+			log.Info ("{0}: indexed {1} of {2} messages and removed {3} expunged messages in {4}",
+				  folderName, indexedCount, count, deletedCount, watch);
 
 			statusStream = PathFinder.WriteAppData ("MailIndex", "status-" + accountName + "-" + folderName);
 			formatter = new BinaryFormatter ();

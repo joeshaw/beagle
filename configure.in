@@ -52,7 +52,7 @@ dnl ----------------------------------------------
 
 dnl beagled
 
-PKG_CHECK_MODULES(BEAGLED, gtk-sharp dbus-sharp)
+PKG_CHECK_MODULES(BEAGLED, gtk-sharp dbus-sharp gconf-sharp)
 BEAGLED_LIBS="$BEAGLED_LIBS $EVO_SHARP_LIBS"
 AC_SUBST(BEAGLED_LIBS)
 
