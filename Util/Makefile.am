@@ -14,7 +14,6 @@ $(GOOGLE_CS): $(GOOGLE_WSDL)
 CSFILES = 			        \
 	$(srcdir)/camel.cs              \
 	$(srcdir)/ExtendedAttribute.cs  \
-	$(srcdir)/FileMatcher.cs        \
 	$(srcdir)/FSpotTools.cs         \
 	$(srcdir)/gnome.cs              \
 	$(srcdir)/Id3.cs                \
