@@ -75,7 +75,7 @@ namespace Best {
 			canvas.Root = root;
 
 			DefaultWidth = 600;
-			DefaultHeight = 550;
+			DefaultHeight = 700;
 
 			accel_group = new Gtk.AccelGroup ();
 			this.AddAccelGroup (accel_group);
