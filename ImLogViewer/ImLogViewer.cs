@@ -52,9 +52,11 @@ namespace ImLogViewer {
 		private CellRendererText renderer;
 
 		private Gecko.WebControl gecko;
-		
+
 		private string log_path;
 		private string first_selected_log;
+		private bool have_first_selection_iter = false;
+		private TreeIter first_selection_iter;
 
 		private string speaking_to;
 		
@@ -88,7 +90,12 @@ namespace ImLogViewer {
 			
 			Glade.XML gxml = new Glade.XML (null, "ImLogViewer.glade", "window1", null);
 			gxml.Autoconnect (this);
-			
+
+			gecko = new Gecko.WebControl();
+			logwindow.AddWithViewport(gecko);
+			gecko.RenderData("", "file:///tmp", "text/html");
+			gecko.Show();
+		
 			this.treeStore = new TreeStore(new Type[] {typeof(string), typeof(string), typeof(object)});
 			this.logsviewer.Model = this.treeStore;
 			
@@ -101,27 +108,22 @@ namespace ImLogViewer {
 			
 			logsviewer.AppendColumn ("Date", renderer , "markup", 0);
 			logsviewer.AppendColumn ("Snippet", renderer , "text", 1);
-			
-			populateLeftTree();
-			
+
 			SetTitle (new DateTime ());
-			this.conversation.Text = "";
-			
-			logsviewer.ExpandAll();
-			
-			gecko = new Gecko.WebControl();
-			logwindow.AddWithViewport(gecko);
-			gecko.RenderData("", "file:///tmp", "text/html");
-			gecko.Show();
-		
-			this.conversation.Markup = "";
 
 			// FIXME: We need to remove this widget from the glade
 			// file.  Just hiding it is sort of silly.
 			this.conversation.Hide ();
 		
+			populateLeftTree();
+
+			logsviewer.ExpandAll();
+
 			logsviewer.Selection.Changed += OnConversationSelected; 
 			//search.Activated += OnSearchPressed;
+
+			if (have_first_selection_iter)
+				logsviewer.Selection.SelectIter (first_selection_iter);
 			
 			Application.Run();
 		}
@@ -169,9 +171,12 @@ namespace ImLogViewer {
 		{
 			list.Sort ();
 			foreach (StoreLog log in list) {
-				treeStore.AppendValues (parent, log.Timestamp.ToString (dateformat), log.Snippet, log);
-				if (log.ImLog.LogFile == first_selected_log)
-					RenderConversation (log.ImLog);
+				TreeIter iter;
+				iter = treeStore.AppendValues (parent, log.Timestamp.ToString (dateformat), log.Snippet, log);
+				if (! have_first_selection_iter || log.ImLog.LogFile == first_selected_log) {
+					have_first_selection_iter = true;
+					first_selection_iter = iter;
+				}
 			}
 		}
 		
@@ -224,10 +229,9 @@ namespace ImLogViewer {
 				SetTitle (new DateTime ());
 				gecko.RenderData ("", "file:///tmp/FIXME", "text/html");
 				return;
-			} 
+			}
 				
 			SetTitle (im_log.StartTime);
-			//conversation.Markup = "<b>" + date + "</b>";
 
 			StringBuilder html = new StringBuilder ();
 
