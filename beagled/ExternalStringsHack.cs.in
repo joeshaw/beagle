@@ -1,6 +1,6 @@
 using System;
 
-namespace Beagle.Core {
+namespace Beagle.Daemon {
 
 	internal class ExternalStringsHack {
 

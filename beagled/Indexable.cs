@@ -30,7 +30,7 @@ using System.Collections;
 using System.IO;
 using System.Text;
 
-namespace Beagle.Core {
+namespace Beagle.Daemon {
 
 	public class Indexable : Versioned {
 

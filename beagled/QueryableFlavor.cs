@@ -26,7 +26,7 @@
 
 using System;
 
-namespace Beagle.Core {
+namespace Beagle.Daemon {
 	
 	[AttributeUsage (AttributeTargets.Class)]
 	public class QueryableFlavor : Attribute {

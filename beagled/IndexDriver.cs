@@ -45,7 +45,7 @@ using LNS = Lucene.Net.Search;
 using BU = Beagle.Util;
 
 
-namespace Beagle.Core {
+namespace Beagle.Daemon {
 
 	[QueryableFlavor (Name="LuceneIndex", Domain=QueryDomain.Local)]
 	public class IndexDriver : IQueryable {

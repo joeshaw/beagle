@@ -29,7 +29,7 @@ using System;
 using System.Collections;
 using System.Text;
 
-namespace Beagle.Core {
+namespace Beagle.Daemon {
 
 	[QueryableFlavor (Name="EvolutionDataServer", Domain=QueryDomain.Local)]
 	public class EvolutionDataServerDriver : IQueryable{

@@ -29,7 +29,6 @@ using System;
 using System.IO;
 using System.Collections;
 using Beagle.Util;
-using Beagle.Core;
 using Beagle;
 
 namespace Beagle.Daemon

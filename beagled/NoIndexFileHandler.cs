@@ -24,7 +24,6 @@
 // DEALINGS IN THE SOFTWARE.
 //
 
-using Beagle.Core;
 using Beagle.Util;
 using System.Collections;
 using System.IO;

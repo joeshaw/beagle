@@ -25,7 +25,6 @@
 //
 
 using DBus;
-using Beagle.Core;
 using System;
 using System.Collections;
 using System.Threading;

@@ -28,19 +28,18 @@ namespace Beagle.Daemon
 {
 	using DBus;
 	using System.Collections;
-	using Core = Beagle.Core;
 
 	public class QueryManager : Beagle.QueryManager
 	{
 		private Hashtable liveQueries = new Hashtable ();
 		private Service service;
 		private static ulong numQueries = 0;
-		private Core.QueryDriver driver;
+		private QueryDriver driver;
 
 		public QueryManager (Service _service) 
 		{
 			service = _service;
-			driver = new Core.QueryDriver ();
+			driver = new QueryDriver ();
 		}
 
 		public override string NewQuery () 

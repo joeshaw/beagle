@@ -24,8 +24,6 @@
 // DEALINGS IN THE SOFTWARE.
 //
 
-using Beagle.Core;
-
 namespace Beagle.Daemon
 {
 

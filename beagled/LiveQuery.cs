@@ -25,7 +25,6 @@
 //
 
 using DBus;
-using Beagle.Core;
 using System;
 using System.IO;
 using System.Xml;
@@ -38,7 +37,7 @@ namespace Beagle.Daemon
 
 	public class LiveQuery : Beagle.Query {
 		private string name;
-		private Beagle.Core.Query query;
+		private Beagle.Daemon.Query query;
 		private QueryDriver driver;
 		private QueryResult result;
 
@@ -56,7 +55,7 @@ namespace Beagle.Daemon
 		{
 			name = _name;
 
-			query = new Beagle.Core.Query ();
+			query = new Beagle.Daemon.Query ();
 			driver = _driver;
 		}
 
@@ -72,12 +71,12 @@ namespace Beagle.Daemon
 
 		public override void AddDomain (Beagle.QueryDomain d)
 		{
-			query.AddDomain ((Beagle.Core.QueryDomain)d);
+			query.AddDomain ((Beagle.Daemon.QueryDomain)d);
 		}
 
 		public override void RemoveDomain (Beagle.QueryDomain d)
 		{
-			query.RemoveDomain ((Beagle.Core.QueryDomain)d);
+			query.RemoveDomain ((Beagle.Daemon.QueryDomain)d);
 		}
 
 		public override void AddMimeType (string type)
