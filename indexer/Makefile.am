@@ -4,7 +4,7 @@ LIBFLAGS =				\
 	-r:ICSharpCode.SharpZipLib.dll	\
 	-L ../Lucene.Net		\
 	-r:Lucene.Net.dll		\
-	-L ../filters			\
+	-L ../Filters			\
 	-r:Filters.dll
 
 INDEXER_CSFILES = 		\
