@@ -18,7 +18,7 @@ if test "x$MCSTEST" = "xno"; then
 fi
 
 
-PKG_CHECK_MODULES(BEAGLE_UI, gtk-sharp gtkhtml-sharp gnome-sharp dbus-sharp gsf-sharp)
+PKG_CHECK_MODULES(BEAGLE_UI, gtk-sharp gtkhtml-sharp gnome-sharp dbus-sharp)
 AC_SUBST(BEAGLE_UI_LIBS)
 
 dnl ----------------------------------------------
@@ -52,11 +52,15 @@ dnl ----------------------------------------------
 
 dnl beagled
 
+PKG_CHECK_MODULES(GSF_SHARP, gsf-sharp, enable_gsf_sharp=yes, enable_gsf_sharp=no)
+AM_CONDITIONAL(ENABLE_GSF_SHARP, test "x$enable_gsf_sharp" = "xyes")
+
 PKG_CHECK_MODULES(BEAGLED, gtk-sharp dbus-sharp gconf-sharp)
-BEAGLED_LIBS="$BEAGLED_LIBS $EVO_SHARP_LIBS"
+BEAGLED_LIBS="$BEAGLED_LIBS $EVO_SHARP_LIBS $GSF_SHARP_LIBS"
 AC_SUBST(BEAGLED_LIBS)
 
 DBUS_PREFIX=`$PKG_CONFIG --variable=prefix dbus-sharp`
+GSF_SHARP_PREFIX=`$PKG_CONFIG --variable=prefix gsf-sharp`
 
 dnl ----------------------------------------------
 
@@ -126,7 +130,7 @@ AC_SUBST(CHOOSER_FU_LIBS)
 dnl ----------------------------------------------
 
 dnl Prefixes for helper scripts
-GAC_PREFIX="$DBUS_PREFIX:$EVO_SHARP_PREFIX"
+GAC_PREFIX="$DBUS_PREFIX:$EVO_SHARP_PREFIX:$GSF_SHARP_PREFIX"
 GAC_PREFIX="`echo $GAC_PREFIX | sed -e 's|::\+|:|g' -e 's|^:\+||' -e 's|:\+$||'`"
 AC_SUBST(GAC_PREFIX)
 

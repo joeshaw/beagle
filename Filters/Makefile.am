@@ -30,10 +30,14 @@ CSFILES = 				\
 	$(srcdir)/FilterPng.cs		\
 	$(srcdir)/FilterText.cs	        \
 	$(srcdir)/FilterSource.cs	\
-	$(srcdir)/FilterRTF.cs		\
+	$(srcdir)/FilterRTF.cs
+
+if ENABLE_GSF_SHARP
+CSFILES += 				\
 	$(srcdir)/FilterOle.cs		\
-	$(srcdir)/FilterPPT.cs		\
-	$(srcdir)/FilterDOC.cs		
+	$(srcdir)/FilterDOC.cs		\
+	$(srcdir)/FilterPPT.cs
+endif
 
 LOCAL_ASSEMBLIES =				\
 	../Util/Util.dll			\
@@ -41,7 +45,7 @@ LOCAL_ASSEMBLIES =				\
 	../beagled/BeagleDaemonPlugins.dll	
 
 ASSEMBLIES =				\
-	$(BEAGLE_UI_LIBS)		\
+	$(BEAGLED_LIBS)			\
 	-r:ICSharpCode.SharpZipLib.dll	\
 	$(LOCAL_ASSEMBLIES:%=-r:%)
 

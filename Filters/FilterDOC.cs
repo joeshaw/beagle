@@ -1,5 +1,5 @@
 //
-// FilterExcel.cs
+// FilterDOC.cs
 //
 // Copyright (C) 2004 Novell, Inc.
 //
