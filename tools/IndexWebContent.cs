@@ -30,10 +30,12 @@ using System.Collections;
 using System.IO;
 
 using Beagle;
+using BU = Beagle.Util;
 
 class IndexWebContentTool {
 
 	public class IndexableWeb : Indexable {
+		
 		public IndexableWeb (string uri,
 				     string title,
 				     Stream contentStream)
@@ -77,7 +79,7 @@ class IndexWebContentTool {
 
 	static void Main (String[] args)
 	{
-		string uri = null;
+		string uriStr = null;
 		string title = null;
 		string sourcefile = null;
 		bool deletesourcefile = false;
@@ -97,7 +99,7 @@ class IndexWebContentTool {
 
 			switch (args [i]) {
 			case "--url":
-				uri = args [++i];
+				uriStr = args [++i];
 				break;
 			case "--title":
 				title = args [++i];
@@ -114,18 +116,37 @@ class IndexWebContentTool {
 			}
 		}
 
-		if (uri == null) {
+		if (uriStr == null) {
 			Console.WriteLine ("ERROR: URI not specified!\n");
 			PrintUsage ();
 			Environment.Exit (1);
-		} else if (uri.StartsWith ("https://")) {
+		}
+
+		Uri uri = new Uri (uriStr, true);
+		if (uri.Scheme == Uri.UriSchemeHttps) {
 			// For security/privacy reasons, we don't index any
 			// SSL-encrypted pages.
 			Console.WriteLine ("ERROR: Indexing secure https:// URIs is not secure!");
 			Environment.Exit (1);
 		}
 
+		// We don't index file: Uris.  Silently exit.
+		if (uri.IsFile)
+			return;
+
+		// We *definitely* don't index mailto: Uris.  Silently exit.
+		if (uri.Scheme == Uri.UriSchemeMailto)
+			return;
+
 		Indexable indexable;
+		
+		indexable = new Indexable (uri);
+		indexable.Type = "WebHistory";
+		indexable.MimeType = "text/html";
+		indexable.Timestamp = DateTime.Now;
+
+		if (title != null)
+			indexable.AddProperty (Property.New ("dc:title", title));
 
 		if (sourcefile != null) {
 			
@@ -135,10 +156,9 @@ class IndexWebContentTool {
 				Environment.Exit (1);
 			}
 
-			indexable = new IndexableWeb (uri, 
-						      title, 
-						      sourcefile,
-						      deletesourcefile);
+			indexable.ContentUri = BU.UriFu.PathToFileUri (sourcefile);
+			indexable.DeleteContent = deletesourcefile;
+
 		} else {
 			Stream stdin = Console.OpenStandardInput ();
 			if (stdin == null) {
@@ -147,12 +167,12 @@ class IndexWebContentTool {
 				Environment.Exit (1);
 			}
 
-			indexable = new IndexableWeb (uri, title, stdin);
+			indexable.SetTextReader (new StreamReader (stdin));
 		}
 
 		try {
 			System.Console.WriteLine ("Indexing");
-			Indexer.Index (indexable);
+			WebHistoryIndexer.Index (indexable);
 		} catch (Exception e) {
 			Console.WriteLine ("ERROR: Indexing failed:");
 			Console.Write (e);

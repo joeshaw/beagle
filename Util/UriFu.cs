@@ -1,5 +1,5 @@
 //
-// SearchWindow.cs
+// UriFu.cs
 //
 // Copyright (C) 2004 Novell, Inc.
 //
@@ -25,44 +25,19 @@
 //
 
 using System;
-using System.Runtime.InteropServices;
 
-using DBus;
+namespace Beagle.Util {
 
-namespace Beagle.Daemon
-{
-	public class DBusisms {
+	public class UriFu {
 
-		static Connection connection = null;
-		static Service service = null;
-		static BusDriver busDriver = null;
+		private UriFu () { } // class is static
 
-		public static Connection Connection {
-			get { return connection; }
-		}
-
-		public static Service Service {
-			get { return service; }
-		}
-
-		public static BusDriver BusDriver {
-			get { return busDriver; }
-		}
-
-		[DllImport ("dbus-glib-1")]
-		private extern static void dbus_g_thread_init ();
-
-		public static void Init ()
+		static public Uri PathToFileUri (string path)
 		{
-			if (connection != null)
-				return;
-					
-			dbus_g_thread_init ();
-			
-			connection = Bus.GetSessionBus ();
-			service = new Service (connection, Beagle.DBusisms.ServiceName);
-			busDriver = BusDriver.New (connection);
+			string uriStr = StringFu.PathToQuotedFileUri (path);
+			return new Uri (uriStr, true);
 		}
-				
+
 	}
+
 }

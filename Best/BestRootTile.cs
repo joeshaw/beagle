@@ -39,12 +39,11 @@ namespace Best {
 		public void Open ()
 		{
 			tileTable = new Hashtable ();
+			Changed ();
 		}
 
 		public void Add (Hit hit)
 		{
-			Console.WriteLine ("Added {0}", hit.Uri);
-
 			HitFlavor flavor = HitToHitFlavor.Get (hit);
 			if (flavor == null)
 				return;
@@ -69,18 +68,14 @@ namespace Best {
 
 		public void Subtract (Uri uri)
 		{
-			Console.WriteLine ("Subtracting {0}", uri);
-
 			bool changed = false;
 
 			foreach (TileHitCollection hitCollection in tileTable.Values)
 				if (hitCollection.Subtract (uri))
 					changed = true;
 
-			if (changed) {
-				Console.WriteLine ("changed!");
+			if (changed) 
 				Changed ();
-			}
 		}
 
 		override public void Render (TileRenderContext ctx)

@@ -176,6 +176,12 @@ namespace Beagle.Daemon {
 			ScheduleQueueItem (item);
 		}
 
+		public void ScheduleAddAndMark (Indexable indexable, FileSystemInfo info)
+		{
+			MarkClosure closure = new MarkClosure (info);
+			ScheduleAdd (indexable, new PostIndexHook (closure.Hook));
+		}
+
 		public void ScheduleAdd (Indexable indexable)
 		{
 			ScheduleAdd (indexable, null);
@@ -196,7 +202,7 @@ namespace Beagle.Daemon {
 		}
 
 		private class HitInfo {
-			public string Uri;
+			public Uri Uri;
 			public int Id;
 			public Document Doc;
 			public Versioned Versioned;
@@ -223,7 +229,19 @@ namespace Beagle.Daemon {
 			for (int i = 0; i < nHits; ++i) {
 				int id = luceneHits.Id (i);
 				Document doc = luceneHits.Doc (i);
-				string uri = UriFromLuceneDoc (doc);
+				Uri uri = UriFromLuceneDoc (doc);
+
+				// If this is a file Uri and the file doesn't exist
+				// on the system, filter the hit out of the
+				// query results and schedule the removal of that
+				// Uri from the index.
+				if (uri.IsFile
+				    && ! File.Exists (uri.LocalPath)
+				    && ! Directory.Exists (uri.LocalPath)) {
+					Console.WriteLine ("{0} is file!", uri);
+					ScheduleDelete (uri);
+					continue;
+				}
 
 				Versioned versioned = new Versioned ();
 				FromLuceneDocToVersioned (doc, versioned);
@@ -267,6 +285,33 @@ namespace Beagle.Daemon {
 
 		public delegate void DeletedHandler (LuceneDriver source, Uri uri);
 		public event DeletedHandler DeletedEvent;
+
+
+		/////////////////////////////////////////////////////
+
+		//
+		// The MarkClosure class
+		//
+
+		private class MarkClosure {
+			FileSystemInfo info;
+			DateTime mtime;
+			
+			public MarkClosure (FileSystemInfo _info)
+			{
+				info = _info;
+				// We cache the file's mtime...
+				mtime = info.LastWriteTime;
+			}
+
+			public void Hook (LuceneDriver driver, Uri uri)
+			{
+				// ...and then use that mtime when marking the file.
+				// Maybe this is just paranoia, but I don't want to miss
+				// file changes between indexing and marking the file.
+				BU.ExtendedAttribute.Mark (info, driver.Fingerprint, mtime);
+			}
+		}
 
 
 		/////////////////////////////////////////////////////
@@ -448,6 +493,8 @@ namespace Beagle.Daemon {
 			if (pendingAdds.Count == 0)
 				return;
 
+			Console.WriteLine ("Flushing {0} Adds", pendingAdds.Count);
+
 			IndexWriter writer = new IndexWriter (Store, Analyzer, false);
 			foreach (QueueItem item in pendingAdds) {
 				Indexable indexable = item.IndexableToAdd;
@@ -461,7 +508,6 @@ namespace Beagle.Daemon {
 					Console.WriteLine (e.StackTrace);
 				}
 				if (doc != null) {
-					Console.WriteLine ("Adding {0}", indexable.Uri);
 					writer.AddDocument (doc);
 					if (item.PostIndexHook != null)
 						item.PostIndexHook (this, indexable.Uri);
@@ -471,6 +517,8 @@ namespace Beagle.Daemon {
 					Thread.Sleep (26);
 				}
 			}
+
+			Console.WriteLine ("Done Adding");
 
 			if (sinceOptimization > sinceOptimizationThreshold) {
 				Console.WriteLine ("Optimizing Index");
@@ -581,13 +629,14 @@ namespace Beagle.Daemon {
 			if (pendingDeletes.Count == 0)
 				return;
 
+			Console.WriteLine ("Flushing {0} deletes", pendingDeletes.Count);
+
 			ArrayList idsToDelete = new ArrayList ();
 
 			// Get the ids of all documents with the given Uris.
 			LNS.Searcher searcher = new LNS.IndexSearcher (Store);
 			foreach (QueueItem item in pendingDeletes) {
 				Uri uri = item.UriToDelete;
-				Console.WriteLine ("Deleting {0}", uri);
 				Term term = new Term ("Uri", uri.ToString ());
 				LNS.Query uriQuery = new LNS.TermQuery (term);
 				LNS.Hits uriHits = searcher.Search (uriQuery);
@@ -605,6 +654,8 @@ namespace Beagle.Daemon {
 			foreach (int id in idsToDelete)
 				reader.Delete (id);
 			reader.Close ();
+
+			Console.WriteLine ("Done deleting");
 
 			// Call any post-indexing hooks
 			foreach (QueueItem item in pendingDeletes) {
@@ -763,12 +814,12 @@ namespace Beagle.Daemon {
 			return luceneQuery;
 		}
 		
-		static private string UriFromLuceneDoc (Document doc)
+		static private Uri UriFromLuceneDoc (Document doc)
 		{
 			string uri = doc.Get ("Uri");
 			if (uri == null)
 				throw new Exception ("Got document from Lucene w/o a URI!");
-			return uri;
+			return new Uri (uri, true);
 		}
 
 		static private void FromLuceneDocToVersioned (Document doc, Versioned versioned)
@@ -795,7 +846,7 @@ namespace Beagle.Daemon {
 
 			FromLuceneDocToVersioned (doc, hit);
 			
-			hit.Uri = new Uri (UriFromLuceneDoc (doc), true);
+			hit.Uri = UriFromLuceneDoc (doc);
 
 			str = doc.Get ("Type");
 			if (str == null)
@@ -845,12 +896,12 @@ namespace Beagle.Daemon {
 		// Sanity-check a Document against the Index:  Make sure that
 		// there isn't some other more recent document with the same Uri.
 		private bool DocIsUpToDate (LNS.Searcher searcher,
-					    string       docUri,
+					    Uri          docUri,
 					    int          docId,
 					    Versioned    docVersioned)
 		{
 			// First, find documents with the same Uri.
-			Term uriTerm = new Term ("Uri", docUri);
+			Term uriTerm = new Term ("Uri", docUri.ToString ());
 			LNS.Query uriQuery = new LNS.TermQuery (uriTerm);
 			LNS.Hits uriHits = searcher.Search (uriQuery);
 

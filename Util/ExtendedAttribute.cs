@@ -51,36 +51,77 @@ namespace Beagle.Util {
 
 		static Encoding encoding = new UTF8Encoding ();
 
-		public static void Set (string path, string name, string value)
+		public static void Set (FileSystemInfo info, string name, string value)
 		{
 			name = AddPrefix (name);
 
 			byte[] buffer = encoding.GetBytes (value);
-			int retval = setxattr (path, name, buffer, (uint) buffer.Length, 0);
+			int retval = setxattr (info.FullName, name, buffer, (uint) buffer.Length, 0);
 			// FIXME: should check retval, throw an exception if path doesn't exist, etc.
 		}
 
-		public static string Get (string path, string name)
+		public static string Get (FileSystemInfo info, string name)
 		{
 			name = AddPrefix (name);
 
 			byte[] buffer = null;
-			int size = getxattr (path, name, buffer, 0);
+			int size = getxattr (info.FullName, name, buffer, 0);
 			if (size <= 0)
 				return null;
 			buffer = new byte [size];
-			int rv = getxattr (path, name, buffer, (uint) size);
+			int rv = getxattr (info.FullName, name, buffer, (uint) size);
 			// FIXME: should check retval, throw an exception if path doesn't exist, etc.
 
 			return encoding.GetString (buffer);
 		}
 
-		public static void Remove (string path, string name)
+		public static void Remove (FileSystemInfo info, string name)
 		{
 			name = AddPrefix (name);
 
-			int retval = removexattr (path, name);
+			int retval = removexattr (info.FullName, name);
 			// FIXME: should check retval, throw an exception if path doesn't exist, etc.
 		}
+
+		//////////////////////////////////////////////////////////////////////
+
+		const string fingerprintAttr = "Fingerprint";
+		const string mtimeAttr = "MTime";
+
+		private static string timeToString (DateTime dt)
+		{
+			return dt.Ticks.ToString ();
+		}
+
+		public static bool Check (FileSystemInfo info, string fingerprint)
+		{
+			// Check the file's mtime to make sure it agrees with
+			// the timestamp stored in the extended attribute.
+			string mtimeFile = timeToString (info.LastWriteTime);
+			string mtimeStored = Get (info, mtimeAttr);
+			if (mtimeFile != mtimeStored)
+				return false;
+
+			// Confirm the fingerprint.
+			string fingerprintStored = Get (info, fingerprintAttr);
+			if (fingerprint != fingerprintStored)
+				return false;
+			
+			return true;
+		}
+
+		public static void Mark (FileSystemInfo info, string fingerprint, DateTime mtime)
+		{
+			// Store the file's mtime and the fingerprint in
+			// extended attributes.
+			Set (info, fingerprintAttr, fingerprint);
+			Set (info, mtimeAttr, timeToString (mtime));
+		}
+
+		public static void Mark (FileSystemInfo info, string fingerprint)
+		{
+			Mark (info, fingerprint, info.LastWriteTime);
+		}
+		
 	}
 }

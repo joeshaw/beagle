@@ -172,6 +172,7 @@ namespace Best {
 
 		private void DoSearch (object o, EventArgs args)
 		{
+			root.Open ();
 			Search (entry.Text);
 		}
 

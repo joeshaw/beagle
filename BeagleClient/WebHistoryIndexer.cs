@@ -1,5 +1,5 @@
 //
-// Indexer.cs
+// WebHistoryIndexer.cs
 //
 // Copyright (C) 2004 Novell, Inc.
 //
@@ -25,39 +25,27 @@
 //
 
 using System;
+
 using DBus;
 
-namespace Beagle {
+namespace Beagle
+{
 
-	public class Indexer 
-	{
-		private static object theIndexerLock = new object ();
-		static private IndexerProxy theIndexer = null;
+	public class WebHistoryIndexer {
 
-		private static IndexerProxy TheIndexer {
-			get {
-				lock (theIndexerLock) {
-					if (theIndexer == null)
-						theIndexer = (IndexerProxy) DBusisms.Service.GetObject (typeof (IndexerProxy), DBusisms.IndexerPath);
-				}
-				return theIndexer;
-			}
-		}
+		private static object theLock = new object ();
+		private static WebHistoryIndexerProxy theIndexer = null;
 
 		public static void Index (Indexable indexable)
 		{
+			lock (theLock) {
+				if (theIndexer == null)
+					theIndexer = DBusisms.Service.GetObject (typeof (WebHistoryIndexerProxy),
+										 DBusisms.WebHistoryIndexerPath) as WebHistoryIndexerProxy;
+			}
+			
 			indexable.StoreStream ();
-			TheIndexer.Index (indexable.ToXml ());
-		}
-
-		public static void Delete (Uri uri)
-		{
-			TheIndexer.Delete (uri.ToString ());
-		}
-
-		public static void Crawl (string path, int maxDepth)
-		{
-			TheIndexer.Crawl (path, maxDepth);
+			theIndexer.Index (indexable.ToXml ());
 		}
 	}
 }

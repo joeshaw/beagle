@@ -38,14 +38,14 @@ namespace Beagle.Daemon {
 
 		Evolution.Book addressbook = null;
 
+		public EvolutionDataServerDriver ()
+		{
+			addressbook = Evolution.Book.NewSystemAddressbook ();
+			addressbook.Open (true);
+		}
+
 		private Evolution.Book Addressbook {
-			get {
-				if (addressbook == null) {
-					addressbook = Evolution.Book.NewSystemAddressbook ();
-					addressbook.Open (true);
-				}
-				return addressbook;
-			}
+			get { return addressbook; }
 		}
 
 		public Hit HitFromContact (Evolution.Contact contact)
@@ -153,6 +153,8 @@ namespace Beagle.Daemon {
 				     IQueryResult result,
 				     IQueryableChangeData changeData)
 		{
+			return;
+
 			// FIXME: Evolution.BookQuery's bindings are all
 			// screwed up, so we can't construct compound queries.
 			// This will have to do for now.

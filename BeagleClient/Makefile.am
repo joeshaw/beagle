@@ -8,18 +8,20 @@ CSFLAGS = 					\
 	-define:PREFIX=$(prefix)		\
 	-define:PKGLIBDIR=$(pkglibdir)
 
-CSFILES = 				\
-	$(srcdir)/DBusisms.cs		\
-	$(srcdir)/FactoryProxy.cs	\
-	$(srcdir)/Factory.cs		\
-	$(srcdir)/Hit.cs                \
-	$(srcdir)/Indexable.cs          \
-	$(srcdir)/IndexerProxy.cs	\
-	$(srcdir)/Indexer.cs            \
-	$(srcdir)/Property.cs           \
-	$(srcdir)/Query.cs              \
-	$(srcdir)/QueryProxy.cs         \
-	$(srcdir)/Versioned.cs 
+CSFILES = 					\
+	$(srcdir)/DBusisms.cs			\
+	$(srcdir)/FactoryProxy.cs		\
+	$(srcdir)/Factory.cs			\
+	$(srcdir)/Versioned.cs			\
+	$(srcdir)/Hit.cs                	\
+	$(srcdir)/Indexable.cs          	\
+	$(srcdir)/Property.cs           	\
+	$(srcdir)/QueryProxy.cs         	\
+	$(srcdir)/Query.cs              	\
+	$(srcdir)/FileSystemIndexerProxy.cs	\
+	$(srcdir)/FileSystemIndexer.cs		\
+	$(srcdir)/WebHistoryIndexerProxy.cs	\
+	$(srcdir)/WebHistoryIndexer.cs
 
 
 

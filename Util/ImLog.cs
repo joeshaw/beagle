@@ -33,11 +33,11 @@ using System.Text.RegularExpressions;
 
 namespace Beagle.Util {
 
-	public class ImLog {
+	public abstract class ImLog {
 
 		public delegate void Sink (ImLog imLog);
 
-		public Sink loader; // semi-private
+		private bool loaded = false;
 
 		public string LogFile;
 		public long   LogOffset;
@@ -62,23 +62,24 @@ namespace Beagle.Util {
 
 		//////////////////////////
 
-		public ImLog (string protocol, string file, long offset)
+		protected ImLog (string protocol, string file, long offset)
 		{
 			Protocol = protocol;
 			LogFile = file;
 			LogOffset = offset;
 		}
 
-		public ImLog (string protocol, string file) : this (protocol, file, -1)
+		protected ImLog (string protocol, string file) : this (protocol, file, -1)
 		{ }
 
-		public string Uri {
+		public Uri Uri {
 			get {
 				// Hacky
-				String when = StartTime.ToString ("yyyy.MM.dd.HH.mm.ss");
-				return String.Format ("imlog://{0}/{1}/{2}/{3}",
-						      Protocol, Identity, SpeakingTo,
-						      when);
+				string when = StartTime.ToString ("yyyy.MM.dd.HH.mm.ss");
+				string uriStr = String.Format ("imlog://{0}/{1}/{2}/{3}",
+							       Protocol, Identity, SpeakingTo,
+							       when);
+				return new Uri (uriStr, true);
 			}							    
 		}
 
@@ -88,12 +89,18 @@ namespace Beagle.Util {
 		}
 
 		public IList Utterances {
-			get { Load (); return utterances; }
+			get { 
+				if (! loaded) {
+					Load ();
+					loaded = true;
+				}
+				return utterances;
+			}
 		}
 
-		public void AddUtterance (DateTime timestamp,
-					  String   who,
-					  String   text)
+		protected void AddUtterance (DateTime timestamp,
+					     String   who,
+					     String   text)
 		{
 			Utterance utt = new Utterance ();
 			utt.Timestamp = timestamp;
@@ -111,7 +118,7 @@ namespace Beagle.Util {
 			utterances.Add (utt);
 		}
 
-		public void AppendToPreviousUtterance (string text)
+		protected void AppendToPreviousUtterance (string text)
 		{
 			if (utterances.Count > 0) {
 				Utterance utt = (Utterance) utterances [utterances.Count - 1];
@@ -119,115 +126,16 @@ namespace Beagle.Util {
 			}
 		}
 
-		public void Load ()
-		{
-			if (loader != null)
-				loader (this);
-			loader = null;
-		}
+		protected abstract void Load ();
 	}
-	
+
 	///////////////////////////////////////////////////////////////////////////////
 
-	public abstract class ImLogScanner {
+	//
+	// Gaim Logs
+	//
 
-		public bool verbose = false;
-
-		abstract public void Scan (string path, ImLog.Sink sink);
-	}
-	
-	public class GaimLogScanner : ImLogScanner {
-
-		private void VerbosePrint (String text)
-		{
-			if (! verbose)
-				return;
-
-			Console.WriteLine ("GaimLogScanner: " + text);
-		}
-			
-		private void Crawl (DirectoryInfo info, ImLog.Sink sink)
-		{
-			foreach (DirectoryInfo subdir in info.GetDirectories ())
-				Scan (subdir.FullName, sink);
-
-			foreach (FileInfo file in info.GetFiles ()) {
-				if (file.Extension == ".txt" || file.Extension == ".html")
-					ScanNewStyleLog (file, sink);
-				else if (file.Extension == ".log")
-					ScanOldStyleLog (file, sink);
-			}
-		}
-
-		override public void Scan (string path, ImLog.Sink sink)
-		{
-			// Crawl the user's .gaim directory, looking for logs
-			DirectoryInfo info = new DirectoryInfo (path);
-			if (info.Exists) {
-				VerbosePrint ("Crawling " + path);
-				Crawl (info, sink);
-			}
-		}
-
-		private void ScanNewStyleLog (FileInfo file, ImLog.Sink sink)
-		{
-			ImLog log = new ImLog ("gaim", file.FullName);
-			
-			log.Timestamp = file.LastWriteTime;
-			
-			string startStr = Path.GetFileNameWithoutExtension (file.Name);
-			log.StartTime = DateTime.ParseExact (startStr,
-							     "yyyy-MM-dd.HHmmss",
-							     CultureInfo.CurrentCulture);
-
-			string path = file.FullName;
-			path = Path.GetDirectoryName (path);
-			log.SpeakingTo = Path.GetFileName (path);
-			path = Path.GetDirectoryName (path);
-			log.Identity = Path.GetFileName (path);
-
-			log.loader = this.LoadLog;
-
-			VerbosePrint ("Adding conversation " + log.Identity + ":" + log.SpeakingTo +
-				      "(" + log.StartTime + " - " + log.EndTime + ") to index queue");
-			sink (log);
-		}
-
-
-		private void ScanOldStyleLog (FileInfo file, ImLog.Sink sink)
-		{
-			StreamReader sr = file.OpenText ();
-			string line;
-			long offset = 0;
-			
-			string speakingTo = Path.GetFileNameWithoutExtension (file.Name);
-			
-			line = sr.ReadLine ();
-			bool isHtml = line.ToLower ().StartsWith ("<html>");
-			offset = line.Length + 1;
-
-			while ((line = sr.ReadLine ()) != null) {
-				long newOffset = offset + line.Length + 1;
-				if (isHtml)
-					line = StripTags (line);
-				if (IsNewConversation (line)) {
-					ImLog log = new ImLog ("gaim", file.FullName, offset);
-					log.loader = this.LoadLog;
-					log.StartTime = NewConversationTime (line);
-					log.Identity = "_OldGaim_"; // FIXME: parse a few lines of the log to figure this out
-					log.SpeakingTo = speakingTo;
-
-					VerbosePrint ("Adding conversation " + log.Identity + ":" + log.SpeakingTo +
-						      "(" + log.StartTime + " - " + log.EndTime + ") to index queue");
-
-					sink (log);
-				}
-				
-				offset = newOffset;
-			}
-		}
-
-		//////////////////////////
+	public class GaimLog : ImLog {
 
 		private static string StripTags (string line)
 		{
@@ -242,7 +150,7 @@ namespace Beagle.Util {
 			return line;
 		}
 
-		private bool IsNewConversation (string line)
+		private static bool IsNewConversation (string line)
 		{
 			int i = line.IndexOf ("--- New Conv");
 			return 0 <= i && i < 5;
@@ -255,7 +163,7 @@ namespace Beagle.Util {
 							    RegexOptions.IgnoreCase | RegexOptions.Compiled);
 		static private DateTimeFormatInfo dtInfo = new DateTimeFormatInfo ();
 
-		private DateTime NewConversationTime (string line)
+		private static DateTime NewConversationTime (string line)
 		{
 			Match m = dateRegex.Match (line);
 			if (m.Success) {
@@ -283,15 +191,24 @@ namespace Beagle.Util {
 			return new DateTime ();
 		}
 
-		private void ProcessLine (ImLog log, string line)
+		///////////////////////////////////////
+
+		private GaimLog (string file, long offset) : base ("gaim", file, offset)
+		{ }
+
+		private GaimLog (string file) : base ("gaim", file)
+		{ }
+
+
+		private void ProcessLine (string line)
 		{
 			if (! line.StartsWith ("(")) {
-				log.AppendToPreviousUtterance (line);
+				AppendToPreviousUtterance (line);
 				return;
 			}
 			int j = line.IndexOf (')');
 			if (j == -1) {
-				log.AppendToPreviousUtterance (line);
+				AppendToPreviousUtterance (line);
 				return;
 			}
 			string whenStr = line.Substring (1, j-1);
@@ -304,7 +221,7 @@ namespace Beagle.Util {
 			} catch {
 				// If something goes wrong, this line probably
 				// spills over from the previous one.
-				log.AppendToPreviousUtterance (line);
+				AppendToPreviousUtterance (line);
 				return;
 			}
 
@@ -312,13 +229,13 @@ namespace Beagle.Util {
 
 			// FIXME: this is wrong --- since we just get a time,
 			// the date gets set to 'now'
-			DateTime when = new DateTime (log.StartTime.Year,
-						      log.StartTime.Month,
-						      log.StartTime.Day,
+			DateTime when = new DateTime (StartTime.Year,
+						      StartTime.Month,
+						      StartTime.Day,
 						      hour, minute, second);
 
 			// Try to deal with time wrapping around.
-			while (when < log.EndTime)
+			while (when < EndTime)
 				when = when.AddDays (1);
 
 			int i = line.IndexOf (':');
@@ -327,24 +244,22 @@ namespace Beagle.Util {
 			string alias = line.Substring (0, i);
 			string text = line.Substring (i+1).Trim ();
 
-			log.AddUtterance (when, alias, text);
+			AddUtterance (when, alias, text);
 		}
 
-		private void LoadLog (ImLog log)
+		protected override void Load ()
 		{
 			StreamReader sr;
 			string line;
 
 			try {
-				FileStream fs = new FileStream (log.LogFile,
-								FileMode.Open, FileAccess.Read);
-				if (log.LogOffset > 0)
-					fs.Seek (log.LogOffset, SeekOrigin.Begin);
+				FileStream fs = new FileStream (LogFile, FileMode.Open, FileAccess.Read);
+				if (LogOffset > 0)
+					fs.Seek (LogOffset, SeekOrigin.Begin);
 				sr = new StreamReader (fs);
 			} catch (Exception e) {
 				// If we can't open the file, just fail.
-				Console.WriteLine ("Could not open '{0}' (offset={1})",
-						   log.LogFile, log.LogOffset);
+				Console.WriteLine ("Could not open '{0}' (offset={1})", LogFile, LogOffset);
 				Console.WriteLine (e);
 				return;
 			}
@@ -364,9 +279,67 @@ namespace Beagle.Util {
 				if (IsNewConversation (line))
 					break;
 
-				ProcessLine (log, line);
+				ProcessLine (line);
+			}
+
+		}
+
+		private static void ScanNewStyleLog (FileInfo file, ArrayList array)
+		{
+			ImLog log = new GaimLog (file.FullName);
+			
+			log.Timestamp = file.LastWriteTime;
+			
+			string startStr = Path.GetFileNameWithoutExtension (file.Name);
+			log.StartTime = DateTime.ParseExact (startStr,
+							     "yyyy-MM-dd.HHmmss",
+							     CultureInfo.CurrentCulture);
+
+			log.SpeakingTo = file.Directory.Name;
+			log.Identity   = file.Directory.Parent.Name;
+
+			array.Add (log);
+		}
+
+
+		private static void ScanOldStyleLog (FileInfo file, ArrayList array)
+		{
+			StreamReader sr = file.OpenText ();
+			string line;
+			long offset = 0;
+			
+			string speakingTo = Path.GetFileNameWithoutExtension (file.Name);
+			
+			line = sr.ReadLine ();
+			bool isHtml = line.ToLower ().StartsWith ("<html>");
+			offset = line.Length + 1;
+
+			while ((line = sr.ReadLine ()) != null) {
+				long newOffset = offset + line.Length + 1;
+				if (isHtml)
+					line = StripTags (line);
+				if (IsNewConversation (line)) {
+					ImLog log = new GaimLog (file.FullName, offset);
+					log.StartTime = NewConversationTime (line);
+					log.Identity = "_OldGaim_"; // FIXME: parse a few lines of the log to figure this out
+					log.SpeakingTo = speakingTo;
+
+					array.Add (log);
+				}
+				
+				offset = newOffset;
 			}
 		}
-	}
 
+		public static ICollection ScanLog (FileInfo file)
+		{
+			ArrayList array = new ArrayList ();
+			if (file.Extension == ".txt" || file.Extension == ".html")
+				ScanNewStyleLog (file, array);
+			else if (file.Extension == ".log")
+				ScanOldStyleLog (file, array);
+			return array;
+		}
+	}
 }
+

@@ -106,8 +106,6 @@ namespace Beagle.Daemon {
 
 		public override void Start ()
 		{
-			System.Console.WriteLine ("starting query");
-			
 			if (StartedEvent != null)
 				StartedEvent (this);
 
@@ -202,7 +200,6 @@ namespace Beagle.Daemon {
 			if (source != result) 
 				return;
 
-			System.Console.WriteLine ("Cancelled");
 			if (CancelledEvent != null)
 				CancelledEvent (this);
 		}

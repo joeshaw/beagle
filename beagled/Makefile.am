@@ -175,14 +175,24 @@ LUCENE_CSFILES =							\
 fsqueryabledir = $(srcdir)/FileSystemQueryable
 FILE_SYSTEM_QUERYABLE_CSFILES =				\
 	$(fsqueryabledir)/FileSystemQueryable.cs	\
-	$(fsqueryabledir)/FileSystemEventMonitor.cs	\
 	$(fsqueryabledir)/Crawler.cs			\
 	$(fsqueryabledir)/IndexerImpl.cs
 
 
+webhistqueryable = $(srcdir)/WebHistoryQueryable
+WEB_HISTORY_QUERYABLE_CSFILES =				\
+	$(webhistqueryable)/WebHistoryQueryable.cs
+
+
+gaimlogqueryable = $(srcdir)/GaimLogQueryable
+GAIM_LOG_QUERYABLE_CSFILES =				\
+	$(gaimlogqueryable)/GaimLogQueryable.cs
+
+
 DAEMON_DLL_CSFILES = 				\
 	$(LUCENE_CSFILES)			\
-	$(FILE_SYSTEM_QUERYABLE_CSFILES)	\
+	$(WEB_HISTORY_QUERYABLE_CSFILES)	\
+	$(GAIM_LOG_QUERYABLE_CSFILES)		\
 	$(srcdir)/DBusisms.cs			\
 	$(srcdir)/FactoryImpl.cs		\
 	$(srcdir)/Relevancy.cs			\
@@ -196,6 +206,8 @@ DAEMON_DLL_CSFILES = 				\
 	$(srcdir)/GoogleDriver.cs		\
 	$(srcdir)/LuceneDriver.cs		\
 	$(srcdir)/LuceneQueryable.cs		\
+	$(srcdir)/Crawler.cs			\
+	$(srcdir)/FileSystemEventMonitor.cs	\
 	$(srcdir)/FilteredIndexable.cs
 
 DAEMON_DLL_LOCAL_ASSEMBLIES =		\

@@ -25,6 +25,7 @@ CSFILES = 			        \
 	$(srcdir)/PageCache.cs          \
 	$(srcdir)/PullingReader.cs      \
 	$(srcdir)/StringFu.cs           \
+	$(srcdir)/UriFu.cs		\
 	$(srcdir)/Vfs.cs
 
 ASSEMBLIES =				\

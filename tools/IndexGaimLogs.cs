@@ -74,7 +74,7 @@ namespace IndexGaimLogs {
 	        static bool verbose = false;
 
 		static Indexable CreateIndexable (ImLog log) {
-			Indexable indexable = new Indexable (new Uri (log.Uri, true));
+			Indexable indexable = new Indexable (log.Uri);
 			indexable.Timestamp = log.Timestamp;
 			indexable.Type = "IMLog";
 

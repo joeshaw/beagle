@@ -121,9 +121,10 @@ namespace Beagle.Daemon {
 		
 				ArrayList filteredHits = new ArrayList ();
 
-				foreach (Hit hit in someHits)
+				foreach (Hit hit in someHits) {
 					if (hit.IsValid && Relevancy.AdjustScore (hit))
 						filteredHits.Add (hit);
+				}
 				
 				if (HitsAddedEvent != null)
 					HitsAddedEvent (this, filteredHits);

@@ -25,6 +25,7 @@
 //
 
 using System;
+using System.Runtime.InteropServices;
 using DBus;
 
 namespace Beagle 
@@ -33,16 +34,22 @@ namespace Beagle
 
 		static public readonly string ServiceName = "com.novell.Beagle";
 		static public readonly string FactoryPath = "/com/novell/Beagle/Factory";
-		static public readonly string IndexerPath = "/com/novell/Beagle/Indexer";
+		static public readonly string WebHistoryIndexerPath = "/com/novell/Beagle/WebHistoryIndexer";
+		static public readonly string FileSystemIndexerPath = "/com/novell/Beagle/FileSystemIndexer";
 
 		static Connection connection = null;
 		static Service service = null;
 		static BusDriver driver = null;
 
+		[DllImport ("dbus-glib-1")]
+		private extern static void dbus_g_thread_init ();
+
 		internal static Connection Connection {
 			get { 
-				if (connection == null)
+				if (connection == null) {
+					dbus_g_thread_init ();
 					connection = Bus.GetSessionBus ();
+				}
 				return connection;
 			}
 		}

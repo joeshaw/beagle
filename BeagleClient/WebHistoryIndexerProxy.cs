@@ -1,5 +1,5 @@
 //
-// IndexerProxy.cs
+// WebHistoryIndexerProxy.cs
 //
 // Copyright (C) 2004 Novell, Inc.
 //
@@ -28,16 +28,10 @@ using DBus;
 
 namespace Beagle
 {
-	[Interface ("com.novell.Beagle.Indexer")]
-	public abstract class IndexerProxy
+	[Interface ("com.novell.Beagle.WebHistoryIndexer")]
+	public abstract class WebHistoryIndexerProxy
 	{
 		[Method]
 		public abstract void Index (string indexableAsXml);
-
-		[Method]
-		public abstract void Delete (string uri);
-
-		[Method]
-		public abstract void Crawl (string path, int maxDepth);
 	}
 }

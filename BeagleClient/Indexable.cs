@@ -42,6 +42,9 @@ namespace Beagle {
 		// The URI of the contents to index
 		private Uri contentUri = null;
 
+		// The URI of the hot contents to index
+		private Uri hotContentUri = null;
+
 		// Whether the content should be deleted after indexing
 		private bool deleteContent = false;
 		
@@ -56,6 +59,9 @@ namespace Beagle {
 
 		// A stream of the content to index
 		private TextReader textReader;
+
+		// A stream of the hot content to index
+		private TextReader hotTextReader;
 
 		//////////////////////////
 
@@ -88,6 +94,11 @@ namespace Beagle {
 			set { contentUri = value; }
 		}
 
+		public Uri HotContentUri {
+			get { return hotContentUri; }
+			set { hotContentUri = value; }
+		}
+
 		public bool DeleteContent {
 			get { return deleteContent; }
 			set { deleteContent = value; }
@@ -117,7 +128,12 @@ namespace Beagle {
 
 		public virtual TextReader GetHotTextReader ()
 		{
-			return null;
+			return hotTextReader;
+		}
+
+		public virtual void SetHotTextReader (TextReader reader)
+		{
+			hotTextReader = reader;
 		}
 
 		public IEnumerable Properties {
@@ -159,6 +175,8 @@ namespace Beagle {
 			writer.WriteAttributeString ("uri", uri.ToString ());
 			if (contentUri != null) 
 				writer.WriteAttributeString ("contenturi", contentUri.ToString ());
+			if (hotContentUri != null)
+				writer.WriteAttributeString ("hotcontenturi", hotContentUri.ToString ());
 			if (deleteContent)
 				writer.WriteAttributeString ("deletecontent", "1");
 			if (mimeType != null)
@@ -185,28 +203,39 @@ namespace Beagle {
 			
 			writer.WriteEndElement ();
 		}
-
-		public void StoreStream () {
-			if (textReader == null)
-				return;
+		
+		private static Uri TextReaderToTempFileUri (TextReader reader)
+		{
+			if (reader == null)
+				return null;
 
 			string filename = Path.GetTempFileName ();
 			FileStream fileStream = File.OpenWrite (filename);
 			BufferedStream bufferedStream = new BufferedStream (fileStream);
 			StreamWriter writer = new StreamWriter (bufferedStream);
+
 			const int BUFFER_SIZE = 1892;
-			char []buffer = new char[BUFFER_SIZE];
-			
-			int read = textReader.Read (buffer, 0, BUFFER_SIZE);
-			
-			while (read > 0) {
-				writer.Write (buffer, 0, read);
-				read = textReader.Read (buffer, 0, BUFFER_SIZE);
-			}
+			char [] buffer = new char [BUFFER_SIZE];
+
+			int read;
+			do {
+				read = reader.Read (buffer, 0, BUFFER_SIZE);
+				if (read > 0)
+					writer.Write (buffer, 0, read);
+			} while (read > 0);
 			
 			writer.Close ();
 
-			ContentUri = new Uri ("file://" + filename, false);
+			return BU.UriFu.PathToFileUri (filename);
+		}
+
+		public void StoreStream () {
+			if (textReader != null)
+				ContentUri = TextReaderToTempFileUri (textReader);
+
+			if (hotTextReader != null)
+				HotContentUri = TextReaderToTempFileUri (hotTextReader);
+
 			DeleteContent = true;
 		}
 
@@ -237,6 +266,12 @@ namespace Beagle {
 				contentUri = null;
 			else
 				contentUri = new Uri (str, true);
+
+			str = reader.GetAttribute ("hotcontenturi");
+			if (str == null)
+				hotContentUri = null;
+			else
+				hotContentUri = new Uri (str, true);
 			
 			deleteContent = (reader.GetAttribute ("deletecontent") == "1");
 			if (reader.GetAttribute ("revision") != null)

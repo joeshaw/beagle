@@ -189,7 +189,7 @@ namespace Beagle.Daemon.FileSystemQueryable {
 
 			// Since this file was just indexed, we don't need to keep
 			// it around in the page cache.
-			BU.PageCache.DoNotNeed (info.FullName);
+			//BU.PageCache.DoNotNeed (info.FullName);
 		}
 
 	}
