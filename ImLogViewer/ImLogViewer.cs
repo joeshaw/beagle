@@ -18,8 +18,7 @@ using BU = Beagle.Util;
 
 namespace ImLogViewer {
 
-	public class StoreLog
-	{
+	public class StoreLog : IComparable {
 		public StoreLog () { }
 		
 		public string File;
@@ -27,6 +26,16 @@ namespace ImLogViewer {
 		public string Snippet;
 		
 		public BU.GaimLog ImLog;
+
+		public int CompareTo (object obj)
+		{
+			StoreLog other = obj as StoreLog;
+			if (other == null)
+				return 1;
+
+			// Sort into reverse chronological order
+			return other.Timestamp.CompareTo (this.Timestamp);
+		}
 	}
 	
 	public class GaimLogViewer {
@@ -47,6 +56,8 @@ namespace ImLogViewer {
 		
 		private string logsDir;
 		private string logPath;
+
+		private string speaking_to;
 		
 		public GaimLogViewer (string path) {
 			logsDir = Path.GetDirectoryName (path);
@@ -54,9 +65,8 @@ namespace ImLogViewer {
 
 			timeline = new BU.Timeline ();
 			IndexLogs();
-			string speaker = extractSpeaker(logsDir);
 			
-			ShowWindow (speaker);
+			ShowWindow (speaking_to);
 		}
 		
 		private void ShowWindow (string speaker) {
@@ -142,6 +152,7 @@ namespace ImLogViewer {
 
 		private void PopulateTimeline (TreeIter parent, ArrayList list, string dateformat)
 		{
+			list.Sort ();
 			foreach (StoreLog log in list)
 				treeStore.AppendValues (parent, log.Timestamp.ToString (dateformat) , log.Snippet, log.File, "");
 		}
@@ -187,6 +198,10 @@ namespace ImLogViewer {
 				ICollection logs = BU.GaimLog.ScanLog (new FileInfo (file));
 				
 				foreach (BU.ImLog gaimlog in logs) {
+
+					if (speaking_to == null)
+						speaking_to = gaimlog.SpeakingTo;
+
 					StoreLog log = ImLogParse (gaimlog);
 					timeline.Add (log, log.Timestamp);
 				}
