@@ -1,3 +1,11 @@
+2005-03-29  Veerapuram Varadhan  <vvaradhan@novell.com>
+
+	* beagled/LuceneDriver: Delete if indexable.DeleteContent is
+	true. Fixes http://bugzilla.gnome.org/show_bug.cgi?id=171944.
+
+	* ChangeLog: Corrected my previous entries w.r.t date (pointed out
+	by Daniel)
+	
 2005-03-28  Veerapuram Varadhan  <vvaradhan@novell.com>
 
 	* Tiles/TileDocs.cs, Tiles/TilePresentation.cs: Fix for
@@ -21,39 +29,39 @@
 
 	* Util/UriFu.cs: Fix for filenames with odd characters, bug #170862
 
-2005-02-18  Veerapuram Varadhan	 <vvaradhan@novell.com>
+2005-03-18  Veerapuram Varadhan	 <vvaradhan@novell.com>
 
 	* beagled/FileSystemQueryable/FileSystemQueryable.cs,
 	beagled/FileSystemQueryable/DirectoryIndexableGenerator.cs: Fix
 	for http://bugzilla.gnome.org/show_bug.cgi?id=170437.
 	
-2005-02-18  Veerapuram Varadhan	 <vvaradhan@novell.com>
+2005-03-18  Veerapuram Varadhan	 <vvaradhan@novell.com>
 
 	* Filters/FilterOpenOffice.cs: More odt-mime-type changes.
 	
-2005-02-17  Veerapuram Varadhan	 <vvaradhan@novell.com>
+2005-03-17  Veerapuram Varadhan	 <vvaradhan@novell.com>
 
 	* glue/wv1-glue.c: Fix for
 	http://bugzilla.gnome.org/show_bug.cgi?id=170124. Do not strip out
 	non-iso-printable characters.
 	
-2005-02-13  Veerapuram Varadhan	 <vvaradhan@novell.com>
+2005-03-13  Veerapuram Varadhan	 <vvaradhan@novell.com>
 
 	* Tiles/TileMusic.cs: Show audio/media filename if "fixme:title"
 	doesn't exist.  Fix for
 	http://bugzilla.gnome.org/show_bug.cgi?id=170300.
 	
-2005-02-13  Veerapuram Varadhan	 <vvaradhan@novell.com>
+2005-03-13  Veerapuram Varadhan	 <vvaradhan@novell.com>
 
 	* Filters/FilterPPT.cs: Catch the exceptions and log the message..
 	
-2005-02-10  Veerapuram Varadhan	 <vvaradhan@novell.com>
+2005-03-10  Veerapuram Varadhan	 <vvaradhan@novell.com>
 
 	* Filters/FilterDOC.cs, glue/wv1-glue.c: Fix for
 	http://bugzilla.gnome.org/show_bug.cgi?id=169758. Reduce the
 	number of round trips between managed and unmanaged code.
 	
-2005-02-10  Veerapuram Varadhan	 <vvaradhan@novell.com>
+2005-03-10  Veerapuram Varadhan	 <vvaradhan@novell.com>
 
 	* Filters/FilterPPT.cs: Fix for PPT 4.0 files.
 	
@@ -94,13 +102,13 @@
 	* Util/StringFu.cs, Util/gnome.cs: Handle filenames containing
 	'%'. Fixes bug #169422
 
-2005-02-02  Veerapuram Varadhan	 <vvaradhan@novell.com>
+2005-03-02  Veerapuram Varadhan	 <vvaradhan@novell.com>
 
 	* Filters/FilterOpenOffice.cs, Filters/FilterRTF.cs: Handle
 	exceptions and log a decent message than dumping the whole stack
 	trace.
 	
-2005-02-02  Veerapuram Varadhan	 <vvaradhan@novell.com>
+2005-03-02  Veerapuram Varadhan	 <vvaradhan@novell.com>
 
 	* Filters/FilterPPT.cs: If gsf# throws some exception, handle it
 	properly so that the whole stack trace is not displayed.  Fixes
