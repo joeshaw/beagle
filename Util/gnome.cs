@@ -20,6 +20,8 @@ namespace Beagle.Util {
 		
 			[DllImport ("libgnomevfs-2")] extern static bool gnome_vfs_init ();
 			[DllImport ("libgnomevfs-2")] extern static string gnome_vfs_get_mime_type (string text_uri);
+			[DllImport ("libgnomevfs-2")] extern static string gnome_vfs_get_mime_type_for_data (byte[] data, int length);
+			[DllImport ("libgnomevfs-2")] extern static string gnome_vfs_mime_type_from_name_or_default (string filename, string defaultv);
 
 			static Mime ()
 			{
@@ -28,9 +30,21 @@ namespace Beagle.Util {
 
 			public static string GetMimeType (string text_uri)
 			{
-				return gnome_vfs_get_mime_type (text_uri);
+				string mimeType = gnome_vfs_get_mime_type (text_uri);
+				return mimeType;
+				
 			}
-
+			
+			public static string GetMimeTypeFromData (byte[] buffer, int buffSize, string text_uri)
+			{
+				string guessedType = gnome_vfs_get_mime_type_for_data (buffer, buffSize);
+				if (text_uri != null 
+				    && (guessedType == "text/plain"
+					|| guessedType == "application/octet-stream"
+					|| guessedType == "application/zip"))
+					guessedType = gnome_vfs_mime_type_from_name_or_default (text_uri, guessedType);
+				return guessedType;
+			}
 		}
 
 		[Flags]

@@ -65,6 +65,22 @@ namespace Beagle.Filters {
 			return new Flavor (mimeType, extension);
 		}
 
+		static public Flavor FromStream (Stream stream, String path)
+		{
+			const int maxSize = 1024; // default to 1k
+			byte [] buffer = new byte [maxSize];
+			
+			// Read up to maxSize bytes of stream to try to guess mime-type
+			int read = stream.Read (buffer, 0, maxSize);
+			String mimeType = Beagle.Util.VFS.Mime.GetMimeTypeFromData (buffer, read, path);
+			return new Flavor (mimeType, path != null ? Path.GetExtension (path) : "");
+		}
+		
+		static public Flavor FromStream (Stream stream)
+		{
+			return FromStream (stream, null);
+		}
+
 		public String MimeType {
 			get { return mimeType; }
 		}
