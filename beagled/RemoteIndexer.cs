@@ -225,6 +225,11 @@ namespace Beagle.Daemon {
 			}
 		}
 
+		public int GetItemCount ()
+		{
+			return Proxy.GetItemCount ();
+		}
+
 		private void OnProxyChanged (string list_of_added_uris_as_string,
 					     string list_of_removed_uris_as_string)
 		{

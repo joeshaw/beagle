@@ -448,8 +448,6 @@ namespace Beagle.Daemon {
 			Stopwatch sw = new Stopwatch ();
 			sw.Start ();
 			IndexReader reader = IndexReader.Open (Store);
-			// Cache this every time you query
-			last_item_count = reader.NumDocs ();
 
 			LNS.Searcher searcher = new LNS.IndexSearcher (reader);
 			LNS.Query query = ToLuceneQuery (body, list_of_uris);

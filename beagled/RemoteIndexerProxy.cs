@@ -48,6 +48,9 @@ namespace Beagle.Daemon {
 		public abstract void Flush ();
 
 		[Method]
+		public abstract int GetItemCount ();
+
+		[Method]
 		public abstract void Close ();
 
 		public delegate void ChangedHandler (string list_of_added_uris_as_string,

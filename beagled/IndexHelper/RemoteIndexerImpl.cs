@@ -175,11 +175,15 @@ namespace Beagle.IndexHelper {
 		override public bool Open ()
 		{
 			lock (this) {
-				Logger.Log.Debug ("Open on {0}", name);
+
+				// We allow the item to be opened multiple times,
+				// but close should only be called once.
 				if (is_open)
-					return true; // FIXME: Is this right?  Does it matter?
+					return true; 
+
 				is_open = true;
-				safe_to_close = false;
+				safe_to_close = true;
+
 				return Shutdown.WorkerStart (this, name);
 			}
 		}
@@ -234,6 +238,7 @@ namespace Beagle.IndexHelper {
 			if (indexer != null) {
 				Indexable indexable = FilteredIndexable.NewFromEitherXml (indexable_as_xml);
 				next_flush.ToBeAdded.Add (indexable);
+				safe_to_close = false;
 			}
 		}
 
@@ -242,6 +247,7 @@ namespace Beagle.IndexHelper {
 			if (indexer != null) {
 				Uri uri = new Uri (uri_as_str, true);
 				next_flush.ToBeRemoved.Add (uri);
+				safe_to_close = false;
 			}
 		}
 		
@@ -255,6 +261,11 @@ namespace Beagle.IndexHelper {
 				Thread th = new Thread (new ThreadStart (this_flush.DoFlush));
 				th.Start ();
 			}
+		}
+
+		override public int GetItemCount ()
+		{
+			return indexer != null ? indexer.GetItemCount () : -1;
 		}
 
 	}

@@ -150,6 +150,7 @@ namespace Beagle.Daemon {
 			// FIXME: Shut down the helper process
 		}
 
+#if DBUS_IS_BROKEN_BROKEN_BROKEN
 		private class GetProxyClosure {
 
 			Service service;
@@ -230,13 +231,56 @@ namespace Beagle.Daemon {
 				return proxy;
 			}
 		}
+#endif
 
 		static public RemoteIndexerProxy NewRemoteIndexerProxy (string name)
 		{
+#if DBUS_IS_BROKEN_BROKEN_BROKEN
 			GetProxyClosure gpc = new GetProxyClosure (index_helper_service, name);
 			return gpc.GetProxy ();
+#else
+			RemoteIndexerProxy proxy = null;
+			bool finished = false;
+			int exception_count = 0;
+
+			while (! finished) {
+				try {
+					RemoteIndexerProxy factory;
+					factory = index_helper_service.GetObject (typeof (RemoteIndexerProxy),
+										  index_helper_factory_path) as RemoteIndexerProxy;
+
+					string path = factory.NewRemoteIndexerPath (name);
+							
+					proxy = index_helper_service.GetObject (typeof (RemoteIndexerProxy),
+										path) as RemoteIndexerProxy;
+					finished = proxy.Open ();
+				} catch (Exception ex) {
+					if (exception_count == 0) {
+						Logger.Log.Debug ("Caught exception fetching proxy '{0}'", name);
+						Logger.Log.Debug (ex);
+					} else if (exception_count % 10 == 0) {
+						Logger.Log.Debug ("More exceptions!");
+						// FIXME: Maybe we dropped the OnServiceOwner signal emission,
+						// so try launching a new helper process.
+						// This is an annoying hack, and should be removed --- OnServiceOwner
+						// should reliably be fired when the helper process dies, and the
+						// fact that it isn't is probably due to a bug in the d-bus mono bindings...
+						// dbus-monitor suggests that the signal is going out across the wire.
+						LaunchHelperProcess ();
+					}
+							
+					++exception_count;
+					if (exception_count > 200) {
+						Logger.Log.Debug ("I surrender!");
+						Environment.Exit (-1949);
+					}
+
+					Thread.Sleep (200);
+				}
+			}
+
+			return proxy;
+#endif
 		}
-
 	}
-
 }

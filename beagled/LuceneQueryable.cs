@@ -275,7 +275,7 @@ namespace Beagle.Daemon {
 
 		public virtual int GetItemCount ()
 		{
-			return Driver.GetItemCount ();
+			return indexer.GetItemCount ();
 		}
 
 		//////////////////////////////////////////////////////////////////////////////////
@@ -416,8 +416,11 @@ namespace Beagle.Daemon {
 			{
 
 				if (indexable != null) {
-					queryable.CacheIndexableInfo (indexable);
-					indexer.Add (indexable);
+					if (! (indexable.Uri.IsFile 
+					       && queryable.FileAttributesStore.IsUpToDate (indexable.Uri.LocalPath))) {
+						queryable.CacheIndexableInfo (indexable);
+						indexer.Add (indexable);
+					}
 				} else if (uri != null) {
 					indexer.Remove (uri);
 				} else if (generator != null) {

@@ -41,6 +41,8 @@ namespace Beagle.Daemon {
 
 		void Flush ();
 
+		int GetItemCount ();
+
 		event IIndexerChangedHandler ChangedEvent;
 	}
 }
