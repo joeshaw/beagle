@@ -59,6 +59,8 @@ namespace Best {
 
 			DeleteEvent += new DeleteEventHandler (this.DoDelete);
 
+			Icon = Images.GetPixbuf ("smalldog.png");
+
 			Widget content = CreateContents ();
 
 			VBox main = new VBox (false, 3);

@@ -26,7 +26,7 @@
 
 using System;
 using System.Diagnostics;
-
+using System.Text.RegularExpressions;
 using BU = Beagle.Util;
 
 namespace Beagle.Tile {
@@ -34,6 +34,14 @@ namespace Beagle.Tile {
 	[HitFlavor (Name="Email", Rank=1100, Emblem="emblem-mail-message.png", Color="#f5f5f5",
 		    Type="MailMessage")]
 	public class TileMailMessage : TileFromHitTemplate {
+#if ENABLE_EVO_SHARP
+		string aim_name;
+		string groupwise_name;
+		string icq_name;
+		string jabber_name;
+		string msn_name;
+		string yahoo_name;
+#endif
 		public TileMailMessage (Hit _hit) : base (_hit,
 							  "template-mail-message.html")
 		{
@@ -75,6 +83,69 @@ namespace Beagle.Tile {
 			if (Hit ["fixme:hasAttachments"] != null)
 				Template["AttachmentIcon"] = Images.GetHtmlSource ("attachment.png", "image/png");
 
+			GetImNames (Template["Who"]);
+
+			if (aim_name != null)
+				Template["CanSendIm"] = "";
+		}
+
+		static bool ebook_failed = false;
+
+		private string GetEmail (string who)
+		{
+			Regex re = new Regex (@".*<(?<email>.*)>");
+			MatchCollection matches = re.Matches (who);
+			foreach (Match match in matches) {
+				if (match.Length != 0) {
+					return match.Groups["email"].ToString ();
+				}
+			}
+			
+			return who;
+		}
+
+		private void GetImNames (string who)
+		{
+#if ENABLE_EVO_SHARP
+			Evolution.Book addressbook = null;
+
+			if (ebook_failed)
+				return;
+
+			try {
+				addressbook = Evolution.Book.NewSystemAddressbook ();
+				addressbook.Open (true);
+			} catch (Exception e) {
+				Console.WriteLine ("\nCould not open Evolution addressbook:\n" + e);
+				ebook_failed = true;
+				return;
+			}
+
+			string email = GetEmail (who);
+
+			System.Console.WriteLine ("Looking for im name for {0}",
+						  email);
+
+			string qstr = 
+				String.Format ("(is \"email\" \"{0}\")", email);
+
+			Evolution.BookQuery query = Evolution.BookQuery.FromString (qstr);
+			Evolution.Contact[] matches = addressbook.GetContacts (query);
+			foreach (Evolution.Contact c in matches) {
+				if (c.ImAim.Length > 0)
+					aim_name = c.ImAim[0];
+				if (c.ImIcq.Length > 0)
+					icq_name = c.ImIcq[0];
+				if (c.ImJabber.Length > 0)
+					jabber_name = c.ImJabber[0];
+				if (c.ImMsn.Length > 0)
+					msn_name = c.ImMsn[0];
+				if (c.ImYahoo.Length > 0)
+					yahoo_name = c.ImYahoo[0];
+				if (c.ImGroupwise.Length > 0)
+					groupwise_name = c.ImGroupwise[0];
+			}
+#endif
 		}
 
 		[TileAction]
@@ -100,6 +171,23 @@ namespace Beagle.Tile {
 			p.StartInfo.Arguments = "'mailto:" + address + "'";
 
 			p.Start ();			
+		}
+
+		[TileAction]
+		public void SendIm () 
+		{
+			if (aim_name != null) 
+				SendImAim (aim_name);
+			if (groupwise_name != null) 
+				SendImGroupwise (aim_name);
+			if (icq_name != null) 
+				SendImIcq (aim_name);
+			if (jabber_name != null) 
+				SendImJabber (aim_name);
+			if (msn_name != null) 
+				SendImMsn (aim_name);
+			if (yahoo_name != null) 
+				SendImYahoo (aim_name);
 		}
 	}
 }

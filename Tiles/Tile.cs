@@ -205,7 +205,7 @@ namespace Beagle.Tile {
 			if (screenname == null || screenname == "")
 				return;
 
-			Console.WriteLine ("SendImAim...");
+			Console.WriteLine ("SendImAim {0}", screenname);
 			Process p = new Process ();
 			p.StartInfo.UseShellExecute = false;
 			p.StartInfo.FileName        = "gaim-remote";
@@ -217,7 +217,26 @@ namespace Beagle.Tile {
 				Console.WriteLine ("Error launching gaim-remote: " + e);
 			}
 		}
-			
+
+		protected void SendImIcq (string screenname)
+		{
+		}
+
+		protected void SendImJabber (string screenname)
+		{
+		}
+
+		protected void SendImMsn (string screenname)
+		{
+		}
+
+		protected void SendImYahoo (string screenname)
+		{
+		}
+
+		protected void SendImGroupwise (string screenname)
+		{
+		}			
 	}
 }
 	
