@@ -118,7 +118,6 @@ namespace Beagle.Daemon.FileSystemQueryable {
 			AddDefaultPatternToIgnore (".*",
 						   "*~",
 						   "#*#",
-						   "*.cs", // FIXME: we skip other source code...
 						   "*.o",
 						   "*.a",
 						   "*.S",
