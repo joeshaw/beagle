@@ -186,7 +186,7 @@ AC_SUBST(LIBGECKOGLUE_LIBS)
 
 dnl -------------------------------------------------------
 
-PKG_CHECK_MODULES(BEAGLE_UI, gtk-sharp gecko-sharp = 0.6 gnome-sharp dbus-sharp = 0.23 gconf-sharp gmime-sharp)
+PKG_CHECK_MODULES(BEAGLE_UI, gtk-sharp glade-sharp gecko-sharp = 0.6 gnome-sharp dbus-sharp = 0.23 gconf-sharp gmime-sharp)
 AC_SUBST(BEAGLE_UI_LIBS)
 
 dnl ----------------------------------------------
@@ -363,6 +363,7 @@ Filters/Makefile
 Tiles/Makefile
 tools/Makefile
 Best/Makefile
+ImLogViewer/Makefile
 epiphany-extension/Makefile
 mozilla-extension/Makefile
 searchomatic/Makefile

@@ -1,0 +1,24 @@
+#!/bin/sh
+
+
+MOZILLA_HOME=@mozillahome@
+export MOZILLA_HOME
+ 
+MOZILLA_FIVE_HOME=@mozillahome@
+export MOZILLA_FIVE_HOME
+
+LD_LIBRARY_PATH="@mozillahome@:$LD_LIBRARY_PATH"
+
+if [ -e ./@target@ ] && [ -e ./Makefile.am ] ; then
+    echo "*** Running uninstalled @target@ ***"
+    THIS_PATH="../Util:../images:../Lucene.Net"
+    THIS_EXE="./@target@"
+    export LD_LIBRARY_PATH="$LD_LIBRARY_PATH"
+else
+    THIS_PATH="@pkglibdir@"
+    THIS_EXE="@pkglibdir@/@target@"
+    export LD_LIBRARY_PATH="@pkglibdir@:$LD_LIBRARY_PATH"
+fi
+
+MONO_GAC_PREFIX="@gacprefix@:$MONO_GAC_PREFIX" MONO_PATH="$THIS_PATH:$MONO_PATH" exec -a mono-imlogviewer mono $MONO_EXTRA_ARGS --debug $THIS_EXE "$@"
+

@@ -27,6 +27,7 @@
 using System;
 using System.IO;
 using System.Collections;
+using System.Diagnostics;
 using BU = Beagle.Util;
 
 namespace Beagle.Tile {
@@ -215,6 +216,18 @@ namespace Beagle.Tile {
 
 			return snip.Substring (0, System.Math.Min (256, snip.Length));
 
+		}
+
+		[TileAction]
+		public override void Open ()
+		{
+			//FIXME: At least for now
+			Process p = new Process ();
+			p.StartInfo.UseShellExecute = false;
+			p.StartInfo.FileName = "beagle-imlogviewer";
+			p.StartInfo.Arguments = Hit ["fixme:file"];
+
+			p.Start ();
 		}
 
 		[TileAction]
