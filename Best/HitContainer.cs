@@ -50,10 +50,11 @@ namespace Best {
 
 			Gtk.ScrolledWindow sw = new Gtk.ScrolledWindow ();
 			sw.Add (renderer.Widget);
+			renderer.Widget.Show ();
 
 			this.PackStart (control, false, false, 3);
 			this.PackStart (sw, true, true, 3);
-			control.ShowAll ();
+			control.Show ();
 			sw.Show ();
 		}
 

@@ -39,7 +39,7 @@ namespace Best {
 
 		static public void Create ()
 		{
-			new BestWindow ().ShowAll ();
+			new BestWindow ().Show ();
 		}
 
 		//////////////////////////
@@ -59,7 +59,10 @@ namespace Best {
 			VBox main = new VBox (false, 3);
 			main.PackStart (menus, false, true, 3);
 			main.PackStart (content, true, true, 3);
+			menus.Show ();
+			content.Show ();
 			Add (main);
+			main.Show ();
 
 			const double GOLDEN = 1.61803399;
 			DefaultHeight = 500;
@@ -135,6 +138,10 @@ namespace Best {
 			VBox contents = new VBox (false, 3);
 			contents.PackStart (entryLine, false, true, 3);
 			contents.PackStart (hitContainer, true, true, 3);
+
+			entryLine.ShowAll ();
+			hitContainer.Show ();
+
 			return contents;
 		}
 

@@ -48,22 +48,26 @@ namespace Beagle {
 			
 			if (icon != null) {
 				Gtk.Widget iconW = DataBarn.GetImageWidget (icon);
-				if (iconW != null)
+				if (iconW != null) {
 					this.PackStart (iconW, false, false, 3);
+					iconW.Show ();
+				}
 			}
 
 			nameLabel = new Gtk.Label ("");
 			this.PackStart (nameLabel, false, false, 3);
+			nameLabel.Show ();
 
 
-			nextButton = new Gtk.Button (">>");
+			nextButton = new Gtk.Button ("Next");
 			nextButton.Clicked += new EventHandler (OnNextClicked);
 			this.PackEnd (nextButton, false, false, 3);			
 
 			displayedLabel = new Gtk.Label ("");
 			this.PackEnd (displayedLabel, false, false, 3);
+			displayedLabel.Show ();
 
-			prevButton = new Gtk.Button ("<<");
+			prevButton = new Gtk.Button ("Prev");
 			prevButton.Clicked += new EventHandler (OnPrevClicked);
 			this.PackEnd (prevButton, false, false, 3);			
 
@@ -93,6 +97,18 @@ namespace Beagle {
 						     renderer.LastDisplayed + 1);
 			}
 			displayedLabel.Text = str;
+
+			if (renderer.FirstDisplayed > 0)
+				prevButton.Show ();
+			else
+				prevButton.Hide ();
+
+			if (renderer.LastDisplayed + 1 < renderer.TotalCount && renderer.TotalCount > 0)
+				nextButton.Show ();
+			else
+				nextButton.Hide ();
+
+			Console.WriteLine ("{0} {1} {2}", renderer.FirstDisplayed, renderer.LastDisplayed, renderer.TotalCount);
 		}
 
 		private void OnPrevClicked (object o, EventArgs args)
