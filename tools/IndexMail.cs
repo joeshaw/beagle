@@ -345,7 +345,7 @@ namespace IndexMailTool {
 			this ["From"] = messageInfo.from;
 			this ["Cc"] = messageInfo.cc;
 			this ["Received"] = messageInfo.received.ToString ();
-			this ["Sent"] = messageInfo.sent.ToString ();
+			this ["SentDate"] = messageInfo.sent.ToString ();
 			this ["Mlist"] = messageInfo.mlist;
 			this ["Flags"] = Convert.ToString (messageInfo.flags);
 

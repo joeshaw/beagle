@@ -17,10 +17,13 @@ namespace Beagle {
 			get {
 				String homedir = Environment.GetEnvironmentVariable ("HOME");
 				String dir = Path.Combine (homedir, ".beagle");
-				if (! Directory.Exists (dir))
+				if (! Directory.Exists (dir)) {
 					Directory.CreateDirectory (dir);
-				// FIXME: We should set some reasonable permissions on the
-				// .beagle directory.
+					// Make sure that ~/.beagle directory is only
+					// readable by the owner.
+					Mono.Posix.Syscall.chmod (dir,
+								  (Mono.Posix.FileMode) 448);
+				}
 				return dir;
 
 			}

@@ -92,10 +92,6 @@ namespace Beagle {
 			}
 		}
 
-		// FIXME: We don't actually use the lockdir for anything, since
-		// Lucene's decision about where to put locks is tangled up in
-		// the Store.FSDirectory code.  For now, it isn't worth the
-		// trouble.
 		private String LockDir {
 			get {
 				String dir = Path.Combine (PathFinder.RootDir, "Locks");

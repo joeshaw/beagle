@@ -20,6 +20,7 @@ CSFILES = 				\
 	$(srcdir)/GoogleDriver.cs
 
 ASSEMBLIES = 				\
+	-r:Mono.Posix			\
 	-r:ICSharpCode.SharpZipLib	\
 	-r:../Util/Util.dll		\
 	-r:../Lucene.Net/Lucene.Net.dll	\
