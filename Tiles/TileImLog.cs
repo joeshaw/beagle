@@ -34,80 +34,76 @@ namespace Beagle.Tile {
 
 	[HitFlavor (Name="Conversations", Rank=900, Emblem="emblem-im-log.png", Color="#e5f5ef",
 		    Type="IMLog")]
-		public class TileImLog : TileFromHitTemplate {
-			private static GaimBuddyListReader list = null;
-			
-#if ENABLE_EVO_SHARP
-			private static Hashtable buddy_emails = new Hashtable ();
-#endif
-			
-			private ImBuddy buddy = null;
-			private string speaking_alias;
-			private string email = null;
-			
-			public TileImLog (Hit _hit) : base (_hit,
-							    "template-im-log.html")
-			{
-				if (list == null) {
-					list = new GaimBuddyListReader ();
-				}
-				
-				buddy = list.Search (Hit.GetValueAsString ("fixme:speakingto"));
-				if (buddy != null) {
-					Console.WriteLine ("Found buddy info for {0}, icon at {1}", buddy.Alias, buddy.BuddyIconLocation);
-					email = GetEmailForName (buddy.Alias);
-				}
-			}
-			
-			protected override void PopulateTemplate ()
-			{
-				base.PopulateTemplate ();
-				
-				Template["nice_duration"] = "(" +
-					StringFu.DurationToPrettyString (
-									 StringFu.StringToDateTime (Hit.GetValueAsString ("fixme:endtime")),
-									 StringFu.StringToDateTime (Hit.GetValueAsString ("fixme:starttime"))) + ")";
-				if (Template ["nice_duration"] == "()")
-					Template ["nice_duration"] = "";
-				
-				if (email != null)
-					Template ["SendMailAction"] = "Send Mail";
-				
-				// FIXME: This is a temporary hack until gaim supports other protocols than AIM via gaim-remote
-				if (Hit.IsKeyContainsValue ("fixme:protocol", "aim"))
-					Template ["SendIMAction"] = "Send IM";
-				
-				if (buddy != null && buddy.Alias != "")
-					speaking_alias = buddy.Alias;
-				else 
-					speaking_alias = Hit.GetValueAsString ("fixme:speakingto");
-				
-				// FIXME: Hack to figure out if the conversation 
-				// is taken place in a chat room
+	public class TileImLog : TileFromHitTemplate {
+		private static GaimBuddyListReader list = null;
 
-				// FIXME: As of now, we assume that 
-				// "fixme:speakingto" contains a single value.
-				if (Hit.GetValueAsString ("fixme:speakingto").EndsWith (".chat"))
-					Template["title"] = String.Format ("Chat in {0}", speaking_alias.Replace(".chat",""));
-				else
-					Template["title"] = String.Format ("Conversation with {0}", speaking_alias);
-				
-				
-				if (buddy != null && buddy.BuddyIconLocation != "") {
-					string homedir = Environment.GetEnvironmentVariable ("HOME");
-					string fullpath = Path.Combine (homedir, ".gaim");
-					fullpath = Path.Combine (fullpath, "icons");
-					fullpath = Path.Combine (fullpath, buddy.BuddyIconLocation);
-					
-					if (File.Exists (fullpath)) {
-						Template["Icon"] = StringFu.PathToQuotedFileUri (fullpath);
+#if ENABLE_EVO_SHARP
+		private static Hashtable buddy_emails = new Hashtable ();
+#endif
+		
+		private ImBuddy buddy = null;
+		private string speaking_alias;
+		private string email = null;
+
+		public TileImLog (Hit _hit) : base (_hit,
+						    "template-im-log.html")
+		{
+			if (list == null) {
+				list = new GaimBuddyListReader ();
+			}
+
+			buddy = list.Search (Hit ["fixme:speakingto"]);
+			if (buddy != null) {
+				Console.WriteLine ("Found buddy info for {0}, icon at {1}", buddy.Alias, buddy.BuddyIconLocation);
+				email = GetEmailForName (buddy.Alias);
+			}
+		}
+
+		protected override void PopulateTemplate ()
+		{
+			base.PopulateTemplate ();
+
+			Template["nice_duration"] = "(" +
+				StringFu.DurationToPrettyString (
+					StringFu.StringToDateTime (Hit ["fixme:endtime"]),
+					StringFu.StringToDateTime (Hit ["fixme:starttime"])) + ")";
+			if (Template ["nice_duration"] == "()")
+				Template ["nice_duration"] = "";
+
+			if (email != null)
+				Template ["SendMailAction"] = "Send Mail";
+
+			// FIXME: This is a temporary hack until gaim supports other protocols than AIM via gaim-remote
+			if (Hit ["fixme:protocol"] == "aim")
+				Template ["SendIMAction"] = "Send IM";
+			
+			if (buddy != null && buddy.Alias != "")
+				speaking_alias = buddy.Alias;
+			else 
+				speaking_alias = Hit["fixme:speakingto"];
+
+			// FIXME: Hack to figure out if the conversation is taken place in a chat room
+			if (Hit["fixme:speakingto"].EndsWith (".chat"))
+				Template["title"] = String.Format ("Chat in {0}", speaking_alias.Replace(".chat",""));
+			else
+				Template["title"] = String.Format ("Conversation with {0}", speaking_alias);
+
+
+			if (buddy != null && buddy.BuddyIconLocation != "") {
+				string homedir = Environment.GetEnvironmentVariable ("HOME");
+				string fullpath = Path.Combine (homedir, ".gaim");
+				fullpath = Path.Combine (fullpath, "icons");
+				fullpath = Path.Combine (fullpath, buddy.BuddyIconLocation);
+
+				if (File.Exists (fullpath)) {
+					Template["Icon"] = StringFu.PathToQuotedFileUri (fullpath);
 				} else {
 					Template["Icon"] = Images.GetHtmlSourceForStock ("gnome-gaim", 48);
+				}
+			} else {
+				Template["Icon"] = Images.GetHtmlSourceForStock ("gnome-gaim", 48);
 			}
-		} else {
-			Template["Icon"] = Images.GetHtmlSourceForStock ("gnome-gaim", 48);
 		}
-}
 
 #if ENABLE_EVO_SHARP
 		static bool ebook_failed = false;
@@ -213,10 +209,7 @@ namespace Beagle.Tile {
 			Process p = new Process ();
 			p.StartInfo.UseShellExecute = true;
 			p.StartInfo.FileName = "beagle-imlogviewer";
-
-			//FIXME: At least for now, we assume that
-			// fixme:file contains only one value.
-			p.StartInfo.Arguments = Hit.GetValueAsString ("fixme:file");
+			p.StartInfo.Arguments = Hit ["fixme:file"];
 
 			try {
 				p.Start ();
@@ -235,8 +228,10 @@ namespace Beagle.Tile {
 		[TileAction]
 		public void SendIm ()
 		{
-			if (Hit.IsKeyContainsValue ("fixme:protocol", "aim"))
-				SendImAim (Hit.GetValueAsString ("fixme:speakingto"));
+			if (Hit ["fixme:protocol"] != "aim")
+				return;
+			
+			SendImAim (Hit ["fixme:speakingto"]);
 		}
 	}
 }

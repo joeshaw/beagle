@@ -247,18 +247,10 @@ namespace Beagle.Daemon.GaimLogQueryable {
 
 		override public string GetSnippet (QueryBody body, Hit hit)
 		{
-			ICollection logs = null;
-			IEnumerator iter = null;
-
 			// FIXME: This does the wrong thing for old-style logs.
-
-			// FIXME: Assuming "fixme:file" will have only one entry.
-			// Suppose, if it contains more than one entry,
-			// use *hit ["fixme:file"]* directly and iterate through
-			// the returned IList.
-			string file = hit.GetValueAsString ("fixme:file");
-			logs = GaimLog.ScanLog (new FileInfo (file));
-			iter = logs.GetEnumerator ();
+			string file = hit ["fixme:file"];
+			ICollection logs = GaimLog.ScanLog (new FileInfo (file));
+			IEnumerator iter = logs.GetEnumerator ();
 			ImLog log = null;
 			if (iter.MoveNext ())
 				log = iter.Current as ImLog;

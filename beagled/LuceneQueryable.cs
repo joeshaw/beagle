@@ -256,12 +256,14 @@ namespace Beagle.Daemon {
 
 			foreach (object obj in properties) {
 				string key = obj as string;
-				string val = hit.GetValueAsString (key);
-				DateTime dt = StringFu.StringToDateTime (val);
-				double this_m;
-				this_m = HalfLifeMultiplier (dt, 182);  /* 182 days == six months */
-				if (this_m > best_m)
-					best_m = this_m;
+				string val = hit [key];
+				if (val != null) {
+					DateTime dt = StringFu.StringToDateTime (val);
+					double this_m;
+					this_m = HalfLifeMultiplier (dt, 182);  /* 182 days == six months */
+					if (this_m > best_m)
+						best_m = this_m;
+				}
 			}
 
 			if (best_m < 0)

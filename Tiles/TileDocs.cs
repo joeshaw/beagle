@@ -56,21 +56,20 @@ namespace Beagle.Tile {
 			protected override void PopulateTemplate ()
 			{
 				StringBuilder strPagesAndWords = new StringBuilder ();
-				string str = null;
 
 				base.PopulateTemplate ();
-				str = Hit.GetValueAsString ("dc:title");
-				if (str.Length > 0)
-					Template ["Title"] = str;
+				if (Hit ["dc:title"] == null || Hit ["dc:title"].Trim () == "")
+					Template ["Title"] = Hit ["fixme:splitname"];
+				else
+					Template ["Title"] = Hit ["dc:title"];
 
-				str = Hit.GetValueAsString ("fixme:page-count");
-                                if (str.Length > 0)
-					strPagesAndWords.Append("Pages: "+str);
-				
-				str = Hit.GetValueAsString ("fixme:word-count");
-                                if (str.Length > 0)
-					strPagesAndWords.Append (" - Words: "+str);
+                                if (Hit ["fixme:page-count"] != null)
+					strPagesAndWords.Append("Pages: "+Hit ["fixme:page-count"]);
+				//Template ["PagesAndWords"] = Hit ["fixme:page-count"];
 
+                                if (Hit ["fixme:word-count"] != null)
+					strPagesAndWords.Append (" - Words: "+Hit ["fixme:word-count"]);
+				//Template ["Words"] = Hit ["fixme:word-count"];
 				Template["PagesAndWords"] = strPagesAndWords.ToString();
 			}
 		}

@@ -29,7 +29,6 @@ using System;
 using System.Collections;
 using System.Diagnostics;
 using System.IO;
-using System.Text;
 
 using BU = Beagle.Util;
 
@@ -68,8 +67,6 @@ namespace Beagle {
 							new CaseInsensitiveComparer ());
 
 
-		private IList zeroList = new ArrayList (0);
-
 		private enum SpecialType {
 			Unknown,
 			None,
@@ -99,12 +96,9 @@ namespace Beagle {
 
 			writer.Write (properties.Count);
 			foreach (string key in properties.Keys) {
-				IList values = properties[key] as IList;
+				string value = (string) properties[key];
 				writer.Write (key);
-				writer.Write (values.Count);
-				foreach(string value in values) {
-					writer.Write (value);
-				}
+				writer.Write (value);
 			}
 
 			writer.Write (data.Count);
@@ -134,12 +128,9 @@ namespace Beagle {
 			int numProps = reader.ReadInt32 ();
 			for (int i = 0; i < numProps; i++) {
 				string key = reader.ReadString ();
-				
-				int numValues = reader.ReadInt32 ();
-				for(int j = 0; j < numValues; j++) {
-					string value = reader.ReadString ();
-					hit.AddValue (key, value);
-				}
+				string value = reader.ReadString ();
+
+				hit[key] = value;
 			}
 
 			int numData = reader.ReadInt32 ();
@@ -298,133 +289,16 @@ namespace Beagle {
 			get { return properties.Keys; }
 		}
 
-		virtual public ICollection this [string key] {
-			get {
-				ICollection props = properties [key] as ICollection;
-				if(props == null || props.Count == 0)
-					return zeroList;
-				
-				return props;
-			}
-		}
-		
-		private void SetValue (string key, string value) 
-		{
-			if (key == null || key.Trim() == "")
-				return;
-
-			if (value == null || value == "") {
-				if (properties.Contains (key))
-					properties.Remove (key);
-			}
-				
-			// Set initial size of the ArrayList to 3, as, 
-			// majority-of-real-time-samples have not more than
-			// two properties with same name.
-			// Moreover, the ArrayList grows in multiples-of-2,
-			// (ie) 2n. Each allocation creates fragmentation in 
-			// heap and Mono GC (in its present state) doesn't compact,
-			// making it difficult to run it for long.
-			ArrayList props = null;
-			props = properties [key] as ArrayList;
-			if (props == null) 
-				props = new ArrayList (3);
-			props.Add (value);
-			properties [key] = props;
-		}
-		
-		private void SetValue (string key, ICollection value, bool replace)
-		{
-			if (key == null || key.Trim() == "")
-				return;
-
-			if (value == null || value.Count < 1 || replace == true) {
-				if (properties.Contains (key))
-					properties.Remove (key);
-				if (!replace)
+		virtual public string this [string key] {
+			get { return (string) properties [key]; }
+			set { 
+				if (value == null || value == "") {
+					if (properties.Contains (key))
+						properties.Remove (key);
 					return;
-			}
-
-			// Set initial size of the ArrayList to inputlist+2, as, 
-			// adding one more element will result in a new-allocation/
-			// Moreover, the ArrayList grows in 2*n fashion,
-			// Each allocation creates fragmentation in 
-			// heap and Mono GC (in its present state) doesn't compact,
-			// making it difficult to run it for long.
-			ArrayList props = null;
-			props = properties [key] as ArrayList;
-			if (props == null) 
-				props = new ArrayList (value.Count+2);
-			props.AddRange (value);
-			properties [key] = props;
-		}
-
-		public void AddValue (string key, ICollection value)
-		{
-			if (value == null)
-				return;
-
-			SetValue (key, value, false);
-		}
-
-		public void AddValue (string key, string value) 
-		{
-			if (value == null || value.Trim() == "")
-				return;
-
-			SetValue (key, value);
-		}
-
-		public void ReplaceValue (string key, ICollection value) 
-		{
-			ICollection props = this [key];
-			if (props == null)
-				SetValue (key, value, false);
-			else {
-				SetValue (key, value, true);
-			}
-		}
-
-		// Replace all occurrances of "oldvalue" with "newvalue"
-		public void ReplaceValue (string key, string oldvalue, string newvalue) 
-		{
-			ArrayList props = this [key] as ArrayList;
-			if (props == null)
-				AddValue (key, newvalue);
-			else {
-				int index = -1;
-
-				// Assuming ICollection.IndexOf uses a "Case sensitive" 
-				// comparison approach.
-				if (oldvalue == newvalue)
-					return;
-				while ((index = props.IndexOf (oldvalue)) != -1) {
-					props.RemoveAt (index);
-					props.Add (newvalue);
 				}
+				properties [key] = value as string;
 			}
-		}
-
-		public string GetValueAsString (string key) {
-
-// 			StringBuilder ret = new StringBuilder ();
-// 			ICollection l = null;
-// 			l = this [key];
-// 			foreach (string str in l) {
-// 				ret.Append (str);
-// 				ret.Append (" - ");
-// 			}
-// 			if (ret.Length > 2)
-// 				ret.Length -= 3;
-// 			return ret.ToString ();
-			
-			return BU.StringFu.GetListValueAsString (this[key], '-');
-		}
-
-		public bool IsKeyContainsValue (string key, string value)
-		{
-			ArrayList l = this[key] as ArrayList;
-			return l.Contains (value);
 		}
 
 		//////////////////////////

@@ -44,7 +44,7 @@ namespace Beagle.Tile {
 		{
 			base.PopulateTemplate ();
 
-			string path = Hit.GetValueAsString ("fixme:cachedimg");
+			string path = Hit ["fixme:cachedimg"];
 
 			if (path != null && File.Exists (path))
 				Template["Icon"] = Images.GetHtmlSource (path, null);
@@ -56,9 +56,9 @@ namespace Beagle.Tile {
 		public override void Open ()
                 {
 			try {
-				Gnome.Url.Show(Hit.GetValueAsString ("fixme:itemuri"));
+				Gnome.Url.Show(Hit["fixme:itemuri"]);
 			} catch (Exception e) {
-				Console.WriteLine ("Could not load handler for {0}: {1}", Hit.GetValueAsString ("fixme:itemuri"), e);
+				Console.WriteLine ("Could not load handler for {0}: {1}", Hit["fixme:itemuri"], e);
 			}
 		}
 	}

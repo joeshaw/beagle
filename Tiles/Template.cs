@@ -70,20 +70,19 @@ namespace Beagle.Tile {
 		public void AddValues (IDictionary values)
 		{
 			foreach (string key in values.Keys)
-				this.values[key] = BU.StringFu.GetListValueAsString (values[key] as ICollection, ',');
+				this.values[key] = values[key];
 			dirty = true;
 		}
 
 		public void AddHit (Hit hit)
 		{
-			string strUri = hit.Uri.ToString ();
-			string strDir = null;
-			
-			values["Uri"] = strUri;
+			string uri = hit.Uri.ToString ();
 
-			if (strUri.Length > 40)
-				strUri = strUri.Substring (0, 40) + "...";
-			values["DisplayUri"] = strUri;
+			values["Uri"] = uri;
+
+			if (uri.Length > 40)
+				uri = uri.Substring (0, 40) + "...";
+			values["DisplayUri"] = uri;
 
 			values["MimeType"] = hit.MimeType;
 			values["Source"] = hit.Source;
@@ -100,15 +99,6 @@ namespace Beagle.Tile {
 			else if (hit.DirectoryInfo != null)
 				values["FolderName"] = hit.DirectoryInfo.Parent.Name;
 			AddValues (hit.Properties);
-			
-			strUri = BU.UriFu.LocalPathFromUri (hit.Uri);
-			if (strUri.Length < 1)
-				strDir = Path.GetDirectoryName (hit.Uri.LocalPath);
-			else 
-				strDir = Path.GetDirectoryName (strUri);
-
-			Console.WriteLine ("fixme:directory: "+strDir);
-			values["fixme:directory"] = strDir;
 		}
 
 		public IDictionary Values {

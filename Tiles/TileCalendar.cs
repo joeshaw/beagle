@@ -44,14 +44,14 @@ namespace Beagle.Tile {
 		{
 			base.PopulateTemplate ();
 			
-			Template["Icon"] = Images.GetHtmlSource ("emblem-calendar", "text/html");
-			Template["Title"] = Hit.GetValueAsString ("fixme:summary");
-			Template["Location"] = Hit.GetValueAsString ("fixme:location");
-			Template["Summary"] = Hit.GetValueAsString ("fixme:summary");
+			Template ["Icon"] = Images.GetHtmlSource ("emblem-calendar", "text/html");
+			Template ["Title"] = Hit ["fixme:summary"];
+			Template ["Location"] = Hit ["fixme:location"];
+			Template ["Summary"] = Hit ["fixme:summary"];
 
 			//FXIME: DateTime.Now + these
-			Template["StartTime"] = Hit.GetValueAsString ("fixme:starttime");
-			Template["EndTime"] = Hit.GetValueAsString ("fixme:endtime");
+			Template ["StartTime"] = Hit ["fixme:starttime"];
+			Template ["EndTime"] = Hit ["fixme:endtime"];
 		}
 
 		[TileAction]

@@ -1,31 +1,8 @@
-2005-02-13  Veerapuram Varadhan	 <vvaradhan@novell.com>
 
-	* Tiles/TileFile.cs, Tiles/Template.cs: Now, there won't be any
-	"fixme:directory" stuff in Hit.  Manipulate them when a hit is
-	added to a template and use Template["fixme:directory"] in the
-	"Reveal" action.
-	
-2005-02-13  Veerapuram Varadhan	 <vvaradhan@novell.com>
-
-	* Tiles/TileDocs.cs, Tiles/TilePresentation.cs: Do not show
-	"Title" in the Tile, if the document doesn't have any Title.
-
-	* Tiles/TileMusic.cs: If "Title" tag is not available, display the
-	file-name as title.
-	
 2005-02-13  Veerapuram Varadhan	 <vvaradhan@novell.com>
 
 	* Filters/FilterPPT.cs: Catch the exceptions and log the message..
 	
-2005-02-13  Veerapuram Varadhan	 <vvaradhan@novell.com>
-
-	* BeagleClient/Hit.cs, Tiles/Tile*.cs, tools/Query.cs,
-	beagled/LuceneDriver.cs, beagled/LuceneQueryable.cs,
-	beagled/GaimLogQueryable/GaimLogQueryable.cs,
-	beagled/GoogleDriver.cs, beagled/BugzillaDriver.cs,
-	Util/StringFu.cs: Beagle supports storing/retrieving multiple
-	properties with same name.
-
 2005-02-10  Veerapuram Varadhan	 <vvaradhan@novell.com>
 
 	* Filters/FilterDOC.cs, glue/wv1-glue.c: Fix for

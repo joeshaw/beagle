@@ -52,7 +52,7 @@ namespace Beagle.Tile {
 				str = "Contains 1 Item";
 			else
 				str = "Contains " + n + " Items";
-			Template["Contents"] =  str;
+			Template["Contents"] = str;
 		}
 
 		[TileAction]
