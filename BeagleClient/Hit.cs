@@ -83,7 +83,7 @@ namespace Beagle {
 		{
 			writer.WriteStartElement ("hit");
 
-			writer.WriteAttributeString ("name", id.ToString());
+			writer.WriteAttributeString ("name", id.ToString ());
 			writer.WriteAttributeString ("uri", uri.ToString ());
 			writer.WriteAttributeString ("type", type);
 			writer.WriteAttributeString ("mimetype", mimeType);

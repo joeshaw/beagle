@@ -60,12 +60,12 @@ namespace Beagle.Filters {
 			string[] KeyWord = {"\\pard\\plain"};
 			int ndxKeyword;
 			while ((str = reader.ReadLine ()) != null) {
-				ndxKeyword = str.IndexOf (KeyWord[0]);
+				ndxKeyword = str.IndexOf (KeyWord [0]);
 				if (ndxKeyword < 0)
 					continue;
 				
 				// Assuming "1" to be the index of the first character
-				str.Remove (1, (ndxKeyword+KeyWord[0].Length));
+				str.Remove (1, (ndxKeyword + KeyWord [0].Length));
 				tokens = str.Split (' ');
 				for (int i = 0; i < tokens.Length; i++) {
 					if (tokens[i].IndexOf (";}") > -1 ||
@@ -89,7 +89,7 @@ namespace Beagle.Filters {
 					  Why don't we do it in "AppendText", that would be 
 					  really generic!!!
 					 */
-					AppendText (tokens[i]);
+					AppendText (tokens [i]);
 					AppendWhiteSpace ();
 				}
 			}  
