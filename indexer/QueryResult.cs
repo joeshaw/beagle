@@ -139,18 +139,24 @@ namespace Beagle {
 
 		public void Add (ICollection someHits)
 		{
+			ArrayList filteredHits = new ArrayList ();
+
 			lock (this) {
 				if (cancelled)
 					return;
 				Debug.Assert (started, "Adding Hits to unstarted QueryResult");
 				Debug.Assert (workers > 0,
 					      "Adding Hits to idle QueryResult");
+		
 				foreach (Hit hit in someHits)
-					hits.Add (hit);
+					if (Relevancy.AdjustScore (hit)) {
+						filteredHits.Add (hit);
+						hits.Add (hit);
+					}
 			}
 
 			if (GotHitsEvent != null) {
-				GotHitsArgs args = new GotHitsArgs (someHits);
+				GotHitsArgs args = new GotHitsArgs (filteredHits);
 				GotHitsEvent (this, args);
 			}
 		}

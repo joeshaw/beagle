@@ -34,6 +34,7 @@ templatedir = $(top_srcdir)/templates
 RESOURCEFILES =					\
 	$(templatedir)/contact.html		\
 	$(templatedir)/email.html		\
+	$(templatedir)/email-sent.html		\
 	$(templatedir)/file-generic.html	\
 	$(templatedir)/google.html		\
 	$(templatedir)/im-log.html		\

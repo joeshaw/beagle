@@ -79,7 +79,10 @@ namespace Beagle {
 					icon = "mail-read.png";
 				hit ["mail:Icon"] = icon;
 
-				t = new Tile ("email.html", hit);
+				if (hit ["_IsSent"] != null)
+					t = new Tile ("email-sent.html", hit);
+				else
+					t = new Tile ("email.html", hit);
 				break;
 
 			case "WebHistory":

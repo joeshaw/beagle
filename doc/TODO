@@ -32,9 +32,9 @@ IndexableFile should store more file properties:
    Filesystem metadata
    Nautilus Emblems
 
-IndexMail needs to support IMAP summaries.  This will require
-changes to camel.cs, since the summary format changed between
-Evo 1.4 and 1.5.
+IndexMail needs to support IMAP.  The necessary changes to support Evo 1.5
+IMAP summaries have been made to camel.cs --- it is solely a question of
+walking ~/.evolution/mail/imap and doing the right thing.
 
 The crawler should have a fast 'partial crawl' mode which searches a random
 subset of the user's tree.  Ideally it would keep track of which directories
@@ -52,4 +52,17 @@ parts of a mail message.
 A relatively easy project for someone would be to write a little viewer for IM
 Logs that could be launched by clicking on an IM Log tile.  There is code in
 Util/ImLog.cs for parsing gaim logs.
+
+How we deal with locking the lucene index is fairly stupid.  Right now we
+time out after 30 seconds of not being able to get the lock.  But since the
+lockfiles contain the locking processes PID and a timestamp, we should be
+able to:
+  (1) Fail immediately if the locking process no longer exists.
+  (2) Fail immediately if the process exists but the lock is too old
+      (i.e. more than a few hours?)
+  (3) Wait more-or-less indefinitely otherwise.
+
+
+
+
 

@@ -111,6 +111,8 @@ namespace Beagle {
 						path = Uri.Substring ("file://".Length);
 						if (! File.Exists (path))
 							path = null;
+					} else {
+						path = null;
 					}
 				}
 

@@ -12,6 +12,7 @@ CSFILES = 				\
 	$(srcdir)/IndexableFile.cs	\
 	$(srcdir)/Query.cs		\
 	$(srcdir)/Hit.cs		\
+	$(srcdir)/Relevancy.cs		\
 	$(srcdir)/IQueryResult.cs	\
 	$(srcdir)/IQueryable.cs		\
 	$(srcdir)/QueryResult.cs	\

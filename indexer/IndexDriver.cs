@@ -588,13 +588,6 @@ namespace Beagle {
 			for (int i = 0; i < nHits; ++i) {
 				Hit hit = FromLuceneHit (luceneHits, i);
 				
-				// Filter out missing files.
-				if (hit.Uri.StartsWith ("file://")) {
-					String path = hit.Uri.Substring ("file://".Length);
-					if (! File.Exists (path))
-						continue;
-				}
-
 				// FIXME: Should check that file:// Uris are unchanged, and do
 				// something smart if they aren't.
 				

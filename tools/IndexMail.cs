@@ -419,6 +419,9 @@ namespace IndexMailTool {
 			this ["SentDate"] = messageInfo.sent.ToString ();
 			this ["Mlist"] = messageInfo.mlist;
 
+			if (folderName == "Sent")
+				this ["_IsSent"] = "1";
+
 			this ["_Flags"] = Convert.ToString (messageInfo.flags);
 			
 			if (messageInfo.IsAnswered)

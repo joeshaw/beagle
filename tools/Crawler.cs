@@ -110,11 +110,10 @@ class CrawlerTool {
 		ArrayList toBeRemoved = new ArrayList ();
 
 		int flushCount = 100;
-		int flushSize =  20 * 1048576; // = 20mb
 
+		int skippedCount = 0;
 		int totalCount = 0;
 		int filterableCount = 0;
-		long pendingSize = 0;
 
 		int sinceOptimize = 0;
 		int optimizeCount = 10;
@@ -125,7 +124,6 @@ class CrawlerTool {
 
 		void ScheduleAdd (FileInfo info, Indexable indexable)
 		{
-			pendingSize += info.Length;
 			toBeIndexed.Add (indexable);
 			MaybeFlush ();
 		}
@@ -140,8 +138,7 @@ class CrawlerTool {
 
 		void MaybeFlush ()
 		{
-			if (toBeIndexed.Count + toBeRemoved.Count > flushCount
-			    || pendingSize > flushSize)
+			if (toBeIndexed.Count + toBeRemoved.Count > flushCount)
 				Flush ();
 		}
 
@@ -152,7 +149,6 @@ class CrawlerTool {
 			if (toBeIndexed.Count > 0) {
 				driver.QuickAdd (toBeIndexed);
 				toBeIndexed.Clear ();
-				pendingSize = 0;
 				didSomething = true;
 			}
 
@@ -173,6 +169,12 @@ class CrawlerTool {
 
 		void CrawlFile (FileInfo info, Hit hit)
 		{
+			// If the file isn't newer that the hit, don't even bother...
+			if (hit != null && ! hit.IsObsoletedBy (info.LastWriteTime)) {
+				++skippedCount;
+				return;
+			}
+
 			Flavor flavor = Flavor.FromPath (info.FullName);
 			if (fileTable.Contains (flavor)) {
 				int n = (int) fileTable [flavor];
@@ -185,17 +187,7 @@ class CrawlerTool {
 				return;
 			++filterableCount;
 
-			// FIXME: The size limit shouldn't just be a hard-wired
-			// constant.
-			if (info.Length > 20 * 1048576) { // =20mb 
-				Console.WriteLine ("To big: {0}", info.FullName);
-				return;
-			}
-
 			Indexable indexable = new IndexableFile (info.FullName);
-			// If our indexable isn't newer, don't even bother...
-			if (! indexable.IsNewerThan (hit))
-				return;
 
 			ScheduleAdd (info, indexable);
 			ScheduleDelete (hit);
@@ -299,6 +291,7 @@ class CrawlerTool {
 			foreach (Flavor flavor in fileTable.Keys)
 				Console.WriteLine ("{0} {1}", (int) fileTable [flavor], flavor);
 			Console.WriteLine ();
+			Console.WriteLine ("   Skipped files: {0}", skippedCount);
 			Console.WriteLine ("     Total files: {0}", totalCount);
 			if (totalCount > 0) {
 				Console.WriteLine ("Filterable files: {0} ({1:f1}%)",
