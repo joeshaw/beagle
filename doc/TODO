@@ -1,0 +1,51 @@
+
+Filters
+=======
+
+We need filters:
+   MS Word/Powerpoint/Excel (Bindings for libgsf would help)
+   RTF
+   Abiword
+   Gnumeric
+   mp3, ogg (and any other audio format that can carry metadata)
+   pdf, postscript
+   png, jpeg (and any other image format that can carry metadata)
+   dvi (and maybe .tex -- we could just strip out the markup)
+   Man pages
+   Texinfo
+   XML documentation format used by MonoDoc
+   Code (throw away the code, extract comments and maybe strings)
+
+The OpenOffice filter needs to read the embedded metadata.  (This
+is blocking on bug 57907.)
+
+The OpenOffice filter should notice when files are encrypted and fail
+gracefully.
+
+
+Indexing
+========
+
+IndexableFile should store more file properties:
+   Ownership
+   Permissions
+   Filesystem metadata
+   Nautilus Emblems
+
+IndexMail needs to support IMAP summaries.  This will require
+changes to camel.cs, since the summary format changed between
+Evo 1.4 and 1.5.
+
+The crawler should have a fast 'partial crawl' mode which searches a random
+subset of the user's tree.  Ideally it would keep track of which directories
+contain files that change frequently, and have a higher probability of
+checking those during a partial crawl.
+
+It would be cool if the crawler could descend into compressed/tarred/zipped
+files.
+
+
+
+   
+   
+   
