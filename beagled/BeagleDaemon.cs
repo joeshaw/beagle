@@ -104,8 +104,56 @@ namespace Beagle.Daemon {
 			}
 		}
 
+		private static void OnServiceOwnerChanged (string serviceName,
+							   string oldOwner,
+							   string newOwner)
+		{
+			if (serviceName == "com.novell.Beagle") {
+
+				if (newOwner == "") {
+					DBusisms.BusDriver.ServiceOwnerChanged -= OnServiceOwnerChanged;
+					Application.Quit ();
+				}
+			}
+		}
+
+
+		public static int ReplaceExisting () 
+		{
+			DBus.Service service = DBus.Service.Get (DBusisms.Connection, "com.novell.Beagle");
+			DBusisms.BusDriver.ServiceOwnerChanged += OnServiceOwnerChanged;
+			do {
+				Ping proxy = (Ping)service.GetObject (typeof (Ping), "/com/novell/Beagle/Ping");
+				proxy.Shutdown ();
+				Application.Run ();
+			} while (!DBusisms.InitService ());
+
+			return 0;
+		} 
+		
 		public static int Main (string[] args)
 		{
+			try {
+				DBusisms.Init ();
+				Application.Init ();
+				
+				if (!DBusisms.InitService ()) {
+					if (Array.IndexOf (args, "--replace") != -1) {
+						ReplaceExisting ();
+					} else {
+						System.Console.WriteLine ("Could not register com.novell.Beagle service.  There is probably another beagled instance running.  Use --replace to replace the running service");
+						return 1;
+					}
+				}
+			} catch (DBus.DBusException e) {
+				System.Console.WriteLine ("Couldn't connect to the session bus.  See http://beaglewiki.org/index.php/Installing%20Beagle for information on setting up a session bus.");
+				System.Console.WriteLine (e);
+				return 1;
+			} catch (Exception e) {
+				System.Console.WriteLine ("Could not initialize Beagle's bus connection:\n{0}", e);
+				return 1;
+			}
+			
 			try {
 				// FIXME: this could be better, but I don't want to
 				// deal with serious cmdline parsing today
@@ -118,24 +166,6 @@ namespace Beagle.Daemon {
 				}
 			} catch (Exception e) {
 				System.Console.WriteLine ("Couldn't initialize logging.  This could mean that another Beagle instance is running: {0}", e);
-				return 1;
-			}
-
-			try {
-				Application.Init ();
-				
-				DBusisms.Init ();
-
-				if (!DBusisms.InitService ()) {
-					Logger.Log.Fatal ("Could not register com.novell.Beagle service.  There is probably another beagled instance running.");
-					return 1;
-				}
-			} catch (DBus.DBusException e) {
-				Logger.Log.Fatal ("Couldn't connect to the session bus.  See http://beaglewiki.org/index.php/Installing%20Beagle for information on setting up a session bus.");
-				Logger.Log.Debug (e);
-				return 1;
-			} catch (Exception e) {
-				Logger.Log.Fatal ("Could not initialize Beagle's bus connection:\n{0}", e);
 				return 1;
 			}
 
