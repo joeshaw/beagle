@@ -19,6 +19,7 @@ CSFILES = 				\
 	$(srcdir)/ImLog.cs		\
 	$(srcdir)/Logger.cs		\
 	$(srcdir)/MultiReader.cs	\
+	$(srcdir)/NautilusTools.cs	\
 	$(srcdir)/PullingReader.cs	\
 	$(srcdir)/StringFu.cs
 
