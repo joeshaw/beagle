@@ -16,6 +16,19 @@ Please send patches to trow@ximian.com for review.  Please don't commit
 unreviewed patches.
 
 
+Organization
+------------
+
+
+Code that parses files or otherwise interacts w/ low-level details from
+third-party apps (i.e. parsing gaim logs, undocumented nautilus metafiles and
+stuff from .gnome2/epiphany, etc.) should probably be broken out into small
+chunks of semi-independent code and placed in Beagle/Util.  That kind of code
+is just ugly by nature, and I want to keep it from getting mixed into the
+beagle code as much as possible.
+
+We also want to avoid non-core dependencies in Util.  Anything in Util that
+requires gtk+ or gnome should go into a separate UtilUi at some point.
 
 Coding Style
 ------------
