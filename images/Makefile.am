@@ -9,6 +9,7 @@ CSFILES =			\
 	$(srcdir)/Images.cs
 
 ASSEMBLIES =			\
+	-r:../Util/Util.dll     \
 	$(BEAGLE_UI_LIBS)
 
 RESOURCEFILES =					\

@@ -47,5 +47,11 @@ namespace Beagle.Tile {
 			Template["Thumbnail"] = Images.GetHtmlSource (Hit.Uri.ToString (),
 								      Hit.MimeType);
 		}
+
+		[TileAction]
+		public override void Open ()
+		{
+			OpenFromMime (Hit);
+		}
 	}
 }

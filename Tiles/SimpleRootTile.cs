@@ -38,7 +38,7 @@ namespace Beagle.Tile {
 		string errorString;
 		bool offerDaemonRestart;
 
-		public void Open ()
+		public void Start ()
 		{
 			hit_collection.Clear ();
 			Changed ();

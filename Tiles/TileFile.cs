@@ -59,6 +59,12 @@ namespace Beagle.Tile {
 									 BU.GnomeIconLookup.GetFileMimeType (path));
 			}
 		}
+
+		[TileAction]
+		public override void Open ()
+		{
+			OpenFromMime (Hit);
+		}
 	}
 }
 	

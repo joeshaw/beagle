@@ -25,7 +25,9 @@
 //
 
 using System;
+using System.Diagnostics;
 using Gtk;
+using BU = Beagle.Util;
 
 namespace Beagle.Tile {
 
@@ -88,30 +90,69 @@ namespace Beagle.Tile {
 			((MessageDialog)o).Destroy ();
 		}
 
-		protected void OpenHitWithDefaultAction (Hit hit) 
+
+		protected void LaunchError (string format, params string[] args)
 		{
-			try {
-				hit.OpenWithDefaultAction ();
-			} catch (Exception e) {
-				string msg;
-
-				if (e.Message.IndexOf ("Cannot find") != -1) {
-					msg = "The application for this file type could not be found.";
-				} else {
-					msg = e.Message;
-				}
-
-				// FIXME: lame error reporting
-				MessageDialog dlg = new MessageDialog (null,
-								       0,
-								       MessageType.Error,
-								       ButtonsType.Ok,
-								       "Couldn't opening " + hit.Uri + ": " + msg);
+			string message = String.Format (format, args);
+			MessageDialog dlg = new MessageDialog (null,
+							       0,
+							       MessageType.Error,
+							       ButtonsType.Ok,
+							       message);
 			
-				dlg.Response += OnErrorDialogResponse;
-				dlg.Show ();
-			}
+			dlg.Response += OnErrorDialogResponse;
+			dlg.Show ();
+
 		}
+
+		[TileAction]
+		public virtual void Open ()
+		{
+			System.Console.WriteLine ("Warning: Open method not implemented for this tile type");
+		}
+
+		protected void OpenFromMime (Hit hit)
+		{
+			OpenFromMime (hit, null, false);
+		}
+
+		protected void OpenFromMime (Hit hit,
+					     string command_fallback,
+					     bool expects_uris_fallback)
+		{
+			string argument = null;
+			string command = command_fallback;
+			bool expects_uris = expects_uris_fallback;
+			
+			BU.GnomeVFSMimeApplication app;
+			app = BU.GnomeIconLookup.GetDefaultAction (hit.MimeType);
+			
+			if (app.command != null) {
+				command = app.command;
+				expects_uris = (app.expects_uris != BU.GnomeVFSMimeApplicationArgumentType.Path);
+			}
+
+			if (command == null) {
+				LaunchError ("Can't open MimeType '{0}'", hit.MimeType);
+				return;
+			}
+			
+			if (expects_uris) {
+				argument = String.Format ("'{0}'", hit.Uri);
+			} else {
+				argument = hit.PathQuoted;
+			}
+			
+			Console.WriteLine ("Cmd: {0}", command);
+			Console.WriteLine ("Arg: {0}", argument);
+
+			Process p = new Process ();
+			p.StartInfo.UseShellExecute = false;
+			p.StartInfo.FileName = command;
+			p.StartInfo.Arguments = argument;
+
+			p.Start ();
+		} 
 	}
 }
 	

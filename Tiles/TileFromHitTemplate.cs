@@ -57,11 +57,5 @@ namespace Beagle.Tile {
 				return hit;
 			}
 		}
-
-		[TileAction]
-		private void OpenDefault () 
-		{
-			hit.OpenWithDefaultAction ();
-		}
 	}
 }

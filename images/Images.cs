@@ -27,6 +27,7 @@
 using System;
 using System.IO;
 using System.Reflection;
+using BU = Beagle.Util;
 
 namespace Beagle {
 	
@@ -105,17 +106,30 @@ namespace Beagle {
 			return pixbuf != null ? new Gtk.Image (pixbuf) : null;
 		}
 
+		static public string GetHtmlSourceForStock (string stockid,
+							    int size)
+		{
+			string path = BU.Icon.LookupName (stockid, size);
+			if (path != null && path != "") {
+				string mime = BU.GnomeIconLookup.GetFileMimeType (path);
+				if (mime != null && mime != "") 
+					return Images.GetHtmlSource 
+						(path, mime);
+			}
+			return null;
+		}
+
 		static public string GetHtmlSource (byte[] binary_data, 
 						    string mime_type) 
 		{
-				string base64_string = 
-					System.Convert.ToBase64String(binary_data, 
-								      0,
-								      binary_data.Length);
-				
-				
-				string data = "data:" + mime_type + ";base64," + base64_string;
-				return data;
+			string base64_string = 
+				System.Convert.ToBase64String(binary_data, 
+							      0,
+							      binary_data.Length);
+			
+			
+			string data = "data:" + mime_type + ";base64," + base64_string;
+			return data;
 		}
 
 		static public string GetHtmlSource (string name, 

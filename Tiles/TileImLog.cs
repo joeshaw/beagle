@@ -63,6 +63,26 @@ namespace Beagle.Tile {
 				Template["speakingalias"] = buddy.Alias;
 			else 
 				Template["speakingalias"] = Hit["fixme:speakingto"];
+
+			
+			if (buddy.BuddyIconLocation != "") {
+				System.Console.WriteLine ("buddy icon location: {0}", buddy.BuddyIconLocation);
+				string homedir = Environment.GetEnvironmentVariable ("HOME");
+				string fullpath = Path.Combine (homedir, 
+								".gaim");
+				fullpath = Path.Combine (fullpath, "icons");
+				fullpath = Path.Combine (fullpath, buddy.BuddyIconLocation);
+				System.Console.WriteLine ("buddy icon location: {0}", fullpath);
+
+				if (File.Exists (fullpath)) {
+					Template["Icon"] = Images.GetHtmlSource (fullpath,
+										 BU.GnomeIconLookup.GetFileMimeType (fullpath));
+				} else {
+					Template["Icon"] = Images.GetHtmlSourceForStock ("gnome-gaim", 48);
+				}
+			} else {
+				Template["Icon"] = Images.GetHtmlSourceForStock ("gnome-gaim", 48);
+			}
 		}
 
 		private string HighlightOrNull (string haystack, string [] needles)

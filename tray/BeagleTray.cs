@@ -266,7 +266,7 @@ namespace Beagle
 			AttachQuery ();
 			
 			root.Query = query;
-			root.Open ();
+			root.Start ();
 
 			SetBusy (true);
 			query.Start ();

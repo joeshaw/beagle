@@ -42,7 +42,7 @@ namespace Beagle.Tile {
 		}
 
 		[TileAction]
-		public void OpenNote ()
+		public override void Open ()
 		{
 			string args = String.Format ("--open-note {0} --highlight-search \"{1}\"",
 						     Hit.Uri, String.Join (" ", Query.Text));

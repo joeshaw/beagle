@@ -77,9 +77,28 @@ namespace Beagle.Tile {
 		}
 
 		[TileAction]
-		public void OpenMailMessage () 
+		public override void Open () 
 		{
-			System.Console.WriteLine ("Opening mail message!");
+			Process p = new Process ();
+			p.StartInfo.UseShellExecute = false;
+			p.StartInfo.FileName = "evolution";
+			p.StartInfo.Arguments = "'" + Hit.Uri + "'";
+
+			p.Start ();
+		}
+
+		[TileAction]
+		public void Mail ()
+		{
+                        bool sent = (Hit ["fixme:isSent"] != null);
+			string address = sent ? Hit ["fixme:to"] : Hit ["fixme:from"];
+			
+			Process p = new Process ();
+			p.StartInfo.UseShellExecute = false;
+			p.StartInfo.FileName = "evolution";
+			p.StartInfo.Arguments = "'mailto:" + address + "'";
+
+			p.Start ();			
 		}
 	}
 }

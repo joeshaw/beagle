@@ -83,6 +83,5 @@ namespace Beagle.Tile {
 					       FileAccess.Read,
 					       FileShare.Read);
 		}
-
 	}
 }

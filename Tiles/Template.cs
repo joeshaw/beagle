@@ -136,15 +136,7 @@ namespace Beagle.Tile {
 			case "image" :
 				return Images.GetHtmlSource (subkey, "image/png"); // FIXME: other mime types 
 			case "stock" :
-				string path = BU.Icon.LookupName (subkey, 16);
-				if (path != null && path != "") {
-					string mime = BU.GnomeIconLookup.GetFileMimeType (path);
-					if (mime != null && mime != "") 
-						return Images.GetHtmlSource 
-							(path, mime);
-				}
-
-				return null;
+				return Images.GetHtmlSourceForStock (subkey, 16);
 			case "date" :
 				try {
 					return BU.StringFu.DateTimeToPrettyString (BU.StringFu.StringToDateTime ((string)values [subkey]));

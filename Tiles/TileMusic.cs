@@ -39,5 +39,11 @@ namespace Beagle.Tile {
 						    "template-music.html")
 		{
 		}
+
+		[TileAction]
+		public override void Open ()
+		{
+			OpenFromMime (Hit);
+		}
 	}
 }

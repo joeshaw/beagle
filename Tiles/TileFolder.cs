@@ -54,5 +54,11 @@ namespace Beagle.Tile {
 				str = "Contains " + n + " Items";
 			Template["Contents"] = str;
 		}
+
+		[TileAction]
+		public override void Open ()
+		{
+			OpenFromMime (Hit, "nautilus", true);
+		} 
 	}
 }
