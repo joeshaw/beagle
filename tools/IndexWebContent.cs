@@ -50,10 +50,6 @@ class IndexWebContentTool {
 
 			stream = contentStream;
 
-			Console.WriteLine (uri);
-			Console.WriteLine (title);
-			Console.WriteLine ();
-
 			properties.Add (Property.New ("dc:title", title));
 
 			filter = Filter.FilterFromMimeType ("text/html");

@@ -201,16 +201,12 @@ namespace Beagle {
 			// If we are handed a stream, dump it into
 			// a temporary file.
 			tempFile = Path.GetTempFileName();
-			Console.WriteLine ("Tempfile is [{0}]", tempFile);
 			Stream tempStream = File.OpenWrite (tempFile);
-			Console.WriteLine ("stream={0} tempStream={1}", stream,tempStream);
 
 			const int BUFFER_SIZE = 8192;
 			byte[] buffer = new byte [BUFFER_SIZE];
 			int n;
-			Console.WriteLine ("Writing [{0}]", buffer);
 			while ((n = stream.Read (buffer, 0, BUFFER_SIZE)) > 0) {
-				Console.WriteLine ("n={0}", n);
 				tempStream.Write (buffer, 0, n);
 			}
 
@@ -345,7 +341,7 @@ namespace Beagle {
 				return;
 
 			if (! Directory.Exists (dir)) {
-				Console.WriteLine ("'{0}' is not a directory: No filters loaded", dir);
+				//Console.WriteLine ("'{0}' is not a directory: No filters loaded", dir);
 				return;
 			}
 
@@ -354,8 +350,7 @@ namespace Beagle {
 				if (file.Extension == ".dll") {
 					Assembly a = Assembly.LoadFrom (file.FullName);
 					int n = ScanAssemblyForFilters (a);
-					Console.WriteLine ("Loaded {0} filters from {1}",
-							   n, file.FullName);
+					//Console.WriteLine ("Loaded {0} filters from {1}", n, file.FullName);
 				}
 			}
 		}

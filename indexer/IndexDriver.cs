@@ -217,7 +217,6 @@ namespace Beagle {
 			}
 			
 			reader = indexable.GetTextReader ();
-			Console.WriteLine ("reader={0}", reader);
 			if (reader != null) {
 				f = Field.Text ("Text", reader);
 				doc.Add (f);
