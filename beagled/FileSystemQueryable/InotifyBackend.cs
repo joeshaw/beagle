@@ -48,23 +48,31 @@ namespace Beagle.Daemon.FileSystemQueryable {
 
 		public object WatchFiles (string path, object old_handle)
 		{
+			int wd;
 			int old_wd = -1;
 			if (old_handle != null)
 				old_wd = (int) old_handle;
 
-			int wd = Inotify.Watch (path,
-						Inotify.EventType.Open
-						| Inotify.EventType.CreateSubdir
-						| Inotify.EventType.DeleteSubdir
-						| Inotify.EventType.DeleteFile
-						| Inotify.EventType.CloseWrite
-						| Inotify.EventType.MovedFrom
-						| Inotify.EventType.MovedTo
-						| Inotify.EventType.Ignored
-						| Inotify.EventType.QueueOverflow);
-			watching [wd] = true;
-			if (old_wd >= 0 && old_wd != wd)
-				watching.Remove (old_wd);
+			try {
+				wd = Inotify.Watch (path,
+						    Inotify.EventType.Open
+						    | Inotify.EventType.CreateSubdir
+						    | Inotify.EventType.DeleteSubdir
+						    | Inotify.EventType.DeleteFile
+						    | Inotify.EventType.CloseWrite
+						    | Inotify.EventType.MovedFrom
+						    | Inotify.EventType.MovedTo
+						    | Inotify.EventType.Ignored
+						    | Inotify.EventType.QueueOverflow);
+				watching [wd] = true;
+				if (old_wd >= 0 && old_wd != wd)
+					watching.Remove (old_wd);
+			}
+			catch (IOException) {
+				// We can race and files can disappear.  No big deal.
+				wd = 0;
+			}
+
 			return wd;
 		}
 
