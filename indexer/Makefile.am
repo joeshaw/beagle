@@ -8,6 +8,7 @@ LIBFLAGS =				\
 	-r:Filters.dll
 
 INDEXER_CSFILES = 		\
+	Versioned.cs		\
 	Indexable.cs		\
 	IndexableFile.cs	\
 	IndexableHttp.cs	\

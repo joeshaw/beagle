@@ -11,13 +11,11 @@ using System.Text;
 
 namespace Dewey {
 
-	public class Indexable {
+	public class Indexable : Versioned {
 
 		protected String uri;
 		protected String domain = "unknown";
 		protected String mimeType = "application/octet-stream";
-		protected DateTime timestamp = new DateTime (0);
-		protected long revision = -1;
 
 		protected bool needPreload = true;
 
@@ -34,22 +32,6 @@ namespace Dewey {
 
 		public String MimeType {
 			get { return mimeType; }
-		}
-
-		public DateTime Timestamp {
-			get { return timestamp; }
-		}
-
-		public bool ValidTimestamp {
-			get { return timestamp.Ticks > 0; }
-		}
-
-		public long Revision {
-			get { return revision; }
-		}
-
-		public bool ValidRevision {
-			get { return revision >= 0; }
 		}
 
 		virtual public ICollection MetadataKeys {

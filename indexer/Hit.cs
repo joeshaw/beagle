@@ -9,13 +9,11 @@ using System.Collections;
 
 namespace Dewey {
     
-	public class Hit : IComparable {
+	public class Hit : Versioned, IComparable {
 	
 		String uri;
 		String domain = "unknown";
 		String mimeType = "application/octet-stream";
-		DateTime timestamp = new DateTime (0);
-		long revision = -1;
 
 		String source = "unknown";
 
@@ -58,24 +56,6 @@ namespace Dewey {
 			set { checkLock (); mimeType = value; }
 		}
 	
-		public DateTime Timestamp {
-			get { return timestamp; }
-			set { checkLock (); timestamp = value; }
-		}
-
-		public bool ValidTimestamp {
-			get { return timestamp.Ticks > 0; }
-		}
-
-		public long Revision {
-			get { return revision; }
-			set { checkLock (); revision = value; }
-		}
-
-		public bool ValidRevision {
-			get { return revision >= 0; }
-		}
-
 		public String Source {
 			get { return source; }
 			set { checkLock (); source = value; }

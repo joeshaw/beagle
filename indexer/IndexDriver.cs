@@ -12,6 +12,7 @@
 using System;
 using System.Collections;
 using System.IO;
+using System.Globalization;
 
 using Lucene.Net.Analysis;
 using Lucene.Net.Analysis.Standard;
@@ -25,7 +26,9 @@ namespace Dewey {
 
 	public class IndexDriver {
 
-		private const int VERSION = 1;
+		// 1: Original
+		// 2: Changed format of timestamp strings
+		private const int VERSION = 2;
 
 		public IndexDriver ()
 		{
@@ -49,15 +52,18 @@ namespace Dewey {
 
 		//////////////////////////
 
+		private const String timeFormat = "yyyyMMddHHmmss";
+
 		static private String TimestampToString (DateTime dt)
-		{
-			return Convert.ToString (dt.Ticks);
-		}
-		
-		static private DateTime StringToTimestamp (String str)
-		{
-			return new DateTime (Convert.ToInt64 (str));
-		}
+                {
+			return dt.ToString (timeFormat);
+                }
+                 
+                static private DateTime StringToTimestamp (String str)
+                {
+			return DateTime.ParseExact (str, timeFormat, CultureInfo.CurrentCulture);
+                }
+
 
 		static private String RevisionToString (long rev)
 		{
@@ -304,21 +310,26 @@ namespace Dewey {
 			reader.Close ();
 		}
 
-		private void DoInsert (IEnumerable indexables, bool optimize)
+		Random optimizeTest = new Random ();
+		private void DoInsert (IEnumerable indexables)
 		{
 			Analyzer analyzer = NewAnayzer ();
 			IndexWriter writer = new IndexWriter (IndexDir, analyzer, false);
 			
+			int count = 0;
 			foreach (Indexable indexable in indexables) {
 				Spew ("Inserting {0}", indexable.Uri);
 				Document doc = ToLuceneDocument (indexable);
 				writer.AddDocument (doc);
+				++count;
 			}
 			// optimization is expensive
-			if (optimize) {
+			// FIXME: this is just asking for trouble
+			const int INSERTS_PER_OPTIMIZATION = 100;
+			if (optimizeTest.Next (INSERTS_PER_OPTIMIZATION) < count) {
 				Spew ("Optimizing...");
 				writer.Optimize ();
-				Spew ("Done optimizing.");
+				Spew ("Optimization complete.");
 			}
 			writer.Close ();
 		}
@@ -333,34 +344,25 @@ namespace Dewey {
 			LNS.Searcher searcher = new LNS.IndexSearcher (IndexDir);
 
 			// First, pre-load all Indexables.  Since Preload can block,
-			// the Preloads should be done in multiple threads.  Of course,
-			// then we need to be smarted about culling duplicate Uris...
+			// the Preloads should be done in multiple threads.
 			foreach (Indexable indexable in indexables) {
-				//try {
+				try {
 					if (indexable.NeedPreload)
 						indexable.Preload ();
 					preloaded.Add (indexable);
-					//} catch {
+				} catch {
 					// If the Preload throws an exception, just 
 					// forget about it.
-					//}
+				}
 			}
 			
 			// If we've been handed multiple Indexables with the same Uri,
 			// try to do something intelligent.
 			Hashtable byUri = new Hashtable ();
 			foreach (Indexable indexable in preloaded) {
-				if (byUri.Contains (indexable.Uri)) {
-					Indexable prev = (Indexable) byUri [indexable.Uri];
-					// FIXME: This isn't quite the right logic.  And what
-					// about objects with Revisions instead of Timestamps?
-					if (prev.ValidTimestamp
-					    && indexable.ValidTimestamp
-					    && prev.Timestamp < indexable.Timestamp)
-						byUri [indexable.Uri] = indexable;
-				} else {
+				Indexable prev = (Indexable) byUri [indexable.Uri];
+				if (prev == null || prev.IsObsoletedBy (indexable))
 					byUri [indexable.Uri] = indexable;
-				}
 			}
 			
 			foreach (Indexable indexable in byUri.Values) {
@@ -370,61 +372,56 @@ namespace Dewey {
 				LNS.Hits uriHits = searcher.Search (uriQuery);
 				int nHits = uriHits.Length ();
 				
-				if (nHits > 1) {
-					throw new Exception (String.Format ("Got {0} hits on Uri {1}",
-									    nHits, indexable.Uri));
-				} else if (nHits == 1) {
-					String oldTsStr = uriHits.Doc (0).Get ("Timestamp");
-					String oldRevStr = uriHits.Doc (0).Get ("Revision");
+				bool needsInsertion = true;
+				
+				for (int i = 0; i < nHits; ++i) {
 					
-					bool isSupercededBy = false;
+					Document doc = uriHits.Doc (i);
+					String oldTsStr = doc.Get ("Timestamp");
+					String oldRevStr = doc.Get ("Revision");
 					
 					// If there is no timestamp or revision #, always
 					// re-index
 					if (oldTsStr == null && oldRevStr == null)
-						isSupercededBy = true;
+						continue;
 					
 					// First, try comparing the timestamps.
-					if (! isSupercededBy
-					    && oldTsStr != null
-					    && indexable.ValidTimestamp) {
+					if (oldTsStr != null) {
 						DateTime oldTs = StringToTimestamp (oldTsStr);
-						if (oldTs < indexable.Timestamp)
-							isSupercededBy = true;
+						if (! indexable.IsNewerThan (oldTs)) {
+							needsInsertion = false;
+							break;
+						}
 					}
 					
 					// Next, try comparing the revisions.
-					if (! isSupercededBy
-					    && oldRevStr != null
-					    && indexable.ValidRevision) {
+					if (oldRevStr != null) {
 						long oldRev = StringToRevision (oldRevStr);
-						if (oldRev < indexable.Revision)
-							isSupercededBy = true;
+						if (! indexable.IsNewerThan (oldRev)) {
+							needsInsertion = false;
+							break;
+						}
 					}
+				}
 		    
-					if (isSupercededBy) {
-						toBeDeleted.Add (indexable.Uri);
-						toBeInserted.Add (indexable);
+				if (needsInsertion) {
+					if (nHits > 0) {
 						Spew ("Re-scheduling {0}", indexable.Uri);
+						toBeDeleted.Add (indexable.Uri);
 					} else {
-						Spew ("Skipping {0}", indexable.Uri);
+						Spew ("Scheduling {0}", indexable.Uri);
 					}
-		    
-				} else {
 					toBeInserted.Add (indexable);
-					Spew ("Scheduling {0}", indexable.Uri);
+				} else {
+					Spew ("Skipping {0}", indexable.Uri);
 				}
 			}
 
-			if (toBeDeleted.Count > 0) {
-				Spew ("Deleting {0}", toBeDeleted.Count);
+			if (toBeDeleted.Count > 0)
 				DoDelete (toBeDeleted);
-			}
 
-			if (toBeInserted.Count > 0) {
-				Spew ("Inserting {0}", toBeInserted.Count);
-				DoInsert (toBeInserted, true);
-			}
+			if (toBeInserted.Count > 0)
+				DoInsert (toBeInserted);
 		}
 	
 		// Add a single item to the index
@@ -442,12 +439,25 @@ namespace Dewey {
 			LNS.Hits luceneHits = searcher.Search (luceneQuery);
 			int nHits = luceneHits.Length ();
 
+			Hashtable seen = new Hashtable ();
 			ArrayList hits = new ArrayList ();
-			ArrayList toBeDeleted = new ArrayList ();
 
 			for (int i = 0; i < nHits; ++i) {
 				Hit hit = FromLuceneHit (luceneHits, i);
 				bool valid = true;
+
+				// If the same Uri comes back more than once, filter
+				// out all but the most recent one.
+				Hit prev = (Hit) seen [hit.Uri];
+				if (prev != null) {
+					if (prev.IsObsoletedBy (hit)) {
+						// FIXME: prev needs to be removed from the index
+					} else {
+						// FIXME: hit needs to be removed from the index
+						continue;
+					}
+				}
+				seen [hit.Uri] = hit;
 
 				// Check that file:// hits still exist and haven't
 				// changed since they were last indexed.
@@ -456,38 +466,29 @@ namespace Dewey {
 					FileInfo info = new FileInfo (path);
 		    
 					if (info.Exists) {
-						if (hit.ValidTimestamp
-						    && hit.Timestamp < info.LastWriteTime) {
+						if (hit.IsObsoletedBy (info.LastWriteTime)) {
 							Spew ("Out-of-date {0}", hit.Uri);
 							// For now, out-of-date hits just pass through.
-							// Maybe we should at least flag them as OOD
-							// somehow?
 							
-							// FIXME: Out-of-date documents should have their
-							// content extracted and the query checked again it.
-							// Can we generate a score for a Document against a
-							// Query in-memory, without going to the index?  Poking
-							// around in Lucene, I didn't see an obvious way to do it.
+							// FIXME: We need to do something more clever here.
+							// Ideally we would extract the content from the
+							// file and write it into a in-memory Index,
+							// then redo the query.  The in-memory Index could
+							// then be written out to disk.
 						}
 					} else {
 						// File has disappeared since being indexed.
 						// FIXME: remove it from the index.
 						Spew ("Lost {0}", hit.Uri);
-						valid = false;
-						toBeDeleted.Add (hit.Uri);
+						continue;
 					}
 				}
 
-				if (valid)
-					hits.Add (hit);
+
+				hits.Add (hit);
 			}
 
 			searcher.Close ();
-			
-			// FIXME: this assumes that we can write back to any index that we can
-			// query.  That obviously isn't the case.
-			if (toBeDeleted.Count > 0)
-				DoDelete (toBeDeleted);
 
 			return hits;
 		}
