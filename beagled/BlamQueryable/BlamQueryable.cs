@@ -111,10 +111,6 @@ namespace Beagle.Daemon.BlamQueryable {
 						
 					// FIXME Use FilterHtml to mark "hot" words in content
 
-					Console.WriteLine ();
-					Console.WriteLine (Channel.Url);
-					Console.WriteLine (Channel.Url);
-					
 					StringReader reader = new StringReader (item.Text);
 					indexable.SetTextReader (reader);
 					
