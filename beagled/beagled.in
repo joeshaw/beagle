@@ -24,5 +24,4 @@ fi
 
 export MONO_GAC_PREFIX="@gacprefix@:$MONO_GAC_PREFIX"
 
-mono --debug $MONO_EXTRA_ARGS $TARGET_EXE $EXTRA_ARGS "$@"
-
+exec -a mono-beagled mono --debug $MONO_EXTRA_ARGS $TARGET_EXE $EXTRA_ARGS "$@"

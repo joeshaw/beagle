@@ -109,10 +109,7 @@ namespace Beagle
 
 			tree.ShowAll ();
                                                                                                                                                             
-                        VBox contents = new VBox (false, 3);
-                        contents.PackStart (swin, true, true, 3);
-			contents.ShowAll ();
-			vbox.PackStart (contents, true, true, 0);
+			vbox.PackStart (swin, true, true, 0);
 
 			return win;
 		}
@@ -185,7 +182,7 @@ namespace Beagle
 			};
 
 			store = new Gtk.ListStore (types);
-			store.SetSortFunc (2 /* change date */,
+			store.SetSortFunc (0 /* sort by type */,
 					   new Gtk.TreeIterCompareFunc (CompareHits),
 					   IntPtr.Zero, 
 					   null);
@@ -202,7 +199,7 @@ namespace Beagle
 			title.Sizing = Gtk.TreeViewColumnSizing.Autosize;
 			title.Resizable = true;
 			
-			title.PackStart (renderer, true);
+			title.PackStart (renderer, false);
 			title.AddAttribute (renderer, "text", 1 /* title */);
 
 			title.SortColumnId = 1; /* title */
