@@ -97,7 +97,7 @@ namespace Beagle.Daemon.BlamQueryable {
 		{
 			FileInfo file = new FileInfo (Path.Combine (blamDir, "collection.xml"));
 
-			if (Driver.IsUpToDate (file.FullName))
+			if (this.FileAttributesStore.IsUpToDate (file.FullName))
 				return;
 
 			ChannelCollection collection = null;

@@ -178,7 +178,7 @@ namespace Beagle.Daemon.TomboyQueryable {
 
 		private void IndexNote (FileInfo file, Scheduler.Priority priority)
 		{
-			if (Driver.IsUpToDate (file.FullName))
+			if (this.FileAttributesStore.IsUpToDate (file.FullName))
 				return;
 
 			// Try and parse a Note from the given path

@@ -9,7 +9,7 @@ if [ -e ./@target@ ] && [ -e ./Makefile.am ] ; then
     TARGET_EXE="./@target@"
     EXTRA_ARGS=""
 
-    export BEAGLE_EXTERNAL_OPTIMIZER_PATH="."
+    export _BEAGLED_INDEX_HELPER_PATH="."
     export MONO_PATH="../Util:../BeagleClient:$MONO_PATH"
     export LD_LIBRARY_PATH="../glue/.libs:$LD_LIBRARY_PATH"
 
@@ -27,7 +27,7 @@ else
     TARGET_EXE="@pkglibdir@/@target@"
     EXTRA_ARGS=""
 
-    export BEAGLE_EXTERNAL_OPTIMIZER_PATH="@pkglibdir@"
+    export _BEAGLED_INDEX_HELPER_PATH="@pkglibdir@"
     export MONO_PATH="@pkglibdir@:$MONO_PATH"
     export LD_LIBRARY_PATH="@pkglibdir@:$LD_LIBRARY_PATH"
 fi
@@ -42,18 +42,20 @@ fi
 export MONO_GAC_PREFIX="@gacprefix@:$MONO_GAC_PREFIX"
 export LD_LIBRARY_PATH="/opt/gnome/lib/evolution/2.0:$LD_LIBRARY_PATH"
 
-# Inspect the arguments passed in by the user to decide whether
-# or not we should run in the foreground.
+
+# Do any necessary processing of the arguments,
+# filtering out ones that are only used by this script
+
 fg=$fg_default
 need_fgbg_arg=1
-for i in $@; do
-    if [ "z$i" = "z--fg" -o "z$i" = "z--foreground" ] ; then
-	fg=1
-	need_fgbg_arg=0
-    elif [ "z$i" = "z--bg" -o "z$i" = "z--background" ] ; then
-	fg=0
-	need_fgbg_arg=0
-    fi
+
+declare -a args
+while [ $# -gt 0 ]; do
+    case "$1" in
+	--fg | --foreground ) fg=1 ; need_fgbg_arg=0 ; shift ;;
+	--bg | --background ) fg=0 ; need_fgbg_arg=0 ; shift ;;
+	*) args[${#args[@]}]=$1 ; shift ;;
+    esac
 done
 
 
@@ -68,7 +70,7 @@ if [ $need_fgbg_arg -eq 1 ]; then
     fi
 fi
 
-CMDLINE="mono --debug $MONO_EXTRA_ARGS $TARGET_EXE $EXTRA_ARGS $@ $FGBG_ARG"
+CMDLINE="mono --debug $MONO_EXTRA_ARGS $TARGET_EXE $EXTRA_ARGS ${args[@]} $FGBG_ARG"
 
 PROCESS_NAME="mono-beagled"
 

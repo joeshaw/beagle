@@ -65,22 +65,24 @@ namespace Beagle.Daemon {
 
 			busDriver = BusDriver.New (connection);
 		}
-		
-		public static bool InitService () {
-			if (service == null) {
+
+		public static bool TestService (string name)
+		{
 #if HAVE_OLD_DBUS
-				if (Service.Exists (connection, Beagle.DBusisms.Name))
+			return Service.Exists (connection, name);
 #else
-				if (Service.HasOwner (connection, Beagle.DBusisms.Name))
+			return Service.HasOwner (connection, name);
 #endif
-                                {
+
+		}
+		
+		public static bool InitService (string name) {
+			if (service == null) {
+                                if (TestService (name)) 
 					return false;
-				}
-				service = new Service (connection, Beagle.DBusisms.Name);
-				return true;
-			} else {
-				return true;
+				service = new Service (connection, name);
 			}
+			return true;
 		}
 
 		// Object Registry

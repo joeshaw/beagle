@@ -52,7 +52,7 @@ namespace Beagle.Daemon.FileSystemQueryable {
 		private DateTime dirty_time;
 		private DateTime last_crawl_time;
 			
-		public WatchedDirectory (LuceneDriver driver, string path)
+		public WatchedDirectory (FileAttributesStore fa_store, string path)
 		{
 			DirectoryInfo info = new DirectoryInfo (path);
 
@@ -83,7 +83,7 @@ namespace Beagle.Daemon.FileSystemQueryable {
 			this.dirty_time = DateTime.MaxValue;
 
 			FileAttributes attr;
-			attr = driver.FileAttributesStore.Read (this.path);
+			attr = fa_store.Read (this.path);
 			if (attr != null)
 				this.last_crawl_time = attr.LastIndexedTime;
 			else

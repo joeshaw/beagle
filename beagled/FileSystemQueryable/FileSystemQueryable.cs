@@ -139,7 +139,7 @@ namespace Beagle.Daemon.FileSystemQueryable {
 			if (filter.Ignore (path))
 				return false;
 
-			if (Driver.IsUpToDate (path))
+			if (this.FileAttributesStore.IsUpToDate (path))
 				return false;
 			
 			return true;
@@ -199,7 +199,7 @@ namespace Beagle.Daemon.FileSystemQueryable {
 				task.AddTaskGroup (group);
 				task.Priority = Scheduler.Priority.Delayed;
 				task.SubPriority = 0;
-				task.Description = "Indexing directory";
+				task.Description = "Indexing directory ";
 
 				ThisScheduler.Add (task);
 			}
@@ -336,7 +336,7 @@ namespace Beagle.Daemon.FileSystemQueryable {
 			
 				DirectoryInfo info = new DirectoryInfo (path);
 				if (info.Exists) {
-					WatchedDirectory dir = new WatchedDirectory (Driver, path);
+					WatchedDirectory dir = new WatchedDirectory (FileAttributesStore, path);
 					dir_by_wd [dir.WatchDescriptor] = dir;
 					dir_array.Add (dir);
 

@@ -36,21 +36,57 @@ namespace Beagle.Daemon {
 		
 		private Scheduler scheduler = Scheduler.Global;
 
+		private string index_name;
 		private string index_dir;
 		private LuceneDriver driver;
+		private IIndexer indexer;
 		private LuceneTaskCollector collector;
-		private IFileAttributesStore fa_store;
+		private FileAttributesStore fa_store;
+
+		//////////////////////////////////////////////////////////
+		
+		private Hashtable indexable_info_cache = UriFu.NewHashtable ();
+		private class IndexableInfo {
+			public Uri      Uri;
+			public string   Path;
+			public DateTime Mtime;
+		}
+
+		internal void CacheIndexableInfo (Indexable indexable)
+		{
+			if (indexable.IsNonTransient) {
+				IndexableInfo info = new IndexableInfo ();
+				info.Uri = indexable.Uri;
+				info.Path = indexable.ContentUri.LocalPath;
+				info.Mtime = FileSystem.GetLastWriteTime (info.Path);
+				indexable_info_cache [info.Uri] = info;
+			}
+		}
+
+		internal void UseCachedIndexableInfo (Uri uri)
+		{
+			IndexableInfo info = indexable_info_cache [uri] as IndexableInfo;
+			if (info != null) {
+				this.FileAttributesStore.AttachTimestamp (info.Path, info.Mtime);
+				indexable_info_cache.Remove (uri);
+			}
+		}
+
+		//////////////////////////////////////////////////////////
 
 		public LuceneQueryable (string index_name)
 		{
+			this.index_name = index_name;
 			index_dir = Path.Combine (PathFinder.RootDir, index_name);
 
 			driver = new LuceneDriver (index_dir);
-			fa_store = BuildFileAttributesStore (driver.Fingerprint);
-			driver.FileAttributesStore = fa_store;
-			driver.ChangedEvent += OnDriverChanged;
 
-			collector = new LuceneTaskCollector (driver);
+			indexer = driver;
+			indexer.ChangedEvent += OnIndexerChanged;
+
+			fa_store = new FileAttributesStore (BuildFileAttributesStore (driver.Fingerprint));
+
+			collector = new LuceneTaskCollector (indexer);
 		}
 
 		virtual protected IFileAttributesStore BuildFileAttributesStore (string index_fingerprint)
@@ -70,7 +106,7 @@ namespace Beagle.Daemon {
 			get { return scheduler; }
 		}
 
-		public IFileAttributesStore FileAttributesStore {
+		public FileAttributesStore FileAttributesStore {
 			get { return fa_store; }
 		}
 
@@ -81,14 +117,25 @@ namespace Beagle.Daemon {
 			public ICollection RemovedUris;
 		}
 
-		private void OnDriverChanged (LuceneDriver source,
-					      ICollection  list_of_added_uris,
-					      ICollection  list_of_removed_uris)
+		private void OnIndexerChanged (IIndexer     source,
+					       ICollection  list_of_added_uris,
+					       ICollection  list_of_removed_uris)
 		{
+			// Walk across the list of removed Uris and drop them
+			// from the text cache.
+			foreach (Uri uri in list_of_removed_uris) {
+				TextCache.Delete (uri);
+			}
+
+			// Walk across the list of added Uris and mark the local
+			// files with the cached timestamp.
+			foreach (Uri uri in list_of_added_uris)
+				UseCachedIndexableInfo (uri);
+
+			// Propagate the event up through the Queryable.
 			ChangeData change_data = new ChangeData ();
 			change_data.AddedUris = list_of_added_uris;
 			change_data.RemovedUris = list_of_removed_uris;
-
 			QueryDriver.QueryableChanged (this, change_data);
 		}
 
@@ -228,7 +275,7 @@ namespace Beagle.Daemon {
 		public Scheduler.Task NewAddTask (Indexable indexable)
 		{
 			LuceneTask task;
-			task = new LuceneTask (Driver, indexable);
+			task = new LuceneTask (this, this.indexer, indexable);
 			task.Collector = collector;
 			return task;
 		}
@@ -236,7 +283,7 @@ namespace Beagle.Daemon {
 		public Scheduler.Task NewAddTask (IIndexableGenerator generator, Scheduler.Hook generator_hook)
 		{
 			LuceneTask task;
-			task = new LuceneTask (Driver, generator);
+			task = new LuceneTask (this, this.indexer, generator);
 			task.Priority = Scheduler.Priority.Generator;
 			task.GeneratorHook = generator_hook;
 			return task;
@@ -250,7 +297,7 @@ namespace Beagle.Daemon {
 		public Scheduler.Task NewRemoveTask (Uri uri)
 		{
 			LuceneTask task;
-			task = new LuceneTask (Driver, uri);
+			task = new LuceneTask (this, this.indexer, uri);
 			task.Collector = collector;
 			return task;
 		}
@@ -266,11 +313,11 @@ namespace Beagle.Daemon {
 
 		private class LuceneTaskCollector : Scheduler.ITaskCollector {
 
-			LuceneDriver driver;
+			IIndexer indexer;
 
-			public LuceneTaskCollector (LuceneDriver driver)
+			public LuceneTaskCollector (IIndexer indexer)
 			{
-				this.driver = driver;
+				this.indexer = indexer;
 			}
 
 			public double GetMinimumWeight ()
@@ -291,9 +338,7 @@ namespace Beagle.Daemon {
 
 			public void PostTaskHook ()
 			{
-				driver.Flush ();
-				if (driver.NeedsOptimize)
-					driver.Optimize ();
+				indexer.Flush ();
 			}
 			
 		}
@@ -302,7 +347,9 @@ namespace Beagle.Daemon {
 
 		private class LuceneTask : Scheduler.Task {
 
-			LuceneDriver driver;
+			LuceneQueryable queryable;
+
+			IIndexer indexer;
 
 			// If non-null, add this Indexable
 			Indexable indexable = null;
@@ -323,27 +370,30 @@ namespace Beagle.Daemon {
 			// just prior to flushing the driver.
 			public Scheduler.Hook GeneratorHook;
 
-			public LuceneTask (LuceneDriver driver, Indexable indexable) // Add
+			public LuceneTask (LuceneQueryable queryable, IIndexer indexer, Indexable indexable) // Add
 			{
-				this.driver = driver;
+				this.queryable = queryable;
+				this.indexer = indexer;
 				this.indexable = indexable;
 				
 				this.Tag = indexable.Uri.ToString ();
 				this.Weight = 1;
 			}
 
-			public LuceneTask (LuceneDriver driver, Uri uri) // Remove
+			public LuceneTask (LuceneQueryable queryable, IIndexer indexer, Uri uri) // Remove
 			{
-				this.driver = driver;
+				this.queryable = queryable;
+				this.indexer = indexer;
 				this.uri = uri;
 
 				this.Tag = uri.ToString ();
 				this.Weight = 0.499999;
 			}
 
-			public LuceneTask (LuceneDriver driver, IIndexableGenerator generator) // Add Many
+			public LuceneTask (LuceneQueryable queryable, IIndexer indexer, IIndexableGenerator generator) // Add Many
 			{
-				this.driver = driver;
+				this.queryable = queryable;
+				this.indexer = indexer;
 				this.generator = generator;
 
 				this.Tag = generator.StatusName;
@@ -354,9 +404,10 @@ namespace Beagle.Daemon {
 			{
 
 				if (indexable != null) {
-					driver.Add (indexable);
+					queryable.CacheIndexableInfo (indexable);
+					indexer.Add (indexable);
 				} else if (uri != null) {
-					driver.Remove (uri);
+					indexer.Remove (uri);
 				} else if (generator != null) {
 
 					// Since this is a generator, we want the task to
@@ -377,16 +428,16 @@ namespace Beagle.Daemon {
 						// This means that the generator didn't have an indexable
 						// to return this time through, but it does not mean that
 						// its processing queue is empty.
-						if (generated != null)
-							driver.Add (generated);
+						if (generated != null) {
+							queryable.CacheIndexableInfo (generated);
+							indexer.Add (generated);
+						}
 					}
 
 					if (count > 0 && this.GeneratorHook != null)
 						this.GeneratorHook ();
 
-					driver.Flush ();
-					if (driver.NeedsOptimize)
-						driver.Optimize ();
+					indexer.Flush ();
 				}
 			}
 		}
@@ -394,29 +445,29 @@ namespace Beagle.Daemon {
 		//////////////////////////////////////////////////////////////////////////////////
 
 		private class MarkingClosure {
-			LuceneDriver driver;
+			FileAttributesStore fa_store;
 			string path;
 			DateTime mtime;
 			
-			public MarkingClosure (LuceneDriver driver,
-					       string       path,
-					       DateTime     mtime)
+			public MarkingClosure (FileAttributesStore fa_store,
+					       string              path,
+					       DateTime            mtime)
 			{
-				this.driver = driver;
+				this.fa_store = fa_store;
 				this.path = path;
 				this.mtime = mtime;
 			}
 				
 			public void Mark ()
 			{
-				driver.AttachTimestamp (path, mtime);
+				fa_store.AttachTimestamp (path, mtime);
 			}
 		}
 				
 		
 		protected Scheduler.TaskGroup NewMarkingTaskGroup (string path, DateTime mtime)
 		{
-			MarkingClosure mc = new MarkingClosure (Driver, path, mtime);
+			MarkingClosure mc = new MarkingClosure (FileAttributesStore, path, mtime);
 			Scheduler.Hook post_hook = new Scheduler.Hook (mc.Mark);
 			return Scheduler.NewTaskGroup ("mark " + path, null, post_hook);
 		}

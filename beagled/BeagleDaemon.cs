@@ -147,7 +147,7 @@ namespace Beagle.Daemon {
 				Logger.Log.Info ("Sending Shutdown");
 				proxy.Shutdown ();
 				Application.Run ();
-			} while (! DBusisms.InitService ());
+			} while (! DBusisms.InitService (Beagle.DBusisms.Name));
 
 			return 0;
 		} 
@@ -298,8 +298,8 @@ namespace Beagle.Daemon {
 				DBusisms.Init ();
 				Application.Init ();
 
-				Logger.Log.Debug ("Acquiring com.novell.Beagle D-BUS service");
-				if (!DBusisms.InitService ()) {
+				Logger.Log.Debug ("Acquiring {0} D-BUS service", Beagle.DBusisms.Name);
+				if (!DBusisms.InitService (Beagle.DBusisms.Name)) {
 					if (arg_replace) {
 						ReplaceExisting ();
 					} else {
@@ -321,6 +321,9 @@ namespace Beagle.Daemon {
 				Logger.Log.Fatal (e);
 				return 1;
 			}
+
+			// Set up our helper process and the associated monitoring
+			IndexHelperFu.Start ();
 			
 			// We want to spend as little time as possible
 			// between InitService and actually being able 
@@ -402,6 +405,9 @@ namespace Beagle.Daemon {
 
 			// Shut down the global scheduler
 			Scheduler.Global.Stop ();
+
+			// Stop our indexing helper process
+			IndexHelperFu.Stop ();
 
 #if false
 			Logger.Log.Debug ("Unregistering Factory objects");

@@ -50,55 +50,12 @@ using Beagle.Util;
 
 namespace Beagle.Daemon {
 
-	public class LuceneDriver {
+	public class LuceneDriver : IIndexer {
 
 		public delegate bool UriFilter (Uri uri);
 		public delegate double RelevancyMultiplier (Hit hit);
 
-
-		public delegate void ChangedHandler (LuceneDriver source,
-						     ICollection list_of_added_uris,
-						     ICollection list_of_removed_uris);
-
-		public event ChangedHandler ChangedEvent;
-
-		/////////////////////////////////////////////////////
-		
-		private static string optimizer_path;
-		
-		static LuceneDriver ()
-		{
-			string beop = Environment.GetEnvironmentVariable ("BEAGLE_EXTERNAL_OPTIMIZER_PATH");
-
-			if (beop != null)
-				optimizer_path = Path.Combine (beop, "beagle-index-optimizer");
-
-			if (optimizer_path != null) {
-				optimizer_path = Path.GetFullPath (optimizer_path);
-				if (File.Exists (optimizer_path)) {
-					Logger.Log.Debug ("Found optimizer script at {0}", optimizer_path);
-
-					try {
-						// Try running the optimizer script w/ no args
-						Process p = new Process ();
-						p.StartInfo.UseShellExecute = true;
-						p.StartInfo.FileName = optimizer_path;
-						p.Start ();
-						p.WaitForExit ();
-					} catch (Exception ex) {
-						Logger.Log.Debug ("Attempt to run optimizer script led to an exception");
-						Logger.Log.Debug (ex);
-						Logger.Log.Debug ("Optimization will occur in-process");
-						optimizer_path = null;
-					}
-
-				} else {
-					Logger.Log.Debug ("Can't find optimizer at {0}", optimizer_path);
-					Logger.Log.Debug ("Optimization will occur in-process");
-					optimizer_path = null;
-				}
-			}
-		}
+		public event IIndexerChangedHandler ChangedEvent;
 
 		/////////////////////////////////////////////////////
 		
@@ -139,13 +96,6 @@ namespace Beagle.Daemon {
 
 		public Lucene.Net.Store.Directory Store {
 			get { return ourStore; }
-#if false
-			set {
-				if (ourStore != null)
-					throw new Exception ("Attempt to attach a second store to a LuceneDriver");
-				ourStore = (Lucene.Net.Store.Directory) value;
-			}
-#endif
 		}
 
 		public string StorePath {
@@ -225,7 +175,7 @@ namespace Beagle.Daemon {
 				StreamWriter sw;
 
 				// Generate a fingerprint and write it out
-				fingerprint = DateTime.Now.Ticks.ToString ();
+				fingerprint = Guid.NewGuid ().ToString ();
 				sw = new StreamWriter (fingerprintFile, false);
 				sw.WriteLine (fingerprint);
 				sw.Close ();
@@ -273,51 +223,6 @@ namespace Beagle.Daemon {
 
 		public string Fingerprint {
 			get { return fingerprint; }
-		}
-
-		private IFileAttributesStore fa_store = null;
-
-		public IFileAttributesStore FileAttributesStore {
-			get { return fa_store; }
-			set { fa_store = value; }
-		}
-
-		public bool IsUpToDate (string path)
-		{
-			if (fa_store == null)
-				return false;
-
-			FileAttributes attr;
-
-			try {
-				attr = fa_store.Read (path);
-			} catch {
-				attr = null;
-			}
-
-			// FIXME: This check is incomplete
-			return attr != null
-				&& attr.Path == path
-				&& FileSystem.GetLastWriteTime (path) <= attr.LastWriteTime;
-		}
-
-		public void AttachTimestamp (string path, DateTime mtime)
-		{
-			if (fa_store == null)
-				return;
-
-			FileAttributes attr = new FileAttributes ();
-
-			// FIXME?: we just assume that there won't be collisions.
-			attr.UniqueId = Guid.NewGuid ().ToString ();
-
-			attr.Path = path;
-			attr.LastWriteTime = mtime;
-			attr.LastIndexedTime = DateTime.Now;
-
-			if (! fa_store.Write (attr)) {
-				log.Warn ("Couldn't store file attributes for {0}", path);
-			}
 		}
 
 		/////////////////////////////////////////////////////
@@ -380,14 +285,6 @@ namespace Beagle.Daemon {
 					Uri uri = (Uri) entry.Key;
 					Indexable indexable = (Indexable) entry.Value;
 
-					// Filter out indexables with
-					// non-transient file ContentUris that
-					// appear to be up-to-date.
-					if (indexable != null
-					    && indexable.IsNonTransient
-					    && IsUpToDate (indexable.ContentUri.LocalPath))
-						continue;
-					
 					pending_uris.Add (uri);
 					if (indexable != null)
 						pending_indexables.Add (indexable);
@@ -426,20 +323,8 @@ namespace Beagle.Daemon {
 			//Log.Debug ("Step #1: {0} {1} {2}", watch, pending_uris.Count,
 			//	   watch.ElapsedTime / pending_uris.Count);
 
-			
-			// Step #2: Cache non-transient content mtimes
-			Hashtable mtimes = new Hashtable ();
-			foreach (Indexable indexable in pending_indexables) {
-				if (indexable.IsNonTransient) {
-					try {
-						string path = indexable.ContentUri.LocalPath;
-						mtimes [path] = FileSystem.GetLastWriteTime (path);
-					} catch { }
-				}
-			}
 
-
-			// Step #3: Write out the pending adds
+			// Step #2: Write out the pending adds
 			watch.Restart ();
 			IndexWriter writer = null;
 			foreach (Indexable indexable in pending_indexables) {
@@ -466,36 +351,29 @@ namespace Beagle.Daemon {
 			if (writer != null) 
 				writer.Close ();
 			watch.Stop ();
-			//Log.Debug ("Step #3: {0}", watch);
+			//Log.Debug ("Step #2: {0}", watch);
 			
-			// Step #4: Mark added non-transient ContentUri files.
-			watch.Restart ();
-			foreach (Indexable indexable in pending_indexables) {
-				if (indexable.ContentUri.IsFile && ! indexable.DeleteContent) {
-					string path = indexable.ContentUri.LocalPath;
-					if (mtimes.Contains (path))
-						AttachTimestamp (path, (DateTime) mtimes [path]);
-				}
-			}
-			watch.Stop ();
-			//Log.Debug ("Step #4: {0}", watch);
 
+			// Step #3: Fire off an event telling what we just did.
 			if (ChangedEvent != null) {
 				ChangedEvent (this, added_uris, removed_uris);
 			}
 
 			lock (pending_by_uri)
 				cycles_since_last_optimization++;
+
+			if (NeedsOptimize)
+				Optimize ();
 		}
 
-		public bool NeedsOptimize {
+		private bool NeedsOptimize {
 			get { 
 				// FIXME: 19 is a totally arbitrary number.
 				return cycles_since_last_optimization > 19;
 			}
 		}
 
-		public void Optimize ()
+		private void Optimize ()
 		{
 			// If nothing has happened since our last optimization,
 			// do dothing.
@@ -514,6 +392,7 @@ namespace Beagle.Daemon {
 
 			bool optimize_in_process = true;
 
+#if false
 			if (optimizer_path != null) {
 				try {
 					// Try to optimize in an external process
@@ -529,6 +408,7 @@ namespace Beagle.Daemon {
 					Log.Debug (ex);
 				}
 			}
+#endif
 
 			if (optimize_in_process) {
 				Log.Debug ("Optimizing in-process.");

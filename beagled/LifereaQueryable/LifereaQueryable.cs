@@ -120,7 +120,7 @@ namespace Beagle.Daemon.LifereaQueryable {
 			
 			foreach(FileInfo file in files){
 				blogCount++;
-			 	if (Driver.IsUpToDate (file.FullName))
+			 	if (this.FileAttributesStore.IsUpToDate (file.FullName))
 					continue;
 				Scheduler.TaskGroup group = NewMarkingTaskGroup (file.FullName, file.LastWriteTime);
 				

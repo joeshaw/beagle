@@ -162,7 +162,8 @@ namespace Beagle.Daemon.GaimLogQueryable {
 		private void IndexLog (string filename, Scheduler.Priority priority)
 		{
 			FileInfo info = new FileInfo (filename);
-			if (! info.Exists || Driver.IsUpToDate (filename))
+			if (! info.Exists
+			    || this.FileAttributesStore.IsUpToDate (filename))
 				return;
 
 			Scheduler.TaskGroup group;

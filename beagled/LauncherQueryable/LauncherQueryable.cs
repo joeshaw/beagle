@@ -135,7 +135,8 @@ namespace Beagle.Daemon.LauncherQueryable {
 
 		private void IndexLauncher (FileInfo file, Scheduler.Priority priority)
 		{
-			if ((! file.Exists) || (Driver.IsUpToDate (file.FullName)))
+			if ((! file.Exists)
+			    || (this.FileAttributesStore.IsUpToDate (file.FullName)))
 				return;
 			
 			/* Check to see if file is a launcher */
