@@ -28,6 +28,7 @@
 using System;
 using System.Collections;
 
+using Gnome;
 using Gtk;
 
 using Beagle;
@@ -149,7 +150,7 @@ namespace Best {
 
 		//////////////////////////
 
-		private Gtk.Entry entry;
+		private Gnome.Entry entry;
 		
 		private Gtk.ScrolledWindow swin;
 		private TileCanvas canvas;
@@ -182,7 +183,7 @@ namespace Best {
 			Gtk.Label words = new Gtk.Label ("Search terms:");
 			entryLine.PackStart (words, false, false, 3);
 			
-			entry = new Gtk.Entry ();
+			entry = new Gnome.Entry ("");
 			entry.Activated += new EventHandler (this.DoSearch);
 			entryLine.PackStart (entry, true, true, 3);
 
@@ -274,22 +275,22 @@ namespace Best {
 		private void DoSearch (object o, EventArgs args)
 		{
 			try {
-				Search (entry.Text);
+				Search (entry.GtkEntry.Text);
 			}
 			catch (Exception e)
 			{
-				delayedQuery = entry.Text;
+				delayedQuery = entry.GtkEntry.Text;
 				DBusisms.BeagleUpAgain += QueueDelayedQuery;
 
 				if (e.ToString ().IndexOf ("'com.novell.Beagle'") != -1) {
-					root.Error ("The query for <i>" + entry.Text + "</i> failed." +
+					root.Error ("The query for <i>" + entry.GtkEntry.Text + "</i> failed." +
 						    "<br>The likely cause is that the beagle daemon isn't running.");
 					root.OfferDaemonRestart = true;
 				} else if (e.ToString().IndexOf ("Unable to determine the address") != -1) {
-					root.Error ("The query for <i>" + entry.Text + "</i> failed.<br>" +
+					root.Error ("The query for <i>" + entry.GtkEntry.Text + "</i> failed.<br>" +
 						    "The session bus isn't running.  See http://beaglewiki.org/index.php/Installing%20Beagle for information on setting up a session bus.");
 				} else
-					root.Error ("The query for <i>" + entry.Text + "</i> failed with error:<br><br>" + e);
+					root.Error ("The query for <i>" + entry.GtkEntry.Text + "</i> failed with error:<br><br>" + e);
 			}
 			UpdatePage ();
 		}
@@ -347,7 +348,7 @@ namespace Best {
 
 		private void Search (String searchString)
 		{
-			entry.Text = searchString;
+			entry.GtkEntry.Text = searchString;
 			if (query != null) {
 				query.Cancel ();
 				DetachQuery ();
