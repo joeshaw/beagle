@@ -16,7 +16,8 @@ WRAPPER_IN = wrapper.in
 WRAPPER_SED = sed 					\
 	-e "s|\@prefix\@|$(prefix)|g"			\
 	-e "s|\@pkglibdir\@|$(pkglibdir)|g"		\
-	-e "s|\@libdir\@|$(libdir)|g"
+	-e "s|\@libdir\@|$(libdir)|g"			\
+	-e "s|\@gacprefix\@|$(GAC_PREFIX)|g"
 
 
 CRAWLER_TARGET  = Crawler.exe

@@ -257,7 +257,7 @@ install-data-local: $(PLUGIN_TARGET) $(DAEMON_DLL_TARGET) $(DAEMON_TARGET)
 	$(INSTALL_DATA) $(DAEMON_TARGET) $(DESTDIR)$(pkglibdir)/$(DAEMON_TARGET)
 
 uninstall-local:
-	rm -f $(DESTDIR)$(bindir)/$(TARGET)
+	rm -f $(DESTDIR)$(bindir)/$(DAEMON_TARGET)
 
 bin_SCRIPTS = $(DAEMON_WRAPPER)
 noinst_SCRIPTS=testclient

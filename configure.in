@@ -36,6 +36,7 @@ dnl ----------------------------------------------
 dnl beagled
 
 PKG_CHECK_MODULES(BEAGLED, gtk-sharp dbus-sharp)
+BEAGLED_LIBS="$BEAGLED_LIBS $EVO_SHARP_LIBS"
 AC_SUBST(BEAGLED_LIBS)
 
 dnl ----------------------------------------------
@@ -103,7 +104,8 @@ AC_SUBST(CHOOSER_FU_LIBS)
 dnl ----------------------------------------------
 
 dnl Prefixes for helper scripts
-GAC_PREFIX="`$PKG_CONFIG --variable=prefix dbus-sharp`"
+GAC_PREFIX="`$PKG_CONFIG --variable=prefix dbus-sharp evolution-sharp`"
+GAC_PREFIX="`echo $GAC_PREFIX | sed -e 's| |:|g'`"
 AC_SUBST(GAC_PREFIX)
 
 AC_OUTPUT([
