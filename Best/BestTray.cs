@@ -88,7 +88,7 @@ namespace Best {
 			Gdk.Pixbuf smalldog = Images.GetPixbuf ("best.png");
 			eventbox.Add (new Gtk.Image (smalldog.ScaleSimple (24, 24, Gdk.InterpType.Hyper)));
 
-			string tooltip = "Bleeding-Edge Search Tool (F12)";
+			string tooltip = "Beagle Search (F12)";
 			tips = new Gtk.Tooltips ();
 			tips.SetTip (eventbox, tooltip, null);
 			tips.Enable ();

@@ -73,7 +73,7 @@ namespace Best {
 
 		void CreateWindow (string query)
 		{
-			Title = "Bleeding-Edge Search Tool";
+			Title = "Beagle Search (beta)";
 
 			DeleteEvent += new DeleteEventHandler (this.DoDelete);
 
