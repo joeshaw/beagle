@@ -76,16 +76,19 @@ namespace Beagle.Util {
 		}
 
 		[DllImport ("libinotifyglue")]
+		static extern void inotify_glue_init ();
+
+		[DllImport ("libinotifyglue")]
 		static extern int inotify_glue_watch (int fd, string filename, EventType mask);
 
 		[DllImport ("libinotifyglue")]
 		static extern int inotify_glue_ignore (int fd, int wd);
 
 		[DllImport ("libinotifyglue")]
-		static extern unsafe int inotify_snarf_events (int fd, 
-							       int timeout_seconds,
-							       out int num_read,
-							       out IntPtr buffer);
+		static extern unsafe void inotify_snarf_events (int fd, 
+								int timeout_seconds,
+								out int num_read,
+								out IntPtr buffer);
 
 
 		/////////////////////////////////////////////////////////////////////////////////////
@@ -95,6 +98,8 @@ namespace Beagle.Util {
 
 		static Inotify ()
 		{
+			inotify_glue_init ();
+
 			dev_inotify = Syscall.open ("/dev/inotify", OpenFlags.O_RDONLY);
 			if (dev_inotify == -1)
 				throw new Exception ("Could not open /dev/inotify");
@@ -295,13 +300,6 @@ namespace Beagle.Util {
 			}
 		}
 
-		private struct RawEvent {
-			public DateTime      Timestamp;
-			public int           Pos;
-			public int           Count;
-			public inotify_event Event;
-		}
-
 		static unsafe void SnarfWorker ()
 		{
 			while (running) {
@@ -331,18 +329,18 @@ namespace Beagle.Util {
 
 				DateTime now = DateTime.Now;
 				lock (event_queue) {
+					bool saw_overflow = false;
 					for (int i = 0; i < num_events; ++i) {
-						RawEvent raw = new RawEvent ();
-						raw.Timestamp = now;
-						raw.Pos = i;
-						raw.Count = num_events;
-						raw.Event = (inotify_event)Marshal.PtrToStructure (buffer, typeof (inotify_event));
+						inotify_event iev;
+						iev = (inotify_event)Marshal.PtrToStructure (buffer, typeof (inotify_event));
 						buffer = (IntPtr) ((long)buffer + Marshal.SizeOf (typeof (inotify_event)));
-						
-						if (raw.Event.mask == EventType.QueueOverflow)
-							Logger.Log.Warn ("Inotify queue overflow!");
-						event_queue.Enqueue (raw);
+						if (iev.mask == EventType.QueueOverflow)
+							saw_overflow = true;
+						event_queue.Enqueue (iev);
 					}
+
+					if (saw_overflow)
+						Logger.Log.Warn ("Inotify queue overflow!");
 
 					Monitor.Pulse (event_queue);
 				}
@@ -366,44 +364,43 @@ namespace Beagle.Util {
 
 			while (running) {
 
-				RawEvent raw;
+				inotify_event iev;
 
 				lock (event_queue) {
 					while (event_queue.Count == 0 && running)
 						Monitor.Wait (event_queue);
-					raw = (RawEvent) event_queue.Dequeue ();
+					if (! running)
+						break;
+					iev = (inotify_event) event_queue.Dequeue ();
 				}
 
-				if (! running)
-					break;
-
 				Watched watched;
-				watched = Lookup (raw.Event.wd, raw.Event.mask);
+				watched = Lookup (iev.wd, iev.mask);
 				if (watched == null)
 					continue;
 
-				if ((watched.Mask & raw.Event.mask) != 0) {
+				if ((watched.Mask & iev.mask) != 0) {
 					
 					int n_chars = 0;
-					while (n_chars < raw.Event.filename.Length && raw.Event.filename [n_chars] != 0)
+					while (n_chars < iev.filename.Length && iev.filename [n_chars] != 0)
 						++n_chars;
 
 					string filename = "";
 					if (n_chars > 0)
-						filename = filename_encoding.GetString (raw.Event.filename, 0, n_chars);
+						filename = filename_encoding.GetString (iev.filename, 0, n_chars);
 
 
 					if (Verbose) {
 						Console.WriteLine ("*** inotify: {0} {1} {2} {3} {4}",
-								   raw.Event.mask, watched.Wd, watched.Path,
+								   iev.mask, watched.Wd, watched.Path,
 								   filename != "" ? filename : "\"\"",
-								   raw.Event.cookie);
+								   iev.cookie);
 					}
 
 					if (Event != null) {
 						try {
 							Event (watched.Wd, watched.Path, filename, 
-							       raw.Event.mask, raw.Event.cookie);
+							       iev.mask, iev.cookie);
 						} catch (Exception e) {
 							Logger.Log.Error ("Caught exception inside Inotify.Event");
 							Logger.Log.Error (e); 
@@ -413,7 +410,7 @@ namespace Beagle.Util {
 
 				// If a directory we are watching gets ignored, we need
 				// to remove it from the watchedByFoo hashes.
-				if (raw.Event.mask == EventType.Ignored) {
+				if (iev.mask == EventType.Ignored) {
 					lock (watched_by_wd)
 						Forget (watched);
 				}
@@ -448,7 +445,7 @@ namespace Beagle.Util {
 			}
 
 			Inotify.Start ();
-			Inotify.Verbose = true;
+			//Inotify.Verbose = true;
 
 			while (Inotify.Enabled && Inotify.WatchCount > 0)
 				Thread.Sleep (1000);
