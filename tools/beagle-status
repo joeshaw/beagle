@@ -4,6 +4,6 @@ DBUS_SEND="dbus-send --session --dest=com.novell.Beagle --print-reply /com/novel
 
 while [ 1 ]; do
     clear
-    $DBUS_SEND | head -20
+    $DBUS_SEND | head -n 20
     sleep 1
 done
