@@ -15,6 +15,7 @@ CSFILES = 				\
 
 ASSEMBLIES = 					\
 	$(BEAGLE_UI_LIBS)			\
+	$(EVO_SHARP_LIBS)			\
 	$(LOCAL_ASSEMBLIES:%=-r:%)
 
 LOCAL_ASSEMBLIES =			\

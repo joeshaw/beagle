@@ -73,6 +73,12 @@ namespace Beagle.Tile {
 			}
 			
 		}
+
+		[TileAction]
+		public void SendMailEmail1 ()
+		{
+			SendMailToAddress (Hit ["fixme:Email1"], null);
+		}
 	}
 }
 	

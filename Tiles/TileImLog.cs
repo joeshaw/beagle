@@ -58,17 +58,14 @@ namespace Beagle.Tile {
 #if false
 			Template["snippet"] = getSnippet ();
 #endif
-
 			if (buddy != null && buddy.Alias != "")
 				Template["speakingalias"] = buddy.Alias;
 			else 
 				Template["speakingalias"] = Hit["fixme:speakingto"];
 
-			
-			if (buddy.BuddyIconLocation != "") {
+			if (buddy != null && buddy.BuddyIconLocation != "") {
 				string homedir = Environment.GetEnvironmentVariable ("HOME");
-				string fullpath = Path.Combine (homedir, 
-								".gaim");
+				string fullpath = Path.Combine (homedir, ".gaim");
 				fullpath = Path.Combine (fullpath, "icons");
 				fullpath = Path.Combine (fullpath, buddy.BuddyIconLocation);
 
@@ -150,6 +147,40 @@ namespace Beagle.Tile {
 
 			return snip.Substring (0, System.Math.Min (256, snip.Length));
 
+		}
+
+		[TileAction]
+		public void SendMailForIm ()
+		{
+			Evolution.Book addressbook = null;
+
+			// Connect to the Evolution addressbook.
+			try {
+				addressbook = Evolution.Book.NewSystemAddressbook ();
+				addressbook.Open (true);
+			} catch (Exception e) {
+				Console.WriteLine ("\nCould not open Evolution addressbook:\n" + e);
+				return;
+			}
+
+			// Do a search.
+			string qstr =
+				String.Format ("(or " +
+					           "(is \"im_aim\" \"{0}\") " + 
+					           "(is \"im_yahoo\" \"{0}\") " +
+					           "(is \"im_msn\" \"{0}\") " + 
+					           "(is \"im_icq\" \"{0}\") " +
+					           "(is \"im_jabber\" \"{0}\") " + 
+					           "(is \"im_groupwise\" \"{0}\") " +
+					       ")",
+					       Hit ["fixme:speakingto"]);
+			Evolution.BookQuery query = Evolution.BookQuery.FromString (qstr);
+			Evolution.Contact [] matches = addressbook.GetContacts (query);
+			foreach (Evolution.Contact c in matches) {
+				Console.WriteLine ("Mail Match: {0} <{1}>", c.FullName, c.Email1);
+				SendMailToAddress (c.Email1, null);
+				return;
+			}
 		}
 	}
 }

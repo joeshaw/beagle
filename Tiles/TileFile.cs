@@ -65,6 +65,12 @@ namespace Beagle.Tile {
 		{
 			OpenFromMime (Hit);
 		}
+
+		[TileAction]
+		public void SendTo ()
+		{
+			SendMailToAddress (null, String.Format ("'{0}'", Hit.Uri));
+		}
 	}
 }
 	

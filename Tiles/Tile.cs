@@ -152,7 +152,32 @@ namespace Beagle.Tile {
 			p.StartInfo.Arguments = argument;
 
 			p.Start ();
-		} 
+		}
+
+		protected void SendMailToAddress (string email, string attach)
+		{
+			if ((email == null || email == "") && (attach == null || attach == "")) {
+				Console.WriteLine ("SendMail got empty email address and attachment");
+				return;
+			}
+			
+			Process p = new Process ();
+			p.StartInfo.UseShellExecute = false;
+			p.StartInfo.FileName        = "evolution";
+			p.StartInfo.Arguments       = "mailto:";
+
+			if (email != null && email != "")
+				p.StartInfo.Arguments += email;
+
+			if (attach != null && attach != "")
+				p.StartInfo.Arguments += "?attach=" + attach;
+			
+			try {
+				p.Start () ;
+			} catch (Exception e) {
+				Console.WriteLine ("Error launching Evolution composer: " + e);
+			}
+		}
 	}
 }
 	

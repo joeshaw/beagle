@@ -99,9 +99,15 @@ namespace Beagle.Daemon.BlamQueryable {
 		private void Index ()
 		{
 			FileInfo file = new FileInfo (Path.Combine (blamDir, "collection.xml"));
-			
-			ChannelCollection collection = ChannelCollection.LoadFromFile (file.FullName);
-			
+
+			ChannelCollection collection = null;
+			try {
+				collection = ChannelCollection.LoadFromFile (file.FullName);
+			} catch (Exception e) {
+				log.Info ("Could not open Blam! channel list: " + e);
+				return;
+			}
+
 			log.Info ("Scanning blogs...");
 			Stopwatch stopwatch = new Stopwatch ();
 			int blogCount = 0, itemCount = 0;
