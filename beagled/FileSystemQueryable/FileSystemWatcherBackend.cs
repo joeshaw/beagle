@@ -87,6 +87,13 @@ namespace Beagle.Daemon.FileSystemQueryable {
 
 			try {
 
+				// If a directory changed, mark it as dirty so it will get rescanned
+				// more quickly.
+				FileSystemModel.Directory dir;
+				dir = queryable.Model.GetDirectoryByPath (args.FullPath);
+				if (dir != null)
+					queryable.Model.ReportChanges (dir);
+
 				queryable.Add (args.FullPath);
 
 			} catch (Exception ex) {
