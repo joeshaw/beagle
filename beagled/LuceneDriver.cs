@@ -361,22 +361,6 @@ namespace Beagle.Daemon {
 				Document doc = luceneHits.Doc (i);
 				Uri uri = UriFromLuceneDoc (doc);
 
-				// If this is a file Uri and the file doesn't exist
-				// on the system, filter the hit out of the
-				// query results and schedule the removal of that
-				// Uri from the index.
-				if (uri.IsFile
-				    && ! File.Exists (uri.LocalPath)
-				    && ! Directory.Exists (uri.LocalPath)) {
-
-					log.Debug ("{0} is file!", uri);
-					// Do a low-priority delete --- it shouldn't matter
-					// if this lingers in the index for a bit, right?
-					ScheduleDelete (uri, -1000);
-
-					continue;
-				}
-
 				Versioned versioned = new Versioned ();
 				FromLuceneDocToVersioned (doc, versioned);
 				

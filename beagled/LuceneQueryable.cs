@@ -77,6 +77,12 @@ namespace Beagle.Daemon {
 			}
 		}
 
+		////////////////////////////////////////////////////////
+
+		virtual protected bool HitIsValid (Hit hit)
+		{
+			return true;
+		}
 
 		////////////////////////////////////////////////////////
 		
@@ -110,8 +116,21 @@ namespace Beagle.Daemon {
 				hits = Driver.DoQuery (body, added);
 			}
 
-			if (hits != null && hits.Count > 0)
-				queryResult.Add (hits);
+			if (hits != null && hits.Count > 0) {
+
+				ArrayList filtererHits = new ArrayList ();
+				foreach (Hit hit in hits) {
+					if (HitIsValid (hit)) {
+						filtererHits.Add (hit);
+					} else {
+						// Do a low-priority delete --- it shouldn't matter
+						// if this lingers in the index for a bit, right?
+						Driver.ScheduleDelete (hit.Uri, -1000);
+					}
+				}
+				
+				queryResult.Add (filtererHits);
+			}
 		}
 
 		

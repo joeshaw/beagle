@@ -69,6 +69,15 @@ namespace Beagle.Daemon.FileSystemQueryable {
 
 		//////////////////////////////////////////////////////////////////////////
 
+		// Filter out hits where the files seem to no longer exist.
+		override protected bool HitIsValid (Hit hit)
+		{
+			string path = hit.Uri.LocalPath;
+			return File.Exists (path) || Directory.Exists (path);
+		}
+
+		//////////////////////////////////////////////////////////////////////////
+
 		//
 		// Inotify-related code
 		//
