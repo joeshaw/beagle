@@ -45,7 +45,6 @@ namespace Beagle
 			public Hit Hit = null;
 			public int RefCount = 0;
 		}
-		private Hashtable allHits = new Hashtable ();
 
 		public Query ()
 		{
@@ -76,54 +75,24 @@ namespace Beagle
 			catch (Exception e) { }
 		}
 
-		private void InternalSubtractUri (Uri uri)
-		{
-			// Only subtract previously-added Uris.
-			if (allHits.Contains (uri)) {
-				HitInfo info = (HitInfo) allHits [uri];
-				--info.RefCount;
-				if (info.RefCount == 0) {
-					allHits.Remove (uri);
-					if (HitSubtractedEvent != null)
-						HitSubtractedEvent (this, uri);
-				}
-			}
-		}
-
-		private void InternalAddHit (Hit hit)
-		{
-			HitInfo info = (HitInfo) allHits [hit.Uri];
-			if (info == null) {
-				info = new HitInfo ();
-				info.Hit = hit;
-				info.RefCount = 0;
-				allHits [hit.Uri] = info;
-			}
-
-			++info.RefCount;
-			// If necessary, synthesize a subtracted event
-			if (info.RefCount > 1)
-				if (HitSubtractedEvent != null)
-					HitSubtractedEvent (this, hit.Uri);
-			if (info.RefCount > 0)
-				if (HitAddedEvent != null)
-					HitAddedEvent (this, hit);
-		}
-
 		private void OnHitsAddedAsXml (QueryProxy sender, string hitsXml)
 		{
 			ArrayList hits = Hit.ReadHitXml (hitsXml);
 			
-			foreach (Hit hit in hits)
-				InternalAddHit (hit);
+			if (HitAddedEvent != null) {
+				foreach (Hit hit in hits)
+					HitAddedEvent (this, hit);
+			}
 		}
 
 		private void OnHitsSubtractedAsString (QueryProxy sender, string uriList)
 		{
-			string[] uris = uriList.Split ('|');
-			foreach (string uriStr in uris) {
-				Uri uri = new Uri (uriStr, true);
-				InternalSubtractUri (uri);
+			if (HitSubtractedEvent != null) {
+				string[] uris = uriList.Split ('|');
+				foreach (string uriStr in uris) {
+					Uri uri = new Uri (uriStr, true);
+					HitSubtractedEvent (this, uri);
+				}
 			}
 		}
 

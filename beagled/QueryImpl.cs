@@ -38,6 +38,8 @@ namespace Beagle.Daemon {
 		private QueryDriver driver;
 		private QueryBody body;
 		private QueryResult result = null;
+
+		private Hashtable allHits = new Hashtable ();
 		
 		public override event StartedHandler StartedEvent;
 		public override event HitsAddedAsXmlHandler HitsAddedAsXmlEvent;
@@ -172,14 +174,28 @@ namespace Beagle.Daemon {
 
 			return stringWriter.ToString ();
 		}
-		
+
+
 		private void OnHitsAddedToResult (QueryResult source, ICollection someHits)
 		{
 			if (source != result)
 				return;
 
+			ArrayList toSubtract = new ArrayList ();
+			
+			foreach (Hit hit in someHits) {
+				// If necessary, synthesize a subtracted event
+				if (allHits.Contains (hit))
+					toSubtract.Add (hit.Uri);
+				
+				allHits[hit.Uri] = hit;
+			}
+			
 			if (HitsAddedAsXmlEvent != null)
 				HitsAddedAsXmlEvent (this, HitsToXml (someHits));
+			if (HitsSubtractedAsStringEvent != null)
+				HitsSubtractedAsStringEvent (this, UrisToString (toSubtract
+));
 		}
 
 		private void OnFinishedResult (QueryResult source) 
@@ -209,8 +225,15 @@ namespace Beagle.Daemon {
 			if (source != result)
 				return;
 
+			ArrayList toSubtract = new ArrayList ();
+			foreach (string uri in someUris) {
+				// Only subtract previously-added Uris
+				if (allHits.Contains (uri)) {
+					toSubtract.Add (uri);
+				}
+			}
 			if (HitsSubtractedAsStringEvent != null)
-				HitsSubtractedAsStringEvent (this, UrisToString (someUris));
+				HitsSubtractedAsStringEvent (this, UrisToString (toSubtract));			
 		}
 
 		private void OnCancelledResult (QueryResult source) 
