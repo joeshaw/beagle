@@ -35,7 +35,7 @@ namespace Beagle.Filters {
 
 		static string [] strKeyWords = { "and", "break", "chop", "class", "close", "closedir", 
 						 "continue", "defined", "die", "do", "eval",
-						 "each", "else", "elseif", "eof", "eq", "exec", "for", 
+						 "each", "else", "elsif", "eof", "eq", "exec", "for", 
 						 "foreach", "ge", "getc", "glob", "goto", "gt",
 						 "if", "index", "keys", "last", "le", "length",
 						 "lt", "ne", "next", "not", "or", "pick", "print", "quit",
