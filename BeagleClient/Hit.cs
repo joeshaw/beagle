@@ -83,6 +83,7 @@ namespace Beagle {
 		{
 			writer.WriteStartElement ("hit");
 
+			writer.WriteAttributeString ("timestamp", BU.StringFu.DateTimeToString (Timestamp));
 			writer.WriteAttributeString ("name", id.ToString ());
 			writer.WriteAttributeString ("uri", uri.ToString ());
 			writer.WriteAttributeString ("type", type);
@@ -117,6 +118,7 @@ namespace Beagle {
 		public void ReadFromXml (XmlTextReader reader)
 		{
 			// This is a pretty lame reader 
+			Timestamp = BU.StringFu.StringToDateTime (reader.GetAttribute ("timestamp"));
 			id = int.Parse (reader.GetAttribute ("name"));
 			uri = new Uri (reader.GetAttribute ("uri"), true);
 			type = reader.GetAttribute ("type");
