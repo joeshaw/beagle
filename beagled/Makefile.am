@@ -6,7 +6,7 @@ CSC = mcs -g -nowarn:0067,0618
 
 PLUGIN_TARGET = BeagleDaemonPlugins.dll
 
-PLUGIN_CFLAGS = -target:library
+PLUGIN_CSFLAGS = -target:library
 
 PLUGIN_CSFILES =			\
 	$(srcdir)/PathFinder.cs		\
@@ -35,7 +35,7 @@ $(EXTSTR): $(EXTSTR_IN)
 
 
 $(PLUGIN_TARGET): $(PLUGIN_CSFILES) $(EXTSTR) $(PLUGIN_LOCAL_ASSEMBLIES)
-	$(CSC) -o $@ $(PLUGIN_CFLAGS) $(PLUGIN_CSFILES) $(EXTSTR) $(PLUGIN_ASSEMBLIES)
+	$(CSC) -o $@ $(PLUGIN_CSFLAGS) $(PLUGIN_CSFILES) $(EXTSTR) $(PLUGIN_ASSEMBLIES)
 
 ############################################################
 
