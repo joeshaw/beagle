@@ -1,6 +1,6 @@
 /* -*- Mode: csharp; tab-width: 8; indent-tabs-mode: t; c-basic-offset: 8 -*- */
 //
-// FilterExcel.cs
+// FilterPPT.cs
 //
 // Copyright (C) 2004 Novell, Inc.
 //
@@ -31,6 +31,8 @@ using System.Collections;
 using System.IO;
 using System.Text;
 using Gsf;
+
+using Beagle.Util;
 
 internal class RecordType
 {
@@ -423,14 +425,97 @@ namespace Beagle.Filters {
 			}
 			return length + 8;
 		}
+		
 
+		private void ExtractMetaData (Input sumStream, Input docSumStream)
+		{
+			DocMetaData sumMeta = null;
+			if (sumStream != null)
+				sumMeta = Msole.MetadataReadReal (sumStream);
+			else
+				Logger.Log.Error ("SummaryInformationStream not found");
+			
+			DocMetaData docSumMeta = null;
+			if (docSumStream != null)
+				docSumMeta = Msole.MetadataReadReal (docSumStream);
+			else
+				Logger.Log.Error ("DocumentSummaryInformationStream not found");
+
+			DocProp prop = null;
+			string str = null;
+			if (sumMeta != null) {
+				prop = sumMeta.GetProp ("dc:title");
+				if (prop != null)
+					str = Gsf.Global.GetPropValStr (prop);
+				if (str != null && str.Length > 0)
+					AddProperty (Beagle.Property.New ("dc:title", str));
+
+				str = null;
+				prop = sumMeta.GetProp ("dc:subject");			
+				if (prop != null)
+					str = Gsf.Global.GetPropValStr (prop);			
+				if (str != null && str.Length > 0)
+					AddProperty (Beagle.Property.New ("dc:subject", str));
+
+				str = null;
+				prop = sumMeta.GetProp ("dc:description");		
+				if (prop != null)
+					str = Gsf.Global.GetPropValStr (prop);			
+				if (str != null && str.Length > 0)
+					AddProperty (Beagle.Property.New ("dc:description", str));
+
+				str = null;
+				prop = sumMeta.GetProp ("keywords");
+				if (prop != null)
+					str = Gsf.Global.GetPropValStr (prop);
+				if (str != null && str.Length > 0)
+					AddProperty (Beagle.Property.New ("fixme:keywords", str));
+
+				str = null;
+				prop = sumMeta.GetProp ("creator");
+				if (prop != null)
+					str = Gsf.Global.GetPropValStr (prop);
+				if (str != null && str.Length > 0)
+					AddProperty (Beagle.Property.New ("fixme:author", str));
+			}
+			
+			if (docSumMeta != null) {
+				str = null;
+				prop = docSumMeta.GetProp ("company");
+				if (prop != null)
+					str = Gsf.Global.GetPropValStr (prop);
+				if (str != null && str.Length > 0)
+					AddProperty (Beagle.Property.New ("fixme:company", str));
+
+				str = null;
+				prop = docSumMeta.GetProp ("slide-count");
+				if (prop != null)
+					str = Gsf.Global.GetPropValStr (prop);
+				if (str != null && str.Length > 0)
+					AddProperty (Beagle.Property.New ("fixme:slide-count", str));
+			}
+		}
 		override protected void DoPullProperties ()
 		{
-			Input stream = file.ChildByName ("PowerPoint Document");
-
-			read_text = false;
-			ParseElement(stream);
-			AddProperty (Beagle.Property.New ("fixme:SlideCount", slide_count));
+			Input sumStream = null;
+			Input docSumStream = null;
+			string str = null;
+			int childCount = 0;
+			int found = 0;
+			
+			childCount = file.NumChildren();
+			for (int i = 0; i < childCount && found != 2; i++) {
+				str = file.NameByIndex (i);
+				if (string.Compare (str, "SummaryInformation") == 0) {
+					sumStream = file.ChildByIndex (i);
+					found = 1;
+				}
+				else if (string.Compare (str, "DocumentSummaryInformation") == 0) {
+					docSumStream = file.ChildByIndex (i);
+					found = 2;
+				}
+			}
+			ExtractMetaData (sumStream, docSumStream);
 		}
 
 		override protected void DoPull ()

@@ -231,7 +231,7 @@ dnl ----------------------------------------------
 
 dnl beagled
 
-PKG_CHECK_MODULES(GSF_SHARP, gsf-sharp, enable_gsf_sharp=yes, enable_gsf_sharp=no)
+PKG_CHECK_MODULES(GSF_SHARP, gsf-sharp >= 0.2, enable_gsf_sharp=yes, enable_gsf_sharp=no)
 AM_CONDITIONAL(ENABLE_GSF_SHARP, test "x$enable_gsf_sharp" = "xyes")
 
 PKG_CHECK_MODULES(GST_SHARP, gst-sharp, enable_gst_sharp=yes, enable_gst_sharp=no)
