@@ -358,14 +358,6 @@ namespace Beagle.Daemon {
 			ScheduleDelete (uri, priority, null);
 		}
 
-		private class HitInfo {
-			public Uri Uri;
-			public int Id;
-			public Document Doc;
-			public Versioned Versioned;
-			public float Score;
-		}
-
 		private ICollection FilterHits (LNS.Searcher searcher, LNS.Hits hits)
 		{
 			int nHits = hits.Length ();
@@ -373,52 +365,34 @@ namespace Beagle.Daemon {
 			if (nHits == 0)
 				return new Hit [0];
 
-			Hashtable byUri = new Hashtable ();
-
-			// Pass #1: If we get multiple hits with the same Uri,
-			// make sure that we throw out all but the most recent.
-			for (int i = 0; i < nHits; ++i) {
-				int id = hits.Id (i);
-				Document doc = hits.Doc (i);
-				Uri uri = UriFromLuceneDoc (doc);
-
-				Versioned versioned = new Versioned ();
-				FromLuceneDocToVersioned (doc, versioned);
-				
-				HitInfo other = (HitInfo) byUri [uri];
-				if (other == null || other.Versioned.IsObsoletedBy (versioned)) {
-					HitInfo info = new HitInfo ();
-					info.Uri = uri;
-					info.Id = hits.Id (i);
-					info.Doc = doc;
-					info.Versioned = versioned;
-					info.Score = hits.Score (i);
-					byUri [uri] = info;
-				}
-			}
-
-			// Pass #2: Check that any Uris we get are the
-			// most recent in the index.
 			ArrayList filteredHits = new ArrayList ();
-			foreach (HitInfo info in byUri.Values) {
-				if (DocIsUpToDate (searcher, info.Uri, info.Id, info.Versioned)) {
-					Hit hit = FromLuceneDocToHit (info.Doc, info.Id, info.Score);
-					filteredHits.Add (hit);
-				}
+			for (int i = 0; i < nHits; ++i) {
+				Hit hit = FromLuceneDocToHit (hits.Doc (i), hits.Id (i), hits.Score (i));
+				filteredHits.Add (hit);
 			}
-
 			return filteredHits;
 		}
 
 		public ICollection DoQuery (QueryBody body, ICollection listOfUris)
 		{
+			Stopwatch watch = new Stopwatch ();
+
 			LNS.Searcher searcher = new LNS.IndexSearcher (Store);
+			watch.Start ();
 			LNS.Query query = ToLuceneQuery (body, listOfUris);
+			watch.Stop ();
+			log.Debug ("Built lucene query in {0}", watch);
 
+			watch.Restart ();
 			LNS.Hits luceneHits = searcher.Search (query);
+			watch.Stop ();
 			int nHits = luceneHits.Length ();
+			log.Debug ("Search on {0} executed, returning {1} hits in {2}", Store, nHits, watch);
 
+			watch.Restart ();
 			ICollection filteredHits = FilterHits (searcher, luceneHits);
+			watch.Stop ();
+			log.Debug ("{0} Lucene hits filtered to {1} Beagle hits in {2}", nHits, filteredHits.Count, watch);
 
 			searcher.Close ();
 
@@ -1253,47 +1227,54 @@ namespace Beagle.Daemon {
 			return new Uri (uri, true);
 		}
 
-		static private void FromLuceneDocToVersioned (Document doc, Versioned versioned)
-		{
-			string str;
-
-			str = doc.Get ("Timestamp");
-			if (str != null)
-				versioned.Timestamp = StringFu.StringToDateTime (str);
-			
-			str = doc.Get ("Revision");
-			if (str != null)
-				versioned.Revision = StringToRevision (str);
-
-		}
-
 		private Hit FromLuceneDocToHit (Document doc, int id, float score)
 		{
 			Hit hit = new Hit ();
 
 			hit.Id = id;
-			
-			string str;
-
-			FromLuceneDocToVersioned (doc, hit);
-			
-			hit.Uri = UriFromLuceneDoc (doc);
-
-			str = doc.Get ("Type");
-			if (str == null)
-				throw new Exception ("Got hit from Lucene w/o a Type!");
-			hit.Type = str;
-			
-			hit.MimeType = doc.Get ("MimeType");
-
-			hit.Source = "lucene";
 			hit.ScoreRaw = score;
-			
+			hit.Source = "lucene";
+
 			foreach (Field ff in doc.Fields ()) {
-				string key = FromLucenePropertyKey (ff.Name ());
-				if (key != null)
-					hit [key] = ff.StringValue ();
+				string name = ff.Name ();
+				string value = ff.StringValue ();
+
+				switch (name) {
+				case "Uri":
+					hit.Uri = new Uri (value, true);
+					break;
+
+				case "Type":
+					hit.Type = value;
+					break;
+					
+				case "MimeType":
+					hit.MimeType = value;
+					break;
+
+				case "Timestamp":
+					hit.Timestamp = StringFu.StringToDateTime (value);
+					break;
+
+				case "Revision":
+					hit.Revision = StringToRevision (value);
+					break;
+
+				default:
+					string key = FromLucenePropertyKey (name);
+
+					if (key != null)
+						hit [key] = value;
+
+					break;
+				}
 			}
+
+			if (hit.Type == null)
+				throw new Exception ("Got hit from Lucene w/o a Type!");
+
+			if (hit.Uri == null)
+				throw new Exception ("Hot a document from Lucene w/o a URI!");
 			
 			return hit;
 		}
@@ -1329,38 +1310,6 @@ namespace Beagle.Daemon {
 					theAnalyzer = new BeagleAnalyzer ();
 				return theAnalyzer;
 			}
-		}
-
-		// Sanity-check a Document against the Index:  Make sure that
-		// there isn't some other more recent document with the same Uri.
-		private bool DocIsUpToDate (LNS.Searcher searcher,
-					    Uri          docUri,
-					    int          docId,
-					    Versioned    docVersioned)
-		{
-			// First, find documents with the same Uri.
-			Term uriTerm = new Term ("Uri", docUri.ToString ());
-			LNS.Query uriQuery = new LNS.TermQuery (uriTerm);
-			LNS.Hits uriHits = searcher.Search (uriQuery);
-
-			Versioned other = null;
-			for (int i = 0; i < uriHits.Length (); ++i) {
-				// Skip the hit under consideration
-				if (uriHits.Id (i) == docId)
-					continue;
-				
-				if (other == null)
-					other = new Versioned ();
-
-				FromLuceneDocToVersioned (uriHits.Doc (i), other);
-				// Oops... this isn't supposed to happen.
-				if (docVersioned.IsObsoletedBy (other)) {
-					log.Warn ("Matched obsolete document with Uri '{0}'", docUri);
-					return false;
-				}
-			}
-
-			return true;
 		}
 
 		/////////////////////////////////////////////////////
