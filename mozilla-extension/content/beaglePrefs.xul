@@ -1,0 +1,44 @@
+<?xml version="1.0"?>
+
+<!DOCTYPE overlay SYSTEM "chrome://beagle/locale/beagle.dtd">
+
+<?xml-stylesheet href="chrome://global/skin/global.css" type="text/css"?>
+
+<dialog id="beagle-pref"
+  buttons="accept,cancel"
+  ondialogaccept="beaglePrefsSave();"
+  onload="beaglePrefsInit();" 
+  persist="screenX screenY"
+  style="width:330px;"
+  title="&beagle.pref.label;"
+  xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
+
+  <script type="application/x-javascript" src="chrome://beagle/content/beagleOverlay.js" />
+  <script type="application/x-javascript" src="chrome://beagle/content/beaglePrefs.js" />
+
+  <groupbox>
+    <caption label="&beagle.pref.context.label;" />
+    <checkbox id="beagle.context.active" 
+      label="&beagle.pref.context.active.label;"
+      oncommand="beaglePrefsFlip();"
+      prefattribute="checked" 
+      preftype="bool" 
+      type="checkbox" 
+    />
+    <checkbox id="beagle.context.sep.a" 
+      class="indent"
+      label="&beagle.pref.context.sep.a.label;"
+      prefattribute="checked" 
+      preftype="bool" 
+      type="checkbox" 
+    />
+    <checkbox id="beagle.context.sep.b" 
+      class="indent"
+      label="&beagle.pref.context.sep.b.label;"
+      prefattribute="checked" 
+      preftype="bool" 
+      type="checkbox" 
+    />
+  </groupbox>
+
+</dialog> 

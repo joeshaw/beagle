@@ -1,5 +1,14 @@
 2004-07-27  Alex Graveley  <alex@ximian.com>
 
+	* mozilla-extension/: Add initial commit of the mozilla/firefox
+	indexing extension.
+
+	* configure.in: Add mozilla-extension/Makefile.
+
+	* Makefile.am (SUBDIRS): Add mozilla-extension.
+
+2004-07-27  Alex Graveley  <alex@ximian.com>
+
 	* tools/Makefile.am (INDEX_WEB_CONTENT_WRAPPER): Rename
 	beagle-epiphany-index to beagle-index-url since it will be used by
 	mozilla too.

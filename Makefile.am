@@ -12,6 +12,7 @@ SUBDIRS = 			\
 	Tiles			\
 	tools 			\
 	Best			\
+	mozilla-extension	\
 	searchomatic		\
 	chooser-fu
 

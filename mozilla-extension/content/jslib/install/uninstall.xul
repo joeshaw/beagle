@@ -1,0 +1,127 @@
+<?xml version="1.0"?>
+
+<!--
+
+The contents of this file are subject to the Mozilla Public
+License Version 1.1 (the "License"); you may not use this file
+except in compliance with the License. You may obtain a copy of
+the License at http://www.mozilla.org/MPL/
+
+Software distributed under the License is distributed on an "AS
+IS" basis, WITHOUT WARRANTY OF ANY KIND, either express or
+implied. See the License for the specific language governing
+rights and limitations under the License.
+
+The Original Code is Mozdev Group, Inc. code.
+The Initial Developer of the Original Code is Mozdev Group, Inc.
+
+Portions created by Mozdev Group, Inc. are
+Copyright (C) 2003 Mozdev Group, Inc.  All
+Rights Reserved.
+
+Original Author: Pete Collins <pete@mozdev.org>
+Contributor(s):
+
+-->
+
+<!-- ***************** STYLE SHEET ****************** -->
+<?xml-stylesheet href="chrome://global/skin/" type="text/css"?>
+<?xml-stylesheet href="chrome://beagle/content/jslib/install/uninstall.css" type="text/css"?>
+<!-- ***************** STYLE SHEET ****************** -->
+
+<!DOCTYPE wizard>
+
+<wizard id="uninstallWizard"
+        title="Uninstall Wizard"
+        xmlns:html="http://www.w3.org/1999/xhtml"
+        xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+        xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+        onwizardcancel="// return onCancel();"
+        onwizardfinish="finish();"
+        onload="initWizard();">
+
+<script type="application/x-javascript" src="chrome://beagle/content/jslib/jslib.js" />
+
+<script>
+ <![CDATA[
+  include (jslib_routines);
+  include (jslib_uninstall);
+  var gPackageName = window.arguments[0];
+  var gInstallCallback = window.arguments[1];
+  var gUninstall = new Uninstall(gPackageName, gInstallCallback);
+                      
+  function initWizard()
+  {
+    document.documentElement.pageIndex = 0;
+
+    gUninstall.generateUninstallInfo();
+
+    const msg1 = "The package ";
+    const msg2 = " will be removed.";
+    var text = document.createTextNode(msg1 + gUninstall.packageDisplayName + msg2);
+    document.getElementById("uninstallText").appendChild(text);
+  }
+
+  function uninstallPackage ()
+  {
+    jslibDebug("uninstallPackage");
+    gUninstall.closeOpenWindows();
+
+    var wizard = document.getElementById("uninstallWizard");
+    wizard.canRewind = false;
+    wizard.canAdvance = false;
+
+    var pmeter = document.getElementById("uninstallProgress");
+
+    gUninstall.uninstallPackage();
+
+  }
+
+  function finish ()
+  {
+    gUninstall.finish();
+  }
+
+  function displayFilesToDelete()
+  {
+    document.getElementById("showFilesButton").hidden = true;
+    document.getElementById("filesBlock").hidden = false;
+
+    var listbox = document.getElementById("filesList");
+
+    var files = gUninstall.filesToDelete;
+    for (var t=0; t<files.length; t++){
+      try {
+        var filename = files[t].leafName;
+        listbox.appendItem(filename,filename);
+      }
+      catch (ex){ jslibDebug(ex); }
+    }
+  }
+ ]]>
+</script>
+
+  <wizardpage pageid="page1" next="page2" label="Uninstall">
+    <description id="uninstallText" class="text"/>
+    <separator/>
+    <description id="uninstallText2" class="text">
+       All open windows will be closed before the package is removed.
+    </description>
+    <separator/>
+    <hbox>
+      <button id="showFilesButton" label="Show files to be deleted"
+              oncommand="displayFilesToDelete();" />
+    </hbox>
+    <vbox id="filesBlock" hidden="true" flex="1">
+      <label value="Files to be deleted:"/>
+      <listbox id="filesList" flex="1"/>
+    </vbox>
+  </wizardpage>
+
+  <wizardpage pageid="page2" label="Uninstall"
+              onpageshow="uninstallPackage();">
+    <label id="progressText" class="text" value="Uninstalling general data" />
+    <progressmeter id="uninstallProgress" value="0" />
+  </wizardpage>
+</wizard>
+

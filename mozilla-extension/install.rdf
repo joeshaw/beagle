@@ -1,0 +1,38 @@
+<?xml version="1.0"?>
+
+<RDF xmlns="http://www.w3.org/1999/02/22-rdf-syntax-ns#" 
+     xmlns:em="http://www.mozilla.org/2004/em-rdf#">
+
+  <Description about="urn:mozilla:install-manifest">
+
+    <em:id>{fda00e13-8c62-4f63-9d19-d168115b11ca}</em:id>
+    <em:name>Beagle Indexer</em:name>
+    <em:version>0.1</em:version>
+    <em:description>
+      Index webpages you visit using Beagle.
+    </em:description>
+    <em:creator>Alex Graveley</em:creator>
+    <em:homepageURL>http://www.gnome.org/projects/beagle</em:homepageURL>
+
+    <em:iconURL>chrome://beagle/skin/beagle-big.png</em:iconURL>
+    <em:aboutURL>chrome://beagle/content/about.xul</em:aboutURL>
+
+    <em:file>
+      <Description about="urn:mozilla:extension:file:beagle.jar">
+        <em:package>content/</em:package>
+        <em:locale>locale/en-US/</em:locale>
+        <em:skin>skin/classic/</em:skin>
+      </Description>
+    </em:file>
+
+    <em:targetApplication>
+      <Description>
+        <em:id>{ec8030f7-c20a-464f-9b0e-13a3a9e97384}</em:id>
+        <em:minVersion>0.8</em:minVersion>
+        <em:maxVersion>0.9+</em:maxVersion>
+      </Description>
+    </em:targetApplication>
+
+  </Description>
+
+</RDF>
