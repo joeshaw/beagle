@@ -66,13 +66,11 @@ namespace Beagle.Tile {
 
 			
 			if (buddy.BuddyIconLocation != "") {
-				System.Console.WriteLine ("buddy icon location: {0}", buddy.BuddyIconLocation);
 				string homedir = Environment.GetEnvironmentVariable ("HOME");
 				string fullpath = Path.Combine (homedir, 
 								".gaim");
 				fullpath = Path.Combine (fullpath, "icons");
 				fullpath = Path.Combine (fullpath, buddy.BuddyIconLocation);
-				System.Console.WriteLine ("buddy icon location: {0}", fullpath);
 
 				if (File.Exists (fullpath)) {
 					Template["Icon"] = Images.GetHtmlSource (fullpath,
