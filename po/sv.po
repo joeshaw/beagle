@@ -22,6 +22,7 @@ msgid ""
 "If you're wondering whether Best is working check your notification area "
 "(system tray)"
 msgstr ""
+"Om du undrar om Best fungerar så kan du hitta den i din notifieringsyta (system tray)"
 
 #: Best/BestTray.cs:164
 msgid "No Recent Searches"
@@ -86,7 +87,7 @@ msgstr "Bästa <b>{0} av {1}</b> träffar visas"
 #: Best/BestWindow.cs:411
 #, csharp-format
 msgid "Results <b>{0} through {1} of {2}</b> are shown."
-msgstr "Visar <b>{0} av {1}</b> träffar."
+msgstr "Visar träffarna <b>{0} till {1}</b> av totalt {2}."
 
 #. To translators: {0} represents the current query keywords
 #: Best/BestWindow.cs:550
