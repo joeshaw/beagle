@@ -4,7 +4,6 @@ AM_INIT_AUTOMAKE(dewey, 0.0)
 AM_MAINTAINER_MODE
 
 AC_PROG_INSTALL
-AM_PROG_LIBTOOL
 
 AC_PATH_PROG(PKG_CONFIG, pkg-config, no)
 if test "x$PKG_CONFIG" = "xno"; then

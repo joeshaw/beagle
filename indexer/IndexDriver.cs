@@ -180,6 +180,10 @@ namespace Dewey {
 			if (str == null)
 				throw new Exception ("Got hit from Lucene w/o a URI!");
 			hit.Uri = str;
+
+			str = doc.Get ("Domain");
+			if (str != null)
+				hit.Domain = str;
 			
 			str = doc.Get ("MimeType");
 			if (str == null)
