@@ -41,6 +41,7 @@ namespace Beagle
 
 			button.Toggled += new EventHandler (ButtonPress);
 
+			// FIXME: My tray icon is clipped with a 28 pixel tray
 			tray_icon = new Egg.TrayIcon ("Search");
 
 			tray_icon.Add (button);
