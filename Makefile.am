@@ -12,7 +12,8 @@ SUBDIRS = 			\
 	Tiles			\
 	tools 			\
 	Best			\
-	searchomatic
+	searchomatic		\
+	chooser-fu
 
 if ENABLE_EPIPHANY_EXTENSION
 SUBDIRS += epiphany-extension

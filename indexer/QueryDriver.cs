@@ -102,7 +102,6 @@ namespace Beagle {
 				if (! query.IsEmpty) {
 					foreach (IQueryable queryable in queryables) {
 						if (queryable.AcceptQuery (query)) {
-							Console.WriteLine ("Querying '{0}'", queryable);
 							QueryClosure qc = new QueryClosure (queryable,
 											    query,
 											    result);

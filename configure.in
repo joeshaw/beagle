@@ -88,6 +88,14 @@ AC_SUBST(SEARCHOMATIC_LIBS)
 
 dnl ----------------------------------------------
 
+dnl Chooser-fu
+
+PKG_CHECK_MODULES(CHOOSER_FU, gtk+-2.0)
+AC_SUBST(CHOOSER_FU_CFLAGS)
+AC_SUBST(CHOOSER_FU_LIBS)
+
+dnl ----------------------------------------------
+
 AC_OUTPUT([
 Makefile
 images/Makefile
@@ -102,6 +110,7 @@ tools/Makefile
 Best/Makefile
 epiphany-extension/Makefile
 searchomatic/Makefile
+chooser-fu/Makefile
 beagle-0.0.pc
 ])
 
