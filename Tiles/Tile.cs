@@ -127,7 +127,7 @@ namespace Beagle.Tile {
 			p.StartInfo.FileName = "nautilus";
 			if ((!path.StartsWith ("\"")) && (!path.EndsWith ("\"")))
 				path = "\"" + path + "\"";
-			p.StartInfo.Arguments = path;
+			p.StartInfo.Arguments = "--no-desktop " + path;
 
 			try {
 				p.Start ();
@@ -138,14 +138,15 @@ namespace Beagle.Tile {
 
 		protected void OpenFromMime (Hit hit)
 		{
-			OpenFromMime (hit, null, false);
+			OpenFromMime (hit, null, null, false);
 		}
 
 		protected void OpenFromMime (Hit hit,
 					     string command_fallback,
+					     string args_fallback,
 					     bool expects_uris_fallback)
 		{
-			string argument = null;
+			string argument;
 			string command = command_fallback;
 			bool expects_uris = expects_uris_fallback;
 			
@@ -161,11 +162,16 @@ namespace Beagle.Tile {
 				LaunchError ("Can't open MimeType '{0}'", hit.MimeType);
 				return;
 			}
+
+			if (args_fallback != null)
+				argument = args_fallback;
+			else 
+				argument = "";
 			
 			if (expects_uris) {
-				argument = String.Format ("'{0}'", hit.Uri);
+				argument = String.Format ("{0} '{1}'", argument, hit.Uri);
 			} else {
-				argument = hit.PathQuoted;
+				argument = String.Format ("{0} {1}", argument, hit.PathQuoted);
 			}
 			
 			Console.WriteLine ("Cmd: {0}", command);

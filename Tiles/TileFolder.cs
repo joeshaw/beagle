@@ -58,7 +58,7 @@ namespace Beagle.Tile {
 		[TileAction]
 		public override void Open ()
 		{
-			OpenFromMime (Hit, "nautilus", true);
+			OpenFromMime (Hit, "nautilus", "--no-desktop", true);
 		} 
 	}
 }
