@@ -365,11 +365,6 @@ namespace Beagle.Daemon {
 					++last_item_count;
 					++add_count;
 				}
-				
-				if (indexable.DeleteContent) {
-					Log.Info ("Cleaning up {0}..." + indexable.ContentUri.LocalPath);
-					File.Delete (indexable.ContentUri.LocalPath);
-				}
 			}
 			if (writer != null) 
 				writer.Close ();
