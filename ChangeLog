@@ -1,5 +1,10 @@
 2005-03-10  Daniel Drake <dsd@gentoo.org>
 
+	* tools/Query.cs: beagle-query no longer requires an X server to
+	run.
+
+2005-03-10  Daniel Drake <dsd@gentoo.org>
+
 	* beagled/BeagleDaemon.cs, beagled/IndexHelper/IndexHelper.cs,
 	glue/screensaver-glue.c: beagled no longer requires an X server
 	to run.

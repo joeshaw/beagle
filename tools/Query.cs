@@ -143,7 +143,7 @@ class QueryTool {
 	
 	static void Main (string[] args) 
 	{
-		Gtk.Application.Init ();
+		Gtk.Application.InitCheck ("beagle-query", ref args);
 
 		try {
 			query = Beagle.Factory.NewQuery ();
