@@ -9,6 +9,7 @@ INDEXER_CSFILES = 		\
 	IndexItemWithPayload.cs	\
 	Content.cs		\
 	ContentText.cs		\
+	Query.cs		\
 	IndexDriver.cs
 
 

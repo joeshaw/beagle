@@ -7,16 +7,16 @@ namespace Dewey {
 
     public class ContentText : Content {
 
-	public ContentText() : base() { }
+	public ContentText () : base () { }
 
-	public override String[] HandledMimeTypes() {
+	public override String[] HandledMimeTypes () {
 	    return new String[] { "text/plain" };
 	}
 
-	public override bool Read(Stream content_stream) {
-	    StreamReader sr = new StreamReader(content_stream);
-	    String body = sr.ReadToEnd();
-	    SetBody(body);
+	public override bool Read (Stream content_stream) {
+	    StreamReader sr = new StreamReader (content_stream);
+	    String body = sr.ReadToEnd ();
+	    AppendBody (body);
 	    return true;
 	}
     }

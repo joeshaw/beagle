@@ -35,10 +35,10 @@ namespace Dewey {
 	}
 
 	public String this[String key] {
-	    get { return metadata[key.ToLower()] as String; }
+	    get { return metadata[key.ToLower ()] as String; }
 	}
 
-	public bool IsSupercededBy(IndexItem item) {
+	public bool IsSupercededBy (IndexItem item) {
 	    if (uri != item.uri)
 		return false;
 	    if (md5 != null 
@@ -50,43 +50,43 @@ namespace Dewey {
 	    return true;
 	}
 
-	protected IndexItem(String _uri) {
+	protected IndexItem (String _uri) {
 	    uri = _uri;
 	}
 
 	// Map Lucene documents to IndexItems
-	public IndexItem(Document doc) {
+	public IndexItem (Document doc) {
 	    Field f;
 
-	    f = doc.GetField("URI");
+	    f = doc.GetField ("URI");
 	    if (f == null) {
 		// FIXME: complain
 	    }
-	    uri = f.StringValue();
+	    uri = f.StringValue ();
 
-	    f = doc.GetField("MimeType");
+	    f = doc.GetField ("MimeType");
 	    if (f == null) {
 		// FIXME: complain
 	    }
-	    mime_type = f.StringValue();
+	    mime_type = f.StringValue ();
 
-	    f = doc.GetField("MD5");
+	    f = doc.GetField ("MD5");
 	    if (f != null)
-		md5 = f.StringValue();
+		md5 = f.StringValue ();
 
-	    f = doc.GetField("Timestamp");
+	    f = doc.GetField ("Timestamp");
 	    if (f != null) {
-		long ticks = Convert.ToInt64(f.StringValue());
-		timestamp = new DateTime(ticks);
+		long ticks = Convert.ToInt64 (f.StringValue ());
+		timestamp = new DateTime (ticks);
 	    }
 
-	    foreach (Field ff in doc.Fields()) {
-		String key = ff.Name();
-		if (key == key.ToLower()) {
-		    if (metadata.Contains(key)) {
+	    foreach (Field ff in doc.Fields ()) {
+		String key = ff.Name ();
+		if (key == key.ToLower ()) {
+		    if (metadata.Contains (key)) {
 			// FIXME: complain
 		    }
-		    metadata[key] = ff.StringValue();
+		    metadata[key] = ff.StringValue ();
 		}
 	    }
 	    

@@ -7,44 +7,44 @@ using Dewey;
 
 class IndexFilesTool {
 
-    static void IndexOrCrawl(String path, ArrayList array) {
+    static void IndexOrCrawl (String path, ArrayList array) {
 
-	if (Path.GetFileName(path).StartsWith("."))
+	if (Path.GetFileName (path).StartsWith ("."))
 	    return;
 	
-	FileAttributes attr = System.IO.File.GetAttributes(path);
+	FileAttributes attr = System.IO.File.GetAttributes (path);
 	if (attr == FileAttributes.Directory) {
-	    Console.WriteLine("Crawling " + path);
-	    DirectoryInfo dir = new DirectoryInfo(path);
-	    foreach (FileSystemInfo info in dir.GetFileSystemInfos()) {
-		IndexOrCrawl(info.FullName, array);
+	    Console.WriteLine ("Crawling " + path);
+	    DirectoryInfo dir = new DirectoryInfo (path);
+	    foreach (FileSystemInfo info in dir.GetFileSystemInfos ()) {
+		IndexOrCrawl (info.FullName, array);
 	    }
 	} else {
-	    if (Path.GetExtension(path) == ".txt") {
+	    if (Path.GetExtension (path) == ".txt") {
 		IndexItemWithPayload item;
-		item = new IndexItemWithPayload("file://" + path);
-		item.AttachFile(path);
-		array.Add(item);
+		item = new IndexItemWithPayload ("file://" + path);
+		item.AttachFile (path);
+		array.Add (item);
 	    }
 	}
     }
 
-    static void Main(String[] args) {
+    static void Main (String[] args) {
 
-	Content.Register(typeof(ContentText));
+	Content.Register (typeof (ContentText));
 
-	ArrayList array = new ArrayList();
+	ArrayList array = new ArrayList ();
 
 	if (args.Length > 0) {
 	    foreach (String arg in args) {
-		IndexOrCrawl(Path.GetFullPath(arg), array);
+		IndexOrCrawl (Path.GetFullPath (arg), array);
 	    }
 	} else {
-	    IndexOrCrawl(Environment.GetEnvironmentVariable("HOME"), array);
+	    IndexOrCrawl (Environment.GetEnvironmentVariable ("HOME"), array);
 	}
 
-	IndexDriver id = new IndexDriver();
-	id.Add(array);
+	IndexDriver id = new IndexDriver ();
+	id.Add (array);
 
     }
 

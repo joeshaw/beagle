@@ -13,10 +13,10 @@ namespace Dewey {
 	String file_path;
 	Stream payload_stream;
 
-	public IndexItemWithPayload(String uri): base(uri) {	    
+	public IndexItemWithPayload (String uri): base (uri) {	    
 	}
 
-	public void AttachFile(String path, String _mime_type) {
+	public void AttachFile (String path, String _mime_type) {
 	    if (payload_attached) {
 		// FIXME: complain
 		return;
@@ -25,18 +25,18 @@ namespace Dewey {
 	    // FIXME: check the file exists, etc.
 
 	    mime_type = _mime_type;
-	    timestamp = File.GetLastWriteTime(path);
+	    timestamp = File.GetLastWriteTime (path);
 	    file_path = path;
 
 	    payload_attached = true;
 	}
 
-	public void AttachFile(String path) {
+	public void AttachFile (String path) {
 	    // FIXME: sniff mime type
-	    AttachFile(path, "text/plain");
+	    AttachFile (path, "text/plain");
 	}
 
-	public Stream OpenPayloadStream() {
+	public Stream OpenPayloadStream () {
 	    if (! payload_attached) {
 		// FIXME: complain
 		return null;
@@ -45,64 +45,78 @@ namespace Dewey {
 
 		if (file_path != null) {
 		    // FIXME: check for errors
-		    payload_stream = new FileStream(file_path,
-						    FileMode.Open,
-						    FileAccess.Read);
+		    payload_stream = new FileStream (file_path,
+						     FileMode.Open,
+						     FileAccess.Read);
 		} else {
 		    // FIXME: complain
-		    Console.WriteLine("Oops!");
+		    Console.WriteLine ("Oops!");
 		}
 	    }
 	    
 	    return payload_stream;
 	}
 
-	public void ClosePayloadStream() {
+	public void ClosePayloadStream () {
 	    if (payload_stream != null) {
-		payload_stream.Close();
+		payload_stream.Close ();
 		payload_stream = null;
 	    }
 	}
 
-	public Document ToDocument() {
-	    Document doc = new Document();
+	public Document ToLuceneDocument () {
+	    Document doc = new Document ();
 
 	    Field f;
 	    
-	    f = Field.Keyword("URI", URI);
-	    doc.Add(f);
+	    f = Field.Keyword ("URI", URI);
+	    doc.Add (f);
 
-	    f = Field.UnIndexed("MimeType", MimeType);
-	    doc.Add(f);
+	    f = Field.UnIndexed ("MimeType", MimeType);
+	    doc.Add (f);
 
 	    if (MD5 != null) {
-		f = Field.UnIndexed("MD5", MD5);
-		doc.Add(f);
+		f = Field.UnIndexed ("MD5", MD5);
+		doc.Add (f);
 	    }
 
-	    f = Field.UnIndexed("Timestamp",
-				Convert.ToString(Timestamp.Ticks));
-	    doc.Add(f);
+	    f = Field.UnIndexed ("Timestamp",
+				 Convert.ToString (Timestamp.Ticks));
+	    doc.Add (f);
 
-	    Stream stream = OpenPayloadStream();
-	    Content c = Content.Extract(MimeType, stream);
-	    ClosePayloadStream();
+	    Stream stream = OpenPayloadStream ();
+	    Content c = Content.Extract (MimeType, stream);
+	    ClosePayloadStream ();
 
-	    StringBuilder body = new StringBuilder(c.Body);
-
+	    StringBuilder metadata = null;
 	    foreach (String key in c.MetadataKeys) {
 		String val = c[key];
 		
-		f = Field.Text(key, val);
-		doc.Add(f);
+		f = Field.Text (key, val);
+		doc.Add (f);
 
-		if (body.Length > 0)
-		    body.Append(" ");
-		body.Append(val);
+		if (metadata == null)
+		    metadata = new StringBuilder ("");
+		else
+		    metadata.Append (" ");
+		metadata.Append (val);
+	    }
+	    if (metadata != null) {
+		f = Field.UnStored ("Metadata", metadata.ToString ());
+		doc.Add (f);
 	    }
 
-	    f = Field.UnStored("Body", body.ToString());
-	    doc.Add(f);
+	    String body = c.Body;
+	    if (body != null) {
+		f = Field.UnStored ("Body", body);
+		doc.Add (f);
+	    }
+
+	    String hot_body = c.HotBody;
+	    if (hot_body != null) {
+		f = Field.UnStored ("HotBody", hot_body);
+		doc.Add (f);
+	    }
 
 	    return doc;
 	}

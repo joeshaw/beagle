@@ -3,34 +3,35 @@ using System;
 using System.Collections;
 using System.IO;
 using System.Reflection;
+using System.Text;
 
 namespace Dewey {
     
     abstract public class Content {
 
-	static Hashtable registry = new Hashtable();
+	static Hashtable registry = new Hashtable ();
 
-	static public void Register(Type handler) {
-	    if (! handler.IsSubclassOf(typeof(Content))) {
+	static public void Register (Type handler) {
+	    if (! handler.IsSubclassOf (typeof (Content))) {
 		// throw exception: type not subclass of Content
 	    }
 	    
-	    Content dummy = (Content)Activator.CreateInstance(handler);
-	    foreach (String mime_type in dummy.HandledMimeTypes()) {
-		if (registry.Contains(mime_type)) {
+	    Content dummy = (Content) Activator.CreateInstance (handler);
+	    foreach (String mime_type in dummy.HandledMimeTypes ()) {
+		if (registry.Contains (mime_type)) {
 		    // throw exception: duplicated mime type
 		}
 		registry[mime_type] = handler;
 	    }
 	}
 
-	static public Content Extract(String mime_type, Stream stream) {
+	static public Content Extract (String mime_type, Stream stream) {
 	    Content content = null;
-	    if (registry.Contains(mime_type)) {
+	    if (registry.Contains (mime_type)) {
 		Type handler = registry[mime_type] as Type;
-		content = Activator.CreateInstance(handler) as Content;
+		content = Activator.CreateInstance (handler) as Content;
 		
-		if (! content.Read(stream))
+		if (! content.Read (stream))
 		    return null;
 	    }
 	    return content;
@@ -38,23 +39,53 @@ namespace Dewey {
 
 	//////////////////////////////
 
-	Hashtable metadata = new Hashtable();
-	String body;
+	Hashtable metadata = new Hashtable ();
+	StringBuilder body;
+	StringBuilder hot_body;
 
-	public Content() { }
+	public Content () { }
 
-	abstract public String[] HandledMimeTypes();
-	abstract public bool Read(Stream content_stream);
+	abstract public String[] HandledMimeTypes ();
+	abstract public bool Read (Stream content_stream);
 
-	protected void SetMetadata(String key, String value) {
-	    metadata[key.ToLower()] = value;
+	protected void SetMetadata (String key, String value) {
+	    metadata[key.ToLower ()] = value;
 	}
 
-	protected void SetBody(String _body) {
-	    if (body != null) {
-		// FIXME: complain that you can't set the body twice
-	    }
-	    body = _body;
+	protected void AppendBody (String _body) {
+	    if (body == null)
+		body = new StringBuilder ("");
+	    else
+		body.Append (" ");
+	    body.Append (_body);
+	}
+
+	// Deprecated
+	protected void SetBody (String _body) {
+	    body = null;
+	    AppendBody (_body);
+	}
+
+	protected void AppendHotBody (String _body) {
+	    if (hot_body == null)
+		hot_body = new StringBuilder ("");
+	    else
+		hot_body.Append (" ");
+	    hot_body.Append (_body);
+	}
+	
+	// Deprecated
+	protected void SetHotBody (String _body) {
+	    hot_body = null;
+	    AppendHotBody (_body);
+	}
+
+	public String Body {
+	    get { return (body == null) ? null : body.ToString (); }
+	}
+
+	public String HotBody {
+	    get { return (hot_body == null) ? null : hot_body.ToString (); }
 	}
 
 	public ICollection MetadataKeys {
@@ -62,12 +93,9 @@ namespace Dewey {
 	}
 
 	public String this[String key] {
-	    get { return metadata[key.ToLower()] as String; }
+	    get { return metadata[key.ToLower ()] as String; }
 	}
 
-	public String Body {
-	    get { return body; }
-	}
 
     }
 

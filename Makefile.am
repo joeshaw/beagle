@@ -1,2 +1,2 @@
 
-SUBDIRS = Lucene.Net indexer tools
+SUBDIRS = Lucene.Net indexer tools 
