@@ -20,14 +20,13 @@ using Beagle.Util;
 namespace ImLogViewer {
 
 	public class GaimLogViewer {
-		[Widget] Window logwindow;
+		[Widget] Dialog log_dialog;
 		[Widget] TreeView timelinetree;
 		[Widget] ScrolledWindow scrollwindow;
-		[Widget] Button searchbutton;
-		[Widget] Label title;
-		[Widget] Entry search;
+		[Widget] Label time_title;
+		[Widget] Entry search_entry;
+		[Widget] Label find_label;
 		[Widget] TextView conversation;
-		[Widget] Image buddyicon;
 		
 		private TreeStore treeStore;
 		private CellRendererText renderer;
@@ -64,11 +63,8 @@ namespace ImLogViewer {
 
 		private void SetTitle (DateTime dt)
 		{
-			string str = "<b>Conversation with " + speaking_to;
 			if (dt.Ticks > 0)
-				str += ": " + StringFu.DateTimeToPrettyString (dt);
-			str += "</b>";
-			title.Markup = str;
+				time_title.Markup = String.Format ("<b>{0}</b>",StringFu.DateTimeToPrettyString (dt));
 		}
 		
 		Gtk.AccelGroup accel_group;
@@ -78,27 +74,29 @@ namespace ImLogViewer {
 		{
 			Application.Init();
 			
-			Glade.XML gxml = new Glade.XML (null, "ImLogViewer.glade", "logwindow", null);
+			Glade.XML gxml = new Glade.XML (null, "ImLogViewer.glade", "log_dialog", null);
 			gxml.Autoconnect (this);
 
+			search_entry.Visible = false;
+			find_label.Visible = false;
+
 			accel_group = new Gtk.AccelGroup ();
-			logwindow.AddAccelGroup (accel_group);
+			log_dialog.AddAccelGroup (accel_group);
 			global_keys = new GlobalKeybinder (accel_group);
 
-			// Buddy icon
+			// Find the buddy
 			GaimBuddyListReader list = new GaimBuddyListReader ();
 			ImBuddy buddy = list.Search (speaker);
-			if (buddy != null && buddy.BuddyIconLocation != "") {
-				//Console.WriteLine ("Found buddy info for {0}, icon at {1}", buddy.BuddyAccountName, buddy.BuddyIconLocation);
-				string homedir = Environment.GetEnvironmentVariable ("HOME");
-				string fullpath = Path.Combine (homedir, ".gaim");
-				fullpath = Path.Combine (fullpath, "icons");
-				fullpath = Path.Combine (fullpath, buddy.BuddyIconLocation);
-				buddyicon.Pixbuf = new Gdk.Pixbuf (fullpath).ScaleSimple (32, 32, Gdk.InterpType.Bilinear);
+			
+			if (buddy != null && buddy.Alias != "") {
+				log_dialog.Title = String.Format ("Conversations with {0}", buddy.Alias);
 			} else {
-				buddyicon.Visible = false;
+				if (speaker.EndsWith (".chat"))
+					log_dialog.Title = String.Format ("Conversations in {0}", speaker.Replace (".chat",""));
+				else
+					log_dialog.Title = String.Format ("Conversation with {0}", speaker);
 			}
-				
+
 			SetTitle (new DateTime ());
 
 			// Close window (Ctrl-W)
@@ -140,9 +138,7 @@ namespace ImLogViewer {
 			PopulateTimelineWidget ();
 
 			timelinetree.Selection.Changed += OnConversationSelected; 
-			search.Activated += OnSearch;
-			search.Changed += OnTypeAhead;
-			searchbutton.Activated += OnSearch;
+			search_entry.Changed += OnTypeAhead;
 
 			if (have_first_selection_iter)
 				timelinetree.Selection.SelectIter (first_selection_iter);
@@ -235,8 +231,8 @@ namespace ImLogViewer {
 		{
 			list.Sort (rev_cmp);
 			foreach (ImLog log in list) {
-				if (search.Text != null && search.Text != "")
-					if (!LogContainsString (log, search.Text))
+				if (search_entry.Text != null && search_entry.Text != "")
+					if (!LogContainsString (log, search_entry.Text))
 						continue;
 					
 				string date_str = log.StartTime.ToString (dateformat);
@@ -293,10 +289,6 @@ namespace ImLogViewer {
 		{
 			Application.Quit ();
 			args.RetVal = true;
-		}
-
-		private void OnSearch (object o, EventArgs args)
-		{
 		}
 
 		private void OnTypeAhead (object o, EventArgs args)
