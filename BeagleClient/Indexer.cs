@@ -1,5 +1,5 @@
 //
-// BeagleDaemon.cs
+// Indexer.cs
 //
 // Copyright (C) 2004 Novell, Inc.
 //
@@ -21,29 +21,17 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE// SOFTWARE.
 //
 
-using DBus;
-using Gtk;
-using Beagle;
+namespace Beagle
+{
+	using DBus;
+	
+	[Interface ("com.novell.Beagle.Indexer")]
+	public abstract class Indexer 
+	{
+		[Method]
+		public abstract void IndexFile (string uri);
 
-namespace BeagleDaemon {
-	class BeagleDaemon {
-		public static int Main (string[] args)
-		{
-			Application.Init ();
-			Connection connection = Bus.GetSessionBus ();
-
-			Service service = new Service (connection,
-						       "com.novell.Beagle");
-			QueryManager manager = new QueryManager (service);
-			service.RegisterObject (manager, 
-						"/com/novell/Beagle/QueryManager");
-
-			Indexer indexer = new Indexer ();
-			service.RegisterObject (indexer,
-						"/com/novell/Beagle/Indexer");
-
-			Application.Run ();
-			return 0;
-		}
+		[Method]
+		public abstract void IndexFiles (string[] uris);
 	}
 }

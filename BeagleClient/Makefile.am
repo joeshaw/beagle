@@ -10,6 +10,7 @@ CSFLAGS = 					\
 
 CSFILES = 				\
 	$(srcdir)/Hit.cs                \
+	$(srcdir)/Indexer.cs            \
 	$(srcdir)/QueryManager.cs	\
 	$(srcdir)/Query.cs              \
 	$(srcdir)/Versioned.cs 

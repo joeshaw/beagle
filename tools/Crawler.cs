@@ -39,70 +39,6 @@ using Beagle;
 
 class CrawlerTool { 
 
-	public class FileMatcher {
-		
-		static ArrayList defaultPatterns = new ArrayList ();
-		ArrayList patterns = new ArrayList ();
-
-		static Regex PatternToRegex (String pattern)
-		{
-			pattern = "^" + Regex.Escape (pattern) + "$";
-			pattern = pattern.Replace ("\\?", ".");
-			pattern = pattern.Replace ("\\*", ".*");
-			return new Regex (pattern);
-		}
-
-		public void Add (String pattern)
-		{
-			patterns.Add (PatternToRegex (pattern));
-		}
-
-		public void Add (params String[] patterns)
-		{
-			foreach (String pattern in patterns)
-				Add (pattern);
-		}
-
-		static public void AddDefault (String pattern)
-		{
-			defaultPatterns.Add (PatternToRegex (pattern));
-		}
-
-		static public void AddDefault (params String[] patterns)
-		{
-			foreach (String pattern in patterns)
-				AddDefault (pattern);
-		}
-
-		public void Load (String path)
-		{
-			StreamReader sr = new StreamReader (path);
-			String line;
-			while ((line = sr.ReadLine ()) != null) {
-				line = line.Trim ();
-				if (line.Length > 0)
-					Add (line);
-			}
-		}
-
-		public bool IsEmpty {
-			get { return patterns.Count == 0; }
-		}
-
-		public bool IsMatch (String path)
-		{
-			String fileName = Path.GetFileName (path);
-			foreach (Regex regex in defaultPatterns)
-				if (regex.IsMatch (fileName))
-					return true;
-			foreach (Regex regex in patterns)
-				if (regex.IsMatch (fileName))
-					return true;
-			return false;
-		}
-	}
-
-
 	public class Crawler {
 
 		IndexDriver driver = new IndexDriver ();
@@ -223,7 +159,7 @@ class CrawlerTool {
 			++dirCount;
 
 			// Scan the .noindex file.
-			FileMatcher noindex = new FileMatcher ();
+			BU.FileMatcher noindex = new BU.FileMatcher ();
 			String noindexPath = Path.Combine (info.FullName, ".noindex");
 			if (File.Exists (noindexPath)) {
 				noindex.Load (noindexPath);
@@ -377,7 +313,7 @@ class CrawlerTool {
 
 	static void Main (String[] args)
 	{
-		FileMatcher.AddDefault (".*",
+		BU.FileMatcher.AddDefault (".*",
 					"*~",
 					"#*#",
 					"*.cs", // FIXME: we skip other source code...

@@ -15,6 +15,7 @@ CSFILES = 				\
 	$(srcdir)/camel.cs		\
 	$(srcdir)/gnome.cs		\
 	$(srcdir)/Vfs.cs		\
+	$(srcdir)/FileMatcher.cs        \
 	$(srcdir)/FSpotTools.cs		\
 	$(srcdir)/Id3.cs		\
 	$(srcdir)/ImLog.cs		\

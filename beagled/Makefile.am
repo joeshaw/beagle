@@ -11,6 +11,7 @@ CSFLAGS = 					\
 
 CSFILES = 				\
 	$(srcdir)/BeagleDaemon.cs       \
+	$(srcdir)/Indexer.cs            \
 	$(srcdir)/LiveQuery.cs          \
 	$(srcdir)/QueryManager.cs
 
