@@ -61,8 +61,6 @@ namespace Beagle.Daemon.MailQueryable {
 						string old_path,
 						string new_path)
 		{
-			Console.WriteLine ("old path: {0}  new_path: {1}", old_path, new_path);
-
 			if (event_type == FileSystemEventType.Created || event_type == FileSystemEventType.Changed) {
 				FileInfo file = new FileInfo (new_path);
 
