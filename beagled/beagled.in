@@ -23,5 +23,6 @@ else
 fi
 
 export MONO_GAC_PREFIX="@gacprefix@:$MONO_GAC_PREFIX"
+export LD_LIBRARY_PATH="/opt/gnome/lib/evolution/2.0:$LD_LIBRARY_PATH"
 
 exec -a mono-beagled mono --debug $MONO_EXTRA_ARGS $TARGET_EXE $EXTRA_ARGS "$@"

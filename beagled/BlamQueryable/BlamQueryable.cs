@@ -108,9 +108,25 @@ namespace Beagle.Daemon.BlamQueryable {
 					indexable.AddProperty(Property.NewKeyword ("dc:title", item.Title));
 					indexable.AddProperty(Property.NewKeyword ("fixme:author", item.Author));
 					indexable.AddProperty(Property.NewDate ("fixme:published", item.PubDate));
-						
-					// FIXME Use FilterHtml to mark "hot" words in content
 
+					int i;
+					string img = null;
+					i = item.Text.IndexOf ("<img src=\"");
+					if (i != -1) {
+						i += "<img src=\"".Length;
+						int j = item.Text.IndexOf ("\"", i);
+						if (j != -1)
+							img = item.Text.Substring (i, j-i);
+					}
+
+					if (img != null) {
+						string path = Path.Combine (Path.Combine (blamDir, "Cache"),
+									    img.GetHashCode ().ToString ());
+						indexable.AddProperty (Property.NewKeyword ("fixme:cachedimg", path));
+					}
+
+					
+					// FIXME Use FilterHtml to mark "hot" words in content
 					StringReader reader = new StringReader (item.Text);
 					indexable.SetTextReader (reader);
 					

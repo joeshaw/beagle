@@ -43,19 +43,19 @@ using GConf;
 namespace Beagle.Daemon {
 
 	internal class CamelIndex : IDisposable{
-		[DllImport ("libcamel")]
+		[DllImport ("libcamel.so.0")]
 		extern static IntPtr camel_text_index_new (string path, int mode);
 
-		[DllImport ("libcamel")]
+		[DllImport ("libcamel.so.0")]
 		extern static IntPtr camel_index_words (IntPtr index);
 
-		[DllImport ("libcamel")]
+		[DllImport ("libcamel.so.0")]
 		extern static IntPtr camel_index_find (IntPtr index, string word);
 
-		[DllImport ("libcamel")]
+		[DllImport ("libcamel.so.0")]
 		extern static IntPtr camel_index_cursor_next (IntPtr cursor);
 
-		[DllImport ("libcamel")]
+		[DllImport ("libcamel.so.0")]
 		extern static void camel_object_unref (IntPtr obj);
 
 		private IntPtr index = IntPtr.Zero;

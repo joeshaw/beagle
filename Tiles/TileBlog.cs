@@ -43,6 +43,39 @@ namespace Beagle.Tile {
 			hit = _hit;
 		}
 
+		private Stream ImageStream ()
+		{
+			if (hit == null)
+				return null;
+
+			string path = hit ["fixme:cachedimg"];
+
+			if (path == null || ! File.Exists (path))
+				return null;
+
+			return new FileStream (path,
+					       FileMode.Open,
+					       FileAccess.Read,
+					       FileShare.Read);
+		}
+
+		override public bool HandleUrlRequest (string url, Gtk.HTMLStream stream)
+		{
+			if (url == "icon-blog.png") {
+				Stream fs = ImageStream ();
+				if (fs != null) {
+					byte[] buffer = new byte [8192];
+					int n;
+					while ( (n = fs.Read (buffer, 0, 8192)) != 0 )
+						stream.Write (buffer, n);
+					fs.Close ();
+					return true;
+				}
+			}
+			
+			return false;
+		}
+
 		override protected string ExpandKey (string key)
 		{
 			switch (key) {
@@ -52,6 +85,36 @@ namespace Beagle.Tile {
 			}
 
 			return hit [key];
+		}
+
+		override protected bool RenderKey (string key, TileRenderContext ctx)
+		{
+			if (key == "Icon") {
+
+				int w = -1, h = -1;
+
+				// Hacky: if an image exists for this blog entry,
+				// load it into a pixbuf to find the size and
+				// scale the image if it is too big.
+				Stream fs = ImageStream ();
+				if (fs != null) {
+					Gdk.Pixbuf pixbuf = new Gdk.Pixbuf (fs);
+					if (pixbuf.Width > pixbuf.Height) {
+						if (pixbuf.Width > 48)
+							w = 48;
+					} else {
+						if (pixbuf.Height > 48)
+							h = 48;
+					}
+
+					fs.Close ();
+				}
+				
+				ctx.Image ("icon-blog.png", w, h, null);
+				return true;
+			}
+
+			return base.RenderKey (key, ctx);
 		}
 	}
 }
