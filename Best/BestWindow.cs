@@ -132,15 +132,26 @@ namespace Best {
 		private TileCanvas canvas;
 		private BestRootTile root;
 
-		private Widget CreateContents ()
+		private Gtk.Widget CreateContents ()
 		{
-			HBox entryLine = new HBox (false, 3);
+			Gtk.HBox entryLine = new HBox (false, 3);
+
+			Gtk.Label words = new Gtk.Label ("Enter search terms:");
+			entryLine.PackStart (words, false, false, 3);
 			
 			entry = new Gtk.Entry ();
 			entry.Activated += new EventHandler (this.DoSearch);
 			entryLine.PackStart (entry, true, true, 3);
 
-			Gtk.Button button = new Gtk.Button ("Search");
+			
+			Gtk.HBox buttonContents = new HBox (false, 0);
+			Gtk.Widget buttonImg = Images.GetWidget ("icon-search.png");
+			buttonContents.PackStart (buttonImg, false, false, 1);
+			Gtk.Label buttonLabel = new Gtk.Label ("Find");
+			buttonContents.PackStart (buttonLabel, false, false, 1);
+			
+			Gtk.Button button = new Gtk.Button ();
+			button.Add (buttonContents);
 			button.Clicked += new EventHandler (this.DoSearch);
 			entryLine.PackStart (button, false, false, 3);
 

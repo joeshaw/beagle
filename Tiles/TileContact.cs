@@ -66,7 +66,10 @@ namespace Beagle {
 		override protected bool RenderKey (string key, TileRenderContext ctx)
 		{
 			if (key == "Icon") {
-				ctx.Image ("contact-icon.png", 64, -1, null);
+				int w = -1;
+				if (hit.GetData ("Photo") != null)
+					w = 64;
+				ctx.Image ("contact-icon.png", w, -1, null);
 				return true;
 			}
 

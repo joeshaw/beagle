@@ -353,7 +353,10 @@ namespace Beagle {
 			{
 				canvas.CacheTile (tile);
 				if (tile.RenderInline) {
-					tile.Render (this);
+					TileCanvasRenderContext ctx;
+					ctx = new TileCanvasRenderContext (canvas, tile);
+					tile.Render (ctx);
+					html.Append (ctx.Html);
 				} else {
 					Write ("<iframe");
 					Write (" src=\":{0}:_iframe_\"", tile.UniqueKey);

@@ -51,7 +51,7 @@ namespace Beagle {
 
 		////////////////////////
 
-		bool renderInline = false;
+		bool renderInline = true; // FIXME: should be false by default
 		public bool RenderInline {
 			get { return renderInline; }
 		}

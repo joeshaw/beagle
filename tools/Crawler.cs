@@ -175,7 +175,8 @@ class CrawlerTool {
 		{
 			Stat stat = new Stat ();
 			Syscall.lstat (path, out stat);
-			return ((int) stat.Mode & (int) StatMode.SymLink) != 0;
+			int mode = (int) stat.Mode & (int)StatModeMasks.TypeMask;
+			return mode == (int) StatMode.SymLink;
 		}
 
 		void CrawlFile (FileInfo info, Hit hit)
