@@ -31,6 +31,8 @@ using System.IO;
 using System.Text.RegularExpressions;
 using System.Xml;
 
+using Mono.Posix;
+
 using Beagle.Filters;
 using Beagle;
 
@@ -126,7 +128,7 @@ class CrawlerTool {
 
 		void ScheduleAdd (Indexable indexable)
 		{
-			//toBeIndexed.Add (indexable);
+			toBeIndexed.Add (indexable);
 			MaybeFlush ();
 		}
 
@@ -169,8 +171,19 @@ class CrawlerTool {
 			}
 		}
 
+		private bool IsSymLink (string path)
+		{
+			Stat stat = new Stat ();
+			Syscall.lstat (path, out stat);
+			return ((int) stat.Mode & (int) StatMode.SymLink) != 0;
+		}
+
 		void CrawlFile (FileInfo info, Hit hit)
 		{
+			// Don't follow symlinks
+			if (IsSymLink (info.FullName))
+				return;
+
 			// If the file isn't newer that the hit, don't even bother...
 			if (hit != null && ! hit.IsObsoletedBy (info.LastWriteTime)) {
 				++skippedCount;
@@ -196,6 +209,10 @@ class CrawlerTool {
 
 		void CrawlDirectory (DirectoryInfo info, Hit dirHit, int maxRecursion)
 		{
+			// Don't follow symlinks
+			if (IsSymLink (info.FullName))
+				return;
+
 			++dirCount;
 
 			// Scan the .noindex file.

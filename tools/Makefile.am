@@ -4,6 +4,7 @@ CSC = mcs -g
 ASSEMBLIES =				\
 	$(EVO_SHARP_LIBS)		\
 	$(BEAGLE_UI_LIBS)		\
+	-r:Mono.Posix			\
 	-r:../Util/Util.dll		\
 	-r:../Lucene.Net/Lucene.Net.dll	\
 	-r:../Filters/Filters.dll	\
