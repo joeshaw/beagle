@@ -54,7 +54,9 @@ namespace Best {
 		//////////////////////////
 
 		Query query = null;
-
+		Gtk.AccelGroup accel_group;
+		GlobalKeybinder global_keys;
+		
 		private BestWindow () : base (WindowType.Toplevel)
 		{
 			Title = "Bleeding-Edge Search Tool";
@@ -76,10 +78,31 @@ namespace Best {
 			DefaultHeight = 500;
 			DefaultWidth = (int) (DefaultHeight * GOLDEN);
 
+			accel_group = new Gtk.AccelGroup ();
+			this.AddAccelGroup (accel_group);
+			global_keys = new GlobalKeybinder (accel_group);
+
+			// Close window (Ctrl-W)
+			global_keys.AddAccelerator (new EventHandler (this.CloseWindowHandler),
+						    (uint) Gdk.Key.w, 
+						    Gdk.ModifierType.ControlMask,
+						    Gtk.AccelFlags.Visible);
+
+			// Close window (Escape)
+			global_keys.AddAccelerator (new EventHandler (this.CloseWindowHandler),
+						    (uint) Gdk.Key.Escape, 
+						    0,
+						    Gtk.AccelFlags.Visible);
+
 			Best.IncRef ();
 		}
 
 		private void DoDelete (object o, DeleteEventArgs args)
+		{
+			Close ();
+		}
+
+		private void CloseWindowHandler (object o, EventArgs args)
 		{
 			Close ();
 		}
