@@ -79,7 +79,7 @@ namespace Beagle.Tile {
 			changedHandler = ch;
 		}
 
-		protected void Changed ()
+		protected virtual void Changed ()
 		{
 			if (changedHandler != null)
 				changedHandler (this);

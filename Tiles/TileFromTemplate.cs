@@ -66,6 +66,12 @@ namespace Beagle.Tile {
 			
 			ctx.Write (Template.ToString ());
 		}
+
+		protected override void Changed ()
+		{
+			populated = false;
+			base.Changed ();
+		}
 	}
 
 }
