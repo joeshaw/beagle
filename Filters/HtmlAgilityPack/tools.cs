@@ -55,7 +55,7 @@ namespace HtmlAgilityPack
 	internal struct HtmlLibrary
 	{
 		[Conditional("DEBUG")]
-		internal static void GetVersion(out string version)
+		internal static void GetVersion(ref string version)
 		{
 			System.Diagnostics.StackFrame sf = new System.Diagnostics.StackFrame(1, true);
 			version = sf.GetMethod().DeclaringType.Assembly.GetName().Version.ToString();
@@ -67,7 +67,7 @@ namespace HtmlAgilityPack
 		{
 			// category is the method
 			string name = null;
-			GetCurrentMethodName(2, out name);
+			GetCurrentMethodName(2, ref name);
 			System.Diagnostics.Trace.WriteLine(Value, name);
 		}
 
@@ -76,7 +76,7 @@ namespace HtmlAgilityPack
 		internal static void TraceStackFrame(int steps)
 		{
 			string name = null;
-			GetCurrentMethodName(2, out name);
+			GetCurrentMethodName(2, ref name);
 			string trace = "";
 			for(int i=1;i<steps;i++)
 			{
@@ -88,14 +88,14 @@ namespace HtmlAgilityPack
 		}
 
 		[Conditional("DEBUG")]
-		internal static void GetCurrentMethodName(out string name)
+		internal static void GetCurrentMethodName(ref string name)
 		{
 			name = null;
-			GetCurrentMethodName(2, out name);
+			GetCurrentMethodName(2, ref name);
 		}
 
 		[Conditional("DEBUG")]
-		internal static void GetCurrentMethodName(int skipframe, out string name)
+		internal static void GetCurrentMethodName(int skipframe, ref string name)
 		{
 			StackFrame sf = new StackFrame(skipframe, true);
 			name = sf.GetMethod().DeclaringType.Name + "." + sf.GetMethod().Name;
