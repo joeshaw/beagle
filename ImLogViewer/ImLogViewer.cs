@@ -50,6 +50,9 @@ namespace ImLogViewer {
 			} else if (File.Exists (path)) {
 				log_path = Path.GetDirectoryName (path);
 				first_selected_log = path;
+			} else {
+				Console.WriteLine ("Log path doesn't exist - {0}", path);
+				return;
 			}
 
 			timeline = new Timeline ();
@@ -170,6 +173,7 @@ namespace ImLogViewer {
 
 		private void UpdateTimelineTree ()
 		{
+			//FIXME: Run this in a thread
 			treeStore = new TreeStore(new Type[] {typeof(string), typeof(string), typeof(object)});
 			timelinetree.Model = this.treeStore;
 			PopulateTimelineWidget ();
@@ -246,11 +250,7 @@ namespace ImLogViewer {
 		}
 		
 		private void IndexLogs () {
-		       	string [] files = Directory.GetFiles (log_path);
-			
-			foreach (string file in files) {
-
-
+			foreach (string file in Directory.GetFiles (log_path)) {
 				ICollection logs = GaimLog.ScanLog (new FileInfo (file));
 				
 				foreach (ImLog log in logs) {
@@ -321,7 +321,7 @@ namespace ImLogViewer {
 				new GaimLogViewer (args [0]);
 			} else {
 				Console.WriteLine ("USAGE: beagle-imlogviewer " +
-						   "/home/lukas/.gaim/logs/msn/joe@hotmail.com/jane@hotmail.com");
+						   "/home/lukas/.gaim/logs/msn/joe@joe.com/jane@love.com");
 			}
 		}
 	}
