@@ -58,7 +58,7 @@ namespace Best {
 
 			DeleteEvent += new DeleteEventHandler (this.DoDelete);
 
-			Icon = Images.GetPixbuf ("smalldog.png");
+			Icon = Images.GetPixbuf ("dog.png");
 
 			Widget content = CreateContents ();
 
