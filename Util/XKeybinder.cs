@@ -4,7 +4,7 @@ using System.Collections;
 using System.Runtime.InteropServices;
 using Mono.Posix;
 
-namespace Beagle
+namespace Beagle.Util
 {
 	public class XKeybinder 
 	{
@@ -103,8 +103,8 @@ namespace Beagle
 							       this);
 				bindings.Add (binding);
 			} catch (Exception e) {
-				Console.WriteLine ("Error Adding global keybinding:");
-				Console.WriteLine (e);
+				Logger.Log.Error ("Error Adding global keybinding:");
+				Logger.Log.Error (e);
 			}
 		}
 
@@ -114,8 +114,8 @@ namespace Beagle
 				bindings.Clear ();
 				base.UnbindAll ();
 			} catch (Exception e) {
-				Console.WriteLine ("Error Removing global keybinding:");
-				Console.WriteLine (e);
+				Logger.Log.Error ("Error Removing global keybinding:");
+				Logger.Log.Error (e);
 			}
 		}
 
@@ -139,8 +139,8 @@ namespace Beagle
 				try {
 					key_sequence = (string) parent.client.Get (gconf_path);
 				} catch (Exception e) {
-					Console.WriteLine ("GConf key '{0}' does not exist, using default.", 
-							   gconf_path);
+					Logger.Log.Warn ("GConf key '{0}' does not exist, using default.", 
+							 gconf_path);
 				}
 
 				SetBinding ();
@@ -153,9 +153,9 @@ namespace Beagle
 			void BindingChanged (object sender, GConf.NotifyEventArgs args)
 			{
 				if (args.Key == gconf_path) {
-					Console.WriteLine ("Binding for '{0}' changed to '{1}'!",
-							   gconf_path,
-							   args.Value);
+					Logger.Log.Debug ("Binding for '{0}' changed to '{1}'!",
+							  gconf_path,
+							  args.Value);
 
 					UnsetBinding ();
 
@@ -171,9 +171,9 @@ namespace Beagle
 				    key_sequence == "disabled")
 					return;
 
-				Console.WriteLine ("Binding key '{0}' for '{1}'",
-						   key_sequence,
-						   gconf_path);
+				Logger.Log.Debug ("Binding key '{0}' for '{1}'",
+						  key_sequence,
+						  gconf_path);
 
 				parent.Bind (key_sequence, handler);
 			}

@@ -23,7 +23,7 @@ namespace Best {
 
 		BestWindow win;
 		Gtk.Button button;
-		GConfXKeybinder keybinder;
+		Beagle.Util.GConfXKeybinder keybinder;
 
 		public BestTray (BestWindow bw)
 		{
@@ -43,7 +43,7 @@ namespace Best {
 			tray_icon.Add (button);
 			tray_icon.ShowAll ();
 
-			keybinder = new GConfXKeybinder ();
+			keybinder = new Beagle.Util.GConfXKeybinder ();
 			keybinder.Bind ("/apps/Beagle/keybindings/show_beagle",
 					"F12",
 					new EventHandler (ShowBeaglePressed));

@@ -104,11 +104,11 @@ namespace Beagle.Util {
 
 
 		private void WriteLine (string level, string message) {
-			System.Console.WriteLine ("{0}: {1}", level, message);
-
 			if (Writer != null) {
 				Writer.WriteLine ("{0}{1}: {2}", GetStamp (), level, message);
 				Writer.Flush ();
+			} else {
+				System.Console.WriteLine ("{0}: {1}", level, message);
 			}
 		}
 

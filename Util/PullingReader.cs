@@ -139,21 +139,6 @@ namespace Beagle.Util {
 		
 
 	}
-	
-	public class FooFooFooMain {
-		static void Main ()
-		{
-			TextReader reader = new StreamReader ("foo.cs");
-
-			PullingReader pull = new PullingReader (new PullingReader.Pull (reader.ReadLine));
-
-			string line;
-			while ((line = pull.ReadLine ()) != null) {
-				Console.WriteLine ("[{0}]", line);
-			}
-
-		}
-	}
 }
 
 // last line

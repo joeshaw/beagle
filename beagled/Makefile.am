@@ -45,7 +45,8 @@ WRAPPER_SED = sed 					\
 ############################################################
 
 lucenedir = $(srcdir)/Lucene.Net
-LUCENE_CSFILES =							\
+
+LUCENE_1_3_CSFILES =							\
 	$(lucenedir)/AssemblyInfo.cs					\
 	$(lucenedir)/Analysis/Analyzer.cs				\
 	$(lucenedir)/Analysis/CharTokenizer.cs				\
@@ -164,6 +165,173 @@ LUCENE_CSFILES =							\
 	$(lucenedir)/Util/BitVector.cs					\
 	$(lucenedir)/Util/Number.cs					\
 	$(lucenedir)/Util/PriorityQueue.cs
+
+
+LUCENE_1_4_CSFILES =							\
+	$(lucenedir)/AssemblyInfo.cs					\
+	$(lucenedir)/SupportClass.cs					\
+	$(lucenedir)/Analysis/DE/GermanAnalyzer.cs			\
+	$(lucenedir)/Analysis/DE/GermanStemFilter.cs			\
+	$(lucenedir)/Analysis/DE/GermanStemmer.cs			\
+	$(lucenedir)/Analysis/DE/WordlistLoader.cs			\
+	$(lucenedir)/Analysis/RU/RussianAnalyzer.cs			\
+	$(lucenedir)/Analysis/RU/RussianCharsets.cs			\
+	$(lucenedir)/Analysis/RU/RussianLetterTokenizer.cs		\
+	$(lucenedir)/Analysis/RU/RussianLowerCaseFilter.cs		\
+	$(lucenedir)/Analysis/RU/RussianStemFilter.cs			\
+	$(lucenedir)/Analysis/RU/RussianStemmer.cs			\
+	$(lucenedir)/Analysis/Standard/CharStream.cs			\
+	$(lucenedir)/Analysis/Standard/FastCharStream.cs		\
+	$(lucenedir)/Analysis/Standard/ParseException.cs		\
+	$(lucenedir)/Analysis/Standard/StandardAnalyzer.cs		\
+	$(lucenedir)/Analysis/Standard/StandardFilter.cs		\
+	$(lucenedir)/Analysis/Standard/StandardTokenizer.cs		\
+	$(lucenedir)/Analysis/Standard/StandardTokenizerConstants.cs	\
+	$(lucenedir)/Analysis/Standard/StandardTokenizerTokenManager.cs	\
+	$(lucenedir)/Analysis/Standard/Token.cs				\
+	$(lucenedir)/Analysis/Standard/TokenMgrError.cs			\
+	$(lucenedir)/Analysis/Analyzer.cs				\
+	$(lucenedir)/Analysis/CharTokenizer.cs				\
+	$(lucenedir)/Analysis/LetterTokenizer.cs			\
+	$(lucenedir)/Analysis/LowerCaseFilter.cs			\
+	$(lucenedir)/Analysis/LowerCaseTokenizer.cs			\
+	$(lucenedir)/Analysis/PerFieldAnalyzerWrapper.cs		\
+	$(lucenedir)/Analysis/PorterStemFilter.cs			\
+	$(lucenedir)/Analysis/PorterStemmer.cs				\
+	$(lucenedir)/Analysis/SimpleAnalyzer.cs				\
+	$(lucenedir)/Analysis/StopAnalyzer.cs				\
+	$(lucenedir)/Analysis/StopFilter.cs				\
+	$(lucenedir)/Analysis/Token.cs					\
+	$(lucenedir)/Analysis/TokenFilter.cs				\
+	$(lucenedir)/Analysis/Tokenizer.cs				\
+	$(lucenedir)/Analysis/TokenStream.cs				\
+	$(lucenedir)/Analysis/WhitespaceAnalyzer.cs			\
+	$(lucenedir)/Analysis/WhitespaceTokenizer.cs			\
+	$(lucenedir)/Document/DateField.cs				\
+	$(lucenedir)/Document/Document.cs				\
+	$(lucenedir)/Document/Field.cs					\
+	$(lucenedir)/Index/CompoundFileReader.cs			\
+	$(lucenedir)/Index/CompoundFileWriter.cs			\
+	$(lucenedir)/Index/DocumentWriter.cs				\
+	$(lucenedir)/Index/FieldInfo.cs					\
+	$(lucenedir)/Index/FieldInfos.cs				\
+	$(lucenedir)/Index/FieldsReader.cs				\
+	$(lucenedir)/Index/FieldsWriter.cs				\
+	$(lucenedir)/Index/FilterIndexReader.cs				\
+	$(lucenedir)/Index/IndexReader.cs				\
+	$(lucenedir)/Index/IndexWriter.cs				\
+	$(lucenedir)/Index/MultipleTermPositions.cs			\
+	$(lucenedir)/Index/MultiReader.cs				\
+	$(lucenedir)/Index/SegmentInfo.cs				\
+	$(lucenedir)/Index/SegmentInfos.cs				\
+	$(lucenedir)/Index/SegmentMergeInfo.cs				\
+	$(lucenedir)/Index/SegmentMergeQueue.cs				\
+	$(lucenedir)/Index/SegmentMerger.cs				\
+	$(lucenedir)/Index/SegmentReader.cs				\
+	$(lucenedir)/Index/SegmentTermDocs.cs				\
+	$(lucenedir)/Index/SegmentTermEnum.cs				\
+	$(lucenedir)/Index/SegmentTermPositions.cs			\
+	$(lucenedir)/Index/SegmentTermVector.cs				\
+	$(lucenedir)/Index/Term.cs					\
+	$(lucenedir)/Index/TermDocs.cs					\
+	$(lucenedir)/Index/TermEnum.cs					\
+	$(lucenedir)/Index/TermFreqVector.cs				\
+	$(lucenedir)/Index/TermInfo.cs					\
+	$(lucenedir)/Index/TermInfosReader.cs				\
+	$(lucenedir)/Index/TermInfosWriter.cs				\
+	$(lucenedir)/Index/TermPositions.cs				\
+	$(lucenedir)/Index/TermPositionVector.cs			\
+	$(lucenedir)/Index/TermVectorsReader.cs				\
+	$(lucenedir)/Index/TermVectorsWriter.cs				\
+	$(lucenedir)/QueryParser/CharStream.cs				\
+	$(lucenedir)/QueryParser/FastCharStream.cs			\
+	$(lucenedir)/QueryParser/MultiFieldQueryParser.cs		\
+	$(lucenedir)/QueryParser/ParseException.cs			\
+	$(lucenedir)/QueryParser/QueryParser.cs				\
+	$(lucenedir)/QueryParser/QueryParserConstants.cs		\
+	$(lucenedir)/QueryParser/QueryParserTokenManager.cs		\
+	$(lucenedir)/QueryParser/Token.cs				\
+	$(lucenedir)/QueryParser/TokenMgrError.cs			\
+	$(lucenedir)/Search/Spans/NearSpans.cs				\
+	$(lucenedir)/Search/Spans/SpanFirstQuery.cs			\
+	$(lucenedir)/Search/Spans/SpanNearQuery.cs			\
+	$(lucenedir)/Search/Spans/SpanNotQuery.cs			\
+	$(lucenedir)/Search/Spans/SpanOrQuery.cs			\
+	$(lucenedir)/Search/Spans/SpanQuery.cs				\
+	$(lucenedir)/Search/Spans/Spans.cs				\
+	$(lucenedir)/Search/Spans/SpanScorer.cs				\
+	$(lucenedir)/Search/Spans/SpanTermQuery.cs			\
+	$(lucenedir)/Search/Spans/SpanWeight.cs				\
+	$(lucenedir)/Search/BooleanClause.cs				\
+	$(lucenedir)/Search/BooleanQuery.cs				\
+	$(lucenedir)/Search/BooleanScorer.cs				\
+	$(lucenedir)/Search/CachingWrapperFilter.cs			\
+	$(lucenedir)/Search/ConjunctionScorer.cs			\
+	$(lucenedir)/Search/DateFilter.cs				\
+	$(lucenedir)/Search/DefaultSimilarity.cs			\
+	$(lucenedir)/Search/ExactPhraseScorer.cs			\
+	$(lucenedir)/Search/Explanation.cs				\
+	$(lucenedir)/Search/FieldCache.cs				\
+	$(lucenedir)/Search/FieldCacheImpl.cs				\
+	$(lucenedir)/Search/FieldDoc.cs					\
+	$(lucenedir)/Search/FieldDocSortedHitQueue.cs			\
+	$(lucenedir)/Search/FieldSortedHitQueue.cs			\
+	$(lucenedir)/Search/Filter.cs					\
+	$(lucenedir)/Search/FilteredQuery.cs				\
+	$(lucenedir)/Search/FilteredTermEnum.cs				\
+	$(lucenedir)/Search/FuzzyQuery.cs				\
+	$(lucenedir)/Search/FuzzyTermEnum.cs				\
+	$(lucenedir)/Search/HitCollector.cs				\
+	$(lucenedir)/Search/HitQueue.cs					\
+	$(lucenedir)/Search/Hits.cs					\
+	$(lucenedir)/Search/IndexSearcher.cs				\
+	$(lucenedir)/Search/MultiSearcher.cs				\
+	$(lucenedir)/Search/MultiTermQuery.cs				\
+	$(lucenedir)/Search/ParallelMultiSearcher.cs			\
+	$(lucenedir)/Search/PhrasePositions.cs				\
+	$(lucenedir)/Search/PhrasePrefixQuery.cs			\
+	$(lucenedir)/Search/PhraseQuery.cs				\
+	$(lucenedir)/Search/PhraseQueue.cs				\
+	$(lucenedir)/Search/PhraseScorer.cs				\
+	$(lucenedir)/Search/PrefixQuery.cs				\
+	$(lucenedir)/Search/Query.cs					\
+	$(lucenedir)/Search/QueryFilter.cs				\
+	$(lucenedir)/Search/QueryTermVector.cs				\
+	$(lucenedir)/Search/RangeQuery.cs				\
+	$(lucenedir)/Search/RemoteSearchable.cs				\
+	$(lucenedir)/Search/ScoreDoc.cs					\
+	$(lucenedir)/Search/ScoreDocComparator.cs			\
+	$(lucenedir)/Search/Scorer.cs					\
+	$(lucenedir)/Search/Searchable.cs				\
+	$(lucenedir)/Search/Searcher.cs					\
+	$(lucenedir)/Search/Similarity.cs				\
+	$(lucenedir)/Search/SloppyPhraseScorer.cs			\
+	$(lucenedir)/Search/Sort.cs					\
+	$(lucenedir)/Search/SortComparator.cs				\
+	$(lucenedir)/Search/SortComparatorSource.cs			\
+	$(lucenedir)/Search/SortField.cs				\
+	$(lucenedir)/Search/TermQuery.cs				\
+	$(lucenedir)/Search/TermScorer.cs				\
+	$(lucenedir)/Search/TopDocs.cs					\
+	$(lucenedir)/Search/TopFieldDocs.cs				\
+	$(lucenedir)/Search/Weight.cs					\
+	$(lucenedir)/Search/WildcardQuery.cs				\
+	$(lucenedir)/Search/WildcardTermEnum.cs				\
+	$(lucenedir)/Store/Directory.cs					\
+	$(lucenedir)/Store/FSDirectory.cs				\
+	$(lucenedir)/Store/InputStream.cs				\
+	$(lucenedir)/Store/Lock.cs					\
+	$(lucenedir)/Store/OutputStream.cs				\
+	$(lucenedir)/Store/RAMDirectory.cs				\
+	$(lucenedir)/Store/RAMFile.cs					\
+	$(lucenedir)/Store/RAMInputStream.cs				\
+	$(lucenedir)/Store/RAMOutputStream.cs				\
+	$(lucenedir)/Util/BitVector.cs					\
+	$(lucenedir)/Util/Constants.cs					\
+	$(lucenedir)/Util/PriorityQueue.cs				\
+	$(lucenedir)/Util/StringHelper.cs
+
+LUCENE_CSFILES = $(LUCENE_1_3_CSFILES)
 
 ############################################################
 
