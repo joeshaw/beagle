@@ -33,6 +33,15 @@ namespace Beagle.Util {
 	
 	public class PullingReader : TextReader {
 
+		private string identifier;
+
+		public string Identifier {
+			get { return identifier; }
+			set { identifier = value; }
+		}
+
+		//////////////////////////
+
 		public delegate string Pull ();
 
 		Pull pull;
@@ -48,6 +57,7 @@ namespace Beagle.Util {
 		{
 			while (! done && pullBuffer.Length < neededSize) {
 				string str = pull ();
+
 				if (str != null) {
 					pullBuffer.Append (str);
 				} else
