@@ -293,7 +293,7 @@ namespace Beagle.Daemon {
 			// Close and reset our TextReader
 			if (currentReader != null) {
 				currentReader.Close ();
-				currentReader = null; 
+				currentReader = null;
 			}
 
 			// Seek back to the beginning of our stream
@@ -325,7 +325,7 @@ namespace Beagle.Daemon {
 			}
 		}
 
-		private bool Pull () 
+		private bool Pull ()
 		{
 			if (IsFinished) {
 				Close ();
@@ -458,7 +458,7 @@ namespace Beagle.Daemon {
 			else if (path [path.Length-1] == ':')
 				path += PathFinder.FilterDir;
 
-			foreach (string dir in path.Split (':')) 
+			foreach (string dir in path.Split (':'))
 				FindAssemblies (dir);
 		}
 
