@@ -15,6 +15,7 @@ CSFILES = 			        	\
 	$(srcdir)/camel.cs              	\
 	$(srcdir)/FileAdvise.cs			\
 	$(srcdir)/ExifData.cs			\
+	$(srcdir)/ExceptionHandlingThread.cs	\
 	$(srcdir)/ExtendedAttribute.cs  	\
 	$(srcdir)/FileSystem.cs			\
 	$(srcdir)/FrequencyStatistics.cs	\
@@ -38,10 +39,10 @@ CSFILES = 			        	\
 	$(srcdir)/StringFu.cs           	\
 	$(srcdir)/StringMatcher.cs		\
 	$(srcdir)/SystemInformation.cs		\
+	$(srcdir)/Timeline.cs			\
 	$(srcdir)/UriFu.cs			\
 	$(srcdir)/Vfs.cs                        \
-	$(srcdir)/XKeybinder.cs			\
-	$(srcdir)/Timeline.cs
+	$(srcdir)/XKeybinder.cs
 
 if ! ENABLE_GST_SHARP
 CSFILES +=					\

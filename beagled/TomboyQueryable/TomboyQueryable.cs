@@ -54,10 +54,10 @@ namespace Beagle.Daemon.TomboyQueryable {
 		{
 			base.Start ();
 
-			// FIXME: We should do something more reasonable if
-			// ~/.tomboy doesn't exist.
-			if (! (Directory.Exists (notesDir) && Directory.Exists (backupDir)))
+			if (! Directory.Exists (notesDir) ) {
+				log.Error("Failed to Scan Tomboy, perhaps it is not installed");
 				return;
+			}
 			
 			Inotify.EventType mask;
 			mask = Inotify.EventType.MovedTo
@@ -67,7 +67,9 @@ namespace Beagle.Daemon.TomboyQueryable {
 				| Inotify.EventType.Modify;
 
 			wdNotes = Inotify.Watch (notesDir, mask);
-			wdBackup = Inotify.Watch (backupDir, mask);
+
+			if (Directory.Exists (backupDir))
+				wdBackup = Inotify.Watch (backupDir, mask);
 
 			Inotify.Event += OnInotifyEvent;
 
@@ -104,11 +106,22 @@ namespace Beagle.Daemon.TomboyQueryable {
 			//Console.WriteLine ("*** {0} {1} {2}", path, subitem, type);
 
 			// Ignore backup files, tmp files, etc.
-			if (Path.GetExtension (subitem) != ".note")
+			if (subitem != "Backup" && Path.GetExtension (subitem) != ".note")
 				return;
 			
 			if (wd == wdNotes && type == Inotify.EventType.MovedTo) {
-				IndexNote (new FileInfo (Path.Combine (path, subitem)), Scheduler.Priority.Immediate);
+				if (subitem == "Backup") {
+					Inotify.EventType mask;
+					mask = Inotify.EventType.MovedTo
+						| Inotify.EventType.MovedFrom
+						| Inotify.EventType.CreateFile
+						| Inotify.EventType.DeleteFile
+						| Inotify.EventType.Modify;
+
+					wdBackup = Inotify.Watch (backupDir, mask);
+					log.Info("Tomboy: Backup dir was created, now watching");
+				} else
+					IndexNote (new FileInfo (Path.Combine (path, subitem)), Scheduler.Priority.Immediate);
 				//Console.WriteLine ("Indexed {0}", Path.Combine (path, subitem));
 			}
 

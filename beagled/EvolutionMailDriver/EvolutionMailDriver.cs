@@ -86,6 +86,8 @@ namespace Beagle.Daemon {
 
 		private void StartWorker ()
 		{
+			Logger.Log.Info ("Starting Evolution mail backend");
+
 			Stopwatch stopwatch = new Stopwatch ();
 			stopwatch.Start ();
 
@@ -114,8 +116,7 @@ namespace Beagle.Daemon {
 		{
 			base.Start ();
 			
-			Thread th = new Thread (new ThreadStart (StartWorker));
-			th.Start ();
+			ExceptionHandlingThread.Start (new ThreadStart (StartWorker));
 		}
 
 		private void OnShutdown ()
@@ -134,6 +135,9 @@ namespace Beagle.Daemon {
 
 			while (queue.Count > 0) {
 				DirectoryInfo dir = queue.Dequeue () as DirectoryInfo;
+
+				if (! dir.Exists)
+					continue;
 				
 				int wd = Inotify.Watch (dir.FullName,
 							Inotify.EventType.CreateSubdir

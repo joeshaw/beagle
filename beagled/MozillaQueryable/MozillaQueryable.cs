@@ -206,8 +206,7 @@ namespace Beagle.Daemon.Mozilla {
 		{
 			base.Start ();
 			
-			Thread th = new Thread (new ThreadStart (StartWorker));
-			th.Start ();
+			ExceptionHandlingThread.Start (new ThreadStart (StartWorker));
 		}
 
 		private void OnShutdown ()

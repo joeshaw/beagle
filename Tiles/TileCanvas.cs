@@ -267,16 +267,22 @@ namespace Beagle.Tile {
 			TileCanvasRenderContext ctx;
 			ctx = new TileCanvasRenderContext (this, 
 							   tile);
-			ctx.Write ("<html><style type=\"text/css\" media=\"screen\">");
 
+			// IMPORTANT!  The <meta> tag has to be in the first
+			// chunk written to the stream or else the encoding
+			// will be wrong!
+			ctx.WriteLine ("<html>\n<head>\n<meta http-equiv=\"content-type\" content=\"text/html; charset=UTF-8\">");
+
+			ctx.WriteLine ("<style type=\"text/css\" media=\"screen\">");
 			RenderStyles (ctx);
 			
-			ctx.Write ("</style>");
+			ctx.WriteLine ("</style>");
+			ctx.WriteLine ("</head>");
 
 			if (tile != null) {
 				tile.Render (ctx);
 			}
-			ctx.Write ("</html>");
+			ctx.WriteLine ("</html>");
 		}
 		
 		/////////////////////////////////////////////////

@@ -500,8 +500,7 @@ namespace Beagle.Daemon.FileSystemQueryable {
 		{
 			base.Start ();
 
-			Thread th = new Thread (new ThreadStart (StartWorker));
-			th.Start ();
+			ExceptionHandlingThread.Start (new ThreadStart (StartWorker));
 		}
 
 		//////////////////////////////////////////////////////////////////////////

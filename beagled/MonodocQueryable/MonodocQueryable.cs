@@ -59,8 +59,7 @@ namespace Beagle.Daemon.MonodocQueryable {
 
 			base.Start ();
 
-			Thread th = new Thread (new ThreadStart (StartWorker));
-			th.Start ();
+			ExceptionHandlingThread.Start (new ThreadStart (StartWorker));
 		}
 		
 		private void StartWorker () 

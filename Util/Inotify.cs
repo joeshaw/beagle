@@ -373,7 +373,7 @@ namespace Beagle.Util {
 
 		static void DispatchWorker ()
 		{
-			Encoding filename_encoding = new ASCIIEncoding ();
+			Encoding filename_encoding = Encoding.UTF8;
 
 			while (running) {
 

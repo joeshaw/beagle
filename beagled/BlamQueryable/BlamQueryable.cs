@@ -74,8 +74,7 @@ namespace Beagle.Daemon.BlamQueryable {
 
 			base.Start ();
 
-			Thread th = new Thread (new ThreadStart (StartWorker));
-			th.Start ();
+			ExceptionHandlingThread.Start (new ThreadStart (StartWorker));
 		}
 
 		private void OnInotifyEvent (int wd,

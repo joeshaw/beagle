@@ -71,8 +71,7 @@ namespace Beagle.Daemon.GaimLogQueryable {
 
 			base.Start ();
 
-			Thread th = new Thread (new ThreadStart (StartWorker));
-			th.Start ();
+			ExceptionHandlingThread.Start (new ThreadStart (StartWorker));
 		}
 
 		private int Watch (string path)
