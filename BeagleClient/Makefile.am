@@ -14,6 +14,7 @@ CSFILES = 				\
 	$(srcdir)/Factory.cs		\
 	$(srcdir)/Hit.cs                \
 	$(srcdir)/Indexable.cs          \
+	$(srcdir)/IndexerProxy.cs	\
 	$(srcdir)/Indexer.cs            \
 	$(srcdir)/Property.cs           \
 	$(srcdir)/Query.cs              \

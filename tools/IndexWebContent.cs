@@ -151,9 +151,8 @@ class IndexWebContentTool {
 		}
 
 		try {
-			Indexer indexer = Indexer.Get ();
 			System.Console.WriteLine ("Indexing");
-			indexer.Index (indexable);
+			Indexer.Index (indexable);
 		} catch (Exception e) {
 			Console.WriteLine ("ERROR: Indexing failed:");
 			Console.Write (e);

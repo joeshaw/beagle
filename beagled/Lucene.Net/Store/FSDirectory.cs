@@ -493,8 +493,9 @@ namespace Lucene.Net.Store
 		/// and create that directory if it doesn't already exist
 		/// </summary>
 		/// FIXED trow@ximian.com 14 May 2004 Give us control over where locks are stored
-		static private String tempDirectoryName = null;
-		static public String TempDirectoryName {
+		/// FIXED trow@ximian.com 12 Sep 2004 make TempDirectoryName not be static
+		private String tempDirectoryName = null;
+		public String TempDirectoryName {
 			get {
 				if (tempDirectoryName == null) {
 					String user_name = Environment.GetEnvironmentVariable("USER");

@@ -70,7 +70,7 @@ namespace Beagle.Daemon.FileSystemQueryable {
 
 			BootstrapIndex (dir);
 			Lucene.Net.Store.FSDirectory.Logger = Log;
-			Lucene.Net.Store.FSDirectory.TempDirectoryName = LockDir;
+			//Lucene.Net.Store.FSDirectory.TempDirectoryName = LockDir;
 
 		}
 

@@ -1,5 +1,5 @@
 //
-// Indexer.cs
+// IndexerProxy.cs
 //
 // Copyright (C) 2004 Novell, Inc.
 //
@@ -25,33 +25,16 @@
 //
 
 using DBus;
-using System;
-using System.IO;
-using System.Collections;
-using Beagle.Daemon;
 
-namespace Beagle.Daemon.FileSystemQueryable
+namespace Beagle
 {
-	public class Indexer : Beagle.IndexerProxy
+	[Interface ("com.novell.Beagle.Indexer")]
+	public abstract class IndexerProxy
 	{
-		LuceneDriver driver;
-		
+		[Method]
+		public abstract void Index (string indexableAsXml);
 
-		public Indexer (LuceneDriver _driver)
-		{
-			driver = _driver;
-		}
-
-		public override void Index (string xml)
-		{
-			FilteredIndexable indexable = FilteredIndexable.NewFromXml (xml);
-			driver.ScheduleAdd (indexable);
-		}
-
-		public override void Delete (string uriStr)
-		{
-			Uri uri = new Uri (uriStr, true);
-			driver.ScheduleDelete (uri);
-		}
+		[Method]
+		public abstract void Delete (string uri);
 	}
 }

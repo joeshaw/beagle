@@ -35,31 +35,18 @@ using BU = Beagle.Util;
 
 namespace Beagle.Daemon.FileSystemQueryable {
 
-	public class FileSystemChangeData : IQueryableChangeData {
-		public ArrayList ChangedUris = new ArrayList ();
-		public ArrayList SubtractedUris = new ArrayList ();
-	}
-
 	[QueryableFlavor (Name="FileSystemQueryable", Domain=QueryDomain.Local)]
-	public class FileSystemQueryable : IQueryable {
+	public class FileSystemQueryable : LuceneQueryable {
 
-		public event IQueryableChangedHandler ChangedEvent;
-
-		IndexerQueue indexerQueue;
-		Indexer indexer;
+		private Indexer indexer;
 
 		FileSystemEventMonitor monitor = new FileSystemEventMonitor ();
 		BU.FileMatcher doNotIndex = new BU.FileMatcher ();
 
-		uint changedId = 0;
-		FileSystemChangeData changeData = null;
-
-		public FileSystemQueryable ()
+		public FileSystemQueryable () : base ("FileSystemQueryable",
+						      Path.Combine (PathFinder.RootDir, "FileSystemIndex"))
 		{
-			indexerQueue = new IndexerQueue ();
-			ScanAssemblyForHandlers (Assembly.GetExecutingAssembly ());
-
-			indexer = new Indexer (indexerQueue);
+			indexer = new Indexer (Driver);
 			
 			DBusisms.Service.RegisterObject (indexer,
 							 Beagle.DBusisms.IndexerPath);
@@ -73,27 +60,9 @@ namespace Beagle.Daemon.FileSystemQueryable {
 			monitor.FileSystemEvent += OnFileSystemEvent;
 		}
 
-		private void ScanAssemblyForHandlers (Assembly assembly)
-		{
-			foreach (Type t in assembly.GetTypes ()) {
-				if (t.IsSubclassOf (typeof (PreIndexHandler))) {
-
-					PreIndexHandler handler = (PreIndexHandler) Activator.CreateInstance (t);
-					indexerQueue.PreIndexingEvent += handler.Run;
-				}
-				if (t.IsSubclassOf (typeof (PostIndexHandler))) {
-					PostIndexHandler handler = (PostIndexHandler) Activator.CreateInstance (t);
-					indexerQueue.PostIndexingEvent += handler.Run;
-				}
-			}
-		}
-
 		private void OnFileSystemEvent (object source, FileSystemEventType eventType,
 						string oldPath, string newPath)
 		{
-			if (changeData == null)
-				changeData = new FileSystemChangeData ();
-
 			Console.WriteLine ("Got event {0} {1} {2}", eventType, oldPath, newPath);
 
 			if (eventType == FileSystemEventType.Changed
@@ -106,66 +75,16 @@ namespace Beagle.Daemon.FileSystemQueryable {
 
 				string uri = BU.StringFu.PathToQuotedFileUri (newPath);
 				FilteredIndexable indexable = new FilteredIndexable (new Uri (uri, true));
-				indexerQueue.ScheduleAdd (indexable);
-
-				changeData.ChangedUris.Add (indexable.Uri);
+				Driver.ScheduleAdd (indexable);
 
 			} else if (eventType == FileSystemEventType.Deleted) {
 
-				string uri = BU.StringFu.PathToQuotedFileUri (oldPath);
-				indexerQueue.ScheduleRemoveByUri (uri);
-				
-				changeData.SubtractedUris.Add (new Uri (uri, false));
-				
+				Uri uri = new Uri (BU.StringFu.PathToQuotedFileUri (oldPath), true);
+				Driver.ScheduleDelete (uri);
+
 			} else {
 				Console.WriteLine ("Unhandled!");
 			}
-
-			if (changedId != 0)
-				GLib.Source.Remove (changedId);
-			changedId = GLib.Timeout.Add (1000, new GLib.TimeoutHandler (FireChangedEvent));
 		}
-
-		private bool FireChangedEvent ()
-		{
-			changedId = 0;
-			if (ChangedEvent != null && changeData != null)
-				ChangedEvent (this, changeData);
-			changeData = null;
-			return false;
-		}
-
-
-		public string Name {
-			get { return "FileSystemQueryable"; }
-		}
-
-		public bool AcceptQuery (QueryBody body)
-		{
-			return indexer.driver.AcceptQuery (body);
-		}
-
-		public void DoQuery (QueryBody body,
-				     IQueryResult queryResult,
-				     IQueryableChangeData iChangeData)
-		{
-			FileSystemChangeData changeData = (FileSystemChangeData) iChangeData;
-
-			if (changeData == null) {
-				indexer.driver.DoQuery (body, queryResult, null);
-			} else {
-				if (changeData.ChangedUris.Count > 0) {
-					// We first subtract all of the changed Uris.  They will get re-added
-					// if they match the query.  This allows us to correctly handle the case of
-					// when a file that matches the query is changed in such a way that it
-					// no longer matches.
-					queryResult.Subtract (changeData.ChangedUris);
-					indexer.driver.DoQuery (body, queryResult, changeData.ChangedUris);
-				}
-				queryResult.Subtract (changeData.SubtractedUris);
-			}
-		}
-
 	}
-
 }

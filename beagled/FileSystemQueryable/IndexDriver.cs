@@ -48,6 +48,7 @@ using Beagle.Daemon;
 namespace Beagle.Daemon.FileSystemQueryable {
 
 	public class IndexDriver {
+
 		const string propPrefix = "prop:";
 
 		private Beagle.Util.Logger log = null;

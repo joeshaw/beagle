@@ -49,10 +49,8 @@ class CrawlerTool {
 
 		Hashtable fileTable = new Hashtable ();
 
-		Indexer indexer;
-
 		public Crawler () {
-			indexer = Indexer.Get ();
+			
 		}
 
 		void ScheduleAdd (string uri)
@@ -72,7 +70,7 @@ class CrawlerTool {
 			System.Console.WriteLine ("Flushing");
 			if (toBeIndexed.Count > 0) {
 				foreach (string uri in toBeIndexed)
-					indexer.Index (new Indexable (new Uri (uri, false)));
+					Indexer.Index (new Indexable (new Uri (uri, false)));
 				toBeIndexed.Clear ();
 			}
 			System.Console.WriteLine ("Done Flushing");

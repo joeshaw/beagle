@@ -128,12 +128,9 @@ namespace IndexGaimLogs {
 			scan.Scan (dir, new ImLog.Sink (AddLog));
 
 			if (indexables.Count > 0) {
-				Console.WriteLine ("Creating indexer"); 
-				Indexer indexer = Indexer.Get ();
-
 				Console.WriteLine ("Adding indexables");
 				foreach (Indexable indexable in indexables) {
-					indexer.Index (indexable);
+					Indexer.Index (indexable);
 				}
 				Console.WriteLine ("done");
 			}

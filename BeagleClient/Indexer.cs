@@ -24,29 +24,35 @@
 // DEALINGS IN THE SOFTWARE.
 //
 
-namespace Beagle
-{
-	using DBus;
-	
-	[Interface ("com.novell.Beagle.Indexer")]
-	public abstract class Indexer 
-	{
-		[Method]
-		public abstract void Index (string indexableAsXml);
+using System;
+using DBus;
 
-		public void Index (Indexable indexable) {
-			indexable.StoreStream ();
-			Index (indexable.ToXml ());
+namespace Beagle {
+
+	public class Indexer 
+	{
+		private static object theIndexerLock = new object ();
+		static private IndexerProxy theIndexer = null;
+
+		private static IndexerProxy TheIndexer {
+			get {
+				lock (theIndexerLock) {
+					if (theIndexerLock == null)
+						theIndexer = (IndexerProxy) DBusisms.Service.GetObject (typeof (IndexerProxy), DBusisms.IndexerPath);
+				}
+				return theIndexer;
+			}
 		}
 
-		static Indexer theIndexer = null;
+		public static void Index (Indexable indexable)
+		{
+			indexable.StoreStream ();
+			TheIndexer.Index (indexable.ToXml ());
+		}
 
-		static public Indexer Get () {
-			if (theIndexer == null)
-				theIndexer = (Indexer) DBusisms.Service.GetObject (typeof (Indexer),
-										   DBusisms.IndexerPath);
-			
-			return theIndexer;
+		public static void Delete (Uri uri)
+		{
+			TheIndexer.Delete (uri.ToString ());
 		}
 	}
 }

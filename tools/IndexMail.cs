@@ -577,7 +577,6 @@ namespace IndexMailTool {
 
 	public class MailScanner {
 
-		Indexer indexer = Indexer.Get ();
 		ArrayList toIndex = new ArrayList ();
 		int count = 0;
 		private bool dumbterm = false;
@@ -591,7 +590,7 @@ namespace IndexMailTool {
 		private void IndexList (ICollection indexables) 
 		{
 			foreach (Indexable i in toIndex)
-				indexer.Index (i);
+				Indexer.Index (i);
 			toIndex = new ArrayList ();
 		}
 			

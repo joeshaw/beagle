@@ -32,6 +32,7 @@ using System.Text;
 
 namespace Beagle.Daemon {
 
+#if false
 	public class Indexable : Versioned {
 
 		// The URI of the item being indexed.
@@ -120,4 +121,5 @@ namespace Beagle.Daemon {
 			return uri.GetHashCode () ^ type.GetHashCode ();
 		}
 	}
+#endif
 }

@@ -176,10 +176,7 @@ fsqueryabledir = $(srcdir)/FileSystemQueryable
 FILE_SYSTEM_QUERYABLE_CSFILES =				\
 	$(fsqueryabledir)/FileSystemQueryable.cs	\
 	$(fsqueryabledir)/FileSystemEventMonitor.cs	\
-	$(fsqueryabledir)/IndexDriver.cs		\
-	$(fsqueryabledir)/Indexer.cs			\
-	$(fsqueryabledir)/IndexerQueue.cs		\
-	$(fsqueryabledir)/MainIndexDriver.cs
+	$(fsqueryabledir)/Indexer.cs
 
 
 DAEMON_DLL_CSFILES = 				\
@@ -196,6 +193,8 @@ DAEMON_DLL_CSFILES = 				\
 	$(srcdir)/QueryDriver.cs		\
 	$(srcdir)/QueryImpl.cs			\
 	$(srcdir)/GoogleDriver.cs		\
+	$(srcdir)/LuceneDriver.cs		\
+	$(srcdir)/LuceneQueryable.cs		\
 	$(srcdir)/FilteredIndexable.cs
 
 DAEMON_DLL_LOCAL_ASSEMBLIES =		\

@@ -172,10 +172,8 @@ namespace Beagle.Daemon {
 		private void OnQueryableChanged (IQueryable           source,
 						 IQueryableChangeData changeData)
 		{
-			if (ChangedEvent != null) {
-				Console.WriteLine ("Got change {0} {1}", source, changeData);
+			if (ChangedEvent != null)
 				ChangedEvent (this, source, changeData);
-			}
 		}
 	}
 }
