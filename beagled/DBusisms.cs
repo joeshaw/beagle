@@ -102,6 +102,8 @@ namespace Beagle.Daemon {
 						if (Object is IDBusObject)
 							((IDBusObject) Object).UnregisterHook ();
 						DBusisms.Service.UnregisterObject (Object);
+						if (Object is IDisposable)
+							((IDisposable) Object).Dispose ();
 						Unregistered = true;
 					}
 				}

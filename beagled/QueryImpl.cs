@@ -196,14 +196,15 @@ namespace Beagle.Daemon {
 		public void Dispose ()
 		{
 			DisconnectResult ();
-			QueryDriver.ChangedEvent -= OnQueryDriverChanged;
+			UnregisterHook ();
+			
 			GC.SuppressFinalize (this);
 		}
 
 		~QueryImpl ()
 		{
 			DisconnectResult ();
-			QueryDriver.ChangedEvent -= OnQueryDriverChanged;
+			UnregisterHook ();
 		}
 
 		//////////////////////////////////////////////////////
@@ -220,6 +221,11 @@ namespace Beagle.Daemon {
 		public void UnregisterHook ()
 		{
 			QueryDriver.ChangedEvent -= OnQueryDriverChanged;
+
+			// Clear out some of our contents
+			this.body = null;
+			this.result = null;
+			this.allHits = null;
 		}
 
 		//////////////////////////////////////////////////////
@@ -293,6 +299,8 @@ namespace Beagle.Daemon {
 					Sender.FireHitsSubtractedAsStringEvent (Arg);
 					break;
 				}
+
+				Sender = null;
 
 				return false;
 			}
