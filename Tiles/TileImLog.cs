@@ -137,6 +137,7 @@ namespace Beagle.Tile {
 			Evolution.BookQuery query = Evolution.BookQuery.FromString (qstr);
 			Evolution.Contact [] matches = addressbook.GetContacts (query);
 			foreach (Evolution.Contact c in matches) {
+				Console.WriteLine ("FIXME: querying the evolution addressbook instead of using Lucene, this is slow and dumb");
 				Console.WriteLine ("Got match: " + c.FullName);
 				buddy_emails[im] = c.Email1;
 				return c.Email1;
