@@ -160,7 +160,7 @@ namespace Beagle {
 					return hits.Count + " Match";
 
 			case "DisplayedMatches":
-				if (hits.Count == 1)
+				if (hits.Count == 1 || ! (CanPageForward ||CanPageBack))
 					return "";
 				return String.Format ("Displaying Matches {0} to {1}",
 						      FirstDisplayed+1, LastDisplayed+1);
