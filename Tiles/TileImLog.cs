@@ -98,10 +98,10 @@ namespace Beagle.Tile {
 				if (File.Exists (fullpath)) {
 					Template["Icon"] = StringFu.PathToQuotedFileUri (fullpath);
 				} else {
-					Template["Icon"] = Images.GetHtmlSourceForStock ("gnome-gaim", 48);
+					Template["Icon"] = Images.GetHtmlSource ("gnome-gaim.png", "image/png");
 				}
 			} else {
-				Template["Icon"] = Images.GetHtmlSourceForStock ("gnome-gaim", 48);
+				Template["Icon"] = Images.GetHtmlSource ("gnome-gaim.png", "image/png");
 			}
 		}
 
