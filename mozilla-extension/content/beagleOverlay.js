@@ -106,32 +106,50 @@ function beagleWriteContent(page, tmpfilepath)
   persist.saveDocument(page, tmpfile, null, null, ENCODE_MASK, 0);
 }
 
-function beaglePageLoad(event)
+function beagleShouldIndex(page)
 {
   // user disabled, or can't find beagle-index-url.
   if (gBeagleRunStatus == -1 || !gBeagleIndexerPath)
-    return;
-
-  var page = event.originalTarget;
+    return false;
 
   if (!page || 
       !page.location || 
       page.location == 'about:blank' || 
-      !page.location.href)
-    return;
+      !page.location.href) {
+    dump("beagleShouldIndex: strange page: " + page);
+    return false;
+  }
 
-	dump("beaglePageLoad : storing page: " + page.location.href);
+  if (page.location.protocol == "https:") {
+	var bPref;
 
-  if (page.location.protocol == "https") {
-	// secure content, disable and return
-	gBeagleRunStatus = -2;
-	beagleUpdateStatus ();
-	return;
+	// secure content, check if user wants it indexed
+	try { bPref = gPref.getBoolPref('beagle.security.active'); }
+	catch(e) { bPref = false }
+
+	if (!bPref) {
+	  // don't index. disable and return.
+	  gBeagleRunStatus = -2;
+	  beagleUpdateStatus ();
+	  return false;
+	}
   } else if (gBeagleRunStatus == -2) {
 	// no longer secure content, re-enable
 	gBeagleRunStatus = 0;
 	beagleUpdateStatus ();
   }
+  
+  return true;
+}
+
+function beaglePageLoad(event)
+{
+  var page = event.originalTarget;
+
+  if (!beagleShouldIndex (page))
+    return;
+
+	dump("beaglePageLoad : storing page: " + page.location.href);
 
   // FIXME: this should be in a safer directory and hash the url as well
   var hash = new Date().getMilliseconds ();
@@ -151,7 +169,7 @@ function beagleRunBest(url)
 {
   try {
     var retval = gFile.spawn(gBeagleBestPath, ['--url', url]);
-    if (retval != 0) 
+    if (retval) 
       alert("Error running best: " + retval);
   } catch(e) {
     alert("Caught error from best: " + e);
@@ -199,20 +217,23 @@ function beagleProcessClick(event)
       // Ctrl-click for Mac properties.  Works on PC too.
       beagleShowPrefs();
     } else {
-      var stat = document.getElementById('beagle-notifier-status').getAttribute('status');
-
-      if (stat == '000') {      	// Enabled.  Disable on click.
+      switch(gBeagleRunStatus) {
+      case 0:
+	// currently enabled. disable by user.
 	gBeagleRunStatus = -1;
-        beagleUpdateStatus();
-        return;
-      } else if (stat == '00f') {	// Disabled.  Enable on click.
+	break;
+      case -1:
+      case -2:
+	// currently disabled (by user or by secure content). enable.
 	gBeagleRunStatus = 0;
-        beagleUpdateStatus();
-        return;
-      } else if (stat == 'f00') {	// Problems.  Alert.
+	break;
+      default:
+	// last run was an error, show the error
 	alert("Error running Beagle Indexer: " + gBeagleRunStatus);
         return;
       }
+
+      beagleUpdateStatus();
     }
   }
 }
@@ -224,7 +245,7 @@ function beagleUpdateStatus()
   switch(gBeagleRunStatus) {
     case 0: // active
       icon.setAttribute("status","000");
-      icon.setAttribute("tooltiptext","Beagle indexing active.");
+      icon.setAttribute("tooltiptext","Beagle indexing active. Click to disable.");
       break;
     case -1: // disabled by user
     case -2: // disabled for secure protocol

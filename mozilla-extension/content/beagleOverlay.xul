@@ -15,36 +15,6 @@
 
 <script type="application/x-javascript" src="chrome://beagle/content/beagleOverlay.js" />
 
-<!--
-<script type="application/x-javascript">
-
-<![CDATA[
-
-// calls the current URL to bugmenot.com via a popup window
-
-function BugMeNot(){
-var bug = window.open('http://bugmenot.com/view.php?mode=bookmarklet&url='+window._content.location,'BugMeNot','location=no,status=yes,menubar=no,scrollbars=yes,resizable=yes,width=385,height=450');
-}
-
-window.addEventListener("load",bugInit,false);
-
-// hides the item when approproiate (use same logic as for Back, Stop etc.)
-// script written by Stephen Clavering, used in his goHome extension
-
-function bugInit() {
-  document.getElementById("contentAreaContextMenu").addEventListener("popupshowing",bugHide,false);
-}
-
-function bugHide() {
-  var cm = gContextMenu;
-  document.getElementById("bugmenot").hidden = ( cm.isTextSelected || cm.onLink || cm.onImage || cm.onTextInput );
-}
-
-]]>
-
-</script>
--->
-
 <popup id="contentAreaContextMenu">
   <menuseparator id="beagle-context-sep-a" />
   <menu id="beagle-context-menu" label="&beagle.context.menu.label;">

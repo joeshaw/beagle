@@ -20,14 +20,15 @@
     <RDF:li>chrome://beagle/content/beagleOverlay.xul</RDF:li>
   </RDF:Seq>  
   
-  <RDF:Description RDF:about="urn:mozilla:package:beagle"
-		   chrome:displayName="Beagle Indexer 0.1"
-		   chrome:author="Alex Graveley"
-		   chrome:authorURL="mailto:alex@hungry.com"
-		   chrome:name="beagle"
-		   chrome:extension="true"
-		   chrome:description="Index webpages you visit using the Beagle Indexing Engine."
-		   chrome:settingsURL="chrome://beagle/content/beaglePrefs.xul">
+  <RDF:Description 
+    RDF:about="urn:mozilla:package:beagle"
+    chrome:displayName="Beagle Indexer 0.1"
+    chrome:author="Alex Graveley"
+    chrome:authorURL="mailto:alex@hungry.com"
+    chrome:name="beagle"
+    chrome:extension="true"
+    chrome:description="Index webpages you visit using the Beagle Indexing Engine."
+    chrome:settingsURL="chrome://beagle/content/beaglePrefs.xul">
   </RDF:Description>
 
 </RDF:RDF>

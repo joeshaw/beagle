@@ -23,6 +23,7 @@ TODO:
 	- watch for beagle-index-url error and clean up tempfile
 	- save tempfile in safer place and with better name
 	- include install.js for older versions of Firefox (<0.9)
+	- screenshot webpage
 
 -- Alex Graveley (Tue Jul 27, 2004)
 

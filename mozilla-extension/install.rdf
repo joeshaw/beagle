@@ -16,6 +16,7 @@
 
     <em:iconURL>chrome://beagle/skin/beagle-big.png</em:iconURL>
     <em:aboutURL>chrome://beagle/content/about.xul</em:aboutURL>
+    <em:optionsURL>chrome://beagle/content/beaglePrefs.xul</em:optionsURL>
 
     <em:file>
       <Description about="urn:mozilla:extension:file:beagle.jar">

@@ -3,8 +3,9 @@
 <!ENTITY beagle.context.search.link.label        "Find References to this Link">
 <!ENTITY beagle.context.search.page.label        "Find References to this Page">
 
+<!ENTITY beagle.pref.label                       "Beagle Preferences">
 <!ENTITY beagle.pref.context.label               "Context Menu Options">
-<!ENTITY beagle.pref.context.active.label        "Add Beagle Options to the Context Menu">
+<!ENTITY beagle.pref.context.active.label        "Add Beagle options to context menu">
 <!ENTITY beagle.pref.context.sep.a.label         "Insert a Separator Before Context Items">
 <!ENTITY beagle.pref.context.sep.b.label         "Insert a Separator After Context Items">
-<!ENTITY beagle.pref.label                       "Beagle Preferences">
+<!ENTITY beagle.pref.security.active.label       "Index pages with secure content">

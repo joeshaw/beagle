@@ -13,18 +13,22 @@
   title="&beagle.pref.label;"
   xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
 
-  <script type="application/x-javascript" src="chrome://beagle/content/beagleOverlay.js" />
   <script type="application/x-javascript" src="chrome://beagle/content/beaglePrefs.js" />
 
   <groupbox>
-    <caption label="&beagle.pref.context.label;" />
-    <checkbox id="beagle.context.active" 
+    <caption label="&beagle.pref.label;" />
+
+    <checkbox 
+      id="beagle.context.active" 
       label="&beagle.pref.context.active.label;"
       oncommand="beaglePrefsFlip();"
       prefattribute="checked" 
       preftype="bool" 
       type="checkbox" 
     />
+
+<!-- showing options for separators is hella lame -->
+<!--
     <checkbox id="beagle.context.sep.a" 
       class="indent"
       label="&beagle.pref.context.sep.a.label;"
@@ -39,6 +43,16 @@
       preftype="bool" 
       type="checkbox" 
     />
+-->
+
+    <checkbox 
+      id="beagle.security.active" 
+      label="&beagle.pref.security.active.label;"
+      prefattribute="checked" 
+      preftype="bool" 
+      type="checkbox" 
+    />
+
   </groupbox>
 
 </dialog> 

@@ -1,3 +1,19 @@
+2004-07-28  Alex Graveley  <alex@ximian.com>
+
+	* mozilla-extension/content/beaglePrefs.xul: Add <checkbox> for
+	beagle.security.active pref.
+
+	* mozilla-extension/content/beaglePrefs.js: Support
+	beagle.security.active pref to enable https indexing.
+
+	* mozilla-extension/content/beagleOverlay.js: Index https pages if
+	pref is chosen.  Fix bug in https detection since
+	location.protocol includes the trailing ':'. Cleanup
+	beagleProcessClick.
+
+	* mozilla-extension/install.rdf: Add <optionsURL> so options can
+	be opened from Extension Manager window.
+
 2004-07-27  Alex Graveley  <alex@ximian.com>
 
 	* mozilla-extension/: Add initial commit of the mozilla/firefox

@@ -11,16 +11,17 @@ var _elementIDs = [
   'beagle.context.active',
   'beagle.context.sep.a',
   'beagle.context.sep.b',
-  'beagle.context.sep.b',
+  'beagle.security.active',
 ];
 
 function beaglePrefsFlip()
 {
-  var bPref, xPref;
-
-  bPref = document.getElementById('beagle.context.active').checked;
+  // Handle enabling/disabling prefs based on settings
+  /*
+  var bPref = document.getElementById('beagle.context.active').checked;
   document.getElementById('beagle.context.sep.a').disabled = !(bPref);
   document.getElementById('beagle.context.sep.b').disabled = !(bPref);
+  */
 }
 
 function beaglePrefsInit()
@@ -32,7 +33,7 @@ function beaglePrefsInit()
 
     if (!element)
     {
-      break;
+      continue;
     }
     else if (element.localName == 'checkbox')
     {
@@ -71,7 +72,7 @@ function beaglePrefsSave()
 
     if (!element)
     {
-      break;
+      continue;
     }
     else if (element.localName == 'checkbox')
     {
