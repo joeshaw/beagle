@@ -80,6 +80,14 @@ AM_CONDITIONAL(ENABLE_EPIPHANY_EXTENSION, test "x$enable_epiphany_extension" = "
 
 dnl ----------------------------------------------
 
+dnl Searchomatic
+
+PKG_CHECK_MODULES(SEARCHOMATIC, gtk+-2.0)
+AC_SUBST(SEARCHOMATIC_CFLAGS)
+AC_SUBST(SEARCHOMATIC_LIBS)
+
+dnl ----------------------------------------------
+
 AC_OUTPUT([
 Makefile
 images/Makefile
@@ -92,6 +100,7 @@ Renderers/Makefile
 tools/Makefile
 Best/Makefile
 epiphany-extension/Makefile
+searchomatic/Makefile
 beagle-0.0.pc
 ])
 

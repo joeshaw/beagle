@@ -108,7 +108,6 @@ namespace Beagle {
 			else
 				nextButton.Hide ();
 
-			Console.WriteLine ("{0} {1} {2}", renderer.FirstDisplayed, renderer.LastDisplayed, renderer.TotalCount);
 		}
 
 		private void OnPrevClicked (object o, EventArgs args)

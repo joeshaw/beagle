@@ -37,9 +37,17 @@ namespace Best {
 
 	public class BestWindow : Gtk.Window {
 
+		static public void Create (string queryStr)
+		{
+			BestWindow best = new BestWindow ();
+			if (queryStr != null)
+				best.Search (queryStr);
+			best.Show ();
+		}
+
 		static public void Create ()
 		{
-			new BestWindow ().Show ();
+			Create (null);
 		}
 
 		//////////////////////////
@@ -188,6 +196,7 @@ namespace Best {
 
 		private void Search (String searchString)
 		{
+			entry.Text = searchString;
 			Query query = new Query (searchString);
 
 			if (result != null)

@@ -11,7 +11,8 @@ SUBDIRS = 			\
 	indexer 		\
 	Renderers		\
 	tools 			\
-	Best
+	Best			\
+	searchomatic
 
 if ENABLE_EPIPHANY_EXTENSION
 SUBDIRS += epiphany-extension
