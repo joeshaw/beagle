@@ -140,6 +140,16 @@ namespace Beagle.Daemon {
 
 			return 0;
 		} 
+
+		private static void LogMemoryUsage (Scheduler.Task task)
+		{
+			Logger.Log.Debug ("Memory usage: VmSize={0}  GC.GetTotalMemory={1}",
+					  SystemInformation.VmSize (),
+					  GC.GetTotalMemory (false));
+
+			task.TriggerTime = DateTime.Now.AddSeconds (10);
+			task.Reschedule = true;
+		}
 		
 		public static int Main (string[] args)
 		{
@@ -308,6 +318,12 @@ namespace Beagle.Daemon {
 #endif
 			// Start the Global Scheduler thread
 			Scheduler.Global.Start ();
+
+			// Add our memory-logging task
+			Scheduler.Task memory_task = Scheduler.TaskFromHook (new Scheduler.TaskHook (LogMemoryUsage));
+			memory_task.Tag = "Memory Logger";
+			memory_task.Priority = Scheduler.Priority.Immediate;
+			Scheduler.Global.Add (memory_task);
 
 			// Start our Inotify threads
 			Inotify.Start ();

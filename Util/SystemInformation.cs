@@ -202,6 +202,29 @@ namespace Beagle.Util {
 				return using_battery;
 			}
 		}
+
+		///////////////////////////////////////////////////////////////
+
+		static public int VmSize ()
+		{
+			string filename = String.Format ("/proc/{0}/status",
+							 Mono.Posix.Syscall.getpid ());
+			TextReader reader = new StreamReader (filename);
+
+			int vm_size = -1;
+
+			string line;
+			while ( (line = reader.ReadLine ()) != null) {
+				if (line.Substring (0, 7) == "VmSize:") {
+					line = line.Substring (7, line.Length - 10).Trim ();
+					vm_size = Int32.Parse (line);
+					break;
+				}
+			}
+			reader.Close ();
+
+			return vm_size;
+		}
 			
 
 #if false
