@@ -310,22 +310,38 @@ namespace Best {
 
 		private void UpdatePage ()
 		{
-			Console.WriteLine ("In UpdatePage");
+			//Console.WriteLine ("In UpdatePage");
 			back_button.Sensitive = root.HitCollection.CanPageBack;
 			forward_button.Sensitive = root.HitCollection.CanPageForward;
 
 			string label;
-			if (root.HitCollection.NumResults == 0)
-				label = "No results.";
-			else if (root.HitCollection.FirstDisplayed == 0) 
-				label = String.Format ("Best <b>{0} results of {1}</b> are shown.", 
-						       root.HitCollection.LastDisplayed + 1,
-						       root.HitCollection.NumResults);
-			else 
-				label = String.Format ("Results <b>{0} through {1} of {2}</b> are shown.",
-						       root.HitCollection.FirstDisplayed + 1, 
-						       root.HitCollection.LastDisplayed + 1,
-						       root.HitCollection.NumResults);						       
+
+			if (this.hit_type == null) {
+				if (root.HitCollection.NumResults == 0)
+					label = "No results.";
+				else if (root.HitCollection.FirstDisplayed == 0) 
+					label = String.Format ("Best <b>{0} results of {1}</b> are shown.", 
+							       root.HitCollection.LastDisplayed + 1,
+							       root.HitCollection.NumResults);
+				else 
+					label = String.Format ("Results <b>{0} through {1} of {2}</b> are shown.",
+							       root.HitCollection.FirstDisplayed + 1, 
+							       root.HitCollection.LastDisplayed + 1,
+							       root.HitCollection.NumResults);
+			} else {
+				if (root.HitCollection.NumResults == 0)
+					label = "No results.";
+				else if (root.HitCollection.FirstDisplayed == 0) 
+					label = String.Format ("Best <b>{0} results of {1} in this category</b> are shown.", 
+							       root.HitCollection.LastDisplayed + 1,
+							       root.HitCollection.NumDisplayableResults);
+				else 
+					label = String.Format ("Results <b>{0} through {1} of {2} in this category</b> are shown.",
+							       root.HitCollection.FirstDisplayed + 1, 
+							       root.HitCollection.LastDisplayed + 1,
+							       root.HitCollection.NumResults);
+			}
+
 			page_label.Markup = label;
 		}
 
@@ -382,6 +398,9 @@ namespace Best {
 			this.hit_type = mi.Type;
 
 			root.SetSource (this.hit_type);
+
+			root.HitCollection.PageFirst ();
+			UpdatePage ();
 
 			//if (this.query != null && lastType != this.hit_type) {
 			//	Search (entry.GtkEntry.Text);

@@ -1,5 +1,5 @@
 //
-// TileMailMessage.cs
+// TileHitCollection.cs
 //
 // Copyright (C) 2004 Novell, Inc.
 //
@@ -95,6 +95,13 @@ namespace Beagle.Tile {
 
 		public bool CanPageForward {
 			get { return LastDisplayed != (hits.Count - 1); }
+		}
+
+		[TileAction]
+		public void PageFirst ()
+		{
+			firstDisplayed = 0;
+			Changed ();
 		}
 
 		[TileAction]
