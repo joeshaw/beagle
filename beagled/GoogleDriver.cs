@@ -33,7 +33,7 @@ using Beagle.Util;
 
 namespace Beagle.Daemon {
 
-	[QueryableFlavor (Name="Google", Domain=QueryDomain.Global)]
+	[QueryableFlavor (Name="Google", Domain=QueryDomain.Global, RequireInotify=false)]
 	public class GoogleDriver : IQueryable {
 
 		int maxResults = 5;

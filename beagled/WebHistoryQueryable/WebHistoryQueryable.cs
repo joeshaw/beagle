@@ -32,7 +32,7 @@ using Beagle.Util;
 
 namespace Beagle.Daemon.WebHistoryQueryable {
 
-	[QueryableFlavor (Name="WebHistory", Domain=QueryDomain.Local)]
+	[QueryableFlavor (Name="WebHistory", Domain=QueryDomain.Local, RequireInotify=false)]
 	public class WebHistoryQueryable : LuceneQueryable {
 
 		public class WebHistoryIndexerImpl : Beagle.WebHistoryIndexerProxy {
