@@ -49,6 +49,9 @@ RESOURCEFILES =					\
 	$(srcdir)/icon-web-large.png		\
 	$(srcdir)/icon-web.png			\
 	$(srcdir)/im-aim.png			\
+	$(srcdir)/mail-large-new.png		\
+	$(srcdir)/mail-large-read.png		\
+	$(srcdir)/mail-large-read-replied.png	\
 	$(srcdir)/mail-message-icon.png		\
 	$(srcdir)/mail-new.png			\
 	$(srcdir)/mail.png			\
