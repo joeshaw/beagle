@@ -75,23 +75,22 @@ namespace Beagle {
 
 		private void HTMLRenderSingleFile (Hit hit, bool color_band, XmlWriter xw)
 		{
-			string Path    = hit.Uri.Substring (7);
-			string Text    = Convert.ToString (System.IO.Path.GetFileName (Path));
+			if (! hit.Uri.StartsWith ("file://")) {
+				Console.WriteLine ("FileHitRenderer got non-file URI {0}",
+						   hit.Uri);
+				return;
+			}
+			String path = hit.Uri.Substring ("file://".Length);
+			string Text    = Path.GetFileName (path);
 			string Icon    = Beagle.Util.GnomeIconLookup.LookupMimeIcon (hit.MimeType, (Gtk.IconSize) 48);
 			string Score   = Convert.ToString (hit ["Score"]);
 			if (Score == null || Score == "")
 				Score = "0";
 
-			// Strip protocol from file
-			// FIXME: Will we ever see a non-file:// protocol?
-			string File = Path;
-			if (File.StartsWith ("file://"))
-				File = File.Substring (7);
-
 			// Check to make sure the file exists
-			FileInfo file = new FileInfo (File);
+			FileInfo file = new FileInfo (path);
 			if (!file.Exists) {
-				Console.WriteLine ("Ack!  File does not exist: {0}", Path);
+				Console.WriteLine ("Ack!  File does not exist: {0}", path);
 				return;
 			}
 
@@ -113,7 +112,12 @@ namespace Beagle {
 
 			// Show the file's icon (and make it a link)
 			xw.WriteStartElement ("a");	// link
-			xw.WriteAttributeString ("href", Path);
+
+			String href = hit.Uri;
+			if (hit.MimeType != null)
+				href += " " + hit.MimeType;
+			xw.WriteAttributeString ("href", href);
+
 			xw.WriteStartElement ("img");	// icon
 			xw.WriteAttributeString ("src", Icon);
 			xw.WriteAttributeString ("border", "0");
@@ -129,7 +133,7 @@ namespace Beagle {
 
 			// Print the filename (w/ hyperlink)
 			xw.WriteStartElement ("a");
-			xw.WriteAttributeString ("href", /* "file://" + */ Path);
+			xw.WriteAttributeString ("href", href);
 			xw.WriteStartElement ("font");
 			xw.WriteAttributeString ("size", "+1");
 			xw.WriteString (Text);

@@ -87,7 +87,6 @@ namespace Beagle {
 				icon = CompositeEmblemIcon ((string)hit ["Emblem-Icon"]);
 			}
 
-			string Uri   = (string)hit ["URL"];
 			string Title = (string)hit ["Title"];
 			string Score = Convert.ToString (hit ["Score"]);
 			if (Score == null || Score == "")
@@ -99,7 +98,7 @@ namespace Beagle {
 			xw.WriteAttributeString ("valign", "center");
 
 			xw.WriteStartElement ("a");
-			xw.WriteAttributeString ("href", Uri);
+			xw.WriteAttributeString ("href", hit.Uri);
 
 			xw.WriteStartElement ("img");
 			xw.WriteAttributeString ("src", icon);
@@ -118,7 +117,7 @@ namespace Beagle {
 			xw.WriteAttributeString ("valign", "top");
 
 			xw.WriteStartElement ("a");
-			xw.WriteAttributeString ("href", Uri);
+			xw.WriteAttributeString ("href", hit.Uri);
 			xw.WriteAttributeString ("style", "text-decoration: none;");
 			xw.WriteString (Title);
 
@@ -133,7 +132,7 @@ namespace Beagle {
 			xw.WriteStartElement ("font");
 			xw.WriteAttributeString ("size", "-1");
 			xw.WriteAttributeString ("color", "#666666");
-			xw.WriteString (Uri);
+			xw.WriteString (hit.Uri);
 			xw.WriteEndElement ();	// font
 
 			xw.WriteEndElement ();	// a

@@ -96,7 +96,7 @@ namespace Beagle {
 				xw.WriteAttributeString ("bgcolor", "#eeeeee");
 
 			xw.WriteStartElement ("a");
-			xw.WriteAttributeString ("href", "exec:evolution-1.5 " + hit ["URI"]); // FIXME: Probably unsafe
+			xw.WriteAttributeString ("href", "exec:evolution-1.5 " + hit.Uri); // FIXME: Probably unsafe
 			xw.WriteAttributeString ("style", "text-decoration: none; color: black;");
 
 			// new / read / replied-to icon
@@ -133,7 +133,7 @@ namespace Beagle {
 				xw.WriteAttributeString ("bgcolor", "#eeeeee");
 
 			xw.WriteStartElement ("a");
-			xw.WriteAttributeString ("href", "exec:evolution-1.5 " + hit ["URI"]); // FIXME: Probably unsafe
+			xw.WriteAttributeString ("href", "exec:evolution-1.5 " + hit.Uri); // FIXME: Probably unsafe
 			xw.WriteAttributeString ("style", "text-decoration: none; color: black");
 
 			// attachment icon
