@@ -25,6 +25,7 @@
 //
 
 using System;
+using System.IO;
 
 using Beagle.Util;
 
@@ -114,6 +115,11 @@ namespace Beagle.Daemon {
 							       String.Format ("{0:000} {1}", attr.FilterVersion, attr.FilterName));
 				
 				return true;
+			} catch (IOException e) {
+				// An IOException here probably means that we don't have the right
+				// permissions to set the EAs.  We just fail silently and return false rather
+				// than spewing a bunch of scary exceptions.
+				return false;
 			} catch (Exception e) {
 				Logger.Log.Debug ("Caught exception writing EAs to {0}", attr.Path);
 				Logger.Log.Debug (e);

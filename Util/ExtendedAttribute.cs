@@ -54,7 +54,7 @@ namespace Beagle.Util {
 
 		public static void Set (string path, string name, string value)
 		{
-			if (! FileSystem.Exists (path))
+			if (! FileSystem.Exists (path) || Syscall.access (path, AccessMode.W_OK) != 0)
 				throw new IOException (path);
 
 			name = AddPrefix (name);
@@ -86,7 +86,7 @@ namespace Beagle.Util {
 
 		public static void Remove (string path, string name)
 		{
-			if (! FileSystem.Exists (path))
+			if (! FileSystem.Exists (path) || Syscall.access (path, AccessMode.W_OK) != 0)
 				throw new IOException (path);
 			
 			name = AddPrefix (name);
@@ -104,7 +104,10 @@ namespace Beagle.Util {
 
 			try {
 				Set (path, test_key, test_value);
-				return Get (path, test_key) == test_value;
+				bool success = (Get (path, test_key) == test_value);
+				Remove (path, test_key);
+				return success && (Get (path, test_key) == null);
+
 			} catch (Exception ex) { 
 				return false;
 			}
