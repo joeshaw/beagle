@@ -17,11 +17,19 @@ INCLUDES= \
 
 gluelibdir = $(pkglibdir)
 
-gluelib_LTLIBRARIES = libinotifyglue.la libgeckoglue.la
+gluelib_LTLIBRARIES = 		\
+	libinotifyglue.la 	\
+	libscreensaverglue.la	\
+	libgeckoglue.la
 
 libinotifyglue_la_SOURCES =	\
 	inotify.h		\
 	inotify-glue.c
+
+libscreensaverglue_la_SOURCES = \
+	screensaver-glue.c
+# FIXME: This stuff shouldn't be hard-wired
+libscreensaverglue_la_LIBADD=-L/usr/X11/lib -lX11 -lXss
 
 libgeckoglue_la_SOURCES=        \
 	gecko-utils.h           \
