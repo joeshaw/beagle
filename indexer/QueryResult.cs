@@ -32,22 +32,17 @@ using System.Threading;
 
 namespace Beagle {
 
-	public class QueryResult {
+	public class QueryResult : IQueryResult {
 
 		public delegate void QueryStart (QueryResult result);
 
 		//////////////////////////////////
 
-		public delegate void GotHitsHandler (object src, GotHitsArgs args);
+		public delegate void GotHitsHandler (QueryResult src, GotHitsArgs args);
 
 		public class GotHitsArgs : EventArgs {
 			ICollection hits;
 			
-			public GotHitsArgs (Hit hit)
-			{
-				hits = new Hit[1] { hit };
-			}
-
 			public GotHitsArgs (ICollection someHits)
 			{
 				hits = someHits;
@@ -66,15 +61,22 @@ namespace Beagle {
 
 		//////////////////////////////////
 
-		public delegate void FinishedHandler (object src);
+		public delegate void FinishedHandler (QueryResult src);
 
 		public event FinishedHandler FinishedEvent;
+
+		//////////////////////////////////
+
+		public delegate void CancelledHandler (QueryResult src);
+
+		public event CancelledHandler CancelledEvent;
 
 		//////////////////////////////////
 
 		QueryStart start;
 		ArrayList hits = new ArrayList ();
 		bool started = false;
+		bool cancelled = false;
 		int workers = 0;
 
 		public QueryResult (QueryStart _start)
@@ -88,8 +90,12 @@ namespace Beagle {
 			get { return started; }
 		}
 
+		public bool Cancelled {
+			get { return cancelled; }
+		}
+
 		public bool Finished {
-			get { lock (this) return started && workers == 0; }
+			get { lock (this) return started && (cancelled || workers == 0); }
 		}
 
 		public int Count {
@@ -121,25 +127,21 @@ namespace Beagle {
 			}
 		}
 
-		internal void Add (Hit hit)
+		public void Cancel ()
 		{
 			lock (this) {
-				Debug.Assert (started,
-					      "Adding Hit to unstarted QueryResult");
-				Debug.Assert (! Finished,
-					      "Adding Hit to finished QueryResult");
-				hits.Add (hit);
+				if (cancelled)
+					return;
+				cancelled = true;
 			}
-
-			if (GotHitsEvent != null) {
-				GotHitsArgs args = new GotHitsArgs (hit);
-				GotHitsEvent (this, args);
-			}
+			CancelledEvent (this);
 		}
 
-		internal void Add (ICollection someHits)
+		public void Add (ICollection someHits)
 		{
 			lock (this) {
+				if (cancelled)
+					return;
 				Debug.Assert (started, "Adding Hits to unstarted QueryResult");
 				Debug.Assert (workers > 0,
 					      "Adding Hits to idle QueryResult");
@@ -171,7 +173,6 @@ namespace Beagle {
 				--workers;
 
 				if (workers == 0) {
-					hits.Sort ();
 					if (FinishedEvent != null)
 						FinishedEvent (this);
 					Monitor.Pulse (this);

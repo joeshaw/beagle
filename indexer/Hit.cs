@@ -74,8 +74,10 @@ namespace Beagle {
 
 		void CheckLock ()
 		{
+#if false
 			if (locked)
 				throw new Exception ("Attempt to modify locked hit '" + uri + "'");
+#endif
 		}
 
 		//////////////////////////
@@ -157,7 +159,7 @@ namespace Beagle {
 				      || ! ValidTimestamp // non-timestamped stuff too
 				      || (FileInfo.LastWriteTime  <= Timestamp); }
 		}
-				
+
 
 		//////////////////////////
 
@@ -173,13 +175,22 @@ namespace Beagle {
 			get { return (String) properties [key]; }
 			set { 
 				CheckLock (); 
-				if ((value == null || value == "")
-				    && ! properties.Contains (key))
+				if (value == null || value == "") {
+					if (properties.Contains (key))
+						properties.Remove (key);
 					return;
-				if (value == "")
-					value = null;
+				}
 				properties [key] = value as String;
 			}
+		}
+
+		//////////////////////////
+
+		public override int GetHashCode ()
+		{
+			return (uri != null ? uri.GetHashCode () : 0)
+				^ (type != null ? type.GetHashCode () : 0)
+				^ (source != null ? source.GetHashCode () : 0);
 		}
 
 		//////////////////////////
@@ -187,13 +198,9 @@ namespace Beagle {
 		public int CompareTo (object obj)
 		{
 			Hit otherHit = (Hit) obj;
-			int cmp = Source.CompareTo (otherHit.Source);
-			if (cmp == 0) {
-				// Notice that we take the negative of the CompareTo,
-				// so that we sort from high to low.
-				cmp = - score.CompareTo (otherHit.score);
-			}
-			return cmp;
+			// Notice that we take the negative of the CompareTo,
+			// so that we sort from high to low.
+			return - score.CompareTo (otherHit.score);
 		}
 
 	}

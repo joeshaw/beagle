@@ -38,45 +38,98 @@ using BU = Beagle.Util;
 
 namespace Beagle {
 
-	public abstract class HitRendererHtml : HitRenderer {
+	public class HitRendererHtml : HitRenderer {
 
-		private Gtk.HTML html;
+		private Gtk.HTML html = new Gtk.HTML ();
+		private Hashtable tiles = new Hashtable ();
 		
 		public HitRendererHtml ()
 		{
-			html = new Gtk.HTML ();
 			this.html.LinkClicked += new LinkClickedHandler (LinkClicked);
 			this.html.UrlRequested += new UrlRequestedHandler (UrlRequested);
 		}
+
+		////////////////////////////////////
+
+		private Tile HitToTile (Hit hit)
+		{
+			Tile t = null;
+
+			// FIXME: We don't want to allow heterogenous containers.
+
+			switch (hit.Type) {
+
+			case "Contact":
+				t = new Tile ("contact.html", hit);
+				break;
+
+			case "File":
+				t = new Tile ("file-generic.html", hit);
+				break;
+
+			case "IMLog":
+				t = new Tile ("im-log.html", hit);
+				break;
+
+			case "MailMessage":
+				string icon = "mail.png";
+				if (hit ["_IsAnswered"] != null)
+					icon = "mail-replied.png";
+				else if (hit ["_IsSeen"] != null)
+					icon = "mail-read.png";
+				hit ["mail:Icon"] = icon;
+
+				t = new Tile ("email.html", hit);
+				break;
+
+			case "WebLink":
+				if (hit.Source == "Google")
+					t = new Tile ("google.html", hit);
+				else
+					t = new Tile ("web-history.html", hit);
+				break;
+			}
+
+			return t;
+		}
+
+		protected override bool ProcessHit (Hit hit)
+		{
+			Tile tile = HitToTile (hit);
+			if (tile == null)
+				return false;
+
+			tiles [hit] = tile;
+			return true;
+		}
+
+		protected override void ProcessClear ()
+		{
+			tiles.Clear ();
+		}
+
+		////////////////////////////////////
 
 		public override Gtk.Widget Widget {
 			get { return html; }
 		}
 
-		protected abstract String HitsToHtml (ArrayList hits);
-
-		protected override void DoRenderHits (ArrayList hits)
+		protected override void DoRefresh ()
 		{
 			Gtk.HTMLStream stream = html.Begin ();
 			stream.Write ("<html><body>");
-			stream.Write (HitsToHtml (hits));
+			if (DisplayedCount > 0) {
+				// FIXME: layout in a table, or something
+				for (int i = FirstDisplayed; i <= LastDisplayed; ++i) {
+					Hit hit = (Hit) Hits [i];
+					Tile t = (Tile) tiles [hit];
+					stream.Write (t.Html);
+				}
+			}
 			stream.Write ("</body></html>");
 		}
 
 		///////////////////////////////////
-
-		private Stream GetImageResource (string name)
-		{
-			Assembly assembly = System.Reflection.Assembly.GetCallingAssembly ();
-			System.IO.Stream s = assembly.GetManifestResourceStream (name);
-
-			return s;
-		}
-
-		private Stream GetFile (string uri)
-		{
-			return File.Open (uri, FileMode.Open, FileAccess.Read);
-		}
 
 		//
 		// Provides data for urls requested (images).  Things prefixed
@@ -84,39 +137,14 @@ namespace Beagle {
 		//
 		private void UrlRequested (object o, UrlRequestedArgs args)
 		{
-			Stream s = null;
-
-			if (args.Url.IndexOf ("/") == 0) {
-				s = GetFile (args.Url);
-			} else {
-				if (args.Url.StartsWith ("internal:")) {
-					try {
-						s = GetImageResource (args.Url.Substring (args.Url.IndexOf (':') + 1));
-					} catch {
-						Console.WriteLine ("Could not find image: " + args.Url);
-						return;
-					}
-				} else {
-					try {
-						HttpWebRequest req = (HttpWebRequest)WebRequest.Create (args.Url);
-						req.UserAgent = "Beagle HTML Renderer";
-						WebResponse resp = req.GetResponse ();
-						s = resp.GetResponseStream ();
-					} catch (Exception e) {
-						Console.WriteLine ("Do not know how to handle " + args.Url);
-						return;
-					}
-				}
-			}
-
+			Stream s = DataBarn.GetStream (args.Url);
 			if (s == null) {
-				Console.WriteLine ("Could not obtain image " + args.Url);
+				Console.WriteLine ("Could not obtain image '{0}'", args.Url);
 				return;
 			}
 
 			byte [] buffer = new byte [8192];
 			int n;
-			
 			while ( (n = s.Read (buffer, 0, 8192)) != 0)
 				args.Handle.Write (buffer, n);
 		}
@@ -135,7 +163,15 @@ namespace Beagle {
 			} else if (args.Url.StartsWith ("http")) {
 				command = "epiphany";
 				arguments = args.Url;
+			} else if (args.Url.StartsWith ("email")) {
+				command = "evolution-1.5";
+				arguments = args.Url;
+			} else if (args.Url.StartsWith ("mailto:")) {
+				command = "evolution-1.5";
+				arguments = args.Url;
 			} else if (args.Url.StartsWith ("file://")) {
+				// Hacky: we extract the mime type from inside of
+				// the file Url.
 				arguments = args.Url.Substring ("file://".Length);
 				int i = arguments.IndexOf (' ');
 				String mimeType;

@@ -4,6 +4,7 @@ pkgconfig_DATA = beagle-0.0.pc
 
 SUBDIRS = 			\
 	images			\
+	templates		\
 	Util			\
 	Lucene.Net 		\
 	Filters 		\

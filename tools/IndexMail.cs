@@ -368,7 +368,23 @@ namespace IndexMailTool {
 			this ["Received"] = messageInfo.received.ToString ();
 			this ["SentDate"] = messageInfo.sent.ToString ();
 			this ["Mlist"] = messageInfo.mlist;
-			this ["Flags"] = Convert.ToString (messageInfo.flags);
+
+			this ["_Flags"] = Convert.ToString (messageInfo.flags);
+			
+			if (messageInfo.IsAnswered)
+				this ["_IsAnswered"] = "1";
+			if (messageInfo.IsDeleted)
+				this ["_IsDeleted"] = "1";
+			if (messageInfo.IsDraft)
+				this ["_IsDraft"] = "1";
+			if (messageInfo.IsFlagged)
+				this ["_IsFlagged"] = "1";
+			if (messageInfo.IsSeen)
+				this ["_IsSeen"] = "1";
+			if (messageInfo.HasAttachments)
+				this ["_HasAttachments"] = "1";
+			if (messageInfo.IsAnsweredAll)
+				this ["_IsAnsweredAll"] = "1";
 
 			// Assemble the content, if we have any
 			if (message != null) {
@@ -419,8 +435,9 @@ namespace IndexMailTool {
 		{
 			toIndex.Add (indexable);
 			++count;
-			if (toIndex.Count > 5000) {
+			if (toIndex.Count > 1000) {
 				driver.Add (toIndex);
+				driver.Optimize ();
 				toIndex.Clear ();
 			}
 		}

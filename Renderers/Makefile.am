@@ -7,13 +7,18 @@ CSFLAGS = -target:library
 
 CSFILES = 					\
 	$(srcdir)/Favicons.cs			\
+	$(srcdir)/DataBarn.cs			\
 	$(srcdir)/HitRenderer.cs		\
+	$(srcdir)/HitRendererControl.cs		\
 	$(srcdir)/HitRendererHtml.cs		\
-	$(srcdir)/DefaultHitRenderer.cs		\
-	$(srcdir)/ContactHitRenderer.cs		\
-	$(srcdir)/FileHitRenderer.cs		\
-	$(srcdir)/MailMessageHitRenderer.cs	\
-	$(srcdir)/WebLinkHitRenderer.cs
+	$(srcdir)/Tile.cs
+
+
+#	$(srcdir)/DefaultHitRenderer.cs		\
+#	$(srcdir)/ContactHitRenderer.cs		\
+#	$(srcdir)/FileHitRenderer.cs		\
+#	$(srcdir)/MailMessageHitRenderer.cs	\
+#	$(srcdir)/WebLinkHitRenderer.cs
 
 ASSEMBLIES =				\
 	$(EVO_SHARP_LIBS)		\
@@ -24,33 +29,55 @@ ASSEMBLIES =				\
 	-r:../indexer/Indexer.dll
 
 imagedir = $(top_srcdir)/images
+templatedir = $(top_srcdir)/templates
 
-RESOURCES =                                                  			\
-	-resource:$(imagedir)/bookmark.png,bookmark.png 			\
-	-resource:$(imagedir)/document.png,document.png 			\
-	-resource:$(imagedir)/default.png,default.png     			\
-	-resource:$(imagedir)/person.png,person.png     			\
-	-resource:$(imagedir)/bug.png,bug.png           			\
-	-resource:$(imagedir)/white.png,white.png       			\
-	-resource:$(imagedir)/foaf.png,foaf.png         			\
-	-resource:$(imagedir)/book.png,book.png         			\
-	-resource:$(imagedir)/stock.png,stock.png				\
-	-resource:$(imagedir)/globe.png,globe.png				\
-	-resource:$(imagedir)/default.png,default.png				\
-	-resource:$(imagedir)/stock.png,stock.png				\
-        -resource:$(imagedir)/evolution.png,evolution.png  			\
-        -resource:$(imagedir)/music.png,music.png				\
-	-resource:$(imagedir)/mail.png,mail.png         			\
-        -resource:$(imagedir)/attachment.png,attachment.png			\
-        -resource:$(imagedir)/flag-for-followup.png,flag-for-followup.png	\
-        -resource:$(imagedir)/mail-new.png,mail-new.png				\
-        -resource:$(imagedir)/mail-replied.png,mail-replied.png			\
-        -resource:$(imagedir)/mail-read.png,mail-read.png			\
-	-resource:$(imagedir)/rss.png,rss.png
+RESOURCEFILES =					\
+	$(templatedir)/contact.html		\
+	$(templatedir)/email.html		\
+	$(templatedir)/file-generic.html	\
+	$(templatedir)/google.html		\
+	$(templatedir)/im-log.html		\
+	$(templatedir)/web-history.html		\
+	$(templatedir)/weblink.html		\
+						\
+	$(imagedir)/attachment.png		\
+	$(imagedir)/bookmark.png		\
+	$(imagedir)/book.png			\
+	$(imagedir)/bug.png			\
+	$(imagedir)/contact-icon.png		\
+	$(imagedir)/contact-phone.png		\
+	$(imagedir)/default.png			\
+	$(imagedir)/document.png		\
+	$(imagedir)/evolution.png		\
+	$(imagedir)/flag-for-followup.png	\
+	$(imagedir)/foaf.png			\
+	$(imagedir)/globe.png			\
+	$(imagedir)/gnome-error.png		\
+	$(imagedir)/gnome-gaim.png		\
+	$(imagedir)/icon-bookmark.png		\
+	$(imagedir)/icon-folder.png		\
+	$(imagedir)/icon-history.png		\
+	$(imagedir)/icon-search.png		\
+	$(imagedir)/icon-web-large.png		\
+	$(imagedir)/icon-web.png		\
+	$(imagedir)/mail-message-icon.png	\
+	$(imagedir)/mail-new.png		\
+	$(imagedir)/mail.png			\
+	$(imagedir)/mail-read.png		\
+	$(imagedir)/mail-replied.png		\
+	$(imagedir)/music.png			\
+	$(imagedir)/person.png			\
+	$(imagedir)/rss.png			\
+	$(imagedir)/status-away.png		\
+	$(imagedir)/status-online.png		\
+	$(imagedir)/stock.png			\
+	$(imagedir)/white.png
 
+# Makefile-fu to map /path/filename to -resource:/path/filename,filename
+RESOURCES = $(join $(RESOURCEFILES:%=-resource:%,),$(notdir $(RESOURCEFILES)))
 
-$(TARGET): $(CSFILES)
-	$(CSC) -o $@ $(CSFLAGS) $^ $(ASSEMBLIES) $(RESOURCES) 
+$(TARGET): $(CSFILES) $(RESOURCEFILES)
+	$(CSC) -o $@ $(CSFLAGS) $(CSFILES) $(ASSEMBLIES) $(RESOURCES) 
 
 all: $(TARGET)
 

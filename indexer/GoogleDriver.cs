@@ -52,6 +52,7 @@ namespace Beagle {
 			hit.Uri      = res.URL;
 			hit.Type     = "WebLink";
 			hit.MimeType = "text/html"; // FIXME
+			hit.Source   = "Google";
 
 			// FIXME: We can't really compare scores if the Hits
 			// come from different sources.  This is a hack.
@@ -88,22 +89,22 @@ namespace Beagle {
 		}
 
 
-		public void Query (Query query, HitCollector collector)
+		public void Query (Query query, IQueryResult result)
 		{
-			GoogleSearchResult result = gss.doGoogleSearch (googleKey,
-									query.AbusivePeekInsideQuery,
-									0, maxResults,
-									false, "", false, "", "", "");
+			GoogleSearchResult gsr = gss.doGoogleSearch (googleKey,
+								     query.AbusivePeekInsideQuery,
+								     0, maxResults,
+								     false, "", false, "", "", "");
 
 			ArrayList hits = new ArrayList ();
 			int rank = 0;
-			foreach (ResultElement elt in result.resultElements) {
+			foreach (ResultElement elt in gsr.resultElements) {
 				Hit hit = FromGoogleResultElement (elt, rank);
 				++rank;
 				hits.Add (hit);
 			}
 
-			collector (hits);
+			result.Add (hits);
 		}
 
 	}

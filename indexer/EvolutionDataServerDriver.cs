@@ -37,9 +37,8 @@ namespace Beagle {
 		private Evolution.Book Addressbook {
 			get {
 				if (addressbook == null) {
-					GtkSharp.EvolutionSharp.ObjectManager.Initialize ();
-					addressbook = new Evolution.Book ();
-					addressbook.LoadLocalAddressbook ();
+					addressbook = Evolution.Book.NewSystemAddressbook ();
+					addressbook.Open (true);
 				}
 				return addressbook;
 			}
@@ -51,6 +50,7 @@ namespace Beagle {
 
 			hit.Uri    = "contact://" + contact.Id; // FIXME!
 			hit.Type   = "Contact";
+			hit.Source = "EvolutionDataServer";
 			hit.Score  = 2.0f; // FIXME
 
 			hit ["FileAs"] = contact.FileAs;
@@ -136,7 +136,7 @@ namespace Beagle {
 			return true;
 		}
 
-		public void Query (Query query, HitCollector collector)
+		public void Query (Query query, IQueryResult result)
 		{
 			Evolution.BookQuery bq;
 			bq = Evolution.BookQuery.AnyFieldContains (query.AbusivePeekInsideQuery);
@@ -144,14 +144,18 @@ namespace Beagle {
 			Evolution.Contact[] contacts;
 			contacts = Addressbook.GetContacts (bq);
 
+			if (result.Cancelled)
+				return;
+
 			ArrayList array = new ArrayList ();
 
 			foreach (Evolution.Contact contact in contacts) {
 				Hit hit = HitFromContact (contact);
 				array.Add (hit);
 			}
-				
-			collector (array);
+			
+			// Add is a no-op if we've already cancelled.
+			result.Add (array);
 		}
 
 	}

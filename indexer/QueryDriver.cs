@@ -84,7 +84,7 @@ namespace Beagle {
 			public void Start ()
 			{
 				try {
-					queryable.Query (query, new HitCollector (Collect));
+					queryable.Query (query, result);
 				} catch (Exception e) {
 					Console.WriteLine ("Query to '{0}' failed with exception:\n{1}:\n{2}", queryable.Name, e.Message, e.StackTrace);
 							   

@@ -14,7 +14,20 @@ using System.Text;
 
 namespace Beagle.Util {
 namespace Camel {
-        public class Summary { 
+	
+	public enum CamelFlags {
+		ANSWERED     = 1<<0,
+		DELETED      = 1<<1,
+		DRAFT        = 1<<2,
+		FLAGGED      = 1<<3,
+		SEEN         = 1<<4,
+		ATTACHMENTS  = 1<<5,
+		ANSWERED_ALL = 1<<6,
+		UNKNOWN_7    = 1<<7,
+		UNKNOWN_8    = 1<<8
+	}
+	
+public class Summary { 
 	    public SummaryHeader header;
 	    public MessageInfo [] messages;
 
@@ -140,6 +153,39 @@ namespace Camel {
 
 		public DateTime Date {
 			get { return received.Ticks != 0 ? received : sent; }
+		}
+		
+		private bool CheckFlag (CamelFlags test)
+		{
+			return (flags & (int) test) == (int) test;
+		}
+		
+		public bool IsAnswered {
+			get { return CheckFlag (CamelFlags.ANSWERED); }
+		}
+
+		public bool IsDeleted {
+			get { return CheckFlag (CamelFlags.DELETED); }
+		}
+
+		public bool IsDraft {
+			get { return CheckFlag (CamelFlags.DRAFT); }
+		}
+
+		public bool IsFlagged {
+			get { return CheckFlag (CamelFlags.FLAGGED); }
+		}
+
+		public bool IsSeen {
+			get { return CheckFlag (CamelFlags.SEEN); }
+		}
+
+		public bool HasAttachments {
+			get { return CheckFlag (CamelFlags.ATTACHMENTS); }
+		}
+
+		public bool IsAnsweredAll {
+			get { return CheckFlag (CamelFlags.ANSWERED_ALL); }
 		}
 	}
 

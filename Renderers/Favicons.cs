@@ -72,7 +72,6 @@ namespace Beagle {
 			if (fav_node != null) {
 				xpath = "child::property[position()=2]";
 				XmlNode favicon = fav_node.SelectSingleNode (xpath);
-				string home_dir = Environment.GetEnvironmentVariable ("HOME");
 				string path = GetPath ("favicon_cache");
 				return Path.Combine (path, favicon.InnerText);
 			}

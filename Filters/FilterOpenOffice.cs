@@ -194,8 +194,15 @@ namespace Beagle.Filters {
 			
 			// FIXME: pull metadata out of meta.xml
 			// This task is blocking on Mono bug 57907.
+#if false
+			entry = zip.GetEntry ("meta.xml");
+			if (entry != null) {
+				Stream meta_stream = zip.GetInputStream (entry);
+				StreamReader sr = new StreamReader (meta_stream);
+				XmlDocument doc = new XmlDocument ();
+				doc.Load (meta_stream);
+			}
+#endif
 		}
-		
 	}
-	
 }

@@ -21,11 +21,9 @@ ASSEMBLIES =			\
 	$(BEAGLE_UI_LIBS)		\
 	-r:System.Web.Services
 
-RESOURCES =
-
 
 $(TARGET): $(CSFILES) $(GOOGLE_CS)
-	$(CSC) -o $@ $(CSFLAGS) $^ $(ASSEMBLIES) $(RESOURCES)
+	$(CSC) -o $@ $(CSFLAGS) $^ $(ASSEMBLIES)
 
 all: $(TARGET)
 

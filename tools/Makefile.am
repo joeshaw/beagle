@@ -11,10 +11,11 @@ ASSEMBLIES =				\
 
 
 WRAPPER_IN = wrapper.in
-WRAPPER_SED = sed 				\
-	-e "s|\@prefix\@|$(prefix)|g"		\
-	-e "s|\@pkglibdir\@|$(pkglibdir)|g"	\
-	-e "s|\@libdir\@|$(libdir)|g" 
+WRAPPER_SED = sed 					\
+	-e "s|\@prefix\@|$(prefix)|g"			\
+	-e "s|\@pkglibdir\@|$(pkglibdir)|g"		\
+	-e "s|\@libdir\@|$(libdir)|g" 			\
+	-e "s|\@monopath\@|$(MONO_PATH_EXTRA)|g"
 
 
 CRAWLER_TARGET  = Crawler.exe

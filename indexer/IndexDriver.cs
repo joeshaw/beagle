@@ -503,7 +503,7 @@ namespace Beagle {
 			return true;
 		}
 
-		public void Query (Query query, HitCollector collector)
+		public void Query (Query query, IQueryResult result)
 		{
 			LNS.Query luceneQuery = ToLuceneQuery (query);
 
@@ -525,23 +525,22 @@ namespace Beagle {
 
 				// FIXME: Should check that file:// Uris are unchanged, and do
 				// something smart if they aren't.
-
+				
 				// If the same Uri comes back more than once, filter
 				// out all but the most recent one.
+				//
+				// FIXME: The same Uri could back for, say, web history
+				// and Google.  In that case, Google will always win,
+				// even though web history will probably be more relevant.
+				// Maybe the most relevant match should win if the
+				// types/sources are different?
 				Hit prev = (Hit) seen [hit.Uri];
 				if (hit.IsNewerThan (prev))
 					seen [hit.Uri] = hit;
 			}
 
 			searcher.Close ();
-
-			// We need to re-sort by score
-			ArrayList hits = new ArrayList ();
-			foreach (Hit hit in seen.Values)
-				hits.Add (hit);
-			hits.Sort ();
-
-			collector (hits);
+			result.Add (seen.Values);
 		}
 	}
 

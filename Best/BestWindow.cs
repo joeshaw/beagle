@@ -45,6 +45,7 @@ namespace Best {
 		//////////////////////////
 
 		QueryDriver driver;
+		QueryResult result;
 
 		private BestWindow () : base (WindowType.Toplevel)
 		{
@@ -152,35 +153,48 @@ namespace Best {
 
 		//////////////////////////
 
-		private void OnGotHits (object src, QueryResult.GotHitsArgs args)
+		private void OnGotHits (QueryResult src, QueryResult.GotHitsArgs args)
 		{
+			if (src != result)
+				return;
 			Console.WriteLine ("Got {0} Hits!", args.Count);
 			foreach (Hit hit in args.Hits)
 				hitContainer.Add (hit);
 		}
 
-		private void OnFinished (object src)
+		private void OnFinished (QueryResult src)
 		{
+			if (src != result)
+				return;
 			Console.WriteLine ("Finished!");
 			hitContainer.Close ();
 		}
 
+		private void OnCancelled (QueryResult src)
+		{
+			if (src != result)
+				return;
+			Console.WriteLine ("Cancelled!");
+			hitContainer.Close ();
+		}
+
+
 		private void Search (String searchString)
 		{
 			Query query = new Query (searchString);
-			QueryResult result;
+
+			if (result != null)
+				result.Cancel ();
 
 			result = driver.Query (query);
+
 			result.GotHitsEvent += OnGotHits;
 			result.FinishedEvent += OnFinished;
-			
+			result.CancelledEvent += OnCancelled;
+
 			hitContainer.Open ();
 
 			result.Start ();
-
-			//foreach (Hit hit in result.Hits)
-			//hitContainer.Add (hit);
-			//hitContainer.Close ();
 
 		}
 	}

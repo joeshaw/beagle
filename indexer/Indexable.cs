@@ -113,7 +113,15 @@ namespace Beagle {
 
 		public String this [String key] {
 			get { return (String) properties [key]; }
-			set { CheckLock (); properties [key] = value as String; }
+			set {
+				CheckLock ();
+				if (value == null || value == "") {
+					if (properties.Contains (key))
+						properties.Remove (key);
+					return;
+				}
+				properties [key] = value as String;
+			}
 		}
 
 		public String PropertiesAsString {
@@ -140,6 +148,13 @@ namespace Beagle {
 		virtual public String HotContent {
 			get { return hotContent; }
 			set { CheckLock (); hotContent = value; }
+		}
+
+		//////////////////////////
+
+		public override int GetHashCode ()
+		{
+			return uri.GetHashCode () ^ type.GetHashCode ();
 		}
 
 		//////////////////////////

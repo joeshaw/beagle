@@ -24,18 +24,24 @@
 // SOFTWARE.
 //
 
-
 using System;
 using System.Collections;
 
 namespace Beagle {
 
-	public interface IQueryable {
+	/*
 
-		String Name { get; }
+	QueryResult has a lot of api that is tied to implementation details.
+	The point of this interface is to only expose the minimum amount
+	of QueryResult api to IQueryable.Query implementations. 
 
-		bool AcceptQuery (Query query);
+	*/
 
-		void Query (Query query, IQueryResult queryResult);
+	public interface IQueryResult {
+
+		bool Cancelled { get; }
+
+		// Add should be a no-op if Cancelled is true.
+		void Add (ICollection someHits);
 	}
 }
