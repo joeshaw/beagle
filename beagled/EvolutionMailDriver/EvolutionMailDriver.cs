@@ -195,13 +195,25 @@ namespace Beagle.Daemon {
 			return true;
 		}
 
+		private Stream ReadAppData ()
+		{
+			string path = Path.Combine (Path.Combine (PathFinder.RootDir, "MailIndex"), this.appDataName);
+			return new FileStream (path, System.IO.FileMode.Open, FileAccess.Read, FileShare.Read);
+		}
+
+		private Stream WriteAppData ()
+		{
+			string path = Path.Combine (Path.Combine (PathFinder.RootDir, "MailIndex"), this.appDataName);
+			return new FileStream (path, System.IO.FileMode.Create, FileAccess.Write, FileShare.None);
+		}
+
 		private bool LoadCache ()
 		{
 			Stream cacheStream;
 			BinaryFormatter formatter;
 
 			try {
-				cacheStream = PathFinder.ReadAppData ("MailIndex", this.appDataName);
+				cacheStream = ReadAppData ();
 				formatter = new BinaryFormatter ();
 				this.mapping = formatter.Deserialize (cacheStream) as Hashtable;
 				cacheStream.Close ();
@@ -220,7 +232,7 @@ namespace Beagle.Daemon {
 			Stream cacheStream;
 			BinaryFormatter formatter;
 			
-			cacheStream = PathFinder.WriteAppData ("MailIndex", this.appDataName);
+			cacheStream = WriteAppData ();
 			formatter = new BinaryFormatter ();
 			formatter.Serialize (cacheStream, mapping);
 			cacheStream.Close ();
@@ -315,8 +327,8 @@ namespace Beagle.Daemon {
 			
 			Camel.MessageInfo mi = this.summaryEnumerator.Current as Camel.MessageInfo;
 
-			// Checkpoint our progress to disk every 500 messages
-			if (this.count % 500 == 0) {
+			// Checkpoint our progress to disk every 200 messages
+			if (this.count % 200 == 0) {
 				EvolutionMailQueryable.log.Debug ("{0}: indexed {1} messages ({2}/{3} {4:###.0}%)",
 								  this.folderName, this.indexedCount, this.count,
 								  this.summary.header.count,
@@ -562,6 +574,7 @@ namespace Beagle.Daemon {
 			EvolutionMailIndexableGenerator generator = new EvolutionMailIndexableGenerator (this, summaryInfo);
 			Scheduler.Task task;
 			task = NewAddTask (generator);
+			task.Tag = summaryInfo.FullName;
 			// IndexableGenerator tasks default to having priority Scheduler.Priority Generator
 			ThisScheduler.Add (task);
 		}
