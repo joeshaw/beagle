@@ -20,6 +20,7 @@ EXTSTR_IN = $(srcdir)/$(EXTSTR).in
 $(EXTSTR): $(EXTSTR_IN)
 	sed	-e "s|\@prefix\@|$(prefix)|g"		\
 		-e "s|\@pkglibdir\@|$(pkglibdir)|g"	\
+		-e "s|\@pkgdatadir\@|$(pkgdatadir)|g"	\
 		-e "s|\@VERSION\@|$(VERSION)|g"		\
 		-e "s|\@GNOME_PREFIX\@|$(GNOME_PREFIX)|g"	\
 		< $(EXTSTR_IN) > $@

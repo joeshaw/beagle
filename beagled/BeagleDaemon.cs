@@ -175,8 +175,8 @@ namespace Beagle.Daemon {
 
 #if ENABLE_WEBSERVICES
 		static Mono.ASPNET.ApplicationServer appServer = null;
-		const string DEFAULT_XSP_ROOT="/usr/local/share/doc/xsp/test";
-		const string DEFAULT_XSP_PORT = "8888";
+		static string DEFAULT_XSP_ROOT = ExternalStringsHack.PkgDataDir;
+		static string DEFAULT_XSP_PORT = "8888";
 		static string[] xsp_param = {"--port", "8888", "--root", DEFAULT_XSP_ROOT, 
 			"--applications", "/:" + DEFAULT_XSP_ROOT + ",/beagle:" + DEFAULT_XSP_ROOT + "/beagle", "--nonstop"};
 #endif 

@@ -20,6 +20,10 @@ namespace Beagle.Util {
 			get { return "@pkglibdir@"; }
 		}
 
+		static public string PkgDataDir {
+			get { return "@pkgdatadir@"; }
+		}
+
 		static public string GnomePrefix {
 			get { return "@GNOME_PREFIX@"; }
 		}
