@@ -27,7 +27,7 @@
 using System;
 using System.IO;
 using System.Reflection;
-using BU = Beagle.Util;
+using Beagle.Util;
 
 using Gnome;
 
@@ -143,7 +143,7 @@ namespace Beagle {
 			if (name.StartsWith ("file://")) {
 				return name;
 			} else if (name.StartsWith ("/")) {
-				return "file://" + name;
+				return StringFu.PathToQuotedFileUri (name);
 			} else {
 				Stream stream;
 

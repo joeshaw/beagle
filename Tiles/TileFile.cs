@@ -60,7 +60,7 @@ namespace Beagle.Tile {
 			string path = BU.GnomeIconLookup.LookupMimeIcon (Hit.MimeType,
 									 size);
 			if (path != null) {
-				Template["Icon"] = Images.GetHtmlSource ("file://" + path,
+				Template["Icon"] = Images.GetHtmlSource (path,
 									 BU.GnomeIconLookup.GetFileMimeType (path));
 			}
 		}

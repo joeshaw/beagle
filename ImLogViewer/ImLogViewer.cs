@@ -225,7 +225,7 @@ namespace ImLogViewer {
 				html.Append ("<p><b>" + who + ":</b> " + utt.Text + "</p>\n");
 			}
 				
-			gecko.RenderData(html.ToString (), "file://"+im_log.LogFile, "text/html");
+			gecko.RenderData(html.ToString (), StringFu.PathToQuotedFileUri (im_log.LogFile), "text/html");
 			
 		}
 

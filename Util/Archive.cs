@@ -48,7 +48,7 @@ namespace Beagle.Util {
 		bool first = true;
 
 		public Archive (string filename, string mimeType) {
-			this.uri = "file://" + filename;
+			this.uri = StringFu.PathToQuotedFileUri (filename);
 			baseStream = new FileStream (filename,
 						     FileMode.Open);
 			switch (mimeType) {

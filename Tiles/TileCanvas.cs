@@ -97,10 +97,12 @@ namespace Beagle.Tile {
 			string command = null;
 			string commandArgs = null;
 
-			if (uri.StartsWith ("http://") || uri.StartsWith ("file://")) {
+			if (uri.StartsWith (Uri.UriSchemeHttp)
+			    || uri.StartsWith (Uri.UriSchemeHttps)
+			    || uri.StartsWith (Uri.UriSchemeFile)) {
 				command = "gnome-open";
 				commandArgs = "'" + uri + "'";
-			} else if (uri.StartsWith ("mailto:")) {
+			} else if (uri.StartsWith (Uri.UriSchemeMailto)) {
 				command = "evolution";
 				commandArgs = uri;
 			}

@@ -28,27 +28,27 @@ using System;
 using System.IO;
 using System.Collections;
 using System.Diagnostics;
-using BU = Beagle.Util;
+using Beagle.Util;
 
 namespace Beagle.Tile {
 
 	[HitFlavor (Name="Conversations", Rank=900, Emblem="emblem-im-log.png", Color="#e5f5ef",
 		    Type="IMLog")]
 	public class TileImLog : TileFromHitTemplate {
-		private static BU.GaimBuddyListReader list = null;
+		private static GaimBuddyListReader list = null;
 
 #if ENABLE_EVO_SHARP
 		private static Hashtable buddy_emails = new Hashtable ();
 #endif
 
-		private BU.ImBuddy buddy = null;
+		private ImBuddy buddy = null;
 		private string email = null;
 
 		public TileImLog (Hit _hit) : base (_hit,
 						    "template-im-log.html")
 		{
 			if (list == null) {
-				list = new BU.GaimBuddyListReader ();
+				list = new GaimBuddyListReader ();
 			}
 
 			buddy = list.Search (Hit ["fixme:speakingto"]);
@@ -61,9 +61,9 @@ namespace Beagle.Tile {
 			base.PopulateTemplate ();
 
 			Template["nice_duration"] = "(" +
-				BU.StringFu.DurationToPrettyString (
-					   BU.StringFu.StringToDateTime (Hit ["fixme:endtime"]),
-					   BU.StringFu.StringToDateTime (Hit ["fixme:starttime"])) + ")";
+				StringFu.DurationToPrettyString (
+					StringFu.StringToDateTime (Hit ["fixme:endtime"]),
+					StringFu.StringToDateTime (Hit ["fixme:starttime"])) + ")";
 			if (Template ["nice_duration"] == "()")
 				Template ["nice_duration"] = "";
 
@@ -81,10 +81,9 @@ namespace Beagle.Tile {
 				fullpath = Path.Combine (fullpath, "icons");
 				fullpath = Path.Combine (fullpath, buddy.BuddyIconLocation);
 
-				Console.WriteLine ("Icon for {0}: {1}", buddy.Alias, fullpath);
-
 				if (File.Exists (fullpath)) {
-					Template["Icon"] = "file://" + fullpath;				} else {
+					Template["Icon"] = StringFu.PathToQuotedFileUri (fullpath);
+				} else {
 					Template["Icon"] = Images.GetHtmlSourceForStock ("gnome-gaim", 48);
 				}
 			} else {

@@ -263,19 +263,10 @@ namespace Beagle.Daemon {
 			get { return filter != null; }
 		}
 
-#if false
-		public Flavor Flavor {
-			get { return flavor; }
-		}
-#endif
-
 		public FileInfo GetFileInfo () {
-			if (Uri.ToString().StartsWith ("file://")) {
-				string path = Uri.ToString().Substring ("file://".Length);
-				return new FileInfo (path);
-			} else {
-				return null;
-			}
+			if (Uri.IsFile) 
+				return new FileInfo (Uri.LocalPath);
+			return null;
 		}
 	}
 

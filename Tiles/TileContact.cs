@@ -28,7 +28,7 @@ using System;
 using System.Diagnostics;
 using System.IO;
 
-using BU = Beagle.Util;
+using Beagle.Util;
 
 namespace Beagle.Tile {
 
@@ -72,7 +72,7 @@ namespace Beagle.Tile {
 				}
 
 				Template["size_adjustment"] = height;
-				Template["Icon"] = "file://" + photo_filename;
+				Template["Icon"] = StringFu.PathToQuotedFileUri (photo_filename);
 			} else {
 				Template["size_adjustment"] = "";
 				Template["Icon"] = default_contact_icon_data;
