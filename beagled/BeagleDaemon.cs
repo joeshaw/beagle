@@ -293,7 +293,7 @@ namespace Beagle.Daemon {
 			try {
 				Logger.Log.Debug ("Initializing D-BUS");
 				DBusisms.Init ();
-				Application.Init ();
+				Application.InitCheck ("beagled", ref args);
 
 				Logger.Log.Debug ("Acquiring {0} D-BUS service", Beagle.DBusisms.Name);
 				if (!DBusisms.InitService (Beagle.DBusisms.Name)) {

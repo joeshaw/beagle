@@ -55,7 +55,7 @@ namespace Beagle.IndexHelper {
 			Logger.LogToFile (PathFinder.LogDir, "IndexHelper", run_by_hand || log_in_fg);
 
 			Beagle.Daemon.DBusisms.Init ();
-			Application.Init ();
+			Application.InitCheck ("IndexHelper", ref args);
 
 			// Keep an eye on the BusDriver so that we know if beagled
 			// goes away.

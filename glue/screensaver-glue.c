@@ -40,6 +40,9 @@ screensaver_info (int *state, int *kind, unsigned long *til_or_since, unsigned l
     int retval;
     static int inited = 0;
 
+    if (GDK_DISPLAY () == NULL)
+        return 0;
+	
     /* FIXME: This should be called somewhere else. */
     if (! inited) {
         gdk_threads_init ();
