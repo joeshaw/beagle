@@ -204,15 +204,36 @@ namespace Beagle.Daemon {
 			ScheduleQueueItem (item);
 		}
 
+		public void SchedulePriorityAdd (Indexable indexable, PostIndexHook hook)
+		{
+			QueueItem item;
+			item = new QueueItem ();
+			item.IndexableToAdd = indexable;
+			item.PostIndexHook = hook;
+			SchedulePriorityQueueItem (item);
+			FlushPending (); // If it is important, we should flush right away.
+		}
+
 		public void ScheduleAddAndMark (Indexable indexable, FileSystemInfo info)
 		{
 			MarkClosure closure = new MarkClosure (info);
 			ScheduleAdd (indexable, new PostIndexHook (closure.Hook));
 		}
 
+		public void SchedulePriorityAddAndMark (Indexable indexable, FileSystemInfo info)
+		{
+			MarkClosure closure = new MarkClosure (info);
+			SchedulePriorityAdd (indexable, new PostIndexHook (closure.Hook));
+		}
+
 		public void ScheduleAdd (Indexable indexable)
 		{
 			ScheduleAdd (indexable, null);
+		}
+
+		public void SchedulePriorityAdd (Indexable indexable)
+		{
+			SchedulePriorityAdd (indexable, null);
 		}
 
 		public void ScheduleDelete (Uri uri, PostIndexHook hook)
@@ -224,9 +245,23 @@ namespace Beagle.Daemon {
 			ScheduleQueueItem (item);
 		}
 
+		public void SchedulePriorityDelete (Uri uri, PostIndexHook hook)
+		{
+			QueueItem item;
+			item = new QueueItem ();
+			item.UriToDelete = uri;
+			item.PostIndexHook = hook;
+			SchedulePriorityQueueItem (item);
+		}
+
 		public void ScheduleDelete (Uri uri)
 		{
 			ScheduleDelete (uri, null);
+		}
+
+		public void SchedulePriorityDelete (Uri uri)
+		{
+			SchedulePriorityDelete (uri, null);
 		}
 
 		private class HitInfo {
@@ -267,7 +302,7 @@ namespace Beagle.Daemon {
 				    && ! File.Exists (uri.LocalPath)
 				    && ! Directory.Exists (uri.LocalPath)) {
 					Console.WriteLine ("{0} is file!", uri);
-					ScheduleDelete (uri);
+					SchedulePriorityDelete (uri);
 					continue;
 				}
 
@@ -338,6 +373,11 @@ namespace Beagle.Daemon {
 				// Maybe this is just paranoia, but I don't want to miss
 				// file changes between indexing and marking the file.
 				BU.ExtendedAttribute.Mark (info, driver.Fingerprint, mtime);
+
+				// Tell the system we don't need the file in the page cache.
+				// This doesn't really have anything to do w/ marking the
+				// file, but it is a convenient place to do it.
+				
 			}
 		}
 
@@ -353,6 +393,7 @@ namespace Beagle.Daemon {
 			public Uri UriToDelete;
 			public PostIndexHook PostIndexHook;
 			public bool IsSilent = false;
+			public bool IsPriority = false;
 
 			public bool IsAdd {
 				get { return IndexableToAdd != null; }
@@ -365,12 +406,28 @@ namespace Beagle.Daemon {
 		
 		Thread queueThread = null;
 		object queueLock = new object ();
-		Queue queue = new Queue ();
+		ArrayList queue = new ArrayList ();
 
 		private void ScheduleQueueItem (QueueItem item)
 		{
 			lock (queueLock) {
-				queue.Enqueue (item);
+				queue.Add (item);
+				Monitor.Pulse (queueLock);
+			}
+		}
+
+		private void SchedulePriorityQueueItem (QueueItem item)
+		{
+			lock (queueLock) {
+				item.IsPriority = true;
+				int i = 0;
+				while (i < queue.Count) {
+					QueueItem qi = queue [i] as QueueItem;
+					if (! qi.IsPriority)
+						break;
+					++i;
+				}
+				queue.Insert (i, item);
 				Monitor.Pulse (queueLock);
 			}
 		}
@@ -457,8 +514,10 @@ namespace Beagle.Daemon {
 				lock (queueLock) {
 					if (queue.Count == 0)
 						Monitor.Wait (queueLock);
-					if (queue.Count > 0)
-						item = (QueueItem) queue.Dequeue ();
+					if (queue.Count > 0) {
+						item = (QueueItem) queue [0];
+						queue.RemoveAt (0);
+					}
 				}
 
 				// If we got a queue item, process it.
@@ -553,22 +612,30 @@ namespace Beagle.Daemon {
 						item.PostIndexHook (this, indexable.Uri);
 					++sinceOptimization;
 
-					if (MultipleWorkers) {
-						// If there are multiple threads indexing at the same time,
-						// sleep for 46ms after indexing every document.  Hopefully
-						// this will keep the daemon from making the system unusable.
-						// 46 is a random number.
-						Thread.Sleep (46);
-						sleepCounter = 0;
-					} else {
-						// Otherwise, if we are the only thread we stop and catch our breath
-						// for 51ms every 6 documents.
-						// 51 and 6 are, of course, completely abritrary.
+					int sleepTime = 0;
+
+					if (queue.Count > 0) {
+						// If there are multiple working threads, increase sleep time
+						// by 46ms.  (46 is a random number.)
+						if (MultipleWorkers)
+							sleepTime += 46;
+
+						// Sleep an extra 51ms if we've indexed at least 6 items
+						// since we last slept.  (6 and 51 is a random number.)
 						++sleepCounter;
-						if (sleepCounter == 6) {
-							Thread.Sleep (51);
-							sleepCounter = 0;
-						}
+						if (sleepCounter == 6)
+							sleepTime += 51;
+
+						// If there are more than 13 items in the queue, sleep 67ms
+						// between items.  (13 and 67 are *very* random numbers.)
+						if (queue.Count > 13)
+							sleepTime += 67;
+					}
+
+					if (sleepTime > 0) {
+						Console.WriteLine ("Sleeping for {0}ms", sleepTime);
+						Thread.Sleep (sleepTime);
+						sleepCounter = 0;
 					}
 				}
 			}

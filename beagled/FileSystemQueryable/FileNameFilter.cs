@@ -69,6 +69,21 @@ namespace Beagle.Daemon.FileSystemQueryable {
 					return false;
 				return true;
 			}
+
+			public override string ToString ()
+			{
+				string str = "[pattern:";
+				if (exactMatch != null)
+					str += " exact=" + exactMatch;
+				if (prefix != null)
+					str += " prefix=" + prefix;
+				if (suffix != null)
+					str += " suffix=" + suffix;
+				if (regex != null)
+					str += " regex=" + regex.ToString ();
+				str += "]";
+				return str;
+			}
 		}
 
 		static ArrayList LoadPatterns (string filename)
@@ -161,12 +176,12 @@ namespace Beagle.Daemon.FileSystemQueryable {
 		/////////////////////////////////////////////////////////////
 
 		private class PerDirectoryInfo {
-			DirectoryInfo dir;
+			string dir;
 			DateTime noindexTimestamp;
 			DateTime noindexLastCheck;
 			ArrayList patternsToIgnore;
 
-			public PerDirectoryInfo (DirectoryInfo _dir)
+			public PerDirectoryInfo (string _dir)
 			{
 				dir = _dir;
 				ConditionallyLoad ();
@@ -181,7 +196,7 @@ namespace Beagle.Daemon.FileSystemQueryable {
 					return;
 				noindexLastCheck = now;
 
-				string noindex = Path.Combine (dir.FullName, ".noindex");
+				string noindex = Path.Combine (dir, ".noindex");
 
 				if (File.Exists (noindex)) {
 					DateTime timestamp = File.GetLastWriteTime (noindex);
@@ -204,6 +219,7 @@ namespace Beagle.Daemon.FileSystemQueryable {
 				foreach (Pattern pattern in patternsToIgnore)
 					if (pattern.IsMatch (name))
 						return true;
+
 				return false;
 			}
 		}
@@ -211,14 +227,14 @@ namespace Beagle.Daemon.FileSystemQueryable {
 		
 		private Hashtable perDirectoryCache = new Hashtable ();
 
-		private PerDirectoryInfo GetPerDirectoryInfo (DirectoryInfo dir)
+		private PerDirectoryInfo GetPerDirectoryInfo (string dir)
 		{
 			PerDirectoryInfo info;
 			lock (perDirectoryCache) {
-				info = perDirectoryCache [dir.FullName] as PerDirectoryInfo;
+				info = perDirectoryCache [dir] as PerDirectoryInfo;
 				if (info == null) {
 					info = new PerDirectoryInfo (dir);
-					perDirectoryCache [dir.FullName] = info;
+					perDirectoryCache [dir] = info;
 				}
 			}
 			return info;
@@ -228,25 +244,20 @@ namespace Beagle.Daemon.FileSystemQueryable {
 		// In particular, if ~/foo is an IgnoreAll directory, we could store
 		// that info in the PerDirectoryInfo of subdir ~/foo/bar so that
 		// we could avoid walking up the chain of directories.
-		public bool Ignore (FileSystemInfo fsinfo)
+		public bool Ignore (string path)
 		{
-			if (fsinfo.FullName == Environment.GetEnvironmentVariable ("HOME"))
+			path = Path.GetFullPath (path);
+
+			if (path == Environment.GetEnvironmentVariable ("HOME"))
 				return false;
 
-			DirectoryInfo dir;
-			string name;
-
-			name = fsinfo.Name;
+			string name = Path.GetFileName (path);
 
 			foreach (Pattern pattern in defaultPatternsToIgnore)
 				if (pattern.IsMatch (name))
 					return true;
-			
-			if (fsinfo is FileInfo)
-				dir  = ((FileInfo) fsinfo).Directory;
-			else
-				dir = ((DirectoryInfo) fsinfo).Parent;
 
+			string dir = Path.GetDirectoryName (path);
 			PerDirectoryInfo perDir = GetPerDirectoryInfo (dir);
 
 			if (perDir.Ignore (name))
@@ -257,14 +268,9 @@ namespace Beagle.Daemon.FileSystemQueryable {
 			return Ignore (dir);
 		}
 
-		public bool Ignore (string path)
+		public bool Ignore (FileSystemInfo info)
 		{
-			if (File.Exists (path))
-				return Ignore (new FileInfo (path));
-			else if (Directory.Exists (path))
-				return Ignore (new DirectoryInfo (path));
-			else
-				return true;
+			return Ignore (info.FullName);
 		}
 	}		
 

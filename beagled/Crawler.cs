@@ -66,22 +66,39 @@ namespace Beagle.Daemon {
 			public int MaxDepth;
 		}
 
+		// Note: This should only be called by code that is holding the queueLock.
+		// Otherwise there is a race condition, since duplicate queue items could be
+		// added to the queue between the call to BuildPendingCrawl and the
+		// actual insertion into the queue.
+		private PendingCrawl BuildPendingCrawl (FileSystemInfo info, int maxDepth)
+		{
+			// Filter out things we don't want to crawl.
+			if (SkipByName (info))
+				return null;
+
+			// Filter out duplicate crawl requests.
+			if (nowCrawling == info.FullName)
+				return null;
+
+			foreach (PendingCrawl other in queue) {
+				if (other.FileSystemInfo.FullName == info.FullName)
+					return null;
+			}
+
+			PendingCrawl pending = new PendingCrawl ();
+			pending.FileSystemInfo = info;
+			pending.MaxDepth = maxDepth;
+			
+			return pending;
+		}
+
 		/////////////////////////////////////////////////////////////
 		
 		//
 		// Public API
 		//
 
-		public void ScheduleCrawl (FileSystemInfo info)
-		{
-			ScheduleCrawl (info, -1);
-		}
-
-		public void ScheduleCrawl (string path)
-		{
-			ScheduleCrawl (path, -1);
-		}
-
+		// Use maxDepth == -1 for no limit.
 		public void ScheduleCrawl (FileSystemInfo info, int maxDepth)
 		{
 			lock (queueLock) {
@@ -91,34 +108,33 @@ namespace Beagle.Daemon {
 									    info.FullName));
 				}
 
-				// Filter out things we don't want to crawl.
-				if (SkipByName (info))
+				PendingCrawl pending = BuildPendingCrawl (info, maxDepth);
+				if (pending == null)
 					return;
-
-				// Filter out duplicate crawl requests.
-				if (nowCrawling == info.FullName)
-					return;
-				foreach (PendingCrawl other in queue) {
-					if (other.FileSystemInfo.FullName == info.FullName)
-						return;
-				}
-
-				PendingCrawl pending = new PendingCrawl ();
-				pending.FileSystemInfo = info;
-				pending.MaxDepth = maxDepth;
 
 				// Add the item to the queue and pulse the lock.
 				queue.Add (pending);
 				Monitor.Pulse (queueLock);
 			}
 		}
-
-		public void ScheduleCrawl (string path, int maxDepth)
+		
+		// Use maxDepth == -1 for no limit.
+		public void SchedulePriorityCrawl (FileSystemInfo info, int maxDepth)
 		{
-			if (Directory.Exists (path))
-				ScheduleCrawl (new DirectoryInfo (path), maxDepth);
-			else if (File.Exists (path))
-				ScheduleCrawl (new FileInfo (path), maxDepth);
+			lock (queueLock) {
+				if (queueStop) {
+					throw new Exception (String.Format ("Attempt to schedule crawl of {0} in a stopped crawler", 
+									    info.FullName));
+				}
+
+				PendingCrawl pending = BuildPendingCrawl (info, maxDepth);
+				if (pending == null)
+					return;
+
+				// Add the item to the queue and pulse the lock.
+				queue.Insert (0, pending);
+				Monitor.Pulse (queueLock);
+			}
 		}
 
 		public void Stop ()

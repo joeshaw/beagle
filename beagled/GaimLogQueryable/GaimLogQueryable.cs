@@ -68,7 +68,7 @@ namespace Beagle.Daemon.GaimLogQueryable {
 
 			// First, do a quick crawl to make sure our logs are all up-to-date
 			GaimLogCrawler crawler = new GaimLogCrawler (this);
-			crawler.ScheduleCrawl (logDir);
+			crawler.ScheduleCrawl (logDir, -1);
 			crawler.StopWhenEmpty ();
 
 			monitor = new FileSystemEventMonitor ();
