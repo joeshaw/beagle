@@ -16,6 +16,7 @@ CSFILES = 					\
 	$(srcdir)/WebLinkHitRenderer.cs
 
 ASSEMBLIES =				\
+	$(EVO_SHARP_LIBS)		\
 	$(BEAGLE_UI_LIBS)		\
 	-r:../Util/Util.dll		\
 	-r:../Filters/Filters.dll	\

@@ -2,14 +2,19 @@
 CSC = mcs -g
 
 ASSEMBLIES =				\
+	$(EVO_SHARP_LIBS)		\
+	$(BEAGLE_UI_LIBS)		\
 	-r:../Util/Util.dll		\
 	-r:../Lucene.Net/Lucene.Net.dll	\
 	-r:../Filters/Filters.dll	\
-	-r:../indexer/Indexer.dll	\
-	$(EVO_SHARP_LIBS)
+	-r:../indexer/Indexer.dll
+
 
 WRAPPER_IN = wrapper.in
-WRAPPER_SED = sed -e "s|\@prefix\@|$(prefix)|g" -e "s|\@pkglibdir\@|$(pkglibdir)|g" 
+WRAPPER_SED = sed 				\
+	-e "s|\@prefix\@|$(prefix)|g"		\
+	-e "s|\@pkglibdir\@|$(pkglibdir)|g"	\
+	-e "s|\@libdir\@|$(libdir)|g" 
 
 
 CRAWLER_TARGET  = Crawler.exe
@@ -77,11 +82,23 @@ INDEX_MAIL_WRAPPER = beagle-index-mail
 INDEX_MAIL_CSFILES = $(srcdir)/IndexMail.cs
 
 $(INDEX_MAIL_TARGET): $(INDEX_MAIL_CSFILES)
-	$(CSC) -o $@ $(CSFLAGS) $(INDEX_MAIL_CSFILES) $(ASSEMBLIES)
+	$(CSC) -o $@ $(CSFLAGS) $^ $(ASSEMBLIES)
 
 $(INDEX_MAIL_WRAPPER): $(WRAPPER_IN)
 	$(WRAPPER_SED) -e "s|\@target\@|$(INDEX_MAIL_TARGET)|g" < $(srcdir)/$^ > $@
 	chmod +x $(INDEX_MAIL_WRAPPER)
+
+
+INDEX_GAIM_LOGS_TARGET = IndexGaimLogs.exe
+INDEX_GAIM_LOGS_WRAPPER = beagle-index-gaim-logs
+INDEX_GAIM_LOGS_CSFILES = $(srcdir)/IndexGaimLogs.cs
+
+$(INDEX_GAIM_LOGS_TARGET): $(INDEX_GAIM_LOGS_CSFILES)	
+	$(CSC) -o $@ $(CSFLAGS) $^ $(ASSEMBLIES)
+
+$(INDEX_GAIM_LOGS_WRAPPER): $(WRAPPER_IN)
+	$(WRAPPER_SED) -e "s|\@target\@|$(INDEX_GAIM_LOGS_TARGET)|g" < $(srcdir)/$^ > $@
+	chmod +x $@
 
 
 UPDATE_SCRIPT = beagle-update-index
@@ -96,7 +113,8 @@ TARGETS = 				\
 	$(QUERY_TARGET)			\
 	$(EXTRACT_CONTENT_TARGET)	\
 	$(INDEX_WEB_CONTENT_TARGET)	\
-	$(INDEX_MAIL_TARGET)
+	$(INDEX_MAIL_TARGET)		\
+	$(INDEX_GAIM_LOGS_TARGET)
 
 WRAPPERS = 				\
 	$(CRAWLER_WRAPPER)		\
@@ -104,7 +122,8 @@ WRAPPERS = 				\
 	$(QUERY_WRAPPER)		\
 	$(EXTRACT_CONTENT_WRAPPER)	\
 	$(INDEX_WEB_CONTENT_WRAPPER)	\
-	$(INDEX_MAIL_WRAPPER)
+	$(INDEX_MAIL_WRAPPER)		\
+	$(INDEX_GAIM_LOGS_WRAPPER)
 
 bin_SCRIPTS = $(WRAPPERS) $(UPDATE_SCRIPT)
 

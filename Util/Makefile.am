@@ -14,7 +14,8 @@ $(GOOGLE_CS): $(GOOGLE_WSDL)
 CSFILES = 			\
 	$(srcdir)/camel.cs	\
 	$(srcdir)/gnome.cs	\
-	$(srcdir)/Vfs.cs
+	$(srcdir)/Vfs.cs	\
+	$(srcdir)/ImLog.cs
 
 ASSEMBLIES =			\
 	$(BEAGLE_UI_LIBS)		\

@@ -28,6 +28,8 @@ using System;
 using System.Collections;
 using System.Threading;
 
+using Gtk;
+
 using Beagle;
 
 class QueryTool {
@@ -52,6 +54,8 @@ class QueryTool {
 
 	static void Main (String[] args) 
 	{
+		Gtk.Application.Init ();
+
 		QueryDriver driver = new QueryDriver ();
 		driver.AutoPopulateHack ();
 

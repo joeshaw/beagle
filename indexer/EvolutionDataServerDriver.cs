@@ -37,6 +37,7 @@ namespace Beagle {
 		private Evolution.Book Addressbook {
 			get {
 				if (addressbook == null) {
+					GtkSharp.EvolutionSharp.ObjectManager.Initialize ();
 					addressbook = new Evolution.Book ();
 					addressbook.LoadLocalAddressbook ();
 				}

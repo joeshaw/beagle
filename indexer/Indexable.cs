@@ -144,6 +144,8 @@ namespace Beagle {
 
 		//////////////////////////
 
+		// IDisposable interface
+
 		public void Dispose ()
 		{
 			properties = null;
@@ -152,5 +154,4 @@ namespace Beagle {
 			built = false;
 		}
 	}
-
 }

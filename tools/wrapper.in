@@ -5,7 +5,7 @@ if [ -e ./@target@ ] && [ -e ./Makefile.am ] ; then
     THIS_PATH="../Util:../Lucene.Net:../Filters:../indexer"
     THIS_EXE="./@target@"
 else
-    THIS_PATH="@pkglibdir@"
+    THIS_PATH="@pkglibdir@:@libdir@"
     THIS_EXE="@pkglibdir@/@target@"
 fi
 
