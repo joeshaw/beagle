@@ -52,16 +52,18 @@ namespace Beagle.Tile {
 		protected override void PopulateTemplate ()
 		{
 			base.PopulateTemplate ();
-			
-			if (Hit ["fixme:title"] == null || Hit ["fixme:title"] == "")
-				Template ["Title"] = Path.GetFileName (BU.UriFu.LocalPathFromUri (Hit.Uri));
-			else
+
+			Template ["Title"] = Path.GetFileName (BU.UriFu.LocalPathFromUri (Hit.Uri));
+			if (Hit ["fixme:title"] != null && Hit ["fixme:title"].Trim().Length > 0)
 				Template ["Title"] = Hit ["fixme:title"];
 
-			if (Hit ["fixme:artist"] == null || Hit ["fixme:artist"] == "")
-				Template ["Artist"] = "Unknown Artist";
-			else
+			Template ["fixme:artist"] = "Unknown Artist";
+			if (Hit ["fixme:artist"] != null && Hit ["fixme:artist"].Trim().Length > 0)
 				Template ["Artist"] = Hit ["fixme:artist"];
+
+			Template ["Album"] = "Unknown Album";
+			if (Hit ["fixme:album"] != null && Hit ["fixme:album"].Trim().Length > 0)
+				Template ["Album"] = Hit ["fixme:album"];
 		}
 		
 		[TileAction]

@@ -77,7 +77,7 @@ namespace ImLogViewer {
 			Glade.XML gxml = new Glade.XML (null, "ImLogViewer.glade", "log_dialog", null);
 			gxml.Autoconnect (this);
 
-			log_dialog.Response += OnWindowClose;
+			log_dialog.Response += new ResponseHandler (OnWindowResponse);
 
 			// FIXME: Hide the find bar until further notice. We want highlighing and queries using Beagle
 			search_entry.Visible = false;
@@ -274,6 +274,11 @@ namespace ImLogViewer {
 		}
 
 		private void OnWindowClose (object o, EventArgs args)
+		{
+			Application.Quit ();
+		}
+
+		private void OnWindowResponse (object o, ResponseArgs args)
 		{
 			Application.Quit ();
 		}
