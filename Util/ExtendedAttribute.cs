@@ -62,7 +62,7 @@ namespace Beagle.Util {
 			byte[] buffer = encoding.GetBytes (value);
 			int retval = lsetxattr (path, name, buffer, (uint) buffer.Length, 0);
 			if (retval != 0) 
-				throw new Exception ("Could not set extended attribute on " + path + ": " + Syscall.strerror (Marshal.GetLastWin32Error ()));
+				throw new IOException ("Could not set extended attribute on " + path + ": " + Syscall.strerror (Marshal.GetLastWin32Error ()));
 		}
 
 		public static string Get (string path, string name)
@@ -79,7 +79,7 @@ namespace Beagle.Util {
 			buffer = new byte [size];
 			int retval = lgetxattr (path, name, buffer, (uint) size);
 			if (retval < 0)
-				throw new Exception ("Could not get extended attribute on " + path + ": " + Syscall.strerror (Marshal.GetLastWin32Error ()));
+				throw new IOException ("Could not get extended attribute on " + path + ": " + Syscall.strerror (Marshal.GetLastWin32Error ()));
 
 			return encoding.GetString (buffer);
 		}
@@ -93,7 +93,7 @@ namespace Beagle.Util {
 
 			int retval = lremovexattr (path, name);
 			if (retval != 0)
-				throw new Exception ("Could not remove extended attribute on " + path + ": " + Syscall.strerror (Marshal.GetLastWin32Error ()));
+				throw new IOException ("Could not remove extended attribute on " + path + ": " + Syscall.strerror (Marshal.GetLastWin32Error ()));
 		}
 
 		// Check to see if it is possible to get and set attributes on a given file.
