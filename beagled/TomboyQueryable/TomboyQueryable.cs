@@ -159,6 +159,11 @@ namespace Beagle.Daemon.TomboyQueryable {
 			task.Priority = priority;
 			task.SubPriority = 0;
 			ThisScheduler.Add (task);
+
+			// Write a plain-text version of our note out into the text cache
+			TextWriter writer = TextCache.GetWriter (note.Uri);
+			writer.Write (note.text);
+			writer.Close ();
 		}
 		
 		private void RemoveNote (string path)
