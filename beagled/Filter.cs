@@ -37,9 +37,32 @@ namespace Beagle.Daemon {
 
 	public class Filter {
 
+		public enum ContentType {
+			Text,
+			WhiteSpace,
+			StructuralBreak
+		}
+
+		public delegate void GotPropertyHandler (Property prop);
+		public delegate void GotContentHandler  (ContentType type, string content);
+
+		public event GotPropertyHandler GotPropetyEvent;
+		public event GotContentHandler  GotContentEvent;
+
+		//////////////////////////
+
 		// Derived classes always must have a constructor that
 		// takes no arguments.
 		public Filter () { }
+
+		//////////////////////////
+
+		private string identifier;
+
+		public string Identifier {
+			get { return identifier; }
+			set { identifier = value; }
+		}
 
 		//////////////////////////
 
@@ -182,6 +205,11 @@ namespace Beagle.Daemon {
 		private ArrayList textPool;
 		private ArrayList hotPool;
 		private ArrayList propertyPool;
+		
+		private int max_text_pool_len = 0;
+		private int max_text_pool_size = 0;
+		private int max_hot_pool_len = 0;
+		
 
 		private bool last_was_structural_break = true;
 
@@ -191,11 +219,26 @@ namespace Beagle.Daemon {
 			if (! IsFrozen && str != null && str != "") {
 
 				// FIXME: We should be smarter about newlines
-				str = str.Replace ("\n", " ");
+				if (str.IndexOf ('\n') != -1)
+					str = str.Replace ("\n", " ");
 
 				textPool.Add (str);
 				if (IsHot)
 					hotPool.Add (str);
+
+				int pool_size = 0;
+				foreach (string x in textPool)
+					pool_size += x.Length;
+
+				if (pool_size > max_text_pool_size)
+					max_text_pool_size = pool_size;
+
+				if (textPool.Count > max_text_pool_len)
+					max_text_pool_len = textPool.Count;
+
+				if (hotPool.Count > max_hot_pool_len)
+					max_hot_pool_len = hotPool.Count;
+
 				if (snippetWriter != null)
 					snippetWriter.Write (str);
 
@@ -258,6 +301,9 @@ namespace Beagle.Daemon {
 		protected void Finished ()
 		{
 			isFinished = true;
+			if (max_text_pool_len > 0 || max_hot_pool_len > 0)
+				Logger.Log.Debug ("{0} pull pool stats: {1} {2} / {3}",
+						  Identifier, max_text_pool_len, max_text_pool_size, max_hot_pool_len);
 		}
 
 		//////////////////////////
@@ -448,123 +494,19 @@ namespace Beagle.Daemon {
 
 		public TextReader GetTextReader ()
 		{
-			return new PullingReader (new PullingReader.Pull (PullText));
+			PullingReader pr = new PullingReader (new PullingReader.Pull (PullText));
+			pr.Identifier = Identifier;
+			return pr;
 		}
 
 		public TextReader GetHotTextReader ()
 		{
-			return new PullingReader (new PullingReader.Pull (PullHotText));
+			return null;
+			//return new PullingReader (new PullingReader.Pull (PullHotText));
 		}
 
 		public IEnumerable Properties {
 			get { return propertyPool; }
 		}
-
-#if false
-		////////////////////////////////////////
-
-		static SortedList registry = null;
-
-		static private int ScanAssemblyForFilters (Assembly assembly)
-		{
-			int count = 0;
-
-			foreach (Type t in assembly.GetTypes ()) {
-				if (t.IsSubclassOf (typeof (Filter)) && ! t.IsAbstract) {
-					Filter filter = (Filter) Activator.CreateInstance (t);
-					bool first = true;
-					foreach (Flavor flavor in filter.SupportedFlavors) {
-						if (registry.ContainsKey (flavor)) {
-							Type otherType = (Type) registry [flavor];
-							Filter other = (Filter) Activator.CreateInstance (otherType);
-							String estr = String.Format ("Type Collision: {0} ({1} vs {2})",
-										     flavor, filter, other);
-							throw new Exception (estr);
-						}
-						registry [flavor] = t;
-						if (first) {
-							++count;
-							first = false;
-						}
-					}
-				}
-			}
-
-			return count;
-		}
-
-		static private void FindAssemblies (string dir)
-		{
-			if (dir == null || dir == "")
-				return;
-
-			if (! Directory.Exists (dir)) {
-				//Logger.Log.Debug ("'{0}' is not a directory: No filters loaded", dir);
-				return;
-			}
-
-			DirectoryInfo dirInfo = new DirectoryInfo (dir);
-			foreach (FileInfo file in dirInfo.GetFiles ()) {
-				if (file.Extension == ".dll") {
-					Assembly a = Assembly.LoadFrom (file.FullName);
-					int n = ScanAssemblyForFilters (a);
-					//Logger.Log.Debug ("Loaded {0} filters from {1}", n, file.FullName);
-				}
-			}
-		}
-
-		static private void AutoRegisterFilters ()
-		{
-			string path = Environment.GetEnvironmentVariable ("BEAGLE_FILTER_PATH");
-			
-			if (path == null || path == "")
-				path = PathFinder.FilterDir;
-			else if (path [path.Length-1] == ':')
-				path += PathFinder.FilterDir;
-
-			foreach (string dir in path.Split (':'))
-				FindAssemblies (dir);
-		}
-
-		static public bool CanFilter (Flavor flavor)
-		{
-			return FromFlavor (flavor) != null;
-		}
-
-		static public Filter FromFlavor (Flavor flavor)
-		{
-			if (registry == null) {
-				registry = new SortedList ();
-				AutoRegisterFilters ();
-			}
-
-			if (flavor.IsPattern)
-				throw new Exception ("Can't create filter from content type pattern " + flavor);
-
-			Filter filter = null;
-
-			foreach (Flavor other in registry.Keys) {
-				if (other.IsMatch (flavor)) {
-					Type t = (Type) registry [other];
-					filter = (Filter) Activator.CreateInstance (t);
-					filter.flavor = flavor;
-				}
-			}
-			
-			return filter;
-		}
-
-		static public Filter FilterFromMimeType (String mimeType)
-		{
-			Flavor flavor = Flavor.FromMimeType (mimeType);
-			return FromFlavor (flavor);
-		}
-
-		static public Filter FilterFromPath (String path)
-		{
-			Flavor flavor = Flavor.FromPath (path);
-			return FromFlavor (flavor);
-		}
-#endif
 	}
 }

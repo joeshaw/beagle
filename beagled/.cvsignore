@@ -3,6 +3,8 @@
 ExternalStringsHack.cs
 Makefile
 Makefile.in
+beagle-index-optimizer
+beagle-snippet-test
 beagle-extract-content
 beagled
 testclient

@@ -9,6 +9,7 @@ if [ -e ./@target@ ] && [ -e ./Makefile.am ] ; then
     TARGET_EXE="./@target@"
     EXTRA_ARGS=""
 
+    export BEAGLE_EXTERNAL_OPTIMIZER_PATH="."
     export MONO_PATH="../Util:../BeagleClient:$MONO_PATH"
     export LD_LIBRARY_PATH="../glue/.libs:$LD_LIBRARY_PATH"
 
@@ -26,6 +27,7 @@ else
     TARGET_EXE="@pkglibdir@/@target@"
     EXTRA_ARGS=""
 
+    export BEAGLE_EXTERNAL_OPTIMIZER_PATH="@pkglibdir@"
     export MONO_PATH="@pkglibdir@:$MONO_PATH"
     export LD_LIBRARY_PATH="@pkglibdir@:$LD_LIBRARY_PATH"
 fi

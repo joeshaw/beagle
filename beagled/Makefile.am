@@ -403,6 +403,7 @@ DAEMON_DLL_CSFILES = 						\
 	$(EVO_MAIL_QUERYABLE_CSFILES)				\
 	$(WEB_HISTORY_QUERYABLE_CSFILES)			\
 	$(LAUNCHER_QUERYABLE_CSFILES)				\
+	$(TOMBOY_QUERYABLE_CSFILES)				\
 	$(srcdir)/BugzillaDriver.cs 				\
 	$(srcdir)/Crawler.cs					\
 	$(srcdir)/DBusisms.cs					\
@@ -526,6 +527,35 @@ $(DAEMON_TARGET): $(DAEMON_CSFILES) $(DAEMON_LOCAL_ASSEMBLIES)
 
 ############################################################
 
+INDEX_OPTIMIZER_WRAPPER = beagle-index-optimizer
+INDEX_OPTIMIZER_TARGET = IndexOptimizer.exe
+
+$(INDEX_OPTIMIZER_WRAPPER): $(srcdir)/$(WRAPPER_IN)
+	$(WRAPPER_SED) -e "s|\@target\@|$(INDEX_OPTIMIZER_TARGET)|g" < $(srcdir)/$(WRAPPER_IN) > $@
+	chmod +x $(INDEX_OPTIMIZER_WRAPPER)
+
+INDEX_OPTIMIZER_CSFLAGS =			\
+	-target:exe
+
+INDEX_OPTIMIZER_CSFILES =			\
+	$(srcdir)/IndexOptimizer.cs
+
+INDEX_OPTIMIZER_LOCAL_ASSEMBLIES =		\
+	../Util/Util.dll			\
+	./$(DAEMON_DLL_TARGET)
+
+INDEX_OPTIMIZER_ASSEMBLIES =			\
+	$(BEAGLED_LIBS)				\
+	$(DAEMON_LOCAL_ASSEMBLIES:%=-r:%)	\
+	-r:Mono.Posix				\
+	-r:System.Runtime.Remoting		\
+	-r:ICSharpCode.SharpZipLib.dll
+
+$(INDEX_OPTIMIZER_TARGET): $(INDEX_OPTIMIZER_CSFILES) $(INDEX_OPTIMIZER_LOCAL_ASSEMBLIES)
+	$(CSC) -o $@ $(INDEX_OPTIMIZER_CSFLAGS) $(INDEX_OPTIMIZER_CSFILES) $(INDEX_OPTIMIZER_ASSEMBLIES)
+
+############################################################
+
 EXTRACT_CONTENT_WRAPPER = beagle-extract-content
 EXTRACT_CONTENT_TARGET = ExtractContent.exe
 
@@ -558,13 +588,44 @@ $(EXTRACT_CONTENT_TARGET): $(EXTRACT_CONTENT_CSFILES) $(EXTRACT_CONTENT_LOCAL_AS
 
 ############################################################
 
+MASTER_DELETE_WRAPPER = beagle-master-delete-button
+MASTER_DELETE_TARGET = MasterDelete.exe
+
+$(MASTER_DELETE_WRAPPER): $(srcdir)/$(WRAPPER_IN)
+	$(WRAPPER_SED) -e "s|\@target\@|$(MASTER_DELETE_TARGET)|g" < $(srcdir)/$(WRAPPER_IN) > $@
+	chmod +x $(MASTER_DELETE_WRAPPER)
+
+
+MASTER_DELETE_CSFLAGS =			\
+	-target:exe
+
+MASTER_DELETE_CSFILES =			\
+	$(srcdir)/MasterDelete.cs
+
+MASTER_DELETE_LOCAL_ASSEMBLIES =		\
+	../Util/Util.dll			\
+	../BeagleClient/Beagle.dll		\
+	./$(PLUGIN_TARGET)			\
+	./$(DAEMON_DLL_TARGET)
+
+MASTER_DELETE_ASSEMBLIES =			\
+	$(BEAGLED_LIBS)				\
+	$(DAEMON_LOCAL_ASSEMBLIES:%=-r:%)	\
+	-r:Mono.Posix				\
+	-r:System.Runtime.Remoting		\
+	-r:ICSharpCode.SharpZipLib.dll
+
+$(MASTER_DELETE_TARGET): $(MASTER_DELETE_CSFILES) $(MASTER_DELETE_LOCAL_ASSEMBLIES)
+	$(CSC) -o $@ $(MASTER_DELETE_CSFLAGS) $(MASTER_DELETE_CSFILES) $(MASTER_DELETE_ASSEMBLIES)
+
+############################################################
+
 SNIPPET_TEST_WRAPPER = beagle-snippet-test
 SNIPPET_TEST_TARGET = SnippetTest.exe
 
 $(SNIPPET_TEST_WRAPPER): $(srcdir)/$(WRAPPER_IN)
 	$(WRAPPER_SED) -e "s|\@target\@|$(SNIPPET_TEST_TARGET)|g" < $(srcdir)/$(WRAPPER_IN) > $@
 	chmod +x $(SNIPPET_TEST_WRAPPER)
-
 
 SNIPPET_TEST_CSFLAGS =				\
 	-target:exe
@@ -590,23 +651,38 @@ $(SNIPPET_TEST_TARGET): $(SNIPPET_TEST_CSFILES) $(SNIPPET_TEST_LOCAL_ASSEMBLIES)
 
 ############################################################
 
+ALL_TARGETS =				\
+	$(PLUGIN_TARGET)		\
+	$(DAEMON_DLL_TARGET)		\
+	$(DAEMON_TARGET)		\
+	$(INDEX_OPTIMIZER_TARGET)	\
+	$(INDEX_OPTIMIZER_WRAPPER)	\
+	$(EXTRACT_CONTENT_TARGET)	\
+	$(MASTER_DELETE_TARGET)		\
+	$(SNIPPET_TEST_TARGET)
 
-all: $(PLUGIN_TARGET) $(DAEMON_DLL_TARGET) $(DAEMON_TARGET) $(EXTRACT_CONTENT_TARGET) $(SNIPPET_TEST_TARGET)
+
+all: $(ALL_TARGETS)
 
 install-data-local: $(PLUGIN_TARGET) $(DAEMON_DLL_TARGET) $(DAEMON_TARGET) $(EXTRACT_CONTENT_TARGET) $(SNIPPET_TEST_TARGET)
 	$(mkinstalldirs) $(DESTDIR)$(pkglibdir)
 	$(INSTALL_DATA) $(PLUGIN_TARGET) $(DESTDIR)$(pkglibdir)/$(PLUGIN_TARGET)
 	$(INSTALL_DATA) $(DAEMON_DLL_TARGET) $(DESTDIR)$(pkglibdir)/$(DAEMON_DLL_TARGET)
 	$(INSTALL_DATA) $(DAEMON_TARGET) $(DESTDIR)$(pkglibdir)/$(DAEMON_TARGET)
+	$(INSTALL_DATA) $(INDEX_OPTIMIZER_TARGET) $(DESTDIR)$(pkglibdir)/$(INDEX_OPTIMIZER_TARGET)
+	$(INSTALL_DATA) $(INDEX_OPTIMIZER_WRAPPER) $(DESTDIR)$(pkglibdir)/$(INDEX_OPTIMIZER_WRAPPER)
 
 uninstall-local:
 	rm -f $(DESTDIR)$(pkglibdir)/$(PLUGIN_TARGET)
 	rm -f $(DESTDIR)$(pkglibdir)/$(DAEMON_DLL_TARGET)
 	rm -f $(DESTDIR)$(pkglibdir)/$(DAEMON_TARGET)
 
-bin_SCRIPTS = $(DAEMON_WRAPPER)
+bin_SCRIPTS = \
+	$(DAEMON_WRAPPER)
+
 noinst_SCRIPTS=				\
 	$(EXTRACT_CONTENT_WRAPPER)	\
+	$(MASTER_DELETE_WRAPPER)	\
 	$(SNIPPET_TEST_WRAPPER)
 
 COND_CS_FILES = \
@@ -622,23 +698,30 @@ EXTRA_DIST =				\
 	$(DAEMON_CSFILES)		\
 	$(EXTRACT_CONTENT_CSFILES)	\
 	$(SNIPPET_TEST_CSFILES)		\
+	$(MASTER_DELETE_CSFILES)	\
 	$(EXTSTR_IN)			\
 	$(WRAPPER_IN)   		\
 	$(DAEMON_WRAPPER_IN)		\
 	$(COND_CS_FILES)
 
 CLEANFILES =				\
+	$(EXTSTR)			\
 	$(PLUGIN_TARGET)       		\
 	$(PLUGIN_TARGET).mdb   		\
 	$(DAEMON_DLL_TARGET)		\
 	$(DAEMON_DLL_TARGET).mdb	\
 	$(DAEMON_TARGET)       		\
 	$(DAEMON_TARGET).mdb   		\
-	$(EXTSTR)			\
 	$(DAEMON_WRAPPER)      		\
+	$(INDEX_OPTIMIZER_TARGET)	\
+	$(INDEX_OPTIMIZER_TARGET).mdb	\
+	$(INDEX_OPTIMIZER_WRAPPER)	\
 	$(EXTRACT_CONTENT_TARGET)	\
 	$(EXTRACT_CONTENT_TARGET).mdb	\
 	$(EXTRACT_CONTENT_WRAPPER)	\
+	$(MASTER_DELETE_TARGET)		\
+	$(MASTER_DELETE_TARGET).mdb	\
+	$(MASTER_DELETE_WRAPPER)	\
 	$(SNIPPET_TEST_TARGET)		\
 	$(SNIPPET_TEST_TARGET).mdb	\
 	$(SNIPPET_TEST_WRAPPER)

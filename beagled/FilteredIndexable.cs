@@ -232,8 +232,9 @@ namespace Beagle.Daemon {
 
 			filter = FilterFactory.CreateFilterFromMimeType (MimeType);
 			
-
 			if (filter != null) {
+
+				filter.Identifier = ContentUri.LocalPath;
 
 				if (filter.SnippetMode) {
 					TextWriter writer = TextCache.GetWriter (Uri);

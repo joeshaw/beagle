@@ -178,12 +178,12 @@ namespace Beagle.Daemon.FileSystemQueryable {
 			int cmp;
 
 			// Sort in increasing order of dirty-time
-			cmp = dirty_time.CompareTo (other.dirty_time);
+			cmp = DateTime.Compare (dirty_time, other.dirty_time);
 			if (cmp != 0)
 				return cmp;
 
 			// Then sort in increasing order of crawl-time
-			cmp = last_crawl_time.CompareTo (other.last_crawl_time);
+			cmp = DateTime.Compare (last_crawl_time, other.last_crawl_time);
 			if (cmp != 0)
 				return cmp;
 
@@ -191,7 +191,7 @@ namespace Beagle.Daemon.FileSystemQueryable {
 			// We give priority to short directories over longer
 			// ones, on the theory that stuff higher up in the
 			// directory structure is more likely to be important.
-			cmp = path_length.CompareTo (other.path_length);
+			cmp = path_length - other.path_length;
 			if (cmp != 0)
 				return cmp;
 

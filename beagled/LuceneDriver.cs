@@ -31,6 +31,7 @@
 
 using System;
 using System.Collections;
+using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Text;
@@ -61,6 +62,46 @@ namespace Beagle.Daemon {
 
 		public event ChangedHandler ChangedEvent;
 
+		/////////////////////////////////////////////////////
+		
+		private static string optimizer_path;
+		
+		static LuceneDriver ()
+		{
+			string beop = Environment.GetEnvironmentVariable ("BEAGLE_EXTERNAL_OPTIMIZER_PATH");
+
+			if (beop != null)
+				optimizer_path = Path.Combine (beop, "beagle-index-optimizer");
+
+			if (optimizer_path != null) {
+				optimizer_path = Path.GetFullPath (optimizer_path);
+				if (File.Exists (optimizer_path)) {
+					Logger.Log.Debug ("Found optimizer script at {0}", optimizer_path);
+
+					try {
+						// Try running the optimizer script w/ no args
+						Process p = new Process ();
+						p.StartInfo.UseShellExecute = true;
+						p.StartInfo.FileName = optimizer_path;
+						p.StartInfo.Arguments = "bogus";
+						p.Start ();
+						p.WaitForExit ();
+					} catch (Exception ex) {
+						Logger.Log.Debug ("Attempt to run optimizer script led to an exception");
+						Logger.Log.Debug (ex);
+						Logger.Log.Debug ("Optimization will occur in-process");
+						optimizer_path = null;
+					}
+
+				} else {
+					Logger.Log.Debug ("Can't find optimizer at {0}", optimizer_path);
+					Logger.Log.Debug ("Optimization will occur in-process");
+					optimizer_path = null;
+				}
+			}
+		}
+
+		/////////////////////////////////////////////////////
 		
 		// 1: Original
 		// 2: Changed format of timestamp strings
@@ -467,16 +508,39 @@ namespace Beagle.Daemon {
 				optimizing = true;
 			}
 
-			Log.Debug ("Optimizing...");
+			Log.Debug ("Optimizing {0}...", StorePath);
 
 			Stopwatch watch = new Stopwatch ();
 			watch.Start ();
-			IndexWriter writer = new IndexWriter (Store, null, false);
-			writer.Optimize ();
-			writer.Close ();
+
+			bool optimize_in_process = true;
+
+			if (optimizer_path != null) {
+				try {
+					// Try to optimize in an external process
+					Process p = new Process ();
+					p.StartInfo.UseShellExecute = true;
+					p.StartInfo.FileName = optimizer_path;
+					p.StartInfo.Arguments = StorePath;
+					p.Start ();
+					p.WaitForExit ();
+					optimize_in_process = false;
+				} catch (Exception ex) {
+					Log.Debug ("Caught exception while running beagle-index-optimizer");
+					Log.Debug (ex);
+				}
+			}
+
+			if (optimize_in_process) {
+				Log.Debug ("Optimizing in-process.");
+				IndexWriter writer = new IndexWriter (Store, null, false);
+				writer.Optimize ();
+				writer.Close ();
+			}
+
 			watch.Stop ();
 
-			Log.Debug ("Optimization time: {0}", watch);
+			Log.Debug ("Optimization time for {0}: {1}", StorePath, watch);
 
 			lock (pending_by_uri) {
 				optimizing = false;
