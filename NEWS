@@ -1,4 +1,112 @@
 
+Version 0.0.8
+March 23, 2005
+
+Daemon/Infrastructure:
+* Added a new web services interface to beagled (KN Vijay)
+* Better support for Move events in the Inotify bindings (Robert Love)
+* Deal with unmatched Move events (Robert)
+* Properly catch exceptions if we try to watch a directory that
+  has just been deleted (Robert)
+* Handle filenames containing funny characters (Daniel Drake)
+* Allow beagled to be started even if X isn't running (Daniel)
+* Better handling of GConf exceptions (Daniel)
+* Check for null URIs in HitRegulator.Subtract() (Veerapuram Varadhan)
+* Lots of snippet fixes and improvements (Fredrik Hedberg)
+* Fixed numerous shutdown-related deadlocks (Jon Trowbridge)
+* Uri serialization fixes (Jon, Daniel)
+* Throw the right exception if we can't set EAs on a file (Jon)
+* Removed inotify dependency from the code that processes gaim's
+  buddy list (Jon)
+* Use Mono.Posix functions to create Lucene's lockfiles (Jon)
+* Construct our lucene queries in a more reasonable way (Jon)
+* Fixed deadlocks and races in our D-BUS work-arounds (Jon)
+* Better disposal/clean-up of unregistered D-BUS objects (Jon)
+* Disable broken indexing of nautilus emblems and notes (Jon)
+* Don't cache the ignore state of files -- it uses too much memory (Jon)
+* When possible, re-use GLib.IdleHandlers to avoid allocations (Jon)
+* If a hit is filtered out of the query results because HitIsValid
+  returns false, schedule it for removal from the index (Jon)
+* Work around dropped FlushComplete signals by polling the flush
+  status in a timeout (Jon)
+* Added a new property type: properties that are stored but not
+  searched by standard queries (Jon)
+
+Backends:
+* Lots of file system backend fixes.  In particular, moving and
+  renaming files now works in many cases.  (Jon)
+* If the gconf key for Evolution accounts doesn't exist, fail gracefully.
+  (Joe)
+* Don't require inotify for the Addressbook or Launcher backends. (Joe)
+* Only index launchers with a name (Joe)
+* To avoid leaking delegates, iterate across GMime message parts by hand
+  instead of using the built-in foreach function. (Joe)
+* Make liberal use of 'using' clauses and Dispose() on GMime objects
+  to reduce our memory usage while indexing mail (Joe, Miguel de Icaza)
+* Use a search pattern when calling DirectoryInfo.GetFiles() so that we
+  don't load entries for all of the cached IMAP files into memory
+  (Joe, Jon)
+* Implemented HitIsValid check for the gaim log backend (Lukas Lipka)
+* Changed some non-user-visible properties in addressbook backend to be
+  unsearched (Jon)
+* Don't index mail headers as text (Jon)
+* If we are ignoring a file, ignore requests to remove it from the
+  index (Jon)
+* Do the right thing when renaming a file changes it's ignore-status (Jon)
+* Lots of fixes to the FSW file system backend (Jon)
+* Turn off synchronous writes to the sqlite NameIndex db (Jon)
+* If we are deferring shutting down the IndexHelper because no
+  RemoteIndexerImpl has been closed, wait a bit between checks (Jon)
+
+Filters:
+* Optimized Word document indexing (Varadhan)
+* Remove null characters from media tags (Varadhan)
+* Skip PPT 4.0 files, because we don't support them. (Varadhan)
+* OpenOffice 2.0 support (Varadhan)
+* Added OpenOffice 1.0 template and all 2.0 mimetypes to the OpenOffice
+  filter (Joe)
+* Better handling of GSF exceptions in the PPT filter (Varadhan)
+* Index non-ISO characters in Word documents (Varadhan)
+
+UI/tools:
+* Make PageUp and PageDown work in Best (Wouter Bolsterlee)
+* Added a .desktop file (Joe)
+* When running Best from menus, start in --no-tray mode (Lukas)
+* Skip over session management arguments to Best, they are handled by the
+  Gnome libraries (Joe)
+* Catch exceptions thrown by snippet requests, so that Best won't crash
+  if you flip through the pages of results while the daemon is down (Joe)
+* When opening a blog entry, don't kill Best if we can't open a handler
+  for the URI (Joe)
+* Added --show-window option (Joe)
+* Add 'Application' in front of launcher names so it is clear what
+  they are (Joe)
+* Fix F12 so that it works with numlock, caps lock, and whatever other
+  crazy modifiers might be on (Joe)
+* Don't crash on non-standard icon themes (Daniel)
+* Allow beagle-query to be run even if X isn't running (Daniel)
+* Improved command-line argument handling for Best (Lukas)
+* Shut down Best properly in non-tray mode (Lukas)
+* Fixed arguments in beagle-status (Lukas)
+* Open Gaim IRC logs in the IM viewer (Lukas)
+* Fixed Buddy List reader error (Lukas)
+* IM viewer clean-ups (Lukas)
+* Fall back to displaying the filename for untagged media files (Varadhan)
+* Display snippets in glorious technicolor (Fredrik)
+* Remember Best's position (Fredrik)
+* Best tile-rendering fixes (Fredrik)
+
+Everything else:
+* Configure-time check for sqlite and dbus headers (Joe)
+* Relentless, heroic D-BUS hacking and leak-fixing (Joe)
+* GMime leak fixes (Joe)
+* Fixed the Dashboard build (Joe)
+* Fun with memory profilers (Ben Maurer, Jon)
+* monogrind! (Nat Friedman)
+
+
+------------------------------------------------------
+
 Version 0.0.7
 February 28, 2005
 
