@@ -53,12 +53,11 @@ WRAPPERS = 				\
 
 bin_SCRIPTS = 			\
 	$(WRAPPERS) 		\
-	$(UPDATE_SCRIPT)	\
 	beagle-ping             \
 	beagle-shutdown		\
 	beagle-status
 
-all: $(TARGETS) $(WRAPPERS) $(UPDATE_SCRIPT)
+all: $(TARGETS) $(WRAPPERS)
 
 install-data-local: $(TARGETS)
 	$(mkinstalldirs) $(DESTDIR)$(pkglibdir)
@@ -71,10 +70,8 @@ EXTRA_DIST =				\
 	$(WRAPPER_IN)			\
 	$(QUERY_CSFILES)		\
 	$(INDEX_WEB_CONTENT_CSFILES)	\
-	$(UPDATE_SCRIPT).in		\
 	beagle-ping
 
 CLEANFILES = 				\
 	$(TARGETS)			\
-	$(WRAPPERS)			\
-	$(UPDATE_SCRIPT)
+	$(WRAPPERS)

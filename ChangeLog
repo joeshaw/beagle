@@ -1,3 +1,7 @@
+2004-10-25  Chris Lahey  <clahey@ximian.com>
+
+	* tools/Makefile.am: Remove UPDATE_SCRIPT.
+
 2004-10-19  Robert Love  <rml@novell.com>
 
 	* beagled/Filter.cs: move the FlushCache inside of the NULL check,
