@@ -110,7 +110,7 @@ namespace Beagle {
 
 		[XmlAttribute ("Uri")]
 		public string UriString {
-			get { return uri.ToString (); }
+			get { return UriFu.UriToSerializableString (uri); }
 			set { uri = UriFu.UriStringToUri (value); }
 		}
 
@@ -122,7 +122,7 @@ namespace Beagle {
 
 		[XmlAttribute ("ContentUri")]
 		public string ContentUriString {
-			get { return ContentUri.ToString (); }
+			get { return UriFu.UriToSerializableString (ContentUri); }
 			set { contentUri = UriFu.UriStringToUri (value); } 
 		}
 
@@ -134,7 +134,7 @@ namespace Beagle {
 		
 		[XmlAttribute ("HotContentUri")]
 		public string HotContentUriString {
-			get { return HotContentUri != null ? HotContentUri.ToString () : ""; }
+			get { return HotContentUri != null ? UriFu.UriToSerializableString (HotContentUri) : ""; }
 			set { hotContentUri = (value != "") ? new Uri (value) : null; }
 		}
 

@@ -488,7 +488,6 @@ namespace Beagle.Daemon {
 					double m = relevancy_multiplier (hit);
 					hit.ScoreMultiplier = (float) m;
 				}
-
 				result.Add (hit);
 			}
 
@@ -594,7 +593,7 @@ namespace Beagle.Daemon {
 			// First we add the Indexable's 'canonical' properties
 			// to the Document.
 			
-			f = Field.Keyword ("Uri", indexable.Uri.ToString ());
+			f = Field.Keyword ("Uri", UriFu.UriToSerializableString (indexable.Uri));
 			doc.Add (f);
 
 			f = Field.Keyword ("Type", indexable.Type);

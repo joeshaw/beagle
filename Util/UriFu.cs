@@ -56,6 +56,21 @@ namespace Beagle.Util {
 			return new Uri (path, true);
 		}
 
+		static public String UriToSerializableString (Uri uri)
+		{
+			// The ToString() of a file:// URI is not always representative of
+			// what it was constructed from. For example, it will return a
+			// # (which was inputted as %23) as %23, whereas the more standard
+			// behaviour for other escaped-characters is to return them as
+			// their actual character. (e.g. %40 gets returned as @)
+			// On the other hand, the LocalPath of a file:// URI does seem to
+			// return the literal # so we use that instead.
+			if (uri.IsFile)
+				return Uri.UriSchemeFile + Uri.SchemeDelimiter + uri.LocalPath;
+			else
+				return uri.ToString ();
+		}
+
 		//////////////////////////////////
 
 		public class Comparer : IComparer

@@ -87,7 +87,7 @@ namespace Beagle {
 		{
 			writer.Write (BU.StringFu.DateTimeToString (Timestamp));
 			writer.Write (id);
-			writer.Write (uri.ToString ());
+			writer.Write (BU.UriFu.UriToSerializableString (uri));
 			writer.Write (type);
 			writer.Write (mimeType == null ? "" : mimeType);
 			writer.Write (source);

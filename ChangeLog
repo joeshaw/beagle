@@ -1,3 +1,9 @@
+2005-03-09  Daniel Drake <dsd@gentoo.org>
+
+	* BeagleClient/Hit.cs, BeagleClient/Indexable.cs, Util/UriFu.cs,
+	beagled/LuceneDriver.cs: Round 3 of dsd vs Uri escaping: Fix for
+	filenames containing '#'
+
 2005-03-07  Daniel Drake <dsd@gentoo.org>
 
 	* beagled/FileSystemQueryable/FileNameFilter.cs: Use
