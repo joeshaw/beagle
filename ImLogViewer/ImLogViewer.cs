@@ -25,7 +25,6 @@ namespace ImLogViewer {
 		[Widget] ScrolledWindow logwindow;
 		[Widget] Button   searchbutton;
 		[Widget] Label    title;
-		[Widget] Label    conversation;
 		[Widget] Entry    search;
 		
 		private Timeline timeline;
@@ -93,11 +92,7 @@ namespace ImLogViewer {
 
 			SetTitle (new DateTime ());
 
-			// FIXME: We need to remove this widget from the glade
-			// file.  Just hiding it is sort of silly.
-			this.conversation.Hide ();
-		
-			populateLeftTree();
+			PopulateTimelineWidget ();
 
 			logsviewer.ExpandAll();
 
@@ -110,7 +105,8 @@ namespace ImLogViewer {
 			Application.Run();
 		}
 		
-		private void populateLeftTree() {
+		private void PopulateTimelineWidget ()
+		{
 			TreeIter parent;
 			
 			if (timeline.Today.Count != 0) {
