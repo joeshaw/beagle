@@ -52,8 +52,8 @@ namespace Beagle {
 		private string source = null;
 
 		// This is used to hold a copy of the Queryable in the
-		// server-side copy of the Hit.  It is always null on the
-		// client-side.
+		// server-side copy of the Hit.  It is always null
+		// on the client-side.
 		private object sourceObject = null;
 
 		// High scores imply greater relevance.

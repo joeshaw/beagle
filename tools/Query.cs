@@ -66,6 +66,8 @@ class QueryTool {
 				Console.WriteLine (hit.Uri);
 
 			if (verbose) {
+				string snippet = query.GetSnippet (hit.Uri);
+				Console.WriteLine (" Snip: {0}", snippet != null ? snippet : "(null)");
 				Console.WriteLine (" Type: {0}", hit.Type);
 				Console.WriteLine ("MimeT: {0}", hit.MimeType == null ? "(null)" : hit.MimeType);
 				Console.WriteLine ("  Src: {0}", hit.Source);

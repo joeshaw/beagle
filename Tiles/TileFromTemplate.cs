@@ -49,6 +49,12 @@ namespace Beagle.Tile {
 					template = new Template (template_resource);
 					Template["TileId"] = UniqueKey;
 					Template["action:"] = "action:" + UniqueKey + "!";
+
+					if (this.Uri != null && this.Query != null) {
+						string snippet = this.Query.GetSnippet (this.Uri);
+						Console.Write ("{0}: {1}", this.Uri, snippet);
+						Template["Snippet"] = snippet;
+					}
 				}
 
 				return template;

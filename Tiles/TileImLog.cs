@@ -69,9 +69,6 @@ namespace Beagle.Tile {
 			if (email != null)
 				Template ["SendMailAction"] = "Send Mail";
 			
-#if false
-			Template["snippet"] = getSnippet ();
-#endif
 			if (buddy != null && buddy.Alias != "")
 				Template["speakingalias"] = buddy.Alias;
 			else 
@@ -189,33 +186,6 @@ namespace Beagle.Tile {
 			}
 			else
 				return null;
-		}
-
-		private string getSnippet ()
-		{
-			ICollection logs = BU.GaimLog.ScanLog (new FileInfo (Hit ["fixme:file"]));
-
-			string snip = "";
-			
-			foreach (BU.ImLog log in logs) {
-					foreach (BU.ImLog.Utterance utt in log.Utterances) {
-						// FIXME: Query.Text is broken for me
-#if false
-						string s = HighlightOrNull (utt.Text, Query.Text);
-#else
-						string s = utt.Text;
-#endif
-						if (s != null) {
-							if (snip != "")
-								snip += " ... ";							    
-							snip += s;
-						}
-						
-					}
-			}
-
-			return snip.Substring (0, System.Math.Min (256, snip.Length));
-
 		}
 
 		[TileAction]

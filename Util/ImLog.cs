@@ -84,6 +84,15 @@ namespace Beagle.Util {
 			}							    
 		}
 
+		public string EllipsizedSnippet {
+			get {
+				string snippet = Snippet;
+				// FIXME: We should try to avoid breaking mid-word
+				if (snippet != null && snippet.Length > 50)
+					snippet = snippet.Substring (0, 50) + "...";
+				return snippet;
+			}
+		}
 
 		public ICollection Speakers {
 			get { return speakerHash.Keys; }
@@ -250,9 +259,6 @@ namespace Beagle.Util {
 					best_word_count = word_count;
 				}
 
-				// FIXME: We should try to avoid breaking mid-word
-				if (Snippet != null && Snippet.Length > 50)
-					Snippet = Snippet.Substring (0, 50) + "...";
 
 				if (word_count > 3)
 					return true;

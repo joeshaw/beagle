@@ -45,9 +45,10 @@ namespace Beagle.Daemon {
 		{
 			string path;
 			lock (this) {
-				path = String.Format ("/com/novell/Beagle/{0}/{1}",
+				path = String.Format ("/com/novell/Beagle/{0}/{1}-{2}",
 						      obj.GetType (),
-						      path_counter);
+						      path_counter,
+						      Guid.NewGuid ().ToString ());
 				++path_counter;
 			}
 

@@ -88,7 +88,11 @@ namespace Beagle
 
 		public string GetSnippet (Uri uri)
 		{
-			return GetSnippetFromUriString (uri.ToString ());
+			string snippet;
+			snippet = GetSnippetFromUriString (uri.ToString ());
+			if (snippet == "")
+				snippet = null;
+			return snippet;
 		}
 
 		private void OnHitsAddedAsBinary (QueryProxy sender, string hitsData)

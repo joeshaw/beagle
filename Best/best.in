@@ -14,6 +14,7 @@ if [ -e ./@target@ ] && [ -e ./Makefile.am ] ; then
     THIS_PATH="../Util:../images:../Lucene.Net:../indexer:../Tiles:../BeagleClient:../glue"
     THIS_EXE="./@target@"
     export LD_LIBRARY_PATH="../glue/.libs:$LD_LIBRARY_PATH"
+    export PATH="../ImLogViewer:$PATH"
 else
     THIS_PATH="@pkglibdir@"
     THIS_EXE="@pkglibdir@/@target@"

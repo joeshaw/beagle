@@ -185,5 +185,41 @@ namespace Beagle.Daemon.GaimLogQueryable {
 			return HalfLifeMultiplierFromProperty (hit, 0.25,
 							       "fixme:endtime", "fixme:starttime");
 		}
+
+		override public string GetSnippet (QueryBody body, Hit hit)
+		{
+			// FIXME: This does the wrong thing for old-style logs.
+			string file = hit ["fixme:file"];
+			ICollection logs = GaimLog.ScanLog (new FileInfo (file));
+			IEnumerator iter = logs.GetEnumerator ();
+			ImLog log = null;
+			if (iter.MoveNext ())
+				log = iter.Current as ImLog;
+			if (log == null)
+				return null;
+
+			// FIXME: This is very lame, and doesn't do the
+			// right thing w/ stemming, word boundaries, etc.
+			foreach (ImLog.Utterance utt in log.Utterances) {
+				string text = utt.Text.ToLower ();
+				int i = -1;
+				string match = null;
+				foreach (string query_text in body.Text) {
+					i = text.IndexOf (query_text.ToLower ());
+					if (i >= 0) {
+						match = query_text;
+						break;
+					}
+				}
+				if (i >= 0) {
+					text = utt.Text;
+					return text.Substring (0, i) + "<b>" + match + "</b>" + text.Substring (i + match.Length);
+				}
+			}
+
+			// If all else fails, return the log's generic snippet
+			return log.Snippet;
+		}
 	}
 }
+

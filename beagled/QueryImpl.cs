@@ -177,6 +177,9 @@ namespace Beagle.Daemon {
 					snippet = queryable.GetSnippet (body, hit);
 			}
 
+			if (snippet == null)
+				snippet = "";
+
 			Logger.Log.Debug ("Requesting snippet for {0}, got '{1}'", uri, snippet);
 
 			return snippet;

@@ -202,7 +202,7 @@ namespace Beagle.Daemon {
 
 		public virtual string GetSnippet (QueryBody body, Hit hit)
 		{
-			return "Snippet for " + hit.Uri + " (query " + body.QuotedText + ")";
+			return null;
 		}
 
 		/////////////////////////////////////////

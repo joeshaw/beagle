@@ -165,7 +165,7 @@ namespace ImLogViewer {
 			foreach (ImLog log in list) {
 				string date_str = log.StartTime.ToString (dateformat);
 				TreeIter iter;
-				iter = treeStore.AppendValues (parent, date_str, log.Snippet, log);
+				iter = treeStore.AppendValues (parent, date_str, log.EllipsizedSnippet, log);
 				if (! have_first_selection_iter || log.LogFile == first_selected_log) {
 					have_first_selection_iter = true;
 					first_selection_iter = iter;

@@ -38,45 +38,157 @@ namespace Beagle.Util {
 
 	public class StringMatcher {
 
-		private ArrayList needle_array = new ArrayList ();
-
-		public void Add (string needle)
-		{
-			needle_array.Add (needle);
-			needle_vector = null;
+		private class Pattern {
+			public string Term;
+			public bool   RequireLeadingWordBoundary;
+			public bool   RequireTrailingWordBoundary;
 		}
 
-		static int [] ComputeOverlapTable (string needle)
-		{
-			int [] overlap = new int [needle.Length];
+		public class Match {
+			protected string term;
+			protected int position;
 
-			overlap [0] = -1;
-			for (int i = 0; i < needle.Length-1; ++i) {
-				overlap [i+1] = overlap [i] + 1;
-				while (overlap [i + 1] > 0
-				       && needle [i] != needle [overlap [i + 1] - 1])
-					overlap [i + 1] = overlap [overlap [i + 1] - 1] + 1;
+			public Match (string term, int position)
+			{
+				this.term = term;
+				this.position = position;
 			}
-			
-			return overlap;
+
+			public string Term {
+				get { return term; }
+			}
+
+			public int Position {
+				get { return position; }
+			}
 		}
 
-		private string [] needle_vector;
-		private int [][]  overlap_vector;
+		ArrayList pattern_array = new ArrayList ();
+		int [][]  overlap_vector;
+		int []    state_vector;
+		
+		TextReader reader;
+		char [] buffer = new char [8192];
+		int buffer_offset;
+		int buffer_len;
+		int buffer_pos;
+		bool finished;
+
+		public void Add (string term,
+				 bool   require_leading,
+				 bool   require_trailing)
+		{
+			Pattern pattern = new Pattern ();
+			pattern.Term = term;
+			pattern.RequireLeadingWordBoundary = require_leading;
+			pattern.RequireTrailingWordBoundary = require_trailing;
+
+			pattern_array.Add (pattern);
+		}
 
 		public void Study ()
 		{
-			int N = needle_array.Count;
 
-			needle_vector = new string [N];
-			for (int i = 0; i < N; ++i)
-				needle_vector [i] = (string) needle_array [i];
 
-			overlap_vector = new int [N] [];
-			for (int i = 0; i < N; ++i)
-				overlap_vector [i] = ComputeOverlapTable (needle_vector [i]);
 		}
-		
+
+		public void Start (TextReader _reader)
+		{
+			int N = pattern_array.Count;
+
+			// Build the overlap vector
+			overlap_vector = new int [N] [];
+			for (int i = 0; i < N; ++i) {
+				Pattern pattern = pattern_array [i] as Pattern;
+				string term = pattern.Term;
+				
+				int [] overlap = new int [term.Length];
+				overlap [0] = -1;
+				for (int j = 0; i < term.Length-1; ++j) {
+					overlap [j + 1] = overlap [j] + 1;
+					while (overlap [j + 1] > 0
+					       && term [j] != term [overlap [j + 1] - 1])
+						overlap [j + 1] = overlap [overlap [j + 1] - 1] + 1;
+				}
+				
+				overlap_vector [i] = overlap;
+			}
+
+			state_vector = new int [N];
+			
+			reader = _reader;
+
+			buffer_offset = 0;
+			buffer_len = -1;
+			buffer_pos = 0;
+
+			finished = false;
+		}
+
+		public Match Find ()
+		{
+			if (finished)
+				return null;
+
+			int N = pattern_array.Count;
+
+			while (true) {
+
+				// If necessary, read another block of characters
+				// into our buffer.
+				if (buffer_pos >= buffer_len) {
+					if (buffer_len > 0)
+						buffer_offset += buffer_len;
+					buffer_len = reader.Read (buffer, 0, buffer.Length);
+					if (buffer_len <= 0) {
+						finished = true;
+						return null;
+					}
+				}
+
+				while (buffer_pos < buffer_len) {
+					char buffer_c = buffer [buffer_pos];
+					++buffer_pos;
+
+					// Try each pattern in sequence
+					for (int i = 0; i < N; ++i) {
+						Pattern pattern = pattern_array [i] as Pattern;
+						string term = pattern.Term;
+
+						while (true) {
+
+							int state = state_vector [i];
+							if (buffer_c == term [state]) {
+
+								// If we match, move to the next state.
+								++state_vector [i];
+
+								// if we reach the last state, return
+								// a Match object.
+								if (state_vector [i] == term.Length) {
+									state_vector [i] = 0;
+									return new Match (term, buffer_offset + buffer_pos - term.Length);
+								}
+
+								// Otherwise break out of the loop so that we can
+								// proceed to the next needle.
+								break;
+
+							} else if (state == 0) {
+								// If we don't get a match in the first
+								// state, there is no hope...
+								break;
+							} else {
+								// Try a shorter partial match
+								state_vector [i] = overlap_vector [i] [state];
+							}
+						}
+					}
+				}
+			}
+		}
+
+#if false		
 		public int Find (TextReader reader)
 		{
 			if (needle_vector == null || overlap_vector == null)
@@ -84,9 +196,6 @@ namespace Beagle.Util {
 
 			int N = needle_vector.Length;
 
-			char [] buffer = new char [8192];
-			int buffer_offset = 0;
-			int buffer_len = -1;
 			
 			int [] offset_vector = new int [N];
 
@@ -136,9 +245,11 @@ namespace Beagle.Util {
 				}
 			}
 
-			return -1;
+			return null;
 		}
+#endif
 
+#if false
 		static void Main ()
 		{
 			StringMatcher matcher = new StringMatcher ();
@@ -160,6 +271,8 @@ namespace Beagle.Util {
 				Console.WriteLine ("[{0}]", line);
 			}
 		}
+#endif
 	}
 }
 	
+
