@@ -196,12 +196,17 @@ tomboyqueryable = $(srcdir)/TomboyQueryable
 TOMBOY_QUERYABLE_CSFILES =				\
 	$(tomboyqueryable)/TomboyQueryable.cs
 
+mailqueryable = $(srcdir)/MailQueryable
+MAIL_QUERYABLE_CSFILES =				\
+	$(mailqueryable)/MailQueryable.cs
+
 DAEMON_DLL_CSFILES = 				\
 	$(LUCENE_CSFILES)			\
 	$(FILE_SYSTEM_QUERYABLE_CSFILES)	\
 	$(WEB_HISTORY_QUERYABLE_CSFILES)	\
 	$(GAIM_LOG_QUERYABLE_CSFILES)		\
 	$(TOMBOY_QUERYABLE_CSFILES)		\
+	$(MAIL_QUERYABLE_CSFILES)		\
 	$(srcdir)/DBusisms.cs			\
 	$(srcdir)/Ping.cs			\
 	$(srcdir)/FactoryImpl.cs		\

@@ -49,7 +49,7 @@ Misc
 Mail
 ----
 
-* IndexMail needs to support IMAP.  The necessary changes to support
+* MailQueryable needs to support IMAP.  The necessary changes to support
   Evo 1.5 IMAP summaries have been made to camel.cs --- it is solely a
   question of walking ~/.evolution/mail/imap and doing the right thing.
 
