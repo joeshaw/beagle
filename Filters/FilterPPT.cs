@@ -550,8 +550,10 @@ namespace Beagle.Filters {
 			int childCount = 0;
 			int found = 0;
 			
-			if (file == null)
+			if (file == null) {
+				Finished ();
 				return;
+			}
 
 			// FIXME: Should try to use Encoding instead of 
 			// string.IndexOf ()... Hacky stuff ;-)
@@ -572,8 +574,10 @@ namespace Beagle.Filters {
 
 		override protected void DoPull ()
 		{
-			if (file == null)
+			if (file == null) {
+				Finished ();
 				return;
+			}
 
 			Input stream = null;
 			stream = file.ChildByName ("PowerPoint Document");
@@ -629,8 +633,9 @@ namespace Beagle.Filters {
 				// "PP97_DUALSTORAGE" is a storage containing some streams
 				if (dualStorTemp.Handle != IntPtr.Zero)
 					file = (Gsf.Infile) GLib.Object.GetObject (dualStorTemp.Handle);
-			} else if ((dualStorTemp = file.ChildByName ("Header")) != null) {
-				Logger.Log.Error ("{0} is a PPT 95 file.  Beagle does not support PPT 95 files. Skipping...", FileName);
+			} else if (((dualStorTemp = file.ChildByName ("Header")) != null) ||
+				   ((dualStorTemp = file.ChildByName ("PowerPoint Document")) == null)) {
+				Logger.Log.Error ("{0} is a PPT 95/4.0 file.  Beagle does not support PPT 95 files. Skipping...", FileName);
 				Finished ();
 			}
 		}
