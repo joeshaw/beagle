@@ -1,6 +1,6 @@
 
 Beagle is an indexing sub-system and search aggregator built on top of
-Lucene.Net.
+the Lucene indexer.
 
 For general information on Beagle, visit http://www.gnome.org/projects/beagle.
 
