@@ -2,6 +2,7 @@
 // NautilusTools.cs
 //
 // Copyright (C) 2004 Joe Gasiorek
+// Copyright (C) 2004 Novell, Inc.
 //
 
 //

@@ -15,6 +15,7 @@ CSFILES = 				\
 	$(srcdir)/camel.cs		\
 	$(srcdir)/gnome.cs		\
 	$(srcdir)/Vfs.cs		\
+	$(srcdir)/FSpotTools.cs		\
 	$(srcdir)/Id3.cs		\
 	$(srcdir)/ImLog.cs		\
 	$(srcdir)/Logger.cs		\
@@ -23,9 +24,10 @@ CSFILES = 				\
 	$(srcdir)/PullingReader.cs	\
 	$(srcdir)/StringFu.cs
 
-ASSEMBLIES =			\
+ASSEMBLIES =				\
 	$(BEAGLE_UI_LIBS)		\
-	-r:System.Web.Services
+	-r:System.Web.Services		\
+	-r:Mono.Data.SqliteClient
 
 
 $(TARGET): $(CSFILES) $(GOOGLE_CS)

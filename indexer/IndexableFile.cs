@@ -120,6 +120,16 @@ namespace Beagle {
 
 			this ["_NautilusEmblem"] = BU.NautilusTools.GetEmblem (path);
 			this ["NautilusNotes"] = BU.NautilusTools.GetNotes (path);
+
+			// Check for FSpot metadata on images.
+			// This is fairly hacky --- we need some sort of unified metadata
+			// system for the desktop.
+			if (MimeType.StartsWith ("image/")) {
+				BU.FSpotTools.Photo photo = BU.FSpotTools.GetPhoto (path);
+				if (photo != null) {
+					this ["Description"] = photo.Description;
+				}
+			}
 		}
 	}
 
