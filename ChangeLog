@@ -1,5 +1,11 @@
 2005-01-28  Veerapuram Varadhan	 <vvaradhan@novell.com>
 
+	* Filter/FilterOpenOffice.cs: Fix for Bug#:162910.
+	table-count is improperly shown as spreadsheet-count in 
+	Sxw.
+	
+2005-01-28  Veerapuram Varadhan	 <vvaradhan@novell.com>
+
 	* Tiles/template-docs.html: Fix for Bug#:165480.
 	Instead of @Snippet@ use @%Snippet@ to process the
 	markups present in @Snippet@.

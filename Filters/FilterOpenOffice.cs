@@ -397,7 +397,8 @@ namespace Beagle.Filters {
 					// count of tables in a sxw whereas calc stores the count of
 					// spreadsheets in a sxc.
 					attr = reader.GetAttribute ("meta:table-count");
-					if (attr != null && Convert.ToInt32 (attr) > 0)
+					if (attr != null && Convert.ToInt32 (attr) > 0 
+					    && MimeType == "application/vnd.sun.xml.calc")
 						AddProperty (Beagle.Property.NewKeyword ("fixme:spreadsheet-count", attr));
 					break;
 
