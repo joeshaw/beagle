@@ -30,6 +30,8 @@ using System.IO;
 
 using BU = Beagle.Util;
 
+using Gnome;
+
 namespace Beagle.Tile {
 
 	[HitFlavor (Name="Pictures", Rank=500, Emblem="emblem-picture.png", Color="#f5f5fe",
@@ -44,8 +46,12 @@ namespace Beagle.Tile {
 		{
 			base.PopulateTemplate ();
 
-			Template["Thumbnail"] = Images.GetHtmlSource (Hit.Uri.ToString (),
-								      Hit.MimeType);
+			string thumbnail = Thumbnail.PathForUri (Hit.Uri.ToString (), ThumbnailSize.Normal);
+
+			if (File.Exists (thumbnail))
+				Template["Thumbnail"] = Images.GetHtmlSource (new Uri (thumbnail), Hit.MimeType);
+			else
+				Template["Thumbnail"] = Images.GetHtmlSource (Hit.Uri.ToString (), Hit.MimeType);
 		}
 	}
 }
