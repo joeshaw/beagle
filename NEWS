@@ -1,4 +1,64 @@
 
+Version 0.0.7
+February 28, 2005
+
+Backends:
+* De-inotification of backends (Jon Trowbridge, Fredrik Hedberg)
+* Lots of file system backend improvements (Jon)
+* Deal with missing Evo mail directories (Joe Shaw, Lukas Lipka,
+  Daniel Drake)
+* Detect Evo summary file versions and skip ones we won't support (Joe)
+* Launcher backend clean-up (Daniel)
+* In the mail backend, don't index mail headers or non-text parts as
+  text (Jon)
+
+Daemon/Infrastructure:
+* Don't check access before setting EAs (Lukas)
+* De-inotification of directory creation (Daniel, Christopher Orr)
+* Before we serialize any XML, check for invalid characters (Joe)
+* More fixes for filenames containing @ (Jon)
+* Fixed logging for helper process (Jon)
+* Don't complain so loudly if we can't set EAs on files (Daniel)
+* Properly handle --fg and --bg in the beagled script (Jon)
+* Look at VmRSS to decide when to restart the helper, not VmSize (Jon)
+* Set the helper max memory size relative to the initial footprint (Jon)
+* Added environment variables to override where beagle looks for your
+  files and when it writes its indexes (Jon)
+* TextCache fixes (Jon)
+* Reset the stored path if a file already has attributes but appears to have
+  been moved, copied or renamed (Jon)
+* Properly shutdown the helper if the beagled terminates after an add
+  but before flushing the indexer (Jon)
+* Properly deal with multiple entries for one path in the fallback
+  file attributes sqlite db (Jon)
+* While indexing, filter out stuff that is obviously not text (Jon)
+
+Filters:
+* Greatly improved handling of .ppt files (Veerapuram Varadhan)
+* Strip junk characters from .doc files (Varadhan)
+* Support odt format in OpenOffice filter (Varadhan)
+* Index contents of hyperlink fields in OpenOffice documents (Varadhan)
+* Handle exif dates gracefully (Daniel)
+* Support both libexif 0.5 and 0.6 (Daniel)
+* Fail gracefully if an exception is thrown while a filter is pulling
+  text (Jon)
+* Don't index text/plain files that are suspiciously large (Jon)
+
+UI:
+* Print out nice error messages on dbus exceptions in beagle-query
+  (Daniel)
+* If we're unable to launch a process from Best, don't crash (Joe)
+* Show snippets in presentation tiles (Jon)
+
+Everything Else:
+* D-BUSology (Joe)
+* Wiki (Joe Gasiorek.)
+* Newsletter (Joe G.)
+* Fixed spelling of Tom von Schwerdtner's name... sorry! (Jon)
+* All the stuff I forgot (All the people I forgot)
+
+------------------------------------------------------
+
 Version 0.0.6.1
 February 16, 2005
 
@@ -48,7 +108,7 @@ Filters:
 * C# filter fixes (Varadhan, with a shout out to Rafael Slinckx)
 
 UI:
-* Filter web history indexing by domain (Tom van Schwerdtner)
+* Filter web history indexing by domain (Tom von Schwerdtner)
 * Mozilla extension UI enhancements (James Viapond)
 * Fixed best searches from the mozilla extensions (Rich Midwinter)
 * Fixed the entry focus in Best (Stephen Solka)
@@ -67,7 +127,6 @@ Everything Else:
 * Testing and Bug Reports (Everyone)
 * Hand-to-hand combat with D-BUS (Joe)
 * Man pages (Robert)
-
 
 ------------------------------------------------------
 
@@ -125,7 +184,6 @@ Everything Else:
 * GMime hacking (Joe)
 * Win32 porting (Fredrik)
 * All the stuff I forgot (All the people I forgot)
-
 
 ------------------------------------------------------
 
