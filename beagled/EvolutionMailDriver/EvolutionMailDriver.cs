@@ -103,6 +103,7 @@ namespace Beagle.Daemon {
 
 			this.crawler.ScheduleCrawl (new DirectoryInfo (local_path), -1);
 			this.crawler.ScheduleCrawl (new DirectoryInfo (imap_path), -1);
+			this.crawler.StopWhenEmpty ();
 
 			stopwatch.Stop ();
 			Logger.Log.Info ("Evolution mail driver worker thread done in {0}",
