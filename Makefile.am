@@ -1,2 +1,2 @@
 
-SUBDIRS = Lucene.Net Filters indexer tools
+SUBDIRS = Lucene.Net Filters indexer tools Best

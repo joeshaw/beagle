@@ -21,4 +21,5 @@ Lucene.Net/Makefile
 Filters/Makefile
 indexer/Makefile
 tools/Makefile
+Best/Makefile
 ])
