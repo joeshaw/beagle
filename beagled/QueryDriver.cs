@@ -102,7 +102,16 @@ namespace Beagle.Daemon {
 			foreach (QueryableInfo qi in queryableInfo) {
 
 				IQueryable queryable;
-				queryable = (IQueryable) Activator.CreateInstance (qi.Type);
+
+				try {
+					queryable = (IQueryable) Activator.CreateInstance (qi.Type);
+				} catch (Exception e) {
+					Exception ex = e.InnerException != null ? e.InnerException : e;
+
+					Console.WriteLine ("Exception trying to activate {0} backend:\n{1}", qi.Type, ex);
+					continue;
+				}
+				
 				queryables.Add (queryable);
 				queryable.ChangedEvent += OnQueryableChanged;
 			}
