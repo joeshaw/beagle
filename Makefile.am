@@ -15,7 +15,8 @@ SUBDIRS = 			\
 	Best			\
 	mozilla-extension	\
 	searchomatic		\
-	chooser-fu
+	chooser-fu		\
+	tray
 
 if ENABLE_EPIPHANY_EXTENSION
 SUBDIRS += epiphany-extension
