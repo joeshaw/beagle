@@ -236,7 +236,9 @@ namespace Beagle.Daemon {
 
 			FileAttributes attr = new FileAttributes ();
 
-			attr.UniqueId = "Foo"; // FIXME!
+			// FIXME?: we just assume that there won't be collisions.
+			attr.UniqueId = Guid.NewGuid ().ToString ();
+
 			attr.Path = path;
 			attr.LastWriteTime = mtime;
 			attr.LastIndexedTime = DateTime.Now;

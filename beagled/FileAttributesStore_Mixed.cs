@@ -55,11 +55,7 @@ namespace Beagle.Daemon {
 
 		public bool Write (FileAttributes attr)
 		{
-			if (store_ea.Write (attr)) {
-				store_sqlite.Write (attr);
-				return true;
-			}
-			return store_sqlite.Write (attr);
+			return store_ea.Write (attr) || store_sqlite.Write (attr);
 		}
 
 		public void Drop (string path)

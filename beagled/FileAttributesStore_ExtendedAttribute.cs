@@ -85,7 +85,6 @@ namespace Beagle.Daemon {
 
 			} catch (Exception e) {
 				// FIXME: Do something smarter with the exception.
-				Console.WriteLine (e);
 				return null;
 			}
 		}
@@ -115,7 +114,6 @@ namespace Beagle.Daemon {
 				return true;
 			} catch (Exception e) {
 				// FIXME: Do something smarter with the exception.
-				Console.WriteLine (e);
 				return false;
 			}
 		}
@@ -135,7 +133,6 @@ namespace Beagle.Daemon {
 
 			} catch (Exception e) {
 				// FIXME: Do something smarter with the exception.
-				Console.WriteLine (e);
 			}
 		}
 
