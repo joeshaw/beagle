@@ -764,12 +764,6 @@ namespace Beagle.Daemon {
 					body_query.Add (q, false, false);
 				}
 
-				q = ToCoreLuceneQuery (body, "PropertiesText");
-				if (q != null) {
-					q.SetBoost (2.5f);
-					body_query.Add (q, false, false);
-				}
-
 				q = ToCoreLuceneQuery (body, "PropertiesKeyword");
 				if (q != null) {
 					q.SetBoost (2.5f);
