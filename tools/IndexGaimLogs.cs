@@ -62,6 +62,7 @@ namespace IndexGaimLogs {
 
 			StringBuilder text = new StringBuilder ();
 			foreach (ImLog.Utterance utt in log.Utterances) {
+				//Console.WriteLine ("[{0}][{1}]", utt.Who, utt.Text);
 				text.Append (utt.Text);
 				text.Append (" ");
 			}

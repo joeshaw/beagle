@@ -274,15 +274,25 @@ namespace Beagle.Util {
 				return;
 			}
 			int j = line.IndexOf (')');
-			if (j == -1)
+			if (j == -1) {
+				log.AppendToPreviousUtterance (line);
 				return;
+			}
 			string whenStr = line.Substring (1, j-1);
-			line = line.Substring (j+1).Trim ();
-
 			string[] whenSplit = whenStr.Split (':');
-			int hour   = int.Parse (whenSplit [0]);
-			int minute = int.Parse (whenSplit [1]);
-			int second = int.Parse (whenSplit [2]);
+			int hour, minute, second;
+			try {
+				hour   = int.Parse (whenSplit [0]);
+				minute = int.Parse (whenSplit [1]);
+				second = int.Parse (whenSplit [2]);
+			} catch {
+				// If something goes wrong, this line probably
+				// spills over from the previous one.
+				log.AppendToPreviousUtterance (line);
+				return;
+			}
+
+			line = line.Substring (j+1).Trim ();
 
 			// FIXME: this is wrong --- since we just get a time,
 			// the date gets set to 'now'
