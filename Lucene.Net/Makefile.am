@@ -1,129 +1,144 @@
-CSC=mcs -g
-LIBFLAGS=-target:library -r:System.Runtime.Remoting
 
-LUCENE_NET_CSFILES =				\
-	AssemblyInfo.cs				\
-	Analysis/Analyzer.cs			\
-	Analysis/CharTokenizer.cs		\
-	Analysis/LetterTokenizer.cs		\
-	Analysis/LowerCaseFilter.cs		\
-	Analysis/LowerCaseTokenizer.cs		\
-	Analysis/PerFieldAnalyzerWrapper.cs	\
-	Analysis/PorterStemFilter.cs		\
-	Analysis/PorterStemmer.cs		\
-	Analysis/SimpleAnalyzer.cs		\
-	Analysis/StopAnalyzer.cs		\
-	Analysis/StopFilter.cs			\
-	Analysis/Token.cs			\
-	Analysis/TokenFilter.cs			\
-	Analysis/Tokenizer.cs			\
-	Analysis/TokenStream.cs			\
-	Analysis/WhitespaceAnalyzer.cs		\
-	Analysis/WhitespaceTokenizer.cs		\
-	Analysis/Standard/CharStream.cs		\
-	Analysis/Standard/FastCharStream.cs	\
-	Analysis/Standard/ParseException.cs	\
-	Analysis/Standard/StandardAnalyzer.cs	\
-	Analysis/Standard/StandardFilter.cs	\
-	Analysis/Standard/StandardTokenizerConstants.cs	\
-	Analysis/Standard/StandardTokenizer.cs		\
+CSC = mcs -g
+
+TARGET = Lucene.Net.dll
+
+CSFLAGS = -target:library
+
+CSFILES =							\
+	AssemblyInfo.cs						\
+	Analysis/Analyzer.cs					\
+	Analysis/CharTokenizer.cs				\
+	Analysis/LetterTokenizer.cs				\
+	Analysis/LowerCaseFilter.cs				\
+	Analysis/LowerCaseTokenizer.cs				\
+	Analysis/PerFieldAnalyzerWrapper.cs			\
+	Analysis/PorterStemFilter.cs				\
+	Analysis/PorterStemmer.cs				\
+	Analysis/SimpleAnalyzer.cs				\
+	Analysis/StopAnalyzer.cs				\
+	Analysis/StopFilter.cs					\
+	Analysis/Token.cs					\
+	Analysis/TokenFilter.cs					\
+	Analysis/Tokenizer.cs					\
+	Analysis/TokenStream.cs					\
+	Analysis/WhitespaceAnalyzer.cs				\
+	Analysis/WhitespaceTokenizer.cs				\
+	Analysis/Standard/CharStream.cs				\
+	Analysis/Standard/FastCharStream.cs			\
+	Analysis/Standard/ParseException.cs			\
+	Analysis/Standard/StandardAnalyzer.cs			\
+	Analysis/Standard/StandardFilter.cs			\
+	Analysis/Standard/StandardTokenizerConstants.cs		\
+	Analysis/Standard/StandardTokenizer.cs			\
 	Analysis/Standard/StandardTokenizerTokenManager.cs	\
-	Analysis/Standard/Token.cs		\
-	Analysis/Standard/TokenMgrError.cs	\
-	Document/DateField.cs			\
-	Document/Document.cs			\
-	Document/Field.cs			\
-	Index/CompoundFileReader.cs		\
-	Index/CompoundFileWriter.cs		\
-	Index/DocumentWriter.cs			\
-	Index/FieldInfo.cs			\
-	Index/FieldInfos.cs			\
-	Index/FieldsReader.cs			\
-	Index/FieldsWriter.cs			\
-	Index/FilterIndexReader.cs		\
-	Index/IndexReader.cs			\
-	Index/IndexWriter.cs			\
-	Index/MultipleTermPositions.cs		\
-	Index/SegmentInfo.cs			\
-	Index/SegmentInfos.cs			\
-	Index/SegmentMergeInfo.cs		\
-	Index/SegmentMergeQueue.cs		\
-	Index/SegmentMerger.cs			\
-	Index/SegmentReader.cs			\
-	Index/SegmentsReader.cs			\
-	Index/SegmentTermDocs.cs		\
-	Index/SegmentTermEnum.cs		\
-	Index/SegmentTermPositions.cs		\
-	Index/Term.cs				\
-	Index/TermDocs.cs			\
-	Index/TermEnum.cs			\
-	Index/TermInfo.cs			\
-	Index/TermInfosReader.cs		\
-	Index/TermInfosWriter.cs		\
-	QueryParser/CharStream.cs		\
-	QueryParser/FastCharStream.cs		\
-	QueryParser/MultiFieldQueryParser.cs	\
-	QueryParser/ParseException.cs		\
-	QueryParser/QueryParserConstants.cs	\
-	QueryParser/QueryParser.cs		\
-	QueryParser/QueryParserTokenManager.cs	\
-	QueryParser/TermPositions.cs		\
-	QueryParser/Token.cs			\
-	QueryParser/TokenMgrError.cs		\
-	Search/BooleanClause.cs			\
-	Search/BooleanQuery.cs			\
-	Search/BooleanScorer.cs			\
-	Search/CachingWrapperFilter.cs		\
-	Search/DateFilter.cs			\
-	Search/DefaultSimilarity.cs		\
-	Search/ExactPhraseScorer.cs		\
-	Search/Explanation.cs			\
-	Search/Filter.cs			\
-	Search/FilteredTermEnum.cs		\
-	Search/FuzzyQuery.cs			\
-	Search/FuzzyTermEnum.cs			\
-	Search/HitCollector.cs			\
-	Search/HitQueue.cs			\
-	Search/Hits.cs				\
-	Search/IndexSearcher.cs			\
-	Search/MultiSearcher.cs			\
-	Search/MultiTermQuery.cs		\
-	Search/PhrasePositions.cs		\
-	Search/PhrasePrefixQuery.cs		\
-	Search/PhraseQuery.cs			\
-	Search/PhraseQueue.cs			\
-	Search/PhraseScorer.cs			\
-	Search/PrefixQuery.cs			\
-	Search/Query.cs				\
-	Search/QueryFilter.cs			\
-	Search/RangeQuery.cs			\
-	Search/RemoteSearchable.cs		\
-	Search/ScoreDoc.cs			\
-	Search/Scorer.cs			\
-	Search/Searchable.cs			\
-	Search/Searcher.cs			\
-	Search/Similarity.cs			\
-	Search/SloppyPhraseScorer.cs		\
-	Search/TermQuery.cs			\
-	Search/TermScorer.cs			\
-	Search/TopDocs.cs			\
-	Search/Weight.cs			\
-	Search/WildcardQuery.cs			\
-	Search/WildcardTermEnum.cs		\
-	Store/Directory.cs			\
-	Store/FSDirectory.cs			\
-	Store/InputStream.cs			\
-	Store/Lock.cs				\
-	Store/OutputStream.cs			\
-	Store/RAMDirectory.cs			\
-	Util/Arrays.cs				\
-	Util/BitVector.cs			\
-	Util/Number.cs				\
+	Analysis/Standard/Token.cs				\
+	Analysis/Standard/TokenMgrError.cs			\
+	Document/DateField.cs					\
+	Document/Document.cs					\
+	Document/Field.cs					\
+	Index/CompoundFileReader.cs				\
+	Index/CompoundFileWriter.cs				\
+	Index/DocumentWriter.cs					\
+	Index/FieldInfo.cs					\
+	Index/FieldInfos.cs					\
+	Index/FieldsReader.cs					\
+	Index/FieldsWriter.cs					\
+	Index/FilterIndexReader.cs				\
+	Index/IndexReader.cs					\
+	Index/IndexWriter.cs					\
+	Index/MultipleTermPositions.cs				\
+	Index/SegmentInfo.cs					\
+	Index/SegmentInfos.cs					\
+	Index/SegmentMergeInfo.cs				\
+	Index/SegmentMergeQueue.cs				\
+	Index/SegmentMerger.cs					\
+	Index/SegmentReader.cs					\
+	Index/SegmentsReader.cs					\
+	Index/SegmentTermDocs.cs				\
+	Index/SegmentTermEnum.cs				\
+	Index/SegmentTermPositions.cs				\
+	Index/Term.cs						\
+	Index/TermDocs.cs					\
+	Index/TermEnum.cs					\
+	Index/TermInfo.cs					\
+	Index/TermInfosReader.cs				\
+	Index/TermInfosWriter.cs				\
+	QueryParser/CharStream.cs				\
+	QueryParser/FastCharStream.cs				\
+	QueryParser/MultiFieldQueryParser.cs			\
+	QueryParser/ParseException.cs				\
+	QueryParser/QueryParserConstants.cs			\
+	QueryParser/QueryParser.cs				\
+	QueryParser/QueryParserTokenManager.cs			\
+	QueryParser/TermPositions.cs				\
+	QueryParser/Token.cs					\
+	QueryParser/TokenMgrError.cs				\
+	Search/BooleanClause.cs					\
+	Search/BooleanQuery.cs					\
+	Search/BooleanScorer.cs					\
+	Search/CachingWrapperFilter.cs				\
+	Search/DateFilter.cs					\
+	Search/DefaultSimilarity.cs				\
+	Search/ExactPhraseScorer.cs				\
+	Search/Explanation.cs					\
+	Search/Filter.cs					\
+	Search/FilteredTermEnum.cs				\
+	Search/FuzzyQuery.cs					\
+	Search/FuzzyTermEnum.cs					\
+	Search/HitCollector.cs					\
+	Search/HitQueue.cs					\
+	Search/Hits.cs						\
+	Search/IndexSearcher.cs					\
+	Search/MultiSearcher.cs					\
+	Search/MultiTermQuery.cs				\
+	Search/PhrasePositions.cs				\
+	Search/PhrasePrefixQuery.cs				\
+	Search/PhraseQuery.cs					\
+	Search/PhraseQueue.cs					\
+	Search/PhraseScorer.cs					\
+	Search/PrefixQuery.cs					\
+	Search/Query.cs						\
+	Search/QueryFilter.cs					\
+	Search/RangeQuery.cs					\
+	Search/RemoteSearchable.cs				\
+	Search/ScoreDoc.cs					\
+	Search/Scorer.cs					\
+	Search/Searchable.cs					\
+	Search/Searcher.cs					\
+	Search/Similarity.cs					\
+	Search/SloppyPhraseScorer.cs				\
+	Search/TermQuery.cs					\
+	Search/TermScorer.cs					\
+	Search/TopDocs.cs					\
+	Search/Weight.cs					\
+	Search/WildcardQuery.cs					\
+	Search/WildcardTermEnum.cs				\
+	Store/Directory.cs					\
+	Store/FSDirectory.cs					\
+	Store/InputStream.cs					\
+	Store/Lock.cs						\
+	Store/OutputStream.cs					\
+	Store/RAMDirectory.cs					\
+	Util/Arrays.cs						\
+	Util/BitVector.cs					\
+	Util/Number.cs						\
 	Util/PriorityQueue.cs
 
+ASSEMBLIES = 				\
+	-r:System.Runtime.Remoting
 
-Lucene.Net.dll: $(LUCENE_NET_CSFILES)
-	$(CSC) $(LIBFLAGS) -out:$@ $^
+$(TARGET): $(CSFILES)
+	$(CSC) -o $@ $(CSFLAGS) $(CSFILES) $(ASSEMBLIES)
 
+all: $(TARGET)
 
-all: Lucene.Net.dll
+install-data-local: $(TARGET)
+	$(mkinstalldirs) $(DESTDIR)$(pkglibdir)
+	$(INSTALL_DATA) $(TARGET) $(DESTDIR)$(pkglibdir)/$(TARGET)
+
+EXTRA_DIST =		\
+	$(CSFILES)
+
+CLEANFILES =		\
+	$(TARGET)

@@ -1,0 +1,4 @@
+#!/bin/sh
+
+MONO_PATH="@pkglibdir@:$MONO_PATH" mono --debug @pkglibdir@/@target@ "$@"
+

@@ -20,21 +20,41 @@ namespace Dewey.Filters {
 		public Filter () { }
 
 		//////////////////////////
+
+		protected String name = "UnNamed";
+
+		public String Name {
+			get { return name; }
+		}
+
+		//////////////////////////
 		
-		private   ArrayList supportedMimeTypes = new ArrayList ();
-		protected String mimeType;
+		private   ArrayList supportedFlavors = new ArrayList ();
+		protected Flavor flavor;
 
-		protected void AddSupportedMimeType (String _mimeType)
+		protected void AddSupportedFlavor (Flavor flavor)
 		{
-			supportedMimeTypes.Add (_mimeType);
+			supportedFlavors.Add (flavor);
 		}
 
-		public IEnumerable SupportedMimeTypes {
-			get { return supportedMimeTypes; }
+		protected void AddSupportedMimeType (String mimeType)
+		{
+			Flavor flavor = new Flavor (mimeType, Flavor.Wildcard);
+			AddSupportedFlavor (flavor);
 		}
 
-		public String MimeType {
-			get { return mimeType; }
+		protected void AddSupportedExtension (String extension)
+		{
+			Flavor flavor = new Flavor (Flavor.Wildcard, extension);
+			AddSupportedFlavor (flavor);
+		}
+
+		public IEnumerable SupportedFlavors {
+			get { return supportedFlavors; }
+		}
+
+		public Flavor Flavor {
+			get { return flavor; }
 		}
 
 		//////////////////////////
@@ -142,7 +162,7 @@ namespace Dewey.Filters {
 		
 		//////////////////////////
 
-		private void Open (Stream stream, bool closeStream)
+		public void Open (Stream stream)
 		{
 			content = null;
 			hot = null;
@@ -150,35 +170,29 @@ namespace Dewey.Filters {
 			hotCount = 0;
 			freezeCount = 0;
 			
-			if (stream != null) {
+			if (stream != null)
 				Read (stream);
-				if (closeStream)
-					stream.Close ();
-			}
 		}
 
-		public void Open (Stream stream)
-		{
-			Open (stream, false);
-		}
-		
 		public void Open (String path)
 		{
 			Stream stream = new FileStream (path,
 							FileMode.Open,
 							FileAccess.Read);
-			Open (stream, true);
+			Open (stream);
+			stream.Close ();
 		}
 		
 		public void Close ()
 		{
 			content = null;
 			hot = null;
+			metadata = null;
 		}
 		
 		//////////////////////////
 
-		static Hashtable registry;
+		static SortedList registry = null;
 		
 		static private void AutoRegisterFilters ()
 		{
@@ -186,39 +200,60 @@ namespace Dewey.Filters {
 			foreach (Type t in a.GetTypes ()) {
 				if (t.IsSubclassOf (typeof (Filter))) {
 					Filter filter = (Filter) Activator.CreateInstance (t);
-					foreach (String mimeType in filter.SupportedMimeTypes) {
-						if (registry.Contains(mimeType)) {
-							String estr = "Mime Type Collision: " + mimeType;
+					foreach (Flavor flavor in filter.SupportedFlavors) {
+						if (registry.ContainsKey (flavor)) {
+							Type otherType = (Type) registry [flavor];
+							Filter other = (Filter) Activator.CreateInstance (otherType);
+							String estr = String.Format ("Type Collision: {0} ({1} vs {2})",
+										     flavor,
+										     filter.Name,
+										     other.Name);
 							throw new Exception (estr);
 						}
-						registry[mimeType] = t;
+						registry [flavor] = t;
 					}
 				}
 			}
 		}
 
-		static public Filter FilterFromMimeType (String _mimeType)
+		static public bool CanFilter (Flavor flavor)
+		{
+			return FilterFromFlavor (flavor) != null;
+		}
+
+		static public Filter FilterFromFlavor (Flavor flavor)
 		{
 			if (registry == null) {
-				registry = new Hashtable ();
+				registry = new SortedList ();
 				AutoRegisterFilters ();
 			}
-			
-			if (! registry.Contains (_mimeType))
-				throw new Exception ("Unsupported mime type: " + _mimeType);
-			
-			Type t = (Type) registry[_mimeType];
-			
-			Filter filter = (Filter) Activator.CreateInstance (t);
-			filter.mimeType = _mimeType;
+
+			if (flavor.IsPattern)
+				throw new Exception ("Can't create filter from content type pattern " + flavor);
+
+			Filter filter = null;
+
+			foreach (Flavor other in registry.Keys) {
+				if (other.IsMatch (flavor)) {
+					Type t = (Type) registry [other];
+					filter = (Filter) Activator.CreateInstance (t);
+					filter.flavor = flavor;
+				}
+			}
 			
 			return filter;
 		}
-		
+
+		static public Filter FilterFromMimeType (String mimeType)
+		{
+			Flavor flavor = Flavor.FromMimeType (mimeType);
+			return FilterFromFlavor (flavor);
+		}
+
 		static public Filter FilterFromPath (String path)
 		{
-			string mimeType  = VFS.Mime.GetMimeType (path);
-			return FilterFromMimeType (mimeType);
+			Flavor flavor = Flavor.FromPath (path);
+			return FilterFromFlavor (flavor);
 		}
 	}
 }

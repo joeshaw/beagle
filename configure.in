@@ -1,4 +1,4 @@
-AC_INIT(indexer/Indexable.cs)
+AC_INIT(Filters/Filter.cs)
 AC_CANONICAL_SYSTEM
 AM_INIT_AUTOMAKE(dewey, 0.0)
 AM_MAINTAINER_MODE

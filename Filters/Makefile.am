@@ -1,8 +1,9 @@
-CSC=mcs -g
-LIBFLAGS =				\
-	-target:library			\
-	-r:gtk-sharp.dll		\
-	-r:ICSharpCode.SharpZipLib.dll
+
+CSC = mcs -g
+
+TARGET = Filters.dll
+
+CSFLAGS = -target:library
 
 # Found at http://sharptoolbox.madgeek.com/
 HAP_CSFILES =					\
@@ -16,16 +17,30 @@ HAP_CSFILES =					\
 	HtmlAgilityPack/MixedCodeDocument.cs	\
 	HtmlAgilityPack/tools.cs
 
-
-FILTERS_CSFILES = 		\
+CSFILES = 			\
 	$(HAP_CSFILES)		\
 	gnome.cs		\
+	Flavor.cs		\
 	Filter.cs		\
 	FilterHtml.cs		\
 	FilterOpenOffice.cs	\
 	FilterText.cs
 
-Filters.dll: $(FILTERS_CSFILES)
-	$(CSC) $(LIBFLAGS) -out:$@ $^
+ASSEMBLIES =				\
+	-r:gtk-sharp			\
+	-r:ICSharpCode.SharpZipLib
 
-all: Filters.dll
+$(TARGET): $(CSFILES)
+	$(CSC) -o $@ $(CSFLAGS) $(CSFILES) $(ASSEMBLIES)
+
+all: $(TARGET)
+
+install-data-local: $(TARGET)
+	$(mkinstalldirs) $(DESTDIR)$(pkglibdir)
+	$(INSTALL_DATA) $(TARGET) $(DESTDIR)$(pkglibdir)/$(TARGET)
+
+EXTRA_DIST =		\
+	$(CSFILES)
+
+CLEANFILES =		\
+	$(TARGET)

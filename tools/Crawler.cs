@@ -9,187 +9,183 @@ using System.Collections;
 using System.IO;
 using System.Text.RegularExpressions;
 
+using Dewey.Filters;
 using Dewey;
 
 class CrawlerTool { 
 
-	public class ExclusionList {
+	public class FileMatcher {
+		
+		static ArrayList defaultPatterns = new ArrayList ();
+		ArrayList patterns = new ArrayList ();
 
-		static Regex GlobToRegex (String glob)
+		static Regex PatternToRegex (String pattern)
 		{
-			String pattern = "^" + Regex.Escape (glob) + "$";
+			pattern = "^" + Regex.Escape (pattern) + "$";
 			pattern = pattern.Replace ("\\?", ".");
 			pattern = pattern.Replace ("\\*", ".*");
 			return new Regex (pattern);
 		}
 
-		
-		static ArrayList excludedStock;
-		ArrayList excluded = new ArrayList ();
-
-		public ExclusionList (String filename) 
+		public void Add (String pattern)
 		{
-			StreamReader sr = new StreamReader (filename);
+			patterns.Add (PatternToRegex (pattern));
+		}
+
+		public void Add (params String[] patterns)
+		{
+			foreach (String pattern in patterns)
+				Add (pattern);
+		}
+
+		static public void AddDefault (String pattern)
+		{
+			defaultPatterns.Add (PatternToRegex (pattern));
+		}
+
+		static public void AddDefault (params String[] patterns)
+		{
+			foreach (String pattern in patterns)
+				AddDefault (pattern);
+		}
+
+		public void Load (String path)
+		{
+			StreamReader sr = new StreamReader (path);
 			String line;
 			while ((line = sr.ReadLine ()) != null) {
 				line = line.Trim ();
 				if (line.Length > 0)
-					excluded.Add (GlobToRegex (line));
+					Add (line);
 			}
 		}
 
-		static public bool ExcludeStock (String filename)
-		{
-			if (excludedStock == null) {
-				excludedStock = new ArrayList ();
-				String[] patterns = new String[] { "*~",
-								   "#*#",
-								   ".*",
-								   "*.o",
-								   "*.a",
-								   "*.la",
-								   "*.so",
-								   "*.exe",
-								   "*.com",
-								   "CVS" };
-				foreach (String pattern in patterns)
-					excludedStock.Add (GlobToRegex (pattern));
-			}
-
-			foreach (Regex regex in excludedStock)
-				if (regex.IsMatch (filename))
-					return true;
-
-			return false;
+		public bool IsEmpty {
+			get { return patterns.Count == 0; }
 		}
 
-		public bool ExcludeAll {
-			get { return excluded.Count == 0; }
-		}
-
-		public bool Exclude (String filename)
+		public bool IsMatch (String path)
 		{
-			// Empty exclusion list == exclude everything
-			if (ExcludeAll)
-				return true;
-
-			filename = Path.GetFileName (filename);
-
-			foreach (Regex regex in excluded)
-				if (regex.IsMatch (filename))
+			String fileName = Path.GetFileName (path);
+			foreach (Regex regex in defaultPatterns)
+				if (regex.IsMatch (fileName))
 					return true;
-
+			foreach (Regex regex in patterns)
+				if (regex.IsMatch (fileName))
+					return true;
 			return false;
 		}
 	}
 
-	static void ScheduleFileIndexing (String path, ArrayList toBeIndexed)
-	{
-		try {
+
+	public class Crawler {
+
+		int totalCount = 0;
+		int filterableCount = 0;
+		Hashtable fileTable = new Hashtable ();
+
+		ArrayList toBeIndexed = new ArrayList ();
+
+		void CrawlFile (String path)
+		{
+			Flavor flavor = Flavor.FromPath (path);
+			if (fileTable.Contains (flavor)) {
+				int n = (int) fileTable [flavor];
+				fileTable [flavor] = n+1;
+			} else
+				fileTable [flavor] = 1;
+
+			++totalCount;
+			if (! Filter.CanFilter (flavor))
+				return;
+			++filterableCount;
+
 			Indexable indexable = new IndexableFile (path);
 			toBeIndexed.Add (indexable);
-		} catch {
-			// If we get an exception, it means that we couldn't
-			// filter the file.  In that case, just do nothing.
 		}
-	}
 
-	static void ScheduleHttpIndexing (String uri, ArrayList toBeIndexed)
-	{
-		try {
-			Indexable indexable = new IndexableHttp (uri);
-			toBeIndexed.Add (indexable);
-		} catch {
-			// If we get an exception, it probably means the uri
-			// was malformed.  In that case, just do nothing.
-		}
-	}
+		void CrawlDirectory (String path)
+		{
+			FileMatcher noindex = new FileMatcher ();
 
-	// path must be a file, or badness will ensue.
-	static void CrawlFile (String path, ArrayList toBeIndexed)
+			String noindexPath = Path.Combine (path, ".noindex");
+			if (File.Exists (noindexPath)) {
+				noindex.Load (noindexPath);
+				// An empty .noindex file causes all files and subdirs
+				// to be skipped.
+				if (noindex.IsEmpty) {
+					Console.WriteLine ("Skipping {0}", path);
+					return;
+				}
+			}
 
-	{
-		FileInfo info = new FileInfo (path);
+			DirectoryInfo dir = new DirectoryInfo (path);
 
-		// Check the .noindex in the same directory as the file.
-		String noIndex = Path.Combine (info.DirectoryName, ".noindex");
-		if (File.Exists (noIndex) && ! ExclusionList.ExcludeStock (info.Name)) {
-			ExclusionList exlist = new ExclusionList (noIndex);
-			if (exlist.Exclude (info.FullName)) {
-				Console.WriteLine ("Excluding {0}", info.FullName);
-				return;
+			foreach (FileSystemInfo info in dir.GetFileSystemInfos ()) {
+
+				if (noindex.IsMatch (info.Name))
+					continue;
+
+				if ((int)(info.Attributes & FileAttributes.Directory) != 0)
+					CrawlDirectory (info.FullName);
+				else
+					CrawlFile (info.FullName);
 			}
 		}
 
-		ScheduleFileIndexing (info.FullName, toBeIndexed);
-	}
-
-		
-	// path must be a directory, or badness will ensue.
-	static void CrawlDirectory (String path, ArrayList toBeIndexed)
-	{
-		Console.WriteLine (path);
-
-		ExclusionList exlist = null;
-		String noIndex = Path.Combine (path, ".noindex");
-		if (File.Exists (noIndex)) {
-			exlist = new ExclusionList (noIndex);
-			if (exlist.ExcludeAll)
-				return;
-		}
-
-		DirectoryInfo dir = new DirectoryInfo (path);
-		foreach (FileSystemInfo info in dir.GetFileSystemInfos ()) {
-			if (ExclusionList.ExcludeStock (info.Name))
-				continue;
-			if (exlist != null && exlist.Exclude (info.Name)) {
-				if (info.Name != ".noindex")
-					Console.WriteLine ("Excluding {0}", info.FullName);
-				continue;
-			}
-			if ((int)(info.Attributes & FileAttributes.Directory) != 0)
-				CrawlDirectory (info.FullName, toBeIndexed);
+		public void Crawl (String path)
+		{
+			if (File.Exists (path))
+				CrawlFile (path);
+			else if (Directory.Exists (path))
+				CrawlDirectory (path);
 			else
-				ScheduleFileIndexing (info.FullName, toBeIndexed);
-		}
-	}
-
-	static void Crawl (String path, ArrayList toBeIndexed)
-	{
-		if (path.StartsWith ("http://")) {
-			ScheduleHttpIndexing (path, toBeIndexed);
-			return;
+				Console.WriteLine ("Can't crawl {0}", path);
 		}
 
-		if (Directory.Exists (path)) {
-			CrawlDirectory (path, toBeIndexed);
-			return;
-		}
-		
-		if (File.Exists (path)) {
-			CrawlFile (path, toBeIndexed);
-			return;
-		}
+		public void Finish ()
+		{
+			if (toBeIndexed.Count > 0) {
+				IndexDriver driver = new IndexDriver ();
+				driver.Add (toBeIndexed);
+			}
 
-		Console.WriteLine ("Bad crawl request: {0}", path);
+			Console.WriteLine ("\n**** FILE STATS ****\n");
+			foreach (Flavor flavor in fileTable.Keys)
+				Console.WriteLine ("{0} {1}", (int) fileTable [flavor], flavor);
+			Console.WriteLine ();
+			Console.WriteLine ("     Total files: {0}", totalCount);
+			if (totalCount > 0) {
+				Console.WriteLine ("Filterable files: {0} ({1:f1}%)",
+						   filterableCount,
+						   100.0 * filterableCount / totalCount);
+			}
+		}
 	}
 
 	static void Main (String[] args)
 	{
-		ArrayList toBeIndexed = new ArrayList ();
+		FileMatcher.AddDefault (".*",
+					"*~",
+					"#*#",
+					"*.o",
+					"*.a",
+					"*.la",
+					"*.so",
+					"*.exe",
+					"*.com",
+					"CVS");
+
+		Crawler crawler = new Crawler ();
 
 		if (args.Length > 0) {
 			foreach (String arg in args)
-				Crawl (arg, toBeIndexed);
+				crawler.Crawl (arg);
 		} else {
-			// Default crawls
-			CrawlDirectory (Environment.GetEnvironmentVariable ("HOME"), 
-					toBeIndexed);
+			// By default, crawl the user's home directory.
+			crawler.Crawl (Environment.GetEnvironmentVariable ("HOME"));
 		}
 
-		if (toBeIndexed.Count > 0) {
-			IndexDriver driver = new IndexDriver ();
-			driver.Add (toBeIndexed);
-		}
+		crawler.Finish ();
 	}
 }

@@ -32,9 +32,21 @@ class ExtractContentTool {
 				if (i != -1)
 					mimeType = mimeType.Substring (0, i);
 				filter = Filter.FilterFromMimeType (mimeType);
+
+				if (filter == null) {
+					Console.WriteLine ("\nNo filter for mime type '{0}'\n", mimeType);
+					continue;
+				}
+
 				stream = resp.GetResponseStream ();
 			} else {
 				filter = Filter.FilterFromPath (arg);
+				
+				if (filter == null) {
+					Flavor flavor = Flavor.FromPath (arg);
+					Console.WriteLine ("{0}: No filter for {1}", arg, flavor);
+					continue;
+				}
 				stream = new FileStream (arg, FileMode.Open, FileAccess.Read);
 			}
 
@@ -43,7 +55,7 @@ class ExtractContentTool {
 			Console.WriteLine ("");
 
 			Console.WriteLine ("Filename: " + arg);
-			Console.WriteLine ("MimeType: " + filter.MimeType);
+			Console.WriteLine ("  Flavor: " + filter.Flavor);
 
 			Console.WriteLine ("");
 

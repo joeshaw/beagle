@@ -1,7 +1,19 @@
-CSC=mcs -g
 
-LIBFLAGS =			\
-	-target:exe		\
+CSC = mcs -g
+
+TARGET = Best.exe
+WRAPPER = best
+
+CSFLAGS = -target:exe
+
+CSFILES =		\
+	Vfs.cs		\
+	Best.cs		\
+	BestWindow.cs	\
+	HitContainer.cs	\
+	HitView.cs
+
+ASSEMBLIES =			\
 	-r:glib-sharp		\
 	-r:gtk-sharp		\
 	-r:gnome-sharp		\
@@ -12,16 +24,24 @@ LIBFLAGS =			\
 	-L ../indexer		\
 	-r:Indexer
 
-BEST_CSFILES =		\
-	Vfs.cs		\
-	Best.cs		\
-	BestWindow.cs	\
-	HitContainer.cs	\
-	HitView.cs
+$(TARGET): $(CSFILES)
+	$(CSC) -o $@ $(CSFLAGS) $(CSFILES) $(ASSEMBLIES)
 
-BEST_TARGET = Best.exe
+all: $(TARGET)
 
-$(BEST_TARGET) : $(BEST_CSFILES)
-	$(CSC) $(LIBFLAGS) -out:$@ $^
+install-data-local: $(TARGET)
+	$(mkinstalldirs) $(DESTDIR)$(pkglibdir)
+	$(INSTALL_DATA) $(TARGET) $(DESTDIR)$(pkglibdir)/$(TARGET)
 
-all: $(BEST_TARGET)
+bin_SCRIPTS = $(WRAPPER)
+
+$(WRAPPER): $(WRAPPER).in
+	sed -e "s|\@prefix\@|$(prefix)|g" -e "s|\@pkglibdir\@|$(pkglibdir)|g" -e "s|\@target\@|$(TARGET)|g" < $(srcdir)/$(WRAPPER).in > $(WRAPPER)
+
+EXTRA_DIST =		\
+	$(CSFILES)	\
+	$(WRAPPER).in
+
+CLEANFILES =		\
+	$(TARGET)	\
+	$(WRAPPER)

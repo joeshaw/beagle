@@ -31,7 +31,7 @@ namespace Dewey {
 
 			uri = "file://" + path;
 			domain = "FileSystem";
-			mimeType = filter.MimeType;		
+			mimeType = filter.Flavor.MimeType;		
 			timestamp = File.GetLastWriteTime (path);
 		}
 
