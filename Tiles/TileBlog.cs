@@ -55,7 +55,11 @@ namespace Beagle.Tile {
 		[TileAction]
 		public override void Open ()
                 {
-			Gnome.Url.Show(Hit["fixme:itemuri"]);
+			try {
+				Gnome.Url.Show(Hit["fixme:itemuri"]);
+			} catch (Exception e) {
+				Console.WriteLine ("Could not load handler for {0}: {1}", Hit["fixme:itemuri"], e);
+			}
 		}
 	}
 }
