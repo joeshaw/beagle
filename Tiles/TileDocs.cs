@@ -27,6 +27,7 @@
 using System;
 using System.Diagnostics;
 using System.IO;
+using System.Text;
 
 using BU = Beagle.Util;
 
@@ -54,11 +55,22 @@ namespace Beagle.Tile {
 			
 			protected override void PopulateTemplate ()
 			{
+				StringBuilder strPagesAndWords = new StringBuilder ();
+
 				base.PopulateTemplate ();
 				if (Hit ["dc:title"] == null || Hit ["dc:title"] == "")
 					Template ["Title"] = Hit ["fixme:splitname"];
 				else
 					Template ["Title"] = Hit ["dc:title"];
+
+                                if (Hit ["fixme:page-count"] != null)
+					strPagesAndWords.Append("Pages: "+Hit ["fixme:page-count"]);
+				//Template ["PagesAndWords"] = Hit ["fixme:page-count"];
+
+                                if (Hit ["fixme:word-count"] != null)
+					strPagesAndWords.Append (" - Words: "+Hit ["fixme:word-count"]);
+				//Template ["Words"] = Hit ["fixme:word-count"];
+				Template["PagesAndWords"] = strPagesAndWords.ToString();
 			}
 		}
 }

@@ -1,5 +1,5 @@
 //
-// FilterSource.cs
+// FilterText.cs
 //
 // Copyright (C) 2004 Novell, Inc.
 //
@@ -82,26 +82,35 @@ namespace Beagle.Filters {
 		static string [] pythonKeyWords = {"and", "assert", "break", "class", "continue", "def", 
 						   "del", "elif", "else", "except", "exec", "finally", 
 						   "for", "from", "global", "if", "import", "in", "is",
-						   "lambda", "not", "or", "pass", "print", "raise", "return", 
+						   "lambda", "not", "or", "pass", "print", "raise", "return",
 						   "try", "while", "yield"};
 
-		static string [] perlKeyWords = {"continue", "else", "elseif", "for", "foreach", "goto", 
-						 "if", "last", "next", "redo", "unless", "until", "each", "eof",
-						 "goto", "next", "return", "while", "do", "class", "exec",
-						 "break", "print", "open", "use", "values"};
+		static string [] perlKeyWords = { "and", "break", "chop", "class", "close", "closedir", 
+						  "continue", "dbmclose", "dbmopen", "defined", "die", "do", 
+						  "each", "else", "elseif", "eof", "eq", "exec", "for", 
+						  "foreach", "ge", "getc", "glob", "goto", "gt", "hostname",
+						  "if", "index", "keys", "last", "le", "length", "localtime",
+						  "lt", "mkdir", "my", "ne", "next", "not", "open", "opendir",
+						  "or", "pick", "print", "printf", "pwd", "quit", "readdir",
+						  "redo", "rename", "reply", "require", "return", "rmdir",
+						  "scalar", "shift", "sleep", "sort", "splice", "split", 
+						  "sprintf", "stat", "stty", "sub", "substr",  "symlink", 
+						  "system", "time", "times","tr", "unless", "unlink", "unshift", 
+						  "until", "use", "utime", "values", "wantarray", "warn", 
+						  "while", "xor" }; 
 
 		private enum LineType {
 			None,
 			SingleLineComment,
 			BlockComment,
 			StringConstant
-		};
+		}
 		
 		private enum LangType {
 			None,
 			C_Style,
 			Python_Style
-		};
+		}
 		
 		LineType SrcLineType;
 		LangType SrcLangType;
