@@ -63,7 +63,6 @@ namespace Best {
 				psi.FileName = command;
 				psi.Arguments = arguments;
 				Process.Start (psi);
-				Console.WriteLine ("command:[{0}] arguments:[{1}]", command, arguments);
 			} else {
 				Console.WriteLine ("Can't launch {0} (mime type: {1})", hit.Uri, hit.MimeType);
 			}
@@ -86,7 +85,6 @@ namespace Best {
 
 		private void AddMarkup (String markup)
 		{
-			Console.WriteLine (markup);
 			Label label = new Label ("");
 			label.Xalign = 0;
 			label.UseUnderline = false;
