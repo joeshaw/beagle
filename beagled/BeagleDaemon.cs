@@ -99,6 +99,8 @@ namespace Beagle.Daemon {
 
 			Application.Init ();
 
+			DBusisms.Init ();
+
 
 			IndexerQueue indexerQueue = new IndexerQueue ();
 			LoadHandlers (indexerQueue);
@@ -109,7 +111,6 @@ namespace Beagle.Daemon {
 							 Beagle.DBusisms.IndexerPath);
 
 
-			QueryManager manager = QueryManager.Get ();
 
 			Application.Run ();
 			return 0;

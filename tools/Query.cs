@@ -90,7 +90,7 @@ class QueryTool {
 	{
 		Gtk.Application.Init ();
 
-		query = Query.New ();
+		query = Beagle.Factory.NewQuery ();
 		query.GotHitsEvent += OnGotHits;
 		query.FinishedEvent += OnFinished;
 		query.CancelledEvent += OnCancelled;

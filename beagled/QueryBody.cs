@@ -1,5 +1,5 @@
 //
-// Query.cs
+// QueryBody.cs
 //
 // Copyright (C) 2004 Novell, Inc.
 //
@@ -32,29 +32,20 @@ using BU = Beagle.Util;
 
 namespace Beagle.Daemon {
 
-	[Flags]
-	public enum QueryDomain {
-		Local = 1,
-		Neighorhood = 2,
-		Global = 4
-	}
+	public class QueryBody {
 
-	public class Query {
-
-		// FIXME: This is not a good default
-		//QueryDomain domainFlags = QueryDomain.Local | QueryDomain.Neighorhood | QueryDomain.Global;
 		// FIXME: This is a good default when on an airplane.
-		QueryDomain domainFlags = QueryDomain.Local; 
+		Beagle.QueryDomain domainFlags = Beagle.QueryDomain.Local; 
 
 		ArrayList text = new ArrayList ();
 		ArrayList mimeTypes = new ArrayList ();
 
-		public Query ()
+		public QueryBody ()
 		{
 
 		}
 
-		public Query (string str) : this ()
+		public QueryBody (string str) : this ()
 		{
 			AddText (str);
 		}
@@ -123,17 +114,17 @@ namespace Beagle.Daemon {
 
 		///////////////////////////////////////////////////////////////
 
-		public void AddDomain (QueryDomain d)
+		public void AddDomain (Beagle.QueryDomain d)
 		{
 			domainFlags |= d;
 		}
 
-		public void RemoveDomain (QueryDomain d)
+		public void RemoveDomain (Beagle.QueryDomain d)
 		{
 			domainFlags &= ~d;
 		}
 		
-		public bool AllowsDomain (QueryDomain d)
+		public bool AllowsDomain (Beagle.QueryDomain d)
 		{
 			return (domainFlags & d) != 0;
 		}

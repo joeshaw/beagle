@@ -75,17 +75,17 @@ namespace Beagle.Daemon {
 			get { return "Google"; }
 		}
 
-		public bool AcceptQuery (Query query)
+		public bool AcceptQuery (QueryBody body)
 		{
-			if (! query.HasText)
+			if (! body.HasText)
 				return false;
 
-			if (! query.AllowsDomain (QueryDomain.Global))
+			if (! body.AllowsDomain (QueryDomain.Global))
 				return false;
 
 			// FIXME: This is a meta-FIXME, since this is a bad assumption
 			// because the mime-type setting FIXME above.
-			if (! query.AllowsMimeType ("text/html"))
+			if (! body.AllowsMimeType ("text/html"))
 				return false;
 
 			// Reject queries if the key isn't set.
@@ -102,10 +102,10 @@ namespace Beagle.Daemon {
 		}
 
 
-		public void Query (Query query, IQueryResult result)
+		public void DoQuery (QueryBody body, IQueryResult result)
 		{
 			GoogleSearchResult gsr = gss.doGoogleSearch (googleKey,
-								     query.QuotedText,
+								     body.QuotedText,
 								     0, maxResults,
 								     false, "", false, "", "", "");
 

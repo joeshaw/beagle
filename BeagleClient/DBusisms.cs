@@ -31,12 +31,11 @@ namespace Beagle
 	public class DBusisms {
 
 		static public readonly string ServiceName = "com.novell.Beagle";
-		static public readonly string QueryManagerPath = "/com/novell/Beagle/QueryManager";
+		static public readonly string FactoryPath = "/com/novell/Beagle/Factory";
 		static public readonly string IndexerPath = "/com/novell/Beagle/Indexer";
 
 		static Connection connection = null;
 		static Service service = null;
-		static QueryManager queryManager = null;
 
 		internal static Connection Connection {
 			get { 
@@ -51,15 +50,6 @@ namespace Beagle
 				if (service == null)
 					service = DBus.Service.Get (Connection, ServiceName);
 				return service;
-			}
-		}
-
-		internal static QueryManager QueryManager {
-			get {
-				if (queryManager == null)
-					queryManager = (QueryManager) DBusisms.Service.GetObject (typeof (QueryManager),
-												       QueryManagerPath);
-				return queryManager;
 			}
 		}
 	}

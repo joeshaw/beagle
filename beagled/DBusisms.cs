@@ -24,6 +24,9 @@
 // SOFTWARE.
 //
 
+using System;
+using System.Runtime.InteropServices;
+
 using DBus;
 
 namespace Beagle.Daemon
@@ -32,6 +35,8 @@ namespace Beagle.Daemon
 
 		static Connection connection = null;
 		static Service service = null;
+		static BusDriver bus_driver = null;
+		static FactoryImpl factory = null;
 
 		public static Connection Connection {
 			get { 
@@ -49,5 +54,32 @@ namespace Beagle.Daemon
 				return service;
 			}
 		}
+
+		public static BusDriver BusDriver {
+			get {
+				if (bus_driver == null)
+					bus_driver = BusDriver.New (Connection);
+				return bus_driver;
+			}
+		}
+
+		public static FactoryImpl Factory {
+			get {
+				return factory;
+			}
+		}
+
+		[DllImport ("dbus-glib-1")]
+		private extern static void dbus_g_thread_init ();
+
+		public static void Init ()
+		{
+			dbus_g_thread_init ();
+
+			factory = new FactoryImpl ();
+			DBusisms.Service.RegisterObject (factory,
+							 Beagle.DBusisms.FactoryPath);
+		}
+				
 	}
 }

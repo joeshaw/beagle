@@ -136,25 +136,25 @@ namespace Beagle.Daemon {
 			get { return "EvolutionDataServer"; }
 		}
 
-		public bool AcceptQuery (Query query)
+		public bool AcceptQuery (QueryBody body)
 		{
-			if (! query.HasText)
+			if (! body.HasText)
 				return false;
 
-			if (! query.AllowsDomain (QueryDomain.Local))
+			if (! body.AllowsDomain (QueryDomain.Local))
 				return false;
 
 			return true;
 		}
 
-		public void Query (Query query, IQueryResult result)
+		public void DoQuery (QueryBody body, IQueryResult result)
 		{
 			// FIXME: Evolution.BookQuery's bindings are all
 			// screwed up, so we can't construct compound queries.
 			// This will have to do for now.
-			Evolution.BookQuery[] ebqs = new Evolution.BookQuery [query.Text.Count];
-			for (int i = 0; i < query.Text.Count; ++i) {
-				string text = (string) query.Text [i];
+			Evolution.BookQuery[] ebqs = new Evolution.BookQuery [body.Text.Count];
+			for (int i = 0; i < body.Text.Count; ++i) {
+				string text = (string) body.Text [i];
 				ebqs [i] = Evolution.BookQuery.AnyFieldContains (text);
 			}
 

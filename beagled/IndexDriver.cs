@@ -186,12 +186,12 @@ namespace Beagle.Daemon {
 			return doc;
 		}
 
-		private LNS.Query ToCoreLuceneQuery (Query    query,
-						     string   field,
-						     Analyzer analyzer)
+		private LNS.Query ToCoreLuceneQuery (QueryBody body,
+						     string    field,
+						     Analyzer  analyzer)
 		{
 			LNS.BooleanQuery luceneQuery = null;
-			foreach (string text in query.Text) {
+			foreach (string text in body.Text) {
 
 				// Use the analyzer to extract the query's tokens.
 				// Code taken from Lucene's query parser.
@@ -237,37 +237,37 @@ namespace Beagle.Daemon {
 
 		}
 		
-		private LNS.Query ToLuceneQuery (Query query)
+		private LNS.Query ToLuceneQuery (QueryBody body)
 		{
 			LNS.BooleanQuery luceneQuery = new LNS.BooleanQuery ();
 			
-			if (query.Text.Count > 0) {
+			if (body.Text.Count > 0) {
 				Analyzer analyzer = NewAnalyzer ();
 				LNS.BooleanQuery contentQuery = new LNS.BooleanQuery ();
 
 				LNS.Query propTQuery;
-				propTQuery = ToCoreLuceneQuery (query, "PropertiesText", analyzer);
+				propTQuery = ToCoreLuceneQuery (body, "PropertiesText", analyzer);
 				if (propTQuery != null) {
 					propTQuery.SetBoost (2.5f);
 					contentQuery.Add (propTQuery, false, false);
 				}
 
 				LNS.Query propKQuery;
-				propKQuery = ToCoreLuceneQuery (query, "PropertiesKeyword", analyzer);
+				propKQuery = ToCoreLuceneQuery (body, "PropertiesKeyword", analyzer);
 				if (propKQuery != null) {
 					propKQuery.SetBoost (2.5f);
 					contentQuery.Add (propKQuery, false, false);
 				}
 				
 				LNS.Query hotQuery;
-				hotQuery = ToCoreLuceneQuery (query, "HotText", analyzer);
+				hotQuery = ToCoreLuceneQuery (body, "HotText", analyzer);
 				if (hotQuery != null) {
 					hotQuery.SetBoost (1.75f);
 					contentQuery.Add (hotQuery, false, false);		
 				}
 				
 				LNS.Query textQuery;
-				textQuery = ToCoreLuceneQuery (query, "Text", analyzer);
+				textQuery = ToCoreLuceneQuery (body, "Text", analyzer);
 				if (textQuery != null) {
 					contentQuery.Add (textQuery, false, false);
 				}
@@ -276,9 +276,9 @@ namespace Beagle.Daemon {
 			}
 
 			// If mime types are specified, we must match one of them.
-			if (query.MimeTypes.Count > 0) {
+			if (body.MimeTypes.Count > 0) {
 				LNS.BooleanQuery mimeTypeQuery = new LNS.BooleanQuery ();
-				foreach (string mimeType in query.MimeTypes) {
+				foreach (string mimeType in body.MimeTypes) {
 					Term t = new Term ("MimeType", mimeType);
 					LNS.Query q = new LNS.TermQuery (t);
 					mimeTypeQuery.Add (q, false, false);
@@ -519,18 +519,18 @@ namespace Beagle.Daemon {
 			get { return "Lucene"; }
 		}
 
-		public bool AcceptQuery (Query query)
+		public bool AcceptQuery (QueryBody body)
 		{
-			if (! query.AllowsDomain (QueryDomain.Local)) {
+			if (! body.AllowsDomain (QueryDomain.Local)) {
 				return false;
 			}
 
 			return true;
 		}
 
-		public void Query (Query query, IQueryResult result)
+		public void DoQuery (QueryBody body, IQueryResult result)
 		{
-			LNS.Query luceneQuery = ToLuceneQuery (query);
+			LNS.Query luceneQuery = ToLuceneQuery (body);
 			if (luceneQuery == null)
 				return;
 

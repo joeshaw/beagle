@@ -101,22 +101,22 @@ namespace Beagle.Daemon {
 		class QueryClosure {
 
 			IQueryable queryable;
-			Query query;
+			QueryBody body;
 			QueryResult result;
 			
 			public QueryClosure (IQueryable  _queryable,
-					     Query       _query,
+					     QueryBody   _body,
 					     QueryResult _result)
 			{
 				queryable = _queryable;
-				query     = _query;
+				body      = _body;
 				result    = _result;
 			}
 
 			public void Start ()
 			{
 				try {
-					queryable.Query (query, result);
+					queryable.DoQuery (body, result);
 				} catch (Exception e) {
 					Console.WriteLine ("Query to '{0}' failed with exception:\n{1}:\n{2}", queryable.Name, e.Message, e.StackTrace);
 							   
@@ -127,14 +127,14 @@ namespace Beagle.Daemon {
 
 		class QueryStartClosure {
 			
-			Query query;
+			QueryBody body;
 			IEnumerable queryables;
 			QueryResult result;
 
-			public QueryStartClosure (Query       _query,
+			public QueryStartClosure (QueryBody   _body,
 						  IEnumerable _queryables)
 			{
-				query = _query;
+				body = _body;
 				queryables = _queryables;
 			}
 
@@ -146,11 +146,11 @@ namespace Beagle.Daemon {
 				// enters the started and finished states, even if
 				// none of the queryables accept the query.
 				result.WorkerStart ();
-				if (! query.IsEmpty) {
+				if (! body.IsEmpty) {
 					foreach (IQueryable queryable in queryables) {
-						if (queryable.AcceptQuery (query)) {
+						if (queryable.AcceptQuery (body)) {
 							QueryClosure qc = new QueryClosure (queryable,
-											    query,
+											    body,
 											    result);
 							Thread th = new Thread (new ThreadStart (qc.Start));
 							
@@ -163,9 +163,9 @@ namespace Beagle.Daemon {
 			}
 		}
 
-		public QueryResult Query (Query query)
+		public QueryResult DoQuery (QueryBody body)
 		{
-			QueryStartClosure qsc = new QueryStartClosure (query, queryables);
+			QueryStartClosure qsc = new QueryStartClosure (body, queryables);
 			QueryResult.QueryStart start = new QueryResult.QueryStart (qsc.Start);
 			QueryResult result = new QueryResult (start);
 			return result;

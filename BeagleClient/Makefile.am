@@ -10,20 +10,16 @@ CSFLAGS = 					\
 
 CSFILES = 				\
 	$(srcdir)/DBusisms.cs		\
+	$(srcdir)/FactoryProxy.cs	\
+	$(srcdir)/Factory.cs		\
 	$(srcdir)/Hit.cs                \
 	$(srcdir)/Indexable.cs          \
 	$(srcdir)/Indexer.cs            \
-	$(srcdir)/IRdf.cs		\
 	$(srcdir)/Property.cs           \
-	$(srcdir)/QueryManager.cs	\
-	$(srcdir)/QueryManagerProxy.cs	\
 	$(srcdir)/Query.cs              \
 	$(srcdir)/QueryProxy.cs         \
-	$(srcdir)/RdfSink.cs		\
-	$(srcdir)/RdfSinkProxy.cs       \
-	$(srcdir)/RdfSource.cs		\
-	$(srcdir)/RdfSourceProxy.cs	\
 	$(srcdir)/Versioned.cs 
+
 
 
 LOCAL_ASSEMBLIES =			\

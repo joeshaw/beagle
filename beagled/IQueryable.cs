@@ -34,8 +34,8 @@ namespace Beagle.Daemon {
 
 		String Name { get; }
 
-		bool AcceptQuery (Query query);
+		bool AcceptQuery (QueryBody body);
 
-		void Query (Query query, IQueryResult queryResult);
+		void DoQuery (QueryBody body, IQueryResult queryResult);
 	}
 }

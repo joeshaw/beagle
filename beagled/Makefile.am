@@ -175,22 +175,21 @@ LUCENE_CSFILES =							\
 DAEMON_DLL_CSFILES = 				\
 	$(LUCENE_CSFILES)			\
 	$(srcdir)/DBusisms.cs			\
-	$(srcdir)/Query.cs			\
+	$(srcdir)/FactoryImpl.cs		\
 	$(srcdir)/Relevancy.cs			\
 	$(srcdir)/IQueryResult.cs		\
 	$(srcdir)/IQueryable.cs			\
 	$(srcdir)/QueryableFlavor.cs		\
+	$(srcdir)/QueryBody.cs			\
 	$(srcdir)/QueryResult.cs		\
 	$(srcdir)/QueryDriver.cs		\
+	$(srcdir)/QueryImpl.cs			\
 	$(srcdir)/IndexDriver.cs		\
 	$(srcdir)/MainIndexDriver.cs		\
 	$(srcdir)/GoogleDriver.cs		\
 	$(srcdir)/Indexer.cs            	\
 	$(srcdir)/IndexerQueue.cs       	\
-	$(srcdir)/LiveQuery.cs          	\
-	$(srcdir)/QueryManager.cs		\
-	$(srcdir)/RdfSinkImpl.cs		\
-	$(srcdir)/RdfSourceImpl.cs              \
+	$(srcdir)/NoIndexFileHandler.cs 	\
 	$(srcdir)/FilteredIndexable.cs
 
 DAEMON_DLL_LOCAL_ASSEMBLIES =		\

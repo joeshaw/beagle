@@ -53,8 +53,7 @@ namespace Best {
 
 		//////////////////////////
 
-		QueryManager queryManager;
-		Query query;
+		Query query = null;
 
 		private BestWindow () : base (WindowType.Toplevel)
 		{
@@ -238,7 +237,7 @@ namespace Best {
 				query.Dispose ();
 			}
 
-			query = Query.New ();
+			query = Factory.NewQuery ();
 			
 			query.AddDomain (QueryDomain.Neighborhood);
 			query.AddDomain (QueryDomain.Global);

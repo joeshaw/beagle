@@ -35,6 +35,11 @@ namespace Beagle
 
 		public virtual event GotHitsHandler GotHitsEvent;
 
+		public Query ()
+		{
+			GotHitsXmlEvent += OnGotHitsXml;
+		}
+
 		public void Dispose () {
 			CloseQuery ();
 			
@@ -53,17 +58,5 @@ namespace Beagle
 			}
 		}
 
-		static public Query New ()
-		{
-			string queryPath = DBusisms.QueryManager.NewQuery ();
-
-			Query query;
-			query = (Query) DBusisms.Service.GetObject (typeof (Query), queryPath);
-			query.GotHitsXmlEvent += query.OnGotHitsXml;
-			
-			return query;
-		}
-
 	}
-
 }
