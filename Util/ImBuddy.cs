@@ -102,7 +102,8 @@ namespace Beagle.Util {
 
 		string buddyListPath;
 		string buddyListDir;
-		int myWatchDescriptor = -1;
+		DateTime buddyListLastWriteTime;
+		uint timeoutId;
 
 		public GaimBuddyListReader ()
 		{
@@ -111,24 +112,21 @@ namespace Beagle.Util {
 			buddyListPath = Path.Combine (buddyListDir, "blist.xml");
 
 			Read ();
-			
-			myWatchDescriptor = Inotify.Watch (buddyListPath, Inotify.EventType.CloseWrite);
-			Inotify.Event += OnInotifyEvent;
+
+			// Poll the file once every minute
+			timeoutId = GLib.Timeout.Add (60000, new GLib.TimeoutHandler (ReadTimeoutHandler));
 		}
 
 		~GaimBuddyListReader ()
 		{
-			Inotify.Event -= OnInotifyEvent;
+			if (timeoutId > 0)
+				GLib.Source.Remove (timeoutId);
 		}
-	
-		protected void OnInotifyEvent (int wd,
-					       string path,
-					       string subitem,
-					       Inotify.EventType type,
-					       uint cookie)
+
+		private bool ReadTimeoutHandler ()
 		{
-			if (wd == myWatchDescriptor)
-				Read ();
+			Read ();
+			return true;
 		}
 
 		private string Format (string name) {
@@ -137,6 +135,13 @@ namespace Beagle.Util {
 
 		override public void Read ()
 		{
+			// If the file hasn't changed, don't do anything.
+			DateTime last_write = File.GetLastWriteTime (buddyListPath);
+			if (last_write == buddyListLastWriteTime)
+				return;
+
+			buddyListLastWriteTime = last_write;
+
 			buddyList = new Hashtable ();
 
 			XmlDocument accounts = new XmlDocument ();
