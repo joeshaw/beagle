@@ -176,7 +176,13 @@ namespace Beagle.Filters {
 		override protected void DoOpen (FileInfo info)
 		{
 			HtmlDocument doc = new HtmlDocument ();
-			doc.Load (Stream);
+
+			try {
+				doc.Load (Stream);
+			} catch (NotSupportedException e) {
+				doc.Load (Stream, Encoding.ASCII);
+			}
+
 			if (doc != null)
 				WalkNodes (doc.DocumentNode);
 			Finished ();

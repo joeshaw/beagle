@@ -54,8 +54,12 @@ namespace Beagle.Daemon.TomboyQueryable {
 		{
 			base.Start ();
 
+			// If ~/.tomboy does not exist, watch ~ for it to be
+			// created
 			if (! Directory.Exists (notesDir) ) {
-				log.Error("Failed to Scan Tomboy, perhaps it is not installed");
+				log.Warn("Failed to Scan Tomboy, perhaps it is not installed");
+				wdNotes = Inotify.Watch (Environment.GetEnvironmentVariable ("HOME"), Inotify.EventType.CreateSubdir);
+				Inotify.Event += WatchForTomboy;
 				return;
 			}
 			
@@ -133,6 +137,23 @@ namespace Beagle.Daemon.TomboyQueryable {
 
 		}
 
+		private void WatchForTomboy (int wd,
+					     string path,
+ 					     string subitem,
+					     Inotify.EventType type,
+					     uint cookie)
+		{
+			// Check if event is the tomboy directory being created
+			// and index the notes
+			if (subitem == ".tomboy" && path == Environment.GetEnvironmentVariable ("HOME")) {
+				Inotify.Event -= WatchForTomboy;
+				Inotify.Ignore (path);
+				Start();
+				return;
+			}
+
+		}
+
 		private static Indexable NoteToIndexable (FileInfo file, Note note)
 		{
 			Indexable indexable = new Indexable (note.Uri);
@@ -173,7 +194,8 @@ namespace Beagle.Daemon.TomboyQueryable {
 			task.SubPriority = 0;
 			ThisScheduler.Add (task);
 
-			// Write a plain-text version of our note out into the text cache
+			// Write a plain-text version of our note out into the
+			// text cache
 			try {
 				TextWriter writer = TextCache.GetWriter (note.Uri);
 				writer.Write (note.text);

@@ -37,7 +37,7 @@ for i in $needed_dlls; do
   fi
 done
 
-AC_CHECK_HEADERS(X11/extensions/scrnsaver.h,, [AC_MSG_ERROR([Unable to find scrnsaver.h.  You probably need to install XFree86 devel packages])])
+AC_CHECK_HEADERS(X11/extensions/scrnsaver.h,, [AC_MSG_ERROR([Unable to find scrnsaver.h.  You probably need to install XFree86 development packages])])
 
 dnl ******************
 dnl Mozilla name check
@@ -60,7 +60,7 @@ if test "x$MOZILLA" = "x"; then
   elif pkg-config --exists thunderbird-gtkmozembed; then
     MOZILLA=thunderbird
   else
-    AC_MSG_ERROR([no mozilla installation found])
+    AC_MSG_ERROR([unable to find gtkmozembed; this can be found in mozilla/firefox/thunderbird development packages])
   fi
 elif test "x$with_mozilla" != "xmozilla" -a "x$with_mozilla" != "xfirefox" -a "x$with_mozilla" != "xthunderbird"; then
   AC_MSG_ERROR([unknown mozilla name ($MOZILLA)])
