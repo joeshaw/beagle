@@ -250,7 +250,7 @@ namespace Beagle.Daemon {
 				di = di.Parent;
 			}
 
-			return Path.Combine (folder_name, Path.GetFileNameWithoutExtension (file_info.Name));
+			return Path.Combine (folder_name, file_info.Name);
 		}
 
 		protected override bool Setup ()
