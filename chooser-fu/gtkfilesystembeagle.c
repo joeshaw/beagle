@@ -241,14 +241,21 @@ static char *       get_parent_dir    (const char       *filename);
 /*
  * GtkFileSystemUnix
  */
+static GType file_system_beagle_type = 0;
+
 GType
 gtk_file_system_beagle_get_type (void)
 {
-  static GType file_system_unix_type = 0;
+  return file_system_beagle_type;
+}
 
-  if (!file_system_unix_type)
+void
+gtk_file_system_beagle_register_type (GTypeModule *module)
+{
+  
+  if (!file_system_beagle_type)
 	{
-		static const GTypeInfo file_system_unix_info =
+		static const GTypeInfo file_system_beagle_info =
       {
 				sizeof (GtkFileSystemUnixClass),
 				NULL,		/* base_init */
@@ -268,15 +275,17 @@ gtk_file_system_beagle_get_type (void)
 				NULL			                              /* interface_data */
       };
 
-		file_system_unix_type = g_type_register_static (G_TYPE_OBJECT,
-																										"GtkFileSystemBeagle",
-																										&file_system_unix_info, 0);
-		g_type_add_interface_static (file_system_unix_type,
+		file_system_beagle_type = g_type_module_register_type (module,
+                                                           G_TYPE_OBJECT,
+                                                           "GtkFileSystemBeagle",
+                                                           &file_system_beagle_info, 0);
+		g_type_module_add_interface (module,
+                                 file_system_beagle_type,
 																 GTK_TYPE_FILE_SYSTEM,
 																 &file_system_info);
 	}
 
-  return file_system_unix_type;
+  return;
 }
 
 /**
@@ -1625,11 +1634,17 @@ gtk_file_system_unix_list_bookmarks (GtkFileSystem *file_system)
 /*
  * GtkFileFolderUnix
  */
+static GType file_folder_unix_type = 0;
+
 static GType
 gtk_file_folder_unix_get_type (void)
 {
-  static GType file_folder_unix_type = 0;
+  return file_folder_unix_type;
+}
 
+static GType
+gtk_file_folder_unix_register_type (GTypeModule *module)
+{
   if (!file_folder_unix_type)
 	{
 		static const GTypeInfo file_folder_unix_info =
@@ -1652,12 +1667,14 @@ gtk_file_folder_unix_get_type (void)
 				NULL			                              /* interface_data */
       };
 
-		file_folder_unix_type = g_type_register_static (G_TYPE_OBJECT,
-																										"GtkFileFolderUnix",
-																										&file_folder_unix_info, 0);
-		g_type_add_interface_static (file_folder_unix_type,
+		file_folder_unix_type = g_type_module_register_type (module,
+                                                         G_TYPE_OBJECT,
+                                                         "GtkFileFolderBeagle",
+                                                         &file_folder_unix_info, 0);
+		g_type_module_add_interface (module,
+                                 file_folder_unix_type,
 																 GTK_TYPE_FILE_FOLDER,
-																 &file_folder_info);
+                                 &file_folder_info);
 	}
 
   return file_folder_unix_type;
@@ -2057,3 +2074,24 @@ filename_is_root (const char *filename)
 
   return (after_root != NULL && *after_root == '\0');
 }
+
+void
+fs_module_init(GTypeModule *module)
+{
+  gtk_file_folder_unix_register_type (module);
+  gtk_file_system_beagle_register_type (module);
+}
+
+void
+fs_module_exit (void)
+{  
+}
+
+GtkFileSystem *
+fs_module_create (void)
+{
+  return gtk_file_system_beagle_new ();
+  
+}
+
+

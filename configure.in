@@ -78,6 +78,9 @@ AC_SUBST(LIBXML_REQUIRED)
 AC_SUBST(LIBGLIB_REQUIRED)
 AC_SUBST(LIBGTK_REQUIRED)
 
+GTK_BINARY_VERSION=`$PKG_CONFIG --variable=gtk_binary_version gtk+-2.0`
+AC_SUBST(GTK_BINARY_VERSION)
+
 dnl fixme -- combine the dependencies of only the enabled plugins
 PKG_CHECK_MODULES(EPIPHANY_DEPENDENCY, \
 		  libxml-2.0 >= $LIBXML_REQUIRED \

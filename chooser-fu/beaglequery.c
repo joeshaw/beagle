@@ -114,7 +114,7 @@ beagle_query (const char *query_string)
     /* An ugly hack: we run beagle-query and parse the results into BeagleHit
        objects. */
 
-    cmdline = g_strdup_printf ("/opt/beagle/bin/beagle-query %s", query_string);
+    cmdline = g_strdup_printf ("/opt/beagle/bin/beagle-query --verbose %s", query_string);
 
     /* FIXME: We should fail gracefully and w/ a meaningful error message if
        we can't find beagle-query, etc. */

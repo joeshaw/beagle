@@ -3,7 +3,10 @@ INCLUDES = 				\
 	-DXDG_PREFIX=_beagle_xdg	\
 	$(CHOOSER_FU_CFLAGS)
 
-lib_LTLIBRARIES = libbeaglechooserhack.la
+module_flags= -export_dynamic -avoid-version -module -no-undefined
+modulesdir=$(libdir)/gtk-2.0/$(GTK_BINARY_VERSION)/filesystems
+
+modules_LTLIBRARIES = libbeaglechooserhack.la
 
 libbeaglechooserhack_la_SOURCES =	\
 	beaglequery.h		\
@@ -17,8 +20,7 @@ libbeaglechooserhack_la_SOURCES =	\
 	xdgmimemagic.c		\
 	xdgmimemagic.h		\
 	gtkfilesystembeagle.h	\
-	gtkfilesystembeagle.c	\
-	preload-symbols.c
+	gtkfilesystembeagle.c
 
 libbeaglechooserhack_la_LIBADD = $(CHOOSER_FU_LIBS)
 
