@@ -270,7 +270,7 @@ namespace Beagle.Filters {
 
 					case "dc.creator":
 						reader.Read ();
-						AddProperty (Beagle.Property.New ("dc:subject", reader.Value ));
+						AddProperty (Beagle.Property.New ("dc:creator", reader.Value ));
 						break;
 
 					case "dc.coverage":

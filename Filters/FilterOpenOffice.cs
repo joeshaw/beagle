@@ -203,7 +203,11 @@ namespace Beagle.Filters {
 					
 					hot_nodes.Push (isHot);
 				
-					if (isHot)
+					isPartiallyHot = false;
+					if (part_hot_nodes.Count > 0)
+						isPartiallyHot = (bool) part_hot_nodes.Peek ();
+
+					if (isHot&& !isPartiallyHot)
 						HotUp ();
 				
 					if (NodeIsFreezing (reader.Name))
@@ -240,16 +244,22 @@ namespace Beagle.Filters {
 						int index;
 						string strPartialText = null;
 						index = text.IndexOf (' ');
-						if (index > 0) {
+						if (index > -1) {
 							strPartialText = text.Substring (0, index);
 							text = text.Substring (index);
-						}
+							if (!text.EndsWith (" "))
+							    part_hot_nodes.Push (isPartiallyHot);
+						} else 
+							part_hot_nodes.Push (isPartiallyHot);
+
 						if (strPartialText != null)
 							AppendText (strPartialText);
-						HotDown ();
+						if (index > -1)
+							HotDown ();
 					} else 	if (is_text_hot && isTextSpanned && !text.EndsWith (" ")) {
 						isPartiallyHot = true;
 						part_hot_nodes.Push (isPartiallyHot);
+						//Console.WriteLine ("Partially hot : [{0}]", text);
 					}
 					AppendText (text);
 					break;
@@ -257,13 +267,20 @@ namespace Beagle.Filters {
 				case XmlNodeType.EndElement:
 					if (reader.Name == "text:span")
 						span_nodes.Pop ();
-					
+
 					if (NodeBreaksTextAfter (reader.Name))
 						AppendWhiteSpace ();
 
+					if (reader.Name == "text:p") {
+						if (part_hot_nodes.Count > 0) {
+							part_hot_nodes.Clear ();
+							HotDown ();
+						}
+					}
+					
 					bool is_hot = (bool) hot_nodes.Pop ();
-					isPartiallyHot = false;
 
+					isPartiallyHot = false;
 					if (part_hot_nodes.Count > 0)
 						isPartiallyHot = (bool) part_hot_nodes.Peek ();
 

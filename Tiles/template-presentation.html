@@ -1,0 +1,16 @@
+<tr>
+  <td class="icon">
+    <span><a href="@action:@Open"><img src="@%Icon@"></a></span>
+  </td>
+  <td class="content">
+    <div class="name"><a href="@action:@Open">@FileName@</a>, in folder <a href="@action:@Reveal">@FolderName@</a></div>
+    <div class="date">Last modified @date%Timestamp@</div>
+    <div class="snippet">Title: @Title@</div>
+    <div class="snippet">Slides: @fixme:slide-count@</div>
+    <ul class="actions">
+      <li><a href="@action:@Open">Open</a></li>
+      <li id="email"><a href="@action:@SendTo">Send to...</a></li>
+      <li id="reveal"><a href="@action:@Reveal">Reveal in file manager</a></li>
+    </ul>
+  </td>
+</tr>
