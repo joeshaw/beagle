@@ -137,10 +137,8 @@ namespace Beagle.Filters {
 				Marshal.Copy (byteHotArray, data, 0, hotDataLen);
 			}
 			if (data != null) {
-				HotUp();
 				str = System.Text.Encoding.UTF8.GetString (data, 0, hotDataLen);
-				AppendText (str);
-				HotDown ();
+				AppendTextToHotPool (str);
 			}
 			if (appendStructBrk)
 				AppendStructuralBreak ();

@@ -139,13 +139,12 @@ append_char (UserData * ud, U16 ch)
   if (ch == 0x00 || ch == 0x20) {
       if (ud->bWasHot) 
 	  g_string_append (ud->txtHotPool, ud->txtWord->str);
-      else
-	  g_string_append (ud->txtPool, ud->txtWord->str);
+      g_string_append (ud->txtPool, ud->txtWord->str);
 
  /*      printf ("TxtPool: %s\n", ud->txtPool->str);       */
 /*       printf ("HotTxtPool: %s\n", ud->txtHotPool->str); */
 
-      if (bNeedStructBrk || ud->bWasHot) {
+      if (bNeedStructBrk) {
 	  (*(ud->WordHandler))(ud->txtPool->str, ud->txtPool->len, 
 			       ud->txtHotPool->str, ud->txtHotPool->len, bNeedStructBrk);
 	  g_string_erase (ud->txtPool, 0, -1);
