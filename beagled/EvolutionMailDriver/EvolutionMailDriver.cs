@@ -424,7 +424,7 @@ namespace Beagle.Daemon {
 
 			Stopwatch watch = new Stopwatch ();
 			watch.Start();
-			log.Info ("Going to index IMAP summary for {0}", folderName);
+			log.Info ("Going to index summary for {0}", folderName);
 
 			Stream statusStream;
 			BinaryFormatter formatter;
