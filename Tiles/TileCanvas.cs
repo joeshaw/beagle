@@ -315,7 +315,7 @@ namespace Beagle.Tile {
 			string mime_type = "text/html";
 			if (Environment.GetEnvironmentVariable ("BEST_DEBUG_HTML") != null)
 			    mime_type = "text/plain";
-			OpenStream ("http://localhost/", mime_type);
+			OpenStream ("file:///tmp/foo", mime_type);
 			PaintTile (root);
 			CloseStream ();
 
