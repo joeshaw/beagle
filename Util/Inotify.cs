@@ -75,7 +75,7 @@ namespace Beagle.Util {
 
 		public static event InotifyHandler InotifyEvent;
 
-		public static bool Verbose = true;
+		public static bool Verbose = false;
 
 		//////////////////////////////////////////////////////////
 
@@ -132,6 +132,12 @@ namespace Beagle.Util {
 
 		public static int WatchCount {
 			get { return watchedByWd.Count; }
+		}
+
+		public static bool IsWatching (string path)
+		{
+			path = Path.GetFullPath (path);
+			return watchedByPath.Contains (path);
 		}
 
 		public static void Watch (string path, InotifyEventType mask)

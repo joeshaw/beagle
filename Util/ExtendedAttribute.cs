@@ -36,13 +36,13 @@ namespace Beagle.Util {
 	public class ExtendedAttribute {
 
 		[DllImport ("libc")]
-		static extern int setxattr (string path, string name, byte[] value, uint size, int flags);
+		static extern int lsetxattr (string path, string name, byte[] value, uint size, int flags);
 
 		[DllImport ("libc")]
-		static extern int getxattr (string path, string name, byte[] value, uint size);
+		static extern int lgetxattr (string path, string name, byte[] value, uint size);
 
 		[DllImport ("libc")]
-		static extern int removexattr (string path, string name);
+		static extern int lremovexattr (string path, string name);
 
 		private static string AddPrefix (string name)
 		{
@@ -53,40 +53,46 @@ namespace Beagle.Util {
 
 		public static void Set (FileSystemInfo info, string name, string value)
 		{
+			if (! info.Exists)
+				throw new IOException (info.FullName);
+
 			name = AddPrefix (name);
 
 			byte[] buffer = encoding.GetBytes (value);
-			int retval = setxattr (info.FullName, name, buffer, (uint) buffer.Length, 0);
-			if (retval != 0) {
-				if (info.Exists)
-					Console.WriteLine ("WARNING: Extended attributes not enabled on filesystem for {0}.  This will affect performance.",
-							   info.FullName);
-				else
-					throw new Exception ("Path not found setting extended attribute: " + info.FullName);
-			}
+			int retval = lsetxattr (info.FullName, name, buffer, (uint) buffer.Length, 0);
+			if (retval != 0) 
+				throw new Exception ("Could not set extended attribute on " + info.FullName);
 		}
 
 		public static string Get (FileSystemInfo info, string name)
 		{
+			if (! info.Exists)
+				throw new IOException (info.FullName);
+
 			name = AddPrefix (name);
 
 			byte[] buffer = null;
-			int size = getxattr (info.FullName, name, buffer, 0);
+			int size = lgetxattr (info.FullName, name, buffer, 0);
 			if (size <= 0)
 				return null;
 			buffer = new byte [size];
-			int rv = getxattr (info.FullName, name, buffer, (uint) size);
-			// FIXME: should check retval, throw an exception if path doesn't exist, etc.
+			int retval = lgetxattr (info.FullName, name, buffer, (uint) size);
+			if (retval < 0)
+				throw new Exception ("Could not get extended attribute on " + info.FullName);
 
 			return encoding.GetString (buffer);
 		}
 
 		public static void Remove (FileSystemInfo info, string name)
 		{
+			if (! info.Exists)
+				throw new IOException (info.FullName);
+			
 			name = AddPrefix (name);
 
-			int retval = removexattr (info.FullName, name);
-			// FIXME: should check retval, throw an exception if path doesn't exist, etc.
+			int retval = lremovexattr (info.FullName, name);
+			if (retval != 0)
+				throw new Exception ("Could not remove extended attribute on " + info.FullName);
 		}
 
 		//////////////////////////////////////////////////////////////////////
