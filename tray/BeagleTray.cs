@@ -104,6 +104,7 @@ namespace Beagle
 			else {
 				win.ShowAll ();
 				entry.GrabFocus ();
+				win.Present ();
 			}
 		}
 
