@@ -11,7 +11,9 @@ CSFLAGS = 					\
 CSFILES = 				\
 	$(srcdir)/DBusisms.cs		\
 	$(srcdir)/Hit.cs                \
+	$(srcdir)/Indexable.cs          \
 	$(srcdir)/Indexer.cs            \
+	$(srcdir)/Property.cs           \
 	$(srcdir)/QueryManager.cs	\
 	$(srcdir)/Query.cs              \
 	$(srcdir)/RdfSink.cs		\

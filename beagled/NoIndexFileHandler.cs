@@ -81,12 +81,10 @@ namespace Beagle.Daemon {
 
 		public override void Run (PreIndexHandlerArgs args)
 		{
-			IndexableFile file = args.indexable as IndexableFile;
-
-			if (file == null) 
+			if (args.indexable.Type != "File")
 				return;
 
-			string path = file.Uri;
+			string path = args.indexable.Uri;
 			if (path.StartsWith ("file://"))
 				path = path.Substring ("file://".Length);
 

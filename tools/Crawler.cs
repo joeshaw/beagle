@@ -72,7 +72,7 @@ class CrawlerTool {
 			System.Console.WriteLine ("Flushing");
 			if (toBeIndexed.Count > 0) {
 				foreach (string uri in toBeIndexed)
-					indexer.IndexFile (uri);
+					indexer.Index (new Indexable (uri));
 				toBeIndexed.Clear ();
 			}
 			System.Console.WriteLine ("Done Flushing");

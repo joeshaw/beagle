@@ -8,10 +8,8 @@ PLUGIN_CFLAGS = -target:library
 
 PLUGIN_CSFILES =			\
 	$(srcdir)/PathFinder.cs		\
-	$(srcdir)/Property.cs		\
 	$(srcdir)/Flavor.cs		\
 	$(srcdir)/Filter.cs		\
-	$(srcdir)/Indexable.cs		\
 	$(srcdir)/PreIndexHandler.cs	\
 	$(srcdir)/PostIndexHandler.cs
 
@@ -54,7 +52,7 @@ DAEMON_DLL_CSFLAGS = 			\
 
 lucenedir = $(srcdir)/Lucene.Net
 
-LUCENE_CSFILES =								\
+LUCENE_CSFILES =							\
 	$(lucenedir)/AssemblyInfo.cs					\
 	$(lucenedir)/Analysis/Analyzer.cs				\
 	$(lucenedir)/Analysis/CharTokenizer.cs				\
@@ -177,7 +175,6 @@ LUCENE_CSFILES =								\
 DAEMON_DLL_CSFILES = 				\
 	$(LUCENE_CSFILES)			\
 	$(srcdir)/DBusisms.cs			\
-	$(srcdir)/IndexableFile.cs		\
 	$(srcdir)/Query.cs			\
 	$(srcdir)/Relevancy.cs			\
 	$(srcdir)/IQueryResult.cs		\
@@ -193,7 +190,8 @@ DAEMON_DLL_CSFILES = 				\
 	$(srcdir)/NoIndexFileHandler.cs 	\
 	$(srcdir)/QueryManager.cs		\
 	$(srcdir)/RdfSinkImpl.cs		\
-	$(srcdir)/RdfSourceImpl.cs
+	$(srcdir)/RdfSourceImpl.cs              \
+	$(srcdir)/FilteredIndexable.cs
 
 DAEMON_DLL_LOCAL_ASSEMBLIES =		\
 	../Util/Util.dll		\

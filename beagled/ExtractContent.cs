@@ -40,10 +40,18 @@ class ExtractContentTool {
 
 		foreach (String arg in args) {
 			
-			IndexableFile indexable;
+			FilteredIndexable indexable;
 
-			indexable = new IndexableFile (arg);
-			indexable.Build ();
+			string uri = arg;
+
+			if (!uri.StartsWith ("file://")) {
+				uri = Path.GetFullPath (uri);
+				uri = "file://" + uri;
+			}
+				
+			Console.WriteLine ("uri: {0}", uri);
+
+			indexable = new FilteredIndexable (uri);
 
 			if (!firstArg) {
 				Console.WriteLine ();
@@ -52,7 +60,7 @@ class ExtractContentTool {
 			}
 			firstArg = false;
 
-			Console.WriteLine ("Filename: " + arg);
+			Console.WriteLine ("Filename: " + uri);
 			Console.WriteLine ("  Flavor: " + indexable.Flavor);
 			if (! indexable.HaveFilter)
 				Console.WriteLine ("No filter!");
@@ -63,7 +71,7 @@ class ExtractContentTool {
 			bool first;
 
 			first = true;
-			foreach (Property prop in indexable.Properties) {
+			foreach (Beagle.Property prop in indexable.Properties) {
 				if (first) {
 					Console.WriteLine ("Properties:");
 					first = false;

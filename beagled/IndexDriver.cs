@@ -182,9 +182,7 @@ namespace Beagle.Daemon {
 		}
 
 		private Document ToLuceneDocument (Indexable indexable)
-		{
-			indexable.Build ();
-			
+		{			
 			Document doc = new Document ();
 			Field f;
 			String str;

@@ -1,5 +1,5 @@
 //
-// Indexer.cs
+// Property.cs
 //
 // Copyright (C) 2004 Novell, Inc.
 //
@@ -24,28 +24,62 @@
 // DEALINGS IN THE SOFTWARE.
 //
 
-namespace Beagle
-{
-	using DBus;
-	
-	[Interface ("com.novell.Beagle.Indexer")]
-	public abstract class Indexer 
-	{
-		[Method]
-		public abstract void Index (string indexableAsXml);
+using System;
+using BU = Beagle.Util;
 
-		public void Index (Indexable indexable) {
-			Index (indexable.ToXml ());
+namespace Beagle {
+	
+	public class Property {
+
+		bool   isKeyword;
+		string key;
+		string value;
+
+		public bool IsKeyword {
+			get { return isKeyword; }
 		}
 
-		static Indexer theIndexer = null;
+		public string Key {
+			get { return key; }
+		}
 
-		static public Indexer Get () {
-			if (theIndexer == null)
-				theIndexer = (Indexer) DBusisms.Service.GetObject (typeof (Indexer),
-										   DBusisms.IndexerPath);
-			
-			return theIndexer;
+		public string Value {
+			get { return value; }
+		}
+		
+		/////////////////////////////////////
+
+		protected Property () { }
+
+		static public Property New (string key, object value)
+		{
+			Property p = new Property ();
+			p.isKeyword = false;
+			p.key = key;
+			p.value = value != null ? value.ToString () : null;
+			return p;
+		}
+
+		static public Property NewKeyword (string key, object value)
+		{
+			Property p = Property.New (key, value);
+			p.isKeyword = true;
+			return p;
+		}
+
+		static public Property NewBool (string key, bool value)
+		{
+			return NewKeyword (key, value ? "true" : "false");
+		}
+
+		static public Property NewFlag (string key)
+		{
+			return NewBool (key, true);
+		}
+
+		static public Property NewDate (string key, DateTime dt)
+		{
+			return NewKeyword (key, BU.StringFu.DateTimeToString (dt));
 		}
 	}
 }

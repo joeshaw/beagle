@@ -92,49 +92,43 @@ namespace Beagle.Daemon
 			return null;
 		}
 
-		void Index (FileInfo file)
+		public void IndexIndexable (FilteredIndexable indexable)
 		{
-			Hit hit = GetExistingHit (file);
+			Hit hit;
 
-			if (!file.Exists) {
-				indexerQueue.ScheduleRemove (hit);
-				return;
+			FileInfo file = indexable.GetFileInfo ();
+			
+			if (file != null) {
+				hit = GetExistingHit (file);
+
+				if (!file.Exists) {
+					indexerQueue.ScheduleRemove (hit);
+					return;
+				}
+
+				DateTime changeTime = file.LastWriteTime;
+				DateTime nautilusTime = NautilusTools.GetMetaFileTime (file.FullName);
+			
+				if (nautilusTime > changeTime)
+					changeTime = nautilusTime;
+
+				// If the file isn't newer than the hit, don't
+				// even bother
+				
+				if (hit != null && !hit.IsObsoletedBy (changeTime))
+					return;
+			} else {
+				hit = driver.FindByUri (indexable.Uri);
 			}
 
-			DateTime changeTime = file.LastWriteTime;
-			DateTime nautilusTime = NautilusTools.GetMetaFileTime (file.FullName);
-			
-			if (nautilusTime > changeTime)
-				changeTime = nautilusTime;
-
-			// If the file isn't newer than the hit, don't
-			// even bother
-
-			if (hit != null && !hit.IsObsoletedBy (changeTime))
-				return;
-			Indexable indexable = new IndexableFile (file.FullName);
 			indexerQueue.ScheduleAdd (indexable);
 			indexerQueue.ScheduleRemove (hit);
 		}
 
-		void IndexPath (string path) 
+		public override void Index (string xml)
 		{
-			if (path.StartsWith ("file://"))
-				path = path.Substring ("file://".Length);
-
-			path = Path.GetFullPath (path);
-			
-			if (path == null)
-				return;
-			
-			FileInfo file = new FileInfo (path);
-
-			Index (file);
-		}
-
-		public override void IndexFile (string path)
-		{
-			IndexPath (path);
+			FilteredIndexable indexable = FilteredIndexable.NewFromXml (xml);
+			IndexIndexable (indexable);
 		}
 	}
 }

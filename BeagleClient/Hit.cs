@@ -121,6 +121,7 @@ namespace Beagle {
 		
 		public void ReadFromXml (XmlTextReader reader)
 		{
+			// This is a pretty lame reader 
 			id = int.Parse (reader.GetAttribute ("name"));
 			uri = reader.GetAttribute ("uri");
 			type = reader.GetAttribute ("type");
