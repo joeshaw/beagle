@@ -45,7 +45,7 @@ namespace Beagle.Util {
 
 		private static Hashtable loggers = new Hashtable ();
 		private static LogLevel defaultLevel = LogLevel.Info;
-		private static TextWriter defaultWriter = System.Console.Out;
+		private static TextWriter defaultWriter = null;
 
 		public static Logger Log {
 			get {
@@ -90,26 +90,25 @@ namespace Beagle.Util {
 		}
 
 		public TextWriter Writer {
-			get { return (writer != null) ? writer : DefaultWriter; }
+			get { return writer; }
 			set { writer = value; }
 		}
 
 		private string GetStamp ()
                 {
-			if (Writer != Console.Out) {
-				return string.Format ("{0}[{1}] {2} ",
-						      Process.GetCurrentProcess().Id,
-						      Environment.CommandLine,
-						      DateTime.Now.ToString ("yy-MM-dd HH.mm.ss.ff"));
-			} else {
-				return "";
-			}
+			return string.Format ("{0}[{1}] {2} ",
+					      Process.GetCurrentProcess().Id,
+					      Environment.CommandLine,
+					      DateTime.Now.ToString ("yy-MM-dd HH.mm.ss.ff"));
 		}
 
 
 		private void WriteLine (string level, string message) {
-			Writer.WriteLine ("{0}{1}: {2}", GetStamp (), level, message);
-			Writer.Flush ();
+			System.Console.WriteLine ("{0}: {1}", level, message);
+			if (Writer != null) {
+				Writer.WriteLine ("{0}{1}: {2}", GetStamp (), level, message);
+				Writer.Flush ();
+			}
 		}
 
 		public void Debug (string message, params object [] args)

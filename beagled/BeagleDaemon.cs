@@ -47,14 +47,6 @@ namespace Beagle.Daemon {
 				return false;
 
 			case 0: // child
-				int fd = Syscall.open ("/dev/null", OpenFlags.O_RDWR);
-
-				if (fd >= 0) {
-					Syscall.dup2 (fd, 0);
-					Syscall.dup2 (fd, 1);
-					Syscall.dup2 (fd, 2);
-				}
-
 				Syscall.umask (022);
 				Syscall.setsid ();
 				break;
@@ -96,38 +88,80 @@ namespace Beagle.Daemon {
 
 		public static int Main (string[] args)
 		{
+			bool daemon = false;
 			if (Array.IndexOf (args, "--nofork") == -1 && Array.IndexOf (args, "--no-fork") == -1) {
 				if (! Daemonize ())
 					return 1;
+				daemon = true;
 			}
 
-			// FIXME: this could be better, but I don't want to
-			// deal with serious cmdline parsing today
-			if (Array.IndexOf (args, "--out") != -1) {
-				SetupLog (null);
-			} else {
-				string logPath = Path.Combine (PathFinder.LogDir,
-							       "Beagle");
-				SetupLog (logPath);
-			}
 			
-			Application.Init ();
+			try {
+				// FIXME: this could be better, but I don't want to
+				// deal with serious cmdline parsing today
+				if (Array.IndexOf (args, "--out") != -1) {
+					SetupLog (null);
+				} else {
+					string logPath = Path.Combine (PathFinder.LogDir,
+								       "Beagle");
+					SetupLog (logPath);
+				}
+			} catch (Exception e) {
+				System.Console.WriteLine ("Couldn't initialize logging.  This could mean that another Beagle instance is running: {0}", e);
+				return 1;
+			}
 
-			// Connect to the session bus, acquire the com.novell.Beagle
-			// service, and set up a BusDriver.
-			DBusisms.Init ();
+			try {
+				Application.Init ();
+				
+				// FIXME: this could be better, but I don't want to
 
-			// Construct and register our ping object.
-			Ping ping = new Ping ();
-			DBusisms.Service.RegisterObject (ping, "/com/novell/Beagle/Ping");
+				// Connect to the session bus, acquire the com.novell.Beagle
+				// service, and set up a BusDriver.
+				DBusisms.Init ();
+			} catch (DBus.DBusException e) {
+				Logger.Log.Fatal ("Couldn't connect to the session bus.  See http://beaglewiki.org/index.php/Installing%20Beagle for information on setting up a session bus.");
+				Logger.Log.Debug (e);
+				return 1;
+			} catch (Exception e) {
+				Logger.Log.Fatal ("Could not initialize Beagle:\n{0}", e);
+				return 1;
+			}
 
-			// Construct a query driver.  Among other things, this
-			// loads and initializes all of the IQueryables.
-			QueryDriver queryDriver = new QueryDriver ();
+			try {
 
-			// Set up our D-BUS object factory.
-			FactoryImpl factory = new FactoryImpl (queryDriver);
-			DBusisms.Service.RegisterObject (factory, Beagle.DBusisms.FactoryPath);
+				// Construct and register our ping object.
+				Ping ping = new Ping ();
+				DBusisms.Service.RegisterObject (ping, "/com/novell/Beagle/Ping");
+
+				// Construct a query driver.  Among other things, this
+				// loads and initializes all of the IQueryables.
+				QueryDriver queryDriver = new QueryDriver ();
+
+				// Set up our D-BUS object factory.
+				FactoryImpl factory = new FactoryImpl (queryDriver);
+				DBusisms.Service.RegisterObject (factory, Beagle.DBusisms.FactoryPath);
+			} catch (DBus.DBusException e) {
+				Logger.Log.Fatal ("Couldn't register DBus objects."); 
+				Logger.Log.Debug (e);
+				return 1;
+			} catch (Exception e) {
+				Logger.Log.Fatal ("Could not initialize Beagle:\n{0}", e);
+				return 1;
+			}			
+			
+			Logger.Log.Info ("Beagle daemon started"); 
+			// Now that the initialization is done, close all the
+			// file descriptors
+			if (daemon) {
+				int fd = Syscall.open ("/dev/null", OpenFlags.O_RDWR);
+			
+				if (fd >= 0) {
+					Syscall.dup2 (fd, 0);
+					Syscall.dup2 (fd, 1);
+					Syscall.dup2 (fd, 2);
+				}
+			}
 
 			// Start our event loop.
 			Application.Run ();
