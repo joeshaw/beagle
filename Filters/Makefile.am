@@ -22,6 +22,7 @@ HAP_CSFILES =						\
 CSFILES = 				\
 	$(HAP_CSFILES)			\
 	$(srcdir)/FilterHtml.cs		\
+	$(srcdir)/FilterFlac.cs		\
 	$(srcdir)/FilterJpeg.cs		\
 	$(srcdir)/FilterMan.cs		\
 	$(srcdir)/FilterMusic.cs	\

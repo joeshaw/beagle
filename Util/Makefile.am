@@ -17,6 +17,7 @@ CSFILES = 			        	\
 	$(srcdir)/ExifData.cs			\
 	$(srcdir)/ExtendedAttribute.cs  	\
 	$(srcdir)/FileSystem.cs			\
+	$(srcdir)/FlacReader.cs			\
 	$(srcdir)/FrequencyStatistics.cs	\
 	$(srcdir)/FSpotTools.cs         	\
 	$(srcdir)/GeckoUtils.cs                 \
