@@ -104,7 +104,7 @@ namespace Beagle.Daemon.FileSystemQueryable {
 			Queue queue = new Queue ();
 			int count = 0;
 
-			log.Info ("Walking {0}", root);
+			log.Info ("Watching {0}", root);
 			Stopwatch stopwatch = new Stopwatch ();
 			stopwatch.Start ();
 			
@@ -136,7 +136,8 @@ namespace Beagle.Daemon.FileSystemQueryable {
 
 			stopwatch.Stop ();
 
-			log.Info ("Processed {0} directories in {1}", count, stopwatch);
+			log.Info ("Watched {0} director{1} in {2}", 
+				  count, count == 1 ? "y" : "ies", stopwatch);
 		}
 
 		private void OnInotifyEvent (int              wd,
@@ -187,6 +188,7 @@ namespace Beagle.Daemon.FileSystemQueryable {
 
 			case InotifyEventType.DeleteSubdir:
 			case InotifyEventType.DeleteFile:
+				crawlQ.ForgetPath (fullPath);
 				Driver.ScheduleDeleteFile (fullPath, 100);
 				dirtyFiles.Remove (fullPath);
 				break;
