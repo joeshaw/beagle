@@ -298,7 +298,6 @@ dnl ----------------------------------------------
 
 dnl Needed to index jpeg metadata
 PKG_CHECK_MODULES(LIBEXIF, libexif >= 0.5)
-PKG_CHECK_MODULES(LIBEXIF, libexif >= 0.6, have_old_libexif=no, have_old_libexif=yes)
 
 PKG_CHECK_MODULES(BEAGLED, gmime-sharp >= 2.1.13 gtk-sharp dbus-sharp >= 0.23.4 gconf-sharp)
 BEAGLED_LIBS="$BEAGLED_LIBS $EVO_SHARP_LIBS $GSF_SHARP_LIBS"
@@ -336,10 +335,6 @@ fi
 
 if test "$dbus_broken" = "yes" -o "$use_dbus_workarounds" = "yes" ; then
 	BEAGLE_DEFINES="$BEAGLE_DEFINES -define:DBUS_IS_BROKEN_BROKEN_BROKEN"
-fi
-
-if test "$have_old_libexif" = "yes"; then
-    BEAGLE_DEFINES="$BEAGLE_DEFINES -define:HAVE_OLD_LIBEXIF"
 fi
 
 AC_SUBST(BEAGLE_DEFINES)
