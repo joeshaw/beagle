@@ -1,7 +1,7 @@
 /*
  * MonoTagEditor
  *
- * Copyright (C) 2003, Mariano Cano PÃ©rez <mariano.cano@hispalinux.es>
+ * Copyright (C) 2003, Mariano Cano Pérez <mariano.cano@hispalinux.es>
  *
  * Redistribution and use in source and binary forms, with or without modification,
  * are permitted provided that the following conditions are met:
@@ -46,7 +46,8 @@ public struct GnomeVFSMimeApplication
 	public string command;
 	public bool can_open_multiple_files;
 	public GnomeVFSMimeApplicationArgumentType expects_uris;
-	public List supported_uri_schemes;
+	//public List supported_uri_schemes;
+	private IntPtr supported_uri_schemes;
 	public bool requires_terminal;
 	
 	public IntPtr reserved1;
@@ -65,6 +66,14 @@ public struct GnomeVFSMimeApplication
 		return self;
 	}
 
+	//Fixme: Create the supported uri schemes struct
+	public List SupportedUriSchemes {
+		get {
+			List list = new List (supported_uri_schemes);
+			return list;
+		}
+	}
+
 	public static bool operator == (GnomeVFSMimeApplication a, GnomeVFSMimeApplication b)
 	{
 		return a.Equals (b);
@@ -77,15 +86,14 @@ public struct GnomeVFSMimeApplication
 
 	public override bool Equals (object o)
 	{
-		 if (!(o is GnomeVFSMimeApplication))
-			 return false;
-
-		return ((GnomeVFSMimeApplication) o) == this;
+		//if (!(o is GnomeVFSMimeApplication))
+		//	 return false;
+		return base.Equals(o)  ;
 	}
-	
+
 	public override int GetHashCode ()
 	{
-		return this.GetHashCode ();
+		return base.GetHashCode ();
 	}
 }
 

@@ -5,6 +5,7 @@
 //
 
 using System;
+using System.Diagnostics;
 
 using Gtk;
 using GtkSharp;
@@ -45,7 +46,27 @@ namespace Best {
 
 		private void Launch ()
 		{
-			Console.WriteLine ("Launched {0}", hit.Uri);
+			Console.WriteLine ("Loading {0}", hit.Uri);
+			String command = null, arguments = null;
+
+			if (hit.Uri.StartsWith ("file://")) {
+				GnomeVFSMimeApplication app = GnomeIconLookup.GetDefaultAction (hit.MimeType);
+				command = app.command;
+				arguments = hit.Uri.Substring (7);
+			} else if (hit.Uri.StartsWith ("http://")) {
+				command = "epiphany";
+				arguments = hit.Uri;
+			}
+			
+			if (command != null && arguments != null) {
+				ProcessStartInfo psi = new ProcessStartInfo ();
+				psi.FileName = command;
+				psi.Arguments = arguments;
+				Process.Start (psi);
+				Console.WriteLine ("command:[{0}] arguments:[{1}]", command, arguments);
+			} else {
+				Console.WriteLine ("Can't launch {0} (mime type: {1})", hit.Uri, hit.MimeType);
+			}
 		}
 
 		private Widget BuildIcon ()
@@ -55,8 +76,17 @@ namespace Best {
 			return icon;
 		}
 
+		private void AddText (String text)
+		{
+			Label label = new Label (text);
+			label.Xalign = 0;
+			label.UseUnderline = false;
+			textBox.PackStart (label, false, true, 1);
+		}
+
 		private void AddMarkup (String markup)
 		{
+			Console.WriteLine (markup);
 			Label label = new Label ("");
 			label.Xalign = 0;
 			label.UseUnderline = false;
@@ -82,7 +112,7 @@ namespace Best {
 			}
 
 			if (hit.Domain == "web") {
-				AddMarkup (hit.Uri);
+				AddText (hit.Uri);
 				if (hit["title"] != null)
 					AddMarkup ("<i>" + hit["title"] + "</i>");
 				if (hit.ValidTimestamp)
