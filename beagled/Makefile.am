@@ -374,6 +374,11 @@ blamqueryable = $(srcdir)/BlamQueryable
 BLAM_QUERYABLE_CSFILES =				\
 	$(blamqueryable)/BlamQueryable.cs
 
+lifereaqueryable = $(srcdir)/LifereaQueryable
+LIFEREA_QUERYABLE_CSFILES =				\
+	$(lifereaqueryable)/LifereaQueryable.cs
+
+
 launcherqueryable = $(srcdir)/LauncherQueryable
 LAUNCHER_QUERYABLE_CSFILES =				\
 	$(launcherqueryable)/LauncherQueryable.cs
@@ -394,6 +399,7 @@ DAEMON_DLL_CSFILES = 						\
 	$(FILE_SYSTEM_QUERYABLE_CSFILES)			\
 	$(GAIM_LOG_QUERYABLE_CSFILES)				\
 	$(BLAM_QUERYABLE_CSFILES)				\
+	$(LIFEREA_QUERYABLE_CSFILES)				\
 	$(EVO_MAIL_QUERYABLE_CSFILES)				\
 	$(WEB_HISTORY_QUERYABLE_CSFILES)			\
 	$(LAUNCHER_QUERYABLE_CSFILES)				\
