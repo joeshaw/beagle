@@ -187,7 +187,7 @@ namespace Beagle.Daemon {
 			UpToTheMainLoop up = UpToTheMainLoop.NewAdd (Proxy, indexable);
 			up.Run ();
 #else
-			Proxy p = Proxy;
+			RemoteIndexerProxy p = Proxy;
 			if (p != null)
 				p.Add (indexable.ToString ());
 #endif
@@ -200,7 +200,7 @@ namespace Beagle.Daemon {
 			UpToTheMainLoop up = UpToTheMainLoop.NewRemove (Proxy, uri);
 			up.Run ();
 #else
-			Proxy p = Proxy;
+			RemoteIndexerProxy p = Proxy;
 			if (p != null)
 				p.Remove (uri.ToString ());
 #endif
@@ -241,7 +241,7 @@ namespace Beagle.Daemon {
 
 		public int GetItemCount ()
 		{
-			Proxy p = Proxy;
+			RemoteIndexerProxy p = Proxy;
 			return p != null ? GetItemCount () : -1;
 		}
 
@@ -263,7 +263,7 @@ namespace Beagle.Daemon {
 				// Since this event is dispatched by d-bus, we are guaranteed
 				// to be in the main loop's thread.  Thus we don't have to
 				// jump through the same hoops as we did above.
-				Proxy p = Proxy;
+				RemoteIndexerProxy p = Proxy;
 				if (p != null)
 					p.Close ();
 
