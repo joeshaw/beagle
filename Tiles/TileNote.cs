@@ -75,7 +75,11 @@ namespace Beagle.Tile {
 			p.StartInfo.FileName = "tomboy";
 			p.StartInfo.Arguments = args;
 
-			p.Start ();
+			try {
+			    p.Start ();
+			} catch (Exception e) {
+			    Console.WriteLine ("Could not invoke Tomboy to open note: " + e);
+			}
 		}
 	}
 }
