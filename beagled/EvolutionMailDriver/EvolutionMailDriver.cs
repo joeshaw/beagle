@@ -158,7 +158,7 @@ namespace Beagle.Daemon {
 		private static Logger log = Logger.Get ("EvolutionMailDriver");
 
 		private SortedList watched = new SortedList ();
-		private ArrayList indexes;
+		private ArrayList indexes = new ArrayList ();
 		private SummaryCrawler crawler;
 
 		public EvolutionMailDriver () : base (Path.Combine (PathFinder.RootDir, "MailIndex"), true)
@@ -191,8 +191,7 @@ namespace Beagle.Daemon {
 
 			Queue queue = new Queue ();
 			queue.Enqueue (root);
-			
-			this.indexes = new ArrayList ();
+			this.indexes.Clear ();
 
 			while (queue.Count > 0) {
 				DirectoryInfo dir = queue.Dequeue () as DirectoryInfo;
@@ -214,7 +213,7 @@ namespace Beagle.Daemon {
 			Inotify.Ignore (path);
 			watched.RemoveAt (watched.IndexOfValue (path));
 
-			this.indexes = new ArrayList ();
+			this.indexes.Clear ();
 			foreach (string p in this.watched.Values)
 				this.indexes.AddRange (Directory.GetFiles (p, "*.ibex.index"));
 		}
