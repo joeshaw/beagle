@@ -225,10 +225,11 @@ namespace Beagle.Daemon {
 				return;
 
 			ArrayList toSubtract = new ArrayList ();
-			foreach (string uri in someUris) {
+			foreach (Uri uri in someUris) {
 				// Only subtract previously-added Uris
 				if (allHits.Contains (uri)) {
 					toSubtract.Add (uri);
+					allHits.Remove (uri);
 				}
 			}
 			if (HitsSubtractedAsStringEvent != null)
