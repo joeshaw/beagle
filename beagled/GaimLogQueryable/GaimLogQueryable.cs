@@ -39,72 +39,130 @@ namespace Beagle.Daemon.GaimLogQueryable {
 	public class GaimLogQueryable : LuceneQueryable {
 
 		private static Logger log = Logger.Get ("GaimLogQueryable");
-		private string log_dir;
-
+		private string config_dir, log_dir;
+		
 		Hashtable watched = new Hashtable ();
 
 		public GaimLogQueryable () : base ("GaimLogIndex")
 		{
 			string home = Environment.GetEnvironmentVariable ("HOME");
-
-			log_dir = Path.Combine (Path.Combine (home, ".gaim"), "logs");
+			config_dir = Path.Combine (home, ".gaim");
+			log_dir = Path.Combine (config_dir, "logs");
 		}
-
-		private void StartWorker () 
+					
+		private void StartWorker() 
 		{
+			// Check to see if ~/.gaim exists.
+			if (! Directory.Exists (config_dir)) {
+				log.Warn ("IM: {0} not found, watching for it.", config_dir);
+				Inotify.Event += WatchForGaim;
+				Inotify.Watch (Environment.GetEnvironmentVariable ("HOME"),
+					       Inotify.EventType.CreateSubdir
+					       | Inotify.EventType.MovedFrom
+					       | Inotify.EventType.MovedTo);
+				return;
+			}
+		
+			// Check to see if ~/.gaim/logs exists.
+			if (! Directory.Exists (log_dir)) {
+				log.Warn ("IM: {0} not found, watching for it.", log_dir);
+				Inotify.Event += WatchForGaim;
+				Inotify.Watch (config_dir,
+					       Inotify.EventType.CreateSubdir
+					       | Inotify.EventType.MovedFrom
+					       | Inotify.EventType.MovedTo);
+				return;
+			}
+			
 			Inotify.Event += OnInotifyEvent;
-
-			log.Info ("Scanning IM Logs");
-			Stopwatch timer = new Stopwatch ();
-			timer.Start ();
-			int foundCount = Watch (log_dir);
-			timer.Stop ();
-			log.Info ("Found {0} logs in {1}", foundCount, timer);
+			ScanLogs ();
 		}
-
+		
 		public override void Start () 
 		{
-			// FIXME: If ~/.gaim/logs doesn't exist we should set up watches
-			// and wait for it to appear instead of just giving up.
-			if (! Directory.Exists (log_dir))
-				return;
-
 			base.Start ();
-
+			
 			ExceptionHandlingThread.Start (new ThreadStart (StartWorker));
 		}
 
+		// Scan the logs directory for logs.
+		private void ScanLogs ()
+		{
+			int file_count;
+			
+			log.Info ("IM: Scanning IM Logs in {0}", log_dir);
+			Stopwatch timer = new Stopwatch ();
+			timer.Start ();
+			file_count = Watch (log_dir);
+			timer.Stop ();
+			log.Info ("IM: Found {0} logs in {1}", file_count, timer);		
+		}
+
+		// Sets up an Inotify watch on all subdirectories withing ~/.gaim/logs
+		// Also indexes the existing log files.
 		private int Watch (string path)
 		{
 			DirectoryInfo root = new DirectoryInfo (path);
-			if (! root.Exists)
-				return 0;
-
+			
+			if (! root.Exists) {
+				log.Warn ("IM: {0} cannot watch path. It doesn't exist.", path);
+				return 0;	
+			}
+			
 			int file_count = 0;
-
 			Queue queue = new Queue ();
 			queue.Enqueue (root);
 
 			while (queue.Count > 0) {
 				DirectoryInfo dir = queue.Dequeue () as DirectoryInfo;
 				
+				// Setup watches on the present directory.
 				int wd = Inotify.Watch (dir.FullName,
 							Inotify.EventType.CreateSubdir
 							| Inotify.EventType.Modify);
+				
 				watched [wd] = true;
 
+				// Index the existing files.
 				foreach (FileInfo file in dir.GetFiles ()) {
  					IndexLog (file.FullName, Scheduler.Priority.Delayed);
 					++file_count;
 				}
 
+				// Add all subdirectories to the queue so their files can be indexed.
 				foreach (DirectoryInfo subdir in dir.GetDirectories ())
 					queue.Enqueue (subdir);
 			}
-
+			
 			return file_count;
 		}
-
+		
+		// Watches to see if the ~/.gaim or ~/.gaim/logs directory was created.
+		private void WatchForGaim (int wd,
+					     string path,
+ 					     string subitem,
+					     Inotify.EventType type,
+					     uint cookie)
+		{
+			
+			// Checking to see if the Gaim config directory was created.
+			if (subitem == ".gaim" && path == Environment.GetEnvironmentVariable ("HOME")) {
+				log.Info ("IM: Found the Gaim config directory.");
+				Inotify.Event -= WatchForGaim;
+				StartWorker ();
+				return;
+			}
+			
+			// Checking to see if the Gaim Log directory was created.
+			if (subitem == "logs" && path == config_dir) {
+				log.Info ("IM: Found the Gaim logs directory.");
+				Inotify.Event -= WatchForGaim;
+				Inotify.Ignore (path);
+				ScanLogs ();
+				return;
+			}
+		}
+		
 		private void OnInotifyEvent (int wd,
 					     string path,
 					     string subitem,
@@ -118,16 +176,17 @@ namespace Beagle.Daemon.GaimLogQueryable {
 
 			switch (type) {
 				
-			case Inotify.EventType.CreateSubdir:
-				Watch (full_path);
-				break;
-
-			case Inotify.EventType.Modify:
-				IndexLog (full_path, Scheduler.Priority.Immediate);
-				break;
+				case Inotify.EventType.CreateSubdir:
+					Watch (full_path);
+					break;
+	
+				case Inotify.EventType.Modify:
+					IndexLog (full_path, Scheduler.Priority.Immediate);
+					break;
 			}
 		}
-
+		
+		
 		private static Indexable ImLogToIndexable (ImLog log)
 		{
 			Indexable indexable = new Indexable (log.Uri);
@@ -220,4 +279,3 @@ namespace Beagle.Daemon.GaimLogQueryable {
 		}
 	}
 }
-
