@@ -1,3 +1,8 @@
+2004-10-17  Todd Berman  <tberman@off.net>
+
+	* Best/best.in: Add directory containing libinofityglue.so to
+	  LD_LIBRARY_PATH.
+
 2004-10-16  Robert Love  <rml@novell.com>
 
 	* chooser-fu/beaglequeru.c: fix compile warning; remove unused

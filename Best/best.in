@@ -4,9 +4,11 @@ if [ -e ./@target@ ] && [ -e ./Makefile.am ] ; then
     echo "*** Running uninstalled @target@ ***"
     THIS_PATH="../Util:../images:../Lucene.Net:../indexer:../Tiles:../BeagleClient"
     THIS_EXE="./@target@"
+    export LD_LIBRARY_PATH="../glue/.libs:$LD_LIBRARY_PATH"
 else
     THIS_PATH="@pkglibdir@"
     THIS_EXE="@pkglibdir@/@target@"
+    export LD_LIBRARY_PATH="@pkglibdir@:$LD_LIBRARY_PATH"
 fi
 
 MONO_GAC_PREFIX="@gacprefix@:$MONO_GAC_PREFIX" MONO_PATH="$THIS_PATH:$MONO_PATH" exec -a mono-best mono --debug $THIS_EXE "$@"
