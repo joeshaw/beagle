@@ -1,4 +1,6 @@
 
+SUBDIRS = TrayIcon
+
 CSC = mcs -g
 
 TARGET = Best.exe
@@ -8,12 +10,14 @@ CSFLAGS = -target:exe
 
 CSFILES =				\
 	$(srcdir)/Best.cs		\
-	$(srcdir)/BestWindow.cs
+	$(srcdir)/BestWindow.cs		\
+	$(srcdir)/BestTray.cs
 
 LOCAL_ASSEMBLIES =			\
+	TrayIcon/TrayIcon.dll 		\
 	../Util/Util.dll		\
 	../images/Images.dll		\
-	../BeagleClient/Beagle.dll         \
+	../BeagleClient/Beagle.dll      \
 	../Tiles/Tiles.dll
 
 ASSEMBLIES =				\

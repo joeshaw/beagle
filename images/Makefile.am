@@ -56,6 +56,8 @@ RESOURCEFILES =					\
 	$(srcdir)/note.png			\
 	$(srcdir)/person.png			\
 	$(srcdir)/rss.png			\
+	$(srcdir)/smalldog.png			\
+	$(srcdir)/smalldogalert.png		\
 	$(srcdir)/status-away.png		\
 	$(srcdir)/status-online.png		\
 	$(srcdir)/stock.png			\

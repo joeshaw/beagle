@@ -38,38 +38,26 @@ namespace Best {
 
 	public class BestWindow : Gtk.Window {
 
-		static public void Create (string queryStr)
+		public BestWindow (string query) : base (WindowType.Toplevel)
 		{
-			BestWindow best = new BestWindow ();
-			if (queryStr != null)
-				best.Search (queryStr);
-			best.Show ();
- 		}
-
-		static public void Create ()
-		{
-			Create (null);
+			CreateWindow (query);
 		}
 
-		//////////////////////////
+		public BestWindow () : base (WindowType.Toplevel)
+		{
+			CreateWindow (null);
+		}
 
-		Query query = null;
-		Gtk.AccelGroup accel_group;
-		GlobalKeybinder global_keys;
-		
-		private BestWindow () : base (WindowType.Toplevel)
+		void CreateWindow (string query)
 		{
 			Title = "Bleeding-Edge Search Tool";
 
 			DeleteEvent += new DeleteEventHandler (this.DoDelete);
 
-			//Widget menus = CreateMenuBar ();
 			Widget content = CreateContents ();
 
 			VBox main = new VBox (false, 3);
-			//main.PackStart (menus, false, true, 3);
 			main.PackStart (content, true, true, 3);
-			//menus.Show ();
 			content.Show ();
 			Add (main);
 			main.Show ();
@@ -87,24 +75,32 @@ namespace Best {
 			global_keys = new GlobalKeybinder (accel_group);
 
 			// Close window (Ctrl-W)
-			global_keys.AddAccelerator (new EventHandler (this.CloseWindowHandler),
+			global_keys.AddAccelerator (new EventHandler (this.HideWindowHandler),
 						    (uint) Gdk.Key.w, 
 						    Gdk.ModifierType.ControlMask,
 						    Gtk.AccelFlags.Visible);
 
 			// Close window (Escape)
-			global_keys.AddAccelerator (new EventHandler (this.CloseWindowHandler),
+			global_keys.AddAccelerator (new EventHandler (this.HideWindowHandler),
 						    (uint) Gdk.Key.Escape, 
 						    0,
 						    Gtk.AccelFlags.Visible);
 
-			Best.IncRef ();
-
 			DBusisms.BeagleDown += OnBeagleDown;
 
 			UpdatePage ();
+
+			if (query != null)
+				Search (query);
+			
 		}
 
+		//////////////////////////
+
+		Query query = null;
+		Gtk.AccelGroup accel_group;
+		GlobalKeybinder global_keys;
+		
 		private void SetBusy (bool busy)
 		{
 			if (busy) {
@@ -123,50 +119,15 @@ namespace Best {
 
 		private void DoDelete (object o, DeleteEventArgs args)
 		{
-			Close ();
+			Hide ();
 		}
 
-		private void CloseWindowHandler (object o, EventArgs args)
+		private void HideWindowHandler (object o, EventArgs args)
 		{
-			Close ();
+			Hide ();
 		}
 		
 		//////////////////////////
-
-		private Widget CreateMenuBar ()
-		{
-			AccelGroup group = new AccelGroup ();
-			AddAccelGroup (group);
-
-			MenuBar bar = new MenuBar ();
-
-			Menu fileMenu = new Menu ();
-			MenuItem file = new MenuItem ("_File");
-			file.Submenu = fileMenu;
-
-			ImageMenuItem fileNew = new ImageMenuItem (Gtk.Stock.New, group);
-			fileNew.Activated += new EventHandler (this.DoNew);
-			fileMenu.Append (fileNew);
-			
-			ImageMenuItem fileClose = new ImageMenuItem (Gtk.Stock.Close, group);
-			fileClose.Activated += new EventHandler (this.DoClose);
-			fileMenu.Append (fileClose);
-
-			bar.Append (file);
-
-			bar.ShowAll ();
-			return bar;
-		}
-		
-		private void DoNew (object o, EventArgs args)
-		{
-			Create ();
-		}
-
-		private void DoClose (object o, EventArgs args)
-		{
-			Close ();
-		}
 
 		private void DoForwardClicked (object o, EventArgs args)
 		{
@@ -330,7 +291,6 @@ namespace Best {
 
 		private void Close ()
 		{
-			Best.DecRef ();
 			Destroy ();
 		}
 

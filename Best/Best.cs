@@ -1,31 +1,10 @@
 //
 // Best.c
 //
+// Nat Friedman <nat@novell.com>
+//
 // Copyright (C) 2004 Novell, Inc.
 //
-
-//
-// Permission is hereby granted, free of charge, to any person obtaining a copy
-// of this software and associated documentation files (the "Software"), to deal
-// in the Software without restriction, including without limitation the rights
-// to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-// copies of the Software, and to permit persons to whom the Software is
-// furnished to do so, subject to the following conditions:
-//
-// The above copyright notice and this permission notice shall be included in all
-// copies or substantial portions of the Software.
-//
-// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-// SOFTWARE.
-//
-
-
-/* Foo */
 
 using System;
 
@@ -40,31 +19,71 @@ namespace Best {
 	
 	class Best {
 
-		static int refs = 0;
-		
-		static public void IncRef ()
+		static void PrintUsageAndExit ()
 		{
-			++refs;
+			string usage =
+				"best: GUI interface to the Beagle search system.\n" +
+				"Web page: http://www.gnome.org/projects/beagle\n" +
+				"Copyright (C) 2004 Novell, Inc.\n\n";
+
+			usage +=
+				"Usage: best [OPTIONS] [<query string>]\n\n" +
+				"Options:\n" +
+				"  --no-tray\t\t\tDo not create a notification area applet.\n" +
+				"  --help\t\t\tPrint this usage message.\n";
+
+			Console.WriteLine (usage);
+
+			System.Environment.Exit (0);
 		}
 
-		static public void DecRef ()
+		static string query = "";
+		static bool doTray = true;
+
+		static void ParseArgs (String[] args)
 		{
-			--refs;
-			if (refs <= 0)
-				Application.Quit ();
+			int i = 0;
+			while (i < args.Length) {
+				switch (args [i]) {
+				case "--no-tray":
+					doTray = false;
+					break;
+
+				case "--help":
+				case "--usage":
+					PrintUsageAndExit ();
+					return;
+				default:
+					query += args [i];
+					break;
+				}
+
+				i ++;
+			}
 		}
 
 		static void Main (String[] args)
 		{
-			
 			Program best = new Program ("best", "0.0", Modules.UI, args);
+
+			ParseArgs (args);
+
 			GeckoUtils.Init ();
 			GeckoUtils.SetSystemFonts ();
 
-			if (args.Length > 0)
-				BestWindow.Create (args [0]);
+			// Create the window.
+			BestWindow win;
+			if (query != "")
+				win = new BestWindow (query);
 			else
-				BestWindow.Create ();
+				win = new BestWindow ();
+
+			// Create the tray icon.
+			if (doTray) {
+				BestTray icon;
+				icon = new BestTray (win);
+			}
+
 			best.Run ();
 		}
 	}

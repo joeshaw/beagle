@@ -310,9 +310,8 @@ epiphany-extension/Makefile
 mozilla-extension/Makefile
 searchomatic/Makefile
 chooser-fu/Makefile
-tray/Makefile
-tray/TrayIcon/Makefile
-tray/TrayIcon/libtrayicon/Makefile
+Best/TrayIcon/Makefile
+Best/TrayIcon/libtrayicon/Makefile
 beagle-0.0.pc
 beagle.spec
 ])
@@ -322,6 +321,7 @@ echo "
 	Evolution-Sharp?	${enable_evo_sharp}
 	gsf-sharp?		${enable_gsf_sharp}
 	Epiphany Extension?	${enable_epiphany_extension}
+	Mozilla Extension?	yes
 
 "
 
