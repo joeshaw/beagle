@@ -40,7 +40,7 @@ namespace Beagle.Util {
 
 	public class Inotify {
 
-		public delegate void Handler (int wd, string path, string subitem, string dstpath, EventType type, uint cookie);
+		public delegate void Handler (int wd, string path, string subitem, string srcpath, EventType type, uint cookie);
 
 		public static event Handler Event;
 
@@ -496,8 +496,6 @@ namespace Beagle.Util {
 						if (Directory.Exists (dstpath))
 							HandleMove (srcpath, dstpath);
 						cookie_hash.Remove (pending);
-					} else
-						Logger.Log.Error ("Got MovedTo without matching cookie!");
 				}
 
 				// If this event matches the watches mask, handle it
