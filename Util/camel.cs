@@ -9,6 +9,7 @@
 
 using System.IO;
 using System;
+using System.Collections;
 using System.Globalization;
 using System.Text;
 
@@ -64,11 +65,19 @@ public class Summary {
 			using (FileStream f = File.OpenRead (file)){
 				header = new ImapSummaryHeader (f);
 
-				messages = new MessageInfo [header.count];
-				
+				ArrayList msgs = new ArrayList ();
 				for (int i = 0; i < header.count; i++){
-					messages [i] = new ImapMessageInfo (f);
+					try {
+						msgs.Add(new ImapMessageInfo (f));
+					} catch (Exception e) {
+						Logger.Log.Warn ("Skipping bogus message " +
+										 "[file={0}, index={1}, error={2}]",
+										 file, i, e.ToString());
+					}
 				}
+
+				messages = new MessageInfo [msgs.Count];
+				msgs.CopyTo (messages);
 			}
 		}
 	}
@@ -343,7 +352,7 @@ public class Summary {
 			
 			// Ok, this is a token from the list, we can ignore it
 			return "token_from_list";
-		    } else if (len > 10240) {
+		    } else if (len < 0 || len > 10240) {
 			throw new Exception ();
 		    } else {
 			len -= 32;
@@ -358,7 +367,7 @@ public class Summary {
 			int len = (int) UInt (f);
 			len--;
 
-			if (len > 65535)
+			if (len < 0 || len > 65535)
 				throw new Exception ();
 			byte [] buffer = new byte [len];
 			f.Read (buffer, 0, (int) len);

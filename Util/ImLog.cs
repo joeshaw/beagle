@@ -318,7 +318,12 @@ namespace Beagle.Util {
 
 		private static void ScanOldStyleLog (FileInfo file, ArrayList array)
 		{
-			StreamReader sr = file.OpenText ();
+			Stream stream;
+			stream = new FileStream (file.FullName,
+						 FileMode.Open,
+						 FileAccess.Read,
+						 FileShare.Read);
+			StreamReader sr = new StreamReader (stream);
 			string line;
 			long offset = 0;
 			
@@ -343,6 +348,9 @@ namespace Beagle.Util {
 				
 				offset = newOffset;
 			}
+
+			sr.Close ();
+			stream.Close ();
 		}
 
 		public static ICollection ScanLog (FileInfo file)
