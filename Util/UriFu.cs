@@ -42,6 +42,18 @@ namespace Beagle.Util {
 
 		static public Uri UriStringToUri (string path)
 		{
+			// Decode our pre-encoded 'odd' characters into their real values
+			int i = 0, pos = 0;
+			while ((i = path.IndexOf ('%', pos)) != -1) {
+				pos = i;
+				char unescaped = UriFu.HexUnescape (path, ref pos);
+				if (unescaped < '!' || unescaped > '~') {
+					path = path.Remove (i, 3);
+					path = path.Insert (i, new String(unescaped, 1));
+					pos -= 2;
+				}
+			}
+		
 			// Paths from the file:// indexer need (re)quoting. For example,
 			// valid characters such as @ need to be converted to their hex
 			// values.
@@ -58,6 +70,10 @@ namespace Beagle.Util {
 
 		static public String UriToSerializableString (Uri uri)
 		{
+			int i;
+			string ret;
+			StringBuilder builder = new StringBuilder ();
+			
 			// The ToString() of a file:// URI is not always representative of
 			// what it was constructed from. For example, it will return a
 			// # (which was inputted as %23) as %23, whereas the more standard
@@ -66,9 +82,79 @@ namespace Beagle.Util {
 			// On the other hand, the LocalPath of a file:// URI does seem to
 			// return the literal # so we use that instead.
 			if (uri.IsFile)
-				return Uri.UriSchemeFile + Uri.SchemeDelimiter + uri.LocalPath;
+				ret = Uri.UriSchemeFile + Uri.SchemeDelimiter + uri.LocalPath;
 			else
-				return uri.ToString ();
+				ret = uri.ToString ();
+
+			// XmlSerializer is happy to serialize 'odd' characters, but doesn't
+			// like to deserialize them. So we encode all 'odd' characters now.
+			for (i = 0; i < ret.Length; i++)
+				if ((ret [i] < '!') || (ret [i] > '~' && ret [i] < 256))
+					builder.Append (Uri.HexEscape (ret [i]));
+				else
+					builder.Append (ret [i]);
+
+			return builder.ToString ();
+		}
+
+		// Stolen from Mono SVN 20050319
+		// Fixes bug where non-ASCII characters couldn't be decoded
+		// FIXME: Go back to using Uri.HexUnescape when new Mono 1.1.5+ is 
+		// readily available.
+		public static char HexUnescape (string pattern, ref int index) 
+		{
+			if (pattern == null) 
+				throw new ArgumentException ("pattern");
+				
+			if (index < 0 || index >= pattern.Length)
+				throw new ArgumentOutOfRangeException ("index");
+
+			if (!Uri.IsHexEncoding (pattern, index))
+				return pattern [index++];
+
+			int stage = 0;
+			int c = 0;
+			int b = 0;
+			bool looped = false;
+			do {
+				index++;
+				int msb = Uri.FromHex (pattern [index++]);
+				int lsb = Uri.FromHex (pattern [index++]);
+				b = (msb << 4) + lsb;
+				if (!Uri.IsHexEncoding (pattern, index)) {
+					if (looped)
+						c += (b - 0x80) << ((stage - 1) * 6);
+					else
+						c = b;
+					break;
+				} else if (stage == 0) {
+					if (b < 0xc0)
+						return (char) b;
+					else if (b < 0xE0) {
+						c = b - 0xc0;
+						stage = 2;
+					} else if (b < 0xF0) {
+						c = b - 0xe0;
+						stage = 3;
+					} else if (b < 0xF8) {
+						c = b - 0xf0;
+						stage = 4;
+					} else if (b < 0xFB) {
+						c = b - 0xf8;
+						stage = 5;
+					} else if (b < 0xFE) {
+						c = b - 0xfc;
+						stage = 6;
+					}
+					c <<= (stage - 1) * 6;
+				} else {
+					c += (b - 0x80) << ((stage - 1) * 6);
+				}
+				stage--;
+				looped = true;
+			} while (stage > 0);
+			
+			return (char) c;
 		}
 
 		static public String LocalPathFromUri (Uri uri)
