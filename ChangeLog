@@ -1,4 +1,9 @@
+2005-02-13  Veerapuram Varadhan	 <vvaradhan@novell.com>
 
+	* Tiles/TileMusic.cs: Show audio/media filename if "fixme:title"
+	doesn't exist.  Fix for
+	http://bugzilla.gnome.org/show_bug.cgi?id=170300.
+	
 2005-02-13  Veerapuram Varadhan	 <vvaradhan@novell.com>
 
 	* Filters/FilterPPT.cs: Catch the exceptions and log the message..

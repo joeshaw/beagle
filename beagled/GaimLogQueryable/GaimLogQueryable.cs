@@ -281,5 +281,31 @@ namespace Beagle.Daemon.GaimLogQueryable {
 			else
 				return log.Snippet;
 		}
+
+		override protected bool HitIsValid (Uri uri)
+		{
+			// FIXME: A hack while we settle on a better URI scheme for imlog
+			// An imlog uri looks like imlog://gaim/aim/joefoo/janebar/2005-03-05.120145
+
+			string log_path = log_dir;
+
+			if (uri.Authority != "gaim")
+				return false;
+
+			foreach (string path in uri.Segments) {
+				if (path == "/")
+					continue;
+				
+				log_path = Path.Combine (log_path, path);
+			}
+
+			if (File.Exists (log_path + ".txt"))
+				return true;
+			
+			if (File.Exists (log_path + ".html"))
+				return true;
+
+			return false;
+		}
 	}
 }

@@ -4,10 +4,10 @@
 <glade-interface>
 
 <widget class="GtkDialog" id="log_dialog">
-  <property name="width_request">750</property>
+  <property name="width_request">700</property>
   <property name="height_request">350</property>
   <property name="visible">True</property>
-  <property name="title" translatable="yes">User Usersson</property>
+  <property name="title" translatable="yes">IM viewer</property>
   <property name="type">GTK_WINDOW_TOPLEVEL</property>
   <property name="window_position">GTK_WIN_POS_NONE</property>
   <property name="modal">False</property>
@@ -18,7 +18,7 @@
   <property name="skip_pager_hint">False</property>
   <property name="type_hint">GDK_WINDOW_TYPE_HINT_DIALOG</property>
   <property name="gravity">GDK_GRAVITY_NORTH_WEST</property>
-  <property name="has_separator">True</property>
+  <property name="has_separator">False</property>
 
   <child internal-child="vbox">
     <widget class="GtkVBox" id="dialog-vbox1">
@@ -28,22 +28,7 @@
 
       <child internal-child="action_area">
 	<widget class="GtkHButtonBox" id="dialog-action_area1">
-	  <property name="visible">True</property>
 	  <property name="layout_style">GTK_BUTTONBOX_END</property>
-
-	  <child>
-	    <widget class="GtkButton" id="closebutton1">
-	      <property name="visible">True</property>
-	      <property name="can_default">True</property>
-	      <property name="can_focus">True</property>
-	      <property name="label">gtk-close</property>
-	      <property name="use_stock">True</property>
-	      <property name="relief">GTK_RELIEF_NORMAL</property>
-	      <property name="focus_on_click">True</property>
-	      <property name="response_id">-7</property>
-	      <signal name="clicked" handler="HideWindow" last_modification_time="Mon, 14 Mar 2005 02:35:22 GMT"/>
-	    </widget>
-	  </child>
 	</widget>
 	<packing>
 	  <property name="padding">0</property>
@@ -69,7 +54,7 @@
 	      <child>
 		<widget class="GtkLabel" id="label1">
 		  <property name="visible">True</property>
-		  <property name="label" translatable="yes">&lt;b&gt;Conversations&lt;/b&gt;</property>
+		  <property name="label" translatable="yes">&lt;b&gt;Conversations History&lt;/b&gt;</property>
 		  <property name="use_underline">False</property>
 		  <property name="use_markup">True</property>
 		  <property name="justify">GTK_JUSTIFY_LEFT</property>

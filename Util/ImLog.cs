@@ -78,7 +78,7 @@ namespace Beagle.Util {
 		public Uri Uri {
 			get {
 				// Hacky
-				string when = StartTime.ToString ("yyyy.MM.dd.HH.mm.ss");
+				string when = StartTime.ToString ("yyyy-MM-dd.HHmmss");
 				string uriStr = String.Format ("imlog://{0}/{1}/{2}/{3}/{4}",
 							       Client, Protocol, Identity, SpeakingTo,
 							       when);

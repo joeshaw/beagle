@@ -46,9 +46,7 @@ namespace Beagle.Tile {
 			protected override void PopulateTemplate ()
 			{
 				base.PopulateTemplate ();
-				if (Hit ["dc:title"] == null || Hit ["dc:title"] == "")
-					Template ["Title"] = Hit ["fixme:splitname"];
-				else
+				if (Hit ["dc:title"] != null && (Hit ["dc:title"]).Trim () != "")
 					Template ["Title"] = Hit ["dc:title"];
 			}
 		}

@@ -71,6 +71,18 @@ namespace Beagle.Util {
 				return uri.ToString ();
 		}
 
+		static public String LocalPathFromUri (Uri uri)
+		{
+			if (uri == null)
+				return "";
+			// FIXME: Can we assume "a directory", if it is not a file?
+			// If so, return the path of that directory.
+			if (uri.IsFile) 
+				return uri.LocalPath;
+			else
+				return "";
+		}
+
 		//////////////////////////////////
 
 		public class Comparer : IComparer

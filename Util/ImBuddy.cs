@@ -110,8 +110,9 @@ namespace Beagle.Util {
 			string home = Environment.GetEnvironmentVariable ("HOME");
 			buddyListDir = Path.Combine (home, ".gaim");
 			buddyListPath = Path.Combine (buddyListDir, "blist.xml");
-
-			Read ();
+			
+			if (File.Exists (buddyListPath))
+				Read ();
 
 			// Poll the file once every minute
 			timeoutId = GLib.Timeout.Add (60000, new GLib.TimeoutHandler (ReadTimeoutHandler));
@@ -125,7 +126,9 @@ namespace Beagle.Util {
 
 		private bool ReadTimeoutHandler ()
 		{
-			Read ();
+			if (File.Exists (buddyListPath))
+				Read ();
+
 			return true;
 		}
 

@@ -54,7 +54,7 @@ namespace Beagle.Tile {
 			base.PopulateTemplate ();
 			
 			if (Hit ["fixme:title"] == null || Hit ["fixme:title"] == "")
-				Template ["Title"] = Hit ["fixme:splitname"];
+				Template ["Title"] = Path.GetFileName (BU.UriFu.LocalPathFromUri (Hit.Uri));
 			else
 				Template ["Title"] = Hit ["fixme:title"];
 

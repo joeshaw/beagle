@@ -77,6 +77,9 @@ namespace ImLogViewer {
 			Glade.XML gxml = new Glade.XML (null, "ImLogViewer.glade", "log_dialog", null);
 			gxml.Autoconnect (this);
 
+			log_dialog.Response += OnWindowClose;
+
+			// FIXME: Hide the find bar until further notice. We want highlighing and queries using Beagle
 			search_entry.Visible = false;
 			find_label.Visible = false;
 
@@ -100,13 +103,13 @@ namespace ImLogViewer {
 			SetTitle (new DateTime ());
 
 			// Close window (Ctrl-W)
-			global_keys.AddAccelerator (new EventHandler (this.HideWindow),
+			global_keys.AddAccelerator (new EventHandler (this.OnWindowClose),
 						    (uint) Gdk.Key.w, 
 						    Gdk.ModifierType.ControlMask,
 						    Gtk.AccelFlags.Visible);
 
 			// Close window (Escape)
-			global_keys.AddAccelerator (new EventHandler (this.HideWindow),
+			global_keys.AddAccelerator (new EventHandler (this.OnWindowClose),
 						    (uint) Gdk.Key.Escape, 
 						    0,
 						    Gtk.AccelFlags.Visible);
@@ -217,19 +220,8 @@ namespace ImLogViewer {
 			timelinetree.ExpandAll();
 		}
 
-		private class ReverseLogComparer : IComparer {
-			
-			public int Compare (object x, object y)
-			{
-				return ((ImLog) y).StartTime.CompareTo (((ImLog) x).StartTime);
-			}
-		}
-
-		static ReverseLogComparer rev_cmp = new ReverseLogComparer ();
-
 		private void PopulateTimeline (TreeIter parent, ArrayList list, string dateformat)
 		{
-			list.Sort (rev_cmp);
 			foreach (ImLog log in list) {
 				if (search_entry.Text != null && search_entry.Text != "")
 					if (!LogContainsString (log, search_entry.Text))
@@ -245,7 +237,8 @@ namespace ImLogViewer {
 			}
 		}
 		
-		private void IndexLogs () {
+		private void IndexLogs ()
+		{
 			foreach (string file in Directory.GetFiles (log_path)) {
 				ICollection logs = GaimLog.ScanLog (new FileInfo (file));
 				
@@ -280,15 +273,9 @@ namespace ImLogViewer {
 			}
 		}
 
-		private void HideWindow (object o, EventArgs args)
+		private void OnWindowClose (object o, EventArgs args)
 		{
 			Application.Quit ();
-		}
-
-		private void OnWindowDeleteEvent (object o, DeleteEventArgs args)
-		{
-			Application.Quit ();
-			args.RetVal = true;
 		}
 
 		private void OnTypeAhead (object o, EventArgs args)

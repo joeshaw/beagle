@@ -68,6 +68,16 @@ namespace Beagle.Util {
 			}
 		}
 
+		private class ReverseLogComparer : IComparer {
+			
+			public int Compare (object x, object y)
+			{
+				return ((ImLog) y).StartTime.CompareTo (((ImLog) x).StartTime);
+			}
+		}
+
+		private static ReverseLogComparer rev_cmp = new ReverseLogComparer ();
+
 		private bool IsThisYear (TimelineEvent e)
 		{
 			if (e.Timestamp.Year == DateTime.Today.Year)
@@ -129,6 +139,8 @@ namespace Beagle.Util {
 			
 			foreach (TimelineEvent ev in list)
 				a.Add (ev.Object);
+
+			a.Sort (rev_cmp);
 
 			return a;
 		}
