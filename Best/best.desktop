@@ -5,4 +5,4 @@ Comment=Desktop Search
 Exec=best
 Icon=best.png
 Type=Application
-Categories=GTK;GNOME;Utility;
+Categories=GTK;GNOME;Application;Utility;
