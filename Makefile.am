@@ -20,6 +20,8 @@ if ENABLE_EPIPHANY_EXTENSION
 SUBDIRS += epiphany-extension
 endif
 
-EXTRA_DIST = $(pkgconfig_DATA)
+EXTRA_DIST = \
+	$(pkgconfig_DATA) \
+	beagle.spec
 
 DISTCLEANFILES = $(pkgconfig_DATA)

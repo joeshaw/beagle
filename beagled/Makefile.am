@@ -319,6 +319,7 @@ EXTRA_DIST =				\
 	$(EXTSTR_IN)			\
 	$(WRAPPER_IN)   		\
 	$(DAEMON_WRAPPER_IN)		\
+	testclient.in			\
 	TestClient.cs
 
 CLEANFILES =				\
