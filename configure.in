@@ -296,10 +296,10 @@ AC_SUBST(GAC_PREFIX)
 
 AC_OUTPUT([
 Makefile
+Util/Makefile
 images/Makefile
 templates/Makefile
 glue/Makefile
-Util/Makefile
 BeagleClient/Makefile
 beagled/Makefile
 Filters/Makefile

@@ -3,10 +3,10 @@ pkgconfigdir = $(libdir)/pkgconfig
 pkgconfig_DATA = beagle-0.0.pc
 
 SUBDIRS = 			\
+	Util			\
 	images			\
 	templates		\
 	glue			\
-	Util			\
 	BeagleClient            \
 	beagled                 \
 	Filters 		\
