@@ -65,11 +65,16 @@ namespace Best {
 			}
 		}
 
+		static void NoTrayWindowDeleteEvent (object o, EventArgs args)
+		{
+			Application.Quit ();
+		}
+
 		static void Main (String[] args)
 		{
-			Program best = new Program ("best", "0.0", Modules.UI, args);
-
 			ParseArgs (args);
+
+			Program best = new Program ("best", "0.0", Modules.UI, args);
 
 			GeckoUtils.Init ();
 			GeckoUtils.SetSystemFonts ();
@@ -87,13 +92,16 @@ namespace Best {
 			if (doTray) {
 				BestTray icon;
 				icon = new BestTray (win);
+
+				Console.WriteLine ("If you're wondering whether Best is working check " +
+						   "your notification area (system tray)");
 			} else {
 				win.Show ();
 				win.Present ();
 				win.FocusEntry ();
+				win.DeleteEvent += NoTrayWindowDeleteEvent;
 			}
 			
-			Console.WriteLine ("If you're wondering whether Best is working: check your SysTray");
 			best.Run ();
 		}
 	}
