@@ -1,11 +1,84 @@
 
-Beagle is an indexing sub-system built on top of Lucene.Net.
+Beagle is an indexing sub-system and search aggregator built on top of
+Lucene.Net.
+
+
+FIRST, A WARNING
+================
+
+Beagle is very new, and is under heavy development.  It is buggy.
+
+Very little effort has gone into optimizing anything yet, so certain
+operations are slow and consume ridiculous amounts of memory.
+
+Beagle uses an epiphany extension to track your web browsing and index all of
+the (non-https://) web pages that you view.  If you don't like that sort of
+thing, you can disable it by setting the BEAGLE_NO_WEB_INDEXING environment
+variable.
+
+
+
+WHAT CAN BEAGLE DO?
+===================
+
+Beagle can index and search:
+ * Your files (or at least the ones we have a filter for)
+ * Your e-mail (as long as you are using mboxes and Evolution 1.5)
+ * Your web browsing (if the epiphany extension is installed
+   in the right place)
+
+Beagle can also search:
+ * Your addressbook (as long as you are using a very, very new
+   version of evolution-data-server and have evolution-sharp)
+ * Google (if you have a Google Web API key from
+   http://api.google.com/createkey and put that key in an environment
+   variable named GOOGLE_WEB_API_KEY.)
+
+
+
+HOW DO I INDEX MY DATA?
+=======================
+
+Files and e-mail are not yet indexed in "real time".  To update the
+index (or create the index, if you are using Beagle for the first time)
+run the 'beagle-update-index' script.
+
+*WARNING* The first time you run beagle-update-index will probably take
+a long time, particularly if you have a big home directory or lots of
+e-mail.  Subsequent updates will be faster.
+
+Because Beagle is still buggy and unstable, we don't recommend running
+beagle-update-index as a cron job --- there is too much that can go wrong.
+
+If you installed beagle into a different prefix that epiphany, epiphany
+won't detect the extension.  Try creating a symbolic link from
+BEAGLE_PREFIX/lib/epiphany/extensions/libbeagleextension.so to
+EPIPHANY_PREFIX/lib/epiphany/extensions.
+
+Also, the web indexing will only work if BEAGLE_PREFIX/bin is in your path.
+
+
+
+HOW DO I SEARCH MY DATA?
+========================
+
+Beagle comes with two search tools.  Both are still very primitive.
+
+There is a command-line tool called 'beagle-query'.  Just run:
+ % beagle-query <thing to search for>
+It's output is not particularly user-friendly.
+
+There is also a graphical tool called 'best'.  It is a bit more user-friendly
+that beagle-query.
+
+
+
+FRIENDS OF BEAGLE
+=================
 
 Thanks to:
-Doug Cutting for the mind-blowing greatness of Lucene.
+Doug Cutting for Lucene, which continues to blow my mind.
 Pasha Bizhan for Lucene.Net.
 Simon Mourier for the Html Agility Pack.
-Mariano Cano Pérez for his gnome-vfs bindings
-
-
-
+Mariano Cano Pérez for his gnome-vfs bindings.
+Kevin Godby for his work on the renderers.

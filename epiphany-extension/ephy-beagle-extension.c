@@ -103,6 +103,10 @@ load_status_cb (EphyTab *tab,
 		EphyBeagleExtension *extension)
 {
 	gboolean load_status;
+
+	/* Don't index web pages if this environment variable is set. */
+	if (getenv ("BEAGLE_NO_WEB_INDEXING") != NULL)
+	    return;
 	
 	load_status = ephy_tab_get_load_status(tab);
 
