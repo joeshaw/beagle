@@ -93,7 +93,7 @@ namespace Best {
 
 		private Widget CreateContents ()
 		{
-			HBox entryLine = new HBox ();
+			HBox entryLine = new HBox (false, 3);
 			
 			entry = new Gtk.Entry ();
 			entry.Activated += new EventHandler (this.DoSearch);

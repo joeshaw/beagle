@@ -37,8 +37,6 @@ namespace Best {
 			
 			Program best = new Program ("best", "0.0", Modules.UI, args);
 			
-			IconTheme it = new IconTheme ();
-
 			BestWindow.Create ();
 			best.Run ();
 		}
