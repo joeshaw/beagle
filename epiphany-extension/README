@@ -17,7 +17,7 @@ sites.
 
 There is currently no automatic way to install the extension after it has been
 built.  On SuSE 9.1, you can install it with:
-# cp .lib/libdeweyextension.so /opt/gnome/lib/epiphany/extensions
+# cp .libs/libdeweyextension.so /opt/gnome/lib/epiphany/extensions
 
 
 
