@@ -85,7 +85,14 @@ namespace Beagle.Daemon.FileSystemQueryable {
 			if (Debug)
 				Logger.Log.Debug ("FileSystemWatcher: OnChangedEvent {0}", args.FullPath);
 
-			queryable.Add (args.FullPath);
+			try {
+
+				queryable.Add (args.FullPath);
+
+			} catch (Exception ex) {
+				Logger.Log.Warn ("Brain-damage in FileSystemWatcher.OnChangedEvent '{0}'", args.FullPath);
+				Logger.Log.Warn (ex);
+			}
 		}
 
 		public void OnCreatedEvent (object source, FileSystemEventArgs args)
@@ -93,20 +100,28 @@ namespace Beagle.Daemon.FileSystemQueryable {
 			if (Debug)
 				Logger.Log.Debug ("FileSystemWatcher: OnCreatedEvent {0}", args.FullPath);
 
-			// When a new directory is created, add it to our model
-			// FIXME: Just in case, don't we need to check the directories unique ID here?
-			if (Directory.Exists (args.FullPath)
-			    && ! queryable.Model.Ignore (args.FullPath)) {
-				string parent = Path.GetDirectoryName (args.FullPath);
-				FileSystemModel.Directory dir;
-				dir = queryable.Model.GetDirectoryByPath (parent);
-				if (dir == null) {
-					Logger.Log.Debug ("Couldn't find parent to create {0}", args.FullPath);
-				} else if (! dir.HasChildWithName (args.Name)) {
-					queryable.Model.AddChild (dir, Path.GetFileName (args.FullPath));
+			try {
+				
+				// When a new directory is created, add it to our model
+				// FIXME: Just in case, don't we need to check the directories unique ID here?
+				
+				if (Directory.Exists (args.FullPath)
+				    && ! queryable.Model.Ignore (args.FullPath)) {
+					string parent = Path.GetDirectoryName (args.FullPath);
+					FileSystemModel.Directory dir;
+					dir = queryable.Model.GetDirectoryByPath (parent);
+					if (dir == null) {
+						Logger.Log.Debug ("Couldn't find parent to create {0}", args.FullPath);
+					} else if (! dir.HasChildWithName (args.Name)) {
+						queryable.Model.AddChild (dir, Path.GetFileName (args.FullPath));
+					}
 				}
+				queryable.Add (args.FullPath);
+
+			} catch (Exception ex) {
+				Logger.Log.Warn ("Brain-damage in FileSystemWatcher.OnCreatedEvent '{0}'", args.FullPath);
+				Logger.Log.Warn (ex);
 			}
-			queryable.Add (args.FullPath);
 		}
 
 		public void OnDeletedEvent (object source, FileSystemEventArgs args)
@@ -114,11 +129,18 @@ namespace Beagle.Daemon.FileSystemQueryable {
 			if (Debug)
 				Logger.Log.Debug ("FileSystemWatcher: OnDeletedEvent {0}", args.FullPath);
 
-			FileSystemModel.Directory dir;
-			dir = queryable.Model.GetDirectoryByPath (args.FullPath);
-			if (dir != null)
-				queryable.Model.Delete (dir);
-			queryable.Remove (args.FullPath);
+			try {
+				
+				FileSystemModel.Directory dir;
+				dir = queryable.Model.GetDirectoryByPath (args.FullPath);
+				if (dir != null)
+					queryable.Model.Delete (dir);
+				queryable.Remove (args.FullPath);
+
+			} catch (Exception ex) {
+				Logger.Log.Warn ("Brain-damage in FileSystemWatcher.OnDeletedEvent '{0}'", args.FullPath);
+				Logger.Log.Warn (ex);
+			}
 		}
 
 		public void OnRenamedEvent (object source, RenamedEventArgs args)
@@ -127,8 +149,14 @@ namespace Beagle.Daemon.FileSystemQueryable {
 				Logger.Log.Debug ("FileSystemWatcher: OnRenamedEvent {0} {1}",
 						  args.OldFullPath, args.FullPath);
 			
+			try {
+				
+				queryable.Rename (args.OldFullPath, args.FullPath);
 
-			queryable.Rename (args.OldFullPath, args.FullPath);
+			} catch (Exception ex) {
+				Logger.Log.Warn ("Brain-damage in FileSystemWatcher.OnRenamedEvent '{0}'", args.FullPath);
+				Logger.Log.Warn (ex);
+			}
 		}
 
 		public void OnErrorEvent (object source, ErrorEventArgs args)

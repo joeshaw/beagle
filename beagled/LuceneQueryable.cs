@@ -195,7 +195,13 @@ namespace Beagle.Daemon {
 					if (x.MoveNext ()) {
 						Uri new_uri = x.Current as Uri;
 
-						AbusiveRenameHook (old_uri, new_uri);
+						try {
+							AbusiveRenameHook (old_uri, new_uri);
+						} catch (Exception ex) {
+							Logger.Log.Warn ("*** Caught exception in AbusiveRenameHook '{0}' => '{1}'",
+									 old_uri, new_uri);
+							Logger.Log.Warn (ex);
+						}
 
 						Logger.Log.Debug ("*** Faking change data {0} => {1}", old_uri, new_uri);
 
@@ -219,7 +225,12 @@ namespace Beagle.Daemon {
 			// files with the cached timestamp.
 			foreach (Uri uri in list_of_added_uris) {
 				UseCachedIndexableInfo (uri);
-				AbusiveAddHook (uri);
+				try {
+					AbusiveAddHook (uri);
+				} catch (Exception ex) {
+					Logger.Log.Warn ("Caught exception in AbusiveAddHook '{0}'", uri);
+					Logger.Log.Warn (ex);
+				}
 			}
 
 			// Propagate the event up through the Queryable.
@@ -251,7 +262,12 @@ namespace Beagle.Daemon {
 			// before calling this hook, since it can (and should)
 			// break the link between uids and paths.
 			foreach (Uri uri in original_list_of_removed_uris) {
-				AbusiveRemoveHook (uri);
+				try {
+					AbusiveRemoveHook (uri);
+				} catch (Exception ex) {
+					Logger.Log.Warn ("Caught exception in AbusiveRemoveHook '{0}'", uri);
+					Logger.Log.Warn (ex);
+				}
 			}
 
 			QueryDriver.QueryableChanged (this, change_data);

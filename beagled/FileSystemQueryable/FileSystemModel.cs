@@ -629,8 +629,8 @@ namespace Beagle.Daemon.FileSystemQueryable {
 				return RequiredAction.Index;
 			}
 
-			// If the inode has changed since it was last
-			// indexed, we might have been moved.
+			// If the inode data has changed since it was last
+			// indexed, we might have been moved or copied.
 			if (attr.LastIndexedTime < stat.CTime) {
 				string path_from_uid = PathFromUid (attr.UniqueId);
 				if (Debug)
@@ -640,6 +640,35 @@ namespace Beagle.Daemon.FileSystemQueryable {
 						Logger.Log.Debug ("*** Unfamiliar Uid, indexing {0}", path);
 					return RequiredAction.Index;
 				} else if (path_from_uid != path) {
+					
+					// Check to see the file mentioned in path_from_uid still exists.
+					// If so, path_from_uid is probably a copy of path and should be
+					// indexed separately.
+					// FIXME: This probably shouldn't happen --- if it is a copy, then the
+					// mtime must have changed, right?  Maybe path_from_uid is actually the
+					// copy, and we should strip it's attrs and treat this as a rename.
+
+					bool looks_like_copy = false;
+					try {
+						FileAttributes other_attr = this.Read (path_from_uid);
+						if (other_attr != null && other_attr.UniqueId == attr.UniqueId) {
+							Logger.Log.Debug ("*** '{0}' looks like a copy of '{1}'", path, path_from_uid);
+							looks_like_copy = true;
+						}
+					} catch (Exception ex) {
+						Logger.Log.Debug ("*** Caught exception while inspecting '{0}'", path_from_uid);
+						Logger.Log.Debug (ex);
+					}
+
+					// If we think this is a copy, clear out the attributes and treat it like
+					// a new file.
+					if (looks_like_copy) {
+						if (Debug)
+							Logger.Log.Debug ("*** Stripping attributes from {0} and requesting new indexing", path);
+						this.backing_store.Drop (path);
+						return RequiredAction.Index;
+					}
+					
 					if (Debug)
 						Logger.Log.Debug ("*** Path has changed, renaming {0} => {1}", previous_path, path);
 					previous_path = path_from_uid;

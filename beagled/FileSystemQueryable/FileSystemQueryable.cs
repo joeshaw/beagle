@@ -62,10 +62,13 @@ namespace Beagle.Daemon.FileSystemQueryable {
 		{
 			// A bit of a hack: since we need the event backend to construct
 			// the FileSystemModel, we create it here.
-			if (Inotify.Enabled)
+			if (Inotify.Enabled) {
+				Logger.Log.Debug ("Starting Inotify Backend");
 				event_backend = new InotifyBackend ();
-			else
+			} else {
+				Logger.Log.Debug ("Starting FileSystemWatcher Backend");
 				event_backend = new FileSystemWatcherBackend ();
+			}
 
 			// The FileSystemModel also implements IFileAttributesStore.
 			model = new FileSystemModel (IndexDirectory, index_fingerprint, event_backend);
