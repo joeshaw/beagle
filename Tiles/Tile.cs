@@ -178,6 +178,25 @@ namespace Beagle.Tile {
 				Console.WriteLine ("Error launching Evolution composer: " + e);
 			}
 		}
+
+		protected void SendImAim (string screenname)
+		{
+			if (screenname == null || screenname == "")
+				return;
+
+			Console.WriteLine ("SendImAim...");
+			Process p = new Process ();
+			p.StartInfo.UseShellExecute = false;
+			p.StartInfo.FileName        = "gaim-remote";
+			p.StartInfo.Arguments       = "uri aim:goim?screenname=" + screenname;
+
+			try {
+				p.Start () ;
+			} catch (Exception e) {
+				Console.WriteLine ("Error launching gaim-remote: " + e);
+			}
+		}
+			
 	}
 }
 	

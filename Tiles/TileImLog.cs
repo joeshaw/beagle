@@ -149,6 +149,9 @@ namespace Beagle.Tile {
 
 		}
 
+		// FIXME: We really should not even display the "Send
+		// mail" action unless we know we have a contact for
+		// this person.
 		[TileAction]
 		public void SendMailForIm ()
 		{
@@ -164,6 +167,8 @@ namespace Beagle.Tile {
 			}
 
 			// Do a search.
+			// FIXME: This should match the contact IM protocol to
+			// the protocol of the IM conversation.
 			string qstr =
 				String.Format ("(or " +
 					           "(is \"im_aim\" \"{0}\") " + 
@@ -181,6 +186,19 @@ namespace Beagle.Tile {
 				SendMailToAddress (c.Email1, null);
 				return;
 			}
+		}
+
+		[TileAction]
+		public void SendIm ()
+		{
+			// FIXME: The hit should really have a field
+			// for the IM protocol that was used.  This is
+			// an ugly hack to check whether the
+			// conversation took place over aim.
+			if (Hit ["fixme:file"].IndexOf ("logs/aim") == -1)
+				return;
+			
+			SendImAim (Hit ["fixme:speakingto"]);
 		}
 	}
 }

@@ -227,6 +227,7 @@ DAEMON_DLL_CSFILES = 				\
 	$(srcdir)/Queryable.cs			\
 	$(srcdir)/QueryDriver.cs		\
 	$(srcdir)/QueryImpl.cs			\
+	$(srcdir)/GoogleDriver.cs		\
 	$(srcdir)/BugzillaDriver.cs 		\
 	$(srcdir)/LuceneDriver.cs		\
 	$(srcdir)/LuceneQueryable.cs		\
