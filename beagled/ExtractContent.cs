@@ -60,6 +60,11 @@ class ExtractContentTool {
 			}
 			firstArg = false;
 
+			// FIX: We should call "Build" as it updates the 
+			// "Flavor" and "Filter" members, failing which 
+			// will result in a "No filter" situation. :)
+			indexable.Build ();
+
 			Console.WriteLine ("Filename: " + uri);
 			Console.WriteLine ("  Flavor: " + indexable.Flavor);
 			if (! indexable.HaveFilter)
