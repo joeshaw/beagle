@@ -149,8 +149,16 @@ namespace Beagle.Daemon {
 					log.Info ("Unable to determine account name for {0}", imapName);
 					return false;
 				}
+
+				// Need to check the directory on disk to see if it's a junk/spam folder,
+				// since the folder name will be "foo/spam" and not match the check below.
+				DirectoryInfo dirInfo = new DirectoryInfo (dirName);
+				if (dirInfo.Name.ToLower () == "spam" || dirInfo.Name.ToLower () == "junk") {
+					log.Debug ("Skipping junk/spam folder {0} on {1}", dirName, this.accountName);
+					return false;
+				}
 					
-				this.folderName = EvolutionMailQueryable.GetImapFolderName (new DirectoryInfo (dirName));
+				this.folderName = EvolutionMailQueryable.GetImapFolderName (dirInfo);
 				this.getCachedContent = true;
 			} else {
 				this.accountName = "local@local";
