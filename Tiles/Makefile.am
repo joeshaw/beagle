@@ -25,7 +25,8 @@ CSFILES =					\
 	$(srcdir)/TileMusic.cs			\
 	$(srcdir)/TileNote.cs			\
 	$(srcdir)/TilePicture.cs		\
-	$(srcdir)/TileWebHistory.cs
+	$(srcdir)/TileWebHistory.cs		\
+	$(srcdir)/TileBlog.cs			
 
 LOCAL_ASSEMBLIES =				\
 	../Util/Util.dll			\
@@ -49,7 +50,8 @@ RESOURCEFILES =					\
 	$(srcdir)/template-music.html		\
 	$(srcdir)/template-note.html		\
 	$(srcdir)/template-picture.html		\
-	$(srcdir)/template-web-history.html
+	$(srcdir)/template-web-history.html	\
+	$(srcdir)/template-blog.html
 
 # Makefile-fu to map /path/filename to -resource:/path/filename,filename
 RESOURCES = $(join $(RESOURCEFILES:%=-resource:%,),$(notdir $(RESOURCEFILES)))

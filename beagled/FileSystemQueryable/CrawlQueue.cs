@@ -228,9 +228,9 @@ namespace Beagle.Daemon.FileSystemQueryable {
 
 		override protected int EmptyQueueTimeoutDuration ()
 		{
-			// Process a pending directory after 3
-			// minutes of inactivity.
-			return allPending.Count > 0 ? (1000 * 60 * 3) : 0;
+			// Process a pending directory after 1
+			// minute of inactivity.
+			return allPending.Count > 0 ? (1000 * 60) : 0;
 		}
 
 		override protected void EmptyQueueTimeout ()

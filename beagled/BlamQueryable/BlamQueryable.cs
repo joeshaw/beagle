@@ -100,19 +100,19 @@ namespace Beagle.Daemon.BlamQueryable {
 				// FIXME: Only index channels and items that have been modified
 				
 				foreach(Item item in channel.Items) {
-					Indexable indexable = new Indexable(new	Uri(channel.Url.Replace("http://","rss://") + ";item="+item.Id));
+					Indexable indexable = new Indexable (new Uri (channel.Url.Replace ("http://", "rss://") + ";item=" + item.Id));
 					indexable.MimeType = "text/html";
 					indexable.Type = "Blog";
 					indexable.Timestamp = item.PubDate;
 					
-					indexable.AddProperty(Property.NewKeyword("dc:title",item.Title));
-					indexable.AddProperty(Property.NewKeyword("fixme:author",item.Author));
-					indexable.AddProperty(Property.NewKeyword("fixme:published",item.PubDate));
+					indexable.AddProperty(Property.NewKeyword ("dc:title", item.Title));
+					indexable.AddProperty(Property.NewKeyword ("fixme:author", item.Author));
+					indexable.AddProperty(Property.NewDate ("fixme:published", item.PubDate));
 						
 					// FIXME Use FilterHtml to mark "hot" words in content
 					
-					StringReader reader = new StringReader(item.Text);
-					indexable.SetTextReader(reader);
+					StringReader reader = new StringReader (item.Text);
+					indexable.SetTextReader (reader);
 					
 					Driver.ScheduleAddAndMark (indexable, 0,file);
 					
@@ -127,7 +127,7 @@ namespace Beagle.Daemon.BlamQueryable {
 				  itemCount, blogCount, stopwatch);
 		}
 	}
-	
+
 	// Classes from Blam! sources for deserialization	
 	
 	public class ChannelCollection {
