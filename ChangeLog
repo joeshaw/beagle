@@ -1,3 +1,8 @@
+2004-11-12  Tuomas Kuosmanen  <tigert@novell.com>
+
+	* Tiles/template-picture.html, Tiles/template-file.html: added
+	link (@action:@Reveal) to the folder name in the tile as well.
+
 2004-11-11  Tuomas Kuosmanen  <tigert@novell.com>
 
 	* Tiles/template-picture.html: added some exif stuff.
