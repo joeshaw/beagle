@@ -1,3 +1,8 @@
+2005-01-11  Veerapuram Varadhan	 <vvaradhan@novell.com>
+
+	* Tiles/TileDocs.cs, Tiles/template-docs.html: beautification.
+	* Filters/FilterSource.cs: More perl keywords.
+	
 2005-01-07  Joe Shaw  <joeshaw@novell.com>
 
 	* configure.in: Add a check for X11/extensions/scrnsaver.h, to fix
