@@ -206,13 +206,27 @@ namespace Beagle
                 {
                         root.Subtract (uri);
                 }
+
+		private void CheckQueryError (Exception e)
+		{
+			if (e.ToString ().IndexOf ("com.novell.Beagle") != -1)
+				root.Error ("Could not query.  The Beagle daemon is probably not running, or maybe you\n don't have D-BUS set up properly.");
+			else
+				root.Error ("The query failed with error:<br><br>" + e);
+		}
                                                                                                                                                              
                 private void Search (String searchString)
                 {
                         entry.Text = searchString;
                                                                                                                                                              
                         if (query != null) {
-                                query.Cancel ();
+				try {
+					query.Cancel ();
+				} catch (Exception e) {
+					CheckQueryError (e);
+					return;
+				}
+				
                                 query.HitAddedEvent -= OnHitAdded;
                                 query.HitSubtractedEvent -= OnHitSubtracted;
                                 query.Dispose ();
@@ -228,10 +242,7 @@ namespace Beagle
 
 				query.AddText (searchString);
 			} catch (Exception e) {
-				if (e.ToString ().IndexOf ("com.novell.Beagle") != -1)
-					root.Error ("Could not query.  The Beagle daemon is probably not running, or maybe you\n don't have D-BUS set up properly.");
-				else
-					root.Error ("The query failed with error:<br><br>" + e);
+				CheckQueryError (e);
 
 				return;
 			}
