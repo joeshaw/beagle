@@ -851,8 +851,6 @@ namespace Beagle.Daemon {
 			if (content_query != null)
 				total_query.Add (content_query, true, false);
 
-			Logger.Log.Debug (total_query.ToString ());
-
 			return total_query;
 		}
 		
