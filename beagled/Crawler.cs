@@ -253,7 +253,7 @@ namespace Beagle.Daemon {
 
 					DirectoryInfo dir = (DirectoryInfo) info;
 					
-					if (! SkipByName (dir)) {
+					if (! SkipByName (dir) && dir.Exists) {
 
 						if (NeedsCrawl (dir))
 							CrawlFile (dir);
