@@ -52,7 +52,7 @@ namespace Beagle.Daemon {
 
 	public class LuceneDriver {
 
-		private Beagle.Util.Logger log = Logger.Get ("lucene");
+		private static Beagle.Util.Logger log = Logger.Get ("lucene");
 
 		// 1: Original
 		// 2: Changed format of timestamp strings
@@ -263,18 +263,18 @@ namespace Beagle.Daemon {
 			// to do, but it doesn't seem possible to attach
 			// extended attributes to them.
 			if (IsSymLink (fsinfo)) {
-				log.Info ("{0} is a symlink... skipping", fsinfo.FullName);				
+				log.Debug ("{0} is a symlink... skipping", fsinfo.FullName);				
 				return false;
 			}
 
 			// If the file appears to be up-to-date, don't do
 			// anything.
 			if (ExtendedAttribute.Check (fsinfo, Fingerprint)) {
-				log.Info ("{0} appears to be up-to-date", fsinfo.FullName);
+				log.Debug ("{0} appears to be up-to-date", fsinfo.FullName);
 				return false;
 			}
 
-			log.Info ("Scheduled {0}", fsinfo.FullName);
+			log.Debug ("Scheduled {0}", fsinfo.FullName);
 
 			Uri uri = UriFu.PathToFileUri (fsinfo.FullName);
 			FilteredIndexable indexable = new FilteredIndexable (uri);
@@ -290,7 +290,7 @@ namespace Beagle.Daemon {
 			item.Priority = priority;
 			item.UriToDelete = uri;
 			item.PostIndexHook = hook;
-			log.Info ("Scheduling deletion of {0}", uri);
+			log.Debug ("Scheduling deletion of {0}", uri);
 			queue.ScheduleQueueItem (item);
 		}
 
@@ -423,7 +423,7 @@ namespace Beagle.Daemon {
 				// Maybe this is just paranoia, but I don't want to miss
 				// file changes between indexing and marking the file.
 				ExtendedAttribute.Mark (info, driver.Fingerprint, mtime);
-				Console.WriteLine ("*** Marking {0}", uri);
+				log.Debug ("*** Marking {0}", uri);
 
 				// Tell the system we don't need the file in the page cache.
 				// This doesn't really have anything to do w/ marking the
@@ -490,7 +490,7 @@ namespace Beagle.Daemon {
 			public LuceneQueue (LuceneDriver _driver)
 			{
 				driver = _driver;
-				Log = driver.log;
+				Log = LuceneDriver.log;
 			}
 
 			public void ScheduleQueueItem (QueueItem item)
@@ -508,7 +508,7 @@ namespace Beagle.Daemon {
 				if (pendingByUri.Count == 0)
 					return;
 
-				driver.log.Info ("Flushing...");
+				Log.Debug ("Flushing...");
 
 				Stopwatch watch = new Stopwatch ();
 
@@ -523,7 +523,7 @@ namespace Beagle.Daemon {
 				foreach (QueueItem item in pending) {
 					Uri uri = item.Uri;
 					if (! item.IsSilent)
-						driver.log.Info ("- {0}", uri);
+						Log.Debug ("- {0}", uri);
 					Term term = new Term ("Uri", uri.ToString ());
 					LNS.Query termQuery = new LNS.TermQuery (term);
 					uriQuery.Add (termQuery, false, false);
@@ -536,7 +536,7 @@ namespace Beagle.Daemon {
 				}
 				searcher.Close ();
 				watch.Stop ();
-				driver.log.Info ("Step #1: {0} {1} {2}", watch, pending.Count, watch.ElapsedTime / pending.Count);
+				Log.Debug ("Step #1: {0} {1} {2}", watch, pending.Count, watch.ElapsedTime / pending.Count);
 
 				// Step #2: Walk across the list of ids and delete all
 				// of those documents.
@@ -547,7 +547,7 @@ namespace Beagle.Daemon {
 					reader.Delete (id);
 				reader.Close ();
 				watch.Stop ();
-				driver.log.Info ("Step #2: {0}", watch);
+				Log.Debug ("Step #2: {0}", watch);
 
 				// Step #3: Write out the pending adds
 				watch.Restart ();
@@ -560,13 +560,13 @@ namespace Beagle.Daemon {
 					
 					Document doc = null;
 					if (! item.IsSilent)
-						driver.log.Info ("+ {0}", indexable.Uri);
+						Log.Debug ("+ {0}", indexable.Uri);
 					try {
 						doc = driver.ToLuceneDocument (indexable);
 					} catch (Exception e) {
-						driver.log.Error ("Unable to convert {0} (type={1}) to a lucene document",
-								  indexable.Uri, indexable.Type);
-						driver.log.Error (e);
+						Log.Error ("Unable to convert {0} (type={1}) to a lucene document",
+							   indexable.Uri, indexable.Type);
+						Log.Error (e);
 					}
 
 					if (doc != null) {
@@ -578,14 +578,14 @@ namespace Beagle.Daemon {
 				}
 				if (writer != null) {
 					if (sinceOptimization > sinceOptimizationThreshold) {
-						driver.log.Info ("Threshold Optimize ({0})", sinceOptimization);
+						Log.Debug ("Threshold Optimize ({0})", sinceOptimization);
 						writer.Optimize ();
 						sinceOptimization = 0;
 					}
 					writer.Close ();
 				}
 				watch.Stop ();
-				driver.log.Info ("Step #3: {0}", watch);
+				Log.Debug ("Step #3: {0}", watch);
 
 				// Step #4: 
 				// (a) Call the post-index hooks.
@@ -610,7 +610,7 @@ namespace Beagle.Daemon {
 					seqnoByUri [item.Uri] = item.SequenceNumber;
 				}
 				watch.Stop ();
-				driver.log.Info ("Step #4: {0}", watch);
+				Log.Debug ("Step #4: {0}", watch);
 				
 				// Step #6: Clear the list of pending items.
 				pendingByUri.Clear ();
@@ -632,7 +632,7 @@ namespace Beagle.Daemon {
 				if (seqnoByUri.Contains (item.Uri)) {
 					uint seqno = (uint) seqnoByUri [item.Uri];
 					if (seqno > item.SequenceNumber) {
-						driver.log.Info ("Rejected {0} by seqno", item.Uri);
+						Log.Debug ("Rejected {0} by seqno", item.Uri);
 						return;
 					}
 				}
@@ -643,7 +643,7 @@ namespace Beagle.Daemon {
 					pendingByUri [item.Uri] = item;
 					
 					if (oldItem != null) {
-						driver.log.Info ("Superceding previously queued item {0}", item.Uri);
+						Log.Debug ("Superceding previously queued item {0}", item.Uri);
 						if (oldItem.IsAdd)
 							--pendingAdds;
 						else if (oldItem.IsDelete)
@@ -655,7 +655,7 @@ namespace Beagle.Daemon {
 					else if (item.IsDelete)
 						++pendingDeletes;
 				} else {
-					driver.log.Info ("Dropped duplicate {0}", item.Uri);
+					Log.Debug ("Dropped duplicate {0}", item.Uri);
 				}
 
 				if (pendingAdds >= pendingAddThreshold
@@ -669,8 +669,8 @@ namespace Beagle.Daemon {
 					Flush ();
 					watch.Stop ();
 
-					driver.log.Info ("Threshold Flush (add={0}, delete={1}), {2}",
-							 pa, pd, watch);
+					Log.Debug ("Threshold Flush (add={0}, delete={1}), {2}",
+						   pa, pd, watch);
 				}
 			}
 
@@ -681,8 +681,8 @@ namespace Beagle.Daemon {
 
 			override protected int EmptyQueueTimeoutDuration ()
 			{
-				driver.log.Info ("pendingCount={0}, sinceOptimization={1}",
-						 pendingByUri.Count, sinceOptimization);
+				Log.Debug ("pendingCount={0}, sinceOptimization={1}",
+					   pendingByUri.Count, sinceOptimization);
 				if (pendingByUri.Count > 0)
 					return 1000; // After 1s, flush
 				else if (sinceOptimization > 0)
@@ -707,8 +707,8 @@ namespace Beagle.Daemon {
 					Flush ();
 					watch.Stop ();
 
-					driver.log.Info ("Opportunistic Flush (add={0}, delete={1}), {2}",
-							 pa, pd, watch);
+					Log.Debug ("Opportunistic Flush (add={0}, delete={1}), {2}",
+						   pa, pd, watch);
 					
 				} else if (sinceOptimization > 0) {
 
@@ -720,8 +720,8 @@ namespace Beagle.Daemon {
 					writer.Close ();
 					watch.Stop ();
 
-					driver.log.Info ("Opportunistic Optimize ({0}), {1}",
-							 sinceOptimization, watch);
+					Log.Debug ("Opportunistic Optimize ({0}), {1}",
+						   sinceOptimization, watch);
 					sinceOptimization = 0;
 				}
 					

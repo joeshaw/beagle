@@ -85,7 +85,14 @@ namespace Beagle.Daemon {
 				}
 				
 				foreach (string arg in debugArgs) {
-					if (arg != "all") {
+					if (arg == "all")
+						continue;
+
+					if (arg[0] == '-') {
+						string logName = arg.Substring (1);
+						Logger log = Logger.Get (logName);
+						log.Level = LogLevel.Info;
+					} else {
 						Logger log = Logger.Get (arg);
 						log.Level = LogLevel.Debug;
 					}
