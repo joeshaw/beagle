@@ -2,6 +2,7 @@ CSC=mcs -g
 
 LIBFLAGS =			\
 	-target:exe		\
+	-r:glib-sharp		\
 	-r:gtk-sharp		\
 	-r:gnome-sharp		\
 	-L ../Lucene.Net	\
@@ -12,7 +13,7 @@ LIBFLAGS =			\
 	-r:Indexer
 
 BEST_CSFILES =		\
-	gnome.cs	\
+	Vfs.cs		\
 	Best.cs		\
 	BestWindow.cs	\
 	HitContainer.cs	\

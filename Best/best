@@ -1,4 +1,4 @@
 #!/bin/sh
 
-MONO_PATH=../Lucene.Net:../Filters:../indexer:/opt/mono/lib/mono mono Best.exe $@
+MONO_PATH=../Lucene.Net:../Filters:../indexer:/opt/mono/lib/mono mono $@ Best.exe 
 

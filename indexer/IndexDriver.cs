@@ -174,6 +174,8 @@ namespace Dewey {
 			f = Field.Keyword ("Domain", indexable.Domain);
 			doc.Add (f);
 
+			indexable.Open ();
+
 			f = Field.Keyword ("MimeType", indexable.MimeType);
 			doc.Add (f);
 	    
@@ -193,9 +195,7 @@ namespace Dewey {
 			// fields and the content-related metadata.
 			
 			String str;
-			
-			indexable.Open ();
-			
+
 			str = indexable.Content;
 			if (str != null) {
 				f = Field.UnStored ("Content", str);
@@ -315,23 +315,41 @@ namespace Dewey {
 				writer.AddDocument (doc);
 			}
 			// optimization is expensive
-			if (optimize)
+			if (optimize) {
+				Spew ("Optimizing...");
 				writer.Optimize ();
+				Spew ("Done optimizing.");
+			}
 			writer.Close ();
 		}
 
 		// Add a set of items to the index
 		public void Add (IEnumerable indexables)
 		{
+			ArrayList preloaded = new ArrayList ();
 			ArrayList toBeDeleted = new ArrayList ();
 			ArrayList toBeInserted = new ArrayList ();
 
 			LNS.Searcher searcher = new LNS.IndexSearcher (IndexDir);
+
+			// First, pre-load all Indexables.  Since Preload can block,
+			// the Preloads should be done in multiple threads.  Of course,
+			// then we need to be smarted about culling duplicate Uris...
+			foreach (Indexable indexable in indexables) {
+				//try {
+					if (indexable.NeedPreload)
+						indexable.Preload ();
+					preloaded.Add (indexable);
+					//} catch {
+					// If the Preload throws an exception, just 
+					// forget about it.
+					//}
+			}
 			
 			// If we've been handed multiple Indexables with the same Uri,
 			// try to do something intelligent.
 			Hashtable byUri = new Hashtable ();
-			foreach (Indexable indexable in indexables) {
+			foreach (Indexable indexable in preloaded) {
 				if (byUri.Contains (indexable.Uri)) {
 					Indexable prev = (Indexable) byUri [indexable.Uri];
 					// FIXME: This isn't quite the right logic.  And what
@@ -398,11 +416,15 @@ namespace Dewey {
 				}
 			}
 
-			if (toBeDeleted.Count > 0)
+			if (toBeDeleted.Count > 0) {
+				Spew ("Deleting {0}", toBeDeleted.Count);
 				DoDelete (toBeDeleted);
+			}
 
-			if (toBeInserted.Count > 0)
+			if (toBeInserted.Count > 0) {
+				Spew ("Inserting {0}", toBeInserted.Count);
 				DoInsert (toBeInserted, true);
+			}
 		}
 	
 		// Add a single item to the index
@@ -413,14 +435,6 @@ namespace Dewey {
 
 		public IEnumerable Query (Query query)
 		{
-			return Query (query, 0);
-		}
-
-		private IEnumerable Query (Query query, int step)
-		{
-			if (step > 0)
-				Spew ("Query Step {0}", step);
-
 			Analyzer analyzer = NewAnayzer ();
 			LNS.Query luceneQuery = ToLuceneQuery (query, analyzer);
 
@@ -430,7 +444,6 @@ namespace Dewey {
 
 			ArrayList hits = new ArrayList ();
 			ArrayList toBeDeleted = new ArrayList ();
-			ArrayList toBeInserted = new ArrayList ();
 
 			for (int i = 0; i < nHits; ++i) {
 				Hit hit = FromLuceneHit (luceneHits, i);
@@ -446,18 +459,15 @@ namespace Dewey {
 						if (hit.ValidTimestamp
 						    && hit.Timestamp < info.LastWriteTime) {
 							Spew ("Out-of-date {0}", hit.Uri);
-							valid = false;
-							toBeDeleted.Add (hit.Uri);
-							try {
-								Indexable indexable = new IndexableFile (path);
-								toBeInserted.Add (indexable);
-							} catch {
-								// If we get an exception, we couldn't figure
-								// out how to filter the file.  In that case,
-								// we just drop the file from the index and
-								// throw away the hit.
-								Spew ("Couldn't re-index {0}", hit.Uri);
-							}
+							// For now, out-of-date hits just pass through.
+							// Maybe we should at least flag them as OOD
+							// somehow?
+							
+							// FIXME: Out-of-date documents should have their
+							// content extracted and the query checked again it.
+							// Can we generate a score for a Document against a
+							// Query in-memory, without going to the index?  Poking
+							// around in Lucene, I didn't see an obvious way to do it.
 						}
 					} else {
 						// File has disappeared since being indexed.
@@ -473,25 +483,11 @@ namespace Dewey {
 			}
 
 			searcher.Close ();
-
-			// If our index appears to be out-of-date, update the index
-			// as necessary.  If documents changed, re-do the query.
-			// This is fairly ugly, but we can probably get away with it
-			// for now because queries are so very, very fast.
-			//
-			// FIXME: can we generate a score for a Document against a
-			// Query in-memory, without going to the index?  Poking around
-			// in Lucene, I didn't see an obvious way to do it.
-			//
-			// FIXME: Doing this assumes that you can write back to any index
-			// that you can query.
+			
+			// FIXME: this assumes that we can write back to any index that we can
+			// query.  That obviously isn't the case.
 			if (toBeDeleted.Count > 0)
 				DoDelete (toBeDeleted);
-			if (toBeInserted.Count > 0) {
-				// To speed things up, we don't re-optimize the index.
-				DoInsert (toBeInserted, false);
-				return Query (query, step+1);
-			}
 
 			return hits;
 		}

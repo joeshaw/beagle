@@ -18,6 +18,7 @@ namespace Best {
 
 		bool open = false;
 		int count = 0;
+		const int MAXCOUNT = 50;
 		
 		public HitContainer () : base (false, 3)
 		{
@@ -41,11 +42,12 @@ namespace Best {
 				return;
 			}
 
-			Widget w = new HitView (hit);
-			PackStart (w, false, true, 3);
-			w.ShowAll ();
-
-			++count;
+			if (count < MAXCOUNT) {
+				Widget w = new HitView (hit);
+				PackStart (w, false, true, 3);
+				w.ShowAll ();
+				++count;
+			}
 		}
 
 		// Call Close when you are done adding hits.

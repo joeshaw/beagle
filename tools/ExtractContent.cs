@@ -6,6 +6,7 @@
 
 using System;
 using System.IO;
+using System.Net;
 
 using Dewey.Filters;
 
@@ -14,12 +15,28 @@ class ExtractContentTool {
 	static void Main (String[] args)
 	{
 		foreach (String arg in args) {
+			
+			Filter filter;
+			Stream stream;
 
-			Filter filter = Filter.FilterFromPath (arg);
-
-			Stream stream = new FileStream (arg,
-							FileMode.Open,
-							FileAccess.Read);
+			if (arg.StartsWith ("http://")) {
+				HttpWebRequest req = (HttpWebRequest) WebRequest.Create (arg);
+				req.UserAgent = "Dewey.ExtractContent";
+				HttpWebResponse resp = (HttpWebResponse) req.GetResponse ();
+				if (resp.StatusCode != HttpStatusCode.OK)
+					throw new Exception (String.Format ("{0} returned {1}: {2}",
+									    resp.StatusCode,
+									    resp.StatusDescription));
+				String mimeType = resp.ContentType;
+				int i = mimeType.IndexOf (";");
+				if (i != -1)
+					mimeType = mimeType.Substring (0, i);
+				filter = Filter.FilterFromMimeType (mimeType);
+				stream = resp.GetResponseStream ();
+			} else {
+				filter = Filter.FilterFromPath (arg);
+				stream = new FileStream (arg, FileMode.Open, FileAccess.Read);
+			}
 
 			filter.Open (stream);
 	    

@@ -10,6 +10,7 @@ LIBFLAGS =				\
 INDEXER_CSFILES = 		\
 	Indexable.cs		\
 	IndexableFile.cs	\
+	IndexableHttp.cs	\
 	Query.cs		\
 	Hit.cs			\
 	IndexDriver.cs

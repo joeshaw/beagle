@@ -18,8 +18,11 @@ namespace Dewey {
 		protected String mimeType = "application/octet-stream";
 		protected DateTime timestamp = new DateTime (0);
 		protected long revision = -1;
-	
+
+		protected bool needPreload = true;
+
 		Hashtable metadata = null;
+		bool preloaded = false;
 
 		public String Uri { 
 			get { return uri; }
@@ -84,6 +87,25 @@ namespace Dewey {
 				return meta == null ? null : meta.ToString ();
 			}
 		}
+
+		public bool NeedPreload {
+			get { return needPreload; }
+		}
+
+		public void Preload ()
+		{
+			if (NeedPreload && ! preloaded) {
+				// Do some locking and stuff
+				DoPreload ();
+				preloaded = true;
+			}
+		}
+		
+		// Do any slow, blocking operations in DoPreload.  Before
+		// Preload (and hence DoPreload) is called, a consumer can't
+		// assume that Indexables contain any information other than
+		// the domain and the Uri.
+		virtual public void DoPreload () { }
 
 		virtual public void Open () { }
 	

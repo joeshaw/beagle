@@ -27,6 +27,8 @@ namespace Dewey {
 			if (filter == null)
 				throw new Exception ("Can't find filter for file " + path);
 
+			needPreload = false;
+
 			uri = "file://" + path;
 			domain = "FileSystem";
 			mimeType = filter.MimeType;		

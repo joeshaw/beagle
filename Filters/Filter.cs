@@ -44,6 +44,7 @@ namespace Dewey.Filters {
 		Hashtable     metadata;
 		int           hotCount;
 		int           freezeCount;
+		bool          closeStream = false;
 
 		protected void HotUp ()
 		{
@@ -141,7 +142,7 @@ namespace Dewey.Filters {
 		
 		//////////////////////////
 
-		public void Open (Stream stream)
+		private void Open (Stream stream, bool closeStream)
 		{
 			content = null;
 			hot = null;
@@ -149,8 +150,16 @@ namespace Dewey.Filters {
 			hotCount = 0;
 			freezeCount = 0;
 			
-			if (stream != null)
+			if (stream != null) {
 				Read (stream);
+				if (closeStream)
+					stream.Close ();
+			}
+		}
+
+		public void Open (Stream stream)
+		{
+			Open (stream, false);
 		}
 		
 		public void Open (String path)
@@ -158,8 +167,7 @@ namespace Dewey.Filters {
 			Stream stream = new FileStream (path,
 							FileMode.Open,
 							FileAccess.Read);
-			Open (stream);
-			stream.Close ();
+			Open (stream, true);
 		}
 		
 		public void Close ()
