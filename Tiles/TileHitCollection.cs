@@ -185,7 +185,7 @@ namespace Beagle.Tile {
 				foot_template = new Template ("template-foot.html");
 				PopulateTemplate (foot_template);
 			}
-			ctx.Write (head_template.ToString ());
+			ctx.Write (foot_template.ToString ());
 		}
 	}
 }

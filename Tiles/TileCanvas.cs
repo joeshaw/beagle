@@ -77,7 +77,7 @@ namespace Beagle.Tile {
 		private void OnOpenUri (object o, OpenUriArgs args)
 		{
 			string uri = args.AURI;
-			System.Console.WriteLine ("Open URI: {0}", args.AURI);
+			System.Console.WriteLine ("Open URI: {0}", uri);
 			
 			args.RetVal = true;
 
@@ -97,9 +97,9 @@ namespace Beagle.Tile {
 			string command = null;
 			string commandArgs = null;
 
-			if (uri.StartsWith ("http://")) {
+			if (uri.StartsWith ("http://") || uri.StartsWith ("file://")) {
 				command = "gnome-open";
-				commandArgs = uri;
+				commandArgs = "'" + uri + "'";
 			} else if (uri.StartsWith ("mailto:")) {
 				command = "evolution";
 				commandArgs = uri;
@@ -265,8 +265,7 @@ namespace Beagle.Tile {
 			TileCanvasRenderContext ctx;
 			ctx = new TileCanvasRenderContext (this, 
 							   tile);
-								   
-			ctx.Write ("<style type=\"text/css\" media=\"screen\">");
+			ctx.Write ("<html><style type=\"text/css\" media=\"screen\">");
 
 			RenderStyles (ctx);
 			
@@ -275,6 +274,7 @@ namespace Beagle.Tile {
 			if (tile != null) {
 				tile.Render (ctx);
 			}
+			ctx.Write ("</html>");
 		}
 
 		/////////////////////////////////////////////////
@@ -292,7 +292,10 @@ namespace Beagle.Tile {
 			ClearActions ();
 			ClearTiles ();
 
-			OpenStream ("http://localhost/", "text/html");
+			string mime_type = "text/html";
+			if (Environment.GetEnvironmentVariable ("BEST_DEBUG_HTML") != null)
+			    mime_type = "text/plain";
+			OpenStream ("http://localhost/", mime_type);
 			PaintTile (root);
 			CloseStream ();
 

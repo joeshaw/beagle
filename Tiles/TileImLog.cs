@@ -34,11 +34,15 @@ namespace Beagle.Tile {
 	[HitFlavor (Name="Conversations", Rank=900, Emblem="emblem-im-log.png", Color="#e5f5ef",
 		    Type="IMLog")]
 	public class TileImLog : TileFromHitTemplate {
-		private BU.ImBuddy buddy = null;
 		private static BU.GaimBuddyListReader list = null;
 
+#if ENABLE_EVO_SHARP
+		private static Hashtable buddy_emails = new Hashtable ();
+#endif
+
+		private BU.ImBuddy buddy = null;
 		private string email = null;
-		
+
 		public TileImLog (Hit _hit) : base (_hit,
 						    "template-im-log.html")
 		{
@@ -89,7 +93,9 @@ namespace Beagle.Tile {
 			}
 		}
 
+#if ENABLE_EVO_SHARP
 		static bool ebook_failed = false;
+#endif
 
 		private string GetEmailForIm (string im)
 		{
@@ -100,6 +106,11 @@ namespace Beagle.Tile {
 			// addressbook, don't keep trying.
 			if (ebook_failed)
 				return null;
+
+			if (buddy_emails.Contains (im)) {
+				string str = (string)buddy_emails[im];
+				return str != "" ? str : null;
+			}
 
 			// Connect to the Evolution addressbook.
 			try {
@@ -127,8 +138,10 @@ namespace Beagle.Tile {
 			Evolution.Contact [] matches = addressbook.GetContacts (query);
 			foreach (Evolution.Contact c in matches) {
 				Console.WriteLine ("Got match: " + c.FullName);
+				buddy_emails[im] = c.Email1;
 				return c.Email1;
 			}
+			buddy_emails[im] = "";
 #endif
 
 			return null;
