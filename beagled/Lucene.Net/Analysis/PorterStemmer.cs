@@ -498,8 +498,12 @@ namespace Lucene.Net.Analysis
 				default: 
 					return;
 			}
+
+#if false
+			// FIXED trow@ximian.com 15 Nov 2004  Removed unreachable code.
 			if (M() > 1) 
 				k = j;
+#endif
 		}
 
 		/// <summary>

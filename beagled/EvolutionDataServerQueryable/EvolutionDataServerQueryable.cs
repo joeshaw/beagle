@@ -31,6 +31,7 @@ using System.Text;
 using System.Threading;
 
 using Beagle.Daemon;
+using Beagle.Util;
 
 namespace Beagle.Daemon.EvolutionDataServerQueryable {
 
@@ -55,7 +56,7 @@ namespace Beagle.Daemon.EvolutionDataServerQueryable {
 				Shutdown.ShutdownEvent += OnShutdown;
 			} catch {
 				addressbook = null;
-				Console.WriteLine ("WARNING: Could not open Evolution addressbook.  Addressbook searching is disabled.");
+				Logger.Log.Warn ("Could not open Evolution addressbook.  Addressbook searching is disabled.");
 			}
 		}
 
@@ -94,7 +95,7 @@ namespace Beagle.Daemon.EvolutionDataServerQueryable {
 			if (Shutdown.ShutdownRequested) 
 				return;
 
-			System.Console.WriteLine ("Starting EDS query for {0}", body.Text);
+			Logger.Log.Debug ("Starting EDS query for {0}", body.Text);
 
 			driver.Start ();
 			
@@ -105,7 +106,7 @@ namespace Beagle.Daemon.EvolutionDataServerQueryable {
 				}
 			}
 
-			System.Console.WriteLine ("EDS query done");
+			Logger.Log.Debug ("EDS query done");
 		}
 
 		public void Start ()

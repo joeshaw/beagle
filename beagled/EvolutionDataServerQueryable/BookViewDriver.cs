@@ -26,11 +26,12 @@
 
 using System;
 using System.Collections;
+using System.Runtime.InteropServices;
 using System.Text;
-using Beagle.Daemon;
 using System.Threading;
 
-using System.Runtime.InteropServices;
+using Beagle.Util;
+using Beagle.Daemon;
 
 namespace Beagle.Daemon.EvolutionDataServerQueryable {
 
@@ -207,7 +208,7 @@ namespace Beagle.Daemon.EvolutionDataServerQueryable {
 		private void OnShutdown () 
 		{
 			lock (this) {
-				System.Console.WriteLine ("shutting down");
+				Logger.Log.Debug ("shutting down");
 				IsShutdown = true;
 				DisconnectView ();
 				result = null;
