@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: beagle\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2005-04-05 12:16-0300\n"
-"PO-Revision-Date: 2005-04-05 15:48-0300\n"
+"POT-Creation-Date: 2005-04-06 12:28-0300\n"
+"PO-Revision-Date: 2005-04-06 12:39-0300\n"
 "Last-Translator: Raphael Higino <raphaelh@uai.com.br>\n"
 "Language-Team: Brazilian Portuguese <gnome-l10n-br@listas.cipsga.org.br>\n"
 "MIME-Version: 1.0\n"
@@ -77,7 +77,7 @@ msgstr "Nenhum resultado."
 #. To translators: {0} is the current count of results shown of {1} in total, this is the message that is initially shown
 #. when results are returned to the user.
 #: ../Best/BestWindow.cs:406
-#, csharp-format, fuzzy
+#, fuzzy, csharp-format
 msgid "Best <b>{0} results of {1}</b> are shown."
 msgstr "Os <b>{0}</b> melhores <b>resultados de {1}</b> "
 
@@ -109,6 +109,26 @@ msgstr ""
 #, csharp-format
 msgid "The query for <i>{0}</i> failed with error:<br>{1}<br>"
 msgstr "A busca por <i>{0}</i> falhou com o erro:<br>{1}<br>"
+
+#: ../ImLogViewer/ImLogViewer.glade.h:1
+msgid "*"
+msgstr "*"
+
+#: ../ImLogViewer/ImLogViewer.glade.h:2
+msgid "<b>Conversations History</b>"
+msgstr ""
+
+#: ../ImLogViewer/ImLogViewer.glade.h:3
+msgid "<b>Today, 12:00 PM</b>"
+msgstr "<b>Hoje, 12:00 PM</b>"
+
+#: ../ImLogViewer/ImLogViewer.glade.h:4
+msgid "Find "
+msgstr "Localizar "
+
+#: ../ImLogViewer/ImLogViewer.glade.h:5
+msgid "IM viewer"
+msgstr "Visualizador de MI"
 
 #: ../Tiles/TileDocs.cs:75
 msgid "Pages:"
@@ -149,6 +169,162 @@ msgstr "Enviado"
 msgid "Received"
 msgstr "Recebido"
 
+#. For translators: From template Tiles/template-docs.html
+#. For translators: From template Tiles/template-folder.html
+#. For translators: From template Tiles/template-file.html
+#. For translators: From template Tiles/template-picture.html
+#. For translators: From template Tiles/template-presentation.html
+#: ../Tiles/TranslationHack.cs:6 ../Tiles/TranslationHack.cs:24
+#: ../Tiles/TranslationHack.cs:28 ../Tiles/TranslationHack.cs:60
+#: ../Tiles/TranslationHack.cs:70
+msgid "in folder"
+msgstr "na pasta"
+
+#. For translators: From template Tiles/template-docs.html
+#. For translators: From template Tiles/template-file.html
+#. For translators: From template Tiles/template-presentation.html
+#: ../Tiles/TranslationHack.cs:8 ../Tiles/TranslationHack.cs:30
+#: ../Tiles/TranslationHack.cs:72
+msgid "Last modified"
+msgstr ""
+
+#. For translators: From template Tiles/template-docs.html
+#. For translators: From template Tiles/template-presentation.html
+#: ../Tiles/TranslationHack.cs:10 ../Tiles/TranslationHack.cs:74
+msgid "Title:"
+msgstr ""
+
+#. For translators: From template Tiles/template-docs.html
+#. For translators: From template Tiles/template-presentation.html
+#: ../Tiles/TranslationHack.cs:12 ../Tiles/TranslationHack.cs:76
+msgid "Author:"
+msgstr "Autor:"
+
+#. For translators: From template Tiles/template-docs.html
+#. For translators: From template Tiles/template-launcher.html
+#. For translators: From template Tiles/template-folder.html
+#. For translators: From template Tiles/template-file.html
+#. For translators: From template Tiles/template-im-log.html
+#. For translators: From template Tiles/template-mail-message.html
+#. For translators: From template Tiles/template-music.html
+#. For translators: From template Tiles/template-note.html
+#. For translators: From template Tiles/template-picture.html
+#. For translators: From template Tiles/template-presentation.html
+#. For translators: From template Tiles/template-web-history.html
+#. For translators: From template Tiles/template-blog.html
+#: ../Tiles/TranslationHack.cs:14 ../Tiles/TranslationHack.cs:22
+#: ../Tiles/TranslationHack.cs:26 ../Tiles/TranslationHack.cs:32
+#: ../Tiles/TranslationHack.cs:38 ../Tiles/TranslationHack.cs:42
+#: ../Tiles/TranslationHack.cs:50 ../Tiles/TranslationHack.cs:58
+#: ../Tiles/TranslationHack.cs:64 ../Tiles/TranslationHack.cs:80
+#: ../Tiles/TranslationHack.cs:88 ../Tiles/TranslationHack.cs:94
+msgid "Open"
+msgstr "Abrir"
+
+#. For translators: From template Tiles/template-docs.html
+#. For translators: From template Tiles/template-file.html
+#. For translators: From template Tiles/template-picture.html
+#. For translators: From template Tiles/template-presentation.html
+#: ../Tiles/TranslationHack.cs:16 ../Tiles/TranslationHack.cs:34
+#: ../Tiles/TranslationHack.cs:66 ../Tiles/TranslationHack.cs:82
+msgid "Send to..."
+msgstr "Enviar para..."
+
+#. For translators: From template Tiles/template-docs.html
+#. For translators: From template Tiles/template-file.html
+#. For translators: From template Tiles/template-music.html
+#. For translators: From template Tiles/template-picture.html
+#. For translators: From template Tiles/template-presentation.html
+#: ../Tiles/TranslationHack.cs:18 ../Tiles/TranslationHack.cs:36
+#: ../Tiles/TranslationHack.cs:54 ../Tiles/TranslationHack.cs:68
+#: ../Tiles/TranslationHack.cs:84
+msgid "Reveal in file manager"
+msgstr "Exibir no gerenciador de arquivos"
+
+#. For translators: From template Tiles/template-launcher.html
+#: ../Tiles/TranslationHack.cs:20
+msgid "Application:"
+msgstr ""
+
+#. For translators: From template Tiles/template-mail-message.html
+#: ../Tiles/TranslationHack.cs:40
+msgid "Folder:"
+msgstr "Pasta:"
+
+#. For translators: From template Tiles/template-mail-message.html
+#: ../Tiles/TranslationHack.cs:44
+msgid "Send IM"
+msgstr "Enviar MI"
+
+#. For translators: From template Tiles/template-music.html
+#: ../Tiles/TranslationHack.cs:46
+msgid "Track"
+msgstr "Faixa"
+
+#. For translators: From template Tiles/template-music.html
+#: ../Tiles/TranslationHack.cs:48
+msgid "from"
+msgstr "de"
+
+#. For translators: From template Tiles/template-music.html
+#: ../Tiles/TranslationHack.cs:52
+msgid "Enqueue"
+msgstr ""
+
+#. For translators: From template Tiles/template-note.html
+#: ../Tiles/TranslationHack.cs:56
+msgid "last modified"
+msgstr ""
+
+#. For translators: From template Tiles/template-picture.html
+#: ../Tiles/TranslationHack.cs:62
+msgid "Modified:"
+msgstr ""
+
+#. For translators: From template Tiles/template-presentation.html
+#: ../Tiles/TranslationHack.cs:78
+msgid "Slides:"
+msgstr "Slides:"
+
+#. For translators: From template Tiles/template-web-history.html
+#: ../Tiles/TranslationHack.cs:86
+msgid "Last viewed:"
+msgstr ""
+
+#. For translators: From template Tiles/template-blog.html
+#: ../Tiles/TranslationHack.cs:90
+msgid "Weblog:"
+msgstr "Weblog:"
+
+#. For translators: From template Tiles/template-blog.html
+#: ../Tiles/TranslationHack.cs:92
+msgid "Published:"
+msgstr "Publicado:"
+
+#: ../Util/ExifData.cs:226
+msgid "Image Directory"
+msgstr ""
+
+#: ../Util/ExifData.cs:228
+msgid "Thumbnail Directory"
+msgstr ""
+
+#: ../Util/ExifData.cs:230
+msgid "Exif Directory"
+msgstr ""
+
+#: ../Util/ExifData.cs:232
+msgid "GPS Directory"
+msgstr ""
+
+#: ../Util/ExifData.cs:234
+msgid "InterOperability Directory"
+msgstr ""
+
+#: ../Util/ExifData.cs:236
+msgid "Unknown Directory"
+msgstr ""
+
 #: ../Util/StringFu.cs:65
 msgid "Today"
 msgstr "Hoje"
@@ -157,34 +333,78 @@ msgstr "Hoje"
 msgid "Yesterday"
 msgstr "Ontem"
 
+#: ../Util/StringFu.cs:69
+msgid "MMM d"
+msgstr "d de MMM"
+
+#: ../Util/StringFu.cs:71
+msgid "MMM d, yyyy"
+msgstr "d de MMM de yyyy"
+
+#: ../Util/StringFu.cs:73
+msgid "h:mm tt"
+msgstr "h:mm"
+
+#. Translators: {0} is a date (e.g. 'Today' or 'Apr 23'), {1} is the time
+#: ../Util/StringFu.cs:79
+#, csharp-format
+msgid "{0}, {1}"
+msgstr "{0}, {1}"
+
 #. To translators: {0} is the time of the day, eg. 13:45
-#: ../Util/StringFu.cs:95
+#: ../Util/StringFu.cs:96
 #, csharp-format
 msgid "Today, {0}"
 msgstr "Hoje, {0}"
 
 #. To translators: {0} is the time of the day, eg. 13:45
-#: ../Util/StringFu.cs:98
+#: ../Util/StringFu.cs:99
 #, csharp-format
 msgid "Yesterday, {0}"
 msgstr "Ontem, {0}"
 
 #. To translators: {0} is the number of days that have passed, {1} is the time of the day, eg. 13:45
-#: ../Util/StringFu.cs:101
+#: ../Util/StringFu.cs:102
 #, csharp-format
 msgid "{0} days ago, {1}"
 msgstr ""
 
-#: ../Util/StringFu.cs:119
+#: ../Util/StringFu.cs:106
+msgid "MMMM d, h:mm tt"
+msgstr "d de MMMM, h:mm"
+
+#: ../Util/StringFu.cs:110
+msgid "MMMM d yyyy, h:mm tt"
+msgstr "d de MMMM de yyyy, h:mm"
+
+#: ../Util/StringFu.cs:120
 #, csharp-format
 msgid "{0} hour"
 msgid_plural "{0} hours"
 msgstr[0] "{0} hora"
 msgstr[1] "{0} horas"
 
-#: ../Util/StringFu.cs:126
+#: ../Util/StringFu.cs:127
 #, csharp-format
 msgid "{0} minute"
 msgid_plural "{0} minutes"
 msgstr[0] "{0} minuto"
 msgstr[1] "{0} minutos"
+
+#. Translators: {0} is a file size in bytes
+#: ../Util/StringFu.cs:143
+#, csharp-format
+msgid "{0} bytes"
+msgstr "{0} bytes"
+
+#. Translators: {0} is a file size in kilobytes
+#: ../Util/StringFu.cs:147
+#, csharp-format
+msgid "{0:0.0} KB"
+msgstr "{0:0.0} KB"
+
+#. Translators: {0} is a file size in megabytes
+#: ../Util/StringFu.cs:150
+#, csharp-format
+msgid "{0:0.0} MB"
+msgstr "{0:0.0} MB"
