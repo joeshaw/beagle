@@ -130,7 +130,7 @@ namespace Camel {
 			}
 
 			// FIXME: How do we know if there is content info in there?
-			// SkipContentInfo ();
+			// SkipContentInfo (f);
 		}
 
 		public override string ToString ()
@@ -271,11 +271,11 @@ namespace Camel {
 	}
 
 	public class ImapSummaryHeader : SummaryHeader {
-		public uint validity;
 		
 		public ImapSummaryHeader (FileStream f) : base (f)
 		{
-			validity = Decode.UInt (f);
+			int version = Decode.FixedInt (f);
+			int validity = Decode.FixedInt (f);
 		}
 	}
 	
