@@ -30,8 +30,8 @@ using System.IO;
 using System.Collections;
 using Beagle.Daemon;
 
-namespace Beagle.Daemon.FileSystemQueryable
-{
+namespace Beagle.Daemon.FileSystemQueryable {
+
 	public class IndexerImpl : Beagle.IndexerProxy
 	{
 		LuceneDriver driver;

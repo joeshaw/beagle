@@ -45,7 +45,9 @@ using LNS = Lucene.Net.Search;
 using BU = Beagle.Util;
 
 namespace Beagle.Daemon {
-	
+
+	public delegate void PostIndexHook (LuceneDriver driver, Uri uri);
+
 	public class LuceneDriver {
 
 		// 1: Original
@@ -164,20 +166,32 @@ namespace Beagle.Daemon {
 		// Public API
 		//
 
-		public void ScheduleAdd (Indexable indexable)
+		public void ScheduleAdd (Indexable indexable, PostIndexHook hook)
 		{
 			QueueItem item;
 			item = new QueueItem ();
 			item.IndexableToAdd = indexable;
+			item.PostIndexHook = hook;
+			ScheduleQueueItem (item);
+		}
+
+		public void ScheduleAdd (Indexable indexable)
+		{
+			ScheduleAdd (indexable, null);
+		}
+
+		public void ScheduleDelete (Uri uri, PostIndexHook hook)
+		{
+			QueueItem item;
+			item = new QueueItem ();
+			item.UriToDelete = uri;
+			item.PostIndexHook = hook;
 			ScheduleQueueItem (item);
 		}
 
 		public void ScheduleDelete (Uri uri)
 		{
-			QueueItem item;
-			item = new QueueItem ();
-			item.UriToDelete = uri;
-			ScheduleQueueItem (item);
+			ScheduleDelete (uri, null);
 		}
 
 		private class HitInfo {
@@ -263,6 +277,7 @@ namespace Beagle.Daemon {
 		private class QueueItem {
 			public Indexable IndexableToAdd;
 			public Uri UriToDelete;
+			public PostIndexHook PostIndexHook;
 
 			public bool IsAdd {
 				get { return IndexableToAdd != null; }
@@ -297,10 +312,12 @@ namespace Beagle.Daemon {
 				if (HavePendingAdds)
 					FlushPending ();
 				
-				AddPendingDelete (item.UriToDelete);
+				AddPendingDelete (item);
 			} else if (item.IsAdd) {
-				AddPendingDelete (item.IndexableToAdd.Uri);
-				AddPendingAdd (item.IndexableToAdd);
+				QueueItem fakeItem = new QueueItem ();
+				fakeItem.UriToDelete = item.IndexableToAdd.Uri;
+				AddPendingDelete (fakeItem);
+				AddPendingAdd (item);
 			} else {
 				Console.WriteLine ("Failed to process unknown/malformed QueueItem");
 			}
@@ -403,9 +420,9 @@ namespace Beagle.Daemon {
 			get { return pendingAdds.Count > 0; }
 		}
 
-		private void AddPendingAdd (Indexable indexable) // an unfortunate method name...
+		private void AddPendingAdd (QueueItem item) // an unfortunate method name...
 		{
-			pendingAdds.Add (indexable);
+			pendingAdds.Add (item);
 		}
 
 		private void FlushPendingAdds ()
@@ -414,7 +431,8 @@ namespace Beagle.Daemon {
 				return;
 
 			IndexWriter writer = new IndexWriter (Store, Analyzer, false);
-			foreach (Indexable indexable in pendingAdds) {
+			foreach (QueueItem item in pendingAdds) {
+				Indexable indexable = item.IndexableToAdd;
 				Document doc = null;
 				try {
 					doc = ToLuceneDocument (indexable);
@@ -427,6 +445,8 @@ namespace Beagle.Daemon {
 				if (doc != null) {
 					Console.WriteLine ("Adding {0}", indexable.Uri);
 					writer.AddDocument (doc);
+					if (item.PostIndexHook != null)
+						item.PostIndexHook (this, indexable.Uri);
 					++sinceOptimization;
 				}
 			}
@@ -444,9 +464,9 @@ namespace Beagle.Daemon {
 		private void BroadcastAndClearPendingAdds ()
 		{
 			if (pendingAdds.Count > 0) {
-				foreach (Indexable indexable in pendingAdds) {
+				foreach (QueueItem item in pendingAdds) {
 					if (AddedEvent != null)
-						AddedEvent (this, indexable.Uri);
+						AddedEvent (this, item.IndexableToAdd.Uri);
 				}
 				pendingAdds.Clear ();
 			}
@@ -530,9 +550,9 @@ namespace Beagle.Daemon {
 
 		private ArrayList pendingDeletes = new ArrayList ();
 
-		private void AddPendingDelete (Uri uri)
+		private void AddPendingDelete (QueueItem item)
 		{
-			pendingDeletes.Add (uri);
+			pendingDeletes.Add (item);
 		}
 
 		private void FlushPendingDeletes ()
@@ -544,7 +564,8 @@ namespace Beagle.Daemon {
 
 			// Get the ids of all documents with the given Uris.
 			LNS.Searcher searcher = new LNS.IndexSearcher (Store);
-			foreach (Uri uri in pendingDeletes) {
+			foreach (QueueItem item in pendingDeletes) {
+				Uri uri = item.UriToDelete;
 				Console.WriteLine ("Deleting {0}", uri);
 				Term term = new Term ("Uri", uri.ToString ());
 				LNS.Query uriQuery = new LNS.TermQuery (term);
@@ -563,15 +584,21 @@ namespace Beagle.Daemon {
 			foreach (int id in idsToDelete)
 				reader.Delete (id);
 			reader.Close ();
+
+			// Call any post-indexing hooks
+			foreach (QueueItem item in pendingDeletes) {
+				if (item.PostIndexHook != null)
+					item.PostIndexHook (this, item.UriToDelete);
+			}
 		}
 
 		private void BroadcastAndClearPendingDeletes ()
 		{
 			if (pendingDeletes.Count > 0) {
 				// Fire off events to indicate what we just deleted.
-				foreach (Uri uri in pendingDeletes) {
+				foreach (QueueItem item in pendingDeletes) {
 					if (DeletedEvent != null)
-						DeletedEvent (this, uri);
+						DeletedEvent (this, item.UriToDelete);
 				}
 				
 				// Clear our list of pending deletions

@@ -176,6 +176,7 @@ fsqueryabledir = $(srcdir)/FileSystemQueryable
 FILE_SYSTEM_QUERYABLE_CSFILES =				\
 	$(fsqueryabledir)/FileSystemQueryable.cs	\
 	$(fsqueryabledir)/FileSystemEventMonitor.cs	\
+	$(fsqueryabledir)/Crawler.cs			\
 	$(fsqueryabledir)/IndexerImpl.cs
 
 
