@@ -52,7 +52,7 @@ namespace Beagle.Daemon {
 		{
 			Hit hit = new Hit ();
 
-			hit.Uri    = "contact://" + contact.Id; // FIXME!
+			hit.Uri    = new Uri ("contact://" + contact.Id, true); // FIXME!
 			hit.Type   = "Contact";
 			hit.Source = "EvolutionDataServer";
 			hit.ScoreRaw  = 1.0f; // FIXME
