@@ -1,3 +1,10 @@
+2005-04-04  Vijay K. Nanjundaswamy <knvijay@novell.com>
+
+	* beagled/WebServices/WebServiceBackEnd.cs: Fix to return a searchToken, whenever
+	  number of results returned is more than 0. (Earlier searchToken was returned
+	  only when the total no. of results was more than the max results returned in a 
+	  single response).
+
 2005-04-01  Daniel Drake  <dsd@gentoo.org>
 
 	* Tiles/TilePicture.cs: Properly handle URI's when finding thumbnail

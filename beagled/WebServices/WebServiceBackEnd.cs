@@ -83,9 +83,8 @@ namespace Beagle.WebService {
 		public int statusCode;			//ReturnCode for programmatic processing
 		public string statusMsg;		//User-friendly return message
 
-		public string searchToken;		//Token identifying the query returned, 
-										//	    when there are more results
-										//		to enable follow-up queries
+		public string searchToken;		//Token identifying the query, 
+							//to enable follow-up queries
 		public int firstResultIndex; 	//Index of first result in this response
 		public int numResults;		 	//No. of results in this response
 		public int totalResults;		//Total no. of results from the query
@@ -299,8 +298,10 @@ namespace Beagle.WebService {
 
 			sr.firstResultIndex = 0;
 			sr.totalResults = results.Count;
+
 			sr.searchToken = "";
-			if (results.Count > MAX_RESULTS_PER_CALL) 
+			//if (results.Count > MAX_RESULTS_PER_CALL) 
+			if (sr.totalResults > 0)
 				sr.searchToken = searchId;
 				
 			sr.statusCode = SC_QUERY_SUCCESS;
@@ -352,8 +353,10 @@ namespace Beagle.WebService {
 
 			sr.firstResultIndex = startIndex;
 			sr.totalResults = results.Count;
+
 			sr.searchToken = "";
-			if (results.Count > startIndex + MAX_RESULTS_PER_CALL)
+			//if (results.Count > startIndex + MAX_RESULTS_PER_CALL)
+			if (sr.totalResults > 0)
 				sr.searchToken = searchToken;
 				
 			sr.statusCode = SC_QUERY_SUCCESS;
