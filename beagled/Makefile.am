@@ -13,6 +13,9 @@ CSFILES = 				\
 	$(srcdir)/BeagleDaemon.cs       \
 	$(srcdir)/Indexer.cs            \
 	$(srcdir)/LiveQuery.cs          \
+	$(srcdir)/NoIndexFileHandler.cs \
+	$(srcdir)/PreIndexHandler.cs    \
+	$(srcdir)/PostIndexHandler.cs   \
 	$(srcdir)/QueryManager.cs
 
 LOCAL_ASSEMBLIES =			\

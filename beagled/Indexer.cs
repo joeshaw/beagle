@@ -30,14 +30,18 @@ using Beagle.Core;
 using Beagle;
 namespace BeagleDaemon
 {
+	public class PreIndexHandlerArgs {
+		public bool shouldIndex;
+		public Indexable indexable;
+	}
+
+	public class PostIndexHandlerArgs {
+		public bool failure;
+		public Indexable indexable;
+	}
+
 	public class Indexer : Beagle.Indexer 
 	{
-		struct IndexerDirectoryInfo {
-			public bool hasNoIndex;
-			public FileMatcher matcher;
-		}
-
-		Hashtable dirInfos = new Hashtable ();
 		IndexDriver driver = new IndexDriver ();
 
 		// Contains Indexables
@@ -46,51 +50,17 @@ namespace BeagleDaemon
 		// Contains Obsoleted or Deleted Hits
 		ArrayList toBeRemoved = new ArrayList ();
 		
+		ArrayList preCallouts = new ArrayList ();
+		ArrayList postCallouts = new ArrayList ();
+
 		int sinceOptimize = 0;
 		const int optimizeCount = 10;
 
-		FileMatcher LoadNoIndex (string dirName)
-		{
-			IndexerDirectoryInfo info;
-			if (dirInfos.Contains (dirName)) {
-				info = (IndexerDirectoryInfo)dirInfos[dirName];
-				return info.matcher;
-			}
-			
-			string noIndexPath = Path.Combine (dirName, ".noindex");
-			info = new IndexerDirectoryInfo ();
-			if (File.Exists (noIndexPath)) {
-				info.hasNoIndex = true;
-				info.matcher = new FileMatcher ();
-				info.matcher.Load (noIndexPath);
-			} else {
-				info.hasNoIndex = false;
-				info.matcher = null;
-			}
+		public delegate void PreIndexingHandler (PreIndexHandlerArgs a);
+		public event PreIndexingHandler PreIndexingEvent;
 
-			dirInfos[dirName] = info;
-			return info.matcher;
-		}
-
-		bool ShouldIndex (string path)
-		{
-			string dirName = Path.GetDirectoryName (path);
-			string fileName = Path.GetFileName (path);
-
-			while (dirName != null) {
-				System.Console.WriteLine ("checking {0}", dirName);
-				FileMatcher noIndex = LoadNoIndex (dirName);
-				
-				if ((noIndex != null) && (noIndex.IsEmpty || noIndex.IsMatch (fileName))) {
-					return false;
-				}
-
-				fileName = Path.GetFileName (dirName);
-				dirName = Path.GetDirectoryName (dirName);
-			}
-
-			return true;
-		}
+		public delegate void PostIndexingHandler (PostIndexHandlerArgs a);
+		public event PostIndexingHandler PostIndexingEvent;
 		
 		void ScheduleAdd (Indexable indexable)
 		{
@@ -105,13 +75,45 @@ namespace BeagleDaemon
 			toBeRemoved.Add (hit);
 		}
 
+		void CallPostIndexingEvent (ArrayList indexables)
+		{
+			if (PostIndexingEvent == null)
+				return;
+
+			PostIndexHandlerArgs args = new PostIndexHandlerArgs ();
+			foreach (Indexable i in indexables) {
+				args.indexable = i;
+				PostIndexingEvent (args);
+					
+			}
+		}
+
+		ArrayList CallPreIndexingEvent (ArrayList indexables)
+		{
+			if (PreIndexingEvent == null) 
+				return indexables;
+
+			ArrayList ret = new ArrayList ();
+			PreIndexHandlerArgs args = new PreIndexHandlerArgs ();
+			foreach (Indexable i in indexables) {
+				args.indexable = i;
+				args.shouldIndex = true;
+				PreIndexingEvent (args);
+				if (args.shouldIndex)
+					ret.Add (i);
+			}
+			return ret;
+		}
+
+
 		void Flush () 
 		{
 			bool didSomething = false;
 			
+			toBeIndexed = CallPreIndexingEvent (toBeIndexed); 
+
 			if (toBeIndexed.Count > 0) {
 				driver.QuickAdd (toBeIndexed);
-				toBeIndexed.Clear ();
 				didSomething = true;
 			}
 			
@@ -128,6 +130,8 @@ namespace BeagleDaemon
 					sinceOptimize = 0;
 				}
 			}
+			CallPostIndexingEvent (toBeIndexed);
+			toBeIndexed.Clear ();
 		}
 
 		void Index (FileInfo file)
@@ -164,18 +168,9 @@ namespace BeagleDaemon
 			if (path == null) {
 				return;
 			}
-
-			if (ShouldIndex (path)) {
-				FileInfo file = new FileInfo (path);
-				System.Console.WriteLine ("Indexing " + file.FullName);
-				Index (file);
-				System.Console.WriteLine ("Indexed");
-				System.Console.WriteLine ("Flushed");
-
-			} else {
-				System.Console.WriteLine ("Not Indexing");
-			}				
-
+			
+			FileInfo file = new FileInfo (path);
+			Index (file);
 		}
 
 		public override void IndexFile (string path)

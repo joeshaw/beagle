@@ -24,9 +24,34 @@
 using DBus;
 using Gtk;
 using Beagle;
+using System.Reflection;
+using System;
 
 namespace BeagleDaemon {
 	class BeagleDaemon {
+
+		static void ScanAssemblyForHandlers (Assembly assembly,
+						     Indexer indexer)
+		{
+			foreach (Type t in assembly.GetTypes ()) {
+				if (t.IsSubclassOf (typeof (PreIndexHandler))) {
+
+					PreIndexHandler handler = (PreIndexHandler) Activator.CreateInstance (t);
+					indexer.PreIndexingEvent += handler.Run;
+				}
+				if (t.IsSubclassOf (typeof (PostIndexHandler))) {
+					PostIndexHandler handler = (PostIndexHandler) Activator.CreateInstance (t);
+					indexer.PostIndexingEvent += handler.Run;
+				}
+			}
+		}
+
+		static void LoadHandlers (Indexer indexer) 
+		{
+			// FIXME: load handlers from plugins
+			ScanAssemblyForHandlers (Assembly.GetExecutingAssembly (), 
+						 indexer);
+		}
 		public static int Main (string[] args)
 		{
 			Application.Init ();
@@ -41,6 +66,8 @@ namespace BeagleDaemon {
 			Indexer indexer = new Indexer ();
 			service.RegisterObject (indexer,
 						"/com/novell/Beagle/Indexer");
+
+			LoadHandlers (indexer);
 
 			Application.Run ();
 			return 0;
