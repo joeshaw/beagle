@@ -58,7 +58,7 @@ namespace Beagle.Tile {
 				StringBuilder strPagesAndWords = new StringBuilder ();
 
 				base.PopulateTemplate ();
-				if (Hit ["dc:title"] == null || Hit ["dc:title"] == "")
+				if (Hit ["dc:title"] == null || Hit ["dc:title"].Trim () == "")
 					Template ["Title"] = Hit ["fixme:splitname"];
 				else
 					Template ["Title"] = Hit ["dc:title"];
