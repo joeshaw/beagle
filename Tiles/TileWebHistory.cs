@@ -26,7 +26,7 @@
 
 using System;
 
-namespace Beagle {
+namespace Beagle.Tile {
 
 	[HitFlavor (Name="Pages You've Viewed", Emblem="icon-web.png",
 		    Type="WebHistory")]

@@ -26,7 +26,7 @@
 
 using System;
 
-namespace Beagle {
+namespace Beagle.Tile {
 
 	[HitFlavor (Name="Conversations", Emblem="emblem-im-log.png", Color="#e5f5ef",
 		    Type="IMLog")]

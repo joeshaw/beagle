@@ -27,7 +27,7 @@
 using System;
 using BU = Beagle.Util;
 
-namespace Beagle {
+namespace Beagle.Core {
 	
 	public class Property {
 

@@ -30,6 +30,7 @@ using System.Collections;
 using System.IO;
 using System.Text;
 using System.Xml;
+using Beagle.Core;
 
 using ICSharpCode.SharpZipLib.Zip;
 

@@ -27,7 +27,7 @@
 using System;
 using System.Collections;
 
-namespace Beagle {
+namespace Beagle.Core {
 
 	/*
 

@@ -28,7 +28,7 @@ using System;
 using System.Collections;
 using System.Reflection;
 
-namespace Beagle {
+namespace Beagle.Core {
 
 	public abstract class RelevancyRule {
 

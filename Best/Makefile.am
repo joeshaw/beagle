@@ -14,8 +14,7 @@ CSFILES =				\
 LOCAL_ASSEMBLIES =			\
 	../Util/Util.dll		\
 	../images/Images.dll		\
-	../Lucene.Net/Lucene.Net.dll	\
-	../indexer/Indexer.dll		\
+	../BeagleClient/Beagle.dll         \
 	../Tiles/Tiles.dll
 
 ASSEMBLIES =				\

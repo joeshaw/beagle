@@ -27,7 +27,7 @@
 using System;
 using System.Collections;
 
-namespace Beagle {
+namespace Beagle.Tile {
 
 	public class TileHitCollection : TileFromTemplate, IComparable {
 
@@ -59,7 +59,7 @@ namespace Beagle {
 				tile = _tile;
 			}
 
-			public Hit Hit {
+			public Beagle.Hit Hit {
 				get { return hit; }
 			}
 

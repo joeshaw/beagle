@@ -30,7 +30,7 @@ using System.IO;
 
 using BU = Beagle.Util;
 
-namespace Beagle {
+namespace Beagle.Tile {
 
 	[HitFlavor (Name="Folders", Emblem="emblem-folder.png", Color="#f5f5fe",
 		    Uri="file://*", MimeType="inode/directory")]

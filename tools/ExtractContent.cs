@@ -30,7 +30,7 @@ using System.Collections;
 using System.IO;
 using System.Net;
 
-using Beagle;
+using Beagle.Core;
 
 class ExtractContentTool {
 

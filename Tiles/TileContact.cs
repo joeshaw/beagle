@@ -30,7 +30,7 @@ using System.IO;
 
 using BU = Beagle.Util;
 
-namespace Beagle {
+namespace Beagle.Tile {
 
 	[HitFlavor (Name="People", Emblem="emblem-contact.png", Color="#eeeebd",
 		    Type="Contact")]

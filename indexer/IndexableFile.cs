@@ -31,7 +31,7 @@ using System.IO;
 
 using BU = Beagle.Util;
 
-namespace Beagle {
+namespace Beagle.Core {
 
 	public class IndexableFile : Indexable {
 

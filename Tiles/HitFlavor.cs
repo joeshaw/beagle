@@ -28,7 +28,7 @@ using System;
 
 using BU = Beagle.Util;
 
-namespace Beagle {
+namespace Beagle.Tile {
 
 	[AttributeUsage (AttributeTargets.Class, AllowMultiple=true)]
 	public class HitFlavor : Attribute {

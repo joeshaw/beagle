@@ -26,6 +26,7 @@
 
 using System;
 using System.IO;
+using Beagle.Core;
 
 using BU = Beagle.Util;
 

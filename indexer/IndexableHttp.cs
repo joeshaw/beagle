@@ -33,7 +33,7 @@ using System.Threading;
 
 using Beagle.Filters;
 
-namespace Beagle {
+namespace Beagle.Core {
 
 	public class IndexableHttp : Indexable {
 

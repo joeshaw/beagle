@@ -31,7 +31,7 @@ using System;
 using System.Collections;
 using Beagle.Util;
 
-namespace Beagle {
+namespace Beagle.Core {
 
 	[QueryableFlavor (Name="Google", Domain=QueryDomain.Global)]
 	public class GoogleDriver : IQueryable {

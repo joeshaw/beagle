@@ -26,7 +26,7 @@
 
 using System;
 
-namespace Beagle {
+namespace Beagle.Tile {
 
 	public delegate void TileActionHandler ();
 	public delegate void TileChangedHandler (Tile tile);

@@ -29,12 +29,13 @@ using System;
 using System.Collections;
 using System.Diagnostics;
 using System.IO;
+using System.Xml;
 
 using BU = Beagle.Util;
 
 namespace Beagle {
     
-	public class Hit : Versioned, IComparable {
+	public class Hit: Versioned, IComparable {
 
 		// A unique ID.  id <= 0 means 'undefined'.
 		private int id = 0;
@@ -61,7 +62,7 @@ namespace Beagle {
 		private Hashtable data = new Hashtable (new CaseInsensitiveHashCodeProvider (), 
 							new CaseInsensitiveComparer ());
 
-		
+
 		private enum SpecialType {
 			Unknown,
 			None,
@@ -77,6 +78,103 @@ namespace Beagle {
 		private DirectoryInfo directoryInfo = null;
 
 		//////////////////////////
+
+		public void WriteToXml (XmlTextWriter writer)
+		{
+			writer.WriteStartElement ("hit");
+			writer.WriteAttributeString ("name", id.ToString());
+			writer.WriteAttributeString ("uri", uri);
+			writer.WriteAttributeString ("type", type);
+			writer.WriteAttributeString ("mimetype", mimeType);
+			writer.WriteAttributeString ("source", source);
+
+			writer.WriteAttributeString ("rawscore", scoreRaw.ToString ());
+			writer.WriteAttributeString ("scoremultiplier", scoreMultiplier.ToString ());
+			
+			writer.WriteStartElement ("properties");
+			foreach (string key in properties.Keys) {
+				string value = (string)properties[key];
+				writer.WriteStartElement ("property");
+				writer.WriteAttributeString ("name", key);
+				writer.WriteString (value);
+				writer.WriteEndElement ();
+			}
+			writer.WriteEndElement ();
+
+			writer.WriteStartElement ("data");
+			foreach (string key in properties.Keys) {
+				string value = (string)properties[key];
+				writer.WriteStartElement ("property");
+				writer.WriteAttributeString ("name", key);
+				writer.WriteString (value);
+				writer.WriteEndElement ();
+			}
+			writer.WriteEndElement ();
+
+			writer.WriteStartElement ("data");
+			writer.WriteEndElement ();
+
+			writer.WriteEndElement ();
+
+			// FIXME: write the Versioned info
+		}
+		
+		public void ReadFromXml (XmlTextReader reader)
+		{
+			id = int.Parse (reader.GetAttribute ("name"));
+			uri = reader.GetAttribute ("uri");
+			type = reader.GetAttribute ("type");
+			mimeType = reader.GetAttribute ("mimetype");
+			source = reader.GetAttribute ("source");
+
+			scoreRaw = float.Parse (reader.GetAttribute ("rawscore"));
+			scoreMultiplier = float.Parse (reader.GetAttribute ("scoremultiplier"));
+
+			bool in_property = true;
+			while (reader.Read ()) {		
+				if (reader.NodeType == XmlNodeType.Element 
+				    && reader.Name == "properties") {
+					in_property = true;
+				} else if (reader.NodeType == XmlNodeType.Element 
+					   && reader.Name == "data") {
+					in_property = false;
+				} else if (reader.NodeType == XmlNodeType.Element
+					   && reader.Name == "property") {
+					string attr = reader.GetAttribute ("name");
+
+					reader.Read ();
+					string value = reader.Value;
+
+					if (in_property)
+						properties[attr] = value;
+					else
+						data[attr] = value;
+
+				} else if (reader.NodeType == XmlNodeType.EndElement
+					   && reader.Name == "hit") {
+					break;
+				}
+			}
+		}
+
+		public static ArrayList ReadHitXml (string xml)
+		{
+			XmlTextReader reader = new XmlTextReader (new StringReader (xml));
+			ArrayList hits = new ArrayList ();
+
+			// FIXME: this should probably be tightened up
+			while (reader.Read ()) {
+				if (reader.NodeType == XmlNodeType.Element) {
+					if (reader.Name == "hit") {
+						Hit hit = new Hit ();
+						hit.ReadFromXml (reader);
+						hits.Add (hit);
+					}
+				}
+			}
+
+			return hits;
+		}
 
 		public int Id {
 			get { return id; }
@@ -198,13 +296,6 @@ namespace Beagle {
 				return directoryInfo;
 			}
 		}
-
-		public bool IsUpToDate {
-			get { return ! IsFileSystem // non-files are always up-to-date
-				      || ! ValidTimestamp // non-timestamped stuff too
-				      || (FileSystemInfo.LastWriteTime  <= Timestamp); }
-		}
-
 
 		//////////////////////////
 

@@ -26,7 +26,7 @@
 
 using System;
 
-namespace Beagle {
+namespace Beagle.Tile {
 
 	public abstract class TileRenderContext {
 

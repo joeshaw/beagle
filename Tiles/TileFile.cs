@@ -30,7 +30,7 @@ using System.IO;
 
 using BU = Beagle.Util;
 
-namespace Beagle {
+namespace Beagle.Tile {
 
 	[HitFlavor (Name="Files", Emblem="emblem-file.png", Color="#f5f5fe",
 		    Type="File"),

@@ -30,7 +30,7 @@ using System.IO;
 using System.Reflection;
 using System.Text;
 
-namespace Beagle {
+namespace Beagle.Tile {
 
 	abstract public class TileFromTemplate : Tile {
 

@@ -30,7 +30,7 @@ using System.IO;
 
 using BU = Beagle.Util;
 
-namespace Beagle {
+namespace Beagle.Tile {
 
 	[HitFlavor (Name="Music", Emblem="emblem-music.png", Color="#f5f5fe",
 		    Type="File", MimeType="audio/x-mp3")]

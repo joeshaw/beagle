@@ -29,7 +29,7 @@ using System;
 using System.Collections;
 using System.IO;
 
-using Beagle;
+using Beagle.Core;
 
 class IndexWebContentTool {
 

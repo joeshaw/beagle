@@ -32,7 +32,7 @@ using System.IO;
 using System.Text;
 using System.Text.RegularExpressions;
 
-using Beagle;
+using Beagle.Core;
 using BU = Beagle.Util;
 using Camel = Beagle.Util.Camel;
 

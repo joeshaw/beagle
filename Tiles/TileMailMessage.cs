@@ -29,7 +29,7 @@ using System.Diagnostics;
 
 using BU = Beagle.Util;
 
-namespace Beagle {
+namespace Beagle.Tile {
 
 	[HitFlavor (Name="Email", Emblem="emblem-mail-message.png", Color="#f5f5f5",
 		    Type="MailMessage")]

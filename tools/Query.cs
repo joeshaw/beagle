@@ -30,6 +30,7 @@ using System.Threading;
 
 using Gtk;
 
+using Beagle.Core;
 using Beagle;
 using BU = Beagle.Util;
 
@@ -58,7 +59,7 @@ class QueryTool {
 		Gtk.Application.Init ();
 
 		QueryDriver driver = new QueryDriver ();
-		Query query = new Query ();
+		Beagle.Core.Query query = new Beagle.Core.Query ();
 
 		int i = 0;
 		while (i < args.Length) {

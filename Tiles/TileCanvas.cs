@@ -30,7 +30,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Text;
 
-namespace Beagle {
+namespace Beagle.Tile {
 
 	public class TileCanvas : Gtk.HTML {
 

@@ -13,11 +13,9 @@ CSFILES = 				\
 	$(srcdir)/Property.cs		\
 	$(srcdir)/Flavor.cs		\
 	$(srcdir)/Filter.cs		\
-	$(srcdir)/Versioned.cs		\
 	$(srcdir)/Indexable.cs		\
 	$(srcdir)/IndexableFile.cs	\
 	$(srcdir)/Query.cs		\
-	$(srcdir)/Hit.cs		\
 	$(srcdir)/Relevancy.cs		\
 	$(srcdir)/IQueryResult.cs	\
 	$(srcdir)/IQueryable.cs		\
@@ -30,7 +28,8 @@ CSFILES = 				\
 
 LOCAL_ASSEMBLIES =			\
 	../Util/Util.dll		\
-	../Lucene.Net/Lucene.Net.dll
+	../Lucene.Net/Lucene.Net.dll    \
+	../BeagleClient/Beagle.dll
 
 
 ASSEMBLIES = 				\

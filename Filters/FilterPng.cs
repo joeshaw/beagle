@@ -27,6 +27,7 @@
 using System;
 using System.IO;
 using BU = Beagle.Util;
+using Beagle.Core;
 
 namespace Beagle.Filters {
 	

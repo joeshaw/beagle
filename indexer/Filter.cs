@@ -33,7 +33,7 @@ using System.Reflection;
 
 using BU = Beagle.Util;
 
-namespace Beagle {
+namespace Beagle.Core {
 
 	public class Filter {
 

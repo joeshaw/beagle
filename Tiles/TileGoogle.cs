@@ -26,7 +26,7 @@
 
 using System;
 
-namespace Beagle {
+namespace Beagle.Tile {
 
 	[HitFlavor (Name="Google", Emblem="emblem-google.png",
 		    Type="Google")]

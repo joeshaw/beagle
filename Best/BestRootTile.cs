@@ -27,6 +27,7 @@
 using System;
 using System.Collections;
 
+using Beagle.Tile;
 using Beagle;
 
 namespace Best {

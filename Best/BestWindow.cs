@@ -32,6 +32,9 @@ using Gtk;
 using GtkSharp;
 
 using Beagle;
+using Beagle.Tile;
+
+using DBus;
 
 namespace Best {
 
@@ -52,8 +55,10 @@ namespace Best {
 
 		//////////////////////////
 
-		QueryDriver driver;
-		QueryResult result;
+		Connection connection;
+		Service service;
+		QueryManager queryManager;
+		Query query;
 
 		private BestWindow () : base (WindowType.Toplevel)
 		{
@@ -76,7 +81,13 @@ namespace Best {
 			DefaultHeight = 500;
 			DefaultWidth = (int) (DefaultHeight * GOLDEN);
 
-			driver = new QueryDriver ();
+			connection = Bus.GetSessionBus ();
+			service = Service.Get (connection, 
+					       "com.novell.Beagle");
+
+			queryManager = 
+				(QueryManager)service.GetObject (typeof (QueryManager),
+								 "/com/novell/Beagle/QueryManager");
 
 			Best.IncRef ();
 		}
@@ -144,7 +155,7 @@ namespace Best {
 
 			
 			Gtk.HBox buttonContents = new HBox (false, 0);
-			Gtk.Widget buttonImg = Images.GetWidget ("icon-search.png");
+			Gtk.Widget buttonImg = Beagle.Images.GetWidget ("icon-search.png");
 			buttonContents.PackStart (buttonImg, false, false, 1);
 			Gtk.Label buttonLabel = new Gtk.Label ("Find");
 			buttonContents.PackStart (buttonLabel, false, false, 1);
@@ -189,27 +200,22 @@ namespace Best {
 
 		//////////////////////////
 
-		private void OnGotHits (QueryResult src, QueryResult.GotHitsArgs args)
+		private void OnGotHits (string results)
 		{
-			if (src != result)
-				return;
-			Console.WriteLine ("Got {0} Hits!", args.Count);
-			foreach (Hit hit in args.Hits)
+			ArrayList hits = Hit.ReadHitXml (results);
+			
+			foreach (Hit hit in hits)
 				root.Add (hit);
 		}
 
-		private void OnFinished (QueryResult src)
+		private void OnFinished ()
 		{
-			if (src != result)
-				return;
 			Console.WriteLine ("Finished!");
 			root.Close ();
 		}
 
-		private void OnCancelled (QueryResult src)
+		private void OnCancelled ()
 		{
-			if (src != result)
-				return;
 			Console.WriteLine ("Cancelled!");
 			root.Close ();
 		}
@@ -237,23 +243,30 @@ namespace Best {
 		private void Search (String searchString)
 		{
 			entry.Text = searchString;
-			Query query = new Query (searchString);
-			query.AddDomain (QueryDomain.Neighorhood);
+
+			if (query != null) {
+				query.Cancel ();
+				query.GotHitsEvent -= OnGotHits;
+				query.FinishedEvent -= OnFinished;
+				query.CancelledEvent -= OnCancelled;
+			}
+
+			string queryPath = queryManager.NewQuery ();
+			query = (Query)service.GetObject (typeof (Query),
+							  queryPath);
+			
+			query.AddDomain (QueryDomain.Neighborhood);
 			query.AddDomain (QueryDomain.Global);
 
-			if (result != null)
-				result.Cancel ();
+			query.AddText (searchString);
 
-			result = driver.Query (query);
-
-			result.GotHitsEvent += OnGotHits;
-			result.FinishedEvent += OnFinished;
-			result.CancelledEvent += OnCancelled;
+			query.GotHitsEvent += OnGotHits;
+			query.FinishedEvent += OnFinished;
+			query.CancelledEvent += OnCancelled;
 
 			root.Open ();
 
-			result.Start ();
-
+			query.Start ();
 		}
 	}
 }

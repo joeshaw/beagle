@@ -30,7 +30,7 @@ using System.Collections;
 
 using BU = Beagle.Util;
 
-namespace Beagle {
+namespace Beagle.Core {
 
 	[Flags]
 	public enum QueryDomain {

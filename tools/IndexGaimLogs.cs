@@ -29,7 +29,7 @@ using System.Collections;
 using System.IO;
 using System.Text;
 
-using Beagle;
+using Beagle.Core;
 using Beagle.Util;
 
 namespace IndexGaimLogs {

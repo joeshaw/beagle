@@ -10,6 +10,7 @@
 using System;
 using System.IO;
 using System.Diagnostics;
+using Beagle.Core;
 
 namespace Beagle.Filters {
 

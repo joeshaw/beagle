@@ -30,7 +30,7 @@ using System.Collections;
 using System.Reflection;
 using System.Threading;
 
-namespace Beagle {
+namespace Beagle.Core {
 	
 	public class QueryDriver {
 

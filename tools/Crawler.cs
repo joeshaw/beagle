@@ -33,8 +33,9 @@ using System.Xml;
 
 using Mono.Posix;
 
-using Beagle;
+using Beagle.Core;
 using BU = Beagle.Util;
+using Beagle;
 
 class CrawlerTool { 
 
