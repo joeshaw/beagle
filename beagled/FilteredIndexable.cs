@@ -41,7 +41,6 @@ namespace Beagle.Daemon {
 		public FilteredIndexable (string _uri) : base (_uri)
 		{
 			BuildFromFile ();
-			Build ();
 		}
 
 		protected FilteredIndexable ()
@@ -54,7 +53,6 @@ namespace Beagle.Daemon {
 			FilteredIndexable indexable = new FilteredIndexable ();
 			indexable.ReadFromXml (xml);
 			indexable.BuildFromFile ();
-			indexable.Build ();
 			return indexable;
 		}
 
@@ -111,7 +109,6 @@ namespace Beagle.Daemon {
 
 			if (dirName != null) {
 				AddProperty (Property.NewKeyword ("fixme:directory", dirName));
-				System.Console.WriteLine ("added fixme:directory: {0}", dirName);
 			}
 			if (parentName != null) {
 				string split = String.Join (" ", BU.StringFu.FuzzySplit (parentName));
@@ -182,7 +179,7 @@ namespace Beagle.Daemon {
 			
 		}
 		
-		private void Build () {
+		public void Build () {
 			if (MimeType == null) {
 				throw new Exception ("Unknown mime type");
 			}

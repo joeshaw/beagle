@@ -41,14 +41,6 @@ namespace Beagle.Daemon.FileSystemQueryable
 		FileSystemEventMonitor monitor = new FileSystemEventMonitor ();
 		FileMatcher doNotIndex = new FileMatcher ();
 
-		struct DirectoryHitEntry {
-			public string directoryName;
-			public Hit[] hits;
-		};
-
-		ArrayList directoryHits = new ArrayList ();
-		const int maxDirectoryHits = 5;
-		
 		public Indexer (IndexerQueue _indexerQueue) {
 			indexerQueue = _indexerQueue;
 
@@ -59,77 +51,10 @@ namespace Beagle.Daemon.FileSystemQueryable
 			monitor.Subscribe (Path.Combine (home, "Documents"));
 		}
 
-		Hit[] GetDirectoryHits (DirectoryInfo dir) 
-		{
-			foreach (DirectoryHitEntry entry in directoryHits) {
-				if (entry.directoryName == dir.FullName) {
-					return entry.hits;
-				}
-			}
-
-			if (directoryHits.Count >= maxDirectoryHits) {
-				directoryHits.RemoveAt (directoryHits.Count - 1);
-			}
-			
-			DirectoryHitEntry newEntry = new DirectoryHitEntry ();
-			newEntry.directoryName = dir.FullName;
-			newEntry.hits = driver.FindByProperty ("fixme:directory",
-							       dir.FullName);
-			directoryHits.Insert (0, newEntry);
-
-			return newEntry.hits;
-		}
-
-		Hit GetExistingHit (FileInfo file) 
-		{
-			// For right now the primary user of the indexer
-			// is the Crawler, which will request a lot of 
-			// files in the same directory.  To speed that
-			// up a bit, cache hits for directories
-			// to reduce the number of searches
-			string uri;
-			uri = "file://" + file.FullName;
-			
-			Hit[] hits = GetDirectoryHits (file.Directory);
-
-			foreach (Hit hit in hits) {
-				if (hit.Uri == uri) {
-					return hit;
-				}
-			}
-			return null;
-		}
-
-		public void IndexIndexable (FilteredIndexable indexable)
-		{
-			Hit hit;
-
-			FileInfo file = indexable.GetFileInfo ();
-			
-			if (file != null) {
-				hit = GetExistingHit (file);
-
-				if (!file.Exists) {
-					indexerQueue.ScheduleRemove (hit);
-					return;
-				}
-				if (hit != null) 
-					System.Console.WriteLine ("checking {0} against {1}", hit.Timestamp, indexable.Timestamp);
-			       
-				if (hit != null && !hit.IsObsoletedBy (indexable.Timestamp))
-					return;
-			} else {
-				hit = driver.FindByUri (indexable.Uri);
-			}
-
-			indexerQueue.ScheduleAdd (indexable);
-			indexerQueue.ScheduleRemove (hit);
-		}
-
 		public override void Index (string xml)
 		{
 			FilteredIndexable indexable = FilteredIndexable.NewFromXml (xml);
-			IndexIndexable (indexable);
+			indexerQueue.ScheduleAdd (indexable);
 		}
 
 		private void OnFileSystemEvent (object source, FileSystemEventType eventType,

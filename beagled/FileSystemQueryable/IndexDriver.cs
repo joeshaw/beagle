@@ -124,6 +124,11 @@ namespace Beagle.Daemon.FileSystemQueryable {
 
 		private Document ToLuceneDocument (Indexable indexable)
 		{			
+			FilteredIndexable filtered = indexable as FilteredIndexable;
+			if (filtered != null) {
+				filtered.Build ();
+			}
+
 			Document doc = new Document ();
 			Field f;
 			String str;
@@ -407,6 +412,78 @@ namespace Beagle.Daemon.FileSystemQueryable {
 			Remove (new Hit [1] { hit });
 		}
 
+		private struct DirectoryHitEntry {
+			public string directoryName;
+			public Hit[] hits;
+		};
+		private ArrayList directoryHits = new ArrayList ();
+		private const int maxDirectoryHits = 5;
+
+		private Hit[] GetDirectoryHits (LNS.Searcher searcher,
+						DirectoryInfo dir) 
+		{
+			lock (directoryHits) {
+				foreach (DirectoryHitEntry entry in directoryHits) {
+					if (entry.directoryName == dir.FullName) {
+						return entry.hits;
+					}
+				}
+			}
+
+			DirectoryHitEntry newEntry = new DirectoryHitEntry ();
+			newEntry.directoryName = dir.FullName;
+			Term term = new Term (ToLucenePropertyKey ("fixme:directory"), 
+					      dir.FullName);
+			LNS.Query uriQuery = new LNS.TermQuery (term);
+			LNS.Hits luceneHits = searcher.Search (uriQuery);
+			newEntry.hits = FromLuceneHits (luceneHits);
+
+			lock (directoryHits) {
+				foreach (DirectoryHitEntry entry in directoryHits) {
+					if (entry.directoryName == dir.FullName) {
+						return entry.hits;
+					}
+				}
+				if (directoryHits.Count >= maxDirectoryHits) {
+					directoryHits.RemoveAt (directoryHits.Count - 1);
+				}
+			
+				directoryHits.Insert (0, newEntry);
+			}
+			return newEntry.hits;
+		}
+
+		private ArrayList GetExistingHits (LNS.Searcher searcher,
+						   Indexable indexable)
+		{
+			FilteredIndexable filteredIndexable = indexable as FilteredIndexable;
+
+			// This is an optimization for the case of a crawler
+			// which adds a bunch of indexables for the same 
+			// directory, this minimizes the number of 
+			// queries
+			if (filteredIndexable != null
+			    && filteredIndexable.GetFileInfo () != null) {
+				Hit[] dirHits = GetDirectoryHits (searcher, 
+								  filteredIndexable.GetFileInfo().Directory);
+				ArrayList hits = new ArrayList ();
+				foreach (Hit hit in dirHits) {
+					if (hit.Uri == indexable.Uri) {
+						hits.Add (hit);
+					}
+				}
+				return hits;
+			} else {
+				Term term = new Term ("Uri", indexable.Uri);
+				LNS.Query uriQuery = new LNS.TermQuery (term);
+				LNS.Hits luceneHits = searcher.Search (uriQuery);
+				ArrayList hits = new ArrayList ();
+				for (int i = 0; i < luceneHits.Length (); i++) {
+					hits.Add (FromLuceneHit (luceneHits, i));
+				}
+				return hits;
+			}
+		}
 
 		// Add a set of items to the index
 		public void Add (ICollection indexables)
@@ -433,16 +510,12 @@ namespace Beagle.Daemon.FileSystemQueryable {
 				// Skip duplicates
 				if (byUri [indexable.Uri] != indexable)
 					continue;
-				
-				Term term = new Term ("Uri", indexable.Uri);
-				LNS.Query uriQuery = new LNS.TermQuery (term);
-				LNS.Hits uriHits = searcher.Search (uriQuery);
-				int nHits = uriHits.Length ();
-				
+
+				ArrayList uriHits = GetExistingHits (searcher, 
+								     indexable);
 				bool needsInsertion = true;
 				
-				for (int i = 0; i < nHits; ++i) {
-					Hit hit = FromLuceneHit (uriHits, i);
+				foreach (Hit hit in uriHits) {
 					if (indexable.IsNewerThan (hit)) {
 						// Schedule the old document's removal
 						toBeRemoved.Add (hit);
@@ -453,10 +526,12 @@ namespace Beagle.Daemon.FileSystemQueryable {
 				}
 						
 				if (needsInsertion) {
-					if (nHits > 0)
+					if (uriHits.Count > 0) {
 						log.Log ("Re-scheduling {0}", indexable.Uri);
-					else
+					} else {
 						log.Log ("Scheduling {0}", indexable.Uri);
+					}
+
 					toBeAdded.Add (indexable);
 				} else {
 					log.Log ("Skipping {0}", indexable.Uri);

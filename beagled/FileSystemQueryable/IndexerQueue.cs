@@ -83,7 +83,8 @@ namespace Beagle.Daemon.FileSystemQueryable
 			return ret;
 		}
 
-		private void CleanupContent (ArrayList toIndex) {
+		private void CleanupContent (ArrayList toIndex) 
+		{
 			foreach (Indexable indexable in toIndex) {
 				if (indexable.DeleteContent) {
 					string path = indexable.ContentUri;
@@ -103,7 +104,7 @@ namespace Beagle.Daemon.FileSystemQueryable
 			ArrayList toCleanup = toIndex;
 			toIndex = CallPreIndexingEvent (toIndex); 
 			if (toIndex.Count > 0)
-				driver.QuickAdd (toIndex);
+				driver.Add (toIndex);
 			
 			if (toRemove.Count > 0)
 				driver.Remove (toRemove);
