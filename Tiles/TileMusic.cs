@@ -32,6 +32,8 @@ using BU = Beagle.Util;
 
 namespace Beagle {
 
+	[HitFlavor (Name="Music", Emblem="music.png",
+		    Type="File", MimeType="audio/x-mp3")]
 	public class TileMusic : TileFromTemplate {
 
 		Hit hit;

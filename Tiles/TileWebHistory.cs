@@ -27,7 +27,9 @@
 using System;
 
 namespace Beagle {
-	
+
+	[HitFlavor (Name="Web", Emblem="icon-web.png",
+		    Type="WebHistory")]
 	public class TileWebHistory : TileFromTemplate {
 
 		Hit hit;

@@ -32,6 +32,8 @@ using BU = Beagle.Util;
 
 namespace Beagle {
 
+	[HitFlavor (Name="Pictures", Emblem="document.png",
+		    Type="File", MimeType="image/*")]
 	public class TilePicture : TileFromTemplate {
 
 		Hit hit;

@@ -27,7 +27,9 @@
 using System;
 
 namespace Beagle {
-	
+
+	[HitFlavor (Name="Conversations", Emblem="gnome-gaim.png",
+		    Type="IMLog")]
 	public class TileImLog : TileFromTemplate {
 
 		Hit hit;

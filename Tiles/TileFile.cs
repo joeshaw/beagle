@@ -32,6 +32,7 @@ using BU = Beagle.Util;
 
 namespace Beagle {
 
+	[HitFlavor (Type="File"), HitFlavor (Uri="file://*")]
 	public class TileFile : TileFromTemplate {
 
 		Hit hit;

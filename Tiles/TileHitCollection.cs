@@ -46,43 +46,10 @@ namespace Beagle {
 			Hit hit;
 			Tile tile;
 
-			public HitTilePair (Hit _hit)
+			public HitTilePair (Hit _hit, Tile _tile)
 			{
 				hit = _hit;
-				tile = null;
-
-				// FIXME: This shouldn't be hard-wired
-				switch (hit.Type) {
-					
-				case "Contact":
-					tile = new TileContact (hit);
-					break;
-
-				case "File":
-					if (hit.MimeType.StartsWith ("image/"))
-						tile = new TilePicture (hit);
-					else if (hit.MimeType == "audio/x-mp3")
-						tile = new TileMusic (hit);
-					else
-						tile = new TileFile (hit);
-					break;
-
-				case "Google":
-					tile = new TileGoogle (hit);
-					break;
-
-				case "IMLog":
-					tile = new TileImLog (hit);
-					break;
-
-				case "MailMessage":
-					tile = new TileMailMessage (hit);
-					break;
-
-				case "WebHistory":
-					tile = new TileWebHistory (hit);
-					break;
-				}
+				tile = _tile;
 			}
 
 			public Hit Hit {
@@ -160,14 +127,9 @@ namespace Beagle {
 				Changed ();
 		}
 
-		public void Add (Hit hit)
+		public void Add (Hit hit, Tile tile)
 		{
-			HitTilePair pair = new HitTilePair (hit);
-			if (pair.Tile == null) {
-				Console.WriteLine ("Dropping Hit w/ type '{0}'", hit.Type);
-				return;
-			}
-
+			HitTilePair pair = new HitTilePair (hit, tile);
 			int i = hits.BinarySearch (pair);
 			hits.Insert (i < 0 ? ~i : i, pair);
 			if (i == 0 || i < LastDisplayed)

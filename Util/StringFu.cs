@@ -121,6 +121,32 @@ namespace Beagle.Util {
 				parts [i] = (string) partsArray [i];
 			return parts;
 		}
+		
+		// Match strings against patterns that are allowed to contain
+		// glob-style * wildcards.
+		// This recursive implementation is not particularly efficient,
+		// and probably will fail for weird corner cases.
+		static public bool GlobMatch (string pattern, string str)
+		{
+			if (pattern == "*")
+				return true;
+			else if (pattern.StartsWith ("**"))
+				return GlobMatch (pattern.Substring (1), str);
+			else if (str == "" && pattern != "")
+				return false;
 
+			int i = pattern.IndexOf ('*');
+			if (i == -1)
+				return pattern == str;
+			else if (i > 0 && i < str.Length)
+				return pattern.Substring (0, i) == str.Substring (0, i)
+					&& GlobMatch (pattern.Substring (i), str.Substring (i));
+			else if (i == 0)
+				return GlobMatch (pattern.Substring (1), str.Substring (1))
+					|| GlobMatch (pattern.Substring (1), str)
+					|| GlobMatch (pattern, str.Substring (1));
+			
+			return false;
+		} 
 	}
 }

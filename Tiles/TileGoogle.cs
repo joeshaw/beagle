@@ -27,7 +27,9 @@
 using System;
 
 namespace Beagle {
-	
+
+	[HitFlavor (Name="Google", Emblem="icon-web.png",
+		    Type="Google")]
 	public class TileGoogle : TileFromTemplate {
 
 		Hit hit;

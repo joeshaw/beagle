@@ -57,7 +57,7 @@ namespace Best {
 		{
 			
 			Program best = new Program ("best", "0.0", Modules.UI, args);
-			
+
 			if (args.Length > 0)
 				BestWindow.Create (args [0]);
 			else

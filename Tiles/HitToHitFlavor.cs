@@ -1,5 +1,5 @@
 //
-// BestRootTile.cs
+// HitToHitFlavor.cs
 //
 // Copyright (C) 2004 Novell, Inc.
 //
@@ -26,58 +26,60 @@
 
 using System;
 using System.Collections;
+using System.Reflection;
 
-using Beagle;
+namespace Beagle {
 
-namespace Best {
+	public class HitToHitFlavor {
 
-	public class BestRootTile : Tile {
+		private HitToHitFlavor () { } // This class is static
 
-		Hashtable tileTable = new Hashtable ();
-
-		public void Open ()
+		static ArrayList flavorArray = null;
+		
+		static private void ScanAssembly (Assembly assembly)
 		{
-			tileTable = new Hashtable ();
-		}
-
-		public void Add (Hit hit)
-		{
-			HitFlavor flavor = HitToHitFlavor.Get (hit);
-			if (flavor == null)
-				return;
-
-			TileHitCollection hitCollection = (TileHitCollection) tileTable [flavor.Name];
-
-			if (hitCollection == null) {
-				hitCollection = new TileHitCollection (flavor.Name, flavor.Emblem);
-				tileTable [flavor.Name] = hitCollection;
-			}
-
-			object[] args = new object [1];
-			args[0] = hit;
-			Tile tile = (Tile) Activator.CreateInstance (flavor.TileType, args);
-			hitCollection.Add (hit, tile);
-			Changed ();
-		}
-
-		public void Close ()
-		{
-
-		}
-
-		override public void Render (TileRenderContext ctx)
-		{
-			ArrayList array = new ArrayList ();
-
-			foreach (TileHitCollection tile in tileTable.Values)
-				array.Add (tile);
-
-			array.Sort ();
-
-			foreach (TileHitCollection tile in array) {
-				ctx.WriteLine ("MaxScore={0}", tile.MaxScore);
-				ctx.Tile (tile);
+			foreach (Type type in assembly.GetTypes ()) {
+				if (type.IsSubclassOf (typeof (Tile))) {
+					foreach (object obj in Attribute.GetCustomAttributes (type)) {
+						if (obj is HitFlavor) {
+							HitFlavor flavor = (HitFlavor) obj;
+							flavor.TileType = type;
+							flavorArray.Add (flavor);
+						}
+					}
+				}
 			}
 		}
+
+		static public HitFlavor Get (Hit hit)
+		{
+			if (flavorArray == null) {
+				flavorArray = new ArrayList ();
+				ScanAssembly (Assembly.GetExecutingAssembly ());
+			}
+
+			HitFlavor flavorBest = null;
+			int weightBest = -1;
+
+			foreach (HitFlavor flavor in flavorArray) {
+				if (flavor.IsMatch (hit)) {
+					int weight = flavor.Weight;
+					if (weight > weightBest) {
+						flavorBest = flavor;
+						weightBest = weight;
+					} else if (weight == weightBest) {
+						// This shouldn't happen.
+						Console.WriteLine ("HitFlavor Weight tie! {0} and {1}",
+								   flavorBest, flavor);
+					}
+				}
+			}
+
+			return flavorBest;
+		}
+
+		
+
 	}
+
 }

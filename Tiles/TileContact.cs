@@ -32,6 +32,8 @@ using BU = Beagle.Util;
 
 namespace Beagle {
 
+	[HitFlavor (Name="People", Emblem="person.png",
+		    Type="Contact")]
 	public class TileContact : TileFromTemplate {
 
 		Hit hit;
