@@ -40,9 +40,17 @@ namespace Beagle.Daemon.FileSystemQueryable {
 
 		public object WatchDirectories (string path)
 		{
-			int wd = Inotify.Watch (path,
-						Inotify.EventType.CreateSubdir);
-			watching [wd] = true;
+			int wd;
+
+			try {
+				wd = Inotify.Watch (path, Inotify.EventType.CreateSubdir);
+				watching [wd] = true;				
+			}
+			catch (IOException) {
+				// We can race and files can disappear.  No big deal.
+				wd = -1;
+			}
+
 			return wd;
 		}
 
@@ -70,7 +78,7 @@ namespace Beagle.Daemon.FileSystemQueryable {
 			}
 			catch (IOException) {
 				// We can race and files can disappear.  No big deal.
-				wd = 0;
+				wd = -1;
 			}
 
 			return wd;
