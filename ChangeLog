@@ -1,3 +1,7 @@
+2005-03-31  Daniel Drake  <dsd@gentoo.org>
+
+	* beagled/PathFinder.cs: Handle directories ending with '/'
+
 2005-03-31  Veerapuram Varadhan  <vvaradhan@novell.com>
 
 	* Filters/FilterRTF.cs: Before/After rewinding the file-stream, 

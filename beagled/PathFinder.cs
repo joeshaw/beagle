@@ -64,6 +64,8 @@ namespace Beagle.Daemon {
 							home_dir = Environment.GetEnvironmentVariable ("HOME");
 						if (home_dir == null)
 							throw new Exception ("Couldn't get HOME or BEAGLE_HOME");
+						if (home_dir.EndsWith ("/"))
+							home_dir = home_dir.Remove (home_dir.Length - 1, 1);
 						if (! Directory.Exists (home_dir))
 							throw new Exception ("Home directory '"+home_dir+"' doesn't exist");
 					}
@@ -83,8 +85,12 @@ namespace Beagle.Daemon {
 				lock (storage_dir_lock) {
 					if (storage_dir == null) {
 						storage_dir = Environment.GetEnvironmentVariable ("BEAGLE_STORAGE");
+
 						if (storage_dir == null)
 							storage_dir = Path.Combine (HomeDir, ".beagle");
+						else if (storage_dir.EndsWith ("/"))
+							storage_dir = storage_dir.Remove (storage_dir.Length - 1, 1);
+
 						if (! Directory.Exists (storage_dir)) {
 							Directory.CreateDirectory (storage_dir);
 							// Make sure that the directory is only
