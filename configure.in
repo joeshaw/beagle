@@ -160,6 +160,7 @@ beagle.spec
 echo "
 	Prefix:			${prefix}
 	Evolution-Sharp?	${enable_evo_sharp}
+	gsf-sharp?		${enable_gsf_sharp}
 	Epiphany Extension?	${enable_epiphany_extension}
 
 "
