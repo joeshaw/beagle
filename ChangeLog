@@ -1,3 +1,9 @@
+2005-02-02  Veerapuram Varadhan	 <vvaradhan@novell.com>
+
+	* Filters/FilterPPT.cs: If gsf# throws some exception, handle it
+	properly so that the whole stack trace is not displayed.  Fixes
+	http://bugzilla.gnome.org/show_bug.cgi?id=169038
+	
 2005-02-28  Veerapuram Varadhan	 <vvaradhan@novell.com>
 
 	* configure.in: Disable detection of gst# for time-being.

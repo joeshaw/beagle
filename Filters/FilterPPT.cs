@@ -601,16 +601,25 @@ namespace Beagle.Filters {
 		{
 			FileName = info.FullName;
 
-			Gsf.Global.Init ();
-			Input input = Input.MmapNew (info.FullName);
-			if (input != null) {
-				input = input.Uncompress();
-				file = new InfileMSOle (input);
-			} else {
-				Logger.Log.Error ("Unable to open {0}", info.FullName);
+			try {
+				Gsf.Global.Init ();
+				Input input = Input.MmapNew (info.FullName);
+				if (input != null) {
+					input = input.Uncompress();
+					file = new InfileMSOle (input);
+				}
+				if (input == null || file == null) {
+					Logger.Log.Error ("Unable to open [{0}] ",info.FullName);
+					Finished ();
+					return;
+				}
+				
+			} catch (Exception e) {
+				Logger.Log.Error ("Unable to open "+info.FullName);
 				Finished ();
+				return;
 			}
-
+			
 			// PPT 95/97-2000 format contains a "PP97_DUALSTORAGE", which is required
 			// to index PPT 97-2000 files.
 			// We don't support PPT 95 files, however, we happily accept patches ;-)
