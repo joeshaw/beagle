@@ -3,7 +3,7 @@ Version 0.0.7
 February 28, 2005
 
 Backends:
-* De-inotification of backends (Jon Trowbridge, Fredrik Hedberg)
+* All backends now work without inotify (Jon Trowbridge, Fredrik Hedberg)
 * Lots of file system backend improvements (Jon)
 * Deal with missing Evo mail directories (Joe Shaw, Lukas Lipka,
   Daniel Drake)
@@ -43,6 +43,7 @@ Filters:
 * Fail gracefully if an exception is thrown while a filter is pulling
   text (Jon)
 * Don't index text/plain files that are suspiciously large (Jon)
+* Lots of misc. clean-up, fixes for compile-time warnings, etc. (Varadhan)
 
 UI:
 * Print out nice error messages on dbus exceptions in beagle-query
