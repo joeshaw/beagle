@@ -88,7 +88,7 @@ inotify_glue_watch (int fd, const char *filename, __u32 mask)
 
 	iwr.mask = mask;
 	iwr.dirname = strdup (filename);
-	if (iwr.dirname) {
+	if (!iwr.dirname) {
 		perror ("strdup");
 		return -1;
 	}
