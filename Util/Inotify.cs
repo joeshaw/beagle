@@ -36,21 +36,25 @@ namespace Beagle.Util {
 
 	[Flags]
 	public enum InotifyEventType : uint {
-		Access    = 0x00000001, // File was accessed
-		Modify    = 0x00000002, // File was modified
-		Create    = 0x00000004, // File was created
-		Delete    = 0x00000008, // File was deleted
-		Rename    = 0x00000010, // File was renamed
-		Attrib    = 0x00000020, // File changed attributes
-		Move      = 0x00000040, // File was moved
-		Unmount   = 0x00000080, // Device file was on was unmounted
-		Close     = 0x00000100, // File was closed
-		Open      = 0x00000200, // File was opened
-		Ignored   = 0x00000400, // File was ignored
-		AllEvents = 0xffffffff,
+		Access         = 0x00000001, // File was accessed
+		Modify         = 0x00000002, // File was modified
+		Attrib         = 0x00000004, // File changed attributes
+		Close          = 0x00000008, // File was closed
+		Open           = 0x00000010, // File was opened
+		MovedFrom      = 0x00000020, // File was moved from X
+		MovedTo        = 0x00000040, // File was moved to Y
+		DeleteSubdir   = 0x00000080, // Subdir was deleted
+		DeleteFile     = 0x00000100, // Subfile was deleted
+		CreateSubdir   = 0x00000200, // Subdir was created
+		CreateFile     = 0x00000400, // Subfile was created
+		DeleteSelf     = 0x00000800, // Self was deleted
+		Unmount        = 0x00001000, // Backing fs was unmounted
+		QueueOverflow  = 0x00002000, // Event queue overflowed
+		Ignored        = 0x00004000, // File is no longer being watched
+		All            = 0xffffffff
 	}
 
-	public delegate void InotifyHandler (string path, InotifyEventType type);
+	public delegate void InotifyHandler (string path, string subitem, InotifyEventType type, int cookie);
 
 	public class Inotify {
 
@@ -59,14 +63,15 @@ namespace Beagle.Util {
 
 		static int fd = -1;
 
-		private class WatchedDirInfo {
+		private class WatchedInfo {
 			public int Wd;
-			public string DirectoryName;
+			public string Path;
+			public bool IsDirectory;
 			public InotifyEventType Mask;
 		}
 
 		static Hashtable watchedByWd = new Hashtable ();
-		static Hashtable watchedByName = new Hashtable ();
+		static Hashtable watchedByPath = new Hashtable ();
 
 		public static event InotifyHandler InotifyEvent;
 
@@ -74,7 +79,7 @@ namespace Beagle.Util {
 
 		//////////////////////////////////////////////////////////
 
-		private delegate void InotifyEventCallback (int wd, InotifyEventType type, string filename);
+		private delegate void InotifyEventCallback (int wd, InotifyEventType type, int cookie, string filename);
 		
 		[DllImport ("libinotifyglue")]
 		static extern int inotify_glue_open_dev ();
@@ -83,10 +88,10 @@ namespace Beagle.Util {
 		static extern int inotify_glue_close_dev (int fd);
 
 		[DllImport ("libinotifyglue")]
-		static extern int inotify_glue_watch_dir (int fd, string dirname, InotifyEventType mask);
+		static extern int inotify_glue_watch (int fd, string filename, InotifyEventType mask);
 
 		[DllImport ("libinotifyglue")]
-		static extern int inotify_glue_ignore_dir (int fd, int wd);
+		static extern int inotify_glue_ignore (int fd, int wd);
 
 		[DllImport ("libinotifyglue")]
 		static extern int inotify_glue_try_for_event (int fd, int sec, int usec, InotifyEventCallback callback);
@@ -115,7 +120,7 @@ namespace Beagle.Util {
 				throw new Exception ("INotify is not enabled!");
 		}
 
-		public static void ShutDown ()
+		public static void Shutdown ()
 		{
 			if (fd >= 0) {
 				inotify_glue_close_dev (fd);
@@ -125,109 +130,130 @@ namespace Beagle.Util {
 
 		//////////////////////////////////////////////////////////
 
-		public static void WatchDirectory (string directory, InotifyEventType mask)
+		public static int WatchCount {
+			get { return watchedByWd.Count; }
+		}
+
+		public static void Watch (string path, InotifyEventType mask)
 		{
 			EnabledCheck ();
 
-			directory = Path.GetFullPath (directory);
+			path = Path.GetFullPath (path);
 
-			// Silently fail if the directory doesn't exist.
-			if (! Directory.Exists (directory))
-				return;
+			bool isDirectory = false;
+			if (Directory.Exists (path))
+				isDirectory = true;
+			else if (! File.Exists (path))
+				throw new IOException (path);
 
 			lock (theLock) {
 				
-				WatchedDirInfo info;
+				WatchedInfo info;
 				
 				// If we try to watch the same directory twice, check
 				// if we are using a different mask.  If we are,
 				// ignore and re-watch the dir.  Otherwise silently
 				// return.
-				info = watchedByName [directory] as WatchedDirInfo;
+				info = watchedByPath [path] as WatchedInfo;
 				if (info != null) {
 					if (info.Mask == mask)
 						return;
-					IgnoreDirectoryInternal (info);
+					Forget (info);
 				}
 
 				InotifyEventType internalMask = mask;
-				internalMask |= InotifyEventType.Delete;
+				internalMask |= InotifyEventType.Ignored;
 
-				int wd = inotify_glue_watch_dir (fd, directory, internalMask);
+				int wd = inotify_glue_watch (fd, path, internalMask);
 				if (wd < 0) {
-					string msg = String.Format ("Attempt to watch {0} failed!", directory);
+					string msg = String.Format ("Attempt to watch {0} failed!", path);
 					throw new Exception (msg);
 				}
 
-				info = new WatchedDirInfo ();
+				info = new WatchedInfo ();
 				info.Wd = wd;
-				info.DirectoryName = directory;
+				info.Path = path;
+				info.IsDirectory = isDirectory;
 				info.Mask = mask;
 
 				watchedByWd [info.Wd] = info;
-				watchedByName [info.DirectoryName] = info;
+				watchedByPath [info.Path] = info;
 			}
 		}
 
-		private static void ForgetDirectory (WatchedDirInfo info)
+		// The caller must be holding theLock!
+		private static void Forget (WatchedInfo info)
 		{
 			watchedByWd.Remove (info.Wd);
-			watchedByName.Remove (info.DirectoryName);
+			watchedByPath.Remove (info.Path);
 		}
 
-		private static void IgnoreDirectoryInternal (WatchedDirInfo info)
-		{
-			int retval = inotify_glue_ignore_dir (fd, info.Wd);
-			if (retval < 0) {
-				string msg = String.Format ("Attempt to ignore {0} failed!", info.DirectoryName);
-				throw new Exception (msg);
-			}
-			ForgetDirectory (info);
-		}
-
-		public static void IgnoreDirectory (string directory)
+		public static void Ignore (string path)
 		{
 			EnabledCheck ();
 
-			directory = Path.GetFullPath (directory);
+			path = Path.GetFullPath (path);
 
 			lock (theLock) {
 				
-				WatchedDirInfo info;
-				info = watchedByName [directory] as WatchedDirInfo;
+				WatchedInfo info;
+				info = watchedByPath [path] as WatchedInfo;
 
-				// If we aren't actually watching that directory,
+				// If we aren't actually watching that path,
 				// silently return.
 				if (info == null) 
 					return;
 
-				IgnoreDirectoryInternal (info);
+				int retval = inotify_glue_ignore (fd, info.Wd);
+				if (retval < 0) {
+					string msg = String.Format ("Attempt to ignore {0} failed!", info.Path);
+					throw new Exception (msg);
+				}
+
+				Forget (info);
 			}
 		}
+
+		// FIXME: If we move a directory that is being watched, the
+		// watch is preserved, as are the watches on any
+		// subdirectories.  This means that our cached value from
+		// WatchedInfo.Path will no longer be accurate.  We need to
+		// trap MovedFrom and MovedTo, check if the thing being moved
+		// is a directory, and then and update our internal data
+		// structures accordingly.
 		
-		private static void FireEvent (int wd, InotifyEventType type, string filename)
+		private static void FireEvent (int wd, InotifyEventType type, int cookie, string filename)
 		{
 			if (fd >= 0) {
 
-				WatchedDirInfo info = watchedByWd [wd] as WatchedDirInfo;
+				// The queue overflow event isn't associated with any directory.
+				if (type == InotifyEventType.QueueOverflow) {
+					if (InotifyEvent != null)
+						InotifyEvent ("", "", type, cookie);
+					return;
+				}
+
+				WatchedInfo info = watchedByWd [wd] as WatchedInfo;
 				if (info == null)
 					return;
 
 				// If we didn't explicitly ask for this type of event
 				// to be monitored, don't fire the event.
 				if ((info.Mask & type) != 0) {
-					string path = Path.Combine (info.DirectoryName, filename);
 					if (Verbose)
-						Console.WriteLine ("*** inotify: {0} {1} [{2}]", type, path, filename);
+						Console.WriteLine ("*** inotify: {0} {1} {2} {3}",
+								   type, info.Path,
+								   filename != "" ? filename : "\"\"",
+								   cookie);
 					if (InotifyEvent != null)
-						InotifyEvent (path, type);
+						InotifyEvent (info.Path, filename, type, cookie);
 				}
-
-				// If a directory we are watching gets deleted, we need
+				
+				// If a directory we are watching gets ignored, we need
 				// to remove it from the watchedByFoo hashes.
-				if (type == InotifyEventType.Delete && filename == "") {
+				if (type == InotifyEventType.Ignored) {
 					lock (theLock) {
-						ForgetDirectory (info);
+						Forget (info);
 					}
 				}
 			}
@@ -236,9 +262,25 @@ namespace Beagle.Util {
 		private static void ReadEvents ()
 		{
 			while (fd >= 0) {
-				// Wait for an event, polling fd every 2.008167s
-				inotify_glue_try_for_event (fd, 2, 8167, new InotifyEventCallback (FireEvent));
+				// Wait for an event, polling fd every 1.008167s
+				inotify_glue_try_for_event (fd, 1, 8167, new InotifyEventCallback (FireEvent));
 			}
+		}
+
+		static void Main (string [] args)
+		{
+			Inotify.Verbose = true; 
+			foreach (string arg in args)
+				Inotify.Watch (arg, InotifyEventType.All);
+
+			while (Inotify.Enabled && Inotify.WatchCount > 0)
+				Thread.Sleep (1000);
+
+			if (Inotify.WatchCount == 0)
+				Console.WriteLine ("Nothing being watched.");
+
+			// Kill the event-reading thread so that we exit
+			Inotify.Shutdown ();
 		}
 	}
 }

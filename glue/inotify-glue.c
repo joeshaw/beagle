@@ -40,7 +40,7 @@
 
 #include "inotify.h"
 
-typedef void (* inotify_event_callback) (int wd, unsigned long mask, const char *filename);
+typedef void (* inotify_event_callback) (int wd, unsigned long mask, int cookie, const char *filename);
 
 int inotify_glue_open_dev ()
 {
@@ -65,10 +65,10 @@ int inotify_glue_close_dev (int fd)
 }
 
 
-int inotify_glue_watch_dir (int fd, const char *dirname, unsigned long mask)
+int inotify_glue_watch (int fd, const char *filename, unsigned long mask)
 {
 	struct inotify_watch_request iwr;
-	iwr.dirname = strdup (dirname);
+	iwr.dirname = strdup (filename);
 	iwr.mask = mask;
 	int wd;
 
@@ -83,12 +83,12 @@ int inotify_glue_watch_dir (int fd, const char *dirname, unsigned long mask)
 	free (iwr.dirname);
 
 #ifdef VERBOSE
-	printf("%s WD=%d\n", dirname, wd);
+	printf("%s WD=%d\n", filename, wd);
 #endif
 	return wd;
 }
 
-int inotify_glue_ignore_dir (int fd, int wd)
+int inotify_glue_ignore (int fd, int wd)
 {
 	int r;
 
@@ -136,7 +136,7 @@ int inotify_glue_try_for_event (int fd, int sec, int usec, inotify_event_callbac
         remaining -= num_bytes;
     }
 
-    callback (event.wd, event.mask, event.filename);
+    callback (event.wd, event.mask, event.cookie, event.filename);
 
     return 1;
 }
