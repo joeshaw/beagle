@@ -20,7 +20,8 @@ ASSEMBLIES =				\
 	-r:../Util/Util.dll		\
 	-r:../Lucene.Net/Lucene.Net.dll	\
 	-r:../Filters/Filters.dll	\
-	-r:../indexer/Indexer.dll
+	-r:../indexer/Indexer.dll	\
+	-r:../Renderers/Renderers.dll
 
 $(TARGET): $(CSFILES)
 	$(CSC) -o $@ $(CSFLAGS) $(CSFILES) $(ASSEMBLIES)

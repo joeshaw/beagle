@@ -40,8 +40,8 @@ namespace Best {
 			Add (main);
 
 			const double GOLDEN = 1.61803399;
-			DefaultWidth = 300;
-			DefaultHeight = (int) (DefaultWidth * GOLDEN);
+			DefaultHeight = 400;
+			DefaultWidth = (int) (DefaultHeight * GOLDEN);
 
 			driver = new QueryDriver ();
 			driver.AutoPopulateHack ();
@@ -96,6 +96,8 @@ namespace Best {
 		private Gtk.Entry entry;
 		private HitContainer hitContainer;
 
+		private ArrayList renderers = new ArrayList ();
+
 		private Widget CreateContents ()
 		{
 			HBox entryLine = new HBox (false, 3);
@@ -109,17 +111,26 @@ namespace Best {
 			entryLine.PackStart (button, false, false, 3);
 
 			////////
+			
+			renderers.Add (new FileHitRenderer ());
+			renderers.Add (new WebLinkHitRenderer ());
+			renderers.Add (new MailMessageHitRenderer ());
 
-			hitContainer = new HitContainer ();
+			Gtk.HBox rbox = new Gtk.HBox (false, 3);
 
-			ScrolledWindow sw = new ScrolledWindow ();
-			sw.AddWithViewport (hitContainer);
+			foreach (HitRenderer r in renderers) {
+				Gtk.Widget w = r.Widget;
+				ScrolledWindow sw = new ScrolledWindow ();
+				sw.Add (w);
+				w.Show ();
+				rbox.PackStart (sw, true, true, 3);
+			}
 
 			////////
 
 			VBox contents = new VBox (false, 3);
 			contents.PackStart (entryLine, false, true, 3);
-			contents.PackStart (sw, true, true, 3);
+			contents.PackStart (rbox, true, true, 3);
 			return contents;
 		}
 
@@ -141,14 +152,35 @@ namespace Best {
 		private void OnGotHits (object src, QueryResult.GotHitsArgs args)
 		{
 			Console.WriteLine ("Got {0} Hits!", args.Count);
-			foreach (Hit hit in args.Hits)
-				hitContainer.Add (hit);
+			//foreach (Hit hit in args.Hits)
+			//hitContainer.Add (hit);
+		}
+
+		class FinishedClosure {
+			QueryResult result;
+			IEnumerable renderers;
+
+			public FinishedClosure (QueryResult qr, IEnumerable r)
+			{
+				result = qr;
+				renderers = r;
+			}
+
+			public bool DoSomething ()
+			{
+				foreach (HitRenderer r in renderers)
+					r.RenderHits (result.Hits);
+				return false;
+			}
 		}
 
 		private void OnFinished (object src)
 		{
 			Console.WriteLine ("Finished!");
-			hitContainer.Close ();
+			//hitContainer.Close ();
+			FinishedClosure fc = new FinishedClosure ((QueryResult) src,
+								  renderers);
+			GLib.Idle.Add (new GLib.IdleHandler (fc.DoSomething));
 		}
 
 		private void Search (String searchString)
@@ -160,9 +192,7 @@ namespace Best {
 			result.GotHitsEvent += OnGotHits;
 			result.FinishedEvent += OnFinished;
 
-			hitContainer.Open ();						
 			result.Start ();
-
 
 			//foreach (Hit hit in result.Hits)
 			//hitContainer.Add (hit);

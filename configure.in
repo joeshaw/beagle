@@ -83,6 +83,7 @@ Util/Makefile
 Lucene.Net/Makefile
 Filters/Makefile
 indexer/Makefile
+Renderers/Makefile
 tools/Makefile
 Best/Makefile
 epiphany-extension/Makefile

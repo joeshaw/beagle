@@ -8,6 +8,7 @@ SUBDIRS = 			\
 	Lucene.Net 		\
 	Filters 		\
 	indexer 		\
+	Renderers		\
 	tools 			\
 	Best
 
