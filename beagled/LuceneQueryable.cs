@@ -38,17 +38,28 @@ namespace Beagle.Daemon {
 
 		private Scheduler scheduler = Scheduler.Global;
 
+		private string index_dir;
 		private LuceneDriver driver;
 		private LuceneTaskCollector collector;
 
 		public LuceneQueryable (string index_name)
 		{
-			string index_dir = Path.Combine (PathFinder.RootDir, index_name);
+			index_dir = Path.Combine (PathFinder.RootDir, index_name);
 
 			driver = new LuceneDriver (index_dir);
-			driver.ChangedEvent += OnDriverChanged; 
+			driver.FileAttributesStore = BuildFileAttributesStore (driver.Fingerprint);
+			driver.ChangedEvent += OnDriverChanged;
 
 			collector = new LuceneTaskCollector (driver);
+		}
+
+		virtual protected IFileAttributesStore BuildFileAttributesStore (string index_fingerprint)
+		{
+			return new FileAttributesStore_ExtendedAttribute (index_fingerprint);
+		}
+
+		protected string IndexDirectory {
+			get { return index_dir; }
 		}
 
 		protected LuceneDriver Driver {

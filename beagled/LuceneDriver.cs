@@ -205,17 +205,39 @@ namespace Beagle.Daemon {
 			get { return fingerprint; }
 		}
 
+		private IFileAttributesStore fa_store = null;
+
+		public IFileAttributesStore FileAttributesStore {
+			set { fa_store = value; }
+		}
+
 		public bool IsUpToDate (string path)
 		{
-			return ExtendedAttribute.Check (path, fingerprint);
+			if (fa_store == null)
+				return false;
+
+			FileAttributes attr = fa_store.Read (path);
+
+			// FIXME: This check is incomplete
+			return attr != null
+				&& attr.Path == path
+				&& FileSystem.GetLastWriteTime (path) <= attr.LastWriteTime;
 		}
 
 		public void AttachTimestamp (string path, DateTime mtime)
 		{
-			try {
-				ExtendedAttribute.Mark (path, fingerprint, mtime);
-			} catch (Exception ex) {
-				log.Warn ("Couldn't set extended attribute on {0}", path);
+			if (fa_store == null)
+				return;
+
+			FileAttributes attr = new FileAttributes ();
+
+			attr.UniqueId = "Foo"; // FIXME!
+			attr.Path = path;
+			attr.LastWriteTime = mtime;
+			attr.LastIndexedTime = DateTime.Now;
+
+			if (! fa_store.Write (attr)) {
+				log.Warn ("Couldn't store file attributes for {0}", path);
 			}
 		}
 
@@ -301,8 +323,7 @@ namespace Beagle.Daemon {
 					// non-transient file ContentUris that
 					// appear to be up-to-date.
 					if (indexable != null
-					    && indexable.ContentUri.IsFile
-					    && ! indexable.DeleteContent
+					    && indexable.IsNonTransient
 					    && IsUpToDate (indexable.ContentUri.LocalPath))
 						continue;
 					
@@ -347,8 +368,7 @@ namespace Beagle.Daemon {
 			// Step #2: Cache non-transient content mtimes
 			Hashtable mtimes = new Hashtable ();
 			foreach (Indexable indexable in pending_indexables) {
-				if (indexable.ContentUri.IsFile
-				    && ! indexable.DeleteContent) {
+				if (indexable.IsNonTransient) {
 					try {
 						string path = indexable.ContentUri.LocalPath;
 						mtimes [path] = FileSystem.GetLastWriteTime (path);

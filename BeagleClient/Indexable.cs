@@ -148,6 +148,11 @@ namespace Beagle {
 			set { mimeType = value; }
 		}
 
+		[XmlIgnore]
+		public bool IsNonTransient {
+			get { return ! DeleteContent && ContentUri.IsFile; }
+		}
+
 		//////////////////////////
 
 		public virtual TextReader GetTextReader ()

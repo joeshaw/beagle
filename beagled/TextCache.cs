@@ -29,60 +29,103 @@ using System;
 using System.Collections;
 using System.IO;
 
+using Mono.Data.SqliteClient;
+
 using Beagle.Util;
 
 namespace Beagle.Daemon {
 
 	public class TextCache {
 
-		const string filename_prefix = "00_";
-		static string path_prefix;
+		static string text_cache_dir;
+		static SqliteConnection connection;
 
 		static TextCache () 
 		{
-			path_prefix = Path.Combine (PathFinder.RootDir, "TextCache");
-			if (! Directory.Exists (path_prefix))
-				Directory.CreateDirectory (path_prefix);
+			text_cache_dir = Path.Combine (PathFinder.RootDir, "TextCache");
+			if (! Directory.Exists (text_cache_dir))
+				Directory.CreateDirectory (text_cache_dir);
 
-			// Create our checksum directories.
+			// Create our cache subdirectories.
 			for (int i = 0; i < 256; ++i) {
-				string subdir = Path.Combine (path_prefix, i.ToString ());
+				string subdir = Path.Combine (text_cache_dir, i.ToString ("x"));
 				if (! Directory.Exists (subdir))
 					Directory.CreateDirectory (subdir);
 			}
+
+			// Create our Sqlite database
+			string db_filename = Path.Combine (text_cache_dir, "TextCache.db");
+			bool create_new_db = false;
+			if (! File.Exists (db_filename))
+				create_new_db = true;
+
+			connection = new SqliteConnection ();
+			connection.ConnectionString = "URI=file:" + db_filename;
+			connection.Open ();
+
+			if (create_new_db) {
+				DoNonQuery ("CREATE TABLE index (                " +
+					    "  uri      STRING UNIQUE NOT NULL,  " +
+					    "  filename STRING UNIQUE NOT NULL   " +
+					    ")");
+			}
 		}
 
-		private static string UriToFilename (Uri uri)
+		private static SqliteCommand NewCommand (string format, params object [] args)
 		{
-			string name = uri.ToString ();
-			name = name.Replace ("/", "%2F");
-			return filename_prefix + name;
+			SqliteCommand command;
+			command = new SqliteCommand ();
+			command.Connection = connection;
+			command.CommandText = String.Format (format, args);
+			return command;
 		}
 
-		private static uint StringToChecksum (string str)
+		private static void DoNonQuery (string format, params object [] args)
 		{
-			int N = str.Length;
-			uint checksum = 1;
-			for (int i = 0; i < N; ++i)
-				checksum = 59 * checksum + (uint) str [i];
-			// xor the uint's four byte together
-			checksum = (checksum & 0xff) ^ (checksum >> 8);
-			checksum = (checksum & 0xff) ^ (checksum >> 8);
-			checksum = (checksum & 0xff) ^ (checksum >> 8);
-			checksum = checksum & 0xff;
-			return checksum;
+			SqliteCommand command = NewCommand (format, args);
+			command.ExecuteNonQuery ();
+			command.Dispose ();
 		}
 
-		private static string UriToPath (Uri uri)
+		public static string LookupPath (Uri uri, bool create_if_not_found)
 		{
-			string name = UriToFilename (uri);
-			uint checksum = StringToChecksum (name);
-			return Path.Combine (path_prefix, Path.Combine (checksum.ToString (), name));
+			SqliteCommand command;
+			SqliteDataReader reader;
+			string path = null;
+
+			command = NewCommand ("SELECT filename FROM index WHERE uri='{0}'", uri);
+			reader = command.ExecuteReader ();
+			if (reader.Read ())
+				path = reader [0].ToString ();
+			reader.Close ();
+			command.Dispose ();
+
+			if (path == null && create_if_not_found) {
+				string guid = Guid.NewGuid ().ToString ();
+				path = Path.Combine (guid.Substring (0, 2), guid.Substring (2));
+				DoNonQuery ("INSERT INTO db_info (uri, filename) VALUES ('{0}', '{1}')", uri, path);
+			}
+
+			return path != null ? Path.Combine (text_cache_dir, path) : null;
+		}
+
+		public static TextWriter GetWriter (Uri uri)
+		{
+			string path = LookupPath (uri, true);
+
+			FileStream stream;
+			stream = new FileStream (path, FileMode.Create, FileAccess.Write, FileShare.Read);
+
+			StreamWriter writer;
+			writer = new StreamWriter (stream);
+			return writer;
 		}
 
 		public static TextReader GetReader (Uri uri)
 		{
-			string path = UriToPath (uri);
+			string path = LookupPath (uri, false);
+			if (path == null)
+				return null;
 
 			FileStream stream;
 			try {
@@ -96,22 +139,13 @@ namespace Beagle.Daemon {
 			return reader;
 		}
 
-		public static TextWriter GetWriter (Uri uri)
-		{
-			string path = UriToPath (uri);
-
-			FileStream stream;
-			stream = new FileStream (path, FileMode.Create, FileAccess.Write, FileShare.Read);
-
-			StreamWriter writer;
-			writer = new StreamWriter (stream);
-			return writer;
-		}
-
 		public static void Delete (Uri uri)
 		{
-			string path = UriToPath (uri);
-			File.Delete (path);
+			string path = LookupPath (uri, false);
+			if (path != null) {
+				DoNonQuery ("DELETE FROM index WHERE uri='{0}' AND filename='{1}'", uri, path); 
+				File.Delete (path);
+			}
 		}
 	}
 }

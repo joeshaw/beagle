@@ -107,6 +107,14 @@ namespace Beagle.Daemon.FileSystemQueryable {
 
 		//////////////////////////////////////////////////////////////////////////
 
+		override protected IFileAttributesStore BuildFileAttributesStore (string index_fingerprint)
+		{
+			return new FileAttributesStore_Mixed (IndexDirectory,
+							      index_fingerprint);
+		}
+
+		//////////////////////////////////////////////////////////////////////////
+
 		private FileNameFilter filter = new FileNameFilter ();
 
 		private bool IgnoreFile (string path)
@@ -480,7 +488,10 @@ namespace Beagle.Daemon.FileSystemQueryable {
 
 		public void StartWorker ()
 		{
-			string home = Environment.GetEnvironmentVariable ("HOME");
+			string home;
+			home = Environment.GetEnvironmentVariable ("BEAGLE_FAKE_HOME");
+			if (home == null)
+				home = Environment.GetEnvironmentVariable ("HOME");
 			Scan (home);
 			log.Info ("FileSystemQueryable start-up thread finished");
 			
