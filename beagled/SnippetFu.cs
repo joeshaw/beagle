@@ -202,7 +202,7 @@ namespace Beagle.Daemon {
 					// trim the snippet so that it ends on word boundaries.
 					// FIXME: We can also break the snippet on sentence boundary,
 					// which ever comes earlier ;-)
-					if (j >= max_snippet_length) {
+					if (j >= max_snippet_length && snippet.Length >= j) {
 						string trim_snip;
 						trim_snip = snippet.Substring (0, j);
 						if ( !trim_snip.EndsWith (" ")) {
