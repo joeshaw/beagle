@@ -290,24 +290,17 @@ namespace Beagle.Tile {
 		
 		/////////////////////////////////////////////////
 
-		StringBuilder source;
+		StringBuilder content;
 
 		public String Source {
-			get { return source.ToString (); }
+			get { return content.ToString (); }
+		}
+
+		public new void AppendData (string data)
+		{
+			content.Append (data);
 		}
 	
-		public new void AppendData(string data)
-		{
-			source.Append(data);
-			base.AppendData(data);
-		}
-
-		public new void OpenStream(string baseurl, string mimetype)
-		{
-			source = new StringBuilder ();
-			base.OpenStream (baseurl, mimetype);
-		}
-
 		/////////////////////////////////////////////////
 
 		private void DoRender ()
@@ -326,9 +319,10 @@ namespace Beagle.Tile {
 			string mime_type = "text/html";
 			if (Environment.GetEnvironmentVariable ("BEST_DEBUG_HTML") != null)
 			    mime_type = "text/plain";
-			OpenStream ("file:///", mime_type);
+
+			content = new StringBuilder ();
 			PaintTile (root);
-			CloseStream ();
+			RenderData (content.ToString (), "file:///", mime_type);
 
 			if (PostRenderEvent != null)
 				PostRenderEvent (this, new EventArgs ());
