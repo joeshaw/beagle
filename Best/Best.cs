@@ -54,6 +54,16 @@ namespace Best {
 				case "--usage":
 					PrintUsageAndExit ();
 					return;
+
+				// Ignore session management
+				case "--sm-config-prefix":
+				case "--sm-client-id":
+				case "--screen":
+					// These all take an argument, so
+					// increment i
+					i++;
+					break;
+
 				default:
 					if (query.Length != 0)
 						query += " ";
