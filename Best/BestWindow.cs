@@ -390,25 +390,8 @@ namespace Best {
 		
 		private void DoSearch (object o, EventArgs args)
 		{
-			try {
+			if (entry.GtkEntry.Text != null && entry.GtkEntry.Text != "")
 				Search (entry.GtkEntry.Text);
-			}
-			catch (Exception e)
-			{
-				delayedQuery = entry.GtkEntry.Text;
-				DBusisms.BeagleUpAgain += QueueDelayedQuery;
-
-				if (e.ToString ().IndexOf ("'com.novell.Beagle'") != -1) {
-					root.Error ("The query for <i>" + entry.GtkEntry.Text + "</i> failed." +
-						    "<br>The likely cause is that the beagle daemon isn't running.");
-					root.OfferDaemonRestart = true;
-				} else if (e.ToString().IndexOf ("Unable to determine the address") != -1) {
-					root.Error ("The query for <i>" + entry.GtkEntry.Text + "</i> failed.<br>" +
-						    "The session bus isn't running.  See http://beaglewiki.org/index.php/Installing%20Beagle for information on setting up a session bus.");
-				} else
-					root.Error ("The query for <i>" + entry.GtkEntry.Text + "</i> failed with error:<br><br>" + e);
-			}
-			UpdatePage ();
 		}
 
 		private string lastType = null;
@@ -430,8 +413,7 @@ namespace Best {
 			//	Search (entry.GtkEntry.Text);
 			//	lastType = this.hit_type;
 			//}
-			
-			UpdatePage ();
+			//UpdatePage ();
 		}
 
 		//////////////////////////
@@ -487,30 +469,47 @@ namespace Best {
 
 		private void Search (String searchString)
 		{
-			StoreSearch (searchString);
-			entry.GtkEntry.Text = searchString;
-			if (query != null) {
-				query.Cancel ();
-				DetachQuery ();
+			try {
+				StoreSearch (searchString);
+				entry.GtkEntry.Text = searchString;
+
+				if (query != null) {
+					query.Cancel ();
+					DetachQuery ();
+				}
+
+				query = Factory.NewQuery ();
+				query.AddDomain (QueryDomain.Neighborhood);
+
+				// FIXME: Disable non-local searching for now.
+				//query.AddDomain (QueryDomain.Global);
+
+				query.AddText (searchString);
+				root.SetSource (hit_type);
+				
+				AttachQuery ();
+				
+				root.Query = query;
+				root.Start ();
+				
+				SetBusy (true);
+				query.Start ();
+			} catch (Exception e) {
+				delayedQuery = entry.GtkEntry.Text;
+				DBusisms.BeagleUpAgain += QueueDelayedQuery;
+
+				if (e.ToString ().IndexOf ("com.novell.Beagle") != -1) {
+					root.Error ("The query for <i>" + searchString + "</i> failed." +
+						    "<br>The likely cause is that the beagle daemon isn't running.");
+					root.OfferDaemonRestart = true;
+				} else if (e.ToString().IndexOf ("Unable to determine the address") != -1) {
+					root.Error ("The query for <i>" + searchString + "</i> failed.<br>" +
+						    "The session bus isn't running.  See http://beaglewiki.org/index.php/Installing%20Beagle for information on setting up a session bus.");
+				} else
+					root.Error ("The query for <i>" + searchString + "</i> failed with error:<br><br>" + e);
 			}
 
-			query = Factory.NewQuery ();
-			
-			query.AddDomain (QueryDomain.Neighborhood);
-
-			// Disable non-local searching for now.
-			//query.AddDomain (QueryDomain.Global);
-
-			query.AddText (searchString);
-			root.SetSource (hit_type);
-
-			AttachQuery ();
-			
-			root.Query = query;
-			root.Start ();
-
-			SetBusy (true);
-			query.Start ();
+			UpdatePage ();
 		}
 
 		ArrayList recentSearches;

@@ -100,8 +100,7 @@ namespace Best {
 
 			// Create the tray icon.
 			if (doTray) {
-				BestTray icon;
-				icon = new BestTray (win);
+				BestTray icon = new BestTray (win);
 
 				Console.WriteLine ("If you're wondering whether Best is working check " +
 						   "your notification area (system tray)");
