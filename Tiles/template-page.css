@@ -52,8 +52,8 @@ td.icon {
 }
 
 .icon img {
-  max-width: 128px;
-  padding: 2px;
+  max-width: 64px;
+  padding: 4px;
 }
 
 .icon img[src$='.jpg'], img[src$='.jpeg'], img[src*='.thumbnails'] {
@@ -116,7 +116,7 @@ ul {
   padding-right: 12px;
   background: url(@stock%16|stock_right@) no-repeat;
   min-height: 16px;
-  -moz-opacity: 0.2;
+  -moz-opacity: 0.5;
 }
 
 tr:hover .actions li { 
