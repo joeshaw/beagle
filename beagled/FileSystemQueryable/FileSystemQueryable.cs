@@ -180,7 +180,7 @@ namespace Beagle.Daemon.FileSystemQueryable {
 			case InotifyEventType.CreateSubdir:
 				TraverseDirectory (fullPath, false);
 				return;
-				
+
 			case InotifyEventType.QueueOverflow:
 				// If the queue overflows, we can't make any
 				// assumptions about the state of the file system.

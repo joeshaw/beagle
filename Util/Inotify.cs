@@ -240,6 +240,7 @@ namespace Beagle.Util {
 
 				// The queue overflow event isn't associated with any directory.
 				if (type == InotifyEventType.QueueOverflow) {
+					Logger.Log.Warn ("The Inotify Queue Overflowed!");
 					if (InotifyEvent != null)
 						InotifyEvent (-1, "", "", type, cookie);
 					return;
