@@ -34,6 +34,38 @@ namespace Beagle.Util {
 		
 		static ArrayList defaultPatterns = new ArrayList ();
 		ArrayList patterns = new ArrayList ();
+
+		static FileMatcher ()
+		{
+			AddDefault (".*",
+				    "*~",
+				    "#*#",
+				    "*.cs", // FIXME: we skip other source code...
+				    "*.o",
+				    "*.a",
+				    "*.S",
+				    "*.la",
+				    "*.lo",
+				    "*.so",
+				    "*.exe",
+				    "*.dll",
+				    "*.com",
+				    "*.csproj",
+				    "*.dsp",
+				    "*.dsw",
+				    "*.m4",
+				    "*.pc",
+				    "*.pc.in",
+				    "*.in.in",
+				    "*.omf",
+				    "*.aux",
+				    "po",
+				    "aclocal",
+				    "Makefile",
+				    "Makefile.am",
+				    "Makefile.in",
+				    "CVS");
+		}
 		
 		static Regex PatternToRegex (String pattern)
 		{

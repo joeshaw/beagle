@@ -226,34 +226,6 @@ class CrawlerTool {
 	static void Main (String[] args)
 	{
 		Gtk.Application.Init ();
-		BU.FileMatcher.AddDefault (".*",
-					"*~",
-					"#*#",
-					"*.cs", // FIXME: we skip other source code...
-					"*.o",
-					"*.a",
-					"*.S",
-					"*.la",
-					"*.lo",
-					"*.so",
-					"*.exe",
-					"*.dll",
-					"*.com",
-					"*.csproj",
-					"*.dsp",
-					"*.dsw",
-					"*.m4",
-					"*.pc",
-					"*.pc.in",
-					"*.in.in",
-					"*.omf",
-					"*.aux",
-					"po",
-					"aclocal",
-					"Makefile",
-					"Makefile.am",
-					"Makefile.in",
-					"CVS");
 
 		Crawler crawler = new Crawler ();
 

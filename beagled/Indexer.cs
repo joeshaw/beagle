@@ -36,8 +36,10 @@ namespace Beagle.Daemon
 	public class Indexer : Beagle.Indexer 
 	{
 		IndexerQueue indexerQueue;
-		FileSystemEventMonitor monitor = new FileSystemEventMonitor ();
 		IndexDriver driver = new MainIndexDriver ();
+
+		FileSystemEventMonitor monitor = new FileSystemEventMonitor ();
+		FileMatcher doNotIndex = new FileMatcher ();
 
 		struct DirectoryHitEntry {
 			public string directoryName;
@@ -137,6 +139,11 @@ namespace Beagle.Daemon
 
 			if (eventType == FileSystemEventType.Changed
 			    || eventType == FileSystemEventType.Created) {
+
+				if (doNotIndex.IsMatch (newPath)) {
+					Console.WriteLine ("Ignoring {0}", newPath);
+					return;
+				}
 
 				string uri = StringFu.PathToQuotedFileUri (newPath);
 				FilteredIndexable indexable = new FilteredIndexable (uri);
