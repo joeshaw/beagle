@@ -43,7 +43,7 @@ namespace Beagle {
 		public void AutoPopulateHack ()
 		{
 			Add (new IndexDriver ());
-			Add (new GoogleDriver ());
+			//Add (new GoogleDriver ());
 #if ENABLE_EVO_SHARP
 			Add (new EvolutionDataServerDriver ());
 #endif

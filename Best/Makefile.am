@@ -36,7 +36,7 @@ install-data-local: $(TARGET)
 bin_SCRIPTS = $(WRAPPER)
 
 $(WRAPPER): $(srcdir)/$(WRAPPER).in
-	sed -e "s|\@prefix\@|$(prefix)|g" -e "s|\@pkglibdir\@|$(pkglibdir)|g" -e "s|\@target\@|$(TARGET)|g" -e "s|\@monopath\@|$(MONO_PATH_EXTRA)|g" < $^ > $@
+	sed -e "s|\@prefix\@|$(prefix)|g" -e "s|\@pkglibdir\@|$(pkglibdir)|g" -e "s|\@target\@|$(TARGET)|g" < $^ > $@
 	chmod +x $(WRAPPER)
 
 EXTRA_DIST =		\

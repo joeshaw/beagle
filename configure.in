@@ -28,7 +28,6 @@ PKG_CHECK_MODULES(EVO_SHARP,						\
                   enable_evo_sharp=yes,					\
 		  enable_evo_sharp=no)
 AC_SUBST(EVO_SHARP_LIBS)
-EVO_SHARP_MONO_PATH="`$PKG_CONFIG --variable=libdir evolution-sharp`"
 
 AM_CONDITIONAL(ENABLE_EVO_SHARP, test "x$enable_evo_sharp" = "xyes")
 
@@ -78,11 +77,6 @@ fi
 
 AM_CONDITIONAL(ENABLE_EPIPHANY_EXTENSION, test "x$enable_epiphany_extension" = "xyes")
 
-
-dnl ----------------------------------------------
-
-MONO_PATH_EXTRA="$EVO_SHARP_MONO_PATH"
-AC_SUBST(MONO_PATH_EXTRA)
 
 dnl ----------------------------------------------
 

@@ -177,6 +177,47 @@ namespace Beagle.Filters {
 			}
 			
 		}
+
+		private void ExtractMetadata (XmlDocument doc)
+		{
+			XmlNode node;
+
+			node = doc.DocumentElement.FirstChild.FirstChild;
+
+			while (node != null) {
+
+				switch (node.Name) {
+					
+				case "dc:title":
+					this ["Title"] = node.InnerText;
+					break;
+
+				case "dc:description":
+					this ["Description"] = node.InnerText;
+					break;
+
+				case "dc:subject":
+					this ["Subject"] = node.InnerText;
+					break;
+					
+				case "meta:document-statistic":
+					XmlAttributeCollection attr = node.Attributes;
+					this ["_PageCount"] = attr ["meta:page-count"].Value;
+					this ["_WordCount"] = attr ["meta:word-count"].Value;
+					break;
+
+				case "meta:user-defined":
+					if (node.InnerText != "") {
+						string name = node.Attributes ["meta:name"].Value;
+						this ["UserDefined:" + name] = node.InnerText;
+					}
+					break;
+					
+				}
+				
+				node = node.NextSibling;
+			}
+		}
 		
 		override protected void Read (Stream stream)
 		{
@@ -192,17 +233,13 @@ namespace Beagle.Filters {
 				WalkContentNodes (doc.DocumentElement);
 			}
 			
-			// FIXME: pull metadata out of meta.xml
-			// This task is blocking on Mono bug 57907.
-#if false
 			entry = zip.GetEntry ("meta.xml");
 			if (entry != null) {
 				Stream meta_stream = zip.GetInputStream (entry);
-				StreamReader sr = new StreamReader (meta_stream);
 				XmlDocument doc = new XmlDocument ();
 				doc.Load (meta_stream);
+				ExtractMetadata (doc);
 			}
-#endif
 		}
 	}
 }

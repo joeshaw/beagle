@@ -22,7 +22,7 @@ CSFILES = 				\
 
 ASSEMBLIES = 				\
 	-r:Mono.Posix			\
-	-r:ICSharpCode.SharpZipLib	\
+	-r:ICSharpCode.SharpZipLib.dll	\
 	-r:../Util/Util.dll		\
 	-r:../Lucene.Net/Lucene.Net.dll	\
 	-r:../Filters/Filters.dll

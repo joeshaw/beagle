@@ -168,7 +168,14 @@ namespace Beagle.Filters {
 
 		public String this [String key] {
 			get { return (String) properties [key]; }
-			set { properties [key] = value as String; }
+			set { 
+				if (value == null) {
+					if (properties.Contains (key))
+						properties.Remove (key);
+					return;
+				}
+				properties [key] = value as String;
+			}
 		}
 
 		//////////////////////////

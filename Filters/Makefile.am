@@ -27,7 +27,7 @@ CSFILES = 				\
 
 ASSEMBLIES =				\
 	$(BEAGLE_UI_LIBS)		\
-	-r:ICSharpCode.SharpZipLib	\
+	-r:ICSharpCode.SharpZipLib.dll	\
 	-r:../Util/Util.dll
 
 RESOURCES =
