@@ -59,6 +59,7 @@ namespace Beagle.Daemon {
 		public abstract string GetTarget ();
 		public abstract bool HasNextIndexable ();
 		public abstract Indexable GetNextIndexable ();
+		public abstract void Checkpoint ();
 
 		protected EvolutionMailQueryable Queryable {
 			get { return this.queryable; }
@@ -318,13 +319,6 @@ namespace Beagle.Daemon {
 		{
 			GMime.Message message = this.mbox_parser.ConstructMessage ();
 
-			if (this.count % 20 == 0) {
-				EvolutionMailQueryable.log.Debug ("{0}: indexed {1} messages",
-								  this.folder_name, this.indexed_count);
-
-				if (this.count > 0)
-					this.MboxLastOffset = this.mbox_parser.FromOffset;
-			}
 			++this.count;
 
 			// Work around what I think is a bug in GMime: If you
@@ -417,6 +411,14 @@ namespace Beagle.Daemon {
 	                indexable.SetTextReader (PartHandler.GetReader (message));
 
 			return indexable;
+		}
+
+		public override void Checkpoint ()
+		{
+			EvolutionMailQueryable.log.Debug ("{0}: indexed {1} messages",
+							  this.folder_name, this.indexed_count);
+
+			this.MboxLastOffset = this.mbox_parser.FromOffset;
 		}
 
 		public override string GetTarget ()
@@ -660,16 +662,6 @@ namespace Beagle.Daemon {
 
 			Camel.MessageInfo mi = (Camel.MessageInfo) this.summary_enumerator.Current;
 
-			// Checkpoint our progress to disk every 500 messages
-			if (this.count % 20 == 0) {
-				EvolutionMailQueryable.log.Debug ("{0}: indexed {1} messages ({2}/{3} {4:###.0}%)",
-								  this.folder_name, this.indexed_count, this.count,
-								  this.summary.header.count,
-								  100.0 * this.count / this.summary.header.count);
-
-				if (this.count > 0)
-					this.SaveCache ();
-			}
 			++this.count;
 
 			if (this.mapping[mi.uid] == null || (uint) mapping[mi.uid] != mi.flags) {
@@ -744,6 +736,16 @@ namespace Beagle.Daemon {
 				indexable.SetTextReader (msgReader);
 
 			return indexable;
+		}
+
+		public override void Checkpoint ()
+		{
+			EvolutionMailQueryable.log.Debug ("{0}: indexed {1} messages ({2}/{3} {4:###.0}%)",
+							  this.folder_name, this.indexed_count, this.count,
+							  this.summary.header.count,
+							  100.0 * this.count / this.summary.header.count);
+
+			this.SaveCache ();
 		}
 
 		public override string GetTarget ()

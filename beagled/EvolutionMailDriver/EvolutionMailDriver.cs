@@ -196,7 +196,7 @@ namespace Beagle.Daemon {
 		{
 			EvolutionMailIndexableGeneratorImap generator = new EvolutionMailIndexableGeneratorImap (this, summaryInfo);
 			Scheduler.Task task;
-			task = NewAddTask (generator);
+			task = NewAddTask (generator, new Scheduler.Hook (generator.Checkpoint));
 			// IndexableGenerator tasks default to having priority Scheduler.Priority Generator
 			ThisScheduler.Add (task);
 		}
@@ -205,7 +205,7 @@ namespace Beagle.Daemon {
 		{
 			EvolutionMailIndexableGeneratorMbox generator = new EvolutionMailIndexableGeneratorMbox (this, mboxInfo);
 			Scheduler.Task task;
-			task = NewAddTask (generator);
+			task = NewAddTask (generator, new Scheduler.Hook (generator.Checkpoint));
 			task.Tag = mboxInfo.FullName;
 			// IndexableGenerator tasks default to having priority Scheduler.Priority Generator
 			ThisScheduler.Add (task);

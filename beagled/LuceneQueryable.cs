@@ -159,12 +159,18 @@ namespace Beagle.Daemon {
 			return task;
 		}
 
-		public Scheduler.Task NewAddTask (IIndexableGenerator generator)
+		public Scheduler.Task NewAddTask (IIndexableGenerator generator, Scheduler.Hook generator_hook)
 		{
 			LuceneTask task;
 			task = new LuceneTask (Driver, generator);
 			task.Priority = Scheduler.Priority.Generator;
+			task.GeneratorHook = generator_hook;
 			return task;
+		}
+
+		public Scheduler.Task NewAddTask (IIndexableGenerator generator)
+		{
+			return this.NewAddTask (generator, null);
 		}
 
 		public Scheduler.Task NewRemoveTask (Uri uri)
@@ -238,6 +244,10 @@ namespace Beagle.Daemon {
 			// hard-wired
 			const int hard_wired_generation_count = 30;
 
+			// Hook to be invoked after the IIndexableGenerator
+			// has finished processing a batch of Indexables,
+			// just prior to flushing the driver.
+			public Scheduler.Hook GeneratorHook;
 
 			public LuceneTask (LuceneDriver driver, Indexable indexable) // Add
 			{
@@ -279,7 +289,8 @@ namespace Beagle.Daemon {
 					// get re-scheduled after it is run.
 					Reschedule = true;
 
-					for (int count = 0; count < hard_wired_generation_count; ++count) {
+					int count;
+					for (count = 0; count < hard_wired_generation_count; ++count) {
 						if (!generator.HasNextIndexable ()) {
 							// ...except if there is no more work to do, of course.
 							Reschedule = false;
@@ -295,6 +306,9 @@ namespace Beagle.Daemon {
 						if (generated != null)
 							driver.Add (generated);
 					}
+
+					if (count > 0 && this.GeneratorHook != null)
+						this.GeneratorHook ();
 
 					driver.Flush ();
 				}
