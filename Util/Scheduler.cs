@@ -173,7 +173,6 @@ namespace Beagle.Util {
 						Logger.Log.Warn (ex);
 					}
 					if (Reschedule) {
-						Console.WriteLine ("Rescheduling {0}!", Tag);
 						Reschedule = false;
 						++count;
 						ThisScheduler.Add (this);
