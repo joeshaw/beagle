@@ -311,7 +311,7 @@ namespace Beagle.Daemon {
 			// to do, but it doesn't seem possible to attach
 			// extended attributes to them.
 			if (FileSystem.IsSymLink (fsinfo.FullName)) {
-				log.Debug ("{0} is a symlink... skipping", fsinfo.FullName);				
+				log.Debug ("{0} is a symlink... skipping", fsinfo.FullName);
 				return false;
 			}
 

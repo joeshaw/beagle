@@ -268,13 +268,13 @@ namespace Beagle.Daemon {
 							FileAccess.Read,
 							FileShare.Read);
 
-			// Give the OS a hint that we will be reading this
-			// file soon.
-			FileAdvise.PreLoad (currentStream);
-
 			// Our default assumption is sequential reads.
 			// FIXME: Is this the right thing to do here?
 			FileAdvise.IncreaseReadAhead (currentStream);
+
+			// Give the OS a hint that we will be reading this
+			// file soon.
+			FileAdvise.PreLoad (currentStream);			
 
 			DoOpen (info);
 			isOpen = true;
