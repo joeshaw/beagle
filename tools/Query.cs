@@ -9,10 +9,7 @@ class QueryTool {
 
 	IndexDriver id = new IndexDriver();
 
-	String query = "";
-	foreach (String arg in args) {
-	    query = String.Concat(query, " ", arg);
-	}
+	String query = String.Join (" ", args);
 	
 	IndexItem[] hits = id.QueryBody(query);
 

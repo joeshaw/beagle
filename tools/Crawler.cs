@@ -16,11 +16,8 @@ class IndexFilesTool {
 	if (attr == FileAttributes.Directory) {
 	    Console.WriteLine("Crawling " + path);
 	    DirectoryInfo dir = new DirectoryInfo(path);
-	    foreach (FileInfo info in dir.GetFiles()) {
-		IndexOrCrawl(Path.Combine(path, info.Name), array);
-	    }
-	    foreach (DirectoryInfo info in dir.GetDirectories()) {
-		IndexOrCrawl(Path.Combine(path, info.Name), array);
+	    foreach (FileSystemInfo info in dir.GetFileSystemInfos()) {
+		IndexOrCrawl(info.FullName, array);
 	    }
 	} else {
 	    if (Path.GetExtension(path) == ".txt") {
