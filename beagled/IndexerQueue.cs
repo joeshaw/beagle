@@ -51,7 +51,7 @@ namespace Beagle.Daemon
 		private object queueLock = new object ();
 		
 		int sinceOptimize = 0;
-		const int optimizeCount = 10;
+		const int optimizeCount = 100;
 
 		uint flushTimeout = 0;
 		bool haveWorker = false;

@@ -222,9 +222,10 @@ $(DAEMON_DLL_TARGET): $(DAEMON_DLL_CSFILES) $(DAEMON_DLL_LOCAL_ASSEMBLIES)
 
 
 DAEMON_WRAPPER = beagled
+DAEMON_WRAPPER_IN = beagled.in
 DAEMON_TARGET = BeagleDaemon.exe
 
-$(DAEMON_WRAPPER): $(srcdir)/$(WRAPPER_IN)
+$(DAEMON_WRAPPER): $(srcdir)/$(DAEMON_WRAPPER_IN)
 	$(WRAPPER_SED) -e "s|\@target\@|$(DAEMON_TARGET)|g" < $(srcdir)/$^ > $@
 	chmod +x $(DAEMON_WRAPPER)
 
@@ -317,6 +318,7 @@ EXTRA_DIST =				\
 	$(EXTRACT_CONTENT_CSFILES)	\
 	$(EXTSTR_IN)			\
 	$(WRAPPER_IN)   		\
+	$(DAEMON_WRAPPER_IN)		\
 	TestClient.cs
 
 CLEANFILES =				\
