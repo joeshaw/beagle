@@ -73,5 +73,4 @@ namespace Beagle.Tile {
 			base.Changed ();
 		}
 	}
-
 }

@@ -70,7 +70,7 @@ namespace Beagle.Tile {
 			Tile tile = (Tile) Activator.CreateInstance (flavor.TileType, args);
 			tile.Query = this.Query;
 			hit_collection.Add (hit, tile);
-			Console.WriteLine ("+ {0}", hit.Uri);
+			//Console.WriteLine ("+ {0}", hit.Uri);
 			Changed ();
 		}
 

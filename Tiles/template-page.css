@@ -97,7 +97,7 @@ ul, li {
   display: inline;
   padding-left: 20px;
   padding-right: 12px;
-  background: url(@stock%stock_right@) no-repeat;
+  background: url(@stock%16|stock_right@) no-repeat;
   -moz-opacity: 0.2;
 }
 
@@ -106,23 +106,23 @@ tr:hover .actions li {
 }
 
 #phone {
-  background: url(@stock%stock_landline-phone@) no-repeat;
+  background: url(@stock%16|stock_landline-phone@) no-repeat;
 }
 
 #email {
-  background: url(@stock%stock_mail@) no-repeat;
+  background: url(@stock%16|stock_mail@) no-repeat;
 }
 
 #email-forward {
-  background: url(@stock%stock_mail-forward@) no-repeat;
+  background: url(@stock%16|stock_mail-forward@) no-repeat;
 }
 
 #email-reply {
-  background: url(@stock%stock_mail-reply@) no-repeat;
+  background: url(@stock%16|stock_mail-reply@) no-repeat;
 }
 
 #message {
-  background: url(@stock%im-yahoo@) no-repeat;
+  background: url(@stock%16|im-yahoo@) no-repeat;
 }
 
 #reveal {

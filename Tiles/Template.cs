@@ -136,7 +136,19 @@ namespace Beagle.Tile {
 			case "image" :
 				return Images.GetHtmlSource (subkey, "image/png"); // FIXME: other mime types 
 			case "stock" :
-				return Images.GetHtmlSourceForStock (subkey, 16);
+				string stockid;
+				int size;
+				pos = subkey.IndexOf ('|');
+				if (pos >= 0) {
+					size = int.Parse (subkey.Substring (0, pos));
+					stockid = subkey.Substring (pos + 1);
+				} else {
+					size = 48;
+					stockid = subkey;
+				}
+
+				return Images.GetHtmlSourceForStock (stockid, 
+								     size);
 			case "date" :
 				try {
 					return BU.StringFu.DateTimeToPrettyString (BU.StringFu.StringToDateTime ((string)values [subkey]));

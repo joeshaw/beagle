@@ -60,14 +60,14 @@ namespace Beagle.Tile {
 
 			string icon;
 			if (Hit ["fixme:isAnswered"] != null)
-				icon = Images.GetHtmlSource ("mail-replied.png", 
-							     "image/png");
+				icon = Images.GetHtmlSourceForStock ("stock_mail-replied", 
+								     48);
 			else if (Hit ["fixme:isSeen"] != null)
-				icon = Images.GetHtmlSource ("mail-read.png",
-							     "image/png");
+				icon = Images.GetHtmlSourceForStock ("stock_mail-open",
+								     48);
 			else
-				icon = Images.GetHtmlSource ("mail.png",
-							     "image/png");
+				icon = Images.GetHtmlSourceForStock ("stock_mail",
+								     48);
 
 			Template["Icon"] = icon;
 			if (Hit ["fixme:isFlagged"] != null)
