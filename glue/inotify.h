@@ -30,7 +30,7 @@ struct inotify_event {
  * Pass to the inotify device via the INOTIFY_WATCH ioctl
  */
 struct inotify_watch_request {
-	char		*name;		/* filename name */
+	int		fd;		/* fd of filename to watch */
 	__u32		mask;		/* event mask */
 };
 

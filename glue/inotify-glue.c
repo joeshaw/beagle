@@ -85,20 +85,23 @@ int
 inotify_glue_watch (int fd, const char *filename, __u32 mask)
 {
 	struct inotify_watch_request iwr;
-	__s32 wd;
+	int file_fd, wd;
 
-	iwr.mask = mask;
-	iwr.name = strdup (filename);
-	if (!iwr.name) {
-		perror ("strdup");
+	file_fd = open (filename, O_RDONLY);
+	if (file_fd < 0) {
+		perror ("open");
 		return -1;
 	}
+
+	iwr.fd = file_fd;
+	iwr.mask = mask;
 
 	wd = ioctl (fd, INOTIFY_WATCH, &iwr);
 	if (wd < 0)
 		perror ("ioctl");
 
-	free (iwr.name);
+	if (close (file_fd))
+		perror ("close");
 
 	return wd;
 }
