@@ -26,6 +26,7 @@ namespace Best {
 		public BestTray (BestWindow bw)
 		{
 			win = bw;
+			win.DeleteEvent += new DeleteEventHandler (DeleteEvent);
 			
 			Gtk.Button button = new Gtk.Button ();
 			Gtk.Widget icon_image = new Gtk.Image (Images.GetPixbuf ("smalldog.png"));
@@ -46,9 +47,16 @@ namespace Best {
 			if (! win.Visible) {
 				win.Show ();
 				win.Present ();
+				win.FocusEntry ();
 			} else {
 				win.Hide ();
 			}
+		}
+
+		void DeleteEvent (object sender, DeleteEventArgs args)
+		{
+			win.Hide ();
+			args.RetVal = (object)true;
 		}
 	}
 }

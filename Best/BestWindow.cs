@@ -47,6 +47,11 @@ namespace Best {
 		{
 			CreateWindow (null);
 		}
+		
+		public void FocusEntry () {
+			entry.SelectRegion (0, -1);
+			entry.GrabFocus ();
+		}
 
 		void CreateWindow (string query)
 		{
