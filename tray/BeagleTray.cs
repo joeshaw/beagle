@@ -131,71 +131,11 @@ namespace Beagle
 
 		Beagle.Query query = null;
 
-		private void SDoSearch (object o, EventArgs args)
-		{
-			Console.WriteLine("Hey");
-                        String searchString = entry.Text;
-                                                                                                                                                             
-                        if (query != null) {
-                                query.Cancel ();
-                                query.HitAddedEvent -= OnHitAdded;
-                                //query.HitSubtractedEvent -= OnHitSubtracted;
-                                query.Dispose ();
-                        }
-                                                                                                                                                             
-                        query = Factory.NewQuery ();
-                                                                                                                                                             
-                        query.AddDomain (QueryDomain.Neighborhood);
-                        query.AddDomain (QueryDomain.Global);
-                                                                                                                                                             
-                        query.AddText (searchString);
-                                                                                                                                                             
-                        query.HitAddedEvent += OnHitAdded;
-                        //query.HitSubtractedEvent += OnHitSubtracted;
-                                                                                                                                                             
-                                                                                                                                                             
-                        query.Start ();
-			entry.Text = "";
-
-		}
-
-		public void SOnHitAdded (Query source, Hit hit)
-                {
-                        //HitFlavor flavor = HitToHitFlavor.Get (hit);
-                        //if (flavor == null)
-                         //       return;
-                                                                                                                                                             
-                                                                                                                                                             
-                        //if (hitCollection == null) {
-                                //hitCollection = new TileHitCollection (flavor.Name,
-                                 //                                      flavor.Emblem,
-                                  //                                     flavor.Color,
-                                   //                                    flavor.Columns);
-			//	Console.WriteLine(flavor.Name);
-                                                                                                                                                             
-                                //tileTable [flavor.Name] = hitCollection;
-                        //}
-                                                                                                                                                             
-                        //object[] args = new object [1];
-                        //args[0] = hit;
-                        //Tile tile = (Tile) Activator.CreateInstance (flavor.TileType, args);
-                        //hitCollection.Add (hit, tile);
-                        Console.WriteLine ("+ {0}", hit.Uri);
-                }  
                 private void DoSearch (object o, EventArgs args)
                 {
                         Search (entry.Text);
                 }
                                                                                                                                                              
-                //////////////////////////
-                                                                                                                                                             
-                private void Close ()
-                {
-                        //Best.DecRef ();
-                        //Destroy ();
-                }
-                                                                                                                                                             
-                //////////////////////////
                                                                                                                                                              
                 private void OnHitAdded (Query source, Hit hit)
                 {
