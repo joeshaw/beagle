@@ -220,6 +220,11 @@ namespace Beagle.Daemon {
 			else
 				return false;
 		}
+
+		public override int GetHashCode ()
+		{
+			return this.CrawlFile.FullName.GetHashCode ();
+		}
 	}
 
 	public class EvolutionMailIndexableGeneratorMbox : EvolutionMailIndexableGenerator {

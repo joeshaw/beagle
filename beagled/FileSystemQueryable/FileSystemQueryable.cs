@@ -91,7 +91,11 @@ namespace Beagle.Daemon.FileSystemQueryable {
 				return true;
 			else
 				return false;
+		}
 
+		public override int GetHashCode ()
+		{
+			return this.dir_info.FullName.GetHashCode ();
 		}
 	}
 
@@ -509,8 +513,6 @@ namespace Beagle.Daemon.FileSystemQueryable {
 		{
 			FileSystemInfo info = hit.FileSystemInfo;
 
-			double m = 1.0;
-			
 			double days = (DateTime.Now - info.LastWriteTime).TotalDays;
 			// Maximize relevancy if the file has been touched within the last seven days.
 			if (0 <= days && days < 7)

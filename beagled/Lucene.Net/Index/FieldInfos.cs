@@ -79,7 +79,9 @@ namespace Lucene.Net.Index
 		public void  AddIndexed(System.Collections.ICollection names, bool storeTermVectors)
 		{
 			System.Collections.IEnumerator i = names.GetEnumerator();
-			int j = 0;
+			// FIXED trow@novell.com 18 Feb 2005
+			// Commented out unused variable j to avoid compiler warning
+			//int j = 0;
 			while (i.MoveNext())
 			{
                 System.Collections.DictionaryEntry t = (System.Collections.DictionaryEntry) i.Current;
@@ -98,7 +100,9 @@ namespace Lucene.Net.Index
 		public void  Add(System.Collections.ICollection names, bool isIndexed)
 		{
 			System.Collections.IEnumerator i = names.GetEnumerator();
-			int j = 0;
+			// FIXED trow@novell.com 18 Feb 2005
+			// Commented out unused variable j to avoid compiler warning
+			//int j = 0;
 			while (i.MoveNext())
 			{
                 System.Collections.DictionaryEntry t = (System.Collections.DictionaryEntry) i.Current;

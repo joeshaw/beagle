@@ -441,22 +441,26 @@ namespace Lucene.Net.Store
                         int len;
                         len = in_Renamed.Read(buffer, 0, buffer.Length);
                         out_Renamed.Write(buffer, 0, len);
+
+			// FIXED trow@novell.com 18 Feb 2005
+			// Commented out unused variables tmpBool3 and generatedAux
+			// to avoid compiler warnings
 						
                         // delete the old file.
-                        bool tmpBool3;
+                        // bool tmpBool3;
                         if (System.IO.File.Exists(old.FullName))
                         {
                             System.IO.File.Delete(old.FullName);
-                            tmpBool3 = true;
+                            // tmpBool3 = true;
                         }
                         else if (System.IO.Directory.Exists(old.FullName))
                         {
                             System.IO.Directory.Delete(old.FullName);
-                            tmpBool3 = true;
+                            // tmpBool3 = true;
                         }
-                        else
-                            tmpBool3 = false;
-                        bool generatedAux = tmpBool3;
+                        //else
+			//tmpBool3 = false;
+                        //bool generatedAux = tmpBool3;
                     }
                     catch (System.IO.IOException e)
                     {

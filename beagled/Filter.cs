@@ -37,20 +37,6 @@ namespace Beagle.Daemon {
 
 	public class Filter {
 
-		public enum ContentType {
-			Text,
-			WhiteSpace,
-			StructuralBreak
-		}
-
-		public delegate void GotPropertyHandler (Property prop);
-		public delegate void GotContentHandler  (ContentType type, string content);
-
-		public event GotPropertyHandler GotPropetyEvent;
-		public event GotContentHandler  GotContentEvent;
-
-		//////////////////////////
-
 		// Derived classes always must have a constructor that
 		// takes no arguments.
 		public Filter () { }

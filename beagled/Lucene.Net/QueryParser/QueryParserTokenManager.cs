@@ -143,12 +143,15 @@ namespace Lucene.Net.QueryParsers
         internal static readonly ulong[] jjbitVec2 = new ulong[]{0x0L, 0x0L, 0xffffffffffffffffL, 0xffffffffffffffffL};
         private int JjMoveNfa_3(int startState, int curPos)
         {
-            int[] nextStates;
+	    // FIXED trow@novell.com 18 Feb 2005
+	    // Removed declaration of unused variables nextStates and j
+	    // to avoid compiler warnings.
+
             int startsAt = 0;
             jjnewStateCnt = 33;
             int i = 1;
             jjstateSet[0] = startState;
-            int j, kind = 0x7fffffff;
+            int kind = 0x7fffffff;
             for (; ; )
             {
                 if (++jjround == 0x7fffffff)
@@ -620,12 +623,15 @@ MatchLoop1:
 		}
 		private int JjMoveNfa_1(int startState, int curPos)
 		{
-			int[] nextStates;
+			// FIXED trow@novell.com 18 Feb 2005
+			// Removed declaration of unused variables nextStates and j
+			// to avoid compiler warnings.
+
 			int startsAt = 0;
 			jjnewStateCnt = 5;
 			int i = 1;
 			jjstateSet[0] = startState;
-			int j, kind = 0x7fffffff;
+			int kind = 0x7fffffff;
 			for (; ; )
 			{
 				if (++jjround == 0x7fffffff)
@@ -770,12 +776,15 @@ MatchLoop1:
 		}
 		private int JjMoveNfa_0(int startState, int curPos)
 		{
-			int[] nextStates;
+			// FIXED trow@novell.com 18 Feb 2005
+			// Removed declaration of unused variables nextStates and j
+			// to avoid compiler warnings.
+
 			int startsAt = 0;
 			jjnewStateCnt = 3;
 			int i = 1;
 			jjstateSet[0] = startState;
-			int j, kind = 0x7fffffff;
+			int kind = 0x7fffffff;
 			for (; ; )
 			{
 				if (++jjround == 0x7fffffff)
@@ -818,7 +827,9 @@ MatchLoop1:
 				}
 				else if (curChar < 128)
 				{
-					ulong l = ((ulong) 1L) << (curChar & 63);
+					// FIXED trow@novell.com 18 Feb 2005
+					// Commented out unused variable l to avoid a compiler warning
+					// ulong l = ((ulong) 1L) << (curChar & 63);
 MatchLoop1: 
 					do 
 					{
@@ -833,11 +844,13 @@ MatchLoop1:
 				}
 				else
 				{
-					int hiByte = (int) (curChar >> 8);
-					int i1 = hiByte >> 6;
-					ulong l1 = ((ulong) 1L) << (hiByte & 63);
-					int i2 = (curChar & 0xff) >> 6;
-					ulong l2 = ((ulong) 1L) << (curChar & 63);
+					// FIXED trow@novell.com 18 Feb 2005
+					// Commented out unused variables hiByte, i1, l1, i2, l2 to avoid compiler warnings
+					// int hiByte = (int) (curChar >> 8);
+					// int i1 = hiByte >> 6;
+					// ulong l1 = ((ulong) 1L) << (hiByte & 63);
+					// int i2 = (curChar & 0xff) >> 6;
+					// ulong l2 = ((ulong) 1L) << (curChar & 63);
 MatchLoop1: 
 					do 
 					{
@@ -948,12 +961,15 @@ MatchLoop1:
 		}
 		private int JjMoveNfa_2(int startState, int curPos)
 		{
-			int[] nextStates;
+			// FIXED trow@novell.com 18 Feb 2005
+			// Removed declaration of unused variables nextStates and j
+			// to avoid compiler warnings.
+
 			int startsAt = 0;
 			jjnewStateCnt = 5;
 			int i = 1;
 			jjstateSet[0] = startState;
-			int j, kind = 0x7fffffff;
+			int kind = 0x7fffffff;
 			for (; ; )
 			{
 				if (++jjround == 0x7fffffff)
@@ -1175,8 +1191,10 @@ MatchLoop1:
 		
 		public virtual Token GetNextToken()
 		{
-			int kind;
-			Token specialToken = null;
+			// FIXED trow@novell.com 18 Feb 2005
+			// Commented out unused variables kind and specialToken to avoid compiler warnings
+			// int kind;
+			// Token specialToken = null;
 			Token matchedToken;
 			int curPos = 0;
 			

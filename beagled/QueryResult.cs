@@ -246,9 +246,10 @@ namespace Beagle.Daemon {
 				Debug.Assert (workers > 0, "Too many calls to WorkerFinished");
 				--workers;
 
-				DateTime then = (DateTime) per_worker_started_time [o];
+
 				DateTime now = DateTime.Now;
 
+				//DateTime then = (DateTime) per_worker_started_time [o];
 				//Logger.Log.Debug ("{0} finished in {1:0.00}s", o, (now - then).TotalSeconds);
 
 				if (workers == 0) {

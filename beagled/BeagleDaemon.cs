@@ -180,10 +180,12 @@ namespace Beagle.Daemon {
 			bool arg_debug = false;
 			bool arg_debug_inotify = false;
 			bool arg_debug_memory = false;
-			bool arg_network = false;
 			bool arg_fg = false;
 			bool arg_disable_scheduler = false;
+#if ENABLE_NETWORK
+			bool arg_network = false;
 			int arg_port = 0;
+#endif
 
 			int i = 0;
 			while (i < args.Length) {
@@ -234,12 +236,13 @@ namespace Beagle.Daemon {
 					++i; // we used next_arg
 					break;
 
-				case "--enable-network":
-					arg_network = true;
-					break;
-
 				case "--disable-scheduler":
 					arg_disable_scheduler = true;
+					break;
+
+#if ENABLE_NETWORK
+				case "--enable-network":
+					arg_network = true;
 					break;
 
 				case "--port":
@@ -250,6 +253,7 @@ namespace Beagle.Daemon {
 					}
 					++i; // we used next_arg
 					break;
+#endif
 
 				default:
 					Console.WriteLine ("Ignoring unknown argument '{0}'", arg);

@@ -118,7 +118,12 @@ namespace Lucene.Net.Analysis.RU
 			if (!FindAndRemoveEnding(stemmingZone, adjectiveEndings))
 				return false;
 			// if adjective ending was found, try for participle ending
-			bool r = FindAndRemoveEnding(stemmingZone, participleEndings1, participle1Predessors) || FindAndRemoveEnding(stemmingZone, participleEndings2);
+
+			// FIXED trow@novell.com 18 Feb 2005
+			// Removed unused dummy variable r to avoid a compiler warning,
+			// use a dummy if-block instead
+			if (FindAndRemoveEnding(stemmingZone, participleEndings1, participle1Predessors)
+			    || FindAndRemoveEnding(stemmingZone, participleEndings2)) { }
 			return true;
 		}
 		
@@ -417,7 +422,10 @@ namespace Lucene.Net.Analysis.RU
 			if (!PerfectiveGerund(stemmingZone))
 			{
 				Reflexive(stemmingZone);
-				bool r = Adjectival(stemmingZone) || Verb(stemmingZone) || Noun(stemmingZone);
+				// FIXED trow@novell.com 18 Feb 2005
+				// Removed unused variable r to avoid a compiler warning,
+				// use a dummy if-block instead
+				if (Adjectival(stemmingZone) || Verb(stemmingZone) || Noun(stemmingZone)) { }
 			}
 			// Step 2
 			RemoveI(stemmingZone);

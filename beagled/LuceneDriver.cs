@@ -117,7 +117,6 @@ namespace Beagle.Daemon {
 			string fingerprintFile = Path.Combine (top_dir, "fingerprint");
 			string lockDir = Path.Combine (top_dir, "Locks");
 			string indexDir = Path.Combine (top_dir, "Index");
-			string queueDir = Path.Combine (top_dir, "Queue");
 			string indexTestFile = Path.Combine (indexDir, "segments");
 
 			bool versionExists = File.Exists (versionFile);
@@ -469,7 +468,6 @@ namespace Beagle.Daemon {
 			if (n_hits == 0)
 				return;
 
-			ArrayList top_hits = new ArrayList ();
 			for (int i = 0; i < n_hits; ++i) {
 				Document doc = hits.Doc (i);
 

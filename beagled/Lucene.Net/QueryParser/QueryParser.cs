@@ -821,7 +821,9 @@ label_1_brk: ;
 			bool prefix = false;
 			bool wildcard = false;
 			bool fuzzy = false;
-			bool rangein = false;
+			// FIXED trow@novell.com 18 Feb 2005
+			// Commented out declaration of unused variable rangein to avoid compiler warning
+			// bool rangein = false;
 			Query q;
 			switch ((jj_ntk == -1) ? Jj_ntk() : jj_ntk)
 			{
