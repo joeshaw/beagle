@@ -52,8 +52,10 @@ namespace Beagle.Tile {
 			}
 
 			buddy = list.Search (Hit ["fixme:speakingto"]);
-			if (buddy != null)
+			if (buddy != null) {
+				Console.WriteLine ("Found buddy info for {0}, icon at {1}", buddy.Alias, buddy.BuddyIconLocation);
 				email = GetEmailForName (buddy.Alias);
+			}
 		}
 
 		protected override void PopulateTemplate ()
@@ -135,9 +137,10 @@ namespace Beagle.Tile {
 			foreach (Evolution.Contact c in matches) {
 				Console.WriteLine ("FIXME: querying the evolution addressbook instead of using Lucene, this is slow and dumb");
 				Console.WriteLine ("Got match: {0} {1}", c.FullName, c.Email1);
-				if (c.Email1 != null)
+				if (c.Email1 != null) {
 					buddy_emails[name] = c.Email1;
-				return c.Email1;
+					return c.Email1;
+				}
 			}
 			buddy_emails[name] = "";
 #endif
