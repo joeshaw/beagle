@@ -59,6 +59,10 @@ namespace Beagle.Util {
 
 			string name = nautilusDir + path + ".xml";
 
+			// If the filename is too long, ignore it.
+			if (Path.GetFileName (name).Length > 255)
+				return null;
+
 			return File.Exists (name) ? name : null;
 		}
 
