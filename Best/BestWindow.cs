@@ -46,7 +46,7 @@ namespace Best {
 			if (queryStr != null)
 				best.Search (queryStr);
 			best.Show ();
-		}
+ 		}
 
 		static public void Create ()
 		{
@@ -80,14 +80,6 @@ namespace Best {
 			const double GOLDEN = 1.61803399;
 			DefaultHeight = 500;
 			DefaultWidth = (int) (DefaultHeight * GOLDEN);
-
-			connection = Bus.GetSessionBus ();
-			service = Service.Get (connection, 
-					       "com.novell.Beagle");
-
-			queryManager = 
-				(QueryManager)service.GetObject (typeof (QueryManager),
-								 "/com/novell/Beagle/QueryManager");
 
 			Best.IncRef ();
 		}
@@ -251,9 +243,7 @@ namespace Best {
 				query.CancelledEvent -= OnCancelled;
 			}
 
-			string queryPath = queryManager.NewQuery ();
-			query = (Query)service.GetObject (typeof (Query),
-							  queryPath);
+			query = Query.New ();
 			
 			query.AddDomain (QueryDomain.Neighborhood);
 			query.AddDomain (QueryDomain.Global);

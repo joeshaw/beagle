@@ -3,9 +3,7 @@ CSC = mcs -g
 
 LOCAL_ASSEMBLIES =			\
 	../Util/Util.dll		\
-	../Lucene.Net/Lucene.Net.dll	\
-	../BeagleClient/Beagle.dll         \
-	../indexer/Indexer.dll
+	../BeagleClient/Beagle.dll
 
 ASSEMBLIES =				\
 	$(EVO_SHARP_LIBS)		\

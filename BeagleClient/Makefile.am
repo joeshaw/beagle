@@ -9,6 +9,7 @@ CSFLAGS = 					\
 	-define:PKGLIBDIR=$(pkglibdir)
 
 CSFILES = 				\
+	$(srcdir)/DBusisms.cs		\
 	$(srcdir)/Hit.cs                \
 	$(srcdir)/Indexer.cs            \
 	$(srcdir)/QueryManager.cs	\
@@ -17,8 +18,8 @@ CSFILES = 				\
 
 
 LOCAL_ASSEMBLIES =			\
-	../Util/Util.dll		\
-	../Lucene.Net/Lucene.Net.dll
+	../Util/Util.dll
+
 
 ASSEMBLIES = 				\
 	$(BEAGLED_LIBS)                 \

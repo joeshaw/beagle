@@ -30,11 +30,12 @@ using System.Threading;
 
 using Gtk;
 
-using Beagle.Core;
 using Beagle;
 using BU = Beagle.Util;
 
 class QueryTool {
+
+	static int count = 0;
 
 	static void WriteHit (Hit hit)
 	{
@@ -54,12 +55,42 @@ class QueryTool {
 		Console.WriteLine ();
 	}
 
+	static void OnGotHits (string results)
+	{
+		foreach (Hit hit in Hit.ReadHitXml (results)) {
+			WriteHit (hit);
+			++count;
+		}
+	}
+
+	static void QuitWithCount (string type)
+	{
+		Console.WriteHit ("{0} after {1} hit{2}.",
+				  type,
+				  count,
+				  count != 1 ? "s" : "");
+	}
+
+	static void OnFinished ()
+	{
+		Console.WriteLine ("Finished after {0} hits.", count);
+		Gtk.Application.Quit ();
+	}
+
+	static void OnCancelled ()
+	{
+		Console.WriteLine ("Cancelled after {0} hits.", count);
+		Gtk.Application.Quit ();
+	}
+
 	static void Main (string[] args) 
 	{
 		Gtk.Application.Init ();
 
-		QueryDriver driver = new QueryDriver ();
-		Beagle.Core.Query query = new Beagle.Core.Query ();
+		Query query = Query.New ();
+		query.GotHitsEvent += OnGotHits;
+		query.FinishedEvent += OnFinished;
+		query.CancelledEvent += OnCancelled;
 
 		int i = 0;
 		while (i < args.Length) {
@@ -72,17 +103,9 @@ class QueryTool {
 			++i;
 		}
 
-		QueryResult result = driver.Query (query);
-		result.Start ();
+		query.Start ();
 
-		Thread.Sleep (1000);
-		result.Wait ();
-
-		foreach (Hit hit in result.Hits) {
-			WriteHit (hit);
-		}
-
-		Console.WriteLine ("Total hits: {0}", result.Count);
+		Gtk.Application.Run ();
 	}
 
 

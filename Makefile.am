@@ -6,9 +6,7 @@ SUBDIRS = 			\
 	images			\
 	templates		\
 	Util			\
-	Lucene.Net 		\
 	BeagleClient            \
-	indexer 		\
 	beagled                 \
 	Filters 		\
 	Tiles			\

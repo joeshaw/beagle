@@ -107,9 +107,7 @@ Makefile
 images/Makefile
 templates/Makefile
 Util/Makefile
-Lucene.Net/Makefile
 BeagleClient/Makefile
-indexer/Makefile
 beagled/Makefile
 Filters/Makefile
 Tiles/Makefile
