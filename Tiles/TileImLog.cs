@@ -78,6 +78,8 @@ namespace Beagle.Tile {
 				fullpath = Path.Combine (fullpath, "icons");
 				fullpath = Path.Combine (fullpath, buddy.BuddyIconLocation);
 
+				Console.WriteLine ("Icon for {0}: {1}", buddy.Alias, fullpath);
+
 				if (File.Exists (fullpath)) {
 					Template["Icon"] = "file://" + fullpath;				} else {
 					Template["Icon"] = Images.GetHtmlSourceForStock ("gnome-gaim", 48);
@@ -87,10 +89,17 @@ namespace Beagle.Tile {
 			}
 		}
 
+		static bool ebook_failed = false;
+
 		private string GetEmailForIm (string im)
 		{
 #if ENABLE_EVO_SHARP
 			Evolution.Book addressbook = null;
+
+			// If we've previously failed to open the
+			// addressbook, don't keep trying.
+			if (ebook_failed)
+				return null;
 
 			// Connect to the Evolution addressbook.
 			try {
@@ -98,6 +107,7 @@ namespace Beagle.Tile {
 				addressbook.Open (true);
 			} catch (Exception e) {
 				Console.WriteLine ("\nCould not open Evolution addressbook:\n" + e);
+				ebook_failed = true;
 				return null;
 			}
 
