@@ -480,8 +480,12 @@ namespace IndexMailTool {
 
 			DateTime lastTime = new DateTime (0);
 			String lastTimeStr = PathFinder.ReadAppDataLine ("IndexMail", dataName);
-			if (lastTimeStr != null)
-				lastTime = DateTime.Parse (lastTimeStr);
+			if (lastTimeStr != null) {
+				try {
+					long ticks = long.Parse (lastTimeStr);
+					lastTime = new DateTime (ticks);
+				} catch { }
+			}
 
 			DateTime latestTime = lastTime;
 
@@ -537,7 +541,7 @@ namespace IndexMailTool {
 				mboxStream.Close ();
 
 			if (latestTime != lastTime)
-				PathFinder.WriteAppDataLine ("IndexMail", dataName, latestTime.ToString ());
+				PathFinder.WriteAppDataLine ("IndexMail", dataName, latestTime.Ticks.ToString ());
 		}
 
 	}
