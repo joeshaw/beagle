@@ -43,6 +43,8 @@ namespace Best {
 
 		public void Add (Hit hit)
 		{
+			Console.WriteLine ("Added {0}", hit.Uri);
+
 			HitFlavor flavor = HitToHitFlavor.Get (hit);
 			if (flavor == null)
 				return;

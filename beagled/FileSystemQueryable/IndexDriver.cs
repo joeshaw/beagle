@@ -307,6 +307,8 @@ namespace Beagle.Daemon.FileSystemQueryable {
 				luceneQuery.Add (uriQuery, true, false);
 			}
 
+			Console.WriteLine (luceneQuery.ToString ());
+
 			return luceneQuery;
 		}		
 
@@ -649,7 +651,7 @@ namespace Beagle.Daemon.FileSystemQueryable {
 
 		public void DoQuery (QueryBody body, IQueryResult result, ICollection listOfUris)
 		{
-			LNS.Query luceneQuery = ToLuceneQuery (body, listOfUris);
+			LNS.Query luceneQuery = ToLuceneQuery (body, null);
 			if (luceneQuery == null)
 				return;
 
@@ -661,6 +663,21 @@ namespace Beagle.Daemon.FileSystemQueryable {
 
 			for (int i = 0; i < nHits; ++i) {
 				Hit hit = FromLuceneHit (luceneHits, i);
+				Console.WriteLine ("Got hit {0} {1}", i, hit.Uri);
+
+				if (listOfUris != null) {
+					bool haveUri = false;
+
+					foreach (Uri uri in listOfUris) {
+						if (uri.Equals (hit.Uri)) {
+							haveUri = true;
+							break;
+						}
+					}
+					
+					if (! haveUri)
+						continue;
+				}
 				
 				// FIXME: Should check that file:// Uris are unchanged, and do
 				// something smart if they aren't.

@@ -50,6 +50,7 @@ namespace Beagle.Daemon {
 		public QueryImpl (QueryDriver _driver)
 		{
 			driver = _driver;
+			driver.ChangedEvent += OnQueryDriverChanged;
 
 			body = new QueryBody ();
 		}
@@ -113,7 +114,6 @@ namespace Beagle.Daemon {
 			AttachResult ();
 
 			driver.DoQuery (body, result);
-			driver.ChangedEvent += OnQueryDriverChanged;
 		}
 
 		public override void Cancel ()

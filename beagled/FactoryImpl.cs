@@ -87,8 +87,10 @@ namespace Beagle.Daemon {
 					Console.WriteLine ("Unregistering {0}", info.Path);
 					DBusisms.Service.UnregisterObject (obj);
 					all_objects.RemoveAt (i);
-					if (obj is IDisposable)
+					if (obj is IDisposable) {
+						Console.WriteLine ("Disposing {0}", info.Path);
 						((IDisposable) obj).Dispose ();
+					}
 					return;
 				}
 			}
@@ -100,9 +102,14 @@ namespace Beagle.Daemon {
 			while (i < all_objects.Count) {
 				ObjectInfo info = (ObjectInfo) all_objects [i];
 				if (info.Owner == owner) {
+					// FIXME: code duplication!
 					Console.WriteLine ("Unregistering {0}", info.Path);
 					DBusisms.Service.UnregisterObject (info.Object);
 					all_objects.RemoveAt (i);
+					if (info.Object is IDisposable) {
+						Console.WriteLine ("Disposing {0}", info.Path);
+						((IDisposable) info.Object).Dispose ();
+					}
 				} else {
 					++i;
 				}

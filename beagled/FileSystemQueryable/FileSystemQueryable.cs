@@ -36,7 +36,7 @@ using BU = Beagle.Util;
 namespace Beagle.Daemon.FileSystemQueryable {
 
 	public class FileSystemChangeData : IQueryableChangeData {
-		public ArrayList AddedUris = new ArrayList ();
+		public ArrayList ChangedUris = new ArrayList ();
 		public ArrayList SubtractedUris = new ArrayList ();
 	}
 
@@ -108,7 +108,7 @@ namespace Beagle.Daemon.FileSystemQueryable {
 				FilteredIndexable indexable = new FilteredIndexable (new Uri (uri, true));
 				indexerQueue.ScheduleAdd (indexable);
 
-				changeData.AddedUris.Add (indexable.Uri);
+				changeData.ChangedUris.Add (indexable.Uri);
 
 			} else if (eventType == FileSystemEventType.Deleted) {
 
@@ -154,8 +154,14 @@ namespace Beagle.Daemon.FileSystemQueryable {
 			if (changeData == null) {
 				indexer.driver.DoQuery (body, queryResult, null);
 			} else {
-				if (changeData.AddedUris.Count > 0)
-					indexer.driver.DoQuery (body, queryResult, changeData.AddedUris);
+				if (changeData.ChangedUris.Count > 0) {
+					// We first subtract all of the changed Uris.  They will get re-added
+					// if they match the query.  This allows us to correctly handle the case of
+					// when a file that matches the query is changed in such a way that it
+					// no longer matches.
+					queryResult.Subtract (changeData.ChangedUris);
+					indexer.driver.DoQuery (body, queryResult, changeData.ChangedUris);
+				}
 				queryResult.Subtract (changeData.SubtractedUris);
 			}
 		}

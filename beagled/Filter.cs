@@ -116,6 +116,7 @@ namespace Beagle.Daemon {
 
 		public void AppendText (string str)
 		{
+			Console.WriteLine ("AppendText (\"{0}\")", str);
 			if (! IsFrozen && str != null && str != "") {
 				textPool.Add (str);
 				if (IsHot)
@@ -138,6 +139,7 @@ namespace Beagle.Daemon {
 
 		public void AppendWhiteSpace ()
 		{
+			Console.WriteLine ("AppendWhiteSpace ()");
 			if (NeedsWhiteSpace (textPool))
 				textPool.Add (" ");
 			if (NeedsWhiteSpace (hotPool))
