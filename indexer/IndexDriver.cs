@@ -250,6 +250,7 @@ namespace Beagle {
 						     string   field,
 						     Analyzer analyzer)
 		{
+			// FIXME: Stemming!
 			LNS.BooleanQuery luceneQuery = new LNS.BooleanQuery ();
 			foreach (string part in query.Parts) {
 				string[] subparts = part.Split (' ');

@@ -157,7 +157,7 @@ namespace Best {
 		{
 			if (src != result)
 				return;
-			Console.WriteLine ("Got {0} Hits!", args.Count);
+			//Console.WriteLine ("Got {0} Hits!", args.Count);
 			foreach (Hit hit in args.Hits)
 				hitContainer.Add (hit);
 		}
@@ -166,7 +166,7 @@ namespace Best {
 		{
 			if (src != result)
 				return;
-			Console.WriteLine ("Finished!");
+			//Console.WriteLine ("Finished!");
 			hitContainer.Close ();
 		}
 
@@ -174,7 +174,7 @@ namespace Best {
 		{
 			if (src != result)
 				return;
-			Console.WriteLine ("Cancelled!");
+			//Console.WriteLine ("Cancelled!");
 			hitContainer.Close ();
 		}
 

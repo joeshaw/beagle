@@ -46,7 +46,7 @@ namespace Best {
 		{
 			renderer = new HitRendererHtml ();
 
-			control = new HitRendererControl ("Foo", "flag-for-followup.png", renderer);
+			control = new HitRendererControl ("Search Results", "flag-for-followup.png", renderer);
 
 			Gtk.ScrolledWindow sw = new Gtk.ScrolledWindow ();
 			sw.Add (renderer.Widget);

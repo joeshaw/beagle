@@ -87,6 +87,10 @@ namespace Beagle {
 			get { return parts; }
 		}
 
+		public bool IsEmpty {
+			get { return parts.Length == 0; }
+		}
+
 		// As the name suggests, this is a transitional API.
 		// (i.e. I don't quite yet know what the hell I'm doing.)
 		public string AbusivePeekInsideQuery {

@@ -64,23 +64,6 @@ namespace Beagle {
 				result    = _result;
 			}
 
-			void Collect (ICollection hits)
-			{
-				// Make sure that hits are properly sourced and locked.
-				foreach (Hit hit in hits) {
-					if (hit == null) {
-						Console.WriteLine ("NULL HIT!");
-						continue;
-					}
-						
-					if (hit.Source == null)
-						hit.Source = queryable.Name;
-					hit.Lockdown ();
-				}
-				
-				result.Add (hits);
-			}
-
 			public void Start ()
 			{
 				try {
@@ -108,8 +91,14 @@ namespace Beagle {
 
 			public void Start (QueryResult result)
 			{
+				// Our iteration over the queryables is preceeded by
+				// a call to WorkerStart and followed by a call to
+				// WorkerFinished.  This ensures that the QueryResult
+				// enters the started and finished states, even if
+				// none of the queryables accept the query.
+				result.WorkerStart ();
 				foreach (IQueryable queryable in queryables) {
-					if (queryable.AcceptQuery (query)) {
+					if (! query.IsEmpty && queryable.AcceptQuery (query)) {
 						QueryClosure qc = new QueryClosure (queryable,
 										    query,
 										    result);
@@ -119,6 +108,7 @@ namespace Beagle {
 						th.Start ();
 					}
 				}
+				result.WorkerFinished ();
 			}
 		}
 

@@ -111,6 +111,14 @@ namespace Beagle.Util {
 			utterances.Add (utt);
 		}
 
+		public void AppendToPreviousUtterance (string text)
+		{
+			if (utterances.Count > 0) {
+				Utterance utt = (Utterance) utterances [utterances.Count - 1];
+				utt.Text += "\n" + text;
+			}
+		}
+
 		public void Load ()
 		{
 			if (loader != null)
@@ -261,13 +269,14 @@ namespace Beagle.Util {
 
 		private void ProcessLine (ImLog log, string line)
 		{
-			int i = line.IndexOf ('(');
-			if (i == -1)
+			if (! line.StartsWith ("(")) {
+				log.AppendToPreviousUtterance (line);
 				return;
-			int j = line.IndexOf (')', i);
+			}
+			int j = line.IndexOf (')');
 			if (j == -1)
 				return;
-			string whenStr = line.Substring (i+1, j-i-1);
+			string whenStr = line.Substring (1, j-1);
 			line = line.Substring (j+1).Trim ();
 
 			string[] whenSplit = whenStr.Split (':');
@@ -286,7 +295,7 @@ namespace Beagle.Util {
 			while (when < log.EndTime)
 				when = when.AddDays (1);
 
-			i = line.IndexOf (':');
+			int i = line.IndexOf (':');
 			if (i == -1)
 				return;
 			string alias = line.Substring (0, i);
@@ -318,7 +327,8 @@ namespace Beagle.Util {
 			if (line == null)
 				return;
 
-			// Could a line ever start w/ < in a non-html log?
+			// Could the second line ever start w/ < in a non-html log?
+			// I hope not!
 			bool isHtml = line.StartsWith ("<");
 			
 			while ((line = sr.ReadLine ()) != null) {
