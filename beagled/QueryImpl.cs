@@ -27,11 +27,7 @@
 using System;
 using System.Collections;
 using System.IO;
-using System.Runtime.Serialization.Formatters.Binary;
 using System.Text;
-using System.Xml;
-
-using BU = Beagle.Util;
 
 namespace Beagle.Daemon {
 
@@ -44,7 +40,7 @@ namespace Beagle.Daemon {
 		private Hashtable allHits = new Hashtable ();
 		
 		public override event StartedHandler StartedEvent;
-		public override event HitsAddedAsXmlHandler HitsAddedAsXmlEvent;
+		public override event HitsAddedAsBinaryHandler HitsAddedAsBinaryEvent;
 		public override event HitsSubtractedAsStringHandler HitsSubtractedAsStringEvent;
 		public override event CancelledHandler CancelledEvent;
 		public override event FinishedHandler FinishedEvent;
@@ -172,25 +168,23 @@ namespace Beagle.Daemon {
 		// QueryResult event handlers
 		//
 
-		private string HitsToXml (ICollection hits)
+		private string HitsToBinary (ICollection hits)
 		{
-			StringWriter stringWriter = new StringWriter ();
-			XmlTextWriter writer = new XmlTextWriter (stringWriter);
+			MemoryStream memStream = new MemoryStream ();
+			BinaryWriter writer = new BinaryWriter (memStream);
 
-			writer.WriteStartElement ("hits");
-			
-			foreach (Hit hit in hits) {
-				hit.WriteToXml (writer);
-			}
+			writer.Write (hits.Count);
+			foreach (Hit hit in hits)
+				hit.WriteAsBinary (writer);
 
-			writer.WriteEndElement ();
-
+			writer.Flush ();
+			byte[] data = memStream.ToArray ();
 			writer.Close ();
-			stringWriter.Close ();
 
-			return stringWriter.ToString ();
+			// FIXME: This could be done much more efficiently by
+			// creating a Base64Stream or something similar.
+			return System.Convert.ToBase64String (data);
 		}
-
 
 		private void OnHitsAddedToResult (QueryResult source, ICollection someHits)
 		{
@@ -209,8 +203,10 @@ namespace Beagle.Daemon {
 			
 			if (HitsSubtractedAsStringEvent != null && toSubtract.Count > 0)
 				HitsSubtractedAsStringEvent (this, UrisToString (toSubtract));
-			if (HitsAddedAsXmlEvent != null && someHits.Count > 0)
-				HitsAddedAsXmlEvent (this, HitsToXml (someHits));
+
+			if (HitsAddedAsBinaryEvent != null && someHits.Count > 0)
+				HitsAddedAsBinaryEvent (this, HitsToBinary (someHits));
+
 		}
 
 		private void OnFinishedResult (QueryResult source) 

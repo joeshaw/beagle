@@ -29,7 +29,6 @@ using System;
 using System.Collections;
 using System.Diagnostics;
 using System.IO;
-using System.Xml;
 
 using BU = Beagle.Util;
 
@@ -79,100 +78,64 @@ namespace Beagle {
 
 		//////////////////////////
 
-		public void WriteToXml (XmlTextWriter writer)
+		public void WriteAsBinary (BinaryWriter writer)
 		{
-			writer.WriteStartElement ("hit");
+			writer.Write (BU.StringFu.DateTimeToString (Timestamp));
+			writer.Write (id);
+			writer.Write (uri.ToString ());
+			writer.Write (type);
+			writer.Write (mimeType);
+			writer.Write (source);
+			writer.Write (scoreRaw);
+			writer.Write (scoreMultiplier);
 
-			writer.WriteAttributeString ("timestamp", BU.StringFu.DateTimeToString (Timestamp));
-			writer.WriteAttributeString ("name", id.ToString ());
-			writer.WriteAttributeString ("uri", uri.ToString ());
-			writer.WriteAttributeString ("type", type);
-			writer.WriteAttributeString ("mimetype", mimeType);
-			writer.WriteAttributeString ("source", source);
-
-			writer.WriteAttributeString ("rawscore", scoreRaw.ToString ());
-			writer.WriteAttributeString ("scoremultiplier", scoreMultiplier.ToString ());
-			
+			writer.Write (properties.Count);
 			foreach (string key in properties.Keys) {
 				string value = (string) properties[key];
-				writer.WriteStartElement ("property");
-				writer.WriteAttributeString ("name", key);
-				writer.WriteString (value);
-				writer.WriteEndElement ();
+				writer.Write (key);
+				writer.Write (value);
 			}
 
+			writer.Write (data.Count);
 			foreach (string key in data.Keys) {
 				byte[] value = (byte[]) data[key];
-				writer.WriteStartElement ("data");
-				writer.WriteAttributeString ("name", key);
-				writer.WriteAttributeString ("length", value.Length.ToString ());
-				writer.WriteBase64 (value, 0, value.Length);
-				writer.WriteEndElement ();
+				writer.Write (key);
+				writer.Write (value.Length);
+				writer.Write (value);
+			}
+		}
+
+		public static Hit ReadAsBinary (BinaryReader reader)
+		{
+			Hit hit = new Hit ();
+			
+			hit.Timestamp = BU.StringFu.StringToDateTime (reader.ReadString ());
+			hit.id = reader.ReadInt32 ();
+			hit.uri = new Uri (reader.ReadString ());
+			hit.type = reader.ReadString ();
+			hit.mimeType = reader.ReadString ();
+			hit.source = reader.ReadString ();
+			hit.scoreRaw = reader.ReadSingle ();
+			hit.scoreMultiplier = reader.ReadSingle ();
+
+			int numProps = reader.ReadInt32 ();
+			for (int i = 0; i < numProps; i++) {
+				string key = reader.ReadString ();
+				string value = reader.ReadString ();
+
+				hit[key] = value;
 			}
 
-			writer.WriteEndElement (); // </hit>
+			int numData = reader.ReadInt32 ();
+			for (int i = 0; i < numData; i++) {
+				string key = reader.ReadString ();
+				int size = reader.ReadInt32 ();
+				byte[] data = reader.ReadBytes (size);
+			}
 
-			// FIXME: write the Versioned info
+			return hit;
 		}
 		
-		public void ReadFromXml (XmlTextReader reader)
-		{
-			// This is a pretty lame reader 
-			Timestamp = BU.StringFu.StringToDateTime (reader.GetAttribute ("timestamp"));
-			id = int.Parse (reader.GetAttribute ("name"));
-			uri = new Uri (reader.GetAttribute ("uri"), true);
-			type = reader.GetAttribute ("type");
-			mimeType = reader.GetAttribute ("mimetype");
-			source = reader.GetAttribute ("source");
-
-			scoreRaw = float.Parse (reader.GetAttribute ("rawscore"));
-			scoreMultiplier = float.Parse (reader.GetAttribute ("scoremultiplier"));
-
-			bool in_property = true;
-			while (reader.Read ()) {		
-				if (reader.NodeType == XmlNodeType.Element
-				    && reader.Name == "property") {
-					string name = reader.GetAttribute ("name");
-
-					reader.Read ();
-					string value = reader.Value;
-					properties [name] = value;
-					
-				} else if (reader.NodeType == XmlNodeType.Element
-					   && reader.Name == "data") {
-					string name = reader.GetAttribute ("name");
-					int length = int.Parse (reader.GetAttribute ("length"));
-					
-					byte[] value = new byte [length];
-					reader.ReadBase64 (value, 0, length);
-					data [name] = value;
-
-				} else if (reader.NodeType == XmlNodeType.EndElement
-					   && reader.Name == "hit") {
-					break;
-				}
-			}
-		}
-
-		public static ArrayList ReadHitXml (string xml)
-		{
-			XmlTextReader reader = new XmlTextReader (new StringReader (xml));
-			ArrayList hits = new ArrayList ();
-
-			// FIXME: this should probably be tightened up
-			while (reader.Read ()) {
-				if (reader.NodeType == XmlNodeType.Element) {
-					if (reader.Name == "hit") {
-						Hit hit = new Hit ();
-						hit.ReadFromXml (reader);
-						hits.Add (hit);
-					}
-				}
-			}
-
-			return hits;
-		}
-
 		public int Id {
 			get { return id; }
 			set { id = value; }

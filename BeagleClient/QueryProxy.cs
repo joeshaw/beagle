@@ -72,9 +72,9 @@ namespace Beagle
 		[Signal]
 		public virtual event StartedHandler StartedEvent;
 
-		public delegate void HitsAddedAsXmlHandler (QueryProxy sender, string hitsXml);
+		public delegate void HitsAddedAsBinaryHandler (QueryProxy sender, string hits);
 		[Signal]
-		public virtual event HitsAddedAsXmlHandler HitsAddedAsXmlEvent;
+		public virtual event HitsAddedAsBinaryHandler HitsAddedAsBinaryEvent;
 
 		public delegate void HitsSubtractedAsStringHandler (QueryProxy sender, string uriList);
 		[Signal]

@@ -26,7 +26,9 @@
 
 using System;
 using System.Collections;
+using System.IO;
 using DBus;
+using Beagle.Util;
 
 namespace Beagle
 {
@@ -48,7 +50,7 @@ namespace Beagle
 
 		public Query ()
 		{
-			HitsAddedAsXmlEvent += OnHitsAddedAsXml;
+			HitsAddedAsBinaryEvent += OnHitsAddedAsBinary;
 			HitsSubtractedAsStringEvent += OnHitsSubtractedAsString;
 			CancelledEvent += OnCancelled;
 		}
@@ -84,12 +86,24 @@ namespace Beagle
 			catch (Exception e) { }
 		}
 
-		private void OnHitsAddedAsXml (QueryProxy sender, string hitsXml)
+		private void OnHitsAddedAsBinary (QueryProxy sender, string hitsData)
 		{
-			System.Console.WriteLine ("Hits added");
+			byte[] binaryData = Convert.FromBase64String (hitsData);
+			MemoryStream memStream = new MemoryStream (binaryData, false);
+			BinaryReader reader = new BinaryReader (memStream);
 
-			ArrayList hits = Hit.ReadHitXml (hitsXml);
-			
+			int numHits = reader.ReadInt32 ();
+
+			Console.WriteLine ("Got {0} hits", numHits);
+
+			ArrayList hits = new ArrayList ();
+			for (int i = 0; i < numHits; i++) {
+				Hit hit = Hit.ReadAsBinary (reader);
+				hits.Add (hit);
+			}
+
+			reader.Close ();
+
 			if (HitAddedEvent != null && hits.Count > 0) {
 				foreach (Hit hit in hits)
 					HitAddedEvent (this, hit);
