@@ -39,13 +39,25 @@ namespace Beagle.Daemon {
 
 		public abstract double GetMultiplier (Hit hit);
 
-		public static double HalfLifeMultiplier (DateTime time)
+		// FIXME: A decaying half-life is a little sketchy, since data
+		// will eventually decay beyond the epsilon and be dropped
+		// from the results entirely, which is almost never what we
+		// want, particularly in searches with a few number of
+		// results.  But with a default half-life of 6 months, it'll
+		// take over 13 years to fully decay outside the epsilon on
+		// this multiplier alone.
+		public static double HalfLifeMultiplier (DateTime time, int half_life_days)
 		{
 			double days = (DateTime.Now - time).TotalDays;
 			if (days < 0)
 				return 1.0;
-			// Relevancy half-life is three months.
-			return Math.Pow (0.5, days / 91.0);
+			return Math.Pow (0.5, days / (double) half_life_days);
+		}
+
+		public static double HalfLifeMultiplier (DateTime time)
+		{
+			// Default relevancy half-life is six months.
+			return HalfLifeMultiplier (time, 181);
 		}
 
 	}

@@ -381,6 +381,11 @@ namespace Beagle.Daemon {
 				indexable.AddProperty (Property.NewKeyword ("fixme:mlist", list_id));
 			}
 
+			if (this.folder_name == "Sent")
+				indexable.AddProperty (Property.NewDate ("fixme:sentdate", message.Date));
+			else
+				indexable.AddProperty (Property.NewDate ("fixme:received", message.Date));
+
 #if false
 			// FIXME - XXX
                         indexable.AddProperty (Property.NewKeyword ("fixme:flags",    messageInfo.flags));
