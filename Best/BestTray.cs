@@ -142,9 +142,9 @@ namespace Best {
 			args.RetVal = (object)true;
 		}
 
-		void CloseEvent (object sender, EventArgs args)
+		void QuitEvent (object sender, EventArgs args)
 		{
-			win.Hide ();
+			Application.Quit ();
 		}
 		
 		void QuickSearchEvent (object sender, EventArgs args) 
@@ -188,9 +188,9 @@ namespace Best {
 			
 			menu.Append (new Gtk.SeparatorMenuItem ());			
 		
-			item = new Gtk.ImageMenuItem ("Close");
-			item.Image = new Gtk.Image (Gtk.Stock.Close, Gtk.IconSize.Menu);
-			item.Activated += new EventHandler (CloseEvent);
+			item = new Gtk.ImageMenuItem ("Quit");
+			item.Image = new Gtk.Image (Gtk.Stock.Quit, Gtk.IconSize.Menu);
+			item.Activated += new EventHandler (QuitEvent);
 			menu.Append (item);
 			
 			menu.ShowAll ();
