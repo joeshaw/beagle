@@ -73,13 +73,13 @@ td.content {
 }
 
 ul, li { 
-  display: inline;
   margin-left: 6px;
-  padding: 0px;
 }
 
 .actions li {
   display: inline;
+  padding-top: 3px;
+  padding-bottom: 3px;
   padding-left: 20px;
   padding-right: 6px;
   background: url(@stock%stock_right@) no-repeat;
