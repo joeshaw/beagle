@@ -20,30 +20,6 @@ WRAPPER_SED = sed 					\
 	-e "s|\@gacprefix\@|$(GAC_PREFIX)|g"
 
 
-CRAWLER_TARGET  = Crawler.exe
-CRAWLER_WRAPPER = beagle-index-files
-CRAWLER_CSFILES =$(srcdir)/Crawler.cs
-
-$(CRAWLER_TARGET): $(CRAWLER_CSFILES) $(LOCAL_ASSEMBLIES)
-	$(CSC) -o $@ $(CSFLAGS) $(CRAWLER_CSFILES) $(ASSEMBLIES)
-
-$(CRAWLER_WRAPPER): $(WRAPPER_IN)
-	$(WRAPPER_SED) -e "s|\@target\@|$(CRAWLER_TARGET)|g" < $(srcdir)/$(WRAPPER_IN) > $@
-	chmod +x $(CRAWLER_WRAPPER)
-
-
-CRAWLER_RSS20_TARGET = CrawlerRSS20.exe
-CRAWLER_RSS20_WRAPPER = beagle-index-rss
-CRAWLER_RSS20_CSFILES = $(srcdir)/CrawlerRSS20.cs
-
-$(CRAWLER_RSS20_TARGET): $(CRAWLER_RSS20_CSFILES) $(LOCAL_ASSEMBLIES)
-	$(CSC) -o $@ $(CSFLAGS) $(CRAWLER_RSS20_CSFILES) $(ASSEMBLIES)
-
-$(CRAWLER_RSS20_WRAPPER): $(WRAPPER_IN)
-	$(WRAPPER_SED) -e "s|\@target\@|$(CRAWLER_RSS20_TARGET)|g" < $(srcdir)/$(WRAPPER_IN) > $@
-	chmod +x $(CRAWLER_RSS20_WRAPPER)
-
-
 QUERY_TARGET  = Query.exe
 QUERY_WRAPPER = beagle-query
 QUERY_CSFILES = $(srcdir)/Query.cs
@@ -67,39 +43,13 @@ $(INDEX_WEB_CONTENT_WRAPPER): $(WRAPPER_IN)
 	chmod +x $(INDEX_WEB_CONTENT_WRAPPER)
 
 
-INDEX_MAIL_TARGET = IndexMail.exe
-INDEX_MAIL_WRAPPER = beagle-index-mail
-INDEX_MAIL_CSFILES = $(srcdir)/IndexMail.cs
-
-$(INDEX_MAIL_TARGET): $(INDEX_MAIL_CSFILES) $(LOCAL_ASSEMBLIES)
-	$(CSC) -o $@ $(CSFLAGS) $(INDEX_MAIL_CSFILES) $(ASSEMBLIES)
-
-$(INDEX_MAIL_WRAPPER): $(WRAPPER_IN)
-	$(WRAPPER_SED) -e "s|\@target\@|$(INDEX_MAIL_TARGET)|g" < $(srcdir)/$(WRAPPER_IN) > $@
-	chmod +x $(INDEX_MAIL_WRAPPER)
-
-
-UPDATE_SCRIPT = beagle-update-index
-
-$(UPDATE_SCRIPT): $(UPDATE_SCRIPT).in
-	sed -e "s|\@prefix\@|$(prefix)|g" < $(srcdir)/$(WRAPPER_IN) > $@
-	chmod +x $@
-
 TARGETS = 				\
 	$(QUERY_TARGET)                 \
-	$(CRAWLER_TARGET)		\
 	$(INDEX_WEB_CONTENT_TARGET)
 
-
-#$(CRAWLER_RSS20_TARGET)	
-
 WRAPPERS = 				\
-	$(CRAWLER_WRAPPER)		\
 	$(QUERY_WRAPPER)		\
-	$(INDEX_WEB_CONTENT_WRAPPER)	\
-	$(INDEX_MAIL_WRAPPER)
-
-#$(CRAWLER_RSS20_WRAPPER)	
+	$(INDEX_WEB_CONTENT_WRAPPER)
 
 bin_SCRIPTS = 			\
 	$(WRAPPERS) 		\
@@ -118,11 +68,8 @@ uninstall-local:
 
 EXTRA_DIST =				\
 	$(WRAPPER_IN)			\
-	$(CRAWLER_CSFILES)		\
-	$(CRAWLER_RSS20_CSFILES)	\
 	$(QUERY_CSFILES)		\
 	$(INDEX_WEB_CONTENT_CSFILES)	\
-	$(INDEX_MAIL_CSFILES)		\
 	$(UPDATE_SCRIPT).in		\
 	beagle-ping
 

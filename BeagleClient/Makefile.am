@@ -18,8 +18,6 @@ CSFILES = 					\
 	$(srcdir)/Property.cs           	\
 	$(srcdir)/QueryProxy.cs         	\
 	$(srcdir)/Query.cs              	\
-	$(srcdir)/FileSystemIndexerProxy.cs	\
-	$(srcdir)/FileSystemIndexer.cs		\
 	$(srcdir)/WebHistoryIndexerProxy.cs	\
 	$(srcdir)/WebHistoryIndexer.cs
 

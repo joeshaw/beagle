@@ -33,17 +33,11 @@ namespace Beagle {
 		private static object the_factory_lock = new object ();
 		private static Factory the_factory = null;
 
-		private static void OnBeagleDown () 
-		{
-			the_factory = null;
-		}
-
 		private static Factory TheFactory {
 			get {
 				lock (the_factory_lock) {
 					if (the_factory == null) {
 						the_factory = (Factory) DBusisms.Service.GetObject (typeof (Factory), DBusisms.FactoryPath);
-						DBusisms.BeagleDown += OnBeagleDown;
 					}
 				}
 				return the_factory;
