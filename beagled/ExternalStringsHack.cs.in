@@ -19,5 +19,9 @@ namespace Beagle.Daemon {
 		static public string PkgLibDir {
 			get { return "@pkglibdir@"; }
 		}
+
+		static public string GnomePrefix {
+			get { return "@GNOME_PREFIX@"; }
+		}
 	}	  
 }

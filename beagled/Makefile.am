@@ -28,6 +28,7 @@ $(EXTSTR): $(EXTSTR_IN)
 	sed	-e "s|\@prefix\@|$(prefix)|g"		\
 		-e "s|\@pkglibdir\@|$(pkglibdir)|g"	\
 		-e "s|\@VERSION\@|$(VERSION)|g"		\
+		-e "s|\@GNOME_PREFIX\@|$(GNOME_PREFIX)|g"	\
 		< $(EXTSTR_IN) > $@
 
 
@@ -373,6 +374,11 @@ blamqueryable = $(srcdir)/BlamQueryable
 BLAM_QUERYABLE_CSFILES =				\
 	$(blamqueryable)/BlamQueryable.cs
 
+launcherqueryable = $(srcdir)/LauncherQueryable
+LAUNCHER_QUERYABLE_CSFILES =				\
+	$(launcherqueryable)/LauncherQueryable.cs
+
+
 
 #	$(EVO_MAIL_DRIVER_CSFILES)		\
 #		$(TOMBOY_QUERYABLE_CSFILES)		\
@@ -390,6 +396,7 @@ DAEMON_DLL_CSFILES = 						\
 	$(BLAM_QUERYABLE_CSFILES)				\
 	$(EVO_MAIL_QUERYABLE_CSFILES)				\
 	$(WEB_HISTORY_QUERYABLE_CSFILES)			\
+	$(LAUNCHER_QUERYABLE_CSFILES)				\
 	$(srcdir)/BugzillaDriver.cs 				\
 	$(srcdir)/Crawler.cs					\
 	$(srcdir)/DBusisms.cs					\

@@ -348,6 +348,9 @@ dnl Remove stray :s
 GAC_PREFIX="`echo $GAC_PREFIX | sed -e 's|::\+|:|g' -e 's|^:\+||' -e 's|:\+$||'`"
 AC_SUBST(GAC_PREFIX)
 
+GNOME_PREFIX="`$PKG_CONFIG --variable=prefix libgnome-2.0`"
+AC_SUBST(GNOME_PREFIX)
+
 AC_OUTPUT([
 Makefile
 Util/Makefile
