@@ -38,7 +38,8 @@ CSFILES = 			        	\
 	$(srcdir)/SystemInformation.cs		\
 	$(srcdir)/ThreadedPriorityQueue.cs	\
 	$(srcdir)/UriFu.cs			\
-	$(srcdir)/Vfs.cs
+	$(srcdir)/Vfs.cs                        \
+	$(srcdir)/XKeybinder.cs
 
 ASSEMBLIES =					\
 	$(BEAGLE_UI_LIBS)			\

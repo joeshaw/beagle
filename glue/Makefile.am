@@ -20,7 +20,8 @@ gluelibdir = $(pkglibdir)
 gluelib_LTLIBRARIES = 		\
 	libinotifyglue.la 	\
 	libscreensaverglue.la	\
-	libgeckoglue.la
+	libgeckoglue.la         \
+	libkeyglue.la
 
 libinotifyglue_la_SOURCES =	\
 	inotify.h		\
@@ -36,5 +37,10 @@ libgeckoglue_la_SOURCES=        \
 	gecko-utils.cpp
 libgeckoglue_la_LIBADD=$(LIBGECKOGLUE_LIBS)
 
+libkeyglue_la_SOURCES =         \
+	tomboykeybinder.c       \
+	tomboykeybinder.h       \
+	eggaccelerators.c       \
+	eggaccelerators.h
 
 

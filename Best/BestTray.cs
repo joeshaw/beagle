@@ -22,13 +22,15 @@ namespace Best {
 		TrayIcon tray_icon;
 
 		BestWindow win;
+		Gtk.Button button;
+		GConfXKeybinder keybinder;
 
 		public BestTray (BestWindow bw)
 		{
 			win = bw;
 			win.DeleteEvent += new DeleteEventHandler (DeleteEvent);
-			
-			Gtk.Button button = new Gtk.Button ();
+			button = new Gtk.Button ();			
+
 			Gtk.Widget icon_image = new Gtk.Image (Images.GetPixbuf ("smalldog.png"));
 			button.Add (icon_image);
 			button.Relief = Gtk.ReliefStyle.None;
@@ -40,6 +42,22 @@ namespace Best {
 
 			tray_icon.Add (button);
 			tray_icon.ShowAll ();
+
+			keybinder = new GConfXKeybinder ();
+			keybinder.Bind ("/apps/Beagle/keybindings/show_beagle",
+					"F12",
+					new EventHandler (ShowBeaglePressed));
+		}
+
+		private void ShowBeaglePressed (object o, EventArgs args)
+		{
+			if (!win.Visible) {
+				button.Press ();
+			} else {
+				win.Show ();
+				win.Present ();
+				win.FocusEntry ();
+			}
 		}
 
 		void ButtonPress (object sender, EventArgs args) 
