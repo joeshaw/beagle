@@ -228,10 +228,6 @@ namespace Beagle.Daemon {
 
 		///////////////////////////////////////////////////////////////////
 
-		// FIXME: Since the Sqlite store will (in general) not have many
-		// entries, we should probably optimize for the case of store_sqlite.Read (path)
-		// returning null.  Maybe we could keep a cache of the stored paths in memory? 
-
 		public FileAttributes Read (string path)
 		{
 			SqliteCommand command;
@@ -241,30 +237,37 @@ namespace Beagle.Daemon {
 				return null;
 
 			FileAttributes attr = null;
+			bool found_too_many = false;
 
 			// We need to quote any 's that appear in the strings
 			// (int particular, in the path)
-			string directory = Path.GetDirectoryName (path);
-			string filename = Path.GetFileName (path);
+			string directory = Path.GetDirectoryName (path).Replace ("'", "''");
+			string filename = Path.GetFileName (path).Replace ("'", "''");
 			lock (connection) {
 				command = QueryCommand ("directory='{0}' AND filename='{1}'",
-							directory.Replace ("'", "''"),
-							filename.Replace ("'", "''"));
+							directory, filename);
 				reader = command.ExecuteReader ();
 				
 				if (reader.Read ()) {
 					attr = GetFromReader (reader);
 					
 					if (reader.Read ())
-						throw new Exception ("Matched multiple items when only expecting one: path=" + path);
+						found_too_many = true;
 				}
 				reader.Close ();
 				command.Dispose ();
+
+				// If we found more than one matching record for a given
+				// directory and filename, something has gone wrong.
+				// Since we have no way of knowing which one is correct
+				// and which isn't, we delete them all and return
+				// null.  (Which in most cases will force a re-index.
+				if (found_too_many) {
+					DoNonQuery ("DELETE FROM file_attributes WHERE directory='{0}' AND filename='{1}'",
+						    directory, filename);
+				}
 			}
 
-			if (attr == null)
-				SetPathFlag (path, false);
-				
 			return attr;
 		}
 
@@ -278,7 +281,8 @@ namespace Beagle.Daemon {
 				DoNonQuery ("INSERT OR REPLACE INTO file_attributes " +
 					    " (unique_id, directory, filename, last_mtime, last_indexed, filter_name, filter_version) " +
 					    " VALUES ('{0}', '{1}', '{2}', '{3}', '{4}', '{5}', '{6}')",
-					    fa.UniqueId, fa.Directory.Replace ("'", "''"), fa.Filename.Replace ("'", "''"),
+					    fa.UniqueId,
+					    fa.Directory.Replace ("'", "''"), fa.Filename.Replace ("'", "''"),
 					    StringFu.DateTimeToString (fa.LastWriteTime),
 					    StringFu.DateTimeToString (fa.LastIndexedTime),
 					    fa.FilterName,
@@ -294,12 +298,11 @@ namespace Beagle.Daemon {
 
 			// We need to quote any 's that appear in the strings
 			// (in particular, in the path)
-			string directory = Path.GetDirectoryName (path);
-			string filename = Path.GetFileName (path);
+			string directory = Path.GetDirectoryName (path).Replace ("'", "''");
+			string filename = Path.GetFileName (path).Replace ("'", "''");
 			lock (connection) {
 				DoNonQuery ("DELETE FROM file_attributes WHERE directory='{0}' AND filename='{1}'",
-					    directory.Replace ("'", "''"),
-					    filename.Replace ("'", "''"));
+					    directory, filename);
 			}
 		}
 	}
