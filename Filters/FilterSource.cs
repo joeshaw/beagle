@@ -139,8 +139,7 @@ namespace Beagle.Filters {
 						AppendText (token.ToString());
 						token.Remove (0, token.Length);
 					} else {
-						StrConstIdentifier = "" + str[index] +
-							str[index+1] + str[index+2];
+						StrConstIdentifier = str.Substring (index, 3);
 						SrcLineType = LineType.StringConstant;
 						token.Remove (0, token.Length);
 						index += 2;
@@ -159,7 +158,7 @@ namespace Beagle.Filters {
 						token.Remove (0, token.Length);
 
 					} else if (SrcLineType == LineType.None) {
-						StrConstIdentifier = "" + str[index];
+						StrConstIdentifier = str.Substring (index, 1);
 						SrcLineType = LineType.StringConstant;
 						token.Remove (0, token.Length);
 					} else
@@ -167,7 +166,8 @@ namespace Beagle.Filters {
 					splCharSeq = "";
 
 				} else if (SrcLineType != LineType.None) {
-					token.Append (splCharSeq + str[index]);
+					token.Append (splCharSeq);
+					token.Append (str[index]);
 					splCharSeq = "";
 
 				} else if (SrcLineType == LineType.None) {

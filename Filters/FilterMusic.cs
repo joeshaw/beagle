@@ -71,13 +71,13 @@ namespace Beagle.Filters {
 				AddProperty (Beagle.Property.New ("fixme:album",   tag.Album));
 			
 			if (tag.Title.Length > 0)
-				AddProperty (Beagle.Property.New ("fixme:song",    tag.Title));
+				AddProperty (Beagle.Property.New ("fixme:title",    tag.Title));
 
 			if (tag.Comment.Length > 0)
 				AddProperty (Beagle.Property.New ("fixme:comment", tag.Comment));
 
 			if (tag.Track.Length > 0)
-				AddProperty (Beagle.Property.NewKeyword ("fixme:track", tag.Track));
+				AddProperty (Beagle.Property.NewKeyword ("fixme:tracknumber", tag.Track));
 
 			if (tag.Year.Length > 0)
 				AddProperty (Beagle.Property.NewKeyword ("fixme:year",  tag.Year));

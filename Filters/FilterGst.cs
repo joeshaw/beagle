@@ -77,8 +77,6 @@ namespace Beagle.Filters {
 
 		protected override void DoPullProperties ()
 		{
-			//Util.Logger.Log.Debug("FilterGst begin: {0}", FileInfo.FullName);
-
 			Pipeline pipe = new Pipeline(null);
 
 			FileSrc src = ElementFactory.Make ("filesrc", null) as FileSrc;
@@ -107,7 +105,6 @@ namespace Beagle.Filters {
 			pipe.SetState(ElementState.Null);
 
 			Finished ();
-			//Util.Logger.Log.Debug("FilterGst end: {0}", FileInfo.FullName);
 		}
 
 		void HandoffHandler (object o, HandoffArgs args) {
@@ -120,11 +117,11 @@ namespace Beagle.Filters {
 		void FoundTagHandler (object o, FoundTagArgs args) {
 			TagList list = args.TagList;
 			list.Foreach(new TagForeachFunc(TagForeachFunc));
-			//Util.Logger.Log.Debug("FilterGst Got tags");
 		}
 		void TagForeachFunc (TagList list, string tag) {
 			string val_str;
-			
+			uint val_uint;
+
 			switch (tag) {
 				//Strings
 				case "comment":
@@ -134,6 +131,11 @@ namespace Beagle.Filters {
 				case "album":
 				list.GetString(tag, out val_str);
 				AddProperty (Beagle.Property.New ("fixme:" + tag, val_str));
+				break;
+
+				case "track-number":
+				list.GetUint(tag, out val_uint);
+				AddProperty (Beagle.Property.New ("fixme:tracknumber", val_uint));
 				break;
 			}
 		}

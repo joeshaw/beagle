@@ -33,7 +33,16 @@ using BU = Beagle.Util;
 namespace Beagle.Tile {
 
 	[HitFlavor (Name="Music", Rank=400, Emblem="emblem-music.png", Color="#f5f5fe",
-		    Type="File", MimeType="audio/mpeg")]
+		    Type="File", MimeType="audio/x-mp3"),
+	 HitFlavor (Name="Music", Rank=400, Emblem="emblem-music.png", Color="#f5f5fe",
+		    Type="File", MimeType="audio/mpeg"),
+	 HitFlavor (Name="Music", Rank=400, Emblem="emblem-music.png", Color="#f5f5fe",
+		    Type="File", MimeType="application/ogg"),
+	 HitFlavor (Name="Music", Rank=400, Emblem="emblem-music.png", Color="#f5f5fe",
+		    Type="File", MimeType="application/x-flac"),
+	 HitFlavor (Name="Music", Rank=400, Emblem="emblem-music.png", Color="#f5f5fe",
+		    Type="File", MimeType="video/x-ms-asf")]
+
 	public class TileMusic : TileFile {
 		public TileMusic (Hit _hit) : base (_hit, 
 						    "template-music.html")
@@ -43,9 +52,36 @@ namespace Beagle.Tile {
 		protected override void PopulateTemplate ()
 		{
 			base.PopulateTemplate ();
+			
+			if (Hit ["fixme:title"] == null)
+				Template ["Title"] = Hit ["fixme:splitname"];
+			else
+				Template ["Title"] = Hit ["fixme:title"];
 
-			if (Hit ["fixme:song"] == null || Hit ["fixme:song"] == "")
-				Template ["Song"] = Hit ["fixme:splitname"];
+			if (Hit ["fixme:artist"] == null)
+				Template ["Artist"] = "Unknown Artist";
+			else
+				Template ["Artist"] = Hit ["fixme:artist"];
+		}
+		
+		[TileAction]
+		public void Enqueue ()
+		{
+			EnqueueMedia (Hit);
+		}
+
+		protected void EnqueueMedia(Hit hit)
+		{
+			Process p = new Process ();
+			p.StartInfo.UseShellExecute = false;
+			p.StartInfo.FileName = "totem";
+			p.StartInfo.Arguments = "--enqueue " + hit.PathQuoted;
+
+			try {
+				p.Start ();
+			} catch (Exception e) {
+				Console.WriteLine ("Error in EnqueueMedia: " + e);
+			}
 		}
 	}
 }

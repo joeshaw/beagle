@@ -43,7 +43,7 @@ namespace Beagle.Filters {
 			string str = TextReader.ReadLine ();
 			if (str == null) {
 				Finished ();
-			} else {
+			} else if (str.Length > 0) {
 				AppendText (str);
 				AppendStructuralBreak ();
 			}
