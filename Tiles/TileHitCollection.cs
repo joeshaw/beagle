@@ -196,8 +196,8 @@ namespace Beagle.Tile {
 			int counter = 0;
 
 			double widthPerc = 100.0 / columns;
-			//string td = String.Format ("<td width=\"{0}%\">", widthPerc);
-			string td = "<td>";
+			//string td = String.Format ("<td valign=\"top\" width=\"{0}%\">", widthPerc);
+			string td = "<td valign=\"top\" height=\"100%\" width=\"100%\">";
 
 			//ctx.Write ("<table width=\"100%\">");
 			ctx.Write ("<table>");

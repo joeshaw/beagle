@@ -50,7 +50,6 @@ namespace Beagle {
 
 			Query query;
 			query = (Query) DBusisms.Service.GetObject (typeof (Query), path);
-			
 			return query;
 		}
 	}

@@ -22,6 +22,7 @@ CSFILES = 			        	\
 	$(srcdir)/gnome.cs              	\
 	$(srcdir)/Id3.cs                	\
 	$(srcdir)/ImLog.cs              	\
+	$(srcdir)/ImBuddy.cs              	\
 	$(srcdir)/Inotify.cs			\
 	$(srcdir)/JpegHeader.cs			\
 	$(srcdir)/Logger.cs             	\
@@ -35,7 +36,8 @@ CSFILES = 			        	\
 	$(srcdir)/TaskManager.cs		\
 	$(srcdir)/ThreadedPriorityQueue.cs	\
 	$(srcdir)/UriFu.cs			\
-	$(srcdir)/Vfs.cs
+	$(srcdir)/Vfs.cs			\
+	$(srcdir)/../beagled/FileSystemEventMonitor.cs
 
 ASSEMBLIES =					\
 	$(BEAGLE_UI_LIBS)			\

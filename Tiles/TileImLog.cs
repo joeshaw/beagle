@@ -25,6 +25,8 @@
 //
 
 using System;
+using System.IO;
+using System.Collections;
 using BU = Beagle.Util;
 
 namespace Beagle.Tile {
@@ -34,75 +36,102 @@ namespace Beagle.Tile {
 	public class TileImLog : TileFromTemplate {
 
 		Hit hit;
-
+		BU.ImBuddy buddy = null;
+		static BU.GaimBuddyListReader list = null;
+		
 		public TileImLog (Hit _hit) : base ("template-im-log.html")
 		{
+			if (list == null) {
+				list = new BU.GaimBuddyListReader ();
+			}
+
 			hit = _hit;
+
+			buddy = list.Search (hit ["fixme:speakingto"]);
 		}
 
-		private string niceTime (string str)
+		private string HighlightOrNull (string haystack, string [] needles)
 		{
-			DateTime date = BU.StringFu.StringToDateTime (str);
+			string [] highlight_start_list = {"<font color=red>",
+							  "<font color=orange>",
+							  "<font color=green>",
+							  "<font color=blue>"};
 
-			DateTime now = DateTime.Now;
-			string short_time = date.ToShortTimeString ();
+			string highlight_end   = "</font>";
 
-			if (date.Year == now.Year) {
-				if (date.DayOfYear == now.DayOfYear)
-					return String.Format ("Today, {0}", short_time);
-				else if (date.DayOfYear == now.DayOfYear - 1)
-					return String.Format ("Yesterday, {0}", short_time);
-				else if (date.DayOfYear > now.DayOfYear - 6)
-					return String.Format ("{0} days ago, {1}",
-							      now.DayOfYear - date.DayOfYear,
-							      short_time);
-				else
-					return date.ToString ("MMMM d, h:mm tt");
+			string hili = haystack;
+			bool dirty = false;
+			int hicolor = -1;
+			foreach (string needle in needles) {
+				string h_up = hili.ToUpper ();
+				string n_up = needle.ToUpper ();
+
+				hicolor = (hicolor + 1) % 4;
+				string highlight_start = highlight_start_list [hicolor];
+				
+				int ni = h_up.IndexOf (n_up);
+				if (ni == -1)
+					continue;
+
+				while (ni != -1) {
+					hili = hili.Insert (ni, highlight_start);
+					hili = hili.Insert (ni + highlight_start.Length + needle.Length, highlight_end);
+
+					h_up = hili.ToUpper ();
+					dirty = true;
+
+					ni = h_up.IndexOf (n_up, ni + highlight_start.Length + needle.Length + highlight_end.Length);
+				}
 			}
 
-			return date.ToString ("MMMM d yyyy, h:mm tt");
+			if (dirty) {
+				Console.WriteLine ("Hi: " + hili);
+				return hili;
+			}
+			else
+				return null;
 		}
-		
-		public string niceDuration (string end_str, string start_str)
+
+		private string getSnippet ()
 		{
-			DateTime end_time   = BU.StringFu.StringToDateTime (end_str);
-			DateTime start_time = BU.StringFu.StringToDateTime (start_str);
+			ICollection logs = BU.GaimLog.ScanLog (new FileInfo (hit ["fixme:file"]));
 
-			TimeSpan span = end_time - start_time;
-
-			string span_str = ""; 
-
-			if (span.Hours > 0) {
-				if (span.Hours == 1)
-					span_str = "1 hour";
-				else
-					span_str = String.Format ("{0} hours", span.Hours);
-
-				if (span.Minutes > 0)
-					span_str += ", ";
-			}
-
-			if (span.Minutes > 0) {
-				if (span.Minutes == 1)
-					span_str += "1 minute";
-				else
-					span_str += String.Format ("{0} minutes", span.Minutes);
-			}
-					
+			string snip = "";
 			
-			return span_str;
+			foreach (BU.ImLog log in logs) {
+					foreach (BU.ImLog.Utterance utt in log.Utterances) {
+						string s = HighlightOrNull (utt.Text, Query.Text);
+						if (s != null) {
+							if (snip != "")
+								snip += " ... ";
+							    
+							snip += s;
+						}
+						
+					}
+			}
+
+			return snip.Substring (0, System.Math.Min (256, snip.Length));
 		}
-
-
+			
 		override protected string ExpandKey (string key)
 		{
 			if (key == "Uri")
 				return hit.Uri.ToString ();
 			if (key == "nice_starttime")
-				return niceTime (hit ["fixme:starttime"]);
+				return BU.StringFu.DateTimeToPrettyString (
+					   BU.StringFu.StringToDateTime (hit ["fixme:starttime"]));
 			if (key == "nice_duration")
-				return niceDuration (hit ["fixme:endtime"],
-						     hit ["fixme:starttime"]);
+				return BU.StringFu.DurationToPrettyString (
+					   BU.StringFu.StringToDateTime (hit ["fixme:endtime"]),
+					   BU.StringFu.StringToDateTime (hit ["fixme:starttime"]));
+			if (key == "snippet")
+				return getSnippet ();
+			if (key == "fixme:speakingto") {
+				if (buddy != null && buddy.Alias != "")
+					return buddy.Alias;
+				return hit ["fixme:speakingto"];
+			}
 
 			return hit [key];
 		}

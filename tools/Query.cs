@@ -107,12 +107,12 @@ class QueryTool {
 
 		int i = 0;
 		while (i < args.Length) {
-			if (args [i].StartsWith ("mimetype:")) {
-				string mt = args [i].Substring ("mimetype:".Length);
-				query.AddMimeType (mt);
-			} else if (args [i].StartsWith ("source:")) {
-				string ss = args [i].Substring ("source:".Length);
-				query.AddSource (ss);
+			if (args [i].StartsWith ("--mime")) {
+			        i ++;
+				query.AddMimeType (args [i]);
+			} else if (args [i].StartsWith ("--source")) {
+				i ++;
+				query.AddSource (args [i]);
 			} else if (args [i].StartsWith ("--keep-running") || args [i].StartsWith ("--keeprunning")) {
 				keepRunning = true;
 			} else if (args [i].StartsWith ("--verbose")) {
