@@ -229,6 +229,8 @@ namespace Best {
 			items.Add (mi);
 			mi = new TypeMenuItem ("in Files", "File");
 			items.Add (mi);
+			mi = new TypeMenuItem ("in Addressbook", "Contact");
+			items.Add (mi);
 			mi = new TypeMenuItem ("in Mail", "MailMessage");
 			items.Add (mi);
 			mi = new TypeMenuItem ("in Web Pages", "WebHistory");
@@ -477,7 +479,7 @@ namespace Best {
 			//query.AddDomain (QueryDomain.Global);
 
 			query.AddText (searchString);
-			root.HitCollection.SetSource (hit_type);
+			root.SetSource (hit_type);
 
 			AttachQuery ();
 			

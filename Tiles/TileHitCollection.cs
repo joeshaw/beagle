@@ -136,7 +136,7 @@ namespace Beagle.Tile {
 					changed = true;
 				}
 				if (hits.Count > 0) {
-					all_hits.Clear ();
+					hits.Clear ();
 					firstDisplayed = 0;
 					changed = true;
 				}
