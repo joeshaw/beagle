@@ -23,6 +23,7 @@ CSFILES = 				\
 	$(HAP_CSFILES)			\
 	$(srcdir)/FilterHtml.cs		\
 	$(srcdir)/FilterJpeg.cs		\
+	$(srcdir)/FilterMan.cs		\
 	$(srcdir)/FilterMusic.cs	\
 	$(srcdir)/FilterOpenOffice.cs	\
 	$(srcdir)/FilterPng.cs		\
