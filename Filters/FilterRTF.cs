@@ -45,6 +45,8 @@ internal class RTFControlWordType {
 		MetaDataBlock,
 		MetaDataTag,
 		Paragraph,
+		ParaEnd,
+		SplSection,
 		EscSeq,
 		CharProp
 	}
@@ -72,8 +74,11 @@ internal class RTFControlWordType {
 		new RTFControlWordType (Type.MetaDataTag, "nofwords"),
 		new RTFControlWordType (Type.MetaDataTag, "generator"),
 		new RTFControlWordType (Type.MetaDataTag, "company"),
-		new RTFControlWordType (Type.Paragraph, "par"),
+		new RTFControlWordType (Type.ParaEnd, "par"),
 		new RTFControlWordType (Type.Paragraph, "pard"),
+		new RTFControlWordType (Type.SplSection, "headerl"),
+		new RTFControlWordType (Type.SplSection, "footerl"),
+		new RTFControlWordType (Type.SplSection, "footnote"),
 		new RTFControlWordType (Type.CharProp, "b"),
 		new RTFControlWordType (Type.CharProp, "i"),
 		new RTFControlWordType (Type.CharProp, "ul"),
@@ -103,7 +108,8 @@ namespace Beagle.Filters {
 			None,
 			InMetaData,
 			InMetaDataTagGenerator,
-			InBody
+			InBody,
+			InPara
 		}
 
 		public enum ErrorCodes {
@@ -113,24 +119,34 @@ namespace Beagle.Filters {
 		};
 		
 		Position pos;
-		Stack MetaDataStack;
-		Stack TextDataStack;
 		int groupCount;
+		int skipCount;
+		int hotStyleCount;
+		bool bPartHotStyle;
 		long offset;
 		FileStream FsRTF;
 		StreamReader SReaderRTF;
+	        string partText;
+
+		Stack MetaDataStack;
+		Stack TextDataStack;
 
 		public FilterRTF ()
 		{
 			// Make this a general rtf filter.
 			AddSupportedMimeType ("application/rtf");
 			pos = Position.None;
-			MetaDataStack = new Stack();
-			TextDataStack = new Stack();
 			groupCount = 0;
+			skipCount = 0;
+			hotStyleCount = 0;
+			bPartHotStyle = false;
 			offset = 0;
 			FsRTF = null;
 			SReaderRTF = null;
+			partText = "";
+
+			MetaDataStack = new Stack ();
+			TextDataStack = new Stack ();
 		}
 
 		override protected void DoOpen (FileInfo info) 
@@ -178,23 +194,41 @@ namespace Beagle.Filters {
 
 			case RTFControlWordType.Type.Paragraph:
 				if (!bMeta)
+					pos = Position.InPara;
+				break;
+
+			case RTFControlWordType.Type.ParaEnd:
+				if (!bMeta)
 					pos = Position.InBody;
 				break;
 
 				// FIXME: "Hot" styles are not *properly reset to normal*
 				// on some *wierd* conditions.
+				// To avoid such stuff, we need to maintain a stack of 
+				// groupCounts for set/reset Hot styles.
+			case RTFControlWordType.Type.SplSection:
+				hotStyleCount = groupCount - 1;
+				break;
+
 			case RTFControlWordType.Type.CharProp:
-				if (pos == Position.InBody) {
-					if (paramVal < 0)
-						HotUp ();
+				if (pos == Position.InPara) {
+					if (paramVal < 0) {
+						//Console.WriteLine ("HotUp: \\{0}{1}", strCtrlWord, paramVal);
+						hotStyleCount = groupCount - 1;
+						//HotUp ();
+					}
 				}
 				break;
 
 			case RTFControlWordType.Type.EscSeq:
-				if (pos == Position.InBody) {
+				if (pos == Position.InPara) {
 					TextDataStack.Push (strCtrlWord);
 					TextDataStack.Push ("EscSeq");
 				}
+				break;
+			case RTFControlWordType.Type.Skip:
+				skipCount = groupCount - 1;
+				//SkipDataStack.Push (groupCount-1);
 				break;
 			}
 			return ErrorCodes.ERROR_RTF_OK;
@@ -207,6 +241,7 @@ namespace Beagle.Filters {
 			int aByte = -1;
 			char ch;
 			int paramVal = -1, i;
+			bool negParamVal = false;
 			StringBuilder strCtrlWord = new StringBuilder ();
 			StringBuilder strParameter = new StringBuilder ();
 			
@@ -236,6 +271,12 @@ namespace Beagle.Filters {
 			}
 			aByte = SReaderRTF.Peek ();
 			ch = (char) aByte;
+			if (aByte != -1 && ch == '-') {
+				negParamVal = true;
+				aByte = SReaderRTF.Read (); // move the fp
+				aByte = SReaderRTF.Peek ();
+				ch = (char) aByte;
+			}
 			if (Char.IsDigit (ch)) {
 				aByte = SReaderRTF.Read ();
 				ch = (char) aByte;
@@ -254,6 +295,8 @@ namespace Beagle.Filters {
 					paramVal = Convert.ToInt32 (strParameter.ToString());
 			}
 			//Console.WriteLine ("{0}\t{1}", strCtrlWord, strParameter);
+			if (negParamVal && paramVal > -1)
+				paramVal *= -1;
 			return (HandleControlWord (strCtrlWord.ToString(), paramVal, bMeta));
 		}
 
@@ -264,6 +307,7 @@ namespace Beagle.Filters {
 			StringBuilder str = new StringBuilder ();
 			string strTemp = null;
 			ErrorCodes ec;
+			int OriginalGrpCount = 0x7FFFFFFF;
 
 			// If we are not extracting meta-data, set the 
 			// file pointer to the saved position
@@ -274,19 +318,22 @@ namespace Beagle.Filters {
 				ch = (char) aByte;
 				switch (ch) {
 				case '\\': /* process keywords */
+					if (skipCount > 0) {
+						if (groupCount > skipCount)
+							continue;
+						else
+							skipCount = 0;
+					}
 					ec = ProcessControlWords (bMeta); 
 					if (ec != ErrorCodes.ERROR_RTF_OK)
 						return ec;
-					if (pos == Position.InBody) {
+					if (pos == Position.InPara)
 						AddTextForIndexing (str);
-						//AppendText (str.ToString());
-						//AppendWhiteSpace ();
-					}
 					str.Remove (0, str.Length);
 					break;
 				case '{': /* process groups */
-					if (pos == Position.InBody)
-					    AddTextForIndexing (str);
+					if (pos == Position.InPara)
+						AddTextForIndexing (str);
 					str.Remove (0, str.Length);
 					groupCount++;
 					break;
@@ -317,22 +364,39 @@ namespace Beagle.Filters {
 							}
 						}
 						
+					} else if (pos == Position.InPara) {
+						AddTextForIndexing (str);
+
 					} else if (pos == Position.InBody) {
+						//Console.WriteLine ("\\par : {0}", str);
 						if (str.Length > 0)
 							str.Append (' ');
 						AddTextForIndexing (str);
-						if (IsHot)
-							HotDown ();
 					}
-
+					if (hotStyleCount > 0
+					    && groupCount <= hotStyleCount) {
+						//Console.WriteLine ("Group count: {0}, stack: {1}", 
+						//groupCount, hotStyleCount);
+						HotDown ();
+						hotStyleCount = 0;
+					}
+					
 					break;
 				case '\r': /* ignore \r */
 				case '\n': /* ignore \n */
 					break;
 				default:
-					str.Append (ch);
+					if (skipCount == 0 || groupCount <= skipCount)
+						str.Append (ch);
 					break;
 				}
+			}
+			if (partText.Length > 0) {
+				if (bPartHotStyle && !IsHot) 
+					HotUp ();
+				AppendText (partText);
+				if (IsHot)
+					HotDown ();
 			}
 			return ErrorCodes.ERROR_RTF_OK;
 		}
@@ -340,8 +404,10 @@ namespace Beagle.Filters {
 		private void AddTextForIndexing (StringBuilder str)
 		{
 			string strTemp;
-			string strStyle;
+			string paramStr = null;
+
 			int elemCount;
+			bool wasHot = false;
 
 			while (TextDataStack.Count > 0) {
 				strTemp = (string) TextDataStack.Pop ();
@@ -352,12 +418,68 @@ namespace Beagle.Filters {
 					break;
 				}
 			}
+			
+			strTemp = "";
 			if (str.Length > 0) {
-				AppendText (str.ToString());
+				//Console.WriteLine ("Text: [{0}]", str);
+
+				paramStr = str.ToString ();
 				str.Remove (0, str.Length);
+
+				int index = paramStr.LastIndexOf (' ');
+				int sindex = 0;
+
+				if (index > -1) {
+					if (partText.Length > 0) {
+						sindex = paramStr.IndexOf (' ');
+						strTemp = partText + paramStr.Substring (0, sindex);
+						//Console.WriteLine ("PartHotStyle: {0}, HotStyleCount: {1}, partText: {2}",
+						//   bPartHotStyle,
+						//	   hotStyleCount, strTemp);
+						if (!IsHot) {
+							if (bPartHotStyle)
+								HotUp ();
+						}
+						else
+							wasHot = true;
+
+						AppendText (strTemp);
+						if (!wasHot && bPartHotStyle)
+							HotDown ();
+						bPartHotStyle = false;
+					}
+					paramStr = paramStr.Substring (sindex);
+					index = paramStr.LastIndexOf (' ');
+					sindex = 0;
+				}
+				if (index > -1) {
+					partText = paramStr.Substring (index);
+					paramStr = paramStr.Substring (sindex, index);
+				} else {
+					strTemp = partText + paramStr;
+					partText = strTemp;
+					paramStr = "";
+					strTemp = "";
+				}
+					
+				// Enable *HOT* just before appending the text
+				// because, there can be some *Partial Texts* without
+				// *HOT* styles that needs to be appended.
+				if (hotStyleCount > 0) {
+					if (!IsHot)
+						HotUp ();
+					bPartHotStyle = true;
+				} else 
+					bPartHotStyle |= false;
+
+				if (paramStr.Length > 0)
+					AppendText (paramStr);
+
+				if (partText.Length < 1)
+					bPartHotStyle = false;
 			}
 		}
-			
+
 		override protected void DoPull ()
 		{
 			ErrorCodes ec;
