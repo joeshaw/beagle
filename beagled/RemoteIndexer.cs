@@ -60,9 +60,11 @@ namespace Beagle.Daemon {
 				lock (this) {
 					if (proxy == null) {
 						proxy = IndexHelperFu.NewRemoteIndexerProxy (remote_index_name);
-						proxy.ChangedEvent += OnProxyChanged;
-						proxy.FlushCompleteEvent += OnFlushComplete;
-						add_remove_count = 0;
+						if (proxy != null) {
+							proxy.ChangedEvent += OnProxyChanged;
+							proxy.FlushCompleteEvent += OnFlushComplete;
+							add_remove_count = 0;
+						}
 					}
 					
 					return proxy;
@@ -154,6 +156,13 @@ namespace Beagle.Daemon {
 			public void Run ()
 			{
 				lock (this) {
+					// If the proxy is null, it means the index helper
+					// disconnected unexpectedly --- this can happen
+					// with scheduled events on daemon shutdown, so we
+					// just silently return.
+					if (proxy == null)
+						return;
+
 					GLib.IdleHandler idle_handler = new GLib.IdleHandler (IdleHandler);
 					GLib.Idle.Add (idle_handler);
 					finished = false;
@@ -178,7 +187,9 @@ namespace Beagle.Daemon {
 			UpToTheMainLoop up = UpToTheMainLoop.NewAdd (Proxy, indexable);
 			up.Run ();
 #else
-			Proxy.Add (indexable.ToString ());
+			Proxy p = Proxy;
+			if (p != null)
+				p.Add (indexable.ToString ());
 #endif
 			++add_remove_count;
 		}
@@ -189,7 +200,9 @@ namespace Beagle.Daemon {
 			UpToTheMainLoop up = UpToTheMainLoop.NewRemove (Proxy, uri);
 			up.Run ();
 #else
-			Proxy.Remove (uri.ToString ());
+			Proxy p = Proxy;
+			if (p != null)
+				p.Remove (uri.ToString ());
 #endif
 			++add_remove_count;
 		}
@@ -212,7 +225,8 @@ namespace Beagle.Daemon {
 				UpToTheMainLoop up = UpToTheMainLoop.NewFlush (Proxy);
 				up.Run ();
 #else
-				Proxy.Flush ();
+				Proxy p = Proxy;
+				p.Flush ();
 #endif
 				// Wait for the flush complete signal, but bail out
 				// if a shutdown request comes through.
@@ -227,7 +241,8 @@ namespace Beagle.Daemon {
 
 		public int GetItemCount ()
 		{
-			return Proxy.GetItemCount ();
+			Proxy p = Proxy;
+			return p != null ? GetItemCount () : -1;
 		}
 
 		private void OnProxyChanged (string list_of_added_uris_as_string,
@@ -248,7 +263,9 @@ namespace Beagle.Daemon {
 				// Since this event is dispatched by d-bus, we are guaranteed
 				// to be in the main loop's thread.  Thus we don't have to
 				// jump through the same hoops as we did above.
-				Proxy.Close ();
+				Proxy p = Proxy;
+				if (p != null)
+					p.Close ();
 
 				UnsetProxy ();
 
