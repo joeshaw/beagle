@@ -20,7 +20,7 @@ unreviewed patches.
 Coding Style
 ------------
 
-Dewey attempts to follow the Mono coding conventions.  The following
+Beagle attempts to follow the Mono coding conventions.  The following
 description of those conventions was shamelessly stolen from Dashboard's
 HACKING file.
 
