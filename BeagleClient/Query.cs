@@ -53,6 +53,15 @@ namespace Beagle
 			CancelledEvent += OnCancelled;
 		}
 
+		public string [] Text {
+			get {
+				string str = GetTextBlob ();
+				if (str == null || str == "")
+					return null;
+				return str.Split ('|'); // FIXME: hacky and stupid
+			}
+		}
+
 		public bool IsCancelled {
 			get { return cancelled; }
 		}

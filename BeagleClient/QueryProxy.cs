@@ -45,6 +45,9 @@ namespace Beagle
 		public abstract void AddTextRaw (string str);
 
 		[Method]
+		public abstract string GetTextBlob ();
+
+		[Method]
 		public abstract void AddMimeType (string type);
 
 		[Method]

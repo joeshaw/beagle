@@ -137,6 +137,7 @@ namespace Beagle.Daemon.FileSystemQueryable {
 						   "*.in.in",
 						   "*.omf",
 						   "*.aux",
+						   "autom4te.cache",
 						   "po",
 						   "aclocal",
 						   "Makefile",

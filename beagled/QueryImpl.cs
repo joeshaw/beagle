@@ -82,7 +82,7 @@ namespace Beagle.Daemon {
 			result.FinishedEvent += OnFinishedResult;
 			result.CancelledEvent += OnCancelledResult;
 		}
-
+		
 		public override void AddText (string text)
 		{
 			body.AddText (text);
@@ -91,6 +91,17 @@ namespace Beagle.Daemon {
 		public override void AddTextRaw (string text)
 		{
 			body.AddTextRaw (text);
+		}
+
+		public override string GetTextBlob ()
+		{
+			StringBuilder builder = new StringBuilder ();
+			foreach (string str in body.Text) {
+				if (builder.Length > 0)
+					builder.Append ("|"); // FIXME: hacky and stupid
+				builder.Append (str);
+			}
+			return builder.ToString ();
 		}
 
 		public override void AddDomain (Beagle.QueryDomain d)

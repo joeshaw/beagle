@@ -71,6 +71,7 @@ namespace Beagle.Tile {
 			object[] args = new object [1];
 			args[0] = hit;
 			Tile tile = (Tile) Activator.CreateInstance (flavor.TileType, args);
+			tile.Query = this.Query;
 			hitCollection.Add (hit, tile);
 			Console.WriteLine ("+ {0}", hit.Uri);
 			Changed ();

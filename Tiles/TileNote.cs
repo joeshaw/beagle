@@ -54,15 +54,28 @@ namespace Beagle.Tile {
 
 			return hit [key];
 		}
-		
+
 		override protected bool RenderKey (string key, TileRenderContext ctx)
 		{
 			if (key == "Icon") {
-				ctx.Image ("note.png", null);
+				ctx.Image ("note.png", new TileActionHandler (OpenNote));
 				return true;
 			}
 
 			return base.RenderKey (key, ctx);
+		}
+
+		public void OpenNote ()
+		{
+			string args = String.Format ("--open-note {0} --highlight-search \"{1}\"",
+						     hit.Uri, String.Join (" ", Query.Text));
+			
+			Process p = new Process ();
+			p.StartInfo.UseShellExecute = false;
+			p.StartInfo.FileName = "tomboy";
+			p.StartInfo.Arguments = args;
+
+			p.Start ();
 		}
 	}
 }

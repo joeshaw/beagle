@@ -232,7 +232,6 @@ namespace Best {
 		
 		private void DoSearch (object o, EventArgs args)
 		{
-			root.Open ();
 			try {
 				Search (entry.Text);
 			}
@@ -319,7 +318,8 @@ namespace Best {
 			query.AddText (searchString);
 
 			AttachQuery ();
-
+			
+			root.Query = query;
 			root.Open ();
 
 			SetBusy (true);
