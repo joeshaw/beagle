@@ -22,7 +22,7 @@ HAP_CSFILES =						\
 
 # FilterAbiword has been temporarily removed
 # because of bug 170082.
-#	$(srcdir)/FilterAbiword.cs	\
+#	$(srcdir)/FilterAbiword.cs	
 
 CSFILES = 				\
 	$(HAP_CSFILES)			\
