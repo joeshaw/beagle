@@ -177,9 +177,13 @@ namespace ImLogViewer {
 		}
 		
 		private void IndexLogs () {
-		       	string [] files = Directory.GetFiles (logsDir);
+		       	string [] files = Directory.GetFiles (logPath);
 			
 			foreach (string file in files) {
+
+				// FIXME: gratuitous debug spew
+				Console.WriteLine (file);
+
 				ICollection logs = BU.GaimLog.ScanLog (new FileInfo (file));
 				
 				foreach (BU.ImLog gaimlog in logs) {
