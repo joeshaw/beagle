@@ -247,7 +247,6 @@ namespace Beagle.Daemon.GaimLogQueryable {
 
 		override public string GetSnippet (QueryBody body, Hit hit)
 		{
-
 			// FIXME: This does the wrong thing for old-style logs.
 			string file = hit ["fixme:file"];
 			ICollection logs = GaimLog.ScanLog (new FileInfo (file));
@@ -258,27 +257,29 @@ namespace Beagle.Daemon.GaimLogQueryable {
 			if (log == null)
 				return null;
 
-			UtteranceIter hack = new UtteranceIter (log.Utterances.GetEnumerator ());
-			return SnippetFu.GetSnippet (body, new SnippetFu.StringSource (hack.NextText));
-		}
+			string result = "";
 
-		// FIXME: Hack, move logic to ImLog.cs 
-		private class UtteranceIter
-		{
-			IEnumerator iter;
+			// FIXME: This is very lame, and doesn't do the
+			// right thing w/ stemming, word boundaries, etc.
+			foreach (ImLog.Utterance utt in log.Utterances) {
+				string text = utt.Text;
+				string who = utt.Who;
+				
+				string snippet = SnippetFu.GetSnippet (body, new StringReader (text));
 
-			public UtteranceIter (IEnumerator iter)
-			{
-				this.iter = iter;
+				if (snippet == null || snippet == "")
+					continue;
+
+				result += String.Format ("{0}: {1} ", who, snippet);
+
+				if (result.Length > 300)
+					break;
 			}
 
-			public string NextText ()
-			{
-				if (iter.MoveNext ())
-					return ((ImLog.Utterance)iter.Current).Text;
-				else
-					return null;
-			}
+			if (result != "")
+				return result;
+			else
+				return log.Snippet;
 		}
 	}
 }
