@@ -158,6 +158,11 @@ namespace Beagle.Daemon {
 				this.getCachedContent = false;
 			}
 
+			if (this.folderName.ToLower () == "spam" || this.folderName.ToLower () == "junk") {
+				log.Debug ("Skipping junk/spam folder {0} on {1}", this.folderName, this.accountName);
+				return false;
+			}
+
 			return true;
 		}
 
@@ -215,18 +220,18 @@ namespace Beagle.Daemon {
 				this.deletedList = new ArrayList (this.mapping.Keys);
 			}
 
-			if (this.summaryEnumerator.MoveNext ()) {
+			while (indexable == null && this.summaryEnumerator.MoveNext ()) {
 				Camel.MessageInfo mi = this.summaryEnumerator.Current as Camel.MessageInfo;
 
 				// Checkpoint our progress to disk every 500 messages
-				if (this.count > 0 && (this.count & 500) == 0)
-					SaveCache (appDataName);
-
-				if ((this.count & 1500) == 0) {
+				if (this.count % 500 == 0) {
 					log.Debug ("{0}: indexed {1} messages ({2}/{3} {4:###.0}%)",
 						   this.folderName, this.indexedCount, this.count,
 						   this.summary.header.count,
 						   100.0 * this.count / this.summary.header.count);
+
+					if (this.count > 0)
+						SaveCache (appDataName);
 				}
 				++this.count;
 
@@ -256,8 +261,16 @@ namespace Beagle.Daemon {
 				} 
 
 				this.deletedList.Remove (mi.uid);
-			} else
+			}
+
+			if (indexable == null) {
+				log.Debug ("{0}: Finished indexing {1} ({2}/{3} {4:###.0}%)",
+					   this.folderName, this.indexedCount, this.count,
+					   this.summary.header.count,
+					   100.0 * this.count / this.summary.header.count);
+
 				SaveCache (appDataName);
+			}
 
 			return indexable;
 		}
