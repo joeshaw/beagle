@@ -24,13 +24,17 @@
 // DEALINGS IN THE SOFTWARE.
 //
 
+using System;
+using System.Collections;
+using System.IO;
+using System.Reflection;
+using System.Threading;
+
 using DBus;
 using Gtk;
-using System.Reflection;
-using System;
-using System.IO;
+
 using Beagle.Util;
-using System.Collections;
+
 
 namespace Beagle.Daemon {
 	class BeagleDaemon {
@@ -141,14 +145,14 @@ namespace Beagle.Daemon {
 			return 0;
 		} 
 
-		private static void LogMemoryUsage (Scheduler.Task task)
+		private static void LogMemoryUsage ()
 		{
-			Logger.Log.Debug ("Memory usage: VmSize={0}  GC.GetTotalMemory={1}",
-					  SystemInformation.VmSize (),
-					  GC.GetTotalMemory (false));
-
-			task.TriggerTime = DateTime.Now.AddSeconds (10);
-			task.Reschedule = true;
+			while (! Shutdown.ShutdownRequested) {
+				Logger.Log.Debug ("Memory usage: VmSize={0}  GC.GetTotalMemory={1}",
+						  SystemInformation.VmSize (),
+						  GC.GetTotalMemory (false));
+				Thread.Sleep (1000);
+			}
 		}
 		
 		public static int Main (string[] args)
@@ -158,6 +162,7 @@ namespace Beagle.Daemon {
 			bool arg_replace = false;
 			bool arg_debug = false;
 			bool arg_debug_inotify = false;
+			bool arg_debug_memory = false;
 			bool arg_network = false;
 			bool arg_fg = false;
 			int arg_port = 0;
@@ -190,7 +195,13 @@ namespace Beagle.Daemon {
 					break;
 
 				case "--debug-inotify":
+					arg_debug = true;
 					arg_debug_inotify = true;
+					break;
+
+				case "--debug-memory":
+					arg_debug = true;
+					arg_debug_memory = true;
 					break;
 
 				case "--allow-backend":
@@ -251,9 +262,11 @@ namespace Beagle.Daemon {
 			Stopwatch stopwatch = new Stopwatch ();
 
 			try {
+				Logger.Log.Debug ("Initializing D-BUS");
 				DBusisms.Init ();
 				Application.Init ();
 
+				Logger.Log.Debug ("Acquiring com.novell.Beagle D-BUS service");
 				if (!DBusisms.InitService ()) {
 					if (arg_replace) {
 						ReplaceExisting ();
@@ -282,11 +295,13 @@ namespace Beagle.Daemon {
 			}
 
 			// Construct a query driver.
+			Logger.Log.Debug ("Constructing QueryDriver");
 			QueryDriver queryDriver;
 			queryDriver = new QueryDriver ();
 
 			try {
 				// Construct and register our remote control object.
+				Logger.Log.Debug ("Initializing RemoteControl");
 				RemoteControlImpl rci = new RemoteControlImpl ();
 				dbusObjects.Add (rci);
 				DBusisms.Service.RegisterObject (rci, Beagle.DBusisms.RemoteControlPath);
@@ -317,18 +332,21 @@ namespace Beagle.Daemon {
 
 #endif
 			// Start the Global Scheduler thread
+			Logger.Log.Debug ("Starting Scheduler thread");
 			Scheduler.Global.Start ();
 
-			// Add our memory-logging task
-			Scheduler.Task memory_task = Scheduler.TaskFromHook (new Scheduler.TaskHook (LogMemoryUsage));
-			memory_task.Tag = "Memory Logger";
-			memory_task.Priority = Scheduler.Priority.Immediate;
-			Scheduler.Global.Add (memory_task);
+			// Start our memory-logging thread
+			if (arg_debug_memory) {
+				Thread th = new Thread (new ThreadStart (LogMemoryUsage));
+				th.Start ();
+			}
 
 			// Start our Inotify threads
+			Logger.Log.Debug ("Starting Inotify threads");
 			Inotify.Start ();
 
 			// Actually start up our QueryDriver.
+			Logger.Log.Debug ("Starting QueryDriver");
 			queryDriver.Start ();
 
 			// Test if the FileAdvise stuff is working: This will print a
@@ -343,6 +361,7 @@ namespace Beagle.Daemon {
 					 stopwatch);
 			
 			// Start our event loop.
+			Logger.Log.Debug ("Starting main loop");
 			Application.Run ();
 
 			Logger.Log.Debug ("Leaving BeagleDaemon.Main");

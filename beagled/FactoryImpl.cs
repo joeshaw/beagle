@@ -163,7 +163,7 @@ namespace Beagle.Daemon {
 		{
 			// Clean up associated objects if a base service is deleted.
 			if (newOwner == "" && serviceName == oldOwner) {
-				Logger.Log.Debug ("Cleaning up objects associated with '{0}'", serviceName);
+				//Logger.Log.Debug ("Cleaning up objects associated with '{0}'", serviceName);
 				UnregisterByOwner (serviceName);
 			}
 		}

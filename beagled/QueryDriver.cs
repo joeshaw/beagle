@@ -89,6 +89,7 @@ namespace Beagle.Daemon {
 		// assemble a Queryable object and stick it into our list of queryables.
 		static void ScanAssembly (Assembly assembly)
 		{
+			DateTime t1 = DateTime.Now;
 			foreach (Type type in assembly.GetTypes ()) {
 				if (TypeImplementsInterface (type, typeof (IQueryable))) {
 					foreach (object obj in Attribute.GetCustomAttributes (type)) {
@@ -111,9 +112,13 @@ namespace Beagle.Daemon {
 
 						Queryable q = new Queryable (flavor, iq);
 						queryables.Add (q);
+						break;
 					}
 				}
 			}
+			DateTime t2 = DateTime.Now;
+
+			Logger.Log.Debug ("Scanned assembly '{0}' in {1:0.00}s", assembly, (t2-t1).TotalSeconds);
 		}
 
 		static bool initialized = false;
