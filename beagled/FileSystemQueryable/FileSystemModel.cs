@@ -450,7 +450,6 @@ namespace Beagle.Daemon.FileSystemQueryable {
 			root.InitRoot (System.IO.Path.GetDirectoryName (path), 
 				       System.IO.Path.GetFileName (path));
 			
-			bool created;
 			FileAttributes attr = backing_store.ReadOrCreate (path);
 			root.SetFromFileAttributes (attr);
 			unique_id_store.AddRoot (attr.UniqueId, path, true);

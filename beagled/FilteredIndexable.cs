@@ -143,10 +143,13 @@ namespace Beagle.Daemon {
 				return;
 			}
 
+#if false
 			DateTime nautilusTime = BU.NautilusTools.GetMetaFileTime (path);
 			if (nautilusTime > modifiedTime) {
 				modifiedTime = nautilusTime;
 			}
+#endif
+
 			Timestamp = modifiedTime;
 
 #if false
@@ -213,6 +216,7 @@ namespace Beagle.Daemon {
 								  Path.GetFileNameWithoutExtension (path)));
 #endif
 
+#if false
 			// Attach Nautilus metadata to the file
 			// FIXME: This should be in the metadata store, not attached
 			// to the indexed document.
@@ -225,6 +229,7 @@ namespace Beagle.Daemon {
 			string nautilusNotes = BU.NautilusTools.GetNotes (path);
 			if (nautilusNotes != null)
 				AddProperty (Property.New ("fixme:nautilus/notes", nautilusNotes));
+#endif
 						      
 
 #if false

@@ -29,12 +29,13 @@ using System.Collections;
 using System.Text.RegularExpressions;
 using System.IO;
 
+using Beagle.Util;
+
 namespace Beagle.Daemon.FileSystemQueryable {
 
 	public class FileNameFilter {
 		
 		static string home_dir;
-		Hashtable ignore_cache = new Hashtable ();
 
 		static FileNameFilter ()
 		{
@@ -206,6 +207,10 @@ namespace Beagle.Daemon.FileSystemQueryable {
 				ConditionallyLoad ();
 			}
 
+			public bool IsEmpty {
+				get { return patternsToIgnore == null; }
+			}
+
 			// If the directory's .noindex file has changed, load it.
 			// FIXME: This should be done with inotify instead of using
 			// this sort of seek-happy polling.
@@ -253,13 +258,14 @@ namespace Beagle.Daemon.FileSystemQueryable {
 			if (dir == null)
 				return null;
 
+			// Only cache the non-trivial per-directory information
 			PerDirectoryInfo info;
 			lock (perDirectoryCache) {
-				info = perDirectoryCache [dir] as PerDirectoryInfo;
-				if (info == null) {
+				if (! perDirectoryCache.Contains (dir)) {
 					info = new PerDirectoryInfo (dir);
-					perDirectoryCache [dir] = info;
+					perDirectoryCache [dir] = info.IsEmpty ? null : info;
 				}
+				info = perDirectoryCache [dir] as PerDirectoryInfo;
 			}
 			return info;
 		}
@@ -273,35 +279,25 @@ namespace Beagle.Daemon.FileSystemQueryable {
 			if (! Path.IsPathRooted (path))
 				path = Path.GetFullPath (path);
 			
-			if (ignore_cache.Contains (path))
-				return (bool) ignore_cache [path];
-
-			if (path == home_dir) {
-				ignore_cache [path] = false;
+			if (path == home_dir)
 				return false;
-			}
 
 			string name = Path.GetFileName (path);
 
-			foreach (Pattern pattern in defaultPatternsToIgnore)
-				if (pattern.IsMatch (name)) {
-					ignore_cache [path] = true;
+			foreach (Pattern pattern in defaultPatternsToIgnore) {
+				if (pattern.IsMatch (name))
 					return true;
-				}
+			}
 
 			string dir = Path.GetDirectoryName (path);
 			PerDirectoryInfo perDir = GetPerDirectoryInfo (dir);
 
-			if (perDir == null || perDir.Ignore (name)) {
-				ignore_cache [path] = true;
+			if (perDir != null && perDir.Ignore (name))
 				return true;
-			}
-
+			
 			// A file should be ignored if any of its parent directories
 			// is ignored.
-			bool rv = Ignore (dir);
-			ignore_cache [path] = rv;
-			return rv;
+			return Ignore (dir);
 		}
 
 		public bool Ignore (FileSystemInfo info)
