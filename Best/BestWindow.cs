@@ -76,6 +76,8 @@ namespace Best {
 			Title = "Beagle Search (beta)";
 
 			DeleteEvent += new DeleteEventHandler (this.DoDelete);
+			MapEvent += new MapEventHandler (MapIt);
+			UnmapEvent += new UnmapEventHandler (UnmapIt);
 
 			Icon = Images.GetPixbuf ("best.png");
 
@@ -168,6 +170,18 @@ namespace Best {
 		private void DoDelete (object o, DeleteEventArgs args)
 		{
 			Hide ();
+		}
+
+		public bool WindowIsVisible;
+
+		private void MapIt (object o, MapEventArgs args)
+		{
+			WindowIsVisible = true;
+		}
+
+		private void UnmapIt (object o, UnmapEventArgs args)
+		{
+			WindowIsVisible = false;
 		}
 
 		private void HideWindowHandler (object o, EventArgs args)

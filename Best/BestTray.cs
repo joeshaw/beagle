@@ -105,7 +105,7 @@ namespace Best {
 
 		private void ShowBeaglePressed (object o, EventArgs args)
 		{
-			if (!win.Visible) {
+			if (!win.WindowIsVisible) {
 				win.Show ();
 				win.Move (PosX, PosY);
 				win.Present ();
@@ -120,7 +120,7 @@ namespace Best {
 		{
 			Gdk.EventButton eb = args.Event;
 			if (eb.Button == 1) {
-				if (! win.Visible) {
+				if (! win.WindowIsVisible) {
 					win.Show ();
 					win.Move (PosX, PosY);
 					win.Present ();
