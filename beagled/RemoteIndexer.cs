@@ -34,7 +34,7 @@ namespace Beagle.Daemon {
 
 	public class RemoteIndexer : IIndexer {
 
-		static public bool Debug = false;
+		static public bool Debug = true;
 
 		static private TimeSpan one_second = new TimeSpan (10000000);
 
@@ -178,7 +178,7 @@ namespace Beagle.Daemon {
 				}
 				return false;
 			}
-			
+
 			public bool Run ()
 			{
 				lock (this) {
@@ -259,6 +259,43 @@ namespace Beagle.Daemon {
 #endif
 		}
 
+		// This can only be called from the main thread!
+		private void PostFlushComplete ()
+		{
+			RemoteIndexerProxy p = Proxy;
+			if (p != null) {
+				Logger.Log.Debug ("Calling close on proxy '{0}'", remote_index_name);
+				p.Close ();
+			}
+			
+			Logger.Log.Debug ("Unsetting '{0}'", remote_index_name);
+			UnsetProxy ();
+		}
+
+#if DBUS_IS_BROKEN_BROKEN_BROKEN
+
+		private uint flush_timeout_handler = 0;
+
+		private bool FlushTimeoutHandler ()
+		{
+			Logger.Log.Debug ("Checking status of FlushTimeoutHandler for '{0}'", remote_index_name);
+			// We know we are in main loop, so we can make any
+			// dbus call we want to.
+			if (! Proxy.IsFlushing ()) {
+				lock (flush_lock) {
+					if (! flush_complete) {
+						Logger.Log.Debug ("No longer flushing on '{0}', setting flush_complete", remote_index_name);
+						flush_complete = true;
+						PostFlushComplete ();
+					}
+					flush_timeout_handler = 0;
+				}
+				return false;
+			}
+			return true;
+		}
+#endif
+
 		public void Flush ()
 		{
 			Logger.Log.Debug ("RemoteIndexer.Flush");
@@ -287,16 +324,28 @@ namespace Beagle.Daemon {
 				// Wait for the flush complete signal, but bail out
 				// if a shutdown request comes through.
 				flush_complete = false;
-				while (! flush_complete) {
+				flush_timeout_handler = GLib.Timeout.Add (1000, new GLib.TimeoutHandler (FlushTimeoutHandler));
+				while (true) {
+
 					Logger.Log.Debug ("Waiting for flush to complete on '{0}'", remote_index_name);
 					if (Shutdown.ShutdownRequested) {
 						if (Debug)
 							Logger.Log.Debug ("Bailing out while waiting for flush on '{0}'", remote_index_name);
 						break;
 					}
-					Monitor.Wait (flush_lock, one_second);
+
+					lock (flush_lock) {
+						if (flush_complete)
+							break;
+						Monitor.Wait (flush_lock, one_second);
+						if (flush_complete)
+							break;
+					}
 				}
-			
+				if (flush_timeout_handler != 0) {
+					GLib.Source.Remove (flush_timeout_handler);
+					flush_timeout_handler = 0;
+				}
 			}
 		}
 
@@ -320,18 +369,15 @@ namespace Beagle.Daemon {
 		private void OnFlushComplete ()
 		{
 			lock (flush_lock) {
-				Logger.Log.Debug ("Got flush complete event from helper");
+				Logger.Log.Debug ("Got flush complete event from proxy '{0}'", remote_index_name);
+
+				if (! flush_complete)
+					PostFlushComplete ();
 				flush_complete = true;
 				
 				// Since this event is dispatched by d-bus, we are guaranteed
 				// to be in the main loop's thread.  Thus we don't have to
 				// jump through the same hoops as we did above.
-				RemoteIndexerProxy p = Proxy;
-				if (p != null)
-					p.Close ();
-
-				UnsetProxy ();
-
 				Monitor.Pulse (flush_lock);
 			}
 		}

@@ -51,6 +51,9 @@ namespace Beagle.Daemon {
 		public abstract void Flush ();
 
 		[Method]
+		public abstract bool IsFlushing ();
+
+		[Method]
 		public abstract int GetItemCount ();
 
 		[Method]

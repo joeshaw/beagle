@@ -46,6 +46,8 @@ namespace Beagle.IndexHelper {
 		bool is_open;
 		bool queued_close;
 		bool safe_to_close;
+
+		public bool is_flushing; // FIXME: shouldn't really be public
 		
 		public override event ChangedHandler ChangedEvent;
 		public override event FlushCompleteHandler FlushCompleteEvent;
@@ -147,6 +149,8 @@ namespace Beagle.IndexHelper {
 
 			public void DoFlush ()
 			{
+				Impl.is_flushing = true;
+
 				if (OldUri != null && NewUri != null) {
 
 					// This is the code for dealing with renames
@@ -197,6 +201,8 @@ namespace Beagle.IndexHelper {
 					// Fire the change notification
 					Impl.OnIndexerChanged (null, empty_collection, empty_collection, renamed_uris);
 				}
+
+				Impl.is_flushing = false;
 
 				if (Impl.CloseIfQueued ())
 					return;
@@ -368,6 +374,11 @@ namespace Beagle.IndexHelper {
 				Thread th = new Thread (new ThreadStart (this_flush.DoFlush));
 				th.Start ();
 			}
+		}
+
+		override public bool IsFlushing ()
+		{
+			return is_flushing;
 		}
 
 		override public int GetItemCount ()
