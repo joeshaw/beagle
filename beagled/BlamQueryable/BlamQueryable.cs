@@ -1,8 +1,6 @@
 //
 // BlamQueryable.cs
 //
-// Copyright (C) 2004 Fredrik Hedberg
-// Copyright (C) 2004 Christopher Orr
 // Copyright (C) 2004 Novell, Inc.
 //
 
@@ -39,37 +37,45 @@ using Beagle.Util;
 
 namespace Beagle.Daemon.BlamQueryable {
 
-	[QueryableFlavor (Name="Blam", Domain=QueryDomain.Local)]
+	[QueryableFlavor (Name="Blam", Domain=QueryDomain.Local, RequireInotify=false)]
 	public class BlamQueryable : LuceneQueryable {
 
 		private static Logger log = Logger.Get ("BlamQueryable");
 
-		string blamDir;
-
-		int wdBlam = -1;
+		string blam_dir;
+		const string blam_file = "collection.xml";
+		int blam_wd = -1;
 
 		public BlamQueryable () : base ("BlamIndex")
 		{
-			blamDir = Path.Combine (Path.Combine (PathFinder.HomeDir, ".gnome2"), "blam");
+			blam_dir = Path.Combine (Path.Combine (PathFinder.HomeDir, ".gnome2"), "blam");
 		}
+
+		/////////////////////////////////////////////////
 
 		private void StartWorker ()
 		{
-			Inotify.EventType mask;
-			mask = Inotify.EventType.CloseWrite;
+			if (Inotify.Enabled) {
+				Inotify.EventType mask = Inotify.EventType.CloseWrite;
+				blam_wd = Inotify.Watch (blam_dir, mask);
+				Inotify.Event += OnInotifyEvent;
+			} else {
+				FileSystemWatcher fsw = new FileSystemWatcher ();
+			       	fsw.Path = blam_dir;
+				fsw.Filter = "collection.xml";
+				
+				fsw.Changed += new FileSystemEventHandler (OnChangedEvent);
+				fsw.Created += new FileSystemEventHandler (OnChangedEvent);
+				
+				fsw.EnableRaisingEvents = true;
+			}
 
-			wdBlam = Inotify.Watch (blamDir, mask);
-
-			Inotify.Event += OnInotifyEvent;
-
-			Index();
+			Index ();
 		}
 
 		public override void Start () 
 		{			
-			// FIXME: We should do something more reasonable if
-			// ~/.gnome2/blam doesn't exist.
-			if (! File.Exists (Path.Combine (blamDir, "collection.xml")))
+			if (! File.Exists (Path.Combine (blam_dir, blam_file)))
 				return;
 
 			base.Start ();
@@ -77,25 +83,37 @@ namespace Beagle.Daemon.BlamQueryable {
 			ExceptionHandlingThread.Start (new ThreadStart (StartWorker));
 		}
 
+		/////////////////////////////////////////////////
+
+		// Modified event using Inotify
+
 		private void OnInotifyEvent (int wd,
 					     string path,
 					     string subitem,
 					     Inotify.EventType type,
 					     uint cookie)
 		{
-			if (wd != wdBlam)
+			if (wd != blam_wd)
 				return;
 
-			// Ignore operations on the directories themselves
-			if (subitem == "")
+			if (subitem == blam_file)
 				return;
 
 			Index ();
 		}
-		
+
+		// Modified/Created event using FSW
+
+		private void OnChangedEvent (object o, FileSystemEventArgs args)
+		{
+			Index ();		
+		}
+
+		/////////////////////////////////////////////////
+
 		private void Index ()
 		{
-			FileInfo file = new FileInfo (Path.Combine (blamDir, "collection.xml"));
+			FileInfo file = new FileInfo (Path.Combine (blam_dir, blam_file));
 
 			if (this.FileAttributesStore.IsUpToDate (file.FullName))
 				return;
@@ -126,7 +144,7 @@ namespace Beagle.Daemon.BlamQueryable {
 
 				foreach(Item item in channel.Items) {
 					Indexable indexable = new Indexable (
-						new Uri (channel.Url.Replace ("http://", "rss://") + ";item=" + item.Id));
+						new Uri (String.Format ("feed:{0};item={1}", channel.Url, item.Id)));
 					indexable.MimeType = "text/html";
 					indexable.Type = "FeedItem";
 					indexable.Timestamp = item.PubDate;
@@ -148,13 +166,11 @@ namespace Beagle.Daemon.BlamQueryable {
 					}
 
 					if (img != null) {
-						string path = Path.Combine (Path.Combine (blamDir, "Cache"),
+						string path = Path.Combine (Path.Combine (blam_dir, "Cache"),
 									    img.GetHashCode ().ToString ());
 						indexable.AddProperty (Property.NewKeyword ("fixme:cachedimg", path));
 					}
 
-					
-					// FIXME Use FilterHtml to mark "hot" words in content
 					StringReader reader = new StringReader (item.Text);
 					indexable.SetTextReader (reader);
 
@@ -176,8 +192,10 @@ namespace Beagle.Daemon.BlamQueryable {
 		}
 	}
 
-	// Classes from Blam! sources for deserialization	
-	
+	/////////////////////////////////////////////////
+
+	// Classes from Blam! sources for deserialization
+
 	public class ChannelCollection {
 
 		private ArrayList mChannels;

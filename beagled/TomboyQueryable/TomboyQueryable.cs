@@ -33,21 +33,18 @@ using Beagle.Util;
 
 namespace Beagle.Daemon.TomboyQueryable {
 
-	[QueryableFlavor (Name="Tomboy", Domain=QueryDomain.Local)]
+	[QueryableFlavor (Name="Tomboy", Domain=QueryDomain.Local, RequireInotify=false)]
 	public class TomboyQueryable : LuceneQueryable {
 
 		private static Logger log = Logger.Get ("TomboyQueryable");
 
-		string notesDir;
-		string backupDir;
-
-		int wdNotes = -1;
-		int wdBackup = -1;
+		string tomboy_dir;
+		int tomboy_wd = -1;
+		FileSystemWatcher tomboy_fsw = null;
 
 		public TomboyQueryable () : base ("TomboyIndex")
 		{
-			notesDir = Path.Combine (PathFinder.HomeDir, ".tomboy");
-			backupDir = Path.Combine (notesDir, "Backup");
+			tomboy_dir = Path.Combine (PathFinder.HomeDir, ".tomboy");
 		}
 
 		public override void Start () 
@@ -56,26 +53,44 @@ namespace Beagle.Daemon.TomboyQueryable {
 
 			// If ~/.tomboy does not exist, watch ~ for it to be
 			// created
-			if (! Directory.Exists (notesDir) ) {
+			if (! Directory.Exists (tomboy_dir) ) {
 				log.Warn("Failed to Scan Tomboy, perhaps it is not installed");
-				wdNotes = Inotify.Watch (PathFinder.HomeDir, Inotify.EventType.CreateSubdir);
-				Inotify.Event += WatchForTomboy;
+
+				if (Inotify.Enabled) {
+					tomboy_wd = Inotify.Watch (PathFinder.HomeDir, Inotify.EventType.CreateSubdir);
+					Inotify.Event += WatchForTomboy;
+				} else {
+					tomboy_fsw = new FileSystemWatcher ();
+					tomboy_fsw.Path = Environment.GetEnvironmentVariable ("HOME");
+					tomboy_fsw.Filter = ".tomboy";
+
+					tomboy_fsw.Created += new FileSystemEventHandler (OnTomboyCreated);
+					tomboy_fsw.EnableRaisingEvents = true;
+				}
+
 				return;
 			}
-			
-			Inotify.EventType mask;
-			mask = Inotify.EventType.MovedTo
-				| Inotify.EventType.MovedFrom
-				| Inotify.EventType.CreateFile
-				| Inotify.EventType.DeleteFile
-				| Inotify.EventType.Modify;
 
-			wdNotes = Inotify.Watch (notesDir, mask);
+			if (Inotify.Enabled) {			
+				Inotify.EventType mask;
+				mask = Inotify.EventType.CreateFile
+					| Inotify.EventType.DeleteFile
+					| Inotify.EventType.CloseWrite;
+				
+				tomboy_wd = Inotify.Watch (tomboy_dir, mask);
 
-			if (Directory.Exists (backupDir))
-				wdBackup = Inotify.Watch (backupDir, mask);
+				Inotify.Event += OnInotifyEvent;
+			} else {
+				FileSystemWatcher fsw = new FileSystemWatcher ();
+				fsw.Path = tomboy_dir;
+				fsw.Filter = "*.note";
 
-			Inotify.Event += OnInotifyEvent;
+				fsw.Changed += new FileSystemEventHandler (OnChanged);
+				fsw.Created += new FileSystemEventHandler (OnChanged);
+				fsw.Deleted += new FileSystemEventHandler (OnDeleted);
+
+				fsw.EnableRaisingEvents = true;
+			}
 
 			// Crawl all of our existing notes to make sure that
 			// everything is up-to-date.
@@ -83,7 +98,7 @@ namespace Beagle.Daemon.TomboyQueryable {
 			Stopwatch stopwatch = new Stopwatch ();
 			int count = 0;
 			stopwatch.Start ();
-			DirectoryInfo dir = new DirectoryInfo (notesDir);
+			DirectoryInfo dir = new DirectoryInfo (tomboy_dir);
 			foreach (FileInfo file in dir.GetFiles ()) {
 				if (file.Extension == ".note") {
 					IndexNote (file, Scheduler.Priority.Delayed);
@@ -94,48 +109,49 @@ namespace Beagle.Daemon.TomboyQueryable {
 			log.Info ("Scanned {0} notes in {1}", count, stopwatch);
 		}
 
+		/////////////////////////////////////////////////
+
+		// Modified/Created/Deleted event using Inotify
+
 		private void OnInotifyEvent (int wd,
 					     string path,
 					     string subitem,
 					     Inotify.EventType type,
 					     uint cookie)
 		{
-			if (wd != wdNotes && wd != wdBackup)
+			if (wd != tomboy_wd)
 				return;
 
-			// Ignore operations on the directories themselves
 			if (subitem == "")
 				return;
 
-			//Console.WriteLine ("*** {0} {1} {2}", path, subitem, type);
-
-			// Ignore backup files, tmp files, etc.
-			if (subitem != "Backup" && Path.GetExtension (subitem) != ".note")
+			if (Path.GetExtension (subitem) != ".note")
 				return;
 			
-			if (wd == wdNotes && type == Inotify.EventType.MovedTo) {
-				if (subitem == "Backup") {
-					Inotify.EventType mask;
-					mask = Inotify.EventType.MovedTo
-						| Inotify.EventType.MovedFrom
-						| Inotify.EventType.CreateFile
-						| Inotify.EventType.DeleteFile
-						| Inotify.EventType.Modify;
-
-					wdBackup = Inotify.Watch (backupDir, mask);
-					log.Info("Tomboy: Backup dir was created, now watching");
-				} else
-					IndexNote (new FileInfo (Path.Combine (path, subitem)), Scheduler.Priority.Immediate);
-				//Console.WriteLine ("Indexed {0}", Path.Combine (path, subitem));
+			if (type == Inotify.EventType.CloseWrite || type == Inotify.EventType.CreateFile) {
+				IndexNote (new FileInfo (Path.Combine (path, subitem)), Scheduler.Priority.Immediate);
 			}
 
-			if (wd == wdBackup && type == Inotify.EventType.MovedTo) {
-				string oldPath = Path.Combine (notesDir, subitem);
-				RemoveNote (oldPath);
-				//Console.WriteLine ("Removing {0}", oldPath);
+			if (type == Inotify.EventType.DeleteFile) {
+				RemoveNote (Path.Combine (path, subitem));
 			}
-
 		}
+
+		// Modified/Created event using FSW
+
+		private void OnChanged (object o, FileSystemEventArgs args)
+		{
+			IndexNote (new FileInfo (args.FullPath), Scheduler.Priority.Immediate);
+		}
+
+		// Deleted event using FSW
+
+		private void OnDeleted (object o, FileSystemEventArgs args)
+		{
+			RemoveNote (args.FullPath);
+		}
+
+		/////////////////////////////////////////////////
 
 		private void WatchForTomboy (int wd,
 					     string path,
@@ -153,6 +169,19 @@ namespace Beagle.Daemon.TomboyQueryable {
 			}
 
 		}
+
+		private void OnTomboyCreated (object o, FileSystemEventArgs args)
+		{
+			if (args.Name == ".tomboy" && Directory.Exists (args.FullPath)) {
+				tomboy_fsw.EnableRaisingEvents = false;
+				tomboy_fsw.Dispose ();
+				tomboy_fsw = null;
+				Start ();
+			}
+				
+		}
+
+		/////////////////////////////////////////////////
 
 		private static Indexable NoteToIndexable (FileInfo file, Note note)
 		{
