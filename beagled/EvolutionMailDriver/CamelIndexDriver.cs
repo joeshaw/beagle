@@ -1,0 +1,360 @@
+//
+// CamelIndexDriver.cs
+//
+// Copyright (C) 2004 Novell, Inc.
+//
+//
+//
+// Permission is hereby granted, free of charge, to any person obtaining a
+// copy of this software and associated documentation files (the "Software"),
+// to deal in the Software without restriction, including without limitation
+// the rights to use, copy, modify, merge, publish, distribute, sublicense,
+// and/or sell copies of the Software, and to permit persons to whom the
+// Software is furnished to do so, subject to the following conditions:
+//
+// The above copyright notice and this permission notice shall be included in
+// all copies or substantial portions of the Software.
+//
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+// FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
+// DEALINGS IN THE SOFTWARE.
+//
+
+using System;
+using System.Collections;
+using System.IO;
+using System.Runtime.InteropServices;
+using System.Threading;
+
+using Mono.Posix;
+
+using Beagle.Util;
+using Camel = Beagle.Util.Camel;
+
+namespace Beagle.Daemon {
+
+	internal class CamelIndex : IDisposable {
+		[DllImport ("libcamel.so.0")]
+		extern static IntPtr camel_text_index_new (string path, int mode);
+
+		[DllImport ("libcamel.so.0")]
+		extern static IntPtr camel_index_words (IntPtr index);
+
+		[DllImport ("libcamel.so.0")]
+		extern static IntPtr camel_index_find (IntPtr index, string word);
+
+		[DllImport ("libcamel.so.0")]
+		extern static IntPtr camel_index_cursor_next (IntPtr cursor);
+
+		[DllImport ("libcamel.so.0")]
+		extern static void camel_object_unref (IntPtr obj);
+
+		private IntPtr index = IntPtr.Zero;
+
+		public CamelIndex (string path)
+		{
+			this.index = camel_text_index_new (path, (int) OpenFlags.O_RDONLY);
+
+			if (this.index == IntPtr.Zero)
+				throw new ArgumentException ();
+		}
+
+		~CamelIndex ()
+		{
+			if (this.index != IntPtr.Zero)
+				camel_object_unref (this.index);
+		}
+
+		public void Dispose ()
+		{
+			if (this.index != IntPtr.Zero)
+				camel_object_unref (this.index);
+			GC.SuppressFinalize (this);
+		}
+
+		private static string GetUid (IntPtr cursor)
+		{
+			IntPtr uid_ptr = camel_index_cursor_next (cursor);
+
+			if (uid_ptr == IntPtr.Zero)
+				return null;
+			else
+				return Marshal.PtrToStringAnsi (uid_ptr);
+		}
+
+		public Hashtable Match (IList words)
+		{
+			Hashtable matches = null;
+
+			foreach (string word in words) {
+				Hashtable word_matches = new Hashtable ();
+
+				IntPtr cursor = camel_index_find (this.index, word);
+
+				string uid;
+				while ((uid = GetUid (cursor)) != null)
+					word_matches [uid] = null;
+
+				if (matches == null)
+					matches = word_matches;
+				else {
+					foreach (string m in matches.Keys) {
+						if (!word_matches.ContainsKey (m))
+							matches.Remove (m);
+					}
+				}
+
+				camel_object_unref (cursor);
+			}
+
+			return matches;
+		}
+	}
+
+	internal class CamelIndexDriver {
+
+		private static Logger log = Logger.Get ("mail");
+
+		private QueryBody queryBody;
+		private IQueryResult queryResult;
+		private Hashtable recentHits = new Hashtable ();
+		private SortedList watched = new SortedList ();
+		private ArrayList indexes = new ArrayList ();
+		private Hashtable indexStatus = new Hashtable ();
+
+		public CamelIndexDriver (QueryBody body, IQueryResult result)
+		{
+			this.queryBody = body;
+			this.queryResult = result;
+
+			string home = Environment.GetEnvironmentVariable ("HOME");
+			string local_path = Path.Combine (home, ".evolution/mail/local");
+
+			Inotify.InotifyEvent += new InotifyHandler (OnInotifyEvent);
+			Watch (local_path);
+
+			QueryResult queryResult = (QueryResult) result;
+			queryResult.CancelledEvent += OnResultCancelled;
+
+			Shutdown.ShutdownEvent += OnShutdown;
+		}
+
+		private void OnResultCancelled (QueryResult source)
+		{
+			this.queryBody = null;
+			this.queryResult = null;
+		}
+
+		private void OnShutdown ()
+		{
+			this.queryBody = null;
+			this.queryResult = null;
+		}
+
+		private void Watch (string path)
+		{
+			DirectoryInfo root = new DirectoryInfo (path);
+			if (! root.Exists)
+				return;
+
+			Queue queue = new Queue ();
+			queue.Enqueue (root);
+			this.indexes.Clear ();
+
+			while (queue.Count > 0) {
+				DirectoryInfo dir = queue.Dequeue () as DirectoryInfo;
+				
+				int wd = Inotify.Watch (dir.FullName,
+							InotifyEventType.CreateSubdir
+							| InotifyEventType.Modify
+							| InotifyEventType.MovedTo);
+				watched [wd] = dir.FullName;
+				this.indexes.AddRange (Directory.GetFiles (dir.FullName, "*.ibex.index"));
+
+				foreach (DirectoryInfo subdir in dir.GetDirectories ())
+					queue.Enqueue (subdir);
+			}
+		}
+
+		private void Ignore (string path)
+		{
+			Inotify.Ignore (path);
+			watched.RemoveAt (watched.IndexOfValue (path));
+
+			this.indexes.Clear ();
+			foreach (string p in this.watched.Values)
+				this.indexes.AddRange (Directory.GetFiles (p, "*.ibex.index"));
+		}
+
+		private void OnInotifyEvent (int wd,
+					     string path,
+					     string subitem,
+					     InotifyEventType type,
+					     int cookie)
+		{
+			if (subitem == "" || ! watched.Contains (wd))
+				return;
+
+			string fullPath = Path.Combine (path, subitem);
+
+			switch (type) {
+				
+			case InotifyEventType.CreateSubdir:
+				Watch (fullPath);
+				break;
+
+			case InotifyEventType.DeleteSubdir:
+				Ignore (fullPath);
+				break;
+
+			// Ok, some explanation needed here.  The .ibex.index files get modified,
+			// but you get out-of-sync errors if you try to read them before the
+			// summary is updated.  So what we do is: if the .ibex.index file has
+			// been changed, add it to the hash table with a value of false.  When
+			// the summary gets updated, change the value to true.  When the
+			// index is updated again, we know that it's ok to rerun the query.
+			case InotifyEventType.MovedTo:
+				
+				if (Path.GetExtension (fullPath) == ".ev-summary") {
+					string indexPath = Path.ChangeExtension (fullPath, ".ibex.index");
+
+					if (this.indexStatus.ContainsKey (indexPath)) {
+						// Second pass - the summary
+						this.indexStatus [indexPath] = true;
+					}
+				}
+				break;
+
+			case InotifyEventType.Modify:
+
+				if (Path.GetExtension (fullPath) == ".index") {
+					if (!this.indexStatus.ContainsKey (fullPath)) {
+						// First pass - the index file changes
+						this.indexStatus [fullPath] = false;
+					} else if ((bool) this.indexStatus [fullPath] == true) {
+						// Third pass - the index file changes again
+						log.Debug ("Index {0} has changed, rerunning query", fullPath);
+						this.indexStatus.Remove (fullPath);
+						this.Start ();
+					}
+				}
+				break;
+			}
+		}
+
+		private Hit HitFromMessageInfo (string folderName, Camel.MessageInfo mi)
+		{
+			Hit hit = new Hit ();
+			hit.Uri = EvolutionMailQueryable.EmailUri ("local@local", folderName, mi.uid);
+			hit.Type = "MailMessage"; // Maybe MailMessage?
+			hit.MimeType = "text/plain";
+			hit.Source = "EvolutionMail";
+			hit.ScoreRaw = 1.0F;
+
+			// These should map to the same properties in MailToIndexable ()
+			hit ["dc:title"] = mi.subject;
+
+			hit ["fixme:folder"]   = folderName;
+			hit ["fixme:subject"]  = mi.subject;
+			hit ["fixme:to"]       = mi.to;
+			hit ["fixme:from"]     = mi.from;
+			hit ["fixme:cc"]       = mi.cc;
+			hit ["fixme:received"] = StringFu.DateTimeToString (mi.received);
+			hit ["fixme:sentdate"] = StringFu.DateTimeToString (mi.sent);
+			hit ["fixme:mlist"]    = mi.mlist;
+			hit ["fixme:flags"]    = mi.flags.ToString ();
+
+			if (folderName == "Sent")
+				hit ["fixme:isSent"] = "true";
+
+			if (mi.IsAnswered)
+				hit ["fixme:isAnswered"] = "true";
+
+			if (mi.IsDeleted)
+				hit ["fixme:isDeleted"] = "true";
+
+			if (mi.IsDraft)
+				hit ["fixme:isDraft"] = "true";
+
+			if (mi.IsFlagged)
+				hit ["fixme:isFlagged"] = "true";
+
+			if (mi.IsSeen)
+				hit ["fixme:isSeen"] = "true";
+			
+			if (mi.HasAttachments)
+				hit ["fixme:hasAttachments"] = "true";
+
+			if (mi.IsAnsweredAll)
+				hit ["fixme:isAnsweredAll"] = "true";
+
+			return hit;
+		}
+
+		public void Start ()
+		{
+			ArrayList hits = new ArrayList ();
+
+			foreach (string idx_path in this.indexes) {
+				// gets rid of the ".index" from the file.  camel expects it to just end in ".ibex"
+				string path = Path.ChangeExtension (idx_path, null);
+
+				CamelIndex index;
+
+				try {
+					index = new CamelIndex (path);
+				} catch (DllNotFoundException e) {
+					log.Info ("Couldn't load libcamel.so.  You probably need to set $LD_LIBRARY_PATH");
+					return;
+				} catch {
+					// If an index is invalid, just skip it.
+					continue;
+				}
+
+				Hashtable matches = index.Match (this.queryBody.Text);
+				index.Dispose ();
+
+				if (matches == null || matches.Count == 0)
+					continue;
+
+				string summaryPath = Path.ChangeExtension (path, "ev-summary");
+
+				if (!File.Exists (summaryPath))
+					continue;
+
+				Camel.Summary summary = Camel.Summary.load (summaryPath);
+
+				foreach (Camel.MessageInfo mi in summary) {
+					if (!matches.ContainsKey (mi.uid))
+						continue;
+
+					string folderName = EvolutionMailQueryable.GetLocalFolderName (new FileInfo (path));
+
+					Hit hit = HitFromMessageInfo (folderName, mi);
+
+					hits.Add (hit);
+				}
+			}
+
+			ArrayList filteredHits = new ArrayList ();
+			Hashtable newRecentHits = new Hashtable ();
+			foreach (Hit hit in hits) {
+				if (!this.recentHits.ContainsKey (hit.Uri))
+					filteredHits.Add (hit);
+				else
+					this.recentHits.Remove (hit.Uri);
+
+				newRecentHits [hit.Uri] = hit;
+			}
+
+			this.queryResult.Add (filteredHits);
+			this.queryResult.Subtract (this.recentHits.Keys);
+
+			this.recentHits = newRecentHits;
+		}
+	}
+}
