@@ -30,9 +30,9 @@ namespace Beagle
 	using DBus;
 	
 	public enum QueryDomain {
-		Local = 1,
+		Local        = 1,
 		Neighborhood = 2,
-		Global = 4
+		Global       = 4
 	}
 
 	[Interface ("com.novell.Beagle.Query")]
@@ -46,6 +46,9 @@ namespace Beagle
 
 		[Method]
 		public abstract void AddMimeType (string type);
+
+		[Method]
+		public abstract void AddSource (string source);
 
 		[Method]
 		public abstract void AddDomain (QueryDomain d);

@@ -74,7 +74,7 @@ class QueryTool {
 			query = Beagle.Factory.NewQuery ();
 		} catch (Exception e) {
 			if (e.ToString ().IndexOf ("com.novell.Beagle") != -1) {
-				Console.WriteLine ("Could not query.  The Beagle daemon probably not running, or you don't have D-BUS set up properly.");
+				Console.WriteLine ("Could not query.  The Beagle daemon is probably not running, or maybe you\n don't have D-BUS set up properly.");
 				System.Environment.Exit (-1);
 			}
 		}
@@ -87,6 +87,9 @@ class QueryTool {
 			if (args [i].StartsWith ("mimetype:")) {
 				string mt = args [i].Substring ("mimetype:".Length);
 				query.AddMimeType (mt);
+			} else if (args [i].StartsWith ("source:")) {
+				string ss = args [i].Substring ("source:".Length);
+				query.AddSource (ss);
 			} else {
 				query.AddTextRaw (args [i]);
 			}

@@ -140,7 +140,7 @@ namespace Beagle.Daemon {
 		}
 
 		public String Name {
-			get { return "EvolutionDataServer"; }
+			get { return "Addressbook"; }
 		}
 
 		public bool AcceptQuery (QueryBody body)

@@ -51,7 +51,7 @@ namespace Beagle.Daemon.WebHistoryQueryable {
 			}
 		}
 		
-		public WebHistoryQueryable () : base ("WebHistoryQueryable",
+		public WebHistoryQueryable () : base ("WebHistory", // backend name
 						      Path.Combine (PathFinder.RootDir, "WebHistoryIndex"))
 		{
 			WebHistoryIndexerImpl indexer = new WebHistoryIndexerImpl (Driver);

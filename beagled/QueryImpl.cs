@@ -104,6 +104,11 @@ namespace Beagle.Daemon {
 			body.AddMimeType (type);
 		}
 
+		public override void AddSource (string source)
+		{
+			body.AddSource (source);
+		}
+
 		public override void Start ()
 		{
 			if (StartedEvent != null)

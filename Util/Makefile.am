@@ -27,6 +27,7 @@ CSFILES = 			        \
 	$(srcdir)/PullingReader.cs      \
 	$(srcdir)/StringFu.cs           \
 	$(srcdir)/UriFu.cs		\
+	$(srcdir)/GtkUtils.cs		\
 	$(srcdir)/Vfs.cs
 
 ASSEMBLIES =				\

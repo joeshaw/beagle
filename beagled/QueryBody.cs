@@ -39,6 +39,7 @@ namespace Beagle.Daemon {
 
 		ArrayList text = new ArrayList ();
 		ArrayList mimeTypes = new ArrayList ();
+		ArrayList searchSources = new ArrayList ();
 
 		public QueryBody ()
 		{
@@ -93,7 +94,7 @@ namespace Beagle.Daemon {
 		{
 			mimeTypes.Add (str);
 		}
-		
+
 		public bool AllowsMimeType (string str)
 		{
 			if (mimeTypes.Count == 0)
@@ -110,6 +111,32 @@ namespace Beagle.Daemon {
 
 		public bool HasMimeTypes {
 			get { return mimeTypes.Count > 0; }
+		}
+
+		///////////////////////////////////////////////////////////////
+
+		public void AddSource (string str)
+		{
+			searchSources.Add (str);
+		}
+		
+
+		public bool AllowsSource (string str)
+		{
+			if (searchSources.Count == 0)
+				return true;
+			foreach (string ss in searchSources)
+				if (str.ToUpper () == ss.ToUpper ())
+					return true;
+			return false;
+		}
+
+		public IList Sources {
+			get { return searchSources; }
+		}
+
+		public bool HasSources {
+			get { return searchSources.Count > 0; }
 		}
 
 		///////////////////////////////////////////////////////////////
@@ -133,7 +160,8 @@ namespace Beagle.Daemon {
 
 		public bool IsEmpty {
 			get { return text.Count == 0
-				      && mimeTypes.Count == 0; }
+				      && mimeTypes.Count == 0
+				      && searchSources.Count == 0; }
 		}
 	}
 }

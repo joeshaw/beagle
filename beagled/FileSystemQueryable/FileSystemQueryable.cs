@@ -125,7 +125,7 @@ namespace Beagle.Daemon.FileSystemQueryable {
 		private FileSystemIndexerImpl indexer;
 		private FileSystemEventMonitor monitor;
 
-		public FileSystemQueryable () : base ("FileSystemQueryable",
+		public FileSystemQueryable () : base ("Files", // backend name
 						      Path.Combine (PathFinder.RootDir, "FileSystemIndex"))
 		{
 			filter = new FileNameFilter ();

@@ -155,6 +155,10 @@ namespace Beagle.Daemon {
 
 			if (! body.IsEmpty) {
 				foreach (IQueryable queryable in queryables) {
+
+					if (! body.AllowsSource (queryable.Name))
+						continue;
+					    
 					if (queryable.AcceptQuery (body)) {
 						QueryClosure qc;
 						qc = new QueryClosure (queryable, body);

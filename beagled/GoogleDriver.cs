@@ -50,6 +50,10 @@ namespace Beagle.Daemon {
 			googleKey = Environment.GetEnvironmentVariable ("GOOGLE_WEB_API_KEY");
 		}
 
+		public string Name {
+			get { return "Google"; }
+		}
+
 		Hit FromGoogleResultElement (ResultElement res, int rank)
 		{
 			Hit hit = new Hit ();
@@ -74,10 +78,6 @@ namespace Beagle.Daemon {
 		}
 
 		static bool showNoKeyMessage = true;
-
-		public string Name {
-			get { return "Google"; }
-		}
 
 		public bool AcceptQuery (QueryBody body)
 		{

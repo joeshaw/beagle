@@ -37,7 +37,8 @@ namespace Beagle.Daemon.TomboyQueryable {
 	public class TomboyQueryable : LuceneQueryable {
 		FileSystemEventMonitor monitor;
 
-		public TomboyQueryable () : base ("TomboyQueryable", Path.Combine (PathFinder.RootDir, "TomboyIndex"))
+		public TomboyQueryable () : base ("Tomboy", // Backend name
+						  Path.Combine (PathFinder.RootDir, "TomboyIndex"))
 		{
 			string home = Environment.GetEnvironmentVariable ("HOME");
 			DirectoryInfo notesDir = new DirectoryInfo (Path.Combine (home, ".tomboy"));

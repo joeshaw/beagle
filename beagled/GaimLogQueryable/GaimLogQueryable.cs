@@ -40,7 +40,7 @@ namespace Beagle.Daemon.GaimLogQueryable {
 		private class GaimLogCrawler : Crawler {
 
 			GaimLogQueryable glq;
-			
+
 			public GaimLogCrawler (GaimLogQueryable _glq) : base (_glq.Driver.Fingerprint)
 			{
 				glq = _glq;
@@ -60,7 +60,7 @@ namespace Beagle.Daemon.GaimLogQueryable {
 
 		FileSystemEventMonitor monitor;
 
-		public GaimLogQueryable () : base ("GaimLogQueryable",
+		public GaimLogQueryable () : base ("IMLog",
 						   Path.Combine (PathFinder.RootDir, "GaimLogQueryable"))
 		{
 			string home = Environment.GetEnvironmentVariable ("HOME");
