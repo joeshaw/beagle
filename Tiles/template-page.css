@@ -43,14 +43,16 @@ td {
 
 td.icon { 
   background-color: #eeeee0;
+  min-height: 80px;
   width: 1%;
-  height: 80px;
+  min-width: 80px;
   text-align: center;
-  vertical-align: center;
+  vertical-align: top;
+  padding: 12px;
 }
 
 td.content { 
-  padding-left: 18px;
+  padding-left: 12px;
   vertical-align: middle;  
 }
 

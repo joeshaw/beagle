@@ -1,0 +1,61 @@
+// This file just exists to override the @tags@ so that testing the stylesheet works
+// by loading the template-mockup.html into a web browser. It should not be installed
+// or used in any other way. //Tuomas
+
+.actions li {
+  background: url(/opt/gnome/share/icons/hicolor/16x16/stock/navigation/stock_right.png) no-repeat;
+}
+
+#phone {
+  background: url(/opt/gnome/share/icons/hicolor/16x16/stock/generic/stock_landline-phone.png) no-repeat;
+}
+
+#email {
+  background: url(/opt/gnome/share/icons/hicolor/16x16/stock/net/stock_mail.png) no-repeat;
+}
+
+#email-forward {
+  background: url(/opt/gnome/share/icons/hicolor/16x16/stock/net/stock_mail-forward.png) no-repeat;
+}
+
+#email-reply {
+  background: url(/opt/gnome/share/icons/hicolor/16x16/stock/net/stock_mail-reply.png) no-repeat;
+}
+
+#message {
+  background: url(/opt/gnome/share/icons/hicolor/16x16/apps/im-yahoo.png) no-repeat;
+}
+
+#message-aim {
+  background: url(/opt/gnome/share/icons/hicolor/16x16/apps/im-aim.png) no-repeat;
+}
+
+#message-icq {
+  background: url(/opt/gnome/share/icons/hicolor/16x16/apps/im-icq.png) no-repeat;
+}
+
+#message-jabber {
+  background: url(/opt/gnome/share/icons/hicolor/16x16/apps/im-jabber.png) no-repeat;
+}
+
+#message-msn {
+  background: url(/opt/gnome/share/icons/hicolor/16x16/apps/im-msn.png) no-repeat;
+}
+
+#message-nov {
+  background: url(/opt/gnome/share/icons/hicolor/16x16/apps/im-nov.png) no-repeat;
+}
+
+#message-yahoo {
+  background: url(/opt/gnome/share/icons/hicolor/16x16/apps/im-yahoo.png) no-repeat;
+}
+
+
+#reveal {
+  background: url(@image%action-reveal.png@) no-repeat;
+}
+
+td.footer { 
+  text-align: right;
+  border-bottom: solid 1px white;
+}

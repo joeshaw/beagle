@@ -1,5 +1,10 @@
 2004-11-10  Tuomas Kuosmanen  <tigert@novell.com>
 
+	* Tiles/template-mockup.html, Tiles/template-mockup.css: added a
+	mockup template that will contain examples of all tiles, also had
+	to add a mock stylesheet that overrides the @foo@ stuff so I see 
+	icons for testing purposes. Not intended for real world use :-)
+
 	* Tiles/template-mail-message.html: added date display and content
 	snippet dummy example (to be implemented in mail messages)
 
