@@ -42,6 +42,12 @@ Filesystem
 Misc
 ----
 
+* beagled is badly behaved!  It redirects stdout/stderr to /dev/null.
+  All logging/spew is via Console.WriteLine.  It should also do
+  more initialization before forking.
+
+* Backends should be able to publish information to be returned by "ping".
+
 * A relatively easy project for someone would be to write a little
   viewer for IM Logs that could be launched by clicking on an IM Log
   tile.  There is code in Util/ImLog.cs for parsing gaim logs.
