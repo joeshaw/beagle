@@ -2,4 +2,4 @@
 *.dll
 Makefile
 Makefile.in
-ExternalStringHack.cs
+ExternalStringsHack.cs
