@@ -36,6 +36,8 @@ namespace Beagle.Tile {
 	public class TileImLog : TileFromHitTemplate {
 		private BU.ImBuddy buddy = null;
 		private static BU.GaimBuddyListReader list = null;
+
+		private string email = null;
 		
 		public TileImLog (Hit _hit) : base (_hit,
 						    "template-im-log.html")
@@ -45,6 +47,7 @@ namespace Beagle.Tile {
 			}
 
 			buddy = list.Search (Hit ["fixme:speakingto"]);
+			email = GetEmailForIm (Hit ["fixme:speakingto"]);
 		}
 
 		protected override void PopulateTemplate ()
@@ -57,6 +60,9 @@ namespace Beagle.Tile {
 					   BU.StringFu.StringToDateTime (Hit ["fixme:starttime"])) + ")";
 			if (Template ["nice_duration"] == "()")
 				Template ["nice_duration"] = "";
+
+			if (email != null)
+				Template ["SendMailAction"] = "Send Mail";
 			
 #if false
 			Template["snippet"] = getSnippet ();
@@ -81,6 +87,41 @@ namespace Beagle.Tile {
 			} else {
 				Template["Icon"] = Images.GetHtmlSourceForStock ("gnome-gaim", 48);
 			}
+		}
+
+		private string GetEmailForIm (string im)
+		{
+			Evolution.Book addressbook = null;
+
+			// Connect to the Evolution addressbook.
+			try {
+				addressbook = Evolution.Book.NewSystemAddressbook ();
+				addressbook.Open (true);
+			} catch (Exception e) {
+				Console.WriteLine ("\nCould not open Evolution addressbook:\n" + e);
+				return null;
+			}
+
+			// Do a search.
+			string qstr =
+				String.Format ("(or " +
+					           "(is \"im_aim\" \"{0}\") " + 
+					           "(is \"im_yahoo\" \"{0}\") " +
+					           "(is \"im_msn\" \"{0}\") " + 
+					           "(is \"im_icq\" \"{0}\") " +
+					           "(is \"im_jabber\" \"{0}\") " + 
+					           "(is \"im_groupwise\" \"{0}\") " +
+					       ")",
+					       im);
+
+			Evolution.BookQuery query = Evolution.BookQuery.FromString (qstr);
+			Evolution.Contact [] matches = addressbook.GetContacts (query);
+			foreach (Evolution.Contact c in matches) {
+				Console.WriteLine ("Got match: " + c.FullName);
+				return c.Email1;
+			}
+
+			return null;
 		}
 
 		private string HighlightOrNull (string haystack, string [] needles)
@@ -152,43 +193,11 @@ namespace Beagle.Tile {
 
 		}
 
-		// FIXME: We really should not even display the "Send
-		// mail" action unless we know we have a contact for
-		// this person.
 		[TileAction]
 		public void SendMailForIm ()
 		{
-			Evolution.Book addressbook = null;
-
-			// Connect to the Evolution addressbook.
-			try {
-				addressbook = Evolution.Book.NewSystemAddressbook ();
-				addressbook.Open (true);
-			} catch (Exception e) {
-				Console.WriteLine ("\nCould not open Evolution addressbook:\n" + e);
-				return;
-			}
-
-			// Do a search.
-			// FIXME: This should match the contact IM protocol to
-			// the protocol of the IM conversation.
-			string qstr =
-				String.Format ("(or " +
-					           "(is \"im_aim\" \"{0}\") " + 
-					           "(is \"im_yahoo\" \"{0}\") " +
-					           "(is \"im_msn\" \"{0}\") " + 
-					           "(is \"im_icq\" \"{0}\") " +
-					           "(is \"im_jabber\" \"{0}\") " + 
-					           "(is \"im_groupwise\" \"{0}\") " +
-					       ")",
-					       Hit ["fixme:speakingto"]);
-			Evolution.BookQuery query = Evolution.BookQuery.FromString (qstr);
-			Evolution.Contact [] matches = addressbook.GetContacts (query);
-			foreach (Evolution.Contact c in matches) {
-				Console.WriteLine ("Mail Match: {0} <{1}>", c.FullName, c.Email1);
-				SendMailToAddress (c.Email1, null);
-				return;
-			}
+			if (email != null)
+				SendMailToAddress (email, null);
 		}
 
 		[TileAction]
