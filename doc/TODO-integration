@@ -1,0 +1,118 @@
+
+BROWSERS:
+
+Extend plug-in to index Foaf metadata embedded in web pages.
+
+Callout on file download/save as/etc (so we can index it immediately)
+
+Firefox support?
+
+
+EVOLUTION:
+
+Foaf backend for e-d-s.
+
+Ability to pop open a contact editor from an identifier on the evo command line.
+
+Ability to search evolution calendar.
+
+Ability to pop up a calendar appointment from the evo commandline.
+
+
+FILE CHOOSER:
+
+Figure out why the current hack doesn't work in gedit w/ 'all files'.
+
+Put the entry directly in the chooser dialog.
+
+In the case of GTK_FILE_CHOOSER_ACTION_SAVE, callout w/ info on the saved filename.
+
+
+FOAF:
+
+Foaf crawling to maintain an up-to-date local cache of your social network.
+
+
+NAUTILUS:
+
+Emblem searching.
+
+Have nautilus track information on how often a folder/file is clicked on in nautilus.
+(That info would be really useful for determining relevancy.  It could also be used to
+optimize crawling.)
+
+We could use nautilus to optimize reindexing --- it would be nice if we could get
+nautilus to callout to a script when:
+* entering/leaving a folder
+* someone uses 'Create Document' to create a document
+* noticing files have appeared or changed
+* moving a file
+* renaming a file
+
+
+GTKHTML:
+
+Fix vertical sizing in nested tables.
+
+Wrap the widget embedding API for gtkhtml#.
+
+Fix iframe layout/sizing.
+
+
+PICTURES:
+
+Index f-spot metadata.
+
+Do the right thing with EXIF data.
+
+
+MUSIC:
+
+Write a rhythmbox backend that uses beagle instead of its own db --- so you don't
+need to tell rb where you keep your mp3s, they just magically appear.  (There might be performance problems that would keep this from working well.)
+
+Use gst# to extract id3 tags and other metadata.  (The current filter is a crude hack.)
+
+Muine backend.
+
+
+RED CARPET:
+
+Have beagle query rcd to search rc channels.
+
+
+HARDWARE:
+
+Hardware querying: search against device names, return device info in the hits.
+
+
+DASHBOARD:
+
+Make Dashboard use beagle's tiles.
+
+Make dashboard focus issues work.
+
+
+RECENTLY USED ITEMS:
+
+The recently-used items format allows for arbitrary Uris.
+It would be able to have recently viewed web pages, recently
+communicated-with people, etc. in there.  Maybe we could
+pack little mini-tiles into the menu?  (Idea from Tom
+Von Schwerdtner (tvon) in #dashboard.)
+
+
+NON-CODING:
+
+Get the artists to make us a cool logo.
+
+Make www.gnome.org/projects/beagle look pretty.
+
+T-shirts!
+
+Packages in a RC channel, both for Beagle and for instrumented apps.  We
+need a way to get the nice integration features into people's hands w/o
+requiring them to patch and recompile gtk+, nautilus, etc.
+
+
+
