@@ -77,7 +77,11 @@ namespace Beagle.IndexHelper {
 			}
 
 			// Save the owner ID of the com.novell.Beagle service
+#if HAVE_OLD_DBUS
 			process_owner = Beagle.Daemon.DBusisms.BusDriver.GetServiceOwner (Beagle.DBusisms.Name);
+#else
+                        process_owner = Beagle.Daemon.DBusisms.BusDriver.GetOwner (Beagle.DBusisms.Name);
+#endif
 
 			// Start monitoring the beagle daemon
 			GLib.Timeout.Add (2000, new GLib.TimeoutHandler (BeagleDaemonWatcherTimeoutHandler));
