@@ -105,6 +105,7 @@ namespace Beagle.Filters {
 			AddSupportedMimeType ("application/msword");
 			AddSupportedMimeType ("application/vnd.ms-word");
 			AddSupportedMimeType ("application/x-msword");
+			SnippetMode = true;
 		}
 		
   		private void IndexText (IntPtr byteArray, int dataLen, bool hotText)

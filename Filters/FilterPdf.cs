@@ -18,6 +18,7 @@ namespace Beagle.Filters {
 		public FilterPdf ()
 		{
 			AddSupportedMimeType ("application/pdf");
+			SnippetMode = true;
 		}
 
 		// FIXME: we should have a reasonable failure mode if pdftotext is

@@ -230,22 +230,16 @@ namespace Beagle.Daemon {
 
 			string path = ContentUri.LocalPath;
 
-#if false
-			flavor = Flavor.FromMimeType (MimeType);
-			filter = Filter.FromFlavor (flavor);
-#endif
 			filter = FilterFactory.CreateFilterFromMimeType (MimeType);
 			
 
 			if (filter != null) {
 
-#if false // For now we explicitly ignore SnippetMode
 				if (filter.SnippetMode) {
 					TextWriter writer = TextCache.GetWriter (Uri);
 					filter.AttachSnippetWriter (writer);
 				}
-#endif
-
+				
 				if (crawl_mode)
 					filter.EnableCrawlMode ();
 				filter.Open (new FileInfo (path));

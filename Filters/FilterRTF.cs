@@ -147,6 +147,8 @@ namespace Beagle.Filters {
 
 			MetaDataStack = new Stack ();
 			TextDataStack = new Stack ();
+
+			SnippetMode = true;
 		}
 
 		override protected void DoOpen (FileInfo info) 

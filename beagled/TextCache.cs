@@ -64,7 +64,7 @@ namespace Beagle.Daemon {
 			connection.Open ();
 
 			if (create_new_db) {
-				DoNonQuery ("CREATE TABLE index (                " +
+				DoNonQuery ("CREATE TABLE uri_index (            " +
 					    "  uri      STRING UNIQUE NOT NULL,  " +
 					    "  filename STRING UNIQUE NOT NULL   " +
 					    ")");
@@ -93,7 +93,7 @@ namespace Beagle.Daemon {
 			SqliteDataReader reader;
 			string path = null;
 
-			command = NewCommand ("SELECT filename FROM index WHERE uri='{0}'", uri);
+			command = NewCommand ("SELECT filename FROM uri_index WHERE uri='{0}'", uri);
 			reader = command.ExecuteReader ();
 			if (reader.Read ())
 				path = reader [0].ToString ();
@@ -103,7 +103,7 @@ namespace Beagle.Daemon {
 			if (path == null && create_if_not_found) {
 				string guid = Guid.NewGuid ().ToString ();
 				path = Path.Combine (guid.Substring (0, 2), guid.Substring (2));
-				DoNonQuery ("INSERT INTO db_info (uri, filename) VALUES ('{0}', '{1}')", uri, path);
+				DoNonQuery ("INSERT INTO uri_index (uri, filename) VALUES ('{0}', '{1}')", uri, path);
 			}
 
 			return path != null ? Path.Combine (text_cache_dir, path) : null;
@@ -143,7 +143,7 @@ namespace Beagle.Daemon {
 		{
 			string path = LookupPath (uri, false);
 			if (path != null) {
-				DoNonQuery ("DELETE FROM index WHERE uri='{0}' AND filename='{1}'", uri, path); 
+				DoNonQuery ("DELETE FROM uri_index WHERE uri='{0}' AND filename='{1}'", uri, path); 
 				File.Delete (path);
 			}
 		}
