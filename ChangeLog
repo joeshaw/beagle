@@ -1,5 +1,13 @@
 2005-02-23  Veerapuram Varadhan	 <vvaradhan@novell.com>
 
+	* glue/wv1-glue.c: Fix for
+	http://bugzilla.gnome.org/show_bug.cgi?id=166155.  The fix is
+	though hacky, does follows the logic ;-).  See the FIXME in
+	append_char() for more details.  Also, process the "special-chars"
+	properly. ;-)
+	
+2005-02-23  Veerapuram Varadhan	 <vvaradhan@novell.com>
+
 	* Filters/FilterPPT.cs: A probable correct way of opening the
 	stream irrespective of the versions of file.  Also, enable it for
 	showing snippets.

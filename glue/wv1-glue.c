@@ -111,7 +111,18 @@ append_char (UserData * ud, U16 ch)
     break;
   default: 
     len =  g_unichar_to_utf8 (ch, tmpBuf);
-    g_string_append_len (ud->txtWord, tmpBuf, len);
+    int i;
+    /*  FIXME: This is not good, pretty hacky code
+     *  to get rid of unwanted characters, especially
+     *  some graphic symbols used in a document. 
+     *  Ex: a tick mark, a smiley blah blah blah...
+     *  I think handling for such wierd stuff needs to be
+     *  done by Filter.cs, thus we don't have to repeat 
+     *  the same for other filters as well. ;-)
+     */
+    for (i = 0; i < len; i++)
+      if (tmpBuf[i] > 0 && tmpBuf[i] < 128)
+	g_string_append_c (ud->txtWord, tmpBuf[i]);
     break;
   }
   if (ch == 0x00 || ch == 0x20) {
@@ -189,7 +200,9 @@ charProc (wvParseStruct * ps, U16 eachchar, U8 chartype, U16 lid)
       ps->fieldstate--;
       ps->fieldmiddle = 0;
       return 0;
-
+    case 7:                     /* Cell/Row mark, end of a cell/row*/
+      eachchar = 0x20;
+      break;
     default:
       break;
     }
@@ -203,7 +216,7 @@ charProc (wvParseStruct * ps, U16 eachchar, U8 chartype, U16 lid)
    * 
    * ud->bIsHot is updated for every CHARPROPBEGIN element
    * ud->bWasHot is updated on reading every *word*.
- */
+   */
   UserData *ud = (UserData *) ps->userData;
   if (!ud->bWasHot)
     ud->bWasHot = ud->bIsHot;
@@ -242,6 +255,9 @@ specCharProc (wvParseStruct * ps, U16 eachchar, CHP * achp)
       ps->fieldstate--;
       ps->fieldmiddle = 0;
       return 0;
+    case 7:                     /* Cell/Row mark, end of a cell/row */
+      append_char (ps->userData, 0x20);
+      break;
     default:
       break;
     }
