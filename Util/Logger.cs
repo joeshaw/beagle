@@ -35,6 +35,7 @@ namespace Beagle.Util {
 	public class Logger {
 
 		private static Hashtable loggers = new Hashtable ();
+		private long lockSize;
 
 		FileStream fs;
 		StreamWriter sw;
@@ -61,7 +62,8 @@ namespace Beagle.Util {
 		private bool AcquireLock ()
 		{
 			try {
-				fs.Lock (0, fs.Length);
+				lockSize = fs.Length;
+				fs.Lock (0, lockSize);
 				return true;
 			} catch {
 				return false;
@@ -88,7 +90,7 @@ namespace Beagle.Util {
 		{
 			sw.Flush ();
 			fs.Flush ();
-			fs.Unlock (0, fs.Length);
+			fs.Unlock (0, lockSize);
 		}
 
 		private string GetStamp ()
