@@ -271,23 +271,28 @@ namespace Beagle.Util {
 			return false;
 		}
 
-		static char[] CharsToQuote = { ';', '?', ':', '@', '&', '=', '$', ',', '#', '%', ' ' };
+		static char[] CharsToQuote = { ';', '?', ':', '@', '&', '=', '$', ',', '#', '%', '"', ' ' };
+
+		static public string HexEscape (string str)
+		{
+			StringBuilder builder = new StringBuilder ();
+			int i;
+
+			while ((i = str.IndexOfAny (CharsToQuote)) != -1) {
+				if (i > 0)
+					builder.Append (str.Substring (0, i));
+				builder.Append (Uri.HexEscape (str [i]));
+				str = str.Substring (i+1);
+			}
+			builder.Append (str);
+
+			return builder.ToString ();
+		}
+
 		static public string PathToQuotedFileUri (string path)
 		{
-
-			StringBuilder builder = new StringBuilder (Uri.UriSchemeFile + Uri.SchemeDelimiter);
-			int i;
 			path = Path.GetFullPath (path);
-			while ((i = path.IndexOfAny (CharsToQuote)) != -1) {
-				if (i > 0)
-					builder.Append (path.Substring (0, i));
-				builder.Append (Uri.HexEscape (path [i]));
-				path = path.Substring (i+1);
-			}
-			builder.Append (path);
-			
-			return builder.ToString ();
-
+			return Uri.UriSchemeFile + Uri.SchemeDelimiter + HexEscape (path);
 		}
 
 		// These strings should never be exposed to the user.

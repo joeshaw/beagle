@@ -96,8 +96,8 @@ namespace Beagle.Util {
 			} else {
 				doc = cached.doc;
 			}
-						
-			string xpath = String.Format ("/directory/file[@name=\"{0}\"]", name);
+
+			string xpath = String.Format ("/directory/file[@name=\"{0}\"]", StringFu.HexEscape (name));
 			return doc.SelectSingleNode (xpath);
 		}
 

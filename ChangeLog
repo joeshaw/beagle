@@ -1,3 +1,8 @@
+2005-03-10  Daniel Drake <dsd@gentoo.org>
+
+	* Util/NautilusTools.cs, Util/StringFu.cs: Fix for filenames
+	containing '"'
+	
 2005-03-09  Daniel Drake <dsd@gentoo.org>
 
 	* BeagleClient/Hit.cs, BeagleClient/Indexable.cs, Util/UriFu.cs,
