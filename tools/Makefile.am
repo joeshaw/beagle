@@ -104,7 +104,8 @@ WRAPPERS = 				\
 bin_SCRIPTS = 			\
 	$(WRAPPERS) 		\
 	$(UPDATE_SCRIPT)	\
-	beagle-ping
+	beagle-ping             \
+	beagle-shutdown
 
 all: $(TARGETS) $(WRAPPERS) $(UPDATE_SCRIPT)
 
