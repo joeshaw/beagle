@@ -53,7 +53,6 @@ namespace Beagle.Daemon.FileSystemQueryable {
 		public Indexable GetNextIndexable ()
 		{
 			FileInfo f = files.Current as FileInfo;
-			System.Console.WriteLine ("returning {0}", f.FullName);
 			return FileSystemQueryable.FileToIndexable (f.FullName, true);
 		}
 
