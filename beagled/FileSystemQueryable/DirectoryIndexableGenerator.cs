@@ -85,7 +85,14 @@ namespace Beagle.Daemon.FileSystemQueryable {
 
 			while (files.MoveNext ()) {
 				FileInfo f = files.Current as FileInfo;
-				Indexable indexable = BuildIndexableForPath (f.FullName);
+				Indexable indexable = null;
+				try { 
+					if (f.Exists)
+						indexable = BuildIndexableForPath (f.FullName);
+				} catch (Exception ex) {
+					Logger.Log.Debug ("Caught exception calling BuildIndexableForPath on '{0}'", f.FullName);
+					Logger.Log.Debug (ex);
+				}
 				if (indexable != null)
 					return indexable;
 			}

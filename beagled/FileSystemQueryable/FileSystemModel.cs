@@ -585,6 +585,17 @@ namespace Beagle.Daemon.FileSystemQueryable {
 
 		///////////////////////////////////////////////////////////////////////////
 
+		// This works around a mono bug: the DateTimes that we get out of stat
+		// don't correctly account for daylight savings time.  We declare the two
+		// dates to be equal if:
+		// (1) They actually are equal
+		// (2) The first date is exactly one hour ahead of the second
+		static private bool DatesAreTheSame (DateTime system_io_datetime, DateTime stat_datetime)
+		{
+			double t = (system_io_datetime - stat_datetime).TotalSeconds;
+			return Math.Abs (t) < 1e-5 || Math.Abs (t-3600) < 1e-5;
+		}
+
 		public enum RequiredAction {
 			None,
 			Index,
@@ -623,15 +634,22 @@ namespace Beagle.Daemon.FileSystemQueryable {
 
 			// If the file has changed since we put on the
 			// attributes, index.
-			if (attr.LastWriteTime < stat.MTime) {
+			if (! DatesAreTheSame (attr.LastWriteTime, stat.MTime)) {
 				if (Debug)
 					Logger.Log.Debug ("*** mtime has changed on {0}", path);
+				
+				// If the mtime has changed and the path doesn't match the
+				// unique ID, the file was probably copied.  Drop the file attributes
+				// so that a new unique ID will be assigned when we index.
+				if (PathFromUid (attr.UniqueId) != path)
+					this.backing_store.Drop (path);
+
 				return RequiredAction.Index;
 			}
 
 			// If the inode data has changed since it was last
 			// indexed, we might have been moved or copied.
-			if (attr.LastIndexedTime < stat.CTime) {
+			if (! DatesAreTheSame (attr.LastIndexedTime, stat.CTime)) {
 				string path_from_uid = PathFromUid (attr.UniqueId);
 				if (Debug)
 					Logger.Log.Debug ("CTime check {0} {1} '{2}'", attr.LastIndexedTime, stat.CTime, path_from_uid);
@@ -682,9 +700,17 @@ namespace Beagle.Daemon.FileSystemQueryable {
 			return RequiredAction.None;
 		}
 
+		// We use this to test whether or not we need to work around
+		// http://bugzilla.ximian.com/show_bug.cgi?id=71214
+		private static bool MonoWillBreakThisPath (string path)
+		{
+			Uri uri = UriFu.PathToFileUri (path);
+			return uri.LocalPath != path; // This assumes that the path is absolute.
+		}
+		
 		public bool Ignore (string path)
 		{
-			return filter.Ignore (path) || FileSystem.IsSymLink (path);
+			return filter.Ignore (path) || FileSystem.IsSymLink (path) || MonoWillBreakThisPath (path);
 		}
 
 		///////////////////////////////////////////////////////////////////////////

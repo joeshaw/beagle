@@ -141,7 +141,7 @@ namespace Beagle.Daemon {
 
 		}
 
-		protected virtual void AbusiveRemoveHook (Uri uri)
+		protected virtual void AbusiveRemoveHook (Uri internal_uri, Uri external_uri)
 		{
 
 		}
@@ -217,9 +217,8 @@ namespace Beagle.Daemon {
 
 			// Walk across the list of removed Uris and drop them
 			// from the text cache.
-			foreach (Uri uri in list_of_removed_uris) {
+			foreach (Uri uri in list_of_removed_uris)
 				TextCache.Delete (uri);
-			}
 
 			// Walk across the list of added Uris and mark the local
 			// files with the cached timestamp.
@@ -261,11 +260,16 @@ namespace Beagle.Daemon {
 			// We want to make sure all of our remappings are done
 			// before calling this hook, since it can (and should)
 			// break the link between uids and paths.
-			foreach (Uri uri in original_list_of_removed_uris) {
+			IEnumerator internal_enumerator = original_list_of_removed_uris.GetEnumerator ();
+			IEnumerator external_enumerator = list_of_removed_uris.GetEnumerator ();
+			while (internal_enumerator.MoveNext () && external_enumerator.MoveNext ()) {
+				Uri internal_uri = internal_enumerator.Current as Uri;
+				Uri external_uri = external_enumerator.Current as Uri;
 				try {
-					AbusiveRemoveHook (uri);
+					AbusiveRemoveHook (internal_uri, external_uri);
 				} catch (Exception ex) {
-					Logger.Log.Warn ("Caught exception in AbusiveRemoveHook '{0}'", uri);
+					Logger.Log.Warn ("Caught exception in AbusiveRemoveHook '{0}' '{1}'",
+							 internal_uri, external_uri);
 					Logger.Log.Warn (ex);
 				}
 			}

@@ -186,11 +186,13 @@ namespace Beagle.Daemon.FileSystemQueryable {
 
 		//////////////////////////////////////////////////////////////////////////
 
-		override protected void AbusiveRemoveHook (Uri uri)
+		override protected void AbusiveRemoveHook (Uri internal_uri, Uri external_uri)
 		{
 			if (Debug)
-				Logger.Log.Debug ("AbusiveRemoveHook: uri={0}", uri);
-			Model.DropUid (GuidFu.FromUri (uri));
+				Logger.Log.Debug ("AbusiveRemoveHook: internal_uri={0} external_uri={1}",
+						  internal_uri, external_uri);
+			Model.DropUid (GuidFu.FromUri (internal_uri));
+			this.FileAttributesStore.Drop (external_uri.LocalPath);
 		}
 
 		override protected void AbusiveRenameHook (Uri old_uri, Uri new_uri)
