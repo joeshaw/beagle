@@ -123,7 +123,7 @@ namespace Beagle.Filters {
 			string [] KeyWords = {" "};
 
 
-			switch (Flavor.MimeType) {
+			switch (MimeType) {
 			case "text/x-csrc":
 				KeyWords = cKeyWords;
 				SrcLangType = LangType.C_Style;

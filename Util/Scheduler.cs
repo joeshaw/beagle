@@ -164,7 +164,12 @@ namespace Beagle.Util {
 				if (! cancelled) {
 					TouchAllTaskGroups ();
 					try {
+						Logger.Log.Debug ("Starting task {0}", Tag);
+						Stopwatch sw = new Stopwatch ();
+						sw.Start ();
 						DoTaskReal ();
+						sw.Stop ();
+						Logger.Log.Debug ("Finished task {0} in {1}", Tag, sw);
 					} catch (Exception ex) {
 						Logger.Log.Warn ("Caught exception in DoTaskReal");
 						Logger.Log.Warn ("        Tag: {0}", Tag);

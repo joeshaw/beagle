@@ -43,45 +43,85 @@ namespace Beagle.Daemon {
 
 		//////////////////////////
 
-		private   ArrayList supportedFlavors = new ArrayList ();
-		protected Flavor flavor;
-
-		protected void AddSupportedFlavor (Flavor flavor)
+		private   ArrayList supported_mime_types = new ArrayList ();
+		private   ArrayList supported_extensions = new ArrayList ();
+		
+		protected void AddSupportedMimeType (string mime_type)
 		{
-			supportedFlavors.Add (flavor);
+			supported_mime_types.Add (mime_type);
 		}
 
-		protected void AddSupportedMimeType (String mimeType)
+		protected void AddSupportedExtension (string extension)
 		{
-			Flavor flavor = new Flavor (mimeType, Flavor.Wildcard);
-			AddSupportedFlavor (flavor);
+			supported_extensions.Add (extension);
 		}
 
-		protected void AddSupportedExtension (String extension)
-		{
-			Flavor flavor = new Flavor (Flavor.Wildcard, extension);
-			AddSupportedFlavor (flavor);
+		public IEnumerable SupportedMimeTypes {
+			get { return supported_mime_types; }
 		}
 
-		public IEnumerable SupportedFlavors {
-			get { return supportedFlavors; }
-		}
-
-		public Flavor Flavor {
-			get { return flavor; }
+		public IEnumerable SupportedExtensions {
+			get { return supported_mime_types; }
 		}
 
 		//////////////////////////
 
-		private bool crawlMode = false;
+		// Filters are versioned.  This allows us to automatically re-index
+		// files when a newer filter is available.
+
+		public string Name {
+			get { return this.GetType ().Name; }
+		}
+
+		private int version = -1;
+
+		public int Version {
+			get { return version < 0 ? 0 : version; }
+		}
+
+		protected void SetVersion (int v)
+		{
+			if (v < 0) {
+				string msg;
+				msg = String.Format ("Attempt to set invalid version {0} on Filter {1}", v, Name);
+				throw new Exception (msg);
+			}
+
+			if (version != -1) {
+				string msg;
+				msg = String.Format ("Attempt to re-set version from {0} to {1} on Filter {2}", version, v, Name);
+				throw new Exception (msg);
+			}
+
+			version = v;
+		}
+
+		//////////////////////////
+
+		private string this_mime_type = null;
+		private string this_extension = null;
+
+		public string MimeType {
+			get { return this_mime_type; }
+			set { this_mime_type = value; }
+		}
+
+		public string Extension {
+			get { return this_extension; }
+			set { this_extension = value; }
+		}
+
+		//////////////////////////
+		
+		private bool crawl_mode = false;
 
 		public void EnableCrawlMode ()
 		{
-			crawlMode = true;
+			crawl_mode = true;
 		}
 		
 		protected bool CrawlMode {
-			get { return crawlMode; }
+			get { return crawl_mode; }
 		}
 
 		//////////////////////////
@@ -410,7 +450,8 @@ namespace Beagle.Daemon {
 			get { return propertyPool; }
 		}
 
-		//////////////////////////
+#if false
+		////////////////////////////////////////
 
 		static SortedList registry = null;
 
@@ -514,5 +555,6 @@ namespace Beagle.Daemon {
 			Flavor flavor = Flavor.FromPath (path);
 			return FromFlavor (flavor);
 		}
+#endif
 	}
 }

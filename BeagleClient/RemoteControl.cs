@@ -63,5 +63,10 @@ namespace Beagle {
 		{
 			return TheProxy.GetHumanReadableStatus ();
 		}
+
+		public static string GetIndexInformation ()
+		{
+			return TheProxy.GetIndexInformation ();
+		}
 	}
 }

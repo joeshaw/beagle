@@ -28,6 +28,7 @@
 using System;
 using System.Collections;
 
+using Beagle.Util;
 using Beagle;
 
 namespace Beagle.Daemon {
@@ -76,6 +77,18 @@ namespace Beagle.Daemon {
 		public string GetHumanReadableStatus ()
 		{
 			return iqueryable.GetHumanReadableStatus ();
+		}
+
+		public int GetItemCount ()
+		{
+			int n = -1;
+			try {
+				n = iqueryable.GetItemCount ();
+			} catch (Exception ex) {
+				Logger.Log.Warn ("Couldn't get item count for '{0}'", Name);
+				Logger.Log.Warn (ex);
+			}
+			return n;
 		}
 
 		//////////////////////////////////////////////////////////////

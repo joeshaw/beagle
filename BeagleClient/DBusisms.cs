@@ -42,7 +42,6 @@ namespace Beagle
 		static public event Callback BeagleUpAgain;
 		static public event Callback BeagleDown;
 
-
 		static Connection connection = null;
 		static Service service = null;
 		static BusDriver driver = null;

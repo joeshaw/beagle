@@ -151,6 +151,11 @@ namespace Beagle.Daemon {
 			return "implement me!";
 		}
 
+		public virtual int GetItemCount ()
+		{
+			return Driver.GetItemCount ();
+		}
+
 		//////////////////////////////////////////////////////////////////////////////////
 
 		//

@@ -224,6 +224,11 @@ namespace Beagle.Daemon {
 		{
 			return "FIXME: Needs Status";
 		}
+
+		public int GetItemCount ()
+		{
+			return -1; // # of items is undefined
+		}
 	}
 
 }

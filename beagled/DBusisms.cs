@@ -25,12 +25,14 @@
 //
 
 using System;
+using System.Collections;
 using System.Runtime.InteropServices;
 
 using DBus;
+using Beagle.Util;
 
-namespace Beagle.Daemon
-{
+namespace Beagle.Daemon {
+
 	public class DBusisms {
 
 		static Connection connection = null;
@@ -74,6 +76,110 @@ namespace Beagle.Daemon
 			} else {
 				return true;
 			}
+		}
+
+		// Object Registry
+
+		class ObjectInfo {
+			public string Owner;
+			public string Path;
+			public object Object;
+			public bool   Unregistered = false;
+
+			public void Unregister ()
+			{
+				lock (this) {
+					if (! Unregistered) {
+						Logger.Log.Debug ("D-BUS unregistered obj={0} path={1} owner={2}",
+								  Object, Path, Owner == null ? "(none)" : Owner);
+						if (Object is IDBusObject)
+							((IDBusObject) Object).UnregisterHook ();
+						DBusisms.Service.UnregisterObject (Object);
+						Unregistered = true;
+					}
+				}
+			}
+		}
+		static ArrayList registered_objects = new ArrayList ();
+
+		public static void RegisterObject (object obj, string path, string owner)
+		{
+			lock (registered_objects) {
+				ObjectInfo info = new ObjectInfo ();
+				info.Object = obj;
+				info.Path = path;
+				info.Owner = owner;
+
+				Logger.Log.Debug ("D-BUS registered obj={0} path={1} owner={2}",
+						  obj, path, owner == null ? "(none)" : owner);
+
+				registered_objects.Add (info);
+				Service.RegisterObject (obj, path);
+				if (obj is IDBusObject)
+					((IDBusObject) obj).RegisterHook (path);
+			}
+		}
+
+		public static void RegisterObject (object obj, string path)
+		{
+			RegisterObject (obj, path, null);
+		}
+
+		internal static void CleanObjectList ()
+		{
+			lock (registered_objects) {
+				int i = 0;
+				while (i < registered_objects.Count) {
+					ObjectInfo info = registered_objects [i] as ObjectInfo;
+					if (info.Unregistered)
+						registered_objects.RemoveAt (i);
+					else
+						++i;
+				}
+			}
+		}
+
+		public static void UnregisterObject (object obj)
+		{
+			lock (registered_objects) {
+				foreach (ObjectInfo info in registered_objects) 
+					if (info.Object == obj)
+						info.Unregister ();
+			}
+
+			CleanObjectList ();
+		}
+
+		public static void UnregisterByOwner (string owner)
+		{
+			lock (registered_objects) {
+				foreach (ObjectInfo info in registered_objects)
+					if (info.Owner == owner)
+						info.Unregister ();
+			}
+
+			CleanObjectList ();
+		}
+
+		public static void UnregisterByPath (string path)
+		{
+			lock (registered_objects) {
+				foreach (ObjectInfo info in registered_objects)
+					if (info.Path == path)
+						info.Unregister ();
+			}
+
+			CleanObjectList ();
+		}
+
+		public static void UnregisterAll ()
+		{
+			lock (registered_objects) {
+				foreach (ObjectInfo info in registered_objects)
+					info.Unregister ();
+			}
+
+			CleanObjectList ();
 		}
 	}
 }

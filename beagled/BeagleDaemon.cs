@@ -39,7 +39,6 @@ using Beagle.Util;
 namespace Beagle.Daemon {
 	class BeagleDaemon {
 
-		private static ArrayList dbusObjects = new ArrayList ();
 		private static FactoryImpl factory = null;
 
 #if ENABLE_NETWORK
@@ -309,22 +308,15 @@ namespace Beagle.Daemon {
 			Stopwatch stopwatch = new Stopwatch ();
 			stopwatch.Start ();
 
-			// Construct a query driver.
-			Logger.Log.Debug ("Constructing QueryDriver");
-			QueryDriver queryDriver;
-			queryDriver = new QueryDriver ();
-
 			try {
 				// Construct and register our remote control object.
 				Logger.Log.Debug ("Initializing RemoteControl");
 				RemoteControlImpl rci = new RemoteControlImpl ();
-				dbusObjects.Add (rci);
-				DBusisms.Service.RegisterObject (rci, Beagle.DBusisms.RemoteControlPath);
+				DBusisms.RegisterObject (rci, Beagle.DBusisms.RemoteControlPath);
 				
 				// Set up our D-BUS object factory.
-				factory = new FactoryImpl (queryDriver);
-				dbusObjects.Add (factory);
-				DBusisms.Service.RegisterObject (factory, Beagle.DBusisms.FactoryPath);
+				factory = new FactoryImpl ();
+				DBusisms.RegisterObject (factory, Beagle.DBusisms.FactoryPath);
 			} catch (DBus.DBusException e) {
 				Logger.Log.Fatal ("Couldn't register DBus objects."); 
 				Logger.Log.Debug (e);
@@ -338,7 +330,7 @@ namespace Beagle.Daemon {
 			if (arg_network) {
 				try {
 					// Set up network service
-					network = new NetworkService(queryDriver, arg_port);
+					network = new NetworkService(arg_port);
 					network.Start ();
 				} catch {
 					Logger.Log.Error ("Could not initialize network service"); 
@@ -346,6 +338,11 @@ namespace Beagle.Daemon {
 			}
 
 #endif
+
+			// Start the query driver.
+			Logger.Log.Debug ("Starting QueryDriver");
+			QueryDriver.Start ();
+
 			// Start the Global Scheduler thread
 			Logger.Log.Debug ("Starting Scheduler thread");
 			Scheduler.Global.Start ();
@@ -353,10 +350,6 @@ namespace Beagle.Daemon {
 			// Start our Inotify threads
 			Logger.Log.Debug ("Starting Inotify threads");
 			Inotify.Start ();
-
-			// Actually start up our QueryDriver.
-			Logger.Log.Debug ("Starting QueryDriver");
-			queryDriver.Start ();
 
 			// Test if the FileAdvise stuff is working: This will print a
 			// warning if not.  The actual advice calls will fail silently.
@@ -388,13 +381,14 @@ namespace Beagle.Daemon {
 			// Shut down the global scheduler
 			Scheduler.Global.Stop ();
 
+#if false
 			Logger.Log.Debug ("Unregistering Factory objects");
 			factory.UnregisterAll ();
 			Logger.Log.Debug ("Done unregistering Factory objects");
+#endif
+
 			Logger.Log.Debug ("Unregistering Daemon objects");
-			foreach (object o in dbusObjects)
-				DBusisms.Service.UnregisterObject (o);
-			dbusObjects = null;
+			DBusisms.UnregisterAll ();
 			Logger.Log.Debug ("Done unregistering Daemon objects");
 
 		}

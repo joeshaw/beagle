@@ -46,6 +46,10 @@ namespace Beagle.Daemon {
 			      IQueryableChangeData data);
 
 		string GetHumanReadableStatus ();
+
+		// Returns the total number of items in this Queryable's index,
+		// or a value < 0 if that number is unknown or undefined.
+		int GetItemCount ();
 	}
 
 	public interface IQueryableChangeData { 

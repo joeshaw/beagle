@@ -31,8 +31,8 @@ using System.Text;
 
 namespace Beagle.Daemon {
 
-	public class QueryImpl : Beagle.QueryProxy, IDisposable {
-		private QueryDriver driver;
+	public class QueryImpl : Beagle.QueryProxy, IDisposable, IDBusObject {
+
 		private QueryBody body;
 		private QueryResult result = null;
 		private string id;
@@ -48,41 +48,45 @@ namespace Beagle.Daemon {
 		public delegate void ClosedHandler (QueryImpl sender);
 		public event ClosedHandler ClosedEvent;
 
-		public QueryImpl (QueryDriver _driver,
-				  string id)
+		public QueryImpl (string id)
 		{
 			this.id = id;
 
-			driver = _driver;
-			driver.ChangedEvent += OnQueryDriverChanged;
 
 			body = new QueryBody ();
 		}
 
 		private void DisconnectResult ()
 		{
-			if (result != null) {
-				result.HitsAddedEvent -= OnHitsAddedToResult;
-				result.HitsSubtractedEvent -= OnHitsSubtractedFromResult;
-				result.FinishedEvent -= OnFinishedResult;
-				result.CancelledEvent -= OnCancelledResult;
-				
-				result.Cancel ();
-				result.Dispose ();
+			lock (this) {
+				if (result != null) {
+					result.HitsAddedEvent -= OnHitsAddedToResult;
+					result.HitsSubtractedEvent -= OnHitsSubtractedFromResult;
+					result.FinishedEvent -= OnFinishedResult;
+					result.CancelledEvent -= OnCancelledResult;
+					
+					result.Cancel ();
+					result.Dispose ();
 
-				result = null;
+					result = null;
+				}
 			}
 		}
 		private void AttachResult ()
 		{
 			DisconnectResult ();
 
-			result = new QueryResult ();
+			lock (this) {
+				if (result != null)
+					return;
 
-			result.HitsAddedEvent += OnHitsAddedToResult;
-			result.HitsSubtractedEvent += OnHitsSubtractedFromResult;
-			result.FinishedEvent += OnFinishedResult;
-			result.CancelledEvent += OnCancelledResult;
+				result = new QueryResult ();
+
+				result.HitsAddedEvent += OnHitsAddedToResult;
+				result.HitsSubtractedEvent += OnHitsSubtractedFromResult;
+				result.FinishedEvent += OnFinishedResult;
+				result.CancelledEvent += OnCancelledResult;
+			}
 		}
 		
 		public override void AddText (string text)
@@ -138,18 +142,18 @@ namespace Beagle.Daemon {
 
 			AttachResult ();
 
-			driver.DoQuery (body, result);
+			QueryDriver.DoQuery (body, result);
 		}
 
 		public override void Cancel ()
 		{
-			driver.ChangedEvent -= OnQueryDriverChanged;
+			QueryDriver.ChangedEvent -= OnQueryDriverChanged;
 			DisconnectResult ();
 		}
 
 		public override void CloseQuery () 
 		{
-			driver.ChangedEvent -= OnQueryDriverChanged;
+			QueryDriver.ChangedEvent -= OnQueryDriverChanged;
 			DisconnectResult ();
 			if (ClosedEvent != null)
 				ClosedEvent (this);
@@ -158,14 +162,30 @@ namespace Beagle.Daemon {
 		public void Dispose ()
 		{
 			DisconnectResult ();
-			driver.ChangedEvent -= OnQueryDriverChanged;
+			QueryDriver.ChangedEvent -= OnQueryDriverChanged;
 			GC.SuppressFinalize (this);
 		}
 
 		~QueryImpl ()
 		{
 			DisconnectResult ();
-			driver.ChangedEvent -= OnQueryDriverChanged;
+			QueryDriver.ChangedEvent -= OnQueryDriverChanged;
+		}
+
+		//////////////////////////////////////////////////////
+
+		//
+		// IDBusObject implementation
+		//
+
+		public void RegisterHook (string path)
+		{
+			QueryDriver.ChangedEvent += OnQueryDriverChanged;
+		}
+
+		public void UnregisterHook ()
+		{
+			QueryDriver.ChangedEvent -= OnQueryDriverChanged;
 		}
 
 		//////////////////////////////////////////////////////
@@ -269,7 +289,7 @@ namespace Beagle.Daemon {
 		// QueryDriver.ChangedEvent handling
 		//
 
-		private void OnQueryDriverChanged (QueryDriver source, Queryable queryable, IQueryableChangeData changeData)
+		private void OnQueryDriverChanged (Queryable queryable, IQueryableChangeData changeData)
 		{
 			if (result != null && queryable.AcceptQuery (body))
 				queryable.DoQuery (body, result, changeData);

@@ -76,6 +76,7 @@ namespace Beagle.Daemon {
 		private int adds_since_last_optimization = 0;
 		private int removals_since_last_optimization = 0;
 		private bool optimizing = false;
+		private int last_item_count = -1;
 
 		public LuceneDriver (string dir)
 		{
@@ -366,6 +367,7 @@ namespace Beagle.Daemon {
 				reader.Delete (term);
 				++removal_count;
 			}
+			last_item_count = reader.NumDocs ();
 			reader.Close ();
 			watch.Stop ();
 			//Log.Debug ("Step #1: {0} {1} {2}", watch, pending_uris.Count,
@@ -404,6 +406,7 @@ namespace Beagle.Daemon {
 					if (writer == null)
 						writer = new IndexWriter (Store, Analyzer, false);
 					writer.AddDocument (doc);
+					++last_item_count;
 					++add_count;
 				}
 			}
@@ -470,7 +473,11 @@ namespace Beagle.Daemon {
 
 		public void DoQuery (QueryBody body, IQueryResult result, ICollection list_of_uris, UriFilter uri_filter)
 		{
-			LNS.Searcher searcher = new LNS.IndexSearcher (Store);
+			IndexReader reader = IndexReader.Open (Store);
+			if (last_item_count == -1)
+				last_item_count = reader.NumDocs ();
+
+			LNS.Searcher searcher = new LNS.IndexSearcher (reader);
 			LNS.Query query = ToLuceneQuery (body, list_of_uris);
 
 			LNS.Hits hits = searcher.Search (query);
@@ -498,6 +505,7 @@ namespace Beagle.Daemon {
 			}
 			result.Add (filtered_hits);
 
+			// The call to searcher.Close () closes the IndexReader.
 			searcher.Close ();
 		}
 
@@ -556,6 +564,19 @@ namespace Beagle.Daemon {
 		public ICollection DoQueryByUri (Uri uri)
 		{
 			return DoQueryByUri (new Uri[1] { uri });
+		}
+
+		// We cache the number of documents in the index when readers are
+		// available, so calls to GetItemCount will return immediately
+		// if the driver has been flushed or queried.
+		public int GetItemCount ()
+		{
+			if (last_item_count < 0) {
+				IndexReader reader = IndexReader.Open (Store);
+				last_item_count = reader.NumDocs ();
+				reader.Close ();
+			}
+			return last_item_count;
 		}
 
 

@@ -84,7 +84,7 @@ class ExtractContentTool {
 			indexable.Build ();
 
 			Console.WriteLine ("Filename: " + uri);
-			Console.WriteLine ("  Flavor: " + indexable.Flavor);
+			//Console.WriteLine ("  Flavor: " + indexable.Flavor);
 			if (! indexable.HaveFilter)
 				Console.WriteLine ("No filter!");
 

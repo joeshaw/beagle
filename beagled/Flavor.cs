@@ -32,12 +32,12 @@ namespace Beagle.Daemon {
 
 	public class Flavor : IComparable {
 
-		static readonly public String Wildcard = "*";
+		static readonly public string Wildcard = "*";
 		
-		String mimeType;
-		String extension;
+		string mimeType;
+		string extension;
 
-		public Flavor (String _mimeType, String _extension)
+		public Flavor (string _mimeType, string _extension)
 		{
 			if (_mimeType == null)
 				_mimeType = "";
@@ -48,31 +48,31 @@ namespace Beagle.Daemon {
 			extension = _extension;
 		}
 
-		static public Flavor FromMimeType (String mimeType)
+		static public Flavor FromMimeType (string mimeType)
 		{
 			return new Flavor (mimeType, "");
 		}
 
-		static public Flavor FromExtension (String extension)
+		static public Flavor FromExtension (string extension)
 		{
 			return new Flavor ("", extension);
 		}
 
-		static public Flavor FromPath (String path)
+		static public Flavor FromPath (string path)
 		{
-			String mimeType = Beagle.Util.VFS.Mime.GetMimeType (path);
-			String extension = Path.GetExtension (path);
+			string mimeType = Beagle.Util.VFS.Mime.GetMimeType (path);
+			string extension = Path.GetExtension (path);
 			return new Flavor (mimeType, extension);
 		}
 
-		static public Flavor FromStream (Stream stream, String path)
+		static public Flavor FromStream (Stream stream, string path)
 		{
 			const int maxSize = 1024; // default to 1k
 			byte [] buffer = new byte [maxSize];
 			
 			// Read up to maxSize bytes of stream to try to guess mime-type
 			int read = stream.Read (buffer, 0, maxSize);
-			String mimeType = Beagle.Util.VFS.Mime.GetMimeTypeFromData (buffer, read, path);
+			string mimeType = Beagle.Util.VFS.Mime.GetMimeTypeFromData (buffer, read, path);
 			return new Flavor (mimeType, path != null ? Path.GetExtension (path) : "");
 		}
 		
@@ -81,11 +81,11 @@ namespace Beagle.Daemon {
 			return FromStream (stream, null);
 		}
 
-		public String MimeType {
+		public string MimeType {
 			get { return mimeType; }
 		}
 
-		public String Extension {
+		public string Extension {
 			get { return extension; }
 		}
 		
@@ -143,7 +143,7 @@ namespace Beagle.Daemon {
 			return cmp;
 		}
 
-		override public String ToString ()
+		override public string ToString ()
 		{
 			String str = "[";
 			if (mimeType != "")

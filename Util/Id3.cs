@@ -173,8 +173,8 @@ namespace Beagle.Util {
 			bool flagExperimental   = (headerFlags & 32) != 0;
 			bool flagFooter         = (headerFlags & 16) != 0;
 
-			if (flagUnsync)
-				Console.WriteLine ("Unsync flag is set!");
+//			if (flagUnsync)
+//				Console.WriteLine ("Unsync flag is set!");
 
 			int totalSize = SyncSafe4 (header, 6);
 			int pos = 0;
@@ -233,6 +233,10 @@ namespace Beagle.Util {
 					stream.Seek (size, SeekOrigin.Current);
 					continue;
 				}
+				
+				// If the frame size is obviously wrong, just bail out.
+				if (pos + size >= totalSize)
+					break;
 
 				byte[] frameData = new byte [size];
 				stream.Read (frameData, 0, size);

@@ -46,6 +46,11 @@ namespace Beagle.Daemon {
 		{
 			return "\n" + Scheduler.Global.GetHumanReadableStatus ();
 		}
+
+		override public string GetIndexInformation ()
+		{
+			return QueryDriver.GetIndexInformation ();
+		}
 	}
 
 }

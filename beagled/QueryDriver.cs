@@ -121,52 +121,39 @@ namespace Beagle.Daemon {
 			Logger.Log.Debug ("Found {0} types in {1}", count, assembly.FullName);
 		}
 
-		static bool initialized = false;
-
-		static void Initialize ()
-		{
-			lock (queryables) {
-				if (initialized)
-					return;
-				ScanAssembly (Assembly.GetCallingAssembly ());
-				initialized = true;
-			}
-		}
-
 		////////////////////////////////////////////////////////
 
-		public delegate void ChangedHandler (QueryDriver          source,
-						     Queryable            queryable,
+		public delegate void ChangedHandler (Queryable            queryable,
 						     IQueryableChangeData changeData);
 
-		public event ChangedHandler ChangedEvent;
+		static public event ChangedHandler ChangedEvent;
+
+		static object worker_lock = new object ();
 
 
-		// FIXME: Would we have problems if there were multiple QueryDriver
-		// objects floating around?
-		
 		// FIXME: There should be a way to disconnect this OnQueryableChanged
 		// from the ChangedEvents.
-		public QueryDriver ()
+		static QueryDriver ()
 		{
-			Initialize ();
+			// FIXME: We should look for Queryables in other assemblies.
+			ScanAssembly (Assembly.GetExecutingAssembly ());
 			foreach (Queryable q in queryables) {
 				q.ChangedEvent += OnQueryableChanged;
 			}
 		}
 
-		public void Start ()
+		static public void Start ()
 		{
 			foreach (Queryable q in queryables)
 				q.Start ();
 		}
 
-		public void DoQuery (QueryBody body, QueryResult result)
+		static public void DoQuery (QueryBody body, QueryResult result)
 		{
 			// The extra pair of calls to WorkerStart/WorkerFinished ensures that
 			// the QueryResult will fire the StartedEvent and FinishedEvent,
 			// even if no queryable accepts the query.
-			if (!result.WorkerStart (this)) {
+			if (!result.WorkerStart (worker_lock)) {
 				return;
 			}
 			
@@ -176,30 +163,20 @@ namespace Beagle.Daemon {
 						queryable.DoQuery (body, result, null);
 				}
 			} finally {
-				result.WorkerFinished (this);
+				result.WorkerFinished (worker_lock);
 			}
 		}
 
-		public void DoQueryChange (Queryable            queryable,
-					   IQueryableChangeData changeData,
-					   QueryBody            body,
-					   QueryResult          result)
+		static private void OnQueryableChanged (Queryable            source,
+							IQueryableChangeData changeData)
 		{
-			if (queryable.AcceptQuery (body)) 
-				queryable.DoQuery (body, result, changeData);
-		}
-
-		private void OnQueryableChanged (Queryable            source,
-						 IQueryableChangeData changeData)
-		{
-			if (ChangedEvent != null) {
-				ChangedEvent (this, source, changeData);
-			}
+			if (ChangedEvent != null)
+				ChangedEvent (source, changeData);
 		}
 
 		////////////////////////////////////////////////////////
 
-		public string GetHumanReadableStatus ()
+		static public string GetHumanReadableStatus ()
 		{
 			StringBuilder builder = new StringBuilder ("\n");
 
@@ -213,6 +190,19 @@ namespace Beagle.Daemon {
 			}
 			builder.Append ("\n");
 			
+			return builder.ToString ();
+		}
+
+		static public string GetIndexInformation ()
+		{
+			StringBuilder builder = new StringBuilder ("\n");
+
+			foreach (Queryable q in queryables) {
+				builder.AppendFormat ("Name: {0}\n", q.Name);
+				builder.AppendFormat ("Count: {0}\n", q.GetItemCount ());
+				builder.Append ("\n");
+			}
+
 			return builder.ToString ();
 		}
 	}

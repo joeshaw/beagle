@@ -399,8 +399,10 @@ DAEMON_DLL_CSFILES = 						\
 	$(srcdir)/FileAttributesStore_ExtendedAttribute.cs	\
 	$(srcdir)/FileAttributesStore_Mixed.cs			\
 	$(srcdir)/FileAttributesStore_Sqlite.cs			\
+	$(srcdir)/FilterFactory.cs				\
 	$(srcdir)/FilteredIndexable.cs				\
 	$(srcdir)/GoogleDriver.cs				\
+	$(srcdir)/IDBusObject.cs				\
 	$(srcdir)/IFileAttributesStore.cs			\
 	$(srcdir)/IQueryResult.cs				\
 	$(srcdir)/IQueryWorker.cs               		\

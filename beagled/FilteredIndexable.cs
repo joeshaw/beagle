@@ -37,7 +37,7 @@ namespace Beagle.Daemon {
 	[XmlInclude (typeof (Indexable))]
 	public class FilteredIndexable : Beagle.Indexable {
 
-		Flavor flavor;
+		//Flavor flavor;
 		Filter filter;
 		bool crawl_mode;
 
@@ -230,8 +230,11 @@ namespace Beagle.Daemon {
 
 			string path = ContentUri.LocalPath;
 
+#if false
 			flavor = Flavor.FromMimeType (MimeType);
 			filter = Filter.FromFlavor (flavor);
+#endif
+			filter = FilterFactory.CreateFilterFromMimeType (MimeType);
 			
 
 			if (filter != null) {
@@ -265,9 +268,11 @@ namespace Beagle.Daemon {
 			get { return filter != null; }
 		}
 
+#if false
 		public Flavor Flavor {
 			get { return flavor; }
 		}
+#endif
 
 		public FileInfo GetFileInfo () {
 			if (Uri.ToString().StartsWith ("file://")) {

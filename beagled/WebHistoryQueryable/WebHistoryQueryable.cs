@@ -46,7 +46,6 @@ namespace Beagle.Daemon.WebHistoryQueryable {
 			
 			public override void Index (string xml)
 			{
-				Console.WriteLine (xml);
 				Indexable indexable = FilteredIndexable.NewFromIndexableXml (xml);
 				Scheduler.Task task = queryable.NewAddTask (indexable);
 				task.Priority = Scheduler.Priority.Immediate;
@@ -63,7 +62,7 @@ namespace Beagle.Daemon.WebHistoryQueryable {
 			base.Start ();
 
 			WebHistoryIndexerImpl indexer = new WebHistoryIndexerImpl (this);
-			DBusisms.Service.RegisterObject (indexer, Beagle.DBusisms.WebHistoryIndexerPath);
+			DBusisms.RegisterObject (indexer, Beagle.DBusisms.WebHistoryIndexerPath);
 		}
 	}
 		

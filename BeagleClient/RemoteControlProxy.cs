@@ -39,6 +39,9 @@ namespace Beagle
 
 		[Method]
 		public abstract string GetHumanReadableStatus ();
+
+		[Method]
+		public abstract string GetIndexInformation ();
 	}
 }
 	
