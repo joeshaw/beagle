@@ -81,12 +81,13 @@ inotify_glue_init (void)
 
 
 int 
-inotify_glue_watch (int fd, const char *filename, unsigned long mask)
+inotify_glue_watch (int fd, const char *filename, __u32 mask)
 {
 	struct inotify_watch_request iwr;
+	int wd;
+
 	iwr.dirname = strdup (filename);
 	iwr.mask = mask;
-	int wd;
 
 	wd = ioctl (fd, INOTIFY_WATCH, &iwr);
 	if (wd < 0) {
