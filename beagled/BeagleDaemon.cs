@@ -31,26 +31,26 @@ namespace BeagleDaemon {
 	class BeagleDaemon {
 
 		static void ScanAssemblyForHandlers (Assembly assembly,
-						     Indexer indexer)
+						     IndexerQueue indexerQueue)
 		{
 			foreach (Type t in assembly.GetTypes ()) {
 				if (t.IsSubclassOf (typeof (PreIndexHandler))) {
 
 					PreIndexHandler handler = (PreIndexHandler) Activator.CreateInstance (t);
-					indexer.PreIndexingEvent += handler.Run;
+					indexerQueue.PreIndexingEvent += handler.Run;
 				}
 				if (t.IsSubclassOf (typeof (PostIndexHandler))) {
 					PostIndexHandler handler = (PostIndexHandler) Activator.CreateInstance (t);
-					indexer.PostIndexingEvent += handler.Run;
+					indexerQueue.PostIndexingEvent += handler.Run;
 				}
 			}
 		}
 
-		static void LoadHandlers (Indexer indexer) 
+		static void LoadHandlers (IndexerQueue indexerQueue) 
 		{
 			// FIXME: load handlers from plugins
 			ScanAssemblyForHandlers (Assembly.GetExecutingAssembly (), 
-						 indexer);
+						 indexerQueue);
 		}
 		public static int Main (string[] args)
 		{
@@ -63,11 +63,12 @@ namespace BeagleDaemon {
 			service.RegisterObject (manager, 
 						"/com/novell/Beagle/QueryManager");
 
-			Indexer indexer = new Indexer ();
+			IndexerQueue indexerQueue = new IndexerQueue ();
+			LoadHandlers (indexerQueue);
+
+			Indexer indexer = new Indexer (indexerQueue);
 			service.RegisterObject (indexer,
 						"/com/novell/Beagle/Indexer");
-
-			LoadHandlers (indexer);
 
 			Application.Run ();
 			return 0;

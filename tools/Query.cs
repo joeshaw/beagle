@@ -65,10 +65,10 @@ class QueryTool {
 
 	static void QuitWithCount (string type)
 	{
-		Console.WriteHit ("{0} after {1} hit{2}.",
-				  type,
-				  count,
-				  count != 1 ? "s" : "");
+		Console.WriteLine ("{0} after {1} hit{2}.",
+				   type,
+				   count,
+				   count != 1 ? "s" : "");
 	}
 
 	static void OnFinished ()

@@ -418,11 +418,13 @@ namespace Beagle.Core {
 			IndexWriter writer = new IndexWriter (IndexDir, analyzer, false);
 			
 			foreach (Indexable indexable in indexables) {
-				log.Log ("Inserting {0} (type={1})",
+				System.Console.WriteLine ("Inserting {0} (type={1})",
 					 indexable.Uri, indexable.Type);
 				Document doc = null;
 				try {
 					doc = ToLuceneDocument (indexable);
+					System.Console.WriteLine ("converted to document");
+
 				} catch (Exception e) {
 					log.Log (e);
 					Console.WriteLine ("unable to convert {0} (type={1}) to a lucene document", indexable.Uri, indexable.Type);
@@ -431,6 +433,8 @@ namespace Beagle.Core {
 				}
 				if (doc != null)
 					writer.AddDocument (doc);
+				System.Console.WriteLine ("added document");
+
 			}
 			writer.Close ();
 		}
@@ -538,8 +542,7 @@ namespace Beagle.Core {
 		///////////////////////////////////////////////////////
 
 		public Hit FindByUri (String uri)
-		{
-			Term term = new Term ("Uri", uri);
+		{			Term term = new Term ("Uri", uri);
 			LNS.Query uriQuery = new LNS.TermQuery (term);
 
 			LNS.Searcher searcher = new LNS.IndexSearcher (IndexDir);

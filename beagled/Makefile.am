@@ -183,6 +183,7 @@ DAEMON_CSFILES = 				\
 	$(srcdir)/GoogleDriver.cs	\
 	$(srcdir)/BeagleDaemon.cs       \
 	$(srcdir)/Indexer.cs            \
+	$(srcdir)/IndexerQueue.cs       \
 	$(srcdir)/LiveQuery.cs          \
 	$(srcdir)/NoIndexFileHandler.cs \
 	$(srcdir)/QueryManager.cs
@@ -216,10 +217,10 @@ $(DAEMON_TARGET): $(DAEMON_CSFILES) $(DAEMON_LOCAL_ASSEMBLIES)
 
 all: $(PLUGIN_TARGET) $(DAEMON_TARGET)
 
-install-data-local: $(TARGET)
+install-data-local: $(PLUGIN_TARGET) $(DAEMON_TARGET)
 	$(mkinstalldirs) $(DESTDIR)$(pkglibdir)
-	$(INSTALL_DATA) $(TARGET) $(DESTDIR)$(pkglibdir)/$(PLUGIN_TARGET)
-	$(INSTALL_DATA) $(TARGET) $(DESTDIR)$(pkglibdir)/$(DAEMON_TARGET)
+	$(INSTALL_DATA) $(PLUGIN_TARGET) $(DESTDIR)$(pkglibdir)/$(PLUGIN_TARGET)
+	$(INSTALL_DATA) $(DAEMON_TARGET) $(DESTDIR)$(pkglibdir)/$(DAEMON_TARGET)
 
 uninstall-local:
 	rm -f $(DESTDIR)$(bindir)/$(TARGET)

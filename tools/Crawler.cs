@@ -33,79 +33,49 @@ using System.Xml;
 
 using Mono.Posix;
 
-using Beagle.Core;
 using BU = Beagle.Util;
 using Beagle;
 
 class CrawlerTool { 
 
 	public class Crawler {
-
-		IndexDriver driver = new IndexDriver ();
-
-		// Contains Indexables
+		// Contains uris
 		ArrayList toBeIndexed = new ArrayList ();
-
-		// Contains Obsoleted or Deleted Hits
-		ArrayList toBeRemoved = new ArrayList ();
 
 		int flushCount = 100;
 
-		int skippedCount = 0;
-		int totalCount = 0;
-		int filterableCount = 0;
-		int dirCount = 0;
-
 		int sinceOptimize = 0;
 		int optimizeCount = 10;
-		
 
 		Hashtable fileTable = new Hashtable ();
 
+		Indexer indexer;
 
-		void ScheduleAdd (Indexable indexable)
-		{
-			toBeIndexed.Add (indexable);
-			MaybeFlush ();
+		public Crawler () {
+			indexer = Indexer.Get ();
 		}
 
-		void ScheduleDelete (Hit hit)
+		void ScheduleAdd (string uri)
 		{
-			if (hit == null)
-				return;
-			toBeRemoved.Add (hit);
+			toBeIndexed.Add (uri);
 			MaybeFlush ();
 		}
 
 		void MaybeFlush ()
 		{
-			if (toBeIndexed.Count + toBeRemoved.Count > flushCount)
+			if (toBeIndexed.Count > flushCount)
 				Flush ();
 		}
 
-		void Flush ()
+		public void Flush ()
 		{
-			bool didSomething = false;
-			
+			System.Console.WriteLine ("Flushing");
 			if (toBeIndexed.Count > 0) {
-				driver.QuickAdd (toBeIndexed);
+				foreach (string uri in toBeIndexed)
+					indexer.IndexFile (uri);
 				toBeIndexed.Clear ();
-				didSomething = true;
 			}
-
-			if (toBeRemoved.Count > 0) {
-				driver.Remove (toBeRemoved);
-				toBeRemoved.Clear ();
-				didSomething = true;
-			}
-
-			if (didSomething) {
-				++sinceOptimize;
-				if (sinceOptimize > optimizeCount) {
-					driver.Optimize ();
-					sinceOptimize = 0;
-				}
-			}
+			System.Console.WriteLine ("Done Flushing");
 		}
 
 		private bool IsSymLink (string path)
@@ -116,47 +86,20 @@ class CrawlerTool {
 			return mode == (int) StatMode.SymLink;
 		}
 
-		void CrawlFile (FileInfo info, Hit hit)
+		void CrawlFile (FileInfo info)
 		{
 			// Don't follow symlinks
 			if (IsSymLink (info.FullName))
 				return;
 
-			DateTime changeTime = info.LastWriteTime;
-			DateTime nautilusTime = BU.NautilusTools.GetMetaFileTime (info.FullName);
-			if (nautilusTime > changeTime)
-				changeTime = nautilusTime;
-
-			// If the file isn't newer that the hit, don't even bother...
-			if (hit != null && ! hit.IsObsoletedBy (changeTime)) {
-				++skippedCount;
-				return;
-			}
-
-			Flavor flavor = Flavor.FromPath (info.FullName);
-			if (fileTable.Contains (flavor)) {
-				int n = (int) fileTable [flavor];
-				fileTable [flavor] = n+1;
-			} else
-				fileTable [flavor] = 1;
-
-			++totalCount;
-			if (Filter.CanFilter (flavor))
-				++filterableCount;
-
-			Indexable indexable = new IndexableFile (info.FullName);
-
-			ScheduleAdd (indexable);
-			ScheduleDelete (hit);
+			ScheduleAdd ("file://" + info.FullName);
 		}
 
-		void CrawlDirectory (DirectoryInfo info, Hit dirHit, int maxRecursion)
+		void CrawlDirectory (DirectoryInfo info, int maxRecursion)
 		{
 			// Don't follow symlinks
 			if (IsSymLink (info.FullName))
 				return;
-
-			++dirCount;
 
 			// Scan the .noindex file.
 			BU.FileMatcher noindex = new BU.FileMatcher ();
@@ -171,15 +114,9 @@ class CrawlerTool {
 				}
 			}
 
-			// Create an indexable for the directory.
-			Indexable dir = new IndexableFile (info.FullName);
-			bool dirChanged = false;
-			if (dirHit == null || dirHit.IsObsoletedBy (dir)) {
-				ScheduleAdd (dir);
-				ScheduleDelete (dirHit);
-				dirChanged = true;
-			}
+			ScheduleAdd ("file://" + info.FullName);
 
+#if false
 			// Pull this directory's indexables and put them in a hashtable
 			// by Uri.  Schedule obsolete duplicates for deletion.
 			Hit[] hits = driver.FindByProperty ("_Directory", info.FullName);
@@ -196,7 +133,7 @@ class CrawlerTool {
 				}
 				hitHash [hit.Uri] = hit;
 			}
-
+#endif
 			
 			Console.WriteLine ("Scanning files in {0}", info.FullName);
 			
@@ -204,8 +141,7 @@ class CrawlerTool {
 				if (! noindex.IsMatch (file.Name)) {
 					//try {
 						String uri = "file://" + file.FullName;
-						CrawlFile (file, (Hit) hitHash [uri]);
-						hitHash.Remove (uri);
+						CrawlFile (file);
 						//} catch (Exception e) {
 						//Console.WriteLine ("Caught exception while crawling file '" + file.Name + "':\n" + e.Message);
 						//}
@@ -218,8 +154,7 @@ class CrawlerTool {
 					if (! noindex.IsMatch (subdir.Name)) {
 						//try {
 							String uri = "file://" + subdir.FullName;
-							CrawlDirectory (subdir, (Hit) hitHash [uri], maxRecursion - 1);
-							hitHash.Remove (uri);
+							CrawlDirectory (subdir, maxRecursion - 1);
 							//} catch (Exception e) {
 							//Console.WriteLine ("Caught exception while crawling directory '" + subdir.Name + "':\n" + e.Message);
 							//}
@@ -227,11 +162,13 @@ class CrawlerTool {
 				}
 			}
 
+#if false
 			// If we didn't see some files that were previously indexed, they
 			// must have been deleted.  Schedule the previously-retrieved hits
 			// for deletion.
 			foreach (Hit hit in hitHash.Values)
 				ScheduleDelete (hit);
+#endif
 		}
 
 		public void Crawl (String path)
@@ -246,41 +183,16 @@ class CrawlerTool {
 				path = path.Substring ("file://".Length);
 
 			if (File.Exists (path)) {
-				CrawlFile (new FileInfo (path), null);
+				CrawlFile (new FileInfo (path));
 			} else if (Directory.Exists (path)) {
 				DirectoryInfo dirinfo = new DirectoryInfo (path);
 				int maxRecursion = 10000;
 				if (quick)
 					maxRecursion = 0;
 
-				Hit dirHit = null;
-				if (dirinfo.Parent != null)
-					dirHit = driver.FindByUri ("file://" + dirinfo.FullName);
-				CrawlDirectory (dirinfo, dirHit, maxRecursion);
+				CrawlDirectory (dirinfo, maxRecursion);
 			} else {
 				Console.WriteLine ("Can't crawl {0}", path);
-			}
-		}
-
-		public void Finish ()
-		{
-			Flush ();
-			if (sinceOptimize != 0)
-				driver.Optimize ();
-
-			Console.WriteLine ("\n**** FILE STATS ****\n");
-			foreach (Flavor flavor in fileTable.Keys)
-				Console.WriteLine ("{0} {1}", (int) fileTable [flavor], flavor);
-			Console.WriteLine ();
-			Console.WriteLine ("    Total directories: {0}", dirCount);
-			Console.WriteLine ();
-			Console.WriteLine ("        Skipped files: {0}", skippedCount);
-			Console.WriteLine ("          Total files: {0}", totalCount);
-
-			if (totalCount > 0) {
-				Console.WriteLine ("     Filterable files: {0} ({1:f1}%)",
-						   filterableCount,
-						   100.0 * filterableCount / totalCount);
 			}
 		}
 
@@ -313,6 +225,7 @@ class CrawlerTool {
 
 	static void Main (String[] args)
 	{
+		Gtk.Application.Init ();
 		BU.FileMatcher.AddDefault (".*",
 					"*~",
 					"#*#",
@@ -356,7 +269,7 @@ class CrawlerTool {
 			crawler.Crawl (Environment.GetEnvironmentVariable ("HOME"));
 		}
 
-		crawler.Finish ();
+		crawler.Flush ();
 	}
 }
 	

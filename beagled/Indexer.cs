@@ -28,110 +28,77 @@ using System.Collections;
 using Beagle.Util;
 using Beagle.Core;
 using Beagle;
+
 namespace BeagleDaemon
 {
-
 	public class Indexer : Beagle.Indexer 
 	{
+		IndexerQueue indexerQueue;
 		IndexDriver driver = new IndexDriver ();
 
-		// Contains Indexables
-		ArrayList toBeIndexed = new ArrayList ();
+		struct DirectoryHitEntry {
+			public string directoryName;
+			public Hit[] hits;
+		};
 
-		// Contains Obsoleted or Deleted Hits
-		ArrayList toBeRemoved = new ArrayList ();
+		ArrayList directoryHits = new ArrayList ();
+		const int maxDirectoryHits = 5;
 		
-		ArrayList preCallouts = new ArrayList ();
-		ArrayList postCallouts = new ArrayList ();
-
-		int sinceOptimize = 0;
-		const int optimizeCount = 10;
-
-		public delegate void PreIndexingHandler (PreIndexHandlerArgs a);
-		public event PreIndexingHandler PreIndexingEvent;
-
-		public delegate void PostIndexingHandler (PostIndexHandlerArgs a);
-		public event PostIndexingHandler PostIndexingEvent;
-		
-		void ScheduleAdd (Indexable indexable)
-		{
-			toBeIndexed.Add (indexable);
+		public Indexer (IndexerQueue _indexerQueue) {
+			indexerQueue = _indexerQueue;
 		}
 
-		void ScheduleRemove (Hit hit)
+		Hit[] GetDirectoryHits (DirectoryInfo dir) 
 		{
-			if (hit == null)
-				return;
-			
-			toBeRemoved.Add (hit);
-		}
-
-		void CallPostIndexingEvent (ArrayList indexables)
-		{
-			if (PostIndexingEvent == null)
-				return;
-
-			PostIndexHandlerArgs args = new PostIndexHandlerArgs ();
-			foreach (Indexable i in indexables) {
-				args.indexable = i;
-				PostIndexingEvent (args);
-					
-			}
-		}
-
-		ArrayList CallPreIndexingEvent (ArrayList indexables)
-		{
-			if (PreIndexingEvent == null) 
-				return indexables;
-
-			ArrayList ret = new ArrayList ();
-			PreIndexHandlerArgs args = new PreIndexHandlerArgs ();
-			foreach (Indexable i in indexables) {
-				args.indexable = i;
-				args.shouldIndex = true;
-				PreIndexingEvent (args);
-				if (args.shouldIndex)
-					ret.Add (i);
-			}
-			return ret;
-		}
-
-
-		void Flush () 
-		{
-			bool didSomething = false;
-			
-			toBeIndexed = CallPreIndexingEvent (toBeIndexed); 
-
-			if (toBeIndexed.Count > 0) {
-				driver.QuickAdd (toBeIndexed);
-				didSomething = true;
-			}
-			
-			if (toBeRemoved.Count > 0) {
-				driver.Remove (toBeRemoved);
-				toBeRemoved.Clear ();
-				didSomething = true;
-			}
-
-			if (didSomething) {
-				++sinceOptimize;
-				if (sinceOptimize > optimizeCount) {
-					driver.Optimize ();
-					sinceOptimize = 0;
+			foreach (DirectoryHitEntry entry in directoryHits) {
+				if (entry.directoryName == dir.FullName) {
+					return entry.hits;
 				}
 			}
-			CallPostIndexingEvent (toBeIndexed);
-			toBeIndexed.Clear ();
+
+			if (directoryHits.Count >= maxDirectoryHits) {
+				directoryHits.RemoveAt (directoryHits.Count - 1);
+			}
+			
+			DirectoryHitEntry newEntry = new DirectoryHitEntry ();
+			newEntry.directoryName = dir.FullName;
+			newEntry.hits = driver.FindByProperty ("_Directory",
+							       dir.FullName);
+
+			directoryHits.Insert (0, newEntry);
+
+			return newEntry.hits;
+		}
+
+		Hit GetExistingHit (FileInfo file) 
+		{
+			// For right now the primary user of the indexer
+			// is the Crawler, which will request a lot of 
+			// files in the same directory.  To speed that
+			// up a bit, cache hits for directories
+			// to reduce the number of searches
+			string uri;
+			uri = "file://" + file.FullName;
+			
+			Hit[] hits = GetDirectoryHits (file.Directory);
+
+			foreach (Hit hit in hits) {
+				if (hit.Uri == uri) {
+					return hit;
+				}
+			}
+			return null;
 		}
 
 		void Index (FileInfo file)
 		{
-			string uri;
-			uri = "file://" + file.FullName;
-			
-			Hit hit = driver.FindByUri (uri);
-			
+			Hit hit = GetExistingHit (file);
+
+			if (!file.Exists) {
+				indexerQueue.ScheduleRemove (hit);
+				return;
+			}
+
 			DateTime changeTime = file.LastWriteTime;
 			DateTime nautilusTime = NautilusTools.GetMetaFileTime (file.FullName);
 			
@@ -143,10 +110,9 @@ namespace BeagleDaemon
 
 			if (hit != null && !hit.IsObsoletedBy (changeTime))
 				return;
-			
 			Indexable indexable = new IndexableFile (file.FullName);
-			ScheduleAdd (indexable);
-			ScheduleRemove (hit);
+			indexerQueue.ScheduleAdd (indexable);
+			indexerQueue.ScheduleRemove (hit);
 		}
 
 		void IndexPath (string path) 
@@ -156,27 +122,17 @@ namespace BeagleDaemon
 
 			path = Path.GetFullPath (path);
 			
-			if (path == null) {
+			if (path == null)
 				return;
-			}
 			
 			FileInfo file = new FileInfo (path);
+
 			Index (file);
 		}
 
 		public override void IndexFile (string path)
 		{
 			IndexPath (path);
-			Flush ();
-		}
-
-		public override void IndexFiles (string[] paths)
-		{
-			foreach (String path in paths) {
-				IndexPath (path);
-			}
-			
-			Flush ();
 		}
 	}
 }

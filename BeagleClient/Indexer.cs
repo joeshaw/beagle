@@ -31,7 +31,14 @@ namespace Beagle
 		[Method]
 		public abstract void IndexFile (string uri);
 
-		[Method]
-		public abstract void IndexFiles (string[] uris);
+		static Indexer theIndexer = null;
+
+		static public Indexer Get () {
+			if (theIndexer == null)
+				theIndexer = (Indexer) DBusisms.Service.GetObject (typeof (Indexer),
+										   "/com/novell/Beagle/Indexer");
+			
+			return theIndexer;
+		}
 	}
 }
