@@ -12,5 +12,5 @@ ltmain.sh
 missing
 install-sh
 mkinstalldirs
-dewey-*.pc
-dewey-*.tar.gz
+beagle-*.pc
+beagle-*.tar.gz
