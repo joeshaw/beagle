@@ -30,17 +30,18 @@ using System.IO;
 
 using Beagle.Util;
 
+// FIXME: Hack. Use Lucence.Net highlighting.
+
 namespace Beagle.Daemon {
 	
 	public class SnippetFu {
 
 		public delegate string StringSource ();
 
-		// Returns true if any terms were actually highlighted, false otherwise.
-		static private bool HighlightTerms (string [] stemmed_terms, ref string text)
+		static private void HighlightTerms (string [] stemmed_terms, string text, ref ArrayList matches)
 		{
-			bool actually_highlighted_something = false;
-			int pos = 0;
+			int pos = 0, prev_stop_pos = 0, prev_end_pos = 0;
+			string prev_match = "";
 
 			while (pos < text.Length) {
 				
@@ -57,10 +58,11 @@ namespace Beagle.Daemon {
 
 				string stemmed_token = null;
 
-				foreach (string term in stemmed_terms) {
+				// Iterate through the stemmed terms and match the token
+				for (int i = 0; i < stemmed_terms.Length; i++) {
 
 					// If this term is longer than the token in question, give up.
-					if (next_pos - pos < term.Length)
+					if (next_pos - pos < stemmed_terms [i].Length)
 						continue;
 
 					// We cache the token, so as to avoid stemming it more than once
@@ -70,29 +72,73 @@ namespace Beagle.Daemon {
 						stemmed_token = LuceneDriver.Stem (token);
 					}
 
-					if (term != stemmed_token)
+					if (stemmed_terms [i] != stemmed_token)
 						continue;
 
 					// We have a match!
-					// FIXME: We should tag the matches with something better than
-					// <b>...</b>.  In particular, we need to be able to consistently
-					// colorize different search terms.
-					actually_highlighted_something = true;
-					text = String.Concat (text.Substring (0, pos),
-							      "<b>",
-							      text.Substring (pos, next_pos - pos),
-							      "</b>",
-							      text.Substring (next_pos));
-					next_pos += 7; // adjust for the length of the tags
+
+				        int start_pos = pos;
+					int stop_pos = next_pos;
+
+					// FIXME: This is a hack, I should be shot.
+					for (int count = 0; count < 3 && start_pos > 0; start_pos--) {
+						if ((text[start_pos] == ' '))
+							count++;
+					}
+					if (start_pos != 0)
+						start_pos += 2;
+
+					for (int count = 0; count < 3 && stop_pos < text.Length; stop_pos++) {
+						if (text[stop_pos] == ' ')
+							count++;
+					}
+					if (stop_pos != text.Length)
+						stop_pos--;
+
+					bool append_to_prev_match = false;
+
+					if (prev_stop_pos > start_pos) {
+						start_pos = prev_end_pos;
+						prev_match = prev_match.Substring (0, prev_match.Length - (prev_stop_pos - prev_end_pos));
+						append_to_prev_match = true;
+					}
+
+					string new_match = String.Concat (text.Substring (start_pos, pos - start_pos),
+									  "<font color=\"",
+									  colors [i%colors.Length],
+									  "\"><b>",
+									  text.Substring (pos, next_pos-pos),
+									  "</b></font>",
+									  text.Substring (next_pos, stop_pos-next_pos));
+
+					if (append_to_prev_match) {
+						prev_match += new_match;
+					} else {					
+						if (prev_match != "")
+							matches.Add (prev_match);
+						prev_match = new_match;
+					}
+
+					prev_stop_pos = stop_pos;
+					prev_end_pos = next_pos;
+					
 					break;
 				}
 
 				pos = next_pos;
 			}
+			
+			// Add trailing match
+			if (prev_match != "")
+				matches.Add (prev_match); 
 
-			return actually_highlighted_something;
+			return;
 		}
-		
+
+		static string[] colors = new string [] { "red", "blue", "green", "orange", "purple", "brown"};
+
+		const int soft_snippet_limit = 400;
+
 		static public string GetSnippet (QueryBody    query_body,
 						 StringSource string_source)
 		{
@@ -112,111 +158,20 @@ namespace Beagle.Daemon {
 				stemmed_terms [i] = LuceneDriver.Stem ((string) query_terms [i]).ToLower ();
 			}
 			
-			string snippet = null;
-			int snippet_word_count = 0;
-
-			string summary = null;
-			int summary_word_count = 0;
-
+			ArrayList matches = new ArrayList ();
 
 			string str;
-			int countdown = -1;
-
-			// FIXME: All possible *Hits* should be shown in snippets.
 			while ( (str = string_source ()) != null) {
-
-				int word_count = StringFu.CountWords (str, 10);
-				if (word_count > summary_word_count && summary_word_count < 8) {
-					summary = str;
-					summary_word_count = word_count;
-				}
-
-				if (HighlightTerms (stemmed_terms, ref str)) {
-
-					if (word_count > snippet_word_count) {
-						snippet = str;
-						countdown = 50;
-						if (word_count < 3)
-							countdown *= 2;
-					}
-
-				}
-
-				if (countdown > 0) {
-					--countdown;
-					if (countdown == 0)
-						break;
-				}
+				HighlightTerms (stemmed_terms, str, ref matches);
 			}
 
-			if (snippet == null)
-				snippet = summary;
+			string snippet = "";
 
-			if (snippet != null) {
-
-				const int max_snippet_length = 100;
-
-				snippet = snippet.Trim ();
-
-				// Prune the snippet to keep it from
-				// being too long.  This is pretty hacky.
-				if (snippet.Length > max_snippet_length) {
-					int i, j;
-					i = snippet.IndexOf ("<b>");
-					if (i == -1) {
-						i = 0;
-						j = max_snippet_length;
-					} else {
-						j = snippet.IndexOf ("</b>", i);
-						if (j == -1)
-							j = i + max_snippet_length;
-						else {
-							i -= max_snippet_length / 2;
-							j += max_snippet_length / 2;
-							if (i < 0) {
-								j -= i;
-								i = 0;
-							}
-							if (j > snippet.Length) {
-								i -= (j - snippet.Length);
-								j = snippet.Length;
-							}
-							if (i < 0)
-								i = 0;
-							if (j > snippet.Length)
-								j = snippet.Length;
-						}
-
-						snippet = snippet.Substring (i, j-i);
-					}
-
-					// FIXME: We should break the snippet on word
-					// boundaries and only ellipsize when the snippet
-					// doesn't end on a sentence boundary.
-					if (i > 0)
-						snippet = "..." + snippet;
-					if (j < snippet.Length && j >= max_snippet_length)
-						snippet = snippet + "...";
-
-					// If snippet is more than max_snippet_length, 
-					// trim the snippet so that it ends on word boundaries.
-					// FIXME: We can also break the snippet on sentence boundary,
-					// which ever comes earlier ;-)
-					if (j >= max_snippet_length && snippet.Length >= j) {
-						string trim_snip;
-						trim_snip = snippet.Substring (0, j);
-						if ( !trim_snip.EndsWith (" ")) {
-							int index = snippet.IndexOf (' ', j);
-							if (index < 0)
-								index = trim_snip.LastIndexOf (' ');
-							j = index;
-							trim_snip = snippet.Substring (0, j);
-							snippet = trim_snip + "...";
-						}
-					}
-				}
-			}
+			for (int i = 0; i < matches.Count && snippet.Length < soft_snippet_limit; i++)
+				snippet += String.Concat((string)matches[i], " ... ");
+			
 			return snippet;
+		
 		}
 		
 		static public string GetSnippet (QueryBody  body,
