@@ -47,6 +47,14 @@ namespace Beagle.Daemon {
 				return false;
 
 			case 0: // child
+				int fd = Syscall.open ("/dev/null", OpenFlags.O_RDWR);
+				
+				if (fd >= 0) {
+					Syscall.dup2 (fd, 0);
+					Syscall.dup2 (fd, 1);
+					Syscall.dup2 (fd, 2);
+				}
+
 				Syscall.umask (022);
 				Syscall.setsid ();
 				break;
@@ -78,7 +86,6 @@ namespace Beagle.Daemon {
 				
 				foreach (string arg in debugArgs) {
 					if (arg != "all") {
-						System.Console.WriteLine ("debugging {0}", arg);
 						Logger log = Logger.Get (arg);
 						log.Level = LogLevel.Debug;
 					}
@@ -88,14 +95,6 @@ namespace Beagle.Daemon {
 
 		public static int Main (string[] args)
 		{
-			bool daemon = false;
-			if (Array.IndexOf (args, "--nofork") == -1 && Array.IndexOf (args, "--no-fork") == -1) {
-				if (! Daemonize ())
-					return 1;
-				daemon = true;
-			}
-
-			
 			try {
 				// FIXME: this could be better, but I don't want to
 				// deal with serious cmdline parsing today
@@ -151,16 +150,10 @@ namespace Beagle.Daemon {
 			}			
 			
 			Logger.Log.Info ("Beagle daemon started"); 
-			// Now that the initialization is done, close all the
-			// file descriptors
-			if (daemon) {
-				int fd = Syscall.open ("/dev/null", OpenFlags.O_RDWR);
-			
-				if (fd >= 0) {
-					Syscall.dup2 (fd, 0);
-					Syscall.dup2 (fd, 1);
-					Syscall.dup2 (fd, 2);
-				}
+
+			if (Array.IndexOf (args, "--nofork") == -1 && Array.IndexOf (args, "--no-fork") == -1) {
+				if (! Daemonize ())
+					return 1;
 			}
 
 			// Start our event loop.

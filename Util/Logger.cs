@@ -105,6 +105,7 @@ namespace Beagle.Util {
 
 		private void WriteLine (string level, string message) {
 			System.Console.WriteLine ("{0}: {1}", level, message);
+
 			if (Writer != null) {
 				Writer.WriteLine ("{0}{1}: {2}", GetStamp (), level, message);
 				Writer.Flush ();
@@ -162,7 +163,7 @@ namespace Beagle.Util {
 		public void Fatal (string message, params object [] args)
 		{
 			if (IsFatalEnabled) {
-				Fatal ("FATAL", String.Format (message, args));
+				WriteLine ("FATAL", String.Format (message, args));
 			}
 		}
 		
