@@ -185,6 +185,7 @@ inotify_snarf_events (int fd, int timeout_secs, int *nr, void **buffer_out)
 			break;
 
 		prev_pending = pending;
+		++pending_count;
 
 		timeout.tv_sec = 0;
 		timeout.tv_usec = PENDING_PAUSE_MICROSECONDS;
