@@ -3,12 +3,13 @@ pkgconfigdir = $(libdir)/pkgconfig
 pkgconfig_DATA = dewey-0.0.pc
 
 SUBDIRS = 			\
+	images			\
 	Util			\
 	Lucene.Net 		\
 	Filters 		\
 	indexer 		\
 	tools 			\
-	Best			
+	Best
 
 if ENABLE_EPIPHANY_EXTENSION
 SUBDIRS += epiphany-extension

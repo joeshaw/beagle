@@ -1,0 +1,137 @@
+//
+// EvolutionAddressbookDriver.cs
+//
+// Copyright (C) 2004 Novell, Inc.
+//
+
+using System;
+using System.Collections;
+
+namespace Dewey {
+
+	public class EvolutionDataServerDriver : IQueryable{
+
+		Evolution.Book addressbook = null;
+
+		private Evolution.Book Addressbook {
+			get {
+				if (addressbook == null) {
+					addressbook = new Evolution.Book ();
+					addressbook.LoadLocalAddressbook ();
+				}
+				return addressbook;
+			}
+		}
+
+		public Hit HitFromContact (Evolution.Contact contact)
+		{
+			Hit hit = new Hit ();
+
+			hit.Uri    = "contact://" + contact.Id; // FIXME!
+			hit.Type   = "Contact";
+			hit.Score  = 2.0f; // FIXME
+
+			hit ["FileAs"] = contact.FileAs;
+			hit ["GivenName"] = contact.GivenName;
+			hit ["FamilyName"] = contact.FamilyName;
+			hit ["Nickname"] = contact.Nickname;
+			hit ["AddressLabelHome"] = contact.AddressLabelHome;
+			hit ["AddressLabelWork"] = contact.AddressLabelWork;
+			hit ["AddressLabelOther"] = contact.AddressLabelOther;
+			hit ["AssistantPhone"] = contact.AssistantPhone;
+			hit ["BusinessPhone"] = contact.BusinessPhone;
+			hit ["BusinessPhone2"] = contact.BusinessPhone2;
+			hit ["BusinessFax"] = contact.BusinessFax;
+			hit ["CallbackPhone"] = contact.CallbackPhone;
+			hit ["CarPhone"] = contact.CarPhone;
+			hit ["CompanyPhone"] = contact.CompanyPhone;
+			hit ["HomePhone"] = contact.HomePhone;
+			hit ["HomePhone2"] = contact.HomePhone2;
+			hit ["HomeFax"] = contact.HomeFax;
+			hit ["IsdnPhone"] = contact.IsdnPhone;
+			hit ["MobilePhone"] = contact.MobilePhone;
+			hit ["OtherPhone"] = contact.OtherPhone;
+			hit ["OtherFax"] = contact.OtherFax;
+			hit ["Pager"] = contact.Pager;
+			hit ["PrimaryPhone"] = contact.PrimaryPhone;
+			hit ["Radio"] = contact.Radio;
+			hit ["Telex"] = contact.Telex;
+			hit ["Tty"] = contact.Tty;
+			hit ["Email1"] = contact.Email1;
+			hit ["Email2"] = contact.Email2;
+			hit ["Email3"] = contact.Email3;
+			hit ["Mailer"] = contact.Mailer;
+			hit ["Org"] = contact.Org;
+			hit ["OrgUnit"] = contact.OrgUnit;
+			hit ["Office"] = contact.Office;
+			hit ["Title"] = contact.Title;
+			hit ["Role"] = contact.Role;
+			hit ["Manager"] = contact.Manager;
+			hit ["Assistant"] = contact.Assistant;
+			hit ["HomepageUrl"] = contact.HomepageUrl;
+			hit ["BlogUrl"] = contact.BlogUrl;
+			hit ["Categories"] = contact.Categories;
+			hit ["Caluri"] = contact.Caluri;
+			hit ["Icscalendar"] = contact.Icscalendar;
+			hit ["Spouse"] = contact.Spouse;
+			hit ["Note"] = contact.Note;
+
+			// FIXME: List?
+			// FIXME: ListShowAddresses?
+
+			// FIXME: Should we not drop the extra Im addresses?
+			if (contact.ImAim.Length > 0)
+				hit ["ImAim"] = contact.ImAim [0];
+			if (contact.ImIcq.Length > 0)
+				hit ["ImIcq"] = contact.ImIcq [0];
+			if (contact.ImJabber.Length > 0)
+				hit ["ImJabber"] = contact.ImJabber [0];
+			if (contact.ImMsn.Length > 0)
+				hit ["ImMsn"] = contact.ImMsn [0];
+			if (contact.ImYahoo.Length > 0)
+				hit ["ImYahoo"] = contact.ImYahoo [0];
+
+			String name = "";
+			if (contact.GivenName != null && contact.GivenName != "")
+				name = contact.GivenName;
+			if (contact.FamilyName != null && contact.FamilyName != "")
+				name += " " + contact.FamilyName;
+			if (name.Length > 0)
+				hit ["Name"] = name;
+
+			if (hit ["Email1"] != null)
+				hit ["Email"] = hit ["Email1"];
+
+			return hit;
+		}
+
+		public String Name {
+			get { return "EvolutionDataServer"; }
+		}
+
+		public bool AcceptQuery (Query query)
+		{
+			return true;
+		}
+
+		public ICollection Query (Query query)
+		{
+			Evolution.BookQuery bq;
+			bq = Evolution.BookQuery.AnyFieldContains (query.AbusivePeekInsideQuery);
+
+			Evolution.Contact[] contacts;
+			contacts = Addressbook.GetContacts (bq);
+
+			ArrayList array = new ArrayList ();
+
+			foreach (Evolution.Contact contact in contacts) {
+				Hit hit = HitFromContact (contact);
+				array.Add (hit);
+			}
+				
+			return array;
+		}
+
+	}
+
+}

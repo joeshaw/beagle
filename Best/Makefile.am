@@ -14,6 +14,7 @@ CSFILES =				\
 
 ASSEMBLIES =				\
 	-r:glib-sharp.dll		\
+	-r:gdk-sharp.dll		\
 	-r:gtk-sharp.dll		\
 	-r:gnome-sharp.dll		\
 	-r:../Util/Util.dll		\

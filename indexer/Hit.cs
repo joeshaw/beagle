@@ -97,7 +97,15 @@ namespace Dewey {
 
 		virtual public String this [String key] {
 			get { return (String) properties [key]; }
-			set { CheckLock (); properties [key] = value as String; }
+			set { 
+				CheckLock (); 
+				if ((value == null || value == "")
+				    && ! properties.Contains (key))
+					return;
+				if (value == "")
+					value = null;
+				properties [key] = value as String;
+			}
 		}
 
 		//////////////////////////

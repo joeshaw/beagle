@@ -5,7 +5,8 @@ ASSEMBLIES =				\
 	-r:../Util/Util.dll		\
 	-r:../Lucene.Net/Lucene.Net.dll	\
 	-r:../Filters/Filters.dll	\
-	-r:../indexer/Indexer.dll
+	-r:../indexer/Indexer.dll	\
+	$(EVO_SHARP_LIBS)
 
 WRAPPER_IN = wrapper.in
 

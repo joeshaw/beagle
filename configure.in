@@ -16,6 +16,17 @@ if test "x$MCSTEST" = "xno"; then
 	AC_MSG_ERROR([You need to install mcs (from mono)])
 fi
 
+
+dnl ----------------------------------------------
+
+EVOLUTION_SHARP_REQUIRED_VERSION=0.3
+PKG_CHECK_MODULES(EVO_SHARP,						\
+                  evolution-sharp >= $EVOLUTION_SHARP_REQUIRED_VERSION, \
+                  enable_evo_sharp=yes,					\
+		  enable_evo_sharp=no)
+AC_SUBST(EVO_SHARP_LIBS)
+AM_CONDITIONAL(ENABLE_EVO_SHARP, test "x$enable_evo_sharp" = "xyes")
+
 dnl ----------------------------------------------
 
 dnl Epiphany Extension
@@ -67,6 +78,7 @@ dnl ----------------------------------------------
 
 AC_OUTPUT([
 Makefile
+images/Makefile
 Util/Makefile
 Lucene.Net/Makefile
 Filters/Makefile
@@ -79,6 +91,7 @@ dewey-0.0.pc
 
 echo "
 	Prefix:			${prefix}
+	Evolution-Sharp?	${enable_evo_sharp}
 	Epiphany Extension?	${enable_epiphany_extension}
 
 "

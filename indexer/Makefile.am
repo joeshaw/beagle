@@ -25,6 +25,14 @@ ASSEMBLIES = 				\
 	-r:../Lucene.Net/Lucene.Net.dll	\
 	-r:../Filters/Filters.dll
 
+if ENABLE_EVO_SHARP
+CSFLAGS += -define:ENABLE_EVO_SHARP
+CSFILES += $(srcdir)/EvolutionDataServerDriver.cs
+ASSEMBLIES += $(EVO_SHARP_LIBS)
+endif
+
+
+
 $(TARGET): $(CSFILES)
 	$(CSC) -o $@ $(CSFLAGS) $(CSFILES) $(ASSEMBLIES)
 

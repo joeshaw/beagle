@@ -23,6 +23,9 @@ namespace Dewey {
 		{
 			Add (new IndexDriver ());
 			Add (new GoogleDriver ());
+#if ENABLE_EVO_SHARP
+			Add (new EvolutionDataServerDriver ());
+#endif
 		}
 
 		class QueryClosure {

@@ -7,6 +7,7 @@
 using System;
 using System.Diagnostics;
 
+using Gdk;
 using Gtk;
 using GtkSharp;
 
@@ -75,12 +76,13 @@ namespace Best {
 		private Widget BuildIcon ()
 		{
 			String iconPath = Dewey.Util.GnomeIconLookup.LookupMimeIcon (hit.MimeType, (Gtk.IconSize) 48);
-			Widget icon = new Image (iconPath);
-			return icon;
+			return new Gtk.Image (iconPath);
 		}
 
 		private void AddText (String text)
 		{
+			if (text == null || text == "")
+				return;
 			Label label = new Label (text);
 			label.Xalign = 0;
 			label.UseUnderline = false;
@@ -89,6 +91,8 @@ namespace Best {
 
 		private void AddMarkup (String markup)
 		{
+			if (markup == null || markup == "")
+				return;
 			Label label = new Label ("");
 			label.Xalign = 0;
 			label.UseUnderline = false;
@@ -127,6 +131,17 @@ namespace Best {
 				AddText ("From: " + hit ["From"]);
 				AddMarkup ("<small>" + hit.Timestamp + "</small>");
 				return;
+			}
+
+			if (hit.Type == "Contact") {
+				AddMarkup ("<b>" + hit ["Name"] + "</b>");
+				if (hit ["Nickname"] != null)
+					AddMarkup ("<i>\"" + hit ["Nickname"] + "</i>");
+				AddText (hit ["Email1"]);
+				AddText (hit ["Email2"]);
+				AddText (hit ["Email3"]);
+				AddText (hit ["HomePhone"]);
+				AddText (hit ["MobilePhone"]);
 			}
 
 		}
