@@ -60,14 +60,20 @@ namespace Beagle
 
 		public void Dispose ()
 		{
-			CloseQuery ();
+			try {
+				CloseQuery ();
+			}
+			catch (Exception e) { }
 			
 			GC.SuppressFinalize (this);
 		}
 
 		~Query ()
 		{
-			CloseQuery ();
+			try {
+				CloseQuery ();
+			}
+			catch (Exception e) { }
 		}
 
 		private void InternalSubtractUri (Uri uri)

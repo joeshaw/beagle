@@ -95,6 +95,16 @@ namespace Best {
 						    Gtk.AccelFlags.Visible);
 
 			Best.IncRef ();
+
+			DBusisms.BeagleDown += OnBeagleDown;
+		}
+
+		private void OnBeagleDown ()
+		{
+			query.HitAddedEvent -= OnHitAdded;
+			query.HitSubtractedEvent -= OnHitSubtracted;
+			query.Dispose ();
+			query = null;
 		}
 
 		private void DoDelete (object o, DeleteEventArgs args)
@@ -193,6 +203,18 @@ namespace Best {
 			return contents;
 		}
 
+		private string DelayedQuery = null;
+
+		private void RunQuery ()
+		{
+			if (DelayedQuery != null) {
+				string tmp = DelayedQuery;
+				DelayedQuery = null;
+				System.Console.WriteLine ("Query fired");
+				Search (tmp);
+			}
+		}
+		
 		private void DoSearch (object o, EventArgs args)
 		{
 			root.Open ();
@@ -201,7 +223,10 @@ namespace Best {
 			}
 			catch (Exception e)
 			{
-				if (e.ToString ().IndexOf ("com.novell.Beagle") != -1)
+				DelayedQuery = entry.Text;
+				DBusisms.BeagleUpAgain += RunQuery;
+
+				if (e.ToString ().IndexOf ("'com.novell.Beagle'") != -1)
 					root.Error ("The query for <i>" + entry.Text + "</i> failed." +
 						    "<br>The likely cause is that the beagle deamon isn't running.");
 				else

@@ -37,6 +37,11 @@ namespace Beagle
 		static public readonly string WebHistoryIndexerPath = "/com/novell/Beagle/WebHistoryIndexer";
 		static public readonly string FileSystemIndexerPath = "/com/novell/Beagle/FileSystemIndexer";
 
+		public delegate void Callback ();
+		static public event Callback BeagleUpAgain;
+		static public event Callback BeagleDown;
+
+
 		static Connection connection = null;
 		static Service service = null;
 		static BusDriver driver = null;
@@ -57,26 +62,53 @@ namespace Beagle
 		internal static Service Service {
 			get {
 				if (service == null) {
-					service = DBus.Service.Get (Connection, ServiceName);
-					driver = BusDriver.New (connection);
-					driver.ServiceDeleted += OnServiceDeleted;
+					
+					try {
+						service = DBus.Service.Get (Connection, ServiceName);
+					}
+					catch (Exception e) {
+						Driver.ServiceCreated += OnServiceAdded;
+						throw;
+					}
+					Driver.ServiceDeleted += OnServiceDeleted;
 				}
 				return service;
 			}
 		}
 
+		internal static BusDriver Driver {
+			get {
+				if (driver == null) {
+					driver = BusDriver.New (Connection);
+				}
+				return driver;
+			}
+		}
+
+		internal static void OnServiceAdded (string serviceName)
+		{
+			if (serviceName == ServiceName) {
+				System.Console.WriteLine ("BeagleDaemon up");
+
+				Driver.ServiceCreated -= OnServiceAdded;
+
+				if (BeagleUpAgain != null)
+					BeagleUpAgain ();
+			}
+		}
+
+
 		internal static void OnServiceDeleted (string serviceName)
 		{
-			// FIXME: It would be nice to do something more graceful than this.
 			if (serviceName == ServiceName) {
-				Console.WriteLine ("****");
-				Console.WriteLine ("****");
-				Console.WriteLine ("**** Lost Connection to service {0}", serviceName);
-				Console.WriteLine ("**** Shutting Down Beagle Client");
-				Console.WriteLine ("****");
-				Console.WriteLine ("****");
-				
-				System.Environment.Exit (-666);
+				System.Console.WriteLine ("BeagleDaemon down");
+
+				service = null;
+
+				Driver.ServiceDeleted -= OnServiceDeleted;
+
+				if (BeagleDown != null)
+					BeagleDown ();
 			}
 		}
 	}
