@@ -120,7 +120,7 @@ inotify_glue_ignore (int fd, __s32 wd)
 #define MAX_PENDING_COUNT           5
 #define PENDING_PAUSE_MICROSECONDS  2000
 #define PENDING_THRESHOLD(qsize)    ((qsize) >> 1)
-#define PENDING_MARGINAL_COST(p)    ((unsigned int)(1 << (p)++))
+#define PENDING_MARGINAL_COST(p)    ((unsigned int)(1 << (p)))
 
 void
 inotify_snarf_events (int fd, int timeout_secs, int *nr, void **buffer_out)
@@ -159,8 +159,8 @@ inotify_snarf_events (int fd, int timeout_secs, int *nr, void **buffer_out)
 
 	select_retval = select (fd + 1, &read_fds, NULL, NULL, &timeout);
 
-	/* If we time out, just return */
-	if (select_retval == 0)
+	/* If we time out or get an error, just return */
+	if (select_retval <= 0)
 		return;
 
 	/* Reading events in groups significantly helps performance.
