@@ -247,7 +247,13 @@ namespace Beagle.Daemon {
 			if (fa_store == null)
 				return false;
 
-			FileAttributes attr = fa_store.Read (path);
+			FileAttributes attr;
+
+			try {
+				attr = fa_store.Read (path);
+			} catch {
+				attr = null;
+			}
 
 			// FIXME: This check is incomplete
 			return attr != null
