@@ -43,6 +43,7 @@ class QueryTool {
 	// CLI args
 	static bool keepRunning = false;
 	static bool verbose = false;
+	static bool display_hits = true;
 
 	static void OnHitsAdded (Query source, ICollection hits)
 	{
@@ -51,6 +52,11 @@ class QueryTool {
 		if (count == 0 && verbose) {
 			Console.WriteLine ("First hit returned in {0:0.000}s",
 					   (lastQueryTime - queryStartTime).TotalSeconds);
+		}
+
+		if (! display_hits) {
+			count += hits.Count;
+			return;
 		}
 
 		foreach (Hit hit in hits) {
@@ -83,6 +89,9 @@ class QueryTool {
 	{
 		lastQueryTime = DateTime.Now;
 
+		if (! display_hits)
+			return;
+
 		foreach (Uri uri in uris) {
 			Console.WriteLine ("Subtracted Uri '{0}'", uri);
 			Console.WriteLine ();
@@ -93,9 +102,12 @@ class QueryTool {
 
 	static void OnFinished (QueryProxy query)
 	{
-		if (verbose)
+		if (verbose) {
 			Console.WriteLine ("Elapsed time: {0:0.000}s",
 					   (DateTime.Now - queryStartTime).TotalSeconds);
+			Console.WriteLine ("Total hits: {0}", count);
+		}
+
 		Gtk.Application.Quit ();
 	}
 
@@ -117,6 +129,8 @@ class QueryTool {
 			"                   \t\tSources list available from beagle-status.\n" +
 			"  --live-query\t\t\tRun continuously, printing notifications if a\n" +
 			"              \t\t\tquery changes.\n" +
+			"  --stats-only\t\t\tOnly display statistics about the query, not\n" +
+			"              \t\t\tthe actual results.\n" +
 			"  --help\t\t\tPrint this usage message.\n";
 
 		Console.WriteLine (usage);
@@ -166,6 +180,10 @@ class QueryTool {
 				break;
 			case "--verbose":
 				verbose = true;
+				break;
+			case "--stats-only":
+				verbose = true;
+				display_hits = false;
 				break;
 
 			case "--help":
