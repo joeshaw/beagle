@@ -277,6 +277,8 @@ namespace Beagle.Daemon {
 						if (generated != null)
 							driver.Add (generated);
 					}
+
+					driver.Flush ();
 				}
 			}
 		}
