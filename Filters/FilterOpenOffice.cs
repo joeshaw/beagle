@@ -202,8 +202,10 @@ namespace Beagle.Filters {
 					
 				case "meta:document-statistic":
 					XmlAttributeCollection attr = node.Attributes;
-					this ["_PageCount"] = attr ["meta:page-count"].Value;
-					this ["_WordCount"] = attr ["meta:word-count"].Value;
+					if (attr ["meta:page-count"] != null)
+						this ["_PageCount"] = attr ["meta:page-count"].Value;
+					if (attr ["meta:word-count"] != null)
+						this ["_WordCount"] = attr ["meta:word-count"].Value;
 					break;
 
 				case "meta:user-defined":

@@ -252,9 +252,20 @@ namespace Beagle {
 		{
 			LNS.BooleanQuery luceneQuery = new LNS.BooleanQuery ();
 			foreach (string part in query.Parts) {
-				// FIXME: Stemming!
-				Term t = new Term (field, part);
-				LNS.Query q = new LNS.TermQuery (t);
+				string[] subparts = part.Split (' ');
+				LNS.Query q;
+				if (subparts.Length == 1) {
+					Term t = new Term (field, part);
+					q = new LNS.TermQuery (t);
+				} else {
+					q = new LNS.PhraseQuery ();
+					foreach (string sp in subparts) {
+						if (sp == "")
+							continue;
+						Term t = new Term (field, sp);
+						((LNS.PhraseQuery) q).Add (t);
+					}
+				}
 				luceneQuery.Add (q, true, false);
 			}
 			return luceneQuery;
