@@ -173,12 +173,16 @@ namespace Beagle.Daemon {
 			// this every time at start-up to help avoid running
 			// out of file descriptors if the beagled were to
 			// crash or be shut down while in a non-optimized state.
-
-			// This creates the index if it doesn't exist
-			IndexWriter writer = new IndexWriter (Store, null, !indexExists);
-			if (indexExists)
-				writer.Optimize ();
-			writer.Close ();
+			// (We do the optimization in a thread since it is I/O bound
+			// and slows down start-up.)
+			if (indexExists) {
+				Thread opt_th = new Thread (new ThreadStart (Optimize));
+				opt_th.Start ();
+			} else {
+				// This creates the index if it doesn't exist
+				IndexWriter writer = new IndexWriter (Store, null, true);
+				writer.Close ();
+			}
 		}
 
 		/////////////////////////////////////////////////////
