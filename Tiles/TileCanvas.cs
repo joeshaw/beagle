@@ -329,13 +329,19 @@ namespace Beagle {
 				Write ("<a href=\"{0}\">{1}</a>", key, label);
 			}
 
-			override public void Image (string name, TileActionHandler handler)
+			override public void Image (string name, int width, int height,
+						    TileActionHandler handler)
 			{
 				if (handler != null) {
 					string key = canvas.AddAction (handler);
 					Write ("<a href=\"{0}\">", key);
 				}
-				Write ("<img src=\":{0}:{1}\" border=\"0\">", tileMain.UniqueKey, name);
+				Write ("<img src=\":{0}:{1}\"", tileMain.UniqueKey, name);
+				if (width > 0)
+					Write (" width=\"{0}\"", width);
+				if (height > 0)
+					Write (" height=\"{0}\"", height);
+				Write (" border=\"0\">");
 				if (handler != null)
 					Write ("</a>");
 			}

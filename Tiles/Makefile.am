@@ -26,6 +26,7 @@ ASSEMBLIES = 					\
 	-r:../indexer/Indexer.dll
 
 RESOURCEFILES =					\
+	$(srcdir)/template-hit-collection.html	\
 	$(srcdir)/template-contact.html		\
 	$(srcdir)/template-file.html		\
 	$(srcdir)/template-mail-message.html

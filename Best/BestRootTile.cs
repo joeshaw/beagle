@@ -33,16 +33,46 @@ namespace Best {
 
 	public class BestRootTile : Tile {
 
-		TileHitCollection hitTile = new TileHitCollection ();
+		Hashtable tileTable = new Hashtable ();
+		TileHitCollection hitTile = new TileHitCollection ("Foo", null);
 
 		public void Open ()
 		{
-			hitTile.Clear ();
+			tileTable = new Hashtable ();
 		}
 
 		public void Add (Hit hit)
 		{
-			hitTile.Add (hit);
+			TileHitCollection tile;
+
+			tile = (TileHitCollection) tileTable [hit.Type];
+
+			if (tile == null) {
+				string name = null;
+				string icon = null;
+				switch (hit.Type) {
+				case "Contact":
+					name = "People";
+					icon = "person.png";
+					break;
+				case "File":
+					name = "Files";
+					icon = "document.png";
+					break;
+				case "MailMessage":
+					name = "Email";
+					icon = "mail-message-icon.png";
+					break;
+				}
+
+				tile = new TileHitCollection (name, icon);
+				tileTable [hit.Type] = tile;
+			}
+
+			if (tile != null) {
+				tile.Add (hit);
+				Changed ();
+			}
 		}
 
 		public void Close ()
@@ -52,7 +82,9 @@ namespace Best {
 
 		override public void Render (TileRenderContext ctx)
 		{
-			ctx.Tile (hitTile);
+			foreach (TileHitCollection tile in tileTable.Values) {
+				ctx.Tile (tile);
+			}
 		}
 	}
 }

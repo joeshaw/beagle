@@ -34,7 +34,8 @@ namespace Beagle {
 
 		abstract public void Link  (string label, TileActionHandler handler);
 
-		abstract public void Image (string name, TileActionHandler handler);
+		abstract public void Image (string name, int width, int height,
+					    TileActionHandler handler);
 
 		abstract public void Tile  (Tile tile);
 
@@ -53,7 +54,12 @@ namespace Beagle {
 		
 		public void Image (string name)
 		{
-			Image (name, null);
+			Image (name, -1, -1, null);
+		}
+
+		public void Image (string name, TileActionHandler handler)
+		{
+			Image (name, -1, -1, handler);
 		}
 
 		// Don't call these unless you really know what you are doing!

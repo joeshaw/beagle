@@ -29,7 +29,16 @@ using System.Collections;
 
 namespace Beagle {
 
-	public class TileHitCollection : Tile {
+	public class TileHitCollection : TileFromTemplate {
+
+		string name = null;
+		string icon = null;
+
+		public TileHitCollection (string _name, string _icon) : base ("template-hit-collection.html")
+		{
+			name = _name;
+			icon = _icon;
+		}
 
 		private class HitTilePair : IComparable {
 			Hit hit;
@@ -73,6 +82,51 @@ namespace Beagle {
 		}
 
 		private ArrayList hits = new ArrayList ();
+		int firstDisplayed = 0;
+		int maxDisplayed = 10;
+
+		public float MaxScore {
+			get {
+				if (hits.Count == 0)
+					return 0;
+				HitTilePair pair = (HitTilePair) hits [0];
+				return pair.Hit.Score;
+			}
+		}
+
+		public int FirstDisplayed {
+			get { return firstDisplayed; }
+		}
+
+		public int LastDisplayed {
+			get { return Math.Min (firstDisplayed + maxDisplayed, hits.Count) - 1; }
+		}
+
+		public bool CanPageForward {
+			get { return LastDisplayed != (hits.Count - 1); }
+		}
+
+		public void PageForward ()
+		{
+			firstDisplayed += maxDisplayed;
+			if (firstDisplayed + maxDisplayed > hits.Count)
+				firstDisplayed = hits.Count - maxDisplayed;
+			if (firstDisplayed < 0)
+				firstDisplayed = 0;
+			Changed ();
+		}
+
+		public bool CanPageBack {
+			get { return FirstDisplayed > 0; }
+		}
+
+		public void PageBack ()
+		{
+			firstDisplayed -= maxDisplayed;
+			if (firstDisplayed < 0)
+				firstDisplayed = 0;
+			Changed ();
+		}
 
 		public void Clear ()
 		{
@@ -94,16 +148,60 @@ namespace Beagle {
 				Console.WriteLine ("Dropping Hit w/ type '{0}'", hit.Type);
 				return;
 			}
-			hits.Add (pair);
-			Changed ();
+
+			int i = hits.BinarySearch (pair);
+			hits.Insert (i < 0 ? ~i : i, pair);
+			if (i == 0 || i < LastDisplayed)
+				Changed ();
 		}
 
-		override public void Render (TileRenderContext ctx)
+		override protected string ExpandKey (string key)
 		{
-			foreach (HitTilePair pair in hits)
-				ctx.Tile (pair.Tile);
+			switch (key) {
+
+			case "Name":
+				return name;
+
+			case "DisplayedInfo":
+				if (hits.Count == 0)
+					return null;
+				return String.Format ("{0} to {1} of {2}",
+						      FirstDisplayed+1, LastDisplayed+1,
+						      hits.Count);
+			}
+			
+			return base.ExpandKey (key);
 		}
 
-	}
+		override protected bool RenderKey (string key, TileRenderContext ctx)
+		{
+			if (key == "Icon" && icon != null) {
+				ctx.Image (icon, 32, 32, null);
+				return true;
+			}
 
+			if (key == "Tiles") {
+				int i = FirstDisplayed;
+				int i1 = LastDisplayed;
+				while (i <= i1) {
+					HitTilePair pair = (HitTilePair) hits [i];
+					ctx.Tile (pair.Tile);
+					++i;
+				}
+				return true;
+			}
+
+			if (key == "BackLink" && CanPageBack) {
+				ctx.Link ("Back", new TileActionHandler (PageBack));
+				return true;
+			}
+			
+			if (key == "ForwardLink" && CanPageForward) {
+				ctx.Link ("Forward", new TileActionHandler (PageForward));
+				return true;
+			}
+
+			return base.RenderKey (key, ctx);
+		}
+	}
 }
