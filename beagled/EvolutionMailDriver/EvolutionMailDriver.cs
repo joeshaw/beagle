@@ -76,6 +76,8 @@ namespace Beagle.Daemon {
 
 	internal class EvolutionMailIndexableGenerator : IIndexableGenerator {
 
+		private static GConf.Client gconf_client = null;
+
 		private EvolutionMailQueryable queryable;
 		private FileInfo summaryInfo;
 		private Camel.Summary summary;
@@ -85,12 +87,28 @@ namespace Beagle.Daemon {
 		private Hashtable mapping;
 		private ArrayList deletedList;
 		private int count, indexedCount;
+		private ICollection accounts;
 
 		public EvolutionMailIndexableGenerator (EvolutionMailQueryable queryable, FileInfo summaryInfo)
 		{
 			this.queryable = queryable;
 			this.summaryInfo = summaryInfo;
 		}
+
+		private bool GConfReady ()
+		{
+			lock (this) {
+				if (gconf_client == null)
+					gconf_client = new GConf.Client ();
+
+				this.accounts = (ICollection) gconf_client.Get ("/apps/evolution/mail/accounts");
+
+				Monitor.Pulse (this);
+			}
+
+			return false;
+		}
+					
 
 		private bool Setup ()
 		{
@@ -101,10 +119,12 @@ namespace Beagle.Daemon {
 				string imapStart = dirName.Substring (imapStartIdx);
 				string imapName = imapStart.Substring (0, imapStart.IndexOf ('/'));
 
-				GConf.Client gc = new GConf.Client ();
-				ICollection accounts = (ICollection) gc.Get ("/apps/evolution/mail/accounts");
+				lock (this) {
+					GLib.Idle.Add (new GLib.IdleHandler (this.GConfReady));
+					Monitor.Wait (this);
+				}
 
-				foreach (string xml in accounts) {
+				foreach (string xml in this.accounts) {
 					XmlDocument xmlDoc = new XmlDocument ();
 
 					xmlDoc.LoadXml (xml);
