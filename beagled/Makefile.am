@@ -2,16 +2,6 @@
 CSC = mcs -g
 
 
-EXTSTR = ExternalStringsHack.cs
-EXTSTR_IN = $(srcdir)/$(EXTSTR).in
-
-$(EXTSTR): $(EXTSTR_IN)
-	sed	-e "s|\@prefix\@|$(prefix)|g"		\
-		-e "s|\@pkglibdir\@|$(pkglibdir)|g"	\
-		< $^ > $@
-
-
-
 PLUGIN_TARGET = BeagleDaemonPlugins.dll
 
 PLUGIN_CFLAGS = -target:library
@@ -34,18 +24,25 @@ PLUGIN_ASSEMBLIES =				\
 	$(BEAGLED_LIBS)                 	\
 	$(PLUGIN_LOCAL_ASSEMBLIES:%=-r:%)
 
+EXTSTR = ExternalStringsHack.cs
+EXTSTR_IN = $(srcdir)/$(EXTSTR).in
+$(EXTSTR): $(EXTSTR_IN)
+	sed	-e "s|\@prefix\@|$(prefix)|g"		\
+		-e "s|\@pkglibdir\@|$(pkglibdir)|g"	\
+		< $^ > $@
+
+
 $(PLUGIN_TARGET): $(PLUGIN_CSFILES) $(EXTSTR) $(PLUGIN_LOCAL_ASSEMBLIES)
 	$(CSC) -o $@ $(PLUGIN_CFLAGS) $(PLUGIN_CSFILES) $(EXTSTR) $(PLUGIN_ASSEMBLIES)
 
 
+############################################################
 
-DAEMON_TARGET = BeagleDaemon.exe
 
-DAEMON_WRAPPER = beagled
+DAEMON_DLL_TARGET = BeagleDaemonLib.dll
 
-DAEMON_CSFLAGS = 			\
-	-target:exe			\
-	-main:BeagleDaemon.BeagleDaemon
+DAEMON_DLL_CSFLAGS = 			\
+	-target:library
 
 lucenedir = $(srcdir)/Lucene.Net
 
@@ -169,7 +166,7 @@ LUCENE_CSFILES =								\
 	$(lucenedir)/Util/Number.cs					\
 	$(lucenedir)/Util/PriorityQueue.cs
 
-DAEMON_CSFILES = 				\
+DAEMON_DLL_CSFILES = 				\
 	$(LUCENE_CSFILES)		\
 	$(srcdir)/IndexableFile.cs	\
 	$(srcdir)/Query.cs		\
@@ -181,56 +178,88 @@ DAEMON_CSFILES = 				\
 	$(srcdir)/QueryDriver.cs	\
 	$(srcdir)/IndexDriver.cs	\
 	$(srcdir)/GoogleDriver.cs	\
-	$(srcdir)/BeagleDaemon.cs       \
 	$(srcdir)/Indexer.cs            \
 	$(srcdir)/IndexerQueue.cs       \
 	$(srcdir)/LiveQuery.cs          \
 	$(srcdir)/NoIndexFileHandler.cs \
 	$(srcdir)/QueryManager.cs
 
-DAEMON_LOCAL_ASSEMBLIES =		\
+DAEMON_DLL_LOCAL_ASSEMBLIES =		\
 	../Util/Util.dll		\
-	../BeagleClient/Beagle.dll
+	../BeagleClient/Beagle.dll	\
+	./$(PLUGIN_TARGET)
 
-DAEMON_ASSEMBLIES = 				\
+DAEMON_DLL_ASSEMBLIES = 				\
 	$(BEAGLED_LIBS)                 	\
-	$(DAEMON_LOCAL_ASSEMBLIES:%=-r:%)	\
+	$(DAEMON_DLL_LOCAL_ASSEMBLIES:%=-r:%)	\
 	-r:Mono.Posix				\
 	-r:System.Runtime.Remoting		\
-	-r:ICSharpCode.SharpZipLib.dll		\
-	-r:./$(PLUGIN_TARGET)
+	-r:ICSharpCode.SharpZipLib.dll
 
 
 if ENABLE_EVO_SHARP
-DAEMON_CSFLAGS += -define:ENABLE_EVO_SHARP
-DAEMON_CSFILES += $(srcdir)/EvolutionDataServerDriver.cs
-DAEMON_ASSEMBLIES += $(EVO_SHARP_LIBS)
+DAEMON_DLL_CSFLAGS += -define:ENABLE_EVO_SHARP
+DAEMON_DLL_CSFILES += $(srcdir)/EvolutionDataServerDriver.cs
+DAEMON_DLL_ASSEMBLIES += $(EVO_SHARP_LIBS)
 endif
 
 
 
+$(DAEMON_DLL_TARGET): $(DAEMON_DLL_CSFILES) $(DAEMON_DLL_LOCAL_ASSEMBLIES)
+	$(CSC) -o $@ $(DAEMON_DLL_CSFLAGS) $(DAEMON_DLL_CSFILES) $(DAEMON_DLL_ASSEMBLIES)
+
+
+############################################################
+
+
+DAEMON_WRAPPER = beagled
+
+$(DAEMON_WRAPPER): $(srcdir)/$(DAEMON_WRAPPER).in
+	sed -e "s|\@prefix\@|$(prefix)|g" -e "s|\@pkglibdir\@|$(pkglibdir)|g" -e "s|\@target\@|$(DAEMON_TARGET)|g" -e "s|\@gacprefix\@|$(GAC_PREFIX)|g" < $^ > $@
+	chmod +x $(DAEMON_WRAPPER)
+
+DAEMON_TARGET = BeagleDaemon.exe
+
+DAEMON_CSFLAGS =				\
+	-target:exe
+
+#	-main:BeagleDaemon.BeagleDaemon
+
+DAEMON_CSFILES =				\
+	$(srcdir)/BeagleDaemon.cs
+
+DAEMON_LOCAL_ASSEMBLIES =			\
+	../Util/Util.dll			\
+	../BeagleClient/Beagle.dll		\
+	./$(PLUGIN_TARGET)			\
+	./$(DAEMON_DLL_TARGET)
+
+DAEMON_ASSEMBLIES =				\
+	$(BEAGLED_LIBS)				\
+	$(DAEMON_LOCAL_ASSEMBLIES:%=-r:%)	\
+	-r:Mono.Posix				\
+	-r:System.Runtime.Remoting		\
+	-r:ICSharpCode.SharpZipLib.dll
+
 $(DAEMON_TARGET): $(DAEMON_CSFILES) $(DAEMON_LOCAL_ASSEMBLIES)
 	$(CSC) -o $@ $(DAEMON_CSFLAGS) $(DAEMON_CSFILES) $(DAEMON_ASSEMBLIES)
 
-#TestClient.exe: TestClient.cs 
-#	$(CSC) -o $@ $(CSFLAGS) TestClient.cs $(ASSEMBLIES)
 
-all: $(PLUGIN_TARGET) $(DAEMON_TARGET)
+############################################################
 
-install-data-local: $(PLUGIN_TARGET) $(DAEMON_TARGET)
+
+all: $(PLUGIN_TARGET) $(DAEMON_DLL_TARGET) $(DAEMON_TARGET)
+
+install-data-local: $(PLUGIN_TARGET) $(DAEMON_DLL_TARGET) $(DAEMON_TARGET)
 	$(mkinstalldirs) $(DESTDIR)$(pkglibdir)
 	$(INSTALL_DATA) $(PLUGIN_TARGET) $(DESTDIR)$(pkglibdir)/$(PLUGIN_TARGET)
+	$(INSTALL_DATA) $(DAEMON_DLL_TARGET) $(DESTDIR)$(pkglibdir)/$(DAEMON_DLL_TARGET)
 	$(INSTALL_DATA) $(DAEMON_TARGET) $(DESTDIR)$(pkglibdir)/$(DAEMON_TARGET)
 
 uninstall-local:
 	rm -f $(DESTDIR)$(bindir)/$(TARGET)
 
 bin_SCRIPTS = $(DAEMON_WRAPPER)
-
-$(DAEMON_WRAPPER): $(srcdir)/$(DAEMON_WRAPPER).in
-	sed -e "s|\@prefix\@|$(prefix)|g" -e "s|\@pkglibdir\@|$(pkglibdir)|g" -e "s|\@target\@|$(TARGET)|g" -e "s|\@gacprefix\@|$(GAC_PREFIX)|g" < $^ > $@
-	chmod +x $(DAEMON_WRAPPER)
-
 noinst_SCRIPTS=testclient
 
 testclient: $(srcdir)/testclient.in
@@ -240,6 +269,7 @@ testclient: $(srcdir)/testclient.in
 
 EXTRA_DIST =			\
 	$(PLUGIN_CSFILES)	\
+	$(DAEMON_DLL_CSFILES)	\
 	$(DAEMON_CSFILES)	\
 	$(EXTSTR_IN)		\
 	$(DAEMON_WRAPPER).in   	\
@@ -247,6 +277,7 @@ EXTRA_DIST =			\
 
 CLEANFILES =			\
 	$(PLUGIN_TARGET)       	\
+	$(DAEMON_DLL_TARGET)	\
 	$(DAEMON_TARGET)       	\
 	$(EXTSTR)		\
 	$(DAEMON_WRAPPER)      	\

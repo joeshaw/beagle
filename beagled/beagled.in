@@ -2,12 +2,12 @@
 
 if [ -e ./@target@ ] && [ -e ./Makefile.am ] ; then
     echo "*** Running uninstalled @target@ ***"
-    THIS_PATH="../Util:../BeagleClient"
+    THIS_PATH="../Util:../BeagleClient:."
     THIS_EXE="./@target@"
 else
     THIS_PATH="@pkglibdir@"
     THIS_EXE="@pkglibdir@/@target@"
 fi
 
-MONO_GAC_PREFIX="@gacprefix@" MONO_PATH="$THIS_PATH:$MONO_PATH" mono --debug $THIS_EXE "$@"
+MONO_GAC_PREFIX="@gacprefix@:$MONO_GAC_PREFIX" MONO_PATH="$THIS_PATH:$MONO_PATH" mono --debug $THIS_EXE "$@"
 
