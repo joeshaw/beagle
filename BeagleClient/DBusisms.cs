@@ -65,12 +65,8 @@ namespace Beagle
 					
 					try {
 						service = DBus.Service.Get (Connection, ServiceName);
-					}
-					catch (Exception e) {
-						Driver.ServiceCreated += OnServiceAdded;
-						throw;
-					}
-					Driver.ServiceDeleted += OnServiceDeleted;
+					} catch { }
+					Driver.ServiceOwnerChanged += OnServiceOwnerChanged;
 				}
 				return service;
 			}
@@ -85,30 +81,27 @@ namespace Beagle
 			}
 		}
 
-		internal static void OnServiceAdded (string serviceName)
+		internal static void OnServiceOwnerChanged (string serviceName,
+							    string oldOwner,
+							    string newOwner)
 		{
 			if (serviceName == ServiceName) {
-				System.Console.WriteLine ("BeagleDaemon up");
 
-				Driver.ServiceCreated -= OnServiceAdded;
+				if (oldOwner == "") { // New service added
+					System.Console.WriteLine ("BeagleDaemon up");
 
-				if (BeagleUpAgain != null)
-					BeagleUpAgain ();
-			}
-		}
+					if (BeagleUpAgain != null)
+						BeagleUpAgain ();
 
+				} else if (newOwner == "") { // Existing service deleted
 
-		internal static void OnServiceDeleted (string serviceName)
-		{
-			if (serviceName == ServiceName) {
-				System.Console.WriteLine ("BeagleDaemon down");
+					System.Console.WriteLine ("BeagleDaemon down");
 
-				service = null;
-
-				Driver.ServiceDeleted -= OnServiceDeleted;
-
-				if (BeagleDown != null)
-					BeagleDown ();
+					service = null;
+					
+					if (BeagleDown != null)
+						BeagleDown ();
+				}
 			}
 		}
 	}

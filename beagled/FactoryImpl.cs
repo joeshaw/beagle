@@ -35,7 +35,7 @@ namespace Beagle.Daemon {
 
 		public FactoryImpl (QueryDriver queryDriver)
 		{
-			DBusisms.BusDriver.ServiceDeleted += this.OnServiceDeleted;
+			DBusisms.BusDriver.ServiceOwnerChanged += this.OnServiceOwnerChanged;
 
 			this.queryDriver = queryDriver;
 		}
@@ -134,10 +134,15 @@ namespace Beagle.Daemon {
 			return by_type;
 		}
 
-		private void OnServiceDeleted (string serviceName)
+		private void OnServiceOwnerChanged (string serviceName,
+						    string oldOwner,
+						    string newOwner)
 		{
-			Console.WriteLine ("Cleaning up objects associated with '{0}'", serviceName);
-			UnregisterByOwner (serviceName);
+			// Clean up associated objects if a base service is deleted.
+			if (newOwner == "" && serviceName == oldOwner) {
+				Console.WriteLine ("Cleaning up objects associated with '{0}'", serviceName);
+				UnregisterByOwner (serviceName);
+			}
 		}
 
 		////////////////////////////////////////////////////
