@@ -1,3 +1,7 @@
+2004-11-11  Tuomas Kuosmanen  <tigert@novell.com>
+
+	* Tiles/template-picture.html: added some exif stuff.
+
 2004-11-10  Tuomas Kuosmanen  <tigert@novell.com>
 
 	* Tiles/template-page.css (.icon img): made icons max-width: 80px;
