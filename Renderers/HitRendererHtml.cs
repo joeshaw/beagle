@@ -82,11 +82,13 @@ namespace Beagle {
 				t = new Tile ("email.html", hit);
 				break;
 
+			case "WebHistory":
+				t = new Tile ("web-history.html", hit);
+				break;
+
 			case "WebLink":
 				if (hit.Source == "Google")
 					t = new Tile ("google.html", hit);
-				else
-					t = new Tile ("web-history.html", hit);
 				break;
 			}
 

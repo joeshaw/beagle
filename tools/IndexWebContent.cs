@@ -42,7 +42,7 @@ class IndexWebContentTool {
 				     Stream contentStream)
 		{
 			Uri = uri;
-			Type = "WebLink";
+			Type = "WebHistory";
 			MimeType = "text/html";
 			Timestamp = DateTime.Now;
 
