@@ -64,7 +64,7 @@ namespace Beagle.Daemon.FileSystemQueryable {
 				if (log == null) {
 					string logPath = Path.Combine (PathFinder.LogDir,
 								       "Index");
-					log = new Beagle.Util.Logger (logPath);
+					log = Beagle.Util.Logger.Get (logPath);
 				}
 			}
 

@@ -28,69 +28,69 @@ using System;
 using System.Diagnostics;
 using System.IO;
 using System.Threading;
+using System.Collections;
 
 namespace Beagle.Util {
 
 	public class Logger {
 
+		private static Hashtable loggers = new Hashtable ();
+
 		FileStream fs;
 		StreamWriter sw;
-		FileInfo lockFile;
 
-		public Logger (string logPath)
+		private Logger (string logPath)
 		{
-			lockFile = new FileInfo (logPath + ".LOCK");
-
-#if false
-			fs = new FileStream (logPath, FileMode.Append, FileAccess.Write);
+			fs = new FileStream (logPath, FileMode.Append, FileAccess.Write, FileShare.ReadWrite);
 			sw = new StreamWriter (fs);
-#endif
+		}
+
+		public static Logger Get (string logPath) {
+			lock (loggers) {
+				if (loggers.ContainsKey (logPath)) {
+					return (Logger)loggers[logPath];
+				}
+				
+				Logger logger = new Logger (logPath);
+				loggers[logPath] = logger;
+			
+				return logger;
+			}
 		}
 
 		private bool AcquireLock ()
 		{
-#if false
 			try {
-				lock (this) {
-					FileStream L = new FileStream (lockFile.FullName,
-								       FileMode.CreateNew,
-								       FileAccess.Write);
-					L.Close ();
-				}
+				fs.Lock (0, fs.Length);
+				return true;
 			} catch {
 				return false;
 			}
-#endif
-			return true;
 		}
 
-		private void WaitForLock ()
+		private bool WaitForLock ()
 		{
-#if false
 			// After a certain amount of time, just stop waiting
 			// for the lock and write to the log.
 			int countdown = 10;
 			while (countdown > 0) {
 				if (AcquireLock ())
-					return;
+					return true;
 				Thread.Sleep (100);
 				--countdown;
 			}
-			sw.WriteLine ("***** Log lock timed out!");
-#endif
+			
+			System.Console.WriteLine ("Couldn't lock logfile");
+			return false;
 		}
 
 		private void ReleaseLock ()
 		{
-#if false
-			lock (this) {
-				try {
-					lockFile.Delete ();
-				} catch { }
-			}
-#endif
+			sw.Flush ();
+			fs.Flush ();
+			fs.Unlock (0, fs.Length);
 		}
-		
+
 		private string GetStamp ()
 		{
 			return string.Format ("{0}[{1}] {2}",
@@ -101,31 +101,41 @@ namespace Beagle.Util {
 
 		private void LogRaw (string format, params object[] args)
 		{
-#if false
 			sw.Write (GetStamp ());
 			sw.Write (": ");
 			sw.WriteLine (String.Format (format, args));
 			sw.Flush ();
 			fs.Flush ();
-#endif
 		}
+
 
 		public void Log (string format, params object[] args)
 		{
-			WaitForLock ();
-			LogRaw (format, args);
-			ReleaseLock ();
+			lock (this) {
+				if (WaitForLock ()) {
+					try {
+						LogRaw (format, args);
+					} finally {
+						ReleaseLock ();
+					}
+				}
+			}
 		}
 
 		public void Log (Exception e)
 		{
-			WaitForLock ();
-			LogRaw ("Exception Begin");
-			LogRaw (e.Message);
-			LogRaw (e.StackTrace);
-			LogRaw ("Exception End");
-			ReleaseLock ();
-			
+			lock (this) {
+				if (WaitForLock ()) {
+					try {
+						LogRaw ("Exception Begin");
+						LogRaw (e.Message);
+						LogRaw (e.StackTrace);
+						LogRaw ("Exception End");
+					} finally {
+						ReleaseLock ();
+					}
+				}
+			}
 		}
 
 	}
