@@ -165,6 +165,7 @@ namespace Beagle.IndexHelper {
 					} else {
 						// Paranoia: don't shut down if we haven't done anything yet
 						Logger.Log.Debug ("Deferring shutdown until we've actually done something.");
+						Thread.Sleep (250);
 					}
 				} else {
 					Thread.Sleep (1000);
