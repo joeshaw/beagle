@@ -13,6 +13,7 @@ $(GOOGLE_CS): $(GOOGLE_WSDL)
 
 CSFILES = 			        	\
 	$(srcdir)/camel.cs              	\
+	$(srcdir)/ExifData.cs			\
 	$(srcdir)/ExtendedAttribute.cs  	\
 	$(srcdir)/FileSystem.cs			\
 	$(srcdir)/FSpotTools.cs         	\
@@ -21,6 +22,7 @@ CSFILES = 			        	\
 	$(srcdir)/Id3.cs                	\
 	$(srcdir)/ImLog.cs              	\
 	$(srcdir)/Inotify.cs			\
+	$(srcdir)/JpegHeader.cs			\
 	$(srcdir)/Logger.cs             	\
 	$(srcdir)/MultiReader.cs        	\
 	$(srcdir)/NautilusTools.cs      	\
@@ -41,7 +43,7 @@ ASSEMBLIES =					\
 
 
 $(TARGET): $(CSFILES) $(GOOGLE_CS)
-	$(CSC) -o $@ $(CSFLAGS) $^ $(ASSEMBLIES)
+	$(CSC) --unsafe -o $@ $(CSFLAGS) $^ $(ASSEMBLIES)
 
 all: $(TARGET)
 
