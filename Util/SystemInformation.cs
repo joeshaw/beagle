@@ -26,6 +26,7 @@
 
 using System;
 using System.Diagnostics;
+using System.Globalization;
 using System.IO;
 using System.Runtime.InteropServices;
 
@@ -57,9 +58,9 @@ namespace Beagle.Util {
 			stream.Close ();
 
 			string [] parts = line.Split (' ');
-			cached_loadavg_1min = Double.Parse (parts [0]);
-			cached_loadavg_5min = Double.Parse (parts [1]);
-			cached_loadavg_15min = Double.Parse (parts [2]);
+			cached_loadavg_1min = Double.Parse (parts [0], NumberFormatInfo.InvariantInfo);
+			cached_loadavg_5min = Double.Parse (parts [1], NumberFormatInfo.InvariantInfo);
+			cached_loadavg_15min = Double.Parse (parts [2], NumberFormatInfo.InvariantInfo);
 
 			proc_loadavg_time = DateTime.Now;
 		}
