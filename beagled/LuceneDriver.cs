@@ -283,6 +283,11 @@ namespace Beagle.Daemon {
 			queue.ScheduleQueueItem (item);
 		}
 
+		public void ScheduleAdd (IIndexableGenerator generator)
+		{
+			this.ScheduleAdd (generator, 0);
+		}
+
 		public void ScheduleAddAndMark (Indexable indexable, int priority, FileSystemInfo fsinfo)
 		{
 			MarkClosure closure = new MarkClosure (fsinfo, log);

@@ -42,7 +42,7 @@ using GConf;
 
 namespace Beagle.Daemon {
 
-	internal class CamelIndex : IDisposable{
+	internal class CamelIndex : IDisposable {
 		[DllImport ("libcamel.so.0")]
 		extern static IntPtr camel_text_index_new (string path, int mode);
 
@@ -152,6 +152,164 @@ namespace Beagle.Daemon {
 		}
 	}
 
+	internal class EvolutionMailIndexableGenerator : IIndexableGenerator {
+
+		private static Logger log = Logger.Get ("mail");
+
+		private EvolutionMailDriver driver;
+		private FileInfo summaryInfo;
+		private Camel.Summary summary;
+		private IEnumerator summaryEnumerator;
+		private string accountName, folderName;
+		private bool getCachedContent;
+		private Hashtable mapping;
+		private string appDataName;
+		private ArrayList deletedList;
+		private int count, indexedCount;
+
+		public EvolutionMailIndexableGenerator (EvolutionMailDriver driver, FileInfo summaryInfo)
+		{
+			this.driver = driver;
+			this.summaryInfo = summaryInfo;
+		}
+
+		private void Setup ()
+		{
+			if (summaryInfo.Name == "summary") {
+				string dirName = summaryInfo.DirectoryName;
+
+				int imapStartIdx = dirName.IndexOf (".evolution/mail/imap/") + 21;
+				string imapStart = dirName.Substring (imapStartIdx);
+				string imapName = imapStart.Substring (0, imapStart.IndexOf ('/'));
+
+				GConf.Client gc = new GConf.Client ();
+				ICollection accounts = (ICollection) gc.Get ("/apps/evolution/mail/accounts");
+
+				foreach (string xml in accounts) {
+					XmlDocument xmlDoc = new XmlDocument ();
+
+					xmlDoc.LoadXml (xml);
+
+					XmlNode account = xmlDoc.SelectSingleNode ("//account");
+
+					if (account == null)
+						continue;
+
+					string uid = null;
+
+					foreach (XmlAttribute attr in account.Attributes) {
+						if (attr.Name == "uid") {
+							uid = attr.InnerText;
+							break;
+						}
+					}
+
+					if (uid == null)
+						continue;
+
+					XmlNode imap_url = xmlDoc.SelectSingleNode ("//source/url");
+
+					if (imap_url == null)
+						continue;
+
+					if (imap_url.InnerText.StartsWith ("imap://" + imapName)) {
+						this.accountName = uid;
+						break;
+					}
+				}
+
+				if (accountName == null) {
+					log.Info ("Unable to determine account name for {0}", imapName);
+					return;
+				}
+					
+				this.folderName = driver.GetImapFolderName (new DirectoryInfo (dirName));
+				this.getCachedContent = true;
+			} else {
+				this.accountName = "local@local";
+				this.folderName = driver.GetLocalFolderName (this.summaryInfo);
+				this.getCachedContent = false;
+			}
+		}
+
+
+		public Indexable GetNextIndexable ()
+		{
+			Indexable indexable = null;
+
+			if (this.accountName == null)
+				Setup ();
+
+			if (this.summary == null)
+				this.summary = Camel.Summary.load (this.summaryInfo.FullName);
+
+			if (this.summaryEnumerator == null)
+				this.summaryEnumerator = this.summary.GetEnumerator ();
+
+			string appDataName;
+			Stream statusStream;
+			BinaryFormatter formatter;
+				
+			if (this.mapping == null) {
+				appDataName = "status-" + this.accountName + "-" + this.folderName.Replace ('/', '-');
+
+				try {
+					statusStream = PathFinder.ReadAppData ("MailIndex", appDataName);
+					formatter = new BinaryFormatter ();
+					this.mapping = formatter.Deserialize (statusStream) as Hashtable;
+					statusStream.Close ();
+					log.Debug ("Successfully loaded previous crawled data from disk");
+				} catch {
+					this.mapping = new Hashtable ();
+				}
+
+				this.deletedList = new ArrayList (this.mapping.Keys);
+			}
+
+			if (this.summaryEnumerator.MoveNext ()) {
+				Camel.MessageInfo mi = this.summaryEnumerator.Current as Camel.MessageInfo;
+
+				if ((this.count & 1500) == 0) {
+					log.Debug ("{0}: indexed {1} messages ({2}/{3} {4:###.0}%)",
+						   this.folderName, this.indexedCount, this.count,
+						   this.summary.header.count,
+						   100.0 * this.count / this.summary.header.count);
+				}
+				++this.count;
+
+				if (this.mapping[mi.uid] == null || (uint) mapping[mi.uid] != mi.flags) {
+					FileStream msgStream = null;
+					TextReader msgReader = null;
+
+					// FIXME: We need to handle MIME parts
+					if (this.getCachedContent && this.mapping[mi.uid] == null) {
+						string path = Path.Combine (summaryInfo.DirectoryName, mi.uid + ".");
+
+						try {
+							msgStream = new FileStream (path, System.IO.FileMode.Open,
+										    FileAccess.Read);
+							msgReader = new StreamReader (msgStream, new ASCIIEncoding ());
+						} catch { }
+					}
+
+					indexable = EvolutionMailDriver.MailToIndexable (this.accountName, this.folderName,
+											 mi, msgReader);
+
+					if (msgStream != null)
+						msgStream.Close ();
+
+					this.mapping[mi.uid] = mi.flags;
+					++indexedCount;
+				}
+
+				this.deletedList.Remove (mi.uid);
+			}
+
+			return indexable;
+		}
+
+	}
+
 	[QueryableFlavor (Name="Mail", Domain=QueryDomain.Local)]
 	public class EvolutionMailDriver : LuceneQueryable {
 
@@ -256,7 +414,7 @@ namespace Beagle.Daemon {
 			get { return "EvolutionMail"; }
 		}
 
-		private string GetLocalFolderName (FileInfo fileInfo)
+		public string GetLocalFolderName (FileInfo fileInfo)
 		{
 			DirectoryInfo di;
 			string folderName = "";
@@ -275,7 +433,7 @@ namespace Beagle.Daemon {
 			return Path.Combine (folderName, Path.GetFileNameWithoutExtension (fileInfo.Name));
 		}
 
-		private string GetImapFolderName (DirectoryInfo dirInfo)
+		public string GetImapFolderName (DirectoryInfo dirInfo)
 		{
 			string folderName = "";
 
@@ -421,150 +579,11 @@ namespace Beagle.Daemon {
 			return null;
 		}
 
+
 		public void IndexSummary (FileInfo summaryInfo)
 		{
-			string accountName = null, folderName;
-			bool getCachedContent = false;
-
-			if (summaryInfo.Name == "summary") {
-				string dirName = summaryInfo.DirectoryName;
-
-				int imapStartIdx = dirName.IndexOf (".evolution/mail/imap/") + 21;
-				string imapStart = dirName.Substring (imapStartIdx);
-				string imapName = imapStart.Substring (0, imapStart.IndexOf ('/'));
-
-				GConf.Client gc = new GConf.Client ();
-				ICollection accounts = (ICollection) gc.Get ("/apps/evolution/mail/accounts");
-
-				foreach (string xml in accounts) {
-					XmlDocument xmlDoc = new XmlDocument ();
-
-					xmlDoc.LoadXml (xml);
-
-					XmlNode account = xmlDoc.SelectSingleNode ("//account");
-					
-					if (account == null)
-						continue;
-
-					string uid = null;
-
-					foreach (XmlAttribute attr in account.Attributes) {
-						if (attr.Name == "uid") {
-							uid = attr.InnerText;
-							break;
-						}
-					}
-
-					if (uid == null)
-						continue;
-
-					XmlNode imap_url = xmlDoc.SelectSingleNode ("//source/url");
-
-					if (imap_url == null)
-						continue;
-
-					if (imap_url.InnerText.StartsWith ("imap://" + imapName)) {
-						accountName = uid;
-						break;
-					}
-				}
-
-				if (accountName == null) {
-					log.Debug ("Unable to determine account name for {0}", imapName);
-					return;
-				}
-
-				folderName = GetImapFolderName (new DirectoryInfo (dirName));
-				getCachedContent = true;
-			} else {
-				accountName = "local@local";
-				folderName = GetLocalFolderName (summaryInfo);
-				getCachedContent = false;
-			}
-
-			if (folderName.ToLower() == "spam" || folderName.ToLower() == "junk") {
-				log.Debug ("Skipping spam/junk folder in {0}", accountName);
-				return;
-			}
-
-			Stopwatch watch = new Stopwatch ();
-			watch.Start();
-			log.Info ("Going to index summary for {0}", folderName);
-
-			Stream statusStream;
-			BinaryFormatter formatter;
-			Hashtable mapping = null;
-
-			string appDataName = "status-" + accountName + "-" + folderName.Replace ('/', '-');
-
-			// It's okay if the file isn't here.
-			try {
-				statusStream = PathFinder.ReadAppData ("MailIndex", appDataName);
-				formatter = new BinaryFormatter ();
-				mapping = formatter.Deserialize (statusStream) as Hashtable;
-				statusStream.Close ();
-				log.Debug ("Successfully loaded previously crawled data from disk");
-			} catch {
-				mapping = new Hashtable ();
-			}
-
-			Camel.Summary summary = Camel.Summary.load (summaryInfo.FullName);
-
-			ArrayList deletedList = new ArrayList (mapping.Keys);
-			int count = 0, indexedCount = 0;
-			foreach (Camel.MessageInfo mi in summary) {
-
-				if ((count & 1500) == 0) {
-					log.Debug ("{0}: indexed {1} messages ({2}/{3} {4:###.0}%)",
-							   folderName, indexedCount,
-							   count, summary.header.count, 
-							   100.0 * count / summary.header.count);
-				}
-				++count;
-
-				if (mapping[mi.uid] == null || (uint) mapping[mi.uid] != mi.flags) {
-					FileStream msgStream = null;
-					TextReader msgReader = null;
-					
-					// FIXME: We should really handle MIME
-					if (getCachedContent && mapping[mi.uid] == null) {
-						string path = Path.Combine (summaryInfo.DirectoryName, mi.uid + ".");
-						try {
-							msgStream = new FileStream (path, System.IO.FileMode.Open,
-										    FileAccess.Read);
-							msgReader = new StreamReader (msgStream, new ASCIIEncoding ());
-						} catch { }
-					}
-
-					Driver.ScheduleAdd (MailToIndexable (accountName, folderName, mi, msgReader));
-
-					if (msgStream != null)
-						msgStream.Close ();
-
-					mapping[mi.uid] = mi.flags;
-					++indexedCount;
-				}
-
-				deletedList.Remove (mi.uid);
-			}
-
-			int deletedCount = 0;
-			foreach (string uid in deletedList) {
-				mapping.Remove (uid);
-				Uri uri = EmailUri (accountName, folderName, uid);
-				Driver.ScheduleDelete (uri);
-				++deletedCount;
-			}
-
-			watch.Stop ();
-			log.Info ("{0}: indexed {1} of {2} messages and removed {3} expunged messages in {4}",
-				  folderName, indexedCount, count, deletedCount, watch);
-
-			statusStream = PathFinder.WriteAppData ("MailIndex", appDataName);
-			formatter = new BinaryFormatter ();
-			formatter.Serialize (statusStream, mapping);
-			statusStream.Flush ();
-			statusStream.Close ();
+			EvolutionMailIndexableGenerator generator = new EvolutionMailIndexableGenerator (this, summaryInfo);
+			Driver.ScheduleAdd (generator);
 		}
 
 		private static Uri EmailUri (string accountName, string folderName, string uid)
@@ -573,8 +592,8 @@ namespace Beagle.Daemon {
 						       accountName, folderName, uid));
 		}
 
-		private static Indexable MailToIndexable (string accountName, string folderName,
-							  Camel.MessageInfo messageInfo, TextReader msgReader)
+		public static Indexable MailToIndexable (string accountName, string folderName,
+							 Camel.MessageInfo messageInfo, TextReader msgReader)
 		{
 			System.Uri uri = EmailUri (accountName, folderName, messageInfo.uid);
 			Indexable indexable = new Indexable (uri);
