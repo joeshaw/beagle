@@ -353,6 +353,11 @@ namespace Lucene.Net.Store
 			if (Logger != null)
 				Logger.Log (format, args);
 		}
+		static private void Log (Exception e)
+		{
+			if (Logger != null)
+				Logger.Log (e);
+		}
 
 		class FSDirectoryLock : Lock
 		{
@@ -387,10 +392,11 @@ namespace Lucene.Net.Store
 						fs.Close();
 					}
 				}
-				catch 
+				catch (Exception e)
 				{
 					// ADDED trow@ximian.com 4 June 2004 - lock debugging
 					Log ("Could not obtain lock {0}", lockFile.FullName);
+					Log (e);
 					return false;
 				}
 				return true;
@@ -406,8 +412,9 @@ namespace Lucene.Net.Store
 					try {
 						lockFile.Delete();
 						Log ("Released lock {0}", lockFile.FullName);
-					} catch {
+					} catch (Exception e) {
 						Log ("Failed to release lock {0}", lockFile.FullName);
+						Log (e);
 					}
 				}
 			}
