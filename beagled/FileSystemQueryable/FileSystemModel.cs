@@ -711,13 +711,20 @@ namespace Beagle.Daemon.FileSystemQueryable {
 			}
 
 			System.IO.DirectoryInfo info = new System.IO.DirectoryInfo (priv.FullName);
-			foreach (System.IO.DirectoryInfo subinfo in info.GetDirectories ()) {
-				if (! Ignore (subinfo.FullName)) {
-					if (! priv.HasChildWithName (subinfo.Name))
-						AddChild_Unlocked (priv, subinfo.Name);
+
+			// It's the call to info.GetDirectories() that may
+			// trigger the exception caught below.
+			try {
+				foreach (System.IO.DirectoryInfo subinfo in info.GetDirectories ()) {
+					if (! Ignore (subinfo.FullName)) {
+						if (! priv.HasChildWithName (subinfo.Name))
+							AddChild_Unlocked (priv, subinfo.Name);
+					}
+					if (known_children != null)
+						known_children.Remove (subinfo.Name);
 				}
-				if (known_children != null)
-					known_children.Remove (subinfo.Name);
+			} catch (UnauthorizedAccessException e) {
+				Logger.Log.Warn ("Skipping over {0}: {1}", priv.FullName, e.Message);
 			}
 
 			if (known_children != null) {
