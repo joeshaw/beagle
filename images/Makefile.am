@@ -64,7 +64,8 @@ RESOURCEFILES =					\
 	$(srcdir)/status-online.png		\
 	$(srcdir)/stock.png			\
 	$(srcdir)/trayicon.png			\
-	$(srcdir)/white.png
+	$(srcdir)/white.png			\
+	$(srcdir)/emblem-calendar.png
 
 # Makefile-fu to map /path/filename to -resource:/path/filename,filename
 RESOURCES = $(join $(RESOURCEFILES:%=-resource:%,),$(notdir $(RESOURCEFILES)))
