@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: beagle\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2005-03-26 13:16+0100\n"
-"PO-Revision-Date: 2005-04-04 20:24+0100\n"
+"PO-Revision-Date: 2005-04-05 21:45+0100\n"
 "Last-Translator: Wouter Bolsterlee <uws+gnome@xs4all.nl>\n"
 "Language-Team: Dutch <vertaling@nl.linux.org>\n"
 "MIME-Version: 1.0\n"
@@ -75,17 +75,14 @@ msgstr "Vorige resultaten tonen"
 msgid "No results."
 msgstr "Geen resultaten."
 
-#: Best/BestWindow.cs:404
 #, csharp-format
 msgid "Best <b>{0} results of {1}</b> are shown."
 msgstr "Beste <b>{0} van {1} resultaten</b> worden getoond."
 
-#: Best/BestWindow.cs:408
 #, csharp-format
 msgid "Results <b>{0} through {1} of {2}</b> are shown."
 msgstr "Resultaten <b>{0} tot {1} van {2} totaal</b> worden getoond."
 
-#: Best/BestWindow.cs:546
 #, csharp-format
 msgid ""
 "The query for <i>{0}</i> failed.<br>The likely cause is that the beagle "
@@ -94,7 +91,6 @@ msgstr ""
 "De zoekopdracht naar <i>{0}</i> is mislukt. Waarschijnlijk komt dit doordat"
 "de beagle-daemon niet actief is."
 
-#: Best/BestWindow.cs:550
 #, csharp-format
 msgid ""
 "The query for <i>{0}</i> failed.<br>The session bus isn't running.  See "
@@ -105,7 +101,6 @@ msgstr ""
 "actief. Zie http://beaglewiki.org/index.php/Installing%20Beagle voor"
 "meer informatie over het activeren van een sessiebus."
 
-#: Best/BestWindow.cs:553
 #, csharp-format
 msgid "The query for <i>{0}</i> failed with error:<br>{1}<br>"
 msgstr "De zoekopdracht naar <i>{0}</i> is mislukt met de fout:<br>{1}<br>"
@@ -122,14 +117,12 @@ msgstr "Woorden:"
 msgid "Empty"
 msgstr "Leeg"
 
-#: Tiles/TileFolder.cs:53
-msgid "Contains 1 Item"
-msgstr "Bevat 1 item"
-
 #: Tiles/TileFolder.cs:55
 #, csharp-format
-msgid "Contains {0} Items"
-msgstr "Bevat {0} items"
+msgid "Contains {0} Item"
+msgid_plural "Contains {0} Items"
+msgstr[0] "Bevat {0} item"
+msgstr[1] "Bevat {0} items"
 
 #: Tiles/TileMailMessage.cs:68
 msgid "<i>No Subject</i>"
@@ -159,7 +152,8 @@ msgstr "Vandaag"
 msgid "Yesterday"
 msgstr "Gisteren"
 
-#: Util/StringFu.cs:94
+
+#: Util/StringFu.cs:95
 #, csharp-format
 msgid "Today, {0}"
 msgstr "Vandaag, {0}"
@@ -172,17 +166,21 @@ msgstr "Gisteren, {0}"
 #: Util/StringFu.cs:98
 #, csharp-format
 msgid "{0} days ago, {1}"
-msgstr "{0} dagen geleden, {1}"
+msgstr "{0} dagen geleden, om {1}"
 
 #: Util/StringFu.cs:118
 #, csharp-format
 msgid "{0} hours"
-msgstr "{0} uur"
+msgid_plural "{0} hours"
+msgstr[0] "{0} uur"
+msgstr[1] "{0} uren"
 
 #: Util/StringFu.cs:128
 #, csharp-format
 msgid "{0} minutes"
-msgstr "{0} minuten"
+msgid_plural "{0} minutes"
+msgstr[0] "{0} minuut"
+msgstr[1] "{0} minuten"
 
 #
 # Common stuff for the templates
