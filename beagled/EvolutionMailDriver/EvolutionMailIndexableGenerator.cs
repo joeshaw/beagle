@@ -728,8 +728,6 @@ namespace Beagle.Daemon.EvolutionMailDriver {
 				TextReader msgReader = null;
 				string msg_file = Path.Combine (summary_info.DirectoryName, mi.uid + ".");
 				
-				Console.WriteLine ("msg file is {0}.  Exists: {1}", msg_file, File.Exists (msg_file));
-
 				// FIXME - XXX
 				if (File.Exists (msg_file))
 					msgReader = GetMessageData (msg_file);
