@@ -37,10 +37,20 @@ namespace IndexGaimLogs {
 	class IndexableImLog : Indexable {
 		
 		private ImLog log;
-		
-		public IndexableImLog (ImLog _log) 
+	        public bool verbose = false;
+
+       		private void VerbosePrint (String text)
+		{
+			if (! verbose)
+				return;
+
+			Console.WriteLine ("IndexableImLog: " + text);
+		}
+			
+		public IndexableImLog (ImLog _log, bool _verbose) 
 		{
 			log = _log;
+			verbose = _verbose;
 
 			Uri = log.Uri;
 			Timestamp = log.Timestamp;
@@ -66,31 +76,45 @@ namespace IndexGaimLogs {
 				text.Append (utt.Text);
 				text.Append (" ");
 			}
+
 			Content = text.ToString ();
+
+			VerbosePrint ("Indexing conversation");
 		}
 	}
 
 	class IndexGaimLogsTool {
 
 		static ArrayList indexables = new ArrayList ();
+	        static bool verbose = false;
 
 		static void AddLog (ImLog log)
 		{
-			indexables.Add (new IndexableImLog (log));
+			indexables.Add (new IndexableImLog (log, verbose));
 		}
 
 		static void Main (string[] args)
 		{
+			foreach (string arg in args)
+			    if (arg == "--verbose")
+				verbose = true;
+			
 			string dir = Environment.GetEnvironmentVariable ("HOME");
 			dir = Path.Combine (dir, ".gaim");
 			dir = Path.Combine (dir, "logs");
 
 			ImLogScanner scan = new GaimLogScanner ();
+			scan.verbose = verbose;
+
 			scan.Scan (dir, new ImLog.Sink (AddLog));
 
 			if (indexables.Count > 0) {
+			        Console.WriteLine ("Creating driver");
 				IndexDriver driver = new IndexDriver ();
+				
+			        Console.WriteLine ("Adding indexables");
 				driver.Add (indexables);
+			        Console.WriteLine ("Optimizing");
 				driver.Optimize ();
 			}
 		}

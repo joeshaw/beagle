@@ -131,12 +131,21 @@ namespace Beagle.Util {
 
 	public abstract class ImLogScanner {
 
-		abstract public void Scan (string path, ImLog.Sink sink);
+		public bool verbose = false;
 
+		abstract public void Scan (string path, ImLog.Sink sink);
 	}
 	
 	public class GaimLogScanner : ImLogScanner {
 
+		private void VerbosePrint (String text)
+		{
+			if (! verbose)
+				return;
+
+			Console.WriteLine ("GaimLogScanner: " + text);
+		}
+			
 		private void Crawl (DirectoryInfo info, ImLog.Sink sink)
 		{
 			foreach (DirectoryInfo subdir in info.GetDirectories ())
@@ -154,8 +163,10 @@ namespace Beagle.Util {
 		{
 			// Crawl the user's .gaim directory, looking for logs
 			DirectoryInfo info = new DirectoryInfo (path);
-			if (info.Exists)
+			if (info.Exists) {
+				VerbosePrint ("Crawling " + path);
 				Crawl (info, sink);
+			}
 		}
 
 		private void ScanNewStyleLog (FileInfo file, ImLog.Sink sink)
@@ -177,6 +188,8 @@ namespace Beagle.Util {
 
 			log.loader = this.LoadLog;
 
+			VerbosePrint ("Adding conversation " + log.Identity + ":" + log.SpeakingTo +
+				      "(" + log.StartTime + " - " + log.EndTime + ") to index queue");
 			sink (log);
 		}
 
@@ -201,8 +214,11 @@ namespace Beagle.Util {
 					ImLog log = new ImLog ("gaim", file.FullName, offset);
 					log.loader = this.LoadLog;
 					log.StartTime = NewConversationTime (line);
-					log.Identity = "_OldGaim_";
+					log.Identity = "_OldGaim_"; // FIXME: parse a few lines of the log to figure this out
 					log.SpeakingTo = speakingTo;
+
+					VerbosePrint ("Adding conversation " + log.Identity + ":" + log.SpeakingTo +
+						      "(" + log.StartTime + " - " + log.EndTime + ") to index queue");
 
 					sink (log);
 				}
