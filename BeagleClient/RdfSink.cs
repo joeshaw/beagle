@@ -28,14 +28,7 @@ namespace Beagle {
 
 	using DBus;
 
-	[Interface ("com.novell.Beagle.RdfSink")]
-	public abstract class RdfSink : IRdfSink {
-
-		[Method]
-		public abstract void AddRdfXml (string rdfXml);
-
-		[Method]
-		public abstract void Finished ();
+	public abstract class RdfSink : RdfSinkProxy {
 
 		static public RdfSink New ()
 		{

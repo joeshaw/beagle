@@ -1,5 +1,5 @@
 //
-// QueryManager.cs
+// RdfSourceProxy.cs
 //
 // Copyright (C) 2004 Novell, Inc.
 //
@@ -24,11 +24,20 @@
 // DEALINGS IN THE SOFTWARE.
 //
 
-namespace Beagle
-{
-	using DBus;
+using DBus;
+
+namespace Beagle {
 	
-	public abstract class QueryManager : QueryManagerProxy
-	{
+	public abstract class RdfSourceProxy : IRdfSource {
+
+		// No events should be emitted until Start is called
+		[Method]
+		public abstract void Start ();
+
+		[Signal]
+		public virtual event GotRdfXmlHandler GotRdfXmlEvent;
+
+		[Signal]
+		public virtual event RdfFinishedHandler RdfFinishedEvent;
 	}
 }

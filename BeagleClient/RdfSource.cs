@@ -28,19 +28,7 @@ using DBus;
 
 namespace Beagle {
 	
-	[Interface ("com.novell.Beagle.RdfSource")]
-	public abstract class RdfSource : IRdfSource {
-
-		// No events should be emitted until Start is called
-		[Method]
-		public abstract void Start ();
-
-		[Signal]
-		public virtual event GotRdfXmlHandler GotRdfXmlEvent;
-
-		[Signal]
-		public virtual event RdfFinishedHandler RdfFinishedEvent;
-
+	public abstract class RdfSource : RdfSourceProxy {
 		static public RdfSource New ()
 		{
 			string path = DBusisms.QueryManager.NewRdfSource ();

@@ -58,7 +58,7 @@ namespace Beagle
 			get {
 				if (queryManager == null)
 					queryManager = (QueryManager) DBusisms.Service.GetObject (typeof (QueryManager),
-												  QueryManagerPath);
+												       QueryManagerPath);
 				return queryManager;
 			}
 		}

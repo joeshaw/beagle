@@ -32,7 +32,7 @@ using DBus;
 
 namespace Beagle.Daemon
 {
-	public class QueryManager : Beagle.QueryManager
+	public class QueryManager : Beagle.QueryManagerProxy
 	{
 		private static QueryManager theQueryManager = null;
 
@@ -49,7 +49,7 @@ namespace Beagle.Daemon
 		{
 			numQueries++;
 			
-			string path ="/com/novell/Beagle/Queries/" + numQueries;
+			string path = "/com/novell/Beagle/Queries/" + numQueries;
 			
 			LiveQuery query = new LiveQuery (path, driver);
 			liveQueries[query.Name] = query;

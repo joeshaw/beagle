@@ -30,7 +30,7 @@ using System.Collections;
 
 namespace Beagle.Daemon {
 
-	public class RdfSourceImpl : Beagle.RdfSource {
+	public class RdfSourceImpl : Beagle.RdfSourceProxy {
 
 		static private object counterLock = new object ();
 		static private int counter = 1;

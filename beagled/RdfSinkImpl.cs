@@ -29,7 +29,7 @@ using System;
 
 namespace Beagle.Daemon {
 
-	public class RdfSinkImpl : Beagle.RdfSink {
+	public class RdfSinkImpl : Beagle.RdfSinkProxy {
 
 		static object counterLock = new object ();
 		static int counter = 1;
