@@ -1,3 +1,8 @@
+//
+// IndexItemWithPayload.cs
+//
+// Copyright (C) 2004 Novell, Inc.
+//
 
 using System;
 using System.IO;
@@ -31,9 +36,29 @@ namespace Dewey {
 	    payload_attached = true;
 	}
 
-	public void AttachFile (String path) {
-	    // FIXME: sniff mime type
-	    AttachFile (path, "text/plain");
+	// FIXME: This is an idiotic work-around
+	static private String GuessMimeTypeFromPath (String path) {
+	    String ext = Path.GetExtension (path);
+	    if (ext == ".txt")
+		return "text/plain";
+	    else if (ext == ".sxw")
+		return "application/vnd.sun.xml.writer";
+	    else if (ext == ".sxi")
+		return "application/vnd.sun.xml.impress";
+
+	    return null;
+	}
+
+	public bool AttachFile (String path) {
+	    // FIXME: sniff mime type in a non-stupid way
+	    String _mime_type = GuessMimeTypeFromPath (path);
+	    
+	    if (_mime_type != null) {
+		AttachFile (path, _mime_type);
+		return true;
+	    }
+
+	    return false;
 	}
 
 	public Stream OpenPayloadStream () {
@@ -90,7 +115,7 @@ namespace Dewey {
 
 	    StringBuilder metadata = null;
 	    foreach (String key in c.MetadataKeys) {
-		String val = c[key];
+		String val = c [key];
 		
 		f = Field.Text (key, val);
 		doc.Add (f);

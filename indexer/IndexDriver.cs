@@ -1,3 +1,8 @@
+//
+// IndexDriver.cs
+//
+// Copyright (C) 2004 Novell, Inc.
+//
 
 using System;
 using System.Collections;
@@ -7,7 +12,7 @@ using Lucene.Net.Analysis;
 using Lucene.Net.Analysis.Standard;
 using Lucene.Net.Documents;
 using Lucene.Net.Index;
-using Lucene.Net.Search;
+using LNS = Lucene.Net.Search;
 
 
 namespace Dewey {
@@ -62,15 +67,15 @@ namespace Dewey {
 	    ArrayList to_be_deleted = new ArrayList ();
 	    ArrayList to_be_inserted = new ArrayList ();
 
-	    Searcher searcher = new IndexSearcher (IndexPath);
+	    LNS.Searcher searcher = new LNS.IndexSearcher (IndexPath);
 	    
 	    foreach (IndexItemWithPayload item in items) {
 
 		Term term = new Term ("URI", item.URI);
-		Lucene.Net.Search.Query uri_query;
-		uri_query = new Lucene.Net.Search.TermQuery (term);
+		LNS.Query uri_query;
+		uri_query = new LNS.TermQuery (term);
 
-		Hits uri_hits = searcher.Search (uri_query);
+		LNS.Hits uri_hits = searcher.Search (uri_query);
 		int nHits = uri_hits.Length ();
 
 		if (nHits > 1) {
@@ -107,16 +112,16 @@ namespace Dewey {
 	}
 
 	public IndexItem[] Query (Query query) {
-	    Searcher searcher = new IndexSearcher (IndexPath);
+	    LNS.Searcher searcher = new LNS.IndexSearcher (IndexPath);
 	    Analyzer analyzer = NewAnayzer ();
 
-	    Lucene.Net.Search.Query ln_query = query.ToLuceneQuery (analyzer);
-	    Hits hits = searcher.Search (ln_query);
+	    LNS.Query ln_query = query.ToLuceneQuery (analyzer);
+	    LNS.Hits hits = searcher.Search (ln_query);
 
-	    IndexItem[] item_hits = new IndexItem[hits.Length ()];
+	    IndexItem[] item_hits = new IndexItem [hits.Length ()];
 
 	    for (int i = 0; i < hits.Length (); ++i) {
-		item_hits[i] = new IndexItem (hits.Doc (i));
+		item_hits [i] = new IndexItem (hits.Doc (i));
 	    }
 
 	    return item_hits;
@@ -124,7 +129,7 @@ namespace Dewey {
 
 	// Deprecated!
 	public IndexItem[] QueryBody (String query_str) {
-	    return Query(new Query(query_str));
+	    return Query (new Query (query_str));
 	}
 
     }

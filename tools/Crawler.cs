@@ -1,3 +1,8 @@
+//
+// Crawler.cs
+//
+// Copyright (C) 2004 Novell, Inc.
+//
 
 using System;
 using System.Collections;
@@ -20,18 +25,18 @@ class IndexFilesTool {
 		IndexOrCrawl (info.FullName, array);
 	    }
 	} else {
-	    if (Path.GetExtension (path) == ".txt") {
-		IndexItemWithPayload item;
-		item = new IndexItemWithPayload ("file://" + path);
-		item.AttachFile (path);
+	    IndexItemWithPayload item;
+	    item = new IndexItemWithPayload ("file://" + path);
+
+	    // If AttachFile returns false, we can't handle the file type
+	    if (item.AttachFile (path))
 		array.Add (item);
-	    }
 	}
     }
 
     static void Main (String[] args) {
 
-	Content.Register (typeof (ContentText));
+	Content.RegisterEverythingByHand ();
 
 	ArrayList array = new ArrayList ();
 

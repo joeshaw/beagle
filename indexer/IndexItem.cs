@@ -1,3 +1,8 @@
+//
+// IndexItem.cs
+//
+// Copyright (C) 2004 Novell, Inc.
+//
 
 using System;
 using System.Collections;
@@ -34,8 +39,8 @@ namespace Dewey {
 	    get { return metadata.Keys; }
 	}
 
-	public String this[String key] {
-	    get { return metadata[key.ToLower ()] as String; }
+	public String this [String key] {
+	    get { return metadata [key.ToLower ()] as String; }
 	}
 
 	public bool IsSupercededBy (IndexItem item) {
@@ -86,7 +91,7 @@ namespace Dewey {
 		    if (metadata.Contains (key)) {
 			// FIXME: complain
 		    }
-		    metadata[key] = ff.StringValue ();
+		    metadata [key] = ff.StringValue ();
 		}
 	    }
 	    

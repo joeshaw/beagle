@@ -1,3 +1,8 @@
+//
+// ContentText.cs
+//
+// Copyright (C) 2004 Novell, Inc.
+//
 
 using System;
 using System.Collections;
