@@ -8,6 +8,7 @@ Source:      beagle-%{version}.tar.gz
 BuildRoot:   /var/tmp/%{name}-root
 BuildPrereq: evolution-sharp, mono
 Requires:    evolution-sharp >= 0.4
+Prefix:	     /opt/gnome
 
 %description
 A general infrastructure for making your data easy to find. 

@@ -166,8 +166,10 @@ namespace Beagle {
 			if (type != null) 
 				writer.WriteAttributeString ("type", type);
 
-			writer.WriteAttributeString ("timestamp", BU.StringFu.DateTimeToString (Timestamp));
-			writer.WriteAttributeString ("revision", Revision.ToString ());
+			if (ValidTimestamp) 
+				writer.WriteAttributeString ("timestamp", BU.StringFu.DateTimeToString (Timestamp));
+			if (ValidRevision)
+				writer.WriteAttributeString ("revision", Revision.ToString ());
 
 			writer.WriteStartElement ("properties");
 			foreach (Property prop in properties) {
@@ -208,14 +210,9 @@ namespace Beagle {
 			DeleteContent = true;
 		}
 
-		public void RestoreStream () 
-		{
-		}
-
 		public void ReadFromXml (string text)
 		{
 			XmlTextReader reader = new XmlTextReader (new StringReader (text));
-			System.Console.WriteLine ("{0}", text);
 			ReadFromXml (reader);
 		}
 
@@ -229,8 +226,10 @@ namespace Beagle {
 			contentUri = reader.GetAttribute ("contenturi");
 			
 			deleteContent = (reader.GetAttribute ("deletecontent") == "1");
-			Revision = long.Parse (reader.GetAttribute ("revision"));
-			Timestamp = BU.StringFu.StringToDateTime (reader.GetAttribute ("timestamp"));
+			if (reader.GetAttribute ("revision") != null)
+				Revision = long.Parse (reader.GetAttribute ("revision"));
+			if (reader.GetAttribute ("timestamp") != null)
+				Timestamp = BU.StringFu.StringToDateTime (reader.GetAttribute ("timestamp"));
 			while (reader.Read ()) {		
 				if (reader.NodeType == XmlNodeType.Element
 				    && reader.Name == "property") {

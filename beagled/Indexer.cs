@@ -36,7 +36,7 @@ namespace Beagle.Daemon
 	public class Indexer : Beagle.Indexer 
 	{
 		IndexerQueue indexerQueue;
-		IndexDriver driver = new IndexDriver ();
+		IndexDriver driver = new MainIndexDriver ();
 
 		struct DirectoryHitEntry {
 			public string directoryName;
@@ -64,9 +64,8 @@ namespace Beagle.Daemon
 			
 			DirectoryHitEntry newEntry = new DirectoryHitEntry ();
 			newEntry.directoryName = dir.FullName;
-			newEntry.hits = driver.FindByProperty ("_Directory",
+			newEntry.hits = driver.FindByProperty ("fixme:directory",
 							       dir.FullName);
-
 			directoryHits.Insert (0, newEntry);
 
 			return newEntry.hits;
@@ -105,17 +104,10 @@ namespace Beagle.Daemon
 					indexerQueue.ScheduleRemove (hit);
 					return;
 				}
-
-				DateTime changeTime = file.LastWriteTime;
-				DateTime nautilusTime = NautilusTools.GetMetaFileTime (file.FullName);
-			
-				if (nautilusTime > changeTime)
-					changeTime = nautilusTime;
-
-				// If the file isn't newer than the hit, don't
-				// even bother
-				
-				if (hit != null && !hit.IsObsoletedBy (changeTime))
+				if (hit != null) 
+					System.Console.WriteLine ("checking {0} against {1}", hit.Timestamp, indexable.Timestamp);
+			       
+				if (hit != null && !hit.IsObsoletedBy (indexable.Timestamp))
 					return;
 			} else {
 				hit = driver.FindByUri (indexable.Uri);

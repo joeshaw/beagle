@@ -28,8 +28,7 @@ namespace Beagle.Daemon
 {
 
 	public class PostIndexHandlerArgs {
-		public bool failure;
-		public Indexable indexable;
+		public System.Collections.ICollection indexables;
 	}
 
 	public abstract class PostIndexHandler {

@@ -40,7 +40,7 @@ namespace Beagle.Daemon
 		public delegate void PostIndexingHandler (PostIndexHandlerArgs a);
 		public event PostIndexingHandler PostIndexingEvent;		
 
-		IndexDriver driver = new IndexDriver ();
+		IndexDriver driver = new MainIndexDriver ();
 
 		// Contains Indexables
 		ArrayList toBeIndexed = new ArrayList ();
@@ -64,11 +64,8 @@ namespace Beagle.Daemon
 				return;
 
 			PostIndexHandlerArgs args = new PostIndexHandlerArgs ();
-			foreach (Indexable i in indexables) {
-				args.indexable = i;
-				PostIndexingEvent (args);
-					
-			}
+			args.indexables = indexables;
+			PostIndexingEvent (args);
 		}
 
 		ArrayList CallPreIndexingEvent (ArrayList indexables)
@@ -155,8 +152,9 @@ namespace Beagle.Daemon
 				}
 			
 				Flush (toIndex, toRemove);
-			} catch {
+			} catch (Exception e){
 				System.Console.WriteLine ("Exception in the worker thread");
+				System.Console.WriteLine (e);
 			} finally {
 				lock (queueLock) {
 					System.Console.WriteLine ("Done flushing");

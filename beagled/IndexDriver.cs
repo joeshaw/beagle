@@ -44,30 +44,18 @@ using LNS = Lucene.Net.Search;
 
 using BU = Beagle.Util;
 
-
 namespace Beagle.Daemon {
 
-	[QueryableFlavor (Name="LuceneIndex", Domain=QueryDomain.Local)]
 	public class IndexDriver : IQueryable {
-
-		// 1: Original
-		// 2: Changed format of timestamp strings
-		// 3: Schema changed to be more Dashboard-Match-like
-		// 4: Schema changed for files to include _Directory property
-		// 5: Changed analyzer to support stemming.  Bumped version # to
-		//    force everyone to re-index.
-		// 6: lots of schema changes as part of general post-guadec
-		//    refactoring
-		private const int VERSION = 5;
-
 		const string propPrefix = "prop:";
 
 		private Beagle.Util.Logger log = null;
 
+		private Lucene.Net.Store.Directory store = null;
+
 		//////////////////////////
 
-		public IndexDriver ()
-		{
+		public IndexDriver (Lucene.Net.Store.Directory _store) {
 			lock (this) {
 				if (log == null) {
 					string logPath = Path.Combine (PathFinder.LogDir,
@@ -76,10 +64,8 @@ namespace Beagle.Daemon {
 				}
 			}
 
-			BootstrapIndex ();
+			store = _store;
 
-			Lucene.Net.Store.FSDirectory.Logger = log;
-			Lucene.Net.Store.FSDirectory.TempDirectoryName = LockDir;
 			IndexWriter.WRITE_LOCK_TIMEOUT = 30/*seconds*/ * 1000;
 		}
 
@@ -97,65 +83,16 @@ namespace Beagle.Daemon {
 
 		//////////////////////////
 
-		private String IndexDir {
+		private Lucene.Net.Store.Directory IndexStore {
 			get {
-				String dir = Path.Combine (PathFinder.RootDir, "Index");
-				if (! Directory.Exists (dir))
-					Directory.CreateDirectory (dir);
-				return dir;
+				return store;
 			}
 		}
 
-		private String LockDir {
+		protected Beagle.Util.Logger Log {
 			get {
-				String dir = Path.Combine (PathFinder.RootDir, "Locks");
-				if (! Directory.Exists (dir))
-					Directory.CreateDirectory (dir);
-				return dir;
+				return log;
 			}
-		}
-
-		private void BootstrapIndex ()
-		{
-			// Look to see if there are any signs of an existing index
-			// with the correct version tag.  If everything looks OK,
-			// just return.
-
-			String indexTestFile = Path.Combine (IndexDir, "segments");
-			String versionFile = Path.Combine (PathFinder.RootDir, "indexVersion");
-
-			bool indexExists = File.Exists (indexTestFile);
-			bool versionExists = PathFinder.HaveAppData ("__Index", "version");
-			
-			if (indexExists && versionExists) {
-				String line = PathFinder.ReadAppDataLine ("__Index", "version");
-				if (line == Convert.ToString (VERSION))
-					return;
-			}
-
-			if (! indexExists)
-				log.Log ("Creating index.");
-			else if (! versionExists)
-				log.Log ("No version information.  Purging index.");
-			else
-				log.Log ("Index format is obsolete.  Purging index.");
-
-			// If this looks like an old-style (pre-.beagle/Index) set-up,
-			// blow away everything in sight.
-			if (File.Exists (Path.Combine (PathFinder.RootDir, "segments")))
-				Directory.Delete (PathFinder.RootDir, true);
-			else {
-				// Purge exist index-related directories.
-				Directory.Delete (IndexDir, true);
-				Directory.Delete (LockDir, true);
-			}
-
-			// Initialize a new index.
-			IndexWriter writer = new IndexWriter (IndexDir, null, true);
-			writer.Close ();
-
-			// Write out the correct version information.
-			PathFinder.WriteAppDataLine ("__Index", "version", Convert.ToString (VERSION));
 		}
 
 		//////////////////////////
@@ -413,16 +350,12 @@ namespace Beagle.Daemon {
 				return;
 
 			Analyzer analyzer = NewAnalyzer ();
-			IndexWriter writer = new IndexWriter (IndexDir, analyzer, false);
+			IndexWriter writer = new IndexWriter (IndexStore, analyzer, false);
 			
 			foreach (Indexable indexable in indexables) {
-				System.Console.WriteLine ("Inserting {0} (type={1})",
-					 indexable.Uri, indexable.Type);
 				Document doc = null;
 				try {
 					doc = ToLuceneDocument (indexable);
-					System.Console.WriteLine ("converted to document");
-
 				} catch (Exception e) {
 					log.Log (e);
 					Console.WriteLine ("unable to convert {0} (type={1}) to a lucene document", indexable.Uri, indexable.Type);
@@ -431,8 +364,6 @@ namespace Beagle.Daemon {
 				}
 				if (doc != null)
 					writer.AddDocument (doc);
-				System.Console.WriteLine ("added document");
-
 			}
 			writer.Close ();
 		}
@@ -449,7 +380,7 @@ namespace Beagle.Daemon {
 			if (hits.Count == 0)
 				return;
 
-			IndexReader reader = IndexReader.Open (IndexDir);
+			IndexReader reader = IndexReader.Open (IndexStore);
 			foreach (Hit hit in hits) {
 				log.Log ("Removing {0}", hit.Uri);
 				reader.Delete (hit.Id);
@@ -472,7 +403,7 @@ namespace Beagle.Daemon {
 			ArrayList toBeRemoved = new ArrayList ();
 			ArrayList toBeAdded = new ArrayList ();
 
-			LNS.Searcher searcher = new LNS.IndexSearcher (IndexDir);
+			LNS.Searcher searcher = new LNS.IndexSearcher (IndexStore);
 
 			// If we've been handed multiple Indexables with the same Uri,
 			// try to do something intelligent.
@@ -531,7 +462,7 @@ namespace Beagle.Daemon {
 		public void Optimize ()
 		{
 			log.Log ("Beginning optimization");
-			IndexWriter writer = new IndexWriter (IndexDir, NewAnalyzer (), false);
+			IndexWriter writer = new IndexWriter (IndexStore, NewAnalyzer (), false);
 			writer.Optimize ();
 			writer.Close ();
 			log.Log ("Optimization complete");
@@ -543,7 +474,7 @@ namespace Beagle.Daemon {
 		{			Term term = new Term ("Uri", uri);
 			LNS.Query uriQuery = new LNS.TermQuery (term);
 
-			LNS.Searcher searcher = new LNS.IndexSearcher (IndexDir);
+			LNS.Searcher searcher = new LNS.IndexSearcher (IndexStore);
 			LNS.Hits uriHits = searcher.Search (uriQuery);
 
 			int nHits = uriHits.Length ();
@@ -569,7 +500,7 @@ namespace Beagle.Daemon {
 			Term term = new Term (ToLucenePropertyKey (key), value);
 			LNS.Query luceneQuery = new LNS.TermQuery (term);
 
-			LNS.Searcher searcher = new LNS.IndexSearcher (IndexDir);
+			LNS.Searcher searcher = new LNS.IndexSearcher (IndexStore);
 			LNS.Hits luceneHits = searcher.Search (luceneQuery);
 			Hit[] hits = FromLuceneHits (luceneHits);
 			searcher.Close ();
@@ -603,7 +534,7 @@ namespace Beagle.Daemon {
 			if (luceneQuery == null)
 				return;
 
-			LNS.Searcher searcher = new LNS.IndexSearcher (IndexDir);
+			LNS.Searcher searcher = new LNS.IndexSearcher (IndexStore);
 			LNS.Hits luceneHits = searcher.Search (luceneQuery);
 
 			int nHits = luceneHits.Length ();

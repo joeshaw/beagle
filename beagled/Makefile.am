@@ -183,11 +183,11 @@ DAEMON_DLL_CSFILES = 				\
 	$(srcdir)/QueryResult.cs		\
 	$(srcdir)/QueryDriver.cs		\
 	$(srcdir)/IndexDriver.cs		\
+	$(srcdir)/MainIndexDriver.cs		\
 	$(srcdir)/GoogleDriver.cs		\
 	$(srcdir)/Indexer.cs            	\
 	$(srcdir)/IndexerQueue.cs       	\
 	$(srcdir)/LiveQuery.cs          	\
-	$(srcdir)/NoIndexFileHandler.cs 	\
 	$(srcdir)/QueryManager.cs		\
 	$(srcdir)/RdfSinkImpl.cs		\
 	$(srcdir)/RdfSourceImpl.cs              \
@@ -236,6 +236,7 @@ DAEMON_CSFLAGS =				\
 #	-main:BeagleDaemon.BeagleDaemon
 
 DAEMON_CSFILES =				\
+	$(srcdir)/NoIndexFileHandler.cs 	\
 	$(srcdir)/BeagleDaemon.cs
 
 DAEMON_LOCAL_ASSEMBLIES =			\

@@ -62,7 +62,6 @@ namespace Beagle.Daemon {
 		
 		private void BuildFromFile ()
 		{
-			Console.WriteLine ("Uri: {0}", Uri);
 			if (Type != "File" || !Uri.StartsWith ("file://") || ContentUri != Uri) {
 				return;
 			}
@@ -71,22 +70,33 @@ namespace Beagle.Daemon {
 
 			string path = Uri.Substring ("file://".Length);
 
+			DateTime modifiedTime;
 			if (Directory.Exists (path)) {
 				isDirectory = true;
 				
 				if (MimeType == null)
 					MimeType = "inode/directory";
-
-				if (Timestamp == new DateTime (0))
-					Timestamp = Directory.GetLastWriteTime (path);
+				
+				modifiedTime = Directory.GetLastWriteTime (path);
 			} else if (File.Exists (path)) {
 				if (MimeType == null) {
 					MimeType = Beagle.Util.VFS.Mime.GetMimeType (path);
 				}
-				if (Timestamp == new DateTime (0)) 
-					File.GetLastWriteTime (path);
+				modifiedTime = File.GetLastWriteTime (path);
 			} else {
-				throw new Exception ("No such file: " + path);
+				throw new IOException ("No such file: " + path);
+			}
+
+			if (!ValidTimestamp) {
+				DateTime nautilusTime = BU.NautilusTools.GetMetaFileTime (path);
+				if (nautilusTime > modifiedTime) {
+					modifiedTime = nautilusTime;
+				}
+				Timestamp = modifiedTime;
+				System.Console.WriteLine ("not a valid timestamp for {0}: {1}", Uri, Timestamp);
+
+			} else {
+				System.Console.WriteLine ("valid timestamp");
 			}
 
 			string dirName = null;
@@ -105,9 +115,10 @@ namespace Beagle.Daemon {
 				parentName = info.DirectoryName;
 			}
 
-			if (dirName != null)
+			if (dirName != null) {
 				AddProperty (Property.NewKeyword ("fixme:directory", dirName));
-
+				System.Console.WriteLine ("added fixme:directory: {0}", dirName);
+			}
 			if (parentName != null) {
 				string split = String.Join (" ", BU.StringFu.FuzzySplit (parentName));
 				AddProperty (Property.New ("fixme:parentsplitname", split));
@@ -182,8 +193,6 @@ namespace Beagle.Daemon {
 				throw new Exception ("Unknown mime type");
 			}
 			
-			System.Console.WriteLine ("Content Uri: {0}", ContentUri);
-
 			// Currently only index file content
 			if (!ContentUri.StartsWith ("file://")) {
 				return;
@@ -195,7 +204,6 @@ namespace Beagle.Daemon {
 			filter = Filter.FromFlavor (flavor);
 			
 			if (filter != null) {
-				Console.WriteLine ("Filtering {0}", path);
 				filter.Open (new FileInfo (path));
 				foreach (Property prop in filter.Properties)
 					AddProperty (prop);

@@ -58,6 +58,10 @@ namespace Beagle.Daemon
 			return path;
 		}
 
+		public ICollection GetLiveQueries () {
+			return liveQueries.Values;
+		}
+
 		static void SomeRdfXmlWasSunk (string rdfXml)
 		{
 			Console.WriteLine ("Got '{0}'", rdfXml);
