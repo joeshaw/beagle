@@ -26,6 +26,7 @@
 
 using System;
 using System.Collections;
+using System.Text;
 using System.Threading;
 
 namespace Beagle.Util {
@@ -52,7 +53,12 @@ namespace Beagle.Util {
 
 		public abstract class Task : IComparable {
 
+			// A unique identifier
 			public string    Tag;
+
+			// Some metadata
+			public string    Creator;
+			public string    Description;
 			
 			public Priority  Priority = Priority.Idle;
 			public int       SubPriority = 0;
@@ -67,6 +73,64 @@ namespace Beagle.Util {
 
 			///////////////////////////////
 
+			private ArrayList task_groups = null;
+
+			public void AddTaskGroup (TaskGroup group)
+			{
+				if (task_groups == null)
+					task_groups = new ArrayList ();
+				task_groups.Add (group);
+			}
+
+			private void IncrementAllTaskGroups ()
+			{
+				if (task_groups != null) {
+					foreach (TaskGroupPrivate group in task_groups) {
+						if (! group.Finished)
+							group.Increment ();
+					}
+				}
+			}
+
+			private void DecrementAllTaskGroups ()
+			{
+				if (task_groups != null) {
+					foreach (TaskGroupPrivate group in task_groups) {
+						if (! group.Finished)
+							group.Decrement ();
+					}
+				}
+			}
+
+			private void TouchAllTaskGroups ()
+			{
+				if (task_groups != null) {
+					foreach (TaskGroupPrivate group in task_groups) {
+						if (! group.Finished)
+							group.Touch ();
+					}
+				}
+			}
+
+			///////////////////////////////
+
+			private Scheduler scheduler = null;
+
+			public Scheduler ThisScheduler {
+				get { return scheduler; }
+			}
+
+			public void Schedule (Scheduler scheduler)
+			{
+				if (this.scheduler != null)
+					throw new Exception ("Can't re-schedule task");
+
+				this.scheduler = scheduler;
+				IncrementAllTaskGroups ();
+			}
+
+			///////////////////////////////
+
 			private bool finished = false;
 
 			public bool Finished {
@@ -75,20 +139,15 @@ namespace Beagle.Util {
 
 			public void Cancel ()
 			{
-				if (! finished) {
-					TaskGroupPrivate task_group = (TaskGroupPrivate) TaskGroup;
-					if (task_group != null)
-						task_group.Decrement ();
-				}
+				if (! finished)
+					DecrementAllTaskGroups ();
 				finished = true;
 			}
 			
 			public void DoTask ()
 			{
 				if (! finished) {
-					TaskGroupPrivate task_group = (TaskGroupPrivate) TaskGroup;
-					if (task_group != null)
-						task_group.Touch ();
+					TouchAllTaskGroups ();
 					DoTaskReal ();
 					Cancel ();
 				}
@@ -121,6 +180,52 @@ namespace Beagle.Util {
 				// Try to break any ties
 				return this.GetHashCode ().CompareTo (other.GetHashCode ());
 			}
+
+			public override string ToString ()
+			{
+				StringBuilder sb = new StringBuilder ();
+
+				sb.AppendFormat ("{0} {1}\n", Priority, SubPriority);
+					
+				sb.Append (Tag + "\n");
+
+				double t = (TriggerTime - DateTime.Now).TotalSeconds;
+				if (t > 0) {
+					if (t < 120)
+						sb.AppendFormat ("Trigger in {0:0.00} seconds\n", t);
+					else
+						sb.AppendFormat ("Trigger at {0}\n", TriggerTime);
+				}
+
+				if (Creator != null)
+					sb.AppendFormat ("Creator: {0}\n", Creator);
+
+				if (Description != null)
+					sb.Append (Description + "\n");
+
+				return sb.ToString ();
+			}
+		}
+
+		private class HookTask : Task {
+
+			Hook hook;
+
+			public HookTask (Hook hook) 
+			{
+				this.hook = hook;
+			}
+
+			protected override void DoTaskReal ()
+			{
+				if (hook != null)
+					hook ();
+			}
+		}
+
+		public static Task TaskFromHook (Hook hook)
+		{
+			return new HookTask (hook);
 		}
 
 		//////////////////////////////////////////////////////////////////////////////
@@ -129,7 +234,7 @@ namespace Beagle.Util {
 		// Task Groups
 		//
 
-		public TaskGroup NewTaskGroup (string name, Hook pre_hook, Hook post_hook)
+		public static TaskGroup NewTaskGroup (string name, Hook pre_hook, Hook post_hook)
 		{
 			return new TaskGroupPrivate (name, pre_hook, post_hook);
 		}
@@ -137,7 +242,7 @@ namespace Beagle.Util {
 		// We split the task group data structure into two parts:
 		// TaskGroup and TaskGroupPrivate.  The TaskGroup we hand
 		// back to the user exposes minimal functionality.
-		public class TaskGroup {
+		public abstract class TaskGroup {
 			private string name;
 			
 			protected TaskGroup (string name) {
@@ -147,6 +252,8 @@ namespace Beagle.Util {
 			public string Name {
 				get { return name; }
 			}
+
+			public abstract bool Finished { get; }
 		}
 
 		private class TaskGroupPrivate : TaskGroup {
@@ -162,6 +269,10 @@ namespace Beagle.Util {
 			{
 				this.pre_hook = pre_hook;
 				this.post_hook = post_hook;
+			}
+
+			public override bool Finished {
+				get { return finished; }
 			}
 
 			public void Increment ()
@@ -227,27 +338,78 @@ namespace Beagle.Util {
 			Task old_task = null;
 
 			lock (task_queue) {
-				old_task = task_by_tag [task.Tag] as Task;
-				if (old_task == task)
-					return;
+				if (task != null) {
+					old_task = task_by_tag [task.Tag] as Task;
+					if (old_task == task)
+						return;
 
-				task.Timestamp = DateTime.Now;
+					task.Timestamp = DateTime.Now;
+					task.Schedule (this);
 
-				int i = task_queue.BinarySearch (task);
-				if (i < 0)
-					i = ~i;
-				task_queue.Insert (i, task);
-				task_by_tag [task.Tag] = task;
-
-				if (task.TaskGroup != null)
-					((TaskGroupPrivate) task.TaskGroup).Increment ();
-
+					int i = task_queue.BinarySearch (task);
+					if (i < 0)
+						i = ~i;
+					task_queue.Insert (i, task);
+					task_by_tag [task.Tag] = task;
+				}
+					
 				Monitor.Pulse (task_queue);
 			}
 
 			if (old_task != null)
 				old_task.Cancel ();
 
+		}
+
+		public Task GetByTag (string tag)
+		{
+			lock (task_queue) {
+				return task_by_tag [tag] as Task;
+			}
+		}
+
+		public bool ContainsByTag (string tag)
+		{
+			Task task = GetByTag (tag);
+			return task != null && !task.Finished;
+		}
+
+
+
+		//////////////////////////////////////////////////////////////////////////////
+
+		private string status_str = null;
+
+		public string GetHumanReadableStatus ()
+		{
+			StringBuilder sb = new StringBuilder ();
+
+			sb.Append ("Scheduler:\n");
+
+			if (status_str != null)
+				sb.Append ("Status: " + status_str + "\n");
+
+			lock (task_queue) {
+				int pos = 1;
+				for (int i = task_queue.Count - 1; i >= 0; --i) {
+					Task task = task_queue [i] as Task;
+					if (task.Finished)
+						continue;
+
+					sb.AppendFormat ("{0} ", pos);
+					sb.Append (task.ToString ());
+					sb.Append ("\n");
+
+					++pos;
+				}
+
+				if (pos == 1)
+					sb.Append ("Scheduler queue is empty.\n");
+			}
+
+			sb.Append ("\n");
+
+			return sb.ToString ();
 		}
 
 		//////////////////////////////////////////////////////////////////////////////
@@ -286,8 +448,8 @@ namespace Beagle.Util {
 		// FIXME: random magic constants
 		const double idle_threshold      = 5.314159 * 60; // probably should be longer
 		const double idle_ramp_up_time   = 5.271828 * 60; // probably should be longer
-		const double default_delayed_rate_factor = 2.007; // work about 1/3rd of the time
-		const double default_idle_rate_factor    = 19.03; // work about 1/20th of the time
+		const double default_delayed_rate_factor =  9.03; // work about 1/10th of the time
+		const double default_idle_rate_factor    = 2.097; // work about 1/3rd of the time
 
 		static DateTime first_time = DateTime.MinValue;
 		private double GetIdleTime ()
@@ -298,7 +460,6 @@ namespace Beagle.Util {
 		private double ComputeDelay (Priority priority_of_next_task,
 					     double   duration_of_previous_task)
 		{
-			double delay;
 			double rate_factor;
 
 			rate_factor = 2.0;
@@ -306,7 +467,9 @@ namespace Beagle.Util {
 			// Do everything faster the longer we are idle.
 			double idle_time = GetIdleTime ();
 			double idle_scale = 1.0;
+			bool is_idle = false;
 			if (idle_time > idle_threshold) {
+				is_idle = true;
 				double t = (idle_time - idle_threshold) / idle_ramp_up_time;				     
 				idle_scale = (1 - Math.Min (t, 1.0));
 			} 
@@ -326,11 +489,24 @@ namespace Beagle.Util {
 				break;
 			}
 
-			// FIXME: should adjust rate factor based on load average
+			// FIXME: we should do something more sophisticated than this
+			// with the load average.
+			// Random numbers galore!
+			double load_average = SystemInformation.LoadAverageOneMinute;
+			if (load_average > 3.001)
+				rate_factor *= 5.002;
+			else if (load_average > 1.5003)
+				rate_factor *= 2.004;
 
-			Console.WriteLine ("rate_factor={0} idle_scale={1}", rate_factor, idle_scale);
+			double delay = rate_factor * duration_of_previous_task;
 
-			return rate_factor * duration_of_previous_task;
+			// space out delayed tasks a bit when we aren't idle
+			if (! is_idle
+			    && priority_of_next_task == Priority.Delayed
+			    && delay < 0.5)
+				delay = 0.5;
+
+			return delay;
 		}
 
 		//
@@ -376,16 +552,15 @@ namespace Beagle.Util {
 						task_by_tag.Remove (t.Tag); // clean up our hashtable
 						--i;
 					}
-					if (i < task_queue.Count - 1) {
-						Console.WriteLine ("Removing {0} finished tasks", task_queue.Count - 1 - i);
+					if (i < task_queue.Count - 1)
 						task_queue.RemoveRange  (i+1, task_queue.Count - 1 - i);
-					}
 					
 					// If the task queue is now empty, wait on our lock
 					// and then re-start our while loop
 					if (task_queue.Count == 0) {
-						Console.WriteLine ("Waiting on empty queue");
+						status_str = "Waiting on empty queue";
 						Monitor.Wait (task_queue);
+						status_str = "Working";
 						continue;
 					}
 
@@ -412,8 +587,11 @@ namespace Beagle.Util {
 					// If we didn't find a task, wait for the next trigger-time
 					// and then re-start our while loop.
 					if (task == null) {
-						Console.WriteLine ("Next trigger time in {0}s", (next_trigger_time - now).TotalSeconds);
+						status_str = String.Format ("Next trigger time is in {0:0.00}s ({1})",
+									    (next_trigger_time - now).TotalSeconds,
+									    next_trigger_time);
 						Monitor.Wait (task_queue, next_trigger_time - now);
+						status_str = "Working";
 						continue;
 					}
 
@@ -432,7 +610,9 @@ namespace Beagle.Util {
 					// If we still need to wait a bit longer, wait for the appropriate
 					// amount of time and then re-start our while loop.
 					if (delay > 0.001) {
+						status_str = String.Format ("Will execute next task in {0:0.00}s", delay);
 						Monitor.Wait (task_queue, TimeSpanFromSeconds (delay));
+						status_str = "Working";
 						continue;
 					}
 
@@ -495,7 +675,6 @@ namespace Beagle.Util {
 					DateTime t2 = DateTime.Now;
 
 					duration_of_last_task = (t2 - t1).TotalSeconds;
-					Console.WriteLine ("duration={0}", duration_of_last_task);
 					time_of_last_task = t2;
 
 					pre_hook = null;
@@ -547,13 +726,14 @@ namespace Beagle.Util {
 			Console.WriteLine ("--- End Task Group!");
 		}
 
+#if false
 		static void Main ()
 		{
 			Scheduler sched = Scheduler.Global;
 
-			Scheduler.TaskGroup tg = sched.NewTaskGroup ("foo",
-								     new Scheduler.Hook (BeginTaskGroup),
-								     new Scheduler.Hook (EndTaskGroup));
+			Scheduler.TaskGroup tg = Scheduler.NewTaskGroup ("foo",
+									 new Scheduler.Hook (BeginTaskGroup),
+									 new Scheduler.Hook (EndTaskGroup));
 
 			sched.Start ();
 
@@ -587,7 +767,7 @@ namespace Beagle.Util {
 				Thread.Sleep (1000);
 			}
 		}
-
+#endif
 
 
 			

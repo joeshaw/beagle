@@ -52,48 +52,48 @@ namespace Beagle.Util {
 
 		static Encoding encoding = new UTF8Encoding ();
 
-		public static void Set (FileSystemInfo info, string name, string value)
+		public static void Set (string path, string name, string value)
 		{
-			if (! info.Exists)
-				throw new IOException (info.FullName);
+			if (! FileSystem.Exists (path))
+				throw new IOException (path);
 
 			name = AddPrefix (name);
 
 			byte[] buffer = encoding.GetBytes (value);
-			int retval = lsetxattr (info.FullName, name, buffer, (uint) buffer.Length, 0);
+			int retval = lsetxattr (path, name, buffer, (uint) buffer.Length, 0);
 			if (retval != 0) 
-				throw new Exception ("Could not set extended attribute on " + info.FullName + ": " + Syscall.strerror (Marshal.GetLastWin32Error ()));
+				throw new Exception ("Could not set extended attribute on " + path + ": " + Syscall.strerror (Marshal.GetLastWin32Error ()));
 		}
 
-		public static string Get (FileSystemInfo info, string name)
+		public static string Get (string path, string name)
 		{
-			if (! info.Exists)
-				throw new IOException (info.FullName);
+			if (! FileSystem.Exists (path))
+				throw new IOException (path);
 
 			name = AddPrefix (name);
 
 			byte[] buffer = null;
-			int size = lgetxattr (info.FullName, name, buffer, 0);
+			int size = lgetxattr (path, name, buffer, 0);
 			if (size <= 0)
 				return null;
 			buffer = new byte [size];
-			int retval = lgetxattr (info.FullName, name, buffer, (uint) size);
+			int retval = lgetxattr (path, name, buffer, (uint) size);
 			if (retval < 0)
-				throw new Exception ("Could not get extended attribute on " + info.FullName + ": " + Syscall.strerror (Marshal.GetLastWin32Error ()));
+				throw new Exception ("Could not get extended attribute on " + path + ": " + Syscall.strerror (Marshal.GetLastWin32Error ()));
 
 			return encoding.GetString (buffer);
 		}
 
-		public static void Remove (FileSystemInfo info, string name)
+		public static void Remove (string path, string name)
 		{
-			if (! info.Exists)
-				throw new IOException (info.FullName);
+			if (! FileSystem.Exists (path))
+				throw new IOException (path);
 			
 			name = AddPrefix (name);
 
-			int retval = lremovexattr (info.FullName, name);
+			int retval = lremovexattr (path, name);
 			if (retval != 0)
-				throw new Exception ("Could not remove extended attribute on " + info.FullName + ": " + Syscall.strerror (Marshal.GetLastWin32Error ()));
+				throw new Exception ("Could not remove extended attribute on " + path + ": " + Syscall.strerror (Marshal.GetLastWin32Error ()));
 		}
 
 		//////////////////////////////////////////////////////////////////////
@@ -102,45 +102,50 @@ namespace Beagle.Util {
 		const string fingerprintAttr = "Fingerprint";
 		const string mtimeAttr = "MTime";
 
-		private static string timeToString (DateTime dt)
+		public static bool CheckFingerprint (string path, string fingerprint)
 		{
-			return dt.Ticks.ToString ();
+			string fingerprintStored = Get (path, fingerprintAttr);
+			return fingerprint == fingerprintStored;
 		}
 
-		public static bool Check (FileSystemInfo info, string fingerprint)
+		public static bool Check (string path, string fingerprint)
 		{
+			path = Path.GetFullPath (path);
+
 			// Check the file's mtime to make sure it agrees with
 			// the timestamp stored in the extended attribute.
-			string mtimeFile = timeToString (info.LastWriteTime);
-			string mtimeStored = Get (info, mtimeAttr);
+			string mtimeFile = StringFu.DateTimeToString (FileSystem.GetLastWriteTime (path));
+			string mtimeStored = Get (path, mtimeAttr);
 			if (mtimeFile != mtimeStored)
 				return false;
 
 			// Confirm the filename
-			string nameStored = Get (info, nameAttr);
-			if (info.FullName != nameStored)
+			string nameStored = Get (path, nameAttr);
+			if (path != nameStored)
 				return false;
 
 			// Confirm the fingerprint.
-			string fingerprintStored = Get (info, fingerprintAttr);
+			string fingerprintStored = Get (path, fingerprintAttr);
 			if (fingerprint != fingerprintStored)
 				return false;
 			
 			return true;
 		}
 
-		public static void Mark (FileSystemInfo info, string fingerprint, DateTime mtime)
+		public static void Mark (string path, string fingerprint, DateTime mtime)
 		{
+			path = Path.GetFullPath (path);
+
 			// Store the file's mtime and the fingerprint in
 			// extended attributes.
-			Set (info, fingerprintAttr, fingerprint);
-			Set (info, nameAttr, info.FullName);
-			Set (info, mtimeAttr, timeToString (mtime));
+			Set (path, fingerprintAttr, fingerprint);
+			Set (path, nameAttr, path);
+			Set (path, mtimeAttr, StringFu.DateTimeToString (mtime));
 		}
 
-		public static void Mark (FileSystemInfo info, string fingerprint)
+		public static void Mark (string path, string fingerprint)
 		{
-			Mark (info, fingerprint, info.LastWriteTime);
+			Mark (path, fingerprint, FileSystem.GetLastWriteTime (path));
 		}
 		
 	}
