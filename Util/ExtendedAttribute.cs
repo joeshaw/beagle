@@ -30,18 +30,19 @@ using System;
 using System.IO;
 using System.Text;
 using System.Runtime.InteropServices;
+using Mono.Posix;
 
 namespace Beagle.Util {
 
 	public class ExtendedAttribute {
 
-		[DllImport ("libc")]
+		[DllImport ("libc", SetLastError=true)]
 		static extern int lsetxattr (string path, string name, byte[] value, uint size, int flags);
 
-		[DllImport ("libc")]
+		[DllImport ("libc", SetLastError=true)]
 		static extern int lgetxattr (string path, string name, byte[] value, uint size);
 
-		[DllImport ("libc")]
+		[DllImport ("libc", SetLastError=true)]
 		static extern int lremovexattr (string path, string name);
 
 		private static string AddPrefix (string name)
@@ -61,7 +62,7 @@ namespace Beagle.Util {
 			byte[] buffer = encoding.GetBytes (value);
 			int retval = lsetxattr (info.FullName, name, buffer, (uint) buffer.Length, 0);
 			if (retval != 0) 
-				throw new Exception ("Could not set extended attribute on " + info.FullName);
+				throw new Exception ("Could not set extended attribute on " + info.FullName + ": " + Syscall.strerror (Marshal.GetLastWin32Error ()));
 		}
 
 		public static string Get (FileSystemInfo info, string name)
@@ -78,7 +79,7 @@ namespace Beagle.Util {
 			buffer = new byte [size];
 			int retval = lgetxattr (info.FullName, name, buffer, (uint) size);
 			if (retval < 0)
-				throw new Exception ("Could not get extended attribute on " + info.FullName);
+				throw new Exception ("Could not get extended attribute on " + info.FullName + ": " + Syscall.strerror (Marshal.GetLastWin32Error ()));
 
 			return encoding.GetString (buffer);
 		}
@@ -92,7 +93,7 @@ namespace Beagle.Util {
 
 			int retval = lremovexattr (info.FullName, name);
 			if (retval != 0)
-				throw new Exception ("Could not remove extended attribute on " + info.FullName);
+				throw new Exception ("Could not remove extended attribute on " + info.FullName + ": " + Syscall.strerror (Marshal.GetLastWin32Error ()));
 		}
 
 		//////////////////////////////////////////////////////////////////////

@@ -1,3 +1,8 @@
+2004-10-10  Anders Carlsson  <andersca@gnome.org>
+
+	* Util/ExtendedAttribute.cs:
+	Check errno and add it to the exceptions on failure.
+	
 2004-10-08  Christopher James Lahey  <clahey@ximian.com>
 
 	* images/Makefile.am, tools/Makefile.am: Fixed make distcheck.
