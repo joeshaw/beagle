@@ -1,3 +1,14 @@
+2005-01-05  Veerapuram Varadhan	 <vvaradhan@novell.com>
+
+	* beagled/Filter.cs: Few tweaks on Hot pool.
+	* Filter/FilterOpenOffice.cs: More elegant(?) logic to handle
+	wierd combination of text-formatting, fixes Bug#157100.
+	* Filter/FilterRTF.cs: Metadata info can be anywhere in the
+	document.  Commented out the "file-offset" positioning after
+	reading meta-data.
+	* Best/Best.cs: Added a console message to guide users to look at
+	their Systray for Best icon.
+	
 2005-01-04  Veerapuram Varadhan	 <vvaradhan@novell.com>
 
 	* Filter/FilterPPT.cs: Validate the Ole stream before using it.

@@ -159,11 +159,8 @@ namespace Beagle.Daemon {
 		
 		public void HotDown ()
 		{
-			if (hotCount > 0) {
+			if (hotCount > 0)
 				--hotCount;
-				if (hotCount == 0)
-					AppendWhiteSpace ();
-			}
 		}
 
 		public bool IsHot {
@@ -177,7 +174,8 @@ namespace Beagle.Daemon {
 
 		public void FreezeDown ()
 		{
-			--freezeCount;
+			if (freezeCount > 0)
+				--freezeCount;
 		}
 
 		public bool IsFrozen {
@@ -229,8 +227,12 @@ namespace Beagle.Daemon {
 					str = str.Replace ("\n", " ");
 
 				textPool.Add (str);
+
+				// For Hot pool, Add the "whitespace"
+				// while adding text to it. This way
+				// we can avoid extra spaces.
 				if (IsHot)
-					hotPool.Add (str);
+					hotPool.Add (str.Trim()+" ");
 
 				int pool_size = 0;
 				foreach (string x in textPool)
@@ -277,9 +279,6 @@ namespace Beagle.Daemon {
 					snippetWriter.Write (" ");
 				last_was_structural_break = false;
 			}
-			if (NeedsWhiteSpace (hotPool))
-				hotPool.Add (" ");
-			
 		}
 
 		public void AddProperty (Property prop)
@@ -294,6 +293,10 @@ namespace Beagle.Daemon {
 				snippetWriter.WriteLine ();
 				last_was_structural_break = true;
 			}
+			// When adding a "newline" to the textCache, we need to 
+			// append a "Whitespace" to the text pool.
+			if (NeedsWhiteSpace (textPool))
+				textPool.Add (" ");
 		}
 
 		//////////////////////////
@@ -504,8 +507,7 @@ namespace Beagle.Daemon {
 
 		public TextReader GetHotTextReader ()
 		{
-			return null;
-			//return new PullingReader (new PullingReader.Pull (PullHotText));
+			return new PullingReader (new PullingReader.Pull (PullHotText));
 		}
 
 		public IEnumerable Properties {

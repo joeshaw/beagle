@@ -93,6 +93,7 @@ namespace Best {
 				win.FocusEntry ();
 			}
 			
+			Console.WriteLine ("If you're wondering whether Best is working: check your SysTray");
 			best.Run ();
 		}
 	}

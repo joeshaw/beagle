@@ -313,8 +313,10 @@ namespace Beagle.Filters {
 
 			// If we are not extracting meta-data, set the 
 			// file pointer to the saved position
-			if (!bMeta)
-				SReaderRTF.BaseStream.Seek (offset, SeekOrigin.Begin);
+			// "/info" can be anywhere in the document,
+			// so, commenting out the next two lines
+			// if (!bMeta)
+			//	SReaderRTF.BaseStream.Seek (offset, SeekOrigin.Begin);
 		       
 			while ((aByte = SReaderRTF.Read ()) != -1) {
 				ch = (char) aByte;
@@ -432,6 +434,9 @@ namespace Beagle.Filters {
 				int sindex = 0;
 
 				if (index > -1) {
+					// During the previous-parsing, a word got terminatted partially,
+					// find the remaining part of the word, concatenate it and add it to 
+					// the respective pools and reset the HOT status, if required.
 					if (partText.Length > 0) {
 						sindex = paramStr.IndexOf (' ');
 						strTemp = partText + paramStr.Substring (0, sindex);

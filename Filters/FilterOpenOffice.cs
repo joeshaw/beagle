@@ -104,6 +104,13 @@ namespace Beagle.Filters {
 			return nodeName == "text:h";
 		}
 
+		static bool NodeIsHotContainer (String nodeName)
+		{
+			return nodeName == "office:annotation" ||
+				nodeName == "text:footnote" ||
+				nodeName == "text:endnote";
+		}
+
 		static bool NodeIsFreezing (String nodeName)
 		{
 			return nodeName == "text:footnote-citation"
@@ -122,8 +129,7 @@ namespace Beagle.Filters {
 		{
 			return  nodeName == "text:s"
 				|| nodeName == "text:tab-stop"
-				|| nodeName == "table:table-cell"
-				|| nodeName == "office:annotation";
+				|| nodeName == "table:table-cell";
 		}
 
 		static bool NodeBreaksStructureAfter (String nodeName)
@@ -131,12 +137,87 @@ namespace Beagle.Filters {
 			return nodeName == "text:p"
 				|| nodeName == "text:h"
 				|| nodeName == "text:footnote"
-				|| nodeName == "text:endnote";
+				|| nodeName == "text:endnote"
+				|| nodeName == "office:annotation";
 		}
 
 		private Stack hot_nodes = new Stack ();
-		private Stack span_nodes = new Stack ();
-		private Stack part_hot_nodes = new Stack ();
+		private string strPartText = "";
+		private bool bPartHotStyle = false;
+		private Stack hot_container_nodes = new Stack ();
+
+		void AddTextForIndexing (string paramStr)
+		{
+			bool is_text_hot =  (bool) hot_nodes.Peek ();
+			int sindex = 0;
+			string strTemp;
+			bool wasHot = false;
+			int index = paramStr.LastIndexOf (' ');
+
+			if (index > -1) {
+				// During the previous-parsing, a word got terminatted partially,
+				// find the remaining part of the word, concatenate it and add it to 
+				// the respective pools and reset the HOT status, if required.
+				if (strPartText.Length > 0) {
+					sindex = paramStr.IndexOf (' ');
+					strTemp = strPartText + paramStr.Substring (0, sindex);
+					if (!IsHot) {
+						if (bPartHotStyle)
+							HotUp ();
+					}
+					else
+						wasHot = true;
+
+					AppendText (strTemp);
+					if (!wasHot && bPartHotStyle)
+						HotDown ();
+					bPartHotStyle = false;
+				}
+				paramStr = paramStr.Substring (sindex);
+				index = paramStr.LastIndexOf (' ');
+				sindex = 0;
+			}
+
+			if (index > -1) {
+				strPartText = paramStr.Substring (index);
+				paramStr = paramStr.Substring (sindex, index);
+			} else {
+				strTemp = strPartText + paramStr;
+				strPartText = strTemp;
+				paramStr = "";
+				strTemp = "";
+			}
+					
+			// Enable *HOT* just before appending the text
+			// because, there can be some *Partial Texts* without
+			// *HOT* styles that needs to be appended.
+			if ((bool)hot_nodes.Peek() == true) {
+				if (!IsHot)
+					HotUp ();
+				bPartHotStyle = true;
+			} else 
+				bPartHotStyle |= false;
+
+			if (paramStr.Length > 0)
+				AppendText (paramStr);
+
+			if (strPartText.Trim().Length < 1)
+				bPartHotStyle = false;
+		}
+
+		void FlushPartialText () 
+		{
+			if (strPartText.Length > 0) {
+				if (bPartHotStyle && !IsHot) 
+					HotUp ();
+				AppendText (strPartText);
+				if (IsHot)
+					HotDown ();
+				strPartText = "";
+			}
+			bPartHotStyle = false;
+
+		}
 
 		bool WalkContentNodes (XmlReader reader)
 		{
@@ -144,34 +225,20 @@ namespace Beagle.Filters {
 			const int total_elements = 10;
 			int num_elements = 0;
 
-			// to handle partially formatted texts.
-			bool isPartiallyHot = false;
-			bool isTextSpanned = false;
-
 			while (reader.Read ()) {
 				switch (reader.NodeType) {
 				case XmlNodeType.Element:
 					if (reader.IsEmptyElement) {
-
+						FlushPartialText ();
 						if (NodeBreaksStructureAfter (reader.Name))
 							AppendStructuralBreak ();
 						else {
 							if (NodeBreaksTextBefore (reader.Name))
 								AppendWhiteSpace ();
+
 							if (NodeBreaksTextAfter (reader.Name))
 								AppendWhiteSpace ();
 						}
-
-						// We check for a "whitespace" to identify
-						// partially formatted texts.
-						// In case if a *paragraph* ends with a *HOT* text
-						// we should be able to reset it.
-						// If "partiallyHot" flag is set, reset the *HOT*ness.
-						isPartiallyHot = false;
-						if (part_hot_nodes.Count > 0)
-							isPartiallyHot = (bool) part_hot_nodes.Pop ();
-						if (isPartiallyHot)
-							HotDown ();
 						continue;
 					}
 
@@ -180,12 +247,6 @@ namespace Beagle.Filters {
 						continue;
 					}
 
-					// Mark text as spanned
-					if (reader.Name == "text:span") {
-						isTextSpanned = true;
-						span_nodes.Push (isTextSpanned);
-					}
-					
 					// A node is hot if:
 					// (1) It's name is hot
 					// (2) It is flagged with a hot style
@@ -195,8 +256,8 @@ namespace Beagle.Filters {
 
 					if (NodeIsHot (reader.Name)) {
 						isHot = true;
-					} else if (reader.Name == "office:annotation") {
-						isHot = true;
+					} else if (NodeIsHotContainer (reader.Name)) {
+						hot_container_nodes.Push (reader.Name);
 					} else {
 						bool has_attr = reader.MoveToFirstAttribute ();
 						while (has_attr) {
@@ -211,98 +272,51 @@ namespace Beagle.Filters {
 					} 
 					
 					hot_nodes.Push (isHot);
-				
-					isPartiallyHot = false;
-					if (part_hot_nodes.Count > 0)
-						isPartiallyHot = (bool) part_hot_nodes.Peek ();
-
-					if (isHot&& !isPartiallyHot)
+					if (isHot || hot_container_nodes.Count > 0)
 						HotUp ();
 				
-					if (NodeIsFreezing (reader.Name))
+					if (NodeIsFreezing (reader.Name)) {
 						FreezeUp ();
+					}
 				
-					if (NodeBreaksTextBefore (reader.Name))
+					if (NodeBreaksTextBefore (reader.Name)) {
+						FlushPartialText ();
 						AppendWhiteSpace ();
+					}
 					break;
 
 				case XmlNodeType.Text:
-
-					bool is_text_hot =  (bool) hot_nodes.Peek ();
-					
-					isPartiallyHot = false;
-					isTextSpanned = false;
-
-					if (part_hot_nodes.Count > 0)
-						isPartiallyHot = (bool) part_hot_nodes.Pop ();
-
-					if (span_nodes.Count > 0)
-						isTextSpanned = (bool) span_nodes.Peek ();
-
 					string text = reader.Value;
-
-					// Partially formatted texts are called *partiallyHot* texts.
-					// In case of partially Hot texts, 
-					//     (i) find the first occurrance of 
-					//         whitespace (ie.)
-					//             <continuation-of-partially-hot-text><whitespace><normaltext>
-					//     (ii) Add <continuation-of-partially-hot-text> to the textpool, 
-					//          which will eventually add it to hotpool, since HotUp is not reset.
-					//     (iii) call HotDown() to reset *HOT*ness.
-					if (isPartiallyHot) {
-						int index;
-						string strPartialText = null;
-						index = text.IndexOf (' ');
-						if (index > -1) {
-							strPartialText = text.Substring (0, index);
-							text = text.Substring (index);
-							if (!text.EndsWith (" "))
-							    part_hot_nodes.Push (isPartiallyHot);
-						} else 
-							part_hot_nodes.Push (isPartiallyHot);
-
-						if (strPartialText != null)
-							AppendText (strPartialText);
-						if (index > -1)
-							HotDown ();
-					} else 	if (is_text_hot && isTextSpanned && !text.EndsWith (" ")) {
-						isPartiallyHot = true;
-						part_hot_nodes.Push (isPartiallyHot);
-						//Console.WriteLine ("Partially hot : [{0}]", text);
-					}
-					AppendText (text);
+					if (text.Length < 1)
+						continue;
+					if (!IsFrozen)
+						AddTextForIndexing (text);
 					break;
 
 				case XmlNodeType.EndElement:
-					if (reader.Name == "text:span")
-						span_nodes.Pop ();
-
-					if (NodeBreaksStructureAfter (reader.Name))
+					if (NodeBreaksStructureAfter (reader.Name)) {
+						FlushPartialText ();
 						AppendStructuralBreak ();
+					}
 					else if (NodeBreaksTextAfter (reader.Name))
 						AppendWhiteSpace ();
 
-					if (reader.Name == "text:p") {
-						if (part_hot_nodes.Count > 0) {
-							part_hot_nodes.Clear ();
+					bool is_hot = (bool) hot_nodes.Pop ();
+					
+					if (hot_container_nodes.Count > 0) {
+						string hot_container_tag = (string) hot_container_nodes.Peek ();
+						if (hot_container_tag == reader.Name) {
+							hot_container_nodes.Clear ();
 							HotDown ();
 						}
 					}
 					
-					bool is_hot = (bool) hot_nodes.Pop ();
-
-					isPartiallyHot = false;
-					if (part_hot_nodes.Count > 0)
-						isPartiallyHot = (bool) part_hot_nodes.Peek ();
-
-					// If text is *partiallyHot* do not reset
-					// the *HOT*ness, which will eventually be get reset
-					// when it finds an empty node or a text with whitespace.
-					if (is_hot && !isPartiallyHot)
+					if (is_hot)
 						HotDown ();
-				
-					if (NodeIsFreezing (reader.Name))
+
+					if (NodeIsFreezing (reader.Name)) {
 						FreezeDown ();
+					}
 					break;
 				}
 				num_elements++;
@@ -345,10 +359,8 @@ namespace Beagle.Filters {
 				}
 				reader.Read ();
 			}
-			
 			if (slideCount != null)
 				AddProperty (Beagle.Property.NewKeyword ("fixme:slide-count", slideCount));
-
 		}
 
 		private void ExtractMetadata (XmlReader reader)
