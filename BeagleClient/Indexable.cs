@@ -247,9 +247,7 @@ namespace Beagle {
 			StringWriter writer = new StringWriter ();
 			our_serializer.Serialize (writer, this);
 			writer.Close ();
-
-			// We might have invalid XML characters in here.
-			return StringFu.CleanupInvalidXmlCharacters (writer.ToString ());
+			return writer.ToString ();
 		}
 
 		private static Uri TextReaderToTempFileUri (TextReader reader)

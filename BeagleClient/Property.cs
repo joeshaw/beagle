@@ -52,7 +52,12 @@ namespace Beagle {
 		[XmlAttribute]
 		public string Value {
 			get { return value; }
-			set { this.value = value; }
+			set { 
+				if (value == null)
+					this.value = null;
+				else
+					this.value = BU.StringFu.CleanupInvalidXmlCharacters (value);
+			}
 		}
 		
 		/////////////////////////////////////
@@ -64,7 +69,7 @@ namespace Beagle {
 			Property p = new Property ();
 			p.isKeyword = false;
 			p.key = key;
-			p.value = value != null ? value.ToString () : null;
+			p.Value = value != null ? value.ToString () : null;
 			return p;
 		}
 
