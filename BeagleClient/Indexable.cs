@@ -228,7 +228,8 @@ namespace Beagle {
 		{
 			StringBuilder sb = new StringBuilder ();
 			foreach (Property prop in Properties) {
-				if (keywords ? prop.IsKeyword : ! prop.IsKeyword) {
+				if (prop.IsSearched 
+				    && keywords ? prop.IsKeyword : ! prop.IsKeyword) {
 					if (sb.Length > 0)
 						sb.Append (" ");
 					sb.Append (prop.Value);

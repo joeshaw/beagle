@@ -34,6 +34,7 @@ namespace Beagle {
 	public class Property {
 
 		bool   isKeyword;
+		bool   isSearched;
 		string key;
 		string value;
 
@@ -41,6 +42,12 @@ namespace Beagle {
 		public bool IsKeyword {
 			get { return isKeyword; }
 			set { isKeyword = value; }
+		}
+
+		[XmlAttribute]
+		public bool IsSearched {
+			get { return isSearched; }
+			set { isSearched = value; }
 		}
 
 		[XmlAttribute]
@@ -68,6 +75,7 @@ namespace Beagle {
 		{
 			Property p = new Property ();
 			p.isKeyword = false;
+			p.IsSearched = true;
 			p.key = key;
 			p.Value = value != null ? value.ToString () : null;
 			return p;
@@ -77,12 +85,21 @@ namespace Beagle {
 		{
 			Property p = Property.New (key, value);
 			p.isKeyword = true;
+			p.isSearched = true;
+			return p;
+		}
+
+		static public Property NewUnsearched (string key, object value)
+		{
+			Property p = Property.New (key, value);
+			p.isKeyword = true;
+			p.isSearched = false;
 			return p;
 		}
 
 		static public Property NewBool (string key, bool value)
 		{
-			return NewKeyword (key, value ? "true" : "false");
+			return NewUnsearched (key, value ? "true" : "false");
 		}
 
 		static public Property NewFlag (string key)
@@ -92,7 +109,7 @@ namespace Beagle {
 
 		static public Property NewDate (string key, DateTime dt)
 		{
-			return NewKeyword (key, BU.StringFu.DateTimeToString (dt));
+			return NewUnsearched (key, BU.StringFu.DateTimeToString (dt));
 		}
 	}
 }

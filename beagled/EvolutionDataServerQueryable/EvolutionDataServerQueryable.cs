@@ -108,9 +108,8 @@ namespace Beagle.Daemon.EvolutionDataServerQueryable {
 			indexable.Timestamp = DateTime.Now;
 			indexable.Type = "Contact";
 						
-			indexable.AddProperty (Property.NewKeyword ("beagle:indexinstance", this_instance));
-			indexable.AddProperty (Property.NewKeyword ("beagle:dummy", "dummy"));
-
+			indexable.AddProperty (Property.NewUnsearched ("beagle:indexinstance", this_instance));
+			indexable.AddProperty (Property.NewUnsearched ("beagle:dummy", "dummy"));
 
 			indexable.AddProperty (Property.NewKeyword ("fixme:FileAs", contact.FileAs));
 			indexable.AddProperty (Property.NewKeyword ("fixme:GivenName", contact.GivenName));
@@ -166,7 +165,7 @@ namespace Beagle.Daemon.EvolutionDataServerQueryable {
 				w.Write (photo.Data);
 				w.Close ();
 
-				indexable.AddProperty (Property.NewKeyword ("Photo", photo_filename));
+				indexable.AddProperty (Property.NewUnsearched ("Photo", photo_filename));
 			}
 			// FIXME: List?
 			// FIXME: ListShowAddresses?
