@@ -773,7 +773,17 @@ namespace Beagle.Daemon {
 		private LNS.Query ToCoreLuceneQuery (QueryBody body, string field)
 		{
 			LNS.BooleanQuery luceneQuery = null;
-			foreach (string text in body.Text) {
+			foreach (string text_orig in body.Text) {
+				string text = text_orig;
+
+				if (text == null || text == "")
+					continue;
+
+				bool minus_sign = false;
+				if (text [0] == '-') {
+					text = text.Substring (1);
+					minus_sign = true;
+				}
 
 				// Use the analyzer to extract the query's tokens.
 				// This code is taken from Lucene's query parser.
@@ -813,7 +823,7 @@ namespace Beagle.Daemon {
 				if (q != null) {
 					if (luceneQuery == null)
 						luceneQuery = new LNS.BooleanQuery ();
-					luceneQuery.Add (q, true, false);
+					luceneQuery.Add (q, !minus_sign, minus_sign);
 				}
 			}
 			return luceneQuery;

@@ -105,8 +105,12 @@ namespace Beagle.Daemon {
 			IList query_terms = query_body.Text;
 			int N = query_terms.Count;
 			string[] stemmed_terms = new string [N];
-			for (int i = 0; i < N; ++i) 
+			for (int i = 0; i < N; ++i) {
+				string term = (string) query_terms [i];
+				if (term [0] == '-')
+					continue;
 				stemmed_terms [i] = LuceneDriver.Stem ((string) query_terms [i]).ToLower ();
+			}
 			
 			string snippet = null;
 			int snippet_word_count = 0;
