@@ -1,3 +1,10 @@
+2005-03-31  Veerapuram Varadhan  <vvaradhan@novell.com>
+
+	* Filters/FilterRTF.cs: Before/After rewinding the file-stream, 
+	ignore the already buffered-data in the stream reader.  Fixes
+	part of http://bugzilla.gnome.org/show_bug.cgi?id=172294.
+	(now font-details and other unwanted-strings are not extracted.)
+	
 2005-03-31  Daniel Drake  <dsd@gentoo.org>
 
 	* Util/ImLog.cs: Ignore GAIM logs which don't have the standard

@@ -38,6 +38,7 @@ using System.Collections;
 using System.IO;
 using System.Text;
 using Beagle.Util;
+
 internal class RTFControlWordType {
 	
 	public enum Type {
@@ -266,7 +267,7 @@ namespace Beagle.Filters {
 			if (!Char.IsLetter (ch) && 
 			    ctrlWrdType.Types != RTFControlWordType.Type.Skip &&
 			    ctrlWrdType.Types != RTFControlWordType.Type.EscSeq) {
-				Console.WriteLine ("Unhandled symbol: {0}, {1}", ch, ctrlWrdType.Types);
+				Logger.Log.Error ("Unhandled symbol: {0}, {1}", ch, ctrlWrdType.Types);
 				return ErrorCodes.ERROR_RTF_UNHANDLED_SYMBOL;
 			}
 			while (aByte != -1) {
@@ -318,10 +319,6 @@ namespace Beagle.Filters {
 			StringBuilder str = new StringBuilder ();
 			string strTemp = null;
 			ErrorCodes ec;
-
-			// "/info" can be anywhere in the document,
-			// so, rewind the file pointer to start from beginning.
-			SReaderRTF.BaseStream.Seek (0, SeekOrigin.Begin);
 		       
 			while ((aByte = SReaderRTF.Read ()) != -1) {
 				ch = (char) aByte;
@@ -393,7 +390,8 @@ namespace Beagle.Filters {
 				case '\n': /* ignore \n */
 					break;
 				default:
-					if (skipCount == 0 || groupCount <= skipCount)
+					if ((skipCount == 0 || groupCount <= skipCount)
+					    && (pos == Position.InPara || pos == Position.InBody))
 						str.Append (ch);
 					break;
 				}
@@ -494,6 +492,17 @@ namespace Beagle.Filters {
 			ErrorCodes ec;
 			ec = ErrorCodes.ERROR_RTF_OK;
 			pos = Position.None;
+
+			// Discard the buffered data, if not,
+			// the buffered data can change the 
+			// state "pos" variable that results 
+			// in complete mess.
+			// Fixes: http://bugzilla.gnome.org/show_bug.cgi?id=172294
+			SReaderRTF.DiscardBufferedData ();
+
+			// Rewind the file pointer to start from beginning.
+			SReaderRTF.BaseStream.Seek (0, SeekOrigin.Begin);
+
 			ec = RTFParse (false);
 			if (ec != ErrorCodes.ERROR_RTF_OK)
 				Logger.Log.Error ("{0}", ec);
