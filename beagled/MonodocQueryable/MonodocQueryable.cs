@@ -97,7 +97,6 @@ namespace Beagle.Daemon.MonodocQueryable {
 			}
 		}
 
-
 		private void OnInotifyEvent (int wd,
 					     string path,
 					     string subitem,
@@ -180,8 +179,12 @@ namespace Beagle.Daemon.MonodocQueryable {
 			indexable.MimeType = "application/monodoc";
 			indexable.Type = "Monodoc";
 
-			indexable.AddProperty (Property.NewKeyword ("fixme:fullname", node.Attributes["FullName"].Value));
 			indexable.AddProperty (Property.NewKeyword ("fixme:type", "type"));
+			indexable.AddProperty (Property.NewKeyword ("fixme:name", node.Attributes["FullName"].Value));
+			
+			string splitname = String.Join (" ", 
+				StringFu.FuzzySplit (node.Attributes["FullName"].Value.ToString ().Substring (2)));
+			indexable.AddProperty (Property.NewKeyword ("fixme:splitname",splitname));
 
 			// Should we add other stuff here? Implemented interfaces etc?
 
@@ -218,15 +221,26 @@ namespace Beagle.Daemon.MonodocQueryable {
 			log.Debug ("Parsing " + memberFullName);
 
 			Indexable indexable = new Indexable (
-				new Uri ("monodoc://" + file + ";item=" + memberFullName));
+				new Uri ("monodoc:///" + file + ";item=" + memberFullName));
 
 			indexable.MimeType = "application/monodoc";
 			indexable.Type = "Monodoc";
 
 			indexable.AddProperty (
-				Property.NewKeyword ("fixme:fullname",memberFullName));
-			indexable.AddProperty (
 				Property.NewKeyword ("fixme:type", node.SelectSingleNode ("MemberType").InnerText.ToLower ()));
+			indexable.AddProperty (
+				Property.NewKeyword ("fixme:name",memberFullName));
+			
+			int indexHack = memberFullName.ToString ().IndexOf ("(");
+			string splitname;
+
+			if (indexHack == -1)
+				splitname = String.Join (" ", StringFu.FuzzySplit (memberFullName.ToString ().Substring (2)));
+			else 
+				splitname = String.Join (" ", StringFu.FuzzySplit (memberFullName.ToString ().Substring(2,indexHack-2)));
+				
+			indexable.AddProperty (
+				Property.NewKeyword ("fixme:splitname",splitname));
 
 			StringReader reader = new StringReader (node.SelectSingleNode ("Docs").InnerXml); 
                         indexable.SetTextReader (reader);
