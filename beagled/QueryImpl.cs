@@ -193,7 +193,7 @@ namespace Beagle.Daemon {
 			
 			if (HitsSubtractedAsStringEvent != null && toSubtract.Count > 0)
 				HitsSubtractedAsStringEvent (this, UrisToString (toSubtract));
-			if (HitsAddedAsXmlEvent != null)
+			if (HitsAddedAsXmlEvent != null && someHits.Count > 0)
 				HitsAddedAsXmlEvent (this, HitsToXml (someHits));
 		}
 
@@ -232,7 +232,7 @@ namespace Beagle.Daemon {
 					allHits.Remove (uri);
 				}
 			}
-			if (HitsSubtractedAsStringEvent != null)
+			if (HitsSubtractedAsStringEvent != null && toSubtract.Count > 0)
 				HitsSubtractedAsStringEvent (this, UrisToString (toSubtract));			
 		}
 

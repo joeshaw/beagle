@@ -79,7 +79,7 @@ namespace Beagle
 		{
 			ArrayList hits = Hit.ReadHitXml (hitsXml);
 			
-			if (HitAddedEvent != null) {
+			if (HitAddedEvent != null && hits.Count > 0) {
 				foreach (Hit hit in hits)
 					HitAddedEvent (this, hit);
 			}
@@ -87,7 +87,7 @@ namespace Beagle
 
 		private void OnHitsSubtractedAsString (QueryProxy sender, string uriList)
 		{
-			if (HitSubtractedEvent != null) {
+			if (HitSubtractedEvent != null && uriList.Length > 0) {
 				string[] uris = uriList.Split ('|');
 
 				foreach (string uriStr in uris) {
