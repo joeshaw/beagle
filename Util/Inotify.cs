@@ -66,6 +66,16 @@ namespace Beagle.Util {
 			All            = 0xffffffff
 		}
 
+		/////////////////////////////////////////////////////////////////////////////////////
+
+		static private Logger log;
+
+		static public Logger Log { 
+			get { return log; }
+		}
+
+		/////////////////////////////////////////////////////////////////////////////////////
+
 		[StructLayout (LayoutKind.Sequential)]
 		private struct inotify_event {
 			public int       wd;
@@ -103,6 +113,8 @@ namespace Beagle.Util {
 			dev_inotify = Syscall.open ("/dev/inotify", OpenFlags.O_RDONLY);
 			if (dev_inotify == -1)
 				throw new Exception ("Could not open /dev/inotify");
+
+			log = Logger.Get ("Inotify");
 		}
 
 		static bool Enabled {

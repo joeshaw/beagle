@@ -138,6 +138,7 @@ namespace Beagle.Daemon {
 
 			bool arg_replace = false;
 			bool arg_debug = false;
+			bool arg_debug_inotify = false;
 			bool arg_network = false;
 			bool arg_fg = false;
 			int arg_port = 0;
@@ -167,6 +168,10 @@ namespace Beagle.Daemon {
 
 				case "--debug":
 					arg_debug = true;
+					break;
+
+				case "--debug-inotify":
+					arg_debug_inotify = true;
 					break;
 
 				case "--allow-backend":
@@ -207,6 +212,15 @@ namespace Beagle.Daemon {
 
 			if (arg_debug)
 				Logger.DefaultLevel = LogLevel.Debug;
+
+			if (arg_debug_inotify)
+				Inotify.Log.Level = LogLevel.Debug;
+			else {
+				// FIXME: A hard-wired constant for Inotify.Log doesn't really
+				// belong here.
+				// This overrides the default, so this logger is "decoupled".
+				Inotify.Log.Level = LogLevel.Warn;
+			}
 
 			if (arg_fg) {
 				// If we are running in the foreground, we want to log to stdout.

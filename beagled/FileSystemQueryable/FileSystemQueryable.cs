@@ -413,7 +413,7 @@ namespace Beagle.Daemon.FileSystemQueryable {
 					     uint              cookie)
 		{
 			if (type == Inotify.EventType.QueueOverflow) {
-				log.Warn ("The inotify queue overflowed!");
+				Inotify.Log.Warn ("The inotify queue overflowed!");
 				// FIXME: Do the right thing
 				return;
 			}
@@ -423,8 +423,9 @@ namespace Beagle.Daemon.FileSystemQueryable {
 			if (dir == null)
 				return;
 
-			//if (type != Inotify.EventType.Open)
-			//log.Debug ("--- {0} {1} {2}", type, path, subitem);
+			if (type != Inotify.EventType.Open)
+				Inotify.Log.Debug ("FileSystemQueryable.OnInotifyEvent: type={0} path='{1}' subitem='{2}'",
+						   type, path, subitem);
 
 			if (! dir.ProcessEvent (type))
 				return;
