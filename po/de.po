@@ -88,7 +88,7 @@ msgstr "Die besten <b>{0} von {1} Ergebnissen</b> werden angezeigt."
 #: ../Best/BestWindow.cs:411
 #, csharp-format
 msgid "Results <b>{0} through {1} of {2}</b> are shown."
-msgstr "Ergebnisse <b>{0} bis [1} von {2}</b> werden angezeigt."
+msgstr "Ergebnisse <b>{0} bis {1} von {2}</b> werden angezeigt."
 
 #. To translators: {0} represents the current query keywords
 #: ../Best/BestWindow.cs:550
