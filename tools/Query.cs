@@ -37,33 +37,59 @@ class QueryTool {
 
 	static int count = 0;
 	static Query query = null;
+	static DateTime lastQueryTime = DateTime.Now;
+
+	// CLI args
+	static bool keepRunning = false;
+	static bool verbose = false;
 
 	static void OnHitAdded (Query source, Hit hit)
 	{
-		Console.WriteLine ("  Uri: {0}", hit.Uri);
-		Console.WriteLine (" Type: {0}", hit.Type);
-		Console.WriteLine ("MimeT: {0}", hit.MimeType == null ? "(null)" : hit.MimeType);
-		Console.WriteLine ("  Src: {0}", hit.Source);
-		Console.WriteLine ("Score: {0}", hit.Score);
-		if (hit.ValidTimestamp)
-			Console.WriteLine (" Time: {0}", hit.Timestamp);
-		if (hit.ValidRevision)
-			Console.WriteLine ("  Rev: {0}", hit.Revision);
+		lastQueryTime = DateTime.Now;
 
-		foreach (String key in hit.Keys)
-			Console.WriteLine ("    {0} = {1}", key, hit [key]);
+		if (verbose)
+			Console.WriteLine ("  Uri: {0}", hit.Uri);
+		else
+			Console.WriteLine (hit.Uri);
 
-		Console.WriteLine ();
+		if (verbose) {
+			Console.WriteLine (" Type: {0}", hit.Type);
+			Console.WriteLine ("MimeT: {0}", hit.MimeType == null ? "(null)" : hit.MimeType);
+			Console.WriteLine ("  Src: {0}", hit.Source);
+			Console.WriteLine ("Score: {0}", hit.Score);
+			if (hit.ValidTimestamp)
+				Console.WriteLine (" Time: {0}", hit.Timestamp);
+			if (hit.ValidRevision)
+				Console.WriteLine ("  Rev: {0}", hit.Revision);
+
+			foreach (String key in hit.Keys)
+				Console.WriteLine ("    {0} = {1}", key, hit [key]);
+
+			Console.WriteLine ();
+		}
 
 		++count;
 	}
 
 	static void OnHitSubtracted (Query source, Uri uri)
 	{
+		lastQueryTime = DateTime.Now;
+
 		Console.WriteLine ("Subtracted Uri '{0}'", uri);
 		Console.WriteLine ();
 
 		--count;
+	}
+
+
+	static bool QuitIfNoRecentResults ()
+	{
+		if ((DateTime.Now - lastQueryTime).Milliseconds > 150) {
+			Console.WriteLine ("No results in 150 milliseconds.  Quitting.");
+			Gtk.Application.Quit ();
+		}
+
+		return true;
 	}
 
 	static void Main (string[] args) 
@@ -93,11 +119,18 @@ class QueryTool {
 			} else if (args [i].StartsWith ("source:")) {
 				string ss = args [i].Substring ("source:".Length);
 				query.AddSource (ss);
+			} else if (args [i].StartsWith ("--keep-running") || args [i].StartsWith ("--keeprunning")) {
+				keepRunning = true;
+			} else if (args [i].StartsWith ("--verbose")) {
+				verbose = true;
 			} else {
 				query.AddTextRaw (args [i]);
 			}
 			++i;
 		}
+
+		if (! keepRunning)
+			GLib.Timeout.Add (50, new GLib.TimeoutHandler (QuitIfNoRecentResults));
 
 		query.Start ();
 		Gtk.Application.Run ();
