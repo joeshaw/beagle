@@ -15,6 +15,7 @@ CSFILES = 					\
 	$(srcdir)/Versioned.cs			\
 	$(srcdir)/Hit.cs                	\
 	$(srcdir)/Indexable.cs          	\
+	$(srcdir)/IIndexableGenerator.cs       	\
 	$(srcdir)/Property.cs           	\
 	$(srcdir)/QueryProxy.cs         	\
 	$(srcdir)/Query.cs              	\

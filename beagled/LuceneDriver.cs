@@ -273,6 +273,16 @@ namespace Beagle.Daemon {
 			ScheduleAdd (indexable, 0, null);
 		}
 
+		public void ScheduleAdd (IIndexableGenerator generator, int priority)
+		{
+			QueueItem item;
+			item = new QueueItem ();
+			item.Priority = priority;
+			item.IndexableGenerator = generator;
+
+			queue.ScheduleQueueItem (item);
+		}
+
 		public void ScheduleAddAndMark (Indexable indexable, int priority, FileSystemInfo fsinfo)
 		{
 			MarkClosure closure = new MarkClosure (fsinfo, log);
@@ -475,7 +485,10 @@ namespace Beagle.Daemon {
 			[XmlAttribute]
 			public int  Priority;
 
-			public Indexable IndexableToAdd;		       
+			public Indexable IndexableToAdd;
+
+			[XmlIgnore]
+			public IIndexableGenerator IndexableGenerator;
 			
 			private Uri uriToDelete;
 
@@ -769,7 +782,36 @@ namespace Beagle.Daemon {
 
 			override protected bool ProcessQueueItem (object obj)
 			{
-				QueueItem item = (QueueItem) obj;
+				QueueItem rawItem = (QueueItem) obj;
+				QueueItem item;
+				bool retval = true; // dequeue the item after processing
+
+				if (rawItem.IndexableGenerator != null) {
+					
+					Indexable indexable;
+					indexable = rawItem.IndexableGenerator.GetNextIndexable ();
+					
+					// The generator is finished, so dequeue it.
+					if (indexable == null)
+						return true;
+
+					// Synthesize a QueueItem for our generated indexable.
+					item = new QueueItem ();
+					item.SequenceNumber = rawItem.SequenceNumber;
+					item.Priority = rawItem.Priority;
+					item.IndexableToAdd = indexable;
+					// FIXME: How do we want to handle post-index hooks for
+					// generated indexables?
+					
+					// No, don't dequeue... leave the generator in the queue
+					// so we can pull out the rest of the indexables during future
+					// calls to ProcessQueueItem.
+					retval = false;
+
+				} else {
+					item = rawItem;
+				}
+
 				QueueItem oldItem = null;
 
 				// Check to make sure that another item w/ the
@@ -779,7 +821,7 @@ namespace Beagle.Daemon {
 					uint seqno = (uint) seqnoByUri [item.Uri];
 					if (seqno > item.SequenceNumber) {
 						Log.Debug ("Rejected {0} by seqno", item.Uri);
-						return true;
+						return retval;
 					}
 				}
 
@@ -827,7 +869,7 @@ namespace Beagle.Daemon {
 							  reason, pa, pd, watch);
 				}
 
-				return true;
+				return retval;
 			}
 
 			override protected int PostProcessSleepDuration ()
