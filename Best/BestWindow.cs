@@ -77,7 +77,6 @@ namespace Best {
 			DefaultWidth = (int) (DefaultHeight * GOLDEN);
 
 			driver = new QueryDriver ();
-			driver.AutoPopulateHack ();
 
 			Best.IncRef ();
 		}
