@@ -1,3 +1,8 @@
+2004-12-07  Tuomas Kuosmanen  <tigert@novell.com>
+
+	* Tiles/TileMailMessage.cs: eeks, I touched c-sharp with bare
+	hands! Hopefully the patch works. Should fix #160321 and #160324
+
 2004-12-03  Veerapuram Varadhan <vvaradhan@novell.com>
 
 	* configure.in: Updated to gsf-sharp 0.2.

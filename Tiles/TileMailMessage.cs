@@ -86,9 +86,9 @@ namespace Beagle.Tile {
 
 			Template["Icon"] = icon;
 			if (Hit ["fixme:isFlagged"] != null)
-				Template["FollowupIcon"] = Images.GetHtmlSource ("flag-for-followup.png", "image/png");
+				Template["FollowupIcon"] = Images.GetHtmlSourceForStock ("stock_mail-priority-high", 16);
 			if (Hit ["fixme:hasAttachments"] != null)
-				Template["AttachmentIcon"] = Images.GetHtmlSource ("attachment.png", "image/png");
+				Template["AttachmentIcon"] = Images.GetHtmlSourceForStock ("stock_attach", 16);
 
 			GetImNames (Template["Who"]);
 
