@@ -71,7 +71,7 @@ namespace Beagle.Daemon {
 				result.FinishedEvent -= OnFinishedResult;
 				result.CancelledEvent -= OnCancelledResult;
 
-				result.Cancel ();
+				result.Dispose ();
 
 				result = null;
 			}

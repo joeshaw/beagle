@@ -32,7 +32,7 @@ using System.Threading;
 using Beagle.Util;
 namespace Beagle.Daemon {
 
-	public class QueryResult : IQueryResult {
+	public class QueryResult : IQueryResult, IDisposable {
 
 		class QueryWorkerClosure {
 			IQueryWorker worker;
@@ -81,6 +81,17 @@ namespace Beagle.Daemon {
 		public QueryResult ()
 		{
 
+		}
+
+		//////////////////////////////////
+
+		public void Dispose () 
+		{
+			lock (this) {
+				if (cancelled)
+					return;
+				cancelled = true;
+			}	
 		}
 
 		//////////////////////////////////
