@@ -10,6 +10,7 @@ SUBDIRS = 			\
 	Filters 		\
 	indexer 		\
 	Renderers		\
+	Tiles			\
 	tools 			\
 	Best			\
 	searchomatic

@@ -2,7 +2,7 @@
 
 if [ -e ./@target@ ] && [ -e ./Makefile.am ] ; then
     echo "*** Running uninstalled @target@ ***"
-    THIS_PATH="../Util:../Lucene.Net:../Filters:../indexer:../Renderers"
+    THIS_PATH="../Util:../images:../Lucene.Net:../Filters:../indexer:../Tiles"
     THIS_EXE="./@target@"
 else
     THIS_PATH="@pkglibdir@"

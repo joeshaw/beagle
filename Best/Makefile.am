@@ -9,20 +9,19 @@ CSFLAGS = -target:exe
 CSFILES =				\
 	$(srcdir)/Best.cs		\
 	$(srcdir)/BestWindow.cs		\
-	$(srcdir)/HitContainer.cs	\
-	$(srcdir)/HitView.cs
+	$(srcdir)/BestRootTile.cs
 
 ASSEMBLIES =				\
 	$(EVO_SHARP_LIBS)		\
 	$(BEAGLE_UI_LIBS)		\
 	-r:../Util/Util.dll		\
+	-r:../images/Images.dll		\
 	-r:../Lucene.Net/Lucene.Net.dll	\
 	-r:../Filters/Filters.dll	\
 	-r:../indexer/Indexer.dll	\
-	-r:../Renderers/Renderers.dll
+	-r:../Tiles/Tiles.dll
 
 RESOURCES =
-
 
 $(TARGET): $(CSFILES)
 	$(CSC) -o $@ $(CSFLAGS) $^ $(ASSEMBLIES) $(RESOURCES)

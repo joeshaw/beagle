@@ -127,7 +127,9 @@ namespace Best {
 		//////////////////////////
 
 		private Gtk.Entry entry;
-		private HitContainer hitContainer;
+		
+		private TileCanvas canvas;
+		private BestRootTile root;
 
 		private Widget CreateContents ()
 		{
@@ -141,14 +143,19 @@ namespace Best {
 			button.Clicked += new EventHandler (this.DoSearch);
 			entryLine.PackStart (button, false, false, 3);
 
-			hitContainer = new HitContainer ();
+			canvas = new TileCanvas ();
+			root = new BestRootTile ();
+			canvas.Root = root;
+
+			Gtk.ScrolledWindow swin = new Gtk.ScrolledWindow ();
+			swin.Add (canvas);
 
 			VBox contents = new VBox (false, 3);
 			contents.PackStart (entryLine, false, true, 3);
-			contents.PackStart (hitContainer, true, true, 3);
+			contents.PackStart (swin, true, true, 3);
 
 			entryLine.ShowAll ();
-			hitContainer.Show ();
+			swin.ShowAll ();
 
 			return contents;
 		}
@@ -172,25 +179,25 @@ namespace Best {
 		{
 			if (src != result)
 				return;
-			//Console.WriteLine ("Got {0} Hits!", args.Count);
+			Console.WriteLine ("Got {0} Hits!", args.Count);
 			foreach (Hit hit in args.Hits)
-				hitContainer.Add (hit);
+				root.Add (hit);
 		}
 
 		private void OnFinished (QueryResult src)
 		{
 			if (src != result)
 				return;
-			//Console.WriteLine ("Finished!");
-			hitContainer.Close ();
+			Console.WriteLine ("Finished!");
+			root.Close ();
 		}
 
 		private void OnCancelled (QueryResult src)
 		{
 			if (src != result)
 				return;
-			//Console.WriteLine ("Cancelled!");
-			hitContainer.Close ();
+			Console.WriteLine ("Cancelled!");
+			root.Close ();
 		}
 
 
@@ -208,7 +215,7 @@ namespace Best {
 			result.FinishedEvent += OnFinished;
 			result.CancelledEvent += OnCancelled;
 
-			hitContainer.Open ();
+			root.Open ();
 
 			result.Start ();
 

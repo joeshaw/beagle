@@ -415,8 +415,8 @@ namespace IndexMailTool {
 			this ["To"] =  messageInfo.to;
 			this ["From"] = messageInfo.from;
 			this ["Cc"] = messageInfo.cc;
-			this ["Received"] = messageInfo.received.ToString ();
-			this ["SentDate"] = messageInfo.sent.ToString ();
+			this ["Received"] = BU.StringFu.DateTimeToString (messageInfo.received);
+			this ["SentDate"] = BU.StringFu.DateTimeToString (messageInfo.sent);
 			this ["Mlist"] = messageInfo.mlist;
 
 			if (folderName == "Sent")

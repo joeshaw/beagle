@@ -42,6 +42,8 @@ using Lucene.Net.Index;
 using Lucene.Net.QueryParsers;
 using LNS = Lucene.Net.Search;
 
+using BU = Beagle.Util;
+
 
 namespace Beagle {
 
@@ -78,19 +80,6 @@ namespace Beagle {
 
 		//////////////////////////
 		
-		private const String timeFormat = "yyyyMMddHHmmss";
-
-		static private String TimestampToString (DateTime dt)
-                {
-			return dt.ToString (timeFormat);
-                }
-                 
-                static private DateTime StringToTimestamp (String str)
-                {
-			return DateTime.ParseExact (str, timeFormat, CultureInfo.CurrentCulture);
-                }
-
-
 		static private String RevisionToString (long rev)
 		{
 			return Convert.ToString (rev);
@@ -210,8 +199,8 @@ namespace Beagle {
 			}
 	    
 			if (indexable.ValidTimestamp) {
-				f = Field.Keyword ("Timestamp",
-						   TimestampToString (indexable.Timestamp));
+				str = BU.StringFu.DateTimeToString (indexable.Timestamp);
+				f = Field.Keyword ("Timestamp", str);
 				doc.Add (f);
 			}
 			
@@ -361,7 +350,7 @@ namespace Beagle {
 
 			str = doc.Get ("Timestamp");
 			if (str != null)
-				hit.Timestamp = StringToTimestamp (str);
+				hit.Timestamp = BU.StringFu.StringToDateTime (str);
 			
 			str = doc.Get ("Revision");
 			if (str != null)

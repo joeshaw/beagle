@@ -18,7 +18,8 @@ CSFILES = 				\
 	$(srcdir)/ImLog.cs		\
 	$(srcdir)/Logger.cs		\
 	$(srcdir)/MultiReader.cs	\
-	$(srcdir)/PullingReader.cs
+	$(srcdir)/PullingReader.cs	\
+	$(srcdir)/StringFu.cs
 
 ASSEMBLIES =			\
 	$(BEAGLE_UI_LIBS)		\

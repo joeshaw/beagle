@@ -41,6 +41,11 @@ subset of the user's tree.  Ideally it would keep track of which directories
 contain files that change frequently, and have a higher probability of
 checking those during a partial crawl.
 
+A 'fast crawl' mode could also look at the recently-used files and index
+those.
+
+The crawler should index folders as well as files.
+
 It would be cool if the crawler could descend into compressed/tarred/zipped
 files.
 
@@ -61,8 +66,4 @@ able to:
   (2) Fail immediately if the process exists but the lock is too old
       (i.e. more than a few hours?)
   (3) Wait more-or-less indefinitely otherwise.
-
-
-
-
 

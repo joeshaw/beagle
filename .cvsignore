@@ -7,6 +7,7 @@ config.log
 config.status
 config.sub
 configure
+depcomp
 libtool
 ltmain.sh
 missing
