@@ -6,8 +6,8 @@ License:     LGPL
 Group:       Applications/Development
 Source:      beagle-%{version}.tar.gz
 BuildRoot:   /var/tmp/%{name}-root
-BuildPrereq: evolution-sharp, mono
-Requires:    evolution-sharp >= 0.4
+BuildPrereq: evolution-sharp, mono-core
+Requires:    evolution-sharp >= 0.4, mono-core
 Prefix:	     /opt/gnome
 
 %description

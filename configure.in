@@ -2,6 +2,7 @@ AC_INIT(beagled/BeagleDaemon.cs)
 AC_CANONICAL_SYSTEM
 AM_INIT_AUTOMAKE(beagle, 0.0.3)
 AM_MAINTAINER_MODE
+AM_CONFIG_HEADER(config.h)
 
 AC_PROG_INSTALL
 AM_PROG_LIBTOOL
@@ -19,6 +20,20 @@ fi
 
 PKG_CHECK_MODULES(BEAGLE_UI, gtk-sharp gtkhtml-sharp gnome-sharp dbus-sharp)
 AC_SUBST(BEAGLE_UI_LIBS)
+
+dnl ----------------------------------------------
+
+# Gdk and Atk are needed for libtrayicon
+GDK20_MINIMUM_VERSION=2.2.3
+ATK_MINIMUM_VERSION=1.2.4
+
+PKG_CHECK_MODULES(GDK20, gdk-2.0 >= $GDK20_MINIMUM_VERSION)
+AC_SUBST(GDK20_CFLAGS)
+AC_SUBST(GDK20_LIBS)
+
+PKG_CHECK_MODULES(ATK, atk >= $ATK_MINIMUM_VERSION)
+AC_SUBST(ATK_CFLAGS)
+AC_SUBST(ATK_LIBS)
 
 dnl ----------------------------------------------
 
@@ -128,6 +143,9 @@ epiphany-extension/Makefile
 mozilla-extension/Makefile
 searchomatic/Makefile
 chooser-fu/Makefile
+tray/Makefile
+tray/TrayIcon/Makefile
+tray/TrayIcon/libtrayicon/Makefile
 beagle-0.0.pc
 beagle.spec
 ])

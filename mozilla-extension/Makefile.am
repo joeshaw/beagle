@@ -37,7 +37,7 @@ OUTER_XPI_FILES = 		\
 	chrome/$(PROJECT).jar
 
 chrome/$(PROJECT).jar: $(INNER_JAR_FILES)
-	-@mkdir chrome
+	-@mkdir -p chrome
 	zip -q9 $@ $^
 
 $(PROJECT).xpi: $(OUTER_XPI_FILES)

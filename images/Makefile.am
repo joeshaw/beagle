@@ -27,6 +27,7 @@ RESOURCEFILES =					\
 	$(srcdir)/emblem-im-log.png		\
 	$(srcdir)/emblem-mail-message.png	\
 	$(srcdir)/emblem-music.png		\
+	$(srcdir)/emblem-note.png		\
 	$(srcdir)/emblem-picture.png		\
 	$(srcdir)/emblem-web-history.png	\
 	$(srcdir)/evolution.png			\
@@ -47,6 +48,7 @@ RESOURCEFILES =					\
 	$(srcdir)/mail-read.png			\
 	$(srcdir)/mail-replied.png		\
 	$(srcdir)/music.png			\
+	$(srcdir)/note.png			\
 	$(srcdir)/person.png			\
 	$(srcdir)/rss.png			\
 	$(srcdir)/status-away.png		\

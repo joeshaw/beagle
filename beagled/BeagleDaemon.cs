@@ -69,8 +69,8 @@ namespace Beagle.Daemon {
 
 		public static int Main (string[] args)
 		{
-			if (Array.IndexOf (args, "--nofork") == -1) {
-				if (!Daemonize ())
+			if (Array.IndexOf (args, "--nofork") == -1 && Array.IndexOf (args, "--no-fork") == -1) {
+				if (! Daemonize ())
 					return 1;
 			}
 

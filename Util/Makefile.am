@@ -22,6 +22,7 @@ CSFILES = 			        \
 	$(srcdir)/Logger.cs             \
 	$(srcdir)/MultiReader.cs        \
 	$(srcdir)/NautilusTools.cs      \
+	$(srcdir)/Note.cs               \
 	$(srcdir)/PageCache.cs          \
 	$(srcdir)/PullingReader.cs      \
 	$(srcdir)/StringFu.cs           \

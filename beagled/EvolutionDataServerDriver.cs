@@ -40,8 +40,13 @@ namespace Beagle.Daemon {
 
 		public EvolutionDataServerDriver ()
 		{
-			addressbook = Evolution.Book.NewSystemAddressbook ();
-			addressbook.Open (true);
+			try {
+				addressbook = Evolution.Book.NewSystemAddressbook ();
+				addressbook.Open (true);
+			} catch {
+				addressbook = null;
+				Console.WriteLine ("WARNING: Could not open Evolution addressbook.  Addressbook searching is disabled.");
+			}
 		}
 
 		private Evolution.Book Addressbook {
@@ -140,6 +145,9 @@ namespace Beagle.Daemon {
 
 		public bool AcceptQuery (QueryBody body)
 		{
+			if (addressbook == null)
+				return false;
+			
 			if (! body.HasText)
 				return false;
 
@@ -153,6 +161,9 @@ namespace Beagle.Daemon {
 				     IQueryResult result,
 				     IQueryableChangeData changeData)
 		{
+			if (addressbook == null)
+				return;
+			
 			// FIXME: Evolution.BookQuery's bindings are all
 			// screwed up, so we can't construct compound queries.
 			// This will have to do for now.

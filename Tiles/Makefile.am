@@ -21,6 +21,7 @@ CSFILES =					\
 	$(srcdir)/TileImLog.cs			\
 	$(srcdir)/TileMailMessage.cs		\
 	$(srcdir)/TileMusic.cs			\
+	$(srcdir)/TileNote.cs			\
 	$(srcdir)/TilePicture.cs		\
 	$(srcdir)/TileWebHistory.cs
 
@@ -43,6 +44,7 @@ RESOURCEFILES =					\
 	$(srcdir)/template-im-log.html		\
 	$(srcdir)/template-mail-message.html	\
 	$(srcdir)/template-music.html		\
+	$(srcdir)/template-note.html		\
 	$(srcdir)/template-picture.html		\
 	$(srcdir)/template-web-history.html
 
