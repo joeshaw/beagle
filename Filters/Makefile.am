@@ -28,7 +28,8 @@ CSFILES = 				\
 	$(srcdir)/FilterOpenOffice.cs	\
 	$(srcdir)/FilterPdf.cs		\
 	$(srcdir)/FilterPng.cs		\
-	$(srcdir)/FilterText.cs	
+	$(srcdir)/FilterText.cs	       \
+	$(srcdir)/FilterSource.cs     
 
 
 
