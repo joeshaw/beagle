@@ -63,6 +63,10 @@ namespace Best {
 			entry.GrabFocus ();
 		}
 
+		public void FocusEntryHandler (object o, EventArgs args) {
+			FocusEntry ();
+		}
+
 		void CreateWindow (string query)
 		{
 			Title = "Bleeding-Edge Search Tool";
@@ -85,7 +89,7 @@ namespace Best {
 			canvas.Root = root;
 
 			DefaultWidth = 600;
-			DefaultHeight = 700;
+			DefaultHeight = 675;
 
 			accel_group = new Gtk.AccelGroup ();
 			this.AddAccelGroup (accel_group);
@@ -101,6 +105,18 @@ namespace Best {
 			global_keys.AddAccelerator (new EventHandler (this.HideWindowHandler),
 						    (uint) Gdk.Key.Escape, 
 						    0,
+						    Gtk.AccelFlags.Visible);
+
+			// Show source (Ctrl+U)
+			global_keys.AddAccelerator (new EventHandler (this.ShowSource),
+						    (uint) Gdk.Key.U, 
+						    Gdk.ModifierType.ControlMask,
+						    Gtk.AccelFlags.Visible);
+
+			// Focus Entry (Ctrl+L)
+			global_keys.AddAccelerator (new EventHandler (this.FocusEntryHandler),
+						    (uint) Gdk.Key.L, 
+						    Gdk.ModifierType.ControlMask,
 						    Gtk.AccelFlags.Visible);
 
 			DBusisms.BeagleDown += OnBeagleDown;
@@ -143,6 +159,22 @@ namespace Best {
 		private void HideWindowHandler (object o, EventArgs args)
 		{
 			Hide ();
+		}
+
+		private void ShowSource (object o, EventArgs args)
+		{
+			Gtk.Window win = new Gtk.Window ("Source");
+			win.SetDefaultSize (800,500);
+			Gtk.ScrolledWindow sw = new ScrolledWindow ();
+			sw.HscrollbarPolicy = Gtk.PolicyType.Automatic;
+			sw.VscrollbarPolicy = Gtk.PolicyType.Automatic;
+			Gtk.TextView view = new Gtk.TextView ();
+			Gtk.TextBuffer buffer = view.Buffer;
+			buffer.Text = canvas.Source;
+			view.Buffer = buffer;
+			sw.Add (view);
+			win.Add (sw);
+			win.ShowAll ();
 		}
 		
 		//////////////////////////

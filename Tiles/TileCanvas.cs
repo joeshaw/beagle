@@ -276,6 +276,26 @@ namespace Beagle.Tile {
 			}
 			ctx.Write ("</html>");
 		}
+		
+		/////////////////////////////////////////////////
+
+		StringBuilder source;
+
+		public String Source {
+			get { return source.ToString (); }
+		}
+	
+		public new void AppendData(string data)
+		{
+			source.Append(data);
+			base.AppendData(data);
+		}
+
+		public new void OpenStream(string baseurl, string mimetype)
+		{
+			source = new StringBuilder ();
+			base.OpenStream (baseurl, mimetype);
+		}
 
 		/////////////////////////////////////////////////
 

@@ -177,6 +177,26 @@ namespace Beagle.Tile {
 			}
 		}
 
+		protected void SendFile (string attach)
+		{
+			if ((attach == null || attach == "")) {
+				Console.WriteLine ("SendFile got empty attachment");
+				return;
+			}
+
+			Process p = new Process ();
+			p.StartInfo.UseShellExecute = false;
+			p.StartInfo.FileName = "nautilus-sendto";
+			p.StartInfo.Arguments = "--default-dir=/ " + attach;
+
+			try {
+				p.Start () ;
+			} catch (Exception e) {
+				// Fall back to just email
+				SendMailToAddress (null, attach);
+			}
+		}
+
 		protected void SendMailToAddress (string email, string attach)
 		{
 			if ((email == null || email == "") && (attach == null || attach == "")) {
