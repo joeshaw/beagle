@@ -46,9 +46,17 @@ namespace Beagle.Daemon.FileSystemQueryable
 
 			string home = Environment.GetEnvironmentVariable ("HOME");
 			monitor.FileSystemEvent += OnFileSystemEvent;
-			monitor.Subscribe (home);
-			monitor.Subscribe (Path.Combine (home, "Desktop"));
-			monitor.Subscribe (Path.Combine (home, "Documents"));
+
+			if (Directory.Exists (home)) 
+				monitor.Subscribe (home);
+			
+			string path = Path.Combine (home, "Desktop");
+			if (Directory.Exists (path))
+				monitor.Subscribe (path);
+
+			path = Path.Combine (home, "Documents");
+			if (Directory.Exists (path))
+				monitor.Subscribe (path);
 		}
 
 		public override void Index (string xml)
