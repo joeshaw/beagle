@@ -59,7 +59,7 @@ namespace Beagle.Daemon {
 		{
 			lock (shutdownLock) {
 				if (!workers.Contains (o)) {
-					Logger.Log.Debug ("extra WorkerFinished called for {0}", o);
+					Logger.Log.Warn ("extra WorkerFinished called for {0}", o);
 					return;
 				}
 
