@@ -204,7 +204,8 @@ namespace Beagle.Daemon {
 
 		private void WorkQueue ()
 		{
-			Shutdown.WorkerStart (this);
+			if (!Shutdown.WorkerStart (this))
+				return;
 			try {
 
 			while (true) {

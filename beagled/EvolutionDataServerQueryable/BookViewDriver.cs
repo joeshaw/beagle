@@ -37,7 +37,8 @@ namespace Beagle.Daemon.EvolutionDataServerQueryable {
 	internal class BookViewDriver {
 		private Evolution.BookView view;
 		private IQueryResult result;
-		
+		public bool IsShutdown = false;
+
 		private Uri GetContactUri (Evolution.Contact contact) {
 			return GetContactUri (contact.Id);
 		}
@@ -196,6 +197,7 @@ namespace Beagle.Daemon.EvolutionDataServerQueryable {
 		private void OnResultCancelled (QueryResult source) 
 		{
 			lock (this) {
+				IsShutdown = true;
 				DisconnectView ();
 				result = null;
 				Monitor.Pulse (this);
@@ -205,6 +207,8 @@ namespace Beagle.Daemon.EvolutionDataServerQueryable {
 		private void OnShutdown () 
 		{
 			lock (this) {
+				System.Console.WriteLine ("shutting down");
+				IsShutdown = true;
 				DisconnectView ();
 				result = null;
 				Monitor.Pulse (this);
@@ -246,7 +250,8 @@ namespace Beagle.Daemon.EvolutionDataServerQueryable {
 	
 		public void Start () 
 		{
-			view.Start ();
+			if (view != null) 
+				view.Start ();
 		}
 	}
 }

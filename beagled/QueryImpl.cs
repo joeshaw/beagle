@@ -27,6 +27,7 @@
 using System;
 using System.Collections;
 using System.IO;
+using System.Runtime.Serialization.Formatters.Binary;
 using System.Text;
 using System.Xml;
 
@@ -38,6 +39,7 @@ namespace Beagle.Daemon {
 		private QueryDriver driver;
 		private QueryBody body;
 		private QueryResult result = null;
+		private string id;
 
 		private Hashtable allHits = new Hashtable ();
 		
@@ -50,8 +52,11 @@ namespace Beagle.Daemon {
 		public delegate void ClosedHandler (QueryImpl sender);
 		public event ClosedHandler ClosedEvent;
 
-		public QueryImpl (QueryDriver _driver)
+		public QueryImpl (QueryDriver _driver,
+				  string id)
 		{
+			this.id = id;
+
 			driver = _driver;
 			driver.ChangedEvent += OnQueryDriverChanged;
 

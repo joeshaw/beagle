@@ -319,7 +319,7 @@ namespace Beagle.Daemon {
 		private ArrayList indexes = new ArrayList ();
 		private SummaryCrawler crawler;
 
-		public EvolutionMailDriver () : base (Path.Combine (PathFinder.RootDir, "MailIndex"), true)
+		public EvolutionMailDriver () : base (Path.Combine (PathFinder.RootDir, "MailIndex"))
 		{
 		}
 

@@ -39,7 +39,13 @@ namespace Beagle.Util {
 		private bool paused = false;
 		private Logger log = null;
 
-		public delegate void WorkerStartHandler (object o);
+		public class WorkerStartArgs 
+		{
+			public bool Success;
+		}
+
+		public delegate void WorkerStartHandler (object o,
+							 WorkerStartArgs args);
 		public event WorkerStartHandler WorkerStartEvent;
 		public delegate void WorkerFinishedHandler (object o);
 		public event WorkerFinishedHandler WorkerFinishedEvent;
@@ -195,8 +201,14 @@ namespace Beagle.Util {
 
 		private void QueueWorker ()
 		{
+			
+			WorkerStartArgs args = new WorkerStartArgs ();
 			if (WorkerStartEvent != null) 
-				WorkerStartEvent (this);
+				WorkerStartEvent (this, args);
+			if (!args.Success) 
+			{
+				return;
+			}
 			try {
 			while (running) {
 

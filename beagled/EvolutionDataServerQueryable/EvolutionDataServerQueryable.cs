@@ -39,13 +39,20 @@ namespace Beagle.Daemon.EvolutionDataServerQueryable {
 
 		public event IQueryableChangedHandler ChangedEvent;
 
-		Evolution.Book addressbook = null;
+		private Evolution.Book addressbook = null;
 
+		private void OnShutdown () 
+		{
+			addressbook.Dispose ();
+			addressbook = null;
+		}
+		
 		public EvolutionDataServerQueryable ()
 		{
 			try {
 				addressbook = Evolution.Book.NewSystemAddressbook ();
 				addressbook.Open (true);
+				Shutdown.ShutdownEvent += OnShutdown;
 			} catch {
 				addressbook = null;
 				Console.WriteLine ("WARNING: Could not open Evolution addressbook.  Addressbook searching is disabled.");
@@ -80,11 +87,25 @@ namespace Beagle.Daemon.EvolutionDataServerQueryable {
 								    body, 
 								    result);
 
+			// Check shutdownRequested in case shutdown
+			// was requested between when the worker
+			// started and when BookViewDriver setup an
+			// OnShutdown callback
+			if (Shutdown.ShutdownRequested) 
+				return;
+
+			System.Console.WriteLine ("Starting EDS query for {0}", body.Text);
+
 			driver.Start ();
 			
 			lock (driver) {
-				Monitor.Wait (driver);
+
+				if (!driver.IsShutdown) {
+					Monitor.Wait (driver);
+				}
 			}
+
+			System.Console.WriteLine ("EDS query done");
 		}
 
 		public void Start ()

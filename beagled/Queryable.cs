@@ -83,7 +83,7 @@ namespace Beagle.Daemon {
 
 		//////////////////////////////////////////////////////////////
 
-		private class QueryClosure {
+		private class QueryClosure : IQueryWorker{
 
 			private Queryable queryable;
 			private QueryBody body;
@@ -98,9 +98,14 @@ namespace Beagle.Daemon {
 				changeData = _changeData;
 			}
 
-			public void Worker (QueryResult result)
+			public void PerformWork (QueryResult result)
 			{
 				queryable.iqueryable.DoQuery (body, result, changeData);
+			}
+
+			public override string ToString ()
+			{
+				return "QueryWorker: " + queryable.iqueryable.ToString ();
 			}
 		}
 
@@ -111,7 +116,7 @@ namespace Beagle.Daemon {
 		{
 			QueryClosure qc;
 			qc = new QueryClosure (this, body, data);
-			result.AttachWorker (new QueryResult.QueryWorker (qc.Worker));
+			result.AttachWorker (qc);
 		}
 	}
 }

@@ -37,6 +37,7 @@ namespace Beagle.Daemon {
 	class BeagleDaemon {
 
 		private static ArrayList dbusObjects = new ArrayList ();
+		private static FactoryImpl factory = null;
 
 		private static bool Daemonize ()
 		{
@@ -151,7 +152,7 @@ namespace Beagle.Daemon {
 				queryDriver = new QueryDriver ();
 				
 				// Set up our D-BUS object factory.
-				FactoryImpl factory = new FactoryImpl (queryDriver);
+				factory = new FactoryImpl (queryDriver);
 				dbusObjects.Add (factory);
 				DBusisms.Service.RegisterObject (factory, Beagle.DBusisms.FactoryPath);
 			} catch (DBus.DBusException e) {
@@ -185,9 +186,15 @@ namespace Beagle.Daemon {
 
 		private static void OnShutdown ()
 		{
+			Logger.Log.Debug ("Unregistering Factory objects");
+			factory.UnregisterAll ();
+			Logger.Log.Debug ("Done unregistering Factory objects");
+			Logger.Log.Debug ("Unregistering Daemon objects");
 			foreach (object o in dbusObjects)
 				DBusisms.Service.UnregisterObject (o);
 			dbusObjects = null;
+			Logger.Log.Debug ("Done unregistering Daemon objects");
+
 		}
 
 	}

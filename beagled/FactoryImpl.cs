@@ -45,7 +45,6 @@ namespace Beagle.Daemon {
 
 		private void OnShutdown () 
 		{
-			UnregisterAll ();
 		}
 
 		////////////////////////////////////////////////////
@@ -131,9 +130,16 @@ namespace Beagle.Daemon {
 		public void UnregisterAll () 
 		{
 			lock (this) {
-				while (all_objects.Count > 0) {
-					UnregisterObjectAt (0);
+				foreach (ObjectInfo info in all_objects) {
+					object obj = info.Object;
+					Logger.Log.Debug ("Unregistering {0}", info.Path);
+					DBusisms.Service.UnregisterObject (obj);
+					Logger.Log.Debug ("Disposing {0}", info.Path);
+					if (obj is IDisposable)
+						((IDisposable) obj).Dispose ();
+					Logger.Log.Debug ("Unregistered {0}", info.Path);
 				}
+				all_objects = new ArrayList ();
 			}
 		}
 
@@ -171,7 +177,8 @@ namespace Beagle.Daemon {
 
 		override public string NewQueryPath ()
 		{
-			QueryImpl queryImpl = new QueryImpl (queryDriver);
+			QueryImpl queryImpl = new QueryImpl (queryDriver,
+							     Guid.NewGuid ().ToString ());
 			// When a query is closed, we need to unregister it
 			// and do any necessary local clean-up.
 			queryImpl.ClosedEvent += OnClosedHandler;

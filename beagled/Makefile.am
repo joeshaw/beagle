@@ -220,6 +220,7 @@ DAEMON_DLL_CSFILES = 				\
 	$(srcdir)/IQueryResult.cs		\
 	$(srcdir)/QueryableFlavor.cs		\
 	$(srcdir)/IQueryable.cs			\
+	$(srcdir)/IQueryWorker.cs               \
 	$(srcdir)/QueryBody.cs			\
 	$(srcdir)/QueryResult.cs		\
 	$(srcdir)/Queryable.cs			\

@@ -34,13 +34,11 @@ namespace Beagle.Daemon {
 
 	public class QueryResult : IQueryResult {
 
-		public delegate void QueryWorker (QueryResult result);
-
 		class QueryWorkerClosure {
-			QueryWorker worker;
+			IQueryWorker worker;
 			QueryResult result;
 
-			public QueryWorkerClosure (QueryWorker _worker, QueryResult _result)
+			public QueryWorkerClosure (IQueryWorker _worker, QueryResult _result)
 			{
 				worker = _worker;
 				result = _result;
@@ -49,7 +47,7 @@ namespace Beagle.Daemon {
 			public void Start ()
 			{
 				try {
-					worker (result);
+					worker.PerformWork (result);
 				} catch (Exception e) {
 					Logger.Log.Error ("QueryWorker '{0}' failed with exception:\n{1}:\n{2}",
 							  worker, e.Message, e.StackTrace);
@@ -146,7 +144,7 @@ namespace Beagle.Daemon {
 			}
 		}
 
-		public void AttachWorker (QueryWorker worker)
+		public void AttachWorker (IQueryWorker worker)
 		{
 			lock (this) {
 				if (cancelled)
@@ -160,7 +158,8 @@ namespace Beagle.Daemon {
 				// all the workers will have a chance 
 				// to start before Finished is called
 				
-				WorkerStartNoLock (worker);
+				if (!WorkerStartNoLock (worker)) 
+					return;
 
 				Thread th;
 				th = new Thread (new ThreadStart (qwc.Start));
@@ -168,19 +167,22 @@ namespace Beagle.Daemon {
 			}
 		}
 
-		private void WorkerStartNoLock (object o)
+		private bool WorkerStartNoLock (object o)
 		{
-			Shutdown.WorkerStart (o);
+			if (!Shutdown.WorkerStart (o))
+				return false;
 			++workers;
 			if (workers == 1 && StartedEvent != null)
 				StartedEvent (this);
+
+			return true;
 			
 		}
 
-		internal void WorkerStart (object o)
+		internal bool WorkerStart (object o)
 		{
 			lock (this) {
-				WorkerStartNoLock (o);
+				return WorkerStartNoLock (o);
 			}
 		}
 

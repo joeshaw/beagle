@@ -42,9 +42,12 @@ namespace Beagle.Daemon {
 		public delegate void ShutdownHandler ();
 		public static event ShutdownHandler ShutdownEvent;
 
-		public static void WorkerStart (object o)
+		public static bool WorkerStart (object o)
 		{
 			lock (shutdownLock) {
+				if (shutdownRequested) {
+					return false;
+				}
 				int refcount = 0;
 				if (workers.Contains (o))
 					refcount = (int)workers[o];
@@ -53,6 +56,7 @@ namespace Beagle.Daemon {
 
 				Logger.Log.Debug ("worker added: {0}", o);
 			}
+			return true;
 		}
 
 		public static void WorkerFinished (object o)
@@ -89,12 +93,16 @@ namespace Beagle.Daemon {
 
 				Logger.Log.Info ("beginning shutdown");
 
-				if (ShutdownEvent != null)
-					ShutdownEvent ();
-
+				Logger.Log.Debug ("shutting down queues");
 				foreach (ThreadedPriorityQueue queue in queues) {
 					queue.Shutdown ();
 				}
+				Logger.Log.Debug ("done shutting down queues");
+				Logger.Log.Debug ("beginning shutdown event");
+
+				if (ShutdownEvent != null)
+					ShutdownEvent ();
+				Logger.Log.Debug ("done with shutdown event"); 
 
 				int count = 0;
 
@@ -103,7 +111,9 @@ namespace Beagle.Daemon {
 					Logger.Log.Debug ("({0}) Waiting for {1} worker{2}...",
 							   count,
 							  workers.Count,
-							   workers.Count > 1 ? "s" : "");
+							   workers.Count > 1 ? "s" : "");					
+					foreach (object o in workers.Keys) 
+						Logger.Log.Debug ("waiting for {0}", o);
 					Monitor.Wait (shutdownLock);
 				}
 
@@ -112,10 +122,15 @@ namespace Beagle.Daemon {
 			}
 		}
 
+		private static void OnWorkerStart (object o, Beagle.Util.ThreadedPriorityQueue.WorkerStartArgs args) 
+		{
+			args.Success = WorkerStart (o);
+		}
+
 		public static void AddQueue (ThreadedPriorityQueue queue)
 		{
 			lock (shutdownLock) {
-				queue.WorkerStartEvent += WorkerStart;
+				queue.WorkerStartEvent += OnWorkerStart;
 				queue.WorkerFinishedEvent += WorkerFinished;
 				queues.Add (queue);
 			}

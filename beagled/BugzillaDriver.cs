@@ -72,9 +72,8 @@ namespace Beagle.Daemon {
 				     IQueryResult result,
 				     IQueryableChangeData changeData)
 		{
-			                                                                           
 			ArrayList hits = new ArrayList ();
-                                                                                                                                                             
+
 			Logger.Log.Debug ("Kicking off a bugzilla query");
 			// FIXME - hard coding the url here
                         XmlDocument xml = GetBugzillaXml (body.QuotedText);
