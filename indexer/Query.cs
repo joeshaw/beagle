@@ -83,7 +83,7 @@ namespace Beagle {
 			get { return original; }
 		}
 
-		public ICollection Parts {
+		public IList Parts {
 			get { return parts; }
 		}
 

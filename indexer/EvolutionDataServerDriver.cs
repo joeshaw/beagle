@@ -142,14 +142,14 @@ namespace Beagle {
 			// FIXME: Evolution.BookQuery's bindings are all
 			// screwed up, so we can't construct compound queries.
 			// This will have to do for now.
-			StringBuilder fixme = new StringBuilder ("");
-			foreach (string part in query.Parts) {
-				if (fixme.Length > 0)
-					fixme.Append (" ");
-				fixme.Append (part);
+			Evolution.BookQuery[] ebqs = new Evolution.BookQuery [query.Parts.Count];
+			for (int i = 0; i < query.Parts.Count; ++i) {
+				string part = (string) query.Parts [i];
+				ebqs [i] = Evolution.BookQuery.AnyFieldContains (part);
 			}
+
 			Evolution.BookQuery bq;
-			bq = Evolution.BookQuery.AnyFieldContains (fixme.ToString ());
+			bq = Evolution.BookQuery.And (ebqs, false);
 
 			Evolution.Contact[] contacts;
 			contacts = Addressbook.GetContacts (bq);
