@@ -256,7 +256,7 @@ namespace Beagle.Util {
 			}
 			} finally {
 				if (WorkerFinishedEvent != null)
-					WorkerFinisedEvent (this);
+					WorkerFinishedEvent (this);
 			}
 		}
 	}
