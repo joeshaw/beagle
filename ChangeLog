@@ -1,3 +1,16 @@
+2004-10-15  Veerapuram Varadhan (vvaradhan@novell.com>
+
+	* Filters/FilterDOC.cs: Filter for MSWord documents.
+	* Filters/Makefile.am: build FilterOle.cs and FilterDOC.cs.
+	* configure.in: Added config time checking of gsf-sharp.dll for
+	MSOffice filters.
+	
+2004-10-15  Christopher James Lahey  <clahey@ximian.com>
+
+	* Filters/FilterOle: Unified interface for pulling properties from
+	MSOffice documents and serves as the base class for document-type 
+	specific filters.
+
 2004-10-14  Robert Love  <rml@novell.com>
 
 	* Util/FileAdvise.cs: new file, implementing the advice stuff

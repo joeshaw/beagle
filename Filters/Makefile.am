@@ -31,7 +31,9 @@ CSFILES = 				\
 	$(srcdir)/FilterText.cs	        \
 	$(srcdir)/FilterSource.cs	\
 	$(srcdir)/FilterRTF.cs		\
-	$(srcdir)/FilterTexi.cs		
+	$(srcdir)/FilterOle.cs		\
+	$(srcdir)/FilterPPT.cs		\
+	$(srcdir)/FilterDOC.cs		
 
 LOCAL_ASSEMBLIES =				\
 	../Util/Util.dll			\

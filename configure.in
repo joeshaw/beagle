@@ -18,7 +18,7 @@ if test "x$MCSTEST" = "xno"; then
 fi
 
 
-PKG_CHECK_MODULES(BEAGLE_UI, gtk-sharp gtkhtml-sharp gnome-sharp dbus-sharp)
+PKG_CHECK_MODULES(BEAGLE_UI, gtk-sharp gtkhtml-sharp gnome-sharp dbus-sharp gsf-sharp)
 AC_SUBST(BEAGLE_UI_LIBS)
 
 dnl ----------------------------------------------
