@@ -30,8 +30,8 @@ struct inotify_event {
  * Pass to the inotify device via the INOTIFY_WATCH ioctl
  */
 struct inotify_watch_request {
-	char *name;		/* directory name */
-	__u32 mask;		/* event mask */
+	char *name;	/* directory name */
+	__u32 mask;	/* event mask */
 };
 
 /* the following are legal, implemented events */
@@ -70,7 +70,6 @@ struct inotify_watch_request {
 
 struct inotify_inode_data {
 	struct list_head watches;	/* list of watches on this inode */
-	struct list_head entry;		/* entry in inotify_device's list */
 	spinlock_t lock;		/* lock protecting the struct */
 	atomic_t count;			/* ref count */
 };
