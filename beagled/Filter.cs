@@ -123,7 +123,7 @@ namespace Beagle.Daemon {
 
 		//////////////////////////
 		
-		private bool snippetMode = true;
+		private bool snippetMode = false;
 		private TextWriter snippetWriter = null;
 
 		public bool SnippetMode {
@@ -147,9 +147,15 @@ namespace Beagle.Daemon {
 		{
 			//Logger.Log.Debug ("AppendText (\"{0}\")", str);
 			if (! IsFrozen && str != null && str != "") {
+
+				// FIXME: We should be smarter about newlines
+				str = str.Replace ("\n", " ");
+
 				textPool.Add (str);
 				if (IsHot)
 					hotPool.Add (str);
+				if (snippetWriter != null)
+					snippetWriter.Write (str);
 			}
 		}
 
@@ -169,8 +175,11 @@ namespace Beagle.Daemon {
 		public void AppendWhiteSpace ()
 		{
 			//Logger.Log.Debug ("AppendWhiteSpace ()");
-			if (NeedsWhiteSpace (textPool))
+			if (NeedsWhiteSpace (textPool)) {
 				textPool.Add (" ");
+				if (snippetWriter != null)
+					snippetWriter.Write (" ");
+			}
 			if (NeedsWhiteSpace (hotPool))
 				hotPool.Add (" ");
 			
@@ -184,7 +193,8 @@ namespace Beagle.Daemon {
 
 		public void AddStructuralBreak ()
 		{
-			// FIXME: Do something!
+			if (snippetWriter != null)
+				snippetWriter.WriteLine ();
 		}
 
 		//////////////////////////
@@ -356,6 +366,9 @@ namespace Beagle.Daemon {
 
 			currentStream.Close ();
 			currentStream = null;
+
+			if (snippetWriter != null)
+				snippetWriter.Close ();
 
 			if (tempFile != null)
 				File.Delete (tempFile);

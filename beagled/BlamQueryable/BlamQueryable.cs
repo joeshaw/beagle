@@ -100,6 +100,9 @@ namespace Beagle.Daemon.BlamQueryable {
 		{
 			FileInfo file = new FileInfo (Path.Combine (blamDir, "collection.xml"));
 
+			if (Driver.IsUpToDate (file.FullName))
+				return;
+
 			ChannelCollection collection = null;
 
 			try {
@@ -119,10 +122,8 @@ namespace Beagle.Daemon.BlamQueryable {
 
 			Scheduler.TaskGroup group = NewMarkingTaskGroup (file.FullName, file.LastWriteTime);
 			
-			foreach(Channel channel in collection.Channels)	{
+			foreach (Channel channel in collection.Channels)	{
 
-				// FIXME: Only index channels and items that have been modified
-				
 				foreach(Item item in channel.Items) {
 					Indexable indexable = new Indexable (
 						new Uri (channel.Url.Replace ("http://", "rss://") + ";item=" + item.Id));

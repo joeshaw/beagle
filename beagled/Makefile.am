@@ -206,7 +206,7 @@ BLAM_QUERYABLE_CSFILES =				\
 
 #	$(WEB_HISTORY_QUERYABLE_CSFILES)	\
 #	$(EVO_MAIL_DRIVER_CSFILES)		\
-#	$(TOMBOY_QUERYABLE_CSFILES)		\
+#		$(TOMBOY_QUERYABLE_CSFILES)		\
 #
 
 DAEMON_DLL_CSFILES = 				\
@@ -233,7 +233,8 @@ DAEMON_DLL_CSFILES = 				\
 	$(srcdir)/Queryable.cs			\
 	$(srcdir)/QueryableFlavor.cs		\
 	$(srcdir)/Relevancy.cs			\
-	$(srcdir)/Shutdown.cs
+	$(srcdir)/Shutdown.cs			\
+	$(srcdir)/TextCache.cs
 
 DAEMON_DLL_LOCAL_ASSEMBLIES =		\
 	../Util/Util.dll		\

@@ -212,7 +212,11 @@ namespace Beagle.Daemon {
 
 		public void AttachTimestamp (string path, DateTime mtime)
 		{
-			ExtendedAttribute.Mark (path, fingerprint, mtime);
+			try {
+				ExtendedAttribute.Mark (path, fingerprint, mtime);
+			} catch (Exception ex) {
+				log.Warn ("Couldn't set extended attribute on {0}", path);
+			}
 		}
 
 		/////////////////////////////////////////////////////

@@ -46,10 +46,10 @@ namespace Beagle.Daemon {
 			get { return Path.Combine (PkgLibDir, "Filters"); }
 		}
 
-		static public String RootDir {
+		static public string RootDir {
 			get {
-				String homedir = Environment.GetEnvironmentVariable ("HOME");
-				String dir = Path.Combine (homedir, ".beagle");
+				string homedir = Environment.GetEnvironmentVariable ("HOME");
+				string dir = Path.Combine (homedir, ".beagle");
 				if (! Directory.Exists (dir)) {
 					Directory.CreateDirectory (dir);
 					// Make sure that ~/.beagle directory is only
@@ -62,7 +62,7 @@ namespace Beagle.Daemon {
 			}
 		}
 
-		static public String LogDir {
+		static public string LogDir {
 			get {
 				string dir = Path.Combine (RootDir, "Log");
 				if (! Directory.Exists (dir))
@@ -71,9 +71,9 @@ namespace Beagle.Daemon {
 			}
 		}
 
-		static private String AppDir {
+		static private string AppDir {
 			get {
-				String dir = Path.Combine (RootDir, "App");
+				string dir = Path.Combine (RootDir, "App");
 				if (! Directory.Exists (dir))
 					Directory.CreateDirectory (dir);
 				return dir;
@@ -82,50 +82,50 @@ namespace Beagle.Daemon {
 
 		// We probably shouldn't expose this.  Use it only for good, not
 		// for evil.
-		static public String AppDataFileName (String appName, String dataName)
+		static public string AppDataFileName (string appName, string dataName)
 		{
 			// FIXME: should make sure appName & dataName don't
 			// contain evil characters.
 			return Path.Combine (AppDir,
-					     String.Format ("{0}_-_-{1}", appName, dataName));
+					     string.Format ("{0}_-_-{1}", appName, dataName));
 		}
 
 		
-		static public bool HaveAppData (String appName, String dataName)
+		static public bool HaveAppData (string appName, string dataName)
 		{
 			return File.Exists (AppDataFileName (appName, dataName));
 		}
 
-		static public Stream ReadAppData (String appName, String dataName)
+		static public Stream ReadAppData (string appName, string dataName)
 		{
 			return new FileStream (AppDataFileName (appName, dataName),
 					       FileMode.Open,
 					       FileAccess.Read);
 		}
 
-		static public String ReadAppDataLine (String appName, String dataName)
+		static public string ReadAppDataLine (string appName, string dataName)
 		{
 			if (! HaveAppData (appName, dataName))
 				return null;
 
 			StreamReader sr = new StreamReader (ReadAppData (appName, dataName));
-			String line = sr.ReadLine ();
+			string line = sr.ReadLine ();
 			sr.Close ();
 
 			return line;
 		}
 
-		static public Stream WriteAppData (String appName, String dataName)
+		static public Stream WriteAppData (string appName, string dataName)
 		{
 			return new FileStream (AppDataFileName (appName, dataName),
 					       FileMode.Create,
 					       FileAccess.Write);
 		}
 
-		static public void WriteAppDataLine (String appName, String dataName, String line)
+		static public void WriteAppDataLine (string appName, string dataName, string line)
 		{
 			if (line == null) {
-				String fileName = AppDataFileName (appName, dataName); 
+				string fileName = AppDataFileName (appName, dataName); 
 				if (File.Exists (fileName))
 					File.Delete (fileName);
 				return;

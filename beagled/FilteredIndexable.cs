@@ -232,8 +232,15 @@ namespace Beagle.Daemon {
 
 			flavor = Flavor.FromMimeType (MimeType);
 			filter = Filter.FromFlavor (flavor);
+			
 
 			if (filter != null) {
+
+				if (filter.SnippetMode) {
+					TextWriter writer = TextCache.GetWriter (Uri);
+					filter.AttachSnippetWriter (writer);
+				}
+
 				if (crawl_mode)
 					filter.EnableCrawlMode ();
 				filter.Open (new FileInfo (path));

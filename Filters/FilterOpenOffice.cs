@@ -44,6 +44,7 @@ namespace Beagle.Filters {
 			AddSupportedMimeType ("application/vnd.sun.xml.writer");
 			AddSupportedMimeType ("application/vnd.sun.xml.impress");
 			AddSupportedMimeType ("application/vnd.sun.xml.calc");
+			SnippetMode = true;
 		}
 		
 		static String FindAttribute (XmlNode node,

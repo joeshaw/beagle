@@ -39,6 +39,7 @@ namespace Beagle.Filters {
 		public FilterHtml ()
 		{
 			AddSupportedMimeType ("text/html");
+			SnippetMode = true;
 		}
 
 		static bool NodeIsHot (String nodeName) 
@@ -121,11 +122,14 @@ namespace Beagle.Filters {
 			case HtmlNodeType.Element:
 				if (! NodeIsContentFree (node.Name)) {
 					bool isHot = NodeIsHot (node.Name);
+					bool breaksText = NodeBreaksText (node.Name);
 					if (isHot)
 						HotUp ();
+					if (breaksText)
+						AppendWhiteSpace ();
 					foreach (HtmlNode subnode in node.ChildNodes)
 						WalkBodyNodes (subnode);
-					if (NodeBreaksText (node.Name))
+					if (breaksText)
 						AppendWhiteSpace ();
 					if (isHot)
 						HotDown ();
