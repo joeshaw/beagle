@@ -378,6 +378,11 @@ BLAM_QUERYABLE_CSFILES =				\
 #		$(TOMBOY_QUERYABLE_CSFILES)		\
 #
 
+calendarqueryable = $(srcdir)/CalendarQueryable
+CALENDAR_QUERYABLE_CSFILES =				\
+	$(calendarqueryable)/CalendarQueryable.cs	\
+	$(calendarqueryable)/ICalParser/*.cs
+
 DAEMON_DLL_CSFILES = 						\
 	$(LUCENE_CSFILES)					\
 	$(FILE_SYSTEM_QUERYABLE_CSFILES)			\
@@ -385,6 +390,7 @@ DAEMON_DLL_CSFILES = 						\
 	$(BLAM_QUERYABLE_CSFILES)				\
 	$(EVO_MAIL_QUERYABLE_CSFILES)				\
 	$(WEB_HISTORY_QUERYABLE_CSFILES)			\
+	$(CALENDAR_QUERYABLE_CSFILES)				\
 	$(srcdir)/BugzillaDriver.cs 				\
 	$(srcdir)/Crawler.cs					\
 	$(srcdir)/DBusisms.cs					\
@@ -423,7 +429,8 @@ DAEMON_DLL_ASSEMBLIES = 			\
 	-r:ICSharpCode.SharpZipLib.dll		\
 	-r:Mono.Data.SqliteClient		\
 	-r:Mono.Posix				\
-	-r:System.Runtime.Remoting
+	-r:System.Runtime.Remoting		\
+	-r:System.Web
 
 
 if ENABLE_EVO_SHARP
