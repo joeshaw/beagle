@@ -1,5 +1,5 @@
 //
-// EvolutionMailIndexableGenerator.cs
+// GConfThreadHelper.cs
 //
 // Copyright (C) 2004 Novell, Inc.
 //
@@ -29,7 +29,7 @@ using System.Threading;
 using GConf;
 using GLib;
 
-namespace Beagle.Util {
+namespace Beagle.Daemon {
 
 	public class GConfThreadHelper {
 		private static object lock_obj = new object ();
@@ -37,10 +37,12 @@ namespace Beagle.Util {
 
 		private string path;
 		private object data;
+		private bool finished;
 
 		private GConfThreadHelper (string path)
 		{			
 			this.path = path;
+			this.finished = false;
 		}
 
 		private bool GConfReady ()
@@ -50,12 +52,14 @@ namespace Beagle.Util {
 					gconf_client = new GConf.Client ();
 
 				this.data = gconf_client.Get (this.path);
-
+				this.finished = true;
 				Monitor.Pulse (lock_obj);
 			}
 
 			return false;
 		}
+
+		static private TimeSpan one_second = new TimeSpan (10000000);
 
 		public static object Get (string path)
 		{
@@ -63,7 +67,10 @@ namespace Beagle.Util {
 				GConfThreadHelper helper = new GConfThreadHelper (path);
 
 				GLib.Idle.Add (new GLib.IdleHandler (helper.GConfReady));
-				Monitor.Wait (lock_obj);
+
+				while (! helper.finished
+				       && ! Shutdown.ShutdownRequested)
+					Monitor.Wait (lock_obj, one_second);
 
 				return helper.data;
 			}

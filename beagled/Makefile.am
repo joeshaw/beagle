@@ -422,6 +422,7 @@ DAEMON_DLL_CSFILES = 						\
 	$(srcdir)/FileAttributesStore_Sqlite.cs			\
 	$(srcdir)/FilterFactory.cs				\
 	$(srcdir)/FilteredIndexable.cs				\
+	$(srcdir)/GConfThreadHelper.cs				\
 	$(srcdir)/GoogleDriver.cs				\
 	$(srcdir)/HitRegulator.cs				\
 	$(srcdir)/IDBusObject.cs				\

@@ -519,6 +519,10 @@ namespace Beagle.Daemon.EvolutionMailDriver {
 				return false;
 			}
 
+			// This should only happen if we shut down while waiting for the GConf results to come back.
+			if (this.accounts == null)
+				return false;
+
 			foreach (string xml in this.accounts) {
 				XmlDocument xmlDoc = new XmlDocument ();
 

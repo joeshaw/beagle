@@ -25,7 +25,6 @@ CSFILES = 			        	\
 	$(srcdir)/FileSystem.cs			\
 	$(srcdir)/FrequencyStatistics.cs	\
 	$(srcdir)/FSpotTools.cs         	\
-	$(srcdir)/GConfThreadHelper.cs          \
 	$(srcdir)/GeckoUtils.cs                 \
 	$(srcdir)/GuidFu.cs			\
 	$(srcdir)/GtkUtils.cs			\

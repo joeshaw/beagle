@@ -462,13 +462,14 @@ namespace Beagle.Daemon {
 			Logger.Log.Debug ("Starting main loop");
 			Application.Run ();
 
-			Logger.Log.Debug ("Leaving BeagleDaemon.Main");
 #if ENABLE_WEBSVC
 			if (appServer != null) {
 			    	appServer.Stop(); 
 				appServer = null;
 			}
 #endif
+			Logger.Log.Debug ("Leaving BeagleDaemon.Main");
+
 			// Exiting will close the dbus connection, which
 			// will release the com.novell.beagle service.
 			return 0;

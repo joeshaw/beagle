@@ -861,6 +861,7 @@ namespace Beagle.Util {
 					collection.Clear ();
 				}
 			}
+			Logger.Log.Debug ("Scheduler.Worker finished");
 		}
 	}
 
