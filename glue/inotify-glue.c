@@ -86,8 +86,12 @@ inotify_glue_watch (int fd, const char *filename, __u32 mask)
 	struct inotify_watch_request iwr;
 	int wd;
 
-	iwr.dirname = strdup (filename);
 	iwr.mask = mask;
+	iwr.dirname = strdup (filename);
+	if (iwr.dirname) {
+		perror ("strdup");
+		return -1;
+	}
 
 	wd = ioctl (fd, INOTIFY_WATCH, &iwr);
 	if (wd < 0) {
@@ -100,6 +104,7 @@ inotify_glue_watch (int fd, const char *filename, __u32 mask)
 
 	return wd;
 }
+
 
 int 
 inotify_glue_ignore (int fd, int wd)
@@ -135,6 +140,10 @@ inotify_snarf_events (int fd, int timeout_secs, int *num_read_out, void **buffer
     if (buffer == NULL) {
 	buffer_size = sizeof (struct inotify_event) * max_queued_events;
 	buffer = malloc (buffer_size);
+	if (!buffer) {
+		/* FIXME: We should have some method of actual error here .. */
+		perror ("malloc");
+	}
     }
 
     /* Wait for the file descriptor to be ready to read. */
@@ -159,13 +168,13 @@ inotify_snarf_events (int fd, int timeout_secs, int *num_read_out, void **buffer
 
     prev_pending = 0;
     pending_pause_count = 0;
-    
+
     while (pending_pause_count < MAX_PENDING_PAUSE_COUNT) {
-	
+
 	if (ioctl (fd, FIONREAD, &pending) == -1)
 	    break;
 	pending /= sizeof (struct inotify_event);
-	
+
 	/* Don't wait if the number of pending events is too close
 	   to the maximum queue size. */
 	if (pending > PENDING_THRESHOLD (max_queued_events))
