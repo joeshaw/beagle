@@ -38,6 +38,16 @@ namespace Beagle.Daemon {
 		}
 
 		public abstract double GetMultiplier (Hit hit);
+
+		public static double HalfLifeMultiplier (DateTime time)
+		{
+			double days = (DateTime.Now - time).TotalDays;
+			if (days < 0)
+				return 1.0;
+			// Relevancy half-life is three months.
+			return Math.Pow (0.5, days / 91.0);
+		}
+
 	}
 
 	// Meta-FIXME: These rules are very ad-hoc.
@@ -65,11 +75,7 @@ namespace Beagle.Daemon {
 
 		public override double GetMultiplier (Hit hit)
 		{
-			double days = (DateTime.Now - hit.FileInfo.LastAccessTime).TotalDays;
-			if (days < 0)
-				return 1.0;
-			// Relevancy half-life is three months.
-			return Math.Pow (0.5, days / 91.0);
+			return HalfLifeMultiplier (hit.FileInfo.LastAccessTime);
 		}
 	}
 
@@ -113,12 +119,30 @@ namespace Beagle.Daemon {
 				return 1.0;
 
 			DateTime date = Beagle.Util.StringFu.StringToDateTime (date_str);
-			double days = (DateTime.Now - date).TotalDays;
-			if (days < 0)
+
+			return HalfLifeMultiplier (date);
+		}
+	}
+
+	public class RelevancyRule_IMLogTime : RelevancyRule {
+
+		public override bool IsApplicable (Hit hit)
+		{
+			if (hit.Uri.Scheme == "imlog")
+				return true;
+			else
+				return false;
+		}
+
+		public override double GetMultiplier (Hit hit)
+		{
+			string date_str = hit["fixme:endtime"];
+
+			if (date_str == null)
 				return 1.0;
 
-			// Relevancy half-life is three months.
-			return Math.Pow (0.5, days / 91.0);
+			DateTime date = Beagle.Util.StringFu.StringToDateTime (date_str);
+			return HalfLifeMultiplier (date);
 		}
 	}
 	
