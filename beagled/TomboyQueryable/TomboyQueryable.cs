@@ -101,7 +101,7 @@ namespace Beagle.Daemon.TomboyQueryable {
 			if (subitem == "")
 				return;
 
-			Console.WriteLine ("*** {0} {1} {2}", path, subitem, type);
+			//Console.WriteLine ("*** {0} {1} {2}", path, subitem, type);
 
 			// Ignore backup files, tmp files, etc.
 			if (Path.GetExtension (subitem) != ".note")
@@ -109,13 +109,13 @@ namespace Beagle.Daemon.TomboyQueryable {
 			
 			if (wd == wdNotes && type == Inotify.EventType.MovedTo) {
 				IndexNote (new FileInfo (Path.Combine (path, subitem)), Scheduler.Priority.Immediate);
-				Console.WriteLine ("Indexed {0}", Path.Combine (path, subitem));
+				//Console.WriteLine ("Indexed {0}", Path.Combine (path, subitem));
 			}
 
 			if (wd == wdBackup && type == Inotify.EventType.MovedTo) {
 				string oldPath = Path.Combine (notesDir, subitem);
 				RemoveNote (oldPath);
-				Console.WriteLine ("Removing {0}", oldPath);
+				//Console.WriteLine ("Removing {0}", oldPath);
 			}
 
 		}
@@ -161,9 +161,13 @@ namespace Beagle.Daemon.TomboyQueryable {
 			ThisScheduler.Add (task);
 
 			// Write a plain-text version of our note out into the text cache
-			TextWriter writer = TextCache.GetWriter (note.Uri);
-			writer.Write (note.text);
-			writer.Close ();
+			try {
+				TextWriter writer = TextCache.GetWriter (note.Uri);
+				writer.Write (note.text);
+				writer.Close ();
+			} catch (Exception ex) {
+				Console.WriteLine (">>>>> Caught exception writing {0} to text cache", note.Uri);
+			}
 		}
 		
 		private void RemoveNote (string path)
