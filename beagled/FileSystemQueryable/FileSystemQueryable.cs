@@ -43,17 +43,366 @@ namespace Beagle.Daemon.FileSystemQueryable {
 
 		private static Logger log = Logger.Get ("FileSystemQueryable");
 
-		private FileNameFilter filter;
-		private CrawlQueue crawlQ;
-		private EventStatistics eventStats;
-
-		public FileSystemQueryable () : base (Path.Combine (PathFinder.RootDir, "FileSystemIndex"))
+		public FileSystemQueryable () : base ("FileSystemIndex")
 		{
-			filter = new FileNameFilter ();			
-			crawlQ = new CrawlQueue (filter, Driver, log);
-			eventStats = new EventStatistics ();
-
 			Inotify.InotifyEvent += new InotifyHandler (OnInotifyEvent);
+		}
+
+		//////////////////////////////////////////////////////////////////////////
+
+		private FileNameFilter filter = new FileNameFilter ();
+
+		private bool IgnoreFile (string path)
+		{
+			if (FileSystem.IsSymLink (path))
+				return true;
+
+			if (filter.Ignore (path))
+				return true;
+			
+			return false;
+		}
+
+		private bool FileNeedsIndexing (string path)
+		{
+			if (! FileSystem.Exists (path))
+				return false;
+
+			if (FileSystem.IsSymLink (path))
+				return false;
+
+			if (filter.Ignore (path))
+				return false;
+
+			if (Driver.IsUpToDate (path))
+				return false;
+			
+			return true;
+		}
+
+		private static Indexable FileToIndexable (string path)
+		{
+			Uri uri = UriFu.PathToFileUri (path);
+			return new FilteredIndexable (uri);
+		}
+
+		//////////////////////////////////////////////////////////////////////////
+
+		private void Add (string path)
+		{
+			if (FileNeedsIndexing (path)) {
+				Scheduler.Task task;
+				Indexable indexable;
+
+				indexable = FileToIndexable (path);
+				task = NewAddTask (indexable);
+				task.Priority = Scheduler.Priority.Immediate;
+				
+				ThisScheduler.Add (task);
+			}
+		}
+
+		private void Remove (string path)
+		{
+			Uri uri = UriFu.PathToFileUri (path);
+			Scheduler.Task task;
+			task = NewRemoveTask (uri);
+			task.Priority = Scheduler.Priority.Immediate;
+			ThisScheduler.Add (task);
+		}
+
+		private void Crawl (WatchedDirectory dir)
+		{
+			DirectoryInfo info = new DirectoryInfo (dir.Path);
+			if (! info.Exists)
+				return;
+			
+			Scheduler.TaskGroup group = LastCrawlTime.NewTaskGroup (dir.Path, DateTime.Now);
+			
+			Scheduler.Task task;
+			Indexable indexable;
+
+			log.Info ("Crawling {0}", dir.Path);
+
+			// Index the directory itself...
+			if (FileNeedsIndexing (dir.Path)) {
+				
+				indexable = FileToIndexable (dir.Path);
+				
+				task = NewAddTask (indexable);
+				task.AddTaskGroup (group);
+				task.Priority = Scheduler.Priority.Delayed;
+				task.SubPriority = 0;
+				task.Description = "Found while crawling " + dir.Path;
+
+				ThisScheduler.Add (task);
+			}
+			
+			// ...and all of the files it contains.  Subdirectories
+			// will get indexed when they are themselves crawled.
+			foreach (FileInfo file in info.GetFiles ()) {
+				if (FileNeedsIndexing (file.FullName)) {
+					
+					indexable = FileToIndexable (file.FullName);
+				
+					task = NewAddTask (indexable);
+					task.AddTaskGroup (group);
+					task.Priority = Scheduler.Priority.Delayed;
+					task.SubPriority = 0;
+					task.Description = "Found while crawling " + dir.Path;
+					
+					ThisScheduler.Add (task);
+				}
+			}
+		}
+
+		//////////////////////////////////////////////////////////////////////////
+
+		//
+		// Maintain a sorted list of directories marked as "dirty".
+		// These are directories that need to be crawled, sorted in
+		// an order that prioritizes never-before-crawled and
+		// recently active directories.
+		//
+
+		private ArrayList dir_dirty = new ArrayList ();
+		private Hashtable dir_dirty_hash = new Hashtable ();
+		private bool dir_dirty_needs_sorting = false;
+
+		private void AddDirtyDirectory (WatchedDirectory dir)
+		{
+			if (! dir.Dirty)
+				return;
+
+			lock (dir_dirty) {
+
+				if (dir_dirty_hash.Contains (dir)) {
+					// If we already know the directory is dirty,
+					// assume something has changed and thus that
+					// we need a re-sort.
+					dir_dirty_needs_sorting = true;
+				} else {
+					// There is no point in insertion-sorting
+					// if the list is in a possibly-unsorted state.
+					if (dir_dirty_needs_sorting) {
+						dir_dirty.Add (dir);
+					} else {
+						int i = dir_dirty.BinarySearch (dir);
+						if (i < 0)
+							i = ~i;
+						dir_dirty.Insert (i, dir);
+					}
+					dir_dirty_hash [dir] = true;
+				}
+
+				if (dir_dirty.Count == 1)
+					ScheduleCrawl ();
+			}
+		}
+
+		private bool HaveDirtyDirectories {
+			get { lock (dir_dirty) { return dir_dirty.Count > 0; } }
+		}
+
+		private WatchedDirectory GetNextDirtyDirectory ()
+		{
+			lock (dir_dirty) {
+				if (dir_dirty.Count == 0)
+					return null;
+
+				WatchedDirectory dir;
+
+				if (dir_dirty_needs_sorting) {
+
+					dir_dirty.Sort ();
+
+					// Prune non-dirty directories off of the end.
+					int i = dir_dirty.Count - 1;
+					while (i >= 0) {
+						dir = dir_dirty [i] as WatchedDirectory;
+						if (dir.Dirty)
+							break;
+						dir_dirty_hash.Remove (dir);
+						--i;
+					}
+					if (i < dir_dirty.Count - 1)
+						dir_dirty.RemoveRange (i+1, dir_dirty.Count - 1 - i);
+
+					if (i == -1) // Everything disappeared
+						return null;
+				}
+
+				dir = dir_dirty [0] as WatchedDirectory;
+
+				dir_dirty.RemoveAt (0);
+				dir_dirty_hash.Remove (dir);
+				
+				return dir;
+			}
+		}
+
+		//////////////////////////////////////////////////////////////////////////
+
+		private Hashtable dir_by_path = new Hashtable ();
+		private Hashtable dir_by_wd = new Hashtable ();
+		private ArrayList dir_array = new ArrayList ();
+
+		public void Scan (string root)
+		{
+			log.Info ("Scanning {0}", root);
+
+			Stopwatch stopwatch = new Stopwatch ();
+			stopwatch.Start ();
+
+			Queue queue = new Queue ();
+			ArrayList scanned = new ArrayList ();
+			int count = 0;
+
+			queue.Enqueue (root);
+
+			while (queue.Count > 0) {
+
+				string path = (string) queue.Dequeue ();
+				if (IgnoreFile (path))
+					continue;
+
+				++count;
+			
+				DirectoryInfo info = new DirectoryInfo (path);
+				if (info.Exists) {
+					WatchedDirectory dir = new WatchedDirectory (Driver, path);
+					dir_by_path [dir.Path] = dir;
+					dir_by_wd [dir.WatchDescriptor] = dir;
+					dir_array.Add (dir);
+
+					dir.State = DirectoryState.Scanning;					
+
+					foreach (DirectoryInfo subinfo in info.GetDirectories ()) {
+						if (! filter.Ignore (subinfo.FullName)
+						    && ! FileSystem.IsSymLink (subinfo.FullName))
+							queue.Enqueue (subinfo.FullName);
+					}
+					
+					// Directories start out dirty
+					AddDirtyDirectory (dir);
+
+					scanned.Add (dir);
+				}
+			}
+
+			foreach (WatchedDirectory dir in scanned)
+				dir.State = DirectoryState.Watched;
+
+			stopwatch.Stop ();
+
+			log.Info ("Scanned {0} director{1} in {2}", 
+				  count, count == 1 ? "y" : "ies", stopwatch);
+			// FIXME: Do we need to re-run queries when we are fully started?
+		}
+
+		private void ScheduleCrawl ()
+		{
+			lock (dir_dirty) {
+				if (dir_dirty.Count > 0) {
+					Scheduler.Task task;
+					task = Scheduler.TaskFromHook (new Scheduler.Hook (CrawlNextDirectory));
+					task.Tag = "File System Crawler";
+					task.Priority = Scheduler.Priority.Delayed;
+					task.SubPriority = -1000;
+					task.Description = String.Format ("{0} directories need to be crawled",
+									  dir_dirty.Count);
+					
+					ThisScheduler.Add (task);
+				}
+			}
+		}
+
+		private void CrawlNextDirectory ()
+		{
+			WatchedDirectory dir;
+
+			dir = GetNextDirtyDirectory ();
+
+			if (dir != null) {
+				Crawl (dir);
+				dir.Dirty = false;
+				ScheduleCrawl ();
+			}
+		}
+
+		//////////////////////////////////////////////////////////////////////////
+
+		// Filter out hits where the files seem to no longer exist.
+		override protected bool HitIsValid (Uri uri)
+		{
+			if (! uri.IsFile)
+				return false;
+			string path = uri.LocalPath;
+			return File.Exists (path) || Directory.Exists (path);
+		}
+
+		//////////////////////////////////////////////////////////////////////////
+
+		//
+		// Inotify-related code
+		//
+
+		private void OnInotifyEvent (int              wd,
+					     string           path,
+					     string           subitem,
+					     InotifyEventType type,
+					     int              cookie)
+		{
+			WatchedDirectory dir;
+			dir = dir_by_wd [wd] as WatchedDirectory;
+			if (dir == null)
+				return;
+
+			if (! dir.ProcessEvent (type))
+				return;
+
+			string full_path = Path.Combine (path, subitem);
+
+			// Handle a few simple event types
+			switch (type) {
+
+			case InotifyEventType.CreateSubdir:
+				Scan (full_path);
+				return;
+
+			case InotifyEventType.QueueOverflow:
+				// If the queue overflows, we can't make any
+				// assumptions about the state of the file system.
+				// FIXME: Do the right thing here.
+				return;
+
+			}
+
+			// If events are coming in too fast, stop watching this directory
+			// for a while.
+			// FIXME: Do the right thing.
+
+			// If we see activity in a dirty directory with the time set to DateTime.MaxValue,
+			// mark it as dirty so that the crawl will happen sooner.
+			if (dir.Dirty && dir.DirtyTime == DateTime.MaxValue) {
+				log.Debug ("Flagging {0} as dirty", dir.Path);
+				dir.Dirty = true;
+				AddDirtyDirectory (dir);
+			}
+
+			// Handle the events that trigger indexing operations.
+			switch (type) {
+
+			case InotifyEventType.DeleteSubdir:
+			case InotifyEventType.DeleteFile:
+				Remove (full_path);
+				break;
+
+			case InotifyEventType.CloseWrite:
+				Add (full_path);
+				break;
+
+			}
 		}
 
 		//////////////////////////////////////////////////////////////////////////
@@ -61,17 +410,7 @@ namespace Beagle.Daemon.FileSystemQueryable {
 		public void StartWorker ()
 		{
 			string home = Environment.GetEnvironmentVariable ("HOME");
-
-			TraverseDirectory (home, true);
-
-			// Crawl a few important directories right away, just to be sure.
-			// FIXME: This list shouldn't be hard-wired
-			crawlQ.ScheduleCrawl (home);
-			crawlQ.ScheduleCrawl (Path.Combine (home, "Desktop"));
-			crawlQ.ScheduleCrawl (Path.Combine (home, "Documents"));
-			Shutdown.AddQueue (crawlQ);
-			crawlQ.Start ();
-
+			Scan (home);
 			log.Info ("FileSystemQueryable start-up thread finished");
 			
 			// FIXME: Do we need to re-run queries when we are fully started?
@@ -87,156 +426,10 @@ namespace Beagle.Daemon.FileSystemQueryable {
 
 		//////////////////////////////////////////////////////////////////////////
 
-		// Filter out hits where the files seem to no longer exist.
-		override protected bool HitIsValid (Hit hit)
-		{
-			string path = hit.Uri.LocalPath;
-			return File.Exists (path) || Directory.Exists (path);
-		}
-
-		//////////////////////////////////////////////////////////////////////////
-
-		//
-		// Inotify-related code
-		//
-
-		private Hashtable watchedPaths = new Hashtable ();
-		private Hashtable blockedPaths = new Hashtable ();
-
-		private void Watch (string path)
-		{
-			Inotify.Watch (path, 
-				       InotifyEventType.Open
-				       | InotifyEventType.CreateSubdir
-				       | InotifyEventType.DeleteSubdir
-				       | InotifyEventType.DeleteFile
-				       | InotifyEventType.CloseWrite
-				       | InotifyEventType.QueueOverflow);
-		}
-
-		// Do a breadth-first traversal of the home directory,
-		// setting up watches and scheduling crawls.
-		private void TraverseDirectory (string root, bool isInitial)
-		{
-			Queue queue = new Queue ();
-			int count = 0;
-
-			log.Info ("Watching {0}", root);
-			Stopwatch stopwatch = new Stopwatch ();
-			stopwatch.Start ();
-			
-			queue.Enqueue (root);
-
-			while (queue.Count > 0) {
-				++count;
-				string path = (string) queue.Dequeue ();
-			
-				DirectoryInfo dir = new DirectoryInfo (path);
-				if (dir.Exists) {
-					blockedPaths [path] = true;
-					watchedPaths [path] = true;
-					Watch (path);
-
-					if (isInitial)
-						crawlQ.RegisterDirectory (path);
-					else
-						crawlQ.ScheduleCrawl (path, 0);
-
-					foreach (DirectoryInfo subdir in dir.GetDirectories ()) {
-						if (! filter.Ignore (subdir.FullName)
-						    && ! FileSystem.IsSymLink (subdir.FullName))
-							queue.Enqueue (subdir.FullName);
-					}
-				}
-
-				blockedPaths.Remove (path);
-			}
-
-			stopwatch.Stop ();
-
-			log.Info ("Watched {0} director{1} in {2}", 
-				  count, count == 1 ? "y" : "ies", stopwatch);
-		}
-
-		private void OnInotifyEvent (int              wd,
-					     string           path,
-					     string           subitem,
-					     InotifyEventType type,
-					     int              cookie)
-		{
-			// Having to do a hash table lookup per event sucks.
-			// It would be nicer if there was a faster way to do
-			// this lookup.
-			if (! watchedPaths.Contains (path))
-				return;
-
-			string fullPath = Path.Combine (path, subitem);
-			if (blockedPaths.Contains (fullPath) || filter.Ignore (fullPath))
-				return;
-
-			// Handle a few simple event types
-			switch (type) {
-
-			case InotifyEventType.CreateSubdir:
-				TraverseDirectory (fullPath, false);
-				return;
-
-			case InotifyEventType.QueueOverflow:
-				// If the queue overflows, we can't make any
-				// assumptions about the state of the file system.
-				crawlQ.ForgetAll ();
-				return;
-
-			}
-
-			eventStats.AddEvent (path);
-
-			// Try to crawl any path we see activity in.
-			// We only crawl each directory once, but that is enforced
-			// inside of the CrawlQueue.
-			if (subitem != "") {
-				crawlQ.ScheduleCrawl (path, 0);
-			}
-
-			// Handle the events that trigger indexing operations.
-			switch (type) {
-
-			case InotifyEventType.DeleteSubdir:
-			case InotifyEventType.DeleteFile:
-				crawlQ.ForgetPath (fullPath);
-				eventStats.ForgetPath (fullPath);
-				Driver.ScheduleDeleteFile (fullPath, 100);
-				break;
-
-			case InotifyEventType.CloseWrite:
-				Driver.ScheduleAddFile (FileSystem.New (fullPath), 100);
-				break;
-
-			}
-		}
-
-		//////////////////////////////////////////////////////////////////////////
-
 		public override string GetHumanReadableStatus ()
 		{
-			StringBuilder builder = new StringBuilder ();
-			string str;
-
-			builder.Append ("Crawl Queue:\n");
-			str = String.Format ("{0} pending director{1} to crawl.\n",
-					     crawlQ.PendingCount,
-					     crawlQ.PendingCount == 1 ? "y" : "ies");
-			builder.Append (str);
-			crawlQ.GetHumanReadableStatus (builder);
-
-			builder.Append ("\n\n");
-			builder.Append ("Indexing Queue:\n");
-			builder.Append (base.GetHumanReadableStatus ());
-
-			return builder.ToString ();
+			return "FIXME!";
 		}
-
-
 	}
 }
 	

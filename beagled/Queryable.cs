@@ -28,6 +28,8 @@
 using System;
 using System.Collections;
 
+using Beagle;
+
 namespace Beagle.Daemon {
 
 	public delegate void QueryableChangedHandler (Queryable source,

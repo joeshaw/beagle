@@ -4,6 +4,14 @@ if [ -e ./@target@ ] && [ -e ./Makefile.am ] ; then
     echo "*** Running uninstalled @target@ ***"
     THIS_PATH="../Util:../BeagleClient:."
     THIS_EXE="./@target@"
+
+    # In BEAGLE_FILTER_PATH, a trailing ':' means "append the default path".
+    if [ -n "$BEAGLE_FILTER_PATH" ]; then
+	export BEAGLE_FILTER_PATH="../Filters:$BEAGLE_FILTER_PATH"
+    else
+	export BEAGLE_FILTER_PATH="../Filters"
+    fi
+
 else
     THIS_PATH="@pkglibdir@"
     THIS_EXE="@pkglibdir@/@target@"

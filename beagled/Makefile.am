@@ -44,12 +44,6 @@ WRAPPER_SED = sed 					\
 
 ############################################################
 
-
-DAEMON_DLL_TARGET = BeagleDaemonLib.dll
-
-DAEMON_DLL_CSFLAGS = 			\
-	-target:library
-
 lucenedir = $(srcdir)/Lucene.Net
 LUCENE_CSFILES =							\
 	$(lucenedir)/AssemblyInfo.cs					\
@@ -171,12 +165,17 @@ LUCENE_CSFILES =							\
 	$(lucenedir)/Util/Number.cs					\
 	$(lucenedir)/Util/PriorityQueue.cs
 
+############################################################
+
+DAEMON_DLL_TARGET = BeagleDaemonLib.dll
+
+DAEMON_DLL_CSFLAGS = -target:library
 
 fsqueryabledir = $(srcdir)/FileSystemQueryable
 FILE_SYSTEM_QUERYABLE_CSFILES =				\
-	$(fsqueryabledir)/CrawlQueue.cs			\
-	$(fsqueryabledir)/EventStatistics.cs		\
 	$(fsqueryabledir)/FileNameFilter.cs		\
+	$(fsqueryabledir)/LastCrawlTime.cs		\
+	$(fsqueryabledir)/WatchedDirectory.cs		\
 	$(fsqueryabledir)/FileSystemQueryable.cs
 
 webhistqueryable = $(srcdir)/WebHistoryQueryable
@@ -205,34 +204,36 @@ blamqueryable = $(srcdir)/BlamQueryable
 BLAM_QUERYABLE_CSFILES =				\
 	$(blamqueryable)/BlamQueryable.cs
 
+#	$(WEB_HISTORY_QUERYABLE_CSFILES)	\
+#	$(TOMBOY_QUERYABLE_CSFILES)		\
+#	$(BLAM_QUERYABLE_CSFILES)		\
+#	$(EVO_MAIL_DRIVER_CSFILES)		\
+#
+
 DAEMON_DLL_CSFILES = 				\
 	$(LUCENE_CSFILES)			\
 	$(FILE_SYSTEM_QUERYABLE_CSFILES)	\
-	$(WEB_HISTORY_QUERYABLE_CSFILES)	\
 	$(GAIM_LOG_QUERYABLE_CSFILES)		\
-	$(TOMBOY_QUERYABLE_CSFILES)		\
-	$(BLAM_QUERYABLE_CSFILES)		\
-	$(EVO_MAIL_DRIVER_CSFILES)		\
-	$(srcdir)/DBusisms.cs			\
-	$(srcdir)/Ping.cs			\
-	$(srcdir)/Shutdown.cs			\
-	$(srcdir)/FactoryImpl.cs		\
-	$(srcdir)/Relevancy.cs			\
-	$(srcdir)/IQueryResult.cs		\
-	$(srcdir)/QueryableFlavor.cs		\
-	$(srcdir)/IQueryable.cs			\
-	$(srcdir)/IQueryWorker.cs               \
-	$(srcdir)/QueryBody.cs			\
-	$(srcdir)/QueryResult.cs		\
-	$(srcdir)/Queryable.cs			\
-	$(srcdir)/QueryDriver.cs		\
-	$(srcdir)/QueryImpl.cs			\
 	$(srcdir)/BugzillaDriver.cs 		\
+	$(srcdir)/Crawler.cs			\
+	$(srcdir)/DBusisms.cs			\
+	$(srcdir)/FactoryImpl.cs		\
+	$(srcdir)/FilteredIndexable.cs		\
+	$(srcdir)/GoogleDriver.cs		\
+	$(srcdir)/IQueryResult.cs		\
+	$(srcdir)/IQueryWorker.cs               \
+	$(srcdir)/IQueryable.cs			\
 	$(srcdir)/LuceneDriver.cs		\
 	$(srcdir)/LuceneQueryable.cs		\
-	$(srcdir)/Crawler.cs			\
-	$(srcdir)/FileSystemEventMonitor.cs	\
-	$(srcdir)/FilteredIndexable.cs
+	$(srcdir)/Ping.cs			\
+	$(srcdir)/QueryBody.cs			\
+	$(srcdir)/QueryDriver.cs		\
+	$(srcdir)/QueryImpl.cs			\
+	$(srcdir)/QueryResult.cs		\
+	$(srcdir)/Queryable.cs			\
+	$(srcdir)/QueryableFlavor.cs		\
+	$(srcdir)/Relevancy.cs			\
+	$(srcdir)/Shutdown.cs
 
 DAEMON_DLL_LOCAL_ASSEMBLIES =		\
 	../Util/Util.dll		\
@@ -282,6 +283,7 @@ DAEMON_CSFILES =				\
 DAEMON_LOCAL_ASSEMBLIES =			\
 	../Util/Util.dll			\
 	../BeagleClient/Beagle.dll		\
+	../Indexer/Indexer.dll			\
 	./$(PLUGIN_TARGET)			\
 	./$(DAEMON_DLL_TARGET)
 

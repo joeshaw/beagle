@@ -37,13 +37,13 @@ namespace Beagle.Daemon {
 
 		event IQueryableChangedHandler ChangedEvent;
 
+		void Start ();
+
 		bool AcceptQuery (QueryBody body);
 
 		void DoQuery (QueryBody body,
 			      IQueryResult queryResult,
 			      IQueryableChangeData data);
-
-		void Start ();
 
 		string GetHumanReadableStatus ();
 	}

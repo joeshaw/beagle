@@ -24,6 +24,11 @@
 // DEALINGS IN THE SOFTWARE.
 //
 
+using System;
+using System.Text;
+
+using Beagle.Util;
+
 using DBus;
 
 namespace Beagle.Daemon {
@@ -53,7 +58,13 @@ namespace Beagle.Daemon {
 		[Method]
 		public string GetHumanReadableStatus ()
 		{
-			return query_driver.GetHumanReadableStatus ();
+			StringBuilder sb = new StringBuilder ();
+
+			sb.Append ("\n");
+			sb.Append (Scheduler.Global.GetHumanReadableStatus ());
+			//sb.Append (query_driver.GetHumanReadableStatus ());
+
+			return sb.ToString ();
 		}
 	}
 

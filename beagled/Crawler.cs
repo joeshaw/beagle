@@ -185,7 +185,7 @@ namespace Beagle.Daemon {
 			if (BU.FileSystem.IsSymLink (info.FullName))
 				return false;
 
-			if (BU.ExtendedAttribute.Check (info, fingerprint))
+			if (BU.ExtendedAttribute.Check (info.FullName, fingerprint))
 				return false;
 
 			return true;

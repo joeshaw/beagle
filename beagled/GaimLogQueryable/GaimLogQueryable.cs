@@ -39,15 +39,15 @@ namespace Beagle.Daemon.GaimLogQueryable {
 	public class GaimLogQueryable : LuceneQueryable {
 
 		private static Logger log = Logger.Get ("GaimLogQueryable");
-		private string logDir;
+		private string log_dir;
 
 		Hashtable watched = new Hashtable ();
 
-		public GaimLogQueryable () : base (Path.Combine (PathFinder.RootDir, "GaimLogIndex"))
+		public GaimLogQueryable () : base ("GaimLogIndex")
 		{
 			string home = Environment.GetEnvironmentVariable ("HOME");
 
-			logDir = Path.Combine (Path.Combine (home, ".gaim"), "logs");
+			log_dir = Path.Combine (Path.Combine (home, ".gaim"), "logs");
 		}
 
 		private void StartWorker () 
@@ -57,7 +57,7 @@ namespace Beagle.Daemon.GaimLogQueryable {
 			log.Info ("Scanning IM Logs");
 			Stopwatch timer = new Stopwatch ();
 			timer.Start ();
-			int foundCount = Watch (logDir);
+			int foundCount = Watch (log_dir);
 			timer.Stop ();
 			log.Info ("Found {0} logs in {1}", foundCount, timer);
 		}
@@ -66,7 +66,7 @@ namespace Beagle.Daemon.GaimLogQueryable {
 		{
 			// FIXME: If ~/.gaim/logs doesn't exist we should set up watches
 			// and wait for it to appear instead of just giving up.
-			if (! Directory.Exists (logDir))
+			if (! Directory.Exists (log_dir))
 				return;
 
 			base.Start ();
@@ -81,7 +81,7 @@ namespace Beagle.Daemon.GaimLogQueryable {
 			if (! root.Exists)
 				return 0;
 
-			int fileCount = 0;
+			int file_count = 0;
 
 			Queue queue = new Queue ();
 			queue.Enqueue (root);
@@ -95,15 +95,15 @@ namespace Beagle.Daemon.GaimLogQueryable {
 				watched [wd] = true;
 
 				foreach (FileInfo file in dir.GetFiles ()) {
- 					IndexLog (file, -100);
-					++fileCount;
+ 					IndexLog (file.FullName, Scheduler.Priority.Delayed);
+					++file_count;
 				}
 
 				foreach (DirectoryInfo subdir in dir.GetDirectories ())
 					queue.Enqueue (subdir);
 			}
 
-			return fileCount;
+			return file_count;
 		}
 
 		private void OnInotifyEvent (int wd,
@@ -115,16 +115,16 @@ namespace Beagle.Daemon.GaimLogQueryable {
 			if (subitem == "" || ! watched.Contains (wd))
 				return;
 
-			string fullPath = Path.Combine (path, subitem);
+			string full_path = Path.Combine (path, subitem);
 
 			switch (type) {
 				
 			case InotifyEventType.CreateSubdir:
-				Watch (fullPath);
+				Watch (full_path);
 				break;
 
 			case InotifyEventType.Modify:
-				IndexLog (new FileInfo (fullPath), 100);
+				IndexLog (full_path, Scheduler.Priority.Immediate);
 				break;
 			}
 		}
@@ -160,15 +160,23 @@ namespace Beagle.Daemon.GaimLogQueryable {
 			return indexable;
 		}
 
-		private void IndexLog (FileInfo file, int priority)
+		private void IndexLog (string filename, Scheduler.Priority priority)
 		{
-			if (! file.Exists || Driver.IsUpToDate (file))
+			FileInfo info = new FileInfo (filename);
+			if (! info.Exists || Driver.IsUpToDate (filename))
 				return;
 
-			ICollection logs = GaimLog.ScanLog (file);
+			Scheduler.TaskGroup group;
+			group = NewMarkingTaskGroup (filename, info.LastWriteTime);
+
+			ICollection logs = GaimLog.ScanLog (info);
 			foreach (ImLog log in logs) {
 				Indexable indexable = ImLogToIndexable (log);
-				Driver.ScheduleAddAndMark (indexable, priority, file);
+				Scheduler.Task task = NewAddTask (indexable);
+				task.Priority = priority;
+				task.SubPriority = 0;
+				task.AddTaskGroup (group);
+				ThisScheduler.Add (task);
 			}
 		}
 	}

@@ -206,6 +206,11 @@ namespace Beagle.Daemon {
 			cacheStream.Close ();
 		}
 
+		public string GetTarget ()
+		{
+			return "summary-file:" + summaryInfo.FullName;
+		}
+
 		private bool CrawlNeeded ()
 		{
 			string timeStr;
