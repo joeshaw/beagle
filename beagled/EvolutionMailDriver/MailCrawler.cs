@@ -81,7 +81,8 @@ namespace Beagle.Daemon.EvolutionMailDriver {
 				foreach (DirectoryInfo subdir in dir.GetDirectories ())
 					pending.Enqueue (subdir);
 
-				foreach (FileInfo file in dir.GetFiles ()) {
+				foreach (FileInfo file in dir.GetFiles ("*summary")) {
+					Console.WriteLine ("file: {0}", file);
 					if (file.Name == "summary") {
 						if (FileIsInteresting (file))
 							summaries.Add (file);

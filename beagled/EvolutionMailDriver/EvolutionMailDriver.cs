@@ -95,8 +95,10 @@ namespace Beagle.Daemon.EvolutionMailDriver {
 				Watch (this.imap_path);
 			}
 
+			Logger.Log.Debug ("Starting mail crawl");
 			crawler = new MailCrawler ();
 			Crawl ();
+			Logger.Log.Debug ("Mail crawl finished");
 
 			// If we don't have inotify, we have to poll the file system.  Ugh.
 			if (! Inotify.Enabled) {
