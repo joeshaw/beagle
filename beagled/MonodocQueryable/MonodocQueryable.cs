@@ -107,6 +107,7 @@ namespace Beagle.Daemon.MonodocQueryable {
 		private void OnInotifyEvent (int wd,
 					     string path,
 					     string subitem,
+					     string srcpath,
 					     Inotify.EventType type,
 					     uint cookie)
 		{

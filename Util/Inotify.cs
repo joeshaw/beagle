@@ -40,7 +40,7 @@ namespace Beagle.Util {
 
 	public class Inotify {
 
-		public delegate void Handler (int wd, string path, string subitem, EventType type, uint cookie);
+		public delegate void Handler (int wd, string path, string subitem, string dstpath, EventType type, uint cookie);
 
 		public static event Handler Event;
 
@@ -451,6 +451,7 @@ namespace Beagle.Util {
 		static void DispatchWorker ()
 		{
 			Encoding filename_encoding = Encoding.UTF8;
+			string srcpath = null;
 
 			while (running) {
 				queued_event qe;
@@ -483,7 +484,7 @@ namespace Beagle.Util {
 				// Unfortunately, we have to handle the Directory.Exists() test a bit
 				// roundabout, because watched.Path during MovedFrom no longer exists.
 				if (qe.iev.mask == EventType.MovedFrom) {
-					string srcpath = Path.Combine (watched.Path, filename);
+					srcpath = Path.Combine (watched.Path, filename);
 					PendingMove pending = new PendingMove (srcpath, qe.iev.cookie);
 					cookie_hash [pending.Cookie] = pending;
 				}
@@ -491,8 +492,9 @@ namespace Beagle.Util {
 					PendingMove pending = cookie_hash [qe.iev.cookie] as PendingMove;
 					if (pending != null) {
 						string dstpath = Path.Combine (watched.Path, filename);
+						srcpath = pending.SrcPath;
 						if (Directory.Exists (dstpath))
-							HandleMove (pending.SrcPath, dstpath);
+							HandleMove (srcpath, dstpath);
 						cookie_hash.Remove (pending);
 					} else
 						Logger.Log.Error ("Got MovedTo without matching cookie!");
@@ -501,15 +503,14 @@ namespace Beagle.Util {
 				// If this event matches the watches mask, handle it
 				if ((watched.Mask & qe.iev.mask) != 0) {
 					if (Verbose) {
-						Console.WriteLine ("*** inotify: {0} {1} {2} {3} {4}",
+						Console.WriteLine ("*** inotify: {0} {1} {2} {3} {4} ({5})",
 								   qe.iev.mask, watched.Wd, watched.Path,
-								   filename != "" ? filename : "\"\"",
-								   qe.iev.cookie);
+								   filename != "" ? filename : "\"\"", qe.iev.cookie,
+								   srcpath != null ? srcpath : "na");
 					}
-
 					if (Event != null) {
 						try {
-							Event (watched.Wd, watched.Path, filename, 
+							Event (watched.Wd, watched.Path, filename, srcpath,
 							       qe.iev.mask, qe.iev.cookie);
 						} catch (Exception e) {
 							Logger.Log.Error ("Caught exception inside Inotify.Event");
