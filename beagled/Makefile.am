@@ -373,45 +373,14 @@ $(DAEMON_DLL_TARGET): $(DAEMON_DLL_CSFILES) $(DAEMON_DLL_LOCAL_ASSEMBLIES)
 
 ############################################################
 
-DAEMON_WRAPPER = beagled
-DAEMON_WRAPPER_IN = beagled.in
-DAEMON_TARGET = BeagleDaemon.exe
-
-$(DAEMON_WRAPPER): $(srcdir)/$(DAEMON_WRAPPER_IN)
-	$(WRAPPER_SED) -e "s|\@target\@|$(DAEMON_TARGET)|g" < $(srcdir)/$(DAEMON_WRAPPER_IN) > $@
-	chmod +x $(DAEMON_WRAPPER)
-
-DAEMON_CSFLAGS =				\
-	-target:exe				\
-	$(BEAGLE_DEFINES)
-
-#	-main:BeagleDaemon.BeagleDaemon
-
-DAEMON_CSFILES =				\
-	$(srcdir)/BeagleDaemon.cs		\
-	$(srcdir)/IndexHelperFu.cs		\
-	$(srcdir)/RemoteIndexer.cs
-
-
-DAEMON_LOCAL_ASSEMBLIES =			\
-	../Util/Util.dll			\
-	../BeagleClient/Beagle.dll		\
-	./$(PLUGIN_TARGET)			\
-	./$(DAEMON_DLL_TARGET)			
-
-
-DAEMON_ASSEMBLIES =				\
-	$(BEAGLED_LIBS)				\
-	$(DAEMON_LOCAL_ASSEMBLIES:%=-r:%)	\
-	-r:Mono.Posix				\
-	-r:ICSharpCode.SharpZipLib.dll
-
-if ENABLE_NETWORK
-DAEMON_CSFLAGS += -define:ENABLE_NETWORK
-endif
+###
+### Web Services
+###
 
 if ENABLE_WEBSVC
 SUBDIRS = webserver
+endif
+
 BG_XSP_TARGET = webserver/bgXsp.dll
 
 WEBSVC_LOCAL_ASSEMBLIES =			\
@@ -447,6 +416,45 @@ WEB_FRONT_END_ASSEMBLIES = 	\
 $(WEB_FRONT_END_TARGET): $(WEB_FRONT_END_CSFILES) $(WEBSVC_TARGET)
 	$(CSC) -o $@ $(WEB_CSFLAGS) $(WEB_FRONT_END_CSFILES) $(WEB_FRONT_END_ASSEMBLIES)
 
+XSP_DIR = /usr/local/share/doc/xsp/test/beagle
+XSPBIN_DIR = $(XSP_DIR)/bin
+
+############################################################
+
+DAEMON_WRAPPER = beagled
+DAEMON_WRAPPER_IN = beagled.in
+DAEMON_TARGET = BeagleDaemon.exe
+
+$(DAEMON_WRAPPER): $(srcdir)/$(DAEMON_WRAPPER_IN)
+	$(WRAPPER_SED) -e "s|\@target\@|$(DAEMON_TARGET)|g" < $(srcdir)/$(DAEMON_WRAPPER_IN) > $@
+	chmod +x $(DAEMON_WRAPPER)
+
+DAEMON_CSFLAGS =				\
+	-target:exe				\
+	$(BEAGLE_DEFINES)
+
+DAEMON_CSFILES =				\
+	$(srcdir)/BeagleDaemon.cs		\
+	$(srcdir)/IndexHelperFu.cs		\
+	$(srcdir)/RemoteIndexer.cs
+
+DAEMON_LOCAL_ASSEMBLIES =			\
+	../Util/Util.dll			\
+	../BeagleClient/Beagle.dll		\
+	./$(PLUGIN_TARGET)			\
+	./$(DAEMON_DLL_TARGET)			
+
+DAEMON_ASSEMBLIES =				\
+	$(BEAGLED_LIBS)				\
+	$(DAEMON_LOCAL_ASSEMBLIES:%=-r:%)	\
+	-r:Mono.Posix				\
+	-r:ICSharpCode.SharpZipLib.dll
+
+if ENABLE_NETWORK
+DAEMON_CSFLAGS += -define:ENABLE_NETWORK
+endif
+
+if ENABLE_WEBSVC
 DAEMON_CSFLAGS += -define:ENABLE_WEBSVC
 
 DAEMON_LOCAL_ASSEMBLIES += 		\
@@ -458,8 +466,6 @@ DAEMON_LOCAL_ASSEMBLIES += 		\
 	$(BG_XSP_TARGET)
 
 DAEMON_ASSEMBLIES += -r:System.Runtime.Remoting		
-XSP_DIR = /usr/local/share/doc/xsp/test/beagle
-XSPBIN_DIR = $(XSP_DIR)/bin
 endif
 
 $(DAEMON_TARGET): $(DAEMON_CSFILES) $(DAEMON_LOCAL_ASSEMBLIES)
@@ -781,7 +787,9 @@ EXTRA_DIST = \
 	$(MASTER_DELETE_CSFILES)	\
 	$(TERM_STATS_CSFILES)		\
 	$(NAME_INDEX_CSFILES)		\
-	$(FS_SANITY_CHECK_CSFILES)
+	$(FS_SANITY_CHECK_CSFILES)	\
+	$(WEBSVC_CSFILES)		\
+	$(WEB_FRONT_END_CSFILES)
 
 CLEANFILES = \
 	$(EXTSTR)			\
@@ -812,8 +820,11 @@ CLEANFILES = \
 	$(NAME_INDEX_WRAPPER)		\
 	$(FS_SANITY_CHECK_TARGET)	\
 	$(FS_SANITY_CHECK_TARGET).mdb	\
-	$(FS_SANITY_CHECK_WRAPPER)
+	$(FS_SANITY_CHECK_WRAPPER)	\
+	$(WEBSVC_TARGET)		\
+	$(WEBSVC_TARGET).mdb		\
+	$(WEB_FRONT_END_TARGET)		\
+	$(WEB_FRONT_END_TARGET).mdb	\
+	$(BG_XSP_TARGET)		\
+	$(BG_XSP_TARGET).mdb
 
-if ENABLE_WEBSVC
-CLEANFILES += $(WEBSVC_TARGET) $(WEBSVC_TARGET).mdb $(WEB_FRONT_END_TARGET) $(WEB_FRONT_END_TARGET).mdb $(BG_XSP_TARGET) $(BG_XSP_TARGET).mdb
-endif
