@@ -26,6 +26,7 @@
 
 using System;
 using System.Collections;
+using Beagle.Util;
 
 namespace Beagle.Daemon {
 
@@ -73,8 +74,8 @@ namespace Beagle.Daemon {
 				DBusisms.Service.RegisterObject (obj, info.Path);
 			}
 
-			Console.WriteLine ("Registered object {0} as belonging to '{1}'",
-					   info.Path, info.Owner);
+			Logger.Log.Debug ("Registered object {0} as belonging to '{1}'",
+					  info.Path, info.Owner);
 
 			return info.Path;
 		}
@@ -86,7 +87,7 @@ namespace Beagle.Daemon {
 			// make sure that 'this' is locked.
 			ObjectInfo info = (ObjectInfo) all_objects [i];
 			object obj = info.Object;
-			Console.WriteLine ("Unregistering {0}", info.Path);
+			Logger.Log.Debug ("Unregistering {0}", info.Path);
 			DBusisms.Service.UnregisterObject (obj);
 			all_objects.RemoveAt (i);
 			if (obj is IDisposable)
@@ -140,7 +141,7 @@ namespace Beagle.Daemon {
 		{
 			// Clean up associated objects if a base service is deleted.
 			if (newOwner == "" && serviceName == oldOwner) {
-				Console.WriteLine ("Cleaning up objects associated with '{0}'", serviceName);
+				Logger.Log.Debug ("Cleaning up objects associated with '{0}'", serviceName);
 				UnregisterByOwner (serviceName);
 			}
 		}

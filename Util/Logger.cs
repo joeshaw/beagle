@@ -25,121 +25,158 @@
 //
 
 using System;
-using System.Diagnostics;
-using System.IO;
-using System.Threading;
 using System.Collections;
+using System.Text;
+using System.IO;
+using System.Diagnostics;
 
 namespace Beagle.Util {
+		
+	public enum LogLevel {
+		None,
+		Fatal,
+		Error,
+		Warn,
+		Info,
+		Debug
+	}
 
 	public class Logger {
 
 		private static Hashtable loggers = new Hashtable ();
-		private long lockSize;
+		private static LogLevel defaultLevel = LogLevel.Info;
+		private static TextWriter defaultWriter = System.Console.Out;
 
-		FileStream fs;
-		StreamWriter sw;
-
-		private Logger (string logPath)
-		{
-			fs = new FileStream (logPath, FileMode.Append, FileAccess.Write, FileShare.ReadWrite);
-			sw = new StreamWriter (fs);
-		}
-
-		public static Logger Get (string logPath) {
-			lock (loggers) {
-				if (loggers.ContainsKey (logPath)) {
-					return (Logger)loggers[logPath];
-				}
-				
-				Logger logger = new Logger (logPath);
-				loggers[logPath] = logger;
-			
-				return logger;
+		public static Logger Log {
+			get {
+				return Get ("other");
 			}
 		}
 
-		private bool AcquireLock ()
+		public static Logger Get (string logName) 
 		{
-			try {
-				lockSize = fs.Length;
-				fs.Lock (0, lockSize);
-				return true;
-			} catch {
-				return false;
-			}
+			if (loggers.ContainsKey (logName)) {
+				return (Logger)loggers[logName];
+			} else {
+				Logger log = new Logger (logName);
+				log.Level = defaultLevel;
+				log.Writer = defaultWriter;
+				loggers[logName] = log;
+				return log;
+			}			
+		}			
+
+		public static LogLevel DefaultLevel {
+			get { return defaultLevel; }
+			set { defaultLevel = value; }
+		}			       
+
+		
+		public static TextWriter DefaultWriter {
+			get { return defaultWriter; }
+			set { defaultWriter = value; }
+		}      
+
+		private bool levelSet = false;
+		private LogLevel level;
+		private TextWriter writer = null;
+
+		private Logger (string name) {
 		}
 
-		private bool WaitForLock ()
-		{
-			// After a certain amount of time, just stop waiting
-			// for the lock and write to the log.
-			int countdown = 10;
-			while (countdown > 0) {
-				if (AcquireLock ())
-					return true;
-				Thread.Sleep (100);
-				--countdown;
-			}
-			
-			System.Console.WriteLine ("Couldn't lock logfile");
-			return false;
+		public LogLevel Level {
+			get { lock (this) { return (levelSet) ? level : DefaultLevel; } }
+			set { lock (this) { level = value; levelSet = true; } }
 		}
 
-		private void ReleaseLock ()
-		{
-			sw.Flush ();
-			fs.Flush ();
-			fs.Unlock (0, lockSize);
+		public TextWriter Writer {
+			get { return (writer != null) ? writer : DefaultWriter; }
+			set { writer = value; }
 		}
 
 		private string GetStamp ()
-		{
-			return string.Format ("{0}[{1}] {2}",
-					      Process.GetCurrentProcess().Id,
-					      Environment.CommandLine,
-					      DateTime.Now.ToString ("yy-MM-dd HH.mm.ss.ff"));
-		}
-
-		private void LogRaw (string format, params object[] args)
-		{
-			sw.Write (GetStamp ());
-			sw.Write (": ");
-			sw.WriteLine (String.Format (format, args));
-			sw.Flush ();
-			fs.Flush ();
-		}
-
-
-		public void Log (string format, params object[] args)
-		{
-			lock (this) {
-				if (WaitForLock ()) {
-					try {
-						LogRaw (format, args);
-					} finally {
-						ReleaseLock ();
-					}
-				}
+                {
+			if (Writer != Console.Out) {
+				return string.Format ("{0}[{1}] {2} ",
+						      Process.GetCurrentProcess().Id,
+						      Environment.CommandLine,
+						      DateTime.Now.ToString ("yy-MM-dd HH.mm.ss.ff"));
+			} else {
+				return "";
 			}
 		}
 
-		public void Log (Exception e)
+
+		private void WriteLine (string level, string message) {
+			Writer.WriteLine ("{0}{1}: {2}", GetStamp (), level, message);
+			Writer.Flush ();
+		}
+
+		public void Debug (string message, params object [] args)
 		{
-			lock (this) {
-				if (WaitForLock ()) {
-					try {
-						LogRaw ("Exception Begin");
-						LogRaw (e.Message);
-						LogRaw (e.StackTrace);
-						LogRaw ("Exception End");
-					} finally {
-						ReleaseLock ();
-					}
-				}
+			if (IsDebugEnabled) {
+				WriteLine ("DEBUG", String.Format (message, args));
 			}
 		}
 
+		public void Debug (Exception e) 
+		{
+			Debug ("{0}", e);
+		}
+
+		public void Info (string message, params object [] args)
+		{
+			if (IsInfoEnabled) {
+				WriteLine ("INFO", String.Format (message, args));
+			}
+		}
+
+		public void Info (Exception e) 
+		{
+			Info ("{0}", e);
+		}
+
+		public void Warn (string message, params object [] args)
+		{
+			if (IsWarnEnabled) {
+				WriteLine ("WARN", String.Format (message, args));
+			}
+		}
+
+		public void Warn (Exception e) 
+		{
+			Warn ("{0}", e);
+		}
+
+		public void Error (string message, params object [] args)
+		{
+			if (IsErrorEnabled) {
+				WriteLine ("ERROR", String.Format (message, args));
+			}
+		}
+
+		public void Error (Exception e) 
+		{
+			Error ("{0}", e);
+		}
+
+		public void Fatal (string message, params object [] args)
+		{
+			if (IsFatalEnabled) {
+				Fatal ("FATAL", String.Format (message, args));
+			}
+		}
+		
+		public void Fatal (Exception e) 
+		{
+			Fatal ("{0}", e);
+		}
+
+		public bool IsDebugEnabled { get { return level >= LogLevel.Debug; } }
+		public bool IsInfoEnabled { get { return level >= LogLevel.Info; } }
+		public bool IsWarnEnabled { get { return level >= LogLevel.Warn; } }
+		public bool IsErrorEnabled { get { return level >= LogLevel.Error;} }
+		public bool IsFatalEnabled { get { return level >= LogLevel.Fatal; } }
 	}
 }
 

@@ -71,7 +71,7 @@ namespace Beagle.Daemon {
 			                                                                           
 			ArrayList hits = new ArrayList ();
                                                                                                                                                              
-			Console.WriteLine ("Kicking off a bugzilla query");
+			Logger.Log.Debug ("Kicking off a bugzilla query");
 			// FIXME - hard coding the url here
                         XmlDocument xml = GetBugzillaXml (body.QuotedText);
                         if (xml != null) {
@@ -118,7 +118,7 @@ namespace Beagle.Daemon {
                         } catch {
                                 return null;
                         }
-			Console.WriteLine (bugxml);
+			Logger.Log.Debug (bugxml);
                                                                                                                                                              
                         int startidx = bugxml.IndexOf ("<bugzilla");
                         if (startidx < 0)
@@ -129,7 +129,7 @@ namespace Beagle.Daemon {
                         try {
                                 xml.LoadXml (bugxml);
                         } catch {
-                                Console.WriteLine ("Bugzilla XML is not well-formed!");
+                                Logger.Log.Warn ("Bugzilla XML is not well-formed: {0}", bugxml);
                                 return null;
                         }
                                                                                                                                                              
@@ -153,7 +153,7 @@ namespace Beagle.Daemon {
                                 owner   = this.GetXmlText (xml, "//assigned_to");
                                 status  = this.GetXmlText (xml, "//bug_status");
                         } catch {
-                                Console.WriteLine ("Could not get bug fields");
+                                Logger.Log.Warn ("Could not get bug fields");
                                 return null;
                         }
                                                                                                                                                              

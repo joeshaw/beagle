@@ -29,6 +29,7 @@ using System;
 using System.Collections;
 using System.Reflection;
 using System.Threading;
+using Beagle.Util;
 
 namespace Beagle.Daemon {
 	
@@ -108,7 +109,7 @@ namespace Beagle.Daemon {
 				} catch (Exception e) {
 					Exception ex = e.InnerException != null ? e.InnerException : e;
 
-					Console.WriteLine ("Exception trying to activate {0} backend:\n{1}", qi.Type, ex);
+					Logger.Log.Error ("Exception trying to activate {0} backend:\n{1}", qi.Type, ex);
 					continue;
 				}
 				

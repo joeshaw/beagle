@@ -37,6 +37,8 @@ namespace Beagle.Daemon {
 
 	public abstract class Crawler {
 		
+		private static BU.Logger log = BU.Logger.Get ("crawler");
+
 		private string fingerprint;
 
 		private Thread queueThread = null;
@@ -230,7 +232,7 @@ namespace Beagle.Daemon {
 						pending = queue [0] as PendingCrawl;
 						queue.RemoveAt (0);
 						nowCrawling = pending.FileSystemInfo.FullName;
-						Console.WriteLine ("Crawling {0}", nowCrawling);
+						log.Debug ("Crawling {0}", nowCrawling);
 					}
 				}
 

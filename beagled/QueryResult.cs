@@ -29,7 +29,7 @@ using System;
 using System.Collections;
 using System.Diagnostics;
 using System.Threading;
-
+using Beagle.Util;
 namespace Beagle.Daemon {
 
 	public class QueryResult : IQueryResult {
@@ -51,8 +51,8 @@ namespace Beagle.Daemon {
 				try {
 					worker (result);
 				} catch (Exception e) {
-					Console.WriteLine ("QueryWorker '{0}' failed with exception:\n{1}:\n{2}",
-							   worker, e.Message, e.StackTrace);
+					Logger.Log.Error ("QueryWorker '{0}' failed with exception:\n{1}:\n{2}",
+							  worker, e.Message, e.StackTrace);
 				}
 				result.WorkerFinished ();
 			}

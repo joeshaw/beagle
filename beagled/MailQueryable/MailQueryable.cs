@@ -38,6 +38,8 @@ namespace Beagle.Daemon.MailQueryable {
 	[QueryableFlavor (Name="MailQueryable", Domain=QueryDomain.Local)]
 	public class MailQueryable : LuceneQueryable {
 
+		private static Logger log = Logger.Get ("mail");
+
 		public MailQueryable () : base ("Mail",
 						Path.Combine (PathFinder.RootDir, "MailIndex"))
 		{
@@ -143,7 +145,7 @@ namespace Beagle.Daemon.MailQueryable {
 			foreach (Camel.MBoxMessageInfo mi in summary.messages) {
 
 				if ((count & 1500) == 0) {
-					Console.WriteLine ("{0}: indexed {1} messages ({2}/{3} {4:###.0}%)",
+					Logger.Log.Debug ("{0}: indexed {1} messages ({2}/{3} {4:###.0}%)",
 							   folderName, indexedCount,
 							   count, summary.header.count, 
 							   100.0 * count / summary.header.count);
@@ -168,15 +170,15 @@ namespace Beagle.Daemon.MailQueryable {
 					// Parse an RFC 2822 message from the array of lines
 					MailMessage msg = new MailMessage (reader, mi.size);
 					
-					Console.WriteLine ("From: {0}", mi.from);
-					Console.WriteLine ("Subject: {0}", mi.subject);
+					Logger.Log.Debug ("From: {0}", mi.from);
+					Logger.Log.Debug ("Subject: {0}", mi.subject);
 
 					Driver.ScheduleAdd (MailToIndexable ("local@local", folderName, mi, msg));
 					++indexedCount;
 				}
 			}
 
-			Console.WriteLine ("{0}: indexed {1} of {2} messages", folderName, indexedCount, count);
+			Logger.Log.Info ("{0}: indexed {1} of {2} messages", folderName, indexedCount, count);
 
 			if (mboxStream != null)
 				mboxStream.Close ();
@@ -195,7 +197,7 @@ namespace Beagle.Daemon.MailQueryable {
 			string account_start = dir_name.Substring (account_start_idx);
 			string account_name = account_start.Substring (0, account_start.IndexOf ('/'));
 
-			Console.WriteLine ("*** Being asked to index {0}", summary_file);
+			Logger.Log.Debug ("*** Being asked to index {0}", summary_file);
 
 			Camel.Summary summary = Camel.Summary.load (summary_file.FullName);
 
@@ -216,10 +218,10 @@ namespace Beagle.Daemon.MailQueryable {
 
 			foreach (Camel.ImapMessageInfo mi in summary.messages) {
 				if ((count & 1500) == 0) {
-					Console.WriteLine ("{0}: indexed {1} messages ({2}/{3} {4:###.0}%)",
-							   folder_name, index_count,
-							   count, summary.header.count, 
-							   100.0 * count / summary.header.count);
+					Logger.Log.Debug ("{0}: indexed {1} messages ({2}/{3} {4:###.0}%)",
+							  folder_name, index_count,
+							  count, summary.header.count, 
+							  100.0 * count / summary.header.count);
 				}
 				++count;
 				
@@ -228,8 +230,8 @@ namespace Beagle.Daemon.MailQueryable {
 					if (latest_time < mi.Date)
 						latest_time = mi.Date;
 
-					Console.WriteLine ("From: {0}", mi.from);
-					Console.WriteLine ("Subject: {0}", mi.subject);
+					Logger.Log.Debug ("From: {0}", mi.from);
+					Logger.Log.Debug ("Subject: {0}", mi.subject);
 
 					Stream message_stream = null;
 					MailMessage msg = null;
@@ -254,7 +256,7 @@ namespace Beagle.Daemon.MailQueryable {
 				}
 			}
 
-			Console.WriteLine ("{0}: indexed {1} of {2} messages", folder_name, index_count, count);
+			Logger.Log.Info ("{0}: indexed {1} of {2} messages", folder_name, index_count, count);
 
 			if (latest_time != last_time)
 				PathFinder.WriteAppDataLine ("MailIndex", data_name, latest_time.Ticks.ToString ());

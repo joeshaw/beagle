@@ -116,7 +116,7 @@ namespace Beagle.Daemon {
 
 		public void AppendText (string str)
 		{
-			//Console.WriteLine ("AppendText (\"{0}\")", str);
+			//Logger.Log.Debug ("AppendText (\"{0}\")", str);
 			if (! IsFrozen && str != null && str != "") {
 				textPool.Add (str);
 				if (IsHot)
@@ -139,7 +139,7 @@ namespace Beagle.Daemon {
 
 		public void AppendWhiteSpace ()
 		{
-			//Console.WriteLine ("AppendWhiteSpace ()");
+			//Logger.Log.Debug ("AppendWhiteSpace ()");
 			if (NeedsWhiteSpace (textPool))
 				textPool.Add (" ");
 			if (NeedsWhiteSpace (hotPool))
@@ -343,7 +343,7 @@ namespace Beagle.Daemon {
 				return;
 
 			if (! Directory.Exists (dir)) {
-				//Console.WriteLine ("'{0}' is not a directory: No filters loaded", dir);
+				//Logger.Log.Debug ("'{0}' is not a directory: No filters loaded", dir);
 				return;
 			}
 
@@ -352,7 +352,7 @@ namespace Beagle.Daemon {
 				if (file.Extension == ".dll") {
 					Assembly a = Assembly.LoadFrom (file.FullName);
 					int n = ScanAssemblyForFilters (a);
-					//Console.WriteLine ("Loaded {0} filters from {1}", n, file.FullName);
+					//Logger.Log.Debug ("Loaded {0} filters from {1}", n, file.FullName);
 				}
 			}
 		}

@@ -26,11 +26,11 @@
 
 using DBus;
 using Gtk;
-//using Beagle;
 using System.Reflection;
 using System;
 using System.IO;
 using Mono.Posix;
+using Beagle.Util;
 
 namespace Beagle.Daemon {
 	class BeagleDaemon {
@@ -67,6 +67,33 @@ namespace Beagle.Daemon {
 			return true;
 		}
 
+		private static void SetupLog (string logPath) {
+			if (logPath != null) {
+				FileStream fs = new FileStream (logPath,
+								System.IO.FileMode.Append,
+								FileAccess.Write);
+				Logger.DefaultWriter = new StreamWriter (fs);
+			}
+
+			string debug = System.Environment.GetEnvironmentVariable ("BEAGLE_DEBUG");
+			if (debug != null) {
+				string[] debugArgs = debug.Split (',');
+				foreach (string arg in debugArgs) {
+					if (arg == "all") {
+						Logger.DefaultLevel = LogLevel.Debug;
+					}
+				}
+				
+				foreach (string arg in debugArgs) {
+					if (arg != "all") {
+						System.Console.WriteLine ("debugging {0}", arg);
+						Logger log = Logger.Get (arg);
+						log.Level = LogLevel.Debug;
+					}
+				}
+			}
+		}
+
 		public static int Main (string[] args)
 		{
 			if (Array.IndexOf (args, "--nofork") == -1 && Array.IndexOf (args, "--no-fork") == -1) {
@@ -74,6 +101,16 @@ namespace Beagle.Daemon {
 					return 1;
 			}
 
+			// FIXME: this could be better, but I don't want to
+			// deal with serious cmdline parsing today
+			if (Array.IndexOf (args, "--out") != -1) {
+				SetupLog (null);
+			} else {
+				string logPath = Path.Combine (PathFinder.LogDir,
+							       "Beagle");
+				SetupLog (logPath);
+			}
+			
 			Application.Init ();
 
 			// Connect to the session bus, acquire the com.novell.Beagle

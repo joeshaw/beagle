@@ -49,7 +49,7 @@ namespace Beagle.Daemon {
 	public delegate void PostIndexHook (LuceneDriver driver, Uri uri);
 
 	public class LuceneDriver {
-
+		private static Beagle.Util.Logger log = Beagle.Util.Logger.Get ("lucene");
 		// 1: Original
 		// 2: Changed format of timestamp strings
 		// 3: Schema changed to be more Dashboard-Match-like
@@ -101,7 +101,7 @@ namespace Beagle.Daemon {
 						}
 					}
 					if (! indexExists)
-						Console.WriteLine ("Found dangling locks in {0}", lockDir);
+						log.Debug ("Found dangling locks in {0}", lockDir);
 				}
 			}
 
@@ -113,7 +113,7 @@ namespace Beagle.Daemon {
 			} else {
 				// Purge the directory if it exists.
 				if (Directory.Exists (dir)) {
-					Console.WriteLine ("Purging {0}", dir);
+					log.Debug ("Purging {0}", dir);
 					Directory.Delete (dir, true);
 				}
 
@@ -321,7 +321,7 @@ namespace Beagle.Daemon {
 				if (uri.IsFile
 				    && ! File.Exists (uri.LocalPath)
 				    && ! Directory.Exists (uri.LocalPath)) {
-					Console.WriteLine ("{0} is file!", uri);
+					log.Debug ("{0} is file!", uri);
 					SchedulePriorityDelete (uri);
 					continue;
 				}
@@ -477,7 +477,7 @@ namespace Beagle.Daemon {
 				AddPendingDelete (fakeItem);
 				AddPendingAdd (item);
 			} else {
-				Console.WriteLine ("Failed to process unknown/malformed QueueItem");
+				log.Warn ("Failed to process unknown/malformed QueueItem");
 			}
 		}
 
@@ -494,11 +494,11 @@ namespace Beagle.Daemon {
 			FlushPending ();
 
 			if (sinceOptimization > sinceOptimizationThreshold / 2) {
-				Console.WriteLine ("Optimizing Index (Opportunistic)");
+				log.Debug ("Optimizing Index (Opportunistic)");
 				IndexWriter writer = new IndexWriter (Store, Analyzer, false);
 				writer.Optimize ();
 				writer.Close ();
-				Console.WriteLine ("Done Optimizing Index");
+				log.Debug ("Done Optimizing Index");
 				sinceOptimization = 0;
 			}
 		}
@@ -609,7 +609,7 @@ namespace Beagle.Daemon {
 
 			WorkerBegin ();
 
-			Console.WriteLine ("Flushing {0} Adds", pendingAdds.Count);
+			log.Debug ("Flushing {0} Adds", pendingAdds.Count);
 
 			IndexWriter writer = new IndexWriter (Store, Analyzer, false);
 			int sleepCounter = 0;
@@ -617,14 +617,13 @@ namespace Beagle.Daemon {
 				Indexable indexable = item.IndexableToAdd;
 				Document doc = null;
 				if (! item.IsSilent)
-					Console.WriteLine ("+ {0}", indexable.Uri);
+					log.Debug ("+ {0}", indexable.Uri);
 				try {
 					doc = ToLuceneDocument (indexable);
 				} catch (Exception e) {
-					Console.WriteLine ("unable to convert {0} (type={1}) to a lucene document",
+					log.Error ("unable to convert {0} (type={1}) to a lucene document",
 							   indexable.Uri, indexable.Type);
-					Console.WriteLine (e.Message);
-					Console.WriteLine (e.StackTrace);
+					log.Error (e);
 				}
 				if (doc != null) {
 					writer.AddDocument (doc);
@@ -653,7 +652,7 @@ namespace Beagle.Daemon {
 					}
 
 					if (sleepTime > 0) {
-						Console.WriteLine ("Sleeping for {0}ms", sleepTime);
+						log.Debug ("Sleeping for {0}ms", sleepTime);
 						Thread.Sleep (sleepTime);
 						sleepCounter = 0;
 					}
@@ -662,12 +661,12 @@ namespace Beagle.Daemon {
 
 			WorkerEnd ();
 
-			Console.WriteLine ("Done Adding");
+			log.Debug ("Done Adding");
 
 			if (sinceOptimization > sinceOptimizationThreshold) {
-				Console.WriteLine ("Optimizing Index");
+				log.Debug ("Optimizing Index");
 				writer.Optimize ();
-				Console.WriteLine ("Done Optimizing Index");
+				log.Debug ("Done Optimizing Index");
 				sinceOptimization = 0;
 			}
 			
@@ -773,7 +772,7 @@ namespace Beagle.Daemon {
 			if (pendingDeletes.Count == 0)
 				return;
 
-			Console.WriteLine ("Flushing {0} deletes", pendingDeletes.Count);
+			log.Debug ("Flushing {0} deletes", pendingDeletes.Count);
 
 			ArrayList idsToDelete = new ArrayList ();
 
@@ -782,7 +781,7 @@ namespace Beagle.Daemon {
 			foreach (QueueItem item in pendingDeletes) {
 				Uri uri = item.UriToDelete;
 				if (! item.IsSilent)
-					Console.WriteLine ("- {0}", uri);
+					log.Debug ("- {0}", uri);
 				Term term = new Term ("Uri", uri.ToString ());
 				LNS.Query uriQuery = new LNS.TermQuery (term);
 				LNS.Hits uriHits = searcher.Search (uriQuery);
@@ -801,7 +800,7 @@ namespace Beagle.Daemon {
 				reader.Delete (id);
 			reader.Close ();
 
-			Console.WriteLine ("Done deleting");
+			log.Debug ("Done deleting");
 
 			// Call any post-indexing hooks
 			foreach (QueueItem item in pendingDeletes) {
@@ -1063,7 +1062,7 @@ namespace Beagle.Daemon {
 				FromLuceneDocToVersioned (uriHits.Doc (i), other);
 				// Oops... this isn't supposed to happen.
 				if (docVersioned.IsObsoletedBy (other)) {
-					Console.WriteLine ("Matched obsolete document with Uri '{0}'", docUri);
+					log.Warn ("Matched obsolete document with Uri '{0}'", docUri);
 					return false;
 				}
 			}

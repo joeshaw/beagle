@@ -351,12 +351,12 @@ namespace Lucene.Net.Store
 		static private void Log (string format, params object[] args)
 		{
 			if (Logger != null)
-				Logger.Log (format, args);
+				Logger.Debug (format, args);
 		}
 		static private void Log (Exception e)
 		{
 			if (Logger != null)
-				Logger.Log (e);
+				Logger.Debug (e);
 		}
 
 		class FSDirectoryLock : Lock
