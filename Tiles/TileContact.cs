@@ -68,7 +68,7 @@ namespace Beagle {
 			if (key == "Icon") {
 				int w = -1;
 				if (hit.GetData ("Photo") != null)
-					w = 64;
+					w = 128;
 				ctx.Image ("contact-icon.png", w, -1, null);
 				return true;
 			}
