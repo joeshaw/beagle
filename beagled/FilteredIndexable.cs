@@ -28,6 +28,7 @@
 using System;
 using System.Collections;
 using System.IO;
+using System.Xml;
 using System.Xml.Serialization;
 
 using BU = Beagle.Util;
@@ -66,19 +67,18 @@ namespace Beagle.Daemon {
 			// For instantiating from xml
 		}
 
-		// FIXME: I should be shot for writing this code
 		public static Indexable NewFromEitherXml (string xml)
 		{
-			int i = xml.IndexOf ("?>");
-			if (i == -1)
-				return null;
-			i = xml.IndexOf ("<", i);
-			if (i == -1)
-				return null;
-			++i;
-			if (xml [i] == 'I') { // Indexable
+			// XmlTextReader doesn't like the <?xml header
+			int xmlstart = xml.IndexOf ("?>") + 3;
+			TextReader stringreader = new StringReader (xml.Substring (xmlstart));
+
+			XmlTextReader xmlreader = new XmlTextReader (stringreader);
+			xmlreader.Read ();
+
+			if (xmlreader.Name.Equals ("Indexable")) {
 				return Indexable.NewFromXml (xml);
-			} else if (xml [i] == 'F') { // FilteredIndexable
+			} else if (xmlreader.Name.Equals ("FilteredIndexable")) {
 				StringReader reader = new StringReader (xml);
 				return (Indexable) our_serializer.Deserialize (reader);
 			}
