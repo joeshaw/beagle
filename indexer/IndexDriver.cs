@@ -51,7 +51,9 @@ namespace Beagle {
 		// 2: Changed format of timestamp strings
 		// 3: Schema changed to be more Dashboard-Match-like
 		// 4: Schema changed for files to include _Directory property
-		private const int VERSION = 4;
+		// 5: Changed analyzer to support stemming.  Bumped version # to
+		//    force everyone to re-index.
+		private const int VERSION = 5;
 
 		private Beagle.Util.Logger log = null;
 
@@ -76,10 +78,6 @@ namespace Beagle {
 
 		//////////////////////////
 		
-		public bool Debug = (Environment.GetEnvironmentVariable ("BEAGLE_DEBUG_INDEX") != null);
-		
-		//////////////////////////
-
 		private const String timeFormat = "yyyyMMddHHmmss";
 
 		static private String TimestampToString (DateTime dt)
@@ -167,10 +165,19 @@ namespace Beagle {
 		}
 
 		//////////////////////////
+
+		// This is just a standard analyzer combined with the Porter stemmer.
+		// FIXME: This assumes everything being indexed is in English!
+		private class BeagleAnalyzer : StandardAnalyzer {
+			public override TokenStream TokenStream (String fieldName, TextReader reader)
+			{
+				return new PorterStemFilter (base.TokenStream (fieldName, reader));
+			}
+		}
 		
 		private Analyzer NewAnalyzer ()
 		{
-			return new StandardAnalyzer ();
+			return new BeagleAnalyzer ();
 		}
 
 		//////////////////////////
@@ -250,24 +257,48 @@ namespace Beagle {
 						     string   field,
 						     Analyzer analyzer)
 		{
-			// FIXME: Stemming!
-			LNS.BooleanQuery luceneQuery = new LNS.BooleanQuery ();
+			LNS.BooleanQuery luceneQuery = null;
 			foreach (string part in query.Parts) {
-				string[] subparts = part.Split (' ');
-				LNS.Query q;
-				if (subparts.Length == 1) {
-					Term t = new Term (field, part);
+
+				// Use the analyzer to extract the query's tokens.
+				// Code taken from Lucene's query parser.
+				TokenStream source = analyzer.TokenStream (field, new StringReader (part));
+				ArrayList tokens = new ArrayList ();
+
+				while (true) {
+					Lucene.Net.Analysis.Token t;
+					try {
+						t = source.Next ();
+					} catch (IOException) {
+						t = null;
+					}
+					if (t == null)
+						break;
+					tokens.Add (t.TermText ());
+				}
+				try {
+					source.Close ();
+				} catch (IOException) { 
+					// ignore
+				}
+
+				LNS.Query q = null;
+				if (tokens.Count == 1) {
+					Term t = new Term (field, (string) tokens [0]);
 					q = new LNS.TermQuery (t);
-				} else {
+				} else if (tokens.Count > 1) {
 					q = new LNS.PhraseQuery ();
-					foreach (string sp in subparts) {
-						if (sp == "")
-							continue;
-						Term t = new Term (field, sp);
+					foreach (string tokenStr in tokens) {
+						Term t = new Term (field, tokenStr);
 						((LNS.PhraseQuery) q).Add (t);
 					}
 				}
-				luceneQuery.Add (q, true, false);
+
+				if (q != null) {
+					if (luceneQuery == null)
+						luceneQuery = new LNS.BooleanQuery ();
+					luceneQuery.Add (q, true, false);
+				}
 			}
 			return luceneQuery;
 
@@ -278,20 +309,24 @@ namespace Beagle {
 			Analyzer analyzer = NewAnalyzer ();
 			LNS.BooleanQuery luceneQuery = new LNS.BooleanQuery ();
 			
-			String queryStr = query.AbusivePeekInsideQuery;
-			
 			LNS.Query metaQuery;
 			metaQuery = ToCoreLuceneQuery (query, "Properties", analyzer);
+			if (metaQuery == null)
+				return null;
 			metaQuery.SetBoost (2.5f);
 			luceneQuery.Add (metaQuery, false, false);
 
 			LNS.Query hotQuery;
 			hotQuery = ToCoreLuceneQuery (query, "HotContent", analyzer);
+			if (hotQuery == null)
+				return null;
 			hotQuery.SetBoost (1.75f);
 			luceneQuery.Add (hotQuery, false, false);
 		
 			LNS.Query contentQuery;
 			contentQuery = ToCoreLuceneQuery (query, "Content", analyzer);
+			if (contentQuery == null)
+				return null;
 			luceneQuery.Add (contentQuery, false, false);
 			
 			return luceneQuery;
@@ -535,6 +570,8 @@ namespace Beagle {
 		public void Query (Query query, IQueryResult result)
 		{
 			LNS.Query luceneQuery = ToLuceneQuery (query);
+			if (luceneQuery == null)
+				return;
 
 			LNS.Searcher searcher = new LNS.IndexSearcher (IndexDir);
 			LNS.Hits luceneHits = searcher.Search (luceneQuery);
