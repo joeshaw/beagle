@@ -61,13 +61,13 @@ namespace Best {
 
 			DeleteEvent += new DeleteEventHandler (this.DoDelete);
 
-			Widget menus = CreateMenuBar ();
+			//Widget menus = CreateMenuBar ();
 			Widget content = CreateContents ();
 
 			VBox main = new VBox (false, 3);
-			main.PackStart (menus, false, true, 3);
+			//main.PackStart (menus, false, true, 3);
 			main.PackStart (content, true, true, 3);
-			menus.Show ();
+			//menus.Show ();
 			content.Show ();
 			Add (main);
 			main.Show ();
