@@ -9,7 +9,6 @@ SUBDIRS = 			\
 	Lucene.Net 		\
 	Filters 		\
 	indexer 		\
-	Renderers		\
 	Tiles			\
 	tools 			\
 	Best			\

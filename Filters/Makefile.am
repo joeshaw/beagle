@@ -28,10 +28,13 @@ CSFILES = 				\
 	$(srcdir)/FilterPng.cs		\
 	$(srcdir)/FilterText.cs
 
+LOCAL_ASSEMBLIES =			\
+	../Util/Util.dll
+
 ASSEMBLIES =				\
 	$(BEAGLE_UI_LIBS)		\
 	-r:ICSharpCode.SharpZipLib.dll	\
-	-r:../Util/Util.dll
+	$(LOCAL_ASSEMBLIES:%=-r:%)
 
 RESOURCES =
 

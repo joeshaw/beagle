@@ -20,12 +20,15 @@ CSFILES = 				\
 	$(srcdir)/IndexDriver.cs	\
 	$(srcdir)/GoogleDriver.cs
 
+LOCAL_ASSEMBLIES =			\
+	../Util/Util.dll		\
+	../Lucene.Net/Lucene.Net.dll	\
+	../Filters/Filters.dll
+
 ASSEMBLIES = 				\
 	-r:Mono.Posix			\
 	-r:ICSharpCode.SharpZipLib.dll	\
-	-r:../Util/Util.dll		\
-	-r:../Lucene.Net/Lucene.Net.dll	\
-	-r:../Filters/Filters.dll
+	$(LOCAL_ASSEMBLIES:%=-r:%)
 
 RESOURCES =
 
@@ -37,8 +40,7 @@ ASSEMBLIES += $(EVO_SHARP_LIBS)
 endif
 
 
-
-$(TARGET): $(CSFILES)
+$(TARGET): $(CSFILES) $(LOCAL_ASSEMBLIES) $(RESOURCES)
 	$(CSC) -o $@ $(CSFLAGS) $(CSFILES) $(ASSEMBLIES) $(RESOURCES)
 
 all: $(TARGET)

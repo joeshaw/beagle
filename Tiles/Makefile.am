@@ -24,14 +24,17 @@ CSFILES =					\
 	$(srcdir)/TilePicture.cs		\
 	$(srcdir)/TileWebHistory.cs
 
+LOCAL_ASSEMBLIES =				\
+	../Util/Util.dll			\
+	../images/Images.dll			\
+	../Lucene.Net/Lucene.Net.dll		\
+	../Filters/Filters.dll		\
+	../indexer/Indexer.dll
+
 ASSEMBLIES = 					\
 	$(EVO_SHARP_LIBS)			\
 	$(BEAGLE_UI_LIBS)			\
-	-r:../Util/Util.dll			\
-	-r:../images/Images.dll			\
-	-r:../Lucene.Net/Lucene.Net.dll		\
-	-r:../Filters/Filters.dll		\
-	-r:../indexer/Indexer.dll
+	$(LOCAL_ASSEMBLIES:%=-r:%)
 
 RESOURCEFILES =					\
 	$(srcdir)/template-hit-collection.html	\
@@ -48,7 +51,7 @@ RESOURCEFILES =					\
 # Makefile-fu to map /path/filename to -resource:/path/filename,filename
 RESOURCES = $(join $(RESOURCEFILES:%=-resource:%,),$(notdir $(RESOURCEFILES)))
 
-$(TARGET): $(CSFILES) $(RESOURCEFILES)
+$(TARGET): $(CSFILES) $(LOCAL_ASSEMBLIES) $(RESOURCEFILES)
 	$(CSC) -o $@ $(CSFLAGS) $(CSFILES) $(ASSEMBLIES) $(RESOURCES)
 
 all: $(TARGET)

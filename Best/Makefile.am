@@ -11,20 +11,23 @@ CSFILES =				\
 	$(srcdir)/BestWindow.cs		\
 	$(srcdir)/BestRootTile.cs
 
+LOCAL_ASSEMBLIES =			\
+	../Util/Util.dll		\
+	../images/Images.dll		\
+	../Lucene.Net/Lucene.Net.dll	\
+	../Filters/Filters.dll		\
+	../indexer/Indexer.dll		\
+	../Tiles/Tiles.dll
+
 ASSEMBLIES =				\
 	$(EVO_SHARP_LIBS)		\
 	$(BEAGLE_UI_LIBS)		\
-	-r:../Util/Util.dll		\
-	-r:../images/Images.dll		\
-	-r:../Lucene.Net/Lucene.Net.dll	\
-	-r:../Filters/Filters.dll	\
-	-r:../indexer/Indexer.dll	\
-	-r:../Tiles/Tiles.dll
+	$(LOCAL_ASSEMBLIES:%=-r:%)
 
 RESOURCES =
 
-$(TARGET): $(CSFILES)
-	$(CSC) -o $@ $(CSFLAGS) $^ $(ASSEMBLIES) $(RESOURCES)
+$(TARGET): $(CSFILES) $(LOCAL_ASSEMBLIES) $(RESOURCES)
+	$(CSC) -o $@ $(CSFLAGS) $(CSFILES) $(ASSEMBLIES) $(RESOURCES)
 
 all: $(TARGET)
 

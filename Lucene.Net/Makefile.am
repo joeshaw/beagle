@@ -125,11 +125,14 @@ CSFILES =								\
 	$(srcdir)/Util/Number.cs				\
 	$(srcdir)/Util/PriorityQueue.cs
 
+LOCAL_ASSEMBLIES =			\
+	../Util/Util.dll
+
 ASSEMBLIES = 				\
 	-r:System.Runtime.Remoting	\
-	-r:../Util/Util.dll
+	$(LOCAL_ASSEMBLIES:%=-r:%)
 
-$(TARGET): $(CSFILES)
+$(TARGET): $(CSFILES) $(LOCAL_ASSEMBLIES)
 	$(CSC) -o $@ $(CSFLAGS) $(CSFILES) $(ASSEMBLIES)
 
 all: $(TARGET)
