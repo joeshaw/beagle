@@ -127,15 +127,12 @@ namespace Beagle.Daemon
 
         public class ServerNetworkHandler : NetworkHandler
         {
-                QueryDriver queryDriver;
 		QueryBody query;
 		NetworkService networkService;
 
-		public ServerNetworkHandler (TcpClient client, 
-					     QueryDriver queryDriver, 
+		public ServerNetworkHandler (TcpClient client,
 					     NetworkService networkService) : base(client) 
 		{
-			this.queryDriver = queryDriver;
 			this.networkService = networkService;
 			base.QueryReceivedEvent += OnQueryReceived;
 		}
@@ -144,7 +141,7 @@ namespace Beagle.Daemon
 			this.query = query;
 			QueryResult result = new QueryResult ();
 			result.HitsAddedEvent += OnHitsAdded;
-			queryDriver.DoQuery (query,result);
+			QueryDriver.DoQuery (query,result);
 		}
 
 		public void SendHits (ICollection hits)

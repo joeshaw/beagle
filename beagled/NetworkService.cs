@@ -57,7 +57,6 @@ namespace Beagle.Daemon
 	{
 		private static Logger log = Logger.Get ("Network");
 		
-		QueryDriver queryDriver;
 		ArrayList authenticators;
 		
 		TcpListener server;
@@ -67,7 +66,7 @@ namespace Beagle.Daemon
 		string localAddress = "EVO";
 		static string serviceName = "beagle._tcp.local";
 
-		public NetworkService (QueryDriver queryDriver, int localPort)
+		public NetworkService (int localPort)
 		{
 			this.queryDriver = queryDriver;
 
@@ -118,7 +117,7 @@ namespace Beagle.Daemon
 		{
 			while (true) {
 				TcpClient client = server.AcceptTcpClient ();
-				ServerNetworkHandler handler = new ServerNetworkHandler (client, queryDriver, this);
+				ServerNetworkHandler handler = new ServerNetworkHandler (client, this);
 				handler.Start ();
 			}
 		}
