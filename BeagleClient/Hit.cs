@@ -116,7 +116,7 @@ namespace Beagle {
 			
 			hit.Timestamp = BU.StringFu.StringToDateTime (reader.ReadString ());
 			hit.id = reader.ReadInt32 ();
-			hit.uri = new Uri (reader.ReadString ());
+			hit.uri = BU.UriFu.UriStringToUri (reader.ReadString ());
 			hit.type = reader.ReadString ();
 			hit.mimeType = reader.ReadString ();
 			if (hit.mimeType == "")

@@ -791,7 +791,7 @@ namespace Beagle.Daemon {
 			string uri = doc.Get ("Uri");
 			if (uri == null)
 				throw new Exception ("Got document from Lucene w/o a URI!");
-			return new Uri (uri, true);
+			return UriFu.UriStringToUri (uri);
 		}
 
 		static private void FromLuceneDocToVersioned (Document doc, Versioned versioned)

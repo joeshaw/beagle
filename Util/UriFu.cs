@@ -40,6 +40,22 @@ namespace Beagle.Util {
 			return new Uri (uriStr, true);
 		}
 
+		static public Uri UriStringToUri (string path)
+		{
+			// Paths from the file:// indexer need (re)quoting. For example,
+			// valid characters such as @ need to be converted to their hex
+			// values.
+			if (path.StartsWith ("file://")) {
+				// Remove the file:// prefix
+				path = path.Substring (7);
+
+				return PathToFileUri (path);
+			}
+			
+			// Currently, no other protocols need extra processing
+			return new Uri (path, true);
+		}
+
 		//////////////////////////////////
 
 		public class Comparer : IComparer

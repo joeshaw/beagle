@@ -168,7 +168,7 @@ namespace Beagle.Daemon {
 		{
 			string snippet;
 			
-			Uri uri = new Uri (uri_string, false);
+			Uri uri = UriFu.UriStringToUri (uri_string);
 			Hit hit = result.GetHitFromUri (uri);
 
 			if (hit == null) {
