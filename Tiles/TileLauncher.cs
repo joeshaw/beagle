@@ -68,10 +68,13 @@ namespace Beagle.Tile {
 				// don't worry about themes
 				return path;
 			} else {
+				IconTheme icon_theme = new IconTheme ();
+				int base_size;
+
 				if (hit ["fixme:Icon"].EndsWith (".png")) 
-					return BU.Icon.LookupName (path.Substring (0, path.Length-4));
+					return icon_theme.LookupIcon (path.Substring (0, path.Length-4), -1, IconData.Zero, out base_size);
 				else
-					return BU.Icon.LookupName (path);
+					return icon_theme.LookupIcon (path, -1, IconData.Zero, out base_size);
 			}
 		}
 

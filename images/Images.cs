@@ -29,6 +29,8 @@ using System.IO;
 using System.Reflection;
 using BU = Beagle.Util;
 
+using Gnome;
+
 namespace Beagle {
 	
 	public class Images {
@@ -109,7 +111,10 @@ namespace Beagle {
 		static public string GetHtmlSourceForStock (string stockid,
 							    int size)
 		{
-			string path = BU.Icon.LookupName (stockid, size);
+			int base_size;
+			IconTheme icon_theme = new IconTheme ();
+			string path = icon_theme.LookupIcon (stockid, size, IconData.Zero, out base_size);
+
 			if (path != null && path != "") {
 				return "file://" + path;
 			}
