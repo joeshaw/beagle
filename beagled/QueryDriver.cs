@@ -121,12 +121,14 @@ namespace Beagle.Daemon {
 			// even if no queryable accepts the query.
 			result.WorkerStart (this);
 			
-			foreach (Queryable queryable in queryables) {
-				if (queryable.AcceptQuery (body))
-					queryable.DoQuery (body, result, null);
+			try {
+				foreach (Queryable queryable in queryables) {
+					if (queryable.AcceptQuery (body))
+						queryable.DoQuery (body, result, null);
+				}
+			} finally {
+				result.WorkerFinished (this);
 			}
-			
-			result.WorkerFinished (this);
 		}
 
 		public void DoQueryChange (Queryable            queryable,

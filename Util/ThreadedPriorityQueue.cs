@@ -169,6 +169,7 @@ namespace Beagle.Util {
 		{
 			if (WorkerStartEvent != null) 
 				WorkerStartEvent (this);
+			try {
 			while (running) {
 
 				if (paused) {
@@ -253,8 +254,10 @@ namespace Beagle.Util {
 					}
 				}
 			}
-			if (WorkerFinishedEvent != null)
-				WorkerFinishedEvent (this);
+			} finally {
+				if (WorkerFinishedEvent != null)
+					WorkerFinisedEvent (this);
+			}
 		}
 	}
 }
