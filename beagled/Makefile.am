@@ -51,7 +51,6 @@ DAEMON_DLL_CSFLAGS = 			\
 	-target:library
 
 lucenedir = $(srcdir)/Lucene.Net
-
 LUCENE_CSFILES =							\
 	$(lucenedir)/AssemblyInfo.cs					\
 	$(lucenedir)/Analysis/Analyzer.cs				\
@@ -172,8 +171,20 @@ LUCENE_CSFILES =							\
 	$(lucenedir)/Util/Number.cs					\
 	$(lucenedir)/Util/PriorityQueue.cs
 
+
+fsqueryabledir = $(srcdir)/FileSystemQueryable
+FILE_SYSTEM_QUERYABLE_CSFILES =				\
+	$(fsqueryabledir)/FileSystemQueryable.cs	\
+	$(fsqueryabledir)/FileSystemEventMonitor.cs	\
+	$(fsqueryabledir)/IndexDriver.cs		\
+	$(fsqueryabledir)/Indexer.cs			\
+	$(fsqueryabledir)/IndexerQueue.cs		\
+	$(fsqueryabledir)/MainIndexDriver.cs
+
+
 DAEMON_DLL_CSFILES = 				\
 	$(LUCENE_CSFILES)			\
+	$(FILE_SYSTEM_QUERYABLE_CSFILES)	\
 	$(srcdir)/DBusisms.cs			\
 	$(srcdir)/FactoryImpl.cs		\
 	$(srcdir)/Relevancy.cs			\
@@ -184,13 +195,7 @@ DAEMON_DLL_CSFILES = 				\
 	$(srcdir)/QueryResult.cs		\
 	$(srcdir)/QueryDriver.cs		\
 	$(srcdir)/QueryImpl.cs			\
-	$(srcdir)/IndexDriver.cs		\
-	$(srcdir)/MainIndexDriver.cs		\
 	$(srcdir)/GoogleDriver.cs		\
-	$(srcdir)/FileSystemEventMonitor.cs	\
-	$(srcdir)/Indexer.cs            	\
-	$(srcdir)/IndexerQueue.cs       	\
-	$(srcdir)/NoIndexFileHandler.cs 	\
 	$(srcdir)/FilteredIndexable.cs
 
 DAEMON_DLL_LOCAL_ASSEMBLIES =		\

@@ -32,7 +32,7 @@ namespace Beagle.Daemon {
 
 	public interface IQueryable {
 
-		String Name { get; }
+		string Name { get; }
 
 		bool AcceptQuery (QueryBody body);
 

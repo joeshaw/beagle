@@ -31,13 +31,13 @@ namespace Beagle.Daemon {
 
 	public class FactoryImpl : Beagle.FactoryProxy {
 
-		QueryDriver query_driver;
+		QueryDriver queryDriver;
 
-		public FactoryImpl ()
+		public FactoryImpl (QueryDriver queryDriver)
 		{
 			DBusisms.BusDriver.ServiceDeleted += this.OnServiceDeleted;
 
-			query_driver = new QueryDriver ();
+			this.queryDriver = queryDriver;
 		}
 
 		////////////////////////////////////////////////////
@@ -125,12 +125,20 @@ namespace Beagle.Daemon {
 			UnregisterByOwner (serviceName);
 		}
 
-		////////////////////////////////////////////////////		
+		////////////////////////////////////////////////////
+
+		private void OnClosedHandler (QueryImpl sender)
+		{
+			UnregisterObject (sender);
+		}
 
 		override public string NewQueryPath ()
 		{
-			QueryImpl query_impl = new QueryImpl (query_driver);
-			return RegisterObject (query_impl);
+			QueryImpl queryImpl = new QueryImpl (queryDriver);
+			// When a query is closed, we need to unregister it
+			// and do any necessary local clean-up.
+			queryImpl.ClosedEvent += OnClosedHandler;
+			return RegisterObject (queryImpl);
 		}
 
 	}

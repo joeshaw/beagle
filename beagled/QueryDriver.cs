@@ -95,6 +95,7 @@ namespace Beagle.Daemon {
 				IQueryable queryable;
 				queryable = (IQueryable) Activator.CreateInstance (qi.Type);
 				queryables.Add (queryable);
+				Console.WriteLine ("Constructed {0}", queryable.Name);
 			}
 		}
 

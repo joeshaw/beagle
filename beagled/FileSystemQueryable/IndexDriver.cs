@@ -43,10 +43,11 @@ using Lucene.Net.QueryParsers;
 using LNS = Lucene.Net.Search;
 
 using BU = Beagle.Util;
+using Beagle.Daemon;
 
-namespace Beagle.Daemon {
+namespace Beagle.Daemon.FileSystemQueryable {
 
-	public class IndexDriver : IQueryable {
+	public class IndexDriver {
 		const string propPrefix = "prop:";
 
 		private Beagle.Util.Logger log = null;

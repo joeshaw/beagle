@@ -29,8 +29,9 @@ using System;
 using System.Collections;
 using System.Threading;
 using Beagle;
+using Beagle.Daemon;
 
-namespace Beagle.Daemon
+namespace Beagle.Daemon.FileSystemQueryable
 {
 	public class IndexerQueue {
 		

@@ -41,6 +41,9 @@ namespace Beagle.Daemon {
 		public override event GotHitsXmlHandler GotHitsXmlEvent;
 		public override event FinishedHandler FinishedEvent;
 		public override event CancelledHandler CancelledEvent;
+		
+		public delegate void ClosedHandler (QueryImpl sender);
+		public event ClosedHandler ClosedEvent;
 
 		public QueryImpl (QueryDriver _driver)
 		{
@@ -111,9 +114,8 @@ namespace Beagle.Daemon {
 		public override void CloseQuery () 
 		{
 			Cancel (true);
-
-			System.Console.WriteLine ("Closing Query");
-			DBusisms.Factory.UnregisterObject (this);
+			if (ClosedEvent != null)
+				ClosedEvent (this);
 		}
 
 		private string HitsToXml (ICollection hits)

@@ -43,12 +43,12 @@ using Lucene.Net.QueryParsers;
 using LNS = Lucene.Net.Search;
 
 using BU = Beagle.Util;
+using Beagle.Daemon;
 
 
-namespace Beagle.Daemon {
+namespace Beagle.Daemon.FileSystemQueryable {
 
-	[QueryableFlavor (Name="LuceneIndex", Domain=QueryDomain.Local)]
-	public class MainIndexDriver : IndexDriver, IQueryable {
+	public class MainIndexDriver : IndexDriver {
 
 		// 1: Original
 		// 2: Changed format of timestamp strings

@@ -29,14 +29,14 @@ using System;
 using System.IO;
 using System.Collections;
 using Beagle.Util;
-//using Beagle;
+using Beagle.Daemon;
 
-namespace Beagle.Daemon
+namespace Beagle.Daemon.FileSystemQueryable
 {
 	public class Indexer : Beagle.Indexer 
 	{
 		IndexerQueue indexerQueue;
-		IndexDriver driver = new MainIndexDriver ();
+		public IndexDriver driver = new MainIndexDriver (); // FIXME: Ugly!
 
 		FileSystemEventMonitor monitor = new FileSystemEventMonitor ();
 		FileMatcher doNotIndex = new FileMatcher ();

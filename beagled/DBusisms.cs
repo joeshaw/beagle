@@ -35,38 +35,18 @@ namespace Beagle.Daemon
 
 		static Connection connection = null;
 		static Service service = null;
-		static BusDriver bus_driver = null;
-		static FactoryImpl factory = null;
+		static BusDriver busDriver = null;
 
 		public static Connection Connection {
-			get { 
-				if (connection == null)
-					connection = Bus.GetSessionBus ();
-				return connection;
-			}
+			get { return connection; }
 		}
 
 		public static Service Service {
-			get {
-				if (service == null)
-					service = new Service (Connection,
-							       Beagle.DBusisms.ServiceName);
-				return service;
-			}
+			get { return service; }
 		}
 
 		public static BusDriver BusDriver {
-			get {
-				if (bus_driver == null)
-					bus_driver = BusDriver.New (Connection);
-				return bus_driver;
-			}
-		}
-
-		public static FactoryImpl Factory {
-			get {
-				return factory;
-			}
+			get { return busDriver; }
 		}
 
 		[DllImport ("dbus-glib-1")]
@@ -76,9 +56,9 @@ namespace Beagle.Daemon
 		{
 			dbus_g_thread_init ();
 
-			factory = new FactoryImpl ();
-			DBusisms.Service.RegisterObject (factory,
-							 Beagle.DBusisms.FactoryPath);
+			connection = Bus.GetSessionBus ();
+			service = new Service (connection, Beagle.DBusisms.ServiceName);
+			busDriver = BusDriver.New (connection);
 		}
 				
 	}

@@ -35,29 +35,6 @@ using Mono.Posix;
 namespace Beagle.Daemon {
 	class BeagleDaemon {
 
-		static void ScanAssemblyForHandlers (Assembly assembly,
-						     IndexerQueue indexerQueue)
-		{
-			foreach (Type t in assembly.GetTypes ()) {
-				if (t.IsSubclassOf (typeof (PreIndexHandler))) {
-
-					PreIndexHandler handler = (PreIndexHandler) Activator.CreateInstance (t);
-					indexerQueue.PreIndexingEvent += handler.Run;
-				}
-				if (t.IsSubclassOf (typeof (PostIndexHandler))) {
-					PostIndexHandler handler = (PostIndexHandler) Activator.CreateInstance (t);
-					indexerQueue.PostIndexingEvent += handler.Run;
-				}
-			}
-		}
-
-		static void LoadHandlers (IndexerQueue indexerQueue) 
-		{
-			// FIXME: load handlers from plugins
-			ScanAssemblyForHandlers (Assembly.GetExecutingAssembly (), 
-						 indexerQueue);
-		}
-
 		private static bool Daemonize ()
 		{
 			Directory.SetCurrentDirectory ("/");
@@ -99,20 +76,21 @@ namespace Beagle.Daemon {
 
 			Application.Init ();
 
+			// Connect to the session bus, acquire the com.novell.Beagle
+			// service, and set up a BusDriver.
 			DBusisms.Init ();
 
+			// Construct a query driver.  Among other things, this
+			// loads and initializes all of the IQueryables.
+			QueryDriver queryDriver = new QueryDriver ();
 
-			IndexerQueue indexerQueue = new IndexerQueue ();
-			LoadHandlers (indexerQueue);
+			// Set up our D-BUS object factory.
+			FactoryImpl factory = new FactoryImpl (queryDriver);
+			DBusisms.Service.RegisterObject (factory, Beagle.DBusisms.FactoryPath);
 
-
-			Indexer indexer = new Indexer (indexerQueue);
-			DBusisms.Service.RegisterObject (indexer,
-							 Beagle.DBusisms.IndexerPath);
-
-
-
+			// Start our event loop.
 			Application.Run ();
+
 			return 0;
 		}
 	}
