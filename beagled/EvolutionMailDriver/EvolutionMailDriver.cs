@@ -34,6 +34,8 @@ using System.Runtime.Serialization.Formatters.Binary;
 using System.Text;
 using System.Xml;
 
+using System.Threading;
+
 using Mono.Posix;
 
 using Beagle.Util;
@@ -91,26 +93,24 @@ namespace Beagle.Daemon {
 				return Marshal.PtrToStringAnsi (uid_ptr);
 		}
 
-		public ArrayList Match (IList words)
+		public Hashtable Match (IList words)
 		{
-			ArrayList matches = null;
+			Hashtable matches = null;
 
 			foreach (string word in words) {
-				ArrayList word_matches = new ArrayList ();
+				Hashtable word_matches = new Hashtable ();
 
 				IntPtr cursor = camel_index_find (this.index, word);
 
 				string uid;
 				while ((uid = GetUid (cursor)) != null)
-					word_matches.Add (uid);
-
-				word_matches.Sort ();
+					word_matches [uid] = null;
 
 				if (matches == null)
 					matches = word_matches;
 				else {
-					foreach (string m in (ArrayList) matches.Clone()) {
-						if (word_matches.BinarySearch (m) < 0)
+					foreach (string m in matches.Keys) {
+						if (!word_matches.ContainsKey (m))
 							matches.Remove (m);
 					}
 				}
@@ -173,7 +173,7 @@ namespace Beagle.Daemon {
 			this.summaryInfo = summaryInfo;
 		}
 
-		private void Setup ()
+		private bool Setup ()
 		{
 			if (summaryInfo.Name == "summary") {
 				string dirName = summaryInfo.DirectoryName;
@@ -212,6 +212,13 @@ namespace Beagle.Daemon {
 					if (imap_url == null)
 						continue;
 
+					// Escape out additional @s in the name.  I hate the class libs so much.
+					int lastIdx = imapName.LastIndexOf ('@');
+					if (imapName.IndexOf ('@') != lastIdx) {
+						string toEscape = imapName.Substring (0, lastIdx);
+						imapName = toEscape.Replace ("@", "%40") + imapName.Substring (lastIdx);
+					}
+
 					if (imap_url.InnerText.StartsWith ("imap://" + imapName)) {
 						this.accountName = uid;
 						break;
@@ -220,7 +227,7 @@ namespace Beagle.Daemon {
 
 				if (accountName == null) {
 					log.Info ("Unable to determine account name for {0}", imapName);
-					return;
+					return false;
 				}
 					
 				this.folderName = driver.GetImapFolderName (new DirectoryInfo (dirName));
@@ -230,6 +237,8 @@ namespace Beagle.Daemon {
 				this.folderName = driver.GetLocalFolderName (this.summaryInfo);
 				this.getCachedContent = false;
 			}
+
+			return true;
 		}
 
 
@@ -237,8 +246,10 @@ namespace Beagle.Daemon {
 		{
 			Indexable indexable = null;
 
-			if (this.accountName == null)
-				Setup ();
+			if (this.accountName == null) {
+				if (!Setup ())
+					return null;
+			}
 
 			if (this.summary == null)
 				this.summary = Camel.Summary.load (this.summaryInfo.FullName);
@@ -250,15 +261,15 @@ namespace Beagle.Daemon {
 			Stream statusStream;
 			BinaryFormatter formatter;
 				
-			if (this.mapping == null) {
-				appDataName = "status-" + this.accountName + "-" + this.folderName.Replace ('/', '-');
+			appDataName = "status-" + this.accountName + "-" + this.folderName.Replace ('/', '-');
 
+			if (this.mapping == null) {
 				try {
 					statusStream = PathFinder.ReadAppData ("MailIndex", appDataName);
 					formatter = new BinaryFormatter ();
 					this.mapping = formatter.Deserialize (statusStream) as Hashtable;
 					statusStream.Close ();
-					log.Debug ("Successfully loaded previous crawled data from disk");
+					log.Debug ("Successfully loaded previous crawled data from disk: {0}", appDataName);
 				} catch {
 					this.mapping = new Hashtable ();
 				}
@@ -300,15 +311,37 @@ namespace Beagle.Daemon {
 
 					this.mapping[mi.uid] = mi.flags;
 					++indexedCount;
-				}
+				} 
 
 				this.deletedList.Remove (mi.uid);
+			} else {
+				statusStream = PathFinder.WriteAppData ("MailIndex", appDataName);
+				formatter = new BinaryFormatter ();
+				formatter.Serialize (statusStream, mapping);
+				statusStream.Close ();
+				log.Debug ("Wrote previously crawled data to disk: {0}", appDataName);
 			}
 
 			return indexable;
 		}
 
 	}
+
+	// Kind of weird that Uri doesn't implement IComparable
+	internal class UriComparer : IComparer {
+		
+		public int Compare (object x, object y)
+		{
+			Uri xUri = (Uri) x;
+			Uri yUri = (Uri) y;
+
+			if (xUri.Equals (yUri))
+				return 0;
+
+			return String.Compare (xUri.ToString (), yUri.ToString ());
+		}
+	}
+				
 
 	[QueryableFlavor (Name="Mail", Domain=QueryDomain.Local)]
 	public class EvolutionMailDriver : LuceneQueryable {
@@ -318,6 +351,10 @@ namespace Beagle.Daemon {
 		private SortedList watched = new SortedList ();
 		private ArrayList indexes = new ArrayList ();
 		private SummaryCrawler crawler;
+
+		private object lockObj = new object ();
+		private ArrayList AddedUris = new ArrayList ();
+		private bool queryRunning = false;
 
 		public EvolutionMailDriver () : base (Path.Combine (PathFinder.RootDir, "MailIndex"))
 		{
@@ -461,6 +498,8 @@ namespace Beagle.Daemon {
 		{
 			ArrayList hits = new ArrayList ();
 
+			log.Debug ("### indexes: {0}", this.indexes);
+
 			foreach (string idx_path in this.indexes) {
 				// gets rid of the ".index" from the file.  camel expects it to just end in ".ibex"
 				string path = Path.ChangeExtension (idx_path, null);
@@ -477,20 +516,34 @@ namespace Beagle.Daemon {
 					continue;
 				}
 
-				ArrayList matches = index.Match (body.Text);
+				log.Debug ("### Trying to match in {0}: {1}", path, body.Text);
+				Hashtable matches = index.Match (body.Text);
+				log.Debug ("### Returned {0} matches", matches.Count);
 				index.Dispose ();
+				log.Debug ("### Disposed of the index");
 
-				foreach (string uid in matches) {
+				if (matches == null || matches.Count == 0)
+					continue;
+
+				string summaryPath = Path.ChangeExtension (path, "ev-summary");
+
+				if (!File.Exists (summaryPath))
+					continue;
+
+				Camel.Summary summary = Camel.Summary.load (summaryPath);
+
+				foreach (Camel.MessageInfo mi in summary) {
+					if (!matches.ContainsKey (mi.uid))
+						continue;
+
 					string folderName = GetLocalFolderName (new FileInfo (path));
 
 					Hit hit = new Hit ();
-					hit.Uri = EmailUri ("local@local", folderName, uid);
+					hit.Uri = EmailUri ("local@local", folderName, mi.uid);
 					hit.Type = "MailMessage"; // Maybe MailMessage?
 					hit.MimeType = "text/plain";
 					hit.Source = "EvolutionMail";
 					hit.ScoreRaw = 1.0F;
-
-					Camel.MessageInfo mi = GetMessageInfo (path, uid);
 
 					// These should map to the same properties in MailToIndexable ()
 					hit ["dc:title"] = mi.subject;
@@ -533,6 +586,8 @@ namespace Beagle.Daemon {
 				}
 			}
 
+			log.Debug ("### Returning {0} hits", hits.Count);
+
 			return hits;
 		}
 
@@ -545,20 +600,69 @@ namespace Beagle.Daemon {
 
 			LuceneQueryableChangeData lqcd = (LuceneQueryableChangeData) changeData;
 			ArrayList hits = new ArrayList ();
+			ArrayList addedUris = null;
 
-			if (lqcd != null && lqcd.UriDeleted != null) {
+			if (lqcd == null) {
+				hits = CamelIndexQuery (body);
+			} else if (lqcd.UriDeleted != null) {
 				Uri[] subtracted = new Uri[1];
 				subtracted[0] = lqcd.UriDeleted;
 				result.Subtract (subtracted);
-			} else {
-				hits = CamelIndexQuery (body);
+			} else if (lqcd.UriAdded != null) {
+				bool runQuery = false;
+ 
+				log.Debug ("*** {0}: Acquring lockObj lock", Thread.CurrentThread.Name);
+				lock (this.lockObj) {
+					if (! this.AddedUris.Contains (lqcd.UriAdded))
+						this.AddedUris.Add (lqcd.UriAdded);
+
+					if (this.queryRunning) {
+						log.Debug ("*** {0}: Query is already running",
+								   Thread.CurrentThread.Name);
+					} else {
+						log.Debug ("*** {0}: We're going to run the query",
+								   Thread.CurrentThread.Name);
+						this.queryRunning = true;
+						runQuery = true;
+					}
+				}
+
+				if (runQuery) {
+					lock (this.lockObj) {
+						addedUris = (ArrayList) this.AddedUris.Clone ();
+						this.AddedUris.Clear ();
+
+						log.Debug ("*** {0}: this.AddedUris has {1} elements, addedUris has {2}",
+								   Thread.CurrentThread.Name,
+								   this.AddedUris.Count, addedUris.Count);
+					}
+
+					log.Debug ("*** {0}: Starting query", Thread.CurrentThread.Name);
+					try {
+						hits = CamelIndexQuery (body);
+					} catch (Exception e) {
+						log.Debug ("*** Caught an exception!");
+					} finally {
+						log.Debug ("*** {0}: Query finished",
+								   Thread.CurrentThread.Name);
+
+						lock (this.lockObj) {
+							log.Debug("*** {0}: Finished running query",
+									  Thread.CurrentThread.Name);
+							this.queryRunning = false;
+						}
+					}
+				}
 			}
 
-			if (hits != null && lqcd != null && lqcd.UriAdded != null) {
+			if (hits != null && addedUris != null) {
 				ArrayList filteredHits = new ArrayList ();
+				UriComparer uriComparer = new UriComparer ();
+
+				addedUris.Sort (uriComparer);
 
 				foreach (Hit hit in hits) {
-					if (hit.Uri == lqcd.UriAdded) {
+					if (addedUris.BinarySearch (hit.Uri, uriComparer) >= 0) {
 						filteredHits.Add (hit);
 						break;
 					}
@@ -570,21 +674,6 @@ namespace Beagle.Daemon {
 			if (hits != null)
 				result.Add (hits);
                 }
-
-		private Camel.MessageInfo GetMessageInfo (string path, string uid)
-		{
-			string summaryFile = Path.ChangeExtension (path, "ev-summary");
-
-			Camel.Summary summary = Camel.Summary.load (summaryFile);
-
-			foreach (Camel.MessageInfo mi in summary) {
-				if (mi.uid == uid)
-					return mi;
-			}
-
-			return null;
-		}
-
 
 		public void IndexSummary (FileInfo summaryInfo)
 		{
