@@ -79,10 +79,9 @@ namespace Beagle.Daemon {
 		private FileInfo summaryInfo;
 		private Camel.Summary summary;
 		private IEnumerator summaryEnumerator;
-		private string accountName, folderName;
+		private string accountName, folderName, appDataName;
 		private bool getCachedContent;
 		private Hashtable mapping;
-		private string appDataName;
 		private ArrayList deletedList;
 		private int count, indexedCount;
 
@@ -164,6 +163,8 @@ namespace Beagle.Daemon {
 				this.getCachedContent = false;
 			}
 
+			this.appDataName = "status-" + this.accountName + "-" + this.folderName.Replace ('/', '-');
+
 			if (this.folderName.ToLower () == "spam" || this.folderName.ToLower () == "junk") {
 				EvolutionMailQueryable.log.Debug ("Skipping junk/spam folder {0} on {1}", this.folderName, this.accountName);
 				return false;
@@ -172,17 +173,17 @@ namespace Beagle.Daemon {
 			return true;
 		}
 
-		private bool LoadCache (string appDataName)
+		private bool LoadCache ()
 		{
 			Stream cacheStream;
 			BinaryFormatter formatter;
 
 			try {
-				cacheStream = PathFinder.ReadAppData ("MailIndex", appDataName);
+				cacheStream = PathFinder.ReadAppData ("MailIndex", this.appDataName);
 				formatter = new BinaryFormatter ();
 				this.mapping = formatter.Deserialize (cacheStream) as Hashtable;
 				cacheStream.Close ();
-				EvolutionMailQueryable.log.Debug ("Successfully loaded previous crawled data from disk: {0}", appDataName);
+				EvolutionMailQueryable.log.Debug ("Successfully loaded previous crawled data from disk: {0}", this.appDataName);
 
 				return true;
 			} catch {
@@ -192,12 +193,12 @@ namespace Beagle.Daemon {
 			}
 		}
 
-		private void SaveCache (string appDataName)
+		private void SaveCache ()
 		{
 			Stream cacheStream;
 			BinaryFormatter formatter;
 			
-			cacheStream = PathFinder.WriteAppData ("MailIndex", appDataName);
+			cacheStream = PathFinder.WriteAppData ("MailIndex", this.appDataName);
 			formatter = new BinaryFormatter ();
 			formatter.Serialize (cacheStream, mapping);
 			cacheStream.Close ();
@@ -223,30 +224,22 @@ namespace Beagle.Daemon {
 				return false;
 		}
 
-		public Indexable GetNextIndexable ()
+		public bool HasNextIndexable ()
 		{
-			Indexable indexable = null;
-
 			if (this.accountName == null) {
 				if (!Setup ())
-					return null;
+					return false;
 			}
 
-			string appDataName;
-			Stream statusStream;
-			BinaryFormatter formatter;
-				
-			appDataName = "status-" + this.accountName + "-" + this.folderName.Replace ('/', '-');
-
 			if (this.mapping == null) {
-				bool cache_loaded = LoadCache (appDataName);
+				bool cache_loaded = this.LoadCache ();
 
 				this.deletedList = new ArrayList (this.mapping.Keys);
 
 				// Check to see if we even need to bother walking the summary
 				if (cache_loaded && ! CrawlNeeded ()) {
 					EvolutionMailQueryable.log.Debug ("{0}: summary has not been updated; crawl unncessary", this.folderName);
-					return null;
+					return false;
 				}
 			}
 
@@ -256,65 +249,74 @@ namespace Beagle.Daemon {
 			if (this.summaryEnumerator == null)
 				this.summaryEnumerator = this.summary.GetEnumerator ();
 
-			while (indexable == null && this.summaryEnumerator.MoveNext ()) {
-				Camel.MessageInfo mi = this.summaryEnumerator.Current as Camel.MessageInfo;
+			if (this.summaryEnumerator.MoveNext ())
+				return true;
 
-				// Checkpoint our progress to disk every 500 messages
-				if (this.count % 500 == 0) {
-					EvolutionMailQueryable.log.Debug ("{0}: indexed {1} messages ({2}/{3} {4:###.0}%)",
-									  this.folderName, this.indexedCount, this.count,
-									  this.summary.header.count,
-									  100.0 * this.count / this.summary.header.count);
+			EvolutionMailQueryable.log.Debug ("{0}: Finished indexing {1} ({2}/{3} {4:###.0}%)",
+							  this.folderName, this.indexedCount, this.count,
+							  this.summary.header.count,
+							  100.0 * this.count / this.summary.header.count);
 
-					if (this.count > 0)
-						SaveCache (appDataName);
-				}
-				++this.count;
-
-				if (this.mapping[mi.uid] == null || (uint) mapping[mi.uid] != mi.flags) {
-					FileStream msgStream = null;
-					TextReader msgReader = null;
-
-					// FIXME: We need to handle MIME parts
-					if (this.getCachedContent && this.mapping[mi.uid] == null) {
-						string path = Path.Combine (summaryInfo.DirectoryName, mi.uid + ".");
-
-						try {
-							msgStream = new FileStream (path, System.IO.FileMode.Open,
-										    FileAccess.Read);
-							msgReader = new StreamReader (msgStream, new ASCIIEncoding ());
-						} catch { }
-					}
-
-					indexable = EvolutionMailQueryable.MailToIndexable (this.accountName, this.folderName,
-											    mi, msgReader);
-
-					if (msgStream != null)
-						msgStream.Close ();
-
-					this.mapping[mi.uid] = mi.flags;
-					++indexedCount;
-				} 
-
-				this.deletedList.Remove (mi.uid);
+			this.SaveCache ();
+				
+			try {
+				ExtendedAttribute.Set (this.summaryInfo, "LastCrawl",
+						       StringFu.DateTimeToString (DateTime.Now));
+			} catch {
+				EvolutionMailQueryable.log.Debug ("Unable to set last crawl time on {0}",
+								  this.summaryInfo.FullName);
 			}
+			
+			return false;
+		}
 
-			if (indexable == null) {
-				EvolutionMailQueryable.log.Debug ("{0}: Finished indexing {1} ({2}/{3} {4:###.0}%)",
+		public Indexable GetNextIndexable ()
+		{
+			Indexable indexable = null;
+
+			Stream statusStream;
+			BinaryFormatter formatter;
+			
+			Camel.MessageInfo mi = this.summaryEnumerator.Current as Camel.MessageInfo;
+
+			// Checkpoint our progress to disk every 500 messages
+			if (this.count % 500 == 0) {
+				EvolutionMailQueryable.log.Debug ("{0}: indexed {1} messages ({2}/{3} {4:###.0}%)",
 								  this.folderName, this.indexedCount, this.count,
 								  this.summary.header.count,
 								  100.0 * this.count / this.summary.header.count);
 
-				SaveCache (appDataName);
-				
-				try {
-					ExtendedAttribute.Set (this.summaryInfo, "LastCrawl",
-							       StringFu.DateTimeToString (DateTime.Now));
-				} catch {
-					EvolutionMailQueryable.log.Debug ("Unable to set last crawl time on {0}",
-									  this.summaryInfo.FullName);
-				}
+				if (this.count > 0)
+					this.SaveCache ();
 			}
+			++this.count;
+
+			if (this.mapping[mi.uid] == null || (uint) mapping[mi.uid] != mi.flags) {
+				FileStream msgStream = null;
+				TextReader msgReader = null;
+
+				// FIXME: We need to handle MIME parts
+				if (this.getCachedContent && this.mapping[mi.uid] == null) {
+					string path = Path.Combine (summaryInfo.DirectoryName, mi.uid + ".");
+
+					try {
+						msgStream = new FileStream (path, System.IO.FileMode.Open,
+									    FileAccess.Read);
+						msgReader = new StreamReader (msgStream, new ASCIIEncoding ());
+					} catch { }
+				}
+
+				indexable = EvolutionMailQueryable.MailToIndexable (this.accountName, this.folderName,
+										    mi, msgReader);
+
+				if (msgStream != null)
+					msgStream.Close ();
+
+				this.mapping[mi.uid] = mi.flags;
+				++indexedCount;
+			} 
+
+			this.deletedList.Remove (mi.uid);
 
 			return indexable;
 		}

@@ -31,5 +31,7 @@ namespace Beagle {
 	public interface IIndexableGenerator {
 
 		Indexable GetNextIndexable ();
+
+		bool HasNextIndexable ();
 	}
 }

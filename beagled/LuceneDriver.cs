@@ -852,13 +852,21 @@ namespace Beagle.Daemon {
 				bool retval = true; // dequeue the item after processing
 
 				if (rawItem.IndexableGenerator != null) {
+
+					// The generator is finished, so dequeue it.
+					if (!rawItem.IndexableGenerator.HasNextIndexable ())
+						return true;
 					
 					Indexable indexable;
 					indexable = rawItem.IndexableGenerator.GetNextIndexable ();
-					
-					// The generator is finished, so dequeue it.
-					if (indexable == null)
-						return true;
+
+					if (indexable == null) {
+						// The generator didn't return an indexable, but that
+						// doesn't mean that its processing queue is empty.
+						// So we won't create an item for it, but we also
+						// will return false so we don't dequeue.
+						return false;
+					}
 
 					// Synthesize a QueueItem for our generated indexable.
 					item = new QueueItem ();
