@@ -1,5 +1,12 @@
 2005-02-13  Veerapuram Varadhan	 <vvaradhan@novell.com>
 
+	* Tiles/TileFile.cs, Tiles/Template.cs: Now, there won't be any
+	"fixme:directory" stuff in Hit.  Manipulate them when a hit is
+	added to a template and use Template["fixme:directory"] in the
+	"Reveal" action.
+	
+2005-02-13  Veerapuram Varadhan	 <vvaradhan@novell.com>
+
 	* Tiles/TileDocs.cs, Tiles/TilePresentation.cs: Do not show
 	"Title" in the Tile, if the document doesn't have any Title.
 
