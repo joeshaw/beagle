@@ -19,6 +19,11 @@ HAP_CSFILES =						\
 	$(srcdir)/HtmlAgilityPack/MixedCodeDocument.cs	\
 	$(srcdir)/HtmlAgilityPack/tools.cs
 
+
+# FilterAbiword has been temporarily removed
+# because of bug 170082.
+#	$(srcdir)/FilterAbiword.cs	\
+
 CSFILES = 				\
 	$(HAP_CSFILES)			\
 	$(srcdir)/FilterHtml.cs		\
@@ -29,7 +34,6 @@ CSFILES = 				\
 	$(srcdir)/FilterPng.cs		\
 	$(srcdir)/FilterText.cs	        \
 	$(srcdir)/FilterRTF.cs		\
-	$(srcdir)/FilterAbiword.cs	\
 	$(srcdir)/FilterSource.cs	\
 	$(srcdir)/FilterC.cs		\
 	$(srcdir)/FilterCpp.cs		\
