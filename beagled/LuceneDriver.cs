@@ -35,6 +35,7 @@ using System.Globalization;
 using System.IO;
 using System.Threading;
 using System.Xml;
+using System.Xml.Serialization;
 
 using Mono.Posix;
 
@@ -465,15 +466,38 @@ namespace Beagle.Daemon {
 		// Queue implementation
 		//
 
-		private class QueueItem : IComparable {
+		// Public so that it can be serialized
+		[XmlInclude (typeof (FilteredIndexable))]
+		public class QueueItem : IComparable {
+			[XmlAttribute]
 			public uint SequenceNumber;
+			
+			[XmlAttribute]
 			public int  Priority;
 
-			public Indexable IndexableToAdd;
-			public Uri UriToDelete;
+			public Indexable IndexableToAdd;		       
+			
+			private Uri uriToDelete;
+
+			[XmlIgnore]
+			public Uri UriToDelete {
+				get { return uriToDelete; }
+				set { uriToDelete = value; }
+			}
+			
+			[XmlAttribute ("UriToDelete")]
+			public string UriToDeleteString {
+				get { return uriToDelete != null ? uriToDelete.ToString () : ""; }
+				set { 
+					uriToDelete = (value != null && value != "") ? new Uri (value) : null; }
+			}
+			
 			public event PostIndexHook PostIndexHook;
+
+			[XmlAttribute]
 			public bool IsSilent = false;
 
+			[XmlIgnore]
 			public Uri Uri {
 				get { 
 					if (IndexableToAdd != null)
@@ -482,10 +506,12 @@ namespace Beagle.Daemon {
 				}
 			}
 
+			[XmlIgnore]
 			public bool IsAdd {
 				get { return IndexableToAdd != null; }
 			}
 
+			[XmlIgnore]
 			public bool IsDelete {
 				get { return UriToDelete != null; }
 			}
@@ -494,44 +520,6 @@ namespace Beagle.Daemon {
 			{
 				return String.Format ("[QueueItem: {0} {1}]",
 						      IsAdd ? "Add" : "Delete", Uri);
-			}
-
-			public void WriteToXml (XmlTextWriter writer) 
-			{
-				writer.WriteStartElement ("queueitem");
-				writer.WriteAttributeString ("sequenceno",
-							     SequenceNumber.ToString ());
-				writer.WriteAttributeString ("priority",
-							     Priority.ToString ());
-				if (UriToDelete != null)
-					writer.WriteAttributeString ("todelete", 
-								     UriToDelete.ToString ());
-				if (IndexableToAdd != null) {
-					writer.WriteAttributeString ("hasindexable", "true");
-					IndexableToAdd.WriteToXml (writer);
-				}
-
-				writer.WriteEndElement ();
-			}
-
-			public void ReadFromXml (XmlTextReader reader)
-			{
-				reader.Read ();
-				string str;
-
-				SequenceNumber = uint.Parse (reader.GetAttribute ("sequenceno"));
-				Priority = int.Parse (reader.GetAttribute ("priority"));
-				str = reader.GetAttribute ("todelete");
-				if (str == null)
-					UriToDelete = null;
-				else
-					UriToDelete = new Uri (str, true);
-				
-				if (reader.GetAttribute ("hasindexable") == "true") {
-					IndexableToAdd = Indexable.NewFromXml (reader);
-				}
-
-
 			}
 
 			public void RunHook (LuceneDriver driver) 
@@ -566,6 +554,8 @@ namespace Beagle.Daemon {
 
 			private bool isPersistent;
 			string queueDir;
+
+			private XmlSerializer serializer;
 			
 			int sinceOptimization = 0;
 			const int sinceOptimizationThreshold = 117;
@@ -579,6 +569,9 @@ namespace Beagle.Daemon {
 				isPersistent = persistent;
 				this.queueDir = queueDir;
 
+				serializer = new XmlSerializer (typeof (QueueItem));
+								
+
 				if (persistent) {
 					Directory.CreateDirectory (queueDir);
 					RestoreQueue ();
@@ -591,15 +584,7 @@ namespace Beagle.Daemon {
 					FileStream f = new FileStream (filename,
 								       System.IO.FileMode.Open,
 								       FileAccess.Read);
-					StreamReader sr = new StreamReader (f); 
-					
-					XmlTextReader reader = new XmlTextReader (sr);
-					QueueItem item = new QueueItem ();
-					item.ReadFromXml (reader);
-					reader.Close ();
-					sr.Close ();
-					f.Close ();
-
+					QueueItem item = (QueueItem)serializer.Deserialize (f);
 					return item;
 				} catch (Exception e) {
 					Logger.Log.Warn ("Unable to restore queued indexable: {0}", e);
@@ -614,11 +599,11 @@ namespace Beagle.Daemon {
 				ArrayList items = new ArrayList ();
 				foreach (string file in files) {
 					QueueItem item = RestoreQueueItem (file);
-					PersistClosure closure = new PersistClosure (file);
-					item.PostIndexHook += closure.Hook;
-					
-					if (item != null)
+					if (item != null) {
+						PersistClosure closure = new PersistClosure (file);
+						item.PostIndexHook += closure.Hook;
 						items.Add (item);
+					}
 				}
 				items.Sort ();
 
@@ -637,12 +622,7 @@ namespace Beagle.Daemon {
 				FileStream f = new FileStream (filename,
 							       System.IO.FileMode.Create,
 							       FileAccess.ReadWrite);
-				StreamWriter sw = new StreamWriter (f); 
-				
-				XmlTextWriter writer = new XmlTextWriter (sw);
-				item.WriteToXml (writer);
-				writer.Close ();
-				sw.Close ();
+				serializer.Serialize (f, item);
 				f.Close ();
 
 				return filename;

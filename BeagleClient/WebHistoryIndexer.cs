@@ -45,7 +45,7 @@ namespace Beagle
 			}
 			
 			indexable.StoreStream ();
-			theIndexer.Index (indexable.ToXml ());
+			theIndexer.Index (indexable.ToString ());
 		}
 	}
 }

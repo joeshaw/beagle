@@ -28,11 +28,13 @@
 using System;
 using System.Collections;
 using System.IO;
+using System.Xml.Serialization;
 
 using BU = Beagle.Util;
 
 namespace Beagle.Daemon {
 
+	[XmlInclude (typeof (Indexable))]
 	public class FilteredIndexable : Beagle.Indexable {
 
 		Flavor flavor;
@@ -43,17 +45,43 @@ namespace Beagle.Daemon {
 			BuildFromFile ();
 		}
 
-		protected FilteredIndexable ()
+		public FilteredIndexable ()
 		{
 			// For instantiating from xml
 		}
 
-		public static new FilteredIndexable NewFromXml (string xml) 
+#if false
+		public static void AddXmlOverrides (overrides)
 		{
-			FilteredIndexable indexable = new FilteredIndexable ();
-			indexable.ReadFromXml (xml);
-			indexable.BuildFromFile ();
-			return indexable;
+			XmlAttributes attrs = new XmlAttributes ();
+			XmlIncludeAttribute attr = new XmlIncludeAttribute ();
+			attr.Type = typeof (FilteredIndexable);
+			attrs.XmlIncludes += attr;
+			overrides.Add (typeof (Indexable), attrs);
+		}
+#endif
+
+		public static FilteredIndexable NewFromIndexableXml (string xml) 
+		{
+			// Hack to allow FilteredIndexable to deserialize from an Indexable
+			XmlAttributes attrs = new XmlAttributes ();
+			XmlRootAttribute attr = new XmlRootAttribute();
+			attr.ElementName = "Indexable";
+			attrs.XmlRoot = attr;
+			XmlAttributeOverrides overrides = new XmlAttributeOverrides ();
+			overrides.Add (typeof (FilteredIndexable), attrs);
+
+			StringReader reader = new StringReader (xml);
+			XmlSerializer s = new XmlSerializer (typeof (FilteredIndexable), overrides);
+			return (FilteredIndexable)s.Deserialize (reader);
+		}
+
+		public override string ToString () {
+			XmlSerializer s = new XmlSerializer (typeof (FilteredIndexable));
+			StringWriter writer = new StringWriter ();
+			s.Serialize (writer, this);
+			writer.Close ();
+			return writer.ToString ();
 		}
 
 		static string[] longExtensions = {".html" };

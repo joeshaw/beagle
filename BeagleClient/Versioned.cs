@@ -26,6 +26,7 @@
 
 
 using System;
+using System.Xml.Serialization;
 
 namespace Beagle {
 
@@ -38,15 +39,18 @@ namespace Beagle {
 			get { return timestamp.Ticks > 0; }
 		}
 
+		[XmlAttribute]
 		public DateTime Timestamp {
 			get { return timestamp; }
 			set { timestamp = value; }
 		}
 
+		[XmlAttribute]
 		public bool ValidRevision {
 			get { return revision >= 0; }
 		}
 
+		[XmlAttribute]
 		public long Revision {
 			get { return revision; }
 			set { revision = value; }

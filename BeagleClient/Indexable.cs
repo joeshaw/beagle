@@ -30,6 +30,7 @@ using System.Collections;
 using System.IO;
 using System.Text;
 using System.Xml;
+using System.Xml.Serialization;
 using BU = Beagle.Util;
 
 namespace Beagle {
@@ -77,49 +78,62 @@ namespace Beagle {
 
 		public static Indexable NewFromXml (string xml)
 		{
-			Indexable indexable = new Indexable ();
-			if (indexable.ReadFromXml (xml))
-				return indexable;
-			else
-				return null;
+			StringReader reader = new StringReader (xml);
+			XmlSerializer s = new XmlSerializer (typeof (Indexable));
+			return (Indexable)s.Deserialize (reader);
 		}
-
-		public static Indexable NewFromXml (XmlTextReader reader)
-		{
-			Indexable indexable = new Indexable ();
-			if (indexable.ReadFromXml (reader))
-				return indexable;
-			else
-				return null;
-		} 
 
 		//////////////////////////
 
+		[XmlIgnore]
 		public Uri Uri { 
 			get { return uri; }
 			set { uri = value; }
 		}
 
+		[XmlAttribute ("Uri")]
+		public string UriString {
+			get { return uri.ToString (); }
+			set { uri = new Uri (value); }
+		}
+
+		[XmlIgnore]
 		public Uri ContentUri {
 			get { return contentUri != null ? contentUri : Uri; }
 			set { contentUri = value; }
 		}
 
-		public Uri HotContentUri {
+		[XmlAttribute ("ContentUri")]
+		public string ContentUriString {
+			get { return ContentUri.ToString (); }
+			set { contentUri = new Uri (value); } 
+		}
+
+		[XmlIgnore]
+		private Uri HotContentUri {
 			get { return hotContentUri; }
 			set { hotContentUri = value; }
 		}
+		
+		[XmlAttribute ("HotContentUri")]
+		public string HotContentUriString {
+			get { return HotContentUri != null ? HotContentUri.ToString () : ""; }
+			set { hotContentUri = (value != "") ? new Uri (value) : null; }
+		}
 
+		[XmlAttribute]
 		public bool DeleteContent {
 			get { return deleteContent; }
 			set { deleteContent = value; }
 		}
 
+		[XmlAttribute]
 		public String Type {
 			get { return type; }
 			set { type = value; }
 		}
 
+		[XmlAttribute]
 		public String MimeType {
 			get { return mimeType; }
 			set { mimeType = value; }
@@ -147,7 +161,8 @@ namespace Beagle {
 			hotTextReader = reader;
 		}
 
-		public IEnumerable Properties {
+		[XmlArrayItem (ElementName="Property", Type=typeof (Property))]
+		public ArrayList Properties {
 			get { return properties; }
 		}
 
@@ -179,42 +194,15 @@ namespace Beagle {
 		}
 		
 		//////////////////////////
-
-		public void WriteToXml (XmlTextWriter writer)
+		public override string ToString () 
 		{
-			writer.WriteStartElement ("indexable");
-			writer.WriteAttributeString ("uri", uri.ToString ());
-			if (contentUri != null) 
-				writer.WriteAttributeString ("contenturi", contentUri.ToString ());
-			if (hotContentUri != null)
-				writer.WriteAttributeString ("hotcontenturi", hotContentUri.ToString ());
-			if (deleteContent)
-				writer.WriteAttributeString ("deletecontent", "1");
-			if (mimeType != null)
-				writer.WriteAttributeString ("mimetype", mimeType);
-			if (type != null) 
-				writer.WriteAttributeString ("type", type);
-
-			if (ValidTimestamp) 
-				writer.WriteAttributeString ("timestamp", BU.StringFu.DateTimeToString (Timestamp));
-			if (ValidRevision)
-				writer.WriteAttributeString ("revision", Revision.ToString ());
-
-			writer.WriteStartElement ("properties");
-			foreach (Property prop in properties) {
-				writer.WriteStartElement ("property");
-				writer.WriteAttributeString ("key", prop.Key);
-				writer.WriteAttributeString ("value", prop.Value);
-				if (prop.IsKeyword) 
-					writer.WriteAttributeString ("iskeyword", "1");
-
-				writer.WriteEndElement ();
-			}
-			writer.WriteEndElement ();
-			
-			writer.WriteEndElement ();
+			XmlSerializer s = new XmlSerializer (typeof (Indexable));
+			StringWriter writer = new StringWriter ();
+			s.Serialize (writer, this);
+			writer.Close ();
+			return writer.ToString ();
 		}
-		
+
 		private static Uri TextReaderToTempFileUri (TextReader reader)
 		{
 			if (reader == null)
@@ -250,83 +238,6 @@ namespace Beagle {
 			DeleteContent = true;
 		}
 
-		public bool ReadFromXml (string text)
-		{
-			XmlTextReader reader = new XmlTextReader (new StringReader (text));
-			return ReadFromXml (reader);
-		}
-
-		public bool ReadFromXml (XmlTextReader reader) 
-		{
-			string str;
-
-			reader.Read ();
-
-			if (reader.Name != "indexable") {
-				return false;
-			}
-
-			// This is a pretty lame reader 
-
-			str = reader.GetAttribute ("uri");
-			if (str == null)
-				uri = null;
-			else
-				uri = new Uri (str, true);
-
-			type = reader.GetAttribute ("type");
-			mimeType = reader.GetAttribute ("mimetype");
-
-			str = reader.GetAttribute ("contenturi");
-			if (str == null)
-				contentUri = null;
-			else
-				contentUri = new Uri (str, true);
-
-			str = reader.GetAttribute ("hotcontenturi");
-			if (str == null)
-				hotContentUri = null;
-			else
-				hotContentUri = new Uri (str, true);
-			
-			deleteContent = (reader.GetAttribute ("deletecontent") == "1");
-			if (reader.GetAttribute ("revision") != null)
-				Revision = long.Parse (reader.GetAttribute ("revision"));
-			if (reader.GetAttribute ("timestamp") != null)
-				Timestamp = BU.StringFu.StringToDateTime (reader.GetAttribute ("timestamp"));
-			while (reader.Read ()) {		
-				if (reader.NodeType == XmlNodeType.Element
-				    && reader.Name == "property") {
-					string key = reader.GetAttribute ("key");
-					
-					string value = reader.GetAttribute ("value");
-					Property prop;
-					if (reader.GetAttribute ("iskeyword") == "1") {
-						prop = Property.NewKeyword (key, value);
-					} else {
-						prop = Property.New (key, value);
-					}
-
-					properties.Add (prop);
-				} else if (reader.NodeType == XmlNodeType.EndElement
-					   && reader.Name == "indexable") {
-					break;
-				}
-			}
-			return true;
-		}
-
-		public string ToXml () {
-			StringWriter stringWriter = new StringWriter ();
-			XmlTextWriter writer = new XmlTextWriter (stringWriter);
-			WriteToXml (writer);
-			
-			writer.Close ();
-			stringWriter.Close ();
-
-			return stringWriter.ToString ();
-		}
-		
 		//////////////////////////
 
 		public override int GetHashCode ()

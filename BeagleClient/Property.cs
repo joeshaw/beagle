@@ -26,31 +26,39 @@
 
 using System;
 using BU = Beagle.Util;
+using System.Xml.Serialization;
 
 namespace Beagle {
 	
+	[XmlInclude (typeof (Property))]
 	public class Property {
 
 		bool   isKeyword;
 		string key;
 		string value;
 
+		[XmlAttribute]
 		public bool IsKeyword {
 			get { return isKeyword; }
+			set { isKeyword = value; }
 		}
 
+		[XmlAttribute]
 		public string Key {
 			get { return key; }
+			set { key = value; }
 		}
 
+		[XmlAttribute]
 		public string Value {
 			get { return value; }
+			set { this.value = value; }
 		}
 		
 		/////////////////////////////////////
 
-		protected Property () { }
-
+		public Property () { }
+		
 		static public Property New (string key, object value)
 		{
 			Property p = new Property ();
