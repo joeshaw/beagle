@@ -62,20 +62,10 @@ struct inotify_watch_request {
 #define IN_CLOSE		(IN_CLOSE_WRITE | IN_CLOSE_NOWRITE)
 
 #define INOTIFY_IOCTL_MAGIC	'Q'
-#define INOTIFY_IOCTL_MAXNR	4
+#define INOTIFY_IOCTL_MAXNR	2
 
 #define INOTIFY_WATCH  		_IOR(INOTIFY_IOCTL_MAGIC, 1, struct inotify_watch_request)
 #define INOTIFY_IGNORE 		_IOR(INOTIFY_IOCTL_MAGIC, 2, int)
-#define INOTIFY_STATS		_IOR(INOTIFY_IOCTL_MAGIC, 3, int)
-#define INOTIFY_SETDEBUG	_IOR(INOTIFY_IOCTL_MAGIC, 4, int)
-
-#define INOTIFY_DEBUG_NONE	0x00000000
-#define INOTIFY_DEBUG_ALLOC	0x00000001
-#define INOTIFY_DEBUG_EVENTS	0x00000002
-#define INOTIFY_DEBUG_INODE	0x00000004
-#define INOTIFY_DEBUG_ERRORS	0x00000008
-#define INOTIFY_DEBUG_FILEN	0x00000010
-#define INOTIFY_DEBUG_ALL	0xffffffff
 
 #ifdef __KERNEL__
 
@@ -98,6 +88,7 @@ extern void inotify_dentry_parent_queue_event(struct dentry *, __u32, __u32,
 extern void inotify_super_block_umount(struct super_block *);
 extern void inotify_inode_is_dead(struct inode *);
 extern __u32 inotify_get_cookie(void);
+extern __u32 setattr_mask_inotify(unsigned int);
 
 /* this could be kstrdup if only we could add that to lib/string.c */
 static inline char * inotify_oldname_init(struct dentry *old_dentry)
@@ -142,8 +133,18 @@ static inline char * inotify_oldname_init(struct dentry *old_dentry)
 	return NULL;
 }
 
+static inline __u32 inotify_get_cookie(void)
+{
+	return 0;
+}
+
 static inline void inotify_oldname_free(const char *old_name)
 {
+}
+
+static inline int setattr_mask_inotify(unsigned int ia_mask)
+{
+	return 0;
 }
 
 #endif	/* CONFIG_INOTIFY */
