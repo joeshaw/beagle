@@ -114,8 +114,7 @@ namespace Beagle {
 
 			set {
 				int f = (int) value;
-				f = Math.Max (f, 0);
-				f = Math.Min (f, hits.Count - displayedCount);
+				f = Math.Max (0, Math.Min (f, hits.Count - displayedCount));
 				if (f != first) {
 					first = f;
 					ScheduleRefresh (0);
