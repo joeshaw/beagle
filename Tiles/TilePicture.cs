@@ -46,12 +46,12 @@ namespace Beagle.Tile {
 		{
 			base.PopulateTemplate ();
 
-			string thumbnail = Thumbnail.PathForUri (Hit.Uri.ToString (), ThumbnailSize.Normal);
+			string thumbnail = Thumbnail.PathForUri (BU.StringFu.PathToQuotedFileUri (Hit.Uri.LocalPath), ThumbnailSize.Normal);
 
 			if (File.Exists (thumbnail))
-				Template["Thumbnail"] = Images.GetHtmlSource (new Uri (thumbnail).ToString (), Hit.MimeType);
+				Template["Thumbnail"] = Images.GetHtmlSource (thumbnail, Hit.MimeType);
 			else
-				Template["Thumbnail"] = Images.GetHtmlSource (Hit.Uri.ToString (), Hit.MimeType);
+				Template["Thumbnail"] = Images.GetHtmlSource (Hit.Uri.LocalPath, Hit.MimeType);
 		}
 	}
 }

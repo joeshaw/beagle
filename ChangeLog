@@ -1,5 +1,10 @@
 2005-04-01  Daniel Drake  <dsd@gentoo.org>
 
+	* Tiles/TilePicture.cs: Properly handle URI's when finding thumbnail
+	paths. Fixes bug 171153.
+
+2005-04-01  Daniel Drake  <dsd@gentoo.org>
+
 	* Filters/FilterJpeg.cs, Util/ExifData.cs, Util/JpegHeader.cs, configure.in:
 	Merge from F-spot in order to be compatible with Mono 1.1.5
 
