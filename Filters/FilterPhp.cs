@@ -32,14 +32,14 @@ using System.Text;
 namespace Beagle.Filters {
 
 	public class FilterPhp : FilterSource {
-
-		static string [] strKeyWords = {"and", "or", "xor", "excepion", "array", "as", "break", 
+		// http://docs.php.net/en/reserved.html
+		static string [] strKeyWords = {"and", "or", "xor", "exception", "array", "as", "break", 
 						"case", "class", "const", "continue", "declare", "default", 
 						"die", "do", "echo", "else", "elseif", "empty", 
 						"enddeclare", "endfor", "endforeach", "endif", 
 						"extends", "for", "foreach", "function", "global", 
 						"if", "include", "includeonce", "isset", "list", "new",
-						"print", "require", "requireonce", "return", "static", 
+						"print", "require", "require_once", "return", "static", 
 						"switch", "unset",  "use", "var", "while", "final", 
 						"php_user_filter", "interface", "implements", "extends", 
 						"public", "private", "protected", "abstract", "clone", 
