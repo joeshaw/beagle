@@ -25,12 +25,13 @@ namespace Best {
 			string usage =
 				"best: GUI interface to the Beagle search system.\n" +
 				"Web page: http://www.gnome.org/projects/beagle\n" +
-				"Copyright (C) 2004 Novell, Inc.\n\n";
+				"Copyright (C) 2004-2005 Novell, Inc.\n\n";
 
 			usage +=
 				"Usage: best [OPTIONS] [<query string>]\n\n" +
 				"Options:\n" +
 				"  --no-tray\t\t\tDo not create a notification area applet.\n" +
+				"  --show-window\t\t\tDisplay a search window.\n" +
 				"  --help\t\t\tPrint this usage message.\n";
 
 			Console.WriteLine (usage);
@@ -40,6 +41,7 @@ namespace Best {
 
 		static string query = "";
 		static bool doTray = true;
+		static bool showWindow = false;
 
 		static void ParseArgs (String[] args)
 		{
@@ -48,6 +50,10 @@ namespace Best {
 				switch (args [i]) {
 				case "--no-tray":
 					doTray = false;
+					break;
+
+				case "--show-window":
+					showWindow = true;
 					break;
 
 				case "--help":
@@ -96,6 +102,8 @@ namespace Best {
 				win.Show ();
 			} else {
 				win = new BestWindow ();
+				if (showWindow)
+					win.Show ();
 			}
 
 			// Create the tray icon.
