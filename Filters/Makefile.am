@@ -1,6 +1,7 @@
 CSC=mcs -g
 LIBFLAGS =				\
 	-target:library			\
+	-r:gtk-sharp.dll		\
 	-r:ICSharpCode.SharpZipLib.dll
 
 # Found at http://sharptoolbox.madgeek.com/
@@ -18,6 +19,7 @@ HAP_CSFILES =					\
 
 FILTERS_CSFILES = 		\
 	$(HAP_CSFILES)		\
+	gnome.cs		\
 	Filter.cs		\
 	FilterHtml.cs		\
 	FilterOpenOffice.cs	\

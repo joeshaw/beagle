@@ -19,6 +19,10 @@ class IndexFilesTool {
 	
 		FileAttributes attr = System.IO.File.GetAttributes (path);
 		if (attr == FileAttributes.Directory) {
+
+			if (File.Exists (Path.Combine (path, ".noindex")))
+				return;
+
 			Console.WriteLine ("Crawling " + path);
 			DirectoryInfo dir = new DirectoryInfo (path);
 			foreach (FileSystemInfo info in dir.GetFileSystemInfos ()) {

@@ -170,53 +170,6 @@ namespace Dewey.Filters {
 		
 		//////////////////////////
 
-		// FIXME: This is idiotic.
-		static private String GuessMimeTypeFromPath (String path)
-		{
-			
-			String ext = Path.GetExtension (path);
-			if (ext == null)
-				return null;
-			
-			switch (ext.ToLower ()) {
-				
-			case ".txt":
-				return "text/plain";
-				
-			case ".html":
-			case ".htm":
-				return "text/html";
-				
-			case ".pdf":
-				return "application/pdf";
-				
-			case ".sxw":
-				return "application/vnd.sun.xml.writer";
-				
-			case ".sxi":
-				return "application/vnd.sun.xml.impress";
-				
-			case ".sxc":
-				return "application/vnd.sun.xml.calc";
-				
-			case ".gif":
-				return "image/gif";
-				
-			case ".png":
-				return "image/png";
-				
-			case ".jpg":
-			case ".jpeg":
-				return "image/jpeg";
-				
-			default:
-				return null;
-				
-			}
-		}
-
-		//////////////////////////
-
 		static Hashtable registry;
 		
 		static private void AutoRegisterFilters ()
@@ -256,10 +209,8 @@ namespace Dewey.Filters {
 		
 		static public Filter FilterFromPath (String path)
 		{
-			String mime_type = GuessMimeTypeFromPath (path);
-			if (mime_type == null) 
-				return null; // Can't guess Mime Type
-			return FilterFromMimeType (mime_type);
+			string mimeType  = VFS.Mime.GetMimeType (path);
+			return FilterFromMimeType (mimeType);
 		}
 	}
 }

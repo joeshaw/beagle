@@ -25,6 +25,8 @@ namespace Dewey {
 
 	public class IndexDriver {
 
+		private const int VERSION = 1;
+
 		public IndexDriver () { }
 
 		//////////////////////////
@@ -66,12 +68,86 @@ namespace Dewey {
 
 		//////////////////////////
 
-		private String IndexPath {
+		private String RootDir {
 			get {
 				String homedir = Environment.GetEnvironmentVariable ("HOME");
-				return Path.Combine (homedir, ".dewey");
+				String dir = Path.Combine (homedir, ".dewey");
+				if (! Directory.Exists (dir))
+					Directory.CreateDirectory (dir);
+				// FIXME: We should set some reasonable permissions on the
+				// .dewey directory.
+				return dir;
 			}
 		}
+
+		private String IndexDir {
+			get {
+				String dir = Path.Combine (RootDir, "Index");
+				if (! Directory.Exists (dir))
+					Directory.CreateDirectory (dir);
+				return dir;
+			}
+		}
+
+		// FIXME: We don't actually use the lockdir for anything, since
+		// Lucene's decision about where to put locks is tangled up in
+		// the Store.FSDirectory code.  For now, it isn't worth the
+		// trouble.
+		private String LockDir {
+			get {
+				String dir = Path.Combine (RootDir, "Locks");
+				if (! Directory.Exists (dir))
+					Directory.CreateDirectory (dir);
+				return dir;
+			}
+		}
+
+		private void BootstrapIndex ()
+		{
+			// Look to see if there are any signs of an existing index
+			// with the correct version tag.  If everything looks OK,
+			// just return.
+
+			String indexTestFile = Path.Combine (IndexDir, "segments");
+			String versionFile = Path.Combine (RootDir, "indexVersion");
+
+			bool indexExists = File.Exists (indexTestFile);
+			bool versionExists = File.Exists (versionFile);
+			if (indexExists && versionExists) {
+				StreamReader sr = new StreamReader (versionFile);
+				String line = sr.ReadLine ();
+				if (line == Convert.ToString (VERSION))
+					return;
+			}
+
+			if (! indexExists)
+				Console.WriteLine ("Creating index.");
+			else if (! versionExists)
+				Console.WriteLine ("No version information.  Purging index.");
+			else
+				Console.WriteLine ("Index format is obsolete.  Purging index.");
+
+			// If this looks like an old-style (pre-.dewey/Index) set-up,
+			// blow away everything in sight.
+			if (File.Exists (Path.Combine (RootDir, "segments")))
+				Directory.Delete (RootDir, true);
+			else {
+				// Purge exist index-related directories.
+				Directory.Delete (IndexDir, true);
+				Directory.Delete (LockDir, true);
+			}
+
+			// Initialize a new index.
+			IndexWriter writer = new IndexWriter (IndexDir, null, true);
+			writer.Close ();
+
+			// Write out the correct version information.
+			StreamWriter sw = new StreamWriter (versionFile);
+			sw.WriteLine (Convert.ToString (VERSION));
+			sw.Close ();
+		}
+
+		//////////////////////////
 		
 		private Analyzer NewAnayzer ()
 		{
@@ -216,7 +292,7 @@ namespace Dewey {
 
 		private void DoDelete (IEnumerable uris) 
 		{
-			IndexReader reader = IndexReader.Open (IndexPath);
+			IndexReader reader = IndexReader.Open (IndexDir);
 			foreach (String uri in uris) {
 				Term term = new Term ("Uri", uri);
 				Spew ("Removing {0}", uri);
@@ -228,7 +304,7 @@ namespace Dewey {
 		private void DoInsert (IEnumerable indexables, bool optimize)
 		{
 			Analyzer analyzer = NewAnayzer ();
-			IndexWriter writer = new IndexWriter (IndexPath, analyzer, false);
+			IndexWriter writer = new IndexWriter (IndexDir, analyzer, false);
 			
 			foreach (Indexable indexable in indexables) {
 				Spew ("Inserting {0}", indexable.Uri);
@@ -244,17 +320,12 @@ namespace Dewey {
 		// Add a set of items to the index
 		public void Add (IEnumerable indexables)
 		{
-			if (! Directory.Exists (IndexPath)) {
-				Directory.CreateDirectory (IndexPath);
-				// Initialize the index
-				IndexWriter writer = new IndexWriter (IndexPath, null, true);
-				writer.Close ();
-			}
-			
+			BootstrapIndex ();
+
 			ArrayList toBeDeleted = new ArrayList ();
 			ArrayList toBeInserted = new ArrayList ();
 
-			LNS.Searcher searcher = new LNS.IndexSearcher (IndexPath);
+			LNS.Searcher searcher = new LNS.IndexSearcher (IndexDir);
 			
 			// If we've been handed multiple Indexables with the same Uri,
 			// try to do something intelligent.
@@ -346,6 +417,7 @@ namespace Dewey {
 
 		private IEnumerable Query (Query query, int step)
 		{
+			BootstrapIndex ();
 
 			if (step > 0)
 				Spew ("Query Step {0}", step);
@@ -353,7 +425,7 @@ namespace Dewey {
 			Analyzer analyzer = NewAnayzer ();
 			LNS.Query luceneQuery = ToLuceneQuery (query, analyzer);
 
-			LNS.Searcher searcher = new LNS.IndexSearcher (IndexPath);
+			LNS.Searcher searcher = new LNS.IndexSearcher (IndexDir);
 			LNS.Hits luceneHits = searcher.Search (luceneQuery);
 			int nHits = luceneHits.Length ();
 
