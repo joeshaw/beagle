@@ -42,26 +42,35 @@ namespace Beagle.Daemon {
 		private static NetworkService network = null;
 #endif
 
-		private static void SetupLog (string log_path) {
+		private static void SetupLog (bool echo)
+		{
 
-			if (log_path != null) {
-				
-				// Open the log file and set it as the default
-				// destination for log messages.
-				// Also redirect stdout and stderr to the same file.
-				FileStream log_stream = new FileStream (log_path,
-									FileMode.Append,
-									FileAccess.Write,
-									FileShare.Write);
-				TextWriter log_writer = new StreamWriter (log_stream);
+			// FIXME: We should probably clean up old logs
 
-				log_writer.WriteLine ("----------------------------------------------");
+			string log_name = String.Format ("{0:yyyy-MM-dd-HH-mm-ss}-Beagle", DateTime.Now);
+			string log_path = Path.Combine (PathFinder.LogDir, log_name);
+			string log_link = Path.Combine (PathFinder.LogDir, "Beagle");
 
-				Logger.DefaultWriter = log_writer;
+			// Open the log file and set it as the default
+			// destination for log messages.
+			// Also redirect stdout and stderr to the same file.
+			FileStream log_stream = new FileStream (log_path,
+								FileMode.Append,
+								FileAccess.Write,
+								FileShare.Write);
+			TextWriter log_writer = new StreamWriter (log_stream);
+
+			File.Delete (log_link);
+			Mono.Posix.Syscall.symlink (log_path, log_link);
+
+			Logger.DefaultWriter = log_writer;
+			Logger.DefaultEcho = echo;
+
+			if (! echo) {
 				Console.SetOut (log_writer);
 				Console.SetError (log_writer);
 
-				// Also redirect stdin to /dev/null
+				// Redirect stdin to /dev/null
 				FileStream dev_null_stream = new FileStream ("/dev/null",
 									     FileMode.Open,
 									     FileAccess.Read,
@@ -88,8 +97,8 @@ namespace Beagle.Daemon {
 						continue;
 
 					if (arg[0] == '-') {
-						string log_name = arg.Substring (1);
-						Logger log = Logger.Get (log_name);
+						string name = arg.Substring (1);
+						Logger log = Logger.Get (name);
 						log.Level = LogLevel.Info;
 					} else {
 						Logger log = Logger.Get (arg);
@@ -222,15 +231,12 @@ namespace Beagle.Daemon {
 				Inotify.Log.Level = LogLevel.Warn;
 			}
 
+			bool echo = false;
 			if (arg_fg) {
-				// If we are running in the foreground, we want to log to stdout.
-				SetupLog (null);
-			} else {
-				// Otherwise if we are running in the background, we want to
-				// log to the logfile.
-				string logPath = Path.Combine (PathFinder.LogDir, "Beagle");
-				SetupLog (logPath);
+				// If we are running in the foreground, we want to echo the log to stdout.
+				echo = true;
 			}
+			SetupLog (echo);
 
 			Stopwatch stopwatch = new Stopwatch ();
 

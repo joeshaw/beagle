@@ -46,6 +46,7 @@ namespace Beagle.Util {
 		private static Hashtable loggers = new Hashtable ();
 		private static LogLevel defaultLevel = LogLevel.Info;
 		private static TextWriter defaultWriter = null;
+		private static bool defaultEcho = false;
 
 		public static Logger Log {
 			get {
@@ -61,6 +62,7 @@ namespace Beagle.Util {
 				Logger log = new Logger (logName);
 				log.Level = defaultLevel;
 				log.Writer = defaultWriter;
+				log.Echo = defaultEcho;
 				loggers[logName] = log;
 				return log;
 			}			
@@ -77,9 +79,15 @@ namespace Beagle.Util {
 			set { defaultWriter = value; }
 		}      
 
+		public static bool DefaultEcho {
+			get { return defaultEcho; }
+			set { defaultEcho = value; }
+		}      
+
 		private bool levelSet = false;
 		private LogLevel level;
 		private TextWriter writer = null;
+		private bool echo = false;
 
 		private Logger (string name) {
 		}
@@ -94,11 +102,16 @@ namespace Beagle.Util {
 			set { writer = value; }
 		}
 
+		public bool Echo {
+			get { return echo; }
+			set { echo = value; }
+		}
+
 		private string GetStamp ()
                 {
-			return string.Format ("{0} {1} ",
+			return string.Format ("{0} {1:yy-MM-dd HH.mm.ss.ff} ",
 					      Process.GetCurrentProcess().Id,
-					      DateTime.Now.ToString ("yy-MM-dd HH.mm.ss.ff"));
+					      DateTime.Now);
 		}
 
 
@@ -106,9 +119,9 @@ namespace Beagle.Util {
 			if (Writer != null) {
 				Writer.WriteLine ("{0}{1}: {2}", GetStamp (), level, message);
 				Writer.Flush ();
-			} else {
+			} 
+			if (Echo)
 				System.Console.WriteLine ("{0}: {1}", level, message);
-			}
 		}
 
 		public void Debug (string message, params object [] args)
