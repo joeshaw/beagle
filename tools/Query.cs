@@ -145,6 +145,9 @@ class QueryTool {
 	{
 		Gtk.Application.InitCheck ("beagle-query", ref args);
 
+		if (args.Length == 0 || Array.IndexOf (args, "--help") > -1 || Array.IndexOf (args, "--usage") > -1)
+			PrintUsageAndExit ();
+
 		try {
 			query = Beagle.Factory.NewQuery ();
 		} catch (DBus.DBusException e) {
@@ -162,7 +165,6 @@ class QueryTool {
 
 		query.HitsAddedEvent += OnHitsAdded;
 		query.HitsSubtractedEvent += OnHitsSubtracted;
-
 		// Parse args
 		int i = 0;
 		while (i < args.Length) {
@@ -190,11 +192,6 @@ class QueryTool {
 				verbose = true;
 				display_hits = false;
 				break;
-
-			case "--help":
-			case "--usage":
-				PrintUsageAndExit ();
-				return;
 
 			default:
 				query.AddTextRaw (args [i]);
