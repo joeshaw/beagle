@@ -325,7 +325,7 @@ namespace Beagle.Daemon {
 				Logger.Log.Fatal ("Couldn't connect to the session bus.  "
 						  + "See http://beaglewiki.org/index.php/Installing%20Beagle "
 						  + "for information on setting up a session bus.");
-				Logger.Log.Fatal (e);
+				Logger.Log.Fatal (e.Message);
 				return 1;
 			} catch (Exception e) {
 				Logger.Log.Fatal ("Could not initialize Beagle's bus connection.");
