@@ -1,5 +1,13 @@
 2004-11-10  Tuomas Kuosmanen  <tigert@novell.com>
 
+	* Tiles/template-page.css (.icon img): made icons max-width: 80px;
+	- I also added a nice border frame for jpeg images (and images
+	with ".thumbnails" on their path - so the nautilus thumbnails
+	(which are png) will also get a frame, while icons and such wont.
+
+	* Tiles/template-picture.html: removed forced size
+	setting, should now work automatically with the stylesheet..
+
 	* Tiles/template-mockup.html, Tiles/template-mockup.css: added a
 	mockup template that will contain examples of all tiles, also had
 	to add a mock stylesheet that overrides the @foo@ stuff so I see 
