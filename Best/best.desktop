@@ -1,0 +1,8 @@
+[Desktop Entry]
+Encoding=UTF-8
+Name=Best
+Comment=Desktop Search
+Exec=best
+Icon=best.png
+Type=Application
+Categories=GTK;GNOME;Utility;
