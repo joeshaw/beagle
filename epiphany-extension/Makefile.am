@@ -4,7 +4,7 @@
 #extensiondir = $(EPIPHANY_PREFIX)/lib/epiphany/extensions
 
 # ...but that causes problems w/ make distcheck.
-extensiondir = $(pkglibdir)/extensions
+extensiondir = $(libdir)/epiphany/extensions
 
 INCLUDES =				\
 	$(EPIPHANY_DEPENDENCY_CFLAGS)	\

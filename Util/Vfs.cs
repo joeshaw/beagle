@@ -1,5 +1,5 @@
 /*
- * MonoTagEditor
+ * Vfs.cs (from MonoTagEditor)
  *
  * Copyright (C) 2003, Mariano Cano Pérez <mariano.cano@hispalinux.es>
  *
