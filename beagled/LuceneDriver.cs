@@ -695,7 +695,7 @@ namespace Beagle.Daemon {
 			foreach (QueueItem item in pendingDeletes) {
 				Uri uri = item.UriToDelete;
 				if (! item.IsSilent)
-					Console.WriteLine ("+ {0}", uri);
+					Console.WriteLine ("- {0}", uri);
 				Term term = new Term ("Uri", uri.ToString ());
 				LNS.Query uriQuery = new LNS.TermQuery (term);
 				LNS.Hits uriHits = searcher.Search (uriQuery);

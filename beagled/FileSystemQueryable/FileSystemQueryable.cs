@@ -161,6 +161,11 @@ namespace Beagle.Daemon.FileSystemQueryable {
 
 			} else if (eventType == FileSystemEventType.Deleted) {
 
+				if (filter.Ignore (oldPath)) {
+					Console.WriteLine ("Ignoring {0}", oldPath);
+					return;
+				}
+
 				RemoveFileFromIndex (Driver, oldPath);
 
 			} else {

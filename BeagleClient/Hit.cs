@@ -82,6 +82,7 @@ namespace Beagle {
 		public void WriteToXml (XmlTextWriter writer)
 		{
 			writer.WriteStartElement ("hit");
+
 			writer.WriteAttributeString ("name", id.ToString());
 			writer.WriteAttributeString ("uri", uri.ToString ());
 			writer.WriteAttributeString ("type", type);
@@ -91,30 +92,24 @@ namespace Beagle {
 			writer.WriteAttributeString ("rawscore", scoreRaw.ToString ());
 			writer.WriteAttributeString ("scoremultiplier", scoreMultiplier.ToString ());
 			
-			writer.WriteStartElement ("properties");
 			foreach (string key in properties.Keys) {
-				string value = (string)properties[key];
+				string value = (string) properties[key];
 				writer.WriteStartElement ("property");
 				writer.WriteAttributeString ("name", key);
 				writer.WriteString (value);
 				writer.WriteEndElement ();
 			}
-			writer.WriteEndElement ();
 
-			writer.WriteStartElement ("data");
-			foreach (string key in properties.Keys) {
-				string value = (string)properties[key];
-				writer.WriteStartElement ("property");
+			foreach (string key in data.Keys) {
+				byte[] value = (byte[]) data[key];
+				writer.WriteStartElement ("data");
 				writer.WriteAttributeString ("name", key);
-				writer.WriteString (value);
+				writer.WriteAttributeString ("length", value.Length.ToString ());
+				writer.WriteBase64 (value, 0, value.Length);
 				writer.WriteEndElement ();
 			}
-			writer.WriteEndElement ();
 
-			writer.WriteStartElement ("data");
-			writer.WriteEndElement ();
-
-			writer.WriteEndElement ();
+			writer.WriteEndElement (); // </hit>
 
 			// FIXME: write the Versioned info
 		}
@@ -133,23 +128,22 @@ namespace Beagle {
 
 			bool in_property = true;
 			while (reader.Read ()) {		
-				if (reader.NodeType == XmlNodeType.Element 
-				    && reader.Name == "properties") {
-					in_property = true;
-				} else if (reader.NodeType == XmlNodeType.Element 
-					   && reader.Name == "data") {
-					in_property = false;
-				} else if (reader.NodeType == XmlNodeType.Element
-					   && reader.Name == "property") {
-					string attr = reader.GetAttribute ("name");
+				if (reader.NodeType == XmlNodeType.Element
+				    && reader.Name == "property") {
+					string name = reader.GetAttribute ("name");
 
 					reader.Read ();
 					string value = reader.Value;
-
-					if (in_property)
-						properties[attr] = value;
-					else
-						data[attr] = value;
+					properties [name] = value;
+					
+				} else if (reader.NodeType == XmlNodeType.Element
+					   && reader.Name == "data") {
+					string name = reader.GetAttribute ("name");
+					int length = int.Parse (reader.GetAttribute ("length"));
+					
+					byte[] value = new byte [length];
+					reader.ReadBase64 (value, 0, length);
+					data [name] = value;
 
 				} else if (reader.NodeType == XmlNodeType.EndElement
 					   && reader.Name == "hit") {
@@ -328,19 +322,19 @@ namespace Beagle {
 			get { return data.Keys; }
 		}
 
-		virtual public object GetData (string key)
+		virtual public byte [] GetData (string key)
 		{
-			return data [key];
+			return (byte []) data [key];
 		}
 
-		virtual public void SetData (string key, object obj)
+		virtual public void SetData (string key, byte [] blob)
 		{
-			if (obj == null) {
+			if (blob == null) {
 				if (data.Contains (key))
 					data.Remove (key);
 				return;
 			}
-			data [key] = obj;
+			data [key] = blob ;
 		}
 		
 
