@@ -53,17 +53,22 @@ namespace Beagle.Util {
 
 	public class Inotify {
 
+		static object theLock = new object ();
+
 		static int fd = -1;
 
 		private class WatchedDirInfo {
-			public int    Wd;
+			public int Wd;
 			public string DirectoryName;
+			public InotifyEventType Mask;
 		}
 
 		static Hashtable watchedByWd = new Hashtable ();
 		static Hashtable watchedByName = new Hashtable ();
 
 		public static event InotifyHandler InotifyEvent;
+
+		public static bool Verbose = true;
 
 		//////////////////////////////////////////////////////////
 
@@ -91,32 +96,102 @@ namespace Beagle.Util {
 			fd = inotify_glue_open_dev ();
 		}
 
+		public static bool Enabled {
+			get { return fd >= 0; }
+		}
+
+		private static void EnabledCheck ()
+		{
+			if (! Enabled)
+				throw new Exception ("INotify is not enabled!");
+		}
+
 		//////////////////////////////////////////////////////////
 
 		public static void WatchDirectory (string directory, InotifyEventType mask)
 		{
+			EnabledCheck ();
+
 			directory = Path.GetFullPath (directory);
 
+			// Silently fail if the directory doesn't exist.
 			if (! Directory.Exists (directory))
 				return;
+
+			lock (theLock) {
+				
+				WatchedDirInfo info;
+				
+				// If we try to watch the same directory twice, check
+				// if we are using a different mask.  If we are,
+				// ignore and re-watch the dir.  Otherwise silently
+				// return.
+				info = watchedByName [directory] as WatchedDirInfo;
+				if (info != null) {
+					if (info.Mask == mask)
+						return;
+					IgnoreDirectoryInternal (info);
+				}
 			
-			int wd = inotify_glue_watch_dir (fd, directory, mask);
+				int wd = inotify_glue_watch_dir (fd, directory, mask);
+				if (wd < 0) {
+					string msg = String.Format ("Attempt to watch {0} failed!", directory);
+					throw new Exception (msg);
+				}
 
-			WatchedDirInfo info = new WatchedDirInfo ();
-			info.Wd = wd;
-			info.DirectoryName = directory;
+				info = new WatchedDirInfo ();
+				info.Wd = wd;
+				info.DirectoryName = directory;
+				info.Mask = mask;
 
-			watchedByWd [info.Wd] = info;
-			watchedByName [info.DirectoryName] = directory;
+				watchedByWd [info.Wd] = info;
+				watchedByName [info.DirectoryName] = directory;
+			}
+		}
+
+		private static void IgnoreDirectoryInternal (WatchedDirInfo info)
+		{
+			int retval = inotify_glue_ignore_dir (fd, info.Wd);
+			if (retval < 0) {
+				string msg = String.Format ("Attempt to ignore {0} failed!", info.DirectoryName);
+				throw new Exception (msg);
+			}
+			watchedByWd.Remove (info.Wd);
+			watchedByName.Remove (info.DirectoryName);
+		}
+
+		public static void IgnoreDirectory (string directory)
+		{
+			EnabledCheck ();
+
+			directory = Path.GetFullPath (directory);
+
+			lock (theLock) {
+				
+				WatchedDirInfo info;
+				info = watchedByName [directory] as WatchedDirInfo;
+
+				// If we aren't actually watching that directory,
+				// silently return.
+				if (info == null)
+					return;
+
+				IgnoreDirectoryInternal (info);
+			}
 		}
 		
-		public static void FireEvent (int wd, InotifyEventType type, string filename)
+		private static void FireEvent (int wd, InotifyEventType type, string filename)
 		{
-			WatchedDirInfo info = watchedByWd [wd] as WatchedDirInfo;
-			string path = Path.Combine (info.DirectoryName, filename);
-			Console.WriteLine ("{0}: {1}", path, type);
-			if (InotifyEvent != null)
-				InotifyEvent (Path.Combine (info.DirectoryName, filename), type);
+			if (InotifyEvent != null || Verbose) {
+				WatchedDirInfo info = watchedByWd [wd] as WatchedDirInfo;
+				if (info == null)
+					return;
+				string path = Path.Combine (info.DirectoryName, filename);
+				if (Verbose)
+					Console.WriteLine ("*** inotify: {0} {1}", type, path);
+				if (InotifyEvent != null)
+					InotifyEvent (path, type);
+			}
 		}
 
 		private static void Crawl (DirectoryInfo dir, int maxDepth)
@@ -140,7 +215,7 @@ namespace Beagle.Util {
 
 		public static void Test ()
 		{
-			Crawl (new DirectoryInfo ("/home/trow"), 2);
+			Crawl (new DirectoryInfo ("/home/trow"), -1);
 
 			while (true) {
 				inotify_glue_try_for_event (fd, 60, 0, new InotifyEventCallback (FireEvent));

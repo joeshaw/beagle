@@ -82,7 +82,9 @@ int inotify_glue_watch_dir (int fd, const char *dirname, unsigned long mask)
 
 	free (iwr.dirname);
 
+#ifdef VERBOSE
 	printf("%s WD=%d\n", dirname, wd);
+#endif
 	return wd;
 }
 
