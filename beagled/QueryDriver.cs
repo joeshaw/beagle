@@ -51,20 +51,22 @@ namespace Beagle.Daemon {
 
 		static private bool UseQueryable (string name)
 		{
+			if (allowed_queryables.Count == 0
+			    && denied_queryables.Count == 0)
+				return true;
+
 			name = name.ToLower ();
 
 			if (allowed_queryables.Count > 0) {
-				foreach (string allowed in allowed_queryables) {
-					if (name == allowed) 
+				foreach (string allowed in allowed_queryables)
+					if (name == allowed)
 						return true;
-				}
 				return false;
 			}
 
-			foreach (string denied in denied_queryables) {
+			foreach (string denied in denied_queryables)
 				if (name == denied)
 					return false;
-			}
 			return true;
 
 		}
@@ -133,19 +135,13 @@ namespace Beagle.Daemon {
 
 		// FIXME: There should be a way to disconnect this OnQueryableChanged
 		// from the ChangedEvents.
-		static QueryDriver ()
+		static public void Start ()
 		{
-			// FIXME: We should look for Queryables in other assemblies.
 			ScanAssembly (Assembly.GetExecutingAssembly ());
 			foreach (Queryable q in queryables) {
 				q.ChangedEvent += OnQueryableChanged;
-			}
-		}
-
-		static public void Start ()
-		{
-			foreach (Queryable q in queryables)
 				q.Start ();
+			}
 		}
 
 		static public void DoQuery (QueryBody body, QueryResult result)

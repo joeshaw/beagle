@@ -164,6 +164,7 @@ namespace Beagle.Daemon {
 			bool arg_debug_memory = false;
 			bool arg_network = false;
 			bool arg_fg = false;
+			bool arg_disable_scheduler = false;
 			int arg_port = 0;
 
 			int i = 0;
@@ -217,6 +218,10 @@ namespace Beagle.Daemon {
 
 				case "--enable-network":
 					arg_network = true;
+					break;
+
+				case "--disable-scheduler":
+					arg_disable_scheduler = true;
 					break;
 
 				case "--port":
@@ -344,8 +349,10 @@ namespace Beagle.Daemon {
 			QueryDriver.Start ();
 
 			// Start the Global Scheduler thread
-			Logger.Log.Debug ("Starting Scheduler thread");
-			Scheduler.Global.Start ();
+			if (! arg_disable_scheduler) {
+				Logger.Log.Debug ("Starting Scheduler thread");
+				Scheduler.Global.Start ();
+			}
 
 			// Start our Inotify threads
 			Logger.Log.Debug ("Starting Inotify threads");
