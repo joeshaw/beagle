@@ -79,7 +79,7 @@ class IndexWebContentTool {
 
 	static void PrintUsage () {
 		Console.WriteLine ("IndexWebContent.exe: Index web page content using the Beagle Search Engine.");
-		Console.WriteLine ("  --uri URI\t\tURI for the web page being indexed.\n" +
+		Console.WriteLine ("  --url URL\t\tURL for the web page being indexed.\n" +
 				   "  --title TITLE\t\tTitle for the web page.\n" +
 				   "  --sourcefile PATH\tFile containing content to index.\n" +
 				   "\t\t\tIf not set, content is read from STDIN.\n" +
@@ -102,7 +102,7 @@ class IndexWebContentTool {
 				if (i + 1 >= args.Length ||
 				    args [i + 1].StartsWith ("--")) {
 					PrintUsage ();
-					return;
+					Environment.Exit (1);
 				}
 				break;
 			}
@@ -129,12 +129,12 @@ class IndexWebContentTool {
 		if (uri == null) {
 			Console.WriteLine ("ERROR: URI not specified!\n");
 			PrintUsage ();
-			return;
+			Environment.Exit (1);
 		} else if (uri.StartsWith ("https://")) {
 			// For security/privacy reasons, we don't index any
 			// SSL-encrypted pages.
 			Console.WriteLine ("ERROR: Indexing secure https:// URIs is not secure!");
-			return;
+			Environment.Exit (1);
 		}
 
 		Indexable indexable;
@@ -143,7 +143,7 @@ class IndexWebContentTool {
 			if (!File.Exists (sourcefile)) {
 				Console.WriteLine ("ERROR: sourcefile '{0}' does not exist!",
 						   sourcefile);
-				return;
+				Environment.Exit (1);
 			}
 
 			Stream sourcestream = File.Open (sourcefile, FileMode.Open);
@@ -153,18 +153,25 @@ class IndexWebContentTool {
 			if (stdin == null) {
 				Console.WriteLine ("ERROR: No sourcefile specified, and no standard input!\n");
 				PrintUsage ();
-				return;
+				Environment.Exit (1);
 			}
 
 			indexable = new IndexableWeb (uri, title, stdin);
 		}
 
-		IndexDriver driver = new IndexDriver ();
-		driver.Add (indexable);
-
-		// If passed --deletesourcefile, delete sourcefile after indexing
-		if (sourcefile != null && deletesourcefile) {
-			File.Delete (sourcefile);
+		try {
+			IndexDriver driver = new IndexDriver ();
+			driver.Add (indexable);
+		} catch (Exception e) {
+			Console.WriteLine ("ERROR: Indexing failed:");
+			Console.Write (e);
+			Environment.Exit (1);
+		} finally {
+			// If passed --deletesourcefile, delete sourcefile after indexing
+			if (sourcefile != null && deletesourcefile) {
+				Console.WriteLine ("IndexWebContent.exe: Removing source file.");
+				File.Delete (sourcefile);
+			}
 		}
 	}
 }

@@ -1,5 +1,12 @@
 2004-07-28  Alex Graveley  <alex@ximian.com>
 
+	* tools/IndexWebContent.cs: Rename --uri to --url, to match
+	implementation.
+	Return an exitcode of 1 on error.
+	Catch indexing error to ensure we always delete sourcefile.
+
+2004-07-28  Alex Graveley  <alex@ximian.com>
+
 	* mozilla-extension/content/beaglePrefs.xul: Add <checkbox> for
 	beagle.security.active pref.
 
