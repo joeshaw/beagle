@@ -225,13 +225,15 @@ namespace Best {
 
 			ArrayList items = new ArrayList ();
 			Gtk.MenuItem mi;
-			mi = new TypeMenuItem ("Everything", null);
+			mi = new TypeMenuItem ("Anywhere", null);
 			items.Add (mi);
-			mi = new TypeMenuItem ("Files", "File");
+			mi = new TypeMenuItem ("in Files", "File");
 			items.Add (mi);
-			mi = new TypeMenuItem ("Email", "MailMessage");
+			mi = new TypeMenuItem ("in Mail", "MailMessage");
 			items.Add (mi);
-			mi = new TypeMenuItem ("IM Logs", "IMLog");
+			mi = new TypeMenuItem ("in Web Pages", "WebHistory");
+			items.Add (mi);
+			mi = new TypeMenuItem ("in Chats", "IMLog");
 			items.Add (mi);
 
 			Gtk.Menu menu = new Gtk.Menu ();
@@ -254,7 +256,7 @@ namespace Best {
 			entry.Activated += new EventHandler (this.DoSearch);
 			entryLine.PackStart (entry, true, true, 3);
 
-			words = new Gtk.Label ("in");
+			words = new Gtk.Label ("");
 			entryLine.PackStart (words, false, false, 3);
 
 			Gtk.OptionMenu types = TypesOptionMenu ();
@@ -369,6 +371,8 @@ namespace Best {
 			UpdatePage ();
 		}
 
+		private string lastType = null;
+
 		private void ChangeType (object o, EventArgs args)
 		{
 			Gtk.OptionMenu opt = (Gtk.OptionMenu) o;
@@ -376,9 +380,14 @@ namespace Best {
 			TypeMenuItem mi = (TypeMenuItem) ((ArrayList) opt.Data["items"])[opt.History];
 
 			this.hit_type = mi.Type;
+
+			root.SetSource (this.hit_type);
+
+			//if (this.query != null && lastType != this.hit_type) {
+			//	Search (entry.GtkEntry.Text);
+			//	lastType = this.hit_type;
+			//}
 			
-			if (this.query != null)
-				Search (entry.GtkEntry.Text);
 			UpdatePage ();
 		}
 
@@ -449,9 +458,7 @@ namespace Best {
 			//query.AddDomain (QueryDomain.Global);
 
 			query.AddText (searchString);
-
-			if (hit_type != null)
-				query.AddHitType (hit_type);
+			root.HitCollection.SetSource (hit_type);
 
 			AttachQuery ();
 			

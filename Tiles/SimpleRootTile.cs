@@ -59,7 +59,7 @@ namespace Beagle.Tile {
 				Add (hit);
 		}
 		
-		public void Add (Hit hit)
+		public void Add (Hit hit)			
 		{
 			HitFlavor flavor = HitToHitFlavor.Get (hit);
 			if (flavor == null)
@@ -69,9 +69,11 @@ namespace Beagle.Tile {
 			args[0] = hit;
 			Tile tile = (Tile) Activator.CreateInstance (flavor.TileType, args);
 			tile.Query = this.Query;
-			hit_collection.Add (hit, tile);
+
+			if (hit_collection.Add (hit, tile))
+				Changed ();
+
 			//Console.WriteLine ("+ {0}", hit.Uri);
-			Changed ();
 		}
 
 		public void Subtract (ICollection uris)
@@ -122,6 +124,12 @@ namespace Beagle.Tile {
 			daemon.StartInfo.UseShellExecute = false;
 
 			daemon.Start ();
+		}
+
+		public void SetSource (string querySource)
+		{
+			hit_collection.SetSource (querySource);
+			Changed ();
 		}
 
 		override public void Render (TileRenderContext ctx)

@@ -60,6 +60,7 @@ namespace Beagle.Tile {
 			}
 		}
 
+		private ArrayList all_hits = new ArrayList ();
 		private ArrayList hits = new ArrayList ();
 		int firstDisplayed = 0;
 		int maxDisplayed = 5;
@@ -69,9 +70,9 @@ namespace Beagle.Tile {
 
 		public float MaxScore {
 			get {
-				if (hits.Count == 0)
+				if (all_hits.Count == 0)
 					return 0;
-				HitTilePair pair = (HitTilePair) hits [0];
+				HitTilePair pair = (HitTilePair) all_hits [0];
 				return pair.Hit.Score;
 			}
 		}
@@ -84,8 +85,12 @@ namespace Beagle.Tile {
 			get { return Math.Min (firstDisplayed + maxDisplayed, hits.Count) - 1; }
 		}
 
-		public int NumResults {
+		public int NumDisplayableResults {
 			get { return hits.Count; }
+		} 
+
+		public int NumResults {
+			get { return all_hits.Count; }
 		} 
 
 		public bool CanPageForward {
@@ -118,8 +123,13 @@ namespace Beagle.Tile {
 		{
 			bool changed = false;
 			lock (this) {
+				if (all_hits.Count > 0) {
+					all_hits.Clear ();
+					firstDisplayed = 0;
+					changed = true;
+				}
 				if (hits.Count > 0) {
-					hits.Clear ();
+					all_hits.Clear ();
 					firstDisplayed = 0;
 					changed = true;
 				}
@@ -128,21 +138,53 @@ namespace Beagle.Tile {
 				Changed ();
 		}
 
-		public void Add (Hit hit, Tile tile)
+		private bool InsertDisplayable (HitTilePair pair)
 		{
-			HitTilePair pair = new HitTilePair (hit, tile);
 			int i = hits.BinarySearch (pair);
+				
 			hits.Insert (i < 0 ? ~i : i, pair);
-			if (i == 0 || i < LastDisplayed)
+			if (i == 0 || i < LastDisplayed) {
 				Changed ();
+				return true;
+			}
+
+			return false;
+		}
+
+		public bool Add (Hit hit, Tile tile)
+		{
+			bool changed = false;
+			
+			HitTilePair pair = new HitTilePair (hit, tile);
+			int i = all_hits.BinarySearch (pair);
+			all_hits.Insert (i < 0 ? ~i : i, pair);
+			if (i == 0 || i < LastDisplayed) {
+				Changed ();
+				changed = true;
+			}
+
+			if (SourceIsDisplayable (hit)) {
+				if (InsertDisplayable (pair))
+					changed = true;
+			}
+
+			return changed;
 		}
 
 		public bool Subtract (Uri uri)
 		{
+			for (int i = 0; i < all_hits.Count; ++i) {
+				HitTilePair pair = (HitTilePair) all_hits [i];
+				if (pair.Hit.Uri.Equals (uri) && pair.Hit.Uri.Fragment == uri.Fragment) {
+					all_hits.Remove (pair);
+					return true;
+				}
+			}
+
 			for (int i = 0; i < hits.Count; ++i) {
 				HitTilePair pair = (HitTilePair) hits [i];
 				if (pair.Hit.Uri.Equals (uri) && pair.Hit.Uri.Fragment == uri.Fragment) {
-					hits.RemoveAt (i);
+					hits.Remove (pair);
 					return true;
 				}
 			}
@@ -151,7 +193,84 @@ namespace Beagle.Tile {
 		}
 
 		public bool IsEmpty {
-			get { return hits.Count == 0; }
+			get { return all_hits.Count == 0; }
+		}
+
+		private ArrayList hitSources = new ArrayList ();
+		
+		public void SetSource (string source)
+		{
+			Console.WriteLine ("SetSource: {0}", source);
+			
+			hitSources = new ArrayList ();
+
+			if (source != null)
+				hitSources.Add (source);
+
+			hits = new ArrayList ();
+			for (int i = 0; i < NumResults; i ++) {
+				HitTilePair pair = (HitTilePair) all_hits [i];
+
+				if (SourceIsDisplayable (pair.Hit)) {
+					InsertDisplayable (pair);
+				} else
+					Console.WriteLine ("{0} -- {1}", pair.Hit.Type, pair.Hit.Uri);
+			}
+
+			Changed ();
+		}
+
+		public void AddSource (string source)
+		{
+			hitSources.Add (source);
+
+			for (int i = 0; i < NumDisplayableResults; i ++) {
+				HitTilePair pair = (HitTilePair) hits [i];
+
+				if (! SourceIsDisplayable (pair.Hit))
+					hits.RemoveAt (i);
+			}
+		}
+
+		public void SubtractSource (string source)
+		{
+			hitSources.Remove (source);
+
+			for (int i = 0; i < NumResults; i ++) {
+				HitTilePair pair = (HitTilePair) hits [i];
+
+				if (pair.Hit.Source != source)
+					continue;
+
+				int j = hits.BinarySearch (pair);
+			
+				hits.Insert (j < 0 ? ~j : j, pair);
+				if (j == 0 || j < LastDisplayed)
+					Changed ();
+			}
+		}
+
+		public void ClearSources (string source)
+		{
+			if (hitSources.Count == 0)
+				return;
+			
+			hitSources.Clear ();
+
+			hits = hits;
+
+			Changed ();
+		}
+
+		public bool SourceIsDisplayable (Hit hit)
+		{
+			if (hitSources.Count == 0)
+				return true;
+			
+			if (hitSources.IndexOf (hit.Type) >= 0)
+				return true;
+
+			return false;
 		}
 
 		private void RenderTiles (TileRenderContext ctx)
