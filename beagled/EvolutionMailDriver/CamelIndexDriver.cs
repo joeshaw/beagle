@@ -86,24 +86,26 @@ namespace Beagle.Daemon {
 				return Marshal.PtrToStringAnsi (uid_ptr);
 		}
 
-		public Hashtable Match (IList words)
+		public ArrayList Match (string folderName, IList words)
 		{
-			Hashtable matches = null;
+			ArrayList matches = null;
 
 			foreach (string word in words) {
-				Hashtable word_matches = new Hashtable ();
+				ArrayList word_matches = new ArrayList ();
 
 				IntPtr cursor = camel_index_find (this.index, word);
 
 				string uid;
-				while ((uid = GetUid (cursor)) != null)
-					word_matches [uid] = null;
+				while ((uid = GetUid (cursor)) != null) {
+					Uri uri = EvolutionMailQueryable.EmailUri ("local@local", folderName, uid);
+					word_matches.Add (uri);
+				}
 
 				if (matches == null)
 					matches = word_matches;
 				else {
-					foreach (string m in matches.Keys) {
-						if (!word_matches.ContainsKey (m))
+					foreach (string m in matches) {
+						if (word_matches.BinarySearch (m) < 0)
 							matches.Remove (m);
 					}
 				}
@@ -119,6 +121,7 @@ namespace Beagle.Daemon {
 
 		private static Logger log = Logger.Get ("mail");
 
+		private EvolutionMailQueryable queryable;
 		private QueryBody queryBody;
 		private IQueryResult queryResult;
 		private Hashtable recentHits = new Hashtable ();
@@ -126,8 +129,9 @@ namespace Beagle.Daemon {
 		private ArrayList indexes = new ArrayList ();
 		private Hashtable indexStatus = new Hashtable ();
 
-		public CamelIndexDriver (QueryBody body, IQueryResult result)
+		public CamelIndexDriver (EvolutionMailQueryable queryable, QueryBody body, IQueryResult result)
 		{
+			this.queryable = queryable;
 			this.queryBody = body;
 			this.queryResult = result;
 
@@ -297,6 +301,7 @@ namespace Beagle.Daemon {
 
 		public void Start ()
 		{
+			ArrayList matches = new ArrayList ();
 			ArrayList hits = new ArrayList ();
 
 			foreach (string idx_path in this.indexes) {
@@ -315,30 +320,16 @@ namespace Beagle.Daemon {
 					continue;
 				}
 
-				Hashtable matches = index.Match (this.queryBody.Text);
+				// Index files are in the form "foo.ibex.index", so we need to remove the extension
+				// twice.
+				string folderPath = Path.ChangeExtension (Path.ChangeExtension (idx_path, null), null);
+				string folderName = EvolutionMailQueryable.GetLocalFolderName (new FileInfo (folderPath));
+
+				matches.AddRange (index.Match (folderName, this.queryBody.Text));
 				index.Dispose ();
+			}			
 
-				if (matches == null || matches.Count == 0)
-					continue;
-
-				string summaryPath = Path.ChangeExtension (path, "ev-summary");
-
-				if (!File.Exists (summaryPath))
-					continue;
-
-				Camel.Summary summary = Camel.Summary.load (summaryPath);
-
-				foreach (Camel.MessageInfo mi in summary) {
-					if (!matches.ContainsKey (mi.uid))
-						continue;
-
-					string folderName = EvolutionMailQueryable.GetLocalFolderName (new FileInfo (path));
-
-					Hit hit = HitFromMessageInfo (folderName, mi);
-
-					hits.Add (hit);
-				}
-			}
+			hits.AddRange (this.queryable.Driver.QueryByUri (matches));
 
 			ArrayList filteredHits = new ArrayList ();
 			Hashtable newRecentHits = new Hashtable ();

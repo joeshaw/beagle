@@ -359,26 +359,16 @@ namespace Beagle.Daemon {
 			public float Score;
 		}
 
-		public ICollection DoQuery (QueryBody body, ICollection listOfUris)
+		private ICollection FilterHits (LNS.Searcher searcher, LNS.Hits hits)
 		{
-			LNS.Searcher searcher = new LNS.IndexSearcher (Store);
-			LNS.Query query = ToLuceneQuery (body, listOfUris);
-
-			LNS.Hits luceneHits = searcher.Search (query);
-			int nHits = luceneHits.Length ();
-
-			if (nHits == 0) {
-				searcher.Close ();
-				return new Hit [0];
-			}
-
+			int nHits = hits.Length ();
 			Hashtable byUri = new Hashtable ();
 
 			// Pass #1: If we get multiple hits with the same Uri,
 			// make sure that we throw out all but the most recent.
 			for (int i = 0; i < nHits; ++i) {
-				int id = luceneHits.Id (i);
-				Document doc = luceneHits.Doc (i);
+				int id = hits.Id (i);
+				Document doc = hits.Doc (i);
 				Uri uri = UriFromLuceneDoc (doc);
 
 				Versioned versioned = new Versioned ();
@@ -388,10 +378,10 @@ namespace Beagle.Daemon {
 				if (other == null || other.Versioned.IsObsoletedBy (versioned)) {
 					HitInfo info = new HitInfo ();
 					info.Uri = uri;
-					info.Id = luceneHits.Id (i);
+					info.Id = hits.Id (i);
 					info.Doc = doc;
 					info.Versioned = versioned;
-					info.Score = luceneHits.Score (i);
+					info.Score = hits.Score (i);
 					byUri [uri] = info;
 				}
 			}
@@ -406,9 +396,55 @@ namespace Beagle.Daemon {
 				}
 			}
 
+			return filteredHits;
+		}
+
+		public ICollection DoQuery (QueryBody body, ICollection listOfUris)
+		{
+			LNS.Searcher searcher = new LNS.IndexSearcher (Store);
+			LNS.Query query = ToLuceneQuery (body, listOfUris);
+
+			LNS.Hits luceneHits = searcher.Search (query);
+			int nHits = luceneHits.Length ();
+
+			if (luceneHits.Length () == 0) {
+				searcher.Close ();
+				return new Hit [0];
+			}
+
+			ICollection filteredHits = FilterHits (searcher, luceneHits);
+
 			searcher.Close ();
 
 			return filteredHits;
+		}
+
+		public ICollection QueryByUri (ICollection listOfUris)
+		{
+			LNS.BooleanQuery uriQuery = new LNS.BooleanQuery ();
+			foreach (Uri uri in listOfUris) {
+				Term term = new Term ("Uri", uri.ToString ());
+				LNS.Query termQuery = new LNS.TermQuery (term);
+				uriQuery.Add (termQuery, false, false);
+			}
+			LNS.Searcher searcher = new LNS.IndexSearcher (Store);
+			LNS.Hits luceneHits = searcher.Search (uriQuery);
+
+			if (luceneHits.Length () == 0) {
+				searcher.Close ();
+				return new Hit [0];
+			}
+
+			ICollection filteredHits = FilterHits (searcher, luceneHits);
+
+			searcher.Close ();
+
+			return filteredHits;
+		}
+
+		public ICollection QueryByUri (Uri uri)
+		{
+			return QueryByUri (new Uri[1] { uri });
 		}
 
 		/////////////////////////////////////////////////////

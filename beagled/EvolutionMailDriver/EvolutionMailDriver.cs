@@ -65,18 +65,37 @@ namespace Beagle.Daemon {
 			return false;
 		}
 
+		private static bool CrawlNeeded (FileSystemInfo info)
+		{
+			string timeStr;
+
+			try {
+				timeStr = ExtendedAttribute.Get (info, "LastCrawl");
+			} catch {
+				EvolutionMailQueryable.log.Debug ("Unable to get last crawl time on {0}", info.FullName);
+				return false;
+			}
+
+			DateTime lastCrawl = StringFu.StringToDateTime (timeStr);
+
+			if (info.LastWriteTime > lastCrawl)
+				return true;
+			else
+				return false;
+		}				
+
 		protected override void CrawlFile (FileSystemInfo info)
 		{
 			FileInfo file = info as FileInfo;
 
-			if (Path.GetExtension (info.Name) == ".ev-summary" || info.Name == "summary")
-				this.queryable.IndexSummary (file);
+			if (Path.GetExtension (info.Name) == ".ev-summary" || info.Name == "summary") {
+				if (CrawlNeeded (file))
+					this.queryable.IndexSummary (file);
+			}
 		}
 	}
 
 	internal class EvolutionMailIndexableGenerator : IIndexableGenerator {
-
-		private static Logger log = Logger.Get ("mail");
 
 		private FileInfo summaryInfo;
 		private Camel.Summary summary;
@@ -146,7 +165,7 @@ namespace Beagle.Daemon {
 				}
 
 				if (accountName == null) {
-					log.Info ("Unable to determine account name for {0}", imapName);
+					EvolutionMailQueryable.log.Info ("Unable to determine account name for {0}", imapName);
 					return false;
 				}
 
@@ -154,7 +173,7 @@ namespace Beagle.Daemon {
 				// since the folder name will be "foo/spam" and not match the check below.
 				DirectoryInfo dirInfo = new DirectoryInfo (dirName);
 				if (dirInfo.Name.ToLower () == "spam" || dirInfo.Name.ToLower () == "junk") {
-					log.Debug ("Skipping junk/spam folder {0} on {1}", dirName, this.accountName);
+					EvolutionMailQueryable.log.Debug ("Skipping junk/spam folder {0} on {1}", dirName, this.accountName);
 					return false;
 				}
 					
@@ -167,7 +186,7 @@ namespace Beagle.Daemon {
 			}
 
 			if (this.folderName.ToLower () == "spam" || this.folderName.ToLower () == "junk") {
-				log.Debug ("Skipping junk/spam folder {0} on {1}", this.folderName, this.accountName);
+				EvolutionMailQueryable.log.Debug ("Skipping junk/spam folder {0} on {1}", this.folderName, this.accountName);
 				return false;
 			}
 
@@ -184,7 +203,7 @@ namespace Beagle.Daemon {
 				formatter = new BinaryFormatter ();
 				this.mapping = formatter.Deserialize (cacheStream) as Hashtable;
 				cacheStream.Close ();
-				log.Debug ("Successfully loaded previous crawled data from disk: {0}", appDataName);
+				EvolutionMailQueryable.log.Debug ("Successfully loaded previous crawled data from disk: {0}", appDataName);
 			} catch {
 				this.mapping = new Hashtable ();
 			}
@@ -233,10 +252,10 @@ namespace Beagle.Daemon {
 
 				// Checkpoint our progress to disk every 500 messages
 				if (this.count % 500 == 0) {
-					log.Debug ("{0}: indexed {1} messages ({2}/{3} {4:###.0}%)",
-						   this.folderName, this.indexedCount, this.count,
-						   this.summary.header.count,
-						   100.0 * this.count / this.summary.header.count);
+					EvolutionMailQueryable.log.Debug ("{0}: indexed {1} messages ({2}/{3} {4:###.0}%)",
+									  this.folderName, this.indexedCount, this.count,
+									  this.summary.header.count,
+									  100.0 * this.count / this.summary.header.count);
 
 					if (this.count > 0)
 						SaveCache (appDataName);
@@ -272,12 +291,20 @@ namespace Beagle.Daemon {
 			}
 
 			if (indexable == null) {
-				log.Debug ("{0}: Finished indexing {1} ({2}/{3} {4:###.0}%)",
-					   this.folderName, this.indexedCount, this.count,
-					   this.summary.header.count,
-					   100.0 * this.count / this.summary.header.count);
+				EvolutionMailQueryable.log.Debug ("{0}: Finished indexing {1} ({2}/{3} {4:###.0}%)",
+								  this.folderName, this.indexedCount, this.count,
+								  this.summary.header.count,
+								  100.0 * this.count / this.summary.header.count);
 
 				SaveCache (appDataName);
+				
+				try {
+					ExtendedAttribute.Set (this.summaryInfo, "LastCrawl",
+							       StringFu.DateTimeToString (DateTime.Now));
+				} catch {
+					EvolutionMailQueryable.log.Debug ("Unable to set last crawl time on {0}",
+									  this.summaryInfo.FullName);
+				}
 			}
 
 			return indexable;
@@ -285,26 +312,10 @@ namespace Beagle.Daemon {
 
 	}
 
-	// Kind of weird that Uri doesn't implement IComparable
-	internal class UriComparer : IComparer {
-		
-		public int Compare (object x, object y)
-		{
-			Uri xUri = (Uri) x;
-			Uri yUri = (Uri) y;
-
-			if (xUri.Equals (yUri))
-				return 0;
-
-			return String.Compare (xUri.ToString (), yUri.ToString ());
-		}
-	}
-				
-
 	[QueryableFlavor (Name="Mail", Domain=QueryDomain.Local)]
 	public class EvolutionMailQueryable : LuceneQueryable {
 
-		private static Logger log = Logger.Get ("mail");
+		public static Logger log = Logger.Get ("mail");
 
 		private SortedList watched = new SortedList ();
 		private SummaryCrawler crawler;
@@ -454,7 +465,7 @@ namespace Beagle.Daemon {
 				return;
 
 			// Now create a CamelIndexDriver and pass it off there
-			CamelIndexDriver driver = new CamelIndexDriver (body, result);
+			CamelIndexDriver driver = new CamelIndexDriver (this, body, result);
 
 			if (Shutdown.ShutdownRequested)
 				return;

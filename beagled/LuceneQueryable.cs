@@ -61,7 +61,7 @@ namespace Beagle.Daemon {
 		}
 
 		private LuceneDriver ourDriver;
-		protected LuceneDriver Driver {
+		public LuceneDriver Driver {
 			get { return ourDriver; }
 		}
 
