@@ -1,9 +1,13 @@
 2004-12-07  Tuomas Kuosmanen  <tigert@novell.com>
 
+	* Tiles/template-web-history.html: Fixed the uri to be a link
+	too. Fixes #160315, also replaced the globe with the nicer looking
+	one. Should come from icon-theme eventually as well.
+	
 	* Tiles/template-mail-message.html: Added the folder info, I'll
 	need to use it for a bit before I hopefully come up with a better
 	way of displaying the information without wasting a lot of screen
-	space.
+	space. Fixes #160313
 
 	* Tiles/TileMailMessage.cs: eeks, I touched c-sharp with bare
 	hands! Hopefully the patch works. Should fix #160321 and #160324
