@@ -22,6 +22,7 @@ CSFILES = 				\
 	$(srcdir)/Flavor.cs		\
 	$(srcdir)/Filter.cs		\
 	$(srcdir)/FilterHtml.cs		\
+	$(srcdir)/FilterMusic.cs	\
 	$(srcdir)/FilterOpenOffice.cs	\
 	$(srcdir)/FilterText.cs
 
