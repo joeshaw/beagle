@@ -1,5 +1,6 @@
 *.exe
 *.dll
+*.mdb
 Makefile
 Makefile.in
 beagle-index-files
