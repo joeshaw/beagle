@@ -1,3 +1,17 @@
+2004-11-04  Tuomas Kuosmanen  <tigert@tigert.priv>
+
+	* Tiles/template-page.css (tr): removed the extra padding from the
+	action links line, also added a div class for "date" - use it for
+	the "modified N days ago" stuff on tiles.
+
+	* Tiles/template-file.html: added last modified line..
+
+	* Tiles/template-im-log.html: wrapped the published line to date class
+
+	* Tiles/template-blog.html: wrapped the date stuff on the date div
+	style, put "Weblog: " to give a better idea it's a blog entry.
+	Also added a "View" link for consistency.
+
 2004-11-01  Chris Lahey  <clahey@ximian.com>
 
 	* tray/TrayIcon/Makefile.am (install-exec-local, uninstall-local):
