@@ -58,7 +58,7 @@ namespace Beagle.Util {
 			byte[] buffer = encoding.GetBytes (value);
 			int retval = setxattr (info.FullName, name, buffer, (uint) buffer.Length, 0);
 			if (retval != 0) {
-				if (File.Exists (info.FullName))
+				if (info.Exists)
 					Console.WriteLine ("WARNING: Extended attributes not enabled on filesystem for {0}.  This will affect performance.",
 							   info.FullName);
 				else
