@@ -8,17 +8,21 @@ For information on GNOME CVS, see:
 http://developer.gnome.org/tools/cvs/html.
 
 
-
 Patches
 -------
 
-Please send patches to trow@ximian.com for review.  Please don't commit
-unreviewed patches.
+If you have a patch you'd like to submit, please open a tracking bug on
+gnome.bugzilla.org (product 'beagle').  Attach the patch (and any additional
+required files) to the bug.  The core developers are all on the beagle-bugs
+mailing list, so we'll see that it is there.  We will review it, but if people
+are busy it might not happen right away.  
+
+In the past we'd been doing patch review on the mailing list, but that hasn't
+always worked very well.  Sometimes patches get lost in the shuffle.
 
 
 Organization
 ------------
-
 
 Code that parses files or otherwise interacts w/ low-level details from
 third-party apps (i.e. parsing gaim logs, undocumented nautilus metafiles and
@@ -29,6 +33,7 @@ beagle code as much as possible.
 
 We also want to avoid non-core dependencies in Util.  Anything in Util that
 requires gtk+ or gnome should go into a separate UtilUi at some point.
+
 
 Coding Style
 ------------
@@ -64,17 +69,17 @@ HACKING file.
 
 
                 for (i = 0; i < 10; i++) {
-                        if (something (i)) {
-                                do_more ();
+                        if (Something (i)) {
+                                DoMore ();
                         }
                 }
 
         This take precious space, instead write it like this:
 
                 for (i = 0; i < 10; i++) {
-                        if (!something (i))
+                        if (! Something (i))
                                 continue;
-                        do_more ();
+                        DoMore ();
                 }
 
         A few guidelines:
@@ -82,30 +87,30 @@ HACKING file.
                 * Use a space before an opening parenthesis when calling
                   functions, or indexing, like this:
 
-                        method (a);
+                        Method (a);
                         b [10];
 
                 * Do not put a space after the opening parenthesis and the 
                   closing one, ie:
 
-                        good: method (a);       array [10];
+                        good: Method (a);       array [10];
 
-                        bad:  method ( a );     array[ 10 ];
+                        bad:  Method ( a );     array[ 10 ];
 
                 * Inside a code block, put the opening brace on the same line
                   as the statement:
 
                         good:
                                 if (a) {
-                                        code ();
-                                        code ();
+                                        Code ();
+                                        Code ();
                                 }
 
                         bad:
                                 if (a) 
                                 {
-                                        code ();
-                                        code ();
+                                        Code ();
+                                        Code ();
                                 }
 
                 * Avoid using unecessary open/close braces, vertical space
@@ -113,11 +118,11 @@ HACKING file.
 
                         good:
                                 if (a)
-                                        code ();
+                                        Code ();
 
                         bad:
                                 if (a) {
-                                        code ();
+                                        Code ();
                                 }
 
                 * When defining a method, use the C style for brace placement, 
@@ -168,10 +173,10 @@ HACKING file.
 
                         good:
 
-                                if (a + 5 > method (blah () + 4))
+                                if (a + 5 > Method (Blah () + 4))
 
                         bad:
-                                if (a+5>method(blah()+4))
+                                if (a+5>Method(Blah()+4))
 
                 * For any new files, please use a descriptive introduction, like
                   this:

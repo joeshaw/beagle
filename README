@@ -2,94 +2,12 @@
 Beagle is an indexing sub-system and search aggregator built on top of
 Lucene.Net.
 
+For general information on Beagle, visit http://www.gnome.org/projects/beagle.
 
-FIRST, A WARNING
-================
+For help on compiling Beagle, visit http://www.beaglewiki.org.
 
-Beagle is very new, and is under heavy development.  It is buggy.
+If you want to improve or fix Beagle, read the HACKING file.  There might also
+be relevant information at http://www.beaglewiki.org.
 
-Very little effort has gone into optimizing anything yet, so certain
-operations are slow and consume ridiculous amounts of memory.
+For the latest gossip, visit http://www.planetbeagle.org.
 
-Beagle uses a Mozilla plugin or an epiphany extension to track your web
-browsing and index all of the (non-https://) web pages that you view.
-If you don't like that sort of thing, you can disable it by setting the
-BEAGLE_NO_WEB_INDEXING environment variable.
-
-
-WHAT CAN BEAGLE DO?
-===================
-
-Beagle can index and search:
- * Your files (or at least the ones we have a filter for)
- * Your e-mail (as long as you are using mboxes and Evolution 1.5)
- * Your web browsing (if the Firefox plugin or epiphany extension
-   is installed in the right place)
- * Your Gaim IM logs
- * Tomboy Notes
-
-Beagle can also search:
- * Your addressbook (as long as you are using a very, very new
-   version of evolution-data-server and have evolution-sharp 0.3 or better)
- * Google (if you have a Google Web API key from
-   http://api.google.com/createkey and put that key in an environment
-   variable named GOOGLE_WEB_API_KEY.)
-
-
-
-HOW DO I INDEX MY DATA?
-=======================
-
-If you installed beagle into a different prefix than Firefox or
-epiphany, they cannot detect the extension.
-
-Also, the web indexing will only work if BEAGLE_PREFIX/bin is in your path.
-
-
-
-HOW DO I SEARCH MY DATA?
-========================
-
-Beagle comes with two search tools.  Both are still very primitive.
-
-There is a command-line tool called 'beagle-query'.  Just run:
- % beagle-query <thing to search for>
-It's output is not particularly user-friendly.
-
-There is also a graphical tool called 'best'.  It is a bit more user-friendly
-that beagle-query.
-
-
-
-BOY, THIS THING SUCKS.  HOW DO I FILE A BUG?
-============================================
-
-bugzilla.gnome.org, product 'beagle'.
-
-
-
-
-KNOWN ISSUES
-============
-
-Google queries are currently broken due to a problem with Mono Beta 2.
-
-The OpenOffice.org filter crashes on encrypted files.
-
-The HTML filter doesn't know how to handle the windows-1252 encoding.
-
-Sometimes bad things happen with Lucene's locking, leaving the index
-inaccessible.  If anyone figures out how to reliably reproduce this problem,
-please contact trow@ximian.com.
-
-
-
-FRIENDS OF BEAGLE
-=================
-
-Thanks to:
-Doug Cutting for Lucene, which continues to blow my mind.
-Pasha Bizhan for Lucene.Net.
-Simon Mourier for the Html Agility Pack.
-Mariano Cano Pérez for his gnome-vfs bindings.
-Kevin Godby for his work on the renderers.

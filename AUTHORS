@@ -16,3 +16,12 @@ Chris Lahey         <clahey@ximian.com>
 Tuomas Kuosmanen    <tigert@tigert.priv>
 Alex Graveley       <alex@beatniksoftware.com>
 
+
+
+Thanks to:
+Doug Cutting (for Lucene, which continues to blow my mind)
+Pasha Bizhan (for Lucene.Net)
+Simon Mourier (for the Html Agility Pack)
+Mariano Cano Pérez (for his gnome-vfs bindings)
+Kevin Godby (for his work on the renderers)
+Google (for exposing API)
