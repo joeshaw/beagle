@@ -97,6 +97,12 @@ td.content {
   margin-left:16px;
 }
 
+.url { 
+  font-size: 0.8em;
+  color: #008200;
+  margin-left:16px;
+}
+
 ul {
   margin-left: 16px;
   padding: 0px;

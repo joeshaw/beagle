@@ -203,9 +203,9 @@ namespace Beagle.Tile {
 		}
 
 		protected void SendIm (string protocol,
-				       string screename)
+				       string screenname)
 		{
-			if (screenname == null || screenname == "")
+			if (screenname == null)
 				return;
 
 			Console.WriteLine ("SendImAim {0}", screenname);
@@ -223,32 +223,32 @@ namespace Beagle.Tile {
 
 		protected void SendImAim (string screenname)
 		{
-			SendIm ("aim", screename);
+			SendIm ("aim", screenname);
 		}
 
 		protected void SendImIcq (string screenname)
 		{
-			SendIm ("icq", screename);
+			SendIm ("icq", screenname);
 		}
 
 		protected void SendImJabber (string screenname)
 		{
-			SendIm ("jabber", screename);
+			SendIm ("jabber", screenname);
 		}
 
 		protected void SendImMsn (string screenname)
 		{
-			SendIm ("msn", screename);
+			SendIm ("msn", screenname);
 		}
 
 		protected void SendImYahoo (string screenname)
 		{
-			SendIm ("yahoo", screename);
+			SendIm ("yahoo", screenname);
 		}
 
 		protected void SendImGroupwise (string screenname)
 		{
-			SendIm ("novell", screename);
+			SendIm ("novell", screenname);
 		}			
 	}
 }
