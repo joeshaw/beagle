@@ -340,7 +340,13 @@ namespace Lucene.Net.Search
 		}
 		override public System.Object Clone()
 		{
-			return null;
+			PhraseQuery newQuery = new PhraseQuery ();
+
+			newQuery.SetSlop (this.slop);
+			foreach (Term t in this.terms)
+				newQuery.Add (t);
+
+			return newQuery;
 		}
 	}
 }
