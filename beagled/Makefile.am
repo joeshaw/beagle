@@ -214,10 +214,11 @@ DAEMON_DLL_CSFILES = 				\
 	$(srcdir)/FactoryImpl.cs		\
 	$(srcdir)/Relevancy.cs			\
 	$(srcdir)/IQueryResult.cs		\
-	$(srcdir)/IQueryable.cs			\
 	$(srcdir)/QueryableFlavor.cs		\
+	$(srcdir)/IQueryable.cs			\
 	$(srcdir)/QueryBody.cs			\
 	$(srcdir)/QueryResult.cs		\
+	$(srcdir)/Queryable.cs			\
 	$(srcdir)/QueryDriver.cs		\
 	$(srcdir)/QueryImpl.cs			\
 	$(srcdir)/GoogleDriver.cs		\

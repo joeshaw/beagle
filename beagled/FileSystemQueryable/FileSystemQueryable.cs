@@ -37,7 +37,7 @@ using Beagle.Util;
 
 namespace Beagle.Daemon.FileSystemQueryable {
 
-	[QueryableFlavor (Name="FileSystemQueryable", Domain=QueryDomain.Local)]
+	[QueryableFlavor (Name="Files", Domain=QueryDomain.Local)]
 	public class FileSystemQueryable : LuceneQueryable {
 
 		private static Logger log = Logger.Get ("FileSystemQueryable");
@@ -46,8 +46,7 @@ namespace Beagle.Daemon.FileSystemQueryable {
 		CrawlQueue crawlQ;
 		Hashtable dirtyFiles = new Hashtable ();
 
-		public FileSystemQueryable () : base ("Files", // backend name
-						      Path.Combine (PathFinder.RootDir, "FileSystemIndex"))
+		public FileSystemQueryable () : base (Path.Combine (PathFinder.RootDir, "FileSystemIndex"))
 		{
 
 			string home = Environment.GetEnvironmentVariable ("HOME");

@@ -56,10 +56,6 @@ namespace Beagle.Daemon.EvolutionDataServerQueryable {
 			get { return addressbook; }
 		}
 
-		public String Name {
-			get { return "EvolutionDataServer"; }
-		}
-
 		public bool AcceptQuery (QueryBody body)
 		{
 			if (addressbook == null)

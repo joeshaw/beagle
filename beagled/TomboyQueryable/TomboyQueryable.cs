@@ -33,7 +33,7 @@ using Beagle.Util;
 
 namespace Beagle.Daemon.TomboyQueryable {
 
-	[QueryableFlavor (Name="TomboyQueryable", Domain=QueryDomain.Local)]
+	[QueryableFlavor (Name="Tomboy", Domain=QueryDomain.Local)]
 	public class TomboyQueryable : LuceneQueryable {
 
 		private static Logger log = Logger.Get ("TomboyQueryable");
@@ -44,8 +44,7 @@ namespace Beagle.Daemon.TomboyQueryable {
 		int wdNotes = -1;
 		int wdBackup = -1;
 
-		public TomboyQueryable () : base ("Tomboy", // Backend name
-						  Path.Combine (PathFinder.RootDir, "TomboyIndex"))
+		public TomboyQueryable () : base (Path.Combine (PathFinder.RootDir, "TomboyIndex"))
 		{
 			notesDir = Path.Combine (Environment.GetEnvironmentVariable ("HOME"), ".tomboy");
 			backupDir = Path.Combine (notesDir, "Backup");
@@ -56,7 +55,11 @@ namespace Beagle.Daemon.TomboyQueryable {
 				return;
 			
 			InotifyEventType mask;
-			mask = InotifyEventType.MovedTo;
+			mask = InotifyEventType.MovedTo
+				| InotifyEventType.MovedFrom
+				| InotifyEventType.CreateFile
+				| InotifyEventType.DeleteFile
+				| InotifyEventType.Modify;
 
 			wdNotes = Inotify.Watch (notesDir, mask);
 			wdBackup = Inotify.Watch (backupDir, mask);
@@ -93,6 +96,8 @@ namespace Beagle.Daemon.TomboyQueryable {
 			// Ignore operations on the directories themselves
 			if (subitem == "")
 				return;
+
+			Console.WriteLine ("*** {0} {1} {2}", path, subitem, type);
 
 			// Ignore backup files, tmp files, etc.
 			if (Path.GetExtension (subitem) != ".note")

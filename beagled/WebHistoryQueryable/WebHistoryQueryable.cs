@@ -31,7 +31,7 @@ using Beagle.Daemon;
 
 namespace Beagle.Daemon.WebHistoryQueryable {
 
-	[QueryableFlavor (Name="WebHistoryQueryable", Domain=QueryDomain.Local)]
+	[QueryableFlavor (Name="WebHistory", Domain=QueryDomain.Local)]
 	public class WebHistoryQueryable : LuceneQueryable {
 
 		public class WebHistoryIndexerImpl : Beagle.WebHistoryIndexerProxy {
@@ -45,14 +45,12 @@ namespace Beagle.Daemon.WebHistoryQueryable {
 			
 			public override void Index (string xml)
 			{
-				Console.WriteLine (xml);
 				Indexable indexable = FilteredIndexable.NewFromXml (xml);
 				driver.ScheduleAdd (indexable);
 			}
 		}
 		
-		public WebHistoryQueryable () : base ("WebHistory", // backend name
-						      Path.Combine (PathFinder.RootDir, "WebHistoryIndex"))
+		public WebHistoryQueryable () : base (Path.Combine (PathFinder.RootDir, "WebHistoryIndex"))
 		{
 			WebHistoryIndexerImpl indexer = new WebHistoryIndexerImpl (Driver);
 			DBusisms.Service.RegisterObject (indexer, Beagle.DBusisms.WebHistoryIndexerPath);

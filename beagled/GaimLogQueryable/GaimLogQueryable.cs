@@ -34,15 +34,14 @@ using Beagle.Util;
 
 namespace Beagle.Daemon.GaimLogQueryable {
 
-	[QueryableFlavor (Name="GaimLogQueryable", Domain=QueryDomain.Local)]
+	[QueryableFlavor (Name="IMLog", Domain=QueryDomain.Local)]
 	public class GaimLogQueryable : LuceneQueryable {
 
 		private static Logger log = Logger.Get ("GaimLogQueryable");
 
 		Hashtable watched = new Hashtable ();
 
-		public GaimLogQueryable () : base ("IMLog",
-						   Path.Combine (PathFinder.RootDir, "GaimLogIndex"))
+		public GaimLogQueryable () : base (Path.Combine (PathFinder.RootDir, "GaimLogIndex"))
 		{
 			string home = Environment.GetEnvironmentVariable ("HOME");
 			string logDir = Path.Combine (Path.Combine (home, ".gaim"), "logs");

@@ -35,13 +35,12 @@ using Camel = Beagle.Util.Camel;
 
 namespace Beagle.Daemon.MailQueryable {
 	
-	[QueryableFlavor (Name="MailQueryable", Domain=QueryDomain.Local)]
+	[QueryableFlavor (Name="Mail", Domain=QueryDomain.Local)]
 	public class MailQueryable : LuceneQueryable {
 
 		private static Logger log = Logger.Get ("mail");
 
-		public MailQueryable () : base ("Mail",
-						Path.Combine (PathFinder.RootDir, "MailIndex"))
+		public MailQueryable () : base (Path.Combine (PathFinder.RootDir, "MailIndex"))
 		{
 			string home = Environment.GetEnvironmentVariable ("HOME");
 			DirectoryInfo local_dir = new DirectoryInfo (Path.Combine (home, ".evolution/mail/local"));

@@ -37,12 +37,8 @@ namespace Beagle.Daemon {
 			public Uri UriDeleted;
 		}
 
-		string name;
-
-		public LuceneQueryable (string _name, string dir)
+		public LuceneQueryable (string dir)
 		{
-			name = _name;
-
 			ourDriver = new LuceneDriver (dir);
 			ourDriver.AddedEvent += OnLuceneDriverAdded;
 			ourDriver.DeletedEvent += OnLuceneDriverDeleted;
@@ -80,14 +76,8 @@ namespace Beagle.Daemon {
 
 		public event IQueryableChangedHandler ChangedEvent;
 
-		public string Name {
-			get { return name; }
-		}
-
 		public bool AcceptQuery (QueryBody body)
 		{
-			if (! body.AllowsDomain (Beagle.QueryDomain.Local))
-				return false;
 			return true;
 		}
 

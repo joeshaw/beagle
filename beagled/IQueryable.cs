@@ -37,8 +37,6 @@ namespace Beagle.Daemon {
 
 		event IQueryableChangedHandler ChangedEvent;
 
-		string Name { get; }
-
 		bool AcceptQuery (QueryBody body);
 
 		void DoQuery (QueryBody body,

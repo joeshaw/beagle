@@ -258,7 +258,7 @@ namespace Beagle.Daemon {
 
 		public void ScheduleAddAndMark (Indexable indexable, int priority, FileSystemInfo fsinfo)
 		{
-			MarkClosure closure = new MarkClosure (fsinfo);
+			MarkClosure closure = new MarkClosure (fsinfo, log);
 			ScheduleAdd (indexable, priority, new PostIndexHook (closure.Hook));
 		}
 
@@ -413,11 +413,13 @@ namespace Beagle.Daemon {
 
 		private class MarkClosure {
 			FileSystemInfo info;
+			Logger log;
 			DateTime mtime;
 			
-			public MarkClosure (FileSystemInfo _info)
+			public MarkClosure (FileSystemInfo _info, Logger _log)
 			{
 				info = _info;
+				log = _log;
 				// We cache the file's mtime...
 				mtime = info.LastWriteTime;
 			}
@@ -427,7 +429,12 @@ namespace Beagle.Daemon {
 				// ...and then use that mtime when marking the file.
 				// Maybe this is just paranoia, but I don't want to miss
 				// file changes between indexing and marking the file.
-				ExtendedAttribute.Mark (info, driver.Fingerprint, mtime);
+				try {
+					ExtendedAttribute.Mark (info, driver.Fingerprint, mtime);
+				} catch (Exception e) {
+					if (info.Exists && log != null)
+						log.Debug (e);
+				}
 			}
 		}
 

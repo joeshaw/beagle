@@ -123,6 +123,7 @@ namespace Beagle.Daemon.FileSystemQueryable {
 						   "*.S",
 						   "*.la",
 						   "*.lo",
+						   "*.loT",
 						   "*.so",
 						   "*.exe",
 						   "*.dll",

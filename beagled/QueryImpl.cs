@@ -251,10 +251,10 @@ namespace Beagle.Daemon {
 		// QueryDriver.ChangedEvent handling
 		//
 
-		private void OnQueryDriverChanged (QueryDriver source, IQueryable queryable, IQueryableChangeData changeData)
+		private void OnQueryDriverChanged (QueryDriver source, Queryable queryable, IQueryableChangeData changeData)
 		{
-			if (result != null)
-				source.DoQueryChange (queryable, changeData, body, result);
+			if (result != null && queryable.AcceptQuery (body))
+				queryable.DoQuery (body, result, changeData);
 		}
 	}
 }
