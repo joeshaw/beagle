@@ -36,12 +36,22 @@ namespace Beagle.Daemon {
 			public Uri UriAdded;
 			public Uri UriDeleted;
 		}
+		
+		private void Setup (string dir, bool persistentQueue) 
+		{
+			ourDriver = new LuceneDriver (dir, persistentQueue);
+			ourDriver.AddedEvent += OnLuceneDriverAdded;
+			ourDriver.DeletedEvent += OnLuceneDriverDeleted;
+		}
+
+		public LuceneQueryable (string dir, bool persistentQueue)
+		{
+			Setup (dir, persistentQueue);
+		}
 
 		public LuceneQueryable (string dir)
 		{
-			ourDriver = new LuceneDriver (dir);
-			ourDriver.AddedEvent += OnLuceneDriverAdded;
-			ourDriver.DeletedEvent += OnLuceneDriverDeleted;
+			Setup (dir, false);
 		}
 
 		private LuceneDriver ourDriver;

@@ -34,6 +34,7 @@ using System.Collections;
 using System.Globalization;
 using System.IO;
 using System.Threading;
+using System.Xml;
 
 using Mono.Posix;
 
@@ -48,7 +49,8 @@ using Beagle.Util;
 
 namespace Beagle.Daemon {
 
-	public delegate void PostIndexHook (LuceneDriver driver, Uri uri);
+	public delegate void PostIndexHook (LuceneDriver driver, 
+					    Uri uri);
 
 	public class LuceneDriver {
 
@@ -67,10 +69,21 @@ namespace Beagle.Daemon {
 
 		public LuceneDriver (string dir)
 		{
+			Setup (dir, false); 
+		}
+
+		public LuceneDriver (string dir, bool isQueuePersistent) 
+		{
+			Setup (dir, isQueuePersistent);
+		}
+
+		public void Setup (string dir, bool isQueuePersistent)
+		{
 			string versionFile = Path.Combine (dir, "version");
 			string fingerprintFile = Path.Combine (dir, "fingerprint");
 			string lockDir = Path.Combine (dir, "Locks");
 			string indexDir = Path.Combine (dir, "Index");
+			string queueDir = Path.Combine (dir, "Queue");
 			string indexTestFile = Path.Combine (indexDir, "segments");
 
 			bool versionExists = File.Exists (versionFile);
@@ -163,7 +176,7 @@ namespace Beagle.Daemon {
 			writer.Close ();
 
 			// Start an indexing queue
-			queue = new LuceneQueue (this);
+			queue = new LuceneQueue (this, isQueuePersistent, queueDir);
 			Shutdown.AddQueue (queue);
 
 			queue.Start ();
@@ -244,7 +257,7 @@ namespace Beagle.Daemon {
 			item = new QueueItem ();
 			item.Priority = priority;
 			item.IndexableToAdd = indexable;
-			item.PostIndexHook = hook;
+			item.PostIndexHook += hook;
 
 			queue.ScheduleQueueItem (item);
 		}
@@ -297,7 +310,7 @@ namespace Beagle.Daemon {
 			item = new QueueItem ();
 			item.Priority = priority;
 			item.UriToDelete = uri;
-			item.PostIndexHook = hook;
+			item.PostIndexHook += hook;
 			log.Debug ("Scheduling deletion of {0}", uri);
 			queue.ScheduleQueueItem (item);
 		}
@@ -394,7 +407,6 @@ namespace Beagle.Daemon {
 			return filteredHits;
 		}
 
-
 		/////////////////////////////////////////////////////
 
 		//
@@ -443,18 +455,39 @@ namespace Beagle.Daemon {
 
 
 		/////////////////////////////////////////////////////
+
+		//
+		// The PersistClosure class
+		//
+
+		private class PersistClosure {
+			string filename;
+			
+			public PersistClosure (string filename) 
+			{
+				this.filename = filename;
+			}
+
+			public void Hook (LuceneDriver driver, Uri uri)
+			{
+				File.Delete (filename);
+			}
+		}
+
+
+		/////////////////////////////////////////////////////
 		
 		//
 		// Queue implementation
 		//
 
-		private class QueueItem {
+		private class QueueItem : IComparable {
 			public uint SequenceNumber;
 			public int  Priority;
 
 			public Indexable IndexableToAdd;
 			public Uri UriToDelete;
-			public PostIndexHook PostIndexHook;
+			public event PostIndexHook PostIndexHook;
 			public bool IsSilent = false;
 
 			public Uri Uri {
@@ -478,6 +511,60 @@ namespace Beagle.Daemon {
 				return String.Format ("[QueueItem: {0} {1}]",
 						      IsAdd ? "Add" : "Delete", Uri);
 			}
+
+			public void WriteToXml (XmlTextWriter writer) 
+			{
+				writer.WriteStartElement ("queueitem");
+				writer.WriteAttributeString ("sequenceno",
+							     SequenceNumber.ToString ());
+				writer.WriteAttributeString ("priority",
+							     Priority.ToString ());
+				if (UriToDelete != null)
+					writer.WriteAttributeString ("todelete", 
+								     UriToDelete.ToString ());
+				if (IndexableToAdd != null) {
+					writer.WriteAttributeString ("hasindexable", "true");
+					IndexableToAdd.WriteToXml (writer);
+				}
+
+				writer.WriteEndElement ();
+			}
+
+			public void ReadFromXml (XmlTextReader reader)
+			{
+				reader.Read ();
+				string str;
+
+				SequenceNumber = uint.Parse (reader.GetAttribute ("sequenceno"));
+				Priority = int.Parse (reader.GetAttribute ("priority"));
+				str = reader.GetAttribute ("todelete");
+				if (str == null)
+					UriToDelete = null;
+				else
+					UriToDelete = new Uri (str, true);
+				
+				if (reader.GetAttribute ("hasindexable") == "true") {
+					IndexableToAdd = Indexable.NewFromXml (reader);
+				}
+
+
+			}
+
+			public void RunHook (LuceneDriver driver) 
+			{
+				if (PostIndexHook != null)
+					PostIndexHook (driver, Uri);
+			}
+
+			public int CompareTo (object o) 
+			{
+				if (o == null) return 1;
+			
+				if (o is QueueItem)
+					return (int)((int)this.SequenceNumber - (int)((QueueItem)o).SequenceNumber);
+				else 
+					throw new ArgumentException ();
+			}	
 		}
 
 		private class LuceneQueue : ThreadedPriorityQueue {
@@ -492,24 +579,111 @@ namespace Beagle.Daemon {
 			private int pendingDeletes = 0;
 			private const int pendingAddThreshold = 21;
 			private const int pendingDeleteThreshold = 83;
+
+			private bool isPersistent;
+			string queueDir;
 			
 			int sinceOptimization = 0;
 			const int sinceOptimizationThreshold = 117;
 
-			public LuceneQueue (LuceneDriver _driver)
+			public LuceneQueue (LuceneDriver _driver,
+					    bool persistent,
+					    string queueDir)
 			{
 				driver = _driver;
 				Log = LuceneDriver.log;
+				isPersistent = persistent;
+				this.queueDir = queueDir;
+
+				if (persistent) {
+					Directory.CreateDirectory (queueDir);
+					RestoreQueue ();
+				}
 			}
 
-			public void ScheduleQueueItem (QueueItem item)
+			private QueueItem RestoreQueueItem (string filename)
+			{
+				try {
+					FileStream f = new FileStream (filename,
+								       System.IO.FileMode.Open,
+								       FileAccess.Read);
+					StreamReader sr = new StreamReader (f); 
+					
+					XmlTextReader reader = new XmlTextReader (sr);
+					QueueItem item = new QueueItem ();
+					item.ReadFromXml (reader);
+					reader.Close ();
+					sr.Close ();
+					f.Close ();
+
+					return item;
+				} catch (Exception e) {
+					Logger.Log.Warn ("Unable to restore queued indexable: {0}", e);
+					return null;
+				}
+
+			}
+
+			private void RestoreQueue () 
+			{
+				string[] files = Directory.GetFiles (queueDir);
+				ArrayList items = new ArrayList ();
+				foreach (string file in files) {
+					QueueItem item = RestoreQueueItem (file);
+					PersistClosure closure = new PersistClosure (file);
+					item.PostIndexHook += closure.Hook;
+					
+					if (item != null)
+						items.Add (item);
+				}
+				items.Sort ();
+
+				foreach (QueueItem item in items) {
+					// Reschedule without persisting again
+					ScheduleQueueItem (item, false);
+				}
+
+				Logger.Log.Debug ("Restored {0} unindexed items to the queue", items.Count);
+			}
+
+			private string PersistQueueItem (QueueItem item)
+			{
+				string filename = Path.Combine (queueDir, Guid.NewGuid ().ToString ());
+
+				FileStream f = new FileStream (filename,
+							       System.IO.FileMode.Create,
+							       FileAccess.ReadWrite);
+				StreamWriter sw = new StreamWriter (f); 
+				
+				XmlTextWriter writer = new XmlTextWriter (sw);
+				item.WriteToXml (writer);
+				writer.Close ();
+				sw.Close ();
+				f.Close ();
+
+				return filename;
+			}
+
+			public void ScheduleQueueItem (QueueItem item,
+						       bool persist)
 			{
 				lock (this) {
 					item.SequenceNumber = NextSequenceNumber;
 					++NextSequenceNumber;
 				}
 				
+				if (persist) {
+					string filename = PersistQueueItem (item);
+					PersistClosure closure = new PersistClosure (filename);
+					item.PostIndexHook += closure.Hook;
+				}
+
 				Enqueue (item, item.Priority);
+			}
+
+			public void ScheduleQueueItem (QueueItem item) 
+			{
+				ScheduleQueueItem (item, isPersistent);
 			}
 			
 			public void Flush ()
@@ -603,8 +777,7 @@ namespace Beagle.Daemon {
 				watch.Restart ();
 				foreach (QueueItem item in pending) {
 
-					if (item.PostIndexHook != null)
-						item.PostIndexHook (driver, item.Uri);
+					item.RunHook (driver);
 
 					if (! item.IsSilent) {
 						if (item.IsAdd) {

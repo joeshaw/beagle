@@ -71,17 +71,27 @@ namespace Beagle {
 			type = "File";
 		}
 
-		protected Indexable () {
+		public Indexable () {
 			// Only used when reading from xml
 		}
 
 		public static Indexable NewFromXml (string xml)
 		{
 			Indexable indexable = new Indexable ();
-			indexable.ReadFromXml (xml);
-
-			return indexable;
+			if (indexable.ReadFromXml (xml))
+				return indexable;
+			else
+				return null;
 		}
+
+		public static Indexable NewFromXml (XmlTextReader reader)
+		{
+			Indexable indexable = new Indexable ();
+			if (indexable.ReadFromXml (reader))
+				return indexable;
+			else
+				return null;
+		} 
 
 		//////////////////////////
 
@@ -240,17 +250,22 @@ namespace Beagle {
 			DeleteContent = true;
 		}
 
-		public void ReadFromXml (string text)
+		public bool ReadFromXml (string text)
 		{
 			XmlTextReader reader = new XmlTextReader (new StringReader (text));
-			ReadFromXml (reader);
+			return ReadFromXml (reader);
 		}
 
-		public void ReadFromXml (XmlTextReader reader) 
+		public bool ReadFromXml (XmlTextReader reader) 
 		{
 			string str;
 
 			reader.Read ();
+
+			if (reader.Name != "indexable") {
+				return false;
+			}
+
 			// This is a pretty lame reader 
 
 			str = reader.GetAttribute ("uri");
@@ -298,6 +313,7 @@ namespace Beagle {
 					break;
 				}
 			}
+			return true;
 		}
 
 		public string ToXml () {
