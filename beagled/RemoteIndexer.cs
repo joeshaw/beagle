@@ -225,7 +225,7 @@ namespace Beagle.Daemon {
 				UpToTheMainLoop up = UpToTheMainLoop.NewFlush (Proxy);
 				up.Run ();
 #else
-				Proxy p = Proxy;
+				RemoteIndexerProxy p = Proxy;
 				p.Flush ();
 #endif
 				// Wait for the flush complete signal, but bail out
@@ -242,7 +242,7 @@ namespace Beagle.Daemon {
 		public int GetItemCount ()
 		{
 			RemoteIndexerProxy p = Proxy;
-			return p != null ? GetItemCount () : -1;
+			return p != null ? p.GetItemCount () : -1;
 		}
 
 		private void OnProxyChanged (string list_of_added_uris_as_string,

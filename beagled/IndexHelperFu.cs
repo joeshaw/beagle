@@ -164,7 +164,7 @@ namespace Beagle.Daemon {
 				this.proxy = null;
 			}
 
-			private bool IdleHandler ()
+			private void ActuallySetProxy ()
 			{
 				lock (this) {
 					bool finished = false;
@@ -182,6 +182,8 @@ namespace Beagle.Daemon {
 							proxy = index_helper_service.GetObject (typeof (RemoteIndexerProxy),
 												path) as RemoteIndexerProxy;
 							finished = proxy.Open ();
+							if (! finished)
+								Logger.Log.Debug ("proxy.Open () call failed!");
 						} catch (Exception ex) {
 							if (exception_count == 0) {
 								Logger.Log.Debug ("Caught exception fetching proxy '{0}'", name);
@@ -209,7 +211,12 @@ namespace Beagle.Daemon {
 					
 					Monitor.Pulse (this);
 				}
+			}
 
+			private bool IdleHandler ()
+			{
+				ActuallySetProxy ();
+				Logger.Log.Debug ("GetProxyClosure.IdleHandler finished: proxy={0}", proxy);
 				return false;
 			}
 
@@ -217,14 +224,20 @@ namespace Beagle.Daemon {
 			{
 				TimeSpan one_second = new TimeSpan (10000000);
 
-				lock (this) {
-					GLib.IdleHandler idle_handler = new GLib.IdleHandler (IdleHandler);
-					GLib.Idle.Add (idle_handler);
-					while (proxy == null) {
-						Logger.Log.Debug ("Waiting for proxy '{0}'", name);
-						Monitor.Wait (this, one_second);
-						if (Shutdown.ShutdownRequested)
-							break;
+				// If this function is called from the main loop, our idle will never
+				// get called and we'll block the main loop indefinitely.  That is bad.
+				if (Thread.CurrentThread == BeagleDaemon.MainLoopThread) {
+					ActuallySetProxy ();
+				} else {
+					lock (this) {
+						GLib.IdleHandler idle_handler = new GLib.IdleHandler (IdleHandler);
+						GLib.Idle.Add (idle_handler);
+						while (proxy == null) {
+							Logger.Log.Debug ("Waiting for proxy '{0}'", name);
+							Monitor.Wait (this, one_second);
+							if (Shutdown.ShutdownRequested)
+								break;
+						}
 					}
 				}
 

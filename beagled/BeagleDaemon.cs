@@ -39,6 +39,8 @@ using Beagle.Util;
 namespace Beagle.Daemon {
 	class BeagleDaemon {
 
+		public static Thread MainLoopThread = null;
+
 		private static FactoryImpl factory = null;
 
 #if ENABLE_NETWORK
@@ -248,6 +250,8 @@ namespace Beagle.Daemon {
 
 				}
 			}
+
+			MainLoopThread = Thread.CurrentThread;
 
 			// Initialize logging.
 			// If we saw the --debug arg, set the default logging level
