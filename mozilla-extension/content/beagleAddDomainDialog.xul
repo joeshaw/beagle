@@ -1,0 +1,35 @@
+<?xml version="1.0"?>
+
+<!DOCTYPE overlay SYSTEM "chrome://beagle/locale/beagle.dtd">
+
+<?xml-stylesheet href="chrome://global/skin/global.css" type="text/css"?>
+
+<dialog id="beagle.addDomainDialog"
+  buttons="accept,cancel"
+  buttonlabelaccept="Add Domain"
+  title="Enter Domain to Add"
+  ondialogaccept="beaglePrefsAddFilterClicked();"
+  xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
+  <groupbox>
+
+    <caption label="Enter domain:" />
+      <vbox>
+        <textbox id="beagle.filterToAdd" />
+      </vbox>	
+
+  </groupbox>
+  
+<script>
+
+function beaglePrefsAddFilterClicked() {
+  // Add value from entry box into listbox from beaglePrefs window (the calling window)
+  var filter = document.getElementById('beagle.filterToAdd');
+  var listbox = window.opener.document.getElementById('beagle.security.filters');
+  if (filter.value != ''){
+      listbox.appendItem(filter.value, filter.value);
+  }
+}
+
+</script>
+
+</dialog> 
