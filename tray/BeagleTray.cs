@@ -179,7 +179,7 @@ namespace Beagle
 	        private void MakeHitTree ()
 	        {
 			Type [] types = new Type [] {
-				typeof (Gdk.Pixbuf), // icon
+				typeof (string),     // type
 				typeof (string),     // name
 				typeof (string),     // change date
 			};
@@ -197,15 +197,11 @@ namespace Beagle
 			Gtk.CellRenderer renderer;
 
 			Gtk.TreeViewColumn title = new Gtk.TreeViewColumn ();
+			renderer = new Gtk.CellRendererText ();
 			title.Title = "Match";
 			title.Sizing = Gtk.TreeViewColumnSizing.Autosize;
 			title.Resizable = true;
 			
-			renderer = new Gtk.CellRendererPixbuf ();
-			title.PackStart (renderer, false);
-			title.AddAttribute (renderer, "pixbuf", 0 /* icon */);
-
-			renderer = new Gtk.CellRendererText ();
 			title.PackStart (renderer, true);
 			title.AddAttribute (renderer, "text", 1 /* title */);
 
@@ -224,6 +220,14 @@ namespace Beagle
 
 			change.SortColumnId = 2; /* change date */
 			tree.AppendColumn (change);
+
+			Gtk.TreeViewColumn typecol = new Gtk.TreeViewColumn ();
+			typecol.Title = "Type";
+			typecol.PackStart (renderer, false);
+			typecol.AddAttribute (renderer, "text", 0 /* type */);
+
+			typecol.SortColumnId = 3; /* title */
+			tree.AppendColumn (typecol);
 
 			//			tree.RowActivated += new Gtk.RowActivatedHandler (OnRowActivated);
 		}
@@ -266,7 +270,7 @@ namespace Beagle
 			string nice_date = PrettyPrintDate (hit.Timestamp);
 
 			Gtk.TreeIter iter = store.Append ();
-			//			store.SetValue (iter, 0 /* icon */, stock_notes);
+			store.SetValue (iter, 0 /* icon */, hit.Type);
 			store.SetValue (iter, 1 /* title */, hit.FileName);
 			store.SetValue (iter, 2 /* change date */, nice_date);
 		}
