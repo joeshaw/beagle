@@ -55,7 +55,7 @@ namespace Beagle.Daemon.GaimLogQueryable {
 			if (! Directory.Exists (config_dir)) {
 				log.Warn ("IM: {0} not found, watching for it.", config_dir);
 				Inotify.Event += WatchForGaim;
-				Inotify.Watch (Environment.GetEnvironmentVariable ("HOME"),
+				Inotify.Watch (PathFinder.HomeDir,
 					       Inotify.EventType.CreateSubdir
 					       | Inotify.EventType.MovedFrom
 					       | Inotify.EventType.MovedTo);
@@ -145,7 +145,7 @@ namespace Beagle.Daemon.GaimLogQueryable {
 		{
 			
 			// Checking to see if the Gaim config directory was created.
-			if (subitem == ".gaim" && path == Environment.GetEnvironmentVariable ("HOME")) {
+			if (subitem == ".gaim" && path == PathFinder.HomeDir) {
 				log.Info ("IM: Found the Gaim config directory.");
 				Inotify.Event -= WatchForGaim;
 				StartWorker ();
@@ -157,7 +157,7 @@ namespace Beagle.Daemon.GaimLogQueryable {
 				log.Info ("IM: Found the Gaim logs directory.");
 				Inotify.Event -= WatchForGaim;
 				Inotify.Ignore (path);
-				ScanLogs ();
+				StartWorker ();
 				return;
 			}
 		}
