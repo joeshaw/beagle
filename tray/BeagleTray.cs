@@ -52,6 +52,8 @@ namespace Beagle
                 private TileCanvas canvas;
                 private SimpleRootTile root;
 
+		private GlobalKeybinder globalKeys;
+
 		private Gtk.Window CreateQueryWindow ()
 		{
 	                win = new Gtk.Window ("Beagle");
@@ -67,7 +69,7 @@ namespace Beagle
 
 			Gtk.AccelGroup accelGroup = new Gtk.AccelGroup ();
 			win.AddAccelGroup (accelGroup);
-			GlobalKeybinder globalKeys = new GlobalKeybinder (accelGroup);
+			globalKeys = new GlobalKeybinder (accelGroup);
 			// Close window (Ctrl-W)
 			globalKeys.AddAccelerator (new EventHandler (this.CloseWindowHandler),
 						   (uint) Gdk.Key.w, 
@@ -111,7 +113,7 @@ namespace Beagle
 
 		void CloseWindowHandler (object sender, EventArgs args)
 		{
-			win.Hide ();
+			button.Active = false; 
 		}
 
 		void ButtonPress (object sender, EventArgs args) 
@@ -119,12 +121,12 @@ namespace Beagle
 			if (win == null)
 				win = CreateQueryWindow ();
 
-			if (win.Visible)
-				win.Hide ();
-			else {
+			if (button.Active) {
 				win.ShowAll ();
 				entry.GrabFocus ();
 				win.Present ();
+			} else {
+				win.Hide ();
 			}
 		}
 
