@@ -123,7 +123,6 @@ namespace Beagle.Filters {
 		int skipCount;
 		int hotStyleCount;
 		bool bPartHotStyle;
-		long offset;
 		FileStream FsRTF;
 		StreamReader SReaderRTF;
 	        string partText;
@@ -140,7 +139,6 @@ namespace Beagle.Filters {
 			skipCount = 0;
 			hotStyleCount = 0;
 			bPartHotStyle = false;
-			offset = 0;
 			FsRTF = null;
 			SReaderRTF = null;
 			partText = "";
@@ -311,12 +309,9 @@ namespace Beagle.Filters {
 			ErrorCodes ec;
 			int OriginalGrpCount = 0x7FFFFFFF;
 
-			// If we are not extracting meta-data, set the 
-			// file pointer to the saved position
 			// "/info" can be anywhere in the document,
-			// so, commenting out the next two lines
-			// if (!bMeta)
-			//	SReaderRTF.BaseStream.Seek (offset, SeekOrigin.Begin);
+			// so, rewind the file pointer to start from beginning.
+			SReaderRTF.BaseStream.Seek (0, SeekOrigin.Begin);
 		       
 			while ((aByte = SReaderRTF.Read ()) != -1) {
 				ch = (char) aByte;
@@ -348,11 +343,8 @@ namespace Beagle.Filters {
 						// groupCount will atleast be 1 for 
 						// the outermost "{" block
 						if (pos == Position.InMetaData && groupCount == 1) {
-							if (bMeta) {
-								offset = SReaderRTF.BaseStream.Position;
+							if (bMeta)
 								return ErrorCodes.ERROR_RTF_OK;
-							}
-
 						} else {
 							if (MetaDataStack.Count > 0) {
 								strTemp = (string) MetaDataStack.Pop ();

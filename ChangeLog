@@ -1,3 +1,11 @@
+2005-01-09  Veerapuram Varadhan	 <vvaradhan@novell.com>
+
+	* beagled/SnippetFu.cs: Fix for
+	http://bugzilla.gnome.org/show_bug.cgi?id=166648. Trim the
+	final snippet to the allowed-length.
+	* Filters/FilterRTF.cs: Fix for
+	http://bugzilla.gnome.org/show_bug.cgi?id=166768
+	
 2005-01-08  Veerapuram Varadhan	 <vvaradhan@novell.com>
 
 	* glue/wv1-glue.c: Handle partially formatted texts.

@@ -1,5 +1,5 @@
 //
-// LuceneDriver.cs
+// SnippetFu.cs
 //
 // Copyright (C) 2005 Novell, Inc.
 //
@@ -121,6 +121,8 @@ namespace Beagle.Daemon {
 
 			string str;
 			int countdown = -1;
+
+			// FIXME: All possible *Hits* should be shown in snippets.
 			while ( (str = string_source ()) != null) {
 
 				int word_count = StringFu.CountWords (str, 10);
@@ -193,16 +195,30 @@ namespace Beagle.Daemon {
 					// doesn't end on a sentence boundary.
 					if (i > 0)
 						snippet = "..." + snippet;
-					if (j < snippet.Length)
+					if (j < snippet.Length && j >= max_snippet_length)
 						snippet = snippet + "...";
 
+					// If snippet is more than max_snippet_length, 
+					// trim the snippet so that it ends on word boundaries.
+					// FIXME: We can also break the snippet on sentence boundary,
+					// which ever comes earlier ;-)
+					if (j >= max_snippet_length) {
+						string trim_snip;
+						trim_snip = snippet.Substring (0, j);
+						if ( !trim_snip.EndsWith (" ")) {
+							int index = snippet.IndexOf (' ', j);
+							if (index < 0)
+								index = trim_snip.LastIndexOf (' ');
+							j = index;
+							trim_snip = snippet.Substring (0, j);
+							snippet = trim_snip + "...";
+						}
+					}
 				}
 			}
-
-
 			return snippet;
 		}
-
+		
 		static public string GetSnippet (QueryBody  body,
 						 TextReader reader)
 		{
