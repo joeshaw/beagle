@@ -175,9 +175,6 @@ namespace Beagle {
 
 				reader = new StreamReader (stream);
 
-				Console.WriteLine ("Uri: {0}", Uri);
-				Console.WriteLine ("Cnt: {0}", uri);
-
 				// Paranoia: never delete the thing we are actually indexing.
 				if (DeleteContent && uri != Uri)
 					File.Delete (uri.LocalPath);
