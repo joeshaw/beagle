@@ -42,6 +42,7 @@ namespace Beagle.Daemon.EvolutionMailDriver {
 		public int polling_interval_in_seconds = 60;
 
 		public static Logger log = Logger.Get ("mail");
+		private string local_path, imap_path;
 
 		private SortedList watched = new SortedList ();
 		private MailCrawler crawler;
@@ -52,6 +53,8 @@ namespace Beagle.Daemon.EvolutionMailDriver {
 
 		public EvolutionMailQueryable () : base ("MailIndex")
 		{
+			this.local_path = Path.Combine (PathFinder.HomeDir, ".evolution/mail/local");
+			this.imap_path = Path.Combine (PathFinder.HomeDir, ".evolution/mail/imap");
 		}
 
 		private void Crawl ()
@@ -77,14 +80,19 @@ namespace Beagle.Daemon.EvolutionMailDriver {
 			Stopwatch stopwatch = new Stopwatch ();
 			stopwatch.Start ();
 
-			string local_path = Path.Combine (PathFinder.HomeDir, ".evolution/mail/local");
-			string imap_path = Path.Combine (PathFinder.HomeDir, ".evolution/mail/imap");
+			// Check that we have data to index
+			if ((! Directory.Exists (this.local_path)) && (! Directory.Exists (this.imap_path))) {
+				// No mails present, repoll every minute
+				log.Warn ("Evolution mail store not found, watching for it.");
+				GLib.Timeout.Add (60000, new GLib.TimeoutHandler (CheckForMailData));
+				return;
+			}
 
 			// Get notification when an index or summary file changes
 			if (Inotify.Enabled) {
 				Inotify.Event += OnInotifyEvent;
-				Watch (local_path);
-				Watch (imap_path);
+				Watch (this.local_path);
+				Watch (this.imap_path);
 			}
 
 			crawler = new MailCrawler ();
@@ -177,6 +185,16 @@ namespace Beagle.Daemon.EvolutionMailDriver {
 
 				break;
 			}
+		}
+
+		private bool CheckForMailData ()
+		{
+			if ((! Directory.Exists (this.local_path)) && (! Directory.Exists (this.imap_path)))
+				return true; // continue polling
+			
+			// Otherwise stop polling and start indexing
+			StartWorker();
+			return false;
 		}
 
 		public string Name {
