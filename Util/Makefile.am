@@ -40,7 +40,8 @@ CSFILES = 			        	\
 	$(srcdir)/SystemInformation.cs		\
 	$(srcdir)/UriFu.cs			\
 	$(srcdir)/Vfs.cs                        \
-	$(srcdir)/XKeybinder.cs			
+	$(srcdir)/XKeybinder.cs			\
+	$(srcdir)/Timeline.cs
 
 if ! ENABLE_GST_SHARP
 CSFILES +=					\
