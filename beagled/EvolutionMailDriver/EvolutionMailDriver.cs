@@ -155,7 +155,7 @@ namespace Beagle.Daemon {
 	[QueryableFlavor (Name="Mail", Domain=QueryDomain.Local)]
 	public class EvolutionMailDriver : LuceneQueryable {
 
-		private static Logger log = Logger.Get ("EvolutionMailDriver");
+		private static Logger log = Logger.Get ("mail");
 
 		private SortedList watched = new SortedList ();
 		private ArrayList indexes = new ArrayList ();
@@ -256,6 +256,43 @@ namespace Beagle.Daemon {
 			get { return "EvolutionMail"; }
 		}
 
+		private string GetLocalFolderName (FileInfo fileInfo)
+		{
+			DirectoryInfo di;
+			string folderName = "";
+
+			di = fileInfo.Directory;
+			while (di != null) {
+				// Evo uses ".sbd" as the extension on a folder
+				if (di.Extension == ".sbd")
+					folderName = Path.Combine (folderName, Path.GetFileNameWithoutExtension (di.Name));
+				else
+					break;
+
+				di = di.Parent;
+			}
+
+			return Path.Combine (folderName, Path.GetFileNameWithoutExtension (fileInfo.Name));
+		}
+
+		private string GetImapFolderName (DirectoryInfo dirInfo)
+		{
+			string folderName = "";
+
+			while (dirInfo != null) {
+				folderName = Path.Combine (dirInfo.Name, folderName);
+
+				dirInfo = dirInfo.Parent;
+
+				if (dirInfo.Name != "subfolders")
+					break;
+				else
+					dirInfo = dirInfo.Parent;
+			}
+
+			return folderName;
+		}
+
 		private ArrayList CamelIndexQuery (QueryBody body)
 		{
 			ArrayList hits = new ArrayList ();
@@ -280,22 +317,7 @@ namespace Beagle.Daemon {
 				index.Dispose ();
 
 				foreach (string uid in matches) {
-					FileInfo fi = new FileInfo (path);
-					DirectoryInfo di;
-					string folderName = "";
-
-					di = fi.Directory;
-					while (di != null) {
-						// Evo uses ".sbd" as the extension on a folder
-						if (di.Extension == ".sbd")
-							folderName = Path.Combine (folderName, Path.GetFileNameWithoutExtension (di.Name));
-						else
-							break;
-
-						di = di.Parent;
-					}
-
-					folderName = Path.Combine (folderName, Path.GetFileNameWithoutExtension (path));
+					string folderName = GetLocalFolderName (new FileInfo (path));
 
 					Hit hit = new Hit ();
 					hit.Uri = EmailUri ("local@local", folderName, uid);
@@ -452,11 +474,11 @@ namespace Beagle.Daemon {
 					return;
 				}
 
-				folderName = dirName.Substring (dirName.LastIndexOf ('/') + 1);
+				folderName = GetImapFolderName (new DirectoryInfo (dirName));
 				getCachedContent = true;
 			} else {
 				accountName = "local@local";
-				folderName = Path.GetFileNameWithoutExtension (summaryInfo.Name);
+				folderName = GetLocalFolderName (summaryInfo);
 				getCachedContent = false;
 			}
 
@@ -473,12 +495,15 @@ namespace Beagle.Daemon {
 			BinaryFormatter formatter;
 			Hashtable mapping = null;
 
+			string appDataName = "status-" + accountName + "-" + folderName.Replace ('/', '-');
+
 			// It's okay if the file isn't here.
 			try {
-				statusStream = PathFinder.ReadAppData ("MailIndex", "status-" + accountName + "-" + folderName);
+				statusStream = PathFinder.ReadAppData ("MailIndex", appDataName);
 				formatter = new BinaryFormatter ();
 				mapping = formatter.Deserialize (statusStream) as Hashtable;
 				statusStream.Close ();
+				log.Debug ("Successfully loaded previously crawled data from disk");
 			} catch {
 				mapping = new Hashtable ();
 			}
@@ -498,9 +523,6 @@ namespace Beagle.Daemon {
 				++count;
 
 				if (mapping[mi.uid] == null || (uint) mapping[mi.uid] != mi.flags) {
-					log.Debug ("From: {0}", mi.from);
-					log.Debug ("Subject: {0}", mi.subject);
-					
 					FileStream msgStream = null;
 					TextReader msgReader = null;
 					
@@ -538,7 +560,7 @@ namespace Beagle.Daemon {
 			log.Info ("{0}: indexed {1} of {2} messages and removed {3} expunged messages in {4}",
 				  folderName, indexedCount, count, deletedCount, watch);
 
-			statusStream = PathFinder.WriteAppData ("MailIndex", "status-" + accountName + "-" + folderName);
+			statusStream = PathFinder.WriteAppData ("MailIndex", appDataName);
 			formatter = new BinaryFormatter ();
 			formatter.Serialize (statusStream, mapping);
 			statusStream.Flush ();
