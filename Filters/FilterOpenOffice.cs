@@ -463,8 +463,8 @@ namespace Beagle.Filters {
 				if (MimeType == "application/vnd.oasis.opendocument.text")
 					odtFormat = true;
 			} catch (Exception e) {
-				Logger.Log.Error ("Caught exception inside FilterOpenOffice.DoOpen");
-				Logger.Log.Error (e); 
+				Logger.Log.Error ("Unable to open {0}.  Probably an invalid OpenOffice document.");
+				Finished ();
 			}
 		}
 

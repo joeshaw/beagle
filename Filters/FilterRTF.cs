@@ -152,9 +152,19 @@ namespace Beagle.Filters {
 
 		override protected void DoOpen (FileInfo info) 
 		{
-			FsRTF = new FileStream (info.FullName, FileMode.Open, FileAccess.Read);
-			if (FsRTF != null)
-				SReaderRTF = new StreamReader (FsRTF);
+			try {
+				FsRTF = new FileStream (info.FullName, FileMode.Open, 
+							FileAccess.Read);
+				if (FsRTF != null)
+					SReaderRTF = new StreamReader (FsRTF);
+				else {
+					Logger.Log.Error ("Unable to open {0}.", info.FullName);
+					Finished ();
+				}
+			} catch (Exception e) {
+				Logger.Log.Error ("Unable to open {0}.", info.FullName);
+				Finished ();
+			}
 			
 		}
 
