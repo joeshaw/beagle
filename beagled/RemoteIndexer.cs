@@ -34,6 +34,8 @@ namespace Beagle.Daemon {
 
 	public class RemoteIndexer : IIndexer {
 
+		static public bool Debug = false;
+
 		static private TimeSpan one_second = new TimeSpan (10000000);
 
 		string remote_index_name;
@@ -59,6 +61,8 @@ namespace Beagle.Daemon {
 			get {
 				lock (this) {
 					if (proxy == null && ! Shutdown.ShutdownRequested) {
+						if (Debug)
+							Logger.Log.Debug ("Requesting new proxy");
 						proxy = IndexHelperFu.NewRemoteIndexerProxy (remote_index_name);
 						if (proxy != null) {
 							proxy.ChangedEvent += OnProxyChanged;
@@ -76,6 +80,8 @@ namespace Beagle.Daemon {
 		{
 			lock (this) {
 				if (proxy != null) {
+					if (Debug)
+						Logger.Log.Debug ("Unsetting proxy");
 					proxy.ChangedEvent -= OnProxyChanged;
 					proxy.FlushCompleteEvent -= OnFlushComplete;
 					proxy = null;
@@ -167,10 +173,12 @@ namespace Beagle.Daemon {
 					GLib.Idle.Add (idle_handler);
 					finished = false;
 					while (! finished) {
-						//Logger.Log.Debug ("Waiting code={0}", magic_code);
+						if (Debug)
+							Logger.Log.Debug ("Waiting code={0}", magic_code);
 						// Bale out if a shutdown request has come in.
 						if (Shutdown.ShutdownRequested) {
-							//Logger.Log.Debug ("Bailing out while waiting on code={0}", magic_code);
+							if (Debug)
+								Logger.Log.Debug ("Bailing out while waiting on code={0}", magic_code);
 							return false;
 						}
 						Monitor.Wait (this, one_second);
@@ -244,7 +252,8 @@ namespace Beagle.Daemon {
 				while (! flush_complete) {
 					Logger.Log.Debug ("Waiting for flush to complete on '{0}'", remote_index_name);
 					if (Shutdown.ShutdownRequested) {
-						//Logger.Log.Debug ("Bailing out while waiting for flush on '{0}'", remote_index_name);
+						if (Debug)
+							Logger.Log.Debug ("Bailing out while waiting for flush on '{0}'", remote_index_name);
 						break;
 					}
 					Monitor.Wait (flush_lock, one_second);
@@ -271,7 +280,7 @@ namespace Beagle.Daemon {
 		private void OnFlushComplete ()
 		{
 			lock (flush_lock) {
-				Logger.Log.Debug ("Flush complete");
+				Logger.Log.Debug ("Got flush complete event from helper");
 				flush_complete = true;
 				
 				// Since this event is dispatched by d-bus, we are guaranteed
