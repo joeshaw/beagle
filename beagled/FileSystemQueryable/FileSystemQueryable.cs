@@ -38,6 +38,64 @@ using Beagle.Util;
 
 namespace Beagle.Daemon.FileSystemQueryable {
 
+	internal class DirectoryIndexableGenerator : IIndexableGenerator {
+		private DirectoryInfo dir_info;
+		private IEnumerator files = null; 
+		private FileSystemQueryable queryable;
+
+		public DirectoryIndexableGenerator (FileSystemQueryable q,
+						    DirectoryInfo info)
+		{
+			queryable = q;
+			dir_info = info;
+		}
+
+		public Indexable GetNextIndexable ()
+		{
+			FileInfo f = files.Current as FileInfo;
+			System.Console.WriteLine ("returning {0}", f.FullName);
+			return FileSystemQueryable.FileToIndexable (f.FullName, true);
+		}
+
+		public bool HasNextIndexable ()
+		{
+			if (files == null)
+				files = dir_info.GetFiles ().GetEnumerator ();
+			
+			bool has_next = files.MoveNext ();
+			while (has_next) {
+				FileInfo f = files.Current as FileInfo;
+				if (queryable.FileNeedsIndexing (f.FullName)) 
+					return true;
+				has_next = files.MoveNext ();
+			}
+			return false;
+		}
+
+		public string StatusName {
+			get {
+				return dir_info.Name;
+			}
+		}
+
+		public override bool Equals (object o)
+		{
+			DirectoryIndexableGenerator generator = o as DirectoryIndexableGenerator;
+
+			if (generator == null) 
+				return false;
+
+			if (Object.ReferenceEquals (this, generator))
+			    return true;
+
+			if (this.dir_info.FullName == generator.dir_info.FullName)
+				return true;
+			else
+				return false;
+
+		}
+	}
+
 	[QueryableFlavor (Name="Files", Domain=QueryDomain.Local)]
 	public class FileSystemQueryable : LuceneQueryable {
 
@@ -63,7 +121,7 @@ namespace Beagle.Daemon.FileSystemQueryable {
 			return false;
 		}
 
-		private bool FileNeedsIndexing (string path)
+		public bool FileNeedsIndexing (string path)
 		{
 			if (! FileSystem.Exists (path))
 				return false;
@@ -80,7 +138,7 @@ namespace Beagle.Daemon.FileSystemQueryable {
 			return true;
 		}
 
-		private static Indexable FileToIndexable (string path, bool crawl_mode)
+		public static Indexable FileToIndexable (string path, bool crawl_mode)
 		{
 			Uri uri = UriFu.PathToFileUri (path);
 			return new FilteredIndexable (uri, crawl_mode);
@@ -139,23 +197,14 @@ namespace Beagle.Daemon.FileSystemQueryable {
 				ThisScheduler.Add (task);
 			}
 			
-			// ...and all of the files it contains.  Subdirectories
-			// will get indexed when they are themselves crawled.
-			foreach (FileInfo file in info.GetFiles ()) {
-				if (FileNeedsIndexing (file.FullName)) {
-					
-					/* Enable crawl mode */
-					indexable = FileToIndexable (file.FullName, true);
-				
-					task = NewAddTask (indexable);
-					task.AddTaskGroup (group);
-					task.Priority = Scheduler.Priority.Delayed;
-					task.SubPriority = 0;
-					task.Description = "Found while crawling " + dir.Path;
-					
-					ThisScheduler.Add (task);
-				}
-			}
+
+			DirectoryIndexableGenerator generator = new DirectoryIndexableGenerator (this, info);
+			task = NewAddTask (generator);
+			task.AddTaskGroup (group);
+			task.Priority = Scheduler.Priority.Delayed;
+			task.SubPriority = 0;
+			task.Description = "Found while crawling " + dir.Path;
+			ThisScheduler.Add (task);
 		}
 
 		//////////////////////////////////////////////////////////////////////////
