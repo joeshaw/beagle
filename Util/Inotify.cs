@@ -82,8 +82,11 @@ namespace Beagle.Util {
 		static extern int inotify_glue_ignore (int fd, int wd);
 
 		[DllImport ("libinotifyglue")]
-		static extern unsafe int inotify_snarf_events (int fd, [In, Out] inotify_event[] buffer,
-							       int buffer_len, int timeout_secs);
+		static extern unsafe int inotify_snarf_events (int fd, 
+							       int timeout_seconds,
+							       out int num_read,
+							       out IntPtr buffer);
+
 
 		/////////////////////////////////////////////////////////////////////////////////////
 
@@ -301,10 +304,6 @@ namespace Beagle.Util {
 
 		static unsafe void SnarfWorker ()
 		{
-			const int max_snarf = 1024;
-			inotify_event[] buffer = new inotify_event [max_snarf];
-
-	
 			while (running) {
 
 				// We get much better performance if we wait a tiny bit
@@ -315,17 +314,21 @@ namespace Beagle.Util {
 				//int N = (int) Syscall.read (dev_inotify, (void *) buffer, (IntPtr) max_snarf_size);
 				//int num_events;
 
+				IntPtr buffer;
 				int num_events;
+
 				// Will block while waiting for events, but with a 1s timeout.
-				num_events = inotify_snarf_events (dev_inotify, buffer, max_snarf, 1);
+				inotify_snarf_events (dev_inotify, 
+						      1, 
+						      out num_events,
+						      out buffer);
+
+				if (!running)
+					break;
+
 				if (num_events == 0)
 					continue;
-				
-				//Logger.Log.Warn ("Got {0} events", num_events);
 
-				if (! running)
-					break;
-								
 				DateTime now = DateTime.Now;
 				lock (event_queue) {
 					for (int i = 0; i < num_events; ++i) {
@@ -333,7 +336,8 @@ namespace Beagle.Util {
 						raw.Timestamp = now;
 						raw.Pos = i;
 						raw.Count = num_events;
-						raw.Event = buffer [i];
+						raw.Event = (inotify_event)Marshal.PtrToStructure (buffer, typeof (inotify_event));
+						buffer = (IntPtr) ((long)buffer + Marshal.SizeOf (typeof (inotify_event)));
 						
 						if (raw.Event.mask == EventType.QueueOverflow)
 							Logger.Log.Warn ("Inotify queue overflow!");

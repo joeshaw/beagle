@@ -72,18 +72,21 @@ inotify_glue_ignore (int fd, int wd)
 }
 
 int
-inotify_snarf_events (int fd, struct inotify_event *buffer, int buffer_len, int timeout_secs)
+inotify_snarf_events (int fd, int timeout_secs, int *num_read_out, void **buffer_out)
 {
+#define MAX_SNARF 1024
+
     struct timeval timeout;
     fd_set read_fds;
     int N, ready_bytes, total_read, max_read, select_retval;
     struct inotify_event *buffer_p;
+    static struct inotify_event buffer[MAX_SNARF];
 
     timeout.tv_sec = timeout_secs;
     timeout.tv_usec = 0;
 
     total_read = 0;
-    max_read = buffer_len;
+    max_read = MAX_SNARF;
     buffer_p = buffer;
 
     FD_ZERO (&read_fds);
@@ -92,11 +95,17 @@ inotify_snarf_events (int fd, struct inotify_event *buffer, int buffer_len, int 
     select_retval = select (fd+1, &read_fds, NULL, NULL, &timeout);
 
     /* If we time out, just return */
-    if (select_retval == 0)
-	return 0;
+    if (select_retval == 0) {
+	    *num_read_out = 0;
+	    return 0;
+    }
 
-    N = read (fd, buffer, buffer_len * sizeof (struct inotify_event));
+    N = read (fd, buffer, MAX_SNARF * sizeof (struct inotify_event));
 
-    return N / sizeof (struct inotify_event);
+    *num_read_out = (N / sizeof (struct inotify_event));
+    *buffer_out = buffer;
+    
+    return *num_read_out;
 }
+
 
