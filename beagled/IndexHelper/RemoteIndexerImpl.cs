@@ -36,6 +36,9 @@ namespace Beagle.IndexHelper {
 
 	public class RemoteIndexerImpl : Beagle.Daemon.RemoteIndexerProxy {
 
+		static int close_count = 0;
+		static public int CloseCount { get { return close_count; } }
+
 		string name;
 		IIndexer indexer;
 		NextFlush next_flush;
@@ -195,6 +198,7 @@ namespace Beagle.IndexHelper {
 				Shutdown.WorkerFinished (this);
 				is_open = false;
 				queued_close = false;
+				++close_count;
 			}
 		}
 

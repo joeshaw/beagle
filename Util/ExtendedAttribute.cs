@@ -104,9 +104,10 @@ namespace Beagle.Util {
 
 			try {
 				Set (path, test_key, test_value);
-				bool success = (Get (path, test_key) == test_value);
+				if (Get (path, test_key) != test_value)
+					return false;
 				Remove (path, test_key);
-				return success && (Get (path, test_key) == null);
+				return Get (path, test_key) == null;
 
 			} catch (Exception ex) { 
 				return false;

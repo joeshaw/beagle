@@ -70,3 +70,37 @@ get_vmsize (void)
 
     return vmsize;
 }
+
+/* a stupid cut&paste */
+int
+get_vmrss (void)
+{
+    static char proc_filename[64] = {'\0'};
+    static char buffer [1024];
+    int fd;
+    int vmsize = -1;
+
+    if (proc_filename[0] == '\0')
+        snprintf (proc_filename, 64, "/proc/%d/status", getpid ());
+
+    fd = open (proc_filename, O_RDONLY);
+    if (fd >= 0) {
+        if (read (fd, buffer, sizeof (buffer)) > 0) {
+            char *pos = strstr (buffer, "VmRSS:");
+            char *endpos = NULL;
+            if (pos != NULL && strlen (pos) > 7) {
+                pos += 7;
+                while (*pos && isspace (*pos))
+                    ++pos;
+                if (*pos != '\0') {
+                    vmsize = (int) strtol (pos, &endpos, 10);
+                    if (pos == endpos || *endpos != ' ')
+                        vmsize = -1;
+                }
+            }
+        }
+        close (fd);
+    }
+
+    return vmsize;
+}

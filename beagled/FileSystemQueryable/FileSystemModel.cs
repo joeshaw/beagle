@@ -376,6 +376,14 @@ namespace Beagle.Daemon.FileSystemQueryable {
 						subdir.PutDirectoriesInArray_Unlocked (array);
 				}
 			}
+
+			public void SetAllToUnknown_Unlocked ()
+			{
+				if (state == State.Clean)
+					state = State.Unknown;
+				foreach (DirectoryPrivate subdir in this.children.Values)
+					subdir.SetAllToUnknown_Unlocked ();
+			}
 		}
 		
 
@@ -707,6 +715,14 @@ namespace Beagle.Daemon.FileSystemQueryable {
 			lock (big_lock) {
 				if (block_activity == 0)
 					((DirectoryPrivate) dir).ReportActivity ();
+			}
+		}
+
+		public void SetAllToUnknown ()
+		{
+			lock (big_lock) {
+				foreach (DirectoryPrivate root in roots)
+					root.SetAllToUnknown_Unlocked ();
 			}
 		}
 

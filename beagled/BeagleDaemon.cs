@@ -110,13 +110,6 @@ namespace Beagle.Daemon {
 				}
 			}
 
-			Logger.Log.Info ("Starting Beagle Daemon (version {0})", ExternalStringsHack.Version);
-			
-			// FIXME: This try/catch is to work around a bug in mono 1.1.3
-			try {
-				Logger.Log.Debug ("Command Line: {0}",
-						  Environment.CommandLine != null ? Environment.CommandLine : "(null)");
-			} catch (Exception ex) { }
 
 		}
 
@@ -178,7 +171,6 @@ namespace Beagle.Daemon {
 
 			bool arg_replace = false;
 			bool arg_debug = false;
-			bool arg_debug_inotify = false;
 			bool arg_debug_memory = false;
 			bool arg_fg = false;
 			bool arg_disable_scheduler = false;
@@ -212,11 +204,6 @@ namespace Beagle.Daemon {
 
 				case "--debug":
 					arg_debug = true;
-					break;
-
-				case "--debug-inotify":
-					arg_debug = true;
-					arg_debug_inotify = true;
 					break;
 
 				case "--debug-memory":
@@ -269,21 +256,16 @@ namespace Beagle.Daemon {
 			if (arg_debug)
 				Logger.DefaultLevel = LogLevel.Debug;
 
-			if (arg_debug_inotify)
-				Inotify.Log.Level = LogLevel.Debug;
-			else {
-				// FIXME: A hard-wired constant for Inotify.Log doesn't really
-				// belong here.
-				// This overrides the default, so this logger is "decoupled".
-				Inotify.Log.Level = LogLevel.Warn;
-			}
+			Logger.LogToFile (PathFinder.LogDir, "Beagle", arg_fg);
 
-			bool echo = false;
-			if (arg_fg) {
-				// If we are running in the foreground, we want to echo the log to stdout.
-				echo = true;
-			}
-			SetupLog (echo);
+			Logger.Log.Info ("Starting Beagle Daemon (version {0})", ExternalStringsHack.Version);
+			
+			// FIXME: This try/catch is to work around a bug in mono 1.1.3
+			try {
+				Logger.Log.Debug ("Command Line: {0}",
+						  Environment.CommandLine != null ? Environment.CommandLine : "(null)");
+			} catch (Exception ex) { }
+
 
 			// Make sure that extended attributes can be set.  If not, bail out with a message.
 			// FIXME FIXME FIXME: This assumes that EAs work the same on your storage dir

@@ -134,7 +134,8 @@ namespace Beagle.Daemon.FileSystemQueryable {
 			}
 
 			if (type == Inotify.EventType.QueueOverflow) {
-				// FIXME: Deal with queue overflows!
+				Logger.Log.Warn ("Inotify queue overflowed: file system is in an unknown state");
+				queryable.Model.SetAllToUnknown ();
 				return;
 			}
 

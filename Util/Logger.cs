@@ -47,6 +47,7 @@ namespace Beagle.Util {
 		private static LogLevel defaultLevel = LogLevel.Info;
 		private static TextWriter defaultWriter = null;
 		private static bool defaultEcho = false;
+		private static string defaultLogName = null;
 
 		public static Logger Log {
 			get {
@@ -107,13 +108,18 @@ namespace Beagle.Util {
 			set { echo = value; }
 		}
 
+		// Multiple logs can be merge-sorted via "sort -m log1 log2 ..."
 		private string GetStamp ()
                 {
-			return string.Format ("{0} {1:yy-MM-dd HH.mm.ss.ff} ",
-					      Process.GetCurrentProcess().Id,
-					      DateTime.Now);
+			StringBuilder builder = new StringBuilder ();
+			builder.AppendFormat ("{0:yy-MM-dd HH.mm.ss.ff} ", DateTime.Now);
+			builder.AppendFormat ("{0:00000} ", Process.GetCurrentProcess().Id);
+			if (defaultLogName != null) {
+				builder.AppendFormat (defaultLogName);
+				builder.Append (' ');
+			}
+			return builder.ToString ();
 		}
-
 
 		private void WriteLine (string level, string message) {
 			if (Writer != null) {
@@ -189,6 +195,84 @@ namespace Beagle.Util {
 		public bool IsWarnEnabled { get { return level >= LogLevel.Warn; } }
 		public bool IsErrorEnabled { get { return level >= LogLevel.Error;} }
 		public bool IsFatalEnabled { get { return level >= LogLevel.Fatal; } }
+
+		////////////////////////////////////////////////////////////////////////////////
+
+		static public void LogToFile (string path, string name, bool foreground_mode)
+		{
+			defaultLogName = name;
+			if (defaultLogName.Length > 6)
+				defaultLogName = defaultLogName.Substring (0, 6);
+			else
+				defaultLogName = defaultLogName.PadRight (6);
+
+			string timestamped_name = String.Format ("{0:yyyy-MM-dd-HH-mm-ss}-{1}", DateTime.Now, name);
+			string log_path = Path.Combine (path, timestamped_name);
+			string log_link = Path.Combine (path, "current-" + name);
+
+			// Open the log file and set it as the default
+			// destination for log messages.
+			// Also redirect stdout and stderr to the same file.
+			FileStream log_stream = new FileStream (log_path,
+								FileMode.Append,
+								FileAccess.Write,
+								FileShare.Write);
+			TextWriter log_writer = new StreamWriter (log_stream);
+
+			File.Delete (log_link);
+			Mono.Posix.Syscall.symlink (log_path, log_link);
+
+			Logger.DefaultWriter = log_writer;
+			Logger.DefaultEcho = foreground_mode;
+
+			if (! foreground_mode) {
+
+				// Redirect stdout and stderr to the logfile
+				Console.SetOut (Logger.DefaultWriter);
+				Console.SetError (Logger.DefaultWriter);
+
+				// Redirect stdin to /dev/null
+				FileStream dev_null_stream = new FileStream ("/dev/null",
+									     FileMode.Open,
+									     FileAccess.Read,
+									     FileShare.ReadWrite);
+				TextReader dev_null_reader = new StreamReader (dev_null_stream);
+				Console.SetIn (dev_null_reader);
+			}
+		}
+
+		////////////////////////////////////////////////////////////////////////////////
+
+		static Logger ()
+		{
+			// Parse the contents of the BEAGLE_DEBUG environment variable
+			// and adjust the default log levels accordingly.
+			string debug = System.Environment.GetEnvironmentVariable ("BEAGLE_DEBUG");
+			if (debug != null) {
+				string[] debugArgs = debug.Split (',');
+				foreach (string arg in debugArgs) {
+					if (arg.Trim () == "all") {
+						Logger.DefaultLevel = LogLevel.Debug;
+					}
+				}
+				
+				foreach (string arg_raw in debugArgs) {
+					string arg = arg_raw.Trim ();
+
+					if (arg.Length == 0 || arg == "all")
+						continue;
+
+					if (arg[0] == '-') {
+						string name = arg.Substring (1);
+						Logger log = Logger.Get (name);
+						log.Level = LogLevel.Info;
+					} else {
+						Logger log = Logger.Get (arg);
+						log.Level = LogLevel.Debug;
+					}
+				}
+			}
+		}
 	}
 }
 

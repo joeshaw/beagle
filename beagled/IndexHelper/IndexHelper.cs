@@ -45,8 +45,12 @@ namespace Beagle.IndexHelper {
 
 		static void Main (string [] args)
 		{
-			Logger.DefaultEcho = true;
+			bool run_by_hand = (Environment.GetEnvironmentVariable ("BEAGLE_RUN_HELPER_BY_HAND") != null);
+			bool log_in_fg = (Environment.GetEnvironmentVariable ("BEAGLE_LOG_IN_THE_FOREGROUND_PLEASE") != null);
+
 			Logger.DefaultLevel = LogLevel.Debug;
+
+			Logger.LogToFile (PathFinder.LogDir, "IndexHelper", run_by_hand || log_in_fg);
 
 			Beagle.Daemon.DBusisms.Init ();
 			Application.Init ();
@@ -66,7 +70,7 @@ namespace Beagle.IndexHelper {
 			if (! Beagle.Daemon.DBusisms.TestService (Beagle.DBusisms.Name)) {
 				Logger.Log.Debug ("Couldn't find d-bus service '{0}' (Is beagled running?)",
 						  Beagle.DBusisms.Name);
-				if (Environment.GetEnvironmentVariable ("BEAGLE_RUN_HELPER_BY_HAND") == null)
+				if (run_by_hand)
 					Environment.Exit (-1);
 			}
 
@@ -130,19 +134,28 @@ namespace Beagle.IndexHelper {
 
 		static void MemoryMonitorWorker ()
 		{
-			const int vmsize_max = 60 * 1024;
-			int last_vmsize = 0;
+			int vmrss_original = SystemInformation.VmRss;
+			const double threshold = 5.0;
+			int last_vmrss = 0;
 
+			
 			while (! Shutdown.ShutdownRequested) {
 
-				// Check memory size
-				int vmsize = SystemInformation.VmSize;
-				if (vmsize != last_vmsize)
-					Logger.Log.Debug ("vmsize={0}, max={1}, {2:0.0}%", vmsize, vmsize_max, 100.0 * vmsize / vmsize_max);
-				last_vmsize = vmsize;
-				if (vmsize > vmsize_max) {
-					Logger.Log.Debug ("Process too big, shutting down!");
-					Shutdown.BeginShutdown ();
+				// Check resident memory usage
+				int vmrss = SystemInformation.VmRss;
+				double size = vmrss / (double) vmrss_original;
+				if (vmrss != last_vmrss)
+					Logger.Log.Debug ("Helper Size: VmRSS={0:0.0} MB, size={1:0.00}, {2:0.0}%",
+							  vmrss/1024.0, size, 100.0 * (size - 1) / (threshold - 1));
+				last_vmrss = vmrss;
+				if (size > threshold) {
+					if (RemoteIndexerImpl.CloseCount > 0) {
+						Logger.Log.Debug ("Process too big, shutting down!");
+						Shutdown.BeginShutdown ();
+					} else {
+						// Paranoia: don't shut down if we haven't done anything yet
+						Logger.Log.Debug ("Deferring shutdown until we've actually done something.");
+					}
 				} else {
 					Thread.Sleep (1000);
 				}

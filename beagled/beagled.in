@@ -52,22 +52,22 @@ need_fgbg_arg=1
 declare -a args
 while [ $# -gt 0 ]; do
     case "$1" in
-	--fg | --foreground ) fg=1 ; need_fgbg_arg=0 ; shift ;;
-	--bg | --background ) fg=0 ; need_fgbg_arg=0 ; shift ;;
+	--fg | --foreground ) fg=1 ; shift ;;
+	--bg | --background ) fg=0 ; shift ;;
 	*) args[${#args[@]}]=$1 ; shift ;;
     esac
 done
 
 
-# If necessary, append a --fg or --bg at the end of the command line so that
+# Append a --fg or --bg at the end of the command line so that
 # the daemon can know whether or not it is running in the background.
 FGBG_ARG=""
-if [ $need_fgbg_arg -eq 1 ]; then
-    if [ $fg -eq 1 ]; then
-	FGBG_ARG="--fg";
-    else
-	FGBG_ARG="--bg";
-    fi
+if [ $fg -eq 1 ]; then
+    FGBG_ARG="--fg";
+    export BEAGLE_LOG_IN_THE_FOREGROUND_PLEASE=1
+else
+    FGBG_ARG="--bg";
+    unset BEAGLE_LOG_IN_THE_FOREGROUND_PLEASE
 fi
 
 CMDLINE="mono --debug $MONO_EXTRA_ARGS $TARGET_EXE $EXTRA_ARGS ${args[@]} $FGBG_ARG"

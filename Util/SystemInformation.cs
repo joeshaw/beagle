@@ -209,8 +209,15 @@ namespace Beagle.Util {
 		[DllImport ("libsysteminfoglue.so")]
 		extern static int get_vmsize ();
 
+		[DllImport ("libsysteminfoglue.so")]
+		extern static int get_vmrss ();
+
 		static public int VmSize {
 			get { return get_vmsize (); }
+		}
+
+		static public int VmRss {
+			get { return get_vmrss (); }
 		}
 
 #if false
