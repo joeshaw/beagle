@@ -43,7 +43,6 @@ CSFILES = 				\
 
 if ENABLE_GSF_SHARP
 CSFILES += 				\
-	$(srcdir)/FilterOle.cs		\
 	$(srcdir)/FilterPPT.cs
 endif
 

@@ -423,27 +423,33 @@ namespace Beagle.Filters {
 		override protected void DoOpen (FileInfo info)
 		{
 			hotStyles = new Hashtable ();
-			zip = new ZipFile (info.FullName);
+			try {
+				zip = new ZipFile (info.FullName);
+			} catch (Exception e) {
+				Logger.Log.Error ("Caught exception inside FilterOpenOffice.DoOpen");
+				Logger.Log.Error (e); 
+			}
 		}
 
 		override protected void DoPullProperties ()
 		{
-			ZipEntry entry = zip.GetEntry ("meta.xml");
-			if (entry != null) {
-				Stream meta_stream = zip.GetInputStream (entry);
-				XmlReader reader = new XmlTextReader (meta_stream);
-				ExtractMetadata (reader);
-			} else {
-				Logger.Log.Error ("No meta.xml!");
-			}
-			
-			entry = zip.GetEntry ("content.xml");
-			if (entry != null) {
-				Stream contents_stream = zip.GetInputStream (entry);
-				XmlReader reader = new XmlTextReader (contents_stream);
-				ExtractSlideCount (reader);
-			} else {
-				Logger.Log.Error ("No content.xml!");
+			if (zip != null) {
+				ZipEntry entry = zip.GetEntry ("meta.xml");
+				if (entry != null) {
+					Stream meta_stream = zip.GetInputStream (entry);
+					XmlReader reader = new XmlTextReader (meta_stream);
+					ExtractMetadata (reader);
+				} else {
+					Logger.Log.Error ("No meta.xml!");
+				}
+				entry = zip.GetEntry ("content.xml");
+				if (entry != null) {
+					Stream contents_stream = zip.GetInputStream (entry);
+					XmlReader reader = new XmlTextReader (contents_stream);
+					ExtractSlideCount (reader);
+				} else {
+					Logger.Log.Error ("No content.xml!");
+				}
 			}
 		}
 
@@ -451,21 +457,23 @@ namespace Beagle.Filters {
 		XmlReader style_reader = null;
 		override protected void DoPull ()
 		{
-			// We need both styles.xml and content.xml as 
-			// "Header", "Footer" are stored in styles.xml and
-			// "[Foot/End]Notes are stored in content.xml
-			if ((content_reader == null) && (style_reader == null)) {
+			if (zip != null) {
+				// We need both styles.xml and content.xml as 
+				// "Header", "Footer" are stored in styles.xml and
+				// "[Foot/End]Notes are stored in content.xml
+				if ((content_reader == null) && (style_reader == null)) {
 
-				ZipEntry entry = zip.GetEntry ("content.xml");
-				ZipEntry entry1 = zip.GetEntry ("styles.xml");
+					ZipEntry entry = zip.GetEntry ("content.xml");
+					ZipEntry entry1 = zip.GetEntry ("styles.xml");
 
-				if ((entry != null) && (entry1 != null)) {
-					Stream content_stream = zip.GetInputStream (entry);
-					Stream style_stream = zip.GetInputStream (entry1);
-					content_reader = new XmlTextReader (content_stream);
-					style_reader = new XmlTextReader (style_stream);
-				}
-			}				
+					if ((entry != null) && (entry1 != null)) {
+						Stream content_stream = zip.GetInputStream (entry);
+						Stream style_stream = zip.GetInputStream (entry1);
+						content_reader = new XmlTextReader (content_stream);
+						style_reader = new XmlTextReader (style_stream);
+					}
+				}			
+			}	
 			if ((content_reader == null) && (style_reader == null)) {
 				Finished ();
 				return;

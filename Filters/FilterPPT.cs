@@ -371,7 +371,7 @@ internal class RecordType
 
 namespace Beagle.Filters {
     
-	public class FilterPPT : FilterOle {
+	public class FilterPPT : Beagle.Daemon.Filter {
 
 		private enum TextType {
 			Invalid = -1,
@@ -386,14 +386,18 @@ namespace Beagle.Filters {
 			QuarterBody
 		};
 
+		Infile file;
 		TextType textType;
+		string FileName;
 		public FilterPPT () 
 		{
 			AddSupportedMimeType ("application/vnd.ms-powerpoint");
 			textType = TextType.Invalid;
+			file = null;
+			FileName = null;
 		}
 
-		private int ParseElement (Gsf.Input stream)
+		private int ParseElement (Input stream)
 		{
 			byte [] data = stream.Read(8);
 			if (data == null)
@@ -475,13 +479,13 @@ namespace Beagle.Filters {
 			if (sumStream != null)
 				sumMeta = Msole.MetadataReadReal (sumStream);
 			else
-				Logger.Log.Error ("SummaryInformationStream not found");
+				Logger.Log.Error ("SummaryInformationStream not found in {0}", FileName);
 			
 			DocMetaData docSumMeta = null;
 			if (docSumStream != null)
 				docSumMeta = Msole.MetadataReadReal (docSumStream);
 			else
-				Logger.Log.Error ("DocumentSummaryInformationStream not found");
+				Logger.Log.Error ("DocumentSummaryInformationStream not found in {0}", FileName);
 
 			DocProp prop = null;
 			string str = null;
@@ -545,6 +549,9 @@ namespace Beagle.Filters {
 			int childCount = 0;
 			int found = 0;
 			
+			if (file == null)
+				return;
+
 			childCount = file.NumChildren();
 			for (int i = 0; i < childCount && found != 2; i++) {
 				str = file.NameByIndex (i);
@@ -562,20 +569,51 @@ namespace Beagle.Filters {
 
 		override protected void DoPull ()
 		{
-			Input stream = file.ChildByName ("PowerPoint Document");
+			if (file == null)
+				return;
 
-			// The parsing was getting terminated when "EndDocument"
-			// container was parsed.  We need to continue our 
-			// parsing till the end of the file, since, some of the
-			// slides do persist after the actual "Document" 
-			// container.
-			// PPTs exported from OO.o actually writes almost all the slides
-			// after "Document" container.
-			// And certain PPTs do have some slides in after
-			// "Document" container.
-			while (!stream.Eof)
-				ParseElement(stream);
+			Input stream = null;
+			stream = file.ChildByName ("PowerPoint Document");
+
+			if (stream != null) {
+
+				// The parsing was getting terminated when "EndDocument"
+				// container was parsed.  We need to continue our 
+				// parsing till the end of the file, since, some of the
+				// slides do persist after the actual "Document" 
+				// container.
+				// PPTs exported from OO.o actually writes almost all the slides
+				// after "Document" container.
+				// And certain PPTs do have some slides in after
+				// "Document" container.
+				while (!stream.Eof)
+					ParseElement (stream);
+			} else 
+				Logger.Log.Error ("Ole stream not found in {0}.  Content extraction skipped.", FileName);
 			Finished();
 		}
+
+		override protected void DoOpen (FileInfo info)
+		{
+			FileName = info.FullName;
+
+			Gsf.Global.Init ();
+			Input input = Input.MmapNew (info.FullName);
+			if (input != null) {
+				input = input.Uncompress();
+				file = new InfileMSOle (input);
+			} else 
+				Logger.Log.Error ("Unable to open {0}", info.FullName);
+		}
+
+		// FIXME: These are utility functions and can be useful 
+		// outside this filter as well.
+		public static int GetInt32 (byte [] data, int offset) {
+			return data[offset] + (data[offset + 1] << 8) + (data[offset + 2] << 16) + (data[offset + 3] << 24);
+		}
+		public static int GetInt16 (byte [] data, int offset) {
+			return data[offset] + (data[offset + 1] << 8);
+		}
+
 	}
 }
