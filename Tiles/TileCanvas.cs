@@ -34,6 +34,9 @@ namespace Beagle {
 
 	public class TileCanvas : Gtk.HTML {
 
+		public event EventHandler PreRenderEvent;
+		public event EventHandler PostRenderEvent;
+
 		public TileCanvas () : base ()
 		{
 			UrlRequested += new Gtk.UrlRequestedHandler (OnUrlRequested);
@@ -348,10 +351,10 @@ namespace Beagle {
 
 			override public void Tile (Tile tile)
 			{
+				canvas.CacheTile (tile);
 				if (tile.RenderInline) {
 					tile.Render (this);
 				} else {
-					canvas.CacheTile (tile);
 					Write ("<iframe");
 					Write (" src=\":{0}:_iframe_\"", tile.UniqueKey);
 					Write (" marginwidth=\"0\"");
@@ -391,13 +394,19 @@ namespace Beagle {
 
 		private void DoRender ()
 		{
-			Console.WriteLine ("DoRender!");
+			if (PreRenderEvent != null)
+				PreRenderEvent (this, new EventArgs ());
+				
 			ClearActions ();
 			ClearTiles ();
 
 			Gtk.HTMLStream stream = this.Begin ();
 			PaintTile (root, stream);
 			this.End (stream, Gtk.HTMLStreamStatus.Ok);
+
+			if (PostRenderEvent != null)
+				PostRenderEvent (this, new EventArgs ());
+
 		}
 
 		/////////////////////////////////////////////////

@@ -35,17 +35,34 @@ namespace Beagle {
 		// This class is fully static.
 		private Images () { }
 
+		static private Stream GetStreamInner (string name)
+		{
+			Stream stream = null;
+
+			if (name.StartsWith ("file://")) {
+				name = name.Substring ("file://".Length);
+				if (File.Exists (name))
+					stream = File.OpenRead (name);
+			} else {
+				Assembly assembly = Assembly.GetExecutingAssembly ();
+				stream = assembly.GetManifestResourceStream (name);
+			}
+
+			return stream;
+		}
+
 		static public Stream GetStream (string name)
 		{
-			Assembly assembly = Assembly.GetExecutingAssembly ();
-			Stream s = assembly.GetManifestResourceStream (name);
-			if (s == null)
-				s = assembly.GetManifestResourceStream (name + ".png");
-			if (s == null)
-				s = assembly.GetManifestResourceStream (name + ".jpg");
-			if (s == null)
-				Console.WriteLine ("Couldn't get resource '{0}'", name);
-			return s;
+			Stream stream;
+
+			stream = GetStreamInner (name);
+			if (stream == null)
+				stream = GetStreamInner (name + ".png");
+			if (stream == null)
+				stream = GetStreamInner (name + ".jpg");
+			if (stream == null)
+				Console.WriteLine ("Couldn't get stream for image '{0}'", name);
+			return stream;
 		}
 
 		static public Gdk.Pixbuf GetPixbuf (string name)
@@ -54,9 +71,34 @@ namespace Beagle {
 			return s != null ? new Gdk.Pixbuf (s) : null;
 		}
 
+		static public Gdk.Pixbuf GetPixbuf (string name, int maxWidth, int maxHeight)
+		{
+			Gdk.Pixbuf pixbuf = GetPixbuf (name);
+			if (pixbuf == null)
+				return null;
+			
+			double scaleWidth = maxWidth / (double)pixbuf.Width;
+			double scaleHeight = maxHeight / (double)pixbuf.Height;
+
+			double s = Math.Min (scaleWidth, scaleHeight);
+			if (s >= 1.0)
+				return pixbuf;
+
+			int w = (int) Math.Round (s * pixbuf.Width);
+			int h = (int) Math.Round (s * pixbuf.Height);
+			
+			return pixbuf.ScaleSimple (w, h, Gdk.InterpType.Bilinear);
+		}
+
 		static public Gtk.Widget GetWidget (string name)
 		{
 			Gdk.Pixbuf pixbuf = GetPixbuf (name);
+			return pixbuf != null ? new Gtk.Image (pixbuf) : null;
+		}
+		
+		static public Gtk.Widget GetWidget (string name, int maxWidth, int maxHeight)
+		{
+			Gdk.Pixbuf pixbuf = GetPixbuf (name, maxWidth, maxHeight);
 			return pixbuf != null ? new Gtk.Image (pixbuf) : null;
 		}
 	}

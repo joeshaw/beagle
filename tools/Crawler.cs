@@ -126,7 +126,7 @@ class CrawlerTool {
 
 		void ScheduleAdd (Indexable indexable)
 		{
-			toBeIndexed.Add (indexable);
+			//toBeIndexed.Add (indexable);
 			MaybeFlush ();
 		}
 

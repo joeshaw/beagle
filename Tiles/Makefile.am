@@ -17,6 +17,8 @@ CSFILES =					\
 	$(srcdir)/TileGoogle.cs			\
 	$(srcdir)/TileImLog.cs			\
 	$(srcdir)/TileMailMessage.cs		\
+	$(srcdir)/TileMusic.cs			\
+	$(srcdir)/TilePicture.cs		\
 	$(srcdir)/TileWebHistory.cs
 
 ASSEMBLIES = 					\
@@ -35,6 +37,8 @@ RESOURCEFILES =					\
 	$(srcdir)/template-google.html		\
 	$(srcdir)/template-im-log.html		\
 	$(srcdir)/template-mail-message.html	\
+	$(srcdir)/template-music.html		\
+	$(srcdir)/template-picture.html		\
 	$(srcdir)/template-web-history.html
 
 # Makefile-fu to map /path/filename to -resource:/path/filename,filename

@@ -56,8 +56,16 @@ namespace Best {
 					icon = "person.png";
 					break;
 				case "File":
-					name = "Files";
-					icon = "document.png";
+					if (hit.MimeType.StartsWith ("image/")) {
+						name = "Pictures";
+						icon = "document.png";
+					} else if (hit.MimeType == "audio/x-mp3") {
+						name = "Music";
+						icon = "music.png";
+					} else {
+						name = "Files";
+						icon = "document.png";
+					}
 					break;
 				case "Google":
 					name = "Google";

@@ -128,6 +128,7 @@ namespace Best {
 
 		private Gtk.Entry entry;
 		
+		private Gtk.ScrolledWindow swin;
 		private TileCanvas canvas;
 		private BestRootTile root;
 
@@ -144,10 +145,13 @@ namespace Best {
 			entryLine.PackStart (button, false, false, 3);
 
 			canvas = new TileCanvas ();
+			canvas.PreRenderEvent += new EventHandler (OnPreRender);
+			canvas.PostRenderEvent += new EventHandler (OnPostRender);
+
 			root = new BestRootTile ();
 			canvas.Root = root;
 
-			Gtk.ScrolledWindow swin = new Gtk.ScrolledWindow ();
+			swin = new Gtk.ScrolledWindow ();
 			swin.Add (canvas);
 
 			VBox contents = new VBox (false, 3);
@@ -198,6 +202,26 @@ namespace Best {
 				return;
 			Console.WriteLine ("Cancelled!");
 			root.Close ();
+		}
+
+		private void OnPreRender (object obj, EventArgs args)
+		{
+			if (swin == null)
+				return;
+			Gtk.Adjustment adj = swin.Vadjustment;
+			if (adj == null)
+				return;
+			Console.WriteLine ("Pre: {0} {1} {2}", adj.Lower, adj.Value, adj.Upper);
+		}
+		
+		private void OnPostRender (object obj, EventArgs args)
+		{
+			if (swin == null)
+				return;
+			Gtk.Adjustment adj = swin.Vadjustment;
+			if (adj == null)
+				return;
+			Console.WriteLine ("Post: {0} {1} {2}", adj.Lower, adj.Value, adj.Upper);
 		}
 
 

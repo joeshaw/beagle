@@ -59,7 +59,12 @@ namespace Beagle {
 					break;
 
 				case "File":
-					tile = new TileFile (hit);
+					if (hit.MimeType.StartsWith ("image/"))
+						tile = new TilePicture (hit);
+					else if (hit.MimeType == "audio/x-mp3")
+						tile = new TileMusic (hit);
+					else
+						tile = new TileFile (hit);
 					break;
 
 				case "Google":
