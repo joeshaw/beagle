@@ -1,4 +1,4 @@
-//
+ //
 // IndexMail.cs
 //
 // Copyright (C) 2004 Novell, Inc.
@@ -344,11 +344,12 @@ namespace IndexMailTool {
 			// Assemble the metadata
 			SetMetadata ("folder",  folderName);
 			SetMetadata ("subject", messageInfo.subject);
-			SetMetadata ("to",      messageInfo.from);
-			SetMetadata ("from",    messageInfo.to);
-			SetMetadata ("cc",      messageInfo.cc);
-			SetMetadata ("mlist",   messageInfo.mlist);
-			SetMetadata ("flags",   Convert.ToString (messageInfo.flags)); // FIXME: should not be indexed
+			SetMetadata ("to", messageInfo.to);
+			SetMetadata ("from", messageInfo.from);
+			SetMetadata ("cc", messageInfo.cc);
+			SetMetadata ("sent", messageInfo.sent.ToString ());
+			SetMetadata ("mlist", messageInfo.mlist);
+			SetMetadata ("flags", Convert.ToString (messageInfo.flags));
 
 			// Assemble the content, if we have any
 			if (message != null) {
@@ -520,7 +521,27 @@ namespace IndexMailTool {
 			MailScanner scanner = new MailScanner ();
 
 			DirectoryInfo dir = new DirectoryInfo (local);
-			
+
+			if (args.Length > 0) {
+			    foreach (String summaryPath in args) {
+				if (Path.GetExtension (summaryPath) != ".ev-summary") {
+				    Console.WriteLine ("Argument is not Evolution summary file.");
+				    continue;
+				}
+
+				string folderName = Path.GetFileNameWithoutExtension (summaryPath);
+				string mboxFile = Path.ChangeExtension (summaryPath, null);
+
+				Console.WriteLine ("Mbox: " + mboxFile);
+				if (File.Exists (mboxFile))
+				    scanner.ScanMbox (folderName, mboxFile, summaryPath);
+
+			    }
+			    
+			    scanner.Flush ();
+			    return;
+			}
+			    
 			foreach (FileInfo f in dir.GetFiles ()) {
 				if (Path.GetExtension (f.Name) == ".ev-summary") {
 					String folderName = Path.GetFileNameWithoutExtension (f.Name);
