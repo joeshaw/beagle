@@ -166,6 +166,7 @@ namespace Beagle.Filters {
 						WalkHeadNodes (subnode);
 						break;
 					case "body":
+					default:
 						WalkBodyNodes (subnode);
 						break;
 					}

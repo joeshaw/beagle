@@ -156,7 +156,7 @@ namespace Beagle.Daemon.BlamQueryable {
 					continue;
 
 				foreach(Item item in channel.Items) {
-					Indexable indexable = new Indexable (
+					Indexable indexable = new FilteredIndexable (
 						new Uri (String.Format ("feed:{0};item={1}", channel.Url, item.Id)));
 					indexable.MimeType = "text/html";
 					indexable.Type = "FeedItem";
