@@ -183,9 +183,9 @@ namespace Beagle.Util
 				if (key_sequence == null)
 					return;
 
-				Console.WriteLine ("Unbinding key '{0}' for '{1}'",
-						   key_sequence,
-						   gconf_path);
+				Logger.Log.Debug ("Unbinding key '{0}' for '{1}'",
+						  key_sequence,
+						  gconf_path);
 
 				parent.Unbind (key_sequence);
 			}
