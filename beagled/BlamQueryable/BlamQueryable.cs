@@ -71,7 +71,7 @@ namespace Beagle.Daemon.BlamQueryable {
 		{			
 			// FIXME: We should do something more reasonable if
 			// ~/.gnome2/blam doesn't exist.
-			if (! Directory.Exists (blamDir))
+			if (! File.Exists (Path.Combine (blamDir, "collection.xml")))
 				return;
 
 			base.Start ();
