@@ -71,6 +71,7 @@ namespace Beagle.Daemon {
 		//    out of order' exceptions in some cases)
 		private const int VERSION = 7;
 
+		private string top_dir;
 		private Hashtable pending_by_uri = UriFu.NewHashtable ();
 		private int pending_adds = 0;
 		private int pending_removals = 0;
@@ -78,11 +79,14 @@ namespace Beagle.Daemon {
 		private bool optimizing = false;
 		private int last_item_count = -1;
 
-		public LuceneDriver (string dir)
+		public LuceneDriver (string index_name)
 		{
-			Setup (dir);
+			Setup (index_name);
 		}
 
+		public string IndexDirectory {
+			get { return top_dir; }
+		}
 
 		/////////////////////////////////////////////////////
 
@@ -105,13 +109,15 @@ namespace Beagle.Daemon {
 		/////////////////////////////////////////////////////
 
 
-		private void Setup (string dir)
+		private void Setup (string index_name)
 		{
-			string versionFile = Path.Combine (dir, "version");
-			string fingerprintFile = Path.Combine (dir, "fingerprint");
-			string lockDir = Path.Combine (dir, "Locks");
-			string indexDir = Path.Combine (dir, "Index");
-			string queueDir = Path.Combine (dir, "Queue");
+			top_dir = Path.Combine (PathFinder.RootDir, index_name); 
+			
+			string versionFile = Path.Combine (top_dir, "version");
+			string fingerprintFile = Path.Combine (top_dir, "fingerprint");
+			string lockDir = Path.Combine (top_dir, "Locks");
+			string indexDir = Path.Combine (top_dir, "Index");
+			string queueDir = Path.Combine (top_dir, "Queue");
 			string indexTestFile = Path.Combine (indexDir, "segments");
 
 			bool versionExists = File.Exists (versionFile);
@@ -162,13 +168,13 @@ namespace Beagle.Daemon {
 				// Purge and rebuild the index's directory
 				// structure.
 
-				if (Directory.Exists (dir)) {
-					log.Debug ("Purging {0}", dir);
-					Directory.Delete (dir, true);
+				if (Directory.Exists (top_dir)) {
+					log.Debug ("Purging {0}", top_dir);
+					Directory.Delete (top_dir, true);
 				}
 
 				// Create all directories.
-				Directory.CreateDirectory (dir);
+				Directory.CreateDirectory (top_dir);
 				Directory.CreateDirectory (lockDir);
 				Directory.CreateDirectory (indexDir);
 

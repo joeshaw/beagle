@@ -5,6 +5,9 @@ if [ -e ./@target@ ] && [ -e ./Makefile.am ] ; then
     THIS_PATH="../Util:../BeagleClient:."
     THIS_EXE="./@target@"
 
+    export MONO_PATH="../Util:../BeagleClient:$MONO_PATH"
+    export LD_LIBRARY_PATH="../glue/.libs:$LD_LIBRARY_PATH"
+
     # In BEAGLE_FILTER_PATH, a trailing ':' means "append the default path".
     if [ -n "$BEAGLE_FILTER_PATH" ]; then
 	export BEAGLE_FILTER_PATH="../Filters:$BEAGLE_FILTER_PATH"

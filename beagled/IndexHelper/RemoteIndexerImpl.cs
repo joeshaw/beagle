@@ -25,6 +25,9 @@
 //
 
 using System;
+using System.Collections;
+using System.IO;
+using System.Threading;
 
 using Beagle.Util;
 using Beagle.Daemon;
@@ -34,27 +37,124 @@ namespace Beagle.IndexHelper {
 	public class RemoteIndexerImpl : Beagle.Daemon.RemoteIndexerProxy {
 
 		IIndexer indexer;
+		NextFlush next_flush;
+		
+		public override event ChangedHandler ChangedEvent;
+		public override event FlushCompleteHandler FlushCompleteEvent;
 
 		public RemoteIndexerImpl (IIndexer indexer)
 		{
 			this.indexer = indexer;
+			if (indexer != null) {
+				indexer.ChangedEvent += OnIndexerChanged;
+			}
+
+			next_flush = NewNextFlush ();
 		}
+
+		private void OnIndexerChanged (IIndexer source,
+					       ICollection list_of_added_uris,
+					       ICollection list_of_removed_uris)
+		{
+			this.ChangedEvent (UriFu.UrisToString (list_of_added_uris),
+					   UriFu.UrisToString (list_of_removed_uris));
+		}
+
+		/////////////////////////////////////////////////////////////////////////////////////
+
+		private class NextFlush {
+			public RemoteIndexerImpl Impl;
+			public IIndexer Indexer;
+			public ArrayList ToBeAdded = new ArrayList ();
+			public ArrayList ToBeRemoved = new ArrayList ();
+
+			public void DoFlush ()
+			{
+				foreach (Indexable indexable in ToBeAdded)
+					Indexer.Add (indexable);
+				foreach (Uri uri in ToBeRemoved)
+					Indexer.Remove (uri);
+				Indexer.Flush ();
+				Impl.FlushComplete ();
+			}
+		}
+
+		private NextFlush NewNextFlush ()
+		{
+			NextFlush next = new NextFlush ();
+			next.Impl = this;
+			next.Indexer = this.indexer;
+			return next;
+		}
+
+		public void FlushComplete ()
+		{
+			Console.WriteLine ("Flush Complete!");
+			FlushCompleteEvent ();
+		}
+		
+
+		/////////////////////////////////////////////////////////////////////////////////////
+
+		// FIXME: We should reject calls to NewRemoteIndexerPath from
+		// anyone except for the process that started us.
+
+		static Hashtable remote_indexer_cache = new Hashtable ();
+
+		override public string NewRemoteIndexerPath (string name)
+		{
+			string path = Path.Combine (IndexHelperTool.IndexPathPrefix, name);
+			if (! remote_indexer_cache.Contains (name)) {
+				LuceneDriver driver = new LuceneDriver (name);
+				RemoteIndexerImpl impl = new RemoteIndexerImpl (driver);
+				remote_indexer_cache [name] = impl;
+				Beagle.Daemon.DBusisms.RegisterObject (impl, path);
+			}
+			return path;
+		}
+
+		/////////////////////////////////////////////////////////////////////////////////////
+
+		override public bool Open ()
+		{
+			Console.WriteLine ("Open!");
+			return Shutdown.WorkerStart (this);
+		}
+
+		override public void Close ()
+		{
+			Console.WriteLine ("Close!");
+			Shutdown.WorkerFinished (this);
+		}
+
+		/////////////////////////////////////////////////////////////////////////////////////
 
 		override public void Add (string indexable_as_xml)
 		{
-			Indexable indexable = Indexable.NewFromXml (indexable_as_xml);
-			indexer.Add (indexable);
+			if (indexer != null) {
+				Indexable indexable = FilteredIndexable.NewFromEitherXml (indexable_as_xml);
+				next_flush.ToBeAdded.Add (indexable);
+			}
 		}
 
 		override public void Remove (string uri_as_str)
 		{
-			Uri uri = new Uri (uri_as_str, false);
-			indexer.Remove (uri);
+			if (indexer != null) {
+				Uri uri = new Uri (uri_as_str, true);
+				next_flush.ToBeRemoved.Add (uri);
+			}
 		}
 		
 		override public void Flush ()
 		{
-			indexer.Flush ();
+			if (indexer != null) {
+				NextFlush this_flush = next_flush;
+				next_flush = NewNextFlush ();
+				indexer.Flush ();
+				Console.WriteLine ("Launching flush thread!");
+				Thread th = new Thread (new ThreadStart (this_flush.DoFlush));
+				th.Start ();
+			}
 		}
 
 	}

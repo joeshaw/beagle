@@ -32,8 +32,11 @@ namespace Beagle.Daemon {
 	[Interface ("com.novell.BeagleIndexHelper.Indexer")]
 	public abstract class RemoteIndexerProxy {
 
-		//[Method]
-		//public abstract string NewRemoteIndexerPath (string name);
+		[Method]
+		public abstract string NewRemoteIndexerPath (string name);
+
+		[Method]
+		public abstract bool Open ();
 
 		[Method]
 		public abstract void Add (string indexable_as_xml);
@@ -44,6 +47,19 @@ namespace Beagle.Daemon {
 		[Method]
 		public abstract void Flush ();
 
+		[Method]
+		public abstract void Close ();
+
+		public delegate void ChangedHandler (string list_of_added_uris_as_string,
+						     string list_of_removed_uris_as_string);
+
+		[Signal]
+		public virtual event ChangedHandler ChangedEvent;
+
+		public delegate void FlushCompleteHandler ();
+		
+		[Signal]
+		public virtual event FlushCompleteHandler FlushCompleteEvent;
 	}
 	
 

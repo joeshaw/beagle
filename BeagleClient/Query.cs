@@ -122,14 +122,10 @@ namespace Beagle
 			if (HitsSubtractedEvent != null && uriString.Length > 0) {
 				string[] uris = uriString.Split ('|');
 
-				ArrayList uriList = new ArrayList ();
+				ICollection uri_collection = UriFu.StringToUris (uriString);
 
-				foreach (string uriStr in uris) {
-					Uri uri = new Uri (uriStr, true);
-					uriList.Add (uri);
-				}
-
-				HitsSubtractedEvent (this, uriList);
+				if (uri_collection != null)
+					HitsSubtractedEvent (this, uri_collection);
 			}
 		}
 

@@ -118,7 +118,6 @@ namespace Beagle.Daemon {
 						  Environment.CommandLine != null ? Environment.CommandLine : "(null)");
 			} catch (Exception ex) { }
 
-
 		}
 
 		private static void OnNameOwnerChanged (string name,
@@ -172,7 +171,7 @@ namespace Beagle.Daemon {
 				Thread.Sleep (1000);
 			}
 		}
-		
+
 		public static int Main (string[] args)
 		{
 			// Process the command-line arguments
@@ -365,6 +364,11 @@ namespace Beagle.Daemon {
 			}
 
 #endif
+
+			// Set up out-of-process indexing
+			if (Environment.GetEnvironmentVariable ("BEAGLE_ENABLE_IN_PROCESS_INDEXING") == null)
+				LuceneQueryable.IndexerHook = new LuceneQueryable.IndexerCreator (RemoteIndexer.NewRemoteIndexer);
+
 
 			// Start the query driver.
 			Logger.Log.Debug ("Starting QueryDriver");

@@ -24,29 +24,229 @@
 // DEALINGS IN THE SOFTWARE.
 //
 
+#define DBUS_IS_BROKEN_BROKEN_BROKEN
+
 using System;
+using System.Threading;
 using DBus;
+
+using Beagle.Util;
 
 namespace Beagle.Daemon {
 
-	public abstract class RemoteIndexer { //: IIndexer {
+	public class RemoteIndexer : IIndexer {
 
+		static private TimeSpan one_second = new TimeSpan (10000000);
+
+		string remote_index_name;
 		RemoteIndexerProxy proxy;
+		bool flush_complete;
+		object flush_lock = new object ();
+		int add_remove_count;
+
+		public event IIndexerChangedHandler ChangedEvent;
+
+		static public IIndexer NewRemoteIndexer (string name)
+		{
+			return new RemoteIndexer (name);
+		}
+
+		public RemoteIndexer (string name)
+		{
+			this.remote_index_name = name;
+			this.proxy = null;
+		}
+
+		private RemoteIndexerProxy Proxy {
+			get {
+				if (proxy == null) {
+					proxy = IndexHelperFu.NewRemoteIndexerProxy (remote_index_name);
+					proxy.ChangedEvent += OnProxyChanged;
+					proxy.FlushCompleteEvent += OnFlushComplete;
+					add_remove_count = 0;
+				}
+
+				return proxy;
+			}
+		}
+
+		private void UnsetProxy ()
+		{
+			if (proxy != null) {
+				proxy.ChangedEvent -= OnProxyChanged;
+				proxy.FlushCompleteEvent -= OnFlushComplete;
+				proxy = null;
+			}
+		}
+
+			
+
+#if DBUS_IS_BROKEN_BROKEN_BROKEN
+		private class UpToTheMainLoop {
+			RemoteIndexerProxy proxy;
+			int magic_code;
+			string data;
+			bool finished;
+
+			static public UpToTheMainLoop NewAdd (RemoteIndexerProxy proxy, Indexable indexable)
+			{
+				UpToTheMainLoop up = new UpToTheMainLoop ();
+				up.proxy = proxy;
+				up.magic_code = 0;
+				up.data = indexable.ToString ();
+				return up;
+			}
+
+			static public UpToTheMainLoop NewRemove (RemoteIndexerProxy proxy, Uri uri)
+			{
+				UpToTheMainLoop up = new UpToTheMainLoop ();
+				up.proxy = proxy;
+				up.magic_code = 1;
+				up.data = uri.ToString ();
+				return up;
+			}
+
+			static public UpToTheMainLoop NewFlush (RemoteIndexerProxy proxy)
+			{
+				UpToTheMainLoop up = new UpToTheMainLoop ();
+				up.proxy = proxy;
+				up.magic_code = 2;
+				return up;
+			}
+
+			static public UpToTheMainLoop NewClose (RemoteIndexerProxy proxy)
+			{
+				UpToTheMainLoop up = new UpToTheMainLoop ();
+				up.proxy = proxy;
+				up.magic_code = 3;
+				return up;
+			}
+
+			private bool IdleHandler ()
+			{
+				if (Shutdown.ShutdownRequested)
+					return false;
+
+				lock (this) {
+					switch (magic_code) {
+					case 0:
+						proxy.Add (data);
+						break;
+					case 1:
+						proxy.Remove (data);
+						break;
+					case 2:
+						proxy.Flush ();
+						break;
+					case 3:
+						proxy.Close ();
+						break;
+					}
+
+					finished = true;
+					Monitor.Pulse (this);
+				}
+				return false;
+			}
+			
+			public void Run ()
+			{
+				lock (this) {
+					GLib.IdleHandler idle_handler = new GLib.IdleHandler (IdleHandler);
+					GLib.Idle.Add (idle_handler);
+					finished = false;
+					while (! finished) {
+						Logger.Log.Debug ("Waiting code={0}", magic_code);
+						Monitor.Wait (this, one_second);
+						// Bale out if a shutdown request has come in.
+						if (Shutdown.ShutdownRequested)
+							return;
+					}
+				}
+			}
+			
+		}
+#endif
 
 		public void Add (Indexable indexable)
 		{
+#if DBUS_IS_BROKEN_BROKEN_BROKEN
+			UpToTheMainLoop up = UpToTheMainLoop.NewAdd (Proxy, indexable);
+			up.Run ();
+#else
 			indexable.StoreStream ();
-			proxy.Add (indexable.ToString ());
+			Logger.Log.Debug ("+++ {0}", indexable.ToString ()); 
+			Proxy.Add (indexable.ToString ());
+#endif
+			++add_remove_count;
 		}
 
 		public void Remove (Uri uri)
 		{
-			proxy.Remove (uri.ToString ());
+#if DBUS_IS_BROKEN_BROKEN_BROKEN
+			UpToTheMainLoop up = UpToTheMainLoop.NewRemove (Proxy, uri);
+			up.Run ();
+#else
+			Proxy.Remove (uri.ToString ());
+#endif
+			++add_remove_count;
 		}
 
 		public void Flush ()
 		{
-			proxy.Flush ();
+			if (add_remove_count == 0) {
+#if DBUS_IS_BROKEN_BROKEN_BROKEN
+				UpToTheMainLoop up = UpToTheMainLoop.NewClose (Proxy);
+				up.Run ();
+#else
+				Proxy.Close ();
+#endif
+				UnsetProxy ();
+				return;
+			}
+
+			lock (flush_lock) {
+#if DBUS_IS_BROKEN_BROKEN_BROKEN
+				UpToTheMainLoop up = UpToTheMainLoop.NewFlush (Proxy);
+				up.Run ();
+#else
+				Proxy.Flush ();
+#endif
+				// Wait for the flush complete signal, but bail out
+				// if a shutdown request comes through.
+				flush_complete = false;
+				while (! flush_complete && ! Shutdown.ShutdownRequested) {
+					Logger.Log.Debug ("Waiting for flush to complete on '{0}'", remote_index_name);
+					Monitor.Wait (flush_lock, one_second);
+				}
+			
+			}
+		}
+
+		private void OnProxyChanged (string list_of_added_uris_as_string,
+					     string list_of_removed_uris_as_string)
+		{
+			if (ChangedEvent != null)
+				ChangedEvent (this,
+					      UriFu.StringToUris (list_of_added_uris_as_string),
+					      UriFu.StringToUris (list_of_removed_uris_as_string));
+		}
+
+		private void OnFlushComplete ()
+		{
+			lock (flush_lock) {
+				Logger.Log.Debug ("Flush complete");
+				flush_complete = true;
+				
+				// Since this event is dispatched by d-bus, we are guaranteed
+				// to be in the main loop's thread.  Thus we don't have to
+				// jump through the same hoops as we did above.
+				Proxy.Close ();
+
+				UnsetProxy ();
+
+				Monitor.Pulse (flush_lock);
+			}
 		}
 
 	}

@@ -41,6 +41,17 @@ namespace Beagle.Daemon {
 		Filter filter;
 		bool crawl_mode;
 
+		/////////////////////////////////////////
+
+		static XmlSerializer our_serializer;
+
+		static FilteredIndexable ()
+		{
+			our_serializer = new XmlSerializer (typeof (FilteredIndexable));
+		}
+
+		/////////////////////////////////////////
+
 		public FilteredIndexable (Uri uri, bool crawl_mode) : base (uri)
 		{
 			this.crawl_mode = crawl_mode;
@@ -55,16 +66,25 @@ namespace Beagle.Daemon {
 			// For instantiating from xml
 		}
 
-#if false
-		public static void AddXmlOverrides (overrides)
+		// FIXME: I should be shot for writing this code
+		public static Indexable NewFromEitherXml (string xml)
 		{
-			XmlAttributes attrs = new XmlAttributes ();
-			XmlIncludeAttribute attr = new XmlIncludeAttribute ();
-			attr.Type = typeof (FilteredIndexable);
-			attrs.XmlIncludes += attr;
-			overrides.Add (typeof (Indexable), attrs);
+			int i = xml.IndexOf ("?>");
+			if (i == -1)
+				return null;
+			i = xml.IndexOf ("<", i);
+			if (i == -1)
+				return null;
+			++i;
+			if (xml [i] == 'I') { // Indexable
+				return Indexable.NewFromXml (xml);
+			} else if (xml [i] == 'F') { // FilteredIndexable
+				StringReader reader = new StringReader (xml);
+				return (Indexable) our_serializer.Deserialize (reader);
+			}
+
+			return null;
 		}
-#endif
 
 		public static FilteredIndexable NewFromIndexableXml (string xml) 
 		{
@@ -81,10 +101,10 @@ namespace Beagle.Daemon {
 			return (FilteredIndexable)s.Deserialize (reader);
 		}
 
-		public override string ToString () {
-			XmlSerializer s = new XmlSerializer (typeof (FilteredIndexable));
+		public override string ToString ()
+		{
 			StringWriter writer = new StringWriter ();
-			s.Serialize (writer, this);
+			our_serializer.Serialize (writer, this);
 			writer.Close ();
 			return writer.ToString ();
 		}

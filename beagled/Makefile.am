@@ -433,7 +433,6 @@ DAEMON_DLL_CSFILES = 						\
 	$(srcdir)/QueryableFlavor.cs				\
 	$(srcdir)/RemoteControlImpl.cs				\
 	$(srcdir)/RemoteIndexerProxy.cs				\
-	$(srcdir)/RemoteIndexer.cs				\
 	$(srcdir)/Shutdown.cs					\
 	$(srcdir)/SnippetFu.cs					\
 	$(srcdir)/TextCache.cs
@@ -508,7 +507,9 @@ DAEMON_CSFLAGS =				\
 
 DAEMON_CSFILES =				\
 	$(srcdir)/BeagleDaemon.cs		\
-	$(srcdir)/IndexHelperFu.cs
+	$(srcdir)/IndexHelperFu.cs		\
+	$(srcdir)/RemoteIndexer.cs
+
 
 DAEMON_LOCAL_ASSEMBLIES =			\
 	../Util/Util.dll			\
@@ -540,8 +541,7 @@ $(INDEX_HELPER_WRAPPER): $(srcdir)/$(WRAPPER_IN)
 	$(WRAPPER_SED) -e "s|\@target\@|$(INDEX_HELPER_TARGET)|g" < $(srcdir)/$(WRAPPER_IN) > $@
 	chmod +x $(INDEX_HELPER_WRAPPER)
 
-INDEX_HELPER_CSFLAGS =			\
-	-target:exe
+INDEX_HELPER_CSFLAGS = -target:exe $(BEAGLE_DEFINES)
 
 indexhelperdir = $(srcdir)/IndexHelper
 

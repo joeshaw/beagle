@@ -27,6 +27,7 @@
 
 using System;
 using System.IO;
+using System.Threading;
 
 using DBus;
 using Gtk;
@@ -38,16 +39,85 @@ namespace Beagle.IndexHelper {
 	
 	class IndexHelperTool {
 
+		static readonly public string ServiceName = "com.novell.BeagleIndexHelper";
+		static readonly public string FactoryPath = "/com/novell/BeagleIndexHelper/Factory";
+		static readonly public string IndexPathPrefix = "/com/novell/BeagleIndexHelper/Index";
+
 		static void Main (string [] args)
 		{
+			Logger.DefaultEcho = true;
+			Logger.DefaultLevel = LogLevel.Debug;
+
 			Beagle.Daemon.DBusisms.Init ();
 			Application.Init ();
 
-			if (! Beagle.Daemon.DBusisms.InitService ("com.novell.BeagleIndexHelper"))
+			// Keep an eye on the BusDriver so that we know if beagled
+			// goes away.
+
+			BusDriver bus_driver = Beagle.Daemon.DBusisms.BusDriver;
+
+#if HAVE_OLD_DBUS
+			bus_driver.ServiceOwnerChanged += OnNameOwnerChanged;
+#else
+			bus_driver.NameOwnerChanged += OnNameOwnerChanged;
+#endif
+
+			// Check that beagled is running by looking for the com.novell.Beagle service.
+			if (! Beagle.Daemon.DBusisms.TestService (Beagle.DBusisms.Name)) {
+				Console.WriteLine ("Couldn't find d-bus service '{0}' (Is beagled running?)",
+						   Beagle.DBusisms.Name);
+				Environment.Exit (-1);
+			}
+
+			// Acquire the service
+			if (! Beagle.Daemon.DBusisms.InitService (ServiceName)) {
+				Console.WriteLine ("Couldn't acquire d-bus service '{0}'", ServiceName);
 				Environment.Exit (-666);
+			}
+
+			// Since the associated RemoteIndexerProxy is null, the only method
+			// that can be called on this object that isn't a no-op is NewRemoteIndexerPath.
+			// We do this to avoid a separate factory object.
+			RemoteIndexerImpl factory = new RemoteIndexerImpl (null);
+			Beagle.Daemon.DBusisms.RegisterObject (factory, FactoryPath);
+
+
+			// Start the memory-watching thread
+			Thread th = new Thread (new ThreadStart (MemoryMonitorWorker));
+			th.Start ();
 
 			Application.Run ();
 			Environment.Exit (0);
+		}
+
+		static void OnNameOwnerChanged (string name,
+						string old_owner,
+						string new_owner)
+		{
+			if (name != Beagle.DBusisms.Name)
+				return;
+
+			if (new_owner == "")
+				Shutdown.BeginShutdown ();
+		}
+
+		static void MemoryMonitorWorker ()
+		{
+			const int vmsize_max = 60 * 1024;
+			int last_vmsize = 0;
+
+			while (! Shutdown.ShutdownRequested) {
+				int vmsize = SystemInformation.VmSize;
+				if (vmsize != last_vmsize)
+					Console.WriteLine ("vmsize={0}, max={1}, {2:0.0}%", vmsize, vmsize_max, 100.0 * vmsize / vmsize_max);
+				last_vmsize = vmsize;
+				if (vmsize > vmsize_max) {
+					Console.WriteLine ("Process too big, shutting down!");
+					Shutdown.BeginShutdown ();
+				} else {
+					Thread.Sleep (1000);
+				}
+			}
 		}
 	}
 

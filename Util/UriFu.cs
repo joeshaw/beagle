@@ -26,6 +26,7 @@
 
 using System;
 using System.Collections;
+using System.Text;
 
 namespace Beagle.Util {
 
@@ -65,6 +66,41 @@ namespace Beagle.Util {
 		static public Hashtable NewHashtable ()
 		{
 			return new Hashtable (the_hasher, the_comparer);
+		}
+
+		//////////////////////////////////
+
+		static public string UrisToString (ICollection list_of_uris)
+		{
+			StringBuilder sb = new StringBuilder ("!@#");
+
+			foreach (Uri uri in list_of_uris) {
+				sb.Append (" ");
+				sb.Append (uri.ToString ().Replace (" ", "%20"));
+			}
+
+			return sb.ToString ();
+		}
+
+		static public ICollection StringToUris (string list_of_uris_as_string)
+		{
+			string [] parts = list_of_uris_as_string.Split (' ');
+
+			if (parts.Length == 0 || parts [0] != "!@#")
+				return null;
+
+			ArrayList uri_array = new ArrayList ();
+			for (int i = 1; i < parts.Length; ++i) {
+				try {
+					Uri uri = new Uri (parts [i], true);
+					uri_array.Add (uri);
+				} catch (Exception ex) {
+					Logger.Log.Debug ("Caught exception converting '{0}' to a Uri", parts [i]);
+				}
+			}
+			
+			return uri_array;
+				
 		}
 
 	}

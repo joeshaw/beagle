@@ -66,6 +66,15 @@ namespace Beagle {
 
 		//////////////////////////
 
+		static private XmlSerializer our_serializer;
+
+		static Indexable ()
+		{
+			our_serializer = new XmlSerializer (typeof (Indexable));
+		}
+
+		//////////////////////////
+
 		public Indexable (Uri _uri) {
 			uri = _uri;
 
@@ -79,8 +88,7 @@ namespace Beagle {
 		public static Indexable NewFromXml (string xml)
 		{
 			StringReader reader = new StringReader (xml);
-			XmlSerializer s = new XmlSerializer (typeof (Indexable));
-			return (Indexable)s.Deserialize (reader);
+			return (Indexable) our_serializer.Deserialize (reader);
 		}
 
 		//////////////////////////
@@ -208,11 +216,11 @@ namespace Beagle {
 		}
 		
 		//////////////////////////
+
 		public override string ToString () 
 		{
-			XmlSerializer s = new XmlSerializer (typeof (Indexable));
 			StringWriter writer = new StringWriter ();
-			s.Serialize (writer, this);
+			our_serializer.Serialize (writer, this);
 			writer.Close ();
 			return writer.ToString ();
 		}

@@ -33,6 +33,16 @@ using Beagle.Util;
 namespace Beagle.Daemon {
 
 	public class LuceneQueryable : IQueryable {
+
+		public delegate IIndexer IndexerCreator (string name);
+
+		static private IndexerCreator indexer_hook = null;
+
+		static public IndexerCreator IndexerHook {
+			set { indexer_hook = value; }
+		}
+
+		//////////////////////////////////////////////////////////
 		
 		private Scheduler scheduler = Scheduler.Global;
 
@@ -77,11 +87,13 @@ namespace Beagle.Daemon {
 		public LuceneQueryable (string index_name)
 		{
 			this.index_name = index_name;
-			index_dir = Path.Combine (PathFinder.RootDir, index_name);
+			driver = new LuceneDriver (this.index_name);
 
-			driver = new LuceneDriver (index_dir);
+			if (indexer_hook != null)
+				indexer = indexer_hook (this.index_name);
+			if (indexer == null)
+				indexer = driver;
 
-			indexer = driver;
 			indexer.ChangedEvent += OnIndexerChanged;
 
 			fa_store = new FileAttributesStore (BuildFileAttributesStore (driver.Fingerprint));
@@ -95,7 +107,7 @@ namespace Beagle.Daemon {
 		}
 
 		protected string IndexDirectory {
-			get { return index_dir; }
+			get { return driver.IndexDirectory; }
 		}
 
 		protected LuceneDriver Driver {

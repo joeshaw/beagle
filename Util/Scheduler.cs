@@ -559,6 +559,7 @@ namespace Beagle.Util {
 		const double idle_ramp_up_time   = 5.271828 * 60; // probably should be longer
 		const double default_delayed_rate_factor =  9.03; // work about 1/10th of the time
 		const double default_idle_rate_factor    = 2.097; // work about 1/3rd of the time
+		const double default_maximum_delay       = 20;    // never wait for more than 20s
 
 		static DateTime first_time = DateTime.MinValue;
 		private double GetIdleTime ()
@@ -618,6 +619,9 @@ namespace Beagle.Util {
 			    && priority_of_next_task == Priority.Delayed
 			    && delay < 0.5)
 				delay = 0.5;
+
+			if (delay > default_maximum_delay)
+				delay = default_maximum_delay;
 
 			return delay;
 		}

@@ -258,7 +258,7 @@ namespace Beagle.Daemon {
 			}
 			
 			if (HitsSubtractedAsStringEvent != null && toSubtract.Count > 0)
-				HitsSubtractedAsStringEvent (this, UrisToString (toSubtract));
+				HitsSubtractedAsStringEvent (this, UriFu.UrisToString (toSubtract));
 
 			if (HitsAddedAsBinaryEvent != null && someHits.Count > 0)
 				HitsAddedAsBinaryEvent (this, HitsToBinary (someHits));
@@ -272,19 +272,6 @@ namespace Beagle.Daemon {
 
 			if (FinishedEvent != null) 
 				FinishedEvent (this);
-		}
-
-		private string UrisToString (ICollection uris)
-		{
-			StringBuilder builder = null;
-			foreach (Uri uri in uris) {
-				if (builder == null)
-					builder = new StringBuilder ("");
-				else
-					builder.Append ("|");
-				builder.Append (uri.ToString ());
-			}
-			return builder  != null ? builder.ToString () : "";
 		}
 
 		private void OnHitsSubtractedFromResult (QueryResult source, ICollection someUris)
@@ -301,7 +288,7 @@ namespace Beagle.Daemon {
 				}
 			}
 			if (HitsSubtractedAsStringEvent != null && toSubtract.Count > 0)
-				HitsSubtractedAsStringEvent (this, UrisToString (toSubtract));			
+				HitsSubtractedAsStringEvent (this, UriFu.UrisToString (toSubtract));			
 		}
 
 		private void OnCancelledResult (QueryResult source) 

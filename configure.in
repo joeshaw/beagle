@@ -193,7 +193,7 @@ AC_SUBST(LIBGECKOGLUE_LIBS)
 
 dnl -------------------------------------------------------
 
-PKG_CHECK_MODULES(BEAGLE_UI, gtk-sharp glade-sharp gecko-sharp = 0.6 gnome-sharp dbus-sharp >= 0.23 gconf-sharp gmime-sharp >= 2.1.11)
+PKG_CHECK_MODULES(BEAGLE_UI, gtk-sharp glade-sharp gecko-sharp = 0.6 gnome-sharp dbus-sharp >= 0.23.1 gconf-sharp gmime-sharp >= 2.1.11)
 AC_SUBST(BEAGLE_UI_LIBS)
 
 dnl ----------------------------------------------
