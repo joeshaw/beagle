@@ -53,8 +53,20 @@ namespace Beagle.Daemon.LifereaQueryable {
 
 		/////////////////////////////////////////////////
 
+		public override void Start () 
+		{			
+			base.Start ();
+
+			ExceptionHandlingThread.Start (new ThreadStart (StartWorker));
+		}
+
 		private void StartWorker ()
 		{
+			if (!Directory.Exists (liferea_dir)) {
+				GLib.Timeout.Add (60000, new GLib.TimeoutHandler (CheckForExistence));
+                                return;
+			}
+				
 			if (Inotify.Enabled) {
 				Inotify.EventType mask = Inotify.EventType.CloseWrite;
 
@@ -87,19 +99,15 @@ namespace Beagle.Daemon.LifereaQueryable {
                         log.Info ("Scanned {0} items in {1} feeds in {2}", item_count, feed_count, stopwatch);
 		}
 
-		public override void Start () 
-		{			
-			// FIXME: We should do something more reasonable if
-			// ~/.liferea/cache doesn't exist.
-			DirectoryInfo dir = new DirectoryInfo(liferea_dir);
-			 
-			if(! dir.Exists)
-				return;
-				
-			base.Start ();
+		private bool CheckForExistence ()
+                {
+                        if (!Directory.Exists (liferea_dir))
+                                return true;
 
-			ExceptionHandlingThread.Start (new ThreadStart (StartWorker));
-		}
+                        this.Start ();
+
+                        return false;
+                }
 
 		/////////////////////////////////////////////////
 

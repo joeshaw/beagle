@@ -27,6 +27,7 @@
 
 using System;
 using System.IO;
+using System.Threading;
 
 using Beagle.Daemon;
 using Beagle.Util;
@@ -49,25 +50,15 @@ namespace Beagle.Daemon.TomboyQueryable {
 
 		public override void Start () 
 		{
-			base.Start ();
+                        base.Start ();
 
-			// If ~/.tomboy does not exist, watch ~ for it to be
-			// created
-			if (! Directory.Exists (tomboy_dir) ) {
-				log.Warn("Failed to Scan Tomboy, perhaps it is not installed");
+                        ExceptionHandlingThread.Start (new ThreadStart (StartWorker));
+		}
 
-				if (Inotify.Enabled) {
-					tomboy_wd = Inotify.Watch (PathFinder.HomeDir, Inotify.EventType.CreateSubdir);
-					Inotify.Event += WatchForTomboy;
-				} else {
-					tomboy_fsw = new FileSystemWatcher ();
-					tomboy_fsw.Path = Environment.GetEnvironmentVariable ("HOME");
-					tomboy_fsw.Filter = ".tomboy";
-
-					tomboy_fsw.Created += new FileSystemEventHandler (OnTomboyCreated);
-					tomboy_fsw.EnableRaisingEvents = true;
-				}
-
+		private void StartWorker ()
+		{
+			if (!Directory.Exists (tomboy_dir) ) {
+				GLib.Timeout.Add (60000, new GLib.TimeoutHandler (CheckForExistence));
 				return;
 			}
 
@@ -95,18 +86,31 @@ namespace Beagle.Daemon.TomboyQueryable {
 			// Crawl all of our existing notes to make sure that
 			// everything is up-to-date.
 			log.Info ("Scanning Tomboy notes...");
+
 			Stopwatch stopwatch = new Stopwatch ();
 			int count = 0;
 			stopwatch.Start ();
 			DirectoryInfo dir = new DirectoryInfo (tomboy_dir);
+
 			foreach (FileInfo file in dir.GetFiles ()) {
 				if (file.Extension == ".note") {
 					IndexNote (file, Scheduler.Priority.Delayed);
 					++count;
 				}
 			}
+
 			stopwatch.Stop ();
 			log.Info ("Scanned {0} notes in {1}", count, stopwatch);
+		}
+
+		private bool CheckForExistence ()
+		{
+			if (!Directory.Exists (tomboy_dir))
+				return true;
+			
+			this.Start ();
+
+			return false;
 		}
 
 		/////////////////////////////////////////////////
@@ -149,36 +153,6 @@ namespace Beagle.Daemon.TomboyQueryable {
 		private void OnDeleted (object o, FileSystemEventArgs args)
 		{
 			RemoveNote (args.FullPath);
-		}
-
-		/////////////////////////////////////////////////
-
-		private void WatchForTomboy (int wd,
-					     string path,
- 					     string subitem,
-					     Inotify.EventType type,
-					     uint cookie)
-		{
-			// Check if event is the tomboy directory being created
-			// and index the notes
-			if (subitem == ".tomboy" && path == PathFinder.HomeDir) {
-				Inotify.Event -= WatchForTomboy;
-				Inotify.Ignore (path);
-				Start();
-				return;
-			}
-
-		}
-
-		private void OnTomboyCreated (object o, FileSystemEventArgs args)
-		{
-			if (args.Name == ".tomboy" && Directory.Exists (args.FullPath)) {
-				tomboy_fsw.EnableRaisingEvents = false;
-				tomboy_fsw.Dispose ();
-				tomboy_fsw = null;
-				Start ();
-			}
-				
 		}
 
 		/////////////////////////////////////////////////

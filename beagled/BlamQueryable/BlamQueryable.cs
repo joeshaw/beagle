@@ -53,8 +53,20 @@ namespace Beagle.Daemon.BlamQueryable {
 
 		/////////////////////////////////////////////////
 
+		public override void Start () 
+		{			
+			base.Start ();
+
+			ExceptionHandlingThread.Start (new ThreadStart (StartWorker));
+		}
+
 		private void StartWorker ()
 		{
+			if (!Directory.Exists (blam_dir)) {
+				GLib.Timeout.Add (60000, new GLib.TimeoutHandler (CheckForExistence));
+				return;
+			}
+
 			if (Inotify.Enabled) {
 				Inotify.EventType mask = Inotify.EventType.CloseWrite;
 				blam_wd = Inotify.Watch (blam_dir, mask);
@@ -73,15 +85,15 @@ namespace Beagle.Daemon.BlamQueryable {
 			Index ();
 		}
 
-		public override void Start () 
-		{			
-			if (! File.Exists (Path.Combine (blam_dir, blam_file)))
-				return;
+		private bool CheckForExistence ()
+                {
+                        if (!Directory.Exists (blam_dir))
+                                return true;
 
-			base.Start ();
+                        this.Start ();
 
-			ExceptionHandlingThread.Start (new ThreadStart (StartWorker));
-		}
+                        return false;
+                }
 
 		/////////////////////////////////////////////////
 
