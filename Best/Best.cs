@@ -82,8 +82,12 @@ namespace Best {
 			if (doTray) {
 				BestTray icon;
 				icon = new BestTray (win);
+			} else {
+				win.Show ();
+				win.Present ();
+				win.FocusEntry ();
 			}
-
+			
 			best.Run ();
 		}
 	}
