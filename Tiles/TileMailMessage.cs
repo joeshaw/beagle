@@ -68,6 +68,8 @@ namespace Beagle.Tile {
 
 			Template["ToFrom"] = sent ? "To" : "From";
 			Template["Who"] = sent ? Hit ["fixme:to"] : Hit ["fixme:from"];
+			Template["Folder"] = Hit ["fixme:folder"];
+			Template["Account"] = Hit ["fixme:account"];
 			Template["SentReceived"] = sent ? "Sent" : "Received";
 			Template["When"] = sent ? Hit ["fixme:sentdate"] : Hit ["fixme:received"];
 
