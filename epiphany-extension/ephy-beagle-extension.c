@@ -119,7 +119,7 @@ load_status_cb (EphyTab *tab,
 		const char *page_title;
 		char *content;
 		int child_stdin;
-		char *argv[4];
+		char *argv[6];
 
 		embed = ephy_tab_get_embed (tab);
 		g_return_if_fail (EPHY_IS_EMBED (embed));
@@ -137,10 +137,12 @@ load_status_cb (EphyTab *tab,
 		content = ephy_embed_persist_to_string (persist);
 		g_object_unref (persist);
 
-		argv[0] = "beagle-epiphany-index";
-		argv[1] = location;
-		argv[2] = (char *) page_title;
-		argv[3] = NULL;
+		argv[0] = "beagle-index-url";
+		argv[1] = "--url";
+		argv[2] = location;
+		argv[3] = "--title";
+		argv[4] = (char *) page_title;
+		argv[5] = NULL;
 
 		if (g_spawn_async_with_pipes (NULL, /* inherit parent's working directory */
 					      argv,

@@ -50,7 +50,8 @@ class IndexWebContentTool {
 
 			stream = contentStream;
 
-			properties.Add (Property.New ("dc:title", title));
+			if (title != null) 
+				properties.Add (Property.New ("dc:title", title));
 
 			filter = Filter.FilterFromMimeType ("text/html");
 		}
@@ -61,6 +62,7 @@ class IndexWebContentTool {
 
 		override protected void DoBuild ()
 		{
+			Console.WriteLine ("Filter: " + filter);
 			filter.Open (stream);
 		}
 
@@ -75,21 +77,94 @@ class IndexWebContentTool {
 		}
 	}
 
+	static void PrintUsage () {
+		Console.WriteLine ("IndexWebContent.exe: Index web page content using the Beagle Search Engine.");
+		Console.WriteLine ("  --uri URI\t\tURI for the web page being indexed.\n" +
+				   "  --title TITLE\t\tTitle for the web page.\n" +
+				   "  --sourcefile PATH\tFile containing content to index.\n" +
+				   "\t\t\tIf not set, content is read from STDIN.\n" +
+				   "  --deletesourcefile\tDelete file passed to --sourcefile after index.\n" +
+				   "  --help\t\tPrint this usage message.\n");
+	}
+
 	static void Main (String[] args)
 	{
-		String uri = args[0];
-		String title = args[1];
+		string uri = null;
+		string title = null;
+		string sourcefile = null;
+		bool deletesourcefile = false;
 
-		// For security/privacy reasons, we don't index any
-		// SSL-encrypted pages.
-		if (uri.StartsWith ("https://"))
+		for (int i = 0; i < args.Length; i++) {
+			switch (args [i]) {
+			case "--url":
+			case "--title":
+			case "--sourcefile":
+				if (i + 1 >= args.Length ||
+				    args [i + 1].StartsWith ("--")) {
+					PrintUsage ();
+					return;
+				}
+				break;
+			}
+
+			switch (args [i]) {
+			case "--url":
+				uri = args [++i];
+				break;
+			case "--title":
+				title = args [++i];
+				break;
+			case "--sourcefile":
+				sourcefile = args [++i];
+				break;
+			case "--deletesourcefile":
+				deletesourcefile = true;
+				break;
+			case "--help":
+				PrintUsage ();
+				return;
+			}
+		}
+
+		if (uri == null) {
+			Console.WriteLine ("ERROR: URI not specified!\n");
+			PrintUsage ();
 			return;
+		} else if (uri.StartsWith ("https://")) {
+			// For security/privacy reasons, we don't index any
+			// SSL-encrypted pages.
+			Console.WriteLine ("ERROR: Indexing secure https:// URIs is not secure!");
+			return;
+		}
 
-		Indexable indexable = new IndexableWeb (uri, title,
-							Console.OpenStandardInput ());
+		Indexable indexable;
+
+		if (sourcefile != null) {
+			if (!File.Exists (sourcefile)) {
+				Console.WriteLine ("ERROR: sourcefile '{0}' does not exist!",
+						   sourcefile);
+				return;
+			}
+
+			Stream sourcestream = File.Open (sourcefile, FileMode.Open);
+			indexable = new IndexableWeb (uri, title, sourcestream);
+		} else {
+			Stream stdin = Console.OpenStandardInput ();
+			if (stdin == null) {
+				Console.WriteLine ("ERROR: No sourcefile specified, and no standard input!\n");
+				PrintUsage ();
+				return;
+			}
+
+			indexable = new IndexableWeb (uri, title, stdin);
+		}
 
 		IndexDriver driver = new IndexDriver ();
 		driver.Add (indexable);
 
+		// If passed --deletesourcefile, delete sourcefile after indexing
+		if (sourcefile != null && deletesourcefile) {
+			File.Delete (sourcefile);
+		}
 	}
 }

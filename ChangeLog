@@ -1,0 +1,13 @@
+2004-07-27  Alex Graveley  <alex@ximian.com>
+
+	* tools/Makefile.am (INDEX_WEB_CONTENT_WRAPPER): Rename
+	beagle-epiphany-index to beagle-index-url since it will be used by
+	mozilla too.
+
+	* tools/IndexWebContent.cs: Take --url, --title, --sourcefile,
+	--deletesourcefile arguments.  Print usage if url or
+	sourcefile/stdin is missing.
+
+	* epiphany-extension/ephy-beagle-extension.c (load_status_cb):
+	Pass "--url" and "--title" to beagle-index-url.
+
