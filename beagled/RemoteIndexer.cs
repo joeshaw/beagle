@@ -170,11 +170,12 @@ namespace Beagle.Daemon {
 
 		public void Add (Indexable indexable)
 		{
+			indexable.StoreStream ();
+			
 #if DBUS_IS_BROKEN_BROKEN_BROKEN
 			UpToTheMainLoop up = UpToTheMainLoop.NewAdd (Proxy, indexable);
 			up.Run ();
 #else
-			indexable.StoreStream ();
 			Logger.Log.Debug ("+++ {0}", indexable.ToString ()); 
 			Proxy.Add (indexable.ToString ());
 #endif

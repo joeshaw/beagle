@@ -162,9 +162,31 @@ namespace Beagle {
 		}
 
 		//////////////////////////
+		
+		private TextReader ReaderFromUri (Uri uri)
+		{
+			TextReader reader = null;
+
+			if (uri != null && uri.IsFile) {
+				Stream stream = new FileStream (uri.LocalPath,
+								FileMode.Open,
+								FileAccess.Read,
+								FileShare.Read);
+
+				reader = new StreamReader (stream);
+				
+				if (DeleteContent)
+					File.Delete (uri.LocalPath);
+			}
+
+			return reader;
+		}
 
 		public virtual TextReader GetTextReader ()
 		{
+			if (textReader == null)
+				textReader = ReaderFromUri (ContentUri);
+
 			return textReader;
 		}
 		
@@ -175,6 +197,8 @@ namespace Beagle {
 
 		public virtual TextReader GetHotTextReader ()
 		{
+			if (hotTextReader == null)
+				hotTextReader = ReaderFromUri (HotContentUri);
 			return hotTextReader;
 		}
 

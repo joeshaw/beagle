@@ -95,7 +95,6 @@ uninstall-local:
 	rm -f $(DESTDIR)$(FILTERDIR)/$(TARGET)
 
 COND_CS_FILES = \
-	$(srcdir)/FilterOle.cs		\
 	$(srcdir)/FilterPPT.cs		\
 	$(srcdir)/FilterDOC.cs		\
 	$(srcdir)/FilterGst.cs		\

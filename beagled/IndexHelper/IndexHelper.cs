@@ -66,7 +66,8 @@ namespace Beagle.IndexHelper {
 			if (! Beagle.Daemon.DBusisms.TestService (Beagle.DBusisms.Name)) {
 				Console.WriteLine ("Couldn't find d-bus service '{0}' (Is beagled running?)",
 						   Beagle.DBusisms.Name);
-				Environment.Exit (-1);
+				if (Environment.GetEnvironmentVariable ("BEAGLE_RUN_HELPER_BY_HAND") == null)
+					Environment.Exit (-1);
 			}
 
 			// Acquire the service

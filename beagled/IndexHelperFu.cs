@@ -86,7 +86,14 @@ namespace Beagle.Daemon {
 				Thread.Sleep ((int) (1000 * t));
 			}
 
+			if (Environment.GetEnvironmentVariable ("BEAGLE_RUN_HELPER_BY_HAND") != null) {			
+				Logger.Log.Debug ("Not launching helper process, BEAGLE_RUN_HELPER_BY_HAND is set.");
+				return;
+			}
+
+
 			Logger.Log.Debug ("Launching helper process!");
+
 
 			Process p = new Process ();
 			p.StartInfo.UseShellExecute = false;
