@@ -51,7 +51,7 @@ namespace Beagle.Daemon.TomboyQueryable {
 
 			// FIXME: We should do something more reasonable if
 			// ~/.tomboy doesn't exist.
-			if (! Directory.Exists (notesDir))
+			if (! (Directory.Exists (notesDir) && Directory.Exists (backupDir)))
 				return;
 			
 			InotifyEventType mask;
