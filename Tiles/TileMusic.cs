@@ -53,12 +53,12 @@ namespace Beagle.Tile {
 		{
 			base.PopulateTemplate ();
 			
-			if (Hit ["fixme:title"] == null)
+			if (Hit ["fixme:title"] == null || Hit ["fixme:title"] == "")
 				Template ["Title"] = Hit ["fixme:splitname"];
 			else
 				Template ["Title"] = Hit ["fixme:title"];
 
-			if (Hit ["fixme:artist"] == null)
+			if (Hit ["fixme:artist"] == null || Hit ["fixme:artist"] == "")
 				Template ["Artist"] = "Unknown Artist";
 			else
 				Template ["Artist"] = Hit ["fixme:artist"];
@@ -70,7 +70,7 @@ namespace Beagle.Tile {
 			EnqueueMedia (Hit);
 		}
 
-		protected void EnqueueMedia(Hit hit)
+		protected void EnqueueMedia (Hit hit)
 		{
 			Process p = new Process ();
 			p.StartInfo.UseShellExecute = false;

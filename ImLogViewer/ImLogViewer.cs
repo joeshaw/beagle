@@ -110,10 +110,9 @@ namespace ImLogViewer {
 						    0,
 						    Gtk.AccelFlags.Visible);
 
-			conversation.PixelsAboveLines = 2;
-			conversation.PixelsBelowLines = 2;
-			conversation.LeftMargin = 3;
-			conversation.RightMargin = 3;
+			conversation.PixelsAboveLines = 3;
+			conversation.LeftMargin = 4;
+			conversation.RightMargin = 4;
 
 			TextTag boldtag = new TextTag ("bold");
 			boldtag.Weight = Pango.Weight.Bold;
