@@ -8,7 +8,6 @@
 #define _LINUX_INOTIFY_H
 
 #include <linux/types.h>
-#include <linux/limits.h>
 
 /*
  * struct inotify_event - structure read from the inotify device for each event
@@ -67,7 +66,6 @@ struct inotify_watch_request {
 #include <linux/dcache.h>
 #include <linux/fs.h>
 #include <linux/config.h>
-#include <asm/atomic.h>
 
 #ifdef CONFIG_INOTIFY
 
