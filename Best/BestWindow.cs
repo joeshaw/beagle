@@ -354,7 +354,9 @@ namespace Best {
 			query = Factory.NewQuery ();
 			
 			query.AddDomain (QueryDomain.Neighborhood);
-			query.AddDomain (QueryDomain.Global);
+
+			// Disable non-local searching for now.
+			//query.AddDomain (QueryDomain.Global);
 
 			query.AddText (searchString);
 
