@@ -52,6 +52,12 @@ namespace Beagle.Tile {
 			get { return offerDaemonRestart; }
 			set { offerDaemonRestart = value; }
 		}
+
+		public void Add (ICollection hits)
+		{
+			foreach (Hit hit in hits)
+				Add (hit);
+		}
 		
 		public void Add (Hit hit)
 		{
@@ -66,6 +72,12 @@ namespace Beagle.Tile {
 			hit_collection.Add (hit, tile);
 			Console.WriteLine ("+ {0}", hit.Uri);
 			Changed ();
+		}
+
+		public void Subtract (ICollection uris)
+		{
+			foreach (Uri uri in uris)
+				Subtract (uri);
 		}
 
 		public void Subtract (Uri uri)

@@ -44,7 +44,7 @@ class QueryTool {
 	static bool keepRunning = false;
 	static bool verbose = false;
 
-	static void OnHitAdded (Query source, Hit hit)
+	static void OnHitsAdded (Query source, ICollection hits)
 	{
 		lastQueryTime = DateTime.Now;
 
@@ -53,38 +53,42 @@ class QueryTool {
 					   (lastQueryTime - queryStartTime).TotalSeconds);
 		}
 
-		if (verbose)
-			Console.WriteLine ("  Uri: {0}", hit.Uri);
-		else
-			Console.WriteLine (hit.Uri);
+		foreach (Hit hit in hits) {
+			if (verbose)
+				Console.WriteLine ("  Uri: {0}", hit.Uri);
+			else
+				Console.WriteLine (hit.Uri);
 
-		if (verbose) {
-			Console.WriteLine (" Type: {0}", hit.Type);
-			Console.WriteLine ("MimeT: {0}", hit.MimeType == null ? "(null)" : hit.MimeType);
-			Console.WriteLine ("  Src: {0}", hit.Source);
-			Console.WriteLine ("Score: {0}", hit.Score);
-			if (hit.ValidTimestamp)
-				Console.WriteLine (" Time: {0}", hit.Timestamp);
-			if (hit.ValidRevision)
-				Console.WriteLine ("  Rev: {0}", hit.Revision);
+			if (verbose) {
+				Console.WriteLine (" Type: {0}", hit.Type);
+				Console.WriteLine ("MimeT: {0}", hit.MimeType == null ? "(null)" : hit.MimeType);
+				Console.WriteLine ("  Src: {0}", hit.Source);
+				Console.WriteLine ("Score: {0}", hit.Score);
+				if (hit.ValidTimestamp)
+					Console.WriteLine (" Time: {0}", hit.Timestamp);
+				if (hit.ValidRevision)
+					Console.WriteLine ("  Rev: {0}", hit.Revision);
+				
+				foreach (String key in hit.Keys)
+					Console.WriteLine ("    {0} = {1}", key, hit [key]);
+				
+				Console.WriteLine ();
+			}
 
-			foreach (String key in hit.Keys)
-				Console.WriteLine ("    {0} = {1}", key, hit [key]);
-
-			Console.WriteLine ();
+			++count;
 		}
-
-		++count;
 	}
 
-	static void OnHitSubtracted (Query source, Uri uri)
+	static void OnHitsSubtracted (Query source, ICollection uris)
 	{
 		lastQueryTime = DateTime.Now;
 
-		Console.WriteLine ("Subtracted Uri '{0}'", uri);
-		Console.WriteLine ();
+		foreach (Uri uri in uris) {
+			Console.WriteLine ("Subtracted Uri '{0}'", uri);
+			Console.WriteLine ();
 
-		--count;
+			--count;
+		}
 	}
 
 	static void OnFinished (QueryProxy query)
@@ -135,8 +139,8 @@ class QueryTool {
 			}
 		}
 
-		query.HitAddedEvent += OnHitAdded;
-		query.HitSubtractedEvent += OnHitSubtracted;
+		query.HitsAddedEvent += OnHitsAdded;
+		query.HitsSubtractedEvent += OnHitsSubtracted;
 
 		// Parse args
 		int i = 0;

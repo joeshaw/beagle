@@ -35,11 +35,11 @@ namespace Beagle
 
 	public abstract class Query : QueryProxy, IDisposable {
 
-		public delegate void HitAddedHandler (Query source, Hit hit);
-		public virtual event HitAddedHandler HitAddedEvent;
+		public delegate void HitsAddedHandler (Query source, ICollection hits);
+		public virtual event HitsAddedHandler HitsAddedEvent;
 
-		public delegate void HitSubtractedHandler (Query source, Uri uri);
-		public virtual event HitSubtractedHandler HitSubtractedEvent;
+		public delegate void HitsSubtractedHandler (Query source, ICollection uris);
+		public virtual event HitsSubtractedHandler HitsSubtractedEvent;
 
 		private bool cancelled = false;
 
@@ -104,21 +104,23 @@ namespace Beagle
 
 			reader.Close ();
 
-			if (HitAddedEvent != null && hits.Count > 0) {
-				foreach (Hit hit in hits)
-					HitAddedEvent (this, hit);
-			}
+			if (HitsAddedEvent != null && hits.Count > 0)
+				HitsAddedEvent (this, hits);
 		}
 
-		private void OnHitsSubtractedAsString (QueryProxy sender, string uriList)
+		private void OnHitsSubtractedAsString (QueryProxy sender, string uriString)
 		{
-			if (HitSubtractedEvent != null && uriList.Length > 0) {
-				string[] uris = uriList.Split ('|');
+			if (HitsSubtractedEvent != null && uriString.Length > 0) {
+				string[] uris = uriString.Split ('|');
+
+				ArrayList uriList = new ArrayList ();
 
 				foreach (string uriStr in uris) {
 					Uri uri = new Uri (uriStr, true);
-					HitSubtractedEvent (this, uri);
+					uriList.Add (uri);
 				}
+
+				HitsSubtractedEvent (this, uriList);
 			}
 		}
 

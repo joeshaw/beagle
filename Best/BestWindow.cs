@@ -301,15 +301,15 @@ namespace Best {
 
 		//////////////////////////
 
-		private void OnHitAdded (Query source, Hit hit)
+		private void OnHitsAdded (Query source, ICollection hits)
 		{
-			root.Add (hit);
+			root.Add (hits);
 			UpdatePage ();
 		}
 
-		private void OnHitSubtracted (Query source, Uri uri)
+		private void OnHitsSubtracted (Query source, ICollection uris)
 		{
-			root.Subtract (uri);
+			root.Subtract (uris);
 			UpdatePage ();
 		}
 
@@ -325,8 +325,8 @@ namespace Best {
 
 		private void AttachQuery ()
 		{
-			query.HitAddedEvent += OnHitAdded;
-			query.HitSubtractedEvent += OnHitSubtracted;
+			query.HitsAddedEvent += OnHitsAdded;
+			query.HitsSubtractedEvent += OnHitsSubtracted;
 			query.FinishedEvent += OnFinished;
 			query.CancelledEvent += OnCancelled;
 		}
@@ -334,8 +334,8 @@ namespace Best {
 		private void DetachQuery ()
 		{
 			if (query != null) {
-				query.HitAddedEvent -= OnHitAdded;
-				query.HitSubtractedEvent -= OnHitSubtracted;
+				query.HitsAddedEvent -= OnHitsAdded;
+				query.HitsSubtractedEvent -= OnHitsSubtracted;
 				query.FinishedEvent -= OnFinished;
 				query.CancelledEvent -= OnCancelled;
 				query.Dispose ();
