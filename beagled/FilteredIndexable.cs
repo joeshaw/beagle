@@ -200,6 +200,12 @@ namespace Beagle.Daemon {
 			AddProperty (Property.New ("fixme:splitname",
 						      String.Join (" ", BU.StringFu.FuzzySplit (name))));
 
+			name = Path.GetFileName (path);
+			AddProperty (Property.NewKeyword ("fixme:exactname", name));
+
+			if (name != Path.GetFileNameWithoutExtension (path))
+				AddProperty (Property.NewKeyword ("fixme:exactnamenoextension",
+								  Path.GetFileNameWithoutExtension (path)));
 
 			// Attach Nautilus metadata to the file
 			// FIXME: This should be in the metadata store, not attached
