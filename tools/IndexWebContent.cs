@@ -21,7 +21,7 @@ class IndexWebContentTool {
 				     Stream contentStream)
 		{
 			uri = _uri;
-			domain = "web";
+			domain = "Web";
 			mimeType = "text/html";
 			timestamp = DateTime.Now;
 			needPreload = false;
