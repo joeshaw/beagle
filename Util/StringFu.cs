@@ -27,6 +27,7 @@
 using System;
 using System.Collections;
 using System.Globalization;
+using System.IO;
 using System.Text;
 
 namespace Beagle.Util {
@@ -217,5 +218,26 @@ namespace Beagle.Util {
 					return true;
 			return false;
 		}
+
+		static char[] CharsToQuote = { ';', '?', ':', '@', '&', '=', '$', ',' };
+		static public string PathToQuotedFileUri (string path)
+		{
+
+			StringBuilder builder = new StringBuilder (Uri.UriSchemeFile + Uri.SchemeDelimiter);
+			int i;
+			path = Path.GetFullPath (path);
+			while ((i = path.IndexOfAny (CharsToQuote)) != -1) {
+				if (i > 0)
+					builder.Append (path.Substring (0, i));
+				builder.Append (Uri.HexEscape (path [i]));
+				path = path.Substring (i+1);
+			}
+			builder.Append (path);
+			
+			Console.WriteLine (builder.ToString ());
+			return builder.ToString ();
+
+		}
+
 	}
 }

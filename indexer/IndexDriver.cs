@@ -410,11 +410,12 @@ namespace Beagle {
 				log.Log ("Inserting {0} (type={1})",
 					 indexable.Uri, indexable.Type);
 				Document doc = null;
-				//try {
+				try {
 					doc = ToLuceneDocument (indexable);
-					//} catch (Exception e) {
-					//log.Log (e);
-					//}
+				} catch (Exception e) {
+					log.Log (e);
+					Console.WriteLine ("unable to convert {0} (type={1}) to a lucene document", indexable.Uri, indexable.Type);
+				}
 				if (doc != null)
 					writer.AddDocument (doc);
 			}

@@ -43,6 +43,9 @@ namespace Beagle {
 				++uidSrc;
 				uid = uidSrc;
 			}
+			
+			if (Environment.GetEnvironmentVariable ("BEAGLE_USE_IFRAMES") != null)
+				renderInline = false;
 		}
 
 		public string UniqueKey {
@@ -58,7 +61,8 @@ namespace Beagle {
 
 		protected void EnableInlineRendering ()
 		{
-			renderInline = true;
+				renderInline = true;
+
 		}
 	       
 

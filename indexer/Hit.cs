@@ -120,8 +120,9 @@ namespace Beagle {
 		{
 			if (special != SpecialType.Unknown)
 				return;
-
-			System.Uri uri = new System.Uri (Uri);
+			
+			// The Uri is already quoted
+			System.Uri uri = new System.Uri (Uri, true);
 			if (uri.IsFile) {
 				path = uri.LocalPath;
 				if (File.Exists (path))

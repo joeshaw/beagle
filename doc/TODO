@@ -29,8 +29,6 @@ Indexing
 IndexableFile should store more file properties:
    Ownership
    Permissions
-   Filesystem metadata
-   Nautilus Emblems
 
 IndexMail needs to support IMAP.  The necessary changes to support Evo 1.5
 IMAP summaries have been made to camel.cs --- it is solely a question of
@@ -40,8 +38,6 @@ The crawler should have a fast 'partial crawl' mode which searches a random
 subset of the user's tree.  Ideally it would keep track of which directories
 contain files that change frequently, and have a higher probability of
 checking those during a partial crawl.
-
-The crawler should index folders as well as files.
 
 It would be cool if the crawler could descend into compressed/tarred/zipped
 files.
