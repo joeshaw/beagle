@@ -26,6 +26,7 @@
 
 
 using System;
+using System.IO;
 using System.Collections;
 
 using BU = Beagle.Util;
@@ -162,6 +163,46 @@ namespace Beagle.Daemon {
 			get { return text.Count == 0
 				      && mimeTypes.Count == 0
 				      && searchSources.Count == 0; }
+		}
+
+		public void WriteAsBinary (BinaryWriter writer)
+                {
+			writer.Write (text.Count);
+			foreach (string str in text) {
+				writer.Write (str);
+			}
+
+			writer.Write (mimeTypes.Count);
+			foreach (string mimeType in mimeTypes) {
+				writer.Write (mimeType);
+			}
+
+			writer.Write (searchSources.Count);
+			foreach (string searchSource in searchSources) {
+				writer.Write (searchSource);
+			}
+		}
+
+		public static QueryBody ReadAsBinary (BinaryReader reader)
+                {
+			QueryBody query = new QueryBody();
+
+			int numTexts = reader.ReadInt32 ();
+                        for (int i = 0; i < numTexts; i++) {
+                                query.AddText (reader.ReadString ());
+                        }
+
+			int numMimeTypes = reader.ReadInt32 ();
+                        for (int i = 0; i < numMimeTypes; i++) {
+                                query.AddMimeType (reader.ReadString ());
+                        }
+
+			int numSearchSources = reader.ReadInt32 ();
+                        for (int i = 0; i < numSearchSources; i++) {
+                                query.AddSource (reader.ReadString ());
+                        }
+
+			return query;
 		}
 	}
 }
