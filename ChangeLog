@@ -1,3 +1,9 @@
+2005-01-28  Veerapuram Varadhan	 <vvaradhan@novell.com>
+
+	* Tiles/template-docs.html: Fix for Bug#:165480.
+	Instead of @Snippet@ use @%Snippet@ to process the
+	markups present in @Snippet@.
+	
 2005-01-24  Veerapuram Varadhan	 <vvaradhan@novell.com>
 
 	* Filters/FilterPascal.cs: Added pascal support.
