@@ -307,9 +307,6 @@ namespace Beagle.Daemon {
 		protected void Finished ()
 		{
 			isFinished = true;
-			if (max_text_pool_len > 0 || max_hot_pool_len > 0)
-				Logger.Log.Debug ("{0} pull pool stats: {1} {2} / {3}",
-						  Identifier, max_text_pool_len, max_text_pool_size, max_hot_pool_len);
 		}
 
 		//////////////////////////

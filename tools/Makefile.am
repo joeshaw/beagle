@@ -53,6 +53,7 @@ WRAPPERS = 				\
 
 bin_SCRIPTS = 			\
 	$(WRAPPERS) 		\
+	beagle-index-info	\
 	beagle-ping             \
 	beagle-shutdown		\
 	beagle-status
@@ -70,6 +71,7 @@ EXTRA_DIST =				\
 	$(WRAPPER_IN)			\
 	$(QUERY_CSFILES)		\
 	$(INDEX_WEB_CONTENT_CSFILES)	\
+	beagle-index-info		\
 	beagle-ping			\
 	beagle-shutdown			\
 	beagle-status
