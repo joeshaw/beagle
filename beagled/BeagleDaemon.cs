@@ -35,11 +35,13 @@ using Gtk;
 
 using Beagle.Util;
 
+#if ENABLE_WEBSVC
+using Beagle.websvc;
+using MA=Mono.ASPNET;
+#endif
 
 namespace Beagle.Daemon {
 	class BeagleDaemon {
-
-		public static Thread MainLoopThread = null;
 
 		private static FactoryImpl factory = null;
 
@@ -167,6 +169,14 @@ namespace Beagle.Daemon {
 			}
 		}
 
+
+#if ENABLE_WEBSVC
+		static Mono.ASPNET.ApplicationServer appServer = null;
+		const string DEFAULT_XSP_ROOT="/usr/local/share/doc/xsp/test";
+		const string DEFAULT_XSP_PORT = "8888";
+		static string[] xsp_param = {"--port", "8888", "--root", DEFAULT_XSP_ROOT, 
+			"--applications", "/:" + DEFAULT_XSP_ROOT + ",/beagle:" + DEFAULT_XSP_ROOT + "/beagle", "--nonstop"};
+#endif 
 		public static int Main (string[] args)
 		{
 			// Process the command-line arguments
@@ -179,6 +189,13 @@ namespace Beagle.Daemon {
 #if ENABLE_NETWORK
 			bool arg_network = false;
 			int arg_port = 0;
+#endif
+
+#if ENABLE_WEBSVC
+			bool web_global = false;
+			bool web_start = false;
+			string web_port = DEFAULT_XSP_PORT;
+			string web_rootDir = DEFAULT_XSP_ROOT;
 #endif
 
 			int i = 0;
@@ -244,14 +261,33 @@ namespace Beagle.Daemon {
 					break;
 #endif
 
+#if ENABLE_WEBSVC
+				case "--web-global":
+					web_global = true;
+					break;
+
+				case "--web-start":
+					web_start = true;
+					break;
+
+				case "--web-port":
+					web_port = next_arg;
+					++i; 
+					web_start = true;
+					break;
+
+				case "--web-root":
+					web_rootDir = next_arg;
+					++i; 
+					web_start = true;
+					break;
+#endif 
 				default:
 					Console.WriteLine ("Ignoring unknown argument '{0}'", arg);
 					break;
 
 				}
 			}
-
-			MainLoopThread = Thread.CurrentThread;
 
 			// Initialize logging.
 			// If we saw the --debug arg, set the default logging level
@@ -293,7 +329,7 @@ namespace Beagle.Daemon {
 			try {
 				Logger.Log.Debug ("Initializing D-BUS");
 				DBusisms.Init ();
-				Application.InitCheck ("beagled", ref args);
+				Application.Init ();
 
 				Logger.Log.Debug ("Acquiring {0} D-BUS service", Beagle.DBusisms.Name);
 				if (!DBusisms.InitService (Beagle.DBusisms.Name)) {
@@ -356,13 +392,41 @@ namespace Beagle.Daemon {
 					Logger.Log.Error ("Could not initialize network service"); 
 				}
 			}
-
 #endif
 
+#if ENABLE_WEBSVC		
+			//Beagle Web, WebService access initialization code:
+			string msg = "Started beagledWeb & beagledWebSvc Listener. Internal Web Server NOT started.";
+
+			xsp_param[1] = web_port;
+			xsp_param[3] = web_rootDir;
+			if (web_start)	
+			{
+				//Start beagled internal web server (bgXsp)
+				int ret = Mono.ASPNET.Server.initXSP(xsp_param, out appServer);
+				msg = "Started beagledWeb & beagledWebSvc Listener \n";
+				if (ret == 0)
+					msg += "Internal Web Server started";
+				else
+					msg += "Error starting Internal Web Server";
+			}	
+
+			//start web-access server first
+			beagledWeb.init (web_global);
+
+			//Next start web-service server 
+			beagledWebSvc.init (web_global);
+
+			//Console.WriteLine (msg);
+			Logger.Log.Debug (msg);
+
+			msg = "Global WebAccess " + (web_global ? "Enabled":"Disabled");
+			//Console.WriteLine (msg);
+			Logger.Log.Debug (msg);
+#endif
 			// Set up out-of-process indexing
 			if (Environment.GetEnvironmentVariable ("BEAGLE_ENABLE_IN_PROCESS_INDEXING") == null)
 				LuceneQueryable.IndexerHook = new LuceneQueryable.IndexerCreator (RemoteIndexer.NewRemoteIndexer);
-
 
 			// Start the query driver.
 			Logger.Log.Debug ("Starting QueryDriver");
@@ -377,7 +441,7 @@ namespace Beagle.Daemon {
 			// Start our Inotify threads
 			Logger.Log.Debug ("Starting Inotify threads");
 			Inotify.Start ();
-
+	
 			// Test if the FileAdvise stuff is working: This will print a
 			// warning if not.  The actual advice calls will fail silently.
 			FileAdvise.TestAdvise ();
@@ -388,13 +452,18 @@ namespace Beagle.Daemon {
 
 			Logger.Log.Debug ("Ready to accept requests after {0}", 
 					 stopwatch);
-			
+		
 			// Start our event loop.
 			Logger.Log.Debug ("Starting main loop");
 			Application.Run ();
 
 			Logger.Log.Debug ("Leaving BeagleDaemon.Main");
-
+#if ENABLE_WEBSVC
+			if (appServer != null) {
+			    	appServer.Stop(); 
+				appServer = null;
+			}
+#endif
 			// Exiting will close the dbus connection, which
 			// will release the com.novell.beagle service.
 			return 0;
@@ -402,6 +471,12 @@ namespace Beagle.Daemon {
 
 		private static void OnShutdown ()
 		{
+#if ENABLE_WEBSVC
+			if (appServer != null) {
+			    	appServer.Stop(); 
+				appServer = null;
+			}
+#endif
 			// Stop our Inotify threads
 			Inotify.Stop ();
 

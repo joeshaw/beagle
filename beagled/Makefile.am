@@ -1,4 +1,3 @@
-
 # Warnings we don't want to see
 # 0067 = event defined but not used
 # 0618 = Mono.Posix.Syscall is obsolete
@@ -46,7 +45,6 @@ WRAPPER_SED = sed 					\
 	-e "s|\@pkglibdir\@|$(pkglibdir)|g"		\
 	-e "s|\@libdir\@|$(libdir)|g"			\
 	-e "s|\@gacprefix\@|$(GAC_PREFIX)|g"
-
 
 ############################################################
 
@@ -171,7 +169,6 @@ LUCENE_1_3_CSFILES =							\
 	$(lucenedir)/Util/BitVector.cs					\
 	$(lucenedir)/Util/Number.cs					\
 	$(lucenedir)/Util/PriorityQueue.cs
-
 
 LUCENE_1_4_CSFILES =							\
 	$(lucenedir)/AssemblyInfo.cs					\
@@ -362,7 +359,7 @@ WEB_HISTORY_QUERYABLE_CSFILES =				\
 
 gaimlogqueryable = $(srcdir)/GaimLogQueryable
 GAIM_LOG_QUERYABLE_CSFILES =				\
-	$(gaimlogqueryable)/GaimLogQueryable.cs		\
+	$(gaimlogqueryable)/GaimLogQueryable.cs 	\
 	$(gaimlogqueryable)/GaimLogCrawler.cs
 
 edsqueryable = $(srcdir)/EvolutionDataServerQueryable
@@ -391,10 +388,6 @@ LIFEREA_QUERYABLE_CSFILES =				\
 launcherqueryable = $(srcdir)/LauncherQueryable
 LAUNCHER_QUERYABLE_CSFILES =				\
 	$(launcherqueryable)/LauncherQueryable.cs
-
-monodocqueryable = $(srcdir)/MonodocQueryable
-MONODOC_QUERYABLE_CSFILES =				\
-	$(monodocqueryable)/MonodocQueryable.cs
 
 
 
@@ -453,6 +446,7 @@ DAEMON_DLL_LOCAL_ASSEMBLIES =		\
 	../Util/Util.dll		\
 	../BeagleClient/Beagle.dll	\
 	./$(PLUGIN_TARGET)
+	
 
 DAEMON_DLL_ASSEMBLIES = 			\
 	$(BEAGLED_LIBS)                 	\
@@ -486,6 +480,7 @@ DAEMON_DLL_ASSEMBLIES += $(RENDEZVOUS_LIBS)
 endif
 endif
 
+
 #if ENABLE_MOZILLA_BACKEND
 #mozillaqueryable = $(srcdir)/MozillaQueryable
 #MOZILLA_QUERYABLE_CSFILES =				\
@@ -498,9 +493,7 @@ endif
 $(DAEMON_DLL_TARGET): $(DAEMON_DLL_CSFILES) $(DAEMON_DLL_LOCAL_ASSEMBLIES)
 	$(CSC) -o $@ $(DAEMON_DLL_CSFLAGS) $(DAEMON_DLL_CSFILES) $(DAEMON_DLL_ASSEMBLIES)
 
-
 ############################################################
-
 
 DAEMON_WRAPPER = beagled
 DAEMON_WRAPPER_IN = beagled.in
@@ -509,7 +502,6 @@ DAEMON_TARGET = BeagleDaemon.exe
 $(DAEMON_WRAPPER): $(srcdir)/$(DAEMON_WRAPPER_IN)
 	$(WRAPPER_SED) -e "s|\@target\@|$(DAEMON_TARGET)|g" < $(srcdir)/$(DAEMON_WRAPPER_IN) > $@
 	chmod +x $(DAEMON_WRAPPER)
-
 
 DAEMON_CSFLAGS =				\
 	-target:exe				\
@@ -527,22 +519,73 @@ DAEMON_LOCAL_ASSEMBLIES =			\
 	../Util/Util.dll			\
 	../BeagleClient/Beagle.dll		\
 	./$(PLUGIN_TARGET)			\
-	./$(DAEMON_DLL_TARGET)
+	./$(DAEMON_DLL_TARGET)			
+
 
 DAEMON_ASSEMBLIES =				\
 	$(BEAGLED_LIBS)				\
 	$(DAEMON_LOCAL_ASSEMBLIES:%=-r:%)	\
 	-r:Mono.Posix				\
-	-r:System.Runtime.Remoting		\
 	-r:ICSharpCode.SharpZipLib.dll
 
 if ENABLE_NETWORK
 DAEMON_CSFLAGS += -define:ENABLE_NETWORK
 endif
 
+if ENABLE_WEBSVC
+SUBDIRS = webserver
+BG_XSP_TARGET = webserver/bgXsp.dll
+
+WEBSVC_LOCAL_ASSEMBLIES =			\
+ 	../Util/Util.dll		\
+ 	../images/Images.dll		\
+	../BeagleClient/Beagle.dll      \
+	../Tiles/Tiles.dll		\
+	BeagleDaemonPlugins.dll \
+	BeagleDaemonLib.dll 
+
+WEBSVC_ASSEMBLIES = \
+	$(WEBSVC_LOCAL_ASSEMBLIES:%=-r:%)	\
+	-r:System				\
+	-r:System.Web 				\
+	-r:System.Runtime.Remoting	
+
+WEBSVC_TARGET  = beagledWebSvc.dll
+WEBSVC_CSFILES = $(srcdir)/beagledWeb.cs $(srcdir)/beagledWebSvc.cs
+
+WEB_CSFLAGS = -target:library -noconfig
+
+$(WEBSVC_TARGET): $(WEBSVC_CSFILES) $(WEBSVC_LOCAL_ASSEMBLIES)
+	$(CSC) -o $@ $(WEB_CSFLAGS) $(WEBSVC_CSFILES) $(WEBSVC_ASSEMBLIES)
+
+WEB_FRONT_END_TARGET = BWS_CodeBehind.dll 
+WEB_FRONT_END_CSFILES = $(srcdir)/BeagleWebCb.cs $(srcdir)/BeagleWebSvcCb.cs
+
+WEB_FRONT_END_ASSEMBLIES = 	\
+	$(WEBSVC_ASSEMBLIES) 	\
+	-r:$(WEBSVC_TARGET) 	\
+	-r:System.Web.Services 
+
+$(WEB_FRONT_END_TARGET): $(WEB_FRONT_END_CSFILES) $(WEBSVC_TARGET)
+	$(CSC) -o $@ $(WEB_CSFLAGS) $(WEB_FRONT_END_CSFILES) $(WEB_FRONT_END_ASSEMBLIES)
+
+DAEMON_CSFLAGS += -define:ENABLE_WEBSVC
+
+DAEMON_LOCAL_ASSEMBLIES += 		\
+	BeagleDaemonPlugins.dll		\
+	../images/Images.dll		\
+	../Tiles/Tiles.dll		\
+	$(WEBSVC_TARGET) 		\
+	$(WEB_FRONT_END_TARGET)		\
+	$(BG_XSP_TARGET)
+
+DAEMON_ASSEMBLIES += -r:System.Runtime.Remoting		
+XSP_DIR = /usr/local/share/doc/xsp/test/beagle
+XSPBIN_DIR = $(XSP_DIR)/bin
+endif
+
 $(DAEMON_TARGET): $(DAEMON_CSFILES) $(DAEMON_LOCAL_ASSEMBLIES)
 	$(CSC) -o $@ $(DAEMON_CSFLAGS) $(DAEMON_CSFILES) $(DAEMON_ASSEMBLIES)
-
 
 ############################################################
 
@@ -712,8 +755,11 @@ ALL_TARGETS = 				\
 	$(EXTRACT_CONTENT_TARGET)	\
 	$(MASTER_DELETE_TARGET)		\
 	$(SNIPPET_TEST_TARGET)		\
-	$(TERM_STATS_TARGET)
+	$(TERM_STATS_TARGET)		
 
+if ENABLE_WEBSVC
+ALL_TARGETS += $(WEB_FRONT_END_TARGET)
+endif
 
 all: $(ALL_TARGETS)
 
@@ -724,8 +770,20 @@ install-data-local: $(ALL_TARGETS)
 	$(INSTALL_DATA) $(DAEMON_TARGET) $(DESTDIR)$(pkglibdir)/$(DAEMON_TARGET)
 	$(INSTALL_DATA) $(INDEX_HELPER_TARGET) $(DESTDIR)$(pkglibdir)/$(INDEX_HELPER_TARGET)
 	$(INSTALL_SCRIPT) $(INDEX_HELPER_WRAPPER) $(DESTDIR)$(pkglibdir)/$(INDEX_HELPER_WRAPPER)
+if ENABLE_WEBSVC
+	$(INSTALL_DATA) $(WEBSVC_TARGET) $(DESTDIR)$(pkglibdir)/$(WEBSVC_TARGET)
+	$(mkinstalldirs) $(XSP_DIR)
+	$(INSTALL_DATA) search.asmx search.aspx web.config dog.png $(XSP_DIR)
+	$(mkinstalldirs) $(XSPBIN_DIR)
+	$(INSTALL_DATA) ../Util/Util.dll ../images/Images.dll ../BeagleClient/Beagle.dll ../Tiles/Tiles.dll BeagleDaemonPlugins.dll BeagleDaemonLib.dll $(XSPBIN_DIR)
+	$(INSTALL_DATA) $(WEBSVC_TARGET) $(WEB_FRONT_END_TARGET) $(XSPBIN_DIR)
+endif
 
 uninstall-local:
+if ENABLE_WEBSVC
+	rm -f $(DESTDIR)$(pkglibdir)/$(WEBSVC_TARGET)
+	rm -rf $(XSP_DIR)
+endif
 	rm -f $(DESTDIR)$(pkglibdir)/$(PLUGIN_TARGET)
 	rm -f $(DESTDIR)$(pkglibdir)/$(DAEMON_DLL_TARGET)
 	rm -f $(DESTDIR)$(pkglibdir)/$(DAEMON_TARGET)
@@ -746,7 +804,9 @@ COND_CS_FILES = \
 	$(srcdir)/NetworkHandler.cs	\
 	$(srcdir)/NetworkService.cs	\
 	$(srcdir)/NetworkDriver.cs	\
-	$(MOZILLA_QUERYABLE_CSFILES)
+	$(MOZILLA_QUERYABLE_CSFILES)	\
+	$(srcdir)/beagledWeb.cs		\
+	$(srcdir)/beagledWebSvc.cs
 
 EXTRA_DIST = \
 	$(PLUGIN_CSFILES)		\
@@ -787,3 +847,7 @@ CLEANFILES = \
 	$(TERM_STATS_TARGET)		\
 	$(TERM_STATS_TARGET).mdb	\
 	$(TERM_STATS_WRAPPER)
+
+if ENABLE_WEBSVC
+CLEANFILES += $(WEBSVC_TARGET) $(WEBSVC_TARGET).mdb $(WEB_FRONT_END_TARGET) $(WEB_FRONT_END_TARGET).mdb $(BG_XSP_TARGET) $(BG_XSP_TARGET).mdb
+endif

@@ -8,9 +8,9 @@ SUBDIRS = 			\
 	templates		\
 	glue			\
 	BeagleClient            \
+	Tiles			\
 	beagled                 \
 	Filters 		\
-	Tiles			\
 	tools 			\
 	Best			\
 	ImLogViewer		\
