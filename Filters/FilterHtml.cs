@@ -42,7 +42,7 @@ namespace Beagle.Filters {
 			SnippetMode = true;
 		}
 
-		static bool NodeIsHot (String nodeName) 
+		bool NodeIsHot (String nodeName) 
 		{
 			return nodeName == "b"
 				|| nodeName == "u"
@@ -54,7 +54,9 @@ namespace Beagle.Filters {
 				|| nodeName == "h3"
 				|| nodeName == "h4"
 				|| nodeName == "h5"
-				|| nodeName == "h6";
+				|| nodeName == "h6"
+				|| nodeName == "i"
+				|| nodeName == "th";
 		}
 
 		static bool NodeBreaksText (String nodeName) 
@@ -75,7 +77,6 @@ namespace Beagle.Filters {
 				|| nodeName == "h4"
 				|| nodeName == "h5"
 				|| nodeName == "h6";
-
 		}
 		
 		static bool NodeIsContentFree (String nodeName) 
@@ -94,7 +95,7 @@ namespace Beagle.Filters {
 					if (! NodeIsContentFree (subnode.Name)) {
 						String subtext = WalkChildNodesForText (subnode);
 						builder.Append (subtext);
-			}
+					}
 					break;
 					
 				case HtmlNodeType.Text:
@@ -116,9 +117,16 @@ namespace Beagle.Filters {
 					title = HtmlEntity.DeEntitize (title);
 					AddProperty (Beagle.Property.New ("dc:title", title));
 				}
+				if (subnode.NodeType == HtmlNodeType.Element
+				    && subnode.Name == "meta") {
+	   				string name = subnode.GetAttributeValue ("name", "");
+           				string content = subnode.GetAttributeValue ("content", "");
+					if (name != "" && content != "")
+						AddProperty (Beagle.Property.New (name, content));
+				}
 			}
 		}
-		
+	
 		void WalkBodyNodes (HtmlNode node)
 		{
 			switch (node.NodeType) {
@@ -133,6 +141,18 @@ namespace Beagle.Filters {
 						HotUp ();
 					if (breaksText)
 						AppendWhiteSpace ();
+					if (node.Name == "img") {
+						string attr = node.GetAttributeValue ("alt", "");
+						if (attr != "") {
+							AppendText (attr);
+						}
+					}
+					if (node.Name == "a") {
+						string attr = node.GetAttributeValue ("href", "");
+						if (attr != "") {
+							AppendText (attr);
+						}
+					}
 					foreach (HtmlNode subnode in node.ChildNodes)
 						WalkBodyNodes (subnode);
 					if (breaksText)
@@ -153,7 +173,7 @@ namespace Beagle.Filters {
 				
 			}
 		}
-		
+	
 		void WalkNodes (HtmlNode node)
 		{
 			foreach (HtmlNode subnode in node.ChildNodes) {

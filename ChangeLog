@@ -12,6 +12,12 @@
 
 2005-04-05  Veerapuram Varadhan  <vvaradhan@novell.com>
 
+	Patch from Saravana <saravana_psgtech@yahoo.co.in> 
+	* Filters/FilterHtml.cs: Parse <meta>, <a> and <img> tags and
+	extract required-contents. Add <i> to *list of hot nodes*.
+	
+2005-04-05  Veerapuram Varadhan  <vvaradhan@novell.com>
+
 	* beagled/Filter.cs: Third round of optimization. Mainly a FIXME
 	fix in AppendText () related to '\n'.
 
