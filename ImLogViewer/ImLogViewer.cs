@@ -23,10 +23,11 @@ namespace ImLogViewer {
 		[Widget] Window logwindow;
 		[Widget] TreeView timelinetree;
 		[Widget] ScrolledWindow scrollwindow;
-		[Widget] Button   searchbutton;
-		[Widget] Label    title;
-		[Widget] Entry    search;
+		[Widget] Button searchbutton;
+		[Widget] Label title;
+		[Widget] Entry search;
 		[Widget] TextView conversation;
+		[Widget] Image buddyicon;
 		
 		private TreeStore treeStore;
 		private CellRendererText renderer;
@@ -54,7 +55,8 @@ namespace ImLogViewer {
 			timeline = new Timeline ();
 			IndexLogs();
 			
-			ShowWindow (speaking_to);
+			if (speaking_to != null && speaking_to != "")
+				ShowWindow (speaking_to);
 		}
 
 		private void SetTitle (DateTime dt)
@@ -80,6 +82,20 @@ namespace ImLogViewer {
 			logwindow.AddAccelGroup (accel_group);
 			global_keys = new GlobalKeybinder (accel_group);
 
+			// Buddy icon
+			GaimBuddyListReader list = new GaimBuddyListReader ();
+			ImBuddy buddy = list.Search (speaker);
+			if (buddy != null && buddy.BuddyIconLocation != "") {
+				//Console.WriteLine ("Found buddy info for {0}, icon at {1}", buddy.BuddyAccountName, buddy.BuddyIconLocation);
+				string homedir = Environment.GetEnvironmentVariable ("HOME");
+				string fullpath = Path.Combine (homedir, ".gaim");
+				fullpath = Path.Combine (fullpath, "icons");
+				fullpath = Path.Combine (fullpath, buddy.BuddyIconLocation);
+				buddyicon.Pixbuf = new Gdk.Pixbuf (fullpath).ScaleSimple (32, 32, Gdk.InterpType.Bilinear);
+			} else {
+				buddyicon.Visible = false;
+			}
+				
 			SetTitle (new DateTime ());
 
 			// Close window (Ctrl-W)
