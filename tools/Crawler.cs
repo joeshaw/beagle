@@ -29,6 +29,7 @@ using System;
 using System.Collections;
 using System.IO;
 using System.Text.RegularExpressions;
+using System.Xml;
 
 using Beagle.Filters;
 using Beagle;
@@ -268,6 +269,9 @@ class CrawlerTool {
 				quick = true;
 			}
 
+			if (path.StartsWith ("file://"))
+				path = path.Substring ("file://".Length);
+
 			if (File.Exists (path)) {
 				CrawlFile (new FileInfo (path), null);
 			} else if (Directory.Exists (path)) {
@@ -298,6 +302,32 @@ class CrawlerTool {
 						   filterableCount,
 						   100.0 * filterableCount / totalCount);
 			}
+		}
+
+		public void CrawlRecentFiles ()
+		{	
+			string HomeDir = Environment.GetEnvironmentVariable ("HOME");
+			string path = Path.Combine (HomeDir, ".recently-used");
+			XmlDocument	doc;
+
+			try {
+				if (!File.Exists (path))
+					return;
+				doc = new XmlDocument ();
+				doc.Load (path);
+			} catch {
+				Console.WriteLine ("No File: {0}", path);
+				return;
+			}
+			XmlNodeList nodes = doc.SelectNodes ("/RecentFiles/RecentItem/URI");
+
+			foreach (XmlNode node in nodes)
+				Crawl (String.Concat ("-quick:", node.InnerText));
+		}
+
+		public void CrawlFast ()
+		{
+			CrawlRecentFiles ();
 		}
 	}
 
@@ -335,8 +365,12 @@ class CrawlerTool {
 		Crawler crawler = new Crawler ();
 
 		if (args.Length > 0) {
-			foreach (String arg in args)
-				crawler.Crawl (arg);
+			foreach (String arg in args) {
+				if (String.Compare (arg, "--fast") == 0)
+					crawler.CrawlFast ();
+				else
+					crawler.Crawl (arg);
+			}
 		} else {
 			// By default, crawl the user's home directory.
 			crawler.Crawl (Environment.GetEnvironmentVariable ("HOME"));
@@ -345,3 +379,4 @@ class CrawlerTool {
 		crawler.Finish ();
 	}
 }
+	
