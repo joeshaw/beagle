@@ -5,6 +5,7 @@ using System.Configuration;
 using System.Runtime.CompilerServices;
 using System.Collections;
 using Lucene.Net.Util;
+using System.Diagnostics; // FIXED trow 2004 May 14 - for lock debugging
 using System.Security.Cryptography;
 
 namespace Lucene.Net.Store
@@ -361,14 +362,35 @@ namespace Lucene.Net.Store
 				{
 					lock (this)
 					{
-						FileStream fs = new FileStream(
-							lockFile.FullName, FileMode.CreateNew
-							);
+						FileStream fs = new FileStream(lockFile.FullName,
+									       FileMode.CreateNew,
+									       FileAccess.Write);
+
+						// ADDED trow@ximian.com 14 May 2004 - lock debug spew
+						if (Environment.GetEnvironmentVariable ("DEWEY_DEBUG_LOCKS") != null)
+							Console.WriteLine ("\n*** Obtained {0}", lockFile.FullName);
+						
+						StreamWriter sw = new StreamWriter (fs);
+						Process us = Process.GetCurrentProcess ();
+						sw.WriteLine (us.Id.ToString ());
+						sw.WriteLine (DateTime.Now.ToString ());
+						sw.Close ();
 						fs.Close();
 					}
 				}
 				catch 
 				{
+					// ADDED trow@ximian.com 14 May 2004 - lock debug spew
+					if (Environment.GetEnvironmentVariable ("DEWEY_DEBUG_LOCKS") != null) {
+						Console.WriteLine ("\n*** Could not obtained {0}", lockFile.FullName);
+						StreamReader sr = new StreamReader (lockFile.FullName);
+						String pidStr = sr.ReadLine ();
+						String timeStr = sr.ReadLine ();
+						Console.WriteLine ("***      pid: {0}", pidStr);
+						Console.WriteLine ("***     time: {0}", timeStr);
+						sr.Close ();
+					}
+
 					return false;
 				}
 				return true;
@@ -381,6 +403,9 @@ namespace Lucene.Net.Store
 				lock (this)
 				{
 					lockFile.Delete();
+					// ADDED trow@ximian.com 14 May 2004 - lock debug spew
+					if (Environment.GetEnvironmentVariable ("DEWEY_DEBUG_LOCKS") != null)
+						Console.WriteLine ("\n*** Released {0}", lockFile.FullName);
 				}
 			}
 			

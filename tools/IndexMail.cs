@@ -342,12 +342,13 @@ namespace IndexMailTool {
 			needPreload = false;
 
 			// Assemble the metadata
+			SetMetadata ("folder",  folderName);
 			SetMetadata ("subject", messageInfo.subject);
-			SetMetadata ("to", messageInfo.from);
-			SetMetadata ("from", messageInfo.to);
-			SetMetadata ("cc", messageInfo.cc);
-			SetMetadata ("mlist", messageInfo.mlist);
-			SetMetadata ("flags", Convert.ToString (messageInfo.flags));
+			SetMetadata ("to",      messageInfo.from);
+			SetMetadata ("from",    messageInfo.to);
+			SetMetadata ("cc",      messageInfo.cc);
+			SetMetadata ("mlist",   messageInfo.mlist);
+			SetMetadata ("flags",   Convert.ToString (messageInfo.flags)); // FIXME: should not be indexed
 
 			// Assemble the content, if we have any
 			if (message != null) {
