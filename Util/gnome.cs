@@ -29,13 +29,13 @@ namespace Beagle.Util {
 				gnome_vfs_init ();
 			}
 
-			public static string GetMimeType (string text_uri)
+			public static string GetMimeType (string text_path)
 			{
-				string mimeType = GLib.Marshaller.PtrToStringGFree (gnome_vfs_get_mime_type (text_uri));
+				string full_uri = StringFu.PathToQuotedFileUri (text_path);
+				string mimeType = GLib.Marshaller.PtrToStringGFree (gnome_vfs_get_mime_type (full_uri));
 				return mimeType;
-				
 			}
-			
+
 			public static string GetMimeTypeFromData (byte[] buffer, int buffSize, string text_uri)
 			{
 				string guessedType = Marshal.PtrToStringAnsi (gnome_vfs_get_mime_type_for_data (buffer, buffSize));

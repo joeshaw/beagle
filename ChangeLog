@@ -1,3 +1,8 @@
+2005-03-06  Daniel Drake <dsd@gentoo.org>
+
+	* Util/StringFu.cs, Util/gnome.cs: Handle filenames containing
+	'%'. Fixes bug #169422
+
 2005-02-02  Veerapuram Varadhan	 <vvaradhan@novell.com>
 
 	* Filters/FilterOpenOffice.cs, Filters/FilterRTF.cs: Handle
