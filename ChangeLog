@@ -1,3 +1,11 @@
+2004-11-12  Chris Lahey  <clahey@ximian.com>
+
+	* From a patch by Adam Lofts <adam@negligible.co.uk>.
+
+	* configure.in, Filters/Makefile.am: Added FilterGst.cs.
+
+	* Filters/FilterGst.cs: Filter to get song data using gst.
+
 2004-11-12  Tuomas Kuosmanen  <tigert@novell.com>
 
 	* mozilla-extension/skin/classic/beagle-*: updated some of the

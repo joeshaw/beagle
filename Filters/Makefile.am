@@ -25,7 +25,6 @@ CSFILES = 				\
 	$(srcdir)/FilterFlac.cs		\
 	$(srcdir)/FilterJpeg.cs		\
 	$(srcdir)/FilterMan.cs		\
-	$(srcdir)/FilterMusic.cs	\
 	$(srcdir)/FilterOpenOffice.cs	\
 	$(srcdir)/FilterPdf.cs		\
 	$(srcdir)/FilterPng.cs		\
@@ -40,6 +39,14 @@ CSFILES += 				\
 	$(srcdir)/FilterPPT.cs
 endif
 
+if ENABLE_GST_SHARP
+CSFILES +=				\
+	$(srcdir)/FilterGst.cs
+else
+CSFILES +=				\
+	$(srcdir)/FilterMusic.cs
+endif
+
 LOCAL_ASSEMBLIES =				\
 	../Util/Util.dll			\
 	../BeagleClient/Beagle.dll		\
@@ -49,6 +56,11 @@ ASSEMBLIES =				\
 	$(BEAGLED_LIBS)			\
 	-r:ICSharpCode.SharpZipLib.dll	\
 	$(LOCAL_ASSEMBLIES:%=-r:%)
+
+if ENABLE_GST_SHARP
+ASSEMBLIES +=				\
+	$(GST_SHARP_LIBS)
+endif
 
 RESOURCES =
 

@@ -231,6 +231,9 @@ dnl beagled
 PKG_CHECK_MODULES(GSF_SHARP, gsf-sharp, enable_gsf_sharp=yes, enable_gsf_sharp=no)
 AM_CONDITIONAL(ENABLE_GSF_SHARP, test "x$enable_gsf_sharp" = "xyes")
 
+PKG_CHECK_MODULES(GST_SHARP, gst-sharp, enable_gst_sharp=yes, enable_gst_sharp=no)
+AM_CONDITIONAL(ENABLE_GST_SHARP, test "x$enable_gst_sharp" = "xyes")
+
 PKG_CHECK_MODULES(BEAGLED, gtk-sharp dbus-sharp gconf-sharp)
 BEAGLED_LIBS="$BEAGLED_LIBS $EVO_SHARP_LIBS $GSF_SHARP_LIBS"
 AC_SUBST(BEAGLED_LIBS)
@@ -344,6 +347,7 @@ echo "
 	Prefix:			${prefix}
 	Evolution-Sharp?	${enable_evo_sharp}
 	gsf-sharp?		${enable_gsf_sharp}
+	gst-sharp?		${enable_gst_sharp}
 	Epiphany Extension?	${enable_epiphany_extension}
 	Mozilla Extension?	yes
 
