@@ -30,42 +30,88 @@ using System.Collections;
 using System.IO;
 
 using Beagle.Filters;
+using BU = Beagle.Util;
 
 namespace Beagle {
 
 	public class IndexableFile : Indexable {
 
+		bool isDirectory = false;
+		Flavor flavor;
 		Filter filter;
 		String path;
 
 		public IndexableFile (String _path)
 		{
 			path = Path.GetFullPath (_path);
-			if (! File.Exists (path))
-				throw new Exception ("No such file: " + path);
-	    
-			filter = Filter.FilterFromPath (path);
-			if (filter == null)
-				throw new Exception ("Can't find filter for file " + path);
-
 			Uri = "file://" + path;
 			Type = "File";
-			MimeType = filter.Flavor.MimeType;		
 
-			Timestamp = File.GetLastWriteTime (path);
+			if (Directory.Exists (path)) {
+				isDirectory = true;
+				MimeType = "inode/directory";
+				Timestamp = Directory.GetLastWriteTime (path);
+			} else if (File.Exists (path)) {
+				flavor = Flavor.FromPath (path);
+				filter = Filter.FromFlavor (flavor);
+				MimeType = flavor.MimeType;		
+				Timestamp = File.GetLastWriteTime (path);
+			} else {
+				throw new Exception ("No such file: " + path);
+			}
 		}
+
+		static string[] longExtensions = {".html" };
 
 		override protected void DoBuild ()
 		{
-			Stream stream = new FileStream (path, FileMode.Open, FileAccess.Read);
-			filter.Open (stream);
-			foreach (String key in filter.Keys)
-				this [key] = filter [key];
-			ContentReader = filter.Content;
-			HotContentReader = filter.HotContent;
+			if (filter != null) {
+				Stream stream;
+				stream = new FileStream (path, FileMode.Open, FileAccess.Read);
+				filter.Open (stream);
+				ContentReader = filter.Content;
+				HotContentReader = filter.HotContent;
+				foreach (String key in filter.Keys)
+					this [key] = filter [key];
+				stream.Close ();
+			}
 
-			FileInfo info = new FileInfo (path);
-			this ["_Directory"] = info.DirectoryName;
+			if (isDirectory) {
+				DirectoryInfo info = new DirectoryInfo (path);
+				info = info.Parent;
+				if (info != null)
+					this ["_Directory"] = info.FullName;
+			} else {
+				FileInfo info = new FileInfo (path);
+				this ["_Directory"] = info.DirectoryName;
+			}
+
+			// Try to strip off the extension in a semi-intelligent way,
+			// and then fuzzy-split the file name and store it in a property.
+			string name;
+			bool ignoreExtension = false;
+			if (path.EndsWith (".tar.gz")) {
+				path = path.Substring (0, path.Length - ".tar.gz".Length);
+				ignoreExtension = false;
+			} else if (Path.HasExtension (path)) {
+				string ext = Path.GetExtension (path);
+				if (ext.Length <= 4)
+					ignoreExtension = true;
+				else {
+					ext = ext.ToLower ();
+					foreach (string str in longExtensions) {
+						if (str == ext) {
+							ignoreExtension = true;
+							break;
+						}
+					}
+				}
+			}
+			if (ignoreExtension)
+				name = Path.GetFileNameWithoutExtension (path);
+			else
+				name = Path.GetFileName (path);
+			this ["SplitName"] = String.Join (" ", BU.StringFu.FuzzySplit (name));
 
 			// FIXME: there is more information that we could attach
 			// * Filesystem-level metadata

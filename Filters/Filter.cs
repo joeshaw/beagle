@@ -233,10 +233,10 @@ namespace Beagle.Filters {
 
 		static public bool CanFilter (Flavor flavor)
 		{
-			return FilterFromFlavor (flavor) != null;
+			return FromFlavor (flavor) != null;
 		}
 
-		static public Filter FilterFromFlavor (Flavor flavor)
+		static public Filter FromFlavor (Flavor flavor)
 		{
 			if (registry == null) {
 				registry = new SortedList ();
@@ -262,13 +262,13 @@ namespace Beagle.Filters {
 		static public Filter FilterFromMimeType (String mimeType)
 		{
 			Flavor flavor = Flavor.FromMimeType (mimeType);
-			return FilterFromFlavor (flavor);
+			return FromFlavor (flavor);
 		}
 
 		static public Filter FilterFromPath (String path)
 		{
 			Flavor flavor = Flavor.FromPath (path);
-			return FilterFromFlavor (flavor);
+			return FromFlavor (flavor);
 		}
 	}
 }

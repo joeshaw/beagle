@@ -115,6 +115,7 @@ class CrawlerTool {
 		int skippedCount = 0;
 		int totalCount = 0;
 		int filterableCount = 0;
+		int dirCount = 0;
 
 		int sinceOptimize = 0;
 		int optimizeCount = 10;
@@ -123,7 +124,7 @@ class CrawlerTool {
 		Hashtable fileTable = new Hashtable ();
 
 
-		void ScheduleAdd (FileInfo info, Indexable indexable)
+		void ScheduleAdd (Indexable indexable)
 		{
 			toBeIndexed.Add (indexable);
 			MaybeFlush ();
@@ -184,18 +185,19 @@ class CrawlerTool {
 				fileTable [flavor] = 1;
 
 			++totalCount;
-			if (! Filter.CanFilter (flavor))
-				return;
-			++filterableCount;
+			if (Filter.CanFilter (flavor))
+				++filterableCount;
 
 			Indexable indexable = new IndexableFile (info.FullName);
 
-			ScheduleAdd (info, indexable);
+			ScheduleAdd (indexable);
 			ScheduleDelete (hit);
 		}
 
-		void CrawlDirectory (DirectoryInfo info, int maxRecursion)
+		void CrawlDirectory (DirectoryInfo info, Hit dirHit, int maxRecursion)
 		{
+			++dirCount;
+
 			// Scan the .noindex file.
 			FileMatcher noindex = new FileMatcher ();
 			String noindexPath = Path.Combine (info.FullName, ".noindex");
@@ -207,6 +209,15 @@ class CrawlerTool {
 					Console.WriteLine ("Skipping {0}", info.FullName);
 					return;
 				}
+			}
+
+			// Create an indexable for the directory.
+			Indexable dir = new IndexableFile (info.FullName);
+			bool dirChanged = false;
+			if (dirHit == null || dirHit.IsObsoletedBy (dir)) {
+				ScheduleAdd (dir);
+				ScheduleDelete (dirHit);
+				dirChanged = true;
 			}
 
 			// Pull this directory's indexables and put them in a hashtable
@@ -226,9 +237,9 @@ class CrawlerTool {
 				hitHash [hit.Uri] = hit;
 			}
 
-
-			Console.WriteLine ("Scanning {0}", info.FullName);
-
+			
+			Console.WriteLine ("Scanning files in {0}", info.FullName);
+			
 			foreach (FileInfo file in info.GetFiles ()) {
 				if (! noindex.IsMatch (file.Name)) {
 					try {
@@ -240,25 +251,27 @@ class CrawlerTool {
 					}
 				}
 			}
+				
+			if (maxRecursion > 0) {
+
+				foreach (DirectoryInfo subdir in info.GetDirectories ()) {
+					if (! noindex.IsMatch (subdir.Name)) {
+						try {
+							String uri = "file://" + subdir.FullName;
+							CrawlDirectory (subdir, (Hit) hitHash [uri], maxRecursion - 1);
+							hitHash.Remove (uri);
+						} catch (Exception e) {
+							Console.WriteLine ("Caught exception while crawling directory '" + subdir.Name + "':\n" + e.Message);
+						}
+					}
+				}
+			}
 
 			// If we didn't see some files that were previously indexed, they
 			// must have been deleted.  Schedule the previously-retrieved hits
 			// for deletion.
 			foreach (Hit hit in hitHash.Values)
 				ScheduleDelete (hit);
-
-			if (maxRecursion <= 0)
-				return;
-
-			foreach (DirectoryInfo subdir in info.GetDirectories ()) {
-				if (! noindex.IsMatch (subdir.Name)) {
-					try {
-						CrawlDirectory (subdir, maxRecursion - 1);
-					} catch (Exception e) {
-						Console.WriteLine ("Caught exception while crawling directory '" + subdir.Name + "':\n" + e.Message);
-					}
-				}
-			}
 		}
 
 		public void Crawl (String path)
@@ -279,7 +292,11 @@ class CrawlerTool {
 				int maxRecursion = 10000;
 				if (quick)
 					maxRecursion = 0;
-				CrawlDirectory (dirinfo, maxRecursion);
+
+				Hit dirHit = null;
+				if (dirinfo.Parent != null)
+					dirHit = driver.FindByUri ("file://" + dirinfo.FullName);
+				CrawlDirectory (dirinfo, dirHit, maxRecursion);
 			} else {
 				Console.WriteLine ("Can't crawl {0}", path);
 			}
@@ -295,10 +312,13 @@ class CrawlerTool {
 			foreach (Flavor flavor in fileTable.Keys)
 				Console.WriteLine ("{0} {1}", (int) fileTable [flavor], flavor);
 			Console.WriteLine ();
-			Console.WriteLine ("   Skipped files: {0}", skippedCount);
-			Console.WriteLine ("     Total files: {0}", totalCount);
+			Console.WriteLine ("    Total directories: {0}", dirCount);
+			Console.WriteLine ();
+			Console.WriteLine ("        Skipped files: {0}", skippedCount);
+			Console.WriteLine ("          Total files: {0}", totalCount);
+
 			if (totalCount > 0) {
-				Console.WriteLine ("Filterable files: {0} ({1:f1}%)",
+				Console.WriteLine ("     Filterable files: {0} ({1:f1}%)",
 						   filterableCount,
 						   100.0 * filterableCount / totalCount);
 			}
@@ -308,7 +328,7 @@ class CrawlerTool {
 		{	
 			string HomeDir = Environment.GetEnvironmentVariable ("HOME");
 			string path = Path.Combine (HomeDir, ".recently-used");
-			XmlDocument	doc;
+			XmlDocument doc;
 
 			try {
 				if (!File.Exists (path))

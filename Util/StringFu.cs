@@ -25,6 +25,7 @@
 //
 
 using System;
+using System.Collections;
 using System.Globalization;
 using System.Text;
 
@@ -67,5 +68,59 @@ namespace Beagle.Util {
 
 			return String.Format ("{0:0.0} Mb", len/(double)oneMb);
 		}
+
+		// FIXME: This is pretty inefficient
+		static public string[] FuzzySplit (string line)
+		{
+			int i;
+
+			// Replace non-alphanumeric characters with spaces
+			StringBuilder builder = new StringBuilder (line.Length);
+			for (i = 0; i < line.Length; ++i) {
+				if (Char.IsLetterOrDigit (line [i]))
+					builder.Append (line [i]);
+				else
+					builder.Append (" ");
+			}
+			line = builder.ToString ();
+
+			// Inject whitespace on all case changes except
+			// from upper to lower.
+			i = 0;
+			int prevCase = 0;
+			while (i < line.Length) {
+				int thisCase;
+				if (Char.IsUpper (line [i]))
+					thisCase = +1;
+				else if (Char.IsLower (line [i]))
+					thisCase = -1;
+				else
+					thisCase = 0;
+
+				if (prevCase != thisCase
+				    && !(prevCase == +1 && thisCase == -1)) {
+					line = line.Substring (0, i) + " " + line.Substring (i);
+					++i;
+				}
+
+				prevCase = thisCase;
+				
+				++i;
+			}
+			
+			// Filter out empty parts
+			ArrayList partsArray = new ArrayList ();
+			foreach (string str in line.Split (' ')) {
+				if (str != "")
+					partsArray.Add (str);
+			}
+
+			// Assemble the array to return
+			string[] parts = new string [partsArray.Count];
+			for (i = 0; i < partsArray.Count; ++i)
+				parts [i] = (string) partsArray [i];
+			return parts;
+		}
+
 	}
 }
