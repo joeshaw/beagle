@@ -378,10 +378,10 @@ BLAM_QUERYABLE_CSFILES =				\
 #		$(TOMBOY_QUERYABLE_CSFILES)		\
 #
 
-calendarqueryable = $(srcdir)/CalendarQueryable
-CALENDAR_QUERYABLE_CSFILES =				\
-	$(calendarqueryable)/CalendarQueryable.cs	\
-	$(calendarqueryable)/ICalParser/*.cs
+#calendarqueryable = $(srcdir)/CalendarQueryable
+#CALENDAR_QUERYABLE_CSFILES =				\
+#	$(calendarqueryable)/CalendarQueryable.cs	\
+#	$(calendarqueryable)/ICalParser/*.cs
 
 DAEMON_DLL_CSFILES = 						\
 	$(LUCENE_CSFILES)					\
@@ -390,7 +390,6 @@ DAEMON_DLL_CSFILES = 						\
 	$(BLAM_QUERYABLE_CSFILES)				\
 	$(EVO_MAIL_QUERYABLE_CSFILES)				\
 	$(WEB_HISTORY_QUERYABLE_CSFILES)			\
-	$(CALENDAR_QUERYABLE_CSFILES)				\
 	$(srcdir)/BugzillaDriver.cs 				\
 	$(srcdir)/Crawler.cs					\
 	$(srcdir)/DBusisms.cs					\
