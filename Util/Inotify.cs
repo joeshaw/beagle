@@ -486,10 +486,10 @@ namespace Beagle.Util {
 					while (event_queue.Count == 0 && running) {
 						// Find all unmatched MovedFrom events and process them.  We expire in
 						// five seconds.  This is quite conservative, but what is the rush?
-						// Would be nice to not do this here and not have to wake up every 5 secs
+						// Would be nice to not do this here and not have to wake up every 2 secs
 						for (int i = 0; i < cookie_list.Count; i++) {
 							PendingMove pending = cookie_list[i] as PendingMove;
-							if (pending.Time.AddSeconds (5) < DateTime.Now) {
+							if (pending.Time.AddSeconds (2) < DateTime.Now) {
 								SendEvent (pending.Watch, pending.SrcName, null,
 									   EventType.MovedFrom);
 								cookie_hash.Remove (pending);
@@ -497,7 +497,7 @@ namespace Beagle.Util {
 							}
 						}
 
-						Monitor.Wait (event_queue, 5);			
+						Monitor.Wait (event_queue, 2);			
 					}
 					if (!running)
 						break;
