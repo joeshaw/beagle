@@ -335,7 +335,6 @@ namespace Beagle.Util.Mozilla
 		{
 		        message = new Message ();
 			message.Path = path;
-			string lastdata = "";
 			string data;
 			bool isBody = false;
 			
@@ -395,8 +394,6 @@ namespace Beagle.Util.Mozilla
 							break;
 						}
 					}
-						
-					lastdata = data;
 				}
 				
 				hasMore = false;

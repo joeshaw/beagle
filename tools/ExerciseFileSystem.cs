@@ -40,19 +40,19 @@ class ExerciseFileSystemTool {
 	[Option (LongName="file-source")]
 	static string file_source = null;
 
-	[Option (LongName="--max-files")]
+	[Option (LongName="max-files")]
 	static int max_files = 20;
 
-	[Option (LongName="--max-directories")]
+	[Option (LongName="max-directories")]
 	static int max_directories = 5;
 
-	[Option (LongName="--depth")]
+	[Option (LongName="depth")]
 	static int max_depth = 4;
 
-	[Option (LongName="--action-count")]
+	[Option (LongName="action-count")]
 	static int action_count = 0;
 
-	[Option (LongName="--max-interval")]
+	[Option (LongName="max-interval")]
 	static int max_interval = 1000;
 
 	static Random random = new Random ();
@@ -92,7 +92,7 @@ class ExerciseFileSystemTool {
 	static int file_count = 0;
 	static int directory_count = 0;
 
-	static void CreateFile (string directory)
+	static string CreateFile (string directory)
 	{
 		string source_file = GetRandomSourceFile ();
 		string new_file = Path.Combine (directory, GetRandomName ());
@@ -105,6 +105,7 @@ class ExerciseFileSystemTool {
 		}
 
 		all_files.Add (new_file);
+		return new_file;
 	}
 
 	static void CreateDirectories (string parent, int depth)
@@ -133,16 +134,55 @@ class ExerciseFileSystemTool {
 			CreateDirectories (root, 0);
 			return;
 		}
+
+		int random_dir_i = random.Next (all_directories.Count);
+		int random_file_i = random.Next (all_files.Count);
+
+		string random_dir = (string) all_directories [random_dir_i];
+		string random_file = (string) all_files [random_file_i];
+
+		int action = 0;
+		action = random.Next (4);
+		switch (action) {
+
+		case 0: // Create new file
+			string new_file = CreateFile (random_dir);
+			Console.WriteLine ("Created {0}", new_file);
+			break;
+
+		case 1: // Delete a file
+			File.Delete (random_file);
+			all_files.RemoveAt (random_file_i);
+			Console.WriteLine ("Deleted {0}", random_file);
+			break;
+
+		case 2: // Create new subdirectory
+			string path = Path.Combine (random_dir, GetRandomName ());
+			Directory.CreateDirectory (path);
+			all_directories.Add (path);
+			Console.WriteLine ("Created subdirectory {0}", path);
+			break;
+
+		case 3: // Recursively delete a subdirectory
+			break;
+		}
 	}
 	
 
 	static void Main (string [] args)
 	{
-		CommandLine.Process (typeof (ExerciseFileSystemTool), args);
+		CommandLine.ProgramName = "beagle-exercise-file-system";
+		CommandLine.ProgramCopyright = "Copyright (C) 2005 Novell, Inc.";
+		args = CommandLine.Process (typeof (ExerciseFileSystemTool), args);
+		if (args == null)
+			return;
 
 		if (root == null)
-			Console.WriteLine ("No root specified!");
+			root = Environment.GetEnvironmentVariable ("PWD");
 		
+		
+		if (Directory.Exists (Path.Combine (root, "1")))
+			Directory.Delete (Path.Combine (root, "1"), true);
 		CreateDirectories (root, 0);
 
 		Console.WriteLine ("Created {0} files across {1} directories",

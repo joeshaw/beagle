@@ -33,7 +33,7 @@ namespace Beagle.Daemon {
 
 	public class Shutdown {
 
-		static public bool Debug = false;
+		static public bool Debug = true;
 
 		static object shutdownLock = new object ();
 		static Hashtable workers = new Hashtable ();
@@ -122,9 +122,9 @@ namespace Beagle.Daemon {
 				while (workers.Count > 0) {
 					++count;
 					Logger.Log.Debug ("({0}) Waiting for {1} worker{2}...",
-							   count,
+							  count,
 							  workers.Count,
-							   workers.Count > 1 ? "s" : "");					
+							  workers.Count > 1 ? "s" : "");					
 					foreach (object o in workers.Keys) 
 						Logger.Log.Debug ("waiting for {0}", workers_names[o]);
 					Monitor.Wait (shutdownLock);

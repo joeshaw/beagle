@@ -354,7 +354,6 @@ namespace Beagle.Util {
 					continue;
 
 				int event_size = Marshal.SizeOf (typeof (inotify_event));
-				DateTime now = DateTime.Now;
 				lock (event_queue) {
 					bool saw_overflow = false;
 					while (nr > 0) {

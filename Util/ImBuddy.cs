@@ -89,10 +89,7 @@ namespace Beagle.Util {
 		public class ImBuddyAliasComparer : IComparer {
 			
 			int IComparer.Compare (Object x, Object y) {
-				string account;
-				
 				try {
-					account = (string) x;
 					return System.String.Compare ((string)x, ((ImBuddy) y).BuddyAccountName);
 				} catch {
 					return System.String.Compare (((ImBuddy) x).BuddyAccountName, (string)y);
@@ -157,12 +154,9 @@ namespace Beagle.Util {
 				}
 
 				if (groupalias != "") {
-					string xpath = "//contact[ name='" + groupalias + "']/buddy";
-					
 					foreach (XmlNode buddy in contact.ChildNodes) {
 						AddBuddy (buddy, groupalias);
 					}
-
 				}
 			}
 			

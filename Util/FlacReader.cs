@@ -134,8 +134,6 @@ namespace Beagle.Util.AudioUtil {
 			if (flac != "fLaC")
 				throw new Exception ("fLaC Header not found, not a flac file");
 			
-			Tag tag = null;
-			
 			// Seems like we hava a valid stream
 			bool isLastBlock = false;
 			while (!isLastBlock) {

@@ -92,8 +92,9 @@ namespace CommandLineFu {
 						builder.Append (Option.Name);
 					}
 					if (Field.FieldType != typeof (System.Boolean)) {
-						builder.Append (" ");
+						builder.Append (" [");
 						builder.Append (Option.ArgDescription);
+						builder.Append ("]");
 					}
 					return builder.ToString ();
 				}
@@ -218,6 +219,31 @@ namespace CommandLineFu {
 
 		///////////////////////////////////////////////////////////////////
 
+		public void SpewVersion ()
+		{
+			Console.WriteLine (CommandLine.ProgramVersion != null ? CommandLine.ProgramVersion : "unknown");
+		}
+
+		public void SpewBanner ()
+		{
+			if (CommandLine.ProgramName == null)
+				return;
+			Console.Write (CommandLine.ProgramName);
+			if (CommandLine.ProgramVersion != null) {
+				Console.Write (" ");
+				Console.Write (CommandLine.ProgramVersion);
+			}
+			if (CommandLine.ProgramDate != null) {
+				Console.Write (" - ");
+				Console.Write (CommandLine.ProgramDate);
+			}
+			Console.WriteLine ();
+
+			if (CommandLine.ProgramCopyright != null)
+				Console.WriteLine (CommandLine.ProgramCopyright);
+				
+		}
+
 		public void SpewOptionDocs ()
 		{
 			int max_usage_name_len = 0;
@@ -302,8 +328,12 @@ namespace CommandLineFu {
 		public string [] Process (string [] args)
 		{
 			foreach (string arg in args) {
-				if (arg == "--help") {
-					// FIXME: Should be able to display other banner information.
+				// FIXME: These should be displayed in the banner information.
+				if (arg == "--version") {
+					SpewVersion ();
+					return null;
+				} else if (arg == "--help") {
+					SpewBanner ();
 					SpewOptionDocs ();
 					return null;
 				}
@@ -324,6 +354,12 @@ namespace CommandLineFu {
 	public class CommandLine {
 
 		static public bool Debug = false;
+
+		static public string ProgramName = null;
+		static public string ProgramVersion = null;
+		static public string ProgramDate = null;
+		static public string ProgramCopyright = null;
+		static public string ProgramHomePage = null;
 
 		static private Processor BuildProcessor (Type type, object obj, BindingFlags flags)
 		{
