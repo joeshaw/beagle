@@ -1,0 +1,11 @@
+#!/bin/sh
+
+echo "*** Indexing Files ***"
+@prefix@/bin/beagle-index-files
+
+echo ""
+echo "*** Indexing Mail ***"
+@prefix@/bin/beagle-index-mail
+
+echo ""
+echo "Update complete."
