@@ -21,6 +21,7 @@ RESOURCEFILES =					\
 	$(srcdir)/default.png			\
 	$(srcdir)/document.png			\
 	$(srcdir)/emblem-bugzilla.png		\
+	$(srcdir)/emblem-blog.png		\
 	$(srcdir)/emblem-contact.png		\
 	$(srcdir)/emblem-file.png		\
 	$(srcdir)/emblem-folder.png		\
@@ -37,6 +38,7 @@ RESOURCEFILES =					\
 	$(srcdir)/globe.png			\
 	$(srcdir)/gnome-error.png		\
 	$(srcdir)/gnome-gaim.png		\
+	$(srcdir)/icon-blog.png			\
 	$(srcdir)/icon-bookmark.png		\
 	$(srcdir)/icon-folder.png		\
 	$(srcdir)/icon-history.png		\
