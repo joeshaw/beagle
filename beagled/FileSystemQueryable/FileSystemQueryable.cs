@@ -96,6 +96,8 @@ namespace Beagle.Daemon.FileSystemQueryable {
 			FileSystemModel.RequiredAction action;
 			string old_path;
 
+			// Model.DetermineRequiredAction checks whether or not we should
+			// ignore the path, so we don't need to do that separately.
 			action = Model.DetermineRequiredAction (path, out old_path);
 			
 			if (action == FileSystemModel.RequiredAction.None)
@@ -125,6 +127,14 @@ namespace Beagle.Daemon.FileSystemQueryable {
 
 		public void Remove (string path, Scheduler.Priority priority)
 		{
+			// If we are ignoring this file, don't do anything.
+			// This should be safe to do even if we weren't ignoring this
+			// file previously --- if it is in the index and matches
+			// a query, that hit will be filtered out by HitIsValid
+			// since the file no longer exists.
+			if (Model.Ignore (path))
+				return;
+
 			Uri uri = UriFu.PathToFileUri (path);
 			Scheduler.Task task;
 			task = NewRemoveTask (uri);
