@@ -1,4 +1,11 @@
 
+Version 0.0.8.1
+March 24, 2005
+
+* Web services build fixes (Jon Trowbridge)
+
+------------------------------------------------------
+
 Version 0.0.8
 March 23, 2005
 
@@ -36,12 +43,12 @@ Daemon/Infrastructure:
 Backends:
 * Lots of file system backend fixes.  In particular, moving and
   renaming files now works in many cases.  (Jon)
-* If the gconf key for Evolution accounts doesn't exist, fail gracefully.
+* If the gconf key for Evolution accounts doesn't exist, fail gracefully
   (Joe)
-* Don't require inotify for the Addressbook or Launcher backends. (Joe)
+* Don't require inotify for the Addressbook or Launcher backends (Joe)
 * Only index launchers with a name (Joe)
 * To avoid leaking delegates, iterate across GMime message parts by hand
-  instead of using the built-in foreach function. (Joe)
+  instead of using the built-in foreach function (Joe)
 * Make liberal use of 'using' clauses and Dispose() on GMime objects
   to reduce our memory usage while indexing mail (Joe, Miguel de Icaza)
 * Use a search pattern when calling DirectoryInfo.GetFiles() so that we
@@ -62,7 +69,7 @@ Backends:
 Filters:
 * Optimized Word document indexing (Varadhan)
 * Remove null characters from media tags (Varadhan)
-* Skip PPT 4.0 files, because we don't support them. (Varadhan)
+* Skip PPT 4.0 files, because we don't support them (Varadhan)
 * OpenOffice 2.0 support (Varadhan)
 * Added OpenOffice 1.0 template and all 2.0 mimetypes to the OpenOffice
   filter (Joe)
@@ -418,6 +425,7 @@ Everything Else:
 Version 0.0.2
 September 1, 2004
 
+------------------------------------------------------
 
 Version 0.0.1
 June 10, 2004
@@ -429,6 +437,7 @@ June 10, 2004
 * Searchomatic!
 * Added logging of indexing operations.
 
+------------------------------------------------------
 
 Version 0.0.0 (Initial release)
 June 3, 2004
