@@ -147,6 +147,9 @@ class QueryTool {
 
 		try {
 			query = Beagle.Factory.NewQuery ();
+		} catch (DBus.DBusException e) {
+			Console.WriteLine ("Could not query.  You probably don't have D-BUS set up properly.\nThe query failed with error: {0}", e.Message);
+			System.Environment.Exit (-1);
 		} catch (Exception e) {
 			if (e.ToString ().IndexOf ("com.novell.Beagle") != -1) {
 				Console.WriteLine ("Could not query.  The Beagle daemon is probably not running, or maybe you\ndon't have D-BUS set up properly.");
