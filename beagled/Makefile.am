@@ -232,6 +232,7 @@ FILE_SYSTEM_QUERYABLE_CSFILES =					\
 	$(fsqueryabledir)/FileSystemWatcherBackend.cs		\
 	$(fsqueryabledir)/IFileEventBackend.cs			\
 	$(fsqueryabledir)/InotifyBackend.cs			\
+	$(fsqueryabledir)/SanityCheck.cs			\
 	$(fsqueryabledir)/UniqueIdStore.cs
 
 webhistqueryable = $(srcdir)/WebHistoryQueryable
@@ -471,6 +472,11 @@ $(DAEMON_TARGET): $(DAEMON_CSFILES) $(DAEMON_LOCAL_ASSEMBLIES)
 	$(CSC) -o $@ $(DAEMON_CSFLAGS) $(DAEMON_CSFILES) $(DAEMON_ASSEMBLIES)
 
 ############################################################
+############################################################
+############################################################
+
+# This next section is a very good example of why we need real mono support in
+# automake.  This is a massive wart on our development platform.
 
 INDEX_HELPER_WRAPPER = beagled-index-helper
 INDEX_HELPER_TARGET = IndexHelper.exe
@@ -660,6 +666,43 @@ $(NAME_INDEX_TARGET): $(NAME_INDEX_CSFILES) $(NAME_INDEX_LOCAL_ASSEMBLIES)
 
 ############################################################
 
+FS_SANITY_CHECK_WRAPPER = beagle-file-system-sanity-check
+FS_SANITY_CHECK_TARGET = SanityCheckTool.exe
+
+$(FS_SANITY_CHECK_WRAPPER): $(srcdir)/$(WRAPPER_IN)
+	$(WRAPPER_SED) -e "s|\@target\@|$(FS_SANITY_CHECK_TARGET)|g" < $(srcdir)/$(WRAPPER_IN) > $@
+	chmod +x $(FS_SANITY_CHECK_WRAPPER)
+
+FS_SANITY_CHECK_CSFLAGS = \
+	-target:exe
+
+FS_SANITY_CHECK_CSFILES = \
+	$(srcdir)/SanityCheckTool.cs
+
+FS_SANITY_CHECK_LOCAL_ASSEMBLIES = \
+	../Util/Util.dll			\
+	../BeagleClient/Beagle.dll		\
+	./$(PLUGIN_TARGET)			\
+	./$(DAEMON_DLL_TARGET)
+
+FS_SANITY_CHECK_ASSEMBLIES = \
+	$(BEAGLED_LIBS)				\
+	$(DAEMON_LOCAL_ASSEMBLIES:%=-r:%)	\
+	-r:Mono.Posix				\
+	-r:System.Runtime.Remoting		\
+	-r:ICSharpCode.SharpZipLib.dll
+
+$(FS_SANITY_CHECK_TARGET): $(FS_SANITY_CHECK_CSFILES) $(FS_SANITY_CHECK_LOCAL_ASSEMBLIES)
+	$(CSC) -o $@ $(FS_SANITY_CHECK_CSFLAGS) $(FS_SANITY_CHECK_CSFILES) $(FS_SANITY_CHECK_ASSEMBLIES)
+
+# OK, now back to our regularly scheduled program.  But notice all of the
+# EXTRA_DIST and CLEANFILES stuff at the bottom of the file.  Yuck.
+
+############################################################
+############################################################
+############################################################
+
+
 ALL_TARGETS = 				\
 	$(PLUGIN_TARGET)		\
 	$(DAEMON_DLL_TARGET)		\
@@ -670,7 +713,8 @@ ALL_TARGETS = 				\
 	$(MASTER_DELETE_TARGET)		\
 	$(SNIPPET_TEST_TARGET)		\
 	$(TERM_STATS_TARGET)		\
-	$(NAME_INDEX_TARGET)
+	$(NAME_INDEX_TARGET)		\
+	$(FS_SANITY_CHECK_TARGET)
 
 if ENABLE_WEBSVC
 ALL_TARGETS += $(WEB_FRONT_END_TARGET)
@@ -716,7 +760,8 @@ noinst_SCRIPTS=	\
 	$(MASTER_DELETE_WRAPPER)	\
 	$(SNIPPET_TEST_WRAPPER)		\
 	$(TERM_STATS_WRAPPER)		\
-	$(NAME_INDEX_WRAPPER)
+	$(NAME_INDEX_WRAPPER)		\
+	$(FS_SANITY_CHECK_WRAPPER)
 
 COND_CS_FILES = \
 	$(AUTHENTICATORS_CSFILES) 	\
@@ -728,6 +773,11 @@ COND_CS_FILES = \
 	$(srcdir)/beagledWebSvc.cs
 
 EXTRA_DIST = \
+	$(EXTSTR_IN)			\
+	$(WRAPPER_IN)   		\
+	$(DAEMON_WRAPPER_IN)		\
+	$(COND_CS_FILES)		\
+	$(man_MANS)			\
 	$(PLUGIN_CSFILES)		\
 	$(DAEMON_DLL_CSFILES)		\
 	$(DAEMON_CSFILES)		\
@@ -737,12 +787,7 @@ EXTRA_DIST = \
 	$(MASTER_DELETE_CSFILES)	\
 	$(TERM_STATS_CSFILES)		\
 	$(NAME_INDEX_CSFILES)		\
-	$(EXTSTR_IN)			\
-	$(WRAPPER_IN)   		\
-	$(DAEMON_WRAPPER_IN)		\
-	$(COND_CS_FILES)		\
-	$(man_MANS)
-
+	$(FS_SANITY_CHECK_CSFILES)
 
 CLEANFILES = \
 	$(EXTSTR)			\
@@ -770,7 +815,10 @@ CLEANFILES = \
 	$(TERM_STATS_WRAPPER)		\
 	$(NAME_INDEX_TARGET)		\
 	$(NAME_INDEX_TARGET).mdb	\
-	$(NAME_INDEX_WRAPPER)
+	$(NAME_INDEX_WRAPPER)		\
+	$(FS_SANITY_CHECK_TARGET)	\
+	$(FS_SANITY_CHECK_TARGET).mdb	\
+	$(FS_SANITY_CHECK_WRAPPER)
 
 if ENABLE_WEBSVC
 CLEANFILES += $(WEBSVC_TARGET) $(WEBSVC_TARGET).mdb $(WEB_FRONT_END_TARGET) $(WEB_FRONT_END_TARGET).mdb $(BG_XSP_TARGET) $(BG_XSP_TARGET).mdb

@@ -65,7 +65,7 @@ namespace Beagle.Daemon {
 				tmp = ExtendedAttribute.Get (path, fingerprint_attr);
 				if (tmp == null 
 				    || int.Parse (tmp.Substring (0, 2)) != EA_VERSION
-				    || tmp.Substring (3) != index_fingerprint)
+				    || (index_fingerprint != null && tmp.Substring (3) != index_fingerprint))
 					return null;
 
 				FileAttributes attr = new FileAttributes ();
@@ -101,8 +101,10 @@ namespace Beagle.Daemon {
 			try {
 				string tmp;
 				
-				tmp = String.Format ("{0:00} {1}", EA_VERSION, index_fingerprint);
-				ExtendedAttribute.Set (attr.Path, fingerprint_attr, tmp);
+				if (index_fingerprint != null) {
+					tmp = String.Format ("{0:00} {1}", EA_VERSION, index_fingerprint);
+					ExtendedAttribute.Set (attr.Path, fingerprint_attr, tmp);
+				}
 
 				ExtendedAttribute.Set (attr.Path, unique_id_attr, GuidFu.ToShortString (attr.UniqueId));
 				ExtendedAttribute.Set (attr.Path, last_mtime_attr,

@@ -77,7 +77,7 @@ namespace Beagle.Daemon {
 				command.Dispose ();
 
 				if (VERSION != stored_version
-				    || index_fingerprint != stored_fingerprint)
+				    || (index_fingerprint != null && index_fingerprint != stored_fingerprint))
 					create_new_db = true;
 			}
 

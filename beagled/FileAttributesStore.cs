@@ -41,14 +41,14 @@ namespace Beagle.Daemon {
 
 		public FileAttributes Read (string path)
 		{
-			lock (this) {
+			lock (ifas) {
 				return ifas.Read (path);
 			}
 		}
 
 		public FileAttributes ReadOrCreate (string path, out bool created)
 		{
-			lock (this) {
+			lock (ifas) {
 				created = false;
 
 				FileAttributes attr = ifas.Read (path);
@@ -71,14 +71,14 @@ namespace Beagle.Daemon {
 
 		public bool Write (FileAttributes attr)
 		{
-			lock (this) {
+			lock (ifas) {
 				return ifas.Write (attr);
 			}
 		}
 
 		public void Drop (string path)
 		{
-			lock (this) {
+			lock (ifas) {
 				ifas.Drop (path);
 			}
 		}

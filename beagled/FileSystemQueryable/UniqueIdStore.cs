@@ -77,14 +77,31 @@ namespace Beagle.Daemon.FileSystemQueryable {
 			PopulateCache ();
 		}
 
-		private class Record {
-			public Guid Id;
-			public Guid ParentId;
-			public string Name;
+		public class Record {
+
+			Guid   id;
+			Guid   parent_id;
+			string name;
+
+			internal Record (Guid id, Guid parent_id, string name)
+			{
+				this.id = id;
+				this.parent_id = parent_id;
+				this.name = name;
+			}
+			
+			public Guid UniqueId { get { return id; } }
+			public Guid ParentId { get { return parent_id; } }
+			public string Name   { get { return name; } }
+
 		}
 
-		private Record GetRecordById (Guid id)
+		// This is mostly for internal use, but there is no harm in exposing it
+		public Record GetRecordById (Guid id)
 		{
+			if (id == Guid.Empty)
+				return null;
+
 			lock (connection) {
 				if (cache.Contains (id))
 					return cache [id] as Record;
@@ -99,10 +116,9 @@ namespace Beagle.Daemon.FileSystemQueryable {
 				Record record = null;
 				bool please_cache = false;
 				if (reader.Read ()) {
-					record = new Record ();
-					record.Id = id;
-					record.ParentId = GuidFu.FromShortString (reader [0].ToString ());
-					record.Name = reader [1].ToString ();
+					Guid parent_id = GuidFu.FromShortString (reader [0].ToString ());
+					string name = reader [1].ToString ();
+					record = new Record (id, parent_id, name);
 					please_cache = (reader [2].ToString () == "1");
 				}
 				reader.Close ();
@@ -119,7 +135,8 @@ namespace Beagle.Daemon.FileSystemQueryable {
 			}
 		}
 
-		private Record GetRecordByNameAndParentId (string name, Guid parent_id)
+		// This is mostly for internal use, but there is no harm in exposing it
+		public Record GetRecordByNameAndParentId (string name, Guid parent_id)
 		{
 			lock (connection) {
 
@@ -133,15 +150,38 @@ namespace Beagle.Daemon.FileSystemQueryable {
 
 				Record record = null;
 				if (reader.Read ()) {
-					record = new Record ();
-					record.Id = GuidFu.FromShortString (reader [0].ToString ());
-					record.ParentId = parent_id;
-					record.Name = name;
+					Guid id = GuidFu.FromShortString (reader [0].ToString ());
+					record = new Record (id, parent_id, name);
 				}
 				reader.Close ();
 				command.Dispose ();
 
 				return record;
+			}
+		}
+
+		public ICollection GetRecordsByParentId (Guid parent_id)
+		{
+			lock (connection) {
+
+				ArrayList record_array = new ArrayList ();
+				
+				SqliteCommand command;
+				command = NewCommand ("SELECT id, name FROM unique_ids WHERE parent_id='{0}'",
+						      GuidFu.ToShortString (parent_id));
+
+				SqliteDataReader reader;
+				reader = command.ExecuteReader ();
+
+				while (reader.Read ()) {
+					Guid id = GuidFu.FromShortString (reader [0].ToString ());
+					string name = reader [1].ToString ();
+					record_array.Add (new Record (id, parent_id, name));
+				}
+				reader.Close ();
+				command.Dispose ();
+
+				return record_array;
 			}
 		}
 
@@ -165,12 +205,11 @@ namespace Beagle.Daemon.FileSystemQueryable {
 				reader = command.ExecuteReader ();
 
 				while (reader.Read ()) {
-					Record record = new Record ();
-					record.Id = GuidFu.FromShortString (reader [0].ToString ());
-					record.ParentId = GuidFu.FromShortString (reader [1].ToString ());
-					record.Name = reader [2].ToString ();
+					Guid id = GuidFu.FromShortString (reader [0].ToString ());
+					Guid parent_id = GuidFu.FromShortString (reader [1].ToString ());
+					string name = reader [2].ToString ();
 
-					cache [record.Id] = record;
+					cache [id] = new Record (id, parent_id, name);
 					++count;
 				}
 				reader.Close ();
@@ -179,7 +218,6 @@ namespace Beagle.Daemon.FileSystemQueryable {
 
 			sw.Stop ();
 			Logger.Log.Debug ("Pre-populated UniqueIdStore cache with {0} items in {1}", count, sw);
-
 		}
 
 		public string GetPathById (Guid id)
@@ -204,7 +242,7 @@ namespace Beagle.Daemon.FileSystemQueryable {
 		{
 			lock (connection) {
 				Record record = GetRecordByNameAndParentId (name, parent_id);
-				return record != null ? record.Id : Guid.Empty;
+				return record != null ? record.UniqueId : Guid.Empty;
 			}
 		}
 
@@ -223,10 +261,10 @@ namespace Beagle.Daemon.FileSystemQueryable {
 
 		public void Add (Guid id, Guid parent_id, string name, bool please_cache)
 		{
-			if (Debug)
-				Logger.Log.Debug ("UniqueIdStore.Add: {0} {1} '{2}' {3}",
-						  GuidFu.ToShortString (id), GuidFu.ToShortString (parent_id),
-						  name, please_cache);
+			if (id == Guid.Empty) {
+				string msg = String.Format ("Attempt to add '{0}' to the UniqueIdStore with unique_id=Guid.Empty", name);
+				throw new Exception (msg);
+			}
 
 			lock (connection) {
 				Record record;
@@ -236,14 +274,16 @@ namespace Beagle.Daemon.FileSystemQueryable {
 				    && record.ParentId == parent_id
 				    && record.Name == name)
 						return;
+
+				if (Debug)
+					Logger.Log.Debug ("UniqueIdStore.Add: {0} {1} '{2}' {3}",
+							  GuidFu.ToShortString (id), GuidFu.ToShortString (parent_id),
+							  name, please_cache);
 				
-				record = new Record ();
-				record.Id = id;
-				record.ParentId = parent_id;
-				record.Name = name;
+				record = new Record (id, parent_id, name);
 				
 				DoNonQuery ("INSERT OR REPLACE INTO unique_ids (id, parent_id, name, please_cache) VALUES ('{0}', '{1}', '{2}', '{3}')",
-					    GuidFu.ToShortString (record.Id),
+					    GuidFu.ToShortString (record.UniqueId),
 					    GuidFu.ToShortString (record.ParentId),
 					    record.Name.Replace ("'", "''"),
 					    please_cache ? "1" : "");
@@ -253,11 +293,15 @@ namespace Beagle.Daemon.FileSystemQueryable {
 					please_cache = true;
 				}
 
-				if (please_cache || cache.Contains (record.Id))
-					cache [record.Id] = record;
+				if (please_cache || cache.Contains (record.UniqueId))
+					cache [record.UniqueId] = record;
 			}
 		}
 
+		// FIXME: If this root is already in the db with the same
+		// UniqueId, something terrible has happened.  In that case we
+		// should probably clean up by removing the lost root and all
+		// of its children from the db.
 		public void AddRoot (Guid id, string name, bool please_cache)
 		{
 			if (Debug)
@@ -331,6 +375,8 @@ namespace Beagle.Daemon.FileSystemQueryable {
 		// Check and set the database version
 		//
 
+		// If index_fingerprint is null, don't require us to match the
+		// fingerprint.
 		private bool CheckVersion (string index_fingerprint)
 		{
 			SqliteCommand command;
@@ -359,7 +405,10 @@ namespace Beagle.Daemon.FileSystemQueryable {
 			}
 			command.Dispose ();
 
-			return VERSION == stored_version && index_fingerprint == stored_fingerprint;
+			if (VERSION != stored_version)
+				return false;
+
+			return index_fingerprint == null || index_fingerprint == stored_fingerprint;
 		}
 		
 		private void SaveVersion (string index_fingerprint)

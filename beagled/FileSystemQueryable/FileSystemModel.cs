@@ -159,7 +159,7 @@ namespace Beagle.Daemon.FileSystemQueryable {
 				}
 			}
 
-			public bool HasChildByName (string child_name)
+			public bool HasChildWithName (string child_name)
 			{
 				lock (big_lock) {
 					return children != null && children.Contains (child_name);
@@ -442,6 +442,17 @@ namespace Beagle.Daemon.FileSystemQueryable {
 			fa_store = new FileAttributesStore (this);
 		}
 
+		// I'd rather not expose these, but we really can't avoid it.
+		public UniqueIdStore UniqueIdStore {
+			get { return unique_id_store; }
+		}
+		public NameIndex NameIndex {
+			get { return name_index; }
+		}
+		public FileAttributesStore FileAttributesStore {
+			get { return fa_store; }
+		}
+
 		public ICollection Roots {
 			// We return a copy of the list of roots to avoid locking issues.
 			// In practice this shouldn't be a problem.
@@ -487,8 +498,15 @@ namespace Beagle.Daemon.FileSystemQueryable {
 				path_cache [root.FullName] = root;
 			}
 
-			if (fire_scan_event && NeedsScanEvent != null)
-				NeedsScanEvent (this);
+			if (fire_scan_event) {
+				if (NeedsScanEvent != null) {
+					NeedsScanEvent (this);
+				} else {
+					// If nothing else is listening for this event,
+					// just do it ourself.
+					ScanAll ();
+				}
+			}
 
 			return root;
 		}
@@ -643,7 +661,7 @@ namespace Beagle.Daemon.FileSystemQueryable {
 		{
 			DirectoryPrivate priv = (DirectoryPrivate) dir;
 
-			if (dir.State == State.Unscanned)
+			if (dir.State == State.Unscanned && event_backend != null)
 				priv.SetWatchHandle (event_backend.WatchDirectories (priv.FullName));
 
 			Hashtable known_children = null;
@@ -656,7 +674,7 @@ namespace Beagle.Daemon.FileSystemQueryable {
 			System.IO.DirectoryInfo info = new System.IO.DirectoryInfo (priv.FullName);
 			foreach (System.IO.DirectoryInfo subinfo in info.GetDirectories ()) {
 				if (! Ignore (subinfo.FullName)) {
-					if (! priv.HasChildByName (subinfo.Name))
+					if (! priv.HasChildWithName (subinfo.Name))
 						AddChild_Unlocked (priv, subinfo.Name);
 				}
 				if (known_children != null)
@@ -707,7 +725,8 @@ namespace Beagle.Daemon.FileSystemQueryable {
 
 				foreach (DirectoryPrivate priv in need_watches) {
 					if (priv.NeedsFinalWatches) {
-						priv.SetWatchHandle (event_backend.WatchFiles (priv.FullName, priv.WatchHandle));
+						if (event_backend != null)
+							priv.SetWatchHandle (event_backend.WatchFiles (priv.FullName, priv.WatchHandle));
 						priv.NeedsFinalWatches = false;
 					}
 				}
@@ -786,7 +805,8 @@ namespace Beagle.Daemon.FileSystemQueryable {
 					// Re-scan post-crawl
 					ScanOne_Unlocked (priv);
 					if (priv.NeedsFinalWatches) {
-						priv.SetWatchHandle (event_backend.WatchFiles (priv.FullName, priv.WatchHandle));
+						if (event_backend != null)
+							priv.SetWatchHandle (event_backend.WatchFiles (priv.FullName, priv.WatchHandle));
 						priv.NeedsFinalWatches = false;
 					}
 

@@ -265,6 +265,7 @@ namespace Beagle.Daemon.FileSystemQueryable {
 		{
 			event_backend.Start (this);
 
+			// FIXME: Shouldn't be hard-wired
 			model.AddRoot (PathFinder.HomeDir);
 
 			log.Info ("FileSystemQueryable start-up thread finished");

@@ -464,9 +464,7 @@ namespace Beagle.Daemon {
 		public Scheduler.Task NewRemoveTask (Uri uri) // This should be an external Uri
 		{
 			LuceneTask task;
-			if (to_internal_uris != null)
-				uri = to_internal_uris (uri);
-			task = new LuceneTask (this, this.indexer, uri);
+			task = new LuceneTask (this, this.indexer, uri, to_internal_uris);
 			task.Collector = collector;
 			return task;
 		}
@@ -474,7 +472,7 @@ namespace Beagle.Daemon {
 		public Scheduler.Task NewRemoveTask_InternalUri (Uri uri) // This should be an internal Uri
 		{
 			LuceneTask task;
-			task = new LuceneTask (this, this.indexer, uri);
+			task = new LuceneTask (this, this.indexer, uri, null);
 			task.Collector = collector;
 			return task;
 		}
@@ -484,9 +482,7 @@ namespace Beagle.Daemon {
 		public Scheduler.Task NewRenameTask (Uri old_uri, Uri new_uri)
 		{
 			LuceneTask task;
-			if (to_internal_uris != null)
-				old_uri = to_internal_uris (old_uri);
-			task = new LuceneTask (this, this.indexer, old_uri, new_uri);
+			task = new LuceneTask (this, this.indexer, old_uri, to_internal_uris, new_uri, null);
 
 			// To avoid grouping with anything else, we create our own collector
 			task.Collector = new LuceneTaskCollector (indexer);
@@ -551,6 +547,9 @@ namespace Beagle.Daemon {
 			Uri uri = null;
 			Uri other_uri = null;
 
+			LuceneDriver.UriRemapper uri_remapper = null;
+			LuceneDriver.UriRemapper other_uri_remapper = null;
+
 			// If non-null, add this IIndexableGenerator
 			IIndexableGenerator generator = null;
 
@@ -574,22 +573,30 @@ namespace Beagle.Daemon {
 				this.Weight = 1;
 			}
 
-			public LuceneTask (LuceneQueryable queryable, IIndexer indexer, Uri uri) // Remove
+			public LuceneTask (LuceneQueryable queryable, IIndexer indexer, 
+					   Uri uri, LuceneDriver.UriRemapper remapper) // Remove
 			{
 				this.queryable = queryable;
 				this.indexer = indexer;
 				this.uri = uri;
+				this.uri_remapper = remapper;
 
 				this.Tag = uri.ToString ();
 				this.Weight = 0.499999;
 			}
 
-			public LuceneTask (LuceneQueryable queryable, IIndexer indexer, Uri old_uri, Uri new_uri) // Rename
+			public LuceneTask (LuceneQueryable queryable, IIndexer indexer, 
+					   Uri old_uri, LuceneDriver.UriRemapper old_remapper,
+					   Uri new_uri, LuceneDriver.UriRemapper new_remapper) // Rename
 			{
 				this.queryable = queryable;
 				this.indexer = indexer;
+
 				this.uri = old_uri;
 				this.other_uri = new_uri;
+
+				this.uri_remapper = old_remapper;
+				this.other_uri_remapper = new_remapper;
 
 				this.Tag = String.Format ("{0} => {1}", old_uri, new_uri);
 				this.Weight = 0.1; // In theory renames are light-weight
@@ -607,6 +614,11 @@ namespace Beagle.Daemon {
 
 			protected override void DoTaskReal ()
 			{
+				// Remap Uris as necessary
+				if (uri != null && uri_remapper != null)
+					uri = uri_remapper (uri);
+				if (other_uri != null && other_uri_remapper != null)
+					other_uri = other_uri_remapper (other_uri);
 
 				if (indexable != null) {
 					if (! (indexable.Uri.IsFile 

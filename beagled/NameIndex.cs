@@ -161,7 +161,7 @@ namespace Beagle.Daemon {
 			f = Field.Keyword ("Uid", GuidFu.ToShortString (p.UniqueId));
 			doc.Add (f);
 
-			f = Field.UnStored ("Name", p.Name);
+			f = Field.Text ("Name", p.Name);
 			doc.Add (f);
 
 			string name_noext = Path.GetFileNameWithoutExtension (p.Name);
@@ -182,6 +182,11 @@ namespace Beagle.Daemon {
 
 		public void Add (Guid unique_id, string name)
 		{
+			if (unique_id == Guid.Empty) {
+				string msg = String.Format ("Attempt to add '{0}' to the NameIndex with unique_id=Guid.Empty", name);
+				throw new Exception (msg);
+			}
+
 			if (Debug && name != null)
 				Logger.Log.Debug ("NameIndex.Add: {0} '{1}'",
 						  GuidFu.ToShortString (unique_id), name);
@@ -195,10 +200,12 @@ namespace Beagle.Daemon {
 
 		public void Remove (Guid unique_id)
 		{
+			if (unique_id == Guid.Empty)
+				throw new Exception ("Attempt to remove unique_id=Guid.Empty from the NameIndex");
+
 			if (Debug)
 				Logger.Log.Debug ("NameIndex.Remove: {0}",
 						  GuidFu.ToShortString (unique_id));
-
 
 			Add (unique_id, null);
 		}
@@ -368,6 +375,56 @@ namespace Beagle.Daemon {
 
 			return uids;
 		}
+
+		//////////////////////////////////////////////////////////////////////////////////
+
+		// Pull data out of the NameIndex in bulk -- useful for sanity checks
+		// and debugging
+
+		public struct Record {
+			public Guid   UniqueId;
+			public string Name;
+		}
+
+		public Record [] GetManyByUniqueId (Guid [] unique_ids)
+		{
+			LNS.BooleanQuery query = new LNS.BooleanQuery ();
+			int max_clauses = LNS.BooleanQuery.GetMaxClauseCount ();
+			int clause_count = 0;
+
+			foreach (Guid uid in unique_ids) {
+				Term term = new Term ("Uid", GuidFu.ToShortString (uid));
+				LNS.Query term_query = new LNS.TermQuery (term);
+				query.Add (term_query, false, false);
+				++clause_count;
+				// If we have to many clases, nest the queries
+				if (clause_count == max_clauses) {
+					LNS.BooleanQuery new_query = new LNS.BooleanQuery ();
+					new_query.Add (query, false, false);
+					query = new_query;
+					clause_count = 1;
+				}
+			}
+
+			IndexReader reader = IndexReader.Open (store);
+			LNS.Searcher searcher = new LNS.IndexSearcher (reader);
+			LNS.Hits hits = searcher.Search (query);
+			int n_hits = hits.Length ();
+
+			Record [] records = new Record [n_hits];
+			for (int i = 0; i < n_hits; ++i) {
+				Document doc = hits.Doc (i);
+				records [i].UniqueId = GuidFu.FromShortString (doc.Get ("Uid"));
+				records [i].Name     = doc.Get ("Name");
+			}
+
+			// The call to searcher.Close () also closes the IndexReader
+			searcher.Close ();
+
+			return records;
+		}
+
+		//////////////////////////////////////////////////////////////////////////////////
 
 		public void SpewIndex ()
 		{
