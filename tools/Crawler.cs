@@ -163,13 +163,23 @@ class CrawlerTool {
 			Console.WriteLine ("Scanning {0}", info.FullName);
 
 			foreach (FileInfo file in info.GetFiles ()) {
-				if (! noindex.IsMatch (file.Name))
-					CrawlFile (file);
+				if (! noindex.IsMatch (file.Name)) {
+					try {
+						CrawlFile (file);
+					} catch (Exception e) {
+						Console.WriteLine ("Caught exception while crawling file '" + file.Name + "':\n" + e.Message);
+					}
+				}
 			}
 
 			foreach (DirectoryInfo subdir in info.GetDirectories ()) {
-				if (! noindex.IsMatch (subdir.Name))
-					CrawlDirectory (subdir);
+				if (! noindex.IsMatch (subdir.Name)) {
+					try {
+						CrawlDirectory (subdir);
+					} catch (Exception e) {
+						Console.WriteLine ("Caught exception while crawling directory '" + subdir.Name + "':\n" + e.Message);
+					}
+				}
 			}
 		}
 

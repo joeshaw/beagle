@@ -9,6 +9,7 @@ ASSEMBLIES =				\
 	$(EVO_SHARP_LIBS)
 
 WRAPPER_IN = wrapper.in
+WRAPPER_SED = sed -e "s|\@prefix\@|$(prefix)|g" -e "s|\@pkglibdir\@|$(pkglibdir)|g" 
 
 
 CRAWLER_TARGET  = Crawler.exe
@@ -19,7 +20,7 @@ $(CRAWLER_TARGET): $(CRAWLER_CSFILES)
 	$(CSC) -o $@ $(CSFLAGS) $(CRAWLER_CSFILES) $(ASSEMBLIES)
 
 $(CRAWLER_WRAPPER): $(WRAPPER_IN)
-	sed -e "s|\@prefix\@|$(prefix)|g" -e "s|\@pkglibdir\@|$(pkglibdir)|g" -e "s|\@target\@|$(CRAWLER_TARGET)|g" < $(srcdir)/$(WRAPPER_IN) > $(CRAWLER_WRAPPER)
+	$(WRAPPER_SED) -e "s|\@target\@|$(CRAWLER_TARGET)|g" < $(srcdir)/$^ > $@
 	chmod +x $(CRAWLER_WRAPPER)
 
 
@@ -31,7 +32,7 @@ $(CRAWLER_RSS20_TARGET): $(CRAWLER_RSS20_CSFILES)
 	$(CSC) -o $@ $(CSFLAGS) $(CRAWLER_RSS20_CSFILES) $(ASSEMBLIES)
 
 $(CRAWLER_RSS20_WRAPPER): $(WRAPPER_IN)
-	sed -e "s|\@prefix\@|$(prefix)|g" -e "s|\@pkglibdir\@|$(pkglibdir)|g" -e "s|\@target\@|$(CRAWLER_RSS20_TARGET)|g" < $(srcdir)/$(WRAPPER_IN) > $(CRAWLER_RSS20_WRAPPER)
+	$(WRAPPER_SED) -e "s|\@target\@|$(CRAWLER_RSS20_TARGET)|g" < $(srcdir)/$^ > $@
 	chmod +x $(CRAWLER_RSS20_WRAPPER)
 
 
@@ -43,7 +44,7 @@ $(QUERY_TARGET): $(QUERY_CSFILES)
 	$(CSC) -o $@ $(CSFLAGS) $(QUERY_CSFILES) $(ASSEMBLIES)
 
 $(QUERY_WRAPPER): $(WRAPPER_IN)
-	sed -e "s|\@prefix\@|$(prefix)|g" -e "s|\@pkglibdir\@|$(pkglibdir)|g" -e "s|\@target\@|$(QUERY_TARGET)|g" < $(srcdir)/$(WRAPPER_IN) > $(QUERY_WRAPPER)
+	$(WRAPPER_SED) -e "s|\@target\@|$(QUERY_TARGET)|g" < $(srcdir)/$^ > $@
 	chmod +x $(QUERY_WRAPPER)
 
 
@@ -55,7 +56,7 @@ $(EXTRACT_CONTENT_TARGET): $(EXTRACT_CONTENT_CSFILES)
 	$(CSC) -o $@ $(CSFLAGS) $(EXTRACT_CONTENT_CSFILES) $(ASSEMBLIES)
 
 $(EXTRACT_CONTENT_WRAPPER): $(WRAPPER_IN)
-	sed -e "s|\@prefix\@|$(prefix)|g" -e "s|\@pkglibdir\@|$(pkglibdir)|g" -e "s|\@target\@|$(EXTRACT_CONTENT_TARGET)|g" < $(srcdir)/$(WRAPPER_IN) > $(EXTRACT_CONTENT_WRAPPER)
+	$(WRAPPER_SED) -e "s|\@target\@|$(EXTRACT_CONTENT_TARGET)|g" < $(srcdir)/$^ > $@
 	chmod +x $(EXTRACT_CONTENT_WRAPPER)
 
 
@@ -67,7 +68,7 @@ $(INDEX_WEB_CONTENT_TARGET): $(INDEX_WEB_CONTENT_CSFILES)
 	$(CSC) -o $@ $(CSFLAGS) $(INDEX_WEB_CONTENT_CSFILES) $(ASSEMBLIES)
 
 $(INDEX_WEB_CONTENT_WRAPPER): $(WRAPPER_IN)
-	sed -e "s|\@prefix\@|$(prefix)|g" -e "s|\@pkglibdir\@|$(pkglibdir)|g" -e "s|\@target\@|$(INDEX_WEB_CONTENT_TARGET)|g" < $(srcdir)/$(WRAPPER_IN) > $(INDEX_WEB_CONTENT_WRAPPER)
+	$(WRAPPER_SED) -e "s|\@target\@|$(INDEX_WEB_CONTENT_TARGET)|g" < $(srcdir)/$^ > $@
 	chmod +x $(INDEX_WEB_CONTENT_WRAPPER)
 
 
@@ -79,7 +80,7 @@ $(INDEX_MAIL_TARGET): $(INDEX_MAIL_CSFILES)
 	$(CSC) -o $@ $(CSFLAGS) $(INDEX_MAIL_CSFILES) $(ASSEMBLIES)
 
 $(INDEX_MAIL_WRAPPER): $(WRAPPER_IN)
-	sed -e "s|\@prefix\@|$(prefix)|g" -e "s|\@pkglibdir\@|$(pkglibdir)|g" -e "s|\@target\@|$(INDEX_MAIL_TARGET)|g" < $(srcdir)/$(WRAPPER_IN) > $(INDEX_MAIL_WRAPPER)
+	$(WRAPPER_SED) -e "s|\@target\@|$(INDEX_MAIL_TARGET)|g" < $(srcdir)/$^ > $@
 	chmod +x $(INDEX_MAIL_WRAPPER)
 
 
@@ -123,8 +124,10 @@ EXTRA_DIST =				\
 	$(QUERY_CSFILES)		\
 	$(EXTRACT_CONTENT_CSFILES)	\
 	$(INDEX_WEB_CONTENT_CSFILES)	\
-	$(INDEX_MAIL_CSFILES)
+	$(INDEX_MAIL_CSFILES)		\
+	$(UPDATE_SCRIPT).in
 
 CLEANFILES = 				\
 	$(TARGETS)			\
-	$(WRAPPERS)
+	$(WRAPPERS)			\
+	$(UPDATE_SCRIPT)

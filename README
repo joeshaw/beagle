@@ -1,6 +1,5 @@
 
-Dewey is an indexing sub-system built on top of Lucene.Net.
-
+Beagle is an indexing sub-system built on top of Lucene.Net.
 
 Thanks to:
 Doug Cutting for the mind-blowing greatness of Lucene.

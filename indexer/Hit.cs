@@ -12,7 +12,7 @@ namespace Beagle {
 	public class Hit : Versioned, IComparable {
 
 		// A unique ID.  id <= 0 means 'undefined'.
-		private long id = 0;
+		private int id = 0;
 
 		// A URI we can use to locate the source of this match.
 		private String uri = null;
@@ -55,7 +55,7 @@ namespace Beagle {
 
 		//////////////////////////
 
-		public long Id {
+		public int Id {
 			get { return id; }
 			set { CheckLock (); id = value; }
 		}
