@@ -1,3 +1,15 @@
+2004-12-07  Veerapuram Varadhan <vvaradhan@novell.com>
+
+	* Filters/FilterOpenOffice.cs: Count slides.  Support for
+	annotations and more *HOT* styles.
+	
+	* From a patch by Vishravars Ramasubramanian <vishrav_r@yahoo.co.in>
+	[NOSIP student].
+		
+	* Filters/FilterOpenOffice.cs: Fix for Bug#: 157100
+	Parse through styles.xml to read "Header", "Footer", "Footnote", 
+	"Endnote" texts.
+	
 2004-12-07  Tuomas Kuosmanen  <tigert@novell.com>
 
 	* Tiles/template-web-history.html: Fixed the uri to be a link
@@ -15,6 +27,7 @@
 2004-12-03  Veerapuram Varadhan <vvaradhan@novell.com>
 
 	* configure.in: Updated to gsf-sharp 0.2.
+	
 	* Filters/FilterPPT.cs: Added meta-data support replacing the
 	current NumSlides logic.
 	

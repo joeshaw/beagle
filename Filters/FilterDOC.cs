@@ -1,7 +1,6 @@
 //
-// FilterDOC.cs
 //
-// FilterRTF.cs : Trivial implementation of a MS Word-document filter.
+// FilterDOC.cs : Trivial implementation of a MS Word-document filter.
 //                This filter uses wv1 library - http://wvware.sourceforge.net/
 //
 // Author: Veerapuram Varadhan <vvaradhan@novell.com>

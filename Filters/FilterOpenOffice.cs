@@ -30,6 +30,7 @@ using System.Collections;
 using System.IO;
 using System.Text;
 using System.Xml;
+using Beagle.Util;
 
 using ICSharpCode.SharpZipLib.Zip;
 
@@ -62,6 +63,8 @@ namespace Beagle.Filters {
 			return null;
 		}
 
+		// Parse the "style" nodes and mark appropriate styles as *HOT*
+		// FIXME: Identify and ADD more *HOT* styles. ;)
 		void StudyStyleNode (XmlReader reader)
 		{
 			string style_name = reader.GetAttribute ("style:name");
@@ -69,6 +72,7 @@ namespace Beagle.Filters {
 
 			string weight = null;
 			string underline = null;
+			string italic = null;
 			int original_depth = reader.Depth;
 
 			if (!reader.IsEmptyElement) {
@@ -77,6 +81,7 @@ namespace Beagle.Filters {
 					if (reader.NodeType == XmlNodeType.Element
 					    && reader.Name == "style:properties") {
 						weight = reader.GetAttribute ("fo:font-weight");
+						italic = reader.GetAttribute ("fo:font-style");
 						underline = reader.GetAttribute ("style:text-underline");
 					}
 					reader.Read ();
@@ -84,11 +89,14 @@ namespace Beagle.Filters {
 			}
 
 			if ((style_parent != null && style_parent.StartsWith("Heading"))
-			    || weight == "bold" 
-			    || (underline != null && underline != "none")) {
-				
+			    || (style_name != null && ((String.Compare (style_name, "Footnote") == 0)
+						       || (String.Compare (style_name, "Endnote") == 0)
+						       || (String.Compare (style_name, "Header") == 0)
+						       || (String.Compare (style_name, "Footer") == 0)))
+			    || (weight != null && weight == "bold")
+			    || (italic != null && italic == "italic")
+			    || (underline != null && underline != "none"))
 				hotStyles[style_name] = true;
-			}
 		}
 
 		static bool NodeIsHot (String nodeName)
@@ -98,12 +106,16 @@ namespace Beagle.Filters {
 
 		static bool NodeIsFreezing (String nodeName)
 		{
-			return nodeName == "text:footnote-citation";
+			return nodeName == "text:footnote-citation"
+				|| nodeName == "text:endnote-citation";
+
 		}
 
 		static bool NodeBreaksTextBefore (String nodeName)
 		{
-			return nodeName == "text:footnote";
+			return nodeName == "text:footnote"
+				|| nodeName == "text:endnote"
+				|| nodeName == "office:annotation";
 		}
 
 		static bool NodeBreaksTextAfter (String nodeName)
@@ -113,7 +125,9 @@ namespace Beagle.Filters {
 				|| nodeName == "text:s"
 				|| nodeName == "text:tab-stop"
 				|| nodeName == "text:footnote"
-				|| nodeName == "table:table-cell";
+				|| nodeName == "table:table-cell"
+				|| nodeName == "text:endnote"
+				|| nodeName == "office:annotation";
 		}
 
 		private Stack hot_nodes = new Stack ();
@@ -124,78 +138,122 @@ namespace Beagle.Filters {
 			int num_elements = 0;
 
 			while (reader.Read ()) {
-			switch (reader.NodeType) {
-			case XmlNodeType.Element:
-				if (reader.IsEmptyElement) {
+				switch (reader.NodeType) {
+				case XmlNodeType.Element:
+					if (reader.IsEmptyElement) {
+						if (NodeBreaksTextBefore (reader.Name))
+							AppendWhiteSpace ();
+						if (NodeBreaksTextAfter (reader.Name))
+							AppendWhiteSpace ();
+						continue;
+					}
+
+					if (reader.Name == "style:style") {
+						StudyStyleNode (reader); 
+						continue;
+					}
+					// A node is hot if:
+					// (1) It's name is hot
+					// (2) It is flagged with a hot style
+					// (3) annotations are always hot.
+
+					bool isHot = false;
+
+					if (NodeIsHot (reader.Name)) {
+						isHot = true;
+					} else if (reader.Name == "office:annotation") {
+						isHot = true;
+					} else {
+						bool has_attr = reader.MoveToFirstAttribute ();
+						while (has_attr) {
+							if (reader.Name.EndsWith(":style-name")) {
+								if (hotStyles.Contains (reader.Value))
+									isHot = true;
+								break;
+							}
+							has_attr = reader.MoveToNextAttribute ();
+						
+						}
+						reader.MoveToElement();
+					} 
+
+					hot_nodes.Push (isHot);
+				
+					if (isHot)
+						HotUp ();
+				
+					if (NodeIsFreezing (reader.Name))
+						FreezeUp ();
+				
 					if (NodeBreaksTextBefore (reader.Name))
 						AppendWhiteSpace ();
+					break;
+				case XmlNodeType.Text:
+					string text = reader.Value;
+					AppendText (text);
+					break;
+				case XmlNodeType.EndElement:
 					if (NodeBreaksTextAfter (reader.Name))
 						AppendWhiteSpace ();
-					continue;
+
+					bool is_hot = (bool) hot_nodes.Pop ();
+					if (is_hot)
+						HotDown ();
+				
+					if (NodeIsFreezing (reader.Name))
+						FreezeDown ();
+					break;
 				}
-
-				if (reader.Name == "style:style") {
-					StudyStyleNode (reader); 
-					continue;
+				num_elements++;
+				if (num_elements >= total_elements) {
+					return false;
 				}
-
-				// A node is hot if:
-				// (1) It's name is hot
-				// (2) It is flagged with a hot style
-				bool isHot = false;
-				if (NodeIsHot (reader.Name)) {
-					isHot = true;
-				} else {
-					bool has_attr = reader.MoveToFirstAttribute ();
-					while (has_attr) {
-						if (reader.Name.EndsWith(":style-name")) {
-							if (hotStyles.Contains (reader.Value))
-								isHot = true;
-							break;
-						}
-						has_attr = reader.MoveToNextAttribute ();
-
-					}
-					reader.MoveToElement();
-				}				
-
-				hot_nodes.Push (isHot);
-				
-				if (isHot)
-					HotUp ();
-				
-				if (NodeIsFreezing (reader.Name))
-					FreezeUp ();
-				
-				if (NodeBreaksTextBefore (reader.Name))
-					AppendWhiteSpace ();
-				break;
-			case XmlNodeType.Text:
-				string text = reader.Value;
-				AppendText (text);
-				break;
-			case XmlNodeType.EndElement:
-				if (NodeBreaksTextAfter (reader.Name))
-					AppendWhiteSpace ();
-
-				bool is_hot = (bool) hot_nodes.Pop ();
-				if (is_hot)
-					HotDown ();
-				
-				if (NodeIsFreezing (reader.Name))
-					FreezeDown ();
-				break;
-			}
-			num_elements++;
-			if (num_elements >= total_elements) {
-				return false;
-			}
 			} 
 			return true;
 		}
 
+		// SlideCount is not stored in meta.xml rather we need to 
+		// parse the whole of content.xml to find out the count of
+		// slides present in an .sxi.
+		private void ExtractSlideCount (XmlReader reader)
+		{
+			string slideCount = null;
+			reader.Read ();
+			do {
+				reader.Read ();
+
+				// Do not parse the whole file if it is not a
+				// presentation (impress document)
+				if (reader.Name == "office:document-content" 
+				    && reader.NodeType == XmlNodeType.Element) {
+					string docClass = reader.GetAttribute ("office:class");
+					if (docClass != "presentation")
+						return;
+				}
+			} while (reader.Depth < 2);
+			
+			while (reader.Depth >= 1) {
+				if (reader.Depth != 2 || reader.NodeType != XmlNodeType.Element) {
+					reader.Read ();
+					continue;
+				}
+				switch (reader.Name) {
+				case "draw:page":
+					slideCount = reader.GetAttribute ("draw:id");
+					break;
+				}
+				reader.Read ();
+			}
+			
+			if (slideCount != null)
+				AddProperty (Beagle.Property.NewKeyword ("fixme:slide-count", slideCount));
+
+		}
+
 		private void ExtractMetadata (XmlReader reader)
 		{
+			string slideCount = null;
+
 			do {
 				reader.Read ();
 			} while (reader.Depth < 2);
@@ -205,9 +263,7 @@ namespace Beagle.Filters {
 					reader.Read ();
 					continue;
 				}
-
 				switch (reader.Name) {
-					
 				case "dc:title":
 					reader.Read ();
 					AddProperty (Beagle.Property.New ("dc:title",
@@ -235,6 +291,13 @@ namespace Beagle.Filters {
 					attr = reader.GetAttribute ("meta:word-count");
 					if (attr != null)
 						AddProperty (Beagle.Property.NewKeyword ("fixme:word-count", attr));
+
+					// Both writer and calc uses this attribute.  writer stores the
+					// count of tables in a sxw whereas calc stores the count of
+					// spreadsheets in a sxc.
+					attr = reader.GetAttribute ("meta:table-count");
+					if (attr != null && Convert.ToInt32 (attr) > 0)
+						AddProperty (Beagle.Property.NewKeyword ("fixme:spreadsheet-count", attr));
 					break;
 
 				case "meta:user-defined":
@@ -269,26 +332,48 @@ namespace Beagle.Filters {
 				XmlReader reader = new XmlTextReader (meta_stream);
 				ExtractMetadata (reader);
 			} else {
-				Console.WriteLine ("No meta.xml!");
+				Logger.Log.Error ("No meta.xml!");
+			}
+			
+			entry = zip.GetEntry ("content.xml");
+			if (entry != null) {
+				Stream contents_stream = zip.GetInputStream (entry);
+				XmlReader reader = new XmlTextReader (contents_stream);
+				ExtractSlideCount (reader);
+			} else {
+				Logger.Log.Error ("No content.xml!");
 			}
 		}
 
 		XmlReader content_reader = null;
+		XmlReader style_reader = null;
 		override protected void DoPull ()
 		{
-			if (content_reader == null) {
+			// We need both styles.xml and content.xml as 
+			// "Header", "Footer" are stored in styles.xml and
+			// "[Foot/End]Notes are stored in content.xml
+			if ((content_reader == null) && (style_reader == null)) {
+
 				ZipEntry entry = zip.GetEntry ("content.xml");
-				if (entry != null) {
+				ZipEntry entry1 = zip.GetEntry ("styles.xml");
+
+				if ((entry != null) && (entry1 != null)) {
 					Stream content_stream = zip.GetInputStream (entry);
+					Stream style_stream = zip.GetInputStream (entry1);
 					content_reader = new XmlTextReader (content_stream);
+					style_reader = new XmlTextReader (style_stream);
 				}
 			}				
-			if (content_reader == null) {
+			if ((content_reader == null) && (style_reader == null)) {
 				Finished ();
 				return;
 			}
 
-			if (WalkContentNodes (content_reader))
+			// Note: Do not change the order.
+			// we need to populate our hotStyles table with all posible hot styles.
+			// Since, "footnotes" and "endnotes" gets stored in content.xml and these
+			// styles needs to be marked as *HOT*, they need to be processed before contents.
+			if ((WalkContentNodes (style_reader)) && (WalkContentNodes (content_reader)))
 				Finished ();
 		}
 	}
