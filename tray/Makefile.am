@@ -11,12 +11,15 @@ CSFLAGS = -target:exe
 CSFILES = 				\
 	$(srcdir)/Utils.cs		\
 	$(srcdir)/BeagleTray.cs		\
-	$(srcdir)/Main.cs
+	$(srcdir)/Main.cs		\
+	$(srcdir)/BestRootTile.cs
 
 ASSEMBLIES = 					\
 	$(BEAGLE_UI_LIBS)			\
-	-r:$(top_builddir)/tray/TrayIcon/TrayIcon.dll
-
+	-r:$(top_builddir)/tray/TrayIcon/TrayIcon.dll \
+	-r:/usr/local/lib/beagle/Beagle.dll \
+	-r:/usr/local/lib/beagle/Util.dll \
+	-r:/usr/local/lib/beagle/Tiles.dll
 RESOURCES = \
 	-resource:$(top_srcdir)/images/trayicon.png,trayicon.png
 

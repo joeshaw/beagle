@@ -1,3 +1,6 @@
+2004-09-22  Srinivasa Ragavan <sragavan@novell.com>
+	* Added code for tray applet  
+
 2004-09-22  Raja R Harinath  <rharinath@novell.com>
 
 	* beagled/Makefile.am: Fix srcdir != builddir problems.
