@@ -215,8 +215,9 @@ namespace Beagle.Daemon.EvolutionDataServerQueryable {
 		
 			Evolution.BookQuery bq;
 			bq = Evolution.BookQuery.And (ebqs, false);
-		
-			view = addressbook.GetBookView (bq, null, -1);
+
+			ArrayList dummy = new ArrayList ();
+			view = addressbook.GetBookView (bq, dummy, -1);
 
 			result = _result;
 		
