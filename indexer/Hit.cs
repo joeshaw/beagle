@@ -282,7 +282,7 @@ namespace Beagle {
 			string mimeType = MimeType;
 			string command = null, argument = null;
 			string commandFallback = null;
-			bool expectsUris, expectsUrisFallback = false;
+			bool expectsUris = false, expectsUrisFallback = false;
 
 			// A hack for folders
 			if (mimeType == "inode/directory") {
