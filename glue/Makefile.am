@@ -1,5 +1,6 @@
 INCLUDES= \
 	$(LIBGECKOGLUE_CFLAGS)                            \
+	$(LIBTRAYICON_CFLAGS)                             \
         -I$(MOZILLA_INCLUDE_ROOT)/content                 \
         -I$(MOZILLA_INCLUDE_ROOT)/dom                     \
         -I$(MOZILLA_INCLUDE_ROOT)/find                    \
@@ -25,7 +26,8 @@ gluelib_LTLIBRARIES = 		\
 	libinotifyglue.la 	\
 	libscreensaverglue.la	\
 	libgeckoglue.la         \
-	libkeyglue.la
+	libkeyglue.la		\
+	libtrayiconglue.la
 
 if ENABLE_WV1
 gluelib_LTLIBRARIES += \
@@ -51,6 +53,11 @@ libkeyglue_la_SOURCES =         \
 	tomboykeybinder.h       \
 	eggaccelerators.c       \
 	eggaccelerators.h
+
+libtrayiconglue_la_SOURCES =    \
+	eggtrayicon.c		\
+	eggtrayicon.h
+libtrayiconglue_la_LIBADD = $(LIBTRAYICON_LIBS)
 
 if ENABLE_WV1
 libwv1glue_la_SOURCES = \

@@ -1,3 +1,9 @@
+2004-11-18  Alex Graveley  <alex@beatniksoftware.com>
+
+	* Best/BestTray.cs: Make BestTray extend Gtk.Plug, and in the
+	constructor set the Raw pointer to the return of
+	egg_tray_icon_new, which we call directly.
+
 2004-11-16  Veerapuram Varadhan <vvaradhan@novell.com>
 
 	* configure.in, Filters/Makefile.am, glue/Makefile.am: Added

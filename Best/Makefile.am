@@ -1,6 +1,4 @@
 
-SUBDIRS = TrayIcon
-
 CSC = mcs -g
 
 TARGET = Best.exe
@@ -14,7 +12,6 @@ CSFILES =				\
 	$(srcdir)/BestTray.cs
 
 LOCAL_ASSEMBLIES =			\
-	TrayIcon/TrayIcon.dll 		\
 	../Util/Util.dll		\
 	../images/Images.dll		\
 	../BeagleClient/Beagle.dll      \

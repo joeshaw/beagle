@@ -180,7 +180,7 @@ AC_SUBST(BEAGLE_UI_LIBS)
 
 dnl ----------------------------------------------
 
-# Gdk and Atk are needed for libtrayicon
+# Gdk and Atk are needed for libtrayiconglue
 GDK20_MINIMUM_VERSION=2.2.3
 ATK_MINIMUM_VERSION=1.2.4
 
@@ -350,8 +350,6 @@ epiphany-extension/Makefile
 mozilla-extension/Makefile
 searchomatic/Makefile
 chooser-fu/Makefile
-Best/TrayIcon/Makefile
-Best/TrayIcon/libtrayicon/Makefile
 beagle-0.0.pc
 beagle.spec
 ])

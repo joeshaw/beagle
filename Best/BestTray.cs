@@ -8,27 +8,31 @@
 
 using System;
 using System.Collections;
+using System.Runtime.InteropServices;
 
 using Gtk;
-using Egg;
 
 using Beagle;
 using Beagle.Tile;
 
 namespace Best {
 	
-	public class BestTray
+	public class BestTray : Gtk.Plug
 	{
-		TrayIcon tray_icon;
-
 		BestWindow win;
 		Gtk.Button button;
 		Beagle.Util.GConfXKeybinder keybinder;
 
+		[DllImport ("libtrayiconglue")]
+		private static extern IntPtr egg_tray_icon_new (string name);
+
 		public BestTray (BestWindow bw)
 		{
+			// FIXME: My tray icon is clipped with a 28 pixel tray
+			Raw = egg_tray_icon_new ("Search");
+
 			win = bw;
-			win.DeleteEvent += new DeleteEventHandler (DeleteEvent);
+			win.DeleteEvent += new DeleteEventHandler (WindowDeleteEvent);
 			button = new Gtk.Button ();			
 
 			Gtk.Widget icon_image = new Gtk.Image (Images.GetPixbuf ("smalldog.png"));
@@ -37,11 +41,8 @@ namespace Best {
 
 			button.Pressed += new EventHandler (ButtonPress);
 
-			// FIXME: My tray icon is clipped with a 28 pixel tray
-			tray_icon = new Egg.TrayIcon ("Search");
-
-			tray_icon.Add (button);
-			tray_icon.ShowAll ();
+			Add (button);
+			ShowAll ();
 
 			keybinder = new Beagle.Util.GConfXKeybinder ();
 			keybinder.Bind ("/apps/Beagle/keybindings/show_beagle",
@@ -71,7 +72,7 @@ namespace Best {
 			}
 		}
 
-		void DeleteEvent (object sender, DeleteEventArgs args)
+		void WindowDeleteEvent (object sender, DeleteEventArgs args)
 		{
 			win.Hide ();
 			args.RetVal = (object)true;
