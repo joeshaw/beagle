@@ -1,3 +1,10 @@
+2005-01-24  Veerapuram Varadhan	 <vvaradhan@novell.com>
+
+	* Filters/FilterPascal.cs: Added pascal support.
+	[ Demo'ed on stage hacking of beagle in Hacker Crackdown, 2005
+	@ NIT, Trichy (http://www.nitt.edu/hackercrackdown/index.php?section=speakers), by
+	writing this Filter ;)]
+	
 2005-01-21  Veerapuram Varadhan	 <vvaradhan@novell.com>
 
 	* Filters/FilterSource.cs: Added Fortran_Style and related changes.

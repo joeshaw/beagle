@@ -37,7 +37,8 @@ namespace Beagle.Filters {
 			None,
 			C_Style,
 			Python_Style,
-			Fortran_Style
+			Fortran_Style,
+			Pascal_Style
 		};
 		
 		protected LangType SrcLangType;
@@ -66,7 +67,8 @@ namespace Beagle.Filters {
 		// Tokenize the passed string and add the relevant 
 		// tokens for indexing.
 		//
-		// FIXME: Perl has embedded "POD" style which needs a little processing.
+		// FIXME: Perl has embedded "POD" (documentation) style, which needs a little processing.
+		//        Pascal has its own style of comments.
  		protected void ExtractTokens (string str)
 		{
 			int index, kwindex;
@@ -75,7 +77,8 @@ namespace Beagle.Filters {
 
 			for (index = 0; index < str.Length; index++) {
 				if ((str[index] == '/' || str[index] == '*') &&
-				    (SrcLangType == LangType.C_Style)) {		
+				    (SrcLangType == LangType.C_Style ||
+				     SrcLangType == LangType.Pascal_Style)) {		
 					splCharSeq += str[index];
 					
 					switch (splCharSeq) {
