@@ -76,7 +76,14 @@ namespace Beagle.Tile {
 
 		public void AddHit (Hit hit)
 		{
-			values["Uri"] = hit.Uri.ToString ();
+			string uri = hit.Uri.ToString ();
+
+			values["Uri"] = uri;
+
+			if (uri.Length > 40)
+				uri = uri.Substring (0, 40) + "...";
+			values["DisplayUri"] = uri;
+
 			values["MimeType"] = hit.MimeType;
 			values["Source"] = hit.Source;
 			values["Score"] = hit.Score.ToString ();
