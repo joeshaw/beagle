@@ -212,22 +212,28 @@ namespace Beagle.Daemon {
 
 		private bool last_was_structural_break = true;
 
-		public void AppendText (string str)
+		// This two-arg AppendText() will give flexibility to
+		// filters to segregate hot-contents and
+		// normal-contents of a para and call this method with
+		// respective contents.  
+		//
+		// str : Holds both the normal-contents and hot contents.
+		// strHot: Holds only hot-contents.
+		//
+		// Ex:- suppose the actual-content is "one <b>two</b> three"
+		// str = "one two three"
+		// strHot = "two"
+		//
+		// NOTE: HotUp() or HotDown() has NO-EFFECT on this variant 
+		// of AppendText ()
+		
+		public void AppendText (string str, string strHot)
 		{
-			//Logger.Log.Debug ("AppendText (\"{0}\")", str);
-			if (! IsFrozen && str != null && str != "") {
+			if (!IsFrozen && strHot != null && strHot != "")
+				hotPool.Add (strHot.Trim()+" ");
 
-				// FIXME: We should be smarter about newlines
-				if (str.IndexOf ('\n') != -1)
-					str = str.Replace ("\n", " ");
-
+			if (!IsFrozen && str != null && str != "") {
 				textPool.Add (str);
-
-				// For Hot pool, Add the "whitespace"
-				// while adding text to it. This way
-				// we can avoid extra spaces.
-				if (IsHot)
-					hotPool.Add (str.Trim()+" ");
 
 				int pool_size = 0;
 				foreach (string x in textPool)
@@ -249,34 +255,16 @@ namespace Beagle.Daemon {
 			}
 		}
 
-		// Some filters like Doc filter needs a method like this.
-		// As, contents are extracted in unmanaged code and 
-		// are returned to managed code through delegates.
-		// As the size of the contents grows, the performance of filters 
-		// degrades really badly.  To avoid such performance-hickups,
-		// the number of round-trips from unmanged-to-managed-code 
-		// calls have to be minimized.  Having said that, 
-		// a possible optimization would be to write back one 
-		// paragraph/section at a time, however, with the current infrastructure
-		// it is not possible to do so, because,
-		//   1) AppendText() is the only method available to add contents/hotcontents/
-		//      textcache etc.  So, the maximum optimization could be that, 
-		//      one has to do AppendText whenever there is a change in the 
-		//      format-attributes of a text.  This can give a fair amount of 
-		//      optimization but not good enough to keep ourselves satisfied.
-		//   2) Alternatively, we can segregate hot-contents and normal-contents of a
-		//      para and call AppendText() with respective contents.  This will give 
-		//      expected amount of optimization, however, will screw-up snippets, as
-		//      the order of text-in-text-cache will not be in sync with original text.
-		// By defining this method, we give the flexibility to the filters, to 
-		//   1) Collect the necessary-contents.
-		//   2) Add them as required.
-		// This will help those filters that have to switch between managed and unmanaged
-		// code.
-		public void AppendTextToHotPool (string str)
+		public void AppendText (string str)
 		{
+			//Logger.Log.Debug ("AppendText (\"{0}\")", str);
 			if (! IsFrozen && str != null && str != "") {
-				hotPool.Add (str.Trim()+" ");
+
+				// FIXME: We should be smarter about newlines
+				if (str.IndexOf ('\n') != -1)
+					str = str.Replace ("\n", " ");
+
+				AppendText (str, IsHot ? str : null);
 			}
 		}
 

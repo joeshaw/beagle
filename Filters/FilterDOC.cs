@@ -119,27 +119,27 @@ namespace Beagle.Filters {
 					bool appendStructBrk)
   		{
 			byte[] data = null;
-			string str;
+			string str = null;
+			string strHot = null;
 
 			if (dataLen > 0){
 				data = new byte[dataLen];
 				Marshal.Copy (byteArray, data, 0, dataLen);
 			}
 			
-			if (data != null) {
+			if (data != null)
 				str = System.Text.Encoding.UTF8.GetString (data, 0, dataLen);
-				AppendText (str);
-			}
 
 			data = null;
 			if (hotDataLen > 0) {
 				data = new byte [hotDataLen];
 				Marshal.Copy (byteHotArray, data, 0, hotDataLen);
 			}
-			if (data != null) {
-				str = System.Text.Encoding.UTF8.GetString (data, 0, hotDataLen);
-				AppendTextToHotPool (str);
-			}
+			if (data != null)
+				strHot = System.Text.Encoding.UTF8.GetString (data, 0, hotDataLen);
+			
+			AppendText (str, strHot);
+			
 			if (appendStructBrk)
 				AppendStructuralBreak ();
   		}

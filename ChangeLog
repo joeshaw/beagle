@@ -1,3 +1,11 @@
+2005-03-31  Veerapuram Varadhan  <vvaradhan@novell.com>
+
+	* beagled/Filter.cs: Defined a new variant of AppendText() with
+	two arguments and removed AppendTextToHotPool().
+
+	* Filter/FilterDOC.cs: Use two-arg AppendText() instead of
+	AppendTextToHotPool().
+	
 2005-03-31  Vijay K. Nanjundaswamy <knvijay@novell.com>
 
 	* beagled/Makefile.am: Fixes in COND_CS_FILES and EXTRA_DIST to include
