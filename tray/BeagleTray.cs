@@ -23,13 +23,13 @@ namespace Beagle
 
 	public class BeagleTray
 	{
-		static TrayIcon   tray_icon;
-		static Gdk.Pixbuf glass_icon;
-		static Gtk.ToggleButton button;
-		static Gtk.Window       win;
-		static Gtk.Entry 	entry;
-		static int              w_width = 400;
-                static int              w_height = 400;
+		TrayIcon   tray_icon;
+		Gdk.Pixbuf glass_icon;
+		Gtk.ToggleButton button;
+		Gtk.Window       win;
+		Gtk.Entry 	entry;
+		int              w_width = 400;
+                int              w_height = 400;
 	
 		public BeagleTray ()
 		{
@@ -51,20 +51,9 @@ namespace Beagle
                 private TileCanvas canvas;
                 private BestRootTile root;
 
-		void ButtonPress (object sender, EventArgs args) 
+		private Gtk.Window CreateQueryWindow ()
 		{
-
-                        if (win != null) {
-                                win.Destroy ();
-				entry.Destroy();
-				entry=null;
-                                win = null;
-                                return;
-                        }
-
-			Console.WriteLine ("*** ButtonPress");
-
-	                win = new Gtk.Window ("Timeline");
+	                win = new Gtk.Window ("Beagle");
                         win.Decorated       = false;
                         win.DefaultHeight   = w_height;
                         win.DefaultWidth    = w_width;
@@ -78,11 +67,13 @@ namespace Beagle
 			Box vbox = new Gtk.VBox (false, 2);
 			
 			entry = new Gtk.Entry();
-			entry.MaxLength=100;	
+			entry.MaxLength = 100;	
 			entry.Activated += new EventHandler (DoSearch);
 			vbox.PackStart (entry, false, false, 0);
-//Start
-			win.Add(vbox);
+
+			win.Add (vbox);
+			entry.CanFocus = true;
+			win.Focus = entry;
 
                         canvas = new TileCanvas ();
                                                                                                                                                              
@@ -92,21 +83,30 @@ namespace Beagle
                         swin = new Gtk.ScrolledWindow ();
                         swin.Add (canvas);
 
-			canvas.ShowAll();
+			canvas.ShowAll ();
                                                                                                                                                             
                         VBox contents = new VBox (false, 3);
                         contents.PackStart (swin, true, true, 3);
 			contents.ShowAll ();
-			vbox.PackStart (contents, true, true, 0);	
+			vbox.PackStart (contents, true, true, 0);
 
-//End
-			win.ShowAll ();
-			//			Gtk.Widget parent = (Gtk.Widget) sender;
-			//			Gtk.Menu recent_menu = MakeRecentNotesMenu (parent);
-			//			GuiUtils.PopupMenu (recent_menu, args.Event);
+			return win;
 		}
 
-                private static void PositionWin ()
+		void ButtonPress (object sender, EventArgs args) 
+		{
+			if (win == null)
+				win = CreateQueryWindow ();
+
+			if (win.Visible)
+				win.Hide ();
+			else {
+				win.ShowAll ();
+				entry.GrabFocus ();
+			}
+		}
+
+                private void PositionWin ()
                 {
                         int display_width, display_height;
                         Drawable d = (Display.Default.GetScreen (0)).RootWindow;
@@ -217,18 +217,27 @@ namespace Beagle
                                 query.HitSubtractedEvent -= OnHitSubtracted;
                                 query.Dispose ();
                         }
+
+                        root.Open ();
                                                                                                                                                              
-                        query = Factory.NewQuery ();
-                                                                                                                                                             
-                        query.AddDomain (QueryDomain.Neighborhood);
-                        query.AddDomain (QueryDomain.Global);
-                                                                                                                                                             
-                        query.AddText (searchString);
+			try {
+				query = Factory.NewQuery ();
+
+				query.AddDomain (QueryDomain.Neighborhood);
+				query.AddDomain (QueryDomain.Global);
+
+				query.AddText (searchString);
+			} catch (Exception e) {
+				if (e.ToString ().IndexOf ("com.novell.Beagle") != -1)
+					root.Error ("Could not query.  The Beagle daemon is probably not running, or maybe you\n don't have D-BUS set up properly.");
+				else
+					root.Error ("The query failed with error:<br><br>" + e);
+
+				return;
+			}
                                                                                                                                                              
                         query.HitAddedEvent += OnHitAdded;
                         query.HitSubtractedEvent += OnHitSubtracted;
-                                                                                                                                                             
-                        root.Open ();
                                                                                                                                                              
                         query.Start ();
                 }

@@ -74,7 +74,10 @@ class QueryTool {
 			query = Beagle.Factory.NewQuery ();
 		} catch (Exception e) {
 			if (e.ToString ().IndexOf ("com.novell.Beagle") != -1) {
-				Console.WriteLine ("Could not query.  The Beagle daemon is probably not running, or maybe you\n don't have D-BUS set up properly.");
+				Console.WriteLine ("Could not query.  The Beagle daemon is probably not running, or maybe you\ndon't have D-BUS set up properly.");
+				System.Environment.Exit (-1);
+			} else {
+				Console.WriteLine ("The query failed with error:\n\n" + e);
 				System.Environment.Exit (-1);
 			}
 		}

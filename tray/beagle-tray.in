@@ -2,9 +2,9 @@
 
 if [ -e ./@target@ ] && [ -e ./Makefile.am ] ; then
     echo "Running uninstalled @target@ in the foreground."
-    THIS_PATH="../Util:../BeagleClient:."
+    THIS_PATH="../Util:../BeagleClient:../Tiles:../images:."
     THIS_EXE="./@target@"
-    EXTRA_ARGS="--nofork"
+    EXTRA_ARGS=""
     FILTER_PATH="../Filters"
 else
     THIS_PATH="@pkglibdir@"

@@ -35,6 +35,7 @@ namespace Best {
 	public class BestRootTile : Tile {
 
 		Hashtable tileTable = new Hashtable ();
+		string errorString;
 
 		public void Open ()
 		{
@@ -81,9 +82,22 @@ namespace Best {
 			}
 		}
 
+		public void Error (string errorString)
+		{
+			this.errorString = errorString;
+			Changed ();
+		}
+
 		override public void Render (TileRenderContext ctx)
 		{
 			Console.WriteLine ("Render!");
+
+			if (errorString != null) {
+				ctx.Write (errorString);
+				errorString = null;
+				return;
+			}
+
 			ArrayList array = new ArrayList ();
 
 			foreach (TileHitCollection tile in tileTable.Values)

@@ -16,3 +16,4 @@ install-sh
 mkinstalldirs
 beagle-*.pc
 beagle-*.tar.gz
+beagle.spec

@@ -16,10 +16,15 @@ CSFILES = 				\
 
 ASSEMBLIES = 					\
 	$(BEAGLE_UI_LIBS)			\
-	-r:$(top_builddir)/tray/TrayIcon/TrayIcon.dll \
-	-r:/usr/local/lib/beagle/Beagle.dll \
-	-r:/usr/local/lib/beagle/Util.dll \
-	-r:/usr/local/lib/beagle/Tiles.dll
+	$(LOCAL_ASSEMBLIES:%=-r:%)
+
+LOCAL_ASSEMBLIES =			\
+	TrayIcon/TrayIcon.dll 		\
+	../Util/Util.dll		\
+	../images/Images.dll		\
+	../BeagleClient/Beagle.dll      \
+	../Tiles/Tiles.dll
+
 RESOURCES = \
 	-resource:$(top_srcdir)/images/trayicon.png,trayicon.png
 
