@@ -121,7 +121,8 @@ namespace Beagle.Daemon
 		
 		void OnHitsReceived (ICollection hits)
 		{
-			result.Add (hits);
+			foreach (Hit hit in hits)
+				result.Add (hit);
 		}
 	}
 

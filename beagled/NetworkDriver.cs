@@ -41,10 +41,6 @@ namespace Beagle.Daemon {
 		ArrayList staticPeers;
 		ArrayList rendezvousPeers;
 		
-		// This event is never fired, but needs to be here for us
-		// to fully implement the IQueryable interface.
-		public event IQueryableChangedHandler ChangedEvent;
-
 		public NetworkDriver ()
 		{
 			staticPeers = new ArrayList ();		
@@ -142,6 +138,13 @@ namespace Beagle.Daemon {
 			{
 				peer.DoQuery (body, result, changeData);
 			}
+		}
+
+		public string GetSnippet (QueryBody body, Hit hit)
+		{
+			// FIXME: It would be nice if we could forward
+			// the snippet request across the network
+			return null;
 		}
 
 		public int GetItemCount ()
