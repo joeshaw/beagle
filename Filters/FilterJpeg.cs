@@ -41,7 +41,9 @@ namespace Beagle.Filters {
 		// FIXME: This is not particularly efficient
 		protected override void DoPullProperties ()
 		{
-			Stream stream = CurrentFileInfo.Open (FileMode.Open);
+			Stream stream = CurrentFileInfo.Open (FileMode.Open,
+							      FileAccess.Read,
+							      FileShare.Read);
 
 			bool seenSofn = false;
 			int x, y, len, marker;
