@@ -29,7 +29,7 @@ Beagle can index and search:
 
 Beagle can also search:
  * Your addressbook (as long as you are using a very, very new
-   version of evolution-data-server and have evolution-sharp)
+   version of evolution-data-server and have evolution-sharp 0.3 or better)
  * Google (if you have a Google Web API key from
    http://api.google.com/createkey and put that key in an environment
    variable named GOOGLE_WEB_API_KEY.)
@@ -70,6 +70,29 @@ It's output is not particularly user-friendly.
 
 There is also a graphical tool called 'best'.  It is a bit more user-friendly
 that beagle-query.
+
+
+
+BOY, THIS THING SUCKS.  HOW DO I FILE A BUG?
+============================================
+
+bugzilla.gnome.org, product 'beagle'.
+
+
+
+
+KNOWN ISSUES
+============
+
+Google queries are currently broken due to a problem with Mono Beta 2.
+
+The OpenOffice.org filter crashes on encrypted files.
+
+The HTML filter doesn't know how to handle the windows-1252 encoding.
+
+Sometimes bad things happen with Lucene's locking, leaving the index
+inaccessible.  If anyone figures out how to reliably reproduce this problem,
+please contact trow@ximian.com.
 
 
 

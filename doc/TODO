@@ -48,3 +48,8 @@ It would also be cool if the mail crawler could index MIME attachments
 on mails in an mbox.  The mail indexer today just indexes the
 text/plain parts of a mail; at the very least it could index the HTML
 parts of a mail message.
+
+A relatively easy project for someone would be to write a little viewer for IM
+Logs that could be launched by clicking on an IM Log tile.  There is code in
+Util/ImLog.cs for parsing gaim logs.
+

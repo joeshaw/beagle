@@ -1,4 +1,22 @@
 
+CVS
+---
+
+Beagle's source repository is in GNOME CVS, in the module 'beagle'.
+
+For information on GNOME CVS, see:
+http://developer.gnome.org/tools/cvs/html.
+
+
+
+Patches
+-------
+
+Please send patches to trow@ximian.com for review.  Please don't commit
+unreviewed patches.
+
+
+
 Coding Style
 ------------
 
