@@ -5,6 +5,10 @@ TARGET = Tiles.dll
 
 CSFLAGS = -target:library -warn:4
 
+if ENABLE_EVO_SHARP
+CSFLAGS += -define:ENABLE_EVO_SHARP
+endif
+
 CSFILES =					\
 	$(srcdir)/SimpleRootTile.cs		\
 	$(srcdir)/HitFlavor.cs			\

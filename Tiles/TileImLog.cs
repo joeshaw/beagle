@@ -91,6 +91,7 @@ namespace Beagle.Tile {
 
 		private string GetEmailForIm (string im)
 		{
+#if ENABLE_EVO_SHARP
 			Evolution.Book addressbook = null;
 
 			// Connect to the Evolution addressbook.
@@ -120,6 +121,7 @@ namespace Beagle.Tile {
 				Console.WriteLine ("Got match: " + c.FullName);
 				return c.Email1;
 			}
+#endif
 
 			return null;
 		}
