@@ -37,6 +37,11 @@ for i in $needed_dlls; do
   fi
 done
 
+# Many distros don't have a dependency on sqlite for their
+# mono-data-sqlite packages, and the mono build process itself 
+# doesn't require it.  But we do, so check for it here.
+PKG_CHECK_MODULES(SQLITE, sqlite)
+
 AC_CHECK_HEADERS(X11/extensions/scrnsaver.h,, [AC_MSG_ERROR([Unable to find scrnsaver.h.  You probably need to install XFree86 development packages])])
 
 dnl ******************
