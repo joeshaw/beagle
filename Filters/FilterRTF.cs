@@ -1,3 +1,4 @@
+
 //
 // Beagle
 //
@@ -240,7 +241,7 @@ namespace Beagle.Filters {
 		{
 			int aByte = -1;
 			char ch;
-			int paramVal = -1, i;
+			int paramVal = -1;
 			bool negParamVal = false;
 			StringBuilder strCtrlWord = new StringBuilder ();
 			StringBuilder strParameter = new StringBuilder ();
@@ -307,7 +308,6 @@ namespace Beagle.Filters {
 			StringBuilder str = new StringBuilder ();
 			string strTemp = null;
 			ErrorCodes ec;
-			int OriginalGrpCount = 0x7FFFFFFF;
 
 			// "/info" can be anywhere in the document,
 			// so, rewind the file pointer to start from beginning.
@@ -403,7 +403,6 @@ namespace Beagle.Filters {
 			string strTemp;
 			string paramStr = null;
 
-			int elemCount;
 			bool wasHot = false;
 
 			while (TextDataStack.Count > 0) {

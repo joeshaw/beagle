@@ -547,7 +547,6 @@ namespace Beagle.Filters {
 			Input sumStream = null;
 			Input docSumStream = null;
 			string str = null;
-			string strTemp = null;
 			int childCount = 0;
 			int found = 0;
 			

@@ -75,7 +75,7 @@ namespace Beagle.Filters {
 		//        Pascal has its own style of comments.
  		protected void ExtractTokens (string str)
 		{
-			int index, kwindex;
+			int index;
 			StringBuilder token = new StringBuilder();
 			string splCharSeq = "";
 

@@ -1,3 +1,10 @@
+2005-02-28  Veerapuram Varadhan	 <vvaradhan@novell.com>
+
+	* configure.in: Disable detection of gst# for time-being.
+	* Filters/FilterOpenOffice.cs, Filters/FilterRTF.cs,
+	Filters/FilterPPT.cs, Filters/FilterSource.cs: Removed unused
+	variables to shut-up certain warnings.
+	
 2005-02-25  Veerapuram Varadhan	 <vvaradhan@novell.com>
 
 	* Filters/FilterOpenOffice.cs: Add support for new OO.o 2.0 ODT

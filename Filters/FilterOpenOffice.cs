@@ -162,7 +162,6 @@ namespace Beagle.Filters {
 
 		void AddTextForIndexing (string paramStr)
 		{
-			bool is_text_hot = hot_nodes.Count > 0 ? (bool) hot_nodes.Peek () : false;
 			int sindex = 0;
 			string strTemp;
 			bool wasHot = false;
@@ -392,8 +391,6 @@ namespace Beagle.Filters {
 
 		private void ExtractMetadata (XmlReader reader)
 		{
-			string slideCount = null;
-
 			do {
 				reader.Read ();
 			} while (reader.Depth < 2);
@@ -450,7 +447,6 @@ namespace Beagle.Filters {
 										  reader.Value));
 					}
 					break;
-					
 				}
 				
 				reader.Read ();
