@@ -10,7 +10,7 @@ using System.Collections;
 using Gtk;
 using GtkSharp;
 
-using Dewey;
+using Beagle;
 
 namespace Best {
 

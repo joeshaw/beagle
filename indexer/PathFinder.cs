@@ -7,7 +7,7 @@
 using System;
 using System.IO;
 
-namespace Dewey {
+namespace Beagle {
 
 	public class PathFinder {
 
@@ -16,11 +16,11 @@ namespace Dewey {
 		static public String RootDir {
 			get {
 				String homedir = Environment.GetEnvironmentVariable ("HOME");
-				String dir = Path.Combine (homedir, ".dewey");
+				String dir = Path.Combine (homedir, ".beagle");
 				if (! Directory.Exists (dir))
 					Directory.CreateDirectory (dir);
 				// FIXME: We should set some reasonable permissions on the
-				// .dewey directory.
+				// .beagle directory.
 				return dir;
 
 			}

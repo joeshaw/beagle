@@ -1,12 +1,12 @@
 //
-// IVersionable.cs
+// Versioned.cs
 //
 // Copyright (C) 2004 Novell, Inc.
 //
 
 using System;
 
-namespace Dewey {
+namespace Beagle {
 
 	public class Versioned {
 

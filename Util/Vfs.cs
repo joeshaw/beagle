@@ -29,7 +29,7 @@ using Gtk;
 using GLib;
 using System.Runtime.InteropServices;
 
-namespace Dewey.Util {
+namespace Beagle.Util {
 
 public enum GnomeVFSMimeApplicationArgumentType
 {

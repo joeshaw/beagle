@@ -11,7 +11,7 @@ using System.Net;
 using System.Threading;
 using System.Xml;
 
-using Dewey;
+using Beagle;
 
 class IndexableRSS20Item : Indexable {
 

@@ -12,7 +12,7 @@ WRAPPER_IN = wrapper.in
 
 
 CRAWLER_TARGET  = Crawler.exe
-CRAWLER_WRAPPER = dewey-index-files
+CRAWLER_WRAPPER = beagle-index-files
 CRAWLER_CSFILES =$(srcdir)/Crawler.cs
 
 $(CRAWLER_TARGET): $(CRAWLER_CSFILES)
@@ -24,7 +24,7 @@ $(CRAWLER_WRAPPER): $(WRAPPER_IN)
 
 
 CRAWLER_RSS20_TARGET = CrawlerRSS20.exe
-CRAWLER_RSS20_WRAPPER = dewey-crawler-rss-2.0
+CRAWLER_RSS20_WRAPPER = beagle-index-rss
 CRAWLER_RSS20_CSFILES = $(srcdir)/CrawlerRSS20.cs
 
 $(CRAWLER_RSS20_TARGET): $(CRAWLER_RSS20_CSFILES)
@@ -35,7 +35,7 @@ $(CRAWLER_RSS20_WRAPPER): $(WRAPPER_IN)
 	chmod +x $(CRAWLER_RSS20_WRAPPER)
 
 QUERY_TARGET  = Query.exe
-QUERY_WRAPPER = dewey-query
+QUERY_WRAPPER = beagle-query
 QUERY_CSFILES = $(srcdir)/Query.cs
 
 $(QUERY_TARGET): $(QUERY_CSFILES)
@@ -47,7 +47,7 @@ $(QUERY_WRAPPER): $(WRAPPER_IN)
 
 
 EXTRACT_CONTENT_TARGET  = ExtractContent.exe
-EXTRACT_CONTENT_WRAPPER = dewey-extract-content
+EXTRACT_CONTENT_WRAPPER = beagle-extract-content
 EXTRACT_CONTENT_CSFILES = $(srcdir)/ExtractContent.cs
 
 $(EXTRACT_CONTENT_TARGET): $(EXTRACT_CONTENT_CSFILES)
@@ -59,7 +59,7 @@ $(EXTRACT_CONTENT_WRAPPER): $(WRAPPER_IN)
 
 
 INDEX_WEB_CONTENT_TARGET = IndexWebContent.exe
-INDEX_WEB_CONTENT_WRAPPER = dewey-epiphany-index
+INDEX_WEB_CONTENT_WRAPPER = beagle-epiphany-index
 INDEX_WEB_CONTENT_CSFILES = $(srcdir)/IndexWebContent.cs
 
 $(INDEX_WEB_CONTENT_TARGET): $(INDEX_WEB_CONTENT_CSFILES)
@@ -71,7 +71,7 @@ $(INDEX_WEB_CONTENT_WRAPPER): $(WRAPPER_IN)
 
 
 INDEX_MAIL_TARGET = IndexMail.exe
-INDEX_MAIL_WRAPPER = dewey-index-mail
+INDEX_MAIL_WRAPPER = beagle-index-mail
 INDEX_MAIL_CSFILES = $(srcdir)/IndexMail.cs
 
 $(INDEX_MAIL_TARGET): $(INDEX_MAIL_CSFILES)

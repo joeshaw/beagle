@@ -1,6 +1,6 @@
 
 pkgconfigdir = $(libdir)/pkgconfig
-pkgconfig_DATA = dewey-0.0.pc
+pkgconfig_DATA = beagle-0.0.pc
 
 SUBDIRS = 			\
 	images			\

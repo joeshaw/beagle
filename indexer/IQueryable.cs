@@ -7,7 +7,7 @@
 using System;
 using System.Collections;
 
-namespace Dewey {
+namespace Beagle {
 
 	public interface IQueryable {
 

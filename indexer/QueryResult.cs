@@ -9,7 +9,7 @@ using System.Collections;
 using System.Diagnostics;
 using System.Threading;
 
-namespace Dewey {
+namespace Beagle {
 
 	public class QueryResult {
 

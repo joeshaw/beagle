@@ -6,9 +6,9 @@ test -z "$srcdir" && srcdir=.
 
 ORIGDIR=`pwd`
 cd $srcdir
-PROJECT=dewey
+PROJECT=beagle
 TEST_TYPE=-f
-FILE=indexer/Indexable.cs
+FILE=Filters/Filter.cs
 
 DIE=0
 

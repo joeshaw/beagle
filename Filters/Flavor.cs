@@ -7,7 +7,7 @@
 using System;
 using System.IO;
 
-namespace Dewey.Filters {
+namespace Beagle.Filters {
 
 	public class Flavor : IComparable {
 
@@ -39,7 +39,7 @@ namespace Dewey.Filters {
 
 		static public Flavor FromPath (String path)
 		{
-			String mimeType = Dewey.Util.VFS.Mime.GetMimeType (path);
+			String mimeType = Beagle.Util.VFS.Mime.GetMimeType (path);
 			String extension = Path.GetExtension (path);
 			return new Flavor (mimeType, extension);
 		}

@@ -12,7 +12,7 @@ using System;
 using System.Globalization;
 using System.Text;
 
-namespace Dewey.Util {
+namespace Beagle.Util {
 namespace Camel {
         public class Summary { 
 	    public SummaryHeader header;

@@ -11,7 +11,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Reflection;
 
-namespace Dewey.Filters {
+namespace Beagle.Filters {
 
 	abstract public class Filter {
 

@@ -2,9 +2,9 @@
 *.dll
 Makefile
 Makefile.in
-dewey-index-files
-dewey-crawler-rss-2.0
-dewey-query
-dewey-extract-content
-dewey-epiphany-index
-dewey-index-mail
+beagle-index-files
+beagle-crawler-rss
+beagle-query
+beagle-extract-content
+beagle-epiphany-index
+beagle-index-mail

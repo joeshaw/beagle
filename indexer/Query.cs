@@ -6,7 +6,7 @@
 
 using System;
 
-namespace Dewey {
+namespace Beagle {
 
 	public class Query {
 

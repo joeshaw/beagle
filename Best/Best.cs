@@ -12,7 +12,7 @@ using Gtk;
 using GtkSharp;
 using Gnome;
 
-using Dewey;
+using Beagle;
 
 namespace Best {
 	

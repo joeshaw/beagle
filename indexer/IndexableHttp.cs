@@ -10,9 +10,9 @@ using System.IO;
 using System.Net;
 using System.Threading;
 
-using Dewey.Filters;
+using Beagle.Filters;
 
-namespace Dewey {
+namespace Beagle {
 
 	public class IndexableHttp : Indexable {
 
@@ -30,7 +30,7 @@ namespace Dewey {
 		override protected void DoBuild ()
 		{
 			HttpWebRequest req = (HttpWebRequest) WebRequest.Create (Uri);
-			req.UserAgent = "Dewey.IndexableHttp";
+			req.UserAgent = "Beagle.IndexableHttp";
 
 			HttpWebResponse resp = (HttpWebResponse) req.GetResponse ();
 			if (resp.StatusCode != HttpStatusCode.OK)

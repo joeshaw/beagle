@@ -7,7 +7,7 @@
 using System;
 using System.IO;
 
-namespace Dewey.Filters {
+namespace Beagle.Filters {
 
 	public class FilterText : Filter {
 	

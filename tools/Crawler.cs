@@ -9,8 +9,8 @@ using System.Collections;
 using System.IO;
 using System.Text.RegularExpressions;
 
-using Dewey.Filters;
-using Dewey;
+using Beagle.Filters;
+using Beagle;
 
 class CrawlerTool { 
 

@@ -12,7 +12,7 @@ using System.Xml;
 
 using ICSharpCode.SharpZipLib.Zip;
 
-namespace Dewey.Filters {
+namespace Beagle.Filters {
     
 	public class FilterOpenOffice : Filter {
 

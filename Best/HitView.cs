@@ -11,7 +11,7 @@ using Gdk;
 using Gtk;
 using GtkSharp;
 
-using Dewey;
+using Beagle;
 
 namespace Best {
 
@@ -51,8 +51,8 @@ namespace Best {
 			String command = null, arguments = null;
 
 			if (hit.Uri.StartsWith ("file://")) {
-				Dewey.Util.GnomeVFSMimeApplication app;
-				app = Dewey.Util.GnomeIconLookup.GetDefaultAction (hit.MimeType);
+				Beagle.Util.GnomeVFSMimeApplication app;
+				app = Beagle.Util.GnomeIconLookup.GetDefaultAction (hit.MimeType);
 				command = app.command;
 				arguments = hit.Uri.Substring (7);
 			} else if (hit.Uri.StartsWith ("http://")) {
@@ -75,7 +75,7 @@ namespace Best {
 
 		private Widget BuildIcon ()
 		{
-			String iconPath = Dewey.Util.GnomeIconLookup.LookupMimeIcon (hit.MimeType, (Gtk.IconSize) 48);
+			String iconPath = Beagle.Util.GnomeIconLookup.LookupMimeIcon (hit.MimeType, (Gtk.IconSize) 48);
 			return new Gtk.Image (iconPath);
 		}
 

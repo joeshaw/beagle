@@ -12,7 +12,7 @@ using Gtk;
 using System;
 using System.Runtime.InteropServices;
 
-namespace Dewey.Util {
+namespace Beagle.Util {
 
 	namespace VFS {
 

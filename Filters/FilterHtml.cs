@@ -11,7 +11,7 @@ using System.Text;
 
 using HtmlAgilityPack;
 
-namespace Dewey.Filters {
+namespace Beagle.Filters {
 
 	public class FilterHtml : Filter {
 

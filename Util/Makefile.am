@@ -9,7 +9,7 @@ GOOGLE_WSDL = $(srcdir)/GoogleSearch.wsdl
 GOOGLE_CS   = GoogleSearch.cs
 
 $(GOOGLE_CS): $(GOOGLE_WSDL)
-	wsdl -namespace:Dewey.Util -out:$@ $^
+	wsdl -namespace:Beagle.Util -out:$@ $^
 
 CSFILES = 			\
 	$(srcdir)/camel.cs	\

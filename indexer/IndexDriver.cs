@@ -22,7 +22,7 @@ using Lucene.Net.QueryParsers;
 using LNS = Lucene.Net.Search;
 
 
-namespace Dewey {
+namespace Beagle {
 
 	public class IndexDriver : IQueryable {
 
@@ -43,7 +43,7 @@ namespace Dewey {
 
 		//////////////////////////
 		
-		public bool Debug = (Environment.GetEnvironmentVariable ("DEWEY_DEBUG_INDEX") != null);
+		public bool Debug = (Environment.GetEnvironmentVariable ("BEAGLE_DEBUG_INDEX") != null);
 		
 		protected void Spew (String str)
 		{
@@ -130,7 +130,7 @@ namespace Dewey {
 			else
 				Spew ("Index format is obsolete.  Purging index.");
 
-			// If this looks like an old-style (pre-.dewey/Index) set-up,
+			// If this looks like an old-style (pre-.beagle/Index) set-up,
 			// blow away everything in sight.
 			if (File.Exists (Path.Combine (PathFinder.RootDir, "segments")))
 				Directory.Delete (PathFinder.RootDir, true);

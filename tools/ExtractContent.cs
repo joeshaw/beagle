@@ -8,7 +8,7 @@ using System;
 using System.IO;
 using System.Net;
 
-using Dewey.Filters;
+using Beagle.Filters;
 
 class ExtractContentTool {
 
@@ -21,7 +21,7 @@ class ExtractContentTool {
 
 			if (arg.StartsWith ("http://")) {
 				HttpWebRequest req = (HttpWebRequest) WebRequest.Create (arg);
-				req.UserAgent = "Dewey.ExtractContent";
+				req.UserAgent = "Beagle.ExtractContent";
 				HttpWebResponse resp = (HttpWebResponse) req.GetResponse ();
 				if (resp.StatusCode != HttpStatusCode.OK)
 					throw new Exception (String.Format ("{0} returned {1}: {2}",

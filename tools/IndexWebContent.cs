@@ -7,8 +7,8 @@
 using System;
 using System.IO;
 
-using Dewey;
-using Dewey.Filters;
+using Beagle;
+using Beagle.Filters;
 
 class IndexWebContentTool {
 

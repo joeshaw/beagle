@@ -8,9 +8,9 @@
 
 using System;
 using System.Collections;
-using Dewey.Util;
+using Beagle.Util;
 
-namespace Dewey {
+namespace Beagle {
 
 	public class GoogleDriver : IQueryable {
 

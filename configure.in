@@ -1,6 +1,6 @@
 AC_INIT(Filters/Filter.cs)
 AC_CANONICAL_SYSTEM
-AM_INIT_AUTOMAKE(dewey, 0.0)
+AM_INIT_AUTOMAKE(beagle, 0.0)
 AM_MAINTAINER_MODE
 
 AC_PROG_INSTALL
@@ -86,7 +86,7 @@ indexer/Makefile
 tools/Makefile
 Best/Makefile
 epiphany-extension/Makefile
-dewey-0.0.pc
+beagle-0.0.pc
 ])
 
 echo "
@@ -97,7 +97,7 @@ echo "
 "
 
 if test "x$enable_epiphany_extension" = "xyes"; then
-   echo "NOTE: The Dewey Epiphany Extension Is Totally Insecure!"
+   echo "NOTE: The Beagle Epiphany Extension Is Totally Insecure!"
    echo "      Use it at your own risk!"
 fi
 	

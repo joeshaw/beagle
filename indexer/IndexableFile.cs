@@ -8,9 +8,9 @@ using System;
 using System.Collections;
 using System.IO;
 
-using Dewey.Filters;
+using Beagle.Filters;
 
-namespace Dewey {
+namespace Beagle {
 
 	public class IndexableFile : Indexable {
 

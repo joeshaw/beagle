@@ -9,7 +9,7 @@ using System.Collections;
 using System.IO;
 using System.Text;
 
-namespace Dewey {
+namespace Beagle {
 
 	public class Indexable : Versioned, IDisposable {
 

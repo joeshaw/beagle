@@ -8,8 +8,8 @@ using System;
 using System.Collections;
 using System.Threading;
 
-namespace Dewey {
-
+namespace Beagle {
+	
 	public class QueryDriver {
 
 		ArrayList queryables = new ArrayList ();

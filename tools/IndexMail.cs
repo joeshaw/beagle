@@ -11,8 +11,8 @@ using System.IO;
 using System.Text;
 using System.Text.RegularExpressions;
 
-using Dewey;
-using Camel = Dewey.Util.Camel;
+using Beagle;
+using Camel = Beagle.Util.Camel;
 
 namespace IndexMailTool {
 
