@@ -84,7 +84,7 @@ namespace Beagle.Tile {
 
 			// FIXME: Hack to figure out if the conversation is taken place in a chat room
 			if (Hit["fixme:speakingto"].EndsWith (".chat"))
-				Template["title"] = String.Format ("Chat in {0}", speaking_alias.Replace(".chat",""));
+				Template["title"] = String.Format ("Conversation in {0}", speaking_alias.Replace(".chat",""));
 			else
 				Template["title"] = String.Format ("Conversation with {0}", speaking_alias);
 
