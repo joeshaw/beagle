@@ -147,8 +147,8 @@ namespace Beagle.Daemon.FileSystemQueryable {
 				return;
 			}
 
-			Logger.Log.Debug ("Event fell through: {0} '{1}' {2} {3}",
-					  path, subitem, type, cookie);
+			//Logger.Log.Debug ("Event fell through: {0} '{1}' {2} {3}",
+			//		  path, subitem, type, cookie);
 
 		}
 	}

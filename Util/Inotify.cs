@@ -31,6 +31,7 @@ using System.Collections;
 using System.IO;
 using System.Runtime.InteropServices;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading;
 
 using Mono.Posix;
@@ -65,6 +66,9 @@ namespace Beagle.Util {
 			Ignored        = 0x00008000, // File is no longer being watched
 			All            = 0xffffffff
 		}
+
+		// Events that we want internally, even if the handlers do not
+		static private EventType base_mask =  EventType.Ignored | EventType.MovedFrom | EventType.MovedTo;
 
 		/////////////////////////////////////////////////////////////////////////////////////
 
@@ -140,11 +144,26 @@ namespace Beagle.Util {
 
 			public EventType FilterMask;
 			public EventType FilterSeen;
+
+			public ArrayList Children;
+			public Watched   Parent;
 		}
 
 		static Hashtable watched_by_wd = new Hashtable ();
 		static Hashtable watched_by_path = new Hashtable ();
 		static Watched   last_watched = null;
+
+		private class PendingMove {
+			public string    SrcPath;
+			public uint      Cookie;
+
+			public PendingMove (string srcpath, uint cookie) {
+				SrcPath = srcpath;
+				Cookie = cookie;
+			}
+		}
+
+		static Hashtable cookie_hash = new Hashtable();
 
 		static public int WatchCount {
 			get { return watched_by_wd.Count; }
@@ -163,9 +182,9 @@ namespace Beagle.Util {
 		{
 			lock (watched_by_wd) {
 				Watched watched;
-				if (last_watched != null && last_watched.Wd == wd) {
+				if (last_watched != null && last_watched.Wd == wd)
 					watched = last_watched;
-				} else {
+				else {
 					watched = watched_by_wd [wd] as Watched;
 					if (watched != null)
 						last_watched = watched;
@@ -185,6 +204,8 @@ namespace Beagle.Util {
 		{
 			if (last_watched == watched)
 				last_watched = null;
+			if (watched.Parent != null)
+				watched.Parent.Children.Remove (watched);
 			watched_by_wd.Remove (watched.Wd);
 			watched_by_path.Remove (watched.Path);
 		}
@@ -203,7 +224,6 @@ namespace Beagle.Util {
 				throw new IOException (path);
 
 			lock (watched_by_wd) {
-				
 				Watched watched;
 
 				watched = watched_by_path [path] as Watched;
@@ -213,15 +233,12 @@ namespace Beagle.Util {
 					Forget (watched);
 				}
 
-				EventType internal_mask = mask;
-				internal_mask |= EventType.Ignored;
-
-				wd = inotify_glue_watch (dev_inotify, path, internal_mask);
+				wd = inotify_glue_watch (dev_inotify, path, mask | base_mask);
 				if (wd < 0) {
 					string msg = String.Format ("Attempt to watch {0} failed!", path);
 					throw new Exception (msg);
 				}
-				
+
 				watched = new Watched ();
 				watched.Wd = wd;
 				watched.Path = path;
@@ -230,6 +247,13 @@ namespace Beagle.Util {
 
 				watched.FilterMask = initial_filter;
 				watched.FilterSeen = 0;
+
+				watched.Children = new ArrayList ();
+
+				DirectoryInfo dir = new DirectoryInfo (path);
+				watched.Parent = watched_by_path [dir.Parent.ToString ()] as Watched;
+				if (watched.Parent != null)
+					watched.Parent.Children.Add (watched);
 
 				watched_by_wd [watched.Wd] = watched;
 				watched_by_path [watched.Path] = watched;
@@ -248,7 +272,7 @@ namespace Beagle.Util {
 			EventType seen = 0;
 
 			path = Path.GetFullPath (path);
-			
+
 			lock (watched_by_wd) {
 
 				Watched watched;
@@ -258,7 +282,7 @@ namespace Beagle.Util {
 				watched.FilterMask = mask;
 				watched.FilterSeen = 0;
 			}
-			
+
 			return seen;
 		}
 
@@ -381,15 +405,48 @@ namespace Beagle.Util {
 			}
 		}
 
-		// FIXME: If we move a directory that is being watched, the
-		// watch is preserved, as are the watches on any
-		// subdirectories.  This means that our cached value from
-		// WatchedInfo.Path will no longer be accurate.  We need to
-		// trap MovedFrom and MovedTo, check if the thing being moved
-		// is a directory, and then and update our internal data
-		// structures accordingly.
+		static public bool Verbose = true;
 
-		static public bool Verbose = false;
+		// Update the watched_by_path hash and the path stored inside the watch
+		// in response to a move event.
+		static private void MoveWatch (Watched watch, string name)
+		{
+			watched_by_path.Remove (watch.Path);
+			watch.Path = name;
+			watched_by_path [watch.Path] = watch;
+
+			if (Verbose)
+				Console.WriteLine ("*** inotify: Moved Watch to {0}", watch.Path);
+		}
+
+		// A directory we are watching has moved.  We need to fix up its path, and the path of
+		// all of its subdirectories, their subdirectories, and so on.
+		static private void HandleMove (string srcpath, string dstpath)
+		{
+			Watched start = watched_by_path [srcpath] as Watched;	// not the same as src!
+			if (start == null) {
+				Console.WriteLine ("Lookup failed for {0}", srcpath);
+				return;
+			}
+
+			// Queue our starting point, then walk its subdirectories, invoking MoveWatch() on
+			// each, repeating for their subdirectories.  The relationship between start, child
+			// and dstpath is fickle and important.
+			Queue queue = new Queue();
+			queue.Enqueue (start);
+			do {
+				Watched target = queue.Dequeue () as Watched;
+				for (int i = 0; i < target.Children.Count; i++) {
+					Watched child = target.Children[i] as Watched;
+					string name = Path.Combine (dstpath, child.Path.Substring (start.Path.Length + 1));
+					MoveWatch (child, name);
+					queue.Enqueue (child);
+				}
+			} while (queue.Count > 0);
+
+			// Ultimately, fixup the original watch, too
+			MoveWatch (start, dstpath);
+		}
 
 		static void DispatchWorker ()
 		{
@@ -411,16 +468,38 @@ namespace Beagle.Util {
 				if (watched == null)
 					continue;
 
+				// Get the filename payload, if any
+				int n_chars = 0;
+				while (n_chars < qe.filename.Length && qe.filename [n_chars] != 0)
+					++n_chars;
+				string filename = "";
+				if (n_chars > 0)
+					filename = filename_encoding.GetString (qe.filename, 0, n_chars);
+
+				// If this is a directory, we need to handle MovedTo and MovedFrom events
+				// (regardless of the actual qe.iev.mask) and fix up watched.Path and the
+				// path of all subdirectories.
+				//
+				// Unfortunately, we have to handle the Directory.Exists() test a bit
+				// roundabout, because watched.Path during MovedFrom no longer exists.
+				if (qe.iev.mask == EventType.MovedFrom) {
+					string srcpath = Path.Combine (watched.Path, filename);
+					PendingMove pending = new PendingMove (srcpath, qe.iev.cookie);
+					cookie_hash [pending.Cookie] = pending;
+				}
+				if (qe.iev.mask == EventType.MovedTo) {
+					PendingMove pending = cookie_hash [qe.iev.cookie] as PendingMove;
+					if (pending != null) {
+						string dstpath = Path.Combine (watched.Path, filename);
+						if (Directory.Exists (dstpath))
+							HandleMove (pending.SrcPath, dstpath);
+						cookie_hash.Remove (pending);
+					} else
+						Logger.Log.Error ("Got MovedTo without matching cookie!");
+				}
+
+				// If this event matches the watches mask, handle it
 				if ((watched.Mask & qe.iev.mask) != 0) {
-					
-					int n_chars = 0;
-					while (n_chars < qe.filename.Length && qe.filename [n_chars] != 0)
-						++n_chars;
-
-					string filename = "";
-					if (n_chars > 0)
-						filename = filename_encoding.GetString (qe.filename, 0, n_chars);
-
 					if (Verbose) {
 						Console.WriteLine ("*** inotify: {0} {1} {2} {3} {4}",
 								   qe.iev.mask, watched.Wd, watched.Path,
@@ -458,8 +537,11 @@ namespace Beagle.Util {
 			foreach (string arg in args) {
 				if (arg == "-r" || arg == "--recursive")
 					recursive = true;
-				else
-					to_watch.Enqueue (arg);
+				else {
+					// Our hashes work without a trailing path delimiter
+					string path = arg.TrimEnd ('/');
+					to_watch.Enqueue (path);
+				}
 			}
 
 			while (to_watch.Count > 0) {
