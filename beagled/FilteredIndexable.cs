@@ -82,7 +82,9 @@ namespace Beagle.Daemon {
 				}
 				modifiedTime = File.GetLastWriteTime (path);
 			} else {
-				throw new IOException ("No such file: " + path);
+				//throw new IOException ("No such file: " + path);
+				Console.WriteLine ("No such file: " + path);
+				return;
 			}
 
 			DateTime nautilusTime = BU.NautilusTools.GetMetaFileTime (path);

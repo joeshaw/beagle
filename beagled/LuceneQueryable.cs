@@ -92,14 +92,14 @@ namespace Beagle.Daemon {
 
 		public event IQueryableChangedHandler ChangedEvent;
 
-		public bool AcceptQuery (QueryBody body)
+		public virtual bool AcceptQuery (QueryBody body)
 		{
 			return true;
 		}
 
-		public void DoQuery (QueryBody body,
-				     IQueryResult queryResult,
-				     IQueryableChangeData data)
+		public virtual void DoQuery (QueryBody body,
+					     IQueryResult queryResult,
+					     IQueryableChangeData data)
 		{
 			LuceneQueryableChangeData lqcd = (LuceneQueryableChangeData) data;
 			ICollection hits = null;
