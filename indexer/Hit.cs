@@ -27,7 +27,10 @@
 
 using System;
 using System.Collections;
+using System.Diagnostics;
 using System.IO;
+
+using BU = Beagle.Util;
 
 namespace Beagle {
     
@@ -267,6 +270,65 @@ namespace Beagle {
 			Hit otherHit = (Hit) obj;
 			// Notice that we sort from high to low.
 			return otherHit.Score.CompareTo (this.Score);
+		}
+
+		//////////////////////////
+
+		// FIXME: Some of this cruft should be in Util, or pluggable, or something.
+		public void OpenWithDefaultAction ()
+		{
+			Console.WriteLine ("Opening {0} ({1})", Uri, MimeType);
+
+			string mimeType = MimeType;
+			string command = null, argument = null;
+			string commandFallback = null;
+			bool expectsUris, expectsUrisFallback = false;
+
+			// A hack for folders
+			if (mimeType == "inode/directory") {
+				mimeType = "x-directory/normal";
+				commandFallback = "nautilus";
+				expectsUrisFallback = true;
+			} else if (Type == "MailMessage") {
+				command = "evolution-1.5";
+				expectsUris = true;
+			}
+			
+			if (command == null) {
+				BU.GnomeVFSMimeApplication app;
+				app = BU.GnomeIconLookup.GetDefaultAction (mimeType);
+				
+				if (app.command != null) {
+					command = app.command;
+					expectsUris = (app.expects_uris != BU.GnomeVFSMimeApplicationArgumentType.Path);
+				} else {
+					command = commandFallback;
+					expectsUris = expectsUrisFallback;
+				}
+			}
+
+			if (command == null) {
+				Console.WriteLine ("Can't open MimeType '{0}'", mimeType);
+				return;
+			}
+			
+			if (argument == null) {
+				if (expectsUris) {
+					argument = String.Format ("'{0}'", Uri);
+				} else {
+					argument = PathQuoted;
+				}
+			}
+
+			Console.WriteLine ("Cmd: {0}", command);
+			Console.WriteLine ("Arg: {0}", argument);
+
+			Process p = new Process ();
+			p.StartInfo.UseShellExecute = false;
+			p.StartInfo.FileName = command;
+			p.StartInfo.Arguments = argument;
+
+			p.Start ();
 		}
 	}
 }

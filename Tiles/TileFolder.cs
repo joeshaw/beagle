@@ -67,21 +67,14 @@ namespace Beagle {
 		
 		private void OpenFolder ()
 		{
-			Console.WriteLine ("Open {0}", hit.Uri);
-
-			Process p = new Process ();
-			p.StartInfo.UseShellExecute = false;
-			p.StartInfo.FileName = "nautilus";
-			p.StartInfo.Arguments = hit.Uri;
-			try {
-				p.Start ();
-			} catch { }
+			hit.OpenWithDefaultAction ();
 		}
 
 		override protected bool RenderKey (string key, TileRenderContext ctx)
 		{
 			if (key == "Icon") {
-				ctx.Image ("icon-folder.png", new TileActionHandler (OpenFolder));
+				ctx.Image ("icon-folder.png",
+					   new TileActionHandler (OpenFolder));
 				return true;
 			}
 

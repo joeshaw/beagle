@@ -75,13 +75,7 @@ namespace Beagle {
 		
 		private void OpenMessage ()
 		{
-			Process p = new Process ();
-			p.StartInfo.UseShellExecute = false;
-			p.StartInfo.FileName = "evolution-1.5";
-			p.StartInfo.Arguments = hit.Uri;
-			try {
-				p.Start ();
-			} catch { }
+			hit.OpenWithDefaultAction ();
 		}
 
 		override protected bool RenderKey (string key, TileRenderContext ctx)

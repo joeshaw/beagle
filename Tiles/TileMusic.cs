@@ -84,17 +84,7 @@ namespace Beagle {
 		
 		private void OpenMusic ()
 		{
-			Console.WriteLine ("Open {0}", hit.Uri);
-			BU.GnomeVFSMimeApplication app;
-			app = BU.GnomeIconLookup.GetDefaultAction (hit.MimeType);
-
-			Process p = new Process ();
-			p.StartInfo.UseShellExecute = false;
-			p.StartInfo.FileName = app.command;
-			p.StartInfo.Arguments = hit.PathQuoted;
-			try {
-				p.Start ();
-			} catch { }
+			hit.OpenWithDefaultAction ();
 		}
 
 		override protected bool RenderKey (string key, TileRenderContext ctx)
