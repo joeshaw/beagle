@@ -85,10 +85,12 @@ install-data-local: $(TARGET)
 uninstall-local:
 	rm -f $(DESTDIR)$(pkglibdir)/$(TARGET)
 
-icondir = $(datadir)/pixmaps
-icon_DATA = best.png
+otherpixmapsdir = $(datadir)/pixmaps
+otherpixmaps_DATA = 	\
+	best.png	\
+	dog.png
 
-EXTRA_DIST = $(CSFILES) $(RESOURCEFILES) $(icon_DATA)
+EXTRA_DIST = $(CSFILES) $(RESOURCEFILES) $(otherpixmaps_DATA)
 
 CLEANFILES = \
 	$(TARGET) 	\

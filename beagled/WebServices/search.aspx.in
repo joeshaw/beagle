@@ -5,7 +5,7 @@
 </head>
 <body>
 
-<img src="file://@prefix@/share/doc/xsp/test/beagle/dog.png" align="center" width="55" height="55"><asp:Label id="Label1" runat="server" text="<b>Beagle Search Page</b>"></asp:Label>
+<img src="file://@prefix@/share/pixmaps/dog.png" align="center" width="55" height="55"><asp:Label id="Label1" runat="server" text="<b>Beagle Search Page</b>"></asp:Label>
 
     <form id="SearchForm" runat="server">  
         <asp:Label id="SearchLabel" runat="server" text="Enter Beagle Search Terms "/>

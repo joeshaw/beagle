@@ -368,20 +368,45 @@ $(DAEMON_DLL_TARGET): $(DAEMON_DLL_CSFILES) $(DAEMON_DLL_LOCAL_ASSEMBLIES)
 ### Web Services
 ###
 
-if ENABLE_WEBSERVICES
-SUBDIRS = WebServices
-endif
-
 webservicesdir = $(srcdir)/WebServices
+xspdir = $(srcdir)/WebServices/WebServer
 
-BEAGLE_XSP_TARGET = $(webservicesdir)/WebServer/BeagleXsp.dll
+WEBSERVICES_XSP_TARGET = BeagleXsp.dll
 
-WEBSERVICES_BACKEND_LOCAL_ASSEMBLIES =			\
+WEBSERVICES_XSP_CSFLAGS = -target:library 
+
+WEBSERVICES_XSP_ASSEMBLIES = 		\
+	-r:System 			\
+	-r:System.Web 			\
+	-r:System.Runtime.Remoting	
+
+WEBSERVICES_XSP_CSFILES =  					\
+	$(xspdir)/IApplicationHost.cs		\
+	$(xspdir)/MonoWorkerRequest.cs		\
+	$(xspdir)/Tracing.cs			\
+	$(xspdir)/ApplicationServer.cs		\
+	$(xspdir)/LingeringNetworkStream.cs	\
+	$(xspdir)/BaseApplicationHost.cs	\
+	$(xspdir)/BaseRequestBroker.cs		\
+	$(xspdir)/IWebSource.cs			\
+	$(xspdir)/server.cs			\
+	$(xspdir)/InitialWorkerRequest.cs	\
+	$(xspdir)/XSPApplicationHost.cs		\
+	$(xspdir)/XSPWorkerRequest.cs		\
+	$(xspdir)/AssemblyInfo.cs
+
+$(WEBSERVICES_XSP_TARGET): $(WEBSERVICES_XSP_CSFILES)
+	$(CSC) -o $@ $(WEBSERVICES_XSP_CSFLAGS) $(WEBSERVICES_XSP_CSFILES) $(WEBSERVICES_XSP_ASSEMBLIES)
+
+
+WEBSERVICES_BACKEND_TARGET = BeagleWebServicesBackEnd.dll
+
+WEBSERVICES_BACKEND_LOCAL_ASSEMBLIES =	\
 	../Util/Util.dll		\
 	../images/Images.dll		\
 	../BeagleClient/Beagle.dll      \
 	../Tiles/Tiles.dll		\
-	BeagleDaemonPlugins.dll \
+	BeagleDaemonPlugins.dll 	\
 	BeagleDaemonLib.dll
 
 WEBSERVICES_BACKEND_ASSEMBLIES = \
@@ -390,17 +415,19 @@ WEBSERVICES_BACKEND_ASSEMBLIES = \
 	-r:System.Web 				\
 	-r:System.Runtime.Remoting
 
-WEBSERVICES_BACKEND_ASSEMBLY  = BeagleWebServicesBackEnd.dll
-WEBSERVICES_BACKEND_TARGET  = $(webservicesdir)/$(WEBSERVICES_BACKEND_ASSEMBLY)
-WEBSERVICES_BACKEND_CSFILES = $(webservicesdir)/WebBackEnd.cs $(webservicesdir)/WebServiceBackEnd.cs
+WEBSERVICES_BACKEND_CSFILES = \
+	$(webservicesdir)/WebBackEnd.cs 	\
+	$(webservicesdir)/WebServiceBackEnd.cs
 
 WEBSERVICES_CSFLAGS = -target:library -noconfig
 
 $(WEBSERVICES_BACKEND_TARGET): $(WEBSERVICES_BACKEND_CSFILES) $(WEBSERVICES_BACKEND_LOCAL_ASSEMBLIES)
 	$(CSC) -o $@ $(WEBSERVICES_CSFLAGS) $(WEBSERVICES_BACKEND_CSFILES) $(WEBSERVICES_BACKEND_ASSEMBLIES)
 
-WEBSERVICES_FRONTEND_TARGET = $(webservicesdir)/BeagleWebServicesFrontEnd.dll
-WEBSERVICES_FRONTEND_CSFILES = $(webservicesdir)/WebFrontEnd.cs $(webservicesdir)/WebServiceFrontEnd.cs
+WEBSERVICES_FRONTEND_TARGET = BeagleWebServicesFrontEnd.dll
+WEBSERVICES_FRONTEND_CSFILES = \
+	$(webservicesdir)/WebFrontEnd.cs	\
+	$(webservicesdir)/WebServiceFrontEnd.cs
 
 WEBSERVICES_FRONTEND_ASSEMBLIES = 	\
 	$(WEBSERVICES_BACKEND_ASSEMBLIES) 	\
@@ -410,20 +437,24 @@ WEBSERVICES_FRONTEND_ASSEMBLIES = 	\
 $(WEBSERVICES_FRONTEND_TARGET): $(WEBSERVICES_FRONTEND_CSFILES) $(WEBSERVICES_BACKEND_TARGET) 
 	$(CSC) -o $@ $(WEBSERVICES_CSFLAGS) $(WEBSERVICES_FRONTEND_CSFILES) $(WEBSERVICES_FRONTEND_ASSEMBLIES)
 
-WEBSERVICES_RESOURCES = $(SEARCH_DOT_ASPX) $(webservicesdir)/search.asmx \
-			$(webservicesdir)/web.config  ../images/dog.png
+WEBSERVICES_RESOURCES = 		\
+	$(SEARCH_DOT_ASPX)		\
+	$(webservicesdir)/search.asmx	\
+	$(webservicesdir)/web.config
 
-WEBSERVICES_RESOURCES_DIST = $(SEARCH_DOT_ASPX_IN) $(webservicesdir)/search.asmx \
-				$(webservicesdir)/web.config ../images/dog.png
+WEBSERVICES_RESOURCES_DIST = 		\
+	$(SEARCH_DOT_ASPX_IN) 		\
+	$(webservicesdir)/search.asmx	\
+	$(webservicesdir)/web.config
 
-XSP_DIR = @prefix@/share/doc/xsp/test/beagle
-XSPBIN_DIR = $(XSP_DIR)/bin
+XSP_DIR = $(pkgdatadir)
+XSPBIN_DIR = $(pkgdir)
 
-SEARCH_DOT_ASPX = $(webservicesdir)/search.aspx
+SEARCH_DOT_ASPX = search.aspx
 SEARCH_DOT_ASPX_IN = $(webservicesdir)/search.aspx.in
 
-MAKE_SEARCH_DOT_ASPX: 
-	$(WRAPPER_SED) -e "s|\@prefix\@|@prefix@|g" < $(SEARCH_DOT_ASPX_IN) > $(SEARCH_DOT_ASPX)
+$(SEARCH_DOT_ASPX): $(SEARCH_DOT_ASPX_IN)
+	$(WRAPPER_SED) < $(SEARCH_DOT_ASPX_IN) > $(SEARCH_DOT_ASPX)
 	chmod +rx $(SEARCH_DOT_ASPX)
 
 ############################################################
@@ -468,9 +499,9 @@ DAEMON_LOCAL_ASSEMBLIES += 		\
 	BeagleDaemonPlugins.dll		\
 	../images/Images.dll		\
 	../Tiles/Tiles.dll		\
-	$(WEBSERVICES_BACKEND_TARGET) 		\
-	$(WEBSERVICES_FRONTEND_TARGET)		\
-	$(BEAGLE_XSP_TARGET)
+	$(WEBSERVICES_BACKEND_TARGET) 	\
+	$(WEBSERVICES_FRONTEND_TARGET)	\
+	$(WEBSERVICES_XSP_TARGET)
 
 DAEMON_ASSEMBLIES += -r:System.Runtime.Remoting
 endif
@@ -753,7 +784,11 @@ ALL_TARGETS = 				\
 	$(FS_SANITY_CHECK_TARGET)
 
 if ENABLE_WEBSERVICES
-ALL_TARGETS += $(WEBSERVICES_FRONTEND_TARGET) MAKE_SEARCH_DOT_ASPX
+ALL_TARGETS += 				\
+	$(XSP_TARGET)			\
+	$(WEBSERVICES_FRONTEND_TARGET)	\
+	$(WEBSERVICES_BACKEND_TARGET)	\
+	$(SEARCH_DOT_ASPX)
 endif
 
 man_MANS = 				\
@@ -763,6 +798,7 @@ all: $(ALL_TARGETS)
 
 install-data-local: $(ALL_TARGETS)
 	$(mkinstalldirs) $(DESTDIR)$(pkglibdir)
+	$(mkinstalldirs) $(DESTDIR)$(pkgdatadir)
 	$(INSTALL_DATA) $(PLUGIN_TARGET) $(DESTDIR)$(pkglibdir)/$(PLUGIN_TARGET)
 	$(INSTALL_DATA) $(DAEMON_DLL_TARGET) $(DESTDIR)$(pkglibdir)/$(DAEMON_DLL_TARGET)
 	$(INSTALL_DATA) $(DAEMON_TARGET) $(DESTDIR)$(pkglibdir)/$(DAEMON_TARGET)
@@ -770,24 +806,27 @@ install-data-local: $(ALL_TARGETS)
 	$(INSTALL_DATA) $(INDEX_HELPER_TARGET) $(DESTDIR)$(pkglibdir)/$(INDEX_HELPER_TARGET)
 	$(INSTALL_SCRIPT) $(INDEX_HELPER_WRAPPER) $(DESTDIR)$(pkglibdir)/$(INDEX_HELPER_WRAPPER)
 if ENABLE_WEBSERVICES
-	$(INSTALL_DATA) $(WEBSERVICES_BACKEND_TARGET) $(DESTDIR)$(pkglibdir)/$(WEBSERVICES_BACKEND_ASSEMBLY)
-	$(mkinstalldirs) $(XSP_DIR)
-	$(INSTALL_DATA)  $(WEBSERVICES_RESOURCES) $(XSP_DIR)
-	$(mkinstalldirs) $(XSPBIN_DIR)
-	$(INSTALL_DATA) ../Util/Util.dll ../images/Images.dll ../BeagleClient/Beagle.dll ../Tiles/Tiles.dll BeagleDaemonPlugins.dll BeagleDaemonLib.dll $(XSPBIN_DIR)
-	$(INSTALL_DATA) $(WEBSERVICES_FRONTEND_TARGET) $(WEBSERVICES_BACKEND_TARGET) $(XSPBIN_DIR)
+	$(INSTALL_DATA) $(WEBSERVICES_XSP_TARGET) $(DESTDIR)$(pkglibdir)/$(WEBSERVICES_XSP_TARGET)
+	$(INSTALL_DATA) $(WEBSERVICES_BACKEND_TARGET) $(DESTDIR)$(pkglibdir)/$(WEBSERVICES_BACKEND_TARGET)
+	$(INSTALL_DATA) $(WEBSERVICES_FRONTEND_TARGET) $(DESTDIR)$(pkglibdir)/$(WEBSERVICES_FRONTEND_TARGET)
+	$(INSTALL_DATA)  $(WEBSERVICES_RESOURCES) $(DESTDIR)$(XSP_DIR)
+#	$(INSTALL_DATA) ../Util/Util.dll ../images/Images.dll ../BeagleClient/Beagle.dll ../Tiles/Tiles.dll BeagleDaemonPlugins.dll BeagleDaemonLib.dll $(DESTDIR)$(XSPBIN_DIR)
+
 endif
 
 uninstall-local:
 if ENABLE_WEBSERVICES
-	rm -f $(DESTDIR)$(pkglibdir)/$(WEBSERVICES_BACKEND_ASSEMBLY)
-	rm -rf $(XSP_DIR)
+	rm -f $(DESTDIR)$(pkglibdir)/$(WEBSERVICES_BACKEND_TARGET)
+	rm -f $(DESTDIR)$(pkglibdir)/$(WEBSERVICES_FRONTEND_TARGET)
+	rm -f $(DESTDIR)$(pkglibdir)/$(WEBSERVICES_XSP_TARGET)
+	rm -rf $(DESTDIR)$(XSP_DIR)
 endif
 	rm -f $(DESTDIR)$(pkglibdir)/$(PLUGIN_TARGET)
 	rm -f $(DESTDIR)$(pkglibdir)/$(DAEMON_DLL_TARGET)
 	rm -f $(DESTDIR)$(pkglibdir)/$(DAEMON_TARGET)
 	rm -f $(DESTDIR)$(pkglibdir)/$(INDEX_HELPER_TARGET)
 	rm -f $(DESTDIR)$(pkglibdir)/$(INDEX_HELPER_WRAPPER)
+	rm -f $(DESTDIR)$(pkglibdir)/$(INDEX_WEB_CONTENT_TARGET)
 
 bin_SCRIPTS = \
 	$(DAEMON_WRAPPER)		\
@@ -825,47 +864,48 @@ EXTRA_DIST = \
 	$(TERM_STATS_CSFILES)		\
 	$(NAME_INDEX_CSFILES)		\
 	$(FS_SANITY_CHECK_CSFILES)	\
-	$(WEBSERVICES_BACKEND_CSFILES)		\
-	$(WEBSERVICES_FRONTEND_CSFILES)		\
+	$(WEBSERVICES_XSP_CSFILES)	\
+	$(WEBSERVICES_BACKEND_CSFILES)	\
+	$(WEBSERVICES_FRONTEND_CSFILES)	\
 	$(WEBSERVICES_RESOURCES_DIST)
 
 CLEANFILES = \
-	$(PLUGIN_TARGET)       		\
-	$(PLUGIN_TARGET).mdb   		\
-	$(DAEMON_DLL_TARGET)		\
-	$(DAEMON_DLL_TARGET).mdb	\
-	$(DAEMON_TARGET)       		\
-	$(DAEMON_TARGET).mdb   		\
-	$(DAEMON_WRAPPER)      		\
-	$(INDEX_HELPER_TARGET)		\
-	$(INDEX_HELPER_TARGET).mdb	\
-	$(INDEX_HELPER_WRAPPER)		\
-	$(EXTRACT_CONTENT_TARGET)	\
-	$(EXTRACT_CONTENT_TARGET).mdb	\
-	$(EXTRACT_CONTENT_WRAPPER)	\
-	$(INDEX_WEB_CONTENT_TARGET)	\
-	$(INDEX_WEB_CONTENT_TARGET).mdb	\
-	$(INDEX_WEB_CONTENT_WRAPPER)	\
-	$(MASTER_DELETE_TARGET)		\
-	$(MASTER_DELETE_TARGET).mdb	\
-	$(MASTER_DELETE_WRAPPER)	\
-	$(SNIPPET_TEST_TARGET)		\
-	$(SNIPPET_TEST_TARGET).mdb	\
-	$(SNIPPET_TEST_WRAPPER)		\
-	$(TERM_STATS_TARGET)		\
-	$(TERM_STATS_TARGET).mdb	\
-	$(TERM_STATS_WRAPPER)		\
-	$(NAME_INDEX_TARGET)		\
-	$(NAME_INDEX_TARGET).mdb	\
-	$(NAME_INDEX_WRAPPER)		\
-	$(FS_SANITY_CHECK_TARGET)	\
-	$(FS_SANITY_CHECK_TARGET).mdb	\
-	$(FS_SANITY_CHECK_WRAPPER)	\
+	$(PLUGIN_TARGET)       			\
+	$(PLUGIN_TARGET).mdb   			\
+	$(DAEMON_DLL_TARGET)			\
+	$(DAEMON_DLL_TARGET).mdb		\
+	$(DAEMON_TARGET)       			\
+	$(DAEMON_TARGET).mdb   			\
+	$(DAEMON_WRAPPER)      			\
+	$(INDEX_HELPER_TARGET)			\
+	$(INDEX_HELPER_TARGET).mdb		\
+	$(INDEX_HELPER_WRAPPER)			\
+	$(EXTRACT_CONTENT_TARGET)		\
+	$(EXTRACT_CONTENT_TARGET).mdb		\
+	$(EXTRACT_CONTENT_WRAPPER)		\
+	$(INDEX_WEB_CONTENT_TARGET)		\
+	$(INDEX_WEB_CONTENT_TARGET).mdb		\
+	$(INDEX_WEB_CONTENT_WRAPPER)		\
+	$(MASTER_DELETE_TARGET)			\
+	$(MASTER_DELETE_TARGET).mdb		\
+	$(MASTER_DELETE_WRAPPER)		\
+	$(SNIPPET_TEST_TARGET)			\
+	$(SNIPPET_TEST_TARGET).mdb		\
+	$(SNIPPET_TEST_WRAPPER)			\
+	$(TERM_STATS_TARGET)			\
+	$(TERM_STATS_TARGET).mdb		\
+	$(TERM_STATS_WRAPPER)			\
+	$(NAME_INDEX_TARGET)			\
+	$(NAME_INDEX_TARGET).mdb		\
+	$(NAME_INDEX_WRAPPER)			\
+	$(FS_SANITY_CHECK_TARGET)		\
+	$(FS_SANITY_CHECK_TARGET).mdb		\
+	$(FS_SANITY_CHECK_WRAPPER)		\
 	$(WEBSERVICES_BACKEND_TARGET)		\
-	$(WEBSERVICES_BACKEND_TARGET).mdb		\
+	$(WEBSERVICES_BACKEND_TARGET).mdb	\
 	$(WEBSERVICES_FRONTEND_TARGET)		\
 	$(WEBSERVICES_FRONTEND_TARGET).mdb	\
-	$(BEAGLE_XSP_TARGET)		\
-	$(BEAGLE_XSP_TARGET).mdb	\
+	$(WEBSERVICES_XSP_TARGET)		\
+	$(WEBSERVICES_XSP_TARGET).mdb		\
 	$(SEARCH_DOT_ASPX)
 

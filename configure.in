@@ -474,8 +474,6 @@ templates/Makefile
 glue/Makefile
 BeagleClient/Makefile
 beagled/Makefile
-beagled/WebServices/Makefile
-beagled/WebServices/WebServer/Makefile
 Filters/Makefile
 Tiles/Makefile
 tools/Makefile
