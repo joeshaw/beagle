@@ -362,6 +362,10 @@ namespace Beagle.Daemon {
 		private ICollection FilterHits (LNS.Searcher searcher, LNS.Hits hits)
 		{
 			int nHits = hits.Length ();
+
+			if (nHits == 0)
+				return new Hit [0];
+
 			Hashtable byUri = new Hashtable ();
 
 			// Pass #1: If we get multiple hits with the same Uri,
@@ -407,11 +411,6 @@ namespace Beagle.Daemon {
 			LNS.Hits luceneHits = searcher.Search (query);
 			int nHits = luceneHits.Length ();
 
-			if (luceneHits.Length () == 0) {
-				searcher.Close ();
-				return new Hit [0];
-			}
-
 			ICollection filteredHits = FilterHits (searcher, luceneHits);
 
 			searcher.Close ();
@@ -422,24 +421,43 @@ namespace Beagle.Daemon {
 		public ICollection QueryByUri (ICollection listOfUris)
 		{
 			LNS.BooleanQuery uriQuery = new LNS.BooleanQuery ();
+			LNS.Searcher searcher;
+			LNS.Hits luceneHits;
+			ArrayList totalHits = new ArrayList ();
+
+			int maxClauses = LNS.BooleanQuery.GetMaxClauseCount ();
+			int clauseCount = 0;
+
 			foreach (Uri uri in listOfUris) {
 				Term term = new Term ("Uri", uri.ToString ());
 				LNS.Query termQuery = new LNS.TermQuery (term);
 				uriQuery.Add (termQuery, false, false);
-			}
-			LNS.Searcher searcher = new LNS.IndexSearcher (Store);
-			LNS.Hits luceneHits = searcher.Search (uriQuery);
+				++clauseCount;
 
-			if (luceneHits.Length () == 0) {
+				if (clauseCount == maxClauses) {
+					searcher = new LNS.IndexSearcher (Store);
+					luceneHits = searcher.Search (uriQuery);
+
+					if (luceneHits.Length () > 0)
+						totalHits.AddRange (FilterHits (searcher, luceneHits));
+
+					searcher.Close ();
+					uriQuery = new LNS.BooleanQuery ();
+					clauseCount = 0;
+				}
+			}
+
+			if (clauseCount > 0) {
+				searcher = new LNS.IndexSearcher (Store);
+				luceneHits = searcher.Search (uriQuery);
+
+				if (luceneHits.Length () > 0)
+					totalHits.AddRange (FilterHits (searcher, luceneHits));
+
 				searcher.Close ();
-				return new Hit [0];
 			}
 
-			ICollection filteredHits = FilterHits (searcher, luceneHits);
-
-			searcher.Close ();
-
-			return filteredHits;
+			return totalHits;
 		}
 
 		public ICollection QueryByUri (Uri uri)
