@@ -20,6 +20,7 @@ CSFILES = 			        	\
 	$(srcdir)/FlacReader.cs			\
 	$(srcdir)/FrequencyStatistics.cs	\
 	$(srcdir)/FSpotTools.cs         	\
+	$(srcdir)/GConfThreadHelper.cs          \
 	$(srcdir)/GeckoUtils.cs                 \
 	$(srcdir)/GtkUtils.cs			\
 	$(srcdir)/gnome.cs              	\

@@ -474,20 +474,6 @@ namespace Beagle.Daemon {
 			return folder_name;
 		}
 
-		private bool GConfReady ()
-		{
-			lock (this) {
-				if (gconf_client == null)
-					gconf_client = new GConf.Client ();
-
-				this.accounts = (ICollection) gconf_client.Get ("/apps/evolution/mail/accounts");
-
-				Monitor.Pulse (this);
-			}
-
-			return false;
-		}
-
 		protected override bool Setup ()
 		{
 			string dir_name = summary_info.DirectoryName;
@@ -496,10 +482,7 @@ namespace Beagle.Daemon {
 			string imap_start = dir_name.Substring (imap_start_idx);
 			this.imap_name = imap_start.Substring (0, imap_start.IndexOf ('/'));
 
-			lock (this) {
-				GLib.Idle.Add (new GLib.IdleHandler (this.GConfReady));
-				Monitor.Wait (this);
-			}
+			this.accounts = (ICollection) GConfThreadHelper.Get ("/apps/evolution/mail/accounts");
 
 			foreach (string xml in this.accounts) {
 				XmlDocument xmlDoc = new XmlDocument ();
