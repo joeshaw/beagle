@@ -34,8 +34,7 @@ using System.Collections;
 
 namespace Beagle.Daemon
 {
-
-	public class LiveQuery : Beagle.Query {
+	public class LiveQuery : Beagle.QueryProxy {
 		private string name;
 		private Beagle.Daemon.Query query;
 		private QueryDriver driver;
@@ -89,9 +88,7 @@ namespace Beagle.Daemon
 			System.Console.WriteLine ("starting query");
 			
 			if (result != null) {
-				result.GotHitsEvent -= OnGotHitsXml;
-				result.FinishedEvent -= OnFinished;
-				result.CancelledEvent -= OnCancelled;
+				return;
 			}
 			
 			result = driver.Query (query);
@@ -103,10 +100,30 @@ namespace Beagle.Daemon
 			result.Start ();
 		}
 
+		private void Cancel (bool disconnectHandlers)
+		{
+			if (disconnectHandlers) {
+			    result.FinishedEvent -= OnFinished;
+			    result.CancelledEvent -= OnCancelled;
+			    result.GotHitsEvent -= OnGotHitsXml;
+			}
+
+			if (!result.Finished) {
+				result.Cancel ();
+			}
+		} 
+
 		public override void Cancel ()
 		{
-			if (result != null) 
-				result.Cancel ();
+			Cancel (false);
+		}
+
+		public override void CloseQuery () 
+		{
+			Cancel (true);
+
+			System.Console.WriteLine ("Closing Query");
+			QueryManager.Get().RemoveQuery (this);
 		}
 
 		private string HitsToXml (ICollection hits)

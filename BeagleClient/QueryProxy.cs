@@ -1,5 +1,5 @@
 //
-// Query.cs
+// QueryProxy.cs
 //
 // Copyright (C) 2004 Novell, Inc.
 //
@@ -28,42 +28,53 @@ namespace Beagle
 {
 	using System.Collections;
 	using DBus;
-	using System;
-
-	public abstract class Query : QueryProxy, IDisposable {
-		public delegate void GotHitsHandler (ICollection hits);
-
-		public virtual event GotHitsHandler GotHitsEvent;
-
-		public void Dispose () {
-			CloseQuery ();
-			
-			GC.SuppressFinalize (this);
-		}
-
-		~Query () {
-			CloseQuery ();
-		}
-
-		private void OnGotHitsXml (string hitsXml)
-		{
-			if (GotHitsEvent != null) {
-				ArrayList hits = Hit.ReadHitXml (hitsXml);
-				GotHitsEvent (hits);
-			}
-		}
-
-		static public Query New ()
-		{
-			string queryPath = DBusisms.QueryManager.NewQuery ();
-
-			Query query;
-			query = (Query) DBusisms.Service.GetObject (typeof (Query), queryPath);
-			query.GotHitsXmlEvent += query.OnGotHitsXml;
-			
-			return query;
-		}
-
+	
+	public enum QueryDomain {
+		Local = 1,
+		Neighborhood = 2,
+		Global = 4
 	}
 
+	[Interface ("com.novell.Beagle.Query")]
+	public abstract class QueryProxy {
+		
+		[Method]
+		public abstract void AddText (string str);
+		
+		[Method]
+		public abstract void AddTextRaw (string str);
+
+		[Method]
+		public abstract void AddMimeType (string type);
+
+		[Method]
+		public abstract void AddDomain (QueryDomain d);
+		
+		[Method]
+		public abstract void RemoveDomain (QueryDomain d);
+
+		[Method]
+		public abstract void Start ();
+
+		[Method]
+		public abstract void Cancel ();
+
+		[Method]
+		public abstract void CloseQuery ();
+
+		public delegate void GotHitsXmlHandler (string hitsXml);
+		[Signal]
+		public virtual event GotHitsXmlHandler GotHitsXmlEvent;
+
+		public delegate void FinishedHandler ();
+		[Signal]
+		public virtual event FinishedHandler FinishedEvent;
+
+		public delegate void CancelledHandler ();
+		[Signal]
+		public virtual event CancelledHandler CancelledEvent;
+		
+
+
+	}
 }

@@ -2,4 +2,6 @@
 ExternalStringsHack.cs
 Makefile
 Makefile.in
+beagle-extract-content
 beagled
+testclient

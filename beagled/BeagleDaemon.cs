@@ -109,10 +109,7 @@ namespace Beagle.Daemon {
 							 Beagle.DBusisms.IndexerPath);
 
 
-			QueryManager manager = new QueryManager ();
-			DBusisms.Service.RegisterObject (manager,
-							 Beagle.DBusisms.QueryManagerPath);
-
+			QueryManager manager = QueryManager.Get ();
 
 			Application.Run ();
 			return 0;

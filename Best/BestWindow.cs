@@ -235,6 +235,7 @@ namespace Best {
 				query.GotHitsEvent -= OnGotHits;
 				query.FinishedEvent -= OnFinished;
 				query.CancelledEvent -= OnCancelled;
+				query.Dispose ();
 			}
 
 			query = Query.New ();

@@ -36,6 +36,7 @@ using BU = Beagle.Util;
 class QueryTool {
 
 	static int count = 0;
+	static Query query = null;
 
 	static void WriteHit (Hit hit)
 	{
@@ -74,12 +75,14 @@ class QueryTool {
 	static void OnFinished ()
 	{
 		Console.WriteLine ("Finished after {0} hits.", count);
+		query.Dispose ();
 		Gtk.Application.Quit ();
 	}
 
 	static void OnCancelled ()
 	{
 		Console.WriteLine ("Cancelled after {0} hits.", count);
+		query.Dispose ();
 		Gtk.Application.Quit ();
 	}
 
@@ -87,7 +90,7 @@ class QueryTool {
 	{
 		Gtk.Application.Init ();
 
-		Query query = Query.New ();
+		query = Query.New ();
 		query.GotHitsEvent += OnGotHits;
 		query.FinishedEvent += OnFinished;
 		query.CancelledEvent += OnCancelled;

@@ -34,11 +34,13 @@ namespace Beagle.Daemon
 {
 	public class QueryManager : Beagle.QueryManager
 	{
+		private static QueryManager theQueryManager = null;
+
 		private Hashtable liveQueries = new Hashtable ();
 		private static ulong numQueries = 0;
 		private QueryDriver driver;
 
-		public QueryManager ()
+		private QueryManager ()
 		{
 			driver = new QueryDriver ();
 		}
@@ -74,6 +76,23 @@ namespace Beagle.Daemon
 			source.AddRdfXml ("Two!");
 			source.AddRdfXml ("Three!");
 			return source.Path;
+		}
+
+		public void RemoveQuery (LiveQuery query)
+		{
+			liveQueries.Remove (query);
+			DBusisms.Service.UnregisterObject (query);
+		}
+
+		public static QueryManager Get () {
+			if (theQueryManager == null) {
+				theQueryManager = new QueryManager ();
+
+				DBusisms.Service.RegisterObject (theQueryManager,
+								 Beagle.DBusisms.QueryManagerPath);
+			}
+			
+			return theQueryManager;
 		}
 	}
 }

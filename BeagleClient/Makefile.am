@@ -17,6 +17,7 @@ CSFILES = 				\
 	$(srcdir)/Property.cs           \
 	$(srcdir)/QueryManager.cs	\
 	$(srcdir)/Query.cs              \
+	$(srcdir)/QueryProxy.cs         \
 	$(srcdir)/RdfSink.cs		\
 	$(srcdir)/RdfSource.cs		\
 	$(srcdir)/Versioned.cs 
