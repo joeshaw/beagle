@@ -271,18 +271,19 @@ namespace Beagle.Tile {
 			// IMPORTANT!  The <meta> tag has to be in the first
 			// chunk written to the stream or else the encoding
 			// will be wrong!
-			ctx.WriteLine ("<html>\n<head>\n<meta http-equiv=\"content-type\" content=\"text/html; charset=UTF-8\">");
+			ctx.Write ("<html>\n<head>\n<meta http-equiv=\"content-type\" content=\"text/html; charset=UTF-8\">\n");
 
-			ctx.WriteLine ("<style type=\"text/css\" media=\"screen\">");
+       			ctx.Write ("<style type=\"text/css\" media=\"screen\">\n");
 			RenderStyles (ctx);
-			
-			ctx.WriteLine ("</style>");
-			ctx.WriteLine ("</head>");
+			ctx.Write ("</style>\n"); 
+
+			ctx.Write ("</head>\n");
 
 			if (tile != null) {
 				tile.Render (ctx);
 			}
-			ctx.WriteLine ("</html>");
+
+			ctx.Write ("</html>");
 		}
 		
 		/////////////////////////////////////////////////
