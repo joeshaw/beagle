@@ -4,7 +4,7 @@ LIBFLAGS =				\
 	-r:ICSharpCode.SharpZipLib.dll
 
 # Found at http://sharptoolbox.madgeek.com/
-HTML_CSFILES =					\
+HAP_CSFILES =					\
 	HtmlAgilityPack/crc32.cs		\
 	HtmlAgilityPack/Header.cs		\
 	HtmlAgilityPack/HtmlAttribute.cs	\
@@ -13,11 +13,13 @@ HTML_CSFILES =					\
 	HtmlAgilityPack/HtmlNode.cs		\
 	HtmlAgilityPack/HtmlNodeNavigator.cs	\
 	HtmlAgilityPack/MixedCodeDocument.cs	\
-	HtmlAgilityPack/tools.cs		\
-	FilterHtml.cs
+	HtmlAgilityPack/tools.cs
+
 
 FILTERS_CSFILES = 		\
+	$(HAP_CSFILES)		\
 	Filter.cs		\
+	FilterHtml.cs		\
 	FilterOpenOffice.cs	\
 	FilterText.cs
 
