@@ -33,11 +33,12 @@ using Beagle.Util;
 
 namespace Beagle.Daemon {
 
-	public class QueryImpl : Beagle.QueryProxy, IDisposable, IDBusObject {
+	public class QueryImpl : Beagle.QueryProxy, IDBusObject {
 
 		private QueryBody body;
 		private QueryResult result = null;
 		private string id;
+		private bool registered = false;
 
 		private Hashtable allHits = UriFu.NewHashtable ();
 		
@@ -56,6 +57,8 @@ namespace Beagle.Daemon {
 
 			body = new QueryBody ();
 		}
+
+		private bool IsRegistered { get { return registered; } }
 
 		private void DisconnectResult ()
 		{
@@ -215,17 +218,23 @@ namespace Beagle.Daemon {
 
 		public void RegisterHook (string path)
 		{
-			QueryDriver.ChangedEvent += OnQueryDriverChanged;
+			lock (this) {
+				this.registered = true;
+				QueryDriver.ChangedEvent += OnQueryDriverChanged;
+			}
 		}
 
 		public void UnregisterHook ()
 		{
-			QueryDriver.ChangedEvent -= OnQueryDriverChanged;
+			lock (this) {
+				QueryDriver.ChangedEvent -= OnQueryDriverChanged;
 
-			// Clear out some of our contents
-			this.body = null;
-			this.result = null;
-			this.allHits = null;
+				// Clear out some of our contents
+				this.registered = false;
+				this.body = null;
+				this.result = null;
+				this.allHits = null;
+			}
 		}
 
 		//////////////////////////////////////////////////////
@@ -233,32 +242,49 @@ namespace Beagle.Daemon {
 #if DBUS_IS_BROKEN_BROKEN_BROKEN
 		//
 		// This works around d-bus bugs by hoisting signal emissions
-		// into the main loop.
+		// into the main loop.  But we don't want to do anything
+		// if the object has already been unregistered.  We test
+		// for it by 
 		//
 
 		public void FireStartedEvent ()
 		{
-			StartedEvent (this);
+			lock (this) {
+				if (this.IsRegistered)
+					StartedEvent (this);
+			}
 		}
 
 		public void FireCancelledEvent ()
 		{
-			CancelledEvent (this);
+			lock (this) {
+				if (this.IsRegistered)
+					CancelledEvent (this);
+			}
 		}
 
 		public void FireFinishedEvent ()
 		{
-			FinishedEvent (this);
+			lock (this) {
+				if (this.IsRegistered)
+					FinishedEvent (this);
+			}
 		}
 
 		public void FireHitsAddedAsBinaryEvent (string arg)
 		{
-			HitsAddedAsBinaryEvent (this, arg);
+			lock (this) {
+				if (this.IsRegistered) 
+					HitsAddedAsBinaryEvent (this, arg);
+			}
 		}
 
 		public void FireHitsSubtractedAsStringEvent (string arg)
 		{
-			HitsSubtractedAsStringEvent (this, arg);
+			lock (this) {
+				if (this.IsRegistered)
+					HitsSubtractedAsStringEvent (this, arg);
+			}
 		}
 
 		private class SignalHoister {
