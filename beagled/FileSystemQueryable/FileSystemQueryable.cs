@@ -91,7 +91,7 @@ namespace Beagle.Daemon.FileSystemQueryable {
 
 		//////////////////////////////////////////////////////////////////////////
 
-		public void Add (string path)
+		public void Add (string path, Scheduler.Priority priority)
 		{
 			FileSystemModel.RequiredAction action;
 			string old_path;
@@ -113,22 +113,51 @@ namespace Beagle.Daemon.FileSystemQueryable {
 			Uri internal_uri = model.ToInternalUri (file_uri);
 			indexable = FileToIndexable (file_uri, internal_uri, false);
 			task = NewAddTask (indexable);
-			task.Priority = Scheduler.Priority.Immediate;
+			task.Priority = priority;
 			
+			ThisScheduler.Add (task);
+		}
+
+		public void Add (string path)
+		{
+			Add (path, Scheduler.Priority.Immediate);
+		}
+
+		public void Remove (string path, Scheduler.Priority priority)
+		{
+			Uri uri = UriFu.PathToFileUri (path);
+			Scheduler.Task task;
+			task = NewRemoveTask (uri);
+			task.Priority = priority;
 			ThisScheduler.Add (task);
 		}
 
 		public void Remove (string path)
 		{
-			Uri uri = UriFu.PathToFileUri (path);
-			Scheduler.Task task;
-			task = NewRemoveTask (uri);
-			task.Priority = Scheduler.Priority.Immediate;
-			ThisScheduler.Add (task);
+			Remove (path, Scheduler.Priority.Immediate);
 		}
 
 		public void Rename (string old_path, string new_path, Scheduler.Priority priority)
 		{
+			bool ignore_old = Model.Ignore (old_path);
+			bool ignore_new = Model.Ignore (new_path);
+
+			// If we just want to ignore both paths, do nothing.
+			if (ignore_old && ignore_new)
+				return;
+
+			// If we were ignoring the old path, treat this as an add
+			if (ignore_old) {
+				Add (new_path, priority);
+				return;
+			}
+
+			// If we want to ignore the new path, treat this as a removal
+			if (ignore_new) {
+				Remove (old_path, priority);
+				return;
+			}
+
 			Uri old_uri = UriFu.PathToFileUri (old_path);
 			Uri new_uri = UriFu.PathToFileUri (new_path);
 			Scheduler.Task task;
