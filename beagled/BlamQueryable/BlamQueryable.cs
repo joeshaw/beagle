@@ -196,7 +196,7 @@ namespace Beagle.Daemon.BlamQueryable {
 			Stream stream = new FileStream (filename,
 							FileMode.Open,
 							FileAccess.Read,
-							FileShare.Read);
+							FileShare.ReadWrite);
 			XmlTextReader reader = new XmlTextReader (stream);
 
 			collection = (ChannelCollection) serializer.Deserialize (reader);
