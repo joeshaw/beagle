@@ -396,13 +396,18 @@ namespace Beagle.Util {
 		{
 			// file.Directory.Parent.Parent.Name is the name of the current protocol (ex. aim)
 			ImLog log = new GaimLog (file.Directory.Parent.Parent.Name, file.FullName);
-			
-			log.Timestamp = file.LastWriteTime;
-			
+
 			string startStr = Path.GetFileNameWithoutExtension (file.Name);
-			log.StartTime = DateTime.ParseExact (startStr,
-							     "yyyy-MM-dd.HHmmss",
-							     CultureInfo.CurrentCulture);
+			try {
+				log.StartTime = DateTime.ParseExact (startStr,
+								     "yyyy-MM-dd.HHmmss",
+								     CultureInfo.CurrentCulture);
+			} catch (FormatException) {
+				Logger.Log.Warn ("IMLog: Could not parse date/time from '{0}', ignoring.", startStr);
+				return;
+			}
+			
+			log.Timestamp = file.LastWriteTime;	
 
 			log.SpeakingTo = file.Directory.Name;
 			log.Identity   = file.Directory.Parent.Name;

@@ -1,3 +1,8 @@
+2005-03-31  Daniel Drake  <dsd@gentoo.org>
+
+	* Util/ImLog.cs: Ignore GAIM logs which don't have the standard
+	filename format
+
 2005-03-31  Vijay K. Nanjundaswamy <knvijay@novell.com>
 
 	* configure.in, beagled/Makefile.am: Changes to work with webservices code moved into a sub-folder
