@@ -46,6 +46,9 @@ namespace Beagle.Tile {
 			// Hacky: if an image exists for this blog entry,
 			// load it into a pixbuf to find the size and
 			// scale the image if it is too big.
+			
+			Template["height"] = " ";
+
 			Stream fs = ImageStream ();
 			if (fs != null) {
 				string height = "";
@@ -65,6 +68,8 @@ namespace Beagle.Tile {
 				Template["Icon"] = Images.GetHtmlSource (Hit ["fixme:cachedimg"],
 									 null);
 			}
+			else
+				Template["Icon"] = Images.GetHtmlSource ("icon-blog", "text/html");
 		}
 
 		private Stream ImageStream ()
@@ -81,6 +86,13 @@ namespace Beagle.Tile {
 					       FileMode.Open,
 					       FileAccess.Read,
 					       FileShare.Read);
+		}
+
+		[TileAction]
+		public override void Open ()
+                {
+			// We should prolly have blam or other aggregator handle rss:// urls, until then...
+			Gnome.Url.Show(Hit["fixme:itemuri"]);
 		}
 	}
 }
