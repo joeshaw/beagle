@@ -86,6 +86,10 @@ namespace Beagle.Daemon.TomboyQueryable {
 
 		private void IndexNote (FileInfo file)
 		{
+			// Don't index backup files.
+			if (file.Name.EndsWith ("~"))
+				return;
+
 			// Try and parse a Note from the given path
 			BU.Note note = BU.TomboyNote.ParseNote (file);
 			if (note == null)
@@ -98,6 +102,10 @@ namespace Beagle.Daemon.TomboyQueryable {
 		
 		private void RemoveNote (string path)
 		{
+			// Don't remove backup files either.
+			if (path.EndsWith ("~"))
+				return;
+
 			Uri uri = BU.UriFu.PathToFileUri(path);
 			Driver.ScheduleDelete (uri);
 		}
