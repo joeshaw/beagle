@@ -24,6 +24,13 @@
 // FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 //
+//
+// Currently, the filtering is based on the Keyword : "\pard\plain". If anyone
+// has any samples that can break this "assumption", kindly post a copy of it, 
+// if you can, to vvaradhan AT novell DOT com
+//
+// FIXME:  Require more complex samples to test the parsing, mostly generated
+//         using Microsoft Word or wordpad. :)
 
 using System;
 using System.IO;
@@ -50,15 +57,38 @@ namespace Beagle.Filters {
 		{
 			string str;
 			string[] tokens;
+			string[] KeyWord = {"\\pard\\plain"};
+			int ndxKeyword;
 			while ((str = reader.ReadLine ()) != null) {
+				ndxKeyword = str.IndexOf (KeyWord[0]);
+				if (ndxKeyword < 0)
+					continue;
+				
+				// Assuming "1" to be the index of the first character
+				str.Remove (1, (ndxKeyword+KeyWord[0].Length));
 				tokens = str.Split (' ');
 				for (int i = 0; i < tokens.Length; i++) {
 					if (tokens[i].IndexOf (";}") > -1 ||
 					    tokens[i].IndexOf ("{\\") > -1 ||
-					    tokens[i].StartsWith ("\\")) {
+					    tokens[i].IndexOf ("}\\") > -1) {
 						/* Control word in the RTF */
 						continue;
 					}
+					else if (tokens[i].StartsWith ("\\") &&
+						 (tokens[i][1] != '{' &&
+						  tokens[i][1] != '}' &&
+						  tokens[i][1] != '\\')) {
+						continue;
+					}
+					tokens[i] = tokens[i].Replace ("\\", "");
+					tokens[i] = tokens[i].Replace ("{", "");
+					tokens[i] = tokens[i].Replace ("}", "");
+					//Console.WriteLine (tokens[i]);
+					/*
+					  FIXME: Why don't we filter out the punctuation marks??
+					  Why don't we do it in "AppendText", that would be 
+					  really generic!!!
+					 */
 					AppendText (tokens[i]);
 					AppendWhiteSpace ();
 				}
