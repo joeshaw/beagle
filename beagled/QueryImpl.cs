@@ -182,7 +182,7 @@ namespace Beagle.Daemon {
 				if (builder == null)
 					builder = new StringBuilder ("");
 				else
-					builder.Append (" ");
+					builder.Append ("|");
 				builder.Append (uri.ToString ());
 			}
 			return builder  != null ? builder.ToString () : "";

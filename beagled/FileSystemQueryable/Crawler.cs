@@ -45,6 +45,9 @@ namespace Beagle.Daemon.FileSystemQueryable {
 		public Crawler (LuceneDriver _driver, FileSystemInfo root)
 		{
 			driver = _driver;
+
+			if (! root.Exists)
+				return;
 			
 			if (root is FileInfo) {
 

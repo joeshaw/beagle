@@ -37,7 +37,7 @@ namespace Beagle {
 		private static IndexerProxy TheIndexer {
 			get {
 				lock (theIndexerLock) {
-					if (theIndexerLock == null)
+					if (theIndexer == null)
 						theIndexer = (IndexerProxy) DBusisms.Service.GetObject (typeof (IndexerProxy), DBusisms.IndexerPath);
 				}
 				return theIndexer;
@@ -53,6 +53,11 @@ namespace Beagle {
 		public static void Delete (Uri uri)
 		{
 			TheIndexer.Delete (uri.ToString ());
+		}
+
+		public static void Crawl (string path, int maxDepth)
+		{
+			TheIndexer.Crawl (path, maxDepth);
 		}
 	}
 }

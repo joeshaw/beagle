@@ -36,5 +36,8 @@ namespace Beagle
 
 		[Method]
 		public abstract void Delete (string uri);
+
+		[Method]
+		public abstract void Crawl (string path, int maxDepth);
 	}
 }

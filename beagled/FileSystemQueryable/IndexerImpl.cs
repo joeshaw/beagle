@@ -28,7 +28,9 @@ using DBus;
 using System;
 using System.IO;
 using System.Collections;
+using System.Threading;
 using Beagle.Daemon;
+using BU = Beagle.Util;
 
 namespace Beagle.Daemon.FileSystemQueryable {
 
@@ -52,6 +54,77 @@ namespace Beagle.Daemon.FileSystemQueryable {
 		{
 			Uri uri = new Uri (uriStr, true);
 			driver.ScheduleDelete (uri);
+		}
+
+		private class PostIndexClosure {
+			Crawler crawler;
+			FileSystemInfo info;
+
+			public PostIndexClosure (Crawler _crawler, FileSystemInfo _info)
+			{
+				crawler = _crawler;
+				info = _info;
+			}
+
+			public void Hook (LuceneDriver driver, Uri uri)
+			{
+				crawler.MarkAsIndexed (info);
+			}
+		}
+
+		private class CrawlClosure {
+
+			LuceneDriver driver;
+			string startPath;
+			int startDepth;
+
+			public CrawlClosure (LuceneDriver _driver, string path, int maxDepth)
+			{
+				driver = _driver;
+				startPath = path;
+				startDepth = maxDepth;
+			}
+
+			private void DoCrawl (string path, int maxDepth)
+			{
+				Console.WriteLine ("Crawling {0}", path);
+			
+				FileSystemInfo root = null;
+
+				if (Directory.Exists (path))
+					root = new DirectoryInfo (path);
+				else if (File.Exists (path))
+					root = new FileInfo (path);
+				else
+					return;
+
+				Crawler crawler = new Crawler (driver, root);
+
+				foreach (FileSystemInfo info in crawler.FilesToIndex) {
+					Uri uri = new Uri (BU.StringFu.PathToQuotedFileUri (info.FullName), true);
+					Indexable indexable = new FilteredIndexable (uri);
+					PostIndexClosure pic = new PostIndexClosure (crawler, info);
+					driver.ScheduleAdd (indexable, new PostIndexHook (pic.Hook));
+				}
+
+				if (maxDepth != 0) {
+					foreach (DirectoryInfo dir in crawler.DirectoriesToCrawl) 
+						DoCrawl (dir.FullName, maxDepth-1);
+				}
+			}
+
+			public void Start ()
+			{
+				DoCrawl (startPath, startDepth);
+			}
+		}
+
+		public override void Crawl (string path, int maxDepth)
+		{
+			CrawlClosure cc = new CrawlClosure (driver, path, maxDepth);
+
+			Thread th = new Thread (new ThreadStart (cc.Start));
+			th.Start ();
 		}
 	}
 }

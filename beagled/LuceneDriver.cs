@@ -127,6 +127,8 @@ namespace Beagle.Daemon {
 				IndexWriter writer = new IndexWriter (Store, null, true);
 				writer.Close ();
 			}
+
+			StartQueue ();
 		}
 
 		/////////////////////////////////////////////////////
@@ -156,7 +158,6 @@ namespace Beagle.Daemon {
 				if (ourStore != null)
 					throw new Exception ("Attempt to attach a second store to a LuceneDriver");
 				ourStore = (Lucene.Net.Store.Directory) value;
-				StartQueue ();
 			}
 		}
 
@@ -334,6 +335,21 @@ namespace Beagle.Daemon {
 		private void ProcessEmptyQueue ()
 		{
 			FlushPending ();
+
+			if (sinceOptimization > sinceOptimizationThreshold / 2) {
+				Console.WriteLine ("Optimizing Index (Opportunistic)");
+				IndexWriter writer = new IndexWriter (Store, Analyzer, false);
+				writer.Optimize ();
+				writer.Close ();
+				Console.WriteLine ("Done Optimizing Index");
+				sinceOptimization = 0;
+			}
+		}
+
+		// Called between iterations when the queue is not empty.
+		private void ProcessNonEmptyQueue ()
+		{
+			ConditionallyFlushPending ();
 		}
 
 		// Test whether or not we should continue processing queue items.
@@ -384,6 +400,8 @@ namespace Beagle.Daemon {
 					}
 					if (queueIsEmpty)
 						ProcessEmptyQueue ();
+					else
+						ProcessNonEmptyQueue ();
 				}
 
 				// Should we stop processing the queue and exit the thread?
@@ -448,6 +466,9 @@ namespace Beagle.Daemon {
 					if (item.PostIndexHook != null)
 						item.PostIndexHook (this, indexable.Uri);
 					++sinceOptimization;
+
+					// Stop and catch our breath for 26ms
+					Thread.Sleep (26);
 				}
 			}
 
@@ -614,6 +635,12 @@ namespace Beagle.Daemon {
 			FlushPendingAdds ();
 			BroadcastAndClearPendingDeletes ();
 			BroadcastAndClearPendingAdds ();
+		}
+
+		private void ConditionallyFlushPending ()
+		{
+			if (pendingAdds.Count + pendingDeletes.Count > 197)
+				FlushPending ();
 		}
 
 

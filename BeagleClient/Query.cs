@@ -114,9 +114,8 @@ namespace Beagle
 
 		private void OnHitsSubtractedAsString (QueryProxy sender, string uriList)
 		{
-			string[] uris = uriList.Split (' ');
+			string[] uris = uriList.Split ('|');
 			foreach (string uriStr in uris) {
-				Console.WriteLine ("[{0}]", uriStr);
 				Uri uri = new Uri (uriStr, true);
 				InternalSubtractUri (uri);
 			}
