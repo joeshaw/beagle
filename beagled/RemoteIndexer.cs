@@ -58,7 +58,7 @@ namespace Beagle.Daemon {
 		private RemoteIndexerProxy Proxy {
 			get {
 				lock (this) {
-					if (proxy == null) {
+					if (proxy == null && ! Shutdown.ShutdownRequested) {
 						proxy = IndexHelperFu.NewRemoteIndexerProxy (remote_index_name);
 						if (proxy != null) {
 							proxy.ChangedEvent += OnProxyChanged;
@@ -128,23 +128,23 @@ namespace Beagle.Daemon {
 
 			private bool IdleHandler ()
 			{
-				if (Shutdown.ShutdownRequested)
-					return false;
-
 				lock (this) {
-					switch (magic_code) {
-					case 0:
-						proxy.Add (data);
-						break;
-					case 1:
-						proxy.Remove (data);
-						break;
-					case 2:
-						proxy.Flush ();
-						break;
-					case 3:
-						proxy.Close ();
-						break;
+					if (! Shutdown.ShutdownRequested) {
+
+						switch (magic_code) {
+						case 0:
+							proxy.Add (data);
+							break;
+						case 1:
+							proxy.Remove (data);
+							break;
+						case 2:
+							proxy.Flush ();
+							break;
+						case 3:
+							proxy.Close ();
+							break;
+						}
 					}
 
 					finished = true;
@@ -153,7 +153,7 @@ namespace Beagle.Daemon {
 				return false;
 			}
 			
-			public void Run ()
+			public bool Run ()
 			{
 				lock (this) {
 					// If the proxy is null, it means the index helper
@@ -161,19 +161,23 @@ namespace Beagle.Daemon {
 					// with scheduled events on daemon shutdown, so we
 					// just silently return.
 					if (proxy == null)
-						return;
+						return false;
 
 					GLib.IdleHandler idle_handler = new GLib.IdleHandler (IdleHandler);
 					GLib.Idle.Add (idle_handler);
 					finished = false;
 					while (! finished) {
-						// Logger.Log.Debug ("Waiting code={0}", magic_code);
-						Monitor.Wait (this, one_second);
+						//Logger.Log.Debug ("Waiting code={0}", magic_code);
 						// Bale out if a shutdown request has come in.
-						if (Shutdown.ShutdownRequested)
-							return;
+						if (Shutdown.ShutdownRequested) {
+							//Logger.Log.Debug ("Bailing out while waiting on code={0}", magic_code);
+							return false;
+						}
+						Monitor.Wait (this, one_second);
 					}
 				}
+
+				return true;
 			}
 			
 		}
@@ -185,26 +189,30 @@ namespace Beagle.Daemon {
 			
 #if DBUS_IS_BROKEN_BROKEN_BROKEN
 			UpToTheMainLoop up = UpToTheMainLoop.NewAdd (Proxy, indexable);
-			up.Run ();
+			if (up.Run ())
+				++add_remove_count;
 #else
 			RemoteIndexerProxy p = Proxy;
-			if (p != null)
+			if (p != null) {
 				p.Add (indexable.ToString ());
+				++add_remove_count;
+			}
 #endif
-			++add_remove_count;
 		}
 
 		public void Remove (Uri uri)
 		{
 #if DBUS_IS_BROKEN_BROKEN_BROKEN
 			UpToTheMainLoop up = UpToTheMainLoop.NewRemove (Proxy, uri);
-			up.Run ();
+			if (up.Run ())
+				++add_remove_count;
 #else
 			RemoteIndexerProxy p = Proxy;
-			if (p != null)
+			if (p != null) {
 				p.Remove (uri.ToString ());
+				++add_remove_count;
+			}
 #endif
-			++add_remove_count;
 		}
 
 		public void Flush ()
@@ -214,7 +222,9 @@ namespace Beagle.Daemon {
 				UpToTheMainLoop up = UpToTheMainLoop.NewClose (Proxy);
 				up.Run ();
 #else
-				Proxy.Close ();
+				RemoteIndexerProxy p = Proxy;
+				if (p != null)
+					p.Close ();
 #endif
 				UnsetProxy ();
 				return;
@@ -231,8 +241,12 @@ namespace Beagle.Daemon {
 				// Wait for the flush complete signal, but bail out
 				// if a shutdown request comes through.
 				flush_complete = false;
-				while (! flush_complete && ! Shutdown.ShutdownRequested) {
+				while (! flush_complete) {
 					Logger.Log.Debug ("Waiting for flush to complete on '{0}'", remote_index_name);
+					if (Shutdown.ShutdownRequested) {
+						//Logger.Log.Debug ("Bailing out while waiting for flush on '{0}'", remote_index_name);
+						break;
+					}
 					Monitor.Wait (flush_lock, one_second);
 				}
 			

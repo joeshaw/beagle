@@ -98,27 +98,33 @@ namespace Beagle.Daemon {
 
 		static public void BeginShutdown ()
 		{
+			if (Debug)
+				Logger.Log.Debug ("Calling BeginShutdown");
+
 			lock (shutdownLock) {
 				if (shutdownRequested)
 					return;
-
 				shutdownRequested = true;
-
-				Logger.Log.Info ("Beginning shutdown");
-
+			}
+			
+			if (Debug)
 				Logger.Log.Debug ("Beginning shutdown event");
-				if (ShutdownEvent != null) {
-					try {
-						ShutdownEvent ();
-					} catch (Exception ex) {
-						Logger.Log.Warn ("Caught unhandled exception during shutdown event");
-						Logger.Log.Warn (ex);
-					}
+
+			if (ShutdownEvent != null) {
+				try {
+					ShutdownEvent ();
+				} catch (Exception ex) {
+					Logger.Log.Warn ("Caught unhandled exception during shutdown event");
+					Logger.Log.Warn (ex);
 				}
+			}
+
+			if (Debug)
 				Logger.Log.Debug ("Done with shutdown event"); 
 
-				int count = 0;
-
+			int count = 0;
+			
+			lock (shutdownLock) { 
 				while (workers.Count > 0) {
 					++count;
 					Logger.Log.Debug ("({0}) Waiting for {1} worker{2}...",
@@ -129,10 +135,10 @@ namespace Beagle.Daemon {
 						Logger.Log.Debug ("waiting for {0}", workers_names[o]);
 					Monitor.Wait (shutdownLock);
 				}
-
-				Logger.Log.Info ("Exiting");
-				Gtk.Application.Quit ();
 			}
+
+			Logger.Log.Info ("Exiting");
+			Gtk.Application.Quit ();
 		}
 	}
 }
