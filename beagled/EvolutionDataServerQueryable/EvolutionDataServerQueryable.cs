@@ -182,6 +182,8 @@ namespace Beagle.Daemon.EvolutionDataServerQueryable {
 				indexable.AddProperty (Property.NewKeyword ("fixme:ImMsn", contact.ImMsn [0]));
 			if (contact.ImYahoo.Length > 0)
 				indexable.AddProperty (Property.NewKeyword ("fixme:ImYahoo", contact.ImYahoo [0]));
+			if (contact.ImGroupwise.Length > 0)
+				indexable.AddProperty (Property.NewKeyword ("fixme:ImGroupWise", contact.ImGroupwise [0]));
 		
 			String name = "";
 			if (contact.GivenName != null && contact.GivenName != "")
