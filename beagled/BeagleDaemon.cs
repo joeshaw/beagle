@@ -312,6 +312,12 @@ namespace Beagle.Daemon {
 			} catch (Exception ex) { }
 
 
+			if (Environment.UserName == "root") {
+				Logger.Log.Error ("You can not run beagle as root.");
+				Logger.Log.Error ("Beagle is designed to be run from your own user account.");
+				Environment.Exit (-1);
+			}
+
 			// Make sure that extended attributes can be set.  If not, bail out with a message.
 			// FIXME FIXME FIXME: This assumes that EAs work the same on your storage dir
 			// as they do on your home dir, which is obviously not a good assumption.
