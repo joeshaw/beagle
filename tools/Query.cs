@@ -81,15 +81,9 @@ class QueryTool {
 		--count;
 	}
 
-
-	static bool QuitIfNoRecentResults ()
+	static void OnFinished (QueryProxy query)
 	{
-		if (lastQueryTime.AddMilliseconds (1000) < DateTime.Now) {
-			Console.WriteLine ("No results in one second.  Quitting.");
-			Gtk.Application.Quit ();
-		}
-
-		return true;
+		Gtk.Application.Quit ();
 	}
 
 	static void Main (string[] args) 
@@ -130,7 +124,7 @@ class QueryTool {
 		}
 
 		if (! keepRunning)
-			GLib.Timeout.Add (50, new GLib.TimeoutHandler (QuitIfNoRecentResults));
+			query.FinishedEvent += OnFinished;
 
 		query.Start ();
 		Gtk.Application.Run ();
