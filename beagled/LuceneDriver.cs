@@ -846,12 +846,122 @@ namespace Beagle.Daemon {
 		// A common, shared analyzer
 		//
 
+		private class BeagleNoiseFilter : TokenFilter {
+			
+			static int total_count = 0;
+			static int noise_count = 0;
+
+			TokenStream token_stream;
+
+			public BeagleNoiseFilter (TokenStream input) : base (input)
+			{
+				token_stream = input;
+			}
+
+			// FIXME: we should add some heuristics that are stricter
+			// but explicitly try to avoid filtering out dates,
+			// phone numbers, etc.
+			private static bool IsNoise (string text)
+			{
+				// Anything really long is almost certainly noise.
+				if (text.Length > 25) 
+					return true;
+
+				// Look at how often we switch between numbers and letters.
+				// Scoring:
+				// <letter> <digit>   1
+				// <digit> <letter>   1
+				// <x> <punct>+ <x>   1
+				// <x> <punct>+ <y>   2
+				const int transitions_cutoff = 4;
+				int last_type = -1, last_non_punct_type = -1, first_type = -1;
+				bool has_letter = false, has_digit = false, has_punctuation = false;
+				int transitions = 0;
+				for (int i = 0; i < text.Length && transitions < transitions_cutoff; ++i) {
+					char c = text [i];
+					int type = -1;
+					if (Char.IsLetter (c)) {
+						type = 1;
+						has_letter = true;
+					} else if (Char.IsDigit (c)) {
+						type = 2;
+						has_digit = true;
+					} else if (Char.IsPunctuation (c)) {
+						type = 3;
+						has_punctuation = true;
+					}
+					
+					if (type != -1) {
+						
+						if (type != last_type) {
+							if (last_type == 3) {
+								if (type != last_non_punct_type)
+									++transitions;
+							} else {
+								++transitions;
+							}
+						}
+
+						if (first_type == -1)
+							first_type = type;
+
+						last_type = type;
+						if (type != 3)
+							last_non_punct_type = type;
+					}
+				}
+
+				// If we make too many transitions, it must be noise.
+				if (transitions >= transitions_cutoff) 
+					return true;
+
+				// If we consist of nothing but digits and punctuation, treat it
+				// as noise if it is too long.
+				if (transitions == 1 && first_type == 1 && text.Length > 10)
+					return true;
+
+				// We are very suspicious of long things that make lots of
+				// transitions
+				if (transitions > 3 && text.Length > 10) 
+					return true;
+
+				// Beware of anything long that contains a little of everything.
+				if (has_letter && has_digit && has_punctuation && text.Length > 10)
+					return true;
+
+				//Logger.Log.Debug ("BeagleNoiseFilter accepted '{0}'", text);
+				return false;
+				
+			}
+
+			public override Lucene.Net.Analysis.Token Next ()
+			{
+				Lucene.Net.Analysis.Token token;
+				while ( (token = token_stream.Next ()) != null) {
+					if (total_count > 0 && total_count % 5000 == 0)
+						Logger.Log.Debug ("BeagleNoiseFilter filtered {0} of {1} ({2:0.0}%)",
+								  noise_count, total_count, 100.0 * noise_count / total_count);
+					++total_count;
+					if (IsNoise (token.TermText ())) {
+						++noise_count;
+						continue;
+					}
+					return token;
+				}
+				return null;
+			}
+		}
+
 		// This is just a standard analyzer combined with the Porter stemmer.
 		// FIXME: This assumes everything being indexed is in English!
 		private class BeagleAnalyzer : StandardAnalyzer {
 			public override TokenStream TokenStream (String fieldName, TextReader reader)
 			{
-				return new PorterStemFilter (base.TokenStream (fieldName, reader));
+				TokenStream outstream = base.TokenStream (fieldName, reader);
+				if (fieldName == "Text" || fieldName == "HotText")
+					outstream = new BeagleNoiseFilter (outstream);
+				outstream = new PorterStemFilter (outstream);
+				return outstream;
 			}
 		}
 
@@ -906,6 +1016,25 @@ namespace Beagle.Daemon {
 			if (key.StartsWith (propPrefix))
 				return key.Substring (propPrefix.Length);
 			return null;
+		}
+
+		/////////////////////////////////////////////////////
+
+		// Expose some information for debugging and analytical purposes.
+
+		public void WriteIndexTermFrequencies (TextWriter writer)
+		{
+			IndexReader reader = IndexReader.Open (Store);
+			TermEnum term_enum = reader.Terms ();
+
+			Term term;
+			while (term_enum.Next ()) {
+				term = term_enum.Term ();
+				int freq = term_enum.DocFreq ();
+				writer.WriteLine ("{0} {1} {2}", term.Field (), term.Text (), freq);
+
+			}
+			reader.Close ();
 		}
 	}
 }
