@@ -3,9 +3,9 @@ Version 0.0.5
 January 26, 2005
 
 Daemon:
+* Improved interaction with Mono GC (Jon Trowbridge, Joe Shaw, Ben Maurer)
 * Dot Lucene 1.4.3 (Joe)
 * Snippets in Files, IM logs, and Tomboy Notes (Jon)
-* Improved interaction with Mono GC (Jon Trowbridge, Joe Shaw, Ben Maurer)
 * Query infrastructure improvements (Jon)
 * Dynamic backend loading (Fredrik Hedberg)
 * Large queries are now much faster (Joe, Jon)
@@ -46,6 +46,7 @@ Everything Else:
 * Build fixes (Everyone)
 * Newletter (Joe G.)
 * Wiki wrangling (Joe G.)
+* Bold, haunting cinematic vision (Nat)
 * Snapshot Resurrection (Joe)
 * Inotify hacking (Robert)
 * D-BUS hacking (Joe)
