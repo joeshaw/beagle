@@ -70,7 +70,15 @@ class QueryTool {
 	{
 		Gtk.Application.Init ();
 
-		query = Beagle.Factory.NewQuery ();
+		try {
+			query = Beagle.Factory.NewQuery ();
+		} catch (Exception e) {
+			if (e.ToString ().IndexOf ("com.novell.Beagle") != -1) {
+				Console.WriteLine ("Could not query.  The Beagle daemon probably not running, or you don't have D-BUS set up properly.");
+				System.Environment.Exit (-1);
+			}
+		}
+
 		query.HitAddedEvent += OnHitAdded;
 		query.HitSubtractedEvent += OnHitSubtracted;
 
@@ -86,7 +94,6 @@ class QueryTool {
 		}
 
 		query.Start ();
-
 		Gtk.Application.Run ();
 	}
 
