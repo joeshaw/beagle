@@ -84,6 +84,7 @@ namespace Beagle.Daemon {
 			Setup (dir);
 		}
 
+
 		/////////////////////////////////////////////////////
 
 		//
@@ -531,7 +532,7 @@ namespace Beagle.Daemon {
 				double score = (double) hits.Score (i);
 
 				if (result.WillReject (score)) {
-					log.Debug ("Terminating DoQuery at {0} of {1}", i, n_hits);
+					log.Debug ("Terminating DoQuery at {0} of {1} (score={2})", i, n_hits, score);
 					break;
 				}
 
@@ -541,7 +542,7 @@ namespace Beagle.Daemon {
 					double m = relevancy_multiplier (hit);
 					hit.ScoreMultiplier = (float) m;
 				}
-				
+
 				result.Add (hit);
 			}
 

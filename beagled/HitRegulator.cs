@@ -38,8 +38,6 @@ namespace Beagle.Daemon {
 		ArrayList hit_array = new ArrayList ();
 		Hashtable by_uri = new Hashtable ();
 
-		Hashtable to_be_flushed = new Hashtable ();
-
 		const double epsilon = 1e-8;
 		double cutoff_score = epsilon;
 
@@ -51,10 +49,10 @@ namespace Beagle.Daemon {
 			return score < cutoff_score;
 		}
 
-		public void Add (Hit hit)
+		public bool Add (Hit hit)
 		{
 			if (WillReject (hit.Score))
-				return;
+				return false;
 
 			int i = hit_array.BinarySearch (hit);
 			if (i < 0)
@@ -66,17 +64,19 @@ namespace Beagle.Daemon {
 				for (int j = max_n_hits; j < hit_array.Count; ++j) {
 					low_hit = hit_array [j] as Hit;
 					by_uri.Remove (low_hit.Uri);
-					to_be_flushed.Remove (low_hit.Uri);
+					added_hits.Remove (low_hit.Uri);
 				}
 				hit_array.RemoveRange (max_n_hits, hit_array.Count - max_n_hits);
 				
 				low_hit = hit_array [hit_array.Count - 1] as Hit;
 				cutoff_score = low_hit.Score;
+				//Logger.Log.Debug ("cutoff score is {0:0.00000}", cutoff_score);
 			}
 			
 			by_uri [hit.Uri] = hit;
 			added_hits [hit.Uri] = hit;
 			
+			return true;
 		}
 
 		public void Subtract (Uri uri)

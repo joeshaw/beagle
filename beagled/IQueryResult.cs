@@ -39,7 +39,7 @@ namespace Beagle.Daemon {
 
 	public interface IQueryResult {
 
-		void Add (Hit hit);
+		bool Add (Hit hit);
 
 		void Subtract (Uri uri);
 
