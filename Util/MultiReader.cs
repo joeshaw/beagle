@@ -61,6 +61,14 @@ namespace Beagle.Util {
 				readers.Dequeue ();
 		}
 
+		public override void Close ()
+		{
+			while (Current != null) {
+				Current.Close ();
+				Next ();
+			}
+		}
+
 		public override int Peek ()
 		{
 			while (Current != null) {
