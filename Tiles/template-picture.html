@@ -1,18 +1,13 @@
-<table bgcolor="#ddddde" cellpadding="0" cellspacing="1" width="100%" height="100%">
-<tr valign="top"><td>
-<table bgcolor="#f5f5fe" cellpadding="6" width="100%" height="100%">
-<tr valign="top">
-<td><a href="@action:@OpenDefault"><img border=0 width="64" src="@Thumbnail@"/></a></td>
-<td>
-<font size="2"><strong>@FileName@</strong></font><br>
-<font size="1">
-@fixme:width@ x @fixme:height@<br>
-@fixme:colortype@<br> <!-- i.e. TrueColor, Greyscale, Indexed -->
-@Length@<br>
-Modified: @LastWriteTime@
-</font>
-</td>
+<tr>
+  <td class="icon">
+    <span><a href="@action:@OpenDefault"><img width="64" src="@Thumbnail@"></a></span>
+  </td>
+  <td class="content">
+    <div class="name"><a href="@action:@OpenDefault">@FileName@</a></div>
+    @fixme:width@ x @fixme:height@<br>
+    @fixme:colortype@<br>
+    @Length@<br>
+    Modified: @LastWriteTime@
+  </td>
 </tr>
-</table>
-</td></tr>
-</table>
+

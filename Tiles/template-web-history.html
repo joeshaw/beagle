@@ -1,16 +1,13 @@
-<table cellpadding="4" width="100%" height="100%">
-<tr valign="top">
-<td>
-<a href="@Uri@"><img src="@image:icon-history.png@" border="0"></a>
-</td>
-<td>
-<font size="2"><a href="@Uri@">@dc:title@</a></font><br>
-<font size="1">
-<!-- First seen: 07/23/02 2:32am<br> -->
-Last viewed: @Timestamp@<br>
-<!-- Visits: 7, Rank: 12% -->
-<font color="#008200">@Uri@<!-- - 9k--></font>
-</font>
-</td>
+<tr>
+  <td class="icon">
+    <span><a href="@Uri@"><img src="@image%icon-web-large@"></a></span>
+  </td>
+  <td class="content">
+    <div class="name"><a href="@action:@OpenDefault">@dc:title@</a></div>
+    Last viewed: @Timestamp@<br>
+    <font color="#008200">@Uri@</font><br>
+    <ul class="actions">
+      <li><a href="@Uri@">Open</a></li>
+    </ul>
+  </td>
 </tr>
-</table>

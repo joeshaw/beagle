@@ -53,11 +53,11 @@ namespace Beagle.Tile {
 				MemoryStream stream = new MemoryStream (data);
 				Gdk.Pixbuf pixbuf = new Gdk.Pixbuf (stream);
 				if (pixbuf.Width > pixbuf.Height) {
-					if (pixbuf.Width > 128)
-						height = "width=\"128\"";
+					if (pixbuf.Width > 80)
+						height = "width=\"80\"";
 				} else {
-					if (pixbuf.Height > 128)
-						height = "height=\"128\"";
+					if (pixbuf.Height > 80)
+						height = "height=\"80\"";
 				}
 				stream.Close ();
 

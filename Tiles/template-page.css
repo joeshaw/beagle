@@ -63,6 +63,11 @@ td.content {
   line-height: 1.5em;
 }
 
+.snippet { 
+  font-size: 1em;
+  color: gray;
+}
+
 .actions { 
   font-size:0.8em;
 }
