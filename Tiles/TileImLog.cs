@@ -195,7 +195,7 @@ namespace Beagle.Tile {
 		{
 			//FIXME: At least for now
 			Process p = new Process ();
-			p.StartInfo.UseShellExecute = false;
+			p.StartInfo.UseShellExecute = true;
 			p.StartInfo.FileName = "beagle-imlogviewer";
 			p.StartInfo.Arguments = Hit ["fixme:file"];
 

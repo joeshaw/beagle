@@ -2,7 +2,7 @@
 Encoding=UTF-8
 Name=Best
 Comment=Desktop Search
-Exec=best
+Exec=best --no-tray
 Icon=best.png
 Type=Application
 Categories=GTK;GNOME;Application;Utility;
