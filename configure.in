@@ -26,6 +26,9 @@ else
   AC_MSG_RESULT([found])
 fi
 
+# require mono 1.0.6 or newer
+PKG_CHECK_MODULES(MONO, mono >= 1.0.6) 
+
 # check for various mono DLLs that we need.
 needed_dlls="Mono.Data.SqliteClient Mono.Posix System.Runtime.Remoting System.Web System.Web.Services"
 for i in $needed_dlls; do
