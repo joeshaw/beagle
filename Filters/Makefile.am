@@ -28,9 +28,16 @@ CSFILES = 				\
 	$(srcdir)/FilterPdf.cs		\
 	$(srcdir)/FilterPng.cs		\
 	$(srcdir)/FilterText.cs	        \
-	$(srcdir)/FilterSource.cs	\
 	$(srcdir)/FilterRTF.cs		\
-	$(srcdir)/FilterAbiword.cs
+	$(srcdir)/FilterAbiword.cs	\
+	$(srcdir)/FilterSource.cs	\
+	$(srcdir)/FilterC.cs		\
+	$(srcdir)/FilterCpp.cs		\
+	$(srcdir)/FilterCSharp.cs	\
+	$(srcdir)/FilterJava.cs		\
+	$(srcdir)/FilterPython.cs	\
+	$(srcdir)/FilterPerl.cs	
+
 
 if ENABLE_GSF_SHARP
 CSFILES += 				\

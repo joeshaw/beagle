@@ -1,5 +1,17 @@
 2005-01-20  Veerapuram Varadhan	 <vvaradhan@novell.com>
 
+	* Filters/FilterSource.cs, Filters/FilterC.cs, 
+	Filters/FilterCpp.cs, Filters/FilterCSharp.cs,
+	Filters/FilterJava.cs Filters/FilterPython.cs,
+	Filters/FilterPerl.cs, Filters/Makefile: Structured/modularized
+	the single big FilterSource.cs into individual derived classes
+	and made FilterSource as abstract parent to them all.
+
+	New "Programming language" filters can just be another class
+	derived from this abstract parent.
+	
+2005-01-20  Veerapuram Varadhan	 <vvaradhan@novell.com>
+
 	* Filters/FilterPPT.cs: Identify Title, Sub-title, and other
 	special sections in a Slide and mark them HOT.
 	

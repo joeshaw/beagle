@@ -1,5 +1,5 @@
 //
-// FilterText.cs
+// FilterSource.cs
 //
 // Copyright (C) 2004 Novell, Inc.
 //
@@ -31,90 +31,25 @@ using System.IO;
 using System.Text;
 namespace Beagle.Filters {
 
-	public class FilterSource : Beagle.Daemon.Filter {
+	public abstract class FilterSource : Beagle.Daemon.Filter {
 
-		static string  [] cKeyWords  = {"auto", "break", "case", "char", "const", 
-						"continue", "default", "do", "double", "else",
-						"enum", "extern", "float", "for", "goto",
-						"if", "int", "long", "register", "return", "short",
-						"signed", "sizeof", "static", "strcut", "switch", "typedef",
-						"union", "unsigned", "void", "volatile", "while" };
-			
+		protected enum LangType {
+			None,
+			C_Style,
+			Python_Style
+		};
 		
-		static string [] cppKeyWords = {"asm", "auto", "bool", "break", "case", "catch", "char",
-						"class", "const", "const_cast", "continue", "default", "delete",
-						"do", "double", "dynamic_cast", "else", "enum", "explicit", 
-						"export", "extern", "false", "float", "for", "friend", "goto",
-						"if", "int", "long", "mutable", "namespace", "new", "operator",
-						"private", "public", "protected", "register", 
-						"reinterpret_cast", "return", "short", "signed", "sizeof", 
-						"static", "static_cast", "struct", "switch", "template", 
-						"this", "throw", "true" ,"try", "typedef", "typeid", 
-						"typename", "union", "unsigned", "using", "virtual",
-						"void", "volatile", "wchar_t"};
-						 
-		static string [] javaKeyWords = {"abstract", "boolean", "break", "byte", "case", "catch",
-						 "char", "class", "const", "continue", "default", "do",
-						 "double", "else", "extends", "final", "finally", "float", 
-						 "for", "goto", "if", "implements", "import", "instanceof", 
-						 "int", "interface", "long", "native", "new", "package", 
-						 "private", "protected", "public", "return", "short", "static", 
-						 "strictfp", "super", "switch", "synchronized", "this", "throw",
-						 "throws", "transient", "try", "void", "volatile", "while" };
-		
-		static string [] csharpKeyWords = {"abstract",  "as",  "base", "bool",  "break", 
-						   "byte",  "case",  "catch",  "char", "checked", 
-						   "class", "const", "continue", "decimal", "default", 
-						   "delegate",  "do",  "double",  "else",  "enum", 
-						   "event", "explicit",  "extern", "false", "finally", 
-						   "fixed", "float", "for", "foreach", "goto", 
-						   "if", "implicit", "in",  "int", "interface", 
-						   "internal",  "is",  "lock",  "long",  "namespace", 
-						   "new",  "null",  "object", "operator", "out", 
-						   "override", "params", "private", "protected", "public", 
-						   "readonly", "ref", "return", "sbyte", "sealed", 
-						   "short", "sizeof", "stackalloc", "static", "string", 
-						   "struct", "switch", "this", "throw", "true", 
-						   "try", "typeof", "uint", "ulong", "unchecked", 
-						   "unsafe", "ushort", "using", "virtual", "void", 
-						   "volatile", "while"}; 
-
-		static string [] pythonKeyWords = {"and", "assert", "break", "class", "continue", "def", 
-						   "del", "elif", "else", "except", "exec", "finally", 
-						   "for", "from", "global", "if", "import", "in", "is",
-						   "lambda", "not", "or", "pass", "print", "raise", "return",
-						   "try", "while", "yield"};
-
-		static string [] perlKeyWords = { "and", "break", "chop", "class", "close", "closedir", 
-						  "continue", "dbmclose", "dbmopen", "defined", "die", "do", 
-						  "each", "else", "elseif", "eof", "eq", "exec", "for", 
-						  "foreach", "ge", "getc", "glob", "goto", "gt", "hostname",
-						  "if", "index", "keys", "last", "le", "length", "localtime",
-						  "lt", "mkdir", "my", "ne", "next", "not", "open", "opendir",
-						  "or", "pick", "print", "printf", "pwd", "quit", "readdir",
-						  "redo", "rename", "reply", "require", "return", "rmdir",
-						  "scalar", "shift", "sleep", "sort", "splice", "split", 
-						  "sprintf", "stat", "stty", "sub", "substr",  "symlink", 
-						  "system", "time", "times","tr", "unless", "unlink", "unshift", 
-						  "until", "use", "utime", "values", "wantarray", "warn", 
-						  "while", "xor" }; 
+		protected LangType SrcLangType;
+		protected Hashtable KeyWordsHash;
 
 		private enum LineType {
 			None,
 			SingleLineComment,
 			BlockComment,
 			StringConstant
-		}
-		
-		private enum LangType {
-			None,
-			C_Style,
-			Python_Style
-		}
+		};
 		
 		LineType SrcLineType;
-		LangType SrcLangType;
-		Hashtable KeyWordsHash;
 		string StrConstIdentifier;
 
 		public FilterSource ()
@@ -124,50 +59,7 @@ namespace Beagle.Filters {
 			SrcLangType = LangType.None;
 			StrConstIdentifier = " ";
 
-			AddSupportedMimeType ("text/x-java");
-			AddSupportedMimeType ("text/x-csrc");
-			AddSupportedMimeType ("text/x-csharp");
-			AddSupportedMimeType ("application/x-python");
-			AddSupportedMimeType ("text/x-c++src");
-			AddSupportedMimeType ("application/x-perl");
-		}
-
-		override protected void DoOpen (FileInfo info)
-		{
-			int index;
-			string [] KeyWords = {" "};
-
-
-			switch (MimeType) {
-			case "text/x-csrc":
-				KeyWords = cKeyWords;
-				SrcLangType = LangType.C_Style;
-				break;
-			case "text/x-c++src":
-				KeyWords = cppKeyWords;
-				SrcLangType = LangType.C_Style;
-				break;
-			case "text/x-csharp":
-				KeyWords = csharpKeyWords;
-				SrcLangType = LangType.C_Style;
-				break;
-			case "text/x-java":
-				KeyWords = javaKeyWords;
-				SrcLangType = LangType.C_Style;
-				break;
-			case "application/x-python":
-				KeyWords = pythonKeyWords;
-				SrcLangType = LangType.Python_Style;
-				break;
-			case "application/x-perl":
-				KeyWords = perlKeyWords;
-				SrcLangType = LangType.Python_Style;
-				break;
-			}
-
 			KeyWordsHash = new Hashtable ();
-			foreach (string keyword in KeyWords)
-				KeyWordsHash [keyword] = true;
 		}
 
 		// Tokenize the passed string and add the relevant 
@@ -175,8 +67,6 @@ namespace Beagle.Filters {
 		//
  		protected void ExtractTokens (string str)
 		{
-			//Console.WriteLine ("ExtractTokens : {0}", str);
-
 			int index, kwindex;
 			StringBuilder token = new StringBuilder();
 			string splCharSeq = "";
@@ -185,7 +75,6 @@ namespace Beagle.Filters {
 				if ((str[index] == '/' || str[index] == '*') &&
 				    (SrcLangType == LangType.C_Style)) {		
 					splCharSeq += str[index];
-					//Console.WriteLine ("splCharSeq : {0}", splCharSeq);
 					
 					switch (splCharSeq) {
 						
@@ -209,7 +98,6 @@ namespace Beagle.Filters {
 							
 					case "*/":
 						if (SrcLineType == LineType.BlockComment) {
-							//Console.WriteLine ("BlockCommentEnds: {0}", token);
 							SrcLineType = LineType.None;
 							token.Append (" ");
 							AppendText (token.ToString());
@@ -243,7 +131,6 @@ namespace Beagle.Filters {
 					 StrConstIdentifier[0] == str[index]) {
 
 					if (SrcLineType == LineType.StringConstant) {
-						//Console.WriteLine ("Found String: {0}", token);
 						SrcLineType = LineType.None;
 						token.Append (" ");
 						AppendText (token.ToString());
@@ -263,7 +150,6 @@ namespace Beagle.Filters {
 					if (SrcLineType == LineType.StringConstant &&
 					    StrConstIdentifier.Length == 1 &&
 					    StrConstIdentifier[0] == str[index]) {
-						//Console.WriteLine ("Found String: {0}", token);
 						SrcLineType = LineType.None;
 						token.Append (" ");
 						AppendText (token.ToString());
@@ -290,7 +176,6 @@ namespace Beagle.Filters {
 						token = token.Replace(" ", "");
 						if (token.Length > 0 && 
 						    !KeyWordsHash.Contains (token.ToString())) {
-							//Console.WriteLine ("Found Token: {0}", token);
 							token.Append (" ");
 							if (!Char.IsDigit (token[0]))
 								AppendText (token.ToString());
@@ -309,7 +194,6 @@ namespace Beagle.Filters {
 			       
 				token.Append (" ");
 				AppendText (token.ToString());
-				//Console.WriteLine ("Found splCharSeq: {0}", token);
 				
 				// if a single-line-comment ends with a "\", 
 				// the lines that follows it are also considered as a comment,
@@ -319,20 +203,10 @@ namespace Beagle.Filters {
 					SrcLineType = LineType.None;
 			} else if (SrcLangType == LangType.Python_Style) {
 				if (token.Length > 0 && !Char.IsDigit (token[0])) {
-					//Console.WriteLine ("Found Token : {0}", token);
 					token.Append (" ");
 					AppendText (token.ToString());
 				}
 			}
-		}
-
-		override protected void DoPull ()
-		{
-			string str = TextReader.ReadLine ();
-			if (str == null)
-				Finished ();
-			else
-				ExtractTokens (str);
 		}
 	}
 }
