@@ -1,3 +1,8 @@
+2004-12-20  Veerapuram Varadhan  <vvaradhan@novell.com>
+
+	* glue/wv1-glue.c: Headers, Footers, [Foot,End]notes, comments and
+	other styles are categorized and marked HOT.
+	
 2004-12-16  Veerapuram Varadhan  <vvaradhan@novell.com>
 
 	* Filters/FilterOpenOffice.cs: Fix for Bug# 157106.

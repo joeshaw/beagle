@@ -55,6 +55,8 @@ typedef struct _UserData {
   int bIsUl:1;
   int bIsSup:1;
   int bIsSub:1;
+  int bIsSplStyle:1;
+  int bIgnore:1;
 
   /* beagle specifc formats */
   U8 bIsHot;
@@ -86,6 +88,9 @@ append_char (UserData * ud, U16 ch)
   int hotText;
   char tmpBuf[64];
   int len = 0;
+
+  if (ud->bIgnore)
+    return;
 
   switch (ch) {
   case 0x20: /* space */
@@ -132,7 +137,12 @@ fill_UserData (UserData * ud, CHP * chp, wvParseStruct * ps)
   ud->bIsSup = (chp->iss == 1);
   ud->bIsSub = (chp->iss == 2);
 
-  if (ud->bIsBold || ud->bIsItalic || ud->bIsUl || ud->bIsSup || ud->bIsSub)
+  if (ud->bIsBold 
+      || ud->bIsItalic 
+      || ud->bIsUl 
+      || ud->bIsSup 
+      || ud->bIsSub
+      || ud->bIsSplStyle)
     ud->bIsHot = 1;
   else
     ud->bIsHot = 0;
@@ -244,13 +254,50 @@ eleProc (wvParseStruct * ps, wvTag tag, void *props, int dirty)
 
   switch (tag)
     {
+    case PARABEGIN:
+      apap = (PAP *)props;
+      switch (ps->stsh.std[apap->istd].sti) {
+      case 29:    /* Footnote Text   */
+      case 30:    /* Annotation text */
+      case 31:    /* Header          */
+      case 32:    /* Footer          */
+      case 33:    /* Index Heading   */
+      case 34:    /* Caption         */
+      case 43:    /* Endnote Text    */
+      case 62:    /* Title           */
+      case 74:    /* Sub title       */
+	ud->bIsSplStyle = 1;
+	break;
+      default:
+	ud->bIsSplStyle = 0;
+	break;
+      }
+      break;
+
     case SECTIONEND:
+      append_char (ud, '\n');
+      break;
+
     case PARAEND:		/* pretty much nothing */
+      ud->bIsSplStyle = 0;
       append_char (ud, '\n');
       break;
 
     case CHARPROPBEGIN:
       achp = (CHP *) props;
+      /*      switch (ps->stsh.std[achp->istd].sti) {
+      case 38:
+      case 39:
+      case 40:
+      case 41:
+      case 42:
+	ud->bIgnore = 1;
+	break;
+      default:
+	ud->bIgnore = 0;
+	break;
+      }
+      */
       fill_UserData (ud, achp, ps);
       break;
 
