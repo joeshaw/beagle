@@ -1,3 +1,8 @@
+2004-11-01  Chris Lahey  <clahey@ximian.com>
+
+	* tray/TrayIcon/Makefile.am (install-exec-local, uninstall-local):
+	Use pkglibdir instead of libdir to avoid collisions.
+
 2004-10-25  Chris Lahey  <clahey@ximian.com>
 
 	* tools/Makefile.am (EXTRA_DIST): Added beagle-shutdown and

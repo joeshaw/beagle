@@ -29,11 +29,11 @@ $(API):
 	PERLLIB=/usr/share/perl5 gapi-parser libtrayicon-sources.xml
 
 install-exec-local: $(LIBRARY)
-	$(mkinstalldirs) $(DESTDIR)$(libdir)
-	$(INSTALL_PROGRAM) $(LIBRARY) $(DESTDIR)$(libdir)
+	$(mkinstalldirs) $(DESTDIR)$(pkglibdir)
+	$(INSTALL_PROGRAM) $(LIBRARY) $(DESTDIR)$(pkglibdir)
 
 uninstall-local:
-	rm -f $(DESTDIR)$(libdir)/$(LIBRARY)
+	rm -f $(DESTDIR)$(pkglibdir)/$(LIBRARY)
 
 clean-local:
 	rm -f generated-stamp
