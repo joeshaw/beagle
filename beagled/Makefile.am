@@ -676,6 +676,8 @@ uninstall-local:
 	rm -f $(DESTDIR)$(pkglibdir)/$(PLUGIN_TARGET)
 	rm -f $(DESTDIR)$(pkglibdir)/$(DAEMON_DLL_TARGET)
 	rm -f $(DESTDIR)$(pkglibdir)/$(DAEMON_TARGET)
+	rm -f $(DESTDIR)$(pkglibdir)/$(INDEX_OPTIMIZER_TARGET)
+	rm -f $(DESTDIR)$(pkglibdir)/$(INDEX_OPTIMIZER_WRAPPER)
 
 bin_SCRIPTS = \
 	$(DAEMON_WRAPPER)
@@ -698,6 +700,7 @@ EXTRA_DIST =				\
 	$(DAEMON_CSFILES)		\
 	$(EXTRACT_CONTENT_CSFILES)	\
 	$(SNIPPET_TEST_CSFILES)		\
+	$(INDEX_OPTIMIZER_CSFILES)	\
 	$(MASTER_DELETE_CSFILES)	\
 	$(EXTSTR_IN)			\
 	$(WRAPPER_IN)   		\

@@ -41,9 +41,10 @@ $(WRAPPER): $(srcdir)/$(WRAPPER).in
 	sed -e "s|\@prefix\@|$(prefix)|g" -e "s|\@pkglibdir\@|$(pkglibdir)|g" -e "s|\@target\@|$(TARGET)|g" -e "s|\@gacprefix\@|$(GAC_PREFIX)|g" -e "s|\@mozillahome\@|$(MOZILLA_HOME)|g" < $^ > $@
 	chmod +x $(WRAPPER)
 
-EXTRA_DIST =		\
-	$(CSFILES)	\
-	$(WRAPPER).in
+EXTRA_DIST =			\
+	$(CSFILES)		\
+	$(WRAPPER).in		\
+	$(RESOURCEFILES)
 
 CLEANFILES =		\
 	$(TARGET)	\

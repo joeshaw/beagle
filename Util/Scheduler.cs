@@ -38,9 +38,17 @@ namespace Beagle.Util {
 
 		static Scheduler ()
 		{
-			if (Environment.GetEnvironmentVariable ("EXERCISE_THE_DOG") != null)
+			if (Environment.GetEnvironmentVariable ("EXERCISE_THE_DOG") != null) {
+				Logger.Log.Warn ("***");
+				Logger.Log.Warn ("*** The EXERCISE_THE_DOG environment variable is deprecated.");
+				Logger.Log.Warn ("*** Please use BEAGLE_EXERCISE_THE_DOG in the future.");
+				Logger.Log.Warn ("*** We will now proceed to exercise the dog.  Thank you.");
+				Logger.Log.Warn ("***");
 				no_delays = true;
-			
+			} else if (Environment.GetEnvironmentVariable ("BEAGLE_EXERCISE_THE_DOG") != null) {
+				no_delays = true;
+			}
+	
 			if (Environment.GetEnvironmentVariable ("BEAGLE_IMMEDIATE_PRIORITY_ONLY") != null)
 				immediate_priority_only = true;
 		}
