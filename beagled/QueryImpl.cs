@@ -185,17 +185,16 @@ namespace Beagle.Daemon {
 			
 			foreach (Hit hit in someHits) {
 				// If necessary, synthesize a subtracted event
-				if (allHits.Contains (hit))
+				if (allHits.Contains (hit.Uri))
 					toSubtract.Add (hit.Uri);
 				
 				allHits[hit.Uri] = hit;
 			}
 			
+			if (HitsSubtractedAsStringEvent != null && toSubtract.Count > 0)
+				HitsSubtractedAsStringEvent (this, UrisToString (toSubtract));
 			if (HitsAddedAsXmlEvent != null)
 				HitsAddedAsXmlEvent (this, HitsToXml (someHits));
-			if (HitsSubtractedAsStringEvent != null)
-				HitsSubtractedAsStringEvent (this, UrisToString (toSubtract
-));
 		}
 
 		private void OnFinishedResult (QueryResult source) 

@@ -89,6 +89,7 @@ namespace Beagle
 		{
 			if (HitSubtractedEvent != null) {
 				string[] uris = uriList.Split ('|');
+
 				foreach (string uriStr in uris) {
 					Uri uri = new Uri (uriStr, true);
 					HitSubtractedEvent (this, uri);
