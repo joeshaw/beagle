@@ -130,7 +130,7 @@ tr:hover .actions li {
 }
 
 #reveal {
-  background: url(@image%action-reveal.png@) no-repeat;
+  background: url(@stock%16|stock_open@) no-repeat;
 }
 
 td.footer { 
