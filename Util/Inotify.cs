@@ -273,9 +273,14 @@ namespace Beagle.Util {
 
 		private static void ReadEvents ()
 		{
+			// We need to hold a reference to our delegate to avoid
+			// magic trampoline errors.
+			InotifyEventCallback pleaseDoNotLeakMeIntoUnmanagedCode;
+			pleaseDoNotLeakMeIntoUnmanagedCode = new InotifyEventCallback (FireEvent);
+
 			while (fd >= 0) {
 				// Wait for an event, polling fd every 1.008167s
-				inotify_glue_try_for_event (fd, 1, 8167, new InotifyEventCallback (FireEvent));
+				inotify_glue_try_for_event (fd, 1, 8167, pleaseDoNotLeakMeIntoUnmanagedCode);
 			}
 		}
 
