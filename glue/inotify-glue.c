@@ -150,6 +150,10 @@ inotify_snarf_events (int fd, int timeout_secs, int *nr, void **buffer_out)
 		}
 	}
 
+	/* Set nr to 0, so it will be sure to contain something
+	   valid if the select times out. */
+	*nr = 0;
+
 	/* Wait for the file descriptor to be ready to read. */
 
 	timeout.tv_sec = timeout_secs;
