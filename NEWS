@@ -1,6 +1,117 @@
+Version 0.0.4
+December 10, 2004
+
+Daemon:
+* Improved relevancy scoring (Joe Shaw)
+* Lots of D-BUS clean-up (Jon Trowbridge)
+* Filter architecture clean-up (Jon)
+* Improved Extended Attribute handling (Jon)
+* If EAs can't be set on a file, store the information in a
+  fallback database (Jon)
+* Expose more information about the indexes via D-BUS (Jon)
+* Added beagle-index-info script (Jon)
+* Initial lucene optimize operations now threaded for faster
+  start-up (Jon)
+
+Backends:
+* Addressbook is now synched to a lucene index (Dave Camp)
+* New gmime-based mail backend that uses lucene for indexing (Joe)
+* Blam backend fixes (Fredrik Hedberg)
+
+Filters:
+* Added meta-data for .ppt files (Veerapuram Varadhan)
+* Improved RTF filter (Varadhan)
+* Count the number of slides in .sxi files (Varadhan)
+* Improved audio file filters (Rafael Slinckx)
+
+UI:
+* Updated web tile (Christopher Orr)
+* Show folder and account properties in the mail tile (Joe)
+* Filter results by hit type (Joe)
+* Save search history (Joe)
+* More stetic (Tuomas Kuosmanen)
+* Tile art updates (Tuomas)
+* "View Source" accelerator (Fredrik)
+* Ctrl+L can focus the search bar (James Vipond)
+* File tile uses nautilus-sendto if it's available (Dave)
+* Mail tile improvements (Joe, Tuomas)
+* Pretty-print dates in image tiles (Joe)
+
+------------------------------------------------------
+
 Version 0.0.3
 November 22, 2004
 
+Daemon:
+* Live query architecture (Jon, Joe, Dave)
+* Inotify-fu (Robert, Dave, Jon)
+* Extended Attributes (Jon, Robert)
+* Task Scheduler (Jon)
+* Start-up fixes (Dave, Jon)
+* LuceneDriver Enhancements (Joe, Jon)
+* Efficiency (Dave, Joe, Jon)
+* Robustness (Hari, Joe, Dave, Nat, Jon)
+* Memory consumption (Joe, Dave, Jon)
+* Real logging (Dave, Jon)
+* Build fixes (Everybody)
+* Experimental Network Support (Fredrik)
+* Command-line tools (Nat, Chris, Jon)
+* Better serialization (Dave, Joe)
+* Relevancy fixes (Joe)
+* Memory Profiling (Jon)
+* Clean shutdown via beagle-shutdown (Dave, Jon)
+* D-BUS fixes (Dave, Jon)
+
+
+Filters:
+* MS Word (Varadhan, Chris)
+* MS PowerPoint (Varadhan, Chris)
+* Media Files/GStreamer (Adam, Chris)
+* Texi (Naggapan)
+* RTF (Varadhan and ???)
+* Source Code (Siva, Varadhan)
+* OpenOffice/SAX Parser (Dave)
+* Flac (Rafael)
+* Jpeg enhancements (Jon, Larry)
+* Misc. fixes (Chris, Robert, Varadhan, Jon)
+
+
+Backends:
+* Mail (Joe)
+* Addressbook (Dave)
+* Filesystem (Jon)
+* Gaim (Jon)
+* Tomboy (Christopher)
+* Bugzilla (Harish)
+* Blam (Fredrik, Jon, Lukas)
+* Monodoc (Fredrik)
+* Network (Fredrik)
+
+
+UI:
+* Geckoification (Dave)
+* Improved Rendering (Dave)
+* Tiles (Tuomas, Dave, Nat, Lukas, Matt, Joe)
+* Tile Actions (Dave, Nat)
+* Stetic (Tuomas)
+* Tray Icon (Srinivasa, Alex, Dave, Lukas, Nat)
+* Other Best Fixes (Dave, Nat, Robert)
+
+
+Everything Else:
+* Better wrapper scripts (Chris, Jon, Todd)
+* Build fixes (Everybody)
+* Packaging & snapshots (Chris)
+* Planet Beagle (Robert, Garrett)
+* Kick-ass Logo (Larry, Garrett)
+* Newsletter (Joe G.)
+* Wiki (Joe G.)
+* Website (Garrett, Ben)
+* beagle-query man page (Nat)
+* Heroic dashboard maintenance (Chris, Joe)
+* All the stuff I forgot (All the people I forgot)
+
+------------------------------------------------------
 
 Version 0.0.2
 September 1, 2004
