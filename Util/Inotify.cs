@@ -30,6 +30,7 @@ using System;
 using System.Collections;
 using System.IO;
 using System.Runtime.InteropServices;
+using System.Threading;
 
 namespace Beagle.Util {
 
@@ -54,6 +55,7 @@ namespace Beagle.Util {
 	public class Inotify {
 
 		static object theLock = new object ();
+		static Thread theThread;
 
 		static int fd = -1;
 
@@ -94,6 +96,13 @@ namespace Beagle.Util {
 		static Inotify ()
 		{
 			fd = inotify_glue_open_dev ();
+
+			// Launch a thread to listen on /dev/inotify and fire off
+			// the InotifyEvent event.
+			if (fd >= 0) {
+				theThread = new Thread (new ThreadStart (ReadEvents));
+				theThread.Start ();
+			}
 		}
 
 		public static bool Enabled {
@@ -104,6 +113,14 @@ namespace Beagle.Util {
 		{
 			if (! Enabled)
 				throw new Exception ("INotify is not enabled!");
+		}
+
+		public static void ShutDown ()
+		{
+			if (fd >= 0) {
+				inotify_glue_close_dev (fd);
+				fd = -1;
+			}
 		}
 
 		//////////////////////////////////////////////////////////
@@ -132,8 +149,11 @@ namespace Beagle.Util {
 						return;
 					IgnoreDirectoryInternal (info);
 				}
-			
-				int wd = inotify_glue_watch_dir (fd, directory, mask);
+
+				InotifyEventType internalMask = mask;
+				internalMask |= InotifyEventType.Delete;
+
+				int wd = inotify_glue_watch_dir (fd, directory, internalMask);
 				if (wd < 0) {
 					string msg = String.Format ("Attempt to watch {0} failed!", directory);
 					throw new Exception (msg);
@@ -145,8 +165,14 @@ namespace Beagle.Util {
 				info.Mask = mask;
 
 				watchedByWd [info.Wd] = info;
-				watchedByName [info.DirectoryName] = directory;
+				watchedByName [info.DirectoryName] = info;
 			}
+		}
+
+		private static void ForgetDirectory (WatchedDirInfo info)
+		{
+			watchedByWd.Remove (info.Wd);
+			watchedByName.Remove (info.DirectoryName);
 		}
 
 		private static void IgnoreDirectoryInternal (WatchedDirInfo info)
@@ -156,8 +182,7 @@ namespace Beagle.Util {
 				string msg = String.Format ("Attempt to ignore {0} failed!", info.DirectoryName);
 				throw new Exception (msg);
 			}
-			watchedByWd.Remove (info.Wd);
-			watchedByName.Remove (info.DirectoryName);
+			ForgetDirectory (info);
 		}
 
 		public static void IgnoreDirectory (string directory)
@@ -173,7 +198,7 @@ namespace Beagle.Util {
 
 				// If we aren't actually watching that directory,
 				// silently return.
-				if (info == null)
+				if (info == null) 
 					return;
 
 				IgnoreDirectoryInternal (info);
@@ -182,48 +207,38 @@ namespace Beagle.Util {
 		
 		private static void FireEvent (int wd, InotifyEventType type, string filename)
 		{
-			if (InotifyEvent != null || Verbose) {
+			if (fd >= 0) {
+
 				WatchedDirInfo info = watchedByWd [wd] as WatchedDirInfo;
 				if (info == null)
 					return;
-				string path = Path.Combine (info.DirectoryName, filename);
-				if (Verbose)
-					Console.WriteLine ("*** inotify: {0} {1}", type, path);
-				if (InotifyEvent != null)
-					InotifyEvent (path, type);
+
+				// If we didn't explicitly ask for this type of event
+				// to be monitored, don't fire the event.
+				if ((info.Mask & type) != 0) {
+					string path = Path.Combine (info.DirectoryName, filename);
+					if (Verbose)
+						Console.WriteLine ("*** inotify: {0} {1} [{2}]", type, path, filename);
+					if (InotifyEvent != null)
+						InotifyEvent (path, type);
+				}
+
+				// If a directory we are watching gets deleted, we need
+				// to remove it from the watchedByFoo hashes.
+				if (type == InotifyEventType.Delete && filename == "") {
+					lock (theLock) {
+						ForgetDirectory (info);
+					}
+				}
 			}
 		}
 
-		private static void Crawl (DirectoryInfo dir, int maxDepth)
+		private static void ReadEvents ()
 		{
-			if (dir.Name [0] == '.')
-				return;
-			if (dir.Name == "CVS")
-				return;
-
-			Console.WriteLine (dir.FullName);
-
-			WatchDirectory (dir.FullName, 
-					InotifyEventType.Modify | InotifyEventType.Create | InotifyEventType.Delete | InotifyEventType.Rename | InotifyEventType.Move);
-
-			if (maxDepth == 0)
-				return;
-
-			foreach (DirectoryInfo subdir in dir.GetDirectories ())
-				Crawl (subdir, maxDepth-1);
-		}
-
-		public static void Test ()
-		{
-			Crawl (new DirectoryInfo ("/home/trow"), -1);
-
-			while (true) {
-				inotify_glue_try_for_event (fd, 60, 0, new InotifyEventCallback (FireEvent));
+			while (fd >= 0) {
+				// Wait for an event, polling fd every 2.008167s
+				inotify_glue_try_for_event (fd, 2, 8167, new InotifyEventCallback (FireEvent));
 			}
-
-			
 		}
-
 	}
-	
 }
