@@ -1,3 +1,11 @@
+//
+// ImLogViewer.cs
+//
+// Lukas Lipka <lukas@pmad.net>
+//
+// Copyright (C) 2004 Novell, Inc.
+//
+
 using System;
 using System.Collections;
 using System.IO;
