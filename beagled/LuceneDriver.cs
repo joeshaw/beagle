@@ -689,7 +689,7 @@ namespace Beagle.Daemon {
 				LNS.BooleanQuery uriQuery = new LNS.BooleanQuery ();
 				foreach (QueueItem item in pending) {
 					Uri uri = item.Uri;
-					if (! item.IsSilent)
+					if (item.IsDelete && ! item.IsSilent)
 						Log.Debug ("- {0}", uri);
 					Term term = new Term ("Uri", uri.ToString ());
 					LNS.Query termQuery = new LNS.TermQuery (term);

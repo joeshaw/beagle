@@ -161,7 +161,7 @@ namespace Beagle.Daemon {
 		private ArrayList indexes;
 		private SummaryCrawler crawler;
 
-		public EvolutionMailDriver () : base (Path.Combine (PathFinder.RootDir, "MailIndex"))
+		public EvolutionMailDriver () : base (Path.Combine (PathFinder.RootDir, "MailIndex"), true)
 		{
 			string home = Environment.GetEnvironmentVariable ("HOME");
 			string local_path = Path.Combine (home, ".evolution/mail/local");
@@ -486,7 +486,7 @@ namespace Beagle.Daemon {
 			int deletedCount = 0;
 			foreach (string uid in deletedList) {
 				mapping.Remove (uid);
-				Uri uri = EmailUri ("local@local", folderName, uid);
+				Uri uri = EmailUri (accountName, folderName, uid);
 				Driver.ScheduleDelete (uri);
 				++deletedCount;
 			}
