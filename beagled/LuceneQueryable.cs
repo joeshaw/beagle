@@ -202,7 +202,14 @@ namespace Beagle.Daemon {
 
 		public virtual string GetSnippet (QueryBody body, Hit hit)
 		{
-			return null;
+			// Look up the hit in our text cache.  If it is there,
+			// use the cached version to generate a snippet.
+
+			TextReader reader = TextCache.GetReader (hit.Uri);
+			if (reader == null)
+				return null;
+
+			return SnippetFu.GetSnippet (body, reader);
 		}
 
 		/////////////////////////////////////////

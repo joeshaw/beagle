@@ -37,6 +37,7 @@ class ExtractContentTool {
 
 	static bool tokenize = false;
 
+	// FIXME: We don't display structural breaks
 	static void DisplayContent (string line)
 	{
 		if (tokenize) {

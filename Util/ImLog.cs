@@ -220,31 +220,6 @@ namespace Beagle.Util {
 
 		///////////////////////////////////////
 
-		private static int CountWords (string str)
-		{
-			const int max_words = 15;
-
-			if (str == null)
-				return 0;
-
-			bool last_was_white = true;
-			int words = 0;
-			for (int i = 0; i < str.Length; ++i) {
-				if (Char.IsWhiteSpace (str [i])) {
-					last_was_white = true;
-				} else {
-					if (last_was_white) {
-						++words;
-						if (words >= max_words)
-							break;
-					}
-					last_was_white = false;
-				}
-			}
-
-			return words;
-		}
-
 		private bool TrySnippet ()
 		{
 			int best_word_count = 0;
@@ -253,7 +228,7 @@ namespace Beagle.Util {
 
 				string possible_snippet = utt.Text.Trim ();
 
-				int word_count = CountWords (possible_snippet);
+				int word_count = StringFu.CountWords (possible_snippet, 15);
 				if (word_count > best_word_count) {
 					Snippet = possible_snippet;
 					best_word_count = word_count;

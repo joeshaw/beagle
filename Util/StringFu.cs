@@ -398,6 +398,34 @@ namespace Beagle.Util {
                         string s = cachedStringBuilder.ToString ();
                         cachedStringBuilder.Length = 0;
                         return s;
-		} 
+		}
+
+		static public int CountWords (string str, int max_words)
+		{
+			if (str == null)
+				return 0;
+
+			bool last_was_white = true;
+			int words = 0;
+			for (int i = 0; i < str.Length; ++i) {
+				if (Char.IsWhiteSpace (str [i])) {
+					last_was_white = true;
+				} else {
+					if (last_was_white) {
+						++words;
+						if (max_words > 0 && words >= max_words)
+							break;
+					}
+					last_was_white = false;
+				}
+			}
+
+			return words;
+		}
+
+		static public int CountWords (string str)
+		{
+			return CountWords (str, -1);
+		}
 	}
 }

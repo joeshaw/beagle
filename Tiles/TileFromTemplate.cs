@@ -52,7 +52,6 @@ namespace Beagle.Tile {
 
 					if (this.Uri != null && this.Query != null) {
 						string snippet = this.Query.GetSnippet (this.Uri);
-						Console.Write ("{0}: {1}", this.Uri, snippet);
 						Template["Snippet"] = snippet;
 					}
 				}

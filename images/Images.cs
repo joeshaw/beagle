@@ -61,6 +61,9 @@ namespace Beagle {
 		{
 			Stream stream;
 
+			if (name == null || name.Length == 0)
+				return null;
+
 			stream = GetStreamInner (name);
 			if (stream == null)
 				stream = GetStreamInner (name + ".png");

@@ -167,9 +167,15 @@ namespace Beagle.Daemon {
 			Uri uri = new Uri (uri_string, false);
 			Hit hit = result.GetHitFromUri (uri);
 
-			if (hit == null)
+			if (hit == null) {
 				snippet = "ERROR: invalid hit, uri=" + uri;
-			else {
+
+				Logger.Log.Debug ("*** Got invalid hit: uri={0}", uri);
+				Logger.Log.Debug ("*** Valid Hits:");
+				foreach (Uri x in result.HitUris)
+					Logger.Log.Debug ("***    {0}", x);
+
+			} else {
 				Queryable queryable = hit.SourceObject as Queryable;
 				if (queryable == null)
 					snippet = "ERROR: hit.SourceObject is null, uri=" + uri;
@@ -179,8 +185,6 @@ namespace Beagle.Daemon {
 
 			if (snippet == null)
 				snippet = "";
-
-			Logger.Log.Debug ("Requesting snippet for {0}, got '{1}'", uri, snippet);
 
 			return snippet;
 		}

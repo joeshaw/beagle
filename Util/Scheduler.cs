@@ -33,6 +33,16 @@ namespace Beagle.Util {
 
 	public class Scheduler {
 
+		static private bool no_delays = false;
+
+		static Scheduler ()
+		{
+			if (Environment.GetEnvironmentVariable ("EXERCISE_THE_DOG") != null)
+				no_delays = true;
+		}
+
+		//////////////////////////////////////////////////////////////////////////////
+
 		static private Scheduler global = new Scheduler ();
 
 		static public Scheduler Global {
@@ -543,6 +553,9 @@ namespace Beagle.Util {
 		private double ComputeDelay (Priority priority_of_next_task,
 					     double   duration_of_previous_task)
 		{
+			if (no_delays)
+				return 0;
+
 			double rate_factor;
 
 			rate_factor = 2.0;

@@ -110,7 +110,7 @@ namespace Beagle.Daemon {
 					return;
 		
 				foreach (Hit hit in some_hits)
-					uri_hash [hit.Uri] = hit;
+					uri_hash [hit.Uri.ToString ()] = hit;
 				
 				if (HitsAddedEvent != null)
 					HitsAddedEvent (this, some_hits);
@@ -160,7 +160,11 @@ namespace Beagle.Daemon {
 		// Given the Uri of a Hit contained in the QueryResult, return that Hit.
 		public Hit GetHitFromUri (Uri uri)
 		{
-			return uri_hash [uri] as Hit;
+			return uri_hash [uri.ToString ()] as Hit;
+		}
+
+		public ICollection HitUris {
+			get { return uri_hash.Keys; }
 		}
 
 		//////////////////////////////////////////////////////////////////////////////////////

@@ -59,18 +59,23 @@ namespace Beagle.Filters {
 
 		static bool NodeBreaksText (String nodeName) 
 		{
-			return nodeName == "p"
-				|| nodeName == "br"
-				|| nodeName == "td"
+			return nodeName == "td"
 				|| nodeName == "a"
 				|| nodeName == "div"
-				|| nodeName == "option"
+				|| nodeName == "option";
+		}
+
+		static bool NodeBreaksStructure (string nodeName)
+		{
+			return nodeName == "p"
+				|| nodeName == "br"
 				|| nodeName == "h1"
 				|| nodeName == "h2"
 				|| nodeName == "h3"
 				|| nodeName == "h4"
 				|| nodeName == "h5"
 				|| nodeName == "h6";
+
 		}
 		
 		static bool NodeIsContentFree (String nodeName) 
@@ -123,6 +128,7 @@ namespace Beagle.Filters {
 				if (! NodeIsContentFree (node.Name)) {
 					bool isHot = NodeIsHot (node.Name);
 					bool breaksText = NodeBreaksText (node.Name);
+					bool breaksStructure = NodeBreaksStructure (node.Name);
 					if (isHot)
 						HotUp ();
 					if (breaksText)
@@ -131,8 +137,11 @@ namespace Beagle.Filters {
 						WalkBodyNodes (subnode);
 					if (breaksText)
 						AppendWhiteSpace ();
+					if (breaksStructure)
+						AppendStructuralBreak ();
 					if (isHot)
 						HotDown ();
+
 				}				
 				break;
 				

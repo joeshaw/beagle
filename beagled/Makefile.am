@@ -424,6 +424,7 @@ DAEMON_DLL_CSFILES = 						\
 	$(srcdir)/QueryableFlavor.cs				\
 	$(srcdir)/RemoteControlImpl.cs				\
 	$(srcdir)/Shutdown.cs					\
+	$(srcdir)/SnippetFu.cs					\
 	$(srcdir)/TextCache.cs
 
 DAEMON_DLL_LOCAL_ASSEMBLIES =		\
@@ -527,10 +528,10 @@ $(EXTRACT_CONTENT_WRAPPER): $(srcdir)/$(WRAPPER_IN)
 	chmod +x $(EXTRACT_CONTENT_WRAPPER)
 
 
-EXTRACT_CONTENT_CSFLAGS =				\
+EXTRACT_CONTENT_CSFLAGS =			\
 	-target:exe
 
-EXTRACT_CONTENT_CSFILES =				\
+EXTRACT_CONTENT_CSFILES =			\
 	$(srcdir)/ExtractContent.cs
 
 EXTRACT_CONTENT_LOCAL_ASSEMBLIES =		\
@@ -539,7 +540,7 @@ EXTRACT_CONTENT_LOCAL_ASSEMBLIES =		\
 	./$(PLUGIN_TARGET)			\
 	./$(DAEMON_DLL_TARGET)
 
-EXTRACT_CONTENT_ASSEMBLIES =				\
+EXTRACT_CONTENT_ASSEMBLIES =			\
 	$(BEAGLED_LIBS)				\
 	$(DAEMON_LOCAL_ASSEMBLIES:%=-r:%)	\
 	-r:Mono.Posix				\
@@ -551,10 +552,42 @@ $(EXTRACT_CONTENT_TARGET): $(EXTRACT_CONTENT_CSFILES) $(EXTRACT_CONTENT_LOCAL_AS
 
 ############################################################
 
+SNIPPET_TEST_WRAPPER = beagle-snippet-test
+SNIPPET_TEST_TARGET = SnippetTest.exe
 
-all: $(PLUGIN_TARGET) $(DAEMON_DLL_TARGET) $(DAEMON_TARGET) $(EXTRACT_CONTENT_TARGET)
+$(SNIPPET_TEST_WRAPPER): $(srcdir)/$(WRAPPER_IN)
+	$(WRAPPER_SED) -e "s|\@target\@|$(SNIPPET_TEST_TARGET)|g" < $(srcdir)/$(WRAPPER_IN) > $@
+	chmod +x $(SNIPPET_TEST_WRAPPER)
 
-install-data-local: $(PLUGIN_TARGET) $(DAEMON_DLL_TARGET) $(DAEMON_TARGET) $(EXTRACT_CONTENT_TARGET)
+
+SNIPPET_TEST_CSFLAGS =				\
+	-target:exe
+
+SNIPPET_TEST_CSFILES =				\
+	$(srcdir)/SnippetTest.cs
+
+SNIPPET_TEST_LOCAL_ASSEMBLIES =			\
+	../Util/Util.dll			\
+	../BeagleClient/Beagle.dll		\
+	./$(PLUGIN_TARGET)			\
+	./$(DAEMON_DLL_TARGET)
+
+SNIPPET_TEST_ASSEMBLIES =			\
+	$(BEAGLED_LIBS)				\
+	$(DAEMON_LOCAL_ASSEMBLIES:%=-r:%)	\
+	-r:Mono.Posix				\
+	-r:System.Runtime.Remoting		\
+	-r:ICSharpCode.SharpZipLib.dll
+
+$(SNIPPET_TEST_TARGET): $(SNIPPET_TEST_CSFILES) $(SNIPPET_TEST_LOCAL_ASSEMBLIES)
+	$(CSC) -o $@ $(SNIPPET_TEST_CSFLAGS) $(SNIPPET_TEST_CSFILES) $(SNIPPET_TEST_ASSEMBLIES)
+
+############################################################
+
+
+all: $(PLUGIN_TARGET) $(DAEMON_DLL_TARGET) $(DAEMON_TARGET) $(EXTRACT_CONTENT_TARGET) $(SNIPPET_TEST_TARGET)
+
+install-data-local: $(PLUGIN_TARGET) $(DAEMON_DLL_TARGET) $(DAEMON_TARGET) $(EXTRACT_CONTENT_TARGET) $(SNIPPET_TEST_TARGET)
 	$(mkinstalldirs) $(DESTDIR)$(pkglibdir)
 	$(INSTALL_DATA) $(PLUGIN_TARGET) $(DESTDIR)$(pkglibdir)/$(PLUGIN_TARGET)
 	$(INSTALL_DATA) $(DAEMON_DLL_TARGET) $(DESTDIR)$(pkglibdir)/$(DAEMON_DLL_TARGET)
@@ -566,7 +599,9 @@ uninstall-local:
 	rm -f $(DESTDIR)$(pkglibdir)/$(DAEMON_TARGET)
 
 bin_SCRIPTS = $(DAEMON_WRAPPER)
-noinst_SCRIPTS=$(EXTRACT_CONTENT_WRAPPER) 
+noinst_SCRIPTS=				\
+	$(EXTRACT_CONTENT_WRAPPER)	\
+	$(SNIPPET_TEST_WRAPPER)
 
 COND_CS_FILES = \
 	$(AUTHENTICATORS_CSFILES) 			\
@@ -580,6 +615,7 @@ EXTRA_DIST =				\
 	$(DAEMON_DLL_CSFILES)		\
 	$(DAEMON_CSFILES)		\
 	$(EXTRACT_CONTENT_CSFILES)	\
+	$(SNIPPET_TEST_CSFILES)		\
 	$(EXTSTR_IN)			\
 	$(WRAPPER_IN)   		\
 	$(DAEMON_WRAPPER_IN)		\
@@ -596,4 +632,7 @@ CLEANFILES =				\
 	$(DAEMON_WRAPPER)      		\
 	$(EXTRACT_CONTENT_TARGET)	\
 	$(EXTRACT_CONTENT_TARGET).mdb	\
-	$(EXTRACT_CONTENT_WRAPPER)
+	$(EXTRACT_CONTENT_WRAPPER)	\
+	$(SNIPPET_TEST_TARGET)		\
+	$(SNIPPET_TEST_TARGET).mdb	\
+	$(SNIPPET_TEST_WRAPPER)
