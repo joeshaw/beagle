@@ -268,10 +268,9 @@ namespace Beagle.Daemon {
 				// We can't do interleaved additions and deletions,
 				// so we have to flush if a delete item comes in
 				// while adds are pending.
-				if (HavePendingAdds) {
-					FlushPendingDeletes ();
-					FlushPendingAdds ();
-				}
+				if (HavePendingAdds)
+					FlushPending ();
+				
 				AddPendingDelete (item.UriToDelete);
 			} else if (item.IsAdd) {
 				AddPendingDelete (item.IndexableToAdd.Uri);
@@ -291,8 +290,7 @@ namespace Beagle.Daemon {
 		// period of time.)
 		private void ProcessEmptyQueue ()
 		{
-			FlushPendingDeletes ();
-			FlushPendingAdds ();
+			FlushPending ();
 		}
 
 		// Test whether or not we should continue processing queue items.
@@ -304,6 +302,14 @@ namespace Beagle.Daemon {
 
 		private void WorkQueue ()
 		{
+			// Before we start, optimize the index.  We want to do this
+			// every time at start-up to help avoid running out of file
+			// descriptors if the beagled were to crash before reaching
+			// the sinceOptimizationThreshold.
+			IndexWriter writer = new IndexWriter (Store, Analyzer, false);
+			writer.Optimize ();
+			writer.Close ();
+
 			while (true) {
 
 				// Get the next queue item.  If necessary,
@@ -364,6 +370,8 @@ namespace Beagle.Daemon {
 		// Adds
 
 		ArrayList pendingAdds = new ArrayList ();
+		int sinceOptimization = 0;
+		const int sinceOptimizationThreshold = 117; // another random number
 
 		private bool HavePendingAdds {
 			get { return pendingAdds.Count > 0; }
@@ -393,21 +401,29 @@ namespace Beagle.Daemon {
 				if (doc != null) {
 					Console.WriteLine ("Adding {0}", indexable.Uri);
 					writer.AddDocument (doc);
+					++sinceOptimization;
 				}
 			}
 
-			// FIXME: We shouldn't optimize this often
-			Console.WriteLine ("Optimizing");
-			writer.Optimize ();
-			Console.WriteLine ("Done Optimizing");
-			writer.Close ();
-
-			foreach (Indexable indexable in pendingAdds) {
-				if (AddedEvent != null)
-					AddedEvent (this, indexable.Uri);
+			if (sinceOptimization > sinceOptimizationThreshold) {
+				Console.WriteLine ("Optimizing Index");
+				writer.Optimize ();
+				Console.WriteLine ("Done Optimizing Index");
+				sinceOptimization = 0;
 			}
+			
+			writer.Close ();
+		}
 
-			pendingAdds.Clear ();
+		private void BroadcastAndClearPendingAdds ()
+		{
+			if (pendingAdds.Count > 0) {
+				foreach (Indexable indexable in pendingAdds) {
+					if (AddedEvent != null)
+						AddedEvent (this, indexable.Uri);
+				}
+				pendingAdds.Clear ();
+			}
 		}
 
 		private Document ToLuceneDocument (Indexable indexable)
@@ -521,15 +537,30 @@ namespace Beagle.Daemon {
 			foreach (int id in idsToDelete)
 				reader.Delete (id);
 			reader.Close ();
+		}
 
-			// Fire off events to indicate what we just deleted.
-			foreach (Uri uri in pendingDeletes) {
-				if (DeletedEvent != null)
-					DeletedEvent (this, uri);
+		private void BroadcastAndClearPendingDeletes ()
+		{
+			if (pendingDeletes.Count > 0) {
+				// Fire off events to indicate what we just deleted.
+				foreach (Uri uri in pendingDeletes) {
+					if (DeletedEvent != null)
+						DeletedEvent (this, uri);
+				}
+				
+				// Clear our list of pending deletions
+				pendingDeletes.Clear ();
 			}
+		}
 
-			// Clear our list of pending deletions
-			pendingDeletes.Clear ();
+		// FlushPending
+
+		private void FlushPending ()
+		{
+			FlushPendingDeletes ();
+			FlushPendingAdds ();
+			BroadcastAndClearPendingDeletes ();
+			BroadcastAndClearPendingAdds ();
 		}
 
 

@@ -40,6 +40,11 @@ namespace Beagle
 		public virtual event HitSubtractedHandler HitSubtractedEvent;
 
 		private bool cancelled = false;
+
+		private class HitInfo {
+			public Hit Hit = null;
+			public int RefCount = 0;
+		}
 		private Hashtable allHits = new Hashtable ();
 
 		public Query ()
@@ -65,25 +70,46 @@ namespace Beagle
 			CloseQuery ();
 		}
 
+		private void InternalSubtractUri (Uri uri)
+		{
+			// Only subtract previously-added Uris.
+			if (allHits.Contains (uri)) {
+				HitInfo info = (HitInfo) allHits [uri];
+				--info.RefCount;
+				if (info.RefCount == 0) {
+					allHits.Remove (uri);
+					if (HitSubtractedEvent != null)
+						HitSubtractedEvent (this, uri);
+				}
+			}
+		}
+
+		private void InternalAddHit (Hit hit)
+		{
+			HitInfo info = (HitInfo) allHits [hit.Uri];
+			if (info == null) {
+				info = new HitInfo ();
+				info.Hit = hit;
+				info.RefCount = 0;
+				allHits [hit.Uri] = info;
+			}
+
+			++info.RefCount;
+			// If necessary, synthesize a subtracted event
+			if (info.RefCount > 1)
+				if (HitSubtractedEvent != null)
+					HitSubtractedEvent (this, hit.Uri);
+			if (info.RefCount > 0)
+				if (HitAddedEvent != null)
+					HitAddedEvent (this, hit);
+		}
+
 		private void OnHitsAddedAsXml (QueryProxy sender, string hitsXml)
 		{
 			ArrayList hits = Hit.ReadHitXml (hitsXml);
 			
-			foreach (Hit hit in hits) {
-
-				// If we already contain something with that Uri,
-				// remove it and fire off a HitSubtractedEvent.
-				if (allHits.Contains (hit.Uri)) {
-					allHits.Remove (hit.Uri);
-					if (HitSubtractedEvent != null)
-						HitSubtractedEvent (this, hit.Uri);
-				}
-
-				if (HitAddedEvent != null) {
-					allHits [hit.Uri] = hit;
-					HitAddedEvent (this, hit);
-				}
-			}
+			foreach (Hit hit in hits)
+				InternalAddHit (hit);
 		}
 
 		private void OnHitsSubtractedAsString (QueryProxy sender, string uriList)
@@ -92,12 +118,7 @@ namespace Beagle
 			foreach (string uriStr in uris) {
 				Console.WriteLine ("[{0}]", uriStr);
 				Uri uri = new Uri (uriStr, true);
-				// Only remove hits we previously matched.
-				if (allHits.Contains (uri)) {
-					allHits.Remove (uri);
-					if (HitSubtractedEvent != null)
-						HitSubtractedEvent (this, uri);
-				}
+				InternalSubtractUri (uri);
 			}
 		}
 

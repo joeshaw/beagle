@@ -59,19 +59,19 @@ namespace Beagle.Daemon {
 		{
 			ObjectInfo info = new ObjectInfo ();
 
-			info.Owner = DBus.Message.Current.Sender;
-
-			info.Path = String.Format ("/com/novell/Beagle/{0}/{1}",
-						   obj.GetType (),
-						   path_counter);
-			++path_counter;
-
 			info.Object = obj;
 
-			all_objects.Add (info);
-
+			info.Owner = DBus.Message.Current.Sender;
 			
-			DBusisms.Service.RegisterObject (obj, info.Path);
+			lock (this) {
+				info.Path = String.Format ("/com/novell/Beagle/{0}/{1}",
+							   obj.GetType (),
+							   path_counter);
+				++path_counter;
+
+				all_objects.Add (info);
+				DBusisms.Service.RegisterObject (obj, info.Path);
+			}
 
 			Console.WriteLine ("Registered object {0} as belonging to '{1}'",
 					   info.Path, info.Owner);
@@ -79,39 +79,43 @@ namespace Beagle.Daemon {
 			return info.Path;
 		}
 
+		private void UnregisterObjectAt (int i)
+		{
+			// Note: this function does no locking.
+			// It is the responsibility of the caller to
+			// make sure that 'this' is locked.
+			ObjectInfo info = (ObjectInfo) all_objects [i];
+			object obj = info.Object;
+			Console.WriteLine ("Unregistering {0}", info.Path);
+			DBusisms.Service.UnregisterObject (obj);
+			all_objects.RemoveAt (i);
+			if (obj is IDisposable)
+				((IDisposable) obj).Dispose ();
+		}
+
 		public void UnregisterObject (object obj)
 		{
-			for (int i = 0; i < all_objects.Count; ++i) {
-				ObjectInfo info = (ObjectInfo) all_objects [i];
-				if (Object.ReferenceEquals (info.Object, obj)) {
-					Console.WriteLine ("Unregistering {0}", info.Path);
-					DBusisms.Service.UnregisterObject (obj);
-					all_objects.RemoveAt (i);
-					if (obj is IDisposable) {
-						Console.WriteLine ("Disposing {0}", info.Path);
-						((IDisposable) obj).Dispose ();
+			lock (this) {
+				for (int i = 0; i < all_objects.Count; ++i) {
+					ObjectInfo info = (ObjectInfo) all_objects [i];
+					if (Object.ReferenceEquals (info.Object, obj)) {
+						UnregisterObjectAt (i);
+						return;
 					}
-					return;
 				}
 			}
 		}
 
 		public void UnregisterByOwner (string owner)
 		{
-			int i = 0;
-			while (i < all_objects.Count) {
-				ObjectInfo info = (ObjectInfo) all_objects [i];
-				if (info.Owner == owner) {
-					// FIXME: code duplication!
-					Console.WriteLine ("Unregistering {0}", info.Path);
-					DBusisms.Service.UnregisterObject (info.Object);
-					all_objects.RemoveAt (i);
-					if (info.Object is IDisposable) {
-						Console.WriteLine ("Disposing {0}", info.Path);
-						((IDisposable) info.Object).Dispose ();
-					}
-				} else {
-					++i;
+			lock (this) {
+				int i = 0;
+				while (i < all_objects.Count) {
+					ObjectInfo info = (ObjectInfo) all_objects [i];
+					if (info.Owner == owner) 
+						UnregisterObjectAt (i);
+					else
+						++i;
 				}
 			}
 		}
@@ -119,10 +123,12 @@ namespace Beagle.Daemon {
 		public ICollection GetByType (Type type)
 		{
 			ArrayList by_type = new ArrayList ();
-
-			foreach (ObjectInfo info in all_objects) {
-				if (type.IsInstanceOfType (info.Object))
-					by_type.Add (info.Object);
+			
+			lock (this) {
+				foreach (ObjectInfo info in all_objects) {
+					if (type.IsInstanceOfType (info.Object))
+						by_type.Add (info.Object);
+				}
 			}
 
 			return by_type;
