@@ -175,10 +175,11 @@ namespace Beagle.Daemon.FileSystemQueryable {
 			}
 
 			// We want to always return an empty list if we have no children, not null
+			static object [] empty_list = new object [0];
 			public ICollection Children {
 				get { 
 					lock (big_lock) {
-						return children != null ? children.Values : new ArrayList ();
+						return children != null ? children.Values : empty_list;
 					}
 				}
 			}
