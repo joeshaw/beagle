@@ -320,9 +320,13 @@ namespace Dewey {
 			int count = 0;
 			foreach (Indexable indexable in indexables) {
 				Spew ("Inserting {0}", indexable.Uri);
-				Document doc = ToLuceneDocument (indexable);
-				writer.AddDocument (doc);
-				++count;
+				try {
+					Document doc = ToLuceneDocument (indexable);
+					writer.AddDocument (doc);
+					++count;
+				} catch {
+					// FIXME: for now we just ignore filter crashes
+				}
 			}
 			// optimization is expensive
 			// FIXME: this is just asking for trouble

@@ -173,6 +173,7 @@ class CrawlerTool {
 					"*.la",
 					"*.so",
 					"*.exe",
+					"*.dll",
 					"*.com",
 					"CVS");
 
