@@ -404,12 +404,12 @@ AC_SUBST(CHOOSER_FU_LIBS)
 
 dnl ----------------------------------------------
 
-AC_ARG_ENABLE([websvc],
-        [  --enable-websvc       Enable WebService],
-        enable_websvc=yes,
-        enable_websvc=no)
+AC_ARG_ENABLE([webservices],
+        [  --enable-webservices       Enable WebServices],
+        enable_webservices=yes,
+        enable_webservices=no)
 
-AM_CONDITIONAL(ENABLE_WEBSVC, test "x$enable_websvc" = "xyes")
+AM_CONDITIONAL(ENABLE_WEBSERVICES, test "x$enable_webservices" = "xyes")
 
 dnl ----------------------------------------------
 dnl Prefixes for helper scripts
@@ -456,7 +456,7 @@ echo "
 	wv1?			${enable_wv1}
 
 	Enable Network		${enable_network}
-	Enable WebService	${enable_websvc}"
+	Enable WebServices	${enable_webservices}"
 
 if test "x$enable_network" = "xyes"; then
    echo "	Enable Rendezvous	${enable_rendezvous}"

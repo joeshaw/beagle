@@ -35,8 +35,8 @@ using Gtk;
 
 using Beagle.Util;
 
-#if ENABLE_WEBSVC
-using Beagle.websvc;
+#if ENABLE_WEBSERVICES
+using Beagle.WebService;
 using MA=Mono.ASPNET;
 #endif
 
@@ -173,7 +173,7 @@ namespace Beagle.Daemon {
 		}
 
 
-#if ENABLE_WEBSVC
+#if ENABLE_WEBSERVICES
 		static Mono.ASPNET.ApplicationServer appServer = null;
 		const string DEFAULT_XSP_ROOT="/usr/local/share/doc/xsp/test";
 		const string DEFAULT_XSP_PORT = "8888";
@@ -194,7 +194,7 @@ namespace Beagle.Daemon {
 			int arg_port = 0;
 #endif
 
-#if ENABLE_WEBSVC
+#if ENABLE_WEBSERVICES
 			bool web_global = false;
 			bool web_start = false;
 			string web_port = DEFAULT_XSP_PORT;
@@ -264,7 +264,7 @@ namespace Beagle.Daemon {
 					break;
 #endif
 
-#if ENABLE_WEBSVC
+#if ENABLE_WEBSERVICES
 				case "--web-global":
 					web_global = true;
 					break;
@@ -405,28 +405,28 @@ namespace Beagle.Daemon {
 			}
 #endif
 
-#if ENABLE_WEBSVC		
+#if ENABLE_WEBSERVICES		
 			//Beagle Web, WebService access initialization code:
-			string msg = "Started beagledWeb & beagledWebSvc Listener. Internal Web Server NOT started.";
+			string msg = "Started WebBackEnd & WebServiceBackEnd Listener. Internal Web Server NOT started.";
 
 			xsp_param[1] = web_port;
 			xsp_param[3] = web_rootDir;
 			if (web_start)	
 			{
-				//Start beagled internal web server (bgXsp)
-				int ret = Mono.ASPNET.Server.initXSP(xsp_param, out appServer);
-				msg = "Started beagledWeb & beagledWebSvc Listener \n";
-				if (ret == 0)
+				//Start beagled internal web server (BeagleXsp)
+				int retVal = Mono.ASPNET.Server.initXSP(xsp_param, out appServer);
+				msg = "Started WebBackEnd & WebServiceBackEnd Listener \n";
+				if (retVal == 0)
 					msg += "Internal Web Server started";
 				else
 					msg += "Error starting Internal Web Server";
 			}	
 
 			//start web-access server first
-			beagledWeb.init (web_global);
+			WebBackEnd.init (web_global);
 
 			//Next start web-service server 
-			beagledWebSvc.init (web_global);
+			WebServiceBackEnd.init (web_global);
 
 			//Console.WriteLine (msg);
 			Logger.Log.Debug (msg);
@@ -468,7 +468,7 @@ namespace Beagle.Daemon {
 			Logger.Log.Debug ("Starting main loop");
 			Application.Run ();
 
-#if ENABLE_WEBSVC
+#if ENABLE_WEBSERVICES
 			if (appServer != null) {
 			    	appServer.Stop(); 
 				appServer = null;
@@ -483,7 +483,7 @@ namespace Beagle.Daemon {
 
 		private static void OnShutdown ()
 		{
-#if ENABLE_WEBSVC
+#if ENABLE_WEBSERVICES
 			if (appServer != null) {
 			    	appServer.Stop(); 
 				appServer = null;

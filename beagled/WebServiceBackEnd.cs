@@ -1,5 +1,5 @@
 //
-// beagledWebSvc.cs
+//WebServiceBackEnd.cs
 //
 // Copyright (C) 2005 Novell, Inc.
 //
@@ -37,7 +37,7 @@ using System.Runtime.Remoting.Channels.Tcp;
 using Beagle.Util;
 using Beagle.Daemon;
 
-namespace Beagle.websvc {
+namespace Beagle.WebService {
 	
 	[Serializable()]
 	public struct searchRequest  {
@@ -92,23 +92,23 @@ namespace Beagle.websvc {
 		public hitResult[] hitResults;
 	}
 	
-	public class beagledWebSvc: MarshalByRefObject   {
+	public class WebServiceBackEnd: MarshalByRefObject   {
 
 		//KNV: If needed, we can convert this to a Singleton, adding a 
 		//	   static Factory method to get the singleton instance reference,
 		//	   so that front-end code always gets hold of same instance.
-		static beagledWebSvc instance = null;
+		static WebServiceBackEnd instance = null;
 		static bool allow_global_access = false;
 
 		private Hashtable resultTable;
 		private Hashtable sessionTable;
 		
-		public beagledWebSvc() {
+		public WebServiceBackEnd() {
 			 resultTable 	= Hashtable.Synchronized(new Hashtable());
 			 sessionTable 	= Hashtable.Synchronized(new Hashtable());
 		}
 
-		~beagledWebSvc() {
+		~WebServiceBackEnd() {
 			resultTable.Clear(); 
 			sessionTable.Clear(); 
 		}	
@@ -123,13 +123,13 @@ namespace Beagle.websvc {
 
 		     if (instance == null) {
 
-		  	instance = new beagledWebSvc();
+		  	instance = new WebServiceBackEnd();
 
   		  	//TCP Channel Listener registered in beagledWeb:init()
 		  	//ChannelServices.RegisterChannel(new TcpChannel(8347));		  
 		  	WellKnownServiceTypeEntry WKSTE = 
-				new WellKnownServiceTypeEntry(typeof(beagledWebSvc),
-				 "beagledWebSvc.rem", WellKnownObjectMode.Singleton);
+				new WellKnownServiceTypeEntry(typeof(WebServiceBackEnd),
+				 "WebServiceBackEnd.rem", WellKnownObjectMode.Singleton);
 		  	RemotingConfiguration.ApplicationName="beagled";
 		  	RemotingConfiguration.RegisterWellKnownServiceType(WKSTE);
 		    }
@@ -162,8 +162,9 @@ namespace Beagle.websvc {
 		}
 
 		void OnFinished (QueryResult qres)
-		{
-			DetachQueryResult (qres);		
+		{	
+
+			DetachQueryResult (qres);				
 		}
 
 		void OnCancelled (QueryResult qres)
@@ -188,6 +189,9 @@ namespace Beagle.websvc {
 		{
 			if (qres != null) {
 
+				if (resultTable.Contains(qres)) 
+					((ArrayList) resultTable[qres]).Sort();
+
 				resultTable.Remove(qres);
 				
 				qres.HitsAddedEvent -= OnHitsAdded;
@@ -205,24 +209,6 @@ namespace Beagle.websvc {
 		public const int SC_INVALID_QUERY = -1;
 		public const int SC_UNAUTHORIZED_ACCESS = -2;
 		public const int SC_INVALID_SEARCH_TOKEN = -3;
-		
-		//simplebeagledQuery
-		public searchResult doQuery(string searchString)
-		{
-			if (searchString == null || searchString == "") {
-				
-			    searchResult sr = new searchResult(); 
-			    sr.statusCode = SC_INVALID_QUERY;
-			    sr.statusMsg = "Error: No search terms specified";
-				return sr; 
-			}
-				
-			QueryBody query = new QueryBody();
-			query.AddText (searchString);
-			query.AddDomain (QueryDomain.Neighborhood);
-			
-			return execQuery(query);
-		}
 
 		//Full beagledQuery
 		public searchResult doQuery(searchRequest sreq)
@@ -230,7 +216,8 @@ namespace Beagle.websvc {
 			searchResult sr; 	
 			//if (sreq == (MarshalByRef)(null))
 				//return new searchResult();
-			if (sreq.text == null || sreq.text.Length == 0) {
+			if (sreq.text == null || sreq.text.Length == 0 ||
+				(sreq.text.Length == 1 && sreq.text[0].Trim() == "") ) {
 				
 			    sr = new searchResult(); 
 			    sr.statusCode = SC_INVALID_QUERY;
@@ -243,14 +230,17 @@ namespace Beagle.websvc {
 			foreach (string text in sreq.text)
 				query.AddText(text);
 
-			foreach (string mtype in sreq.mimeType)
-				query.AddMimeType(mtype);
+			if (sreq.mimeType != null && sreq.mimeType[0] != null)
+				foreach (string mtype in sreq.mimeType)
+					query.AddMimeType(mtype);
 
-			foreach (string src in sreq.searchSources)
-				query.AddSource(src);	
+			if (sreq.searchSources != null && sreq.searchSources[0] != null)
+				foreach (string src in sreq.searchSources)
+					query.AddSource(src);	
 
-			query.AddDomain(sreq.qdomain);		
-						
+			if (sreq.qdomain > 0) 
+				query.AddDomain(sreq.qdomain);
+							
 			return execQuery(query);
 		}
 				
@@ -259,7 +249,7 @@ namespace Beagle.websvc {
 			ArrayList results = new ArrayList();
 			QueryResult qres = new QueryResult ();
 			
-			//Console.WriteLine("beagledWebSvc: Starting Query for string \"{0}\"",	query.QuotedText);
+			//Console.WriteLine("WebServiceBackEnd: Starting Query for string \"{0}\"",	query.QuotedText);
 
 			AttachQueryResult (qres, results);
 
@@ -276,7 +266,7 @@ namespace Beagle.websvc {
 			while ((resultTable.Contains(qres)) && (results.Count < MAX_RESULTS_PER_CALL)) 
 				Thread.Sleep(10);
 
-			//Console.WriteLine("beagledWebSvc: Got {0} results from beagled", results.Count);
+			//Console.WriteLine("WebServiceBackEnd: Got {0} results from beagled", results.Count);
 			searchResult sr = new searchResult();
 
 			sr.numResults = results.Count < MAX_RESULTS_PER_CALL ? results.Count: MAX_RESULTS_PER_CALL;

@@ -1,5 +1,5 @@
 //
-// BeagleWebCb.cs
+// WebFrontEnd.cs
 //
 // Copyright (C) 2005 Novell, Inc.
 //
@@ -40,9 +40,9 @@ using System.Runtime.Remoting.Channels;
 using System.Runtime.Remoting.Channels.Tcp;
 
 using Beagle.Daemon;
-using Beagle.websvc;
+using Beagle.WebService;
 
-namespace BWS_CodeBehind {
+namespace WebService_CodeBehind {
 
 	public class BeagleWebPage: System.Web.UI.Page {
 	
@@ -58,6 +58,8 @@ namespace BWS_CodeBehind {
 	protected TextBox SearchBox;
 	protected Label Output; 
 
+	const string NO_RESULTS = "No results.";
+	
 	protected void Page_Load(Object o, EventArgs e) {
 
 	//note: this web-form relies on availability of Session information either through
@@ -65,27 +67,39 @@ namespace BWS_CodeBehind {
 	
 		string sessId = Session.SessionID;
 		Output.Visible = Back.Visible = Forward.Visible = true;
+		
+		if (Session["ResultsOnDisplay"] != null
+		    && ((string)Session["ResultsOnDisplay"]).StartsWith(HeaderMsg + NO_RESULTS)) {
+		    Back.Visible = Forward.Visible = false;
+		}
 
-		string rawUrl = Request.RawUrl;
-		int index = rawUrl.IndexOf(".aspx?");
-
-		string actionString = null;
+		string actionString = null;		
+		bool queryStringProcessed = false;
+		
+		string reqUrl = Request.Url.ToString();
+		int index = reqUrl.IndexOf(".aspx?");
 		if (index > 0)
-			actionString = rawUrl.Substring(index + ".aspx?".Length);
+			actionString = reqUrl.Substring(index + ".aspx?".Length);
 
-		if (!IsPostBack) { //HTTP GET request
-
+		if (!IsPostBack) { 
+			//HTTP GET request
 			if (actionString == null) {			
 			  	//HTTP Get without any query string
 				if (Session["ResultsOnDisplay"] == null) {
 				 	//First access 				
 					Output.Visible = false;
-					Back.Visible = Forward.Visible = false;
-					
-					Session["InitialReqUrl"] = (Request.Url).ToString();
+					Back.Visible = Forward.Visible = false;				
+
+					int index1 = reqUrl.IndexOf(".aspx");
+					if ((index1 > 0) && (index1 + ".aspx".Length < reqUrl.Length))
+							Session["InitialReqUrl"] = reqUrl.Substring(0, index1 + ".aspx".Length);
+					else
+							Session["InitialReqUrl"] = reqUrl;
+																			
 					Session["SearchString"] = "";
 					Session["Source"] = "Anywhere";
-					sourceList.SelectedValue = "Anywhere"; 					}
+					sourceList.SelectedValue = "Anywhere"; 					
+				}
 				else  {
 
 				  //Redirected from Tile-Action invocation, restore Results
@@ -93,30 +107,83 @@ namespace BWS_CodeBehind {
 				  sourceList.SelectedValue = (string) Session["Source"];
 				   
 				  Output.Text = (string) Session["ResultsOnDisplay"];
-				  beagledWeb remoteObj = (beagledWeb) Session["RemObj"];
+				  WebBackEnd remoteObj = (WebBackEnd) Session["RemObj"];
 				  if (remoteObj != null) {
 				  	Back.Enabled = remoteObj.canBack(sessId);
 				  	Forward.Enabled = remoteObj.canForward(sessId);
 				  }
 				}
-			}		
-		}
+			}
+			else    {  //HTTP-Get request with query string:  
+				//Initial web query initiated via HTTP Get (firefox search bar):
+			
+				string searchString = null;
+				NameValueCollection nvc = Request.QueryString;
+				 
+				if ((nvc != null) && (nvc.Count != 0) && 
+						((searchString = nvc["text"]) != null )) {
+
+					SearchBox.Text = searchString;		
+					Session["SearchString"] = searchString;
+
+					string source = null;
+					if ((source = nvc["source"]) != null)	
+						
+							switch (source.ToLower())	{
+							  
+								case "files": 		sourceList.SelectedValue = "Files"; 	
+													break;
+								case "addressbook": sourceList.SelectedValue = "Contact"; 	
+													break;
+								case "mail"	: 		sourceList.SelectedValue = "MailMessage"; 
+													break;
+								case "web"	: 		sourceList.SelectedValue = "WebHistory"; 
+													break;
+								case "chats":		sourceList.SelectedValue = "IMLog"; 	
+													break;
+								case "anywhere":
+								default:			sourceList.SelectedValue = "Anywhere"; 	
+													break;
+							}
+					else 
+							sourceList.SelectedValue = "Anywhere"; 
+			
+					Session["Source"] = sourceList.SelectedValue;	
+										
+					if (Session["ResultsOnDisplay"] == null) {
 	
-		//Process Tile!Action, if user has clicked on one:
-		if (actionString != null) {
+						int index2 = reqUrl.IndexOf(".aspx");
+						if ((index2 > 0) && (index2 + ".aspx".Length < reqUrl.Length))
+							Session["InitialReqUrl"] = reqUrl.Substring(0, index2 + ".aspx".Length);
+						else
+							Session["InitialReqUrl"] = reqUrl;						
+					}
+					
+					queryStringProcessed = true;
+					
+					Search_Click(o, e);
+						
+					//Redirect client to initial Beagle webaccess URL:
+		    		Response.Redirect((string)Session["InitialReqUrl"]);
+				}		
+			}  //end else for if (actionString == null)  
+		}
 
-		    beagledWeb remoteObj = (beagledWeb) Session["RemObj"];
+		//Process Tile!Action HTTP-Get request, if user has clicked on one:
+		if (actionString != null && !queryStringProcessed) {
+
+		    	WebBackEnd remoteObj = (WebBackEnd) Session["RemObj"];
 		    
-		    if (remoteObj != null)
-		         remoteObj.dispatchAction(sessId, actionString);
-		    else {
-			Output.Text = enableSessionMsg;
-			Back.Visible = Forward.Visible = false;
-			return;
-		    }
+		    	if (remoteObj != null)
+		    	     remoteObj.dispatchAction(sessId, actionString);
+		    	else {
+					Output.Text = enableSessionMsg;
+					Back.Visible = Forward.Visible = false;
+					return;
+		    	}
 
-		    //Redirect client to initial Beagle webaccess URL:
-		    Response.Redirect((string)Session["InitialReqUrl"]);
+		    	//Redirect client to initial Beagle webaccess URL:
+		    	Response.Redirect((string)Session["InitialReqUrl"]);
 		}
 	}
 
@@ -146,8 +213,8 @@ namespace BWS_CodeBehind {
 			return;
 		} 
 
-		if (SearchBox.Text == "") {		
-			Output.Text = HeaderMsg + "No Results.";
+		if (SearchBox.Text.Trim() == "") {		
+			Output.Text = HeaderMsg + NO_RESULTS;
 			Back.Visible = Forward.Visible = false;
 			Session["SearchString"] = SearchBox.Text;
 			Session["ResultsOnDisplay"] = Output.Text;
@@ -160,9 +227,9 @@ namespace BWS_CodeBehind {
 
 		remoteChannel.Register(); 
 		
-		beagledWeb remoteObj = (beagledWeb) Session["RemObj"];
+		WebBackEnd remoteObj = (WebBackEnd) Session["RemObj"];
 		if (remoteObj == null)
-			 remoteObj = new beagledWeb();
+			 remoteObj = new WebBackEnd();
 			 
 		if (Application["allowGlobalAccess"] == null) 
 			Application["allowGlobalAccess"] = remoteObj.allowGlobalAccess;
@@ -177,7 +244,7 @@ namespace BWS_CodeBehind {
 		string sessId = Session.SessionID;
 		string response = remoteObj.doQuery(sessId, SearchBox.Text, searchSrc);
 		
-		if (response.StartsWith("No results"))  {
+		if (response.StartsWith(NO_RESULTS))  {
 				Output.Text = HeaderMsg + response;
 				Back.Visible = Forward.Visible = false;
 		}
@@ -188,14 +255,14 @@ namespace BWS_CodeBehind {
 		}
 			
 		Session["RemObj"] = remoteObj;
-		Session["SearchString"] = SearchBox.Text;
-		Session["Source"] = searchSrc;
 		Session["ResultsOnDisplay"] = Output.Text;
+		Session["SearchString"] = SearchBox.Text;
+		Session["Source"] = searchSrc;		
 	}
 	
 	protected void Back_Click(object o, EventArgs e) {
 
-		beagledWeb remoteObj = (beagledWeb) Session["RemObj"];
+		WebBackEnd remoteObj = (WebBackEnd) Session["RemObj"];
 		//if (IsPostBack && HttpContext.Current.Session.IsNewSession) 
 		if (remoteObj == null)  {
 			Output.Text = enableSessionMsg;
@@ -218,7 +285,7 @@ namespace BWS_CodeBehind {
 		SearchBox.Text = (string) Session["SearchString"];
 		sourceList.SelectedValue = (string) Session["Source"];
 		
-		//if (remoteObj == null)  { Output.Text = "No Results"; return; }
+		//if (remoteObj == null)  { Output.Text = NO_RESULTS; return; }
 		string response = convertUrls(remoteObj.doBack(sessId));	
 		Session["ResultsOnDisplay"] = Output.Text = HeaderMsg + response;
 
@@ -228,7 +295,7 @@ namespace BWS_CodeBehind {
 
 	protected void Forward_Click(object o, EventArgs e) {
 
-		beagledWeb remoteObj = (beagledWeb) Session["RemObj"];
+		WebBackEnd remoteObj = (WebBackEnd) Session["RemObj"];
 		//if (IsPostBack && HttpContext.Current.Session.IsNewSession) 
 		if (remoteObj == null) {
 			Output.Text = enableSessionMsg;
@@ -251,7 +318,7 @@ namespace BWS_CodeBehind {
 		SearchBox.Text = (string) Session["SearchString"];
 		sourceList.SelectedValue = (string) Session["Source"];
 		
-		//if (remoteObj == null)  { Output.Text = "No Results"; return; }
+		//if (remoteObj == null)  { Output.Text = NO_RESULTS; return; }
 		string response = convertUrls(remoteObj.doForward(sessId));
 		Session["ResultsOnDisplay"] = Output.Text = HeaderMsg + response;
 

@@ -1,1 +1,1 @@
-<%@ WebService Language="c#" Class="BWS_CodeBehind.BeagleWebService" %>
+<%@ WebService Language="c#" Class="WebService_CodeBehind.BeagleWebService" %>

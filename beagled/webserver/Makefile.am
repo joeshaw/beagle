@@ -1,6 +1,6 @@
 CSC = mcs -g
 
-XSP_TARGET = bgXsp.dll
+XSP_TARGET = BeagleXsp.dll
 
 XSP_CSFLAGS = -target:library 
 

@@ -1,5 +1,5 @@
 //
-// beagledWeb.cs
+// WebBackEnd.cs
 //
 // Copyright (C) 2005 Novell, Inc.
 //
@@ -42,22 +42,22 @@ using Beagle.Util;
 using BT = Beagle.Tile;
 using Beagle.Daemon;
 
-namespace Beagle.websvc {
+namespace Beagle.WebService {
 	
-	public class beagledWeb: MarshalByRefObject{
+	public class WebBackEnd: MarshalByRefObject{
 
-		static beagledWeb instance = null;
+		static WebBackEnd instance = null;
 		static bool allow_global_access = false;
 
 		private Hashtable result;
 		private Hashtable sessionResp;
 
-		public beagledWeb() {
+		public WebBackEnd() {
 			result = Hashtable.Synchronized(new Hashtable());
 			sessionResp = Hashtable.Synchronized(new Hashtable());
 		}
 
-		~beagledWeb() {
+		~WebBackEnd() {
 			result.Clear(); 
 			sessionResp.Clear();
 		}		
@@ -71,14 +71,14 @@ namespace Beagle.websvc {
 		   allow_global_access = web_global;
 
 		   if (instance == null) {
-			  instance = new beagledWeb();
+			  instance = new WebBackEnd();
 
 			  //Register TCP Channel Listener
 		  	  ChannelServices.RegisterChannel(new TcpChannel(8347));	
 
 			  WellKnownServiceTypeEntry WKSTE = 
-				new WellKnownServiceTypeEntry(typeof(beagledWeb),
-				 "beagledWeb.rem", WellKnownObjectMode.Singleton);
+				new WellKnownServiceTypeEntry(typeof(WebBackEnd),
+				 "WebBackEnd.rem", WellKnownObjectMode.Singleton);
 			  RemotingConfiguration.ApplicationName="beagled";
 			  RemotingConfiguration.RegisterWellKnownServiceType(WKSTE);
 		   }
@@ -103,7 +103,7 @@ namespace Beagle.websvc {
 		void OnFinished (QueryResult qres)
 		{
 			if (result.Contains(qres))
-				Console.WriteLine("beagledWeb: Got {0} results from beagled", ((Resp) result[qres]).rootTile.HitCollection.NumResults);
+				Console.WriteLine("WebBackEnd: Got {0} results from beagled", ((Resp) result[qres]).rootTile.HitCollection.NumResults);
 
 			DetachQueryResult(qres);
 		}
@@ -141,11 +141,13 @@ namespace Beagle.websvc {
 			}
 		}
 
+		const string NO_RESULTS = "No results.";
+		
 		private string getResultsLabel(BT.SimpleRootTile root)
 		{
 			string label;
 			if (root.HitCollection.NumResults == 0)
-				label = "No results.";
+				label = NO_RESULTS;
 			else if (root.HitCollection.FirstDisplayed == 0) 
 				label = String.Format ("<b>{0} results of {1}</b> are shown.", 
 						       root.HitCollection.LastDisplayed + 1,
@@ -172,7 +174,7 @@ namespace Beagle.websvc {
 		{	
 			Resp resp = (Resp) sessionResp[sessId];
 			if (!canForward(sessId) || (resp == null))
-				return "No results.";
+				return NO_RESULTS;
 				
 			BT.SimpleRootTile root = resp.rootTile;
 			if (root != null) {
@@ -184,7 +186,7 @@ namespace Beagle.websvc {
 				return (getResultsLabel(root) + bctx.buffer);
 			}
 
-			return "No results.";
+			return NO_RESULTS;
 		}
 
 		public bool canBack(string sessId)
@@ -201,7 +203,7 @@ namespace Beagle.websvc {
 		{	
 			Resp resp = (Resp) sessionResp[sessId];
 			if (!canBack(sessId) || (resp == null))
-				return "No results.";
+				return NO_RESULTS;
 		
 			BT.SimpleRootTile root = resp.rootTile;
 			if (root != null) {
@@ -213,16 +215,16 @@ namespace Beagle.websvc {
 				return (getResultsLabel(root) + bctx.buffer);
 			}
 			
-			return "No results.";
+			return NO_RESULTS;
 		}
 
 		public string doQuery(string sessId, string searchString, string searchSource)
 		{
 		
 			if (sessId == null || searchString == null || searchString == "")
-				return "No results.";
+				return NO_RESULTS;
 						 
-			Console.WriteLine("beagledWeb: Got Search String: " + searchString); 
+			Console.WriteLine("WebBackEnd: Got Search String: " + searchString); 
 			QueryBody qbody = new QueryBody();
 			qbody.AddText (searchString);
 			if (searchSource != null && searchSource != "")
@@ -246,7 +248,7 @@ namespace Beagle.websvc {
 			else
 				sessionResp.Add(sessId, resp);	
 
-			Console.WriteLine("beagledWeb: Starting Query for string \"{0}\"", qbody.QuotedText);
+			Console.WriteLine("WebBackEnd: Starting Query for string \"{0}\"", qbody.QuotedText);
 
 			QueryDriver.DoQuery (qbody, qres);
 

@@ -1,3 +1,17 @@
+2005-03-29  Vijay K. Nanjundaswamy <knvijay@novell.com>
+
+	* WebServices: Changes in Web, Web-Services code to ensure file
+          names & Class names are fully spelt out instead of abbreviations, 
+	  file/assembly names renamed to more meaningful names like WebFrontEnd.cs
+ 	  and WebBackEnd.cs, internal WebServer assembly renamed to BeagleXsp.dll, 
+	  with corresponding changes in Makefile.am and configure.in. 
+	  ./configure option to include web-services code, now changed to 
+    	  '--enable-webservices' instead of --enable-websvc
+
+	* Updates to Web interface code to include support for Firefox search bar and 
+	  changes in methods exposed by Beagle web-service to BeagleQuery, SimpleQuery,
+	  SimpleQuery2 and GetMoreResults.
+	
 2005-03-29  Veerapuram Varadhan  <vvaradhan@novell.com>
 
 	* beagled/LuceneDriver: Delete if indexable.DeleteContent is
