@@ -1,380 +1,405 @@
+/*
+ * Copyright 2004 The Apache Software Foundation
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * 
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 using System;
-using System.Text;
-using System.Collections;
-using Lucene.Net.Index; 
-using Lucene.Net.Util; 
-
+using IndexReader = Lucene.Net.Index.IndexReader;
 namespace Lucene.Net.Search
 {
-	/* ====================================================================
-	 * The Apache Software License, Version 1.1
-	 *
-	 * Copyright (c) 2001 The Apache Software Foundation.  All rights
-	 * reserved.
-	 *
-	 * Redistribution and use in source and binary forms, with or without
-	 * modification, are permitted provided that the following conditions
-	 * are met:
-	 *
-	 * 1. Redistributions of source code must retain the above copyright
-	 *    notice, this list of conditions and the following disclaimer.
-	 *
-	 * 2. Redistributions in binary form must reproduce the above copyright
-	 *    notice, this list of conditions and the following disclaimer in
-	 *    the documentation and/or other materials provided with the
-	 *    distribution.
-	 *
-	 * 3. The end-user documentation included with the redistribution,
-	 *    if any, must include the following acknowledgment:
-	 *       "This product includes software developed by the
-	 *        Apache Software Foundation (http://www.apache.org/)."
-	 *    Alternately, this acknowledgment may appear in the software itself,
-	 *    if and wherever such third-party acknowledgments normally appear.
-	 *
-	 * 4. The names "Apache" and "Apache Software Foundation" and
-	 *    "Apache Lucene" must not be used to endorse or promote products
-	 *    derived from this software without prior written permission. For
-	 *    written permission, please contact apache@apache.org.
-	 *
-	 * 5. Products derived from this software may not be called "Apache",
-	 *    "Apache Lucene", nor may "Apache" appear in their name, without
-	 *    prior written permission of the Apache Software Foundation.
-	 *
-	 * THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESSED OR IMPLIED
-	 * WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
-	 * OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
-	 * DISCLAIMED.  IN NO EVENT SHALL THE APACHE SOFTWARE FOUNDATION OR
-	 * ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
-	 * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
-	 * LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF
-	 * USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
-	 * ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
-	 * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT
-	 * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
-	 * SUCH DAMAGE.
-	 * ====================================================================
-	 *
-	 * This software consists of voluntary contributions made by many
-	 * individuals on behalf of the Apache Software Foundation.  For more
-	 * information on the Apache Software Foundation, please see
-	 * <http://www.apache.org/>.
-	 */
-
-	/// <summary>
-	/// A Query that matches documents matching bool combinations of other
-	/// queries, typically TermQuery's or PhraseQuery's.
+	
+	/// <summary>A Query that matches documents matching boolean combinations of other
+	/// queries, typically {@link TermQuery}s or {@link PhraseQuery}s.
 	/// </summary>
 	[Serializable]
-	public class BooleanQuery : Query 
+	public class BooleanQuery:Query, System.ICloneable
 	{
-		private static int maxClauseCount = 1024;
-
-		/// <summary>
-		/// Thrown when an attempt is made to add more than 
-		/// GetMaxClauseCount() clauses.
+		
+		/// <summary> Default value is 1024.  Use <code>Lucene.Net.maxClauseCount</code>
+		/// system property to override.
 		/// </summary>
-		public class TooManyClausesException : Exception {}
-
-		/// <summary>
-		/// Return the maximum number of clauses permitted, 1024 by default.
-		/// Attempts to add more than the permitted number of clauses cause 
-		/// {TooManyClauses} to be thrown.
+		public static int maxClauseCount = System.Int32.Parse(SupportClass.AppSettings.Get("Lucene.Net.maxClauseCount", "1024"));
+		
+		/// <summary>Thrown when an attempt is made to add more than {@link
+		/// #GetMaxClauseCount()} clauses. 
 		/// </summary>
-		/// <returns></returns>
-		public static int GetMaxClauseCount() { return maxClauseCount; }
-
-		/// <summary>
-		/// Set the maximum number of clauses permitted.
+		[Serializable]
+		public class TooManyClauses:System.SystemException
+		{
+		}
+		
+		/// <summary>Return the maximum number of clauses permitted, 1024 by default.
+		/// Attempts to add more than the permitted number of clauses cause {@link
+		/// TooManyClauses} to be thrown.
 		/// </summary>
-		/// <param name="maxClauseCount"></param>
-		public static void SetMaxClauseCount(int maxClauseCount) 
+		public static int GetMaxClauseCount()
+		{
+			return maxClauseCount;
+		}
+		
+		/// <summary>Set the maximum number of clauses permitted. </summary>
+		public static void  SetMaxClauseCount(int maxClauseCount)
 		{
 			BooleanQuery.maxClauseCount = maxClauseCount;
 		}
-  
-		private ArrayList clauses = new ArrayList();
-
-		/// <summary>
-		/// Constructs an empty bool query.
-		/// </summary>
-		public BooleanQuery() {}
-
-		/// <summary>
-		/// Adds a clause to a bool query.  Clauses may be:
+		
+		private System.Collections.ArrayList clauses = System.Collections.ArrayList.Synchronized(new System.Collections.ArrayList(10));
+		
+		/// <summary>Constructs an empty boolean query. </summary>
+		public BooleanQuery()
+		{
+		}
+		
+		/// <summary>Adds a clause to a boolean query.  Clauses may be:
 		/// <ul>
 		/// <li><code>required</code> which means that documents which <i>do not</i>
-		/// match this sub-query will <i>not</i> match the bool query;</li>
+		/// match this sub-query will <i>not</i> match the boolean query;
 		/// <li><code>prohibited</code> which means that documents which <i>do</i>
-		/// match this sub-query will <i>not</i> match the bool query; or</li>
+		/// match this sub-query will <i>not</i> match the boolean query; or
 		/// <li>neither, in which case matched documents are neither prohibited from
-		/// nor required to match the sub-query.</li>
+		/// nor required to match the sub-query. However, a document must match at
+		/// least 1 sub-query to match the boolean query.
 		/// </ul>
 		/// It is an error to specify a clause as both <code>required</code> and
 		/// <code>prohibited</code>.
+		/// 
 		/// </summary>
-		/// <param name="query"></param>
-		/// <param name="required"></param>
-		/// <param name="prohibited"></param>
-		public void Add(Query query, bool required, bool prohibited) 
+		/// <seealso cref="#GetMaxClauseCount()">
+		/// </seealso>
+		public virtual void  Add(Query query, bool required, bool prohibited)
 		{
 			Add(new BooleanClause(query, required, prohibited));
 		}
-
-		/// <summary>
-		/// Adds a clause to a bool query.
-		/// </summary>
-		/// <param name="clause"></param>
-		public void Add(BooleanClause clause) 
+		
+		/// <summary>Adds a clause to a boolean query.</summary>
+		/// <seealso cref="#GetMaxClauseCount()">
+		/// </seealso>
+		public virtual void  Add(BooleanClause clause)
 		{
 			if (clauses.Count >= maxClauseCount)
-				throw new TooManyClausesException();
-
+				throw new TooManyClauses();
+			
 			clauses.Add(clause);
 		}
-
-		/// <summary>
-		/// Returns the set of clauses in this query.
-		/// </summary>
-		/// <returns></returns>
-		public BooleanClause[] GetClauses() 
+		
+		/// <summary>Returns the set of clauses in this query. </summary>
+		public virtual BooleanClause[] GetClauses()
 		{
-			return (BooleanClause[])clauses.ToArray(typeof(BooleanClause));
+            return (BooleanClause[]) clauses.ToArray(typeof(BooleanClause));
 		}
-
+		
 		[Serializable]
-		private class BooleanWeight : Weight 
+		private class BooleanWeight : Weight
 		{
-			internal BooleanQuery booleanQuery;
-			private Searcher searcher;
-			private ArrayList weights = new ArrayList();
-
-			public BooleanWeight(Searcher searcher, BooleanQuery booleanQuery) 
+			private void  InitBlock(BooleanQuery enclosingInstance)
 			{
-				this.booleanQuery = booleanQuery;
-				this.searcher = searcher;
-				for (int i = 0 ; i < booleanQuery.clauses.Count; i++) 
+				this.enclosingInstance = enclosingInstance;
+			}
+			private BooleanQuery enclosingInstance;
+            virtual public Query Query
+            {
+                get
+                {
+                    return Enclosing_Instance;
+                }
+				
+            }
+            virtual public float Value
+            {
+                get
+                {
+                    return Enclosing_Instance.GetBoost();
+                }
+				
+            }
+            public BooleanQuery Enclosing_Instance
+			{
+				get
 				{
-					BooleanClause c = (BooleanClause)booleanQuery.clauses[i];
+					return enclosingInstance;
+				}
+				
+			}
+			private Searcher searcher;
+			private System.Collections.ArrayList weights = System.Collections.ArrayList.Synchronized(new System.Collections.ArrayList(10));
+			
+			public BooleanWeight(BooleanQuery enclosingInstance, Searcher searcher)
+			{
+				InitBlock(enclosingInstance);
+				this.searcher = searcher;
+				for (int i = 0; i < Enclosing_Instance.clauses.Count; i++)
+				{
+					BooleanClause c = (BooleanClause) Enclosing_Instance.clauses[i];
 					weights.Add(c.query.CreateWeight(searcher));
 				}
 			}
-
-			public Query GetQuery() { return booleanQuery; }
-			public float GetValue() { return booleanQuery.GetBoost(); }
-
-			public float SumOfSquaredWeights()  
+			
+			public virtual float SumOfSquaredWeights()
 			{
 				float sum = 0.0f;
-				for (int i = 0 ; i < weights.Count; i++) 
+				for (int i = 0; i < weights.Count; i++)
 				{
-					BooleanClause c = (BooleanClause)booleanQuery.clauses[i];
-					Weight w = (Weight)weights[i];
+					BooleanClause c = (BooleanClause) Enclosing_Instance.clauses[i];
+					Weight w = (Weight) weights[i];
 					if (!c.prohibited)
-						sum += w.SumOfSquaredWeights();         // sum sub weights
+						sum += w.SumOfSquaredWeights(); // sum sub weights
 				}
-      
-				sum *= booleanQuery.GetBoost() * booleanQuery.GetBoost();             // boost each sub-weight
+				
+				sum *= Enclosing_Instance.GetBoost() * Enclosing_Instance.GetBoost(); // boost each sub-weight
+				
 				return sum;
 			}
-
-			public void Normalize(float norm) 
+			
+			
+			public virtual void  Normalize(float norm)
 			{
-				norm *= booleanQuery.GetBoost();                         // incorporate boost
-				for (int i = 0 ; i < weights.Count; i++) 
+				norm *= Enclosing_Instance.GetBoost(); // incorporate boost
+				for (int i = 0; i < weights.Count; i++)
 				{
-					BooleanClause c = (BooleanClause)booleanQuery.clauses[i];
-					Weight w = (Weight)weights[i];
+					BooleanClause c = (BooleanClause) Enclosing_Instance.clauses[i];
+					Weight w = (Weight) weights[i];
 					if (!c.prohibited)
 						w.Normalize(norm);
 				}
 			}
-
-			public Scorer Scorer(IndexReader reader)  
+			
+			public virtual Scorer Scorer(IndexReader reader)
 			{
-				BooleanScorer result = new BooleanScorer(searcher.GetSimilarity());
-
-				for (int i = 0 ; i < weights.Count; i++) 
+				// First see if the (faster) ConjunctionScorer will work.  This can be
+				// used when all clauses are required.  Also, at this point a
+				// BooleanScorer cannot be embedded in a ConjunctionScorer, as the hits
+				// from a BooleanScorer are not always sorted by document number (sigh)
+				// and hence BooleanScorer cannot implement skipTo() correctly, which is
+				// required by ConjunctionScorer.
+				bool allRequired = true;
+				bool noneBoolean = true;
+				for (int i = 0; i < weights.Count; i++)
 				{
-					BooleanClause c = (BooleanClause)booleanQuery.clauses[i];
-					Weight w = (Weight)weights[i];
+					BooleanClause c = (BooleanClause) Enclosing_Instance.clauses[i];
+					if (!c.required)
+						allRequired = false;
+					if (c.query is BooleanQuery)
+						noneBoolean = false;
+				}
+				
+				if (allRequired && noneBoolean)
+				{
+					// ConjunctionScorer is okay
+					ConjunctionScorer result = new ConjunctionScorer(Enclosing_Instance.GetSimilarity(searcher));
+					for (int i = 0; i < weights.Count; i++)
+					{
+						Weight w = (Weight) weights[i];
+						Scorer subScorer = w.Scorer(reader);
+						if (subScorer == null)
+							return null;
+						result.Add(subScorer);
+					}
+					return result;
+				}
+				
+				// Use good-old BooleanScorer instead.
+				BooleanScorer result2 = new BooleanScorer(Enclosing_Instance.GetSimilarity(searcher));
+				
+				for (int i = 0; i < weights.Count; i++)
+				{
+					BooleanClause c = (BooleanClause) Enclosing_Instance.clauses[i];
+					Weight w = (Weight) weights[i];
 					Scorer subScorer = w.Scorer(reader);
 					if (subScorer != null)
-						result.Add(subScorer, c.required, c.prohibited);
+						result2.Add(subScorer, c.required, c.prohibited);
 					else if (c.required)
 						return null;
 				}
-
-				return result;
+				
+				return result2;
 			}
-
-			public Explanation Explain(IndexReader reader, int doc)
+			
+			public virtual Explanation Explain(IndexReader reader, int doc)
 			{
 				Explanation sumExpl = new Explanation();
 				sumExpl.SetDescription("sum of:");
 				int coord = 0;
 				int maxCoord = 0;
 				float sum = 0.0f;
-				for (int i = 0 ; i < weights.Count; i++) 
+				for (int i = 0; i < weights.Count; i++)
 				{
-					BooleanClause c = (BooleanClause)booleanQuery.clauses[i];
-					Weight w = (Weight)weights[i];
+					BooleanClause c = (BooleanClause) Enclosing_Instance.clauses[i];
+					Weight w = (Weight) weights[i];
 					Explanation e = w.Explain(reader, doc);
-					if (!c.prohibited) maxCoord++;
-					if (e.GetValue() > 0) 
+					if (!c.prohibited)
+						maxCoord++;
+					if (e.GetValue() > 0)
 					{
-						if (!c.prohibited) 
+						if (!c.prohibited)
 						{
 							sumExpl.AddDetail(e);
 							sum += e.GetValue();
 							coord++;
-						} 
-						else 
+						}
+						else
 						{
 							return new Explanation(0.0f, "match prohibited");
 						}
-					} 
-					else if (c.required) 
+					}
+					else if (c.required)
 					{
 						return new Explanation(0.0f, "match required");
 					}
 				}
 				sumExpl.SetValue(sum);
-
-				if (coord == 1)                               // only one clause matched
-					sumExpl = sumExpl.GetDetails()[0];          // eliminate wrapper
-
-				float coordFactor = searcher.GetSimilarity().Coord(coord, maxCoord);
-				if (coordFactor == 1.0f)                      // coord is no-op
-					return sumExpl;                             // eliminate wrapper
-				else 
+				
+				if (coord == 1)
+				// only one clause matched
+					sumExpl = sumExpl.GetDetails()[0]; // eliminate wrapper
+				
+				float coordFactor = Enclosing_Instance.GetSimilarity(searcher).Coord(coord, maxCoord);
+				if (coordFactor == 1.0f)
+				// coord is no-op
+					return sumExpl;
+				// eliminate wrapper
+				else
 				{
 					Explanation result = new Explanation();
 					result.SetDescription("product of:");
 					result.AddDetail(sumExpl);
-					result.AddDetail(new Explanation(coordFactor,
-						"coord("+coord+"/"+maxCoord+")"));
-					result.SetValue(sum*coordFactor);
+					result.AddDetail(new Explanation(coordFactor, "coord(" + coord + "/" + maxCoord + ")"));
+					result.SetValue(sum * coordFactor);
 					return result;
 				}
 			}
 		}
-
-		public override Weight CreateWeight(Searcher searcher) 
+		
+		protected internal override Weight CreateWeight(Searcher searcher)
 		{
-			return new BooleanWeight(searcher, this);
+			return new BooleanWeight(this, searcher);
 		}
-
-		public override Query Rewrite(IndexReader reader)  
+		
+		public override Query Rewrite(IndexReader reader)
 		{
-			if (clauses.Count == 1) 
-			{                    // optimize 1-clause queries
-				BooleanClause c = (BooleanClause)clauses[0];
-				if (!c.prohibited) 
-				{			  // just return clause
-					Query query = c.query;
-					if (GetBoost() != 1.0f) 
-					{                 // have to clone to boost
-						query = (Query)query.Clone();
+			if (clauses.Count == 1)
+			{
+				// optimize 1-clause queries
+				BooleanClause c = (BooleanClause) clauses[0];
+				if (!c.prohibited)
+				{
+					// just return clause
+					
+					Query query = c.query.Rewrite(reader); // rewrite first
+					
+					if (GetBoost() != 1.0f)
+					{
+						// incorporate boost
+						if (query == c.query) {
+							// if rewrite was no-op
+							query = (Query) query.Clone(); // then clone before boost
+						}
 						query.SetBoost(GetBoost() * query.GetBoost());
 					}
+					
 					return query;
 				}
 			}
-
-			BooleanQuery clone = null;                    // recursively rewrite
-			for (int i = 0 ; i < clauses.Count; i++) 
+			
+			BooleanQuery clone = null; // recursively rewrite
+			for (int i = 0; i < clauses.Count; i++)
 			{
-				BooleanClause c = (BooleanClause)clauses[i];
+				BooleanClause c = (BooleanClause) clauses[i];
 				Query query = c.query.Rewrite(reader);
-				if (query != c.query) 
-				{                     // clause rewrote: must clone
+				if (query != c.query)
+				{
+					// clause rewrote: must clone
 					if (clone == null)
-						clone = (BooleanQuery)this.Clone();
+						clone = (BooleanQuery) this.Clone();
 					clone.clauses[i] = new BooleanClause(query, c.required, c.prohibited);
 				}
 			}
-			if (clone != null) 
+			if (clone != null)
 			{
-				return clone;                               // some clauses rewrote
-			} 
+				return clone; // some clauses rewrote
+			}
 			else
-				return this;                                // no clauses rewrote
+				return this; // no clauses rewrote
 		}
-
-
-		public override Object Clone()
+		
+		
+		public override System.Object Clone()
 		{
-			BooleanQuery clone = (BooleanQuery)base.Clone();
-			clone.clauses = (ArrayList)this.clauses.Clone();
+			BooleanQuery clone = (BooleanQuery) base.Clone();
+			clone.clauses = (System.Collections.ArrayList) this.clauses.Clone();
 			return clone;
 		}
-
-		/// <summary>
-		/// Prints a user-readable version of this query.
-		/// </summary>
-		/// <param name="field"></param>
-		/// <returns></returns>
-		public override String ToString(String field) 
+		
+		/// <summary>Prints a user-readable version of this query. </summary>
+		public override System.String ToString(System.String field)
 		{
-			StringBuilder buffer = new StringBuilder();
-			if (GetBoost() != 1.0) 
+			System.Text.StringBuilder buffer = new System.Text.StringBuilder();
+			if (GetBoost() != 1.0)
 			{
 				buffer.Append("(");
 			}
-
-			for (int i = 0 ; i < clauses.Count; i++) 
+			
+			for (int i = 0; i < clauses.Count; i++)
 			{
-				BooleanClause c = (BooleanClause)clauses[i];
+				BooleanClause c = (BooleanClause) clauses[i];
 				if (c.prohibited)
 					buffer.Append("-");
 				else if (c.required)
 					buffer.Append("+");
-
+				
 				Query subQuery = c.query;
-				if (subQuery is BooleanQuery) 
-				{	  // wrap sub-bools in parens
+				if (subQuery is BooleanQuery)
+				{
+					// wrap sub-bools in parens
 					buffer.Append("(");
 					buffer.Append(c.query.ToString(field));
 					buffer.Append(")");
-				} 
+				}
 				else
 					buffer.Append(c.query.ToString(field));
-
-				if (i != clauses.Count-1)
+				
+				if (i != clauses.Count - 1)
 					buffer.Append(" ");
 			}
-
-			if (GetBoost() != 1.0) 
+			
+			if (GetBoost() != 1.0)
 			{
-				buffer.Append(")^");
-				buffer.Append(Number.ToString(GetBoost()));
-			}
+                System.Globalization.NumberFormatInfo nfi = new System.Globalization.CultureInfo("en-US", false).NumberFormat;
+                nfi.NumberDecimalDigits = 1;
 
+                buffer.Append(")^");
+                buffer.Append(GetBoost().ToString("N", nfi));
+
+                //buffer.Append(")^");
+				//buffer.Append(GetBoost());
+			}
+			
 			return buffer.ToString();
 		}
-
-		/// <summary>
-		/// Returns true iff <code>o</code> is equal to this.
-		/// </summary>
-		/// <param name="o"></param>
-		/// <returns></returns>
-		public override bool Equals(Object o) 
+		
+		/// <summary>Returns true iff <code>o</code> is equal to this. </summary>
+		public  override bool Equals(System.Object o)
 		{
 			if (!(o is BooleanQuery))
 				return false;
-			BooleanQuery other = (BooleanQuery)o;
-			return (this.GetBoost() == other.GetBoost())
-				&&  this.clauses.Equals(other.clauses);
+			BooleanQuery other = (BooleanQuery) o;
+			return (this.GetBoost() == other.GetBoost()) && this.clauses.Equals(other.clauses);
 		}
-
-		/// <summary>
-		/// Returns a hash code value for this object.
-		/// </summary>
-		/// <returns></returns>
+		
+		/// <summary>Returns a hash code value for this object.</summary>
 		public override int GetHashCode()
 		{
-			int boostInt = BitConverter.ToInt32(BitConverter.GetBytes(GetBoost()), 0);
-			return boostInt ^ clauses.GetHashCode();
+            int boostInt = BitConverter.ToInt32(BitConverter.GetBytes(GetBoost()), 0);
+            return boostInt ^ clauses.GetHashCode();
 		}
 	}
 }

@@ -1,294 +1,237 @@
+/*
+ * Copyright 2004 The Apache Software Foundation
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * 
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 using System;
-using System.IO;
-using System.Text;
-using System.Collections;
-
-namespace Lucene.Net.Analysis.De
+namespace Lucene.Net.Analysis.DE
 {
-	/* ====================================================================
-	 * The Apache Software License, Version 1.1
-	 *
-	 * Copyright (c) 2001 The Apache Software Foundation.  All rights
-	 * reserved.
-	 *
-	 * Redistribution and use in source and binary forms, with or without
-	 * modification, are permitted provided that the following conditions
-	 * are met:
-	 *
-	 * 1. Redistributions of source code must retain the above copyright
-	 *    notice, this list of conditions and the following disclaimer.
-	 *
-	 * 2. Redistributions in binary form must reproduce the above copyright
-	 *    notice, this list of conditions and the following disclaimer in
-	 *    the documentation and/or other materials provided with the
-	 *    distribution.
-	 *
-	 * 3. The end-user documentation included with the redistribution,
-	 *    if any, must include the following acknowledgment:
-	 *       "This product includes software developed by the
-	 *        Apache Software Foundation (http://www.apache.org/)."
-	 *    Alternately, this acknowledgment may appear in the software itself,
-	 *    if and wherever such third-party acknowledgments normally appear.
-	 *
-	 * 4. The names "Apache" and "Apache Software Foundation" and
-	 *    "Apache Lucene" must not be used to endorse or promote products
-	 *    derived from this software without prior written permission. For
-	 *    written permission, please contact apache@apache.org.
-	 *
-	 * 5. Products derived from this software may not be called "Apache",
-	 *    "Apache Lucene", nor may "Apache" appear in their name, without
-	 *    prior written permission of the Apache Software Foundation.
-	 *
-	 * THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESSED OR IMPLIED
-	 * WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
-	 * OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
-	 * DISCLAIMED.  IN NO EVENT SHALL THE APACHE SOFTWARE FOUNDATION OR
-	 * ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
-	 * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
-	 * LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF
-	 * USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
-	 * ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
-	 * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT
-	 * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
-	 * SUCH DAMAGE.
-	 * ====================================================================
-	 *
-	 * This software consists of voluntary contributions made by many
-	 * individuals on behalf of the Apache Software Foundation.  For more
-	 * information on the Apache Software Foundation, please see
-	 * <http://www.apache.org/>.
-	 */
-
-	/// <summary>
-	/// A stemmer for German words. The algorithm is based on the report
-	/// "A Fast and Simple Stemming Algorithm for German Words" by Jörg
+	/// <summary> A stemmer for German words. The algorithm is based on the report
+	/// "A Fast and Simple Stemming Algorithm for German Words" by JÃ¶rg
 	/// Caumanns (joerg.caumanns@isst.fhg.de).
+	/// 
 	/// </summary>
-	/// <author>Gerhard Schwarz</author>
-	/// <version>$Id$</version>
+	/// <author>     Gerhard Schwarz
+	/// </author>
+	/// <version>    $Id$
+	/// </version>
 	public class GermanStemmer
 	{
-		/// <summary>
-		/// Buffer for the terms while stemming them. 
-		/// </summary>
-		private StringBuilder sb = new StringBuilder();
-
-		/// <summary>
-		/// Indicates if a term is handled as a noun.
-		/// </summary>
-		private bool uppercase = false;
-
-		/// <summary>
-		/// Amount of characters that are removed with <tt>Substitute()</tt> while stemming.
-		/// </summary>
+		/// <summary> Buffer for the terms while stemming them.</summary>
+		private System.Text.StringBuilder sb = new System.Text.StringBuilder();
+		
+		/// <summary> Amount of characters that are removed with <tt>substitute()</tt> while stemming.</summary>
 		private int substCount = 0;
-
-		/// <summary>
-		/// Stemms the given term to an unique <tt>discriminator</tt>.
+		
+		/// <summary> Stemms the given term to an unique <tt>discriminator</tt>.
+		/// 
 		/// </summary>
-		/// <param name="term">The term that should be stemmed.</param>
-		/// <returns>Discriminator for <tt>term</tt></returns>
-		internal String Stem( String term )
+		/// <param name="term"> The term that should be stemmed.
+		/// </param>
+		/// <returns>      Discriminator for <tt>term</tt>
+		/// </returns>
+		protected internal virtual System.String Stem(System.String term)
 		{
-			// Mark a possible noun.
-			uppercase = Char.IsUpper( term[0] );
 			// Use lowercase for medium stemming.
 			term = term.ToLower();
-			if ( !IsStemmable( term ) )
+			if (!IsStemmable(term))
 				return term;
-			// Reset the StringBuilder.
-			sb.Remove(0, sb.Length);
+			// Reset the StringBuffer.
+			sb.Remove(0, sb.Length - 0);
 			sb.Insert(0, term);
 			// Stemming starts here...
-			Substitute( sb );
-			Strip( sb );
-			Optimize( sb );
-			Resubstitute( sb );
-			RemoveParticleDenotion( sb );
+			Substitute(sb);
+			Strip(sb);
+			Optimize(sb);
+			Resubstitute(sb);
+			RemoveParticleDenotion(sb);
 			return sb.ToString();
 		}
-
-		/// <summary>
-		/// Checks if a term could be stemmed.
+		
+		/// <summary> Checks if a term could be stemmed.
+		/// 
 		/// </summary>
-		/// <param name="term"></param>
-		/// <returns>true if, and only if, the given term consists in letters.</returns>
-		private bool IsStemmable( String term )
+		/// <returns>  true if, and only if, the given term consists in letters.
+		/// </returns>
+		private bool IsStemmable(System.String term)
 		{
-			for ( int c = 0; c < term.Length; c++ ) 
+			for (int c = 0; c < term.Length; c++)
 			{
-				if ( !Char.IsLetter(term[c])) return false;
+				if (!System.Char.IsLetter(term[c]))
+					return false;
 			}
 			return true;
 		}
-
-		/// <summary>
-		/// Suffix stripping (stemming) on the current term. The stripping is reduced
+		
+		/// <summary> suffix stripping (stemming) on the current term. The stripping is reduced
 		/// to the seven "base" suffixes "e", "s", "n", "t", "em", "er" and * "nd",
 		/// from which all regular suffixes are build of. The simplification causes
 		/// some overstemming, and way more irregular stems, but still provides unique.
 		/// discriminators in the most of those cases.
 		/// The algorithm is context free, except of the length restrictions.
 		/// </summary>
-		/// <param name="buffer"></param>
-		private void Strip( StringBuilder buffer )
+		private void  Strip(System.Text.StringBuilder buffer)
 		{
 			bool doMore = true;
-			while ( doMore && buffer.Length > 3 ) 
+			while (doMore && buffer.Length > 3)
 			{
-				if ( ( buffer.Length + substCount > 5 ) &&
-					buffer.ToString().Substring(buffer.Length - 2, 2).Equals( "nd" ) )
+				if ((buffer.Length + substCount > 5) && buffer.ToString(buffer.Length - 2, buffer.Length).Equals("nd"))
 				{
-					buffer.Remove( buffer.Length - 2, buffer.Length );
+					buffer.Remove(buffer.Length - 2, buffer.Length - (buffer.Length - 2));
 				}
-				else if ( ( buffer.Length + substCount > 4 ) &&
-					buffer.ToString().Substring( buffer.Length - 2, 2).Equals( "em" ) ) 
+				else if ((buffer.Length + substCount > 4) && buffer.ToString(buffer.Length - 2, buffer.Length).Equals("em"))
 				{
-					buffer.Remove( buffer.Length - 2, buffer.Length );
+					buffer.Remove(buffer.Length - 2, buffer.Length - (buffer.Length - 2));
 				}
-				else if ( ( buffer.Length + substCount > 4 ) &&
-					buffer.ToString().Substring( buffer.Length - 2, 2).Equals( "er" ) ) 
+				else if ((buffer.Length + substCount > 4) && buffer.ToString(buffer.Length - 2, buffer.Length).Equals("er"))
 				{
-					buffer.Remove( buffer.Length - 2, buffer.Length );
+					buffer.Remove(buffer.Length - 2, buffer.Length - (buffer.Length - 2));
 				}
-				else if ( buffer[buffer.Length - 1] == 'e' ) 
+				else if (buffer[buffer.Length - 1] == 'e')
 				{
 					buffer.Remove(buffer.Length - 1, 1);
 				}
-				else if ( buffer[buffer.Length - 1] == 's' ) 
+				else if (buffer[buffer.Length - 1] == 's')
 				{
 					buffer.Remove(buffer.Length - 1, 1);
 				}
-				else if ( buffer[buffer.Length - 1] == 'n' ) 
+				else if (buffer[buffer.Length - 1] == 'n')
 				{
 					buffer.Remove(buffer.Length - 1, 1);
 				}
-					// "t" occurs only as suffix of verbs.
-				else if ( buffer[buffer.Length - 1] == 't' && !uppercase ) 
+				// "t" occurs only as suffix of verbs.
+				else if (buffer[buffer.Length - 1] == 't')
 				{
 					buffer.Remove(buffer.Length - 1, 1);
 				}
-				else 
+				else
 				{
 					doMore = false;
 				}
 			}
 		}
-
-		/// <summary>
-		/// Does some optimizations on the term. This optimisations are contextual.
+		
+		/// <summary> Does some optimizations on the term. This optimisations are
+		/// contextual.
 		/// </summary>
-		/// <param name="buffer"></param>
-		private void Optimize( StringBuilder buffer )
+		private void  Optimize(System.Text.StringBuilder buffer)
 		{
 			// Additional step for female plurals of professions and inhabitants.
-			if ( buffer.Length > 5 && buffer.ToString().Substring(buffer.Length - 5, 5).Equals( "erin*" )) 
+			if (buffer.Length > 5 && buffer.ToString(buffer.Length - 5, buffer.Length).Equals("erin*"))
 			{
 				buffer.Remove(buffer.Length - 1, 1);
 				Strip(buffer);
 			}
 			// Additional step for irregular plural nouns like "Matrizen -> Matrix".
-			if ( buffer[buffer.Length - 1] == ('z') ) 
+			if (buffer[buffer.Length - 1] == ('z'))
 			{
 				buffer[buffer.Length - 1] = 'x';
 			}
 		}
-
-		/// <summary>
-		/// Removes a particle denotion ("ge") from a term.
-		/// </summary>
-		/// <param name="buffer"></param>
-		private void RemoveParticleDenotion( StringBuilder buffer )
+		
+		/// <summary> Removes a particle denotion ("ge") from a term.</summary>
+		private void  RemoveParticleDenotion(System.Text.StringBuilder buffer)
 		{
-			if ( buffer.Length > 4 ) 
+			if (buffer.Length > 4)
 			{
-				for ( int c = 0; c < buffer.Length - 3; c++ ) 
+				for (int c = 0; c < buffer.Length - 3; c++)
 				{
-					if ( buffer.ToString().Substring( c, 4 ).Equals( "gege" ) ) 
+					if (buffer.ToString(c, c + 4).Equals("gege"))
 					{
-						buffer.Remove(c, 2);
-						return;
+						buffer.Remove(c, c + 2 - c);
+						return ;
 					}
 				}
 			}
 		}
-
-		/// <summary>
-		/// Do some substitutions for the term to reduce overstemming:
-		///
-		/// - Substitute Umlauts with their corresponding vowel: äöü -> aou,
-		///   "ß" is substituted by "ss"
+		
+		/// <summary> Do some substitutions for the term to reduce overstemming:
+		/// 
+		/// - Substitute Umlauts with their corresponding vowel: Ã¤Ã¶Ã¼ -> aou,
+		/// "ÃŸ" is substituted by "ss"
 		/// - Substitute a second char of a pair of equal characters with
 		/// an asterisk: ?? -> ?*
 		/// - Substitute some common character combinations with a token:
-		///   sch/ch/ei/ie/ig/st -> $/§/%/&amp;/#/!
+		/// sch/ch/ei/ie/ig/st -> $/Â§/%/&/#/!
 		/// </summary>
-		/// <param name="buffer"></param>
-		private void Substitute( StringBuilder buffer )
+		private void  Substitute(System.Text.StringBuilder buffer)
 		{
 			substCount = 0;
-			for ( int c = 0; c < buffer.Length; c++ ) 
+			for (int c = 0; c < buffer.Length; c++)
 			{
 				// Replace the second char of a pair of the equal characters with an asterisk
-				if ( c > 0 && buffer[c] == buffer[c - 1]) 
+				if (c > 0 && buffer[c] == buffer[c - 1])
 				{
 					buffer[c] = '*';
 				}
-					// Substitute Umlauts.
-				else if ( buffer[c] == 'ä' ) 
+				// Substitute Umlauts.
+				else if (buffer[c] == 'A') //// 'ÃƒÂ¤')
 				{
+					//'Ã¤' ) {
 					buffer[c] = 'a';
 				}
-				else if ( buffer[c] == 'ö' ) 
+				else if (buffer[c] == 'A') //// 'ÃƒÂ¶')
 				{
+					//'Ã¶' ) {
 					buffer[c] = 'o';
 				}
-				else if ( buffer[c] == 'ü' ) 
+				else if (buffer[c] == 'A') //// 'ÃƒÂ¼')
 				{
+					// 'Ã¼' ) {
 					buffer[c] = 'u';
 				}
 				// Take care that at least one character is left left side from the current one
-				if ( c < buffer.Length - 1 ) 
+				if (c < buffer.Length - 1)
 				{
-					if ( buffer[c] == 'ß' ) 
+					if (buffer[c] == 'A') //// 'ÃƒÅ¸')
 					{
+						//'ÃŸ' ) {
 						buffer[c] = 's';
 						buffer.Insert(c + 1, 's');
 						substCount++;
 					}
-						// Masking several common character combinations with an token
-					else if ( ( c < buffer.Length - 2 ) && buffer[c] == 's' &&
-						buffer[c + 1] == 'c' && buffer[c + 2] == 'h' )
+					// Masking several common character combinations with an token
+					else if ((c < buffer.Length - 2) && buffer[c] == 's' && buffer[c + 1] == 'c' && buffer[c + 2] == 'h')
 					{
 						buffer[c] = '$';
-						buffer.Remove(c + 1, 2);
-						substCount =+ 2;
+						buffer.Remove(c + 1, c + 3 - (c + 1));
+						substCount = + 2;
 					}
-					else if ( buffer[c] == 'c' && buffer[c + 1] == 'h' ) 
+					else if (buffer[c] == 'c' && buffer[c + 1] == 'h')
 					{
-						buffer[c] = '§';
+						buffer[c] = 'A'; //// 'Ã‚Â§';
 						buffer.Remove(c + 1, 1);
 						substCount++;
 					}
-					else if ( buffer[c] == 'e' && buffer[c + 1] == 'i' ) 
+					else if (buffer[c] == 'e' && buffer[c + 1] == 'i')
 					{
 						buffer[c] = '%';
 						buffer.Remove(c + 1, 1);
 						substCount++;
 					}
-					else if ( buffer[c] == 'i' && buffer[c + 1] == 'e' ) 
+					else if (buffer[c] == 'i' && buffer[c + 1] == 'e')
 					{
 						buffer[c] = '&';
 						buffer.Remove(c + 1, 1);
 						substCount++;
 					}
-					else if ( buffer[c] == 'i' && buffer[c + 1] == 'g' ) 
+					else if (buffer[c] == 'i' && buffer[c + 1] == 'g')
 					{
 						buffer[c] = '#';
 						buffer.Remove(c + 1, 1);
 						substCount++;
 					}
-					else if ( buffer[c] == 's' && buffer[c + 1] == 't' ) 
+					else if (buffer[c] == 's' && buffer[c + 1] == 't')
 					{
 						buffer[c] = '!';
 						buffer.Remove(c + 1, 1);
@@ -297,51 +240,50 @@ namespace Lucene.Net.Analysis.De
 				}
 			}
 		}
-
-		/// <summary>
-		/// Undoes the changes made by Substitute(). That are character pairs and
+		
+		/// <summary> Undoes the changes made by substitute(). That are character pairs and
 		/// character combinations. Umlauts will remain as their corresponding vowel,
-		/// as "ß" remains as "ss".
+		/// as "ÃŸ" remains as "ss".
 		/// </summary>
-		/// <param name="buffer"></param>
-		private void Resubstitute( StringBuilder buffer )
+		private void  Resubstitute(System.Text.StringBuilder buffer)
 		{
-			for ( int c = 0; c < buffer.Length; c++ ) 
+			for (int c = 0; c < buffer.Length; c++)
 			{
-				if ( buffer[c] == '*' ) 
+				if (buffer[c] == '*')
 				{
 					char x = buffer[c - 1];
 					buffer[c] = x;
 				}
-				else if ( buffer[c] == '$' ) 
+				else if (buffer[c] == '$')
 				{
 					buffer[c] = 's';
-					buffer.Insert( c + 1, new char[]{'c', 'h'}, 0, 2);
+					buffer.Insert(c + 1, new char[]{'c', 'h'}, 0, 2);
 				}
-				else if ( buffer[c] == '§' ) 
+				else if (buffer[c] == 'A') //// 'Ã‚Â§')
 				{
+					// 'Â§' ) {
 					buffer[c] = 'c';
-					buffer.Insert( c + 1, 'h' );
+					buffer.Insert(c + 1, 'h');
 				}
-				else if ( buffer[c] == '%' ) 
+				else if (buffer[c] == '%')
 				{
 					buffer[c] = 'e';
-					buffer.Insert( c + 1, 'i' );
+					buffer.Insert(c + 1, 'i');
 				}
-				else if ( buffer[c] == '&' ) 
+				else if (buffer[c] == '&')
 				{
 					buffer[c] = 'i';
-					buffer.Insert( c + 1, 'e' );
+					buffer.Insert(c + 1, 'e');
 				}
-				else if ( buffer[c] == '#' ) 
+				else if (buffer[c] == '#')
 				{
 					buffer[c] = 'i';
-					buffer.Insert( c + 1, 'g' );
+					buffer.Insert(c + 1, 'g');
 				}
-				else if ( buffer[c] == '!' ) 
+				else if (buffer[c] == '!')
 				{
 					buffer[c] = 's';
-					buffer.Insert( c + 1, 't' );
+					buffer.Insert(c + 1, 't');
 				}
 			}
 		}

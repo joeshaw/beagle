@@ -173,6 +173,55 @@ LUCENE_1_3_CSFILES =							\
 LUCENE_1_4_CSFILES =							\
 	$(lucenedir)/AssemblyInfo.cs					\
 	$(lucenedir)/SupportClass.cs					\
+	$(lucenedir)/Store/Directory.cs					\
+	$(lucenedir)/Store/FSDirectory.cs				\
+	$(lucenedir)/Store/InputStream.cs				\
+	$(lucenedir)/Store/Lock.cs					\
+	$(lucenedir)/Store/OutputStream.cs				\
+	$(lucenedir)/Store/RAMDirectory.cs				\
+	$(lucenedir)/Store/RAMFile.cs					\
+	$(lucenedir)/Store/RAMInputStream.cs				\
+	$(lucenedir)/Store/RAMOutputStream.cs				\
+	$(lucenedir)/Util/BitVector.cs					\
+	$(lucenedir)/Util/Constants.cs					\
+	$(lucenedir)/Util/PriorityQueue.cs				\
+	$(lucenedir)/Util/StringHelper.cs				\
+	$(lucenedir)/Index/CompoundFileReader.cs			\
+	$(lucenedir)/Index/CompoundFileWriter.cs			\
+	$(lucenedir)/Index/DocumentWriter.cs				\
+	$(lucenedir)/Index/FieldInfo.cs					\
+	$(lucenedir)/Index/FieldInfos.cs				\
+	$(lucenedir)/Index/FieldsReader.cs				\
+	$(lucenedir)/Index/FieldsWriter.cs				\
+	$(lucenedir)/Index/FilterIndexReader.cs				\
+	$(lucenedir)/Index/IndexReader.cs				\
+	$(lucenedir)/Index/IndexWriter.cs				\
+	$(lucenedir)/Index/MultipleTermPositions.cs			\
+	$(lucenedir)/Index/MultiReader.cs				\
+	$(lucenedir)/Index/SegmentInfo.cs				\
+	$(lucenedir)/Index/SegmentInfos.cs				\
+	$(lucenedir)/Index/SegmentMergeInfo.cs				\
+	$(lucenedir)/Index/SegmentMergeQueue.cs				\
+	$(lucenedir)/Index/SegmentMerger.cs				\
+	$(lucenedir)/Index/SegmentReader.cs				\
+	$(lucenedir)/Index/SegmentTermDocs.cs				\
+	$(lucenedir)/Index/SegmentTermEnum.cs				\
+	$(lucenedir)/Index/SegmentTermPositions.cs			\
+	$(lucenedir)/Index/SegmentTermVector.cs				\
+	$(lucenedir)/Index/Term.cs					\
+	$(lucenedir)/Index/TermDocs.cs					\
+	$(lucenedir)/Index/TermEnum.cs					\
+	$(lucenedir)/Index/TermFreqVector.cs				\
+	$(lucenedir)/Index/TermInfo.cs					\
+	$(lucenedir)/Index/TermInfosReader.cs				\
+	$(lucenedir)/Index/TermInfosWriter.cs				\
+	$(lucenedir)/Index/TermPositions.cs				\
+	$(lucenedir)/Index/TermPositionVector.cs			\
+	$(lucenedir)/Index/TermVectorsReader.cs				\
+	$(lucenedir)/Index/TermVectorsWriter.cs				\
+	$(lucenedir)/Document/DateField.cs				\
+	$(lucenedir)/Document/Document.cs				\
+	$(lucenedir)/Document/Field.cs					\
 	$(lucenedir)/Analysis/DE/GermanAnalyzer.cs			\
 	$(lucenedir)/Analysis/DE/GermanStemFilter.cs			\
 	$(lucenedir)/Analysis/DE/GermanStemmer.cs			\
@@ -210,51 +259,6 @@ LUCENE_1_4_CSFILES =							\
 	$(lucenedir)/Analysis/TokenStream.cs				\
 	$(lucenedir)/Analysis/WhitespaceAnalyzer.cs			\
 	$(lucenedir)/Analysis/WhitespaceTokenizer.cs			\
-	$(lucenedir)/Document/DateField.cs				\
-	$(lucenedir)/Document/Document.cs				\
-	$(lucenedir)/Document/Field.cs					\
-	$(lucenedir)/Index/CompoundFileReader.cs			\
-	$(lucenedir)/Index/CompoundFileWriter.cs			\
-	$(lucenedir)/Index/DocumentWriter.cs				\
-	$(lucenedir)/Index/FieldInfo.cs					\
-	$(lucenedir)/Index/FieldInfos.cs				\
-	$(lucenedir)/Index/FieldsReader.cs				\
-	$(lucenedir)/Index/FieldsWriter.cs				\
-	$(lucenedir)/Index/FilterIndexReader.cs				\
-	$(lucenedir)/Index/IndexReader.cs				\
-	$(lucenedir)/Index/IndexWriter.cs				\
-	$(lucenedir)/Index/MultipleTermPositions.cs			\
-	$(lucenedir)/Index/MultiReader.cs				\
-	$(lucenedir)/Index/SegmentInfo.cs				\
-	$(lucenedir)/Index/SegmentInfos.cs				\
-	$(lucenedir)/Index/SegmentMergeInfo.cs				\
-	$(lucenedir)/Index/SegmentMergeQueue.cs				\
-	$(lucenedir)/Index/SegmentMerger.cs				\
-	$(lucenedir)/Index/SegmentReader.cs				\
-	$(lucenedir)/Index/SegmentTermDocs.cs				\
-	$(lucenedir)/Index/SegmentTermEnum.cs				\
-	$(lucenedir)/Index/SegmentTermPositions.cs			\
-	$(lucenedir)/Index/SegmentTermVector.cs				\
-	$(lucenedir)/Index/Term.cs					\
-	$(lucenedir)/Index/TermDocs.cs					\
-	$(lucenedir)/Index/TermEnum.cs					\
-	$(lucenedir)/Index/TermFreqVector.cs				\
-	$(lucenedir)/Index/TermInfo.cs					\
-	$(lucenedir)/Index/TermInfosReader.cs				\
-	$(lucenedir)/Index/TermInfosWriter.cs				\
-	$(lucenedir)/Index/TermPositions.cs				\
-	$(lucenedir)/Index/TermPositionVector.cs			\
-	$(lucenedir)/Index/TermVectorsReader.cs				\
-	$(lucenedir)/Index/TermVectorsWriter.cs				\
-	$(lucenedir)/QueryParser/CharStream.cs				\
-	$(lucenedir)/QueryParser/FastCharStream.cs			\
-	$(lucenedir)/QueryParser/MultiFieldQueryParser.cs		\
-	$(lucenedir)/QueryParser/ParseException.cs			\
-	$(lucenedir)/QueryParser/QueryParser.cs				\
-	$(lucenedir)/QueryParser/QueryParserConstants.cs		\
-	$(lucenedir)/QueryParser/QueryParserTokenManager.cs		\
-	$(lucenedir)/QueryParser/Token.cs				\
-	$(lucenedir)/QueryParser/TokenMgrError.cs			\
 	$(lucenedir)/Search/Spans/NearSpans.cs				\
 	$(lucenedir)/Search/Spans/SpanFirstQuery.cs			\
 	$(lucenedir)/Search/Spans/SpanNearQuery.cs			\
@@ -320,21 +324,17 @@ LUCENE_1_4_CSFILES =							\
 	$(lucenedir)/Search/Weight.cs					\
 	$(lucenedir)/Search/WildcardQuery.cs				\
 	$(lucenedir)/Search/WildcardTermEnum.cs				\
-	$(lucenedir)/Store/Directory.cs					\
-	$(lucenedir)/Store/FSDirectory.cs				\
-	$(lucenedir)/Store/InputStream.cs				\
-	$(lucenedir)/Store/Lock.cs					\
-	$(lucenedir)/Store/OutputStream.cs				\
-	$(lucenedir)/Store/RAMDirectory.cs				\
-	$(lucenedir)/Store/RAMFile.cs					\
-	$(lucenedir)/Store/RAMInputStream.cs				\
-	$(lucenedir)/Store/RAMOutputStream.cs				\
-	$(lucenedir)/Util/BitVector.cs					\
-	$(lucenedir)/Util/Constants.cs					\
-	$(lucenedir)/Util/PriorityQueue.cs				\
-	$(lucenedir)/Util/StringHelper.cs
+	$(lucenedir)/QueryParser/CharStream.cs				\
+	$(lucenedir)/QueryParser/FastCharStream.cs			\
+	$(lucenedir)/QueryParser/MultiFieldQueryParser.cs		\
+	$(lucenedir)/QueryParser/ParseException.cs			\
+	$(lucenedir)/QueryParser/QueryParser.cs				\
+	$(lucenedir)/QueryParser/QueryParserConstants.cs		\
+	$(lucenedir)/QueryParser/QueryParserTokenManager.cs		\
+	$(lucenedir)/QueryParser/Token.cs				\
+	$(lucenedir)/QueryParser/TokenMgrError.cs
 
-LUCENE_CSFILES = $(LUCENE_1_3_CSFILES)
+LUCENE_CSFILES = $(LUCENE_1_4_CSFILES)
 
 ############################################################
 

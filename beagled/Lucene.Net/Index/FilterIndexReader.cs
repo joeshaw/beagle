@@ -1,65 +1,24 @@
+/*
+ * Copyright 2004 The Apache Software Foundation
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * 
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 using System;
-using System.Collections;
-
-using Lucene.Net.Documents;
-
+using Document = Lucene.Net.Documents.Document;
 namespace Lucene.Net.Index
 {
-	/* ====================================================================
-	 * The Apache Software License, Version 1.1
-	 *
-	 * Copyright (c) 2003 The Apache Software Foundation. All rights reserved.
-	 *
-	 * Redistribution and use in source and binary forms, with or without
-	 * modification, are permitted provided that the following conditions
-	 * are met:
-	 *
-	 * 1. Redistributions of source code must retain the above copyright
-	 *    notice, this list of conditions and the following disclaimer.
-	 *
-	 * 2. Redistributions in binary form must reproduce the above copyright
-	 *    notice, this list of conditions and the following disclaimer in
-	 *    the documentation and/or other materials provided with the
-	 *    distribution.
-	 *
-	 * 3. The end-user documentation included with the redistribution,
-	 *    if any, must include the following acknowledgment:
-	 *       "This product includes software developed by the
-	 *        Apache Software Foundation (http://www.apache.org/)."
-	 *    Alternately, this acknowledgment may appear in the software itself,
-	 *    if and wherever such third-party acknowledgments normally appear.
-	 *
-	 * 4. The names "Apache" and "Apache Software Foundation" and
-	 *    "Apache Lucene" must not be used to endorse or promote products
-	 *    derived from this software without prior written permission. For
-	 *    written permission, please contact apache@apache.org.
-	 *
-	 * 5. Products derived from this software may not be called "Apache",
-	 *    "Apache Lucene", nor may "Apache" appear in their name, without
-	 *    prior written permission of the Apache Software Foundation.
-	 *
-	 * THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESSED OR IMPLIED
-	 * WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
-	 * OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
-	 * DISCLAIMED.  IN NO EVENT SHALL THE APACHE SOFTWARE FOUNDATION OR
-	 * ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
-	 * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
-	 * LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF
-	 * USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
-	 * ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
-	 * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT
-	 * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
-	 * SUCH DAMAGE.
-	 * ====================================================================
-	 *
-	 * This software consists of voluntary contributions made by many
-	 * individuals on behalf of the Apache Software Foundation.  For more
-	 * information on the Apache Software Foundation, please see
-	 * <http://www.apache.org/>.
-	 */
-
-	/// <summary>
-	/// A <code>FilterIndexReader</code> contains another IndexReader, which it
+	
+	/// <summary>A <code>FilterIndexReader</code> contains another IndexReader, which it
 	/// uses as its basic source of data, possibly transforming the data along the
 	/// way or providing additional functionality. The class
 	/// <code>FilterIndexReader</code> itself simply implements all abstract methods
@@ -68,98 +27,215 @@ namespace Lucene.Net.Index
 	/// further override some of these methods and may also provide additional
 	/// methods and fields.
 	/// </summary>
-	public class FilterIndexReader : IndexReader 
+	public class FilterIndexReader : IndexReader
 	{
-		/// <summary>
-		/// Base class for filtering {@link TermDocs} implementations.
-		/// </summary>
-		public class FilterTermDocs : TermDocs 
+		
+		/// <summary>Base class for filtering {@link TermDocs} implementations. </summary>
+		public class FilterTermDocs : TermDocs
 		{
-			protected TermDocs _in;
-
-			public FilterTermDocs(TermDocs _in) { this._in = _in; }
-
-			public virtual void Seek(Term term){ _in.Seek(term); }
-			public virtual void Seek(TermEnum _enum){ _in.Seek(_enum); }
-			public virtual int Doc() { return _in.Doc(); }
-			public virtual int Freq() { return _in.Freq(); }
-			public virtual bool Next(){ return _in.Next(); }
+			protected internal TermDocs in_Renamed;
+			
+			public FilterTermDocs(TermDocs in_Renamed)
+			{
+				this.in_Renamed = in_Renamed;
+			}
+			
+			public virtual void  Seek(Term term)
+			{
+				in_Renamed.Seek(term);
+			}
+			public virtual void  Seek(TermEnum termEnum)
+			{
+				in_Renamed.Seek(termEnum);
+			}
+			public virtual int Doc()
+			{
+				return in_Renamed.Doc();
+			}
+			public virtual int Freq()
+			{
+				return in_Renamed.Freq();
+			}
+			public virtual bool Next()
+			{
+				return in_Renamed.Next();
+			}
 			public virtual int Read(int[] docs, int[] freqs)
 			{
-				return _in.Read(docs, freqs);
+				return in_Renamed.Read(docs, freqs);
 			}
-			public virtual bool SkipTo(int i){ return _in.SkipTo(i); }
-			public virtual void Close(){ _in.Close(); } 
+			public virtual bool SkipTo(int i)
+			{
+				return in_Renamed.SkipTo(i);
+			}
+			public virtual void  Close()
+			{
+				in_Renamed.Close();
+			}
 		}
-
-		/// <summary>
-		/// Base class for filtering {@link TermPositions} implementations.
-		/// </summary>
-		public class FilterTermPositions : FilterTermDocs, TermPositions
+		
+		/// <summary>Base class for filtering {@link TermPositions} implementations. </summary>
+		public class FilterTermPositions:FilterTermDocs, TermPositions
 		{
-
-			public FilterTermPositions(TermPositions _in) : base(_in) {}
-
+			
+			public FilterTermPositions(TermPositions in_Renamed):base(in_Renamed)
+			{
+			}
+			
 			public virtual int NextPosition()
 			{
-				return ((TermPositions)_in).NextPosition();
+				return ((TermPositions) this.in_Renamed).NextPosition();
 			}
 		}
-
-		/// <summary>
-		/// Base class for filtering {@link TermEnum} implementations.
+		
+		/// <summary>Base class for filtering {@link TermEnum} implementations. </summary>
+		public class FilterTermEnum:TermEnum
+		{
+			protected internal TermEnum in_Renamed;
+			
+			public FilterTermEnum(TermEnum in_Renamed)
+			{
+				this.in_Renamed = in_Renamed;
+			}
+			
+			public override bool Next()
+			{
+				return in_Renamed.Next();
+			}
+			public override Term Term()
+			{
+				return in_Renamed.Term();
+			}
+			public override int DocFreq()
+			{
+				return in_Renamed.DocFreq();
+			}
+			public override void  Close()
+			{
+				in_Renamed.Close();
+			}
+		}
+		
+		protected internal IndexReader in_Renamed;
+		
+		/// <summary> <p>Construct a FilterIndexReader based on the specified base reader.
+		/// Directory locking for delete, undeleteAll, and setNorm operations is
+		/// left to the base reader.</p>
+		/// <p>Note that base reader is closed if this FilterIndexReader is closed.</p>
 		/// </summary>
-		public class FilterTermEnum : TermEnum 
+		/// <param name="in">specified base reader.
+		/// </param>
+		public FilterIndexReader(IndexReader in_Renamed):base(in_Renamed.Directory())
 		{
-			protected TermEnum _in;
-
-			public FilterTermEnum(TermEnum _in) { this._in = _in; }
-
-			public override bool Next(){ return _in.Next(); }
-			public override Term Term() { return _in.Term(); }
-			public override int DocFreq() { return _in.DocFreq(); }
-			public override void Close(){ _in.Close(); }
+			this.in_Renamed = in_Renamed;
 		}
-
-		protected IndexReader _in;
-
-		public FilterIndexReader(IndexReader _in) : base(_in.Directory())
+		
+		public override TermFreqVector[] GetTermFreqVectors(int docNumber)
 		{
-			this._in = _in;
+			return in_Renamed.GetTermFreqVectors(docNumber);
 		}
-
-		public override int NumDocs() { return _in.NumDocs(); }
-		public override int MaxDoc() { return _in.MaxDoc(); }
-
-		public override Document Document(int n){return _in.Document(n);}
-
-		public override bool IsDeleted(int n) { return _in.IsDeleted(n); }
-		public override bool HasDeletions() { return _in.HasDeletions(); }
-		public override void UndeleteAll(){ _in.UndeleteAll(); }
-
-		public override byte[] Norms(String f){ return _in.Norms(f); }
-
-		public override TermEnum Terms(){ return _in.Terms(); }
-		public override TermEnum Terms(Term t){ return _in.Terms(t); }
-
-		public override int DocFreq(Term t){ return _in.DocFreq(t); }
-
-		public override TermDocs TermDocs(){ return _in.TermDocs(); }
+		
+		public override TermFreqVector GetTermFreqVector(int docNumber, System.String field)
+		{
+			return in_Renamed.GetTermFreqVector(docNumber, field);
+		}
+		
+		public override int NumDocs()
+		{
+			return in_Renamed.NumDocs();
+		}
+		public override int MaxDoc()
+		{
+			return in_Renamed.MaxDoc();
+		}
+		
+		public override Document Document(int n)
+		{
+			return in_Renamed.Document(n);
+		}
+		
+		public override bool IsDeleted(int n)
+		{
+			return in_Renamed.IsDeleted(n);
+		}
+		public override bool HasDeletions()
+		{
+			return in_Renamed.HasDeletions();
+		}
+		protected internal override void  DoUndeleteAll()
+		{
+			in_Renamed.UndeleteAll();
+		}
+		
+		public override byte[] Norms(System.String f)
+		{
+			return in_Renamed.Norms(f);
+		}
+		public override void  Norms(System.String f, byte[] bytes, int offset)
+		{
+			in_Renamed.Norms(f, bytes, offset);
+		}
+		protected internal override void  DoSetNorm(int d, System.String f, byte b)
+		{
+			in_Renamed.SetNorm(d, f, b);
+		}
+		
+		public override TermEnum Terms()
+		{
+			return in_Renamed.Terms();
+		}
+		public override TermEnum Terms(Term t)
+		{
+			return in_Renamed.Terms(t);
+		}
+		
+		public override int DocFreq(Term t)
+		{
+			return in_Renamed.DocFreq(t);
+		}
+		
+		public override TermDocs TermDocs()
+		{
+			return in_Renamed.TermDocs();
+		}
+		
 		public override TermPositions TermPositions()
 		{
-			return _in.TermPositions();
+			return in_Renamed.TermPositions();
 		}
-
-		protected internal override void DoDelete(int n){ _in.DoDelete(n); }
-		protected internal override void DoClose(){ _in.DoClose(); }
-
-		public override ICollection GetFieldNames()
+		
+		protected internal override void  DoDelete(int n)
 		{
-			return _in.GetFieldNames();
+			in_Renamed.Delete(n);
 		}
-		public override ICollection GetFieldNames(bool indexed)
+		protected internal override void  DoCommit()
 		{
-			return _in.GetFieldNames(indexed);
+			in_Renamed.Commit();
+		}
+		protected internal override void  DoClose()
+		{
+			in_Renamed.Close();
+		}
+		
+		public override System.Collections.ICollection GetFieldNames()
+		{
+			return in_Renamed.GetFieldNames();
+		}
+		
+		public override System.Collections.ICollection GetFieldNames(bool indexed)
+		{
+			return in_Renamed.GetFieldNames(indexed);
+		}
+		
+		/// <summary> </summary>
+		/// <param name="storedTermVector">if true, returns only Indexed fields that have term vector info, 
+		/// else only indexed fields without term vector info 
+		/// </param>
+		/// <returns> Collection of Strings indicating the names of the fields
+		/// </returns>
+		public override System.Collections.ICollection GetIndexedFieldNames(bool storedTermVector)
+		{
+			return in_Renamed.GetIndexedFieldNames(storedTermVector);
 		}
 	}
 }

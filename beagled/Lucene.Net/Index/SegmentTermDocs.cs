@@ -1,170 +1,160 @@
+/*
+ * Copyright 2004 The Apache Software Foundation
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * 
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 using System;
-
-using Lucene.Net.Util; 
-using Lucene.Net.Store; 
-
+using InputStream = Lucene.Net.Store.InputStream;
+using BitVector = Lucene.Net.Util.BitVector;
 namespace Lucene.Net.Index
 {
-	/* ====================================================================
-	 * The Apache Software License, Version 1.1
-	 *
-	 * Copyright (c) 2001 The Apache Software Foundation.  All rights
-	 * reserved.
-	 *
-	 * Redistribution and use in source and binary forms, with or without
-	 * modification, are permitted provided that the following conditions
-	 * are met:
-	 *
-	 * 1. Redistributions of source code must retain the above copyright
-	 *    notice, this list of conditions and the following disclaimer.
-	 *
-	 * 2. Redistributions in binary form must reproduce the above copyright
-	 *    notice, this list of conditions and the following disclaimer in
-	 *    the documentation and/or other materials provided with the
-	 *    distribution.
-	 *
-	 * 3. The end-user documentation included with the redistribution,
-	 *    if any, must include the following acknowledgment:
-	 *       "This product includes software developed by the
-	 *        Apache Software Foundation (http://www.apache.org/)."
-	 *    Alternately, this acknowledgment may appear in the software itself,
-	 *    if and wherever such third-party acknowledgments normally appear.
-	 *
-	 * 4. The names "Apache" and "Apache Software Foundation" and
-	 *    "Apache Lucene" must not be used to endorse or promote products
-	 *    derived from this software without prior written permission. For
-	 *    written permission, please contact apache@apache.org.
-	 *
-	 * 5. Products derived from this software may not be called "Apache",
-	 *    "Apache Lucene", nor may "Apache" appear in their name, without
-	 *    prior written permission of the Apache Software Foundation.
-	 *
-	 * THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESSED OR IMPLIED
-	 * WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
-	 * OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
-	 * DISCLAIMED.  IN NO EVENT SHALL THE APACHE SOFTWARE FOUNDATION OR
-	 * ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
-	 * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
-	 * LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF
-	 * USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
-	 * ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
-	 * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT
-	 * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
-	 * SUCH DAMAGE.
-	 * ====================================================================
-	 *
-	 * This software consists of voluntary contributions made by many
-	 * individuals on behalf of the Apache Software Foundation.  For more
-	 * information on the Apache Software Foundation, please see
-	 * <http://www.apache.org/>.
-	 */
-
-	class SegmentTermDocs : TermDocs 
+	
+	public class SegmentTermDocs : TermDocs
 	{
-		protected SegmentReader parent;
+		protected internal SegmentReader parent;
 		private InputStream freqStream;
-		private int freqCount;
+		private int count;
+		private int df;
 		private BitVector deletedDocs;
 		internal int doc = 0;
 		internal int freq;
-
-		internal SegmentTermDocs(SegmentReader parent)
+		
+		private int skipInterval;
+		private int numSkips;
+		private int skipCount;
+		private InputStream skipStream;
+		private int skipDoc;
+		private long freqPointer;
+		private long proxPointer;
+		private long skipPointer;
+		private bool haveSkipped;
+		
+		public /*internal*/ SegmentTermDocs(SegmentReader parent)
 		{
 			this.parent = parent;
-			this.freqStream = (InputStream)parent.freqStream.Clone();
+			this.freqStream = (InputStream) parent.freqStream.Clone();
 			this.deletedDocs = parent.deletedDocs;
+			this.skipInterval = parent.tis.GetSkipInterval();
 		}
-  
-		virtual public void Seek(Term term)  
+		
+		public virtual void  Seek(Term term)
 		{
 			TermInfo ti = parent.tis.Get(term);
 			Seek(ti);
 		}
-  
-		virtual public void Seek(TermEnum _enum)
+		
+		public virtual void  Seek(TermEnum termEnum)
 		{
 			TermInfo ti;
 			
-			if (typeof(SegmentTermEnum).IsInstanceOfType(_enum))          // optimized case
-				ti = ((SegmentTermEnum)_enum).TermInfo();
-			else                                          // punt case
-				ti = parent.tis.Get(_enum.Term());
+			// use comparison of fieldinfos to verify that termEnum belongs to the same segment as this SegmentTermDocs
+			if (termEnum is SegmentTermEnum && ((SegmentTermEnum) termEnum).fieldInfos == parent.fieldInfos)
+			// optimized case
+				ti = ((SegmentTermEnum) termEnum).TermInfo();
+			// punt case
+			else
+				ti = parent.tis.Get(termEnum.Term());
 			
 			Seek(ti);
 		}
 		
-		virtual internal void Seek(TermInfo ti)  
+		internal virtual void  Seek(TermInfo ti)
 		{
-			if (ti == null) 
+			count = 0;
+			if (ti == null)
 			{
-				freqCount = 0;
-			} 
-			else 
+				df = 0;
+			}
+			else
 			{
-				freqCount = ti.docFreq;
+				df = ti.docFreq;
 				doc = 0;
-				freqStream.Seek(ti.freqPointer);
+				skipDoc = 0;
+				skipCount = 0;
+				numSkips = df / skipInterval;
+				freqPointer = ti.freqPointer;
+				proxPointer = ti.proxPointer;
+				skipPointer = freqPointer + ti.skipOffset;
+				freqStream.Seek(freqPointer);
+				haveSkipped = false;
 			}
 		}
-  
-		virtual public void Close()  
+		
+		public virtual void  Close()
 		{
 			freqStream.Close();
+			if (skipStream != null)
+				skipStream.Close();
 		}
-
-		virtual public int Doc() { return doc; }
-		virtual public int Freq() { return freq; }
-
-		virtual protected void SkippingDoc()  
+		
+		public int Doc()
+		{
+			return doc;
+		}
+		public int Freq()
+		{
+			return freq;
+		}
+		
+		protected internal virtual void  SkippingDoc()
 		{
 		}
-
-		virtual public bool Next()
+		
+		public virtual bool Next()
 		{
-			while (true) 
+			while (true)
 			{
-				if (freqCount == 0)
+				if (count == df)
 					return false;
-
+				
 				int docCode = freqStream.ReadVInt();
-				doc += (int)(((uint)docCode) >> 1);			  // shift off low bit
-				if ((docCode & 1) != 0)			  // if low bit is set
-					freq = 1;				  // freq is one
+				doc += (int) (((uint) docCode) >> 1); // shift off low bit
+				if ((docCode & 1) != 0)
+				// if low bit is set
+					freq = 1;
+				// freq is one
 				else
-					freq = freqStream.ReadVInt();		  // else read freq
- 
-				freqCount--;
-    
+					freq = freqStream.ReadVInt(); // else read freq
+				
+				count++;
+				
 				if (deletedDocs == null || !deletedDocs.Get(doc))
 					break;
 				SkippingDoc();
 			}
 			return true;
 		}
-
-		/// <summary>
-		/// Optimized implementation.
-		/// </summary>
-		/// <param name="docs"></param>
-		/// <param name="freqs"></param>
-		/// <returns></returns>
-		virtual public int Read(int[] docs, int[] freqs)
+		
+		/// <summary>Optimized implementation. </summary>
+		public virtual int Read(int[] docs, int[] freqs)
 		{
-			int end = docs.Length;
+			int length = docs.Length;
 			int i = 0;
-			while (i < end && freqCount > 0) 
+			while (i < length && count < df)
 			{
-
+				
 				// manually inlined call to next() for speed
 				int docCode = freqStream.ReadVInt();
-				doc += (int)(((uint)docCode) >> 1);			  // shift off low bit
-				if ((docCode & 1) != 0)			  // if low bit is set
-					freq = 1;				  // freq is one
+				doc += (int) (((uint) docCode) >> 1); // shift off low bit
+				if ((docCode & 1) != 0)
+				// if low bit is set
+					freq = 1;
+				// freq is one
 				else
-					freq = freqStream.ReadVInt();		  // else read freq
-				freqCount--;
-   
-				if (deletedDocs == null || !deletedDocs.Get(doc)) 
+					freq = freqStream.ReadVInt(); // else read freq
+				count++;
+				
+				if (deletedDocs == null || !deletedDocs.Get(doc))
 				{
 					docs[i] = doc;
 					freqs[i] = freq;
@@ -173,19 +163,72 @@ namespace Lucene.Net.Index
 			}
 			return i;
 		}
-
-		/// <summary>
-		/// As yet unoptimized implementation.
-		/// </summary>
-		/// <param name="target"></param>
-		/// <returns></returns>
-		virtual public bool SkipTo(int target)  
+		
+		/// <summary>Overridden by SegmentTermPositions to skip in prox stream. </summary>
+		protected internal virtual void  SkipProx(long proxPointer)
 		{
+		}
+		
+		/// <summary>Optimized implementation. </summary>
+		public virtual bool SkipTo(int target)
+		{
+			if (df >= skipInterval)
+			{
+				// optimized case
+				
+				if (skipStream == null)
+					skipStream = (InputStream) freqStream.Clone(); // lazily clone
+				
+				if (!haveSkipped)
+				{
+					// lazily seek skip stream
+					skipStream.Seek(skipPointer);
+					haveSkipped = true;
+				}
+				
+				// scan skip data
+				int lastSkipDoc = skipDoc;
+				long lastFreqPointer = freqStream.GetFilePointer();
+				long lastProxPointer = - 1;
+				int numSkipped = - 1 - (count % skipInterval);
+				
+				while (target > skipDoc)
+				{
+					lastSkipDoc = skipDoc;
+					lastFreqPointer = freqPointer;
+					lastProxPointer = proxPointer;
+					
+					if (skipDoc != 0 && skipDoc >= doc)
+						numSkipped += skipInterval;
+					
+					if (skipCount >= numSkips)
+						break;
+					
+					skipDoc += skipStream.ReadVInt();
+					freqPointer += skipStream.ReadVInt();
+					proxPointer += skipStream.ReadVInt();
+					
+					skipCount++;
+				}
+				
+				// if we found something to skip, then skip it
+				if (lastFreqPointer > freqStream.GetFilePointer())
+				{
+					freqStream.Seek(lastFreqPointer);
+					SkipProx(lastProxPointer);
+					
+					doc = lastSkipDoc;
+					count += numSkipped;
+				}
+			}
+			
+			// done skipping, now just scan
 			do 
 			{
 				if (!Next())
 					return false;
-			} while (target > doc);
+			}
+			while (target > doc);
 			return true;
 		}
 	}

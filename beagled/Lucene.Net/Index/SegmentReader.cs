@@ -1,249 +1,251 @@
+/*
+ * Copyright 2004 The Apache Software Foundation
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * 
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 using System;
-using System.Collections;
-using System.Runtime.CompilerServices;
-
-using Lucene.Net.Documents; 
-using Lucene.Net.Store; 
-using Lucene.Net.Util; 
-
+using Document = Lucene.Net.Documents.Document;
+using Directory = Lucene.Net.Store.Directory;
+using InputStream = Lucene.Net.Store.InputStream;
+using OutputStream = Lucene.Net.Store.OutputStream;
+using BitVector = Lucene.Net.Util.BitVector;
 namespace Lucene.Net.Index
 {
-	/* ====================================================================
-	 * The Apache Software License, Version 1.1
-	 *
-	 * Copyright (c) 2001 The Apache Software Foundation.  All rights
-	 * reserved.
-	 *
-	 * Redistribution and use _in source and binary forms, with or without
-	 * modification, are permitted provided that the following conditions
-	 * are met:
-	 *
-	 * 1. Redistributions of source code must retain the above copyright
-	 *    notice, this list of conditions and the following disclaimer.
-	 *
-	 * 2. Redistributions _in binary form must reproduce the above copyright
-	 *    notice, this list of conditions and the following disclaimer _in
-	 *    the documentation and/or other materials provided with the
-	 *    distribution.
-	 *
-	 * 3. The end-user documentation included with the redistribution,
-	 *    if any, must include the following acknowledgment:
-	 *       "This product includes software developed by the
-	 *        Apache Software Foundation (http://www.apache.org/)."
-	 *    Alternately, this acknowledgment may appear _in the software itself,
-	 *    if and wherever such third-party acknowledgments normally appear.
-	 *
-	 * 4. The names "Apache" and "Apache Software Foundation" and
-	 *    "Apache Lucene" must not be used to endorse or promote products
-	 *    derived from this software without prior written permission. For
-	 *    written permission, please contact apache@apache.org.
-	 *
-	 * 5. Products derived from this software may not be called "Apache",
-	 *    "Apache Lucene", nor may "Apache" appear _in their name, without
-	 *    prior written permission of the Apache Software Foundation.
-	 *
-	 * THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESSED OR IMPLIED
-	 * WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
-	 * OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
-	 * DISCLAIMED.  _in NO EVENT SHALL THE APACHE SOFTWARE FOUNDATION OR
-	 * ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
-	 * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
-	 * LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF
-	 * USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
-	 * ON ANY THEORY OF LIABILITY, WHETHER _in CONTRACT, STRICT LIABILITY,
-	 * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING _in ANY WAY OUT
-	 * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
-	 * SUCH DAMAGE.
-	 * ====================================================================
-	 *
-	 * This software consists of voluntary contributions made by many
-	 * individuals on behalf of the Apache Software Foundation.  For more
-	 * information on the Apache Software Foundation, please see
-	 * <http://www.apache.org/>.
-	 */
-
-	public sealed class SegmentReader : IndexReader 
+	
+	/// <summary> FIXME: Describe class <code>SegmentReader</code> here.
+	/// 
+	/// </summary>
+	/// <version>  $Id$
+	/// </version>
+	sealed public class SegmentReader : IndexReader
 	{
-		private bool closeDirectory = false;
-		private String segment;
-
+		private System.String segment;
+		
 		internal FieldInfos fieldInfos;
 		private FieldsReader fieldsReader;
-
+		
 		internal TermInfosReader tis;
-
+		internal TermVectorsReader termVectorsReader;
+		
 		internal BitVector deletedDocs = null;
 		private bool deletedDocsDirty = false;
-
+		private bool normsDirty = false;
+		private bool undeleteAll = false;
+		
 		internal InputStream freqStream;
 		internal InputStream proxStream;
-
-		// Compound File Reader when based on a compound file segment
-		CompoundFileReader cfsReader;
 		
-		private class Norm 
+		// Compound File Reader when based on a compound file segment
+		internal CompoundFileReader cfsReader;
+		
+		private class Norm
 		{
-			public Norm(InputStream _in) { this._in = _in; }
-			public InputStream _in;
-			public byte[] bytes;
+			private void  InitBlock(SegmentReader enclosingInstance)
+			{
+				this.enclosingInstance = enclosingInstance;
+			}
+			private SegmentReader enclosingInstance;
+			public SegmentReader Enclosing_Instance
+			{
+				get
+				{
+					return enclosingInstance;
+				}
+				
+			}
+			public Norm(SegmentReader enclosingInstance, InputStream in_Renamed, int number)
+			{
+				InitBlock(enclosingInstance);
+				this.in_Renamed = in_Renamed;
+				this.number = number;
+			}
+			
+			public InputStream in_Renamed;  // private -> public
+			public byte[] bytes;           // private -> public
+			public bool dirty;              // private -> public
+			public int number;              // private -> public
+			
+			public void  ReWrite()          // private -> public
+			{
+				// NOTE: norms are re-written in regular directory, not cfs
+				OutputStream out_Renamed = Enclosing_Instance.Directory().CreateFile(Enclosing_Instance.segment + ".tmp");
+				try
+				{
+					out_Renamed.WriteBytes(bytes, Enclosing_Instance.MaxDoc());
+				}
+				finally
+				{
+					out_Renamed.Close();
+				}
+				System.String fileName = Enclosing_Instance.segment + ".f" + number;
+				Enclosing_Instance.Directory().RenameFile(Enclosing_Instance.segment + ".tmp", fileName);
+				this.dirty = false;
+			}
 		}
-		private Hashtable norms = new Hashtable();
-
-		public SegmentReader(SegmentInfo si, bool closeDir) : this(si)
+		
+		private System.Collections.Hashtable norms = System.Collections.Hashtable.Synchronized(new System.Collections.Hashtable());
+		
+		public /*internal*/ SegmentReader(SegmentInfos sis, SegmentInfo si, bool closeDir) : base(si.dir, sis, closeDir)
 		{
-			closeDirectory = closeDir;
+			Initialize(si);
 		}
-
-		public SegmentReader(SegmentInfo si) : base(si.dir)
+		
+		public /*internal*/ SegmentReader(SegmentInfo si) : base(si.dir)
+		{
+			Initialize(si);
+		}
+		
+		private void  Initialize(SegmentInfo si)
 		{
 			segment = si.name;
-
+			
 			// Use compound file directory for some files, if it exists
 			Directory cfsDir = Directory();
-			if (Directory().FileExists(segment + ".cfs")) 
+			if (Directory().FileExists(segment + ".cfs"))
 			{
 				cfsReader = new CompoundFileReader(Directory(), segment + ".cfs");
 				cfsDir = cfsReader;
 			}
-
-			 // No compound file exists - use the multi-file format
+			
+			// No compound file exists - use the multi-file format
 			fieldInfos = new FieldInfos(cfsDir, segment + ".fnm");
 			fieldsReader = new FieldsReader(cfsDir, segment, fieldInfos);
-
+			
 			tis = new TermInfosReader(cfsDir, segment, fieldInfos);
-
+			
 			// NOTE: the bitvector is stored using the regular directory, not cfs
 			if (HasDeletions(si))
 				deletedDocs = new BitVector(Directory(), segment + ".del");
-
+			
 			// make sure that all index files have been read or are kept open
 			// so that if an index update removes them we'll still have them
 			freqStream = cfsDir.OpenFile(segment + ".frq");
 			proxStream = cfsDir.OpenFile(segment + ".prx");
 			OpenNorms(cfsDir);
-		}
-
-		internal class SegmentReaderLockWith : Lock.With
-		{
-			SegmentReader segmentReader;
-
-			internal SegmentReaderLockWith(Lock _lock, long lockTimeout, SegmentReader segmentReader) 
-				: base(_lock, lockTimeout) 
+			
+			if (fieldInfos.HasVectors())
 			{
-				this.segmentReader = segmentReader;
-			}
-
-			override public Object DoBody()  
-			{
-				segmentReader.deletedDocs.Write(segmentReader.Directory(), segmentReader.segment + ".tmp");
-				segmentReader.Directory().RenameFile(segmentReader.segment + ".tmp", segmentReader.segment + ".del");
-				segmentReader.Directory().TouchFile("segments");
-				return null;
+				// open term vector files only as needed
+				termVectorsReader = new TermVectorsReader(cfsDir, segment, fieldInfos);
 			}
 		}
-
-		[MethodImpl(MethodImplOptions.Synchronized)]
-		protected internal override void DoClose()  
+		
+		protected internal override void  DoCommit()
 		{
-			if (deletedDocsDirty) 
+			if (deletedDocsDirty)
 			{
-				lock (Directory()) 
-				{		  // _in- & inter-process sync
-					new SegmentReaderLockWith(Directory().MakeLock(IndexWriter.COMMIT_LOCK_NAME), IndexWriter.COMMIT_LOCK_TIMEOUT, this).Run();
+				// re-write deleted 
+				deletedDocs.Write(Directory(), segment + ".tmp");
+				Directory().RenameFile(segment + ".tmp", segment + ".del");
+			}
+			if (undeleteAll && Directory().FileExists(segment + ".del"))
+			{
+				Directory().DeleteFile(segment + ".del");
+			}
+			if (normsDirty)
+			{
+				// re-write norms 
+				System.Collections.IEnumerator values = norms.Values.GetEnumerator();
+				while (values.MoveNext())
+				{
+					Norm norm = (Norm) values.Current;
+					if (norm.dirty)
+					{
+						norm.ReWrite();
+					}
 				}
-				deletedDocsDirty = false;
 			}
-
+			deletedDocsDirty = false;
+			normsDirty = false;
+			undeleteAll = false;
+		}
+		
+		protected internal override void  DoClose()
+		{
 			fieldsReader.Close();
 			tis.Close();
-
+			
 			if (freqStream != null)
 				freqStream.Close();
 			if (proxStream != null)
 				proxStream.Close();
-
+			
 			CloseNorms();
+			if (termVectorsReader != null)
+				termVectorsReader.Close();
 			
 			if (cfsReader != null)
 				cfsReader.Close();
-
-			if (closeDirectory)
-				Directory().Close();
 		}
-
-		internal static bool HasDeletions(SegmentInfo si)  
+		
+		internal static bool HasDeletions(SegmentInfo si)
 		{
 			return si.dir.FileExists(si.name + ".del");
 		}
-
-		public override bool HasDeletions() 
+		
+		public override bool HasDeletions()
 		{
 			return deletedDocs != null;
 		}
-
+		
+		
 		internal static bool UsesCompoundFile(SegmentInfo si)
 		{
 			return si.dir.FileExists(si.name + ".cfs");
 		}
-	
-		[MethodImpl(MethodImplOptions.Synchronized)]
-		protected internal override void DoDelete(int docNum)  
+		
+		internal static bool HasSeparateNorms(SegmentInfo si)
+		{
+			System.String[] result = si.dir.List();
+			System.String pattern = si.name + ".f";
+			int patternLength = pattern.Length;
+			for (int i = 0; i < 0; i++)
+			{
+				if (result[i].StartsWith(pattern) && System.Char.IsDigit(result[i][patternLength]))
+					return true;
+			}
+			return false;
+		}
+		
+		protected internal override void  DoDelete(int docNum)
 		{
 			if (deletedDocs == null)
 				deletedDocs = new BitVector(MaxDoc());
 			deletedDocsDirty = true;
+			undeleteAll = false;
 			deletedDocs.Set(docNum);
 		}
-
-		internal class SegmentReaderLockWith2 : Lock.With
+		
+		protected internal override void  DoUndeleteAll()
 		{
-			SegmentReader segmentReader;
-			string segment;
-
-			internal SegmentReaderLockWith2(Lock _lock, long lockTimeout, SegmentReader segmentReader, string segment) 
-				: base(_lock, lockTimeout) 
-			{
-				this.segmentReader = segmentReader;
-				this.segment = segment;
-			}
-
-			override public Object DoBody()  
-			{
-				if (segmentReader.Directory().FileExists(segment + ".del")) 
-				{
-					segmentReader.Directory().DeleteFile(segment + ".del");
-				}
-				return null;
-			}
+			deletedDocs = null;
+			deletedDocsDirty = false;
+			undeleteAll = true;
 		}
 		
-		public override void UndeleteAll()
+		internal System.Collections.ArrayList Files()
 		{
-			lock(Directory()) 
-			{		  // in- & inter-process sync
-				new SegmentReaderLockWith2(Directory().MakeLock(IndexWriter.COMMIT_LOCK_NAME),
-										   IndexWriter.COMMIT_LOCK_TIMEOUT,
-										   this,
-										   segment);
-				deletedDocs = null;
-				deletedDocsDirty = false;
-			}
-		}
-
-		internal ArrayList Files()  
-		{
-			ArrayList files = new ArrayList(16);
-			String[] ext = new String[] 
-			{"cfs", "fnm", "fdx", "fdt", "tii", "tis", "frq", "prx", "del"};
-
-			for (int i=0; i<ext.Length; i++) 
+			System.Collections.ArrayList files = System.Collections.ArrayList.Synchronized(new System.Collections.ArrayList(16));
+			System.String[] ext = new System.String[]{"cfs", "fnm", "fdx", "fdt", "tii", "tis", "frq", "prx", "del", "tvx", "tvd", "tvf", "tvp"};
+			
+			for (int i = 0; i < ext.Length; i++)
 			{
-				String name = segment + "." + ext[i];
+				System.String name = segment + "." + ext[i];
 				if (Directory().FileExists(name))
 					files.Add(name);
 			}
 			
-			for (int i = 0; i < fieldInfos.Size(); i++) 
+			for (int i = 0; i < fieldInfos.Size(); i++)
 			{
 				FieldInfo fi = fieldInfos.FieldInfo(i);
 				if (fi.isIndexed)
@@ -251,43 +253,46 @@ namespace Lucene.Net.Index
 			}
 			return files;
 		}
-
-		public override TermEnum Terms()  
+		
+		public override TermEnum Terms()
 		{
 			return tis.Terms();
 		}
-
-		public override TermEnum Terms(Term t)  
+		
+		public override TermEnum Terms(Term t)
 		{
 			return tis.Terms(t);
 		}
-
-		[MethodImpl(MethodImplOptions.Synchronized)]
-		public override Document Document(int n)  
+		
+		public override Document Document(int n)
 		{
-			if (IsDeleted(n))
-				throw new ArgumentException
-					("attempt to access a deleted document");
-			return fieldsReader.Doc(n);
+			lock (this)
+			{
+				if (IsDeleted(n))
+					throw new System.ArgumentException("attempt to access a deleted document");
+				return fieldsReader.Doc(n);
+			}
 		}
-
-		[MethodImpl(MethodImplOptions.Synchronized)]
-		public override bool IsDeleted(int n) 
+		
+		public override bool IsDeleted(int n)
 		{
-			return (deletedDocs != null && deletedDocs.Get(n));
+			lock (this)
+			{
+				return (deletedDocs != null && deletedDocs.Get(n));
+			}
 		}
-
-		public override TermDocs TermDocs()  
+		
+		public override TermDocs TermDocs()
 		{
 			return new SegmentTermDocs(this);
 		}
-
-		public override TermPositions TermPositions()  
+		
+		public override TermPositions TermPositions()
 		{
 			return new SegmentTermPositions(this);
 		}
-
-		public override int DocFreq(Term t)  
+		
+		public override int DocFreq(Term t)
 		{
 			TermInfo ti = tis.Get(t);
 			if (ti != null)
@@ -295,122 +300,188 @@ namespace Lucene.Net.Index
 			else
 				return 0;
 		}
-
-		public override int NumDocs() 
+		
+		public override int NumDocs()
 		{
 			int n = MaxDoc();
 			if (deletedDocs != null)
 				n -= deletedDocs.Count();
 			return n;
 		}
-
-		public override int MaxDoc() 
+		
+		public override int MaxDoc()
 		{
 			return fieldsReader.Size();
 		}
-
-		public override ICollection GetFieldNames()
+		
+		/// <seealso cref="IndexReader#GetFieldNames()">
+		/// </seealso>
+		public override System.Collections.ICollection GetFieldNames()
 		{
-			// maintain a unique set of field names
-			Hashtable fieldSet = new Hashtable();
-			for (int i = 0; i < fieldInfos.Size(); i++) 
+			// maintain a unique set of Field names
+			System.Collections.Hashtable fieldSet = new System.Collections.Hashtable();
+			for (int i = 0; i < fieldInfos.Size(); i++)
 			{
 				FieldInfo fi = fieldInfos.FieldInfo(i);
 				fieldSet.Add(fi.name, fi.name);
 			}
-			return fieldSet.Keys;
+			return fieldSet;
 		}
-
-		public override ICollection GetFieldNames(bool indexed)
+		
+		/// <seealso cref="IndexReader#GetFieldNames(boolean)">
+		/// </seealso>
+		public override System.Collections.ICollection GetFieldNames(bool indexed)
 		{
-			// maintain a unique set of field names
-			Hashtable fieldSet = new Hashtable();
-			for (int i = 0; i < fieldInfos.Size(); i++) 
+			// maintain a unique set of Field names
+			System.Collections.Hashtable fieldSet = new System.Collections.Hashtable();
+			for (int i = 0; i < fieldInfos.Size(); i++)
 			{
 				FieldInfo fi = fieldInfos.FieldInfo(i);
 				if (fi.isIndexed == indexed)
 					fieldSet.Add(fi.name, fi.name);
 			}
-			return fieldSet.Keys;
+			return fieldSet;
 		}
-
-		public override byte[] Norms(String field)  
+		
+		/// <summary> </summary>
+		/// <param name="storedTermVector">if true, returns only Indexed fields that have term vector info, 
+		/// else only indexed fields without term vector info 
+		/// </param>
+		/// <returns> Collection of Strings indicating the names of the fields
+		/// </returns>
+		public override System.Collections.ICollection GetIndexedFieldNames(bool storedTermVector)
 		{
-			Norm norm = (Norm)norms[field];
-			if (norm == null)
-				return null;
-			if (norm.bytes == null) 
+			// maintain a unique set of Field names
+			System.Collections.Hashtable fieldSet = new System.Collections.Hashtable();
+			for (int ii = 0; ii < fieldInfos.Size(); ii++)
 			{
-				byte[] bytes = new byte[MaxDoc()];
-				Norms(field, bytes, 0);
-				norm.bytes = bytes;
-			}
-			return norm.bytes;
-		}
-
-		internal void Norms(String field, byte[] bytes, int offset)  
-		{
-			InputStream normStream = NormStream(field);
-			if (normStream == null)
-				return;					  // use zeros _in array
-
-			try 
-			{
-				normStream.ReadBytes(bytes, offset, MaxDoc());
-			} 
-			finally 
-			{
-				normStream.Close();
-			}
-		}
-
-		internal InputStream NormStream(String field)  
-		{
-			Norm norm = (Norm)norms[field];
-			if (norm == null)
-				return null;
-			InputStream result = (InputStream)norm._in.Clone();
-			result.Seek(0);
-			return result;
-		}
-
-		private void OpenNorms(Directory useDir)  
-		{
-			for (int i = 0; i < fieldInfos.Size(); i++) 
-			{
-				FieldInfo fi = fieldInfos.FieldInfo(i);
-				if (fi.isIndexed) 
-					norms.Add(
-						fi.name, new Norm(useDir.OpenFile(segment + ".f" + fi.number))
-					);
-			}
-		}
-
-		private void CloseNorms()  
-		{
-			lock (norms) 
-			{
-				foreach (Norm norm in norms.Values)
+				FieldInfo fi = fieldInfos.FieldInfo(ii);
+				if (fi.isIndexed == true && fi.storeTermVector == storedTermVector)
 				{
-					norm._in.Close();
+					fieldSet.Add(fi.name, fi.name);
+				}
+			}
+			return fieldSet;
+		}
+		
+		public override byte[] Norms(System.String field)
+		{
+			lock (this)
+			{
+				Norm norm = (Norm) norms[field];
+				if (norm == null)
+				// not an indexed Field
+					return null;
+				if (norm.bytes == null)
+				{
+					// value not yet read
+					byte[] bytes = new byte[MaxDoc()];
+					Norms(field, bytes, 0);
+					norm.bytes = bytes; // cache it
+				}
+				return norm.bytes;
+			}
+		}
+		
+		protected internal override void  DoSetNorm(int doc, System.String field, byte value_Renamed)
+		{
+			Norm norm = (Norm) norms[field];
+			if (norm == null)
+			// not an indexed Field
+				return ;
+			norm.dirty = true; // mark it dirty
+			normsDirty = true;
+			
+			Norms(field)[doc] = value_Renamed; // set the value
+		}
+		
+		/// <summary>Read norms into a pre-allocated array. </summary>
+		public override void  Norms(System.String field, byte[] bytes, int offset)
+		{
+			lock (this)
+			{
+				
+				Norm norm = (Norm) norms[field];
+				if (norm == null)
+					return ; // use zeros in array
+				
+				if (norm.bytes != null)
+				{
+					// can copy from cache
+					Array.Copy(norm.bytes, 0, bytes, offset, MaxDoc());
+					return ;
+				}
+				
+				InputStream normStream = (InputStream) norm.in_Renamed.Clone();
+				try
+				{
+					// read from disk
+					normStream.Seek(0);
+					normStream.ReadBytes(bytes, offset, MaxDoc());
+				}
+				finally
+				{
+					normStream.Close();
 				}
 			}
 		}
-
-//		public override ICollection GetFieldNames()  
-//		{
-//			// maintain a unique set of field names
-//			Hashtable fieldSet = new Hashtable();
-//			for (int i = 0; i < fieldInfos.Size(); i++) 
-//			{
-//				FieldInfo fi = fieldInfos.FieldInfo(i);
-//
-//				if (fieldSet[fi.name] == null)
-//				{
-//					fieldSet.Add(fi.name, null);
-//				}
-//			}
-//			return fieldSet;
-//		}
+		
+		private void  OpenNorms(Directory cfsDir)
+		{
+			for (int i = 0; i < fieldInfos.Size(); i++)
+			{
+				FieldInfo fi = fieldInfos.FieldInfo(i);
+				if (fi.isIndexed)
+				{
+					System.String fileName = segment + ".f" + fi.number;
+					// look first for re-written file, then in compound format
+					Directory d = Directory().FileExists(fileName)?Directory():cfsDir;
+					norms[fi.name] = new Norm(this, d.OpenFile(fileName), fi.number);
+				}
+			}
+		}
+		
+		private void  CloseNorms()
+		{
+			lock (norms.SyncRoot)
+			{
+				System.Collections.IEnumerator enumerator = norms.Values.GetEnumerator();
+				while (enumerator.MoveNext())
+				{
+					Norm norm = (Norm) enumerator.Current;
+					norm.in_Renamed.Close();
+				}
+			}
+		}
+		
+		/// <summary>Return a term frequency vector for the specified document and Field. The
+		/// vector returned contains term numbers and frequencies for all terms in
+		/// the specified Field of this document, if the Field had storeTermVector
+		/// flag set.  If the flag was not set, the method returns null.
+		/// </summary>
+		public override TermFreqVector GetTermFreqVector(int docNumber, System.String field)
+		{
+			// Check if this Field is invalid or has no stored term vector
+			FieldInfo fi = fieldInfos.FieldInfo(field);
+			if (fi == null || !fi.storeTermVector)
+				return null;
+			
+			return termVectorsReader.Get(docNumber, field);
+		}
+		
+		
+		/// <summary>Return an array of term frequency vectors for the specified document.
+		/// The array contains a vector for each vectorized Field in the document.
+		/// Each vector vector contains term numbers and frequencies for all terms
+		/// in a given vectorized Field.
+		/// If no such fields existed, the method returns null.
+		/// </summary>
+		public override TermFreqVector[] GetTermFreqVectors(int docNumber)
+		{
+			if (termVectorsReader == null)
+				return null;
+			
+			return termVectorsReader.Get(docNumber);
+		}
 	}
 }

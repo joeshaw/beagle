@@ -1,115 +1,63 @@
+/*
+ * Copyright 2004 The Apache Software Foundation
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * 
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 using System;
-using System.IO;
-using System.Collections;
-
 using Lucene.Net.Analysis;
-
 namespace Lucene.Net.Analysis.Standard
 {
-	/* ====================================================================
-	 * The Apache Software License, Version 1.1
-	 *
-	 * Copyright (c) 2001 The Apache Software Foundation.  All rights
-	 * reserved.
-	 *
-	 * Redistribution and use in source and binary forms, with or without
-	 * modification, are permitted provided that the following conditions
-	 * are met:
-	 *
-	 * 1. Redistributions of source code must retain the above copyright
-	 *    notice, this list of conditions and the following disclaimer.
-	 *
-	 * 2. Redistributions in binary form must reproduce the above copyright
-	 *    notice, this list of conditions and the following disclaimer in
-	 *    the documentation and/or other materials provided with the
-	 *    distribution.
-	 *
-	 * 3. The end-user documentation included with the redistribution,
-	 *    if any, must include the following acknowledgment:
-	 *       "This product includes software developed by the
-	 *        Apache Software Foundation (http://www.apache.org/)."
-	 *    Alternately, this acknowledgment may appear in the software itself,
-	 *    if and wherever such third-party acknowledgments normally appear.
-	 *
-	 * 4. The names "Apache" and "Apache Software Foundation" and
-	 *    "Apache Lucene" must not be used to endorse or promote products
-	 *    derived from this software without prior written permission. For
-	 *    written permission, please contact apache@apache.org.
-	 *
-	 * 5. Products derived from this software may not be called "Apache",
-	 *    "Apache Lucene", nor may "Apache" appear in their name, without
-	 *    prior written permission of the Apache Software Foundation.
-	 *
-	 * THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESSED OR IMPLIED
-	 * WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
-	 * OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
-	 * DISCLAIMED.  IN NO EVENT SHALL THE APACHE SOFTWARE FOUNDATION OR
-	 * ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
-	 * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
-	 * LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF
-	 * USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
-	 * ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
-	 * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT
-	 * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
-	 * SUCH DAMAGE.
-	 * ====================================================================
-	 *
-	 * This software consists of voluntary contributions made by many
-	 * individuals on behalf of the Apache Software Foundation.  For more
-	 * information on the Apache Software Foundation, please see
-	 * <http://www.apache.org/>.
-	 */
-
-	/// <summary>
-	/// Filters StandardTokenizer with StandardFilter, LowerCaseFilter and StopFilter.
+	
+	/// <summary> Filters {@link StandardTokenizer} with {@link StandardFilter}, {@link
+	/// LowerCaseFilter} and {@link StopFilter}.
+	/// 
 	/// </summary>
-	public class StandardAnalyzer : Analyzer 
+	/// <version>  $Id$
+	/// </version>
+	public class StandardAnalyzer : Analyzer
 	{
-		private Hashtable stopTable;
-
-		/// <summary>
-		/// An array containing some common English words that are usually not
-		/// useful for searching.
+		private System.Collections.Hashtable stopSet;
+		
+		/// <summary>An array containing some common English words that are usually not
+		/// useful for searching. 
 		/// </summary>
-		public static readonly String[] STOP_WORDS = StopAnalyzer.ENGLISH_STOP_WORDS;
-//		{
-//			"a", "and", "are", "as", "at", "be", "but", "by",
-//			"for", "if", "in", "into", "is", "it",
-//			"no", "not", "of", "on", "or", "s", "such",
-//			"t", "that", "the", "their", "then", "there", "these",
-//			"they", "this", "to", "was", "will", "with"
-//		};
-
-		/// <summary>
-		/// Builds an analyzer.
-		/// </summary>
-		public StandardAnalyzer() : this(STOP_WORDS)
+		public static readonly System.String[] STOP_WORDS;
+		
+		/// <summary>Builds an analyzer. </summary>
+		public StandardAnalyzer():this(STOP_WORDS)
 		{
 		}
-
-		/// <summary>
-		/// Builds an analyzer with the given stop words.
-		/// </summary>
-		/// <param name="stopWords"></param>
-		public StandardAnalyzer(String[] stopWords) 
+		
+		/// <summary>Builds an analyzer with the given stop words. </summary>
+		public StandardAnalyzer(System.String[] stopWords)
 		{
-			stopTable = StopFilter.MakeStopTable(stopWords);
+			stopSet = StopFilter.MakeStopSet(stopWords);
 		}
-
-		/// <summary>
-		/// Constructs a StandardTokenizer filtered by a 
-		/// StandardFilter, a LowerCaseFilter and a StopFilter.
+		
+		/// <summary>Constructs a {@link StandardTokenizer} filtered by a {@link
+		/// StandardFilter}, a {@link LowerCaseFilter} and a {@link StopFilter}. 
 		/// </summary>
-		/// <param name="fieldName"></param>
-		/// <param name="reader"></param>
-		/// <returns></returns>
-		public override TokenStream TokenStream(String fieldName, TextReader reader) 
+		public override TokenStream TokenStream(System.String fieldName, System.IO.TextReader reader)
 		{
 			TokenStream result = new StandardTokenizer(reader);
 			result = new StandardFilter(result);
 			result = new LowerCaseFilter(result);
-			result = new StopFilter(result, stopTable);
+			result = new StopFilter(result, stopSet);
 			return result;
+		}
+		static StandardAnalyzer()
+		{
+			STOP_WORDS = StopAnalyzer.ENGLISH_STOP_WORDS;
 		}
 	}
 }

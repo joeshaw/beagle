@@ -1,156 +1,160 @@
+/*
+ * Copyright 2004 The Apache Software Foundation
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * 
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 using System;
-using System.Text;
-using System.Collections;
-
-using Lucene.Net.Index;       
-using Lucene.Net.Search;      
-
+using IndexReader = Lucene.Net.Index.IndexReader;
+using Hits = Lucene.Net.Search.Hits;
+using Searcher = Lucene.Net.Search.Searcher;
 namespace Lucene.Net.Documents
 {
-	/* ====================================================================
-	 * The Apache Software License, Version 1.1
-	 *
-	 * Copyright (c) 2001 The Apache Software Foundation.  All rights
-	 * reserved.
-	 *
-	 * Redistribution and use in source and binary forms, with or without
-	 * modification, are permitted provided that the following conditions
-	 * are met:
-	 *
-	 * 1. Redistributions of source code must retain the above copyright
-	 *    notice, this list of conditions and the following disclaimer.
-	 *
-	 * 2. Redistributions in binary form must reproduce the above copyright
-	 *    notice, this list of conditions and the following disclaimer in
-	 *    the documentation and/or other materials provided with the
-	 *    distribution.
-	 *
-	 * 3. The end-user documentation included with the redistribution,
-	 *    if any, must include the following acknowledgment:
-	 *       "This product includes software developed by the
-	 *        Apache Software Foundation (http://www.apache.org/)."
-	 *    Alternately, this acknowledgment may appear in the software itself,
-	 *    if and wherever such third-party acknowledgments normally appear.
-	 *
-	 * 4. The names "Apache" and "Apache Software Foundation" and
-	 *    "Apache Lucene" must not be used to endorse or promote products
-	 *    derived from this software without prior written permission. For
-	 *    written permission, please contact apache@apache.org.
-	 *
-	 * 5. Products derived from this software may not be called "Apache",
-	 *    "Apache Lucene", nor may "Apache" appear in their name, without
-	 *    prior written permission of the Apache Software Foundation.
-	 *
-	 * THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESSED OR IMPLIED
-	 * WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
-	 * OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
-	 * DISCLAIMED.  IN NO EVENT SHALL THE APACHE SOFTWARE FOUNDATION OR
-	 * ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
-	 * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
-	 * LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF
-	 * USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
-	 * ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
-	 * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT
-	 * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
-	 * SUCH DAMAGE.
-	 * ====================================================================
-	 *
-	 * This software consists of voluntary contributions made by many
-	 * individuals on behalf of the Apache Software Foundation.  For more
-	 * information on the Apache Software Foundation, please see
-	 * <http://www.apache.org/>.
-	 */
-
-	/// <summary>
-	/// Documents are the unit of indexing and search.
-	///
-	/// A Document is a set of fields.  Each field has a name and a textual value.
-	/// A field may be stored with the document, in which case it is returned with
-	/// search hits on the document.  Thus each document should typically contain
-	/// stored fields which uniquely identify it.
+	
+	/// <summary>Documents are the unit of indexing and search.
+	/// 
+	/// A Document is a set of fields.  Each Field has a name and a textual value.
+	/// A Field may be {@link Field#IsStored() stored} with the document, in which
+	/// case it is returned with search hits on the document.  Thus each document
+	/// should typically contain one or more stored fields which uniquely identify
+	/// it.
+	/// 
+	/// <p>Note that fields which are <i>not</i> {@link Field#IsStored() stored} are
+	/// <i>not</i> available in documents retrieved from the index, e.g. with {@link
+	/// Hits#Doc(int)}, {@link Searcher#Doc(int)} or {@link
+	/// IndexReader#Document(int)}.
 	/// </summary>
+	
 	[Serializable]
-	public sealed class Document 
+	public sealed class Document
 	{
-		internal DocumentFieldList fieldList = null;
+		public System.Collections.IList fields = System.Collections.ArrayList.Synchronized(new System.Collections.ArrayList(10));
 		private float boost = 1.0f;
-
-		/// <summary>
-		/// Constructs a new document with no fields.
-		/// </summary>
-		public Document() {}
-
-		/// <summary>
-		/// Sets a boost factor for hits on any field of this document.  This value
+		
+		/// <summary>Constructs a new document with no fields. </summary>
+		public Document()
+		{
+		}
+		
+		
+		/// <summary>Sets a boost factor for hits on any Field of this document.  This value
 		/// will be multiplied into the score of all hits on this document.
-		///
-		/// <p>
-		/// Values are multiplied into the value of Field.GetBoost() of
-		/// each field in this document.  Thus, this method in effect sets a default
+		/// 
+		/// <p>Values are multiplied into the value of {@link Field#GetBoost()} of
+		/// each Field in this document.  Thus, this method in effect sets a default
 		/// boost for the fields of this document.
-		/// </p>
-		///
-		/// <see cref="Field.SetBoost(float)"/>
+		/// 
 		/// </summary>
-		/// <param name="boost"></param>
-		public void SetBoost(float boost) 
+		/// <seealso cref="Field#SetBoost(float)">
+		/// </seealso>
+		public void  SetBoost(float boost)
 		{
 			this.boost = boost;
 		}
-
-		/// <summary>
-		/// Returns the boost factor for hits on any field of this document.
-		///
-		/// <p>The default value is 1.0.</p>
-		///
+		
+		/// <summary>Returns the boost factor for hits on any Field of this document.
+		/// 
+		/// <p>The default value is 1.0.
+		/// 
 		/// <p>Note: This value is not stored directly with the document in the index.
-		/// Documents returned from IndexReader.Document(int) and 
-		/// Hits.Doc(int) may thus not have the same value present as when this
-		/// document was indexed.
-		/// </p>
-		///
-		/// <see cref="SetBoost(float)"/>
+		/// Documents returned from {@link IndexReader#Document(int)} and
+		/// {@link Hits#Doc(int)} may thus not have the same value present as when
+		/// this document was indexed.
+		/// 
 		/// </summary>
-		/// <returns></returns>
-		public float GetBoost() 
+		/// <seealso cref="#SetBoost(float)">
+		/// </seealso>
+		public float GetBoost()
 		{
 			return boost;
 		}
-
-		/// <summary>
-		/// Adds a field to a document.  Several fields may be added with
+		
+		/// <summary> <p>Adds a Field to a document.  Several fields may be added with
 		/// the same name.  In this case, if the fields are indexed, their text is
-		/// treated as though appended for the purposes of search. 
+		/// treated as though appended for the purposes of search.</p>
+		/// <p> Note that add like the removeField(s) methods only makes sense 
+		/// prior to adding a document to an index. These methods cannot
+		/// be used to change the content of an existing index! In order to achieve this,
+		/// a document has to be deleted from an index and a new changed version of that
+		/// document has to be added.</p>
 		/// </summary>
-		/// <param name="field"></param>
-		public void Add(Field field) 
+		public void  Add(Field field)
 		{
-			fieldList = new DocumentFieldList(field, fieldList);
+			fields.Add(field);
 		}
-
-		/// <summary>
-		/// Returns a field with the given name if any exist in this document, or
-		/// null. If multiple fields exists with this name, this method returns the
-		/// last field value added. 
+		
+		/// <summary> <p>Removes Field with the specified name from the document.
+		/// If multiple fields exist with this name, this method removes the first Field that has been added.
+		/// If there is no Field with the specified name, the document remains unchanged.</p>
+		/// <p> Note that the removeField(s) methods like the add method only make sense 
+		/// prior to adding a document to an index. These methods cannot
+		/// be used to change the content of an existing index! In order to achieve this,
+		/// a document has to be deleted from an index and a new changed version of that
+		/// document has to be added.</p>
 		/// </summary>
-		/// <param name="name"></param>
-		/// <returns></returns>
-		public Field GetField(String name) 
+		public void  RemoveField(System.String name)
 		{
-			for (DocumentFieldList list = fieldList; list != null; list = list.next)
-				if (list.field.Name().Equals(name))
-					return list.field;
+			System.Collections.IEnumerator it = fields.GetEnumerator();
+			while (it.MoveNext())
+			{
+				Field field = (Field) it.Current;
+				if (field.Name().Equals(name))
+				{
+					fields.Remove(field);
+					return ;
+				}
+			}
+		}
+		
+		/// <summary> <p>Removes all fields with the given name from the document.
+		/// If there is no Field with the specified name, the document remains unchanged.</p>
+		/// <p> Note that the removeField(s) methods like the add method only make sense 
+		/// prior to adding a document to an index. These methods cannot
+		/// be used to change the content of an existing index! In order to achieve this,
+		/// a document has to be deleted from an index and a new changed version of that
+		/// document has to be added.</p>
+		/// </summary>
+		public void  RemoveFields(System.String name)
+		{
+            for (int i = fields.Count - 1; i >= 0; i--)
+            {
+                Field field = (Field) fields[i];
+                if (field.Name().Equals(name))
+                {
+                    fields.RemoveAt(i);
+                }
+            }
+		}
+		
+		/// <summary>Returns a Field with the given name if any exist in this document, or
+		/// null.  If multiple fields exists with this name, this method returns the
+		/// first value added.
+		/// </summary>
+		public Field GetField(System.String name)
+		{
+			for (int i = 0; i < fields.Count; i++)
+			{
+				Field field = (Field) fields[i];
+				if (field.Name().Equals(name))
+					return field;
+			}
 			return null;
 		}
-
-		/// <summary>
-		/// Returns the string value of the field with the given name if any exist in
-		/// this document, or null. If multiple fields exist with this name, this
-		/// method returns the last value added. 
+		
+		/// <summary>Returns the string value of the Field with the given name if any exist in
+		/// this document, or null.  If multiple fields exist with this name, this
+		/// method returns the first value added.
 		/// </summary>
-		/// <param name="name"></param>
-		/// <returns></returns>
-		public String Get(String name) 
+		public System.String Get(System.String name)
 		{
 			Field field = GetField(name);
 			if (field != null)
@@ -158,162 +162,74 @@ namespace Lucene.Net.Documents
 			else
 				return null;
 		}
-
-		/// <summary>
-		/// Returns an Enumeration of all the fields in a document.
-		/// </summary>
-		/// <returns></returns>
-		public IEnumerable Fields() 
+		
+		/// <summary>Returns an Enumeration of all the fields in a document. </summary>
+		public System.Collections.IEnumerable Fields()
 		{
-			return new DocumentFieldEnumeration(this);
+            return (System.Collections.IEnumerable) fields;
 		}
-
-		/// <summary>
-		/// Returns an array of Field's with the given name.
+		
+		/// <summary> Returns an array of {@link Field}s with the given name.
 		/// This method can return <code>null</code>.
+		/// 
 		/// </summary>
-		/// <param name="name">the name of the field</param>
-		/// <returns>a <code>Field[]</code> array</returns>
-		public Field[] GetFields(String name) 
+		/// <param name="name">the name of the Field
+		/// </param>
+		/// <returns> a <code>Field[]</code> array
+		/// </returns>
+		public Field[] GetFields(System.String name)
 		{
-			ArrayList tempFieldList = new ArrayList();
-			for (DocumentFieldList list = fieldList; list != null; list = list.next) 
+            System.Collections.ArrayList result = new System.Collections.ArrayList();
+			for (int i = 0; i < fields.Count; i++)
 			{
-				if (list.field.Name().Equals(name)) 
+				Field field = (Field) fields[i];
+				if (field.Name().Equals(name))
 				{
-					tempFieldList.Add(list.field);
+					result.Add(field);
 				}
 			}
-			int fieldCount = tempFieldList.Count;
-			if (fieldCount == 0) 
-			{
+			
+			if (result.Count == 0)
 				return null;
-			}
-			else 
-			{
-				return (Field[])tempFieldList.ToArray(typeof(Field));
-			}
+			
+            return (Field[]) result.ToArray(typeof(Field));
 		}
-
-		/// <summary>
-		/// Returns an array of values of the field specified as the method parameter.
+		
+		/// <summary> Returns an array of values of the Field specified as the method parameter.
 		/// This method can return <code>null</code>.
-		/// UnStored fields' values cannot be returned by this method.
+		/// 
 		/// </summary>
-		/// <param name="name">the name of the field</param>
-		/// <returns>a <code>String[]</code> of field values</returns>
-		public String[] GetValues(String name) 
+		/// <param name="name">the name of the Field
+		/// </param>
+		/// <returns> a <code>String[]</code> of Field values
+		/// </returns>
+		public System.String[] GetValues(System.String name)
 		{
 			Field[] namedFields = GetFields(name);
 			if (namedFields == null)
 				return null;
-			String[] values = new String[namedFields.Length];
-			for (int i = 0; i < namedFields.Length; i++) 
+			System.String[] values = new System.String[namedFields.Length];
+			for (int i = 0; i < namedFields.Length; i++)
 			{
 				values[i] = namedFields[i].StringValue();
 			}
 			return values;
 		}
-
-		/// <summary>
-		/// Prints the fields of a document for human consumption.
-		/// </summary>
-		/// <returns></returns>
-		override public String ToString() 
+		
+		/// <summary>Prints the fields of a document for human consumption. </summary>
+		public override System.String ToString()
 		{
-			StringBuilder buffer = new StringBuilder();
+			System.Text.StringBuilder buffer = new System.Text.StringBuilder();
 			buffer.Append("Document<");
-			for (DocumentFieldList list = fieldList; list != null; list = list.next) 
+			for (int i = 0; i < fields.Count; i++)
 			{
-				buffer.Append(list.field.ToString());
-				if (list.next != null)
+				Field field = (Field) fields[i];
+				buffer.Append(field.ToString());
+				if (i != fields.Count - 1)
 					buffer.Append(" ");
 			}
 			buffer.Append(">");
 			return buffer.ToString();
-		}
-	}
-
-
-	[Serializable]
-	sealed class DocumentFieldList 
-	{
-		internal DocumentFieldList(Field f, DocumentFieldList n) 
-		{
-			field = f;
-			next = n;
-		}
-		internal Field field;
-		internal DocumentFieldList next;
-	}
-
-	sealed class DocumentFieldEnumeration : IEnumerable
-	{
-		internal Document doc;
-		internal DocumentFieldEnumeration(Document doc) 
-		{
-			this.doc = doc;
-		}
-
-		/// <summary>
-		/// IEnumerable Interface Implementation:
-		///   Declaration of the GetEnumerator() method 
-		///   required by IEnumerable
-		/// </summary>
-		/// <returns></returns>
-		public IEnumerator GetEnumerator()
-		{
-			return new DocumentFieldEnumerator(doc);
-		}
-
-		class DocumentFieldEnumerator : IEnumerator
-		{
-			bool before;
-			DocumentFieldList fields;
-			Document doc;
-
-			internal DocumentFieldEnumerator(Document doc) 
-			{
-				this.doc = doc;
-				Reset();
-			}
-
-			/// <summary>
-			/// Declare the Reset method required by IEnumerator
-			/// </summary>
-			public void Reset()
-			{
-				before = true;
-				fields = doc.fieldList;
-			}
-
-			/// <summary>
-			/// Declare the Current property required by IEnumerator
-			/// </summary>
-			public object Current
-			{
-				get
-				{
-					return fields.field;
-				}
-			}
-
-			/// <summary>
-			/// Declare the MoveNext method required by IEnumerator
-			/// </summary>
-			/// <returns></returns>
-			public bool MoveNext() 
-			{
-				if (before)
-				{
-					before = false;
-				}
-				else if (fields != null)
-				{
-					fields = fields.next;
-				}
-				return fields == null ? false : true;
-			}
 		}
 	}
 }

@@ -1,215 +1,215 @@
+/*
+ * Copyright 2004 The Apache Software Foundation
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * 
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 using System;
-using Lucene.Net.Index;
-
+using IndexReader = Lucene.Net.Index.IndexReader;
+using Term = Lucene.Net.Index.Term;
 namespace Lucene.Net.Search
 {
-	/* ====================================================================
-	 * The Apache Software License,	Version	1.1
-	 *
-	 * Copyright (c) 2001 The Apache Software Foundation.  All rights
-	 * reserved.
-	 *
-	 * Redistribution and use in source	and	binary forms, with or without
-	 * modification, are permitted provided	that the following conditions
-	 * are met:
-	 *
-	 * 1. Redistributions of source	code must retain the above copyright
-	 *	  notice, this list	of conditions and the following	disclaimer.
-	 *
-	 * 2. Redistributions in binary	form must reproduce	the	above copyright
-	 *	  notice, this list	of conditions and the following	disclaimer in
-	 *	  the documentation	and/or other materials provided	with the
-	 *	  distribution.
-	 *
-	 * 3. The end-user documentation included with the redistribution,
-	 *	  if any, must include the following acknowledgment:
-	 *		 "This product includes	software developed by the
-	 *		  Apache Software Foundation (http://www.apache.org/)."
-	 *	  Alternately, this	acknowledgment may appear in the software itself,
-	 *	  if and wherever such third-party acknowledgments normally	appear.
-	 *
-	 * 4. The names	"Apache" and "Apache Software Foundation" and
-	 *	  "Apache Lucene" must not be used to endorse or promote products
-	 *	  derived from this	software without prior written permission. For
-	 *	  written permission, please contact apache@apache.org.
-	 *
-	 * 5. Products derived from	this software may not be called	"Apache",
-	 *	  "Apache Lucene", nor may "Apache"	appear in their	name, without
-	 *	  prior	written	permission of the Apache Software Foundation.
-	 *
-	 * THIS	SOFTWARE IS	PROVIDED ``AS IS'' AND ANY EXPRESSED OR	IMPLIED
-	 * WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
-	 * OF MERCHANTABILITY AND FITNESS FOR A	PARTICULAR PURPOSE ARE
-	 * DISCLAIMED.	IN NO EVENT	SHALL THE APACHE SOFTWARE FOUNDATION OR
-	 * ITS CONTRIBUTORS	BE LIABLE FOR ANY DIRECT, INDIRECT,	INCIDENTAL,
-	 * SPECIAL,	EXEMPLARY, OR CONSEQUENTIAL	DAMAGES	(INCLUDING,	BUT	NOT
-	 * LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;	LOSS OF
-	 * USE,	DATA, OR PROFITS; OR BUSINESS INTERRUPTION)	HOWEVER	CAUSED AND
-	 * ON ANY THEORY OF	LIABILITY, WHETHER IN CONTRACT,	STRICT LIABILITY,
-	 * OR TORT (INCLUDING NEGLIGENCE OR	OTHERWISE) ARISING IN ANY WAY OUT
-	 * OF THE USE OF THIS SOFTWARE,	EVEN IF	ADVISED	OF THE POSSIBILITY OF
-	 * SUCH	DAMAGE.
-	 * ====================================================================
-	 *
-	 * This	software consists of voluntary contributions made by many
-	 * individuals on behalf of	the	Apache Software	Foundation.	 For more
-	 * information on the Apache Software Foundation, please see
-	 * <http://www.apache.org/>.
-	 */
-
-	/// <summary>
-	///	Subclass of	FilteredTermEnum for enumerating all terms that	are	
-	///	similiar to the	specified filter term.
-	/// <p>Term enumerations are always ordered by Term.CompareTo(). Each term in
-	/// the enumeration is greater than all that precede it.</p>
+	
+	/// <summary>Subclass of FilteredTermEnum for enumerating all terms that are similiar to the specified filter term.
+	/// <p>Term enumerations are always ordered by Term.compareTo().  Each term in
+	/// the enumeration is greater than all that precede it.  
 	/// </summary>
-	public sealed class FuzzyTermEnum : FilteredTermEnum 
+	public sealed class FuzzyTermEnum:FilteredTermEnum
 	{
-		internal double	distance;
-		internal bool fieldMatch = false;
-		internal bool endEnum =	false;
-
-		internal Term searchTerm = null;
-		internal String	field =	"";
-		internal String	text = "";
-		internal int textlen;
-	
-		public FuzzyTermEnum(IndexReader reader, Term term)	: base(reader, term)
+		private void  InitBlock()
 		{
-			searchTerm = term;
-			field =	searchTerm.Field();
-			text = searchTerm.Text();
-			textlen	= text.Length;
-			SetEnum(reader.Terms(new Term(searchTerm.Field(), "")));
-		}
-	
-		/// <summary>
-		/// The termCompare method	in FuzzyTermEnum uses Levenshtein distance to 
-		/// calculate the distance	between	the	given term and the comparing term. 
-		/// </summary>
-		/// <param name="term"></param>
-		/// <returns></returns>
-		protected override bool TermCompare(Term term) 
-		{
-			if (field == term.Field()) 
+			for (int i = 0; i < 1; i++)
 			{
-				String target =	term.Text();
-				int	targetlen =	target.Length;
-				int	dist = EditDistance(text, target, textlen, targetlen);
-				distance = 1 - ((double)dist / (double)Math.Min(textlen, targetlen));
-				return (distance > FUZZY_THRESHOLD);
+				e[i] = new int[1];
 			}
-			endEnum	= true;
-			return false;
 		}
-	
-		public override float Difference() 
-		{
-			return (float)((distance - FUZZY_THRESHOLD)	* SCALE_FACTOR);
-		}
-	
-		public override bool EndEnum() 
+		internal double distance;
+		internal bool endEnum = false;
+		
+		internal Term searchTerm = null;
+		internal System.String field = "";
+		internal System.String text = "";
+		internal int textlen;
+        internal System.String prefix = "";
+        internal int prefixLength = 0;
+        internal float minimumSimilarity;
+        internal double scale_factor;
+		
+		
+        /// <summary> Empty prefix and minSimilarity of 0.5f are used.
+        /// 
+        /// </summary>
+        /// <param name="">reader
+        /// </param>
+        /// <param name="">term
+        /// </param>
+        /// <throws>  IOException </throws>
+        /// <seealso cref="Term, float, int)">
+        /// </seealso>
+        public FuzzyTermEnum(IndexReader reader, Term term):this(reader, term, FuzzyQuery.defaultMinSimilarity, 0)
+        {
+        }
+		
+        /// <summary> This is the standard FuzzyTermEnum with an empty prefix.
+        /// 
+        /// </summary>
+        /// <param name="">reader
+        /// </param>
+        /// <param name="">term
+        /// </param>
+        /// <param name="">minSimilarity
+        /// </param>
+        /// <throws>  IOException </throws>
+        /// <seealso cref="Term, float, int)">
+        /// </seealso>
+        public FuzzyTermEnum(IndexReader reader, Term term, float minSimilarity):this(reader, term, minSimilarity, 0)
+        {
+        }
+		
+        /// <summary> Constructor for enumeration of all terms from specified <code>reader</code> which share a prefix of
+        /// length <code>prefixLength</code> with <code>term</code> and which have a fuzzy similarity &gt;
+        /// <code>minSimilarity</code>. 
+        /// 
+        /// </summary>
+        /// <param name="reader">Delivers terms.
+        /// </param>
+        /// <param name="term">Pattern term.
+        /// </param>
+        /// <param name="minSimilarity">Minimum required similarity for terms from the reader. Default value is 0.5f.
+        /// </param>
+        /// <param name="prefixLength">Length of required common prefix. Default value is 0.
+        /// </param>
+        /// <throws>  IOException </throws>
+        public FuzzyTermEnum(IndexReader reader, Term term, float minSimilarity, int prefixLength):base()
+        {
+            InitBlock();
+            minimumSimilarity = minSimilarity;
+            scale_factor = 1.0f / (1.0f - minimumSimilarity);
+            searchTerm = term;
+            field = searchTerm.Field();
+            text = searchTerm.Text();
+            textlen = text.Length;
+            if (prefixLength > 0 && prefixLength < textlen)
+            {
+                this.prefixLength = prefixLength;
+                prefix = text.Substring(0, (prefixLength) - (0));
+                text = text.Substring(prefixLength);
+                textlen = text.Length;
+            }
+            SetEnum(reader.Terms(new Term(searchTerm.Field(), prefix)));
+        }
+		
+        /// <summary>The termCompare method in FuzzyTermEnum uses Levenshtein distance to 
+        /// calculate the distance between the given term and the comparing term. 
+        /// </summary>
+        protected internal override bool TermCompare(Term term)
+        {
+            System.String termText = term.Text();
+            if ((System.Object) field == (System.Object) term.Field() && termText.StartsWith(prefix))
+            {
+                System.String target = termText.Substring(prefixLength);
+                int targetlen = target.Length;
+                int dist = EditDistance(text, target, textlen, targetlen);
+                distance = 1 - ((double) dist / (double) System.Math.Min(textlen, targetlen));
+                return (distance > minimumSimilarity);
+            }
+            endEnum = true;
+            return false;
+        }
+		
+        public override float Difference()
+        {
+            return (float) ((distance - minimumSimilarity) * scale_factor);
+        }
+		
+		public override bool EndEnum()
 		{
 			return endEnum;
 		}
-	
-		/******************************
-		 * Compute Levenshtein distance
-		 ******************************/
-	
-		public const double	FUZZY_THRESHOLD	= 0.5;
-		public const double	SCALE_FACTOR = 1.0f	/ (1.0f	- FUZZY_THRESHOLD);
-	
-		/// <summary>
-		/// Finds and returns the smallest	of three integers 
+		
+		/// <summary>***************************
+		/// Compute Levenshtein distance
+		/// ****************************
 		/// </summary>
-		/// <param name="a"></param>
-		/// <param name="b"></param>
-		/// <param name="c"></param>
-		/// <returns></returns>
-		private	int Min(int a, int b, int c)	
+		
+		/// <summary>Finds and returns the smallest of three integers </summary>
+		private static int Min(int a, int b, int c)
 		{
-			int	t =	(a < b)	? a	: b;
-			return (t <	c) ? t : c;
+			int t = (a < b) ? a : b;
+			return (t < c) ? t : c;
 		}
-	
-		/// <summary>
-		/// This	static array saves us from the time	required to	create a new array
+		
+		/// <summary> This static array saves us from the time required to create a new array
 		/// everytime editDistance is called.
-		/// 
 		/// </summary>
-		private	int[][] e =	null;
-	
-		/// <summary>
-		/// Levenshtein distance also known as	edit distance is a measure of similiarity
-		/// between two strings where the distance	is measured	as the number of character 
-		/// deletions,	insertions or substitutions	required to	transform one string to	
+		private int[][] e = new int[1][];
+		
+		/// <summary>Levenshtein distance also known as edit distance is a measure of similiarity
+		/// between two strings where the distance is measured as the number of character 
+		/// deletions, insertions or substitutions required to transform one string to 
 		/// the other string. 
-		/// <p>This method	takes in four parameters; two strings and their	respective 
-		/// lengths to	compute	the	Levenshtein	distance between the two strings.
-		/// The result	is returned	as an integer.</p>
+		/// <p>This method takes in four parameters; two strings and their respective 
+		/// lengths to compute the Levenshtein distance between the two strings.
+		/// The result is returned as an integer.
 		/// </summary>
-		/// <param name="s"></param>
-		/// <param name="t"></param>
-		/// <param name="n"></param>
-		/// <param name="m"></param>
-		/// <returns></returns>
-		private	int	EditDistance(String	s, String t, int n,	int	m) 
+		private int EditDistance(System.String s, System.String t, int n, int m)
 		{
-			if (e == null || e.Length <= n || e[0].Length <= m) 
+			if (e.Length <= n || e[0].Length <= m)
 			{
-				int l1, l2;
-				
-				if (e == null)
+				int[][] tmpArray = new int[System.Math.Max(e.Length, n + 1)][];
+				for (int i = 0; i < System.Math.Max(e.Length, n + 1); i++)
 				{
-					l1 = n+1;
-					l2 = m+1;
+					tmpArray[i] = new int[System.Math.Max(e[0].Length, m + 1)];
 				}
-				else
-				{
-					l1 = Math.Max(e.Length, n+1);
-					l2 = Math.Max(e[0].Length,	m+1);
-				}
-
-				e =	new	int[l1][];
-				for (int i1 = 0; i1 < l1; i1++)
-				{
-					e[i1] = new int[l2];
-				}
+				e = tmpArray;
 			}
-			int[][]	d =	e; // matrix
-				int	i; // iterates through s
-			int	j; // iterates through t
+			int[][] d = e; // matrix
+			int i2; // iterates through s
+			int j; // iterates through t
 			char s_i; // ith character of s
-		
-			if (n == 0)	return m;
-			if (m == 0)	return n;
-		
-			// init	matrix d
-			for	(i = 0;	i <= n;	i++) d[i][0] = i;
-			for	(j = 0;	j <= m;	j++) d[0][j] = j;
-		
-			// start computing edit	distance
-			for	(i = 1;	i <= n;	i++) 
+			
+			if (n == 0)
+				return m;
+			if (m == 0)
+				return n;
+			
+			// init matrix d
+			for (i2 = 0; i2 <= n; i2++)
+				d[i2][0] = i2;
+			for (j = 0; j <= m; j++)
+				d[0][j] = j;
+			
+			// start computing edit distance
+			for (i2 = 1; i2 <= n; i2++)
 			{
-				s_i	= s[i - 1];
-				for	(j = 1;	j <= m;	j++) 
+				s_i = s[i2 - 1];
+				for (j = 1; j <= m; j++)
 				{
-					if (s_i	!= t[j-1])
-						d[i][j]	= Min(d[i-1][j], d[i][j-1],	d[i-1][j-1])+1;
-					else d[i][j] = Min(d[i-1][j]+1,	d[i][j-1]+1, d[i-1][j-1]);
+					if (s_i != t[j - 1])
+						d[i2][j] = Min(d[i2 - 1][j], d[i2][j - 1], d[i2 - 1][j - 1]) + 1;
+					else
+						d[i2][j] = Min(d[i2 - 1][j] + 1, d[i2][j - 1] + 1, d[i2 - 1][j - 1]);
 				}
 			}
-		
+			
 			// we got the result!
 			return d[n][m];
 		}
-	
-		public override void Close() 
+		
+		public override void  Close()
 		{
 			base.Close();
 			searchTerm = null;
-			field	= null;
+			field = null;
 			text = null;
 		}
 	}

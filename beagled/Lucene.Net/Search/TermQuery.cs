@@ -1,239 +1,218 @@
+/*
+ * Copyright 2004 The Apache Software Foundation
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * 
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 using System;
-using System.Text;
-using Lucene.Net.Util;
-using Lucene.Net.Index;
-
+using IndexReader = Lucene.Net.Index.IndexReader;
+using Term = Lucene.Net.Index.Term;
+using TermDocs = Lucene.Net.Index.TermDocs;
 namespace Lucene.Net.Search
 {
-	/* ====================================================================
-	 * The Apache Software License, Version 1.1
-	 *
-	 * Copyright (c) 2001 The Apache Software Foundation.  All rights
-	 * reserved.
-	 *
-	 * Redistribution and use in source and binary forms, with or without
-	 * modification, are permitted provided that the following conditions
-	 * are met:
-	 *
-	 * 1. Redistributions of source code must retain the above copyright
-	 *    notice, this list of conditions and the following disclaimer.
-	 *
-	 * 2. Redistributions in binary form must reproduce the above copyright
-	 *    notice, this list of conditions and the following disclaimer in
-	 *    the documentation and/or other materials provided with the
-	 *    distribution.
-	 *
-	 * 3. The end-user documentation included with the redistribution,
-	 *    if any, must include the following acknowledgment:
-	 *       "This product includes software developed by the
-	 *        Apache Software Foundation (http://www.apache.org/)."
-	 *    Alternately, this acknowledgment may appear in the software itself,
-	 *    if and wherever such third-party acknowledgments normally appear.
-	 *
-	 * 4. The names "Apache" and "Apache Software Foundation" and
-	 *    "Apache Lucene" must not be used to endorse or promote products
-	 *    derived from this software without prior written permission. For
-	 *    written permission, please contact apache@apache.org.
-	 *
-	 * 5. Products derived from this software may not be called "Apache",
-	 *    "Apache Lucene", nor may "Apache" appear in their name, without
-	 *    prior written permission of the Apache Software Foundation.
-	 *
-	 * THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESSED OR IMPLIED
-	 * WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
-	 * OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
-	 * DISCLAIMED.  IN NO EVENT SHALL THE APACHE SOFTWARE FOUNDATION OR
-	 * ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
-	 * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
-	 * LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF
-	 * USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
-	 * ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
-	 * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT
-	 * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
-	 * SUCH DAMAGE.
-	 * ====================================================================
-	 *
-	 * This software consists of voluntary contributions made by many
-	 * individuals on behalf of the Apache Software Foundation.  For more
-	 * information on the Apache Software Foundation, please see
-	 * <http://www.apache.org/>.
-	 */
-
-	/// <summary>
-	/// A Query that matches documents containing a term.
-	/// This may be combined with other terms with a BooleanQuery.
+	
+	/// <summary>A Query that matches documents containing a term.
+	/// This may be combined with other terms with a {@link BooleanQuery}.
 	/// </summary>
 	[Serializable]
-	public class TermQuery : Query 
+	public class TermQuery:Query
 	{
 		private Term term;
-
+		
 		[Serializable]
-		private class TermWeight : Weight 
+		private class TermWeight : Weight
 		{
+			private void  InitBlock(TermQuery enclosingInstance)
+			{
+				this.enclosingInstance = enclosingInstance;
+			}
+			private TermQuery enclosingInstance;
+            virtual public Query Query
+            {
+                get
+                {
+                    return Enclosing_Instance;
+                }
+				
+            }
+            virtual public float Value
+            {
+                get
+                {
+                    return value_Renamed;
+                }
+				
+            }
+            public TermQuery Enclosing_Instance
+			{
+				get
+				{
+					return enclosingInstance;
+				}
+				
+			}
 			private Searcher searcher;
-			private float value;
+			private float value_Renamed;
 			private float idf;
 			private float queryNorm;
 			private float queryWeight;
-			private TermQuery termQuery;
-
-			public TermWeight(Searcher searcher, TermQuery termQuery) 
+			
+			public TermWeight(TermQuery enclosingInstance, Searcher searcher)
 			{
+				InitBlock(enclosingInstance);
 				this.searcher = searcher;
-				this.termQuery = termQuery;
 			}
-
-			public Query GetQuery() { return termQuery; }
-			public float GetValue() { return value; }
-
-			public float SumOfSquaredWeights()  
+			
+			public override System.String ToString()
 			{
-				idf = searcher.GetSimilarity().Idf(termQuery.term, searcher); // compute idf
-				queryWeight = idf * termQuery.GetBoost();             // compute query weight
-				return queryWeight * queryWeight;           // square it
+				return "weight(" + Enclosing_Instance + ")";
 			}
-
-			public void Normalize(float queryNorm) 
+			
+			public virtual float SumOfSquaredWeights()
+			{
+				idf = Enclosing_Instance.GetSimilarity(searcher).Idf(Enclosing_Instance.term, searcher); // compute idf
+				queryWeight = idf * Enclosing_Instance.GetBoost(); // compute query weight
+				return queryWeight * queryWeight; // square it
+			}
+			
+			public virtual void  Normalize(float queryNorm)
 			{
 				this.queryNorm = queryNorm;
-				queryWeight *= queryNorm;                   // normalize query weight
-				value = queryWeight * idf;                  // idf for document 
+				queryWeight *= queryNorm; // normalize query weight
+				value_Renamed = queryWeight * idf; // idf for document 
 			}
-
-			public Scorer Scorer(IndexReader reader)  
+			
+			public virtual Scorer Scorer(IndexReader reader)
 			{
-				TermDocs termDocs = reader.TermDocs(termQuery.term);
-      
+				TermDocs termDocs = reader.TermDocs(Enclosing_Instance.term);
+				
 				if (termDocs == null)
 					return null;
-      
-				return new TermScorer(this, termDocs, searcher.GetSimilarity(),
-					reader.Norms(termQuery.term.Field()));
+				
+				return new TermScorer(this, termDocs, Enclosing_Instance.GetSimilarity(searcher), reader.Norms(Enclosing_Instance.term.Field()));
 			}
-
-			public Explanation Explain(IndexReader reader, int doc)
+			
+			public virtual Explanation Explain(IndexReader reader, int doc)
 			{
-
+				
 				Explanation result = new Explanation();
-				result.SetDescription("weight("+GetQuery()+" in "+doc+"), product of:");
-
-				Explanation idfExpl =
-					new Explanation(idf, "idf(docFreq=" + searcher.DocFreq(termQuery.term) + ")");
-
+				result.SetDescription("weight(" + Query + " in " + doc + "), product of:");
+				
+				Explanation idfExpl = new Explanation(idf, "idf(docFreq=" + searcher.DocFreq(Enclosing_Instance.term) + ")");
+				
 				// explain query weight
 				Explanation queryExpl = new Explanation();
-				queryExpl.SetDescription("queryWeight(" + GetQuery() + "), product of:");
-
-				Explanation boostExpl = new Explanation(termQuery.GetBoost(), "boost");
-				if (termQuery.GetBoost() != 1.0f)
+				queryExpl.SetDescription("queryWeight(" + Query + "), product of:");
+				
+				Explanation boostExpl = new Explanation(Enclosing_Instance.GetBoost(), "boost");
+				if (Enclosing_Instance.GetBoost() != 1.0f)
 					queryExpl.AddDetail(boostExpl);
 				queryExpl.AddDetail(idfExpl);
-      
-				Explanation queryNormExpl = new Explanation(queryNorm,"queryNorm");
+				
+				Explanation queryNormExpl = new Explanation(queryNorm, "queryNorm");
 				queryExpl.AddDetail(queryNormExpl);
-      
-				queryExpl.SetValue(boostExpl.GetValue() *
-					idfExpl.GetValue() *
-					queryNormExpl.GetValue());
-
+				
+				queryExpl.SetValue(boostExpl.GetValue() * idfExpl.GetValue() * queryNormExpl.GetValue());
+				
 				result.AddDetail(queryExpl);
-     
-				// explain field weight
-				String field = termQuery.term.Field();
+				
+				// explain Field weight
+				System.String field = Enclosing_Instance.term.Field();
 				Explanation fieldExpl = new Explanation();
-				fieldExpl.SetDescription("fieldWeight("+termQuery.term+" in "+doc+
-					"), product of:");
-
+				fieldExpl.SetDescription("fieldWeight(" + Enclosing_Instance.term + " in " + doc + "), product of:");
+				
 				Explanation tfExpl = Scorer(reader).Explain(doc);
 				fieldExpl.AddDetail(tfExpl);
 				fieldExpl.AddDetail(idfExpl);
-
+				
 				Explanation fieldNormExpl = new Explanation();
-				fieldNormExpl.SetValue(Similarity.DecodeNorm(reader.Norms(field)[doc]));
-				fieldNormExpl.SetDescription("fieldNorm(field="+field+", doc="+doc+")");
+				byte[] fieldNorms = reader.Norms(field);
+				float fieldNorm = fieldNorms != null?Similarity.DecodeNorm(fieldNorms[doc]):0.0f;
+				fieldNormExpl.SetValue(fieldNorm);
+				fieldNormExpl.SetDescription("fieldNorm(Field=" + field + ", doc=" + doc + ")");
 				fieldExpl.AddDetail(fieldNormExpl);
-
-				fieldExpl.SetValue(tfExpl.GetValue() *
-					idfExpl.GetValue() *
-					fieldNormExpl.GetValue());
-      
+				
+				fieldExpl.SetValue(tfExpl.GetValue() * idfExpl.GetValue() * fieldNormExpl.GetValue());
+				
 				result.AddDetail(fieldExpl);
-
+				
 				// combine them
 				result.SetValue(queryExpl.GetValue() * fieldExpl.GetValue());
-
+				
 				if (queryExpl.GetValue() == 1.0f)
 					return fieldExpl;
-
+				
 				return result;
 			}
 		}
-
-		/// <summary>
-		/// Constructs a query for the term <code>t</code>.
-		/// </summary>
-		/// <param name="t"></param>
-		public TermQuery(Term t) 
+		
+		/// <summary>Constructs a query for the term <code>t</code>. </summary>
+		public TermQuery(Term t)
 		{
 			term = t;
 		}
-
-		/// <summary>
-		/// Returns the term of this query.
-		/// </summary>
-		/// <returns></returns>
-		public Term GetTerm() { return term; }
-
-		public override Weight CreateWeight(Searcher searcher) 
+		
+		/// <summary>Returns the term of this query. </summary>
+		public virtual Term GetTerm()
 		{
-			return new TermWeight(searcher, this);
+			return term;
 		}
-
-		/// <summary>
-		/// Prints a user-readable version of this query.
-		/// </summary>
-		/// <param name="field"></param>
-		/// <returns></returns>
-		public override String ToString(String field) 
+		
+		protected internal override Weight CreateWeight(Searcher searcher)
 		{
-			StringBuilder buffer = new StringBuilder();
-			if (!term.Field().Equals(field)) 
+			return new TermWeight(this, searcher);
+		}
+		
+		/// <summary>Prints a user-readable version of this query. </summary>
+		public override System.String ToString(System.String field)
+		{
+			System.Text.StringBuilder buffer = new System.Text.StringBuilder();
+			if (!term.Field().Equals(field))
 			{
 				buffer.Append(term.Field());
 				buffer.Append(":");
 			}
 			buffer.Append(term.Text());
-			if (GetBoost() != 1.0f) 
+			if (GetBoost() != 1.0f)
 			{
-				buffer.Append("^");
-				buffer.Append(Number.ToString(GetBoost()));
+                System.Globalization.NumberFormatInfo nfi = new System.Globalization.CultureInfo("en-US", false).NumberFormat;
+                nfi.NumberDecimalDigits = 1;
+
+                buffer.Append("^");
+                buffer.Append(GetBoost().ToString("N", nfi));
+
+				//buffer.Append("^");
+				//buffer.Append(GetBoost().ToString());
 			}
 			return buffer.ToString();
 		}
-
-		/// <summary>
-		/// Returns true iff <code>o</code> is equal to this.
-		/// </summary>
-		/// <param name="o"></param>
-		/// <returns></returns>
-		public override bool Equals(Object o) 
+		
+		/// <summary>Returns true iff <code>o</code> is equal to this. </summary>
+		public  override bool Equals(System.Object o)
 		{
 			if (!(o is TermQuery))
 				return false;
-			TermQuery other = (TermQuery)o;
-			return (this.GetBoost() == other.GetBoost())
-				&& this.term.Equals(other.term);
+			TermQuery other = (TermQuery) o;
+			return (this.GetBoost() == other.GetBoost()) && this.term.Equals(other.term);
 		}
-
-		/// <summary>
-		/// Returns a hash code value for this object.
-		/// </summary>
-		/// <returns></returns>
-		public override int GetHashCode() 
+		
+		/// <summary>Returns a hash code value for this object.</summary>
+		public override int GetHashCode()
 		{
-			return BitConverter.ToInt32(BitConverter.GetBytes(GetBoost()), 0)
-				^ term.GetHashCode();
+            return BitConverter.ToInt32(BitConverter.GetBytes(GetBoost()), 0) ^ term.GetHashCode();
+		}
+		override public System.Object Clone()
+		{
+			return new TermQuery (this.term);
 		}
 	}
 }

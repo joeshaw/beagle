@@ -1,130 +1,112 @@
+/*
+ * Copyright 2004 The Apache Software Foundation
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * 
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 using System;
-using System.IO;
-using System.Collections;
-using Lucene.Net.Index;
-
+using System.Runtime.InteropServices;
+using IndexReader = Lucene.Net.Index.IndexReader;
 namespace Lucene.Net.Search
 {
-	/* ====================================================================
-	 * The Apache Software License, Version 1.1
-	 *
-	 * Copyright (c) 2001 The Apache Software Foundation.  All rights
-	 * reserved.
-	 *
-	 * Redistribution and use in source and binary forms, with or without
-	 * modification, are permitted provided that the following conditions
-	 * are met:
-	 *
-	 * 1. Redistributions of source code must retain the above copyright
-	 *    notice, this list of conditions and the following disclaimer.
-	 *
-	 * 2. Redistributions in binary form must reproduce the above copyright
-	 *    notice, this list of conditions and the following disclaimer in
-	 *    the documentation and/or other materials provided with the
-	 *    distribution.
-	 *
-	 * 3. The end-user documentation included with the redistribution,
-	 *    if any, must include the following acknowledgment:
-	 *       "This product includes software developed by the
-	 *        Apache Software Foundation (http://www.apache.org/)."
-	 *    Alternately, this acknowledgment may appear in the software itself,
-	 *    if and wherever such third-party acknowledgments normally appear.
-	 *
-	 * 4. The names "Apache" and "Apache Software Foundation" and
-	 *    "Apache Lucene" must not be used to endorse or promote products
-	 *    derived from this software without prior written permission. For
-	 *    written permission, please contact apache@apache.org.
-	 *
-	 * 5. Products derived from this software may not be called "Apache",
-	 *    "Apache Lucene", nor may "Apache" appear in their name, without
-	 *    prior written permission of the Apache Software Foundation.
-	 *
-	 * THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESSED OR IMPLIED
-	 * WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
-	 * OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
-	 * DISCLAIMED.  IN NO EVENT SHALL THE APACHE SOFTWARE FOUNDATION OR
-	 * ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
-	 * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
-	 * LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF
-	 * USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
-	 * ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
-	 * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT
-	 * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
-	 * SUCH DAMAGE.
-	 * ====================================================================
-	 *
-	 * This software consists of voluntary contributions made by many
-	 * individuals on behalf of the Apache Software Foundation.  For more
-	 * information on the Apache Software Foundation, please see
-	 * <http://www.apache.org/>.
-	 */
-
-	/// <summary>
-	/// Constrains search results to only match those which also match a provided
+	
+	/// <summary>Constrains search results to only match those which also match a provided
 	/// query.  Results are cached, so that searches after the first on the same
 	/// index using this filter are much faster.
-	/// <p> This could be used, for example, with a RangeQuery on a suitably
-	/// formatted date field to implement date filtering.  One could re-use a single
+	/// 
+	/// <p> This could be used, for example, with a {@link RangeQuery} on a suitably
+	/// formatted date Field to implement date filtering.  One could re-use a single
 	/// QueryFilter that matches, e.g., only documents modified within the last
 	/// week.  The QueryFilter and RangeQuery would only need to be reconstructed
-	/// once per day.</p>
+	/// once per day.
+	/// 
 	/// </summary>
+	/// <version>  $Id$
+	/// </version>
 	[Serializable]
-	public class QueryFilter : Filter 
+	public class QueryFilter:Filter
 	{
-		private Query query;
-		[NonSerialized]
-		private Hashtable cache = null;
-
-		class QueryFilterHitCollector : HitCollector 
+		private class AnonymousClassHitCollector:HitCollector
 		{
-			BitArray bits;
-			internal QueryFilterHitCollector(BitArray bits)
+			public AnonymousClassHitCollector(System.Collections.BitArray bits, QueryFilter enclosingInstance)
+			{
+				InitBlock(bits, enclosingInstance);
+			}
+			private void  InitBlock(System.Collections.BitArray bits, QueryFilter enclosingInstance)
 			{
 				this.bits = bits;
+				this.enclosingInstance = enclosingInstance;
 			}
-			public override void Collect(int doc, float score) 
+			private System.Collections.BitArray bits;
+			private QueryFilter enclosingInstance;
+			public QueryFilter Enclosing_Instance
 			{
-				bits.Set(doc, true);                          // set bit for hit
+				get
+				{
+					return enclosingInstance;
+				}
+				
+			}
+			public override void  Collect(int doc, float score)
+			{
+				bits.Set(doc, true); // set bit for hit
 			}
 		}
-
-		/// <summary>
-		/// Constructs a filter which only matches documents matching
+		private Query query;
+		[NonSerialized]
+		private System.Collections.Hashtable cache = null;
+		
+		/// <summary>Constructs a filter which only matches documents matching
 		/// <code>query</code>.
 		/// </summary>
-		/// <param name="query"></param>
-		public QueryFilter(Query query) 
+		public QueryFilter(Query query)
 		{
 			this.query = query;
 		}
-
-		public override BitArray Bits(IndexReader reader) 
+		
+		public override System.Collections.BitArray Bits(IndexReader reader)
 		{
+			
 			if (cache == null)
 			{
-				cache = new Hashtable();
+				cache = new System.Collections.Hashtable();
 			}
 			
-			lock (cache) 
-			{                        // check cache
-				BitArray cached = (BitArray)cache[reader];
+			lock (cache.SyncRoot)
+			{
+				// check cache
+				System.Collections.BitArray cached = (System.Collections.BitArray) cache[reader];
 				if (cached != null)
+				{
 					return cached;
+				}
 			}
-
-			BitArray bits = new BitArray(reader.MaxDoc());
-
-			new IndexSearcher(reader).Search(query, new QueryFilterHitCollector(bits));
-                                     
-
-			lock (cache) 
-			{                        
+			
+			System.Collections.BitArray bits = new System.Collections.BitArray((reader.MaxDoc() % 64 == 0?reader.MaxDoc() / 64:reader.MaxDoc() / 64 + 1) * 64);
+			
+			new IndexSearcher(reader).Search(query, new AnonymousClassHitCollector(bits, this));
+			
+			lock (cache.SyncRoot)
+			{
 				// update cache
-				cache.Add(reader, bits);
+				cache[reader] = bits;
 			}
-
+			
 			return bits;
+		}
+		
+		public override System.String ToString()
+		{
+			return "QueryFilter(" + query + ")";
 		}
 	}
 }

@@ -1,109 +1,64 @@
+/*
+ * Copyright 2004 The Apache Software Foundation
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * 
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 using System;
-using System.IO;
-using System.Collections;
-
 namespace Lucene.Net.Analysis
 {
-	/* ====================================================================
-	 * The Apache Software License, Version 1.1
-	 *
-	 * Copyright (c) 2001 The Apache Software Foundation.  All rights
-	 * reserved.
-	 *
-	 * Redistribution and use in source and binary forms, with or without
-	 * modification, are permitted provided that the following conditions
-	 * are met:
-	 *
-	 * 1. Redistributions of source code must retain the above copyright
-	 *    notice, this list of conditions and the following disclaimer.
-	 *
-	 * 2. Redistributions in binary form must reproduce the above copyright
-	 *    notice, this list of conditions and the following disclaimer in
-	 *    the documentation and/or other materials provided with the
-	 *    distribution.
-	 *
-	 * 3. The end-user documentation included with the redistribution,
-	 *    if any, must include the following acknowledgment:
-	 *       "This product includes software developed by the
-	 *        Apache Software Foundation (http://www.apache.org/)."
-	 *    Alternately, this acknowledgment may appear in the software itself,
-	 *    if and wherever such third-party acknowledgments normally appear.
-	 *
-	 * 4. The names "Apache" and "Apache Software Foundation" and
-	 *    "Apache Lucene" must not be used to endorse or promote products
-	 *    derived from this software without prior written permission. For
-	 *    written permission, please contact apache@apache.org.
-	 *
-	 * 5. Products derived from this software may not be called "Apache",
-	 *    "Apache Lucene", nor may "Apache" appear in their name, without
-	 *    prior written permission of the Apache Software Foundation.
-	 *
-	 * THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESSED OR IMPLIED
-	 * WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
-	 * OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
-	 * DISCLAIMED.  IN NO EVENT SHALL THE APACHE SOFTWARE FOUNDATION OR
-	 * ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
-	 * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
-	 * LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF
-	 * USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
-	 * ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
-	 * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT
-	 * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
-	 * SUCH DAMAGE.
-	 * ====================================================================
-	 *
-	 * This software consists of voluntary contributions made by many
-	 * individuals on behalf of the Apache Software Foundation.  For more
-	 * information on the Apache Software Foundation, please see
-	 * <http://www.apache.org/>.
-	 */
 	
-	/// <summary>
-	/// This analyzer is used to facilitate scenarios where different
+	/// <summary> This analyzer is used to facilitate scenarios where different
 	/// fields require different analysis techniques.  Use {@link #addAnalyzer}
-	/// to add a non-default analyzer on a field name basis.
-	/// See {@link TestPerFieldAnalzyerWrapper} for example usage.
+	/// to add a non-default analyzer on a Field name basis.
+	/// See TestPerFieldAnalyzerWrapper.java for example usage.
 	/// </summary>
-	public class PerFieldAnalyzerWrapper : Analyzer 
+	public class PerFieldAnalyzerWrapper:Analyzer
 	{
 		private Analyzer defaultAnalyzer;
-		private Hashtable analyzerMap = new Hashtable();
-
-
-		/// <summary>
-		/// Constructs with default analyzer.
+		private System.Collections.IDictionary analyzerMap = new System.Collections.Hashtable();
+		
+		
+		/// <summary> Constructs with default analyzer.
+		/// 
 		/// </summary>
-		/// <param name="defaultAnalyzer">
-		/// Any fields not specifically
+		/// <param name="defaultAnalyzer">Any fields not specifically
 		/// defined to use a different analyzer will use the one provided here.
-		///</param>
-		public PerFieldAnalyzerWrapper(Analyzer defaultAnalyzer) 
+		/// </param>
+		public PerFieldAnalyzerWrapper(Analyzer defaultAnalyzer)
 		{
 			this.defaultAnalyzer = defaultAnalyzer;
 		}
-
-		/// <summary>
-		/// Defines an analyzer to use for the specified field.
+		
+		/// <summary> Defines an analyzer to use for the specified Field.
+		/// 
 		/// </summary>
-		/// <param name="fieldName">field name requiring a non-default analyzer.</param>
-		/// <param name="analyzer">non-default analyzer to use for field</param>
-		public void AddAnalyzer(String fieldName, Analyzer analyzer) 
+		/// <param name="fieldName">Field name requiring a non-default analyzer.
+		/// </param>
+		/// <param name="analyzer">non-default analyzer to use for Field
+		/// </param>
+		public virtual void  AddAnalyzer(System.String fieldName, Analyzer analyzer)
 		{
-			try
-			{
-				analyzerMap.Add(fieldName, analyzer);
-			}
-			catch(Exception){}
+			analyzerMap[fieldName] = analyzer;
 		}
 
-		public override TokenStream TokenStream(String fieldName, TextReader reader) 
+		public override TokenStream TokenStream(System.String fieldName, System.IO.TextReader reader)
 		{
 			Analyzer analyzer = (Analyzer) analyzerMap[fieldName];
-			if (analyzer == null) 
+			if (analyzer == null)
 			{
 				analyzer = defaultAnalyzer;
 			}
-
+			
 			return analyzer.TokenStream(fieldName, reader);
 		}
 	}

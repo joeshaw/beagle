@@ -1,519 +1,707 @@
+/*
+ * Copyright 2004 The Apache Software Foundation
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * 
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 using System;
-//using System.IO;
-using System.Collections;
-using System.Runtime.CompilerServices;
-using Lucene.Net.Store;
-using Lucene.Net.Documents;
-
+using Document = Lucene.Net.Documents.Document;
+using Field = Lucene.Net.Documents.Field;
+using Similarity = Lucene.Net.Search.Similarity;
+using Directory = Lucene.Net.Store.Directory;
+using FSDirectory = Lucene.Net.Store.FSDirectory;
+using Lock = Lucene.Net.Store.Lock;
 namespace Lucene.Net.Index
 {
-	/* ====================================================================
-	 * The Apache Software License, Version 1.1
-	 *
-	 * Copyright (c) 2001 The Apache Software Foundation.  All rights
-	 * reserved.
-	 *
-	 * Redistribution and use in source and binary forms, with or without
-	 * modification, are permitted provided that the following conditions
-	 * are met:
-	 *
-	 * 1. Redistributions of source code must retain the above copyright
-	 *    notice, this list of conditions and the following disclaimer.
-	 *
-	 * 2. Redistributions in binary form must reproduce the above copyright
-	 *    notice, this list of conditions and the following disclaimer in
-	 *    the documentation and/or other materials provided with the
-	 *    distribution.
-	 *
-	 * 3. The end-user documentation included with the redistribution,
-	 *    if any, must include the following acknowledgment:
-	 *       "This product includes software developed by the
-	 *        Apache Software Foundation (http://www.apache.org/)."
-	 *    Alternately, this acknowledgment may appear in the software itself,
-	 *    if and wherever such third-party acknowledgments normally appear.
-	 *
-	 * 4. The names "Apache" and "Apache Software Foundation" and
-	 *    "Apache Lucene" must not be used to endorse or promote products
-	 *    derived from this software without prior written permission. For
-	 *    written permission, please contact apache@apache.org.
-	 *
-	 * 5. Products derived from this software may not be called "Apache",
-	 *    "Apache Lucene", nor may "Apache" appear in their name, without
-	 *    prior written permission of the Apache Software Foundation.
-	 *
-	 * THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESSED OR IMPLIED
-	 * WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
-	 * OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
-	 * DISCLAIMED.  IN NO EVENT SHALL THE APACHE SOFTWARE FOUNDATION OR
-	 * ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
-	 * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
-	 * LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF
-	 * USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
-	 * ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
-	 * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT
-	 * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
-	 * SUCH DAMAGE.
-	 * ====================================================================
-	 *
-	 * This software consists of voluntary contributions made by many
-	 * individuals on behalf of the Apache Software Foundation.  For more
-	 * information on the Apache Software Foundation, please see
-	 * <http://www.apache.org/>.
-	 */
-
-	/// <summary>
-	/// IndexReader is an abstract class, providing an interface for accessing an
+	
+	/// <summary>IndexReader is an abstract class, providing an interface for accessing an
 	/// index.  Search of an index is done entirely through this abstract interface,
 	/// so that any subclass which implements it is searchable.
 	/// <p> Concrete subclasses of IndexReader are usually constructed with a call to
-	/// the static method Open.
-	/// </p>
+	/// the static method {@link #open}.
 	/// <p> For efficiency, in this API documents are often referred to via
 	/// <i>document numbers</i>, non-negative integers which each name a unique
 	/// document in the index.  These document numbers are ephemeral--they may change
 	/// as documents are added to and deleted from an index.  Clients should thus not
-	/// rely on a given document having the same number between sessions. 
-	/// </p>
+	/// rely on a given document having the same number between sessions.
 	/// </summary>
-	public abstract class IndexReader 
+	/// <author>  Doug Cutting
+	/// </author>
+	/// <version>  $Id$
+	/// </version>
+	public abstract class IndexReader
 	{
-		protected IndexReader(Lucene.Net.Store.Directory directory) 
+		private class AnonymousClassWith : Lock.With
 		{
-			this.directory = directory;
-			segmentInfosAge = Int64.MaxValue;
-		}
-
-		/// <summary>
-		/// Release the write lock, if needed.
-		/// </summary>
-		~IndexReader()  
-		{
-			if (writeLock != null) 
-			{
-				writeLock.Release();                        // release write lock
-				writeLock = null;
-			}
-		}
-
-		private Lucene.Net.Store.Directory directory;
-		private Lock writeLock;
-		
-		//used to determine whether index has chaged since reader was opened
-		private Int64 segmentInfosAge;
-
-		/// <summary>
-		/// Returns an IndexReader reading the index in an FSDirectory in the named path.
-		/// </summary>
-		/// <param name="path"></param>
-		/// <returns></returns>
-		public static IndexReader Open(String path)  
-		{
-			return Open(FSDirectory.GetDirectory(path, false));
-		}
-
-		/// <summary>
-		/// Returns an IndexReader reading the index in an FSDirectory in the named path.
-		/// </summary>
-		/// <param name="path"></param>
-		/// <returns></returns>
-		public static IndexReader Open(System.IO.FileInfo path)  
-		{
-			return Open(FSDirectory.GetDirectory(path.FullName, false));
-		}
-
-		internal class IndexReaderLockWith : Lock.With
-		{
-			Lucene.Net.Store.Directory directory;
-			internal IndexReaderLockWith(Lock _lock, long lockTimeOut, Lucene.Net.Store.Directory directory) : base(_lock, lockTimeOut)
+			private void  InitBlock(Lucene.Net.Store.Directory directory, bool closeDirectory)
 			{
 				this.directory = directory;
+				this.closeDirectory = closeDirectory;
 			}
-
-			override public Object DoBody()  
+			private Lucene.Net.Store.Directory directory;
+			private bool closeDirectory;
+			internal AnonymousClassWith(Lucene.Net.Store.Directory directory, bool closeDirectory, Lucene.Net.Store.Lock Param1, long Param2) : base(Param1, Param2)
 			{
-				IndexReader result = null;
+				InitBlock(directory, closeDirectory);
+			}
+			public override System.Object DoBody()
+			{
 				SegmentInfos infos = new SegmentInfos();
-				
 				infos.Read(directory);
-				if (infos.Count == 1)		  // index is optimized
-					result = new SegmentReader(infos.Info(0), true);
+				if (infos.Count == 1)
+				{
+					// index is optimized
+					return new SegmentReader(infos, infos.Info(0), closeDirectory);
+				}
 				else
 				{
-					SegmentReader[] readers = new SegmentReader[infos.Count];
+					IndexReader[] readers = new IndexReader[infos.Count];
 					for (int i = 0; i < infos.Count; i++)
-						readers[i] = new SegmentReader(infos.Info(i), i==infos.Count-1);
-					result = new SegmentsReader(directory, readers);
+						readers[i] = new SegmentReader(infos.Info(i));
+					return new MultiReader(directory, infos, closeDirectory, readers);
+				}
+			}
+		}
+		private class AnonymousClassWith1 : Lock.With
+		{
+			private void  InitBlock(IndexReader enclosingInstance)
+			{
+				this.enclosingInstance = enclosingInstance;
+			}
+			private IndexReader enclosingInstance;
+			public IndexReader Enclosing_Instance
+			{
+				get
+				{
+					return enclosingInstance;
 				}
 				
-				result.segmentInfosAge = LastModified(directory);
-				return result;
+			}
+			internal AnonymousClassWith1(IndexReader enclosingInstance, Lucene.Net.Store.Lock Param1, long Param2) : base(Param1, Param2)
+			{
+				InitBlock(enclosingInstance);
+			}
+			public override System.Object DoBody()
+			{
+				Enclosing_Instance.DoCommit();
+				Enclosing_Instance.segmentInfos.Write(Enclosing_Instance.directory);
+				return null;
 			}
 		}
-
-		/// <summary>
-		/// Returns the directory this index resides in.
+		
+		/// <summary> Constructor used if IndexReader is not owner of its directory. 
+		/// This is used for IndexReaders that are used within other IndexReaders that take care or locking directories.
+		/// 
 		/// </summary>
-		/// <returns></returns>
-		public Directory Directory() { return directory; }
-
-		/// <summary>
-		/// Returns an IndexReader reading the index in the given Lucene.Net.Store.Directory.
-		/// </summary>
-		/// <param name="directory"></param>
-		/// <returns></returns>
-		public static IndexReader Open(Lucene.Net.Store.Directory directory) 
+		/// <param name="directory">Directory where IndexReader files reside.
+		/// </param>
+		protected internal IndexReader(Directory directory)
 		{
-			lock (directory) 
-			{			  
+			this.directory = directory;
+			segmentInfos = null;
+			directoryOwner = false;
+			closeDirectory = false;
+			stale = false;
+			hasChanges = false;
+			writeLock = null;
+		}
+		
+		/// <summary> Constructor used if IndexReader is owner of its directory.
+		/// If IndexReader is owner of its directory, it locks its directory in case of write operations.
+		/// 
+		/// </summary>
+		/// <param name="directory">Directory where IndexReader files reside.
+		/// </param>
+		/// <param name="segmentInfos">Used for write-l
+		/// </param>
+		/// <param name="">closeDirectory
+		/// </param>
+		internal IndexReader(Directory directory, SegmentInfos segmentInfos, bool closeDirectory)
+		{
+			this.directory = directory;
+			this.segmentInfos = segmentInfos;
+			directoryOwner = true;
+			this.closeDirectory = closeDirectory;
+			stale = false;
+			hasChanges = false;
+			writeLock = null;
+		}
+		
+		private Directory directory;
+		
+		private bool directoryOwner;
+		private SegmentInfos segmentInfos;
+		private Lock writeLock;
+		private bool stale;
+		private bool hasChanges;
+		
+		private bool closeDirectory;
+		
+		/// <summary>Returns an IndexReader reading the index in an FSDirectory in the named
+		/// path. 
+		/// </summary>
+		public static IndexReader Open(System.String path)
+		{
+			return Open(FSDirectory.GetDirectory(path, false), true);
+		}
+		
+		/// <summary>Returns an IndexReader reading the index in an FSDirectory in the named
+		/// path. 
+		/// </summary>
+		public static IndexReader Open(System.IO.FileInfo path)
+		{
+			return Open(FSDirectory.GetDirectory(path, false), true);
+		}
+		
+		/// <summary>Returns an IndexReader reading the index in the given Directory. </summary>
+		public static IndexReader Open(Directory directory)
+		{
+			return Open(directory, false);
+		}
+		
+		private static IndexReader Open(Directory directory, bool closeDirectory)
+		{
+			lock (directory)
+			{
 				// in- & inter-process sync
-				return (IndexReader)new IndexReaderLockWith(
-					directory.MakeLock(IndexWriter.COMMIT_LOCK_NAME), IndexWriter.COMMIT_LOCK_TIMEOUT, directory
-				).Run();
+				return (IndexReader) new AnonymousClassWith(directory, closeDirectory, directory.MakeLock(IndexWriter.COMMIT_LOCK_NAME), IndexWriter.COMMIT_LOCK_TIMEOUT).run();
 			}
 		}
-
-		/// <summary>
-		/// Returns the time the index in the named directory was last modified.
-		/// </summary>
-		/// <param name="directory"></param>
-		/// <returns></returns>
-		public static long LastModified(String directory)  
+		
+		/// <summary>Returns the directory this index resides in. </summary>
+		public virtual Directory Directory()
 		{
-			return LastModified(new System.IO.DirectoryInfo(directory));
+			return directory;
 		}
-
-		/// <summary>
-		/// Returns the time the index in the named directory was last modified.
+		
+		/// <summary> Returns the time the index in the named directory was last modified. 
+		/// 
+		/// <p>Synchronization of IndexReader and IndexWriter instances is 
+		/// no longer done via time stamps of the segments file since the time resolution 
+		/// depends on the hardware platform. Instead, a version number is maintained
+		/// within the segments file, which is incremented everytime when the index is
+		/// changed.</p>
+		/// 
 		/// </summary>
-		/// <param name="directory"></param>
-		/// <returns></returns>
-		public static long LastModified(System.IO.DirectoryInfo directory)
+		/// <deprecated>  Replaced by {@link #GetCurrentVersion(String)}
+		/// 
+		/// </deprecated>
+		public static long LastModified(System.String directory)
+		{
+			return LastModified(new System.IO.FileInfo(directory));
+		}
+		
+		/// <summary> Returns the time the index in the named directory was last modified. 
+		/// 
+		/// <p>Synchronization of IndexReader and IndexWriter instances is 
+		/// no longer done via time stamps of the segments file since the time resolution 
+		/// depends on the hardware platform. Instead, a version number is maintained
+		/// within the segments file, which is incremented everytime when the index is
+		/// changed.</p>
+		/// 
+		/// </summary>
+		/// <deprecated>  Replaced by {@link #GetCurrentVersion(File)}
+		/// 
+		/// </deprecated>
+		public static long LastModified(System.IO.FileInfo directory)
 		{
 			return FSDirectory.FileModified(directory, "segments");
 		}
-
-		/// <summary>
-		/// Returns the time the index in this directory was last modified.
+		
+		/// <summary> Returns the time the index in the named directory was last modified. 
+		/// 
+		/// <p>Synchronization of IndexReader and IndexWriter instances is 
+		/// no longer done via time stamps of the segments file since the time resolution 
+		/// depends on the hardware platform. Instead, a version number is maintained
+		/// within the segments file, which is incremented everytime when the index is
+		/// changed.</p>
+		/// 
 		/// </summary>
-		/// <param name="directory"></param>
-		/// <returns></returns>
-		public static long LastModified(Lucene.Net.Store.Directory directory)  
+		/// <deprecated>  Replaced by {@link #GetCurrentVersion(Directory)}
+		/// 
+		/// </deprecated>
+		public static long LastModified(Directory directory)
 		{
 			return directory.FileModified("segments");
 		}
-
-		/// <summary>
-		/// Returns <code>true</code> if an index exists at the specified directory.
+		
+		/// <summary> Reads version number from segments files. The version number counts the
+		/// number of changes of the index.
+		/// 
+		/// </summary>
+		/// <param name="directory">where the index resides.
+		/// </param>
+		/// <returns> version number.
+		/// </returns>
+		/// <throws>  IOException if segments file cannot be read </throws>
+		public static long GetCurrentVersion(System.String directory)
+		{
+			return GetCurrentVersion(new System.IO.FileInfo(directory));
+		}
+		
+		/// <summary> Reads version number from segments files. The version number counts the
+		/// number of changes of the index.
+		/// 
+		/// </summary>
+		/// <param name="directory">where the index resides.
+		/// </param>
+		/// <returns> version number.
+		/// </returns>
+		/// <throws>  IOException if segments file cannot be read </throws>
+		public static long GetCurrentVersion(System.IO.FileInfo directory)
+		{
+			Directory dir = FSDirectory.GetDirectory(directory, false);
+			long version = GetCurrentVersion(dir);
+			dir.Close();
+			return version;
+		}
+		
+		/// <summary> Reads version number from segments files. The version number counts the
+		/// number of changes of the index.
+		/// 
+		/// </summary>
+		/// <param name="directory">where the index resides.
+		/// </param>
+		/// <returns> version number.
+		/// </returns>
+		/// <throws>  IOException if segments file cannot be read. </throws>
+		public static long GetCurrentVersion(Directory directory)
+		{
+			return SegmentInfos.ReadCurrentVersion(directory);
+		}
+		
+		/// <summary>Return an array of term frequency vectors for the specified document.
+		/// The array contains a vector for each vectorized Field in the document.
+		/// Each vector contains terms and frequencies for all terms
+		/// in a given vectorized Field.
+		/// If no such fields existed, the method returns null.
+		/// 
+		/// </summary>
+		/// <seealso cref="Field#IsTermVectorStored()">
+		/// </seealso>
+		abstract public TermFreqVector[] GetTermFreqVectors(int docNumber);
+		
+		/// <summary>Return a term frequency vector for the specified document and Field. The
+		/// vector returned contains terms and frequencies for those terms in
+		/// the specified Field of this document, if the Field had storeTermVector
+		/// flag set.  If the flag was not set, the method returns null.
+		/// 
+		/// </summary>
+		/// <seealso cref="Field#IsTermVectorStored()">
+		/// </seealso>
+		abstract public TermFreqVector GetTermFreqVector(int docNumber, System.String field);
+		
+		/// <summary> Returns <code>true</code> if an index exists at the specified directory.
 		/// If the directory does not exist or if there is no index in it.
 		/// <code>false</code> is returned.
 		/// </summary>
-		/// <param name="directory">the directory to check for an index</param>
-		/// <returns>
-		///		<code>true</code> if an index exists; <code>false</code> otherwise 
+		/// <param name="directory">the directory to check for an index
+		/// </param>
+		/// <returns> <code>true</code> if an index exists; <code>false</code> otherwise
 		/// </returns>
-		public static bool IndexExists(String directory) 
+		public static bool IndexExists(System.String directory)
 		{
-			return (new System.IO.FileInfo(directory + "/" + "segments")).Exists;
+			bool tmpBool;
+			if (System.IO.File.Exists((new System.IO.FileInfo(System.IO.Path.Combine(directory, "segments"))).FullName))
+				tmpBool = true;
+			else
+				tmpBool = System.IO.Directory.Exists((new System.IO.FileInfo(System.IO.Path.Combine(directory, "segments"))).FullName);
+			return tmpBool;
 		}
-
-		/// <summary>
-		/// Returns <code>true</code> if an index exists at the specified directory.
+		
+		/// <summary> Returns <code>true</code> if an index exists at the specified directory.
 		/// If the directory does not exist or if there is no index in it.
 		/// </summary>
-		/// <param name="directory">the directory to check for an index</param>
-		/// <returns>
-		///		<code>true</code> if an index exists; <code>false</code> otherwise
-		///	</returns>
-		public static bool IndexExists(System.IO.FileInfo directory) 
+		/// <param name="directory">the directory to check for an index
+		/// </param>
+		/// <returns> <code>true</code> if an index exists; <code>false</code> otherwise
+		/// </returns>
+		public static bool IndexExists(System.IO.FileInfo directory)
 		{
-			return (new System.IO.FileInfo(directory.FullName + "/" + "segments")).Exists;
+			bool tmpBool;
+			if (System.IO.File.Exists((new System.IO.FileInfo(System.IO.Path.Combine(directory.FullName, "segments"))).FullName))
+				tmpBool = true;
+			else
+				tmpBool = System.IO.Directory.Exists((new System.IO.FileInfo(System.IO.Path.Combine(directory.FullName, "segments"))).FullName);
+			return tmpBool;
 		}
-
-		/// <summary>
-		/// Returns <code>true</code> if an index exists at the specified directory.
+		
+		/// <summary> Returns <code>true</code> if an index exists at the specified directory.
 		/// If the directory does not exist or if there is no index in it.
 		/// </summary>
-		/// <param name="directory">the directory to check for an index</param>
-		/// <returns>
-		///		<code>true</code> if an index exists; 
-		///		<code>false</code> otherwise if there is a problem with accessing the index
+		/// <param name="directory">the directory to check for an index
+		/// </param>
+		/// <returns> <code>true</code> if an index exists; <code>false</code> otherwise
 		/// </returns>
-		public static bool IndexExists(Lucene.Net.Store.Directory directory)  
+		/// <throws>  IOException if there is a problem with accessing the index </throws>
+		public static bool IndexExists(Directory directory)
 		{
 			return directory.FileExists("segments");
 		}
-
-		/// <summary>
-		/// Returns the number of documents in this index.
-		/// </summary>
-		/// <returns></returns>
+		
+		/// <summary>Returns the number of documents in this index. </summary>
 		public abstract int NumDocs();
-
-		/// <summary>
-		/// Returns one greater than the largest possible document number.
+		
+		/// <summary>Returns one greater than the largest possible document number.
 		/// This may be used to, e.g., determine how big to allocate an array which
 		/// will have an element for every document number in an index.
 		/// </summary>
-		/// <returns></returns>
 		public abstract int MaxDoc();
-
-		/// <summary>
-		/// Returns the stored fields of the <code>n</code><sup>th</sup>
+		
+		/// <summary>Returns the stored fields of the <code>n</code><sup>th</sup>
 		/// <code>Document</code> in this index. 
 		/// </summary>
-		/// <param name="n"></param>
-		/// <returns></returns>
-		public abstract Document Document(int n) ;
-
+		public abstract Document Document(int n);
 		
-		/// <summary>
-		/// Returns true if document <i>n</i> has been deleted
-		/// </summary>
-		/// <param name="n"></param>
-		/// <returns></returns>
+		/// <summary>Returns true if document <i>n</i> has been deleted </summary>
 		public abstract bool IsDeleted(int n);
-
-		/// <summary>
-		/// Returns true if any documents have been deleted
-		/// </summary>
-		/// <returns></returns>
+		
+		/// <summary>Returns true if any documents have been deleted </summary>
 		public abstract bool HasDeletions();
 		
-		/// <summary>
-		/// Returns the byte-encoded normalization factor for the named field of
+		/// <summary>Returns the byte-encoded normalization factor for the named Field of
 		/// every document.  This is used by the search code to score documents.
-		/// <seealso cref="Field.SetBoost(float)"/>
+		/// 
 		/// </summary>
-		/// <param name="field"></param>
-		/// <returns></returns>
-		public abstract byte[] Norms(String field);
-
-		/// <summary>
-		/// Returns an enumeration of all the terms in the index.
-		///	The enumeration is ordered by Term.CompareTo().  Each term
-		///	is greater than all that precede it in the enumeration.
+		/// <seealso cref="Field#SetBoost(float)">
+		/// </seealso>
+		public abstract byte[] Norms(System.String field);
+		
+		/// <summary>Reads the byte-encoded normalization factor for the named Field of every
+		/// document.  This is used by the search code to score documents.
+		/// 
 		/// </summary>
-		/// <returns></returns>
+		/// <seealso cref="Field#SetBoost(float)">
+		/// </seealso>
+		public abstract void  Norms(System.String field, byte[] bytes, int offset);
+		
+		/// <summary>Expert: Resets the normalization factor for the named Field of the named
+		/// document.  The norm represents the product of the Field's {@link
+		/// Field#SetBoost(float) boost} and its {@link Similarity#LengthNorm(String,
+		/// int) length normalization}.  Thus, to preserve the length normalization
+		/// values when resetting this, one should base the new value upon the old.
+		/// 
+		/// </summary>
+		/// <seealso cref="#Norms(String)">
+		/// </seealso>
+		/// <seealso cref="Similarity#DecodeNorm(byte)">
+		/// </seealso>
+		public void  SetNorm(int doc, System.String field, byte value_Renamed)
+		{
+			lock (this)
+			{
+				if (directoryOwner)
+					AquireWriteLock();
+				DoSetNorm(doc, field, value_Renamed);
+				hasChanges = true;
+			}
+		}
+		
+		/// <summary>Implements setNorm in subclass.</summary>
+		protected internal abstract void  DoSetNorm(int doc, System.String field, byte value_Renamed);
+		
+		/// <summary>Expert: Resets the normalization factor for the named Field of the named
+		/// document.
+		/// 
+		/// </summary>
+		/// <seealso cref="#Norms(String)">
+		/// </seealso>
+		/// <seealso cref="Similarity#DecodeNorm(byte)">
+		/// </seealso>
+		public virtual void  SetNorm(int doc, System.String field, float value_Renamed)
+		{
+			SetNorm(doc, field, Similarity.EncodeNorm(value_Renamed));
+		}
+		
+		
+		/// <summary>Returns an enumeration of all the terms in the index.
+		/// The enumeration is ordered by Term.compareTo().  Each term
+		/// is greater than all that precede it in the enumeration.
+		/// </summary>
 		public abstract TermEnum Terms();
-
-		/// <summary>
-		/// Returns an enumeration of all terms after a given term.
-		///	The enumeration is ordered by Term.CompareTo().  Each term
-		///	is greater than all that precede it in the enumeration.
+		
+		/// <summary>Returns an enumeration of all terms after a given term.
+		/// The enumeration is ordered by Term.compareTo().  Each term
+		/// is greater than all that precede it in the enumeration.
 		/// </summary>
-		/// <param name="t"></param>
-		/// <returns></returns>
 		public abstract TermEnum Terms(Term t);
-
-		/// <summary>
-		/// Returns the number of documents containing the term <code>t</code>.
-		/// </summary>
-		/// <param name="t"></param>
-		/// <returns></returns>
+		
+		/// <summary>Returns the number of documents containing the term <code>t</code>. </summary>
 		public abstract int DocFreq(Term t);
-
-		/// <summary>
-		/// Returns an enumeration of all the documents which contain
-		///	<code>term</code>. For each document, the document number, the frequency of
-		///	the term in that document is also provided, for use in search scoring.
-		///	Thus, this method implements the mapping:
-		///	<p><ul>
-		///	Term  = docNum, freq<sup>*</sup>
-		///	</ul></p>
-		///	<p>The enumeration is ordered by document number.  Each document number
-		///	is greater than all that precede it in the enumeration.</p>
+		
+		/// <summary>Returns an enumeration of all the documents which contain
+		/// <code>term</code>. For each document, the document number, the frequency of
+		/// the term in that document is also provided, for use in search scoring.
+		/// Thus, this method implements the mapping:
+		/// <p><ul>
+		/// Term &nbsp;&nbsp; =&gt; &nbsp;&nbsp; &lt;docNum, freq&gt;<sup>*</sup>
+		/// </ul>
+		/// <p>The enumeration is ordered by document number.  Each document number
+		/// is greater than all that precede it in the enumeration.
 		/// </summary>
-		/// <param name="term"></param>
-		/// <returns></returns>
-		public TermDocs TermDocs(Term term)  
+		public virtual TermDocs TermDocs(Term term)
 		{
 			TermDocs termDocs = TermDocs();
 			termDocs.Seek(term);
 			return termDocs;
 		}
-
-		/// <summary>
-		/// Returns an unpositioned TermDocs enumerator.
-		/// </summary>
-		/// <returns></returns>
+		
+		/// <summary>Returns an unpositioned {@link TermDocs} enumerator. </summary>
 		public abstract TermDocs TermDocs();
-
-		/// <summary>
-		/// Returns an enumeration of all the documents which contain
-		///	<code>term</code>.  For each document, in addition to the document number
-		///	and frequency of the term in that document, a list of all of the ordinal
-		///	positions of the term in the document is available.  Thus, this method
-		///	implements the mapping:
-		///	<p><ul>
-		///	Term  =docNum, freq,
-		///		pos<sub>1</sub>, pos<sub>2</sub>, ...
-		///	pos<sub>freq-1</sub>&gt;
-		///	&gt;<sup>*</sup>
-		///	</ul></p>
-		///	<p> This positional information faciliates phrase and proximity searching.</p>
-		///	<p>The enumeration is ordered by document number.  Each document number is
-		///	greater than all that precede it in the enumeration. </p>
+		
+		/// <summary>Returns an enumeration of all the documents which contain
+		/// <code>term</code>.  For each document, in addition to the document number
+		/// and frequency of the term in that document, a list of all of the ordinal
+		/// positions of the term in the document is available.  Thus, this method
+		/// implements the mapping:
+		/// <p><ul>
+		/// Term &nbsp;&nbsp; =&gt; &nbsp;&nbsp; &lt;docNum, freq,
+		/// &lt;pos<sub>1</sub>, pos<sub>2</sub>, ...
+		/// pos<sub>freq-1</sub>&gt;
+		/// &gt;<sup>*</sup>
+		/// </ul>
+		/// <p> This positional information faciliates phrase and proximity searching.
+		/// <p>The enumeration is ordered by document number.  Each document number is
+		/// greater than all that precede it in the enumeration.
 		/// </summary>
-		/// <param name="term"></param>
-		/// <returns></returns>
-		public TermPositions TermPositions(Term term)  
+		public virtual TermPositions TermPositions(Term term)
 		{
 			TermPositions termPositions = TermPositions();
 			termPositions.Seek(term);
 			return termPositions;
 		}
-
-		/// <summary>
-		/// Returns an unpositioned TermPositions enumerator.
-		/// </summary>
-		/// <returns></returns>
+		
+		/// <summary>Returns an unpositioned {@link TermPositions} enumerator. </summary>
 		public abstract TermPositions TermPositions();
-
-		/// <summary>
-		/// Deletes the document numbered <code>docNum</code>.  Once a document is
-		///	deleted it will not appear in TermDocs or TermPostitions enumerations.
-		///	Attempts to read its field with the Document
-		///	method will result in an error.  The presence of this document may still be
-		///	reflected in the DocFreq statistic, though
-		///	this will be corrected eventually as the index is further modified.  
+		
+		/// <summary> Trys to acquire the WriteLock on this directory.
+		/// this method is only valid if this IndexReader is directory owner.
+		/// 
 		/// </summary>
-		/// <param name="docNum"></param>
-		[MethodImpl(MethodImplOptions.Synchronized)]
-		public void Delete(int docNum)  
+		/// <throws>  IOException If WriteLock cannot be acquired. </throws>
+		private void  AquireWriteLock()
 		{
-			if (writeLock == null) 
+			if (stale)
+				throw new System.IO.IOException("IndexReader out of date and no longer valid for delete, undelete, or setNorm operations");
+			
+			if (this.writeLock == null)
 			{
-				Lock _writeLock = directory.MakeLock(IndexWriter.WRITE_LOCK_NAME);
-				if (!_writeLock.Obtain(IndexWriter.WRITE_LOCK_TIMEOUT))			  // obtain write lock
+				Lock writeLock = directory.MakeLock(IndexWriter.WRITE_LOCK_NAME);
+				if (!writeLock.Obtain(IndexWriter.WRITE_LOCK_TIMEOUT))
+				// obtain write lock
+				{
 					throw new System.IO.IOException("Index locked for write: " + writeLock);
-				this.writeLock = _writeLock;
+				}
+				this.writeLock = writeLock;
 				
 				// we have to check whether index has changed since this reader was opened.
 				// if so, this reader is no longer valid for deletion
-				if(LastModified(directory) > segmentInfosAge)
+				if (SegmentInfos.ReadCurrentVersion(directory) > segmentInfos.GetVersion())
 				{
+					stale = true;
 					this.writeLock.Release();
 					this.writeLock = null;
-					throw new System.IO.IOException(
-						"IndexReader out of date and no longer valid for deletion");
+					throw new System.IO.IOException("IndexReader out of date and no longer valid for delete, undelete, or setNorm operations");
 				}
 			}
-			DoDelete(docNum);
 		}
-  
-		protected internal abstract void DoDelete(int docNum);
-
-		/// <summary>
-		/// Deletes all documents containing <code>term</code>.
-		///	This is useful if one uses a document field to hold a unique ID string for
-		///	the document.  Then to delete such a document, one merely constructs a
-		///	term with the appropriate field and the unique ID string as its text and
-		///	passes it to this method.  Returns the number of documents deleted. 
+		
+		/// <summary>Deletes the document numbered <code>docNum</code>.  Once a document is
+		/// deleted it will not appear in TermDocs or TermPostitions enumerations.
+		/// Attempts to read its Field with the {@link #document}
+		/// method will result in an error.  The presence of this document may still be
+		/// reflected in the {@link #docFreq} statistic, though
+		/// this will be corrected eventually as the index is further modified.
 		/// </summary>
-		/// <param name="term"></param>
-		/// <returns></returns>
+		public void  Delete(int docNum)
+		{
+			lock (this)
+			{
+				if (directoryOwner)
+					AquireWriteLock();
+				DoDelete(docNum);
+				hasChanges = true;
+			}
+		}
+		
+		/// <summary>Implements deletion of the document numbered <code>docNum</code>.
+		/// Applications should call {@link #Delete(int)} or {@link #Delete(Term)}.
+		/// </summary>
+		protected internal abstract void  DoDelete(int docNum);
+		
+		/// <summary>Deletes all documents containing <code>term</code>.
+		/// This is useful if one uses a document Field to hold a unique ID string for
+		/// the document.  Then to delete such a document, one merely constructs a
+		/// term with the appropriate Field and the unique ID string as its text and
+		/// passes it to this method.  Returns the number of documents deleted.
+		/// </summary>
 		public int Delete(Term term)
 		{
 			TermDocs docs = TermDocs(term);
-			if ( docs == null ) return 0;
+			if (docs == null)
+				return 0;
 			int n = 0;
-			try 
+			try
 			{
-				while (docs.Next()) 
+				while (docs.Next())
 				{
 					Delete(docs.Doc());
 					n++;
 				}
-			} 
-			finally 
+			}
+			finally
 			{
 				docs.Close();
 			}
 			return n;
 		}
-
-		/// <summary>
-		/// Undeletes all documents currently marked as deleted in this index.
+		
+		/// <summary>Undeletes all documents currently marked as deleted in this index.</summary>
+		public void  UndeleteAll()
+		{
+			lock (this)
+			{
+				if (directoryOwner)
+					AquireWriteLock();
+				DoUndeleteAll();
+				hasChanges = true;
+			}
+		}
+		
+		/// <summary>Implements actual undeleteAll() in subclass. </summary>
+		protected internal abstract void  DoUndeleteAll();
+		
+		/// <summary> Commit changes resulting from delete, undeleteAll, or setNorm operations
+		/// 
 		/// </summary>
-		public abstract void UndeleteAll();
-
-		/// <summary>
-		/// Closes files associated with this index.
+		/// <throws>  IOException </throws>
+		protected internal void  Commit()
+		{
+			lock (this)
+			{
+				if (hasChanges)
+				{
+					if (directoryOwner)
+					{
+						lock (directory)
+						{
+							// in- & inter-process sync
+							new AnonymousClassWith1(this, directory.MakeLock(IndexWriter.COMMIT_LOCK_NAME), IndexWriter.COMMIT_LOCK_TIMEOUT).run();
+						}
+						if (writeLock != null)
+						{
+							writeLock.Release(); // release write lock
+							writeLock = null;
+						}
+					}
+					else
+						DoCommit();
+				}
+				hasChanges = false;
+			}
+		}
+		
+		/// <summary>Implements commit. </summary>
+		protected internal abstract void  DoCommit();
+		
+		/// <summary> Closes files associated with this index.
 		/// Also saves any new deletions to disk.
 		/// No other methods should be called after this has been called.
 		/// </summary>
-		[MethodImpl(MethodImplOptions.Synchronized)]
-		public void Close()  
+		public void  Close()
 		{
-			DoClose();
-			if (writeLock != null) 
+            lock (this)
+            {
+                Commit();
+                DoClose();
+                if (closeDirectory)
+                    directory.Close();
+                System.GC.SuppressFinalize(this);
+            }
+		}
+		
+		/// <summary>Implements close. </summary>
+		protected internal abstract void  DoClose();
+		
+		/// <summary>Release the write lock, if needed. </summary>
+		~IndexReader()
+		{
+			if (writeLock != null)
 			{
-				writeLock.Release();  // release write lock
+				writeLock.Release(); // release write lock
 				writeLock = null;
 			}
 		}
-
-		/// <summary>
-		/// Implements close.
+		
+		/// <summary> Returns a list of all unique Field names that exist in the index pointed
+		/// to by this IndexReader.
 		/// </summary>
-		protected internal abstract void DoClose();
-
-		/// <summary>
-		/// Return a list of all unique field names which exist in the index pointed to by
-		/// this IndexReader.
+		/// <returns> Collection of Strings indicating the names of the fields
+		/// </returns>
+		/// <throws>  IOException if there is a problem with accessing the index </throws>
+		public abstract System.Collections.ICollection GetFieldNames();
+		
+		/// <summary> Returns a list of all unique Field names that exist in the index pointed
+		/// to by this IndexReader.  The boolean argument specifies whether the fields
+		/// returned are indexed or not.
 		/// </summary>
-		/// <returns>
-		///		Collection of Strings indicating the names of the 
-		///		fields if there is a problem with accessing the index (hashtable)
-		///	</returns>
-		public abstract ICollection GetFieldNames();
-
-		/// <summary>
-		/// Returns a list of all unique field names that exist in the index pointed to by
-		/// this IndexReader.  The boolean argument specifies whether the fields returned
-		/// are indexed or not.
-		/// </summary>
-		/// <param name="indexed">
-		/// indexed <code>true</code> if only indexed fields should be returned;
+		/// <param name="indexed"><code>true</code> if only indexed fields should be returned;
 		/// <code>false</code> if only unindexed fields should be returned.
 		/// </param>
-		/// <returns>Collection of Strings indicating the names of the fields (hashtable)</returns>
-		public abstract ICollection GetFieldNames(bool indexed);
-
-		/// <summary>
-		/// Returns <code>true</code> iff the index in the named directory is
+		/// <returns> Collection of Strings indicating the names of the fields
+		/// </returns>
+		/// <throws>  IOException if there is a problem with accessing the index </throws>
+		public abstract System.Collections.ICollection GetFieldNames(bool indexed);
+		
+		/// <summary> </summary>
+		/// <param name="storedTermVector">if true, returns only Indexed fields that have term vector info, 
+		/// else only indexed fields without term vector info 
+		/// </param>
+		/// <returns> Collection of Strings indicating the names of the fields
+		/// </returns>
+		public abstract System.Collections.ICollection GetIndexedFieldNames(bool storedTermVector);
+		
+		/// <summary> Returns <code>true</code> iff the index in the named directory is
 		/// currently locked.
 		/// </summary>
 		/// <param name="directory">the directory to check for a lock
-		/// if there is a problem with accessing the index</param>
-		/// <returns></returns>
-		public static bool IsLocked(Lucene.Net.Store.Directory directory)  
+		/// </param>
+		/// <throws>  IOException if there is a problem with accessing the index </throws>
+		public static bool IsLocked(Directory directory)
 		{
-			return directory.MakeLock(IndexWriter.WRITE_LOCK_NAME).IsLocked() ||
-				   directory.MakeLock(IndexWriter.COMMIT_LOCK_NAME).IsLocked();
+			return directory.MakeLock(IndexWriter.WRITE_LOCK_NAME).IsLocked() || directory.MakeLock(IndexWriter.COMMIT_LOCK_NAME).IsLocked();
 		}
-
-		/// <summary>
-		/// Returns <code>true</code> iff the index in the named directory is
+		
+		/// <summary> Returns <code>true</code> iff the index in the named directory is
 		/// currently locked.
 		/// </summary>
 		/// <param name="directory">the directory to check for a lock
-		/// if there is a problem with accessing the index</param>
-		/// <returns></returns>
-		public static bool IsLocked(String directory)  
+		/// </param>
+		/// <throws>  IOException if there is a problem with accessing the index </throws>
+		public static bool IsLocked(System.String directory)
 		{
-			return IsLocked(FSDirectory.GetDirectory(directory, false));
+			Directory dir = FSDirectory.GetDirectory(directory, false);
+			bool result = IsLocked(dir);
+			dir.Close();
+			return result;
 		}
-
-		/// <summary>
-		/// Forcibly unlocks the index in the named directory.
+		
+		/// <summary> Forcibly unlocks the index in the named directory.
 		/// <P>
 		/// Caution: this should only be used by failure recovery code,
 		/// when it is known that no other process nor thread is in fact
-		/// currently accessing this index.</P>
+		/// currently accessing this index.
 		/// </summary>
-		/// <param name="directory"></param>
-		public static void Unlock(Lucene.Net.Store.Directory directory)  
+		public static void  Unlock(Directory directory)
 		{
 			directory.MakeLock(IndexWriter.WRITE_LOCK_NAME).Release();
 			directory.MakeLock(IndexWriter.COMMIT_LOCK_NAME).Release();

@@ -1,101 +1,60 @@
+/*
+ * Copyright 2004 The Apache Software Foundation
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * 
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 using System;
-using System.Text;
-using Lucene.Net.Index;
-using Lucene.Net.Util;
-
+using IndexReader = Lucene.Net.Index.IndexReader;
+using Term = Lucene.Net.Index.Term;
+using TermEnum = Lucene.Net.Index.TermEnum;
 namespace Lucene.Net.Search
 {
-	/* ====================================================================
-	 * The Apache Software License, Version 1.1
-	 *
-	 * Copyright (c) 2001 The Apache Software Foundation.  All rights
-	 * reserved.
-	 *
-	 * Redistribution and use in source and binary forms, with or without
-	 * modification, are permitted provided that the following conditions
-	 * are met:
-	 *
-	 * 1. Redistributions of source code must retain the above copyright
-	 *    notice, this list of conditions and the following disclaimer.
-	 *
-	 * 2. Redistributions in binary form must reproduce the above copyright
-	 *    notice, this list of conditions and the following disclaimer in
-	 *    the documentation and/or other materials provided with the
-	 *    distribution.
-	 *
-	 * 3. The end-user documentation included with the redistribution,
-	 *    if any, must include the following acknowledgment:
-	 *       "This product includes software developed by the
-	 *        Apache Software Foundation (http://www.apache.org/)."
-	 *    Alternately, this acknowledgment may appear in the software itself,
-	 *    if and wherever such third-party acknowledgments normally appear.
-	 *
-	 * 4. The names "Apache" and "Apache Software Foundation" and
-	 *    "Apache Lucene" must not be used to endorse or promote products
-	 *    derived from this software without prior written permission. For
-	 *    written permission, please contact apache@apache.org.
-	 *
-	 * 5. Products derived from this software may not be called "Apache",
-	 *    "Apache Lucene", nor may "Apache" appear in their name, without
-	 *    prior written permission of the Apache Software Foundation.
-	 *
-	 * THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESSED OR IMPLIED
-	 * WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
-	 * OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
-	 * DISCLAIMED.  IN NO EVENT SHALL THE APACHE SOFTWARE FOUNDATION OR
-	 * ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
-	 * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
-	 * LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF
-	 * USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
-	 * ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
-	 * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT
-	 * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
-	 * SUCH DAMAGE.
-	 * ====================================================================
-	 *
-	 * This software consists of voluntary contributions made by many
-	 * individuals on behalf of the Apache Software Foundation.  For more
-	 * information on the Apache Software Foundation, please see
-	 * <http://www.apache.org/>.
-	 */
-
-	/// <summary>
-	/// A Query that matches documents within an exclusive range.
+	
+	/// <summary> A Query that matches documents within an exclusive range.
+	/// 
 	/// </summary>
+	/// <version>  $Id$
+	/// </version>
 	[Serializable]
-	public class RangeQuery : Query
+	public class RangeQuery:Query
 	{
 		private Term lowerTerm;
 		private Term upperTerm;
 		private bool inclusive;
-    
-		/// <summary>
-		/// Constructs a query selecting all terms greater than 
+		
+		/// <summary>Constructs a query selecting all terms greater than
 		/// <code>lowerTerm</code> but less than <code>upperTerm</code>.
-		/// There must be at least one term and either term may be null--
-		/// in which case there is no bound on that side, but if there are 
-		/// two term, both terms <b>must</b> be for the same field.
+		/// There must be at least one term and either term may be null,
+		/// in which case there is no bound on that side, but if there are
+		/// two terms, both terms <b>must</b> be for the same Field.
 		/// </summary>
-		/// <param name="lowerTerm"></param>
-		/// <param name="upperTerm"></param>
-		/// <param name="inclusive"></param>
 		public RangeQuery(Term lowerTerm, Term upperTerm, bool inclusive)
 		{
 			if (lowerTerm == null && upperTerm == null)
 			{
-				throw new ArgumentException("At least one term must be non-null");
+				throw new System.ArgumentException("At least one term must be non-null");
 			}
-			if (lowerTerm != null && upperTerm != null && lowerTerm.Field() != upperTerm.Field())
+			if (lowerTerm != null && upperTerm != null && (System.Object) lowerTerm.Field() != (System.Object) upperTerm.Field())
 			{
-				throw new ArgumentException("Both terms must be for the same field");
+				throw new System.ArgumentException("Both terms must be for the same Field");
 			}
 			
 			// if we have a lowerTerm, start there. otherwise, start at beginning
-			if (lowerTerm != null) 
+			if (lowerTerm != null)
 			{
 				this.lowerTerm = lowerTerm;
 			}
-			else 
+			else
 			{
 				this.lowerTerm = new Term(upperTerm.Field(), "");
 			}
@@ -103,88 +62,124 @@ namespace Lucene.Net.Search
 			this.upperTerm = upperTerm;
 			this.inclusive = inclusive;
 		}
-
-		public override Query Rewrite(IndexReader reader)  
+		
+		/// <summary> FIXME: Describe <code>rewrite</code> method here.
+		/// 
+		/// </summary>
+		/// <param name="reader">an <code>IndexReader</code> value
+		/// </param>
+		/// <returns> a <code>Query</code> value
+		/// </returns>
+		/// <exception cref=""> IOException if an error occurs
+		/// </exception>
+		public override Query Rewrite(IndexReader reader)
 		{
-			BooleanQuery query = new BooleanQuery();
-			TermEnum _enum = reader.Terms(lowerTerm);
 			
-			try 
+			BooleanQuery query = new BooleanQuery();
+			TermEnum enumerator = reader.Terms(lowerTerm);
+			
+			try
 			{
+				
 				bool checkLower = false;
-				if (!inclusive) 
-				{
+				if (!inclusive)
+				// make adjustments to set to exclusive
 					checkLower = true;
-				}
-				String testField = GetField();
+				
+				System.String testField = GetField();
+				
 				do 
 				{
-					Term term = _enum.Term();
-					if (term != null && term.Field() == testField) 
+					Term term = enumerator.Term();
+					if (term != null && (System.Object) term.Field() == (System.Object) testField)
 					{
-						if (!checkLower || String.CompareOrdinal(term.Text(), lowerTerm.Text()) > 0) 
+						if (!checkLower || String.CompareOrdinal(term.Text(), lowerTerm.Text()) > 0)
 						{
 							checkLower = false;
-							if (upperTerm != null) 
+							if (upperTerm != null)
 							{
 								int compare = String.CompareOrdinal(upperTerm.Text(), term.Text());
 								/* if beyond the upper term, or is exclusive and
-								 * this is equal to the upper term, break out */
-								if ((compare < 0) || (!inclusive && compare == 0)) break;
+								* this is equal to the upper term, break out */
+								if ((compare < 0) || (!inclusive && compare == 0))
+									break;
 							}
 							TermQuery tq = new TermQuery(term); // found a match
-							tq.SetBoost(GetBoost());          // set the boost
+							tq.SetBoost(GetBoost()); // set the boost
 							query.Add(tq, false, false); // add to query
 						}
-					} 
-					else 
+					}
+					else
 					{
 						break;
 					}
 				}
-				while (_enum.Next());
-			} 
-			finally 
+				while (enumerator.Next());
+			}
+			finally
 			{
-				_enum.Close();
+				enumerator.Close();
 			}
 			return query;
 		}
-    
-		public override Query Combine(Query[] queries) 
+		
+		public override Query Combine(Query[] queries)
 		{
 			return Query.MergeBooleanQueries(queries);
 		}
-
-		private String GetField()
+		
+		/// <summary>Returns the Field name for this query </summary>
+		public virtual System.String GetField()
 		{
-			return (lowerTerm != null ? lowerTerm.Field() : upperTerm.Field());
+			return (lowerTerm != null?lowerTerm.Field():upperTerm.Field());
 		}
-    
-		/// <summary>
-		/// Prints a user-readable version of this query.
-		/// </summary>
-		/// <param name="field"></param>
-		/// <returns></returns>
-		public override String ToString(String field)
+		
+		/// <summary>Returns the lower term of this range query </summary>
+		public virtual Term GetLowerTerm()
 		{
-			StringBuilder buffer = new StringBuilder();
+			return lowerTerm;
+		}
+		
+		/// <summary>Returns the upper term of this range query </summary>
+		public virtual Term GetUpperTerm()
+		{
+			return upperTerm;
+		}
+		
+		/// <summary>Returns <code>true</code> if the range query is inclusive </summary>
+		public virtual bool IsInclusive()
+		{
+			return inclusive;
+		}
+		
+		
+		/// <summary>Prints a user-readable version of this query. </summary>
+		public override System.String ToString(System.String field)
+		{
+			System.Text.StringBuilder buffer = new System.Text.StringBuilder();
 			if (!GetField().Equals(field))
 			{
 				buffer.Append(GetField());
 				buffer.Append(":");
 			}
-			buffer.Append(inclusive ? "[" : "{");
-			buffer.Append(lowerTerm != null ? lowerTerm.Text() : "null");
+			buffer.Append(inclusive?"[":"{");
+			buffer.Append(lowerTerm != null?lowerTerm.Text():"null");
 			buffer.Append(" TO ");
-			buffer.Append(upperTerm != null ? upperTerm.Text() : "null");
-			buffer.Append(inclusive ? "]" : "}");
+			buffer.Append(upperTerm != null?upperTerm.Text():"null");
+			buffer.Append(inclusive?"]":"}");
 			if (GetBoost() != 1.0f)
 			{
+                System.Globalization.NumberFormatInfo nfi = new System.Globalization.CultureInfo("en-US", false).NumberFormat;
+                nfi.NumberDecimalDigits = 1;
+
 				buffer.Append("^");
-				buffer.Append(Number.ToString(GetBoost()));
+				buffer.Append(GetBoost().ToString("N", nfi));
 			}
 			return buffer.ToString();
+		}
+		override public System.Object Clone()
+		{
+			return null;
 		}
 	}
 }

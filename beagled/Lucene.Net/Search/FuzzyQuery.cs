@@ -1,79 +1,105 @@
+/*
+ * Copyright 2004 The Apache Software Foundation
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * 
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 using System;
-using Lucene.Net.Index;
-
+using IndexReader = Lucene.Net.Index.IndexReader;
+using Term = Lucene.Net.Index.Term;
 namespace Lucene.Net.Search
 {
-	/* ====================================================================
-	 * The Apache Software License, Version 1.1
-	 *
-	 * Copyright (c) 2001 The Apache Software Foundation.  All rights
-	 * reserved.
-	 *
-	 * Redistribution and use in source and binary forms, with or without
-	 * modification, are permitted provided that the following conditions
-	 * are met:
-	 *
-	 * 1. Redistributions of source code must retain the above copyright
-	 *    notice, this list of conditions and the following disclaimer.
-	 *
-	 * 2. Redistributions in binary form must reproduce the above copyright
-	 *    notice, this list of conditions and the following disclaimer in
-	 *    the documentation and/or other materials provided with the
-	 *    distribution.
-	 *
-	 * 3. The end-user documentation included with the redistribution,
-	 *    if any, must include the following acknowledgment:
-	 *       "This product includes software developed by the
-	 *        Apache Software Foundation (http://www.apache.org/)."
-	 *    Alternately, this acknowledgment may appear in the software itself,
-	 *    if and wherever such third-party acknowledgments normally appear.
-	 *
-	 * 4. The names "Apache" and "Apache Software Foundation" and
-	 *    "Apache Lucene" must not be used to endorse or promote products
-	 *    derived from this software without prior written permission. For
-	 *    written permission, please contact apache@apache.org.
-	 *
-	 * 5. Products derived from this software may not be called "Apache",
-	 *    "Apache Lucene", nor may "Apache" appear in their name, without
-	 *    prior written permission of the Apache Software Foundation.
-	 *
-	 * THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESSED OR IMPLIED
-	 * WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
-	 * OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
-	 * DISCLAIMED.  IN NO EVENT SHALL THE APACHE SOFTWARE FOUNDATION OR
-	 * ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
-	 * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
-	 * LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF
-	 * USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
-	 * ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
-	 * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT
-	 * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
-	 * SUCH DAMAGE.
-	 * ====================================================================
-	 *
-	 * This software consists of voluntary contributions made by many
-	 * individuals on behalf of the Apache Software Foundation.  For more
-	 * information on the Apache Software Foundation, please see
-	 * <http://www.apache.org/>.
-	 */
-
-	/// <summary>
-	/// Implements the fuzzy search query
-	/// </summary>
-	public sealed class FuzzyQuery : MultiTermQuery 
-	{
-		public FuzzyQuery(Term term) : base(term)
-		{
-		}
-    
-		protected override FilteredTermEnum GetEnum(IndexReader reader)  
-		{
-			return new FuzzyTermEnum(reader, GetTerm());
-		}
-    
-		public override String ToString(String field) 
-		{
-			return base.ToString(field) + '~';
-		}
-	}
+	
+    /// <summary>Implements the fuzzy search query. The similiarity measurement
+    /// is based on the Levenshtein (edit distance) algorithm.
+    /// </summary>
+    [Serializable]
+    public sealed class FuzzyQuery:MultiTermQuery
+    {
+		
+        public const float defaultMinSimilarity = 0.5f;
+        private float minimumSimilarity;
+        private int prefixLength;
+		
+        /// <summary> Create a new FuzzyQuery that will match terms with a similarity 
+        /// of at least <code>minimumSimilarity</code> to <code>term</code>.
+        /// If a <code>prefixLength</code> &gt; 0 is specified, a common prefix
+        /// of that length is also required.
+        /// 
+        /// </summary>
+        /// <param name="term">the term to search for
+        /// </param>
+        /// <param name="minimumSimilarity">a value between 0 and 1 to set the required similarity
+        /// between the query term and the matching terms. For example, for a
+        /// <code>minimumSimilarity</code> of <code>0.5</code> a term of the same length
+        /// as the query term is considered similar to the query term if the edit distance
+        /// between both terms is less than <code>length(term)*0.5</code>
+        /// </param>
+        /// <param name="prefixLength">length of common (non-fuzzy) prefix
+        /// </param>
+        /// <throws>  IllegalArgumentException if minimumSimilarity is &gt; 1 or &lt; 0 </throws>
+        /// <summary> or if prefixLength &lt; 0 or &gt; <code>term.text().length()</code>.
+        /// </summary>
+        public FuzzyQuery(Term term, float minimumSimilarity, int prefixLength):base(term)
+        {
+			
+            if (minimumSimilarity > 1.0f)
+                throw new System.ArgumentException("minimumSimilarity > 1");
+            else if (minimumSimilarity < 0.0f)
+                throw new System.ArgumentException("minimumSimilarity < 0");
+            this.minimumSimilarity = minimumSimilarity;
+			
+            if (prefixLength < 0)
+                throw new System.ArgumentException("prefixLength < 0");
+            else if (prefixLength >= term.Text().Length)
+                throw new System.ArgumentException("prefixLength >= term.text().length()");
+            this.prefixLength = prefixLength;
+        }
+		
+        /// <summary> Calls {@link #FuzzyQuery(Term, float) FuzzyQuery(term, minimumSimilarity, 0)}.</summary>
+        public FuzzyQuery(Term term, float minimumSimilarity):this(term, minimumSimilarity, 0)
+        {
+        }
+		
+        /// <summary> Calls {@link #FuzzyQuery(Term, float) FuzzyQuery(term, 0.5f, 0)}.</summary>
+        public FuzzyQuery(Term term):this(term, defaultMinSimilarity, 0)
+        {
+        }
+		
+        /// <summary> Returns the minimum similarity that is required for this query to match.</summary>
+        /// <returns> float value between 0.0 and 1.0
+        /// </returns>
+        public float GetMinSimilarity()
+        {
+            return minimumSimilarity;
+        }
+		
+        /// <summary> Returns the prefix length, i.e. the number of characters at the start
+        /// of a term that must be identical (not fuzzy) to the query term if the query
+        /// is to match that term. 
+        /// </summary>
+        public int GetPrefixLength()
+        {
+            return prefixLength;
+        }
+		
+        protected internal override FilteredTermEnum GetEnum(IndexReader reader)
+        {
+            return new FuzzyTermEnum(reader, GetTerm(), minimumSimilarity, prefixLength);
+        }
+		
+        public override System.String ToString(System.String field)
+        {
+            return base.ToString(field) + '~' + minimumSimilarity.ToString();
+        }
+    }
 }

@@ -1,183 +1,244 @@
+/*
+ * Copyright 2004 The Apache Software Foundation
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * 
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 using System;
-using System.Collections;
-
-using  Lucene.Net.Documents;
-using  Lucene.Net.Store;
-
+using Document = Lucene.Net.Documents.Document;
+using Field = Lucene.Net.Documents.Field;
+using Directory = Lucene.Net.Store.Directory;
+using InputStream = Lucene.Net.Store.InputStream;
+using OutputStream = Lucene.Net.Store.OutputStream;
 namespace Lucene.Net.Index
 {
-	/* ====================================================================
-	 * The Apache Software License, Version 1.1
-	 *
-	 * Copyright (c) 2001 The Apache Software Foundation.  All rights
-	 * reserved.
-	 *
-	 * Redistribution and use in source and binary forms, with or without
-	 * modification, are permitted provided that the following conditions
-	 * are met:
-	 *
-	 * 1. Redistributions of source code must retain the above copyright
-	 *    notice, this list of conditions and the following disclaimer.
-	 *
-	 * 2. Redistributions in binary form must reproduce the above copyright
-	 *    notice, this list of conditions and the following disclaimer in
-	 *    the documentation and/or other materials provided with the
-	 *    distribution.
-	 *
-	 * 3. The end-user documentation included with the redistribution,
-	 *    if any, must include the following acknowledgment:
-	 *       "This product includes software developed by the
-	 *        Apache Software Foundation (http://www.apache.org/)."
-	 *    Alternately, this acknowledgment may appear in the software itself,
-	 *    if and wherever such third-party acknowledgments normally appear.
-	 *
-	 * 4. The names "Apache" and "Apache Software Foundation" and
-	 *    "Apache Lucene" must not be used to endorse or promote products
-	 *    derived from this software without prior written permission. For
-	 *    written permission, please contact apache@apache.org.
-	 *
-	 * 5. Products derived from this software may not be called "Apache",
-	 *    "Apache Lucene", nor may "Apache" appear in their name, without
-	 *    prior written permission of the Apache Software Foundation.
-	 *
-	 * THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESSED OR IMPLIED
-	 * WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
-	 * OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
-	 * DISCLAIMED.  IN NO EVENT SHALL THE APACHE SOFTWARE FOUNDATION OR
-	 * ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
-	 * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
-	 * LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF
-	 * USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
-	 * ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
-	 * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT
-	 * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
-	 * SUCH DAMAGE.
-	 * ====================================================================
-	 *
-	 * This software consists of voluntary contributions made by many
-	 * individuals on behalf of the Apache Software Foundation.  For more
-	 * information on the Apache Software Foundation, please see
-	 * <http://www.apache.org/>.
-	 */
-
-	public sealed class FieldInfos 
+	
+	/// <summary>Access to the Field Info file that describes document fields and whether or
+	/// not they are indexed. Each segment has a separate Field Info file. Objects
+	/// of this class are thread-safe for multiple readers, but only one thread can
+	/// be adding documents at a time, with no other reader or writer threads
+	/// accessing this object.
+	/// </summary>
+	sealed public class FieldInfos
 	{
-		private ArrayList byNumber = new ArrayList();
-		private Hashtable byName = new Hashtable();
-
-		public FieldInfos() 
+		private System.Collections.ArrayList byNumber = new System.Collections.ArrayList();
+		private System.Collections.Hashtable byName = new System.Collections.Hashtable();
+		
+		public /*internal*/ FieldInfos()
 		{
 			Add("", false);
 		}
-
-		public FieldInfos(Directory d, String name) 
+		
+		/// <summary> Construct a FieldInfos object using the directory and the name of the file
+		/// InputStream
+		/// </summary>
+		/// <param name="d">The directory to open the InputStream from
+		/// </param>
+		/// <param name="name">The name of the file to open the InputStream from in the Directory
+		/// </param>
+		/// <throws>  IOException </throws>
+		/// <summary> 
+		/// </summary>
+		/// <seealso cref="#read">
+		/// </seealso>
+		public /*internal*/ FieldInfos(Directory d, System.String name)
 		{
 			InputStream input = d.OpenFile(name);
-			try 
+			try
 			{
 				Read(input);
-			} 
-			finally 
+			}
+			finally
 			{
 				input.Close();
 			}
 		}
-
-		/// <summary>
-		/// Adds field info for a Document.
+		
+		/// <summary>Adds Field info for a Document. </summary>
+		public void  Add(Document doc)
+		{
+            foreach (Field field in doc.Fields())
+            {
+                Add(field.Name(), field.IsIndexed(), field.IsTermVectorStored());
+            }
+		}
+		
+		/// <param name="names">The names of the fields
+		/// </param>
+		/// <param name="storeTermVectors">Whether the fields store term vectors or not
+		/// </param>
+		public void  AddIndexed(System.Collections.ICollection names, bool storeTermVectors)
+		{
+			System.Collections.IEnumerator i = names.GetEnumerator();
+			int j = 0;
+			while (i.MoveNext())
+			{
+                System.Collections.DictionaryEntry t = (System.Collections.DictionaryEntry) i.Current;
+				Add((System.String) t.Key, true, storeTermVectors);
+			}
+		}
+		
+		/// <summary> Assumes the Field is not storing term vectors </summary>
+		/// <param name="names">The names of the fields
+		/// </param>
+		/// <param name="isIndexed">Whether the fields are indexed or not
+		/// 
+		/// </param>
+		/// <seealso cref="boolean)">
+		/// </seealso>
+		public void  Add(System.Collections.ICollection names, bool isIndexed)
+		{
+			System.Collections.IEnumerator i = names.GetEnumerator();
+			int j = 0;
+			while (i.MoveNext())
+			{
+                System.Collections.DictionaryEntry t = (System.Collections.DictionaryEntry) i.Current;
+                Add((System.String) t.Key, isIndexed);
+			}
+		}
+		
+		/// <summary> Calls three parameter add with false for the storeTermVector parameter </summary>
+		/// <param name="name">The name of the Field
+		/// </param>
+		/// <param name="isIndexed">true if the Field is indexed
+		/// </param>
+		/// <seealso cref="boolean, boolean)">
+		/// </seealso>
+		public void  Add(System.String name, bool isIndexed)
+		{
+			Add(name, isIndexed, false);
+		}
+		
+		
+		/// <summary>If the Field is not yet known, adds it. If it is known, checks to make
+		/// sure that the isIndexed flag is the same as was given previously for this
+		/// Field. If not - marks it as being indexed.  Same goes for storeTermVector
+		/// 
 		/// </summary>
-		/// <param name="doc"></param>
-		public void Add(Document doc) 
-		{
-			foreach (Field field in doc.Fields()) 
-			{
-				Add(field.Name(), field.IsIndexed());
-			}
-		}
-
-		public void Add(ICollection names, bool isIndexed) 
-		{
-			foreach(string name in names)
-			{
-				Add(name, isIndexed);
-			}
-		}
-
-		public void Add(String name, bool isIndexed) 
+		/// <param name="name">The name of the Field
+		/// </param>
+		/// <param name="isIndexed">true if the Field is indexed
+		/// </param>
+		/// <param name="storeTermVector">true if the term vector should be stored
+		/// </param>
+		public void  Add(System.String name, bool isIndexed, bool storeTermVector)
 		{
 			FieldInfo fi = FieldInfo(name);
 			if (fi == null)
-				AddInternal(name, isIndexed);
-			else if (fi.isIndexed != isIndexed)
-				fi.isIndexed = true;
+			{
+				AddInternal(name, isIndexed, storeTermVector);
+			}
+			else
+			{
+				if (fi.isIndexed != isIndexed)
+				{
+					fi.isIndexed = true; // once indexed, always index
+				}
+				if (fi.storeTermVector != storeTermVector)
+				{
+					fi.storeTermVector = true; // once vector, always vector
+				}
+			}
 		}
-
-		private void AddInternal(String name, bool isIndexed) 
+		
+		private void  AddInternal(System.String name, bool isIndexed, bool storeTermVector)
 		{
-			FieldInfo fi = new FieldInfo(name, isIndexed, byNumber.Count);
+			FieldInfo fi = new FieldInfo(name, isIndexed, byNumber.Count, storeTermVector);
 			byNumber.Add(fi);
-			byName.Add(name, fi);
+			byName[name] = fi;
 		}
-
-		internal int FieldNumber(String fieldName) 
+		
+		public int FieldNumber(System.String fieldName)
 		{
 			FieldInfo fi = FieldInfo(fieldName);
 			if (fi != null)
 				return fi.number;
 			else
-				return -1;
+				return - 1;
 		}
-
-		internal FieldInfo FieldInfo(String fieldName) 
+		
+		public FieldInfo FieldInfo(System.String fieldName)
 		{
-			return (FieldInfo)byName[fieldName];
+			return (FieldInfo) byName[fieldName];
 		}
-
-		internal String FieldName(int fieldNumber) 
+		
+		public System.String FieldName(int fieldNumber)
 		{
 			return FieldInfo(fieldNumber).name;
 		}
-
-		internal FieldInfo FieldInfo(int fieldNumber) 
+		
+		public FieldInfo FieldInfo(int fieldNumber)
 		{
-			return (FieldInfo)byNumber[fieldNumber];
+			return (FieldInfo) byNumber[fieldNumber];
 		}
-
-		internal int Size() 
+		
+		public int Size()
 		{
 			return byNumber.Count;
 		}
-
-		internal void Write(Directory d, String name) 
+		
+		public bool HasVectors()
+		{
+			bool hasVectors = false;
+			for (int i = 0; i < Size(); i++)
+			{
+				if (FieldInfo(i).storeTermVector)
+					hasVectors = true;
+			}
+			return hasVectors;
+		}
+		
+		public void  Write(Directory d, System.String name)
 		{
 			OutputStream output = d.CreateFile(name);
-			try 
+			try
 			{
 				Write(output);
-			} 
-			finally 
+			}
+			finally
 			{
 				output.Close();
 			}
 		}
-
-		internal void Write(OutputStream output) 
+		
+		public void  Write(OutputStream output)
 		{
 			output.WriteVInt(Size());
-			for (int i = 0; i < Size(); i++) 
+			for (int i = 0; i < Size(); i++)
 			{
 				FieldInfo fi = FieldInfo(i);
+				byte bits = (byte) (0x0);
+				if (fi.isIndexed)
+					bits |= (byte) (0x1);
+				if (fi.storeTermVector)
+					bits |= (byte) (0x2);
 				output.WriteString(fi.name);
-				output.WriteByte((byte)(fi.isIndexed ? 1 : 0));
+				//Was REMOVE
+				//output.writeByte((byte)(fi.isIndexed ? 1 : 0));
+				output.WriteByte(bits);
 			}
 		}
-
-		private void Read(InputStream input) 
+		
+		private void  Read(InputStream input)
 		{
-			int size = input.ReadVInt();
+			int size = input.ReadVInt(); //read in the size
 			for (int i = 0; i < size; i++)
-				AddInternal(String.Intern(input.ReadString()),
-					input.ReadByte() != 0);
+			{
+				System.String name = String.Intern(input.ReadString());
+				byte bits = input.ReadByte();
+				bool isIndexed = (bits & 0x1) != 0;
+				bool storeTermVector = (bits & 0x2) != 0;
+				AddInternal(name, isIndexed, storeTermVector);
+			}
 		}
 	}
 }

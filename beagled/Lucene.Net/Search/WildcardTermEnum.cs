@@ -1,110 +1,77 @@
+/*
+ * Copyright 2004 The Apache Software Foundation
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * 
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 using System;
-using Lucene.Net.Index;
-
+using IndexReader = Lucene.Net.Index.IndexReader;
+using Term = Lucene.Net.Index.Term;
 namespace Lucene.Net.Search
 {
-	/* ====================================================================
-	 * The Apache Software License, Version 1.1
-	 *
-	 * Copyright (c) 2001 The Apache Software Foundation.  All rights
-	 * reserved.
-	 *
-	 * Redistribution and use in source and binary forms, with or without
-	 * modification, are permitted provided that the following conditions
-	 * are met:
-	 *
-	 * 1. Redistributions of source code must retain the above copyright
-	 *    notice, this list of conditions and the following disclaimer.
-	 *
-	 * 2. Redistributions in binary form must reproduce the above copyright
-	 *    notice, this list of conditions and the following disclaimer in
-	 *    the documentation and/or other materials provided with the
-	 *    distribution.
-	 *
-	 * 3. The end-user documentation included with the redistribution,
-	 *    if any, must include the following acknowledgment:
-	 *       "This product includes software developed by the
-	 *        Apache Software Foundation (http://www.apache.org/)."
-	 *    Alternately, this acknowledgment may appear in the software itself,
-	 *    if and wherever such third-party acknowledgments normally appear.
-	 *
-	 * 4. The names "Apache" and "Apache Software Foundation" and
-	 *    "Apache Lucene" must not be used to endorse or promote products
-	 *    derived from this software without prior written permission. For
-	 *    written permission, please contact apache@apache.org.
-	 *
-	 * 5. Products derived from this software may not be called "Apache",
-	 *    "Apache Lucene", nor may "Apache" appear in their name, without
-	 *    prior written permission of the Apache Software Foundation.
-	 *
-	 * THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESSED OR IMPLIED
-	 * WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
-	 * OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
-	 * DISCLAIMED.  IN NO EVENT SHALL THE APACHE SOFTWARE FOUNDATION OR
-	 * ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
-	 * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
-	 * LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF
-	 * USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
-	 * ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
-	 * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT
-	 * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
-	 * SUCH DAMAGE.
-	 * ====================================================================
-	 *
-	 * This software consists of voluntary contributions made by many
-	 * individuals on behalf of the Apache Software Foundation.  For more
-	 * information on the Apache Software Foundation, please see
-	 * <http://www.apache.org/>.
-	 */
-
-	/// <summary>
-	/// Subclass of FilteredTermEnum for enumerating all terms that match the
+	
+	/// <summary> Subclass of FilteredTermEnum for enumerating all terms that match the
 	/// specified wildcard filter term.
 	/// <p>
-	/// Term enumerations are always ordered by Term.CompareTo().  Each term in
-	/// the enumeration is greater than all that precede it.</p>
+	/// Term enumerations are always ordered by Term.compareTo().  Each term in
+	/// the enumeration is greater than all that precede it.
+	/// 
 	/// </summary>
-	public class WildcardTermEnum : FilteredTermEnum 
+	/// <version>  $Id$
+	/// </version>
+	public class WildcardTermEnum:FilteredTermEnum
 	{
 		internal Term searchTerm;
-		internal String field = "";
-		internal String text = "";
-		internal String pre = "";
+		internal System.String field = "";
+		internal System.String text = "";
+		internal System.String pre = "";
 		internal int preLen = 0;
-		//bool fieldMatch = false;
+		internal bool fieldMatch = false;
 		internal bool endEnum = false;
-
-		/// <summary>
-		/// Creates a new <code>WildcardTermEnum</code>.  Passing in a
-		/// org.apache.lucene.index.Term Term that does not contain a
+		
+		/// <summary> Creates a new <code>WildcardTermEnum</code>.  Passing in a
+		/// {@link Lucene.Net.Index.Term Term} that does not contain a
 		/// <code>WILDCARD_CHAR</code> will cause an exception to be thrown.
 		/// </summary>
-		/// <param name="reader"></param>
-		/// <param name="term"></param>
-		public WildcardTermEnum(IndexReader reader, Term term)  : base(reader, term)
+		public WildcardTermEnum(IndexReader reader, Term term):base()
 		{
 			searchTerm = term;
 			field = searchTerm.Field();
 			text = searchTerm.Text();
-
-			int sidx = text.IndexOf(WILDCARD_STRING);
-			int cidx = text.IndexOf(WILDCARD_CHAR);
+			
+			int sidx = text.IndexOf((System.Char) WILDCARD_STRING);
+			int cidx = text.IndexOf((System.Char) WILDCARD_CHAR);
 			int idx = sidx;
-			if (idx == -1) idx = cidx;
-			else if (cidx >= 0) idx = Math.Min(idx, cidx);
-
-			pre = searchTerm.Text().Substring(0, idx);
+			if (idx == - 1)
+			{
+				idx = cidx;
+			}
+			else if (cidx >= 0)
+			{
+				idx = System.Math.Min(idx, cidx);
+			}
+			
+			pre = searchTerm.Text().Substring(0, (idx) - (0));
 			preLen = pre.Length;
 			text = text.Substring(preLen);
 			SetEnum(reader.Terms(new Term(searchTerm.Field(), pre)));
 		}
-
-		protected override bool TermCompare(Term term) 
+		
+		protected internal override bool TermCompare(Term term)
 		{
-			if (field == term.Field()) 
+			if ((System.Object) field == (System.Object) term.Field())
 			{
-				String searchText = term.Text();
-				if (searchText.StartsWith(pre)) 
+				System.String searchText = term.Text();
+				if (searchText.StartsWith(pre))
 				{
 					return WildcardEquals(text, 0, searchText, preLen);
 				}
@@ -112,52 +79,46 @@ namespace Lucene.Net.Search
 			endEnum = true;
 			return false;
 		}
-
-		public override float Difference() 
+		
+		public override float Difference()
 		{
 			return 1.0f;
 		}
-
-		public override bool EndEnum() 
+		
+		public override bool EndEnum()
 		{
 			return endEnum;
 		}
-
-		///
+		
+		/// <summary>*****************************************
 		/// String equality with support for wildcards
-		///
-
+		/// ******************************************
+		/// </summary>
+		
 		public const char WILDCARD_STRING = '*';
 		public const char WILDCARD_CHAR = '?';
-
-		/// <summary>
-		/// Determines if a word matches a wildcard pattern.
+		
+		/// <summary> Determines if a word matches a wildcard pattern.
 		/// <small>Work released by Granta Design Ltd after originally being done on
 		/// company time.</small>
 		/// </summary>
-		/// <param name="pattern"></param>
-		/// <param name="patternIdx"></param>
-		/// <param name="_string"></param>
-		/// <param name="stringIdx"></param>
-		/// <returns></returns>
-		public static bool WildcardEquals(String pattern, int patternIdx,
-			String _string, int stringIdx)
+		public static bool WildcardEquals(System.String pattern, int patternIdx, System.String string_Renamed, int stringIdx)
 		{
 			for (int p = patternIdx; ; ++p)
 			{
 				for (int s = stringIdx; ; ++p, ++s)
 				{
-					// End of _string yet?
-					bool sEnd = (s >= _string.Length);
+					// End of string yet?
+					bool sEnd = (s >= string_Renamed.Length);
 					// End of pattern yet?
 					bool pEnd = (p >= pattern.Length);
-
-					// If we're looking at the end of the _string...
+					
+					// If we're looking at the end of the string...
 					if (sEnd)
 					{
 						// Assume the only thing left on the pattern is/are wildcards
 						bool justWildcardsLeft = true;
-
+						
 						// Current wildcard position
 						int wildcardSearchPos = p;
 						// While we haven't found the end of the pattern,
@@ -168,9 +129,8 @@ namespace Lucene.Net.Search
 							char wildchar = pattern[wildcardSearchPos];
 							// If it's not a wildcard character, then there is more
 							// pattern information after this/these wildcards.
-
-							if (wildchar != WILDCARD_CHAR &&
-								wildchar != WILDCARD_STRING)
+							
+							if (wildchar != WILDCARD_CHAR && wildchar != WILDCARD_STRING)
 							{
 								justWildcardsLeft = false;
 							}
@@ -180,7 +140,7 @@ namespace Lucene.Net.Search
 								wildcardSearchPos++;
 							}
 						}
-
+						
 						// This was a prefix wildcard search, and we've matched, so
 						// return true.
 						if (justWildcardsLeft)
@@ -188,36 +148,36 @@ namespace Lucene.Net.Search
 							return true;
 						}
 					}
-
-					// If we've gone past the end of the _string, or the pattern,
+					
+					// If we've gone past the end of the string, or the pattern,
 					// return false.
 					if (sEnd || pEnd)
 					{
 						break;
 					}
-
+					
 					// Match a single character, so continue.
 					if (pattern[p] == WILDCARD_CHAR)
 					{
 						continue;
 					}
-
+					
 					//
 					if (pattern[p] == WILDCARD_STRING)
 					{
 						// Look at the character beyond the '*'.
 						++p;
-						// Examine the _string, starting at the last character.
-						for (int i = _string.Length; i >= s; --i)
+						// Examine the string, starting at the last character.
+						for (int i = string_Renamed.Length; i >= s; --i)
 						{
-							if (WildcardEquals(pattern, p, _string, i))
+							if (WildcardEquals(pattern, p, string_Renamed, i))
 							{
 								return true;
 							}
 						}
 						break;
 					}
-					if (pattern[p] != _string[s])
+					if (pattern[p] != string_Renamed[s])
 					{
 						break;
 					}
@@ -225,8 +185,8 @@ namespace Lucene.Net.Search
 				return false;
 			}
 		}
-
-		public override void Close() 
+		
+		public override void  Close()
 		{
 			base.Close();
 			searchTerm = null;

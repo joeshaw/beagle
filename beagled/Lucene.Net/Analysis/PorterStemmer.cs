@@ -1,675 +1,749 @@
-using System;
-using System.IO;
+/*
+ * Copyright 2004 The Apache Software Foundation
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * 
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 
+/*
+
+Porter stemmer in Java. The original paper is in
+
+Porter, 1980, An algorithm for suffix stripping, Program, Vol. 14,
+no. 3, pp 130-137,
+
+See also http://www.tartarus.org/~martin/PorterStemmer/index.html
+
+Bug 1 (reported by Gonzalo Parra 16/10/99) fixed as marked below.
+Tthe words 'aed', 'eed', 'oed' leave k at 'a' for step 3, and b[k-1]
+is then out outside the bounds of b.
+
+Similarly,
+
+Bug 2 (reported by Steve Dyrdahl 22/2/00) fixed as marked below.
+'ion' by itself leaves j = -1 in the test for 'ion' in step 5, and
+b[j] is then outside the bounds of b.
+
+Release 3.
+
+[ This version is derived from Release 3, modified by Brian Goetz to
+optimize for fewer object creations.  ]
+*/
+using System;
 namespace Lucene.Net.Analysis
 {
-	/* ====================================================================
-	 * The Apache Software License, Version 1.1
-	 *
-	 * Copyright (c) 2001 The Apache Software Foundation.  All rights
-	 * reserved.
-	 *
-	 * Redistribution and use _in source and binary forms, with or without
-	 * modification, are permitted provided that the following conditions
-	 * are met:
-	 *
-	 * 1. Redistributions of source code must retain the above copyright
-	 *    notice, this list of conditions and the following disclaimer.
-	 *
-	 * 2. Redistributions _in binary form must reproduce the above copyright
-	 *    notice, this list of conditions and the following disclaimer _in
-	 *    the documentation and/or other materials provided with the
-	 *    distribution.
-	 *
-	 * 3. The end-user documentation included with the redistribution,
-	 *    if any, must include the following acknowledgment:
-	 *       "This product includes software developed by the
-	 *        Apache Software Foundation (http://www.apache.org/)."
-	 *    Alternately, this acknowledgment may appear _in the software itself,
-	 *    if and wherever such third-party acknowledgments normally appear.
-	 *
-	 * 4. The names "Apache" and "Apache Software Foundation" and
-	 *    "Apache Lucene" must not be used to endorse or promote products
-	 *    derived from this software without prior written permission. For
-	 *    written permission, please contact apache@apache.org.
-	 *
-	 * 5. Products derived from this software may not be called "Apache",
-	 *    "Apache Lucene", nor may "Apache" appear _in their name, without
-	 *    prior written permission of the Apache Software Foundation.
-	 *
-	 * THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESSED OR IMPLIED
-	 * WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
-	 * OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
-	 * DISCLAIMED.  IN NO EVENT SHALL THE APACHE SOFTWARE FOUNDATION OR
-	 * ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
-	 * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
-	 * LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF
-	 * USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
-	 * ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
-	 * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT
-	 * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
-	 * SUCH DAMAGE.
-	 * ====================================================================
-	 *
-	 * This software consists of voluntary contributions made by many
-	 * individuals on behalf of the Apache Software Foundation.  For more
-	 * information on the Apache Software Foundation, please see
-	 * <http://www.apache.org/>.
-	 */
-
-	/*
-	   Porter stemmer in Java. The original paper is in
-
-		   Porter, 1980, An algorithm for suffix stripping, Program, Vol. 14,
-		   no. 3, pp 130-137,
-
-	   See also http://www.muscat.com/~martin/stem.html
-
-	   Bug 1 (reported by Gonzalo Parra 16/10/99) fixed as marked below.
-	   Tthe words 'aed', 'eed', 'oed' leave k at 'a' for step 3, and b[k-1]
-	   is then out outside the bounds of b.
-
-	   Similarly,
-
-	   Bug 2 (reported by Steve Dyrdahl 22/2/00) fixed as marked below.
-	   'ion' by itself leaves j = -1 in the test for 'ion' in step 5, and
-	   b[j] is then outside the bounds of b.
-
-	   Release 3.
-
-	   [ This version is derived from Release 3, modified by Brian Goetz to 
-		 optimize for fewer object creations.  ]
-
-	*/
-
-	/// <summary>
+	
+	/// <summary> 
 	/// Stemmer, implementing the Porter Stemming Algorithm
-	///
+	/// 
 	/// The Stemmer class transforms a word into its root form.  The input
-	/// word can be provided a character at time (by calling Add()), or at once
-	/// by calling one of the various Stem(something) methods.  
+	/// word can be provided a character at time (by calling add()), or at once
+	/// by calling one of the various stem(something) methods.
 	/// </summary>
+	
 	class PorterStemmer
-	{   
+	{
 		private char[] b;
-		private int i,    /* offset into b */
-			j, k, k0;
+		private int i, j, k, k0;
 		private bool dirty = false;
 		private const int INC = 50; /* unit of size whereby b is increased */
 		private const int EXTRA = 1;
-
-		public PorterStemmer() 
-		{  
+		
+		public PorterStemmer()
+		{
 			b = new char[INC];
 			i = 0;
 		}
-
-		/// <summary>
-		/// Resets the stemmer so it can stem another word.  If you invoke
-		/// the stemmer by calling Add(char) and then Stem(), you must call Reset()
+		
+		/// <summary> reset() resets the stemmer so it can stem another word.  If you invoke
+		/// the stemmer by calling add(char) and then stem(), you must call reset()
 		/// before starting another word.
 		/// </summary>
-		public void Reset() { i = 0; dirty = false; }
-
-		/// <summary>
-		/// Add a character to the word being stemmed.  When you are finished 
-		/// adding characters, you can call Stem(void) to process the word. 
-		/// </summary>
-		/// <param name="ch"></param>
-		public void Add(char ch) 
+		public virtual void  Reset()
 		{
-			if (b.Length <= i + EXTRA) 
+			i = 0; dirty = false;
+		}
+		
+		/// <summary> Add a character to the word being stemmed.  When you are finished
+		/// adding characters, you can call stem(void) to process the word.
+		/// </summary>
+		public virtual void  Add(char ch)
+		{
+			if (b.Length <= i + EXTRA)
 			{
-				char[] new_b = new char[b.Length+INC];
-				for (int c = 0; c < b.Length; c++) 
+				char[] new_b = new char[b.Length + INC];
+				for (int c = 0; c < b.Length; c++)
 					new_b[c] = b[c];
 				b = new_b;
 			}
 			b[i++] = ch;
 		}
-
-		/// <summary>
-		/// After a word has been stemmed, it can be retrieved by ToString(), 
-		/// or a reference to the internal buffer can be retrieved by GetResultBuffer
-		/// and GetResultLength (which is generally more efficient.)
+		
+		/// <summary> After a word has been stemmed, it can be retrieved by toString(),
+		/// or a reference to the internal buffer can be retrieved by getResultBuffer
+		/// and getResultLength (which is generally more efficient.)
 		/// </summary>
-		/// <returns></returns>
-		public override String ToString() { return new String(b,0,i); }
-
-		/// <summary>
-		/// Returns the length of the word resulting from the stemming process.
-		/// </summary>
-		/// <returns></returns>
-		virtual public int GetResultLength() { return i; }
-
-		/// <summary>
-		/// Returns a reference to a character buffer containing the results of
-		/// the stemming process.  You also need to consult GetResultLength()
+		public override System.String ToString()
+		{
+			return new System.String(b, 0, i);
+		}
+		
+		/// <summary> Returns the length of the word resulting from the stemming process.</summary>
+		public virtual int GetResultLength()
+		{
+			return i;
+		}
+		
+		/// <summary> Returns a reference to a character buffer containing the results of
+		/// the stemming process.  You also need to consult getResultLength()
 		/// to determine the length of the result.
 		/// </summary>
-		/// <returns></returns>
-		public char[] GetResultBuffer() { return b; }
-
-		/// <summary>
-		/// Ñons(i) is true &lt;=&gt; b[i] is a consonant.
-		/// </summary>
-		/// <param name="i"></param>
-		/// <returns></returns>
-		private bool Cons(int i) 
+		public virtual char[] GetResultBuffer()
 		{
-			switch (b[i]) 
+			return b;
+		}
+		
+		/* cons(i) is true <=> b[i] is a consonant. */
+		
+		private bool Cons(int i)
+		{
+			switch (b[i])
 			{
+				
 				case 'a': 
-					return false;
-				case 'e':
-					return false;
+				case 'e': 
 				case 'i': 
-					return false;
 				case 'o': 
-				    return false;
 				case 'u': 
 					return false;
+				
 				case 'y': 
-					return (i==k0) ? true : !Cons(i-1);
+					return (i == k0)?true:!Cons(i - 1);
+				
 				default: 
 					return true;
+				
 			}
 		}
-
-		/// <summary>
-		/// M() measures the number of consonant sequences between k0 and j. if c is
-		/// a consonant sequence and v a vowel sequence, and &lt;..&gt; indicates arbitrary
-		/// presence,
-		///		&lt;c&gt;&lt;v&gt;       gives 0
-		///		&lt;c&gt;vc&lt;v&gt;     gives 1
-		///		&lt;c&gt;vcvc&lt;v&gt;   gives 2
-		///		&lt;c&gt;vcvcvc&lt;v&gt; gives 3
-		///		....
-		/// </summary>
-		/// <returns></returns>
-		private int M() 
+		
+		/* m() measures the number of consonant sequences between k0 and j. if c is
+		a consonant sequence and v a vowel sequence, and <..> indicates arbitrary
+		presence,
+		
+		<c><v>       gives 0
+		<c>vc<v>     gives 1
+		<c>vcvc<v>   gives 2
+		<c>vcvcvc<v> gives 3
+		....
+		*/
+		
+		private int M()
 		{
 			int n = 0;
 			int i = k0;
-			while(true) 
+			while (true)
 			{
-				if (i > j) 
+				if (i > j)
 					return n;
-				if (! Cons(i)) 
-					break; 
+				if (!Cons(i))
+					break;
 				i++;
 			}
 			i++;
-			while(true) 
+			while (true)
 			{
-				while(true) 
+				while (true)
 				{
-					if (i > j) 
+					if (i > j)
 						return n;
-					if (Cons(i)) 
+					if (Cons(i))
 						break;
 					i++;
 				}
 				i++;
 				n++;
-				while(true) 
+				while (true)
 				{
-					if (i > j) 
+					if (i > j)
 						return n;
-					if (! Cons(i)) 
+					if (!Cons(i))
 						break;
 					i++;
 				}
 				i++;
 			}
 		}
-
-		/// <summary>
-		/// Vowelinstem() is true &lt;=&gt; k0,...j contains a vowel
-		/// </summary>
-		/// <returns></returns>
-		private bool Vowelinstem() 
+		
+		/* vowelinstem() is true <=> k0,...j contains a vowel */
+		
+		private bool vowelinstem()
 		{
-			int i; 
-			for (i = k0; i <= j; i++) 
-				if (! Cons(i)) 
+			int i;
+			for (i = k0; i <= j; i++)
+				if (!Cons(i))
 					return true;
 			return false;
 		}
-
-		/// <summary>
-		/// Doublec(j) is true &lt;=&gt; j,(j-1) contain a double consonant.
-		/// </summary>
-		/// <param name="j"></param>
-		/// <returns></returns>
-		private bool Doublec(int j) 
+		
+		/* doublec(j) is true <=> j,(j-1) contain a double consonant. */
+		
+		private bool Doublec(int j)
 		{
-			if (j < k0+1) 
+			if (j < k0 + 1)
 				return false;
-			if (b[j] != b[j-1]) 
+			if (b[j] != b[j - 1])
 				return false;
 			return Cons(j);
 		}
-
-		/// <summary>
-		/// Cvc(i) is true &lt;=&gt; i-2,i-1,i has the form consonant - vowel - consonant
-		/// and also if the second c is not w,x or y. this is used when trying to
-		/// restore an e at the end of a short word. e.g.
-		///
-		///				Cav(e), Lov(e), Hop(e), Crim(e), but
-		///				snow, box, tray.
-		/// </summary>
-		/// <param name="i"></param>
-		/// <returns></returns>
-		private bool Cvc(int i) 
+		
+		/* cvc(i) is true <=> i-2,i-1,i has the form consonant - vowel - consonant
+		and also if the second c is not w,x or y. this is used when trying to
+		restore an e at the end of a short word. e.g.
+		
+		cav(e), lov(e), hop(e), crim(e), but
+		snow, box, tray.
+		
+		*/
+		
+		private bool Cvc(int i)
 		{
-			if (i < k0+2 || !Cons(i) || Cons(i-1) || !Cons(i-2)) 
+			if (i < k0 + 2 || !Cons(i) || Cons(i - 1) || !Cons(i - 2))
 				return false;
-			else 
+			else
 			{
 				int ch = b[i];
-				if (ch == 'w' || ch == 'x' || ch == 'y') return false;
+				if (ch == 'w' || ch == 'x' || ch == 'y')
+					return false;
 			}
 			return true;
 		}
-
-		private bool Ends(String s) 
+		
+		private bool Ends(System.String s)
 		{
 			int l = s.Length;
-			int o = k-l+1;
-			if (o < k0) 
+			int o = k - l + 1;
+			if (o < k0)
 				return false;
-			for (int i = 0; i < l; i++) 
-				if (b[o+i] != s[i]) 
+			for (int i = 0; i < l; i++)
+				if (b[o + i] != s[i])
 					return false;
-			j = k-l;
+			j = k - l;
 			return true;
 		}
-
-		/// <summary>
-		/// Setto(s) sets (j+1),...k to the characters in the string s, readjusting k. 
-		/// </summary>
-		/// <param name="s"></param>
-		internal virtual void Setto(String s) 
+		
+		/* setto(s) sets (j+1),...k to the characters in the string s, readjusting
+		k. */
+		
+		internal virtual void  Setto(System.String s)
 		{
 			int l = s.Length;
-			int o = j+1;
-			for (int i = 0; i < l; i++) 
-				b[o+i] = s[i];
-			k = j+l;
+			int o = j + 1;
+			for (int i = 0; i < l; i++)
+				b[o + i] = s[i];
+			k = j + l;
 			dirty = true;
 		}
-
-		/// <summary>
-		/// R(s) is used further down.
-		/// </summary>
-		/// <param name="s"></param>
-		internal virtual void R(String s) { if (M() > 0) Setto(s); }
-  
-		/// <summary>
-		/// Step1() gets rid of plurals and -ed or -ing. e.g.
-		///		 caresses  ->  caress
-		///		 ponies    ->  poni
-		///		 ties      ->  ti
-		///		 caress    ->  caress
-		///		 cats      ->  cat
-		///
-		///		 feed      ->  feed
-		///		 agreed    ->  agree
-		///		 disabled  ->  disable
-		///
-		///		 matting   ->  mat
-		///		 mating    ->  mate
-		///		 meeting   ->  meet
-		///		 milling   ->  mill
-		///		 messing   ->  mess
-		///
-		///		 meetings  ->  meet
-		/// </summary>
-		private void Step1() 
+		
+		/* r(s) is used further down. */
+		
+		internal virtual void  R(System.String s)
 		{
-			if (b[k] == 's') 
+			if (M() > 0)
+				Setto(s);
+		}
+		
+		/* step1() gets rid of plurals and -ed or -ing. e.g.
+		
+		caresses  ->  caress
+		ponies    ->  poni
+		ties      ->  ti
+		caress    ->  caress
+		cats      ->  cat
+		
+		feed      ->  feed
+		agreed    ->  agree
+		disabled  ->  disable
+		
+		matting   ->  mat
+		mating    ->  mate
+		meeting   ->  meet
+		milling   ->  mill
+		messing   ->  mess
+		
+		meetings  ->  meet
+		
+		*/
+		
+		private void  step1()
+		{
+			if (b[k] == 's')
 			{
-				if (Ends("sses")) k -= 2; 
-				else if (Ends("ies")) Setto("i"); 
-				else if (b[k-1] != 's') k--;
+				if (Ends("sses"))
+					k -= 2;
+				else if (Ends("ies"))
+					Setto("i");
+				else if (b[k - 1] != 's')
+					k--;
 			}
-			if (Ends("eed")) 
-			{ 
-				if (M() > 0) 
-					k--; 
-			} 
-			else if ((Ends("ed") || Ends("ing")) && Vowelinstem()) 
-			{  
+			if (Ends("eed"))
+			{
+				if (M() > 0)
+					k--;
+			}
+			else if ((Ends("ed") || Ends("ing")) && vowelinstem())
+			{
 				k = j;
-				if (Ends("at")) Setto("ate"); 
-				else if (Ends("bl")) Setto("ble"); 
-				else if (Ends("iz")) Setto("ize"); 
-				else if (Doublec(k)) 
+				if (Ends("at"))
+					Setto("ate");
+				else if (Ends("bl"))
+					Setto("ble");
+				else if (Ends("iz"))
+					Setto("ize");
+				else if (Doublec(k))
 				{
 					int ch = b[k--];
-					if (ch == 'l' || ch == 's' || ch == 'z') 
+					if (ch == 'l' || ch == 's' || ch == 'z')
 						k++;
 				}
-				else if (M() == 1 && Cvc(k)) 
+				else if (M() == 1 && Cvc(k))
 					Setto("e");
 			}
 		}
-
-		/// <summary>
-		/// Step2() turns terminal y to i when there is another vowel in the stem.
-		/// </summary>
-		private void Step2() 
-		{ 
-			if (Ends("y") && Vowelinstem()) 
+		
+		/* step2() turns terminal y to i when there is another vowel in the stem. */
+		
+		private void  step2()
+		{
+			if (Ends("y") && vowelinstem())
 			{
-				b[k] = 'i'; 
+				b[k] = 'i';
 				dirty = true;
 			}
 		}
-
-
-		/// <summary>
-		/// Step3() maps double suffices to single ones. so -ization ( = -ize plus
-		/// -ation) maps to -ize etc. note that the string before the suffix must give
-		/// M() > 0.
-		/// </summary>
-		private void Step3() 
-		{ 
-			if (k == k0) return; /* For Bug 1 */ 
-			switch (b[k-1]) 
-			{
-				case 'a': 
-					if (Ends("ational")) { R("ate"); break; }
-					if (Ends("tional")) { R("tion"); break; }
-					break;
-				case 'c': 
-					if (Ends("enci")) { R("ence"); break; }
-					if (Ends("anci")) { R("ance"); break; }
-					break;
-				case 'e': 
-					if (Ends("izer")) { R("ize"); break; }
-					break;
-				case 'l': 
-					if (Ends("bli")) { R("ble"); break; }
-					if (Ends("alli")) { R("al"); break; }
-					if (Ends("entli")) { R("ent"); break; }
-					if (Ends("eli")) { R("e"); break; }
-					if (Ends("ousli")) { R("ous"); break; }
-					break;
-				case 'o': 
-					if (Ends("ization")) { R("ize"); break; }
-					if (Ends("ation")) { R("ate"); break; }
-					if (Ends("ator")) { R("ate"); break; }
-					break;
-				case 's': 
-					if (Ends("alism")) { R("al"); break; }
-					if (Ends("iveness")) { R("ive"); break; }
-					if (Ends("fulness")) { R("ful"); break; }
-					if (Ends("ousness")) { R("ous"); break; }
-					break;
-				case 't': 
-					if (Ends("aliti")) { R("al"); break; }
-					if (Ends("iviti")) { R("ive"); break; }
-					if (Ends("biliti")) { R("ble"); break; }
-					break;
-				case 'g': 
-					if (Ends("logi")) { R("log"); break; }
-				break;
-			} 
-		}
-
-		/// <summary>
-		/// Step4() deals with -ic-, -full, -ness etc. similar strategy to Step3.
-		/// </summary>
-		private void Step4() 
-		{ 
-			switch (b[k]) 
-			{
-				case 'e': 
-					if (Ends("icate")) { R("ic"); break; }
-					if (Ends("ative")) { R(""); break; }
-					if (Ends("alize")) { R("al"); break; }
-					break;
-				case 'i': 
-					if (Ends("iciti")) { R("ic"); break; }
-					break;
-				case 'l': 
-					if (Ends("ical")) { R("ic"); break; }
-					if (Ends("ful")) { R(""); break; }
-					break;
-				case 's': 
-					if (Ends("ness")) { R(""); break; }
-					break;
-			}
-		}
-  
-		/// <summary>
-		/// Step5() takes off -ant, -ence etc., in context &lt;c&gt;vcvc&lt;v&gt;.
-		/// </summary>
-		private void Step5() 
+		
+		/* step3() maps double suffices to single ones. so -ization ( = -ize plus
+		-ation) maps to -ize etc. note that the string before the suffix must give
+		m() > 0. */
+		
+		private void  step3()
 		{
-			if (k == k0) return; /* for Bug 1 */ 
-			switch (b[k-1]) 
+			if (k == k0)
+				return ; /* For Bug 1 */
+			switch (b[k - 1])
 			{
+				
 				case 'a': 
-					if (Ends("al")) break; 
-					return;
+					if (Ends("ational"))
+					{
+						R("ate"); break;
+					}
+					if (Ends("tional"))
+					{
+						R("tion"); break;
+					}
+					break;
+				
 				case 'c': 
-					if (Ends("ance")) break;
-					if (Ends("ence")) break; 
-					return;
+					if (Ends("enci"))
+					{
+						R("ence"); break;
+					}
+					if (Ends("anci"))
+					{
+						R("ance"); break;
+					}
+					break;
+				
 				case 'e': 
-					if (Ends("er")) break; return;
-				case 'i': 
-					if (Ends("ic")) break; return;
+					if (Ends("izer"))
+					{
+						R("ize"); break;
+					}
+					break;
+				
 				case 'l': 
-					if (Ends("able")) break;
-					if (Ends("ible")) break; return;
-				case 'n': 
-					if (Ends("ant")) break;
-					if (Ends("ement")) break;
-					if (Ends("ment")) break;
-					/* element etc. not stripped before the m */
-					if (Ends("ent")) break; 
-					return;
+					if (Ends("bli"))
+					{
+						R("ble"); break;
+					}
+					if (Ends("alli"))
+					{
+						R("al"); break;
+					}
+					if (Ends("entli"))
+					{
+						R("ent"); break;
+					}
+					if (Ends("eli"))
+					{
+						R("e"); break;
+					}
+					if (Ends("ousli"))
+					{
+						R("ous"); break;
+					}
+					break;
+				
 				case 'o': 
-					if (Ends("ion") && j >= 0 && (b[j] == 's' || b[j] == 't')) break;
-					/* j >= 0 fixes Bug 2 */
-					if (Ends("ou")) break; 
-					return;
-					/* takes care of -ous */
+					if (Ends("ization"))
+					{
+						R("ize"); break;
+					}
+					if (Ends("ation"))
+					{
+						R("ate"); break;
+					}
+					if (Ends("ator"))
+					{
+						R("ate"); break;
+					}
+					break;
+				
 				case 's': 
-					if (Ends("ism")) break; 
-					return;
+					if (Ends("alism"))
+					{
+						R("al"); break;
+					}
+					if (Ends("iveness"))
+					{
+						R("ive"); break;
+					}
+					if (Ends("fulness"))
+					{
+						R("ful"); break;
+					}
+					if (Ends("ousness"))
+					{
+						R("ous"); break;
+					}
+					break;
+				
 				case 't': 
-					if (Ends("ate")) break;
-					if (Ends("iti")) break; 
-					return;
+					if (Ends("aliti"))
+					{
+						R("al"); break;
+					}
+					if (Ends("iviti"))
+					{
+						R("ive"); break;
+					}
+					if (Ends("biliti"))
+					{
+						R("ble"); break;
+					}
+					break;
+				
+				case 'g': 
+					if (Ends("logi"))
+					{
+						R("log"); break;
+					}
+					break;
+				}
+		}
+		
+		/* step4() deals with -ic-, -full, -ness etc. similar strategy to step3. */
+		
+		private void  step4()
+		{
+			switch (b[k])
+			{
+				
+				case 'e': 
+					if (Ends("icate"))
+					{
+						R("ic"); break;
+					}
+					if (Ends("ative"))
+					{
+						R(""); break;
+					}
+					if (Ends("alize"))
+					{
+						R("al"); break;
+					}
+					break;
+				
+				case 'i': 
+					if (Ends("iciti"))
+					{
+						R("ic"); break;
+					}
+					break;
+				
+				case 'l': 
+					if (Ends("ical"))
+					{
+						R("ic"); break;
+					}
+					if (Ends("ful"))
+					{
+						R(""); break;
+					}
+					break;
+				
+				case 's': 
+					if (Ends("ness"))
+					{
+						R(""); break;
+					}
+					break;
+				}
+		}
+		
+		/* step5() takes off -ant, -ence etc., in context <c>vcvc<v>. */
+		
+		private void  step5()
+		{
+			if (k == k0)
+				return ; /* for Bug 1 */
+			switch (b[k - 1])
+			{
+				
+				case 'a': 
+					if (Ends("al"))
+						break;
+					return ;
+				
+				case 'c': 
+					if (Ends("ance"))
+						break;
+					if (Ends("ence"))
+						break;
+					return ;
+				
+				case 'e': 
+					if (Ends("er"))
+						break; return ;
+				
+				case 'i': 
+					if (Ends("ic"))
+						break; return ;
+				
+				case 'l': 
+					if (Ends("able"))
+						break;
+					if (Ends("ible"))
+						break; return ;
+				
+				case 'n': 
+					if (Ends("ant"))
+						break;
+					if (Ends("ement"))
+						break;
+					if (Ends("ment"))
+						break;
+					/* element etc. not stripped before the m */
+					if (Ends("ent"))
+						break;
+					return ;
+				
+				case 'o': 
+					if (Ends("ion") && j >= 0 && (b[j] == 's' || b[j] == 't'))
+						break;
+					/* j >= 0 fixes Bug 2 */
+					if (Ends("ou"))
+						break;
+					return ;
+					/* takes care of -ous */
+				
+				case 's': 
+					if (Ends("ism"))
+						break;
+					return ;
+				
+				case 't': 
+					if (Ends("ate"))
+						break;
+					if (Ends("iti"))
+						break;
+					return ;
+				
 				case 'u': 
-					if (Ends("ous")) break; 
-					return;
+					if (Ends("ous"))
+						break;
+					return ;
+				
 				case 'v': 
-					if (Ends("ive")) break; 
-					return;
+					if (Ends("ive"))
+						break;
+					return ;
+				
 				case 'z': 
-					if (Ends("ize")) break; 
-					return;
+					if (Ends("ize"))
+						break;
+					return ;
+				
 				default: 
-					return;
+					return ;
+				
 			}
 
+			// FIXED joeshaw@novell.com 10 Jan 2005 - turn off unreachable code
 #if false
-			// FIXED trow@ximian.com 15 Nov 2004  Removed unreachable code.
-			if (M() > 1) 
+			if (M() > 1)
 				k = j;
 #endif
 		}
-
-		/// <summary>
-		/// Step6() removes a final -e if M() > 1.
-		/// </summary>
-		private void Step6() 
+		
+		/* step6() removes a final -e if m() > 1. */
+		
+		private void  step6()
 		{
 			j = k;
-			if (b[k] == 'e') 
+			if (b[k] == 'e')
 			{
 				int a = M();
-				if (a > 1 || a == 1 && !Cvc(k-1)) 
+				if (a > 1 || a == 1 && !Cvc(k - 1))
 					k--;
 			}
-			if (b[k] == 'l' && Doublec(k) && M() > 1) 
+			if (b[k] == 'l' && Doublec(k) && M() > 1)
 				k--;
 		}
-
-		/// <summary>
-		/// Stem a word provided as a String.  Returns the result as a String.
-		/// </summary>
-		/// <param name="s"></param>
-		/// <returns></returns>
-		public String Stem(String s) 
+		
+		
+		/// <summary> Stem a word provided as a String.  Returns the result as a String.</summary>
+		public virtual System.String Stem(System.String s)
 		{
 			if (Stem(s.ToCharArray(), s.Length))
+			{
 				return ToString();
-			else 
+			}
+			else
 				return s;
 		}
-
-		/// <summary>
-		/// Stem a word contained in a char[].  Returns true if the stemming process
-		/// resulted in a word different from the input.  You can retrieve the 
-		/// result with GetResultLength()/GetResultBuffer() or ToString(). 
+		
+		/// <summary>Stem a word contained in a char[].  Returns true if the stemming process
+		/// resulted in a word different from the input.  You can retrieve the
+		/// result with getResultLength()/getResultBuffer() or toString().
 		/// </summary>
-		/// <param name="word"></param>
-		/// <returns></returns>
-		public virtual bool Stem(char[] word) 
+		public virtual bool Stem(char[] word)
 		{
 			return Stem(word, word.Length);
 		}
-
-		/// <summary>
-		/// Stem a word contained in a portion of a char[] array.  Returns
+		
+		/// <summary>Stem a word contained in a portion of a char[] array.  Returns
 		/// true if the stemming process resulted in a word different from
 		/// the input.  You can retrieve the result with
-		/// GetResultLength()/GetResultBuffer() or ToString().  
+		/// getResultLength()/getResultBuffer() or toString().
 		/// </summary>
-		/// <param name="wordBuffer"></param>
-		/// <param name="offset"></param>
-		/// <param name="wordLen"></param>
-		/// <returns></returns>
-		public virtual bool Stem(char[] wordBuffer, int offset, int wordLen) 
+		public virtual bool Stem(char[] wordBuffer, int offset, int wordLen)
 		{
 			Reset();
-			if (b.Length < wordLen) 
+			if (b.Length < wordLen)
 			{
 				char[] new_b = new char[wordLen + EXTRA];
 				b = new_b;
 			}
-			for (int j=0; j<wordLen; j++) 
-				b[j] = wordBuffer[offset+j];
+			for (int j = 0; j < wordLen; j++)
+				b[j] = wordBuffer[offset + j];
 			i = wordLen;
 			return Stem(0);
 		}
-
-		/// <summary>
-		/// Stem a word contained in a leading portion of a char[] array.
+		
+		/// <summary>Stem a word contained in a leading portion of a char[] array.
 		/// Returns true if the stemming process resulted in a word different
-		/// from the input. You can retrieve the result with
-		/// GetResultLength()/GetResultBuffer() or ToString().  
+		/// from the input.  You can retrieve the result with
+		/// getResultLength()/getResultBuffer() or toString().
 		/// </summary>
-		/// <param name="word"></param>
-		/// <param name="wordLen"></param>
-		/// <returns></returns>
-		public virtual bool Stem(char[] word, int wordLen) 
+		public virtual bool Stem(char[] word, int wordLen)
 		{
 			return Stem(word, 0, wordLen);
 		}
-
-		/// Stem the word placed into the Stemmer buffer through calls to Add().
+		
+		/// <summary>Stem the word placed into the Stemmer buffer through calls to add().
 		/// Returns true if the stemming process resulted in a word different
 		/// from the input.  You can retrieve the result with
-		/// GetResultLength()/GetResultBuffer() or ToString().  
-		public virtual bool Stem() 
+		/// getResultLength()/getResultBuffer() or toString().
+		/// </summary>
+		public virtual bool Stem()
 		{
 			return Stem(0);
 		}
-
-		public virtual bool Stem(int i0) 
-		{  
-			k = i - 1; 
+		
+		public virtual bool Stem(int i0)
+		{
+			k = i - 1;
 			k0 = i0;
-			if (k > k0+1) 
-			{ 
-				Step1(); Step2(); Step3(); Step4(); Step5(); Step6(); 
+			if (k > k0 + 1)
+			{
+				step1(); step2(); step3(); step4(); step5(); step6();
 			}
 			// Also, a word is considered dirty if we lopped off letters
 			// Thanks to Ifigenia Vairelles for pointing this out.
-			if (i != k+1)
+			if (i != k + 1)
 				dirty = true;
-			i = k+1;
+			i = k + 1;
 			return dirty;
 		}
-
-		/// <summary>
-		/// Test program for demonstrating the Stemmer.  It reads a file and
-		/// stems each word, writing the result to standard out.  
-		/// Usage: Stemmer file-name 
+		
+		/// <summary>Test program for demonstrating the Stemmer.  It reads a file and
+		/// stems each word, writing the result to standard out.
+		/// Usage: Stemmer file-name
 		/// </summary>
-		/// <param name="args"></param>
-		public static void Main(String[] args) 
+		[STAThread]
+		public static void  Main(System.String[] args)
 		{
 			PorterStemmer s = new PorterStemmer();
-
-			for (int i = 0; i < args.Length; i++) 
+			
+			for (int i = 0; i < args.Length; i++)
 			{
-				try 
+				try
 				{
-					// fix: 1.3.2.2 - FileAccess.Read
-					FileStream _in = new FileStream(args[i], FileMode.Open, FileAccess.Read);
+					System.IO.BinaryReader in_Renamed = new System.IO.BinaryReader(System.IO.File.Open(args[i], System.IO.FileMode.Open, System.IO.FileAccess.Read));
 					byte[] buffer = new byte[1024];
 					int bufferLen, offset, ch;
-
-					bufferLen = _in.Read(buffer, 0, buffer.Length);
+					
+					bufferLen = in_Renamed.Read(buffer, 0, buffer.Length);
 					offset = 0;
 					s.Reset();
-
-					while(true) 
-					{  
-						if (offset < bufferLen) 
+					
+					while (true)
+					{
+						if (offset < bufferLen)
 							ch = buffer[offset++];
-						else 
+						else
 						{
-							bufferLen = _in.Read(buffer, 0, buffer.Length);
+							bufferLen = in_Renamed.Read(buffer, 0, buffer.Length);
 							offset = 0;
-							if (bufferLen < 0) 
-								ch = -1;
-							else 
+							if (bufferLen <= 0)
+								ch = - 1;
+							else
 								ch = buffer[offset++];
 						}
-
-						if (Char.IsLetter((char) ch)) 
+						
+						if (System.Char.IsLetter((char) ch))
 						{
-							s.Add(Char.ToLower((char) ch));
+							s.Add(System.Char.ToLower((char) ch));
 						}
-						else 
-						{  
+						else
+						{
 							s.Stem();
-							Console.Write(s.ToString());
+							System.Console.Out.Write(s.ToString());
 							s.Reset();
-							if (ch < 0) 
+							if (ch < 0)
 								break;
-							else 
+							else
 							{
-								Console.Write((char) ch);
+								System.Console.Out.Write((char) ch);
 							}
 						}
 					}
-
-					_in.Close();
+					
+					in_Renamed.Close();
 				}
-				catch (IOException) 
-				{  
-					Console.WriteLine("error reading " + args[i]);
+				catch (System.IO.IOException )
+				{
+					System.Console.Out.WriteLine("error reading " + args[i]);
 				}
 			}
 		}

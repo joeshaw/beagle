@@ -1,0 +1,346 @@
+diff -rup /home/joe/lucene-1.4/Lucene.Net-1.4.3.RC2-001/Lucene.Net/Analysis/PorterStemmer.cs ./Analysis/PorterStemmer.cs
+--- /home/joe/lucene-1.4/Lucene.Net-1.4.3.RC2-001/Lucene.Net/Analysis/PorterStemmer.cs	2004-11-02 12:55:50.000000000 -0500
++++ ./Analysis/PorterStemmer.cs	2005-01-10 16:02:22.000000000 -0500
+@@ -587,8 +587,12 @@ namespace Lucene.Net.Analysis
+ 					return ;
+ 				
+ 			}
++
++			// FIXED joeshaw@novell.com 10 Jan 2005 - turn off unreachable code
++#if false
+ 			if (M() > 1)
+ 				k = j;
++#endif
+ 		}
+ 		
+ 		/* step6() removes a final -e if m() > 1. */
+diff -rup /home/joe/lucene-1.4/Lucene.Net-1.4.3.RC2-001/Lucene.Net/Analysis/Standard/StandardTokenizer.cs ./Analysis/Standard/StandardTokenizer.cs
+--- /home/joe/lucene-1.4/Lucene.Net-1.4.3.RC2-001/Lucene.Net/Analysis/Standard/StandardTokenizer.cs	2004-12-27 17:15:00.000000000 -0500
++++ ./Analysis/Standard/StandardTokenizer.cs	2005-01-10 16:01:51.000000000 -0500
+@@ -101,7 +101,8 @@ namespace Lucene.Net.Analysis.Standard
+ 						return new Lucene.Net.Analysis.Token(token.image, token.beginColumn, token.endColumn, Lucene.Net.Analysis.Standard.StandardTokenizerConstants.tokenImage[token.kind]);
+ 				}
+ 			}
+-			throw new System.ApplicationException("Missing return statement in function");
++			// FIXED joeshaw@novell.com 10 Jan 2005 - Turn off unreachable code
++			//throw new System.ApplicationException("Missing return statement in function");
+ 		}
+ 		
+ 		public StandardTokenizerTokenManager token_source;
+@@ -157,8 +158,8 @@ namespace Lucene.Net.Analysis.Standard
+ 		
+ 		private Token Jj_consume_token(int kind)
+ 		{
+-			Token oldToken;
+-			if ((oldToken = token).next != null)
++			Token oldToken = token;
++			if (token.next != null)
+ 				token = token.next;
+ 			else
+ 				token = token.next = token_source.GetNextToken();
+diff -rup /home/joe/lucene-1.4/Lucene.Net-1.4.3.RC2-001/Lucene.Net/Document/Field.cs ./Document/Field.cs
+--- /home/joe/lucene-1.4/Lucene.Net-1.4.3.RC2-001/Lucene.Net/Document/Field.cs	2004-11-02 12:56:16.000000000 -0500
++++ ./Document/Field.cs	2005-01-07 17:32:41.000000000 -0500
+@@ -33,7 +33,7 @@ namespace Lucene.Net.Documents
+ 		private System.String name = "body";
+ 		private System.String stringValue = null;
+ 		private bool storeTermVector = false;
+-		private System.IO.StreamReader readerValue = null;
++		private System.IO.TextReader readerValue = null;
+ 		private bool isStored = false;
+ 		private bool isIndexed = true;
+ 		private bool isTokenized = true;
+@@ -143,7 +143,7 @@ namespace Lucene.Net.Documents
+ 		/// not stored in the index verbatim.  Useful for longer text fields, like
+ 		/// "body". Term vector will not be stored for this Field. 
+ 		/// </summary>
+-		public static Field Text(System.String name, System.IO.StreamReader value_Renamed)
++		public static Field Text(System.String name, System.IO.TextReader value_Renamed)
+ 		{
+ 			return Text(name, value_Renamed, false);
+ 		}
+@@ -152,7 +152,7 @@ namespace Lucene.Net.Documents
+ 		/// not stored in the index verbatim.  Useful for longer text fields, like
+ 		/// "body". 
+ 		/// </summary>
+-		public static Field Text(System.String name, System.IO.StreamReader value_Renamed, bool storeTermVector)
++		public static Field Text(System.String name, System.IO.TextReader value_Renamed, bool storeTermVector)
+ 		{
+ 			Field f = new Field(name, value_Renamed);
+ 			f.storeTermVector = storeTermVector;
+@@ -177,7 +177,7 @@ namespace Lucene.Net.Documents
+ 		/// <summary>The value of the Field as a Reader, or null.  If null, the String value
+ 		/// is used.  Exactly one of stringValue() and readerValue() must be set. 
+ 		/// </summary>
+-		public System.IO.StreamReader ReaderValue()
++		public System.IO.TextReader ReaderValue()
+ 		{
+ 			return readerValue;
+ 		}
+@@ -220,7 +220,7 @@ namespace Lucene.Net.Documents
+ 			this.storeTermVector = storeTermVector;
+ 		}
+ 		
+-		internal Field(System.String name, System.IO.StreamReader reader)
++		internal Field(System.String name, System.IO.TextReader reader)
+ 		{
+ 			if (name == null)
+ 				throw new System.ArgumentException("name cannot be null");
+Only in /home/joe/lucene-1.4/Lucene.Net-1.4.3.RC2-001/Lucene.Net: Lucene.Net.csproj
+Only in /home/joe/lucene-1.4/Lucene.Net-1.4.3.RC2-001/Lucene.Net: Lucene.Net.csproj.user
+Only in /home/joe/lucene-1.4/Lucene.Net-1.4.3.RC2-001/Lucene.Net: Lucene.Net.Dll
+Only in /home/joe/lucene-1.4/Lucene.Net-1.4.3.RC2-001/Lucene.Net: Lucene.Net.Search.RemoteSearchable.config
+Only in /home/joe/lucene-1.4/Lucene.Net-1.4.3.RC2-001/Lucene.Net: Lucene.Net.Search.TestSort.config
+Only in /home/joe/lucene-1.4/Lucene.Net-1.4.3.RC2-001/Lucene.Net: Lucene.Net.sln
+Only in /home/joe/lucene-1.4/Lucene.Net-1.4.3.RC2-001/Lucene.Net: Lucene.Net.suo
+Only in /home/joe/lucene-1.4/Lucene.Net-1.4.3.RC2-001/Lucene.Net: Lucene.Net.xml
+Only in /home/joe/lucene-1.4/Lucene.Net-1.4.3.RC2-001/Lucene.Net: Overview.html
+Only in ./QueryParser: .#QueryParser.cs
+Only in ./QueryParser: #QueryParser.cs#
+diff -rup /home/joe/lucene-1.4/Lucene.Net-1.4.3.RC2-001/Lucene.Net/QueryParser/QueryParser.cs ./QueryParser/QueryParser.cs
+--- /home/joe/lucene-1.4/Lucene.Net-1.4.3.RC2-001/Lucene.Net/QueryParser/QueryParser.cs	2005-01-07 16:56:32.000000000 -0500
++++ ./QueryParser/QueryParser.cs	2005-01-10 16:03:16.000000000 -0500
+@@ -629,7 +629,8 @@ namespace Lucene.Net.QueryParsers
+ 				if (true)
+ 					return ret;
+ 			}
+-			throw new System.ApplicationException("Missing return statement in function");
++			// FIXED joeshaw@novell.com 10 Jan 2005 - turned off unreachable code
++			//throw new System.ApplicationException("Missing return statement in function");
+ 		}
+ 		
+ 		public int Modifiers()
+@@ -677,7 +678,8 @@ namespace Lucene.Net.QueryParsers
+ 				if (true)
+ 					return ret;
+ 			}
+-			throw new System.ApplicationException("Missing return statement in function");
++			// FIXED joeshaw@novell.com 10 Jan 2005 - turned off unreachable code
++			//throw new System.ApplicationException("Missing return statement in function");
+ 		}
+ 		
+ 		public Query Query(System.String field)
+@@ -736,7 +738,8 @@ label_1_brk: ;
+ 						return GetBooleanQuery(clauses);
+ 				}
+ 			}
+-			throw new System.ApplicationException("Missing return statement in function");
++			// FIXED joeshaw@novell.com 10 Jan 2005 - turned off unreachable code
++			//throw new System.ApplicationException("Missing return statement in function");
+ 		}
+ 		
+ 		public Query Clause(System.String field)
+@@ -808,7 +811,8 @@ label_1_brk: ;
+ 				if (true)
+ 					return q;
+ 			}
+-			throw new System.ApplicationException("Missing return statement in function");
++			// FIXED joeshaw@novell.com 10 Jan 2005 - turned off unreachable code
++			//throw new System.ApplicationException("Missing return statement in function");
+ 		}
+ 		
+ 		public Query Term(System.String field)
+@@ -1173,7 +1177,8 @@ label_1_brk: ;
+ 				if (true)
+ 					return q;
+ 			}
+-			throw new System.ApplicationException("Missing return statement in function");
++			// FIXED joeshaw@novell.com 10 Jan 2005 - turned off unreachable code
++			//throw new System.ApplicationException("Missing return statement in function");
+ 		}
+ 		
+ 		private bool Jj_2_1(int xla)
+diff -rup /home/joe/lucene-1.4/Lucene.Net-1.4.3.RC2-001/Lucene.Net/Search/BooleanQuery.cs ./Search/BooleanQuery.cs
+--- /home/joe/lucene-1.4/Lucene.Net-1.4.3.RC2-001/Lucene.Net/Search/BooleanQuery.cs	2004-12-06 12:18:16.000000000 -0500
++++ ./Search/BooleanQuery.cs	2005-01-07 18:05:15.000000000 -0500
+@@ -299,9 +299,10 @@ namespace Lucene.Net.Search
+ 					if (GetBoost() != 1.0f)
+ 					{
+ 						// incorporate boost
+-						if (query == c.query)
+-						// if rewrite was no-op
++						if (query == c.query) {
++							// if rewrite was no-op
+ 							query = (Query) query.Clone(); // then clone before boost
++						}
+ 						query.SetBoost(GetBoost() * query.GetBoost());
+ 					}
+ 					
+diff -rup /home/joe/lucene-1.4/Lucene.Net-1.4.3.RC2-001/Lucene.Net/Search/RemoteSearchable.cs ./Search/RemoteSearchable.cs
+--- /home/joe/lucene-1.4/Lucene.Net-1.4.3.RC2-001/Lucene.Net/Search/RemoteSearchable.cs	2004-11-02 13:25:20.000000000 -0500
++++ ./Search/RemoteSearchable.cs	2005-01-10 16:04:47.000000000 -0500
+@@ -85,11 +85,14 @@ namespace Lucene.Net.Search
+ 		{
+ 			System.Runtime.Remoting.RemotingConfiguration.Configure("Lucene.Net.Search.RemoteSearchable.config");
+ 			System.Runtime.Remoting.Channels.ChannelServices.RegisterChannel(new System.Runtime.Remoting.Channels.Http.HttpChannel(1099));
++			// FIXED joeshaw@novell.com 10 Jan 2005 - turned off unreachable code
++#if false
+ 			// create and install a security manager
+ 			if (false) //{{}}// if (System.getSecurityManager() == null)    // {{Aroush}} >> 'java.lang.System.getSecurityManager()'
+ 			{
+ 				//{{}}// System.setSecurityManager(new RMISecurityManager());   // {{Aroush}} >> 'java.lang.System.setSecurityManager()' and 'java.rmi.RMISecurityManager.RMISecurityManager()'
+ 			}
++#endif
+ 			
+ 			Lucene.Net.Search.Searchable local = new IndexSearcher(args[0]);
+ 			RemoteSearchable impl = new RemoteSearchable(local);
+diff -rup /home/joe/lucene-1.4/Lucene.Net-1.4.3.RC2-001/Lucene.Net/Search/TermQuery.cs ./Search/TermQuery.cs
+--- /home/joe/lucene-1.4/Lucene.Net-1.4.3.RC2-001/Lucene.Net/Search/TermQuery.cs	2004-12-06 12:00:44.000000000 -0500
++++ ./Search/TermQuery.cs	2005-01-07 17:59:38.000000000 -0500
+@@ -212,7 +212,7 @@ namespace Lucene.Net.Search
+ 		}
+ 		override public System.Object Clone()
+ 		{
+-			return null;
++			return new TermQuery (this.term);
+ 		}
+ 	}
+ }
+\ No newline at end of file
+diff -rup /home/joe/lucene-1.4/Lucene.Net-1.4.3.RC2-001/Lucene.Net/Store/FSDirectory.cs ./Store/FSDirectory.cs
+--- /home/joe/lucene-1.4/Lucene.Net-1.4.3.RC2-001/Lucene.Net/Store/FSDirectory.cs	2004-12-15 11:25:12.000000000 -0500
++++ ./Store/FSDirectory.cs	2005-01-10 16:00:59.000000000 -0500
+@@ -15,6 +15,7 @@
+  */
+ using System;
+ using Constants = Lucene.Net.Util.Constants;
++using System.Diagnostics; // FIXED joeshaw@novell.com 10 Jan 2005 - for lock debugging
+ namespace Lucene.Net.Store
+ {
+ 	
+@@ -76,11 +77,16 @@ namespace Lucene.Net.Store
+                 {
+                     System.IO.FileStream createdFile = lockFile.Create();
+                     createdFile.Close();
++		    // ADDED joeshaw@novell.com 10 Jan 2005  Lock debugging
++		    Log ("Obtained lock {0}", lockFile.FullName);
+                     return true;
+                 }
+-                catch (Exception)
++                catch (Exception e)
+                 {
+-                    return false;
++			// ADDED joeshaw@novell.com 10 Jan 2005  Lock debugging
++			Log ("Could not obtain lock {0}", lockFile.FullName);
++			Log (e);
++			return false;
+                 }
+ 			}
+ 			public override void  Release()
+@@ -100,7 +106,12 @@ namespace Lucene.Net.Store
+ 				}
+ 				else
+ 					tmpBool = false;
+-				bool generatedAux = tmpBool;
++
++				// ADDED joeshaw@novell.com 10 Jan 2005 - lock debugging
++				if (tmpBool)
++					Log ("Released lock {0}", lockFile.FullName);
++				else
++					Log ("Failed to release lock {0}", lockFile.FullName);
+ 			}
+ 			public override bool IsLocked()
+ 			{
+@@ -130,11 +141,31 @@ namespace Lucene.Net.Store
+ 		
+ 		private static readonly bool DISABLE_LOCKS;
+ 		
+-		/// <summary> Directory specified by <code>Lucene.Net.lockdir</code>
+-		/// or <code>java.io.tmpdir</code> system property
+-		/// </summary>
+-		public static readonly System.String LOCK_DIR = SupportClass.AppSettings.Get("Lucene.Net.lockdir", System.IO.Path.GetTempPath());
+-		
++		/// <summary>
++		/// Get the name of the directory to use for temporary files,
++		/// and create that directory if it doesn't already exist
++		/// </summary>
++		/// FIXED trow@ximian.com 14 May 2004 Give us control over where locks are stored
++		/// FIXED trow@ximian.com 12 Sep 2004 make TempDirectoryName not be static
++		private String tempDirectoryName = null;
++                public String TempDirectoryName {
++                        get {
++                                if (tempDirectoryName == null) {
++                                        String user_name = Environment.GetEnvironmentVariable("USER");
++                                        if (user_name == null)
++                                                user_name = "unknown";
++                                        TempDirectoryName = "/tmp/" + user_name + "-lucene.net";
++                                }
++                                return tempDirectoryName;
++                        }
++			
++                        set {
++                                tempDirectoryName = value;
++                                if (! System.IO.Directory.Exists (tempDirectoryName))
++                                        System.IO.Directory.CreateDirectory (tempDirectoryName);
++                        }
++                }
++
+         private static System.Security.Cryptography.MD5 DIGESTER;
+ 		
+ 		/// <summary>A buffer optionally used in renameTo method </summary>
+@@ -203,14 +234,8 @@ namespace Lucene.Net.Store
+ 		{
+ 			directory = path;
+ 			
+-			if (LOCK_DIR == null)
+-			{
+-				lockDir = directory;
+-			}
+-			else
+-			{
+-				lockDir = new System.IO.FileInfo(LOCK_DIR);
+-			}
++			// FIXED joeshaw@novell.com  10 Jan 2005  Use TempDirectoryName to find where locks live
++			lockDir = new System.IO.FileInfo (TempDirectoryName);
+ 			if (create)
+ 			{
+ 				Create();
+@@ -479,7 +504,20 @@ namespace Lucene.Net.Store
+ 		{
+ 			return new FSInputStream(new System.IO.FileInfo(System.IO.Path.Combine(directory.FullName, name)));
+ 		}
+-		
++
++		// ADDED trow 4 June 2004
++		static public Beagle.Util.Logger Logger = null;
++		static private void Log (string format, params object[] args)
++		{
++			if (Logger != null)
++				Logger.Debug (format, args);
++		}
++		static private void Log (Exception e)
++		{
++			if (Logger != null)
++				Logger.Debug (e);
++		}
++	       
+ 		/// <summary> So we can do some byte-to-hexchar conversion below</summary>
+ 		private static readonly char[] HEX_DIGITS = new char[]{'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f'};
+ 		
+diff -rup /home/joe/lucene-1.4/Lucene.Net-1.4.3.RC2-001/Lucene.Net/Store/Lock.cs ./Store/Lock.cs
+--- /home/joe/lucene-1.4/Lucene.Net-1.4.3.RC2-001/Lucene.Net/Store/Lock.cs	2004-11-02 13:26:20.000000000 -0500
++++ ./Store/Lock.cs	2005-01-10 15:42:13.000000000 -0500
+@@ -59,12 +59,21 @@ namespace Lucene.Net.Store
+ 			bool locked = Obtain();
+ 			int maxSleepCount = (int) (lockWaitTimeout / LOCK_POLL_INTERVAL);
+ 			int sleepCount = 0;
++
++			// FIXED trow@ximian.com 2004 May 8
++			// We shouldn't just fail right away if lockWaitTimeout < LOCK_POLL_INTERVAL.
++			maxSleepCount = Math.Max (maxSleepCount, 1);
++
+ 			while (!locked)
+ 			{
+-				if (++sleepCount == maxSleepCount)
++				// FIXED trow@ximian.com 2004 May 8
++				// Lock would time out before first sleep if maxSleepCount == 1
++				if (sleepCount == maxSleepCount)
+ 				{
+ 					throw new System.IO.IOException("Lock obtain timed out: " + this.ToString());
+ 				}
++				++sleepCount;
++
+ 				try
+ 				{
+ 					System.Threading.Thread.Sleep(new System.TimeSpan((System.Int64) 10000 * LOCK_POLL_INTERVAL));
+Only in .: upstream-changes.diff

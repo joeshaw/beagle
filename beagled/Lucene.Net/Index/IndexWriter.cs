@@ -1,282 +1,360 @@
+/*
+ * Copyright 2004 The Apache Software Foundation
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * 
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 using System;
-using System.IO;
-using System.Collections;
-using System.Runtime.CompilerServices;
-
-using Lucene.Net.Store;
-using Lucene.Net.Search; 
-using Lucene.Net.Documents;
-using Lucene.Net.Analysis;
-
+using Analyzer = Lucene.Net.Analysis.Analyzer;
+using Document = Lucene.Net.Documents.Document;
+using Similarity = Lucene.Net.Search.Similarity;
+using Directory = Lucene.Net.Store.Directory;
+using FSDirectory = Lucene.Net.Store.FSDirectory;
+using InputStream = Lucene.Net.Store.InputStream;
+using Lock = Lucene.Net.Store.Lock;
+using OutputStream = Lucene.Net.Store.OutputStream;
+using RAMDirectory = Lucene.Net.Store.RAMDirectory;
 namespace Lucene.Net.Index
 {
-	/* ====================================================================
-	 * The Apache Software License, Version 1.1
-	 *
-	 * Copyright (c) 2001 The Apache Software Foundation.  All rights
-	 * reserved.
-	 *
-	 * Redistribution and use in source and binary forms, with or without
-	 * modification, are permitted provided that the following conditions
-	 * are met:
-	 *
-	 * 1. Redistributions of source code must retain the above copyright
-	 *    notice, this list of conditions and the following disclaimer.
-	 *
-	 * 2. Redistributions in binary form must reproduce the above copyright
-	 *    notice, this list of conditions and the following disclaimer in
-	 *    the documentation and/or other materials provided with the
-	 *    distribution.
-	 *
-	 * 3. The end-user documentation included with the redistribution,
-	 *    if any, must include the following acknowledgment:
-	 *       "This product includes software developed by the
-	 *        Apache Software Foundation (http://www.apache.org/)."
-	 *    Alternately, this acknowledgment may appear in the software itself,
-	 *    if and wherever such third-party acknowledgments normally appear.
-	 *
-	 * 4. The names "Apache" and "Apache Software Foundation" and
-	 *    "Apache Lucene" must not be used to endorse or promote products
-	 *    derived from this software without prior written permission. For
-	 *    written permission, please contact apache@apache.org.
-	 *
-	 * 5. Products derived from this software may not be called "Apache",
-	 *    "Apache Lucene", nor may "Apache" appear in their name, without
-	 *    prior written permission of the Apache Software Foundation.
-	 *
-	 * THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESSED OR IMPLIED
-	 * WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
-	 * OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
-	 * DISCLAIMED.  IN NO EVENT SHALL THE APACHE SOFTWARE FOUNDATION OR
-	 * ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
-	 * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
-	 * LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF
-	 * USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
-	 * ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
-	 * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT
-	 * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
-	 * SUCH DAMAGE.
-	 * ====================================================================
-	 *
-	 * This software consists of voluntary contributions made by many
-	 * individuals on behalf of the Apache Software Foundation.  For more
-	 * information on the Apache Software Foundation, please see
-	 * <http://www.apache.org/>.
-	 */
-
-	/// <summary>
-	/// An IndexWriter creates and maintains an index.
-	///  
-	/// The third argument to the IndexWriter <b>constructor</b>
+	
+	
+	/// <summary>An IndexWriter creates and maintains an index.
+	/// The third argument to the <a href="#IndexWriter"><b>constructor</b></a>
 	/// determines whether a new index is created, or whether an existing index is
 	/// opened for the addition of new documents.
-	/// 
-	/// In either case, documents are added with the <b>AddDocument</b> method.  
-	/// When finished adding documents, <b>Close</b> should be called.
-	///
+	/// In either case, documents are added with the <a
+	/// href="#addDocument"><b>addDocument</b></a> method.  When finished adding
+	/// documents, <a href="#close"><b>close</b></a> should be called.
 	/// If an index will not have more documents added for a while and optimal search
-	/// performance is desired, then the <b>Optimize</b>
+	/// performance is desired, then the <a href="#optimize"><b>optimize</b></a>
 	/// method should be called before the index is closed.
 	/// </summary>
-	public class IndexWriter 
+	
+	public class IndexWriter
 	{
-		public static long WRITE_LOCK_TIMEOUT = 1000;
-		public static long COMMIT_LOCK_TIMEOUT = 10000;
-
-		public static string WRITE_LOCK_NAME = "write.lock";
-		public static string COMMIT_LOCK_NAME = "commit.lock";
-
-		private Lucene.Net.Store.Directory directory;			  // where this index resides
-		private Analyzer analyzer;			  // how to analyze text
-
-		private Similarity similarity = Similarity.GetDefault(); // how to normalize
-
-		private SegmentInfos segmentInfos = new SegmentInfos(); // the segments
-		private readonly Lucene.Net.Store.Directory ramDirectory = new RAMDirectory(); // for temp segs
-
-		private Lock writeLock;
-
-		/// <summary>
-		/// Use compound file setting. Defaults to false to maintain multiple files 
-		/// per segment behavior.
-		/// </summary>
-		private bool useCompoundFile = false;
-  
-  		/// <summary>
-		/// Setting to turn on usage of a compound file. When on, multiple files
-		/// for each segment are merged into a single file once the segment creation
-		/// is finished. This is done regardless of what directory is in use.
-		/// </summary>
-		public bool GetUseCompoundFile() 
+		private class AnonymousClassWith : Lock.With
 		{
-			return useCompoundFile;
-		}
-  
-		/// <summary>
-		/// Setting to turn on usage of a compound file. When on, multiple files
-		/// for each segment are merged into a single file once the segment creation
-		/// is finished. This is done regardless of what directory is in use.
-		/// </summary>
-		public void SetUseCompoundFile(bool val) 
-		{
-			useCompoundFile = val;
-		}
-  
-		/// <summary>
-		/// Expert: Set the Similarity implementation used by this IndexWriter.
-		/// </summary>
-		/// <param name="similarity"></param>
-		/// <see cref="Similarity.SetDefault(Similarity)"/>
-		public void SetSimilarity(Similarity similarity) 
-		{
-			this.similarity = similarity;
-		}
-
-		/// <summary>
-		/// Expert: Return the Similarity implementation used by this IndexWriter.
-		/// <p>This defaults to the current value of Similarity.GetDefault().</p>
-		/// </summary>
-		/// <returns></returns>
-		public Similarity GetSimilarity() 
-		{
-			return this.similarity;
-		}
-
-		/// <summary>
-		/// Constructs an IndexWriter for the index in <code>path</code>.  Text will
-		///	be analyzed with <code>a</code>.  If <code>create</code> is true, then a
-		///	new, empty index will be created in <code>path</code>, replacing the index
-		///	already there, if any. 
-		/// </summary>
-		/// <param name="path"></param>
-		/// <param name="a"></param>
-		/// <param name="create"></param>
-		public IndexWriter(String path, Analyzer a, bool create) : 
-			this(FSDirectory.GetDirectory(path, create), a, create)
-		{
-		}
-
-		/// <summary>
-		/// Constructs an IndexWriter for the index in <code>path</code>.  Text will
-		///	be analyzed with <code>a</code>.  If <code>create</code> is true, then a
-		///	new, empty index will be created in <code>path</code>, replacing the index
-		///	already there, if any. 
-		/// </summary>
-		/// <param name="path"></param>
-		/// <param name="a"></param>
-		/// <param name="create"></param>
-		public IndexWriter(FileInfo path, Analyzer a, bool create)
-			: this(FSDirectory.GetDirectory(path.FullName, create), a, create)
-		{
-		}
-
-		class IndexWriterLockWith : Lock.With
-		{
-			bool create;
-			IndexWriter indexWriter;
-			internal IndexWriterLockWith(Lock _lock, long lockTimeout, IndexWriter writer, bool create) 
-				: base(_lock, lockTimeout)
+			private void  InitBlock(bool create, IndexWriter enclosingInstance)
 			{
-				this.indexWriter = writer;
 				this.create = create;
+				this.enclosingInstance = enclosingInstance;
 			}
-
-			internal IndexWriterLockWith(Lock _lock, IndexWriter writer, bool create) 
-				: base(_lock)
+			private bool create;
+			private IndexWriter enclosingInstance;
+			public IndexWriter Enclosing_Instance
 			{
-				this.indexWriter = writer;
-				this.create = create;
+				get
+				{
+					return enclosingInstance;
+				}
+				
 			}
-
-			override public Object DoBody()
+			internal AnonymousClassWith(bool create, IndexWriter enclosingInstance, Lucene.Net.Store.Lock Param1, long Param2):base(Param1, Param2)
+			{
+				InitBlock(create, enclosingInstance);
+			}
+			public override System.Object DoBody()
 			{
 				if (create)
-					indexWriter.segmentInfos.Write(indexWriter.directory);
+					Enclosing_Instance.segmentInfos.Write(Enclosing_Instance.directory);
 				else
-					indexWriter.segmentInfos.Read(indexWriter.directory);
+					Enclosing_Instance.segmentInfos.Read(Enclosing_Instance.directory);
 				return null;
 			}
 		}
-
-		/// <summary>
-		/// Release the write lock, if needed.
-		/// </summary>
-		~IndexWriter()  
+		private class AnonymousClassWith1 : Lock.With
 		{
-			if (writeLock != null) 
+			private void  InitBlock(IndexWriter enclosingInstance)
 			{
-				writeLock.Release();                        // release write lock
+				this.enclosingInstance = enclosingInstance;
+			}
+			private IndexWriter enclosingInstance;
+			public IndexWriter Enclosing_Instance
+			{
+				get
+				{
+					return enclosingInstance;
+				}
+				
+			}
+			internal AnonymousClassWith1(IndexWriter enclosingInstance, Lucene.Net.Store.Lock Param1, long Param2):base(Param1, Param2)
+			{
+				InitBlock(enclosingInstance);
+			}
+			public override System.Object DoBody()
+			{
+				Enclosing_Instance.segmentInfos.Write(Enclosing_Instance.directory); // commit changes
+				return null;
+			}
+		}
+		private class AnonymousClassWith2 : Lock.With
+		{
+			private void  InitBlock(System.Collections.ArrayList segmentsToDelete, IndexWriter enclosingInstance)
+			{
+				this.segmentsToDelete = segmentsToDelete;
+				this.enclosingInstance = enclosingInstance;
+			}
+			private System.Collections.ArrayList segmentsToDelete;
+			private IndexWriter enclosingInstance;
+			public IndexWriter Enclosing_Instance
+			{
+				get
+				{
+					return enclosingInstance;
+				}
+				
+			}
+			internal AnonymousClassWith2(System.Collections.ArrayList segmentsToDelete, IndexWriter enclosingInstance, Lucene.Net.Store.Lock Param1, long Param2):base(Param1, Param2)
+			{
+				InitBlock(segmentsToDelete, enclosingInstance);
+			}
+			public override System.Object DoBody()
+			{
+				Enclosing_Instance.segmentInfos.Write(Enclosing_Instance.directory); // commit before deleting
+				Enclosing_Instance.DeleteSegments(segmentsToDelete); // delete now-unused segments
+				return null;
+			}
+		}
+		private void  InitBlock()
+		{
+			similarity = Similarity.GetDefault();
+		}
+		
+		/// <summary> Default value is 1000.  Use <code>Lucene.Net.writeLockTimeout</code>
+		/// system property to override.
+		/// </summary>
+		public static long WRITE_LOCK_TIMEOUT = SupportClass.AppSettings.Get("Lucene.Net.writeLockTimeout", 1000L);
+		
+		/// <summary> Default value is 10000.  Use <code>Lucene.Net.commitLockTimeout</code>
+		/// system property to override.
+		/// </summary>
+		public static long COMMIT_LOCK_TIMEOUT = System.Int32.Parse(SupportClass.AppSettings.Get("Lucene.Net.commitLockTimeout", "10000"));
+		
+		public const System.String WRITE_LOCK_NAME = "write.lock";
+		public const System.String COMMIT_LOCK_NAME = "commit.lock";
+		
+		/// <summary> Default value is 10.  Use <code>Lucene.Net.mergeFactor</code>
+		/// system property to override.
+		/// </summary>
+		public static readonly int DEFAULT_MERGE_FACTOR = System.Int32.Parse(SupportClass.AppSettings.Get("Lucene.Net.mergeFactor", "10"));
+		
+		/// <summary> Default value is 10.  Use <code>Lucene.Net.minMergeDocs</code>
+		/// system property to override.
+		/// </summary>
+		public static readonly int DEFAULT_MIN_MERGE_DOCS = System.Int32.Parse(SupportClass.AppSettings.Get("Lucene.Net.minMergeDocs", "10"));
+		
+		/// <summary> Default value is {@link Integer#MAX_VALUE}.
+		/// Use <code>Lucene.Net.maxMergeDocs</code> system property to override.
+		/// </summary>
+		public static readonly int DEFAULT_MAX_MERGE_DOCS = System.Int32.Parse(SupportClass.AppSettings.Get("Lucene.Net.maxMergeDocs", System.Convert.ToString(System.Int32.MaxValue)));
+		
+		/// <summary> Default value is 10000.  Use <code>Lucene.Net.maxFieldLength</code>
+		/// system property to override.
+		/// </summary>
+		public static readonly int DEFAULT_MAX_FIELD_LENGTH = System.Int32.Parse(SupportClass.AppSettings.Get("Lucene.Net.maxFieldLength", "10000")); //// "5000000")); // "2147483647"));
+		
+		
+		private Directory directory; // where this index resides
+		private Analyzer analyzer; // how to analyze text
+		
+		private Similarity similarity; // how to normalize
+		
+		private SegmentInfos segmentInfos = new SegmentInfos(); // the segments
+		private Directory ramDirectory = new RAMDirectory(); // for temp segs
+		
+		private Lock writeLock;
+		
+		/// <summary>Use compound file setting. Defaults to true, minimizing the number of
+		/// files used.  Setting this to false may improve indexing performance, but
+		/// may also cause file handle problems.
+		/// </summary>
+		private bool useCompoundFile = true;
+		
+		private bool closeDir;
+		
+		/// <summary>Setting to turn on usage of a compound file. When on, multiple files
+		/// for each segment are merged into a single file once the segment creation
+		/// is finished. This is done regardless of what directory is in use.
+		/// </summary>
+		public virtual bool GetUseCompoundFile()
+		{
+			return useCompoundFile;
+		}
+		
+		/// <summary>Setting to turn on usage of a compound file. When on, multiple files
+		/// for each segment are merged into a single file once the segment creation
+		/// is finished. This is done regardless of what directory is in use.
+		/// </summary>
+		public virtual void  SetUseCompoundFile(bool value_Renamed)
+		{
+			useCompoundFile = value_Renamed;
+		}
+		
+		
+		/// <summary>Expert: Set the Similarity implementation used by this IndexWriter.
+		/// 
+		/// </summary>
+		/// <seealso cref="Similarity#SetDefault(Similarity)">
+		/// </seealso>
+		public virtual void  SetSimilarity(Similarity similarity)
+		{
+			this.similarity = similarity;
+		}
+		
+		/// <summary>Expert: Return the Similarity implementation used by this IndexWriter.
+		/// 
+		/// <p>This defaults to the current value of {@link Similarity#GetDefault()}.
+		/// </summary>
+		public virtual Similarity GetSimilarity()
+		{
+			return this.similarity;
+		}
+		
+		/// <summary> Constructs an IndexWriter for the index in <code>path</code>.
+		/// Text will be analyzed with <code>a</code>.  If <code>create</code>
+		/// is true, then a new, empty index will be created in
+		/// <code>path</code>, replacing the index already there, if any.
+		/// 
+		/// </summary>
+		/// <param name="path">the path to the index directory
+		/// </param>
+		/// <param name="a">the analyzer to use
+		/// </param>
+		/// <param name="create"><code>true</code> to create the index or overwrite
+		/// the existing one; <code>false</code> to append to the existing
+		/// index
+		/// </param>
+		/// <throws>  IOException if the directory cannot be read/written to, or </throws>
+		/// <summary>  if it does not exist, and <code>create</code> is
+		/// <code>false</code>
+		/// </summary>
+		public IndexWriter(System.String path, Analyzer a, bool create) :this(FSDirectory.GetDirectory(path, create), a, create, true)
+		{
+		}
+		
+		/// <summary> Constructs an IndexWriter for the index in <code>path</code>.
+		/// Text will be analyzed with <code>a</code>.  If <code>create</code>
+		/// is true, then a new, empty index will be created in
+		/// <code>path</code>, replacing the index already there, if any.
+		/// 
+		/// </summary>
+		/// <param name="path">the path to the index directory
+		/// </param>
+		/// <param name="a">the analyzer to use
+		/// </param>
+		/// <param name="create"><code>true</code> to create the index or overwrite
+		/// the existing one; <code>false</code> to append to the existing
+		/// index
+		/// </param>
+		/// <throws>  IOException if the directory cannot be read/written to, or </throws>
+		/// <summary>  if it does not exist, and <code>create</code> is
+		/// <code>false</code>
+		/// </summary>
+		public IndexWriter(System.IO.FileInfo path, Analyzer a, bool create):this(FSDirectory.GetDirectory(path, create), a, create, true)
+		{
+		}
+		
+		/// <summary> Constructs an IndexWriter for the index in <code>d</code>.
+		/// Text will be analyzed with <code>a</code>.  If <code>create</code>
+		/// is true, then a new, empty index will be created in
+		/// <code>d</code>, replacing the index already there, if any.
+		/// 
+		/// </summary>
+		/// <param name="d">the index directory
+		/// </param>
+		/// <param name="a">the analyzer to use
+		/// </param>
+		/// <param name="create"><code>true</code> to create the index or overwrite
+		/// the existing one; <code>false</code> to append to the existing
+		/// index
+		/// </param>
+		/// <throws>  IOException if the directory cannot be read/written to, or </throws>
+		/// <summary>  if it does not exist, and <code>create</code> is
+		/// <code>false</code>
+		/// </summary>
+		public IndexWriter(Directory d, Analyzer a, bool create):this(d, a, create, false)
+		{
+		}
+		
+		private IndexWriter(Directory d, Analyzer a, bool create, bool closeDir)
+		{
+			InitBlock();
+			this.closeDir = closeDir;
+			directory = d;
+			analyzer = a;
+			
+			Lock writeLock = directory.MakeLock(IndexWriter.WRITE_LOCK_NAME);
+			if (!writeLock.Obtain(WRITE_LOCK_TIMEOUT))
+			// obtain write lock
+			{
+				throw new System.IO.IOException("Index locked for write: " + writeLock);
+			}
+			this.writeLock = writeLock; // save it
+			
+			lock (directory)
+			{
+				// in- & inter-process sync
+				new AnonymousClassWith(create, this, directory.MakeLock(IndexWriter.COMMIT_LOCK_NAME), COMMIT_LOCK_TIMEOUT).run();
+			}
+		}
+		
+		/// <summary>Flushes all changes to an index and closes all associated files. </summary>
+		public virtual void  Close()
+		{
+			lock (this)
+			{
+				FlushRamSegments();
+				ramDirectory.Close();
+				writeLock.Release(); // release write lock
+				writeLock = null;
+				if (closeDir)
+					directory.Close();
+				System.GC.SuppressFinalize(this);
+			}
+		}
+		
+		/// <summary>Release the write lock, if needed. </summary>
+		~IndexWriter()
+		{
+			if (writeLock != null)
+			{
+				writeLock.Release(); // release write lock
 				writeLock = null;
 			}
 		}
-
-		/// <summary>
-		/// Constructs an IndexWriter for the index in <code>d</code>.  Text will be
-		///	analyzed with <code>a</code>.  If <code>create</code> is true, then a new,
-		///	empty index will be created in <code>d</code>, replacing the index already
-		///	there, if any. 
-		/// </summary>
-		/// <param name="d"></param>
-		/// <param name="a"></param>
-		/// <param name="create"></param>
-		public IndexWriter(Lucene.Net.Store.Directory d, Analyzer a, bool create)
-		{
-			directory = d;
-			analyzer = a;
-
-			Lock writeLock = directory.MakeLock(IndexWriter.WRITE_LOCK_NAME);
-			if (!writeLock.Obtain(WRITE_LOCK_TIMEOUT))                      // obtain write lock
-				throw new IOException("Index locked for write: " + writeLock);
-			this.writeLock = writeLock;                   // save it
-
-			lock (directory) 
-			{			  // in- & inter-process sync
-				new IndexWriterLockWith(
-					directory.MakeLock(IndexWriter.COMMIT_LOCK_NAME), COMMIT_LOCK_TIMEOUT, this, create
-				).Run();
-			}
-		}
-
-		/// <summary>
-		/// Flushes all changes to an index, closes all associated files, and closes
-		///	the directory that the index is stored in. 
-		/// </summary>
-		[MethodImpl(MethodImplOptions.Synchronized)]
-		public void Close()  
-		{
-			FlushRamSegments();
-			ramDirectory.Close();
-			writeLock.Release();                          // release write lock
-			writeLock = null;
-			directory.Close();
-		}
-
-		/// <summary>
-		/// Returns the analyzer used by this index.
-		/// </summary>
-		/// <returns></returns>
-		public Analyzer GetAnalyzer() 
+		
+		/// <summary>Returns the analyzer used by this index. </summary>
+		public virtual Analyzer GetAnalyzer()
 		{
 			return analyzer;
 		}
-
-		/// <summary>
-		/// Returns the number of documents currently in this index.
-		/// </summary>
-		[MethodImpl(MethodImplOptions.Synchronized)]
-		public int DocCount() 
+		
+		
+		/// <summary>Returns the number of documents currently in this index. </summary>
+		public virtual int DocCount()
 		{
-			int count = 0;
-			for (int i = 0; i < segmentInfos.Count; i++) 
+			lock (this)
 			{
-				SegmentInfo si = segmentInfos.Info(i);
-				count += si.docCount;
+				int count = 0;
+				for (int i = 0; i < segmentInfos.Count; i++)
+				{
+					SegmentInfo si = segmentInfos.Info(i);
+					count += si.docCount;
+				}
+				return count;
 			}
-			return count;
 		}
-
-		/// <summary>
-		/// The maximum number of terms that will be indexed for a single field in a
+		
+		/// <summary> The maximum number of terms that will be indexed for a single Field in a
 		/// document.  This limits the amount of memory required for indexing, so that
 		/// collections with very large files will not crash the indexing process by
 		/// running out of memory.<p/>
@@ -285,349 +363,333 @@ namespace Lucene.Net.Index
 		/// documents are large, be sure to set this value high enough to accomodate
 		/// the expected size.  If you set it to Integer.MAX_VALUE, then the only limit
 		/// is your memory, but you should anticipate an OutOfMemoryError.<p/>
-		/// By default, no more than 10,000 terms will be indexed for a field.
+		/// By default, no more than 10,000 terms will be indexed for a Field.
 		/// </summary>
-		public int maxFieldLength = 10000;
-
-		/// <summary>
-		/// Adds a document to this index. If the document contains more than
-		///	maxFieldLength terms for a given field, the remainder are
-		///	discarded.
+		public int maxFieldLength = DEFAULT_MAX_FIELD_LENGTH;
+		
+		/// <summary> Adds a document to this index.  If the document contains more than
+		/// {@link #maxFieldLength} terms for a given Field, the remainder are
+		/// discarded.
 		/// </summary>
-		/// <param name="doc"></param>
-		public void AddDocument(Document doc)  
+		public virtual void  AddDocument(Document doc)
 		{
 			AddDocument(doc, analyzer);
 		}
-
-		/// <summary>
-		/// Adds a document to this index, using the provided analyzer instead of the
-		/// value of {@link #getAnalyzer()}.  If the document contains more than
-		/// {@link #maxFieldLength} terms for a given field, the remainder are
+		
+		/// <summary> Adds a document to this index, using the provided analyzer instead of the
+		/// value of {@link #GetAnalyzer()}.  If the document contains more than
+		/// {@link #maxFieldLength} terms for a given Field, the remainder are
 		/// discarded.
 		/// </summary>
-		public void AddDocument(Document doc, Analyzer analyzer)
+		public virtual void  AddDocument(Document doc, Analyzer analyzer)
 		{
-			DocumentWriter dw =
-				new DocumentWriter(ramDirectory, analyzer, similarity, maxFieldLength);
-			String segmentName = NewSegmentName();
+			DocumentWriter dw = new DocumentWriter(ramDirectory, analyzer, similarity, maxFieldLength);
+			System.String segmentName = NewSegmentName();
 			dw.AddDocument(segmentName, doc);
-			lock (this) 
+			lock (this)
 			{
 				segmentInfos.Add(new SegmentInfo(segmentName, 1, ramDirectory));
 				MaybeMergeSegments();
 			}
-
 		}
 		
-		
-		[MethodImpl(MethodImplOptions.Synchronized)]
-		private String NewSegmentName() 
+		internal int GetSegmentsCounter()
 		{
-			return "_" + Lucene.Net.Util.Number.ToString(segmentInfos.counter++, Lucene.Net.Util.Number.MAX_RADIX);
+			return segmentInfos.counter;
 		}
-
-		/// <summary>
-		/// Determines how often segment indexes are merged by AddDocument().  With
+		
+		private System.String NewSegmentName()
+		{
+			lock (this)
+			{
+				return "_" + SupportClass.Number.ToString(segmentInfos.counter++, SupportClass.Number.MAX_RADIX);
+			}
+		}
+		
+		/// <summary>Determines how often segment indices are merged by addDocument().  With
 		/// smaller values, less RAM is used while indexing, and searches on
-		/// unoptimized indexes are faster, but indexing speed is slower.  With larger
-		/// values more RAM is used while indexing and searches on unoptimized indexes
-		/// are slower, but indexing is faster.  Thus larger values (&gt; 10) are best
-		/// for batched index creation, and smaller values (&lt; 10) for indexes that are
+		/// unoptimized indices are faster, but indexing speed is slower.  With larger
+		/// values, more RAM is used during indexing, and while searches on unoptimized
+		/// indices are slower, indexing is faster.  Thus larger values (> 10) are best
+		/// for batch index creation, and smaller values (< 10) for indices that are
 		/// interactively maintained.
-		/// <p>This must never be less than 2.  The default value is 10.</p>
+		/// 
+		/// <p>This must never be less than 2.  The default value is 10.
 		/// </summary>
-		public int mergeFactor = 10;
-
-		/// <summary>
-		/// Determines the largest number of documents ever merged by AddDocument().
+		public int mergeFactor = DEFAULT_MERGE_FACTOR;
+		
+		/// <summary>Determines the minimal number of documents required before the buffered
+		/// in-memory documents are merging and a new Segment is created.
+		/// Since Documents are merged in a {@link Lucene.Net.Store.RAMDirectory},
+		/// large value gives faster indexing.  At the same time, mergeFactor limits
+		/// the number of files open in a FSDirectory.
+		/// 
+		/// <p> The default value is 10.
+		/// </summary>
+		public int minMergeDocs = DEFAULT_MIN_MERGE_DOCS;
+		
+		
+		/// <summary>Determines the largest number of documents ever merged by addDocument().
 		/// Small values (e.g., less than 10,000) are best for interactive indexing,
 		/// as this limits the length of pauses while indexing to a few seconds.
 		/// Larger values are best for batched indexing and speedier searches.
-		///
-		/// <p>The default value is Int32.MaxValue</p>
+		/// 
+		/// <p>The default value is {@link Integer#MAX_VALUE}. 
 		/// </summary>
-		public int maxMergeDocs = Int32.MaxValue;
-
-		/// <summary>
-		/// If non-null, information about merges will be printed to this.
+		public int maxMergeDocs = DEFAULT_MAX_MERGE_DOCS;
+		
+		/// <summary>If non-null, information about merges will be printed to this. </summary>
+		public System.IO.StreamWriter infoStream = null;
+		
+		/// <summary>Merges all segments together into a single segment, optimizing an index
+		/// for search. 
 		/// </summary>
-		public TextWriter infoStream = null;
-
-		/// <summary>
-		/// Merges all segments together into a single segment, optimizing 
-		/// an index for search.
-		/// </summary>
-		[MethodImpl(MethodImplOptions.Synchronized)]
-		public void Optimize()  
+		public virtual void  Optimize()
 		{
-			FlushRamSegments();
-			while (segmentInfos.Count > 1 ||
-				(segmentInfos.Count == 1 &&
-				(SegmentReader.HasDeletions(segmentInfos.Info(0)) ||
-				(useCompoundFile && 
-                 !SegmentReader.UsesCompoundFile(segmentInfos.Info(0))) ||
-				segmentInfos.Info(0).dir != directory))) 
+			lock (this)
 			{
-				int minSegment = segmentInfos.Count - mergeFactor;
-				MergeSegments(minSegment < 0 ? 0 : minSegment);
+				FlushRamSegments();
+				while (segmentInfos.Count > 1 || (segmentInfos.Count == 1 && (SegmentReader.HasDeletions(segmentInfos.Info(0)) || segmentInfos.Info(0).dir != directory || (useCompoundFile && (!SegmentReader.UsesCompoundFile(segmentInfos.Info(0)) || SegmentReader.HasSeparateNorms(segmentInfos.Info(0)))))))
+				{
+					int minSegment = segmentInfos.Count - mergeFactor;
+					MergeSegments(minSegment < 0?0:minSegment);
+				}
 			}
 		}
-
-		/// <summary>
-		/// Merges all segments from an array of indexes into this index.
-		///
+		
+		/// <summary>Merges all segments from an array of indexes into this index.
+		/// 
 		/// <p>This may be used to parallelize batch indexing.  A large document
 		/// collection can be broken into sub-collections.  Each sub-collection can be
 		/// indexed in parallel, on a different thread, process or machine.  The
 		/// complete index can then be created by merging sub-collection indexes
 		/// with this method.
-		/// </p>
 		/// 
-		/// <p>After this completes, the index is optimized. </p>
+		/// <p>After this completes, the index is optimized. 
 		/// </summary>
-		[MethodImpl(MethodImplOptions.Synchronized)]
-		public void AddIndexes(Lucene.Net.Store.Directory[] dirs)
+		public virtual void  AddIndexes(Directory[] dirs)
 		{
-			Optimize();					  // start with zero or 1 seg
-			for (int i = 0; i < dirs.Length; i++) 
+			lock (this)
 			{
-				SegmentInfos sis = new SegmentInfos();	  // read infos from dir
-				sis.Read(dirs[i]);
-				for (int j = 0; j < sis.Count; j++) 
+				Optimize(); // start with zero or 1 seg
+				for (int i = 0; i < dirs.Length; i++)
 				{
-					segmentInfos.Add(sis.Info(j));	  // add each info
+					SegmentInfos sis = new SegmentInfos(); // read infos from dir
+					sis.Read(dirs[i]);
+					for (int j = 0; j < sis.Count; j++)
+					{
+						segmentInfos.Add(sis.Info(j)); // add each info
+					}
 				}
+				Optimize(); // final cleanup
 			}
-			Optimize();					  // final cleanup
 		}
 		
-		/// <summary>
-		/// Merges the provided indexes into this index.
-		/// <p/>After this completes, the index is optimized.
+		/// <summary>Merges the provided indexes into this index.
+		/// <p>After this completes, the index is optimized. </p>
+		/// <p>The provided IndexReaders are not closed.</p>
 		/// </summary>
-		[MethodImpl(MethodImplOptions.Synchronized)]
-		public void AddIndexes(IndexReader[] readers)
+		public virtual void  AddIndexes(IndexReader[] readers)
 		{
-			Optimize();					  // start with zero or 1 seg
-
-			String mergedName = NewSegmentName();
-			SegmentMerger merger = new SegmentMerger(directory, mergedName, false);
-
-			if (segmentInfos.Count == 1)                 // add existing index, if any
-				merger.Add(new SegmentReader(segmentInfos.Info(0)));
-
-			for (int i = 0; i < readers.Length; i++)      // add new indexes
-				merger.Add(readers[i]);
-
-			int docCount = merger.Merge();                // merge 'em
-
-			segmentInfos.Clear();                      // pop old infos & add new
-			segmentInfos.Add(new SegmentInfo(mergedName, docCount, directory));
-
-			lock (directory) 
-			{			  // in- & inter-process sync
-				new IndexWriterLockWith(directory.MakeLock(IndexWriter.COMMIT_LOCK_NAME), this, true).Run();
+			lock (this)
+			{
+				
+				Optimize(); // start with zero or 1 seg
+				
+				System.String mergedName = NewSegmentName();
+				SegmentMerger merger = new SegmentMerger(directory, mergedName, false);
+				
+				if (segmentInfos.Count == 1)
+				// add existing index, if any
+					merger.Add(new SegmentReader(segmentInfos.Info(0)));
+				
+				for (int i = 0; i < readers.Length; i++)
+				// add new indexes
+					merger.Add(readers[i]);
+				
+				int docCount = merger.Merge(); // merge 'em
+				
+				segmentInfos.Clear(); // pop old infos & add new
+				segmentInfos.Add(new SegmentInfo(mergedName, docCount, directory));
+				
+				lock (directory)
+				{
+					// in- & inter-process sync
+					new AnonymousClassWith1(this, directory.MakeLock("commit.lock"), COMMIT_LOCK_TIMEOUT).run();
+				}
 			}
 		}
-
-
-		/// <summary>
-		/// Merges all RAM-resident segments.
-		/// </summary>
-		private void FlushRamSegments()  
+		
+		/// <summary>Merges all RAM-resident segments. </summary>
+		private void  FlushRamSegments()
 		{
-			int minSegment = segmentInfos.Count-1;
+			int minSegment = segmentInfos.Count - 1;
 			int docCount = 0;
-			while (minSegment >= 0 &&
-				(segmentInfos.Info(minSegment)).dir == ramDirectory) 
+			while (minSegment >= 0 && (segmentInfos.Info(minSegment)).dir == ramDirectory)
 			{
 				docCount += segmentInfos.Info(minSegment).docCount;
 				minSegment--;
 			}
-			if (minSegment < 0 ||			  // add one FS segment?
-				(docCount + segmentInfos.Info(minSegment).docCount) > mergeFactor ||
-				!(segmentInfos.Info(segmentInfos.Count-1).dir == ramDirectory))
+			if (minSegment < 0 || (docCount + segmentInfos.Info(minSegment).docCount) > mergeFactor || !(segmentInfos.Info(segmentInfos.Count - 1).dir == ramDirectory))
 				minSegment++;
 			if (minSegment >= segmentInfos.Count)
-				return;					  // none to merge
+				return ; // none to merge
 			MergeSegments(minSegment);
 		}
-
-		/// <summary>
-		/// Incremental segment merger.
-		/// </summary>
-		private void MaybeMergeSegments()  
+		
+		/// <summary>Incremental segment merger.  </summary>
+		private void  MaybeMergeSegments()
 		{
-			long targetMergeDocs = mergeFactor;
-			while (targetMergeDocs <= maxMergeDocs) 
+			long targetMergeDocs = minMergeDocs;
+			while (targetMergeDocs <= maxMergeDocs)
 			{
 				// find segments smaller than current target size
 				int minSegment = segmentInfos.Count;
 				int mergeDocs = 0;
-				while (--minSegment >= 0) 
+				while (--minSegment >= 0)
 				{
 					SegmentInfo si = segmentInfos.Info(minSegment);
 					if (si.docCount >= targetMergeDocs)
 						break;
 					mergeDocs += si.docCount;
 				}
-
-				if (mergeDocs >= targetMergeDocs)		  // found a merge to do
-					MergeSegments(minSegment+1);
+				
+				if (mergeDocs >= targetMergeDocs)
+				// found a merge to do
+					MergeSegments(minSegment + 1);
 				else
 					break;
-      
-				targetMergeDocs *= mergeFactor;		  // increase target size
+				
+				targetMergeDocs *= mergeFactor; // increase target size
 			}
 		}
-
-		class IndexWriterLockWith2 : Lock.With
-		{
-			IndexWriter indexWriter;
-			ArrayList segmentsToDelete;
-
-			internal IndexWriterLockWith2(Lock _lock, long lockTimeout, IndexWriter indexWriter, 
-				ArrayList segmentsToDelete) : base(_lock, lockTimeout) 
-			{
-				this.indexWriter = indexWriter;
-				this.segmentsToDelete = segmentsToDelete;
-			}
-			override public Object DoBody()  
-			{
-				indexWriter.segmentInfos.Write(indexWriter.directory);	  // commit before deleting
-				indexWriter.DeleteSegments(segmentsToDelete);	  // delete now-unused segments
-				return null;
-			}
-		}
-
-		/// <summary>
-		/// Pops segments off of segmentInfos stack down to minSegment, merges them,
-		///	and pushes the merged index onto the top of the segmentInfos stack. 
+		
+		/// <summary>Pops segments off of segmentInfos stack down to minSegment, merges them,
+		/// and pushes the merged index onto the top of the segmentInfos stack. 
 		/// </summary>
-		/// <param name="minSegment"></param>
-		private void MergeSegments(int minSegment)
+		private void  MergeSegments(int minSegment)
 		{
-			String mergedName = NewSegmentName();
-			int mergedDocCount = 0;
-			if (infoStream != null) infoStream.Write("merging segments");
+			System.String mergedName = NewSegmentName();
+			if (infoStream != null)
+				infoStream.Write("merging segments");
 			SegmentMerger merger = new SegmentMerger(directory, mergedName, useCompoundFile);
-			ArrayList segmentsToDelete = new ArrayList();
-			for (int i = minSegment; i < segmentInfos.Count; i++) 
+			
+			System.Collections.ArrayList segmentsToDelete = System.Collections.ArrayList.Synchronized(new System.Collections.ArrayList(10));
+			for (int i = minSegment; i < segmentInfos.Count; i++)
 			{
 				SegmentInfo si = segmentInfos.Info(i);
 				if (infoStream != null)
 					infoStream.Write(" " + si.name + " (" + si.docCount + " docs)");
-				SegmentReader reader = new SegmentReader(si);
+				IndexReader reader = new SegmentReader(si);
 				merger.Add(reader);
-				if ((reader.Directory() == this.directory) || // if we own the directory
-					(reader.Directory() == this.ramDirectory))
-					segmentsToDelete.Add(reader);	  // queue segment for deletion
-				mergedDocCount += reader.NumDocs();
+				if ((reader.Directory() == this.directory) || (reader.Directory() == this.ramDirectory))
+					segmentsToDelete.Add(reader); // queue segment for deletion
 			}
-			if (infoStream != null) 
+			
+			int mergedDocCount = merger.Merge();
+			
+			if (infoStream != null)
 			{
-				infoStream.WriteLine();
-				infoStream.WriteLine(" into "+mergedName+" ("+mergedDocCount+" docs)");
+				infoStream.WriteLine(" into " + mergedName + " (" + mergedDocCount + " docs)");
 			}
-			merger.Merge();
-
-			segmentInfos.RemoveRange(minSegment,segmentInfos.Count - minSegment);  // pop old infos & add new
-			segmentInfos.Add(
-				new SegmentInfo(mergedName, mergedDocCount,
-				directory)
-			);
-    
-			lock (directory) 
-			{			  // in- & inter-process sync
-				IndexWriterLockWith2 lockWith = new IndexWriterLockWith2(
-					directory.MakeLock(IndexWriter.COMMIT_LOCK_NAME), COMMIT_LOCK_TIMEOUT, this, segmentsToDelete
-				);
-				lockWith.Run();
+			
+			segmentInfos.RemoveRange(minSegment, segmentInfos.Count - minSegment); // pop old infos & add new
+			segmentInfos.Add(new SegmentInfo(mergedName, mergedDocCount, directory));
+			
+			// close readers before we attempt to delete now-obsolete segments
+			merger.CloseReaders();
+			
+			lock (directory)
+			{
+				// in- & inter-process sync
+				new AnonymousClassWith2(segmentsToDelete, this, directory.MakeLock(IndexWriter.COMMIT_LOCK_NAME), COMMIT_LOCK_TIMEOUT).run();
 			}
 		}
-
-		/// <summary>
-		/// Some operating systems (e.g. Windows) don't permit a file to be deleted
-		/// while it is opened for read (e.g. by another process or thread).  So we
-		/// assume that when a delete fails it is because the file is open in another
-		/// process, and queue the file for subsequent deletion. 
-		/// </summary>
-		/// <param name="segments"></param>
-		internal void DeleteSegments(ArrayList segments)  
+		
+		/* Some operating systems (e.g. Windows) don't permit a file to be deleted
+		while it is opened for read (e.g. by another process or thread).  So we
+		assume that when a delete fails it is because the file is open in another
+		process, and queue the file for subsequent deletion. */
+		
+		private void  DeleteSegments(System.Collections.ArrayList segments)
 		{
-			ArrayList deletable = new ArrayList();
-
+			System.Collections.ArrayList deletable = System.Collections.ArrayList.Synchronized(new System.Collections.ArrayList(10));
+			
 			DeleteFiles(ReadDeleteableFiles(), deletable); // try to delete deleteable
-    
-			for (int i = 0; i < segments.Count; i++) 
+			
+			for (int i = 0; i < segments.Count; i++)
 			{
-				SegmentReader reader = (SegmentReader)segments[i];
+				SegmentReader reader = (SegmentReader) segments[i];
 				if (reader.Directory() == this.directory)
-					DeleteFiles(reader.Files(), deletable);	  // try to delete our files
+					DeleteFiles(reader.Files(), deletable);
+				// try to delete our files
 				else
-					DeleteFiles(reader.Files(), reader.Directory()); // delete, eg, RAM files
+					DeleteFiles(reader.Files(), reader.Directory()); // delete other files
 			}
-
-			WriteDeleteableFiles(deletable);		  // note files we can't delete
+			
+			WriteDeleteableFiles(deletable); // note files we can't delete
 		}
-
-		private void DeleteFiles(ArrayList files, Lucene.Net.Store.Directory directory)
+		
+		private void  DeleteFiles(System.Collections.ArrayList files, Directory directory)
 		{
 			for (int i = 0; i < files.Count; i++)
-				directory.DeleteFile((String)files[i]);
+				directory.DeleteFile((System.String) files[i]);
 		}
-
-		private void DeleteFiles(ArrayList files, ArrayList deletable)
+		
+		private void  DeleteFiles(System.Collections.ArrayList files, System.Collections.ArrayList deletable)
 		{
-			for (int i = 0; i < files.Count; i++) 
+			for (int i = 0; i < files.Count; i++)
 			{
-				String file = (String)files[i];
-				try 
+				System.String file = (System.String) files[i];
+				try
 				{
-					directory.DeleteFile(file);		  // try to delete each file
-				} 
-				catch (IOException e) 
-				{			  // if delete fails
-					if (directory.FileExists(file)) 
+					directory.DeleteFile(file); // try to delete each file
+				}
+				catch (System.IO.IOException e)
+				{
+					// if delete fails
+					if (directory.FileExists(file))
 					{
 						if (infoStream != null)
+						{
 							infoStream.WriteLine(e.Message + "; Will re-try later.");
-						deletable.Add(file);		  // add to deletable
+						}
+						deletable.Add(file); // add to deletable
 					}
 				}
 			}
 		}
-
-		private ArrayList ReadDeleteableFiles()  
+		
+		private System.Collections.ArrayList ReadDeleteableFiles()
 		{
-			ArrayList result = new ArrayList();
+			System.Collections.ArrayList result = System.Collections.ArrayList.Synchronized(new System.Collections.ArrayList(10));
 			if (!directory.FileExists("deletable"))
 				return result;
-
+			
 			InputStream input = directory.OpenFile("deletable");
-			try 
+			try
 			{
-				for (int i = input.ReadInt(); i > 0; i--)	  // read file names
+				for (int i = input.ReadInt(); i > 0; i--)
+				// read file names
 					result.Add(input.ReadString());
-			} 
-			finally 
+			}
+			finally
 			{
 				input.Close();
 			}
 			return result;
 		}
-
-		private void WriteDeleteableFiles(ArrayList files)  
+		
+		private void  WriteDeleteableFiles(System.Collections.ArrayList files)
 		{
 			OutputStream output = directory.CreateFile("deleteable.new");
-			try 
+			try
 			{
 				output.WriteInt(files.Count);
 				for (int i = 0; i < files.Count; i++)
-					output.WriteString((String)files[i]);
-			} 
-			finally 
+					output.WriteString((System.String) files[i]);
+			}
+			finally
 			{
 				output.Close();
 			}

@@ -1,372 +1,417 @@
+/*
+ * Copyright 2004 The Apache Software Foundation
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * 
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 using System;
-using System.IO;
-using System.Collections;
-
-using Lucene.Net.Documents;
-using Lucene.Net.Analysis;
-using Lucene.Net.Store;
-using Lucene.Net.Search;
-
+using Analyzer = Lucene.Net.Analysis.Analyzer;
+using Token = Lucene.Net.Analysis.Token;
+using TokenStream = Lucene.Net.Analysis.TokenStream;
+using Document = Lucene.Net.Documents.Document;
+using Field = Lucene.Net.Documents.Field;
+using Similarity = Lucene.Net.Search.Similarity;
+using Directory = Lucene.Net.Store.Directory;
+using OutputStream = Lucene.Net.Store.OutputStream;
 namespace Lucene.Net.Index
 {
-	/* ====================================================================
-	 * The Apache Software License, Version 1.1
-	 *
-	 * Copyright (c) 2001 The Apache Software Foundation.  All rights
-	 * reserved.
-	 *
-	 * Redistribution and use in source and binary forms, with or without
-	 * modification, are permitted provided that the following conditions
-	 * are met:
-	 *
-	 * 1. Redistributions of source code must retain the above copyright
-	 *    notice, this list of conditions and the following disclaimer.
-	 *
-	 * 2. Redistributions in binary form must reproduce the above copyright
-	 *    notice, this list of conditions and the following disclaimer in
-	 *    the documentation and/or other materials provided with the
-	 *    distribution.
-	 *
-	 * 3. The end-user documentation included with the redistribution,
-	 *    if any, must include the following acknowledgment:
-	 *       "This product includes software developed by the
-	 *        Apache Software Foundation (http://www.apache.org/)."
-	 *    Alternately, this acknowledgment may appear in the software itself,
-	 *    if and wherever such third-party acknowledgments normally appear.
-	 *
-	 * 4. The names "Apache" and "Apache Software Foundation" and
-	 *    "Apache Lucene" must not be used to endorse or promote products
-	 *    derived from this software without prior written permission. For
-	 *    written permission, please contact apache@apache.org.
-	 *
-	 * 5. Products derived from this software may not be called "Apache",
-	 *    "Apache Lucene", nor may "Apache" appear in their name, without
-	 *    prior written permission of the Apache Software Foundation.
-	 *
-	 * THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESSED OR IMPLIED
-	 * WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
-	 * OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
-	 * DISCLAIMED.  IN NO EVENT SHALL THE APACHE SOFTWARE FOUNDATION OR
-	 * ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
-	 * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
-	 * LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF
-	 * USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
-	 * ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
-	 * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT
-	 * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
-	 * SUCH DAMAGE.
-	 * ====================================================================
-	 *
-	 * This software consists of voluntary contributions made by many
-	 * individuals on behalf of the Apache Software Foundation.  For more
-	 * information on the Apache Software Foundation, please see
-	 * <http://www.apache.org/>.
-	 */
-
-	public sealed class DocumentWriter 
+	
+	sealed public class DocumentWriter
 	{
 		private Analyzer analyzer;
-		private Lucene.Net.Store.Directory directory;
+		private Directory directory;
 		private Similarity similarity;
 		private FieldInfos fieldInfos;
 		private int maxFieldLength;
-  
-		public DocumentWriter(Lucene.Net.Store.Directory directory, Analyzer analyzer,
-			Similarity similarity, int maxFieldLength) 
+		
+		/// <summary> </summary>
+		/// <param name="directory">The directory to write the document information to
+		/// </param>
+		/// <param name="analyzer">The analyzer to use for the document
+		/// </param>
+		/// <param name="similarity">The Similarity function
+		/// </param>
+		/// <param name="maxFieldLength">The maximum number of tokens a Field may have
+		/// </param>
+		public /*internal*/ DocumentWriter(Directory directory, Analyzer analyzer, Similarity similarity, int maxFieldLength)
 		{
 			this.directory = directory;
 			this.analyzer = analyzer;
 			this.similarity = similarity;
 			this.maxFieldLength = maxFieldLength;
 		}
-
-		public void AddDocument(String segment, Document doc)
+		
+		/*internal*/ public void  AddDocument(System.String segment, Document doc)
 		{
-			// write field names
+			// write Field names
 			fieldInfos = new FieldInfos();
 			fieldInfos.Add(doc);
 			fieldInfos.Write(directory, segment + ".fnm");
-
-			// write field values
-			FieldsWriter fieldsWriter =
-				new FieldsWriter(directory, segment, fieldInfos);
-			try 
+			
+			// write Field values
+			FieldsWriter fieldsWriter = new FieldsWriter(directory, segment, fieldInfos);
+			try
 			{
 				fieldsWriter.AddDocument(doc);
-			} 
-			finally 
+			}
+			finally
 			{
 				fieldsWriter.Close();
 			}
-
+			
 			// invert doc into postingTable
-			postingTable.Clear();			  // clear postingTable
-			fieldLengths = new int[fieldInfos.Size()];	  // init fieldLengths
-
-			fieldBoosts = new float[fieldInfos.Size()];	  // init fieldBoosts
-			float boost = doc.GetBoost();
-			for (int i = 0; i < fieldBoosts.Length; i++)
-			{
-				fieldBoosts[i] = boost;
-			}
-
+			postingTable.Clear(); // clear postingTable
+			fieldLengths = new int[fieldInfos.Size()]; // init fieldLengths
+			fieldPositions = new int[fieldInfos.Size()]; // init fieldPositions
+			
+			fieldBoosts = new float[fieldInfos.Size()]; // init fieldBoosts
+            float boost = doc.GetBoost();
+            for (int i = 0; i < fieldBoosts.Length; i++)
+            {
+                fieldBoosts[i] = boost;
+            }
+			
 			InvertDocument(doc);
-
+			
 			// sort postingTable into an array
 			Posting[] postings = SortPostingTable();
-
-#if false
-			for (int i = 0; i < postings.Length; i++) {
-			  Posting posting = postings[i];
-			  Console.WriteLine (posting.term);
-			  Console.WriteLine (" freq=" + posting.freq);
-			  Console.Write (" pos=");
-			  Console.Write (posting.positions[0]);
-			  for (int j = 1; j < posting.freq; j++)
-				  Console.Write ("," + posting.positions[j]);
-			  Console.WriteLine ();
+			
+			/*
+			for (int i = 0; i < postings.length; i++) {
+			Posting posting = postings[i];
+			System.out.print(posting.term);
+			System.out.print(" freq=" + posting.freq);
+			System.out.print(" pos=");
+			System.out.print(posting.positions[0]);
+			for (int j = 1; j < posting.freq; j++)
+			System.out.print("," + posting.positions[j]);
+			System.out.println("");
 			}
-#endif
-
+			*/
+			
 			// write postings
 			WritePostings(postings, segment);
-
+			
 			// write norms of indexed fields
 			WriteNorms(doc, segment);
-
 		}
-
+		
 		// Keys are Terms, values are Postings.
 		// Used to buffer a document before it is written to the index.
-
-		private readonly Hashtable postingTable = new Hashtable();
+		private System.Collections.Hashtable postingTable = System.Collections.Hashtable.Synchronized(new System.Collections.Hashtable());
 		private int[] fieldLengths;
+		private int[] fieldPositions;
 		private float[] fieldBoosts;
-
-		/// <summary>
-		/// Tokenizes the fields of a document into Postings.
-		/// </summary>
-		/// <param name="doc"></param>
- 		private void InvertDocument(Document doc)
+		
+		// Tokenizes the fields of a document into Postings.
+		private void  InvertDocument(Document doc)
 		{
-			foreach (Field field in doc.Fields()) 
-			{
-				String fieldName = field.Name();
+            foreach(Field field in doc.Fields())
+            {
+				System.String fieldName = field.Name();
 				int fieldNumber = fieldInfos.FieldNumber(fieldName);
-
-				int position = fieldLengths[fieldNumber];	  // position in field
-
-				if (field.IsIndexed()) 
+				
+				int length = fieldLengths[fieldNumber]; // length of Field
+				int position = fieldPositions[fieldNumber]; // position in Field
+				
+				if (field.IsIndexed())
 				{
-					if (!field.IsTokenized()) 
-					{		  // un-tokenized field
-						AddPosition(fieldName, field.StringValue(), position++);
-					} 
-					else 
+					if (!field.IsTokenized())
 					{
-						TextReader reader;			  // find or make Reader
+						// un-tokenized Field
+						AddPosition(fieldName, field.StringValue(), position++);
+						length++;
+					}
+					else
+					{
+						System.IO.TextReader reader; // find or make Reader
 						if (field.ReaderValue() != null)
-						{
 							reader = field.ReaderValue();
-						}
 						else if (field.StringValue() != null)
-							reader = new StringReader(field.StringValue());
+							reader = new System.IO.StringReader(field.StringValue());
 						else
-							throw new ArgumentException
-								("field must have either String or Reader value");
-
-						// Tokenize field and add to postingTable
+							throw new System.ArgumentException("Field must have either String or Reader value");
+						
+						// Tokenize Field and add to postingTable
 						TokenStream stream = analyzer.TokenStream(fieldName, reader);
-						try 
+						try
 						{
-							for (Token t = stream.Next(); t != null; t = stream.Next()) 
+							for (Token t = stream.Next(); t != null; t = stream.Next())
 							{
 								position += (t.GetPositionIncrement() - 1);
 								AddPosition(fieldName, t.TermText(), position++);
-								if (position > maxFieldLength) break;
+								if (++length > maxFieldLength)
+									break;
 							}
-						} 
-						finally 
+						}
+						finally
 						{
 							stream.Close();
 						}
 					}
-
-					fieldLengths[fieldNumber] = position;	  // save field length
+					
+					fieldLengths[fieldNumber] = length; // save Field length
+					fieldPositions[fieldNumber] = position; // save Field position
 					fieldBoosts[fieldNumber] *= field.GetBoost();
 				}
 			}
 		}
-
-		private readonly Term termBuffer = new Term("", ""); // avoid consing
-
-		private void AddPosition(String field, String text, int position) 
+		
+		private Term termBuffer = new Term("", ""); // avoid consing
+		
+		private void  AddPosition(System.String field, System.String text, int position)
 		{
 			termBuffer.Set(field, text);
-			Posting ti = (Posting)postingTable[termBuffer];
-			if (ti != null) 
-			{				  // word seen before
+			Posting ti = (Posting) postingTable[termBuffer];
+			if (ti != null)
+			{
+				// word seen before
 				int freq = ti.freq;
-				if (ti.positions.Length == freq) 
-				{	  // positions array is full
-					int[] newPositions = new int[freq * 2];	  // double size
+				if (ti.positions.Length == freq)
+				{
+					// positions array is full
+					int[] newPositions = new int[freq * 2]; // double size
 					int[] positions = ti.positions;
-					for (int i = 0; i < freq; i++)		  // copy old positions to new
+					for (int i = 0; i < freq; i++)
+					// copy old positions to new
 						newPositions[i] = positions[i];
 					ti.positions = newPositions;
 				}
-				ti.positions[freq] = position;		  // add new position
-				ti.freq = freq + 1;			  // update frequency
+				ti.positions[freq] = position; // add new position
+				ti.freq = freq + 1; // update frequency
 			}
-			else 
-			{					  // word not seen before
+			else
+			{
+				// word not seen before
 				Term term = new Term(field, text, false);
-				postingTable.Add(term, new Posting(term, position));
+				postingTable[term] = new Posting(term, position);
 			}
 		}
-
-		private Posting[] SortPostingTable() 
+		
+		private Posting[] SortPostingTable()
 		{
 			// copy postingTable into an array
 			Posting[] array = new Posting[postingTable.Count];
-			
-			int i = 0;
-			foreach (Posting posting in postingTable.Values)
+			System.Collections.IEnumerator postings = postingTable.Values.GetEnumerator();
+			for (int i = 0; postings.MoveNext(); i++)
 			{
-				array[i] = posting;
-				i++;
+				array[i] = (Posting) postings.Current;
 			}
-
+			
 			// sort the array
 			QuickSort(array, 0, array.Length - 1);
-
+			
 			return array;
 		}
-
-		private static void QuickSort(Posting[] postings, int lo, int hi) 
+		
+		private static void  QuickSort(Posting[] postings, int lo, int hi)
 		{
-			if(lo >= hi)
-				return;
-
+			if (lo >= hi)
+				return ;
+			
 			int mid = (lo + hi) / 2;
-
-			if(postings[lo].term.CompareTo(postings[mid].term) > 0) 
+			
+			if (postings[lo].term.CompareTo(postings[mid].term) > 0)
 			{
 				Posting tmp = postings[lo];
 				postings[lo] = postings[mid];
 				postings[mid] = tmp;
 			}
-
-			if(postings[mid].term.CompareTo(postings[hi].term) > 0) 
+			
+			if (postings[mid].term.CompareTo(postings[hi].term) > 0)
 			{
 				Posting tmp = postings[mid];
 				postings[mid] = postings[hi];
 				postings[hi] = tmp;
-
-				if(postings[lo].term.CompareTo(postings[mid].term) > 0) 
+				
+				if (postings[lo].term.CompareTo(postings[mid].term) > 0)
 				{
 					Posting tmp2 = postings[lo];
 					postings[lo] = postings[mid];
 					postings[mid] = tmp2;
 				}
 			}
-
+			
 			int left = lo + 1;
 			int right = hi - 1;
-
+			
 			if (left >= right)
-				return;
-
+				return ;
+			
 			Term partition = postings[mid].term;
-
-			for( ;; ) 
+			
+			for (; ; )
 			{
-				while(postings[right].term.CompareTo(partition) > 0)
+				while (postings[right].term.CompareTo(partition) > 0)
 					--right;
-
-				while(left < right && postings[left].term.CompareTo(partition) <= 0)
+				
+				while (left < right && postings[left].term.CompareTo(partition) <= 0)
 					++left;
-
-				if(left < right) 
+				
+				if (left < right)
 				{
 					Posting tmp = postings[left];
 					postings[left] = postings[right];
 					postings[right] = tmp;
 					--right;
-				} 
-				else 
+				}
+				else
 				{
 					break;
 				}
 			}
-
+			
 			QuickSort(postings, lo, left);
 			QuickSort(postings, left + 1, hi);
 		}
-
-		private void WritePostings(Posting[] postings, String segment)
+		
+		private void  WritePostings(Posting[] postings, System.String segment)
 		{
 			OutputStream freq = null, prox = null;
 			TermInfosWriter tis = null;
-
-			try 
+			TermVectorsWriter termVectorWriter = null;
+			try
 			{
+				//open files for inverse index storage
 				freq = directory.CreateFile(segment + ".frq");
 				prox = directory.CreateFile(segment + ".prx");
 				tis = new TermInfosWriter(directory, segment, fieldInfos);
 				TermInfo ti = new TermInfo();
-
-				for (int i = 0; i < postings.Length; i++) 
+				System.String currentField = null;
+				
+				for (int i = 0; i < postings.Length; i++)
 				{
 					Posting posting = postings[i];
-
+					
 					// add an entry to the dictionary with pointers to prox and freq files
-					ti.Set(1, freq.GetFilePointer(), prox.GetFilePointer());
+					ti.Set(1, freq.GetFilePointer(), prox.GetFilePointer(), - 1);
 					tis.Add(posting.term, ti);
-
+					
 					// add an entry to the freq file
-					int f = posting.freq;
-					if (f == 1)				  // optimize freq=1
-						freq.WriteVInt(1);			  // set low bit of doc num.
-					else 
+					int postingFreq = posting.freq;
+					if (postingFreq == 1)
+					// optimize freq=1
+						freq.WriteVInt(1);
+					// set low bit of doc num.
+					else
 					{
-						freq.WriteVInt(0);			  // the document number
-						freq.WriteVInt(f);			  // frequency in doc
+						freq.WriteVInt(0); // the document number
+						freq.WriteVInt(postingFreq); // frequency in doc
 					}
-
-					int lastPosition = 0;			  // write positions
+					
+					int lastPosition = 0; // write positions
 					int[] positions = posting.positions;
-					for (int j = 0; j < f; j++) 
-					{		  // use delta-encoding
+					for (int j = 0; j < postingFreq; j++)
+					{
+						// use delta-encoding
 						int position = positions[j];
 						prox.WriteVInt(position - lastPosition);
 						lastPosition = position;
 					}
+					// check to see if we switched to a new Field
+					System.String termField = posting.term.Field();
+					if ((System.Object) currentField != (System.Object) termField)
+					{
+						// changing Field - see if there is something to save
+						currentField = termField;
+						FieldInfo fi = fieldInfos.FieldInfo(currentField);
+						if (fi.storeTermVector)
+						{
+							if (termVectorWriter == null)
+							{
+								termVectorWriter = new TermVectorsWriter(directory, segment, fieldInfos);
+								termVectorWriter.OpenDocument();
+							}
+							termVectorWriter.OpenField(currentField);
+						}
+						else if (termVectorWriter != null)
+						{
+							termVectorWriter.CloseField();
+						}
+					}
+					if (termVectorWriter != null && termVectorWriter.IsFieldOpen())
+					{
+						termVectorWriter.AddTerm(posting.term.Text(), postingFreq);
+					}
+				}
+				if (termVectorWriter != null)
+					termVectorWriter.CloseDocument();
+			}
+			finally
+			{
+				// make an effort to close all streams we can but remember and re-throw
+				// the first exception encountered in this process
+				System.IO.IOException keep = null;
+				if (freq != null)
+					try
+					{
+						freq.Close();
+					}
+					catch (System.IO.IOException e)
+					{
+						if (keep == null)
+							keep = e;
+					}
+				if (prox != null)
+					try
+					{
+						prox.Close();
+					}
+					catch (System.IO.IOException e)
+					{
+						if (keep == null)
+							keep = e;
+					}
+				if (tis != null)
+					try
+					{
+						tis.Close();
+					}
+					catch (System.IO.IOException e)
+					{
+						if (keep == null)
+							keep = e;
+					}
+				if (termVectorWriter != null)
+					try
+					{
+						termVectorWriter.Close();
+					}
+					catch (System.IO.IOException e)
+					{
+						if (keep == null)
+							keep = e;
+					}
+				if (keep != null)
+				{
+                    throw new System.IO.IOException(keep.StackTrace);
 				}
 			}
-			finally 
-			{
-				if (freq != null) freq.Close();
-				if (prox != null) prox.Close();
-				if (tis  != null)  tis.Close();
-			}
 		}
-
-		private void WriteNorms(Document doc, String segment)
+		
+		private void  WriteNorms(Document doc, System.String segment)
 		{
-			foreach(Field field in doc.Fields()) 
+			for (int n = 0; n < fieldInfos.Size(); n++)
 			{
-				if (field.IsIndexed()) 
+				FieldInfo fi = fieldInfos.FieldInfo(n);
+				if (fi.isIndexed)
 				{
-					int n = fieldInfos.FieldNumber(field.Name());
-					float norm =
-						fieldBoosts[n] * similarity.LengthNorm(field.Name(),fieldLengths[n]);
+					float norm = fieldBoosts[n] * similarity.LengthNorm(fi.name, fieldLengths[n]);
 					OutputStream norms = directory.CreateFile(segment + ".f" + n);
-					try 
+					try
 					{
-						norms.WriteByte(Similarity.EncodeNorm(norm));
-					} 
-					finally 
+						norms.WriteByte(Lucene.Net.Search.Similarity.EncodeNorm(norm));
+					}
+					finally
 					{
 						norms.Close();
 					}
@@ -374,15 +419,15 @@ namespace Lucene.Net.Index
 			}
 		}
 	}
-
-	sealed class Posting 
-	{				  
+	
+	sealed class Posting
+	{
 		// info about a Term in a doc
-		internal Term term;					  // the Term
-		internal int freq;					  // its frequency in doc
-		internal int[] positions;				  // positions it occurs at
-
-		internal Posting(Term t, int position) 
+		internal Term term; // the Term
+		internal int freq; // its frequency in doc
+		internal int[] positions; // positions it occurs at
+		
+		internal Posting(Term t, int position)
 		{
 			term = t;
 			freq = 1;
