@@ -39,6 +39,7 @@ namespace Beagle.Filters {
 	public class FilterOpenOffice : Beagle.Daemon.Filter {
 
 		Hashtable hotStyles;
+		bool odtFormat;
 		
 		public FilterOpenOffice () 
 		{
@@ -46,6 +47,7 @@ namespace Beagle.Filters {
 			AddSupportedMimeType ("application/vnd.sun.xml.impress");
 			AddSupportedMimeType ("application/vnd.sun.xml.calc");
 			SnippetMode = true;
+			odtFormat = false;
 		}
 		
 		static String FindChildAttribute (XmlNode node,
@@ -79,7 +81,8 @@ namespace Beagle.Filters {
 				reader.Read ();
 				while (reader.Depth > original_depth) {
 					if (reader.NodeType == XmlNodeType.Element
-					    && reader.Name == "style:properties") {
+					    && (reader.Name == "style:properties" ||
+						reader.Name == "style:text-properties")) {  /* ODT changes */
 						weight = reader.GetAttribute ("fo:font-weight");
 						italic = reader.GetAttribute ("fo:font-style");
 						underline = reader.GetAttribute ("style:text-underline");
@@ -115,13 +118,15 @@ namespace Beagle.Filters {
 		{
 			return nodeName == "office:annotation" ||
 				nodeName == "text:footnote" ||
-				nodeName == "text:endnote";
+				nodeName == "text:endnote" ||
+				nodeName == "text:note"; // "ODT format"
 		}
 
 		static bool NodeIsFreezing (String nodeName)
 		{
 			return nodeName == "text:footnote-citation"
-				|| nodeName == "text:endnote-citation";
+				|| nodeName == "text:endnote-citation"
+				|| nodeName == "text:note-citation";  // "ODT format"
 
 		}
 
@@ -129,7 +134,8 @@ namespace Beagle.Filters {
 		{
 			return nodeName == "text:footnote"
 				|| nodeName == "text:endnote"
-				|| nodeName == "office:annotation";
+				|| nodeName == "office:annotation"
+				|| nodeName == "text:note";       // "ODT format"
 		}
 
 		static bool NodeBreaksTextAfter (String nodeName)
@@ -145,7 +151,8 @@ namespace Beagle.Filters {
 				|| nodeName == "text:h"
 				|| nodeName == "text:footnote"
 				|| nodeName == "text:endnote"
-				|| nodeName == "office:annotation";
+				|| nodeName == "office:annotation"
+				|| nodeName == "text:note";       // "ODT format"
 		}
 
 		private Stack hot_nodes = new Stack ();
@@ -284,7 +291,11 @@ namespace Beagle.Filters {
 					} 
 					
 					hot_nodes.Push (isHot);
-					if (isHot || hot_container_nodes.Count > 0)
+
+					// Call *HotUp* iff
+					//   i) Its already in *HOT* mode and
+					//  ii) there is a hot style/hot container tag
+					if (!IsHot && (isHot || hot_container_nodes.Count > 0))
 						HotUp ();
 				
 					if (NodeIsFreezing (reader.Name)) {
@@ -449,6 +460,8 @@ namespace Beagle.Filters {
 			hotStyles = new Hashtable ();
 			try {
 				zip = new ZipFile (info.FullName);
+				if (MimeType == "application/vnd.oasis.opendocument.text")
+					odtFormat = true;
 			} catch (Exception e) {
 				Logger.Log.Error ("Caught exception inside FilterOpenOffice.DoOpen");
 				Logger.Log.Error (e); 

@@ -1,3 +1,8 @@
+2005-02-25  Veerapuram Varadhan	 <vvaradhan@novell.com>
+
+	* Filters/FilterOpenOffice.cs: Add support for new OO.o 2.0 ODT
+	format.  This fixes http://bugzilla.gnome.org/show_bug.cgi?id=157100
+	
 2005-02-23  Veerapuram Varadhan	 <vvaradhan@novell.com>
 
 	* glue/wv1-glue.c: Fix for
