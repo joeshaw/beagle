@@ -237,7 +237,7 @@ namespace ImLogViewer {
 				new GaimLogViewer (args [0]);
 			}
 			else
-				Console.WriteLine ("USAGE: beagle-imlogviewer" +
+				Console.WriteLine ("USAGE: beagle-imlogviewer " +
 						   "/home/lukas/.gaim/logs/msn/lipkalukas@hotmail.com/bbulik@hotmail.com");
 		}
 	}
