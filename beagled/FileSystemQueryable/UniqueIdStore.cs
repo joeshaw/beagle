@@ -37,6 +37,8 @@ namespace Beagle.Daemon.FileSystemQueryable {
 
 	public class UniqueIdStore {
 
+		static public bool Debug = true;
+
 		const int VERSION = 1;
 
 		SqliteConnection connection;
@@ -221,6 +223,11 @@ namespace Beagle.Daemon.FileSystemQueryable {
 
 		public void Add (Guid id, Guid parent_id, string name, bool please_cache)
 		{
+			if (Debug)
+				Logger.Log.Debug ("UniqueIdStore.Add: {0} {1} '{2}' {3}",
+						  GuidFu.ToShortString (id), GuidFu.ToShortString (parent_id),
+						  name, please_cache);
+
 			lock (connection) {
 				Record record;
 
@@ -253,11 +260,18 @@ namespace Beagle.Daemon.FileSystemQueryable {
 
 		public void AddRoot (Guid id, string name, bool please_cache)
 		{
+			if (Debug)
+				Logger.Log.Debug ("UniqueIdStore.AddRoot: {0} '{1}' {2}",
+						  GuidFu.ToShortString (id), name, please_cache);
+
 			Add (id, Guid.Empty, name, please_cache);
 		}
 
 		public void Drop (Guid id)
 		{
+			if (Debug)
+				Logger.Log.Debug ("UniqueIdStore.Drop: {0}", id);
+			
 			lock (connection) {
 				DoNonQuery ("DELETE FROM unique_ids WHERE id='{0}'", GuidFu.ToShortString (id));
 				cache.Remove (id);

@@ -185,10 +185,10 @@ namespace Beagle.IndexHelper {
 					Indexer.Flush ();
 
 				}
-					
+
 				if (NameIndex != null)
 					NameIndex.Flush ();
-
+				
 				if (OldUri != null && NewUri != null) {
 					Uri [] renamed_uris = new Uri [2];
 					renamed_uris [0] = OldUri;

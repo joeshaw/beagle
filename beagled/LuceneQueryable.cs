@@ -288,10 +288,8 @@ namespace Beagle.Daemon {
 				// FIXME: There is probably a race here --- what if the hit
 				// becomes valid sometime between calling HitIsValid
 				// and the removal task being executed?
-				if (to_internal_uris != null)
-					uri = to_internal_uris (uri);
 
-				Scheduler.Task task = NewRemoveTask (uri);
+				Scheduler.Task task = NewRemoveTask_InternalUri (uri);
 				ThisScheduler.Add (task, Scheduler.AddType.DeferToExisting);
 			}
 
@@ -353,7 +351,7 @@ namespace Beagle.Daemon {
 		
 		/////////////////////////////////////////
 
-		protected virtual ICollection DoBonusQuery (QueryBody body)
+		protected virtual ICollection DoBonusQuery (QueryBody body, ICollection list_of_uris)
 		{
 			return null;
 		}
@@ -385,19 +383,19 @@ namespace Beagle.Daemon {
 				if (to_internal_uris != null) {
 					Uri [] remapped_uris = new Uri [change_data.AddedUris.Count];
 					int i = 0;
-					foreach (Uri uri in change_data.AddedUris)
-						remapped_uris [i++] = to_internal_uris (uri);
+					foreach (Uri uri in change_data.AddedUris) {
+						Uri new_uri = to_internal_uris (uri);
+						remapped_uris [i++] = new_uri;
+						Logger.Log.Debug ("*** Remapped {0} => {1}", uri, new_uri);
+					}
 					added_uris = remapped_uris;
 				} else {
 					added_uris = change_data.AddedUris;
 				}
-			} else {
-				
-				// We only generate extra Uris via the bonus query when we
-				// don't have change data.
-				extra_uris = DoBonusQuery (body);
 			}
-
+			
+			extra_uris = DoBonusQuery (body, added_uris);
+			
 			Driver.DoQuery (body, 
 					query_result,
 					added_uris,
@@ -468,6 +466,14 @@ namespace Beagle.Daemon {
 			LuceneTask task;
 			if (to_internal_uris != null)
 				uri = to_internal_uris (uri);
+			task = new LuceneTask (this, this.indexer, uri);
+			task.Collector = collector;
+			return task;
+		}
+
+		public Scheduler.Task NewRemoveTask_InternalUri (Uri uri) // This should be an internal Uri
+		{
+			LuceneTask task;
 			task = new LuceneTask (this, this.indexer, uri);
 			task.Collector = collector;
 			return task;

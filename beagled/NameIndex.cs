@@ -46,6 +46,8 @@ namespace Beagle.Daemon {
 
 	public class NameIndex {
 
+		static public bool Debug = true;
+
 		// This is just a standard analyzer combined with the Porter stemmer.
 		// FIXME: This assumes everything being indexed is in English!
 		private class NameAnalyzer : StandardAnalyzer {
@@ -104,7 +106,10 @@ namespace Beagle.Daemon {
 				StreamReader sr = new StreamReader (fingerprint_file);
 				string fingerprint_from_file = sr.ReadLine ();
 				sr.Close ();
-				if (fingerprint_from_file != fingerprint)
+				if (fingerprint == null) {
+					fingerprint = fingerprint_from_file;
+					index_exists = true;
+				} else if (fingerprint_from_file != fingerprint)
 					index_exists = false;
 			} else {
 				index_exists = false;
@@ -177,6 +182,10 @@ namespace Beagle.Daemon {
 
 		public void Add (Guid unique_id, string name)
 		{
+			if (Debug && name != null)
+				Logger.Log.Debug ("NameIndex.Add: {0} '{1}'",
+						  GuidFu.ToShortString (unique_id), name);
+
 			PendingOperation p = new PendingOperation ();
 			p.UniqueId = unique_id;
 			p.Name = name;
@@ -186,13 +195,24 @@ namespace Beagle.Daemon {
 
 		public void Remove (Guid unique_id)
 		{
+			if (Debug)
+				Logger.Log.Debug ("NameIndex.Remove: {0}",
+						  GuidFu.ToShortString (unique_id));
+
+
 			Add (unique_id, null);
 		}
 
 		public void Flush ()
 		{
-			if (pending.Count == 0)
+			if (pending.Count == 0) {
+				if (Debug)
+					Logger.Log.Debug ("NameIndex.Flush: nothing to do");
 				return;
+			}
+
+			if (Debug)
+				Logger.Log.Debug ("NameIndex.Flush: starting");
 
 			Stopwatch sw = new Stopwatch ();
 			sw.Start ();
@@ -231,10 +251,11 @@ namespace Beagle.Daemon {
 
 			sw.Stop ();
 			
-			Logger.Log.Debug ("Add{0} of {1} took {2}",
-					  did_optimize ? "+Optimize" : "",
-					  pending.Count,
-					  sw);
+			if (Debug)
+				Logger.Log.Debug ("NameIndex.Flush: Add{0} of {1} took {2}",
+						  did_optimize ? "+Optimize" : "",
+						  pending.Count,
+						  sw);
 
 			pending.Clear ();
 		}
@@ -300,7 +321,7 @@ namespace Beagle.Daemon {
 			return lucene_query;
 		}
 
-		private LNS.Query ToLuceneQuery (QueryBody body)
+		private LNS.Query ToLuceneQuery (QueryBody body, ICollection uris_to_search)
 		{
 			if (body.Text.Count == 0)
 				return null;
@@ -311,13 +332,22 @@ namespace Beagle.Daemon {
 			query.Add (ToCoreLuceneQuery (body, "NoExt"), false, false);
 			query.Add (ToCoreLuceneQuery (body, "Split"), false, false);
 
+			// If a list of Uris is specified, we must match one of them.
+			LNS.Query uri_query = LuceneDriver.ToUriQuery (uris_to_search);
+			if (uri_query != null) {
+				LNS.BooleanQuery combined_query = new LNS.BooleanQuery ();
+				combined_query.Add (query, true, false);
+				combined_query.Add (uri_query, true, false);
+				combined_query = query;
+			}
+
 			return query;
 		}
 
 		// Return a collection of uid: Uris.
-		public ICollection Search (QueryBody body)
+		public ICollection Search (QueryBody body, ICollection uris_to_search)
 		{
-			LNS.Query query = ToLuceneQuery (body);
+			LNS.Query query = ToLuceneQuery (body, uris_to_search);
 			if (query == null)
 				return new string [0];
 			
@@ -337,6 +367,21 @@ namespace Beagle.Daemon {
 			searcher.Close ();
 
 			return uids;
+		}
+
+		public void SpewIndex ()
+		{
+			IndexReader reader = IndexReader.Open (store);
+			int N = reader.MaxDoc ();
+
+			for (int i = 0; i < N; ++i) {
+				if (! reader.IsDeleted (i)) {
+					Document doc = reader.Document (i);
+					Console.WriteLine (doc.Get ("Uid"));
+				}
+			}
+
+			reader.Close ();
 		}
 	}
 }

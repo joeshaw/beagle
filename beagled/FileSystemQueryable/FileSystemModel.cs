@@ -921,9 +921,9 @@ namespace Beagle.Daemon.FileSystemQueryable {
 		// Search by filename
 
 		// Returns a collection of internal Uris
-		public ICollection Search (QueryBody body)
+		public ICollection Search (QueryBody body, ICollection list_of_uris)
 		{
-			return name_index.Search (body);
+			return name_index.Search (body, list_of_uris);
 		}
 
 		//////////////////////////////////////////////////////////////////////////////////

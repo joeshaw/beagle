@@ -429,8 +429,8 @@ namespace Beagle.Daemon {
 		// truncated.
 		public void DoQuery (QueryBody           body,
 				     IQueryResult        result,
-				     ICollection         list_of_uris, // should be internal uris
-				     ICollection         extra_uris,   // should be internal uris
+				     ICollection         search_subset, // should be internal uris
+				     ICollection         bonus_uris,    // should be internal uris
 				     UriFilter           uri_filter,
 				     UriRemapper         uri_remapper, // map to external uris
 				     RelevancyMultiplier relevancy_multiplier)
@@ -443,7 +443,7 @@ namespace Beagle.Daemon {
 			IndexReader reader = IndexReader.Open (Store);
 
 			LNS.Searcher searcher = new LNS.IndexSearcher (reader);
-			LNS.Query query = ToLuceneQuery (body, list_of_uris, extra_uris);
+			LNS.Query query = ToLuceneQuery (body, search_subset, bonus_uris);
 
 			LNS.Hits hits = searcher.Search (query);
 			sw.Stop ();
@@ -646,6 +646,40 @@ namespace Beagle.Daemon {
 			
 			return doc;
 		}
+
+		static public LNS.Query ToUriQuery (ICollection list_of_uris, UriRemapper remapper)
+		{
+			if (list_of_uris == null || list_of_uris.Count == 0)
+				return null;
+
+			LNS.BooleanQuery query = new LNS.BooleanQuery ();
+			int max_clauses = LNS.BooleanQuery.GetMaxClauseCount ();
+			int clause_count = 0;
+
+			foreach (Uri original_uri in list_of_uris) {
+				Uri uri = original_uri;
+				if (remapper != null)
+					uri = remapper (uri);
+				Term term = new Term ("Uri", uri.ToString ()); // FIXME: Do we need some UriFu here?
+				LNS.Query term_query = new LNS.TermQuery (term);
+				query.Add (term_query, false, false);
+				++clause_count;
+				// If we have to many clases, nest the queries
+				if (clause_count == max_clauses) {
+					LNS.BooleanQuery new_query = new LNS.BooleanQuery ();
+					new_query.Add (query, false, false);
+					query = new_query;
+					clause_count = 1;
+				}
+			}
+
+			return query;
+		}
+
+		static public LNS.Query ToUriQuery (ICollection list_of_uris)
+		{
+			return ToUriQuery (list_of_uris, null);
+		}
 		
 		private LNS.Query ToCoreLuceneQuery (QueryBody body, string field)
 		{
@@ -707,95 +741,119 @@ namespace Beagle.Daemon {
 
 		}
 
-		// FIXME: If listOfUris and extraUris are both non-empty, we
-		// should either:
-		// (1) Complain
-		// (2) Remove any element of listOfUris not also in extraUris
+		// search_subset limits the score of our search to that set of Uris
+		// bonus_uris are always matched by the query
 		private LNS.Query ToLuceneQuery (QueryBody body,
-						 ICollection listOfUris,
-						 ICollection extraUris)
+						 ICollection search_subset,
+						 ICollection bonus_uris)
 		{
-			LNS.BooleanQuery luceneQuery = new LNS.BooleanQuery ();
+			LNS.BooleanQuery body_query = null;
+			LNS.Query        search_subset_query = null;
+			LNS.Query        bonus_uris_query = null;
+			LNS.BooleanQuery mime_type_query = null;
+			LNS.BooleanQuery hit_type_query = null;
 			
-			if (body.Text.Count > 0 || (extraUris != null && extraUris.Count > 0)) {
-				LNS.BooleanQuery contentQuery = new LNS.BooleanQuery ();
+			if (body.Text.Count > 0) {
 
-				if (body.Text.Count > 0) {
-					LNS.Query propTQuery;
-					propTQuery = ToCoreLuceneQuery (body, "PropertiesText");
-					if (propTQuery != null) {
-						propTQuery.SetBoost (2.5f);
-						contentQuery.Add (propTQuery, false, false);
-					}
+				body_query = new LNS.BooleanQuery ();
 
-					LNS.Query propKQuery;
-					propKQuery = ToCoreLuceneQuery (body, "PropertiesKeyword");
-					if (propKQuery != null) {
-						propKQuery.SetBoost (2.5f);
-						contentQuery.Add (propKQuery, false, false);
-					}
+				LNS.Query q;
 				
-					LNS.Query hotQuery;
-					hotQuery = ToCoreLuceneQuery (body, "HotText");
-					if (hotQuery != null) {
-						hotQuery.SetBoost (1.75f);
-						contentQuery.Add (hotQuery, false, false);		
-					}
-				
-					LNS.Query textQuery;
-					textQuery = ToCoreLuceneQuery (body, "Text");
-					if (textQuery != null) {
-						contentQuery.Add (textQuery, false, false);
-					}
+				q = ToCoreLuceneQuery (body, "PropertiesText");
+				if (q != null) {
+					q.SetBoost (2.5f);
+					body_query.Add (q, false, false);
 				}
 
-				// If we were handed a list of extra Uris, we automatically
-				// add those to our query.
-				if (extraUris != null) {
-					foreach (Uri uri in extraUris) {
-						Term t = new Term ("Uri", uri.ToString ());
-						LNS.Query q = new LNS.TermQuery (t);
-						contentQuery.Add (q, false, false);
-					}
+				q = ToCoreLuceneQuery (body, "PropertiesText");
+				if (q != null) {
+					q.SetBoost (2.5f);
+					body_query.Add (q, false, false);
 				}
 
-				luceneQuery.Add (contentQuery, true, false);
+				q = ToCoreLuceneQuery (body, "PropertiesKeyword");
+				if (q != null) {
+					q.SetBoost (2.5f);
+					body_query.Add (q, false, false);
+				}
+				
+				q = ToCoreLuceneQuery (body, "HotText");
+				if (q != null) {
+					q.SetBoost (1.75f);
+					body_query.Add (q, false, false);		
+				}
+				
+				q = ToCoreLuceneQuery (body, "Text");
+				if (q != null) {
+					body_query.Add (q, false, false);
+				}
 			}
 
-			// If mime types are specified, we must match one of them.
+			search_subset_query = ToUriQuery (search_subset, null);
+
+			bonus_uris_query = ToUriQuery (bonus_uris, null);
+				
 			if (body.MimeTypes.Count > 0) {
-				LNS.BooleanQuery mimeTypeQuery = new LNS.BooleanQuery ();
-				foreach (string mimeType in body.MimeTypes) {
-					Term t = new Term ("MimeType", mimeType);
+				mime_type_query = new LNS.BooleanQuery ();
+				foreach (string mime_type in body.MimeTypes) {
+					Term t = new Term ("MimeType", mime_type);
 					LNS.Query q = new LNS.TermQuery (t);
-					mimeTypeQuery.Add (q, false, false);
+					mime_type_query.Add (q, false, false);
 				}
-				luceneQuery.Add (mimeTypeQuery, true, false);
 			}
 
-			// If hit types are specified, we must match one of them.
 			if (body.HasHitTypes) {
-				LNS.BooleanQuery hitTypeQuery = new LNS.BooleanQuery ();
-				foreach (string hitType in body.HitTypes) {
-					Term t = new Term ("Type", hitType);
+				hit_type_query = new LNS.BooleanQuery ();
+				foreach (string hit_type in body.HitTypes) {
+					Term t = new Term ("Type", hit_type);
 					LNS.Query q = new LNS.TermQuery (t);
-					hitTypeQuery.Add (q, false, false);
+					hit_type_query.Add (q, false, false);
 				}
-				luceneQuery.Add (hitTypeQuery, true, false);
 			}
 
-			// If a list of Uris is specified, we must match one of them.
-			if (listOfUris != null && listOfUris.Count > 0) {
-				LNS.BooleanQuery uriQuery = new LNS.BooleanQuery ();
-				foreach (Uri uri in listOfUris) {
-					Term t = new Term ("Uri", uri.ToString ());
-					LNS.Query q = new LNS.TermQuery (t);
-					uriQuery.Add (q, false, false);
-				}
-				luceneQuery.Add (uriQuery, true, false);
+			//
+			// Now we combine the various parts into one big query.
+			//
+
+			LNS.BooleanQuery total_query = new LNS.BooleanQuery ();
+
+			// If we have hit types or mime types, those must be matched
+			if (mime_type_query != null)
+				total_query.Add (mime_type_query, true, false);
+			if (hit_type_query != null)
+				total_query.Add (hit_type_query, true, false);
+
+			// We also must match the "content query":
+			// (body_query OR bonus_uris_query) AND search_subset_query
+
+			LNS.Query content_query = null;
+
+			if (body_query != null && bonus_uris_query != null) {
+				LNS.BooleanQuery q = new LNS.BooleanQuery ();
+				q.Add (body_query, false, false);
+				q.Add (bonus_uris_query, false, false);
+				content_query = q;
+			} else if (body_query != null) {
+				content_query = body_query;
+			} else if (bonus_uris_query != null) {
+				content_query = bonus_uris_query;
 			}
 
-			return luceneQuery;
+			if (content_query != null && search_subset_query != null) {
+				LNS.BooleanQuery q = new LNS.BooleanQuery ();
+				q.Add (content_query, true, false);
+				q.Add (search_subset_query, true, false);
+				content_query = q;
+			} else if (search_subset_query != null) {
+				content_query = search_subset_query;
+			}
+
+			if (content_query != null)
+				total_query.Add (content_query, true, false);
+
+			Logger.Log.Debug (total_query.ToString ());
+
+			return total_query;
 		}
 		
 		static private Uri UriFromLuceneDoc (Document doc)

@@ -41,6 +41,8 @@ namespace Beagle.Daemon.FileSystemQueryable {
 	[QueryableFlavor (Name="Files", Domain=QueryDomain.Local, RequireInotify=false)]
 	public class FileSystemQueryable : LuceneQueryable {
 
+		static public bool Debug = true;
+
 		private static Logger log = Logger.Get ("FileSystemQueryable");
 
 		private IFileEventBackend event_backend;
@@ -144,13 +146,15 @@ namespace Beagle.Daemon.FileSystemQueryable {
 
 		override protected void AbusiveRemoveHook (Uri uri)
 		{
-			Logger.Log.Debug ("AbusiveRemoveHook: uri={0}", uri);
+			if (Debug)
+				Logger.Log.Debug ("AbusiveRemoveHook: uri={0}", uri);
 			Model.DropUid (GuidFu.FromUri (uri));
 		}
 
 		override protected void AbusiveRenameHook (Uri old_uri, Uri new_uri)
 		{
-			Logger.Log.Debug ("AbusiveRenameHook: old_uri={0}", old_uri);
+			if (Debug)
+				Logger.Log.Debug ("AbusiveRenameHook: old_uri={0}, new_uri={1}", old_uri, new_uri);
 
 			// If the thing being renamed is a directory, we have to update
 			// our model.
@@ -158,26 +162,30 @@ namespace Beagle.Daemon.FileSystemQueryable {
 
 			if (dir != null) {
 
-				Logger.Log.Debug ("AbusiveRenameHook: found directory");
+				if (Debug)
+					Logger.Log.Debug ("AbusiveRenameHook: found directory");
 			
 				string new_dirname = Path.GetDirectoryName (new_uri.LocalPath);
 				string new_filename = Path.GetFileName (new_uri.LocalPath);
 
 				FileSystemModel.Directory new_parent = Model.GetDirectoryByPath (new_dirname);
 
-				Logger.Log.Debug ("AbusiveRenameHook: new_parent={0}", new_parent.FullName);
+				if (Debug)
+					Logger.Log.Debug ("AbusiveRenameHook: new_parent={0}", new_parent.FullName);
 			
 				if (dir.Name != new_filename) {
-					Logger.Log.Debug ("AbusiveRenameHook: new name is {0}", new_filename);
+					if (Debug)
+						Logger.Log.Debug ("AbusiveRenameHook: new name is {0}", new_filename);
 					Model.Rename (dir, new_filename);
 				}
 
 				if (dir.Parent != new_parent) {
-					Logger.Log.Debug ("AbusiveRenameHook: new parent is {0}", new_parent.FullName);
+					if (Debug)
+						Logger.Log.Debug ("AbusiveRenameHook: new parent is {0}", new_parent.FullName);
 					Model.Move (dir, new_parent);
 				}
 			}
-
+			
 			// Attach the current time as the last index time.
 			// We didn't actually index anything, of course, but we
 			// need to update this time so that future ctime checks
@@ -185,8 +193,10 @@ namespace Beagle.Daemon.FileSystemQueryable {
 			// This will also make the necessary adjustments to
 			// the unique ID store.
 			FileAttributes attr = FileAttributesStore.Read (new_uri.LocalPath);
-			attr.LastIndexedTime = DateTime.Now;
-			FileAttributesStore.Write (attr);
+			if (attr != null) {
+				attr.LastIndexedTime = DateTime.Now;
+				FileAttributesStore.Write (attr);
+			}
 		}
 
 		//////////////////////////////////////////////////////////////////////////
@@ -232,9 +242,9 @@ namespace Beagle.Daemon.FileSystemQueryable {
 
 		//////////////////////////////////////////////////////////////////////////
 
-		protected override ICollection DoBonusQuery (QueryBody body)
+		protected override ICollection DoBonusQuery (QueryBody body, ICollection list_of_uris)
 		{
-			return model.Search (body);
+			return model.Search (body, list_of_uris);
 		}
 
 		protected override double RelevancyMultiplier (Hit hit)
