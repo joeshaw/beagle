@@ -42,7 +42,10 @@ namespace Beagle.Tile {
 			// the type's definition.
 			Assembly assembly = Assembly.GetAssembly (this.GetType ());
 			Stream stream = assembly.GetManifestResourceStream (templateResource);
-			// FIXME: fail if we there is no such resource (i.e. if stream == null)
+
+			if (stream == null)
+				throw new Exception (String.Format ("No such resource: {0}", templateResource));
+
 			StreamReader sr = new StreamReader (stream);
 			string line;
 			while ((line = sr.ReadLine ()) != null)
