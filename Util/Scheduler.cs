@@ -43,8 +43,9 @@ namespace Beagle.Util {
 
 		public enum Priority {
 			Idle      = 0, // Do it when the system is idle
-			Delayed   = 1, // Do it soon
-			Immediate = 2, // Do it right now
+			Generator = 1, // Do it soon, but not *too* soon
+			Delayed   = 2, // Do it soon
+			Immediate = 3, // Do it right now
 		}
 
 		public delegate void Hook ();
@@ -361,8 +362,16 @@ namespace Beagle.Util {
 
 		private ArrayList task_queue = new ArrayList ();
 		private Hashtable task_by_tag = new Hashtable ();
+		private int executed_task_count = 0;
+		
+		public enum AddType {
+			DeferToExisting,
+			OptionallyReplaceExisting,
+			OnlyReplaceExisting
+		};
+			
 
-		public void Add (Task task)
+		public bool Add (Task task, AddType add_type)
 		{
 			Task old_task = null;
 
@@ -370,7 +379,15 @@ namespace Beagle.Util {
 				if (task != null) {
 					old_task = task_by_tag [task.Tag] as Task;
 					if (old_task == task)
-						return;
+						return true;
+
+					if (add_type == AddType.DeferToExisting
+					    && old_task != null)
+						return false;
+
+					if (add_type == AddType.OnlyReplaceExisting
+					    && old_task == null)
+						return false;
 
 #if false
 					Logger.Log.Debug ("Adding task");
@@ -395,6 +412,12 @@ namespace Beagle.Util {
 			if (old_task != null)
 				old_task.Cancel ();
 
+			return true;
+		}
+
+		public bool Add (Task task)
+		{
+			return Add (task, AddType.OptionallyReplaceExisting);
 		}
 
 		public Task GetByTag (string tag)
@@ -415,12 +438,19 @@ namespace Beagle.Util {
 		//////////////////////////////////////////////////////////////////////////////
 
 		private string status_str = null;
+		private DateTime next_task_time;
 
 		public string GetHumanReadableStatus ()
 		{
 			StringBuilder sb = new StringBuilder ();
 
 			sb.Append ("Scheduler:\n");
+
+			sb.Append (String.Format ("Count: {0}\n", executed_task_count));
+
+			if (next_task_time.Ticks > 0)
+				sb.Append (String.Format ("Next task in {0:0.00} seconds\n",
+							  (next_task_time - DateTime.Now).TotalSeconds));
 
 			if (status_str != null)
 				sb.Append ("Status: " + status_str + "\n");
@@ -624,6 +654,7 @@ namespace Beagle.Util {
 					// If the task queue is now empty, wait on our lock
 					// and then re-start our while loop
 					if (task_queue.Count == 0) {
+						next_task_time = new DateTime ();
 						status_str = "Waiting on empty queue";
 						Monitor.Wait (task_queue);
 						status_str = "Working";
@@ -654,10 +685,10 @@ namespace Beagle.Util {
 					// If we didn't find a task, wait for the next trigger-time
 					// and then re-start our while loop.
 					if (task == null) {
-						status_str = String.Format ("Next trigger time is in {0:0.00}s ({1})",
-									    (next_trigger_time - now).TotalSeconds,
-									    next_trigger_time);
+						next_task_time = next_trigger_time;
+						status_str = "Waiting for next trigger time.";
 						Monitor.Wait (task_queue, next_trigger_time - now);
+						next_task_time = new DateTime ();
 						status_str = "Working";
 						continue;
 					}
@@ -677,8 +708,11 @@ namespace Beagle.Util {
 					// If we still need to wait a bit longer, wait for the appropriate
 					// amount of time and then re-start our while loop.
 					if (delay > 0.001) {
-						status_str = String.Format ("Will execute next task in {0:0.00}s", delay);
-						Monitor.Wait (task_queue, TimeSpanFromSeconds (delay));
+						next_task_time = DateTime.Now.AddSeconds (delay);
+						status_str = "Waiting for next task.";
+						// Never wait more than 15 seconds.
+						Monitor.Wait (task_queue, TimeSpanFromSeconds (Math.Min (delay, 15)));
+						next_task_time = new DateTime ();
 						status_str = "Working";
 						continue;
 					}
@@ -754,8 +788,10 @@ namespace Beagle.Util {
 							Logger.Log.Error (ex);
 						}
 					}
-					foreach (Task task in collection)
+					foreach (Task task in collection) {
 						task.DoTask ();
+						++executed_task_count;
+					}
 					if (post_hook != null) {
 						try {
 							post_hook ();

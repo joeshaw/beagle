@@ -191,7 +191,7 @@ namespace Beagle.Daemon.FileSystemQueryable {
 				task.AddTaskGroup (group);
 				task.Priority = Scheduler.Priority.Delayed;
 				task.SubPriority = 0;
-				task.Description = "Found while crawling " + dir.Path;
+				task.Description = "Indexing directory";
 
 				ThisScheduler.Add (task);
 			}
@@ -202,7 +202,7 @@ namespace Beagle.Daemon.FileSystemQueryable {
 			task.AddTaskGroup (group);
 			task.Priority = Scheduler.Priority.Delayed;
 			task.SubPriority = 0;
-			task.Description = "Found while crawling " + dir.Path;
+			task.Description = "Crawling " + dir.Path;
 			ThisScheduler.Add (task);
 		}
 
@@ -366,12 +366,11 @@ namespace Beagle.Daemon.FileSystemQueryable {
 					Scheduler.Task task;
 					task = Scheduler.TaskFromHook (new Scheduler.TaskHook (CrawlNextDirectory));
 					task.Tag = "File System Crawler";
-					task.Priority = Scheduler.Priority.Delayed;
-					task.SubPriority = -1000;
+					task.Priority = Scheduler.Priority.Generator;
 					task.Description = String.Format ("{0} directories need to be crawled",
 									  dir_dirty.Count);
-					
-					ThisScheduler.Add (task);
+
+					ThisScheduler.Add (task, Scheduler.AddType.DeferToExisting);
 				}
 			}
 		}
@@ -385,7 +384,10 @@ namespace Beagle.Daemon.FileSystemQueryable {
 			if (dir != null) {
 				Crawl (dir);
 				dir.Dirty = false;
-				ScheduleCrawl ();
+				
+				task.Description = String.Format ("{0} directories need to be crawled",
+								  dir_dirty.Count);
+				task.Reschedule = true;
 			}
 		}
 

@@ -85,4 +85,5 @@ EXTRA_DIST =		\
 	$(CSFILES)
 
 CLEANFILES =		\
-	$(TARGET)
+	$(TARGET)	\
+	$(TARGET).mdb

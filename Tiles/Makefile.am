@@ -82,4 +82,5 @@ EXTRA_DIST =			\
 	$(RESOURCEFILES)
 
 CLEANFILES =			\
-	$(TARGET)
+	$(TARGET)		\
+	$(TARGET).mdb

@@ -76,4 +76,5 @@ EXTRA_DIST =				\
 
 CLEANFILES = 				\
 	$(TARGETS)			\
+	$(TARGETS:%=%.mdb)		\
 	$(WRAPPERS)

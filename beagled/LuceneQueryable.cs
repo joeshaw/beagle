@@ -33,7 +33,7 @@ using Beagle.Util;
 namespace Beagle.Daemon {
 
 	public class LuceneQueryable : IQueryable {
-
+		
 		public event IQueryableChangedHandler ChangedEvent;
 
 		private Scheduler scheduler = Scheduler.Global;
@@ -152,7 +152,7 @@ namespace Beagle.Daemon {
 		{
 			LuceneTask task;
 			task = new LuceneTask (Driver, generator);
-			task.Collector = collector;
+			task.Priority = Scheduler.Priority.Generator;
 			return task;
 		}
 

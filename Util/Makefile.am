@@ -66,4 +66,5 @@ EXTRA_DIST =		\
 
 CLEANFILES =		\
 	$(GOOGLE_CS)	\
-	$(TARGET)
+	$(TARGET)	\
+	$(TARGET).mdb

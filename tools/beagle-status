@@ -1,3 +1,9 @@
 #!/bin/sh
 
-dbus-send --session --dest=com.novell.Beagle --print-reply /com/novell/Beagle/RemoteControl com.novell.Beagle.RemoteControl.GetHumanReadableStatus
+DBUS_SEND="dbus-send --session --dest=com.novell.Beagle --print-reply /com/novell/Beagle/RemoteControl com.novell.Beagle.RemoteControl.GetHumanReadableStatus"
+
+while [ 1 ]; do
+    clear
+    $DBUS_SEND | head -20
+    sleep 1
+done

@@ -415,9 +415,10 @@ DAEMON_DLL_LOCAL_ASSEMBLIES =		\
 DAEMON_DLL_ASSEMBLIES = 			\
 	$(BEAGLED_LIBS)                 	\
 	$(DAEMON_DLL_LOCAL_ASSEMBLIES:%=-r:%)	\
+	-r:ICSharpCode.SharpZipLib.dll		\
+	-r:Mono.Data.SqliteClient		\
 	-r:Mono.Posix				\
-	-r:System.Runtime.Remoting		\
-	-r:ICSharpCode.SharpZipLib.dll
+	-r:System.Runtime.Remoting
 
 
 if ENABLE_EVO_SHARP
@@ -550,9 +551,13 @@ EXTRA_DIST =				\
 
 CLEANFILES =				\
 	$(PLUGIN_TARGET)       		\
+	$(PLUGIN_TARGET).mdb   		\
 	$(DAEMON_DLL_TARGET)		\
+	$(DAEMON_DLL_TARGET).mdb	\
 	$(DAEMON_TARGET)       		\
+	$(DAEMON_TARGET).mdb   		\
 	$(EXTSTR)			\
 	$(DAEMON_WRAPPER)      		\
 	$(EXTRACT_CONTENT_TARGET)	\
+	$(EXTRACT_CONTENT_TARGET).mdb	\
 	$(EXTRACT_CONTENT_WRAPPER)

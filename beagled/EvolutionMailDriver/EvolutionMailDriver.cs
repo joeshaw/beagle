@@ -542,7 +542,7 @@ namespace Beagle.Daemon {
 			EvolutionMailIndexableGenerator generator = new EvolutionMailIndexableGenerator (this, summaryInfo);
 			Scheduler.Task task;
 			task = NewAddTask (generator);
-			task.Priority = Scheduler.Priority.Delayed;
+			// IndexableGenerator tasks default to having priority Scheduler.Priority Generator
 			ThisScheduler.Add (task);
 		}
 

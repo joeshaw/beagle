@@ -82,4 +82,6 @@ uninstall-local:
 
 EXTRA_DIST = $(CSFILES) $(RESOURCEFILES)
 
-CLEANFILES = $(TARGET)
+CLEANFILES = \
+	$(TARGET) 	\
+	$(TARGET).mdb

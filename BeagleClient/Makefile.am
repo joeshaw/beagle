@@ -55,4 +55,5 @@ EXTRA_DIST =		\
 
 CLEANFILES =		\
 	$(TARGET)	\
+	$(TARGET).mdb	\
 	$(EXTSTR)

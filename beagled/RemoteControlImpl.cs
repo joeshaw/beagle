@@ -44,7 +44,7 @@ namespace Beagle.Daemon {
 		
 		override public string GetHumanReadableStatus ()
 		{
-			return Scheduler.Global.GetHumanReadableStatus ();
+			return "\n" + Scheduler.Global.GetHumanReadableStatus ();
 		}
 	}
 
