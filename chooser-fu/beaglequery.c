@@ -149,12 +149,13 @@ beagle_query (const char *query_string)
             current_hit->score = atof (query_ptr + 7);
         } else if (! strncmp (query_ptr, "Time: ", 6)) {
             struct tm tm;
-            time_t t;
-            if (strptime (query_ptr + 6, "%m/%d/%Y %I:%M:%S %p", &tm) != NULL) {
+
+	    /* strptime() does not init fields it does not touch ... */
+	    memset (&tm, '0', sizeof (struct tm));
+            if (strptime (query_ptr + 6, "%m/%d/%Y %I:%M:%S %p", &tm))
                 current_hit->timestamp = mktime (&tm);
-            }
         }
-        
+
         /* FIXME: We should also read in the properties */
         
         query_ptr = next;
