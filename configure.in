@@ -198,7 +198,7 @@ AC_SUBST(LIBGECKOGLUE_LIBS)
 
 dnl -------------------------------------------------------
 
-PKG_CHECK_MODULES(BEAGLE_UI, gtk-sharp glade-sharp gecko-sharp = 0.6 gnome-sharp dbus-sharp >= 0.23.1 gconf-sharp gmime-sharp >= 2.1.11)
+PKG_CHECK_MODULES(BEAGLE_UI, gtk-sharp glade-sharp gecko-sharp = 0.6 gnome-sharp dbus-sharp >= 0.23.4 gconf-sharp gmime-sharp >= 2.1.13)
 AC_SUBST(BEAGLE_UI_LIBS)
 
 dnl ----------------------------------------------
@@ -276,7 +276,7 @@ dnl Needed to index jpeg metadata
 PKG_CHECK_MODULES(LIBEXIF, libexif >= 0.5)
 PKG_CHECK_MODULES(LIBEXIF, libexif >= 0.6, have_old_libexif=no, have_old_libexif=yes)
 
-PKG_CHECK_MODULES(BEAGLED, gmime-sharp >= 2.1.11 gtk-sharp dbus-sharp >= 0.23.1 gconf-sharp)
+PKG_CHECK_MODULES(BEAGLED, gmime-sharp >= 2.1.13 gtk-sharp dbus-sharp >= 0.23.4 gconf-sharp)
 BEAGLED_LIBS="$BEAGLED_LIBS $EVO_SHARP_LIBS $GSF_SHARP_LIBS"
 AC_SUBST(BEAGLED_LIBS)
 
