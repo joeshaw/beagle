@@ -1,0 +1,5 @@
+*.dll
+ExternalStringsHack.cs
+Makefile
+Makefile.in
+beagled
