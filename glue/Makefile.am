@@ -28,8 +28,8 @@ libinotifyglue_la_SOURCES =	\
 
 libscreensaverglue_la_SOURCES = \
 	screensaver-glue.c
-# FIXME: This stuff shouldn't be hard-wired
-libscreensaverglue_la_LIBADD=-L/usr/X11/lib -lX11 -lXss
+
+libscreensaverglue_la_LIBADD = @X_LIBS@
 
 libgeckoglue_la_SOURCES=        \
 	gecko-utils.h           \

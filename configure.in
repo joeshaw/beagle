@@ -265,6 +265,14 @@ AM_CONDITIONAL(ENABLE_EPIPHANY_EXTENSION, test "x$enable_epiphany_extension" = "
 
 dnl ----------------------------------------------
 
+dnl For the XScreenSaver glue
+
+AC_PATH_XTRA
+X_LIBS="$X_PRE_LIBS $X_LIBS -lX11 $X_EXTRA_LIBS"
+AC_SUBST(X_LIBS)
+
+dnl ----------------------------------------------
+
 dnl Searchomatic
 
 PKG_CHECK_MODULES(SEARCHOMATIC, gtk+-2.0)
