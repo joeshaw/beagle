@@ -32,13 +32,29 @@ using Mono.Data.SqliteClient;
 namespace Beagle.Util {
 
 	public class FSpotTools {
+
+		public class Tag {
+			public uint   Id;
+			public string Name;
+			public uint   CategoryId;
+			public bool   IsCategory;
+			public int    SortPriority;
+			public Tag    Category;
+			// FIXME: Icon
+		}
 		
 		public class Photo {
-			public uint Id;
+			public uint   Id;
 			public string Path;
 			public string Description;
-			// FIXME: Need to support tags
+			public Tag[]  Tags;
 		}
+
+
+		static private SqliteConnection connection;
+		static Hashtable tagCache = null;
+		static Hashtable directoryCache = null;
+
 
 		static private string PhotoStorePath {
 			get {
@@ -47,7 +63,6 @@ namespace Beagle.Util {
 			}
 		}
 
-		static private SqliteConnection connection;
 		static private SqliteConnection PhotoStoreConnection {
 			get {
 				if (connection == null && File.Exists (PhotoStorePath)) {
@@ -66,7 +81,43 @@ namespace Beagle.Util {
 			}
 		}
 
-		static Hashtable directoryCache = null;
+		// FIXME: We should expire this cache if the underlying db has changed.
+		static private Tag GetTagById (uint id)
+		{
+			if (! HavePhotoStore)
+				return null;
+
+			if (tagCache == null) {
+				tagCache = new Hashtable ();
+
+				SqliteCommand command = new SqliteCommand ();
+				command.Connection = PhotoStoreConnection;
+				command.CommandText = "SELECT id, name, category_id, is_category, sort_priority FROM tags";
+				
+				SqliteDataReader reader = command.ExecuteReader ();
+				while (reader.Read ()) {
+					Tag tag = new Tag ();
+					tag.Id = Convert.ToUInt32 (reader [0]);
+					tag.Name = (string) reader [1];
+					tag.CategoryId = Convert.ToUInt32 (reader [2]);
+					tag.IsCategory = (reader [3] == "1");
+					tag.SortPriority = Convert.ToInt32 (reader [4]);
+					tagCache [tag.Id] = tag;
+				}
+
+				// Walk across all tags, linking to the category's Tag
+				// object.  Since the tagCache is fully populated, it is
+				// safe to call GetTagById here.
+				foreach (Tag tag in tagCache.Values)
+					tag.Category = GetTagById (tag.CategoryId);
+
+				command.Dispose ();
+			}
+			
+			return (Tag) tagCache [id];
+		}
+
+		// FIXME: We should expire this cache if the underlying db has changed.
 		static bool IsPossibleDirectory (string directory)
 		{
 			if (! HavePhotoStore)
@@ -78,8 +129,8 @@ namespace Beagle.Util {
 				SqliteCommand command = new SqliteCommand ();
 				command.Connection = PhotoStoreConnection;
 				command.CommandText = "SELECT DISTINCT directory_path FROM photos";
-				SqliteDataReader reader = command.ExecuteReader ();
 
+				SqliteDataReader reader = command.ExecuteReader ();
 				while (reader.Read ()) {
 					directoryCache [reader [0]] = true;
 				}
@@ -102,7 +153,10 @@ namespace Beagle.Util {
 			if (! IsPossibleDirectory (dir))
 				return null;
 
-			SqliteCommand command = new SqliteCommand ();
+			SqliteCommand command;
+			SqliteDataReader reader;
+
+			command = new SqliteCommand ();
 			command.Connection = PhotoStoreConnection;
 			command.CommandText = String.Format ("SELECT id, description         " +
 							     "FROM photos                    " +
@@ -111,7 +165,7 @@ namespace Beagle.Util {
 							     dir, name);
 
 			Photo photo = null;
-			SqliteDataReader reader = command.ExecuteReader ();
+			reader = command.ExecuteReader ();
 			if (reader.Read ()) {
 				photo = new Photo ();
 				photo.Path = path;
@@ -120,6 +174,37 @@ namespace Beagle.Util {
 			}
 
 			command.Dispose ();
+
+			if (photo != null) {
+				command = new SqliteCommand ();
+				command.Connection = PhotoStoreConnection;
+				command.CommandText = String.Format ("SELECT tag_id       " +
+								     "FROM photo_tags     " + 
+								     "WHERE photo_id = {0}",
+								     photo.Id);
+
+				Hashtable tagHash = new Hashtable ();
+
+				// Mark the photo with both any tags and all parents.
+				// Maybe this isn't the right thing to do, but it seems
+				// to most closely mirror the tag semantics implied by f-spot.
+				reader = command.ExecuteReader ();
+				while (reader.Read ()) {
+					uint id = Convert.ToUInt32 (reader [0]);
+					Tag tag = GetTagById (id);
+					while (tag != null) {
+						tagHash [tag] = tag;
+						tag = tag.Category;
+					}
+				}
+				
+				photo.Tags = new Tag [tagHash.Count];
+				int i = 0;
+				foreach (Tag t in tagHash.Values) {
+					photo.Tags [i] = t;
+					++i;
+				}
+			}
 
 			return photo;
 		}

@@ -127,7 +127,18 @@ namespace Beagle {
 			if (MimeType.StartsWith ("image/")) {
 				BU.FSpotTools.Photo photo = BU.FSpotTools.GetPhoto (path);
 				if (photo != null) {
-					this ["Description"] = photo.Description;
+					this ["FSpot.Description"] = photo.Description;
+
+					// FIXME: This is a bit weird, since stemming is applied to
+					// the list of tags. .. but I'm not sure if there is a clean way
+					// to do it.
+					string tagStr = "";
+					foreach (BU.FSpotTools.Tag tag in photo.Tags) {
+						if (tagStr.Length > 0)
+							tagStr += " :: "; // just a weird separator
+						tagStr += tag.Name;
+					}
+					this ["FSpot.Tags"] = tagStr;
 				}
 			}
 		}
