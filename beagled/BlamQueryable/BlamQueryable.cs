@@ -108,6 +108,9 @@ namespace Beagle.Daemon.BlamQueryable {
 				return;
 			}
 
+			if (collection == null)
+				return;
+
 			log.Info ("Scanning blogs...");
 			Stopwatch stopwatch = new Stopwatch ();
 			int blogCount = 0, itemCount = 0;
