@@ -82,8 +82,10 @@ namespace Beagle.Daemon.FileSystemQueryable {
 			this.is_dirty = true;
 			this.dirty_time = DateTime.MaxValue;
 
-			if (ExtendedAttribute.CheckFingerprint (this.path, driver.Fingerprint))
-				this.last_crawl_time = LastCrawlTime.Get (this.path);
+			FileAttributes attr;
+			attr = driver.FileAttributesStore.Read (this.path);
+			if (attr != null)
+				this.last_crawl_time = attr.LastIndexedTime;
 			else
 				this.last_crawl_time = DateTime.MinValue;
 

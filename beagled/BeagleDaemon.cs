@@ -259,6 +259,15 @@ namespace Beagle.Daemon {
 			}
 			SetupLog (echo);
 
+			// Make sure that extended attributes can be set.  If not, bail out with a message.
+			if (! ExtendedAttribute.Test (PathFinder.RootDir)) {
+				Logger.Log.Fatal ("Could not set extended attributes on a file in your home "
+						  + "directory.  See "
+						  + "http://www.beaglewiki.org/index.php/Enable%20Extended%20Attributes "
+						  + "for more information.");
+				return 1;
+			}
+
 			// Start our memory-logging thread
 			if (arg_debug_memory) {
 				Thread th = new Thread (new ThreadStart (LogMemoryUsage));

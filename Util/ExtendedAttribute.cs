@@ -96,57 +96,18 @@ namespace Beagle.Util {
 				throw new Exception ("Could not remove extended attribute on " + path + ": " + Syscall.strerror (Marshal.GetLastWin32Error ()));
 		}
 
-		//////////////////////////////////////////////////////////////////////
-
-		const string nameAttr = "Name";
-		const string fingerprintAttr = "Fingerprint";
-		const string mtimeAttr = "MTime";
-
-		public static bool CheckFingerprint (string path, string fingerprint)
+		// Check to see if it is possible to get and set attributes on a given file.
+		public static bool Test (string path)
 		{
-			string fingerprintStored = Get (path, fingerprintAttr);
-			return fingerprint == fingerprintStored;
-		}
+			const string test_key = "__test_key__";
+			const string test_value = "__test_value__";
 
-		public static bool Check (string path, string fingerprint)
-		{
-			path = Path.GetFullPath (path);
-
-			// Check the file's mtime to make sure it agrees with
-			// the timestamp stored in the extended attribute.
-			string mtimeFile = StringFu.DateTimeToString (FileSystem.GetLastWriteTime (path));
-			string mtimeStored = Get (path, mtimeAttr);
-			if (mtimeFile != mtimeStored)
+			try {
+				Set (path, test_key, test_value);
+				return Get (path, test_key) == test_value;
+			} catch (Exception ex) { 
 				return false;
-
-			// Confirm the filename
-			string nameStored = Get (path, nameAttr);
-			if (path != nameStored)
-				return false;
-
-			// Confirm the fingerprint.
-			string fingerprintStored = Get (path, fingerprintAttr);
-			if (fingerprint != fingerprintStored)
-				return false;
-			
-			return true;
+			}
 		}
-
-		public static void Mark (string path, string fingerprint, DateTime mtime)
-		{
-			path = Path.GetFullPath (path);
-
-			// Store the file's mtime and the fingerprint in
-			// extended attributes.
-			Set (path, fingerprintAttr, fingerprint);
-			Set (path, nameAttr, path);
-			Set (path, mtimeAttr, StringFu.DateTimeToString (mtime));
-		}
-
-		public static void Mark (string path, string fingerprint)
-		{
-			Mark (path, fingerprint, FileSystem.GetLastWriteTime (path));
-		}
-		
 	}
 }

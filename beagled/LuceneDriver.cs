@@ -208,6 +208,7 @@ namespace Beagle.Daemon {
 		private IFileAttributesStore fa_store = null;
 
 		public IFileAttributesStore FileAttributesStore {
+			get { return fa_store; }
 			set { fa_store = value; }
 		}
 

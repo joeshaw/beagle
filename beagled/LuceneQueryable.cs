@@ -41,13 +41,15 @@ namespace Beagle.Daemon {
 		private string index_dir;
 		private LuceneDriver driver;
 		private LuceneTaskCollector collector;
+		private IFileAttributesStore fa_store;
 
 		public LuceneQueryable (string index_name)
 		{
 			index_dir = Path.Combine (PathFinder.RootDir, index_name);
 
 			driver = new LuceneDriver (index_dir);
-			driver.FileAttributesStore = BuildFileAttributesStore (driver.Fingerprint);
+			fa_store = BuildFileAttributesStore (driver.Fingerprint);
+			driver.FileAttributesStore = fa_store;
 			driver.ChangedEvent += OnDriverChanged;
 
 			collector = new LuceneTaskCollector (driver);
@@ -68,6 +70,10 @@ namespace Beagle.Daemon {
 
 		public Scheduler ThisScheduler {
 			get { return scheduler; }
+		}
+
+		public IFileAttributesStore FileAttributesStore {
+			get { return fa_store; }
 		}
 
 		/////////////////////////////////////////
