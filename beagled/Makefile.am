@@ -27,7 +27,7 @@ EXTSTR_IN = $(srcdir)/$(EXTSTR).in
 $(EXTSTR): $(EXTSTR_IN)
 	sed	-e "s|\@prefix\@|$(prefix)|g"		\
 		-e "s|\@pkglibdir\@|$(pkglibdir)|g"	\
-		< $^ > $@
+		< $(EXTSTR_IN) > $@
 
 
 $(PLUGIN_TARGET): $(PLUGIN_CSFILES) $(EXTSTR) $(PLUGIN_LOCAL_ASSEMBLIES)
@@ -249,7 +249,7 @@ DAEMON_WRAPPER_IN = beagled.in
 DAEMON_TARGET = BeagleDaemon.exe
 
 $(DAEMON_WRAPPER): $(srcdir)/$(DAEMON_WRAPPER_IN)
-	$(WRAPPER_SED) -e "s|\@target\@|$(DAEMON_TARGET)|g" < $(srcdir)/$^ > $@
+	$(WRAPPER_SED) -e "s|\@target\@|$(DAEMON_TARGET)|g" < $(srcdir)/$(DAEMON_WRAPPER_IN) > $@
 	chmod +x $(DAEMON_WRAPPER)
 
 
@@ -284,7 +284,7 @@ EXTRACT_CONTENT_WRAPPER = beagle-extract-content
 EXTRACT_CONTENT_TARGET = ExtractContent.exe
 
 $(EXTRACT_CONTENT_WRAPPER): $(srcdir)/$(WRAPPER_IN)
-	$(WRAPPER_SED) -e "s|\@target\@|$(EXTRACT_CONTENT_TARGET)|g" < $(srcdir)/$^ > $@
+	$(WRAPPER_SED) -e "s|\@target\@|$(EXTRACT_CONTENT_TARGET)|g" < $(srcdir)/$(WRAPPER_IN) > $@
 	chmod +x $(EXTRACT_CONTENT_WRAPPER)
 
 
