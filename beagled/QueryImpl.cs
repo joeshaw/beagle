@@ -121,6 +121,11 @@ namespace Beagle.Daemon {
 			body.AddMimeType (type);
 		}
 
+		public override void AddHitType (string type)
+		{
+			body.AddHitType (type);
+		}
+
 		public override void AddSource (string source)
 		{
 			body.AddSource (source);

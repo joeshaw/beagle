@@ -111,6 +111,8 @@ class QueryTool {
 			"  --verbose\t\t\tPrint detailed information about each hit.\n" +
 			"  --mime <mime type>\t\tConstrain search results to the specified mime\n" +
 			"                    \t\ttype. Can be used multiply.\n" +
+			"  --type <hit type>\t\tConstrain search results to the specified hit\n" +
+			"                    \t\ttype. Can be used multiply.\n" +
 			"  --source <source>\t\tConstrain query to the specified source.\n" +
 			"                   \t\tSources list available from beagle-status.\n" +
 			"  --live-query\t\t\tRun continuously, printing notifications if a\n" +
@@ -150,6 +152,10 @@ class QueryTool {
 			case "--mime":
 			        if (++i >= args.Length) PrintUsageAndExit ();
 				query.AddMimeType (args [i]);
+				break;
+			case "--type":
+			        if (++i >= args.Length) PrintUsageAndExit ();
+				query.AddHitType (args [i]);
 				break;
 			case "--source":
 			        if (++i >= args.Length) PrintUsageAndExit ();

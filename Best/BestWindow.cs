@@ -36,6 +36,16 @@ using Beagle.Tile;
 
 namespace Best {
 
+	public class TypeMenuItem : Gtk.MenuItem {
+
+		public string Type;
+
+		public TypeMenuItem (string label, string type) : base (label)
+		{
+			this.Type = type;
+		}
+	}
+
 	public class BestWindow : Gtk.Window {
 
 		public BestWindow (string query) : base (WindowType.Toplevel)
@@ -105,6 +115,7 @@ namespace Best {
 		//////////////////////////
 
 		Query query = null;
+		string hit_type = null;
 		Gtk.AccelGroup accel_group;
 		GlobalKeybinder global_keys;
 		
@@ -176,6 +187,30 @@ namespace Best {
 			return button;
 		}
 
+		private Gtk.OptionMenu TypesOptionMenu ()
+		{
+			Gtk.OptionMenu opt = new Gtk.OptionMenu ();
+
+			ArrayList items = new ArrayList ();
+			Gtk.MenuItem mi;
+			mi = new TypeMenuItem ("Everything", null);
+			items.Add (mi);
+			mi = new TypeMenuItem ("Files", "File");
+			items.Add (mi);
+			mi = new TypeMenuItem ("Email", "MailMessage");
+			items.Add (mi);
+			mi = new TypeMenuItem ("IM Logs", "IMLog");
+			items.Add (mi);
+
+			Gtk.Menu menu = new Gtk.Menu ();
+			foreach (Gtk.MenuItem item in items)
+				menu.Append (item);
+			opt.Menu = menu;
+			opt.Data["items"] = items;
+		
+			return opt;
+		}
+
 		private Gtk.Widget CreateContents ()
 		{
 			Gtk.HBox entryLine = new HBox (false, 3);
@@ -186,6 +221,13 @@ namespace Best {
 			entry = new Gnome.Entry ("");
 			entry.Activated += new EventHandler (this.DoSearch);
 			entryLine.PackStart (entry, true, true, 3);
+
+			words = new Gtk.Label ("in");
+			entryLine.PackStart (words, false, false, 3);
+
+			Gtk.OptionMenu types = TypesOptionMenu ();
+			types.Changed += new EventHandler (this.ChangeType);
+			entryLine.PackStart (types, false, false, 3);
 
 			Gtk.HBox buttonContents = new HBox (false, 0);
 			Gtk.Widget buttonImg = Beagle.Images.GetWidget ("icon-search.png");
@@ -295,6 +337,19 @@ namespace Best {
 			UpdatePage ();
 		}
 
+		private void ChangeType (object o, EventArgs args)
+		{
+			Gtk.OptionMenu opt = (Gtk.OptionMenu) o;
+
+			TypeMenuItem mi = (TypeMenuItem) ((ArrayList) opt.Data["items"])[opt.History];
+
+			this.hit_type = mi.Type;
+			
+			if (this.query != null)
+				Search (entry.GtkEntry.Text);
+			UpdatePage ();
+		}
+
 		//////////////////////////
 
 		private void Close ()
@@ -362,6 +417,9 @@ namespace Best {
 			//query.AddDomain (QueryDomain.Global);
 
 			query.AddText (searchString);
+
+			if (hit_type != null)
+				query.AddHitType (hit_type);
 
 			AttachQuery ();
 			

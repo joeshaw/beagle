@@ -734,6 +734,17 @@ namespace Beagle.Daemon {
 				luceneQuery.Add (mimeTypeQuery, true, false);
 			}
 
+			// If hit types are specified, we must match one of them.
+			if (body.HasHitTypes) {
+				LNS.BooleanQuery hitTypeQuery = new LNS.BooleanQuery ();
+				foreach (string hitType in body.HitTypes) {
+					Term t = new Term ("Type", hitType);
+					LNS.Query q = new LNS.TermQuery (t);
+					hitTypeQuery.Add (q, false, false);
+				}
+				luceneQuery.Add (hitTypeQuery, true, false);
+			}
+
 			// If a list of Uris is specified, we must match one of them.
 			if (listOfUris != null && listOfUris.Count > 0) {
 				LNS.BooleanQuery uriQuery = new LNS.BooleanQuery ();

@@ -51,6 +51,9 @@ namespace Beagle
 		public abstract void AddMimeType (string type);
 
 		[Method]
+		public abstract void AddHitType (string type);
+
+		[Method]
 		public abstract void AddSource (string source);
 
 		[Method]

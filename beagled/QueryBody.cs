@@ -40,6 +40,7 @@ namespace Beagle.Daemon {
 
 		ArrayList text = new ArrayList ();
 		ArrayList mimeTypes = new ArrayList ();
+		ArrayList hitTypes = new ArrayList ();
 		ArrayList searchSources = new ArrayList ();
 
 		public QueryBody ()
@@ -112,6 +113,31 @@ namespace Beagle.Daemon {
 
 		public bool HasMimeTypes {
 			get { return mimeTypes.Count > 0; }
+		}
+
+		///////////////////////////////////////////////////////////////
+
+		public void AddHitType (string str)
+		{
+			hitTypes.Add (str);
+		}
+
+		public bool AllowsHitType (string str)
+		{
+			if (hitTypes.Count == 0)
+				return true;
+			foreach (string ht in hitTypes)
+				if (str == ht)
+					return true;
+			return false;
+		}
+
+		public IList HitTypes {
+			get { return hitTypes; }
+		}
+
+		public bool HasHitTypes {
+			get { return hitTypes.Count > 0; }
 		}
 
 		///////////////////////////////////////////////////////////////

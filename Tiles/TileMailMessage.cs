@@ -25,9 +25,12 @@
 //
 
 using System;
+using System.Collections;
 using System.Diagnostics;
+using System.Text;
 using System.Text.RegularExpressions;
 using BU = Beagle.Util;
+using GMime;
 
 namespace Beagle.Tile {
 
@@ -67,7 +70,34 @@ namespace Beagle.Tile {
 			Template["Subject"] = str;
 
 			Template["ToFrom"] = sent ? "To" : "From";
-			Template["Who"] = sent ? Hit ["fixme:to"] : Hit ["fixme:from"];
+
+			if (sent) {
+				// Limit the number of recipients to 3, so the
+				// tile doesn't look terrible.
+				ICollection list = InternetAddress.ParseString (Hit ["fixme:to"]);
+
+				if (list.Count <= 3)
+					Template["Who"] = Hit["fixme:to"];
+				else {
+					StringBuilder sb = new StringBuilder ();
+
+					int count = 0;
+					foreach (InternetAddress ia in list) {
+						sb.Append (ia.ToString (false));
+						sb.Append (", ");
+
+						++count;
+						if (count == 3)
+							break;
+					}
+
+					sb.Append ("et al");
+
+					Template["Who"] = sb.ToString ();
+				}
+			} else
+				Template["Who"] = Hit ["fixme:from"];
+
 			Template["Folder"] = Hit ["fixme:folder"];
 			Template["Account"] = Hit ["fixme:account"];
 			Template["SentReceived"] = sent ? "Sent" : "Received";
