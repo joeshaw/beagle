@@ -1,14 +1,5 @@
 #!/bin/sh
 
-
-MOZILLA_HOME=@mozillahome@
-export MOZILLA_HOME
- 
-MOZILLA_FIVE_HOME=@mozillahome@
-export MOZILLA_FIVE_HOME
-
-LD_LIBRARY_PATH="@mozillahome@:$LD_LIBRARY_PATH"
-
 if [ -e ./@target@ ] && [ -e ./Makefile.am ] ; then
     echo "*** Running uninstalled @target@ ***"
     THIS_PATH="../Util:../images:../Lucene.Net"
