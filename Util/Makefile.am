@@ -15,6 +15,15 @@ GOOGLE_CS   = GoogleSearch.cs
 $(GOOGLE_CS): $(GOOGLE_WSDL)
 	wsdl -namespace:Beagle.Util -out:$@ $^
 
+EXTSTR = ExternalStringsHack.cs
+EXTSTR_IN = $(srcdir)/$(EXTSTR).in
+$(EXTSTR): $(EXTSTR_IN)
+	sed	-e "s|\@prefix\@|$(prefix)|g"		\
+		-e "s|\@pkglibdir\@|$(pkglibdir)|g"	\
+		-e "s|\@VERSION\@|$(VERSION)|g"		\
+		-e "s|\@GNOME_PREFIX\@|$(GNOME_PREFIX)|g"	\
+		< $(EXTSTR_IN) > $@
+
 CSFILES = 			        	\
 	$(srcdir)/camel.cs              	\
 	$(srcdir)/CommandLineFu.cs		\
@@ -65,7 +74,7 @@ ASSEMBLIES =					\
 	-r:Mono.Posix
 
 
-$(TARGET): $(CSFILES) $(GOOGLE_CS)
+$(TARGET): $(CSFILES) $(GOOGLE_CS) $(EXTSTR)
 	$(CSC) --unsafe -o $@ $(CSFLAGS) $^ $(ASSEMBLIES)
 
 Inotify.exe: $(srcdir)/Inotify.cs $(srcdir)/Logger.cs
@@ -89,12 +98,14 @@ COND_CS_FILES =	\
 
 EXTRA_DIST =			\
 	$(GOOGLE_WSDL)		\
+	$(EXTSTR_IN)		\
 	$(CSFILES)		\
 	$(COND_CS_FILES)	\
 	inotify-test
 
 CLEANFILES =			\
 	$(GOOGLE_CS)		\
+	$(EXTSTR)		\
 	$(TARGET)		\
 	$(TARGET).mdb		\
 	Inotify.exe		\

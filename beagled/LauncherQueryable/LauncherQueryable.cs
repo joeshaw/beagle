@@ -194,23 +194,17 @@ namespace Beagle.Daemon.LauncherQueryable {
 				string [] sline = line.Split ('=');
 				if (sline.Length != 2)
 					continue;
-				if (!sline[1].Equals (""))  {
-					// FIXME:  add other language support
-					switch (sline[0]) {
-					case "Exec":
-					case "Icon":
-						indexable.AddProperty (Beagle.Property.NewUnsearched ("fixme:" + sline[0], sline[1]));
-						break;
 
-					case "Name":
+				// FIXME: We shouldnt really search fields that are in other locales than the current should we?
+
+				if (sline [0].Equals ("Icon") || sline [0].Equals ("Exec")) {
+					indexable.AddProperty (Beagle.Property.NewUnsearched ("fixme:" + sline[0], sline[1]));
+				} else if (sline [0].StartsWith ("Name")) {
+					if (sline [0] == "Name")
 						have_name = true;
-						indexable.AddProperty (Beagle.Property.NewKeyword ("fixme:" + sline[0], sline[1]));
-						break;
-						
-					case "Comment":
-						indexable.AddProperty (Beagle.Property.NewKeyword ("fixme:" + sline[0], sline[1]));
-						break;
-					}
+					indexable.AddProperty (Beagle.Property.NewKeyword ("fixme:" + sline[0], sline[1]));
+				} else if (sline[0].StartsWith ("Comment")) {
+					   indexable.AddProperty (Beagle.Property.NewKeyword ("fixme:" + sline[0], sline[1]));
 				}
 			}
 			reader.Close ();
@@ -223,4 +217,3 @@ namespace Beagle.Daemon.LauncherQueryable {
 		}
 	}
 }
-

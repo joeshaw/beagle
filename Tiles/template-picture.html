@@ -3,13 +3,13 @@
     <span><a href="@action:@Open"><img src="@Thumbnail@"></a></span>
   </td>
   <td class="content">
-    <div class="name"><a href="@action:@Open">@FileName@</a> in folder <a href="@action:@Reveal">@FolderName@</a></div>
-    <div class="date">Modified: @date%LastWriteTime@</div>
+    <div class="name"><a href="@action:@Open">@FileName@</a> @text%in folder@ <a href="@action:@Reveal">@FolderName@</a></div>
+    <div class="date">@text%Modified:@ @date%LastWriteTime@</div>
     <div class="snippet">@fixme:width@ x @fixme:height@ - @fixme:colortype@ - @Length@</div>
   <ul class="actions">
-      <li><a href="@action:@Open">Open</a></li>
-      <li id="email"><a href="@action:@SendTo">Send to...</a></li>
-      <li id="reveal"><a href="@action:@Reveal">Reveal in file manager</a></li>
+      <li><a href="@action:@Open">@text%Open@</a></li>
+      <li id="email"><a href="@action:@SendTo">@text%Send to...@</a></li>
+      <li id="reveal"><a href="@action:@Reveal">@text%Reveal in file manager@</a></li>
   </ul>
   </td>
 </tr>

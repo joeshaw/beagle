@@ -28,6 +28,8 @@
 using System;
 using System.IO;
 
+using Beagle.Util;
+
 namespace Beagle.Daemon {
 
 	public class PathFinder {

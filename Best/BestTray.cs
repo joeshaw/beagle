@@ -12,6 +12,8 @@ using System.Runtime.InteropServices;
 using Gtk;
 using Gdk;
 
+using Mono.Posix;
+
 using Beagle;
 using Beagle.Tile;
 
@@ -159,7 +161,7 @@ namespace Best {
 			// Quick Search menu items
 			ArrayList list = win.RetriveSearches ();
 			if (list == null || list.Count == 0 ) {
-				item = new Gtk.ImageMenuItem ("No Recent Searches");
+				item = new Gtk.ImageMenuItem (Catalog.GetString ("No Recent Searches"));
 				item.Sensitive = false;
 				menu.Append (item);
 			}else {
@@ -174,7 +176,7 @@ namespace Best {
 			
 			menu.Append (new Gtk.SeparatorMenuItem ());			
 		
-			item = new Gtk.ImageMenuItem ("Quit");
+			item = new Gtk.ImageMenuItem (Catalog.GetString ("Quit"));
 			item.Image = new Gtk.Image (Gtk.Stock.Quit, Gtk.IconSize.Menu);
 			item.Activated += new EventHandler (QuitEvent);
 			menu.Append (item);

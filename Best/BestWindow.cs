@@ -31,6 +31,8 @@ using System.Collections;
 using Gnome;
 using Gtk;
 
+using Mono.Posix;
+
 using Beagle;
 using BU = Beagle.Util;
 using Beagle.Tile;
@@ -297,17 +299,17 @@ namespace Best {
 
 			ArrayList items = new ArrayList ();
 			Gtk.MenuItem mi;
-			mi = new TypeMenuItem ("Anywhere", null);
+			mi = new TypeMenuItem (Catalog.GetString ("Anywhere"), null);
 			items.Add (mi);
-			mi = new TypeMenuItem ("in Files", "File");
+			mi = new TypeMenuItem (Catalog.GetString ("in Files"), "File");
 			items.Add (mi);
-			mi = new TypeMenuItem ("in Addressbook", "Contact");
+			mi = new TypeMenuItem (Catalog.GetString ("in Addressbook"), "Contact");
 			items.Add (mi);
-			mi = new TypeMenuItem ("in Mail", "MailMessage");
+			mi = new TypeMenuItem (Catalog.GetString ("in Mail"), "MailMessage");
 			items.Add (mi);
-			mi = new TypeMenuItem ("in Web Pages", "WebHistory");
+			mi = new TypeMenuItem (Catalog.GetString ("in Web Pages"), "WebHistory");
 			items.Add (mi);
-			mi = new TypeMenuItem ("in Chats", "IMLog");
+			mi = new TypeMenuItem (Catalog.GetString ("in Chats"), "IMLog");
 			items.Add (mi);
 
 			Gtk.Menu menu = new Gtk.Menu ();
@@ -323,7 +325,7 @@ namespace Best {
 		{
 			Gtk.HBox entryLine = new HBox (false, 3);
 
-			Gtk.Label words = new Gtk.Label ("Search terms:");
+			Gtk.Label words = new Gtk.Label (Catalog.GetString ("Search terms:"));
 			entryLine.PackStart (words, false, false, 3);
 			
 			entry = new Gnome.Entry ("");
@@ -340,7 +342,7 @@ namespace Best {
 			Gtk.HBox buttonContents = new HBox (false, 0);
 			Gtk.Widget buttonImg = Beagle.Images.GetWidget ("icon-search.png");
 			buttonContents.PackStart (buttonImg, false, false, 1);
-			Gtk.Label buttonLabel = new Gtk.Label ("Find");
+			Gtk.Label buttonLabel = new Gtk.Label (Catalog.GetString ("Find"));
 			buttonContents.PackStart (buttonLabel, false, false, 1);
 			
 			Gtk.Button button = new Gtk.Button ();
@@ -357,13 +359,13 @@ namespace Best {
 			pager.PackStart (page_label, false, false, 3);
 
 			forward_button = StockButton ("gtk-go-forward", 
-						      "Show More Results");
+						      Catalog.GetString ("Show More Results"));
 			forward_button.Show ();
 			forward_button.Clicked += new EventHandler (PageForwardHandler);
 			pager.PackEnd (forward_button, false, false, 3);
 
 			back_button = StockButton ("gtk-go-back",
-						   "Show Previous Results");
+						   Catalog.GetString ("Show Previous Results"));
 			back_button.Show ();
 
 			back_button.Clicked += new EventHandler (PageBackHandler);
@@ -397,13 +399,13 @@ namespace Best {
 				results = root.HitCollection.NumDisplayableResults;
 
 			if (results == 0)
-				label = "No results.";
+				label = Catalog.GetString ("No results.");
 			else if (root.HitCollection.FirstDisplayed == 0) 
-				label = String.Format ("Best <b>{0} results of {1}</b> are shown.", 
+				label = String.Format (Catalog.GetString ("Best <b>{0} results of {1}</b> are shown."), 
 						       root.HitCollection.LastDisplayed + 1,
 						       results);
 			else 
-				label = String.Format ("Results <b>{0} through {1} of {2}</b> are shown.",
+				label = String.Format (Catalog.GetString ("Results <b>{0} through {1} of {2}</b> are shown."),
 						       root.HitCollection.FirstDisplayed + 1, 
 						       root.HitCollection.LastDisplayed + 1,
 						       results);
@@ -541,14 +543,14 @@ namespace Best {
 				DBusisms.BeagleUpAgain += QueueDelayedQuery;
 
 				if (e.ToString ().IndexOf ("com.novell.Beagle") != -1) {
-					root.Error ("The query for <i>" + searchString + "</i> failed." +
-						    "<br>The likely cause is that the beagle daemon isn't running.");
+					root.Error (String.Format (Catalog.GetString ("The query for <i>{0}</i> failed." +
+						    "<br>The likely cause is that the beagle daemon isn't running."),searchString));
 					root.OfferDaemonRestart = true;
 				} else if (e.ToString().IndexOf ("Unable to determine the address") != -1) {
-					root.Error ("The query for <i>" + searchString + "</i> failed.<br>" +
-						    "The session bus isn't running.  See http://beaglewiki.org/index.php/Installing%20Beagle for information on setting up a session bus.");
+					root.Error (String.Format (Catalog.GetString ("The query for <i>{0}</i> failed.<br>" +
+						    "The session bus isn't running.  See http://beaglewiki.org/index.php/Installing%20Beagle for information on setting up a session bus."),searchString));
 				} else
-					root.Error ("The query for <i>" + searchString + "</i> failed with error:<br><br>" + e);
+					root.Error (String.Format (Catalog.GetString ("The query for <i>{0}</i> failed with error:<br>{1}<br>"),searchString, e));
 			}
 
 			UpdatePage ();

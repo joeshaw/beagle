@@ -29,6 +29,7 @@ using System;
 using System.Diagnostics;
 using System.IO;
 using System.Text;
+using System.Globalization;
 
 using Gnome;
 
@@ -82,6 +83,11 @@ namespace Beagle.Tile {
 			}
 		}
 
+		// FIXME: This doesn't work for all locales
+		static string locale = CultureInfo.CurrentCulture.TwoLetterISOLanguageName;
+		static string name_key = String.Format ("fixme:Name[{0}]",locale);
+		static string comment_key = String.Format ("fixme:Comment[{0}]",locale);
+
 		protected override void PopulateTemplate ()
 		{
 			base.PopulateTemplate ();
@@ -92,6 +98,17 @@ namespace Beagle.Tile {
 			else
 				Template["Icon"] = Images.GetHtmlSource ("document", "image/png");
 
+			string name = Hit [name_key];
+			string comment = Hit [comment_key];
+
+			if (name == null || name == "")
+				name = Hit ["fixme:Name"];
+
+			if (comment == null || comment == "")
+				comment = Hit ["fixme:Comment"];
+			
+			Template ["Name"] = name;
+			Template ["Comment"] = comment;
 		}
 
 	}		

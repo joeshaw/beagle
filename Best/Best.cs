@@ -13,6 +13,8 @@ using Gtk;
 using GtkSharp;
 using Gnome;
 
+using Mono.Posix;
+
 using Beagle;
 using Beagle.Util;
 
@@ -97,6 +99,9 @@ namespace Best {
 			GeckoUtils.Init ();
 			GeckoUtils.SetSystemFonts ();
 
+			// I18N
+			Catalog.Init ("beagle", ExternalStringsHack.LocaleDir);
+
 			// Create the window.
 			BestWindow win;
 			if (query != "") {
@@ -112,8 +117,8 @@ namespace Best {
 			BestTray icon;			
 			if (doTray) {
 				icon = new BestTray (win);
-				Console.WriteLine ("If you're wondering whether Best is working check " +
-						   "your notification area (system tray)");
+				Console.WriteLine (Catalog.GetString ("If you're wondering whether Best is working check " +
+						   "your notification area (system tray)"));
 			} else {
 				win.Show ();
 				win.Present ();

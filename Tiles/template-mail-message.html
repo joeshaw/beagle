@@ -11,15 +11,15 @@
     <div class="name"><a href="@action:@Open">@%Subject@</a> @ToFrom@ <a href="@action:@Mail">@Who@</a></div>
 @disabling_sample_snippet@    <div class="snippet">FIXME:...neque porro quisquam est qui <span id="hilight">dolorem</span> ipsum quia dolor sit amet, consectetur, adipisci velit...</div>
     <div class="date">@SentReceived@ @date%When@</div>
-    <div class="date">Folder: <i>@Folder@</i> (@Account@)</div>
+    <div class="date">@text%Folder:@ <i>@Folder@</i> (@Account@)</div>
     <div class="snippet">@%Snippet@</div>
     <ul class="actions">
-    <li id="open"><a href="@action:@Open">Open</a></li>
+    <li id="open"><a href="@action:@Open">@text%Open@</a></li>
 <!--
     <li id="email-forward"><a href="@action:@Forward">Forward to...</a></li>
     <li id="email-reply"><a href="@action:@Reply">Reply to message...</a></li>
 -->
-@CanSendIm@<li id="message"><a href="@action:@SendIm">Send IM</a></li>
+@CanSendIm@<li id="message"><a href="@action:@SendIm">@text%Send IM@</a></li>
     </ul>
   </td>
 </tr>

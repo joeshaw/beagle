@@ -31,6 +31,8 @@ using System.IO;
 using System.Text;
 using System.Xml;
 
+using Mono.Posix;
+
 namespace Beagle.Util {
 
 	public class StringFu {
@@ -60,9 +62,9 @@ namespace Beagle.Util {
 			string date = null, time = null;
 
 			if (sinceToday.TotalDays <= 0)
-				date = "Today";
+				date = Catalog.GetString ("Today");
 			else if (sinceToday.TotalDays < 1)
-				date = "Yesterday";
+				date = Catalog.GetString ("Yesterday");
 			else if (today.Year == dt.Year)
 				date = dt.ToString ("MMM d");
 			else
@@ -89,11 +91,11 @@ namespace Beagle.Util {
 
 			if (date.Year == now.Year) {
 				if (date.DayOfYear == now.DayOfYear)
-					return String.Format ("Today, {0}", short_time);
+					return String.Format (Catalog.GetString ("Today, {0}"), short_time);
 				else if (date.DayOfYear == now.DayOfYear - 1)
-					return String.Format ("Yesterday, {0}", short_time);
+					return String.Format (Catalog.GetString ("Yesterday, {0}"), short_time);
 				else if (date.DayOfYear > now.DayOfYear - 6)
-					return String.Format ("{0} days ago, {1}",
+					return String.Format (Catalog.GetString ("{0} days ago, {1}"),
 							      now.DayOfYear - date.DayOfYear,
 							      short_time);
 				else
@@ -113,7 +115,7 @@ namespace Beagle.Util {
 				if (span.Hours == 1)
 					span_str = "1 hour";
 				else
-					span_str = String.Format ("{0} hours", span.Hours);
+					span_str = String.Format (Catalog.GetString ("{0} hours"), span.Hours);
 
 				if (span.Minutes > 0)
 					span_str += ", ";
@@ -123,7 +125,7 @@ namespace Beagle.Util {
 				if (span.Minutes == 1)
 					span_str += "1 minute";
 				else
-					span_str += String.Format ("{0} minutes", span.Minutes);
+					span_str += String.Format (Catalog.GetString ("{0} minutes"), span.Minutes);
 			}
 					
 			

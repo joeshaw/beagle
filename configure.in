@@ -40,6 +40,16 @@ for i in $needed_dlls; do
   fi
 done
 
+#
+# I18N
+#
+
+AC_PROG_INTLTOOL([0.23])
+GETTEXT_PACKAGE=beagle
+AC_SUBST(GETTEXT_PACKAGE)
+ALL_LINGUAS="sv"
+AM_GLIB_GNU_GETTEXT
+
 # Many distros don't have a dependency on sqlite for their
 # mono-data-sqlite packages, and the mono build process itself
 # doesn't require it.  But we do, so check for it here.
@@ -477,6 +487,7 @@ searchomatic/Makefile
 chooser-fu/Makefile
 beagle-0.0.pc
 beagle.spec
+po/Makefile.in
 ])
 
 echo "

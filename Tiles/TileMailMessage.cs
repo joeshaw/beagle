@@ -31,6 +31,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using BU = Beagle.Util;
 using GMime;
+using Mono.Posix;
 
 namespace Beagle.Tile {
 
@@ -64,12 +65,12 @@ namespace Beagle.Tile {
 
 			str = Hit ["fixme:subject"];
 			if (str == null)
-				str = "<i>No Subject</i>";
+				str = Catalog.GetString ("<i>No Subject</i>");
 			if (Hit ["_IsDeleted"] != null)
 				str = "<strike>" + str + "</strike>";
 			Template["Subject"] = str;
 
-			Template["ToFrom"] = sent ? "To" : "From";
+			Template["ToFrom"] = sent ? Catalog.GetString ("To") : Catalog.GetString ("From");
 
 			if (sent) {
 				// Limit the number of recipients to 3, so the
@@ -100,7 +101,7 @@ namespace Beagle.Tile {
 
 			Template["Folder"] = Hit ["fixme:folder"];
 			Template["Account"] = Hit ["fixme:account"];
-			Template["SentReceived"] = sent ? "Sent" : "Received";
+			Template["SentReceived"] = sent ? Catalog.GetString ("Sent") : Catalog.GetString ("Received");
 			Template["When"] = sent ? Hit ["fixme:sentdate"] : Hit ["fixme:received"];
 
 			string icon;

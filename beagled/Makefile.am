@@ -24,18 +24,9 @@ PLUGIN_ASSEMBLIES =				\
 	$(BEAGLED_LIBS)                 	\
 	$(PLUGIN_LOCAL_ASSEMBLIES:%=-r:%)
 
-EXTSTR = ExternalStringsHack.cs
-EXTSTR_IN = $(srcdir)/$(EXTSTR).in
-$(EXTSTR): $(EXTSTR_IN)
-	sed	-e "s|\@prefix\@|$(prefix)|g"		\
-		-e "s|\@pkglibdir\@|$(pkglibdir)|g"	\
-		-e "s|\@VERSION\@|$(VERSION)|g"		\
-		-e "s|\@GNOME_PREFIX\@|$(GNOME_PREFIX)|g"	\
-		< $(EXTSTR_IN) > $@
 
-
-$(PLUGIN_TARGET): $(PLUGIN_CSFILES) $(EXTSTR) $(PLUGIN_LOCAL_ASSEMBLIES)
-	$(CSC) -o $@ $(PLUGIN_CSFLAGS) $(PLUGIN_CSFILES) $(EXTSTR) $(PLUGIN_ASSEMBLIES)
+$(PLUGIN_TARGET): $(PLUGIN_CSFILES) $(PLUGIN_LOCAL_ASSEMBLIES)
+	$(CSC) -o $@ $(PLUGIN_CSFLAGS) $(PLUGIN_CSFILES) $(PLUGIN_ASSEMBLIES)
 
 ############################################################
 
@@ -810,7 +801,6 @@ COND_CS_FILES = \
 	$(WEBSERVICES_BACKEND_CSFILES)
 
 EXTRA_DIST = \
-	$(EXTSTR_IN)			\
 	$(WRAPPER_IN)   		\
 	$(DAEMON_WRAPPER_IN)		\
 	$(COND_CS_FILES)		\
@@ -831,7 +821,6 @@ EXTRA_DIST = \
 	$(WEBSERVICES_RESOURCES)
 
 CLEANFILES = \
-	$(EXTSTR)			\
 	$(PLUGIN_TARGET)       		\
 	$(PLUGIN_TARGET).mdb   		\
 	$(DAEMON_DLL_TARGET)		\

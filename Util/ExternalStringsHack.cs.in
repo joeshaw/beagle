@@ -1,0 +1,31 @@
+//
+// ExternalStringsHack.cs is generated from ExternalStringsHack.cs.in
+//
+
+using System;
+
+namespace Beagle.Util {
+
+	  public class ExternalStringsHack {
+
+		static public string Version {
+		       get { return "@VERSION@"; }
+		}
+
+		static public string Prefix {
+			get { return "@prefix@"; }
+		}
+
+		static public string PkgLibDir {
+			get { return "@pkglibdir@"; }
+		}
+
+		static public string GnomePrefix {
+			get { return "@GNOME_PREFIX@"; }
+		}
+
+		static public string LocaleDir {
+		       get { return "@prefix@/share/locale"; }
+		}
+	}	  
+}

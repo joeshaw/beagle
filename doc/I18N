@@ -1,0 +1,16 @@
+A few quick notes about I18N support in Beagle
+--------------
+
+Developers:
+
+I18N support is provided with the use of good old gettext/intltool and is very
+straight forward. In code (C#) you can fetch translated strings with
+Mono.Posix.Catalog.GetString ("Text to be translated") and in the templates'
+HTML files with the new text macro, eg. simply writing @text%Text to be translated@.
+
+Translators:
+
+You can extract translatable strings from the source files listed in
+po/POTFILES.in with standard xgettext with the C# language mode. Translatable
+strings are also found in the Tiles/template-*.html files with prefix "@text%"
+and suffix "@".

@@ -1,6 +1,5 @@
 *.dll
 *.mdb
-ExternalStringsHack.cs
 Makefile
 Makefile.in
 beagle-index-optimizer

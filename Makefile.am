@@ -3,6 +3,7 @@ pkgconfigdir = $(libdir)/pkgconfig
 pkgconfig_DATA = beagle-0.0.pc
 
 SUBDIRS = 			\
+	po			\
 	Util			\
 	images			\
 	templates		\
@@ -22,8 +23,15 @@ if ENABLE_EPIPHANY_EXTENSION
 SUBDIRS += epiphany-extension
 endif
 
-EXTRA_DIST = \
-	$(pkgconfig_DATA) \
+EXTRA_DIST = 			\
+	intltool-extract.in	\
+	intltool-merge.in	\
+	intltool-update.in	\
+	$(pkgconfig_DATA) 	\
 	beagle.spec
 
-DISTCLEANFILES = $(pkgconfig_DATA)
+DISTCLEANFILES = 		\
+	intltool-extract	\
+	intltool-merge		\
+	intltool-update		\
+	$(pkgconfig_DATA)

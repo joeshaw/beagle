@@ -29,6 +29,8 @@ using System.Diagnostics;
 using System.IO;
 using System.Text;
 
+using Mono.Posix;
+
 using BU = Beagle.Util;
 
 namespace Beagle.Tile {
@@ -70,11 +72,11 @@ namespace Beagle.Tile {
 					Template ["Title"] = Hit ["dc:title"];
 
                                 if (Hit ["fixme:page-count"] != null)
-					strPagesAndWords.Append("Pages: "+Hit ["fixme:page-count"]);
+					strPagesAndWords.Append (Catalog.GetString ("Pages:") + " " + Hit ["fixme:page-count"]);
 				//Template ["PagesAndWords"] = Hit ["fixme:page-count"];
 
                                 if (Hit ["fixme:word-count"] != null)
-					strPagesAndWords.Append (" - Words: "+Hit ["fixme:word-count"]);
+					strPagesAndWords.Append (" - " + Catalog.GetString ("Words:") + " " + Hit ["fixme:word-count"]);
 				//Template ["Words"] = Hit ["fixme:word-count"];
 				Template["PagesAndWords"] = strPagesAndWords.ToString();
 			}

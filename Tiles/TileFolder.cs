@@ -29,6 +29,7 @@ using System.Diagnostics;
 using System.IO;
 
 using BU = Beagle.Util;
+using Mono.Posix;
 
 namespace Beagle.Tile {
 
@@ -47,11 +48,11 @@ namespace Beagle.Tile {
 			string str;
 			int n = Hit.DirectoryInfo.GetFileSystemInfos().Length;
 			if (n == 0)
-				str =  "Empty";
+				str = Catalog.GetString ("Empty");
 			else if (n == 1)
-				str = "Contains 1 Item";
+				str = Catalog.GetString ("Contains 1 Item");
 			else
-				str = "Contains " + n + " Items";
+				str = String.Format (Catalog.GetString ("Contains {0} Items"), n);
 			Template["Contents"] = str;
 		}
 

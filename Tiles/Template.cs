@@ -162,6 +162,8 @@ namespace Beagle.Tile {
 				} catch {
 					return (string)values[subkey];
 				}
+			case "text" :
+				return Mono.Posix.Catalog.GetString (subkey); // I18N
 			default :
 				if (values.Contains (key))
 					return BU.StringFu.EscapeStringForHtml ((string)values[subkey], false);

@@ -48,7 +48,8 @@ LOCAL_ASSEMBLIES =				\
 ASSEMBLIES = 					\
 	$(EVO_SHARP_LIBS)			\
 	$(BEAGLE_UI_LIBS)			\
-	$(LOCAL_ASSEMBLIES:%=-r:%)
+	$(LOCAL_ASSEMBLIES:%=-r:%)		\
+	-r:Mono.Posix
 
 RESOURCEFILES =					\
 	$(srcdir)/template-page.css		\
