@@ -34,6 +34,8 @@ using Beagle.Daemon;
 namespace Beagle.Daemon.FileSystemQueryable {
 
 	public class FileSystemWatcherBackend : IFileEventBackend {
+
+		static public bool Debug = true;
 		
 		Hashtable to_be_watched = new Hashtable ();
 		Hashtable watching = new Hashtable ();
@@ -51,6 +53,9 @@ namespace Beagle.Daemon.FileSystemQueryable {
 		{
 			if (! to_be_watched.Contains (path))
 				return null;
+
+			if (Debug)
+				Logger.Log.Debug ("FileSystemWatcher watching {0}", path);
 
 			FileSystemWatcher fsw = new FileSystemWatcher (path);
 
@@ -77,23 +82,38 @@ namespace Beagle.Daemon.FileSystemQueryable {
 
 		public void OnChangedEvent (object source, FileSystemEventArgs args)
 		{
+			if (Debug)
+				Logger.Log.Debug ("FileSystemWatcher: OnChangedEvent {0}", args.FullPath);
+
 			queryable.Add (args.FullPath);
 		}
 
 		public void OnCreatedEvent (object source, FileSystemEventArgs args)
 		{
+			if (Debug)
+				Logger.Log.Debug ("FileSystemWatcher: OnCreatedEvent {0}", args.FullPath);
+
 			// When a new directory is created, add it to our model
-			if (Directory.Exists (args.FullPath)) {
+			// FIXME: Just in case, don't we need to check the directories unique ID here?
+			if (Directory.Exists (args.FullPath)
+			    && ! queryable.Model.Ignore (args.FullPath)) {
 				string parent = Path.GetDirectoryName (args.FullPath);
 				FileSystemModel.Directory dir;
 				dir = queryable.Model.GetDirectoryByPath (parent);
-				queryable.Model.AddChild (dir, Path.GetFileName (args.FullPath));
+				if (dir == null) {
+					Logger.Log.Debug ("Couldn't find parent to create {0}", args.FullPath);
+				} else if (! dir.HasChildWithName (args.Name)) {
+					queryable.Model.AddChild (dir, Path.GetFileName (args.FullPath));
+				}
 			}
 			queryable.Add (args.FullPath);
 		}
 
 		public void OnDeletedEvent (object source, FileSystemEventArgs args)
 		{
+			if (Debug)
+				Logger.Log.Debug ("FileSystemWatcher: OnDeletedEvent {0}", args.FullPath);
+
 			FileSystemModel.Directory dir;
 			dir = queryable.Model.GetDirectoryByPath (args.FullPath);
 			if (dir != null)
@@ -103,8 +123,12 @@ namespace Beagle.Daemon.FileSystemQueryable {
 
 		public void OnRenamedEvent (object source, RenamedEventArgs args)
 		{
-			queryable.Remove (args.OldFullPath);
-			queryable.Add (args.FullPath);
+			if (Debug)
+				Logger.Log.Debug ("FileSystemWatcher: OnRenamedEvent {0} {1}",
+						  args.OldFullPath, args.FullPath);
+			
+
+			queryable.Rename (args.OldFullPath, args.FullPath);
 		}
 
 		public void OnErrorEvent (object source, ErrorEventArgs args)
