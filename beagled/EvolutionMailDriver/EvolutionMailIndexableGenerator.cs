@@ -323,7 +323,7 @@ namespace Beagle.Daemon.EvolutionMailDriver {
 				this.mbox_parser.ScanFrom = true;
 			}
 
-			if (this.mbox_parser.Eos ()) {
+			if (this.mbox_parser != null && this.mbox_parser.Eos ()) {
 				long offset = this.mbox_parser.FromOffset;
 
 				this.mbox_stream.Close ();
