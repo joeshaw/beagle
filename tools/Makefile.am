@@ -83,6 +83,7 @@ EXTRA_DIST =				\
 	$(WRAPPER_IN)			\
 	$(QUERY_CSFILES)		\
 	$(INDEX_WEB_CONTENT_CSFILES)	\
+	$(EXERCISE_FILE_SYSTEM_CSFILES)	\
 	beagle-index-info		\
 	beagle-ping			\
 	beagle-shutdown			\
