@@ -100,7 +100,7 @@ namespace Beagle.Tile {
 		private string GetEmailForName (string name)
 		{
 #if ENABLE_EVO_SHARP
-			if (name == null)
+			if (name == null || name == "")
 				return null;
 
 			Evolution.Book addressbook = null;

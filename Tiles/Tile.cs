@@ -193,7 +193,7 @@ namespace Beagle.Tile {
 			Process p = new Process ();
 			p.StartInfo.UseShellExecute = false;
 			p.StartInfo.FileName = "nautilus-sendto";
-			p.StartInfo.Arguments = "--default-dir=/ " + attach;
+			p.StartInfo.Arguments = String.Format ("--default-dir=/ '{0}'", attach);
 
 			try {
 				p.Start () ;
@@ -213,14 +213,16 @@ namespace Beagle.Tile {
 			Process p = new Process ();
 			p.StartInfo.UseShellExecute = false;
 			p.StartInfo.FileName        = "evolution";
-			p.StartInfo.Arguments       = "mailto:";
+			p.StartInfo.Arguments       = "\"mailto:";
 
 			if (email != null && email != "")
 				p.StartInfo.Arguments += email;
 
 			if (attach != null && attach != "")
 				p.StartInfo.Arguments += "?attach=" + attach;
-			
+
+			p.StartInfo.Arguments += "\"";
+
 			try {
 				p.Start () ;
 			} catch (Exception e) {

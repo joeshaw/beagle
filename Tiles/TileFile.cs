@@ -74,7 +74,7 @@ namespace Beagle.Tile {
 		[TileAction]
 		public void SendTo ()
 		{
-			SendFile (String.Format ("'{0}'", Hit.Uri.LocalPath));
+			SendFile (String.Format ("{0}", Hit.Uri.LocalPath));
 		}
 
 		[TileAction]
