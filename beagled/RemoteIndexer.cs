@@ -62,7 +62,7 @@ namespace Beagle.Daemon {
 				lock (this) {
 					if (proxy == null && ! Shutdown.ShutdownRequested) {
 						if (Debug)
-							Logger.Log.Debug ("Requesting new proxy");
+							Logger.Log.Debug ("Requesting new proxy '{0}'", remote_index_name);
 						proxy = IndexHelperFu.NewRemoteIndexerProxy (remote_index_name);
 						if (proxy != null) {
 							proxy.ChangedEvent += OnProxyChanged;
@@ -81,7 +81,7 @@ namespace Beagle.Daemon {
 			lock (this) {
 				if (proxy != null) {
 					if (Debug)
-						Logger.Log.Debug ("Unsetting proxy");
+						Logger.Log.Debug ("Unsetting proxy '{0}'", remote_index_name);
 					proxy.ChangedEvent -= OnProxyChanged;
 					proxy.FlushCompleteEvent -= OnFlushComplete;
 					proxy = null;
@@ -298,7 +298,7 @@ namespace Beagle.Daemon {
 
 		public void Flush ()
 		{
-			Logger.Log.Debug ("RemoteIndexer.Flush");
+			Logger.Log.Debug ("RemoteIndexer.Flush on '{0}'", remote_index_name);
 
 			if (add_remove_count == 0) {
 #if DBUS_IS_BROKEN_BROKEN_BROKEN
