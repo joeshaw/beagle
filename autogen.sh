@@ -8,7 +8,7 @@ ORIGDIR=`pwd`
 cd $srcdir
 PROJECT=dewey
 TEST_TYPE=-f
-FILE=indexer/Content.cs
+FILE=indexer/Indexable.cs
 
 DIE=0
 
