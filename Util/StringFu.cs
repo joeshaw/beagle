@@ -238,5 +238,24 @@ namespace Beagle.Util {
 
 		}
 
+		// These strings should never be exposed to the user.
+		static int uid = 0;
+		static object uidLock = new object ();
+		static public string GetUniqueId ()
+		{
+			lock (uidLock) {
+				if (uid == 0) {
+					Random r = new Random ();
+					uid = r.Next ();
+				}
+				++uid;
+				
+				return string.Format ("{0}-{1}-{2}-{3}",
+						      Environment.GetEnvironmentVariable ("USER"),
+						      Environment.GetEnvironmentVariable ("HOST"),
+						      DateTime.Now.Ticks,
+						      uid);
+			}
+		}
 	}
 }

@@ -41,12 +41,15 @@ namespace Beagle.Util {
 		{
 			lockFile = new FileInfo (logPath + ".LOCK");
 
+#if false
 			fs = new FileStream (logPath, FileMode.Append, FileAccess.Write);
 			sw = new StreamWriter (fs);
+#endif
 		}
 
 		private bool AcquireLock ()
 		{
+#if false
 			try {
 				lock (this) {
 					FileStream L = new FileStream (lockFile.FullName,
@@ -57,11 +60,13 @@ namespace Beagle.Util {
 			} catch {
 				return false;
 			}
+#endif
 			return true;
 		}
 
 		private void WaitForLock ()
 		{
+#if false
 			// After a certain amount of time, just stop waiting
 			// for the lock and write to the log.
 			int countdown = 10;
@@ -72,15 +77,18 @@ namespace Beagle.Util {
 				--countdown;
 			}
 			sw.WriteLine ("***** Log lock timed out!");
+#endif
 		}
 
 		private void ReleaseLock ()
 		{
+#if false
 			lock (this) {
 				try {
 					lockFile.Delete ();
 				} catch { }
 			}
+#endif
 		}
 		
 		private string GetStamp ()
@@ -93,11 +101,13 @@ namespace Beagle.Util {
 
 		private void LogRaw (string format, params object[] args)
 		{
+#if false
 			sw.Write (GetStamp ());
 			sw.Write (": ");
 			sw.WriteLine (String.Format (format, args));
 			sw.Flush ();
 			fs.Flush ();
+#endif
 		}
 
 		public void Log (string format, params object[] args)
