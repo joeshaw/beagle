@@ -62,11 +62,8 @@ namespace Beagle
 		internal static Service Service {
 			get {
 				if (service == null) {
-					
-					try {
-						service = DBus.Service.Get (Connection, ServiceName);
-					} catch { }
 					Driver.ServiceOwnerChanged += OnServiceOwnerChanged;
+					service = DBus.Service.Get (Connection, ServiceName);
 				}
 				return service;
 			}
