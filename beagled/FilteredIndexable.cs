@@ -88,13 +88,14 @@ namespace Beagle.Daemon {
 		
 		private void BuildFromFile ()
 		{
-			if (Type != "File" || !Uri.ToString().StartsWith ("file://") || ContentUri != Uri) {
+			if (Type != "File"
+			    || !Uri.IsFile
+			    || Uri.ToString () != ContentUri.ToString ())
 				return;
-			}
 
 			bool isDirectory = false;
 
-			string path = Uri.ToString().Substring ("file://".Length);
+			string path = Uri.LocalPath;
 
 			DateTime modifiedTime;
 			if (Directory.Exists (path)) {
@@ -211,17 +212,18 @@ namespace Beagle.Daemon {
 			
 		}
 		
-		public void Build () {
+		public override void Build () {
+			base.Build ();
+
 			if (MimeType == null) {
 				throw new Exception ("Unknown mime type");
 			}
 			
 			// Currently only index file content
-			if (!ContentUri.ToString().StartsWith ("file://")) {
+			if (! ContentUri.IsFile)
 				return;
-			}
 
-			string path = ContentUri.ToString().Substring ("file://".Length);
+			string path = ContentUri.LocalPath;
 
 			flavor = Flavor.FromMimeType (MimeType);
 			filter = Filter.FromFlavor (flavor);

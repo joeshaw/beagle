@@ -85,6 +85,15 @@ namespace Beagle {
 
 		//////////////////////////
 
+		// Use Build to do any set-up that you want to defer until
+		// immediately before indexing.
+		public virtual void Build ()
+		{
+
+		}
+
+		//////////////////////////
+
 		[XmlIgnore]
 		public Uri Uri { 
 			get { return uri; }
