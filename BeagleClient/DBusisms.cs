@@ -24,6 +24,7 @@
 // SOFTWARE.
 //
 
+using System;
 using DBus;
 
 namespace Beagle 
@@ -36,6 +37,7 @@ namespace Beagle
 
 		static Connection connection = null;
 		static Service service = null;
+		static BusDriver driver = null;
 
 		internal static Connection Connection {
 			get { 
@@ -47,9 +49,27 @@ namespace Beagle
 
 		internal static Service Service {
 			get {
-				if (service == null)
+				if (service == null) {
 					service = DBus.Service.Get (Connection, ServiceName);
+					driver = BusDriver.New (connection);
+					driver.ServiceDeleted += OnServiceDeleted;
+				}
 				return service;
+			}
+		}
+
+		internal static void OnServiceDeleted (string serviceName)
+		{
+			// FIXME: It would be nice to do something more graceful than this.
+			if (serviceName == ServiceName) {
+				Console.WriteLine ("****");
+				Console.WriteLine ("****");
+				Console.WriteLine ("**** Lost Connection to service {0}", serviceName);
+				Console.WriteLine ("**** Shutting Down Beagle Client");
+				Console.WriteLine ("****");
+				Console.WriteLine ("****");
+				
+				System.Environment.Exit (-666);
 			}
 		}
 	}
