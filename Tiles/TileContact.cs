@@ -47,6 +47,7 @@ namespace Beagle.Tile {
 			byte[] data = (byte[]) Hit.GetData ("Photo");
 
 			if (data != null) {
+				Console.WriteLine ("Got photo for {0}", Hit.Uri);
 				string height = "";
 
 				// bad hack to scale the image 

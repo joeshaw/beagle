@@ -259,7 +259,11 @@ namespace Beagle.Daemon {
 			}
 			SetupLog (echo);
 
-			Stopwatch stopwatch = new Stopwatch ();
+			// Start our memory-logging thread
+			if (arg_debug_memory) {
+				Thread th = new Thread (new ThreadStart (LogMemoryUsage));
+				th.Start ();
+			}
 
 			try {
 				Logger.Log.Debug ("Initializing D-BUS");
@@ -277,10 +281,6 @@ namespace Beagle.Daemon {
 						return 1;
 					}
 				}
-				// We want to spend as little time as possible
-				// between InitService and actually being able 
-				// to serve requests
-				stopwatch.Start ();
 				
 			} catch (DBus.DBusException e) {
 				Logger.Log.Fatal ("Couldn't connect to the session bus.  "
@@ -293,6 +293,12 @@ namespace Beagle.Daemon {
 				Logger.Log.Fatal (e);
 				return 1;
 			}
+			
+			// We want to spend as little time as possible
+			// between InitService and actually being able 
+			// to serve requests
+			Stopwatch stopwatch = new Stopwatch ();
+			stopwatch.Start ();
 
 			// Construct a query driver.
 			Logger.Log.Debug ("Constructing QueryDriver");
@@ -334,12 +340,6 @@ namespace Beagle.Daemon {
 			// Start the Global Scheduler thread
 			Logger.Log.Debug ("Starting Scheduler thread");
 			Scheduler.Global.Start ();
-
-			// Start our memory-logging thread
-			if (arg_debug_memory) {
-				Thread th = new Thread (new ThreadStart (LogMemoryUsage));
-				th.Start ();
-			}
 
 			// Start our Inotify threads
 			Logger.Log.Debug ("Starting Inotify threads");

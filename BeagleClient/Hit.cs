@@ -133,6 +133,8 @@ namespace Beagle {
 				string key = reader.ReadString ();
 				int size = reader.ReadInt32 ();
 				byte[] data = reader.ReadBytes (size);
+
+				hit.SetData (key, data);
 			}
 
 			return hit;
