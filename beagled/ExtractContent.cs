@@ -34,11 +34,34 @@ using Beagle.Daemon;
 
 class ExtractContentTool {
 
+	static bool tokenize = false;
+
+	static void DisplayContent (string line)
+	{
+		if (tokenize) {
+			
+			string [] parts = line.Split (' ');
+			for (int i = 0; i < parts.Length; ++i) {
+				string part = parts [i].Trim ();
+				if (part != "")
+					Console.WriteLine ("{0}", part);
+			}
+
+		} else {
+			Console.WriteLine (line);
+		}
+	}
+
 	static void Main (String[] args)
 	{
 		bool firstArg = true;
 
 		foreach (String arg in args) {
+
+			if (arg == "--tokenize") {
+				tokenize = true;
+				continue;
+			}
 			
 			FilteredIndexable indexable;
 
@@ -96,7 +119,7 @@ class ExtractContentTool {
 						Console.WriteLine ("Content:");
 						first = false;
 					}
-					Console.WriteLine (line);
+					DisplayContent (line);
 				}
 
 				if (! first)
@@ -112,7 +135,7 @@ class ExtractContentTool {
 						Console.WriteLine ("HotContent:");
 						first = false;
 					}
-					Console.WriteLine (line);
+					DisplayContent (line);
 				}
 
 				if (! first)
