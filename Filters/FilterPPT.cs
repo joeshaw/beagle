@@ -371,6 +371,9 @@ namespace Beagle.Filters {
     
 	public class FilterPPT : FilterOle {
 
+		bool read_text;
+		int slide_count;
+
 		public FilterPPT () 
 		{
 			AddSupportedMimeType ("application/vnd.ms-powerpoint");
@@ -386,6 +389,9 @@ namespace Beagle.Filters {
 			RecordType type = RecordType.Find (opcode);
 			if (type.is_container) {
 				int length_remaining = length;
+				if (opcode == RecordType.TypeCode.SlideListWithText) {
+					slide_count = 0;
+				}
 				while (length_remaining > 0) {
 					int elem_length = ParseElement(stream);
 					if (elem_length == 0)
@@ -394,26 +400,42 @@ namespace Beagle.Filters {
 				}
 			} else {
 				if (length != 0) {
-					data = stream.Read(length);
-					if (data == null)
-						return 0;
-					string val = null;
+					System.Text.Encoding encoding = null;
+
 					if (opcode == RecordType.TypeCode.TextBytesAtom) {
-						val = System.Text.Encoding.GetEncoding (28591).GetString (data);
+						encoding = System.Text.Encoding.GetEncoding (28591);
 					} else if (opcode == RecordType.TypeCode.TextCharsAtom) {
-						val = System.Text.Encoding.Unicode.GetString (data);
+						encoding = System.Text.Encoding.Unicode;
+					} else if (opcode == RecordType.TypeCode.SlidePersistAtom) {
+						slide_count ++;
 					}
-					if (val != null) {
-						AppendText (val);
+
+					if (encoding != null && read_text) {
+						data = stream.Read(length);
+						if (data == null)
+							return 0;
+						AppendText (encoding.GetString (data));
 						AppendWhiteSpace ();
+					} else {
+						stream.Seek(length, SeekOrigin.Current);
 					}
 				}
 			}
 			return length + 8;
 		}
 
+		override protected void DoPullProperties ()
+		{
+			Input stream = file.ChildByName ("PowerPoint Document");
+
+			read_text = false;
+			ParseElement(stream);
+			AddProperty (Beagle.Property.New ("fixme:SlideCount", slide_count));
+		}
+
 		override protected void DoPull ()
 		{
+			read_text = true;
 			Input stream = file.ChildByName ("PowerPoint Document");
 
 			ParseElement(stream);

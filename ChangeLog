@@ -1,5 +1,9 @@
 2004-11-12  Chris Lahey  <clahey@ximian.com>
 
+	* Filters/FilterPPT.cs: Count slides.
+
+2004-11-12  Chris Lahey  <clahey@ximian.com>
+
 	* From a patch by Adam Lofts <adam@negligible.co.uk>.
 
 	* configure.in, Filters/Makefile.am: Added FilterGst.cs.
