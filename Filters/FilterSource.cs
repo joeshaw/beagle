@@ -1,5 +1,5 @@
 //
-// FilterText.cs
+// FilterSource.cs
 //
 // Copyright (C) 2004 Novell, Inc.
 //
@@ -85,18 +85,23 @@ namespace Beagle.Filters {
 						   "lambda", "not", "or", "pass", "print", "raise", "return", 
 						   "try", "while", "yield"};
 
+		static string [] perlKeyWords = {"continue", "else", "elseif", "for", "foreach", "goto", 
+						 "if", "last", "next", "redo", "unless", "until", "each", "eof",
+						 "goto", "next", "return", "while", "do", "class", "exec",
+						 "break", "print", "open", "use", "values"};
+
 		private enum LineType {
 			None,
 			SingleLineComment,
 			BlockComment,
 			StringConstant
-		}
+		};
 		
 		private enum LangType {
 			None,
 			C_Style,
-			Python
-		}
+			Python_Style
+		};
 		
 		LineType SrcLineType;
 		LangType SrcLangType;
@@ -115,6 +120,7 @@ namespace Beagle.Filters {
 			AddSupportedMimeType ("text/x-csharp");
 			AddSupportedMimeType ("application/x-python");
 			AddSupportedMimeType ("text/x-c++src");
+			AddSupportedMimeType ("application/x-perl");
 		}
 
 		override protected void DoOpen (FileInfo info)
@@ -142,7 +148,11 @@ namespace Beagle.Filters {
 				break;
 			case "application/x-python":
 				KeyWords = pythonKeyWords;
-				SrcLangType = LangType.Python;
+				SrcLangType = LangType.Python_Style;
+				break;
+			case "application/x-perl":
+				KeyWords = perlKeyWords;
+				SrcLangType = LangType.Python_Style;
 				break;
 			}
 
@@ -200,7 +210,7 @@ namespace Beagle.Filters {
 						splCharSeq = "";
 						break;
 					}
-				} else if (str[index] == '#' && SrcLangType == LangType.Python) {
+				} else if (str[index] == '#' && SrcLangType == LangType.Python_Style) {
 					if (SrcLineType == LineType.None) {
 						SrcLineType = LineType.SingleLineComment;
 						token.Remove (0, token.Length);
@@ -217,7 +227,7 @@ namespace Beagle.Filters {
 					index ++; 
 				}
 				// Well the typical python ''' or """ stuff 
-				else if ((SrcLangType == LangType.Python) &&
+				else if ((SrcLangType == LangType.Python_Style) &&
 					 ((index + 2) <= (str.Length-1)) && 
 					 (str[index] == '\"' || str[index] == '\'') &&
 					 (str[index] == str[index + 1] && str[index] == str[index + 2]) &&
@@ -298,7 +308,7 @@ namespace Beagle.Filters {
 				if (SrcLineType == LineType.SingleLineComment &&
 				    str[str.Length - 1] != '\\')
 					SrcLineType = LineType.None;
-			} else if (SrcLangType == LangType.Python) {
+			} else if (SrcLangType == LangType.Python_Style) {
 				if (token.Length > 0 && !Char.IsDigit (token[0])) {
 					//Console.WriteLine ("Found Token : {0}", token);
 					token.Append (" ");

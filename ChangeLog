@@ -1,3 +1,9 @@
+2005-01-04  Veerapuram Varadhan	 <vvaradhan@novell.com>
+
+	Patch from Vishravars RamaSubramanian <vishrav_r@yahoo.co.in>
+
+	* Filters/FilterSource.cs: Added perl support.
+	  
 2005-01-04  Veerapuram Varadhan  <vvaradhan@novell.com>
 
 	* Tiles/template-presentation.html, Tiles/template-docs.html:
