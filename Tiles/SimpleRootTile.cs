@@ -112,7 +112,7 @@ namespace Beagle.Tile {
 
 			string beagled_filename;
 			if (bestdir.EndsWith ("lib/beagle")) {
-				Console.WriteLine ("Running uninstalled daemon...");
+				Console.WriteLine ("Running installed daemon...");
 				beagled_filename = "beagled"; // Running installed
 			} else {
 				Console.WriteLine ("Running uninstalled daemon...");
@@ -124,7 +124,11 @@ namespace Beagle.Tile {
 			daemon.StartInfo.FileName  = beagled_filename;
 			daemon.StartInfo.UseShellExecute = false;
 
-			daemon.Start ();
+			try {
+				daemon.Start ();
+			} catch (System.ComponentModel.Win32Exception e) {
+				Console.WriteLine ("Unable to start daemon: {0}", e.Message);
+			}
 		}
 
 		public void SetSource (string querySource)
