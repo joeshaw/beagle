@@ -572,7 +572,7 @@ namespace Beagle.Daemon.EvolutionMailDriver {
 					this.imap_name = toEscape.Replace ("@", "%40") + this.imap_name.Substring (lastIdx);
 				}
 
-				if (imap_url.InnerText.StartsWith ("imap://" + this.imap_name)) {
+				if (imap_url.InnerText.StartsWith ("imap://" + this.imap_name + "/")) {
 					this.account_name = uid;
 					break;
 				}
