@@ -272,7 +272,7 @@ namespace Beagle.Daemon {
 			DoNonQuery ("INSERT OR REPLACE INTO file_attributes " +
 				    " (unique_id, directory, filename, last_mtime, last_indexed, filter_name, filter_version) " +
 				    " VALUES ('{0}', '{1}', '{2}', '{3}', '{4}', '{5}', '{6}')",
-				    fa.UniqueId, fa.Directory, fa.Filename,
+				    fa.UniqueId, fa.Directory.Replace ("'", "''"), fa.Filename.Replace ("'", "''"),
 				    StringFu.DateTimeToString (fa.LastWriteTime),
 				    StringFu.DateTimeToString (fa.LastIndexedTime),
 				    fa.FilterName,

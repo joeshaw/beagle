@@ -1,7 +1,6 @@
 //
 // Beagle tray icon.
 //
-// Nat Friedman <nat@novell.com>
 //
 // Copyright 2004 Novell, Inc.
 //
@@ -11,16 +10,61 @@ using System.Collections;
 using System.Runtime.InteropServices;
 
 using Gtk;
+using Gdk;
 
 using Beagle;
 using Beagle.Tile;
 
 namespace Best {
+
+	// This class is from Tomboy, removed some functions which weren't needed
+	public class GuiUtils 
+	{
+		public static void GetMenuPosition (Gtk.Menu menu,
+						    out int  x, 
+						    out int  y, 
+						    out bool push_in)
+		{
+			Gtk.Requisition menu_req = menu.SizeRequest ();
+
+			menu.AttachWidget.GdkWindow.GetOrigin (out x, out y);
+
+			if (y + menu_req.Height >= menu.AttachWidget.Screen.Height)
+				y -= menu_req.Height;
+			else
+				y += menu.AttachWidget.Allocation.Height;
+
+			push_in = true;
+		}
+
+		static void DeactivateMenu (object sender, EventArgs args) 
+		{
+			Gtk.Menu menu = (Gtk.Menu) sender;
+			menu.Popdown ();
+		}
+
+		// Place the menu underneath an arbitrary parent widget.  The
+		// parent widget must be set using menu.AttachToWidget before
+		// calling this
+		public static void PopupMenu (Gtk.Menu menu, Gdk.EventButton ev)
+		{
+			menu.Deactivated += DeactivateMenu;
+			menu.Popup (null, 
+				    null, 
+				    new Gtk.MenuPositionFunc (GetMenuPosition), 
+				    IntPtr.Zero, 
+				    (ev == null) ? 0 : ev.Button, 
+				    (ev == null) ? Gtk.Global.CurrentEventTime : ev.Time);
+		}	
+	}
+	
 	
 	public class BestTray : Gtk.Plug
 	{
 		BestWindow win;
-		Gtk.Button button;
+		
+		Gtk.EventBox eventbox;
+		Gtk.Tooltips tips;
 		Beagle.Util.GConfXKeybinder keybinder;
 		int PosX;
 		int PosY;
@@ -32,20 +76,25 @@ namespace Best {
 		{
 			PosX = 0;
 			PosY = 0;
-			// FIXME: My tray icon is clipped with a 28 pixel tray
 			Raw = egg_tray_icon_new ("Search");
 
 			win = bw;
 			win.DeleteEvent += new DeleteEventHandler (WindowDeleteEvent);
-			button = new Gtk.Button ();			
+						
+			eventbox = new Gtk.EventBox ();
+			eventbox.CanFocus = true;
+			eventbox.ButtonPressEvent += new ButtonPressEventHandler (ButtonPress);
+			
+			Gdk.Pixbuf smalldog = Images.GetPixbuf ("dog.png");
+			eventbox.Add (new Gtk.Image (smalldog.ScaleSimple (24, 24, Gdk.InterpType.Hyper)));
 
-			Gtk.Widget icon_image = new Gtk.Image (Images.GetPixbuf ("smalldog.png"));
-			button.Add (icon_image);
-			button.Relief = Gtk.ReliefStyle.None;
-
-			button.Pressed += new EventHandler (ButtonPress);
-
-			Add (button);
+			string tooltip = "Bleeding-Edge Search Tool (F12)";
+			tips = new Gtk.Tooltips ();
+			tips.SetTip (eventbox, tooltip, null);
+			tips.Enable ();
+			
+			
+			Add (eventbox);
 			ShowAll ();
 
 			keybinder = new Beagle.Util.GConfXKeybinder ();
@@ -57,17 +106,6 @@ namespace Best {
 		private void ShowBeaglePressed (object o, EventArgs args)
 		{
 			if (!win.Visible) {
-				button.Press ();
-			} else {
-				win.Show ();
-				win.Present ();
-				win.FocusEntry ();
-			}
-		}
-
-		void ButtonPress (object sender, EventArgs args) 
-		{
-			if (! win.Visible) {
 				win.Show ();
 				win.Move (PosX, PosY);
 				win.Present ();
@@ -78,10 +116,85 @@ namespace Best {
 			}
 		}
 
+		void ButtonPress (object sender, Gtk.ButtonPressEventArgs args) 
+		{
+			Gdk.EventButton eb = args.Event;
+			if (eb.Button == 1) {
+				if (! win.Visible) {
+					win.Show ();
+					win.Move (PosX, PosY);
+					win.Present ();
+					win.FocusEntry ();
+				} else {
+					win.GetPosition (out PosX, out PosY);
+					win.Hide ();
+				}
+			}else {
+			
+				Gtk.Menu recent_menu = MakeMenu ((Gtk.Widget) sender);
+				GuiUtils.PopupMenu (recent_menu, args.Event);
+			}
+		}
+				
 		void WindowDeleteEvent (object sender, DeleteEventArgs args)
 		{
 			win.Hide ();
 			args.RetVal = (object)true;
 		}
+
+		void CloseEvent (object sender, EventArgs args)
+		{
+			win.Hide ();
+		}
+		
+		void QuickSearchEvent (object sender, EventArgs args) 
+		{			
+			string quickQuery = (string)((Gtk.Widget) sender).Data ["Query"];
+						
+			if (! win.Visible) {
+				win.Show ();
+				win.Move (PosX, PosY);
+				win.Present ();
+				
+				win.QuickSearch (quickQuery);
+			} else {
+				win.QuickSearch (quickQuery);
+			}
+			
+		}
+		
+		private Gtk.Menu MakeMenu (Gtk.Widget parent) 
+		{
+			Gtk.Menu menu = new Gtk.Menu ();
+			menu.AttachToWidget (parent, null);
+			
+			Gtk.ImageMenuItem item;
+						
+			// Quick Search menu items
+			ArrayList list = win.RetriveSearches ();
+			if (list == null || list.Count == 0 ) {
+				item = new Gtk.ImageMenuItem ("No Recent Searches");
+				item.Sensitive = false;
+				menu.Append (item);
+			}else {
+				foreach (string s in list) {
+					item = new Gtk.ImageMenuItem (s);
+					item.Image = new Gtk.Image (Images.GetPixbuf ("icon-search.png"));
+					item.Data ["Query"] = s;
+					item.Activated += new EventHandler (QuickSearchEvent);
+					menu.Append (item);
+				}
+			}			
+			
+			menu.Append (new Gtk.SeparatorMenuItem ());			
+		
+			item = new Gtk.ImageMenuItem ("Close");
+			item.Image = new Gtk.Image (Gtk.Stock.Close, Gtk.IconSize.Menu);
+			item.Activated += new EventHandler (CloseEvent);
+			menu.Append (item);
+			
+			menu.ShowAll ();
+			return menu;
+		}	
 	}
 }

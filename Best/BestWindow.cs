@@ -318,31 +318,23 @@ namespace Best {
 
 			string label;
 
-			if (this.hit_type == null) {
-				if (root.HitCollection.NumResults == 0)
-					label = "No results.";
-				else if (root.HitCollection.FirstDisplayed == 0) 
-					label = String.Format ("Best <b>{0} results of {1}</b> are shown.", 
-							       root.HitCollection.LastDisplayed + 1,
-							       root.HitCollection.NumResults);
-				else 
-					label = String.Format ("Results <b>{0} through {1} of {2}</b> are shown.",
-							       root.HitCollection.FirstDisplayed + 1, 
-							       root.HitCollection.LastDisplayed + 1,
-							       root.HitCollection.NumResults);
-			} else {
-				if (root.HitCollection.NumResults == 0)
-					label = "No results.";
-				else if (root.HitCollection.FirstDisplayed == 0) 
-					label = String.Format ("Best <b>{0} results of {1} in this category</b> are shown.", 
-							       root.HitCollection.LastDisplayed + 1,
-							       root.HitCollection.NumDisplayableResults);
-				else 
-					label = String.Format ("Results <b>{0} through {1} of {2} in this category</b> are shown.",
-							       root.HitCollection.FirstDisplayed + 1, 
-							       root.HitCollection.LastDisplayed + 1,
-							       root.HitCollection.NumDisplayableResults);
-			}
+			int results;
+			if (this.hit_type == null)
+				results = root.HitCollection.NumResults;
+			else
+				results = root.HitCollection.NumDisplayableResults;
+
+			if (results == 0)
+				label = "No results.";
+			else if (root.HitCollection.FirstDisplayed == 0) 
+				label = String.Format ("Best <b>{0} results of {1}</b> are shown.", 
+						       root.HitCollection.LastDisplayed + 1,
+						       results);
+			else 
+				label = String.Format ("Results <b>{0} through {1} of {2}</b> are shown.",
+						       root.HitCollection.FirstDisplayed + 1, 
+						       root.HitCollection.LastDisplayed + 1,
+						       results);
 
 			page_label.Markup = label;
 		}
@@ -465,6 +457,7 @@ namespace Best {
 
 		private void Search (String searchString)
 		{
+			StoreSearch (searchString);
 			entry.GtkEntry.Text = searchString;
 			if (query != null) {
 				query.Cancel ();
@@ -489,5 +482,38 @@ namespace Best {
 			SetBusy (true);
 			query.Start ();
 		}
+
+		ArrayList recentSearches;
+		
+		private void StoreSearch (string newQuery)
+		{
+			if (recentSearches == null) {
+				recentSearches = new ArrayList ();
+			}
+
+			if (newQuery != null && newQuery != "") {
+				int duplicate = recentSearches.IndexOf (newQuery);
+				if (duplicate >= 0) {
+					recentSearches.RemoveAt (duplicate);
+				}
+				recentSearches.Insert (0, newQuery);				
+			}
+
+			if (recentSearches.Count == 11) {
+				recentSearches.RemoveAt (10);
+			}
+		}
+		
+		public ArrayList RetriveSearches () 
+		{
+			return recentSearches;
+		}
+		
+		public void QuickSearch (string query) 
+		{
+			Search (query);
+		}
 	}
+
+	
 }
