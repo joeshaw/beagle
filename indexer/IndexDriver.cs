@@ -53,12 +53,23 @@ namespace Beagle {
 		// 4: Schema changed for files to include _Directory property
 		private const int VERSION = 4;
 
+		private Beagle.Util.Logger log = null;
+
 		//////////////////////////
 
 		public IndexDriver ()
 		{
+			lock (this) {
+				if (log == null) {
+					string logPath = Path.Combine (PathFinder.LogDir,
+								       "Index");
+					log = new Beagle.Util.Logger (logPath);
+				}
+			}
+
 			BootstrapIndex ();
 
+			Lucene.Net.Store.FSDirectory.Logger = log;
 			Lucene.Net.Store.FSDirectory.TempDirectoryName = LockDir;
 			IndexWriter.WRITE_LOCK_TIMEOUT = 30/*seconds*/ * 1000;
 		}
@@ -67,17 +78,6 @@ namespace Beagle {
 		
 		public bool Debug = (Environment.GetEnvironmentVariable ("BEAGLE_DEBUG_INDEX") != null);
 		
-		protected void Spew (String str)
-		{
-			if (Debug)
-				Console.WriteLine (str);
-		}
-
-		protected void Spew (String formatStr, params object[] formatArgs)
-		{
-			Spew (String.Format (formatStr, formatArgs));
-		}
-
 		//////////////////////////
 
 		private const String timeFormat = "yyyyMMddHHmmss";
@@ -142,11 +142,11 @@ namespace Beagle {
 			}
 
 			if (! indexExists)
-				Spew ("Creating index.");
+				log.Log ("Creating index.");
 			else if (! versionExists)
-				Spew ("No version information.  Purging index.");
+				log.Log ("No version information.  Purging index.");
 			else
-				Spew ("Index format is obsolete.  Purging index.");
+				log.Log ("Index format is obsolete.  Purging index.");
 
 			// If this looks like an old-style (pre-.beagle/Index) set-up,
 			// blow away everything in sight.
@@ -361,13 +361,13 @@ namespace Beagle {
 			IndexWriter writer = new IndexWriter (IndexDir, analyzer, false);
 			
 			foreach (Indexable indexable in indexables) {
-				Spew ("Inserting {0}", indexable.Uri);
+				log.Log ("Inserting {0} (type={1})",
+					 indexable.Uri, indexable.Type);
 				Document doc = null;
 				try {
 					doc = ToLuceneDocument (indexable);
 				} catch (Exception e) {
-					Console.WriteLine ("Exception converting {0}: {1}",
-							   indexable.Uri, e);
+					log.Log (e);
 				}
 				if (doc != null)
 					writer.AddDocument (doc);
@@ -389,7 +389,7 @@ namespace Beagle {
 
 			IndexReader reader = IndexReader.Open (IndexDir);
 			foreach (Hit hit in hits) {
-				Spew ("Removing {0}", hit.Uri);
+				log.Log ("Removing {0}", hit.Uri);
 				reader.Delete (hit.Id);
 			}
 			reader.Close ();
@@ -447,12 +447,12 @@ namespace Beagle {
 						
 				if (needsInsertion) {
 					if (nHits > 0)
-						Spew ("Re-scheduling {0}", indexable.Uri);
+						log.Log ("Re-scheduling {0}", indexable.Uri);
 					else
-						Spew ("Scheduling {0}", indexable.Uri);
+						log.Log ("Scheduling {0}", indexable.Uri);
 					toBeAdded.Add (indexable);
 				} else {
-					Spew ("Skipping {0}", indexable.Uri);
+					log.Log ("Skipping {0}", indexable.Uri);
 				}
 			}
 
@@ -468,9 +468,11 @@ namespace Beagle {
 
 		public void Optimize ()
 		{
+			log.Log ("Beginning optimization");
 			IndexWriter writer = new IndexWriter (IndexDir, NewAnalyzer (), false);
 			writer.Optimize ();
 			writer.Close ();
+			log.Log ("Optimization complete");
 		}
 
 		///////////////////////////////////////////////////////

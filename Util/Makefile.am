@@ -15,7 +15,8 @@ CSFILES = 			\
 	$(srcdir)/camel.cs	\
 	$(srcdir)/gnome.cs	\
 	$(srcdir)/Vfs.cs	\
-	$(srcdir)/ImLog.cs
+	$(srcdir)/ImLog.cs	\
+	$(srcdir)/Logger.cs
 
 ASSEMBLIES =			\
 	$(BEAGLE_UI_LIBS)		\

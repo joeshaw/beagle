@@ -50,6 +50,15 @@ namespace Beagle {
 			}
 		}
 
+		static public String LogDir {
+			get {
+				string dir = Path.Combine (RootDir, "Log");
+				if (! Directory.Exists (dir))
+					Directory.CreateDirectory (dir);
+				return dir;
+			}
+		}
+
 		static private String AppDir {
 			get {
 				String dir = Path.Combine (RootDir, "App");

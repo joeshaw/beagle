@@ -126,7 +126,8 @@ CSFILES =								\
 	$(srcdir)/Util/PriorityQueue.cs
 
 ASSEMBLIES = 				\
-	-r:System.Runtime.Remoting
+	-r:System.Runtime.Remoting	\
+	-r:../Util/Util.dll
 
 $(TARGET): $(CSFILES)
 	$(CSC) -o $@ $(CSFLAGS) $(CSFILES) $(ASSEMBLIES)

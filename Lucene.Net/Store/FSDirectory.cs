@@ -346,8 +346,17 @@ namespace Lucene.Net.Store
 			return new FSInputStream(GetFileInfo(name));
 		}
 
+		// ADDED trow 4 June 2004
+		static public Beagle.Util.Logger Logger = null;
+		static private void Log (string format, params object[] args)
+		{
+			if (Logger != null)
+				Logger.Log (format, args);
+		}
+
 		class FSDirectoryLock : Lock
 		{
+
 			FileInfo lockFile;
 			internal FSDirectoryLock(FileInfo lockFile) : base()
 			{
@@ -367,10 +376,9 @@ namespace Lucene.Net.Store
 									       FileMode.CreateNew,
 									       FileAccess.Write);
 
-						// ADDED trow@ximian.com 14 May 2004 - lock debug spew
-						if (Environment.GetEnvironmentVariable ("DEWEY_DEBUG_LOCKS") != null)
-							Console.WriteLine ("\n*** Obtained {0}", lockFile.FullName);
-						
+						// ADDED trow@ximian.com 4 Jun 2004 - lock debugging
+						Log ("Obtained lock {0}", lockFile.FullName);
+
 						StreamWriter sw = new StreamWriter (fs);
 						Process us = Process.GetCurrentProcess ();
 						sw.WriteLine (us.Id.ToString ());
@@ -381,17 +389,8 @@ namespace Lucene.Net.Store
 				}
 				catch 
 				{
-					// ADDED trow@ximian.com 14 May 2004 - lock debug spew
-					if (Environment.GetEnvironmentVariable ("DEWEY_DEBUG_LOCKS") != null) {
-						Console.WriteLine ("\n*** Could not obtained {0}", lockFile.FullName);
-						StreamReader sr = new StreamReader (lockFile.FullName);
-						String pidStr = sr.ReadLine ();
-						String timeStr = sr.ReadLine ();
-						Console.WriteLine ("***      pid: {0}", pidStr);
-						Console.WriteLine ("***     time: {0}", timeStr);
-						sr.Close ();
-					}
-
+					// ADDED trow@ximian.com 4 June 2004 - lock debugging
+					Log ("Could not obtain lock {0}", lockFile.FullName);
 					return false;
 				}
 				return true;
@@ -403,10 +402,13 @@ namespace Lucene.Net.Store
 
 				lock (this)
 				{
-					lockFile.Delete();
-					// ADDED trow@ximian.com 14 May 2004 - lock debug spew
-					if (Environment.GetEnvironmentVariable ("DEWEY_DEBUG_LOCKS") != null)
-						Console.WriteLine ("\n*** Released {0}", lockFile.FullName);
+					// ADDED trow@ximian.com 4 June 2004 - lock debugging
+					try {
+						lockFile.Delete();
+						Log ("Released lock {0}", lockFile.FullName);
+					} catch {
+						Log ("Failed to release lock {0}", lockFile.FullName);
+					}
 				}
 			}
 			
