@@ -471,13 +471,13 @@ DAEMON_DLL_ASSEMBLIES += $(RENDEZVOUS_LIBS)
 endif
 endif
 
-if ENABLE_MOZILLA_BACKEND
-mozillaqueryable = $(srcdir)/MozillaQueryable
-MOZILLA_QUERYABLE_CSFILES =				\
-	$(mozillaqueryable)/MozillaQueryable.cs
-DAEMON_DLL_CSFILES +=					\
-	$(MOZILLA_QUERYABLE_CSFILES)
-endif
+#if ENABLE_MOZILLA_BACKEND
+#mozillaqueryable = $(srcdir)/MozillaQueryable
+#MOZILLA_QUERYABLE_CSFILES =				\
+#	$(mozillaqueryable)/MozillaQueryable.cs
+#DAEMON_DLL_CSFILES +=					\
+#	$(MOZILLA_QUERYABLE_CSFILES)
+#endif
 
 
 $(DAEMON_DLL_TARGET): $(DAEMON_DLL_CSFILES) $(DAEMON_DLL_LOCAL_ASSEMBLIES)
