@@ -14,18 +14,17 @@ using Glade;
 using System.Text;
 using System.Xml;
 
-using BU = Beagle.Util;
+using Beagle.Util;
 
 namespace ImLogViewer {
 
 	public class StoreLog : IComparable {
 		public StoreLog () { }
 		
-		public string File;
 		public DateTime Timestamp;
 		public string Snippet;
 		
-		public BU.GaimLog ImLog;
+		public ImLog ImLog;
 
 		public int CompareTo (object obj)
 		{
@@ -47,26 +46,41 @@ namespace ImLogViewer {
 		[Widget] Label    conversation;
 		[Widget] Entry    search;
 		
-		private BU.Timeline timeline;
+		private Timeline timeline;
 		
 		private TreeStore treeStore;
 		private CellRendererText renderer;
 
 		private Gecko.WebControl gecko;
 		
-		private string logsDir;
-		private string logPath;
+		private string log_path;
+		private string first_selected_log;
 
 		private string speaking_to;
 		
 		public GaimLogViewer (string path) {
-			logsDir = Path.GetDirectoryName (path);
-			logPath = path;
+			
+			if (Directory.Exists (path)) {
+				log_path = path;
+				first_selected_log = null;
+			} else if (File.Exists (path)) {
+				log_path = Path.GetDirectoryName (path);
+				first_selected_log = path;
+			}
 
-			timeline = new BU.Timeline ();
+			timeline = new Timeline ();
 			IndexLogs();
 			
 			ShowWindow (speaking_to);
+		}
+
+		private void SetTitle (DateTime dt)
+		{
+			string str = "<b>Conversation with " + speaking_to;
+			if (dt.Ticks > 0)
+				str += ": " + StringFu.DateTimeToPrettyString (dt);
+			str += "</b>";
+			this.title.Markup = str;
 		}
 		
 		private void ShowWindow (string speaker) {
@@ -75,7 +89,7 @@ namespace ImLogViewer {
 			Glade.XML gxml = new Glade.XML (null, "ImLogViewer.glade", "window1", null);
 			gxml.Autoconnect (this);
 			
-			this.treeStore = new TreeStore(new Type[] {typeof(string), typeof(string), typeof(string), typeof(string)});
+			this.treeStore = new TreeStore(new Type[] {typeof(string), typeof(string), typeof(object)});
 			this.logsviewer.Model = this.treeStore;
 			
 			this.renderer = new CellRendererText();
@@ -90,7 +104,7 @@ namespace ImLogViewer {
 			
 			populateLeftTree();
 			
-			this.title.Markup = "<b>Conversation with " + speaker + "</b>";
+			SetTitle (new DateTime ());
 			this.conversation.Text = "";
 			
 			logsviewer.ExpandAll();
@@ -101,13 +115,14 @@ namespace ImLogViewer {
 			gecko.Show();
 		
 			this.conversation.Markup = "";
+
+			// FIXME: We need to remove this widget from the glade
+			// file.  Just hiding it is sort of silly.
+			this.conversation.Hide ();
 		
 			logsviewer.Selection.Changed += OnConversationSelected; 
 			//search.Activated += OnSearchPressed;
 			
-			if (File.Exists (logPath))
-				ShowConversation (logPath);
-
 			Application.Run();
 		}
 		
@@ -115,37 +130,37 @@ namespace ImLogViewer {
 			TreeIter parent;
 			
 			if (timeline.Today.Count != 0) {
-				parent= treeStore.AppendValues ("<b>Today</b>", "", "", "");
+				parent= treeStore.AppendValues ("<b>Today</b>", "", null);
 				PopulateTimeline(parent, timeline.Today, "HH:mm");
 			}
 			
 			if (timeline.Yesterday.Count != 0) {
-				parent = treeStore.AppendValues ("<b>Yesterday</b>", "", "", "");
+				parent = treeStore.AppendValues ("<b>Yesterday</b>", "", null);
 				PopulateTimeline(parent, timeline.Yesterday, "HH:mm");
 			}
 			
 			if (timeline.ThisWeek.Count != 0) {
-				parent = treeStore.AppendValues ("<b>This Week</b>", "", "", "");
+				parent = treeStore.AppendValues ("<b>This Week</b>", "", null);
 				PopulateTimeline(parent, timeline.ThisWeek, "dddd");
 			}
 		
 			if (timeline.LastWeek.Count != 0) {
-				parent = treeStore.AppendValues ("<b>Last Week</b>", "", "", "");
+				parent = treeStore.AppendValues ("<b>Last Week</b>", "", null);
 				PopulateTimeline (parent, timeline.LastWeek, "dddd");
 			}
 			
 			if (timeline.ThisMonth.Count != 0) {
-				parent = treeStore.AppendValues ("<b>This Month</b>", "", "", "");
+				parent = treeStore.AppendValues ("<b>This Month</b>", "", null);
 				PopulateTimeline(parent, timeline.ThisMonth, "MMM d");
 			}
 			
 			if (timeline.ThisYear.Count != 0) {
-				parent = treeStore.AppendValues ("<b>This Year</b>", "", "", "");
+				parent = treeStore.AppendValues ("<b>This Year</b>", "", null);
 				PopulateTimeline (parent, timeline.ThisYear, "MMM d");
 			}
 			
 			if (timeline.Older.Count != 0) {
-				parent = treeStore.AppendValues ("<b>Older</b>", "", "", "");
+				parent = treeStore.AppendValues ("<b>Older</b>", "", null);
 				PopulateTimeline (parent, timeline.Older, "yyyy MMM d");
 			}
 		}
@@ -153,27 +168,22 @@ namespace ImLogViewer {
 		private void PopulateTimeline (TreeIter parent, ArrayList list, string dateformat)
 		{
 			list.Sort ();
-			foreach (StoreLog log in list)
-				treeStore.AppendValues (parent, log.Timestamp.ToString (dateformat) , log.Snippet, log.File, "");
+			foreach (StoreLog log in list) {
+				treeStore.AppendValues (parent, log.Timestamp.ToString (dateformat), log.Snippet, log);
+				if (log.ImLog.LogFile == first_selected_log)
+					RenderConversation (log.ImLog);
+			}
 		}
 		
-		private string extractSpeaker (string logDir)
-		{
-			//FIXME: Get properly the directory name
-			//Or search for the real name of the speaker instead of adress
-			int i = logDir.Substring(0, logDir.Length -1).LastIndexOf("/");
-			return logDir.Substring(i+1);
-		}
-		
-		public StoreLog ImLogParse (BU.ImLog imlog)
+		public StoreLog ImLogParse (ImLog imlog)
 		{
 			StoreLog log = new StoreLog ();
-			log.File = imlog.LogFile;
+			log.ImLog = imlog;
 			log.Timestamp = imlog.StartTime;
 			
 			string snippet = "";
 			
-			foreach (BU.ImLog.Utterance utt in imlog.Utterances) {
+			foreach (ImLog.Utterance utt in imlog.Utterances) {
 				if (snippet == null || snippet == "")
 					snippet =  utt.Text;
 				
@@ -188,16 +198,16 @@ namespace ImLogViewer {
 		}
 		
 		private void IndexLogs () {
-		       	string [] files = Directory.GetFiles (logPath);
+		       	string [] files = Directory.GetFiles (log_path);
 			
 			foreach (string file in files) {
 
 				// FIXME: gratuitous debug spew
 				Console.WriteLine (file);
 
-				ICollection logs = BU.GaimLog.ScanLog (new FileInfo (file));
+				ICollection logs = GaimLog.ScanLog (new FileInfo (file));
 				
-				foreach (BU.ImLog gaimlog in logs) {
+				foreach (ImLog gaimlog in logs) {
 
 					if (speaking_to == null)
 						speaking_to = gaimlog.SpeakingTo;
@@ -208,28 +218,25 @@ namespace ImLogViewer {
 			}
 		}
 		
-		private void ShowConversation (string path)
+		private void RenderConversation (ImLog im_log)
 		{
-			RenderConversation (path, "FIXME: Date");
-		}
-
-		private void RenderConversation (string file, string date)
-		{
-			conversation.Markup = "<b>Conversation " + date  + "</b>";
-			string html = "";
-
-			ICollection logs = BU.GaimLog.ScanLog (new FileInfo (file));
-			
-			foreach (BU.ImLog gaimlog in logs)
-			{
-				foreach (BU.ImLog.Utterance utt in gaimlog.Utterances) {
-					//FIXME: We strip tags here!
-					html += "<p><b>" + utt.Who + ":</b>&nbsp;" + utt.Text + "</p>\n";
-				}
+			if (im_log == null) {
+				SetTitle (new DateTime ());
+				gecko.RenderData ("", "file:///tmp/FIXME", "text/html");
+				return;
+			} 
 				
+			SetTitle (im_log.StartTime);
+			//conversation.Markup = "<b>" + date + "</b>";
+
+			StringBuilder html = new StringBuilder ();
+
+			foreach (ImLog.Utterance utt in im_log.Utterances) {
+				//FIXME: We strip tags here!
+				html.Append ("<p><b>" + utt.Who + ":</b>&nbsp;" + utt.Text + "</p>\n");
 			}
 				
-			gecko.RenderData(html, "file://"+file, "text/html");
+			gecko.RenderData(html.ToString (), "file://"+im_log.LogFile, "text/html");
 			
 		}
 		
@@ -245,9 +252,11 @@ namespace ImLogViewer {
 			TreeModel model;
 			
 			if (((TreeSelection)o).GetSelected (out model, out iter)) {
-				string log = (string)model.GetValue (iter, 2);
-				if (log != "")
-					RenderConversation (log, (string)model.GetValue (iter, 0));
+				StoreLog log = model.GetValue (iter, 2) as StoreLog;
+				if (log != null)
+					RenderConversation (log.ImLog);
+				else
+					RenderConversation (null);
 			}
 		}
 		
@@ -255,8 +264,8 @@ namespace ImLogViewer {
 		{
 			if (args.Length > 0)
 			{
-				BU.GeckoUtils.Init ();
-				BU.GeckoUtils.SetSystemFonts ();
+				GeckoUtils.Init ();
+				GeckoUtils.SetSystemFonts ();
 
 				new GaimLogViewer (args [0]);
 			}
