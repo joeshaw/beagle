@@ -116,6 +116,7 @@ AC_OUTPUT([
 Makefile
 images/Makefile
 templates/Makefile
+glue/Makefile
 Util/Makefile
 BeagleClient/Makefile
 beagled/Makefile

@@ -18,6 +18,7 @@ CSFILES = 			        \
 	$(srcdir)/gnome.cs              \
 	$(srcdir)/Id3.cs                \
 	$(srcdir)/ImLog.cs              \
+	$(srcdir)/Inotify.cs		\
 	$(srcdir)/Logger.cs             \
 	$(srcdir)/MultiReader.cs        \
 	$(srcdir)/NautilusTools.cs      \

@@ -5,6 +5,7 @@ pkgconfig_DATA = beagle-0.0.pc
 SUBDIRS = 			\
 	images			\
 	templates		\
+	glue			\
 	Util			\
 	BeagleClient            \
 	beagled                 \

@@ -249,11 +249,15 @@ namespace Beagle.Util {
 
 		protected override void Load ()
 		{
+			FileStream fs;
 			StreamReader sr;
 			string line;
 
 			try {
-				FileStream fs = new FileStream (LogFile, FileMode.Open, FileAccess.Read);
+				fs = new FileStream (LogFile,
+						     FileMode.Open,
+						     FileAccess.Read,
+						     FileShare.Read);
 				if (LogOffset > 0)
 					fs.Seek (LogOffset, SeekOrigin.Begin);
 				sr = new StreamReader (fs);
@@ -265,23 +269,25 @@ namespace Beagle.Util {
 			}
 
 			line = sr.ReadLine (); // throw away first line
-			if (line == null)
-				return;
+			if (line != null) {
 
-			// Could the second line ever start w/ < in a non-html log?
-			// I hope not!
-			bool isHtml = line.StartsWith ("<");
-			
-			while ((line = sr.ReadLine ()) != null) {
-				if (isHtml)
-					line = StripTags (line);
+				// Could the second line ever start w/ < in a non-html log?
+				// I hope not!
+				bool isHtml = line.StartsWith ("<");
 				
-				if (IsNewConversation (line))
-					break;
+				while ((line = sr.ReadLine ()) != null) {
+					if (isHtml)
+						line = StripTags (line);
+				
+					if (IsNewConversation (line))
+						break;
 
-				ProcessLine (line);
+					ProcessLine (line);
+				}
 			}
 
+			sr.Close ();
+			fs.Close ();
 		}
 
 		private static void ScanNewStyleLog (FileInfo file, ArrayList array)
