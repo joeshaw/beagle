@@ -111,6 +111,11 @@ namespace Beagle.Daemon.EvolutionDataServerQueryable {
 		public void Start ()
 		{
 		}
+		
+		public string GetHumanReadableStatus ()
+		{
+			return "FIXME: Needs Status";
+		}
 	}
 
 }

@@ -219,15 +219,14 @@ namespace Beagle.Daemon {
 
 			QueryDriver queryDriver;
 			try {
-
-				// Construct and register our ping object.
-				Ping ping = new Ping ();
-				dbusObjects.Add (ping);
-				DBusisms.Service.RegisterObject (ping, "/com/novell/Beagle/Ping");
-
 				// Construct a query driver.  Among other things, this
 				// loads and initializes all of the IQueryables.
 				queryDriver = new QueryDriver ();
+
+				// Construct and register our ping object.
+				Ping ping = new Ping (queryDriver);
+				dbusObjects.Add (ping);
+				DBusisms.Service.RegisterObject (ping, "/com/novell/Beagle/Ping");
 				
 				// Set up our D-BUS object factory.
 				factory = new FactoryImpl (queryDriver);

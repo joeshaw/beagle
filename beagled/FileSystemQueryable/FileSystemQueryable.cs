@@ -56,10 +56,9 @@ namespace Beagle.Daemon.FileSystemQueryable {
 		}
 
 		//////////////////////////////////////////////////////////////////////////
-		public override void Start ()
-		{
-			base.Start ();
 
+		public void StartWorker ()
+		{
 			string home = Environment.GetEnvironmentVariable ("HOME");
 
 			TraverseDirectory (home, true);
@@ -71,6 +70,18 @@ namespace Beagle.Daemon.FileSystemQueryable {
 			crawlQ.ScheduleCrawl (Path.Combine (home, "Documents"));
 			Shutdown.AddQueue (crawlQ);
 			crawlQ.Start ();
+
+			log.Info ("FileSystemQueryable start-up thread finished");
+			
+			// FIXME: Do we need to re-run queries when we are fully started?
+		}
+
+		public override void Start ()
+		{
+			base.Start ();
+
+			Thread th = new Thread (new ThreadStart (StartWorker));
+			th.Start ();
 		}
 
 		//////////////////////////////////////////////////////////////////////////

@@ -44,6 +44,8 @@ namespace Beagle.Daemon {
 			      IQueryableChangeData data);
 
 		void Start ();
+
+		string GetHumanReadableStatus ();
 	}
 
 	public interface IQueryableChangeData { 

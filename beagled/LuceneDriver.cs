@@ -33,6 +33,7 @@ using System;
 using System.Collections;
 using System.Globalization;
 using System.IO;
+using System.Text;
 using System.Threading;
 using System.Xml;
 using System.Xml.Serialization;
@@ -539,8 +540,10 @@ namespace Beagle.Daemon {
 
 			override public string ToString ()
 			{
-				return String.Format ("[QueueItem: {0} {1}]",
-						      IsAdd ? "Add" : "Delete", Uri);
+				if (IndexableGenerator != null)
+					return "<IndexableGenerator>";
+
+				return String.Format ("{0} {1}", IsAdd ? "Add" : "Delete", Uri);
 			}
 
 			public void RunHook (LuceneDriver driver) 
@@ -1180,6 +1183,13 @@ namespace Beagle.Daemon {
 			return hit;
 		}
 
+
+		/////////////////////////////////////////////////////
+
+		public void GetHumanReadableStatus (StringBuilder builder)
+		{
+			queue.GetHumanReadableStatus (builder);
+		}
 
 		/////////////////////////////////////////////////////
 

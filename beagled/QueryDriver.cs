@@ -28,6 +28,7 @@
 using System;
 using System.Collections;
 using System.Reflection;
+using System.Text;
 using System.Threading;
 using Beagle.Util;
 
@@ -190,6 +191,25 @@ namespace Beagle.Daemon {
 			if (ChangedEvent != null) {
 				ChangedEvent (this, source, changeData);
 			}
+		}
+
+		////////////////////////////////////////////////////////
+
+		public string GetHumanReadableStatus ()
+		{
+			StringBuilder builder = new StringBuilder ("\n");
+
+			foreach (Queryable q in queryables) {
+				if (builder.Length > 1)
+					builder.Append ("\n--------------------------------------\n\n");
+				builder.Append (q.Name);
+				builder.Append (":\n");
+				builder.Append (q.GetHumanReadableStatus ());
+				builder.Append ("\n");
+			}
+			builder.Append ("\n");
+			
+			return builder.ToString ();
 		}
 	}
 }

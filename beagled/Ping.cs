@@ -31,6 +31,13 @@ namespace Beagle.Daemon {
 	[Interface ("com.novell.Beagle.Ping")]
 	public class Ping
 	{
+		QueryDriver query_driver;
+
+		public Ping (QueryDriver qd)
+		{
+			query_driver = qd;
+		}
+
 		[Method]
 		public virtual string GetVersion ()
 		{
@@ -41,6 +48,12 @@ namespace Beagle.Daemon {
 		public virtual void Shutdown ()
 		{
 			Beagle.Daemon.Shutdown.BeginShutdown ();
+		}
+
+		[Method]
+		public string GetHumanReadableStatus ()
+		{
+			return query_driver.GetHumanReadableStatus ();
 		}
 	}
 

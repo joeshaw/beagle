@@ -27,6 +27,7 @@
 
 using System;
 using System.Collections;
+using System.Text;
 
 namespace Beagle.Daemon {
 
@@ -138,8 +139,11 @@ namespace Beagle.Daemon {
 			}
 		}
 
-		
-
+		public virtual string GetHumanReadableStatus ()
+		{
+			StringBuilder builder = new StringBuilder ();
+			ourDriver.GetHumanReadableStatus (builder);
+			return builder.ToString ();
+		}
 	}
-
 }

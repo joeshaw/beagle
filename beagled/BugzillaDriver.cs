@@ -219,7 +219,11 @@ namespace Beagle.Daemon {
                         }
                         return false;
                 }
-		
+
+		public string GetHumanReadableStatus ()
+		{
+			return "FIXME: Needs Status";
+		}
 	}
 
 }

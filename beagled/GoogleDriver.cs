@@ -130,6 +130,11 @@ namespace Beagle.Daemon {
 			result.Add (hits);
 		}
 
+		public string GetHumanReadableStatus ()
+		{
+			return "FIXME: Needs Status";
+		}
+
 	}
 
 }
