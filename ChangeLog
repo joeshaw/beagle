@@ -1,3 +1,7 @@
+2004-12-23  Veerapuram Varadhan  <vvaradhan@novell.com>
+
+	* Filters/FilterAbiword.cs: Improved validations.
+	
 2004-12-20  Veerapuram Varadhan  <vvaradhan@novell.com>
 
 	* glue/wv1-glue.c: Headers, Footers, [Foot,End]notes, comments and

@@ -33,7 +33,7 @@ using System.IO;
 using System.Text;
 using System.Xml;
 
-using ICSharpCode.SharpZipLib.Zip;
+using ICSharpCode.SharpZipLib.GZip;
 
 namespace Beagle.Filters {
     
@@ -49,7 +49,7 @@ namespace Beagle.Filters {
 		}
 
 		// Process the <styles> ... </styles> nodes.
-		void StudyStyleNode (XmlTextReader reader)
+		void StudyStyleNode (XmlReader reader)
 		{
 			string styleName = null;
 			string temp = null;
@@ -125,12 +125,12 @@ namespace Beagle.Filters {
 
 		// Walk through the <section> ... </section> nodes
 		// and extract the texts.
-		bool WalkContentNodes (XmlTextReader reader)
+		bool WalkContentNodes (XmlReader reader)
 		{
 			// total number of elements to read per-pull
 			const int total_elements = 10;
 			int num_elements = 0;
-
+			
 			while (reader.Read ()) {
 				if (reader.Name == "styles" && 
 				    reader.NodeType == XmlNodeType.Element) {
@@ -220,14 +220,11 @@ namespace Beagle.Filters {
 			string key = null;
 			do {
 				reader.Read ();
-			} while (reader.Depth < 2);
+			} while (reader.Name != "metadata");
 
-			while (reader.Depth >= 2) {
-				if (reader.Depth != 2 || reader.NodeType != XmlNodeType.Element) {
-					reader.Read ();
-					continue;
-				}
+			reader.Read ();
 
+			while (reader.Name != "metadata") {
 				if (reader.Name == "m") {
 					key = reader.GetAttribute ("key");
 					switch (key) {
@@ -301,54 +298,36 @@ namespace Beagle.Filters {
 						AddProperty (Beagle.Property.New ("dc:publisher", reader.Value ));
 						break;
 					}
-				}				
+				}
 				reader.Read ();
 			}
 		}
 
 		String FileName = null;
-		XmlTextReader reader = null;
-		ZipFile zip  = null;
-
 		override protected void DoOpen (FileInfo info)
 		{
 			hotStyles = new Hashtable ();
 			FileName = info.FullName;
-			//zip = new GZipFile (FileName);
 		}
 
 		override protected void DoPullProperties ()
 		{
-			string name = null;
-
-			if (zip != null) {
-				name = Path.GetFileNameWithoutExtension (FileName);
-				
-				//GZipEntry entry = zip.GetEntry (name+".abw");
-				//if (entry == null) {
-				//	Console.WriteLine ("No zip entry found!!");
-				//	return;
-				//}
-				//Stream meta_stream = zip.GetInputStream (entry);
-				//reader = new XmlTextReader (meta_stream);
-			} else 
-				reader = new XmlTextReader (FileName);
+			XmlReader reader = null;
+			reader = new XmlTextReader (FileName);
 			ExtractMetadata (reader);
-			reader.Close ();
-			reader = null;
 		}
-
+		XmlReader contentReader = null;
 		override protected void DoPull ()
 		{
-			if (reader == null)
-				reader = new XmlTextReader (FileName);
+			if (contentReader == null)
+				contentReader = new XmlTextReader (FileName);
 
-			if (reader == null) {
+			if (contentReader == null) {
 				Finished ();
 				return;
 			}
 
-			if (WalkContentNodes (reader))
+			if (WalkContentNodes (contentReader))
 				Finished ();
 		}
 	}
