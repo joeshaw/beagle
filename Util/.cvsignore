@@ -2,3 +2,4 @@
 *.dll
 Makefile
 Makefile.in
+GoogleSearch.cs

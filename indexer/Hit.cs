@@ -28,14 +28,14 @@ namespace Dewey {
 
 		//////////////////////////
 
-		public void lockdown ()
+		public void Lockdown ()
 		{
 			if (uri == null)
 				throw new Exception ("Locking Hit with undefined URI");
 			locked = true;
 		}
 
-		void checkLock ()
+		void CheckLock ()
 		{
 			if (locked)
 				throw new Exception ("Attempt to modify locked hit '" + uri + "'");
@@ -45,32 +45,32 @@ namespace Dewey {
 
 		public int Id {
 			get { return id; }
-			set { checkLock (); id = value; }
+			set { CheckLock (); id = value; }
 		}
 
 		public String Uri {
 			get { return uri; }
-			set { checkLock (); uri = value; }
+			set { CheckLock (); uri = value; }
 		}
 
 		public String Domain {
 			get { return domain; }
-			set { checkLock (); domain = value; }
+			set { CheckLock (); domain = value; }
 		}
 
 		public String MimeType {
 			get { return mimeType; }
-			set { checkLock (); mimeType = value; }
+			set { CheckLock (); mimeType = value; }
 		}
 	
 		public String Source {
 			get { return source; }
-			set { checkLock (); source = value; }
+			set { CheckLock (); source = value; }
 		}
 
 		public float Score {
 			get { return score; }
-			set { checkLock (); score = value; }
+			set { CheckLock (); score = value; }
 		}
 
 		//////////////////////////
@@ -81,7 +81,7 @@ namespace Dewey {
 
 		virtual public String this [String key] {
 			get { return (String) metadata [key]; }
-			set { checkLock (); metadata [key] = (String) value; }
+			set { CheckLock (); metadata [key] = (String) value; }
 		}
 
 		//////////////////////////

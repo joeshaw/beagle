@@ -286,7 +286,7 @@ namespace Dewey {
 					hit [key] = ff.StringValue ();
 			}
 			
-			hit.lockdown ();
+			hit.Lockdown ();
 			return hit;
 		}
 		

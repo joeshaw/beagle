@@ -9,4 +9,8 @@ config.sub
 configure
 libtool
 ltmain.sh
+missing
+install-sh
+mkinstalldirs
 dewey-*.pc
+dewey-*.tar.gz

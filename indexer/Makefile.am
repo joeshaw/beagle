@@ -13,7 +13,8 @@ CSFILES = 				\
 	$(srcdir)/IndexableHttp.cs	\
 	$(srcdir)/Query.cs		\
 	$(srcdir)/Hit.cs		\
-	$(srcdir)/IndexDriver.cs
+	$(srcdir)/IndexDriver.cs	\
+	$(srcdir)/GoogleDriver.cs
 
 ASSEMBLIES = 				\
 	-r:ICSharpCode.SharpZipLib	\

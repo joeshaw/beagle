@@ -5,18 +5,25 @@ TARGET = Util.dll
 
 CSFLAGS = -target:library
 
+GOOGLE_WSDL = $(srcdir)/GoogleSearch.wsdl
+GOOGLE_CS   = GoogleSearch.cs
+
+$(GOOGLE_CS): $(GOOGLE_WSDL)
+	wsdl -namespace:Dewey.Util -out:$@ $^
+
 CSFILES = 			\
 	$(srcdir)/camel.cs	\
 	$(srcdir)/gnome.cs	\
 	$(srcdir)/Vfs.cs
 
 ASSEMBLIES =			\
+	-r:System.Web.Services	\
 	-r:glib-sharp.dll	\
 	-r:gtk-sharp.dll	\
 	-r:gnome-sharp.dll		
 
-$(TARGET): $(CSFILES)
-	$(CSC) -o $@ $(CSFLAGS) $(CSFILES) $(ASSEMBLIES)
+$(TARGET): $(CSFILES) $(GOOGLE_CS)
+	$(CSC) -o $@ $(CSFLAGS) $^ $(ASSEMBLIES)
 
 all: $(TARGET)
 
@@ -28,7 +35,9 @@ uninstall-local:
 	rm -f $(DESTDIR)$(pkglibdir)/$(TARGET)
 
 EXTRA_DIST =		\
+	$(GOOGLE_WSDL)	\
 	$(CSFILES)
 
 CLEANFILES =		\
+	$(GOOGLE_CS)	\
 	$(TARGET)
