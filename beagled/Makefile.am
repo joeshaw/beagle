@@ -31,6 +31,7 @@ PLUGIN_LOCAL_ASSEMBLIES =		\
 
 PLUGIN_ASSEMBLIES =				\
 	-r:Mono.Posix				\
+	$(BEAGLED_LIBS)                 	\
 	$(PLUGIN_LOCAL_ASSEMBLIES:%=-r:%)
 
 $(PLUGIN_TARGET): $(PLUGIN_CSFILES) $(EXTSTR) $(PLUGIN_LOCAL_ASSEMBLIES)
@@ -191,8 +192,8 @@ DAEMON_LOCAL_ASSEMBLIES =		\
 	../BeagleClient/Beagle.dll
 
 DAEMON_ASSEMBLIES = 				\
-	$(DAEMON_LOCAL_ASSEMBLIES:%=-r:%)	\
 	$(BEAGLED_LIBS)                 	\
+	$(DAEMON_LOCAL_ASSEMBLIES:%=-r:%)	\
 	-r:Mono.Posix				\
 	-r:System.Runtime.Remoting		\
 	-r:ICSharpCode.SharpZipLib.dll		\
