@@ -187,7 +187,12 @@ namespace Beagle.Daemon {
 					Logger.Log.Error ("QueryWorker '{0}' threw an exception", worker);
 					Logger.Log.Error (e);
 				}
-				result.WorkerFinished (worker);
+				try {
+					result.WorkerFinished (worker);
+				} catch (Exception e) {
+					Logger.Log.Error ("QueryResult threw an exception while calling WorkerFinished for '{0}'",
+							  worker);
+				}
 			}
 		}
 
@@ -208,6 +213,9 @@ namespace Beagle.Daemon {
 				if (!WorkerStartNoLock (worker)) 
 					return;
 
+				// We don't need to use an ExceptionHandlingThread
+				// here, because qwc.Start is careful about catching
+				// any exceptions.
 				Thread th;
 				th = new Thread (new ThreadStart (qwc.Start));
 				th.Start ();

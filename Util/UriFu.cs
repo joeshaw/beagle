@@ -108,7 +108,7 @@ namespace Beagle.Util {
 			ArrayList uri_array = new ArrayList ();
 			for (int i = 1; i < parts.Length; ++i) {
 				try {
-					Uri uri = new Uri (parts [i], true);
+					Uri uri = UriStringToUri (parts [i]);
 					uri_array.Add (uri);
 				} catch (Exception ex) {
 					Logger.Log.Debug ("Caught exception converting '{0}' to a Uri", parts [i]);

@@ -81,7 +81,7 @@ namespace Beagle.Daemon {
 			FileAttributes attr;
 
 			attr = Read (path);
-			
+
 			// FIXME: This check is incomplete, we should also check
 			// filter names, filter versions, etc.
 			return attr != null
@@ -93,6 +93,7 @@ namespace Beagle.Daemon {
 		{
 			FileAttributes attr = ReadOrCreate (path);
 
+			attr.Path = path;
 			attr.LastWriteTime = mtime;
 			attr.LastIndexedTime = DateTime.Now;
 
