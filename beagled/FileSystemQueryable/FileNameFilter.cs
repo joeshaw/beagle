@@ -38,7 +38,7 @@ namespace Beagle.Daemon.FileSystemQueryable {
 
 		static FileNameFilter ()
 		{
-			home_dir = Environment.GetEnvironmentVariable ("HOME");
+			home_dir = PathFinder.HomeDir;
 		}
 
 
