@@ -43,9 +43,22 @@ namespace Beagle.Filters {
 		
 		public FilterOpenOffice () 
 		{
+			// OO 1.0 mime types
 			AddSupportedMimeType ("application/vnd.sun.xml.writer");
-			AddSupportedMimeType ("application/vnd.sun.xml.impress");
+			AddSupportedMimeType ("application/vnd.sun.xml.writer.template");
 			AddSupportedMimeType ("application/vnd.sun.xml.calc");
+			AddSupportedMimeType ("application/vnd.sun.xml.calc.template");
+			AddSupportedMimeType ("application/vnd.sun.xml.impress");
+			AddSupportedMimeType ("application/vnd.sun.xml.impress.template");
+
+			// OO 2.0 mime types
+			AddSupportedMimeType ("application/vnd.oasis.opendocument.text");
+			AddSupportedMimeType ("application/vnd.oasis.opendocument.text-template");
+			AddSupportedMimeType ("application/vnd.oasis.opendocument.spreadsheet");
+			AddSupportedMimeType ("application/vnd.oasis.opendocument.spreadsheet-template");
+			AddSupportedMimeType ("application/vnd.oasis.opendocument.presentation");
+			AddSupportedMimeType ("application/vnd.oasis.opendocument.presentation-template");
+
 			SnippetMode = true;
 			odtFormat = false;
 		}
