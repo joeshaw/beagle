@@ -91,6 +91,7 @@ namespace Beagle {
 
 		public void Query (Query query, IQueryResult result)
 		{
+			// FIXME: stop using the abusive query api
 			GoogleSearchResult gsr = gss.doGoogleSearch (googleKey,
 								     query.AbusivePeekInsideQuery,
 								     0, maxResults,

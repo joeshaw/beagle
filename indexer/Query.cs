@@ -26,22 +26,71 @@
 
 
 using System;
+using System.Collections;
 
 namespace Beagle {
 
 	public class Query {
-
-		String queryStr;
 		
-		public Query (String _queryStr)
+		string original;
+		string[] parts;
+
+		public Query (string queryString)
 		{
-			queryStr = _queryStr;
+			original = queryString;
+			parts = SplitQuoted (original);
+		}
+
+		static string[] SplitQuoted (string str)
+		{
+			char[] specialChars = new char [2] { ' ', '"' };
+			
+			ArrayList array = new ArrayList ();
+			
+			int i;
+			while ((i = str.IndexOfAny (specialChars)) != -1) {
+				if (str [i] == ' ') {
+					if (i > 0)
+						array.Add (str.Substring (0, i));
+					str = str.Substring (i+1);
+				} else if (str [i] == '"') {
+					int j = str.IndexOf ('"', i+1);
+					if (i > 0)
+						array.Add (str.Substring (0, i));
+					if (j == -1) {
+						if (i+1 < str.Length)
+							array.Add (str.Substring (i+1));
+						str = "";
+					} else {
+						if (j-i-1 > 0)
+						array.Add (str.Substring (i+1, j-i-1));
+						str = str.Substring (j+1);
+					}
+				} else {
+					Console.WriteLine ("Hmm, that shouldn't have happened.");
+				}
+			}
+			if (str != "")
+				array.Add (str);
+			
+			string [] retval = new string [array.Count];
+			for (i = 0; i < array.Count; ++i)
+				retval [i] = (string) array [i];
+			return retval;
+		}
+
+		public string Original {
+			get { return original; }
+		}
+
+		public ICollection Parts {
+			get { return parts; }
 		}
 
 		// As the name suggests, this is a transitional API.
 		// (i.e. I don't quite yet know what the hell I'm doing.)
-		public String AbusivePeekInsideQuery {
-			get { return queryStr; }
+		public string AbusivePeekInsideQuery {
+			get { return original; }
 		}
 	}
 }

@@ -27,6 +27,7 @@
 
 using System;
 using System.Collections;
+using System.Text;
 
 namespace Beagle {
 
@@ -138,8 +139,17 @@ namespace Beagle {
 
 		public void Query (Query query, IQueryResult result)
 		{
+			// FIXME: Evolution.BookQuery's bindings are all
+			// screwed up, so we can't construct compound queries.
+			// This will have to do for now.
+			StringBuilder fixme = new StringBuilder ("");
+			foreach (string part in query.Parts) {
+				if (fixme.Length > 0)
+					fixme.Append (" ");
+				fixme.Append (part);
+			}
 			Evolution.BookQuery bq;
-			bq = Evolution.BookQuery.AnyFieldContains (query.AbusivePeekInsideQuery);
+			bq = Evolution.BookQuery.AnyFieldContains (fixme.ToString ());
 
 			Evolution.Contact[] contacts;
 			contacts = Addressbook.GetContacts (bq);

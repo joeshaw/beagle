@@ -245,6 +245,21 @@ namespace Beagle {
 			
 			return doc;
 		}
+
+		private LNS.Query ToCoreLuceneQuery (Query    query,
+						     string   field,
+						     Analyzer analyzer)
+		{
+			LNS.BooleanQuery luceneQuery = new LNS.BooleanQuery ();
+			foreach (string part in query.Parts) {
+				// FIXME: Stemming!
+				Term t = new Term (field, part);
+				LNS.Query q = new LNS.TermQuery (t);
+				luceneQuery.Add (q, true, false);
+			}
+			return luceneQuery;
+
+		}
 		
 		private LNS.Query ToLuceneQuery (Query query)
 		{
@@ -253,18 +268,18 @@ namespace Beagle {
 			
 			String queryStr = query.AbusivePeekInsideQuery;
 			
-			LNS.Query hotQuery;
-			hotQuery = QueryParser.Parse (queryStr, "HotContent", analyzer);
-			hotQuery.SetBoost (2.0f);
-			luceneQuery.Add (hotQuery, false, false);
-			
 			LNS.Query metaQuery;
-			metaQuery = QueryParser.Parse (queryStr, "Properties", analyzer);
-			metaQuery.SetBoost (1.5f);
+			metaQuery = ToCoreLuceneQuery (query, "Properties", analyzer);
+			metaQuery.SetBoost (2.5f);
 			luceneQuery.Add (metaQuery, false, false);
-			
+
+			LNS.Query hotQuery;
+			hotQuery = ToCoreLuceneQuery (query, "HotContent", analyzer);
+			hotQuery.SetBoost (1.75f);
+			luceneQuery.Add (hotQuery, false, false);
+		
 			LNS.Query contentQuery;
-			contentQuery = QueryParser.Parse (queryStr, "Content", analyzer);
+			contentQuery = ToCoreLuceneQuery (query, "Content", analyzer);
 			luceneQuery.Add (contentQuery, false, false);
 			
 			return luceneQuery;
