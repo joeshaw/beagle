@@ -76,7 +76,11 @@ namespace Beagle.Daemon {
 				if (hit != null)
 					result.Add (hit);
 			}
-                                                                                                                                                             
+		}
+
+		public string GetSnippet (QueryBody body, Hit hit)
+		{
+			return null;
 		}
 		
 		private XmlDocument GetBugzillaXml (string bug) {

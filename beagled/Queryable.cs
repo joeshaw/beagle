@@ -88,5 +88,26 @@ namespace Beagle.Daemon {
 				Logger.Log.Warn (ex);
 			}
 		}
+
+		public string GetSnippet (QueryBody body, Hit hit)
+		{
+			if (hit == null)
+				return null;
+
+			// Sanity-check: make sure this Hit actually came out of this Queryable
+			if (hit.SourceObject != this) {
+				string msg = String.Format ("Queryable mismatch in GetSnippet: {0} vs {1}", hit.SourceObject, this);
+				throw new Exception (msg);
+			}
+
+			try {
+				return iqueryable.GetSnippet (body, hit);
+			} catch (Exception ex) {
+				Logger.Log.Warn ("Caught exception calling DoQuery on '{0}'", Name);
+				Logger.Log.Warn (ex);
+			}
+			
+			return null;
+		}
 	}
 }

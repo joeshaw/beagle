@@ -86,6 +86,11 @@ namespace Beagle
 			catch (Exception e) { }
 		}
 
+		public string GetSnippet (Uri uri)
+		{
+			return GetSnippetFromUriString (uri.ToString ());
+		}
+
 		private void OnHitsAddedAsBinary (QueryProxy sender, string hitsData)
 		{
 			byte[] binaryData = Convert.FromBase64String (hitsData);

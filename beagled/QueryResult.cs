@@ -78,20 +78,6 @@ namespace Beagle.Daemon {
 
 		//////////////////////////////////
 
-		public HitRegulator GetHitRegulator (Queryable queryable)
-		{
-			lock (hit_regulators) {
-				HitRegulator hr = hit_regulators [queryable] as HitRegulator;
-				if (hr == null) {
-					hr = new HitRegulator ();
-					hit_regulators [queryable] = hr;
-				}
-				return hr;
-			}
-		}
-
-		//////////////////////////////////
-
 		public bool Active {
 			get { return workers > 0 && ! cancelled; }
 		}
@@ -124,7 +110,7 @@ namespace Beagle.Daemon {
 					return;
 		
 				foreach (Hit hit in some_hits)
-					uri_hash [hit.Uri] = true;
+					uri_hash [hit.Uri] = hit;
 				
 				if (HitsAddedEvent != null)
 					HitsAddedEvent (this, some_hits);
@@ -145,13 +131,36 @@ namespace Beagle.Daemon {
 				ArrayList filtered_uris = new ArrayList ();
 
 				// We only get to subtract a URI if it was previously added.
-				foreach (Uri uri in some_uris)
-					if (uri_hash.Contains (uri))
+				foreach (Uri uri in some_uris) {
+					if (uri_hash.Contains (uri)) {
 						filtered_uris.Add (uri);
+						uri_hash.Remove (uri);
+					}
+				}
 
 				if (HitsSubtractedEvent != null)
 					HitsSubtractedEvent (this, filtered_uris);
 			}
+		}
+
+		//////////////////////////////////
+
+		public HitRegulator GetHitRegulator (Queryable queryable)
+		{
+			lock (hit_regulators) {
+				HitRegulator hr = hit_regulators [queryable] as HitRegulator;
+				if (hr == null) {
+					hr = new HitRegulator (queryable);
+					hit_regulators [queryable] = hr;
+				}
+				return hr;
+			}
+		}
+
+		// Given the Uri of a Hit contained in the QueryResult, return that Hit.
+		public Hit GetHitFromUri (Uri uri)
+		{
+			return uri_hash [uri] as Hit;
 		}
 
 		//////////////////////////////////////////////////////////////////////////////////////

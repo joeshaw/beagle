@@ -35,6 +35,8 @@ namespace Beagle.Daemon {
 
 		const int max_n_hits = 100;
 
+		Queryable queryable;
+
 		ArrayList hit_array = new ArrayList ();
 		Hashtable by_uri = new Hashtable ();
 
@@ -43,6 +45,11 @@ namespace Beagle.Daemon {
 
 		public Hashtable added_hits = new Hashtable ();
 		public Hashtable subtracted_uris = new Hashtable ();
+
+		public HitRegulator (Queryable queryable)
+		{
+			this.queryable = queryable;
+		}
 
 		public bool WillReject (double score)
 		{
@@ -101,6 +108,9 @@ namespace Beagle.Daemon {
 				added_hits = new Hashtable ();
 				subtracted_uris = new Hashtable ();
 			}
+
+			foreach (Hit hit in added)
+				hit.SourceObject = queryable;
 
 			result.Subtract (subtracted);
 			result.Add (added);

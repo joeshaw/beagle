@@ -123,6 +123,11 @@ namespace Beagle.Daemon {
 			}
 		}
 
+		public string GetSnippet (QueryBody body, Hit hit)
+		{
+			return hit ["Snippet"];
+		}
+
 		public int GetItemCount ()
 		{
 			// Is there a way to get the # of indexed pages from

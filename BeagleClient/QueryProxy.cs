@@ -71,6 +71,9 @@ namespace Beagle
 		[Method]
 		public abstract void CloseQuery ();
 
+		[Method]
+		public abstract string GetSnippetFromUriString (string uri_string);
+
 		public delegate void StartedHandler (QueryProxy sender);
 		[Signal]
 		public virtual event StartedHandler StartedEvent;

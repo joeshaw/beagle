@@ -29,6 +29,8 @@ using System.Collections;
 using System.IO;
 using System.Text;
 
+using Beagle.Util;
+
 namespace Beagle.Daemon {
 
 	public class QueryImpl : Beagle.QueryProxy, IDisposable, IDBusObject {
@@ -156,6 +158,28 @@ namespace Beagle.Daemon {
 			DisconnectResult ();
 			if (ClosedEvent != null)
 				ClosedEvent (this);
+		}
+
+		public override string GetSnippetFromUriString (string uri_string)
+		{
+			string snippet;
+			
+			Uri uri = new Uri (uri_string, false);
+			Hit hit = result.GetHitFromUri (uri);
+
+			if (hit == null)
+				snippet = "ERROR: invalid hit, uri=" + uri;
+			else {
+				Queryable queryable = hit.SourceObject as Queryable;
+				if (queryable == null)
+					snippet = "ERROR: hit.SourceObject is null, uri=" + uri;
+				else
+					snippet = queryable.GetSnippet (body, hit);
+			}
+
+			Logger.Log.Debug ("Requesting snippet for {0}, got '{1}'", uri, snippet);
+
+			return snippet;
 		}
 
 		public void Dispose ()

@@ -51,6 +51,11 @@ namespace Beagle {
 		// IndexUser, IndexSystem, Google, Addressbook, iFolder, etc.
 		private string source = null;
 
+		// This is used to hold a copy of the Queryable in the
+		// server-side copy of the Hit.  It is always null on the
+		// client-side.
+		private object sourceObject = null;
+
 		// High scores imply greater relevance.
 		private double scoreRaw = 0.0;
 		private double scoreMultiplier = 1.0;
@@ -163,6 +168,11 @@ namespace Beagle {
 		public string Source {
 			get { return source; }
 			set { source = value; }
+		}
+
+		public object SourceObject {
+			get { return sourceObject; }
+			set { sourceObject = value; }
 		}
 
 		public double Score {
