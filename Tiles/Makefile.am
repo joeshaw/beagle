@@ -91,7 +91,8 @@ uninstall-local:
 
 EXTRA_DIST =			\
 	$(CSFILES)		\
-	$(RESOURCEFILES)
+	$(RESOURCEFILES)	\
+	TranslationHack.cs
 
 CLEANFILES =			\
 	$(TARGET)		\
