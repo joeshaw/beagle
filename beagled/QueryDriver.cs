@@ -102,55 +102,102 @@ namespace Beagle.Daemon {
 		{
 			int count = 0;
 
-			foreach (Type type in assembly.GetTypes ()) {
-				if (TypeImplementsInterface (type, typeof (IQueryable))) {
-					foreach (object obj in Attribute.GetCustomAttributes (type)) {
-						QueryableFlavor flavor = obj as QueryableFlavor;
-						if (flavor == null)
-							continue;
-						
-						if (! UseQueryable (flavor.Name))
-							continue;
+			foreach (Type type in GetQueryableTypes (assembly)) {
+				foreach (QueryableFlavor flavor in GetQueryableFlavors (type)) {
+					if (! UseQueryable (flavor.Name))
+						continue;
 
-						if (flavor.RequireInotify && ! Inotify.Enabled) {
-							Logger.Log.Warn ("Can't start backend '{0}' without inotify",  flavor.Name);
-							continue;
-						}
+					if (flavor.RequireInotify && ! Inotify.Enabled) {
+						Logger.Log.Warn ("Can't start backend '{0}' without inotify",  flavor.Name);
+						continue;
+					}
 
-						IQueryable iq = null;
-						try {
-							iq = Activator.CreateInstance (type) as IQueryable;
-						} catch (Exception e) {
-							Logger.Log.Error ("Caught exception while instantiating {0} backend", flavor.Name);
-							Logger.Log.Error (e);
-						}
+					IQueryable iq = null;
+					try {
+						iq = Activator.CreateInstance (type) as IQueryable;
+					} catch (Exception e) {
+						Logger.Log.Error ("Caught exception while instantiating {0} backend", flavor.Name);
+						Logger.Log.Error (e);
+					}
 
-						if (iq != null) {
-							Queryable q = new Queryable (flavor, iq);
-							queryables.Add (q);
-							iqueryable_to_queryable [iq] = q;
-							++count;
-							break;
-						}
+					if (iq != null) {
+						Queryable q = new Queryable (flavor, iq);
+						queryables.Add (q);
+						iqueryable_to_queryable [iq] = q;
+						++count;
+						break;
 					}
 				}
 			}
 			Logger.Log.Debug ("Found {0} types in {1}", count, assembly.FullName);
 		}
 
-		static public void Start ()
+		static private Type[] GetQueryableTypes (Assembly assembly)
 		{
-			ScanAssembly (Assembly.GetExecutingAssembly ());
+			Type[] assembly_types = assembly.GetTypes ();
+			ArrayList types = new ArrayList (assembly_types.Length);
+
+			foreach (Type type in assembly_types)
+				if (TypeImplementsInterface (type, typeof (IQueryable)))
+					types.Add (type);
+		
+			return (Type[]) types.ToArray (typeof (Type));
+		}
+		
+		static private QueryableFlavor[] GetQueryableFlavors (Type type)
+		{
+			object[] attributes = Attribute.GetCustomAttributes (type);
+			ArrayList flavors = new ArrayList (attributes.Length);
 			
+			foreach (object obj in attributes) {
+					QueryableFlavor flavor = obj as QueryableFlavor;
+					if (flavor != null)
+						flavors.Add (flavor);
+			}
+
+			return (QueryableFlavor[]) flavors.ToArray (typeof (QueryableFlavor));
+		}
+
+		static private Assembly[] GetAssemblies ()
+		{
+			Assembly[] assemblies;
+			int i = 0;
 			DirectoryInfo backends = new DirectoryInfo (PathFinder.BackendDir);
 
 			if (backends.Exists) {
-				foreach (FileInfo assembly in backends.GetFiles ("*.dll"))
-					ScanAssembly (Assembly.LoadFile (assembly.ToString ()));
+				FileInfo[] assembly_files = backends.GetFiles ("*.dll");
+				assemblies = new Assembly [assembly_files.Length + 1];
+
+				foreach (FileInfo assembly in assembly_files)
+					assemblies[i++] = Assembly.LoadFile (assembly.ToString ());
+
+			} else {
+				assemblies = new Assembly [1];
 			}
-				
+
+			assemblies[i] = Assembly.GetExecutingAssembly ();
+		
+			return assemblies;
+		}
+
+		static public void Start ()
+		{
+			foreach (Assembly assembly in GetAssemblies ())
+				ScanAssembly (assembly);
+
 			foreach (Queryable q in queryables)
 				q.Start ();
+		}
+
+		static public string ListBackends ()
+		{
+			string ret = "";
+			foreach (Assembly assembly in GetAssemblies ())
+				foreach (Type type in GetQueryableTypes (assembly))
+					foreach (QueryableFlavor flavor in GetQueryableFlavors (type))
+						ret += " - " + flavor.Name + "\n";
+
+			return ret;
 		}
 
 		////////////////////////////////////////////////////////

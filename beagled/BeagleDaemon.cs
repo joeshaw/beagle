@@ -209,6 +209,11 @@ namespace Beagle.Daemon {
 				string next_arg = i < args.Length ? args [i] : null;
 
 				switch (arg) {
+				case "--list-backends":
+					Console.WriteLine ("Current available backends:");
+					Console.Write (QueryDriver.ListBackends ());
+					Environment.Exit (0);
+					break;
 
 				case "--fg":
 				case "--foreground":
