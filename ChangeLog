@@ -1,3 +1,7 @@
+2005-04-05  Frank Arnold  <farnold@cvs.gnome.org>
+
+	* configure.in: Added "de" to ALL_LINGUAS.
+
 2005-04-04  Vijay K. Nanjundaswamy <knvijay@novell.com>
 
 	* beagled/WebServices/WebServiceBackEnd.cs: Fix to return a searchToken, whenever

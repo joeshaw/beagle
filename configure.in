@@ -47,7 +47,7 @@ done
 AC_PROG_INTLTOOL([0.23])
 GETTEXT_PACKAGE=beagle
 AC_SUBST(GETTEXT_PACKAGE)
-ALL_LINGUAS="nl sv zh_CN"
+ALL_LINGUAS="de nl sv zh_CN"
 AM_GLIB_GNU_GETTEXT
 
 # Many distros don't have a dependency on sqlite for their
