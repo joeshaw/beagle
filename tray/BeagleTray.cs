@@ -305,6 +305,8 @@ namespace Beagle
                 private void Search (String searchString)
                 {
                         entry.Text = searchString;
+
+			store.Clear ();
                                                                                                                                                              
                         if (query != null) {
 				try {
