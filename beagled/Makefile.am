@@ -204,9 +204,9 @@ blamqueryable = $(srcdir)/BlamQueryable
 BLAM_QUERYABLE_CSFILES =				\
 	$(blamqueryable)/BlamQueryable.cs
 
+
 #	$(WEB_HISTORY_QUERYABLE_CSFILES)	\
 #	$(TOMBOY_QUERYABLE_CSFILES)		\
-#	$(BLAM_QUERYABLE_CSFILES)		\
 #	$(EVO_MAIL_DRIVER_CSFILES)		\
 #
 
@@ -214,6 +214,7 @@ DAEMON_DLL_CSFILES = 				\
 	$(LUCENE_CSFILES)			\
 	$(FILE_SYSTEM_QUERYABLE_CSFILES)	\
 	$(GAIM_LOG_QUERYABLE_CSFILES)		\
+	$(BLAM_QUERYABLE_CSFILES)		\
 	$(srcdir)/BugzillaDriver.cs 		\
 	$(srcdir)/Crawler.cs			\
 	$(srcdir)/DBusisms.cs			\
@@ -254,6 +255,21 @@ DAEMON_DLL_CSFILES += 	$(EDS_QUERYABLE_CSFILES)
 DAEMON_DLL_ASSEMBLIES += $(EVO_SHARP_LIBS)
 endif
 
+authenticators = $(srcdir)/NetworkAuthenticators
+AUTHENTICATORS_CSFILES =				\
+	$(authenticators)/BasicAuthenticator.cs
+
+if ENABLE_NETWORK
+DAEMON_DLL_CSFILES += 					\
+	$(AUTHENTICATORS_CSFILES) 			\
+	$(srcdir)/NetworkHandler.cs			\
+	$(srcdir)/NetworkService.cs			\
+	$(srcdir)/NetworkDriver.cs
+if ENABLE_RENDEZVOUS
+DAEMON_DLL_CSFLAGS += -define:ENABLE_RENDEZVOUS
+DAEMON_DLL_ASSEMBLIES += $(RENDEZVOUS_LIBS)
+endif
+endif
 
 
 $(DAEMON_DLL_TARGET): $(DAEMON_DLL_CSFILES) $(DAEMON_DLL_LOCAL_ASSEMBLIES)
@@ -292,6 +308,10 @@ DAEMON_ASSEMBLIES =				\
 	-r:Mono.Posix				\
 	-r:System.Runtime.Remoting		\
 	-r:ICSharpCode.SharpZipLib.dll
+
+if ENABLE_NETWORK
+DAEMON_CSFLAGS += -define:ENABLE_NETWORK
+endif
 
 $(DAEMON_TARGET): $(DAEMON_CSFILES) $(DAEMON_LOCAL_ASSEMBLIES)
 	$(CSC) -o $@ $(DAEMON_CSFLAGS) $(DAEMON_CSFILES) $(DAEMON_ASSEMBLIES)

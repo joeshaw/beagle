@@ -39,6 +39,10 @@ namespace Beagle.Daemon {
 		private static ArrayList dbusObjects = new ArrayList ();
 		private static FactoryImpl factory = null;
 
+#if ENABLE_NETWORK
+		private static NetworkService network = null;
+#endif
+
 		private static bool Daemonize ()
 		{
 			Directory.SetCurrentDirectory ("/");
@@ -139,6 +143,7 @@ namespace Beagle.Daemon {
 			bool arg_out = false;
 			bool arg_no_fork = false;
 			bool arg_debug = false;
+			bool arg_network = false;
 
 			int i = 0;
 			while (i < args.Length) {
@@ -176,6 +181,10 @@ namespace Beagle.Daemon {
 					if (next_arg != null)
 						QueryDriver.Deny (next_arg);
 					++i; // we used next_arg
+					break;
+
+				case "--enable-network":
+					arg_network = true;
 					break;
 
 				default:
@@ -263,7 +272,17 @@ namespace Beagle.Daemon {
 				Logger.Log.Fatal ("Could not initialize Beagle:\n{0}", e);
 				return 1;
 			}	
-
+#if ENABLE_NETWORK
+			if (arg_network) {
+				try {
+					// Set up network service
+					network = new NetworkService(queryDriver);
+					network.Start ();
+				} catch {
+					Logger.Log.Error ("Could not initialize network service"); 
+				}
+			}
+#endif
 			// Test if the FileAdvise stuff is working: This will print a
 			// warning if not.  The actual advice calls will fail silently.
 			FileAdvise.TestAdvise ();
@@ -308,6 +327,5 @@ namespace Beagle.Daemon {
 			Logger.Log.Debug ("Done unregistering Daemon objects");
 
 		}
-
 	}
 }

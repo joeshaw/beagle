@@ -202,6 +202,30 @@ EVO_SHARP_PREFIX=`$PKG_CONFIG --variable=prefix evolution-sharp`
 
 dnl ----------------------------------------------
 
+AC_ARG_ENABLE([network],
+        [  --enable-network       Enable Network Service ],
+        enable_network=yes,
+        enable_network=no)
+
+AM_CONDITIONAL(ENABLE_NETWORK, test "x$enable_network" = "xyes")
+
+if test "x$enable_network" = "xyes"; then
+        PKG_CHECK_MODULES(RENDEZVOUS,					\
+		          mdnsresponder,				\
+			  enable_rendezvous=yes,			\
+			  enable_rendezvous=no)
+        AC_SUBST(RENDEZVOUS_LIBS)
+
+	AM_CONDITIONAL(ENABLE_RENDEZVOUS, test "x$enable_rendezvous" = "xyes")
+
+	RENDEZVOUS_PREFIX=`$PKG_CONFIG --variable=prefix mdnsresponder`
+else
+	AM_CONDITIONAL(ENABLE_RENDEZVOUS, false)
+fi
+
+
+dnl ----------------------------------------------
+
 dnl beagled
 
 PKG_CHECK_MODULES(GSF_SHARP, gsf-sharp, enable_gsf_sharp=yes, enable_gsf_sharp=no)
@@ -290,7 +314,7 @@ AC_SUBST(CHOOSER_FU_LIBS)
 dnl ----------------------------------------------
 
 dnl Prefixes for helper scripts
-GAC_PREFIX="$DBUS_PREFIX:$EVO_SHARP_PREFIX:$GSF_SHARP_PREFIX"
+GAC_PREFIX="$DBUS_PREFIX:$EVO_SHARP_PREFIX:$GSF_SHARP_PREFIX:$RENDEZVOUS_PREFIX"
 GAC_PREFIX="`echo $GAC_PREFIX | sed -e 's|::\+|:|g' -e 's|^:\+||' -e 's|:\+$||'`"
 AC_SUBST(GAC_PREFIX)
 
@@ -323,7 +347,13 @@ echo "
 	Epiphany Extension?	${enable_epiphany_extension}
 	Mozilla Extension?	yes
 
-"
+	Enable Network		${enable_network}"
+
+if test "x$enable_network" = "xyes"; then
+   echo "	Enable Rendezvous	${enable_rendezvous}"
+fi
+
+echo 
 
 if test "x$enable_epiphany_extension" = "xyes"; then
    echo "NOTE: The Beagle Epiphany Extension Is Totally Insecure!"
