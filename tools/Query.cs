@@ -184,9 +184,8 @@ class QueryTool {
 		if (! keepRunning)
 			query.FinishedEvent += OnFinished;
 
-		query.Start ();
-
 		queryStartTime = DateTime.Now;
+		query.Start ();
 
 		Gtk.Application.Run ();
 	}
