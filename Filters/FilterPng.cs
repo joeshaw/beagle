@@ -54,13 +54,13 @@ namespace Beagle.Filters {
 			    || buffer [2] != 78 || buffer [3] != 71
 			    || buffer [4] != 13 || buffer [5] != 10
 			    || buffer [6] != 26 || buffer [7] != 10) {
-				Console.WriteLine ("Bad signature!");
+				//Console.WriteLine ("Bad signature!");
 				return;
 			}
 
 			if (buffer [12] != 73 || buffer [13] != 72
 			    || buffer [14] != 68 || buffer [15] != 82) {
-				Console.WriteLine ("First chunk is not IHDR!");
+				//Console.WriteLine ("First chunk is not IHDR!");
 				return;
 			}
 
