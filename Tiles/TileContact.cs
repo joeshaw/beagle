@@ -71,13 +71,21 @@ namespace Beagle.Tile {
 				Template["Icon"] = Images.GetHtmlSource ("contact-icon.png",
 									 "image/png");
 			}
-			
+
+			if (Hit["fixme:ImAim"] != null)
+				Template["CanSendIm"] = "";
 		}
 
 		[TileAction]
 		public void SendMailEmail1 ()
 		{
 			SendMailToAddress (Hit ["fixme:Email1"], null);
+		}
+
+		[TileAction]
+		public void SendIm ()
+		{
+			SendImAim (Hit["fixme:ImAim"]);
 		}
 	}
 }
