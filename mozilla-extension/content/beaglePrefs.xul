@@ -41,12 +41,9 @@
   <groupbox>
 
     <caption label="&beagle.pref.filter.label;" />
-    <label control="host-filter" value="&beagle.pref.filter.host.label;"/>
-    <textbox id="beagle.filter" oninput="updateFilterAddButton();"/>
     <hbox>
         <button id="beagle.filter.add" 
             label="&beagle.pref.filter.host.add.label;"
-            disabled="true" 
             oncommand="beaglePrefsAddFilter();"/>
         <button id="beagle.filter.remove"
             disabled="true" 

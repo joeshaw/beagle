@@ -124,12 +124,7 @@ function beaglePrefsSave()
 }
 
 function beaglePrefsAddFilter() {
-  var filter = document.getElementById('beagle.filter');
-  var listbox = document.getElementById('beagle.security.filters');
-  if (filter.value != ''){
-      listbox.appendItem(filter.value, filter.value);
-  }
-  filter.value = '';
+  window.openDialog('chrome://beagle/content/beagleAddDomainDialog.xul', 'Add Domain', 'chrome, modal');
 }
 
 function beaglePrefsRemoveFilter() {

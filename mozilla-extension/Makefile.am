@@ -12,6 +12,7 @@ INNER_JAR_FILES = 			\
 	content/beagleOverlay.xul	\
 	content/beaglePrefs.js		\
 	content/beaglePrefs.xul		\
+	content/beagleAddDomainDialog.xul	\
 	\
 	content/jslib/jslib.js		\
 	content/jslib/modules.js	\
