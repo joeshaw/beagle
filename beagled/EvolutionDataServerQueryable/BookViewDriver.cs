@@ -28,6 +28,7 @@ using System;
 using System.Collections;
 using System.Text;
 using Beagle.Daemon;
+using System.Threading;
 
 using System.Runtime.InteropServices;
 
@@ -37,11 +38,19 @@ namespace Beagle.Daemon.EvolutionDataServerQueryable {
 		private Evolution.BookView view;
 		private IQueryResult result;
 		
+		private Uri GetContactUri (Evolution.Contact contact) {
+			return GetContactUri (contact.Id);
+		}
+
+		private Uri GetContactUri (string id) {
+			return new Uri ("contact://" + id, true); // FIXME!
+		}
+
 		public Hit HitFromContact (Evolution.Contact contact)
 		{
 			Hit hit = new Hit ();
 			
-			hit.Uri    = new Uri ("contact://" + contact.Id, true); // FIXME!
+			hit.Uri    = GetContactUri (contact.Id);
 			hit.Type   = "Contact";
 			hit.Source = "EvolutionDataServer";
 			hit.ScoreRaw  = 1.0f; // FIXME
@@ -153,7 +162,7 @@ namespace Beagle.Daemon.EvolutionDataServerQueryable {
 			ArrayList array = new ArrayList ();
 
 			foreach (string id in idList) {
-				array.Add (new Uri ("contact://" + id, true)); // FIXME
+				array.Add (GetContactUri (id));
 			}
 
 			result.Subtract (array);
@@ -165,17 +174,30 @@ namespace Beagle.Daemon.EvolutionDataServerQueryable {
 			// FIXME: handle this as a remove/add?  Add a
 			// "changed" event to beagle?
 		}
+
+		void OnSequenceComplete (object o, 
+					 Evolution.SequenceCompleteArgs args)
+		{
+			System.Console.WriteLine ("sequence complete");
+			lock (this) {
+				Monitor.Pulse (this);
+			}
+		}
 	
 		private void OnResultCancelled (QueryResult source) 
 		{
-			view.ContactsAdded -= OnContactsAdded;
-			view.ContactsRemoved -= OnContactsRemoved;
-			view.ContactsChanged -= OnContactsChanged;
-
-			view.Dispose ();
-
-			view = null;
-			result = null;
+			lock (this) {
+				view.ContactsAdded -= OnContactsAdded;
+				view.ContactsRemoved -= OnContactsRemoved;
+				view.ContactsChanged -= OnContactsChanged;
+				view.SequenceComplete -= OnSequenceComplete;
+				
+				view.Dispose ();
+				
+				view = null;
+				result = null;
+				Monitor.Pulse (this);
+			}
 		}
 
 		public BookViewDriver (Evolution.Book addressbook,
@@ -201,6 +223,7 @@ namespace Beagle.Daemon.EvolutionDataServerQueryable {
 			view.ContactsAdded += OnContactsAdded;
 			view.ContactsRemoved += OnContactsRemoved;
 			view.ContactsChanged += OnContactsChanged;
+			view.SequenceComplete += OnSequenceComplete;
 
 			// FIXME: bad hack - need Cancelled on IQueryResult
 			QueryResult queryResult = (QueryResult)result;

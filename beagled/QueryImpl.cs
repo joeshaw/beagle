@@ -43,6 +43,7 @@ namespace Beagle.Daemon {
 		public override event HitsAddedAsXmlHandler HitsAddedAsXmlEvent;
 		public override event HitsSubtractedAsStringHandler HitsSubtractedAsStringEvent;
 		public override event CancelledHandler CancelledEvent;
+		public override event FinishedHandler FinishedEvent;
 		
 		public delegate void ClosedHandler (QueryImpl sender);
 		public event ClosedHandler ClosedEvent;
@@ -60,6 +61,7 @@ namespace Beagle.Daemon {
 			if (result != null) {
 				result.HitsAddedEvent -= OnHitsAddedToResult;
 				result.HitsSubtractedEvent -= OnHitsSubtractedFromResult;
+				result.FinishedEvent -= OnFinishedResult;
 				result.CancelledEvent -= OnCancelledResult;
 
 				result.Cancel ();
@@ -75,6 +77,7 @@ namespace Beagle.Daemon {
 
 			result.HitsAddedEvent += OnHitsAddedToResult;
 			result.HitsSubtractedEvent += OnHitsSubtractedFromResult;
+			result.FinishedEvent += OnFinishedResult;
 			result.CancelledEvent += OnCancelledResult;
 		}
 
@@ -177,6 +180,15 @@ namespace Beagle.Daemon {
 
 			if (HitsAddedAsXmlEvent != null)
 				HitsAddedAsXmlEvent (this, HitsToXml (someHits));
+		}
+
+		private void OnFinishedResult (QueryResult source) 
+		{
+			if (source != result)
+				return;
+
+			if (FinishedEvent != null) 
+				FinishedEvent (this);
 		}
 
 		private string UrisToString (ICollection uris)

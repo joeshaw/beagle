@@ -28,6 +28,7 @@
 using System;
 using System.Collections;
 using System.Text;
+using System.Threading;
 
 using Beagle.Daemon;
 
@@ -84,6 +85,10 @@ namespace Beagle.Daemon.EvolutionDataServerQueryable {
 								    result);
 
 			driver.Start ();
+			
+			lock (driver) {
+				Monitor.Wait (driver);
+			}
 		}
 	}
 

@@ -48,7 +48,6 @@ namespace Beagle.Daemon {
 
 			public void Start ()
 			{
-				result.WorkerStart ();
 				try {
 					worker (result);
 				} catch (Exception e) {
@@ -156,18 +155,31 @@ namespace Beagle.Daemon {
 				QueryWorkerClosure qwc;
 				qwc = new QueryWorkerClosure (worker, this);
 
+				// QueryDriver has an enclosing WorkerStart,
+				// so if we call WorkerStartin this tread, 
+				// all the workers will have a chance 
+				// to start before Finished is called
+				
+				WorkerStartNoLock ();
+
 				Thread th;
 				th = new Thread (new ThreadStart (qwc.Start));
 				th.Start ();
 			}
 		}
 
+		private void WorkerStartNoLock ()
+		{
+			++workers;
+			if (workers == 1 && StartedEvent != null)
+				StartedEvent (this);
+			
+		}
+
 		internal void WorkerStart ()
 		{
 			lock (this) {
-				++workers;
-				if (workers == 1 && StartedEvent != null)
-					StartedEvent (this);
+				WorkerStartNoLock ();
 			}
 		}
 

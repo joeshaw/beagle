@@ -81,5 +81,8 @@ namespace Beagle
 		[Signal]
 		public virtual event CancelledHandler CancelledEvent;
 
+		public delegate void FinishedHandler (QueryProxy source);
+		[Signal]
+		public virtual event FinishedHandler FinishedEvent;
 	}
 }

@@ -142,7 +142,7 @@ namespace Beagle.Daemon.MailQueryable {
 			int count = 0, indexedCount = 0;
 			foreach (Camel.MBoxMessageInfo mi in summary.messages) {
 
-				if ((count & 15) == 0) {
+				if ((count & 1500) == 0) {
 					Console.WriteLine ("{0}: indexed {1} messages ({2}/{3} {4:###.0}%)",
 							   folderName, indexedCount,
 							   count, summary.header.count, 
@@ -215,7 +215,7 @@ namespace Beagle.Daemon.MailQueryable {
 			int count = 0, index_count = 0;
 
 			foreach (Camel.ImapMessageInfo mi in summary.messages) {
-				if ((count & 15) == 0) {
+				if ((count & 1500) == 0) {
 					Console.WriteLine ("{0}: indexed {1} messages ({2}/{3} {4:###.0}%)",
 							   folder_name, index_count,
 							   count, summary.header.count, 

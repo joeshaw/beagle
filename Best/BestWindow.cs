@@ -99,12 +99,20 @@ namespace Best {
 			DBusisms.BeagleDown += OnBeagleDown;
 		}
 
+		private void SetBusy (bool busy)
+		{
+			if (busy) {
+				this.GdkWindow.Cursor = new Gdk.Cursor (Gdk.CursorType.Watch);
+			} else {
+				this.GdkWindow.Cursor = null;
+			}
+
+		}
+
 		private void OnBeagleDown ()
 		{
-			query.HitAddedEvent -= OnHitAdded;
-			query.HitSubtractedEvent -= OnHitSubtracted;
-			query.Dispose ();
-			query = null;
+			SetBusy (false);
+			DetachQuery ();
 		}
 
 		private void DoDelete (object o, DeleteEventArgs args)
@@ -262,15 +270,42 @@ namespace Best {
 			root.Subtract (uri);
 		}
 
+		private void OnFinished (QueryProxy source)
+		{
+			SetBusy (false);
+		}
+
+		private void OnCancelled (QueryProxy source)
+		{
+			SetBusy (false);
+		}
+
+		private void AttachQuery ()
+		{
+			query.HitAddedEvent += OnHitAdded;
+			query.HitSubtractedEvent += OnHitSubtracted;
+			query.FinishedEvent += OnFinished;
+			query.CancelledEvent += OnCancelled;
+		}
+
+		private void DetachQuery ()
+		{
+			if (query != null) {
+				query.HitAddedEvent -= OnHitAdded;
+				query.HitSubtractedEvent -= OnHitSubtracted;
+				query.FinishedEvent -= OnFinished;
+				query.CancelledEvent -= OnCancelled;
+				query.Dispose ();
+				query = null;
+			}
+		}
+
 		private void Search (String searchString)
 		{
 			entry.Text = searchString;
-
 			if (query != null) {
 				query.Cancel ();
-				query.HitAddedEvent -= OnHitAdded;
-				query.HitSubtractedEvent -= OnHitSubtracted;
-				query.Dispose ();
+				DetachQuery ();
 			}
 
 			query = Factory.NewQuery ();
@@ -280,11 +315,11 @@ namespace Best {
 
 			query.AddText (searchString);
 
-			query.HitAddedEvent += OnHitAdded;
-			query.HitSubtractedEvent += OnHitSubtracted;
+			AttachQuery ();
 
 			root.Open ();
 
+			SetBusy (true);
 			query.Start ();
 		}
 	}
