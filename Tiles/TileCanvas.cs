@@ -348,13 +348,17 @@ namespace Beagle {
 
 			override public void Tile (Tile tile)
 			{
-				canvas.CacheTile (tile);
-				Write ("<iframe");
-				Write (" src=\":{0}:_iframe_\"", tile.UniqueKey);
-				Write (" marginwidth=\"0\"");
-				Write (" marginheight=\"1\"");
-				Write (" frameborder=\"0\"");
-				Write ("></iframe>");
+				if (tile.RenderInline) {
+					tile.Render (this);
+				} else {
+					canvas.CacheTile (tile);
+					Write ("<iframe");
+					Write (" src=\":{0}:_iframe_\"", tile.UniqueKey);
+					Write (" marginwidth=\"0\"");
+					Write (" marginheight=\"1\"");
+					Write (" frameborder=\"0\"");
+					Write ("></iframe>");
+				}
 			}
 
 			override public void Checkpoint ()

@@ -50,7 +50,7 @@ namespace Beagle {
 			Hit hit = new Hit ();
 
 			hit.Uri      = res.URL;
-			hit.Type     = "WebLink";
+			hit.Type     = "Google";
 			hit.MimeType = "text/html"; // FIXME
 			hit.Source   = "Google";
 

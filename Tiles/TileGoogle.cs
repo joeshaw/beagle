@@ -1,5 +1,5 @@
 //
-// Tile.cs
+// TileGoogle.cs
 //
 // Copyright (C) 2004 Novell, Inc.
 //
@@ -27,67 +27,24 @@
 using System;
 
 namespace Beagle {
+	
+	public class TileGoogle : TileFromTemplate {
 
-	public delegate void TileActionHandler ();
-	public delegate void TileChangedHandler (Tile tile);
+		Hit hit;
 
-	public abstract class Tile {
+		public TileGoogle (Hit _hit) : base ("template-google.html")
+		{
+			hit = _hit;
+		}
 
-		static private object uidSrcLock = new object ();
-		static private long uidSrc = 0;
-		private long uid;
+		override protected string ExpandKey (string key)
+		{
+			if (key == "Uri")
+				return hit.Uri;
+			return hit [key];
+		}
+
 		
-		public Tile ()
-		{
-			lock (uidSrcLock) {
-				++uidSrc;
-				uid = uidSrc;
-			}
-		}
 
-		public string UniqueKey {
-			get { return "_tile_" + uid; }
-		}
-
-		////////////////////////
-
-		bool renderInline = false;
-		public bool RenderInline {
-			get { return renderInline; }
-		}
-
-		protected void EnableInlineRendering ()
-		{
-			renderInline = true;
-		}
-	       
-
-		abstract public void Render (TileRenderContext ctx);
-
-		////////////////////////
-
-		virtual public void PopupMenu (TileMenuContext ctx) { }
-
-		////////////////////////
-
-		virtual public bool HandleUrlRequest (string url, Gtk.HTMLStream stream)
-		{
-			return false;
-		}
-
-		////////////////////////
-
-		private TileChangedHandler changedHandler = null;
-
-		public void SetChangedHandler (TileChangedHandler ch)
-		{
-			changedHandler = ch;
-		}
-
-		protected void Changed ()
-		{
-			if (changedHandler != null)
-				changedHandler (this);
-		}
 	}
 }

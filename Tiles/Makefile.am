@@ -14,7 +14,10 @@ CSFILES =					\
 	$(srcdir)/TileFromTemplate.cs		\
 	$(srcdir)/TileContact.cs		\
 	$(srcdir)/TileFile.cs			\
-	$(srcdir)/TileMailMessage.cs
+	$(srcdir)/TileGoogle.cs			\
+	$(srcdir)/TileImLog.cs			\
+	$(srcdir)/TileMailMessage.cs		\
+	$(srcdir)/TileWebHistory.cs
 
 ASSEMBLIES = 					\
 	$(EVO_SHARP_LIBS)			\
@@ -29,7 +32,10 @@ RESOURCEFILES =					\
 	$(srcdir)/template-hit-collection.html	\
 	$(srcdir)/template-contact.html		\
 	$(srcdir)/template-file.html		\
-	$(srcdir)/template-mail-message.html
+	$(srcdir)/template-google.html		\
+	$(srcdir)/template-im-log.html		\
+	$(srcdir)/template-mail-message.html	\
+	$(srcdir)/template-web-history.html
 
 # Makefile-fu to map /path/filename to -resource:/path/filename,filename
 RESOURCES = $(join $(RESOURCEFILES:%=-resource:%,),$(notdir $(RESOURCEFILES)))

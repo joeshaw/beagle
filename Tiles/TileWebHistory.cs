@@ -1,5 +1,5 @@
 //
-// Tile.cs
+// TileWebHistory.cs
 //
 // Copyright (C) 2004 Novell, Inc.
 //
@@ -27,67 +27,21 @@
 using System;
 
 namespace Beagle {
+	
+	public class TileWebHistory : TileFromTemplate {
 
-	public delegate void TileActionHandler ();
-	public delegate void TileChangedHandler (Tile tile);
+		Hit hit;
 
-	public abstract class Tile {
-
-		static private object uidSrcLock = new object ();
-		static private long uidSrc = 0;
-		private long uid;
-		
-		public Tile ()
+		public TileWebHistory (Hit _hit) : base ("template-web-history.html")
 		{
-			lock (uidSrcLock) {
-				++uidSrc;
-				uid = uidSrc;
-			}
+			hit = _hit;
 		}
 
-		public string UniqueKey {
-			get { return "_tile_" + uid; }
-		}
-
-		////////////////////////
-
-		bool renderInline = false;
-		public bool RenderInline {
-			get { return renderInline; }
-		}
-
-		protected void EnableInlineRendering ()
+		override protected string ExpandKey (string key)
 		{
-			renderInline = true;
-		}
-	       
-
-		abstract public void Render (TileRenderContext ctx);
-
-		////////////////////////
-
-		virtual public void PopupMenu (TileMenuContext ctx) { }
-
-		////////////////////////
-
-		virtual public bool HandleUrlRequest (string url, Gtk.HTMLStream stream)
-		{
-			return false;
-		}
-
-		////////////////////////
-
-		private TileChangedHandler changedHandler = null;
-
-		public void SetChangedHandler (TileChangedHandler ch)
-		{
-			changedHandler = ch;
-		}
-
-		protected void Changed ()
-		{
-			if (changedHandler != null)
-				changedHandler (this);
+			if (key == "Uri")
+				return hit.Uri;
+			return hit [key];
 		}
 	}
 }

@@ -59,9 +59,21 @@ namespace Best {
 					name = "Files";
 					icon = "document.png";
 					break;
+				case "Google":
+					name = "Google";
+					icon = "icon-web.png";
+					break;
+				case "IMLog":
+					name = "Conversations";
+					icon = "gnome-gaim.png";
+					break;
 				case "MailMessage":
 					name = "Email";
 					icon = "mail-message-icon.png";
+					break;
+				case "WebHistory":
+					name = "Web";
+					icon = "icon-web.png";
 					break;
 				}
 
@@ -82,7 +94,15 @@ namespace Best {
 
 		override public void Render (TileRenderContext ctx)
 		{
-			foreach (TileHitCollection tile in tileTable.Values) {
+			ArrayList array = new ArrayList ();
+
+			foreach (TileHitCollection tile in tileTable.Values)
+				array.Add (tile);
+
+			array.Sort ();
+
+			foreach (TileHitCollection tile in array) {
+				ctx.WriteLine ("MaxScore={0}", tile.MaxScore);
 				ctx.Tile (tile);
 			}
 		}

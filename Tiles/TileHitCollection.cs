@@ -29,7 +29,7 @@ using System.Collections;
 
 namespace Beagle {
 
-	public class TileHitCollection : TileFromTemplate {
+	public class TileHitCollection : TileFromTemplate, IComparable {
 
 		string name = null;
 		string icon = null;
@@ -38,6 +38,8 @@ namespace Beagle {
 		{
 			name = _name;
 			icon = _icon;
+
+			EnableInlineRendering ();
 		}
 
 		private class HitTilePair : IComparable {
@@ -60,8 +62,20 @@ namespace Beagle {
 					tile = new TileFile (hit);
 					break;
 
+				case "Google":
+					tile = new TileGoogle (hit);
+					break;
+
+				case "IMLog":
+					tile = new TileImLog (hit);
+					break;
+
 				case "MailMessage":
 					tile = new TileMailMessage (hit);
+					break;
+
+				case "WebHistory":
+					tile = new TileWebHistory (hit);
 					break;
 				}
 			}
@@ -203,5 +217,12 @@ namespace Beagle {
 
 			return base.RenderKey (key, ctx);
 		}
+
+		public int CompareTo (object obj)
+		{
+			TileHitCollection other = (TileHitCollection) obj;
+			return other.MaxScore.CompareTo (MaxScore);
+		}
+
 	}
 }
