@@ -1,0 +1,190 @@
+# Brazilian Portuguese translation of beagle.
+# Copyright (C) 2005 Free Software Foundation, Inc.
+# This file is distributed under the same license as the beagle package.
+# Raphael Higino <raphaelh@uai.com.br>, 2005.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: beagle\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2005-04-05 12:16-0300\n"
+"PO-Revision-Date: 2005-04-05 15:48-0300\n"
+"Last-Translator: Raphael Higino <raphaelh@uai.com.br>\n"
+"Language-Team: Brazilian Portuguese <gnome-l10n-br@listas.cipsga.org.br>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n > 1);\n"
+
+#: ../Best/Best.cs:120
+msgid ""
+"If you're wondering whether Best is working check your notification area "
+"(system tray)"
+msgstr ""
+
+#: ../Best/BestTray.cs:164
+msgid "No Recent Searches"
+msgstr "Nenhuma Busca Recente"
+
+#: ../Best/BestTray.cs:179
+msgid "Quit"
+msgstr "Sair"
+
+#: ../Best/BestWindow.cs:302
+msgid "Anywhere"
+msgstr "Qualquer lugar"
+
+#: ../Best/BestWindow.cs:304
+msgid "in Files"
+msgstr "em Arquivos"
+
+#: ../Best/BestWindow.cs:306
+msgid "in Addressbook"
+msgstr ""
+
+#: ../Best/BestWindow.cs:308
+msgid "in Mail"
+msgstr "em Mensagens"
+
+#: ../Best/BestWindow.cs:310
+msgid "in Web Pages"
+msgstr ""
+
+#: ../Best/BestWindow.cs:312
+msgid "in Chats"
+msgstr "em Bate-papos"
+
+#: ../Best/BestWindow.cs:328
+msgid "Search terms:"
+msgstr "Termos das busca:"
+
+#: ../Best/BestWindow.cs:345
+msgid "Find"
+msgstr "Localizar"
+
+#: ../Best/BestWindow.cs:362
+msgid "Show More Results"
+msgstr "Exibir Mais Resultados"
+
+#: ../Best/BestWindow.cs:368
+msgid "Show Previous Results"
+msgstr "Exibir Resultados Anteriores"
+
+#: ../Best/BestWindow.cs:402
+msgid "No results."
+msgstr "Nenhum resultado."
+
+#. To translators: {0} is the current count of results shown of {1} in total, this is the message that is initially shown
+#. when results are returned to the user.
+#: ../Best/BestWindow.cs:406
+#, csharp-format, fuzzy
+msgid "Best <b>{0} results of {1}</b> are shown."
+msgstr "Os <b>{0}</b> melhores <b>resultados de {1}</b> "
+
+#. To translators: {0} to {1} is the interval of results currently shown of {2} results in total
+#: ../Best/BestWindow.cs:411
+#, csharp-format
+msgid "Results <b>{0} through {1} of {2}</b> are shown."
+msgstr ""
+
+#. To translators: {0} represents the current query keywords
+#: ../Best/BestWindow.cs:550
+#, csharp-format
+msgid ""
+"The query for <i>{0}</i> failed.<br>The likely cause is that the beagle "
+"daemon isn't running."
+msgstr ""
+
+#. To translators: {0} represents the current query keywords
+#: ../Best/BestWindow.cs:555
+#, csharp-format
+msgid ""
+"The query for <i>{0}</i> failed.<br>The session bus isn't running.  See "
+"http://beaglewiki.org/index.php/Installing%20Beagle for information on "
+"setting up a session bus."
+msgstr ""
+
+#. To translators: {0} represents the current query keywords, {1} contains the errormessage
+#: ../Best/BestWindow.cs:559
+#, csharp-format
+msgid "The query for <i>{0}</i> failed with error:<br>{1}<br>"
+msgstr "A busca por <i>{0}</i> falhou com o erro:<br>{1}<br>"
+
+#: ../Tiles/TileDocs.cs:75
+msgid "Pages:"
+msgstr ""
+
+#: ../Tiles/TileDocs.cs:79
+msgid "Words:"
+msgstr "Palavras:"
+
+#: ../Tiles/TileFolder.cs:51
+msgid "Empty"
+msgstr "Vazio"
+
+#: ../Tiles/TileFolder.cs:53
+#, csharp-format
+msgid "Contains {0} Item"
+msgid_plural "Contains {0} Items"
+msgstr[0] ""
+msgstr[1] ""
+
+#: ../Tiles/TileMailMessage.cs:68
+msgid "No Subject"
+msgstr "Sem Assunto"
+
+#: ../Tiles/TileMailMessage.cs:73
+msgid "To"
+msgstr "Para"
+
+#: ../Tiles/TileMailMessage.cs:73
+msgid "From"
+msgstr "De"
+
+#: ../Tiles/TileMailMessage.cs:104
+msgid "Sent"
+msgstr "Enviado"
+
+#: ../Tiles/TileMailMessage.cs:104
+msgid "Received"
+msgstr "Recebido"
+
+#: ../Util/StringFu.cs:65
+msgid "Today"
+msgstr "Hoje"
+
+#: ../Util/StringFu.cs:67
+msgid "Yesterday"
+msgstr "Ontem"
+
+#. To translators: {0} is the time of the day, eg. 13:45
+#: ../Util/StringFu.cs:95
+#, csharp-format
+msgid "Today, {0}"
+msgstr "Hoje, {0}"
+
+#. To translators: {0} is the time of the day, eg. 13:45
+#: ../Util/StringFu.cs:98
+#, csharp-format
+msgid "Yesterday, {0}"
+msgstr "Ontem, {0}"
+
+#. To translators: {0} is the number of days that have passed, {1} is the time of the day, eg. 13:45
+#: ../Util/StringFu.cs:101
+#, csharp-format
+msgid "{0} days ago, {1}"
+msgstr ""
+
+#: ../Util/StringFu.cs:119
+#, csharp-format
+msgid "{0} hour"
+msgid_plural "{0} hours"
+msgstr[0] "{0} hora"
+msgstr[1] "{0} horas"
+
+#: ../Util/StringFu.cs:126
+#, csharp-format
+msgid "{0} minute"
+msgid_plural "{0} minutes"
+msgstr[0] "{0} minuto"
+msgstr[1] "{0} minutos"
