@@ -55,9 +55,9 @@ class QueryTool {
 		Console.WriteLine ();
 	}
 
-	static void OnGotHits (string results)
+	static void OnGotHits (ICollection hits)
 	{
-		foreach (Hit hit in Hit.ReadHitXml (results)) {
+		foreach (Hit hit in hits) {
 			WriteHit (hit);
 			++count;
 		}

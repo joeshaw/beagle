@@ -192,10 +192,8 @@ namespace Best {
 
 		//////////////////////////
 
-		private void OnGotHits (string results)
+		private void OnGotHits (ICollection hits)
 		{
-			ArrayList hits = Hit.ReadHitXml (results);
-			
 			foreach (Hit hit in hits)
 				root.Add (hit);
 		}

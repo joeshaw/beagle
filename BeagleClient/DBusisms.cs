@@ -32,6 +32,7 @@ namespace Beagle
 
 		static Connection connection = null;
 		static Service service = null;
+		static QueryManager queryManager = null;
 
 		public static Connection Connection {
 			get { 
@@ -47,6 +48,15 @@ namespace Beagle
 					service = DBus.Service.Get (Connection,
 								    "com.novell.Beagle");
 				return service;
+			}
+		}
+
+		public static QueryManager QueryManager {
+			get {
+				if (queryManager == null)
+					queryManager = (QueryManager) DBusisms.Service.GetObject (typeof (QueryManager),
+												  "/com/novell/Beagle/QueryManager");
+				return queryManager;
 			}
 		}
 	}

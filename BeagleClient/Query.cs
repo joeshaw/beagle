@@ -26,6 +26,7 @@
 
 namespace Beagle
 {
+	using System.Collections;
 	using DBus;
 	
 	public enum QueryDomain {
@@ -36,7 +37,7 @@ namespace Beagle
 
 	[Interface ("com.novell.Beagle.Query")]
 	public abstract class Query {
-
+		
 		[Method]
 		public abstract void AddText (string str);
 		
@@ -59,8 +60,11 @@ namespace Beagle
 		public abstract void Cancel ();
 
 
-		public delegate void GotHitsHandler (string hitsXml);
+		public delegate void GotHitsXmlHandler (string hitsXml);
 		[Signal]
+		public virtual event GotHitsXmlHandler GotHitsXmlEvent;
+
+		public delegate void GotHitsHandler (ICollection hits);
 		public virtual event GotHitsHandler GotHitsEvent;
 
 		public delegate void FinishedHandler ();
@@ -71,18 +75,21 @@ namespace Beagle
 		[Signal]
 		public virtual event CancelledHandler CancelledEvent;
 
-		static QueryManager theQM = null;
+		private void OnGotHitsXml (string hitsXml)
+		{
+			if (GotHitsEvent != null) {
+				ArrayList hits = Hit.ReadHitXml (hitsXml);
+				GotHitsEvent (hits);
+			}
+		}
 
 		static public Query New ()
 		{
-			if (theQM == null)
-				theQM = (QueryManager) DBusisms.Service.GetObject (typeof (QueryManager),
-										   "/com/novell/Beagle/QueryManager");
-
-			string queryPath = theQM.NewQuery ();
+			string queryPath = DBusisms.QueryManager.NewQuery ();
 
 			Query query;
 			query = (Query) DBusisms.Service.GetObject (typeof (Query), queryPath);
+			query.GotHitsXmlEvent += query.OnGotHitsXml;
 			
 			return query;
 		}
