@@ -66,16 +66,17 @@ namespace Beagle.Util {
 			else if (sinceToday.TotalDays < 1)
 				date = Catalog.GetString ("Yesterday");
 			else if (today.Year == dt.Year)
-				date = dt.ToString ("MMM d");
+				date = dt.ToString (Catalog.GetString ("MMM d"));
 			else
-				date = dt.ToString ("MMM d, yyyy");
+				date = dt.ToString (Catalog.GetString ("MMM d, yyyy"));
 			
-			time = dt.ToString ("h:mm tt");
+			time = dt.ToString (Catalog.GetString ("h:mm tt"));
 
 			string fuzzy;
 
 			if (date != null && time != null)
-				fuzzy = date + ", " + time;
+				/* Translators: {0} is a date (e.g. 'Today' or 'Apr 23'), {1} is the time */
+				fuzzy = String.Format (Catalog.GetString ("{0}, {1}"), date, time);
 			else if (date != null)
 				fuzzy = date;
 			else 
@@ -102,11 +103,11 @@ namespace Beagle.Util {
 							      now.DayOfYear - date.DayOfYear,
 							      short_time);
 				} else {
-					return date.ToString ("MMMM d, h:mm tt");
+					return date.ToString (Catalog.GetString ("MMMM d, h:mm tt"));
 				}
 			}
 
-			return date.ToString ("MMMM d yyyy, h:mm tt");
+			return date.ToString (Catalog.GetString ("MMMM d yyyy, h:mm tt"));
 		}
 		
 		public static string DurationToPrettyString (DateTime end_time, DateTime start_time)
@@ -138,12 +139,15 @@ namespace Beagle.Util {
 				return "*BadLength*";
 
 			if (len < 1024)
-				return String.Format ("{0} bytes", len);
+				/* Translators: {0} is a file size in bytes */
+				return String.Format (Catalog.GetString ("{0} bytes"), len);
 
 			if (len < oneMb)
-				return String.Format ("{0:0.0} kb", len/(double)1024);
+				/* Translators: {0} is a file size in kilobytes */
+				return String.Format (Catalog.GetString ("{0:0.0} KB"), len/(double)1024);
 
-			return String.Format ("{0:0.0} Mb", len/(double)oneMb);
+			/* Translators: {0} is a file size in megabytes */
+			return String.Format (Catalog.GetString ("{0:0.0} MB"), len/(double)oneMb);
 		}
 
 		// FIXME: This is pretty inefficient

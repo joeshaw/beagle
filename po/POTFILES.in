@@ -4,9 +4,11 @@
 Best/Best.cs
 Best/BestTray.cs
 Best/BestWindow.cs
+ImLogViewer/ImLogViewer.glade
 Tiles/TileDocs.cs
 Tiles/TileFolder.cs
 Tiles/TileMailMessage.cs
 Tiles/TranslationHack.cs
 Util/ExifData.cs
 Util/StringFu.cs
+
