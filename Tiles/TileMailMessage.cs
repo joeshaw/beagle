@@ -166,6 +166,10 @@ namespace Beagle.Tile {
 				String.Format ("(is \"email\" \"{0}\")", email);
 
 			Evolution.BookQuery query = Evolution.BookQuery.FromString (qstr);
+
+			if (query == null)
+				return;
+
 			Evolution.Contact[] matches = addressbook.GetContacts (query);
 			foreach (Evolution.Contact c in matches) {
 				if (c.ImAim.Length > 0)
