@@ -65,33 +65,12 @@ namespace Beagle.Daemon {
 			return false;
 		}
 
-		private static bool CrawlNeeded (FileSystemInfo info)
-		{
-			string timeStr;
-
-			try {
-				timeStr = ExtendedAttribute.Get (info, "LastCrawl");
-			} catch {
-				EvolutionMailQueryable.log.Debug ("Unable to get last crawl time on {0}", info.FullName);
-				return false;
-			}
-
-			DateTime lastCrawl = StringFu.StringToDateTime (timeStr);
-
-			if (info.LastWriteTime > lastCrawl)
-				return true;
-			else
-				return false;
-		}				
-
 		protected override void CrawlFile (FileSystemInfo info)
 		{
 			FileInfo file = info as FileInfo;
 
-			if (Path.GetExtension (info.Name) == ".ev-summary" || info.Name == "summary") {
-				if (CrawlNeeded (file))
-					this.queryable.IndexSummary (file);
-			}
+			if (Path.GetExtension (info.Name) == ".ev-summary" || info.Name == "summary")
+				this.queryable.IndexSummary (file);
 		}
 	}
 
@@ -193,7 +172,7 @@ namespace Beagle.Daemon {
 			return true;
 		}
 
-		private void LoadCache (string appDataName)
+		private bool LoadCache (string appDataName)
 		{
 			Stream cacheStream;
 			BinaryFormatter formatter;
@@ -204,8 +183,12 @@ namespace Beagle.Daemon {
 				this.mapping = formatter.Deserialize (cacheStream) as Hashtable;
 				cacheStream.Close ();
 				EvolutionMailQueryable.log.Debug ("Successfully loaded previous crawled data from disk: {0}", appDataName);
+
+				return true;
 			} catch {
 				this.mapping = new Hashtable ();
+
+				return false;
 			}
 		}
 
@@ -220,6 +203,26 @@ namespace Beagle.Daemon {
 			cacheStream.Close ();
 		}
 
+		private bool CrawlNeeded ()
+		{
+			string timeStr;
+
+			try {
+				timeStr = ExtendedAttribute.Get (this.summaryInfo, "LastCrawl");
+			} catch {
+				EvolutionMailQueryable.log.Debug ("Unable to get last crawl time on {0}",
+								  this.summaryInfo.FullName);
+				return true;
+			}
+
+			DateTime lastCrawl = StringFu.StringToDateTime (timeStr);
+
+			if (this.summaryInfo.LastWriteTime > lastCrawl)
+				return true;
+			else
+				return false;
+		}
+
 		public Indexable GetNextIndexable ()
 		{
 			Indexable indexable = null;
@@ -229,12 +232,6 @@ namespace Beagle.Daemon {
 					return null;
 			}
 
-			if (this.summary == null)
-				this.summary = Camel.Summary.load (this.summaryInfo.FullName);
-
-			if (this.summaryEnumerator == null)
-				this.summaryEnumerator = this.summary.GetEnumerator ();
-
 			string appDataName;
 			Stream statusStream;
 			BinaryFormatter formatter;
@@ -242,10 +239,22 @@ namespace Beagle.Daemon {
 			appDataName = "status-" + this.accountName + "-" + this.folderName.Replace ('/', '-');
 
 			if (this.mapping == null) {
-				LoadCache (appDataName);
+				bool cache_loaded = LoadCache (appDataName);
 
 				this.deletedList = new ArrayList (this.mapping.Keys);
+
+				// Check to see if we even need to bother walking the summary
+				if (cache_loaded && ! CrawlNeeded ()) {
+					EvolutionMailQueryable.log.Debug ("{0}: summary has not been updated; crawl unncessary", this.folderName);
+					return null;
+				}
 			}
+
+			if (this.summary == null)
+				this.summary = Camel.Summary.load (this.summaryInfo.FullName);
+
+			if (this.summaryEnumerator == null)
+				this.summaryEnumerator = this.summary.GetEnumerator ();
 
 			while (indexable == null && this.summaryEnumerator.MoveNext ()) {
 				Camel.MessageInfo mi = this.summaryEnumerator.Current as Camel.MessageInfo;
