@@ -36,6 +36,8 @@ using System.Collections;
 using System.Xml;
 using System.IO;
 
+using BU = Beagle.Util;
+
 //[assembly:Dashboard.MatchRendererFactory ("Dashboard.FileMatchRenderer")]
 
 namespace Beagle {
@@ -99,24 +101,15 @@ namespace Beagle {
 
 		private void HTMLRenderSingleFile (Hit hit, bool color_band, XmlWriter xw)
 		{
-			if (! hit.Uri.StartsWith ("file://")) {
-				Console.WriteLine ("FileHitRenderer got non-file URI {0}",
-						   hit.Uri);
+			if (! hit.IsFile)
 				return;
-			}
-			String path = hit.Uri.Substring ("file://".Length);
-			string Text    = Path.GetFileName (path);
-			string Icon    = Beagle.Util.GnomeIconLookup.LookupMimeIcon (hit.MimeType, (Gtk.IconSize) 48);
+
+			string Text    = hit.FileName;
+			string Icon    = BU.GnomeIconLookup.LookupMimeIcon (hit.MimeType,
+									    (Gtk.IconSize) 48);
 			string Score   = Convert.ToString (hit ["Score"]);
 			if (Score == null || Score == "")
-				Score = "0";
-
-			// Check to make sure the file exists
-			FileInfo file = new FileInfo (path);
-			if (!file.Exists) {
-				Console.WriteLine ("Ack!  File does not exist: {0}", path);
-				return;
-			}
+				Score = "n/a";
 
 			// DEBUG
 			//Console.WriteLine ("File name: {0}", file.FullName);
@@ -124,8 +117,10 @@ namespace Beagle {
 			//Console.WriteLine ("Last Access time: {0}", file.LastAccessTime);
 			//Console.WriteLine ("Last Write Time: {0}", file.LastWriteTime);
 			//Console.WriteLine ("Size: {0}", file.Length);
-
-			string LastModifiedDate = file.LastWriteTime.ToLongDateString ();
+			
+			FileInfo info = hit.FileInfo;
+			string LastModifiedDate = info.LastWriteTime.ToLongDateString ();
+			string LastAccessedDate = info.LastAccessTime.ToLongDateString ();
 
 			xw.WriteStartElement ("tr");
 			if (color_band)		// highlight every other row
@@ -167,6 +162,7 @@ namespace Beagle {
 			xw.WriteAttributeString ("color", "#666666");
 			xw.WriteString (" (" + Score + ")");
 			xw.WriteEndElement ();	// font
+			
 			xw.WriteStartElement ("br");
 			xw.WriteEndElement ();	// br
 
@@ -174,6 +170,21 @@ namespace Beagle {
 			xw.WriteStartElement ("font");
 			xw.WriteAttributeString ("color", "#666666");
 			xw.WriteString ("Last modified " + LastModifiedDate);
+			xw.WriteEndElement ();	// font
+
+			xw.WriteStartElement ("br");
+			xw.WriteEndElement ();	// br
+			
+			// FIXME:
+			// Last accessed isn't very useful, since it will just
+			// tell us the last time the file crawler ran, right?
+			// We really want to know the last time the *user* accessed
+			// the file.
+
+			// Print 'Last accessed: date'
+			xw.WriteStartElement ("font");
+			xw.WriteAttributeString ("color", "#666666");
+			xw.WriteString ("Last accessed " + LastAccessedDate);
 			xw.WriteEndElement ();	// font
 
 			xw.WriteEndElement ();	// font

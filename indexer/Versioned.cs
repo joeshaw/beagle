@@ -64,6 +64,10 @@ namespace Beagle {
 
 		public bool IsObsoletedBy (Versioned other)
 		{
+			// We are never obsoleted by null.
+			if (other == null)
+				return false;
+
 			// Anything with a valid timestamp always is
 			// more recent than something w/o a timestamp.
 			if (ValidTimestamp || other.ValidTimestamp) {
@@ -99,6 +103,10 @@ namespace Beagle {
 
 		public bool IsNewerThan (Versioned other)
 		{
+			// We are always newer than null.
+			if (other == null)
+				return true;
+
 			// Anything with a valid timestamp always is
 			// more recent than something w/o a timestamp.
 			if (ValidTimestamp || other.ValidTimestamp) {

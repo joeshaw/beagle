@@ -6,6 +6,7 @@ TARGET = Renderers.dll
 CSFLAGS = -target:library
 
 CSFILES = 					\
+	$(srcdir)/Favicons.cs			\
 	$(srcdir)/HitRenderer.cs		\
 	$(srcdir)/HitRendererHtml.cs		\
 	$(srcdir)/DefaultHitRenderer.cs		\

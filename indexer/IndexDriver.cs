@@ -50,7 +50,8 @@ namespace Beagle {
 		// 1: Original
 		// 2: Changed format of timestamp strings
 		// 3: Schema changed to be more Dashboard-Match-like
-		private const int VERSION = 3;
+		// 4: Schema changed for files to include _Directory property
+		private const int VERSION = 4;
 
 		//////////////////////////
 
@@ -167,16 +168,20 @@ namespace Beagle {
 
 		//////////////////////////
 		
-		private Analyzer NewAnayzer ()
+		private Analyzer NewAnalyzer ()
 		{
 			return new StandardAnalyzer ();
 		}
 
 		//////////////////////////
+
+		private String ToLucenePropertyKey (String key)
+		{
+			return "_" + key;
+		}
 	
 		private Document ToLuceneDocument (Indexable indexable)
 		{
-
 			indexable.Build ();
 
 			Document doc = new Document ();
@@ -225,17 +230,25 @@ namespace Beagle {
 			}
 			
 			foreach (String key in indexable.Keys) {
-				// Non-canonical properties start with _
-				f = Field.Text ("_" + key, indexable [key]);
+				// Namespace keys before storing them in the document.
+				String docKey = ToLucenePropertyKey (key);
+				String value = indexable [key];
+		
+				// If the key starts with _, treat it as
+				// a keyword.
+				if (key.Length > 0 && key [0] == '_')
+					f = Field.Keyword (docKey, value);
+				else
+					f = Field.Text (docKey, value);
 				doc.Add (f);
 			}
-			
 			
 			return doc;
 		}
 		
-		private LNS.Query ToLuceneQuery (Query query, Analyzer analyzer)
+		private LNS.Query ToLuceneQuery (Query query)
 		{
+			Analyzer analyzer = NewAnalyzer ();
 			LNS.BooleanQuery luceneQuery = new LNS.BooleanQuery ();
 			
 			String queryStr = query.AbusivePeekInsideQuery;
@@ -300,24 +313,26 @@ namespace Beagle {
 			
 			return hit;
 		}
-		
-		//////////////////////////
 
-		private void DoDelete (IEnumerable ids) 
+		private Hit[] FromLuceneHits (LNS.Hits luceneHits)
 		{
-			IndexReader reader = IndexReader.Open (IndexDir);
-			foreach (int id in ids)
-				reader.Delete (id);
-			reader.Close ();
+			int nHits = luceneHits.Length ();
+			Hit[] hits = new Hit[nHits];
+			for (int i = 0; i < nHits; ++i)
+				hits [i] = FromLuceneHit (luceneHits, i);
+			return hits;
 		}
 
-		Random optimizeTest = new Random ();
-		private void DoInsert (IEnumerable indexables, bool allowOptimization)
+		//////////////////////////
+
+		public void QuickAdd (ICollection indexables)
 		{
-			Analyzer analyzer = NewAnayzer ();
+			if (indexables.Count == 0)
+				return;
+
+			Analyzer analyzer = NewAnalyzer ();
 			IndexWriter writer = new IndexWriter (IndexDir, analyzer, false);
 			
-			int count = 0;
 			foreach (Indexable indexable in indexables) {
 				Spew ("Inserting {0}", indexable.Uri);
 				Document doc = null;
@@ -327,36 +342,46 @@ namespace Beagle {
 					Console.WriteLine ("Exception converting {0}: {1}",
 							   indexable.Uri, e);
 				}
-				if (doc != null) {
+				if (doc != null)
 					writer.AddDocument (doc);
-					++count;
-				}
-			}
-			// optimization is expensive
-			if (allowOptimization) {
-				// FIXME: this is just asking for trouble
-				const int INSERTS_PER_OPTIMIZATION = 100;
-				if (optimizeTest.Next (INSERTS_PER_OPTIMIZATION) < count) {
-					Spew ("Optimizing...");
-					writer.Optimize ();
-					Spew ("Optimization complete.");
-				}
 			}
 			writer.Close ();
 		}
 
-		public void Add (IEnumerable indexables)
+
+		public void QuickAdd (Indexable indexable)
 		{
-			// Allow optimization by default
-			Add (indexables, true);
+			QuickAdd (new Indexable [1] { indexable });
 		}
 
-		// Add a set of items to the index
-		public void Add (IEnumerable indexables, bool allowOptimization)
+		
+		public void Remove (ICollection hits) 
 		{
-			ArrayList preloaded = new ArrayList ();
-			ArrayList toBeDeleted = new ArrayList ();
-			ArrayList toBeInserted = new ArrayList ();
+			if (hits.Count == 0)
+				return;
+
+			IndexReader reader = IndexReader.Open (IndexDir);
+			foreach (Hit hit in hits) {
+				Spew ("Removing {0}", hit.Uri);
+				reader.Delete (hit.Id);
+			}
+			reader.Close ();
+		}
+
+		public void Remove (Hit hit)
+		{
+			Remove (new Hit [1] { hit });
+		}
+
+
+		// Add a set of items to the index
+		public void Add (ICollection indexables)
+		{
+			if (indexables.Count == 0)
+				return;
+
+			ArrayList toBeRemoved = new ArrayList ();
+			ArrayList toBeAdded = new ArrayList ();
 
 			LNS.Searcher searcher = new LNS.IndexSearcher (IndexDir);
 
@@ -365,7 +390,7 @@ namespace Beagle {
 			Hashtable byUri = new Hashtable ();
 			foreach (Indexable indexable in indexables) {
 				Indexable prev = (Indexable) byUri [indexable.Uri];
-				if (prev == null || prev.IsObsoletedBy (indexable))
+				if (indexable.IsNewerThan (prev))
 					byUri [indexable.Uri] = indexable;
 			}
 			
@@ -386,7 +411,7 @@ namespace Beagle {
 					Hit hit = FromLuceneHit (uriHits, i);
 					if (indexable.IsNewerThan (hit)) {
 						// Schedule the old document's removal
-						toBeDeleted.Add (hit.Id);
+						toBeRemoved.Add (hit);
 					} else {
 						needsInsertion = false;
 						break;
@@ -398,17 +423,14 @@ namespace Beagle {
 						Spew ("Re-scheduling {0}", indexable.Uri);
 					else
 						Spew ("Scheduling {0}", indexable.Uri);
-					toBeInserted.Add (indexable);
+					toBeAdded.Add (indexable);
 				} else {
 					Spew ("Skipping {0}", indexable.Uri);
 				}
 			}
 
-			if (toBeDeleted.Count > 0)
-				DoDelete (toBeDeleted);
-
-			if (toBeInserted.Count > 0)
-				DoInsert (toBeInserted, allowOptimization);
+			Remove (toBeRemoved);
+			QuickAdd (toBeAdded);
 		}
 	
 		// Add a single item to the index
@@ -419,19 +441,20 @@ namespace Beagle {
 
 		public void Optimize ()
 		{
-			IndexWriter writer = new IndexWriter (IndexDir, NewAnayzer (), false);
+			IndexWriter writer = new IndexWriter (IndexDir, NewAnalyzer (), false);
 			writer.Optimize ();
 			writer.Close ();
 		}
 
-		public Hit QueryByUri (String uri)
+		///////////////////////////////////////////////////////
+
+		public Hit FindByUri (String uri)
 		{
 			Term term = new Term ("Uri", uri);
 			LNS.Query uriQuery = new LNS.TermQuery (term);
 
 			LNS.Searcher searcher = new LNS.IndexSearcher (IndexDir);
 			LNS.Hits uriHits = searcher.Search (uriQuery);
-			searcher.Close ();
 
 			int nHits = uriHits.Length ();
 			Hit hit = null;
@@ -445,8 +468,31 @@ namespace Beagle {
 				}
 			}
 
+			searcher.Close ();
+
 			return hit;
 		}
+
+		// Returns all hits that exactly match.
+		public Hit[] FindByProperty (String key, String value)
+		{
+			Term term = new Term (ToLucenePropertyKey (key), value);
+			LNS.Query luceneQuery = new LNS.TermQuery (term);
+
+			LNS.Searcher searcher = new LNS.IndexSearcher (IndexDir);
+			LNS.Hits luceneHits = searcher.Search (luceneQuery);
+			Hit[] hits = FromLuceneHits (luceneHits);
+			searcher.Close ();
+
+			return hits;
+		}
+
+		
+		///////////////////////////////////////////////////////
+
+		///
+		/// IQueryable interface
+		///
 
 		public String Name {
 			get { return "Lucene"; }
@@ -459,68 +505,35 @@ namespace Beagle {
 
 		public void Query (Query query, HitCollector collector)
 		{
-			Analyzer analyzer = NewAnayzer ();
-			LNS.Query luceneQuery = ToLuceneQuery (query, analyzer);
+			LNS.Query luceneQuery = ToLuceneQuery (query);
 
 			LNS.Searcher searcher = new LNS.IndexSearcher (IndexDir);
 			LNS.Hits luceneHits = searcher.Search (luceneQuery);
-			int nHits = luceneHits.Length ();
 
+			int nHits = luceneHits.Length ();
 			Hashtable seen = new Hashtable ();
-			ArrayList toBeDeleted = new ArrayList ();
 
 			for (int i = 0; i < nHits; ++i) {
 				Hit hit = FromLuceneHit (luceneHits, i);
-				bool valid = true;
+				
+				// Filter out missing files.
+				if (hit.Uri.StartsWith ("file://")) {
+					String path = hit.Uri.Substring ("file://".Length);
+					if (! File.Exists (path))
+						continue;
+				}
+
+				// FIXME: Should check that file:// Uris are unchanged, and do
+				// something smart if they aren't.
 
 				// If the same Uri comes back more than once, filter
 				// out all but the most recent one.
 				Hit prev = (Hit) seen [hit.Uri];
-				if (prev != null) {
-					if (prev.IsObsoletedBy (hit)) {
-						// prev needs to be removed from the index
-						seen.Remove (hit.Uri);
-						toBeDeleted.Add (prev.Id);
-					} else {
-						// hit needs to be removed from the index
-						toBeDeleted.Add (hit.Id);
-						continue;
-					}
-				}
-
-				// Check that file:// hits still exist and haven't
-				// changed since they were last indexed.
-				if (hit.Uri.StartsWith ("file://")) {
-					String path = hit.Uri.Substring (7);
-					FileInfo info = new FileInfo (path);
-		    
-					if (info.Exists) {
-						if (hit.IsObsoletedBy (info.LastWriteTime)) {
-							Spew ("Out-of-date {0}", hit.Uri);
-							// For now, out-of-date hits just pass through.
-							
-							// FIXME: We need to do something more clever here.
-							// Ideally we would extract the content from the
-							// file and write it into a in-memory Index,
-							// then redo the query.  The in-memory Index could
-							// then be written out to disk.
-						}
-					} else {
-						// File has disappeared since being indexed,
-						// so we remove it from the index.
-						Spew ("Lost {0}", hit.Uri);
-						toBeDeleted.Add (hit.Id);
-						continue;
-					}
-				}
-
-				seen [hit.Uri] = hit;
+				if (hit.IsNewerThan (prev))
+					seen [hit.Uri] = hit;
 			}
 
 			searcher.Close ();
-
-			if (toBeDeleted.Count > 0)
-				DoDelete (toBeDeleted);
 
 			// We need to re-sort by score
 			ArrayList hits = new ArrayList ();

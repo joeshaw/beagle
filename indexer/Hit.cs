@@ -27,6 +27,7 @@
 
 using System;
 using System.Collections;
+using System.IO;
 
 namespace Beagle {
     
@@ -54,6 +55,9 @@ namespace Beagle {
 							      new CaseInsensitiveComparer ());
 
 		private bool locked = false;
+
+		private String path = ""; // == uninitialized
+		private FileInfo fileInfo = null;
 
 		//////////////////////////
 
@@ -105,6 +109,55 @@ namespace Beagle {
 			get { return score; }
 			set { CheckLock (); score = value; }
 		}
+
+		//////////////////////////
+
+		public String Path {
+			get {
+				if (path == null)
+					return null;
+
+				if (path == "") {
+					if (Uri.StartsWith ("file://")) {
+						path = Uri.Substring ("file://".Length);
+						if (! File.Exists (path))
+							path = null;
+					}
+				}
+
+				return path;
+			}
+		}
+
+		// This will return false for file:// URIs if the referenced
+		// file doesn't exist.
+		public bool IsFile {
+			get { return Path != null; }
+		}
+
+		public String FileName {
+			get { return IsFile ? System.IO.Path.GetFileName (Path) : null; }
+		}
+
+		public String DirectoryName {
+			get { return IsFile ? System.IO.Path.GetDirectoryName (Path) : null; }
+		}
+
+		public FileInfo FileInfo
+		{
+			get { 
+				if (fileInfo == null && Path != null)
+					fileInfo = new FileInfo (Path);
+				return fileInfo;
+			}
+		}
+
+		public bool IsUpToDate {
+			get { return ! IsFile // non-files are always up-to-date
+				      || ! ValidTimestamp // non-timestamped stuff too
+				      || (FileInfo.LastWriteTime  <= Timestamp); }
+		}
+				
 
 		//////////////////////////
 

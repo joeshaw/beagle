@@ -67,12 +67,9 @@ namespace Beagle {
 			stream.Close ();
 
 			FileInfo info = new FileInfo (path);
-			this ["Length"] = Convert.ToString (info.Length);
-			this ["LastAccess"] = info.LastAccessTime.ToString ();
+			this ["_Directory"] = info.DirectoryName;
 
 			// FIXME: there is more information that we could attach
-			// * File ownership
-			// * File permissions
 			// * Filesystem-level metadata
 			// * Nautilus emblems
 		}

@@ -98,15 +98,7 @@ namespace Beagle {
 
 		private void HTMLRenderSingleWebLink (Hit hit, bool color_band, XmlWriter xw)
 		{
-			string icon;
-
-			// Allow the caller to overwide the compositing of the icon by setting
-			// icon.
-			if (hit ["Icon"] != null) {
-				icon = (string)hit ["Icon"];
-			} else {
-				icon = CompositeEmblemIcon ((string)hit ["Emblem-Icon"]);
-			}
+			string icon = CompositeEmblemIcon (Favicons.GetIconPath (hit.Uri));
 
 			string Title = (string)hit ["Title"];
 			string Score = Convert.ToString (hit ["Score"]);
@@ -166,8 +158,10 @@ namespace Beagle {
 
 		private Stream GetImage (string name)
 		{
-			Assembly assembly = System.Reflection.Assembly.GetEntryAssembly ();
+			Assembly assembly = System.Reflection.Assembly.GetCallingAssembly ();
 			System.IO.Stream s = assembly.GetManifestResourceStream (name);
+			if (s == null)
+				Console.WriteLine ("Can't find resource '{0}'", name);
 			return s;
 		}
 

@@ -68,6 +68,11 @@ namespace Beagle {
 			{
 				// Make sure that hits are properly sourced and locked.
 				foreach (Hit hit in hits) {
+					if (hit == null) {
+						Console.WriteLine ("NULL HIT!");
+						continue;
+					}
+						
 					if (hit.Source == null)
 						hit.Source = queryable.Name;
 					hit.Lockdown ();
@@ -81,7 +86,7 @@ namespace Beagle {
 				try {
 					queryable.Query (query, new HitCollector (Collect));
 				} catch (Exception e) {
-					Console.WriteLine ("Query to '{0}' failed with exception:\n{1}", queryable.Name, e.Message);
+					Console.WriteLine ("Query to '{0}' failed with exception:\n{1}:\n{2}", queryable.Name, e.Message, e.StackTrace);
 							   
 				}
 				result.WorkerFinished ();

@@ -101,49 +101,77 @@ class CrawlerTool {
 
 	public class Crawler {
 
-		int flushCount = 1000;
-		int flushSize =  50 * 1048576; // = 50mb
+		IndexDriver driver = new IndexDriver ();
+
+		// Contains Indexables
+		ArrayList toBeIndexed = new ArrayList ();
+
+		// Contains Obsoleted or Deleted Hits
+		ArrayList toBeRemoved = new ArrayList ();
+
+		int flushCount = 100;
+		int flushSize =  20 * 1048576; // = 20mb
 
 		int totalCount = 0;
 		int filterableCount = 0;
 		long pendingSize = 0;
 
+		int sinceOptimize = 0;
+		int optimizeCount = 10;
+		
+
 		Hashtable fileTable = new Hashtable ();
 
-		ArrayList toBeIndexed = new ArrayList ();
 
-		void Schedule (FileInfo info, Indexable indexable)
+		void ScheduleAdd (FileInfo info, Indexable indexable)
 		{
 			pendingSize += info.Length;
 			toBeIndexed.Add (indexable);
-			if (toBeIndexed.Count > flushCount || pendingSize > flushSize)
-				Flush (false);
-				
+			MaybeFlush ();
 		}
 
-		void Flush (bool isLast)
+		void ScheduleDelete (Hit hit)
 		{
-			if (toBeIndexed.Count > 0 || isLast) {
-				IndexDriver driver = new IndexDriver ();
-				if (toBeIndexed.Count > 0) {
-					driver.Add (toBeIndexed, false);
-					toBeIndexed.Clear ();
-					pendingSize = 0;
-				}
-				
-				//Console.WriteLine ("Optimize begin");
-				driver.Optimize ();
-				//Console.WriteLine ("Optimize end");
+			if (hit == null)
+				return;
+			toBeRemoved.Add (hit);
+			MaybeFlush ();
+		}
 
-				if (! isLast) {
-					//Console.WriteLine ("GC begin");
-					GC.Collect ();
-					//Console.WriteLine ("GC end");
+		void MaybeFlush ()
+		{
+			if (toBeIndexed.Count + toBeRemoved.Count > flushCount
+			    || pendingSize > flushSize)
+				Flush ();
+		}
+
+		void Flush ()
+		{
+			bool didSomething = false;
+			
+			if (toBeIndexed.Count > 0) {
+				driver.QuickAdd (toBeIndexed);
+				toBeIndexed.Clear ();
+				pendingSize = 0;
+				didSomething = true;
+			}
+
+			if (toBeRemoved.Count > 0) {
+				driver.Remove (toBeRemoved);
+				toBeRemoved.Clear ();
+				didSomething = true;
+			}
+
+			if (didSomething) {
+				++sinceOptimize;
+				if (sinceOptimize > optimizeCount) {
+					driver.Optimize ();
+					sinceOptimize = 0;
 				}
 			}
 		}
 
-		void CrawlFile (FileInfo info)
+		void CrawlFile (FileInfo info, Hit hit)
 		{
 			Flavor flavor = Flavor.FromPath (info.FullName);
 			if (fileTable.Contains (flavor)) {
@@ -157,19 +185,26 @@ class CrawlerTool {
 				return;
 			++filterableCount;
 
-			if (info.Length > 50 * 1048576) { // =50mb FIXME: shouldn't just be a hard-wired constant
+			// FIXME: The size limit shouldn't just be a hard-wired
+			// constant.
+			if (info.Length > 20 * 1048576) { // =20mb 
 				Console.WriteLine ("To big: {0}", info.FullName);
 				return;
 			}
 
 			Indexable indexable = new IndexableFile (info.FullName);
-			Schedule (info, indexable);
+			// If our indexable isn't newer, don't even bother...
+			if (! indexable.IsNewerThan (hit))
+				return;
+
+			ScheduleAdd (info, indexable);
+			ScheduleDelete (hit);
 		}
 
-		void CrawlDirectory (DirectoryInfo info)
+		void CrawlDirectory (DirectoryInfo info, int maxRecursion)
 		{
+			// Scan the .noindex file.
 			FileMatcher noindex = new FileMatcher ();
-
 			String noindexPath = Path.Combine (info.FullName, ".noindex");
 			if (File.Exists (noindexPath)) {
 				noindex.Load (noindexPath);
@@ -181,22 +216,51 @@ class CrawlerTool {
 				}
 			}
 
+			// Pull this directory's indexables and put them in a hashtable
+			// by Uri.  Schedule obsolete duplicates for deletion.
+			Hit[] hits = driver.FindByProperty ("_Directory", info.FullName);
+			Hashtable hitHash = new Hashtable ();
+			foreach (Hit hit in hits) {
+				Hit prev = (Hit) hitHash [hit.Uri];
+				if (prev != null) {
+					if (prev.IsObsoletedBy (hit))
+						ScheduleDelete (prev);
+					else {
+						ScheduleDelete (hit);
+						continue;
+					}
+				}
+				hitHash [hit.Uri] = hit;
+			}
+
+
 			Console.WriteLine ("Scanning {0}", info.FullName);
 
 			foreach (FileInfo file in info.GetFiles ()) {
 				if (! noindex.IsMatch (file.Name)) {
 					try {
-						CrawlFile (file);
+						String uri = "file://" + file.FullName;
+						CrawlFile (file, (Hit) hitHash [uri]);
+						hitHash.Remove (uri);
 					} catch (Exception e) {
 						Console.WriteLine ("Caught exception while crawling file '" + file.Name + "':\n" + e.Message);
 					}
 				}
 			}
 
+			// If we didn't see some files that were previously indexed, they
+			// must have been deleted.  Schedule the previously-retrieved hits
+			// for deletion.
+			foreach (Hit hit in hitHash.Values)
+				ScheduleDelete (hit);
+
+			if (maxRecursion <= 0)
+				return;
+
 			foreach (DirectoryInfo subdir in info.GetDirectories ()) {
 				if (! noindex.IsMatch (subdir.Name)) {
 					try {
-						CrawlDirectory (subdir);
+						CrawlDirectory (subdir, maxRecursion - 1);
 					} catch (Exception e) {
 						Console.WriteLine ("Caught exception while crawling directory '" + subdir.Name + "':\n" + e.Message);
 					}
@@ -206,17 +270,30 @@ class CrawlerTool {
 
 		public void Crawl (String path)
 		{
-			if (File.Exists (path))
-				CrawlFile (new FileInfo (path));
-			else if (Directory.Exists (path))
-				CrawlDirectory (new DirectoryInfo (path));
-			else
+			bool quick = false;
+			if (path.StartsWith ("-quick:")) {
+				path = path.Substring ("-quick:".Length);
+				quick = true;
+			}
+
+			if (File.Exists (path)) {
+				CrawlFile (new FileInfo (path), null);
+			} else if (Directory.Exists (path)) {
+				DirectoryInfo dirinfo = new DirectoryInfo (path);
+				int maxRecursion = 10000;
+				if (quick)
+					maxRecursion = 0;
+				CrawlDirectory (dirinfo, maxRecursion);
+			} else {
 				Console.WriteLine ("Can't crawl {0}", path);
+			}
 		}
 
 		public void Finish ()
 		{
-			Flush (true);
+			Flush ();
+			if (sinceOptimize != 0)
+				driver.Optimize ();
 
 			Console.WriteLine ("\n**** FILE STATS ****\n");
 			foreach (Flavor flavor in fileTable.Keys)
@@ -236,13 +313,30 @@ class CrawlerTool {
 		FileMatcher.AddDefault (".*",
 					"*~",
 					"#*#",
+					"*.cs", // FIXME: we skip other source code...
 					"*.o",
 					"*.a",
+					"*.S",
 					"*.la",
+					"*.lo",
 					"*.so",
 					"*.exe",
 					"*.dll",
 					"*.com",
+					"*.csproj",
+					"*.dsp",
+					"*.dsw",
+					"*.m4",
+					"*.pc",
+					"*.pc.in",
+					"*.in.in",
+					"*.omf",
+					"*.aux",
+					"po",
+					"aclocal",
+					"Makefile",
+					"Makefile.am",
+					"Makefile.in",
 					"CVS");
 
 		Crawler crawler = new Crawler ();
