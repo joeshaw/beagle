@@ -37,10 +37,10 @@ namespace Beagle {
 	public class Indexable : Versioned {
 
 		// The URI of the item being indexed.
-		private String uri = null;
+		private Uri uri = null;
 
 		// The URI of the contents to index
-		private String contentUri = null;
+		private Uri contentUri = null;
 
 		// Whether the content should be deleted after indexing
 		private bool deleteContent = false;
@@ -59,7 +59,7 @@ namespace Beagle {
 
 		//////////////////////////
 
-		public Indexable (string _uri) {
+		public Indexable (Uri _uri) {
 			uri = _uri;
 
 			type = "File";
@@ -78,12 +78,12 @@ namespace Beagle {
 		}
 
 		//////////////////////////
-		public String Uri { 
+		public Uri Uri { 
 			get { return uri; }
 			set { uri = value; }
 		}
 
-		public String ContentUri {
+		public Uri ContentUri {
 			get { return contentUri != null ? contentUri : Uri; }
 			set { contentUri = value; }
 		}
@@ -156,9 +156,9 @@ namespace Beagle {
 		public void WriteToXml (XmlTextWriter writer)
 		{
 			writer.WriteStartElement ("indexable");
-			writer.WriteAttributeString ("uri", uri);
+			writer.WriteAttributeString ("uri", uri.ToString ());
 			if (contentUri != null) 
-				writer.WriteAttributeString ("contenturi", contentUri);
+				writer.WriteAttributeString ("contenturi", contentUri.ToString ());
 			if (deleteContent)
 				writer.WriteAttributeString ("deletecontent", "1");
 			if (mimeType != null)
@@ -206,7 +206,7 @@ namespace Beagle {
 			
 			writer.Close ();
 
-			ContentUri = "file://" + filename;
+			ContentUri = new Uri ("file://" + filename, false);
 			DeleteContent = true;
 		}
 
@@ -218,12 +218,25 @@ namespace Beagle {
 
 		public void ReadFromXml (XmlTextReader reader) 
 		{
+			string str;
+
 			reader.Read ();
 			// This is a pretty lame reader 
-			uri = reader.GetAttribute ("uri");
+
+			str = reader.GetAttribute ("uri");
+			if (str == null)
+				uri = null;
+			else
+				uri = new Uri (str, true);
+
 			type = reader.GetAttribute ("type");
 			mimeType = reader.GetAttribute ("mimetype");
-			contentUri = reader.GetAttribute ("contenturi");
+
+			str = reader.GetAttribute ("contenturi");
+			if (str == null)
+				contentUri = null;
+			else
+				contentUri = new Uri (str, true);
 			
 			deleteContent = (reader.GetAttribute ("deletecontent") == "1");
 			if (reader.GetAttribute ("revision") != null)
@@ -266,7 +279,7 @@ namespace Beagle {
 
 		public override int GetHashCode ()
 		{
-			return uri.GetHashCode () ^ type.GetHashCode ();
+			return (uri != null ? uri.GetHashCode () : 0) ^ type.GetHashCode ();
 		}
 	}
 }

@@ -32,7 +32,9 @@ using System.Text;
 namespace Beagle.Daemon {
 
 	[QueryableFlavor (Name="EvolutionDataServer", Domain=QueryDomain.Local)]
-	public class EvolutionDataServerDriver : IQueryable{
+	public class EvolutionDataServerDriver : IQueryable {
+
+		public event IQueryableChangedHandler ChangedEvent;
 
 		Evolution.Book addressbook = null;
 
@@ -147,7 +149,9 @@ namespace Beagle.Daemon {
 			return true;
 		}
 
-		public void DoQuery (QueryBody body, IQueryResult result)
+		public void DoQuery (QueryBody body, 
+				     IQueryResult result,
+				     IQueryableChangeData changeData)
 		{
 			// FIXME: Evolution.BookQuery's bindings are all
 			// screwed up, so we can't construct compound queries.

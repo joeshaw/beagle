@@ -38,7 +38,7 @@ namespace Beagle.Daemon {
 		Flavor flavor;
 		Filter filter;
 
-		public FilteredIndexable (string _uri) : base (_uri)
+		public FilteredIndexable (Uri _uri) : base (_uri)
 		{
 			BuildFromFile ();
 		}
@@ -60,13 +60,13 @@ namespace Beagle.Daemon {
 		
 		private void BuildFromFile ()
 		{
-			if (Type != "File" || !Uri.StartsWith ("file://") || ContentUri != Uri) {
+			if (Type != "File" || !Uri.ToString().StartsWith ("file://") || ContentUri != Uri) {
 				return;
 			}
 
 			bool isDirectory = false;
 
-			string path = Uri.Substring ("file://".Length);
+			string path = Uri.ToString().Substring ("file://".Length);
 
 			DateTime modifiedTime;
 			if (Directory.Exists (path)) {
@@ -185,11 +185,11 @@ namespace Beagle.Daemon {
 			}
 			
 			// Currently only index file content
-			if (!ContentUri.StartsWith ("file://")) {
+			if (!ContentUri.ToString().StartsWith ("file://")) {
 				return;
 			}
 
-			string path = ContentUri.Substring ("file://".Length);
+			string path = ContentUri.ToString().Substring ("file://".Length);
 
 			flavor = Flavor.FromMimeType (MimeType);
 			filter = Filter.FromFlavor (flavor);
@@ -220,8 +220,8 @@ namespace Beagle.Daemon {
 		}
 
 		public FileInfo GetFileInfo () {
-			if (Uri.StartsWith ("file://")) {
-				string path = Uri.Substring ("file://".Length);
+			if (Uri.ToString().StartsWith ("file://")) {
+				string path = Uri.ToString().Substring ("file://".Length);
 				return new FileInfo (path);
 			} else {
 				return null;

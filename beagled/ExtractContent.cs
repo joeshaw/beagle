@@ -51,7 +51,7 @@ class ExtractContentTool {
 				
 			Console.WriteLine ("uri: {0}", uri);
 
-			indexable = new FilteredIndexable (uri);
+			indexable = new FilteredIndexable (new Uri (uri, false));
 
 			if (!firstArg) {
 				Console.WriteLine ();

@@ -26,15 +26,24 @@
 
 using System;
 using System.Reflection;
+using System.IO;
+
 using Beagle.Daemon;
+using BU = Beagle.Util;
+
 
 namespace Beagle.Daemon.FileSystemQueryable {
 
 	[QueryableFlavor (Name="FileSystemQueryable", Domain=QueryDomain.Local)]
 	public class FileSystemQueryable : IQueryable {
 
+		public event IQueryableChangedHandler ChangedEvent;
+
 		IndexerQueue indexerQueue;
 		Indexer indexer;
+
+		FileSystemEventMonitor monitor = new FileSystemEventMonitor ();
+		BU.FileMatcher doNotIndex = new BU.FileMatcher ();
 
 		public FileSystemQueryable ()
 		{
@@ -45,6 +54,14 @@ namespace Beagle.Daemon.FileSystemQueryable {
 			
 			DBusisms.Service.RegisterObject (indexer,
 							 Beagle.DBusisms.IndexerPath);
+
+			// Set up file system monitor
+			string home = Environment.GetEnvironmentVariable ("HOME");
+			monitor.Subscribe (home);
+			monitor.Subscribe (Path.Combine (home, "Desktop"));
+			monitor.Subscribe (Path.Combine (home, "Documents"));
+
+			monitor.FileSystemEvent += OnFileSystemEvent;
 		}
 
 		private void ScanAssemblyForHandlers (Assembly assembly)
@@ -62,6 +79,33 @@ namespace Beagle.Daemon.FileSystemQueryable {
 			}
 		}
 
+		private void OnFileSystemEvent (object source, FileSystemEventType eventType,
+						string oldPath, string newPath)
+		{
+			Console.WriteLine ("Got event {0} {1} {2}", eventType, oldPath, newPath);
+
+			if (eventType == FileSystemEventType.Changed
+			    || eventType == FileSystemEventType.Created) {
+
+				if (doNotIndex.IsMatch (newPath)) {
+					Console.WriteLine ("Ignoring {0}", newPath);
+					return;
+				}
+
+				string uri = BU.StringFu.PathToQuotedFileUri (newPath);
+				FilteredIndexable indexable = new FilteredIndexable (new Uri (uri, true));
+				indexerQueue.ScheduleAdd (indexable);
+
+			} else if (eventType == FileSystemEventType.Deleted) {
+
+				string uri = BU.StringFu.PathToQuotedFileUri (oldPath);
+				indexerQueue.ScheduleRemoveByUri (uri);
+				
+			} else {
+				Console.WriteLine ("Unhandled!");
+			}
+		}
+
 
 		public string Name {
 			get { return "FileSystemQueryable"; }
@@ -72,7 +116,9 @@ namespace Beagle.Daemon.FileSystemQueryable {
 			return indexer.driver.AcceptQuery (body);
 		}
 
-		public void DoQuery (QueryBody body, IQueryResult queryResult)
+		public void DoQuery (QueryBody body,
+				     IQueryResult queryResult,
+				     IQueryableChangeData changeData)
 		{
 			indexer.driver.DoQuery (body, queryResult);
 		}

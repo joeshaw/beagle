@@ -42,7 +42,7 @@ namespace Beagle.Tile {
 		override protected string ExpandKey (string key)
 		{
 			if (key == "Uri")
-				return hit.Uri;
+				return hit.Uri.ToString ();
 			return hit [key];
 		}
 

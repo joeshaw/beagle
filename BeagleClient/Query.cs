@@ -40,6 +40,7 @@ namespace Beagle
 		public virtual event HitSubtractedHandler HitSubtractedEvent;
 
 		private bool cancelled = false;
+		private Hashtable allHits = new Hashtable ();
 
 		public Query ()
 		{
@@ -64,16 +65,35 @@ namespace Beagle
 
 		private void OnHitsAddedAsXml (QueryProxy sender, string hitsXml)
 		{
-			if (HitAddedEvent != null) {
-				ArrayList hits = Hit.ReadHitXml (hitsXml);
-				foreach (Hit hit in hits)
+			ArrayList hits = Hit.ReadHitXml (hitsXml);
+			
+			foreach (Hit hit in hits) {
+
+				// If we already contain something with that Uri,
+				// remove it and fire off a HitSubtractedEvent.
+				if (allHits.Contains (hit.Uri)) {
+					allHits.Remove (hit.Uri);
+					if (HitSubtractedEvent != null)
+						HitSubtractedEvent (this, hit.Uri);
+				}
+
+				if (HitAddedEvent != null)
 					HitAddedEvent (this, hit);
 			}
 		}
 
 		private void OnHitsSubtractedAsString (QueryProxy sender, string uriList)
 		{
-
+			string[] uris = uriList.Split (' ');
+			foreach (string uriStr in uris) {
+				Uri uri = new Uri (uriStr);
+				// Only remove hits we previously matched.
+				if (allHits.Contains (uri)) {
+					allHits.Remove (uri);
+					if (HitSubtractedEvent != null)
+						HitSubtractedEvent (this, uri);
+				}
+			}
 		}
 
 		private void OnCancelled (QueryProxy sender)

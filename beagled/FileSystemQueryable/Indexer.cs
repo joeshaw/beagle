@@ -28,7 +28,6 @@ using DBus;
 using System;
 using System.IO;
 using System.Collections;
-using Beagle.Util;
 using Beagle.Daemon;
 
 namespace Beagle.Daemon.FileSystemQueryable
@@ -38,60 +37,16 @@ namespace Beagle.Daemon.FileSystemQueryable
 		IndexerQueue indexerQueue;
 		public IndexDriver driver = new MainIndexDriver (); // FIXME: Ugly!
 
-		FileSystemEventMonitor monitor = new FileSystemEventMonitor ();
-		FileMatcher doNotIndex = new FileMatcher ();
 
 		public Indexer (IndexerQueue _indexerQueue) {
 			indexerQueue = _indexerQueue;
 
-			string home = Environment.GetEnvironmentVariable ("HOME");
-			monitor.FileSystemEvent += OnFileSystemEvent;
-
-			if (Directory.Exists (home)) 
-				monitor.Subscribe (home);
-			
-			string path = Path.Combine (home, "Desktop");
-			if (Directory.Exists (path))
-				monitor.Subscribe (path);
-
-			path = Path.Combine (home, "Documents");
-			if (Directory.Exists (path))
-				monitor.Subscribe (path);
 		}
 
 		public override void Index (string xml)
 		{
 			FilteredIndexable indexable = FilteredIndexable.NewFromXml (xml);
 			indexerQueue.ScheduleAdd (indexable);
-		}
-
-		private void OnFileSystemEvent (object source, FileSystemEventType eventType,
-						string oldPath, string newPath)
-		{
-			Console.WriteLine ("Got event {0} {1} {2}", eventType, oldPath, newPath);
-
-			if (eventType == FileSystemEventType.Changed
-			    || eventType == FileSystemEventType.Created) {
-
-				if (doNotIndex.IsMatch (newPath)) {
-					Console.WriteLine ("Ignoring {0}", newPath);
-					return;
-				}
-
-				string uri = StringFu.PathToQuotedFileUri (newPath);
-				FilteredIndexable indexable = new FilteredIndexable (uri);
-				indexerQueue.ScheduleAdd (indexable);
-
-			} else if (eventType == FileSystemEventType.Deleted) {
-
-				string uri = StringFu.PathToQuotedFileUri (oldPath);
-				Hit hit = driver.FindByUri (uri);
-				if (hit != null)
-					indexerQueue.ScheduleRemove (hit);
-				
-			} else {
-				Console.WriteLine ("Unhandled!");
-			}
 		}
 	}
 }

@@ -84,7 +84,7 @@ namespace Beagle.Daemon {
 			if (args.indexable.Type != "File")
 				return;
 
-			string path = args.indexable.Uri;
+			string path = args.indexable.Uri.ToString ();
 			if (path.StartsWith ("file://"))
 				path = path.Substring ("file://".Length);
 

@@ -501,8 +501,7 @@ namespace IndexMailTool {
 				      Camel.MessageInfo messageInfo,
 				      MailMessage message)
 		{
-			Uri = String.Format ("email://{0}/{1};uid={2}",
-					     accountId, folderName, messageInfo.uid);
+			Uri = new Uri (String.Format ("email://{0}/{1};uid={2}", accountId, folderName, messageInfo.uid), false);
 			Type = "MailMessage";
 			MimeType = "text/plain";
 

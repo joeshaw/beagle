@@ -41,7 +41,7 @@ namespace Beagle {
 		private int id = 0;
 
 		// A URI we can use to locate the source of this match.
-		private string uri = null;
+		private Uri uri = null;
 
 		// File, Web, MailMessage, IMLog, etc.
 		private string type = null;
@@ -83,7 +83,7 @@ namespace Beagle {
 		{
 			writer.WriteStartElement ("hit");
 			writer.WriteAttributeString ("name", id.ToString());
-			writer.WriteAttributeString ("uri", uri);
+			writer.WriteAttributeString ("uri", uri.ToString ());
 			writer.WriteAttributeString ("type", type);
 			writer.WriteAttributeString ("mimetype", mimeType);
 			writer.WriteAttributeString ("source", source);
@@ -123,7 +123,7 @@ namespace Beagle {
 		{
 			// This is a pretty lame reader 
 			id = int.Parse (reader.GetAttribute ("name"));
-			uri = reader.GetAttribute ("uri");
+			uri = new Uri (reader.GetAttribute ("uri"), true);
 			type = reader.GetAttribute ("type");
 			mimeType = reader.GetAttribute ("mimetype");
 			source = reader.GetAttribute ("source");
@@ -182,7 +182,7 @@ namespace Beagle {
 			set { id = value; }
 		}
 
-		public string Uri {
+		public Uri Uri {
 			get { return uri; }
 			set { uri = value; }
 		}
@@ -223,8 +223,6 @@ namespace Beagle {
 			if (special != SpecialType.Unknown)
 				return;
 			
-			// The Uri is already quoted
-			System.Uri uri = new System.Uri (Uri, true);
 			if (uri.IsFile) {
 				path = uri.LocalPath;
 				if (File.Exists (path))
@@ -350,7 +348,7 @@ namespace Beagle {
 
 		public override int GetHashCode ()
 		{
-			return (uri != null ? uri.GetHashCode () : 0)
+			return (uri != null ? uri.ToString().GetHashCode () : 0)
 				^ (type != null ? type.GetHashCode () : 0)
 				^ (source != null ? source.GetHashCode () : 0);
 		}

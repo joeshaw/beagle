@@ -87,7 +87,7 @@ namespace Beagle.Daemon.FileSystemQueryable
 		{
 			foreach (Indexable indexable in toIndex) {
 				if (indexable.DeleteContent) {
-					string path = indexable.ContentUri;
+					string path = indexable.ContentUri.ToString ();
 					if (path.StartsWith ("file://")) {
 						path = path.Substring ("file://".Length);
 					}
@@ -200,6 +200,13 @@ namespace Beagle.Daemon.FileSystemQueryable
 				System.Console.WriteLine ("scheduled a remove: {0}", toBeRemoved.Count);
 			}
 			ScheduleFlush ();
+		}
+
+		public void ScheduleRemoveByUri (string uri)
+		{
+			Hit hit = driver.FindByUri (uri);
+			if (hit != null)
+				ScheduleRemove (hit);
 		}
 	}
 }

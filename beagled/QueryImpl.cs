@@ -50,6 +50,7 @@ namespace Beagle.Daemon {
 		public QueryImpl (QueryDriver _driver)
 		{
 			driver = _driver;
+
 			body = new QueryBody ();
 		}
 
@@ -112,25 +113,28 @@ namespace Beagle.Daemon {
 			AttachResult ();
 
 			driver.DoQuery (body, result);
+			driver.ChangedEvent += OnQueryDriverChanged;
 		}
 
 		public override void Cancel ()
 		{
+			driver.ChangedEvent -= OnQueryDriverChanged;
 			DisconnectResult ();
 		}
 
 		public override void CloseQuery () 
 		{
+			driver.ChangedEvent -= OnQueryDriverChanged;
 			DisconnectResult ();
 			if (ClosedEvent != null)
 				ClosedEvent (this);
 		}
 
 		//////////////////////////////////////////////////////
-		
-		///
-		/// QueryResult event handlers
-		///
+
+		//
+		// QueryResult event handlers
+		//
 
 		private string HitsToXml (ICollection hits)
 		{
@@ -190,6 +194,18 @@ namespace Beagle.Daemon {
 			System.Console.WriteLine ("Cancelled");
 			if (CancelledEvent != null)
 				CancelledEvent (this);
+		}
+
+		//////////////////////////////////////////////////////
+
+		//
+		// QueryDriver.ChangedEvent handling
+		//
+
+		private void OnQueryDriverChanged (QueryDriver source, IQueryable queryable, IQueryableChangeData changeData)
+		{
+			if (result != null)
+				source.DoQueryChange (queryable, changeData, body, result);
 		}
 	}
 }

@@ -36,6 +36,10 @@ namespace Beagle.Daemon {
 	[QueryableFlavor (Name="Google", Domain=QueryDomain.Global)]
 	public class GoogleDriver : IQueryable {
 
+		// This event is never fired, but needs to be here for us
+		// to fully implement the IQueryable interface.
+		public event IQueryableChangedHandler ChangedEvent;
+
 		int maxResults = 5;
 
 		GoogleSearchService gss = new GoogleSearchService ();
@@ -50,7 +54,7 @@ namespace Beagle.Daemon {
 		{
 			Hit hit = new Hit ();
 
-			hit.Uri      = res.URL;
+			hit.Uri      = new Uri (res.URL, true);
 			hit.Type     = "Google";
 			hit.MimeType = "text/html"; // FIXME
 			hit.Source   = "Google";
@@ -102,7 +106,9 @@ namespace Beagle.Daemon {
 		}
 
 
-		public void DoQuery (QueryBody body, IQueryResult result)
+		public void DoQuery (QueryBody body,
+				     IQueryResult result,
+				     IQueryableChangeData changeData)
 		{
 			GoogleSearchResult gsr = gss.doGoogleSearch (googleKey,
 								     body.QuotedText,

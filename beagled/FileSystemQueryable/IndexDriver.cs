@@ -137,7 +137,7 @@ namespace Beagle.Daemon.FileSystemQueryable {
 			// First we add the Indexable's 'canonical' properties
 			// to the Document.
 			
-			f = Field.Keyword ("Uri", indexable.Uri);
+			f = Field.Keyword ("Uri", indexable.Uri.ToString ());
 			doc.Add (f);
 
 			f = Field.Keyword ("Type", indexable.Type);
@@ -310,7 +310,7 @@ namespace Beagle.Daemon.FileSystemQueryable {
 			str = doc.Get ("Uri");
 			if (str == null)
 				throw new Exception ("Got hit from Lucene w/o a URI!");
-			hit.Uri = str;
+			hit.Uri = new Uri (str, true);
 
 			str = doc.Get ("Type");
 			if (str == null)
@@ -474,7 +474,7 @@ namespace Beagle.Daemon.FileSystemQueryable {
 				}
 				return hits;
 			} else {
-				Term term = new Term ("Uri", indexable.Uri);
+				Term term = new Term ("Uri", indexable.Uri.ToString ());
 				LNS.Query uriQuery = new LNS.TermQuery (term);
 				LNS.Hits luceneHits = searcher.Search (uriQuery);
 				ArrayList hits = new ArrayList ();

@@ -30,12 +30,23 @@ using System.Collections;
 
 namespace Beagle.Daemon {
 
+	public delegate void IQueryableChangedHandler (IQueryable source,
+						       IQueryableChangeData changeData);
+
 	public interface IQueryable {
+
+		event IQueryableChangedHandler ChangedEvent;
 
 		string Name { get; }
 
 		bool AcceptQuery (QueryBody body);
 
-		void DoQuery (QueryBody body, IQueryResult queryResult);
+		void DoQuery (QueryBody body,
+			      IQueryResult queryResult,
+			      IQueryableChangeData data);
+	}
+
+	public interface IQueryableChangeData { 
+	
 	}
 }

@@ -78,7 +78,7 @@ namespace Beagle.Tile {
 
 		public bool IsMatch (Hit hit)
 		{
-			return (Uri == null || BU.StringFu.GlobMatch (Uri, hit.Uri))
+			return (Uri == null || BU.StringFu.GlobMatch (Uri, hit.Uri.ToString ()))
 				&& (Type == null || BU.StringFu.GlobMatch (Type, hit.Type))
 				&& (MimeType == null || BU.StringFu.GlobMatch (MimeType, hit.MimeType))
 				&& (Source == null || BU.StringFu.GlobMatch (Source, hit.Source));

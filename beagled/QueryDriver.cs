@@ -85,6 +85,15 @@ namespace Beagle.Daemon {
 			}
 		}
 
+		////////////////////////////////////////////////////////
+
+		public delegate void ChangedHandler (QueryDriver          source,
+						     IQueryable           queryable,
+						     IQueryableChangeData changeData);
+
+		public event ChangedHandler ChangedEvent;
+
+
 		private ArrayList queryables = new ArrayList ();
 
 		public QueryDriver ()
@@ -95,6 +104,7 @@ namespace Beagle.Daemon {
 				IQueryable queryable;
 				queryable = (IQueryable) Activator.CreateInstance (qi.Type);
 				queryables.Add (queryable);
+				queryable.ChangedEvent += OnQueryableChanged;
 			}
 		}
 
@@ -102,17 +112,28 @@ namespace Beagle.Daemon {
 
 			IQueryable queryable;
 			QueryBody body;
+			IQueryableChangeData changeData;
 			
 			public QueryClosure (IQueryable  _queryable,
 					     QueryBody   _body)
 			{
-				queryable = _queryable;
-				body      = _body;
+				queryable  = _queryable;
+				body       = _body;
+				changeData = null;
+			}
+
+			public QueryClosure (IQueryable           _queryable,
+					     QueryBody            _body,
+					     IQueryableChangeData _changeData)
+			{
+				queryable  = _queryable;
+				body       = _body;
+				changeData = _changeData;
 			}
 
 			public void Worker (QueryResult result)
 			{
-				queryable.DoQuery (body, result);
+				queryable.DoQuery (body, result, changeData);
 			}
 		}
 
@@ -126,13 +147,35 @@ namespace Beagle.Daemon {
 			if (! body.IsEmpty) {
 				foreach (IQueryable queryable in queryables) {
 					if (queryable.AcceptQuery (body)) {
-						QueryClosure qc = new QueryClosure (queryable, body);
+						QueryClosure qc;
+						qc = new QueryClosure (queryable, body);
 						result.AttachWorker (new QueryResult.QueryWorker (qc.Worker));
 					}
 				}
 			}
 			
 			result.WorkerFinished ();
+		}
+
+		public void DoQueryChange (IQueryable queryable, IQueryableChangeData changeData,
+					   QueryBody body, QueryResult result)
+		{
+			if (result != null
+			    && ! body.IsEmpty 
+			    && queryable.AcceptQuery (body)) {
+				QueryClosure qc;
+				qc = new QueryClosure (queryable, body, changeData);
+				result.AttachWorker (new QueryResult.QueryWorker (qc.Worker));
+			}
+		}
+
+		private void OnQueryableChanged (IQueryable           source,
+						 IQueryableChangeData changeData)
+		{
+			if (ChangedEvent != null) {
+				Console.WriteLine ("Got change {0} {1}", source, changeData);
+				ChangedEvent (this, source, changeData);
+			}
 		}
 	}
 }

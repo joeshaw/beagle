@@ -38,7 +38,7 @@ class IndexWebContentTool {
 				     string title,
 				     Stream contentStream)
 		{
-			Uri = uri;
+			Uri = new Uri (uri, true);
 			Type = "WebHistory";
 			MimeType = "text/html";
 			Timestamp = DateTime.Now;
@@ -55,12 +55,12 @@ class IndexWebContentTool {
 				     string filename,
 				     bool deleteSource)
 		{
-			Uri = uri;
+			Uri = new Uri (uri, true);
 			Type = "WebHistory";
 			MimeType = "text/html";
 			Timestamp = DateTime.Now;
 			
-			ContentUri = "file://" + Path.GetFullPath (filename);
+			ContentUri = new Uri ("file://" + Path.GetFullPath (filename), false);
 			DeleteContent = deleteSource;
 		}
 	}
