@@ -487,6 +487,7 @@ namespace Beagle.Util {
 					srcpath = Path.Combine (watched.Path, filename);
 					PendingMove pending = new PendingMove (srcpath, qe.iev.cookie);
 					cookie_hash [pending.Cookie] = pending;
+					//continue; // Wait for a possible matching MovedTo
 				}
 				if (qe.iev.mask == EventType.MovedTo) {
 					PendingMove pending = cookie_hash [qe.iev.cookie] as PendingMove;
@@ -496,6 +497,7 @@ namespace Beagle.Util {
 						if (Directory.Exists (dstpath))
 							HandleMove (srcpath, dstpath);
 						cookie_hash.Remove (pending);
+					}
 				}
 
 				// If this event matches the watches mask, handle it
