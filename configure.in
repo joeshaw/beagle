@@ -104,7 +104,6 @@ Util/Makefile
 Lucene.Net/Makefile
 Filters/Makefile
 indexer/Makefile
-Renderers/Makefile
 Tiles/Makefile
 tools/Makefile
 Best/Makefile
