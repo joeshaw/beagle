@@ -175,7 +175,8 @@ LUCENE_CSFILES =							\
 fsqueryabledir = $(srcdir)/FileSystemQueryable
 FILE_SYSTEM_QUERYABLE_CSFILES =				\
 	$(fsqueryabledir)/FileSystemQueryable.cs	\
-	$(fsqueryabledir)/FileNameFilter.cs
+	$(fsqueryabledir)/FileNameFilter.cs		\
+	$(fsqueryabledir)/CrawlQueue.cs
 
 
 webhistqueryable = $(srcdir)/WebHistoryQueryable
@@ -209,6 +210,7 @@ DAEMON_DLL_CSFILES = 				\
 	$(MAIL_QUERYABLE_CSFILES)		\
 	$(srcdir)/DBusisms.cs			\
 	$(srcdir)/Ping.cs			\
+	$(srcdir)/Shutdown.cs			\
 	$(srcdir)/FactoryImpl.cs		\
 	$(srcdir)/Relevancy.cs			\
 	$(srcdir)/IQueryResult.cs		\

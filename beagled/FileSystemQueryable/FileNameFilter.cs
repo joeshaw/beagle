@@ -187,6 +187,8 @@ namespace Beagle.Daemon.FileSystemQueryable {
 			}
 
 			// If the directory's .noindex file has changed, load it.
+			// FIXME: This should be done with inotify instead of using
+			// this sort of seek-happy polling.
 			private void ConditionallyLoad ()
 			{
 				// Only re-check the .noindex file every 11 seconds.

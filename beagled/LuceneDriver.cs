@@ -35,6 +35,8 @@ using System.Globalization;
 using System.IO;
 using System.Threading;
 
+using Mono.Posix;
+
 using Lucene.Net.Analysis;
 using Lucene.Net.Analysis.Standard;
 using Lucene.Net.Documents;
@@ -42,14 +44,16 @@ using Lucene.Net.Index;
 using Lucene.Net.QueryParsers;
 using LNS = Lucene.Net.Search;
 
-using BU = Beagle.Util;
+using Beagle.Util;
 
 namespace Beagle.Daemon {
 
 	public delegate void PostIndexHook (LuceneDriver driver, Uri uri);
 
 	public class LuceneDriver {
-		private static Beagle.Util.Logger log = Beagle.Util.Logger.Get ("lucene");
+
+		private Beagle.Util.Logger log = Logger.Get ("lucene");
+
 		// 1: Original
 		// 2: Changed format of timestamp strings
 		// 3: Schema changed to be more Dashboard-Match-like
@@ -58,6 +62,8 @@ namespace Beagle.Daemon {
 		//    force everyone to re-index.
 		// 6: lots of schema changes as part of the general refactoring
 		private const int VERSION = 6;
+
+		private LuceneQueue queue;
 
 		public LuceneDriver (string dir)
 		{
@@ -111,7 +117,9 @@ namespace Beagle.Daemon {
 				fingerprint = sr.ReadLine ();
 
 			} else {
-				// Purge the directory if it exists.
+				// Purge and rebuild the index's directory
+				// structure.
+
 				if (Directory.Exists (dir)) {
 					log.Debug ("Purging {0}", dir);
 					Directory.Delete (dir, true);
@@ -142,13 +150,20 @@ namespace Beagle.Daemon {
 
 			Store = store;
 
-			if (! indexExists) {
-				// Initialize a new index.
-				IndexWriter writer = new IndexWriter (Store, null, true);
-				writer.Close ();
-			}
+			// Before we start, optimize the index.  We want to do
+			// this every time at start-up to help avoid running
+			// out of file descriptors if the beagled were to
+			// crash or be shut down before reaching the
+			// sinceOptimizationThreshold.
+			//
+			// This creates the index if it doesn't exist
+			IndexWriter writer = new IndexWriter (Store, null, true);
+			if (indexExists)
+				writer.Optimize ();
+			writer.Close ();
 
-			StartQueue ();
+			// Start an indexing queue
+			queue = new LuceneQueue (this);
 		}
 
 		/////////////////////////////////////////////////////
@@ -215,73 +230,84 @@ namespace Beagle.Daemon {
 		// Public API
 		//
 
-		public void ScheduleAdd (Indexable indexable, PostIndexHook hook)
+		public void ScheduleAdd (Indexable indexable, int priority, PostIndexHook hook)
 		{
 			QueueItem item;
 			item = new QueueItem ();
+			item.Priority = priority;
 			item.IndexableToAdd = indexable;
 			item.PostIndexHook = hook;
-			ScheduleQueueItem (item);
+
+			queue.ScheduleQueueItem (item);
 		}
 
-		public void SchedulePriorityAdd (Indexable indexable, PostIndexHook hook)
+		public void ScheduleAdd (Indexable indexable, int priority)
 		{
-			QueueItem item;
-			item = new QueueItem ();
-			item.IndexableToAdd = indexable;
-			item.PostIndexHook = hook;
-			SchedulePriorityQueueItem (item);
-			FlushPending (); // If it is important, we should flush right away.
-		}
-
-		public void ScheduleAddAndMark (Indexable indexable, FileSystemInfo info)
-		{
-			MarkClosure closure = new MarkClosure (info);
-			ScheduleAdd (indexable, new PostIndexHook (closure.Hook));
-		}
-
-		public void SchedulePriorityAddAndMark (Indexable indexable, FileSystemInfo info)
-		{
-			MarkClosure closure = new MarkClosure (info);
-			SchedulePriorityAdd (indexable, new PostIndexHook (closure.Hook));
+			ScheduleAdd (indexable, priority, null);
 		}
 
 		public void ScheduleAdd (Indexable indexable)
 		{
-			ScheduleAdd (indexable, null);
+			ScheduleAdd (indexable, 0, null);
 		}
 
-		public void SchedulePriorityAdd (Indexable indexable)
+		public void ScheduleAddAndMark (Indexable indexable, int priority, FileSystemInfo fsinfo)
 		{
-			SchedulePriorityAdd (indexable, null);
+			MarkClosure closure = new MarkClosure (fsinfo);
+			ScheduleAdd (indexable, priority, new PostIndexHook (closure.Hook));
 		}
 
-		public void ScheduleDelete (Uri uri, PostIndexHook hook)
+		public bool ScheduleAddFile (FileSystemInfo fsinfo, int priority)
+		{
+			// Skip symlinks.  FIXME: This is probably the wrong thing
+			// to do, but it doesn't seem possible to attach
+			// extended attributes to them.
+			if (IsSymLink (fsinfo)) {
+				log.Info ("{0} is a symlink... skipping", fsinfo.FullName);				
+				return false;
+			}
+
+			// If the file appears to be up-to-date, don't do
+			// anything.
+			if (ExtendedAttribute.Check (fsinfo, Fingerprint)) {
+				log.Info ("{0} appears to be up-to-date", fsinfo.FullName);
+				return false;
+			}
+
+			log.Info ("Scheduled {0}", fsinfo.FullName);
+
+			Uri uri = UriFu.PathToFileUri (fsinfo.FullName);
+			FilteredIndexable indexable = new FilteredIndexable (uri);
+			ScheduleAddAndMark (indexable, priority, fsinfo);
+			
+			return true;
+		}
+
+		public void ScheduleDelete (Uri uri, int priority, PostIndexHook hook)
 		{
 			QueueItem item;
 			item = new QueueItem ();
+			item.Priority = priority;
 			item.UriToDelete = uri;
 			item.PostIndexHook = hook;
-			ScheduleQueueItem (item);
+			log.Info ("Scheduling deletion of {0}", uri);
+			queue.ScheduleQueueItem (item);
 		}
 
-		public void SchedulePriorityDelete (Uri uri, PostIndexHook hook)
+		public void ScheduleDelete (Uri uri, int priority)
 		{
-			QueueItem item;
-			item = new QueueItem ();
-			item.UriToDelete = uri;
-			item.PostIndexHook = hook;
-			SchedulePriorityQueueItem (item);
+			ScheduleDelete (uri, priority, null);
 		}
 
 		public void ScheduleDelete (Uri uri)
 		{
-			ScheduleDelete (uri, null);
+			ScheduleDelete (uri, 0, null);
 		}
 
-		public void SchedulePriorityDelete (Uri uri)
+		public void ScheduleDeleteFile (string path, int priority)
 		{
-			SchedulePriorityDelete (uri, null);
+			Uri uri = UriFu.PathToFileUri (path);
+			ScheduleDelete (uri, priority, null);
 		}
 
 		private class HitInfo {
@@ -321,8 +347,12 @@ namespace Beagle.Daemon {
 				if (uri.IsFile
 				    && ! File.Exists (uri.LocalPath)
 				    && ! Directory.Exists (uri.LocalPath)) {
+
 					log.Debug ("{0} is file!", uri);
-					SchedulePriorityDelete (uri);
+					// Do a low-priority delete --- it shouldn't matter
+					// if this lingers in the index for a bit, right?
+					ScheduleDelete (uri, -1000);
+
 					continue;
 				}
 
@@ -392,7 +422,8 @@ namespace Beagle.Daemon {
 				// ...and then use that mtime when marking the file.
 				// Maybe this is just paranoia, but I don't want to miss
 				// file changes between indexing and marking the file.
-				BU.ExtendedAttribute.Mark (info, driver.Fingerprint, mtime);
+				ExtendedAttribute.Mark (info, driver.Fingerprint, mtime);
+				Console.WriteLine ("*** Marking {0}", uri);
 
 				// Tell the system we don't need the file in the page cache.
 				// This doesn't really have anything to do w/ marking the
@@ -409,11 +440,21 @@ namespace Beagle.Daemon {
 		//
 
 		private class QueueItem {
+			public uint SequenceNumber;
+			public int  Priority;
+
 			public Indexable IndexableToAdd;
 			public Uri UriToDelete;
 			public PostIndexHook PostIndexHook;
 			public bool IsSilent = false;
-			public bool IsPriority = false;
+
+			public Uri Uri {
+				get { 
+					if (IndexableToAdd != null)
+						return IndexableToAdd.Uri;
+					return UriToDelete;
+				}
+			}
 
 			public bool IsAdd {
 				get { return IndexableToAdd != null; }
@@ -422,267 +463,271 @@ namespace Beagle.Daemon {
 			public bool IsDelete {
 				get { return UriToDelete != null; }
 			}
-		}
-		
-		Thread queueThread = null;
-		object queueLock = new object ();
-		ArrayList queue = new ArrayList ();
 
-		private void ScheduleQueueItem (QueueItem item)
-		{
-			lock (queueLock) {
-				queue.Add (item);
-				Monitor.Pulse (queueLock);
+			override public string ToString ()
+			{
+				return String.Format ("[QueueItem: {0} {1}]",
+						      IsAdd ? "Add" : "Delete", Uri);
 			}
 		}
 
-		private void SchedulePriorityQueueItem (QueueItem item)
-		{
-			lock (queueLock) {
-				item.IsPriority = true;
-				int i = 0;
-				while (i < queue.Count) {
-					QueueItem qi = queue [i] as QueueItem;
-					if (! qi.IsPriority)
-						break;
-					++i;
+		private class LuceneQueue : ThreadedPriorityQueue {
+
+			private LuceneDriver driver;
+			
+			private uint NextSequenceNumber = 0;
+			private Hashtable seqnoByUri = new Hashtable ();
+			
+			private Hashtable pendingByUri = new Hashtable ();
+			private int pendingAdds = 0;
+			private int pendingDeletes = 0;
+			private const int pendingAddThreshold = 21;
+			private const int pendingDeleteThreshold = 83;
+			
+			int sinceOptimization = 0;
+			const int sinceOptimizationThreshold = 117;
+
+			public LuceneQueue (LuceneDriver _driver)
+			{
+				driver = _driver;
+				Log = driver.log;
+			}
+
+			public void ScheduleQueueItem (QueueItem item)
+			{
+				lock (this) {
+					item.SequenceNumber = NextSequenceNumber;
+					++NextSequenceNumber;
 				}
-				queue.Insert (i, item);
-				Monitor.Pulse (queueLock);
-			}
-		}
-
-		// Process a single queue item.
-		// In the interest of efficiency, we try to batch together
-		// as many operations as possible.  
-		private void ProcessQueueItem (QueueItem item)
-		{
-			if (item.IsDelete) {
-				// We can't do interleaved additions and deletions,
-				// so we have to flush if a delete item comes in
-				// while adds are pending.
-				if (HavePendingAdds)
-					FlushPending ();
 				
-				AddPendingDelete (item);
-			} else if (item.IsAdd) {
-				QueueItem fakeItem = new QueueItem ();
-				fakeItem.UriToDelete = item.IndexableToAdd.Uri;
-				// We have to not broadcast this delete to avoid
-				// a nasty race in when successive change events get processed
-				// in different threads in the QueryDriver.
-				// This is OK, because Query will synthesize a
-				// subtract event if it sees an existing thing added.
-				fakeItem.IsSilent = true;
-				AddPendingDelete (fakeItem);
-				AddPendingAdd (item);
-			} else {
-				log.Warn ("Failed to process unknown/malformed QueueItem");
-			}
-		}
-
-		// Called immediately after each queue item is processed.
-		private void PostProcessQueue ()
-		{
-
-		}
-
-		// Called when the queue is empty (and has been empty for a brief
-		// period of time.)
-		private void ProcessEmptyQueue ()
-		{
-			FlushPending ();
-
-			if (sinceOptimization > sinceOptimizationThreshold / 2) {
-				log.Debug ("Optimizing Index (Opportunistic)");
-				IndexWriter writer = new IndexWriter (Store, Analyzer, false);
-				writer.Optimize ();
-				writer.Close ();
-				log.Debug ("Done Optimizing Index");
-				sinceOptimization = 0;
-			}
-		}
-
-		// Called between iterations when the queue is not empty.
-		private void ProcessNonEmptyQueue ()
-		{
-			ConditionallyFlushPending ();
-		}
-
-		// Test whether or not we should continue processing queue items.
-		private bool StopProcessingQueue ()
-		{
-			// For now, we never stop.
-			return false;
-		}
-
-		private void WorkQueue ()
-		{
-			// Before we start, optimize the index.  We want to do this
-			// every time at start-up to help avoid running out of file
-			// descriptors if the beagled were to crash before reaching
-			// the sinceOptimizationThreshold.
-			IndexWriter writer = new IndexWriter (Store, Analyzer, false);
-			writer.Optimize ();
-			writer.Close ();
-
-			while (true) {
-
-				// Get the next queue item.  If necessary,
-				// wait until an item becomes available.
-				QueueItem item = null;
-				lock (queueLock) {
-					if (queue.Count == 0)
-						Monitor.Wait (queueLock);
-					if (queue.Count > 0) {
-						item = (QueueItem) queue [0];
-						queue.RemoveAt (0);
-					}
-				}
-
-				// If we got a queue item, process it.
-				if (item != null) {
-					ProcessQueueItem (item);
-					PostProcessQueue ();
-
-					// If the queue is empty and stays empty for 137ms,
-					// call ProcessEmptyQueue.  (I chose 137ms at random.
-					// Why pretend that any value we stick in here isn't
-					// completely arbitrary?)
-					bool queueIsEmpty = false;
-					lock (queueLock) {
-						if (queue.Count == 0) {
-							Monitor.Wait (queueLock, 137);
-							if (queue.Count == 0)
-								queueIsEmpty = true;
-						}
-					}
-					if (queueIsEmpty)
-						ProcessEmptyQueue ();
-					else
-						ProcessNonEmptyQueue ();
-				}
-
-				// Should we stop processing the queue and exit the thread?
-				if (StopProcessingQueue ())
-					break;
-			}
-		}
-
-		// Launch a thread to handle the queue.
-		private void StartQueue ()
-		{
-			lock (this) {
-				if (queueThread != null)
-					return;
-				queueThread = new Thread (new ThreadStart (WorkQueue));
-				queueThread.Start ();
-			}
-		}
-
-
-		/////////////////////////////////////////////////////
-
-		//
-		// Queue Processing Helper Functions
-		//
-
-		// Adds
-
-		ArrayList pendingAdds = new ArrayList ();
-		int sinceOptimization = 0;
-		const int sinceOptimizationThreshold = 117; // another random number
-
-		private bool HavePendingAdds {
-			get { return pendingAdds.Count > 0; }
-		}
-
-		private void AddPendingAdd (QueueItem item) // an unfortunate method name...
-		{
-			pendingAdds.Add (item);
-		}
-
-		private void FlushPendingAdds ()
-		{
-			if (pendingAdds.Count == 0)
-				return;
-
-			WorkerBegin ();
-
-			log.Debug ("Flushing {0} Adds", pendingAdds.Count);
-
-			IndexWriter writer = new IndexWriter (Store, Analyzer, false);
-			int sleepCounter = 0;
-			foreach (QueueItem item in pendingAdds) {
-				Indexable indexable = item.IndexableToAdd;
-				Document doc = null;
-				if (! item.IsSilent)
-					log.Debug ("+ {0}", indexable.Uri);
-				try {
-					doc = ToLuceneDocument (indexable);
-				} catch (Exception e) {
-					log.Error ("unable to convert {0} (type={1}) to a lucene document",
-							   indexable.Uri, indexable.Type);
-					log.Error (e);
-				}
-				if (doc != null) {
-					writer.AddDocument (doc);
-					if (item.PostIndexHook != null)
-						item.PostIndexHook (this, indexable.Uri);
-					++sinceOptimization;
-
-					int sleepTime = 0;
-
-					if (queue.Count > 0) {
-						// If there are multiple working threads, increase sleep time
-						// by 46ms.  (46 is a random number.)
-						if (MultipleWorkers)
-							sleepTime += 46;
-
-						// Sleep an extra 51ms if we've indexed at least 6 items
-						// since we last slept.  (6 and 51 is a random number.)
-						++sleepCounter;
-						if (sleepCounter == 6)
-							sleepTime += 51;
-
-						// If there are more than 13 items in the queue, sleep 67ms
-						// between items.  (13 and 67 are *very* random numbers.)
-						if (queue.Count > 13)
-							sleepTime += 67;
-					}
-
-					if (sleepTime > 0) {
-						log.Debug ("Sleeping for {0}ms", sleepTime);
-						Thread.Sleep (sleepTime);
-						sleepCounter = 0;
-					}
-				}
-			}
-
-			WorkerEnd ();
-
-			log.Debug ("Done Adding");
-
-			if (sinceOptimization > sinceOptimizationThreshold) {
-				log.Debug ("Optimizing Index");
-				writer.Optimize ();
-				log.Debug ("Done Optimizing Index");
-				sinceOptimization = 0;
+				Enqueue (item, item.Priority);
 			}
 			
-			writer.Close ();
-		}
+			public void Flush ()
+			{
+				if (pendingByUri.Count == 0)
+					return;
 
-		private void BroadcastAndClearPendingAdds ()
-		{
-			if (pendingAdds.Count > 0) {
-				foreach (QueueItem item in pendingAdds) {
-					if (AddedEvent != null && ! item.IsSilent)
-						AddedEvent (this, item.IndexableToAdd.Uri);
+				driver.log.Info ("Flushing...");
+
+				Stopwatch watch = new Stopwatch ();
+
+				ArrayList pending = new ArrayList (pendingByUri.Values);
+
+				ArrayList idsToDelete = new ArrayList ();
+
+				// Step #1:  Convert the URIs of all pending items
+				// to Id numbers and store them in idsToDelete
+				watch.Restart ();
+				LNS.BooleanQuery uriQuery = new LNS.BooleanQuery ();
+				foreach (QueueItem item in pending) {
+					Uri uri = item.Uri;
+					if (! item.IsSilent)
+						driver.log.Info ("- {0}", uri);
+					Term term = new Term ("Uri", uri.ToString ());
+					LNS.Query termQuery = new LNS.TermQuery (term);
+					uriQuery.Add (termQuery, false, false);
 				}
-				pendingAdds.Clear ();
+				LNS.Searcher searcher = new LNS.IndexSearcher (driver.Store);
+				LNS.Hits uriHits = searcher.Search (uriQuery);
+				for (int i = 0; i < uriHits.Length (); ++i) {
+					int id = uriHits.Id (i);
+					idsToDelete.Add (id);
+				}
+				searcher.Close ();
+				watch.Stop ();
+				driver.log.Info ("Step #1: {0} {1} {2}", watch, pending.Count, watch.ElapsedTime / pending.Count);
+
+				// Step #2: Walk across the list of ids and delete all
+				// of those documents.
+				watch.Restart ();
+				IndexReader reader;
+				reader = IndexReader.Open (driver.Store);
+				foreach (int id in idsToDelete)
+					reader.Delete (id);
+				reader.Close ();
+				watch.Stop ();
+				driver.log.Info ("Step #2: {0}", watch);
+
+				// Step #3: Write out the pending adds
+				watch.Restart ();
+				IndexWriter writer = null;
+				foreach (QueueItem item in pending) {
+					if (! item.IsAdd)
+						continue;
+
+					Indexable indexable = item.IndexableToAdd;
+					
+					Document doc = null;
+					if (! item.IsSilent)
+						driver.log.Info ("+ {0}", indexable.Uri);
+					try {
+						doc = driver.ToLuceneDocument (indexable);
+					} catch (Exception e) {
+						driver.log.Error ("Unable to convert {0} (type={1}) to a lucene document",
+								  indexable.Uri, indexable.Type);
+						driver.log.Error (e);
+					}
+
+					if (doc != null) {
+						if (writer == null)
+							writer = new IndexWriter (driver.Store, Analyzer, false);
+						writer.AddDocument (doc);
+						++sinceOptimization;
+					}
+				}
+				if (writer != null) {
+					if (sinceOptimization > sinceOptimizationThreshold) {
+						driver.log.Info ("Threshold Optimize ({0})", sinceOptimization);
+						writer.Optimize ();
+						sinceOptimization = 0;
+					}
+					writer.Close ();
+				}
+				watch.Stop ();
+				driver.log.Info ("Step #3: {0}", watch);
+
+				// Step #4: 
+				// (a) Call the post-index hooks.
+				// (b) Broadcast our notifications.
+				// (c) Store the sequence numbers by Uri
+				watch.Restart ();
+				foreach (QueueItem item in pending) {
+
+					if (item.PostIndexHook != null)
+						item.PostIndexHook (driver, item.Uri);
+
+					if (! item.IsSilent) {
+						if (item.IsAdd) {
+							if (driver.AddedEvent != null)
+								driver.AddedEvent (driver, item.Uri);
+						} else if (item.IsDelete) {
+							if (driver.DeletedEvent != null)
+								driver.DeletedEvent (driver, item.Uri);
+						}
+					}
+
+					seqnoByUri [item.Uri] = item.SequenceNumber;
+				}
+				watch.Stop ();
+				driver.log.Info ("Step #4: {0}", watch);
+				
+				// Step #6: Clear the list of pending items.
+				pendingByUri.Clear ();
+				pendingAdds = 0;
+				pendingDeletes = 0;
+			}
+			
+			///////////////////////////////////////////////////////
+			
+
+			override protected void ProcessQueueItem (object obj)
+			{
+				QueueItem item = (QueueItem) obj;
+				QueueItem oldItem = null;
+
+				// Check to make sure that another item w/ the
+				// same Uri and a larger sequence number
+				// wasn't already processed.
+				if (seqnoByUri.Contains (item.Uri)) {
+					uint seqno = (uint) seqnoByUri [item.Uri];
+					if (seqno > item.SequenceNumber) {
+						driver.log.Info ("Rejected {0} by seqno", item.Uri);
+						return;
+					}
+				}
+
+				oldItem = pendingByUri [item.Uri] as QueueItem;
+				if (oldItem == null || item.SequenceNumber > oldItem.SequenceNumber) {
+				
+					pendingByUri [item.Uri] = item;
+					
+					if (oldItem != null) {
+						driver.log.Info ("Superceding previously queued item {0}", item.Uri);
+						if (oldItem.IsAdd)
+							--pendingAdds;
+						else if (oldItem.IsDelete)
+							--pendingDeletes;
+					}
+				
+					if (item.IsAdd)
+						++pendingAdds;
+					else if (item.IsDelete)
+						++pendingDeletes;
+				} else {
+					driver.log.Info ("Dropped duplicate {0}", item.Uri);
+				}
+
+				if (pendingAdds >= pendingAddThreshold
+				    || pendingDeletes >= pendingDeleteThreshold) {
+
+					int pa = pendingAdds;
+					int pd = pendingDeletes;
+					
+					Stopwatch watch = new Stopwatch ();
+					watch.Start ();
+					Flush ();
+					watch.Stop ();
+
+					driver.log.Info ("Threshold Flush (add={0}, delete={1}), {2}",
+							 pa, pd, watch);
+				}
+			}
+
+			override protected int PostProcessSleepDuration ()
+			{
+				return 50;
+			}
+
+			override protected int EmptyQueueTimeoutDuration ()
+			{
+				driver.log.Info ("pendingCount={0}, sinceOptimization={1}",
+						 pendingByUri.Count, sinceOptimization);
+				if (pendingByUri.Count > 0)
+					return 1000; // After 1s, flush
+				else if (sinceOptimization > 0)
+					return 5000; // After 5s, optimize
+				return 0;
+			}
+
+			override protected void EmptyQueueTimeout ()
+			{
+				// If the queue is empty, there is no longer
+				// a risk of processing a queue items out of
+				// sequence because of priorities.
+				seqnoByUri.Clear ();
+
+				if (pendingByUri.Count != 0) {
+					
+					int pa = pendingAdds;
+					int pd = pendingDeletes;
+
+					Stopwatch watch = new Stopwatch ();
+					watch.Start ();
+					Flush ();
+					watch.Stop ();
+
+					driver.log.Info ("Opportunistic Flush (add={0}, delete={1}), {2}",
+							 pa, pd, watch);
+					
+				} else if (sinceOptimization > 0) {
+
+					Stopwatch watch = new Stopwatch ();
+					watch.Start ();
+					IndexWriter writer;
+					writer = new IndexWriter (driver.Store, null, false);
+					writer.Optimize ();
+					writer.Close ();
+					watch.Stop ();
+
+					driver.log.Info ("Opportunistic Optimize ({0}), {1}",
+							 sinceOptimization, watch);
+					sinceOptimization = 0;
+				}
+					
 			}
 		}
+		
 
 		private Document ToLuceneDocument (Indexable indexable)
 		{			
@@ -711,7 +756,7 @@ namespace Beagle.Daemon {
 			}
 			
 			if (indexable.ValidTimestamp) {
-				str = BU.StringFu.DateTimeToString (indexable.Timestamp);
+				str = StringFu.DateTimeToString (indexable.Timestamp);
 				f = Field.Keyword ("Timestamp", str);
 				doc.Add (f);
 			}
@@ -757,88 +802,6 @@ namespace Beagle.Daemon {
 			return doc;
 		}
 		
-
-		// Deletions
-
-		private ArrayList pendingDeletes = new ArrayList ();
-
-		private void AddPendingDelete (QueueItem item)
-		{
-			pendingDeletes.Add (item);
-		}
-
-		private void FlushPendingDeletes ()
-		{
-			if (pendingDeletes.Count == 0)
-				return;
-
-			log.Debug ("Flushing {0} deletes", pendingDeletes.Count);
-
-			ArrayList idsToDelete = new ArrayList ();
-
-			// Get the ids of all documents with the given Uris.
-			LNS.Searcher searcher = new LNS.IndexSearcher (Store);
-			foreach (QueueItem item in pendingDeletes) {
-				Uri uri = item.UriToDelete;
-				if (! item.IsSilent)
-					log.Debug ("- {0}", uri);
-				Term term = new Term ("Uri", uri.ToString ());
-				LNS.Query uriQuery = new LNS.TermQuery (term);
-				LNS.Hits uriHits = searcher.Search (uriQuery);
-				for (int i = 0; i < uriHits.Length (); ++i) {
-					int id = uriHits.Id (i);
-					idsToDelete.Add (id);
-				}
-			}
-			searcher.Close ();
-
-			// Walk across the list of ids and delete all of those
-			// documents.
-			IndexReader reader;
-			reader = IndexReader.Open (Store);
-			foreach (int id in idsToDelete)
-				reader.Delete (id);
-			reader.Close ();
-
-			log.Debug ("Done deleting");
-
-			// Call any post-indexing hooks
-			foreach (QueueItem item in pendingDeletes) {
-				if (item.PostIndexHook != null)
-					item.PostIndexHook (this, item.UriToDelete);
-			}
-		}
-
-		private void BroadcastAndClearPendingDeletes ()
-		{
-			if (pendingDeletes.Count > 0) {
-				// Fire off events to indicate what we just deleted.
-				foreach (QueueItem item in pendingDeletes) {
-					if (DeletedEvent != null && ! item.IsSilent)
-						DeletedEvent (this, item.UriToDelete);
-				}
-				
-				// Clear our list of pending deletions
-				pendingDeletes.Clear ();
-			}
-		}
-
-		// FlushPending
-
-		private void FlushPending ()
-		{
-			FlushPendingDeletes ();
-			FlushPendingAdds ();
-			BroadcastAndClearPendingDeletes ();
-			BroadcastAndClearPendingAdds ();
-		}
-
-		private void ConditionallyFlushPending ()
-		{
-			if (pendingAdds.Count + pendingDeletes.Count > 197)
-				FlushPending ();
-		}
-
 
 		/////////////////////////////////////////////////////
 
@@ -973,7 +936,7 @@ namespace Beagle.Daemon {
 
 			str = doc.Get ("Timestamp");
 			if (str != null)
-				versioned.Timestamp = BU.StringFu.StringToDateTime (str);
+				versioned.Timestamp = StringFu.StringToDateTime (str);
 			
 			str = doc.Get ("Revision");
 			if (str != null)
@@ -1098,6 +1061,15 @@ namespace Beagle.Daemon {
 			if (key.StartsWith (propPrefix))
 				return key.Substring (propPrefix.Length);
 			return null;
+		}
+
+		// Check if a file is a symlink.
+		private static bool IsSymLink (FileSystemInfo info)
+		{
+			Stat stat = new Stat ();
+			Syscall.lstat (info.FullName, out stat);
+			int mode = (int) stat.Mode & (int)StatModeMasks.TypeMask;
+			return mode == (int) StatMode.SymLink;
 		}
 	}
 }

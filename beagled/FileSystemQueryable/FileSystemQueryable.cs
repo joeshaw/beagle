@@ -26,11 +26,13 @@
 
 using System;
 using System.Collections;
-using System.Reflection;
 using System.IO;
+using System.Reflection;
+using System.Threading;
+
 
 using Beagle.Daemon;
-using BU = Beagle.Util;
+using Beagle.Util;
 
 
 namespace Beagle.Daemon.FileSystemQueryable {
@@ -38,151 +40,146 @@ namespace Beagle.Daemon.FileSystemQueryable {
 	[QueryableFlavor (Name="FileSystemQueryable", Domain=QueryDomain.Local)]
 	public class FileSystemQueryable : LuceneQueryable {
 
-		static void IndexFile (LuceneDriver driver, FileSystemInfo fsinfo, bool priority)
-		{
-			Uri uri = BU.UriFu.PathToFileUri (fsinfo.FullName);
-			FilteredIndexable indexable = new FilteredIndexable (uri);
-			if (priority)
-				driver.SchedulePriorityAddAndMark (indexable, fsinfo);
-			else
-				driver.ScheduleAddAndMark (indexable, fsinfo);
-		}
+		private static Logger log = Logger.Get ("FileSystemQueryable");
 
-		static void IndexFile (LuceneDriver driver, string path, bool priority)
-		{
-			if (File.Exists (path))
-				IndexFile (driver, new FileInfo (path), priority);
-			else if (Directory.Exists (path))
-				IndexFile (driver, new DirectoryInfo (path), priority);
-		}
-
-		static void RemoveFileFromIndex (LuceneDriver driver, string path, bool priority)
-		{
-			Uri uri = BU.UriFu.PathToFileUri (path);
-			if (priority)
-				driver.SchedulePriorityDelete (uri);
-			else
-				driver.ScheduleDelete (uri);
-		}
-
-		private class FileSystemCrawler : Crawler {
-
-			LuceneDriver driver;
-			FileNameFilter filter;
-
-			public FileSystemCrawler (LuceneDriver _driver, FileNameFilter _filter) : base (_driver.Fingerprint)
-			{
-				driver = _driver;
-				filter = _filter;
-			}
-
-			protected override bool SkipByName (FileSystemInfo fsinfo)
-			{
-				return filter.Ignore (fsinfo);
-			}
-
-			protected override void CrawlFile (FileSystemInfo fsinfo)
-			{
-				IndexFile (driver, fsinfo, false); /* Crawling is never high priority */
-			}
-		}
-
-		private class FileSystemIndexerImpl : Beagle.FileSystemIndexerProxy {
-
-			LuceneDriver driver;
-			Crawler crawler;
-
-			public FileSystemIndexerImpl (LuceneDriver _driver, Crawler _crawler)
-			{
-				driver = _driver;
-				crawler = _crawler;
-			}
-			
-
-			public override void Index (string path)
-			{
-				IndexFile (driver, path, true); /* An explicitly-requested indexing op is always high priority. */
-			}
-
-			public override void Delete (string path)
-			{
-				RemoveFileFromIndex (driver, path, true); /* ...as is an explicitly-requested delete. */
-			}
-
-			public override void Crawl (string path, int maxDepth)
-			{
-				if (Directory.Exists (path)) {
-					DirectoryInfo dir = new DirectoryInfo (path);
-					// Correction: crawling is never high priority, unless the user
-					// explicitly asks us to crawl.
-					crawler.SchedulePriorityCrawl (dir, maxDepth);
-				}
-			}
-		}
-
-		private FileNameFilter filter;
-		private FileSystemCrawler crawler;
-		private FileSystemIndexerImpl indexer;
-		private FileSystemEventMonitor monitor;
+		FileNameFilter filter;
+		CrawlQueue crawlQ;
+		Hashtable dirtyFiles = new Hashtable ();
 
 		public FileSystemQueryable () : base ("Files", // backend name
 						      Path.Combine (PathFinder.RootDir, "FileSystemIndex"))
 		{
-			filter = new FileNameFilter ();
-			crawler = new FileSystemCrawler (Driver, filter);
-			indexer = new FileSystemIndexerImpl (Driver, crawler);
-			DBusisms.Service.RegisterObject (indexer, Beagle.DBusisms.FileSystemIndexerPath);
 
-			// Set up file system monitor
-			monitor  = new FileSystemEventMonitor ();
 			string home = Environment.GetEnvironmentVariable ("HOME");
-			ImportantDirectory (home);
-			ImportantDirectory (Path.Combine (home, "Desktop"));
-			ImportantDirectory (Path.Combine (home, "Documents"));
+			
+			filter = new FileNameFilter ();
+			crawlQ = new CrawlQueue (filter, Driver, log);
 
-			monitor.FileSystemEvent += OnFileSystemEvent;
+			TraverseDirectory (home);
+
+			// Crawl a few important directories right away, just to be sure.
+			// FIXME: This list shouldn't be hard-wired
+			crawlQ.ScheduleCrawl (home);
+			crawlQ.ScheduleCrawl (Path.Combine (home, "Desktop"));
+			crawlQ.ScheduleCrawl (Path.Combine (home, "Documents"));
+
+			Inotify.InotifyEvent += new InotifyHandler (OnInotifyEvent);
 		}
 
-		public void ImportantDirectory (string path)
+		//////////////////////////////////////////////////////////////////////////
+
+		//
+		// Inotify-related code
+		//
+
+		private Hashtable watchedPaths = new Hashtable ();
+		private Hashtable blockedPaths = new Hashtable ();
+
+		private void Watch (string path)
 		{
-			DirectoryInfo dir = new DirectoryInfo (path);
-			if (dir.Exists) {
-				monitor.Subscribe (dir, false);
-				crawler.ScheduleCrawl (dir, 0);
+			Inotify.Watch (path, 
+				       InotifyEventType.All & (~ InotifyEventType.Access));
+		}
+
+		// Do a breadth-first traversal of the home directory,
+		// setting up watches and scheduling crawls.
+		private void TraverseDirectory (string root)
+		{
+			Queue queue = new Queue ();
+			int count = 0;
+
+			log.Info ("Walking {0}", root);
+			Stopwatch stopwatch = new Stopwatch ();
+			stopwatch.Start ();
+			
+			queue.Enqueue (root);
+
+			while (queue.Count > 0) {
+				++count;
+				string path = (string) queue.Dequeue ();
+			
+				DirectoryInfo dir = new DirectoryInfo (path);
+				if (dir.Exists) {
+					blockedPaths [path] = true;
+					watchedPaths [path] = true;
+					Watch (path);
+
+					foreach (DirectoryInfo subdir in dir.GetDirectories ()) {
+						if (! filter.Ignore (subdir.FullName))
+							queue.Enqueue (subdir.FullName);
+					}
+				}
+
+				blockedPaths.Remove (path);
+			}
+
+			stopwatch.Stop ();
+
+			log.Info ("Processed {0} directories in {1}", count, stopwatch);
+		}
+
+		private void OnInotifyEvent (string           path,
+					     string           subitem,
+					     InotifyEventType type,
+					     int              cookie)
+		{
+			// Having to do a hash table lookup per event sucks.
+			// It would be nicer if there was a faster way to do
+			// this lookup.
+			if (! watchedPaths.Contains (path))
+				return;
+
+			string fullPath = Path.Combine (path, subitem);
+			if (blockedPaths.Contains (fullPath) || filter.Ignore (fullPath))
+				return;
+
+			// Handle a few simple event types
+			switch (type) {
+
+			case InotifyEventType.CreateSubdir:
+				TraverseDirectory (fullPath);
+				return;
+				
+			case InotifyEventType.CreateFile:
+			case InotifyEventType.Modify:
+				dirtyFiles [fullPath] = true;
+				return;
+
+			case InotifyEventType.QueueOverflow:
+				// If the queue overflows, we can't make any
+				// assumptions about the state of the file system.
+				crawlQ.ForgetAll ();
+				return;
+
+			}
+
+			// Try to crawl any path we see activity in.
+			// We only crawl each directory once, but that is enforced
+			// inside of the CrawlQueue.
+			crawlQ.ScheduleCrawl (path, 0);
+
+			// Handle the events that trigger indexing operations.
+			switch (type) {
+
+			case InotifyEventType.DeleteSubdir:
+			case InotifyEventType.DeleteFile:
+				Driver.ScheduleDeleteFile (fullPath, 100);
+				dirtyFiles.Remove (fullPath);
+				break;
+
+			case InotifyEventType.Close:
+				if (dirtyFiles.Contains (fullPath)) {
+					Driver.ScheduleAddFile (FileSystem.New (fullPath), 100);
+					dirtyFiles.Remove (fullPath);
+				} else {
+					log.Info ("{0} is not dirty", fullPath);
+				}
+				break;
+
 			}
 		}
 
-		private void OnFileSystemEvent (FileSystemEventMonitor source, FileSystemEventType eventType,
-						string oldPath, string newPath)
-		{
-			Console.WriteLine ("Got event {0} {1} {2}", eventType, oldPath, newPath);
 
-			if (eventType == FileSystemEventType.Changed
-			    || eventType == FileSystemEventType.Created) {
-
-				if (filter.Ignore (newPath)) {
-					Console.WriteLine ("Ignoring {0}", newPath);
-					return;
-				}
-
-				/* An index request generated by a file system event is always
-				   high-priority. */
-				IndexFile (Driver, newPath, true);
-
-			} else if (eventType == FileSystemEventType.Deleted) {
-
-				if (filter.Ignore (oldPath)) {
-					Console.WriteLine ("Ignoring {0}", oldPath);
-					return;
-				}
-
-				/* ...as is a removal generated by an event. */
-				RemoveFileFromIndex (Driver, oldPath, true);
-
-			} else {
-
-				Console.WriteLine ("Unhandled!");
-			}
-		}
 	}
 }
+	

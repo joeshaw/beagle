@@ -61,7 +61,7 @@ namespace Beagle.Daemon.GaimLogQueryable {
 		FileSystemEventMonitor monitor;
 
 		public GaimLogQueryable () : base ("IMLog",
-						   Path.Combine (PathFinder.RootDir, "GaimLogQueryable"))
+						   Path.Combine (PathFinder.RootDir, "GaimLogIndex"))
 		{
 			string home = Environment.GetEnvironmentVariable ("HOME");
 			DirectoryInfo logDir = new DirectoryInfo (Path.Combine (Path.Combine (home, ".gaim"), "logs"));
@@ -119,14 +119,9 @@ namespace Beagle.Daemon.GaimLogQueryable {
 		private void IndexLog (FileInfo file)
 		{
 			ICollection logs = BU.GaimLog.ScanLog (file);
-			int n = 0;
 			foreach (BU.ImLog log in logs) {
 				Indexable indexable = ImLogToIndexable (log);
-				++n;
-				if (n < logs.Count)
-					Driver.ScheduleAdd (indexable);
-				else
-					Driver.ScheduleAddAndMark (indexable, file);
+				Driver.ScheduleAddAndMark (indexable, 0, file);
 			}
 		}
 	}

@@ -116,6 +116,10 @@ namespace Beagle.Daemon.MailQueryable {
 		public void IndexMbox (FileInfo summaryInfo)
 		{
 			string summaryFile = summaryInfo.FullName;
+
+			if (! summaryInfo.Name.StartsWith ("Sent"))
+				return;
+
 			string mboxFile = Path.ChangeExtension (summaryFile, null);
 			string folderName = Path.GetFileNameWithoutExtension (summaryInfo.Name);
 

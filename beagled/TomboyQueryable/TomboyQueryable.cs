@@ -98,7 +98,7 @@ namespace Beagle.Daemon.TomboyQueryable {
 			
 			// A Note was returned; add it to the index
 			Indexable indexable = NoteToIndexable (note);
-			Driver.ScheduleAddAndMark (indexable, file);
+			Driver.ScheduleAddAndMark (indexable, 0, file);
 		}
 		
 		private void RemoveNote (string path)
@@ -108,7 +108,7 @@ namespace Beagle.Daemon.TomboyQueryable {
 				return;
 
 			Uri uri = BU.UriFu.PathToFileUri(path);
-			Driver.ScheduleDelete (uri);
+			Driver.ScheduleDelete (uri, 0);
 		}
 		
 		
