@@ -51,25 +51,10 @@ namespace Beagle.Daemon.GaimLogQueryable {
 					
 		private void StartWorker() 
 		{
-			// Check to see if ~/.gaim exists.
-			if (! Directory.Exists (config_dir)) {
-				log.Warn ("IM: {0} not found, watching for it.", config_dir);
-				Inotify.Event += WatchForGaim;
-				Inotify.Watch (PathFinder.HomeDir,
-					       Inotify.EventType.CreateSubdir
-					       | Inotify.EventType.MovedFrom
-					       | Inotify.EventType.MovedTo);
-				return;
-			}
-		
-			// Check to see if ~/.gaim/logs exists.
-			if (! Directory.Exists (log_dir)) {
-				log.Warn ("IM: {0} not found, watching for it.", log_dir);
-				Inotify.Event += WatchForGaim;
-				Inotify.Watch (config_dir,
-					       Inotify.EventType.CreateSubdir
-					       | Inotify.EventType.MovedFrom
-					       | Inotify.EventType.MovedTo);
+			// Check to see if ~/.gaim/logs exists
+			if (! Directory.Exists (this.log_dir)) {
+				log.Warn ("IM: {0} not found, watching for it.", this.log_dir);
+				GLib.Timeout.Add (60000, new GLib.TimeoutHandler (CheckForLogs));
 				return;
 			}
 			
@@ -136,32 +121,16 @@ namespace Beagle.Daemon.GaimLogQueryable {
 			return file_count;
 		}
 		
-		// Watches to see if the ~/.gaim or ~/.gaim/logs directory was created.
-		private void WatchForGaim (int wd,
-					     string path,
- 					     string subitem,
-					     Inotify.EventType type,
-					     uint cookie)
+		private bool CheckForLogs ()
 		{
-			
-			// Checking to see if the Gaim config directory was created.
-			if (subitem == ".gaim" && path == PathFinder.HomeDir) {
-				log.Info ("IM: Found the Gaim config directory.");
-				Inotify.Event -= WatchForGaim;
-				StartWorker ();
-				return;
-			}
-			
-			// Checking to see if the Gaim Log directory was created.
-			if (subitem == "logs" && path == config_dir) {
-				log.Info ("IM: Found the Gaim logs directory.");
-				Inotify.Event -= WatchForGaim;
-				Inotify.Ignore (path);
-				StartWorker ();
-				return;
-			}
+			if (! Directory.Exists (this.log_dir))
+				return true; // continue polling
+
+			// Otherwise, stop polling and start indexing
+			StartWorker ();
+			return false;
 		}
-		
+
 		private void OnInotifyEvent (int wd,
 					     string path,
 					     string subitem,
