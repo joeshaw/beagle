@@ -1,0 +1,183 @@
+
+Coding Style
+------------
+
+Dewey attempts to follow the Mono coding conventions.  The following
+description of those conventions was shamelessly stolen from Dashboard's
+HACKING file.
+
+* Tagging buggy code
+
+        If there is a bug in your implementation tag the problem by using
+        the word "FIXME" in the code, together with a description of the 
+        problem.
+
+        Do not use XXX or TODo or obscure descriptions, because
+        otherwise people will not be able to understand what you mean.
+
+
+* Basic code formatting
+
+        In order to keep the code consistent, please use the following
+        conventions.  From here on `good' and `bad' are used to attribute
+        things that would make the coding style match, or not match.  It is not
+        a judgement call on your coding abilities, but more of a style and 
+        look call.  Please follow these guidelines to ensure prettiness.
+
+        Use 8 space tabs for writing your code.
+
+        Since we are using 8-space tabs, you might want to consider the Linus
+        Torvalds trick to reduce code nesting.  Many times in a loop, you will
+        find yourself doing a test, and if the test is true, you will
+        nest.  Many times this can be changed.  Example:
+
+
+                for (i = 0; i < 10; i++) {
+                        if (something (i)) {
+                                do_more ();
+                        }
+                }
+
+        This take precious space, instead write it like this:
+
+                for (i = 0; i < 10; i++) {
+                        if (!something (i))
+                                continue;
+                        do_more ();
+                }
+
+        A few guidelines:
+
+                * Use a space before an opening parenthesis when calling
+                  functions, or indexing, like this:
+
+                        method (a);
+                        b [10];
+
+                * Do not put a space after the opening parenthesis and the 
+                  closing one, ie:
+
+                        good: method (a);       array [10];
+
+                        bad:  method ( a );     array[ 10 ];
+
+                * Inside a code block, put the opening brace on the same line
+                  as the statement:
+
+                        good:
+                                if (a) {
+                                        code ();
+                                        code ();
+                                }
+
+                        bad:
+                                if (a) 
+                                {
+                                        code ();
+                                        code ();
+                                }
+
+                * Avoid using unecessary open/close braces, vertical space
+                  is usually limited:
+
+                        good:
+                                if (a)
+                                        code ();
+
+                        bad:
+                                if (a) {
+                                        code ();
+                                }
+
+                * When defining a method, use the C style for brace placement, 
+                  that means, use a new line for the brace, like this:
+
+                        good:
+                                void Method ()
+                                {
+                                }
+
+                        bad:
+                                void Method () {
+                                }
+
+                * Properties and indexers are an exception, keep the
+                  brace on the same line as the property declaration.
+                  Rationale: this makes it visually
+                  simple to distinguish them.
+
+                        good:
+                                int Property {
+                                        get {
+                                                return value;
+                                        }
+                                }
+
+                        bad:
+                                int Property 
+                                {
+                                        get {
+                                                return value;
+                                        }
+                                }
+
+                  Notice how the accessor "get" also keeps its brace on the same
+                  line.
+
+                  For very small properties, you can compress things:
+
+                        ok:
+                                int Property {
+                                        get { return value; }
+                                        set { x = value; }
+                                }
+
+                * Use white space in expressions liberally, except in the presence
+                  of parenthesis:
+
+                        good:
+
+                                if (a + 5 > method (blah () + 4))
+
+                        bad:
+                                if (a+5>method(blah()+4))
+
+                * For any new files, please use a descriptive introduction, like
+                  this:
+
+                        //
+                        // System.Comment.cs: Handles comments in System files.
+                        //
+                        // Author:
+                        //   Juan Perez (juan@address.com)
+                        //
+                        // (C) 2002 Address, Inc (http://www.address.com)
+                        //
+
+                * Switch statements have the case at the same indentation as the
+                  switch:
+
+                        switch (x) {
+                        case 'a':
+                                ...
+                        case 'b':
+                                ...
+                        }
+
+
+If you are using Emacs, you might want to put something like this
+in your .emacs file:
+
+(defun poor-mans-csharp-mode ()
+  (java-mode)
+  (setq mode-name "C#")
+  (set-variable 'tab-width 8)
+  (set-variable 'indent-tabs-mode t)
+  (set-variable 'c-basic-offset 8)
+  (c-set-offset 'inline-open 0)
+  (c-set-offset 'case-label 0)
+)
+
+(setq auto-mode-alist (append '(("\\.cs\\'" . poor-mans-csharp-mode))
+			      auto-mode-alist))
+

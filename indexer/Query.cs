@@ -8,19 +8,19 @@ using System;
 
 namespace Dewey {
 
-    public class Query {
+	public class Query {
 
-	String queryStr;
+		String queryStr;
+		
+		public Query (String _queryStr)
+		{
+			queryStr = _queryStr;
+		}
 
-	public Query (String _queryStr) {
-	    queryStr = _queryStr;
+		// As the name suggests, this is a transitional API.
+		// (i.e. I don't quite yet know what the hell I'm doing.)
+		public String AbusivePeekInsideQuery {
+			get { return queryStr; }
+		}
 	}
-
-	// As the name suggests, this is a transitional API.
-	// (i.e. I don't quite yet know what the hell I'm doing.)
-	public String AbusivePeekInsideQuery {
-	    get { return queryStr; }
-	}
-    }
-
 }

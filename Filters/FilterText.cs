@@ -9,17 +9,18 @@ using System.IO;
 
 namespace Dewey.Filters {
 
-    public class FilterText : Filter {
+	public class FilterText : Filter {
 	
-	public FilterText () {
-	    AddSupportedMimeType ("text/plain");
-	}
+		public FilterText ()
+		{
+			AddSupportedMimeType ("text/plain");
+		}
 
-	override protected void Read (Stream stream) {
-	    StreamReader reader = new StreamReader (stream);
-	    String text = reader.ReadToEnd ();
-	    AppendContent (text);
+		override protected void Read (Stream stream) 
+		{
+			StreamReader reader = new StreamReader (stream);
+			String text = reader.ReadToEnd ();
+			AppendContent (text);
+		}
 	}
-    }
-
-}
+ }

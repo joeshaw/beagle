@@ -11,49 +11,48 @@ using Dewey.Filters;
 
 class ExtractContentTool {
 
-    static void Main (String[] args) {
+	static void Main (String[] args)
+	{
+		foreach (String arg in args) {
 
-	foreach (String arg in args) {
+			Filter filter = Filter.FilterFromPath (arg);
 
-	    Filter filter = Filter.FilterFromPath (arg);
+			Stream stream = new FileStream (arg,
+							FileMode.Open,
+							FileAccess.Read);
 
-	    Stream stream = new FileStream (arg,
-					    FileMode.Open,
-					    FileAccess.Read);
-
-	    filter.Open (stream);
+			filter.Open (stream);
 	    
-	    Console.WriteLine ("");
+			Console.WriteLine ("");
 
-	    Console.WriteLine ("Filename: " + arg);
-	    Console.WriteLine ("MimeType: " + filter.MimeType);
+			Console.WriteLine ("Filename: " + arg);
+			Console.WriteLine ("MimeType: " + filter.MimeType);
 
-	    Console.WriteLine ("");
+			Console.WriteLine ("");
 
-	    if (filter.MetadataKeys.Count == 0)
-		Console.WriteLine ("No metadata.");
-	    else
-		foreach (String key in filter.MetadataKeys)
-		    Console.WriteLine (key + " = " + filter [key]);
+			if (filter.MetadataKeys.Count == 0)
+				Console.WriteLine ("No metadata.");
+			else
+				foreach (String key in filter.MetadataKeys)
+					Console.WriteLine (key + " = " + filter [key]);
 
-	    Console.WriteLine ("");
+			Console.WriteLine ("");
 
-	    if (filter.Content == null)
-		Console.WriteLine ("No Content.");
-	    else
-		Console.WriteLine ("Content: " + filter.Content);
+			if (filter.Content == null)
+				Console.WriteLine ("No Content.");
+			else
+				Console.WriteLine ("Content: " + filter.Content);
 
-	    Console.WriteLine ("");
+			Console.WriteLine ("");
 
-	    if (filter.HotContent == null)
-		Console.WriteLine ("No HotContent.");
-	    else
-		Console.WriteLine ("HotContent: " + filter.HotContent);
+			if (filter.HotContent == null)
+				Console.WriteLine ("No HotContent.");
+			else
+				Console.WriteLine ("HotContent: " + filter.HotContent);
 
-	    Console.WriteLine ("");
+			Console.WriteLine ("");
 
-	    filter.Close ();
+			filter.Close ();
+		}
 	}
-    }
-
 }
