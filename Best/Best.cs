@@ -59,10 +59,8 @@ namespace Best {
 			
 			Program best = new Program ("best", "0.0", Modules.UI, args);
 			GeckoUtils.Init ();
+			GeckoUtils.SetSystemFonts ();
 
-			// FIXME: get real fonts
-			GeckoUtils.SetFont (1, "sans-serif 7");
-			GeckoUtils.SetFont (2, "mono 7");
 			if (args.Length > 0)
 				BestWindow.Create (args [0]);
 			else

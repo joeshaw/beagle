@@ -172,7 +172,7 @@ AC_SUBST(LIBGECKOGLUE_LIBS)
 
 dnl -------------------------------------------------------
 
-PKG_CHECK_MODULES(BEAGLE_UI, gtk-sharp gecko-sharp gnome-sharp dbus-sharp)
+PKG_CHECK_MODULES(BEAGLE_UI, gtk-sharp gecko-sharp gnome-sharp dbus-sharp gconf-sharp)
 AC_SUBST(BEAGLE_UI_LIBS)
 
 dnl ----------------------------------------------

@@ -15,9 +15,7 @@ namespace Beagle
 								   args);
 
 			Beagle.Util.GeckoUtils.Init ();
-			Beagle.Util.GeckoUtils.SetFont (1, "sans-serif 7");
-			Beagle.Util.GeckoUtils.SetFont (2, "mono 7");
-
+			Beagle.Util.GeckoUtils.SetSystemFonts ();
 
 			/* Restart if we are running when the session ends */
 			Gnome.Client client = Gnome.Global.MasterClient ();
