@@ -1,0 +1,42 @@
+.\" beagle-shutdown(1) manpage
+.\"
+.\" Copyright (C) 2005 Novell, Inc.
+.\"
+.TH BEAGLE-QUERY "1" "Feb 2005" "beagle" "Linux User's Manual"
+.SH NAME
+beagle-query \- search your personal information space
+.SH SYNOPSIS
+.B beagle-query
+[\fIoptions\fR] \fIquery\fR
+.SH DESCRIPTION
+.BR beagle-query
+is used to search your personal information space via Beagle, on the command
+line.  It is a command-line form of the
+.BR best (1)
+GNOME program.
+.SH OPTIONS
+.TP
+.B --verbose 
+Print detailed information about each hit.
+.TP
+.B --mime=\fImimetype\fP
+Constrain search results to this mime type.  This argument can be
+specified multiple times.
+.TP
+.B --source=\fIsource\fP
+Constrain query to the specified search source.  A source list can be
+obtained from the beagle-status command.
+.SH AUTHOR
+Novell, Inc.
+.SH "REPORTING BUGS"
+Report bugs to <dashboard-hackers@gnome.org>.
+.SH COPYRIGHT
+Copyright \(co 2005 Novell, Inc.
+.sp
+This is free software; see the source for copying conditions.  There is NO
+warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+.SH "SEE ALSO"
+.BR beagled (1),
+.BR beagle-shutdown (1),
+.BR beagle-status (1),
+.BR best (1)
