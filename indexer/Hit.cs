@@ -10,28 +10,40 @@ using System.Collections;
 namespace Dewey {
     
 	public class Hit : Versioned, IComparable {
-	
-		int id = 0; /* some sort of unique ID, or 0 if undefined */
 
-		String uri;
-		String domain = "unknown";
-		String mimeType = "application/octet-stream";
+		// A unique ID.  id <= 0 means 'undefined'.
+		private long id = 0;
 
-		String source = "unknown";
+		// A URI we can use to locate the source of this match.
+		private String uri = null;
 
-		// Scores are comparable iff they have the same source.
-		float score = 0;
+		// File, Web, MailMessage, IMLog, etc.
+		private String type = null;
 
-		Hashtable metadata = new Hashtable ();
+		// If applicable, otherwise set to null.
+		private String mimeType = null;
 
-		bool locked = false;
+		// IndexUser, IndexSystem, Google, Addressbook, iFolder, etc.
+		private String source = null;
+
+		// High scores imply greater relevance.
+		private float score = 0.0f;
+
+		private Hashtable properties = new Hashtable (new CaseInsensitiveHashCodeProvider (), 
+							      new CaseInsensitiveComparer ());
+
+		private bool locked = false;
 
 		//////////////////////////
 
 		public void Lockdown ()
 		{
 			if (uri == null)
-				throw new Exception ("Locking Hit with undefined URI");
+				throw new Exception ("Locking Hit with undefined Uri");
+			if (type == null)
+				throw new Exception ("Locking Hit with undefined Type");
+			if (source == null)
+				throw new Exception ("Locking Hit with undefined Source");
 			locked = true;
 		}
 
@@ -43,7 +55,7 @@ namespace Dewey {
 
 		//////////////////////////
 
-		public int Id {
+		public long Id {
 			get { return id; }
 			set { CheckLock (); id = value; }
 		}
@@ -53,9 +65,9 @@ namespace Dewey {
 			set { CheckLock (); uri = value; }
 		}
 
-		public String Domain {
-			get { return domain; }
-			set { CheckLock (); domain = value; }
+		public String Type {
+			get { return type; }
+			set { CheckLock (); type = value; }
 		}
 
 		public String MimeType {
@@ -75,13 +87,17 @@ namespace Dewey {
 
 		//////////////////////////
 
-		public ICollection MetadataKeys {
-			get { return metadata.Keys; }
+		public IDictionary Properties {
+			get { return properties; }
+		}
+
+		public ICollection Keys {
+			get { return properties.Keys; }
 		}
 
 		virtual public String this [String key] {
-			get { return (String) metadata [key]; }
-			set { CheckLock (); metadata [key] = (String) value; }
+			get { return (String) properties [key]; }
+			set { CheckLock (); properties [key] = value as String; }
 		}
 
 		//////////////////////////
@@ -90,8 +106,11 @@ namespace Dewey {
 		{
 			Hit otherHit = (Hit) obj;
 			int cmp = Source.CompareTo (otherHit.Source);
-			if (cmp == 0)
-				cmp = score.CompareTo (otherHit.score);
+			if (cmp == 0) {
+				// Notice that we take the negative of the CompareTo,
+				// so that we sort from high to low.
+				cmp = - score.CompareTo (otherHit.score);
+			}
 			return cmp;
 		}
 

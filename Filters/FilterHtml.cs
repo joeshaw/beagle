@@ -87,7 +87,7 @@ namespace Dewey.Filters {
 				    && subnode.Name == "title") {
 					String title = WalkChildNodesForText (subnode);
 					title = HtmlEntity.DeEntitize (title);
-					SetMetadata ("title", title);
+					this ["Title"] = title;
 				}
 			}
 		}

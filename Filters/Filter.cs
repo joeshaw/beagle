@@ -61,7 +61,7 @@ namespace Dewey.Filters {
 		
 		StringBuilder content;
 		StringBuilder hot;
-		Hashtable     metadata;
+		Hashtable     properties;
 		int           hotCount;
 		int           freezeCount;
 		bool          closeStream = false;
@@ -117,17 +117,6 @@ namespace Dewey.Filters {
 			BuilderAppendWhitespace (hot);
 		}
 		
-		protected void SetMetadata (String key, String val)
-		{
-			key = key.ToLower ();
-			if (key == null)
-				throw new Exception ("Metadata keys may not be null");
-			if (metadata.Contains (key))
-				throw new Exception ("Clobbering metadata " + key);
-			if (val != null)
-				metadata[key] = val;
-		}
-		
 		//////////////////////////
 		
 		static String CleanUp (StringBuilder builder)
@@ -148,12 +137,17 @@ namespace Dewey.Filters {
 			get { return CleanUp (hot); }
 		}
 
-		public ICollection MetadataKeys {
-			get { return metadata.Keys; }
+		public IDictionary Properties {
+			get { return properties; }
+		}
+
+		public ICollection Keys {
+			get { return properties.Keys; }
 		}
 
 		public String this [String key] {
-			get { return metadata[key.ToLower ()] as String; }
+			get { return (String) properties [key]; }
+			set { properties [key] = value as String; }
 		}
 
 		//////////////////////////
@@ -166,7 +160,8 @@ namespace Dewey.Filters {
 		{
 			content = null;
 			hot = null;
-			metadata = new Hashtable ();
+			properties = new Hashtable (new CaseInsensitiveHashCodeProvider (), 
+						    new CaseInsensitiveComparer ());
 			hotCount = 0;
 			freezeCount = 0;
 			
@@ -187,7 +182,7 @@ namespace Dewey.Filters {
 		{
 			content = null;
 			hot = null;
-			metadata = null;
+			properties = null;
 		}
 		
 		//////////////////////////

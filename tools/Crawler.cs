@@ -80,15 +80,51 @@ class CrawlerTool {
 
 	public class Crawler {
 
+		int flushCount = 1000;
+		int flushSize =  50 * 1048576; // = 50mb
+
 		int totalCount = 0;
 		int filterableCount = 0;
+		long pendingSize = 0;
+
 		Hashtable fileTable = new Hashtable ();
 
 		ArrayList toBeIndexed = new ArrayList ();
 
-		void CrawlFile (String path)
+		void Schedule (FileInfo info, Indexable indexable)
 		{
-			Flavor flavor = Flavor.FromPath (path);
+			pendingSize += info.Length;
+			toBeIndexed.Add (indexable);
+			if (toBeIndexed.Count > flushCount || pendingSize > flushSize)
+				Flush (false);
+				
+		}
+
+		void Flush (bool isLast)
+		{
+			if (toBeIndexed.Count > 0 || isLast) {
+				IndexDriver driver = new IndexDriver ();
+				if (toBeIndexed.Count > 0) {
+					driver.Add (toBeIndexed, false);
+					toBeIndexed.Clear ();
+					pendingSize = 0;
+				}
+				
+				//Console.WriteLine ("Optimize begin");
+				driver.Optimize ();
+				//Console.WriteLine ("Optimize end");
+
+				if (! isLast) {
+					//Console.WriteLine ("GC begin");
+					GC.Collect ();
+					//Console.WriteLine ("GC end");
+				}
+			}
+		}
+
+		void CrawlFile (FileInfo info)
+		{
+			Flavor flavor = Flavor.FromPath (info.FullName);
 			if (fileTable.Contains (flavor)) {
 				int n = (int) fileTable [flavor];
 				fileTable [flavor] = n+1;
@@ -100,55 +136,56 @@ class CrawlerTool {
 				return;
 			++filterableCount;
 
-			Indexable indexable = new IndexableFile (path);
-			toBeIndexed.Add (indexable);
+			if (info.Length > 50 * 1048576) { // =50mb FIXME: shouldn't just be a hard-wired constant
+				Console.WriteLine ("To big: {0}", info.FullName);
+				return;
+			}
+
+			Indexable indexable = new IndexableFile (info.FullName);
+			Schedule (info, indexable);
 		}
 
-		void CrawlDirectory (String path)
+		void CrawlDirectory (DirectoryInfo info)
 		{
 			FileMatcher noindex = new FileMatcher ();
 
-			String noindexPath = Path.Combine (path, ".noindex");
+			String noindexPath = Path.Combine (info.FullName, ".noindex");
 			if (File.Exists (noindexPath)) {
 				noindex.Load (noindexPath);
 				// An empty .noindex file causes all files and subdirs
 				// to be skipped.
 				if (noindex.IsEmpty) {
-					Console.WriteLine ("Skipping {0}", path);
+					Console.WriteLine ("Skipping {0}", info.FullName);
 					return;
 				}
 			}
 
-			DirectoryInfo dir = new DirectoryInfo (path);
+			Console.WriteLine ("Scanning {0}", info.FullName);
 
-			foreach (FileSystemInfo info in dir.GetFileSystemInfos ()) {
+			foreach (FileInfo file in info.GetFiles ()) {
+				if (! noindex.IsMatch (file.Name))
+					CrawlFile (file);
+			}
 
-				if (noindex.IsMatch (info.Name))
-					continue;
-
-				if ((int)(info.Attributes & FileAttributes.Directory) != 0)
-					CrawlDirectory (info.FullName);
-				else
-					CrawlFile (info.FullName);
+			foreach (DirectoryInfo subdir in info.GetDirectories ()) {
+				if (! noindex.IsMatch (subdir.Name))
+					CrawlDirectory (subdir);
 			}
 		}
 
 		public void Crawl (String path)
 		{
 			if (File.Exists (path))
-				CrawlFile (path);
+				CrawlFile (new FileInfo (path));
 			else if (Directory.Exists (path))
-				CrawlDirectory (path);
+				CrawlDirectory (new DirectoryInfo (path));
 			else
 				Console.WriteLine ("Can't crawl {0}", path);
 		}
 
 		public void Finish ()
 		{
-			if (toBeIndexed.Count > 0) {
-				IndexDriver driver = new IndexDriver ();
-				driver.Add (toBeIndexed);
-			}
+			Flush (true);
 
 			Console.WriteLine ("\n**** FILE STATS ****\n");
 			foreach (Flavor flavor in fileTable.Keys)

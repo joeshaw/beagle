@@ -27,40 +27,34 @@ namespace Dewey {
 			if (filter == null)
 				throw new Exception ("Can't find filter for file " + path);
 
-			needPreload = false;
+			Uri = "file://" + path;
+			Type = "File";
+			MimeType = filter.Flavor.MimeType;		
 
-			uri = "file://" + path;
-			domain = "FileSystem";
-			mimeType = filter.Flavor.MimeType;		
-			timestamp = File.GetLastWriteTime (path);
+			Timestamp = File.GetLastWriteTime (path);
 		}
 
-		override public ICollection MetadataKeys {
-			get { return filter.MetadataKeys; }
-		}
-
-		override public String this [String key] {
-			get { return filter [key]; }
-		}
-
-		override public String Content {
-			get { return filter.Content; }
-		}
-
-		override public String HotContent {
-			get { return filter.HotContent; }
-		}
-
-		override public void Open ()
+		override protected void DoBuild ()
 		{
-			filter.Open (path);
-		}
-
-		override public void Close ()
-		{
+			Stream stream = new FileStream (path, FileMode.Open, FileAccess.Read);
+			filter.Open (stream);
+			foreach (String key in filter.Keys)
+				this [key] = filter [key];
+			Content = filter.Content;
+			HotContent = filter.HotContent;
 			filter.Close ();
-		}
+			stream.Close ();
 
+			FileInfo info = new FileInfo (path);
+			this ["Length"] = Convert.ToString (info.Length);
+			this ["LastAccess"] = info.LastAccessTime.ToString ();
+
+			// FIXME: there is more information that we could attach
+			// * File ownership
+			// * File permissions
+			// * Filesystem-level metadata
+			// * Nautilus emblems
+		}
 	}
 
 }

@@ -107,11 +107,12 @@ namespace Best {
 
 				AddMarkup ("<i>" + dir + "</i>");
 				AddMarkup (name);
+				AddMarkup ("Mime Type: " + hit.MimeType);
 				AddMarkup ("<small>Last modified " + hit.Timestamp.ToString ("g") + "</small>");
 				return;
 			}
 
-			if (hit.Domain == "web") {
+			if (hit.Type == "WebLink") {
 				AddText (hit.Uri);
 				if (hit["title"] != null)
 					AddMarkup ("<i>" + hit["title"] + "</i>");

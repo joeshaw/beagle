@@ -18,18 +18,18 @@ class IndexableRSS20Item : Indexable {
 	String content;
 
 	public IndexableRSS20Item (XmlNode itemNode) {
-		domain = "RSS 2.0";
-		mimeType = "text/html";
+		Type = "RssFeed";
+		MimeType = "text/html";
 
 		XmlNode linkNode = itemNode.SelectSingleNode ("link");
 		if (linkNode == null
 		    || linkNode.InnerText == null)
 			throw new Exception ("No link node!");
-		uri = linkNode.InnerText;
+		Uri = linkNode.InnerText;
 	
 		XmlNode titleNode = itemNode.SelectSingleNode ("title");
 		if (titleNode != null && titleNode.InnerText != null)
-			SetMetadata ("title", titleNode.InnerText);
+			this ["title"] = titleNode.InnerText;
 
 		XmlNode pubDateNode = itemNode.SelectSingleNode ("pubDate");
 		if (pubDateNode == null || pubDateNode.InnerText == null)
@@ -38,12 +38,13 @@ class IndexableRSS20Item : Indexable {
 		// Chop off the time zone
 		int k = pubDateStr.LastIndexOf (" ");
 		pubDateStr = pubDateStr.Remove (k, pubDateStr.Length - k);
-		timestamp = DateTime.Parse (pubDateStr);
+		Timestamp = DateTime.Parse (pubDateStr);
 
 		XmlNode descriptionNode = itemNode.SelectSingleNode ("description");
 		if (descriptionNode == null || descriptionNode.InnerText == null)
 			throw new Exception ("No description!");
 		String description = descriptionNode.InnerText;
+		// Strip out any tags.
 		while (true) {
 			int i = description.IndexOf ("<");
 			if (i == -1)
@@ -51,14 +52,9 @@ class IndexableRSS20Item : Indexable {
 			int j = description.IndexOf (">", i);
 			description = description.Remove(i, j-i+1);
 		}
-		content = description;
+		Content = description;
 
 	}
-
-	override public String Content {
-		get { return content; }
-	}
-
 }
 
 class CrawlerRSS20Tool {

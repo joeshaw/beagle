@@ -29,7 +29,7 @@ namespace Dewey {
 			Hit hit = new Hit ();
 
 			hit.Uri      = res.URL;
-			hit.Domain   = "Google";
+			hit.Type     = "WebLink";
 			hit.MimeType = "text/html"; // FIXME
 			hit.Source   = "Google";
 
@@ -37,12 +37,12 @@ namespace Dewey {
 			// come from different sources.  This is a hack.
 			hit.Score    = 0.2f / (1 + rank);
 
-			hit ["summary"]                   = res.summary;
-			hit ["snippet"]                   = res.snippet;
-			hit ["title"]                     = res.title;
-			hit ["cachedSize"]                = res.cachedSize;
-			hit ["hostName"]                  = res.hostName;
-			hit ["directoryTitle"]            = res.directoryTitle;
+			hit ["Summary"]        = res.summary;
+			hit ["Snippet"]        = res.snippet;
+			hit ["Title"]          = res.title;
+			hit ["CachedSize"]     = res.cachedSize;
+			hit ["HostName"]       = res.hostName;
+			hit ["DirectoryTitle"] = res.directoryTitle;
 
 			hit.Lockdown ();
 

@@ -16,31 +16,22 @@ class IndexWebContentTool {
 		
 		String content, hotContent;
 		
-		public IndexableWeb (String _uri,
-				     String _title,
+		public IndexableWeb (String uri,
+				     String title,
 				     Stream contentStream)
 		{
-			uri = _uri;
-			domain = "Web";
-			mimeType = "text/html";
-			timestamp = DateTime.Now;
-			needPreload = false;
+			Uri = uri;
+			Type = "WebLink";
+			MimeType = "text/html";
+			Timestamp = DateTime.Now;
 
-			SetMetadata ("title", _title);
+			this ["title"] = title;
 			
 			Filter filter = Filter.FilterFromMimeType ("text/html");
 			filter.Open (contentStream);
-			content = filter.Content;
-			hotContent = filter.HotContent;
+			Content = filter.Content;
+			HotContent = filter.HotContent;
 			filter.Close ();
-		}
-
-		override public String Content {
-			get { return content; }
-		}
-
-		override public String HotContent {
-			get { return hotContent; }
 		}
 	}
 
@@ -49,7 +40,8 @@ class IndexWebContentTool {
 		String uri = args[0];
 		String title = args[1];
 
-		Indexable indexable = new IndexableWeb (uri, title, Console.OpenStandardInput ());
+		Indexable indexable = new IndexableWeb (uri, title,
+							Console.OpenStandardInput ());
 
 		IndexDriver driver = new IndexDriver ();
 		driver.Add (indexable);

@@ -11,90 +11,125 @@ using System.Text;
 
 namespace Dewey {
 
-	public class Indexable : Versioned {
+	public class Indexable : Versioned, IDisposable {
 
-		protected String uri;
-		protected String domain = "unknown";
-		protected String mimeType = "application/octet-stream";
+		// The URI of the item being indexed.
+		private String uri = null;
+		
+		// File, WebLink, MailMessage, IMLog, etc.
+		private String type = null;
 
-		protected bool needPreload = true;
+		// If applicable, otherwise set to null.
+		private String mimeType = null;
 
-		Hashtable metadata = null;
-		bool preloaded = false;
+		private Hashtable properties = new Hashtable (new CaseInsensitiveHashCodeProvider (),
+							      new CaseInsensitiveComparer ());
+
+		private String content = null;
+		private String hotContent = null;
+
+		private bool built = false;
+		private bool locked = false;
+
+		//////////////////////////
+
+		public void Lockdown ()
+		{
+			if (uri == null)
+				throw new Exception ("Locking Hit with undefined Uri");
+			if (type == null)
+				throw new Exception ("Locking Indexable with undefined Type");
+			locked = true;
+		}
+
+		void CheckLock ()
+		{
+			if (locked)
+				throw new Exception ("Attempt to modify locked indexable '" + uri + "'");
+		}
+		
+		//////////////////////////
+		
+		virtual protected void DoBuild () { }
+
+		public void Build ()
+		{
+			if (! built) {
+				bool lockedSave = locked;
+				locked = false;
+				DoBuild ();
+				locked = lockedSave;
+				built = true;
+			}
+		}
+
+		//////////////////////////
 
 		public String Uri { 
 			get { return uri; }
+			set { CheckLock (); uri = value; }
 		}
 
-		public String Domain {
-			get { return domain; }
+		public String Type {
+			get { return type; }
+			set { CheckLock ();  type = value; }
 		}
 
 		public String MimeType {
 			get { return mimeType; }
+			set { CheckLock (); mimeType = value; }
 		}
 
-		virtual public ICollection MetadataKeys {
-			get { return metadata == null ? new String [0] : metadata.Keys; }
+		//////////////////////////
+
+		public IDictionary Properties {
+			get { return properties; }
 		}
 
-		virtual public String this [String key] {
-			get { return metadata == null ? null : metadata [key.ToLower ()] as String; }
+		public ICollection Keys {
+			get { return properties.Keys; }
 		}
 
-		virtual protected void SetMetadata (String key, String val) {
-			if (key == null || val == null)
-				return;
-			if (metadata == null)
-				metadata = new Hashtable ();
-			metadata [key.ToLower ()] = val;
+		public String this [String key] {
+			get { return (String) properties [key]; }
+			set { CheckLock (); properties [key] = value as String; }
 		}
+
+		public String PropertiesAsString {
+			get {
+				StringBuilder propStr = null;
+				foreach (String key in Keys) {
+					if (propStr == null)
+						propStr = new StringBuilder ("");
+					else
+						propStr.Append (" ");
+					propStr.Append (this [key]);
+				}
+				return propStr == null ? "" : propStr.ToString ();
+			}
+		}
+
+		//////////////////////////
 
 		virtual public String Content {
-			get { return null; }
+			get { return content; }
+			set { CheckLock (); content = value; }
 		}
 
 		virtual public String HotContent {
-			get { return null; }
+			get { return hotContent; }
+			set { CheckLock (); hotContent = value; }
 		}
 
-		public String Metadata {
-			get {
-				StringBuilder meta = null;
-				foreach (String key in MetadataKeys) {
-					if (meta == null)
-						meta = new StringBuilder ("");
-					else
-						meta.Append (" ");
-					meta.Append (this [key]);
-				}
-				return meta == null ? null : meta.ToString ();
-			}
-		}
+		//////////////////////////
 
-		public bool NeedPreload {
-			get { return needPreload; }
-		}
-
-		public void Preload ()
+		public void Dispose ()
 		{
-			if (NeedPreload && ! preloaded) {
-				// Do some locking and stuff
-				DoPreload ();
-				preloaded = true;
-			}
+			properties = null;
+			content = null;
+			hotContent = null;
+			built = false;
 		}
-		
-		// Do any slow, blocking operations in DoPreload.  Before
-		// Preload (and hence DoPreload) is called, a consumer can't
-		// assume that Indexables contain any information other than
-		// the domain and the Uri.
-		virtual public void DoPreload () { }
-
-		virtual public void Open () { }
-	
-		virtual public void Close () { }
-
 	}
 
 }

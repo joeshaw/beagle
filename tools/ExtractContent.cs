@@ -59,10 +59,10 @@ class ExtractContentTool {
 
 			Console.WriteLine ("");
 
-			if (filter.MetadataKeys.Count == 0)
+			if (filter.Keys.Count == 0)
 				Console.WriteLine ("No metadata.");
 			else
-				foreach (String key in filter.MetadataKeys)
+				foreach (String key in filter.Keys)
 					Console.WriteLine (key + " = " + filter [key]);
 
 			Console.WriteLine ("");

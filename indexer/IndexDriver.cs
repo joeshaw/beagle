@@ -28,7 +28,8 @@ namespace Dewey {
 
 		// 1: Original
 		// 2: Changed format of timestamp strings
-		private const int VERSION = 2;
+		// 3: Schema changed to be more Dashboard-Match-like
+		private const int VERSION = 3;
 
 		//////////////////////////
 
@@ -158,23 +159,26 @@ namespace Dewey {
 	
 		private Document ToLuceneDocument (Indexable indexable)
 		{
+
+			indexable.Build ();
+
 			Document doc = new Document ();
-
-			// First we add the Indexable's canonical metadata fields
-			// to the Document.
-
 			Field f;
+			String str;
+
+			// First we add the Indexable's 'canonical' properties
+			// to the Document.
 			
 			f = Field.Keyword ("Uri", indexable.Uri);
 			doc.Add (f);
 			
-			f = Field.Keyword ("Domain", indexable.Domain);
+			f = Field.Keyword ("Type", indexable.Type);
 			doc.Add (f);
 
-			indexable.Open ();
-
-			f = Field.Keyword ("MimeType", indexable.MimeType);
-			doc.Add (f);
+			if (indexable.MimeType != null) {
+				f = Field.Keyword ("MimeType", indexable.MimeType);
+				doc.Add (f);
+			}
 	    
 			if (indexable.ValidTimestamp) {
 				f = Field.Keyword ("Timestamp",
@@ -187,37 +191,28 @@ namespace Dewey {
 						     RevisionToString (indexable.Revision));
 				doc.Add (f);
 			}
-			
-			// Next we actually open the Indexable and extract the content
-			// fields and the content-related metadata.
-			
-			String str;
 
-			str = indexable.Content;
-			if (str != null) {
-				f = Field.UnStored ("Content", str);
+			if (indexable.Content != null) {
+				f = Field.UnStored ("Content", indexable.Content);
 				doc.Add (f);
 			}
 			
-			str = indexable.HotContent;
-			if (str != null) {
-				f = Field.UnStored ("HotContent", str);
+			if (indexable.HotContent != null) {
+				f = Field.UnStored ("HotContent", indexable.HotContent);
 				doc.Add (f);
 			}
 			
-			str = indexable.Metadata;
-			if (str != null) {
-				f = Field.UnStored ("MetaData", str);
+			if (indexable.PropertiesAsString != null) {
+				f = Field.UnStored ("Properties", indexable.PropertiesAsString);
 				doc.Add (f);
 			}
 			
-			foreach (String key in indexable.MetadataKeys) {
-				// Non-canonical metadata keys are always lower case.
-				f = Field.Text (key.ToLower (), indexable [key]);
+			foreach (String key in indexable.Keys) {
+				// Non-canonical properties start with _
+				f = Field.Text ("_" + key, indexable [key]);
 				doc.Add (f);
 			}
 			
-			indexable.Close ();
 			
 			return doc;
 		}
@@ -234,7 +229,7 @@ namespace Dewey {
 			luceneQuery.Add (hotQuery, false, false);
 			
 			LNS.Query metaQuery;
-			metaQuery = QueryParser.Parse (queryStr, "MetaData", analyzer);
+			metaQuery = QueryParser.Parse (queryStr, "Properties", analyzer);
 			metaQuery.SetBoost (1.5f);
 			luceneQuery.Add (metaQuery, false, false);
 			
@@ -250,6 +245,8 @@ namespace Dewey {
 			Hit hit = new Hit ();
 
 			hit.Id = luceneHits.Id (i);
+
+			hit.Source = "IndexUser"; // FIXME: in the long run, this can't be hard-wired
 			
 			Document doc = luceneHits.Doc (i);
 			String str;
@@ -259,15 +256,13 @@ namespace Dewey {
 				throw new Exception ("Got hit from Lucene w/o a URI!");
 			hit.Uri = str;
 
-			str = doc.Get ("Domain");
-			if (str != null)
-				hit.Domain = str;
-			
-			str = doc.Get ("MimeType");
+			str = doc.Get ("Type");
 			if (str == null)
-				throw new Exception ("Got hit from Lucene w/o a MimeType");
-			hit.MimeType = str;
+				throw new Exception ("Got hit from Lucene w/o a Type!");
+			hit.Type = str;
 			
+			hit.MimeType = doc.Get ("MimeType");
+
 			str = doc.Get ("Timestamp");
 			if (str != null)
 				hit.Timestamp = StringToTimestamp (str);
@@ -281,9 +276,11 @@ namespace Dewey {
 			
 			foreach (Field ff in doc.Fields ()) {
 				String key = ff.Name ();
-				// Non-canonical metadata keys are always lower case.
-				if (key == key.ToLower ())
-					hit [key] = ff.StringValue ();
+				// Non-property metadata keys always start with _.
+				if (key.Length > 1 && key [0] == '_') {
+					String realKey = key.Substring (1);
+					hit [realKey] = ff.StringValue ();
+				}
 			}
 			
 			hit.Lockdown ();
@@ -309,12 +306,16 @@ namespace Dewey {
 			int count = 0;
 			foreach (Indexable indexable in indexables) {
 				Spew ("Inserting {0}", indexable.Uri);
+				Document doc = null;
 				try {
-					Document doc = ToLuceneDocument (indexable);
+					doc = ToLuceneDocument (indexable);
+				} catch (Exception e) {
+					Console.WriteLine ("Exception converting {0}: {1}",
+							   indexable.Uri, e);
+				}
+				if (doc != null) {
 					writer.AddDocument (doc);
 					++count;
-				} catch {
-					// FIXME: for now we just ignore filter crashes
 				}
 			}
 			// optimization is expensive
@@ -345,29 +346,20 @@ namespace Dewey {
 
 			LNS.Searcher searcher = new LNS.IndexSearcher (IndexDir);
 
-			// First, pre-load all Indexables.  Since Preload can block,
-			// the Preloads should be done in multiple threads.
-			foreach (Indexable indexable in indexables) {
-				try {
-					if (indexable.NeedPreload)
-						indexable.Preload ();
-					preloaded.Add (indexable);
-				} catch {
-					// If the Preload throws an exception, just 
-					// forget about it.
-				}
-			}
-			
 			// If we've been handed multiple Indexables with the same Uri,
 			// try to do something intelligent.
 			Hashtable byUri = new Hashtable ();
-			foreach (Indexable indexable in preloaded) {
+			foreach (Indexable indexable in indexables) {
 				Indexable prev = (Indexable) byUri [indexable.Uri];
 				if (prev == null || prev.IsObsoletedBy (indexable))
 					byUri [indexable.Uri] = indexable;
 			}
 			
-			foreach (Indexable indexable in byUri.Values) {
+			foreach (Indexable indexable in indexables) {
+
+				// Skip duplicates
+				if (byUri [indexable.Uri] != indexable)
+					continue;
 				
 				Term term = new Term ("Uri", indexable.Uri);
 				LNS.Query uriQuery = new LNS.TermQuery (term);
@@ -507,7 +499,13 @@ namespace Dewey {
 			if (toBeDeleted.Count > 0)
 				DoDelete (toBeDeleted);
 
-			return seen.Values;
+			// We need to re-sort by score
+			ArrayList hits = new ArrayList ();
+			foreach (Hit hit in seen.Values)
+				hits.Add (hit);
+			hits.Sort ();
+
+			return hits;
 		}
 	}
 

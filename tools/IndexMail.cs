@@ -326,46 +326,46 @@ namespace IndexMailTool {
 
 	public class IndexableMail : Indexable {
 
-		StringBuilder contentBuilder = null; 
-
 		public IndexableMail (String accountId,
 				      String folderName,
 				      Camel.MessageInfo messageInfo,
 				      MailMessage message)
 		{
-			uri = String.Format ("email://{0}/{1};uid={2}", accountId, folderName, messageInfo.uid);
-			domain = "Mail";
-			mimeType = "text/plain"; // FIXME: what about html mail?
+			Uri = String.Format ("email://{0}/{1};uid={2}",
+					     accountId, folderName, messageInfo.uid);
+			Type = "MailMessage";
+			MimeType = null;
 
-			timestamp = messageInfo.received;
-
-			needPreload = false;
+			Timestamp = messageInfo.received;
 
 			// Assemble the metadata
-			SetMetadata ("folder",  folderName);
-			SetMetadata ("subject", messageInfo.subject);
-			SetMetadata ("to", messageInfo.to);
-			SetMetadata ("from", messageInfo.from);
-			SetMetadata ("cc", messageInfo.cc);
-			SetMetadata ("sent", messageInfo.sent.ToString ());
-			SetMetadata ("mlist", messageInfo.mlist);
-			SetMetadata ("flags", Convert.ToString (messageInfo.flags));
+			this ["Folder"] = folderName;
+			this ["Subject"] = messageInfo.subject;
+			this ["To"] =  messageInfo.to;
+			this ["From"] = messageInfo.from;
+			this ["Cc"] = messageInfo.cc;
+			this ["Sent"] = messageInfo.sent.ToString ();
+			this ["Mlist"] = messageInfo.mlist;
+			this ["Flags"] = Convert.ToString (messageInfo.flags);
 
 			// Assemble the content, if we have any
 			if (message != null) {
-				contentBuilder = new StringBuilder ();
+				StringBuilder contentBuilder = new StringBuilder ();
 				foreach (MailBody body in message.Bodies)
-					AddContent (body);
+					AddContent (body, contentBuilder);
+				Content = contentBuilder.ToString ();
 			}
 		}
 
-		void AddContent (MailBody body)
+		void AddContent (MailBody body, StringBuilder contentBuilder)
 		{
 			if (body.Alternatives != null
 			    && body.Alternatives.Count > 0) {
 				foreach (MailBody alt in body.Alternatives)
-					if (alt != null && alt.Headers != null && alt.Headers.ContentType == "text/plain")
-						AddContent (alt);
+					if (alt != null 
+					    && alt.Headers != null 
+					    && alt.Headers.ContentType == "text/plain")
+						AddContent (alt, contentBuilder);
 			}
 
 			if (body.Headers == null
@@ -381,10 +381,6 @@ namespace IndexMailTool {
 					}
 				}
 			}
-		}
-
-		override public String Content {
-			get { return contentBuilder == null ? null : contentBuilder.ToString (); }
 		}
 
 	}
