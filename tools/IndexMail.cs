@@ -475,6 +475,13 @@ namespace IndexMailTool {
 		IndexDriver driver = new IndexDriver ();
 		ArrayList toIndex = new ArrayList ();
 		int count = 0;
+		private bool dumbterm = false;
+
+		public MailScanner ()
+		{
+			if (Environment.GetEnvironmentVariable ("TERM") == "dumb")
+				dumbterm = true;
+		}
 
 		private void Schedule (Indexable indexable)
 		{
@@ -497,7 +504,10 @@ namespace IndexMailTool {
 
 		public void MessageStatus (String str)
 		{
-			Console.Write ("\x1b[1G{0}\x1b[0K", str); // terminal-fu!
+			if (! dumbterm)
+				Console.Write ("\x1b[1G{0}\x1b[0K", str); // terminal-fu!
+			else
+				Console.WriteLine (str);
 		}
 
 		public void MessageStatus (String format, params object[] args)
@@ -507,7 +517,10 @@ namespace IndexMailTool {
 
 		public void MessageFinished (String str)
 		{
-			Console.WriteLine ("\x1b[1G{0}\x1b[0K", str); // terminal-fu!
+			if (! dumbterm)
+				Console.WriteLine ("\x1b[1G{0}\x1b[0K", str); // terminal-fu!
+			else
+				Console.WriteLine (str);
 		}
 
 		public void MessageFinished (String format, params object[] args)
