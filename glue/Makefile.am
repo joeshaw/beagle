@@ -41,8 +41,7 @@ libinotifyglue_la_SOURCES =	\
 libsysteminfoglue_la_SOURCES =	\
 	screensaver-glue.c	\
 	vmsize-glue.c
-
-libsysteminfoglue_la_LIBADD = @X_LIBS@
+libsysteminfoglue_la_LIBADD = $(SYSTEMINFO_GLUE_LIBS) $(SYSTEMINFO_GLUE_X_LIBS)
 
 libgeckoglue_la_SOURCES=        \
 	gecko-utils.h           \
@@ -61,9 +60,8 @@ libtrayiconglue_la_SOURCES =    \
 libtrayiconglue_la_LIBADD = $(LIBTRAYICON_LIBS)
 
 if ENABLE_WV1
-libwv1glue_la_SOURCES = \
+libwv1glue_la_SOURCES =		\
 	wv1-glue.c
-libwv1glue_la_LIBADD = @X_LIBS@ \
-			$(WV1_LIBS)
-
+libwv1glue_la_LIBADD =		\
+	$(WV1_LIBS)
 endif

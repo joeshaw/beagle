@@ -295,11 +295,12 @@ AM_CONDITIONAL(ENABLE_EPIPHANY_EXTENSION, test "x$enable_epiphany_extension" = "
 
 dnl ----------------------------------------------
 
-dnl For the XScreenSaver glue
+dnl For the systeminfo glue
 
+PKG_CHECK_MODULES(SYSTEMINFO_GLUE, gdk-2.0)
 AC_PATH_XTRA
-X_LIBS="$X_PRE_LIBS $X_LIBS -lX11 -lXss $X_EXTRA_LIBS"
-AC_SUBST(X_LIBS)
+SYSTEMINFO_GLUE_X_LIBS="$X_PRE_LIBS $X_LIBS -lX11 -lXss $X_EXTRA_LIBS"
+AC_SUBST(SYSTEMINFO_GLUE_X_LIBS)
 
 dnl ----------------------------------------------
 
@@ -307,8 +308,6 @@ dnl For the wv1 glue
 
 PKG_CHECK_MODULES(WV1, wv-1.0, enable_wv1=yes, enable_wv1=no)
 AM_CONDITIONAL(ENABLE_WV1, test "x$enable_wv1" = "xyes")
-
-WV1_LIBS=`$PKG_CONFIG --libs wv-1.0`
 AC_SUBST(WV1_LIBS)
 
 dnl ----------------------------------------------
