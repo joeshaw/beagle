@@ -1,3 +1,3 @@
 #!/bin/sh
 
-dbus-send --session --dest=com.novell.Beagle --print-reply /com/novell/Beagle/Ping com.novell.Beagle.Ping.GetHumanReadableStatus | tail +3
+dbus-send --session --dest=com.novell.Beagle --print-reply /com/novell/Beagle/Ping com.novell.Beagle.Ping.GetHumanReadableStatus
