@@ -576,7 +576,23 @@ namespace Beagle.Filters {
 				return;
 
 			Input stream = null;
-			stream = file.ChildByName ("PowerPoint Document");
+			Input dualStorTemp = null;
+			Infile dualStorageFile = null;
+			
+			// PPT 95/97-2000 format contains a "PP97_DUALSTORAGE", which is required
+			// to index PPT 97-2000 files.
+			// We don't support PPT 95 files, however, we happily accept patches ;-)
+
+			if ((dualStorTemp = file.ChildByName ("PP97_DUALSTORAGE")) != null) {
+				// "PP97_DUALSTORAGE" is a storage containing some streams
+				if (dualStorTemp.Handle != IntPtr.Zero)
+					dualStorageFile = (Gsf.Infile) GLib.Object.GetObject (dualStorTemp.Handle);
+				if (dualStorageFile != null)
+					stream = dualStorageFile.ChildByName ("PowerPoint Document");
+			} else if ((dualStorTemp = file.ChildByName ("Header")) != null) {
+				Logger.Log.Error ("{0} is a PPT 95 file.  Beagle does not support PPT 95 files. Skipping...", FileName);
+			} else
+				stream = file.ChildByName ("PowerPoint Document");
 
 			if (stream != null) {
 
@@ -591,8 +607,9 @@ namespace Beagle.Filters {
 				// "Document" container.
 				while (!stream.Eof)
 					ParseElement (stream);
-			} else 
+			} else {
 				Logger.Log.Error ("Ole stream not found in {0}.  Content extraction skipped.", FileName);
+			}
 			Finished();
 		}
 

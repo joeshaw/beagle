@@ -1,6 +1,12 @@
 2005-02-23  Veerapuram Varadhan	 <vvaradhan@novell.com>
 
 	* Filters/FilterPPT.cs: Fix for
+	http://bugzilla.gnome.org/show_bug.cgi?id=168028.  Implemented
+	support for *DUAL STORAGE* PPT files.
+	
+2005-02-23  Veerapuram Varadhan	 <vvaradhan@novell.com>
+
+	* Filters/FilterPPT.cs: Fix for
 	http://bugzilla.gnome.org/show_bug.cgi?id=168238
 	
 2005-02-16  Veerapuram Varadhan	 <vvaradhan@novell.com>
