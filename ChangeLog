@@ -1,7 +1,18 @@
+2005-03-21  Veerapuram Varadhan	 <vvaradhan@novell.com>
+
+	* Filters/FilterOpenOffice.cs: Fix for
+	http://bugzilla.gnome.org/show_bug.cgi?id=171102.
+	
 2005-03-19  Daniel Drake  <dsd@gentoo.org>
 
 	* Util/UriFu.cs: Fix for filenames with odd characters, bug #170862
 
+2005-02-18  Veerapuram Varadhan	 <vvaradhan@novell.com>
+
+	* beagled/FileSystemQueryable/FileSystemQueryable.cs,
+	beagled/FileSystemQueryable/DirectoryIndexableGenerator.cs: Fix
+	for http://bugzilla.gnome.org/show_bug.cgi?id=170437.
+	
 2005-02-18  Veerapuram Varadhan	 <vvaradhan@novell.com>
 
 	* Filters/FilterOpenOffice.cs: More odt-mime-type changes.

@@ -288,7 +288,7 @@ namespace Beagle.Filters {
 						string attr = reader.GetAttribute ("xlink:href");
 						AppendText (attr);
 						AppendWhiteSpace ();
-						continue;
+						isHot = false;
 					} else {
 						bool has_attr = reader.MoveToFirstAttribute ();
 						while (has_attr) {
@@ -341,7 +341,6 @@ namespace Beagle.Filters {
 						is_hot = (bool) hot_nodes.Pop ();
 					else
 						Logger.Log.Debug ("FilterOpenOffice: hot_nodes underflow in {0}", reader.Name);
-					
 					if (hot_container_nodes.Count > 0) {
 						string hot_container_tag = (string) hot_container_nodes.Peek ();
 						if (hot_container_tag == reader.Name) {
