@@ -73,6 +73,19 @@ namespace Beagle.Daemon {
 
 		//////////////////////////
 
+		private bool crawlMode = false;
+
+		public void EnableCrawlMode ()
+		{
+			crawlMode = true;
+		}
+		
+		protected bool CrawlMode {
+			get { return crawlMode; }
+		}
+
+		//////////////////////////
+
 		int hotCount = 0;
 		int freezeCount = 0;
 
@@ -106,6 +119,22 @@ namespace Beagle.Daemon {
 
 		public bool IsFrozen {
 			get { return freezeCount > 0; }
+		}
+
+		//////////////////////////
+		
+		private bool snippetMode = true;
+		private TextWriter snippetWriter = null;
+
+		public bool SnippetMode {
+			get { return snippetMode; }
+			set { snippetMode = value; }
+		}
+		
+		public void AttachSnippetWriter (TextWriter writer)
+		{
+			if (snippetMode)
+				snippetWriter = writer;
 		}
 
 		//////////////////////////
@@ -299,8 +328,7 @@ namespace Beagle.Daemon {
 		private bool Pull () 
 		{
 			if (IsFinished) {
-				DoClose ();
-				Cleanup ();
+				Close ();
 				return false;
 			}
 
@@ -309,21 +337,29 @@ namespace Beagle.Daemon {
 			return true;
 		}
 
-		public void Cleanup ()
+		private bool closed = false;
+
+		private void Close ()
 		{
+			if (currentStream == null)
+				return;
+
+			DoClose ();
+
+			// When crawling, give the OS a hint that we don't
+			// need to keep this file around in the page cache.
+			if (CrawlMode)
+				FileAdvise.FlushCache (currentStream);
+
 			if (currentReader != null)
 				currentReader.Close ();
 
-			if (currentStream != null) {
-				// Give the OS a hint that we don't need to
-				// to keep the file around in the page cache
-				FileAdvise.FlushCache (currentStream);
-				// And then close the file
-				currentStream.Close ();
-			}
+			currentStream.Close ();
+			currentStream = null;
 
 			if (tempFile != null)
 				File.Delete (tempFile);
+
 		}
 
 		private string PullFromArray (ArrayList array)
