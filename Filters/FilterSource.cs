@@ -138,7 +138,13 @@ namespace Beagle.Filters {
 			for (index = 0; index < KeyWords.Length; index ++)
 				KeyWordsHash.Add (KeyWords[index], KeyWords[index]);
 
-			reader = info.OpenText ();
+			Stream stream;
+			stream = new FileStream (info.FullName,
+						 FileMode.Open,
+						 FileAccess.Read,
+						 FileShare.Read);
+			reader = new StreamReader (stream);
+
 		}
 
 		// Tokenize the passed string and add the relevant 

@@ -65,8 +65,14 @@ namespace Beagle.Filters {
 
 		override protected void DoOpen (FileInfo info)
 		{
-			reader = info.OpenText ();
+			Stream stream;
+			stream = new FileStream (info.FullName,
+						 FileMode.Open,
+						 FileAccess.Read,
+						 FileShare.Read);
+			reader = new StreamReader (stream);
 		}
+
 		override protected void DoPull ()
 		{
 			ParseTexiFile (reader);

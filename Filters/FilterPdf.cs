@@ -27,7 +27,6 @@ namespace Beagle.Filters {
 		{
 			// get full file path from Filter
 			string path = CurrentFileInfo.Directory +"/"+ CurrentFileInfo.Name;
-			Console.WriteLine ("Converting PDF \"{0}\"", path);			
 
 			// create new external process
 			Process pc = new Process ();
