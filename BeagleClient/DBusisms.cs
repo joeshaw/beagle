@@ -85,14 +85,13 @@ namespace Beagle
 			if (serviceName == ServiceName) {
 
 				if (oldOwner == "") { // New service added
-					System.Console.WriteLine ("BeagleDaemon up");
+					//System.Console.WriteLine ("BeagleDaemon up");
 
 					if (BeagleUpAgain != null)
 						BeagleUpAgain ();
 
 				} else if (newOwner == "") { // Existing service deleted
-
-					System.Console.WriteLine ("BeagleDaemon down");
+					//System.Console.WriteLine ("BeagleDaemon down");
 
 					service = null;
 					

@@ -94,7 +94,7 @@ namespace Beagle
 
 			int numHits = reader.ReadInt32 ();
 
-			Console.WriteLine ("Got {0} hits", numHits);
+			//Console.WriteLine ("Got {0} hits", numHits);
 
 			ArrayList hits = new ArrayList ();
 			for (int i = 0; i < numHits; i++) {
