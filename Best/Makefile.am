@@ -13,10 +13,7 @@ CSFILES =				\
 	$(srcdir)/HitView.cs
 
 ASSEMBLIES =				\
-	-r:glib-sharp.dll		\
-	-r:gdk-sharp.dll		\
-	-r:gtk-sharp.dll		\
-	-r:gnome-sharp.dll		\
+	$(BEAGLE_UI_LIBS)		\
 	-r:../Util/Util.dll		\
 	-r:../Lucene.Net/Lucene.Net.dll	\
 	-r:../Filters/Filters.dll	\

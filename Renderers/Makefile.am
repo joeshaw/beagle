@@ -16,14 +16,11 @@ CSFILES = 					\
 	$(srcdir)/WebLinkHitRenderer.cs
 
 ASSEMBLIES =				\
+	$(BEAGLE_UI_LIBS)		\
 	-r:../Util/Util.dll		\
 	-r:../Filters/Filters.dll	\
 	-r:../Lucene.Net/Lucene.Net.dll	\
-	-r:../indexer/Indexer.dll	\
-	-r:glib-sharp.dll		\
-	-r:gdk-sharp.dll		\
-	-r:gtk-sharp.dll		\
-	-r:gtkhtml-sharp.dll
+	-r:../indexer/Indexer.dll
 
 imagedir = $(top_srcdir)/images
 

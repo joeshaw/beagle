@@ -17,10 +17,8 @@ CSFILES = 			\
 	$(srcdir)/Vfs.cs
 
 ASSEMBLIES =			\
-	-r:System.Web.Services	\
-	-r:glib-sharp.dll	\
-	-r:gtk-sharp.dll	\
-	-r:gnome-sharp.dll
+	$(BEAGLE_UI_LIBS)		\
+	-r:System.Web.Services
 
 RESOURCES =
 

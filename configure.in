@@ -17,6 +17,9 @@ if test "x$MCSTEST" = "xno"; then
 fi
 
 
+PKG_CHECK_MODULES(BEAGLE_UI, gtk-sharp gtkhtml-sharp gnome-sharp)
+AC_SUBST(BEAGLE_UI_LIBS)
+
 dnl ----------------------------------------------
 
 EVOLUTION_SHARP_REQUIRED_VERSION=0.3

@@ -26,7 +26,7 @@ CSFILES = 				\
 	$(srcdir)/FilterText.cs
 
 ASSEMBLIES =				\
-	-r:gtk-sharp.dll		\
+	$(BEAGLE_UI_LIBS)		\
 	-r:ICSharpCode.SharpZipLib	\
 	-r:../Util/Util.dll
 
