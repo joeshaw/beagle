@@ -202,7 +202,7 @@ namespace Beagle.Daemon.MailQueryable {
 			Indexable indexable = new Indexable (uri);
 
 			indexable.Timestamp = messageInfo.Date;
-			indexable.Type = "Mail";
+			indexable.Type = "MailMessage";
 			indexable.MimeType = "text/plain";
 
 			indexable.AddProperty (Property.NewKeyword ("dc:title", messageInfo.subject));
