@@ -52,7 +52,7 @@ namespace Beagle.Daemon.GaimLogQueryable {
 
 		private void StartWorker () 
 		{
-			Inotify.InotifyEvent += new InotifyHandler (OnInotifyEvent);
+			Inotify.Event += OnInotifyEvent;
 
 			log.Info ("Scanning IM Logs");
 			Stopwatch timer = new Stopwatch ();
@@ -90,8 +90,8 @@ namespace Beagle.Daemon.GaimLogQueryable {
 				DirectoryInfo dir = queue.Dequeue () as DirectoryInfo;
 				
 				int wd = Inotify.Watch (dir.FullName,
-							InotifyEventType.CreateSubdir
-							| InotifyEventType.Modify);
+							Inotify.EventType.CreateSubdir
+							| Inotify.EventType.Modify);
 				watched [wd] = true;
 
 				foreach (FileInfo file in dir.GetFiles ()) {
@@ -109,8 +109,8 @@ namespace Beagle.Daemon.GaimLogQueryable {
 		private void OnInotifyEvent (int wd,
 					     string path,
 					     string subitem,
-					     InotifyEventType type,
-					     int cookie)
+					     Inotify.EventType type,
+					     uint cookie)
 		{
 			if (subitem == "" || ! watched.Contains (wd))
 				return;
@@ -119,11 +119,11 @@ namespace Beagle.Daemon.GaimLogQueryable {
 
 			switch (type) {
 				
-			case InotifyEventType.CreateSubdir:
+			case Inotify.EventType.CreateSubdir:
 				Watch (full_path);
 				break;
 
-			case InotifyEventType.Modify:
+			case Inotify.EventType.Modify:
 				IndexLog (full_path, Scheduler.Priority.Immediate);
 				break;
 			}

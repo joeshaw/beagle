@@ -30,36 +30,14 @@
 #include <string.h>
 #include <fcntl.h>
 #include <unistd.h>
+#include <errno.h>
 #include <sys/ioctl.h>
 #include <sys/select.h>
 
 #include "inotify.h"
 
-typedef void (* inotify_event_callback) (int wd, unsigned long mask, int cookie, const char *filename);
-
-int inotify_glue_open_dev ()
-{
-	int fd;
-
-	fd = open("/dev/inotify", O_RDONLY);
-	if (fd < 0)
-		perror ("open");
-
-	return fd;
-}
-
-int inotify_glue_close_dev (int fd)
-{
-	int r;
-
-	r = close (fd);
-	if (r < 0)
-		perror ("close");
-
-	return r;
-}
-
-int inotify_glue_watch (int fd, const char *filename, unsigned long mask)
+int 
+inotify_glue_watch (int fd, const char *filename, unsigned long mask)
 {
 	struct inotify_watch_request iwr;
 	iwr.dirname = strdup (filename);
@@ -78,7 +56,8 @@ int inotify_glue_watch (int fd, const char *filename, unsigned long mask)
 	return wd;
 }
 
-int inotify_glue_ignore (int fd, int wd)
+int 
+inotify_glue_ignore (int fd, int wd)
 {
 	int ret;
 
@@ -92,54 +71,32 @@ int inotify_glue_ignore (int fd, int wd)
 	return ret;
 }
 
-int inotify_glue_try_for_event (int fd, int sec, int usec,
-				inotify_event_callback callback)
+int
+inotify_snarf_events (int fd, struct inotify_event *buffer, int buffer_len, int timeout_secs)
 {
-  	struct timeval timeout;
-	fd_set rfds;
-	struct inotify_event event;
-	char *event_buffer;
-	int num_bytes, remaining, ret;
+    struct timeval timeout;
+    fd_set read_fds;
+    int N, ready_bytes, total_read, max_read, select_retval;
+    struct inotify_event *buffer_p;
 
-	if (!callback)
-        	return 0;
+    timeout.tv_sec = timeout_secs;
+    timeout.tv_usec = 0;
 
-	timeout.tv_sec = sec;
-	timeout.tv_usec = usec;
+    total_read = 0;
+    max_read = buffer_len;
+    buffer_p = buffer;
 
-	FD_ZERO (&rfds);
-	FD_SET (fd, &rfds);
+    FD_ZERO (&read_fds);
+    FD_SET (fd, &read_fds);
+    
+    select_retval = select (fd+1, &read_fds, NULL, NULL, &timeout);
 
-	ret = select (fd + 1, &rfds, NULL, NULL, &timeout);
+    /* If we time out, just return */
+    if (select_retval == 0)
+	return 0;
 
-	/* We couldn't find an event. */
-	if (ret <= 0)
-		return 0;
+    N = read (fd, buffer, buffer_len * sizeof (struct inotify_event));
 
-	event.wd = 0;
-	event.mask = 0;
-
-	remaining = sizeof (struct inotify_event);
-	while (remaining > 0) {
-        	num_bytes = read (fd, &event, remaining);
-		/*
-		 * If num_bytes==0, this would be an unexpected EOF, resulting
-		 * in a partial read of the inotify_event structure, so return.
-		 */
-		if (!num_bytes) {
-			fprintf (stderr, "Unexpected EOF on read()\n");
-			return 0;
-		}
-		/* If num_bytes<0, we have an error.  Return there, too. */
-		if (num_bytes < 0) {
-			perror ("read");
-			return 0;
-		}
-		event_buffer += num_bytes;
-		remaining -= num_bytes;
-	}
-
-	callback (event.wd, event.mask, event.cookie, event.filename);
-
-	return 1;
+    return N / sizeof (struct inotify_event);
 }
+

@@ -115,20 +115,20 @@ namespace Beagle.Util {
 
 			Read ();
 			
-			myWatchDescriptor = Inotify.Watch (buddyListPath, InotifyEventType.CloseWrite);
-			Inotify.InotifyEvent += OnInotifyEvent;
+			myWatchDescriptor = Inotify.Watch (buddyListPath, Inotify.EventType.CloseWrite);
+			Inotify.Event += OnInotifyEvent;
 		}
 
 		~GaimBuddyListReader ()
 		{
-			Inotify.InotifyEvent -= OnInotifyEvent;
+			Inotify.Event -= OnInotifyEvent;
 		}
 	
 		protected void OnInotifyEvent (int wd,
 					       string path,
 					       string subitem,
-					       InotifyEventType type,
-					       int cookie)
+					       Inotify.EventType type,
+					       uint cookie)
 		{
 			if (wd == myWatchDescriptor)
 				Read ();

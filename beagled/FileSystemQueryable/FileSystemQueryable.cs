@@ -45,7 +45,7 @@ namespace Beagle.Daemon.FileSystemQueryable {
 
 		public FileSystemQueryable () : base ("FileSystemIndex")
 		{
-			Inotify.InotifyEvent += new InotifyHandler (OnInotifyEvent);
+			Inotify.Event += OnInotifyEvent;
 		}
 
 		//////////////////////////////////////////////////////////////////////////
@@ -213,13 +213,14 @@ namespace Beagle.Daemon.FileSystemQueryable {
 					return null;
 
 				WatchedDirectory dir;
+				int i;
 
 				if (dir_dirty_needs_sorting) {
 
 					dir_dirty.Sort ();
 
 					// Prune non-dirty directories off of the end.
-					int i = dir_dirty.Count - 1;
+					i = dir_dirty.Count - 1;
 					while (i >= 0) {
 						dir = dir_dirty [i] as WatchedDirectory;
 						if (dir.Dirty)
@@ -234,10 +235,18 @@ namespace Beagle.Daemon.FileSystemQueryable {
 						return null;
 				}
 
-				dir = dir_dirty [0] as WatchedDirectory;
-
-				dir_dirty.RemoveAt (0);
-				dir_dirty_hash.Remove (dir);
+				// Find the first non-backed-off directory
+				dir = null;
+				for (i = 0; i < dir_dirty.Count; ++i) {
+					dir = dir_dirty [i] as WatchedDirectory;
+					if (dir.State == DirectoryState.Backoff) {
+						dir = null;
+					} else {
+						dir_dirty.RemoveAt (0);
+						dir_dirty_hash.Remove (dir);
+						break;
+					}
+				}
 				
 				return dir;
 			}
@@ -349,16 +358,24 @@ namespace Beagle.Daemon.FileSystemQueryable {
 		// Inotify-related code
 		//
 
-		private void OnInotifyEvent (int              wd,
-					     string           path,
-					     string           subitem,
-					     InotifyEventType type,
-					     int              cookie)
+		private void OnInotifyEvent (int               wd,
+					     string            path,
+					     string            subitem,
+					     Inotify.EventType type,
+					     uint              cookie)
 		{
+			if (type == Inotify.EventType.QueueOverflow) {
+				log.Warn ("The inotify queue overflowed!");
+				// FIXME: Do the right thing
+				return;
+			}
+
 			WatchedDirectory dir;
 			dir = dir_by_wd [wd] as WatchedDirectory;
 			if (dir == null)
 				return;
+
+			//log.Debug ("--- {0} {1} {2}", type, path, subitem);
 
 			if (! dir.ProcessEvent (type))
 				return;
@@ -368,11 +385,11 @@ namespace Beagle.Daemon.FileSystemQueryable {
 			// Handle a few simple event types
 			switch (type) {
 
-			case InotifyEventType.CreateSubdir:
+			case Inotify.EventType.CreateSubdir:
 				Scan (full_path);
 				return;
 
-			case InotifyEventType.QueueOverflow:
+			case Inotify.EventType.QueueOverflow:
 				// If the queue overflows, we can't make any
 				// assumptions about the state of the file system.
 				// FIXME: Do the right thing here.
@@ -395,12 +412,12 @@ namespace Beagle.Daemon.FileSystemQueryable {
 			// Handle the events that trigger indexing operations.
 			switch (type) {
 
-			case InotifyEventType.DeleteSubdir:
-			case InotifyEventType.DeleteFile:
+			case Inotify.EventType.DeleteSubdir:
+			case Inotify.EventType.DeleteFile:
 				Remove (full_path);
 				break;
 
-			case InotifyEventType.CloseWrite:
+			case Inotify.EventType.CloseWrite:
 				Add (full_path);
 				break;
 

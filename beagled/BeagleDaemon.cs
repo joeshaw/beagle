@@ -204,6 +204,9 @@ namespace Beagle.Daemon {
 			// Start the Global Scheduler
 			Scheduler.Global.Start ();
 
+			// Start our Inotify threads
+			Inotify.Start ();
+
 
 			Stopwatch stopwatch = new Stopwatch ();
 
@@ -314,6 +317,9 @@ namespace Beagle.Daemon {
 
 		private static void OnShutdown ()
 		{
+			// Stop our Inotify threads
+			Inotify.Stop ();
+
 			// Shut down the global scheduler
 			Scheduler.Global.Stop ();
 

@@ -30,207 +30,322 @@ using System;
 using System.Collections;
 using System.IO;
 using System.Runtime.InteropServices;
+using System.Text;
 using System.Threading;
 
-namespace Beagle.Util {
-	
-	[Flags]
-	public enum InotifyEventType : uint {
-		Access         = 0x00000001, // File was accessed
-		Modify         = 0x00000002, // File was modified
-		Attrib         = 0x00000004, // File changed attributes
-		CloseWrite     = 0x00000008, // Writable file was closed
-		CloseNoWrite   = 0x00000010, // Non-writable file was close
-		Open           = 0x00000020, // File was opened
-		MovedFrom      = 0x00000040, // File was moved from X
-		MovedTo        = 0x00000080, // File was moved to Y
-		DeleteSubdir   = 0x00000100, // Subdir was deleted
-		DeleteFile     = 0x00000200, // Subfile was deleted
-		CreateSubdir   = 0x00000400, // Subdir was created
-		CreateFile     = 0x00000800, // Subfile was created
-		DeleteSelf     = 0x00001000, // Self was deleted
-		Unmount        = 0x00002000, // Backing fs was unmounted
-		QueueOverflow  = 0x00004000, // Event queue overflowed
-		Ignored        = 0x00008000, // File is no longer being watched
-		All            = 0xffffffff
-	}
+using Mono.Posix;
 
-	public delegate void InotifyHandler (int wd, string path, string subitem, InotifyEventType type, int cookie);
+namespace Beagle.Util {
 
 	public class Inotify {
 
-		static object theLock = new object ();
-		static Thread theThread;
+		public delegate void Handler (int wd, string path, string subitem, EventType type, uint cookie);
 
-		static int fd = -1;
+		public static event Handler Event;
 
-		private class WatchedInfo {
-			public int Wd;
-			public string Path;
-			public bool IsDirectory;
-			public InotifyEventType Mask;
+		/////////////////////////////////////////////////////////////////////////////////////
+
+		[Flags]
+		public enum EventType : uint {
+			Access         = 0x00000001, // File was accessed
+			Modify         = 0x00000002, // File was modified
+			Attrib         = 0x00000004, // File changed attributes
+			CloseWrite     = 0x00000008, // Writable file was closed
+			CloseNoWrite   = 0x00000010, // Non-writable file was close
+			Open           = 0x00000020, // File was opened
+			MovedFrom      = 0x00000040, // File was moved from X
+			MovedTo        = 0x00000080, // File was moved to Y
+			DeleteSubdir   = 0x00000100, // Subdir was deleted
+			DeleteFile     = 0x00000200, // Subfile was deleted
+			CreateSubdir   = 0x00000400, // Subdir was created
+			CreateFile     = 0x00000800, // Subfile was created
+			DeleteSelf     = 0x00001000, // Self was deleted
+			Unmount        = 0x00002000, // Backing fs was unmounted
+			QueueOverflow  = 0x00004000, // Event queue overflowed
+			Ignored        = 0x00008000, // File is no longer being watched
+			All            = 0xffffffff
 		}
 
-		static Hashtable watchedByWd = new Hashtable ();
-		static Hashtable watchedByPath = new Hashtable ();
-
-		public static event InotifyHandler InotifyEvent;
-
-		public static bool Verbose = false;
-
-		//////////////////////////////////////////////////////////
-
-		private delegate void InotifyEventCallback (int wd, InotifyEventType type, int cookie, string filename);
-		
-		[DllImport ("libinotifyglue")]
-		static extern int inotify_glue_open_dev ();
+		[StructLayout (LayoutKind.Sequential)]
+		private struct inotify_event {
+			public int       wd;
+			public EventType mask;
+			public uint      cookie;
+			[MarshalAs (UnmanagedType.ByValArray, SizeConst=256)]
+			public byte[]    filename;
+		}
 
 		[DllImport ("libinotifyglue")]
-		static extern int inotify_glue_close_dev (int fd);
-
-		[DllImport ("libinotifyglue")]
-		static extern int inotify_glue_watch (int fd, string filename, InotifyEventType mask);
+		static extern int inotify_glue_watch (int fd, string filename, EventType mask);
 
 		[DllImport ("libinotifyglue")]
 		static extern int inotify_glue_ignore (int fd, int wd);
 
 		[DllImport ("libinotifyglue")]
-		static extern int inotify_glue_try_for_event (int fd, int sec, int usec, InotifyEventCallback callback);
+		static extern unsafe int inotify_snarf_events (int fd, [In, Out] inotify_event[] buffer,
+							       int buffer_len, int timeout_secs);
 
-		//////////////////////////////////////////////////////////
-		
+		/////////////////////////////////////////////////////////////////////////////////////
+
+		static private int dev_inotify = -1;
+		static private Queue event_queue = new Queue ();
+
 		static Inotify ()
 		{
-			fd = inotify_glue_open_dev ();
-
-			// Launch a thread to listen on /dev/inotify and fire off
-			// the InotifyEvent event.
-			if (fd >= 0) {
-				theThread = new Thread (new ThreadStart (ReadEvents));
-				theThread.IsBackground = true;
-				theThread.Start ();
-			}
+			dev_inotify = Syscall.open ("/dev/inotify", OpenFlags.O_RDONLY);
+			if (dev_inotify == -1)
+				throw new Exception ("Could not open /dev/inotify");
 		}
 
-		public static bool Enabled {
-			get { return fd >= 0; }
+		static bool Enabled {
+			get { return dev_inotify >= 0; }
 		}
 
-		private static void EnabledCheck ()
-		{
-			if (! Enabled)
-				throw new Exception ("INotify is not enabled!");
+		/////////////////////////////////////////////////////////////////////////////////////
+
+		private class Watched {
+			public int       Wd;
+			public string    Path;
+			public bool      IsDirectory;
+			public EventType Mask;
+
+			public EventType FilterMask;
+			public EventType FilterSeen;
 		}
 
-		public static void Shutdown ()
-		{
-			if (fd >= 0) {
-				inotify_glue_close_dev (fd);
-				fd = -1;
-			}
+		static Hashtable watched_by_wd = new Hashtable ();
+		static Hashtable watched_by_path = new Hashtable ();
+		static Watched   last_watched = null;
+
+		static public int WatchCount {
+			get { return watched_by_wd.Count; }
 		}
 
-		//////////////////////////////////////////////////////////
-
-		public static int WatchCount {
-			get { return watchedByWd.Count; }
-		}
-
-		public static bool IsWatching (string path)
+		static public bool IsWatching (string path)
 		{
 			path = Path.GetFullPath (path);
-			return watchedByPath.Contains (path);
+			return watched_by_path.Contains (path);
 		}
 
-		public static int Watch (string path, InotifyEventType mask)
+		// Filter Watched items when we do the Lookup.
+		// We do the filtering here to avoid having to acquire
+		// the watched_by_wd lock yet again.
+		static private Watched Lookup (int wd, EventType event_type)
+		{
+			lock (watched_by_wd) {
+				Watched watched;
+				if (last_watched != null && last_watched.Wd == wd) {
+					watched = last_watched;
+				} else {
+					watched = watched_by_wd [wd] as Watched;
+					if (watched != null)
+						last_watched = watched;
+				}
+
+				if (watched != null && (watched.FilterMask & event_type) != 0) {
+					watched.FilterSeen |= event_type;
+					watched = null;
+				}
+
+				return watched;
+			}
+		}
+
+		// The caller has to handle all locking itself
+		static private void Forget (Watched watched)
+		{
+			if (last_watched == watched)
+				last_watched = null;
+			watched_by_wd.Remove (watched.Wd);
+			watched_by_path.Remove (watched.Path);
+		}
+
+		static public int Watch (string path, EventType mask, EventType initial_filter)
 		{
 			int wd = -1;
 
-			EnabledCheck ();
-
 			path = Path.GetFullPath (path);
 
-			bool isDirectory = false;
+			bool is_directory = false;
 			if (Directory.Exists (path))
-				isDirectory = true;
+				is_directory = true;
 			else if (! File.Exists (path))
 				throw new IOException (path);
 
-			lock (theLock) {
+			lock (watched_by_wd) {
 				
-				WatchedInfo info;
-				
-				// If we try to watch the same directory twice, check
-				// if we are using a different mask.  If we are,
-				// ignore and re-watch the dir.  Otherwise silently
-				// return.
-				info = watchedByPath [path] as WatchedInfo;
-				if (info != null) {
-					if (info.Mask == mask)
-						return info.Wd;
-					Forget (info);
+				Watched watched;
+
+				watched = watched_by_path [path] as Watched;
+				if (watched != null) {
+					if (watched.Mask == mask)
+						return watched.Wd;
+					Forget (watched);
 				}
 
-				InotifyEventType internalMask = mask;
-				internalMask |= InotifyEventType.Ignored;
+				EventType internal_mask = mask;
+				internal_mask |= EventType.Ignored;
 
-				wd = inotify_glue_watch (fd, path, internalMask);
+				wd = inotify_glue_watch (dev_inotify, path, internal_mask);
 				if (wd < 0) {
 					string msg = String.Format ("Attempt to watch {0} failed!", path);
 					throw new Exception (msg);
 				}
+				
+				watched = new Watched ();
+				watched.Wd = wd;
+				watched.Path = path;
+				watched.IsDirectory = is_directory;
+				watched.Mask = mask;
 
-				info = new WatchedInfo ();
-				info.Wd = wd;
-				info.Path = path;
-				info.IsDirectory = isDirectory;
-				info.Mask = mask;
+				watched.FilterMask = initial_filter;
+				watched.FilterSeen = 0;
 
-				watchedByWd [info.Wd] = info;
-				watchedByPath [info.Path] = info;
+				watched_by_wd [watched.Wd] = watched;
+				watched_by_path [watched.Path] = watched;
 			}
 
 			return wd;
 		}
 
-		// The caller must be holding theLock!
-		private static void Forget (WatchedInfo info)
+		public static int Watch (string path, EventType mask)
 		{
-			watchedByWd.Remove (info.Wd);
-			watchedByPath.Remove (info.Path);
+			return Watch (path, mask, 0);
 		}
 
-		public static int Ignore (string path)
+		static public EventType Filter (string path, EventType mask)
 		{
-			EnabledCheck ();
+			EventType seen = 0;
 
+			path = Path.GetFullPath (path);
+			
+			lock (watched_by_wd) {
+
+				Watched watched;
+				watched = watched_by_path [path] as Watched;
+
+				seen = watched.FilterSeen;
+				watched.FilterMask = mask;
+				watched.FilterSeen = 0;
+			}
+			
+			return seen;
+		}
+
+		static public int Ignore (string path)
+		{
 			path = Path.GetFullPath (path);
 
 			int wd = 0;
+			lock (watched_by_wd) {
 
-			lock (theLock) {
-				
-				WatchedInfo info;
-				info = watchedByPath [path] as WatchedInfo;
+				Watched watched;
+				watched = watched_by_path [path] as Watched;
 
 				// If we aren't actually watching that path,
 				// silently return.
-				if (info == null) 
+				if (watched == null)
 					return 0;
 
-				wd = info.Wd;
+				wd = watched.Wd;
 
-				int retval = inotify_glue_ignore (fd, info.Wd);
+				int retval = inotify_glue_ignore (dev_inotify, wd);
 				if (retval < 0) {
-					string msg = String.Format ("Attempt to ignore {0} failed!", info.Path);
+					string msg = String.Format ("Attempt to ignore {0} failed!", watched.Path);
 					throw new Exception (msg);
 				}
 
-				Forget (info);
+				Forget (watched);
 			}
 
 			return wd;
 		}
+		
+
+		/////////////////////////////////////////////////////////////////////////////////////
+
+		static Thread snarf_thread = null;
+		static Thread dispatch_thread = null;
+		static bool   running = false;
+
+		static public void Start ()
+		{
+			lock (event_queue) {
+				if (snarf_thread != null)
+					return;
+				
+				running = true;
+
+				snarf_thread = new Thread (new ThreadStart (SnarfWorker));
+				snarf_thread.Start ();
+
+				dispatch_thread = new Thread (new ThreadStart (DispatchWorker));
+				dispatch_thread.Start ();
+			}
+		}
+
+		static public void Stop ()
+		{
+			lock (event_queue) {
+				running = false;
+				Monitor.Pulse (event_queue);
+			}
+		}
+
+		private struct RawEvent {
+			public DateTime      Timestamp;
+			public int           Pos;
+			public int           Count;
+			public inotify_event Event;
+		}
+
+		static unsafe void SnarfWorker ()
+		{
+			const int max_snarf = 1024;
+			//inotify_event* buffer = stackalloc inotify_event [max_snarf];
+			inotify_event[] buffer = new inotify_event [max_snarf];
+
+	
+			while (running) {
+
+				// We get much better performance if we wait a tiny bit
+				// between reads in order to let events build up.
+				// FIXME: We need to be smarter here to avoid queue overflows.
+				Thread.Sleep (15);
+
+				//int N = (int) Syscall.read (dev_inotify, (void *) buffer, (IntPtr) max_snarf_size);
+				//int num_events;
+
+				int num_events;
+				// Will block while waiting for events, but with a 1s timeout.
+				num_events = inotify_snarf_events (dev_inotify, buffer, max_snarf, 1);
+				if (num_events == 0)
+					continue;
+				
+				//Logger.Log.Warn ("Got {0} events", num_events);
+
+				if (! running)
+					break;
+								
+				DateTime now = DateTime.Now;
+				lock (event_queue) {
+					for (int i = 0; i < num_events; ++i) {
+						RawEvent raw = new RawEvent ();
+						raw.Timestamp = now;
+						raw.Pos = i;
+						raw.Count = num_events;
+						raw.Event = buffer [i];
+						
+						if (raw.Event.mask == EventType.QueueOverflow)
+							Logger.Log.Warn ("Inotify queue overflow!");
+						event_queue.Enqueue (raw);
+					}
+
+					Monitor.Pulse (event_queue);
+				}
+			}
+		}
+
 
 		// FIXME: If we move a directory that is being watched, the
 		// watch is preserved, as are the watches on any
@@ -240,62 +355,69 @@ namespace Beagle.Util {
 		// is a directory, and then and update our internal data
 		// structures accordingly.
 
-		private static void FireEvent (int wd, InotifyEventType type, int cookie, string filename)
-		{
-			if (fd >= 0) {
+		static public bool Verbose = false;
 
-				// The queue overflow event isn't associated with any directory.
-				if (type == InotifyEventType.QueueOverflow) {
-					Logger.Log.Warn ("The Inotify Queue Overflowed!");
-					if (InotifyEvent != null)
-						InotifyEvent (-1, "", "", type, cookie);
-					return;
+		static void DispatchWorker ()
+		{
+			Encoding filename_encoding = new ASCIIEncoding ();
+
+			while (running) {
+
+				RawEvent raw;
+
+				lock (event_queue) {
+					while (event_queue.Count == 0 && running)
+						Monitor.Wait (event_queue);
+					raw = (RawEvent) event_queue.Dequeue ();
 				}
 
-				WatchedInfo info = watchedByWd [wd] as WatchedInfo;
-				if (info == null)
-					return;
+				if (! running)
+					break;
 
-				// If we didn't explicitly ask for this type of event
-				// to be monitored, don't fire the event.
-				if ((info.Mask & type) != 0) {
-					if (Verbose)
+				Watched watched;
+				watched = Lookup (raw.Event.wd, raw.Event.mask);
+				if (watched == null)
+					continue;
+
+				if ((watched.Mask & raw.Event.mask) != 0) {
+					
+					int n_chars = 0;
+					while (n_chars < raw.Event.filename.Length && raw.Event.filename [n_chars] != 0)
+						++n_chars;
+
+					string filename = "";
+					if (n_chars > 0)
+						filename = filename_encoding.GetString (raw.Event.filename, 0, n_chars);
+
+
+					if (Verbose) {
 						Console.WriteLine ("*** inotify: {0} {1} {2} {3} {4}",
-								   type, wd, info.Path,
+								   raw.Event.mask, watched.Wd, watched.Path,
 								   filename != "" ? filename : "\"\"",
-								   cookie);
-					if (InotifyEvent != null) {
+								   raw.Event.cookie);
+					}
+
+					if (Event != null) {
 						try {
-							InotifyEvent (wd, info.Path, filename, type, cookie);
+							Event (watched.Wd, watched.Path, filename, 
+							       raw.Event.mask, raw.Event.cookie);
 						} catch (Exception e) {
-							Logger.Log.Error ("Caught exception inside InotifyEvent");
-							Logger.Log.Error (e);
+							Logger.Log.Error ("Caught exception inside Inotify.Event");
+							Logger.Log.Error (e); 
 						}
 					}
 				}
-				
+
 				// If a directory we are watching gets ignored, we need
 				// to remove it from the watchedByFoo hashes.
-				if (type == InotifyEventType.Ignored) {
-					lock (theLock) {
-						Forget (info);
-					}
+				if (raw.Event.mask == EventType.Ignored) {
+					lock (watched_by_wd)
+						Forget (watched);
 				}
 			}
 		}
 
-		private static void ReadEvents ()
-		{
-			// We need to hold a reference to our delegate to avoid
-			// magic trampoline errors.
-			InotifyEventCallback pleaseDoNotLeakMeIntoUnmanagedCode;
-			pleaseDoNotLeakMeIntoUnmanagedCode = new InotifyEventCallback (FireEvent);
-
-			while (fd >= 0) {
-				// Wait for an event, polling fd every 1.008167s
-				inotify_glue_try_for_event (fd, 1, 8167, pleaseDoNotLeakMeIntoUnmanagedCode);
-			}
-		}
+		/////////////////////////////////////////////////////////////////////////////////
 
 		static void Main (string [] args)
 		{
@@ -313,7 +435,7 @@ namespace Beagle.Util {
 				string path = (string) to_watch.Dequeue ();
 
 				Console.WriteLine ("Watching {0}", path);
-				Inotify.Watch (path, InotifyEventType.All);
+				Inotify.Watch (path, Inotify.EventType.All);
 
 				if (recursive) {
 					DirectoryInfo dir = new DirectoryInfo (path);
@@ -322,6 +444,7 @@ namespace Beagle.Util {
 				}
 			}
 
+			Inotify.Start ();
 			Inotify.Verbose = true;
 
 			while (Inotify.Enabled && Inotify.WatchCount > 0)
@@ -331,7 +454,8 @@ namespace Beagle.Util {
 				Console.WriteLine ("Nothing being watched.");
 
 			// Kill the event-reading thread so that we exit
-			Inotify.Shutdown ();
+			Inotify.Stop ();
 		}
+
 	}
 }

@@ -55,14 +55,14 @@ namespace Beagle.Daemon.BlamQueryable {
 
 		private void StartWorker ()
 		{
-			InotifyEventType mask;
-			mask = InotifyEventType.CreateFile
-				| InotifyEventType.DeleteFile
-				| InotifyEventType.Modify;
+			Inotify.EventType mask;
+			mask = Inotify.EventType.CreateFile
+				| Inotify.EventType.DeleteFile
+				| Inotify.EventType.Modify;
 
 			wdBlam = Inotify.Watch (blamDir, mask);
 
-			Inotify.InotifyEvent += new InotifyHandler (OnInotifyEvent);
+			Inotify.Event += OnInotifyEvent;
 
 			Index();
 		}
@@ -83,8 +83,8 @@ namespace Beagle.Daemon.BlamQueryable {
 		private void OnInotifyEvent (int wd,
 					     string path,
 					     string subitem,
-					     InotifyEventType type,
-					     int cookie)
+					     Inotify.EventType type,
+					     uint cookie)
 		{
 			if (wd != wdBlam)
 				return;

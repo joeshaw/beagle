@@ -39,7 +39,7 @@ namespace Beagle.Daemon.FileSystemQueryable {
 		Watched,      // Directory is being watched
 		Backoff,      // This directory is busy, so we aren't trying to keep up with it.
 	}
-
+	
 	public class WatchedDirectory : IComparable {
 
 		private string path;
@@ -58,13 +58,13 @@ namespace Beagle.Daemon.FileSystemQueryable {
 
 			this.path = path;
 			this.wd = Inotify.Watch (path, 
-						 InotifyEventType.Open
-						 | InotifyEventType.CreateSubdir
-						 | InotifyEventType.DeleteSubdir
-						 | InotifyEventType.DeleteFile
-						 | InotifyEventType.CloseWrite
-						 | InotifyEventType.Ignored
-						 | InotifyEventType.QueueOverflow);
+						 Inotify.EventType.Open
+						 | Inotify.EventType.CreateSubdir
+						 | Inotify.EventType.DeleteSubdir
+						 | Inotify.EventType.DeleteFile
+						 | Inotify.EventType.CloseWrite
+						 | Inotify.EventType.Ignored
+						 | Inotify.EventType.QueueOverflow);
 
 			// compute the path length
 			this.path_length = -1;
@@ -139,14 +139,8 @@ namespace Beagle.Daemon.FileSystemQueryable {
 
 		// Return true if we should continue processing the
 		// event, false if we should filter it.
-		public bool ProcessEvent (InotifyEventType event_type)
+		public bool ProcessEvent (Inotify.EventType event_type)
 		{
-			if (event_type == InotifyEventType.DeleteFile
-			    || event_type == InotifyEventType.CloseWrite) {
-				statistics.AddEvent ();
-				//Console.WriteLine ("{0}: {1}", Path, statistics.EstimatedFrequency);
-			}
-			
 			//Console.WriteLine ("{0} {1} {2}", path, state, event_type);
 								
 			switch (state) {
@@ -155,19 +149,14 @@ namespace Beagle.Daemon.FileSystemQueryable {
 				return false;
 
 			case DirectoryState.Scanning:
-				return event_type != InotifyEventType.Open;
+				return event_type != Inotify.EventType.Open;
 
 			case DirectoryState.Watched:
 				return true;
 
 			case DirectoryState.Backoff:
-				if (event_type == InotifyEventType.DeleteFile
-				    || event_type == InotifyEventType.CloseWrite) {
-					Dirty = true;
-				return false;
-				}
-
-				return true;
+				return event_type != Inotify.EventType.DeleteFile
+					&& event_type != Inotify.EventType.CloseWrite;
 			}
 
 			return true;

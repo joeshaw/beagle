@@ -75,6 +75,12 @@ namespace Beagle.Util {
 			}
 		}
 
+		public double ImpliedFrequency {
+			get {
+				return ComputeExpMaGap (DateTime.Now, expma_gap);
+			}
+		}
+
 		// How many seconds would be have to be idle for our exmpa
 		// frequency to reach the required level.
 		public double TimeToReachFrequency (double target_frequency)
