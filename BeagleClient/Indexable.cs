@@ -214,7 +214,7 @@ namespace Beagle {
 			BufferedStream bufferedStream = new BufferedStream (fileStream);
 			StreamWriter writer = new StreamWriter (bufferedStream);
 
-			const int BUFFER_SIZE = 1892;
+			const int BUFFER_SIZE = 8192;
 			char [] buffer = new char [BUFFER_SIZE];
 
 			int read;
