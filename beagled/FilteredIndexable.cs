@@ -284,6 +284,12 @@ namespace Beagle.Daemon {
 				
 				if (crawl_mode)
 					filter.EnableCrawlMode ();
+
+				// Be extra paramoid: never delete the actual
+				// URI we are indexing.
+				if (DeleteContent && Uri != ContentUri)
+					filter.DeleteContent = DeleteContent;
+					
 				filter.Open (new FileInfo (path));
 				foreach (Property prop in filter.Properties)
 					AddProperty (prop);

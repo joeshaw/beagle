@@ -52,6 +52,15 @@ namespace Beagle.Daemon {
 
 		//////////////////////////
 
+		private bool delete_content;
+
+		public bool DeleteContent {
+			get { return this.delete_content; }
+			set { this.delete_content = value; }
+		}
+
+		//////////////////////////
+
 		private   ArrayList supported_mime_types = new ArrayList ();
 		private   ArrayList supported_extensions = new ArrayList ();
 		
@@ -461,6 +470,15 @@ namespace Beagle.Daemon {
 			if (tempFile != null)
 				File.Delete (tempFile);
 
+			if (currentInfo != null && this.DeleteContent) {
+				try {
+					currentInfo.Delete ();
+				} catch (Exception e) {
+					Logger.Log.Debug ("Caught exception trying to delete {0} in filter '{1}'",
+							  currentInfo.FullName, Name);
+					Logger.Log.Debug (e);					
+				}
+			}
 		}
 
 		private string PullFromArray (ArrayList array)
