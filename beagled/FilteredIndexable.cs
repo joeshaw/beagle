@@ -106,7 +106,9 @@ namespace Beagle.Daemon {
 			StringWriter writer = new StringWriter ();
 			our_serializer.Serialize (writer, this);
 			writer.Close ();
-			return writer.ToString ();
+
+			// We might have invalid XML characters in here.
+			return BU.StringFu.CleanupInvalidXmlCharacters (writer.ToString ());
 		}
 
 		static string[] longExtensions = {".html" };

@@ -255,9 +255,11 @@ AM_CONDITIONAL(ENABLE_GSF_SHARP, test "x$enable_gsf_sharp" = "xyes")
 PKG_CHECK_MODULES(GST_SHARP, gst-sharp, enable_gst_sharp=yes, enable_gst_sharp=no)
 AM_CONDITIONAL(ENABLE_GST_SHARP, test "x$enable_gst_sharp" = "xyes")
 
-PKG_CHECK_MODULES(BEAGLED, gmime-sharp >= 2.1.11 gtk-sharp dbus-sharp >= 0.23 gconf-sharp)
+PKG_CHECK_MODULES(BEAGLED, gmime-sharp >= 2.1.11 gtk-sharp dbus-sharp >= 0.23.1 gconf-sharp)
 BEAGLED_LIBS="$BEAGLED_LIBS $EVO_SHARP_LIBS $GSF_SHARP_LIBS"
 AC_SUBST(BEAGLED_LIBS)
+
+PKG_CHECK_MODULES(DBUS_BROKEN, dbus-sharp >= 0.23.2 dbus-sharp < 0.30, dbus_broken=no, dbus_broken=yes)
 
 DBUS_PREFIX=`$PKG_CONFIG --variable=prefix dbus-sharp`
 GSF_SHARP_PREFIX=`$PKG_CONFIG --variable=prefix gsf-sharp`
@@ -280,6 +282,11 @@ if test "$have_old_dbus" = "yes"; then
 else
 	BEAGLE_DEFINES=""
 fi
+
+if test "$dbus_broken" = "yes"; then
+	BEAGLE_DEFINES="$BEAGLE_DEFINES -define:DBUS_IS_BROKEN_BROKEN_BROKEN"
+fi
+
 AC_SUBST(BEAGLE_DEFINES)
 
 dnl ----------------------------------------------

@@ -31,7 +31,7 @@ using System.IO;
 using System.Text;
 using System.Xml;
 using System.Xml.Serialization;
-using BU = Beagle.Util;
+using Beagle.Util;
 
 namespace Beagle {
 
@@ -247,7 +247,9 @@ namespace Beagle {
 			StringWriter writer = new StringWriter ();
 			our_serializer.Serialize (writer, this);
 			writer.Close ();
-			return writer.ToString ();
+
+			// We might have invalid XML characters in here.
+			return StringFu.CleanupInvalidXmlCharacters (writer.ToString ());
 		}
 
 		private static Uri TextReaderToTempFileUri (TextReader reader)
@@ -272,7 +274,7 @@ namespace Beagle {
 			
 			writer.Close ();
 
-			return BU.UriFu.PathToFileUri (filename);
+			return UriFu.PathToFileUri (filename);
 		}
 
 		public void StoreStream () {

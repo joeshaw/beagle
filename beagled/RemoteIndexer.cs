@@ -24,8 +24,6 @@
 // DEALINGS IN THE SOFTWARE.
 //
 
-#define DBUS_IS_BROKEN_BROKEN_BROKEN
-
 using System;
 using System.Threading;
 using DBus;

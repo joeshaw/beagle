@@ -400,6 +400,24 @@ namespace Beagle.Util {
                         return s;
 		}
 
+		static public string CleanupInvalidXmlCharacters (string str)
+		{
+			int len = str.Length;
+			char[] char_array = new char[len];
+
+			for (int i = 0; i < len; i++) {
+				if (str[i] < 0x20 &&
+				    str[i] != 0xd &&
+				    str[i] != 0xa &&
+				    str[i] != 0x9)
+					char_array[i] = ' ';
+				else
+					char_array[i] = str[i];
+			}
+
+			return new string (char_array);
+		}
+		
 		static public int CountWords (string str, int max_words)
 		{
 			if (str == null)
