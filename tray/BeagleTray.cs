@@ -4,6 +4,7 @@
 // Copyright 2004 Novell, Inc.
 //
 // Nat Friedman <nat@novell.com>
+// Srinivasa Ragavan <sragavan@novell.com>
 //
 
 using System;
@@ -17,17 +18,17 @@ using GLib;
 using Egg;
 using Beagle;
 using Beagle.Tile;
-using Best;
+
 namespace Beagle
 {
 
 	public class BeagleTray
 	{
-		TrayIcon   tray_icon;
-		Gdk.Pixbuf glass_icon;
+		TrayIcon         tray_icon;
+		Gdk.Pixbuf       glass_icon;
 		Gtk.ToggleButton button;
 		Gtk.Window       win;
-		Gtk.Entry 	entry;
+		Gtk.Entry 	 entry;
 		int              w_width = 400;
                 int              w_height = 400;
 	
@@ -49,7 +50,7 @@ namespace Beagle
 
                 private Gtk.ScrolledWindow swin;
                 private TileCanvas canvas;
-                private BestRootTile root;
+                private SimpleRootTile root;
 
 		private Gtk.Window CreateQueryWindow ()
 		{
@@ -77,7 +78,7 @@ namespace Beagle
 
                         canvas = new TileCanvas ();
                                                                                                                                                              
-                        root = new BestRootTile ();
+                        root = new SimpleRootTile ();
                         canvas.Root = root;
                                                                                                                                                              
                         swin = new Gtk.ScrolledWindow ();
@@ -147,12 +148,35 @@ namespace Beagle
                         root.Subtract (uri);
                 }
 
+		private string delayedQuery = null;
+		
+		private bool RunDelayedQuery ()
+		{
+			if (delayedQuery != null) {
+				string tmp = delayedQuery;
+				delayedQuery = null;
+				System.Console.WriteLine ("Delayed query fired");
+				Search (tmp);
+			}
+			
+			return false;
+		}
+
+		private void QueueDelayedQuery ()
+		{
+			GLib.Timeout.Add (1000, new GLib.TimeoutHandler (RunDelayedQuery));
+		}
+		
 		private void CheckQueryError (Exception e)
 		{
-			if (e.ToString ().IndexOf ("com.novell.Beagle") != -1)
-				root.Error ("Could not query.  The Beagle daemon is probably not running, or maybe you\n don't have D-BUS set up properly.");
-			else
-				root.Error ("The query failed with error:<br><br>" + e);
+			delayedQuery = entry.Text;
+			DBusisms.BeagleUpAgain += QueueDelayedQuery;
+
+			if (e.ToString ().IndexOf ("com.novell.Beagle") != -1) {
+		                root.Error ("Could not query.  The Beagle daemon is probably not running, or maybe you\n don't have D-BUS set up properly.");
+			        root.OfferDaemonRestart = true;
+			} else
+			        root.Error ("The query failed with error:<br><br>" + e);
 		}
                                                                                                                                                              
                 private void Search (String searchString)

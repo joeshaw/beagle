@@ -160,7 +160,7 @@ namespace Best {
 		
 		private Gtk.ScrolledWindow swin;
 		private TileCanvas canvas;
-		private BestRootTile root;
+		private SimpleRootTile root;
 
 		private Gtk.Widget CreateContents ()
 		{
@@ -187,7 +187,7 @@ namespace Best {
 
 			canvas = new TileCanvas ();
 
-			root = new BestRootTile ();
+			root = new SimpleRootTile ();
 			canvas.Root = root;
 
 			swin = new Gtk.ScrolledWindow ();
@@ -203,27 +203,23 @@ namespace Best {
 			return contents;
 		}
 
-		private string DelayedQuery = null;
-
-		private void RunQuery ()
-		{
-			if (DelayedQuery != null) {
-				string tmp = DelayedQuery;
-				DelayedQuery = null;
-				System.Console.WriteLine ("Query fired");
-				Search (tmp);
-			}
-		}
+		private string delayedQuery = null;
 
 		private bool RunDelayedQuery ()
 		{
-			RunQuery ();
+			if (delayedQuery != null) {
+				string tmp = delayedQuery;
+				delayedQuery = null;
+				System.Console.WriteLine ("Delayed query fired");
+				Search (tmp);
+			}
+
 			return false;
 		}
 
 		private void QueueDelayedQuery ()
 		{
-			GLib.Timeout.Add (500, new GLib.TimeoutHandler (RunDelayedQuery));
+			GLib.Timeout.Add (1000, new GLib.TimeoutHandler (RunDelayedQuery));
 		}
 		
 		private void DoSearch (object o, EventArgs args)
@@ -234,7 +230,7 @@ namespace Best {
 			}
 			catch (Exception e)
 			{
-				DelayedQuery = entry.Text;
+				delayedQuery = entry.Text;
 				DBusisms.BeagleUpAgain += QueueDelayedQuery;
 
 				if (e.ToString ().IndexOf ("'com.novell.Beagle'") != -1) {

@@ -11,8 +11,7 @@ CSFLAGS = -target:exe
 CSFILES = 				\
 	$(srcdir)/Utils.cs		\
 	$(srcdir)/BeagleTray.cs		\
-	$(srcdir)/Main.cs		\
-	$(srcdir)/BestRootTile.cs
+	$(srcdir)/Main.cs
 
 ASSEMBLIES = 					\
 	$(BEAGLE_UI_LIBS)			\

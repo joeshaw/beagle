@@ -8,8 +8,7 @@ CSFLAGS = -target:exe
 
 CSFILES =				\
 	$(srcdir)/Best.cs		\
-	$(srcdir)/BestWindow.cs		\
-	$(srcdir)/BestRootTile.cs
+	$(srcdir)/BestWindow.cs
 
 LOCAL_ASSEMBLIES =			\
 	../Util/Util.dll		\

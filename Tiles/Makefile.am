@@ -6,6 +6,7 @@ TARGET = Tiles.dll
 CSFLAGS = -target:library
 
 CSFILES =					\
+	$(srcdir)/SimpleRootTile.cs		\
 	$(srcdir)/HitFlavor.cs			\
 	$(srcdir)/HitToHitFlavor.cs		\
 	$(srcdir)/Tile.cs			\
