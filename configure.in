@@ -286,7 +286,11 @@ DBUS_PREFIX=`$PKG_CONFIG --variable=prefix dbus-sharp`
 GSF_SHARP_PREFIX=`$PKG_CONFIG --variable=prefix gsf-sharp`
 GMIME_SHARP_PREFIX=`$PKG_CONFIG --variable=prefix gmime-sharp`
 
-AC_CHECK_HEADERS(dbus-1.0/dbus/dbus.h,, [AC_MSG_ERROR([Unable to find dbus headers.  You'll need to install the dbus devel package])])
+# Can't use AC_CHECK_HEADERS() because dbus insists on #defining
+# DBUS_API_SUBJECT_TO_CHANGE, and that breaks the check.
+if test ! -e "$DBUS_PREFIX/include/dbus-1.0/dbus/dbus.h"; then
+  AC_MSG_ERROR([Unable to find dbus headers.  You'll need to install the dbus devel package])
+fi
 
 AC_MSG_CHECKING(for older dbus API)
 LDFLAGS_save="$LDFLAGS"
