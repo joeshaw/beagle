@@ -48,7 +48,11 @@ namespace Beagle.Util {
 		}
 
 		private TextReader Current {
-			get { return (TextReader) readers.Peek (); }
+			get { 
+				if (readers.Count == 0)
+					return null;
+				return (TextReader) readers.Peek ();
+			}
 		}
 
 		private void Next ()
