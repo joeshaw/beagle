@@ -99,7 +99,8 @@ namespace Beagle.Filters {
 				
                       		}
                       		
-			}   
+			}  
+			Finished ();
 		}
 
 		override protected void DoOpen (FileInfo info)
