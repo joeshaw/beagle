@@ -214,7 +214,7 @@ namespace Beagle.Daemon {
 				System.Console.WriteLine ("Could not initialize Beagle's bus connection:\n{0}", e);
 				return 1;
 			}
-			
+
 			try {
 				// FIXME: this could be better, but I don't want to
 				// deal with serious cmdline parsing today
@@ -247,8 +247,12 @@ namespace Beagle.Daemon {
 			} catch (Exception e) {
 				Logger.Log.Fatal ("Could not initialize Beagle:\n{0}", e);
 				return 1;
-			}			
-			
+			}	
+
+			// Test if the FileAdvise stuff is working: This will print a
+			// warning if not.  The actual advice calls will fail silently.
+			FileAdvise.TestAdvise ();
+
 			Logger.Log.Info ("Beagle daemon started"); 
 
 			if (! arg_no_fork) {

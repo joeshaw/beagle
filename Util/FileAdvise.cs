@@ -32,6 +32,8 @@ using System.Text;
 using System.Runtime.InteropServices;
 using Mono.Posix;
 
+using Beagle.Util;
+
 namespace Beagle.Util {
 
 	public class FileAdvise {
@@ -48,10 +50,10 @@ namespace Beagle.Util {
 		private const int AdviseDontNeed = 4;	// POSIX_FADV_DONTNEED
 		private const int AdviseNoReUse = 5;	// POSIX_FADV_NOREUSE
 
-		static private void GiveAdvice (FileStream file, int advice)
+		static private int GiveAdvice (FileStream file, int advice)
 		{
 			int fd = file.Handle.ToInt32();
-			posix_fadvise (fd, 0, 0, advice);
+			return posix_fadvise (fd, 0, 0, advice);
 		}
 
 		static public void FlushCache (FileStream file)
@@ -79,6 +81,22 @@ namespace Beagle.Util {
 			GiveAdvice (file, AdviseNormal);
 		}
 
-	}
+		static public void TestAdvise ()
+		{
+			try {
+				FileStream file = new FileStream ("/etc/fstab",
+								  System.IO.FileMode.Open,
+								  FileAccess.Read);
 
+				int ret = GiveAdvice (file, AdviseNormal);
+				if (ret != 0) {
+					Logger log = Logger.Get ("FileAdvise");
+					log.Warn ("FileAdvise disabled: " +
+						  Syscall.strerror (Marshal.GetLastWin32Error()));
+				}
+
+				file.Close();
+			} catch { }
+		}
+	}
 }
