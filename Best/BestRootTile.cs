@@ -26,6 +26,7 @@
 
 using System;
 using System.Collections;
+using System.Diagnostics;
 
 using Beagle.Tile;
 using Beagle;
@@ -36,11 +37,17 @@ namespace Best {
 
 		Hashtable tileTable = new Hashtable ();
 		string errorString;
+		bool offerDaemonRestart;
 
 		public void Open ()
 		{
 			tileTable = new Hashtable ();
 			Changed ();
+		}
+
+		public bool OfferDaemonRestart {
+			get { return offerDaemonRestart; }
+			set { offerDaemonRestart = value; }
 		}
 
 		public void Add (Hit hit)
@@ -88,12 +95,41 @@ namespace Best {
 			Changed ();
 		}
 
+		public void StartDaemon ()
+		{
+			// If we're running uninstalled (in the source tree), then run
+			// the uninstalled daemon.  Otherwise run the installed daemon.
+
+			string bestpath = System.Environment.GetCommandLineArgs () [0];
+			string bestdir = System.IO.Path.GetDirectoryName (bestpath);
+
+			string beagled_filename;
+			if (bestdir.EndsWith ("lib/beagle"))
+				beagled_filename = "beagled"; // Running installed
+			else {
+				Console.WriteLine ("Running uninstalled daemon");
+				beagled_filename = System.IO.Path.Combine (bestdir, "../beagled/beagled");
+			}
+				
+			
+			Process daemon = new Process ();
+			daemon.StartInfo.FileName  = beagled_filename;
+			daemon.StartInfo.UseShellExecute = false;
+
+			daemon.Start ();
+		}
+
 		override public void Render (TileRenderContext ctx)
 		{
 			Console.WriteLine ("Render!");
 
 			if (errorString != null) {
 				ctx.Write (errorString);
+				if (offerDaemonRestart) {
+					ctx.Write ("<hr noshade>");
+					ctx.Link ("Click to start the Beagle daemon...", new TileActionHandler (StartDaemon));
+					offerDaemonRestart = false;
+				}
 				errorString = null;
 				return;
 			}

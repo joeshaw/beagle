@@ -169,10 +169,10 @@ namespace Beagle.Tile {
 			string commandArgs = null;
 
 			if (args.Url.StartsWith ("http://")) {
-				command = "epiphany";
+				command = "gnome-open";
 				commandArgs = args.Url;
 			} else if (args.Url.StartsWith ("mailto:")) {
-				command = "evolution-1.5";
+				command = "evolution";
 				commandArgs = args.Url;
 			}
 

@@ -214,6 +214,17 @@ namespace Best {
 				Search (tmp);
 			}
 		}
+
+		private bool RunDelayedQuery ()
+		{
+			RunQuery ();
+			return false;
+		}
+
+		private void QueueDelayedQuery ()
+		{
+			GLib.Timeout.Add (500, new GLib.TimeoutHandler (RunDelayedQuery));
+		}
 		
 		private void DoSearch (object o, EventArgs args)
 		{
@@ -224,12 +235,13 @@ namespace Best {
 			catch (Exception e)
 			{
 				DelayedQuery = entry.Text;
-				DBusisms.BeagleUpAgain += RunQuery;
+				DBusisms.BeagleUpAgain += QueueDelayedQuery;
 
-				if (e.ToString ().IndexOf ("'com.novell.Beagle'") != -1)
+				if (e.ToString ().IndexOf ("'com.novell.Beagle'") != -1) {
 					root.Error ("The query for <i>" + entry.Text + "</i> failed." +
 						    "<br>The likely cause is that the beagle daemon isn't running.");
-				else
+					root.OfferDaemonRestart = true;
+				} else
 					root.Error ("The query for <i>" + entry.Text + "</i> failed with error:<br><br>" + e);
 			}
 		}
