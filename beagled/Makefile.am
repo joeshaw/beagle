@@ -358,7 +358,6 @@ GAIM_LOG_QUERYABLE_CSFILES =				\
 
 edsqueryable = $(srcdir)/EvolutionDataServerQueryable
 EDS_QUERYABLE_CSFILES =                                 \
-	$(edsqueryable)/BookViewDriver.cs               \
 	$(edsqueryable)/EvolutionDataServerQueryable.cs 
 
 tomboyqueryable = $(srcdir)/TomboyQueryable

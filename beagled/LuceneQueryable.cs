@@ -175,6 +175,13 @@ namespace Beagle.Daemon {
 			return task;
 		}
 
+		public Scheduler.Task NewTaskFromHook (Scheduler.TaskHook hook)
+		{
+			Scheduler.Task task = Scheduler.TaskFromHook (hook);
+			task.Collector = collector;
+			return task;
+		}
+
 		//////////////////////////////////////////////////////////////////////////////////
 
 		private class LuceneTaskCollector : Scheduler.ITaskCollector {

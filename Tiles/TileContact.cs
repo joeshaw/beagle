@@ -52,41 +52,28 @@ namespace Beagle.Tile {
 		{
 			base.PopulateTemplate ();
 
-			bool use_generic_icon = true;
+			string photo_filename = Hit["Photo"];
 
-			byte[] data = (byte[]) Hit.GetData ("Photo");
-
-			if (data != null) {
-				Console.WriteLine ("Got photo for {0}", Hit.Uri);
-				string size_adjustment = "";
-
-				// bad hack to scale the image 
-				MemoryStream stream = new MemoryStream (data);
-				Gdk.Pixbuf pixbuf = new Gdk.Pixbuf (stream);
-				Console.WriteLine ("Build pixbuf {0} {1}x{2}", pixbuf, pixbuf.Width, pixbuf.Height);
-				if (pixbuf.Width > pixbuf.Height) {
-					if (pixbuf.Width > 80)
-						size_adjustment = "width=\"80\"";
-				} else {
-					if (pixbuf.Height > 80)
-						size_adjustment = "height=\"80\"";
+			if (photo_filename != null) {
+				System.Console.WriteLine ("photo: {0}", photo_filename);
+				string height = "";
+				
+				try {
+					// bad hack to scale the image 
+					Gdk.Pixbuf pixbuf = new Gdk.Pixbuf (photo_filename);
+					if (pixbuf.Width > pixbuf.Height) {
+						if (pixbuf.Width > 80)
+							height = "width=\"80\"";
+					} else {
+						if (pixbuf.Height > 80)
+							height = "height=\"80\"";
+					}
+				} catch {
 				}
-				stream.Close ();
 
-				string data_chunk;
-				data_chunk = Images.GetHtmlSource (data, "image/jpeg");
-				// FIXME: We shouldn't drop an image it its data: block
-				// is too big.  It would make more sense to either:
-				//  (a) Get the data into gecko by some other means.
-				//  (b) Scale down the image before base64-encoding it.
-				if (data_chunk.Length  < 65000) {
-					Template["size_adjustment"] = size_adjustment;
-					Template["Icon"] = data_chunk;
-					use_generic_icon = false;
-				}
-			}
-
-			if (use_generic_icon) {
+				Template["size_adjustment"] = height;
+				Template["Icon"] = "file://" + photo_filename;
+			} else {
 				Template["size_adjustment"] = "";
 				Template["Icon"] = default_contact_icon_data;
 			}

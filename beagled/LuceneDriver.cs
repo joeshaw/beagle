@@ -249,7 +249,7 @@ namespace Beagle.Daemon {
 
 		private Lucene.Net.Store.Directory ourStore = null;
 
-		private Lucene.Net.Store.Directory Store {
+		public Lucene.Net.Store.Directory Store {
 			get { return ourStore; }
 
 			set {
