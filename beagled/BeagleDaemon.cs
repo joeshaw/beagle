@@ -138,6 +138,7 @@ namespace Beagle.Daemon {
 				return 1;
 			}
 
+			QueryDriver queryDriver;
 			try {
 
 				// Construct and register our ping object.
@@ -147,8 +148,8 @@ namespace Beagle.Daemon {
 
 				// Construct a query driver.  Among other things, this
 				// loads and initializes all of the IQueryables.
-				QueryDriver queryDriver = new QueryDriver ();
-
+				queryDriver = new QueryDriver ();
+				
 				// Set up our D-BUS object factory.
 				FactoryImpl factory = new FactoryImpl (queryDriver);
 				dbusObjects.Add (factory);
@@ -169,6 +170,8 @@ namespace Beagle.Daemon {
 					return 1;
 			}
 
+			queryDriver.Start ();
+			
 			Shutdown.ShutdownEvent += OnShutdown;
 			// Start our event loop.
 			Application.Run ();

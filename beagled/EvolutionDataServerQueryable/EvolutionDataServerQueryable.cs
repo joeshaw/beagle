@@ -86,6 +86,10 @@ namespace Beagle.Daemon.EvolutionDataServerQueryable {
 				Monitor.Wait (driver);
 			}
 		}
+
+		public void Start ()
+		{
+		}
 	}
 
 }

@@ -321,6 +321,12 @@ namespace Beagle.Daemon {
 
 		public EvolutionMailDriver () : base (Path.Combine (PathFinder.RootDir, "MailIndex"), true)
 		{
+		}
+
+		public override void Start () 
+		{
+			base.Start ();
+
 			string home = Environment.GetEnvironmentVariable ("HOME");
 			string local_path = Path.Combine (home, ".evolution/mail/local");
 			string imap_path = Path.Combine (home, ".evolution/mail/imap");

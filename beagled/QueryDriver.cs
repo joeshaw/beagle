@@ -113,6 +113,12 @@ namespace Beagle.Daemon {
 			}
 		}
 
+		public void Start ()
+		{
+			foreach (Queryable q in queryables) {
+				q.Start ();
+			}
+		}
 
 		public void DoQuery (QueryBody body, QueryResult result)
 		{

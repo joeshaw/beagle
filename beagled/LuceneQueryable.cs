@@ -44,6 +44,11 @@ namespace Beagle.Daemon {
 			ourDriver.DeletedEvent += OnLuceneDriverDeleted;
 		}
 
+		public virtual void Start () 
+		{
+			ourDriver.Start ();
+		}
+
 		public LuceneQueryable (string dir, bool persistentQueue)
 		{
 			Setup (dir, persistentQueue);

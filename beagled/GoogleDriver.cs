@@ -54,6 +54,10 @@ namespace Beagle.Daemon {
 			get { return "Google"; }
 		}
 
+		public void Start () 
+		{
+		}
+
 		Hit FromGoogleResultElement (ResultElement res, int rank)
 		{
 			Hit hit = new Hit ();

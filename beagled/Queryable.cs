@@ -48,6 +48,11 @@ namespace Beagle.Daemon {
 
 			iqueryable.ChangedEvent += OnIChangedEvent;
 		}
+		
+		public void Start ()
+		{
+			iqueryable.Start ();
+		}
 
 		public string Name {
 			get { return flavor.Name; }

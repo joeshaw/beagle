@@ -43,6 +43,12 @@ namespace Beagle.Daemon.GaimLogQueryable {
 
 		public GaimLogQueryable () : base (Path.Combine (PathFinder.RootDir, "GaimLogIndex"))
 		{
+		}
+
+		public override void Start () 
+		{
+			base.Start ();
+
 			string home = Environment.GetEnvironmentVariable ("HOME");
 			string logDir = Path.Combine (Path.Combine (home, ".gaim"), "logs");
 

@@ -179,7 +179,10 @@ namespace Beagle.Daemon {
 			// Start an indexing queue
 			queue = new LuceneQueue (this, isQueuePersistent, queueDir);
 			Shutdown.AddQueue (queue);
+		}
 
+		public void Start () 
+		{
 			queue.Start ();
 		}
 

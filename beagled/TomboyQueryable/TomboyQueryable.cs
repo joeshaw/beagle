@@ -48,6 +48,11 @@ namespace Beagle.Daemon.TomboyQueryable {
 		{
 			notesDir = Path.Combine (Environment.GetEnvironmentVariable ("HOME"), ".tomboy");
 			backupDir = Path.Combine (notesDir, "Backup");
+		}
+
+		public override void Start () 
+		{
+			base.Start ();
 
 			// FIXME: We should do something more reasonable if
 			// ~/.tomboy doesn't exist.
@@ -82,7 +87,6 @@ namespace Beagle.Daemon.TomboyQueryable {
 			stopwatch.Stop ();
 			log.Info ("Scanned {0} notes in {1}", count, stopwatch);
 		}
-
 
 		private void OnInotifyEvent (int wd,
 					     string path,

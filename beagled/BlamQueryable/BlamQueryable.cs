@@ -50,7 +50,12 @@ namespace Beagle.Daemon.BlamQueryable {
 		public BlamQueryable () : base (Path.Combine (PathFinder.RootDir, "BlamIndex"))
 		{
 			blamDir = Path.Combine (Path.Combine (Environment.GetEnvironmentVariable ("HOME"), ".gnome2"), "blam");
-			
+		}
+
+		public override void Start () 
+		{			
+			base.Start ();
+
 			// FIXME: We should do something more reasonable if
 			// ~/.gnome2/blam doesn't exist.
 			if (! Directory.Exists (blamDir))

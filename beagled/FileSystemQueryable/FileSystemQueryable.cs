@@ -48,11 +48,19 @@ namespace Beagle.Daemon.FileSystemQueryable {
 
 		public FileSystemQueryable () : base (Path.Combine (PathFinder.RootDir, "FileSystemIndex"))
 		{
-			string home = Environment.GetEnvironmentVariable ("HOME");
-
 			filter = new FileNameFilter ();			
 			crawlQ = new CrawlQueue (filter, Driver, log);
 			eventStats = new EventStatistics ();
+
+			Inotify.InotifyEvent += new InotifyHandler (OnInotifyEvent);
+		}
+
+		//////////////////////////////////////////////////////////////////////////
+		public override void Start ()
+		{
+			base.Start ();
+
+			string home = Environment.GetEnvironmentVariable ("HOME");
 
 			TraverseDirectory (home, true);
 
@@ -63,8 +71,6 @@ namespace Beagle.Daemon.FileSystemQueryable {
 			crawlQ.ScheduleCrawl (Path.Combine (home, "Documents"));
 			Shutdown.AddQueue (crawlQ);
 			crawlQ.Start ();
-
-			Inotify.InotifyEvent += new InotifyHandler (OnInotifyEvent);
 		}
 
 		//////////////////////////////////////////////////////////////////////////

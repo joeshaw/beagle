@@ -42,6 +42,8 @@ namespace Beagle.Daemon {
 		void DoQuery (QueryBody body,
 			      IQueryResult queryResult,
 			      IQueryableChangeData data);
+
+		void Start ();
 	}
 
 	public interface IQueryableChangeData { 

@@ -56,6 +56,10 @@ namespace Beagle.Daemon {
 			get { return "Bugzilla"; }
 		}
 
+		public void Start () 
+		{
+		}
+
 		public bool AcceptQuery (QueryBody body)
 		{
 			if (! body.HasText)
