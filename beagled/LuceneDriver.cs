@@ -74,8 +74,7 @@ namespace Beagle.Daemon {
 		private Hashtable pending_by_uri = new Hashtable ();
 		private int pending_adds = 0;
 		private int pending_removals = 0;
-		private int adds_since_last_optimization = 0;
-		private int removals_since_last_optimization = 0;
+		private int cycles_since_last_optimization = 0;
 		private bool optimizing = false;
 		private int last_item_count = -1;
 
@@ -445,16 +444,14 @@ namespace Beagle.Daemon {
 				ChangedEvent (this, added_uris, removed_uris);
 			}
 
-			lock (pending_by_uri) {
-				adds_since_last_optimization += add_count;
-				removals_since_last_optimization += removal_count;
-			}
+			lock (pending_by_uri)
+				cycles_since_last_optimization++;
 		}
 
 		public bool NeedsOptimize {
 			get { 
-				// FIXME: 259 is a totally arbitrary number.
-				return adds_since_last_optimization + removals_since_last_optimization > 259;
+				// FIXME: 19 is a totally arbitrary number.
+				return cycles_since_last_optimization > 19;
 			}
 		}
 
@@ -465,8 +462,7 @@ namespace Beagle.Daemon {
 			// If this index is already being optimized, don't
 			// optimize it again.
 			lock (pending_by_uri) {
-				if (optimizing || (adds_since_last_optimization == 0
-						   && removals_since_last_optimization == 0))
+				if (optimizing || cycles_since_last_optimization == 0)
 					return;
 				optimizing = true;
 			}
@@ -478,8 +474,7 @@ namespace Beagle.Daemon {
 
 			lock (pending_by_uri) {
 				optimizing = false;
-				adds_since_last_optimization = 0;
-				removals_since_last_optimization = 0;
+				cycles_since_last_optimization = 0;
 			}
 		}
 
