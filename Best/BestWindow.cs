@@ -245,6 +245,9 @@ namespace Best {
 					root.Error ("The query for <i>" + entry.Text + "</i> failed." +
 						    "<br>The likely cause is that the beagle daemon isn't running.");
 					root.OfferDaemonRestart = true;
+				} else if (e.ToString().IndexOf ("Unable to determine the address") != -1) {
+					root.Error ("The query for <i>" + entry.Text + "</i> failed.<br>" +
+						    "The session bus isn't running.  See http://beaglewiki.org/index.php/Installing%20Beagle for information on setting up a session bus.");
 				} else
 					root.Error ("The query for <i>" + entry.Text + "</i> failed with error:<br><br>" + e);
 			}
