@@ -1,4 +1,63 @@
 
+Version 0.0.6
+February 15, 2005
+
+Daemon/Infrastructure:
+* Indexing now happens outside of the begaled process, which allows us to
+  substantially reduce our memory consumption (Jon Trowbridge)
+* Updated to use inotify 0.18 (Robert Love)
+* Use UTF-8 encoding when converting filenames from inotify (Joe Shaw)
+* Added support for both D-BUS 0.23 and HEAD (Joe)
+* Make the indexer more robust against filters that throw exceptions (Jon)
+* Indexable serialization fixes (Jon)
+* Put an upper limit on scheduler idle time (Jon)
+
+Backends:
+* Watch for .tomboy if it doesn't exist (Larry Reaves)
+* Added an ExceptionHandleingThread class and port all the backends to
+  use it for easier debugging (Joe)
+* Non-existent directories no long kill the Evolution backend (Joe)
+* Fixed mime encoding issues in mail headers (Joe)
+* If .gaim or .gaim/logs doesn't exist, watch for them with inotify
+  (Robert Van Gorkom)
+* Some small launcher backend fixes (Jon)
+
+Filters:
+* Hot text and StructuralBreak fixes in the Filter base class
+  (Veerapuram Varadhan)
+* Assume ASCII for HTML files with unknown encodings (Joe)
+* Made the PDF filter more robust (Joe)
+* Pass the correct parameters to pdfinfo (Urko Frenandez)
+* Lots of snippets fixes (Varadhan)
+* Only initialize wv1 once (Varadhan)
+* Lots of other filter fixes (Varadhan)
+* PHP filter fixes (Rich Midwinter)
+* C# filter fixes (Varadhan, with a shout out to Rafael Slinckx)
+
+UI:
+* Filter web history indexing by domain (Tom van Schwerdtner)
+* Mozilla extension UI enhancements (James Viapond)
+* Fixed best searches from the mozilla extensions (Rich Midwinter)
+* Fixed the entry focus in Best (Stephen Solka)
+* Added a right-click menu to Best (Shobith Alva)
+* Fixed charset encoding issues in Best (Joe, Jonas Klingstedt)
+* Improved Best startup behaviour if started with a query (Christopher Orr)
+* Fixed music tile ID3 tag bug (Lukas Lipka)
+* IM viewer tuning (Lukas)
+* Gaim-remote fixes (Lukas)
+* Fixed launching Evolution and sending mail from the mail tile (Nicolas
+  Trangez)
+* Fixed rendering bug in TileCanvas (Lukas)
+
+Everything Else:
+* Build fixes (Everyone)
+* Testing and Bug Reports (Everyone)
+* Hand-to-hand combat with D-BUS (Joe)
+* Man pages (Robert)
+
+
+------------------------------------------------------
+
 Version 0.0.5
 January 26, 2005
 
