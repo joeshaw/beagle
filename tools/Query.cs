@@ -105,11 +105,12 @@ class QueryTool {
 			"Usage: beagle-query [OPTIONS] <query string>\n\n" +
 			"Options:\n" +
 			"  --verbose\t\t\tPrint detailed information about each hit.\n" +
-			"  --mime <mime type>\t\tConstrain search results to the specified mime type.\n" +
-			"                    \t\tCan be used multiply.\n" +
-			"  --source <source>\t\tConstrain query to the specified source.  Sources\n" +
-			"                   \t\tlist available from beagle-status.\n" +
-			"  --live-query\t\t\tRun continuously, printing notifications if a query changes.\n" +
+			"  --mime <mime type>\t\tConstrain search results to the specified mime\n" +
+			"                    \t\ttype. Can be used multiply.\n" +
+			"  --source <source>\t\tConstrain query to the specified source.\n" +
+			"                   \t\tSources list available from beagle-status.\n" +
+			"  --live-query\t\t\tRun continuously, printing notifications if a\n" +
+			"              \t\t\tquery changes.\n" +
 			"  --help\t\t\tPrint this usage message.\n";
 
 		Console.WriteLine (usage);
