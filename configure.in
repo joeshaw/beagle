@@ -102,6 +102,10 @@ AC_SUBST(CHOOSER_FU_LIBS)
 
 dnl ----------------------------------------------
 
+dnl Prefixes for helper scripts
+GAC_PREFIX="`$PKG_CONFIG --variable=prefix dbus-sharp`"
+AC_SUBST(GAC_PREFIX)
+
 AC_OUTPUT([
 Makefile
 images/Makefile
