@@ -69,6 +69,8 @@ namespace Beagle.Daemon.FileSystemQueryable {
 				//DoNonQuery ("CREATE UNIQUE INDEX id_index ON unique_ids ( id )");
 				//DoNonQuery ("CREATE UNIQUE INDEX parent_and_name_index ON unique_ids ( parent_id, name )");
 			}
+			
+			SetPragmaSynchronous (false);
 
 			PopulateCache ();
 		}
@@ -279,6 +281,7 @@ namespace Beagle.Daemon.FileSystemQueryable {
 			c = new SqliteConnection ();
 			c.ConnectionString = "URI=file:" + GetDbPath (directory);
 			c.Open ();
+
 			return c;
 		}
 
@@ -299,6 +302,13 @@ namespace Beagle.Daemon.FileSystemQueryable {
 			command.CommandText = String.Format (format, args);
 			command.ExecuteNonQuery ();
 			command.Dispose ();
+		}
+
+		private void SetPragmaSynchronous (bool value)
+		{
+			SqliteCommand command = NewCommand ("PRAGMA synchronous = {0}", value ? "ON" : "OFF");
+			command.ExecuteScalar ();
+ 			command.Dispose ();
 		}
 
 		///////////////////////////////////////////////////////////////////
