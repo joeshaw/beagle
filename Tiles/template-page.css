@@ -118,6 +118,10 @@ tr:hover .actions li {
   background: url(@image%im-aim.png@) no-repeat;
 }
 
+#reveal {
+  background: url(@image%action-reveal.png@) no-repeat;
+}
+
 td.footer { 
   text-align: right;
   border-bottom: solid 1px white;
