@@ -318,15 +318,23 @@ namespace Beagle.Daemon.EvolutionMailDriver {
 
 			if (this.mbox_fd < 0) {
 				Logger.Log.Debug ("opening mbox {0}", this.mbox_info.Name);
+
+				try {
+					InitializeGMime ();
+				} catch (Exception e) {
+					Logger.Log.Warn ("Caught exception trying to initalize gmime:");
+					Logger.Log.Warn (e);
+					return false;
+				}
+
 				this.mbox_fd = Syscall.open (this.mbox_info.FullName, OpenFlags.O_RDONLY);
-				InitializeGMime ();
 				this.mbox_stream = new GMime.StreamFs (this.mbox_fd);
 				this.mbox_stream.Seek ((int) this.MboxLastOffset);
 				this.mbox_parser = new GMime.Parser (this.mbox_stream);
 				this.mbox_parser.ScanFrom = true;
 			}
 
-			if (this.mbox_parser != null && this.mbox_parser.Eos ()) {
+			if (this.mbox_parser.Eos ()) {
 				long offset = this.mbox_parser.FromOffset;
 
 				this.mbox_stream.Close ();
@@ -684,12 +692,15 @@ namespace Beagle.Daemon.EvolutionMailDriver {
 
 		private MultiReader GetMessageData (string file)
 		{
-			int fd;
+			try {
+				InitializeGMime ();
+			} catch (Exception e) {
+				Logger.Log.Warn ("Caught exception trying to initialize gmime:");
+				Logger.Log.Warn (e);
+				return null;
+			}
 
-			fd = Syscall.open (file, OpenFlags.O_RDONLY);
-
-			InitializeGMime ();
-
+			int fd = Syscall.open (file, OpenFlags.O_RDONLY);
 			GMime.StreamFs stream = new GMime.StreamFs (fd);
 			GMime.Parser parser = new GMime.Parser (stream);
 
