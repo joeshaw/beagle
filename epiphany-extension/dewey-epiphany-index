@@ -1,9 +1,0 @@
-#!/bin/sh
-
-echo " "
-echo "URI   [$1]"
-echo "Title [$2]"
-echo " "
-
-ROOT=/home/trow/src/gnome/dewey
-MONO_PATH=$ROOT/Lucene.Net:$ROOT/Filters:$ROOT/indexer mono --debug $ROOT/tools/IndexWebContent.exe "$1" "$2"
