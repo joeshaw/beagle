@@ -85,6 +85,7 @@ namespace Beagle.Util {
 
 		//////////////////////////////////////////////////////////////////////
 
+		const string nameAttr = "Name";
 		const string fingerprintAttr = "Fingerprint";
 		const string mtimeAttr = "MTime";
 
@@ -102,6 +103,11 @@ namespace Beagle.Util {
 			if (mtimeFile != mtimeStored)
 				return false;
 
+			// Confirm the filename
+			string nameStored = Get (info, nameAttr);
+			if (info.FullName != nameStored)
+				return false;
+
 			// Confirm the fingerprint.
 			string fingerprintStored = Get (info, fingerprintAttr);
 			if (fingerprint != fingerprintStored)
@@ -115,6 +121,7 @@ namespace Beagle.Util {
 			// Store the file's mtime and the fingerprint in
 			// extended attributes.
 			Set (info, fingerprintAttr, fingerprint);
+			Set (info, nameAttr, info.FullName);
 			Set (info, mtimeAttr, timeToString (mtime));
 		}
 

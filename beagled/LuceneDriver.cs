@@ -324,6 +324,7 @@ namespace Beagle.Daemon {
 			public Indexable IndexableToAdd;
 			public Uri UriToDelete;
 			public PostIndexHook PostIndexHook;
+			public bool IsSilent = false;
 
 			public bool IsAdd {
 				get { return IndexableToAdd != null; }
@@ -362,6 +363,12 @@ namespace Beagle.Daemon {
 			} else if (item.IsAdd) {
 				QueueItem fakeItem = new QueueItem ();
 				fakeItem.UriToDelete = item.IndexableToAdd.Uri;
+				// We have to not broadcast this delete to avoid
+				// a nasty race in when successive change events get processed
+				// in different threads in the QueryDriver.
+				// This is OK, because Query will synthesize a
+				// subtract event if it sees an existing thing added.
+				fakeItem.IsSilent = true;
 				AddPendingDelete (fakeItem);
 				AddPendingAdd (item);
 			} else {
@@ -496,9 +503,12 @@ namespace Beagle.Daemon {
 			Console.WriteLine ("Flushing {0} Adds", pendingAdds.Count);
 
 			IndexWriter writer = new IndexWriter (Store, Analyzer, false);
+			int sleepCounter = 0;
 			foreach (QueueItem item in pendingAdds) {
 				Indexable indexable = item.IndexableToAdd;
 				Document doc = null;
+				if (! item.IsSilent)
+					Console.WriteLine ("+ {0}", indexable.Uri);
 				try {
 					doc = ToLuceneDocument (indexable);
 				} catch (Exception e) {
@@ -513,8 +523,13 @@ namespace Beagle.Daemon {
 						item.PostIndexHook (this, indexable.Uri);
 					++sinceOptimization;
 
-					// Stop and catch our breath for 26ms
-					Thread.Sleep (26);
+					// Stop and catch our breath for 51ms every 11 documents
+					// 51 and 11 are, of course, completely abritrary.
+					++sleepCounter;
+					if (sleepCounter == 11) {
+						Thread.Sleep (51);
+						sleepCounter = 0;
+					}
 				}
 			}
 
@@ -534,7 +549,7 @@ namespace Beagle.Daemon {
 		{
 			if (pendingAdds.Count > 0) {
 				foreach (QueueItem item in pendingAdds) {
-					if (AddedEvent != null)
+					if (AddedEvent != null && ! item.IsSilent)
 						AddedEvent (this, item.IndexableToAdd.Uri);
 				}
 				pendingAdds.Clear ();
@@ -637,6 +652,8 @@ namespace Beagle.Daemon {
 			LNS.Searcher searcher = new LNS.IndexSearcher (Store);
 			foreach (QueueItem item in pendingDeletes) {
 				Uri uri = item.UriToDelete;
+				if (! item.IsSilent)
+					Console.WriteLine ("+ {0}", uri);
 				Term term = new Term ("Uri", uri.ToString ());
 				LNS.Query uriQuery = new LNS.TermQuery (term);
 				LNS.Hits uriHits = searcher.Search (uriQuery);
@@ -669,7 +686,7 @@ namespace Beagle.Daemon {
 			if (pendingDeletes.Count > 0) {
 				// Fire off events to indicate what we just deleted.
 				foreach (QueueItem item in pendingDeletes) {
-					if (DeletedEvent != null)
+					if (DeletedEvent != null && ! item.IsSilent)
 						DeletedEvent (this, item.UriToDelete);
 				}
 				

@@ -156,6 +156,10 @@ namespace Beagle.Tile {
 			return false;
 		}
 
+		public bool IsEmpty {
+			get { return hits.Count == 0; }
+		}
+
 		override protected string ExpandKey (string key)
 		{
 			switch (key) {

@@ -33,33 +33,21 @@ class CrawlerTool {
 
 	public class Crawler {
 
-		static ArrayList paths = new ArrayList ();
-
-		static bool DoWork ()
+		static void Crawl (string path)
 		{
-			foreach (string path in paths) {
-				Console.WriteLine ("Requesting crawl of {0}", path);
-				Beagle.Indexer.Crawl (path, -1);
-			}
-				
-			Gtk.Application.Quit ();
-			return false;
+			path = Path.GetFullPath (path);
+			Console.WriteLine ("Crawing {0}", path);
+			Beagle.FileSystemIndexer.Crawl (path);
 		}
 
 		static void Main (string[] args)
 		{
-			Gtk.Application.Init ();
-
 			if (args.Length > 0) {
 				foreach (string arg in args)
-					paths.Add (Path.GetFullPath (arg));
+					Crawl (arg);
 			} else {
-				paths.Add (Environment.GetEnvironmentVariable ("HOME"));
+				Crawl (Environment.GetEnvironmentVariable ("HOME"));
 			}
-
-			GLib.Idle.Add (new GLib.IdleHandler (DoWork));
-
-			Gtk.Application.Run ();
 		}
 				
 	}

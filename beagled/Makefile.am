@@ -175,8 +175,7 @@ LUCENE_CSFILES =							\
 fsqueryabledir = $(srcdir)/FileSystemQueryable
 FILE_SYSTEM_QUERYABLE_CSFILES =				\
 	$(fsqueryabledir)/FileSystemQueryable.cs	\
-	$(fsqueryabledir)/Crawler.cs			\
-	$(fsqueryabledir)/IndexerImpl.cs
+	$(fsqueryabledir)/FileNameFilter.cs
 
 
 webhistqueryable = $(srcdir)/WebHistoryQueryable
@@ -191,6 +190,7 @@ GAIM_LOG_QUERYABLE_CSFILES =				\
 
 DAEMON_DLL_CSFILES = 				\
 	$(LUCENE_CSFILES)			\
+	$(FILE_SYSTEM_QUERYABLE_CSFILES)	\
 	$(WEB_HISTORY_QUERYABLE_CSFILES)	\
 	$(GAIM_LOG_QUERYABLE_CSFILES)		\
 	$(srcdir)/DBusisms.cs			\
@@ -253,7 +253,6 @@ DAEMON_CSFLAGS =				\
 #	-main:BeagleDaemon.BeagleDaemon
 
 DAEMON_CSFILES =				\
-	$(srcdir)/NoIndexFileHandler.cs 	\
 	$(srcdir)/BeagleDaemon.cs
 
 DAEMON_LOCAL_ASSEMBLIES =			\

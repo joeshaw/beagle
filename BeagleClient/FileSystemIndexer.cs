@@ -25,6 +25,7 @@
 //
 
 using System;
+using System.IO;
 using DBus;
 
 namespace Beagle {
@@ -45,20 +46,44 @@ namespace Beagle {
 			}
 		}
 
-		public static void Index (Indexable indexable)
+		public static void Index (string path)
 		{
-			indexable.StoreStream ();
-			TheIndexer.Index (indexable.ToXml ());
+			TheIndexer.Index (path);
 		}
 
-		public static void Delete (Uri uri)
+		public static void Index (FileSystemInfo fsinfo)
 		{
-			TheIndexer.Delete (uri.ToString ());
+			TheIndexer.Index (fsinfo.FullName);
+		}
+
+		public static void Delete (string path)
+		{
+			TheIndexer.Delete (path);
+		}
+
+		public static void Delete (FileSystemInfo fsinfo)
+		{
+			TheIndexer.Delete (fsinfo.FullName);
+		}
+
+		public static void Crawl (string path)
+		{
+			TheIndexer.Crawl (path, -1);
 		}
 
 		public static void Crawl (string path, int maxDepth)
 		{
 			TheIndexer.Crawl (path, maxDepth);
+		}
+
+		public static void Crawl (FileSystemInfo fsinfo)
+		{
+			TheIndexer.Crawl (fsinfo.FullName, -1);
+		}
+
+		public static void Crawl (FileSystemInfo fsinfo, int maxDepth)
+		{
+			TheIndexer.Crawl (fsinfo.FullName, maxDepth);
 		}
 	}
 }

@@ -1,5 +1,5 @@
 //
-// Crawler.cs
+// FileMatcher.cs
 //
 // Copyright (C) 2004 Novell, Inc.
 //
@@ -31,97 +31,195 @@ using System.IO;
 
 namespace Beagle.Util {
 	public class FileMatcher {
-		
-		static ArrayList defaultPatterns = new ArrayList ();
-		ArrayList patterns = new ArrayList ();
 
-		static FileMatcher ()
-		{
-			AddDefault (".*",
-				    "*~",
-				    "#*#",
-				    "*.cs", // FIXME: we skip other source code...
-				    "*.o",
-				    "*.a",
-				    "*.S",
-				    "*.la",
-				    "*.lo",
-				    "*.so",
-				    "*.exe",
-				    "*.dll",
-				    "*.com",
-				    "*.csproj",
-				    "*.dsp",
-				    "*.dsw",
-				    "*.m4",
-				    "*.pc",
-				    "*.pc.in",
-				    "*.in.in",
-				    "*.omf",
-				    "*.aux",
-				    "po",
-				    "aclocal",
-				    "Makefile",
-				    "Makefile.am",
-				    "Makefile.in",
-				    "CVS");
-		}
-		
-		static Regex PatternToRegex (String pattern)
-		{
-			pattern = "^" + Regex.Escape (pattern) + "$";
-			pattern = pattern.Replace ("\\?", ".");
-			pattern = pattern.Replace ("\\*", ".*");
-			return new Regex (pattern);
-		}
-		
-		public void Add (String pattern)
-		{
-			patterns.Add (PatternToRegex (pattern));
-		}
-		
-		public void Add (params String[] patterns)
-		{
-			foreach (String pattern in patterns)
-				Add (pattern);
-		}
-		
-		static public void AddDefault (String pattern)
-		{
-			defaultPatterns.Add (PatternToRegex (pattern));
-		}
-		
-		static public void AddDefault (params String[] patterns)
-		{
-			foreach (String pattern in patterns)
-				AddDefault (pattern);
-		}
-		
-		public void Load (String path)
-		{
-			StreamReader sr = new StreamReader (path);
-			String line;
-			while ((line = sr.ReadLine ()) != null) {
-				line = line.Trim ();
-				if (line.Length > 0)
-					Add (line);
+		private class FilePattern {
+			private string exactMatch;
+			private string prefix;
+			private string suffix;
+			private Regex  regex;
+
+			public FilePattern (string pattern)
+			{
+				if (pattern.StartsWith ("/") && pattern.EndsWith ("/")) {
+					regex = new Regex (pattern.Substring (1, pattern.Length - 2));
+					return;
+				}
+
+				int i = pattern.IndexOf ('*');
+				if (i == -1) {
+					exactMatch = pattern;
+				} else {
+					if (i > 0)
+						prefix = pattern.Substring (0, i);
+					if (i < pattern.Length-1)
+						suffix = pattern.Substring (i+1);
+				}
+			}
+
+			public bool IsMatch (string name)
+			{
+				if (exactMatch != null)
+					return name == exactMatch;
+				if (prefix != null && ! name.StartsWith (prefix))
+					return false;
+				if (suffix != null && ! name.EndsWith (suffix))
+					return false;
+				if (regex != null && ! regex.IsMatch (name))
+					return false;
+				return true;
 			}
 		}
 		
-		public bool IsEmpty {
-			get { return patterns.Count == 0; }
+		static ArrayList defaultPatterns = new ArrayList ();
+
+		static FileMatcher ()
+		{
+			// Add our default patterns.
+			AddDefaultPattern (".*",
+					   "*~",
+					   "#*#",
+					   "*.cs", // FIXME: we skip other source code...
+					   "*.o",
+					   "*.a",
+					   "*.S",
+					   "*.la",
+					   "*.lo",
+					   "*.so",
+					   "*.exe",
+					   "*.dll",
+					   "*.com",
+					   "*.csproj",
+					   "*.dsp",
+					   "*.dsw",
+					   "*.m4",
+					   "*.pc",
+					   "*.pc.in",
+					   "*.in.in",
+					   "*.omf",
+					   "*.aux",
+					   "po",
+					   "aclocal",
+					   "Makefile",
+					   "Makefile.am",
+					   "Makefile.in",
+					   "CVS");
+
+			// Read the ~/.neverindex file, which contains patterns
+			// for files that should always be ignored.
+			string home = Environment.GetEnvironmentVariable ("HOME");
+			string neverIndex = Path.Combine (home, ".neverindex");
+			if (File.Exists (neverIndex)) {
+				StreamReader sr = new StreamReader (neverIndex);
+				string line;
+				while ((line = sr.ReadLine ()) != null) {
+					line = line.Trim ();
+					if (line.Length > 0)
+						AddDefaultPattern (line);
+				}
+			}
+		}
+
+		static public void AddDefaultPattern (string pattern)
+		{
+			defaultPatterns.Add (new FilePattern (pattern));
+		}
+
+		static public void AddDefaultPattern (params string[] patterns)
+		{
+			foreach (string pattern in patterns)
+				AddDefaultPattern (pattern);
 		}
 		
-		public bool IsMatch (String path)
+		/////////////////////////////////////////////////////////////
+
+		private bool matchAnything = false;
+		private ArrayList patterns = new ArrayList ();
+
+		public FileMatcher ()
+		{ }
+
+		public FileMatcher (string path)
 		{
-			String fileName = Path.GetFileName (path);
-			foreach (Regex regex in defaultPatterns)
-				if (regex.IsMatch (fileName))
+			Load (path);
+		}
+		
+		public void AddPattern (string pattern)
+		{
+			patterns.Add (new FilePattern (pattern));
+		}
+		
+		public void AddPattern (params string[] patterns)
+		{
+			foreach (string pattern in patterns)
+				AddPattern (pattern);
+		}
+		
+		public void Load (string path)
+		{
+			StreamReader sr = new StreamReader (path);
+			string line;
+			bool addedSomething = false;
+			while ((line = sr.ReadLine ()) != null) {
+				line = line.Trim ();
+				if (line.Length > 0) {
+					AddPattern (line);
+					addedSomething = true;
+				}
+			}
+
+			// 
+			if (! addedSomething)
+				matchAnything = true;
+		}
+		
+		private bool IsMatchInternal (string name)
+		{
+			if (matchAnything)
+				return true;
+			
+			foreach (FilePattern pattern in defaultPatterns) {
+				if (pattern.IsMatch (name))
 					return true;
-			foreach (Regex regex in patterns)
-				if (regex.IsMatch (fileName))
+			}
+
+			foreach (FilePattern pattern in patterns) {
+				if (pattern.IsMatch (name))
 					return true;
+			}
+
 			return false;
 		}
+
+		public bool IsMatch (string path)
+		{
+			return IsMatchInternal (Path.GetFileName (path));
+		}
+
+		public bool IsMatch (FileSystemInfo info)
+		{
+			return IsMatchInternal (info.Name);
+		}
 	}
+
+#if false
+	class Test {
+		static void Main (string [] args)
+		{
+			FileMatcher matcher = new FileMatcher ();
+
+			foreach (string arg in args) {
+				if (arg [0] == '+')
+					matcher.AddPattern (arg.Substring (1));
+			}
+
+			foreach (string arg in args) {
+				if (arg [0] != '+') {
+					Console.WriteLine ("{0} {1}" ,
+							   matcher.IsMatch (arg) ? "YES" : "no ",
+							   arg);
+				}
+			}
+		}
+	}
+#endif
 }

@@ -59,6 +59,12 @@ namespace Beagle.Daemon {
 			StartQueue ();
 		}
 
+		/////////////////////////////////////////////////////////////
+
+		private class PendingCrawl {
+			public FileSystemInfo FileSystemInfo;
+			public int MaxDepth;
+		}
 
 		/////////////////////////////////////////////////////////////
 		
@@ -67,6 +73,16 @@ namespace Beagle.Daemon {
 		//
 
 		public void ScheduleCrawl (FileSystemInfo info)
+		{
+			ScheduleCrawl (info, -1);
+		}
+
+		public void ScheduleCrawl (string path)
+		{
+			ScheduleCrawl (path, -1);
+		}
+
+		public void ScheduleCrawl (FileSystemInfo info, int maxDepth)
 		{
 			lock (queueLock) {
 
@@ -82,24 +98,27 @@ namespace Beagle.Daemon {
 				// Filter out duplicate crawl requests.
 				if (nowCrawling == info.FullName)
 					return;
-
-				foreach (FileSystemInfo other in queue) {
-					if (other.FullName == info.FullName)
+				foreach (PendingCrawl other in queue) {
+					if (other.FileSystemInfo.FullName == info.FullName)
 						return;
 				}
 
+				PendingCrawl pending = new PendingCrawl ();
+				pending.FileSystemInfo = info;
+				pending.MaxDepth = maxDepth;
+
 				// Add the item to the queue and pulse the lock.
-				queue.Add (info);
+				queue.Add (pending);
 				Monitor.Pulse (queueLock);
 			}
 		}
 
-		public void ScheduleCrawl (string path)
+		public void ScheduleCrawl (string path, int maxDepth)
 		{
 			if (Directory.Exists (path))
-				ScheduleCrawl (new DirectoryInfo (path));
+				ScheduleCrawl (new DirectoryInfo (path), maxDepth);
 			else if (File.Exists (path))
-				ScheduleCrawl (new FileInfo (path));
+				ScheduleCrawl (new FileInfo (path), maxDepth);
 		}
 
 		public void Stop ()
@@ -125,12 +144,7 @@ namespace Beagle.Daemon {
 		// Fill these functions in
 		//
 
-		protected virtual bool SkipFileByName (DirectoryInfo dir, string name)
-		{
-			return false;
-		}
-
-		protected virtual bool SkipDirectoryByName (DirectoryInfo parent, string name)
+		protected virtual bool SkipByName (FileSystemInfo info)
 		{
 			return false;
 		}
@@ -144,17 +158,6 @@ namespace Beagle.Daemon {
 		// Implementation Details
 		//
 
-		protected bool SkipByName (FileSystemInfo info)
-		{
-			if (info is FileInfo) {
-				FileInfo file = (FileInfo) info;
-				return SkipFileByName (file.Directory, file.Name);
-			} else if (info is DirectoryInfo) {
-				DirectoryInfo dir = (DirectoryInfo) info;
-				return SkipDirectoryByName (dir.Parent, dir.Name);
-			} else
-				return true;
-		}
 
 		// Check if a file is a symlink.
 		private static bool IsSymLink (FileSystemInfo info)
@@ -198,7 +201,7 @@ namespace Beagle.Daemon {
 				
 				// Get the next item to crawl.  If necessary,
 				// wait until an item becomes available.
-				FileSystemInfo info = null;
+				PendingCrawl pending = null;
 				lock (queueLock) {
 					if (queue.Count == 0) {
 						if (queueStopWhenEmpty) {
@@ -208,17 +211,20 @@ namespace Beagle.Daemon {
 						Monitor.Wait (queueLock);
 					}
 					if (queue.Count > 0) {
-						info = (FileSystemInfo) queue [0];
+						pending = queue [0] as PendingCrawl;
 						queue.RemoveAt (0);
-						nowCrawling = info.FullName;
+						nowCrawling = pending.FileSystemInfo.FullName;
+						Console.WriteLine ("Crawling {0}", nowCrawling);
 					}
 				}
 
 				if (queueStop)
 					return;
 
-				if (info == null)
+				if (pending == null)
 					continue;
+
+				FileSystemInfo info = pending.FileSystemInfo;
 
 				// If this item is just a file, just crawl it
 				// individually.
@@ -231,18 +237,27 @@ namespace Beagle.Daemon {
 
 					DirectoryInfo dir = (DirectoryInfo) info;
 					
-					if (! SkipDirectoryByName (dir.Parent, dir.FullName)) {
+					if (! SkipByName (dir)) {
 
 						if (NeedsCrawl (dir))
 							CrawlFile (dir);
 						
 						foreach (FileInfo file in dir.GetFiles ()) {
-							if (NeedsCrawl (file) && ! SkipFileByName (dir, info.FullName))
+							if (NeedsCrawl (file) && ! SkipByName (file))
 								CrawlFile (file);
 						}
 
-						foreach (DirectoryInfo subdir in dir.GetDirectories ())
-							ScheduleCrawl (subdir);
+						foreach (DirectoryInfo subdir in dir.GetDirectories ()) {
+							if (pending.MaxDepth != 0) 
+								ScheduleCrawl (subdir, pending.MaxDepth - 1);
+							else {
+								// Just crawl the directories as files, don't descend into them.
+								if (NeedsCrawl (subdir) && ! SkipByName (subdir))
+									CrawlFile (subdir);
+							}
+						}
+
+
 					}
 				}
 				

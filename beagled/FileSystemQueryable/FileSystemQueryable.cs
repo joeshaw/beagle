@@ -38,29 +38,113 @@ namespace Beagle.Daemon.FileSystemQueryable {
 	[QueryableFlavor (Name="FileSystemQueryable", Domain=QueryDomain.Local)]
 	public class FileSystemQueryable : LuceneQueryable {
 
-		private IndexerImpl indexer;
+		static void IndexFile (LuceneDriver driver, FileSystemInfo fsinfo)
+		{
+			Uri uri = BU.UriFu.PathToFileUri (fsinfo.FullName);
+			FilteredIndexable indexable = new FilteredIndexable (uri);
+			driver.ScheduleAddAndMark (indexable, fsinfo);
+		}
 
-		FileSystemEventMonitor monitor = new FileSystemEventMonitor ();
-		BU.FileMatcher doNotIndex = new BU.FileMatcher ();
+		static void IndexFile (LuceneDriver driver, string path)
+		{
+			if (File.Exists (path))
+				IndexFile (driver, new FileInfo (path));
+			else if (Directory.Exists (path))
+				IndexFile (driver, new DirectoryInfo (path));
+		}
+
+		static void RemoveFileFromIndex (LuceneDriver driver, string path)
+		{
+			Uri uri = BU.UriFu.PathToFileUri (path);
+			driver.ScheduleDelete (uri);
+		}
+
+		private class FileSystemCrawler : Crawler {
+
+			LuceneDriver driver;
+			FileNameFilter filter;
+
+			public FileSystemCrawler (LuceneDriver _driver, FileNameFilter _filter) : base (_driver.Fingerprint)
+			{
+				driver = _driver;
+				filter = _filter;
+			}
+
+			protected override bool SkipByName (FileSystemInfo fsinfo)
+			{
+				return filter.Ignore (fsinfo);
+			}
+
+			protected override void CrawlFile (FileSystemInfo fsinfo)
+			{
+				IndexFile (driver, fsinfo);
+			}
+		}
+
+		private class FileSystemIndexerImpl : Beagle.FileSystemIndexerProxy {
+
+			LuceneDriver driver;
+			Crawler crawler;
+
+			public FileSystemIndexerImpl (LuceneDriver _driver, Crawler _crawler)
+			{
+				driver = _driver;
+				crawler = _crawler;
+			}
+			
+
+			public override void Index (string path)
+			{
+				IndexFile (driver, path);
+			}
+
+			public override void Delete (string path)
+			{
+				RemoveFileFromIndex (driver, path);
+			}
+
+			public override void Crawl (string path, int maxDepth)
+			{
+				if (Directory.Exists (path)) {
+					DirectoryInfo dir = new DirectoryInfo (path);
+					crawler.ScheduleCrawl (dir, maxDepth);
+				}
+			}
+		}
+
+		private FileNameFilter filter;
+		private FileSystemCrawler crawler;
+		private FileSystemIndexerImpl indexer;
+		private FileSystemEventMonitor monitor;
 
 		public FileSystemQueryable () : base ("FileSystemQueryable",
 						      Path.Combine (PathFinder.RootDir, "FileSystemIndex"))
 		{
-			indexer = new IndexerImpl (Driver);
-			
-			DBusisms.Service.RegisterObject (indexer,
-							 Beagle.DBusisms.IndexerPath);
+			filter = new FileNameFilter ();
+			crawler = new FileSystemCrawler (Driver, filter);
+			indexer = new FileSystemIndexerImpl (Driver, crawler);
+			DBusisms.Service.RegisterObject (indexer, Beagle.DBusisms.FileSystemIndexerPath);
 
 			// Set up file system monitor
+			monitor  = new FileSystemEventMonitor ();
 			string home = Environment.GetEnvironmentVariable ("HOME");
-			monitor.Subscribe (home);
-			monitor.Subscribe (Path.Combine (home, "Desktop"));
-			monitor.Subscribe (Path.Combine (home, "Documents"));
+			ImportantDirectory (home);
+			ImportantDirectory (Path.Combine (home, "Desktop"));
+			ImportantDirectory (Path.Combine (home, "Documents"));
 
 			monitor.FileSystemEvent += OnFileSystemEvent;
 		}
 
-		private void OnFileSystemEvent (object source, FileSystemEventType eventType,
+		public void ImportantDirectory (string path)
+		{
+			DirectoryInfo dir = new DirectoryInfo (path);
+			if (dir.Exists) {
+				monitor.Subscribe (dir, false);
+				crawler.ScheduleCrawl (dir, 0);
+			}
+		}
+
+		private void OnFileSystemEvent (FileSystemEventMonitor source, FileSystemEventType eventType,
 						string oldPath, string newPath)
 		{
 			Console.WriteLine ("Got event {0} {1} {2}", eventType, oldPath, newPath);
@@ -68,21 +152,19 @@ namespace Beagle.Daemon.FileSystemQueryable {
 			if (eventType == FileSystemEventType.Changed
 			    || eventType == FileSystemEventType.Created) {
 
-				if (doNotIndex.IsMatch (newPath)) {
+				if (filter.Ignore (newPath)) {
 					Console.WriteLine ("Ignoring {0}", newPath);
 					return;
 				}
 
-				string uri = BU.StringFu.PathToQuotedFileUri (newPath);
-				FilteredIndexable indexable = new FilteredIndexable (new Uri (uri, true));
-				Driver.ScheduleAdd (indexable);
+				IndexFile (Driver, newPath);
 
 			} else if (eventType == FileSystemEventType.Deleted) {
 
-				Uri uri = new Uri (BU.StringFu.PathToQuotedFileUri (oldPath), true);
-				Driver.ScheduleDelete (uri);
+				RemoveFileFromIndex (Driver, oldPath);
 
 			} else {
+
 				Console.WriteLine ("Unhandled!");
 			}
 		}

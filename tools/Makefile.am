@@ -87,6 +87,7 @@ $(UPDATE_SCRIPT): $(UPDATE_SCRIPT).in
 
 TARGETS = 				\
 	$(QUERY_TARGET)                 \
+	$(CRAWLER_TARGET)		\
 	$(INDEX_WEB_CONTENT_TARGET)
 
 

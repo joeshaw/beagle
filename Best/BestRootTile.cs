@@ -63,6 +63,7 @@ namespace Best {
 			args[0] = hit;
 			Tile tile = (Tile) Activator.CreateInstance (flavor.TileType, args);
 			hitCollection.Add (hit, tile);
+			Console.WriteLine ("+ {0}", hit.Uri);
 			Changed ();
 		}
 
@@ -74,16 +75,20 @@ namespace Best {
 				if (hitCollection.Subtract (uri))
 					changed = true;
 
-			if (changed) 
+			if (changed) {
+				Console.WriteLine ("- {0}", uri);
 				Changed ();
+			}
 		}
 
 		override public void Render (TileRenderContext ctx)
 		{
+			Console.WriteLine ("Render!");
 			ArrayList array = new ArrayList ();
 
 			foreach (TileHitCollection tile in tileTable.Values)
-				array.Add (tile);
+				if (! tile.IsEmpty)
+					array.Add (tile);
 
 			array.Sort ();
 

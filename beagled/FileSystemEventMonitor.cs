@@ -57,6 +57,11 @@ namespace Beagle.Daemon {
 
 		Hashtable subscriptions = new Hashtable ();
 
+		public void Subscribe (string path, bool recursive)
+		{
+			Subscribe (new DirectoryInfo (path), recursive);
+		}
+
 		public void Subscribe (DirectoryInfo dir, bool recursive)
 		{
 			if (! dir.Exists)

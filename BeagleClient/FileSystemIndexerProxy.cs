@@ -32,10 +32,10 @@ namespace Beagle
 	public abstract class FileSystemIndexerProxy
 	{
 		[Method]
-		public abstract void Index (string indexableAsXml);
+		public abstract void Index (string path);
 
 		[Method]
-		public abstract void Delete (string uri);
+		public abstract void Delete (string path);
 
 		[Method]
 		public abstract void Crawl (string path, int maxDepth);

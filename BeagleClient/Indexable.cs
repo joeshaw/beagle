@@ -84,6 +84,7 @@ namespace Beagle {
 		}
 
 		//////////////////////////
+
 		public Uri Uri { 
 			get { return uri; }
 			set { uri = value; }
