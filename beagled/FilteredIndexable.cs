@@ -113,18 +113,20 @@ namespace Beagle.Daemon {
 		
 		private void BuildFromFile ()
 		{
-			if (Type != "File"
-			    || !Uri.IsFile
-			    || Uri.ToString () != ContentUri.ToString ())
+			if (Type != "File" || !ContentUri.IsFile)
 				return;
 
+#if false
 			bool isDirectory = false;
+#endif
 
-			string path = Uri.LocalPath;
+			string path = ContentUri.LocalPath;
 
 			DateTime modifiedTime;
 			if (Directory.Exists (path)) {
+#if false
 				isDirectory = true;
+#endif
 				
 				if (MimeType == null)
 					MimeType = "inode/directory";
@@ -147,6 +149,7 @@ namespace Beagle.Daemon {
 			}
 			Timestamp = modifiedTime;
 
+#if false
 			string dirName = null;
 			string parentName = null;
 			FileInfo info = new FileInfo (path);
@@ -162,6 +165,8 @@ namespace Beagle.Daemon {
 				dirName = info.DirectoryName;
 				parentName = info.DirectoryName;
 			}
+
+			// We don't want to store any name information in the index!
 
 			if (dirName != null) {
 				AddProperty (Property.NewKeyword ("fixme:directory", dirName));
@@ -206,6 +211,7 @@ namespace Beagle.Daemon {
 			if (name != Path.GetFileNameWithoutExtension (path))
 				AddProperty (Property.NewKeyword ("fixme:exactnamenoextension",
 								  Path.GetFileNameWithoutExtension (path)));
+#endif
 
 			// Attach Nautilus metadata to the file
 			// FIXME: This should be in the metadata store, not attached

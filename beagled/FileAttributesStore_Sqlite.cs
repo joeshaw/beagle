@@ -176,7 +176,7 @@ namespace Beagle.Daemon {
 		{
 			FileAttributes attr = new FileAttributes ();
 
-			attr.UniqueId = reader [0].ToString ();
+			attr.UniqueId = GuidFu.FromShortString (reader [0].ToString ());
 			attr.Path = System.IO.Path.Combine (reader [1].ToString (), reader [2].ToString ());
 			attr.LastWriteTime = StringFu.StringToDateTime (reader [3].ToString ());
 			attr.LastIndexedTime = StringFu.StringToDateTime (reader [4].ToString ());
@@ -281,7 +281,7 @@ namespace Beagle.Daemon {
 				DoNonQuery ("INSERT OR REPLACE INTO file_attributes " +
 					    " (unique_id, directory, filename, last_mtime, last_indexed, filter_name, filter_version) " +
 					    " VALUES ('{0}', '{1}', '{2}', '{3}', '{4}', '{5}', '{6}')",
-					    fa.UniqueId,
+					    GuidFu.ToShortString (fa.UniqueId),
 					    fa.Directory.Replace ("'", "''"), fa.Filename.Replace ("'", "''"),
 					    StringFu.DateTimeToString (fa.LastWriteTime),
 					    StringFu.DateTimeToString (fa.LastIndexedTime),

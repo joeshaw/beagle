@@ -156,16 +156,17 @@ namespace Beagle.Daemon {
 		{
 			while (! Shutdown.ShutdownRequested) {
 				int vm_size = SystemInformation.VmSize;
+				int vm_rss = SystemInformation.VmRss;
 
-				Logger.Log.Debug ("Memory usage: VmSize={0}  GC.GetTotalMemory={1}",
-						  vm_size, GC.GetTotalMemory (false));
+				Logger.Log.Debug ("Memory usage: VmSize={0:.0} MB, VmRSS={1:.0} MB,  GC.GetTotalMemory={2}",
+						  vm_size/1024.0, vm_rss/1024.0, GC.GetTotalMemory (false));
 
-				if (vm_size > 200 * 1024) {
+				if (vm_size > 300 * 1024) {
 					Logger.Log.Debug ("VmSize too large --- shutting down");
 					Shutdown.BeginShutdown ();
 				}
 
-				Thread.Sleep (1000);
+				Thread.Sleep (5000);
 			}
 		}
 

@@ -53,6 +53,9 @@ namespace Beagle.Daemon {
 		private LuceneTaskCollector collector;
 		private FileAttributesStore fa_store;
 
+		private LuceneDriver.UriRemapper to_internal_uris = null;
+		private LuceneDriver.UriRemapper from_internal_uris = null;
+
 		//////////////////////////////////////////////////////////
 		
 		private Hashtable indexable_info_cache = UriFu.NewHashtable ();
@@ -124,6 +127,15 @@ namespace Beagle.Daemon {
 
 		/////////////////////////////////////////
 
+		public void SetUriRemappers (LuceneDriver.UriRemapper to_internal_uris,
+					     LuceneDriver.UriRemapper from_internal_uris)
+		{
+			this.to_internal_uris = to_internal_uris;
+			this.from_internal_uris = from_internal_uris;
+		}
+
+		/////////////////////////////////////////
+
 		private class ChangeData : IQueryableChangeData {
 			public ICollection AddedUris;
 			public ICollection RemovedUris;
@@ -141,11 +153,29 @@ namespace Beagle.Daemon {
 
 			// Walk across the list of added Uris and mark the local
 			// files with the cached timestamp.
-			foreach (Uri uri in list_of_added_uris)
+			foreach (Uri uri in list_of_added_uris) {
 				UseCachedIndexableInfo (uri);
+			}
 
 			// Propagate the event up through the Queryable.
 			ChangeData change_data = new ChangeData ();
+
+			// If necessary, remap Uris
+			if (from_internal_uris != null) {
+				Uri [] remapped_adds = new Uri [list_of_added_uris.Count];
+				Uri [] remapped_removes = new Uri [list_of_removed_uris.Count];
+
+				int i = 0;
+				foreach (Uri uri in list_of_added_uris)
+					remapped_adds [i++] = from_internal_uris (uri);
+				i = 0;
+				foreach (Uri uri in list_of_removed_uris)
+					remapped_removes [i++] = from_internal_uris (uri);
+
+				list_of_added_uris = remapped_adds;
+				list_of_removed_uris = remapped_removes;
+			}
+			
 			change_data.AddedUris = list_of_added_uris;
 			change_data.RemovedUris = list_of_removed_uris;
 			QueryDriver.QueryableChanged (this, change_data);
@@ -181,6 +211,8 @@ namespace Beagle.Daemon {
 				// FIXME: There is probably a race here --- what if the hit
 				// becomes valid sometime between calling HitIsValid
 				// and the removal task being executed?
+				if (to_internal_uris != null)
+					uri = to_internal_uris (uri);
 				Scheduler.Task task = NewRemoveTask (uri);
 				ThisScheduler.Add (task, Scheduler.AddType.DeferToExisting);
 			}
@@ -240,36 +272,60 @@ namespace Beagle.Daemon {
 		}
 
 
-
+		
 		/////////////////////////////////////////
 
-		public virtual void DoQuery (QueryBody            body,
-					     IQueryResult         query_result,
-					     IQueryableChangeData i_change_data)
+		protected virtual ICollection DoBonusQuery (QueryBody body)
+		{
+			return null;
+		}
+
+		public void DoQuery (QueryBody            body,
+				     IQueryResult         query_result,
+				     IQueryableChangeData i_change_data)
 		{
 			ChangeData change_data = (ChangeData) i_change_data;
-
+			
 			ICollection added_uris = null;
+			ICollection extra_uris = null;
 
 			if (change_data != null) {
-
-				if (change_data.RemovedUris != null)
-					foreach (Uri uri in change_data.RemovedUris)
+				
+				if (change_data.RemovedUris != null) {
+					foreach (Uri uri in change_data.RemovedUris) {
+						Logger.Log.Debug ("**** Removing {0}", uri);
 						query_result.Subtract (uri);
+					}
+				}
 
 				// If nothing was added, we can safely return now: this change
 				// cannot have any further effect on an outstanding live query.
 				if (change_data.AddedUris == null
 				    || change_data.AddedUris.Count == 0)
 					return;
+
+				if (to_internal_uris != null) {
+					Uri [] remapped_uris = new Uri [change_data.AddedUris.Count];
+					int i = 0;
+					foreach (Uri uri in change_data.AddedUris)
+						remapped_uris [i++] = to_internal_uris (uri);
+					added_uris = remapped_uris;
+				} else {
+					added_uris = change_data.AddedUris;
+				}
+			} else {
 				
-				added_uris = change_data.AddedUris;
+				// We only generate extra Uris via the bonus query when we
+				// don't have change data.
+				extra_uris = DoBonusQuery (body);
 			}
 
 			Driver.DoQuery (body, 
 					query_result,
 					added_uris,
+					extra_uris,
 					new LuceneDriver.UriFilter (HitIsValidOrElse),
+					from_internal_uris,
 					new LuceneDriver.RelevancyMultiplier (RelevancyMultiplier));
 		}
 
@@ -280,7 +336,11 @@ namespace Beagle.Daemon {
 			// Look up the hit in our text cache.  If it is there,
 			// use the cached version to generate a snippet.
 
-			TextReader reader = TextCache.GetReader (hit.Uri);
+			Uri uri = hit.Uri;
+			if (to_internal_uris != null)
+				uri = to_internal_uris (uri);
+
+			TextReader reader = TextCache.GetReader (uri, from_internal_uris);
 			if (reader == null)
 				return null;
 
@@ -325,9 +385,11 @@ namespace Beagle.Daemon {
 			return this.NewAddTask (generator, null);
 		}
 
-		public Scheduler.Task NewRemoveTask (Uri uri)
+		public Scheduler.Task NewRemoveTask (Uri uri) // This should be an external Uri
 		{
 			LuceneTask task;
+			if (to_internal_uris != null)
+				uri = to_internal_uris (uri);
 			task = new LuceneTask (this, this.indexer, uri);
 			task.Collector = collector;
 			return task;
@@ -407,7 +469,7 @@ namespace Beagle.Daemon {
 				this.indexer = indexer;
 				this.indexable = indexable;
 				
-				this.Tag = indexable.Uri.ToString ();
+				this.Tag = indexable.DisplayUri.ToString ();
 				this.Weight = 1;
 			}
 

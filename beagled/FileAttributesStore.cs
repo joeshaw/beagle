@@ -46,18 +46,27 @@ namespace Beagle.Daemon {
 			}
 		}
 
-		public FileAttributes ReadOrCreate (string path)
+		public FileAttributes ReadOrCreate (string path, out bool created)
 		{
 			lock (this) {
+				created = false;
+
 				FileAttributes attr = ifas.Read (path);
 				if (attr == null) {
 					attr = new FileAttributes ();
-					attr.UniqueId = Guid.NewGuid ().ToString ();
+					attr.UniqueId = Guid.NewGuid ();
 					attr.Path = path;
 					ifas.Write (attr);
+					created = true;
 				}
 				return attr;
 			}
+		}
+
+		public FileAttributes ReadOrCreate (string path)
+		{
+			bool dummy;
+			return ReadOrCreate (path, out dummy);
 		}
 
 		public bool Write (FileAttributes attr)

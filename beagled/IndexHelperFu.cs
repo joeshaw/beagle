@@ -216,7 +216,6 @@ namespace Beagle.Daemon {
 			private bool IdleHandler ()
 			{
 				ActuallySetProxy ();
-				Logger.Log.Debug ("GetProxyClosure.IdleHandler finished: proxy={0}", proxy);
 				return false;
 			}
 

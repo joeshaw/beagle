@@ -91,7 +91,7 @@ namespace Beagle.IndexHelper {
 			// Since the associated RemoteIndexerProxy is null, the only method
 			// that can be called on this object that isn't a no-op is NewRemoteIndexerPath.
 			// We do this to avoid a separate factory object.
-			RemoteIndexerImpl factory = new RemoteIndexerImpl ("factory object", null);
+			RemoteIndexerImpl factory = new RemoteIndexerImpl ("factory object", null, null);
 			Beagle.Daemon.DBusisms.RegisterObject (factory, FactoryPath);
 
 

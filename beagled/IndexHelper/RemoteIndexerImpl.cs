@@ -41,6 +41,7 @@ namespace Beagle.IndexHelper {
 
 		string name;
 		IIndexer indexer;
+		NameIndex name_index;
 		NextFlush next_flush;
 		bool is_open;
 		bool queued_close;
@@ -49,10 +50,12 @@ namespace Beagle.IndexHelper {
 		public override event ChangedHandler ChangedEvent;
 		public override event FlushCompleteHandler FlushCompleteEvent;
 
-		public RemoteIndexerImpl (string name, IIndexer indexer)
+		public RemoteIndexerImpl (string name, IIndexer indexer, NameIndex name_index)
 		{
 			this.name = name;
 			this.indexer = indexer;
+			this.name_index = name_index;
+
 			if (indexer != null) {
 				indexer.ChangedEvent += OnIndexerChanged;
 			}
@@ -102,6 +105,7 @@ namespace Beagle.IndexHelper {
 		private class NextFlush {
 			public RemoteIndexerImpl Impl;
 			public IIndexer Indexer;
+			public NameIndex NameIndex;
 			public ArrayList ToBeAdded = new ArrayList ();
 			public ArrayList ToBeRemoved = new ArrayList ();
 
@@ -116,11 +120,30 @@ namespace Beagle.IndexHelper {
 
 			public void DoFlush ()
 			{
-				foreach (Indexable indexable in ToBeAdded)
+				foreach (Indexable indexable in ToBeAdded) {
 					Indexer.Add (indexable);
-				foreach (Uri uri in ToBeRemoved)
+					if (NameIndex != null
+					    && indexable.Uri.Scheme == "uid"
+					    && indexable.ContentUri.IsFile) {
+						Guid uid = GuidFu.FromUri (indexable.Uri);
+						string name = Path.GetFileName (indexable.ContentUri.LocalPath);
+						NameIndex.Add (uid, name);
+					}
+				}
+
+				foreach (Uri uri in ToBeRemoved) {
 					Indexer.Remove (uri);
+					if (NameIndex != null && uri.Scheme == "uid") {
+						Guid uid = GuidFu.FromUri (uri);
+						NameIndex.Remove (uid);
+					}
+				}
+
 				Indexer.Flush ();
+
+				if (NameIndex != null)
+					NameIndex.Flush ();
+
 				if (Impl.CloseIfQueued ())
 					return;
 #if DBUS_IS_BROKEN_BROKEN_BROKEN
@@ -136,6 +159,7 @@ namespace Beagle.IndexHelper {
 			NextFlush next = new NextFlush ();
 			next.Impl = this;
 			next.Indexer = this.indexer;
+			next.NameIndex = this.name_index;
 			return next;
 		}
 
@@ -161,8 +185,17 @@ namespace Beagle.IndexHelper {
 
 			string path = Path.Combine (IndexHelperTool.IndexPathPrefix, name);
 			if (! remote_indexer_cache.Contains (name)) {
+
 				LuceneDriver driver = new LuceneDriver (name);
-				RemoteIndexerImpl impl = new RemoteIndexerImpl (name, driver);
+
+				NameIndex new_name_index = null;
+				// A hack: if this is the FileSystemIndex, create a new NameIndex.
+				if (name == "FileSystemIndex") {
+					string dir = Path.Combine (PathFinder.StorageDir, name);
+					new_name_index = new NameIndex (dir, driver.Fingerprint);
+				}
+				
+				RemoteIndexerImpl impl = new RemoteIndexerImpl (name, driver, new_name_index);
 				remote_indexer_cache [name] = impl;
 				Beagle.Daemon.DBusisms.RegisterObject (impl, path);
 			}

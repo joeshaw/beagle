@@ -53,6 +53,7 @@ namespace Beagle.Daemon {
 	public class LuceneDriver : IIndexer {
 
 		public delegate bool UriFilter (Uri uri);
+		public delegate Uri UriRemapper (Uri uri);
 		public delegate double RelevancyMultiplier (Hit hit);
 
 		public event IIndexerChangedHandler ChangedEvent;
@@ -69,7 +70,11 @@ namespace Beagle.Daemon {
 		// 7: incremented to force a re-index after our upgrade to lucene 1.4
 		//    (in theory the file formats are compatible, we are seeing 'term
 		//    out of order' exceptions in some cases)
-		private const int VERSION = 7;
+		// 8: another forced re-index, this time because of massive changes
+		//    in the file system backend (it would be nice to have per-backend
+		//    versioning so that we didn't have to purge all indexes just
+		//    because one changed)
+		private const int VERSION = 8;
 
 		private string top_dir;
 		private Hashtable pending_by_uri = UriFu.NewHashtable ();
@@ -334,7 +339,7 @@ namespace Beagle.Daemon {
 			IndexWriter writer = null;
 			foreach (Indexable indexable in pending_indexables) {
 				
-				Log.Debug ("+ {0}", indexable.Uri);
+				Log.Debug ("+ {0}", indexable.DisplayUri);
 				
 				Document doc = null;
 				try {
@@ -438,8 +443,10 @@ namespace Beagle.Daemon {
 		// truncated.
 		public void DoQuery (QueryBody           body,
 				     IQueryResult        result,
-				     ICollection         list_of_uris,
+				     ICollection         list_of_uris, // should be internal uris
+				     ICollection         extra_uris,   // should be internal uris
 				     UriFilter           uri_filter,
+				     UriRemapper         uri_remapper, // map to external uris
 				     RelevancyMultiplier relevancy_multiplier)
 		{
 			double t_lucene;
@@ -450,7 +457,7 @@ namespace Beagle.Daemon {
 			IndexReader reader = IndexReader.Open (Store);
 
 			LNS.Searcher searcher = new LNS.IndexSearcher (reader);
-			LNS.Query query = ToLuceneQuery (body, list_of_uris);
+			LNS.Query query = ToLuceneQuery (body, list_of_uris, extra_uris);
 
 			LNS.Hits hits = searcher.Search (query);
 			sw.Stop ();
@@ -483,6 +490,8 @@ namespace Beagle.Daemon {
 				}
 
 				Hit hit = FromLuceneDocToHit (doc, hits.Id (i), score);
+				if (uri_remapper != null)
+					hit.Uri = uri_remapper (hit.Uri);
 
 				if (relevancy_multiplier != null) {
 					double m = relevancy_multiplier (hit);
@@ -500,10 +509,11 @@ namespace Beagle.Daemon {
 			// The call to searcher.Close () also closes the IndexReader.
 			searcher.Close ();
 
-			log.Debug ("{0}: n_hits={1} lucene={2:0.00}s  assembly={3:0.00}s",
+			log.Debug ("{0}: n_hits={1} lucene={2:0.00}s assembly={3:0.00}s",
 				   StorePath, n_hits, t_lucene, t_assembly);
 		}
-
+		
+		// FIXME: This should support Uri filtering, Uri remapping, etc.
 		public ICollection DoQueryByUri (ICollection list_of_uris)
 		{
 			LNS.BooleanQuery uri_query = new LNS.BooleanQuery ();
@@ -711,39 +721,56 @@ namespace Beagle.Daemon {
 
 		}
 
+		// FIXME: If listOfUris and extraUris are both non-empty, we
+		// should either:
+		// (1) Complain
+		// (2) Remove any element of listOfUris not also in extraUris
 		private LNS.Query ToLuceneQuery (QueryBody body,
-						 ICollection listOfUris)
+						 ICollection listOfUris,
+						 ICollection extraUris)
 		{
 			LNS.BooleanQuery luceneQuery = new LNS.BooleanQuery ();
 			
-			if (body.Text.Count > 0) {
+			if (body.Text.Count > 0 || (extraUris != null && extraUris.Count > 0)) {
 				LNS.BooleanQuery contentQuery = new LNS.BooleanQuery ();
 
-				LNS.Query propTQuery;
-				propTQuery = ToCoreLuceneQuery (body, "PropertiesText");
-				if (propTQuery != null) {
-					propTQuery.SetBoost (2.5f);
-					contentQuery.Add (propTQuery, false, false);
+				if (body.Text.Count > 0) {
+					LNS.Query propTQuery;
+					propTQuery = ToCoreLuceneQuery (body, "PropertiesText");
+					if (propTQuery != null) {
+						propTQuery.SetBoost (2.5f);
+						contentQuery.Add (propTQuery, false, false);
+					}
+
+					LNS.Query propKQuery;
+					propKQuery = ToCoreLuceneQuery (body, "PropertiesKeyword");
+					if (propKQuery != null) {
+						propKQuery.SetBoost (2.5f);
+						contentQuery.Add (propKQuery, false, false);
+					}
+				
+					LNS.Query hotQuery;
+					hotQuery = ToCoreLuceneQuery (body, "HotText");
+					if (hotQuery != null) {
+						hotQuery.SetBoost (1.75f);
+						contentQuery.Add (hotQuery, false, false);		
+					}
+				
+					LNS.Query textQuery;
+					textQuery = ToCoreLuceneQuery (body, "Text");
+					if (textQuery != null) {
+						contentQuery.Add (textQuery, false, false);
+					}
 				}
 
-				LNS.Query propKQuery;
-				propKQuery = ToCoreLuceneQuery (body, "PropertiesKeyword");
-				if (propKQuery != null) {
-					propKQuery.SetBoost (2.5f);
-					contentQuery.Add (propKQuery, false, false);
-				}
-				
-				LNS.Query hotQuery;
-				hotQuery = ToCoreLuceneQuery (body, "HotText");
-				if (hotQuery != null) {
-					hotQuery.SetBoost (1.75f);
-					contentQuery.Add (hotQuery, false, false);		
-				}
-				
-				LNS.Query textQuery;
-				textQuery = ToCoreLuceneQuery (body, "Text");
-				if (textQuery != null) {
-					contentQuery.Add (textQuery, false, false);
+				// If we were handed a list of extra Uris, we automatically
+				// add those to our query.
+				if (extraUris != null) {
+					foreach (Uri uri in extraUris) {
+						Term t = new Term ("Uri", uri.ToString ());
+						LNS.Query q = new LNS.TermQuery (t);
+						contentQuery.Add (q, false, false);
+					}
 				}
 
 				luceneQuery.Add (contentQuery, true, false);
@@ -937,9 +964,11 @@ namespace Beagle.Daemon {
 			{
 				Lucene.Net.Analysis.Token token;
 				while ( (token = token_stream.Next ()) != null) {
+#if false
 					if (total_count > 0 && total_count % 5000 == 0)
 						Logger.Log.Debug ("BeagleNoiseFilter filtered {0} of {1} ({2:0.0}%)",
 								  noise_count, total_count, 100.0 * noise_count / total_count);
+#endif
 					++total_count;
 					if (IsNoise (token.TermText ())) {
 						++noise_count;

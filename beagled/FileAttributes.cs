@@ -33,7 +33,7 @@ namespace Beagle.Daemon {
 
 	public class FileAttributes {
 		
-		private string   unique_id;
+		private Guid     unique_id;
 		private string   path;
 		private DateTime last_mtime;
 
@@ -41,7 +41,7 @@ namespace Beagle.Daemon {
 		private string   filter_name;
 		private int      filter_version;
 		
-		public string UniqueId {
+		public Guid UniqueId {
 			get { return unique_id; }
 			set { unique_id = value; }
 		}

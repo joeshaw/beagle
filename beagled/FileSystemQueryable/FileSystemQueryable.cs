@@ -43,12 +43,11 @@ namespace Beagle.Daemon.FileSystemQueryable {
 
 		private static Logger log = Logger.Get ("FileSystemQueryable");
 
-		private FileSystemModel model;
 		private IFileEventBackend event_backend;
+		private FileSystemModel model;
 
 		public FileSystemQueryable () : base ("FileSystemIndex")
 		{
-			
 		}
 
 		public FileSystemModel Model {
@@ -59,7 +58,23 @@ namespace Beagle.Daemon.FileSystemQueryable {
 
 		override protected IFileAttributesStore BuildFileAttributesStore (string index_fingerprint)
 		{
-			return new FileAttributesStore_Mixed (IndexDirectory, index_fingerprint);
+			// A bit of a hack: since we need the event backend to construct
+			// the FileSystemModel, we create it here.
+			if (Inotify.Enabled)
+				event_backend = new InotifyBackend ();
+			else
+				event_backend = new FileSystemWatcherBackend ();
+
+			// The FileSystemModel also implements IFileAttributesStore.
+			model = new FileSystemModel (IndexDirectory, index_fingerprint, event_backend);
+
+			model.NeedsScanEvent += new FileSystemModel.NeedsScanHandler (OnModelNeedsScan);
+			model.NeedsCrawlEvent += new FileSystemModel.NeedsCrawlHandler (OnModelNeedsCrawl);
+
+			SetUriRemappers (new LuceneDriver.UriRemapper (model.ToInternalUri),
+					 new LuceneDriver.UriRemapper (model.FromInternalUri));
+
+			return model;
 		}
 
 		//////////////////////////////////////////////////////////////////////////
@@ -94,10 +109,12 @@ namespace Beagle.Daemon.FileSystemQueryable {
 			return true;
 		}
 
-		public static Indexable FileToIndexable (string path, bool crawl_mode)
+		public static Indexable FileToIndexable (Uri file_uri, Uri internal_uri, bool crawl_mode)
 		{
-			Uri uri = UriFu.PathToFileUri (path);
-			return new FilteredIndexable (uri, crawl_mode);
+			Indexable indexable = new FilteredIndexable (file_uri, crawl_mode);
+			indexable.Uri = internal_uri;
+			indexable.ContentUri = file_uri;
+			return indexable;
 		}
 
 		//////////////////////////////////////////////////////////////////////////
@@ -107,8 +124,10 @@ namespace Beagle.Daemon.FileSystemQueryable {
 			if (FileNeedsIndexing (path)) {
 				Scheduler.Task task;
 				Indexable indexable;
-
-				indexable = FileToIndexable (path, false);
+				
+				Uri file_uri = UriFu.PathToFileUri (path);
+				Uri internal_uri = model.ToInternalUri (file_uri);
+				indexable = FileToIndexable (file_uri, internal_uri, false);
 				task = NewAddTask (indexable);
 				task.Priority = Scheduler.Priority.Immediate;
 				
@@ -130,10 +149,7 @@ namespace Beagle.Daemon.FileSystemQueryable {
 		// Filter out hits where the files seem to no longer exist.
 		override protected bool HitIsValid (Uri uri)
 		{
-			if (! uri.IsFile)
-				return false;
-			string path = uri.LocalPath;
-			return File.Exists (path) || Directory.Exists (path);
+			return model.InternalUriIsValid (uri);
 		}
 
 		//////////////////////////////////////////////////////////////////////////
@@ -153,15 +169,6 @@ namespace Beagle.Daemon.FileSystemQueryable {
 
 		public void StartWorker ()
 		{
-			if (Inotify.Enabled)
-				event_backend = new InotifyBackend ();
-			else
-				event_backend = new FileSystemWatcherBackend ();
-
-			model = new FileSystemModel (this.FileAttributesStore, event_backend);
-			model.NeedsScanEvent += new FileSystemModel.NeedsScanHandler (OnModelNeedsScan);
-			model.NeedsCrawlEvent += new FileSystemModel.NeedsCrawlHandler (OnModelNeedsCrawl);
-
 			event_backend.Start (this);
 
 			model.AddRoot (PathFinder.HomeDir);
@@ -179,6 +186,11 @@ namespace Beagle.Daemon.FileSystemQueryable {
 		}
 
 		//////////////////////////////////////////////////////////////////////////
+
+		protected override ICollection DoBonusQuery (QueryBody body)
+		{
+			return model.Search (body);
+		}
 
 		protected override double RelevancyMultiplier (Hit hit)
 		{

@@ -86,8 +86,8 @@ namespace Beagle.Daemon.FileSystemQueryable {
 
 			// ...but if we are crawling a possibly-clean directory,
 			// maybe wait a little bit extra.
-			// FIXME: This will not respect BEAGLE_EXERCISE_THE_DOG
-			TriggerTime = DateTime.Now.AddSeconds (5);
+			if (Environment.GetEnvironmentVariable ("BEAGLE_EXERCISE_THE_DOG") == null)
+				TriggerTime = DateTime.Now.AddSeconds (5);
 
 			// Set up a task group to mark the time on the directory
 			// after we finish crawling it.

@@ -138,6 +138,11 @@ namespace Beagle {
 			set { hotContentUri = (value != "") ? new Uri (value) : null; }
 		}
 
+		[XmlIgnore]
+		public Uri DisplayUri {
+			get { return uri.Scheme == "uid" ? ContentUri : Uri; }
+		}
+
 		[XmlAttribute]
 		public bool DeleteContent {
 			get { return deleteContent; }

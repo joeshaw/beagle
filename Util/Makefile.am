@@ -27,6 +27,7 @@ CSFILES = 			        	\
 	$(srcdir)/FSpotTools.cs         	\
 	$(srcdir)/GConfThreadHelper.cs          \
 	$(srcdir)/GeckoUtils.cs                 \
+	$(srcdir)/GuidFu.cs			\
 	$(srcdir)/GtkUtils.cs			\
 	$(srcdir)/gnome.cs              	\
 	$(srcdir)/ImLog.cs              	\

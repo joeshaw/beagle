@@ -167,7 +167,7 @@ namespace Beagle.Daemon {
 					GLib.Idle.Add (idle_handler);
 					finished = false;
 					while (! finished) {
-						Logger.Log.Debug ("Waiting code={0}", magic_code);
+						// Logger.Log.Debug ("Waiting code={0}", magic_code);
 						Monitor.Wait (this, one_second);
 						// Bale out if a shutdown request has come in.
 						if (Shutdown.ShutdownRequested)

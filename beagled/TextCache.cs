@@ -103,15 +103,11 @@ namespace Beagle.Daemon {
 				    UriToString (uri), filename);
 		}
 
-		private static string LookupPathUnlocked (Uri uri,
-							  bool create_if_not_found,
-							  out bool is_self_cached)
+		private static string LookupPathRawUnlocked (Uri uri, bool create_if_not_found)
 		{
 			SqliteCommand command;
 			SqliteDataReader reader;
 			string path = null;
-
-			is_self_cached = false;
 
 			command = NewCommand ("SELECT filename FROM uri_index WHERE uri='{0}'", 
 			                      UriToString (uri));
@@ -127,40 +123,40 @@ namespace Beagle.Daemon {
 				Insert (uri, path);
 			}
 
-			if (path == SELF_CACHE_TAG) {
-				if (! uri.IsFile) {
-					string msg = String.Format ("Non-file uri {0} flagged as self-cached", uri);
-					throw new Exception (msg);
-				}
-				is_self_cached = true;
-				return uri.LocalPath;
-			}
+			if (path == SELF_CACHE_TAG)
+				return path;
 
 			return path != null ? Path.Combine (text_cache_dir, path) : null;
 		}
-
-		public static string LookupPath (Uri uri, bool create_if_not_found)
+	
+		private static string LookupPath (Uri uri,
+						  LuceneDriver.UriRemapper uri_remapper,
+						  bool create_if_not_found)
 		{
 			lock (connection) {
-				bool is_self_cached;
-				return LookupPathUnlocked (uri, create_if_not_found, out is_self_cached);
+				string path = LookupPathRawUnlocked (uri, create_if_not_found);
+				if (path == SELF_CACHE_TAG) {
+					if (uri_remapper != null)
+						uri = uri_remapper (uri);
+					if (! uri.IsFile) {
+						string msg = String.Format ("Non-file uri {0} flagged as self-cached", uri);
+						throw new Exception (msg);
+					}
+					return uri.LocalPath;
+				}
+				return path;
 			}
 		}
 
 		public static void MarkAsSelfCached (Uri uri)
 		{
-			if (! uri.IsFile) {
-				string msg = String.Format ("Only file URIs can be self-cached ({0})", uri);
-				throw new Exception (msg);
-			}
-
 			lock (connection)
 				Insert (uri, SELF_CACHE_TAG);
 		}
 
 		public static TextWriter GetWriter (Uri uri)
 		{
-			string path = LookupPath (uri, true);
+			string path = LookupPath (uri, null, true);
 
 			FileStream stream;
 			stream = new FileStream (path, FileMode.Create, FileAccess.Write, FileShare.ReadWrite);
@@ -170,9 +166,9 @@ namespace Beagle.Daemon {
 			return writer;
 		}
 
-		public static TextReader GetReader (Uri uri)
+		public static TextReader GetReader (Uri uri, LuceneDriver.UriRemapper uri_remapper)
 		{
-			string path = LookupPath (uri, false);
+			string path = LookupPath (uri, uri_remapper, false);
 			if (path == null)
 				return null;
 
@@ -191,12 +187,11 @@ namespace Beagle.Daemon {
 		public static void Delete (Uri uri)
 		{
 			lock (connection) {
-				bool is_self_cached;
-				string path = LookupPathUnlocked (uri, false, out is_self_cached);
+				string path = LookupPathRawUnlocked (uri, false);
 				if (path != null) {
 					DoNonQuery ("DELETE FROM uri_index WHERE uri='{0}' AND filename='{1}'", 
 					            UriToString (uri), path);
-					if (! is_self_cached)
+					if (path != SELF_CACHE_TAG)
 						File.Delete (path);
 				}
 			}

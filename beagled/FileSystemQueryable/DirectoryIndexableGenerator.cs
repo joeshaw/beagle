@@ -53,7 +53,7 @@ namespace Beagle.Daemon.FileSystemQueryable {
 				files = info.GetFiles ().GetEnumerator ();
 			}
 		}
-
+		
 		public Indexable GetNextIndexable ()
 		{
 			if (done)
@@ -61,12 +61,22 @@ namespace Beagle.Daemon.FileSystemQueryable {
 
 			while (files.MoveNext ()) {
 				FileInfo f = files.Current as FileInfo;
-				if (! model.Ignore (f.FullName)
-				    && ! model.IsUpToDate (f.FullName))
-					return FileSystemQueryable.FileToIndexable (f.FullName, true);
+				if (! model.Ignore (f.FullName) && ! model.IsUpToDate (f.FullName)) {
+					Uri file_uri = UriFu.PathToFileUri (f.FullName);
+					Uri internal_uri = model.ToInternalUri (file_uri);
+					return FileSystemQueryable.FileToIndexable (file_uri, internal_uri, true);
+				}
 			}
 
 			done = true;
+
+			// Finally, try to index the directory itself
+			if (! model.Ignore (directory.FullName) && ! model.IsUpToDate (directory.FullName)) {
+				Uri file_uri = UriFu.PathToFileUri (directory.FullName);
+				Uri internal_uri = model.ToInternalUri (file_uri);
+				return FileSystemQueryable.FileToIndexable (file_uri, internal_uri, true);
+			}
+
 			return null;
 		}
 

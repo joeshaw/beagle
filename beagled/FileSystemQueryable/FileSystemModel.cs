@@ -33,7 +33,7 @@ using Beagle.Util;
 
 namespace Beagle.Daemon.FileSystemQueryable {
 
-	public class FileSystemModel {
+	public class FileSystemModel : IFileAttributesStore {
 
 		public enum State {
 			Clean         = 0,
@@ -47,6 +47,7 @@ namespace Beagle.Daemon.FileSystemQueryable {
 			
 			protected object big_lock;
 			protected string name;
+			protected Guid unique_id;
 			protected string parent_name; // non-null only for roots of directory trees
 			protected State state = State.Unscanned;
 			protected object watch_handle;
@@ -89,6 +90,10 @@ namespace Beagle.Daemon.FileSystemQueryable {
 
 			public bool FullNameIsCached { // Sort of hacky
 				get { return cached_full_name != null; }
+			}
+
+			public Guid UniqueId {
+				get { return unique_id; }
 			}
 		
 			public int Depth {
@@ -257,12 +262,10 @@ namespace Beagle.Daemon.FileSystemQueryable {
 				this.watch_handle = handle;
 			}
 
-			public void SetFromFileAttributes (FileAttributesStore fa_store)
+			public void SetFromFileAttributes (FileAttributes attr)
 			{
-				FileAttributes attr = fa_store.Read (FullName);
-				if (attr != null) {
-					last_crawl_time = attr.LastIndexedTime;
-				}
+				unique_id = attr.UniqueId;
+				last_crawl_time = attr.LastIndexedTime;
 			}
 
 			public void ReportActivity ()
@@ -390,23 +393,39 @@ namespace Beagle.Daemon.FileSystemQueryable {
 		///////////////////////////////////////////////////////////////////////////
 		///////////////////////////////////////////////////////////////////////////
 		///////////////////////////////////////////////////////////////////////////
-		
+
 
 		object big_lock = new object ();
 		ArrayList roots = new ArrayList ();
 		Hashtable path_cache = new Hashtable ();
 		Queue to_be_scanned = new Queue ();
 		FileNameFilter filter = new FileNameFilter ();
-		FileAttributesStore fa_store = null;
+
 		IFileEventBackend event_backend;
 		int needs_crawl_count = 0;
 		int block_activity = 0;
 
-		public FileSystemModel (FileAttributesStore fa_store,
+		UniqueIdStore unique_id_store;
+		NameIndex name_index;
+		FileAttributesStore backing_store;
+		FileAttributesStore fa_store;
+
+		public FileSystemModel (string index_directory,
+					string index_fingerprint,
 					IFileEventBackend event_backend)
 		{
-			this.fa_store = fa_store;
 			this.event_backend = event_backend;
+
+			unique_id_store = new UniqueIdStore (index_directory, index_fingerprint);
+			name_index = new NameIndex (index_directory, index_fingerprint);
+
+			IFileAttributesStore backing_store_i;
+			backing_store_i = new FileAttributesStore_Mixed (index_directory, index_fingerprint);
+			backing_store = new FileAttributesStore (backing_store_i);
+
+			// This let's us access our own implementation of the FileAttributesStore
+			// using the convenience routines in FileAttributesStore.
+			fa_store = new FileAttributesStore (this);
 		}
 
 		public ICollection Roots {
@@ -429,7 +448,11 @@ namespace Beagle.Daemon.FileSystemQueryable {
 			DirectoryPrivate root = new DirectoryPrivate (big_lock);
 			root.InitRoot (System.IO.Path.GetDirectoryName (path), 
 				       System.IO.Path.GetFileName (path));
-			root.SetFromFileAttributes (fa_store);
+			
+			bool created;
+			FileAttributes attr = backing_store.ReadOrCreate (path);
+			root.SetFromFileAttributes (attr);
+			unique_id_store.AddRoot (attr.UniqueId, path, true);
 			
 			bool fire_scan_event = false;
 			lock (big_lock) {
@@ -530,7 +553,7 @@ namespace Beagle.Daemon.FileSystemQueryable {
 
 		public bool IsUpToDate (string path)
 		{
-			return this.fa_store.IsUpToDate (path);
+			return this.backing_store.IsUpToDate (path);
 		}
 
 		///////////////////////////////////////////////////////////////////////////
@@ -600,10 +623,8 @@ namespace Beagle.Daemon.FileSystemQueryable {
 			bool fire_crawl_event = false;
 			lock (big_lock) {
 				int old_needs_crawl_count = needs_crawl_count;
-				while (true) {
+				while (to_be_scanned.Count > 0) {
 					Directory dir;
-					if (to_be_scanned.Count == 0)
-						break;
 					dir = to_be_scanned.Dequeue () as Directory;
 					ScanOne_Unlocked (dir);
 					need_watches.Add (dir);
@@ -699,13 +720,13 @@ namespace Beagle.Daemon.FileSystemQueryable {
 					priv.SetState (State.PossiblyClean);
 				}					
 
-				FileAttributes attr = fa_store.ReadOrCreate (priv.FullName);
+				FileAttributes attr = backing_store.ReadOrCreate (priv.FullName);
 				attr.LastIndexedTime = priv.LastCrawlTime;
 
 				// FIXME: We should check the return value and make sure that
 				// the write succeeds.  (But what is the right behavior if it
 				// fails?)
-				fa_store.Write (attr);
+				backing_store.Write (attr);
 				
 			}
 		}
@@ -733,7 +754,11 @@ namespace Beagle.Daemon.FileSystemQueryable {
 			DirectoryPrivate child = new DirectoryPrivate (big_lock);
 			child.Rename_Unlocked (child_name);
 			parent.AddChild_Unlocked (child);
-			child.SetFromFileAttributes (fa_store);
+
+			FileAttributes attr = backing_store.ReadOrCreate (child.FullName);
+			child.SetFromFileAttributes (attr);
+			unique_id_store.Add (child.UniqueId, parent.UniqueId, child.Name, true);
+
 			to_be_scanned.Enqueue (child);
 					
 		}
@@ -805,6 +830,94 @@ namespace Beagle.Daemon.FileSystemQueryable {
 		}
 
 		//////////////////////////////////////////////////////////////////////////////////
+
+		// Search by filename
+
+		// Returns a collection of internal Uris
+		public ICollection Search (QueryBody body)
+		{
+			return name_index.Search (body);
+		}
+
+		//////////////////////////////////////////////////////////////////////////////////
+
+		
+		// Map between internal and external Uris.
+
+		public Uri PathToInternalUri (string path)
+		{
+			Guid unique_id;
+
+			// FIXME: This is probably racey.
+			if (System.IO.File.Exists (path) || System.IO.Directory.Exists (path)) {
+				FileAttributes attr;
+				attr = backing_store.ReadOrCreate (path);
+				unique_id = attr.UniqueId;
+			} else {
+				// Maybe the file got deleted.  If so, try to get it from
+				// the unique id store.
+				string dir_name = System.IO.Path.GetDirectoryName (path);
+				string file_name = System.IO.Path.GetFileName (path);
+				Directory dir = GetDirectoryByPath (dir_name);
+				unique_id = unique_id_store.GetIdByNameAndParentId (file_name, dir.UniqueId);
+			}
+			return GuidFu.ToUri (unique_id);
+		}
+
+		public Uri ToInternalUri (Uri external_uri)
+		{
+			return PathToInternalUri (external_uri.LocalPath);
+		}
+
+		public Uri FromInternalUri (Uri internal_uri)
+		{
+			return unique_id_store.GetFileUriByUidUri (internal_uri);
+		}
+
+		public bool InternalUriIsValid (Uri internal_uri)
+		{
+			string path = unique_id_store.GetPathByUidUri (internal_uri);
+			if (path == null)
+				return false;
+			return System.IO.File.Exists (path) || System.IO.Directory.Exists (path);
+		}
+
+		//////////////////////////////////////////////////////////////////////////////////
+
+		//
+		// Implementation of IFileAttributesStore
+		//
+
+		public FileAttributes Read (string path)
+		{
+			FileAttributes attr;
+			attr = backing_store.Read (path);
+			return attr;
+		}
+
+		public bool Write (FileAttributes attr)
+		{
+			bool write_rv = backing_store.Write (attr);
+
+			// Since directories are always explicitly cached,
+			// this check is equivalent to checking that
+			// attr.Path is a file and not a directory.
+			if (! unique_id_store.IsCached (attr.UniqueId)) {
+				// When writing out our FileAttributes, add the
+				// file and unique id to the UniqueIdStore.
+				string dir_name = System.IO.Path.GetDirectoryName (attr.Path);
+				string file_name = System.IO.Path.GetFileName (attr.Path);
+				Directory dir = GetDirectoryByPath (dir_name);
+				unique_id_store.Add (attr.UniqueId, dir.UniqueId, file_name, false);
+			}
+
+			return write_rv;
+		}
+
+		public void Drop (string path)
+		{
+			backing_store.Drop (path);
+		}
 		
 	}
 }

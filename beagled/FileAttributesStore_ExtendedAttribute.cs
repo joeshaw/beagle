@@ -71,7 +71,9 @@ namespace Beagle.Daemon {
 
 				FileAttributes attr = new FileAttributes ();
 				
-				attr.UniqueId = ExtendedAttribute.Get (path, unique_id_attr);
+				string uid_str = ExtendedAttribute.Get (path, unique_id_attr);
+				attr.UniqueId = GuidFu.FromShortString (uid_str);
+
 				attr.Path = ExtendedAttribute.Get (path, path_attr);
 				attr.LastWriteTime = StringFu.StringToDateTime (ExtendedAttribute.Get (path, last_mtime_attr));
 				
@@ -103,7 +105,7 @@ namespace Beagle.Daemon {
 				tmp = String.Format ("{0:00} {1}", EA_VERSION, index_fingerprint);
 				ExtendedAttribute.Set (attr.Path, fingerprint_attr, tmp);
 
-				ExtendedAttribute.Set (attr.Path, unique_id_attr, attr.UniqueId);
+				ExtendedAttribute.Set (attr.Path, unique_id_attr, GuidFu.ToShortString (attr.UniqueId));
 				ExtendedAttribute.Set (attr.Path, path_attr, attr.Path);
 				ExtendedAttribute.Set (attr.Path, last_mtime_attr,
 						       StringFu.DateTimeToString (attr.LastWriteTime));

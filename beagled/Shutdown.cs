@@ -33,7 +33,7 @@ namespace Beagle.Daemon {
 
 	public class Shutdown {
 
-		static public bool Debug = true;
+		static public bool Debug = false;
 
 		static object shutdownLock = new object ();
 		static Hashtable workers = new Hashtable ();

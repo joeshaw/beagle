@@ -351,7 +351,8 @@ FILE_SYSTEM_QUERYABLE_CSFILES =					\
 	$(fsqueryabledir)/FileSystemQueryable.cs		\
 	$(fsqueryabledir)/FileSystemWatcherBackend.cs		\
 	$(fsqueryabledir)/IFileEventBackend.cs			\
-	$(fsqueryabledir)/InotifyBackend.cs
+	$(fsqueryabledir)/InotifyBackend.cs			\
+	$(fsqueryabledir)/UniqueIdStore.cs
 
 webhistqueryable = $(srcdir)/WebHistoryQueryable
 WEB_HISTORY_QUERYABLE_CSFILES =				\
@@ -430,6 +431,7 @@ DAEMON_DLL_CSFILES = 						\
 	$(srcdir)/IQueryable.cs					\
 	$(srcdir)/LuceneDriver.cs				\
 	$(srcdir)/LuceneQueryable.cs				\
+	$(srcdir)/NameIndex.cs					\
 	$(srcdir)/QueryBody.cs					\
 	$(srcdir)/QueryDriver.cs				\
 	$(srcdir)/QueryImpl.cs					\

@@ -43,6 +43,10 @@ namespace Beagle.Daemon {
 		// EA nightmare scenario: a file whose permissions or ownership get
 		// changed after the EAs have been attached.  Thus attributes in
 		// the database always trump those found in EAs.
+		//
+		// FIXME: If we have write access to the path but it has attributes
+		// stored in the sqlite file attributes db, we should attach them
+		// to the file with EAs and delete the record from the db.
 
 		public FileAttributes Read (string path)
 		{
