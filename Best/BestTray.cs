@@ -129,7 +129,7 @@ namespace Best {
 					win.GetPosition (out PosX, out PosY);
 					win.Hide ();
 				}
-			}else {
+			} else {
 			
 				Gtk.Menu recent_menu = MakeMenu ((Gtk.Widget) sender);
 				GuiUtils.PopupMenu (recent_menu, args.Event);

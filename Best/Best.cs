@@ -107,9 +107,9 @@ namespace Best {
 			}
 
 			// Create the tray icon.
+			BestTray icon;			
 			if (doTray) {
-				BestTray icon = new BestTray (win);
-
+				icon = new BestTray (win);
 				Console.WriteLine ("If you're wondering whether Best is working check " +
 						   "your notification area (system tray)");
 			} else {
@@ -118,7 +118,7 @@ namespace Best {
 				win.FocusEntry ();
 				win.DeleteEvent += new Gtk.DeleteEventHandler (NoTrayWindowDeleteEvent);
 			}
-			
+
 			best.Run ();
 		}
 	}
