@@ -90,7 +90,7 @@ typedef struct _UserData {
 void
 append_char (UserData * ud, U16 ch)
 {
-  char tmpBuf[64];
+  gchar tmpBuf[64];
   int len = 0;
   U8 bNeedStructBrk = 0;
 
@@ -121,7 +121,7 @@ append_char (UserData * ud, U16 ch)
      *  the same for other filters as well. ;-)
      */
     for (i = 0; i < len; i++)
-      if (tmpBuf[i] > 0 && tmpBuf[i] < 128)
+      if (tmpBuf[i] > 0)
 	g_string_append_c (ud->txtWord, tmpBuf[i]);
     break;
   }
