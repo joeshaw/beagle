@@ -1,7 +1,7 @@
 /*
  * Inode based directory notification for Linux
  *
- * Copyright (C) 2004 John McCutchan
+ * Copyright (C) 2005 John McCutchan
  */
 
 #ifndef _LINUX_INOTIFY_H
@@ -14,14 +14,14 @@
  * struct inotify_event - structure read from the inotify device for each event
  *
  * When you are watching a directory, you will receive the filename for events
- * such as IN_CREATE, IN_DELETE, IN_OPEN, IN_CLOSE, ...
+ * such as IN_CREATE, IN_DELETE, IN_OPEN, IN_CLOSE, ..., relative to the wd.
  */
 struct inotify_event {
-	__s32 wd;
-	__u32 mask;
-	__u32 cookie;
-	size_t len;
-	char filename[0];
+	__s32 wd;	/* watch descriptor */
+	__u32 mask;	/* watch mask */
+	__u32 cookie;	/* cookie used for synchronizing two events */
+	size_t len;	/* length (including nulls) of name */
+	char name[0];	/* stub for possible name */
 };
 
 /*
@@ -30,7 +30,7 @@ struct inotify_event {
  * Pass to the inotify device via the INOTIFY_WATCH ioctl
  */
 struct inotify_watch_request {
-	char *dirname;		/* directory name */
+	char *name;		/* directory name */
 	__u32 mask;		/* event mask */
 };
 
@@ -69,10 +69,10 @@ struct inotify_watch_request {
 #include <linux/config.h>
 
 struct inotify_inode_data {
-	struct list_head watches;
-	__u32 watch_mask;
-	spinlock_t lock;
-	atomic_t count;
+	struct list_head watches;	/* list of watches on this inode */
+	struct list_head entry;		/* entry in inotify_device's list */
+	spinlock_t lock;		/* lock protecting the struct */
+	atomic_t count;			/* ref count */
 };
 
 #ifdef CONFIG_INOTIFY

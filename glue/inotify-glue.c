@@ -87,8 +87,8 @@ inotify_glue_watch (int fd, const char *filename, __u32 mask)
 	int wd;
 
 	iwr.mask = mask;
-	iwr.dirname = strdup (filename);
-	if (!iwr.dirname) {
+	iwr.name = strdup (filename);
+	if (!iwr.name) {
 		perror ("strdup");
 		return -1;
 	}
@@ -97,11 +97,11 @@ inotify_glue_watch (int fd, const char *filename, __u32 mask)
 	if (wd < 0) {
 		fprintf (stderr,
 			 "ioctl(%d, INOTIFY_WATCH, {%s, %d}) failed", fd,
-			 iwr.dirname, iwr.mask);
+			 iwr.name, iwr.mask);
 		perror ("ioctl");
 	}
 
-	free (iwr.dirname);
+	free (iwr.name);
 
 	return wd;
 }
