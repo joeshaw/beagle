@@ -769,15 +769,12 @@ namespace Beagle.Daemon.EvolutionMailDriver {
 					int hash = (g_str_hash (mi.uid) >> 5) & CAMEL_DATA_CACHE_MASK;
 					string cache_path = String.Format ("cache/{0:x}/{1}", hash, mi.uid);
 					msg_file = Path.Combine (summary_info.DirectoryName, cache_path);
-					Console.WriteLine ("msg file is: {0}", msg_file);
 				}
 				
 				// FIXME - Filters really need to be rearchitected so that we can
 				// pass multiple attachments of different types into the indexable.
-				if (File.Exists (msg_file)) {
+				if (File.Exists (msg_file))
 					msgReader = GetMessageData (msg_file);
-					Console.WriteLine ("Got it: {0}", msg_file);
-				}
 
 				indexable = this.CamelMessageToIndexable (mi, msgReader);
 
