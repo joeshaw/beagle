@@ -12,7 +12,7 @@ Patches
 -------
 
 If you have a patch you'd like to submit, please open a tracking bug on
-gnome.bugzilla.org (product 'beagle').  Attach the patch (and any additional
+bugzilla.gnome.org (product 'beagle').  Attach the patch (and any additional
 required files) to the bug.  The core developers are all on the beagle-bugs
 mailing list, so we'll see that it is there.  We will review it, but if people
 are busy it might not happen right away.  
