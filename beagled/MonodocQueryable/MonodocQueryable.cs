@@ -40,21 +40,24 @@ using ICSharpCode.SharpZipLib.Zip;
 
 namespace Beagle.Daemon.MonodocQueryable {
 
-	[QueryableFlavor (Name="Monodoc", Domain=QueryDomain.Local)]
+	[QueryableFlavor (Name="Monodoc", Domain=QueryDomain.Local, RequireInotify=false)]
 	public class MonodocQueryable : LuceneQueryable {
 
 		private static Logger log = Logger.Get ("MonodocQueryable");
 
-		string monodocDir;
+		string monodoc_dir;
+		int monodoc_wd;
 
 		public MonodocQueryable () : base ("MondocIndex")
 		{
-			monodocDir = "/usr/lib/monodoc/sources"; // FIXME Make use of autoconf
+			monodoc_dir = "/usr/lib/monodoc/sources"; // FIXME Make use of autoconf
 		}
+
+		/////////////////////////////////////////////
 
 		public override void Start () 
 		{			
-			if (! (Directory.Exists (monodocDir)))
+			if (! (Directory.Exists (monodoc_dir)))
 				return;
 
 			base.Start ();
@@ -64,29 +67,29 @@ namespace Beagle.Daemon.MonodocQueryable {
 		
 		private void StartWorker () 
 		{
-			Inotify.Event += OnInotifyEvent;
-
 			log.Info ("Scanning Monodoc sources");
 			Stopwatch timer = new Stopwatch ();
 			timer.Start ();
-			int foundSources;
-			int foundTypes;
-			Scan (out foundSources, out foundTypes);
-			timer.Stop ();
-			log.Info ("Found {0} types in {1} Monodoc sources in {2}", foundTypes, foundSources, timer);
-		}
 
-		private void Scan (out int foundSources, out int foundTypes)
-		{
-			foundSources = 0;
-			foundTypes = 0;
+			int foundSources = 0;
+			int foundTypes = 0;
 
-			DirectoryInfo root = new DirectoryInfo (monodocDir);
-			if (! root.Exists)
-				return;
+			DirectoryInfo root = new DirectoryInfo (monodoc_dir);
 
-			int wd = Inotify.Watch (root.FullName, Inotify.EventType.Modify);
-			
+			if (Inotify.Enabled) {
+				monodoc_wd = Inotify.Watch (root.FullName, Inotify.EventType.CloseWrite | Inotify.EventType.CreateFile);
+				Inotify.Event += OnInotifyEvent;
+			} else {
+				FileSystemWatcher fsw = new FileSystemWatcher ();
+				fsw.Path = monodoc_dir;
+				fsw.Filter = "*.zip";
+
+				fsw.Changed += new FileSystemEventHandler (OnChangedEvent);
+				fsw.Created += new FileSystemEventHandler (OnChangedEvent);
+
+				fsw.EnableRaisingEvents = true;
+			}
+
 			foreach (FileInfo file in root.GetFiles ("*.zip")) {
  				int result = IndexArchive (file, Scheduler.Priority.Delayed);
 				if (result != -1) {
@@ -94,7 +97,12 @@ namespace Beagle.Daemon.MonodocQueryable {
 					foundTypes += result;
 				}
 			}
+
+			timer.Stop ();
+			log.Info ("Found {0} types in {1} Monodoc sources in {2}", foundTypes, foundSources, timer);
 		}
+
+		/////////////////////////////////////////////
 
 		private void OnInotifyEvent (int wd,
 					     string path,
@@ -102,24 +110,38 @@ namespace Beagle.Daemon.MonodocQueryable {
 					     Inotify.EventType type,
 					     uint cookie)
 		{
+			if (wd != monodoc_wd)
+				return;
+
 			if (subitem == "")
+				return;
+
+			if (Path.GetExtension (subitem) != ".zip")
 				return;
 
 			string full_path = Path.Combine (path, subitem);
 
 			switch (type) {
-			case Inotify.EventType.Modify:
-				IndexArchive (new FileInfo(full_path), Scheduler.Priority.Immediate);
+			     case Inotify.EventType.CloseWrite:
+			     case Inotify.EventType.CreateFile:
+				IndexArchive (new FileInfo (full_path), Scheduler.Priority.Delayed);
 				break;
 			}
 		}
 
+		private void OnChangedEvent (object o, FileSystemEventArgs args)
+		{
+			IndexArchive (new FileInfo (args.FullPath), Scheduler.Priority.Delayed);
+		}
+
+		/////////////////////////////////////////////
+
 		int IndexArchive (FileInfo file, Scheduler.Priority priority)
 		{
-			if (Driver.IsUpToDate (file.FullName))
-				return -1;
+                        if (this.FileAttributesStore.IsUpToDate (file.FullName))
+                                return -1;
 
-			log.Info ("Scanning " + file);
+			log.Debug ("Scanning Monodoc source file " + file);
 
 			Scheduler.TaskGroup group = NewMarkingTaskGroup (file.FullName, file.LastWriteTime);
 			
@@ -130,8 +152,6 @@ namespace Beagle.Daemon.MonodocQueryable {
 			{
 				if (entry.Name.IndexOf (".") != -1)
 					continue;
-
-				log.Debug ("Going through entry " + entry.Name);
 
 				XmlDocument document = new XmlDocument ();
 				document.Load (archive.GetInputStream (entry));
@@ -170,8 +190,6 @@ namespace Beagle.Daemon.MonodocQueryable {
 
 		Indexable TypeNodeToIndexable(XmlNode node,FileInfo file)
 		{
-			log.Debug ("Parsing T:" + node.Attributes["FullName"].Value);
-
 			Indexable indexable = new Indexable(
 				new Uri ("monodoc:///" + file + ";item=T:"+node.Attributes["FullName"].Value));
 
@@ -217,8 +235,6 @@ namespace Beagle.Daemon.MonodocQueryable {
 				memberFullName.Append (")");
 			}
 
-			log.Debug ("Parsing " + memberFullName);
-
 			Indexable indexable = new Indexable (
 				new Uri ("monodoc:///" + file + ";item=" + memberFullName));
 
@@ -228,7 +244,7 @@ namespace Beagle.Daemon.MonodocQueryable {
 			indexable.AddProperty (
 				Property.NewKeyword ("fixme:type", node.SelectSingleNode ("MemberType").InnerText.ToLower ()));
 			indexable.AddProperty (
-				Property.NewKeyword ("fixme:name",memberFullName));
+				Property.New ("fixme:name",memberFullName));
 			
 			int indexHack = memberFullName.ToString ().IndexOf ("(");
 			string splitname;
