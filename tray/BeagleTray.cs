@@ -65,6 +65,21 @@ namespace Beagle
                         win.Stick ();
 			PositionWin ();
 
+			Gtk.AccelGroup accelGroup = new Gtk.AccelGroup ();
+			win.AddAccelGroup (accelGroup);
+			GlobalKeybinder globalKeys = new GlobalKeybinder (accelGroup);
+			// Close window (Ctrl-W)
+			globalKeys.AddAccelerator (new EventHandler (this.CloseWindowHandler),
+						   (uint) Gdk.Key.w, 
+						   Gdk.ModifierType.ControlMask,
+						   Gtk.AccelFlags.Visible);
+
+			// Close window (Escape)
+			globalKeys.AddAccelerator (new EventHandler (this.CloseWindowHandler),
+						   (uint) Gdk.Key.Escape, 
+						   0,
+						   Gtk.AccelFlags.Visible);
+
 			Box vbox = new Gtk.VBox (false, 2);
 			
 			entry = new Gtk.Entry();
@@ -92,6 +107,11 @@ namespace Beagle
 			vbox.PackStart (contents, true, true, 0);
 
 			return win;
+		}
+
+		void CloseWindowHandler (object sender, EventArgs args)
+		{
+			win.Hide ();
 		}
 
 		void ButtonPress (object sender, EventArgs args) 
