@@ -38,6 +38,13 @@ namespace Beagle.Daemon {
 
 		public delegate string StringSource ();
 
+		static private bool IsTokenSeparator (char c)
+		{
+			return Char.IsWhiteSpace (c)
+				|| Char.IsSeparator (c)
+				|| Char.IsPunctuation (c);
+		}
+
 		static private void HighlightTerms (string [] stemmed_terms, string text, ref ArrayList matches)
 		{
 			int pos = 0, prev_stop_pos = 0, prev_end_pos = 0;
@@ -46,14 +53,14 @@ namespace Beagle.Daemon {
 			while (pos < text.Length) {
 				
 				// Find the beginning of the next token.
-				if (! Char.IsLetterOrDigit (text [pos])) {
+				if (IsTokenSeparator (text [pos])) {
 					++pos;
 					continue;
 				}
 
 				// Find the end of the next token
 				int next_pos = pos+1;
-				while (next_pos < text.Length && Char.IsLetterOrDigit (text [next_pos]))
+				while (next_pos < text.Length && !IsTokenSeparator (text [next_pos]))
 					++next_pos;
 
 				string stemmed_token = null;
