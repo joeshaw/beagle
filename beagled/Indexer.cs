@@ -36,6 +36,7 @@ namespace Beagle.Daemon
 	public class Indexer : Beagle.Indexer 
 	{
 		IndexerQueue indexerQueue;
+		FileSystemEventMonitor monitor = new FileSystemEventMonitor ();
 		IndexDriver driver = new MainIndexDriver ();
 
 		struct DirectoryHitEntry {
@@ -48,6 +49,12 @@ namespace Beagle.Daemon
 		
 		public Indexer (IndexerQueue _indexerQueue) {
 			indexerQueue = _indexerQueue;
+
+			string home = Environment.GetEnvironmentVariable ("HOME");
+			monitor.FileSystemEvent += OnFileSystemEvent;
+			monitor.Subscribe (home);
+			monitor.Subscribe (Path.Combine (home, "Desktop"));
+			monitor.Subscribe (Path.Combine (home, "Documents"));
 		}
 
 		Hit[] GetDirectoryHits (DirectoryInfo dir) 
@@ -121,6 +128,30 @@ namespace Beagle.Daemon
 		{
 			FilteredIndexable indexable = FilteredIndexable.NewFromXml (xml);
 			IndexIndexable (indexable);
+		}
+
+		private void OnFileSystemEvent (object source, FileSystemEventType eventType,
+						string oldPath, string newPath)
+		{
+			Console.WriteLine ("Got event {0} {1} {2}", eventType, oldPath, newPath);
+
+			if (eventType == FileSystemEventType.Changed
+			    || eventType == FileSystemEventType.Created) {
+
+				string uri = StringFu.PathToQuotedFileUri (newPath);
+				FilteredIndexable indexable = new FilteredIndexable (uri);
+				indexerQueue.ScheduleAdd (indexable);
+
+			} else if (eventType == FileSystemEventType.Deleted) {
+
+				string uri = StringFu.PathToQuotedFileUri (oldPath);
+				Hit hit = driver.FindByUri (uri);
+				if (hit != null)
+					indexerQueue.ScheduleRemove (hit);
+				
+			} else {
+				Console.WriteLine ("Unhandled!");
+			}
 		}
 	}
 }

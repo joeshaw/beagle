@@ -53,6 +53,9 @@ namespace Beagle.Daemon {
 
 		private Lucene.Net.Store.Directory store = null;
 
+		private int sinceOptimization = 0;
+		private const int sinceOptimizationThreshold = 100;
+
 		//////////////////////////
 
 		public IndexDriver (Lucene.Net.Store.Directory _store) {
@@ -358,12 +361,18 @@ namespace Beagle.Daemon {
 					doc = ToLuceneDocument (indexable);
 				} catch (Exception e) {
 					log.Log (e);
-					Console.WriteLine ("unable to convert {0} (type={1}) to a lucene document", indexable.Uri, indexable.Type);
+					Console.WriteLine ("unable to convert {0} (type={1}) to a lucene document",
+							   indexable.Uri, indexable.Type);
 					Console.WriteLine (e.Message);
 					Console.WriteLine (e.StackTrace);
 				}
-				if (doc != null)
+				if (doc != null) {
 					writer.AddDocument (doc);
+					++sinceOptimization;
+				}
+				if (sinceOptimization > sinceOptimizationThreshold) {
+					Optimize (writer);
+				}
 			}
 			writer.Close ();
 		}
@@ -384,8 +393,12 @@ namespace Beagle.Daemon {
 			foreach (Hit hit in hits) {
 				log.Log ("Removing {0}", hit.Uri);
 				reader.Delete (hit.Id);
+				++sinceOptimization;
 			}
 			reader.Close ();
+
+			if (sinceOptimization > sinceOptimizationThreshold)
+				Optimize ();
 		}
 
 		public void Remove (Hit hit)
@@ -459,19 +472,37 @@ namespace Beagle.Daemon {
 			Add (new Indexable[] { indexable });
 		}
 
-		public void Optimize ()
+		private void Optimize (IndexWriter writer)
 		{
+			if (sinceOptimization == 0)
+				return;
+
+			bool createdWriter = false;
+			if (writer == null) {
+				writer = new IndexWriter (IndexStore, NewAnalyzer (), false);
+				createdWriter = true;
+			}
+
 			log.Log ("Beginning optimization");
-			IndexWriter writer = new IndexWriter (IndexStore, NewAnalyzer (), false);
 			writer.Optimize ();
-			writer.Close ();
 			log.Log ("Optimization complete");
+			
+			if (createdWriter)
+				writer.Close ();
+
+			sinceOptimization = 0;
+		}
+
+		private void Optimize ()
+		{
+			Optimize (null);
 		}
 
 		///////////////////////////////////////////////////////
 
 		public Hit FindByUri (String uri)
-		{			Term term = new Term ("Uri", uri);
+		{			
+			Term term = new Term ("Uri", uri);
 			LNS.Query uriQuery = new LNS.TermQuery (term);
 
 			LNS.Searcher searcher = new LNS.IndexSearcher (IndexStore);

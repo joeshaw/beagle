@@ -31,6 +31,8 @@ AC_SUBST(EVO_SHARP_LIBS)
 
 AM_CONDITIONAL(ENABLE_EVO_SHARP, test "x$enable_evo_sharp" = "xyes")
 
+EVO_SHARP_PREFIX=`$PKG_CONFIG --variable=prefix evolution-sharp`
+
 dnl ----------------------------------------------
 
 dnl beagled
@@ -38,6 +40,8 @@ dnl beagled
 PKG_CHECK_MODULES(BEAGLED, gtk-sharp dbus-sharp)
 BEAGLED_LIBS="$BEAGLED_LIBS $EVO_SHARP_LIBS"
 AC_SUBST(BEAGLED_LIBS)
+
+DBUS_PREFIX=`$PKG_CONFIG --variable=prefix dbus-sharp`
 
 dnl ----------------------------------------------
 
@@ -104,8 +108,8 @@ AC_SUBST(CHOOSER_FU_LIBS)
 dnl ----------------------------------------------
 
 dnl Prefixes for helper scripts
-GAC_PREFIX="`$PKG_CONFIG --variable=prefix dbus-sharp evolution-sharp`"
-GAC_PREFIX="`echo $GAC_PREFIX | sed -e 's| |:|g'`"
+GAC_PREFIX="$DBUS_PREFIX:$EVO_SHARP_PREFIX"
+GAC_PREFIX="`echo $GAC_PREFIX | sed -e 's|::\+|:|g' -e 's|^:\+||' -e 's|:\+$||'`"
 AC_SUBST(GAC_PREFIX)
 
 AC_OUTPUT([

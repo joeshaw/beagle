@@ -50,9 +50,6 @@ namespace Beagle.Daemon
 
 		private object queueLock = new object ();
 		
-		int sinceOptimize = 0;
-		const int optimizeCount = 100;
-
 		uint flushTimeout = 0;
 		bool haveWorker = false;
 
@@ -99,30 +96,16 @@ namespace Beagle.Daemon
 		}
 
 		void Flush (ArrayList toIndex, ArrayList toRemove) {
-			bool didSomething = false;
 			
 			System.Console.WriteLine ("flushing {0}", toIndex.Count);
 
 			ArrayList toCleanup = toIndex;
 			toIndex = CallPreIndexingEvent (toIndex); 
-			if (toIndex.Count > 0) {
+			if (toIndex.Count > 0)
 				driver.QuickAdd (toIndex);
-				didSomething = true;
-			}
 			
-			if (toRemove.Count > 0) {
+			if (toRemove.Count > 0)
 				driver.Remove (toRemove);
-				didSomething = true;
-			}
-
-			if (didSomething) {
-				++sinceOptimize;
-
-				if (sinceOptimize > optimizeCount) {
-					driver.Optimize ();
-					sinceOptimize = 0;
-				}
-			}
 
 			CallPostIndexingEvent (toIndex);
 

@@ -187,6 +187,7 @@ DAEMON_DLL_CSFILES = 				\
 	$(srcdir)/IndexDriver.cs		\
 	$(srcdir)/MainIndexDriver.cs		\
 	$(srcdir)/GoogleDriver.cs		\
+	$(srcdir)/FileSystemEventMonitor.cs	\
 	$(srcdir)/Indexer.cs            	\
 	$(srcdir)/IndexerQueue.cs       	\
 	$(srcdir)/NoIndexFileHandler.cs 	\
