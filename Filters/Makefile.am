@@ -36,8 +36,9 @@ CSFILES = 				\
 	$(srcdir)/FilterCSharp.cs	\
 	$(srcdir)/FilterJava.cs		\
 	$(srcdir)/FilterPython.cs	\
-	$(srcdir)/FilterPerl.cs	
-
+	$(srcdir)/FilterPerl.cs		\
+	$(srcdir)/FilterPhp.cs		\
+	$(srcdir)/FilterFortran.cs	
 
 if ENABLE_GSF_SHARP
 CSFILES += 				\

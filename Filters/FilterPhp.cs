@@ -1,5 +1,5 @@
 //
-// FilterPerl.cs
+// FilterPhp.cs
 //
 // Copyright (C) 2004 Novell, Inc.
 //
@@ -31,21 +31,24 @@ using System.IO;
 using System.Text;
 namespace Beagle.Filters {
 
-	public class FilterPerl : FilterSource {
+	public class FilterPhp : FilterSource {
 
-		static string [] strKeyWords = { "and", "break", "chop", "class", "close", "closedir", 
-						 "continue", "defined", "die", "do", "eval",
-						 "each", "else", "elseif", "eof", "eq", "exec", "for", 
-						 "foreach", "ge", "getc", "glob", "goto", "gt",
-						 "if", "index", "keys", "last", "le", "length",
-						 "lt", "ne", "next", "not", "or", "pick", "print", "quit",
-						 "redo", "rename", "reply", "require", "return", 
-						 "scalar", "sub", "tr", "unless", "until", "use", "undef", 
-						 "values", "wantarray", "warn", "while", "xor" }; 
-		
-		public FilterPerl ()
+		static string [] strKeyWords = {"and", "or", "xor", "excepion", "array", "as", "break", 
+						"case", "class", "const", "continue", "declare", "default", 
+						"die", "do", "echo", "else", "elseif", "empty", 
+						"enddeclare", "endfor", "endforeach", "endif", 
+						"extends", "for", "foreach", "function", "global", 
+						"if", "include", "includeonce", "isset", "list", "new",
+						"print", "require", "requireonce", "return", "static", 
+						"switch", "unset",  "use", "var", "while", "final", 
+						"php_user_filter", "interface", "implements", "extends", 
+						"public", "private", "protected", "abstract", "clone", 
+						"try", "catch", "throw", "cfunction", 
+						"old_function"};
+
+		public FilterPhp ()
 		{
-			AddSupportedMimeType ("text/x-perl");
+			AddSupportedMimeType ("text/x-php");
 
 		}
 
@@ -53,6 +56,10 @@ namespace Beagle.Filters {
 		{
 			foreach (string keyword in strKeyWords)
 				KeyWordsHash [keyword] = true;
+
+			// By default, "C" type comments are processed.
+			// Php also supports "#" as comment, so,
+			// adding Python_Style will process that as well.
 			SrcLangType = LangType.Python_Style;
 		}
 

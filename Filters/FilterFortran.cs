@@ -1,5 +1,5 @@
 //
-// FilterPerl.cs
+// FilterFortran.cs
 //
 // Copyright (C) 2004 Novell, Inc.
 //
@@ -31,21 +31,17 @@ using System.IO;
 using System.Text;
 namespace Beagle.Filters {
 
-	public class FilterPerl : FilterSource {
+	public class FilterFortran : FilterSource {
 
-		static string [] strKeyWords = { "and", "break", "chop", "class", "close", "closedir", 
-						 "continue", "defined", "die", "do", "eval",
-						 "each", "else", "elseif", "eof", "eq", "exec", "for", 
-						 "foreach", "ge", "getc", "glob", "goto", "gt",
-						 "if", "index", "keys", "last", "le", "length",
-						 "lt", "ne", "next", "not", "or", "pick", "print", "quit",
-						 "redo", "rename", "reply", "require", "return", 
-						 "scalar", "sub", "tr", "unless", "until", "use", "undef", 
-						 "values", "wantarray", "warn", "while", "xor" }; 
-		
-		public FilterPerl ()
+		static string [] strKeyWords = { "call", "character", "continue", 
+						 "data", "dimension", "do", "else", "elseif", 
+						 "end", "enddo", "endif", "function", "goto", 
+						 "if", "parameter", "real", "return",
+						 "subroutine", "then", "use" }; 
+
+		public FilterFortran ()
 		{
-			AddSupportedMimeType ("text/x-perl");
+			AddSupportedMimeType ("text/x-fortran");
 
 		}
 
@@ -53,7 +49,8 @@ namespace Beagle.Filters {
 		{
 			foreach (string keyword in strKeyWords)
 				KeyWordsHash [keyword] = true;
-			SrcLangType = LangType.Python_Style;
+
+			SrcLangType = LangType.Fortran_Style;
 		}
 
 		override protected void DoPull ()

@@ -36,7 +36,8 @@ namespace Beagle.Filters {
 		protected enum LangType {
 			None,
 			C_Style,
-			Python_Style
+			Python_Style,
+			Fortran_Style
 		};
 		
 		protected LangType SrcLangType;
@@ -65,6 +66,7 @@ namespace Beagle.Filters {
 		// Tokenize the passed string and add the relevant 
 		// tokens for indexing.
 		//
+		// FIXME: Perl has embedded "POD" style which needs a little processing.
  		protected void ExtractTokens (string str)
 		{
 			int index, kwindex;
@@ -107,7 +109,8 @@ namespace Beagle.Filters {
 						splCharSeq = "";
 						break;
 					}
-				} else if (str[index] == '#' && SrcLangType == LangType.Python_Style) {
+				} else if (str[index] == '#' && SrcLangType == LangType.Python_Style ||
+					   str[index] == '!' && SrcLangType == LangType.Fortran_Style) {
 					if (SrcLineType == LineType.None) {
 						SrcLineType = LineType.SingleLineComment;
 						token.Remove (0, token.Length);
@@ -174,11 +177,16 @@ namespace Beagle.Filters {
 						token.Append (str[index]);
 					else {
 						token = token.Replace(" ", "");
-						if (token.Length > 0 && 
-						    !KeyWordsHash.Contains (token.ToString())) {
-							token.Append (" ");
-							if (!Char.IsDigit (token[0]))
-								AppendText (token.ToString());
+						if (token.Length > 0) {
+							string tok = token.ToString(); 
+							if (SrcLangType == LangType.Fortran_Style)
+								tok = token.ToString().ToLower();
+							
+							if (!KeyWordsHash.Contains (tok)) {
+								token.Append (" ");
+								if (!Char.IsDigit (token[0]))
+									AppendText (token.ToString());
+							}
 						}
 						// reset the token
 						token.Remove (0, token.Length);

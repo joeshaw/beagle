@@ -1,3 +1,12 @@
+2005-01-21  Veerapuram Varadhan	 <vvaradhan@novell.com>
+
+	* Filters/FilterSource.cs: Added Fortran_Style and related changes.
+
+	Patch received from Vishravars Ramasubramanian (vishrav_r@yahoo.co.in)
+
+	  * Filters/FilterPhp.cs: Added PHP support.
+	  * Filters/FilterFortran.cs: Added fortran support.
+	
 2005-01-20  Veerapuram Varadhan	 <vvaradhan@novell.com>
 
 	* Filters/FilterSource.cs, Filters/FilterC.cs, 
