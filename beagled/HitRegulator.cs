@@ -88,6 +88,9 @@ namespace Beagle.Daemon {
 
 		public void Subtract (Uri uri)
 		{
+			if (uri == null)
+				return;
+
 			Hit hit = by_uri [uri] as Hit;
 			if (hit != null) {
 				int i = hit_array.BinarySearch (hit);
