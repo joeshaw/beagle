@@ -361,6 +361,7 @@ namespace Beagle.Daemon {
 
 			indexable.AddProperty (Property.NewKeyword ("dc:title",       message.Subject));
 
+			indexable.AddProperty (Property.NewKeyword ("fixme:account",  "Local"));
                         indexable.AddProperty (Property.NewKeyword ("fixme:folder",   this.folder_name));
 			indexable.AddProperty (Property.NewKeyword ("fixme:subject",  message.Subject));
                         indexable.AddProperty (Property.NewKeyword ("fixme:to",       message.GetRecipientsAsString (GMime.Message.RecipientType.To)));
@@ -695,6 +696,7 @@ namespace Beagle.Daemon {
 
 			indexable.AddProperty (Property.NewKeyword ("dc:title", messageInfo.subject));
 
+			indexable.AddProperty (Property.NewKeyword ("fixme:account",  this.account_name));
                         indexable.AddProperty (Property.NewKeyword ("fixme:folder",   this.folder_name));
 			indexable.AddProperty (Property.NewKeyword ("fixme:subject",  messageInfo.subject));
                         indexable.AddProperty (Property.NewKeyword ("fixme:to",       messageInfo.to));
