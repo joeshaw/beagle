@@ -86,6 +86,23 @@ namespace Beagle.Util {
 		// inefficient if the number of distinct priority values used
 		// is large.
 
+		// FIXME: Maybe check every priority?
+		public bool Contains (object item)
+		{
+			return Contains (item, 0);
+		}
+
+		public bool Contains (object item, int priority)
+		{
+			lock (priority_queue) {
+				Queue queue = priority_queue [priority] as Queue;
+				if (queue == null)
+					return false;
+
+				return queue.Contains (item);
+			}
+		}
+
 		// If no priority is specified, revert to zero.
 		public void Enqueue (object item)
 		{

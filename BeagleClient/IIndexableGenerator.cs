@@ -33,5 +33,7 @@ namespace Beagle {
 		Indexable GetNextIndexable ();
 
 		bool HasNextIndexable ();
+
+		string StatusName { get; }
 	}
 }

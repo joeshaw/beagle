@@ -256,6 +256,11 @@ namespace Beagle.Daemon {
 		// Public API
 		//
 
+		public bool Contains (IIndexableGenerator generator)
+		{
+			return queue.Contains (generator);
+		}
+		
 		public void ScheduleAdd (Indexable indexable, int priority, PostIndexHook hook)
 		{
 			QueueItem item;
@@ -284,7 +289,9 @@ namespace Beagle.Daemon {
 			item.Priority = priority;
 			item.IndexableGenerator = generator;
 
-			queue.ScheduleQueueItem (item);
+			// Don't requeue if a generator is already queued at this priority
+			if (!queue.Contains (item, priority))
+				queue.ScheduleQueueItem (item);
 		}
 
 		public void ScheduleAdd (IIndexableGenerator generator)
@@ -595,7 +602,7 @@ namespace Beagle.Daemon {
 			override public string ToString ()
 			{
 				if (IndexableGenerator != null)
-					return "<IndexableGenerator>";
+					return IndexableGenerator.StatusName + " <IndexableGenerator>";
 
 				return String.Format ("{0} {1}", IsAdd ? "Add" : "Delete", Uri);
 			}
@@ -605,6 +612,52 @@ namespace Beagle.Daemon {
 				if (PostIndexHook != null)
 					PostIndexHook (driver, Uri);
 			}
+
+			public override bool Equals (object o)
+			{
+				if (o == null) return false;
+
+				QueueItem item = o as QueueItem;
+
+				if (item == null)
+					throw new ArgumentException ();
+
+				if (Object.ReferenceEquals (this, item))
+					return true;
+
+				if (this.Priority != item.Priority)
+					return false;
+
+				if (this.IndexableToAdd != null) {
+					if (!this.IndexableToAdd.Equals (item.IndexableToAdd))
+						return false;
+				} else {
+					if (item.IndexableToAdd != null)
+						return false;
+				}
+
+				if (this.IndexableGenerator != null) {
+					if (!this.IndexableGenerator.Equals (item.IndexableGenerator))
+						return false;
+				} else {
+					if (item.IndexableGenerator != null)
+						return false;
+				}
+
+				// Uri.Equals() doesn't compare values, so we need to do all this crap.
+				if (this.uriToDelete == null && item.uriToDelete == null)
+					return true;
+
+				if ((this.uriToDelete == null && item.uriToDelete != null) ||
+				    (this.uriToDelete != null && item.uriToDelete == null))
+					return false;
+
+				if (this.uriToDelete.ToString () == item.uriToDelete.ToString ())
+					return true;
+				else
+					return false;
+			}
+
 
 			public int CompareTo (object o) 
 			{

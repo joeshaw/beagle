@@ -76,6 +76,7 @@ namespace Beagle.Daemon {
 
 	internal class EvolutionMailIndexableGenerator : IIndexableGenerator {
 
+		private LuceneDriver driver;
 		private FileInfo summaryInfo;
 		private Camel.Summary summary;
 		private IEnumerator summaryEnumerator;
@@ -85,8 +86,9 @@ namespace Beagle.Daemon {
 		private ArrayList deletedList;
 		private int count, indexedCount;
 
-		public EvolutionMailIndexableGenerator (FileInfo summaryInfo)
+		public EvolutionMailIndexableGenerator (LuceneDriver driver, FileInfo summaryInfo)
 		{
+			this.driver = driver;
 			this.summaryInfo = summaryInfo;
 		}
 
@@ -252,6 +254,14 @@ namespace Beagle.Daemon {
 			if (this.summaryEnumerator.MoveNext ())
 				return true;
 
+			// FIXME: This is kind of a hack, but it's the only way with the IndexableGenerator
+			// to handle our removals.
+			foreach (string uid in this.deletedList) {
+				Uri uri = EvolutionMailQueryable.EmailUri (this.accountName, this.folderName, uid);
+
+				this.driver.ScheduleDelete (uri, 1);
+			}
+
 			EvolutionMailQueryable.log.Debug ("{0}: Finished indexing {1} ({2}/{3} {4:###.0}%)",
 							  this.folderName, this.indexedCount, this.count,
 							  this.summary.header.count,
@@ -321,6 +331,30 @@ namespace Beagle.Daemon {
 			return indexable;
 		}
 
+		public string StatusName {
+			get {
+				if (this.folderName != null)
+					return this.folderName + " (" + this.accountName + ")";
+				else
+					return this.summaryInfo.FullName;
+			}
+		}
+
+		public override bool Equals (object o)
+		{
+			EvolutionMailIndexableGenerator generator = o as EvolutionMailIndexableGenerator;
+
+			if (generator == null)
+				return false;
+
+			if (Object.ReferenceEquals (this, generator))
+				return true;
+
+			if (this.summaryInfo.FullName == generator.summaryInfo.FullName)
+				return true;
+			else
+				return false;
+		}
 	}
 
 	[QueryableFlavor (Name="Mail", Domain=QueryDomain.Local)]
@@ -351,6 +385,7 @@ namespace Beagle.Daemon {
 			// Get notification when an index or summary file changes
 			Inotify.InotifyEvent += new InotifyHandler (OnInotifyEvent);
 			Watch (local_path);
+			Watch (imap_path);
 
 			this.crawler = new SummaryCrawler (this, this.Driver.Fingerprint);
 			Shutdown.ShutdownEvent += OnShutdown;
@@ -390,7 +425,7 @@ namespace Beagle.Daemon {
 				
 				int wd = Inotify.Watch (dir.FullName,
 							InotifyEventType.CreateSubdir
-							| InotifyEventType.Modify
+							| InotifyEventType.DeleteSubdir
 							| InotifyEventType.MovedTo);
 				watched [wd] = dir.FullName;
 
@@ -426,7 +461,6 @@ namespace Beagle.Daemon {
 				Ignore (fullPath);
 				break;
 
-			case InotifyEventType.Modify:
 			case InotifyEventType.MovedTo:
 				if (Path.GetExtension (fullPath) == ".ev-summary" || subitem == "summary") {
 					log.Info ("reindexing updated summary: {0}", fullPath);
@@ -499,7 +533,7 @@ namespace Beagle.Daemon {
 
 		public void IndexSummary (FileInfo summaryInfo)
 		{
-			EvolutionMailIndexableGenerator generator = new EvolutionMailIndexableGenerator (summaryInfo);
+			EvolutionMailIndexableGenerator generator = new EvolutionMailIndexableGenerator (Driver, summaryInfo);
 			Driver.ScheduleAdd (generator);
 		}
 
