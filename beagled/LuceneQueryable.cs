@@ -32,7 +32,7 @@ namespace Beagle.Daemon {
 
 	public class LuceneQueryable : IQueryable {
 
-		private class LuceneQueryableChangeData : IQueryableChangeData {
+		protected class LuceneQueryableChangeData : IQueryableChangeData {
 			public Uri UriAdded;
 			public Uri UriDeleted;
 		}

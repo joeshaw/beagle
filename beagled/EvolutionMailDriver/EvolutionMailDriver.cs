@@ -256,9 +256,7 @@ namespace Beagle.Daemon {
 			get { return "EvolutionMail"; }
 		}
 
-		public override void DoQuery (QueryBody body,
-					      IQueryResult result,
-					      IQueryableChangeData changeData)
+		private ArrayList CamelIndexQuery (QueryBody body)
 		{
 			ArrayList hits = new ArrayList ();
 
@@ -272,7 +270,7 @@ namespace Beagle.Daemon {
 					index = new CamelIndex (path);
 				} catch (DllNotFoundException e) {
 					log.Info ("Couldn't load libcamel.so.  You probably need to set $LD_LIBRARY_PATH");
-					return;
+					return null;
 				} catch {
 					// If an index is invalid, just skip it.
 					continue;
@@ -282,11 +280,25 @@ namespace Beagle.Daemon {
 				index.Dispose ();
 
 				foreach (string uid in matches) {
-					// FIXME: May need some munging for subfolders?
-					string folder_name = Path.GetFileNameWithoutExtension (path);
-					
+					FileInfo fi = new FileInfo (path);
+					DirectoryInfo di;
+					string folderName = "";
+
+					di = fi.Directory;
+					while (di != null) {
+						// Evo uses ".sbd" as the extension on a folder
+						if (di.Extension == ".sbd")
+							folderName = Path.Combine (folderName, Path.GetFileNameWithoutExtension (di.Name));
+						else
+							break;
+
+						di = di.Parent;
+					}
+
+					folderName = Path.Combine (folderName, Path.GetFileNameWithoutExtension (path));
+
 					Hit hit = new Hit ();
-					hit.Uri = EmailUri ("local@local", folder_name, uid);
+					hit.Uri = EmailUri ("local@local", folderName, uid);
 					hit.Type = "MailMessage"; // Maybe MailMessage?
 					hit.MimeType = "text/plain";
 					hit.Source = "EvolutionMail";
@@ -297,7 +309,7 @@ namespace Beagle.Daemon {
 					// These should map to the same properties in MailToIndexable ()
 					hit ["dc:title"] = mi.subject;
 
-					hit ["fixme:folder"]   = folder_name;
+					hit ["fixme:folder"]   = folderName;
 					hit ["fixme:subject"]  = mi.subject;
 					hit ["fixme:to"]       = mi.to;
 					hit ["fixme:from"]     = mi.from;
@@ -307,7 +319,7 @@ namespace Beagle.Daemon {
 					hit ["fixme:mlist"]    = mi.mlist;
 					hit ["fixme:flags"]    = mi.flags.ToString ();
 
-					if (folder_name == "Sent")
+					if (folderName == "Sent")
 						hit ["fixme:isSent"] = "true";
 
 					if (mi.IsAnswered)
@@ -335,10 +347,42 @@ namespace Beagle.Daemon {
 				}
 			}
 
-			result.Add (hits);
+			return hits;
+		}
 
-			// Chain up to the Lucene index
+		public override void DoQuery (QueryBody body,
+					      IQueryResult result,
+					      IQueryableChangeData changeData)
+		{
+			// First, chain up to the Lucene index
 			base.DoQuery (body, result, changeData);
+
+			LuceneQueryableChangeData lqcd = (LuceneQueryableChangeData) changeData;
+			ArrayList hits = new ArrayList ();
+
+			if (lqcd != null && lqcd.UriDeleted != null) {
+				Uri[] subtracted = new Uri[1];
+				subtracted[0] = lqcd.UriDeleted;
+				result.Subtract (subtracted);
+			} else {
+				hits = CamelIndexQuery (body);
+			}
+
+			if (hits != null && lqcd != null && lqcd.UriAdded != null) {
+				ArrayList filteredHits = new ArrayList ();
+
+				foreach (Hit hit in hits) {
+					if (hit.Uri == lqcd.UriAdded) {
+						filteredHits.Add (hit);
+						break;
+					}
+				}
+
+				hits = filteredHits;
+			}
+
+			if (hits != null)
+				result.Add (hits);
                 }
 
 		private Camel.MessageInfo GetMessageInfo (string path, string uid)
