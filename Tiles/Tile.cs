@@ -119,6 +119,8 @@ namespace Beagle.Tile {
 			Process p = new Process ();
 			p.StartInfo.UseShellExecute = false;
 			p.StartInfo.FileName = "nautilus";
+			if ((!path.StartsWith ("\"")) && (!path.EndsWith ("\"")))
+				path = "\"" + path + "\"";
 			p.StartInfo.Arguments = path;
 
 			try {
