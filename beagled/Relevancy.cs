@@ -89,6 +89,38 @@ namespace Beagle.Daemon {
 			return 1.0;
 		}
 	}
+
+	public class RelevancyRule_EmailTime : RelevancyRule {
+
+		public override bool IsApplicable (Hit hit)
+		{
+			if (hit.Uri.Scheme == "email")
+				return true;
+			else
+				return false;
+		}
+
+		public override double GetMultiplier (Hit hit)
+		{
+			string date_str;
+
+			date_str = hit["fixme:received"];
+
+			if (date_str == null)
+				date_str = hit["fixme:sentdate"];
+
+			if (date_str == null)
+				return 1.0;
+
+			DateTime date = Beagle.Util.StringFu.StringToDateTime (date_str);
+			double days = (DateTime.Now - date).TotalDays;
+			if (days < 0)
+				return 1.0;
+
+			// Relevancy half-life is three months.
+			return Math.Pow (0.5, days / 91.0);
+		}
+	}
 	
 	public class Relevancy {
 

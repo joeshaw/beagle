@@ -256,55 +256,6 @@ namespace Beagle.Daemon {
 			}
 		}
 
-		private Hit HitFromMessageInfo (string folderName, Camel.MessageInfo mi)
-		{
-			Hit hit = new Hit ();
-			hit.Uri = EvolutionMailQueryable.EmailUri ("local@local", folderName, mi.uid);
-			hit.Type = "MailMessage"; // Maybe MailMessage?
-			hit.MimeType = "text/plain";
-			hit.Source = "EvolutionMail";
-			hit.ScoreRaw = 1.0F;
-
-			// These should map to the same properties in MailToIndexable ()
-			hit ["dc:title"] = mi.subject;
-
-			hit ["fixme:folder"]   = folderName;
-			hit ["fixme:subject"]  = mi.subject;
-			hit ["fixme:to"]       = mi.to;
-			hit ["fixme:from"]     = mi.from;
-			hit ["fixme:cc"]       = mi.cc;
-			hit ["fixme:received"] = StringFu.DateTimeToString (mi.received);
-			hit ["fixme:sentdate"] = StringFu.DateTimeToString (mi.sent);
-			hit ["fixme:mlist"]    = mi.mlist;
-			hit ["fixme:flags"]    = mi.flags.ToString ();
-
-			if (folderName == "Sent")
-				hit ["fixme:isSent"] = "true";
-
-			if (mi.IsAnswered)
-				hit ["fixme:isAnswered"] = "true";
-
-			if (mi.IsDeleted)
-				hit ["fixme:isDeleted"] = "true";
-
-			if (mi.IsDraft)
-				hit ["fixme:isDraft"] = "true";
-
-			if (mi.IsFlagged)
-				hit ["fixme:isFlagged"] = "true";
-
-			if (mi.IsSeen)
-				hit ["fixme:isSeen"] = "true";
-			
-			if (mi.HasAttachments)
-				hit ["fixme:hasAttachments"] = "true";
-
-			if (mi.IsAnsweredAll)
-				hit ["fixme:isAnsweredAll"] = "true";
-
-			return hit;
-		}
-
 		public void Start ()
 		{
 			ArrayList matches = new ArrayList ();

@@ -569,10 +569,14 @@ namespace Beagle.Daemon {
                         indexable.AddProperty (Property.NewKeyword ("fixme:to",       messageInfo.to));
 			indexable.AddProperty (Property.NewKeyword ("fixme:from",     messageInfo.from));
                         indexable.AddProperty (Property.NewKeyword ("fixme:cc",       messageInfo.cc));
-			indexable.AddProperty (Property.NewDate    ("fixme:received", messageInfo.received));
-                        indexable.AddProperty (Property.NewDate    ("fixme:sentdate", messageInfo.sent));
                         indexable.AddProperty (Property.NewKeyword ("fixme:mlist",    messageInfo.mlist));
                         indexable.AddProperty (Property.NewKeyword ("fixme:flags",    messageInfo.flags));
+
+			if (messageInfo.received != DateTime.MinValue)
+				indexable.AddProperty (Property.NewDate ("fixme:received", messageInfo.received));
+
+			if (messageInfo.sent != DateTime.MinValue)
+				indexable.AddProperty (Property.NewDate ("fixme:sentdate", messageInfo.sent));
 
 			if (folderName == "Sent")
 				indexable.AddProperty (Property.NewFlag ("fixme:isSent"));
