@@ -13,6 +13,7 @@ SUBDIRS = 			\
 	Tiles			\
 	tools 			\
 	Best			\
+	ImLogViewer		\
 	mozilla-extension	\
 	searchomatic		\
 	chooser-fu

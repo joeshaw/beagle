@@ -1,0 +1,6 @@
+*.exe
+*.dll
+*.mdb
+Makefile
+Makefile.in
+beagle-imlogviewer

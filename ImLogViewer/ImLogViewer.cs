@@ -38,7 +38,7 @@ namespace ImLogViewer {
 		[Widget] Label    conversation;
 		[Widget] Entry    search;
 		
-		private Timeline timeline;
+		private BU.Timeline timeline;
 		
 		private TreeStore treeStore;
 		private CellRendererText renderer;
@@ -52,7 +52,7 @@ namespace ImLogViewer {
 			logsDir = Path.GetDirectoryName (path);
 			logPath = path;
 
-			timeline = new Timeline ();
+			timeline = new BU.Timeline ();
 			IndexLogs();
 			string speaker = extractSpeaker(logsDir);
 			

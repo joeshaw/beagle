@@ -1,15 +1,15 @@
 //
 // Timeline.cs: Store chronological events
 //
-// Author:
-//   Lukas Lipka (lukas@pmad.net)
+// Lukas Lipka <lukas@pmad.net>
 //
-// (C) 2004 Lukas Lipka. All rights reserved.
+// Copyright (C) 2004 Novell, Inc.
 //
+
 using System;
 using System.Collections;
 
-//namespace Beagle.Util {
+namespace Beagle.Util {
 
 	public class Timeline {
 
@@ -200,4 +200,4 @@ using System.Collections;
 			
 		}
 	}*/
-//}
+}

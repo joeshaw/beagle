@@ -363,6 +363,7 @@ Filters/Makefile
 Tiles/Makefile
 tools/Makefile
 Best/Makefile
+ImLogViewer/Makefile
 epiphany-extension/Makefile
 mozilla-extension/Makefile
 searchomatic/Makefile
