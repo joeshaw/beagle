@@ -36,6 +36,7 @@ namespace Dewey {
 		{
 			BootstrapIndex ();
 
+			Lucene.Net.Store.FSDirectory.TempDirectoryName = LockDir;
 			IndexWriter.WRITE_LOCK_TIMEOUT = 30/*seconds*/ * 1000;
 		}
 

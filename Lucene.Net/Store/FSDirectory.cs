@@ -178,7 +178,8 @@ namespace Lucene.Net.Store
 			
 			string lockPrefix = GetLockPrefix().ToString(); // clear old locks
 
-			DirectoryInfo tmpdir = new DirectoryInfo(GetTempDirectoryName());
+			// FIXED trow@ximian.com 14 May 2004  Use TempDirectoryName to find where locks live
+			DirectoryInfo tmpdir = new DirectoryInfo(TempDirectoryName);
 			files = tmpdir.GetFiles();
 			for (int i = 0; i < files.Length; i++) 
 			{      
@@ -446,7 +447,8 @@ namespace Lucene.Net.Store
 			buf.Append("-");
 			buf.Append(name);
 
-			DirectoryInfo tmpDir = new DirectoryInfo(GetTempDirectoryName());
+			// FIXED trow@ximian.com 14 May 2004  Use TempDirectoryName to find where locks live
+			DirectoryInfo tmpDir = new DirectoryInfo(TempDirectoryName);
 			// make the lock file in tmp, where anyone can create files.
 			FileInfo lockFile = new FileInfo(tmpDir.FullName + "/" + buf.ToString());
 
@@ -477,22 +479,29 @@ namespace Lucene.Net.Store
 			return "FSDirectory@" + directory;
 		}
 
-	    /// <summary>
-	    /// Get the name of the directory to use for temporary files,
-	    /// and create that directory if it doesn't already exist
-	    /// </summary>
-	    private String GetTempDirectoryName() {
-		String tmpdir_name = Environment.GetEnvironmentVariable("TEMP");
-		if (tmpdir_name == null) {
-		    String user_name = Environment.GetEnvironmentVariable("USER");
-		    if (user_name == null)
-			user_name = "unknown";
-		    tmpdir_name = "/tmp/" + user_name + "-lucene.net";
+		/// <summary>
+		/// Get the name of the directory to use for temporary files,
+		/// and create that directory if it doesn't already exist
+		/// </summary>
+		/// FIXED trow@ximian.com 14 May 2004 Give us control over where locks are stored
+		static private String tempDirectoryName = null;
+		static public String TempDirectoryName {
+			get {
+				if (tempDirectoryName == null) {
+					String user_name = Environment.GetEnvironmentVariable("USER");
+					if (user_name == null)
+						user_name = "unknown";
+					TempDirectoryName = "/tmp/" + user_name + "-lucene.net";
+				}
+				return tempDirectoryName;
+			}
+
+			set {
+				tempDirectoryName = value;
+				if (! System.IO.Directory.Exists (tempDirectoryName))
+					System.IO.Directory.CreateDirectory (tempDirectoryName);
+			}
 		}
-		if (! System.IO.Directory.Exists(tmpdir_name))
-		    System.IO.Directory.CreateDirectory(tmpdir_name);
-		return tmpdir_name;
-	    }
 
 		private StringBuilder GetLockPrefix() 
 		{
