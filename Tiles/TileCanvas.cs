@@ -30,6 +30,7 @@ using System.Diagnostics;
 using System.Reflection;
 using System.IO;
 using System.Text;
+using Beagle.Util;
 using Gecko;
 
 namespace Beagle.Tile {
@@ -224,16 +225,9 @@ namespace Beagle.Tile {
 			}
 		}
 
-
-
-		private void RenderStyleResource (TileRenderContext ctx,
-						  string resource_name)
-		{
-			Template t = new Template (resource_name);
-			ctx.Write (t.ToString ());
-		}
-		
 		private static ArrayList style_attributes = null;
+		private static ArrayList style_templates = null;
+
 		static private void ScanAssembly (Assembly assembly)
 		{
 			style_attributes = new ArrayList ();
@@ -253,9 +247,16 @@ namespace Beagle.Tile {
 			if (style_attributes == null) 
 				ScanAssembly (Assembly.GetExecutingAssembly ());
 
-			foreach (TileStyleAttribute attr in style_attributes) {
-				RenderStyleResource (ctx,
-						     attr.Resource);
+			if (style_templates == null) {
+				style_templates = new ArrayList ();
+				foreach (TileStyleAttribute attr in style_attributes) {
+					Template t = new Template (attr.Resource);
+					style_templates.Add (t);
+				}
+			}
+			
+			foreach (Template t in style_templates) {
+				ctx.Write (t.ToString ());
 			}
 		}
 
@@ -274,13 +275,16 @@ namespace Beagle.Tile {
 			if (tile != null) {
 				tile.Render (ctx);
 			}
-
 		}
 
 		/////////////////////////////////////////////////
 
 		private void DoRender ()
 		{
+			if (time == null) {
+				time = new Beagle.Util.Stopwatch ();
+				time.Start ();
+			}
 			System.Console.WriteLine ("Rendering");
 			if (PreRenderEvent != null)
 				PreRenderEvent (this, new EventArgs ());
@@ -295,7 +299,12 @@ namespace Beagle.Tile {
 			if (PostRenderEvent != null)
 				PostRenderEvent (this, new EventArgs ());
 
-			System.Console.WriteLine ("Done Rendering");
+			time.Stop ();
+			System.Console.WriteLine ("Done Rendering: {0}",
+						  time);
+			time = null;
+
+
 		}
 
 		/////////////////////////////////////////////////
@@ -322,12 +331,15 @@ namespace Beagle.Tile {
 			return false;
 		}
 
+		Beagle.Util.Stopwatch time;
 		public void ScheduleRender ()
 		{
+			time = new Beagle.Util.Stopwatch ();
+			time.Start ();
 			lock (this) {
 				if (renderId != 0)
 					return;
-				renderId = GLib.Timeout.Add (100, new GLib.TimeoutHandler (RenderHandler));
+				renderId = GLib.Idle.Add (new GLib.IdleHandler (RenderHandler));
 			}
 		}
 

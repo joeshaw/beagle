@@ -111,10 +111,7 @@ namespace Beagle {
 		{
 			string path = BU.Icon.LookupName (stockid, size);
 			if (path != null && path != "") {
-				string mime = BU.GnomeIconLookup.GetFileMimeType (path);
-				if (mime != null && mime != "") 
-					return Images.GetHtmlSource 
-						(path, mime);
+				return "file://" + path;
 			}
 			return null;
 		}
@@ -137,6 +134,8 @@ namespace Beagle {
 		{
 			if (name.StartsWith ("file://")) {
 				return name;
+			} else if (name.StartsWith ("/")) {
+				return "file://" + name;
 			} else {
 				Stream stream;
 
@@ -152,7 +151,6 @@ namespace Beagle {
 				long bytes_read = stream.Read(binary_data, 0,
 							      (int)stream.Length);
 				stream.Close ();
-				
 				return GetHtmlSource (binary_data, mime_type);
 			}
 		} 

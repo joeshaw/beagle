@@ -79,9 +79,7 @@ namespace Beagle.Tile {
 				fullpath = Path.Combine (fullpath, buddy.BuddyIconLocation);
 
 				if (File.Exists (fullpath)) {
-					Template["Icon"] = Images.GetHtmlSource (fullpath,
-										 BU.GnomeIconLookup.GetFileMimeType (fullpath));
-				} else {
+					Template["Icon"] = "file://" + fullpath;				} else {
 					Template["Icon"] = Images.GetHtmlSourceForStock ("gnome-gaim", 48);
 				}
 			} else {

@@ -64,6 +64,9 @@ namespace Beagle.Tile {
 		int firstDisplayed = 0;
 		int maxDisplayed = 10;
 
+		Template head_template;
+		Template foot_template;
+
 		public float MaxScore {
 			get {
 				if (hits.Count == 0)
@@ -151,33 +154,6 @@ namespace Beagle.Tile {
 			get { return hits.Count == 0; }
 		}
 
-		protected void PopulateTemplate (Template t)
-		{
-
-			t["TileId"] = UniqueKey;
-			t["action:"] = "action:" + UniqueKey + "!"
-;
-			if (hits.Count > 1)
-				t["NumberOfMatches"] = hits.Count + " Matches";
-			else
-				t["NumberOfMatches"] = hits.Count + " Match";
-
-			if (hits.Count == 1 || ! (CanPageForward ||CanPageBack))
-				t["DisplayedMatches"] = "";
-			else 
-				t["DisplayedMatches"] = String.Format ("Displaying Matches {0} to {1}",
-								       FirstDisplayed+1, LastDisplayed+1);				
-
-			
-
-			if (CanPageForward) 
-				t["CanPageForward"] = " ";
-			if (CanPageBack) 
-				t["CanPageBack"] = "";
-			if (CanPageBack && CanPageForward) 
-				t["CanPageBoth"] = "";
-		}
-
 		private void RenderTiles (TileRenderContext ctx)
 		{
 			int i = FirstDisplayed;
@@ -188,20 +164,28 @@ namespace Beagle.Tile {
 				ctx.Tile (pair.Tile);
 				++i;
 			}
+		}
 
+		private void PopulateTemplate (Template t)
+		{
 		}
 
 		public override void Render (TileRenderContext ctx)
 		{
-			Template t = new Template ("template-head.html");
-			PopulateTemplate (t);
-			ctx.Write (t.ToString ());
+			if (head_template == null) {
+				head_template = new Template ("template-head.html");
+				PopulateTemplate (head_template);
+			}
+			
+			ctx.Write (head_template.ToString ());
 
 			RenderTiles (ctx);
 			
-			t = new Template ("template-foot.html");
-			PopulateTemplate (t);
-			ctx.Write (t.ToString ());
+			if (foot_template == null) {
+				foot_template = new Template ("template-foot.html");
+				PopulateTemplate (foot_template);
+			}
+			ctx.Write (head_template.ToString ());
 		}
 	}
 }

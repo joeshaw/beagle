@@ -147,6 +147,8 @@ public class GnomeIconLookup{
 	
 	[DllImport("libgnomevfs-2")]
 	static extern IntPtr gnome_vfs_mime_get_default_application(string mime_type);
+
+	static IntPtr icon_theme = IntPtr.Zero;
 	
 	public static string LookupMimeIcon(string mime,IconSize size)
 	{
@@ -155,7 +157,10 @@ public class GnomeIconLookup{
 		GnomeIconLookupResultsFlags result=0;
 		IntPtr icon_data=IntPtr.Zero;
 		int base_size=0;
-		IntPtr icon_theme = gnome_icon_theme_new ();
+
+		if (icon_theme == IntPtr.Zero) {
+			icon_theme = gnome_icon_theme_new ();
+		}
 		
 		if(icon_theme==IntPtr.Zero)
 		{

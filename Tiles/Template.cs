@@ -185,6 +185,7 @@ namespace Beagle.Tile {
 		{
 			if (dirty) {
 				string_html = Build ();
+				dirty = false;
 			}
 
 			return string_html;

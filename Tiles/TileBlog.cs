@@ -63,8 +63,7 @@ namespace Beagle.Tile {
 				
 				
 				Template["Icon"] = Images.GetHtmlSource (Hit ["fixme:cachedimg"],
-									 BU.GnomeIconLookup.GetFileMimeType (Hit ["fixme:cachedimg"]));
-				
+									 null);
 			}
 		}
 
