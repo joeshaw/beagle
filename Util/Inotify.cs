@@ -405,7 +405,7 @@ namespace Beagle.Util {
 			}
 		}
 
-		static public bool Verbose = true;
+		static public bool Verbose = false;
 
 		// Update the watched_by_path hash and the path stored inside the watch
 		// in response to a move event.
