@@ -3,7 +3,7 @@
 Makefile
 Makefile.in
 beagle-index-files
-beagle-crawler-rss
+beagle-index-rss
 beagle-query
 beagle-extract-content
 beagle-epiphany-index

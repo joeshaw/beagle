@@ -29,7 +29,7 @@
 #include "config.h"
 #endif
 
-#include "ephy-dewey-extension.h"
+#include "ephy-beagle-extension.h"
 
 #include <epiphany/ephy-extension.h>
 #include <epiphany/ephy-embed-persist.h>
@@ -39,54 +39,54 @@
 
 #include <gmodule.h>
 
-#define EPHY_DEWEY_EXTENSION_GET_PRIVATE(object) (G_TYPE_INSTANCE_GET_PRIVATE ((object), EPHY_TYPE_DEWEY_EXTENSION, EphyDeweyExtensionPrivate))
+#define EPHY_BEAGLE_EXTENSION_GET_PRIVATE(object) (G_TYPE_INSTANCE_GET_PRIVATE ((object), EPHY_TYPE_BEAGLE_EXTENSION, EphyBeagleExtensionPrivate))
 
-struct EphyDeweyExtensionPrivate
+struct EphyBeagleExtensionPrivate
 {
 };
 
 #define EPIPHANY_FRONTEND_IDENTIFIER	"Web Browser"
 
-static void ephy_dewey_extension_class_init	(EphyDeweyExtensionClass *klass);
-static void ephy_dewey_extension_iface_init	(EphyExtensionIface *iface);
-static void ephy_dewey_extension_init	(EphyDeweyExtension *extension);
+static void ephy_beagle_extension_class_init	(EphyBeagleExtensionClass *klass);
+static void ephy_beagle_extension_iface_init	(EphyExtensionIface *iface);
+static void ephy_beagle_extension_init	(EphyBeagleExtension *extension);
 
 static GObjectClass *parent_class = NULL;
 
 static GType type = 0;
 
 GType
-ephy_dewey_extension_get_type (void)
+ephy_beagle_extension_get_type (void)
 {
 	return type;
 }
 
 GType
-ephy_dewey_extension_register_type (GTypeModule *module)
+ephy_beagle_extension_register_type (GTypeModule *module)
 {
 	static const GTypeInfo our_info =
 	{
-		sizeof (EphyDeweyExtensionClass),
+		sizeof (EphyBeagleExtensionClass),
 		NULL, /* base_init */
 		NULL, /* base_finalize */
-		(GClassInitFunc) ephy_dewey_extension_class_init,
+		(GClassInitFunc) ephy_beagle_extension_class_init,
 		NULL,
 		NULL, /* class_data */
-		sizeof (EphyDeweyExtension),
+		sizeof (EphyBeagleExtension),
 		0, /* n_preallocs */
-		(GInstanceInitFunc) ephy_dewey_extension_init
+		(GInstanceInitFunc) ephy_beagle_extension_init
 	};
 
 	static const GInterfaceInfo extension_info =
 	{
-		(GInterfaceInitFunc) ephy_dewey_extension_iface_init,
+		(GInterfaceInitFunc) ephy_beagle_extension_iface_init,
 		NULL,
 		NULL
 	};
 
 	type = g_type_module_register_type (module,
 					    G_TYPE_OBJECT,
-					    "EphyDeweyExtension",
+					    "EphyBeagleExtension",
 					    &our_info, 0);
 
 	g_type_module_add_interface (module,
@@ -100,7 +100,7 @@ ephy_dewey_extension_register_type (GTypeModule *module)
 static void
 load_status_cb (EphyTab *tab,
 		GParamSpec *pspec,
-		EphyDeweyExtension *extension)
+		EphyBeagleExtension *extension)
 {
 	gboolean load_status;
 	
@@ -133,7 +133,7 @@ load_status_cb (EphyTab *tab,
 		content = ephy_embed_persist_to_string (persist);
 		g_object_unref (persist);
 
-		argv[0] = "dewey-epiphany-index";
+		argv[0] = "beagle-epiphany-index";
 		argv[1] = location;
 		argv[2] = (char *) page_title;
 		argv[3] = NULL;
@@ -163,7 +163,7 @@ load_status_cb (EphyTab *tab,
 static void
 tab_added_cb (GtkWidget *notebook,
 	      EphyTab *tab,
-	      EphyDeweyExtension *extension)
+	      EphyBeagleExtension *extension)
 {
 	g_return_if_fail (EPHY_IS_TAB (tab));
 
@@ -174,7 +174,7 @@ tab_added_cb (GtkWidget *notebook,
 static void
 tab_removed_cb (GtkWidget *notebook,
 		EphyTab *tab,
-		EphyDeweyExtension *extension)
+		EphyBeagleExtension *extension)
 {
 	g_return_if_fail (EPHY_IS_TAB (tab));
 
@@ -211,24 +211,24 @@ impl_detach_window (EphyExtension *ext,
 }
 
 static void
-ephy_dewey_extension_init (EphyDeweyExtension *extension)
+ephy_beagle_extension_init (EphyBeagleExtension *extension)
 {
-	extension->priv = EPHY_DEWEY_EXTENSION_GET_PRIVATE (extension);
+	extension->priv = EPHY_BEAGLE_EXTENSION_GET_PRIVATE (extension);
 }
 
 static void
-ephy_dewey_extension_iface_init (EphyExtensionIface *iface)
+ephy_beagle_extension_iface_init (EphyExtensionIface *iface)
 {
 	iface->attach_window = impl_attach_window;
 	iface->detach_window = impl_detach_window;
 }
 
 static void
-ephy_dewey_extension_class_init (EphyDeweyExtensionClass *klass)
+ephy_beagle_extension_class_init (EphyBeagleExtensionClass *klass)
 {
 	GObjectClass *object_class = G_OBJECT_CLASS (klass);
 
 	parent_class = g_type_class_peek_parent (klass);
 
-	g_type_class_add_private (object_class, sizeof (EphyDeweyExtensionPrivate));
+	g_type_class_add_private (object_class, sizeof (EphyBeagleExtensionPrivate));
 }

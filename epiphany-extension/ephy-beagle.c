@@ -24,13 +24,13 @@
   This is all copied from Dashboard's Epiphany Extension.
 */
 
-#include "ephy-dewey-extension.h"
+#include "ephy-beagle-extension.h"
 
 #include <gmodule.h>
 
 G_MODULE_EXPORT GType
 register_module (GTypeModule *module)
 {
-	return ephy_dewey_extension_register_type (module);
+	return ephy_beagle_extension_register_type (module);
 }
 

@@ -1,25 +1,17 @@
 
-This is an Epiphany extension that allows Dewey to index every page
+This is an Epiphany extension that allows Beagle to index every page
 the user views.  The code is derived from Dashboard's extension.
 
 Right now, this extension is just a hack: for every page, Epiphany tries to
-run a program named 'dewey-epiphany-index'.  The page's URI and title are
-passed to dewey-epiphany-index as command-line arguments, and the HTML is
+run a program named 'beagle-epiphany-index'.  The page's URI and title are
+passed to beagle-epiphany-index as command-line arguments, and the HTML is
 written to its stdin.
 
 Obviously this opens up a huge security hole: anyone who can get a rogue
-program named 'dewey-epiphany-index' into the user's path can spy on all of
+program named 'beagle-epiphany-index' into the user's path can spy on all of
 their web traffic.  
 
 There is also the issue of private information (account numbers, etc.) ending
 up in the index.  Maybe the default behavior should be to not index https://
 sites.
-
-Note: The extension will get install into Epiphany's prefix, not Dewey's.
-Since Epiphany probably lives under /usr or /opt/gnome, that means you'll
-need to be root to 'make install', even if you are installing Dewey into a
-prefix under your home directory.
-
-
-
 
