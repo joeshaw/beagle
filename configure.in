@@ -4,6 +4,7 @@ AM_INIT_AUTOMAKE(dewey, 0.0)
 AM_MAINTAINER_MODE
 
 AC_PROG_INSTALL
+AC_PROG_LIBTOOL
 
 AC_PATH_PROG(PKG_CONFIG, pkg-config, no)
 if test "x$PKG_CONFIG" = "xno"; then
@@ -15,6 +16,52 @@ if test "x$MCSTEST" = "xno"; then
 	AC_MSG_ERROR([You need to install mcs (from mono)])
 fi
 
+dnl ----------------------------------------------
+
+dnl Epiphany Extension
+dnl Much of this is cut&pasted from epiphany-extensions/configure.ac
+
+AC_ARG_ENABLE([epiphany-extension],
+	[  --enable-epiphany-extension   Disable Epiphany Extension ],
+	enable_epiphany_extension=$enableval,
+	enable_epiphany_extension=yes)
+
+EPIPHANY_REQUIRED=1.2.1
+LIBXML_REQUIRED=2.6.0
+LIBGLIB_REQUIRED=2.4.0
+LIBGTK_REQUIRED=2.4.0
+
+AC_SUBST(EPIPHANY_REQUIRED)
+AC_SUBST(LIBXML_REQUIRED)
+AC_SUBST(LIBGLIB_REQUIRED)
+AC_SUBST(LIBGTK_REQUIRED)
+
+dnl fixme -- combine the dependencies of only the enabled plugins
+PKG_CHECK_MODULES(EPIPHANY_DEPENDENCY, \
+		  libxml-2.0 >= $LIBXML_REQUIRED \
+		  libglade-2.0 \
+		  glib-2.0 >= $LIBGLIB_REQUIRED \
+		  gmodule-2.0 \
+		  gtk+-2.0 >= $LIBGTK_REQUIRED \
+		  epiphany-1.2 >= $EPIPHANY_REQUIRED,
+		  have_epiphany_dependencies=yes,
+		  have_epiphany_dependencies=no)
+AC_SUBST(EPIPHANY_DEPENDENCY_CFLAGS)
+AC_SUBST(EPIPHANY_DEPENDENCY_LIBS)
+
+if test "x$have_epiphany_dependencies" = "xno"; then
+   enable_epiphany_extension="no (missing dependencies)"
+else
+	if test "x$enable_epiphany_extension" != "xyes"; then
+	   enable_epiphany_extension="disabled"
+	fi
+fi
+
+AM_CONDITIONAL(ENABLE_EPIPHANY_EXTENSION, test "x$enable_epiphany_extension" = "xyes")
+
+
+dnl ----------------------------------------------
+
 AC_OUTPUT([
 Makefile
 Lucene.Net/Makefile
@@ -22,4 +69,17 @@ Filters/Makefile
 indexer/Makefile
 tools/Makefile
 Best/Makefile
+epiphany-extension/Makefile
 ])
+
+echo "
+	Prefix:			${prefix}
+	Epiphany Extension?	${enable_epiphany_extension}
+
+"
+
+if test "x$enable_epiphany_extension" = "xyes"; then
+   echo "NOTE: The Dewey Epiphany Extension Is Totally Insecure!"
+   echo "      Use it at your own risk!"
+fi
+	

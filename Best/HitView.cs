@@ -28,7 +28,12 @@ namespace Best {
 
 		private Widget BuildWidget ()
 		{
-			String name = System.IO.Path.GetFileName (hit.Uri);
+			String name;
+
+			if (hit.Uri.StartsWith ("file:///"))
+				name = System.IO.Path.GetFileName (hit.Uri);
+			else
+				name = hit.Uri;
 
 			String iconPath = GnomeIconLookup.LookupMimeIcon (hit.MimeType, (Gtk.IconSize) 48);
 			Widget icon = new Image (iconPath);
