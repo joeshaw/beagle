@@ -197,8 +197,7 @@ namespace Beagle.Daemon {
 			}
 
 			Lucene.Net.Store.FSDirectory store;
-			store = Lucene.Net.Store.FSDirectory.GetDirectory (indexDir, false);
-			store.TempDirectoryName = lockDir;
+			store = Lucene.Net.Store.FSDirectory.GetDirectory (indexDir, lockDir, false);
 			ourStore = store;
 			ourStorePath = indexDir;
 

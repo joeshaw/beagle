@@ -63,32 +63,50 @@ namespace Lucene.Net.Store
 					tmpBool = System.IO.Directory.Exists(Enclosing_Instance.lockDir.FullName);
 				if (!tmpBool)
 				{
-                    try
-                    {
-                        System.IO.Directory.CreateDirectory(Enclosing_Instance.lockDir.FullName);
-                    }
-                    catch (Exception)
+					try
+					{
+						System.IO.Directory.CreateDirectory(Enclosing_Instance.lockDir.FullName);
+					}
+					catch (Exception)
 					{
 						throw new System.IO.IOException("Cannot create lock directory: " + Enclosing_Instance.lockDir);
 					}
 				}
 				
-                try
-                {
-                    System.IO.FileStream createdFile = lockFile.Create();
-                    createdFile.Close();
-		    // ADDED joeshaw@novell.com 10 Jan 2005  Lock debugging
-		    Log ("Obtained lock {0}", lockFile.FullName);
-                    return true;
-                }
-                catch (Exception e)
-                {
-			// ADDED joeshaw@novell.com 10 Jan 2005  Lock debugging
-			Log ("Could not obtain lock {0}", lockFile.FullName);
-			Log (e);
-			return false;
-                }
+				// ADDED trow@novell.com 17 Mar 2005: Use Mono.Posix for lock creation
+
+				bool obtainedLock = false;
+
+				int fd = Mono.Posix.Syscall.open (lockFile.FullName,
+								  Mono.Posix.OpenFlags.O_CREAT
+								  | Mono.Posix.OpenFlags.O_EXCL,
+								  Mono.Posix.FileMode.S_IRUSR
+								  | Mono.Posix.FileMode.S_IWUSR);
+
+				if (fd != -1) {
+					Mono.Posix.Syscall.close (fd);
+					lockFile.Refresh ();
+					obtainedLock = true;
+				}
+			
+				
+#if false
+				try
+				{
+					System.IO.FileStream createdFile = lockFile.Create();
+					createdFile.Close();
+					obtainedLock = true;
+				}
+				catch (Exception e)
+				{
+					// Just fall through
+				}
+#endif
+
+				Log ("{0} lock {1}", obtainedLock ? "Obtained" : "Could not obtain", lockFile.FullName);
+				return obtainedLock;
 			}
+
 			public override void  Release()
 			{
 				if (Lucene.Net.Store.FSDirectory.DISABLE_LOCKS)
@@ -155,12 +173,14 @@ namespace Lucene.Net.Store
                                         if (user_name == null)
                                                 user_name = "unknown";
                                         TempDirectoryName = "/tmp/" + user_name + "-lucene.net";
+					Beagle.Util.Logger.Log.Debug ("Auto-setting TempDirectoryName");
                                 }
                                 return tempDirectoryName;
                         }
 			
                         set {
                                 tempDirectoryName = value;
+				Beagle.Util.Logger.Log.Debug ("Set TempDirectoryName to {0}", tempDirectoryName);
                                 if (! System.IO.Directory.Exists (tempDirectoryName))
                                         System.IO.Directory.CreateDirectory (tempDirectoryName);
                         }
@@ -184,9 +204,16 @@ namespace Lucene.Net.Store
 		/// </param>
 		/// <returns> the FSDirectory for the named file.  
 		/// </returns>
+
+		/// CHANGED trow@novell.com 17 Mar 2005 set tmp dir at creation-time
+		public static FSDirectory GetDirectory(System.String path, System.String tmpDir, bool create)
+		{
+			return GetDirectory(new System.IO.FileInfo(path), tmpDir, create);
+		}
+
 		public static FSDirectory GetDirectory(System.String path, bool create)
 		{
-			return GetDirectory(new System.IO.FileInfo(path), create);
+			return GetDirectory(new System.IO.FileInfo(path), null, create);
 		}
 		
 		/// <summary>Returns the directory instance for the named location.
@@ -202,7 +229,7 @@ namespace Lucene.Net.Store
 		/// </param>
 		/// <returns> the FSDirectory for the named file.  
 		/// </returns>
-		public static FSDirectory GetDirectory(System.IO.FileInfo file, bool create)
+		public static FSDirectory GetDirectory(System.IO.FileInfo file, System.String tmpDir, bool create)
 		{
 			file = new System.IO.FileInfo(file.FullName);
 			FSDirectory dir;
@@ -211,7 +238,7 @@ namespace Lucene.Net.Store
 				dir = (FSDirectory) DIRECTORIES[file];
 				if (dir == null)
 				{
-					dir = new FSDirectory(file, create);
+					dir = new FSDirectory(file, tmpDir, create);
 					DIRECTORIES[file] = dir;
 				}
 				else if (create)
@@ -225,16 +252,24 @@ namespace Lucene.Net.Store
 			}
 			return dir;
 		}
+
+		public static FSDirectory GetDirectory(System.IO.FileInfo file, bool create)
+		{
+			return GetDirectory (file, null, create);
+		}
 		
 		private System.IO.FileInfo directory = null;
 		private int refCount;
 		private System.IO.FileInfo lockDir;
 		
-		private FSDirectory(System.IO.FileInfo path, bool create)
+		private FSDirectory(System.IO.FileInfo path, string tmpDir, bool create)
 		{
 			directory = path;
 			
 			// FIXED joeshaw@novell.com  10 Jan 2005  Use TempDirectoryName to find where locks live
+			// FIXED trow@novell.com  17 Mar 2005  A fix on the fix
+			if (tmpDir != null)
+				TempDirectoryName = tmpDir;
 			lockDir = new System.IO.FileInfo (TempDirectoryName);
 			if (create)
 			{
@@ -510,7 +545,8 @@ namespace Lucene.Net.Store
 		}
 
 		// ADDED trow 4 June 2004
-		static public Beagle.Util.Logger Logger = null;
+		//static public Beagle.Util.Logger Logger = null;
+		static public Beagle.Util.Logger Logger = Beagle.Util.Logger.Log;
 		static private void Log (string format, params object[] args)
 		{
 			if (Logger != null)
