@@ -209,6 +209,9 @@ namespace Beagle.Daemon.GaimLogQueryable {
 			indexable.AddProperty (Property.NewKeyword ("fixme:identity", log.Identity));
 			indexable.AddProperty (Property.NewDate ("fixme:endtime", log.EndTime));
 
+			indexable.AddProperty (Property.New ("fixme:client", log.Client));
+			indexable.AddProperty (Property.New ("fixme:protocol", log.Protocol));
+
 			StringReader reader = new StringReader (text.ToString ());
 			indexable.SetTextReader (reader);
 			

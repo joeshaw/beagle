@@ -40,8 +40,9 @@ namespace Beagle.Tile {
 #if ENABLE_EVO_SHARP
 		private static Hashtable buddy_emails = new Hashtable ();
 #endif
-
+		
 		private ImBuddy buddy = null;
+		private string speaking_alias;
 		private string email = null;
 
 		public TileImLog (Hit _hit) : base (_hit,
@@ -71,11 +72,22 @@ namespace Beagle.Tile {
 
 			if (email != null)
 				Template ["SendMailAction"] = "Send Mail";
+
+			// FIXME: This is a temporary hack until gaim supports other protocols than AIM via gaim-remote
+			if (Hit ["fixme:protocol"] == "aim")
+				Template ["SendIMAction"] = "Send IM";
 			
 			if (buddy != null && buddy.Alias != "")
-				Template["speakingalias"] = buddy.Alias;
+				speaking_alias = buddy.Alias;
 			else 
-				Template["speakingalias"] = Hit["fixme:speakingto"];
+				speaking_alias = Hit["fixme:speakingto"];
+
+			// FIXME: Hack to figure out if the conversation is taken place in a chat room
+			if (Hit["fixme:speakingto"].EndsWith (".chat"))
+				Template["title"] = String.Format ("Chat in {0}", speaking_alias.Replace(".chat",""));
+			else
+				Template["title"] = String.Format ("Conversation with {0}", speaking_alias);
+
 
 			if (buddy != null && buddy.BuddyIconLocation != "") {
 				string homedir = Environment.GetEnvironmentVariable ("HOME");
@@ -216,11 +228,7 @@ namespace Beagle.Tile {
 		[TileAction]
 		public void SendIm ()
 		{
-			// FIXME: The hit should really have a field
-			// for the IM protocol that was used.  This is
-			// an ugly hack to check whether the
-			// conversation took place over aim.
-			if (Hit ["fixme:file"].IndexOf ("logs/aim") == -1)
+			if (Hit ["fixme:protocol"] != "aim")
 				return;
 			
 			SendImAim (Hit ["fixme:speakingto"]);

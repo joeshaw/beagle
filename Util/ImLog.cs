@@ -43,6 +43,7 @@ namespace Beagle.Util {
 		public long   LogOffset;
 
 		public string Protocol;
+		public string Client;
 
 		public DateTime StartTime;
 		public DateTime EndTime;
@@ -63,22 +64,23 @@ namespace Beagle.Util {
 
 		//////////////////////////
 
-		protected ImLog (string protocol, string file, long offset)
+		protected ImLog (string client, string protocol, string file, long offset)
 		{
+			Client = client;
 			Protocol = protocol;
 			LogFile = file;
 			LogOffset = offset;
 		}
 
-		protected ImLog (string protocol, string file) : this (protocol, file, -1)
+		protected ImLog (string client, string protocol, string file) : this (client, protocol, file, -1)
 		{ }
 
 		public Uri Uri {
 			get {
 				// Hacky
 				string when = StartTime.ToString ("yyyy.MM.dd.HH.mm.ss");
-				string uriStr = String.Format ("imlog://{0}/{1}/{2}/{3}",
-							       Protocol, Identity, SpeakingTo,
+				string uriStr = String.Format ("imlog://{0}/{1}/{2}/{3}/{4}",
+							       Client, Protocol, Identity, SpeakingTo,
 							       when);
 				return new Uri (uriStr, true);
 			}							    
@@ -273,12 +275,12 @@ namespace Beagle.Util {
 
 		///////////////////////////////////////
 
-		private GaimLog (string file, long offset) : base ("gaim", file, offset)
+		private GaimLog (string protocol, string file, long offset) : base ("gaim", protocol, file, offset)
 		{ 
 			SetSnippet ();
 		}
 
-		private GaimLog (string file) : base ("gaim", file)
+		private GaimLog (string protocol, string file) : base ("gaim", protocol, file)
 		{ 
 			SetSnippet ();
 		}
@@ -392,7 +394,8 @@ namespace Beagle.Util {
 
 		private static void ScanNewStyleLog (FileInfo file, ArrayList array)
 		{
-			ImLog log = new GaimLog (file.FullName);
+			// file.Directory.Parent.Parent.Name is the name of the current protocol (ex. aim)
+			ImLog log = new GaimLog (file.Directory.Parent.Parent.Name, file.FullName);
 			
 			log.Timestamp = file.LastWriteTime;
 			
@@ -403,7 +406,7 @@ namespace Beagle.Util {
 
 			log.SpeakingTo = file.Directory.Name;
 			log.Identity   = file.Directory.Parent.Name;
-
+			
 			array.Add (log);
 		}
 
@@ -430,7 +433,7 @@ namespace Beagle.Util {
 				if (isHtml)
 					line = StripTags (line);
 				if (IsNewConversation (line)) {
-					ImLog log = new GaimLog (file.FullName, offset);
+					ImLog log = new GaimLog ("aim", file.FullName, offset); //FIXME: protocol
 					log.StartTime = NewConversationTime (line);
 					log.Identity = "_OldGaim_"; // FIXME: parse a few lines of the log to figure this out
 					log.SpeakingTo = speakingTo;
