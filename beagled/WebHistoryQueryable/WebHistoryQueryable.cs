@@ -28,6 +28,7 @@ using System;
 using System.IO;
 
 using Beagle.Daemon;
+using Beagle.Util;
 
 namespace Beagle.Daemon.WebHistoryQueryable {
 
@@ -36,21 +37,24 @@ namespace Beagle.Daemon.WebHistoryQueryable {
 
 		public class WebHistoryIndexerImpl : Beagle.WebHistoryIndexerProxy {
 
-			LuceneDriver driver;
+			LuceneQueryable queryable;
 
-			public WebHistoryIndexerImpl (LuceneDriver _driver)
+			public WebHistoryIndexerImpl (LuceneQueryable queryable)
 			{
-				driver = _driver;
+				this.queryable = queryable;
 			}
 			
 			public override void Index (string xml)
 			{
-				Indexable indexable = FilteredIndexable.NewFromXml (xml);
-				driver.ScheduleAdd (indexable);
+				Console.WriteLine (xml);
+				Indexable indexable = FilteredIndexable.NewFromIndexableXml (xml);
+				Scheduler.Task task = queryable.NewAddTask (indexable);
+				task.Priority = Scheduler.Priority.Immediate;
+				queryable.ThisScheduler.Add (task);
 			}
 		}
 		
-		public WebHistoryQueryable () : base (Path.Combine (PathFinder.RootDir, "WebHistoryIndex"), true)
+		public WebHistoryQueryable () : base ("WebHistoryIndex")
 		{
 		}
 
@@ -58,7 +62,7 @@ namespace Beagle.Daemon.WebHistoryQueryable {
 		{
 			base.Start ();
 
-			WebHistoryIndexerImpl indexer = new WebHistoryIndexerImpl (Driver);
+			WebHistoryIndexerImpl indexer = new WebHistoryIndexerImpl (this);
 			DBusisms.Service.RegisterObject (indexer, Beagle.DBusisms.WebHistoryIndexerPath);
 		}
 	}

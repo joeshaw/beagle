@@ -34,39 +34,6 @@ using BU = Beagle.Util;
 
 class IndexWebContentTool {
 
-	public class IndexableWeb : Indexable {
-		
-		public IndexableWeb (string uri,
-				     string title,
-				     Stream contentStream)
-		{
-			Uri = new Uri (uri, true);
-			Type = "WebHistory";
-			MimeType = "text/html";
-			Timestamp = DateTime.Now;
-
-			System.Console.WriteLine ("getting reader");
-			SetTextReader (new StreamReader (contentStream));
-
-			if (title != null) 
-				AddProperty (Property.New ("dc:title", title));
-		}
-
-		public IndexableWeb (string uri,
-				     string title,
-				     string filename,
-				     bool deleteSource)
-		{
-			Uri = new Uri (uri, true);
-			Type = "WebHistory";
-			MimeType = "text/html";
-			Timestamp = DateTime.Now;
-			
-			ContentUri = new Uri ("file://" + Path.GetFullPath (filename), false);
-			DeleteContent = deleteSource;
-		}
-	}
-
 	static void PrintUsage () {
 		Console.WriteLine ("IndexWebContent.exe: Index web page content using the Beagle Search Engine.");
 		Console.WriteLine ("  --url URL\t\tURL for the web page being indexed.\n" +

@@ -117,7 +117,7 @@ namespace Beagle.Daemon {
 				modifiedTime = File.GetLastWriteTime (path);
 			} else {
 				//throw new IOException ("No such file: " + path);
-				Console.WriteLine ("No such file: " + path);
+				BU.Logger.Log.Error ("No such file: " + path);
 				return;
 			}
 
@@ -223,7 +223,7 @@ namespace Beagle.Daemon {
 			if (MimeType == null) {
 				throw new Exception ("Unknown mime type");
 			}
-			
+
 			// Currently only index file content
 			if (! ContentUri.IsFile)
 				return;

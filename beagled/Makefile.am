@@ -374,7 +374,7 @@ blamqueryable = $(srcdir)/BlamQueryable
 BLAM_QUERYABLE_CSFILES =				\
 	$(blamqueryable)/BlamQueryable.cs
 
-#	$(WEB_HISTORY_QUERYABLE_CSFILES)	\
+
 #	$(EVO_MAIL_DRIVER_CSFILES)		\
 #		$(TOMBOY_QUERYABLE_CSFILES)		\
 #
@@ -385,6 +385,7 @@ DAEMON_DLL_CSFILES = 				\
 	$(GAIM_LOG_QUERYABLE_CSFILES)		\
 	$(BLAM_QUERYABLE_CSFILES)		\
 	$(EVO_MAIL_QUERYABLE_CSFILES)		\
+	$(WEB_HISTORY_QUERYABLE_CSFILES)	\
 	$(srcdir)/BugzillaDriver.cs 		\
 	$(srcdir)/Crawler.cs			\
 	$(srcdir)/DBusisms.cs			\

@@ -407,7 +407,7 @@ namespace Beagle.Daemon {
 		private ArrayList AddedUris = new ArrayList ();
 		private bool queryRunning = false;
 
-		public EvolutionMailQueryable () : base (Path.Combine (PathFinder.RootDir, "MailIndex"))
+		public EvolutionMailQueryable () : base ("MailIndex")
 		{
 		}
 
