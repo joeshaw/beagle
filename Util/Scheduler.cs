@@ -48,6 +48,7 @@ namespace Beagle.Util {
 		}
 
 		public delegate void Hook ();
+		public delegate void TaskHook (Task task);
 
 		//////////////////////////////////////////////////////////////////////////////
 
@@ -66,10 +67,10 @@ namespace Beagle.Util {
 			public DateTime  Timestamp;
 			public DateTime  TriggerTime = DateTime.MinValue;
 
-			public TaskGroup TaskGroup = null;
-
 			public ITaskCollector Collector = null;
 			public double         Weight = 1.0;
+
+			public bool Reschedule = false;
 
 			///////////////////////////////
 
@@ -122,34 +123,63 @@ namespace Beagle.Util {
 
 			public void Schedule (Scheduler scheduler)
 			{
-				if (this.scheduler != null)
-					throw new Exception ("Can't re-schedule task");
-
+				// Increment the task groups the first
+				// time a task is scheduled.
+				if (this.scheduler == null)
+					IncrementAllTaskGroups ();
 				this.scheduler = scheduler;
-				IncrementAllTaskGroups ();
 			}
 
 			///////////////////////////////
 
-			private bool finished = false;
+			private bool cancelled = false;
 
-			public bool Finished {
-				get { return finished; }
+			public bool Cancelled {
+				get { return cancelled; }
 			}
 
 			public void Cancel ()
 			{
-				if (! finished)
+				if (! cancelled)
 					DecrementAllTaskGroups ();
-				finished = true;
+				cancelled = true;
 			}
+
+			///////////////////////////////
+
+			// The Task's count keeps track of how many
+			// times it has been executed.
+
+			private int count = 0;
+			
+			public int Count {
+				get { return count; }
+			}
+
+			///////////////////////////////
 			
 			public void DoTask ()
 			{
-				if (! finished) {
+				if (! cancelled) {
 					TouchAllTaskGroups ();
-					DoTaskReal ();
-					Cancel ();
+					try {
+						DoTaskReal ();
+					} catch (Exception ex) {
+						Logger.Log.Warn ("Caught exception in DoTaskReal");
+						Logger.Log.Warn ("        Tag: {0}", Tag);
+						Logger.Log.Warn ("    Creator: {0}", Creator);
+						Logger.Log.Warn ("Description: {0}", Description);
+						Logger.Log.Warn ("   Priority: {0} ({1})", Priority, SubPriority);
+						Logger.Log.Warn (ex);
+					}
+					if (Reschedule) {
+						Console.WriteLine ("Rescheduling {0}!", Tag);
+						Reschedule = false;
+						++count;
+						ThisScheduler.Add (this);
+					} else {
+						DecrementAllTaskGroups ();
+					}
 				}
 			}
 
@@ -207,11 +237,11 @@ namespace Beagle.Util {
 			}
 		}
 
-		private class HookTask : Task {
+		private class TaskHookWrapper : Task {
 
-			Hook hook;
-
-			public HookTask (Hook hook) 
+			TaskHook hook;
+			
+			public TaskHookWrapper (TaskHook hook) 
 			{
 				this.hook = hook;
 			}
@@ -219,13 +249,13 @@ namespace Beagle.Util {
 			protected override void DoTaskReal ()
 			{
 				if (hook != null)
-					hook ();
+					hook (this);
 			}
 		}
 
-		public static Task TaskFromHook (Hook hook)
+		public static Task TaskFromHook (TaskHook hook)
 		{
-			return new HookTask (hook);
+			return new TaskHookWrapper (hook);
 		}
 
 		//////////////////////////////////////////////////////////////////////////////
@@ -342,6 +372,11 @@ namespace Beagle.Util {
 					old_task = task_by_tag [task.Tag] as Task;
 					if (old_task == task)
 						return;
+					
+					Logger.Log.Debug ("Adding task");
+					Logger.Log.Debug ("Tag: {0}", task.Tag);
+					if (task.Description != null)
+						Logger.Log.Debug ("Desc: {0}", task.Description);
 
 					task.Timestamp = DateTime.Now;
 					task.Schedule (this);
@@ -371,7 +406,7 @@ namespace Beagle.Util {
 		public bool ContainsByTag (string tag)
 		{
 			Task task = GetByTag (tag);
-			return task != null && !task.Finished;
+			return task != null && !task.Cancelled;
 		}
 
 
@@ -393,7 +428,7 @@ namespace Beagle.Util {
 				int pos = 1;
 				for (int i = task_queue.Count - 1; i >= 0; --i) {
 					Task task = task_queue [i] as Task;
-					if (task.Finished)
+					if (task == null || task.Cancelled)
 						continue;
 
 					sb.AppendFormat ("{0} ", pos);
@@ -527,6 +562,43 @@ namespace Beagle.Util {
 			return new TimeSpan (ticks);
 		}
 
+		private void DescribeTaskQueue (string note, int i0, int i1)
+		{
+			Console.WriteLine ("----------------------");
+			Console.WriteLine (note);
+			for (int i=i0; i<i1; ++i) {
+				Task t = task_queue [i] as Task;
+				string xxx;
+				if (t == null)
+					xxx = "(null)";
+				else if (t.Cancelled)
+					xxx = t.Tag + " CANCELLED";
+				else
+					xxx = t.Tag;
+				Console.WriteLine ("{0}: {1}", i, xxx);
+			}
+			Console.WriteLine ("----------------------");
+		}
+
+		// Remove nulls and cancelled tasks from the queue.
+		// Note: this does no locking!
+		private void CleanQueue ()
+		{
+			int i = task_queue.Count - 1;
+			while (i >= 0) {
+				Task t = task_queue [i] as Task;
+				if (t != null) {
+					if (! t.Cancelled)
+						break;
+					// Remove cancelled items from the tag hash
+					task_by_tag.Remove (t.Tag);
+				}
+				--i;
+			}
+			if (i < task_queue.Count - 1)
+				task_queue.RemoveRange  (i+1, task_queue.Count - 1 - i);
+		}
+
 		private void Worker ()
 		{
 			DateTime time_of_last_task = DateTime.MinValue;
@@ -541,19 +613,12 @@ namespace Beagle.Util {
 				lock (task_queue) {
 
 					Task task = null;
+					int task_i = -1;
 					int i;
 
-					// First, remove finished tasks
-					i = task_queue.Count - 1;
-					while (i >= 0) {
-						Task t = task_queue [i] as Task;
-						if (! t.Finished)
-							break;
-						task_by_tag.Remove (t.Tag); // clean up our hashtable
-						--i;
-					}
-					if (i < task_queue.Count - 1)
-						task_queue.RemoveRange  (i+1, task_queue.Count - 1 - i);
+					// First, remove any null or cancelled tasks
+					// we find in the task_queue.
+					CleanQueue ();
 					
 					// If the task queue is now empty, wait on our lock
 					// and then re-start our while loop
@@ -571,9 +636,10 @@ namespace Beagle.Util {
 					task = null;
 					while (i >= 0) {
 						Task t = task_queue [i] as Task;
-						if (! t.Finished) {
+						if (t != null && ! t.Cancelled) {
 							if (t.TriggerTime < now) {
 								task = t;
+								task_i = i; // Remember the task's position in the queue.
 								break;
 							} else {
 								// Keep track of when the next possible trigger time is.
@@ -616,6 +682,10 @@ namespace Beagle.Util {
 						continue;
 					}
 
+					// Remove this task from the queue
+					task_queue [task_i] = null;
+					task_by_tag.Remove (task.Tag);
+
 					if (task.Collector == null) {
 
 						pre_hook = null;
@@ -639,7 +709,8 @@ namespace Beagle.Util {
 						--i;
 						while (i >= 0 && weight < max_weight) {
 							Task t = task_queue [i] as Task;
-							if (! t.Finished 
+							if (t != null
+							    && ! t.Cancelled
 							    && t.Collector == task.Collector
 							    && t.TriggerTime < now) {
 
@@ -654,10 +725,20 @@ namespace Beagle.Util {
 									break;
 
 								collection.Add (t);
+
+								// Remove the task from the queue and clean
+								// up the by-tag hash table.
+								task_queue [i] = null;
+								task_by_tag.Remove (t.Tag);
 							}
 							--i;
 						}
 					}
+
+					// Clean the queue again
+					// (We need to do this to keep rescheduled tasks from blocking
+					// stuff from getting cleaned off the end of the queue)
+					CleanQueue ();
 				}
 
 
@@ -685,6 +766,7 @@ namespace Beagle.Util {
 		}
 	}
 
+#if false
 	class TestTask : Scheduler.Task {
 
 		private class TestCollector : Scheduler.ITaskCollector {
@@ -714,6 +796,8 @@ namespace Beagle.Util {
 		{
 			Console.WriteLine ("Doing task '{0}' at {1}", Tag, DateTime.Now);
 			Thread.Sleep (200);
+			if (Tag == "Bar")
+				Reschedule = true;
 		}
 
 		static void BeginTaskGroup ()
@@ -726,7 +810,6 @@ namespace Beagle.Util {
 			Console.WriteLine ("--- End Task Group!");
 		}
 
-#if false
 		static void Main ()
 		{
 			Scheduler sched = Scheduler.Global;
@@ -741,19 +824,19 @@ namespace Beagle.Util {
 
 			task = new TestTask ();
 			task.Tag = "Foo";
-			task.TaskGroup = tg;
+			task.AddTaskGroup (tg);
 			task.Priority = Scheduler.Priority.Delayed;
 			task.TriggerTime = DateTime.Now.AddSeconds (7);
 			sched.Add (task);
 
 			task = new TestTask ();
-			task.Tag = "Bar";
-			task.TaskGroup = tg;
+			task.Tag = "Bar";			
+			task.AddTaskGroup (tg);
 			task.Priority = Scheduler.Priority.Delayed;
 			sched.Add (task);
 
 			Scheduler.ITaskCollector collector = null;
-			for (int i = 0; i < 1000; ++i) {
+			for (int i = 0; i < 20; ++i) {
 				if ((i % 10) == 0)
 					collector = new TestCollector ();
 				task = new TestTask ();
@@ -767,10 +850,6 @@ namespace Beagle.Util {
 				Thread.Sleep (1000);
 			}
 		}
-#endif
-
-
-			
-
 	}
+#endif
 }

@@ -198,7 +198,7 @@ namespace Beagle.Util {
 		}
 			
 
-
+#if false
 		static void Main ()
 		{
 			Gtk.Application.Init ();
@@ -213,6 +213,7 @@ namespace Beagle.Util {
 				System.Threading.Thread.Sleep (1000);
 			}
 		}
+#endif
 
 	}
 

@@ -316,7 +316,7 @@ namespace Beagle.Daemon.FileSystemQueryable {
 			lock (dir_dirty) {
 				if (dir_dirty.Count > 0) {
 					Scheduler.Task task;
-					task = Scheduler.TaskFromHook (new Scheduler.Hook (CrawlNextDirectory));
+					task = Scheduler.TaskFromHook (new Scheduler.TaskHook (CrawlNextDirectory));
 					task.Tag = "File System Crawler";
 					task.Priority = Scheduler.Priority.Delayed;
 					task.SubPriority = -1000;
@@ -328,7 +328,7 @@ namespace Beagle.Daemon.FileSystemQueryable {
 			}
 		}
 
-		private void CrawlNextDirectory ()
+		private void CrawlNextDirectory (Scheduler.Task task)
 		{
 			WatchedDirectory dir;
 

@@ -257,11 +257,14 @@ namespace Beagle.Daemon {
 					driver.Remove (uri);
 				} else if (generator != null) {
 
-					bool finished = false;
+					// Since this is a generator, we want the task to
+					// get re-scheduled after it is run.
+					Reschedule = true;
 
 					for (int count = 0; count < hard_wired_generation_count; ++count) {
 						if (!generator.HasNextIndexable ()) {
-							finished = true;
+							// ...except if there is no more work to do, of course.
+							Reschedule = false;
 							break;
 						}
 
@@ -273,20 +276,6 @@ namespace Beagle.Daemon {
 						// its processing queue is empty.
 						if (generated != null)
 							driver.Add (generated);
-					}
-
-					if (! finished) {
-						// Schedule a task to generate more indexables.
-						LuceneTask new_task;
-
-						new_task = new LuceneTask (driver, generator);
-						new_task.Priority = this.Priority;
-						new_task.SubPriority = this.SubPriority;
-						new_task.TaskGroup = this.TaskGroup;
-						new_task.Collector = this.Collector;
-
-						// Schedule the next phase of indexable generation.
-						ThisScheduler.Add (new_task);
 					}
 				}
 			}
