@@ -10,23 +10,18 @@
 #include <linux/types.h>
 #include <linux/limits.h>
 
-/* this size could limit things, since technically we could need PATH_MAX */
-#define INOTIFY_FILENAME_MAX	256
-
 /*
  * struct inotify_event - structure read from the inotify device for each event
  *
  * When you are watching a directory, you will receive the filename for events
  * such as IN_CREATE, IN_DELETE, IN_OPEN, IN_CLOSE, ...
- *
- * Note: When reading from the device you must provide a buffer that is a
- * multiple of sizeof(struct inotify_event)
  */
 struct inotify_event {
 	__s32 wd;
 	__u32 mask;
 	__u32 cookie;
-	char filename[INOTIFY_FILENAME_MAX];
+	size_t len;
+	char filename[0];
 };
 
 /*
@@ -76,7 +71,8 @@ struct inotify_watch_request {
 struct inotify_inode_data {
 	struct list_head watches;
 	__u32 watch_mask;
-	int watch_count;
+	spinlock_t lock;
+	atomic_t count;
 };
 
 #ifdef CONFIG_INOTIFY

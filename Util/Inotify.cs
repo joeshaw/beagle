@@ -81,8 +81,12 @@ namespace Beagle.Util {
 			public int       wd;
 			public EventType mask;
 			public uint      cookie;
-			[MarshalAs (UnmanagedType.ByValArray, SizeConst=256)]
-			public byte[]    filename;
+			public uint      len;
+		}
+
+		private struct queued_event {
+			public inotify_event iev;
+			public byte[]        filename;
 		}
 
 		[DllImport ("libinotifyglue")]
@@ -95,9 +99,9 @@ namespace Beagle.Util {
 		static extern int inotify_glue_ignore (int fd, int wd);
 
 		[DllImport ("libinotifyglue")]
-		static extern unsafe void inotify_snarf_events (int fd, 
+		static extern unsafe void inotify_snarf_events (int fd,
 								int timeout_seconds,
-								out int num_read,
+								out int nr,
 								out IntPtr buffer);
 
 
@@ -294,7 +298,7 @@ namespace Beagle.Util {
 			lock (event_queue) {
 				if (snarf_thread != null)
 					return;
-				
+
 				running = true;
 
 				snarf_thread = new Thread (new ThreadStart (SnarfWorker));
@@ -323,33 +327,40 @@ namespace Beagle.Util {
 				Thread.Sleep (15);
 
 				//int N = (int) Syscall.read (dev_inotify, (void *) buffer, (IntPtr) max_snarf_size);
-				//int num_events;
-
 				IntPtr buffer;
-				int num_events;
+				int nr;
 
 				// Will block while waiting for events, but with a 1s timeout.
 				inotify_snarf_events (dev_inotify, 
 						      1, 
-						      out num_events,
+						      out nr,
 						      out buffer);
 
 				if (!running)
 					break;
 
-				if (num_events == 0)
+				if (nr == 0)
 					continue;
 
+				int event_size = Marshal.SizeOf (typeof (inotify_event));
 				DateTime now = DateTime.Now;
 				lock (event_queue) {
 					bool saw_overflow = false;
-					for (int i = 0; i < num_events; ++i) {
-						inotify_event iev;
-						iev = (inotify_event)Marshal.PtrToStructure (buffer, typeof (inotify_event));
-						buffer = (IntPtr) ((long)buffer + Marshal.SizeOf (typeof (inotify_event)));
-						if (iev.mask == EventType.QueueOverflow)
+					while (nr > 0) {
+						queued_event qe;
+
+						qe.iev = (inotify_event) Marshal.PtrToStructure (buffer, typeof (inotify_event));
+						buffer = (IntPtr) ((long) buffer + event_size);
+
+						qe.filename = new byte[qe.iev.len];
+						Marshal.Copy (buffer, qe.filename, 0, (int) qe.iev.len);
+						buffer = (IntPtr) ((long) buffer + qe.iev.len);
+
+						if (qe.iev.mask == EventType.QueueOverflow)
 							saw_overflow = true;
-						event_queue.Enqueue (iev);
+						event_queue.Enqueue (qe);
+
+						nr -= event_size + (int) qe.iev.len;
 					}
 
 					if (saw_overflow)
@@ -359,7 +370,6 @@ namespace Beagle.Util {
 				}
 			}
 		}
-
 
 		// FIXME: If we move a directory that is being watched, the
 		// watch is preserved, as are the watches on any
@@ -376,44 +386,42 @@ namespace Beagle.Util {
 			Encoding filename_encoding = Encoding.UTF8;
 
 			while (running) {
-
-				inotify_event iev;
+				queued_event qe;
 
 				lock (event_queue) {
 					while (event_queue.Count == 0 && running)
 						Monitor.Wait (event_queue);
-					if (! running)
+					if (!running)
 						break;
-					iev = (inotify_event) event_queue.Dequeue ();
+					qe = (queued_event) event_queue.Dequeue ();
 				}
 
 				Watched watched;
-				watched = Lookup (iev.wd, iev.mask);
+				watched = Lookup (qe.iev.wd, qe.iev.mask);
 				if (watched == null)
 					continue;
 
-				if ((watched.Mask & iev.mask) != 0) {
+				if ((watched.Mask & qe.iev.mask) != 0) {
 					
 					int n_chars = 0;
-					while (n_chars < iev.filename.Length && iev.filename [n_chars] != 0)
+					while (n_chars < qe.filename.Length && qe.filename [n_chars] != 0)
 						++n_chars;
 
 					string filename = "";
 					if (n_chars > 0)
-						filename = filename_encoding.GetString (iev.filename, 0, n_chars);
-
+						filename = filename_encoding.GetString (qe.filename, 0, n_chars);
 
 					if (Verbose) {
 						Console.WriteLine ("*** inotify: {0} {1} {2} {3} {4}",
-								   iev.mask, watched.Wd, watched.Path,
+								   qe.iev.mask, watched.Wd, watched.Path,
 								   filename != "" ? filename : "\"\"",
-								   iev.cookie);
+								   qe.iev.cookie);
 					}
 
 					if (Event != null) {
 						try {
 							Event (watched.Wd, watched.Path, filename, 
-							       iev.mask, iev.cookie);
+							       qe.iev.mask, qe.iev.cookie);
 						} catch (Exception e) {
 							Logger.Log.Error ("Caught exception inside Inotify.Event");
 							Logger.Log.Error (e); 
@@ -423,7 +431,7 @@ namespace Beagle.Util {
 
 				// If a directory we are watching gets ignored, we need
 				// to remove it from the watchedByFoo hashes.
-				if (iev.mask == EventType.Ignored) {
+				if (qe.iev.mask == EventType.Ignored) {
 					lock (watched_by_wd)
 						Forget (watched);
 				}

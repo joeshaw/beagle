@@ -1,3 +1,9 @@
+2005-01-28  Robert Love  <rml@novell.com>
+
+	* Util/Inotify.cs: update for inotify ABI changes (dynamic filenames)
+	* glue/inotify-glue.c: ditto
+	* glue/inotify.h: header from inotify 0.18
+
 2005-01-28  Veerapuram Varadhan	 <vvaradhan@novell.com>
 
 	* Filter/FilterOpenOffice.cs: Fix for Bug#:162910.

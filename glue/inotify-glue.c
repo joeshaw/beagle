@@ -127,22 +127,25 @@ inotify_glue_ignore (int fd, int wd)
 #define PENDING_THRESHOLD(qsize)   ((qsize) >> 1)
 
 void
-inotify_snarf_events (int fd, int timeout_secs, int *num_read_out, void **buffer_out)
+inotify_snarf_events (int fd, int timeout_secs, int *nr, void **buffer_out)
 {
     struct timeval timeout;
     fd_set read_fds;
-    int N, select_retval;
+    int select_retval;
     int pending, prev_pending, pending_pause_count;
     static struct inotify_event *buffer = NULL;
     static size_t buffer_size;
-    
+
     /* Allocate our buffer the first time we try to read events. */
     if (buffer == NULL) {
-	buffer_size = sizeof (struct inotify_event) * max_queued_events;
+	buffer_size = sizeof (struct inotify_event) + 16;  /* guess avg len */
+	buffer_size *= max_queued_events;
 	buffer = malloc (buffer_size);
 	if (!buffer) {
 		/* FIXME: We should have some method of actual error here .. */
 		perror ("malloc");
+		*buffer_out = NULL;
+		return;
 	}
     }
 
@@ -157,10 +160,8 @@ inotify_snarf_events (int fd, int timeout_secs, int *num_read_out, void **buffer
     select_retval = select (fd+1, &read_fds, NULL, NULL, &timeout);
 
     /* If we time out, just return */
-    if (select_retval == 0) {
-	    *num_read_out = 0;
+    if (select_retval == 0)
 	    return;
-    }
 
     /* Reading events in groups significantly helps performance.
        If there are some events (but not too many!) ready, wait a
@@ -173,7 +174,7 @@ inotify_snarf_events (int fd, int timeout_secs, int *num_read_out, void **buffer
 
 	if (ioctl (fd, FIONREAD, &pending) == -1)
 	    break;
-	pending /= sizeof (struct inotify_event);
+	pending /= sizeof (struct inotify_event) + 16;	/* guess avg len */
 
 	/* Don't wait if the number of pending events is too close
 	   to the maximum queue size. */
@@ -193,11 +194,8 @@ inotify_snarf_events (int fd, int timeout_secs, int *num_read_out, void **buffer
 	select (0, NULL, NULL, NULL, &timeout);
     }
 
-    N = read (fd, buffer,  buffer_size);
-    N /= sizeof (struct inotify_event);
+    *nr = read (fd, buffer, buffer_size);
 
-    *num_read_out = N;
     *buffer_out = buffer;
 }
-
 
