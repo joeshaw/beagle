@@ -66,6 +66,8 @@ namespace Beagle.IndexHelper {
 
 			next_flush = NewNextFlush ();
 		}
+		
+		public string Name { get { return name; } }
 
 #if DBUS_IS_BROKEN_BROKEN_BROKEN
 		private class HoistChanged {
@@ -130,8 +132,14 @@ namespace Beagle.IndexHelper {
 #if DBUS_IS_BROKEN_BROKEN_BROKEN
 			private bool FlushCompleteIdleHandler ()
 			{
-				Impl.FlushComplete ();
-				Impl.CloseIfQueued ();
+				try {
+					Impl.FlushComplete ();
+					Impl.CloseIfQueued ();
+				} catch (Exception ex) {
+					Logger.Log.Warn ("Caught exception in FlushCompleteIdleHandler for '{0}'", Impl.Name);
+					Logger.Log.Warn (ex);
+				}
+
 				return false;
 			}
 #endif
@@ -147,7 +155,7 @@ namespace Beagle.IndexHelper {
 				NewUri = new_uri;
 			}
 
-			public void DoFlush ()
+			private void RealDoFlush ()
 			{
 				Impl.is_flushing = true;
 
@@ -211,6 +219,16 @@ namespace Beagle.IndexHelper {
 #else
 				Impl.FlushComplete ();
 #endif
+			}
+
+			public void DoFlush ()
+			{
+				try {
+					RealDoFlush ();
+				} catch (Exception ex) {
+					Logger.Log.Warn ("Caught exception while flushing '{0}'", Impl.Name);
+					Logger.Log.Warn (ex);
+				}
 			}
 		}
 
