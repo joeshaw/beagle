@@ -1,33 +1,31 @@
-MCS = mcs -g
-
-MCSFLAGS= -debug+ -debug:full -nologo -target:library 
+CSC = mcs -g
 
 XSP_TARGET = bgXsp.dll
 
-CLEANFILES = $(XSP_TARGET)
-EXTRA_DIST = $(xsp_only) 
+XSP_CSFLAGS = -target:library 
 
-ASSEMBLIES =	-r:System 		\
-		-r:System.Web 		\
-		-r:System.Runtime.Remoting	
+XSP_ASSEMBLIES = 			\
+	-r:System 			\
+	-r:System.Web 			\
+	-r:System.Runtime.Remoting	
 
-xsp_only =  $(srcdir)/IApplicationHost.cs \
-	  $(srcdir)/MonoWorkerRequest.cs \
-	  $(srcdir)/Tracing.cs \
-	  $(srcdir)/ApplicationServer.cs \
-	  $(srcdir)/LingeringNetworkStream.cs \
-	  $(srcdir)/BaseApplicationHost.cs \
-	  $(srcdir)/BaseRequestBroker.cs \
-	  $(srcdir)/IWebSource.cs \
-	  $(srcdir)/server.cs \
-	  $(srcdir)/InitialWorkerRequest.cs \
-	  $(srcdir)/XSPApplicationHost.cs \
-	  $(srcdir)/XSPWorkerRequest.cs \
-		$(srcdir)/AssemblyInfo.cs
+XSP_CSFILES =  					\
+	$(srcdir)/IApplicationHost.cs		\
+	$(srcdir)/MonoWorkerRequest.cs		\
+	$(srcdir)/Tracing.cs			\
+	$(srcdir)/ApplicationServer.cs		\
+	$(srcdir)/LingeringNetworkStream.cs	\
+	$(srcdir)/BaseApplicationHost.cs	\
+	$(srcdir)/BaseRequestBroker.cs		\
+	$(srcdir)/IWebSource.cs			\
+	$(srcdir)/server.cs			\
+	$(srcdir)/InitialWorkerRequest.cs	\
+	$(srcdir)/XSPApplicationHost.cs		\
+	$(srcdir)/XSPWorkerRequest.cs		\
+	$(srcdir)/AssemblyInfo.cs
 
-
-$(XSP_TARGET): $(xsp_only) 
-	$(MCS) $(MCSFLAGS) /out:$(XSP_TARGET) $(ASSEMBLIES) $(xsp_only) 
+$(XSP_TARGET): $(XSP_CSFILES)
+	$(CSC) -o $@ $(XSP_CSFLAGS) $(XSP_CSFILES) $(XSP_ASSEMBLIES)
 
 all: $(XSP_TARGET)
 
@@ -37,3 +35,8 @@ install-data-local: $(XSP_TARGET)
 
 uninstall-local:
 	cd $(DESTDIR)$(pkglibdir) && rm -f $(XSP_TARGET)
+
+
+EXTRA_DIST = $(XSP_CSFILES)
+
+CLEANFILES = $(XSP_TARGET) $(XSP_TARGET).mdb
