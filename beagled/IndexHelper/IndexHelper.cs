@@ -80,7 +80,7 @@ namespace Beagle.IndexHelper {
 #if HAVE_OLD_DBUS
 			process_owner = Beagle.Daemon.DBusisms.BusDriver.GetServiceOwner (Beagle.DBusisms.Name);
 #else
-                        process_owner = Beagle.Daemon.DBusisms.BusDriver.GetOwner (Beagle.DBusisms.Name);
+                        process_owner = Beagle.Daemon.DBusisms.BusDriver.GetNameOwner (Beagle.DBusisms.Name);
 #endif
 
 			// Start monitoring the beagle daemon
