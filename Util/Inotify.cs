@@ -253,8 +253,8 @@ namespace Beagle.Util {
 				// to be monitored, don't fire the event.
 				if ((info.Mask & type) != 0) {
 					if (Verbose)
-						Console.WriteLine ("*** inotify: {0} {1} {2} {3}",
-								   type, info.Path,
+						Console.WriteLine ("*** inotify: {0} {1} {2} {3} {4}",
+								   type, wd, info.Path,
 								   filename != "" ? filename : "\"\"",
 								   cookie);
 					if (InotifyEvent != null)
