@@ -872,6 +872,17 @@ namespace Beagle.Daemon.FileSystemQueryable {
 			}
 		}
 
+		// This is used by the FSW backend when a subdirectory
+		// below a watched directory reports a change.
+		public void ReportChanges (Directory dir)
+		{
+			lock (big_lock) {
+				DirectoryPrivate priv = (DirectoryPrivate) dir;
+				priv.SetState (State.Dirty);
+				priv.ReportActivity ();
+			}
+		}
+
 		public void SetAllToUnknown ()
 		{
 			lock (big_lock) {
