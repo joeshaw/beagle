@@ -16,6 +16,7 @@ CSFILES =					\
 	$(srcdir)/TileFromTemplate.cs		\
 	$(srcdir)/TileContact.cs		\
 	$(srcdir)/TileFile.cs			\
+	$(srcdir)/TileFolder.cs			\
 	$(srcdir)/TileGoogle.cs			\
 	$(srcdir)/TileImLog.cs			\
 	$(srcdir)/TileMailMessage.cs		\
@@ -36,6 +37,7 @@ RESOURCEFILES =					\
 	$(srcdir)/template-hit-collection.html	\
 	$(srcdir)/template-contact.html		\
 	$(srcdir)/template-file.html		\
+	$(srcdir)/template-folder.html		\
 	$(srcdir)/template-google.html		\
 	$(srcdir)/template-im-log.html		\
 	$(srcdir)/template-mail-message.html	\

@@ -32,7 +32,8 @@ using BU = Beagle.Util;
 
 namespace Beagle {
 
-	[HitFlavor (Type="File"), HitFlavor (Uri="file://*")]
+	[HitFlavor (Name="Files", Emblem="document.png", Type="File"),
+	 HitFlavor (Name="Files", Emblem="document.png", Uri="file://*")]
 	public class TileFile : TileFromTemplate {
 
 		Hit hit;
@@ -65,6 +66,8 @@ namespace Beagle {
 
 		override protected string ExpandKey (string key)
 		{
+			if (hit.FileInfo == null)
+				Console.WriteLine ("FileInfo is null");
 			switch (key) {
 			case "FileName":
 				return hit.FileName;

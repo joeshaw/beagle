@@ -37,16 +37,16 @@ namespace Beagle {
 		private int id = 0;
 
 		// A URI we can use to locate the source of this match.
-		private String uri = null;
+		private string uri = null;
 
 		// File, Web, MailMessage, IMLog, etc.
-		private String type = null;
+		private string type = null;
 
 		// If applicable, otherwise set to null.
-		private String mimeType = null;
+		private string mimeType = null;
 
 		// IndexUser, IndexSystem, Google, Addressbook, iFolder, etc.
-		private String source = null;
+		private string source = null;
 
 		// High scores imply greater relevance.
 		private float scoreRaw = 0.0f;
@@ -58,8 +58,20 @@ namespace Beagle {
 		private Hashtable data = new Hashtable (new CaseInsensitiveHashCodeProvider (), 
 							new CaseInsensitiveComparer ());
 
-		private String path = ""; // == uninitialized
+		
+		private enum SpecialType {
+			Unknown,
+			None,
+			Invalid,
+			File,
+			Directory
+		}
+
+		SpecialType special = SpecialType.Unknown;
+
+		private string path;
 		private FileInfo fileInfo = null;
+		private DirectoryInfo directoryInfo = null;
 
 		//////////////////////////
 
@@ -68,22 +80,22 @@ namespace Beagle {
 			set { id = value; }
 		}
 
-		public String Uri {
+		public string Uri {
 			get { return uri; }
 			set { uri = value; }
 		}
 
-		public String Type {
+		public string Type {
 			get { return type; }
 			set { type = value; }
 		}
 
-		public String MimeType {
+		public string MimeType {
 			get { return mimeType; }
 			set { mimeType = value; }
 		}
 	
-		public String Source {
+		public string Source {
 			get { return source; }
 			set { source = value; }
 		}
@@ -103,53 +115,85 @@ namespace Beagle {
 		}
 
 		//////////////////////////
+		
+		private void SpecialHandling ()
+		{
+			if (special != SpecialType.Unknown)
+				return;
 
-		public String Path {
+			if (Uri.StartsWith ("file://")) {
+				path = Uri.Substring ("file://".Length);
+				if (File.Exists (path))
+					special = SpecialType.File;
+				else if (Directory.Exists (path))
+					special = SpecialType.Directory;
+				else
+					special = SpecialType.Invalid;
+			}
+			
+			if (special == SpecialType.Unknown)
+				special = SpecialType.None;
+		}
+
+		public bool IsValid {
+			get { SpecialHandling (); return special != SpecialType.Invalid; }
+		}
+
+		public bool IsFile {
+			get { SpecialHandling (); return special == SpecialType.File; }
+		}
+
+		public bool IsDirectory {
+			get { SpecialHandling (); return special == SpecialType.Directory; }
+		}
+
+		public bool IsFileSystem {
+			get { return IsFile || IsDirectory; }
+		}
+
+		public string Path {
+			get { SpecialHandling (); return path; }
+		}
+
+		public string FileName {
+			get { return Path != null ? System.IO.Path.GetFileName (Path) : null; }
+		}
+
+		public string DirectoryName {
+			get { return Path != null ? System.IO.Path.GetDirectoryName (Path) : null; }
+		}
+
+		public FileSystemInfo FileSystemInfo {
 			get {
-				if (path == null)
+				if (IsFile)
+					return (FileSystemInfo) FileInfo;
+				else if (IsDirectory)
+					return (FileSystemInfo) DirectoryInfo;
+				else
 					return null;
-
-				if (path == "") {
-					if (Uri.StartsWith ("file://")) {
-						path = Uri.Substring ("file://".Length);
-						if (! File.Exists (path))
-							path = null;
-					} else {
-						path = null;
-					}
-				}
-
-				return path;
 			}
 		}
 
-		// This will return false for file:// URIs if the referenced
-		// file doesn't exist.
-		public bool IsFile {
-			get { return Path != null; }
-		}
-
-		public String FileName {
-			get { return IsFile ? System.IO.Path.GetFileName (Path) : null; }
-		}
-
-		public String DirectoryName {
-			get { return IsFile ? System.IO.Path.GetDirectoryName (Path) : null; }
-		}
-
-		public FileInfo FileInfo
-		{
+		public FileInfo FileInfo {
 			get { 
-				if (fileInfo == null && Path != null)
+				if (fileInfo == null && IsFile)
 					fileInfo = new FileInfo (Path);
 				return fileInfo;
 			}
 		}
 
+		public DirectoryInfo DirectoryInfo {
+			get {
+				if (directoryInfo == null && IsDirectory)
+					directoryInfo = new DirectoryInfo (Path);
+				return directoryInfo;
+			}
+		}
+
 		public bool IsUpToDate {
-			get { return ! IsFile // non-files are always up-to-date
+			get { return ! IsFileSystem // non-files are always up-to-date
 				      || ! ValidTimestamp // non-timestamped stuff too
-				      || (FileInfo.LastWriteTime  <= Timestamp); }
+				      || (FileSystemInfo.LastWriteTime  <= Timestamp); }
 		}
 
 
@@ -163,15 +207,15 @@ namespace Beagle {
 			get { return properties.Keys; }
 		}
 
-		virtual public String this [String key] {
-			get { return (String) properties [key]; }
+		virtual public string this [string key] {
+			get { return (string) properties [key]; }
 			set { 
 				if (value == null || value == "") {
 					if (properties.Contains (key))
 						properties.Remove (key);
 					return;
 				}
-				properties [key] = value as String;
+				properties [key] = value as string;
 			}
 		}
 

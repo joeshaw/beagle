@@ -74,10 +74,8 @@ namespace Best {
 
 			array.Sort ();
 
-			foreach (TileHitCollection tile in array) {
-				ctx.WriteLine ("MaxScore={0}", tile.MaxScore);
+			foreach (TileHitCollection tile in array)
 				ctx.Tile (tile);
-			}
 		}
 	}
 }

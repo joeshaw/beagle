@@ -48,12 +48,7 @@ namespace Beagle {
 			// Try to short-circuit the request for document.png,
 			// replacing it w/ the appropriate icon for the hit's mime type.
 			if (url == "document.png") {
-				Gtk.IconSize size = (Gtk.IconSize) 48;
-				string path = BU.GnomeIconLookup.LookupMimeIcon (hit.MimeType,
-										 size);
-				if (path == null)
-					return false;
-				Stream icon = new FileStream (path, FileMode.Open, FileAccess.Read);
+				Stream icon = new FileStream (hit.Path, FileMode.Open, FileAccess.Read);
 				byte[] buffer = new byte [8192];
 				int n;
 				while ((n = icon.Read (buffer, 0, 8192)) != 0)
@@ -105,7 +100,7 @@ namespace Beagle {
 		override protected bool RenderKey (string key, TileRenderContext ctx)
 		{
 			if (key == "Thumbnail") {
-				ctx.Image ("document.png", new TileActionHandler (OpenPicture));
+				ctx.Image ("document.png", 64, -1, new TileActionHandler (OpenPicture));
 				return true;
 			}
 

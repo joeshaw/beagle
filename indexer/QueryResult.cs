@@ -149,7 +149,7 @@ namespace Beagle {
 					      "Adding Hits to idle QueryResult");
 		
 				foreach (Hit hit in someHits)
-					if (Relevancy.AdjustScore (hit)) {
+					if (hit.IsValid && Relevancy.AdjustScore (hit)) {
 						filteredHits.Add (hit);
 						hits.Add (hit);
 					}

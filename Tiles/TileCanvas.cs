@@ -444,7 +444,6 @@ namespace Beagle {
 
 		private void OnTileChanged (Tile tile)
 		{
-			Console.WriteLine ("Tile Changed!");
 			ScheduleRender ();
 		}
 	}

@@ -67,7 +67,7 @@ namespace Beagle {
 					if (weight > weightBest) {
 						flavorBest = flavor;
 						weightBest = weight;
-					} else if (weight == weightBest) {
+					} else if (weight == weightBest && flavor.Name != flavorBest.Name) {
 						// This shouldn't happen.
 						Console.WriteLine ("HitFlavor Weight tie! {0} and {1}",
 								   flavorBest, flavor);

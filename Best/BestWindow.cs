@@ -211,7 +211,7 @@ namespace Best {
 			Gtk.Adjustment adj = swin.Vadjustment;
 			if (adj == null)
 				return;
-			Console.WriteLine ("Pre: {0} {1} {2}", adj.Lower, adj.Value, adj.Upper);
+			// FIXME!
 		}
 		
 		private void OnPostRender (object obj, EventArgs args)
@@ -221,9 +221,8 @@ namespace Best {
 			Gtk.Adjustment adj = swin.Vadjustment;
 			if (adj == null)
 				return;
-			Console.WriteLine ("Post: {0} {1} {2}", adj.Lower, adj.Value, adj.Upper);
+			// FIXME!
 		}
-
 
 		private void Search (String searchString)
 		{

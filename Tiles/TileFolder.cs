@@ -1,5 +1,5 @@
 //
-// TileContact.cs
+// TileFolder.cs
 //
 // Copyright (C) 2004 Novell, Inc.
 //
@@ -32,45 +32,60 @@ using BU = Beagle.Util;
 
 namespace Beagle {
 
-	[HitFlavor (Name="People", Emblem="person.png",
-		    Type="Contact")]
-	public class TileContact : TileFromTemplate {
+	[HitFlavor (Name="Folders", Emblem="document.png", Uri="file://*", MimeType="inode/directory")]
+	public class TileFolder : TileFromTemplate {
 
 		Hit hit;
 
-		public TileContact (Hit _hit) : base ("template-contact.html")
+		public TileFolder (Hit _hit) : base ("template-folder.html")
 		{
 			hit = _hit;
 		}
 
-		override public bool HandleUrlRequest (string url, Gtk.HTMLStream stream)
-		{
-			// Try to short-circuit the request for contact-icon.png,
-			// replacing it w/ a photo of the contact.
-			if (url == "contact-icon.png") {
-				byte[] data = (byte[]) hit.GetData ("Photo");
-				if (data != null) {
-					stream.Write (data, data.Length);
-					return true;
-				}
-			}
-
-			return false;
-		}
-
 		override protected string ExpandKey (string key)
 		{
-			return hit [key];
+			switch (key) {
+			case "FileName":
+				return hit.FileName;
+
+			case "LastWriteTime":
+				return BU.StringFu.DateTimeToFuzzy (hit.FileSystemInfo.LastWriteTime);
+
+			case "Contents":
+				int n = hit.DirectoryInfo.GetFileSystemInfos().Length;
+				if (n == 0)
+					return "Empty";
+				else if (n == 1)
+					return "Contains 1 Item";
+				else
+					return "Contains " + n + " Items";
+			}
+
+			return null;
 		}
 		
+		private void OpenFolder ()
+		{
+			Console.WriteLine ("Open {0}", hit.Uri);
+
+			Process p = new Process ();
+			p.StartInfo.UseShellExecute = false;
+			p.StartInfo.FileName = "nautilus";
+			p.StartInfo.Arguments = hit.Path;
+			try {
+				p.Start ();
+			} catch { }
+		}
+
 		override protected bool RenderKey (string key, TileRenderContext ctx)
 		{
 			if (key == "Icon") {
-				ctx.Image ("contact-icon.png", 64, -1, null);
+				ctx.Image ("icon-folder.png", new TileActionHandler (OpenFolder));
 				return true;
 			}
 
 			return base.RenderKey (key, ctx);
 		}
+
 	}
 }
