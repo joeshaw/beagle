@@ -1,5 +1,5 @@
 //
-// EvolutionAddressbookDriver.cs
+// BookViewDriver.cs
 //
 // Copyright (C) 2004 Novell, Inc.
 //
@@ -24,44 +24,28 @@
 // DEALINGS IN THE SOFTWARE.
 //
 
-
 using System;
 using System.Collections;
 using System.Text;
+using Beagle.Daemon;
 
-namespace Beagle.Daemon {
+using System.Runtime.InteropServices;
 
-	[QueryableFlavor (Name="EvolutionDataServer", Domain=QueryDomain.Local)]
-	public class EvolutionDataServerDriver : IQueryable {
+namespace Beagle.Daemon.EvolutionDataServerQueryable {
 
-		public event IQueryableChangedHandler ChangedEvent;
-
-		Evolution.Book addressbook = null;
-
-		public EvolutionDataServerDriver ()
-		{
-			try {
-				addressbook = Evolution.Book.NewSystemAddressbook ();
-				addressbook.Open (true);
-			} catch {
-				addressbook = null;
-				Console.WriteLine ("WARNING: Could not open Evolution addressbook.  Addressbook searching is disabled.");
-			}
-		}
-
-		private Evolution.Book Addressbook {
-			get { return addressbook; }
-		}
-
+	internal class BookViewDriver {
+		private Evolution.BookView view;
+		private IQueryResult result;
+		
 		public Hit HitFromContact (Evolution.Contact contact)
 		{
 			Hit hit = new Hit ();
-
+			
 			hit.Uri    = new Uri ("contact://" + contact.Id, true); // FIXME!
 			hit.Type   = "Contact";
 			hit.Source = "EvolutionDataServer";
 			hit.ScoreRaw  = 1.0f; // FIXME
-
+			
 			hit ["fixme:FileAs"] = contact.FileAs;
 			hit ["fixme:GivenName"] = contact.GivenName;
 			hit ["fixme:FamilyName"] = contact.FamilyName;
@@ -106,13 +90,13 @@ namespace Beagle.Daemon {
 			hit ["fixme:Icscalendar"] = contact.Icscalendar;
 			hit ["fixme:Spouse"] = contact.Spouse;
 			hit ["fixme:Note"] = contact.Note;
-			
+		
 			if (contact.Photo.Data != null && contact.Photo.Data.Length > 0)
 				hit.SetData ("Photo", contact.Photo.Data);
-
+		
 			// FIXME: List?
 			// FIXME: ListShowAddresses?
-
+		
 			// FIXME: Should we not drop the extra Im addresses?
 			if (contact.ImAim.Length > 0)
 				hit ["fixme:ImAim"] = contact.ImAim [0];
@@ -124,7 +108,7 @@ namespace Beagle.Daemon {
 				hit ["fixme:ImMsn"] = contact.ImMsn [0];
 			if (contact.ImYahoo.Length > 0)
 				hit ["fixme:ImYahoo"] = contact.ImYahoo [0];
-
+		
 			String name = "";
 			if (contact.GivenName != null && contact.GivenName != "")
 				name = contact.GivenName;
@@ -132,38 +116,72 @@ namespace Beagle.Daemon {
 				name += " " + contact.FamilyName;
 			if (name.Length > 0)
 				hit ["fixme:Name"] = name;
-
+		
 			if (hit ["fixme:Email1"] != null)
 				hit ["fixme:Email"] = hit ["fixme:Email1"];
-
+		
 			return hit;
 		}
+	
+		void OnContactsAdded (object o,
+				      Evolution.ContactsAddedArgs args)
+		{
+			System.Console.WriteLine ("contact added");
+		
+			ArrayList array = new ArrayList ();
+		
+			foreach (Evolution.Contact contact in args.Contacts) {
+				Hit hit = HitFromContact (contact);
+				array.Add (hit);
+			}
+		
+			result.Add (array);
+		}
+	
+		void OnContactsRemoved (object o,
+					Evolution.ContactsRemovedArgs args)
+		{
+			System.Console.WriteLine ("contact removed");
+		
+			// FIXME: This is a temporary workaround for the 
+			// fact that the evolution bindings return a 
+			// GLib.List with an object type, but there
+			// are really strings in there
+			GLib.List idList = new GLib.List (args.Ids.Handle,
+							  typeof (string));
 
-		public String Name {
-			get { return "Addressbook"; }
+			ArrayList array = new ArrayList ();
+
+			foreach (string id in idList) {
+				array.Add (new Uri ("contact://" + id, true)); // FIXME
+			}
+
+			result.Subtract (array);
+		}
+	
+		void OnContactsChanged (object o,
+					Evolution.ContactsChangedArgs args)
+		{
+			// FIXME: handle this as a remove/add?  Add a
+			// "changed" event to beagle?
+		}
+	
+		private void OnResultCancelled (QueryResult source) 
+		{
+			view.ContactsAdded -= OnContactsAdded;
+			view.ContactsRemoved -= OnContactsRemoved;
+			view.ContactsChanged -= OnContactsChanged;
+
+			view.Dispose ();
+
+			view = null;
+			result = null;
 		}
 
-		public bool AcceptQuery (QueryBody body)
+		public BookViewDriver (Evolution.Book addressbook,
+				       QueryBody body,
+				       IQueryResult _result)
 		{
-			if (addressbook == null)
-				return false;
-			
-			if (! body.HasText)
-				return false;
-
-			if (! body.AllowsDomain (QueryDomain.Local))
-				return false;
-
-			return true;
-		}
-
-		public void DoQuery (QueryBody body, 
-				     IQueryResult result,
-				     IQueryableChangeData changeData)
-		{
-			if (addressbook == null)
-				return;
-			
 			// FIXME: Evolution.BookQuery's bindings are all
 			// screwed up, so we can't construct compound queries.
 			// This will have to do for now.
@@ -172,27 +190,26 @@ namespace Beagle.Daemon {
 				string text = (string) body.Text [i];
 				ebqs [i] = Evolution.BookQuery.AnyFieldContains (text);
 			}
-
+		
 			Evolution.BookQuery bq;
 			bq = Evolution.BookQuery.And (ebqs, false);
+		
+			view = addressbook.GetBookView (bq, null, -1);
 
-			Evolution.Contact[] contacts;
-			contacts = Addressbook.GetContacts (bq);
+			result = _result;
+		
+			view.ContactsAdded += OnContactsAdded;
+			view.ContactsRemoved += OnContactsRemoved;
+			view.ContactsChanged += OnContactsChanged;
 
-			if (result.Cancelled)
-				return;
-
-			ArrayList array = new ArrayList ();
-
-			foreach (Evolution.Contact contact in contacts) {
-				Hit hit = HitFromContact (contact);
-				array.Add (hit);
-			}
-			
-			// Add is a no-op if we've already cancelled.
-			result.Add (array);
+			// FIXME: bad hack - need Cancelled on IQueryResult
+			QueryResult queryResult = (QueryResult)result;
+			queryResult.CancelledEvent += OnResultCancelled;
 		}
-
+	
+		public void Start () 
+		{
+			view.Start ();
+		}
 	}
-
 }

@@ -67,7 +67,6 @@ namespace Beagle.Daemon {
 				result = null;
 			}
 		}
-
 		private void AttachResult ()
 		{
 			DisconnectResult ();
@@ -135,12 +134,14 @@ namespace Beagle.Daemon {
 
 		public void Dispose ()
 		{
+			DisconnectResult ();
 			driver.ChangedEvent -= OnQueryDriverChanged;
 			GC.SuppressFinalize (this);
 		}
 
 		~QueryImpl ()
 		{
+			DisconnectResult ();
 			driver.ChangedEvent -= OnQueryDriverChanged;
 		}
 

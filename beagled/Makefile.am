@@ -187,10 +187,14 @@ gaimlogqueryable = $(srcdir)/GaimLogQueryable
 GAIM_LOG_QUERYABLE_CSFILES =				\
 	$(gaimlogqueryable)/GaimLogQueryable.cs
 
+edsqueryable = $(srcdir)/EvolutionDataServerQueryable
+EDS_QUERYABLE_CSFILES =                                 \
+	$(edsqueryable)/BookViewDriver.cs               \
+	$(edsqueryable)/EvolutionDataServerQueryable.cs 
+
 tomboyqueryable = $(srcdir)/TomboyQueryable
 TOMBOY_QUERYABLE_CSFILES =				\
 	$(tomboyqueryable)/TomboyQueryable.cs
-
 
 DAEMON_DLL_CSFILES = 				\
 	$(LUCENE_CSFILES)			\
@@ -232,7 +236,7 @@ DAEMON_DLL_ASSEMBLIES = 			\
 
 if ENABLE_EVO_SHARP
 DAEMON_DLL_CSFLAGS += -define:ENABLE_EVO_SHARP
-DAEMON_DLL_CSFILES += $(srcdir)/EvolutionDataServerDriver.cs
+DAEMON_DLL_CSFILES += 	$(EDS_QUERYABLE_CSFILES)
 DAEMON_DLL_ASSEMBLIES += $(EVO_SHARP_LIBS)
 endif
 
