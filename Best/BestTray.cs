@@ -22,12 +22,16 @@ namespace Best {
 		BestWindow win;
 		Gtk.Button button;
 		Beagle.Util.GConfXKeybinder keybinder;
+		int PosX;
+		int PosY;
 
 		[DllImport ("libtrayiconglue")]
 		private static extern IntPtr egg_tray_icon_new (string name);
 
 		public BestTray (BestWindow bw)
 		{
+			PosX = 0;
+			PosY = 0;
 			// FIXME: My tray icon is clipped with a 28 pixel tray
 			Raw = egg_tray_icon_new ("Search");
 
@@ -65,9 +69,11 @@ namespace Best {
 		{
 			if (! win.Visible) {
 				win.Show ();
+				win.Move (PosX, PosY);
 				win.Present ();
 				win.FocusEntry ();
 			} else {
+				win.GetPosition (out PosX, out PosY);
 				win.Hide ();
 			}
 		}
