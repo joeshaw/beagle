@@ -1,3 +1,15 @@
+2005-01-03  Veerapuram Varadhan  <vvaradhan@novell.com>
+
+	* Tiles/TilePresentation.cs, Tiles/TileDocs.cs,
+	Tiles/template-presentation.html, Tiles/template-docs.html: Added to
+	display Title, number of slides, pages and words in Best.
+
+	* Filters/FilterPdf.cs: Added DoPullProperties, uses "pdfinfo" command.
+
+	* Filters/FilterOpenOffice.cs: Fix for combination bug
+
+	* Filters/FilterAbiword.cs: Typo correction.
+	
 2004-12-23  Veerapuram Varadhan  <vvaradhan@novell.com>
 
 	* Filters/FilterAbiword.cs: Improved validations.
