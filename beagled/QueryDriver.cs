@@ -89,7 +89,8 @@ namespace Beagle.Daemon {
 		// assemble a Queryable object and stick it into our list of queryables.
 		static void ScanAssembly (Assembly assembly)
 		{
-			DateTime t1 = DateTime.Now;
+			int count = 0;
+
 			foreach (Type type in assembly.GetTypes ()) {
 				if (TypeImplementsInterface (type, typeof (IQueryable))) {
 					foreach (object obj in Attribute.GetCustomAttributes (type)) {
@@ -99,26 +100,25 @@ namespace Beagle.Daemon {
 						
 						if (! UseQueryable (flavor.Name))
 							continue;
-						
+
 						IQueryable iq = null;
 						try {
 							iq = Activator.CreateInstance (type) as IQueryable;
 						} catch (Exception e) {
-							Logger.Log.Error ("Caught exception while activiting {0} backend", flavor.Name);
+							Logger.Log.Error ("Caught exception while instantiating {0} backend", flavor.Name);
 							Logger.Log.Error (e);
 						}
-						if (iq == null)
-							continue;
 
-						Queryable q = new Queryable (flavor, iq);
-						queryables.Add (q);
-						break;
+						if (iq != null) {
+							Queryable q = new Queryable (flavor, iq);
+							queryables.Add (q);
+							++count;
+							break;
+						}
 					}
 				}
 			}
-			DateTime t2 = DateTime.Now;
-
-			Logger.Log.Debug ("Scanned assembly '{0}' in {1:0.00}s", assembly, (t2-t1).TotalSeconds);
+			Logger.Log.Debug ("Found {0} types in {1}", count, assembly.FullName);
 		}
 
 		static bool initialized = false;
@@ -157,9 +157,8 @@ namespace Beagle.Daemon {
 
 		public void Start ()
 		{
-			foreach (Queryable q in queryables) {
+			foreach (Queryable q in queryables)
 				q.Start ();
-			}
 		}
 
 		public void DoQuery (QueryBody body, QueryResult result)
