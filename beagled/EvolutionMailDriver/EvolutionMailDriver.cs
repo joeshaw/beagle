@@ -161,6 +161,32 @@ namespace Beagle.Daemon {
 			return true;
 		}
 
+		private void LoadCache (string appDataName)
+		{
+			Stream cacheStream;
+			BinaryFormatter formatter;
+
+			try {
+				cacheStream = PathFinder.ReadAppData ("MailIndex", appDataName);
+				formatter = new BinaryFormatter ();
+				this.mapping = formatter.Deserialize (cacheStream) as Hashtable;
+				cacheStream.Close ();
+				log.Debug ("Successfully loaded previous crawled data from disk: {0}", appDataName);
+			} catch {
+				this.mapping = new Hashtable ();
+			}
+		}
+
+		private void SaveCache (string appDataName)
+		{
+			Stream cacheStream;
+			BinaryFormatter formatter;
+			
+			cacheStream = PathFinder.WriteAppData ("MailIndex", appDataName);
+			formatter = new BinaryFormatter ();
+			formatter.Serialize (cacheStream, mapping);
+			cacheStream.Close ();
+		}
 
 		public Indexable GetNextIndexable ()
 		{
@@ -184,21 +210,17 @@ namespace Beagle.Daemon {
 			appDataName = "status-" + this.accountName + "-" + this.folderName.Replace ('/', '-');
 
 			if (this.mapping == null) {
-				try {
-					statusStream = PathFinder.ReadAppData ("MailIndex", appDataName);
-					formatter = new BinaryFormatter ();
-					this.mapping = formatter.Deserialize (statusStream) as Hashtable;
-					statusStream.Close ();
-					log.Debug ("Successfully loaded previous crawled data from disk: {0}", appDataName);
-				} catch {
-					this.mapping = new Hashtable ();
-				}
+				LoadCache (appDataName);
 
 				this.deletedList = new ArrayList (this.mapping.Keys);
 			}
 
 			if (this.summaryEnumerator.MoveNext ()) {
 				Camel.MessageInfo mi = this.summaryEnumerator.Current as Camel.MessageInfo;
+
+				// Checkpoint our progress to disk every 500 messages
+				if (this.count > 0 && (this.count & 500) == 0)
+					SaveCache (appDataName);
 
 				if ((this.count & 1500) == 0) {
 					log.Debug ("{0}: indexed {1} messages ({2}/{3} {4:###.0}%)",
@@ -234,13 +256,8 @@ namespace Beagle.Daemon {
 				} 
 
 				this.deletedList.Remove (mi.uid);
-			} else {
-				statusStream = PathFinder.WriteAppData ("MailIndex", appDataName);
-				formatter = new BinaryFormatter ();
-				formatter.Serialize (statusStream, mapping);
-				statusStream.Close ();
-				log.Debug ("Wrote previously crawled data to disk: {0}", appDataName);
-			}
+			} else
+				SaveCache (appDataName);
 
 			return indexable;
 		}
