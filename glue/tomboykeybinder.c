@@ -27,6 +27,8 @@ typedef struct _Binding {
 	uint                  modifiers;
 } Binding;
 
+#define IGNORED_MODS (GDK_LOCK_MASK | GDK_MOD2_MASK | GDK_MOD3_MASK | GDK_MOD4_MASK | GDK_MOD5_MASK)
+
 static gboolean 
 do_grab_key (Binding *binding)
 {
@@ -35,6 +37,7 @@ do_grab_key (Binding *binding)
 
 	EggVirtualModifierType virtual_mods = 0;
 	guint keysym = 0;
+	int i;
 
 	if (keymap == NULL || rootwin == NULL)
 		return FALSE;
@@ -59,13 +62,15 @@ do_grab_key (Binding *binding)
 
 	TRACE (g_print ("Got modmask %d\n", binding->modifiers));
 
-	XGrabKey (GDK_WINDOW_XDISPLAY (rootwin),
-		  binding->keycode,
-                  binding->modifiers,
-                  GDK_WINDOW_XWINDOW (rootwin),
-                  True,
-                  GrabModeAsync, 
-		  GrabModeAsync);
+	for (i = 0; i < 32; i++) {
+		XGrabKey (GDK_WINDOW_XDISPLAY (rootwin),
+			  binding->keycode,
+			  binding->modifiers | (IGNORED_MODS & (1 << i)),
+			  GDK_WINDOW_XWINDOW (rootwin),
+			  True,
+			  GrabModeAsync, 
+			  GrabModeAsync);
+	}
 
 	return TRUE;
 }
@@ -74,13 +79,16 @@ static gboolean
 do_ungrab_key (Binding *binding)
 {
 	GdkWindow *rootwin = gdk_get_default_root_window ();
+	int i;
 
 	TRACE (g_print ("Removing grab for '%s'\n", binding->keystring));
 
-	XUngrabKey (GDK_WINDOW_XDISPLAY (rootwin),
-		    binding->keycode,
-		    binding->modifiers,
-		    GDK_WINDOW_XWINDOW (rootwin));
+	for (i = 0; i < 32; i++) {
+		XUngrabKey (GDK_WINDOW_XDISPLAY (rootwin),
+			    binding->keycode,
+			    binding->modifiers | (IGNORED_MODS & (1 << i)),
+			    GDK_WINDOW_XWINDOW (rootwin));
+	}
 
 	return TRUE;
 }
@@ -104,7 +112,7 @@ filter_func (GdkXEvent *gdk_xevent, GdkEvent *event, gpointer data)
 			Binding *binding = (Binding *) iter->data;
 
 			if (binding->keycode == xevent->xkey.keycode &&
-			    binding->modifiers == xevent->xkey.state) {
+			    binding->modifiers == (xevent->xkey.state & ~IGNORED_MODS)) {
 
 				TRACE (g_print ("Calling handler for '%s'...\n", 
 						binding->keystring));
