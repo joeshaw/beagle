@@ -86,16 +86,16 @@ namespace Beagle.Filters {
 						   "try", "while", "yield"};
 
 		private enum LineType {
+			None,
 			SingleLineComment,
 			BlockComment,
-			StringConstant, 
-			None
+			StringConstant
 		}
 		
 		private enum LangType {
+			None,
 			C_Style,
-			Python,
-			None
+			Python
 		}
 		
 		LineType SrcLineType;

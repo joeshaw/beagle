@@ -14,6 +14,10 @@ INCLUDES= \
         -DMOZILLA_HOME=\""$(MOZILLA_HOME)\""              \
         -include $(MOZILLA_INCLUDE_ROOT)/mozilla-config.h
 
+if ENABLE_WV1
+INCLUDES += \
+	$(WV1_CFLAGS)
+endif
 
 gluelibdir = $(pkglibdir)
 
@@ -22,6 +26,11 @@ gluelib_LTLIBRARIES = 		\
 	libscreensaverglue.la	\
 	libgeckoglue.la         \
 	libkeyglue.la
+
+if ENABLE_WV1
+gluelib_LTLIBRARIES += \
+	libwv1glue.la
+endif	
 
 libinotifyglue_la_SOURCES =	\
 	inotify.h		\
@@ -43,4 +52,10 @@ libkeyglue_la_SOURCES =         \
 	eggaccelerators.c       \
 	eggaccelerators.h
 
+if ENABLE_WV1
+libwv1glue_la_SOURCES = \
+	wv1-glue.c
+libwv1glue_la_LIBADD = @X_LIBS@ \
+			$(WV1_LIBS)
 
+endif

@@ -303,6 +303,16 @@ AC_SUBST(X_LIBS)
 
 dnl ----------------------------------------------
 
+dnl For the wv1 glue
+
+PKG_CHECK_MODULES(WV1, wv-1.0, enable_wv1=yes, enable_wv1=no)
+AM_CONDITIONAL(ENABLE_WV1, test "x$enable_wv1" = "xyes")
+
+WV1_LIBS=`$PKG_CONFIG --libs wv-1.0`
+AC_SUBST(WV1_LIBS)
+
+dnl ----------------------------------------------
+
 dnl Searchomatic
 
 PKG_CHECK_MODULES(SEARCHOMATIC, gtk+-2.0)
@@ -353,6 +363,7 @@ echo "
 	gst-sharp?		${enable_gst_sharp}
 	Epiphany Extension?	${enable_epiphany_extension}
 	Mozilla Extension?	yes
+	wv1?			${enable_wv1}
 
 	Enable Network		${enable_network}"
 

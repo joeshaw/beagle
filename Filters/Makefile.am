@@ -35,7 +35,6 @@ CSFILES = 				\
 if ENABLE_GSF_SHARP
 CSFILES += 				\
 	$(srcdir)/FilterOle.cs		\
-	$(srcdir)/FilterDOC.cs		\
 	$(srcdir)/FilterPPT.cs
 endif
 
@@ -45,6 +44,11 @@ CSFILES +=				\
 else
 CSFILES +=				\
 	$(srcdir)/FilterMusic.cs
+endif
+
+if ENABLE_WV1
+CSFILES += \
+	$(srcdir)/FilterDOC.cs		
 endif
 
 LOCAL_ASSEMBLIES =				\

@@ -1,3 +1,13 @@
+2004-11-16  Veerapuram Varadhan <vvaradhan@novell.com>
+
+	* configure.in, Filters/Makefile.am, glue/Makefile.am: Added
+	support for wv1.
+
+	* glue/wv1-glue.c: Wrapper to parse MS word files using wv-1.0
+	
+	* Filters/FilterDOC.cs: Modified to use wv1 to get meta-data and
+	text data from MS Word documents.
+
 2004-11-14  Tuomas Kuosmanen  <tigert@tigert.priv>
 
 	* Tiles/template-page.css: made opacity to 0.5 for non-focused
