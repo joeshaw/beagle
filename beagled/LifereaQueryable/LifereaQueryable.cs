@@ -36,39 +36,62 @@ using Beagle.Util;
 
 namespace Beagle.Daemon.LifereaQueryable {
 
-	[QueryableFlavor (Name="Liferea", Domain=QueryDomain.Local)]
+	[QueryableFlavor (Name="Liferea", Domain=QueryDomain.Local, RequireInotify=false)]
 	public class LifereaQueryable : LuceneQueryable {
 
 		private static Logger log = Logger.Get ("LifereaQueryable");
 
-		string lifereaDir;
-
-		int wdLiferea = -1;
+		string liferea_dir;
+		int liferea_wd = -1;
 
 		public LifereaQueryable () : base ("LifereaIndex")
 		{
-			lifereaDir = Path.Combine (PathFinder.HomeDir, ".liferea");
-			lifereaDir = Path.Combine (lifereaDir, "cache");
-			lifereaDir = Path.Combine (lifereaDir, "feeds");
+			liferea_dir = Path.Combine (PathFinder.HomeDir, ".liferea");
+			liferea_dir = Path.Combine (liferea_dir, "cache");
+			liferea_dir = Path.Combine (liferea_dir, "feeds");
 		}
+
+		/////////////////////////////////////////////////
 
 		private void StartWorker ()
 		{
-			Inotify.EventType mask;
-			mask = Inotify.EventType.CloseWrite;
+			if (Inotify.Enabled) {
+				Inotify.EventType mask = Inotify.EventType.CloseWrite;
 
-			wdLiferea = Inotify.Watch (lifereaDir, mask);
+				liferea_wd = Inotify.Watch (liferea_dir, mask);
+				Inotify.Event += OnInotifyEvent;
+			} else {
+                                FileSystemWatcher fsw = new FileSystemWatcher ();
+                                fsw.Path = liferea_dir;
 
-			Inotify.Event += OnInotifyEvent;
+                                fsw.Changed += new FileSystemEventHandler (OnChanged);
+                                fsw.Created += new FileSystemEventHandler (OnChanged);
 
-			Index();
+                                fsw.EnableRaisingEvents = true;
+                        }                                                                                                                                                                                                     
+                        log.Info ("Scanning Liferea feeds...");
+
+                        Stopwatch stopwatch = new Stopwatch ();
+                        int feed_count = 0, item_count = 0;
+
+                        stopwatch.Start ();
+
+                        DirectoryInfo dir = new DirectoryInfo (liferea_dir);
+                        foreach (FileInfo file in dir.GetFiles ()) {
+				item_count += IndexFeed (file.FullName, Scheduler.Priority.Delayed);
+				feed_count++;
+                        }
+
+                        stopwatch.Stop ();
+
+                        log.Info ("Scanned {0} items in {1} feeds in {2}", item_count, feed_count, stopwatch);
 		}
 
 		public override void Start () 
 		{			
 			// FIXME: We should do something more reasonable if
 			// ~/.liferea/cache doesn't exist.
-			DirectoryInfo dir = new DirectoryInfo(lifereaDir);
+			DirectoryInfo dir = new DirectoryInfo(liferea_dir);
 			 
 			if(! dir.Exists)
 				return;
@@ -78,154 +101,140 @@ namespace Beagle.Daemon.LifereaQueryable {
 			ExceptionHandlingThread.Start (new ThreadStart (StartWorker));
 		}
 
+		/////////////////////////////////////////////////
+
+                // Modified/Created event using Inotify
+
 		private void OnInotifyEvent (int wd,
 					     string path,
 					     string subitem,
 					     Inotify.EventType type,
 					     uint cookie)
 		{
-			if (wd != wdLiferea)
+			if (wd != liferea_wd)
 				return;
 
-			// Ignore operations on the directories themselves
 			if (subitem == "")
 				return;
 
-			Index (Path.Combine(path, subitem) );
+			IndexFeed (Path.Combine (path, subitem), Scheduler.Priority.Immediate);
 		}
+
+		// Modified/Created event using FSW
 		
-		private void Index(){
-			Index(null);
-		}
-		
-		private void Index (string filename)
+		private void OnChanged (object o, FileSystemEventArgs args)
 		{
-			FileInfo [] files ;
-			if( filename == null){
-				DirectoryInfo dir = new DirectoryInfo(lifereaDir);
-				files = dir.GetFiles();
-			}
-			else{
-				files = new FileInfo[1];
-				files[0] = new FileInfo(filename);
-				log.Info("indexing " + filename);
-			}
-			
-			
-			Feed f;
-			log.Info ("Scanning Liferea Weblogs");
-			Stopwatch stopwatch = new Stopwatch ();
-			int blogCount = 0, itemCount = 0;
-			stopwatch.Start ();
-			
-			foreach(FileInfo file in files){
-				blogCount++;
-			 	if (this.FileAttributesStore.IsUpToDate (file.FullName))
-					continue;
-				Scheduler.TaskGroup group = NewMarkingTaskGroup (file.FullName, file.LastWriteTime);
-				
-				f = Feed.LoadFromFile(file.FullName);
-				
-				if(f == null)
-					continue;
-	
-				if(f.Items == null)
-					continue;
-					
-				IEnumerator e = f.Items.GetEnumerator();
-				
-				
-				while(e.MoveNext() ){
-					itemCount++;
-					Item i = (Item) e.Current;
-					
-					Indexable indexable = new Indexable ( new Uri(i.Source));
-					indexable.MimeType = "text/html";
-					indexable.Type = "FeedItem";
-					
-					DateTime date = new DateTime(1970, 1, 1);
-					
-					date = date.AddSeconds( i.Timestamp );
-					indexable.Timestamp = date;				
-					indexable.AddProperty(Property.NewKeyword ("dc:title", i.Title) );
-					indexable.AddProperty(Property.NewKeyword ("dc:description", i.Description));
-					indexable.AddProperty(Property.NewKeyword ("fixme:author", i.Attribs.Author));
-					indexable.AddProperty(Property.NewDate ("fixme:published", date));
-					indexable.AddProperty(Property.NewKeyword ("fixme:itemuri", i.Source));
-					indexable.AddProperty(Property.NewKeyword ("fixme:webloguri", f.Source));
-
-					// FIXME Use FilterHtml to mark "hot" words in content
-					StringReader reader = new StringReader (i.Description);
-					indexable.SetTextReader (reader);
-
-					Scheduler.Task task = NewAddTask (indexable);
-					task.Priority = Scheduler.Priority.Delayed;
-					task.SubPriority = 0;
-					task.AddTaskGroup (group);
-					ThisScheduler.Add (task);
-
-				}
-			}
+			IndexFeed (args.FullPath, Scheduler.Priority.Immediate);
+		}
 		
-			stopwatch.Stop ();
-			log.Info ("Found {0} items in {1} Liferea weblogs in {2}", 
-			itemCount, blogCount, stopwatch);
-		
+		/////////////////////////////////////////////////
+
+		// Parse and index a feed
+
+		private int IndexFeed (string filename, Scheduler.Priority priority)
+		{
+			FileInfo file = new FileInfo(filename);
+			
+			Feed feed;
+			int item_count = 0;
+
+			if (this.FileAttributesStore.IsUpToDate (file.FullName))
+			        return 0;
+
+			Scheduler.TaskGroup group = NewMarkingTaskGroup (file.FullName, file.LastWriteTime);
+			
+			feed = Feed.LoadFromFile(file.FullName);
+			
+			if(feed == null)
+				return 0;
+			
+			if(feed.Items == null)
+				return 0;
+			
+			foreach (Item item in feed.Items) {
+				item_count++;
+				
+				Indexable indexable = new Indexable ( new Uri (String.Format ("feed:{0};item={1}", feed.Source, item.Source)));
+				indexable.MimeType = "text/html";
+				indexable.Type = "FeedItem";
+				
+				DateTime date = new DateTime (1970, 1, 1);
+				date = date.AddSeconds (item.Timestamp);
+				indexable.Timestamp = date;				
+
+				indexable.AddProperty (Property.NewKeyword ("dc:title", item.Title));
+				indexable.AddProperty (Property.NewKeyword ("dc:description", item.Description));
+				indexable.AddProperty (Property.NewKeyword ("fixme:author", item.Attribs.Author));
+				indexable.AddProperty (Property.NewDate ("fixme:published", date));
+				indexable.AddProperty (Property.NewKeyword ("fixme:itemuri", item.Source));
+				indexable.AddProperty (Property.NewKeyword ("fixme:webloguri", feed.Source));
+				
+				StringReader reader = new StringReader (item.Description);
+				indexable.SetTextReader (reader);
+				
+				Scheduler.Task task = NewAddTask (indexable);
+				task.Priority = priority;
+				task.SubPriority = 0;
+				task.AddTaskGroup (group);
+				ThisScheduler.Add (task);
+				
+			}
+		     
+			return item_count;
 		}
 	}	
 
-	public class Item{
+	////////////////////////////////////////////////
+
+	// De-serialization classes
+	// FIXME: Change to standard stream parsing for performance? 
+
+	public class Item {
 		[XmlElement ("title")] public string Title = "";
 		[XmlElement ("description")] public string Description ="";
 		[XmlElement ("source")] public string Source="";
 		[XmlElement ("attributes")] public Attributes Attribs;
 		[XmlElement ("time")] public ulong Timestamp; 
 	}
-
+	
 	public class Attributes{
 		[XmlAttribute ("author")] public string Author = "";
 	}
 	
 	public class Feed{
-		[XmlElement ("feedTitle")] 	public string Title="";
+		[XmlElement ("feedTitle")] public string Title="";
 		[XmlElement ("feedSource")] public string Source="";
 		[XmlElement ("feedDescription")] public string Description="";
-	
-		[XmlElement ("feedStatus")] public int	Status;
+		
+		[XmlElement ("feedStatus")] public int Status;
 		[XmlElement ("feedUpdateInterval")] public int UpdateInterval;
 		[XmlElement ("feedDiscontinued")] public string Discontinued ="";
 		[XmlElement ("feedLastModified")] public string LastModified ="";
-		
-	
-			
+
 		[XmlElement ("item", typeof (Item))]
 		public ArrayList Items {
 			get { return mItems; }
 			set { mItems = value; }
 		}
 		
+		private ArrayList mItems = new ArrayList ();
 		
-		private ArrayList mItems = new ArrayList();
-	
-		
-		public static Feed LoadFromFile(string filename){
-			
+		public static Feed LoadFromFile (string filename) {
 			Feed f;
 			XmlRootAttribute xRoot = new XmlRootAttribute();
-        	xRoot.ElementName = "feed";
-        	
+			xRoot.ElementName = "feed";
+			
 			XmlSerializer serializer = new XmlSerializer (typeof (Feed), xRoot);
 			Stream stream = new FileStream (filename,
 							FileMode.Open,
 							FileAccess.Read,
 							FileShare.Read);
 			XmlTextReader reader = new XmlTextReader (stream);
-
-			if( !serializer.CanDeserialize(reader) )
-				Console.WriteLine("Muopp");
-			f = (Feed) serializer.Deserialize (reader);
-		
 			
+			if (!serializer.CanDeserialize(reader) )
+				Console.WriteLine ("Muopp");
+			f = (Feed) serializer.Deserialize (reader);
+
 			reader.Close ();
 			stream.Close ();
 			return f;
