@@ -219,6 +219,8 @@ namespace Beagle.Daemon {
 				return false;
 			}
 
+			public GLib.IdleHandler reusable_idle_hander = null;
+
 			public RemoteIndexerProxy GetProxy ()
 			{
 				TimeSpan one_second = new TimeSpan (10000000);
@@ -229,8 +231,11 @@ namespace Beagle.Daemon {
 					ActuallySetProxy ();
 				} else {
 					lock (this) {
-						GLib.IdleHandler idle_handler = new GLib.IdleHandler (IdleHandler);
-						GLib.Idle.Add (idle_handler);
+
+						if (reusable_idle_hander == null)
+							reusable_idle_hander = new GLib.IdleHandler (IdleHandler);
+						GLib.Idle.Add (reusable_idle_hander);
+
 						while (proxy == null) {
 							Logger.Log.Debug ("Waiting for proxy '{0}'", name);
 							Monitor.Wait (this, one_second);
