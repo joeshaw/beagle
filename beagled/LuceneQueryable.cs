@@ -317,6 +317,8 @@ namespace Beagle.Daemon {
 						this.GeneratorHook ();
 
 					driver.Flush ();
+					if (driver.NeedsOptimize)
+						driver.Optimize ();
 				}
 			}
 		}

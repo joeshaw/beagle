@@ -434,8 +434,8 @@ namespace Beagle.Daemon {
 
 		public bool NeedsOptimize {
 			get { 
-				// FIXME: 47 is a totally arbitrary number.
-				return adds_since_last_optimization + removals_since_last_optimization > 47;
+				// FIXME: 259 is a totally arbitrary number.
+				return adds_since_last_optimization + removals_since_last_optimization > 259;
 			}
 		}
 
@@ -452,6 +452,7 @@ namespace Beagle.Daemon {
 				optimizing = true;
 			}
 
+			Log.Debug ("Optimizing...");
 			IndexWriter writer = new IndexWriter (Store, null, false);
 			writer.Optimize ();
 			writer.Close ();
