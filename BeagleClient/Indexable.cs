@@ -174,9 +174,11 @@ namespace Beagle {
 								FileShare.Read);
 
 				reader = new StreamReader (stream);
-				
+
+#if false				
 				if (DeleteContent)
 					File.Delete (uri.LocalPath);
+#endif
 			}
 
 			return reader;
