@@ -35,7 +35,7 @@ INNER_JAR_FILES = 			\
 OUTER_XPI_FILES = 		\
 	install.rdf		\
 	chrome/$(PROJECT).jar
-	
+
 chrome/$(PROJECT).jar: $(INNER_JAR_FILES)
 	-@mkdir chrome
 	zip -q9 $@ $^
@@ -43,6 +43,11 @@ chrome/$(PROJECT).jar: $(INNER_JAR_FILES)
 $(PROJECT).xpi: $(OUTER_XPI_FILES)
 	zip -q9 $@ $^
 
-clean:
-	-rm -r chrome
-	-rm $(PROJECT).xpi
+
+EXTRA_DIST =			\
+	$(INNER_JAR_FILES)	\
+	$(OUTER_XPI_FILES)
+
+CLEANFILES =			\
+	chrome/$(PROJECT).jar	\
+	$(PROJECT).xpi

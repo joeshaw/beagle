@@ -297,7 +297,9 @@ install-data-local: $(PLUGIN_TARGET) $(DAEMON_DLL_TARGET) $(DAEMON_TARGET) $(EXT
 	$(INSTALL_DATA) $(DAEMON_TARGET) $(DESTDIR)$(pkglibdir)/$(DAEMON_TARGET)
 
 uninstall-local:
-	rm -f $(DESTDIR)$(bindir)/$(DAEMON_TARGET)
+	rm -f $(DESTDIR)$(pkglibdir)/$(PLUGIN_TARGET)
+	rm -f $(DESTDIR)$(pkglibdir)/$(DAEMON_DLL_TARGET)
+	rm -f $(DESTDIR)$(pkglibdir)/$(DAEMON_TARGET)
 
 bin_SCRIPTS = $(DAEMON_WRAPPER)
 noinst_SCRIPTS=testclient $(EXTRACT_CONTENT_WRAPPER) 
@@ -307,20 +309,22 @@ testclient: $(srcdir)/testclient.in
 	chmod +x testclient
 
 
-EXTRA_DIST =			\
-	$(PLUGIN_CSFILES)	\
-	$(DAEMON_DLL_CSFILES)	\
-	$(DAEMON_CSFILES)	\
-	$(EXTSTR_IN)		\
-	$(WRAPPER_IN)   	\
+EXTRA_DIST =				\
+	$(PLUGIN_CSFILES)		\
+	$(DAEMON_DLL_CSFILES)		\
+	$(DAEMON_CSFILES)		\
+	$(EXTRACT_CONTENT_CSFILES)	\
+	$(EXTSTR_IN)			\
+	$(WRAPPER_IN)   		\
 	TestClient.cs
 
-CLEANFILES =			\
-	$(PLUGIN_TARGET)       	\
-	$(DAEMON_DLL_TARGET)	\
-	$(DAEMON_TARGET)       	\
-	$(EXTSTR)		\
-	$(DAEMON_WRAPPER)      	\
-	$(EXTRACT_CONTENT_WRAPPER) \
-	testclient      	\
+CLEANFILES =				\
+	$(PLUGIN_TARGET)       		\
+	$(DAEMON_DLL_TARGET)		\
+	$(DAEMON_TARGET)       		\
+	$(EXTSTR)			\
+	$(DAEMON_WRAPPER)      		\
+	$(EXTRACT_CONTENT_TARGET)	\
+	$(EXTRACT_CONTENT_WRAPPER)	\
+	testclient      		\
 	TestClient.exe

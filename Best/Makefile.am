@@ -33,6 +33,10 @@ install-data-local: $(TARGET)
 	$(mkinstalldirs) $(DESTDIR)$(pkglibdir)
 	$(INSTALL_DATA) $(TARGET) $(DESTDIR)$(pkglibdir)/$(TARGET)
 
+uninstall-local:
+	rm -f $(DESTDIR)$(pkglibdir)/$(TARGET)
+
+
 bin_SCRIPTS = $(WRAPPER)
 
 $(WRAPPER): $(srcdir)/$(WRAPPER).in
