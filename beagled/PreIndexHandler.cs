@@ -23,7 +23,7 @@
 
 using Beagle.Core;
 
-namespace BeagleDaemon {
+namespace Beagle.Daemon {
 
 	public class PreIndexHandlerArgs {
 		public bool shouldIndex;

@@ -26,7 +26,7 @@ using Beagle.Util;
 using System.Collections;
 using System.IO;
 
-namespace BeagleDaemon {
+namespace Beagle.Daemon {
 	class NoIndexFileHandler : PreIndexHandler {
 		struct IndexerDirectoryInfo {
 			public bool hasNoIndex;

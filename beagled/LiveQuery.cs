@@ -29,7 +29,7 @@ using System.Collections;
 
 using Beagle;
 
-namespace BeagleDaemon
+namespace Beagle.Daemon
 {
 
 	public class LiveQuery : Beagle.Query {

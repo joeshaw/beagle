@@ -30,7 +30,7 @@ using Beagle;
 using System.Reflection;
 using System;
 
-namespace BeagleDaemon {
+namespace Beagle.Daemon {
 	class BeagleDaemon {
 
 		static void ScanAssemblyForHandlers (Assembly assembly,

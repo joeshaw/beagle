@@ -29,7 +29,7 @@ using Beagle.Util;
 using Beagle.Core;
 using Beagle;
 
-namespace BeagleDaemon
+namespace Beagle.Daemon
 {
 	public class Indexer : Beagle.Indexer 
 	{

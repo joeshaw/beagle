@@ -28,7 +28,7 @@ using System.Collections;
 using System.Threading;
 using Beagle;
 
-namespace BeagleDaemon
+namespace Beagle.Daemon
 {
 	public class IndexerQueue {
 		
