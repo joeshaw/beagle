@@ -477,7 +477,7 @@ namespace Beagle.Util {
 					filename = filename_encoding.GetString (qe.filename, 0, n_chars);
 
 				// If this is a directory, we need to handle MovedTo and MovedFrom events
-				// (regardless of the actual qe.iev.mask) and fix up watched.Path and the
+				// (regardless of the actual watched.Mask) and fix up watched.Path and the
 				// path of all subdirectories.
 				//
 				// Unfortunately, we have to handle the Directory.Exists() test a bit
