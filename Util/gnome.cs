@@ -160,14 +160,13 @@ namespace Beagle.Util {
 		{
 			Info info;
 			info = gnome_vfs_mime_get_default_application (mime_type);
-			System.Diagnostics.Process e = new System.Diagnostics.Process ();
 			if (info == null)
 			{
 				Console.WriteLine ("Unable to open " + uri);
-				// Can we please stop hard coding Nautilus!?
-				e.Start ("nautilus", "\"" + uri + "\"");
+				// FIXME: Can we please stop hard coding Nautilus!?
+				System.Diagnostics.Process.Start ("nautilus", "\"" + uri + "\"");
 			} else {
-				e.Start (info.command, "\"" + uri + "\"");
+				System.Diagnostics.Process.Start (info.command, "\"" + uri + "\"");
 			}
 //FIXME:  Memory leak, causes crashes, dunno why...needs fixed
 //			gnome_vfs_mime_application_free (info);
