@@ -20,7 +20,7 @@ struct inotify_event {
 	__s32		wd;		/* watch descriptor */
 	__u32		mask;		/* watch mask */
 	__u32		cookie;		/* cookie to synchronize two events */
-	size_t		len;		/* length (including nulls) of name */
+	__u32		len;		/* length (including nulls) of name */
 	char		name[0];	/* stub for possible name */
 };
 
