@@ -6,7 +6,8 @@ config.guess
 config.log
 config.status
 config.sub
-config.h
+config.h*
+stamp-h1
 configure
 depcomp
 libtool
