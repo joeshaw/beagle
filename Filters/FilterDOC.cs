@@ -246,7 +246,7 @@ namespace Beagle.Filters {
 			else if (ret == -3)
 				Logger.Log.Error ("Unable to initiate the parser for {0}", FileName);
 			stopwatch.Stop ();
-			Console.WriteLine ("FilterDoc extraction done in {0}", stopwatch);
+			Logger.Log.Info ("FilterDoc extraction done in {0}", stopwatch);
 			Finished ();
 		}
 	}
