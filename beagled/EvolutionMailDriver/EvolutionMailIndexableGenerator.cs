@@ -121,9 +121,9 @@ namespace Beagle.Daemon {
 				if (this.reader == null)
 					this.reader = new MultiReader ();
 
-				for (int i = 0; i < depth; i++)
-					Console.Write ("  ");
-				Console.WriteLine ("Content-Type: {0}", part.ContentType);
+				//for (int i = 0; i < depth; i++)
+				//  Console.Write ("  ");
+				//Console.WriteLine ("Content-Type: {0}", part.ContentType);
 
 				++depth;
 
@@ -269,7 +269,7 @@ namespace Beagle.Daemon {
 				string offset_str = ReadAppDataLine ("offset-" + this.folder_name.Replace ('/', '-'));
 				long offset = Convert.ToInt64 (offset_str);
 
-				Console.WriteLine ("offset is {0}", offset);
+				Logger.Log.Debug ("mbox {0} offset is {1}", this.mbox_info.Name, offset);
 				return offset;
 			}
 
@@ -286,7 +286,7 @@ namespace Beagle.Daemon {
 			}
 
 			if (this.mbox_fd < 0) {
-				Console.WriteLine ("opening mbox {0}", this.mbox_info.Name);
+				Logger.Log.Debug ("opening mbox {0}", this.mbox_info.Name);
 				this.mbox_fd = Syscall.open (this.mbox_info.FullName, OpenFlags.O_RDONLY);
 				InitializeGMime ();
 				this.mbox_stream = new GMime.StreamFs (this.mbox_fd);
