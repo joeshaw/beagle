@@ -34,7 +34,7 @@ namespace Beagle.Tile {
 
 	[HitFlavor (Name="Pictures", Rank=500, Emblem="emblem-picture.png", Color="#f5f5fe",
 		    Type="File", MimeType="image/*")]
-	public class TilePicture : TileFromHitTemplate {
+	public class TilePicture : TileFile {
 		public TilePicture (Hit _hit) : base (_hit,
 						      "template-picture.html")
 		{			
@@ -46,12 +46,6 @@ namespace Beagle.Tile {
 
 			Template["Thumbnail"] = Images.GetHtmlSource (Hit.Uri.ToString (),
 								      Hit.MimeType);
-		}
-
-		[TileAction]
-		public override void Open ()
-		{
-			OpenFromMime (Hit);
 		}
 	}
 }

@@ -34,7 +34,7 @@ namespace Beagle.Tile {
 
 	[HitFlavor (Name="Music", Rank=400, Emblem="emblem-music.png", Color="#f5f5fe",
 		    Type="File", MimeType="audio/mpeg")]
-	public class TileMusic : TileFromHitTemplate {
+	public class TileMusic : TileFile {
 		public TileMusic (Hit _hit) : base (_hit, 
 						    "template-music.html")
 		{
@@ -46,12 +46,6 @@ namespace Beagle.Tile {
 
 			if (Hit ["fixme:song"] == null || Hit ["fixme:song"] == "")
 				Template ["Song"] = Hit ["fixme:splitname"];
-		}
-
-		[TileAction]
-		public override void Open ()
-		{
-			OpenFromMime (Hit);
 		}
 	}
 }

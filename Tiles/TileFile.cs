@@ -42,6 +42,11 @@ namespace Beagle.Tile {
 		{
 		}
 
+		public TileFile (Hit _hit, string template) : base (_hit,
+								    template)
+		{
+		}
+
 		protected override void PopulateTemplate ()
 		{
 			base.PopulateTemplate ();
