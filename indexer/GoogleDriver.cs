@@ -33,6 +33,7 @@ using Beagle.Util;
 
 namespace Beagle {
 
+	[QueryableFlavor (Name="Google", Domain=QueryDomain.Global)]
 	public class GoogleDriver : IQueryable {
 
 		int maxResults = 5;
@@ -103,7 +104,6 @@ namespace Beagle {
 
 		public void Query (Query query, IQueryResult result)
 		{
-			// FIXME: stop using the abusive query api
 			GoogleSearchResult gsr = gss.doGoogleSearch (googleKey,
 								     query.QuotedText,
 								     0, maxResults,

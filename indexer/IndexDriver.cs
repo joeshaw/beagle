@@ -47,6 +47,7 @@ using BU = Beagle.Util;
 
 namespace Beagle {
 
+	[QueryableFlavor (Name="LuceneIndex", Domain=QueryDomain.Local)]
 	public class IndexDriver : IQueryable {
 
 		// 1: Original

@@ -15,6 +15,7 @@ CSFILES = 				\
 	$(srcdir)/Relevancy.cs		\
 	$(srcdir)/IQueryResult.cs	\
 	$(srcdir)/IQueryable.cs		\
+	$(srcdir)/QueryableFlavor.cs	\
 	$(srcdir)/QueryResult.cs	\
 	$(srcdir)/QueryDriver.cs	\
 	$(srcdir)/IndexDriver.cs	\

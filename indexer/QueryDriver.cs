@@ -27,28 +27,75 @@
 
 using System;
 using System.Collections;
+using System.Reflection;
 using System.Threading;
 
 namespace Beagle {
 	
 	public class QueryDriver {
 
-		ArrayList queryables = new ArrayList ();
+		struct QueryableInfo {
+			public QueryableFlavor Flavor;
+			public Type Type;
+		}
 
-		// FIXME: There should be a way to control which
-		// drivers are part of the QueryDriver.
+		static ArrayList queryableInfo = new ArrayList ();
+
+		static bool ThisApiSoVeryIsBroken (Type m, object criteria)
+		{
+			return m == (Type) criteria;
+		}
+
+		static bool TypeImplementsInterface (Type t, Type iface)
+		{
+			Type[] impls = t.FindInterfaces (new TypeFilter (ThisApiSoVeryIsBroken),
+							 iface);
+			return impls.Length > 0;
+		}
+
+		static void ScanAssembly (Assembly assembly)
+		{
+			foreach (Type type in assembly.GetTypes ()) {
+				if (TypeImplementsInterface (type, typeof (IQueryable))) {
+					foreach (object obj in Attribute.GetCustomAttributes (type)) {
+						if (obj is QueryableFlavor) {
+							QueryableFlavor flavor = (QueryableFlavor) obj;
+							QueryableInfo info = new QueryableInfo ();
+							info.Flavor = flavor;
+							info.Type = type;
+							queryableInfo.Add (info);
+							break;
+						}
+					}
+				}
+			}
+							
+							
+		}
+
+		static bool initialized = false;
+
+		static void Initialize ()
+		{
+			lock (queryableInfo) {
+				if (initialized)
+					return;
+				ScanAssembly (Assembly.GetCallingAssembly ());
+				initialized = true;
+			}
+		}
+
+		private ArrayList queryables = new ArrayList ();
+
 		public QueryDriver ()
 		{
-			Add (new IndexDriver ());
-			Add (new GoogleDriver ());
-#if ENABLE_EVO_SHARP
-			Add (new EvolutionDataServerDriver ());
-#endif
-		}
-		
-		public void Add (IQueryable iq)
-		{
-			queryables.Add (iq);
+			Initialize ();
+			foreach (QueryableInfo qi in queryableInfo) {
+
+				IQueryable queryable;
+				queryable = (IQueryable) Activator.CreateInstance (qi.Type);
+				queryables.Add (queryable);
+			}
 		}
 
 		class QueryClosure {

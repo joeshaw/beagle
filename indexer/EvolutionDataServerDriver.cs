@@ -31,6 +31,7 @@ using System.Text;
 
 namespace Beagle {
 
+	[QueryableFlavor (Name="EvolutionDataServer", Domain=QueryDomain.Local)]
 	public class EvolutionDataServerDriver : IQueryable{
 
 		Evolution.Book addressbook = null;
