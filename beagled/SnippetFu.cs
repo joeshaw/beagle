@@ -83,7 +83,7 @@ namespace Beagle.Daemon {
 							      text.Substring (pos, next_pos - pos),
 							      "</b>",
 							      text.Substring (next_pos));
-					next_pos += 6; // adjust for the length of the tags
+					next_pos += 7; // adjust for the length of the tags
 					break;
 				}
 
