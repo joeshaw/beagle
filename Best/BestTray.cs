@@ -66,16 +66,12 @@ namespace Best {
 		Gtk.EventBox eventbox;
 		Gtk.Tooltips tips;
 		Beagle.Util.GConfXKeybinder keybinder;
-		int PosX;
-		int PosY;
 
 		[DllImport ("libtrayiconglue")]
 		private static extern IntPtr egg_tray_icon_new (string name);
 
 		public BestTray (BestWindow bw)
 		{
-			PosX = 0;
-			PosY = 0;
 			Raw = egg_tray_icon_new ("Search");
 
 			win = bw;
@@ -92,7 +88,6 @@ namespace Best {
 			tips = new Gtk.Tooltips ();
 			tips.SetTip (eventbox, tooltip, null);
 			tips.Enable ();
-			
 			
 			Add (eventbox);
 			ShowAll ();
