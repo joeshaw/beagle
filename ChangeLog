@@ -1,3 +1,20 @@
+2004-10-14  Tuomas Kuosmanen  <tigert@novell.com>
+
+	* Tiles/template-im-log.html: stylized a bit, added area for
+	snippet for chat log content that needs to be replaced with 
+	actual content of course. The search term should be hilighted
+	with color.
+
+	* images/im-aim.png: added a nicer icon for AIM chat for now.
+
+	   *Note!* Please use *gnome-icon-theme* for this - we have the
+	   following icons there for us: im-aim.png im-icq.png
+	   im-jabber.png im-msn.png im-nov.png im-yahoo.png - these would
+	   be used depending on the chat type. Also there's im.png which
+	   is a generic one for possible other chat client logs.
+	
+	* images/Makefile.am: Added the icon to be installed for now..
+
 2004-10-10  Anders Carlsson  <andersca@gnome.org>
 
 	* Util/ExtendedAttribute.cs:
