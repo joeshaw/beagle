@@ -65,7 +65,7 @@ namespace Beagle.Tile {
 
 			str = Hit ["fixme:subject"];
 			if (str == null)
-				str = Catalog.GetString ("<i>No Subject</i>");
+				str = String.Format ("<i>{0}</i>", Catalog.GetString ("No Subject"));
 			if (Hit ["_IsDeleted"] != null)
 				str = "<strike>" + str + "</strike>";
 			Template["Subject"] = str;

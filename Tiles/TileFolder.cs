@@ -49,10 +49,9 @@ namespace Beagle.Tile {
 			int n = Hit.DirectoryInfo.GetFileSystemInfos().Length;
 			if (n == 0)
 				str = Catalog.GetString ("Empty");
-			else if (n == 1)
-				str = Catalog.GetString ("Contains 1 Item");
 			else
-				str = String.Format (Catalog.GetString ("Contains {0} Items"), n);
+				str = String.Format (Catalog.GetPluralString ("Contains {0} Item", "Contains {0} Items", n), n);
+
 			Template["Contents"] = str;
 		}
 

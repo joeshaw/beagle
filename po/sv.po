@@ -49,7 +49,7 @@ msgstr "i e-post"
 
 #: Best/BestWindow.cs:310
 msgid "in Web Pages"
-msgstr "i web-sidor"
+msgstr "i websidor"
 
 #: Best/BestWindow.cs:312
 msgid "in Chats"
@@ -72,29 +72,32 @@ msgid "Show Previous Results"
 msgstr "Visa tidigare träffar"
 
 #: Best/BestWindow.cs:402
-#, fuzzy
 msgid "No results."
-msgstr "Inga träffar."
+msgstr "Inga träffar"
 
-#: Best/BestWindow.cs:404
+#. To translators: {0} is the current count of results shown of {1} in total, this is the message that is initially shown
+#. when results are returned to the user.
+#: Best/BestWindow.cs:406
 #, csharp-format
 msgid "Best <b>{0} results of {1}</b> are shown."
-msgstr "Bästa <b>{0} av {1}</b> träffar visas."
+msgstr "Bästa <b>{0} av {1}</b> träffar visas"
 
-#: Best/BestWindow.cs:408
+#. To translators: {0} to {1} is the interval of results currently shown of {2} results in total
+#: Best/BestWindow.cs:411
 #, csharp-format
 msgid "Results <b>{0} through {1} of {2}</b> are shown."
-msgstr "Visar <b>{0} till {1}</b> av totalt {2} träffar."
+msgstr "Visar <b>{0} av {1}</b> träffar."
 
-#: Best/BestWindow.cs:546
+#. To translators: {0} represents the current query keywords
+#: Best/BestWindow.cs:550
 #, csharp-format
 msgid ""
 "The query for <i>{0}</i> failed.<br>The likely cause is that the beagle "
 "daemon isn't running."
-msgstr ""
-"Sökningen efter <i>{0}</i> gick ej att genomföra.<br>Söktjnsten är inte startad."
+msgstr "Sökningen efter <i>{0}</i> gick ej att genomföra.<br>Söktjänsten är inte startad."
 
-#: Best/BestWindow.cs:550
+#. To translators: {0} represents the current query keywords
+#: Best/BestWindow.cs:555
 #, csharp-format
 msgid ""
 "The query for <i>{0}</i> failed.<br>The session bus isn't running.  See "
@@ -104,7 +107,8 @@ msgstr ""
 "Sökningen efter <i>{0}</i> gick ej att genomföra.<br>Sessionsbussen är inte "
 "startad."
 
-#: Best/BestWindow.cs:553
+#. To translators: {0} represents the current query keywords, {1} contains the errormessage
+#: Best/BestWindow.cs:559
 #, csharp-format
 msgid "The query for <i>{0}</i> failed with error:<br>{1}<br>"
 msgstr "Sökningen efter <i>{0}</i> gick ej att genomföra:<br>{1}"
@@ -122,17 +126,15 @@ msgid "Empty"
 msgstr "Tom"
 
 #: Tiles/TileFolder.cs:53
-msgid "Contains 1 Item"
-msgstr "Innehåller ett objekt"
-
-#: Tiles/TileFolder.cs:55
 #, csharp-format
-msgid "Contains {0} Items"
-msgstr "Innehåller {0} objekt"
+msgid "Contains {0} Item"
+msgid_plural "Contains {0} Items"
+msgstr[0] "Innehåller {0} objekt"
+msgstr[1] "Innehåller {0} objekt"
 
 #: Tiles/TileMailMessage.cs:68
-msgid "<i>No Subject</i>"
-msgstr "<i>Inget ämne</i>"
+msgid "No Subject"
+msgstr "Inget ämne"
 
 #: Tiles/TileMailMessage.cs:73
 msgid "To"
@@ -152,36 +154,43 @@ msgstr "Mottaget"
 
 #: Util/StringFu.cs:65
 msgid "Today"
-msgstr "idag"
+msgstr "Idag"
 
 #: Util/StringFu.cs:67
 msgid "Yesterday"
-msgstr "igår"
+msgstr "Igår"
 
-#: Util/StringFu.cs:94
+#. To translators: {0} is the time of the day, eg. 13:45
+#: Util/StringFu.cs:95
 #, csharp-format
 msgid "Today, {0}"
-msgstr "idag, {0}"
+msgstr "Idag, {0}"
 
-#: Util/StringFu.cs:96
+#. To translators: {0} is the time of the day, eg. 13:45
+#: Util/StringFu.cs:98
 #, csharp-format
 msgid "Yesterday, {0}"
-msgstr "igår {0}"
+msgstr "Igår, {0}"
 
-#: Util/StringFu.cs:98
+#. To translators: {0} is the number of days that have passed, {1} is the time of the day, eg. 13:45
+#: Util/StringFu.cs:101
 #, csharp-format
 msgid "{0} days ago, {1}"
 msgstr "{0} dagar sedan, {1}"
 
-#: Util/StringFu.cs:118
+#: Util/StringFu.cs:119
 #, csharp-format
-msgid "{0} hours"
-msgstr "{0} timmar"
+msgid "{0} hour"
+msgid_plural "{0} hours"
+msgstr[0] "{0} timme"
+msgstr[1] "{1} timmar"
 
-#: Util/StringFu.cs:128
+#: Util/StringFu.cs:126
 #, csharp-format
-msgid "{0} minutes"
-msgstr "{0} minuter"
+msgid "{0} minute"
+msgid_plural "{0} minutes"
+msgstr[0] "{0} minut"
+msgstr[1] "{0} minuter"
 
 #
 # Common stuff for the templates

@@ -90,16 +90,20 @@ namespace Beagle.Util {
 			string short_time = date.ToShortTimeString ();
 
 			if (date.Year == now.Year) {
-				if (date.DayOfYear == now.DayOfYear)
+				if (date.DayOfYear == now.DayOfYear) {
+					/* To translators: {0} is the time of the day, eg. 13:45 */
 					return String.Format (Catalog.GetString ("Today, {0}"), short_time);
-				else if (date.DayOfYear == now.DayOfYear - 1)
+				} else if (date.DayOfYear == now.DayOfYear - 1) {
+					/* To translators: {0} is the time of the day, eg. 13:45 */
 					return String.Format (Catalog.GetString ("Yesterday, {0}"), short_time);
-				else if (date.DayOfYear > now.DayOfYear - 6)
+				} else if (date.DayOfYear > now.DayOfYear - 6) {
+					/* To translators: {0} is the number of days that have passed, {1} is the time of the day, eg. 13:45 */
 					return String.Format (Catalog.GetString ("{0} days ago, {1}"),
 							      now.DayOfYear - date.DayOfYear,
 							      short_time);
-				else
+				} else {
 					return date.ToString ("MMMM d, h:mm tt");
+				}
 			}
 
 			return date.ToString ("MMMM d yyyy, h:mm tt");
@@ -112,20 +116,14 @@ namespace Beagle.Util {
 			string span_str = ""; 
 
 			if (span.Hours > 0) {
-				if (span.Hours == 1)
-					span_str = "1 hour";
-				else
-					span_str = String.Format (Catalog.GetString ("{0} hours"), span.Hours);
-
+				span_str = String.Format (Catalog.GetPluralString ("{0} hour", "{0} hours", span.Hours), span.Hours);
+					
 				if (span.Minutes > 0)
 					span_str += ", ";
 			}
 
 			if (span.Minutes > 0) {
-				if (span.Minutes == 1)
-					span_str += "1 minute";
-				else
-					span_str += String.Format (Catalog.GetString ("{0} minutes"), span.Minutes);
+				span_str += String.Format (Catalog.GetPluralString ("{0} minute", "{0} minutes", span.Minutes), span.Minutes);
 			}
 					
 			

@@ -398,18 +398,21 @@ namespace Best {
 			else
 				results = root.HitCollection.NumDisplayableResults;
 
-			if (results == 0)
+			if (results == 0) {
 				label = Catalog.GetString ("No results.");
-			else if (root.HitCollection.FirstDisplayed == 0) 
+			} else if (root.HitCollection.FirstDisplayed == 0) {
+				/* To translators: {0} is the current count of results shown of {1} in total, this is the message that is initially shown */
+				/* when results are returned to the user. */
 				label = String.Format (Catalog.GetString ("Best <b>{0} results of {1}</b> are shown."), 
 						       root.HitCollection.LastDisplayed + 1,
 						       results);
-			else 
+			} else {
+				/* To translators: {0} to {1} is the interval of results currently shown of {2} results in total*/
 				label = String.Format (Catalog.GetString ("Results <b>{0} through {1} of {2}</b> are shown."),
 						       root.HitCollection.FirstDisplayed + 1, 
 						       root.HitCollection.LastDisplayed + 1,
 						       results);
-
+			}
 			page_label.Markup = label;
 		}
 
@@ -543,14 +546,18 @@ namespace Best {
 				DBusisms.BeagleUpAgain += QueueDelayedQuery;
 
 				if (e.ToString ().IndexOf ("com.novell.Beagle") != -1) {
+					/* To translators: {0} represents the current query keywords */
 					root.Error (String.Format (Catalog.GetString ("The query for <i>{0}</i> failed." +
 						    "<br>The likely cause is that the beagle daemon isn't running."),searchString));
 					root.OfferDaemonRestart = true;
 				} else if (e.ToString().IndexOf ("Unable to determine the address") != -1) {
+					/* To translators: {0} represents the current query keywords */
 					root.Error (String.Format (Catalog.GetString ("The query for <i>{0}</i> failed.<br>" +
 						    "The session bus isn't running.  See http://beaglewiki.org/index.php/Installing%20Beagle for information on setting up a session bus."),searchString));
-				} else
+				} else {
+					/* To translators: {0} represents the current query keywords, {1} contains the errormessage */
 					root.Error (String.Format (Catalog.GetString ("The query for <i>{0}</i> failed with error:<br>{1}<br>"),searchString, e));
+				}
 			}
 
 			UpdatePage ();
