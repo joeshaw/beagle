@@ -22,7 +22,7 @@ function beagleFindFileInPath(filename)
     var split = path.split(':');
     var idx = 0;
     while (idx < split.length) {
-      var trypath = gFile.append(split[idx++], filename);
+      var trypath = split[idx++] + '/' + filename;
       if (gFile.exists(trypath))
         return trypath;
     }
