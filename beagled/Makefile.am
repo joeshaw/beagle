@@ -407,16 +407,21 @@ WEBSERVICES_FRONTEND_ASSEMBLIES = 	\
 	-r:$(WEBSERVICES_BACKEND_TARGET) 	\
 	-r:System.Web.Services
 
-$(WEBSERVICES_FRONTEND_TARGET): $(WEBSERVICES_FRONTEND_CSFILES) $(WEBSERVICES_BACKEND_TARGET)
+$(WEBSERVICES_FRONTEND_TARGET): $(WEBSERVICES_FRONTEND_CSFILES) $(WEBSERVICES_BACKEND_TARGET) $(SEARCH_DOT_ASPX)
 	$(CSC) -o $@ $(WEBSERVICES_CSFLAGS) $(WEBSERVICES_FRONTEND_CSFILES) $(WEBSERVICES_FRONTEND_ASSEMBLIES)
 
-WEBSERVICES_RESOURCES = $(webservicesdir)/search.aspx \
-						$(webservicesdir)/search.asmx \
-						$(webservicesdir)/web.config  \
-						$(webservicesdir)/dog.png
+WEBSERVICES_RESOURCES = $(SEARCH_DOT_ASPX) $(webservicesdir)/search.asmx \
+			$(webservicesdir)/web.config  ../images/dog.png
 						
-XSP_DIR = /usr/local/share/doc/xsp/test/beagle
+XSP_DIR = @prefix@/share/doc/xsp/test/beagle
 XSPBIN_DIR = $(XSP_DIR)/bin
+
+SEARCH_DOT_ASPX = $(webservicesdir)/search.aspx
+SEARCH_DOT_ASPX_IN = $(webservicesdir)/search.aspx.in
+
+$(SEARCH_DOT_ASPX): $(srcdir)/$(SEARCH_DOT_ASPX_IN)
+	$(WRAPPER_SED) -e "s|\@prefix\@|@prefix@|g" < $(SEARCH_DOT_ASPX_IN) > $@
+	chmod +rx $(SEARCH_DOT_ASPX)
 
 ############################################################
 
@@ -763,7 +768,7 @@ install-data-local: $(ALL_TARGETS)
 if ENABLE_WEBSERVICES
 	$(INSTALL_DATA) $(WEBSERVICES_BACKEND_TARGET) $(DESTDIR)$(pkglibdir)/$(WEBSERVICES_BACKEND_ASSEMBLY)
 	$(mkinstalldirs) $(XSP_DIR)
-	$(INSTALL_DATA) $(WEBSERVICES_RESOURCES) $(XSP_DIR)
+	$(INSTALL_DATA)  $(WEBSERVICES_RESOURCES) $(XSP_DIR)
 	$(mkinstalldirs) $(XSPBIN_DIR)
 	$(INSTALL_DATA) ../Util/Util.dll ../images/Images.dll ../BeagleClient/Beagle.dll ../Tiles/Tiles.dll BeagleDaemonPlugins.dll BeagleDaemonLib.dll $(XSPBIN_DIR)
 	$(INSTALL_DATA) $(WEBSERVICES_FRONTEND_TARGET) $(WEBSERVICES_BACKEND_TARGET) $(XSPBIN_DIR)

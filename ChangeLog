@@ -1,3 +1,9 @@
+2005-04-05  Vijay K. Nanjundaswamy <knvijay@novell.com>
+
+	* beagled/WebServices: Moved dog.png image file to images folder.
+          Replaced search.aspx with search.aspx.in. 
+	* beagled/Makefile.am: Script to generate search.aspx from search.aspx.in and determine XSP_DIR, based on prefix specified.
+ 
 2005-04-05  Frank Arnold  <farnold@cvs.gnome.org>
 
 	* configure.in: Added "de" to ALL_LINGUAS.
