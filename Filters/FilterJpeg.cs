@@ -105,9 +105,12 @@ namespace Beagle.Filters {
 
 			str = exif.LookupString (ExifTag.DateTime);
 			if (str != null && str != "") {
-				DateTime dt;
-				dt = ExifData.DateTimeFromString (str);
-				AddProperty (Beagle.Property.NewDate ("exif:DateTime", dt));
+				try {
+					DateTime dt = ExifData.DateTimeFromString (str);
+					AddProperty (Beagle.Property.NewDate ("exif:DateTime", dt));
+				} catch (ArgumentOutOfRangeException e) {
+					Logger.Log.Debug("EXIF DateTime '{0}' is invalid.", str);
+				}
 			}
 
 			Finished (); // That's all folks...
