@@ -30,6 +30,7 @@ using System.Collections;
 using System.IO;
 using System.Net;
 
+using Beagle.Util;
 using Beagle.Daemon;
 
 class ExtractContentTool {
@@ -65,16 +66,10 @@ class ExtractContentTool {
 			
 			FilteredIndexable indexable;
 
-			string uri = arg;
-
-			if (!uri.StartsWith ("file://")) {
-				uri = Path.GetFullPath (uri);
-				uri = "file://" + uri;
-			}
-				
+			Uri uri = UriFu.PathToFileUri (arg);
 			Console.WriteLine ("uri: {0}", uri);
 
-			indexable = new FilteredIndexable (new Uri (uri, false));
+			indexable = new FilteredIndexable (uri);
 
 			if (!firstArg) {
 				Console.WriteLine ();
@@ -122,7 +117,9 @@ class ExtractContentTool {
 					DisplayContent (line);
 				}
 
-				if (! first)
+				if (first)
+					Console.WriteLine ("(no content)");
+				else
 					Console.WriteLine ();
 			}
 
@@ -138,7 +135,9 @@ class ExtractContentTool {
 					DisplayContent (line);
 				}
 
-				if (! first)
+				if (first)
+					Console.WriteLine ("(no hot content)");
+				else
 					Console.WriteLine ();
 			}
 		}
