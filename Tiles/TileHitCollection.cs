@@ -180,11 +180,14 @@ namespace Beagle.Tile {
 
 		public bool Subtract (Uri uri)
 		{
+			bool removed = false;
+
 			for (int i = 0; i < all_hits.Count; ++i) {
 				HitTilePair pair = (HitTilePair) all_hits [i];
 				if (pair.Hit.Uri.Equals (uri) && pair.Hit.Uri.Fragment == uri.Fragment) {
 					all_hits.Remove (pair);
-					return true;
+					removed = true;
+					break;
 				}
 			}
 
@@ -192,11 +195,11 @@ namespace Beagle.Tile {
 				HitTilePair pair = (HitTilePair) hits [i];
 				if (pair.Hit.Uri.Equals (uri) && pair.Hit.Uri.Fragment == uri.Fragment) {
 					hits.Remove (pair);
-					return true;
+					break;
 				}
 			}
 
-			return false;
+			return removed;
 		}
 
 		public bool IsEmpty {
