@@ -54,9 +54,10 @@ namespace Beagle.Daemon.EvolutionDataServerQueryable {
 				addressbook = Evolution.Book.NewSystemAddressbook ();
 				addressbook.Open (true);
 				Shutdown.ShutdownEvent += OnShutdown;
-			} catch {
+			} catch (Exception ex) {
 				addressbook = null;
 				Logger.Log.Warn ("Could not open Evolution addressbook.  Addressbook searching is disabled.");
+				Logger.Log.Debug (ex);
 			}
 		}
 

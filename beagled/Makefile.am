@@ -27,11 +27,13 @@ EXTSTR_IN = $(srcdir)/$(EXTSTR).in
 $(EXTSTR): $(EXTSTR_IN)
 	sed	-e "s|\@prefix\@|$(prefix)|g"		\
 		-e "s|\@pkglibdir\@|$(pkglibdir)|g"	\
+		-e "s|\@VERSION\@|$(VERSION)|g"		\
 		< $(EXTSTR_IN) > $@
 
 
 $(PLUGIN_TARGET): $(PLUGIN_CSFILES) $(EXTSTR) $(PLUGIN_LOCAL_ASSEMBLIES)
 	$(CSC) -o $@ $(PLUGIN_CFLAGS) $(PLUGIN_CSFILES) $(EXTSTR) $(PLUGIN_ASSEMBLIES)
+
 ############################################################
 
 WRAPPER_IN = wrapper.in
@@ -394,7 +396,6 @@ DAEMON_DLL_CSFILES = 				\
 	$(srcdir)/IQueryable.cs			\
 	$(srcdir)/LuceneDriver.cs		\
 	$(srcdir)/LuceneQueryable.cs		\
-	$(srcdir)/Ping.cs			\
 	$(srcdir)/QueryBody.cs			\
 	$(srcdir)/QueryDriver.cs		\
 	$(srcdir)/QueryImpl.cs			\
@@ -402,6 +403,7 @@ DAEMON_DLL_CSFILES = 				\
 	$(srcdir)/Queryable.cs			\
 	$(srcdir)/QueryableFlavor.cs		\
 	$(srcdir)/Relevancy.cs			\
+	$(srcdir)/RemoteControlImpl.cs		\
 	$(srcdir)/Shutdown.cs			\
 	$(srcdir)/TextCache.cs
 

@@ -1,5 +1,5 @@
 //
-// ThreadedPriorityQueue.cs
+// SystemInformation.cs
 //
 // Copyright (C) 2004 Novell, Inc.
 //

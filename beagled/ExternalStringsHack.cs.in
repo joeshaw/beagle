@@ -1,8 +1,16 @@
+//
+// ExternalStringsHack.cs is generated from ExternalStringsHack.cs.in
+//
+
 using System;
 
 namespace Beagle.Daemon {
 
-	internal class ExternalStringsHack {
+	  public class ExternalStringsHack {
+
+		static public string Version {
+		       get { return "@VERSION@"; }
+		}
 
 		static public string Prefix {
 			get { return "@prefix@"; }

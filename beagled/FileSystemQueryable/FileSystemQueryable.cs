@@ -423,6 +423,7 @@ namespace Beagle.Daemon.FileSystemQueryable {
 			if (dir == null)
 				return;
 
+			//if (type != Inotify.EventType.Open)
 			//log.Debug ("--- {0} {1} {2}", type, path, subitem);
 
 			if (! dir.ProcessEvent (type))

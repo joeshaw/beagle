@@ -1,5 +1,5 @@
 //
-// Ping.cs
+// RemoteControlProxy.cs
 //
 // Copyright (C) 2004 Novell, Inc.
 //
@@ -24,48 +24,21 @@
 // DEALINGS IN THE SOFTWARE.
 //
 
-using System;
-using System.Text;
-
-using Beagle.Util;
-
 using DBus;
 
-namespace Beagle.Daemon {
-
-	[Interface ("com.novell.Beagle.Ping")]
-	public class Ping
-	{
-		QueryDriver query_driver;
-
-		public Ping (QueryDriver qd)
-		{
-			query_driver = qd;
-		}
+namespace Beagle
+{
+	[Interface ("com.novell.Beagle.RemoteControl")]
+	public abstract class RemoteControlProxy {
 
 		[Method]
-		public virtual string GetVersion ()
-		{
-			return "Beagle Daemon blah blah blah\n(this should return the version number, etc.)";
-		}
+		public abstract string GetVersion ();
+		
+		[Method]
+		public abstract void Shutdown ();
 
 		[Method]
-		public virtual void Shutdown ()
-		{
-			Beagle.Daemon.Shutdown.BeginShutdown ();
-		}
-
-		[Method]
-		public string GetHumanReadableStatus ()
-		{
-			StringBuilder sb = new StringBuilder ();
-
-			sb.Append ("\n");
-			sb.Append (Scheduler.Global.GetHumanReadableStatus ());
-			//sb.Append (query_driver.GetHumanReadableStatus ());
-
-			return sb.ToString ();
-		}
+		public abstract string GetHumanReadableStatus ();
 	}
-
 }
+	

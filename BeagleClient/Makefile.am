@@ -19,6 +19,8 @@ CSFILES = 					\
 	$(srcdir)/Property.cs           	\
 	$(srcdir)/QueryProxy.cs         	\
 	$(srcdir)/Query.cs              	\
+	$(srcdir)/RemoteControlProxy.cs		\
+	$(srcdir)/RemoteControl.cs		\
 	$(srcdir)/WebHistoryIndexerProxy.cs	\
 	$(srcdir)/WebHistoryIndexer.cs
 

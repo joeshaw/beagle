@@ -37,8 +37,6 @@ namespace Beagle.Daemon {
 		static Hashtable workers = new Hashtable ();
 		static bool shutdownRequested = false;
 
-		static ArrayList queues = new ArrayList ();
-
 		public delegate void ShutdownHandler ();
 		public static event ShutdownHandler ShutdownEvent;
 
@@ -91,18 +89,18 @@ namespace Beagle.Daemon {
 
 				shutdownRequested = true;
 
-				Logger.Log.Info ("beginning shutdown");
+				Logger.Log.Info ("Beginning shutdown");
 
-				Logger.Log.Debug ("shutting down queues");
-				foreach (ThreadedPriorityQueue queue in queues) {
-					queue.Shutdown ();
+				Logger.Log.Debug ("Beginning shutdown event");
+				if (ShutdownEvent != null) {
+					try {
+						ShutdownEvent ();
+					} catch (Exception ex) {
+						Logger.Log.Warn ("Caught unhandled exception during shutdown event");
+						Logger.Log.Warn (ex);
+					}
 				}
-				Logger.Log.Debug ("done shutting down queues");
-				Logger.Log.Debug ("beginning shutdown event");
-
-				if (ShutdownEvent != null)
-					ShutdownEvent ();
-				Logger.Log.Debug ("done with shutdown event"); 
+				Logger.Log.Debug ("Done with shutdown event"); 
 
 				int count = 0;
 
@@ -121,20 +119,5 @@ namespace Beagle.Daemon {
 				Gtk.Application.Quit ();
 			}
 		}
-
-		private static void OnWorkerStart (object o, Beagle.Util.ThreadedPriorityQueue.WorkerStartArgs args) 
-		{
-			args.Success = WorkerStart (o);
-		}
-
-		public static void AddQueue (ThreadedPriorityQueue queue)
-		{
-			lock (shutdownLock) {
-				queue.WorkerStartEvent += OnWorkerStart;
-				queue.WorkerFinishedEvent += WorkerFinished;
-				queues.Add (queue);
-			}
-		}
- 
 	}
 }

@@ -34,6 +34,7 @@ namespace Beagle
 
 		static public readonly string ServiceName = "com.novell.Beagle";
 		static public readonly string FactoryPath = "/com/novell/Beagle/Factory";
+		static public readonly string RemoteControlPath = "/com/novell/Beagle/RemoteControl";
 		static public readonly string WebHistoryIndexerPath = "/com/novell/Beagle/WebHistoryIndexer";
 		static public readonly string FileSystemIndexerPath = "/com/novell/Beagle/FileSystemIndexer";
 

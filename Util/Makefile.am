@@ -37,7 +37,6 @@ CSFILES = 			        	\
 	$(srcdir)/Stopwatch.cs			\
 	$(srcdir)/StringFu.cs           	\
 	$(srcdir)/SystemInformation.cs		\
-	$(srcdir)/ThreadedPriorityQueue.cs	\
 	$(srcdir)/UriFu.cs			\
 	$(srcdir)/Vfs.cs                        \
 	$(srcdir)/XKeybinder.cs

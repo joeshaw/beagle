@@ -98,7 +98,7 @@ namespace Beagle.Daemon {
 				}
 			}
 
-			Logger.Log.Info ("Starting Beagle Daemon");
+			Logger.Log.Info ("Starting Beagle Daemon (version {0})", ExternalStringsHack.Version);
 			Logger.Log.Debug ("Command Line: {0}",
 					  Environment.CommandLine != null ? Environment.CommandLine : "(null)");
 
@@ -118,10 +118,13 @@ namespace Beagle.Daemon {
 
 		public static int ReplaceExisting () 
 		{
+			Logger.Log.Info ("Attempting to replace another beagled.");
 			DBus.Service service = DBus.Service.Get (DBusisms.Connection, "com.novell.Beagle");
 			DBusisms.BusDriver.ServiceOwnerChanged += OnServiceOwnerChanged;
 			do {
-				Ping proxy = (Ping) service.GetObject (typeof (Ping), "/com/novell/Beagle/Ping");
+				Logger.Log.Info ("Building Remote Control Proxy");
+				RemoteControlProxy proxy = RemoteControl.GetProxy (service);
+				Logger.Log.Info ("Sending Shutdown");
 				proxy.Shutdown ();
 				Application.Run ();
 			} while (! DBusisms.InitService ());
@@ -221,7 +224,6 @@ namespace Beagle.Daemon {
 				DBusisms.Init ();
 				Application.Init ();
 
-				
 				if (!DBusisms.InitService ()) {
 					if (arg_replace) {
 						ReplaceExisting ();
@@ -254,10 +256,10 @@ namespace Beagle.Daemon {
 			queryDriver = new QueryDriver ();
 
 			try {
-				// Construct and register our ping object.
-				Ping ping = new Ping (queryDriver);
-				dbusObjects.Add (ping);
-				DBusisms.Service.RegisterObject (ping, "/com/novell/Beagle/Ping");
+				// Construct and register our remote control object.
+				RemoteControlImpl rci = new RemoteControlImpl ();
+				dbusObjects.Add (rci);
+				DBusisms.Service.RegisterObject (rci, Beagle.DBusisms.RemoteControlPath);
 				
 				// Set up our D-BUS object factory.
 				factory = new FactoryImpl (queryDriver);
