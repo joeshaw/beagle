@@ -241,10 +241,11 @@ internal unsafe struct _ExifEntry {
 	readonly public _ExifContent *parent;
 
 	[DllImport ("libexif.so")]
+#if HAVE_OLD_LIBEXIF
 	internal static extern IntPtr exif_entry_get_value (_ExifEntry *entry);
-
-	[DllImport ("libexif.so")]
-	internal static extern IntPtr exif_entry_get_value_brief (_ExifEntry *entry);
+#else
+	internal static extern IntPtr exif_entry_get_value (_ExifEntry *entry, byte [] value, int maxlen);
+#endif
 }
 
 [StructLayout(LayoutKind.Sequential)]
@@ -333,7 +334,12 @@ public class ExifData : IDisposable {
 	unsafe void AssembleContent (_ExifEntry *entry, void *callback_data)
 	{
 		tag_list.Add (entry->tag);
+#if HAVE_OLD_LIBEXIF
 		string_values [entry->tag] = Marshal.PtrToStringAnsi (_ExifEntry.exif_entry_get_value (entry));
+#else
+		byte [] value = new byte [1024];
+		string_values [entry->tag] = Marshal.PtrToStringAnsi (_ExifEntry.exif_entry_get_value (entry, value, value.Length));
+#endif
 
 		byte [] raw_data;
 		if (entry->size > 0) {
