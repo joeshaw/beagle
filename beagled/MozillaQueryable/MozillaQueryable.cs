@@ -223,8 +223,10 @@ namespace Beagle.Daemon.Mozilla {
 		{
 			Scheduler.TaskGroup group = NewMarkingTaskGroup (file.FullName, file.LastWriteTime);
 
-			foreach (Message message in MessageReader.Parse (file.FullName)) {
-				
+			MessageReader reader = new MessageReader (file.FullName);
+
+			while (reader.HasMoreMessages) {
+				Message message = reader.NextMessage;
 				Indexable indexable = MessageToIndexable (message);
 
 				Scheduler.Task task = NewAddTask (indexable);

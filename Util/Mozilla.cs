@@ -280,13 +280,21 @@ namespace Beagle.Util.Mozilla
 	/// </summary>
 	public class MessageReader
 	{
-		public static ICollection Parse (string path)
+		FileStream stream;
+		StreamReader reader;
+		bool hasMore = true;
+		Message message;
+		string path;
+
+		public MessageReader (string path) : this (path, -1)
 		{
-			return Parse (path, -1);
+			Console.WriteLine ("Doing: " + path);
 		}
 
-		public static ICollection Parse (string path, int offset)
+		public MessageReader (string path, int offset)
 		{
+			this.path = path;
+
 			FileStream stream;
 
 			try {
@@ -298,41 +306,47 @@ namespace Beagle.Util.Mozilla
 				if (offset > 0)
 					stream.Seek (offset, SeekOrigin.Begin);
 
+				reader = new StreamReader (stream);
+
 			} catch (Exception e) {
 				Console.WriteLine ("Could not open '{0}' (offset={1})", path, offset);
 				Console.WriteLine (e);
-				return null;
 			}
 
-			ArrayList messages = new ArrayList ();
-			StreamReader reader;
+			reader.ReadLine ();
 
-			Message message = null;
+			
+		}
+
+		public bool HasMoreMessages
+		{
+			get { return hasMore; }
+		}
+
+		public Message NextMessage
+		{
+			get {
+				Read ();
+				return message;
+			}
+		}
+
+		private void Read ()
+		{
+		        message = new Message ();
+			message.Path = path;
 			string lastdata = "";
 			string data;
 			bool isBody = false;
-
-			int moffset = offset;
-
+			
 			try {
-				reader = new StreamReader (stream);
-
+				
 				while ((data = reader.ReadLine ()) != null) {
 
-					moffset++;
-
 					// Break for new message
-
+					
 					if (data.StartsWith ("From - ")) {
-						if (message != null)
-							messages.Add (message);
-						message = new Message ();
-
-						message.Path = path;
-						message.Offset = moffset;
-
-						isBody = false;
-						continue;
+						return;
 					}
 
 					// Add body to message
@@ -384,13 +398,12 @@ namespace Beagle.Util.Mozilla
 						
 					lastdata = data;
 				}
-
+				
+				hasMore = false;
 			} catch (Exception e) {
 				Console.WriteLine (e);
-				return null;
+				return;
 			}
-			 
-			return messages;
 		}
 	}
 
