@@ -55,6 +55,9 @@ namespace Beagle {
 		private Hashtable properties = new Hashtable (new CaseInsensitiveHashCodeProvider (), 
 							      new CaseInsensitiveComparer ());
 
+		private Hashtable data = new Hashtable (new CaseInsensitiveHashCodeProvider (), 
+							new CaseInsensitiveComparer ());
+
 		private String path = ""; // == uninitialized
 		private FileInfo fileInfo = null;
 
@@ -171,6 +174,32 @@ namespace Beagle {
 				properties [key] = value as String;
 			}
 		}
+
+		//////////////////////////
+
+		virtual public IDictionary Data {
+			get { return data; }
+		}
+
+		virtual public ICollection DataKeys {
+			get { return data.Keys; }
+		}
+
+		virtual public object GetData (string key)
+		{
+			return data [key];
+		}
+
+		virtual public void SetData (string key, object obj)
+		{
+			if (obj == null) {
+				if (data.Contains (key))
+					data.Remove (key);
+				return;
+			}
+			data [key] = obj;
+		}
+		
 
 		//////////////////////////
 

@@ -7,10 +7,12 @@ CSFLAGS = -target:library
 
 CSFILES =					\
 	$(srcdir)/Tile.cs			\
+	$(srcdir)/TileMenuContext.cs		\
 	$(srcdir)/TileRenderContext.cs		\
 	$(srcdir)/TileCanvas.cs			\
 	$(srcdir)/TileHitCollection.cs		\
 	$(srcdir)/TileFromTemplate.cs		\
+	$(srcdir)/TileContact.cs		\
 	$(srcdir)/TileFile.cs			\
 	$(srcdir)/TileMailMessage.cs
 
@@ -24,6 +26,7 @@ ASSEMBLIES = 					\
 	-r:../indexer/Indexer.dll
 
 RESOURCEFILES =					\
+	$(srcdir)/template-contact.html		\
 	$(srcdir)/template-file.html		\
 	$(srcdir)/template-mail-message.html
 

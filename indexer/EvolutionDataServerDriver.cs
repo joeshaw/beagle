@@ -98,6 +98,15 @@ namespace Beagle {
 			hit ["Icscalendar"] = contact.Icscalendar;
 			hit ["Spouse"] = contact.Spouse;
 			hit ["Note"] = contact.Note;
+			
+#if false
+			if (contact.Photo.Data != null && contact.Photo.Data.Length > 0) {
+				hit.SetData ("Photo", contact.Photo.Data);
+				System.IO.Stream x = new System.IO.FileStream ("/tmp/foo.data", System.IO.FileMode.Create, System.IO.FileAccess.Write);
+				x.Write (contact.Photo.Data, 0, contact.Photo.Data.Length);
+				x.Close ();
+			}
+#endif
 
 			// FIXME: List?
 			// FIXME: ListShowAddresses?

@@ -1,5 +1,5 @@
 //
-// Tile.cs
+// TileContact.cs
 //
 // Copyright (C) 2004 Novell, Inc.
 //
@@ -25,58 +25,50 @@
 //
 
 using System;
+using System.Diagnostics;
+using System.IO;
+
+using BU = Beagle.Util;
 
 namespace Beagle {
 
-	public delegate void TileActionHandler ();
-	public delegate void TileChangedHandler (Tile tile);
+	public class TileContact : TileFromTemplate {
 
-	public abstract class Tile {
+		Hit hit;
 
-		static private object uidSrcLock = new object ();
-		static private long uidSrc = 0;
-		private long uid;
-		
-		public Tile ()
+		public TileContact (Hit _hit) : base ("template-contact.html")
 		{
-			lock (uidSrcLock) {
-				++uidSrc;
-				uid = uidSrc;
+			hit = _hit;
+		}
+
+		override public bool HandleUrlRequest (string url, Gtk.HTMLStream stream)
+		{
+			// Try to short-circuit the request for contact-icon.png,
+			// replacing it w/ a photo of the contact.
+			if (url == "contact-icon.png") {
+				byte[] data = (byte[]) hit.GetData ("Photo");
+				if (data != null) {
+					stream.Write (data, data.Length);
+					return true;
+				}
 			}
-		}
 
-		public string UniqueKey {
-			get { return "_tile_" + uid; }
-		}
-
-		////////////////////////
-
-		abstract public void Render (TileRenderContext ctx);
-
-		////////////////////////
-
-		virtual public void PopupMenu (TileMenuContext ctx) { }
-
-		////////////////////////
-
-		virtual public bool HandleUrlRequest (string url, Gtk.HTMLStream stream)
-		{
 			return false;
 		}
 
-		////////////////////////
-
-		private TileChangedHandler changedHandler = null;
-
-		public void SetChangedHandler (TileChangedHandler ch)
+		override protected string ExpandKey (string key)
 		{
-			changedHandler = ch;
+			return hit [key];
 		}
-
-		protected void Changed ()
+		
+		override protected bool RenderKey (string key, TileRenderContext ctx)
 		{
-			if (changedHandler != null)
-				changedHandler (this);
+			if (key == "Icon") {
+				ctx.Image ("contact-icon.png");
+				return true;
+			}
+
+			return base.RenderKey (key, ctx);
 		}
 	}
 }

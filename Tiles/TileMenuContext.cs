@@ -1,5 +1,5 @@
 //
-// Tile.cs
+// TileMenuContext.cs
 //
 // Copyright (C) 2004 Novell, Inc.
 //
@@ -28,55 +28,10 @@ using System;
 
 namespace Beagle {
 
-	public delegate void TileActionHandler ();
-	public delegate void TileChangedHandler (Tile tile);
-
-	public abstract class Tile {
-
-		static private object uidSrcLock = new object ();
-		static private long uidSrc = 0;
-		private long uid;
+	public abstract class TileMenuContext {
 		
-		public Tile ()
-		{
-			lock (uidSrcLock) {
-				++uidSrc;
-				uid = uidSrc;
-			}
-		}
+		abstract public void Add (string icon, string label,
+					  TileActionHandler handler);
 
-		public string UniqueKey {
-			get { return "_tile_" + uid; }
-		}
-
-		////////////////////////
-
-		abstract public void Render (TileRenderContext ctx);
-
-		////////////////////////
-
-		virtual public void PopupMenu (TileMenuContext ctx) { }
-
-		////////////////////////
-
-		virtual public bool HandleUrlRequest (string url, Gtk.HTMLStream stream)
-		{
-			return false;
-		}
-
-		////////////////////////
-
-		private TileChangedHandler changedHandler = null;
-
-		public void SetChangedHandler (TileChangedHandler ch)
-		{
-			changedHandler = ch;
-		}
-
-		protected void Changed ()
-		{
-			if (changedHandler != null)
-				changedHandler (this);
-		}
 	}
 }

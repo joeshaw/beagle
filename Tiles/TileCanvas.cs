@@ -26,6 +26,7 @@
 
 using System;
 using System.Collections;
+using System.Diagnostics;
 using System.IO;
 using System.Text;
 
@@ -80,12 +81,15 @@ namespace Beagle {
 		{
 			return key.StartsWith ("_action_:");
 		}
-
-		private void DoAction (string key)
+		
+		private bool DoAction (string key)
 		{
 			TileActionHandler handler = (TileActionHandler) actionTable [key];
-			if (handler != null)
+			if (handler != null) {
 				handler ();
+				return true;
+			}
+			return false;
 		}
 
 
@@ -115,22 +119,29 @@ namespace Beagle {
 
 		private void OnUrlRequested (object o, Gtk.UrlRequestedArgs args)
 		{
-			int i = args.Url.IndexOf (':');
-			string tileKey = args.Url.Substring (0, i);
-			string name = args.Url.Substring (i+1);
+			string name = args.Url;
+			Tile tile = null;
 
-			Tile tile = GetTile (tileKey);
+			if (name.Length > 0 && name [0] == ':') {
+				int i = name.IndexOf (':', 1);
+				if (i != -1) {
+					string tileKey = name.Substring (1, i-1);
+					tile = GetTile (tileKey);
+					name = args.Url.Substring (i+1);
+
+				}
+			}
 
 			// If this Url request originates from an iframe,
 			// we respond by painting the tile into the HTMLStream.
-			if (name == "_iframe_") {
+			if (tile != null && name == "_iframe_") {
 				PaintTile (tile, args.Handle);
 				return;
 			}
 
 			// Give the original tile an opportunity to
 			// service the Url request.
-			if (tile.HandleUrlRequest (name, args.Handle))
+			if (tile != null && tile.HandleUrlRequest (name, args.Handle))
 				return;
 
 			// Maybe this is an image: try the image barn
@@ -148,7 +159,31 @@ namespace Beagle {
 
 		private void OnLinkClicked (object o, Gtk.LinkClickedArgs args)
 		{
-			DoAction (args.Url);
+			if (DoAction (args.Url))
+				return;
+
+			string command = null;
+			string commandArgs = null;
+
+			if (args.Url.StartsWith ("http://")) {
+				command = "epiphany";
+				commandArgs = args.Url;
+			} else if (args.Url.StartsWith ("mailto:")) {
+				command = "evolution-1.5";
+				commandArgs = args.Url;
+			}
+
+			if (command != null) {
+				Process p = new Process ();
+				p.StartInfo.UseShellExecute = false;
+				p.StartInfo.FileName = command;
+				if (args != null)
+					p.StartInfo.Arguments = commandArgs;
+				try {
+					p.Start ();
+				} catch { }
+				return;
+			}
 		}
 
 		private void OnIframeCreated (object o, Gtk.IframeCreatedArgs args)
@@ -170,7 +205,7 @@ namespace Beagle {
 			Gtk.HTML src = (Gtk.HTML) o;
 			string url = src.Base;
 			if (url.EndsWith (":_iframe_"))
-				url = url.Substring (0, url.Length - ":_iframe_".Length);
+				url = url.Substring (1, url.Length - ":_iframe_".Length - 1);
 			Tile tile = GetTile (url);
 			if (tile == null)
 				Console.WriteLine ("Unable to map event to tile! (base='{0}')",
@@ -182,13 +217,85 @@ namespace Beagle {
 		{
 			Gdk.EventButton ev = (Gdk.EventButton) args.Event;
 			Tile tile = TileFromEventSource (o);
-			Console.WriteLine ("Clicked button {0}", ev.Button);
+			if (tile != null && ev.Button == 3)
+				DoPopupMenu (tile, ev.Button, ev.Time);
 		}
 
 		private void OnPopupMenu (object o, Gtk.PopupMenuArgs args)
 		{
 			Tile tile = TileFromEventSource (o);
-			Console.WriteLine ("popup!");
+			if (tile != null)
+				DoPopupMenu (tile, 0, Gtk.Global.CurrentEventTime);
+		}
+
+		/////////////////////////////////////////////////
+
+		private class ActionWrapper {
+
+			TileActionHandler handler;
+
+			public ActionWrapper (TileActionHandler _handler)
+			{
+				handler = _handler;
+			}
+
+			public void AsEventHandler (object sender, EventArgs e)
+			{
+				handler ();
+			}
+		}
+
+		private class TileCanvasMenuContext : TileMenuContext {
+			ArrayList items = new ArrayList ();
+
+			public ICollection Items {
+				get { return items; }
+			}
+
+			override public void Add (string icon, string label,
+						  TileActionHandler handler)
+			{
+				Gtk.Widget img = null;
+				if (icon != null)
+					img = Images.GetWidget (icon);
+
+				Gtk.MenuItem item;
+				if (img != null) {
+					Gtk.ImageMenuItem imgItem;
+					imgItem = new Gtk.ImageMenuItem (label);
+					imgItem.Image = img;
+					item = imgItem;
+					items.Add (item);
+				} else {
+					item = new Gtk.MenuItem (label);
+					items.Add (item);
+				}
+
+				if (handler != null) {
+					ActionWrapper thunk = new ActionWrapper (handler);
+					item.Activated += new EventHandler (thunk.AsEventHandler);
+				}
+
+				item.Sensitive = (handler != null);
+			}
+
+		}
+
+		private void DoPopupMenu (Tile tile, uint button, uint activateTime)
+		{
+			TileCanvasMenuContext ctx = new TileCanvasMenuContext ();
+			tile.PopupMenu (ctx);
+			if (ctx.Items.Count == 0)
+				return;
+
+			Gtk.Menu menu = new Gtk.Menu ();
+			foreach (Gtk.MenuItem mi in ctx.Items) {
+				menu.Append (mi);
+				mi.ShowAll ();
+			}
+
+			menu.ShowAll ();
+			menu.Popup (null, null, null, (IntPtr) 0,  button, activateTime);
 		}
 
 		/////////////////////////////////////////////////
@@ -228,7 +335,7 @@ namespace Beagle {
 					string key = canvas.AddAction (handler);
 					Write ("<a href=\"{0}\">", key);
 				}
-				Write ("<img src=\"{0}:{1}\" border=\"0\">", tileMain.UniqueKey, name);
+				Write ("<img src=\":{0}:{1}\" border=\"0\">", tileMain.UniqueKey, name);
 				if (handler != null)
 					Write ("</a>");
 			}
@@ -237,7 +344,7 @@ namespace Beagle {
 			{
 				canvas.CacheTile (tile);
 				Write ("<iframe");
-				Write (" src=\"{0}:_iframe_\"", tile.UniqueKey);
+				Write (" src=\":{0}:_iframe_\"", tile.UniqueKey);
 				Write (" marginwidth=\"0\"");
 				Write (" marginheight=\"1\"");
 				Write (" frameborder=\"0\"");

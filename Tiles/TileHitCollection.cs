@@ -42,6 +42,10 @@ namespace Beagle {
 
 				// FIXME: This shouldn't be hard-wired
 				switch (hit.Type) {
+					
+				case "Contact":
+					tile = new TileContact (hit);
+					break;
 
 				case "File":
 					tile = new TileFile (hit);
