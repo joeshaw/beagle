@@ -54,7 +54,7 @@ namespace Beagle.Daemon {
 					Logger.Log.Error ("QueryWorker '{0}' failed with exception:\n{1}:\n{2}",
 							  worker, e.Message, e.StackTrace);
 				}
-				result.WorkerFinished ();
+				result.WorkerFinished (worker);
 			}
 		}
 
@@ -160,7 +160,7 @@ namespace Beagle.Daemon {
 				// all the workers will have a chance 
 				// to start before Finished is called
 				
-				WorkerStartNoLock ();
+				WorkerStartNoLock (worker);
 
 				Thread th;
 				th = new Thread (new ThreadStart (qwc.Start));
@@ -168,22 +168,23 @@ namespace Beagle.Daemon {
 			}
 		}
 
-		private void WorkerStartNoLock ()
+		private void WorkerStartNoLock (object o)
 		{
+			Shutdown.WorkerStart (o);
 			++workers;
 			if (workers == 1 && StartedEvent != null)
 				StartedEvent (this);
 			
 		}
 
-		internal void WorkerStart ()
+		internal void WorkerStart (object o)
 		{
 			lock (this) {
-				WorkerStartNoLock ();
+				WorkerStartNoLock (o);
 			}
 		}
 
-		internal void WorkerFinished ()
+		internal void WorkerFinished (object o)
 		{
 			lock (this) {
 				Debug.Assert (workers > 0, "Too many calls to WorkerFinished");
@@ -195,6 +196,7 @@ namespace Beagle.Daemon {
 					Monitor.Pulse (this);
 				}
 			}
+			Shutdown.WorkerFinished (o);
 		}
 
 		public void Wait ()

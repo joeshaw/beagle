@@ -178,10 +178,9 @@ namespace Beagle.Daemon.EvolutionDataServerQueryable {
 				Monitor.Pulse (this);
 			}
 		}
-	
-		private void OnResultCancelled (QueryResult source) 
+
+		private void DisconnectView () 
 		{
-			lock (this) {
 				view.ContactsAdded -= OnContactsAdded;
 				view.ContactsRemoved -= OnContactsRemoved;
 				view.ContactsChanged -= OnContactsChanged;
@@ -190,6 +189,21 @@ namespace Beagle.Daemon.EvolutionDataServerQueryable {
 				view.Dispose ();
 				
 				view = null;
+		}
+	
+		private void OnResultCancelled (QueryResult source) 
+		{
+			lock (this) {
+				DisconnectView ();
+				result = null;
+				Monitor.Pulse (this);
+			}
+		}
+
+		private void OnShutdown () 
+		{
+			lock (this) {
+				DisconnectView ();
 				result = null;
 				Monitor.Pulse (this);
 			}
@@ -224,6 +238,8 @@ namespace Beagle.Daemon.EvolutionDataServerQueryable {
 			// FIXME: bad hack - need Cancelled on IQueryResult
 			QueryResult queryResult = (QueryResult)result;
 			queryResult.CancelledEvent += OnResultCancelled;
+
+			Shutdown.ShutdownEvent += OnShutdown;
 		}
 	
 		public void Start () 

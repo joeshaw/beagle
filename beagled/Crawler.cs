@@ -215,6 +215,7 @@ namespace Beagle.Daemon {
 
 		private void WorkQueue ()
 		{
+			Shutdown.WorkerStart (this);
 			while (true) {
 				
 				// Get the next item to crawl.  If necessary,
@@ -224,6 +225,7 @@ namespace Beagle.Daemon {
 					if (queue.Count == 0) {
 						if (queueStopWhenEmpty) {
 							queueStop = true;
+							Shutdown.WorkerFinished (this);
 							return;
 						}
 						Monitor.Wait (queueLock);
@@ -236,8 +238,10 @@ namespace Beagle.Daemon {
 					}
 				}
 
-				if (queueStop)
+				if (queueStop) {
+					Shutdown.WorkerFinished (this);
 					return;
+				}
 
 				if (pending == null)
 					continue;

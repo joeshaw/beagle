@@ -39,6 +39,13 @@ namespace Beagle.Daemon {
 			DBusisms.BusDriver.ServiceOwnerChanged += this.OnServiceOwnerChanged;
 
 			this.queryDriver = queryDriver;
+
+			Shutdown.ShutdownEvent += OnShutdown; 
+		}
+
+		private void OnShutdown () 
+		{
+			UnregisterAll ();
 		}
 
 		////////////////////////////////////////////////////
@@ -117,6 +124,15 @@ namespace Beagle.Daemon {
 						UnregisterObjectAt (i);
 					else
 						++i;
+				}
+			}
+		}
+
+		public void UnregisterAll () 
+		{
+			lock (this) {
+				while (all_objects.Count > 0) {
+					UnregisterObjectAt (0);
 				}
 			}
 		}

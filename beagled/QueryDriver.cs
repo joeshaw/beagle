@@ -119,14 +119,14 @@ namespace Beagle.Daemon {
 			// The extra pair of calls to WorkerStart/WorkerFinished ensures that
 			// the QueryResult will fire the StartedEvent and FinishedEvent,
 			// even if no queryable accepts the query.
-			result.WorkerStart ();
+			result.WorkerStart (this);
 			
 			foreach (Queryable queryable in queryables) {
 				if (queryable.AcceptQuery (body))
 					queryable.DoQuery (body, result, null);
 			}
 			
-			result.WorkerFinished ();
+			result.WorkerFinished (this);
 		}
 
 		public void DoQueryChange (Queryable            queryable,

@@ -106,6 +106,7 @@ namespace Beagle.Util {
 			// the InotifyEvent event.
 			if (fd >= 0) {
 				theThread = new Thread (new ThreadStart (ReadEvents));
+				theThread.IsBackground = true;
 				theThread.Start ();
 			}
 		}

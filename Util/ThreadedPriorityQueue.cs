@@ -38,16 +38,27 @@ namespace Beagle.Util {
 		private bool running = true;
 		private bool paused = false;
 		private Logger log = null;
+
+		public delegate void WorkerStartHandler (object o);
+		public event WorkerStartHandler WorkerStartEvent;
+		public delegate void WorkerFinishedHandler (object o);
+		public event WorkerFinishedHandler WorkerFinishedEvent;
 		
 		public ThreadedPriorityQueue ()
 		{
-			thread = new Thread (new ThreadStart (QueueWorker));
-			thread.Start ();
 		}
 
 		public Logger Log {
 			get { return log; }
 			set { log = value; }
+		}
+
+		///////////////////////////////////////////////////////////////////
+
+		public void Start ()
+		{
+			thread = new Thread (new ThreadStart (QueueWorker));
+			thread.Start ();
 		}
 
 		///////////////////////////////////////////////////////////////////
@@ -156,6 +167,8 @@ namespace Beagle.Util {
 
 		private void QueueWorker ()
 		{
+			if (WorkerStartEvent != null) 
+				WorkerStartEvent (this);
 			while (running) {
 
 				if (paused) {
@@ -240,6 +253,8 @@ namespace Beagle.Util {
 					}
 				}
 			}
+			if (WorkerFinishedEvent != null)
+				WorkerFinishedEvent (this);
 		}
 	}
 }

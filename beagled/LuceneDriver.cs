@@ -164,6 +164,9 @@ namespace Beagle.Daemon {
 
 			// Start an indexing queue
 			queue = new LuceneQueue (this);
+			Shutdown.AddQueue (queue);
+
+			queue.Start ();
 		}
 
 		/////////////////////////////////////////////////////

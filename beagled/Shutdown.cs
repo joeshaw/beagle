@@ -26,26 +26,51 @@
 
 using System;
 using System.Threading;
+using System.Collections;
+using Beagle.Util;
 
 namespace Beagle.Daemon {
 
 	public class Shutdown {
 
 		static object shutdownLock = new object ();
-		static int numberOfWorkers = 0;
+		static Hashtable workers = new Hashtable ();
 		static bool shutdownRequested = false;
 
-		static void WorkerBegin ()
+		static ArrayList queues = new ArrayList ();
+
+		public delegate void ShutdownHandler ();
+		public static event ShutdownHandler ShutdownEvent;
+
+		public static void WorkerStart (object o)
 		{
 			lock (shutdownLock) {
-				++numberOfWorkers;
+				int refcount = 0;
+				if (workers.Contains (o))
+					refcount = (int)workers[o];
+				++refcount;
+				workers[o] = refcount;
+
+				Logger.Log.Debug ("worker added: {0}", o);
 			}
 		}
 
-		static void WorkerEnd ()
+		public static void WorkerFinished (object o)
 		{
 			lock (shutdownLock) {
-				--numberOfWorkers;
+				if (!workers.Contains (o)) {
+					Logger.Log.Debug ("extra WorkerFinished called for {0}", o);
+					return;
+				}
+
+				int refcount = (int)workers[o];
+				--refcount;
+				if (refcount == 0)
+					workers.Remove (o);
+				else 
+					workers[o] = refcount;
+				Logger.Log.Debug ("worker removed: {0}", o);
+
 				Monitor.Pulse (shutdownLock);
 			}
 		}
@@ -62,19 +87,37 @@ namespace Beagle.Daemon {
 
 				shutdownRequested = true;
 
-				Console.WriteLine ("Beginning shutdown");
-				int count = 0;
+				Logger.Log.Info ("beginning shutdown");
 
-				while (numberOfWorkers > 0) {
-					++count;
-					Console.WriteLine ("({0}) Waiting for {1} worker{2}...",
-							   count,
-							   numberOfWorkers,
-							   numberOfWorkers > 1 ? "s" : "");
-					Monitor.Wait (500);
+				if (ShutdownEvent != null)
+					ShutdownEvent ();
+
+				foreach (ThreadedPriorityQueue queue in queues) {
+					queue.Shutdown ();
 				}
 
+				int count = 0;
+
+				while (workers.Count > 0) {
+					++count;
+					Logger.Log.Debug ("({0}) Waiting for {1} worker{2}...",
+							   count,
+							  workers.Count,
+							   workers.Count > 1 ? "s" : "");
+					Monitor.Wait (shutdownLock);
+				}
+
+				Logger.Log.Info ("Exiting");
 				Gtk.Application.Quit ();
+			}
+		}
+
+		public static void AddQueue (ThreadedPriorityQueue queue)
+		{
+			lock (shutdownLock) {
+				queue.WorkerStartEvent += WorkerStart;
+				queue.WorkerFinishedEvent += WorkerFinished;
+				queues.Add (queue);
 			}
 		}
  

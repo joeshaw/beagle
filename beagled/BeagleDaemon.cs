@@ -31,9 +31,12 @@ using System;
 using System.IO;
 using Mono.Posix;
 using Beagle.Util;
+using System.Collections;
 
 namespace Beagle.Daemon {
 	class BeagleDaemon {
+
+		private static ArrayList dbusObjects = new ArrayList ();
 
 		private static bool Daemonize ()
 		{
@@ -120,17 +123,18 @@ namespace Beagle.Daemon {
 			try {
 				Application.Init ();
 				
-				// FIXME: this could be better, but I don't want to
-
-				// Connect to the session bus, acquire the com.novell.Beagle
-				// service, and set up a BusDriver.
 				DBusisms.Init ();
+
+				if (!DBusisms.InitService ()) {
+					Logger.Log.Fatal ("Could not register com.novell.Beagle service.  There is probably another beagled instance running.");
+					return 1;
+				}
 			} catch (DBus.DBusException e) {
 				Logger.Log.Fatal ("Couldn't connect to the session bus.  See http://beaglewiki.org/index.php/Installing%20Beagle for information on setting up a session bus.");
 				Logger.Log.Debug (e);
 				return 1;
 			} catch (Exception e) {
-				Logger.Log.Fatal ("Could not initialize Beagle:\n{0}", e);
+				Logger.Log.Fatal ("Could not initialize Beagle's bus connection:\n{0}", e);
 				return 1;
 			}
 
@@ -138,6 +142,7 @@ namespace Beagle.Daemon {
 
 				// Construct and register our ping object.
 				Ping ping = new Ping ();
+				dbusObjects.Add (ping);
 				DBusisms.Service.RegisterObject (ping, "/com/novell/Beagle/Ping");
 
 				// Construct a query driver.  Among other things, this
@@ -146,6 +151,7 @@ namespace Beagle.Daemon {
 
 				// Set up our D-BUS object factory.
 				FactoryImpl factory = new FactoryImpl (queryDriver);
+				dbusObjects.Add (factory);
 				DBusisms.Service.RegisterObject (factory, Beagle.DBusisms.FactoryPath);
 			} catch (DBus.DBusException e) {
 				Logger.Log.Fatal ("Couldn't register DBus objects."); 
@@ -163,10 +169,23 @@ namespace Beagle.Daemon {
 					return 1;
 			}
 
+			Shutdown.ShutdownEvent += OnShutdown;
 			// Start our event loop.
 			Application.Run ();
 
+			Logger.Log.Info ("done");
+
+			// Exiting will close the dbus connection, which
+			// will release the com.novell.beagle service.
 			return 0;
 		}
+
+		private static void OnShutdown ()
+		{
+			foreach (object o in dbusObjects)
+				DBusisms.Service.UnregisterObject (o);
+			dbusObjects = null;
+		}
+
 	}
 }

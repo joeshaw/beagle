@@ -39,6 +39,7 @@ namespace Beagle.Daemon.MailQueryable {
 	public class MailQueryable : LuceneQueryable {
 
 		private static Logger log = Logger.Get ("mail");
+		private MailCrawler crawler = null;
 
 		public MailQueryable () : base (Path.Combine (PathFinder.RootDir, "MailIndex"))
 		{
@@ -46,8 +47,9 @@ namespace Beagle.Daemon.MailQueryable {
 			DirectoryInfo local_dir = new DirectoryInfo (Path.Combine (home, ".evolution/mail/local"));
 
 			// Crawl mail
-			MailCrawler crawler = new MailCrawler (this);
+			crawler = new MailCrawler (this);
 			crawler.ScheduleCrawl (local_dir, -1);
+			Shutdown.ShutdownEvent += OnShutdown;
 
 			DirectoryInfo imap_dir = new DirectoryInfo (Path.Combine (home, ".evolution/mail/imap"));
 			crawler.ScheduleCrawl (imap_dir, -1);
@@ -56,6 +58,10 @@ namespace Beagle.Daemon.MailQueryable {
 			monitor.FileSystemEvent += OnFileSystemEvent;
 			monitor.Subscribe (local_dir, true);
 			//monitor.Subscribe (imap_dir, true);
+		}
+
+		private void OnShutdown () {
+			crawler.Stop ();
 		}
 
 		private void OnFileSystemEvent (FileSystemEventMonitor monitor,
@@ -74,7 +80,7 @@ namespace Beagle.Daemon.MailQueryable {
 							this.IndexImap (file);
 					}
 				} catch (Exception e) {
-					Logger.Log.Error ("Unable to index mail: {0}", e);
+					log.Error ("Unable to index mail: {0}", e);
 				}
 			} else if (event_type == FileSystemEventType.Deleted) {
 				// FIXME
@@ -149,7 +155,7 @@ namespace Beagle.Daemon.MailQueryable {
 			foreach (Camel.MBoxMessageInfo mi in summary) {
 
 				if ((count & 1500) == 0) {
-					Logger.Log.Debug ("{0}: indexed {1} messages ({2}/{3} {4:###.0}%)",
+					log.Debug ("{0}: indexed {1} messages ({2}/{3} {4:###.0}%)",
 							   folderName, indexedCount,
 							   count, summary.header.count, 
 							   100.0 * count / summary.header.count);
@@ -174,15 +180,15 @@ namespace Beagle.Daemon.MailQueryable {
 					// Parse an RFC 2822 message from the array of lines
 					MailMessage msg = new MailMessage (reader, mi.size);
 					
-					Logger.Log.Debug ("From: {0}", mi.from);
-					Logger.Log.Debug ("Subject: {0}", mi.subject);
+					log.Debug ("From: {0}", mi.from);
+					log.Debug ("Subject: {0}", mi.subject);
 
 					Driver.ScheduleAdd (MailToIndexable ("local@local", folderName, mi, msg));
 					++indexedCount;
 				}
 			}
 
-			Logger.Log.Info ("{0}: indexed {1} of {2} messages", folderName, indexedCount, count);
+			log.Info ("{0}: indexed {1} of {2} messages", folderName, indexedCount, count);
 
 			if (mboxStream != null)
 				mboxStream.Close ();
@@ -201,7 +207,7 @@ namespace Beagle.Daemon.MailQueryable {
 			string account_start = dir_name.Substring (account_start_idx);
 			string account_name = account_start.Substring (0, account_start.IndexOf ('/'));
 
-			Logger.Log.Debug ("*** Being asked to index {0}", summary_file);
+			log.Debug ("*** Being asked to index {0}", summary_file);
 
 			Camel.Summary summary = Camel.Summary.load (summary_file.FullName);
 
@@ -222,7 +228,7 @@ namespace Beagle.Daemon.MailQueryable {
 
 			foreach (Camel.ImapMessageInfo mi in summary) {
 				if ((count & 1500) == 0) {
-					Logger.Log.Debug ("{0}: indexed {1} messages ({2}/{3} {4:###.0}%)",
+					log.Debug ("{0}: indexed {1} messages ({2}/{3} {4:###.0}%)",
 							  folder_name, index_count,
 							  count, summary.header.count, 
 							  100.0 * count / summary.header.count);
@@ -234,8 +240,8 @@ namespace Beagle.Daemon.MailQueryable {
 					if (latest_time < mi.Date)
 						latest_time = mi.Date;
 
-					Logger.Log.Debug ("From: {0}", mi.from);
-					Logger.Log.Debug ("Subject: {0}", mi.subject);
+					log.Debug ("From: {0}", mi.from);
+					log.Debug ("Subject: {0}", mi.subject);
 
 					Stream message_stream = null;
 					MailMessage msg = null;
@@ -260,7 +266,7 @@ namespace Beagle.Daemon.MailQueryable {
 				}
 			}
 
-			Logger.Log.Info ("{0}: indexed {1} of {2} messages", folder_name, index_count, count);
+			log.Info ("{0}: indexed {1} of {2} messages", folder_name, index_count, count);
 
 			if (latest_time != last_time)
 				PathFinder.WriteAppDataLine ("MailIndex", data_name, latest_time.Ticks.ToString ());

@@ -61,6 +61,8 @@ namespace Beagle.Daemon.FileSystemQueryable {
 			crawlQ.ScheduleCrawl (home);
 			crawlQ.ScheduleCrawl (Path.Combine (home, "Desktop"));
 			crawlQ.ScheduleCrawl (Path.Combine (home, "Documents"));
+			Shutdown.AddQueue (crawlQ);
+			crawlQ.Start ();
 
 			Inotify.InotifyEvent += new InotifyHandler (OnInotifyEvent);
 		}

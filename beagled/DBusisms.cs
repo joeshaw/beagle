@@ -60,9 +60,21 @@ namespace Beagle.Daemon
 			dbus_g_thread_init ();
 			
 			connection = Bus.GetSessionBus ();
-			service = new Service (connection, Beagle.DBusisms.ServiceName);
+
 			busDriver = BusDriver.New (connection);
 		}
-				
+		
+		public static bool InitService () {
+			if (service == null) {
+				if (Service.Exists (connection, Beagle.DBusisms.ServiceName)) {
+					return false;
+				}
+				service = new Service (connection, Beagle.DBusisms.ServiceName);
+				return true;
+			} else {
+				return true;
+			}
+		}
 	}
 }
+	

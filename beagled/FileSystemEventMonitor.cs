@@ -121,6 +121,7 @@ namespace Beagle.Daemon {
 			sc.Recursive = recursive;
 
 			Thread th = new Thread (new ThreadStart (sc.Start));
+			th.IsBackground = true;
 			th.Start ();
 		}
 			

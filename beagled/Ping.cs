@@ -36,6 +36,12 @@ namespace Beagle.Daemon {
 		{
 			return "Beagle Daemon blah blah blah\n(this should return the version number, etc.)";
 		}
+
+		[Method]
+		public virtual void Shutdown ()
+		{
+			Beagle.Daemon.Shutdown.BeginShutdown ();
+		}
 	}
 
 }
