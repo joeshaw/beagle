@@ -369,6 +369,11 @@ EVO_MAIL_QUERYABLE_CSFILES =				\
 	$(evomailqueryable)/EvolutionMailDriver.cs	\
 	$(evomailqueryable)/EvolutionMailIndexableGenerator.cs
 
+mozillaqueryable = $(srcdir)/MozillaQueryable
+MOZILLA_QUERYABLE_CSFILES =				\
+	$(mozillaqueryable)/MozillaQueryable.cs
+
+
 blamqueryable = $(srcdir)/BlamQueryable
 BLAM_QUERYABLE_CSFILES =				\
 	$(blamqueryable)/BlamQueryable.cs
@@ -389,6 +394,7 @@ DAEMON_DLL_CSFILES = 						\
 	$(GAIM_LOG_QUERYABLE_CSFILES)				\
 	$(BLAM_QUERYABLE_CSFILES)				\
 	$(EVO_MAIL_QUERYABLE_CSFILES)				\
+	$(MOZILLA_QUERYABLE_CSFILES)				\
 	$(WEB_HISTORY_QUERYABLE_CSFILES)			\
 	$(srcdir)/BugzillaDriver.cs 				\
 	$(srcdir)/Crawler.cs					\

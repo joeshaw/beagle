@@ -359,6 +359,8 @@ namespace Beagle.Daemon {
 			indexable.Type = "MailMessage";
 			indexable.MimeType = "text/plain"; // FIXME
 
+			indexable.AddProperty (Property.New ("fixme:client", "evolution"));
+
 			indexable.AddProperty (Property.NewKeyword ("dc:title",       message.Subject));
 
 			indexable.AddProperty (Property.NewKeyword ("fixme:account",  "Local"));

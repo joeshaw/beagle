@@ -129,7 +129,7 @@ namespace Beagle.Daemon.BlamQueryable {
 					Indexable indexable = new Indexable (
 						new Uri (channel.Url.Replace ("http://", "rss://") + ";item=" + item.Id));
 					indexable.MimeType = "text/html";
-					indexable.Type = "Blog";
+					indexable.Type = "FeedItem";
 					indexable.Timestamp = item.PubDate;
 					
 					indexable.AddProperty(Property.NewKeyword ("dc:title", item.Title));

@@ -32,8 +32,8 @@ using BU = Beagle.Util;
 
 namespace Beagle.Tile {
 
-	[HitFlavor (Name="Blogs", Rank=800, Emblem="emblem-blog.png", Color="#f5f5fe",
-		    Type="Blog")]
+	[HitFlavor (Name="Feeds", Rank=800, Emblem="emblem-blog.png", Color="#f5f5fe",
+		    Type="FeedItem")]
 	public class TileBlog : TileFromHitTemplate 
 	{
 		public TileBlog (Hit _hit) : base (_hit, "template-blog.html")
@@ -55,7 +55,6 @@ namespace Beagle.Tile {
 		[TileAction]
 		public override void Open ()
                 {
-			// We should prolly have blam or other aggregator handle rss:// urls, until then...
 			Gnome.Url.Show(Hit["fixme:itemuri"]);
 		}
 	}

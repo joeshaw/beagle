@@ -29,6 +29,7 @@ CSFILES = 			        	\
 	$(srcdir)/JpegHeader.cs			\
 	$(srcdir)/Logger.cs             	\
 	$(srcdir)/MultiReader.cs        	\
+	$(srcdir)/Mozilla.cs	        	\
 	$(srcdir)/NautilusTools.cs      	\
 	$(srcdir)/Note.cs               	\
 	$(srcdir)/PullingReader.cs      	\
