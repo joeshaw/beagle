@@ -53,13 +53,15 @@ namespace Beagle
 			get { return cancelled; }
 		}
 
-		public void Dispose () {
+		public void Dispose ()
+		{
 			CloseQuery ();
 			
 			GC.SuppressFinalize (this);
 		}
 
-		~Query () {
+		~Query ()
+		{
 			CloseQuery ();
 		}
 
@@ -77,8 +79,10 @@ namespace Beagle
 						HitSubtractedEvent (this, hit.Uri);
 				}
 
-				if (HitAddedEvent != null)
+				if (HitAddedEvent != null) {
+					allHits [hit.Uri] = hit;
 					HitAddedEvent (this, hit);
+				}
 			}
 		}
 
@@ -86,7 +90,8 @@ namespace Beagle
 		{
 			string[] uris = uriList.Split (' ');
 			foreach (string uriStr in uris) {
-				Uri uri = new Uri (uriStr);
+				Console.WriteLine ("[{0}]", uriStr);
+				Uri uri = new Uri (uriStr, true);
 				// Only remove hits we previously matched.
 				if (allHits.Contains (uri)) {
 					allHits.Remove (uri);

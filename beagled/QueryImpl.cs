@@ -34,7 +34,7 @@ using BU = Beagle.Util;
 
 namespace Beagle.Daemon {
 
-	public class QueryImpl : Beagle.QueryProxy {
+	public class QueryImpl : Beagle.QueryProxy, IDisposable {
 		private QueryDriver driver;
 		private QueryBody body;
 		private QueryResult result = null;
@@ -128,6 +128,17 @@ namespace Beagle.Daemon {
 			DisconnectResult ();
 			if (ClosedEvent != null)
 				ClosedEvent (this);
+		}
+
+		public void Dispose ()
+		{
+			driver.ChangedEvent -= OnQueryDriverChanged;
+			GC.SuppressFinalize (this);
+		}
+
+		~QueryImpl ()
+		{
+			driver.ChangedEvent -= OnQueryDriverChanged;
 		}
 
 		//////////////////////////////////////////////////////

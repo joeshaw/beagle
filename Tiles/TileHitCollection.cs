@@ -143,6 +143,19 @@ namespace Beagle.Tile {
 				Changed ();
 		}
 
+		public bool Subtract (Uri uri)
+		{
+			for (int i = 0; i < hits.Count; ++i) {
+				HitTilePair pair = (HitTilePair) hits [i];
+				if (pair.Hit.Uri.Equals (uri) && pair.Hit.Uri.Fragment == uri.Fragment) {
+					hits.RemoveAt (i);
+					return true;
+				}
+			}
+
+			return false;
+		}
+
 		override protected string ExpandKey (string key)
 		{
 			switch (key) {

@@ -67,7 +67,18 @@ namespace Best {
 
 		public void Subtract (Uri uri)
 		{
-			Console.WriteLine ("Subtracted {0}", uri);
+			Console.WriteLine ("Subtracting {0}", uri);
+
+			bool changed = false;
+
+			foreach (TileHitCollection hitCollection in tileTable.Values)
+				if (hitCollection.Subtract (uri))
+					changed = true;
+
+			if (changed) {
+				Console.WriteLine ("changed!");
+				Changed ();
+			}
 		}
 
 		override public void Render (TileRenderContext ctx)

@@ -246,7 +246,8 @@ namespace Beagle.Daemon.FileSystemQueryable {
 
 		}
 		
-		private LNS.Query ToLuceneQuery (QueryBody body)
+		private LNS.Query ToLuceneQuery (QueryBody body,
+						 ICollection listOfUris)
 		{
 			LNS.BooleanQuery luceneQuery = new LNS.BooleanQuery ();
 			
@@ -294,9 +295,20 @@ namespace Beagle.Daemon.FileSystemQueryable {
 				}
 				luceneQuery.Add (mimeTypeQuery, true, false);
 			}
-			
+
+			// If a list of Uris is specified, we must match one of them.
+			if (listOfUris != null && listOfUris.Count > 0) {
+				LNS.BooleanQuery uriQuery = new LNS.BooleanQuery ();
+				foreach (Uri uri in listOfUris) {
+					Term t = new Term ("Uri", uri.ToString ());
+					LNS.Query q = new LNS.TermQuery (t);
+					uriQuery.Add (q, false, false);
+				}
+				luceneQuery.Add (uriQuery, true, false);
+			}
+
 			return luceneQuery;
-		}
+		}		
 
 		private Hit FromLuceneHit (LNS.Hits luceneHits, int i)
 		{
@@ -635,9 +647,9 @@ namespace Beagle.Daemon.FileSystemQueryable {
 			return true;
 		}
 
-		public void DoQuery (QueryBody body, IQueryResult result)
+		public void DoQuery (QueryBody body, IQueryResult result, ICollection listOfUris)
 		{
-			LNS.Query luceneQuery = ToLuceneQuery (body);
+			LNS.Query luceneQuery = ToLuceneQuery (body, listOfUris);
 			if (luceneQuery == null)
 				return;
 

@@ -115,6 +115,9 @@ namespace Beagle.Daemon {
 					return;
 
 				Debug.Assert (workers > 0, "Adding Hits to idle QueryResult");
+
+				if (someHits.Count == 0)
+					return;
 		
 				ArrayList filteredHits = new ArrayList ();
 
@@ -134,6 +137,9 @@ namespace Beagle.Daemon {
 					return;
 
 				Debug.Assert (workers > 0, "Subtracting Hits from idle QueryResult");
+
+				if (someUris.Count == 0)
+					return;
 
 				if (HitsSubtractedEvent != null)
 					HitsSubtractedEvent (this, someUris);

@@ -87,6 +87,8 @@ namespace Beagle.Daemon {
 					Console.WriteLine ("Unregistering {0}", info.Path);
 					DBusisms.Service.UnregisterObject (obj);
 					all_objects.RemoveAt (i);
+					if (obj is IDisposable)
+						((IDisposable) obj).Dispose ();
 					return;
 				}
 			}

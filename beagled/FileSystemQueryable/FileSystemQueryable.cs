@@ -25,6 +25,7 @@
 //
 
 using System;
+using System.Collections;
 using System.Reflection;
 using System.IO;
 
@@ -33,6 +34,11 @@ using BU = Beagle.Util;
 
 
 namespace Beagle.Daemon.FileSystemQueryable {
+
+	public class FileSystemChangeData : IQueryableChangeData {
+		public ArrayList AddedUris = new ArrayList ();
+		public ArrayList SubtractedUris = new ArrayList ();
+	}
 
 	[QueryableFlavor (Name="FileSystemQueryable", Domain=QueryDomain.Local)]
 	public class FileSystemQueryable : IQueryable {
@@ -44,6 +50,9 @@ namespace Beagle.Daemon.FileSystemQueryable {
 
 		FileSystemEventMonitor monitor = new FileSystemEventMonitor ();
 		BU.FileMatcher doNotIndex = new BU.FileMatcher ();
+
+		uint changedId = 0;
+		FileSystemChangeData changeData = null;
 
 		public FileSystemQueryable ()
 		{
@@ -82,6 +91,9 @@ namespace Beagle.Daemon.FileSystemQueryable {
 		private void OnFileSystemEvent (object source, FileSystemEventType eventType,
 						string oldPath, string newPath)
 		{
+			if (changeData == null)
+				changeData = new FileSystemChangeData ();
+
 			Console.WriteLine ("Got event {0} {1} {2}", eventType, oldPath, newPath);
 
 			if (eventType == FileSystemEventType.Changed
@@ -96,14 +108,31 @@ namespace Beagle.Daemon.FileSystemQueryable {
 				FilteredIndexable indexable = new FilteredIndexable (new Uri (uri, true));
 				indexerQueue.ScheduleAdd (indexable);
 
+				changeData.AddedUris.Add (indexable.Uri);
+
 			} else if (eventType == FileSystemEventType.Deleted) {
 
 				string uri = BU.StringFu.PathToQuotedFileUri (oldPath);
 				indexerQueue.ScheduleRemoveByUri (uri);
 				
+				changeData.SubtractedUris.Add (new Uri (uri, false));
+				
 			} else {
 				Console.WriteLine ("Unhandled!");
 			}
+
+			if (changedId != 0)
+				GLib.Source.Remove (changedId);
+			changedId = GLib.Timeout.Add (1000, new GLib.TimeoutHandler (FireChangedEvent));
+		}
+
+		private bool FireChangedEvent ()
+		{
+			changedId = 0;
+			if (ChangedEvent != null && changeData != null)
+				ChangedEvent (this, changeData);
+			changeData = null;
+			return false;
 		}
 
 
@@ -118,9 +147,17 @@ namespace Beagle.Daemon.FileSystemQueryable {
 
 		public void DoQuery (QueryBody body,
 				     IQueryResult queryResult,
-				     IQueryableChangeData changeData)
+				     IQueryableChangeData iChangeData)
 		{
-			indexer.driver.DoQuery (body, queryResult);
+			FileSystemChangeData changeData = (FileSystemChangeData) iChangeData;
+
+			if (changeData == null) {
+				indexer.driver.DoQuery (body, queryResult, null);
+			} else {
+				if (changeData.AddedUris.Count > 0)
+					indexer.driver.DoQuery (body, queryResult, changeData.AddedUris);
+				queryResult.Subtract (changeData.SubtractedUris);
+			}
 		}
 
 	}
