@@ -554,22 +554,27 @@ namespace Beagle.Filters {
 				Finished ();
 				return;
 			}
-
-			// FIXME: Should try to use Encoding instead of 
-			// string.IndexOf ()... Hacky stuff ;-)
-			childCount = file.NumChildren();
-			for (int i = 0; i < childCount && found != 2; i++) {
-				str = file.NameByIndex (i);	
-				if (str.IndexOf ("SummaryInformation") > -1 && found < 1) {
-					sumStream = file.ChildByIndex (i);
-					found = 1;
+			
+			try {
+				// FIXME: Should try to use Encoding instead of 
+				// string.IndexOf ()... Hacky stuff ;-)
+				childCount = file.NumChildren();
+				for (int i = 0; i < childCount && found != 2; i++) {
+					str = file.NameByIndex (i);	
+					if (str.IndexOf ("SummaryInformation") > -1 && found < 1) {
+						sumStream = file.ChildByIndex (i);
+						found = 1;
+					}
+					else if (str.IndexOf ("DocumentSummaryInformation") > -1) {
+						docSumStream = file.ChildByIndex (i);
+						found = 2;
+					}
 				}
-				else if (str.IndexOf ("DocumentSummaryInformation") > -1) {
-					docSumStream = file.ChildByIndex (i);
-					found = 2;
-				}
+				ExtractMetaData (sumStream, docSumStream);
+			} catch (Exception e) {
+				Logger.Log.Error ("Exception {0} occurred duing DoPullProperties.", e.Message);
+				Finished ();
 			}
-			ExtractMetaData (sumStream, docSumStream);
 		}
 
 		override protected void DoPull ()
@@ -580,25 +585,30 @@ namespace Beagle.Filters {
 			}
 
 			Input stream = null;
-			stream = file.ChildByName ("PowerPoint Document");
+			try {
+				stream = file.ChildByName ("PowerPoint Document");
 
-			if (stream != null) {
+				if (stream != null) {
 
-				// The parsing was getting terminated when "EndDocument"
-				// container was parsed.  We need to continue our 
-				// parsing till the end of the file, since, some of the
-				// slides do persist after the actual "Document" 
-				// container.
-				// PPTs exported from OO.o actually writes almost all the slides
-				// after "Document" container.
-				// And certain PPTs do have some slides in after
-				// "Document" container.
-				while (!stream.Eof)
-					ParseElement (stream);
-			} else {
-				Logger.Log.Error ("Ole stream not found in {0}.  Content extraction skipped.", FileName);
-			}
+					// The parsing was getting terminated when "EndDocument"
+					// container was parsed.  We need to continue our 
+					// parsing till the end of the file, since, some of the
+					// slides do persist after the actual "Document" 
+					// container.
+					// PPTs exported from OO.o actually writes almost all the slides
+					// after "Document" container.
+					// And certain PPTs do have some slides in after
+					// "Document" container.
+					while (!stream.Eof)
+						ParseElement (stream);
+				} else {
+					Logger.Log.Error ("Ole stream not found in {0}.  Content extraction skipped.", FileName);
+				}
 			Finished();
+			} catch (Exception e) {
+				Logger.Log.Error ("Exception {0} occurred during DoPull.", e.Message);
+				Finished ();
+			}
 		}
 
 		override protected void DoOpen (FileInfo info)
@@ -629,13 +639,19 @@ namespace Beagle.Filters {
 			// We don't support PPT 95 files, however, we happily accept patches ;-)
 
 			Input dualStorTemp = null;
-			if ((dualStorTemp = file.ChildByName ("PP97_DUALSTORAGE")) != null) {
-				// "PP97_DUALSTORAGE" is a storage containing some streams
-				if (dualStorTemp.Handle != IntPtr.Zero)
-					file = (Gsf.Infile) GLib.Object.GetObject (dualStorTemp.Handle);
-			} else if (((dualStorTemp = file.ChildByName ("Header")) != null) ||
-				   ((dualStorTemp = file.ChildByName ("PowerPoint Document")) == null)) {
-				Logger.Log.Error ("{0} is a PPT 95/4.0 file.  Beagle does not support PPT 95 files. Skipping...", FileName);
+			try {
+				if ((dualStorTemp = file.ChildByName ("PP97_DUALSTORAGE")) != null) {
+					// "PP97_DUALSTORAGE" is a storage containing some streams
+					if (dualStorTemp.Handle != IntPtr.Zero)
+						file = (Gsf.Infile) GLib.Object.GetObject (dualStorTemp.Handle);
+				} else if (((dualStorTemp = file.ChildByName ("Header")) != null) ||
+					   ((dualStorTemp = file.ChildByName ("PowerPoint Document")) == null)) {
+					Logger.Log.Error ("{0} is a PPT 95/4.0 file.  Beagle does not support PPT 95 files. Skipping...", FileName);
+					Finished ();
+				}
+			} catch (Exception e) {
+				
+				Logger.Log.Error ("Unable to open OleFile stream of "+info.FullName);
 				Finished ();
 			}
 		}

@@ -1,5 +1,9 @@
 2005-02-13  Veerapuram Varadhan	 <vvaradhan@novell.com>
 
+	* Filters/FilterPPT.cs: Catch the exceptions and log the message..
+	
+2005-02-13  Veerapuram Varadhan	 <vvaradhan@novell.com>
+
 	* BeagleClient/Hit.cs, Tiles/Tile*.cs, tools/Query.cs,
 	beagled/LuceneDriver.cs, beagled/LuceneQueryable.cs,
 	beagled/GaimLogQueryable/GaimLogQueryable.cs,
