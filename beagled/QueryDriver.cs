@@ -35,6 +35,39 @@ namespace Beagle.Daemon {
 	
 	public class QueryDriver {
 
+		static ArrayList allowed_queryables = new ArrayList ();
+		static ArrayList denied_queryables = new ArrayList ();
+		
+		static public void Allow (string name)
+		{
+			allowed_queryables.Add (name.ToLower ());
+		}
+		
+		static public void Deny (string name)
+		{
+			denied_queryables.Add (name.ToLower ());
+		}
+
+		static private bool UseQueryable (string name)
+		{
+			name = name.ToLower ();
+
+			if (allowed_queryables.Count > 0) {
+				foreach (string allowed in allowed_queryables) {
+					if (name == allowed) 
+						return true;
+				}
+				return false;
+			}
+
+			foreach (string denied in denied_queryables) {
+				if (name == denied)
+					return false;
+			}
+			return true;
+
+		}
+
 		static ArrayList queryables = new ArrayList ();
 
 		static bool ThisApiSoVeryIsBroken (Type m, object criteria)
@@ -60,6 +93,9 @@ namespace Beagle.Daemon {
 					foreach (object obj in Attribute.GetCustomAttributes (type)) {
 						QueryableFlavor flavor = obj as QueryableFlavor;
 						if (flavor == null)
+							continue;
+						
+						if (! UseQueryable (flavor.Name))
 							continue;
 						
 						IQueryable iq = null;

@@ -133,12 +133,60 @@ namespace Beagle.Daemon {
 		
 		public static int Main (string[] args)
 		{
+			// Process the command-line arguments
+
+			bool arg_replace = false;
+			bool arg_out = false;
+			bool arg_no_fork = false;
+
+			int i = 0;
+			while (i < args.Length) {
+				
+				string arg = args [i];
+				++i;
+				string next_arg = i < args.Length ? args [i] : null;
+
+				switch (arg) {
+
+				case "--replace":
+					arg_replace = true;
+					break;
+
+				case "--out":
+					arg_out = true;
+					break;
+
+				case "--nofork":
+				case "--no-fork":
+					arg_no_fork = true;
+					break;
+
+				case "--allow-backend":
+					if (next_arg != null)
+						QueryDriver.Allow (next_arg);
+					++i; // we used next_arg
+					break;
+					
+				case "--deny-backend":
+					if (next_arg != null)
+						QueryDriver.Deny (next_arg);
+					++i; // we used next_arg
+					break;
+
+				default:
+					Console.WriteLine ("Ignoring unknown argument '{0}'", arg);
+					break;
+
+				}
+
+			}
+
 			try {
 				DBusisms.Init ();
 				Application.Init ();
 				
 				if (!DBusisms.InitService ()) {
-					if (Array.IndexOf (args, "--replace") != -1) {
+					if (arg_replace) {
 						ReplaceExisting ();
 					} else {
 						System.Console.WriteLine ("Could not register com.novell.Beagle service.  There is probably another beagled instance running.  Use --replace to replace the running service");
@@ -157,7 +205,7 @@ namespace Beagle.Daemon {
 			try {
 				// FIXME: this could be better, but I don't want to
 				// deal with serious cmdline parsing today
-				if (Array.IndexOf (args, "--out") != -1) {
+				if (arg_out) {
 					SetupLog (null);
 				} else {
 					string logPath = Path.Combine (PathFinder.LogDir,
@@ -196,7 +244,7 @@ namespace Beagle.Daemon {
 			
 			Logger.Log.Info ("Beagle daemon started"); 
 
-			if (Array.IndexOf (args, "--nofork") == -1 && Array.IndexOf (args, "--no-fork") == -1) {
+			if (! arg_no_fork) {
 				if (! Daemonize ())
 					return 1;
 			}

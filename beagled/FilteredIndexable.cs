@@ -189,6 +189,7 @@ namespace Beagle.Daemon {
 				AddProperty (Property.New ("fixme:nautilus/notes", nautilusNotes));
 						      
 
+#if false
 			// Check for FSpot metadata on images.
 			// FIXME: This should also be in the metadata store.
 			if (MimeType.StartsWith ("image/")) {
@@ -206,6 +207,7 @@ namespace Beagle.Daemon {
 						AddProperty (Property.NewKeyword ("fixme:fspot/tag", tag.Name));
 				}
 			}
+#endif
 			
 		}
 		

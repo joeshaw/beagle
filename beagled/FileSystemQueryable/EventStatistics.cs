@@ -31,39 +31,100 @@ namespace Beagle.Daemon.FileSystemQueryable {
 
 	public class EventStatistics {
 
-		const double decayFactor = 0.5;
+		const double decay = 0.5;
+
+		// OK, this is crack.  We fix a very large
+		// constant that is returned as the gap before
+		// the second event comes in.  This is a hack
+		// that lets us pretty much ignore the special
+		// case of the initial state in our backoff code.
+		const double first_gap = 1.0e+8;
 
 		private class ItemInfo {
-			public string Path;
-			public int EventCount = 0;
-			public DateTime PreviousEventTime;
-			public double AverageEventGap;
+			private string path;
+			private int event_count = 0;
+			private DateTime previous_event_time;
+			private double average_gap;
 
-			public ItemInfo (string path)
+			public ItemInfo (string _path)
 			{
-				Path = path;
+				path = _path;
 			}
+
+			public string Path {
+				get { return path; }
+			}
+
+			public int EventCount {
+				get { return event_count; }
+			}
+
+			public DateTime PreviousEventTime {
+				get { return previous_event_time; }
+			}
+
+			public double Gap {
+				get {
+					if (event_count == 0)
+						return first_gap;
+					else
+						return (DateTime.Now - previous_event_time).TotalSeconds;
+				}
+			}
+			
+
+			public double AverageGap {
+				get {
+					return average_gap;
+				}
+			}
+
+			// What would the new average gap be if an event
+			// came in right now?
+			public double ImpliedAverageGap {
+				get {
+					return ComputeAverageGap (DateTime.Now);
+				}
+			}
+
+			// The amount of time, in seconds, that has to pass
+			// without an event before the implied average gap
+			// drops below the specified target.
+			public double TimeToTargetLevel (double target_iag)
+			{
+				if (event_count < 2 || target_iag < average_gap)
+					return 0;
+
+				// Compute time required for level to decay.
+				double t;
+				t = (target_iag - decay * average_gap) / (1 - decay);
+
+				// Adjust for time elapsed since last event
+				t -= Gap;
+
+				return Math.Max (t, 0);
+			}
+
+			private double ComputeAverageGap (DateTime now)
+			{
+				if (event_count <= 1)
+					return first_gap;
+				
+				double gap = (now - previous_event_time).TotalSeconds;
+
+				if (event_count == 2)
+					return gap;
+
+				return decay * average_gap + (1 - decay) * gap;
+			}
+				
 
 			public void Touch ()
 			{
 				DateTime now = DateTime.Now;
-				if (EventCount > 0) {
-					double gap = (now - PreviousEventTime).TotalSeconds;
-					if (EventCount == 1)
-						AverageEventGap = gap;
-					else
-						AverageEventGap = decayFactor * AverageEventGap + (1 - decayFactor) * gap;
-				}
-				++EventCount;
-				PreviousEventTime = now;
-			}
-
-			public double TimeSinceLastEvent {
-				get { 
-					if (EventCount > 0)
-						return (DateTime.Now - PreviousEventTime).TotalSeconds;
-					return 0;
-				}
+				average_gap = ComputeAverageGap (now);
+				previous_event_time = now;
+				++event_count;
 			}
 		}
 
@@ -79,15 +140,14 @@ namespace Beagle.Daemon.FileSystemQueryable {
 				items [path] = info;
 			}
 			
-			double t = info.TimeSinceLastEvent;
 			info.Touch ();
-			
+
 #if false
 			Console.WriteLine ("{0}: {1} {2} {3}",
 					   info.Path,
 					   info.EventCount,
-					   t,
-					   info.AverageEventGap);
+					   info.Gap,
+					   info.AverageGap);
 #endif
 		}
 

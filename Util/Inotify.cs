@@ -257,8 +257,14 @@ namespace Beagle.Util {
 								   type, wd, info.Path,
 								   filename != "" ? filename : "\"\"",
 								   cookie);
-					if (InotifyEvent != null)
-						InotifyEvent (wd, info.Path, filename, type, cookie);
+					if (InotifyEvent != null) {
+						try {
+							InotifyEvent (wd, info.Path, filename, type, cookie);
+						} catch (Exception e) {
+							Logger.Log.Error ("Caught exception inside InotifyEvent");
+							Logger.Log.Error (e);
+						}
+					}
 				}
 				
 				// If a directory we are watching gets ignored, we need

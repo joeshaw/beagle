@@ -45,6 +45,8 @@ namespace Beagle.Daemon.FileSystemQueryable {
 		private ArrayList allPending = new ArrayList ();
 		private bool allPendingSorted = false;
 
+		private double wait_s; // number of seconds to wait between crawls
+
 		public CrawlQueue (FileNameFilter _filter, LuceneDriver _driver, Logger _log)
 		{
 			filter = _filter;
@@ -197,6 +199,8 @@ namespace Beagle.Daemon.FileSystemQueryable {
 		{
 			string path = (string) item;
 
+			wait_s = 1; // Start the next crawl almost immediately.
+
 			// We only want to crawl any given path once.
 			lock (crawledPaths) {
 				if (crawledPaths.Contains (path))
@@ -211,13 +215,25 @@ namespace Beagle.Daemon.FileSystemQueryable {
 			if (log != null)
 				log.Info ("Crawling {0}", path);
 
+			bool did_work = false;
+
 			// The Lucene Driver checks the EAs on the file
 			// and drops the add if it appears to be up-to-date.
-			driver.ScheduleAddFile (dir, 0);
+			if (driver.ScheduleAddFile (dir, 0))
+				did_work = true;
 			foreach (FileSystemInfo fsinfo in dir.GetFileSystemInfos ()) {
-				if (! filter.Ignore (fsinfo.FullName))
-					driver.ScheduleAddFile (fsinfo, 0);
+				if (! filter.Ignore (fsinfo.FullName)) {
+					if (driver.ScheduleAddFile (fsinfo, 0))
+						did_work = true;
+				}
 			}
+
+			// If we actually did work, wait 1 minute to do more work.
+			// Otherwise just wait 10 seconds.
+			if (did_work)
+				wait_s = 60;
+			else 
+				wait_s = 10;
 
 			return true;
 		}
@@ -230,9 +246,7 @@ namespace Beagle.Daemon.FileSystemQueryable {
 
 		override protected int EmptyQueueTimeoutDuration ()
 		{
-			// Process a pending directory after 1
-			// minute of inactivity.
-			return allPending.Count > 0 ? (1000 * 60) : 0;
+			return allPending.Count > 0 && wait_s > 0 ? (int)(1000 * wait_s) : 0;
 		}
 
 		override protected void EmptyQueueTimeout ()
