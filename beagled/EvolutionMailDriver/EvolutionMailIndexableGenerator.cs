@@ -243,7 +243,7 @@ namespace Beagle.Daemon {
 			while (di != null) {
 				// Evo uses ".sbd" as the extension on a folder
 				if (di.Extension == ".sbd")
-					folder_name = Path.Combine (folder_name, Path.GetFileNameWithoutExtension (di.Name));
+					folder_name = Path.Combine (Path.GetFileNameWithoutExtension (di.Name), folder_name);
 				else
 					break;
 
