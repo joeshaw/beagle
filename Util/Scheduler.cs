@@ -372,11 +372,13 @@ namespace Beagle.Util {
 					old_task = task_by_tag [task.Tag] as Task;
 					if (old_task == task)
 						return;
-					
+
+#if false
 					Logger.Log.Debug ("Adding task");
 					Logger.Log.Debug ("Tag: {0}", task.Tag);
 					if (task.Description != null)
 						Logger.Log.Debug ("Desc: {0}", task.Description);
+#endif
 
 					task.Timestamp = DateTime.Now;
 					task.Schedule (this);
