@@ -1,5 +1,5 @@
 //
-// QueryManager.cs
+// RdfSinkImpl.cs
 //
 // Copyright (C) 2004 Novell, Inc.
 //
@@ -24,56 +24,72 @@
 // DEALINGS IN THE SOFTWARE.
 //
 
+using DBus;
 using System;
 using System.Collections;
 
-using DBus;
+namespace Beagle.Daemon {
 
+	public class RdfSourceImpl : Beagle.RdfSource {
 
-namespace Beagle.Daemon
-{
-	public class QueryManager : Beagle.QueryManager
-	{
-		private Hashtable liveQueries = new Hashtable ();
-		private static ulong numQueries = 0;
-		private QueryDriver driver;
+		static private object counterLock = new object ();
+		static private int counter = 1;
 
-		public QueryManager ()
+		private string path;
+		private bool started = false;
+		private bool finished = false;
+		private ArrayList queue = new ArrayList ();
+
+		public RdfSourceImpl ()
 		{
-			driver = new QueryDriver ();
+			lock (counterLock) {
+				path = "/com/novell/Beagle/RdfSource/Obj" + counter;
+				++counter;
+			}
+
+			DBusisms.Service.RegisterObject (this, Path);
 		}
 
-		public override string NewQuery () 
-		{
-			numQueries++;
-			
-			string path ="/com/novell/Beagle/Queries/" + numQueries;
-			
-			LiveQuery query = new LiveQuery (path, driver);
-			liveQueries[query.Name] = query;
-			DBusisms.Service.RegisterObject (query, path);
-
-			return path;
+		public string Path {
+			get { return path; }
 		}
 
-		static void SomeRdfXmlWasSunk (string rdfXml)
+		public override event Beagle.RdfSource.GotRdfXmlHandler GotRdfXmlEvent;
+		public override event Beagle.RdfSource.FinishedHandler FinishedEvent;
+
+		public override void Start ()
 		{
-			Console.WriteLine ("Got '{0}'", rdfXml);
+			if (! started) {
+				started = true;
+				foreach (string rdfXml in queue)
+					AddRdfXml (rdfXml);
+				queue = null;
+			}
 		}
 
-		public override string NewRdfSink ()
+		public void AddRdfXml (string rdfXml)
 		{
-			RdfSinkImpl sink = new RdfSinkImpl (new Beagle.RdfSource.GotRdfXmlHandler (SomeRdfXmlWasSunk));
-			return sink.Path;
+			if (finished) {
+				Console.WriteLine ("Adding to finished RdfSource");
+				return;
+			}
+
+			if (started)
+				GotRdfXmlEvent (rdfXml);
+			else
+				queue.Add (rdfXml);
 		}
 
-		public override string NewRdfSource ()
+		public void Finished ()
 		{
-			RdfSourceImpl source = new RdfSourceImpl ();
-			source.AddRdfXml ("One!");
-			source.AddRdfXml ("Two!");
-			source.AddRdfXml ("Three!");
-			return source.Path;
+			if (! finished) {
+				finished = true;
+				FinishedEvent ();
+			}
 		}
+
+		
+		
+
 	}
 }

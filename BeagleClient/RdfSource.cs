@@ -1,5 +1,5 @@
 //
-// Indexer.cs
+// RdfSource.cs
 //
 // Copyright (C) 2004 Novell, Inc.
 //
@@ -7,7 +7,7 @@
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
 // copy of this software and associated documentation files (the "Software"),
-// to deal in the Software without restriction, including without limitation
+// to deal// in the Software without restriction, including without limitation
 // the rights to use, copy, modify, merge, publish, distribute, sublicense,
 // and/or sell copies of the Software, and to permit persons to whom the
 // Software is furnished to do so, subject to the following conditions:
@@ -24,24 +24,34 @@
 // DEALINGS IN THE SOFTWARE.
 //
 
-namespace Beagle
-{
+namespace Beagle {
+
 	using DBus;
-	
-	[Interface ("com.novell.Beagle.Indexer")]
-	public abstract class Indexer 
-	{
+
+	[Interface ("com.novell.Beagle.RdfSource")]
+	public abstract class RdfSource {
+
+		// No events should be emitted until Start is called
 		[Method]
-		public abstract void IndexFile (string uri);
+		public abstract void Start ();
 
-		static Indexer theIndexer = null;
+		public delegate void GotRdfXmlHandler (string rdfXml);
+		[Signal]
+		public virtual event GotRdfXmlHandler GotRdfXmlEvent;
 
-		static public Indexer Get () {
-			if (theIndexer == null)
-				theIndexer = (Indexer) DBusisms.Service.GetObject (typeof (Indexer),
-										   DBusisms.IndexerPath);
-			
-			return theIndexer;
+		public delegate void FinishedHandler ();
+		[Signal]
+		public virtual event FinishedHandler FinishedEvent;
+
+		static public RdfSource New ()
+		{
+			string path = DBusisms.QueryManager.NewRdfSource ();
+
+			RdfSource source;
+			source = (RdfSource) DBusisms.Service.GetObject (typeof (RdfSource),
+									 path);
+
+			return source;
 		}
 	}
 }

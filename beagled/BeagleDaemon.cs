@@ -26,7 +26,7 @@
 
 using DBus;
 using Gtk;
-using Beagle;
+//using Beagle;
 using System.Reflection;
 using System;
 using System.IO;
@@ -98,20 +98,21 @@ namespace Beagle.Daemon {
 			}
 
 			Application.Init ();
-			Connection connection = Bus.GetSessionBus ();
 
-			Service service = new Service (connection,
-						       "com.novell.Beagle");
-			QueryManager manager = new QueryManager (service);
-			service.RegisterObject (manager, 
-						"/com/novell/Beagle/QueryManager");
 
 			IndexerQueue indexerQueue = new IndexerQueue ();
 			LoadHandlers (indexerQueue);
 
+
 			Indexer indexer = new Indexer (indexerQueue);
-			service.RegisterObject (indexer,
-						"/com/novell/Beagle/Indexer");
+			DBusisms.Service.RegisterObject (indexer,
+							 Beagle.DBusisms.IndexerPath);
+
+
+			QueryManager manager = new QueryManager ();
+			DBusisms.Service.RegisterObject (manager,
+							 Beagle.DBusisms.QueryManagerPath);
+
 
 			Application.Run ();
 			return 0;

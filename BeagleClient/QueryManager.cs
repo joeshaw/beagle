@@ -33,5 +33,11 @@ namespace Beagle
 	{
 		[Method]
 		public abstract string NewQuery ();
+
+		[Method]
+		public abstract string NewRdfSink ();
+
+		[Method]
+		public abstract string NewRdfSource ();
 	}
 }

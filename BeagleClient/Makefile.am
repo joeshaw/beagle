@@ -14,6 +14,8 @@ CSFILES = 				\
 	$(srcdir)/Indexer.cs            \
 	$(srcdir)/QueryManager.cs	\
 	$(srcdir)/Query.cs              \
+	$(srcdir)/RdfSink.cs		\
+	$(srcdir)/RdfSource.cs		\
 	$(srcdir)/Versioned.cs 
 
 

@@ -1,5 +1,5 @@
 //
-// Indexer.cs
+// RdfSinkImpl.cs
 //
 // Copyright (C) 2004 Novell, Inc.
 //
@@ -24,24 +24,39 @@
 // DEALINGS IN THE SOFTWARE.
 //
 
-namespace Beagle
-{
-	using DBus;
-	
-	[Interface ("com.novell.Beagle.Indexer")]
-	public abstract class Indexer 
-	{
-		[Method]
-		public abstract void IndexFile (string uri);
+using DBus;
+using System;
 
-		static Indexer theIndexer = null;
+namespace Beagle.Daemon {
 
-		static public Indexer Get () {
-			if (theIndexer == null)
-				theIndexer = (Indexer) DBusisms.Service.GetObject (typeof (Indexer),
-										   DBusisms.IndexerPath);
+	public class RdfSinkImpl : Beagle.RdfSink {
+
+		static object counterLock = new object ();
+		static int counter = 1;
+
+		string path;
+		Beagle.RdfSource.GotRdfXmlHandler handler;
+
+		public RdfSinkImpl (Beagle.RdfSource.GotRdfXmlHandler handler)
+		{
+			this.handler = handler;
 			
-			return theIndexer;
+			lock (counterLock) {
+				path = "/com/novell/Beagle/RdfSink/Obj" + counter;
+				++counter;
+			}
+
+			DBusisms.Service.RegisterObject (this, Path);
+		}
+
+		public string Path {
+			get { return path; }
+		}
+
+		public override void AddRdfXml (string rdfXml)
+		{
+			if (handler != null)
+				handler (rdfXml);
 		}
 	}
 }

@@ -28,13 +28,17 @@ using DBus;
 
 namespace Beagle 
 {
-	internal class DBusisms {
+	public class DBusisms {
+
+		static public readonly string ServiceName = "com.novell.Beagle";
+		static public readonly string QueryManagerPath = "/com/novell/Beagle/QueryManager";
+		static public readonly string IndexerPath = "/com/novell/Beagle/Indexer";
 
 		static Connection connection = null;
 		static Service service = null;
 		static QueryManager queryManager = null;
 
-		public static Connection Connection {
+		internal static Connection Connection {
 			get { 
 				if (connection == null)
 					connection = Bus.GetSessionBus ();
@@ -42,20 +46,19 @@ namespace Beagle
 			}
 		}
 
-		public static Service Service {
+		internal static Service Service {
 			get {
 				if (service == null)
-					service = DBus.Service.Get (Connection,
-								    "com.novell.Beagle");
+					service = DBus.Service.Get (Connection, ServiceName);
 				return service;
 			}
 		}
 
-		public static QueryManager QueryManager {
+		internal static QueryManager QueryManager {
 			get {
 				if (queryManager == null)
 					queryManager = (QueryManager) DBusisms.Service.GetObject (typeof (QueryManager),
-												  "/com/novell/Beagle/QueryManager");
+												  QueryManagerPath);
 				return queryManager;
 			}
 		}

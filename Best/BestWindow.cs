@@ -1,5 +1,5 @@
 //
-// SearchWindow.cs
+// BestWindow.cs
 //
 // Copyright (C) 2004 Novell, Inc.
 //
@@ -34,8 +34,6 @@ using GtkSharp;
 using Beagle;
 using Beagle.Tile;
 
-using DBus;
-
 namespace Best {
 
 	public class BestWindow : Gtk.Window {
@@ -55,8 +53,6 @@ namespace Best {
 
 		//////////////////////////
 
-		Connection connection;
-		Service service;
 		QueryManager queryManager;
 		Query query;
 

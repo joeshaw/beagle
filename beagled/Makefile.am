@@ -175,29 +175,32 @@ LUCENE_CSFILES =								\
 	$(lucenedir)/Util/PriorityQueue.cs
 
 DAEMON_DLL_CSFILES = 				\
-	$(LUCENE_CSFILES)		\
-	$(srcdir)/IndexableFile.cs	\
-	$(srcdir)/Query.cs		\
-	$(srcdir)/Relevancy.cs		\
-	$(srcdir)/IQueryResult.cs	\
-	$(srcdir)/IQueryable.cs		\
-	$(srcdir)/QueryableFlavor.cs	\
-	$(srcdir)/QueryResult.cs	\
-	$(srcdir)/QueryDriver.cs	\
-	$(srcdir)/IndexDriver.cs	\
-	$(srcdir)/GoogleDriver.cs	\
-	$(srcdir)/Indexer.cs            \
-	$(srcdir)/IndexerQueue.cs       \
-	$(srcdir)/LiveQuery.cs          \
-	$(srcdir)/NoIndexFileHandler.cs \
-	$(srcdir)/QueryManager.cs
+	$(LUCENE_CSFILES)			\
+	$(srcdir)/DBusisms.cs			\
+	$(srcdir)/IndexableFile.cs		\
+	$(srcdir)/Query.cs			\
+	$(srcdir)/Relevancy.cs			\
+	$(srcdir)/IQueryResult.cs		\
+	$(srcdir)/IQueryable.cs			\
+	$(srcdir)/QueryableFlavor.cs		\
+	$(srcdir)/QueryResult.cs		\
+	$(srcdir)/QueryDriver.cs		\
+	$(srcdir)/IndexDriver.cs		\
+	$(srcdir)/GoogleDriver.cs		\
+	$(srcdir)/Indexer.cs            	\
+	$(srcdir)/IndexerQueue.cs       	\
+	$(srcdir)/LiveQuery.cs          	\
+	$(srcdir)/NoIndexFileHandler.cs 	\
+	$(srcdir)/QueryManager.cs		\
+	$(srcdir)/RdfSinkImpl.cs		\
+	$(srcdir)/RdfSourceImpl.cs
 
 DAEMON_DLL_LOCAL_ASSEMBLIES =		\
 	../Util/Util.dll		\
 	../BeagleClient/Beagle.dll	\
 	./$(PLUGIN_TARGET)
 
-DAEMON_DLL_ASSEMBLIES = 				\
+DAEMON_DLL_ASSEMBLIES = 			\
 	$(BEAGLED_LIBS)                 	\
 	$(DAEMON_DLL_LOCAL_ASSEMBLIES:%=-r:%)	\
 	-r:Mono.Posix				\
