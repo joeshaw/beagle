@@ -242,9 +242,13 @@ namespace Beagle.Daemon {
 			if (! GetPathFlag (path))
 				return null;
 
+			// We need to quote any 's that appear in the strings
+			// (int particular, in the path)
+			string directory = Path.GetDirectoryName (path);
+			string filename = Path.GetFileName (path);
 			command = QueryCommand ("directory='{0}' AND filename='{1}'",
-						Path.GetDirectoryName (path),
-						Path.GetFileName (path));
+						directory.Replace ("'", "''"),
+						filename.Replace ("'", "''");
 			reader = command.ExecuteReader ();
 
 			FileAttributes attr = null;
@@ -267,7 +271,7 @@ namespace Beagle.Daemon {
 		{
 			SetPathFlag (fa.Path, true);
 
-			// FIXME: We probably need to quote any 's that appear in the strings
+			// We need to quote any 's that appear in the strings
 			// (in particular, in the path)
 			DoNonQuery ("INSERT OR REPLACE INTO file_attributes " +
 				    " (unique_id, directory, filename, last_mtime, last_indexed, filter_name, filter_version) " +
@@ -284,9 +288,14 @@ namespace Beagle.Daemon {
 		{
 			// We don't want to SetPathFlag (path, false) here, since we have no way of knowing
 			// if another path hashes to the same value as this one.
+
+			// We need to quote any 's that appear in the strings
+			// (in particular, in the path)
+			string directory = Path.GetDirectoryName (path);
+			string filename = Path.GetFileName (path);
 			DoNonQuery ("DELETE FROM file_attributes WHERE directory='{0}' AND filename='{1}'",
-				    Path.GetDirectoryName (path),
-				    Path.GetFileName (path));
+					directory.Replace ("'", "''"),
+				    filename.Replace ("'", "''"));
 		}
 	}
 }
