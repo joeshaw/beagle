@@ -138,6 +138,7 @@ namespace Beagle.Daemon {
 			bool arg_replace = false;
 			bool arg_out = false;
 			bool arg_no_fork = false;
+			bool arg_debug = false;
 
 			int i = 0;
 			while (i < args.Length) {
@@ -154,6 +155,10 @@ namespace Beagle.Daemon {
 
 				case "--out":
 					arg_out = true;
+					break;
+
+				case "--debug":
+					arg_debug = true;
 					break;
 
 				case "--nofork":
@@ -178,8 +183,18 @@ namespace Beagle.Daemon {
 					break;
 
 				}
-
 			}
+
+			// If we saw the --debug arg, set the default logging level
+			// accordingly.
+
+			if (arg_debug)
+				Logger.DefaultLevel = LogLevel.Debug;
+
+
+			// Start the Global Scheduler
+			Scheduler.Global.Start ();
+
 
 			Stopwatch stopwatch = new Stopwatch ();
 
@@ -280,6 +295,9 @@ namespace Beagle.Daemon {
 
 		private static void OnShutdown ()
 		{
+			// Shut down the global scheduler
+			Scheduler.Global.Stop ();
+
 			Logger.Log.Debug ("Unregistering Factory objects");
 			factory.UnregisterAll ();
 			Logger.Log.Debug ("Done unregistering Factory objects");
