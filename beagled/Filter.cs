@@ -275,10 +275,10 @@ namespace Beagle.Daemon {
 			// Our default assumption is sequential reads.
 			// FIXME: Is this the right thing to do here?
 			FileAdvise.IncreaseReadAhead (currentStream);
-			
+
 			DoOpen (info);
 			isOpen = true;
-			
+
 			if (IsFinished) {
 				isOpen = false;
 				return;

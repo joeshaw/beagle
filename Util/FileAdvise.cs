@@ -51,11 +51,7 @@ namespace Beagle.Util {
 		static private void GiveAdvice (FileStream file, int advice)
 		{
 			int fd = file.Handle.ToInt32();
-			int ret = posix_fadvise (fd, 0, 0, advice);
-			if (ret != 0) {
-				throw new Exception ("Could not give file advice on " + file.Name + ": "
-						     + Syscall.strerror (Marshal.GetLastWin32Error()));
-			}
+			posix_fadvise (fd, 0, 0, advice);
 		}
 
 		static public void FlushCache (FileStream file)
