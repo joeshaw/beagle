@@ -38,7 +38,7 @@ uninstall-local:
 bin_SCRIPTS = $(WRAPPER)
 
 $(WRAPPER): $(srcdir)/$(WRAPPER).in
-	sed -e "s|\@prefix\@|$(prefix)|g" -e "s|\@pkglibdir\@|$(pkglibdir)|g" -e "s|\@target\@|$(TARGET)|g" -e "s|\@gacprefix\@|$(GAC_PREFIX)|g" -e "s|\@mozillahome\@|$(MOZILLA_HOME)|g" < $^ > $@
+	sed -e "s|\@prefix\@|$(prefix)|g" -e "s|\@pkglibdir\@|$(pkglibdir)|g" -e "s|\@target\@|$(TARGET)|g" -e "s|\@gacprefix\@|$(GAC_PREFIX)|g" < $^ > $@
 	chmod +x $(WRAPPER)
 
 EXTRA_DIST =			\

@@ -110,10 +110,19 @@ namespace ImLogViewer {
 						    0,
 						    Gtk.AccelFlags.Visible);
 
+			conversation.PixelsAboveLines = 2;
+			conversation.PixelsBelowLines = 2;
+			conversation.LeftMargin = 3;
+			conversation.RightMargin = 3;
+
 			TextTag boldtag = new TextTag ("bold");
 			boldtag.Weight = Pango.Weight.Bold;
 			conversation.Buffer.TagTable.Add (boldtag);
-		
+
+			TextTag highlight = new TextTag ("highlight");
+			highlight.Background = "yellow";
+			conversation.Buffer.TagTable.Add (highlight);
+
 			treeStore = new TreeStore(new Type[] {typeof(string), typeof(string), typeof(object)});
 			timelinetree.Model = this.treeStore;
 			renderer = new CellRendererText();
@@ -266,8 +275,8 @@ namespace ImLogViewer {
  			}
  				
  			SetTitle (im_log.StartTime);
-			
-			TextTag bold = buffer.TagTable.Lookup("bold");
+			TextTag bold = buffer.TagTable.Lookup ("bold");
+
  			foreach (ImLog.Utterance utt in im_log.Utterances) {
  				string who = utt.Who;
 				
@@ -309,16 +318,12 @@ namespace ImLogViewer {
 		
 		public static void Main (string[] args)
 		{
-			if (args.Length > 0)
-			{
-				GeckoUtils.Init ();
-				GeckoUtils.SetSystemFonts ();
-
+			if (args.Length > 0) {
 				new GaimLogViewer (args [0]);
-			}
-			else
+			} else {
 				Console.WriteLine ("USAGE: beagle-imlogviewer " +
-						   "/home/lukas/.gaim/logs/msn/lipkalukas@hotmail.com/bbulik@hotmail.com");
+						   "/home/lukas/.gaim/logs/msn/joe@hotmail.com/jane@hotmail.com");
+			}
 		}
 	}
 }
