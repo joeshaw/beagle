@@ -52,14 +52,14 @@ td.icon {
 }
 
 .icon img {
-  max-width: 64px;
+  max-width: 60px;
   padding: 4px;
 }
 
 .icon img[src$='.jpg'], img[src$='.jpeg'], img[src*='.thumbnails'] {
-  max-width: 48px;
+//  max-width: 48px;
   border: 1px dotted #bbb;
-  padding: 4px;
+//  padding: 4px;
   background: #f9f9f9;
 }
 
