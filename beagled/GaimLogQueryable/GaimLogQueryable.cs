@@ -28,6 +28,7 @@ using System;
 using System.Collections;
 using System.IO;
 using System.Text;
+using System.Threading;
 
 using Beagle.Daemon;
 using Beagle.Util;
@@ -38,25 +39,19 @@ namespace Beagle.Daemon.GaimLogQueryable {
 	public class GaimLogQueryable : LuceneQueryable {
 
 		private static Logger log = Logger.Get ("GaimLogQueryable");
+		private string logDir;
 
 		Hashtable watched = new Hashtable ();
 
 		public GaimLogQueryable () : base (Path.Combine (PathFinder.RootDir, "GaimLogIndex"))
 		{
+			string home = Environment.GetEnvironmentVariable ("HOME");
+
+			logDir = Path.Combine (Path.Combine (home, ".gaim"), "logs");
 		}
 
-		public override void Start () 
+		private void StartWorker () 
 		{
-			base.Start ();
-
-			string home = Environment.GetEnvironmentVariable ("HOME");
-			string logDir = Path.Combine (Path.Combine (home, ".gaim"), "logs");
-
-			// FIXME: If ~/.gaim/logs doesn't exist we should set up watches
-			// and wait for it to appear instead of just giving up.
-			if (! Directory.Exists (logDir))
-				return;
-
 			Inotify.InotifyEvent += new InotifyHandler (OnInotifyEvent);
 
 			log.Info ("Scanning IM Logs");
@@ -65,6 +60,19 @@ namespace Beagle.Daemon.GaimLogQueryable {
 			int foundCount = Watch (logDir);
 			timer.Stop ();
 			log.Info ("Found {0} logs in {1}", foundCount, timer);
+		}
+
+		public override void Start () 
+		{
+			// FIXME: If ~/.gaim/logs doesn't exist we should set up watches
+			// and wait for it to appear instead of just giving up.
+			if (! Directory.Exists (logDir))
+				return;
+
+			base.Start ();
+
+			Thread th = new Thread (new ThreadStart (StartWorker));
+			th.Start ();
 		}
 
 		private int Watch (string path)

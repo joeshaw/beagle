@@ -29,6 +29,7 @@
 using System;
 using System.IO;
 using System.Collections;
+using System.Threading;
 
 using System.Xml;
 using System.Xml.Serialization;
@@ -52,15 +53,8 @@ namespace Beagle.Daemon.BlamQueryable {
 			blamDir = Path.Combine (Path.Combine (Environment.GetEnvironmentVariable ("HOME"), ".gnome2"), "blam");
 		}
 
-		public override void Start () 
-		{			
-			base.Start ();
-
-			// FIXME: We should do something more reasonable if
-			// ~/.gnome2/blam doesn't exist.
-			if (! Directory.Exists (blamDir))
-				return;
-			
+		private void StartWorker ()
+		{
 			InotifyEventType mask;
 			mask = InotifyEventType.CreateFile
 				| InotifyEventType.DeleteFile
@@ -71,6 +65,19 @@ namespace Beagle.Daemon.BlamQueryable {
 			Inotify.InotifyEvent += new InotifyHandler (OnInotifyEvent);
 
 			Index();
+		}
+
+		public override void Start () 
+		{			
+			// FIXME: We should do something more reasonable if
+			// ~/.gnome2/blam doesn't exist.
+			if (! Directory.Exists (blamDir))
+				return;
+
+			base.Start ();
+
+			Thread th = new Thread (new ThreadStart (StartWorker));
+			th.Start ();
 		}
 
 		private void OnInotifyEvent (int wd,

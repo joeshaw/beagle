@@ -337,9 +337,10 @@ namespace Beagle.Daemon {
 		{
 		}
 
-		public override void Start () 
+		private void StartWorker ()
 		{
-			base.Start ();
+			Stopwatch stopwatch = new Stopwatch ();
+			stopwatch.Start ();
 
 			string home = Environment.GetEnvironmentVariable ("HOME");
 			string local_path = Path.Combine (home, ".evolution/mail/local");
@@ -354,6 +355,18 @@ namespace Beagle.Daemon {
 
 			this.crawler.ScheduleCrawl (new DirectoryInfo (local_path), -1);
 			this.crawler.ScheduleCrawl (new DirectoryInfo (imap_path), -1);
+
+			stopwatch.Stop ();
+			Logger.Log.Info ("Evolution mail driver worker thread done in {0}",
+					 stopwatch);
+		}
+
+		public override void Start () 
+		{
+			base.Start ();
+			
+			Thread th = new Thread (new ThreadStart (StartWorker));
+			th.Start ();
 		}
 
 		private void OnShutdown ()

@@ -52,6 +52,12 @@ namespace Beagle.Daemon.WebHistoryQueryable {
 		
 		public WebHistoryQueryable () : base (Path.Combine (PathFinder.RootDir, "WebHistoryIndex"), true)
 		{
+		}
+
+		public override void Start ()
+		{
+			base.Start ();
+
 			WebHistoryIndexerImpl indexer = new WebHistoryIndexerImpl (Driver);
 			DBusisms.Service.RegisterObject (indexer, Beagle.DBusisms.WebHistoryIndexerPath);
 		}

@@ -181,9 +181,17 @@ namespace Beagle.Daemon {
 
 			}
 
+			Stopwatch stopwatch = new Stopwatch ();
+
+			QueryDriver queryDriver;
+
 			try {
 				DBusisms.Init ();
 				Application.Init ();
+
+				// Construct a query driver.  Among other things, this
+				// loads and initializes all of the IQueryables.
+				queryDriver = new QueryDriver ();
 				
 				if (!DBusisms.InitService ()) {
 					if (arg_replace) {
@@ -193,6 +201,11 @@ namespace Beagle.Daemon {
 						return 1;
 					}
 				}
+				// We want to spend as little time as possible
+				// between InitService and actually being able 
+				// to serve requests
+				stopwatch.Start ();
+				
 			} catch (DBus.DBusException e) {
 				System.Console.WriteLine ("Couldn't connect to the session bus.  See http://beaglewiki.org/index.php/Installing%20Beagle for information on setting up a session bus.");
 				System.Console.WriteLine (e);
@@ -217,12 +230,7 @@ namespace Beagle.Daemon {
 				return 1;
 			}
 
-			QueryDriver queryDriver;
 			try {
-				// Construct a query driver.  Among other things, this
-				// loads and initializes all of the IQueryables.
-				queryDriver = new QueryDriver ();
-
 				// Construct and register our ping object.
 				Ping ping = new Ping (queryDriver);
 				dbusObjects.Add (ping);
@@ -248,9 +256,14 @@ namespace Beagle.Daemon {
 					return 1;
 			}
 
-			queryDriver.Start ();
-			
 			Shutdown.ShutdownEvent += OnShutdown;
+
+			queryDriver.Start ();
+
+			stopwatch.Stop ();
+
+			Logger.Log.Info ("Ready to accept requests after {0}", 
+				  stopwatch);
 			// Start our event loop.
 			Application.Run ();
 
