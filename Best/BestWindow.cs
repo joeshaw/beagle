@@ -123,6 +123,18 @@ namespace Best {
 						    Gdk.ModifierType.ControlMask,
 						    Gtk.AccelFlags.Visible);
 
+			// Previous Page (PageUp)
+			global_keys.AddAccelerator (new EventHandler (this.PageBackHandler),
+						    (uint) Gdk.Key.Page_Up, 
+						    0,
+						    Gtk.AccelFlags.Visible);
+
+			// Next Page (PageDown)
+			global_keys.AddAccelerator (new EventHandler (this.PageForwardHandler),
+						    (uint) Gdk.Key.Page_Down, 
+						    0,
+						    Gtk.AccelFlags.Visible);
+
 			DBusisms.BeagleDown += OnBeagleDown;
 
 			UpdatePage ();
@@ -181,16 +193,32 @@ namespace Best {
 		
 		//////////////////////////
 
-		private void DoForwardClicked (object o, EventArgs args)
+		private void PageForward ()
 		{
+			if (!root.HitCollection.CanPageForward)
+				return;
+
 			root.HitCollection.PageForward ();
 			UpdatePage ();
 		}
 
-		private void DoBackClicked (object o, EventArgs args)
+		private void PageBack ()
 		{
+			if (!root.HitCollection.CanPageBack)
+				return;
+
 			root.HitCollection.PageBack ();
 			UpdatePage ();
+		}
+
+		private void PageForwardHandler (object o, EventArgs args)
+		{
+			PageForward ();
+		}
+
+		private void PageBackHandler (object o, EventArgs args)
+		{
+			PageBack ();
 		}
 
 		//////////////////////////
@@ -289,14 +317,14 @@ namespace Best {
 			forward_button = StockButton ("gtk-go-forward", 
 						      "Show More Results");
 			forward_button.Show ();
-			forward_button.Clicked += new EventHandler (DoForwardClicked);
+			forward_button.Clicked += new EventHandler (PageForwardHandler);
 			pager.PackEnd (forward_button, false, false, 3);
 
 			back_button = StockButton ("gtk-go-back",
 						   "Show Previous Results");
 			back_button.Show ();
 
-			back_button.Clicked += new EventHandler (DoBackClicked);
+			back_button.Clicked += new EventHandler (PageBackHandler);
 			pager.PackEnd (back_button, false, false, 3);
 
 			pager.Show ();
