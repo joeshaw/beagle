@@ -26,6 +26,7 @@
 
 
 using System;
+using System.IO;
 using System.Collections;
 using System.Reflection;
 using System.Text;
@@ -138,6 +139,14 @@ namespace Beagle.Daemon {
 		static public void Start ()
 		{
 			ScanAssembly (Assembly.GetExecutingAssembly ());
+			
+			DirectoryInfo backends = new DirectoryInfo (PathFinder.BackendDir);
+
+			if (backends.Exists) {
+				foreach (FileInfo assembly in backends.GetFiles ("*.dll"))
+					ScanAssembly (Assembly.LoadFile (assembly.ToString ()));
+			}
+				
 			foreach (Queryable q in queryables) {
 				q.ChangedEvent += OnQueryableChanged;
 				q.Start ();

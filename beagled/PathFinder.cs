@@ -46,6 +46,10 @@ namespace Beagle.Daemon {
 			get { return Path.Combine (PkgLibDir, "Filters"); }
 		}
 
+		static public string BackendDir {
+			get { return Path.Combine (PkgLibDir, "Backends"); }
+		}
+
 		static public string RootDir {
 			get {
 				string homedir = Environment.GetEnvironmentVariable ("HOME");
