@@ -75,7 +75,7 @@ namespace Beagle.Tile {
 		
 		private void OpenMessage ()
 		{
-			hit.OpenWithDefaultAction ();
+			OpenHitWithDefaultAction (hit);
 		}
 
 		override protected bool RenderKey (string key, TileRenderContext ctx)

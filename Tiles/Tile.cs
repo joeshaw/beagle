@@ -25,6 +25,7 @@
 //
 
 using System;
+using Gtk;
 
 namespace Beagle.Tile {
 
@@ -93,5 +94,37 @@ namespace Beagle.Tile {
 			if (changedHandler != null)
 				changedHandler (this);
 		}
+
+		private void OnErrorDialogResponse (object o, ResponseArgs args)
+		{
+			((MessageDialog)o).Destroy ();
+		}
+
+		protected void OpenHitWithDefaultAction (Hit hit) 
+		{
+			string message;
+			try {
+				hit.OpenWithDefaultAction ();
+			} catch (Exception e) {
+				string msg;
+
+				if (e.Message.IndexOf ("Cannot find") != -1) {
+					msg = "The application for this file type could not be found.";
+				} else {
+					msg = e.Message;
+				}
+
+				// FIXME: lame error reporting
+				MessageDialog dlg = new MessageDialog (null,
+								       0,
+								       MessageType.Error,
+								       ButtonsType.Ok,
+								       "Couldn't opening " + hit.Uri + ": " + msg);
+			
+				dlg.Response += OnErrorDialogResponse;
+				dlg.Show ();
+			}
+		}
 	}
 }
+	

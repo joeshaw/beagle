@@ -376,7 +376,7 @@ namespace Beagle {
 				commandFallback = "nautilus";
 				expectsUrisFallback = true;
 			} else if (Type == "MailMessage") {
-				command = "evolution-1.5";
+				command = "evolution";
 				expectsUris = true;
 			}
 			

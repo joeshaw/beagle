@@ -181,6 +181,7 @@ namespace Beagle.Daemon.EvolutionDataServerQueryable {
 
 		private void DisconnectView () 
 		{
+			if (view != null) {
 				view.ContactsAdded -= OnContactsAdded;
 				view.ContactsRemoved -= OnContactsRemoved;
 				view.ContactsChanged -= OnContactsChanged;
@@ -189,6 +190,7 @@ namespace Beagle.Daemon.EvolutionDataServerQueryable {
 				view.Dispose ();
 				
 				view = null;
+			}
 		}
 	
 		private void OnResultCancelled (QueryResult source) 
