@@ -1,5 +1,10 @@
 2005-03-06  Daniel Drake <dsd@gentoo.org>
 
+	* IndexHelper/IndexHelper.cs, IndexHelper/RemoteIndexerImpl.cs:
+	Verify that NewRemoteIndexerPath requests are coming from beagled
+
+2005-03-06  Daniel Drake <dsd@gentoo.org>
+
 	* Util/StringFu.cs, Util/gnome.cs: Handle filenames containing
 	'%'. Fixes bug #169422
 

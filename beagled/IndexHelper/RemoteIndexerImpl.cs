@@ -149,13 +149,16 @@ namespace Beagle.IndexHelper {
 
 		/////////////////////////////////////////////////////////////////////////////////////
 
-		// FIXME: We should reject calls to NewRemoteIndexerPath from
-		// anyone except for the process that started us.
-
 		static Hashtable remote_indexer_cache = new Hashtable ();
 
 		override public string NewRemoteIndexerPath (string name)
 		{
+			if (! IndexHelperTool.CheckSenderID (DBus.Message.Current.Sender)) {
+				Logger.Log.Error ("NewRemoteIndexerPath: Rejected request from {0}",
+				                  DBus.Message.Current.Sender);
+				return null;
+			}
+
 			string path = Path.Combine (IndexHelperTool.IndexPathPrefix, name);
 			if (! remote_indexer_cache.Contains (name)) {
 				LuceneDriver driver = new LuceneDriver (name);

@@ -43,6 +43,8 @@ namespace Beagle.IndexHelper {
 		static readonly public string FactoryPath = "/com/novell/BeagleIndexHelper/Factory";
 		static readonly public string IndexPathPrefix = "/com/novell/BeagleIndexHelper/Index";
 
+		static private string process_owner;
+
 		static void Main (string [] args)
 		{
 			bool run_by_hand = (Environment.GetEnvironmentVariable ("BEAGLE_RUN_HELPER_BY_HAND") != null);
@@ -73,6 +75,9 @@ namespace Beagle.IndexHelper {
 				if (run_by_hand)
 					Environment.Exit (-1);
 			}
+
+			// Save the owner ID of the com.novell.Beagle service
+			process_owner = Beagle.Daemon.DBusisms.BusDriver.GetServiceOwner (Beagle.DBusisms.Name);
 
 			// Start monitoring the beagle daemon
 			GLib.Timeout.Add (2000, new GLib.TimeoutHandler (BeagleDaemonWatcherTimeoutHandler));
@@ -114,6 +119,11 @@ namespace Beagle.IndexHelper {
 				th
 			}
 #endif
+		}
+
+		public static bool CheckSenderID (string sender)
+		{
+			return sender == process_owner;
 		}
 
 		static bool BeagleDaemonWatcherTimeoutHandler ()
