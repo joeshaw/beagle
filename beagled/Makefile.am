@@ -366,8 +366,8 @@ TOMBOY_QUERYABLE_CSFILES =				\
 
 evomailqueryable = $(srcdir)/EvolutionMailDriver
 EVO_MAIL_QUERYABLE_CSFILES =				\
-	$(evomailqueryable)/CamelIndexDriver.cs		\
-	$(evomailqueryable)/EvolutionMailDriver.cs
+	$(evomailqueryable)/EvolutionMailDriver.cs	\
+	$(evomailqueryable)/EvolutionMailIndexableGenerator.cs
 
 blamqueryable = $(srcdir)/BlamQueryable
 BLAM_QUERYABLE_CSFILES =				\

@@ -29,7 +29,6 @@ using System;
 using System.Collections;
 
 using Gtk;
-using GtkSharp;
 
 using Beagle;
 using Beagle.Tile;
@@ -234,6 +233,7 @@ namespace Best {
 
 		private void UpdatePage ()
 		{
+			Console.WriteLine ("In UpdatePage");
 			back_button.Sensitive = root.HitCollection.CanPageBack;
 			forward_button.Sensitive = root.HitCollection.CanPageForward;
 

@@ -237,7 +237,7 @@ AM_CONDITIONAL(ENABLE_GSF_SHARP, test "x$enable_gsf_sharp" = "xyes")
 PKG_CHECK_MODULES(GST_SHARP, gst-sharp, enable_gst_sharp=yes, enable_gst_sharp=no)
 AM_CONDITIONAL(ENABLE_GST_SHARP, test "x$enable_gst_sharp" = "xyes")
 
-PKG_CHECK_MODULES(BEAGLED, gtk-sharp dbus-sharp gconf-sharp)
+PKG_CHECK_MODULES(BEAGLED, gmime-sharp gtk-sharp dbus-sharp gconf-sharp)
 BEAGLED_LIBS="$BEAGLED_LIBS $EVO_SHARP_LIBS $GSF_SHARP_LIBS"
 AC_SUBST(BEAGLED_LIBS)
 
