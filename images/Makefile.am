@@ -20,6 +20,7 @@ RESOURCEFILES =					\
 	$(srcdir)/contact-phone.png		\
 	$(srcdir)/default.png			\
 	$(srcdir)/document.png			\
+	$(srcdir)/emblem-bugzilla.png		\
 	$(srcdir)/emblem-contact.png		\
 	$(srcdir)/emblem-file.png		\
 	$(srcdir)/emblem-folder.png		\
