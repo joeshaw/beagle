@@ -90,24 +90,44 @@ namespace Beagle.Util {
 			}
 		}
 
-		private object Dequeue ()
+		private Queue NextSubQueue ()
 		{
-			object item;
-
+			Queue queue = null;
+				
 			lock (priorityQueue) {
-				int i = priorityQueue.Count - 1;
-				if (i < 0)
-					return null;
-
-				Queue queue = priorityQueue.GetByIndex (i) as Queue;
-				item = queue.Dequeue ();
-				--count;
-				if (queue.Count == 0)
-					priorityQueue.RemoveAt (i);
+				while (queue == null) {
+					int i = priorityQueue.Count - 1;
+					if (i < 0)
+						return null;
+					queue = priorityQueue.GetByIndex (i) as Queue;
+					if (queue == null || queue.Count == 0) {
+						priorityQueue.RemoveAt (i);
+						queue = null;
+					}
+				}
 			}
 
-			//if (log != null)
-			//  log.Info ("Dequeued {0}", item);
+			return queue;
+		}
+
+		private object PeekSubQueue (Queue queue)
+		{
+			lock (priorityQueue) {
+				return queue != null && queue.Count > 0 ? queue.Peek () : null;
+			}
+		}
+
+		private object DequeueSubQueue (Queue queue)
+		{
+			object item = null;
+
+			lock (priorityQueue) {
+				if (queue != null && queue.Count > 0) {
+					item = queue.Dequeue ();
+					--count;
+				}
+			}
+			
 			return item;
 		}
 
@@ -145,7 +165,15 @@ namespace Beagle.Util {
 
 		///////////////////////////////////////////////////////////////////
 
-		protected abstract void ProcessQueueItem (object item);
+		// Return true to dequeue the item after processing.
+		// If false, the item will remain in the queue and will show
+		// up again in future ProcessQueueItem calls.
+		protected abstract bool ProcessQueueItem (object item);
+
+		protected virtual bool PeekAtQueueItem (object item)
+		{
+			return true;
+		}
 
 		protected virtual int PostProcessSleepDuration ()
 		{
@@ -178,19 +206,26 @@ namespace Beagle.Util {
 					continue;
 				}
 
-				// Pull the highest-priority item off of the queue.
-				object item = Dequeue ();
+				// Pull the highest-priority subqueue off of the queue.
+				Queue subqueue = NextSubQueue ();
+				object item = PeekSubQueue (subqueue);
+
 				int sleep = 0;
 
 				// If we found a non-null item, process it.
 				if (item != null) {
 
+					bool needDequeue = true;
+
 					try {
-						ProcessQueueItem (item);
+						needDequeue = ProcessQueueItem (item);
 					} catch (Exception e) {
 						if (log != null)
 							log.Warn (e);
 					}
+
+					if (needDequeue)
+						DequeueSubQueue (subqueue);
 
 
 					// Afterwards, maybe sleep a little bit.

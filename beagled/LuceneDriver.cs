@@ -767,7 +767,7 @@ namespace Beagle.Daemon {
 			///////////////////////////////////////////////////////
 			
 
-			override protected void ProcessQueueItem (object obj)
+			override protected bool ProcessQueueItem (object obj)
 			{
 				QueueItem item = (QueueItem) obj;
 				QueueItem oldItem = null;
@@ -779,7 +779,7 @@ namespace Beagle.Daemon {
 					uint seqno = (uint) seqnoByUri [item.Uri];
 					if (seqno > item.SequenceNumber) {
 						Log.Debug ("Rejected {0} by seqno", item.Uri);
-						return;
+						return true;
 					}
 				}
 
@@ -826,6 +826,8 @@ namespace Beagle.Daemon {
 					Log.Debug ("{0} Flush (add={1}, delete={2}), {3}",
 							  reason, pa, pd, watch);
 				}
+
+				return true;
 			}
 
 			override protected int PostProcessSleepDuration ()

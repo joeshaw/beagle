@@ -193,20 +193,20 @@ namespace Beagle.Daemon.FileSystemQueryable {
 
 		/////////////////////////////////////////////////////////////////
 
-		override protected void ProcessQueueItem (object item)
+		override protected bool ProcessQueueItem (object item)
 		{
 			string path = (string) item;
 
 			// We only want to crawl any given path once.
 			lock (crawledPaths) {
 				if (crawledPaths.Contains (path))
-					return;
+					return true;
 				crawledPaths [path] = true;
 			}
 
 			DirectoryInfo dir = new DirectoryInfo (path);
 			if (! dir.Exists)
-				return;
+				return true;
 
 			if (log != null)
 				log.Info ("Crawling {0}", path);
@@ -218,6 +218,8 @@ namespace Beagle.Daemon.FileSystemQueryable {
 				if (! filter.Ignore (fsinfo.FullName))
 					driver.ScheduleAddFile (fsinfo, 0);
 			}
+
+			return true;
 		}
 
 		override protected int PostProcessSleepDuration ()
