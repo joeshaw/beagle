@@ -38,8 +38,8 @@ TestClient.exe: TestClient.cs
 all: $(TARGET)
 
 install-data-local: $(TARGET)
-	$(mkinstalldirs) $(DESTDIR)$(bindir)
-	$(INSTALL_DATA) $(TARGET) $(DESTDIR)$(bindir)/$(TARGET)
+	$(mkinstalldirs) $(DESTDIR)$(pkglibdir)
+	$(INSTALL_DATA) $(TARGET) $(DESTDIR)$(pkglibdir)/$(TARGET)
 
 uninstall-local:
 	rm -f $(DESTDIR)$(bindir)/$(TARGET)
