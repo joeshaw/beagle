@@ -90,10 +90,34 @@ class QueryTool {
 	static void OnFinished (QueryProxy query)
 	{
 		if (verbose)
-			Console.WriteLine ("Elapsed time: {0:0.000}s", (DateTime.Now - queryStartTime).TotalSeconds);
+			Console.WriteLine ("Elapsed time: {0:0.000}s",
+					   (DateTime.Now - queryStartTime).TotalSeconds);
 		Gtk.Application.Quit ();
 	}
 
+	public static void PrintUsageAndExit () 
+	{
+		string usage =
+			"beagle-query: Command-line interface to the Beagle search system.\n" +
+			"Web page: http://www.gnome.org/projects/beagle\n" +
+			"Copyright (C) 2004 Novell, Inc.\n\n";
+		usage +=
+			"Usage: beagle-query [OPTIONS] <query string>\n\n" +
+			"Options:\n" +
+			"  --verbose\t\t\tPrint detailed information about each hit.\n" +
+			"  --mime <mime type>\t\tConstrain search results to the specified mime type.\n" +
+			"                    \t\tCan be used multiply.\n" +
+			"  --source <source>\t\tConstrain query to the specified source.  Sources\n" +
+			"                   \t\tlist available from beagle-status.\n" +
+			"  --live-query\t\t\tRun continuously, printing notifications if a query changes.\n" +
+			"  --help\t\t\tPrint this usage message.\n";
+
+		Console.WriteLine (usage);
+
+		System.Environment.Exit (0);
+	}
+
+	
 	static void Main (string[] args) 
 	{
 		Gtk.Application.Init ();
@@ -113,21 +137,36 @@ class QueryTool {
 		query.HitAddedEvent += OnHitAdded;
 		query.HitSubtractedEvent += OnHitSubtracted;
 
+		// Parse args
 		int i = 0;
 		while (i < args.Length) {
-			if (args [i].StartsWith ("--mime")) {
-			        i ++;
+			switch (args [i]) {
+
+			case "--mime":
+			        if (++i >= args.Length) PrintUsageAndExit ();
 				query.AddMimeType (args [i]);
-			} else if (args [i].StartsWith ("--source")) {
-				i ++;
+				break;
+			case "--source":
+			        if (++i >= args.Length) PrintUsageAndExit ();
 				query.AddSource (args [i]);
-			} else if (args [i].StartsWith ("--keep-running") || args [i].StartsWith ("--keeprunning")) {
+				break;
+			case "--live-query":
 				keepRunning = true;
-			} else if (args [i].StartsWith ("--verbose")) {
+				break;
+			case "--verbose":
 				verbose = true;
-			} else {
+				break;
+
+			case "--help":
+			case "--usage":
+				PrintUsageAndExit ();
+				return;
+
+			default:
 				query.AddTextRaw (args [i]);
+				break;
 			}
+
 			++i;
 		}
 
