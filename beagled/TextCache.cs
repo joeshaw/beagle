@@ -163,7 +163,7 @@ namespace Beagle.Daemon {
 			string path = LookupPath (uri, true);
 
 			FileStream stream;
-			stream = new FileStream (path, FileMode.Create, FileAccess.Write, FileShare.Read);
+			stream = new FileStream (path, FileMode.Create, FileAccess.Write, FileShare.ReadWrite);
 
 			StreamWriter writer;
 			writer = new StreamWriter (stream);
@@ -178,7 +178,7 @@ namespace Beagle.Daemon {
 
 			FileStream stream;
 			try {
-				stream = new FileStream (path, FileMode.Open, FileAccess.Read, FileShare.Read);
+				stream = new FileStream (path, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
 			} catch (FileNotFoundException ex) {
 				return null;
 			}

@@ -268,7 +268,10 @@ namespace Beagle.Daemon {
 			if (reader == null)
 				return null;
 
-			return SnippetFu.GetSnippet (body, reader);
+			string snippet = SnippetFu.GetSnippet (body, reader);
+			reader.Close ();
+
+			return snippet;
 		}
 
 		/////////////////////////////////////////
