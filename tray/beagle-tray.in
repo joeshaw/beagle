@@ -20,8 +20,6 @@ else
     THIS_EXE="@pkglibdir@/@target@"
     EXTRA_ARGS=""
     FILTER_PATH=$BEAGLE_FILTER_PATH
-    # FIXME: Set this correctly, since libtrayicon shouldn't be
-    # installed into a system directory by default.
     export LD_LIBRARY_PATH="@pkglibdir@:$LD_LIBRARY_PATH"
 fi
 
