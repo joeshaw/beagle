@@ -64,26 +64,29 @@ namespace Beagle.IndexHelper {
 
 			// Check that beagled is running by looking for the com.novell.Beagle service.
 			if (! Beagle.Daemon.DBusisms.TestService (Beagle.DBusisms.Name)) {
-				Console.WriteLine ("Couldn't find d-bus service '{0}' (Is beagled running?)",
-						   Beagle.DBusisms.Name);
+				Logger.Log.Debug ("Couldn't find d-bus service '{0}' (Is beagled running?)",
+						  Beagle.DBusisms.Name);
 				if (Environment.GetEnvironmentVariable ("BEAGLE_RUN_HELPER_BY_HAND") == null)
 					Environment.Exit (-1);
 			}
 
+			// Start monitoring the beagle daemon
+			GLib.Timeout.Add (2000, new GLib.TimeoutHandler (BeagleDaemonWatcherTimeoutHandler));
+
 			// Acquire the service
 			if (! Beagle.Daemon.DBusisms.InitService (ServiceName)) {
-				Console.WriteLine ("Couldn't acquire d-bus service '{0}'", ServiceName);
+				Logger.Log.Debug ("Couldn't acquire d-bus service '{0}'", ServiceName);
 				Environment.Exit (-666);
 			}
 
 			// Since the associated RemoteIndexerProxy is null, the only method
 			// that can be called on this object that isn't a no-op is NewRemoteIndexerPath.
 			// We do this to avoid a separate factory object.
-			RemoteIndexerImpl factory = new RemoteIndexerImpl (null);
+			RemoteIndexerImpl factory = new RemoteIndexerImpl ("factory object", null);
 			Beagle.Daemon.DBusisms.RegisterObject (factory, FactoryPath);
 
 
-			// Start the memory-watching thread
+			// Start the monitor thread, which keeps an eye on memory usage.
 			Thread th = new Thread (new ThreadStart (MemoryMonitorWorker));
 			th.Start ();
 
@@ -98,8 +101,27 @@ namespace Beagle.IndexHelper {
 			if (name != Beagle.DBusisms.Name)
 				return;
 
-			if (new_owner == "")
+			if (new_owner == "") {
+				Logger.Log.Debug ("Shutting down on OnNameOwnerChanged");
+				RemoteIndexerImpl.UnconditionallyCloseAll ();
 				Shutdown.BeginShutdown ();
+			}
+		}
+
+		static bool BeagleDaemonWatcherTimeoutHandler ()
+		{
+
+			// FIXME: we only poll the beagled service to work around
+			// the dropped OnNameOwnerChanged signals, which is presumably a
+			// dbus or dbus-sharp bug.
+			if (! Beagle.Daemon.DBusisms.TestService (Beagle.DBusisms.Name)) {
+				Logger.Log.Debug ("Shutting down on failed TestService in BeagleDaemonWatcherTimeoutHandler");
+				RemoteIndexerImpl.UnconditionallyCloseAll ();
+				Shutdown.BeginShutdown ();
+				return false;
+			}
+			
+			return true;
 		}
 
 		static void MemoryMonitorWorker ()
@@ -108,12 +130,14 @@ namespace Beagle.IndexHelper {
 			int last_vmsize = 0;
 
 			while (! Shutdown.ShutdownRequested) {
+
+				// Check memory size
 				int vmsize = SystemInformation.VmSize;
 				if (vmsize != last_vmsize)
-					Console.WriteLine ("vmsize={0}, max={1}, {2:0.0}%", vmsize, vmsize_max, 100.0 * vmsize / vmsize_max);
+					Logger.Log.Debug ("vmsize={0}, max={1}, {2:0.0}%", vmsize, vmsize_max, 100.0 * vmsize / vmsize_max);
 				last_vmsize = vmsize;
 				if (vmsize > vmsize_max) {
-					Console.WriteLine ("Process too big, shutting down!");
+					Logger.Log.Debug ("Process too big, shutting down!");
 					Shutdown.BeginShutdown ();
 				} else {
 					Thread.Sleep (1000);

@@ -24,6 +24,8 @@
 // DEALINGS IN THE SOFTWARE.
 //
 
+#define DBUS_IS_BROKEN_BROKEN_BROKEN
+
 using System;
 using System.Collections;
 using System.IO;
@@ -36,14 +38,17 @@ namespace Beagle.IndexHelper {
 
 	public class RemoteIndexerImpl : Beagle.Daemon.RemoteIndexerProxy {
 
+		string name;
 		IIndexer indexer;
 		NextFlush next_flush;
+		bool is_open;
 		
 		public override event ChangedHandler ChangedEvent;
 		public override event FlushCompleteHandler FlushCompleteEvent;
 
-		public RemoteIndexerImpl (IIndexer indexer)
+		public RemoteIndexerImpl (string name, IIndexer indexer)
 		{
+			this.name = name;
 			this.indexer = indexer;
 			if (indexer != null) {
 				indexer.ChangedEvent += OnIndexerChanged;
@@ -68,6 +73,14 @@ namespace Beagle.IndexHelper {
 			public ArrayList ToBeAdded = new ArrayList ();
 			public ArrayList ToBeRemoved = new ArrayList ();
 
+#if DBUS_IS_BROKEN_BROKEN_BROKEN
+			private bool FlushCompleteIdleHandler ()
+			{
+				Impl.FlushComplete ();
+				return false;
+			}
+#endif
+
 			public void DoFlush ()
 			{
 				foreach (Indexable indexable in ToBeAdded)
@@ -75,7 +88,11 @@ namespace Beagle.IndexHelper {
 				foreach (Uri uri in ToBeRemoved)
 					Indexer.Remove (uri);
 				Indexer.Flush ();
+#if DBUS_IS_BROKEN_BROKEN_BROKEN
+				GLib.Idle.Add (new GLib.IdleHandler (FlushCompleteIdleHandler));
+#else
 				Impl.FlushComplete ();
+#endif
 			}
 		}
 
@@ -89,7 +106,7 @@ namespace Beagle.IndexHelper {
 
 		public void FlushComplete ()
 		{
-			Console.WriteLine ("Flush Complete!");
+			Logger.Log.Debug ("Flush Complete!");
 			FlushCompleteEvent ();
 		}
 		
@@ -106,25 +123,42 @@ namespace Beagle.IndexHelper {
 			string path = Path.Combine (IndexHelperTool.IndexPathPrefix, name);
 			if (! remote_indexer_cache.Contains (name)) {
 				LuceneDriver driver = new LuceneDriver (name);
-				RemoteIndexerImpl impl = new RemoteIndexerImpl (driver);
+				RemoteIndexerImpl impl = new RemoteIndexerImpl (name, driver);
 				remote_indexer_cache [name] = impl;
 				Beagle.Daemon.DBusisms.RegisterObject (impl, path);
 			}
 			return path;
 		}
 
+		static public void UnconditionallyCloseAll ()
+		{
+			Logger.Log.Debug ("RemoteIndexerImpl.UnconditionallyCloseAll");
+			foreach (RemoteIndexerImpl impl in remote_indexer_cache.Values)
+				impl.Close ();
+		}
+
 		/////////////////////////////////////////////////////////////////////////////////////
 
 		override public bool Open ()
 		{
-			Console.WriteLine ("Open!");
-			return Shutdown.WorkerStart (this);
+			lock (this) {
+				Logger.Log.Debug ("Open!");
+				if (is_open)
+					return true; // FIXME: Is this right?  Does it matter?
+				is_open = true;
+				return Shutdown.WorkerStart (this, name);
+			}
 		}
 
 		override public void Close ()
 		{
-			Console.WriteLine ("Close!");
-			Shutdown.WorkerFinished (this);
+			lock (this) {
+				Logger.Log.Debug ("Close!");
+				if (is_open) {
+					Shutdown.WorkerFinished (this);
+					is_open = false;
+				}
+			}
 		}
 
 		/////////////////////////////////////////////////////////////////////////////////////
@@ -151,7 +185,7 @@ namespace Beagle.IndexHelper {
 				NextFlush this_flush = next_flush;
 				next_flush = NewNextFlush ();
 				indexer.Flush ();
-				Console.WriteLine ("Launching flush thread!");
+				Logger.Log.Debug ("Launching flush thread!");
 				Thread th = new Thread (new ThreadStart (this_flush.DoFlush));
 				th.Start ();
 			}

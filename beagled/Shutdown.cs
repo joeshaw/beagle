@@ -33,14 +33,17 @@ namespace Beagle.Daemon {
 
 	public class Shutdown {
 
+		static public bool Debug = false;
+
 		static object shutdownLock = new object ();
 		static Hashtable workers = new Hashtable ();
+		static Hashtable workers_names = new Hashtable ();
 		static bool shutdownRequested = false;
 
 		public delegate void ShutdownHandler ();
 		public static event ShutdownHandler ShutdownEvent;
 
-		public static bool WorkerStart (object o)
+		public static bool WorkerStart (object o, string name)
 		{
 			lock (shutdownLock) {
 				if (shutdownRequested) {
@@ -51,10 +54,17 @@ namespace Beagle.Daemon {
 					refcount = (int)workers[o];
 				++refcount;
 				workers[o] = refcount;
+				workers_names[o] = name;
 
-				//Logger.Log.Debug ("worker added: {0}", o);
+				if (Debug)
+					Logger.Log.Debug ("worker added: name={0} refcount={1}", name, refcount);
 			}
 			return true;
+		}
+
+		public static bool WorkerStart (object o)
+		{
+			return WorkerStart (o, o.ToString ());
 		}
 
 		public static void WorkerFinished (object o)
@@ -67,11 +77,16 @@ namespace Beagle.Daemon {
 
 				int refcount = (int)workers[o];
 				--refcount;
-				if (refcount == 0)
+				if (refcount == 0) {
+					if (Debug)
+						Logger.Log.Debug ("worker removed: name={0}", workers_names[o]);
 					workers.Remove (o);
-				else 
+					workers_names.Remove (o);
+				} else {
+					if (Debug)
+						Logger.Log.Debug ("worker finished: name={0} refcount={1}", workers_names[o], refcount);
 					workers[o] = refcount;
-				//Logger.Log.Debug ("worker removed: {0}", o);
+				}
 
 				Monitor.Pulse (shutdownLock);
 			}
@@ -111,7 +126,7 @@ namespace Beagle.Daemon {
 							  workers.Count,
 							   workers.Count > 1 ? "s" : "");					
 					foreach (object o in workers.Keys) 
-						Logger.Log.Debug ("waiting for {0}", o);
+						Logger.Log.Debug ("waiting for {0}", workers_names[o]);
 					Monitor.Wait (shutdownLock);
 				}
 
