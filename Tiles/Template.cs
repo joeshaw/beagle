@@ -175,7 +175,7 @@ namespace Beagle.Tile {
 					}
 				}
 				if (new_line != "") 
-					writer.WriteLine (new_line + "\n");
+					writer.Write (new_line + "\n");
 			}
 
 			return writer.ToString ();

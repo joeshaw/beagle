@@ -62,7 +62,7 @@ namespace Beagle.Tile {
 
 		private ArrayList hits = new ArrayList ();
 		int firstDisplayed = 0;
-		int maxDisplayed = 10;
+		int maxDisplayed = 5;
 
 		Template head_template;
 		Template foot_template;
