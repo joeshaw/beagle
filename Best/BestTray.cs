@@ -85,7 +85,7 @@ namespace Best {
 			eventbox.CanFocus = true;
 			eventbox.ButtonPressEvent += new ButtonPressEventHandler (ButtonPress);
 			
-			Gdk.Pixbuf smalldog = Images.GetPixbuf ("dog.png");
+			Gdk.Pixbuf smalldog = Images.GetPixbuf ("best.png");
 			eventbox.Add (new Gtk.Image (smalldog.ScaleSimple (24, 24, Gdk.InterpType.Hyper)));
 
 			string tooltip = "Bleeding-Edge Search Tool (F12)";
