@@ -286,6 +286,8 @@ DBUS_PREFIX=`$PKG_CONFIG --variable=prefix dbus-sharp`
 GSF_SHARP_PREFIX=`$PKG_CONFIG --variable=prefix gsf-sharp`
 GMIME_SHARP_PREFIX=`$PKG_CONFIG --variable=prefix gmime-sharp`
 
+AC_CHECK_HEADERS(dbus-1.0/dbus/dbus.h,, [AC_MSG_ERROR([Unable to find dbus headers.  You'll need to install the dbus devel package])])
+
 AC_MSG_CHECKING(for older dbus API)
 LDFLAGS_save="$LDFLAGS"
 LDFLAGS="$LDFLAGS `pkg-config --libs dbus-1`"
