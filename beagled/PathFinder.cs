@@ -50,25 +50,57 @@ namespace Beagle.Daemon {
 			get { return Path.Combine (PkgLibDir, "Backends"); }
 		}
 
-		static public string RootDir {
+		// The user's personal files are under this and their dotfiles are in it.
+		// It is usually found via HOME, but that can be overridden by setting
+		// BEAGLE_HOME
+		static string home_dir;
+		static object home_dir_lock = new object ();
+		static public string HomeDir {
 			get {
-				string homedir = Environment.GetEnvironmentVariable ("HOME");
-				string dir = Path.Combine (homedir, ".beagle");
-				if (! Directory.Exists (dir)) {
-					Directory.CreateDirectory (dir);
-					// Make sure that ~/.beagle directory is only
-					// readable by the owner.
-					Mono.Posix.Syscall.chmod (dir,
-								  (Mono.Posix.FileMode) 448);
+				lock (home_dir_lock) {
+					if (home_dir == null) {
+						home_dir = Environment.GetEnvironmentVariable ("BEAGLE_HOME");
+						if (home_dir == null)
+							home_dir = Environment.GetEnvironmentVariable ("HOME");
+						if (home_dir == null)
+							throw new Exception ("Couldn't get HOME or BEAGLE_HOME");
+						if (! Directory.Exists (home_dir))
+							throw new Exception ("Home directory '"+home_dir+"' doesn't exist");
+					}
 				}
-				return dir;
+				
+				return home_dir;
+			}
+		}
 
+		// The storage directory is the place where beagle stores its private data.
+		// Fun fact #1: By default this is ~/.beagle
+		// Fun fact #2: It can be overridden by setting BEAGLE_STORAGE
+		static string storage_dir;
+		static object storage_dir_lock = new object ();
+		static public string StorageDir {
+			get {
+				lock (storage_dir_lock) {
+					if (storage_dir == null) {
+						storage_dir = Environment.GetEnvironmentVariable ("BEAGLE_STORAGE");
+						if (storage_dir == null)
+							storage_dir = Path.Combine (HomeDir, ".beagle");
+						if (! Directory.Exists (storage_dir)) {
+							Directory.CreateDirectory (storage_dir);
+							// Make sure that the directory is only
+							// readable by the owner.
+							Mono.Posix.Syscall.chmod (storage_dir, (Mono.Posix.FileMode) 448);
+						}
+					}
+				}
+
+				return storage_dir;
 			}
 		}
 
 		static public string LogDir {
 			get {
-				string dir = Path.Combine (RootDir, "Log");
+				string dir = Path.Combine (StorageDir, "Log");
 				if (! Directory.Exists (dir))
 					Directory.CreateDirectory (dir);
 				return dir;
@@ -77,7 +109,7 @@ namespace Beagle.Daemon {
 
 		static private string AppDir {
 			get {
-				string dir = Path.Combine (RootDir, "App");
+				string dir = Path.Combine (StorageDir, "App");
 				if (! Directory.Exists (dir))
 					Directory.CreateDirectory (dir);
 				return dir;

@@ -44,7 +44,7 @@ namespace Beagle.Daemon {
 
 		static TextCache () 
 		{
-			text_cache_dir = Path.Combine (PathFinder.RootDir, "TextCache");
+			text_cache_dir = Path.Combine (PathFinder.StorageDir, "TextCache");
 			if (! Directory.Exists (text_cache_dir))
 				Directory.CreateDirectory (text_cache_dir);
 

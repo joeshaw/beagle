@@ -47,7 +47,7 @@ namespace Beagle.Daemon.LifereaQueryable {
 
 		public LifereaQueryable () : base ("LifereaIndex")
 		{
-			lifereaDir = Path.Combine (Environment.GetEnvironmentVariable ("HOME"), ".liferea");
+			lifereaDir = Path.Combine (PathFinder.HomeDir, ".liferea");
 			lifereaDir = Path.Combine (lifereaDir, "cache");
 			lifereaDir = Path.Combine (lifereaDir, "feeds");
 		}

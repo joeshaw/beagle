@@ -46,7 +46,7 @@ namespace Beagle.Daemon.TomboyQueryable {
 
 		public TomboyQueryable () : base ("TomboyIndex")
 		{
-			notesDir = Path.Combine (Environment.GetEnvironmentVariable ("HOME"), ".tomboy");
+			notesDir = Path.Combine (PathFinder.HomeDir, ".tomboy");
 			backupDir = Path.Combine (notesDir, "Backup");
 		}
 
@@ -58,7 +58,7 @@ namespace Beagle.Daemon.TomboyQueryable {
 			// created
 			if (! Directory.Exists (notesDir) ) {
 				log.Warn("Failed to Scan Tomboy, perhaps it is not installed");
-				wdNotes = Inotify.Watch (Environment.GetEnvironmentVariable ("HOME"), Inotify.EventType.CreateSubdir);
+				wdNotes = Inotify.Watch (PathFinder.HomeDir, Inotify.EventType.CreateSubdir);
 				Inotify.Event += WatchForTomboy;
 				return;
 			}
@@ -145,7 +145,7 @@ namespace Beagle.Daemon.TomboyQueryable {
 		{
 			// Check if event is the tomboy directory being created
 			// and index the notes
-			if (subitem == ".tomboy" && path == Environment.GetEnvironmentVariable ("HOME")) {
+			if (subitem == ".tomboy" && path == PathFinder.HomeDir) {
 				Inotify.Event -= WatchForTomboy;
 				Inotify.Ignore (path);
 				Start();

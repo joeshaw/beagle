@@ -47,9 +47,7 @@ namespace Beagle.Daemon.CalendarQueryable {
 
 		public CalendarQueryable () : base ("CalendarIndex")
 		{
-			string home = Environment.GetEnvironmentVariable ("HOME");
-
-			cal_dir = Path.Combine (home, ".evolution/calendar/local");
+			cal_dir = Path.Combine (PathFinder.HomeDir, ".evolution/calendar/local");
 		}
 
 		private void StartWorker () 

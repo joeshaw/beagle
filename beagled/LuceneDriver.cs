@@ -111,7 +111,7 @@ namespace Beagle.Daemon {
 
 		private void Setup (string index_name)
 		{
-			top_dir = Path.Combine (PathFinder.RootDir, index_name); 
+			top_dir = Path.Combine (PathFinder.StorageDir, index_name); 
 			
 			string versionFile = Path.Combine (top_dir, "version");
 			string fingerprintFile = Path.Combine (top_dir, "fingerprint");

@@ -159,7 +159,7 @@ namespace Beagle.Daemon {
 
 		protected static Stream ReadAppData (string name)
 		{
-			string path = Path.Combine (Path.Combine (PathFinder.RootDir, "MailIndex"), name);
+			string path = Path.Combine (Path.Combine (PathFinder.StorageDir, "MailIndex"), name);
 			return new FileStream (path, System.IO.FileMode.Open, FileAccess.Read, FileShare.Read);
 		}
 
@@ -181,14 +181,14 @@ namespace Beagle.Daemon {
 
 		protected static Stream WriteAppData (string name)
 		{
-			string path = Path.Combine (Path.Combine (PathFinder.RootDir, "MailIndex"), name);
+			string path = Path.Combine (Path.Combine (PathFinder.StorageDir, "MailIndex"), name);
 			return new FileStream (path, System.IO.FileMode.Create, FileAccess.Write, FileShare.None);
 		}
 
 		protected static void WriteAppDataLine (string name, string line)
 		{
 			if (line == null) {
-				string path = Path.Combine (Path.Combine (PathFinder.RootDir, "MailIndex"), name);
+				string path = Path.Combine (Path.Combine (PathFinder.StorageDir, "MailIndex"), name);
 
 				if (File.Exists (path))
 					File.Delete (path);

@@ -49,6 +49,7 @@ namespace Beagle.Daemon.LauncherQueryable {
 		{
 			Dirs = new ArrayList ();
 			// Add GNOME dirs
+			// FIXME: We should use Path.Combine here
 			string prefix = ExternalStringsHack.GnomePrefix;
 			StringBuilder fullpath = new StringBuilder (prefix);
 			fullpath.Replace ("\n","");
@@ -57,8 +58,7 @@ namespace Beagle.Daemon.LauncherQueryable {
 			Dirs.Add (fullpath.ToString () + "gnome/apps/");
 			Dirs.Add (fullpath.ToString () + "control-center-2.0/");
 			Dirs.Add (fullpath.ToString () + "control-center/");
-			home = Environment.GetEnvironmentVariable ("HOME");
-			Dirs.Add (home + ".gnome2/panel2.d/default/launchers/");
+			Dirs.Add (PathFinder.HomeDir + ".gnome2/panel2.d/default/launchers/");
 
 			// FIXME:  Add KDE dirs
 			// home = Environment.GetEnvironmentVariable ("KDEDIR");

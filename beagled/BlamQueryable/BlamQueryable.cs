@@ -50,7 +50,7 @@ namespace Beagle.Daemon.BlamQueryable {
 
 		public BlamQueryable () : base ("BlamIndex")
 		{
-			blamDir = Path.Combine (Path.Combine (Environment.GetEnvironmentVariable ("HOME"), ".gnome2"), "blam");
+			blamDir = Path.Combine (Path.Combine (PathFinder.HomeDir, ".gnome2"), "blam");
 		}
 
 		private void StartWorker ()

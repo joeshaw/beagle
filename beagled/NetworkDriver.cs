@@ -71,11 +71,11 @@ namespace Beagle.Daemon {
 
 		void LoadPeers ()
 		{
-			if (!File.Exists (Path.Combine (PathFinder.RootDir, configuration)))
+			if (!File.Exists (Path.Combine (PathFinder.StorageDir, configuration)))
 				return;
 
 			StreamReader reader = new StreamReader(
-				Path.Combine (PathFinder.RootDir, configuration));
+				Path.Combine (PathFinder.StorageDir, configuration));
 
 			string line = "";
 

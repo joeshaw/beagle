@@ -91,9 +91,8 @@ namespace Beagle.Daemon {
 			Stopwatch stopwatch = new Stopwatch ();
 			stopwatch.Start ();
 
-			string home = Environment.GetEnvironmentVariable ("HOME");
-			string local_path = Path.Combine (home, ".evolution/mail/local");
-			string imap_path = Path.Combine (home, ".evolution/mail/imap");
+			string local_path = Path.Combine (PathFinder.HomeDir, ".evolution/mail/local");
+			string imap_path = Path.Combine (PathFinder.HomeDir, ".evolution/mail/imap");
 
 			// Get notification when an index or summary file changes
 			Inotify.Event += OnInotifyEvent;
