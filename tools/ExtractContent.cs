@@ -7,57 +7,52 @@
 using System;
 using System.IO;
 
-using Dewey;
+using Dewey.Filters;
 
 class ExtractContentTool {
 
     static void Main (String[] args) {
-	
-	Content.RegisterEverythingByHand (); // FIXME: this still sucks
 
 	foreach (String arg in args) {
 
-	    IndexItemWithPayload item;
-	    item = new IndexItemWithPayload ("file://" + arg);
+	    Filter filter = Filter.FilterFromPath (arg);
 
-	    Console.WriteLine ("");
-	    Console.WriteLine ("     URI: " + item.URI);
+	    Stream stream = new FileStream (arg,
+					    FileMode.Open,
+					    FileAccess.Read);
 
-	    if (item.AttachFile (arg)) {
-		Stream stream = item.OpenPayloadStream ();
-		Content c = Content.Extract (item.MimeType, stream);
-
-
-
-
-		Console.WriteLine ("MimeType: " + item.MimeType);
-
-		Console.WriteLine ("-----");
-		
-		if (c.Body == null) {
-		    Console.WriteLine ("Body is empty");
-		} else {
-		    Console.WriteLine ("Body:");
-		    Console.WriteLine (c.Body);
-		}
-
-		Console.WriteLine ("-----");
-
-		if (c.HotBody == null || c.HotBody.Length == 0) {
-		    Console.WriteLine ("HotBody is empty");
-		} else {
-		    Console.WriteLine ("HotBody:");
-		    Console.WriteLine (c.HotBody);
-		}
-
-	    } else {
-		Console.WriteLine ("MimeType: (unknown)");
-	    }
-
-	    Console.WriteLine ("");
-		
-		    
+	    filter.Open (stream);
 	    
+	    Console.WriteLine ("");
+
+	    Console.WriteLine ("Filename: " + arg);
+	    Console.WriteLine ("MimeType: " + filter.MimeType);
+
+	    Console.WriteLine ("");
+
+	    if (filter.MetadataKeys.Count == 0)
+		Console.WriteLine ("No metadata.");
+	    else
+		foreach (String key in filter.MetadataKeys)
+		    Console.WriteLine (key + " = " + filter [key]);
+
+	    Console.WriteLine ("");
+
+	    if (filter.Content == null)
+		Console.WriteLine ("No Content.");
+	    else
+		Console.WriteLine ("Content: " + filter.Content);
+
+	    Console.WriteLine ("");
+
+	    if (filter.HotContent == null)
+		Console.WriteLine ("No HotContent.");
+	    else
+		Console.WriteLine ("HotContent: " + filter.HotContent);
+
+	    Console.WriteLine ("");
+
+	    filter.Close ();
 	}
     }
 

@@ -5,6 +5,7 @@
 //
 
 using System;
+using System.Collections;
 
 using Dewey;
 
@@ -12,19 +13,19 @@ class QueryTool {
 
     static void Main (String[] args) {
 
-	IndexDriver id = new IndexDriver ();
+	IndexDriver driver = new IndexDriver ();
 
-	String query_str = String.Join (" ", args);
-	
-	Query query = new Query (query_str);
+	Query query = new Query (String.Join (" ", args));
 
-	IndexItem[] hits = id.Query (query);
+	IEnumerable hits = driver.Query (query);
 
-	foreach (IndexItem item in hits) {
-	    Console.WriteLine (item.URI);
+	int count = 0;
+	foreach (Hit hit in hits) {
+	    Console.WriteLine (hit.Uri);
+	    ++count;
 	}
 
-	Console.WriteLine ("Total hits: " + hits.Length);
+	Console.WriteLine ("Total hits: {0}", count);
 
     }
 

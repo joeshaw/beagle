@@ -3,16 +3,15 @@ LIBFLAGS =				\
 	-target:library			\
 	-r:ICSharpCode.SharpZipLib.dll	\
 	-L ../Lucene.Net		\
-	-r:Lucene.Net
+	-r:Lucene.Net.dll		\
+	-L ../filters			\
+	-r:Filters.dll
 
 INDEXER_CSFILES = 		\
-	IndexItem.cs		\
-	IndexItemWithPayload.cs	\
-	Content.cs		\
-	XmlContentReader.cs	\
-	ContentText.cs		\
-	ContentOpenOffice.cs	\
+	Indexable.cs		\
+	IndexableFile.cs	\
 	Query.cs		\
+	Hit.cs			\
 	IndexDriver.cs
 
 

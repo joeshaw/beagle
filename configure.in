@@ -19,6 +19,7 @@ fi
 AC_OUTPUT([
 Makefile
 Lucene.Net/Makefile
+Filters/Makefile
 indexer/Makefile
 tools/Makefile
 ])

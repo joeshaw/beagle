@@ -25,18 +25,18 @@ class IndexFilesTool {
 		IndexOrCrawl (info.FullName, array);
 	    }
 	} else {
-	    IndexItemWithPayload item;
-	    item = new IndexItemWithPayload ("file://" + path);
 
-	    // If AttachFile returns false, we can't handle the file type
-	    if (item.AttachFile (path))
-		array.Add (item);
+	    try {
+		Indexable indexable = new IndexableFile (path);
+		array.Add (indexable);
+	    } catch {
+		// If we get an exception, it means that we couldn't
+		// filter the file.  In this case, just do nothing.
+	    }
 	}
     }
 
     static void Main (String[] args) {
-
-	Content.RegisterEverythingByHand (); // FIXME: this sucks
 
 	ArrayList array = new ArrayList ();
 
@@ -48,8 +48,8 @@ class IndexFilesTool {
 	    IndexOrCrawl (Environment.GetEnvironmentVariable ("HOME"), array);
 	}
 
-	IndexDriver id = new IndexDriver ();
-	id.Add (array);
+	IndexDriver driver = new IndexDriver ();
+	driver.Add (array);
 
     }
 
