@@ -53,10 +53,6 @@ namespace Beagle.Daemon {
 			get { return flavor.Name; }
 		}
 
-		public string Source {
-			get { return flavor.Source; }
-		}
-
 		public QueryDomain Domain {
 			get { return flavor.Domain; }
 		}
@@ -65,7 +61,7 @@ namespace Beagle.Daemon {
 		{
 			return body != null
 				&& ! body.IsEmpty
-				&& body.AllowsSource (Source)
+				&& body.AllowsSource (Name)
 				&& body.AllowsDomain (Domain)
 				&& iqueryable.AcceptQuery (body);
 		}

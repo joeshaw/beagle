@@ -32,7 +32,6 @@ namespace Beagle.Daemon {
 	public class QueryableFlavor : Attribute {
 
 		public string      Name;
-		public string      Source;
 		public QueryDomain Domain;
 	}
 }
