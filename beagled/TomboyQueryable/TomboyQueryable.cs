@@ -29,44 +29,89 @@ using System;
 using System.IO;
 
 using Beagle.Daemon;
-using BU = Beagle.Util;
+using Beagle.Util;
 
 namespace Beagle.Daemon.TomboyQueryable {
 
 	[QueryableFlavor (Name="TomboyQueryable", Domain=QueryDomain.Local)]
 	public class TomboyQueryable : LuceneQueryable {
-		FileSystemEventMonitor monitor;
+
+		private static Logger log = Logger.Get ("TomboyQueryable");
+
+		string notesDir;
+		string backupDir;
+
+		int wdNotes = -1;
+		int wdBackup = -1;
 
 		public TomboyQueryable () : base ("Tomboy", // Backend name
 						  Path.Combine (PathFinder.RootDir, "TomboyIndex"))
 		{
-			string home = Environment.GetEnvironmentVariable ("HOME");
-			DirectoryInfo notesDir = new DirectoryInfo (Path.Combine (home, ".tomboy"));
+			notesDir = Path.Combine (Environment.GetEnvironmentVariable ("HOME"), ".tomboy");
+			backupDir = Path.Combine (notesDir, "Backup");
 
-			// First, do a quick crawl to make sure our notes are all up-to-date
-			TomboyNoteCrawler crawler = new TomboyNoteCrawler (this);
-			crawler.ScheduleCrawl (notesDir, -1);
-			crawler.StopWhenEmpty ();
+			// FIXME: We should do something more reasonable if
+			// ~/.tomboy doesn't exist.
+			if (! Directory.Exists (notesDir))
+				return;
+			
+			InotifyEventType mask;
+			mask = InotifyEventType.MovedTo;
 
-			monitor = new FileSystemEventMonitor ();
-			monitor.FileSystemEvent += OnFileSystemEvent;
-			monitor.Subscribe (notesDir, true);
-		}
+			wdNotes = Inotify.Watch (notesDir, mask);
+			wdBackup = Inotify.Watch (backupDir, mask);
 
-		protected void OnFileSystemEvent (FileSystemEventMonitor monitor,
-						  FileSystemEventType eventType,
-						  string oldPath,
-						  string newPath)
-		{
-			if (eventType == FileSystemEventType.Created
-			    || eventType == FileSystemEventType.Changed) {
-				IndexNote (new FileInfo (newPath));
-			} else if (eventType == FileSystemEventType.Deleted) {
-				RemoveNote (oldPath);
+			Inotify.InotifyEvent += new InotifyHandler (OnInotifyEvent);
+
+			// Crawl all of our existing notes to make sure that
+			// everything is up-to-date.
+			log.Info ("Scanning Tomboy notes...");
+			Stopwatch stopwatch = new Stopwatch ();
+			int count = 0;
+			stopwatch.Start ();
+			DirectoryInfo dir = new DirectoryInfo (notesDir);
+			foreach (FileInfo file in dir.GetFiles ()) {
+				if (file.Extension == ".note") {
+					IndexNote (file, 0);
+					++count;
+				}
 			}
+			stopwatch.Stop ();
+			log.Info ("Scanned {0} notes in {1}", count, stopwatch);
 		}
 
-		private static Indexable NoteToIndexable (BU.Note note)
+
+		private void OnInotifyEvent (int wd,
+					     string path,
+					     string subitem,
+					     InotifyEventType type,
+					     int cookie)
+		{
+			if (wd != wdNotes && wd != wdBackup)
+				return;
+
+			// Ignore operations on the directories themselves
+			if (subitem == "")
+				return;
+
+			// Ignore backup files, tmp files, etc.
+			if (Path.GetExtension (subitem) != ".note")
+				return;
+			
+			if (wd == wdNotes && type == InotifyEventType.MovedTo) {
+				IndexNote (new FileInfo (Path.Combine (path, subitem)), 100);
+				Console.WriteLine ("Indexed {0}", Path.Combine (path, subitem));
+			}
+
+			if (wd == wdBackup && type == InotifyEventType.MovedTo) {
+				string oldPath = Path.Combine (notesDir, subitem);
+				RemoveNote (oldPath);
+				Console.WriteLine ("Removing {0}", oldPath);
+			}
+
+		}
+
+		private static Indexable NoteToIndexable (Note note)
 		{
 			Indexable indexable = new Indexable (note.Uri);
 			indexable.Timestamp = note.timestamp;
@@ -85,48 +130,25 @@ namespace Beagle.Daemon.TomboyQueryable {
 			return indexable;
 		}
 
-		private void IndexNote (FileInfo file)
+		private void IndexNote (FileInfo file, int priority)
 		{
-			// Don't index backup files.
-			if (file.Name.EndsWith ("~"))
+			if (Driver.IsUpToDate (file))
 				return;
 
 			// Try and parse a Note from the given path
-			BU.Note note = BU.TomboyNote.ParseNote (file);
+			Note note = TomboyNote.ParseNote (file);
 			if (note == null)
 				return;
 			
 			// A Note was returned; add it to the index
 			Indexable indexable = NoteToIndexable (note);
-			Driver.ScheduleAddAndMark (indexable, 0, file);
+			Driver.ScheduleAddAndMark (indexable, priority, file);
 		}
 		
 		private void RemoveNote (string path)
 		{
-			// Don't remove backup files either.
-			if (path.EndsWith ("~"))
-				return;
-
-			Uri uri = BU.UriFu.PathToFileUri(path);
-			Driver.ScheduleDelete (uri, 0);
-		}
-		
-		
-		private class TomboyNoteCrawler : Crawler {
-			TomboyQueryable tbq;
-			
-			public TomboyNoteCrawler (TomboyQueryable _tbq) : base (_tbq.Driver.Fingerprint)
-			{
-				tbq = _tbq;
-			}
-			
-			protected override void CrawlFile (FileSystemInfo info)
-			{
-				FileInfo file = info as FileInfo;
-				if (file == null)
-					return;
-				tbq.IndexNote (file);
-			}
+			Uri uri = UriFu.PathToFileUri (path);
+			Driver.ScheduleDelete (uri, 100);
 		}
 	}
 }

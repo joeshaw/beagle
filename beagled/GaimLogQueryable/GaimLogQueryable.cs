@@ -30,62 +30,93 @@ using System.IO;
 using System.Text;
 
 using Beagle.Daemon;
-using BU = Beagle.Util;
+using Beagle.Util;
 
 namespace Beagle.Daemon.GaimLogQueryable {
 
 	[QueryableFlavor (Name="GaimLogQueryable", Domain=QueryDomain.Local)]
 	public class GaimLogQueryable : LuceneQueryable {
 
-		private class GaimLogCrawler : Crawler {
+		private static Logger log = Logger.Get ("GaimLogQueryable");
 
-			GaimLogQueryable glq;
-
-			public GaimLogCrawler (GaimLogQueryable _glq) : base (_glq.Driver.Fingerprint)
-			{
-				glq = _glq;
-			}
-
-			protected override void CrawlFile (FileSystemInfo info)
-			{
-				FileInfo file = info as FileInfo;
-				// We don't need to do anything with directories.
-				if (file == null)
-					return;
-
-				glq.IndexLog (file);
-			}
-
-		}
-
-		FileSystemEventMonitor monitor;
+		Hashtable watched = new Hashtable ();
 
 		public GaimLogQueryable () : base ("IMLog",
 						   Path.Combine (PathFinder.RootDir, "GaimLogIndex"))
 		{
 			string home = Environment.GetEnvironmentVariable ("HOME");
-			DirectoryInfo logDir = new DirectoryInfo (Path.Combine (Path.Combine (home, ".gaim"), "logs"));
+			string logDir = Path.Combine (Path.Combine (home, ".gaim"), "logs");
 
-			// First, do a quick crawl to make sure our logs are all up-to-date
-			GaimLogCrawler crawler = new GaimLogCrawler (this);
-			crawler.ScheduleCrawl (logDir, -1);
-			crawler.StopWhenEmpty ();
+			// FIXME: If ~/.gaim/logs doesn't exist we should set up watches
+			// and wait for it to appear instead of just giving up.
+			if (! Directory.Exists (logDir))
+				return;
 
-			monitor = new FileSystemEventMonitor ();
-			monitor.FileSystemEvent += OnFileSystemEvent;
-			monitor.Subscribe (logDir, true);
+			Inotify.InotifyEvent += new InotifyHandler (OnInotifyEvent);
+
+			log.Info ("Scanning IM Logs");
+			Stopwatch timer = new Stopwatch ();
+			timer.Start ();
+			int foundCount = Watch (logDir);
+			timer.Stop ();
+			log.Info ("Found {0} logs in {1}", foundCount, timer);
 		}
 
-		protected void OnFileSystemEvent (FileSystemEventMonitor monitor,
-						  FileSystemEventType eventType,
-						  string oldPath,
-						  string newPath)
+		private int Watch (string path)
 		{
-			if (eventType == FileSystemEventType.Created || eventType == FileSystemEventType.Changed)
-				IndexLog (new FileInfo (newPath));
+			DirectoryInfo root = new DirectoryInfo (path);
+			if (! root.Exists)
+				return 0;
+
+			int fileCount = 0;
+
+			Queue queue = new Queue ();
+			queue.Enqueue (root);
+
+			while (queue.Count > 0) {
+				DirectoryInfo dir = queue.Dequeue () as DirectoryInfo;
+				
+				int wd = Inotify.Watch (dir.FullName,
+							InotifyEventType.CreateSubdir
+							| InotifyEventType.Modify);
+				watched [wd] = true;
+
+				foreach (FileInfo file in dir.GetFiles ()) {
+ 					IndexLog (file, -100);
+					++fileCount;
+				}
+
+				foreach (DirectoryInfo subdir in dir.GetDirectories ())
+					queue.Enqueue (subdir);
+			}
+
+			return fileCount;
 		}
 
-		private static Indexable ImLogToIndexable (BU.ImLog log)
+		private void OnInotifyEvent (int wd,
+					     string path,
+					     string subitem,
+					     InotifyEventType type,
+					     int cookie)
+		{
+			if (subitem == "" || ! watched.Contains (wd))
+				return;
+
+			string fullPath = Path.Combine (path, subitem);
+
+			switch (type) {
+				
+			case InotifyEventType.CreateSubdir:
+				Watch (fullPath);
+				break;
+
+			case InotifyEventType.Modify:
+				IndexLog (new FileInfo (fullPath), 100);
+				break;
+			}
+		}
+
+		private static Indexable ImLogToIndexable (ImLog log)
 		{
 			Indexable indexable = new Indexable (log.Uri);
 			indexable.Timestamp = log.Timestamp;
@@ -97,7 +128,7 @@ namespace Beagle.Daemon.GaimLogQueryable {
 			indexable.MimeType = "text/plain";
 			
 			StringBuilder text = new StringBuilder ();
-			foreach (BU.ImLog.Utterance utt in log.Utterances) {
+			foreach (ImLog.Utterance utt in log.Utterances) {
 				//Console.WriteLine ("[{0}][{1}]", utt.Who, utt.Text);
 				text.Append (utt.Text);
 				text.Append (" ");
@@ -116,12 +147,15 @@ namespace Beagle.Daemon.GaimLogQueryable {
 			return indexable;
 		}
 
-		private void IndexLog (FileInfo file)
+		private void IndexLog (FileInfo file, int priority)
 		{
-			ICollection logs = BU.GaimLog.ScanLog (file);
-			foreach (BU.ImLog log in logs) {
+			if (! file.Exists || Driver.IsUpToDate (file))
+				return;
+
+			ICollection logs = GaimLog.ScanLog (file);
+			foreach (ImLog log in logs) {
 				Indexable indexable = ImLogToIndexable (log);
-				Driver.ScheduleAddAndMark (indexable, 0, file);
+				Driver.ScheduleAddAndMark (indexable, priority, file);
 			}
 		}
 	}

@@ -54,7 +54,7 @@ namespace Beagle.Util {
 		All            = 0xffffffff
 	}
 
-	public delegate void InotifyHandler (string path, string subitem, InotifyEventType type, int cookie);
+	public delegate void InotifyHandler (int wd, string path, string subitem, InotifyEventType type, int cookie);
 
 	public class Inotify {
 
@@ -140,8 +140,10 @@ namespace Beagle.Util {
 			return watchedByPath.Contains (path);
 		}
 
-		public static void Watch (string path, InotifyEventType mask)
+		public static int Watch (string path, InotifyEventType mask)
 		{
+			int wd = -1;
+
 			EnabledCheck ();
 
 			path = Path.GetFullPath (path);
@@ -163,14 +165,14 @@ namespace Beagle.Util {
 				info = watchedByPath [path] as WatchedInfo;
 				if (info != null) {
 					if (info.Mask == mask)
-						return;
+						return info.Wd;
 					Forget (info);
 				}
 
 				InotifyEventType internalMask = mask;
 				internalMask |= InotifyEventType.Ignored;
 
-				int wd = inotify_glue_watch (fd, path, internalMask);
+				wd = inotify_glue_watch (fd, path, internalMask);
 				if (wd < 0) {
 					string msg = String.Format ("Attempt to watch {0} failed!", path);
 					throw new Exception (msg);
@@ -185,6 +187,8 @@ namespace Beagle.Util {
 				watchedByWd [info.Wd] = info;
 				watchedByPath [info.Path] = info;
 			}
+
+			return wd;
 		}
 
 		// The caller must be holding theLock!
@@ -235,7 +239,7 @@ namespace Beagle.Util {
 				// The queue overflow event isn't associated with any directory.
 				if (type == InotifyEventType.QueueOverflow) {
 					if (InotifyEvent != null)
-						InotifyEvent ("", "", type, cookie);
+						InotifyEvent (-1, "", "", type, cookie);
 					return;
 				}
 
@@ -252,7 +256,7 @@ namespace Beagle.Util {
 								   filename != "" ? filename : "\"\"",
 								   cookie);
 					if (InotifyEvent != null)
-						InotifyEvent (info.Path, filename, type, cookie);
+						InotifyEvent (wd, info.Path, filename, type, cookie);
 				}
 				
 				// If a directory we are watching gets ignored, we need

@@ -157,7 +157,7 @@ namespace Beagle.Daemon {
 			// sinceOptimizationThreshold.
 			//
 			// This creates the index if it doesn't exist
-			IndexWriter writer = new IndexWriter (Store, null, true);
+			IndexWriter writer = new IndexWriter (Store, null, !indexExists);
 			if (indexExists)
 				writer.Optimize ();
 			writer.Close ();
@@ -204,6 +204,11 @@ namespace Beagle.Daemon {
 
 		public string Fingerprint {
 			get { return fingerprint; }
+		}
+
+		public bool IsUpToDate (FileSystemInfo fsinfo)
+		{
+			return ExtendedAttribute.Check (fsinfo, fingerprint);
 		}
 
 		/////////////////////////////////////////////////////
@@ -269,7 +274,7 @@ namespace Beagle.Daemon {
 
 			// If the file appears to be up-to-date, don't do
 			// anything.
-			if (ExtendedAttribute.Check (fsinfo, Fingerprint)) {
+			if (IsUpToDate (fsinfo)) {
 				log.Debug ("{0} appears to be up-to-date", fsinfo.FullName);
 				return false;
 			}
@@ -423,12 +428,6 @@ namespace Beagle.Daemon {
 				// Maybe this is just paranoia, but I don't want to miss
 				// file changes between indexing and marking the file.
 				ExtendedAttribute.Mark (info, driver.Fingerprint, mtime);
-				log.Debug ("*** Marking {0}", uri);
-
-				// Tell the system we don't need the file in the page cache.
-				// This doesn't really have anything to do w/ marking the
-				// file, but it is a convenient place to do it.
-				
 			}
 		}
 
@@ -658,8 +657,16 @@ namespace Beagle.Daemon {
 					Log.Debug ("Dropped duplicate {0}", item.Uri);
 				}
 
-				if (pendingAdds >= pendingAddThreshold
+				// We always flush after an elevated-priority item is processed.
+				if (item.Priority > 0
+				    || pendingAdds >= pendingAddThreshold
 				    || pendingDeletes >= pendingDeleteThreshold) {
+
+					string reason;
+					if (item.Priority > 0)
+						reason = "Priority";
+					else
+						reason = "Threshold";
 
 					int pa = pendingAdds;
 					int pd = pendingDeletes;
@@ -669,8 +676,8 @@ namespace Beagle.Daemon {
 					Flush ();
 					watch.Stop ();
 
-					Log.Debug ("Threshold Flush (add={0}, delete={1}), {2}",
-						   pa, pd, watch);
+					Log.Debug ("{0} Flush (add={1}, delete={2}), {3}",
+							  reason, pa, pd, watch);
 				}
 			}
 
@@ -706,7 +713,6 @@ namespace Beagle.Daemon {
 					watch.Start ();
 					Flush ();
 					watch.Stop ();
-
 					Log.Debug ("Opportunistic Flush (add={0}, delete={1}), {2}",
 						   pa, pd, watch);
 					
@@ -719,9 +725,9 @@ namespace Beagle.Daemon {
 					writer.Optimize ();
 					writer.Close ();
 					watch.Stop ();
-
 					Log.Debug ("Opportunistic Optimize ({0}), {1}",
 						   sinceOptimization, watch);
+
 					sinceOptimization = 0;
 				}
 					

@@ -118,7 +118,8 @@ namespace Beagle.Daemon.FileSystemQueryable {
 			log.Info ("Processed {0} directories in {1}", count, stopwatch);
 		}
 
-		private void OnInotifyEvent (string           path,
+		private void OnInotifyEvent (int              wd,
+					     string           path,
 					     string           subitem,
 					     InotifyEventType type,
 					     int              cookie)
@@ -172,7 +173,7 @@ namespace Beagle.Daemon.FileSystemQueryable {
 					Driver.ScheduleAddFile (FileSystem.New (fullPath), 100);
 					dirtyFiles.Remove (fullPath);
 				} else {
-					log.Info ("{0} is not dirty", fullPath);
+					log.Debug ("{0} is not dirty", fullPath);
 				}
 				break;
 
