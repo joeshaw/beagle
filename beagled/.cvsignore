@@ -6,3 +6,4 @@ Makefile.in
 beagle-extract-content
 beagled
 testclient
+beagle-snippet-test
