@@ -233,7 +233,7 @@ namespace Beagle.Util {
 		// trap MovedFrom and MovedTo, check if the thing being moved
 		// is a directory, and then and update our internal data
 		// structures accordingly.
-		
+
 		private static void FireEvent (int wd, InotifyEventType type, int cookie, string filename)
 		{
 			if (fd >= 0) {
