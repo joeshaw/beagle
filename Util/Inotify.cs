@@ -241,7 +241,7 @@ namespace Beagle.Util {
 				wd = inotify_glue_watch (dev_inotify, path, mask | base_mask);
 				if (wd < 0) {
 					string msg = String.Format ("Attempt to watch {0} failed!", path);
-					throw new Exception (msg);
+					throw new IOException (msg);
 				}
 
 				watched = new Watched ();
@@ -310,7 +310,7 @@ namespace Beagle.Util {
 				int retval = inotify_glue_ignore (dev_inotify, wd);
 				if (retval < 0) {
 					string msg = String.Format ("Attempt to ignore {0} failed!", watched.Path);
-					throw new Exception (msg);
+					throw new IOException (msg);
 				}
 
 				Forget (watched);
