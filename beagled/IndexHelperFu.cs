@@ -137,7 +137,7 @@ namespace Beagle.Daemon {
 #if HAVE_OLD_DBUS
 			bus_driver.ServiceOwnerChanged -= OnNameOwnerChanged;
 #else
-			bus_driver.ServiceOwnerChanged -= OnNameOwnerChanged;
+			bus_driver.NameOwnerChanged -= OnNameOwnerChanged;
 #endif
 
 			// FIXME: Shut down the helper process
