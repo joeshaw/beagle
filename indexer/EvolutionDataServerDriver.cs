@@ -52,7 +52,7 @@ namespace Beagle {
 			hit.Uri    = "contact://" + contact.Id; // FIXME!
 			hit.Type   = "Contact";
 			hit.Source = "EvolutionDataServer";
-			hit.Score  = 2.0f; // FIXME
+			hit.ScoreRaw  = 1.0f; // FIXME
 
 			hit ["FileAs"] = contact.FileAs;
 			hit ["GivenName"] = contact.GivenName;

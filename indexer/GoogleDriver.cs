@@ -54,9 +54,9 @@ namespace Beagle {
 			hit.MimeType = "text/html"; // FIXME
 			hit.Source   = "Google";
 
-			// FIXME: We can't really compare scores if the Hits
-			// come from different sources.  This is a hack.
-			hit.Score    = 0.2f / (1 + rank);
+			// FIXME: We don't get scoring information from Google
+			// other than the ranks.  This is a hack.
+			hit.ScoreRaw    = 0.2f / (1 + rank);
 
 			hit ["Summary"]        = res.summary;
 			hit ["Snippet"]        = res.snippet;

@@ -176,6 +176,14 @@ namespace Beagle {
 		public int TotalCount {
 			get { return hits.Count; }
 		}
+
+		public float MaxScore {
+			get {
+				if (hits.Count > 0)
+					return ((Hit) hits [0]).Score;
+				return 0;
+			}
+		}
 		
 		public void Clear ()
 		{
@@ -187,7 +195,7 @@ namespace Beagle {
 		}
 		
 		// Return true if we need a refresh after this add.
-		private bool  AddInRightPlace (Hit hit)
+		private bool AddInRightPlace (Hit hit)
 		{
 			if (hits.Count == 0) {
 				hits.Add (hit);

@@ -61,7 +61,7 @@ namespace Beagle {
 
 			nextButton = new Gtk.Button ("Next");
 			nextButton.Clicked += new EventHandler (OnNextClicked);
-			this.PackEnd (nextButton, false, false, 3);			
+			this.PackEnd (nextButton, false, false, 3);
 
 			displayedLabel = new Gtk.Label ("");
 			this.PackEnd (displayedLabel, false, false, 3);
@@ -69,9 +69,7 @@ namespace Beagle {
 
 			prevButton = new Gtk.Button ("Prev");
 			prevButton.Clicked += new EventHandler (OnPrevClicked);
-			this.PackEnd (prevButton, false, false, 3);			
-
-
+			this.PackEnd (prevButton, false, false, 3);
 
 			// Initialize things
 			OnRefresh (null);
@@ -95,19 +93,16 @@ namespace Beagle {
 				str = String.Format ("{0} - {1} displayed",
 						     renderer.FirstDisplayed + 1,
 						     renderer.LastDisplayed + 1);
+				if (renderer.LastDisplayed + 1 < renderer.TotalCount) {
+					prevButton.Show ();
+					nextButton.Show ();
+				}
 			}
 			displayedLabel.Text = str;
 
-			if (renderer.FirstDisplayed > 0)
-				prevButton.Show ();
-			else
-				prevButton.Hide ();
-
-			if (renderer.LastDisplayed + 1 < renderer.TotalCount && renderer.TotalCount > 0)
-				nextButton.Show ();
-			else
-				nextButton.Hide ();
-
+			prevButton.Sensitive = (renderer.FirstDisplayed > 0);
+			nextButton.Sensitive = (renderer.LastDisplayed + 1 < renderer.TotalCount
+						&& renderer.TotalCount > 0);
 		}
 
 		private void OnPrevClicked (object o, EventArgs args)

@@ -368,7 +368,7 @@ namespace Beagle {
 				hit.Revision = StringToRevision (str);
 			
 			hit.Source = "lucene";
-			hit.Score = luceneHits.Score (i);
+			hit.ScoreRaw = luceneHits.Score (i);
 			
 			foreach (Field ff in doc.Fields ()) {
 				String key = ff.Name ();

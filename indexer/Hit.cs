@@ -49,67 +49,54 @@ namespace Beagle {
 		private String source = null;
 
 		// High scores imply greater relevance.
-		private float score = 0.0f;
+		private float scoreRaw = 0.0f;
+		private float scoreMultiplier = 1.0f;
 
 		private Hashtable properties = new Hashtable (new CaseInsensitiveHashCodeProvider (), 
 							      new CaseInsensitiveComparer ());
-
-		private bool locked = false;
 
 		private String path = ""; // == uninitialized
 		private FileInfo fileInfo = null;
 
 		//////////////////////////
 
-		public void Lockdown ()
-		{
-			if (uri == null)
-				throw new Exception ("Locking Hit with undefined Uri");
-			if (type == null)
-				throw new Exception ("Locking Hit with undefined Type");
-			if (source == null)
-				throw new Exception ("Locking Hit with undefined Source");
-			locked = true;
-		}
-
-		void CheckLock ()
-		{
-#if false
-			if (locked)
-				throw new Exception ("Attempt to modify locked hit '" + uri + "'");
-#endif
-		}
-
-		//////////////////////////
-
 		public int Id {
 			get { return id; }
-			set { CheckLock (); id = value; }
+			set { id = value; }
 		}
 
 		public String Uri {
 			get { return uri; }
-			set { CheckLock (); uri = value; }
+			set { uri = value; }
 		}
 
 		public String Type {
 			get { return type; }
-			set { CheckLock (); type = value; }
+			set { type = value; }
 		}
 
 		public String MimeType {
 			get { return mimeType; }
-			set { CheckLock (); mimeType = value; }
+			set { mimeType = value; }
 		}
 	
 		public String Source {
 			get { return source; }
-			set { CheckLock (); source = value; }
+			set { source = value; }
 		}
 
 		public float Score {
-			get { return score; }
-			set { CheckLock (); score = value; }
+			get { return scoreRaw * scoreMultiplier; }
+		}
+
+		public float ScoreRaw {
+			get { return scoreRaw; }
+			set { scoreRaw = value; }
+		}
+
+		public float ScoreMultiplier {
+			get { return scoreMultiplier; }
+			set { scoreMultiplier = value; }
 		}
 
 		//////////////////////////
@@ -174,7 +161,6 @@ namespace Beagle {
 		virtual public String this [String key] {
 			get { return (String) properties [key]; }
 			set { 
-				CheckLock (); 
 				if (value == null || value == "") {
 					if (properties.Contains (key))
 						properties.Remove (key);
@@ -198,10 +184,8 @@ namespace Beagle {
 		public int CompareTo (object obj)
 		{
 			Hit otherHit = (Hit) obj;
-			// Notice that we take the negative of the CompareTo,
-			// so that we sort from high to low.
-			return - score.CompareTo (otherHit.score);
+			// Notice that we sort from high to low.
+			return otherHit.Score.CompareTo (this.Score);
 		}
-
 	}
 }
