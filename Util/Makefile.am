@@ -60,7 +60,10 @@ ASSEMBLIES =					\
 $(TARGET): $(CSFILES) $(GOOGLE_CS)
 	$(CSC) --unsafe -o $@ $(CSFLAGS) $^ $(ASSEMBLIES)
 
-all: $(TARGET)
+Inotify.exe: $(srcdir)/Inotify.cs $(srcdir)/Logger.cs
+	$(CSC) --unsafe -o $@ $^ -r:Mono.Posix
+
+all: $(TARGET) Inotify.exe
 
 install-data-local: $(TARGET)
 	$(mkinstalldirs) $(DESTDIR)$(pkglibdir)
@@ -76,12 +79,15 @@ COND_CS_FILES =	\
 	$(srcdir)/OggReader.cs	\
 	$(srcdir)/Tag.cs
 
-EXTRA_DIST =		\
-	$(GOOGLE_WSDL)	\
-	$(CSFILES)	\
-	$(COND_CS_FILES)
+EXTRA_DIST =			\
+	$(GOOGLE_WSDL)		\
+	$(CSFILES)		\
+	$(COND_CS_FILES)	\
+	inotify-test
 
-CLEANFILES =		\
-	$(GOOGLE_CS)	\
-	$(TARGET)	\
-	$(TARGET).mdb
+CLEANFILES =			\
+	$(GOOGLE_CS)		\
+	$(TARGET)		\
+	$(TARGET).mdb		\
+	Inotify.exe		\
+	Inotify.exe.mdb
