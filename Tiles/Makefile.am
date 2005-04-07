@@ -38,7 +38,8 @@ CSFILES =					\
 	$(srcdir)/TileDocs.cs			\
 	$(srcdir)/TilePresentation.cs		\
 	$(srcdir)/TileLauncher.cs		\
-	$(srcdir)/TileCalendar.cs
+	$(srcdir)/TileCalendar.cs		\
+	$(srcdir)/TileSpreadsheet.cs
 
 LOCAL_ASSEMBLIES =				\
 	../Util/Util.dll			\
@@ -71,7 +72,8 @@ RESOURCEFILES =					\
 	$(srcdir)/template-docs.html		\
 	$(srcdir)/template-presentation.html	\
 	$(srcdir)/template-launcher.html	\
-	$(srcdir)/template-calendar.html
+	$(srcdir)/template-calendar.html	\
+	$(srcdir)/template-spreadsheet.html
 
 
 # Makefile-fu to map /path/filename to -resource:/path/filename,filename

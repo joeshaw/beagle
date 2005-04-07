@@ -1,3 +1,16 @@
+2005-04-08  Veerapuram Varadhan <vvaradhan@novell.com>
+
+	* Filters/: Added FilterSpreadsheet.cs.
+	Indexes gnumeric, excel and csv format files using 
+	"ssindex" from gnumeric.  "ssindex" needs to be improved
+	to give more-information that just data.
+
+	* Filters/Makefile.am: Changes w.r.t newly added files.
+
+	* Tiles/: Added template-spreadsheet.html, TileSpreadsheet.cs.
+
+	* Tiles/Makefile.am: Changes w.r.t newly added files.
+	
 2005-04-07  Veerapuram Varadhan <vvaradhan@novell.com>
 
 	* Filters/FilterOpenoffice.cs: A Logger.Log.Error() call with a
