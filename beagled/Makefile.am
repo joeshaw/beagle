@@ -375,12 +375,16 @@ WEBSERVICES_XSP_TARGET = BeagleXsp.dll
 
 WEBSERVICES_XSP_CSFLAGS = -target:library 
 
-WEBSERVICES_XSP_ASSEMBLIES = 		\
-	-r:System 			\
-	-r:System.Web 			\
+WEBSERVICES_XSP_LOCAL_ASSEMBLIES =	\
+	../Util/Util.dll
+
+WEBSERVICES_XSP_ASSEMBLIES = 			\
+	$(DAEMON_DLL_LOCAL_ASSEMBLIES:%=-r:%)	\
+	-r:System 				\
+	-r:System.Web 				\
 	-r:System.Runtime.Remoting	
 
-WEBSERVICES_XSP_CSFILES =  					\
+WEBSERVICES_XSP_CSFILES =  			\
 	$(xspdir)/IApplicationHost.cs		\
 	$(xspdir)/MonoWorkerRequest.cs		\
 	$(xspdir)/Tracing.cs			\
@@ -395,7 +399,7 @@ WEBSERVICES_XSP_CSFILES =  					\
 	$(xspdir)/XSPWorkerRequest.cs		\
 	$(xspdir)/AssemblyInfo.cs
 
-$(WEBSERVICES_XSP_TARGET): $(WEBSERVICES_XSP_CSFILES)
+$(WEBSERVICES_XSP_TARGET): $(WEBSERVICES_XSP_CSFILES) $(WEBSERVICES_XSP_LOCAL_ASSEMBLIES)
 	$(CSC) -o $@ $(WEBSERVICES_XSP_CSFLAGS) $(WEBSERVICES_XSP_CSFILES) $(WEBSERVICES_XSP_ASSEMBLIES)
 
 
@@ -447,8 +451,8 @@ WEBSERVICES_RESOURCES_DIST = 		\
 	$(webservicesdir)/search.asmx	\
 	$(webservicesdir)/web.config
 
-XSP_DIR = $(pkgdatadir)
-XSPBIN_DIR = $(pkgdir)
+XSP_DIR = $(pkgdatadir)/xsp
+XSPBIN_DIR = $(XSP_DIR)/bin
 
 SEARCH_DOT_ASPX = search.aspx
 SEARCH_DOT_ASPX_IN = $(webservicesdir)/search.aspx.in
@@ -799,6 +803,8 @@ all: $(ALL_TARGETS)
 install-data-local: $(ALL_TARGETS)
 	$(mkinstalldirs) $(DESTDIR)$(pkglibdir)
 	$(mkinstalldirs) $(DESTDIR)$(pkgdatadir)
+	$(mkinstalldirs) $(DESTDIR)$(XSP_DIR)
+	$(mkinstalldirs) $(DESTDIR)$(XSPBIN_DIR)
 	$(INSTALL_DATA) $(PLUGIN_TARGET) $(DESTDIR)$(pkglibdir)/$(PLUGIN_TARGET)
 	$(INSTALL_DATA) $(DAEMON_DLL_TARGET) $(DESTDIR)$(pkglibdir)/$(DAEMON_DLL_TARGET)
 	$(INSTALL_DATA) $(DAEMON_TARGET) $(DESTDIR)$(pkglibdir)/$(DAEMON_TARGET)
@@ -808,7 +814,7 @@ install-data-local: $(ALL_TARGETS)
 if ENABLE_WEBSERVICES
 	$(INSTALL_DATA) $(WEBSERVICES_XSP_TARGET) $(DESTDIR)$(pkglibdir)/$(WEBSERVICES_XSP_TARGET)
 	$(INSTALL_DATA) $(WEBSERVICES_BACKEND_TARGET) $(DESTDIR)$(pkglibdir)/$(WEBSERVICES_BACKEND_TARGET)
-	$(INSTALL_DATA) $(WEBSERVICES_FRONTEND_TARGET) $(DESTDIR)$(pkglibdir)/$(WEBSERVICES_FRONTEND_TARGET)
+	$(INSTALL_DATA) $(WEBSERVICES_FRONTEND_TARGET) $(DESTDIR)$(XSPBIN_DIR)/$(WEBSERVICES_FRONTEND_TARGET)
 	$(INSTALL_DATA)  $(WEBSERVICES_RESOURCES) $(DESTDIR)$(XSP_DIR)
 #	$(INSTALL_DATA) ../Util/Util.dll ../images/Images.dll ../BeagleClient/Beagle.dll ../Tiles/Tiles.dll BeagleDaemonPlugins.dll BeagleDaemonLib.dll $(DESTDIR)$(XSPBIN_DIR)
 

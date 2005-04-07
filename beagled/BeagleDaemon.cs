@@ -175,10 +175,12 @@ namespace Beagle.Daemon {
 
 #if ENABLE_WEBSERVICES
 		static Mono.ASPNET.ApplicationServer appServer = null;
-		static string DEFAULT_XSP_ROOT = ExternalStringsHack.PkgDataDir;
+		static string DEFAULT_XSP_ROOT = Path.Combine (ExternalStringsHack.PkgDataDir, "xsp");
 		static string DEFAULT_XSP_PORT = "8888";
-		static string[] xsp_param = {"--port", "8888", "--root", DEFAULT_XSP_ROOT, 
-			"--applications", "/:" + DEFAULT_XSP_ROOT + ",/beagle:" + DEFAULT_XSP_ROOT + "/beagle", "--nonstop"};
+		static string[] xsp_param = {"--port", DEFAULT_XSP_PORT,
+					     "--root", DEFAULT_XSP_ROOT, 
+					     "--applications", "/:" + DEFAULT_XSP_ROOT + ",/beagle:" + DEFAULT_XSP_ROOT,
+					     "--nonstop"};
 #endif 
 		public static int Main (string[] args)
 		{
@@ -410,36 +412,6 @@ namespace Beagle.Daemon {
 			}
 #endif
 
-#if ENABLE_WEBSERVICES		
-			//Beagle Web, WebService access initialization code:
-			string msg = "Started WebBackEnd & WebServiceBackEnd Listener. Internal Web Server NOT started.";
-
-			xsp_param[1] = web_port;
-			xsp_param[3] = web_rootDir;
-			if (web_start)	
-			{
-				//Start beagled internal web server (BeagleXsp)
-				int retVal = Mono.ASPNET.Server.initXSP(xsp_param, out appServer);
-				msg = "Started WebBackEnd & WebServiceBackEnd Listener \n";
-				if (retVal == 0)
-					msg += "Internal Web Server started";
-				else
-					msg += "Error starting Internal Web Server";
-			}	
-
-			//start web-access server first
-			WebBackEnd.init (web_global);
-
-			//Next start web-service server 
-			WebServiceBackEnd.init (web_global);
-
-			//Console.WriteLine (msg);
-			Logger.Log.Debug (msg);
-
-			msg = "Global WebAccess " + (web_global ? "Enabled":"Disabled");
-			//Console.WriteLine (msg);
-			Logger.Log.Debug (msg);
-#endif
 			// Set up out-of-process indexing
 			if (Environment.GetEnvironmentVariable ("BEAGLE_ENABLE_IN_PROCESS_INDEXING") == null)
 				LuceneQueryable.IndexerHook = new LuceneQueryable.IndexerCreator (RemoteIndexer.NewRemoteIndexer);
@@ -461,6 +433,31 @@ namespace Beagle.Daemon {
 			// Test if the FileAdvise stuff is working: This will print a
 			// warning if not.  The actual advice calls will fail silently.
 			FileAdvise.TestAdvise ();
+
+#if ENABLE_WEBSERVICES		
+			//Beagle Web, WebService access initialization code:
+
+			//start web-access server first
+			Logger.Log.Debug ("Starting WebBackEnd");
+			WebBackEnd.init (web_global);
+
+			//Next start web-service server
+			Logger.Log.Debug ("Starting WebServiceBackEnd");
+			WebServiceBackEnd.init (web_global);
+
+			Logger.Log.Debug ("Global WebAccess {0}", web_global ? "Enabled" : "Disabled");
+
+			xsp_param[1] = web_port;
+			xsp_param[3] = web_rootDir;
+			if (web_start) {
+				Logger.Log.Debug ("Starting Internal Web Server");
+				//Start beagled internal web server (BeagleXsp)
+				int retVal = Mono.ASPNET.Server.initXSP(xsp_param, out appServer);
+				if (retVal != 0)
+					Logger.Log.Warn ("Error starting Internal Web Server (retVal={0})", retVal);
+			}
+
+#endif
 
 			Shutdown.ShutdownEvent += OnShutdown;
 
