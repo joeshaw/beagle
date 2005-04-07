@@ -53,7 +53,6 @@ namespace Beagle.Filters {
 		void StudyStyleNode (XmlTextReader reader)
 		{
 			string styleName = null;
-			string temp = null;
 			int original_depth = reader.Depth;
 
 			if (!reader.IsEmptyElement) {

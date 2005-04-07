@@ -39,7 +39,8 @@ CSFILES = 				\
 	$(srcdir)/FilterPhp.cs		\
 	$(srcdir)/FilterFortran.cs	\
 	$(srcdir)/FilterPascal.cs	\
-	$(srcdir)/FilterAbiword.cs
+	$(srcdir)/FilterAbiword.cs	\
+	$(srcdir)/FilterSpreadsheet.cs
 
 if ENABLE_GSF_SHARP
 CSFILES += 				\

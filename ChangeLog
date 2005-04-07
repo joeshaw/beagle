@@ -1,5 +1,10 @@
 2005-04-08  Veerapuram Varadhan <vvaradhan@novell.com>
 
+	* Oops.. missing Filters/Makefile.am changes
+	* Filters/FilterAbiword.cs: Shut-up an un-used variable warning.
+	
+2005-04-08  Veerapuram Varadhan <vvaradhan@novell.com>
+
 	* Filters/: Added FilterSpreadsheet.cs.
 	Indexes gnumeric, excel and csv format files using 
 	"ssindex" from gnumeric.  "ssindex" needs to be improved
