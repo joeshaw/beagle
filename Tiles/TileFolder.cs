@@ -60,5 +60,11 @@ namespace Beagle.Tile {
 		{
 			OpenFromMime (Hit, "nautilus", "--no-desktop", true);
 		} 
+
+                [TileAction]
+                public void Reveal ()
+                {
+                        OpenFolder (Path.GetDirectoryName (Hit.Uri.LocalPath));
+                }
 	}
 }
