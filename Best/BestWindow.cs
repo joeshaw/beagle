@@ -227,6 +227,8 @@ namespace Best {
 			sw.HscrollbarPolicy = Gtk.PolicyType.Automatic;
 			sw.VscrollbarPolicy = Gtk.PolicyType.Automatic;
 			Gtk.TextView view = new Gtk.TextView ();
+			view.CursorVisible = false;
+			view.Editable = false;
 			Gtk.TextBuffer buffer = view.Buffer;
 			buffer.Text = canvas.Source;
 			view.Buffer = buffer;

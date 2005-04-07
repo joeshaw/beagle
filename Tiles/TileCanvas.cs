@@ -231,6 +231,27 @@ namespace Beagle.Tile {
 
 		private static ArrayList style_attributes = null;
 		private static ArrayList style_templates = null;
+		private static string preferred_font_family;
+		private static double preferred_font_size;
+
+		static private void GetFontSettings ()
+		{
+			GConf.Client client = new GConf.Client ();
+			string font = null;
+
+			try {
+				font = client.Get ("/desktop/gnome/interface/font_name") as string;
+			} catch (GConf.NoSuchKeyException) { }
+
+			// Sans 10 seems to be the default GNOME fallback
+			if (font == null)
+				font = "Sans 10";
+
+			Pango.FontDescription font_desc = Pango.FontDescription.FromString (font);
+
+			preferred_font_family = font_desc.Family;
+			preferred_font_size = font_desc.Size / Pango.Scale.PangoScale;
+		}
 
 		static private void ScanAssembly (Assembly assembly)
 		{
@@ -252,9 +273,13 @@ namespace Beagle.Tile {
 				ScanAssembly (Assembly.GetExecutingAssembly ());
 
 			if (style_templates == null) {
+				GetFontSettings ();
+
 				style_templates = new ArrayList ();
 				foreach (TileStyleAttribute attr in style_attributes) {
 					Template t = new Template (attr.Resource);
+					t["FontFamily"] = preferred_font_family;
+					t["FontSize"] = preferred_font_size.ToString ();
 					style_templates.Add (t);
 				}
 			}
