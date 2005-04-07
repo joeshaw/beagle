@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: beagle\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2005-04-05 23:21+0100\n"
-"PO-Revision-Date: 2005-04-05 21:00+0100\n"
+"POT-Creation-Date: 2005-04-08 00:05+0100\n"
+"PO-Revision-Date: 2005-04-08 00:05+0100\n"
 "Last-Translator: Christopher Orr <chris@protactin.co.uk>\n"
 "Language-Team: British English\n"
 "MIME-Version: 1.0\n"
@@ -21,7 +21,7 @@ msgid ""
 "If you're wondering whether Best is working check your notification area "
 "(system tray)"
 msgstr ""
-"If you're wondering whether Best is working check your notification area "
+"If you're wondering whether Best is working: check your notification area "
 "(system tray)"
 
 #: ../Best/BestTray.cs:164
@@ -117,6 +117,61 @@ msgstr ""
 msgid "The query for <i>{0}</i> failed with error:<br>{1}<br>"
 msgstr "The query for <i>{0}</i> failed with error:<br>{1}<br>"
 
+#: ../ImLogViewer/ImLogViewer.cs:100 ../ImLogViewer/ImLogViewer.cs:105
+#, csharp-format
+msgid "Conversations with {0}"
+msgstr "Conversations with {0}"
+
+#: ../ImLogViewer/ImLogViewer.cs:103
+#, csharp-format
+msgid "Conversations in {0}"
+msgstr "Conversations in {0}"
+
+#: ../ImLogViewer/ImLogViewer.cs:191 ../Util/StringFu.cs:65
+msgid "Today"
+msgstr "Today"
+
+#: ../ImLogViewer/ImLogViewer.cs:192 ../ImLogViewer/ImLogViewer.cs:197
+msgid "HH:mm"
+msgstr "HH:mm"
+
+#: ../ImLogViewer/ImLogViewer.cs:196 ../Util/StringFu.cs:67
+msgid "Yesterday"
+msgstr "Yesterday"
+
+#: ../ImLogViewer/ImLogViewer.cs:201
+msgid "This Week"
+msgstr "This Week"
+
+#: ../ImLogViewer/ImLogViewer.cs:202 ../ImLogViewer/ImLogViewer.cs:207
+msgid "dddd"
+msgstr "dddd"
+
+#: ../ImLogViewer/ImLogViewer.cs:206
+msgid "Last Week"
+msgstr "Last Week"
+
+#: ../ImLogViewer/ImLogViewer.cs:211
+msgid "This Month"
+msgstr "This Month"
+
+#: ../ImLogViewer/ImLogViewer.cs:212 ../ImLogViewer/ImLogViewer.cs:217
+#: ../Util/StringFu.cs:69
+msgid "MMM d"
+msgstr "d MMM"
+
+#: ../ImLogViewer/ImLogViewer.cs:216
+msgid "This Year"
+msgstr "This Year"
+
+#: ../ImLogViewer/ImLogViewer.cs:221
+msgid "Older"
+msgstr "Older"
+
+#: ../ImLogViewer/ImLogViewer.cs:222
+msgid "yyyy MMM d"
+msgstr "yyyy MMM d"
+
 #: ../ImLogViewer/ImLogViewer.glade.h:1
 msgid "*"
 msgstr "*"
@@ -155,6 +210,25 @@ msgid "Contains {0} Item"
 msgid_plural "Contains {0} Items"
 msgstr[0] "Contains {0} Item"
 msgstr[1] "Contains {0} Items"
+
+#: ../Tiles/TileImLog.cs:76
+msgid "Send Mail"
+msgstr "Send Mail"
+
+#. For translators: From template Tiles/template-mail-message.html
+#: ../Tiles/TileImLog.cs:80 ../Tiles/TranslationHack.cs:44
+msgid "Send IM"
+msgstr "Send IM"
+
+#: ../Tiles/TileImLog.cs:89
+#, csharp-format
+msgid "Conversation in {0}"
+msgstr "Conversation in {0}"
+
+#: ../Tiles/TileImLog.cs:91
+#, csharp-format
+msgid "Conversation with {0}"
+msgstr "Conversation with {0}"
 
 #: ../Tiles/TileMailMessage.cs:68
 msgid "No Subject"
@@ -258,11 +332,6 @@ msgstr "Application:"
 msgid "Folder:"
 msgstr "Folder:"
 
-#. For translators: From template Tiles/template-mail-message.html
-#: ../Tiles/TranslationHack.cs:44
-msgid "Send IM"
-msgstr "Send IM"
-
 #. For translators: From template Tiles/template-music.html
 #: ../Tiles/TranslationHack.cs:46
 msgid "Track"
@@ -332,27 +401,15 @@ msgstr "InterOperability Directory"
 msgid "Unknown Directory"
 msgstr "Unknown Directory"
 
-#: ../Util/StringFu.cs:65
-msgid "Today"
-msgstr "Today"
-
-#: ../Util/StringFu.cs:67
-msgid "Yesterday"
-msgstr "Yesterday"
-
-#: ../Util/StringFu.cs:69
-msgid "MMM d"
-msgstr "d MMM"
-
 #: ../Util/StringFu.cs:71
 msgid "MMM d, yyyy"
 msgstr "d MMM, yyyy"
 
 #: ../Util/StringFu.cs:73
 msgid "h:mm tt"
-msgstr "h:mm tt"
+msgstr "HH:mm"
 
-#. Translators: {0} is a date (e.g. 'Today' or 'Apr 3'), {1} is the time
+#. Translators: {0} is a date (e.g. 'Today' or 'Apr 23'), {1} is the time
 #: ../Util/StringFu.cs:79
 #, csharp-format
 msgid "{0}, {1}"
@@ -378,11 +435,11 @@ msgstr "{0} days ago, {1}"
 
 #: ../Util/StringFu.cs:106
 msgid "MMMM d, h:mm tt"
-msgstr "d MMMM, h:mm tt"
+msgstr "d MMMM, HH:mm"
 
 #: ../Util/StringFu.cs:110
 msgid "MMMM d yyyy, h:mm tt"
-msgstr "d MMMM yyyy, h:mm tt"
+msgstr "d MMMM yyyy, HH:mm"
 
 #: ../Util/StringFu.cs:120
 #, csharp-format
@@ -407,8 +464,8 @@ msgstr "{0} bytes"
 #. Translators: {0} is a file size in kilobytes
 #: ../Util/StringFu.cs:147
 #, csharp-format
-msgid "{0:0.0} kB"
-msgstr "{0:0.0} kB"
+msgid "{0:0.0} KB"
+msgstr "{0:0.0} KB"
 
 #. Translators: {0} is a file size in megabytes
 #: ../Util/StringFu.cs:150
