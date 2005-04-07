@@ -1,3 +1,11 @@
+2005-04-07  Vijay K. Nanjundaswamy <knvijay@novell.com>
+
+	* beagled/Makefile.am: Updates to fix WebServices install/uninstall, after recent
+	  reorganizations 
+
+	* beagled/BeagleDaemon.cs: Fix in --applications startup argument passed to BeagleXSP,
+	  when user specifies a root directory with --web-root option
+
 2005-04-06  Takeshi AIHANA <aihana@gnome.gr.jp>
 
 	* configure.in: Added 'ja' (Japanese) to ALL_LINGUAS.

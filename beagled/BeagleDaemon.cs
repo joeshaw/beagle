@@ -292,7 +292,8 @@ namespace Beagle.Daemon {
 					web_rootDir = next_arg;
 					++i; 
 					web_start = true;
-					web_rootDir_changed = true;
+					if (String.Compare(web_rootDir, DEFAULT_XSP_ROOT, true) != 0)
+						web_rootDir_changed = true;
 					break;
 #endif 
 				default:
