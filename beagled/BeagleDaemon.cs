@@ -177,6 +177,7 @@ namespace Beagle.Daemon {
 		static Mono.ASPNET.ApplicationServer appServer = null;
 		static string DEFAULT_XSP_ROOT = Path.Combine (ExternalStringsHack.PkgDataDir, "xsp");
 		static string DEFAULT_XSP_PORT = "8888";
+		//Both "/" and "/beagle" aliased to DEFAULT_XSP_ROOT only for BeagleXSP server
 		static string[] xsp_param = {"--port", DEFAULT_XSP_PORT,
 					     "--root", DEFAULT_XSP_ROOT, 
 					     "--applications", "/:" + DEFAULT_XSP_ROOT + ",/beagle:" + DEFAULT_XSP_ROOT,
@@ -201,6 +202,7 @@ namespace Beagle.Daemon {
 			bool web_start = false;
 			string web_port = DEFAULT_XSP_PORT;
 			string web_rootDir = DEFAULT_XSP_ROOT;
+			bool web_rootDir_changed = false;
 #endif
 
 			int i = 0;
@@ -290,6 +292,7 @@ namespace Beagle.Daemon {
 					web_rootDir = next_arg;
 					++i; 
 					web_start = true;
+					web_rootDir_changed = true;
 					break;
 #endif 
 				default:
@@ -449,6 +452,9 @@ namespace Beagle.Daemon {
 
 			xsp_param[1] = web_port;
 			xsp_param[3] = web_rootDir;
+			if (web_rootDir_changed)
+				//Assuming "/beagle" exists as an explicit sub-folder under user specified xsp root directory:
+				xsp_param[5] = "/:" + web_rootDir + ",/beagle:" + web_rootDir + "/beagle";
 			if (web_start) {
 				Logger.Log.Debug ("Starting Internal Web Server");
 				//Start beagled internal web server (BeagleXsp)
