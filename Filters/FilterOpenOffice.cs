@@ -340,7 +340,8 @@ namespace Beagle.Filters {
 					if (hot_nodes.Count > 0)
 						is_hot = (bool) hot_nodes.Pop ();
 					else
-						Logger.Log.Debug ("FilterOpenOffice: hot_nodes underflow in {0}", reader.Name);
+						Logger.Log.Debug ("FilterOpenOffice: hot_nodes underflow in {0}", 
+								  reader.Name);
 					if (hot_container_nodes.Count > 0) {
 						string hot_container_tag = (string) hot_container_nodes.Peek ();
 						if (hot_container_tag == reader.Name) {
@@ -477,7 +478,8 @@ namespace Beagle.Filters {
 					odtFormat = true;
 
 			} catch (Exception e) {
-				Logger.Log.Error ("Unable to open {0}.  Probably an invalid OpenOffice document.");
+				Logger.Log.Error ("Unable to open {0}.  Probably an invalid OpenOffice document.", 
+						  info.FullName);
 				Finished ();
 			}
 		}

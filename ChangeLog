@@ -1,3 +1,8 @@
+2005-04-07  Veerapuram Varadhan <vvaradhan@novell.com>
+
+	* Filters/FilterOpenoffice.cs: A Logger.Log.Error() call with a
+	"{0}" but no argument, in the exceptional case, in DoOpen().
+	
 2005-04-07  Vijay K. Nanjundaswamy <knvijay@novell.com>
 
 	* beagled/Makefile.am: Updates to fix WebServices install/uninstall, after recent
