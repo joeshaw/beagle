@@ -925,7 +925,7 @@ namespace Beagle.Daemon {
 			private static bool IsNoise (string text)
 			{
 				// Anything really long is almost certainly noise.
-				if (text.Length > 25) 
+				if (text.Length > 30) 
 					return true;
 
 				// Look at how often we switch between numbers and letters.
@@ -978,7 +978,7 @@ namespace Beagle.Daemon {
 
 				// If we consist of nothing but digits and punctuation, treat it
 				// as noise if it is too long.
-				if (transitions == 1 && first_type == 1 && text.Length > 10)
+				if (transitions == 1 && first_type != 1 && text.Length > 10)
 					return true;
 
 				// We are very suspicious of long things that make lots of
