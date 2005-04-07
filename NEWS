@@ -1,6 +1,6 @@
 
 Version 0.0.9
-April 6, 2005
+April 7, 2005
 
 Daemon/Infrastructure:
 * Basic support for internationalization (Fredrik Hedberg)
@@ -56,9 +56,10 @@ UI/Tools:
   (Varadhan)
 * Handle URI escaping when dealing with GNOME Thumbnails (Daniel)
 * Better commandline parsing for beagle-query (Daniel)
+* Folder tile improvements (Fredrik)
 
 Web Services:
-* Build fixes (Jon, Vijay)
+* Build fixes (Vijay, Jon)
 * Return a searchToken whenever we return results (Vijay)
 * Added support for Firefox search bar (Vijay)
 * Updated TokenGenerator to use System.Guid (Vijay)
@@ -78,6 +79,7 @@ Everything else:
 * Dutch translation (Wouter Bolsterlee)
 * Brazilian Portuguese translation (Raphael Higino)
 * Simplified Chinese translation (Funda Wang)
+* Norwegian bokmal translation (Terance Edward Sola)
 * All the stuff I forgot (All the people I forgot)
 
 ------------------------------------------------------
