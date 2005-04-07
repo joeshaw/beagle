@@ -1,4 +1,87 @@
 
+Version 0.0.9
+April 6, 2005
+
+Daemon/Infrastructure:
+* Basic support for internationalization (Fredrik Hedberg)
+* Properly delete Indexable content when asked (Joe Shaw)
+* If watching or ignoring a directory with inotify fails, throw
+  the correct exception (Joe)
+* Tweaked the types of characters permitted in the snippet code,
+  so that certain symbols that were ignored before are allowed (Joe)
+* Updated inotify glue to support the latest inotify code (Robert Love)
+* Added --list-backends option to beagled (Daniel Drake)
+* Merged Exif compatibility code from F-Spot to be compatible with
+  mono 1.1.5 (Daniel)
+* Do the right thing if Beagle is passed a directory in an environment
+  variable that ends with / (Daniel)
+* Noise filter fixes (Jon Trowbridge)
+
+Backends:
+* Updated beagle-index-url to use FilteredIndexables (Joe)
+* Have beagle-index-url delete content that it is unable to pass
+  to the daemon (Joe)
+* Fixed up the firefox extension to pass --title into beagle-index-url (Joe)
+* Create temporary files in .beagle/firefox, not /tmp (Joe)
+* Display snippets in web history tiles (Joe)
+* Fixed a bug in the IMAP backend where mails would be indexed twice
+  for two separate accounts if the URIs were similar (Joe)
+* Do the right thing if we try to scan an unreadable directory (Joe)
+* Added support for the IMAP4rev1 backend in Evolution 2.2 (Joe)
+* Gracefully handle null queries that we get back from evolution-sharp
+  when dealing with invalid email addresses (Joe)
+* Display snippets in Blam hits (Joe)
+* Ignore Gaim logs which don't follow the standard filename format (Daniel)
+* Fixed bugs in the file system backend related to copying and moving
+  files (Jon)
+* In the file system backend, work around a mono bug by ignoring files
+  whose name contain '\' (Varadhan, Jon)
+* Work around a mono bug which causes dates in the stat structure to
+  not reflect daylight savings time (Jon)
+
+Filters:
+* Abiword filter fixes (Veerapuram Varadhan)
+* MS Word filter optimizations and enhancements (Varadhan)
+* Fixed the RTF filter to not extract unwanted strings like font names
+ (Varadhan)
+* Handle '\n' in a sane way in the filte case class (Varadhan)
+* Extract information from meta tags in the Html filter (Saravana)
+
+UI/Tools:
+* Catch exceptions when starting the daemon from Best (Joe)
+* Add an "Open" action to the launcher tile (Chris Schneider, Joe)
+* When opening a folder, run nautilus with the --no-desktop argument
+  (Joshua Nichols, Joe)
+* Display more information about OO.o 2.0 files in the document tile
+  (Varadhan)
+* Handle URI escaping when dealing with GNOME Thumbnails (Daniel)
+* Better commandline parsing for beagle-query (Daniel)
+
+Web Services:
+* Build fixes (Jon, Vijay)
+* Return a searchToken whenever we return results (Vijay)
+* Added support for Firefox search bar (Vijay)
+* Updated TokenGenerator to use System.Guid (Vijay)
+* Removed hard-wired paths (Vijay, Jon)
+* Code reorganization and rationalization (Vijay)
+* Allow beagled to run in-place when web services are enabled (Jon)
+
+Everything else:
+* Web services build fixes (Jon, Vijay)
+* New configure option: --disable-evolution-sharp (Daniel)
+* Merciless bugzilla rampage (Joe)
+* i18n tips (Christian Rose)
+* German translation (Frank Arnold)
+* Canadian English translation (Adam Weinberger)
+* British English translation (Christopher Orr)
+* Japanese translation (Takeshi Aihana)
+* Dutch translation (Wouter Bolsterlee)
+* Brazilian Portuguese translation (Raphael Higino)
+* Simplified Chinese translation (Funda Wang)
+* All the stuff I forgot (All the people I forgot)
+
+------------------------------------------------------
+
 Version 0.0.8.1
 March 24, 2005
 
