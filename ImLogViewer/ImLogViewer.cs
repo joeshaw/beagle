@@ -17,6 +17,8 @@ using System.Xml;
 
 using Beagle.Util;
 
+using Mono.Posix;
+
 namespace ImLogViewer {
 
 	public class GaimLogViewer {
@@ -53,6 +55,9 @@ namespace ImLogViewer {
 				Console.WriteLine ("Log path doesn't exist - {0}", path);
 				return;
 			}
+
+			// I18N
+			Catalog.Init ("beagle", ExternalStringsHack.LocaleDir);
 
 			timeline = new Timeline ();
 			IndexLogs();
@@ -92,12 +97,12 @@ namespace ImLogViewer {
 			ImBuddy buddy = list.Search (speaker);
 			
 			if (buddy != null && buddy.Alias != "") {
-				log_dialog.Title = String.Format ("Conversations with {0}", buddy.Alias);
+				log_dialog.Title = String.Format (Catalog.GetString ("Conversations with {0}"), buddy.Alias);
 			} else {
 				if (speaker.EndsWith (".chat"))
-					log_dialog.Title = String.Format ("Conversations in {0}", speaker.Replace (".chat",""));
+					log_dialog.Title = String.Format (Catalog.GetString ("Conversations in {0}"), speaker.Replace (".chat",""));
 				else
-					log_dialog.Title = String.Format ("Conversation with {0}", speaker);
+					log_dialog.Title = String.Format (Catalog.GetString ("Conversations with {0}"), speaker);
 			}
 
 			SetTitle (new DateTime ());
@@ -183,38 +188,38 @@ namespace ImLogViewer {
 			TreeIter parent;
 			
 			if (timeline.Today.Count != 0) {
-				parent = treeStore.AppendValues ("<b>Today</b>", "", null);
-				PopulateTimeline (parent, timeline.Today, "HH:mm");
+				parent = treeStore.AppendValues (String.Format ("<b>{0}</b>", Catalog.GetString ("Today")), "", null);
+				PopulateTimeline (parent, timeline.Today, Catalog.GetString ("HH:mm"));
 			}
 			
 			if (timeline.Yesterday.Count != 0) {
-				parent = treeStore.AppendValues ("<b>Yesterday</b>", "", null);
-				PopulateTimeline (parent, timeline.Yesterday, "HH:mm");
+				parent = treeStore.AppendValues (String.Format ("<b>{0}</b>", Catalog.GetString ("Yesterday")), "", null);
+				PopulateTimeline (parent, timeline.Yesterday, Catalog.GetString ("HH:mm"));
 			}
 			
 			if (timeline.ThisWeek.Count != 0) {
-				parent = treeStore.AppendValues ("<b>This Week</b>", "", null);
-				PopulateTimeline (parent, timeline.ThisWeek, "dddd");
+				parent = treeStore.AppendValues (String.Format ("<b>{0}</b>", Catalog.GetString ("This Week")), "", null);
+				PopulateTimeline (parent, timeline.ThisWeek, Catalog.GetString ("dddd"));
 			}
 		
 			if (timeline.LastWeek.Count != 0) {
-				parent = treeStore.AppendValues ("<b>Last Week</b>", "", null);
-				PopulateTimeline (parent, timeline.LastWeek, "dddd");
+				parent = treeStore.AppendValues (String.Format ("<b>{0}</b>", Catalog.GetString ("Last Week")), "", null);
+				PopulateTimeline (parent, timeline.LastWeek, Catalog.GetString ("dddd"));
 			}
 			
 			if (timeline.ThisMonth.Count != 0) {
-				parent = treeStore.AppendValues ("<b>This Month</b>", "", null);
-				PopulateTimeline (parent, timeline.ThisMonth, "MMM d");
+				parent = treeStore.AppendValues (String.Format ("<b>{0}</b>", Catalog.GetString ("This Month")), "", null);
+				PopulateTimeline (parent, timeline.ThisMonth, Catalog.GetString ("MMM d"));
 			}
 			
 			if (timeline.ThisYear.Count != 0) {
-				parent = treeStore.AppendValues ("<b>This Year</b>", "", null);
-				PopulateTimeline (parent, timeline.ThisYear, "MMM d");
+				parent = treeStore.AppendValues (String.Format ("<b>{0}</b>", Catalog.GetString ("This Year")), "", null);
+				PopulateTimeline (parent, timeline.ThisYear, Catalog.GetString ("MMM d"));
 			}
 			
 			if (timeline.Older.Count != 0) {
-				parent = treeStore.AppendValues ("<b>Older</b>", "", null);
-				PopulateTimeline (parent, timeline.Older, "yyyy MMM d");
+				parent = treeStore.AppendValues (String.Format ("<b>{0}</b>", Catalog.GetString ("Older")), "", null);
+				PopulateTimeline (parent, timeline.Older, Catalog.GetString ("yyyy MMM d"));
 			}
 
 			timelinetree.ExpandAll();

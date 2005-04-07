@@ -30,6 +30,8 @@ using System.Collections;
 using System.Diagnostics;
 using Beagle.Util;
 
+using Mono.Posix;
+
 namespace Beagle.Tile {
 
 	[HitFlavor (Name="Conversations", Rank=900, Emblem="emblem-im-log.png", Color="#e5f5ef",
@@ -71,11 +73,11 @@ namespace Beagle.Tile {
 				Template ["nice_duration"] = "";
 
 			if (email != null)
-				Template ["SendMailAction"] = "Send Mail";
+				Template ["SendMailAction"] = Catalog.GetString ("Send Mail");
 
 			// FIXME: This is a temporary hack until gaim supports other protocols than AIM via gaim-remote
 			if (Hit ["fixme:protocol"] == "aim")
-				Template ["SendIMAction"] = "Send IM";
+				Template ["SendIMAction"] = Catalog.GetString ("Send IM");
 			
 			if (buddy != null && buddy.Alias != "")
 				speaking_alias = buddy.Alias;
@@ -84,9 +86,9 @@ namespace Beagle.Tile {
 
 			// FIXME: Hack to figure out if the conversation is taken place in a chat room
 			if (Hit["fixme:speakingto"].EndsWith (".chat"))
-				Template["title"] = String.Format ("Conversation in {0}", speaking_alias.Replace(".chat",""));
+				Template["title"] = String.Format (Catalog.GetString ("Conversation in {0}"), speaking_alias.Replace(".chat",""));
 			else
-				Template["title"] = String.Format ("Conversation with {0}", speaking_alias);
+				Template["title"] = String.Format (Catalog.GetString ("Conversation with {0}"), speaking_alias);
 
 
 			if (buddy != null && buddy.BuddyIconLocation != "") {
