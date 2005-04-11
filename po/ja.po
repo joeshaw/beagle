@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: beagle HEAD\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2005-04-06 22:10+0900\n"
-"PO-Revision-Date: 2005-04-06 22:08+0900\n"
+"POT-Creation-Date: 2005-04-11 21:12+0900\n"
+"PO-Revision-Date: 2005-04-11 21:11+0900\n"
 "Last-Translator: Takeshi AIHANA <aihana@gnome.gr.jp>\n"
 "Language-Team: Japanese <gnome-translation@gnome.gr.jp>\n"
 "MIME-Version: 1.0\n"
@@ -32,65 +32,65 @@ msgstr "\"最近検索したエントリ\" はありません"
 msgid "Quit"
 msgstr "終了"
 
-#: ../Best/BestWindow.cs:302
+#: ../Best/BestWindow.cs:304
 msgid "Anywhere"
 msgstr "全て"
 
-#: ../Best/BestWindow.cs:304
+#: ../Best/BestWindow.cs:306
 msgid "in Files"
 msgstr "ファイルから"
 
-#: ../Best/BestWindow.cs:306
+#: ../Best/BestWindow.cs:308
 msgid "in Addressbook"
 msgstr "連絡先から"
 
-#: ../Best/BestWindow.cs:308
+#: ../Best/BestWindow.cs:310
 msgid "in Mail"
 msgstr "メールから"
 
-#: ../Best/BestWindow.cs:310
+#: ../Best/BestWindow.cs:312
 msgid "in Web Pages"
 msgstr "ウェブ・ページから"
 
-#: ../Best/BestWindow.cs:312
+#: ../Best/BestWindow.cs:314
 msgid "in Chats"
 msgstr "IM から"
 
-#: ../Best/BestWindow.cs:328
+#: ../Best/BestWindow.cs:330
 msgid "Search terms:"
 msgstr "検索する語句:"
 
-#: ../Best/BestWindow.cs:345
+#: ../Best/BestWindow.cs:347
 msgid "Find"
 msgstr "検索"
 
-#: ../Best/BestWindow.cs:362
+#: ../Best/BestWindow.cs:364
 msgid "Show More Results"
 msgstr "次の検索結果"
 
-#: ../Best/BestWindow.cs:368
+#: ../Best/BestWindow.cs:370
 msgid "Show Previous Results"
 msgstr "前の検索結果"
 
-#: ../Best/BestWindow.cs:402
+#: ../Best/BestWindow.cs:404
 msgid "No results."
 msgstr "該当するものが見つかりませんでした。"
 
 #. To translators: {0} is the current count of results shown of {1} in total, this is the message that is initially shown
 #. when results are returned to the user.
-#: ../Best/BestWindow.cs:406
+#: ../Best/BestWindow.cs:408
 #, csharp-format
 msgid "Best <b>{0} results of {1}</b> are shown."
 msgstr "<b>{1}個のうち1〜{0}番目</b>の結果を表示しました。"
 
 #. To translators: {0} to {1} is the interval of results currently shown of {2} results in total
-#: ../Best/BestWindow.cs:411
+#: ../Best/BestWindow.cs:413
 #, csharp-format
 msgid "Results <b>{0} through {1} of {2}</b> are shown."
 msgstr "<b>{2}個のうち{0}〜{1}番目</b>の結果を表示しました。"
 
 #. To translators: {0} represents the current query keywords
-#: ../Best/BestWindow.cs:550
+#: ../Best/BestWindow.cs:552
 #, csharp-format
 msgid ""
 "The query for <i>{0}</i> failed.<br>The likely cause is that the beagle "
@@ -100,7 +100,7 @@ msgstr ""
 "す。"
 
 #. To translators: {0} represents the current query keywords
-#: ../Best/BestWindow.cs:555
+#: ../Best/BestWindow.cs:557
 #, csharp-format
 msgid ""
 "The query for <i>{0}</i> failed.<br>The session bus isn't running.  See "
@@ -112,10 +112,65 @@ msgstr ""
 "Installing%20Beagle をご覧下さい。"
 
 #. To translators: {0} represents the current query keywords, {1} contains the errormessage
-#: ../Best/BestWindow.cs:559
+#: ../Best/BestWindow.cs:561
 #, csharp-format
 msgid "The query for <i>{0}</i> failed with error:<br>{1}<br>"
 msgstr "<i>{0}</i> の検索に失敗しました。エラー:<br>{1}<br>"
+
+#: ../ImLogViewer/ImLogViewer.cs:100 ../ImLogViewer/ImLogViewer.cs:105
+#, csharp-format
+msgid "Conversations with {0}"
+msgstr "{0} さんとの会話記録"
+
+#: ../ImLogViewer/ImLogViewer.cs:103
+#, csharp-format
+msgid "Conversations in {0}"
+msgstr "{0} についての会話記録"
+
+#: ../ImLogViewer/ImLogViewer.cs:191 ../Util/StringFu.cs:65
+msgid "Today"
+msgstr "今日"
+
+#: ../ImLogViewer/ImLogViewer.cs:192 ../ImLogViewer/ImLogViewer.cs:197
+msgid "HH:mm"
+msgstr "HH:mm"
+
+#: ../ImLogViewer/ImLogViewer.cs:196 ../Util/StringFu.cs:67
+msgid "Yesterday"
+msgstr "昨日"
+
+#: ../ImLogViewer/ImLogViewer.cs:201
+msgid "This Week"
+msgstr "今週"
+
+#: ../ImLogViewer/ImLogViewer.cs:202 ../ImLogViewer/ImLogViewer.cs:207
+msgid "dddd"
+msgstr "dddd日"
+
+#: ../ImLogViewer/ImLogViewer.cs:206
+msgid "Last Week"
+msgstr "先週"
+
+#: ../ImLogViewer/ImLogViewer.cs:211
+msgid "This Month"
+msgstr "今月"
+
+#: ../ImLogViewer/ImLogViewer.cs:212 ../ImLogViewer/ImLogViewer.cs:217
+#: ../Util/StringFu.cs:69
+msgid "MMM d"
+msgstr "MMM月d日"
+
+#: ../ImLogViewer/ImLogViewer.cs:216
+msgid "This Year"
+msgstr "今年"
+
+#: ../ImLogViewer/ImLogViewer.cs:221
+msgid "Older"
+msgstr "過去"
+
+#: ../ImLogViewer/ImLogViewer.cs:222
+msgid "yyyy MMM d"
+msgstr "yyyy年MMM月d日"
 
 #: ../ImLogViewer/ImLogViewer.glade.h:1
 msgid "*"
@@ -155,6 +210,25 @@ msgid "Contains {0} Item"
 msgid_plural "Contains {0} Items"
 msgstr[0] "{0}個のアイテムがあります"
 msgstr[1] "{0}個のアイテムがあります"
+
+#: ../Tiles/TileImLog.cs:76
+msgid "Send Mail"
+msgstr "メールの送信"
+
+#. For translators: From template Tiles/template-mail-message.html
+#: ../Tiles/TileImLog.cs:80 ../Tiles/TranslationHack.cs:44
+msgid "Send IM"
+msgstr "IM で送信する"
+
+#: ../Tiles/TileImLog.cs:89
+#, csharp-format
+msgid "Conversation in {0}"
+msgstr "{0} についての会話"
+
+#: ../Tiles/TileImLog.cs:91
+#, csharp-format
+msgid "Conversation with {0}"
+msgstr "{0} さんとの会話"
 
 #: ../Tiles/TileMailMessage.cs:68
 msgid "No Subject"
@@ -258,11 +332,6 @@ msgstr "アプリケーション:"
 msgid "Folder:"
 msgstr "フォルダ:"
 
-#. For translators: From template Tiles/template-mail-message.html
-#: ../Tiles/TranslationHack.cs:44
-msgid "Send IM"
-msgstr "IM で送信する"
-
 #. For translators: From template Tiles/template-music.html
 #: ../Tiles/TranslationHack.cs:46
 msgid "Track"
@@ -331,18 +400,6 @@ msgstr "InterOperability のフォルダ"
 #: ../Util/ExifData.cs:236
 msgid "Unknown Directory"
 msgstr "不明なフォルダ"
-
-#: ../Util/StringFu.cs:65
-msgid "Today"
-msgstr "今日"
-
-#: ../Util/StringFu.cs:67
-msgid "Yesterday"
-msgstr "昨日"
-
-#: ../Util/StringFu.cs:69
-msgid "MMM d"
-msgstr "MMM d"
 
 #: ../Util/StringFu.cs:71
 msgid "MMM d, yyyy"
