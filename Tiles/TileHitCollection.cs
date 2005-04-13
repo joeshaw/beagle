@@ -267,8 +267,6 @@ namespace Beagle.Tile {
 			
 			hitSources.Clear ();
 
-			hits = hits;
-
 			Changed ();
 		}
 
