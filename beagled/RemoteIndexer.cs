@@ -272,8 +272,6 @@ namespace Beagle.Daemon {
 			UnsetProxy ();
 		}
 
-#if DBUS_IS_BROKEN_BROKEN_BROKEN
-
 		private uint flush_timeout_handler = 0;
 
 		private bool FlushTimeoutHandler ()
@@ -294,8 +292,6 @@ namespace Beagle.Daemon {
 			}
 			return true;
 		}
-#endif
-
 		public void Flush ()
 		{
 			Logger.Log.Debug ("RemoteIndexer.Flush on '{0}'", remote_index_name);
