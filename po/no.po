@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: beagle.HEAD\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2005-04-06 10:38+0000\n"
-"PO-Revision-Date: 2005-04-07 13:02+0200\n"
+"POT-Creation-Date: 2005-04-14 21:46+0200\n"
+"PO-Revision-Date: 2005-04-14 21:54+0200\n"
 "Last-Translator: Terance Edward sola <terance@lyse.net>\n"
 "Language-Team: Norwegian bokmal <i18n-nb@lister.ping.uio.no>\n"
 "MIME-Version: 1.0\n"
@@ -30,73 +30,75 @@ msgstr "Ingen nylige søk"
 msgid "Quit"
 msgstr "Avslutt"
 
-#: ../Best/BestWindow.cs:302
+#: ../Best/BestWindow.cs:304
 msgid "Anywhere"
 msgstr "Hvor som helst"
 
-#: ../Best/BestWindow.cs:304
+#: ../Best/BestWindow.cs:306
 msgid "in Files"
 msgstr "i filer"
 
-#: ../Best/BestWindow.cs:306
+#: ../Best/BestWindow.cs:308
 msgid "in Addressbook"
 msgstr "i adressebok"
 
-#: ../Best/BestWindow.cs:308
+#: ../Best/BestWindow.cs:310
 msgid "in Mail"
 msgstr "i e-post"
 
-#: ../Best/BestWindow.cs:310
+#: ../Best/BestWindow.cs:312
 msgid "in Web Pages"
 msgstr "i vevsider"
 
-#: ../Best/BestWindow.cs:312
+#: ../Best/BestWindow.cs:314
 msgid "in Chats"
 msgstr "i samtaler"
 
-#: ../Best/BestWindow.cs:328
+#: ../Best/BestWindow.cs:330
 msgid "Search terms:"
 msgstr "Søketermer:"
 
-#: ../Best/BestWindow.cs:345
+#: ../Best/BestWindow.cs:347
 msgid "Find"
 msgstr "Finn"
 
-#: ../Best/BestWindow.cs:362
+#: ../Best/BestWindow.cs:364
 msgid "Show More Results"
 msgstr "Vis flere resultater"
 
-#: ../Best/BestWindow.cs:368
+#: ../Best/BestWindow.cs:370
 msgid "Show Previous Results"
 msgstr "Vis tidligere resultater"
 
-#: ../Best/BestWindow.cs:402
+#: ../Best/BestWindow.cs:404
 msgid "No results."
 msgstr "Ingen resultater."
 
 #. To translators: {0} is the current count of results shown of {1} in total, this is the message that is initially shown
 #. when results are returned to the user.
-#: ../Best/BestWindow.cs:406
+#: ../Best/BestWindow.cs:408
 #, csharp-format
 msgid "Best <b>{0} results of {1}</b> are shown."
 msgstr "Beste <b>{0} av {1} resultater</b> er vist."
 
 #. To translators: {0} to {1} is the interval of results currently shown of {2} results in total
-#: ../Best/BestWindow.cs:411
+#: ../Best/BestWindow.cs:413
 #, csharp-format
 msgid "Results <b>{0} through {1} of {2}</b> are shown."
 msgstr "Resultatene <b>{0} til {1} av {2}</b> er vist."
 
 #. To translators: {0} represents the current query keywords
-#: ../Best/BestWindow.cs:550
+#: ../Best/BestWindow.cs:552
 #, csharp-format
 msgid ""
 "The query for <i>{0}</i> failed.<br>The likely cause is that the beagle "
 "daemon isn't running."
-msgstr "Spørringen for <i>{0}</i> feilet.<br>Det er mest sannsynlig at nissen til beagle ikke kjører."
+msgstr ""
+"Spørringen for <i>{0}</i> feilet.<br>Det er mest sannsynlig at nissen til "
+"beagle ikke kjører."
 
 #. To translators: {0} represents the current query keywords
-#: ../Best/BestWindow.cs:555
+#: ../Best/BestWindow.cs:557
 #, csharp-format
 msgid ""
 "The query for <i>{0}</i> failed.<br>The session bus isn't running.  See "
@@ -104,13 +106,69 @@ msgid ""
 "setting up a session bus."
 msgstr ""
 "Spørringen for <i>{0}</i> feilet.<br> Økt-buss programmet kjører ikke. Se "
-"http://beaglewiki.org/index.php/Installing%20Beagle for mer informasjon om hvordan du setter det opp."
+"http://beaglewiki.org/index.php/Installing%20Beagle for mer informasjon om "
+"hvordan du setter det opp."
 
 #. To translators: {0} represents the current query keywords, {1} contains the errormessage
-#: ../Best/BestWindow.cs:559
+#: ../Best/BestWindow.cs:561
 #, csharp-format
 msgid "The query for <i>{0}</i> failed with error:<br>{1}<br>"
 msgstr "Spørringen for <i>{0}</i> feilet: <br>{1}<br>"
+
+#: ../ImLogViewer/ImLogViewer.cs:100 ../ImLogViewer/ImLogViewer.cs:105
+#, csharp-format
+msgid "Conversations with {0}"
+msgstr "Samtaler med {0}"
+
+#: ../ImLogViewer/ImLogViewer.cs:103
+#, csharp-format
+msgid "Conversations in {0}"
+msgstr "Samtaler i {0}"
+
+#: ../ImLogViewer/ImLogViewer.cs:191 ../Util/StringFu.cs:65
+msgid "Today"
+msgstr "I dag"
+
+#: ../ImLogViewer/ImLogViewer.cs:192 ../ImLogViewer/ImLogViewer.cs:197
+msgid "HH:mm"
+msgstr "HH:mm"
+
+#: ../ImLogViewer/ImLogViewer.cs:196 ../Util/StringFu.cs:67
+msgid "Yesterday"
+msgstr "I går"
+
+#: ../ImLogViewer/ImLogViewer.cs:201
+msgid "This Week"
+msgstr "Denne uken"
+
+#: ../ImLogViewer/ImLogViewer.cs:202 ../ImLogViewer/ImLogViewer.cs:207
+msgid "dddd"
+msgstr "dddd"
+
+#: ../ImLogViewer/ImLogViewer.cs:206
+msgid "Last Week"
+msgstr "Forrige uke"
+
+#: ../ImLogViewer/ImLogViewer.cs:211
+msgid "This Month"
+msgstr "Denne måneden"
+
+#: ../ImLogViewer/ImLogViewer.cs:212 ../ImLogViewer/ImLogViewer.cs:217
+#: ../Util/StringFu.cs:69
+msgid "MMM d"
+msgstr "MMM d"
+
+#: ../ImLogViewer/ImLogViewer.cs:216
+msgid "This Year"
+msgstr "I år"
+
+#: ../ImLogViewer/ImLogViewer.cs:221
+msgid "Older"
+msgstr "Eldre"
+
+#: ../ImLogViewer/ImLogViewer.cs:222
+msgid "yyyy MMM d"
+msgstr "d MMM yyyy"
 
 #: ../ImLogViewer/ImLogViewer.glade.h:1
 msgid "*"
@@ -150,6 +208,25 @@ msgid "Contains {0} Item"
 msgid_plural "Contains {0} Items"
 msgstr[0] "Inneholder{0} element"
 msgstr[1] "Inneholder {0} elementer"
+
+#: ../Tiles/TileImLog.cs:76
+msgid "Send Mail"
+msgstr "Send e-post"
+
+#. For translators: From template Tiles/template-mail-message.html
+#: ../Tiles/TileImLog.cs:80 ../Tiles/TranslationHack.cs:44
+msgid "Send IM"
+msgstr "Send lynmelding"
+
+#: ../Tiles/TileImLog.cs:89
+#, csharp-format
+msgid "Conversation in {0}"
+msgstr "Samtale i {0}"
+
+#: ../Tiles/TileImLog.cs:91
+#, csharp-format
+msgid "Conversation with {0}"
+msgstr "Samtale med {0}"
 
 #: ../Tiles/TileMailMessage.cs:68
 msgid "No Subject"
@@ -221,7 +298,7 @@ msgstr "Forfatter:"
 #: ../Tiles/TranslationHack.cs:64 ../Tiles/TranslationHack.cs:80
 #: ../Tiles/TranslationHack.cs:88 ../Tiles/TranslationHack.cs:94
 msgid "Open"
-msgstr "Åpen"
+msgstr "Åpne"
 
 #. For translators: From template Tiles/template-docs.html
 #. For translators: From template Tiles/template-file.html
@@ -230,7 +307,7 @@ msgstr "Åpen"
 #: ../Tiles/TranslationHack.cs:16 ../Tiles/TranslationHack.cs:34
 #: ../Tiles/TranslationHack.cs:66 ../Tiles/TranslationHack.cs:82
 msgid "Send to..."
-msgstr "Send ti..."
+msgstr "Send til..."
 
 #. For translators: From template Tiles/template-docs.html
 #. For translators: From template Tiles/template-file.html
@@ -252,11 +329,6 @@ msgstr "Program:"
 #: ../Tiles/TranslationHack.cs:40
 msgid "Folder:"
 msgstr "Mappe:"
-
-#. For translators: From template Tiles/template-mail-message.html
-#: ../Tiles/TranslationHack.cs:44
-msgid "Send IM"
-msgstr "Send lynmelding"
 
 #. For translators: From template Tiles/template-music.html
 #: ../Tiles/TranslationHack.cs:46
@@ -326,18 +398,6 @@ msgstr "Samspillsevnemappe"
 #: ../Util/ExifData.cs:236
 msgid "Unknown Directory"
 msgstr "Ukjent mappe"
-
-#: ../Util/StringFu.cs:65
-msgid "Today"
-msgstr "I dag"
-
-#: ../Util/StringFu.cs:67
-msgid "Yesterday"
-msgstr "I går"
-
-#: ../Util/StringFu.cs:69
-msgid "MMM d"
-msgstr "MMM d"
 
 #: ../Util/StringFu.cs:71
 msgid "MMM d, yyyy"
@@ -410,4 +470,3 @@ msgstr "{0:0.0} KB"
 #, csharp-format
 msgid "{0:0.0} MB"
 msgstr "{0:0.0} MB"
-
