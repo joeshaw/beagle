@@ -37,7 +37,7 @@ namespace Beagle.Filters {
 						"continue", "default", "do", "double", "else",
 						"enum", "extern", "float", "for", "goto",
 						"if", "int", "long", "register", "return", "short",
-						"signed", "sizeof", "static", "strcut", "switch", "typedef",
+						"signed", "sizeof", "static", "struct", "switch", "typedef",
 						"union", "unsigned", "void", "volatile", "while" };
 			
 		public FilterC ()

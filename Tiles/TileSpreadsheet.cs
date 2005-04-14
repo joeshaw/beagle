@@ -65,8 +65,6 @@ namespace Beagle.Tile {
 			
 			protected override void PopulateTemplate ()
 			{
-				StringBuilder strPagesAndWords = new StringBuilder ();
-
 				base.PopulateTemplate ();
 				if (Hit ["dc:title"] != null && Hit ["dc:title"].Trim () != "")
 					Template ["Title"] = Hit ["dc:title"];

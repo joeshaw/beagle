@@ -1,3 +1,9 @@
+2005-04-14  Veerapuram Varadhan <vvaradhan@novell.com>
+
+	* Tiles/TileSpreadsheet.cs: Removed unwanted variable.
+	Patch from <wojciechpolak@gmail.com>
+	* Filters/FilterC.cs: A Typo correction.
+	
 2005-04-08  Veerapuram Varadhan <vvaradhan@novell.com>
 
 	* Oops.. missing Filters/Makefile.am changes
