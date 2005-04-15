@@ -1,3 +1,12 @@
+2005-04-15  Veerapuram Varadhan <vvaradhan@novell.com>
+
+	* beagled/Filter.cs: Fix SupportedExtensions to actually return supported_extensions list.
+	* beagled/FilterFactory.cs: CreateFilter will look for
+	registered-extensions before registered-mime-types to create
+	instances of corresponding filter-classes.
+	* beagled/FilteredIndexable.cs: Call CreateFilterFromPath() to
+	support creation of filter-objects using extensions as well.
+ 	
 2005-04-14  Veerapuram Varadhan <vvaradhan@novell.com>
 
 	* Tiles/TileSpreadsheet.cs: Removed unwanted variable.

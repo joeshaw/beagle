@@ -79,7 +79,7 @@ namespace Beagle.Daemon {
 		}
 
 		public IEnumerable SupportedExtensions {
-			get { return supported_mime_types; }
+			get { return supported_extensions; }
 		}
 
 		//////////////////////////

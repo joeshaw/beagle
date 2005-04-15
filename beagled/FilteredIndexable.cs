@@ -267,7 +267,12 @@ namespace Beagle.Daemon {
 
 			string path = ContentUri.LocalPath;
 
-			filter = FilterFactory.CreateFilterFromMimeType (MimeType);
+			// Commented by Varadhan.
+			// I am commenting this out and use CreateFilterFromPath
+			// as some extensions are not properly identified by
+			// gnome vfs.
+			// filter = FilterFactory.CreateFilterFromMimeType (MimeType);
+			filter = FilterFactory.CreateFilterFromPath (path);
 			
 			if (filter != null) {
 

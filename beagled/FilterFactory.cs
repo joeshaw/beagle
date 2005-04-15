@@ -105,22 +105,24 @@ namespace Beagle.Daemon {
 			string this_mime_type = null;
 			string this_extension = null;
 
-			// First, try looking it up by mime type.
-			if (mime_type != null && mime_type.Length > 0) {
-				mime_type = mime_type.ToLower ();
-				filter_type = (Type) mime_type_table [mime_type];
-				if (filter_type != null)
-					this_mime_type = mime_type;
-			}
-
-			// If that didn't work, look it up by the extension.
-			if (filter_type == null && extension != null && extension.Length > 0) {
+			// First, try looking it up by extension.
+			// For example, a ".js" file is identified as "text/plain" by gnome-vfs,
+			// which will improperly create an instance of Text filter.
+			if (extension != null && extension.Length > 0) {
 				extension = extension.ToLower ();
 				if (extension [0] != '.')
 					extension = "." + extension;
 				filter_type = (Type) extension_table [extension];
 				if (filter_type != null)
 					this_extension = extension;
+			}
+			
+			// If that didn't work, look it up by the mime-type.
+			if (filter_type == null && mime_type != null && mime_type.Length > 0) {
+				mime_type = mime_type.ToLower ();
+				filter_type = (Type) mime_type_table [mime_type];
+				if (filter_type != null)
+					this_mime_type = mime_type;
 			}
 
 			Filter filter = null;
