@@ -1,5 +1,10 @@
 2005-04-15  Veerapuram Varadhan <vvaradhan@novell.com>
 
+	Patch from Anthony Batchelor <toeknee@haircrazy.info>
+	* Filters/FilterJs.cs: A Javascript filter. 
+	
+2005-04-15  Veerapuram Varadhan <vvaradhan@novell.com>
+
 	* beagled/Filter.cs: Fix SupportedExtensions to actually return supported_extensions list.
 	* beagled/FilterFactory.cs: CreateFilter will look for
 	registered-extensions before registered-mime-types to create
