@@ -49,10 +49,15 @@ namespace Beagle.Util {
 		// FIXME: this is a mess
 		public Uri Uri {
 			get {
-				string name = Path.GetFileNameWithoutExtension (filename);
-				string uri  = String.Format ("note://{0}/{1}", type, name);
-				return new Uri (uri, true);
+				return BuildNoteUri (filename, type);
 			}
+		}
+
+		public static Uri BuildNoteUri (string _filename, string _type)
+		{
+			string name = Path.GetFileNameWithoutExtension (_filename);
+			string uri  = String.Format ("note://{0}/{1}", _type, name);
+			return new Uri (uri, true);
 		}
 	}
 

@@ -63,13 +63,11 @@ namespace Beagle.Daemon.TomboyQueryable {
 			}
 
 			if (Inotify.Enabled) {			
-				Inotify.EventType mask;
-				mask = Inotify.EventType.CreateFile
-					| Inotify.EventType.DeleteFile
-					| Inotify.EventType.CloseWrite;
-				
-				tomboy_wd = Inotify.Watch (tomboy_dir, mask);
+				Inotify.EventType mask = Inotify.EventType.DeleteFile | 
+					Inotify.EventType.MovedTo |
+					Inotify.EventType.MovedFrom;
 
+				tomboy_wd = Inotify.Watch (tomboy_dir, mask);
 				Inotify.Event += OnInotifyEvent;
 			} else {
 				FileSystemWatcher fsw = new FileSystemWatcher ();
@@ -116,7 +114,6 @@ namespace Beagle.Daemon.TomboyQueryable {
 		/////////////////////////////////////////////////
 
 		// Modified/Created/Deleted event using Inotify
-
 		private void OnInotifyEvent (int wd,
 					     string path,
 					     string subitem,
@@ -131,25 +128,23 @@ namespace Beagle.Daemon.TomboyQueryable {
 
 			if (Path.GetExtension (subitem) != ".note")
 				return;
-			
-			if (type == Inotify.EventType.CloseWrite || type == Inotify.EventType.CreateFile) {
+
+			if (type == Inotify.EventType.MovedTo) {
 				IndexNote (new FileInfo (Path.Combine (path, subitem)), Scheduler.Priority.Immediate);
 			}
 
-			if (type == Inotify.EventType.DeleteFile) {
-				RemoveNote (Path.Combine (path, subitem));
+			if (type == Inotify.EventType.MovedFrom || type == Inotify.EventType.DeleteFile) {
+				RemoveNote (subitem);
 			}
 		}
 
 		// Modified/Created event using FSW
-
 		private void OnChanged (object o, FileSystemEventArgs args)
 		{
 			IndexNote (new FileInfo (args.FullPath), Scheduler.Priority.Immediate);
 		}
 
 		// Deleted event using FSW
-
 		private void OnDeleted (object o, FileSystemEventArgs args)
 		{
 			RemoveNote (args.FullPath);
@@ -208,9 +203,9 @@ namespace Beagle.Daemon.TomboyQueryable {
 			}
 		}
 		
-		private void RemoveNote (string path)
+		private void RemoveNote (string file)
 		{
-			Uri uri = UriFu.PathToFileUri (path);
+			Uri uri = Note.BuildNoteUri (file, "tomboy");
 			Scheduler.Task task = NewRemoveTask (uri);
 			task.Priority = Scheduler.Priority.Immediate;
 			task.SubPriority = 0;
