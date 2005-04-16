@@ -216,5 +216,15 @@ namespace Beagle.Daemon.TomboyQueryable {
 			task.SubPriority = 0;
 			ThisScheduler.Add (task);
 		}
+
+		override protected bool HitIsValid (Uri uri)
+		{
+			string note = Path.Combine (tomboy_dir, uri.Segments [1] + ".note");
+
+			if (File.Exists (note))
+				return true;
+
+			return false;
+		}
 	}
 }
