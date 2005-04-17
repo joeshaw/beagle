@@ -99,7 +99,6 @@ namespace Beagle.Daemon.BlamQueryable {
 		/////////////////////////////////////////////////
 
 		// Modified event using Inotify
-
 		private void OnInotifyEvent (int wd,
 					     string path,
 					     string subitem,
@@ -109,14 +108,13 @@ namespace Beagle.Daemon.BlamQueryable {
 			if (wd != blam_wd)
 				return;
 
-			if (subitem == blam_file)
+			if (subitem != blam_file)
 				return;
 
 			Index ();
 		}
 
 		// Modified/Created event using FSW
-
 		private void OnChangedEvent (object o, FileSystemEventArgs args)
 		{
 			Index ();		
@@ -150,7 +148,7 @@ namespace Beagle.Daemon.BlamQueryable {
 
 			Scheduler.TaskGroup group = NewMarkingTaskGroup (file.FullName, file.LastWriteTime);
 			
-			foreach (Channel channel in collection.Channels)	{
+			foreach (Channel channel in collection.Channels) {
 
 				if (channel.Items == null)
 					continue;
@@ -162,15 +160,14 @@ namespace Beagle.Daemon.BlamQueryable {
 					indexable.Type = "FeedItem";
 					indexable.Timestamp = item.PubDate;
 					
-					indexable.AddProperty(Property.NewKeyword ("dc:title", item.Title));
-					indexable.AddProperty(Property.NewKeyword ("fixme:author", item.Author));
-					indexable.AddProperty(Property.NewDate ("fixme:published", item.PubDate));
-					indexable.AddProperty(Property.NewKeyword ("fixme:itemuri", item.Link));
-					indexable.AddProperty(Property.NewKeyword ("fixme:webloguri", channel.Url));
+					indexable.AddProperty (Property.NewKeyword ("dc:title", item.Title));
+					indexable.AddProperty (Property.NewKeyword ("fixme:author", item.Author));
+					indexable.AddProperty (Property.NewDate ("fixme:published", item.PubDate));
+					indexable.AddProperty (Property.NewKeyword ("fixme:itemuri", item.Link));
+					indexable.AddProperty (Property.NewKeyword ("fixme:webloguri", channel.Url));
 
-					int i;
 					string img = null;
-					i = item.Text.IndexOf ("<img src=\"");
+					int i = item.Text.IndexOf ("<img src=\"");
 					if (i != -1) {
 						i += "<img src=\"".Length;
 						int j = item.Text.IndexOf ("\"", i);
