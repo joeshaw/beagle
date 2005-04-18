@@ -749,7 +749,7 @@ namespace Beagle.Daemon.FileSystemQueryable {
 					if (known_children != null)
 						known_children.Remove (subinfo.Name);
 				}
-			} catch (UnauthorizedAccessException e) {
+			} catch (System.IO.DirectoryNotFoundException e) {
 				Logger.Log.Warn ("Skipping over {0}: {1}", priv.FullName, e.Message);
 			}
 
