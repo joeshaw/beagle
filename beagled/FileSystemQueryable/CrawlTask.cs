@@ -84,9 +84,8 @@ namespace Beagle.Daemon.FileSystemQueryable {
 			// Check the next directory for new subdirectories.  If we find any,
 			// add them to the model.
 			try {
-				DirectoryInfo next_dir_info = new DirectoryInfo (next_dir.FullName);
-				foreach (DirectoryInfo subdir in next_dir_info.GetDirectories ()) {
-					Logger.Log.Debug ("Looking at {0} in {1}", subdir.Name, next_dir_info.FullName);
+				foreach (DirectoryInfo subdir in DirectoryWalker.GetDirectoryInfos (next_dir.FullName)) {
+					Logger.Log.Debug ("Looking at {0} in {1}", subdir.Name, next_dir.FullName);
 					if (! next_dir.HasChildWithName (subdir.Name)
 					    && ! model.Ignore (subdir.FullName)) {
 						Logger.Log.Debug ("Found new subdir {0} under {1}",

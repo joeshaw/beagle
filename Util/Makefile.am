@@ -28,6 +28,7 @@ $(EXTSTR): $(EXTSTR_IN)
 CSFILES = 			        	\
 	$(srcdir)/camel.cs              	\
 	$(srcdir)/CommandLineFu.cs		\
+	$(srcdir)/DirectoryWalker.cs		\
 	$(srcdir)/FileAdvise.cs			\
 	$(srcdir)/ExifData.cs			\
 	$(srcdir)/ExceptionHandlingThread.cs	\
@@ -78,7 +79,7 @@ ASSEMBLIES =					\
 $(TARGET): $(CSFILES) $(GOOGLE_CS) $(EXTSTR)
 	$(CSC) --unsafe -o $@ $(CSFLAGS) $^ $(ASSEMBLIES)
 
-Inotify.exe: $(srcdir)/Inotify.cs $(srcdir)/Logger.cs
+Inotify.exe: $(srcdir)/Inotify.cs $(srcdir)/Logger.cs $(srcdir)/DirectoryWalker.cs
 	$(CSC) --unsafe -o $@ $^ -r:Mono.Posix
 
 all: $(TARGET) Inotify.exe

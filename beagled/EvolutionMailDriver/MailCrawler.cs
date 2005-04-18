@@ -68,16 +68,16 @@ namespace Beagle.Daemon.EvolutionMailDriver {
 			Queue pending = new Queue ();
 
 			foreach (string root in roots)
-				pending.Enqueue (new DirectoryInfo (root));
+				pending.Enqueue (root);
 
 			while (pending.Count > 0) {
 
-				DirectoryInfo dir = pending.Dequeue () as DirectoryInfo;
+				string dir = (string) pending.Dequeue ();
 
-				foreach (DirectoryInfo subdir in dir.GetDirectories ())
+				foreach (string subdir in DirectoryWalker.GetDirectories (dir))
 					pending.Enqueue (subdir);
 
-				foreach (FileInfo file in dir.GetFiles ("*summary")) {
+				foreach (FileInfo file in DirectoryWalker.GetFileInfos (dir)) {
 					if (file.Name == "summary") {
 						if (FileIsInteresting (file))
 							summaries.Add (file);

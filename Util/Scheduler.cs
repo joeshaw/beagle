@@ -561,7 +561,6 @@ namespace Beagle.Util {
 		const double default_idle_rate_factor    = 2.097; // work about 1/3rd of the time
 		const double default_maximum_delay       = 20;    // never wait for more than 20s
 
-		static DateTime first_time = DateTime.MinValue;
 		private double GetIdleTime ()
 		{
 			return SystemInformation.InputIdleTime;

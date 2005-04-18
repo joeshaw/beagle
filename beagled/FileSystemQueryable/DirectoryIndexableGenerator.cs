@@ -51,7 +51,7 @@ namespace Beagle.Daemon.FileSystemQueryable {
 				done = true;
 			else {
 				DirectoryInfo info = new DirectoryInfo (this.directory.FullName);
-				files = info.GetFiles ().GetEnumerator ();
+				files = DirectoryWalker.GetFileInfos (this.directory.FullName).GetEnumerator ();
 			}
 		}
 

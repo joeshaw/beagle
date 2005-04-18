@@ -597,9 +597,8 @@ namespace Beagle.Util {
 				Inotify.Watch (path, Inotify.EventType.All);
 
 				if (recursive) {
-					DirectoryInfo dir = new DirectoryInfo (path);
-					foreach (DirectoryInfo subdir in dir.GetDirectories ())
-						to_watch.Enqueue (subdir.FullName);
+					foreach (string subdir in DirectoryWalker.GetDirectories (path))
+						to_watch.Enqueue (subdir);
 				}
 			}
 

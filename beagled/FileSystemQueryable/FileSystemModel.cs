@@ -738,10 +738,10 @@ namespace Beagle.Daemon.FileSystemQueryable {
 
 			System.IO.DirectoryInfo info = new System.IO.DirectoryInfo (priv.FullName);
 
-			// It's the call to info.GetDirectories() that may
+			// It's the call to GetDirectoryInfos() that may
 			// trigger the exception caught below.
 			try {
-				foreach (System.IO.DirectoryInfo subinfo in info.GetDirectories ()) {
+				foreach (System.IO.DirectoryInfo subinfo in DirectoryWalker.GetDirectoryInfos (info)) {
 					if (! Ignore (subinfo.FullName)) {
 						if (! priv.HasChildWithName (subinfo.Name))
 							AddChild_Unlocked (priv, subinfo.Name);

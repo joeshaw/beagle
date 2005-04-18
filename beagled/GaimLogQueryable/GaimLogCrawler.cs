@@ -63,16 +63,16 @@ namespace Beagle.Daemon.GaimLogQueryable {
 
 			Queue pending = new Queue ();
 
-			pending.Enqueue (new DirectoryInfo (log_dir));
+			pending.Enqueue (log_dir);
 
 			while (pending.Count > 0) {
 
-				DirectoryInfo dir = pending.Dequeue () as DirectoryInfo;
+				string dir = (string) pending.Dequeue ();
 
-				foreach (DirectoryInfo subdir in dir.GetDirectories ())
+				foreach (string subdir in DirectoryWalker.GetDirectories (dir))
 					pending.Enqueue (subdir);
 
-				foreach (FileInfo file in dir.GetFiles ()) {
+				foreach (FileInfo file in DirectoryWalker.GetFileInfos (dir)) {
 					if (FileIsInteresting (file))
 						log_files.Add (file);
 				}

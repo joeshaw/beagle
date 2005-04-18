@@ -338,8 +338,8 @@ namespace Beagle.Daemon {
 			last_item_count = reader.NumDocs ();
 			reader.Close ();
 			watch.Stop ();
-			//Log.Debug ("Step #1: {0} {1} {2}", watch, pending_uris.Count,
-			//	   watch.ElapsedTime / pending_uris.Count);
+			Log.Debug ("Lucene Delete: {0} {1} {2}", watch, pending_uris.Count,
+				   pending_uris.Count / watch.ElapsedTime);
 
 
 			// Step #2: Write out the pending adds
@@ -369,7 +369,8 @@ namespace Beagle.Daemon {
 			if (writer != null) 
 				writer.Close ();
 			watch.Stop ();
-			//Log.Debug ("Step #2: {0}", watch);
+			Log.Debug ("Lucene Add: {0} {1} {2}", watch, pending_indexables.Count,
+				   pending_indexables.Count / watch.ElapsedTime);
 			
 
 			// Step #3: Fire off an event telling what we just did.
