@@ -113,7 +113,7 @@ namespace Beagle.Daemon {
 			                      UriToString (uri));
 			reader = command.ExecuteReader ();
 			if (reader.Read ())
-				path = reader [0].ToString ();
+				path = reader.GetString (0);
 			reader.Close ();
 			command.Dispose ();
 

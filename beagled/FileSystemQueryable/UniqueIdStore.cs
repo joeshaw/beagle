@@ -116,10 +116,10 @@ namespace Beagle.Daemon.FileSystemQueryable {
 				Record record = null;
 				bool please_cache = false;
 				if (reader.Read ()) {
-					Guid parent_id = GuidFu.FromShortString (reader [0].ToString ());
-					string name = reader [1].ToString ();
+					Guid parent_id = GuidFu.FromShortString (reader.GetString (0));
+					string name = reader.GetString (1);
 					record = new Record (id, parent_id, name);
-					please_cache = (reader [2].ToString () == "1");
+					please_cache = (reader.GetString (2) == "1");
 				}
 				reader.Close ();
 				command.Dispose ();
@@ -150,7 +150,7 @@ namespace Beagle.Daemon.FileSystemQueryable {
 
 				Record record = null;
 				if (reader.Read ()) {
-					Guid id = GuidFu.FromShortString (reader [0].ToString ());
+					Guid id = GuidFu.FromShortString (reader.GetString (0));
 					record = new Record (id, parent_id, name);
 				}
 				reader.Close ();
@@ -174,8 +174,8 @@ namespace Beagle.Daemon.FileSystemQueryable {
 				reader = command.ExecuteReader ();
 
 				while (reader.Read ()) {
-					Guid id = GuidFu.FromShortString (reader [0].ToString ());
-					string name = reader [1].ToString ();
+					Guid id = GuidFu.FromShortString (reader.GetString (0));
+					string name = reader.GetString (1);
 					record_array.Add (new Record (id, parent_id, name));
 				}
 				reader.Close ();
@@ -205,9 +205,9 @@ namespace Beagle.Daemon.FileSystemQueryable {
 				reader = command.ExecuteReader ();
 
 				while (reader.Read ()) {
-					Guid id = GuidFu.FromShortString (reader [0].ToString ());
-					Guid parent_id = GuidFu.FromShortString (reader [1].ToString ());
-					string name = reader [2].ToString ();
+					Guid id = GuidFu.FromShortString (reader.GetString (0));
+					Guid parent_id = GuidFu.FromShortString (reader.GetString (1));
+					string name = reader.GetString (2);
 
 					cache [id] = new Record (id, parent_id, name);
 					++count;

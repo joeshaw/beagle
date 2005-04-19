@@ -69,8 +69,8 @@ namespace Beagle.Daemon {
 				}
 				if (reader != null && ! create_new_db) {
 					if (reader.Read ()) {
-						stored_version = int.Parse (reader [0].ToString ());
-						stored_fingerprint = reader [1].ToString ();
+						stored_version = reader.GetInt32 (0);
+						stored_fingerprint = reader.GetString (1);
 					}
 					reader.Close ();
 				}
@@ -118,8 +118,8 @@ namespace Beagle.Daemon {
 				reader = command.ExecuteReader ();
 
 				while (reader.Read ()) {
-					string dir = reader [0].ToString ();
-					string file = reader [1].ToString ();
+					string dir = reader.GetString (0);
+					string file = reader.GetString (1);
 					string path = Path.Combine (dir, file);
 					SetPathFlag (path, true);
 					++count;
@@ -176,12 +176,12 @@ namespace Beagle.Daemon {
 		{
 			FileAttributes attr = new FileAttributes ();
 
-			attr.UniqueId = GuidFu.FromShortString (reader [0].ToString ());
-			attr.Path = System.IO.Path.Combine (reader [1].ToString (), reader [2].ToString ());
-			attr.LastWriteTime = StringFu.StringToDateTime (reader [3].ToString ());
-			attr.LastIndexedTime = StringFu.StringToDateTime (reader [4].ToString ());
-			attr.FilterName = reader [5].ToString ();
-			attr.FilterVersion = int.Parse (reader [6].ToString ());
+			attr.UniqueId = GuidFu.FromShortString (reader.GetString (0));
+			attr.Path = System.IO.Path.Combine (reader.GetString (1), reader.GetString (2));
+			attr.LastWriteTime = StringFu.StringToDateTime (reader.GetString (3));
+			attr.LastIndexedTime = StringFu.StringToDateTime (reader.GetString (4));
+			attr.FilterName = reader.GetString (5);
+			attr.FilterVersion = int.Parse (reader.GetString (6));
 
 			return attr;
 		}
