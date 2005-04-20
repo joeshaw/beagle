@@ -310,7 +310,19 @@ AM_CONDITIONAL(ENABLE_GST_SHARP, test "x$enable_gst_sharp" = "xyes")
 dnl ----------------------------------------------
 
 dnl Needed to index jpeg metadata
-PKG_CHECK_MODULES(LIBEXIF, libexif >= 0.5)
+LIBEXIF_API_CHANGE=0.6.0
+LIBEXIF_REQUIRED_MIN=0.5.7
+LIBEXIF_REQUIRED_MAX=0.7.0
+
+PKG_CHECK_MODULES(LIBEXIF, libexif >= $LIBEXIF_REQUIRED_MIN libexif < $LIBEXIF_REQUIRED_MAX)
+PKG_CHECK_MODULES(LIBEXIF_API_CHECK, libexif >= $LIBEXIF_API_CHANGE, have_old_libexif=no, have_old_libexif=yes)
+
+if test "x$have_old_libexif" = "xyes"; then
+	EXIF_SOVERSION=9
+else
+	EXIF_SOVERSION=10
+fi
+AC_SUBST(EXIF_SOVERSION)
 
 PKG_CHECK_MODULES(BEAGLED, gmime-sharp >= 2.1.13 gtk-sharp dbus-sharp >= 0.23.4 gconf-sharp)
 BEAGLED_LIBS="$BEAGLED_LIBS $EVO_SHARP_LIBS $GSF_SHARP_LIBS"
@@ -469,6 +481,7 @@ AC_SUBST(GNOME_PREFIX)
 AC_OUTPUT([
 Makefile
 Util/Makefile
+Util/Util.dll.config
 images/Makefile
 templates/Makefile
 glue/Makefile

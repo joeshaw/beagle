@@ -1,3 +1,9 @@
+2005-04-20  Daniel Drake  <dsd@gentoo.org>
+
+	* configure.in, Util/Makefile.am, Util/Util.dll.config.in: Import
+	dll-mapping from f-spot, fixes lack of image indexing for some users.
+	Reported by Northsea on IRC.
+
 2005-04-17  Francisco Javier Fernandez  <cyphra@vir.tecknolabs.com>
 
 	* configure.in: Added Spanish translation.

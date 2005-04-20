@@ -6,6 +6,7 @@ CSC = mcs -g -nowarn:0067,0618
 
 
 TARGET = Util.dll
+TARGET_CONFIG = $(TARGET).config
 
 CSFLAGS = -target:library
 
@@ -86,7 +87,7 @@ all: $(TARGET) Inotify.exe
 
 install-data-local: $(TARGET)
 	$(mkinstalldirs) $(DESTDIR)$(pkglibdir)
-	$(INSTALL_DATA) $(TARGET) $(DESTDIR)$(pkglibdir)/$(TARGET)
+	$(INSTALL_DATA) $(TARGET) $(TARGET_CONFIG) $(DESTDIR)$(pkglibdir)
 
 uninstall-local:
 	rm -f $(DESTDIR)$(pkglibdir)/$(TARGET)
@@ -103,6 +104,7 @@ EXTRA_DIST =			\
 	$(EXTSTR_IN)		\
 	$(CSFILES)		\
 	$(COND_CS_FILES)	\
+	Util.dll.config.in	\
 	inotify-test
 
 CLEANFILES =			\
