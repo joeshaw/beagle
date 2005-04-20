@@ -51,74 +51,6 @@ namespace Beagle.Daemon {
 		private static NetworkService network = null;
 #endif
 
-		private static void SetupLog (bool echo)
-		{
-
-			// FIXME: We should probably clean up old logs
-
-			string log_name = String.Format ("{0:yyyy-MM-dd-HH-mm-ss}-Beagle", DateTime.Now);
-			string log_path = Path.Combine (PathFinder.LogDir, log_name);
-			string log_link = Path.Combine (PathFinder.LogDir, "Beagle");
-
-			// Open the log file and set it as the default
-			// destination for log messages.
-			// Also redirect stdout and stderr to the same file.
-			FileStream log_stream = new FileStream (log_path,
-								FileMode.Append,
-								FileAccess.Write,
-								FileShare.Write);
-			TextWriter log_writer = new StreamWriter (log_stream);
-
-			File.Delete (log_link);
-			Mono.Posix.Syscall.symlink (log_path, log_link);
-
-			Logger.DefaultWriter = log_writer;
-			Logger.DefaultEcho = echo;
-
-			if (! echo) {
-				Console.SetOut (log_writer);
-				Console.SetError (log_writer);
-
-				// Redirect stdin to /dev/null
-				FileStream dev_null_stream = new FileStream ("/dev/null",
-									     FileMode.Open,
-									     FileAccess.Read,
-									     FileShare.ReadWrite);
-				TextReader dev_null_reader = new StreamReader (dev_null_stream);
-				Console.SetIn (dev_null_reader);
-			}
-
-			// Parse the contents of the BEAGLE_DEBUG environment variable
-			// and adjust the default log levels accordingly.
-			string debug = System.Environment.GetEnvironmentVariable ("BEAGLE_DEBUG");
-			if (debug != null) {
-				string[] debugArgs = debug.Split (',');
-				foreach (string arg in debugArgs) {
-					if (arg.Trim () == "all") {
-						Logger.DefaultLevel = LogLevel.Debug;
-					}
-				}
-				
-				foreach (string arg_raw in debugArgs) {
-					string arg = arg_raw.Trim ();
-
-					if (arg.Length == 0 || arg == "all")
-						continue;
-
-					if (arg[0] == '-') {
-						string name = arg.Substring (1);
-						Logger log = Logger.Get (name);
-						log.Level = LogLevel.Info;
-					} else {
-						Logger log = Logger.Get (arg);
-						log.Level = LogLevel.Debug;
-					}
-				}
-			}
-
-
-		}
-
 		private static void OnNameOwnerChanged (string name,
 							string oldOwner,
 							string newOwner)
@@ -377,6 +309,8 @@ namespace Beagle.Daemon {
 				return 1;
 			}
 
+			SetupSignalHandlers ();
+
 			// Set up our helper process and the associated monitoring
 			IndexHelperFu.Start ();
 			
@@ -475,6 +409,7 @@ namespace Beagle.Daemon {
 		
 			// Start our event loop.
 			Logger.Log.Debug ("Starting main loop");
+
 			Application.Run ();
 
 #if ENABLE_WEBSERVICES
@@ -489,6 +424,66 @@ namespace Beagle.Daemon {
 			// will release the com.novell.beagle service.
 			return 0;
 		}
+
+		/////////////////////////////////////////////////////////////////////////////
+
+		// The integer values of the Mono.Posix.Signal enumeration don't actually
+		// match the Linux signal numbers of Linux.  Oops!
+		// This is fixed in Mono.Unix, but for the moment we want to maintain
+		// compatibility with mono 1.0.x.
+		const int ACTUAL_LINUX_SIGINT  = 2;
+		const int ACTUAL_LINUX_SIGQUIT = 3;
+		const int ACTUAL_LINUX_SIGTERM = 15;
+
+		static void SetupSignalHandlers ()
+		{
+			// Set up our signal handler
+			Mono.Posix.Syscall.sighandler_t sig_handler;
+			sig_handler = new Mono.Posix.Syscall.sighandler_t (OurSignalHandler);
+                        Mono.Posix.Syscall.signal (ACTUAL_LINUX_SIGINT, sig_handler);
+                        Mono.Posix.Syscall.signal (ACTUAL_LINUX_SIGQUIT, sig_handler);
+                        Mono.Posix.Syscall.signal (ACTUAL_LINUX_SIGTERM, sig_handler);
+		}
+
+		// Our handler triggers an orderly shutdown when it receives a signal.
+		// However, this can be annoying if the process gets wedged during
+		// shutdown.  To deal with that case, we make a note of the time when
+		// the first signal comes in, and we allow signals to unconditionally
+		// kill the process after 5 seconds have passed.
+		static DateTime signal_time = DateTime.MinValue;
+		static void OurSignalHandler (int signal)
+		{
+			Logger.Log.Debug ("Handling signal {0}", signal);
+
+			bool first_signal = false;
+			if (signal_time == DateTime.MinValue) {
+				signal_time = DateTime.Now;
+				first_signal = true;
+			}
+
+			if (Shutdown.ShutdownRequested) {
+				
+				if (first_signal) {
+					Logger.Log.Debug ("Shutdown already in progress.");
+				} else {
+					double t = (DateTime.Now - signal_time).TotalSeconds;
+					const double min_t = 5;
+
+					if (t < min_t) {
+						Logger.Log.Debug ("Signals can force an immediate shutdown in {0:0.00}s", min_t-t);
+					} else {
+						Logger.Log.Debug ("Forcing immediate shutdown.");
+						Environment.Exit (0);
+					}
+				}
+
+			} else {
+				Logger.Log.Debug ("Initiating shutdown in response to signal.");
+				Shutdown.BeginShutdown ();
+			}
+		}
+
+		/////////////////////////////////////////////////////////////////////////////
 
 		private static void OnShutdown ()
 		{
@@ -506,12 +501,6 @@ namespace Beagle.Daemon {
 
 			// Stop our indexing helper process
 			IndexHelperFu.Stop ();
-
-#if false
-			Logger.Log.Debug ("Unregistering Factory objects");
-			factory.UnregisterAll ();
-			Logger.Log.Debug ("Done unregistering Factory objects");
-#endif
 
 			Logger.Log.Debug ("Unregistering Daemon objects");
 			DBusisms.UnregisterAll ();
