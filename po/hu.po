@@ -9,8 +9,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: beagle.HEAD\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2005-04-13 10:39+0000\n"
-"PO-Revision-Date: 2005-04-19 10:19+0200\n"
+"POT-Creation-Date: 2005-04-20 10:38+0000\n"
+"PO-Revision-Date: 2005-04-20 18:43+0200\n"
 "Last-Translator: Gabor Kelemen <kelemeng@gnome.hu>\n"
 "Language-Team: Hungarian <gnome@gnome.hu>\n"
 "MIME-Version: 1.0\n"
@@ -96,7 +96,9 @@ msgstr "Eredmények megjelenítése ettől: <b>{0} eddig: {1}, összesen {2}</b>
 msgid ""
 "The query for <i>{0}</i> failed.<br>The likely cause is that the beagle "
 "daemon isn't running."
-msgstr "<i>{0}</i> lekérdezése sikertelen.<br>A hiba valószínűsíthető oka, hogy a beagle démon nem fut."
+msgstr ""
+"<i>{0}</i> lekérdezése sikertelen.<br>A hiba valószínűsíthető oka, hogy a "
+"beagle démon nem fut."
 
 #. To translators: {0} represents the current query keywords
 #: ../Best/BestWindow.cs:557
@@ -105,7 +107,10 @@ msgid ""
 "The query for <i>{0}</i> failed.<br>The session bus isn't running.  See "
 "http://beaglewiki.org/index.php/Installing%20Beagle for information on "
 "setting up a session bus."
-msgstr "<i>{0}</i> lekérdezése sikertelen. A munkamenet busz nem fut. Információk a munkamenet busz beállításáról: http://beaglewiki.org/index.php/Installing%20Beagle"
+msgstr ""
+"<i>{0}</i> lekérdezése sikertelen. A munkamenet busz nem fut. Információk a "
+"munkamenet busz beállításáról: http://beaglewiki.org/index.php/Installing%"
+"20Beagle"
 
 #. To translators: {0} represents the current query keywords, {1} contains the errormessage
 #: ../Best/BestWindow.cs:561
@@ -203,7 +208,9 @@ msgstr "Üres"
 #: ../Tiles/TileFolder.cs:53
 #, csharp-format
 msgid "Contains {0} Item"
-msgstr "{0} elemet tartalmaz"
+msgid_plural "Contains {0} Items"
+msgstr[0] "{0} elemet tartalmaz"
+msgstr[1] "{0} elemet tartalmaz"
 
 #: ../Tiles/TileImLog.cs:76
 msgid "Send Mail"
@@ -438,12 +445,16 @@ msgstr "yyyy MMMM d, h.mm tt"
 #: ../Util/StringFu.cs:120
 #, csharp-format
 msgid "{0} hour"
-msgstr "{0} óra"
+msgid_plural "{0} hours"
+msgstr[0] "{0} óra"
+msgstr[1] "{0} óra"
 
 #: ../Util/StringFu.cs:127
 #, csharp-format
 msgid "{0} minute"
-msgstr "{0} perc"
+msgid_plural "{0} minutes"
+msgstr[0] "{0} perc"
+msgstr[1] "{0} perc"
 
 #. Translators: {0} is a file size in bytes
 #: ../Util/StringFu.cs:143
