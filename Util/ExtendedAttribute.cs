@@ -36,6 +36,9 @@ namespace Beagle.Util {
 
 	public class ExtendedAttribute {
 
+		// FIXME: Once Mono 1.1/1.2 is required, we should start using the
+		// xattr bindings which are now present in the Mono.Unix.Syscall class.
+			
 		[DllImport ("libc", SetLastError=true)]
 		static extern int lsetxattr (string path, string name, byte[] value, uint size, int flags);
 
