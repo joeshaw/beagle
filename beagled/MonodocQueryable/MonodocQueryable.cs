@@ -48,7 +48,7 @@ namespace Beagle.Daemon.MonodocQueryable {
 		string monodoc_dir;
 		int monodoc_wd;
 
-		public MonodocQueryable () : base ("MondocIndex")
+		public MonodocQueryable () : base ("MonodocIndex")
 		{
 			monodoc_dir = "/usr/lib/monodoc/sources"; // FIXME Make use of autoconf
 		}
@@ -197,12 +197,12 @@ namespace Beagle.Daemon.MonodocQueryable {
 			indexable.Type = "Monodoc";
 
 			indexable.AddProperty (Property.NewKeyword ("fixme:type", "type"));
-			indexable.AddProperty (Property.NewKeyword ("fixme:name", node.Attributes["FullName"].Value));
-			
-			string splitname = String.Join (" ", 
-				StringFu.FuzzySplit (node.Attributes["FullName"].Value.ToString ().Substring (2)));
-			indexable.AddProperty (Property.NewKeyword ("fixme:splitname",splitname));
+			indexable.AddProperty (Property.NewKeyword ("fixme:name", "T:" + node.Attributes["FullName"].Value));
 
+			string splitname = String.Join (" ", 
+							StringFu.FuzzySplit (node.Attributes["FullName"].Value.ToString ()));
+			indexable.AddProperty (Property.NewKeyword ("fixme:splitname",splitname));
+			
 			// Should we add other stuff here? Implemented interfaces etc?
 
 			StringReader reader = new StringReader (node.SelectSingleNode ("Docs").InnerXml); 
@@ -245,18 +245,18 @@ namespace Beagle.Daemon.MonodocQueryable {
 				Property.NewKeyword ("fixme:type", node.SelectSingleNode ("MemberType").InnerText.ToLower ()));
 			indexable.AddProperty (
 				Property.New ("fixme:name",memberFullName));
-			
+
 			int indexHack = memberFullName.ToString ().IndexOf ("(");
 			string splitname;
-
+			
 			if (indexHack == -1)
 				splitname = String.Join (" ", StringFu.FuzzySplit (memberFullName.ToString ().Substring (2)));
 			else 
 				splitname = String.Join (" ", StringFu.FuzzySplit (memberFullName.ToString ().Substring(2,indexHack-2)));
-				
+			
 			indexable.AddProperty (
 				Property.NewKeyword ("fixme:splitname",splitname));
-
+			
 			StringReader reader = new StringReader (node.SelectSingleNode ("Docs").InnerXml); 
                         indexable.SetTextReader (reader);
 
@@ -265,20 +265,19 @@ namespace Beagle.Daemon.MonodocQueryable {
 
 		char MemberTypeToChar (string memberType)
 		{
-			switch (memberType) 
-			{
-				case "Constructor":
-					return 'C';
-				case "Event":
-					return 'E';
-				case "Property":
-					return 'P';
-				case "Field":
-					return 'F';
-				case "Method":
-					return 'M';
-				default:
-					return 'U';
+			switch (memberType) {
+			case "Constructor":
+				return 'C';
+			case "Event":
+				return 'E';
+			case "Property":
+				return 'P';
+			case "Field":
+				return 'F';
+			case "Method":
+				return 'M';
+			default:
+				return 'U';
 			}
 		}
 	}
