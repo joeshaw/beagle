@@ -1,3 +1,7 @@
+2005-04-21  Josep Puigdemont  <josep.puigdemont@gmail.com>
+
+	* configure.in: Added "ca" to ALL_LINGUAS.
+
 2005-04-20  Daniel Drake  <dsd@gentoo.org>
 
 	* configure.in, Util/Makefile.am, Util/Util.dll.config.in: Import
