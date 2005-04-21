@@ -110,6 +110,35 @@ namespace Beagle.Util {
 			public EventType Type;
 			public string    Filename;
 			public uint      Cookie;
+
+			public bool        Analyzed;
+			public bool        Dispatched;
+			public DateTime    HoldUntil;
+			public QueuedEvent PairedMove;
+
+			// Measured in milliseconds; 57ms is totally random
+			public const double DefaultHoldTime = 57;
+
+			public QueuedEvent ()
+			{
+				// Set a default HoldUntil time
+				HoldUntil = DateTime.Now.AddMilliseconds (DefaultHoldTime);
+			}
+
+			public void AddMilliseconds (double x)
+			{
+				HoldUntil = HoldUntil.AddMilliseconds (x);
+			}
+
+			public void PairWith (QueuedEvent other)
+			{
+				this.PairedMove = other;
+				other.PairedMove = this;
+				
+				if (this.HoldUntil < other.HoldUntil)
+					this.HoldUntil = other.HoldUntil;
+				other.HoldUntil = this.HoldUntil;
+			}
 		}
 
 		/////////////////////////////////////////////////////////////////////////////////////
@@ -386,46 +415,50 @@ namespace Beagle.Util {
 				if (nr == 0)
 					continue;
 
+				ArrayList new_events = new ArrayList ();
+
+				bool saw_overflow = false;
+				while (nr > 0) {
+
+					// Read the low-level event struct from the buffer.
+					inotify_event raw_event;
+					raw_event = (inotify_event) Marshal.PtrToStructure (buffer, typeof (inotify_event));
+					buffer = (IntPtr) ((long) buffer + event_size);
+
+					if (raw_event.mask == EventType.QueueOverflow)
+						saw_overflow = true;
+
+					// Now we convert our low-level event struct into a nicer object.
+					QueuedEvent qe = new QueuedEvent ();
+					qe.Wd = raw_event.wd;
+					qe.Type = raw_event.mask;
+					qe.Cookie = raw_event.cookie;
+
+					// Extract the filename payload (if any) from the buffer.
+					byte [] filename_bytes = new byte[raw_event.len];
+					Marshal.Copy (buffer, filename_bytes, 0, (int) raw_event.len);
+					buffer = (IntPtr) ((long) buffer + raw_event.len);
+					int n_chars = 0;
+					while (n_chars < filename_bytes.Length && filename_bytes [n_chars] != 0)
+						++n_chars;
+					qe.Filename = "";
+					if (n_chars > 0)
+						qe.Filename = filename_encoding.GetString (filename_bytes, 0, n_chars);
+
+					event_queue.Add (qe);
+					nr -= event_size + (int) raw_event.len;
+				}
+
+				if (saw_overflow)
+					Logger.Log.Warn ("Inotify queue overflow!");
+
 				lock (event_queue) {
-					bool saw_overflow = false;
-					while (nr > 0) {
-
-						// Read the low-level event struct from the buffer.
-						inotify_event raw_event;
-						raw_event = (inotify_event) Marshal.PtrToStructure (buffer, typeof (inotify_event));
-						buffer = (IntPtr) ((long) buffer + event_size);
-
-						if (raw_event.mask == EventType.QueueOverflow)
-							saw_overflow = true;
-
-						// Now we convert our low-level event struct into a nicer object.
-						QueuedEvent qe = new QueuedEvent ();
-						qe.Wd = raw_event.wd;
-						qe.Type = raw_event.mask;
-						qe.Cookie = raw_event.cookie;
-
-						// Extract the filename payload (if any) from the buffer.
-						byte [] filename_bytes = new byte[raw_event.len];
-						Marshal.Copy (buffer, filename_bytes, 0, (int) raw_event.len);
-						buffer = (IntPtr) ((long) buffer + raw_event.len);
-						int n_chars = 0;
-						while (n_chars < filename_bytes.Length && filename_bytes [n_chars] != 0)
-							++n_chars;
-						qe.Filename = "";
-						if (n_chars > 0)
-							qe.Filename = filename_encoding.GetString (filename_bytes, 0, n_chars);
-
-						event_queue.Add (qe);
-						nr -= event_size + (int) raw_event.len;
-					}
-
-					if (saw_overflow)
-						Logger.Log.Warn ("Inotify queue overflow!");
-
+					event_queue.AddRange (new_events);
 					Monitor.Pulse (event_queue);
 				}
 			}
 		}
+
 
 		static public bool Verbose = false;
 
@@ -493,90 +526,160 @@ namespace Beagle.Util {
 			}
 		}
 
+		////////////////////////////////////////////////////////////////////////////////////////////////////
+
+		// Dispatch-time operations on the event queue
+	       
+		static Hashtable pending_move_cookies = new Hashtable ();
+
+		// Clean up the queue, removing dispatched objects.
+		// We assume that the called holds the event_queue lock.
+		static void CleanQueue_Unlocked ()
+		{
+			int first_undispatched = 0;
+			while (first_undispatched < event_queue.Count) {
+				QueuedEvent qe = event_queue [first_undispatched] as QueuedEvent;
+				if (! qe.Dispatched)
+					break;
+				
+				if (qe.Cookie != 0)
+					pending_move_cookies.Remove (qe.Cookie);
+				
+				++first_undispatched;
+			}
+
+			if (first_undispatched > 0)
+				event_queue.RemoveRange (0, first_undispatched);
+
+		}
+
+		// Apply high-level processing to the queue.  Pair moves,
+		// coalesce events, etc.
+		// We assume that the caller holds the event_queue lock.
+		static void AnalyzeQueue_Unlocked ()
+		{
+			int first_unanalyzed = event_queue.Count;
+			while (first_unanalyzed > 0) {
+				--first_unanalyzed;
+				QueuedEvent qe = event_queue [first_unanalyzed] as QueuedEvent;
+				if (qe.Analyzed) {
+					++first_unanalyzed;
+					break;
+				}
+			}
+			if (first_unanalyzed == event_queue.Count)
+				return;
+
+			// Walk across the unanalyzed events...
+			for (int i = first_unanalyzed; i < event_queue.Count; ++i) {
+				QueuedEvent qe = event_queue [i] as QueuedEvent;
+
+				// Pair off the MovedFrom and MovedTo events.
+				if (qe.Cookie != 0) {
+					if (qe.Type == EventType.MovedFrom) {
+						pending_move_cookies [qe.Cookie] = qe;
+						// This increases the MovedFrom's HoldUntil time,
+						// giving us more time for the matching MovedTo to
+						// show up.
+						// (512 ms is totally arbitrary)
+						qe.AddMilliseconds (512); 
+					} else if (qe.Type == EventType.MovedTo) {
+						QueuedEvent paired_move = pending_move_cookies [qe.Cookie] as QueuedEvent;
+						if (paired_move != null) {
+							paired_move.Dispatched = true;
+							qe.PairedMove = paired_move;
+						}
+					}
+				}
+
+				qe.Analyzed = true;
+			}
+		}
+
 		static void DispatchWorker ()
 		{
 			while (running) {
-				QueuedEvent qe;
+				QueuedEvent next_event = null;
 
+				// Until we find something we want to dispatch, we will stay
+				// inside the following block of code.
 				lock (event_queue) {
-					while (event_queue.Count == 0 && running) {
-						// Find all unmatched MovedFrom events and process them.  We expire in
-						// five seconds.  This is quite conservative, but what is the rush?
-						// Would be nice to not do this here and not have to wake up every 2 secs
-						for (int i = 0; i < cookie_list.Count; i++) {
-							PendingMove pending = cookie_list[i] as PendingMove;
-							if (pending.Time.AddSeconds (2) < DateTime.Now) {
-								SendEvent (pending.Watch, pending.SrcName, null,
-									   EventType.MovedFrom);
-								cookie_hash.Remove (pending);
-								cookie_list.Remove (pending);
+
+					while (running) {
+						
+						CleanQueue_Unlocked ();
+
+						AnalyzeQueue_Unlocked ();
+
+						// Now look for an event to dispatch.
+						DateTime min_hold_until = DateTime.MaxValue;
+						DateTime now = DateTime.Now;
+						foreach (QueuedEvent qe in event_queue) {
+							if (qe.Dispatched)
+								continue;
+							if (qe.HoldUntil <= now) {
+								next_event = qe;
+								break;
 							}
+							if (qe.HoldUntil < min_hold_until)
+								min_hold_until = qe.HoldUntil;
 						}
 
-						Monitor.Wait (event_queue, 2000);			
+						// If we found an event, break out of this block
+						// and dispatch it.
+						if (next_event != null)
+							break;
+						
+						// If we didn't find an event to dispatch, we can sleep
+						// (1) until the next hold-until time
+						// (2) until the lock pulses (which means something changed, so
+						//     we need to check that we are still running, new events
+						//     are on the queue, etc.)
+						// and then we go back up and try to find something to dispatch
+						// all over again.
+						if (min_hold_until == DateTime.MaxValue)
+							Monitor.Wait (event_queue);
+						else
+							Monitor.Wait (event_queue, min_hold_until - now);
 					}
-					if (!running)
-						break;
-
-					qe = (QueuedEvent) event_queue [0];
-					event_queue.RemoveAt (0);
 				}
 
+				// Now we have an event, so we release the event_queue lock and do
+				// the actual dispatch.
+				
+				// Before we get any further, mark it
+				next_event.Dispatched = true;
+
 				Watched watched;
-				watched = Lookup (qe.Wd, qe.Type);
+				watched = Lookup (next_event.Wd, next_event.Type);
 				if (watched == null)
 					continue;
 
-				// If this is a directory, we need to handle MovedTo and MovedFrom events
-				// (regardless of the actual watched.Mask) and fix up watched.Path and the
-				// path of all subdirectories.
-				//
-				// We also have to handle unmatched events.  As we presume MovedTo always
-				// follows MovedFrom, we only need to handle unmatched MoveFrom's
-				// explicitly (unmatched MovedFrom's have srcpath=null in Inotify.Event).
-				// We handle the expiration process above, in the idle loop.
-				//
-				// Unfortunately, we have to handle the Directory.Exists() test a bit
-				// roundabout, because watched.Path during MovedFrom no longer exists.
-				if (qe.Type == EventType.MovedFrom) {
-					PendingMove pending = new PendingMove (watched, qe.Filename, DateTime.Now,
-									       qe.Cookie);
-					cookie_hash [pending.Cookie] = pending;
-					cookie_list.Add (pending);
-					continue; // Wait for a possible matching MovedTo
-				}
 				string srcpath = null;
-				if (qe.Type == EventType.MovedTo) {
-					PendingMove pending = cookie_hash [qe.Cookie] as PendingMove;
-					if (pending != null) {
-						string dstpath = Path.Combine (watched.Path, qe.Filename);
-						srcpath = Path.Combine (pending.Watch.Path, pending.SrcName);
+
+				// If this event is a paired MoveTo, there is extra work to do.
+				if (next_event.Type == EventType.MovedTo && next_event.PairedMove != null) {
+
+					Watched paired_watched;
+					paired_watched = Lookup (next_event.PairedMove.Wd, next_event.PairedMove.Type);
+					
+					if (paired_watched != null) {
+						// Set the source path accordingly.
+						srcpath = Path.Combine (paired_watched.Path, next_event.PairedMove.Filename);
+						
+						// Handle the internal rename of the directory.
+						string dstpath = Path.Combine (watched.Path, next_event.Filename);
 						if (Directory.Exists (dstpath))
 							HandleMove (srcpath, dstpath);
-						cookie_hash.Remove (pending);
-						cookie_list.Remove (pending);
-					}
-
-					// This gets prettier and prettier.  Like my Ex-Wife.  Since we delay
-					// unmatched MovedFrom events until they expire, a MovedFrom+MovedTo
-					// combination on the same file out and back into a watched directory
-					// can race and arrive as MovedTo+MovedFrom.  That is bad.
-					for (int i = 0; i < cookie_list.Count; i++) {
-						PendingMove race = cookie_list[i] as PendingMove;
-						if (race.Watch.Wd == watched.Wd && race.SrcName == qe.Filename) {
-							// Expire this MovedFrom and send it out right immediately
-							SendEvent (race.Watch, race.SrcName, null, EventType.MovedFrom);
-							cookie_hash.Remove (race);
-							cookie_list.Remove (race);
-						}
 					}
 				}
 
-				SendEvent (watched, qe.Filename, srcpath, qe.Type);
+
+				SendEvent (watched, next_event.Filename, srcpath, next_event.Type);
 
 				// If a directory we are watching gets ignored, we need
 				// to remove it from the watchedByFoo hashes.
-				if (qe.Type == EventType.Ignored) {
+				if (next_event.Type == EventType.Ignored) {
 					lock (watched_by_wd)
 						Forget (watched);
 				}
