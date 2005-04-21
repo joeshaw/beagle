@@ -88,11 +88,6 @@ namespace Beagle.Util {
 			public uint      len;
 		}
 
-		private struct queued_event {
-			public inotify_event iev;
-			public byte[]        filename;
-		}
-
 		[DllImport ("libinotifyglue")]
 		static extern void inotify_glue_init ();
 
@@ -108,11 +103,19 @@ namespace Beagle.Util {
 								out int nr,
 								out IntPtr buffer);
 
+		/////////////////////////////////////////////////////////////////////////////////////
+
+		private class QueuedEvent {
+			public int       Wd;
+			public EventType Type;
+			public string    Filename;
+			public uint      Cookie;
+		}
 
 		/////////////////////////////////////////////////////////////////////////////////////
 
 		static private int dev_inotify = -1;
-		static private Queue event_queue = new Queue ();
+		static private ArrayList event_queue = new ArrayList ();
 
 		static Inotify ()
 		{
@@ -358,6 +361,9 @@ namespace Beagle.Util {
 
 		static unsafe void SnarfWorker ()
 		{
+			Encoding filename_encoding = Encoding.UTF8;
+			int event_size = Marshal.SizeOf (typeof (inotify_event));
+			
 			while (running) {
 
 				// We get much better performance if we wait a tiny bit
@@ -365,7 +371,6 @@ namespace Beagle.Util {
 				// FIXME: We need to be smarter here to avoid queue overflows.
 				Thread.Sleep (15);
 
-				//int N = (int) Syscall.read (dev_inotify, (void *) buffer, (IntPtr) max_snarf_size);
 				IntPtr buffer;
 				int nr;
 
@@ -381,24 +386,37 @@ namespace Beagle.Util {
 				if (nr == 0)
 					continue;
 
-				int event_size = Marshal.SizeOf (typeof (inotify_event));
 				lock (event_queue) {
 					bool saw_overflow = false;
 					while (nr > 0) {
-						queued_event qe;
 
-						qe.iev = (inotify_event) Marshal.PtrToStructure (buffer, typeof (inotify_event));
+						// Read the low-level event struct from the buffer.
+						inotify_event raw_event;
+						raw_event = (inotify_event) Marshal.PtrToStructure (buffer, typeof (inotify_event));
 						buffer = (IntPtr) ((long) buffer + event_size);
 
-						qe.filename = new byte[qe.iev.len];
-						Marshal.Copy (buffer, qe.filename, 0, (int) qe.iev.len);
-						buffer = (IntPtr) ((long) buffer + qe.iev.len);
-
-						if (qe.iev.mask == EventType.QueueOverflow)
+						if (raw_event.mask == EventType.QueueOverflow)
 							saw_overflow = true;
-						event_queue.Enqueue (qe);
 
-						nr -= event_size + (int) qe.iev.len;
+						// Now we convert our low-level event struct into a nicer object.
+						QueuedEvent qe = new QueuedEvent ();
+						qe.Wd = raw_event.wd;
+						qe.Type = raw_event.mask;
+						qe.Cookie = raw_event.cookie;
+
+						// Extract the filename payload (if any) from the buffer.
+						byte [] filename_bytes = new byte[raw_event.len];
+						Marshal.Copy (buffer, filename_bytes, 0, (int) raw_event.len);
+						buffer = (IntPtr) ((long) buffer + raw_event.len);
+						int n_chars = 0;
+						while (n_chars < filename_bytes.Length && filename_bytes [n_chars] != 0)
+							++n_chars;
+						qe.Filename = "";
+						if (n_chars > 0)
+							qe.Filename = filename_encoding.GetString (filename_bytes, 0, n_chars);
+
+						event_queue.Add (qe);
+						nr -= event_size + (int) raw_event.len;
 					}
 
 					if (saw_overflow)
@@ -477,10 +495,8 @@ namespace Beagle.Util {
 
 		static void DispatchWorker ()
 		{
-			Encoding filename_encoding = Encoding.UTF8;
-
 			while (running) {
-				queued_event qe;
+				QueuedEvent qe;
 
 				lock (event_queue) {
 					while (event_queue.Count == 0 && running) {
@@ -497,25 +513,19 @@ namespace Beagle.Util {
 							}
 						}
 
-						Monitor.Wait (event_queue, 2);			
+						Monitor.Wait (event_queue, 2000);			
 					}
 					if (!running)
 						break;
-					qe = (queued_event) event_queue.Dequeue ();
+
+					qe = (QueuedEvent) event_queue [0];
+					event_queue.RemoveAt (0);
 				}
 
 				Watched watched;
-				watched = Lookup (qe.iev.wd, qe.iev.mask);
+				watched = Lookup (qe.Wd, qe.Type);
 				if (watched == null)
 					continue;
-
-				// Get the filename payload, if any
-				int n_chars = 0;
-				while (n_chars < qe.filename.Length && qe.filename [n_chars] != 0)
-					++n_chars;
-				string filename = "";
-				if (n_chars > 0)
-					filename = filename_encoding.GetString (qe.filename, 0, n_chars);
 
 				// If this is a directory, we need to handle MovedTo and MovedFrom events
 				// (regardless of the actual watched.Mask) and fix up watched.Path and the
@@ -528,18 +538,18 @@ namespace Beagle.Util {
 				//
 				// Unfortunately, we have to handle the Directory.Exists() test a bit
 				// roundabout, because watched.Path during MovedFrom no longer exists.
-				if (qe.iev.mask == EventType.MovedFrom) {
-					PendingMove pending = new PendingMove (watched, filename, DateTime.Now,
-									       qe.iev.cookie);
+				if (qe.Type == EventType.MovedFrom) {
+					PendingMove pending = new PendingMove (watched, qe.Filename, DateTime.Now,
+									       qe.Cookie);
 					cookie_hash [pending.Cookie] = pending;
 					cookie_list.Add (pending);
 					continue; // Wait for a possible matching MovedTo
 				}
 				string srcpath = null;
-				if (qe.iev.mask == EventType.MovedTo) {
-					PendingMove pending = cookie_hash [qe.iev.cookie] as PendingMove;
+				if (qe.Type == EventType.MovedTo) {
+					PendingMove pending = cookie_hash [qe.Cookie] as PendingMove;
 					if (pending != null) {
-						string dstpath = Path.Combine (watched.Path, filename);
+						string dstpath = Path.Combine (watched.Path, qe.Filename);
 						srcpath = Path.Combine (pending.Watch.Path, pending.SrcName);
 						if (Directory.Exists (dstpath))
 							HandleMove (srcpath, dstpath);
@@ -553,7 +563,7 @@ namespace Beagle.Util {
 					// can race and arrive as MovedTo+MovedFrom.  That is bad.
 					for (int i = 0; i < cookie_list.Count; i++) {
 						PendingMove race = cookie_list[i] as PendingMove;
-						if (race.Watch.Wd == watched.Wd && race.SrcName == filename) {
+						if (race.Watch.Wd == watched.Wd && race.SrcName == qe.Filename) {
 							// Expire this MovedFrom and send it out right immediately
 							SendEvent (race.Watch, race.SrcName, null, EventType.MovedFrom);
 							cookie_hash.Remove (race);
@@ -562,11 +572,11 @@ namespace Beagle.Util {
 					}
 				}
 
-				SendEvent (watched, filename, srcpath, qe.iev.mask);
+				SendEvent (watched, qe.Filename, srcpath, qe.Type);
 
 				// If a directory we are watching gets ignored, we need
 				// to remove it from the watchedByFoo hashes.
-				if (qe.iev.mask == EventType.Ignored) {
+				if (qe.Type == EventType.Ignored) {
 					lock (watched_by_wd)
 						Forget (watched);
 				}
