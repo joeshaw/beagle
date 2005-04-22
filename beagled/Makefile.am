@@ -407,7 +407,8 @@ WEBSERVICES_BACKEND_LOCAL_ASSEMBLIES =	\
 	../BeagleClient/Beagle.dll      \
 	../Tiles/Tiles.dll		\
 	BeagleDaemonPlugins.dll 	\
-	BeagleDaemonLib.dll
+	BeagleDaemonLib.dll			\
+	$(WEBSERVICES_XSP_TARGET)
 
 WEBSERVICES_BACKEND_ASSEMBLIES = \
 	$(WEBSERVICES_BACKEND_LOCAL_ASSEMBLIES:%=-r:%)	\
@@ -500,8 +501,7 @@ DAEMON_LOCAL_ASSEMBLIES += 		\
 	../images/Images.dll		\
 	../Tiles/Tiles.dll		\
 	$(WEBSERVICES_BACKEND_TARGET) 	\
-	$(WEBSERVICES_FRONTEND_TARGET)	\
-	$(WEBSERVICES_XSP_TARGET)
+	$(WEBSERVICES_FRONTEND_TARGET)	
 
 DAEMON_ASSEMBLIES += -r:System.Runtime.Remoting
 endif

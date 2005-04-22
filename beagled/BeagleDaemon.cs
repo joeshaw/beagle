@@ -37,7 +37,6 @@ using Beagle.Util;
 
 #if ENABLE_WEBSERVICES
 using Beagle.WebService;
-using MA=Mono.ASPNET;
 #endif
 
 namespace Beagle.Daemon {
@@ -105,20 +104,9 @@ namespace Beagle.Daemon {
 		}
 
 
-#if ENABLE_WEBSERVICES
-		static Mono.ASPNET.ApplicationServer appServer = null;
-		static string DEFAULT_XSP_ROOT = Path.Combine (ExternalStringsHack.PkgDataDir, "xsp");
-		static string DEFAULT_XSP_PORT = "8888";
-		//Both "/" and "/beagle" aliased to DEFAULT_XSP_ROOT only for BeagleXSP server
-		static string[] xsp_param = {"--port", DEFAULT_XSP_PORT,
-					     "--root", DEFAULT_XSP_ROOT, 
-					     "--applications", "/:" + DEFAULT_XSP_ROOT + ",/beagle:" + DEFAULT_XSP_ROOT,
-					     "--nonstop"};
-#endif 
 		public static int Main (string[] args)
 		{
 			// Process the command-line arguments
-
 			bool arg_replace = false;
 			bool arg_debug = false;
 			bool arg_debug_memory = false;
@@ -130,13 +118,8 @@ namespace Beagle.Daemon {
 #endif
 
 #if ENABLE_WEBSERVICES
-			bool web_global = false;
-			bool web_start = false;
-			string web_port = DEFAULT_XSP_PORT;
-			string web_rootDir = DEFAULT_XSP_ROOT;
-			bool web_rootDir_changed = false;
+			WebServicesArgs wsargs = new WebServicesArgs();
 #endif
-
 			int i = 0;
 			while (i < args.Length) {
 				
@@ -207,25 +190,23 @@ namespace Beagle.Daemon {
 
 #if ENABLE_WEBSERVICES
 				case "--web-global":
-					web_global = true;
+					wsargs.web_global = true;
 					break;
 
 				case "--web-start":
-					web_start = true;
+					wsargs.web_start = true;
 					break;
 
 				case "--web-port":
-					web_port = next_arg;
+					wsargs.web_port = next_arg;
 					++i; 
-					web_start = true;
+					wsargs.web_start = true;
 					break;
 
 				case "--web-root":
-					web_rootDir = next_arg;
+					wsargs.web_rootDir = next_arg;
 					++i; 
-					web_start = true;
-					if (String.Compare(web_rootDir, DEFAULT_XSP_ROOT, true) != 0)
-						web_rootDir_changed = true;
+					wsargs.web_start = true;
 					break;
 #endif 
 				default:
@@ -374,32 +355,8 @@ namespace Beagle.Daemon {
 
 #if ENABLE_WEBSERVICES		
 			//Beagle Web, WebService access initialization code:
-
-			//start web-access server first
-			Logger.Log.Debug ("Starting WebBackEnd");
-			WebBackEnd.init (web_global);
-
-			//Next start web-service server
-			Logger.Log.Debug ("Starting WebServiceBackEnd");
-			WebServiceBackEnd.init (web_global);
-
-			Logger.Log.Debug ("Global WebAccess {0}", web_global ? "Enabled" : "Disabled");
-
-			xsp_param[1] = web_port;
-			xsp_param[3] = web_rootDir;
-			if (web_rootDir_changed)
-				//Assuming "/beagle" exists as an explicit sub-folder under user specified xsp root directory:
-				xsp_param[5] = "/:" + web_rootDir + ",/beagle:" + web_rootDir + "/beagle";
-			if (web_start) {
-				Logger.Log.Debug ("Starting Internal Web Server");
-				//Start beagled internal web server (BeagleXsp)
-				int retVal = Mono.ASPNET.Server.initXSP(xsp_param, out appServer);
-				if (retVal != 0)
-					Logger.Log.Warn ("Error starting Internal Web Server (retVal={0})", retVal);
-			}
-
+			WebServiceBackEnd.Start(wsargs);
 #endif
-
 			Shutdown.ShutdownEvent += OnShutdown;
 
 			stopwatch.Stop ();
@@ -413,10 +370,7 @@ namespace Beagle.Daemon {
 			Application.Run ();
 
 #if ENABLE_WEBSERVICES
-			if (appServer != null) {
-			    	appServer.Stop(); 
-				appServer = null;
-			}
+			WebServiceBackEnd.Stop();
 #endif
 			Logger.Log.Debug ("Leaving BeagleDaemon.Main");
 
@@ -488,10 +442,7 @@ namespace Beagle.Daemon {
 		private static void OnShutdown ()
 		{
 #if ENABLE_WEBSERVICES
-			if (appServer != null) {
-			    	appServer.Stop(); 
-				appServer = null;
-			}
+			WebServiceBackEnd.Stop();
 #endif
 			// Stop our Inotify threads
 			Inotify.Stop ();

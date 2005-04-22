@@ -29,6 +29,7 @@
 using System;
 using System.Collections;
 using System.Threading;
+using System.IO;
 
 using System.Runtime.Remoting;
 using System.Runtime.Remoting.Channels;
@@ -37,10 +38,12 @@ using System.Runtime.Remoting.Channels.Tcp;
 using Beagle.Util;
 using Beagle.Daemon;
 
+using Mono.ASPNET;
+
 namespace Beagle.WebService {
 	
 	[Serializable()]
-	public struct searchRequest  {
+	public class searchRequest  {
 
 		public string[] text;
 		public string[] mimeType;		 
@@ -65,7 +68,7 @@ namespace Beagle.WebService {
 	}
 
 	[Serializable()]
-	public struct hitResult {
+	public class hitResult {
 
 		public int id;
 		public string uri;
@@ -78,7 +81,7 @@ namespace Beagle.WebService {
 	}
 
 	[Serializable()]
-	public struct searchResult  {
+	public class searchResult  {
 	
 		public int statusCode;			//ReturnCode for programmatic processing
 		public string statusMsg;		//User-friendly return message
@@ -90,9 +93,68 @@ namespace Beagle.WebService {
 		public int totalResults;		//Total no. of results from the query
 		public hitResult[] hitResults;
 	}
+					     
+	public class WebServicesArgs {
 	
+		public bool web_global = false;
+		public bool web_start = false;
+		public string web_port = WebServiceBackEnd.DEFAULT_XSP_PORT;
+		public string web_rootDir = WebServiceBackEnd.DEFAULT_XSP_ROOT;
+	}
+			
 	public class WebServiceBackEnd: MarshalByRefObject   {
 
+		private static Logger log = Logger.Get ("WebServices");
+		
+		public static string DEFAULT_XSP_ROOT = Path.Combine (ExternalStringsHack.PkgDataDir, "xsp");
+		public static string DEFAULT_XSP_PORT = "8888";
+		
+		static Mono.ASPNET.ApplicationServer appServer = null;
+		//Both "/" and "/beagle" aliased to DEFAULT_XSP_ROOT only for BeagleXSP server
+		static string[] xsp_param = {"--port", DEFAULT_XSP_PORT,
+					     "--root", DEFAULT_XSP_ROOT, 
+					     "--applications", "/:" + DEFAULT_XSP_ROOT + ",/beagle:" + DEFAULT_XSP_ROOT,
+					     "--nonstop"};
+					  
+		public static void Start(WebServicesArgs wsargs)
+		{
+			//start web-access server first
+			Logger.Log.Debug ("Starting WebBackEnd");
+			WebBackEnd.init (wsargs.web_global);
+
+			//Next start web-service server
+			Logger.Log.Debug ("Starting WebServiceBackEnd");
+			WebServiceBackEnd.init (wsargs.web_global);
+
+			Logger.Log.Debug ("Global WebAccess {0}", wsargs.web_global ? "Enabled" : "Disabled");
+
+			xsp_param[1] = wsargs.web_port;
+			xsp_param[3] = wsargs.web_rootDir;
+			
+			//Check if web_rootDir_changed:
+			if (String.Compare(wsargs.web_rootDir, DEFAULT_XSP_ROOT, true) != 0)
+				//Assuming "/beagle" exists as an explicit sub-folder under user specified xsp root directory:
+				xsp_param[5] = "/:" + wsargs.web_rootDir + ",/beagle:" + wsargs.web_rootDir + "/beagle";
+				
+			if (wsargs.web_start) {
+				
+				Logger.Log.Debug ("Starting Internal Web Server");
+				
+				//Start beagled internal web server (BeagleXsp)
+				int retVal = Mono.ASPNET.Server.initXSP(xsp_param, out appServer);
+				if (retVal != 0)
+					Logger.Log.Warn ("Error starting Internal Web Server (retVal={0})", retVal);
+			}		
+		}
+		
+		public static void Stop() 
+		{
+			if (appServer != null) {
+			    appServer.Stop(); 
+				appServer = null;
+			}
+		}
+		
 		//KNV: If needed, we can convert this to a Singleton, adding a 
 		//	   static Factory method to get the singleton instance reference,
 		//	   so that front-end code always gets hold of same instance.
@@ -118,9 +180,9 @@ namespace Beagle.WebService {
 
 		public static void init(bool web_global) 
 		{
-		     allow_global_access = web_global;
+		    allow_global_access = web_global;
 
-		     if (instance == null) {
+		    if (instance == null) {
 
 		  	instance = new WebServiceBackEnd();
 

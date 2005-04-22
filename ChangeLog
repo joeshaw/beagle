@@ -1,3 +1,11 @@
+2005-04-22  Vijay K. Nanjundaswamy <knvijay@novell.com>
+
+	* beagled/BeagleDaemon.cs: Simplified WebServices initialization code
+	* beagled/WebServices/WebServiceBackEnd.cs: Moved Web Services initialization and termination code
+	  including internal web server, from BeagleDaemon.cs into
+	  static Start() and Stop() methods.
+	* beagled/Makefile.am: Corresponding changes	 
+
 2005-04-21  Josep Puigdemont  <josep.puigdemont@gmail.com>
 
 	* configure.in: Added "ca" to ALL_LINGUAS.
