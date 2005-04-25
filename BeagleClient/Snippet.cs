@@ -1,7 +1,7 @@
 //
-// RemoteControlImpl.cs
+// Snippet.cs
 //
-// Copyright (C) 2004 Novell, Inc.
+// Copyright (C) 2005 Novell, Inc.
 //
 
 //
@@ -26,31 +26,44 @@
 
 using System;
 using System.Collections;
+using System.Xml.Serialization;
+
 using Beagle.Util;
 
-namespace Beagle.Daemon {
+namespace Beagle {
 
-	public class RemoteControlImpl : Beagle.RemoteControlProxy {
+	public class SnippetRequest : RequestMessage {
 
-		override public string GetVersion ()
+		public Hit Hit;
+		public string[] QueryTerms;
+
+		public SnippetRequest () : base (false) { }
+
+		public SnippetRequest (string[] query_terms, Hit hit) : base (false)
 		{
-			return ExternalStringsHack.Version;
+			this.QueryTerms = query_terms;
+			this.Hit = hit;
 		}
 
-		override public void Shutdown ()
+		public SnippetRequest (IList query_terms, Hit hit) : base (false)
 		{
-			Beagle.Daemon.Shutdown.BeginShutdown ();
-		}
-		
-		override public string GetHumanReadableStatus ()
-		{
-			return "\n" + Scheduler.Global.GetHumanReadableStatus ();
-		}
+			int N = query_terms.Count;
+			this.QueryTerms = new string [N];
+			for (int i = 0; i < N; i++)
+				this.QueryTerms [i] = (string) query_terms [i];
 
-		override public string GetIndexInformation ()
-		{
-			return QueryDriver.GetIndexInformation ();
+			this.Hit = hit;
 		}
 	}
 
+	public class SnippetResponse : ResponseMessage {
+		public string Snippet;
+
+		public SnippetResponse () { }
+
+		public SnippetResponse (string snippet)
+		{
+			this.Snippet = snippet;
+		}
+	}
 }

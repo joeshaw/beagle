@@ -28,9 +28,7 @@
 using System;
 using System.IO;
 
-using Beagle.Util;
-
-namespace Beagle.Daemon {
+namespace Beagle.Util {
 
 	public class PathFinder {
 

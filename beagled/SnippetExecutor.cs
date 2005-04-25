@@ -1,7 +1,7 @@
 //
-// RemoteControlProxy.cs
+// SnippetExecutor.cs
 //
-// Copyright (C) 2004 Novell, Inc.
+// Copyright (C) 2005 Novell, Inc.
 //
 
 //
@@ -24,24 +24,29 @@
 // DEALINGS IN THE SOFTWARE.
 //
 
-using DBus;
+using System;
+using System.Collections;
+using System.Xml.Serialization;
 
-namespace Beagle
-{
-	[Interface ("com.novell.Beagle.RemoteControl")]
-	public abstract class RemoteControlProxy {
+using Beagle.Util;
 
-		[Method]
-		public abstract string GetVersion ();
-		
-		[Method]
-		public abstract void Shutdown ();
+namespace Beagle.Daemon {
 
-		[Method]
-		public abstract string GetHumanReadableStatus ();
+	[RequestMessage (typeof (SnippetRequest))]
+	public class SnippetExecutor : RequestMessageExecutor {
 
-		[Method]
-		public abstract string GetIndexInformation ();
+		public override ResponseMessage Execute (RequestMessage req)
+		{
+			SnippetRequest request = (SnippetRequest) req;
+			Queryable queryable = QueryDriver.GetQueryable (request.Hit.SourceObjectName);
+			string snippet;
+
+			if (queryable == null)
+				snippet = String.Format ("ERROR: No queryable object matches '{0}'", request.Hit.Source);
+			else
+				snippet = queryable.GetSnippet (request.QueryTerms, request.Hit);
+
+			return new SnippetResponse (snippet);
+		}
 	}
 }
-	
