@@ -119,14 +119,14 @@ namespace Beagle.WebService {
 		public static void Start(WebServicesArgs wsargs)
 		{
 			//start web-access server first
-			Logger.Log.Debug ("Starting WebBackEnd");
+			log.Debug ("Starting WebBackEnd");
 			WebBackEnd.init (wsargs.web_global);
 
 			//Next start web-service server
-			Logger.Log.Debug ("Starting WebServiceBackEnd");
+			log.Info ("Starting WebServiceBackEnd");
 			WebServiceBackEnd.init (wsargs.web_global);
 
-			Logger.Log.Debug ("Global WebAccess {0}", wsargs.web_global ? "Enabled" : "Disabled");
+			log.Debug ("Global WebAccess {0}", wsargs.web_global ? "Enabled" : "Disabled");
 
 			xsp_param[1] = wsargs.web_port;
 			xsp_param[3] = wsargs.web_rootDir;
@@ -138,17 +138,18 @@ namespace Beagle.WebService {
 				
 			if (wsargs.web_start) {
 				
-				Logger.Log.Debug ("Starting Internal Web Server");
+				log.Debug ("Starting Internal Web Server");
 				
 				//Start beagled internal web server (BeagleXsp)
 				int retVal = Mono.ASPNET.Server.initXSP(xsp_param, out appServer);
 				if (retVal != 0)
-					Logger.Log.Warn ("Error starting Internal Web Server (retVal={0})", retVal);
+					log.Warn ("Error starting Internal Web Server (retVal={0})", retVal);
 			}		
 		}
 		
 		public static void Stop() 
 		{
+			log.Info ("Stopping WebServiceBackEnd");
 			if (appServer != null) {
 			    appServer.Stop(); 
 				appServer = null;
