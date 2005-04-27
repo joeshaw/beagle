@@ -31,4 +31,6 @@ Pasha Bizhan (for Lucene.Net)
 Simon Mourier (for the Html Agility Pack)
 Mariano Cano Pérez (for his gnome-vfs bindings)
 Kevin Godby (for his work on the renderers)
+Jimmy Krehl (for the indexer and other key infrastructure in
+             the original version of dashboard)
 Google (for exposing API)
