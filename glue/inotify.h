@@ -52,8 +52,9 @@ struct inotify_watch_request {
 #define IN_IGNORED		0x00008000	/* File was ignored */
 
 /* special flags */
-#define IN_ALL_EVENTS		0xffffffff	/* All the events */
-#define IN_CLOSE		(IN_CLOSE_WRITE | IN_CLOSE_NOWRITE)
+#define IN_ONESHOT		0x80000000	/* only send event once */
+#define IN_ALL_EVENTS		(0xffffffff & ~IN_ONESHOT) /* All the events */
+#define IN_CLOSE		(IN_CLOSE_WRITE | IN_CLOSE_NOWRITE) /* close */
 
 #define INOTIFY_IOCTL_MAGIC	'Q'
 #define INOTIFY_IOCTL_MAXNR	2

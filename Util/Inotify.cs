@@ -64,7 +64,9 @@ namespace Beagle.Util {
 			Unmount        = 0x00002000, // Backing fs was unmounted
 			QueueOverflow  = 0x00004000, // Event queue overflowed
 			Ignored        = 0x00008000, // File is no longer being watched
-			All            = 0xffffffff
+			OneShot        = 0x80000000, // Watch is one-shot
+
+			All            = (0xffffffff & ~0x80000000)
 		}
 
 		// Events that we want internally, even if the handlers do not
