@@ -1,3 +1,7 @@
+2005-04-28  Martin Willemoes Hansen  <mwh@sysrq.dk>
+
+	* configure.in: Added Danish "da" to ALL_LINGUAS.
+
 2005-04-22  Vijay K. Nanjundaswamy <knvijay@novell.com>
 
 	* beagled/BeagleDaemon.cs: Simplified WebServices initialization code
