@@ -198,6 +198,23 @@ namespace Beagle.Util {
 
 		////////////////////////////////////////////////////////////////////////////////
 
+		static private void PruneLogDirectory (string path, string instance)
+		{
+			DateTime magic_date = DateTime.Now - new TimeSpan (7, 0, 0, 0);
+			DirectoryInfo info = new DirectoryInfo (path);
+			
+			foreach (FileInfo file in info.GetFiles ()) {
+				if (file.Name.StartsWith ("current") || (!file.Name.EndsWith (instance)))
+					continue;
+				
+				string date = file.Name.Substring (0, file.Name.LastIndexOf ("-"));
+				DateTime bar = DateTime.ParseExact (date, "yyyy-MM-dd-HH-mm-ss", null);
+				
+				if (bar < magic_date)
+					file.Delete ();
+			}
+		}
+
 		static public void LogToFile (string path, string name, bool foreground_mode)
 		{
 			defaultLogName = name;
@@ -209,6 +226,9 @@ namespace Beagle.Util {
 			string timestamped_name = String.Format ("{0:yyyy-MM-dd-HH-mm-ss}-{1}", DateTime.Now, name);
 			string log_path = Path.Combine (path, timestamped_name);
 			string log_link = Path.Combine (path, "current-" + name);
+
+			// Delete obsolete log files
+			PruneLogDirectory (path, name);
 
 			// Open the log file and set it as the default
 			// destination for log messages.
