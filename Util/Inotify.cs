@@ -447,7 +447,7 @@ namespace Beagle.Util {
 					if (n_chars > 0)
 						qe.Filename = filename_encoding.GetString (filename_bytes, 0, n_chars);
 
-					event_queue.Add (qe);
+					new_events.Add (qe);
 					nr -= event_size + (int) raw_event.len;
 				}
 
