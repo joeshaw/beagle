@@ -1,6 +1,7 @@
 
 
 #include <gdk/gdk.h>
+#include <gdk/gdkkeysyms.h>
 #include <gdk/gdkwindow.h>
 #include <gdk/gdkx.h>
 #include <X11/Xlib.h>
@@ -9,6 +10,8 @@
 #include "tomboykeybinder.h"
 
 static GSList *bindings = NULL;
+static guint ignored_modifiers = 0;
+
 
 /* Uncomment the next line to print a debug trace. */
 /* #define DEBUG */
@@ -27,7 +30,65 @@ typedef struct _Binding {
 	uint                  modifiers;
 } Binding;
 
-#define IGNORED_MODS (GDK_LOCK_MASK | GDK_MOD2_MASK | GDK_MOD3_MASK | GDK_MOD4_MASK | GDK_MOD5_MASK)
+/*
+ * Adapted from eggcellrenderkeys.c.
+ */
+static guint
+get_modifier_mask_for_keycode (guint keycode)
+{
+	gint i;
+	gint map_size;
+	XModifierKeymap *mod_keymap;
+	guint retval = 0;
+
+	mod_keymap = XGetModifierMapping (gdk_display);
+	
+	map_size = 8 * mod_keymap->max_keypermod;
+
+	for (i = 0; i < map_size; i++) {
+		if (keycode == mod_keymap->modifiermap[i]) {
+			retval = i;
+			break;
+		}
+	}
+
+	XFreeModifiermap (mod_keymap);
+
+	return retval;
+}
+
+gboolean
+tomboy_keybinder_is_modifier (guint keycode)
+{
+	return (get_modifier_mask_for_keycode (keycode) != 0);
+}
+
+static guint
+get_ignored_modifiers (void)
+{
+	guint keyvals[] = { GDK_Num_Lock, GDK_Scroll_Lock, 0 };
+	int i;
+	GdkKeymapKey *keys;
+	int num_keys;
+
+	if (ignored_modifiers != 0)
+		return ignored_modifiers;
+
+	ignored_modifiers = GDK_LOCK_MASK | 0x2000; /* Xkb modifier */
+
+	for (i = 0; keyvals[i] != 0; i++) {
+		if (gdk_keymap_get_entries_for_keyval (NULL, keyvals[i], &keys, &num_keys)) {
+			int j;
+
+			for (j = 0; j < num_keys; j++)
+				ignored_modifiers |= get_modifier_mask_for_keycode (keys[j].keycode);
+
+			g_free (keys);
+		}
+	}
+
+	return ignored_modifiers;
+}
 
 static gboolean 
 do_grab_key (Binding *binding)
@@ -62,10 +123,14 @@ do_grab_key (Binding *binding)
 
 	TRACE (g_print ("Got modmask %d\n", binding->modifiers));
 
-	for (i = 0; i < 32; i++) {
+	for (i = 0; i <= get_ignored_modifiers (); i++) {
+		/* Check to ensure we're not including non-ignored modifiers */
+		if (i & ~(get_ignored_modifiers ()))
+			continue;
+
 		XGrabKey (GDK_WINDOW_XDISPLAY (rootwin),
 			  binding->keycode,
-			  binding->modifiers | (IGNORED_MODS & (1 << i)),
+			  binding->modifiers | i,
 			  GDK_WINDOW_XWINDOW (rootwin),
 			  True,
 			  GrabModeAsync, 
@@ -83,10 +148,14 @@ do_ungrab_key (Binding *binding)
 
 	TRACE (g_print ("Removing grab for '%s'\n", binding->keystring));
 
-	for (i = 0; i < 32; i++) {
+	for (i = 0; i <= get_ignored_modifiers (); i++) {
+		/* Check to ensure we're not including non-ignored modifiers */
+		if (i & ~(get_ignored_modifiers ()))
+			continue;
+
 		XUngrabKey (GDK_WINDOW_XDISPLAY (rootwin),
 			    binding->keycode,
-			    binding->modifiers | (IGNORED_MODS & (1 << i)),
+			    binding->modifiers | i,
 			    GDK_WINDOW_XWINDOW (rootwin));
 	}
 
@@ -112,7 +181,7 @@ filter_func (GdkXEvent *gdk_xevent, GdkEvent *event, gpointer data)
 			Binding *binding = (Binding *) iter->data;
 
 			if (binding->keycode == xevent->xkey.keycode &&
-			    binding->modifiers == (xevent->xkey.state & ~IGNORED_MODS)) {
+			    binding->modifiers == (xevent->xkey.state & ~get_ignored_modifiers ())) {
 
 				TRACE (g_print ("Calling handler for '%s'...\n", 
 						binding->keystring));
@@ -136,6 +205,8 @@ keymap_changed (GdkKeymap *map)
 	GSList *iter;
 
 	TRACE (g_print ("Keymap changed! Regrabbing keys..."));
+
+	ignored_modifiers = 0;
 
 	for (iter = bindings; iter != NULL; iter = iter->next) {
 		Binding *binding = (Binding *) iter->data;
@@ -206,33 +277,4 @@ tomboy_keybinder_unbind (const char           *keystring,
 		g_free (binding);
 		break;
 	}
-}
-
-/* 
- * From eggcellrenderkeys.c.
- */
-gboolean
-tomboy_keybinder_is_modifier (guint keycode)
-{
-	gint i;
-	gint map_size;
-	XModifierKeymap *mod_keymap;
-	gboolean retval = FALSE;
-
-	mod_keymap = XGetModifierMapping (gdk_display);
-
-	map_size = 8 * mod_keymap->max_keypermod;
-
-	i = 0;
-	while (i < map_size) {
-		if (keycode == mod_keymap->modifiermap[i]) {
-			retval = TRUE;
-			break;
-		}
-		++i;
-	}
-
-	XFreeModifiermap (mod_keymap);
-
-	return retval;
 }
