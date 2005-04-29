@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: beagle\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2005-04-28 11:49+0200\n"
-"PO-Revision-Date: 2005-04-28 11:53+0200\n"
+"PO-Revision-Date: 2005-04-28 20:19+0200\n"
 "Last-Translator: Martin Willemoes Hansen <mwh@sysrq.dk>\n"
 "Language-Team: Danish <dansk@klid.dk>\n"
 "MIME-Version: 1.0\n"
@@ -241,7 +241,7 @@ msgstr ""
 
 #: ../Tiles/TileMailMessage.cs:104
 msgid "Received"
-msgstr ""
+msgstr "Modtaget"
 
 #. For translators: From template Tiles/template-docs.html
 #. For translators: From template Tiles/template-folder.html
@@ -252,7 +252,7 @@ msgstr ""
 #: ../Tiles/TranslationHack.cs:28 ../Tiles/TranslationHack.cs:60
 #: ../Tiles/TranslationHack.cs:70
 msgid "in folder"
-msgstr ""
+msgstr "i mappe"
 
 #. For translators: From template Tiles/template-docs.html
 #. For translators: From template Tiles/template-file.html
@@ -260,19 +260,19 @@ msgstr ""
 #: ../Tiles/TranslationHack.cs:8 ../Tiles/TranslationHack.cs:30
 #: ../Tiles/TranslationHack.cs:72
 msgid "Last modified"
-msgstr ""
+msgstr "Sidst rettet"
 
 #. For translators: From template Tiles/template-docs.html
 #. For translators: From template Tiles/template-presentation.html
 #: ../Tiles/TranslationHack.cs:10 ../Tiles/TranslationHack.cs:74
 msgid "Title:"
-msgstr ""
+msgstr "Titel:"
 
 #. For translators: From template Tiles/template-docs.html
 #. For translators: From template Tiles/template-presentation.html
 #: ../Tiles/TranslationHack.cs:12 ../Tiles/TranslationHack.cs:76
 msgid "Author:"
-msgstr ""
+msgstr "Forfatter:"
 
 #. For translators: From template Tiles/template-docs.html
 #. For translators: From template Tiles/template-launcher.html
@@ -293,7 +293,7 @@ msgstr ""
 #: ../Tiles/TranslationHack.cs:64 ../Tiles/TranslationHack.cs:80
 #: ../Tiles/TranslationHack.cs:88 ../Tiles/TranslationHack.cs:94
 msgid "Open"
-msgstr ""
+msgstr "Åbn"
 
 #. For translators: From template Tiles/template-docs.html
 #. For translators: From template Tiles/template-file.html
@@ -302,7 +302,7 @@ msgstr ""
 #: ../Tiles/TranslationHack.cs:16 ../Tiles/TranslationHack.cs:34
 #: ../Tiles/TranslationHack.cs:66 ../Tiles/TranslationHack.cs:82
 msgid "Send to..."
-msgstr ""
+msgstr "Send til..."
 
 #. For translators: From template Tiles/template-docs.html
 #. For translators: From template Tiles/template-file.html
@@ -318,22 +318,22 @@ msgstr ""
 #. For translators: From template Tiles/template-launcher.html
 #: ../Tiles/TranslationHack.cs:20
 msgid "Application:"
-msgstr ""
+msgstr "Program:"
 
 #. For translators: From template Tiles/template-mail-message.html
 #: ../Tiles/TranslationHack.cs:40
 msgid "Folder:"
-msgstr ""
+msgstr "Mappe:"
 
 #. For translators: From template Tiles/template-music.html
 #: ../Tiles/TranslationHack.cs:46
 msgid "Track"
-msgstr ""
+msgstr "Spor"
 
 #. For translators: From template Tiles/template-music.html
 #: ../Tiles/TranslationHack.cs:48
 msgid "from"
-msgstr ""
+msgstr "fra"
 
 #. For translators: From template Tiles/template-music.html
 #: ../Tiles/TranslationHack.cs:52
@@ -343,7 +343,7 @@ msgstr ""
 #. For translators: From template Tiles/template-note.html
 #: ../Tiles/TranslationHack.cs:56
 msgid "last modified"
-msgstr ""
+msgstr "sidst rettet"
 
 #. For translators: From template Tiles/template-picture.html
 #: ../Tiles/TranslationHack.cs:62
@@ -358,12 +358,12 @@ msgstr ""
 #. For translators: From template Tiles/template-web-history.html
 #: ../Tiles/TranslationHack.cs:86
 msgid "Last viewed:"
-msgstr ""
+msgstr "Sidst set:"
 
 #. For translators: From template Tiles/template-blog.html
 #: ../Tiles/TranslationHack.cs:90
 msgid "Weblog:"
-msgstr ""
+msgstr "Weblog:"
 
 #. For translators: From template Tiles/template-blog.html
 #: ../Tiles/TranslationHack.cs:92
@@ -372,7 +372,7 @@ msgstr ""
 
 #: ../Util/ExifData.cs:226
 msgid "Image Directory"
-msgstr ""
+msgstr "Billed-katalog"
 
 #: ../Util/ExifData.cs:228
 msgid "Thumbnail Directory"
@@ -380,19 +380,19 @@ msgstr ""
 
 #: ../Util/ExifData.cs:230
 msgid "Exif Directory"
-msgstr ""
+msgstr "Exif-katalog"
 
 #: ../Util/ExifData.cs:232
 msgid "GPS Directory"
-msgstr ""
+msgstr "GPS-katalog"
 
 #: ../Util/ExifData.cs:234
 msgid "InterOperability Directory"
-msgstr ""
+msgstr "Interoperabilitetskatalog"
 
 #: ../Util/ExifData.cs:236
 msgid "Unknown Directory"
-msgstr ""
+msgstr "Ukendt katalog"
 
 #: ../Util/StringFu.cs:71
 msgid "MMM d, yyyy"
@@ -406,25 +406,25 @@ msgstr ""
 #: ../Util/StringFu.cs:79
 #, csharp-format
 msgid "{0}, {1}"
-msgstr ""
+msgstr "{0}, {1}"
 
 #. To translators: {0} is the time of the day, eg. 13:45
 #: ../Util/StringFu.cs:96
 #, csharp-format
 msgid "Today, {0}"
-msgstr ""
+msgstr "I dag, {0}"
 
 #. To translators: {0} is the time of the day, eg. 13:45
 #: ../Util/StringFu.cs:99
 #, csharp-format
 msgid "Yesterday, {0}"
-msgstr ""
+msgstr "I går, {0}"
 
 #. To translators: {0} is the number of days that have passed, {1} is the time of the day, eg. 13:45
 #: ../Util/StringFu.cs:102
 #, csharp-format
 msgid "{0} days ago, {1}"
-msgstr ""
+msgstr "{0} dage siden, {1}"
 
 #: ../Util/StringFu.cs:106
 msgid "MMMM d, h:mm tt"
@@ -438,30 +438,30 @@ msgstr ""
 #, csharp-format
 msgid "{0} hour"
 msgid_plural "{0} hours"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "{0} time"
+msgstr[1] "{0} timer"
 
 #: ../Util/StringFu.cs:127
 #, csharp-format
 msgid "{0} minute"
 msgid_plural "{0} minutes"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "{0} minut"
+msgstr[1] "{0} minutter"
 
 #. Translators: {0} is a file size in bytes
 #: ../Util/StringFu.cs:143
 #, csharp-format
 msgid "{0} bytes"
-msgstr ""
+msgstr "{0} bytes"
 
 #. Translators: {0} is a file size in kilobytes
 #: ../Util/StringFu.cs:147
 #, csharp-format
 msgid "{0:0.0} KB"
-msgstr ""
+msgstr "{0:0.0} KB"
 
 #. Translators: {0} is a file size in megabytes
 #: ../Util/StringFu.cs:150
 #, csharp-format
 msgid "{0:0.0} MB"
-msgstr ""
+msgstr "{0:0.0} MB"
