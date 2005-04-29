@@ -79,7 +79,8 @@ EXTRA_DIST =				\
 	beagle-index-info		\
 	beagle-ping			\
 	beagle-shutdown			\
-	beagle-status
+	beagle-status			\
+	boot.inotify.init
 
 CLEANFILES = 				\
 	$(TARGETS)			\
