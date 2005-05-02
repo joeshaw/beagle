@@ -1,3 +1,10 @@
+2005-05-02  Daniel Drake  <dsd@gentoo.org>
+
+	* Tiles/HitFlavor.cs, Util/ImLog.cs,
+	beagled/GaimLogQueryable/GaimLogQueryable.cs: Use real file:// URI's
+	for GAIM logs. Fixes searching of logs with non-standard characters
+	in their name. (e.g. # in irc logs)
+
 2005-05-2  Vijay K. Nanjundaswamy <knvijay@novell.com>
 
 	* beagled/WebServices/WebBackEnd.cs: Added support for Snippets in Beagle Web Interface.
