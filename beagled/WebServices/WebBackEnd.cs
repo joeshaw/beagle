@@ -38,6 +38,7 @@ using System.Runtime.Remoting;
 using System.Runtime.Remoting.Channels;
 using System.Runtime.Remoting.Channels.Tcp;
 
+using Beagle;
 using Beagle.Util;
 using BT = Beagle.Tile;
 using Beagle.Daemon;
@@ -86,12 +87,15 @@ namespace Beagle.WebService {
 
 		void OnHitsAdded (QueryResult qres, ICollection hits)
 		{	
+			Console.WriteLine("WebBackEnd: OnHitsAdded() invoked with {0} hits", hits.Count);
 			if (result.Contains(qres)) {
 				BT.SimpleRootTile root = ((Resp) result[qres]).rootTile;
 				root.Add(hits);
+				Console.WriteLine("Hit Added to Root Tile");
 			}
 		}
 
+		
 		void OnHitsSubtracted (QueryResult qres, ICollection uris)
 		{
 			if (result.Contains(qres)) {
@@ -103,7 +107,7 @@ namespace Beagle.WebService {
 		void OnFinished (QueryResult qres)
 		{
 			if (result.Contains(qres))
-				Console.WriteLine("WebBackEnd: Got {0} results from beagled", ((Resp) result[qres]).rootTile.HitCollection.NumResults);
+				Console.WriteLine("WebBackEnd:OnFinished() - Got {0} results from beagled QueryDriver", ((Resp) result[qres]).rootTile.HitCollection.NumResults);
 
 			DetachQueryResult(qres);
 		}
@@ -131,6 +135,8 @@ namespace Beagle.WebService {
 			
 				if (result.Contains(qres))
 					result.Remove(qres);
+					
+				//Console.WriteLine("QueryResult: qres detached");
 				
 				qres.HitsAddedEvent -= OnHitsAdded;
 				qres.HitsSubtractedEvent -= OnHitsSubtracted;
@@ -217,28 +223,39 @@ namespace Beagle.WebService {
 			
 			return NO_RESULTS;
 		}
-
+		
 		public string doQuery(string sessId, string searchString, string searchSource)
 		{
 		
 			if (sessId == null || searchString == null || searchString == "")
 				return NO_RESULTS;
 						 
-			Console.WriteLine("WebBackEnd: Got Search String: " + searchString); 
+			Console.WriteLine("WebBackEnd:doQuery() - Got Search String: " + searchString + ", with searchSource: " + searchSource);
+			 
 			QueryBody qbody = new QueryBody();
-			qbody.AddText (searchString);
-			if (searchSource != null && searchSource != "")
-				qbody.AddSource(searchSource);	
-			qbody.AddDomain (QueryDomain.Neighborhood);
+			QueryResult qres = new QueryResult ();
 			
-		//Note: QueryDriver.DoQuery() local invocation is used. 
-		//      The root tile is used only for adding hits and generating html; 
-
-			BT.SimpleRootTile root = new BT.SimpleRootTile (); 				
+			BT.SimpleRootTile root = new BT.SimpleRootTile (); 
+			//Note: QueryDriver.DoQuery() local invocation is used. 
+			//The root tile is used only for adding hits and generating html.
+			Query query = new LocalQuery(qbody, qres);
+									
+			qbody.AddText (searchString); 
+			query.AddText (searchString);	
+			
+			if (searchSource != null && searchSource != "") {
+				qbody.AddSource(searchSource);	
+				query.AddSource(searchSource);
+			}
+			
+			qbody.AddDomain (QueryDomain.Neighborhood);
+			query.AddDomain (QueryDomain.Neighborhood);					
+			
+			root.Query = query;
+			//root.SetSource(searchSource);
+											
 			bufferRenderContext bctx = new bufferRenderContext();
 			Resp resp = new Resp(root, bctx);
-
-			QueryResult qres = new QueryResult ();
 
 			AttachQueryResult (qres, resp);
 
@@ -248,7 +265,7 @@ namespace Beagle.WebService {
 			else
 				sessionResp.Add(sessId, resp);	
 
-			Console.WriteLine("WebBackEnd: Starting Query for string \"{0}\"", qbody.QuotedText);
+			Console.WriteLine("WebBackEnd:doQuery() - Starting Query for string \"{0}\"", qbody.QuotedText);
 
 			QueryDriver.DoQuery (qbody, qres);
 
@@ -334,13 +351,121 @@ namespace Beagle.WebService {
 				if (commandArgs != null)
 				//if (args != null)
 					p.StartInfo.Arguments = commandArgs;
-				try {
+				try {		
+
 					p.Start ();
 				} 
 				catch { }
 			}
 		}
 		
+
+//////////////////////////////////////////////////////////////////////////
+
+	//KNV: Wrapper implementation similar to BeagleClient Query to feed RootTile.
+	//Needed to get snippets working for Web Interface.
+	public class LocalQuery: Beagle.Query {
+		
+			private QueryBody body;
+			private QueryResult result;
+			
+			public LocalQuery(QueryBody qbody, QueryResult qres) {
+				this.body = qbody;
+				this.result = qres;
+			}
+			
+			public override void AddText (string text)
+			{
+				body.AddText (text);
+			}
+
+			public override void AddTextRaw (string text)
+			{
+				body.AddTextRaw (text);
+			}
+
+			public override string GetTextBlob ()
+			{
+				StringBuilder builder = new StringBuilder ();
+				foreach (string str in body.Text) {
+					if (builder.Length > 0)
+						builder.Append ("|"); 
+					builder.Append (str);
+				}
+				return builder.ToString ();
+			}
+
+			public override void AddDomain (Beagle.QueryDomain d)
+			{
+				body.AddDomain (d);
+			}
+	
+			public override void RemoveDomain (Beagle.QueryDomain d)
+			{
+				body.RemoveDomain (d);
+			}
+	
+			public override void AddMimeType (string type)
+			{
+				body.AddMimeType (type);
+			}
+	
+			public override void AddHitType (string type)
+			{
+				body.AddHitType (type);
+			}
+	
+			public override void AddSource (string source)
+			{
+				body.AddSource (source);
+			}
+			
+			public override string GetSnippetFromUriString (string uri_string)
+			{
+			 	string snippet;
+				
+				Uri uri = UriFu.UriStringToUri (uri_string);
+				Hit hit = result.GetHitFromUri (uri);
+
+				if (hit == null) {
+					snippet = "ERROR: invalid hit, uri=" + uri;
+
+					Logger.Log.Debug ("*** Got invalid hit: uri={0}", uri);
+					Logger.Log.Debug ("*** Valid Hits:");
+					foreach (Uri x in result.HitUris)
+						Logger.Log.Debug ("***    {0}", x);
+
+				} else {
+					Queryable queryable = hit.SourceObject as Queryable;
+					if (queryable == null)
+						snippet = "ERROR: hit.SourceObject is null, uri=" + uri;
+					else
+						snippet = queryable.GetSnippet (body, hit);
+				}
+
+				if (snippet == null)
+					snippet = "";
+
+				return snippet;
+			}		
+			
+			public override void Start ()
+			{
+			
+			}
+
+			public override void Cancel ()
+			{
+				
+			}
+
+			public override void CloseQuery () 
+			{
+				
+			}
+		}
+
+//////////////////////////////////////////////////////////////////////////
 	private class Resp {
 
 		private BT.SimpleRootTile root;
@@ -383,6 +508,7 @@ namespace Beagle.WebService {
 		}
 	}
 
+//////////////////////////////////////////////////////////////////////////
         private class bufferRenderContext : BT.TileRenderContext {
 
 		private System.Text.StringBuilder sb;
@@ -463,10 +589,12 @@ namespace Beagle.WebService {
 */
 				renderStylesDone = true;
 			}
-
+				
 			if (tile != null)
 				tile.Render (this);
 		}
+
+//////////////////////////////////////////////////////////////////////////
 
 string static_stylesheet = "<style type=\"text/css\" media=\"screen\"> body, html { background: white; margin: 0; padding: 0; font-family: Sans, Segoe, Trebuchet MS, Lucida, Sans-Serif;  text-align: left; line-height: 1.5em; } a, a:visited {  text-decoration: none; color: #2b5a8a; } a:hover {  text-decoration: underline; } img {  border: 0px; } table {  width: 100%; border-collapse: collapse;	font-size: 10px; } tr {  border-bottom: 1px dotted #999999; } tr:hover {  background: #f5f5f5; } tr:hover .icon { background-color: #ddddd0; } td {  padding: 6px; } td.icon {  background-color: #eeeee0; min-height: 80px; width: 1%;	min-width: 80px; text-align: center; vertical-align: top; padding: 12px; } .icon img { max-width: 60px; padding: 4px; }	.icon img[src$='.jpg'], img[src$='.jpeg'], img[src*='.thumbnails'] {//  max-width: 48px; border: 1px dotted #bbb; //  padding: 4px;	background: #f9f9f9; } td.content { padding-left: 12px; vertical-align: top; } #hilight {  background-color: #ffee66; color: #000000;  padding-left: 2px; padding-right: 2px; margin-left: -2px; margin-right: -2px; } .name {font-size: 1.3em; font-weight: bold; color: black; } .date { font-size: 1em; color: black; margin-bottom: 0.6em; margin-top: 0.2em; margin-left: 16px; } .snippet {font-size: 1em; color: gray; margin-left: 16px; } .url {font-size: 1em; color: #008200; margin-left: 16px;	} ul {margin-left: 16px; padding: 0px; clear: both;	} .actions {  font-size: 1em; } .actions li {  float: left;  display: block;  vertical-align: middle;  padding: 0;  padding-left: 20px;  padding-right: 12px;  background: url(file:///opt/gnome/share/icons/hicolor/16x16/stock/navigation/stock_right.png) no-repeat;  min-height: 16px; -moz-opacity: 0.5; } tr:hover .actions li {  -moz-opacity: 1.0; } #phone { background: url(file:///opt/gnome/share/icons/hicolor/16x16/stock/generic/stock_landline-phone.png) no-repeat; } #email { background: url(file:///opt/gnome/share/icons/hicolor/16x16/stock/net/stock_mail.png) no-repeat; } #email-forward { background: url(file:///opt/gnome/share/icons/hicolor/16x16/stock/net/stock_mail-forward.png) no-repeat; } #email-reply {  background: url(file:///opt/gnome/share/icons/hicolor/16x16/stock/net/stock_mail-reply.png) no-repeat; }	#message { background: url(file:///opt/gnome/share/icons/hicolor/16x16/apps/im-yahoo.png) no-repeat; } #reveal {  background: url(file:///opt/gnome/share/icons/hicolor/16x16/stock/io/stock_open.png) no-repeat; }	td.footer { text-align: right;   border-bottom: solid 1px white; } </style>";			
 		}

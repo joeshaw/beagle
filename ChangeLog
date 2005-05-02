@@ -1,6 +1,6 @@
-2005-04-28  Martin Willemoes Hansen  <mwh@sysrq.dk>
+2005-05-2  Vijay K. Nanjundaswamy <knvijay@novell.com>
 
-	* configure.in: Added Danish "da" to ALL_LINGUAS.
+	* beagled/WebServices/WebBackEnd.cs: Added support for Snippets in Beagle Web Interface.
 
 2005-04-22  Vijay K. Nanjundaswamy <knvijay@novell.com>
 
