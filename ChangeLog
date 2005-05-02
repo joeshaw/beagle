@@ -1,6 +1,7 @@
 2005-05-2  Vijay K. Nanjundaswamy <knvijay@novell.com>
 
 	* beagled/WebServices/WebBackEnd.cs: Added support for Snippets in Beagle Web Interface.
+	* beagled/Makefile.am: Added $(BEAGLED_LIBS) to WEBSERVICES_BACKEND_ASSEMBLIES.
 
 2005-04-22  Vijay K. Nanjundaswamy <knvijay@novell.com>
 

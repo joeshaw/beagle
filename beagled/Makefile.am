@@ -414,7 +414,8 @@ WEBSERVICES_BACKEND_ASSEMBLIES = \
 	$(WEBSERVICES_BACKEND_LOCAL_ASSEMBLIES:%=-r:%)	\
 	-r:System				\
 	-r:System.Web 				\
-	-r:System.Runtime.Remoting
+	-r:System.Runtime.Remoting		\
+	$(BEAGLED_LIBS)
 
 WEBSERVICES_BACKEND_CSFILES = \
 	$(webservicesdir)/WebBackEnd.cs 	\
