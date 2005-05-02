@@ -41,10 +41,13 @@ namespace ImLogViewer {
 		private TreeIter first_selection_iter;
 
 		private string speaking_to;
+		private string highlight_string;
 
 
-		public GaimLogViewer (string path) {
-			
+		public GaimLogViewer (string path) : this (path, null) {
+		}
+
+		public GaimLogViewer (string path, string hl) {
 			if (Directory.Exists (path)) {
 				log_path = path;
 				first_selected_log = null;
@@ -56,11 +59,10 @@ namespace ImLogViewer {
 				return;
 			}
 
-			// I18N
-			Catalog.Init ("beagle", ExternalStringsHack.LocaleDir);
-
 			timeline = new Timeline ();
 			IndexLogs();
+
+			highlight_string = hl;
 			
 			if (speaking_to != null && speaking_to != "")
 				ShowWindow (speaking_to);
@@ -69,7 +71,7 @@ namespace ImLogViewer {
 		private void SetTitle (DateTime dt)
 		{
 			if (dt.Ticks > 0)
-				time_title.Markup = String.Format ("<b>{0}</b>",StringFu.DateTimeToPrettyString (dt));
+				time_title.Markup = String.Format ("<b>{0}</b>", StringFu.DateTimeToPrettyString (dt));
 		}
 		
 		Gtk.AccelGroup accel_group;
@@ -84,7 +86,8 @@ namespace ImLogViewer {
 
 			log_dialog.Response += new ResponseHandler (OnWindowResponse);
 
-			// FIXME: Hide the find bar until further notice. We want highlighing and queries using Beagle
+			// FIXME: Hide the find bar until further notice.
+			// We want highlighing and queries using Beagle
 			search_entry.Visible = false;
 			find_label.Visible = false;
 
@@ -136,9 +139,9 @@ namespace ImLogViewer {
 			renderer = new CellRendererText();
 			
 			//FIXME: Hide the expanders in the timeline widget
-			/*TreeViewColumn hidden = timelinetree.AppendColumn ("HiddenExpander", renderer , "text", 3);
-			  hidden.Visible = false;
-			  timelinetree.ExpanderColumn = hidden;*/
+			//TreeViewColumn hidden = timelinetree.AppendColumn ("HiddenExpander", renderer , "text", 3);
+			//hidden.Visible = false;
+			//timelinetree.ExpanderColumn = hidden;
 			
 			timelinetree.AppendColumn ("Date", renderer , "markup", 0);
 			timelinetree.AppendColumn ("Snippet", renderer , "text", 1);
@@ -158,7 +161,7 @@ namespace ImLogViewer {
  		{
 			string [] words = text.Split (null);
 			
-			//FIXME: This is quite crude and EXPENSIVE!
+			//FIXME: This is very crude and EXPENSIVE!
 			foreach (string word in words)	{
 				bool match = false;
 
@@ -268,13 +271,33 @@ namespace ImLogViewer {
  			}
  				
  			SetTitle (im_log.StartTime);
+
 			TextTag bold = buffer.TagTable.Lookup ("bold");
 
  			foreach (ImLog.Utterance utt in im_log.Utterances) {
- 				string who = utt.Who;
-				
-				buffer.InsertWithTags (buffer.EndIter, who + ":", new TextTag[] {bold});
+				buffer.InsertWithTags (buffer.EndIter, utt.Who + ":", new TextTag[] {bold});
 				buffer.Insert (buffer.EndIter, String.Format(" {0}\n", utt.Text));
+			}
+
+			if (highlight_string != null)
+				HighlightSearchTerms (highlight_string);
+		}
+
+		private void HighlightSearchTerms (string highlight)
+		{
+			TextBuffer buffer = conversation.Buffer;
+			string[] terms = highlight.Split (' ');
+			
+			foreach (string term in terms) {
+				TextIter start;
+				TextIter end;
+				TextIter find = conversation.Buffer.StartIter.Copy ();
+				
+				while (find.ForwardSearch (term, TextSearchFlags.TextOnly, out start, out end, buffer.EndIter)) {
+					buffer.ApplyTag ("highlight", start, end);
+					conversation.ScrollToIter (start, 0.1, true, 0, 0.5);
+					find = end.Copy ();
+				}
 			}
 		}
 
@@ -306,11 +329,42 @@ namespace ImLogViewer {
 		
 		public static void Main (string[] args)
 		{
-			if (args.Length > 0) {
-				new GaimLogViewer (args [0]);
+			// I18N
+			Catalog.Init ("beagle", ExternalStringsHack.LocaleDir);
+
+			if (args.Length < 1) {
+				Console.WriteLine ("USAGE: beagle-imlogviewer [OPTIONS] <log file or directory>\n" +
+						   "Options:\n" +
+						   "  --highlight\t\t\tWords to highlight in the buffer.\n");
+			}
+
+			string highlight = null;
+			string path = null;
+
+			int i = 0;
+			while (i < args.Length) {
+				switch (args [i]) {
+				case "--highlight":
+					highlight = args [i + 1];
+					i++;
+					break;
+				       
+				default:
+					if (args [i].StartsWith ("--")) {
+						Console.WriteLine ("Invalid option {0}", args [i]);
+					} else {
+						path = args [i];
+					}
+					break;
+				}
+
+				i++;
+			}
+
+			if (path != null) {
+				new GaimLogViewer (path, highlight);
 			} else {
-				Console.WriteLine ("USAGE: beagle-imlogviewer " +
-						   "/home/lukas/.gaim/logs/msn/joe@joe.com/jane@love.com");
+				Console.WriteLine ("Please specify a valid log path or log directory.");
 			}
 		}
 	}
