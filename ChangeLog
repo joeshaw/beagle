@@ -1,3 +1,7 @@
+2005-05-03  Kostas Papadimas <pkst@gnome.org>
+
+	* configure.in: Added "el" to ALL_LINGUAS.
+
 2005-05-03  Vijay K. Nanjundaswamy <knvijay@novell.com>
 
 	* beagled/WebServices/WebBackEnd.cs: Fixes in doQuery method: removed duplicate population of queryBody

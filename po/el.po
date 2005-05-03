@@ -1,0 +1,476 @@
+# translation of el.po to Greek
+# This file is distributed under the same license as the PACKAGE package.
+# Copyright (C) 2005 THE PACKAGE'S COPYRIGHT HOLDER.
+# Kostas Papadimas <pkst@gnome.org>, 2005.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: el\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2005-05-02 13:57+0300\n"
+"PO-Revision-Date: 2005-05-03 10:48+0300\n"
+"Last-Translator: Kostas Papadimas <pkst@gnome.org>\n"
+"Language-Team: Greek <team@gnome.gr>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms:  nplurals=2; plural=(n != 1);\n"
+"X-Generator: KBabel 1.10\n"
+
+#: ../Best/Best.cs:120
+msgid ""
+"If you're wondering whether Best is working check your notification area "
+"(system tray)"
+msgstr ""
+"Αν αναρωτιέστε αν το Best δουλέυει, κοιτάξτε την περιοχή ειδοποίησης σας"
+"(system tray)"
+
+#: ../Best/BestTray.cs:164
+msgid "No Recent Searches"
+msgstr "Δεν υπάρχουν πρόσφατες αναζητήσεις"
+
+#: ../Best/BestTray.cs:179
+msgid "Quit"
+msgstr "Έξοδος"
+
+#: ../Best/BestWindow.cs:304
+msgid "Anywhere"
+msgstr "Οπουδήποτε"
+
+#: ../Best/BestWindow.cs:306
+msgid "in Files"
+msgstr "Σε αρχεία"
+
+#: ../Best/BestWindow.cs:308
+msgid "in Addressbook"
+msgstr "Σε ευρετήριο διευθύνσεων"
+
+#: ../Best/BestWindow.cs:310
+msgid "in Mail"
+msgstr "σε αλληλογραφία"
+
+#: ../Best/BestWindow.cs:312
+msgid "in Web Pages"
+msgstr "Σε ιστοσελίδες"
+
+#: ../Best/BestWindow.cs:314
+msgid "in Chats"
+msgstr "σε chats"
+
+#: ../Best/BestWindow.cs:330
+msgid "Search terms:"
+msgstr "Κριτήρια αναζήτησης:"
+
+#: ../Best/BestWindow.cs:347
+msgid "Find"
+msgstr "Εύρεση"
+
+#: ../Best/BestWindow.cs:364
+msgid "Show More Results"
+msgstr "Εμφάνιση περισσότερων αποτελεσμάτων"
+
+#: ../Best/BestWindow.cs:370
+msgid "Show Previous Results"
+msgstr "Εμφάνιση προηγούμενων αποτελεσμάτων"
+
+#: ../Best/BestWindow.cs:404
+msgid "No results."
+msgstr "Χωρίς αποτελέσματα."
+
+#. To translators: {0} is the current count of results shown of {1} in total, this is the message that is initially shown
+#. when results are returned to the user.
+#: ../Best/BestWindow.cs:408
+#, csharp-format
+msgid "Best <b>{0} results of {1}</b> are shown."
+msgstr "Εμφανίζοντια τα καλύτερα <b>{0} αποτελέσματα από {1}</b> are shown."
+
+#. To translators: {0} to {1} is the interval of results currently shown of {2} results in total
+#: ../Best/BestWindow.cs:413
+#, csharp-format
+msgid "Results <b>{0} through {1} of {2}</b> are shown."
+msgstr "Αποτελέσματα<b>{0} του {1} από {2}</b> εμφανίζονται."
+
+#. To translators: {0} represents the current query keywords
+#: ../Best/BestWindow.cs:552
+#, csharp-format
+msgid ""
+"The query for <i>{0}</i> failed.<br>The likely cause is that the beagle "
+"daemon isn't running."
+msgstr ""
+"Η αναζήτηση για <i>{0}</i> απέτυχε.<br>. Ο πιό πιθανός λόγος είναι ότι ο beagle "
+"daemon δεν εκτελείται."
+
+#. To translators: {0} represents the current query keywords
+#: ../Best/BestWindow.cs:557
+#, csharp-format
+msgid ""
+"The query for <i>{0}</i> failed.<br>The session bus isn't running.  See "
+"http://beaglewiki.org/index.php/Installing%20Beagle for information on "
+"setting up a session bus."
+msgstr ""
+"Η αναζήτηση για <i>{0}</i> απέτυχε.<br> Τοsession bus δεν εκτελείται.  Δείτε το "
+"http://beaglewiki.org/index.php/Installing%20Beagle για περισσότερες πληροφορίες"
+"στο ως να ρυθμίετε ένα session bus."
+
+#. To translators: {0} represents the current query keywords, {1} contains the errormessage
+#: ../Best/BestWindow.cs:561
+#, csharp-format
+msgid "The query for <i>{0}</i> failed with error:<br>{1}<br>"
+msgstr "Η αναζήτηση για <i>{0}</i> απέτυχε με σφάλμα:<br>{1}<br>"
+
+#: ../ImLogViewer/ImLogViewer.cs:100 ../ImLogViewer/ImLogViewer.cs:105
+#, csharp-format
+msgid "Conversations with {0}"
+msgstr "Συζητήσεις με {0}"
+
+#: ../ImLogViewer/ImLogViewer.cs:103
+#, csharp-format
+msgid "Conversations in {0}"
+msgstr "Συζητήσεις σε {0}"
+
+#: ../ImLogViewer/ImLogViewer.cs:191 ../Util/StringFu.cs:65
+msgid "Today"
+msgstr "Σήμερα"
+
+#: ../ImLogViewer/ImLogViewer.cs:192 ../ImLogViewer/ImLogViewer.cs:197
+msgid "HH:mm"
+msgstr "HH:mm"
+
+#: ../ImLogViewer/ImLogViewer.cs:196 ../Util/StringFu.cs:67
+msgid "Yesterday"
+msgstr "Χθές"
+
+#: ../ImLogViewer/ImLogViewer.cs:201
+msgid "This Week"
+msgstr "Αυτή την εβδομάδα"
+
+#: ../ImLogViewer/ImLogViewer.cs:202 ../ImLogViewer/ImLogViewer.cs:207
+msgid "dddd"
+msgstr "dddd"
+
+#: ../ImLogViewer/ImLogViewer.cs:206
+msgid "Last Week"
+msgstr "Τελευταία εβδομάδα"
+
+#: ../ImLogViewer/ImLogViewer.cs:211
+msgid "This Month"
+msgstr "Αυτό το μήνα"
+
+#: ../ImLogViewer/ImLogViewer.cs:212 ../ImLogViewer/ImLogViewer.cs:217
+#: ../Util/StringFu.cs:69
+msgid "MMM d"
+msgstr "MMM d"
+
+#: ../ImLogViewer/ImLogViewer.cs:216
+msgid "This Year"
+msgstr "Αυτό το έτος"
+
+#: ../ImLogViewer/ImLogViewer.cs:221
+msgid "Older"
+msgstr "Παλαιότερο"
+
+#: ../ImLogViewer/ImLogViewer.cs:222
+msgid "yyyy MMM d"
+msgstr "yyyy MMM d"
+
+#: ../ImLogViewer/ImLogViewer.glade.h:1
+msgid "*"
+msgstr "*"
+
+#: ../ImLogViewer/ImLogViewer.glade.h:2
+msgid "<b>Conversations History</b>"
+msgstr "<b> Ιστορικό συζητήσεων</b>"
+
+#: ../ImLogViewer/ImLogViewer.glade.h:3
+msgid "<b>Today, 12:00 PM</b>"
+msgstr "<b>Σήμερα, 12:00 ΜΜ</b>"
+
+#: ../ImLogViewer/ImLogViewer.glade.h:4
+msgid "Find "
+msgstr "Εύρεση"
+
+#: ../ImLogViewer/ImLogViewer.glade.h:5
+msgid "IM viewer"
+msgstr "Εφαρμογή προβολής IM"
+
+#: ../Tiles/TileDocs.cs:75
+msgid "Pages:"
+msgstr "Σελίδες:"
+
+#: ../Tiles/TileDocs.cs:79
+msgid "Words:"
+msgstr "Λέξεις:"
+
+#: ../Tiles/TileFolder.cs:51
+msgid "Empty"
+msgstr "Κενός"
+
+#: ../Tiles/TileFolder.cs:53
+#, csharp-format
+msgid "Contains {0} Item"
+msgid_plural "Contains {0} Items"
+msgstr[0] "Περιέχει {0}αντικείμενο"
+msgstr[1] "Περιέχει {0}αντικείμενα"
+
+#: ../Tiles/TileImLog.cs:76
+msgid "Send Mail"
+msgstr "Αποστολή Αλληλογραφίας"
+
+#. For translators: From template Tiles/template-mail-message.html
+#: ../Tiles/TileImLog.cs:80 ../Tiles/TranslationHack.cs:44
+msgid "Send IM"
+msgstr "Αποστολή IM"
+
+#: ../Tiles/TileImLog.cs:89
+#, csharp-format
+msgid "Conversation in {0}"
+msgstr "Συζήτηση σε {0}"
+
+#: ../Tiles/TileImLog.cs:91
+#, csharp-format
+msgid "Conversation with {0}"
+msgstr "Συζήτηση με {0}"
+
+#: ../Tiles/TileMailMessage.cs:68
+msgid "No Subject"
+msgstr "Χωρίς θέμα"
+
+#: ../Tiles/TileMailMessage.cs:73
+msgid "To"
+msgstr "Προς"
+
+#: ../Tiles/TileMailMessage.cs:73
+msgid "From"
+msgstr "Από"
+
+#: ../Tiles/TileMailMessage.cs:104
+msgid "Sent"
+msgstr "Απεσταλμένα"
+
+#: ../Tiles/TileMailMessage.cs:104
+msgid "Received"
+msgstr "Ληφθέντα"
+
+#. For translators: From template Tiles/template-docs.html
+#. For translators: From template Tiles/template-folder.html
+#. For translators: From template Tiles/template-file.html
+#. For translators: From template Tiles/template-picture.html
+#. For translators: From template Tiles/template-presentation.html
+#: ../Tiles/TranslationHack.cs:6 ../Tiles/TranslationHack.cs:24
+#: ../Tiles/TranslationHack.cs:28 ../Tiles/TranslationHack.cs:60
+#: ../Tiles/TranslationHack.cs:70
+msgid "in folder"
+msgstr "σε φάκελο"
+
+#. For translators: From template Tiles/template-docs.html
+#. For translators: From template Tiles/template-file.html
+#. For translators: From template Tiles/template-presentation.html
+#: ../Tiles/TranslationHack.cs:8 ../Tiles/TranslationHack.cs:30
+#: ../Tiles/TranslationHack.cs:72
+msgid "Last modified"
+msgstr "Τελευταία τροποποίηση"
+
+#. For translators: From template Tiles/template-docs.html
+#. For translators: From template Tiles/template-presentation.html
+#: ../Tiles/TranslationHack.cs:10 ../Tiles/TranslationHack.cs:74
+msgid "Title:"
+msgstr "Τίτλος:"
+
+#. For translators: From template Tiles/template-docs.html
+#. For translators: From template Tiles/template-presentation.html
+#: ../Tiles/TranslationHack.cs:12 ../Tiles/TranslationHack.cs:76
+msgid "Author:"
+msgstr "Συγγραφέας:"
+
+#. For translators: From template Tiles/template-docs.html
+#. For translators: From template Tiles/template-launcher.html
+#. For translators: From template Tiles/template-folder.html
+#. For translators: From template Tiles/template-file.html
+#. For translators: From template Tiles/template-im-log.html
+#. For translators: From template Tiles/template-mail-message.html
+#. For translators: From template Tiles/template-music.html
+#. For translators: From template Tiles/template-note.html
+#. For translators: From template Tiles/template-picture.html
+#. For translators: From template Tiles/template-presentation.html
+#. For translators: From template Tiles/template-web-history.html
+#. For translators: From template Tiles/template-blog.html
+#: ../Tiles/TranslationHack.cs:14 ../Tiles/TranslationHack.cs:22
+#: ../Tiles/TranslationHack.cs:26 ../Tiles/TranslationHack.cs:32
+#: ../Tiles/TranslationHack.cs:38 ../Tiles/TranslationHack.cs:42
+#: ../Tiles/TranslationHack.cs:50 ../Tiles/TranslationHack.cs:58
+#: ../Tiles/TranslationHack.cs:64 ../Tiles/TranslationHack.cs:80
+#: ../Tiles/TranslationHack.cs:88 ../Tiles/TranslationHack.cs:94
+msgid "Open"
+msgstr "Άνοιγμα"
+
+#. For translators: From template Tiles/template-docs.html
+#. For translators: From template Tiles/template-file.html
+#. For translators: From template Tiles/template-picture.html
+#. For translators: From template Tiles/template-presentation.html
+#: ../Tiles/TranslationHack.cs:16 ../Tiles/TranslationHack.cs:34
+#: ../Tiles/TranslationHack.cs:66 ../Tiles/TranslationHack.cs:82
+msgid "Send to..."
+msgstr "Αποστολή σε..."
+
+#. For translators: From template Tiles/template-docs.html
+#. For translators: From template Tiles/template-file.html
+#. For translators: From template Tiles/template-music.html
+#. For translators: From template Tiles/template-picture.html
+#. For translators: From template Tiles/template-presentation.html
+#: ../Tiles/TranslationHack.cs:18 ../Tiles/TranslationHack.cs:36
+#: ../Tiles/TranslationHack.cs:54 ../Tiles/TranslationHack.cs:68
+#: ../Tiles/TranslationHack.cs:84
+msgid "Reveal in file manager"
+msgstr "Εμφάνιση στον διαχειριστή αρχείων"
+
+#. For translators: From template Tiles/template-launcher.html
+#: ../Tiles/TranslationHack.cs:20
+msgid "Application:"
+msgstr "Εφαρμογή:"
+
+#. For translators: From template Tiles/template-mail-message.html
+#: ../Tiles/TranslationHack.cs:40
+msgid "Folder:"
+msgstr "Φάκελος:"
+
+#. For translators: From template Tiles/template-music.html
+#: ../Tiles/TranslationHack.cs:46
+msgid "Track"
+msgstr "Κομμάτι"
+
+#. For translators: From template Tiles/template-music.html
+#: ../Tiles/TranslationHack.cs:48
+msgid "from"
+msgstr "από"
+
+#. For translators: From template Tiles/template-music.html
+#: ../Tiles/TranslationHack.cs:52
+msgid "Enqueue"
+msgstr "Enqueue"
+
+#. For translators: From template Tiles/template-note.html
+#: ../Tiles/TranslationHack.cs:56
+msgid "last modified"
+msgstr "τελευταία τροποποίηση"
+
+#. For translators: From template Tiles/template-picture.html
+#: ../Tiles/TranslationHack.cs:62
+msgid "Modified:"
+msgstr "Τροποποιήθηκε:"
+
+#. For translators: From template Tiles/template-presentation.html
+#: ../Tiles/TranslationHack.cs:78
+msgid "Slides:"
+msgstr "Slides:"
+
+#. For translators: From template Tiles/template-web-history.html
+#: ../Tiles/TranslationHack.cs:86
+msgid "Last viewed:"
+msgstr "Τελευταία προβολή:"
+
+#. For translators: From template Tiles/template-blog.html
+#: ../Tiles/TranslationHack.cs:90
+msgid "Weblog:"
+msgstr "Weblog:"
+
+#. For translators: From template Tiles/template-blog.html
+#: ../Tiles/TranslationHack.cs:92
+msgid "Published:"
+msgstr "Δημοσιεύθηκε:"
+
+#: ../Util/ExifData.cs:226
+msgid "Image Directory"
+msgstr "Κατάλογος εικόνων"
+
+#: ../Util/ExifData.cs:228
+msgid "Thumbnail Directory"
+msgstr "Κατάλογος μικρογραφιών"
+
+#: ../Util/ExifData.cs:230
+msgid "Exif Directory"
+msgstr "Κατάλογος Exif"
+
+#: ../Util/ExifData.cs:232
+msgid "GPS Directory"
+msgstr "Κατάλογος GPS "
+
+#: ../Util/ExifData.cs:234
+msgid "InterOperability Directory"
+msgstr "Κατάλογος InterOperability"
+
+#: ../Util/ExifData.cs:236
+msgid "Unknown Directory"
+msgstr "Άγνωστος κατάλογος"
+
+#: ../Util/StringFu.cs:71
+msgid "MMM d, yyyy"
+msgstr "MMM d, yyyy"
+
+#: ../Util/StringFu.cs:73
+msgid "h:mm tt"
+msgstr "h:mm tt"
+
+#. Translators: {0} is a date (e.g. 'Today' or 'Apr 23'), {1} is the time
+#: ../Util/StringFu.cs:79
+#, csharp-format
+msgid "{0}, {1}"
+msgstr "{0}, {1}"
+
+#. To translators: {0} is the time of the day, eg. 13:45
+#: ../Util/StringFu.cs:96
+#, csharp-format
+msgid "Today, {0}"
+msgstr "Σήμερα, {0}"
+
+#. To translators: {0} is the time of the day, eg. 13:45
+#: ../Util/StringFu.cs:99
+#, csharp-format
+msgid "Yesterday, {0}"
+msgstr "Χθες, {0}"
+
+#. To translators: {0} is the number of days that have passed, {1} is the time of the day, eg. 13:45
+#: ../Util/StringFu.cs:102
+#, csharp-format
+msgid "{0} days ago, {1}"
+msgstr "{0} ημέρες πριν, {1}"
+
+#: ../Util/StringFu.cs:106
+msgid "MMMM d, h:mm tt"
+msgstr "MMMM d, h:mm tt"
+
+#: ../Util/StringFu.cs:110
+msgid "MMMM d yyyy, h:mm tt"
+msgstr "MMMM d yyyy, h:mm tt"
+
+#: ../Util/StringFu.cs:120
+#, csharp-format
+msgid "{0} hour"
+msgid_plural "{0} hours"
+msgstr[0] "{0} ώρα"
+msgstr[1] "{0} ώρες"
+
+#: ../Util/StringFu.cs:127
+#, csharp-format
+msgid "{0} minute"
+msgid_plural "{0} minutes"
+msgstr[0] "{0} λεπτό"
+msgstr[1] "{0} λεπτά"
+
+#. Translators: {0} is a file size in bytes
+#: ../Util/StringFu.cs:143
+#, csharp-format
+msgid "{0} bytes"
+msgstr "{0} bytes"
+
+#. Translators: {0} is a file size in kilobytes
+#: ../Util/StringFu.cs:147
+#, csharp-format
+msgid "{0:0.0} KB"
+msgstr "{0:0.0} KB"
+
+#. Translators: {0} is a file size in megabytes
+#: ../Util/StringFu.cs:150
+#, csharp-format
+msgid "{0:0.0} MB"
+msgstr "{0:0.0} MB"
+
