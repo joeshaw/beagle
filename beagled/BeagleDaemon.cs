@@ -216,12 +216,18 @@ namespace Beagle.Daemon {
 				}
 			}
 
+			// Bail out if we are trying to run as root
+			if (Environment.UserName == "root") {
+				Logger.Log.Error ("You can not run beagle as root.");
+				Logger.Log.Error ("Beagle is designed to be run from your own user account.");
+				Environment.Exit (-1);
+			}
+
 			MainLoopThread = Thread.CurrentThread;
 
 			// Initialize logging.
 			// If we saw the --debug arg, set the default logging level
 			// accordingly.
-
 			if (arg_debug)
 				Logger.DefaultLevel = LogLevel.Debug;
 
@@ -234,13 +240,6 @@ namespace Beagle.Daemon {
 				Logger.Log.Debug ("Command Line: {0}",
 						  Environment.CommandLine != null ? Environment.CommandLine : "(null)");
 			} catch (Exception ex) { }
-
-
-			if (Environment.UserName == "root") {
-				Logger.Log.Error ("You can not run beagle as root.");
-				Logger.Log.Error ("Beagle is designed to be run from your own user account.");
-				Environment.Exit (-1);
-			}
 
 			// Make sure that extended attributes can be set.  If not, bail out with a message.
 			// FIXME FIXME FIXME: This assumes that EAs work the same on your storage dir
