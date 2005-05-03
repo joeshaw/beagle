@@ -114,16 +114,15 @@ namespace Beagle.Daemon.GaimLogQueryable {
 		/////////////////////////////////////////////////
 
 		// Sets up an Inotify watch on all subdirectories withing ~/.gaim/logs
-		private int Watch (string path)
+		private void Watch (string path)
 		{
 			DirectoryInfo root = new DirectoryInfo (path);
 			
 			if (! root.Exists) {
 				log.Warn ("IM: {0} cannot watch path. It doesn't exist.", path);
-				return 0;	
+				return;	
 			}
 			
-			int file_count = 0;
 			Queue queue = new Queue ();
 			queue.Enqueue (root);
 
@@ -141,8 +140,6 @@ namespace Beagle.Daemon.GaimLogQueryable {
 				foreach (DirectoryInfo subdir in dir.GetDirectories ())
 					queue.Enqueue (subdir);
 			}
-			
-			return file_count;
 		}
 		
 		/////////////////////////////////////////////////
