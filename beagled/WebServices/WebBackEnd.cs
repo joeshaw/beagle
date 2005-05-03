@@ -86,12 +86,10 @@ namespace Beagle.WebService {
 		}
 
 		void OnHitsAdded (QueryResult qres, ICollection hits)
-		{	
-			Console.WriteLine("WebBackEnd: OnHitsAdded() invoked with {0} hits", hits.Count);
+		{			
 			if (result.Contains(qres)) {
 				BT.SimpleRootTile root = ((Resp) result[qres]).rootTile;
 				root.Add(hits);
-				Console.WriteLine("Hit Added to Root Tile");
 			}
 		}
 
@@ -135,8 +133,6 @@ namespace Beagle.WebService {
 			
 				if (result.Contains(qres))
 					result.Remove(qres);
-					
-				//Console.WriteLine("QueryResult: qres detached");
 				
 				qres.HitsAddedEvent -= OnHitsAdded;
 				qres.HitsSubtractedEvent -= OnHitsSubtracted;
@@ -225,34 +221,27 @@ namespace Beagle.WebService {
 		}
 		
 		public string doQuery(string sessId, string searchString, string searchSource)
-		{
-		
+		{	
 			if (sessId == null || searchString == null || searchString == "")
 				return NO_RESULTS;
 						 
 			Console.WriteLine("WebBackEnd:doQuery() - Got Search String: " + searchString + ", with searchSource: " + searchSource);
 			 
-			QueryBody qbody = new QueryBody();
-			QueryResult qres = new QueryResult ();
-			
-			BT.SimpleRootTile root = new BT.SimpleRootTile (); 
-			//Note: QueryDriver.DoQuery() local invocation is used. 
-			//The root tile is used only for adding hits and generating html.
-			Query query = new LocalQuery(qbody, qres);
-									
-			qbody.AddText (searchString); 
-			query.AddText (searchString);	
-			
+			QueryBody qbody = new QueryBody();								
+			qbody.AddText (searchString); 			
 			if (searchSource != null && searchSource != "") {
 				qbody.AddSource(searchSource);	
-				query.AddSource(searchSource);
-			}
+			}			
+			//qbody.AddDomain (QueryDomain.Neighborhood);
+			qbody.AddDomain (QueryDomain.Global);			
+
+			QueryResult qres = new QueryResult ();
 			
-			qbody.AddDomain (QueryDomain.Neighborhood);
-			query.AddDomain (QueryDomain.Neighborhood);					
-			
+			//Note: QueryDriver.DoQuery() local invocation is used. 
+			//The root tile is used only for adding hits and generating html.
+			BT.SimpleRootTile root = new BT.SimpleRootTile (); 			
+			Query query = new LocalQuery(qbody, qres);					
 			root.Query = query;
-			//root.SetSource(searchSource);
 											
 			bufferRenderContext bctx = new bufferRenderContext();
 			Resp resp = new Resp(root, bctx);
@@ -265,7 +254,7 @@ namespace Beagle.WebService {
 			else
 				sessionResp.Add(sessId, resp);	
 
-			Console.WriteLine("WebBackEnd:doQuery() - Starting Query for string \"{0}\"", qbody.QuotedText);
+			//Console.WriteLine("WebBackEnd:doQuery() - Starting Query for string \"{0}\"", qbody.QuotedText);
 
 			QueryDriver.DoQuery (qbody, qres);
 
@@ -359,7 +348,6 @@ namespace Beagle.WebService {
 			}
 		}
 		
-
 //////////////////////////////////////////////////////////////////////////
 
 	//KNV: Wrapper implementation similar to BeagleClient Query to feed RootTile.
