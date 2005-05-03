@@ -218,8 +218,8 @@ namespace Beagle.Daemon {
 
 			// Bail out if we are trying to run as root
 			if (Environment.UserName == "root") {
-				Logger.Log.Error ("You can not run beagle as root.");
-				Logger.Log.Error ("Beagle is designed to be run from your own user account.");
+				Console.WriteLine ("You can not run beagle as root.");
+				Console.WriteLine ("Beagle is designed to be run from your own user account.");
 				Environment.Exit (-1);
 			}
 
