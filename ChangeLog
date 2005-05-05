@@ -1,3 +1,11 @@
+2005-05-05  Veerapuram Varadhan <vvaradhan@novell.com>
+
+	* Filters/FilterRTF: Added "header" and "footer" control words.
+	Patch from Wojciech Polak <wojciechpolak at gmail.com>
+	* Filters/FilterSource.cs: Support for handling Lisp files.
+	* Filters/FilterLisp.cs: Lisp filter.
+	* Filters/Makefile.am: ditto.
+	
 2005-05-03  Kostas Papadimas <pkst@gnome.org>
 
 	* configure.in: Added "el" to ALL_LINGUAS.

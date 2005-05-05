@@ -1,7 +1,7 @@
 //
 // FilterSource.cs
 //
-// Copyright (C) 2004 Novell, Inc.
+// Copyright (C) 2004, 2005 Novell, Inc.
 //
 
 //
@@ -39,7 +39,8 @@ namespace Beagle.Filters {
 			C_Sharp_Style,
 			Python_Style,
 			Fortran_Style,
-			Pascal_Style
+			Pascal_Style,
+			Lisp_Style
 		};
 		
 		protected LangType SrcLangType;
@@ -118,7 +119,8 @@ namespace Beagle.Filters {
 						break;
 					}
 				} else if (str[index] == '#' && SrcLangType == LangType.Python_Style ||
-					   str[index] == '!' && SrcLangType == LangType.Fortran_Style) {
+					   str[index] == '!' && SrcLangType == LangType.Fortran_Style ||
+					   str[index] == ';' && SrcLangType == LangType.Lisp_Style) {
 					if (SrcLineType == LineType.None) {
 						SrcLineType = LineType.SingleLineComment;
 						token.Remove (0, token.Length);
@@ -155,6 +157,10 @@ namespace Beagle.Filters {
 					       
 					splCharSeq = "";
 				}
+				// Lisp: ignore the single quote character; do another iteration
+				else if (SrcLangType == LangType.Lisp_Style && str[index] == '\'') {
+					continue;
+				}
 				else if (str[index] == '\"' || str[index] == '\'') {
 
 					if (SrcLineType == LineType.StringConstant &&
@@ -181,9 +187,23 @@ namespace Beagle.Filters {
 				} else if (SrcLineType == LineType.None) {
 					if (Char.IsLetter (str[index]) ||
 					    Char.IsDigit (str[index]) ||
-					    str[index] == '_')
+					    str[index] == '_') {
 						token.Append (str[index]);
-					else {
+					} else {
+						if (SrcLangType == LangType.Lisp_Style) {
+
+							// Lisp identifiers: letters, digits, and:
+							// ! $ % & * + - . / : < = > ? @ ^ _ ~
+							switch (str[index]) {
+							case '!': case '$': case '%': case '&':
+							case '*': case '+': case '-': case '.':
+							case '/': case ':': case '<': case '=':
+							case '>': case '?': case '@': case '^':
+							case '_': case '~':
+								token.Append (str[index]);
+								continue;
+							}
+						}
 						token = token.Replace(" ", "");
 						if (token.Length > 0) {
 							string tok = token.ToString(); 
@@ -214,8 +234,9 @@ namespace Beagle.Filters {
 				// if a single-line-comment ends with a "\", 
 				// the lines that follows it are also considered as a comment,
 				// till a line with out a "\" is found
-				// C# doesn't follow this syntax.
+				// C# and Lisp don't follow this syntax.
 				if (SrcLangType == LangType.C_Sharp_Style ||
+				    SrcLangType == LangType.Lisp_Style ||
 				    (SrcLineType == LineType.SingleLineComment &&
 				     str.Length > 0 && str[str.Length - 1] != '\\'))
 					SrcLineType = LineType.None;

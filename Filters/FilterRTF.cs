@@ -78,6 +78,8 @@ internal class RTFControlWordType {
 		new RTFControlWordType (Type.MetaDataTag, "company"),
 		new RTFControlWordType (Type.ParaEnd, "par"),
 		new RTFControlWordType (Type.Paragraph, "pard"),
+		new RTFControlWordType (Type.SplSection, "header"),
+		new RTFControlWordType (Type.SplSection, "footer"),
 		new RTFControlWordType (Type.SplSection, "headerl"),
 		new RTFControlWordType (Type.SplSection, "footerl"),
 		new RTFControlWordType (Type.SplSection, "footnote"),
@@ -136,6 +138,7 @@ namespace Beagle.Filters {
 		{
 			// Make this a general rtf filter.
 			AddSupportedMimeType ("application/rtf");
+
 			pos = Position.None;
 			groupCount = 0;
 			skipCount = 0;

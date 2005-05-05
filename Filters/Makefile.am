@@ -41,7 +41,8 @@ CSFILES = 				\
 	$(srcdir)/FilterPascal.cs	\
 	$(srcdir)/FilterAbiword.cs	\
 	$(srcdir)/FilterSpreadsheet.cs	\
-	$(srcdir)/FilterJs.cs
+	$(srcdir)/FilterJs.cs		\
+	$(srcdir)/FilterLisp.cs
 
 if ENABLE_GSF_SHARP
 CSFILES += 				\
