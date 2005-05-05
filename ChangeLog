@@ -1,3 +1,8 @@
+2005-05-05  Daniel Drake  <dsd@gentoo.org>
+
+	* beagled/LauncherQueryable/LauncherQueryable.cs: Don't choke on
+	unreadable desktop files.
+
 2005-05-05  Veerapuram Varadhan <vvaradhan@novell.com>
 
 	* Filters/FilterRTF: Added "header" and "footer" control words.

@@ -171,14 +171,23 @@ namespace Beagle.Daemon.LauncherQueryable {
 				return;
 			
 			/* Check to see if file is a launcher */
-			if (Beagle.Util.VFS.Mime.GetMimeType (file.ToString ()) != "application/x-desktop")
+			if (Beagle.Util.VFS.Mime.GetMimeType (file.FullName) != "application/x-desktop")
 				return;
-			StreamReader reader = new StreamReader (file.Open (FileMode.Open, FileAccess.Read, FileShare.Read));
+
+			StreamReader reader;
+
+			try {
+				reader = new StreamReader (file.Open (FileMode.Open, FileAccess.Read, FileShare.Read));
+			} catch (Exception e) {
+				log.Warn ("Could not open '{0}': {1}", file.FullName, e.Message);
+				return;
+			}
+
 			if (reader.ReadLine () != "[Desktop Entry]") {
 				reader.Close ();
 				return;
 			}
-				
+
 			/* I'm convinced it is a launcher */
 			Indexable indexable = new Indexable (UriFu.PathToFileUri (file.FullName));
 
