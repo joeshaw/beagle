@@ -1,0 +1,454 @@
+# traditional Chinese translation of beagle.
+# Copyright (C) 2001, 03, 2004 Free Software Foundation, Inc.
+# Chao-Hsiung Liao <j_h_liau@yahoo.com.tw>, 2005.
+msgid ""
+msgstr ""
+"Project-Id-Version: beagle 0.0.10\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2005-04-16 10:38+0000\n"
+"PO-Revision-Date: 2005-04-27 17:53+0800\n"
+"Last-Translator: Chao-Hsiung Liao <j_h_liau@yahoo.com.tw>\n"
+"Language-Team: Chinese (traditional) <zh-l10n@linux.org.tw>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#: ../Best/Best.cs:120
+msgid "If you're wondering whether Best is working check your notification area (system tray)"
+msgstr "如果您不確定 Best 是否在運作，請檢查您的通知區域(系統匣)"
+
+#: ../Best/BestTray.cs:164
+msgid "No Recent Searches"
+msgstr "沒有最近的搜尋"
+
+#: ../Best/BestTray.cs:179
+msgid "Quit"
+msgstr "離開"
+
+#: ../Best/BestWindow.cs:304
+msgid "Anywhere"
+msgstr "任何地方"
+
+#: ../Best/BestWindow.cs:306
+msgid "in Files"
+msgstr "在檔案中"
+
+#: ../Best/BestWindow.cs:308
+msgid "in Addressbook"
+msgstr "在通訊錄中"
+
+#: ../Best/BestWindow.cs:310
+msgid "in Mail"
+msgstr "在郵件中"
+
+#: ../Best/BestWindow.cs:312
+msgid "in Web Pages"
+msgstr "在網頁中"
+
+#: ../Best/BestWindow.cs:314
+msgid "in Chats"
+msgstr "在聊天室中"
+
+#: ../Best/BestWindow.cs:330
+msgid "Search terms:"
+msgstr "搜尋條件:"
+
+#: ../Best/BestWindow.cs:347
+msgid "Find"
+msgstr "尋找"
+
+#: ../Best/BestWindow.cs:364
+msgid "Show More Results"
+msgstr "顯示更多結果"
+
+#: ../Best/BestWindow.cs:370
+msgid "Show Previous Results"
+msgstr "顯示前一次結果"
+
+#: ../Best/BestWindow.cs:404
+msgid "No results."
+msgstr "沒有結果。"
+
+#. To translators: {0} is the current count of results shown of {1} in total, this is the message that is initially shown
+#: ../Best/BestWindow.cs:408
+#, csharp-format
+msgid "Best <b>{0} results of {1}</b> are shown."
+msgstr "Best 顯示 <b>{1} 個結果中的 {0} 個</b> 。"
+
+#. To translators: {0} to {1} is the interval of results currently shown of {2} results in total
+#: ../Best/BestWindow.cs:413
+#, csharp-format
+msgid "Results <b>{0} through {1} of {2}</b> are shown."
+msgstr "顯示全部 <b>{2} 個結果中 {0} 到 {1}</b>。"
+
+#. To translators: {0} represents the current query keywords
+#: ../Best/BestWindow.cs:552
+#, csharp-format
+msgid "The query for <i>{0}</i> failed.<br>The likely cause is that the beagle daemon isn't running."
+msgstr "對 <i>{0}</i> 的查詢失敗了。<br>原因可能是 beagle 伺服程式尚未執行。"
+
+#. To translators: {0} represents the current query keywords
+#: ../Best/BestWindow.cs:557
+#, csharp-format
+msgid "The query for <i>{0}</i> failed.<br>The session bus isn't running.  See http://beaglewiki.org/index.php/Installing%20Beagle for information on setting up a session bus."
+msgstr "對 <i>{0}</i> 的查詢失敗了。<br>該工作階段匯流並未執行。請查閱 http://beaglewiki.org/index.php/Installing%20Beagle 以獲得設定工作階段匯流的資訊。"
+
+#. To translators: {0} represents the current query keywords, {1} contains the errormessage
+#: ../Best/BestWindow.cs:561
+#, csharp-format
+msgid "The query for <i>{0}</i> failed with error:<br>{1}<br>"
+msgstr "對 <i>{0}</i> 的查詢失敗了。錯誤為：<br>{1}<br>"
+
+#: ../ImLogViewer/ImLogViewer.cs:100
+#: ../ImLogViewer/ImLogViewer.cs:105
+#, csharp-format
+msgid "Conversations with {0}"
+msgstr "與 {0} 交涉"
+
+#: ../ImLogViewer/ImLogViewer.cs:103
+#, csharp-format
+msgid "Conversations in {0}"
+msgstr "於 {0} 交涉"
+
+#: ../ImLogViewer/ImLogViewer.cs:191
+#: ../Util/StringFu.cs:65
+msgid "Today"
+msgstr "今天"
+
+#: ../ImLogViewer/ImLogViewer.cs:192
+#: ../ImLogViewer/ImLogViewer.cs:197
+msgid "HH:mm"
+msgstr "HH:mm"
+
+#: ../ImLogViewer/ImLogViewer.cs:196
+#: ../Util/StringFu.cs:67
+msgid "Yesterday"
+msgstr "昨天"
+
+#: ../ImLogViewer/ImLogViewer.cs:201
+msgid "This Week"
+msgstr "本週"
+
+#: ../ImLogViewer/ImLogViewer.cs:202
+#: ../ImLogViewer/ImLogViewer.cs:207
+msgid "dddd"
+msgstr "dddd"
+
+#: ../ImLogViewer/ImLogViewer.cs:206
+msgid "Last Week"
+msgstr "上週"
+
+#: ../ImLogViewer/ImLogViewer.cs:211
+msgid "This Month"
+msgstr "本月"
+
+#: ../ImLogViewer/ImLogViewer.cs:212
+#: ../ImLogViewer/ImLogViewer.cs:217
+#: ../Util/StringFu.cs:69
+msgid "MMM d"
+msgstr "MMM d"
+
+#: ../ImLogViewer/ImLogViewer.cs:216
+msgid "This Year"
+msgstr "今年"
+
+#: ../ImLogViewer/ImLogViewer.cs:221
+msgid "Older"
+msgstr "較舊的"
+
+#: ../ImLogViewer/ImLogViewer.cs:222
+msgid "yyyy MMM d"
+msgstr "yyyy MMM d"
+
+#: ../ImLogViewer/ImLogViewer.glade.h:1
+msgid "*"
+msgstr "*"
+
+#: ../ImLogViewer/ImLogViewer.glade.h:2
+msgid "<b>Conversations History</b>"
+msgstr "<b>交涉紀錄</b>"
+
+#: ../ImLogViewer/ImLogViewer.glade.h:3
+msgid "<b>Today, 12:00 PM</b>"
+msgstr "<b>今天, 12:00 PM</b>"
+
+#: ../ImLogViewer/ImLogViewer.glade.h:4
+msgid "Find "
+msgstr "尋找"
+
+#: ../ImLogViewer/ImLogViewer.glade.h:5
+msgid "IM viewer"
+msgstr "IM 檢視器"
+
+#: ../Tiles/TileDocs.cs:75
+msgid "Pages:"
+msgstr "頁:"
+
+#: ../Tiles/TileDocs.cs:79
+msgid "Words:"
+msgstr "字:"
+
+#: ../Tiles/TileFolder.cs:51
+msgid "Empty"
+msgstr "空的"
+
+#: ../Tiles/TileFolder.cs:53
+#, csharp-format
+msgid "Contains {0} Item"
+msgid_plural "Contains {0} Items"
+msgstr[0] "包含 {0} 個項目"
+msgstr[1] "包含 {0} 個項目"
+
+#: ../Tiles/TileImLog.cs:76
+msgid "Send Mail"
+msgstr "傳送郵件"
+
+#. For translators: From template Tiles/template-mail-message.html
+#: ../Tiles/TileImLog.cs:80
+#: ../Tiles/TranslationHack.cs:44
+msgid "Send IM"
+msgstr "傳送 IM"
+
+#: ../Tiles/TileImLog.cs:89
+#, csharp-format
+msgid "Conversation in {0}"
+msgstr "交涉於 {0}"
+
+#: ../Tiles/TileImLog.cs:91
+#, csharp-format
+msgid "Conversation with {0}"
+msgstr "與 {0} 交涉"
+
+#: ../Tiles/TileMailMessage.cs:68
+msgid "No Subject"
+msgstr "沒有主旨"
+
+#: ../Tiles/TileMailMessage.cs:73
+msgid "To"
+msgstr "To"
+
+#: ../Tiles/TileMailMessage.cs:73
+msgid "From"
+msgstr "From"
+
+#: ../Tiles/TileMailMessage.cs:104
+msgid "Sent"
+msgstr "已傳送"
+
+#: ../Tiles/TileMailMessage.cs:104
+msgid "Received"
+msgstr "已接收"
+
+#. For translators: From template Tiles/template-docs.html
+#: ../Tiles/TranslationHack.cs:6
+#: ../Tiles/TranslationHack.cs:24
+#: ../Tiles/TranslationHack.cs:28
+#: ../Tiles/TranslationHack.cs:60
+#: ../Tiles/TranslationHack.cs:70
+msgid "in folder"
+msgstr "於資料夾"
+
+#. For translators: From template Tiles/template-docs.html
+#: ../Tiles/TranslationHack.cs:8
+#: ../Tiles/TranslationHack.cs:30
+#: ../Tiles/TranslationHack.cs:72
+msgid "Last modified"
+msgstr "上次修改過的"
+
+#. For translators: From template Tiles/template-docs.html
+#: ../Tiles/TranslationHack.cs:10
+#: ../Tiles/TranslationHack.cs:74
+msgid "Title:"
+msgstr "標題:"
+
+#. For translators: From template Tiles/template-docs.html
+#: ../Tiles/TranslationHack.cs:12
+#: ../Tiles/TranslationHack.cs:76
+msgid "Author:"
+msgstr "作者:"
+
+#. For translators: From template Tiles/template-docs.html
+#: ../Tiles/TranslationHack.cs:14
+#: ../Tiles/TranslationHack.cs:22
+#: ../Tiles/TranslationHack.cs:26
+#: ../Tiles/TranslationHack.cs:32
+#: ../Tiles/TranslationHack.cs:38
+#: ../Tiles/TranslationHack.cs:42
+#: ../Tiles/TranslationHack.cs:50
+#: ../Tiles/TranslationHack.cs:58
+#: ../Tiles/TranslationHack.cs:64
+#: ../Tiles/TranslationHack.cs:80
+#: ../Tiles/TranslationHack.cs:88
+#: ../Tiles/TranslationHack.cs:94
+msgid "Open"
+msgstr "開啟"
+
+#. For translators: From template Tiles/template-docs.html
+#: ../Tiles/TranslationHack.cs:16
+#: ../Tiles/TranslationHack.cs:34
+#: ../Tiles/TranslationHack.cs:66
+#: ../Tiles/TranslationHack.cs:82
+msgid "Send to..."
+msgstr "傳送郵件給..."
+
+#. For translators: From template Tiles/template-docs.html
+#: ../Tiles/TranslationHack.cs:18
+#: ../Tiles/TranslationHack.cs:36
+#: ../Tiles/TranslationHack.cs:54
+#: ../Tiles/TranslationHack.cs:68
+#: ../Tiles/TranslationHack.cs:84
+msgid "Reveal in file manager"
+msgstr "檔案管理程式的邊框"
+
+#. For translators: From template Tiles/template-launcher.html
+#: ../Tiles/TranslationHack.cs:20
+msgid "Application:"
+msgstr "應用程式:"
+
+#. For translators: From template Tiles/template-mail-message.html
+#: ../Tiles/TranslationHack.cs:40
+msgid "Folder:"
+msgstr "資料夾:"
+
+#. For translators: From template Tiles/template-music.html
+#: ../Tiles/TranslationHack.cs:46
+msgid "Track"
+msgstr "音軌"
+
+#. For translators: From template Tiles/template-music.html
+#: ../Tiles/TranslationHack.cs:48
+msgid "from"
+msgstr "from"
+
+#. For translators: From template Tiles/template-music.html
+#: ../Tiles/TranslationHack.cs:52
+msgid "Enqueue"
+msgstr "Enqueue"
+
+#. For translators: From template Tiles/template-note.html
+#: ../Tiles/TranslationHack.cs:56
+msgid "last modified"
+msgstr "上次修改的"
+
+#. For translators: From template Tiles/template-picture.html
+#: ../Tiles/TranslationHack.cs:62
+msgid "Modified:"
+msgstr "已修改:"
+
+#. For translators: From template Tiles/template-presentation.html
+#: ../Tiles/TranslationHack.cs:78
+msgid "Slides:"
+msgstr "滑動鈕:"
+
+#. For translators: From template Tiles/template-web-history.html
+#: ../Tiles/TranslationHack.cs:86
+msgid "Last viewed:"
+msgstr "上次檢視的:"
+
+#. For translators: From template Tiles/template-blog.html
+#: ../Tiles/TranslationHack.cs:90
+msgid "Weblog:"
+msgstr "部落格:"
+
+#. For translators: From template Tiles/template-blog.html
+#: ../Tiles/TranslationHack.cs:92
+msgid "Published:"
+msgstr "已發佈:"
+
+#: ../Util/ExifData.cs:226
+msgid "Image Directory"
+msgstr "圖片目錄"
+
+#: ../Util/ExifData.cs:228
+msgid "Thumbnail Directory"
+msgstr "縮圖目錄"
+
+#: ../Util/ExifData.cs:230
+msgid "Exif Directory"
+msgstr "Exif 目錄"
+
+#: ../Util/ExifData.cs:232
+msgid "GPS Directory"
+msgstr "GPS 目錄"
+
+#: ../Util/ExifData.cs:234
+msgid "InterOperability Directory"
+msgstr "互通(InterOperability)目錄"
+
+#: ../Util/ExifData.cs:236
+msgid "Unknown Directory"
+msgstr "未知的目錄"
+
+#: ../Util/StringFu.cs:71
+msgid "MMM d, yyyy"
+msgstr "MMM d, yyyy"
+
+#: ../Util/StringFu.cs:73
+msgid "h:mm tt"
+msgstr "h:mm tt"
+
+#. Translators: {0} is a date (e.g. 'Today' or 'Apr 23'), {1} is the time
+#: ../Util/StringFu.cs:79
+#, csharp-format
+msgid "{0}, {1}"
+msgstr "{0}, {1}"
+
+#. To translators: {0} is the time of the day, eg. 13:45
+#: ../Util/StringFu.cs:96
+#, csharp-format
+msgid "Today, {0}"
+msgstr "今天, {0}"
+
+#. To translators: {0} is the time of the day, eg. 13:45
+#: ../Util/StringFu.cs:99
+#, csharp-format
+msgid "Yesterday, {0}"
+msgstr "昨天, {0}"
+
+#. To translators: {0} is the number of days that have passed, {1} is the time of the day, eg. 13:45
+#: ../Util/StringFu.cs:102
+#, csharp-format
+msgid "{0} days ago, {1}"
+msgstr "{0} 天前，{1}"
+
+#: ../Util/StringFu.cs:106
+msgid "MMMM d, h:mm tt"
+msgstr "MMMM d, h:mm tt"
+
+#: ../Util/StringFu.cs:110
+msgid "MMMM d yyyy, h:mm tt"
+msgstr "MMMM d yyyy, h:mm tt"
+
+#: ../Util/StringFu.cs:120
+#, csharp-format
+msgid "{0} hour"
+msgid_plural "{0} hours"
+msgstr[0] "{0} 小時"
+msgstr[1] "{0} 小時"
+
+#: ../Util/StringFu.cs:127
+#, csharp-format
+msgid "{0} minute"
+msgid_plural "{0} minutes"
+msgstr[0] "{0} 分"
+msgstr[1] "{0} 分"
+
+#. Translators: {0} is a file size in bytes
+#: ../Util/StringFu.cs:143
+#, csharp-format
+msgid "{0} bytes"
+msgstr "{0} 位元組"
+
+#. Translators: {0} is a file size in kilobytes
+#: ../Util/StringFu.cs:147
+#, csharp-format
+msgid "{0:0.0} KB"
+msgstr "{0:0.0} KB"
+
+#. Translators: {0} is a file size in megabytes
+#: ../Util/StringFu.cs:150
+#, csharp-format
+msgid "{0:0.0} MB"
+msgstr "{0:0.0} MB"
+

@@ -1,3 +1,7 @@
+2005-05-06  Chao-Hsiung Liao  <j_h_liau@yahoo.com.tw>
+
+	* configure.in: Added "zh_TW" to ALL_LINGUAS.
+
 2005-05-05  Daniel Drake  <dsd@gentoo.org>
 
 	* beagled/LauncherQueryable/LauncherQueryable.cs: Don't choke on
