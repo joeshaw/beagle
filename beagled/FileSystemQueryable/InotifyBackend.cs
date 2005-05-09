@@ -43,7 +43,7 @@ namespace Beagle.Daemon.FileSystemQueryable {
 			int wd;
 
 			try {
-				wd = Inotify.Watch (path, Inotify.EventType.CreateSubdir);
+				wd = Inotify.Watch (path, Inotify.EventType.Create);
 				watching [wd] = true;				
 			}
 			catch (IOException) {
@@ -64,14 +64,11 @@ namespace Beagle.Daemon.FileSystemQueryable {
 			try {
 				wd = Inotify.Watch (path,
 						    Inotify.EventType.Open
-						    | Inotify.EventType.CreateSubdir
-						    | Inotify.EventType.DeleteSubdir
-						    | Inotify.EventType.DeleteFile
+						    | Inotify.EventType.Create
+						    | Inotify.EventType.Delete
 						    | Inotify.EventType.CloseWrite
 						    | Inotify.EventType.MovedFrom
-						    | Inotify.EventType.MovedTo
-						    | Inotify.EventType.Ignored
-						    | Inotify.EventType.QueueOverflow);
+						    | Inotify.EventType.MovedTo);
 				watching [wd] = true;
 				if (old_wd >= 0 && old_wd != wd)
 					watching.Remove (old_wd);
@@ -102,7 +99,7 @@ namespace Beagle.Daemon.FileSystemQueryable {
 				return;
 
 			// Clean up after removed watches
-			if (type == Inotify.EventType.Ignored) {
+			if ((type & Inotify.EventType.Ignored) != 0) {
 				watching.Remove (wd);
 				return;
 			}
@@ -121,68 +118,59 @@ namespace Beagle.Daemon.FileSystemQueryable {
 				return;
 			}
 			queryable.Model.ReportActivity (path_dir);
-			
+
 			// If this was just an open event, we are done
-			if (type == Inotify.EventType.Open)
+			if ((type & Inotify.EventType.Open) != 0)
 				return;
 
 			// The case of matched move events
-			if (type == Inotify.EventType.MovedTo && srcpath != null) {
+			if ((type & Inotify.EventType.MovedTo) != 0 && srcpath != null) {
 				Logger.Log.Debug ("********** Matched Move '{0}' => '{1}'", srcpath, full_path);
 				queryable.Rename (srcpath, full_path);
 				return;
 			}
 
 			// An unmatched MovedTo is like a create
-			if (type == Inotify.EventType.MovedTo && srcpath == null) {
+			if ((type & Inotify.EventType.MovedTo) != 0 && srcpath == null) {
 
-				// Synthesize the appropriate Create event
+				// Synthesize the appropriate Create event.  Note that we could check for the
+				// IsDirectory event here, but this also shrinks the race window.
 				if (File.Exists (full_path))
-					type = Inotify.EventType.CloseWrite;
+					type &= Inotify.EventType.CloseWrite;
 				else if (Directory.Exists (full_path))
-					type = Inotify.EventType.CreateSubdir;
+					type &= Inotify.EventType.Create;
 				Logger.Log.Debug ("Synthesizing {0} on unpaired MoveTo", type);
 			}
 
 			// An unmatched MovedFrom is like a delete
-			if (type == Inotify.EventType.MovedFrom) {
-				// Synthesize the appropriate Delete event
-				// Since we don't know if the moved object is a file
-				// or a directory, we have to perform the following check.
-				FileSystemModel.Directory fsm_dir = queryable.Model.GetDirectoryByPath (full_path);
-				if (fsm_dir != null)
-					type = Inotify.EventType.DeleteSubdir;
-				else
-					type = Inotify.EventType.DeleteFile;
+			if ((type & Inotify.EventType.MovedFrom) != 0) {
+				type &= Inotify.EventType.Delete;
 				Logger.Log.Debug ("Synthesizing {0} on unpaired MoveFrom", type);
 			}
 
-			if (type == Inotify.EventType.DeleteSubdir) {
-				FileSystemModel.Directory subitem_dir;
-				subitem_dir = path_dir.GetChildByName (subitem);
-				if (subitem_dir != null)
-					queryable.Model.Delete (subitem_dir);
+			if ((type & Inotify.EventType.Delete) != 0) {
+				if ((type & Inotify.EventType.IsDirectory) != 0) {
+					FileSystemModel.Directory subitem_dir;
+					subitem_dir = path_dir.GetChildByName (subitem);
+					if (subitem_dir != null)
+						queryable.Model.Delete (subitem_dir);
+				}
 				queryable.Remove (full_path);
 				return;
 			}
 
-			if (type == Inotify.EventType.DeleteFile) {
-				queryable.Remove (full_path);
-				return;
-			}
-
-			if (type == Inotify.EventType.CreateSubdir) {
+			if ((type & Inotify.EventType.Create) != 0 && (type & Inotify.EventType.IsDirectory) != 0) {
 				queryable.Model.AddChild (path_dir, subitem);
 				return;
 			}
 
-			if (type == Inotify.EventType.CloseWrite) {
+			if ((type & Inotify.EventType.CloseWrite) != 0) {
 				queryable.Add (full_path);
 				return;
 			}
 
 
-			if (type == Inotify.EventType.QueueOverflow) {
+			if ((type & Inotify.EventType.QueueOverflow) != 0) {
 				Logger.Log.Warn ("Inotify queue overflowed: file system is in an unknown state");
 				queryable.Model.SetAllToUnknown ();
 				return;

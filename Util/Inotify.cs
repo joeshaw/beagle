@@ -56,21 +56,26 @@ namespace Beagle.Util {
 			Open           = 0x00000020, // File was opened
 			MovedFrom      = 0x00000040, // File was moved from X
 			MovedTo        = 0x00000080, // File was moved to Y
-			DeleteSubdir   = 0x00000100, // Subdir was deleted
-			DeleteFile     = 0x00000200, // Subfile was deleted
-			CreateSubdir   = 0x00000400, // Subdir was created
-			CreateFile     = 0x00000800, // Subfile was created
-			DeleteSelf     = 0x00001000, // Self was deleted
+			Create         = 0x00000100, // Subfile was created
+			Delete         = 0x00000200, // Subfile was deleted			
+			DeleteSelf     = 0x00000400, // Self was deleted
+
 			Unmount        = 0x00002000, // Backing fs was unmounted
 			QueueOverflow  = 0x00004000, // Event queue overflowed
 			Ignored        = 0x00008000, // File is no longer being watched
+
+			IsDirectory    = 0x40000000, // Event is against a directory
 			OneShot        = 0x80000000, // Watch is one-shot
 
-			All            = (0xffffffff & ~0x80000000)
+			// For forward compatibility, define these explicitly
+			All            = (EventType.Access | EventType.Modify | EventType.Attrib |
+					  EventType.CloseWrite | EventType.CloseNoWrite | EventType.Open |
+					  EventType.MovedFrom | EventType.MovedTo | EventType.Create |
+					  EventType.Delete | EventType.DeleteSelf)
 		}
 
 		// Events that we want internally, even if the handlers do not
-		static private EventType base_mask =  EventType.Ignored | EventType.MovedFrom | EventType.MovedTo;
+		static private EventType base_mask =  EventType.MovedFrom | EventType.MovedTo;
 
 		/////////////////////////////////////////////////////////////////////////////////////
 
@@ -427,7 +432,7 @@ namespace Beagle.Util {
 					raw_event = (inotify_event) Marshal.PtrToStructure (buffer, typeof (inotify_event));
 					buffer = (IntPtr) ((long) buffer + event_size);
 
-					if (raw_event.mask == EventType.QueueOverflow)
+					if ((raw_event.mask & EventType.QueueOverflow) != 0)
 						saw_overflow = true;
 
 					// Now we convert our low-level event struct into a nicer object.
@@ -511,10 +516,15 @@ namespace Beagle.Util {
 			if ((watched.Mask & mask) == 0)
 				return;
 
+			bool isDirectory = false;
+			if ((mask & EventType.IsDirectory) != 0)
+				isDirectory = true;
+
 			if (Verbose) {
-				Console.WriteLine ("*** inotify: {0} {1} {2} {3} {4}",
+				Console.WriteLine ("*** inotify: {0} {1} {2} {3} {4} {5}",
 						   mask, watched.Wd, watched.Path,
 						   filename != "" ? filename : "\"\"",
+						   isDirectory == true ? "(directory)" : "(file)",
 						   srcpath != null ? "(from " + srcpath + ")" : "");
 			}
 
@@ -578,14 +588,14 @@ namespace Beagle.Util {
 
 				// Pair off the MovedFrom and MovedTo events.
 				if (qe.Cookie != 0) {
-					if (qe.Type == EventType.MovedFrom) {
+					if ((qe.Type & EventType.MovedFrom) != 0) {
 						pending_move_cookies [qe.Cookie] = qe;
 						// This increases the MovedFrom's HoldUntil time,
 						// giving us more time for the matching MovedTo to
 						// show up.
 						// (512 ms is totally arbitrary)
 						qe.AddMilliseconds (512); 
-					} else if (qe.Type == EventType.MovedTo) {
+					} else if ((qe.Type & EventType.MovedTo) != 0) {
 						QueuedEvent paired_move = pending_move_cookies [qe.Cookie] as QueuedEvent;
 						if (paired_move != null) {
 							paired_move.Dispatched = true;
@@ -608,7 +618,6 @@ namespace Beagle.Util {
 				lock (event_queue) {
 
 					while (running) {
-						
 						CleanQueue_Unlocked ();
 
 						AnalyzeQueue_Unlocked ();
@@ -660,11 +669,10 @@ namespace Beagle.Util {
 				string srcpath = null;
 
 				// If this event is a paired MoveTo, there is extra work to do.
-				if (next_event.Type == EventType.MovedTo && next_event.PairedMove != null) {
-
+				if ((next_event.Type & EventType.MovedTo) != 0 && next_event.PairedMove != null) {
 					Watched paired_watched;
 					paired_watched = Lookup (next_event.PairedMove.Wd, next_event.PairedMove.Type);
-					
+
 					if (paired_watched != null) {
 						// Set the source path accordingly.
 						srcpath = Path.Combine (paired_watched.Path, next_event.PairedMove.Filename);
@@ -676,12 +684,11 @@ namespace Beagle.Util {
 					}
 				}
 
-
 				SendEvent (watched, next_event.Filename, srcpath, next_event.Type);
 
 				// If a directory we are watching gets ignored, we need
 				// to remove it from the watchedByFoo hashes.
-				if (next_event.Type == EventType.Ignored) {
+				if ((next_event.Type & EventType.Ignored) != 0) {
 					lock (watched_by_wd)
 						Forget (watched);
 				}

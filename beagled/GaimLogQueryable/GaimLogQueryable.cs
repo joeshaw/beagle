@@ -131,8 +131,7 @@ namespace Beagle.Daemon.GaimLogQueryable {
 				
 				// Setup watches on the present directory.
 				int wd = Inotify.Watch (dir.FullName,
-							Inotify.EventType.CreateSubdir
-							| Inotify.EventType.Modify);
+							Inotify.EventType.Create | Inotify.EventType.Modify);
 				
 				watched [wd] = true;
 
@@ -167,15 +166,14 @@ namespace Beagle.Daemon.GaimLogQueryable {
 
 			string full_path = Path.Combine (path, subitem);
 
-			switch (type) {
-				
-				case Inotify.EventType.CreateSubdir:
-					Watch (full_path);
-					break;
-	
-				case Inotify.EventType.Modify:
-					IndexLog (full_path, Scheduler.Priority.Immediate);
-					break;
+			if ((type & Inotify.EventType.Create) != 0 && (type & Inotify.EventType.IsDirectory) != 0) {
+				Watch (full_path);
+				return;
+			}
+
+			if ((type & Inotify.EventType.Modify) != 0) {
+				IndexLog (full_path, Scheduler.Priority.Immediate);
+				return;
 			}
 		}
 

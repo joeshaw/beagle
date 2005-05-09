@@ -136,10 +136,10 @@ namespace Beagle.Daemon.EvolutionMailDriver {
 
 				if (! dir.Exists)
 					continue;
-				
+
 				int wd = Inotify.Watch (dir.FullName,
-							Inotify.EventType.CreateSubdir
-							| Inotify.EventType.DeleteSubdir
+							Inotify.EventType.Create
+							| Inotify.EventType.Delete
 							| Inotify.EventType.MovedTo);
 				watched [wd] = dir.FullName;
 
@@ -165,17 +165,17 @@ namespace Beagle.Daemon.EvolutionMailDriver {
 
 			string fullPath = Path.Combine (path, subitem);
 
-			switch (type) {
-				
-			case Inotify.EventType.CreateSubdir:
+			if ((type & Inotify.EventType.Create) != 0 && (type & Inotify.EventType.IsDirectory) != 0) {
 				Watch (fullPath);
-				break;
+				return;
+			}
 
-			case Inotify.EventType.DeleteSubdir:
+			if ((type & Inotify.EventType.Delete) != 0 && (type & Inotify.EventType.IsDirectory) != 0) {
 				Ignore (fullPath);
-				break;
+				return;
+			}
 
-			case Inotify.EventType.MovedTo:
+			if ((type & Inotify.EventType.MovedTo) != 0) {
 				if (subitem == "summary") {
 					// IMAP summary
 					log.Info ("Reindexing updated IMAP summary: {0}", fullPath);
@@ -186,8 +186,6 @@ namespace Beagle.Daemon.EvolutionMailDriver {
 					log.Info ("Reindexing updated mbox: {0}", mbox_file);
 					this.IndexMbox (new FileInfo (mbox_file));
 				}
-
-				break;
 			}
 		}
 

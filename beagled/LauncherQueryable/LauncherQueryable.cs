@@ -129,7 +129,7 @@ namespace Beagle.Daemon.LauncherQueryable {
 
 			while (queue.Count > 0) {
 				DirectoryInfo dir = queue.Dequeue () as DirectoryInfo;
-				int wd = Inotify.Watch (dir.FullName, Inotify.EventType.CreateSubdir | Inotify.EventType.Modify);
+				int wd = Inotify.Watch (dir.FullName, Inotify.EventType.Create | Inotify.EventType.Modify);
 				watched [wd] = true;
 				foreach (FileInfo file in dir.GetFiles ()) {
 					IndexLauncher (file, Scheduler.Priority.Delayed);
@@ -154,13 +154,13 @@ namespace Beagle.Daemon.LauncherQueryable {
 
 			string fullPath = Path.Combine (path, subitem);
 
-			switch (type) {
-				case Inotify.EventType.CreateSubdir:
-					Watch (fullPath);
-					break;
-				case Inotify.EventType.Modify:
-					IndexLauncher (new FileInfo (fullPath), Scheduler.Priority.Immediate);
-					break;
+			if ((type & Inotify.EventType.Create) != 0 && (type & Inotify.EventType.IsDirectory) != 0) {
+				Watch (fullPath);
+				return;
+			}
+			if ((type & Inotify.EventType.Modify) != 0) {
+				IndexLauncher (new FileInfo (fullPath), Scheduler.Priority.Immediate);
+				return;
 			}
 		}
 

@@ -63,7 +63,7 @@ namespace Beagle.Daemon.TomboyQueryable {
 			}
 
 			if (Inotify.Enabled) {			
-				Inotify.EventType mask = Inotify.EventType.DeleteFile | 
+				Inotify.EventType mask = Inotify.EventType.Delete | 
 					Inotify.EventType.MovedTo |
 					Inotify.EventType.MovedFrom;
 
@@ -129,13 +129,14 @@ namespace Beagle.Daemon.TomboyQueryable {
 			if (Path.GetExtension (subitem) != ".note")
 				return;
 
-			if (type == Inotify.EventType.MovedTo) {
+			if ((type & Inotify.EventType.MovedTo) != 0) {
 				IndexNote (new FileInfo (Path.Combine (path, subitem)), Scheduler.Priority.Immediate);
 			}
 
-			if (type == Inotify.EventType.MovedFrom || type == Inotify.EventType.DeleteFile) {
+			if ((type & Inotify.EventType.MovedFrom) != 0 ||
+					((type & Inotify.EventType.Delete) != 0 &&
+					 (type & Inotify.EventType.IsDirectory) == 0))
 				RemoveNote (subitem);
-			}
 		}
 
 		// Modified/Created event using FSW
