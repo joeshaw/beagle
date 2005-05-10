@@ -40,6 +40,9 @@ for i in $needed_dlls; do
   fi
 done
 
+# check for wsdl
+AC_PATH_PROG(WSDL, wsdl)
+
 #
 # I18N
 #
