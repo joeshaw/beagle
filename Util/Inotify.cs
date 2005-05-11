@@ -162,6 +162,9 @@ namespace Beagle.Util {
 				return;
 			}
 
+			if (Environment.GetEnvironmentVariable ("BEAGLE_INOTIFY_VERBOSE") != null)
+				Inotify.Verbose = true;
+
 			inotify_glue_init ();
 
 			dev_inotify = Syscall.open ("/dev/inotify", OpenFlags.O_RDONLY);
