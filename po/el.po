@@ -321,7 +321,7 @@ msgstr "Αποστολή σε..."
 #: ../Tiles/TranslationHack.cs:54 ../Tiles/TranslationHack.cs:68
 #: ../Tiles/TranslationHack.cs:84
 msgid "Reveal in file manager"
-msgstr "Εμφάνιση στον διαχειριστή αρχείων"
+msgstr "Εμφάνιση στο διαχειριστή αρχείων"
 
 #. For translators: From template Tiles/template-launcher.html
 #: ../Tiles/TranslationHack.cs:20
