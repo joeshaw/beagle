@@ -55,7 +55,7 @@ namespace ImLogViewer {
 				log_path = Path.GetDirectoryName (path);
 				first_selected_log = path;
 			} else {
-				Console.WriteLine ("Log path doesn't exist - {0}", path);
+				Console.WriteLine ("ERROR: Log path doesn't exist - {0}", path);
 				return;
 			}
 
@@ -351,7 +351,7 @@ namespace ImLogViewer {
 				       
 				default:
 					if (args [i].StartsWith ("--")) {
-						Console.WriteLine ("Invalid option {0}", args [i]);
+						Console.WriteLine ("WARN: Invalid option {0}", args [i]);
 					} else {
 						path = args [i];
 					}
@@ -364,7 +364,7 @@ namespace ImLogViewer {
 			if (path != null) {
 				new GaimLogViewer (path, highlight);
 			} else {
-				Console.WriteLine ("Please specify a valid log path or log directory.");
+				Console.WriteLine ("ERROR: Please specify a valid log path or log directory.");
 			}
 		}
 	}

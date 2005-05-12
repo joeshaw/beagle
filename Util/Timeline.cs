@@ -68,15 +68,15 @@ namespace Beagle.Util {
 			}
 		}
 
-		private class ReverseLogComparer : IComparer {
+		private class ReverseChronoComparer : IComparer {
 			
 			public int Compare (object x, object y)
 			{
-				return ((ImLog) y).StartTime.CompareTo (((ImLog) x).StartTime);
+				return ((TimelineEvent) y).Timestamp.CompareTo (((TimelineEvent) x).Timestamp);
 			}
 		}
 
-		private static ReverseLogComparer rev_cmp = new ReverseLogComparer ();
+		private static ReverseChronoComparer rev_cmp = new ReverseChronoComparer ();
 
 		private bool IsThisYear (TimelineEvent e)
 		{
@@ -135,14 +135,14 @@ namespace Beagle.Util {
 
 		private ArrayList GetObjects (ArrayList list)
 		{
-			ArrayList a = new ArrayList ();
+			ArrayList sort = new ArrayList ();
+
+			list.Sort (rev_cmp);
 			
-			foreach (TimelineEvent ev in list)
-				a.Add (ev.Object);
+			foreach (TimelineEvent timeevent in list)
+				sort.Add (timeevent.Object);
 
-			a.Sort (rev_cmp);
-
-			return a;
+			return sort;
 		}
 
 		public ArrayList Today {
@@ -175,7 +175,8 @@ namespace Beagle.Util {
 	
 	}
 
-/*public class Driver {
+#if false
+	public class Driver {
 		public static void Main (string [] args)
 		{
 			Timeline t = new Timeline ();
@@ -211,5 +212,7 @@ namespace Beagle.Util {
 			Console.WriteLine ("\t" + d);
 			
 		}
-	}*/
+	}
+#endif
+
 }
