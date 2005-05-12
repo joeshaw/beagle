@@ -164,10 +164,14 @@ namespace Best {
 				item = new Gtk.ImageMenuItem (Catalog.GetString ("No Recent Searches"));
 				item.Sensitive = false;
 				menu.Append (item);
-			}else {
+			} else {
+				item = new Gtk.ImageMenuItem (Catalog.GetString ("Recent Searches"));
+				item.Sensitive = false;
+				item.Image = new Gtk.Image (Images.GetPixbuf ("icon-search.png"));
+				menu.Append (item);
+
 				foreach (string s in list) {
 					item = new Gtk.ImageMenuItem (s);
-					item.Image = new Gtk.Image (Images.GetPixbuf ("icon-search.png"));
 					item.Data ["Query"] = s;
 					item.Activated += new EventHandler (QuickSearchEvent);
 					menu.Append (item);
