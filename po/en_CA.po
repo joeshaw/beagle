@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: beagle\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2005-04-07 13:09-0400\n"
-"PO-Revision-Date: 2005-04-07 13:55-0400\n"
+"POT-Creation-Date: 2005-05-13 16:16-0400\n"
+"PO-Revision-Date: 2005-05-13 13:55-0400\n"
 "Last-Translator: Adam Weinberger <adamw@gnome.org>\n"
 "Language-Team: Canadian English <adamw@gnome.org>\n"
 "MIME-Version: 1.0\n"
@@ -29,69 +29,73 @@ msgstr ""
 msgid "No Recent Searches"
 msgstr "No Recent Searches"
 
-#: Best/BestTray.cs:179
+#: Best/BestTray.cs:168
+msgid "Recent Searches"
+msgstr "Recent Searches"
+
+#: Best/BestTray.cs:183
 msgid "Quit"
 msgstr "Quit"
 
-#: Best/BestWindow.cs:302
+#: Best/BestWindow.cs:304
 msgid "Anywhere"
 msgstr "Anywhere"
 
-#: Best/BestWindow.cs:304
+#: Best/BestWindow.cs:306
 msgid "in Files"
 msgstr "in Files"
 
-#: Best/BestWindow.cs:306
+#: Best/BestWindow.cs:308
 msgid "in Addressbook"
 msgstr "in Addressbook"
 
-#: Best/BestWindow.cs:308
+#: Best/BestWindow.cs:310
 msgid "in Mail"
 msgstr "in Mail"
 
-#: Best/BestWindow.cs:310
+#: Best/BestWindow.cs:312
 msgid "in Web Pages"
 msgstr "in Web Pages"
 
-#: Best/BestWindow.cs:312
+#: Best/BestWindow.cs:314
 msgid "in Chats"
 msgstr "in Chats"
 
-#: Best/BestWindow.cs:328
+#: Best/BestWindow.cs:330
 msgid "Search terms:"
 msgstr "Search terms:"
 
-#: Best/BestWindow.cs:345
+#: Best/BestWindow.cs:347
 msgid "Find"
 msgstr "Find"
 
-#: Best/BestWindow.cs:362
+#: Best/BestWindow.cs:364
 msgid "Show More Results"
 msgstr "Show More Results"
 
-#: Best/BestWindow.cs:368
+#: Best/BestWindow.cs:370
 msgid "Show Previous Results"
 msgstr "Show Previous Results"
 
-#: Best/BestWindow.cs:402
+#: Best/BestWindow.cs:404
 msgid "No results."
 msgstr "No results."
 
 #. To translators: {0} is the current count of results shown of {1} in total, this is the message that is initially shown
 #. when results are returned to the user.
-#: Best/BestWindow.cs:406
+#: Best/BestWindow.cs:408
 #, csharp-format
 msgid "Best <b>{0} results of {1}</b> are shown."
 msgstr "Best <b>{0} results of {1}</b> are shown."
 
 #. To translators: {0} to {1} is the interval of results currently shown of {2} results in total
-#: Best/BestWindow.cs:411
+#: Best/BestWindow.cs:413
 #, csharp-format
 msgid "Results <b>{0} through {1} of {2}</b> are shown."
 msgstr "Results <b>{0} through {1} of {2}</b> are shown."
 
 #. To translators: {0} represents the current query keywords
-#: Best/BestWindow.cs:550
+#: Best/BestWindow.cs:552
 #, csharp-format
 msgid ""
 "The query for <i>{0}</i> failed.<br>The likely cause is that the beagle "
@@ -101,7 +105,7 @@ msgstr ""
 "daemon isn't running."
 
 #. To translators: {0} represents the current query keywords
-#: Best/BestWindow.cs:555
+#: Best/BestWindow.cs:557
 #, csharp-format
 msgid ""
 "The query for <i>{0}</i> failed.<br>The session bus isn't running.  See "
@@ -113,63 +117,63 @@ msgstr ""
 "setting up a session bus."
 
 #. To translators: {0} represents the current query keywords, {1} contains the errormessage
-#: Best/BestWindow.cs:559
+#: Best/BestWindow.cs:561
 #, csharp-format
 msgid "The query for <i>{0}</i> failed with error:<br>{1}<br>"
 msgstr "The query for <i>{0}</i> failed with error:<br>{1}<br>"
 
-#: ImLogViewer/ImLogViewer.cs:100 ImLogViewer/ImLogViewer.cs:105
+#: ImLogViewer/ImLogViewer.cs:103 ImLogViewer/ImLogViewer.cs:108
 #, csharp-format
 msgid "Conversations with {0}"
 msgstr "Conversations with {0}"
 
-#: ImLogViewer/ImLogViewer.cs:103
+#: ImLogViewer/ImLogViewer.cs:106
 #, csharp-format
 msgid "Conversations in {0}"
 msgstr "Conversations in {0}"
 
-#: ImLogViewer/ImLogViewer.cs:191 Util/StringFu.cs:65
+#: ImLogViewer/ImLogViewer.cs:194 Util/StringFu.cs:65
 msgid "Today"
 msgstr "Today"
 
-#: ImLogViewer/ImLogViewer.cs:192 ImLogViewer/ImLogViewer.cs:197
+#: ImLogViewer/ImLogViewer.cs:195 ImLogViewer/ImLogViewer.cs:200
 msgid "HH:mm"
 msgstr "HH:mm"
 
-#: ImLogViewer/ImLogViewer.cs:196 Util/StringFu.cs:67
+#: ImLogViewer/ImLogViewer.cs:199 Util/StringFu.cs:67
 msgid "Yesterday"
 msgstr "Yesterday"
 
-#: ImLogViewer/ImLogViewer.cs:201
+#: ImLogViewer/ImLogViewer.cs:204
 msgid "This Week"
 msgstr "This Week"
 
-#: ImLogViewer/ImLogViewer.cs:202 ImLogViewer/ImLogViewer.cs:207
+#: ImLogViewer/ImLogViewer.cs:205 ImLogViewer/ImLogViewer.cs:210
 msgid "dddd"
 msgstr "dddd"
 
-#: ImLogViewer/ImLogViewer.cs:206
+#: ImLogViewer/ImLogViewer.cs:209
 msgid "Last Week"
 msgstr "Last Week"
 
-#: ImLogViewer/ImLogViewer.cs:211
+#: ImLogViewer/ImLogViewer.cs:214
 msgid "This Month"
 msgstr "This Month"
 
-#: ImLogViewer/ImLogViewer.cs:212 ImLogViewer/ImLogViewer.cs:217
+#: ImLogViewer/ImLogViewer.cs:215 ImLogViewer/ImLogViewer.cs:220
 #: Util/StringFu.cs:69
 msgid "MMM d"
 msgstr "MMM d"
 
-#: ImLogViewer/ImLogViewer.cs:216
+#: ImLogViewer/ImLogViewer.cs:219
 msgid "This Year"
 msgstr "This Year"
 
-#: ImLogViewer/ImLogViewer.cs:221
+#: ImLogViewer/ImLogViewer.cs:224
 msgid "Older"
 msgstr "Older"
 
-#: ImLogViewer/ImLogViewer.cs:222
+#: ImLogViewer/ImLogViewer.cs:225
 msgid "yyyy MMM d"
 msgstr "yyyy MMM d"
 
