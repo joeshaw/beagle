@@ -135,13 +135,7 @@ namespace Beagle.Util {
 
 		private ArrayList GetObjects (ArrayList list)
 		{
-			ArrayList sort = new ArrayList ();
-
 			list.Sort (rev_cmp);
-			
-			foreach (TimelineEvent timeevent in list)
-				sort.Add (timeevent.Object);
-
 			return sort;
 		}
 
