@@ -136,7 +136,7 @@ namespace Beagle.Util {
 		private ArrayList GetObjects (ArrayList list)
 		{
 			list.Sort (rev_cmp);
-			return sort;
+			return list;
 		}
 
 		public ArrayList Today {
