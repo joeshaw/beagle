@@ -6,6 +6,5 @@ dlldir=@libdir@/beagle
 Name: Beagle
 Description: We Index Your Life
 Version: @VERSION@
-Requires: dbus-sharp
 Libs: -r:${dlldir}/Beagle.dll -r:${dlldir}/Tiles.dll -r:${dlldir}/Util.dll
 
