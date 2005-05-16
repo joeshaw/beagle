@@ -157,6 +157,11 @@ namespace Beagle {
 		}
 
 		[XmlIgnore]
+		public string[] TextAsArray {
+			get { return (string[]) text.ToArray (typeof (string)); }
+		}
+
+		[XmlIgnore]
 		public bool HasText {
 			get { return text.Count > 0; }
 		}
