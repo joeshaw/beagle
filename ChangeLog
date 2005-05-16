@@ -1,5 +1,11 @@
 2005-05-16  Daniel Drake  <dsd@gentoo.org>
 
+	* Tiles/TileLauncher.cs, Util/Makefile.am,
+	beagled/LauncherQueryable/LauncherQueryable.cs: KDE launcher querying,
+	and KDE launcher icon lookups.
+
+2005-05-16  Daniel Drake  <dsd@gentoo.org>
+
 	* BeagleClient/Query.cs, beagled/HitRegulator.cs,
 	beagled/QueryDriver.cs, tools/Query.cs, tools/beagle-query.1:
 	Support for lowering the maximum number of hits returned per backend.

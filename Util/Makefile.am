@@ -45,6 +45,7 @@ CSFILES = 			        	\
 	$(srcdir)/ImLog.cs              	\
 	$(srcdir)/Inotify.cs			\
 	$(srcdir)/JpegHeader.cs			\
+	$(srcdir)/KdeUtils.cs			\
 	$(srcdir)/Logger.cs             	\
 	$(srcdir)/Mozilla.cs	        	\
 	$(srcdir)/MultiReader.cs        	\

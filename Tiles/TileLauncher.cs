@@ -75,11 +75,19 @@ namespace Beagle.Tile {
 			} else {
 				IconTheme icon_theme = new IconTheme ();
 				int base_size;
+				string icon_path;
 
-				if (hit ["fixme:Icon"].EndsWith (".png")) 
-					return icon_theme.LookupIcon (path.Substring (0, path.Length-4), -1, IconData.Zero, out base_size);
+				// Try GNOME Icons
+				if (path.EndsWith (".png")) 
+					icon_path = icon_theme.LookupIcon (path.Substring (0, path.Length-4), -1, IconData.Zero, out base_size);
 				else
-					return icon_theme.LookupIcon (path, -1, IconData.Zero, out base_size);
+					icon_path = icon_theme.LookupIcon (path, -1, IconData.Zero, out base_size);
+
+				if (icon_path != null)
+					return icon_path;
+
+				// Fall back to KDE icons
+				return BU.KdeUtils.LookupIcon (path);
 			}
 		}
 

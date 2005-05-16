@@ -56,11 +56,11 @@ namespace Beagle.Daemon.LauncherQueryable {
 			Dirs.Add (Path.Combine (path, "control-center"));
 			Dirs.Add (Path.Combine (PathFinder.HomeDir, ".gnome2/panel2.d/default/launchers"));
 
-			// FIXME:  Add KDE dirs
-			// home = Environment.GetEnvironmentVariable ("KDEDIR");
-			// Dirs.Add (home + "share/services/");
-			// Dirs.Add (home + "share/apps/");
-			// Dirs.Add (home + "share/applications/");
+			// Add KDE dirs
+			path = KdeUtils.KdeSharePrefix;
+			if (path != null)
+				Dirs.Add (Path.Combine(path, "applications"));
+			Dirs.Add (Path.Combine (PathFinder.HomeDir, ".local/share/applications"));
 		}
 
 		override protected IFileAttributesStore BuildFileAttributesStore (string index_fingerprint) 
