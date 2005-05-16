@@ -267,6 +267,14 @@ namespace Beagle {
 
 		///////////////////////////////////////////////////////////////
 
+		private int max_hits = 100;
+		public int MaxHits {
+			get { return max_hits; }
+			set { max_hits = value; }
+		}
+
+		///////////////////////////////////////////////////////////////
+
 		[XmlIgnore]
 		public bool IsEmpty {
 			get { return text.Count == 0

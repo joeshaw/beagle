@@ -134,6 +134,8 @@ class QueryTool {
 			"              \t\t\tquery changes.\n" +
 			"  --stats-only\t\t\tOnly display statistics about the query, not\n" +
 			"              \t\t\tthe actual results.\n" +
+			"  --max-hits\t\t\tLimit number of search results per backend\n" +
+			"            \t\t\t(default = 100, max = 100)\n" +
 			"  --help\t\t\tPrint this usage message.\n";
 
 		Console.WriteLine (usage);
@@ -181,6 +183,10 @@ class QueryTool {
 			case "--stats-only":
 				verbose = true;
 				display_hits = false;
+				break;
+			case "--max-hits":
+			    if (++i >= args.Length) PrintUsageAndExit ();
+				query.MaxHits = Int32.Parse (args[i]);
 				break;
 
 			default:

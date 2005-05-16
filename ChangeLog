@@ -1,3 +1,9 @@
+2005-05-16  Daniel Drake  <dsd@gentoo.org>
+
+	* BeagleClient/Query.cs, beagled/HitRegulator.cs,
+	beagled/QueryDriver.cs, tools/Query.cs, tools/beagle-query.1:
+	Support for lowering the maximum number of hits returned per backend.
+
 2005-05-06  Chao-Hsiung Liao  <j_h_liau@yahoo.com.tw>
 
 	* configure.in: Added "zh_TW" to ALL_LINGUAS.

@@ -33,7 +33,11 @@ namespace Beagle.Daemon {
 
 	public class HitRegulator : IQueryResult {
 
-		const int max_n_hits = 100;
+		private int max_n_hits = 100;
+		public int MaxHits {
+			get { return max_n_hits; }
+			set { max_n_hits = (value > 100)? 100 : value; }
+		}
 
 		Queryable queryable;
 

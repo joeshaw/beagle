@@ -255,6 +255,7 @@ namespace Beagle.Daemon {
 			public void DoWork ()
 			{
 				HitRegulator regulator = result.GetHitRegulator (queryable);
+				regulator.MaxHits = query.MaxHits;
 				queryable.DoQuery (query, regulator, change_data);
 				regulator.Flush (result);
 			}
