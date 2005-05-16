@@ -1,7 +1,7 @@
 //
-// IDBusObject.cs
+// Shutdown.cs
 //
-// Copyright (C) 2004 Novell, Inc.
+// Copyright (C) 2005 Novell, Inc.
 //
 
 //
@@ -24,15 +24,15 @@
 // SOFTWARE.
 //
 
-namespace Beagle.Daemon {
+using System;
 
-	// D-BUS objects that need notification when they are registered
-	// or unregistered should implement this interface.
+using Beagle;
 
-	public interface IDBusObject {
-		void RegisterHook (string path);
-		void UnregisterHook ();
+class Shutdown {
 
+	static void Main ()
+	{
+		ShutdownRequest request = new ShutdownRequest ();
+		request.Send ();
 	}
 }
-

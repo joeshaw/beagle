@@ -1,3 +1,9 @@
 #!/bin/sh
 
-dbus-send --session --dest=com.novell.Beagle --print-reply /com/novell/Beagle/RemoteControl com.novell.Beagle.RemoteControl.GetVersion
+if [ -x "./beagle-info" ]; then
+    CMD="./beagle-info"
+else
+    CMD="beagle-info"
+fi
+
+exec -a beagle-ping $CMD --daemon-version

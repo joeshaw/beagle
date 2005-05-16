@@ -69,7 +69,6 @@ namespace Beagle.Daemon {
 
 		Lucene.Net.Store.FSDirectory store;
 		Analyzer analyzer;
-		string store_path;
 
 		Hashtable pending = new Hashtable ();
 
@@ -139,7 +138,6 @@ namespace Beagle.Daemon {
 
 
 			store = Lucene.Net.Store.FSDirectory.GetDirectory (index_dir, lock_dir, false);
-			store_path = index_dir;
 
 			analyzer = new NameAnalyzer ();
 
@@ -274,10 +272,10 @@ namespace Beagle.Daemon {
 
 		///////////////////////////////////////////////////////////////////////////////////////////
 
-		private LNS.Query ToCoreLuceneQuery (QueryBody body, string field)
+		private LNS.Query ToCoreLuceneQuery (Query query, string field)
 		{
 			LNS.BooleanQuery lucene_query = null;
-			foreach (string text_orig in body.Text) {
+			foreach (string text_orig in query.Text) {
 				string text = text_orig;
 
 				if (text == null || text == "")
@@ -333,39 +331,39 @@ namespace Beagle.Daemon {
 			return lucene_query;
 		}
 
-		private LNS.Query ToLuceneQuery (QueryBody body, ICollection uris_to_search)
+		private LNS.Query ToLuceneQuery (Query query, ICollection uris_to_search)
 		{
-			if (body.Text.Count == 0)
+			if (query.Text.Count == 0)
 				return null;
 
-			LNS.BooleanQuery query = new LNS.BooleanQuery ();
+			LNS.BooleanQuery lucene_query = new LNS.BooleanQuery ();
 			
-			query.Add (ToCoreLuceneQuery (body, "Name"),  false, false);
-			query.Add (ToCoreLuceneQuery (body, "NoExt"), false, false);
-			query.Add (ToCoreLuceneQuery (body, "Split"), false, false);
+			lucene_query.Add (ToCoreLuceneQuery (query, "Name"),  false, false);
+			lucene_query.Add (ToCoreLuceneQuery (query, "NoExt"), false, false);
+			lucene_query.Add (ToCoreLuceneQuery (query, "Split"), false, false);
 
 			// If a list of Uris is specified, we must match one of them.
 			LNS.Query uri_query = LuceneDriver.ToUriQuery (uris_to_search);
 			if (uri_query != null) {
 				LNS.BooleanQuery combined_query = new LNS.BooleanQuery ();
-				combined_query.Add (query, true, false);
+				combined_query.Add (lucene_query, true, false);
 				combined_query.Add (uri_query, true, false);
-				combined_query = query;
+				combined_query = lucene_query;
 			}
 
-			return query;
+			return lucene_query;
 		}
 
 		// Return a collection of uid: Uris.
-		public ICollection Search (QueryBody body, ICollection uris_to_search)
+		public ICollection Search (Query query, ICollection uris_to_search)
 		{
-			LNS.Query query = ToLuceneQuery (body, uris_to_search);
-			if (query == null)
+			LNS.Query lucene_query = ToLuceneQuery (query, uris_to_search);
+			if (lucene_query == null)
 				return new string [0];
 			
 			IndexReader reader = IndexReader.Open (store);
 			LNS.Searcher searcher = new LNS.IndexSearcher (reader);
-			LNS.Hits hits = searcher.Search (query);
+			LNS.Hits hits = searcher.Search (lucene_query);
 
 			int n_hits = hits.Length ();
 			Uri [] uids = new Uri [n_hits];

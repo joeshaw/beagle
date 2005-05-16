@@ -348,6 +348,13 @@ namespace Beagle.Daemon {
 			foreach (Indexable indexable in pending_indexables) {
 				
 				Log.Debug ("+ {0}", indexable.DisplayUri);
+
+				try {
+					FilterFactory.FilterIndexable (indexable);
+				} catch (Exception e) {
+					Log.Error ("Unable to filter {0} (mimetype={1})", indexable.DisplayUri, indexable.MimeType);
+					Log.Error (e);
+				}
 				
 				Document doc = null;
 				try {
@@ -427,7 +434,7 @@ namespace Beagle.Daemon {
 
 		// Returns the lowest matching score before the results are
 		// truncated.
-		public void DoQuery (QueryBody           body,
+		public void DoQuery (Query               query,
 				     IQueryResult        result,
 				     ICollection         search_subset, // should be internal uris
 				     ICollection         bonus_uris,    // should be internal uris
@@ -443,9 +450,9 @@ namespace Beagle.Daemon {
 			IndexReader reader = IndexReader.Open (Store);
 
 			LNS.Searcher searcher = new LNS.IndexSearcher (reader);
-			LNS.Query query = ToLuceneQuery (body, search_subset, bonus_uris);
+			LNS.Query lucene_query = ToLuceneQuery (query, search_subset, bonus_uris);
 
-			LNS.Hits hits = searcher.Search (query);
+			LNS.Hits hits = searcher.Search (lucene_query);
 			sw.Stop ();
 
 			t_lucene = sw.ElapsedTime;
@@ -579,8 +586,6 @@ namespace Beagle.Daemon {
 
 		private Document ToLuceneDocument (Indexable indexable)
 		{			
-			indexable.Build ();
-			
 			Document doc = new Document ();
 			Field f;
 			String str;
@@ -681,10 +686,10 @@ namespace Beagle.Daemon {
 			return ToUriQuery (list_of_uris, null);
 		}
 		
-		private LNS.Query ToCoreLuceneQuery (QueryBody body, string field)
+		private LNS.Query ToCoreLuceneQuery (Query query, string field)
 		{
 			LNS.BooleanQuery luceneQuery = null;
-			foreach (string text_orig in body.Text) {
+			foreach (string text_orig in query.Text) {
 				string text = text_orig;
 
 				if (text == null || text == "")
@@ -743,7 +748,7 @@ namespace Beagle.Daemon {
 
 		// search_subset limits the score of our search to that set of Uris
 		// bonus_uris are always matched by the query
-		private LNS.Query ToLuceneQuery (QueryBody body,
+		private LNS.Query ToLuceneQuery (Query query,
 						 ICollection search_subset,
 						 ICollection bonus_uris)
 		{
@@ -753,31 +758,31 @@ namespace Beagle.Daemon {
 			LNS.BooleanQuery mime_type_query = null;
 			LNS.BooleanQuery hit_type_query = null;
 			
-			if (body.Text.Count > 0) {
+			if (query.Text.Count > 0) {
 
 				body_query = new LNS.BooleanQuery ();
 
 				LNS.Query q;
 				
-				q = ToCoreLuceneQuery (body, "PropertiesText");
+				q = ToCoreLuceneQuery (query, "PropertiesText");
 				if (q != null) {
 					q.SetBoost (2.5f);
 					body_query.Add (q, false, false);
 				}
 
-				q = ToCoreLuceneQuery (body, "PropertiesKeyword");
+				q = ToCoreLuceneQuery (query, "PropertiesKeyword");
 				if (q != null) {
 					q.SetBoost (2.5f);
 					body_query.Add (q, false, false);
 				}
 				
-				q = ToCoreLuceneQuery (body, "HotText");
+				q = ToCoreLuceneQuery (query, "HotText");
 				if (q != null) {
 					q.SetBoost (1.75f);
 					body_query.Add (q, false, false);		
 				}
 				
-				q = ToCoreLuceneQuery (body, "Text");
+				q = ToCoreLuceneQuery (query, "Text");
 				if (q != null) {
 					body_query.Add (q, false, false);
 				}
@@ -787,18 +792,18 @@ namespace Beagle.Daemon {
 
 			bonus_uris_query = ToUriQuery (bonus_uris, null);
 				
-			if (body.MimeTypes.Count > 0) {
+			if (query.MimeTypes.Count > 0) {
 				mime_type_query = new LNS.BooleanQuery ();
-				foreach (string mime_type in body.MimeTypes) {
+				foreach (string mime_type in query.MimeTypes) {
 					Term t = new Term ("MimeType", mime_type);
 					LNS.Query q = new LNS.TermQuery (t);
 					mime_type_query.Add (q, false, false);
 				}
 			}
 
-			if (body.HasHitTypes) {
+			if (query.HasHitTypes) {
 				hit_type_query = new LNS.BooleanQuery ();
-				foreach (string hit_type in body.HitTypes) {
+				foreach (string hit_type in query.HitTypes) {
 					Term t = new Term ("Type", hit_type);
 					LNS.Query q = new LNS.TermQuery (t);
 					hit_type_query.Add (q, false, false);

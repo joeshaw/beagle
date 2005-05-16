@@ -1,7 +1,7 @@
 //
-// IRdf.cs
+// IndexingService.cs
 //
-// Copyright (C) 2004 Novell, Inc.
+// Copyright (C) 2005 Novell, Inc.
 //
 
 //
@@ -24,19 +24,49 @@
 // DEALINGS IN THE SOFTWARE.
 //
 
+using System;
+using System.Collections;
+using System.Xml.Serialization;
+
+using Beagle.Util;
+
 namespace Beagle {
+	
+	public class IndexingServiceRequest : RequestMessage {
 
-	public delegate void GotRdfXmlHandler   (string rdfXml);
-	public delegate void RdfFinishedHandler ();
+		private ArrayList to_remove = new ArrayList ();
+		private ArrayList to_add = new ArrayList ();
 
-	public interface IRdfSource {
-		void Start ();
-		event GotRdfXmlHandler   GotRdfXmlEvent;
-		event RdfFinishedHandler RdfFinishedEvent;
-	}
+		public IndexingServiceRequest () : base (true)
+		{
 
-	public interface IRdfSink {
-		void AddRdfXml (string rdfXml);
-		void Finished ();
+		}
+
+		[XmlArray (ElementName="Indexables")]
+		[XmlArrayItem (ElementName="Indexable", Type=typeof (Indexable))]
+		public ArrayList ToAdd {
+			get { return to_add; }
+		}
+
+		[XmlAttribute ("ToRemove")]
+		public string ToRemoveString {
+			get { return UriFu.UrisToString (to_remove); }
+			set { to_remove = new ArrayList (UriFu.StringToUris (value)); }
+		}
+
+		[XmlIgnore]
+		public ICollection ToRemove {
+			get { return to_remove; }
+		}
+
+		public void Add (Indexable indexable)
+		{
+			to_add.Add (indexable);
+		}
+
+		public void Remove (Uri uri)
+		{
+			to_remove.Add (uri);
+		}
 	}
 }

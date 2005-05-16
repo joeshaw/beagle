@@ -368,7 +368,6 @@ namespace Beagle.Daemon {
 		  
 		*/
 
-		private bool isOpen = false;
 		private string tempFile = null;
 		private FileInfo currentInfo = null;
 		private FileStream currentStream = null;
@@ -416,20 +415,20 @@ namespace Beagle.Daemon {
 			// file soon.
 			FileAdvise.PreLoad (currentStream);			
 
-			DoOpen (info);
-			isOpen = true;
-
-			if (IsFinished) {
-				isOpen = false;
+			try {
+				DoOpen (info);
+			} catch (Exception e) {
+				Logger.Log.Warn ("Unable to filter {0}: {1}", info.FullName, e.Message);
 				return;
 			}
+				
+			if (IsFinished)
+				return;
 			
 			DoPullProperties ();
-			if (IsFinished) {
-				isOpen = false;
+			if (IsFinished) 
 				return;
-			}
-
+			
 			// Close and reset our TextReader
 			if (currentReader != null) {
 				currentReader.Close ();
@@ -440,10 +439,13 @@ namespace Beagle.Daemon {
 			currentStream.Seek (0, SeekOrigin.Begin);
 
 			DoPullSetup ();
-			if (IsFinished) {
-				isOpen = false;
+			if (IsFinished)
 				return;
-			}
+		}
+
+		public void Open (string path)
+		{
+			Open (new FileInfo (path));
 		}
 
 		public FileInfo FileInfo {
@@ -476,8 +478,6 @@ namespace Beagle.Daemon {
 
 			return true;
 		}
-
-		private bool closed = false;
 
 		private void Close ()
 		{

@@ -1,7 +1,7 @@
 //
-// TileMenuContext.cs
+// SnippetExecutor.cs
 //
-// Copyright (C) 2004 Novell, Inc.
+// Copyright (C) 2005 Novell, Inc.
 //
 
 //
@@ -25,13 +25,28 @@
 //
 
 using System;
+using System.Collections;
+using System.Xml.Serialization;
 
-namespace Beagle.Tile {
+using Beagle.Util;
 
-	public abstract class TileMenuContext {
-		
-		abstract public void Add (string icon, string label,
-					  TileActionHandler handler);
+namespace Beagle.Daemon {
 
+	[RequestMessage (typeof (SnippetRequest))]
+	public class SnippetExecutor : RequestMessageExecutor {
+
+		public override ResponseMessage Execute (RequestMessage req)
+		{
+			SnippetRequest request = (SnippetRequest) req;
+			Queryable queryable = QueryDriver.GetQueryable (request.Hit.SourceObjectName);
+			string snippet;
+
+			if (queryable == null)
+				snippet = String.Format ("ERROR: No queryable object matches '{0}'", request.Hit.Source);
+			else
+				snippet = queryable.GetSnippet (request.QueryTerms, request.Hit);
+
+			return new SnippetResponse (snippet);
+		}
 	}
 }

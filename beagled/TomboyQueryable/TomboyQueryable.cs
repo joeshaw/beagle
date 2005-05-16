@@ -41,7 +41,6 @@ namespace Beagle.Daemon.TomboyQueryable {
 
 		string tomboy_dir;
 		int tomboy_wd = -1;
-		FileSystemWatcher tomboy_fsw = null;
 
 		public TomboyQueryable () : base ("TomboyIndex")
 		{
@@ -161,8 +160,6 @@ namespace Beagle.Daemon.TomboyQueryable {
 
 			indexable.Timestamp = note.timestamp;
 			indexable.Type = "Note";
-
-			// Beagle sees the XML as text/plain..
 			indexable.MimeType = "text/plain";
 
 			// Using dc:title for a note's subject is debateable?
@@ -192,17 +189,8 @@ namespace Beagle.Daemon.TomboyQueryable {
 			task.Priority = priority;
 			task.SubPriority = 0;
 			ThisScheduler.Add (task);
-
-			// Write a plain-text version of our note out into the
-			// text cache
-			try {
-				TextWriter writer = TextCache.GetWriter (note.Uri);
-				writer.Write (note.text);
-				writer.Close ();
-			} catch (Exception ex) {
-				Console.WriteLine (">>>>> Caught exception writing {0} to text cache", note.Uri);
-			}
 		}
+
 		
 		private void RemoveNote (string file)
 		{

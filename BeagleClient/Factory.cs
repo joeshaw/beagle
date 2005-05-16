@@ -44,6 +44,7 @@ namespace Beagle {
 			}
 		}
 
+#if OLD_DEAD_CODE
 		public static Query NewQuery ()
 		{
 			string path = TheFactory.NewQueryPath ();
@@ -52,5 +53,6 @@ namespace Beagle {
 			query = (Query) DBusisms.Service.GetObject (typeof (Query), path);
 			return query;
 		}
+#endif
 	}
 }

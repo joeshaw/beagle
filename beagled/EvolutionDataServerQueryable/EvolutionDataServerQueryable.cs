@@ -90,10 +90,6 @@ namespace Beagle.Daemon.EvolutionDataServerQueryable {
 			}
 		}
 
-		private Evolution.Book Addressbook {
-			get { return addressbook; }
-		}
-
 		private Uri GetContactUri (Evolution.Contact contact) {
 			return GetContactUri (contact.Id);
 		}

@@ -36,7 +36,6 @@ using Beagle.Util;
 using Beagle.Daemon;
 
 using Camel = Beagle.Util.Camel;
-using GConf;
 using Mono.Posix;
 
 namespace Beagle.Daemon.EvolutionMailDriver {
@@ -398,7 +397,8 @@ namespace Beagle.Daemon.EvolutionMailDriver {
 
 			indexable.Timestamp = message.Date;
 			indexable.Type = "MailMessage";
-			indexable.MimeType = "text/plain"; // FIXME
+			indexable.MimeType = "text/plain";
+			indexable.CacheContent = false;
 
 			indexable.AddProperty (Property.New ("fixme:client", "evolution"));
 
@@ -487,8 +487,6 @@ namespace Beagle.Daemon.EvolutionMailDriver {
 			Imap,
 			Imap4
 		};
-
-		private static GConf.Client gconf_client = null;
 
 		private FileInfo summary_info;
 		private string imap_name;
@@ -799,7 +797,6 @@ namespace Beagle.Daemon.EvolutionMailDriver {
 
 			indexable.Timestamp = messageInfo.Date;
 			indexable.Type = "MailMessage";
-			indexable.MimeType = "text/plain"; // FIXME
 
 			indexable.AddProperty (Property.NewKeyword ("dc:title", messageInfo.subject));
 
@@ -844,6 +841,8 @@ namespace Beagle.Daemon.EvolutionMailDriver {
 
 			if (msgReader != null)
 				indexable.SetTextReader (msgReader);
+			else
+				indexable.NoContent = true;
 
 			return indexable;
 		}

@@ -1,7 +1,7 @@
 //
-// WebHistoryQueryable.cs
+// SnippetExecutor.cs
 //
-// Copyright (C) 2004 Novell, Inc.
+// Copyright (C) 2005 Novell, Inc.
 //
 
 //
@@ -25,46 +25,44 @@
 //
 
 using System;
-using System.IO;
+using System.Collections;
+using System.Xml.Serialization;
 
-using Beagle.Daemon;
 using Beagle.Util;
 
-namespace Beagle.Daemon.WebHistoryQueryable {
+namespace Beagle.Daemon {
 
-	[QueryableFlavor (Name="WebHistory", Domain=QueryDomain.Local, RequireInotify=false)]
-	public class WebHistoryQueryable : LuceneQueryable {
+	[RequestMessage (typeof (DaemonInformationRequest))]
+	public class DaemonInformationExecutor : RequestMessageExecutor {
 
-		public class WebHistoryIndexerImpl : Beagle.WebHistoryIndexerProxy {
-
-			LuceneQueryable queryable;
-
-			public WebHistoryIndexerImpl (LuceneQueryable queryable)
-			{
-				this.queryable = queryable;
-			}
-			
-			public override void Index (string xml)
-			{
-				Indexable indexable = FilteredIndexable.NewFromEitherXml (xml);
-				Scheduler.Task task = queryable.NewAddTask (indexable);
-				task.Priority = Scheduler.Priority.Immediate;
-				queryable.ThisScheduler.Add (task);
-			}
-		}
-		
-		public WebHistoryQueryable () : base ("WebHistoryIndex")
+		public override ResponseMessage Execute (RequestMessage req)
 		{
-		}
+			DaemonInformationResponse response = new DaemonInformationResponse ();
+			response.Version = ExternalStringsHack.Version;
+			response.HumanReadableStatus = Scheduler.Global.GetHumanReadableStatus ();
+			response.IndexInformation = QueryDriver.GetIndexInformation ();
 
-		public override void Start ()
-		{
-			base.Start ();
-
-			WebHistoryIndexerImpl indexer = new WebHistoryIndexerImpl (this);
-			DBusisms.RegisterObject (indexer, Beagle.DBusisms.WebHistoryIndexerPath);
+			return response;
 		}
 	}
-		
 
+	[RequestMessage (typeof (ShutdownRequest))]
+	public class ShutdownExecutor : RequestMessageExecutor {
+
+		private bool DoShutdown ()
+		{
+			Beagle.Daemon.Shutdown.BeginShutdown ();
+			return false;
+		}
+		
+		public override ResponseMessage Execute (RequestMessage req)
+		{
+			// Defer the shutdown to the main loop so that we
+			// don't wreak havoc with the Server IO stuff and the
+			// shutdown process.
+			GLib.Idle.Add (new GLib.IdleHandler (DoShutdown));
+
+			return new EmptyResponse ();
+		}
+	}
 }

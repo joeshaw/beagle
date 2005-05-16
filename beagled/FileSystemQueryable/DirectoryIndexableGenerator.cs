@@ -36,7 +36,6 @@ namespace Beagle.Daemon.FileSystemQueryable {
 	public class DirectoryIndexableGenerator : IIndexableGenerator {
 
 		FileSystemQueryable queryable;
-		FileSystemModel model;
 		FileSystemModel.Directory directory;
 		IEnumerator files;
 		bool done = false;
@@ -49,10 +48,8 @@ namespace Beagle.Daemon.FileSystemQueryable {
 
 			if (this.directory == null)
 				done = true;
-			else {
-				DirectoryInfo info = new DirectoryInfo (this.directory.FullName);
+			else 
 				files = DirectoryWalker.GetFileInfos (this.directory.FullName).GetEnumerator ();
-			}
 		}
 
 		// return null if we don't need to index that file

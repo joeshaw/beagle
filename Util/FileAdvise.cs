@@ -82,6 +82,11 @@ namespace Beagle.Util {
 			GiveAdvice (file, AdviseNormal);
 		}
 
+		static public void WillAccessOnlyOnce (FileStream file)
+		{
+			GiveAdvice (file, AdviseNoReUse);
+		}
+
 		static public void TestAdvise ()
 		{
 			try {

@@ -146,7 +146,7 @@ namespace Beagle.Daemon {
 
 		const int soft_snippet_limit = 400;
 
-		static public string GetSnippet (QueryBody    query_body,
+		static public string GetSnippet (string[]     query_terms,
 						 StringSource string_source)
 		{
 			// FIXME: If the query doesn't have search text (or is null), we should
@@ -155,14 +155,13 @@ namespace Beagle.Daemon {
 			if (string_source == null)
 				return null;
 
-			IList query_terms = query_body.Text;
-			int N = query_terms.Count;
+			int N = query_terms.Length;
 			string[] stemmed_terms = new string [N];
 			for (int i = 0; i < N; ++i) {
-				string term = (string) query_terms [i];
+				string term = query_terms [i];
 				if (term [0] == '-')
 					continue;
-				stemmed_terms [i] = LuceneDriver.Stem ((string) query_terms [i]).ToLower ();
+				stemmed_terms [i] = LuceneDriver.Stem (query_terms [i]).ToLower ();
 			}
 			
 			ArrayList matches = new ArrayList ();
@@ -181,16 +180,16 @@ namespace Beagle.Daemon {
 		
 		}
 		
-		static public string GetSnippet (QueryBody  body,
+		static public string GetSnippet (string[]   query_terms,
 						 TextReader reader)
 		{
-			return GetSnippet (body, new StringSource (reader.ReadLine));
+			return GetSnippet (query_terms, new StringSource (reader.ReadLine));
 		}
 
-		static public string GetSnippetFromFile (QueryBody body,
-							 string    filename)
+		static public string GetSnippetFromFile (string[] query_terms,
+							 string   filename)
 		{
-			return GetSnippet (body, new StreamReader (filename));
+			return GetSnippet (query_terms, new StreamReader (filename));
 		}
 	}
 

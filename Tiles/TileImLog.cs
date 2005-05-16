@@ -162,6 +162,7 @@ namespace Beagle.Tile {
 			return null;
 		}
 
+#if false
 		private string HighlightOrNull (string haystack, string [] needles)
 		{
 			string [] highlight_start_list = {"<font color=red>",
@@ -203,6 +204,7 @@ namespace Beagle.Tile {
 			else
 				return null;
 		}
+#endif
 
 		[TileAction]
 		public override void Open ()

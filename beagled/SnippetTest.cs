@@ -30,6 +30,7 @@ using System.Collections;
 using System.IO;
 using System.Net;
 
+using Beagle;
 using Beagle.Util;
 using Beagle.Daemon;
 
@@ -37,13 +38,13 @@ class SnippetTestTool {
 
 	static void Main (string [] args)
 	{
-		QueryBody query_body = new QueryBody ();
+		Query query = new Query ();
 
 		foreach (string arg in args)
-			query_body.AddText (arg);
+			query.AddText (arg);
 
 		string snippet;
-		snippet = SnippetFu.GetSnippet (query_body,
+		snippet = SnippetFu.GetSnippet (args,
 						new SnippetFu.StringSource (Console.ReadLine));
 
 		Console.WriteLine ("Snippet:\n'{0}'", snippet);

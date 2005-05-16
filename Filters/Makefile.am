@@ -1,7 +1,7 @@
 
 FILTERDIR = $(pkglibdir)/Filters
 
-CSC = mcs -g
+CSC = mcs -debug
 
 TARGET = Filters.dll
 
@@ -86,7 +86,7 @@ RESOURCES =
 
 
 $(TARGET): $(CSFILES)
-	$(CSC) -o $@ $(CSFLAGS) $(CSFILES) $(ASSEMBLIES) $(RESOURCES)
+	$(CSC) -out:$@ $(CSFLAGS) $(CSFILES) $(ASSEMBLIES) $(RESOURCES)
 
 all: $(TARGET)
 

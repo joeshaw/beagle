@@ -287,7 +287,7 @@ namespace Beagle.WebService {
 				return sr; 
 			}
 				
-			QueryBody query = new QueryBody();
+			Query query = new Query ();
 
 			foreach (string text in sreq.text)
 				query.AddText(text);
@@ -306,7 +306,7 @@ namespace Beagle.WebService {
 			return execQuery(query);
 		}
 				
-		private searchResult execQuery(QueryBody query)
+		private searchResult execQuery (Query query)
 		{
 			ArrayList results = new ArrayList();
 			QueryResult qres = new QueryResult ();

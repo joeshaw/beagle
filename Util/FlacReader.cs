@@ -42,11 +42,9 @@ namespace Beagle.Util.AudioUtil {
 			private int blockType, dataLength;
 			private bool lastBlock;
 			private byte[] data;
-			private byte[] bytes;
 			
 			public MetadataBlockHeader (byte[] b) {
-				this.bytes = b;
-				
+
 				lastBlock = ( (b[0] & 0x80) >> 7 ) == 1;
 				
 				int type = b[0] & 0x7F;

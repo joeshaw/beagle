@@ -1,7 +1,7 @@
 //
 // Query.cs
 //
-// Copyright (C) 2004 Novell, Inc.
+// Copyright (C) 2004-2005 Novell, Inc.
 //
 
 //
@@ -24,112 +24,257 @@
 // DEALINGS IN THE SOFTWARE.
 //
 
+
 using System;
-using System.Collections;
 using System.IO;
-using DBus;
-using Beagle.Util;
+using System.Collections;
+using System.Xml.Serialization;
 
-namespace Beagle
-{
+using BU = Beagle.Util;
 
-	public abstract class Query : QueryProxy, IDisposable {
+namespace Beagle {
 
-		public delegate void HitsAddedHandler (Query source, ICollection hits);
-		public virtual event HitsAddedHandler HitsAddedEvent;
+	public enum QueryDomain {
+		Local        = 1,
+		Neighborhood = 2,
+		Global       = 4
+	}
 
-		public delegate void HitsSubtractedHandler (Query source, ICollection uris);
-		public virtual event HitsSubtractedHandler HitsSubtractedEvent;
+	public class Query : RequestMessage {
 
-		private bool cancelled = false;
+		// FIXME: This is a good default when on an airplane.
+		private Beagle.QueryDomain domainFlags = Beagle.QueryDomain.Local; 
 
-		private class HitInfo {
-			public Hit Hit = null;
-			public int RefCount = 0;
-		}
+		private ArrayList text = new ArrayList ();
+		private ArrayList mimeTypes = new ArrayList ();
+		private ArrayList hitTypes = new ArrayList ();
+		private ArrayList searchSources = new ArrayList ();
 
-		public Query ()
+		// Events to make things nicer to clients
+		public delegate void HitsAdded (HitsAddedResponse response);
+		public event HitsAdded HitsAddedEvent;
+
+		public delegate void HitsSubtracted (HitsSubtractedResponse response);
+		public event HitsSubtracted HitsSubtractedEvent;
+
+		public delegate void Finished (FinishedResponse response);
+		public event Finished FinishedEvent;
+
+		public delegate void Cancelled (CancelledResponse response);
+		public event Cancelled CancelledEvent;
+
+
+		public Query () : base (true)
 		{
-			HitsAddedAsBinaryEvent += OnHitsAddedAsBinary;
-			HitsSubtractedAsStringEvent += OnHitsSubtractedAsString;
-			CancelledEvent += OnCancelled;
+			this.RegisterAsyncResponseHandler (typeof (HitsAddedResponse), OnHitsAdded);
+			this.RegisterAsyncResponseHandler (typeof (HitsSubtractedResponse), OnHitsSubtracted);
+			this.RegisterAsyncResponseHandler (typeof (FinishedResponse), OnFinished);
+			this.RegisterAsyncResponseHandler (typeof (CancelledResponse), OnCancelled);
+			this.RegisterAsyncResponseHandler (typeof (ErrorResponse), OnError);
 		}
 
-		public string [] Text {
-			get {
-				string str = GetTextBlob ();
-				if (str == null || str == "")
-					return null;
-				return str.Split ('|'); // FIXME: hacky and stupid
+		public Query (string str) : this ()
+		{
+			AddText (str);
+		}
+
+		///////////////////////////////////////////////////////////////
+
+		private void OnHitsAdded (ResponseMessage r)
+		{
+			HitsAddedResponse response = (HitsAddedResponse) r;
+
+			if (this.HitsAddedEvent != null)
+				this.HitsAddedEvent (response);
+		}
+
+		private void OnHitsSubtracted (ResponseMessage r)
+		{
+			HitsSubtractedResponse response = (HitsSubtractedResponse) r;
+
+			if (this.HitsSubtractedEvent != null)
+				this.HitsSubtractedEvent (response);
+		}
+
+		private void OnFinished (ResponseMessage r)
+		{
+			FinishedResponse response = (FinishedResponse) r;
+
+			if (this.FinishedEvent != null)
+				this.FinishedEvent (response);
+		}
+
+		private void OnCancelled (ResponseMessage r)
+		{
+			CancelledResponse response = (CancelledResponse) r;
+
+			if (this.CancelledEvent != null)
+				this.CancelledEvent (response);
+		}
+
+		// FIXME: Useful?
+		private void OnError (ResponseMessage r)
+		{
+			ErrorResponse response = (ErrorResponse) r;
+
+			throw new Exception (response.Message);
+		}
+
+		///////////////////////////////////////////////////////////////
+
+		public void AddTextRaw (string str)
+		{
+			text.Add (str);
+		}
+
+		public void AddText (string str)
+		{
+			foreach (string textPart in BU.StringFu.SplitQuoted (str))
+				AddTextRaw (textPart);
+		}
+
+		// FIXME: Since it is possible to introduce quotes via the AddTextRaw
+		// method, this function should replace " with \" when appropriate.
+		public string QuotedText {
+			get { 
+				string[] parts = new string [text.Count];
+				for (int i = 0; i < text.Count; ++i) {
+					string t = (string) text [i];
+					if (BU.StringFu.ContainsWhiteSpace (t))
+						parts [i] = "\"" + t + "\"";
+					else
+						parts [i] = t;
+				}
+				return String.Join (" ", parts);
 			}
 		}
 
-		public bool IsCancelled {
-			get { return cancelled; }
+		[XmlArrayItem (ElementName="Text",
+			       Type=typeof(string))]
+		[XmlArray (ElementName="Text")]
+		public ArrayList Text {
+			get { return text; }
 		}
 
-		public void Dispose ()
+		[XmlIgnore]
+		public bool HasText {
+			get { return text.Count > 0; }
+		}
+
+		///////////////////////////////////////////////////////////////
+
+		public void AddMimeType (string str)
 		{
-			try {
-				CloseQuery ();
-			}
-			catch (Exception e) { }
-			
-			GC.SuppressFinalize (this);
+			mimeTypes.Add (str);
 		}
 
-		~Query ()
+		public bool AllowsMimeType (string str)
 		{
-			try {
-				CloseQuery ();
-			}
-			catch (Exception e) { }
+			if (mimeTypes.Count == 0)
+				return true;
+			foreach (string mt in mimeTypes)
+				if (str == mt)
+					return true;
+			return false;
 		}
 
-		public string GetSnippet (Uri uri)
+		[XmlArrayItem (ElementName="MimeType",
+			       Type=typeof(string))]
+		[XmlArray (ElementName="MimeTypes")]
+		public ArrayList MimeTypes {
+			get { return mimeTypes; }
+		}
+
+		public bool HasMimeTypes {
+			get { return mimeTypes.Count > 0; }
+		}
+
+		///////////////////////////////////////////////////////////////
+
+		public void AddHitType (string str)
 		{
-			string snippet;
-			snippet = GetSnippetFromUriString (uri.ToString ());
-			if (snippet == "")
-				snippet = null;
-			return snippet;
+			hitTypes.Add (str);
 		}
 
-		private void OnHitsAddedAsBinary (QueryProxy sender, string hitsData)
+		public bool AllowsHitType (string str)
 		{
-			byte[] binaryData = Convert.FromBase64String (hitsData);
-			MemoryStream memStream = new MemoryStream (binaryData, false);
-			BinaryReader reader = new BinaryReader (memStream);
-
-			int numHits = reader.ReadInt32 ();
-
-			//Console.WriteLine ("Got {0} hits", numHits);
-
-			ArrayList hits = new ArrayList ();
-			for (int i = 0; i < numHits; i++) {
-				Hit hit = Hit.ReadAsBinary (reader);
-				hits.Add (hit);
-			}
-
-			reader.Close ();
-
-			if (HitsAddedEvent != null && hits.Count > 0)
-				HitsAddedEvent (this, hits);
+			if (hitTypes.Count == 0)
+				return true;
+			foreach (string ht in hitTypes)
+				if (str == ht)
+					return true;
+			return false;
 		}
 
-		private void OnHitsSubtractedAsString (QueryProxy sender, string uriString)
+		[XmlArrayItem (ElementName="HitType",
+			       Type=typeof(string))]
+		[XmlArray (ElementName="HitTypes")]
+		public ArrayList HitTypes {
+			get { return hitTypes; }
+		}
+
+		[XmlIgnore]
+		public bool HasHitTypes {
+			get { return hitTypes.Count > 0; }
+		}
+
+		///////////////////////////////////////////////////////////////
+
+		public void AddSource (string str)
 		{
-			if (HitsSubtractedEvent != null && uriString.Length > 0) {
-				ICollection uri_collection = UriFu.StringToUris (uriString);
-
-				if (uri_collection != null)
-					HitsSubtractedEvent (this, uri_collection);
-			}
+			searchSources.Add (str);
 		}
+		
 
-		private void OnCancelled (QueryProxy sender)
+		public bool AllowsSource (string str)
 		{
-			cancelled = true;
+			if (searchSources.Count == 0)
+				return true;
+			foreach (string ss in searchSources)
+				if (str.ToUpper () == ss.ToUpper ())
+					return true;
+			return false;
 		}
+
+		[XmlArrayItem (ElementName="Source",
+			       Type=typeof(string))]
+		[XmlArray (ElementName="Sources")]
+		public ArrayList Sources {
+			get { return searchSources; }
+		}
+
+		[XmlIgnore]
+		public bool HasSources {
+			get { return searchSources.Count > 0; }
+		}
+
+		///////////////////////////////////////////////////////////////
+
+		public void AddDomain (Beagle.QueryDomain d)
+		{
+			domainFlags |= d;
+		}
+
+		public void RemoveDomain (Beagle.QueryDomain d)
+		{
+			domainFlags &= ~d;
+		}
+
+		public bool AllowsDomain (Beagle.QueryDomain d)
+		{
+			return (domainFlags & d) != 0;
+		}
+
+		///////////////////////////////////////////////////////////////
+
+		[XmlIgnore]
+		public bool IsEmpty {
+			get { return text.Count == 0
+				      && mimeTypes.Count == 0
+				      && searchSources.Count == 0; }
+		}
+
+		///////////////////////////////////////////////////////////////
+
 	}
 }

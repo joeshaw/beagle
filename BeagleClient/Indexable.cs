@@ -35,7 +35,14 @@ using Beagle.Util;
 
 namespace Beagle {
 
+	public enum IndexableFiltering {
+		Never,     // Never try to filter this indexable
+		Automatic, // Try to determine automatically if this needs to be filtered
+		Always     // Always try to filter this indexable
+	}
+
 	public class Indexable : Versioned {
+
 
 		// The URI of the item being indexed.
 		private Uri uri = null;
@@ -58,11 +65,25 @@ namespace Beagle {
 		// List of Property objects
 		private ArrayList properties = new ArrayList ();
 
+		// Is this being indexed because of crawling or other
+		// background activity?
+		private bool crawled = true;
+
+		// Is this object inherently contentless?
+		private bool no_content = false;
+
+		// If necessary, should we cache this object's content?
+		// The cached version is used to generate snippets.
+		private bool cache_content = true;
+
 		// A stream of the content to index
 		private TextReader textReader;
 
 		// A stream of the hot content to index
 		private TextReader hotTextReader;
+
+		// When should we try to filter this indexable?
+		private IndexableFiltering filtering = IndexableFiltering.Automatic;
 
 		//////////////////////////
 
@@ -89,15 +110,6 @@ namespace Beagle {
 		{
 			StringReader reader = new StringReader (xml);
 			return (Indexable) our_serializer.Deserialize (reader);
-		}
-
-		//////////////////////////
-
-		// Use Build to do any set-up that you want to defer until
-		// immediately before indexing.
-		public virtual void Build ()
-		{
-
 		}
 
 		//////////////////////////
@@ -166,13 +178,37 @@ namespace Beagle {
 			get { return ! DeleteContent && ContentUri.IsFile; }
 		}
 
+		[XmlAttribute]
+		public bool Crawled {
+			get { return crawled; }
+			set { crawled = value; }
+		}
+
+		[XmlAttribute]
+		public bool NoContent {
+			get { return no_content; }
+			set { no_content = value; }
+		}
+
+		[XmlAttribute]
+		public bool CacheContent {
+			get { return cache_content; }
+			set { cache_content = value; }
+		}
+
+		[XmlAttribute]
+		public IndexableFiltering Filtering {
+			get { return filtering; }
+			set { filtering = value; }
+		}
+
 		//////////////////////////
 		
 		private TextReader ReaderFromUri (Uri uri)
 		{
 			TextReader reader = null;
 
-			if (uri != null && uri.IsFile) {
+			if (uri != null && uri.IsFile && ! no_content) {
 				Stream stream = new FileStream (uri.LocalPath,
 								FileMode.Open,
 								FileAccess.Read,
@@ -188,7 +224,7 @@ namespace Beagle {
 			return reader;
 		}
 
-		public virtual TextReader GetTextReader ()
+		public TextReader GetTextReader ()
 		{
 			if (textReader == null)
 				textReader = ReaderFromUri (ContentUri);
@@ -201,14 +237,14 @@ namespace Beagle {
 			textReader = reader;
 		}
 
-		public virtual TextReader GetHotTextReader ()
+		public TextReader GetHotTextReader ()
 		{
 			if (hotTextReader == null)
 				hotTextReader = ReaderFromUri (HotContentUri);
 			return hotTextReader;
 		}
 
-		public virtual void SetHotTextReader (TextReader reader)
+		public void SetHotTextReader (TextReader reader)
 		{
 			hotTextReader = reader;
 		}
@@ -263,6 +299,16 @@ namespace Beagle {
 
 			string filename = Path.GetTempFileName ();
 			FileStream fileStream = File.OpenWrite (filename);
+
+			// When we dump the contents of an indexable into a file, we
+			// expect to use it again soon.
+			FileAdvise.PreLoad (fileStream);
+
+			// Make sure the temporary file is only readable by the owner.
+			// FIXME: There is probably a race here.  Could some malicious program
+			// do something to the file between creation and the chmod?
+			Mono.Posix.Syscall.chmod (filename, (Mono.Posix.FileMode) 256);
+
 			BufferedStream bufferedStream = new BufferedStream (fileStream);
 			StreamWriter writer = new StreamWriter (bufferedStream);
 

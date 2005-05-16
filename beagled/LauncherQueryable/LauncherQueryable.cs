@@ -42,8 +42,6 @@ namespace Beagle.Daemon.LauncherQueryable {
 		private static Logger log = Logger.Get ("LauncherQueryable");
 		ArrayList Dirs;
 		Hashtable watched = new Hashtable ();
-		string home;
-		FileStream LauncherDB;
 		int polling_interval_in_hours = 1;
 		LauncherCrawler crawler;
 

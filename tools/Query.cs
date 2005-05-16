@@ -1,7 +1,7 @@
 //
 // Query.cs
 //
-// Copyright (C) 2004 Novell, Inc.
+// Copyright (C) 2004-2005 Novell, Inc.
 //
 
 //
@@ -45,7 +45,7 @@ class QueryTool {
 	static bool verbose = false;
 	static bool display_hits = true;
 
-	static void OnHitsAdded (Query source, ICollection hits)
+	static void OnHitsAdded (HitsAddedResponse response)
 	{
 		lastQueryTime = DateTime.Now;
 
@@ -55,19 +55,20 @@ class QueryTool {
 		}
 
 		if (! display_hits) {
-			count += hits.Count;
+			count += response.Hits.Count;
 			return;
 		}
 
-		foreach (Hit hit in hits) {
+		foreach (Hit hit in response.Hits) {
 			if (verbose)
 				Console.WriteLine ("  Uri: {0}", hit.Uri);
 			else
 				Console.WriteLine (hit.Uri);
 
 			if (verbose) {
-				string snippet = query.GetSnippet (hit.Uri);
-				Console.WriteLine (" Snip: {0}", snippet != null ? snippet : "(null)");
+				SnippetRequest sreq = new SnippetRequest (query.Text, hit);
+				SnippetResponse sresp = (SnippetResponse) sreq.Send ();
+				Console.WriteLine (" Snip: {0}", sresp.Snippet != null ? sresp.Snippet : "(null)");
 				Console.WriteLine (" Type: {0}", hit.Type);
 				Console.WriteLine ("MimeT: {0}", hit.MimeType == null ? "(null)" : hit.MimeType);
 				Console.WriteLine ("  Src: {0}", hit.Source);
@@ -87,14 +88,14 @@ class QueryTool {
 		}
 	}
 
-	static void OnHitsSubtracted (Query source, ICollection uris)
+	static void OnHitsSubtracted (HitsSubtractedResponse response)
 	{
 		lastQueryTime = DateTime.Now;
 
 		if (! display_hits)
 			return;
 
-		foreach (Uri uri in uris) {
+		foreach (Uri uri in response.Uris) {
 			Console.WriteLine ("Subtracted Uri '{0}'", uri);
 			Console.WriteLine ();
 
@@ -102,7 +103,7 @@ class QueryTool {
 		}
 	}
 
-	static void OnFinished (QueryProxy query)
+	static void OnFinished (FinishedResponse response)
 	{
 		if (verbose) {
 			Console.WriteLine ("Elapsed time: {0:0.000}s",
@@ -140,6 +141,10 @@ class QueryTool {
 		System.Environment.Exit (0);
 	}
 
+	static void OnClosed ()
+	{
+		Gtk.Application.Quit ();
+	}
 	
 	static void Main (string[] args) 
 	{
@@ -148,23 +153,8 @@ class QueryTool {
 		if (args.Length == 0 || Array.IndexOf (args, "--help") > -1 || Array.IndexOf (args, "--usage") > -1)
 			PrintUsageAndExit ();
 
-		try {
-			query = Beagle.Factory.NewQuery ();
-		} catch (DBus.DBusException e) {
-			Console.WriteLine ("Could not query.  You probably don't have D-BUS set up properly.\nThe query failed with error: {0}", e.Message);
-			System.Environment.Exit (-1);
-		} catch (Exception e) {
-			if (e.ToString ().IndexOf ("com.novell.Beagle") != -1) {
-				Console.WriteLine ("Could not query.  The Beagle daemon is probably not running, or maybe you\ndon't have D-BUS set up properly.");
-				System.Environment.Exit (-1);
-			} else {
-				Console.WriteLine ("The query failed with error:\n\n" + e);
-				System.Environment.Exit (-1);
-			}
-		}
+		query = new Query ();
 
-		query.HitsAddedEvent += OnHitsAdded;
-		query.HitsSubtractedEvent += OnHitsSubtracted;
 		// Parse args
 		int i = 0;
 		while (i < args.Length) {
@@ -201,11 +191,21 @@ class QueryTool {
 			++i;
 		}
 
+		query.HitsAddedEvent += OnHitsAdded;
+		query.HitsSubtractedEvent += OnHitsSubtracted;
+
 		if (! keepRunning)
 			query.FinishedEvent += OnFinished;
+		else
+			query.ClosedEvent += OnClosed;
 
 		queryStartTime = DateTime.Now;
-		query.Start ();
+		try {
+			query.SendAsync ();
+		} catch (System.Net.Sockets.SocketException e) {
+			Console.WriteLine ("Could not connect to the Beagle daemon.  The daemon probably isn't running.");
+			System.Environment.Exit (-1);
+		}
 
 		Gtk.Application.Run ();
 	}

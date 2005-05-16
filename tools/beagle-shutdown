@@ -1,3 +1,0 @@
-#!/bin/sh
-
-dbus-send --session --dest=com.novell.Beagle --print-reply /com/novell/Beagle/RemoteControl com.novell.Beagle.RemoteControl.Shutdown

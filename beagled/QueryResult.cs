@@ -30,6 +30,7 @@ using System.Collections;
 using System.Diagnostics;
 using System.Threading;
 using Beagle.Util;
+
 namespace Beagle.Daemon {
 
 	public class QueryResult : IDisposable {

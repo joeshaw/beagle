@@ -68,6 +68,7 @@ namespace Beagle.Tile {
 			object[] args = new object [1];
 			args[0] = hit;
 			Tile tile = (Tile) Activator.CreateInstance (flavor.TileType, args);
+			tile.Hit = hit;
 			tile.Uri = hit.Uri;
 			tile.Query = this.Query;
 

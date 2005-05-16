@@ -89,9 +89,6 @@ class ExerciseFileSystemTool {
 		return name_counter.ToString ();
 	}
 
-	static int file_count = 0;
-	static int directory_count = 0;
-
 	static string CreateFile (string directory)
 	{
 		string source_file = GetRandomSourceFile ();

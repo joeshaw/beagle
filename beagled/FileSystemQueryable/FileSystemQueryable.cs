@@ -86,9 +86,11 @@ namespace Beagle.Daemon.FileSystemQueryable {
 
 		public static Indexable FileToIndexable (Uri file_uri, Uri internal_uri, bool crawl_mode)
 		{
-			Indexable indexable = new FilteredIndexable (file_uri, crawl_mode);
+			Indexable indexable = new Indexable (file_uri);
 			indexable.Uri = internal_uri;
 			indexable.ContentUri = file_uri;
+			indexable.Crawled = crawl_mode;
+			indexable.Filtering = Beagle.IndexableFiltering.Always;
 			return indexable;
 		}
 
@@ -287,9 +289,9 @@ namespace Beagle.Daemon.FileSystemQueryable {
 
 		//////////////////////////////////////////////////////////////////////////
 
-		protected override ICollection DoBonusQuery (QueryBody body, ICollection list_of_uris)
+		protected override ICollection DoBonusQuery (Query query, ICollection list_of_uris)
 		{
-			return model.Search (body, list_of_uris);
+			return model.Search (query, list_of_uris);
 		}
 
 		protected override double RelevancyMultiplier (Hit hit)

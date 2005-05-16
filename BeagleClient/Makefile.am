@@ -3,7 +3,7 @@
 # 0067 = event defined but not used
 # 0618 = Mono.Posix.Syscall is obsolete
 
-CSC = mcs -g -nowarn:0067,0618
+CSC = mcs -debug -nowarn:0067,0618
 
 TARGET = Beagle.dll
 
@@ -14,20 +14,18 @@ CSFLAGS = 					\
 	$(BEAGLE_DEFINES)
 
 CSFILES = 					\
-	$(srcdir)/DBusisms.cs			\
-	$(srcdir)/FactoryProxy.cs		\
-	$(srcdir)/Factory.cs			\
-	$(srcdir)/Versioned.cs			\
+	$(srcdir)/Client.cs			\
 	$(srcdir)/Hit.cs                	\
-	$(srcdir)/Indexable.cs          	\
 	$(srcdir)/IIndexableGenerator.cs       	\
+	$(srcdir)/Indexable.cs          	\
+	$(srcdir)/IndexingService.cs		\
+	$(srcdir)/Message.cs			\
 	$(srcdir)/Property.cs           	\
-	$(srcdir)/QueryProxy.cs         	\
 	$(srcdir)/Query.cs              	\
-	$(srcdir)/RemoteControlProxy.cs		\
+	$(srcdir)/QueryResponses.cs            	\
 	$(srcdir)/RemoteControl.cs		\
-	$(srcdir)/WebHistoryIndexerProxy.cs	\
-	$(srcdir)/WebHistoryIndexer.cs
+	$(srcdir)/Snippet.cs			\
+	$(srcdir)/Versioned.cs
 
 
 
@@ -37,13 +35,14 @@ LOCAL_ASSEMBLIES =			\
 
 ASSEMBLIES = 				\
 	$(BEAGLED_LIBS)                 \
+	-r:Mono.Posix			\
 	-r:ICSharpCode.SharpZipLib.dll	\
 	$(LOCAL_ASSEMBLIES:%=-r:%)
 
 RESOURCES =
 
 $(TARGET): $(CSFILES) $(EXTSTR) $(LOCAL_ASSEMBLIES) $(RESOURCES)
-	$(CSC) -o $@ $(CSFLAGS) $(CSFILES) $(EXTSTR) $(ASSEMBLIES) $(RESOURCES)
+	$(CSC) -out:$@ $(CSFLAGS) $(CSFILES) $(EXTSTR) $(ASSEMBLIES) $(RESOURCES)
 
 all: $(TARGET)
 

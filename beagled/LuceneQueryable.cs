@@ -41,13 +41,17 @@ namespace Beagle.Daemon {
 		static public IndexerCreator IndexerHook {
 			set { indexer_hook = value; }
 		}
+		
+		virtual protected IIndexer LocalIndexerHook ()
+		{
+			return null;
+		}
 
 		//////////////////////////////////////////////////////////
 		
 		private Scheduler scheduler = Scheduler.Global;
 
 		private string index_name;
-		private string index_dir;
 		private LuceneDriver driver;
 		private IIndexer indexer;
 		private LuceneTaskCollector collector;
@@ -92,7 +96,8 @@ namespace Beagle.Daemon {
 			this.index_name = index_name;
 			driver = new LuceneDriver (this.index_name);
 
-			if (indexer_hook != null)
+			indexer = LocalIndexerHook ();
+			if (indexer == null && indexer_hook != null)
 				indexer = indexer_hook (this.index_name);
 			if (indexer == null)
 				indexer = driver;
@@ -286,7 +291,7 @@ namespace Beagle.Daemon {
 
 		/////////////////////////////////////////
 
-		virtual public bool AcceptQuery (QueryBody body)
+		virtual public bool AcceptQuery (Query query)
 		{
 			return true;
 		}
@@ -371,12 +376,12 @@ namespace Beagle.Daemon {
 		
 		/////////////////////////////////////////
 
-		protected virtual ICollection DoBonusQuery (QueryBody body, ICollection list_of_uris)
+		protected virtual ICollection DoBonusQuery (Query query, ICollection list_of_uris)
 		{
 			return null;
 		}
 
-		public void DoQuery (QueryBody            body,
+		public void DoQuery (Query                query,
 				     IQueryResult         query_result,
 				     IQueryableChangeData i_change_data)
 		{
@@ -414,9 +419,9 @@ namespace Beagle.Daemon {
 				}
 			}
 			
-			extra_uris = DoBonusQuery (body, added_uris);
+			extra_uris = DoBonusQuery (query, added_uris);
 			
-			Driver.DoQuery (body, 
+			Driver.DoQuery (query, 
 					query_result,
 					added_uris,
 					extra_uris,
@@ -427,7 +432,7 @@ namespace Beagle.Daemon {
 
 		/////////////////////////////////////////
 
-		public virtual string GetSnippet (QueryBody body, Hit hit)
+		public virtual string GetSnippet (string[] query_terms, Hit hit)
 		{
 			// Look up the hit in our text cache.  If it is there,
 			// use the cached version to generate a snippet.
@@ -440,7 +445,7 @@ namespace Beagle.Daemon {
 			if (reader == null)
 				return null;
 
-			string snippet = SnippetFu.GetSnippet (body, reader);
+			string snippet = SnippetFu.GetSnippet (query_terms, reader);
 			reader.Close ();
 
 			return snippet;

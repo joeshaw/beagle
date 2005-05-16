@@ -1,4 +1,4 @@
-//
+
 // IndexHelper.cs
 //
 // Copyright (C) 2005 Novell, Inc.
@@ -26,10 +26,13 @@
 
 
 using System;
+using System.Collections;
 using System.IO;
+using SNS = System.Net.Sockets;
 using System.Threading;
 
-using DBus;
+using Mono.Posix;
+
 using Gtk;
 
 using Beagle.Daemon;
@@ -39,11 +42,7 @@ namespace Beagle.IndexHelper {
 	
 	class IndexHelperTool {
 
-		static readonly public string ServiceName = "com.novell.BeagleIndexHelper";
-		static readonly public string FactoryPath = "/com/novell/BeagleIndexHelper/Factory";
-		static readonly public string IndexPathPrefix = "/com/novell/BeagleIndexHelper/Index";
-
-		static private string process_owner;
+		static Server server;
 
 		static void Main (string [] args)
 		{
@@ -54,105 +53,46 @@ namespace Beagle.IndexHelper {
 
 			Logger.LogToFile (PathFinder.LogDir, "IndexHelper", run_by_hand || log_in_fg);
 
-			Beagle.Daemon.DBusisms.Init ();
 			Application.InitCheck ("IndexHelper", ref args);
 
-			// Keep an eye on the BusDriver so that we know if beagled
-			// goes away.
+			SetupSignalHandlers ();
 
-			BusDriver bus_driver = Beagle.Daemon.DBusisms.BusDriver;
+			Shutdown.ShutdownEvent += OnShutdown;
 
-#if HAVE_OLD_DBUS
-			bus_driver.ServiceOwnerChanged += OnNameOwnerChanged;
-#else
-			bus_driver.NameOwnerChanged += OnNameOwnerChanged;
-#endif
-
-			// Check that beagled is running by looking for the com.novell.Beagle service.
-			if (! Beagle.Daemon.DBusisms.TestService (Beagle.DBusisms.Name)) {
-				Logger.Log.Debug ("Couldn't find d-bus service '{0}' (Is beagled running?)",
-						  Beagle.DBusisms.Name);
-				if (run_by_hand)
-					Environment.Exit (-1);
+			// Start the server
+			Logger.Log.Debug ("Starting messaging server");
+			bool server_has_been_started = false;
+			try {
+				server = new Server ("socket-helper");
+				server.Start ();
+				server_has_been_started = true;
+			} catch (InvalidOperationException ex) {
+				Logger.Log.Error ("Couldn't start server:");
+				Logger.Log.Error (ex);
 			}
 
-			// Save the owner ID of the com.novell.Beagle service
-#if HAVE_OLD_DBUS
-			process_owner = Beagle.Daemon.DBusisms.BusDriver.GetServiceOwner (Beagle.DBusisms.Name);
-#else
-                        process_owner = Beagle.Daemon.DBusisms.BusDriver.GetNameOwner (Beagle.DBusisms.Name);
-#endif
+			if (server_has_been_started) {
+				
+				// Start the monitor thread, which keeps an eye on memory usage.
+				ExceptionHandlingThread.Start (new ThreadStart (MemoryMonitorWorker));
 
-			// Start monitoring the beagle daemon
-			GLib.Timeout.Add (2000, new GLib.TimeoutHandler (BeagleDaemonWatcherTimeoutHandler));
+				// Start a thread that watches the daemon and begins a shutdown
+				// if it terminates.
+				ExceptionHandlingThread.Start (new ThreadStart (DaemonMonitorWorker));
 
-			// Acquire the service
-			if (! Beagle.Daemon.DBusisms.InitService (ServiceName)) {
-				Logger.Log.Debug ("Couldn't acquire d-bus service '{0}'", ServiceName);
-				Environment.Exit (-666);
+				Application.Run ();
 			}
 
-			// Since the associated RemoteIndexerProxy is null, the only method
-			// that can be called on this object that isn't a no-op is NewRemoteIndexerPath.
-			// We do this to avoid a separate factory object.
-			RemoteIndexerImpl factory = new RemoteIndexerImpl ("factory object", null, null);
-			Beagle.Daemon.DBusisms.RegisterObject (factory, FactoryPath);
-
-
-			// Start the monitor thread, which keeps an eye on memory usage.
-			Thread th = new Thread (new ThreadStart (MemoryMonitorWorker));
-			th.Start ();
-
-			Application.Run ();
 			Environment.Exit (0);
-		}
-
-		static void OnNameOwnerChanged (string name,
-						string old_owner,
-						string new_owner)
-		{
-			if (name != Beagle.DBusisms.Name)
-				return;
-
-#if false
-			// FIXME: This is disabled for now.  We'll let BeagleDaemonWatcherTimeoutHandler
-			// deal with our shutdowns for us.
-			if (new_owner == "") {
-				RemoteIndexerImpl.QueueCloseForAll ();
-				Thread th = new Thread (new ThreadStart (Shutdown.BeginShutdown));
-				th
-			}
-#endif
-		}
-
-		public static bool CheckSenderID (string sender)
-		{
-			return sender == process_owner;
-		}
-
-		static bool BeagleDaemonWatcherTimeoutHandler ()
-		{
-
-			// FIXME: we only poll the beagled service to work around
-			// the dropped OnNameOwnerChanged signals, which is presumably a
-			// dbus or dbus-sharp bug.
-			if (! Beagle.Daemon.DBusisms.TestService (Beagle.DBusisms.Name)) {
-				Logger.Log.Debug ("Shutting down on failed TestService in BeagleDaemonWatcherTimeoutHandler");
-				RemoteIndexerImpl.QueueCloseForAll ();
-				Shutdown.BeginShutdown ();
-				return false;
-			}
-			
-			return true;
 		}
 
 		static void MemoryMonitorWorker ()
 		{
 			int vmrss_original = SystemInformation.VmRss;
 			const double threshold = 5.0;
+			const int max_request_count = 0;
 			int last_vmrss = 0;
 
-			
 			while (! Shutdown.ShutdownRequested) {
 
 				// Check resident memory usage
@@ -162,8 +102,9 @@ namespace Beagle.IndexHelper {
 					Logger.Log.Debug ("Helper Size: VmRSS={0:0.0} MB, size={1:0.00}, {2:0.0}%",
 							  vmrss/1024.0, size, 100.0 * (size - 1) / (threshold - 1));
 				last_vmrss = vmrss;
-				if (size > threshold) {
-					if (RemoteIndexerImpl.CloseCount > 0) {
+				if (size > threshold
+				    || (max_request_count > 0 && RemoteIndexerExecutor.Count > max_request_count)) {
+					if (RemoteIndexerExecutor.Count > 0) {
 						Logger.Log.Debug ("Process too big, shutting down!");
 						Shutdown.BeginShutdown ();
 					} else {
@@ -176,6 +117,99 @@ namespace Beagle.IndexHelper {
 				}
 			}
 		}
+		
+		static void DaemonMonitorWorker ()
+		{
+			// FIXME: We shouldn't need to know the  name of the daemon's socket.
+			string socket_name;
+			socket_name = Path.Combine (PathFinder.StorageDir, "socket");
+
+			try {
+				SNS.Socket socket;
+				socket = new SNS.Socket (SNS.AddressFamily.Unix, SNS.SocketType.Stream, 0);
+				socket.Connect (new UnixEndPoint (socket_name));
+				
+				ArrayList socket_list = new ArrayList ();
+				
+				while (! Shutdown.ShutdownRequested) {
+					socket_list.Add (socket);
+					SNS.Socket.Select (socket_list, null, null, 1000000); // 1000000 microseconds = 1 second
+					if (socket_list.Count != 0) {
+						Logger.Log.Debug ("The daemon appears to have gone away.");
+						Logger.Log.Debug ("Shutting down helper.");
+						Shutdown.BeginShutdown ();
+					}
+				}
+			} catch (SNS.SocketException) {
+				Logger.Log.Debug ("Caught a SocketException while trying to monitor the daemon");
+				Logger.Log.Debug ("Shutting down");
+				Shutdown.BeginShutdown ();
+			}
+		}
+
+		/////////////////////////////////////////////////////////////////////////////
+
+		// The integer values of the Mono.Posix.Signal enumeration don't actually
+		// match the Linux signal numbers of Linux.  Oops!
+		// This is fixed in Mono.Unix, but for the moment we want to maintain
+		// compatibility with mono 1.0.x.
+		const int ACTUAL_LINUX_SIGINT  = 2;
+		const int ACTUAL_LINUX_SIGQUIT = 3;
+		const int ACTUAL_LINUX_SIGTERM = 15;
+
+		static void SetupSignalHandlers ()
+		{
+			// Set up our signal handler
+			Mono.Posix.Syscall.sighandler_t sig_handler;
+			sig_handler = new Mono.Posix.Syscall.sighandler_t (OurSignalHandler);
+                        Mono.Posix.Syscall.signal (ACTUAL_LINUX_SIGINT, sig_handler);
+                        Mono.Posix.Syscall.signal (ACTUAL_LINUX_SIGQUIT, sig_handler);
+                        Mono.Posix.Syscall.signal (ACTUAL_LINUX_SIGTERM, sig_handler);
+		}
+
+		// Our handler triggers an orderly shutdown when it receives a signal.
+		// However, this can be annoying if the process gets wedged during
+		// shutdown.  To deal with that case, we make a note of the time when
+		// the first signal comes in, and we allow signals to unconditionally
+		// kill the process after 5 seconds have passed.
+		static DateTime signal_time = DateTime.MinValue;
+		static void OurSignalHandler (int signal)
+		{
+			Logger.Log.Debug ("Handling signal {0}", signal);
+
+			bool first_signal = false;
+			if (signal_time == DateTime.MinValue) {
+				signal_time = DateTime.Now;
+				first_signal = true;
+			}
+
+			if (Shutdown.ShutdownRequested) {
+				
+				if (first_signal) {
+					Logger.Log.Debug ("Shutdown already in progress.");
+				} else {
+					double t = (DateTime.Now - signal_time).TotalSeconds;
+					const double min_t = 5;
+
+					if (t < min_t) {
+						Logger.Log.Debug ("Signals can force an immediate shutdown in {0:0.00}s", min_t-t);
+					} else {
+						Logger.Log.Debug ("Forcing immediate shutdown.");
+						Environment.Exit (0);
+					}
+				}
+
+			} else {
+				Logger.Log.Debug ("Initiating shutdown in response to signal.");
+				Shutdown.BeginShutdown ();
+			}
+		}
+
+		static void OnShutdown ()
+		{
+			server.Stop ();
+		}
+
 	}
 
 }

@@ -1,5 +1,5 @@
 
-CSC = mcs -g
+CSC = mcs -debug
 
 TARGET = Best.exe
 WRAPPER = best
@@ -26,7 +26,7 @@ ASSEMBLIES =				\
 RESOURCES =
 
 $(TARGET): $(CSFILES) $(LOCAL_ASSEMBLIES) $(RESOURCES)
-	$(CSC) -o $@ $(CSFLAGS) $(CSFILES) $(ASSEMBLIES) $(RESOURCES)
+	$(CSC) -out:$@ $(CSFLAGS) $(CSFILES) $(ASSEMBLIES) $(RESOURCES)
 
 all: $(TARGET)
 

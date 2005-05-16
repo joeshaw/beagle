@@ -29,6 +29,8 @@ using System;
 using System.Collections;
 using System.Diagnostics;
 using System.IO;
+using System.Xml;
+using System.Xml.Serialization;
 
 using BU = Beagle.Util;
 
@@ -55,6 +57,7 @@ namespace Beagle {
 		// server-side copy of the Hit.  It is always null
 		// on the client-side.
 		private object sourceObject = null;
+		private string source_object_name = null;
 
 		// High scores imply greater relevance.
 		private double scoreRaw = 0.0;
@@ -82,77 +85,27 @@ namespace Beagle {
 		private DirectoryInfo directoryInfo = null;
 
 		//////////////////////////
-
-		public void WriteAsBinary (BinaryWriter writer)
-		{
-			writer.Write (BU.StringFu.DateTimeToString (Timestamp));
-			writer.Write (id);
-			writer.Write (BU.UriFu.UriToSerializableString (uri));
-			writer.Write (type);
-			writer.Write (mimeType == null ? "" : mimeType);
-			writer.Write (source);
-			writer.Write (scoreRaw);
-			writer.Write (scoreMultiplier);
-
-			writer.Write (properties.Count);
-			foreach (string key in properties.Keys) {
-				string value = (string) properties[key];
-				writer.Write (key);
-				writer.Write (value);
-			}
-
-			writer.Write (data.Count);
-			foreach (string key in data.Keys) {
-				byte[] value = (byte[]) data[key];
-				writer.Write (key);
-				writer.Write (value.Length);
-				writer.Write (value);
-			}
-		}
-
-		public static Hit ReadAsBinary (BinaryReader reader)
-		{
-			Hit hit = new Hit ();
-			
-			hit.Timestamp = BU.StringFu.StringToDateTime (reader.ReadString ());
-			hit.id = reader.ReadInt32 ();
-			hit.uri = BU.UriFu.UriStringToUri (reader.ReadString ());
-			hit.type = reader.ReadString ();
-			hit.mimeType = reader.ReadString ();
-			if (hit.mimeType == "")
-				hit.mimeType = null;
-			hit.source = reader.ReadString ();
-			hit.scoreRaw = reader.ReadDouble ();
-			hit.scoreMultiplier = reader.ReadDouble ();
-
-			int numProps = reader.ReadInt32 ();
-			for (int i = 0; i < numProps; i++) {
-				string key = reader.ReadString ();
-				string value = reader.ReadString ();
-
-				hit[key] = value;
-			}
-
-			int numData = reader.ReadInt32 ();
-			for (int i = 0; i < numData; i++) {
-				string key = reader.ReadString ();
-				int size = reader.ReadInt32 ();
-				byte[] data = reader.ReadBytes (size);
-
-				hit.SetData (key, data);
-			}
-
-			return hit;
-		}
 		
 		public int Id {
 			get { return id; }
 			set { id = value; }
 		}
 
+		[XmlIgnore]
 		public Uri Uri {
 			get { return uri; }
 			set { uri = value; }
+		}
+
+		[XmlElement ("Uri")]
+		public string UriAsString {
+			get {
+				return BU.UriFu.UriToSerializableString (uri);
+			}
+
+			set {
+				uri = BU.UriFu.UriStringToUri (value);
+			}
 		}
 
 		public string Type {
@@ -170,9 +123,15 @@ namespace Beagle {
 			set { source = value; }
 		}
 
+		[XmlIgnore]
 		public object SourceObject {
 			get { return sourceObject; }
 			set { sourceObject = value; }
+		}
+
+		public string SourceObjectName {
+			get { return source_object_name; }
+			set { source_object_name = value; }
 		}
 
 		public double Score {
@@ -252,6 +211,7 @@ namespace Beagle {
 			get { return Path != null ? System.IO.Path.GetDirectoryName (Path) : null; }
 		}
 
+		[XmlIgnore]
 		public FileSystemInfo FileSystemInfo {
 			get {
 				if (IsFile)
@@ -263,6 +223,7 @@ namespace Beagle {
 			}
 		}
 
+		[XmlIgnore]
 		public FileInfo FileInfo {
 			get { 
 				if (fileInfo == null && IsFile)
@@ -271,6 +232,7 @@ namespace Beagle {
 			}
 		}
 
+		[XmlIgnore]
 		public DirectoryInfo DirectoryInfo {
 			get {
 				if (directoryInfo == null && IsDirectory)
@@ -281,10 +243,42 @@ namespace Beagle {
 
 		//////////////////////////
 
+		[XmlIgnore]
 		public IDictionary Properties {
 			get { return properties; }
 		}
 
+		public struct KeyValuePair {
+			public string Key, Value;
+
+			public KeyValuePair (string key, string value)
+			{
+				this.Key = key;
+				this.Value = value;
+			}
+		}
+							       
+		[XmlArray (ElementName="Properties")]
+		[XmlArrayItem (ElementName="Property", Type=typeof (KeyValuePair))]
+		public ArrayList PropertiesAsXmlElements {
+			get {
+				ArrayList props = new ArrayList (properties.Count);
+				
+				foreach (string key in properties.Keys) {
+					KeyValuePair pair = new KeyValuePair (key, (string) properties[key]);
+					props.Add (pair);
+				}
+
+				return props;
+			}
+
+			set {
+				foreach (KeyValuePair pair in value)
+					properties[pair.Key] = pair.Value;
+			}
+		}
+
+		[XmlIgnore]
 		public ICollection Keys {
 			get { return properties.Keys; }
 		}
@@ -303,10 +297,27 @@ namespace Beagle {
 
 		//////////////////////////
 
+		[XmlIgnore]
 		virtual public IDictionary Data {
 			get { return data; }
 		}
 
+		[XmlArray (ElementName="Data")]
+		[XmlArrayItem (ElementName="Data", Type=typeof (KeyValuePair))]
+		public ArrayList DataAsXmlElements {
+			get {
+				ArrayList data_list = new ArrayList (data.Count);
+				
+				foreach (string key in data.Keys) {
+					KeyValuePair pair = new KeyValuePair (key, (string) data[key]);
+					data_list.Add (pair);
+				}
+
+				return data_list;
+			}
+		}
+
+		[XmlIgnore]
 		virtual public ICollection DataKeys {
 			get { return data.Keys; }
 		}

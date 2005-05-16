@@ -81,7 +81,6 @@ namespace Beagle.Daemon.Mozilla {
 			Uri uri = new Uri (String.Format ("email:///{0};id={1}", message.Path, message.Id));
 
 			Indexable indexable = new Indexable (uri);
-			indexable.MimeType = "text/plain"; // FIXME
 			indexable.Type = "MailMessage";
 
 			indexable.AddProperty (Property.New ("fixme:client", "mozilla"));

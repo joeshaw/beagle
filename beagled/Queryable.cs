@@ -58,13 +58,13 @@ namespace Beagle.Daemon {
 			get { return flavor.Domain; }
 		}
 			
-		public bool AcceptQuery (QueryBody body)
+		public bool AcceptQuery (Query query)
 		{
-			return body != null
-				&& ! body.IsEmpty
-				&& body.AllowsSource (Name)
-				&& body.AllowsDomain (Domain)
-				&& iqueryable.AcceptQuery (body);
+			return query != null
+				&& ! query.IsEmpty
+				&& query.AllowsSource (Name)
+				&& query.AllowsDomain (Domain)
+				&& iqueryable.AcceptQuery (query);
 		}
 
 		public int GetItemCount ()
@@ -79,29 +79,29 @@ namespace Beagle.Daemon {
 			return n;
 		}
 
-		public void DoQuery (QueryBody body, IQueryResult result, IQueryableChangeData change_data)
+		public void DoQuery (Query query, IQueryResult result, IQueryableChangeData change_data)
 		{
 			try {
-				iqueryable.DoQuery (body, result, change_data);
+				iqueryable.DoQuery (query, result, change_data);
 			} catch (Exception ex) {
 				Logger.Log.Warn ("Caught exception calling DoQuery on '{0}'", Name);
 				Logger.Log.Warn (ex);
 			}
 		}
 
-		public string GetSnippet (QueryBody body, Hit hit)
+		public string GetSnippet (string[] query_terms, Hit hit)
 		{
 			if (hit == null)
 				return null;
 
 			// Sanity-check: make sure this Hit actually came out of this Queryable
-			if (hit.SourceObject != this) {
-				string msg = String.Format ("Queryable mismatch in GetSnippet: {0} vs {1}", hit.SourceObject, this);
+			if (QueryDriver.GetQueryable (hit.SourceObjectName) != this) {
+				string msg = String.Format ("Queryable mismatch in GetSnippet: {0} vs {1}", hit.SourceObjectName, this);
 				throw new Exception (msg);
 			}
 
 			try {
-				return iqueryable.GetSnippet (body, hit);
+				return iqueryable.GetSnippet (query_terms, hit);
 			} catch (Exception ex) {
 				Logger.Log.Warn ("Caught exception calling DoQuery on '{0}'", Name);
 				Logger.Log.Warn (ex);

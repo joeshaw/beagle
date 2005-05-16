@@ -27,6 +27,7 @@
 using System;
 using System.IO;
 
+using Beagle;
 using Beagle.Util;
 using Beagle.Daemon;
 
@@ -41,10 +42,10 @@ class NameIndexTool {
 			if (args.Length == 0) {
 				name_index.SpewIndex ();
 			} else {
-				QueryBody body = new QueryBody ();
+				Query query = new Query ();
 				foreach (string arg in args)
-					body.AddTextRaw (arg);
-				foreach (Uri uri in name_index.Search (body, null))
+					query.AddTextRaw (arg);
+				foreach (Uri uri in name_index.Search (query, null))
 					Console.WriteLine (GuidFu.ToShortString (GuidFu.FromUri (uri)));
 			}
 		}

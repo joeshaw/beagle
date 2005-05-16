@@ -112,8 +112,10 @@ namespace Beagle.Daemon {
 				subtracted_uris = new Hashtable ();
 			}
 
-			foreach (Hit hit in added)
+			foreach (Hit hit in added) {
 				hit.SourceObject = queryable;
+				hit.SourceObjectName = queryable.Name;
+			}
 
 			result.Subtract (subtracted);
 			result.Add (added);

@@ -30,6 +30,7 @@ using System.Collections;
 using System.IO;
 using System.Net;
 
+using Beagle;
 using Beagle.Util;
 using Beagle.Daemon;
 
@@ -58,6 +59,9 @@ class ExtractContentTool {
 	{
 		bool firstArg = true;
 
+		Logger.DefaultEcho = true;
+		Logger.DefaultLevel = LogLevel.Debug;
+
 		foreach (String arg in args) {
 
 			if (arg == "--tokenize") {
@@ -65,12 +69,12 @@ class ExtractContentTool {
 				continue;
 			}
 			
-			FilteredIndexable indexable;
+			Indexable indexable;
 
 			Uri uri = UriFu.PathToFileUri (arg);
 			Console.WriteLine ("uri: {0}", uri);
 
-			indexable = new FilteredIndexable (uri);
+			indexable = new Indexable (uri);
 
 			if (!firstArg) {
 				Console.WriteLine ();
@@ -79,14 +83,9 @@ class ExtractContentTool {
 			}
 			firstArg = false;
 
-			// FIX: We should call "Build" as it updates the 
-			// "Flavor" and "Filter" members, failing which 
-			// will result in a "No filter" situation. :)
-			indexable.Build ();
-
 			Console.WriteLine ("Filename: " + uri);
-			//Console.WriteLine ("  Flavor: " + indexable.Flavor);
-			if (! indexable.HaveFilter)
+
+			if (! FilterFactory.FilterIndexable (indexable))
 				Console.WriteLine ("No filter!");
 
 			Console.WriteLine ();

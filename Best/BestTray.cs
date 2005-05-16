@@ -92,7 +92,7 @@ namespace Best {
 			tips.Enable ();
 			
 			Add (eventbox);
-			ShowAll ();
+			eventbox.ShowAll ();
 
 			keybinder = new Beagle.Util.GConfXKeybinder ();
 			keybinder.Bind ("/apps/Beagle/keybindings/show_beagle",

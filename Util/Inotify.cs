@@ -209,9 +209,6 @@ namespace Beagle.Util {
 			}
 		}
 
-		static Hashtable cookie_hash = new Hashtable ();
-		static ArrayList cookie_list = new ArrayList ();
-
 		static public int WatchCount {
 			get { return watched_by_wd.Count; }
 		}
@@ -658,6 +655,11 @@ namespace Beagle.Util {
 					}
 				}
 
+				// If "running" gets set to false, we might get a null next_event as the above
+				// loop terminates
+				if (next_event == null)
+					return;
+
 				// Now we have an event, so we release the event_queue lock and do
 				// the actual dispatch.
 				
@@ -700,6 +702,7 @@ namespace Beagle.Util {
 
 		/////////////////////////////////////////////////////////////////////////////////
 
+#if INOTIFY_TEST
 		static void Main (string [] args)
 		{
 			Queue to_watch = new Queue ();
@@ -739,6 +742,7 @@ namespace Beagle.Util {
 			// Kill the event-reading thread so that we exit
 			Inotify.Stop ();
 		}
+#endif
 
 	}
 }

@@ -182,8 +182,13 @@ namespace Beagle.Daemon {
 
 		static public void Start ()
 		{
-			foreach (Assembly assembly in GetAssemblies ())
+			foreach (Assembly assembly in GetAssemblies ()) {
 				ScanAssembly (assembly);
+
+				// This allows backends to define their
+				// own executors.
+				Server.ScanAssemblyForExecutors (assembly);
+			}
 
 			foreach (Queryable q in queryables)
 				q.Start ();
@@ -198,6 +203,16 @@ namespace Beagle.Daemon {
 						ret += " - " + flavor.Name + "\n";
 
 			return ret;
+		}
+
+		static public Queryable GetQueryable (string name)
+		{
+			foreach (Queryable q in queryables) {
+				if (q.Name == name)
+					return q;
+			}
+
+			return null;
 		}
 
 		////////////////////////////////////////////////////////
@@ -222,17 +237,17 @@ namespace Beagle.Daemon {
 		private class QueryClosure : IQueryWorker {
 
 			Queryable queryable;
-			QueryBody body;
+			Query query;
 			QueryResult result;
 			IQueryableChangeData change_data;
 			
 			public QueryClosure (Queryable            queryable,
-					     QueryBody            body,
+					     Query                query,
 					     QueryResult          result,
 					     IQueryableChangeData change_data)
 			{
 				this.queryable = queryable;
-				this.body = body;
+				this.query = query;
 				this.result = result;
 				this.change_data = change_data;
 			}
@@ -240,23 +255,23 @@ namespace Beagle.Daemon {
 			public void DoWork ()
 			{
 				HitRegulator regulator = result.GetHitRegulator (queryable);
-				queryable.DoQuery (body, regulator, change_data);
+				queryable.DoQuery (query, regulator, change_data);
 				regulator.Flush (result);
 			}
 		}
 
 		static public void DoOneQuery (Queryable            queryable,
-					       QueryBody            body,
+					       Query                query,
 					       QueryResult          result,
 					       IQueryableChangeData change_data)
 		{
-			if (queryable.AcceptQuery (body)) {
-				QueryClosure qc = new QueryClosure (queryable, body, result, change_data);
+			if (queryable.AcceptQuery (query)) {
+				QueryClosure qc = new QueryClosure (queryable, query, result, change_data);
 				result.AttachWorker (qc);
 			}
 		}
 
-		static public void DoQuery (QueryBody body, QueryResult result)
+		static public void DoQuery (Query query, QueryResult result)
 		{
 			// The extra pair of calls to WorkerStart/WorkerFinished ensures:
 			// (1) that the QueryResult will fire the StartedEvent
@@ -271,7 +286,7 @@ namespace Beagle.Daemon {
 				return;
 			
 			foreach (Queryable queryable in queryables)
-				DoOneQuery (queryable, body, result, null);
+				DoOneQuery (queryable, query, result, null);
 			
 			result.WorkerFinished (dummy_worker);
 		}

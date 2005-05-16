@@ -1,5 +1,5 @@
 
-CSC = mcs -g
+CSC = mcs -debug
 
 TARGET = Images.dll
 
@@ -74,7 +74,7 @@ RESOURCEFILES =					\
 RESOURCES = $(join $(RESOURCEFILES:%=-resource:%,),$(notdir $(RESOURCEFILES)))
 
 $(TARGET): $(CSFILES) $(RESOURCEFILES)
-	$(CSC) -o $@ $(CSFLAGS) $(CSFILES) $(ASSEMBLIES) $(RESOURCES) 
+	$(CSC) -out:$@ $(CSFLAGS) $(CSFILES) $(ASSEMBLIES) $(RESOURCES) 
 
 all: $(TARGET)
 

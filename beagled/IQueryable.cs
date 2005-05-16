@@ -34,13 +34,13 @@ namespace Beagle.Daemon {
 
 		void Start ();
 
-		bool AcceptQuery (QueryBody body);
+		bool AcceptQuery (Query query);
 
-		void DoQuery (QueryBody body,
+		void DoQuery (Query query,
 			      IQueryResult result,
 			      IQueryableChangeData data);
 
-		string GetSnippet (QueryBody body, Hit hit);
+		string GetSnippet (string[] query_terms, Hit hit);
 
 		// Returns the total number of items in this Queryable's index,
 		// or a value < 0 if that number is unknown or undefined.

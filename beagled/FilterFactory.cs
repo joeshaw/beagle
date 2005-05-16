@@ -156,6 +156,106 @@ namespace Beagle.Daemon {
 
 		/////////////////////////////////////////////////////////////////////////
 
+		static private bool ShouldWeFilterThis (Indexable indexable)
+		{
+			if (indexable.Filtering == IndexableFiltering.Never
+			    || indexable.NoContent)
+				return false;
+
+			if (indexable.Filtering == IndexableFiltering.Always)
+				return true;
+
+			// Our default behavior is to try to filter non-transient file
+			// indexable and indexables with a specific mime type attached.
+			if (indexable.IsNonTransient || indexable.MimeType != null)
+				return true;
+			
+			return false;
+		}
+
+		static public bool FilterIndexable (Indexable indexable)
+		{
+			if (! ShouldWeFilterThis (indexable))
+				return false;
+
+			string path = indexable.ContentUri.LocalPath;
+
+			// First, figure out which filter we should use to deal with
+			// the indexable.
+
+			Filter filter = null;
+
+			// If a specific mime type is specified, try to index as that type.
+			if (indexable.MimeType != null)
+				filter = CreateFilterFromMimeType (indexable.MimeType);
+
+			if (indexable.IsNonTransient) {
+				// Otherwise sniff the mime-type from the file
+				if (filter == null) {
+					filter = CreateFilterFromPath (path);
+					if (filter != null)
+						indexable.MimeType = filter.MimeType;
+				}
+			
+				if (filter != null)
+					filter.Identifier = path;
+				
+				if (Directory.Exists (path)) {
+					indexable.MimeType = "inode/directory";
+					indexable.NoContent = true;
+					indexable.Timestamp = Directory.GetLastWriteTime (path);
+				} else if (File.Exists (path)) {
+					if (indexable.MimeType == null)
+						indexable.MimeType = Beagle.Util.VFS.Mime.GetMimeType (path);
+					indexable.Timestamp = File.GetLastWriteTime (path);
+				} else {
+					Logger.Log.Warn ("No such file: {0}", path);
+					return false;
+				}
+			}
+
+			// We don't know how to filter this, so there is nothing else to do.
+			if (filter == null) {
+				if (indexable.NoContent) {
+					Logger.Log.Debug ("No filter for {0}", path);
+					return false;
+				}
+
+				return true;
+			}
+
+			// Hook up the snippet writer.
+			if (filter.SnippetMode) {
+				if (filter.OriginalIsText && indexable.IsNonTransient) {
+					TextCache.MarkAsSelfCached (indexable.Uri);
+				} else if (indexable.CacheContent) {
+					TextWriter writer = TextCache.GetWriter (indexable.Uri);
+					filter.AttachSnippetWriter (writer);
+				}
+			}
+
+			if (indexable.Crawled)
+				filter.EnableCrawlMode ();
+
+			// Be extra paranoid: never delete the actual
+			// URI we are indexing.
+			if (indexable.DeleteContent && indexable.Uri != indexable.ContentUri)
+				filter.DeleteContent = indexable.DeleteContent;
+
+
+			// Open the filter, copy the file's properties to the indexable,
+			// and hook up the TextReaders.
+			filter.Open (path);
+			foreach (Property prop in filter.Properties)
+				indexable.AddProperty (prop);
+			indexable.SetTextReader (filter.GetTextReader ());
+			indexable.SetHotTextReader (filter.GetHotTextReader ());
+
+			return true;
+		}
+
+		/////////////////////////////////////////////////////////////////////////
+
 		static private int ScanAssemblyForFilters (Assembly assembly)
 		{
 			int count = 0;

@@ -45,7 +45,7 @@ namespace Beagle.Tile {
 		public override void Open ()
 		{
 			string args = String.Format ("--open-note {0} --highlight-search \"{1}\"",
-						     Hit.Uri, String.Join (" ", Query.Text));
+						     Hit.Uri, String.Join (" ", (string[]) Query.Text.ToArray ()));
 			
 			Process p = new Process ();
 			p.StartInfo.UseShellExecute = false;

@@ -199,16 +199,16 @@ public abstract class Summary : IEnumerable {
 
 		private void SkipContentInfo (FileStream f)
 		{
-			Decode.Token (f); // type
-			Decode.Token (f); // subtype
+			Decode.SkipToken (f); // type
+			Decode.SkipToken (f); // subtype
 			uint count = Decode.UInt (f); // count
 			for (int i = 0; i < count; ++i) {
-				Decode.Token (f); // name
-				Decode.Token (f); // value
+				Decode.SkipToken (f); // name
+				Decode.SkipToken (f); // value
 			}
-			Decode.Token (f); // id
-			Decode.Token (f); // description
-			Decode.Token (f); // encoding
+			Decode.SkipToken (f); // id
+			Decode.SkipToken (f); // description
+			Decode.SkipToken (f); // encoding
 			Decode.UInt (f); // size
 
 			count = Decode.UInt (f); // child count
@@ -229,8 +229,8 @@ public abstract class Summary : IEnumerable {
 			cc       = Decode.String (f);
 			mlist    = Decode.String (f);
 
-			Decode.FixedInt (f);
-			Decode.FixedInt (f);
+			Decode.SkipFixedInt (f);
+			Decode.SkipFixedInt (f);
 
 			uint count;
 
@@ -238,8 +238,8 @@ public abstract class Summary : IEnumerable {
 			count = Decode.UInt (f);
 			if (count > 0) {
 				for (int i = 0; i < count; i++) {
-					Decode.FixedInt (f);
-					Decode.FixedInt (f);
+					Decode.SkipFixedInt (f);
+					Decode.SkipFixedInt (f);
 				}
 			}
 
@@ -247,7 +247,7 @@ public abstract class Summary : IEnumerable {
 			count = Decode.UInt (f);
 			if (count > 0) {
 				for (int i = 0; i < count; i++) {
-					Decode.String (f);
+					Decode.SkipString (f);
 				}
 			}
 
@@ -255,8 +255,8 @@ public abstract class Summary : IEnumerable {
 			count = Decode.UInt (f);
 			if (count > 0){
 				for (int i = 0; i < count; i++){
-					Decode.String (f);
-					Decode.String (f);
+					Decode.SkipString (f);
+					Decode.SkipString (f);
 				}
 			}
 
@@ -362,15 +362,13 @@ public abstract class Summary : IEnumerable {
 
 		private bool ContentInfoLoad (FileStream f)
 		{
-		    string token;
-
 		    if (f.ReadByte () == 0) 
 			return true;
 
 		    // type
-		    token = Decode.Token (f);
+		    Decode.SkipToken (f);
 		    // subtype
-		    token = Decode.Token (f);
+		    Decode.SkipToken (f);
 
 		    uint count;
 		    count = Decode.UInt (f);
@@ -378,19 +376,19 @@ public abstract class Summary : IEnumerable {
 			return false;
 		    for (int i = 0; i < count; i++) {
 			// Name
-			token = Decode.Token (f);
+			Decode.SkipToken (f);
 			// Value
-			token = Decode.Token (f);
+			Decode.SkipToken (f);
 		    }
 		    
 		    // id
-		    token = Decode.Token (f);
+		    Decode.SkipToken (f);
 
 		    // description
-		    token = Decode.Token (f);
+		    Decode.SkipToken (f);
 
 		    // encoding
-		    token = Decode.Token (f);
+		    Decode.SkipToken (f);
 
 		    // size
 		    Decode.UInt (f);
@@ -449,7 +447,8 @@ public abstract class Summary : IEnumerable {
 			if (version == 2)
 				Decode.FixedInt (f);
 
-			int validity = Decode.FixedInt (f);
+			// validity
+			Decode.SkipFixedInt (f);
 		}
 	}
 	
@@ -480,6 +479,14 @@ public abstract class Summary : IEnumerable {
 			return new System.String (e.GetChars (buffer, 0, len));
 		    }
 		}
+
+		public static void SkipToken (FileStream f)
+		{
+			int len = (int) UInt (f);
+			len -= 32;
+			if (len > 0)
+				f.Seek (len, SeekOrigin.Current);
+		}
 	       
 		public static string String (FileStream f)
 		{
@@ -491,6 +498,14 @@ public abstract class Summary : IEnumerable {
 			byte [] buffer = new byte [len];
 			f.Read (buffer, 0, (int) len);
 			return new System.String (e.GetChars (buffer, 0, len));
+		}
+
+		public static void SkipString (FileStream f)
+		{
+			int len = (int) UInt (f);
+			--len;
+			if (len > 0)
+				f.Seek (len, SeekOrigin.Current);
 		}
 
 		public static uint UInt (FileStream f)
@@ -512,6 +527,11 @@ public abstract class Summary : IEnumerable {
 			f.Read (b, 0, 4);
 
 			return (b [0] << 24) | (b [1] << 16) | (b [2] << 8) | b [3];
+		}
+
+		public static void SkipFixedInt (FileStream f)
+		{
+			f.Seek (4, SeekOrigin.Current);
 		}
 
 		public static DateTime Time (FileStream f)
@@ -537,6 +557,7 @@ public abstract class Summary : IEnumerable {
 		}
 	}
 
+#if false
 	class Test {
 		void Main (string [] args)
 		{
@@ -555,5 +576,6 @@ public abstract class Summary : IEnumerable {
 		}
 		
 	}
+#endif
 }
 }

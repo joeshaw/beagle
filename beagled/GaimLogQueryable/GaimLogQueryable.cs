@@ -185,11 +185,6 @@ namespace Beagle.Daemon.GaimLogQueryable {
 			indexable.Timestamp = log.Timestamp;
 			indexable.Type = "IMLog";
 
-			// We don't have a specific mime type for this
-			// blob, but a mime type must be specified for
-			// indexables that provide a stream
-			indexable.MimeType = "text/plain";
-			
 			StringBuilder text = new StringBuilder ();
 			foreach (ImLog.Utterance utt in log.Utterances) {
 				//Console.WriteLine ("[{0}][{1}]", utt.Who, utt.Text);
@@ -240,7 +235,7 @@ namespace Beagle.Daemon.GaimLogQueryable {
 							       "fixme:endtime", "fixme:starttime");
 		}
 
-		override public string GetSnippet (QueryBody body, Hit hit)
+		override public string GetSnippet (string[] query_terms, Hit hit)
 		{
 			// FIXME: This does the wrong thing for old-style logs.
 			string file = hit ["fixme:file"];
@@ -260,7 +255,7 @@ namespace Beagle.Daemon.GaimLogQueryable {
 				string text = utt.Text;
 				string who = utt.Who;
 				
-				string snippet = SnippetFu.GetSnippet (body, new StringReader (text));
+				string snippet = SnippetFu.GetSnippet (query_terms, new StringReader (text));
 
 				if (snippet == null || snippet == "")
 					continue;

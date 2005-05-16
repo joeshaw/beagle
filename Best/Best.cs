@@ -117,6 +117,7 @@ namespace Best {
 			BestTray icon;			
 			if (doTray) {
 				icon = new BestTray (win);
+				icon.Show ();
 				Console.WriteLine (Catalog.GetString ("If you're wondering whether Best is working check " +
 						   "your notification area (system tray)"));
 			} else {

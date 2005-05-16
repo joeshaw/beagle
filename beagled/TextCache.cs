@@ -45,29 +45,29 @@ namespace Beagle.Daemon {
 		static TextCache () 
 		{
 			text_cache_dir = Path.Combine (PathFinder.StorageDir, "TextCache");
-			if (! Directory.Exists (text_cache_dir))
+			if (! Directory.Exists (text_cache_dir)) {
 				Directory.CreateDirectory (text_cache_dir);
 
-			// Create our cache subdirectories.
-			for (int i = 0; i < 256; ++i) {
-				string subdir = i.ToString ("x");
-				if (i < 16)
-					subdir = "0" + subdir;
-				subdir = Path.Combine (text_cache_dir, subdir);
-				if (! Directory.Exists (subdir))
+				// Create our cache subdirectories.
+				for (int i = 0; i < 256; ++i) {
+					string subdir = i.ToString ("x");
+					if (i < 16)
+						subdir = "0" + subdir;
+					subdir = Path.Combine (text_cache_dir, subdir);
 					Directory.CreateDirectory (subdir);
+				}
 			}
-
+			
 			// Create our Sqlite database
 			string db_filename = Path.Combine (text_cache_dir, "TextCache.db");
 			bool create_new_db = false;
 			if (! File.Exists (db_filename))
 				create_new_db = true;
-
+			
 			connection = new SqliteConnection ();
 			connection.ConnectionString = "URI=file:" + db_filename;
 			connection.Open ();
-
+			
 			if (create_new_db) {
 				DoNonQuery ("CREATE TABLE uri_index (            " +
 					    "  uri      STRING UNIQUE NOT NULL,  " +
@@ -160,6 +160,9 @@ namespace Beagle.Daemon {
 
 			FileStream stream;
 			stream = new FileStream (path, FileMode.Create, FileAccess.Write, FileShare.ReadWrite);
+
+			// We don't expect to need this again in the near future.
+			FileAdvise.FlushCache (stream);
 
 			StreamWriter writer;
 			writer = new StreamWriter (stream);

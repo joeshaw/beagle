@@ -1,7 +1,7 @@
 //
-// WebHistoryIndexerProxy.cs
+// Snippet.cs
 //
-// Copyright (C) 2004 Novell, Inc.
+// Copyright (C) 2005 Novell, Inc.
 //
 
 //
@@ -24,14 +24,46 @@
 // DEALINGS IN THE SOFTWARE.
 //
 
-using DBus;
+using System;
+using System.Collections;
+using System.Xml.Serialization;
 
-namespace Beagle
-{
-	[Interface ("com.novell.Beagle.WebHistoryIndexer")]
-	public abstract class WebHistoryIndexerProxy
-	{
-		[Method]
-		public abstract void Index (string indexableAsXml);
+using Beagle.Util;
+
+namespace Beagle {
+
+	public class SnippetRequest : RequestMessage {
+
+		public Hit Hit;
+		public string[] QueryTerms;
+
+		public SnippetRequest () : base (false) { }
+
+		public SnippetRequest (string[] query_terms, Hit hit) : base (false)
+		{
+			this.QueryTerms = query_terms;
+			this.Hit = hit;
+		}
+
+		public SnippetRequest (IList query_terms, Hit hit) : base (false)
+		{
+			int N = query_terms.Count;
+			this.QueryTerms = new string [N];
+			for (int i = 0; i < N; i++)
+				this.QueryTerms [i] = (string) query_terms [i];
+
+			this.Hit = hit;
+		}
+	}
+
+	public class SnippetResponse : ResponseMessage {
+		public string Snippet;
+
+		public SnippetResponse () { }
+
+		public SnippetResponse (string snippet)
+		{
+			this.Snippet = snippet;
+		}
 	}
 }

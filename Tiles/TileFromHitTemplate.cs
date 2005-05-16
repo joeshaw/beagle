@@ -34,28 +34,20 @@ namespace Beagle.Tile {
 
 	public class TileFromHitTemplate : TileFromTemplate {
 
-		Hit hit;
-
 		public TileFromHitTemplate (Hit _hit, 
 					    string template) : base (template)
 		{
-			hit = _hit;
+			this.Hit = _hit;
 		}
 
 		protected override void PopulateTemplate ()
 		{
-			Template.AddHit (hit);
+			Template.AddHit (this.Hit);
 
-			if (hit.FileInfo != null) {
-				Template["LastWriteTime"] = hit.FileInfo.LastWriteTime.ToString ();
-				Template["Length"] = BU.StringFu.FileLengthToString (hit.FileInfo.Length);
+			if (this.Hit.FileInfo != null) {
+				Template["LastWriteTime"] = this.Hit.FileInfo.LastWriteTime.ToString ();
+				Template["Length"] = BU.StringFu.FileLengthToString (this.Hit.FileInfo.Length);
 			} 
-		}
-
-		public Hit Hit {
-			get { 
-				return hit;
-			}
 		}
 	}
 }

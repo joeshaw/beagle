@@ -159,11 +159,6 @@ namespace Beagle.Tile {
 			return key;
 		}
 
-		private bool IsActionKey (string key)
-		{
-			return key.StartsWith ("dynaction:");
-		}
-		
 		private bool DoAction (string key)
 		{
 			TileActionHandler handler = (TileActionHandler) actionTable [key];

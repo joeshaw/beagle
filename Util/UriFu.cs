@@ -171,6 +171,18 @@ namespace Beagle.Util {
 
 		//////////////////////////////////
 
+		static public bool Equals (Uri uri1, Uri uri2)
+		{
+			return uri1.ToString () == uri2.ToString ();
+		}
+
+		static public int Compare (Uri uri1, Uri uri2)
+		{
+			return String.Compare (uri1.ToString (), uri2.ToString ());
+		}
+
+		//////////////////////////////////
+
 		public class Comparer : IComparer
 		{
 			public int Compare(object uri1, object uri2)

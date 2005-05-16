@@ -437,7 +437,12 @@ namespace Beagle.Util.AudioUtil {
 			fs.Seek (3, SeekOrigin.Begin);
 			//----------------------------------------------------------------------------
 			string versionHigh = fs.ReadByte () + "";
-			string versionID3 = versionHigh + "." + fs.ReadByte ();
+
+			// Since we never use versionID3, we just read the byte off of
+			// the stream instead of constructing the version string.
+			//string versionID3 = versionHigh + "." + fs.ReadByte ();
+			fs.ReadByte ();
+			
 			//------------------------------------------------------------------------- ---
 			byte flags = (byte) fs.ReadByte (); //ID3 Flags, skipping
 			//----------------------------------------------------------------------------

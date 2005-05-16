@@ -225,17 +225,12 @@ namespace Beagle.WebService {
 			if (sessId == null || searchString == null || searchString == "")
 				return NO_RESULTS;
 						 
-			Console.WriteLine("WebBackEnd:doQuery() - Got Search String: " + searchString + ", with searchSource: " + searchSource);
-			 
-			QueryBody qbody = new QueryBody();								
-			qbody.AddText (searchString); 			
-			if (searchSource != null && searchSource != "") {
-				qbody.AddSource(searchSource);	
-			}			
-			//qbody.AddDomain (QueryDomain.Neighborhood);
-			qbody.AddDomain (QueryDomain.Global);			
-
-			QueryResult qres = new QueryResult ();
+			Console.WriteLine("WebBackEnd: Got Search String: " + searchString); 
+			Query query = new Query();
+			query.AddText (searchString);
+			if (searchSource != null && searchSource != "")
+				query.AddSource(searchSource);	
+			query.AddDomain (QueryDomain.Global);
 			
 			//Note: QueryDriver.DoQuery() local invocation is used. 
 			//The root tile is used only for adding hits and generating html.
@@ -254,9 +249,9 @@ namespace Beagle.WebService {
 			else
 				sessionResp.Add(sessId, resp);	
 
-			//Console.WriteLine("WebBackEnd:doQuery() - Starting Query for string \"{0}\"", qbody.QuotedText);
+			Console.WriteLine("WebBackEnd: Starting Query for string \"{0}\"", query.QuotedText);
 
-			QueryDriver.DoQuery (qbody, qres);
+			QueryDriver.DoQuery (query, qres);
 
 			//Wait only till we have enough results to display
 			while ((result.Contains(qres)) && 

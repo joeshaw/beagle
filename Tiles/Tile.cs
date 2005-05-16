@@ -40,6 +40,7 @@ namespace Beagle.Tile {
 		static private long uidSrc = 0;
 
 		private long uid;
+		private Hit hit;
 		private Uri uri;
 		private Query query;
 		
@@ -53,6 +54,11 @@ namespace Beagle.Tile {
 
 		public string UniqueKey {
 			get { return "_tile_" + uid; }
+		}
+
+		public Hit Hit {
+			get { return hit; }
+			set { hit = value; }
 		}
 
 		public Uri Uri {

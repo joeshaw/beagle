@@ -2,7 +2,7 @@
 # 0067 = event defined but not used
 # 0618 = Mono.Posix.Syscall is obsolete
 
-CSC = mcs -g -nowarn:0067,0618
+CSC = mcs -debug -nowarn:0067,0618
 
 
 TARGET = Util.dll
@@ -30,26 +30,27 @@ CSFILES = 			        	\
 	$(srcdir)/camel.cs              	\
 	$(srcdir)/CommandLineFu.cs		\
 	$(srcdir)/DirectoryWalker.cs		\
-	$(srcdir)/FileAdvise.cs			\
-	$(srcdir)/ExifData.cs			\
 	$(srcdir)/ExceptionHandlingThread.cs	\
+	$(srcdir)/ExifData.cs			\
 	$(srcdir)/ExtendedAttribute.cs  	\
+	$(srcdir)/FileAdvise.cs			\
 	$(srcdir)/FileSystem.cs			\
 	$(srcdir)/FrequencyStatistics.cs	\
 	$(srcdir)/FSpotTools.cs         	\
 	$(srcdir)/GeckoUtils.cs                 \
-	$(srcdir)/GuidFu.cs			\
-	$(srcdir)/GtkUtils.cs			\
 	$(srcdir)/gnome.cs              	\
-	$(srcdir)/ImLog.cs              	\
+	$(srcdir)/GtkUtils.cs			\
+	$(srcdir)/GuidFu.cs			\
 	$(srcdir)/ImBuddy.cs              	\
+	$(srcdir)/ImLog.cs              	\
 	$(srcdir)/Inotify.cs			\
 	$(srcdir)/JpegHeader.cs			\
 	$(srcdir)/Logger.cs             	\
-	$(srcdir)/MultiReader.cs        	\
 	$(srcdir)/Mozilla.cs	        	\
+	$(srcdir)/MultiReader.cs        	\
 	$(srcdir)/NautilusTools.cs      	\
 	$(srcdir)/Note.cs               	\
+	$(srcdir)/PathFinder.cs			\
 	$(srcdir)/PullingReader.cs      	\
 	$(srcdir)/Scheduler.cs			\
 	$(srcdir)/Stopwatch.cs			\
@@ -57,6 +58,8 @@ CSFILES = 			        	\
 	$(srcdir)/StringMatcher.cs		\
 	$(srcdir)/SystemInformation.cs		\
 	$(srcdir)/Timeline.cs			\
+	$(srcdir)/UnixClient.cs			\
+	$(srcdir)/UnixListener.cs		\
 	$(srcdir)/UriFu.cs			\
 	$(srcdir)/Vfs.cs                        \
 	$(srcdir)/XKeybinder.cs
@@ -78,10 +81,10 @@ ASSEMBLIES =					\
 
 
 $(TARGET): $(CSFILES) $(GOOGLE_CS) $(EXTSTR)
-	$(CSC) --unsafe -o $@ $(CSFLAGS) $^ $(ASSEMBLIES)
+	$(CSC) -unsafe -out:$@ $(CSFLAGS) $^ $(ASSEMBLIES)
 
 Inotify.exe: $(srcdir)/Inotify.cs $(srcdir)/Logger.cs $(srcdir)/DirectoryWalker.cs
-	$(CSC) --unsafe -o $@ $^ -r:Mono.Posix
+	$(CSC) -unsafe -out:$@ $^ -r:Mono.Posix -define:INOTIFY_TEST
 
 all: $(TARGET) Inotify.exe
 

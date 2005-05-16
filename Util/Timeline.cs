@@ -14,7 +14,6 @@ namespace Beagle.Util {
 	public class Timeline {
 
 		private DateTime TodaySpan;
-		private DateTime TommorowSpan;
 		private DateTime YesterdaySpan;
 		private DateTime ThisWeekSpan;
 		private DateTime LastWeekSpan;
@@ -43,7 +42,6 @@ namespace Beagle.Util {
 		public void UpdateTimespan ()
 		{
 			TodaySpan = DateTime.Today;
-			TommorowSpan = TodaySpan + new TimeSpan (1, 0, 0, 0);
 			YesterdaySpan = TodaySpan - new TimeSpan (1, 0, 0, 0);
 			ThisWeekSpan = TodaySpan - new TimeSpan (((int)DateTime.Now.DayOfWeek), 0, 0, 0);
 			LastWeekSpan = ThisWeekSpan - new TimeSpan (7, 0, 0, 0);

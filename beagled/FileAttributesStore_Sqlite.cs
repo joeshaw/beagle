@@ -186,15 +186,6 @@ namespace Beagle.Daemon {
 			return attr;
 		}
 
-		private SqliteCommand PathQueryCommand ()
-		{
-			SqliteCommand command;
-			command = new SqliteCommand ();
-			command.Connection = connection;
-			command.CommandText = "SELECT directory, filename FROM file_attributes";
-			return command;
-		}
-
 		///////////////////////////////////////////////////////////////////
 
 		private int GetPathHash (string path)

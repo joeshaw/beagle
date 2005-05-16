@@ -30,7 +30,6 @@ using System.IO;
 using System.Reflection;
 using System.Threading;
 
-using DBus;
 using Gtk;
 
 using Beagle.Util;
@@ -44,46 +43,37 @@ namespace Beagle.Daemon {
 
 		public static Thread MainLoopThread = null;
 
-		private static FactoryImpl factory = null;
+		private static Server server = null;
 
 #if ENABLE_NETWORK
 		private static NetworkService network = null;
 #endif
 
-		private static void OnNameOwnerChanged (string name,
-							string oldOwner,
-							string newOwner)
+		public static bool StartServer ()
 		{
-			if (name == "com.novell.Beagle" && newOwner == "") {
-#if HAVE_OLD_DBUS
-				DBusisms.BusDriver.ServiceOwnerChanged -= OnNameOwnerChanged;
-#else
-				DBusisms.BusDriver.NameOwnerChanged -= OnNameOwnerChanged;
-#endif
-				Application.Quit ();
+			Logger.Log.Debug ("Starting messaging server");
+			try {
+				server = new Server ("socket");
+				server.Start ();
+			} catch (InvalidOperationException) {
+				return false;
 			}
+
+			return true;
 		}
 
-
-		public static int ReplaceExisting () 
+		public static void ReplaceExisting () 
 		{
 			Logger.Log.Info ("Attempting to replace another beagled.");
-			DBus.Service service = DBus.Service.Get (DBusisms.Connection, "com.novell.Beagle");
-#if HAVE_OLD_DBUS
-			DBusisms.BusDriver.ServiceOwnerChanged += OnNameOwnerChanged;
-#else
-			DBusisms.BusDriver.NameOwnerChanged += OnNameOwnerChanged;
-#endif
-			do {
-				Logger.Log.Info ("Building Remote Control Proxy");
-				RemoteControlProxy proxy = RemoteControl.GetProxy (service);
-				Logger.Log.Info ("Sending Shutdown");
-				proxy.Shutdown ();
-				Application.Run ();
-			} while (! DBusisms.InitService (Beagle.DBusisms.Name));
 
-			return 0;
-		} 
+			do {
+				ShutdownRequest request = new ShutdownRequest ();
+				Logger.Log.Info ("Sending Shutdown");
+				request.Send ();
+				// Give it a second to shut down the messaging server
+				Thread.Sleep (1000);
+			} while (! StartServer ());
+		}
 
 		private static void LogMemoryUsage ()
 		{
@@ -260,63 +250,30 @@ namespace Beagle.Daemon {
 				th.Start ();
 			}
 
-			try {
-				Logger.Log.Debug ("Initializing D-BUS");
-				DBusisms.Init ();
-				Application.InitCheck ("beagled", ref args);
-
-				Logger.Log.Debug ("Acquiring {0} D-BUS service", Beagle.DBusisms.Name);
-				if (!DBusisms.InitService (Beagle.DBusisms.Name)) {
-					if (arg_replace) {
-						ReplaceExisting ();
-					} else {
-						Logger.Log.Fatal ("Could not register com.novell.Beagle service.  "
-								  + "There is probably another beagled instance running.  "
-								  + "Use --replace to replace the running service");
-						return 1;
-					}
-				}
-				
-			} catch (DBus.DBusException e) {
-				Logger.Log.Fatal ("Couldn't connect to the session bus.  "
-						  + "See http://beaglewiki.org/index.php/Installing%20Beagle "
-						  + "for information on setting up a session bus.");
-				Logger.Log.Fatal (e.Message);
-				return 1;
-			} catch (Exception e) {
-				Logger.Log.Fatal ("Could not initialize Beagle's bus connection.");
-				Logger.Log.Fatal (e);
-				return 1;
-			}
+			Application.InitCheck ("beagled", ref args);
 
 			SetupSignalHandlers ();
 
+			// Fire up our server
+			if (! StartServer ()) {
+				if (arg_replace)
+					ReplaceExisting ();
+				else {
+					Logger.Log.Fatal ("Could not set up the listener for beagle requests.  "
+							  + "There is probably another beagled instance running.  "
+							  + "Use --replace to replace the running service");
+					return 1;
+				}
+			}
+			
 			// Set up our helper process and the associated monitoring
-			IndexHelperFu.Start ();
+			//IndexHelperFu.Start ();
 			
 			// We want to spend as little time as possible
 			// between InitService and actually being able 
 			// to serve requests
 			Stopwatch stopwatch = new Stopwatch ();
 			stopwatch.Start ();
-
-			try {
-				// Construct and register our remote control object.
-				Logger.Log.Debug ("Initializing RemoteControl");
-				RemoteControlImpl rci = new RemoteControlImpl ();
-				DBusisms.RegisterObject (rci, Beagle.DBusisms.RemoteControlPath);
-				
-				// Set up our D-BUS object factory.
-				factory = new FactoryImpl ();
-				DBusisms.RegisterObject (factory, Beagle.DBusisms.FactoryPath);
-			} catch (DBus.DBusException e) {
-				Logger.Log.Fatal ("Couldn't register DBus objects."); 
-				Logger.Log.Debug (e);
-				return 1;
-			} catch (Exception e) {
-				Logger.Log.Fatal ("Could not initialize Beagle:\n{0}", e);
-				return 1;
-			}
 
 #if ENABLE_NETWORK
 			if (arg_network) {
@@ -373,10 +330,9 @@ namespace Beagle.Daemon {
 #endif
 			Logger.Log.Debug ("Leaving BeagleDaemon.Main");
 
-			// Exiting will close the dbus connection, which
-			// will release the com.novell.beagle service.
 			return 0;
 		}
+		
 
 		/////////////////////////////////////////////////////////////////////////////
 
@@ -449,13 +405,8 @@ namespace Beagle.Daemon {
 			// Shut down the global scheduler
 			Scheduler.Global.Stop ();
 
-			// Stop our indexing helper process
-			IndexHelperFu.Stop ();
-
-			Logger.Log.Debug ("Unregistering Daemon objects");
-			DBusisms.UnregisterAll ();
-			Logger.Log.Debug ("Done unregistering Daemon objects");
-
+			// Stop the messaging server
+			server.Stop ();
 		}
 	}
 }

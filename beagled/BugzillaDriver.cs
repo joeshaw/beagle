@@ -56,29 +56,29 @@ namespace Beagle.Daemon {
 		{
 		}
 
-		public bool AcceptQuery (QueryBody body)
+		public bool AcceptQuery (Query query)
 		{
-			if (! body.HasText)
+			if (! query.HasText)
 				return false;
 			return true;
 		}
 
 
-		public void DoQuery (QueryBody body,
+		public void DoQuery (Query query,
 				     IQueryResult result,
 				     IQueryableChangeData changeData)
 		{
 			Logger.Log.Debug ("Kicking off a bugzilla query");
 			// FIXME - hard coding the url here
-                        XmlDocument xml = GetBugzillaXml (body.QuotedText);
+                        XmlDocument xml = GetBugzillaXml (query.QuotedText);
                         if (xml != null) {
-				Hit hit = XmlBugToHit (xml, body.QuotedText);
+				Hit hit = XmlBugToHit (xml, query.QuotedText);
 				if (hit != null)
 					result.Add (hit);
 			}
 		}
 
-		public string GetSnippet (QueryBody body, Hit hit)
+		public string GetSnippet (string[] query_terms, Hit hit)
 		{
 			return null;
 		}

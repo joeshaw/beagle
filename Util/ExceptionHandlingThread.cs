@@ -25,12 +25,15 @@
 //
 
 using System;
+using System.Collections;
 using System.Threading;
 
 namespace Beagle.Util {
 
 	public class ExceptionHandlingThread {
 
+		private static Hashtable live_threads = new Hashtable ();
+		private Thread thread;
 		private ThreadStart method;
 
 		private ExceptionHandlingThread (ThreadStart method)
@@ -47,18 +50,39 @@ namespace Beagle.Util {
 						 this.method.Target, this.method.Method);
 				Logger.Log.Warn (e);
 			}
+
+			lock (live_threads)
+				live_threads.Remove (this.thread);
 		}
 
 		public static void Start (ThreadStart method)
 		{
 			ExceptionHandlingThread eht = new ExceptionHandlingThread (method);
 
-			Thread th = new Thread (new ThreadStart (eht.ThreadStarted));
+			eht.thread = new Thread (new ThreadStart (eht.ThreadStarted));
 
-			th.Name = String.Format ("ExceptionHandlingThread: {0}:{1}",
-						 method.Target, method.Method);
+			eht.thread.Name = String.Format ("ExceptionHandlingThread: {0}:{1}",
+							 method.Target, method.Method);
 
-			th.Start ();
+			lock (live_threads)
+				live_threads [eht.thread] = eht.thread.Name;
+
+			eht.thread.Start ();
+		}
+
+		public static void SpewLiveThreads ()
+		{
+			bool have_live_thread = false;
+
+			lock (live_threads) {
+				foreach (string str in live_threads.Values) {
+					Logger.Log.Debug ("Live ExceptionHandlingThread: {0}", str);
+					have_live_thread = true;
+				}
+			}
+
+			if (! have_live_thread)
+				Logger.Log.Debug ("No live ExceptionHandlingThreads!");
 		}
 	}
 }

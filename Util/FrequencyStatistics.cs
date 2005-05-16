@@ -48,7 +48,6 @@ namespace Beagle.Util {
 
 		private int count = 0;
 		private double expma_gap;
-		private DateTime first_time;
 		private DateTime previous_time;
 
 		public int Count {
@@ -124,22 +123,5 @@ namespace Beagle.Util {
 			previous_time = now;
 			++count;
 		}
-
-		static void Main ()
-		{
-			FrequencyStatistics stats = new FrequencyStatistics ();
-			
-			while (true) {
-				stats.AddEvent ();
-				Console.WriteLine ("{0}: freq={1} required={2}",
-						   stats.Count,
-						   stats.EstimatedFrequency,
-						   stats.TimeToReachFrequency (1.0));
-				
-				Thread.Sleep (200);
-			}
-		}
-
-		
 	}
 }

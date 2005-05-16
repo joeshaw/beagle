@@ -2,18 +2,15 @@
 # 0067 = event defined but not used
 # 0618 = Mono.Posix.Syscall is obsolete
 
-CSC = mcs -g -nowarn:0067,0618
+CSC = mcs -debug -nowarn:0067,0618,0619
 
 PLUGIN_TARGET = BeagleDaemonPlugins.dll
 
 PLUGIN_CSFLAGS = -target:library
 
 PLUGIN_CSFILES =			\
-	$(srcdir)/PathFinder.cs		\
 	$(srcdir)/Flavor.cs		\
-	$(srcdir)/Filter.cs		\
-	$(srcdir)/PreIndexHandler.cs	\
-	$(srcdir)/PostIndexHandler.cs
+	$(srcdir)/Filter.cs
 
 PLUGIN_LOCAL_ASSEMBLIES =		\
 	../Util/Util.dll		\
@@ -26,7 +23,7 @@ PLUGIN_ASSEMBLIES =				\
 
 
 $(PLUGIN_TARGET): $(PLUGIN_CSFILES) $(PLUGIN_LOCAL_ASSEMBLIES)
-	$(CSC) -o $@ $(PLUGIN_CSFLAGS) $(PLUGIN_CSFILES) $(PLUGIN_ASSEMBLIES)
+	$(CSC) -out:$@ $(PLUGIN_CSFLAGS) $(PLUGIN_CSFILES) $(PLUGIN_ASSEMBLIES)
 
 ############################################################
 
@@ -226,10 +223,6 @@ FILE_SYSTEM_QUERYABLE_CSFILES =					\
 	$(fsqueryabledir)/SanityCheck.cs			\
 	$(fsqueryabledir)/UniqueIdStore.cs
 
-webhistqueryable = $(srcdir)/WebHistoryQueryable
-WEB_HISTORY_QUERYABLE_CSFILES =				\
-	$(webhistqueryable)/WebHistoryQueryable.cs
-
 gaimlogqueryable = $(srcdir)/GaimLogQueryable
 GAIM_LOG_QUERYABLE_CSFILES =				\
 	$(gaimlogqueryable)/GaimLogQueryable.cs 	\
@@ -263,6 +256,10 @@ LAUNCHER_QUERYABLE_CSFILES =				\
 	$(launcherqueryable)/LauncherCrawler.cs		\
 	$(launcherqueryable)/LauncherQueryable.cs
 
+indexingservicequeryable = $(srcdir)/IndexingServiceQueryable
+INDEXING_SERVICE_QUERYABLE_CSFILES =			\
+	$(indexingservicequeryable)/IndexingServiceQueryable.cs
+
 #calendarqueryable = $(srcdir)/CalendarQueryable
 #CALENDAR_QUERYABLE_CSFILES =				\
 #	$(calendarqueryable)/CalendarQueryable.cs	\
@@ -275,23 +272,18 @@ DAEMON_DLL_CSFILES = 						\
 	$(BLAM_QUERYABLE_CSFILES)				\
 	$(LIFEREA_QUERYABLE_CSFILES)				\
 	$(EVO_MAIL_QUERYABLE_CSFILES)				\
-	$(WEB_HISTORY_QUERYABLE_CSFILES)			\
 	$(LAUNCHER_QUERYABLE_CSFILES)				\
 	$(TOMBOY_QUERYABLE_CSFILES)				\
-	$(srcdir)/BugzillaDriver.cs 				\
-	$(srcdir)/DBusisms.cs					\
-	$(srcdir)/FactoryImpl.cs				\
+	$(INDEXING_SERVICE_QUERYABLE_CSFILES)			\
 	$(srcdir)/FileAttributes.cs				\
 	$(srcdir)/FileAttributesStore.cs			\
 	$(srcdir)/FileAttributesStore_ExtendedAttribute.cs	\
 	$(srcdir)/FileAttributesStore_Mixed.cs			\
 	$(srcdir)/FileAttributesStore_Sqlite.cs			\
 	$(srcdir)/FilterFactory.cs				\
-	$(srcdir)/FilteredIndexable.cs				\
 	$(srcdir)/GConfThreadHelper.cs				\
 	$(srcdir)/GoogleDriver.cs				\
 	$(srcdir)/HitRegulator.cs				\
-	$(srcdir)/IDBusObject.cs				\
 	$(srcdir)/IFileAttributesStore.cs			\
 	$(srcdir)/IIndexer.cs					\
 	$(srcdir)/IQueryResult.cs				\
@@ -300,15 +292,18 @@ DAEMON_DLL_CSFILES = 						\
 	$(srcdir)/LuceneDriver.cs				\
 	$(srcdir)/LuceneQueryable.cs				\
 	$(srcdir)/NameIndex.cs					\
-	$(srcdir)/QueryBody.cs					\
 	$(srcdir)/QueryDriver.cs				\
-	$(srcdir)/QueryImpl.cs					\
+	$(srcdir)/QueryExecutor.cs				\
 	$(srcdir)/QueryResult.cs				\
 	$(srcdir)/Queryable.cs					\
 	$(srcdir)/QueryableFlavor.cs				\
-	$(srcdir)/RemoteControlImpl.cs				\
-	$(srcdir)/RemoteIndexerProxy.cs				\
+	$(srcdir)/RemoteControlExecutors.cs			\
+	$(srcdir)/RemoteIndexerRequest.cs			\
+	$(srcdir)/RemoteIndexerResponse.cs			\
+	$(srcdir)/RenamingLuceneDriver.cs			\
+	$(srcdir)/Server.cs					\
 	$(srcdir)/Shutdown.cs					\
+	$(srcdir)/SnippetExecutor.cs				\
 	$(srcdir)/SnippetFu.cs					\
 	$(srcdir)/TextCache.cs
 
@@ -360,7 +355,7 @@ endif
 
 
 $(DAEMON_DLL_TARGET): $(DAEMON_DLL_CSFILES) $(DAEMON_DLL_LOCAL_ASSEMBLIES)
-	$(CSC) -o $@ $(DAEMON_DLL_CSFLAGS) $(DAEMON_DLL_CSFILES) $(DAEMON_DLL_ASSEMBLIES)
+	$(CSC) -out:$@ $(DAEMON_DLL_CSFLAGS) $(DAEMON_DLL_CSFILES) $(DAEMON_DLL_ASSEMBLIES)
 
 ############################################################
 
@@ -396,7 +391,7 @@ WEBSERVICES_XSP_CSFILES =  			\
 	$(xspdir)/AssemblyInfo.cs
 
 $(WEBSERVICES_XSP_TARGET): $(WEBSERVICES_XSP_CSFILES) 
-	$(CSC) -o $@ $(WEBSERVICES_XSP_CSFLAGS) $(WEBSERVICES_XSP_CSFILES) $(WEBSERVICES_XSP_ASSEMBLIES)
+	$(CSC) -out:$@ $(WEBSERVICES_XSP_CSFLAGS) $(WEBSERVICES_XSP_CSFILES) $(WEBSERVICES_XSP_ASSEMBLIES)
 
 
 WEBSERVICES_BACKEND_TARGET = BeagleWebServicesBackEnd.dll
@@ -424,7 +419,7 @@ WEBSERVICES_BACKEND_CSFILES = \
 WEBSERVICES_CSFLAGS = -target:library -noconfig
 
 $(WEBSERVICES_BACKEND_TARGET): $(WEBSERVICES_BACKEND_CSFILES) $(WEBSERVICES_BACKEND_LOCAL_ASSEMBLIES)
-	$(CSC) -o $@ $(WEBSERVICES_CSFLAGS) $(WEBSERVICES_BACKEND_CSFILES) $(WEBSERVICES_BACKEND_ASSEMBLIES)
+	$(CSC) -out:$@ $(WEBSERVICES_CSFLAGS) $(WEBSERVICES_BACKEND_CSFILES) $(WEBSERVICES_BACKEND_ASSEMBLIES)
 
 WEBSERVICES_FRONTEND_TARGET = BeagleWebServicesFrontEnd.dll
 WEBSERVICES_FRONTEND_CSFILES = \
@@ -437,7 +432,7 @@ WEBSERVICES_FRONTEND_ASSEMBLIES = 	\
 	-r:System.Web.Services
 
 $(WEBSERVICES_FRONTEND_TARGET): $(WEBSERVICES_FRONTEND_CSFILES) $(WEBSERVICES_BACKEND_TARGET) 
-	$(CSC) -o $@ $(WEBSERVICES_CSFLAGS) $(WEBSERVICES_FRONTEND_CSFILES) $(WEBSERVICES_FRONTEND_ASSEMBLIES)
+	$(CSC) -out:$@ $(WEBSERVICES_CSFLAGS) $(WEBSERVICES_FRONTEND_CSFILES) $(WEBSERVICES_FRONTEND_ASSEMBLIES)
 
 WEBSERVICES_RESOURCES = 		\
 	$(SEARCH_DOT_ASPX)		\
@@ -475,7 +470,6 @@ DAEMON_CSFLAGS =				\
 
 DAEMON_CSFILES =				\
 	$(srcdir)/BeagleDaemon.cs		\
-	$(srcdir)/IndexHelperFu.cs		\
 	$(srcdir)/RemoteIndexer.cs
 
 DAEMON_LOCAL_ASSEMBLIES =			\
@@ -508,7 +502,7 @@ DAEMON_ASSEMBLIES += -r:System.Runtime.Remoting
 endif
 
 $(DAEMON_TARGET): $(DAEMON_CSFILES) $(DAEMON_LOCAL_ASSEMBLIES)
-	$(CSC) -o $@ $(DAEMON_CSFLAGS) $(DAEMON_CSFILES) $(DAEMON_ASSEMBLIES)
+	$(CSC) -out:$@ $(DAEMON_CSFLAGS) $(DAEMON_CSFILES) $(DAEMON_ASSEMBLIES)
 
 ############################################################
 ############################################################
@@ -529,8 +523,9 @@ INDEX_HELPER_CSFLAGS = -target:exe $(BEAGLE_DEFINES)
 indexhelperdir = $(srcdir)/IndexHelper
 
 INDEX_HELPER_CSFILES =	\
-	$(indexhelperdir)/IndexHelper.cs	\
-	$(indexhelperdir)/RemoteIndexerImpl.cs
+	$(indexhelperdir)/IndexHelper.cs		\
+	$(indexhelperdir)/RemoteIndexerExecutor.cs
+
 
 INDEX_HELPER_LOCAL_ASSEMBLIES =	\
 	../Util/Util.dll		\
@@ -544,7 +539,7 @@ INDEX_HELPER_ASSEMBLIES = \
 	-r:ICSharpCode.SharpZipLib.dll
 
 $(INDEX_HELPER_TARGET): $(INDEX_HELPER_CSFILES) $(INDEX_HELPER_LOCAL_ASSEMBLIES)
-	$(CSC) -o $@ $(INDEX_HELPER_CSFLAGS) $(INDEX_HELPER_CSFILES) $(INDEX_HELPER_ASSEMBLIES)
+	$(CSC) -out:$@ $(INDEX_HELPER_CSFLAGS) $(INDEX_HELPER_CSFILES) $(INDEX_HELPER_ASSEMBLIES)
 
 ############################################################
 
@@ -576,7 +571,7 @@ EXTRACT_CONTENT_ASSEMBLIES = \
 	-r:ICSharpCode.SharpZipLib.dll
 
 $(EXTRACT_CONTENT_TARGET): $(EXTRACT_CONTENT_CSFILES) $(EXTRACT_CONTENT_LOCAL_ASSEMBLIES)
-	$(CSC) -o $@ $(EXTRACT_CONTENT_CSFLAGS) $(EXTRACT_CONTENT_CSFILES) $(EXTRACT_CONTENT_ASSEMBLIES)
+	$(CSC) -out:$@ $(EXTRACT_CONTENT_CSFLAGS) $(EXTRACT_CONTENT_CSFILES) $(EXTRACT_CONTENT_ASSEMBLIES)
 
 ############################################################
 
@@ -604,7 +599,7 @@ INDEX_WEB_CONTENT_ASSEMBLIES =	\
 	$(INDEX_WEB_CONTENT_LOCAL_ASSEMBLIES:%=-r:%)
 
 $(INDEX_WEB_CONTENT_TARGET): $(INDEX_WEB_CONTENT_CSFILES) $(INDEX_WEB_CONTENT_LOCAL_ASSEMBLIES)
-	$(CSC) -o $@ $(INDEX_WEB_CONTENT_CSFLAGS) $(INDEX_WEB_CONTENT_CSFILES) $(INDEX_WEB_CONTENT_ASSEMBLIES)
+	$(CSC) -out:$@ $(INDEX_WEB_CONTENT_CSFLAGS) $(INDEX_WEB_CONTENT_CSFILES) $(INDEX_WEB_CONTENT_ASSEMBLIES)
 
 ############################################################
 
@@ -636,7 +631,7 @@ MASTER_DELETE_ASSEMBLIES = \
 	-r:ICSharpCode.SharpZipLib.dll
 
 $(MASTER_DELETE_TARGET): $(MASTER_DELETE_CSFILES) $(MASTER_DELETE_LOCAL_ASSEMBLIES)
-	$(CSC) -o $@ $(MASTER_DELETE_CSFLAGS) $(MASTER_DELETE_CSFILES) $(MASTER_DELETE_ASSEMBLIES)
+	$(CSC) -out:$@ $(MASTER_DELETE_CSFLAGS) $(MASTER_DELETE_CSFILES) $(MASTER_DELETE_ASSEMBLIES)
 
 ############################################################
 
@@ -667,7 +662,7 @@ SNIPPET_TEST_ASSEMBLIES = \
 	-r:ICSharpCode.SharpZipLib.dll
 
 $(SNIPPET_TEST_TARGET): $(SNIPPET_TEST_CSFILES) $(SNIPPET_TEST_LOCAL_ASSEMBLIES)
-	$(CSC) -o $@ $(SNIPPET_TEST_CSFLAGS) $(SNIPPET_TEST_CSFILES) $(SNIPPET_TEST_ASSEMBLIES)
+	$(CSC) -out:$@ $(SNIPPET_TEST_CSFLAGS) $(SNIPPET_TEST_CSFILES) $(SNIPPET_TEST_ASSEMBLIES)
 
 ############################################################
 
@@ -698,7 +693,7 @@ TERM_STATS_ASSEMBLIES = \
 	-r:ICSharpCode.SharpZipLib.dll
 
 $(TERM_STATS_TARGET): $(TERM_STATS_CSFILES) $(TERM_STATS_LOCAL_ASSEMBLIES)
-	$(CSC) -o $@ $(TERM_STATS_CSFLAGS) $(TERM_STATS_CSFILES) $(TERM_STATS_ASSEMBLIES)
+	$(CSC) -out:$@ $(TERM_STATS_CSFLAGS) $(TERM_STATS_CSFILES) $(TERM_STATS_ASSEMBLIES)
 
 ############################################################
 
@@ -729,7 +724,7 @@ NAME_INDEX_ASSEMBLIES = \
 	-r:ICSharpCode.SharpZipLib.dll
 
 $(NAME_INDEX_TARGET): $(NAME_INDEX_CSFILES) $(NAME_INDEX_LOCAL_ASSEMBLIES)
-	$(CSC) -o $@ $(NAME_INDEX_CSFLAGS) $(NAME_INDEX_CSFILES) $(NAME_INDEX_ASSEMBLIES)
+	$(CSC) -out:$@ $(NAME_INDEX_CSFLAGS) $(NAME_INDEX_CSFILES) $(NAME_INDEX_ASSEMBLIES)
 
 ############################################################
 
@@ -760,7 +755,7 @@ FS_SANITY_CHECK_ASSEMBLIES = \
 	-r:ICSharpCode.SharpZipLib.dll
 
 $(FS_SANITY_CHECK_TARGET): $(FS_SANITY_CHECK_CSFILES) $(FS_SANITY_CHECK_LOCAL_ASSEMBLIES)
-	$(CSC) -o $@ $(FS_SANITY_CHECK_CSFLAGS) $(FS_SANITY_CHECK_CSFILES) $(FS_SANITY_CHECK_ASSEMBLIES)
+	$(CSC) -out:$@ $(FS_SANITY_CHECK_CSFLAGS) $(FS_SANITY_CHECK_CSFILES) $(FS_SANITY_CHECK_ASSEMBLIES)
 
 # OK, now back to our regularly scheduled program.  But notice all of the
 # EXTRA_DIST and CLEANFILES stuff at the bottom of the file.  Yuck.
@@ -776,8 +771,9 @@ ALL_TARGETS = 				\
 	$(DAEMON_TARGET)		\
 	$(INDEX_HELPER_TARGET)		\
 	$(INDEX_HELPER_WRAPPER)		\
-	$(EXTRACT_CONTENT_TARGET)	\
 	$(INDEX_WEB_CONTENT_TARGET)	\
+	$(INDEX_WEB_CONTENT_WRAPPER)	\
+	$(EXTRACT_CONTENT_TARGET)	\
 	$(MASTER_DELETE_TARGET)		\
 	$(SNIPPET_TEST_TARGET)		\
 	$(TERM_STATS_TARGET)		\

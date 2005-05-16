@@ -160,8 +160,7 @@ namespace Beagle {
 					return null;
 
 				byte[] binary_data = new Byte[stream.Length];
-				long bytes_read = stream.Read(binary_data, 0,
-							      (int)stream.Length);
+				stream.Read(binary_data, 0, (int) stream.Length);
 				stream.Close ();
 				return GetHtmlSource (binary_data, mime_type);
 			}

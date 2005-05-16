@@ -38,7 +38,6 @@ namespace Beagle.Daemon.FileSystemQueryable {
 		static public bool Debug = true;
 		
 		Hashtable to_be_watched = new Hashtable ();
-		Hashtable watching = new Hashtable ();
 		FileSystemQueryable queryable;
 
 		public FileSystemWatcherBackend ()

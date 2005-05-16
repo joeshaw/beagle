@@ -1,5 +1,5 @@
 
-CSC = mcs -g
+CSC = mcs -debug
 
 LOCAL_ASSEMBLIES =			\
 	../Util/Util.dll		\
@@ -20,12 +20,34 @@ WRAPPER_SED = sed 					\
 	-e "s|\@gacprefix\@|$(GAC_PREFIX)|g"
 
 
+INFO_TARGET  = Info.exe
+INFO_WRAPPER = beagle-info
+INFO_CSFILES = $(srcdir)/Info.cs
+
+$(INFO_TARGET): $(INFO_CSFILES) $(LOCAL_ASSEMBLIES)
+	$(CSC) -out:$@ $(CSFLAGS) $(INFO_CSFILES) $(ASSEMBLIES)
+
+$(INFO_WRAPPER): $(WRAPPER_IN)
+	$(WRAPPER_SED) -e "s|\@target\@|$(INFO_TARGET)|g" < $(srcdir)/$(WRAPPER_IN) > $@
+	chmod +x $(INFO_WRAPPER)
+
+SHUTDOWN_TARGET  = Shutdown.exe
+SHUTDOWN_WRAPPER = beagle-shutdown
+SHUTDOWN_CSFILES = $(srcdir)/Shutdown.cs
+
+$(SHUTDOWN_TARGET): $(SHUTDOWN_CSFILES) $(LOCAL_ASSEMBLIES)
+	$(CSC) -out:$@ $(CSFLAGS) $(SHUTDOWN_CSFILES) $(ASSEMBLIES)
+
+$(SHUTDOWN_WRAPPER): $(WRAPPER_IN)
+	$(WRAPPER_SED) -e "s|\@target\@|$(SHUTDOWN_TARGET)|g" < $(srcdir)/$(WRAPPER_IN) > $@
+	chmod +x $(SHUTDOWN_WRAPPER)
+
 QUERY_TARGET  = Query.exe
 QUERY_WRAPPER = beagle-query
 QUERY_CSFILES = $(srcdir)/Query.cs
 
 $(QUERY_TARGET): $(QUERY_CSFILES) $(LOCAL_ASSEMBLIES)
-	$(CSC) -o $@ $(CSFLAGS) $(QUERY_CSFILES) $(ASSEMBLIES)
+	$(CSC) -out:$@ $(CSFLAGS) $(QUERY_CSFILES) $(ASSEMBLIES)
 
 $(QUERY_WRAPPER): $(WRAPPER_IN)
 	$(WRAPPER_SED) -e "s|\@target\@|$(QUERY_TARGET)|g" < $(srcdir)/$(WRAPPER_IN) > $@
@@ -36,17 +58,21 @@ EXERCISE_FILE_SYSTEM_WRAPPER = beagle-exercise-file-system
 EXERCISE_FILE_SYSTEM_CSFILES = $(srcdir)/ExerciseFileSystem.cs
 
 $(EXERCISE_FILE_SYSTEM_TARGET): $(EXERCISE_FILE_SYSTEM_CSFILES) $(LOCAL_ASSEMBLIES)
-	$(CSC) -o $@ $(CSFLAGS) $(EXERCISE_FILE_SYSTEM_CSFILES) $(ASSEMBLIES)
+	$(CSC) -out:$@ $(CSFLAGS) $(EXERCISE_FILE_SYSTEM_CSFILES) $(ASSEMBLIES)
 
 $(EXERCISE_FILE_SYSTEM_WRAPPER): $(WRAPPER_IN)
 	$(WRAPPER_SED) -e "s|\@target\@|$(EXERCISE_FILE_SYSTEM_TARGET)|g" < $(srcdir)/$(WRAPPER_IN) > $@
 	chmod +x $(EXERCISE_FILE_SYSTEM_WRAPPER)
 
 TARGETS = 				\
-	$(QUERY_TARGET)                 \
+	$(INFO_TARGET)			\
+	$(SHUTDOWN_TARGET)		\
+	$(QUERY_TARGET)			\
 	$(EXERCISE_FILE_SYSTEM_TARGET)
 
 WRAPPERS = 				\
+	$(INFO_WRAPPER)			\
+	$(SHUTDOWN_WRAPPER)		\
 	$(QUERY_WRAPPER)		\
 	$(EXERCISE_FILE_SYSTEM_WRAPPER)
 
@@ -54,7 +80,6 @@ bin_SCRIPTS = 			\
 	$(WRAPPERS) 		\
 	beagle-index-info	\
 	beagle-ping             \
-	beagle-shutdown		\
 	beagle-status
 
 man_MANS = 			\
@@ -73,12 +98,13 @@ uninstall-local:
 
 EXTRA_DIST =				\
 	$(WRAPPER_IN)			\
+	$(INFO_CSFILES)			\
+	$(SHUTDOWN_CSFILES)		\
 	$(QUERY_CSFILES)		\
 	$(EXERCISE_FILE_SYSTEM_CSFILES)	\
 	$(man_MANS)			\
 	beagle-index-info		\
 	beagle-ping			\
-	beagle-shutdown			\
 	beagle-status			\
 	boot.inotify.init
 

@@ -33,7 +33,7 @@ namespace Beagle.Daemon {
 
 	public class Shutdown {
 
-		static public bool Debug = false;
+		static public bool Debug = true;
 
 		static object shutdownLock = new object ();
 		static Hashtable workers = new Hashtable ();
@@ -139,6 +139,11 @@ namespace Beagle.Daemon {
 
 			Logger.Log.Info ("Exiting");
 			Gtk.Application.Quit ();
+
+			if (Debug) {
+				Thread.Sleep (500);
+				ExceptionHandlingThread.SpewLiveThreads ();
+			}
 		}
 	}
 }

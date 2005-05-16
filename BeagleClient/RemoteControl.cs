@@ -1,7 +1,7 @@
 //
 // RemoteControl.cs
 //
-// Copyright (C) 2004 Novell, Inc.
+// Copyright (C) 2004-2005 Novell, Inc.
 //
 
 //
@@ -24,49 +24,15 @@
 // DEALINGS IN THE SOFTWARE.
 //
 
-using DBus;
-
 namespace Beagle {
 
-	public abstract class RemoteControl {
+	// These requests have no interesting client-side state
+	public class DaemonInformationRequest : RequestMessage { }
+	public class ShutdownRequest : RequestMessage { }
 
-		private static object the_lock = new object ();
-		private static RemoteControlProxy the_proxy = null;
-
-		public static RemoteControlProxy GetProxy (DBus.Service service)
-		{
-			return service.GetObject (typeof (RemoteControlProxy),
-						  DBusisms.RemoteControlPath) as RemoteControlProxy;
-		}
-
-		private static RemoteControlProxy TheProxy {
-			get {
-				lock (the_lock) {
-					if (the_proxy == null) 
-						the_proxy = GetProxy (DBusisms.Service);
-				}
-				return the_proxy;
-			}
-		}
-
-		public static string GetVersion ()
-		{
-			return TheProxy.GetVersion ();
-		}
-
-		public static void Shutdown ()
-		{
-			TheProxy.Shutdown ();
-		}
-
-		public static string GetHumanReadableStatus ()
-		{
-			return TheProxy.GetHumanReadableStatus ();
-		}
-
-		public static string GetIndexInformation ()
-		{
-			return TheProxy.GetIndexInformation ();
-		}
+	public class DaemonInformationResponse : ResponseMessage {
+		public string Version;
+		public string HumanReadableStatus;
+		public string IndexInformation;
 	}
 }

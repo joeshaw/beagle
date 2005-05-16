@@ -409,7 +409,6 @@ namespace Beagle.Daemon.FileSystemQueryable {
 
 
 		object big_lock = new object ();
-		string fingerprint;
 		ArrayList roots = new ArrayList ();
 		Hashtable path_cache = new Hashtable ();
 		Hashtable by_unique_id = new Hashtable ();
@@ -430,7 +429,6 @@ namespace Beagle.Daemon.FileSystemQueryable {
 					IFileEventBackend event_backend)
 		{
 			this.event_backend = event_backend;
-			this.fingerprint = index_fingerprint;
 
 			unique_id_store = new UniqueIdStore (index_directory, index_fingerprint);
 			name_index = new NameIndex (index_directory, index_fingerprint);
@@ -1024,9 +1022,9 @@ namespace Beagle.Daemon.FileSystemQueryable {
 		// Search by filename
 
 		// Returns a collection of internal Uris
-		public ICollection Search (QueryBody body, ICollection list_of_uris)
+		public ICollection Search (Query query, ICollection list_of_uris)
 		{
-			return name_index.Search (body, list_of_uris);
+			return name_index.Search (query, list_of_uris);
 		}
 
 		//////////////////////////////////////////////////////////////////////////////////

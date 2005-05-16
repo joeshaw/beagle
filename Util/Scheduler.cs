@@ -643,6 +643,7 @@ namespace Beagle.Util {
 			return new TimeSpan (ticks);
 		}
 
+#if false
 		private void DescribeTaskQueue (string note, int i0, int i1)
 		{
 			Console.WriteLine ("----------------------");
@@ -660,6 +661,7 @@ namespace Beagle.Util {
 			}
 			Console.WriteLine ("----------------------");
 		}
+#endif
 
 		// Remove nulls and cancelled tasks from the queue.
 		// Note: this does no locking!

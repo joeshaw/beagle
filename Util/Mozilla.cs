@@ -280,7 +280,6 @@ namespace Beagle.Util.Mozilla
 	/// </summary>
 	public class MessageReader
 	{
-		FileStream stream;
 		StreamReader reader;
 		bool hasMore = true;
 		Message message;

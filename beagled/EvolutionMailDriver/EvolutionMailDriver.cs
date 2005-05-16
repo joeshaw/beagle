@@ -47,10 +47,6 @@ namespace Beagle.Daemon.EvolutionMailDriver {
 		private SortedList watched = new SortedList ();
 		private MailCrawler crawler;
 
-		private object lockObj = new object ();
-		private ArrayList AddedUris = new ArrayList ();
-		private bool queryRunning = false;
-
 		public EvolutionMailQueryable () : base ("MailIndex")
 		{
 			this.local_path = Path.Combine (PathFinder.HomeDir, ".evolution/mail/local");

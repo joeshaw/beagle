@@ -44,9 +44,9 @@ namespace Beagle.Util {
 	public class Logger {
 
 		private static Hashtable loggers = new Hashtable ();
-		private static LogLevel defaultLevel = LogLevel.Info;
+		private static LogLevel defaultLevel = LogLevel.Debug; //LogLevel.Info;
 		private static TextWriter defaultWriter = null;
-		private static bool defaultEcho = false;
+		private static bool defaultEcho = true; //false;
 		private static string defaultLogName = null;
 
 		public static Logger Log {
@@ -84,6 +84,8 @@ namespace Beagle.Util {
 			get { return defaultEcho; }
 			set { defaultEcho = value; }
 		}      
+
+		private static object write_lock = new object ();
 
 		private bool levelSet = false;
 		private LogLevel level;
@@ -123,8 +125,10 @@ namespace Beagle.Util {
 
 		private void WriteLine (string level, string message) {
 			if (Writer != null) {
-				Writer.WriteLine ("{0}{1}: {2}", GetStamp (), level, message);
-				Writer.Flush ();
+				lock (write_lock) {
+					Writer.WriteLine ("{0}{1}: {2}", GetStamp (), level, message);
+					Writer.Flush ();
+				}
 			} 
 			if (Echo)
 				System.Console.WriteLine ("{0}: {1}", level, message);

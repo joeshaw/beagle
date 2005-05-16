@@ -31,7 +31,7 @@ using System.IO;
 
 using Beagle;
 using Beagle.Daemon;
-using BU = Beagle.Util;
+using Beagle.Util;
 
 class IndexWebContentTool {
 
@@ -52,6 +52,10 @@ class IndexWebContentTool {
 		string sourcefile = null;
 		bool deletesourcefile = false;
 
+		Logger.LogToFile (PathFinder.LogDir, "IndexWebContent", true);
+		Logger.Log.Info ("Running IndexWebContent");
+		Logger.Log.Debug ("Debug Mode!");
+		
 		for (int i = 0; i < args.Length; i++) {
 			switch (args [i]) {
 			case "--url":
@@ -106,9 +110,9 @@ class IndexWebContentTool {
 		if (uri.Scheme == Uri.UriSchemeMailto)
 			return;
 
-		FilteredIndexable indexable;
+		Indexable indexable;
 		
-		indexable = new FilteredIndexable (uri);
+		indexable = new Indexable (uri);
 		indexable.Type = "WebHistory";
 		indexable.MimeType = "text/html";
 		indexable.Timestamp = DateTime.Now;
@@ -124,7 +128,7 @@ class IndexWebContentTool {
 				Environment.Exit (1);
 			}
 
-			indexable.ContentUri = BU.UriFu.PathToFileUri (sourcefile);
+			indexable.ContentUri = UriFu.PathToFileUri (sourcefile);
 			indexable.DeleteContent = deletesourcefile;
 
 		} else {
@@ -138,9 +142,16 @@ class IndexWebContentTool {
 			indexable.SetTextReader (new StreamReader (stdin));
 		}
 
+		IndexingServiceRequest req = new IndexingServiceRequest ();
+		req.Add (indexable);
+
 		try {
 			System.Console.WriteLine ("Indexing");
-			WebHistoryIndexer.Index (indexable);
+			Logger.Log.Debug ("SendAsync");
+			req.SendAsync ();
+			Logger.Log.Debug ("Close");
+			req.Close ();
+			Logger.Log.Debug ("Done");
 		} catch (Exception e) {
 			Console.WriteLine ("ERROR: Indexing failed:");
 			Console.Write (e);

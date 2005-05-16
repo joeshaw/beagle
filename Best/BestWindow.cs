@@ -139,7 +139,7 @@ namespace Best {
 						    0,
 						    Gtk.AccelFlags.Visible);
 
-			DBusisms.BeagleDown += OnBeagleDown;
+			//DBusisms.BeagleDown += OnBeagleDown;
 
 			UpdatePage ();
 
@@ -271,7 +271,6 @@ namespace Best {
 
 		private Gnome.Entry entry;
 		
-		private Gtk.ScrolledWindow swin;
 		private TileCanvas canvas;
 		private SimpleRootTile root;
 		private Gtk.Label page_label;
@@ -443,7 +442,7 @@ namespace Best {
 				Search (entry.GtkEntry.Text);
 		}
 
-		private string lastType = null;
+		//private string lastType = null;
 
 		private void ChangeType (object o, EventArgs args)
 		{
@@ -467,31 +466,24 @@ namespace Best {
 
 		//////////////////////////
 
-		private void Close ()
+		private void OnHitsAdded (HitsAddedResponse response)
 		{
-			Destroy ();
-		}
-
-		//////////////////////////
-
-		private void OnHitsAdded (Query source, ICollection hits)
-		{
-			root.Add (hits);
+			root.Add (response.Hits);
 			UpdatePage ();
 		}
 
-		private void OnHitsSubtracted (Query source, ICollection uris)
+		private void OnHitsSubtracted (HitsSubtractedResponse response)
 		{
-			root.Subtract (uris);
+			root.Subtract (response.Uris);
 			UpdatePage ();
 		}
 
-		private void OnFinished (QueryProxy source)
+		private void OnFinished (FinishedResponse repsonse)
 		{
 			SetBusy (false);
 		}
 
-		private void OnCancelled (QueryProxy source)
+		private void OnCancelled (CancelledResponse response)
 		{
 			SetBusy (false);
 		}
@@ -511,7 +503,8 @@ namespace Best {
 				query.HitsSubtractedEvent -= OnHitsSubtracted;
 				query.FinishedEvent -= OnFinished;
 				query.CancelledEvent -= OnCancelled;
-				query.Dispose ();
+				query.Close ();
+
 				query = null;
 			}
 		}
@@ -522,12 +515,10 @@ namespace Best {
 				StoreSearch (searchString);
 				entry.GtkEntry.Text = searchString;
 
-				if (query != null) {
-					query.Cancel ();
+				if (query != null)
 					DetachQuery ();
-				}
 
-				query = Factory.NewQuery ();
+				query = new Query ();
 				query.AddDomain (QueryDomain.Neighborhood);
 
 				// FIXME: Disable non-local searching for now.
@@ -542,10 +533,10 @@ namespace Best {
 				root.Start ();
 				
 				SetBusy (true);
-				query.Start ();
+				query.SendAsync ();
 			} catch (Exception e) {
 				delayedQuery = entry.GtkEntry.Text;
-				DBusisms.BeagleUpAgain += QueueDelayedQuery;
+				//DBusisms.BeagleUpAgain += QueueDelayedQuery;
 
 				if (e.ToString ().IndexOf ("com.novell.Beagle") != -1) {
 					/* To translators: {0} represents the current query keywords */

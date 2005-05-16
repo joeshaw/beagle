@@ -1,5 +1,5 @@
 
-CSC = mcs -g
+CSC = mcs -debug
 
 TARGET = Tiles.dll
 
@@ -10,36 +10,37 @@ CSFLAGS += -define:ENABLE_EVO_SHARP
 endif
 
 CSFILES =					\
-	$(srcdir)/SimpleRootTile.cs		\
 	$(srcdir)/HitFlavor.cs			\
 	$(srcdir)/HitToHitFlavor.cs		\
+	$(srcdir)/SimpleRootTile.cs		\
 	$(srcdir)/Template.cs                   \
 	$(srcdir)/TileActionAttribute.cs        \
 	$(srcdir)/Tile.cs			\
-	$(srcdir)/TileRenderContext.cs		\
-	$(srcdir)/TileStyleAttribute.cs         \
+	$(srcdir)/TileBlog.cs			\
+	$(srcdir)/TileBugzilla.cs		\
+	$(srcdir)/TileCalendar.cs		\
 	$(srcdir)/TileCanvas.cs			\
-	$(srcdir)/TileHitCollection.cs		\
-	$(srcdir)/TileFromTemplate.cs		\
-	$(srcdir)/TileFromHitTemplate.cs	\
 	$(srcdir)/TileContact.cs		\
+	$(srcdir)/TileDocs.cs			\
 	$(srcdir)/TileFile.cs			\
 	$(srcdir)/TileFolder.cs			\
+	$(srcdir)/TileFromHitTemplate.cs	\
+	$(srcdir)/TileFromTemplate.cs		\
 	$(srcdir)/TileGoogle.cs			\
-	$(srcdir)/TileBugzilla.cs		\
+	$(srcdir)/TileHitCollection.cs		\
 	$(srcdir)/TileImLog.cs			\
+	$(srcdir)/TileLauncher.cs		\
 	$(srcdir)/TileMailMessage.cs		\
+	$(srcdir)/TileMonodoc.cs		\
 	$(srcdir)/TileMusic.cs			\
 	$(srcdir)/TileNote.cs			\
 	$(srcdir)/TilePicture.cs		\
-	$(srcdir)/TileWebHistory.cs		\
-	$(srcdir)/TileBlog.cs			\
-	$(srcdir)/TileMonodoc.cs		\
-	$(srcdir)/TileDocs.cs			\
 	$(srcdir)/TilePresentation.cs		\
-	$(srcdir)/TileLauncher.cs		\
-	$(srcdir)/TileCalendar.cs		\
-	$(srcdir)/TileSpreadsheet.cs
+	$(srcdir)/TileRenderContext.cs		\
+	$(srcdir)/TileSpreadsheet.cs		\
+	$(srcdir)/TileStyleAttribute.cs         \
+	$(srcdir)/TileWebHistory.cs
+
 
 LOCAL_ASSEMBLIES =				\
 	../Util/Util.dll			\
@@ -80,7 +81,7 @@ RESOURCEFILES =					\
 RESOURCES = $(join $(RESOURCEFILES:%=-resource:%,),$(notdir $(RESOURCEFILES)))
 
 $(TARGET): $(CSFILES) $(LOCAL_ASSEMBLIES) $(RESOURCEFILES)
-	$(CSC) -o $@ $(CSFLAGS) $(CSFILES) $(ASSEMBLIES) $(RESOURCES)
+	$(CSC) -out:$@ $(CSFLAGS) $(CSFILES) $(ASSEMBLIES) $(RESOURCES)
 
 all: $(TARGET)
 
