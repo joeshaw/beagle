@@ -1,5 +1,11 @@
 2005-05-16  Daniel Drake  <dsd@gentoo.org>
 
+	* beagled/Makefile.am, beagled/LauncherQueryable/LauncherQueryable.cs,
+	beagled/LauncherQueryable/LauncherCrawler.cs: Reduce duplicated code and
+	kill LauncherCrawler.
+
+2005-05-16  Daniel Drake  <dsd@gentoo.org>
+
 	* Tiles/TileLauncher.cs, Util/Makefile.am,
 	beagled/LauncherQueryable/LauncherQueryable.cs: KDE launcher querying,
 	and KDE launcher icon lookups.

@@ -253,7 +253,6 @@ LIFEREA_QUERYABLE_CSFILES =				\
 
 launcherqueryable = $(srcdir)/LauncherQueryable
 LAUNCHER_QUERYABLE_CSFILES =				\
-	$(launcherqueryable)/LauncherCrawler.cs		\
 	$(launcherqueryable)/LauncherQueryable.cs
 
 indexingservicequeryable = $(srcdir)/IndexingServiceQueryable

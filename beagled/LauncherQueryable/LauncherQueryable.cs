@@ -43,7 +43,6 @@ namespace Beagle.Daemon.LauncherQueryable {
 		ArrayList Dirs;
 		Hashtable watched = new Hashtable ();
 		int polling_interval_in_hours = 1;
-		LauncherCrawler crawler;
 
 		public LauncherQueryable () : base ("LauncherIndex")
 		{
@@ -76,18 +75,9 @@ namespace Beagle.Daemon.LauncherQueryable {
 			Stopwatch timer = new Stopwatch ();
 			timer.Start ();
 
-			if (Inotify.Enabled) {
+			if (Inotify.Enabled)
 				Inotify.Event += OnInotifyEvent;
 
-				log.Info ("Scanning Launchers");
-				int launchers_found = 0;
-				foreach (String dir in Dirs)
-					launchers_found += Watch (dir);
-
-				log.Info ("Found {0} Launchers in {1}", launchers_found, timer);
-			}
-
-			this.crawler = new LauncherCrawler (Dirs);
 			Crawl ();
 
 			if (!Inotify.Enabled) {
@@ -102,10 +92,13 @@ namespace Beagle.Daemon.LauncherQueryable {
 
 		private void Crawl ()
 		{
-			this.crawler.Crawl ();
-  	                
-			foreach (FileInfo file in crawler.Launchers)
-				IndexLauncher (file, Scheduler.Priority.Delayed);
+			log.Info ("Scanning Launchers");
+			Stopwatch timer = new Stopwatch ();
+			int launchers_found = 0;
+			foreach (String dir in Dirs)
+				launchers_found += CrawlLaunchers (dir);
+
+			log.Info ("Found {0} Launchers in {1}", launchers_found, timer);
 		}
 
 		private void CrawlHook (Scheduler.Task task)
@@ -115,7 +108,10 @@ namespace Beagle.Daemon.LauncherQueryable {
 			task.TriggerTime = DateTime.Now.AddHours (this.polling_interval_in_hours);
 		}
 
-		private int Watch (string path)
+		// Crawl the specified directory and all subdirectories, indexing all
+		// discovered launchers. If Inotify is available, every directory 
+		// scanned will be added to the watched list.
+		private int CrawlLaunchers (string path)
 		{
 			DirectoryInfo root = new DirectoryInfo (path);
 			if (! root.Exists)
@@ -127,8 +123,12 @@ namespace Beagle.Daemon.LauncherQueryable {
 
 			while (queue.Count > 0) {
 				DirectoryInfo dir = queue.Dequeue () as DirectoryInfo;
-				int wd = Inotify.Watch (dir.FullName, Inotify.EventType.Create | Inotify.EventType.Modify);
-				watched [wd] = true;
+				
+				if (Inotify.Enabled) {
+					int wd = Inotify.Watch (dir.FullName, Inotify.EventType.Create | Inotify.EventType.Modify);
+					watched [wd] = true;
+				}
+
 				foreach (FileInfo file in dir.GetFiles ()) {
 					IndexLauncher (file, Scheduler.Priority.Delayed);
 					++fileCount;
@@ -153,7 +153,7 @@ namespace Beagle.Daemon.LauncherQueryable {
 			string fullPath = Path.Combine (path, subitem);
 
 			if ((type & Inotify.EventType.Create) != 0 && (type & Inotify.EventType.IsDirectory) != 0) {
-				Watch (fullPath);
+				CrawlLaunchers (fullPath);
 				return;
 			}
 			if ((type & Inotify.EventType.Modify) != 0) {
