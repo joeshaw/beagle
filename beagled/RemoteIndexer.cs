@@ -123,12 +123,19 @@ namespace Beagle.Daemon {
 		{
 			RemoteIndexerResponse response = null;
 			int exception_count = 0;
+			bool start_helper_by_hand = false;
+
+			if (Environment.GetEnvironmentVariable ("BEAGLE_RUN_HELPER_BY_HAND") != null)
+				start_helper_by_hand = true;
 
 			request.RemoteIndexName = remote_index_name;
 			
 			while (response == null
 			       && exception_count < 5
 				&& ! Shutdown.ShutdownRequested) {
+
+				bool need_helper = false;
+
 				Logger.Log.Debug ("Sending request!");
 				try {
 					response = request.Send () as RemoteIndexerResponse;
@@ -137,20 +144,32 @@ namespace Beagle.Daemon {
 					Logger.Log.Debug ("Caught ResponseMessageException: {0}", ex.Message);
 				} catch (System.Net.Sockets.SocketException ex) {
 					Logger.Log.Debug ("Caught SocketException -- we probably need to launch a helper: {0}", ex.Message);
+					need_helper = true;
 				} catch (IOException ex) {
 					Logger.Log.Debug ("Caught IOException --- we probably need to launch a helper: {0}", ex.Message);
+					need_helper = true;
 				}
 
-				// If we caught an exception, try to activate the helper.
+				// If we caught an exception...
 				if (response == null) {
-					++exception_count;
-					LaunchHelper ();
+					if (! start_helper_by_hand || ! need_helper)
+						++exception_count;
+
+					if (start_helper_by_hand) {
+						// Sleep briefly before trying again.
+						Thread.Sleep (1000);
+					} else {
+						// Try to activate the helper.
+						LaunchHelper ();
+					}
 				}
 			}
 
 			if (response != null) {
 				Logger.Log.Debug ("Got response!");
 				last_item_count = response.ItemCount;
+			} else if (exception_count >= 5) {
+				Logger.Log.Error ("Exception limit exceeded trying to activate a helper.  Giving up on indexing!");
 			}
 	
 			return response;
@@ -162,6 +181,9 @@ namespace Beagle.Daemon {
 		{
 			// FIXME: We shouldn't need to know the path to the helper socket.
 			string socket_name = Path.Combine (PathFinder.StorageDir, "socket-helper");
+
+			if (! File.Exists (socket_name))
+				return false;
 
 			// Open, and then immediately close, a connection to the helper's socket.
 			try {

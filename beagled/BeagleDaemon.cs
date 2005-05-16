@@ -252,6 +252,10 @@ namespace Beagle.Daemon {
 
 			Application.InitCheck ("beagled", ref args);
 
+			// Profile our initialization
+			Stopwatch stopwatch = new Stopwatch ();
+			stopwatch.Start ();
+
 			SetupSignalHandlers ();
 
 			// Fire up our server
@@ -266,15 +270,6 @@ namespace Beagle.Daemon {
 				}
 			}
 			
-			// Set up our helper process and the associated monitoring
-			//IndexHelperFu.Start ();
-			
-			// We want to spend as little time as possible
-			// between InitService and actually being able 
-			// to serve requests
-			Stopwatch stopwatch = new Stopwatch ();
-			stopwatch.Start ();
-
 #if ENABLE_NETWORK
 			if (arg_network) {
 				try {
@@ -317,17 +312,13 @@ namespace Beagle.Daemon {
 
 			stopwatch.Stop ();
 
-			Logger.Log.Debug ("Ready to accept requests after {0}", 
-					 stopwatch);
+			Logger.Log.Debug ("Daemon initialization finished after {0}", stopwatch);
 		
 			// Start our event loop.
 			Logger.Log.Debug ("Starting main loop");
 
 			Application.Run ();
 
-#if ENABLE_WEBSERVICES
-			WebServiceBackEnd.Stop();
-#endif
 			Logger.Log.Debug ("Leaving BeagleDaemon.Main");
 
 			return 0;
