@@ -27,6 +27,8 @@ namespace ImLogViewer {
 		[Widget] ScrolledWindow scrollwindow;
 		[Widget] Label time_title;
 		[Widget] Entry search_entry;
+		[Widget] Button search_button;
+		[Widget] Button clear_button;
 		[Widget] Label find_label;
 		[Widget] TextView conversation;
 		
@@ -41,8 +43,8 @@ namespace ImLogViewer {
 		private TreeIter first_selection_iter;
 
 		private string speaking_to;
-		private string highlight_string;
-
+		private string highlight_text;
+		private string search_text;
 
 		public GaimLogViewer (string path) : this (path, null) {
 		}
@@ -62,7 +64,7 @@ namespace ImLogViewer {
 			timeline = new Timeline ();
 			IndexLogs();
 
-			highlight_string = hl;
+			highlight_text = hl;
 			
 			if (speaking_to != null && speaking_to != "")
 				ShowWindow (speaking_to);
@@ -85,11 +87,6 @@ namespace ImLogViewer {
 			gxml.Autoconnect (this);
 
 			log_dialog.Response += new ResponseHandler (OnWindowResponse);
-
-			// FIXME: Hide the find bar until further notice.
-			// We want highlighing and queries using Beagle
-			search_entry.Visible = false;
-			find_label.Visible = false;
 
 			accel_group = new Gtk.AccelGroup ();
 			log_dialog.AddAccelGroup (accel_group);
@@ -149,7 +146,10 @@ namespace ImLogViewer {
 			PopulateTimelineWidget ();
 
 			timelinetree.Selection.Changed += OnConversationSelected; 
-			search_entry.Changed += OnTypeAhead;
+
+			search_entry.Activated += OnSearchClicked;
+			search_button.Clicked += OnSearchClicked;
+			clear_button.Clicked += OnClearClicked;
 
 			if (have_first_selection_iter)
 				timelinetree.Selection.SelectIter (first_selection_iter);
@@ -181,8 +181,7 @@ namespace ImLogViewer {
 		private void UpdateTimelineTree ()
 		{
 			//FIXME: Run this in a thread
-			treeStore = new TreeStore(new Type[] {typeof(string), typeof(string), typeof(object)});
-			timelinetree.Model = this.treeStore;
+			treeStore.Clear ();
 			PopulateTimelineWidget ();
 		}
 
@@ -231,8 +230,8 @@ namespace ImLogViewer {
 		private void PopulateTimeline (TreeIter parent, ArrayList list, string dateformat)
 		{
 			foreach (ImLog log in list) {
-				if (search_entry.Text != null && search_entry.Text != "")
-					if (!LogContainsString (log, search_entry.Text))
+				if (search_text != null && search_text != "")
+					if (! LogContainsString (log, search_text))
 						continue;
 					
 				string date_str = log.StartTime.ToString (dateformat);
@@ -244,7 +243,7 @@ namespace ImLogViewer {
 				}
 			}
 		}
-		
+
 		private void IndexLogs ()
 		{
 			foreach (string file in Directory.GetFiles (log_path)) {
@@ -279,8 +278,11 @@ namespace ImLogViewer {
 				buffer.Insert (buffer.EndIter, String.Format(" {0}\n", utt.Text));
 			}
 
-			if (highlight_string != null)
-				HighlightSearchTerms (highlight_string);
+			if (highlight_text != null)
+				HighlightSearchTerms (highlight_text);
+
+			if (search_text != null && search_text != "")
+				HighlightSearchTerms (search_text);
 		}
 
 		private void HighlightSearchTerms (string highlight)
@@ -311,11 +313,26 @@ namespace ImLogViewer {
 			Application.Quit ();
 		}
 
-		private void OnTypeAhead (object o, EventArgs args)
+		private void OnSearchClicked (object o, EventArgs args)
 		{
+			search_text = search_entry.Text;
+			search_button.Visible = false;
+			clear_button.Visible = true;
+			search_entry.Sensitive = false;
+
 			UpdateTimelineTree ();
 		}
 		
+		private void OnClearClicked (object o, EventArgs args)
+		{
+			search_text = null;
+			search_button.Visible = true;
+			clear_button.Visible = false;
+			search_entry.Sensitive = true;
+
+			UpdateTimelineTree ();
+		}
+
 		private void OnConversationSelected (object o, EventArgs args) 
 		{
 			TreeIter iter;
