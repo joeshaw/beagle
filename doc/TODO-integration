@@ -1,6 +1,6 @@
 GENERAL:
 
-C bindings for beagle's dbus interface.  This will be helpful for
+C bindings for beagle's interface.  This will be helpful for
   integrating with existing apps.
 
 BROWSERS:

@@ -38,8 +38,6 @@ using System.Net.Sockets;
 
 using System.Collections;
 
-using DBus;
-
 namespace Beagle.Daemon
 {
 	public class NetworkHandler
