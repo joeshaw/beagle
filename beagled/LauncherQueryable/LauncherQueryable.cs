@@ -56,9 +56,13 @@ namespace Beagle.Daemon.LauncherQueryable {
 			Dirs.Add (Path.Combine (PathFinder.HomeDir, ".gnome2/panel2.d/default/launchers"));
 
 			// Add KDE dirs
-			path = KdeUtils.KdeSharePrefix;
-			if (path != null)
-				Dirs.Add (Path.Combine(path, "applications"));
+			foreach (string kde_dir in KdeUtils.KdeLocations) {
+				if (kde_dir == null || kde_dir == String.Empty)
+					continue;
+
+				string share_dir = Path.Combine (kde_dir, "share");
+				Dirs.Add (Path.Combine(share_dir, "applications"));
+			}
 			Dirs.Add (Path.Combine (PathFinder.HomeDir, ".local/share/applications"));
 		}
 

@@ -24,6 +24,7 @@ $(EXTSTR): $(EXTSTR_IN)
 		-e "s|\@pkgdatadir\@|$(pkgdatadir)|g"	\
 		-e "s|\@VERSION\@|$(VERSION)|g"		\
 		-e "s|\@GNOME_PREFIX\@|$(GNOME_PREFIX)|g"	\
+		-e "s|\@KDE_PREFIX\@|$(KDE_PREFIX)|g"	\
 		< $(EXTSTR_IN) > $@
 
 CSFILES = 			        	\

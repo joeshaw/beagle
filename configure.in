@@ -402,6 +402,14 @@ AC_SUBST(CHOOSER_FU_LIBS)
 
 dnl ----------------------------------------------
 
+dnl KDE launcher/icon support
+
+AC_PATH_PROG(KDE_CONFIG, [kde-config], [])
+if test ! "x$PKG_CONFIG" = "xno"; then
+	KDE_PREFIX=`$KDE_CONFIG --prefix`
+fi
+AC_SUBST(KDE_PREFIX)
+
 AC_ARG_ENABLE([webservices],
         AC_HELP_STRING([--enable-webservices], [Enable WebServices (default disabled)]),
         enable_webservices=$enableval,

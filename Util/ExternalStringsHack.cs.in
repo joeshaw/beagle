@@ -31,5 +31,9 @@ namespace Beagle.Util {
 		static public string LocaleDir {
 		       get { return "@prefix@/share/locale"; }
 		}
+
+		static public string KdePrefix {
+			get { return "@KDE_PREFIX@"; }
+		}
 	}	  
 }
