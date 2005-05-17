@@ -269,30 +269,6 @@ AM_CONDITIONAL(ENABLE_EVO_SHARP, test "x$enable_evo_sharp" == "xyes")
 
 dnl ----------------------------------------------
 
-AC_ARG_ENABLE([network],
-        AC_HELP_STRING ([--enable-network], [Enable Network Service (default disabled)]),
-        enable_network=$enableval,
-        enable_network=no)
-
-AM_CONDITIONAL(ENABLE_NETWORK, test "x$enable_network" = "xyes")
-
-if test "x$enable_network" = "xyes"; then
-        PKG_CHECK_MODULES(RENDEZVOUS,					\
-		          mdnsresponder,				\
-			  enable_rendezvous=yes,			\
-			  enable_rendezvous=no)
-        AC_SUBST(RENDEZVOUS_LIBS)
-
-	AM_CONDITIONAL(ENABLE_RENDEZVOUS, test "x$enable_rendezvous" = "xyes")
-
-	RENDEZVOUS_PREFIX=`$PKG_CONFIG --variable=prefix mdnsresponder`
-else
-	AM_CONDITIONAL(ENABLE_RENDEZVOUS, false)
-fi
-
-
-dnl ----------------------------------------------
-
 dnl beagled
 
 PKG_CHECK_MODULES(GSF_SHARP, gsf-sharp >= 0.2, enable_gsf_sharp=yes, enable_gsf_sharp=no)
@@ -435,7 +411,7 @@ AM_CONDITIONAL(ENABLE_WEBSERVICES, test "x$enable_webservices" = "xyes")
 
 dnl ----------------------------------------------
 dnl Prefixes for helper scripts
-GAC_PREFIX="$EVO_SHARP_PREFIX:$GSF_SHARP_PREFIX:$GMIME_SHARP_PREFIX:$RENDEZVOUS_PREFIX"
+GAC_PREFIX="$EVO_SHARP_PREFIX:$GSF_SHARP_PREFIX:$GMIME_SHARP_PREFIX"
 dnl Remove duplicate prefixes
 GAC_PREFIX="`echo $GAC_PREFIX | sed -e 's|:|\n|g' | sort | uniq | tr '\n' ':'`"
 dnl Remove stray :s
@@ -477,13 +453,7 @@ echo "
 	Mozilla Extension?	yes
 	wv1?			${enable_wv1}
 
-	Enable Network		${enable_network}
 	Enable WebServices	${enable_webservices}"
-
-if test "x$enable_network" = "xyes"; then
-   echo "	Enable Rendezvous	${enable_rendezvous}"
-fi
-
 echo
 
 if test "x$enable_epiphany_extension" = "xyes"; then

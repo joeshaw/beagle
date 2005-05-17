@@ -327,23 +327,6 @@ DAEMON_DLL_CSFILES += 	$(EDS_QUERYABLE_CSFILES)
 DAEMON_DLL_ASSEMBLIES += $(EVO_SHARP_LIBS)
 endif
 
-authenticators = $(srcdir)/NetworkAuthenticators
-AUTHENTICATORS_CSFILES =				\
-	$(authenticators)/BasicAuthenticator.cs
-
-if ENABLE_NETWORK
-DAEMON_DLL_CSFILES += 					\
-	$(AUTHENTICATORS_CSFILES) 			\
-	$(srcdir)/NetworkHandler.cs			\
-	$(srcdir)/NetworkService.cs			\
-	$(srcdir)/NetworkDriver.cs
-if ENABLE_RENDEZVOUS
-DAEMON_DLL_CSFLAGS += -define:ENABLE_RENDEZVOUS
-DAEMON_DLL_ASSEMBLIES += $(RENDEZVOUS_LIBS)
-endif
-endif
-
-
 #if ENABLE_MOZILLA_BACKEND
 #mozillaqueryable = $(srcdir)/MozillaQueryable
 #MOZILLA_QUERYABLE_CSFILES =				\
@@ -482,10 +465,6 @@ DAEMON_ASSEMBLIES =				\
 	$(DAEMON_LOCAL_ASSEMBLIES:%=-r:%)	\
 	-r:Mono.Posix				\
 	-r:ICSharpCode.SharpZipLib.dll
-
-if ENABLE_NETWORK
-DAEMON_CSFLAGS += -define:ENABLE_NETWORK
-endif
 
 if ENABLE_WEBSERVICES
 DAEMON_CSFLAGS += -define:ENABLE_WEBSERVICES
@@ -839,10 +818,6 @@ noinst_SCRIPTS=	\
 	$(FS_SANITY_CHECK_WRAPPER)
 
 COND_CS_FILES = \
-	$(AUTHENTICATORS_CSFILES) 	\
-	$(srcdir)/NetworkHandler.cs	\
-	$(srcdir)/NetworkService.cs	\
-	$(srcdir)/NetworkDriver.cs	\
 	$(MOZILLA_QUERYABLE_CSFILES)	\
 	$(WEBSERVICES_BACKEND_CSFILES)
 

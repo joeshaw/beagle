@@ -45,10 +45,6 @@ namespace Beagle.Daemon {
 
 		private static Server server = null;
 
-#if ENABLE_NETWORK
-		private static NetworkService network = null;
-#endif
-
 		public static bool StartServer ()
 		{
 			Logger.Log.Debug ("Starting messaging server");
@@ -102,11 +98,6 @@ namespace Beagle.Daemon {
 			bool arg_debug_memory = false;
 			bool arg_fg = false;
 			bool arg_disable_scheduler = false;
-#if ENABLE_NETWORK
-			bool arg_network = false;
-			int arg_port = 0;
-#endif
-
 #if ENABLE_WEBSERVICES
 			WebServicesArgs wsargs = new WebServicesArgs();
 #endif
@@ -162,22 +153,6 @@ namespace Beagle.Daemon {
 				case "--disable-scheduler":
 					arg_disable_scheduler = true;
 					break;
-
-#if ENABLE_NETWORK
-				case "--enable-network":
-					arg_network = true;
-					break;
-
-				case "--port":
-					try {
-						arg_port = Convert.ToInt32(next_arg);
-					} catch (Exception e) {
-						Console.WriteLine("Ignoring malformed port argument '{0}'",next_arg);
-					}
-					++i; // we used next_arg
-					break;
-#endif
-
 #if ENABLE_WEBSERVICES
 				case "--web-global":
 					wsargs.web_global = true;
@@ -270,18 +245,6 @@ namespace Beagle.Daemon {
 				}
 			}
 			
-#if ENABLE_NETWORK
-			if (arg_network) {
-				try {
-					// Set up network service
-					network = new NetworkService(arg_port);
-					network.Start ();
-				} catch {
-					Logger.Log.Error ("Could not initialize network service"); 
-				}
-			}
-#endif
-
 			// Set up out-of-process indexing
 			if (Environment.GetEnvironmentVariable ("BEAGLE_ENABLE_IN_PROCESS_INDEXING") == null)
 				LuceneQueryable.IndexerHook = new LuceneQueryable.IndexerCreator (RemoteIndexer.NewRemoteIndexer);
