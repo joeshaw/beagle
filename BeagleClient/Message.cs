@@ -1,3 +1,7 @@
+//
+// BeagleClient/Message.cs - Implement the core of JoeBus
+//
+
 using System;
 using System.Collections;
 using System.Reflection;
