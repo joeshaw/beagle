@@ -5,6 +5,8 @@
 	KDE discovery rework: Use kde-config at configure-time, and if not
 	present, guess at runtime.
 
+	* Tiles/template-*.html: Added mouseover tooltips to most templates
+
 2005-05-16  Daniel Drake  <dsd@gentoo.org>
 
 	* beagled/Makefile.am, beagled/LauncherQueryable/LauncherQueryable.cs,
