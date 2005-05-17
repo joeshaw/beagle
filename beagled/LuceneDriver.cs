@@ -74,7 +74,7 @@ namespace Beagle.Daemon {
 		//    in the file system backend (it would be nice to have per-backend
 		//    versioning so that we didn't have to purge all indexes just
 		//    because one changed)
-		private const int VERSION = 8;
+		private const int MAIN_VERSION = 8;
 
 		private string top_dir;
 		private Hashtable pending_by_uri = UriFu.NewHashtable ();
@@ -84,9 +84,11 @@ namespace Beagle.Daemon {
 		private bool optimizing = false;
 		private int last_item_count = -1;
 
-		public LuceneDriver (string index_name)
+		public LuceneDriver (string index_name) : this (index_name, -1) { }
+
+		public LuceneDriver (string index_name, int index_version)
 		{
-			Setup (index_name);
+			Setup (index_name, index_version);
 		}
 
 		public string IndexDirectory {
@@ -113,9 +115,8 @@ namespace Beagle.Daemon {
 
 		/////////////////////////////////////////////////////
 
-
-		private void Setup (string index_name)
-		{
+		private void Setup (string index_name, int index_version)
+		{			
 			top_dir = Path.Combine (PathFinder.StorageDir, index_name); 
 			
 			string versionFile = Path.Combine (top_dir, "version");
@@ -134,8 +135,18 @@ namespace Beagle.Daemon {
 				StreamReader sr = new StreamReader (versionFile);
 				string versionStr = sr.ReadLine ();
 				sr.Close ();
-				
-				if (versionStr != Convert.ToString (VERSION))
+
+				int old_main_version, old_index_version = -1;
+				int i = versionStr.IndexOf (".");
+
+				if (i != -1) {
+					old_main_version = Convert.ToInt32 (versionStr.Substring (0,i));
+					old_index_version = Convert.ToInt32 (versionStr.Substring (i+1));
+				} else {
+					old_main_version = Convert.ToInt32 (versionStr);
+				}
+
+				if (old_main_version != MAIN_VERSION || old_index_version != index_version)
 					indexExists = false;
 			}
 
@@ -192,7 +203,7 @@ namespace Beagle.Daemon {
 
 				// Write out our version information
 				sw = new StreamWriter (versionFile, false);
-				sw.WriteLine ("{0}", VERSION);
+				sw.WriteLine ((index_version == -1) ? "{0}" : "{0}.{1}", MAIN_VERSION, index_version);
 				sw.Close ();
 			}
 

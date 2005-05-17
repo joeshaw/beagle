@@ -91,10 +91,12 @@ namespace Beagle.Daemon {
 
 		//////////////////////////////////////////////////////////
 
-		public LuceneQueryable (string index_name)
+		public LuceneQueryable (string index_name) : this (index_name, -1) { }
+
+		public LuceneQueryable (string index_name, int index_version)
 		{
 			this.index_name = index_name;
-			driver = new LuceneDriver (this.index_name);
+			driver = new LuceneDriver (this.index_name, index_version);
 
 			indexer = LocalIndexerHook ();
 			if (indexer == null && indexer_hook != null)
