@@ -300,6 +300,9 @@ namespace Beagle.Daemon {
 
 		static void SetupSignalHandlers ()
 		{
+			// Force OurSignalHandler to be JITed
+			OurSignalHandler (-1);
+
 			// Set up our signal handler
 			Mono.Posix.Syscall.sighandler_t sig_handler;
 			sig_handler = new Mono.Posix.Syscall.sighandler_t (OurSignalHandler);
@@ -316,6 +319,11 @@ namespace Beagle.Daemon {
 		static DateTime signal_time = DateTime.MinValue;
 		static void OurSignalHandler (int signal)
 		{
+			// This allows us to call OurSignalHandler w/o doing anything.
+			// We want to call it once to ensure that it is pre-JITed.
+			if (signal < 0)
+				return;
+
 			Logger.Log.Debug ("Handling signal {0}", signal);
 
 			bool first_signal = false;
