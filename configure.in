@@ -297,7 +297,7 @@ else
 fi
 AC_SUBST(EXIF_SOVERSION)
 
-PKG_CHECK_MODULES(BEAGLED, gmime-sharp >= 2.1.13 gtk-sharp gconf-sharp)
+PKG_CHECK_MODULES(BEAGLED, gmime-sharp >= 2.1.13 gtk-sharp gconf-sharp gnome-vfs-2.0)
 BEAGLED_LIBS="$BEAGLED_LIBS $EVO_SHARP_LIBS $GSF_SHARP_LIBS"
 AC_SUBST(BEAGLED_LIBS)
 
