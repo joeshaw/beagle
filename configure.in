@@ -61,6 +61,8 @@ PKG_CHECK_MODULES(SQLITE, sqlite)
 
 AC_CHECK_HEADERS(X11/extensions/scrnsaver.h,, [AC_MSG_ERROR([Unable to find scrnsaver.h.  You probably need to install XFree86 development packages])])
 
+PKG_CHECK_MODULES(GNOME_VFS, gnome-vfs-2.0)
+
 dnl ******************
 dnl Mozilla name check
 dnl ******************
@@ -297,7 +299,7 @@ else
 fi
 AC_SUBST(EXIF_SOVERSION)
 
-PKG_CHECK_MODULES(BEAGLED, gmime-sharp >= 2.1.13 gtk-sharp gconf-sharp gnome-vfs-2.0)
+PKG_CHECK_MODULES(BEAGLED, gmime-sharp >= 2.1.13 gtk-sharp gconf-sharp)
 BEAGLED_LIBS="$BEAGLED_LIBS $EVO_SHARP_LIBS $GSF_SHARP_LIBS"
 AC_SUBST(BEAGLED_LIBS)
 
