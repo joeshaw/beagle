@@ -408,9 +408,11 @@ dnl ----------------------------------------------
 
 dnl KDE launcher/icon support
 
-AC_PATH_PROG(KDE_CONFIG, [kde-config], [])
+kde_prefix_print="unknown; will guess at runtime"
+AC_PATH_PROG(KDE_CONFIG, [kde-config], [no])
 if test ! "x$KDE_CONFIG" = "xno"; then
 	KDE_PREFIX=`$KDE_CONFIG --prefix`
+	kde_prefix_print="$KDE_PREFIX"
 fi
 AC_SUBST(KDE_PREFIX)
 
@@ -458,6 +460,9 @@ po/Makefile.in
 
 echo "
 	Prefix:			${prefix}
+	GNOME Prefix:           ${GNOME_PREFIX}
+	KDE Prefix:		${kde_prefix_print}
+
 	Evolution-Sharp?	${enable_evo_sharp}
 	gsf-sharp?		${enable_gsf_sharp}
 	gst-sharp?		${enable_gst_sharp}
