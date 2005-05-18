@@ -62,8 +62,9 @@ PKG_CHECK_MODULES(SQLITE, sqlite)
 # Needed by glue/screensaver-glue.c
 AC_CHECK_HEADERS(X11/extensions/scrnsaver.h,, [AC_MSG_ERROR([Unable to find scrnsaver.h.  You probably need to install XFree86 development packages])])
 
-# We pinvoke into gnome-vfs directly from Util/gnome.cs and Util/Vfs.cs
-PKG_CHECK_MODULES(GNOME_VFS, gnome-vfs-2.0)
+# We pinvoke into gnome-vfs directly from Util/gnome.cs and Util/Vfs.cs, and
+# we get the GNOME prefix from libgnome-2.0
+PKG_CHECK_MODULES(GNOME_VFS, gnome-vfs-2.0 libgnome-2.0)
 
 dnl ******************
 dnl Mozilla name check
