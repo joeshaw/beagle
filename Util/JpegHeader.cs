@@ -113,6 +113,11 @@ public class JpegHeader {
 	{
 		return this.GetRaw ("JFIF");
 	}
+	
+	public byte [] GetJFIFComment ()
+	{
+		return this.GetRaw ("COM");
+	}
 
 	public byte [] GetRawIcc ()
 	{
@@ -200,6 +205,14 @@ public class JpegHeader {
 			length -= 2;
 			
 			switch (marker) {
+			case JpegMarker.Com:
+				byte [] commentdata = new byte [length];
+				if (stream.Read (commentdata, 0, length) != length)
+					throw new System.Exception ("Incomplete Marker");
+				Marker m1 = new Marker (marker, commentdata, position);
+				marker_list.Add (m1);
+				app_marker_hash ["COM"] = m1;
+				break;
 			case JpegMarker.App0:
 			case JpegMarker.App1:
 			case JpegMarker.App2:

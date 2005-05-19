@@ -42,6 +42,14 @@ namespace Beagle.Filters {
 		protected override void DoPullProperties ()
 		{
 			JpegHeader header = new JpegHeader (Stream);
+			byte [] commentdata = header.GetJFIFComment();
+			if (commentdata != null && commentdata.Length != 0)
+			{
+				string comment = System.Text.Encoding.ASCII.GetString( commentdata, 0, commentdata.Length );
+				if (comment != null && comment != "")
+					AddProperty (Beagle.Property.New ("jfif:Comment", comment));
+			}
+
 			byte [] data = header.GetRawExif ();
 			if (data == null || data.Length == 0)
 				return;
