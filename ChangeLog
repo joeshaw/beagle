@@ -1,3 +1,9 @@
+2005-05-19  Vijay K. Nanjundaswamy <knvijay@novell.com>
+
+	* beagled/WebServices/WebBackEnd.cs: Updates to work with recent Beagle code changes
+
+	* beagled/WebServices/WebServer/*.cs: Update to XSP-1.0.9 code 
+
 2005-05-17  Daniel Drake  <dsd@gentoo.org>
 
 	* configure.in, Util/ExternalStringsHack.cs.in, Util/KdeUtils.cs,
