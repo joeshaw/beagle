@@ -274,10 +274,23 @@ namespace Mono.ASPNET
 			if (!started)
 				throw new InvalidOperationException ("The server is not started.");
 
+			if (stop)
+				return; // Just ignore, as we're already stopping
+
 			stop = true;	
+			webSource.Dispose ();
+
+			// A foreground thread is required to end cleanly
+			Thread stopThread = new Thread (new ThreadStart (RealStop));
+			stopThread.Start ();
+		}
+
+		void RealStop ()
+		{
 			runner.Abort ();
 			listen_socket.Close ();
 			UnloadAll ();
+			Thread.Sleep (1000);
 			WebTrace.WriteLine ("Server stopped.");
 		}
 
@@ -454,6 +467,7 @@ namespace Mono.ASPNET
 					TimeSpan diff = now - atime;
 					if (diff.TotalMilliseconds > 15 * 1000) {
 						RemoveReadSocket (k);
+						wSockets.Remove (k);
 						k.Close ();
 						continue;
 					}
@@ -556,10 +570,8 @@ namespace Mono.ASPNET
 
 		public void UnloadHost ()
 		{
-			if (AppHost != null) {
+			if (AppHost != null)
 				AppHost.Unload ();
-				Thread.Sleep (2000);
-			}
 
 			AppHost = null;
 		}

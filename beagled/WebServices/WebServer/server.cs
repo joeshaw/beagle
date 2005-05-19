@@ -66,10 +66,10 @@ namespace Mono.ASPNET
 			Console.WriteLine ("                    AppSettings key name: MonoUnixSocket");
 			Console.WriteLine ();
 #else
-			Console.WriteLine ("XSP server is a sample server that hosts the ASP.NET runtime in a");
+			Console.WriteLine ("Beagle-XSP server is a sample server that hosts the ASP.NET runtime in a");
 			Console.WriteLine ("minimalistic HTTP server\n");
-			Console.WriteLine ("Usage is:\n");
-			Console.WriteLine ("    xsp.exe [...]");
+			//Console.WriteLine ("Usage is:\n");
+			//Console.WriteLine ("    xsp.exe [...]");
 			Console.WriteLine ();
 #endif
 			Console.WriteLine ("    --port N: n is the tcp port to listen on.");
@@ -172,14 +172,13 @@ namespace Mono.ASPNET
 				Environment.Exit (1);
 			}
 		}
-		
-//		public static int Main (string [] args)
+		//		public static int Main (string [] args)
 		public static int initXSP(string [] args, out ApplicationServer appServer)
 		{
 			bool nonstop = false;
 			bool verbose = false;
 			appServer = null;
-
+						
 			Trace.Listeners.Add (new TextWriterTraceListener (Console.Out));
 			string apps = ConfigurationSettings.AppSettings ["MonoApplications"];
 			string appConfigDir = ConfigurationSettings.AppSettings ["MonoApplicationsConfigDir"];
@@ -198,8 +197,10 @@ namespace Mono.ASPNET
 				oport = 8080;
 
 			Options options = 0;
+			int hash = 0;
 			for (int i = 0; i < args.Length; i++){
 				string a = args [i];
+				hash ^= args [i].GetHashCode () + i;
 				
 				switch (a){
 #if MODMONO_SERVER
@@ -255,6 +256,10 @@ namespace Mono.ASPNET
 			}
 
 #if MODMONO_SERVER
+			if (hash < 0)
+				hash = -hash;
+
+			string lockfile;
 			bool useTCP = ((options & Options.Port) != 0);
 			if (!useTCP) {
 				if (filename == null || filename == "")
@@ -266,6 +271,11 @@ namespace Mono.ASPNET
 					Console.WriteLine ("ERROR: --address without --port");
 					Environment.Exit (1);
 				}
+				lockfile = Path.Combine (Path.GetTempPath (), Path.GetFileName (filename));
+				lockfile = String.Format ("{0}_{1}", lockfile, hash);
+			} else {
+				lockfile = Path.Combine (Path.GetTempPath (), "mod_mono_TCP_");
+				lockfile = String.Format ("{0}_{1}", lockfile, hash);
 			}
 #endif
 			IPAddress ipaddr = null;
@@ -298,9 +308,9 @@ namespace Mono.ASPNET
 			IWebSource webSource;
 #if MODMONO_SERVER
 			if (useTCP) {
-				webSource = new ModMonoTCPWebSource (ipaddr, port);
+				webSource = new ModMonoTCPWebSource (ipaddr, port, lockfile);
 			} else {
-				webSource = new ModMonoWebSource (filename);
+				webSource = new ModMonoWebSource (filename, lockfile);
 			}
 
 			if ((options & Options.Terminate) != 0) {
@@ -347,7 +357,7 @@ namespace Mono.ASPNET
 
 			//KNV: return appServer reference to beagle to control it
 			appServer = server;
-
+			
 			try {
 				if (server.Start (!nonstop) == false)
 					return 2;
@@ -369,11 +379,11 @@ namespace Mono.ASPNET
 			r.Close();
 		} 
 		catch (Exception e) {
-			Console.WriteLine ("Error: {0} in starting bgXsp", e.Message);
-			return 3;
+			//Console.WriteLine ("Error: {0} in starting bgXsp", e.Message);
+			//return 3;
 		}
 
-			return 0;
+		return 0;
 		}
 	}
 }
