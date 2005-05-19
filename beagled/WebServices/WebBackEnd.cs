@@ -86,10 +86,13 @@ namespace Beagle.WebService {
 		}
 
 		void OnHitsAdded (QueryResult qres, ICollection hits)
-		{			
+		{	
+			//Console.WriteLine("WebBackEnd: OnHitsAdded() invoked with {0} hits", hits.Count);
+
 			if (result.Contains(qres)) {
 				BT.SimpleRootTile root = ((Resp) result[qres]).rootTile;
 				root.Add(hits);
+				//Console.WriteLine("Hit Added to Root Tile");
 			}
 		}
 
@@ -226,16 +229,18 @@ namespace Beagle.WebService {
 				return NO_RESULTS;
 						 
 			Console.WriteLine("WebBackEnd: Got Search String: " + searchString); 
+			
 			Query query = new Query();
 			query.AddText (searchString);
 			if (searchSource != null && searchSource != "")
 				query.AddSource(searchSource);	
 			query.AddDomain (QueryDomain.Global);
-			
+
+			QueryResult qres = new QueryResult ();
+									
 			//Note: QueryDriver.DoQuery() local invocation is used. 
 			//The root tile is used only for adding hits and generating html.
-			BT.SimpleRootTile root = new BT.SimpleRootTile (); 			
-			Query query = new LocalQuery(qbody, qres);					
+			BT.SimpleRootTile root = new BT.SimpleRootTile (); 							
 			root.Query = query;
 											
 			bufferRenderContext bctx = new bufferRenderContext();
@@ -345,110 +350,6 @@ namespace Beagle.WebService {
 		
 //////////////////////////////////////////////////////////////////////////
 
-	//KNV: Wrapper implementation similar to BeagleClient Query to feed RootTile.
-	//Needed to get snippets working for Web Interface.
-	public class LocalQuery: Beagle.Query {
-		
-			private QueryBody body;
-			private QueryResult result;
-			
-			public LocalQuery(QueryBody qbody, QueryResult qres) {
-				this.body = qbody;
-				this.result = qres;
-			}
-			
-			public override void AddText (string text)
-			{
-				body.AddText (text);
-			}
-
-			public override void AddTextRaw (string text)
-			{
-				body.AddTextRaw (text);
-			}
-
-			public override string GetTextBlob ()
-			{
-				StringBuilder builder = new StringBuilder ();
-				foreach (string str in body.Text) {
-					if (builder.Length > 0)
-						builder.Append ("|"); 
-					builder.Append (str);
-				}
-				return builder.ToString ();
-			}
-
-			public override void AddDomain (Beagle.QueryDomain d)
-			{
-				body.AddDomain (d);
-			}
-	
-			public override void RemoveDomain (Beagle.QueryDomain d)
-			{
-				body.RemoveDomain (d);
-			}
-	
-			public override void AddMimeType (string type)
-			{
-				body.AddMimeType (type);
-			}
-	
-			public override void AddHitType (string type)
-			{
-				body.AddHitType (type);
-			}
-	
-			public override void AddSource (string source)
-			{
-				body.AddSource (source);
-			}
-			
-			public override string GetSnippetFromUriString (string uri_string)
-			{
-			 	string snippet;
-				
-				Uri uri = UriFu.UriStringToUri (uri_string);
-				Hit hit = result.GetHitFromUri (uri);
-
-				if (hit == null) {
-					snippet = "ERROR: invalid hit, uri=" + uri;
-
-					Logger.Log.Debug ("*** Got invalid hit: uri={0}", uri);
-					Logger.Log.Debug ("*** Valid Hits:");
-					foreach (Uri x in result.HitUris)
-						Logger.Log.Debug ("***    {0}", x);
-
-				} else {
-					Queryable queryable = hit.SourceObject as Queryable;
-					if (queryable == null)
-						snippet = "ERROR: hit.SourceObject is null, uri=" + uri;
-					else
-						snippet = queryable.GetSnippet (body, hit);
-				}
-
-				if (snippet == null)
-					snippet = "";
-
-				return snippet;
-			}		
-			
-			public override void Start ()
-			{
-			
-			}
-
-			public override void Cancel ()
-			{
-				
-			}
-
-			public override void CloseQuery () 
-			{
-				
-			}
-		}
-
-//////////////////////////////////////////////////////////////////////////
 	private class Resp {
 
 		private BT.SimpleRootTile root;
