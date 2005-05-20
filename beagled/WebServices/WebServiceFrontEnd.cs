@@ -33,13 +33,13 @@ using System.Collections;
 using System.Web;
 using System.Web.Services;
 using System.Web.Services.Protocols;
+
 using System.Runtime.Remoting;
 using System.Runtime.Remoting.Channels;
 using System.Runtime.Remoting.Channels.Tcp;
 
-using Beagle;
-using Beagle.Daemon;
 using Beagle.WebService;
+
 
 namespace WebService_CodeBehind {
 
@@ -54,12 +54,12 @@ namespace WebService_CodeBehind {
 
 			ChannelServices.RegisterChannel(new TcpChannel());
 
-		    	WellKnownClientTypeEntry WKCTE_Web = 
+		    	WellKnownClientTypeEntry WKCTE_Web =
 			new WellKnownClientTypeEntry(typeof(WebBackEnd),
 				"tcp://localhost:8347/WebBackEnd.rem");
 		    	RemotingConfiguration.RegisterWellKnownClientType(WKCTE_Web);
 
-		    	WellKnownClientTypeEntry WKCTE_WebService = 
+		    	WellKnownClientTypeEntry WKCTE_WebService =
 			new WellKnownClientTypeEntry(typeof(WebServiceBackEnd),
 				"tcp://localhost:8347/WebServiceBackEnd.rem");
 		    	RemotingConfiguration.RegisterWellKnownClientType(WKCTE_WebService);
@@ -75,7 +75,7 @@ namespace WebService_CodeBehind {
 	
 		private WebServiceBackEnd remoteObj = null;
 
-		private searchResult initialQuery(searchRequest req) 
+		private searchResult initialQuery(searchRequest req)
 		{
 		try {
 			searchResult sr;
@@ -85,31 +85,33 @@ namespace WebService_CodeBehind {
 			
 				sr = new searchResult();
 			    sr.statusCode = WebServiceBackEnd.SC_INVALID_QUERY;
-			    sr.statusMsg = "No search terms specified";		
+			    sr.statusMsg = "No search terms specified";
 			    return sr;
 			}
 				
-			remoteChannel.Register(); 
+			remoteChannel.Register();
 
 			if (remoteObj == null)
 				remoteObj = new WebServiceBackEnd();
 
 			if (Application["allowGlobalAccess"] == null)
 				Application["allowGlobalAccess"] =  remoteObj.allowGlobalAccess;
+
+			bool isLocalReq = HttpContext.Current.Request.Url.IsLoopback;
 				
 			if ((remoteObj == null) || !((bool)Application["allowGlobalAccess"] ||
-				HttpContext.Current.Request.Url.IsLoopback) ) {
+				isLocalReq) ) 	{
 
 				return restrictedAccessResult();
 			}
 
-			sr = remoteObj.doQuery(req); 				
-			return sr; 
+			sr = remoteObj.doQuery(req, isLocalReq);
+			return sr;
 		 }
-		 catch (Exception e) {	
+		 catch (Exception e) {
 			throw e;
-		 }	 
-	  } 
+		 }
+	  }
 	
 	[WebMethod(Description = "Full object interface to Beagle")]
 	[System.Web.Services.Protocols.SoapDocumentMethodAttribute(
@@ -126,7 +128,7 @@ namespace WebService_CodeBehind {
 	"http://www.gnome.org/projects/beagle/webservices/SimpleQuery",
 	RequestNamespace="http://www.gnome.org/projects/beagle/webservices",
 	ResponseNamespace="http://www.gnome.org/projects/beagle/webservices")]
-	public searchResult SimpleQuery(string text) 
+	public searchResult SimpleQuery(string text)
 	{
 		searchResult sr;
 			
@@ -135,7 +137,7 @@ namespace WebService_CodeBehind {
 			sr = new searchResult();
 			sr.statusCode = WebServiceBackEnd.SC_INVALID_QUERY;
 			sr.statusMsg = "No search terms specified";
-			return sr;		
+			return sr;
 		}
 			
 		searchRequest srq = new searchRequest();
@@ -143,7 +145,7 @@ namespace WebService_CodeBehind {
 		srq.text = new string[1];
 		srq.text[0] = text.Trim();
 		
-		srq.qdomain = Beagle.QueryDomain.Neighborhood; 
+		srq.qdomain = Beagle.QueryDomain.Neighborhood;
 	
 		return initialQuery(srq);
 	}
@@ -153,7 +155,7 @@ namespace WebService_CodeBehind {
 	"http://www.gnome.org/projects/beagle/webservices/SimpleQuery2",
 	RequestNamespace="http://www.gnome.org/projects/beagle/webservices",
 	ResponseNamespace="http://www.gnome.org/projects/beagle/webservices")]
-	public searchResult SimpleQuery2(string text, string mimeType, string source, string queryDomain) 
+	public searchResult SimpleQuery2(string text, string mimeType, string source, string queryDomain)
 	{
 		searchResult sr;
 			
@@ -162,7 +164,7 @@ namespace WebService_CodeBehind {
 			sr = new searchResult();
 			sr.statusCode = WebServiceBackEnd.SC_INVALID_QUERY;
 			sr.statusMsg = "No search terms specified";
-			return sr;		
+			return sr;
 		}
 			
 		searchRequest srq = new searchRequest();
@@ -173,52 +175,52 @@ namespace WebService_CodeBehind {
 		if (mimeType != null && mimeType != "")  {
 		
 			srq.mimeType = new string[1];
-			srq.mimeType[0] = mimeType.Trim();		
+			srq.mimeType[0] = mimeType.Trim();
 		}
 		
-		srq.qdomain = Beagle.QueryDomain.Neighborhood; 
+		srq.qdomain = Beagle.QueryDomain.Neighborhood;
 		switch (queryDomain.Trim().ToLower()) {
 		
-			case "local" : 	srq.qdomain = Beagle.QueryDomain.Local; 
+			case "local" : 	srq.qdomain = Beagle.QueryDomain.Local;
 							break;
 							
-			case "neighborhood" : 		
-							srq.qdomain = Beagle.QueryDomain.Neighborhood; 
+			case "neighborhood" :
+							srq.qdomain = Beagle.QueryDomain.Neighborhood;
 							break;
 							
-			case "global" : srq.qdomain = Beagle.QueryDomain.Global; 
+			case "global" : srq.qdomain = Beagle.QueryDomain.Global;
 							break;
 							
-			default: 		srq.qdomain = Beagle.QueryDomain.Neighborhood; 
+			default: 		srq.qdomain = Beagle.QueryDomain.Neighborhood;
 							break;
 		}
 		
-		string sourceSelector = null; 			
+		string sourceSelector = null;
 		srq.searchSources = new string[1];
 		
 		switch (source.Trim().ToLower()) {
 		
-			case "files" : 	sourceSelector = "Files"; 
+			case "files" : 	sourceSelector = "Files";
 							break;
 							
-			case "addressbook" : 		
-							sourceSelector = "Contact"; 
+			case "addressbook" :
+							sourceSelector = "Contact";
 							break;
 							
-			case "mail" : 	sourceSelector = "MailMessage"; 
+			case "mail" : 	sourceSelector = "MailMessage";
 							break;
 							
-			case "web": 	sourceSelector = "WebHistory"; 
+			case "web": 	sourceSelector = "WebHistory";
 							break;
 							
-			case "chats": 	sourceSelector = "IMLog"; 
+			case "chats": 	sourceSelector = "IMLog";
 							break;
 							
 			default: 		sourceSelector = null;
 							break;
 		}
 		
-		srq.searchSources[0] = sourceSelector;		
+		srq.searchSources[0] = sourceSelector;
 		return initialQuery(srq);
 	}
 	
@@ -229,33 +231,33 @@ namespace WebService_CodeBehind {
 	ResponseNamespace="http://www.gnome.org/projects/beagle/webservices")]
 	public searchResult GetMoreResults(string searchToken, int index)
 	{
-		try {
-		
+		try {		
 				searchResult sr;
 			
 			if (searchToken == null | searchToken == "")  {
-			
 				sr = new searchResult();
 				sr.statusCode = WebServiceBackEnd.SC_INVALID_SEARCH_TOKEN;
 				sr.statusMsg = "Invalid Search Token";
 			}
 			
-			remoteChannel.Register(); 
+			remoteChannel.Register();
 			
 			if (remoteObj == null)
 				remoteObj = new WebServiceBackEnd();
 
 			if (Application["allowGlobalAccess"] == null)
 				Application["allowGlobalAccess"] =  remoteObj.allowGlobalAccess;
+			
+			bool isLocalReq = HttpContext.Current.Request.Url.IsLoopback;
 				
 			if ((remoteObj == null) || !((bool)Application["allowGlobalAccess"] ||
-				HttpContext.Current.Request.Url.IsLoopback) ) 	{
+				isLocalReq) ) 	{
 
 				return restrictedAccessResult();
 			}
 
-			sr = remoteObj.getMoreResults(searchToken, index);
-			return sr; 		
+			sr = remoteObj.getMoreResults(searchToken, index, isLocalReq);
+			return sr;
 		}
 		catch (Exception e)
 		{
@@ -272,7 +274,7 @@ namespace WebService_CodeBehind {
 		sr.totalResults = 0;
 
 		sr.statusCode = WebServiceBackEnd.SC_UNAUTHORIZED_ACCESS;
-		sr.statusMsg = localReqOnlyMsg; 
+		sr.statusMsg = localReqOnlyMsg;
 
 		return sr;
 	}

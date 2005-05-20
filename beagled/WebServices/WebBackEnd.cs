@@ -90,8 +90,16 @@ namespace Beagle.WebService {
 			//Console.WriteLine("WebBackEnd: OnHitsAdded() invoked with {0} hits", hits.Count);
 
 			if (result.Contains(qres)) {
-				BT.SimpleRootTile root = ((Resp) result[qres]).rootTile;
-				root.Add(hits);
+			
+				Resp resp = ((Resp) result[qres]);
+				BT.SimpleRootTile root = resp.rootTile;
+				
+				if (resp.isLocalReq)
+					root.Add(hits);
+				else {
+						foreach (Hit h in hits)
+							root.Add(WebServiceBackEnd.AccessFilter.FilterHit(h));
+				}
 				//Console.WriteLine("Hit Added to Root Tile");
 			}
 		}
@@ -121,6 +129,7 @@ namespace Beagle.WebService {
 		private void AttachQueryResult (QueryResult qres, Resp resp)
 		{
 			if (qres != null) {
+			
 				qres.HitsAddedEvent += OnHitsAdded;
 				qres.HitsSubtractedEvent += OnHitsSubtracted;
 				qres.FinishedEvent += OnFinished;
@@ -223,7 +232,7 @@ namespace Beagle.WebService {
 			return NO_RESULTS;
 		}
 		
-		public string doQuery(string sessId, string searchString, string searchSource)
+		public string doQuery(string sessId, string searchString, string searchSource, bool isLocalReq)
 		{	
 			if (sessId == null || searchString == null || searchString == "")
 				return NO_RESULTS;
@@ -234,7 +243,8 @@ namespace Beagle.WebService {
 			query.AddText (searchString);
 			if (searchSource != null && searchSource != "")
 				query.AddSource(searchSource);	
-			query.AddDomain (QueryDomain.Global);
+				
+			query.AddDomain (isLocalReq ? QueryDomain.Global:QueryDomain.Local);
 
 			QueryResult qres = new QueryResult ();
 									
@@ -244,7 +254,7 @@ namespace Beagle.WebService {
 			root.Query = query;
 											
 			bufferRenderContext bctx = new bufferRenderContext();
-			Resp resp = new Resp(root, bctx);
+			Resp resp = new Resp(root, bctx, isLocalReq);
 
 			AttachQueryResult (qres, resp);
 
@@ -355,12 +365,15 @@ namespace Beagle.WebService {
 		private BT.SimpleRootTile root;
 		private Hashtable tileTab = null;
 		private bufferRenderContext bufCtx = null;	
-
-		public Resp(BT.SimpleRootTile rt, bufferRenderContext bCtx)
+		
+		private bool _localRequest;
+		
+		public Resp(BT.SimpleRootTile rt, bufferRenderContext bCtx, bool isLocalReq)
 		{
 			this.root = rt;
 			this.tileTab = Hashtable.Synchronized(new Hashtable());
 			this.bufCtx = bCtx;
+			this._localRequest = isLocalReq;
 			CacheTile(rt);
 			bufCtx.table = tileTab;
 			bufCtx.ClearActions();
@@ -380,6 +393,10 @@ namespace Beagle.WebService {
 				bufCtx.ClearActions();
 			}
 		}
+		public bool isLocalReq {			
+		 	get { return _localRequest; } 
+		}		
+		
 		public void CacheTile (BT.Tile tile) 
 		{
 			tileTab[tile.UniqueKey] = tile;

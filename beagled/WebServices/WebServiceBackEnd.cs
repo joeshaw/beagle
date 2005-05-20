@@ -30,6 +30,7 @@ using System;
 using System.Collections;
 using System.Threading;
 using System.IO;
+using System.Net;
 
 using System.Runtime.Remoting;
 using System.Runtime.Remoting.Channels;
@@ -46,7 +47,7 @@ namespace Beagle.WebService {
 	public class searchRequest  {
 
 		public string[] text;
-		public string[] mimeType;		 
+		public string[] mimeType;
 		public string[] searchSources;
 		public QueryDomain qdomain;
 	}
@@ -75,9 +76,11 @@ namespace Beagle.WebService {
 		public string resourceType;
 		public string mimeType;
 		public string source;
-		public double score;
+		public double scoreRaw;
+		public double scoreMultiplier;
 		public HitProperty[] properties;
 		//FIXME: public xxx[] data;
+		public string snippet;
 	}
 
 	[Serializable()]
@@ -86,7 +89,7 @@ namespace Beagle.WebService {
 		public int statusCode;			//ReturnCode for programmatic processing
 		public string statusMsg;		//User-friendly return message
 
-		public string searchToken;		//Token identifying the query, 
+		public string searchToken;		//Token identifying the query,
 							//to enable follow-up queries
 		public int firstResultIndex; 	//Index of first result in this response
 		public int numResults;		 	//No. of results in this response
@@ -103,8 +106,6 @@ namespace Beagle.WebService {
 	}
 			
 	public class WebServiceBackEnd: MarshalByRefObject   {
-
-		private static Logger log = Logger.Get ("WebServices");
 		
 		public static string DEFAULT_XSP_ROOT = Path.Combine (ExternalStringsHack.PkgDataDir, "xsp");
 		public static string DEFAULT_XSP_PORT = "8888";
@@ -119,14 +120,14 @@ namespace Beagle.WebService {
 		public static void Start(WebServicesArgs wsargs)
 		{
 			//start web-access server first
-			log.Debug ("Starting WebBackEnd");
+			Logger.Log.Debug ("Starting WebBackEnd");
 			WebBackEnd.init (wsargs.web_global);
 
 			//Next start web-service server
-			log.Info ("Starting WebServiceBackEnd");
+			Logger.Log.Info ("Starting WebServiceBackEnd");
 			WebServiceBackEnd.init (wsargs.web_global);
 
-			log.Debug ("Global WebAccess {0}", wsargs.web_global ? "Enabled" : "Disabled");
+			Logger.Log.Debug ("Global WebAccess {0}", wsargs.web_global ? "Enabled" : "Disabled");
 
 			xsp_param[1] = wsargs.web_port;
 			xsp_param[3] = wsargs.web_rootDir;
@@ -138,18 +139,21 @@ namespace Beagle.WebService {
 				
 			if (wsargs.web_start) {
 				
-				log.Debug ("Starting Internal Web Server");
+				Logger.Log.Debug ("Starting Internal Web Server");
 				
 				//Start beagled internal web server (BeagleXsp)
 				int retVal = Mono.ASPNET.Server.initXSP(xsp_param, out appServer);
-				if (retVal != 0)
-					log.Warn ("Error starting Internal Web Server (retVal={0})", retVal);
+				
+				if (retVal != 0) {
+					Logger.Log.Warn ("Error starting Internal Web Server (retVal={0})", retVal);
+					Logger.Log.Warn ("Check if there is another instance of Beagle running");
+				}
 			}		
 		}
 		
 		public static void Stop() 
 		{
-			log.Info ("Stopping WebServiceBackEnd");
+			Logger.Log.Info ("Stopping WebServiceBackEnd");
 			if (appServer != null) {
 			    appServer.Stop(); 
 				appServer = null;
@@ -161,56 +165,81 @@ namespace Beagle.WebService {
 		//	   so that front-end code always gets hold of same instance.
 		static WebServiceBackEnd instance = null;
 		static bool allow_global_access = false;
-
+		public static ExternalAccessFilter AccessFilter;
+		
 		private Hashtable resultTable;
 		private Hashtable sessionTable;
 		
 		public WebServiceBackEnd() {
-			 resultTable 	= Hashtable.Synchronized(new Hashtable());
-			 sessionTable 	= Hashtable.Synchronized(new Hashtable());
+			 resultTable 		= Hashtable.Synchronized(new Hashtable());
+			 sessionTable 		= Hashtable.Synchronized(new Hashtable());
 		}
 
 		~WebServiceBackEnd() {
-			resultTable.Clear(); 
-			sessionTable.Clear(); 
-		}	
+			resultTable.Clear();
+			sessionTable.Clear();
+		}
 	
 		public bool allowGlobalAccess {
 			get { return allow_global_access; }
 		}
-
-		public static void init(bool web_global) 
+				
+		public static void init(bool web_global)
 		{
 		    allow_global_access = web_global;
 
+			AccessFilter = new ExternalAccessFilter();
+			
 		    if (instance == null) {
 
 		  	instance = new WebServiceBackEnd();
 
   		  	//TCP Channel Listener registered in beagledWeb:init()
-		  	//ChannelServices.RegisterChannel(new TcpChannel(8347));		  
-		  	WellKnownServiceTypeEntry WKSTE = 
+		  	//ChannelServices.RegisterChannel(new TcpChannel(8347));
+		  	WellKnownServiceTypeEntry WKSTE =
 				new WellKnownServiceTypeEntry(typeof(WebServiceBackEnd),
 				 "WebServiceBackEnd.rem", WellKnownObjectMode.Singleton);
 		  	RemotingConfiguration.ApplicationName="beagled";
 		  	RemotingConfiguration.RegisterWellKnownServiceType(WKSTE);
-		    }
+		    }	    
 		}
 
 		void OnHitsAdded (QueryResult qres, ICollection hits)
-		{	
+		{
 			if (resultTable.Contains(qres)) {
-				ArrayList results = (ArrayList) resultTable[qres];
-				results.AddRange(hits);
+			
+				SessionData sdata = ((SessionData) resultTable[qres]);	
+				ArrayList results = sdata.results;
+				bool localReq = sdata.localRequest;
+				
+				//if (!localReq)
+				//	Console.WriteLine("OnHitsAdded invoked with {0} hits", hits.Count); 
+			
+				if (localReq){
+					lock (results.SyncRoot) 
+						results.AddRange(hits);
+				}
+				else {
+				
+					Query query = sdata.query;
+					
+					lock (results.SyncRoot) {
+						foreach (Hit h in hits)
+							results.AddRange(HitToNetworkHits(h, query));
+					}
+					//Console.WriteLine("OnHitsAdded: Total hits in Results is {0}", results.Count); 												
+				}
 			}
 		}
-
+		
 		void removeUris(ArrayList results, ICollection uris)
-		{	
+		{
 			foreach(Uri u in uris)
 			   foreach(Hit h in results)
 				if (h.Uri.Equals (u) && h.Uri.Fragment == u.Fragment) {
-					results.Remove(h);	
+					lock (results.SyncRoot) {
+						results.Remove(h);
+					}
 					break;
 				}
 		}
@@ -218,15 +247,16 @@ namespace Beagle.WebService {
 		void OnHitsSubtracted (QueryResult qres, ICollection uris)
 		{
 			if (resultTable.Contains(qres)) {
-				ArrayList results = (ArrayList) resultTable[qres];
+				SessionData sdata = ((SessionData) resultTable[qres]);	
+				ArrayList results = sdata.results;
 				removeUris(results, uris);
 			}
 		}
 
 		void OnFinished (QueryResult qres)
-		{	
+		{
 
-			DetachQueryResult (qres);				
+			DetachQueryResult (qres);
 		}
 
 		void OnCancelled (QueryResult qres)
@@ -234,7 +264,7 @@ namespace Beagle.WebService {
 			DetachQueryResult (qres);
 		}
 
-		void AttachQueryResult (QueryResult qres, ArrayList results)
+		void AttachQueryResult (QueryResult qres, SessionData sdata)
 		{
 			if (qres != null) {
 
@@ -243,7 +273,7 @@ namespace Beagle.WebService {
 				qres.FinishedEvent += OnFinished;
 				qres.CancelledEvent += OnCancelled;
 
-				resultTable.Add(qres, results);
+				resultTable.Add(qres, sdata);
 			}
 		}
 
@@ -251,19 +281,85 @@ namespace Beagle.WebService {
 		{
 			if (qres != null) {
 
-				if (resultTable.Contains(qres)) 
-					((ArrayList) resultTable[qres]).Sort();
-
-				resultTable.Remove(qres);
-				
+				if (resultTable.Contains(qres)) {
+					SessionData sdata = ((SessionData) resultTable[qres]);	
+					sdata.results.Sort();
+				}
 				qres.HitsAddedEvent -= OnHitsAdded;
 				qres.HitsSubtractedEvent -= OnHitsSubtracted;
 				qres.FinishedEvent -= OnFinished;
 				qres.CancelledEvent -= OnCancelled;
 
+				resultTable.Remove(qres);
 				qres.Dispose ();
 			}
 		}
+		
+		private class SessionData {
+		
+			private bool _localRequest;
+			private ArrayList _results;
+			private Query _query;
+			
+			public SessionData (Query _query, ArrayList _results, bool _localRequest)
+			{
+				this._localRequest = _localRequest;
+				this._results = _results;
+				this._query = _query;
+			}
+
+			public bool localRequest {
+				get { return _localRequest; }
+			}				
+										
+			public ArrayList results {
+				get { return _results; }
+			}
+			
+
+			public Query query  {
+				get { return _query; }
+			}
+		}
+
+		private ArrayList HitToNetworkHits(Hit h, Query query)
+		{
+			string snippet = "";
+			ArrayList authResults = new ArrayList();		
+						
+			Queryable queryable = h.SourceObject as Queryable;
+			
+			if (queryable == null)
+				snippet = "ERROR: hit.SourceObject is null, uri=" + h.Uri;
+			else
+				snippet = queryable.GetSnippet (query.TextAsArray, h);
+										
+			ArrayList tempResults = (ArrayList) AccessFilter.TranslateHit(h);
+
+			foreach (Hit h1 in tempResults) {
+																		
+				NetworkHit h2 = new NetworkHit();
+						
+				h2.Id = h1.Id;
+				h2.Uri = h1.Uri;
+   	    		h2.Type = h1.Type;
+				h2.MimeType = h1.MimeType;
+				h2.Source = h1.Source;
+				h2.ScoreRaw = h1.ScoreRaw;
+				h2.ScoreMultiplier = h1.ScoreMultiplier;
+			
+				h2.SourceObject = h1.SourceObject;
+				
+				Hashtable sp = (Hashtable) h1.Properties;	
+				foreach (string key in sp.Keys) 
+					h2[key] = (string) sp[key];
+							
+				h2.snippet = snippet;
+						
+				authResults.Add(h2);
+			}
+			return authResults;
+		}				
 
 		private const int MAX_RESULTS_PER_CALL = 20;
 		
@@ -273,24 +369,26 @@ namespace Beagle.WebService {
 		public const int SC_INVALID_SEARCH_TOKEN = -3;
 
 		//Full beagledQuery
-		public searchResult doQuery(searchRequest sreq)
-		{				
-			searchResult sr; 	
+		public searchResult doQuery(searchRequest sreq, bool isLocalReq)
+		{	
+			searchResult sr;
 			//if (sreq == (MarshalByRef)(null))
 				//return new searchResult();
 			if (sreq.text == null || sreq.text.Length == 0 ||
 				(sreq.text.Length == 1 && sreq.text[0].Trim() == "") ) {
 				
-			    sr = new searchResult(); 
+			    sr = new searchResult();
 			    sr.statusCode = SC_INVALID_QUERY;
 			    sr.statusMsg = "Error: No search terms specified";
-				return sr; 
+				return sr;
 			}
 				
-			Query query = new Query ();
-
-			foreach (string text in sreq.text)
-				query.AddText(text);
+			Query query = new Query();
+			
+			foreach (string text in sreq.text) 
+				query.AddText(text);				
+			
+			Console.WriteLine("WebServiceBackEnd: Received {0} WebService Query with search term: {1}", isLocalReq ? "Local":"External", query.QuotedText);
 
 			if (sreq.mimeType != null && sreq.mimeType[0] != null)
 				foreach (string mtype in sreq.mimeType)
@@ -298,147 +396,212 @@ namespace Beagle.WebService {
 
 			if (sreq.searchSources != null && sreq.searchSources[0] != null)
 				foreach (string src in sreq.searchSources)
-					query.AddSource(src);	
+					query.AddSource(src);
 
-			if (sreq.qdomain > 0) 
+			//FIXME: Add check to restrict queryDomain to Local or Neighborhood ?
+			//Having this Global can cause cascading/looping of requests.
+			if (sreq.qdomain > 0)
 				query.AddDomain(sreq.qdomain);
-							
-			return execQuery(query);
-		}
-				
-		private searchResult execQuery (Query query)
-		{
-			ArrayList results = new ArrayList();
+
+			ArrayList results = ArrayList.Synchronized(new ArrayList());
+			
 			QueryResult qres = new QueryResult ();
 			
 			//Console.WriteLine("WebServiceBackEnd: Starting Query for string \"{0}\"",	query.QuotedText);
 
-			AttachQueryResult (qres, results);
-
 			string searchId = TokenGenerator();
+						
+			SessionData sdata = new SessionData(query, results, isLocalReq);
+				
+			AttachQueryResult (qres, sdata);
+			
 /* Include this code, if sessionID passed from front-end:
-			if (sessionTable.Contains(searchId)) 
-				sessionTable[searchId] = results;
+			if (sessionTable.Contains(searchId))
+				sessionTable[searchId] = sdata;
 			else
-*/			
-				sessionTable.Add(searchId, results);
+*/
+			sessionTable.Add(searchId, sdata);
 		
 			QueryDriver.DoQuery (query, qres);
 
-			while ((resultTable.Contains(qres)) && (results.Count < MAX_RESULTS_PER_CALL)) 
+			while (resultTable.Contains(qres) && (results.Count < MAX_RESULTS_PER_CALL) )
 				Thread.Sleep(10);
 
 			//Console.WriteLine("WebServiceBackEnd: Got {0} results from beagled", results.Count);
-			searchResult sr = new searchResult();
+			sr = new searchResult();
 
-			sr.numResults = results.Count < MAX_RESULTS_PER_CALL ? results.Count: MAX_RESULTS_PER_CALL;
-			sr.hitResults = new hitResult[sr.numResults];
-
-			int i = 0;
-			foreach (Hit h in results) {
-							
-				sr.hitResults[i] = new hitResult();
-				sr.hitResults[i].id = h.Id;
-				sr.hitResults[i].uri = h.Uri.ToString(); 		
-	                        sr.hitResults[i].resourceType = h.Type;		
-				sr.hitResults[i].mimeType = h.MimeType;
-				sr.hitResults[i].source = h.Source;
-				sr.hitResults[i].score = h.Score;
-
-				Hashtable sp = (Hashtable) h.Properties;
-				sr.hitResults[i].properties = new HitProperty[sp.Count];
-
-				int j = 0;
-				foreach (string key in sp.Keys) {
-					sr.hitResults[i].properties[j] = new HitProperty();
-					sr.hitResults[i].properties[j].PKey = key;
-					sr.hitResults[i].properties[j++].PVal = (string) sp[key];	
-				}
-
-				if (++i == sr.numResults)
-					break;
-			}
-
-			sr.firstResultIndex = 0;
-			sr.totalResults = results.Count;
-
-			sr.searchToken = "";
-			//if (results.Count > MAX_RESULTS_PER_CALL) 
-			if (sr.totalResults > 0)
-				sr.searchToken = searchId;
-				
-			sr.statusCode = SC_QUERY_SUCCESS;
-			sr.statusMsg = "Success";
+			if (results.Count != 0) 
+			 lock (results.SyncRoot) { //Lock results ArrayList to prevent more Hits added till we've processed doQuery
 			
-			return sr;
+				sr.numResults = results.Count < MAX_RESULTS_PER_CALL ? results.Count: MAX_RESULTS_PER_CALL;	
+				sr.hitResults = new hitResult[sr.numResults];
+				
+				int i = 0; 
+			    // Console.WriteLine(sr.numResults);
+			    				
+				for (int n = 0; n < sr.numResults; n++) {
+				
+					Hit h = (Hit) results[n];
+			
+					string snippet = ""; 
+			
+					if (isLocalReq) {
+						
+						//Get Snippet before AuthenticateHit call changes the Uri:
+						Queryable queryable = h.SourceObject as Queryable;
+						if (queryable == null)
+							snippet = "ERROR: hit.SourceObject is null, uri=" + h.Uri;
+						else
+							snippet = queryable.GetSnippet (query.TextAsArray, h);
+					}
+					else 
+						snippet = ((NetworkHit) h).snippet;					
+								
+					sr.hitResults[i] = new hitResult();
+					sr.hitResults[i].id = h.Id;
+					sr.hitResults[i].uri = h.Uri.ToString();
+	        	    sr.hitResults[i].resourceType = h.Type;
+					sr.hitResults[i].mimeType = h.MimeType;
+					sr.hitResults[i].source = h.Source;
+					sr.hitResults[i].scoreRaw = h.ScoreRaw;
+					sr.hitResults[i].scoreMultiplier = h.ScoreMultiplier;
+					
+					Hashtable sp = (Hashtable) h.Properties;
+					sr.hitResults[i].properties = new HitProperty[sp.Count];
+	
+					int j = 0;
+					foreach (string key in sp.Keys) {
+						sr.hitResults[i].properties[j] = new HitProperty();
+						sr.hitResults[i].properties[j].PKey = key;
+						sr.hitResults[i].properties[j++].PVal = (string) sp[key];
+					}
+						
+					sr.hitResults[i].snippet = snippet;
+	
+					i++;
+				}					
+			 } //end lock
+			 else {
+
+			    sr.numResults = 0;
+				sr.hitResults = new hitResult[sr.numResults];	
+			 }
+
+			 sr.totalResults = results.Count;
+			 
+			 sr.firstResultIndex = 0;			 
+			 sr.searchToken = "";
+				
+			 if (sr.totalResults > 0)
+				sr.searchToken = searchId;
+					
+			 sr.statusCode = SC_QUERY_SUCCESS;
+			 sr.statusMsg = "Success";
+			 Console.WriteLine("WebServiceBackEnd: Total Results = "  + sr.totalResults);			
+			 return sr;
 		}
 
-		public searchResult getMoreResults(string searchToken, int startIndex)
-		{
-			searchResult sr = new searchResult();							
+		public searchResult getMoreResults(string searchToken, int startIndex, bool isLocalReq)
+		{					
+			searchResult sr = new searchResult();
 			sr.numResults = 0;
 			
-			ArrayList results = (ArrayList) sessionTable[searchToken];
+			ArrayList results = ((SessionData)sessionTable[searchToken]).results;
 			if (results == null) {
 				sr.statusCode = SC_INVALID_SEARCH_TOKEN;
 				sr.statusMsg = "Error: Invalid Search Token";
+				Console.WriteLine("GetMoreResults: Invalid Search Token received ");
 				return sr;
 			}
 
-			if (startIndex < results.Count)
-				sr.numResults = (results.Count < startIndex + MAX_RESULTS_PER_CALL) ? (results.Count - startIndex): MAX_RESULTS_PER_CALL;
-
-			sr.hitResults = new hitResult[sr.numResults];
-
-			int k = startIndex;
-			for (int i = 0; i < sr.numResults; i++)   {
+			lock (results.SyncRoot) { //Lock results ArrayList to prevent more Hits added till we've processed doQuery
+ 
+ 				int i = 0;
+ 				
+				if (startIndex < results.Count)
+					sr.numResults = (results.Count < startIndex + MAX_RESULTS_PER_CALL) ? (results.Count - startIndex): MAX_RESULTS_PER_CALL;
 				
-				Hit h = (Hit) results[k++];
+				sr.hitResults = new hitResult[sr.numResults];
+				
+				Query query = ((SessionData)sessionTable[searchToken]).query;
+			
+				for (int k = startIndex; (i < sr.numResults) && (k < results.Count); k++)   {		
+				
+					Hit h = (Hit) results[k];
+			
+					string snippet = ""; 
+			
+					if (isLocalReq) {
+						
+						//Get Snippet before AuthenticateHit call changes the Uri:
+						Queryable queryable = h.SourceObject as Queryable;
+						if (queryable == null)
+							snippet = "ERROR: hit.SourceObject is null, uri=" + h.Uri;
+						else
+							snippet = queryable.GetSnippet (query.TextAsArray, h);
+					}
+					else 
+						snippet = ((NetworkHit) h).snippet;					
+								
+					sr.hitResults[i] = new hitResult();
+					sr.hitResults[i].id = h.Id;
+					sr.hitResults[i].uri = h.Uri.ToString();
+	        	    sr.hitResults[i].resourceType = h.Type;
+					sr.hitResults[i].mimeType = h.MimeType;
+					sr.hitResults[i].source = h.Source;
+					sr.hitResults[i].scoreRaw = h.ScoreRaw;
+					sr.hitResults[i].scoreMultiplier = h.ScoreMultiplier;
+					
+					Hashtable sp = (Hashtable) h.Properties;
+					sr.hitResults[i].properties = new HitProperty[sp.Count];
+	
+					int j = 0;
+					foreach (string key in sp.Keys) {
+						sr.hitResults[i].properties[j] = new HitProperty();
+						sr.hitResults[i].properties[j].PKey = key;
+						sr.hitResults[i].properties[j++].PVal = (string) sp[key];
+					}
+						
+					sr.hitResults[i].snippet = snippet;
+					i++;
+				}												
+			} //end lock
 
-				sr.hitResults[i] = new hitResult();
-				sr.hitResults[i].id = h.Id;
-				sr.hitResults[i].uri = h.Uri.ToString(); 		
-	            sr.hitResults[i].resourceType = h.Type;		
-				sr.hitResults[i].mimeType = h.MimeType;
-				sr.hitResults[i].source = h.Source;
-				sr.hitResults[i].score = h.Score;
-
-				Hashtable sp = (Hashtable) h.Properties;
-				sr.hitResults[i].properties = new HitProperty[sp.Count];
-
-				int j = 0;
-				foreach (string key in sp.Keys) {
-					sr.hitResults[i].properties[j] = new HitProperty();
-					sr.hitResults[i].properties[j].PKey = key;
-					sr.hitResults[i].properties[j++].PVal = (string) sp[key];
-				}
-			}
-
-			sr.firstResultIndex = startIndex;
 			sr.totalResults = results.Count;
-
+													
+			sr.firstResultIndex = startIndex;
 			sr.searchToken = "";
-			//if (results.Count > startIndex + MAX_RESULTS_PER_CALL)
+			
 			if (sr.totalResults > 0)
 				sr.searchToken = searchToken;
 				
 			sr.statusCode = SC_QUERY_SUCCESS;
 			sr.statusMsg = "Success";
-
+			//Console.WriteLine("WebServiceQuery: Total Results = "  + sr.totalResults);	
 			return sr;
 		}
 
 		//Returns a 15-char random alpha-numeric string similar to ASP.NET sessionId
-		private string TokenGenerator() 
+		private string TokenGenerator()
 		{
-			const int TOKEN_LEN = 15; 
+			const int TOKEN_LEN = 15;
 
 			Random r = new Random();
-			string token = ((Char)((int)((26 * r.NextDouble()) + 'a')) + System.Guid.NewGuid().ToString()).Substring (0, TOKEN_LEN); 
+			string token = ((Char)((int)((26 * r.NextDouble()) + 'a')) + System.Guid.NewGuid().ToString()).Substring (0, TOKEN_LEN);
 
 			char alpha = (Char)((int)((26 * r.NextDouble()) + 'a'));
-
+				
 			return (token.Replace('-', alpha));
 		}
-    }	
+    }
+	
+	public class NetworkHit: Hit {
+	
+		private string _snippet;
+	
+		public string snippet {
+			get { return _snippet; }
+			set { _snippet = value; }
+		}
+	}    
 }

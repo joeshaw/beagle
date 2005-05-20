@@ -395,6 +395,7 @@ WEBSERVICES_BACKEND_ASSEMBLIES = \
 	$(BEAGLED_LIBS)
 
 WEBSERVICES_BACKEND_CSFILES = \
+	$(webservicesdir)/ExternalAccessFilter.cs	\
 	$(webservicesdir)/WebBackEnd.cs 	\
 	$(webservicesdir)/WebServiceBackEnd.cs
 

@@ -195,13 +195,12 @@ namespace WebService_CodeBehind {
 	private string convertUrls(string buf)
 	{
 		//Replace all URL's
-	  	return buf.Replace("href=\"", "href=\"" + Session["InitialReqUrl"] + "?");
+	  	//return buf.Replace("href=\"", "href=\"" + Session["InitialReqUrl"] + "?");
 
-/*	  //Replace specific actions in URL's
+	  //Replace specific actions in URL's
 	  string buf1 = buf.Replace("href=\"action:", "href=\"" + Session["InitialReqUrl"] + "?action:"); 
 	  string buf2 = buf1.Replace("href=\"dynaction:", "href=\"" + Session["InitialReqUrl"] + "?dynaction:"); 
-		return buf2;
-*/
+	  return buf2;
 	}
 
 	protected void Search_Click(object o, EventArgs e) {
@@ -242,7 +241,7 @@ namespace WebService_CodeBehind {
 		} 
 
 		string sessId = Session.SessionID;
-		string response = remoteObj.doQuery(sessId, SearchBox.Text, searchSrc);
+		string response = remoteObj.doQuery(sessId, SearchBox.Text, searchSrc, isLocalReq());
 		
 		if (response.StartsWith(NO_RESULTS))  {
 				Output.Text = HeaderMsg + response;

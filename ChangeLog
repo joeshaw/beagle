@@ -1,3 +1,10 @@
+2005-05-20  Vijay K. Nanjundaswamy <knvijay@novell.com>
+
+	* beagled/WebServices/WebFrontEnd,WebBackEnd.cs,ExternalAccessFilter.cs:
+    	  beagled/WebServices/WebServiceFrontEnd.cs,WebServiceBackEnd.cs: 
+	  Updates to distinguish between local and external web/web-service access,
+	  and do filtering of hit results for external accesses.
+
 2005-05-19  Vijay K. Nanjundaswamy <knvijay@novell.com>
 
 	* beagled/WebServices/WebBackEnd.cs: Updates to work with recent Beagle code changes
