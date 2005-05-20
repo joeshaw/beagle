@@ -1,8 +1,10 @@
 # Warnings we don't want to see
 # 0067 = event defined but not used
 # 0618 = Mono.Posix.Syscall is obsolete
+# 0169 = The private method/field 'foo' is never used
+# 0164 = This label has not been referenced
 
-CSC = mcs -debug -nowarn:0067,0618,0619
+CSC = mcs -debug -nowarn:0067,0618,0619,0169,0164
 
 PLUGIN_TARGET = BeagleDaemonPlugins.dll
 
