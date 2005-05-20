@@ -120,6 +120,10 @@ namespace Beagle.Daemon {
 			get { return driver.IndexDirectory; }
 		}
 
+		protected string IndexStoreDirectory {
+			get { return driver.StorePath; }
+		}
+
 		protected LuceneDriver Driver {
 			get { return driver; }
 		}

@@ -97,11 +97,14 @@ namespace Beagle.Daemon.EvolutionDataServerQueryable {
 			
 			get {
 				if (indexed_through == DateTime.MinValue) {
-					string filename = Path.Combine (IndexDirectory, "IndexedThrough");
+					string filename = Path.Combine (IndexStoreDirectory, "IndexedThrough");
 					
-					StreamReader sr = new StreamReader (filename);
-					string line = sr.ReadLine ();
-					sr.Close ();
+					string line = null;
+					try {
+						StreamReader sr = new StreamReader (filename);
+						line = sr.ReadLine ();
+						sr.Close ();
+					} catch (Exception ex) { }
 
 					if (line != null)
 						indexed_through = StringFu.StringToDateTime (line);
@@ -112,10 +115,10 @@ namespace Beagle.Daemon.EvolutionDataServerQueryable {
 			set {
 				indexed_through = value;
 
-				string filename = Path.Combine (IndexDirectory, "IndexedThrough");
-				StreamReader sr = new StreamReader (filename);
-				sr.WriteLine (StringFu.DateTimeToString (indexed_through));
-				sr.Close ();
+				string filename = Path.Combine (IndexStoreDirectory, "IndexedThrough");
+				StreamWriter sw = new StreamWriter (filename);
+				sw.WriteLine (StringFu.DateTimeToString (indexed_through));
+				sw.Close ();
 			}
 		}
 		
