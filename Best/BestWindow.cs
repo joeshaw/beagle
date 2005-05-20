@@ -515,8 +515,9 @@ namespace Best {
 				StoreSearch (searchString);
 				entry.GtkEntry.Text = searchString;
 
-				if (query != null)
-					DetachQuery ();
+				if (query != null) {
+					try { DetachQuery (); } catch (ObjectDisposedException e) {}
+				}
 
 				query = new Query ();
 				query.AddDomain (QueryDomain.Neighborhood);
