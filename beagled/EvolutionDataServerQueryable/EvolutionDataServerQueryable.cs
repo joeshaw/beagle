@@ -27,6 +27,7 @@
 
 using System;
 using System.Collections;
+using System.Globalization;
 using System.Text;
 using System.Threading;
 using System.IO;
@@ -48,9 +49,10 @@ namespace Beagle.Daemon.EvolutionDataServerQueryable {
 		//private Scheduler.Priority priority = Scheduler.Priority.Immediate;
 		private Scheduler.Priority priority = Scheduler.Priority.Delayed;
 
-		private string this_instance;
 		private string photo_dir;
-		private bool scheduled_cleanup = false;
+		private DateTime sequence_start_time;
+		
+		private DateTime indexed_through = DateTime.MinValue;
 
 		private Evolution.Book addressbook = null;
 		private Evolution.BookView book_view;
@@ -60,8 +62,6 @@ namespace Beagle.Daemon.EvolutionDataServerQueryable {
 			string dir = Path.Combine (PathFinder.StorageDir, "AddressbookIndex");
 			photo_dir = Path.Combine (dir, "Photos");
 			System.IO.Directory.CreateDirectory (photo_dir);
-
-			this_instance = Guid.NewGuid ().ToString ();
 		}
 
 		public override void Start ()
@@ -82,7 +82,10 @@ namespace Beagle.Daemon.EvolutionDataServerQueryable {
 				book_view.ContactsRemoved += OnContactsRemoved;
 				book_view.ContactsChanged += OnContactsChanged;
 				book_view.SequenceComplete += OnSequenceComplete;
+				
+				sequence_start_time = DateTime.Now;
 				book_view.Start ();
+
 			} catch (Exception ex) {
 				addressbook = null;
 				log.Warn ("Could not open Evolution addressbook.  Addressbook searching is disabled.");
@@ -90,6 +93,32 @@ namespace Beagle.Daemon.EvolutionDataServerQueryable {
 			}
 		}
 
+		private DateTime IndexedThrough {
+			
+			get {
+				if (indexed_through == DateTime.MinValue) {
+					string filename = Path.Combine (IndexDirectory, "IndexedThrough");
+					
+					StreamReader sr = new StreamReader (filename);
+					string line = sr.ReadLine ();
+					sr.Close ();
+
+					if (line != null)
+						indexed_through = StringFu.StringToDateTime (line);
+				}
+				return indexed_through;
+			}
+			
+			set {
+				indexed_through = value;
+
+				string filename = Path.Combine (IndexDirectory, "IndexedThrough");
+				StreamReader sr = new StreamReader (filename);
+				sr.WriteLine (StringFu.DateTimeToString (indexed_through));
+				sr.Close ();
+			}
+		}
+		
 		private Uri GetContactUri (Evolution.Contact contact) {
 			return GetContactUri (contact.Id);
 		}
@@ -98,15 +127,55 @@ namespace Beagle.Daemon.EvolutionDataServerQueryable {
 			return new Uri ("contact://" + id, true); // FIXME!
 		}
 
-		public Indexable ContactToIndexable (Evolution.Contact contact)
+		private static string ExtractFieldFromVCardString (string vcard_str, string field)
 		{
+			field = "\n" + field + ":";
+
+			int i = vcard_str.IndexOf (field);
+			if (i == -1)
+				return null;
+			i += field.Length;
+			
+			int j = vcard_str.IndexOf ('\n', i);
+			
+			string retval = null;
+			if (j == -1)
+				retval = vcard_str.Substring (i);
+			else
+				retval = vcard_str.Substring (i, j-i);
+
+			if (retval != null) {
+				retval = retval.Trim ();
+				if (retval.Length == 0)
+					retval = null;
+			}
+
+			return retval;
+		}
+
+		private static DateTime RevStringToDateTime (string date_str)
+		{
+			if (date_str == null)
+				return DateTime.MinValue;
+			return DateTime.ParseExact (date_str,
+						    "yyyy'-'MM'-'dd'T'HH':'mm':'ss'Z'",
+						    CultureInfo.CurrentCulture);
+		}
+
+		private Indexable ContactToIndexable (Evolution.Contact contact)
+		{
+			string vcard_str = contact.ToString (Evolution.VCardFormat.Three0);
+
+			string rev_str = ExtractFieldFromVCardString (vcard_str, "REV");
+			DateTime rev = RevStringToDateTime (rev_str);
+
+			if (rev < IndexedThrough)
+				return null;
+
 			Indexable indexable = new Indexable (GetContactUri (contact));
-			indexable.Timestamp = DateTime.Now;
+			indexable.Timestamp = rev;
 			indexable.Type = "Contact";
 						
-			indexable.AddProperty (Property.NewUnsearched ("beagle:indexinstance", this_instance));
-			indexable.AddProperty (Property.NewUnsearched ("beagle:dummy", "dummy"));
-
 			indexable.AddProperty (Property.NewKeyword ("fixme:FileAs", contact.FileAs));
 			indexable.AddProperty (Property.NewKeyword ("fixme:GivenName", contact.GivenName));
 			indexable.AddProperty (Property.NewKeyword ("fixme:FamilyName", contact.FamilyName));
@@ -197,20 +266,25 @@ namespace Beagle.Daemon.EvolutionDataServerQueryable {
 		private void AddContacts (IEnumerable contacts)
 		{
 			foreach (Evolution.Contact contact in contacts) {
-				Scheduler.Task task;
-				task = NewAddTask (ContactToIndexable (contact));
-				task.Priority = priority;
-				ThisScheduler.Add (task);
+				Indexable indexable = ContactToIndexable (contact);
+				if (indexable != null) {
+					Scheduler.Task task;
+					task = NewAddTask (indexable);
+					task.Priority = priority;
+					ThisScheduler.Add (task);
+				}
 			}
 		}
 		
 		private void RemoveContacts (IEnumerable contacts)
 		{
 			foreach (string id in contacts) {
+
 				Scheduler.Task task;
 				task = NewRemoveTask (GetContactUri (id));
 				task.Priority = priority;
 				ThisScheduler.Add (task);
+				
 				string filename = GetPhotoFilename (id);
 				if (filename != null && File.Exists (filename)) 
 					File.Delete (filename);
@@ -249,58 +323,21 @@ namespace Beagle.Daemon.EvolutionDataServerQueryable {
 			return Path.Combine (photo_dir, id);
 		}
 		
-		private void CleanupHits (LNS.Hits lucene_hits)
-		{
-			int n_hits = lucene_hits.Length ();
-
-			for (int i = 0; i < n_hits; i++) {
-				Document doc = lucene_hits.Doc (i);
-				Scheduler.Task task;
-				task = NewRemoveTask (new Uri (doc.Get ("Uri")));
-				task.Priority = priority;
-				ThisScheduler.Add (task);
-				string filename = doc.Get ("Photo");
-				if (filename != null && File.Exists (filename))
-					File.Delete (filename);
-			}
-
-			log.Debug ("Cleaned up {0} entries", n_hits);
-
-			// Now that we're done synching with the original state of the addressbook, switch all new changes to Immediate mode
-			priority = Scheduler.Priority.Immediate;
-		}
-
-		private void Cleanup (Scheduler.Task task)
-		{
-			Driver.Flush ();
-
-			LNS.BooleanQuery query = new LNS.BooleanQuery ();
-			Term term = new Term ("prop:beagle:dummy",  "dummy");
-			LNS.Query term_query = new LNS.TermQuery (term);
-			query.Add (term_query, true, false);
-			
-			term = new Term ("prop:beagle:indexinstance",
-					 this_instance);
-			term_query = new LNS.TermQuery (term);
-			query.Add (term_query, false, true);
-
-			LNS.IndexSearcher searcher = new LNS.IndexSearcher (Driver.Store);
-			LNS.Hits lucene_hits = searcher.Search (query);
-			CleanupHits (lucene_hits);
-		}
-
 		private void OnSequenceComplete (object o,
 						 Evolution.SequenceCompleteArgs args)
 		{
-			if (!scheduled_cleanup) {
-				scheduled_cleanup = true;
-				Scheduler.Task task = NewTaskFromHook (new Scheduler.TaskHook (Cleanup));
-				task.Weight = 2;
-				task.Tag = "Cleanup " + this_instance;
-				task.Priority = priority;
-				ThisScheduler.Add (task);
-			}
-		}		
+			// Contacts that get changed while the beagled is
+			// running will be re-indexed during the next scan.
+			// That isn't optimal, but is much better than the
+			// current situation.
+			IndexedThrough = sequence_start_time;
+
+			// Now that we're done synching with the original
+			// state of the addressbook, switch all new changes to
+			// Immediate mode
+			priority = Scheduler.Priority.Immediate;
+		}
+
 	}
 
 }
