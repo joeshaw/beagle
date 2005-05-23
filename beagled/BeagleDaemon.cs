@@ -89,6 +89,39 @@ namespace Beagle.Daemon {
 			}
 		}
 
+		private static void PrintUsage ()
+		{
+			string usage =
+				"beagled: The daemon to the Beagle search system.\n" +
+				"Web page: http://www.gnome.org/projects/beagle\n" +
+				"Copyright (C) 2004-2005 Novell, Inc.\n\n";
+
+			usage +=
+				"Usage: beagled [OPTIONS]\n\n" +
+				"Options:\n" +
+				"  --foreground\t\tRun the daemon in the foreground.\n" +
+				"  --fg\t\t\tRun the daemon in the foreground.\n" +
+				"  --background\t\tRun the daemon in the background.\n" +
+				"  --bg\t\t\tRun the daemon in the background.\n" +
+				"  --replace\t\tReplace a running daemon with a new instance.\n" +
+				"  --debug\t\tWrite out debugging information.\n" +
+				"  --debug-memory\tWrite out debugging information about memory use.\n" +
+				"  --deny-backend\tDeny a specific backend.\n" +
+				"  --allow-backend\tAllow a specific backend.\n" +
+				"  --list-backends\tList all the available backends.\n" +
+				"  --disable-scheduler\tDisable the use of the scheduler.\n" +
+				"  --help\t\tPrint this usage message.\n";
+
+#if ENABLE_WEBSERVICES
+			usage += "\n" +
+				"  --web-global\t\tAllow global access to the web interface.\n" +
+				"  --web-start\t\tStart the web server interface for this instance..n" +
+				"  --web-port\t\tPort to use for the web server interface.\n" +
+				"  --web-root\t\tRoot of the web server interface.\n";
+#endif 
+
+			Console.WriteLine (usage);
+		}
 
 		public static int Main (string[] args)
 		{
@@ -109,6 +142,12 @@ namespace Beagle.Daemon {
 				string next_arg = i < args.Length ? args [i] : null;
 
 				switch (arg) {
+				case "-h":
+				case "--help":
+					PrintUsage ();
+					Environment.Exit (0);
+					break;
+
 				case "--list-backends":
 					Console.WriteLine ("Current available backends:");
 					Console.Write (QueryDriver.ListBackends ());
