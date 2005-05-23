@@ -144,7 +144,7 @@ namespace Beagle.Daemon {
 			// and deserialize the request.
 			byte[] network_data = new byte [4096];
 			MemoryStream buffer_stream = new MemoryStream ();
-			int bytes_read, end_index = -1;
+			int bytes_read, total_bytes = 0, end_index = -1;
 
 			// We use the network_data array as an object to represent this worker.
 			Shutdown.WorkerStart (network_data, String.Format ("HandleConnection ({0})", ++connection_count));
@@ -172,6 +172,8 @@ namespace Beagle.Daemon {
 					return;
 				}
 
+				total_bytes += bytes_read;
+
 				if (bytes_read > 0) {
 					// 0xff signifies end of message
 					end_index = Array.IndexOf (network_data, (byte) 0xff);
@@ -180,6 +182,16 @@ namespace Beagle.Daemon {
 							     end_index == -1 ? bytes_read : end_index);
 				}
 			} while (bytes_read > 0 && end_index == -1);
+
+			// Something just connected to our socket and then
+			// hung up.  The IndexHelper (among other things) does
+			// this to check that a server is still running.  It's
+			// no big deal, so just clean up and close without
+			// running any handlers.
+			if (total_bytes == 0) {
+				force_close_connection = true;
+				goto cleanup;
+			}
 
 			buffer_stream.Seek (0, SeekOrigin.Begin);
 
@@ -191,8 +203,6 @@ namespace Beagle.Daemon {
 				resp = new ErrorResponse (e);
 				force_close_connection = true;
 			}
-
-			buffer_stream.Close ();
 
 			// If XmlSerializer can't deserialize the payload, we
 			// may get a null payload and not an exception.  Or
@@ -232,6 +242,9 @@ namespace Beagle.Daemon {
 				if (!this.SendResponse (resp))
 					force_close_connection = true;
 			}
+
+		cleanup:
+			buffer_stream.Close ();
 
 			if (force_close_connection || !req.Keepalive)
 				Close ();
