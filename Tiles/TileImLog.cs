@@ -213,7 +213,8 @@ namespace Beagle.Tile {
 			Process p = new Process ();
 			p.StartInfo.UseShellExecute = true;
 			p.StartInfo.FileName = "beagle-imlogviewer";
-			p.StartInfo.Arguments = Hit ["fixme:file"];
+			p.StartInfo.Arguments = String.Format ("--highlight-search \"{0}\" {1}",
+							       String.Join (" ", Query.TextAsArray), Hit ["fixme:file"]);
 
 			try {
 				p.Start ();
@@ -232,9 +233,6 @@ namespace Beagle.Tile {
 		[TileAction]
 		public void SendIm ()
 		{
-			if (Hit ["fixme:protocol"] != "aim")
-				return;
-			
 			SendImAim (Hit ["fixme:speakingto"]);
 		}
 	}
