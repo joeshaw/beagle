@@ -30,7 +30,10 @@ using System.IO;
 using Mono.Posix;
 
 namespace Beagle.Util {
-	public static class KdeUtils {
+	public class KdeUtils {
+
+		// No instantiation
+		private KdeUtils () { }
 
 		private static string [] icon_sizes = { "128x128", "64x64", "48x48", "32x32", "22x22", "16x16" };
 		private static string [] kde_locations = { ExternalStringsHack.KdePrefix, Environment.GetEnvironmentVariable ("KDEDIR"), "/opt/kde3", "/usr" };
