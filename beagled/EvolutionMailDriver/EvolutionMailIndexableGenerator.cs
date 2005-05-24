@@ -250,6 +250,49 @@ namespace Beagle.Daemon.EvolutionMailDriver {
 		{
 			return this.CrawlFile.FullName.GetHashCode ();
 		}
+
+		// FIXME FIXME FIXME!
+		// This is a fragile piece-of-shit parser.
+		// This will not do the right thing if the address is quoted
+		// or contains special characters.  For example, we will do the wrong thing
+		// with:
+		// "Foo, bar" <foo@bar.com>, Zoo <zoo@bar.com>"
+		// Also, this almost certainly won't deal well w/ broken addresses.
+		static protected ICollection ExtractAddresses (string addr_str)
+		{
+			string [] split = addr_str.Split (',');
+
+			ArrayList addresses = new ArrayList ();
+			foreach (string part in split) {
+				if (part == "")
+					continue;
+				if (part [part.Length - 1] == '>') {
+					int i = part.LastIndexOf ('<');
+					addresses.Add (part.Substring (i+1, part.Length-i-2));
+				} else if (part [part.Length - 1] == ')') {
+					int i = part.LastIndexOf ('(');
+					addresses.Add (part.Substring (i+1, part.Length-i-2));
+				} else {
+					addresses.Add (part);
+				}
+			}
+			
+			return addresses;
+		}
+
+		static protected void MapAddressStringToProperties (Indexable indexable,
+								    string    property_key,
+								    string    address_string)
+		{
+			if (address_string == null || address_string.Length == 0)
+				return;
+
+			foreach (string one_addr in ExtractAddresses (address_string)) {
+				Property prop;
+				prop = Property.NewKeyword (property_key, one_addr);
+				indexable.AddProperty (prop);
+			}
+		}
 	}
 
 	public class EvolutionMailIndexableGeneratorMbox : EvolutionMailIndexableGenerator {
@@ -385,6 +428,9 @@ namespace Beagle.Daemon.EvolutionMailDriver {
 				
 				Indexable indexable = this.GMimeMessageToIndexable (uid, message);
 				++this.indexed_count;
+
+				// HACK: update your recipients
+				EvolutionMailQueryable.AddAsYourRecipient (indexable);
 				
 				return indexable;
 			}
@@ -400,19 +446,30 @@ namespace Beagle.Daemon.EvolutionMailDriver {
 			indexable.MimeType = "text/plain";
 			indexable.CacheContent = false;
 
-			indexable.AddProperty (Property.New ("fixme:client", "evolution"));
+			indexable.AddProperty (Property.NewKeyword ("fixme:client", "evolution"));
 
-			indexable.AddProperty (Property.NewKeyword ("dc:title",       GMime.Utils.HeaderDecodePhrase (message.Subject)));
+			string subject = GMime.Utils.HeaderDecodePhrase (message.Subject);
+			indexable.AddProperty (Property.New ("dc:title", subject));
+			indexable.AddProperty (Property.New ("fixme:subject", subject));
 
-			indexable.AddProperty (Property.NewKeyword ("fixme:account",  "Local"));
-                        indexable.AddProperty (Property.NewKeyword ("fixme:folder",   this.folder_name));
-			indexable.AddProperty (Property.NewKeyword ("fixme:subject",  GMime.Utils.HeaderDecodePhrase (message.Subject)));
-                        indexable.AddProperty (Property.NewKeyword ("fixme:to",       message.GetRecipientsAsString (GMime.Message.RecipientType.To)));
-			indexable.AddProperty (Property.NewKeyword ("fixme:from",     GMime.Utils.HeaderDecodePhrase (message.Sender)));
-			indexable.AddProperty (Property.NewKeyword ("fixme:cc",       message.GetRecipientsAsString (GMime.Message.RecipientType.Cc)));
+			indexable.AddProperty (Property.NewKeyword ("fixme:account", "Local"));
+                        indexable.AddProperty (Property.NewKeyword ("fixme:folder", this.folder_name));
 
-			if (this.folder_name == "Sent")
+			string to_str = message.GetRecipientsAsString (GMime.Message.RecipientType.To);
+			string cc_str = message.GetRecipientsAsString (GMime.Message.RecipientType.Cc);
+			string from_str = GMime.Utils.HeaderDecodePhrase (message.Sender);
+                        indexable.AddProperty (Property.NewKeyword ("fixme:to", to_str));       
+			indexable.AddProperty (Property.NewKeyword ("fixme:cc", cc_str));
+			indexable.AddProperty (Property.NewKeyword ("fixme:from", from_str));
+
+			if (this.folder_name == "Sent") {
 				indexable.AddProperty (Property.NewFlag ("fixme:isSent"));
+
+				MapAddressStringToProperties (indexable, "fixme:sentTo", to_str);
+				MapAddressStringToProperties (indexable, "fixme:sentTo", cc_str);
+			} else {
+				MapAddressStringToProperties (indexable, "fixme:gotFrom", from_str);
+			}
 
 			if (message.MimePart is GMime.Multipart || message.MimePart is GMime.MessagePart)
 				indexable.AddProperty (Property.NewFlag ("fixme:hasAttachments"));
@@ -781,6 +838,9 @@ namespace Beagle.Daemon.EvolutionMailDriver {
 			} 
 
 			this.deleted_list.Remove (mi.uid);
+			
+			// HACK: update your recipients
+			EvolutionMailQueryable.AddAsYourRecipient (indexable);
 
 			return indexable;
 		}
@@ -798,7 +858,8 @@ namespace Beagle.Daemon.EvolutionMailDriver {
 			indexable.Timestamp = messageInfo.Date;
 			indexable.Type = "MailMessage";
 
-			indexable.AddProperty (Property.NewKeyword ("dc:title", messageInfo.subject));
+			indexable.AddProperty (Property.New ("dc:title", messageInfo.subject));
+			indexable.AddProperty (Property.New ("fixme:subject",  messageInfo.subject));
 
 			indexable.AddProperty (Property.NewKeyword ("fixme:account",  this.imap_name));
                         indexable.AddProperty (Property.NewKeyword ("fixme:folder",   this.folder_name));
@@ -815,8 +876,14 @@ namespace Beagle.Daemon.EvolutionMailDriver {
 			if (messageInfo.sent != DateTime.MinValue)
 				indexable.AddProperty (Property.NewDate ("fixme:sentdate", messageInfo.sent));
 
-			if (this.folder_name == "Sent")
+			if (this.folder_name == "Sent") {
 				indexable.AddProperty (Property.NewFlag ("fixme:isSent"));
+
+				MapAddressStringToProperties (indexable, "fixme:sentTo", messageInfo.to);
+				MapAddressStringToProperties (indexable, "fixme:sentTo", messageInfo.cc);
+			} else {
+				MapAddressStringToProperties (indexable, "fixme:gotFrom", messageInfo.from);
+			}
 
 			if (messageInfo.IsAnswered)
 				indexable.AddProperty (Property.NewFlag ("fixme:isAnswered"));

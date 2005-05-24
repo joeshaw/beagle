@@ -1,5 +1,5 @@
 //
-// Snippet.cs
+// QueryPart.cs
 //
 // Copyright (C) 2005 Novell, Inc.
 //
@@ -24,49 +24,74 @@
 // DEALINGS IN THE SOFTWARE.
 //
 
+
 using System;
+using System.IO;
 using System.Collections;
 using System.Xml.Serialization;
 
-using Beagle.Util;
+using BU = Beagle.Util;
 
 namespace Beagle {
 
-	public class SnippetRequest : RequestMessage {
+	public class QueryPart {
 
-		public Hit Hit;
-		public string[] QueryTerms;
+		public const string TargetAll = "_all";
+		public const string TargetText = "_text";
+		public const string TargetProperties = "_prop";
 
-		public SnippetRequest () : base (false) { }
+		private string target;
+		private string text;
+		private bool is_keyword;
+		private bool is_required;
+		private bool is_prohibited;
 
-		public SnippetRequest (string[] query_terms, Hit hit) : base (false)
-		{
-			this.QueryTerms = query_terms;
-			this.Hit = hit;
+		public QueryPart ()
+		{ }
+
+		public string Target {
+			get { return target; }
+			set { target = value; }
 		}
 
-		public SnippetRequest (ICollection query_terms, Hit hit) : base (false)
-		{
-			this.QueryTerms = new string [query_terms.Count];
-
-			int i = 0;
-			foreach (string term in query_terms) {
-				this.QueryTerms [i] = term;
-				++i;
-			}
-
-			this.Hit = hit;
+		public string Text {
+			get { return text; }
+			set { text = value; }
 		}
-	}
 
-	public class SnippetResponse : ResponseMessage {
-		public string Snippet;
+		public bool IsKeyword {
+			get { return is_keyword; }
+			set { is_keyword = value; }
+		}
 
-		public SnippetResponse () { }
+		public bool IsRequired {
+			get { return is_required; }
+			set { is_required = value; }
+		}
 
-		public SnippetResponse (string snippet)
-		{
-			this.Snippet = snippet;
+		public bool IsProhibited {
+			get { return is_prohibited; }
+			set { is_prohibited = value; }
+		}
+
+		[XmlIgnore]
+		public bool TargetIsAll {
+			get { return target == TargetAll; }
+		}
+
+		[XmlIgnore]
+		public bool TargetIsText {
+			get { return target == TargetText; }
+		}
+
+		[XmlIgnore]
+		public bool TargetIsProperties {
+			get { return target == TargetProperties; }
+		}
+
+		[XmlIgnore]
+		public bool TargetIsSpecificProperty {
+			get { return target != TargetAll && target != TargetText && target != TargetProperties; }
 		}
 	}
 }

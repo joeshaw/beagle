@@ -411,14 +411,36 @@ namespace Beagle.Util {
 
 		static public string CleanupInvalidXmlCharacters (string str)
 		{
-			int len = str.Length;
-			char[] char_array = new char[len];
+			if (str == null)
+				return null;
 
-			for (int i = 0; i < len; i++) {
-				if (IsInvalid (str[i]))
-					char_array[i] = ' ';
+			int len = str.Length;
+			
+			// Find the first invalid character in the string
+			int i = 0;
+			while (i < len && ! IsInvalid (str [i]))
+				++i;
+
+			// If the string doesn't contain invalid characters,
+			// just return it.
+			if (i >= len)
+				return str;
+
+			// Otherwise copy the first chunk, then go through
+			// character by character looking for more invalid stuff.
+
+			char [] char_array = new char[len];
+			
+			for (int j = 0; j < i; ++i)
+				char_array [j] = str [j];
+			char_array [i] = ' ';
+
+			for (int j = i+1; j < len; ++j) {
+				char c = str [i];
+				if (IsInvalid (c))
+					char_array [i] = ' ';
 				else
-					char_array[i] = str[i];
+					char_array [i] = c;
 			}
 
 			return new string (char_array);

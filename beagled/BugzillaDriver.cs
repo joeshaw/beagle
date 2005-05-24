@@ -58,7 +58,7 @@ namespace Beagle.Daemon {
 
 		public bool AcceptQuery (Query query)
 		{
-			if (! query.HasText)
+			if (query.IsEmpty)
 				return false;
 			return true;
 		}

@@ -173,11 +173,11 @@ namespace Beagle {
 		public ResponseMessage Send ()
 		{
 			Client client = new Client (this.client_name);
-			Logger.Log.Debug ("Sending message");
+			//Logger.Log.Debug ("Sending message");
 			ResponseMessage resp = client.Send (this);
-			Logger.Log.Debug ("Got reply");
+			//Logger.Log.Debug ("Got reply");
 			client.Close ();
-			Logger.Log.Debug ("Closed client");
+			//Logger.Log.Debug ("Closed client");
 
 			// Add some nice syntactic sugar by throwing an
 			// exception if the response is an error.

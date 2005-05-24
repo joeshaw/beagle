@@ -219,7 +219,7 @@ namespace Beagle {
 			do {
 				bytes_read = stream.Read (this.network_data, 0, 4096);
 
-				Logger.Log.Debug ("Read {0} bytes", bytes_read);
+				//Logger.Log.Debug ("Read {0} bytes", bytes_read);
 
 				if (bytes_read > 0) {
 					// 0xff signifies end of message

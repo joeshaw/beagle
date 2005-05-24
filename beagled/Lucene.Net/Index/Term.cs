@@ -94,7 +94,7 @@ namespace Lucene.Net.Index
 		/// <summary>Resets the Field and text of a Term. </summary>
 		internal void  Set(System.String fld, System.String txt)
 		{
-			field = fld;
+			field = String.Intern(fld); // FIXED(?) trow@novell.com on May 24, 2005
 			text = txt;
 		}
 		

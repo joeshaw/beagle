@@ -28,6 +28,7 @@
 using System;
 using System.IO;
 using System.Collections;
+using System.Text;
 using System.Xml.Serialization;
 
 using BU = Beagle.Util;
@@ -45,7 +46,7 @@ namespace Beagle {
 		// FIXME: This is a good default when on an airplane.
 		private Beagle.QueryDomain domainFlags = Beagle.QueryDomain.Local; 
 
-		private ArrayList text = new ArrayList ();
+		private ArrayList parts = new ArrayList ();
 		private ArrayList mimeTypes = new ArrayList ();
 		private ArrayList hitTypes = new ArrayList ();
 		private ArrayList searchSources = new ArrayList ();
@@ -122,9 +123,18 @@ namespace Beagle {
 
 		///////////////////////////////////////////////////////////////
 
+		public void AddPart (QueryPart part)
+		{
+			parts.Add (part);
+		}
+
 		public void AddTextRaw (string str)
 		{
-			text.Add (str);
+			QueryPart part = new QueryPart ();
+			part.Target = QueryPart.TargetAll;
+			part.Text = str;
+
+			parts.Add (part);
 		}
 
 		public void AddText (string str)
@@ -135,35 +145,46 @@ namespace Beagle {
 
 		// FIXME: Since it is possible to introduce quotes via the AddTextRaw
 		// method, this function should replace " with \" when appropriate.
+		// FIXME: This doesn't really do the right thing when we have property queries.
+		[XmlIgnore]
 		public string QuotedText {
 			get { 
-				string[] parts = new string [text.Count];
-				for (int i = 0; i < text.Count; ++i) {
-					string t = (string) text [i];
-					if (BU.StringFu.ContainsWhiteSpace (t))
-						parts [i] = "\"" + t + "\"";
-					else
-						parts [i] = t;
+				StringBuilder builder = new StringBuilder ();
+				
+				foreach (QueryPart part in parts) {
+					if (part.Text == null)
+						continue;
+
+					bool has_ws = BU.StringFu.ContainsWhiteSpace (part.Text);
+					if (builder.Length > 0)
+						builder.Append (' ');
+					if (has_ws)
+						builder.Append ('"');
+					builder.Append (part.Text);
+					if (has_ws)
+						builder.Append ('"');
 				}
-				return String.Join (" ", parts);
+
+				return builder.ToString ();
 			}
 		}
 
-		[XmlArrayItem (ElementName="Text",
-			       Type=typeof(string))]
-		[XmlArray (ElementName="Text")]
-		public ArrayList Text {
-			get { return text; }
+		[XmlArrayItem (ElementName="Parts",
+			       Type=typeof (QueryPart))]
+		[XmlArray (ElementName="Part")]
+		public ArrayList Parts {
+			get { return parts; }
 		}
 
 		[XmlIgnore]
-		public string[] TextAsArray {
-			get { return (string[]) text.ToArray (typeof (string)); }
-		}
-
-		[XmlIgnore]
-		public bool HasText {
-			get { return text.Count > 0; }
+		public ICollection Text {
+			get {
+				ArrayList text = new ArrayList ();
+				foreach (QueryPart part in parts)
+					if (part.Text != null)
+						text.Add (part.Text);
+				return text;
+			}
 		}
 
 		///////////////////////////////////////////////////////////////
@@ -184,7 +205,7 @@ namespace Beagle {
 		}
 
 		[XmlArrayItem (ElementName="MimeType",
-			       Type=typeof(string))]
+			       Type=typeof (string))]
 		[XmlArray (ElementName="MimeTypes")]
 		public ArrayList MimeTypes {
 			get { return mimeTypes; }
@@ -242,7 +263,7 @@ namespace Beagle {
 		}
 
 		[XmlArrayItem (ElementName="Source",
-			       Type=typeof(string))]
+			       Type=typeof (string))]
 		[XmlArray (ElementName="Sources")]
 		public ArrayList Sources {
 			get { return searchSources; }
@@ -282,7 +303,7 @@ namespace Beagle {
 
 		[XmlIgnore]
 		public bool IsEmpty {
-			get { return text.Count == 0
+			get { return parts.Count == 0
 				      && mimeTypes.Count == 0
 				      && searchSources.Count == 0; }
 		}

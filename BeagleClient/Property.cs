@@ -25,13 +25,14 @@
 //
 
 using System;
-using BU = Beagle.Util;
 using System.Xml.Serialization;
+
+using Beagle.Util;
 
 namespace Beagle {
 	
 	[XmlInclude (typeof (Property))]
-	public class Property {
+	public class Property : IComparable {
 
 		bool   isKeyword;
 		bool   isSearched;
@@ -53,23 +54,35 @@ namespace Beagle {
 		[XmlAttribute]
 		public string Key {
 			get { return key; }
-			set { key = value; }
+			set { this.key = StringFu.CleanupInvalidXmlCharacters (value); }
 		}
 
 		[XmlAttribute]
 		public string Value {
 			get { return value; }
-			set { 
-				if (value == null)
-					this.value = null;
-				else
-					this.value = BU.StringFu.CleanupInvalidXmlCharacters (value);
-			}
+			set { this.value = StringFu.CleanupInvalidXmlCharacters (value); }
 		}
 		
 		/////////////////////////////////////
 
 		public Property () { }
+
+		public int CompareTo (object other)
+		{
+			// By convention, a non-null object always
+			// compares greater than null.
+			if (other == null)
+				return 1;
+
+			Property other_property = other as Property;
+
+			// If the other object is not a Property, compare the
+			// two objects by their hash codes.
+			if (other_property == null)
+				return this.GetHashCode ().CompareTo (other.GetHashCode ());
+
+			return String.Compare (this.Key, other_property.Key);
+		}
 		
 		static public Property New (string key, object value)
 		{
@@ -109,7 +122,7 @@ namespace Beagle {
 
 		static public Property NewDate (string key, DateTime dt)
 		{
-			return NewUnsearched (key, BU.StringFu.DateTimeToString (dt));
+			return NewUnsearched (key, StringFu.DateTimeToString (dt));
 		}
 	}
 }

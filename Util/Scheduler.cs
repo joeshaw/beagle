@@ -33,20 +33,21 @@ namespace Beagle.Util {
 
 	public class Scheduler {
 
-		static private bool no_delays = false;
+		static private double global_delay = -1.0;
 		static private bool immediate_priority_only = false;
+		static private string exercise_the_dog = null;
 
 		static Scheduler ()
 		{
-			if (Environment.GetEnvironmentVariable ("EXERCISE_THE_DOG") != null) {
-				Logger.Log.Warn ("***");
-				Logger.Log.Warn ("*** The EXERCISE_THE_DOG environment variable is deprecated.");
-				Logger.Log.Warn ("*** Please use BEAGLE_EXERCISE_THE_DOG in the future.");
-				Logger.Log.Warn ("*** We will now proceed to exercise the dog.  Thank you.");
-				Logger.Log.Warn ("***");
-				no_delays = true;
-			} else if (Environment.GetEnvironmentVariable ("BEAGLE_EXERCISE_THE_DOG") != null) {
-				no_delays = true;
+			// We used to support the EXERCISE_THE_DOG env variable, but
+			// that was dropped.  
+			exercise_the_dog = Environment.GetEnvironmentVariable ("BEAGLE_EXERCISE_THE_DOG");
+			if (exercise_the_dog != null) {
+				
+				global_delay = 0.0;
+
+				if (exercise_the_dog.Length > 2 && exercise_the_dog [0] == 't')
+					global_delay = Double.Parse (exercise_the_dog.Substring (1));
 			}
 	
 			if (Environment.GetEnvironmentVariable ("BEAGLE_IMMEDIATE_PRIORITY_ONLY") != null)
@@ -566,11 +567,12 @@ namespace Beagle.Util {
 			return SystemInformation.InputIdleTime;
 		}
 
+		// The return value and duration_of_previous_task are both measured in seconds.
 		private double ComputeDelay (Priority priority_of_next_task,
 					     double   duration_of_previous_task)
 		{
-			if (no_delays)
-				return 0;
+			if (global_delay >= 0.0)
+				return global_delay;
 
 			double rate_factor;
 

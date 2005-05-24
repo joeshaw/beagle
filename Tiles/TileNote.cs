@@ -44,8 +44,11 @@ namespace Beagle.Tile {
 		[TileAction]
 		public override void Open ()
 		{
+			// FIXME: This is broken, since the resulting shell command will not
+			// necessarily be quoted properly... query.QuotedText might return
+			// something containing quotes or other special characters.
 			string args = String.Format ("--open-note {0} --highlight-search \"{1}\"",
-						     Hit.Uri, String.Join (" ", Query.TextAsArray));
+						     Hit.Uri, Query.QuotedText);
 			
 			Process p = new Process ();
 			p.StartInfo.UseShellExecute = false;

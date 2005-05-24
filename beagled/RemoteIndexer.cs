@@ -136,7 +136,7 @@ namespace Beagle.Daemon {
 
 				bool need_helper = false;
 
-				Logger.Log.Debug ("Sending request!");
+				//Logger.Log.Debug ("Sending request!");
 				try {
 					response = request.Send () as RemoteIndexerResponse;
 					Logger.Log.Debug ("Done sending request");
@@ -166,7 +166,7 @@ namespace Beagle.Daemon {
 			}
 
 			if (response != null) {
-				Logger.Log.Debug ("Got response!");
+				//Logger.Log.Debug ("Got response!");
 				last_item_count = response.ItemCount;
 			} else if (exception_count >= 5) {
 				Logger.Log.Error ("Exception limit exceeded trying to activate a helper.  Giving up on indexing!");

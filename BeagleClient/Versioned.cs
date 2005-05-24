@@ -45,6 +45,11 @@ namespace Beagle {
 			set { timestamp = value; }
 		}
 
+		[XmlIgnore]
+		public double DaysSinceTimestamp {
+			get { return (DateTime.Now - timestamp).TotalDays; }
+		}
+
 		[XmlAttribute]
 		public bool ValidRevision {
 			get { return revision >= 0; }

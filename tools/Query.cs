@@ -78,8 +78,8 @@ class QueryTool {
 				if (hit.ValidRevision)
 					Console.WriteLine ("  Rev: {0}", hit.Revision);
 				
-				foreach (String key in hit.Keys)
-					Console.WriteLine ("    {0} = {1}", key, hit [key]);
+				foreach (Property prop in hit.Properties)
+					Console.WriteLine ("    {0} = {1}", prop.Key, prop.Value);
 				
 				Console.WriteLine ();
 			}
@@ -190,7 +190,28 @@ class QueryTool {
 				break;
 
 			default:
-				query.AddTextRaw (args [i]);
+				int j = args [i].IndexOf ('=');
+				if (j == -1) {
+					query.AddTextRaw (args [i]);
+				} else {
+					QueryPart part = new QueryPart ();
+					part.Target = args [i].Substring (0, j);
+
+					// This is very obscure notation.
+					if (args [i] [j+1] == '~') {
+						part.Text = args [i].Substring (j+2);
+						part.IsKeyword = false;
+					} else {
+						part.Text = args [i].Substring (j+1);
+						part.IsKeyword = true;
+					}
+
+					Console.WriteLine ("*** '{0}' '{1}' '{2}'",
+							   part.Target, part.Text, part.IsKeyword);
+
+					query.AddPart (part);
+				}
+
 				break;
 			}
 
@@ -218,3 +239,4 @@ class QueryTool {
 
 
 }
+	

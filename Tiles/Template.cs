@@ -67,10 +67,10 @@ namespace Beagle.Tile {
 			Setup (stream);
 		}
 
-		public void AddValues (IDictionary values)
+		public void AddProperties (ICollection properties)
 		{
-			foreach (string key in values.Keys)
-				this.values[key] = values[key];
+			foreach (Property prop in properties)
+				this.values [prop.Key] = values [prop.Value];
 			dirty = true;
 		}
 
@@ -98,7 +98,7 @@ namespace Beagle.Tile {
 				values["FolderName"] = hit.FileInfo.Directory.Name;
 			else if (hit.DirectoryInfo != null)
 				values["FolderName"] = hit.DirectoryInfo.Parent.Name;
-			AddValues (hit.Properties);
+			AddProperties (hit.Properties);
 		}
 
 		public IDictionary Values {

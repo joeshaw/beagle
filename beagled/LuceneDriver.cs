@@ -74,7 +74,9 @@ namespace Beagle.Daemon {
 		//    in the file system backend (it would be nice to have per-backend
 		//    versioning so that we didn't have to purge all indexes just
 		//    because one changed)
-		private const int MAIN_VERSION = 8;
+		// 9: changed the way properties are stored, changed in conjunction
+		//    with sane handling of multiple properties on hits.
+		private const int MAIN_VERSION = 9;
 
 		private string top_dir;
 		private Hashtable pending_by_uri = UriFu.NewHashtable ();
@@ -595,6 +597,49 @@ namespace Beagle.Daemon {
 		// Code to map to/from Lucene data types
 		//
 
+		private void AddPropertyToLuceneDocument (Document doc, Property prop)
+		{
+			if (prop.Value == null)
+				return;
+
+			Field f;
+
+			if (prop.IsSearched) {
+				f = new Field (prop.IsKeyword ? "PropertyKeyword" : "PropertyText",
+					       prop.Value,
+					       false,              // never stored
+					       true,               // always index
+					       ! prop.IsKeyword);  // only tokenize non-keywords
+				doc.Add (f);
+			}
+
+			f = new Field (String.Format ("prop:{0}:{1}",
+						      prop.IsKeyword  ? "k" : "_",
+						      prop.Key),
+				       prop.Value,
+				       true,               // always store
+				       true,               // always index
+				       ! prop.IsKeyword);  // only tokenize non-keywords
+			doc.Add (f);
+		}
+
+		private Property FieldToProperty (Field field)
+		{
+			string name = field.Name ();
+			if (name.Length < 7 || ! name.StartsWith ("prop:"))
+				return null;
+
+			string key = name.Substring (7);
+			string value = field.StringValue ();
+			
+			if (name [5] == 'k')
+				return Property.NewKeyword (key, value);
+			else if (name [6] == 's')
+				return Property.NewUnsearched (key, value);
+			else
+				return Property.New (key, value);
+		}
+
 		private Document ToLuceneDocument (Indexable indexable)
 		{			
 			Document doc = new Document ();
@@ -640,25 +685,8 @@ namespace Beagle.Daemon {
 				doc.Add (f);
 			}
 
-			f = Field.UnStored ("PropertiesText",
-					    indexable.TextPropertiesAsString);
-			doc.Add (f);
-
-			// FIXME: We shouldn't apply stemming, etc. when dealing
-			// with this field.
-			f = Field.UnStored ("PropertiesKeyword",
-					    indexable.KeywordPropertiesAsString);
-			doc.Add (f);
-			
-			// FIXME: We need to deal with duplicate properties in some
-			// sort of sane way.
-			foreach (Property prop in indexable.Properties) {
-				if (prop.Value != null) {
-					f = Field.Keyword (ToLucenePropertyKey (prop.Key),
-							   prop.Value);
-					doc.Add (f);
-				}
-			}
+			foreach (Property prop in indexable.Properties)
+				AddPropertyToLuceneDocument (doc, prop);
 			
 			return doc;
 		}
@@ -696,65 +724,45 @@ namespace Beagle.Daemon {
 		{
 			return ToUriQuery (list_of_uris, null);
 		}
-		
-		private LNS.Query ToCoreLuceneQuery (Query query, string field)
+
+		static private LNS.Query NewTokenizedQuery (string field, string text)
 		{
-			LNS.BooleanQuery luceneQuery = null;
-			foreach (string text_orig in query.Text) {
-				string text = text_orig;
+			ArrayList tokens = new ArrayList ();
 
-				if (text == null || text == "")
-					continue;
-
-				bool minus_sign = false;
-				if (text [0] == '-') {
-					text = text.Substring (1);
-					minus_sign = true;
-				}
-
-				// Use the analyzer to extract the query's tokens.
-				// This code is taken from Lucene's query parser.
-				// We use the standard Analyzer.
-				TokenStream source = LuceneDriver.Analyzer.TokenStream (field, new StringReader (text));
-				ArrayList tokens = new ArrayList ();
-
-				while (true) {
-					Lucene.Net.Analysis.Token t;
-					try {
-						t = source.Next ();
-					} catch (IOException) {
-						t = null;
-					}
-					if (t == null)
-						break;
-					tokens.Add (t.TermText ());
-				}
+			// Use the analyzer to extract the query's tokens.
+			// This code is taken from Lucene's query parser.
+			// We use the standard Analyzer.
+			TokenStream source = LuceneDriver.Analyzer.TokenStream (field, new StringReader (text));
+			while (true) {
+				Lucene.Net.Analysis.Token t;
 				try {
-					source.Close ();
-				} catch (IOException) { 
-					// ignore
+					t = source.Next ();
+				} catch (IOException) {
+					t = null;
 				}
-
-				LNS.Query q = null;
-				if (tokens.Count == 1) {
-					Term t = new Term (field, (string) tokens [0]);
-					q = new LNS.TermQuery (t);
-				} else if (tokens.Count > 1) {
-					q = new LNS.PhraseQuery ();
-					foreach (string tokenStr in tokens) {
-						Term t = new Term (field, tokenStr);
-						((LNS.PhraseQuery) q).Add (t);
-					}
-				}
-
-				if (q != null) {
-					if (luceneQuery == null)
-						luceneQuery = new LNS.BooleanQuery ();
-					luceneQuery.Add (q, !minus_sign, minus_sign);
+				if (t == null)
+					break;
+				tokens.Add (t.TermText ());
+			}
+			try {
+				source.Close ();
+			} catch (IOException) { 
+				// ignore
+			}
+			
+			LNS.Query q = null;
+			if (tokens.Count == 1) {
+				Term t = new Term (field, (string) tokens [0]);
+				q = new LNS.TermQuery (t);
+			} else if (tokens.Count > 1) {
+				q = new LNS.PhraseQuery ();
+				foreach (string tokenStr in tokens) {
+					Term t = new Term (field, tokenStr);
+					((LNS.PhraseQuery) q).Add (t);
 				}
 			}
-			return luceneQuery;
 
+			return q;
 		}
 
 		// search_subset limits the score of our search to that set of Uris
@@ -769,33 +777,45 @@ namespace Beagle.Daemon {
 			LNS.BooleanQuery mime_type_query = null;
 			LNS.BooleanQuery hit_type_query = null;
 			
-			if (query.Text.Count > 0) {
+			if (query.Parts.Count > 0) {
 
 				body_query = new LNS.BooleanQuery ();
 
-				LNS.Query q;
-				
-				q = ToCoreLuceneQuery (query, "PropertiesText");
-				if (q != null) {
-					q.SetBoost (2.5f);
-					body_query.Add (q, false, false);
-				}
+				foreach (QueryPart part in query.Parts) {
 
-				q = ToCoreLuceneQuery (query, "PropertiesKeyword");
-				if (q != null) {
-					q.SetBoost (2.5f);
-					body_query.Add (q, false, false);
-				}
-				
-				q = ToCoreLuceneQuery (query, "HotText");
-				if (q != null) {
-					q.SetBoost (1.75f);
-					body_query.Add (q, false, false);		
-				}
-				
-				q = ToCoreLuceneQuery (query, "Text");
-				if (q != null) {
-					body_query.Add (q, false, false);
+					LNS.Query subquery = null;
+
+					if (part.TargetIsAll || part.TargetIsText) {
+
+						subquery = NewTokenizedQuery ("Text", part.Text);
+						body_query.Add (subquery, part.IsRequired, part.IsProhibited);
+
+						subquery = NewTokenizedQuery ("HotText", part.Text);
+						subquery.SetBoost (1.75f);
+						body_query.Add (subquery, part.IsRequired, part.IsProhibited);
+					}
+
+					if (part.TargetIsAll || part.TargetIsProperties) {
+						subquery = NewTokenizedQuery ("PropertyText", part.Text);
+						body_query.Add (subquery, part.IsRequired, part.IsProhibited);
+					}
+
+					if (part.TargetIsSpecificProperty) {
+
+						string prop_name;
+						prop_name = String.Format ("prop:{0}:{1}",
+									   part.IsKeyword ? 'k' : '_',
+									   part.Target);
+						
+						if (part.IsKeyword) {
+							Term term = new Term (prop_name, part.Text);
+							subquery = new LNS.TermQuery (term);
+						} else {
+							subquery = NewTokenizedQuery (prop_name, part.Text);
+						}
+
+						body_query.Add (subquery, part.IsRequired, part.IsProhibited);
+					}
 				}
 			}
 
@@ -909,9 +929,9 @@ namespace Beagle.Daemon {
 			hit.ScoreRaw = score;
 			
 			foreach (Field ff in doc.Fields ()) {
-				string key = FromLucenePropertyKey (ff.Name ());
-				if (key != null)
-					hit [key] = ff.StringValue ();
+				Property prop = FieldToProperty (ff);
+				if (prop != null)
+					hit.AddProperty (prop);
 			}
 			
 			return hit;
@@ -1082,20 +1102,6 @@ namespace Beagle.Daemon {
 		static private long StringToRevision (String str)
 		{
 			return Convert.ToInt64 (str);
-		}
-
-		const string propPrefix = "prop:";
-
-		private string ToLucenePropertyKey (string key)
-		{
-			return propPrefix + key;
-		}
-
-		private string FromLucenePropertyKey (string key)
-		{
-			if (key.StartsWith (propPrefix))
-				return key.Substring (propPrefix.Length);
-			return null;
 		}
 
 		/////////////////////////////////////////////////////

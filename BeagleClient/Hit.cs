@@ -32,7 +32,7 @@ using System.IO;
 using System.Xml;
 using System.Xml.Serialization;
 
-using BU = Beagle.Util;
+using Beagle.Util;
 
 namespace Beagle {
     
@@ -63,12 +63,8 @@ namespace Beagle {
 		private double scoreRaw = 0.0;
 		private double scoreMultiplier = 1.0;
 
-		private Hashtable properties = new Hashtable (new CaseInsensitiveHashCodeProvider (), 
-							      new CaseInsensitiveComparer ());
-
-		private Hashtable data = new Hashtable (new CaseInsensitiveHashCodeProvider (), 
-							new CaseInsensitiveComparer ());
-
+		private ArrayList properties = new ArrayList ();
+		private bool sorted = true;
 
 		private enum SpecialType {
 			Unknown,
@@ -100,11 +96,11 @@ namespace Beagle {
 		[XmlElement ("Uri")]
 		public string UriAsString {
 			get {
-				return BU.UriFu.UriToSerializableString (uri);
+				return UriFu.UriToSerializableString (uri);
 			}
 
 			set {
-				uri = BU.UriFu.UriStringToUri (value);
+				uri = UriFu.UriStringToUri (value);
 			}
 		}
 
@@ -148,10 +144,10 @@ namespace Beagle {
 			set { 
 				scoreMultiplier = value;
 				if (scoreMultiplier < 0) {
-					BU.Logger.Log.Warn ("Invalid ScoreMultiplier={0} for {1}", scoreMultiplier, Uri);
+					Logger.Log.Warn ("Invalid ScoreMultiplier={0} for {1}", scoreMultiplier, Uri);
 					scoreMultiplier = 0;
 				} else if (scoreMultiplier > 1) {
-					BU.Logger.Log.Warn ("Invalid ScoreMultiplier={0} for {1}", scoreMultiplier, Uri);
+					Logger.Log.Warn ("Invalid ScoreMultiplier={0} for {1}", scoreMultiplier, Uri);
 					scoreMultiplier = 1;
 
 				}
@@ -243,100 +239,96 @@ namespace Beagle {
 
 		//////////////////////////
 
-		[XmlIgnore]
-		public IDictionary Properties {
-			get { return properties; }
+		[XmlArray]
+		[XmlArrayItem (ElementName="Property", Type=typeof (Property))]
+		public ArrayList Properties {
+			get {  return properties; }
 		}
 
-		public struct KeyValuePair {
-			public string Key, Value;
-
-			public KeyValuePair (string key, string value)
-			{
-				this.Key = key;
-				this.Value = value;
+		public void AddProperty (Property prop)
+		{
+			if (sorted && properties.Count > 0) {
+				Property last_prop;
+				last_prop = properties [properties.Count - 1] as Property;
+				if (last_prop.CompareTo (prop) > 0) // i.e. last_prop > prop
+					sorted = false;
 			}
+
+			properties.Add (prop);
 		}
-							       
-		[XmlArray (ElementName="Properties")]
-		[XmlArrayItem (ElementName="Property", Type=typeof (KeyValuePair))]
-		public ArrayList PropertiesAsXmlElements {
+
+		private bool FindProperty (string key, out int first, out int top)
+		{
+			// FIXME: Should use binary search on sorted property list
+			if (! sorted) {
+				properties.Sort ();
+				sorted = true;
+			}
+			
+			first = 0;
+			top = 0;
+
+			while  (first < properties.Count) {
+				Property prop;
+				prop = properties [first] as Property;
+				if (prop.Key == key)
+					break;
+				++first;
+			}
+
+			if (first >= properties.Count)
+				return false;
+
+			top = first + 1;
+			while (top < properties.Count) {
+				Property prop;
+				prop = properties [top] as Property;
+				if (prop.Key != key)
+					break;
+				++top;
+			}
+
+			return true;
+		}
+
+		private string this [string key] {
 			get {
-				ArrayList props = new ArrayList (properties.Count);
-				
-				foreach (string key in properties.Keys) {
-					KeyValuePair pair = new KeyValuePair (key, (string) properties[key]);
-					props.Add (pair);
+				int first, top;
+				if (! FindProperty (key, out first, out top))
+					return null;
+
+				if (top - first != 1) {
+					Logger.Log.Debug ("Accessed multi-property key with Hit's indexer.");
+					return null;
 				}
 
-				return props;
+				Property prop;
+				prop = properties [first] as Property;
+				return prop.Value;
 			}
 
 			set {
-				foreach (KeyValuePair pair in value)
-					properties[pair.Key] = pair.Value;
-			}
-		}
+				int first = 0, top = 0;
 
-		[XmlIgnore]
-		public ICollection Keys {
-			get { return properties.Keys; }
-		}
-
-		virtual public string this [string key] {
-			get { return (string) properties [key]; }
-			set { 
-				if (value == null || value == "") {
-					if (properties.Contains (key))
-						properties.Remove (key);
+				// If we've never heard of this property, add it.
+				if (! FindProperty (key, out first, out top)) {
+					AddProperty (Property.New (key, value));
 					return;
 				}
-				properties [key] = value as string;
-			}
-		}
 
-		//////////////////////////
+				// If it has appeared once before, clobber the existing
+				// value.  This emulates the previous (broken) semantics.
 
-		[XmlIgnore]
-		virtual public IDictionary Data {
-			get { return data; }
-		}
-
-		[XmlArray (ElementName="Data")]
-		[XmlArrayItem (ElementName="Data", Type=typeof (KeyValuePair))]
-		public ArrayList DataAsXmlElements {
-			get {
-				ArrayList data_list = new ArrayList (data.Count);
-				
-				foreach (string key in data.Keys) {
-					KeyValuePair pair = new KeyValuePair (key, (string) data[key]);
-					data_list.Add (pair);
+				if (top - first == 1) {
+					properties [first] = Property.New (key, value);
+					return;
 				}
-
-				return data_list;
+				
+				// Otherwise throw an exception (which sort of sucks,
+				// but we don't really know what to do there)
+				throw new Exception (String.Format ("Attempt to re-set multi-property '{0}' via the indexer", key));
 			}
 		}
-
-		[XmlIgnore]
-		virtual public ICollection DataKeys {
-			get { return data.Keys; }
-		}
-
-		virtual public byte [] GetData (string key)
-		{
-			return (byte []) data [key];
-		}
-
-		virtual public void SetData (string key, byte [] blob)
-		{
-			if (blob == null) {
-				if (data.Contains (key))
-					data.Remove (key);
-				return;
-			}
-			data [key] = blob ;
-		}
-		
 
 		//////////////////////////
 

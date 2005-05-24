@@ -22,6 +22,7 @@ CSFILES = 					\
 	$(srcdir)/Message.cs			\
 	$(srcdir)/Property.cs           	\
 	$(srcdir)/Query.cs              	\
+	$(srcdir)/QueryPart.cs			\
 	$(srcdir)/QueryResponses.cs            	\
 	$(srcdir)/RemoteControl.cs		\
 	$(srcdir)/Snippet.cs			\

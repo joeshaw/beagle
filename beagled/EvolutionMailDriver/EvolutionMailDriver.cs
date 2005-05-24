@@ -34,6 +34,8 @@ using System.Threading;
 using Beagle.Util;
 using Camel = Beagle.Util.Camel;
 
+using LNI = Lucene.Net.Index;
+
 namespace Beagle.Daemon.EvolutionMailDriver {
 
 	[QueryableFlavor (Name="Mail", Domain=QueryDomain.Local, RequireInotify=false)]
@@ -70,6 +72,107 @@ namespace Beagle.Daemon.EvolutionMailDriver {
 			task.TriggerTime = DateTime.Now.AddSeconds (polling_interval_in_seconds);
 		}
 
+		//////////////////////////////////////////////////////////////////////////////////////////////
+
+		// Evil hack: manipulate the lucene index directly to extract
+		// statistics about who you sent mail to.
+		static private void AnalyzeYourRecipients (LuceneDriver driver)
+		{
+			LNI.IndexReader reader;
+			reader = LNI.IndexReader.Open (driver.Store);
+
+			LNI.TermEnum term_enum;
+			term_enum = reader.Terms ();
+
+			const string prop_field = "prop:k:fixme:sentTo";
+
+			LNI.Term skip_to;
+			skip_to = new LNI.Term (prop_field, ""); // ACK!
+
+			term_enum.SkipTo (skip_to);
+			
+			int N = 0;
+			while (term_enum.Next ()) {
+				LNI.Term t = term_enum.Term ();
+				if (t.Field () != prop_field) // Double-ACK!
+					break;
+				
+				AddAsYourRecipient (t.Text (), term_enum.DocFreq ());
+				++N;
+			}
+			term_enum.Close ();
+
+			reader.Close ();
+		}
+
+		static private Hashtable your_recipient_weights = new Hashtable ();
+		static private int total_recipient_weight = 0;
+
+		static private void AddAsYourRecipient (string address, int weight)
+		{
+			object obj = your_recipient_weights [address];
+			int n = obj != null ? (int) obj : 0;
+			your_recipient_weights [address] = n + weight;
+		}
+
+		// FIXME: We update the weights when we add indexables, but not
+		// when we remove records... the daemon has to be restarted
+		// to pick up those changes.
+		static public void AddAsYourRecipient (Indexable indexable)
+		{
+			if (indexable == null)
+				return;
+			foreach (Property prop in indexable.Properties)
+				if (prop.Key == "fixme:sentTo")
+					AddAsYourRecipient (prop.Value, 1);
+		}
+
+		static private double AnalyzeYourRecipientsMultiplier (Hit hit)
+		{
+			// The first magic constant: exempt mail that is less than
+			// one month old.
+			if (hit.DaysSinceTimestamp < 30)
+				return 1.0;
+
+			int weight = 0;
+			foreach (Property prop in hit.Properties) {
+
+				// This optimization only counts for mails you
+				// received: if you sent this mail, bail out immediately.
+				if (prop.Key == "fixme:isSent")
+					return 1.0;
+
+				if (prop.Key == "fixme:gotFrom") {
+					object obj = your_recipient_weights [prop.Value];
+					if (obj != null)
+						weight = (int) obj;
+					break;
+				}
+			}
+			
+			const double min_multiplier = 0.6;
+			const int weight_threshold = 10;
+
+			if (weight <= 0)
+				return min_multiplier;
+
+			if (weight >= weight_threshold)
+				return 1.0;
+
+			// t == 0.0 if weight == 0
+			// t == 1.0 if weight == weight_threshold
+			double t = weight / (double) weight_threshold;
+
+			double multiplier;
+
+			multiplier = min_multiplier + (1 - min_multiplier) * t;
+
+			return multiplier;
+
+		}
+
+		//////////////////////////////////////////////////////////////////////////////////////////////
+
 		private void StartWorker ()
 		{
 			Logger.Log.Info ("Starting Evolution mail backend");
@@ -84,6 +187,9 @@ namespace Beagle.Daemon.EvolutionMailDriver {
 				GLib.Timeout.Add (60000, new GLib.TimeoutHandler (CheckForMailData));
 				return;
 			}
+
+			// This might be dangerous.
+			AnalyzeYourRecipients (Driver);
 
 			// Get notification when an index or summary file changes
 			if (Inotify.Enabled) {
@@ -226,8 +332,20 @@ namespace Beagle.Daemon.EvolutionMailDriver {
 
 		override protected double RelevancyMultiplier (Hit hit)
 		{
-			return HalfLifeMultiplierFromProperty (hit, 0.25,
-							       "fixme:received", "fixme:sentdate");
+			double t = 1.0;
+
+			// FIXME: We should probably be more careful
+			// about how we combine these two numbers into one,
+			// since the cardinal value of the score is used for
+			// comparisons with hits of other types.  It isn't
+			// sufficient to just worry about the ordinal relationship
+			// between two scores.
+			t *= HalfLifeMultiplierFromProperty (hit, 0.25,
+							     "fixme:received", "fixme:sentdate");
+
+			t *= AnalyzeYourRecipientsMultiplier (hit);
+
+			return t;
 		}
 	}
 

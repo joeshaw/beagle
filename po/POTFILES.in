@@ -4,6 +4,7 @@
 Best/Best.cs
 Best/BestTray.cs
 Best/BestWindow.cs
+glue/eggtrayicon.c
 ImLogViewer/ImLogViewer.cs
 ImLogViewer/ImLogViewer.glade
 Tiles/TileDocs.cs
