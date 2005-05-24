@@ -34,7 +34,7 @@ using Mono.Posix;
 namespace Beagle.Tile {
 
 	[HitFlavor (Name="Folders", Rank=600, Emblem="emblem-folder.png", Color="#f5f5fe",
-		    Uri="file://*", MimeType="inode/directory")]
+		    Type="File", Uri="file://*", MimeType="inode/directory")]
 	public class TileFolder : TileFromHitTemplate {
 		public TileFolder (Hit _hit) : base (_hit, 
 						     "template-folder.html")
