@@ -1,3 +1,7 @@
+2005-05-24  Daniel Drake  <dsd@gentoo.org>
+
+	* Util/inotify-test: Fix parameter escaping
+
 2005-05-20  Vijay K. Nanjundaswamy <knvijay@novell.com>
 
 	* beagled/WebServices/WebFrontEnd,WebBackEnd.cs,ExternalAccessFilter.cs:
