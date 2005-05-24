@@ -214,7 +214,7 @@ namespace Beagle.Tile {
 			p.StartInfo.UseShellExecute = true;
 			p.StartInfo.FileName = "beagle-imlogviewer";
 			p.StartInfo.Arguments = String.Format ("--highlight-search \"{0}\" {1}",
-							       String.Join (" ", Query.TextAsArray), Hit ["fixme:file"]);
+							       Query.QuotedText, Hit ["fixme:file"]);
 
 			try {
 				p.Start ();
