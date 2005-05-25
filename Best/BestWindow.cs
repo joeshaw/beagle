@@ -425,7 +425,7 @@ namespace Best {
 				string tmp = delayedQuery;
 				delayedQuery = null;
 				System.Console.WriteLine ("Delayed query fired");
-				Search (tmp);
+				StartQuery ();
 			}
 
 			return false;
@@ -510,44 +510,50 @@ namespace Best {
 			}
 		}
 
-		private void Search (String searchString)
+		private void StartQuery ()
 		{
 			try {
-				StoreSearch (searchString);
-				entry.GtkEntry.Text = searchString;
-
-				if (query != null) {
-					try { DetachQuery (); } catch (ObjectDisposedException e) {}
-				}
-
-				query = new Query ();
-				query.AddDomain (QueryDomain.Neighborhood);
-
-				// FIXME: Disable non-local searching for now.
-				//query.AddDomain (QueryDomain.Global);
-
-				query.AddText (searchString);
-				root.SetSource (hit_type);
-				
-				AttachQuery ();
-				
-				root.Query = query;
-				root.Start ();
-				
 				query.SendAsync ();
 				SetBusy (true);
 			} catch (System.Net.Sockets.SocketException e) {
 				QueueDelayedQuery (entry.GtkEntry.Text);
-
+				
 				/* To translators: {0} represents the current query keywords */
 				root.Error (String.Format (Catalog.GetString ("The query for <i>{0}</i> failed." +
-						    "<br>The likely cause is that the beagle daemon isn't running."), searchString));
+						    "<br>The likely cause is that the beagle daemon isn't running."), entry.GtkEntry.Text));
 				root.OfferDaemonRestart = true;
 			} catch (Exception e) {
 				/* To translators: {0} represents the current query keywords, {1} contains the errormessage */
-				root.Error (String.Format (Catalog.GetString ("The query for <i>{0}</i> failed with error:<br>{1}<br>"), searchString, e));
+				root.Error (String.Format (Catalog.GetString ("The query for <i>{0}</i> failed with error:<br>{1}<br>"), 
+							   entry.GtkEntry.Text, e));
 			}
+		}
 
+		private void Search (String searchString)
+		{
+			StoreSearch (searchString);
+			entry.GtkEntry.Text = searchString;
+
+			if (query != null) {
+				try { DetachQuery (); } catch (ObjectDisposedException e) {}
+			}
+			
+			query = new Query ();
+			query.AddDomain (QueryDomain.Neighborhood);
+			
+			// FIXME: Disable non-local searching for now.
+			//query.AddDomain (QueryDomain.Global);
+			
+			query.AddText (searchString);
+			root.SetSource (hit_type);
+			
+			AttachQuery ();
+			
+			root.Query = query;
+			root.Start ();
+			
+			StartQuery ();
+			
 			UpdatePage ();
 		}
 
