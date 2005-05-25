@@ -487,7 +487,8 @@ namespace Beagle.Daemon.EvolutionMailDriver {
 				indexable.AddProperty (Property.NewDate ("fixme:received", message.Date));
 			
 #if false
-			// FIXME - XXX
+			// FIXME - These are stored in the Evolution summary
+			// and we don't parse that anymore.
                         indexable.AddProperty (Property.NewKeyword ("fixme:flags",    messageInfo.flags));
 
 			if (messageInfo.received != DateTime.MinValue)
@@ -631,10 +632,21 @@ namespace Beagle.Daemon.EvolutionMailDriver {
 				if (uid == null)
 					continue;
 
-				XmlNode imap_url = xmlDoc.SelectSingleNode ("//source/url");
+				XmlNode imap_url_node = xmlDoc.SelectSingleNode ("//source/url");
 
-				if (imap_url == null)
+				if (imap_url_node == null)
 					continue;
+
+				string imap_url = imap_url_node.InnerText;
+				// If there is a semicolon in the username part of the URL, it
+				// indicates that there's an auth scheme there.  We don't care
+				// about that, so remove it.
+				int user_end = imap_url.IndexOf ('@');
+				int semicolon = imap_url.IndexOf (';', 0, user_end + 1);
+
+				if (semicolon != -1)
+					imap_url = imap_url.Substring (0, semicolon) + imap_url.Substring (user_end);
+
 
 				// Escape out additional @s in the name.  I hate the class libs so much.
 				int lastIdx = this.imap_name.LastIndexOf ('@');
@@ -649,7 +661,7 @@ namespace Beagle.Daemon.EvolutionMailDriver {
 				else
 					backend_url_prefix = "imap4";
 
-				if (imap_url.InnerText.StartsWith (backend_url_prefix + "://" + this.imap_name + "/")) {
+				if (imap_url.StartsWith (backend_url_prefix + "://" + this.imap_name + "/")) {
 					this.account_name = uid;
 					break;
 				}
