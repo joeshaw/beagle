@@ -431,9 +431,10 @@ namespace Best {
 			return false;
 		}
 
-		private void QueueDelayedQuery ()
+		private void QueueDelayedQuery (string query)
 		{
-			GLib.Timeout.Add (1000, new GLib.TimeoutHandler (RunDelayedQuery));
+			delayedQuery = query;
+			GLib.Timeout.Add (10000, new GLib.TimeoutHandler (RunDelayedQuery));
 		}
 		
 		private void DoSearch (object o, EventArgs args)
@@ -533,25 +534,18 @@ namespace Best {
 				root.Query = query;
 				root.Start ();
 				
-				SetBusy (true);
 				query.SendAsync ();
-			} catch (Exception e) {
-				delayedQuery = entry.GtkEntry.Text;
-				//DBusisms.BeagleUpAgain += QueueDelayedQuery;
+				SetBusy (true);
+			} catch (System.Net.Sockets.SocketException e) {
+				QueueDelayedQuery (entry.GtkEntry.Text);
 
-				if (e.ToString ().IndexOf ("com.novell.Beagle") != -1) {
-					/* To translators: {0} represents the current query keywords */
-					root.Error (String.Format (Catalog.GetString ("The query for <i>{0}</i> failed." +
-						    "<br>The likely cause is that the beagle daemon isn't running."),searchString));
-					root.OfferDaemonRestart = true;
-				} else if (e.ToString().IndexOf ("Unable to determine the address") != -1) {
-					/* To translators: {0} represents the current query keywords */
-					root.Error (String.Format (Catalog.GetString ("The query for <i>{0}</i> failed.<br>" +
-						    "The session bus isn't running.  See http://beaglewiki.org/index.php/Installing%20Beagle for information on setting up a session bus."),searchString));
-				} else {
-					/* To translators: {0} represents the current query keywords, {1} contains the errormessage */
-					root.Error (String.Format (Catalog.GetString ("The query for <i>{0}</i> failed with error:<br>{1}<br>"),searchString, e));
-				}
+				/* To translators: {0} represents the current query keywords */
+				root.Error (String.Format (Catalog.GetString ("The query for <i>{0}</i> failed." +
+						    "<br>The likely cause is that the beagle daemon isn't running."), searchString));
+				root.OfferDaemonRestart = true;
+			} catch (Exception e) {
+				/* To translators: {0} represents the current query keywords, {1} contains the errormessage */
+				root.Error (String.Format (Catalog.GetString ("The query for <i>{0}</i> failed with error:<br>{1}<br>"), searchString, e));
 			}
 
 			UpdatePage ();
