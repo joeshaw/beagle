@@ -531,10 +531,18 @@ namespace Beagle.WebService {
 		}
 
 		public searchResult getMoreResults(string searchToken, int startIndex, bool isLocalReq)
-		{					
+		{							
+
 			searchResult sr = new searchResult();
 			sr.numResults = 0;
 			
+			if (!sessionTable.ContainsKey(searchToken)) {
+				sr.statusCode = SC_INVALID_SEARCH_TOKEN;
+				sr.statusMsg = "Error: Invalid Search Token";
+				Console.WriteLine("GetMoreResults: Invalid Search Token received ");
+				return sr;
+			}
+									
 			ArrayList results = ((SessionData)sessionTable[searchToken]).results;
 			if (results == null) {
 				sr.statusCode = SC_INVALID_SEARCH_TOKEN;
