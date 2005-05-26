@@ -66,6 +66,18 @@ namespace Beagle.WebService {
 			get {return pVal;}
 			set {pVal = value;}
 		}
+		
+		private bool  isKeyword;
+		public bool IsKeyword {
+			get { return isKeyword; }
+			set { isKeyword = value; }
+		}
+		
+		private bool   isSearched;
+		public bool IsSearched {
+			get { return isSearched; }
+			set { isSearched = value; }
+		}		
 	}
 
 	[Serializable()]
@@ -114,7 +126,7 @@ namespace Beagle.WebService {
 		//Both "/" and "/beagle" aliased to DEFAULT_XSP_ROOT only for BeagleXSP server
 		static string[] xsp_param = {"--port", DEFAULT_XSP_PORT,
 					     "--root", DEFAULT_XSP_ROOT, 
-					     "--applications", "/:" + DEFAULT_XSP_ROOT + ",/beagle:" + DEFAULT_XSP_ROOT,
+					     "--applications", "/:" + DEFAULT_XSP_ROOT + ",/beagle:" + DEFAULT_XSP_ROOT + ",/beagle/public:" + PathFinder.HomeDir + "/public",
 					     "--nonstop"};
 					  
 		public static void Start(WebServicesArgs wsargs)
@@ -135,7 +147,7 @@ namespace Beagle.WebService {
 			//Check if web_rootDir_changed:
 			if (String.Compare(wsargs.web_rootDir, DEFAULT_XSP_ROOT, true) != 0)
 				//Assuming "/beagle" exists as an explicit sub-folder under user specified xsp root directory:
-				xsp_param[5] = "/:" + wsargs.web_rootDir + ",/beagle:" + wsargs.web_rootDir + "/beagle";
+				xsp_param[5] = "/:" + wsargs.web_rootDir + ",/beagle:" + wsargs.web_rootDir + "/beagle" + ",/beagle/public:" + PathFinder.HomeDir + "/public";
 				
 			if (wsargs.web_start) {
 				
@@ -332,7 +344,7 @@ namespace Beagle.WebService {
 			if (queryable == null)
 				snippet = "ERROR: hit.SourceObject is null, uri=" + h.Uri;
 			else
-				snippet = queryable.GetSnippet (query.TextAsArray, h);
+				snippet = queryable.GetSnippet (query.Text as string[], h);
 										
 			ArrayList tempResults = (ArrayList) AccessFilter.TranslateHit(h);
 
@@ -349,11 +361,16 @@ namespace Beagle.WebService {
 				h2.ScoreMultiplier = h1.ScoreMultiplier;
 			
 				h2.SourceObject = h1.SourceObject;
+					
+				//h2.properties = h1.Properties;
 				
+				foreach (Property p in h1.Properties)
+					h2.AddProperty(p);				 
+/*				
 				Hashtable sp = (Hashtable) h1.Properties;	
 				foreach (string key in sp.Keys) 
 					h2[key] = (string) sp[key];
-							
+*/
 				h2.snippet = snippet;
 						
 				authResults.Add(h2);
@@ -452,7 +469,7 @@ namespace Beagle.WebService {
 						if (queryable == null)
 							snippet = "ERROR: hit.SourceObject is null, uri=" + h.Uri;
 						else
-							snippet = queryable.GetSnippet (query.TextAsArray, h);
+							snippet = queryable.GetSnippet (query.Text as string[], h);
 					}
 					else 
 						snippet = ((NetworkHit) h).snippet;					
@@ -466,8 +483,20 @@ namespace Beagle.WebService {
 					sr.hitResults[i].scoreRaw = h.ScoreRaw;
 					sr.hitResults[i].scoreMultiplier = h.ScoreMultiplier;
 					
+					//sr.hitResults[i].properties = h.Properties;	
+					int plen = h.Properties.Count;
+					sr.hitResults[i].properties = new HitProperty[plen];
+					for (int j = 0; j < plen; j++) {
+						Property p = (Property) h.Properties[j];
+						sr.hitResults[i].properties[j] = new HitProperty();
+						sr.hitResults[i].properties[j].PKey = p.Key;
+						sr.hitResults[i].properties[j].PVal = p.Value;				
+						sr.hitResults[i].properties[j].IsKeyword = p.IsKeyword;				
+						sr.hitResults[i].properties[j].IsSearched = p.IsSearched;							
+					}
+/*									
 					Hashtable sp = (Hashtable) h.Properties;
-					sr.hitResults[i].properties = new HitProperty[sp.Count];
+					sr.hitResults[i].properties = new Property[h.Properties.Count];
 	
 					int j = 0;
 					foreach (string key in sp.Keys) {
@@ -475,7 +504,7 @@ namespace Beagle.WebService {
 						sr.hitResults[i].properties[j].PKey = key;
 						sr.hitResults[i].properties[j++].PVal = (string) sp[key];
 					}
-						
+*/											
 					sr.hitResults[i].snippet = snippet;
 	
 					i++;
@@ -538,7 +567,7 @@ namespace Beagle.WebService {
 						if (queryable == null)
 							snippet = "ERROR: hit.SourceObject is null, uri=" + h.Uri;
 						else
-							snippet = queryable.GetSnippet (query.TextAsArray, h);
+							snippet = queryable.GetSnippet (query.Text as string[], h);
 					}
 					else 
 						snippet = ((NetworkHit) h).snippet;					
@@ -552,6 +581,17 @@ namespace Beagle.WebService {
 					sr.hitResults[i].scoreRaw = h.ScoreRaw;
 					sr.hitResults[i].scoreMultiplier = h.ScoreMultiplier;
 					
+					int plen = h.Properties.Count;
+					sr.hitResults[i].properties = new HitProperty[plen];
+					for (int j = 0; j < plen; j++) {
+						Property p = (Property) h.Properties[j];
+						sr.hitResults[i].properties[j] = new HitProperty();
+						sr.hitResults[i].properties[j].PKey = p.Key;
+						sr.hitResults[i].properties[j].PVal = p.Value;				
+						sr.hitResults[i].properties[j].IsKeyword = p.IsKeyword;				
+						sr.hitResults[i].properties[j].IsSearched = p.IsSearched;							
+					}	
+/*									
 					Hashtable sp = (Hashtable) h.Properties;
 					sr.hitResults[i].properties = new HitProperty[sp.Count];
 	
@@ -561,7 +601,7 @@ namespace Beagle.WebService {
 						sr.hitResults[i].properties[j].PKey = key;
 						sr.hitResults[i].properties[j++].PVal = (string) sp[key];
 					}
-						
+*/																	
 					sr.hitResults[i].snippet = snippet;
 					i++;
 				}												
@@ -593,8 +633,8 @@ namespace Beagle.WebService {
 				
 			return (token.Replace('-', alpha));
 		}
-    }
-	
+	}
+
 	public class NetworkHit: Hit {
 	
 		private string _snippet;
@@ -603,5 +643,5 @@ namespace Beagle.WebService {
 			get { return _snippet; }
 			set { _snippet = value; }
 		}
-	}    
+	} 	
 }
