@@ -130,7 +130,7 @@ namespace Beagle.Tile {
 				formatter = key.Substring (0, pos);
 				subkey = key.Substring (pos + 1);
 			} else {
-				formatter = null;
+				formatter = ""; //KNV: Changed from null, which causes switch statement to throw NP Exception
 				subkey = key;
 			}
 
