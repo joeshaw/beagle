@@ -94,11 +94,13 @@ namespace Beagle.WebService {
 				Resp resp = ((Resp) result[qres]);
 				BT.SimpleRootTile root = resp.rootTile;
 				
-				if (resp.isLocalReq)
-					root.Add(hits);
-				else {
-						foreach (Hit h in hits)
-							root.Add(WebServiceBackEnd.AccessFilter.FilterHit(h));
+				lock (root)  {
+					if (resp.isLocalReq)
+						root.Add(hits);
+					else {
+							foreach (Hit h in hits)
+								root.Add(WebServiceBackEnd.AccessFilter.FilterHit(h));
+					}
 				}
 				//Console.WriteLine("Hit Added to Root Tile");
 			}
@@ -109,7 +111,9 @@ namespace Beagle.WebService {
 		{
 			if (result.Contains(qres)) {
 				BT.SimpleRootTile root = ((Resp) result[qres]).rootTile;
-				root.Subtract (uris);
+				lock (root) {
+					root.Subtract (uris);
+				}
 			}
 		}
 
@@ -192,12 +196,14 @@ namespace Beagle.WebService {
 				
 			BT.SimpleRootTile root = resp.rootTile;
 			if (root != null) {
-				root.HitCollection.PageForward ();
+				lock (root) {
+					root.HitCollection.PageForward ();
 			
-				bufferRenderContext bctx = new bufferRenderContext();
-				resp.bufferContext = bctx;
-				root.Render(bctx);
-				return (getResultsLabel(root) + bctx.buffer);
+					bufferRenderContext bctx = new bufferRenderContext();
+					resp.bufferContext = bctx;
+					root.Render(bctx);
+					return (getResultsLabel(root) + bctx.buffer);
+				}
 			}
 
 			return NO_RESULTS;
@@ -221,12 +227,15 @@ namespace Beagle.WebService {
 		
 			BT.SimpleRootTile root = resp.rootTile;
 			if (root != null) {
-				root.HitCollection.PageBack();
 			
-				bufferRenderContext bctx = new bufferRenderContext();
-				resp.bufferContext = bctx;
-				root.Render(bctx);
-				return (getResultsLabel(root) + bctx.buffer);
+				lock (root) {
+					root.HitCollection.PageBack();
+			
+					bufferRenderContext bctx = new bufferRenderContext();
+					resp.bufferContext = bctx;
+					root.Render(bctx);
+					return (getResultsLabel(root) + bctx.buffer);
+				}
 			}
 			
 			return NO_RESULTS;
@@ -252,6 +261,7 @@ namespace Beagle.WebService {
 			//The root tile is used only for adding hits and generating html.
 			BT.SimpleRootTile root = new BT.SimpleRootTile (); 							
 			root.Query = query;
+			root.SetSource (searchSource); 
 											
 			bufferRenderContext bctx = new bufferRenderContext();
 			Resp resp = new Resp(root, bctx, isLocalReq);
@@ -273,9 +283,13 @@ namespace Beagle.WebService {
 					(root.HitCollection.NumResults < 10)) 
 				Thread.Sleep(5);
 
-			root.Render(bctx);
-			
-			return (getResultsLabel(root) + bctx.buffer);
+			if (root.HitCollection.IsEmpty)
+				return NO_RESULTS;
+						
+			lock (root) {
+				root.Render(bctx);
+				return (getResultsLabel(root) + bctx.buffer);
+			}			
 		}
 
 		public void dispatchAction (string sessId, string actionString)
@@ -473,14 +487,14 @@ namespace Beagle.WebService {
 					   BT.TileActionHandler handler)
 		{
 		       	string key = AddAction (handler);
-			Write ("<a href=\"{0}\">{1}</a>", key, label);
+				Write ("<a href=\"{0}\">{1}</a>", key, label);
 		}
 	
 		override public void Tile (BT.Tile tile)
 		{
 			tileTable [tile.UniqueKey] = tile;
 
-			if (!renderStylesDone) {
+			if (!renderStylesDone) {			
 	//KNV: Using static_stylesheet for now. Replace with TileCanvas logic later:
 				Write(static_stylesheet);
 /*
@@ -489,6 +503,7 @@ namespace Beagle.WebService {
 				Write ("</style>");
 */
 				renderStylesDone = true;
+				
 			}
 				
 			if (tile != null)
