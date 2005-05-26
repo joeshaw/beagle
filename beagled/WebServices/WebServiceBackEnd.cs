@@ -126,7 +126,13 @@ namespace Beagle.WebService {
 		//Both "/" and "/beagle" aliased to DEFAULT_XSP_ROOT only for BeagleXSP server
 		static string[] xsp_param = {"--port", DEFAULT_XSP_PORT,
 					     "--root", DEFAULT_XSP_ROOT, 
-					     "--applications", "/:" + DEFAULT_XSP_ROOT + ",/beagle:" + DEFAULT_XSP_ROOT + ",/beagle/public:" + PathFinder.HomeDir + "/public",
+					     "--applications", 
+					     		"/:" + DEFAULT_XSP_ROOT + 
+					     		",/beagle:" + DEFAULT_XSP_ROOT + 
+					     		",/beagle/public:" + PathFinder.HomeDir + "/public" +
+					     		",/beagle/kde3:" + ExternalStringsHack.KdePrefix +
+					     		",/beagle/gnome:" + ExternalStringsHack.GnomePrefix +	
+					     		",/beagle/local:" + ExternalStringsHack.Prefix,					     						     		
 					     "--nonstop"};
 					  
 		public static void Start(WebServicesArgs wsargs)

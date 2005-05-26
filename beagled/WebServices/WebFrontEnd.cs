@@ -39,6 +39,7 @@ using System.Runtime.Remoting;
 using System.Runtime.Remoting.Channels;
 using System.Runtime.Remoting.Channels.Tcp;
 
+using Beagle.Util;
 using Beagle.Daemon;
 using Beagle.WebService;
 
@@ -168,7 +169,7 @@ namespace WebService_CodeBehind {
 				}		
 			}  //end else for if (actionString == null)  
 		}
-
+	
 		//Process Tile!Action HTTP-Get request, if user has clicked on one:
 		if (actionString != null && !queryStringProcessed) {
 
@@ -194,13 +195,32 @@ namespace WebService_CodeBehind {
 
 	private string convertUrls(string buf)
 	{
-		//Replace all URL's
-	  	//return buf.Replace("href=\"", "href=\"" + Session["InitialReqUrl"] + "?");
-
 	  //Replace specific actions in URL's
 	  string buf1 = buf.Replace("href=\"action:", "href=\"" + Session["InitialReqUrl"] + "?action:"); 
-	  string buf2 = buf1.Replace("href=\"dynaction:", "href=\"" + Session["InitialReqUrl"] + "?dynaction:"); 
-	  return buf2;
+	  string buf2 = buf1.Replace("href=\"dynaction:", "href=\"" + Session["InitialReqUrl"] + "?dynaction:");
+	  
+	  //return buf2;
+	   
+	  string sep = "\"";
+	  string[] list = buf2.Split('\"');
+	  
+	  string initUrl = (string) Session["InitialReqUrl"];
+	  int i = initUrl.LastIndexOf('/');
+	  //Get the initial part of url: i.e. http://localhost:8888/beagle/
+	  string p = initUrl.Substring(0, i+1);
+	  string s; 
+	  
+	  for (int k = 0; k < list.Length; k++) {
+	  
+	   		s = list[k];
+	  		if ((s.Length > 0) && s.StartsWith("file:///") && s.EndsWith(".png")) {	  			
+	  			string s1 = s.Replace("file://" + ExternalStringsHack.KdePrefix, p + "kde3");
+	  			string s2 = s1.Replace("file://" + ExternalStringsHack.GnomePrefix, p + "gnome"); 
+	  			list[k] = s2.Replace("file://" + ExternalStringsHack.Prefix, p + "local");
+	  		}  		
+	  }
+	  
+	  return String.Join (sep, list);
 	}
 
 	protected void Search_Click(object o, EventArgs e) {
