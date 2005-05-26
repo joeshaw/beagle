@@ -1,5 +1,11 @@
 2005-05-26  Vijay K. Nanjundaswamy <knvijay@novell.com>
 
+	* beagled/WebServices/WebFrontEnd.cs, WebServiceBackEnd.cs, search.aspx.in: 
+	Updates to serve images for Icons from web server, converting file:///
+	uris into http uris.
+
+2005-05-26  Vijay K. Nanjundaswamy <knvijay@novell.com>
+
 	* beagled/WebServices/WebBackEnd.cs: Added locks to WebBackEnd code to 		  prevent changes to results set while generating response to web interface
 	  queries
 	* beagled/WebServices/WebServiceBackEnd.cs: Updates to WebServiceBackEnd 	   following recent changes in Property and Hit classes.
