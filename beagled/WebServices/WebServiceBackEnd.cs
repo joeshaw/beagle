@@ -134,7 +134,9 @@ namespace Beagle.WebService {
 					     		",/beagle/gnome:" + ExternalStringsHack.GnomePrefix +	
 					     		",/beagle/local:" + ExternalStringsHack.Prefix,					     						     		
 					     "--nonstop"};
-					  
+					     
+		static string FallBackAppString = "/:" + DEFAULT_XSP_ROOT + ",/beagle:" + DEFAULT_XSP_ROOT;
+		 
 		public static void Start(WebServicesArgs wsargs)
 		{
 			//start web-access server first
@@ -159,8 +161,16 @@ namespace Beagle.WebService {
 				
 				Logger.Log.Debug ("Starting Internal Web Server");
 				
-				//Start beagled internal web server (BeagleXsp)
-				int retVal = Mono.ASPNET.Server.initXSP(xsp_param, out appServer);
+				int retVal = 0;
+				try {
+					//Start beagled internal web server (BeagleXsp)
+					retVal = Mono.ASPNET.Server.initXSP(xsp_param, out appServer);
+				}
+				catch (Exception e) {
+					//Retry with reduced application mappings:
+					xsp_param[5] = FallBackAppString;
+					retVal = Mono.ASPNET.Server.initXSP(xsp_param, out appServer);		
+				}
 				
 				if (retVal != 0) {
 					Logger.Log.Warn ("Error starting Internal Web Server (retVal={0})", retVal);
