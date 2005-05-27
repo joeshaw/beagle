@@ -36,10 +36,22 @@ namespace Beagle.Util {
 
 		private static void SetFonts ()
 		{
-			string font = (string)gconf_client.Get ("/desktop/gnome/interface/font_name");
+			string font;
+
+			try {
+				font = (string) gconf_client.Get ("/desktop/gnome/interface/font_name");
+			} catch (GConf.NoSuchKeyException) {
+				font = "sans 12";
+			}
+			
 			GeckoUtils.SetFont (1, font);
 
-			font = (string)gconf_client.Get ("/desktop/gnome/interface/monospace_font_name");
+			try {
+				font = (string) gconf_client.Get ("/desktop/gnome/interface/monospace_font_name");
+			} catch (GConf.NoSuchKeyException) {
+				font = "monospace 12";
+			}
+
 			GeckoUtils.SetFont (2, font);
 		}
 

@@ -2,7 +2,7 @@
 # 0067 = event defined but not used
 # 0618 = Mono.Posix.Syscall is obsolete
 
-CSC = mcs -debug -nowarn:0067,0618
+CSC = mcs -debug -langversion:iso-1 -nowarn:0067,0618
 
 
 TARGET = Util.dll
