@@ -436,11 +436,11 @@ namespace Beagle.Util {
 			char_array [i] = ' ';
 
 			for (int j = i+1; j < len; ++j) {
-				char c = str [i];
+				char c = str [j];
 				if (IsInvalid (c))
-					char_array [i] = ' ';
+					char_array [j] = ' ';
 				else
-					char_array [i] = c;
+					char_array [j] = c;
 			}
 
 			return new string (char_array);
