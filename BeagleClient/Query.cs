@@ -169,9 +169,9 @@ namespace Beagle {
 			}
 		}
 
-		[XmlArrayItem (ElementName="Parts",
+		[XmlArrayItem (ElementName="Part",
 			       Type=typeof (QueryPart))]
-		[XmlArray (ElementName="Part")]
+		[XmlArray (ElementName="Parts")]
 		public ArrayList Parts {
 			get { return parts; }
 		}
