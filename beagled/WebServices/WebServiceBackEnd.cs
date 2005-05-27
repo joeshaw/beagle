@@ -129,7 +129,7 @@ namespace Beagle.WebService {
 					     "--applications", 
 					     		"/:" + DEFAULT_XSP_ROOT + 
 					     		",/beagle:" + DEFAULT_XSP_ROOT + 
-					     		",/beagle/public:" + PathFinder.HomeDir + "/public" +
+					     		//",/beagle/public:" + PathFinder.HomeDir + "/public" +
 					     		",/beagle/kde3:" + ExternalStringsHack.KdePrefix +
 					     		",/beagle/gnome:" + ExternalStringsHack.GnomePrefix +	
 					     		",/beagle/local:" + ExternalStringsHack.Prefix,					     						     		
