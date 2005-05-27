@@ -70,7 +70,7 @@ namespace Beagle.Tile {
 		public void AddProperties (ICollection properties)
 		{
 			foreach (Property prop in properties)
-				this.values [prop.Key] = values [prop.Value];
+				this.values [prop.Key] = prop.Value;
 			dirty = true;
 		}
 
@@ -130,7 +130,7 @@ namespace Beagle.Tile {
 				formatter = key.Substring (0, pos);
 				subkey = key.Substring (pos + 1);
 			} else {
-				formatter = ""; //KNV: Changed from null, which causes switch statement to throw NP Exception
+				formatter = null;
 				subkey = key;
 			}
 
