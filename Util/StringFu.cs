@@ -431,7 +431,7 @@ namespace Beagle.Util {
 
 			char [] char_array = new char[len];
 			
-			for (int j = 0; j < i; ++i)
+			for (int j = 0; j < i; ++j)
 				char_array [j] = str [j];
 			char_array [i] = ' ';
 

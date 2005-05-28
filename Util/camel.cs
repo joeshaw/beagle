@@ -24,8 +24,8 @@ namespace Camel {
 		SEEN         = 1<<4,
 		ATTACHMENTS  = 1<<5,
 		ANSWERED_ALL = 1<<6,
-		UNKNOWN_7    = 1<<7,
-		UNKNOWN_8    = 1<<8
+		JUNK         = 1<<7,
+		SECURE       = 1<<8
 	}
 	
 public abstract class Summary : IEnumerable { 
