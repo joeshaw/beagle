@@ -30,6 +30,8 @@ EXTRA_DIST = 			\
 	$(pkgconfig_DATA) 	\
 	beagle.spec
 
+DISTCHECK_CONFIGURE_FLAGS = --disable-epiphany-extension-install
+
 DISTCLEANFILES = 		\
 	intltool-extract	\
 	intltool-merge		\

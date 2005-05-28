@@ -24,13 +24,18 @@
   This is all copied from Dashboard's Epiphany Extension.
 */
 
+#ifdef HAVE_CONFIG_H
+#include "config.h"
+#endif
+
 #include "ephy-beagle-extension.h"
 
 #include <gmodule.h>
+
+G_MODULE_EXPORT GType register_module (GTypeModule *module);
 
 G_MODULE_EXPORT GType
 register_module (GTypeModule *module)
 {
 	return ephy_beagle_extension_register_type (module);
 }
-

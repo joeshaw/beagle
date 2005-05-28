@@ -1,3 +1,20 @@
+2005-05-28  Christian Persch  <chpe@cvs.gnome.org>
+
+	* configure.in:	Update configure checks to detect Epiphany >= 1.6.
+	* Makefile.am:
+	* epiphany-extension/.cvsignore:
+	* epiphany-extension/Makefile.am:
+	* epiphany-extension/beagle.xml.in.in:
+	* epiphany-extension/ephy-beagle-extension.c: (load_status_cb),
+	(impl_attach_tab), (impl_detach_tab), (impl_attach_window),
+	(impl_detach_window), (ephy_beagle_extension_iface_init),
+	(ephy_beagle_extension_class_init),
+	(ephy_beagle_extension_get_type),
+	(ephy_beagle_extension_register_type):
+	* epiphany-extension/ephy-beagle.c: (register_module):
+	Update Epiphany extension to work with Epiphany >= 1.6.
+	Fixes bug #167948 and bug #167949.
+
 2005-05-26  Vijay K. Nanjundaswamy <knvijay@novell.com>
 
 	* beagled/WebServices/WebFrontEnd.cs, WebServiceBackEnd.cs, search.aspx.in: 
