@@ -51,4 +51,5 @@ EXTRA_DIST =			\
 CLEANFILES =		\
 	$(TARGET)	\
 	$(TARGET).mdb	\
-	$(WRAPPER)
+	$(WRAPPER)	\
+	ImLogViewer.glade.h
