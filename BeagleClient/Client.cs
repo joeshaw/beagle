@@ -109,17 +109,20 @@ namespace Beagle {
 				this.ClosedEvent ();
 		}
 
+		static XmlSerializer req_serializer = new XmlSerializer (typeof (RequestWrapper), RequestMessage.Types);
+
 		private void SendRequest (RequestMessage request)
 		{
 			this.client = new UnixClient (this.socket_name);
 			NetworkStream stream = this.client.GetStream ();
 
-			XmlSerializer req_serializer = new XmlSerializer (typeof (RequestWrapper), RequestMessage.Types);
-
 			req_serializer.Serialize (stream, new RequestWrapper (request));
 			// Send end of message marker
 			stream.WriteByte (0xff);
+			stream.Flush ();
 		}
+
+		static XmlSerializer resp_serializer = new XmlSerializer (typeof (ResponseWrapper), ResponseMessage.Types);
 		
 		// This function will be called from its own thread
 		private void ReadCallback (IAsyncResult ar)
@@ -161,8 +164,9 @@ namespace Beagle {
 
 						deserialize_stream.Seek (0, SeekOrigin.Begin);
 
-						XmlSerializer resp_serializer = new XmlSerializer (typeof (ResponseWrapper), ResponseMessage.Types);
-						ResponseWrapper wrapper = (ResponseWrapper) resp_serializer.Deserialize (deserialize_stream);
+						ResponseWrapper wrapper;
+						wrapper = (ResponseWrapper) resp_serializer.Deserialize (deserialize_stream);
+
 						ResponseMessage resp = wrapper.Message;
 
 						deserialize_stream.Close ();
@@ -232,13 +236,13 @@ namespace Beagle {
 
 			this.buffer_stream.Seek (0, SeekOrigin.Begin);
 			
-			XmlSerializer resp_serializer = new XmlSerializer (typeof (ResponseWrapper), ResponseMessage.Types);
-
 			ResponseMessage resp = null;
 			Exception throw_me = null;
 
 			try {
-				ResponseWrapper wrapper = (ResponseWrapper) resp_serializer.Deserialize (this.buffer_stream);
+				ResponseWrapper wrapper;
+				wrapper = (ResponseWrapper) resp_serializer.Deserialize (this.buffer_stream);
+
 				resp = wrapper.Message;
 			} catch (Exception e) {
 				throw_me = new ResponseMessageException (e);

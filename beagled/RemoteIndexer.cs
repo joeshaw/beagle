@@ -39,7 +39,7 @@ namespace Beagle.Daemon {
 		static string helper_path;
 
 		string remote_index_name;
-		int last_item_count;
+		int last_item_count = -1;
 
 		RemoteIndexerRequest pending_request = new RemoteIndexerRequest ();
 		object pending_request_lock = new object ();

@@ -39,6 +39,7 @@ namespace Beagle.Daemon {
 	class ConnectionHandler {
 
 		private static int connection_count = 0;
+		private static XmlSerializer serializer = new XmlSerializer (typeof (ResponseWrapper), ResponseMessage.Types);
 
 		private object client_lock = new object ();
 
@@ -58,12 +59,11 @@ namespace Beagle.Daemon {
 				if (this.client == null)
 					return false;
 
-				XmlSerializer serializer = new XmlSerializer (typeof (ResponseWrapper), ResponseMessage.Types);
-
 				try { 
 					serializer.Serialize (this.client.GetStream (), new ResponseWrapper (response));
 					// Send an end of message marker
 					this.client.GetStream ().WriteByte (0xff);
+					this.client.Flush ();
 				} catch (IOException e) {
 					// The socket was shut down, so we can't write
 					// any more.
@@ -128,11 +128,12 @@ namespace Beagle.Daemon {
 				Close ();
 		}
 
+		static XmlSerializer req_serializer = new XmlSerializer (typeof (RequestWrapper), RequestMessage.Types);
+
 		public void HandleConnection ()
 		{
 			this.thread = Thread.CurrentThread;
 
-			XmlSerializer req_serializer = new XmlSerializer (typeof (RequestWrapper), RequestMessage.Types);
 			RequestMessage req = null;
 			ResponseMessage resp = null;
 

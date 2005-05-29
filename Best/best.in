@@ -22,4 +22,5 @@ else
 fi
 
 MONO_GAC_PREFIX="@gacprefix@:$MONO_GAC_PREFIX" MONO_PATH="$THIS_PATH:$MONO_PATH" exec -a mono-best mono $MONO_EXTRA_ARGS --debug $THIS_EXE "$@"
+#MONO_GAC_PREFIX="@gacprefix@:$MONO_GAC_PREFIX" MONO_PATH="$THIS_PATH:$MONO_PATH" exec -a mono-best mono --trace $MONO_EXTRA_ARGS $THIS_EXE "$@" >& log
 

@@ -158,6 +158,12 @@ namespace Beagle.Util {
 							SocketOptionName.SendTimeout, value);
 			}
 		}
+
+		public void Flush ()
+		{
+			if (stream != null)
+				stream.Flush ();
+		}
         
 		public void Close ()
 		{
