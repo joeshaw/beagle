@@ -1,3 +1,8 @@
+2005-05-29  Vijay K. Nanjundaswamy <knvijay@novell.com>
+
+	* beagled/WebServices/WebServiceBackEnd.cs: 
+	Added check for existence of folders added to BeagleXSP applications list parameter.
+
 2005-05-28  Christian Persch  <chpe@cvs.gnome.org>
 
 	* configure.in:	Update configure checks to detect Epiphany >= 1.6.
