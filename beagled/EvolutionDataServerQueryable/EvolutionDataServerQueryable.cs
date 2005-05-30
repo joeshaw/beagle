@@ -179,50 +179,50 @@ namespace Beagle.Daemon.EvolutionDataServerQueryable {
 			indexable.Timestamp = rev;
 			indexable.Type = "Contact";
 						
-			indexable.AddProperty (Property.NewKeyword ("fixme:FileAs", contact.FileAs));
-			indexable.AddProperty (Property.NewKeyword ("fixme:GivenName", contact.GivenName));
-			indexable.AddProperty (Property.NewKeyword ("fixme:FamilyName", contact.FamilyName));
-			indexable.AddProperty (Property.NewKeyword ("fixme:Nickname", contact.Nickname));
-			indexable.AddProperty (Property.NewKeyword ("fixme:AddressLabelHome", contact.AddressLabelHome));
-			indexable.AddProperty (Property.NewKeyword ("fixme:AddressLabelWork", contact.AddressLabelWork));
-			indexable.AddProperty (Property.NewKeyword ("fixme:AddressLabelOther", contact.AddressLabelOther));
-			indexable.AddProperty (Property.NewKeyword ("fixme:AssistantPhone", contact.AssistantPhone));
-			indexable.AddProperty (Property.NewKeyword ("fixme:BusinessPhone", contact.BusinessPhone));
-			indexable.AddProperty (Property.NewKeyword ("fixme:BusinessPhone2", contact.BusinessPhone2));
-			indexable.AddProperty (Property.NewKeyword ("fixme:BusinessFax", contact.BusinessFax));
-			indexable.AddProperty (Property.NewKeyword ("fixme:CallbackPhone", contact.CallbackPhone));
-			indexable.AddProperty (Property.NewKeyword ("fixme:CarPhone", contact.CarPhone));
-			indexable.AddProperty (Property.NewKeyword ("fixme:CompanyPhone", contact.CompanyPhone));
-			indexable.AddProperty (Property.NewKeyword ("fixme:HomePhone", contact.HomePhone));
-			indexable.AddProperty (Property.NewKeyword ("fixme:HomePhone2", contact.HomePhone2));
-			indexable.AddProperty (Property.NewKeyword ("fixme:HomeFax", contact.HomeFax));
-			indexable.AddProperty (Property.NewKeyword ("fixme:IsdnPhone", contact.IsdnPhone));
-			indexable.AddProperty (Property.NewKeyword ("fixme:MobilePhone", contact.MobilePhone));
-			indexable.AddProperty (Property.NewKeyword ("fixme:OtherPhone", contact.OtherPhone));
-			indexable.AddProperty (Property.NewKeyword ("fixme:OtherFax", contact.OtherFax));
-			indexable.AddProperty (Property.NewKeyword ("fixme:Pager", contact.Pager));
-			indexable.AddProperty (Property.NewKeyword ("fixme:PrimaryPhone", contact.PrimaryPhone));
-			indexable.AddProperty (Property.NewKeyword ("fixme:Radio", contact.Radio));
-			indexable.AddProperty (Property.NewKeyword ("fixme:Telex", contact.Telex));
+			indexable.AddProperty (Property.New ("fixme:FileAs", contact.FileAs));
+			indexable.AddProperty (Property.New ("fixme:GivenName", contact.GivenName));
+			indexable.AddProperty (Property.New ("fixme:FamilyName", contact.FamilyName));
+			indexable.AddProperty (Property.New ("fixme:Nickname", contact.Nickname));
+			indexable.AddProperty (Property.New ("fixme:AddressLabelHome", contact.AddressLabelHome));
+			indexable.AddProperty (Property.New ("fixme:AddressLabelWork", contact.AddressLabelWork));
+			indexable.AddProperty (Property.New ("fixme:AddressLabelOther", contact.AddressLabelOther));
+			indexable.AddProperty (Property.New ("fixme:AssistantPhone", contact.AssistantPhone));
+			indexable.AddProperty (Property.New ("fixme:BusinessPhone", contact.BusinessPhone));
+			indexable.AddProperty (Property.New ("fixme:BusinessPhone2", contact.BusinessPhone2));
+			indexable.AddProperty (Property.New ("fixme:BusinessFax", contact.BusinessFax));
+			indexable.AddProperty (Property.New ("fixme:CallbackPhone", contact.CallbackPhone));
+			indexable.AddProperty (Property.New ("fixme:CarPhone", contact.CarPhone));
+			indexable.AddProperty (Property.New ("fixme:CompanyPhone", contact.CompanyPhone));
+			indexable.AddProperty (Property.New ("fixme:HomePhone", contact.HomePhone));
+			indexable.AddProperty (Property.New ("fixme:HomePhone2", contact.HomePhone2));
+			indexable.AddProperty (Property.New ("fixme:HomeFax", contact.HomeFax));
+			indexable.AddProperty (Property.New ("fixme:IsdnPhone", contact.IsdnPhone));
+			indexable.AddProperty (Property.New ("fixme:MobilePhone", contact.MobilePhone));
+			indexable.AddProperty (Property.New ("fixme:OtherPhone", contact.OtherPhone));
+			indexable.AddProperty (Property.New ("fixme:OtherFax", contact.OtherFax));
+			indexable.AddProperty (Property.New ("fixme:Pager", contact.Pager));
+			indexable.AddProperty (Property.New ("fixme:PrimaryPhone", contact.PrimaryPhone));
+			indexable.AddProperty (Property.New ("fixme:Radio", contact.Radio));
+			indexable.AddProperty (Property.New ("fixme:Telex", contact.Telex));
 			indexable.AddProperty (Property.NewKeyword ("fixme:Tty", contact.Tty));
 			indexable.AddProperty (Property.NewKeyword ("fixme:Email1", contact.Email1));
 			indexable.AddProperty (Property.NewKeyword ("fixme:Email2", contact.Email2));
 			indexable.AddProperty (Property.NewKeyword ("fixme:Email3", contact.Email3));
 			indexable.AddProperty (Property.NewKeyword ("fixme:Mailer", contact.Mailer));
-			indexable.AddProperty (Property.NewKeyword ("fixme:Org", contact.Org));
-			indexable.AddProperty (Property.NewKeyword ("fixme:OrgUnit", contact.OrgUnit));
-			indexable.AddProperty (Property.NewKeyword ("fixme:Office", contact.Office));
-			indexable.AddProperty (Property.NewKeyword ("fixme:Title", contact.Title));
-			indexable.AddProperty (Property.NewKeyword ("fixme:Role", contact.Role));
-			indexable.AddProperty (Property.NewKeyword ("fixme:Manager", contact.Manager));
-			indexable.AddProperty (Property.NewKeyword ("fixme:Assistant", contact.Assistant));
+			indexable.AddProperty (Property.New ("fixme:Org", contact.Org));
+			indexable.AddProperty (Property.New ("fixme:OrgUnit", contact.OrgUnit));
+			indexable.AddProperty (Property.New ("fixme:Office", contact.Office));
+			indexable.AddProperty (Property.New ("fixme:Title", contact.Title));
+			indexable.AddProperty (Property.New ("fixme:Role", contact.Role));
+			indexable.AddProperty (Property.New ("fixme:Manager", contact.Manager));
+			indexable.AddProperty (Property.New ("fixme:Assistant", contact.Assistant));
 			indexable.AddProperty (Property.NewKeyword ("fixme:HomepageUrl", contact.HomepageUrl));
 			indexable.AddProperty (Property.NewKeyword ("fixme:BlogUrl", contact.BlogUrl));
 			indexable.AddProperty (Property.NewKeyword ("fixme:Categories", contact.Categories));
 			indexable.AddProperty (Property.NewKeyword ("fixme:Caluri", contact.Caluri));
 			indexable.AddProperty (Property.NewKeyword ("fixme:Icscalendar", contact.Icscalendar));
-			indexable.AddProperty (Property.NewKeyword ("fixme:Spouse", contact.Spouse));
-			indexable.AddProperty (Property.NewKeyword ("fixme:Note", contact.Note));
+			indexable.AddProperty (Property.New ("fixme:Spouse", contact.Spouse));
+			indexable.AddProperty (Property.New ("fixme:Note", contact.Note));
 			
 			Evolution.ContactPhoto photo = contact.Photo;
 
@@ -258,7 +258,7 @@ namespace Beagle.Daemon.EvolutionDataServerQueryable {
 			if (contact.FamilyName != null && contact.FamilyName != "")
 				name += " " + contact.FamilyName;
 			if (name.Length > 0)
-				indexable.AddProperty (Property.NewKeyword ("fixme:Name", name));
+				indexable.AddProperty (Property.New ("fixme:Name", name));
 		
 			if (contact.Email1 != null)
 				indexable.AddProperty (Property.NewKeyword ("fixme:Email",

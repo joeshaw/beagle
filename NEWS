@@ -34,6 +34,7 @@ Backends:
 * Improved relevancy for e-mails (Jon)
 * Look at the REV field to know which contacts have changed since
   the last time we crawled the local addressbook (Jon)
+* Fixed properties in addressbook objects (Jon)
 
 Filters:
 * Filter infrastructure improvements (Jon, Joe, Daniel)
