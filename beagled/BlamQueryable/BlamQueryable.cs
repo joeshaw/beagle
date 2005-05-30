@@ -161,8 +161,8 @@ namespace Beagle.Daemon.BlamQueryable {
 					indexable.Type = "FeedItem";
 					indexable.Timestamp = item.PubDate;
 					
-					indexable.AddProperty (Property.NewKeyword ("dc:title", item.Title));
-					indexable.AddProperty (Property.NewKeyword ("fixme:author", item.Author));
+					indexable.AddProperty (Property.New ("dc:title", item.Title));
+					indexable.AddProperty (Property.New ("fixme:author", item.Author));
 					indexable.AddProperty (Property.NewDate ("fixme:published", item.PubDate));
 					indexable.AddProperty (Property.NewKeyword ("fixme:itemuri", item.Link));
 					indexable.AddProperty (Property.NewKeyword ("fixme:webloguri", channel.Url));
@@ -179,7 +179,7 @@ namespace Beagle.Daemon.BlamQueryable {
 					if (img != null) {
 						string path = Path.Combine (Path.Combine (blam_dir, "Cache"),
 									    img.GetHashCode ().ToString ());
-						indexable.AddProperty (Property.NewKeyword ("fixme:cachedimg", path));
+						indexable.AddProperty (Property.NewUnsearched ("fixme:cachedimg", path));
 					}
 
 					StringReader reader = new StringReader (item.Text);
