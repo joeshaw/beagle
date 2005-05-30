@@ -27,10 +27,10 @@
 // DEALINGS IN THE SOFTWARE.
 //
 using System;
-using System.Collections;
-using System.Threading;
 using System.IO;
 using System.Net;
+using System.Collections;
+using System.Threading;
 
 using System.Runtime.Remoting;
 using System.Runtime.Remoting.Channels;
@@ -83,16 +83,16 @@ namespace Beagle.WebService {
 	[Serializable()]
 	public class hitResult {
 
-		public int id;
-		public string uri;
-		public string resourceType;
-		public string mimeType;
-		public string source;
-		public double scoreRaw;
-		public double scoreMultiplier;
+		public int 		id;
+		public string 	uri;
+		public string 	resourceType;
+		public string 	mimeType;
+		public string 	source;
+		public double 	scoreRaw;
+		public double 	scoreMultiplier;
 		public HitProperty[] properties;
 		//FIXME: public xxx[] data;
-		public string snippet;
+		public string 	snippet;
 	}
 
 	[Serializable()]
@@ -102,7 +102,7 @@ namespace Beagle.WebService {
 		public string statusMsg;		//User-friendly return message
 
 		public string searchToken;		//Token identifying the query,
-							//to enable follow-up queries
+										//to enable follow-up queries
 		public int firstResultIndex; 	//Index of first result in this response
 		public int numResults;		 	//No. of results in this response
 		public int totalResults;		//Total no. of results from the query
@@ -123,20 +123,14 @@ namespace Beagle.WebService {
 		public static string DEFAULT_XSP_PORT = "8888";
 		
 		static Mono.ASPNET.ApplicationServer appServer = null;
+		static string DEFAULT_APP_MAPPINGS = "/:" + DEFAULT_XSP_ROOT + ",/beagle:" + DEFAULT_XSP_ROOT;
+
 		//Both "/" and "/beagle" aliased to DEFAULT_XSP_ROOT only for BeagleXSP server
 		static string[] xsp_param = {"--port", DEFAULT_XSP_PORT,
 					     "--root", DEFAULT_XSP_ROOT, 
-					     "--applications", 
-					     		"/:" + DEFAULT_XSP_ROOT + 
-					     		",/beagle:" + DEFAULT_XSP_ROOT + 
-					     		//",/beagle/public:" + PathFinder.HomeDir + "/public" +
-					     		",/beagle/kde3:" + ExternalStringsHack.KdePrefix +
-					     		",/beagle/gnome:" + ExternalStringsHack.GnomePrefix +	
-					     		",/beagle/local:" + ExternalStringsHack.Prefix,					     						     		
+					     "--applications", DEFAULT_APP_MAPPINGS, 
 					     "--nonstop"};
-					     
-		static string FallBackAppString = "/:" + DEFAULT_XSP_ROOT + ",/beagle:" + DEFAULT_XSP_ROOT;
-		 
+
 		public static void Start(WebServicesArgs wsargs)
 		{
 			//start web-access server first
@@ -155,27 +149,51 @@ namespace Beagle.WebService {
 			//Check if web_rootDir_changed:
 			if (String.Compare(wsargs.web_rootDir, DEFAULT_XSP_ROOT, true) != 0)
 				//Assuming "/beagle" exists as an explicit sub-folder under user specified xsp root directory:
-				xsp_param[5] = "/:" + wsargs.web_rootDir + ",/beagle:" + wsargs.web_rootDir + "/beagle" + ",/beagle/public:" + PathFinder.HomeDir + "/public";
-				
+				xsp_param[5] = "/:" + wsargs.web_rootDir + ",/beagle:" + wsargs.web_rootDir + "/beagle";
+			
+			try {
+					
+				if (Directory.Exists(PathFinder.HomeDir + "/public"))
+				xsp_param[5] += ",/beagle/public:" + PathFinder.HomeDir + "/public";
+
+				//",/beagle/kde3:" + ExternalStringsHack.KdePrefix +
+				if (Directory.Exists(ExternalStringsHack.KdePrefix))
+				xsp_param[5] += ",/beagle/kde3:" + ExternalStringsHack.KdePrefix;
+							
+				//",/beagle/gnome:" + ExternalStringsHack.GnomePrefix +
+				if (Directory.Exists(ExternalStringsHack.GnomePrefix))
+				xsp_param[5] += ",/beagle/gnome:" + ExternalStringsHack.GnomePrefix;
+								
+				//",/beagle/local:" + ExternalStringsHack.Prefix,	
+				if (Directory.Exists(ExternalStringsHack.Prefix))
+				xsp_param[5] += ",/beagle/local:" + ExternalStringsHack.Prefix;
+			}
+			catch (Exception e)
+			{
+				xsp_param[5] = DEFAULT_APP_MAPPINGS;
+			}					
+					     						
 			if (wsargs.web_start) {
 				
 				Logger.Log.Debug ("Starting Internal Web Server");
-				
+
 				int retVal = 0;
 				try {
 					//Start beagled internal web server (BeagleXsp)
 					retVal = Mono.ASPNET.Server.initXSP(xsp_param, out appServer);
 				}
-				catch (Exception e) {
-					//Retry with reduced application mappings:
-					xsp_param[5] = FallBackAppString;
+				catch (ArgumentException e) {
+					//Retry with default application mappings:
+					xsp_param[5] = DEFAULT_APP_MAPPINGS;
 					retVal = Mono.ASPNET.Server.initXSP(xsp_param, out appServer);		
 				}
-				
+
 				if (retVal != 0) {
 					Logger.Log.Warn ("Error starting Internal Web Server (retVal={0})", retVal);
 					Logger.Log.Warn ("Check if there is another instance of Beagle running");
 				}
+				else
+					Logger.Log.Debug("BeagleXSP Applications list: " + xsp_param[5]);
 			}		
 		}
 		
@@ -360,7 +378,7 @@ namespace Beagle.WebService {
 			if (queryable == null)
 				snippet = "ERROR: hit.SourceObject is null, uri=" + h.Uri;
 			else
-				snippet = queryable.GetSnippet (query.Text as string[], h);
+				snippet = queryable.GetSnippet (ICollection2StringList(query.Text), h);
 										
 			ArrayList tempResults = (ArrayList) AccessFilter.TranslateHit(h);
 
@@ -378,15 +396,9 @@ namespace Beagle.WebService {
 			
 				h2.SourceObject = h1.SourceObject;
 					
-				//h2.properties = h1.Properties;
-				
 				foreach (Property p in h1.Properties)
 					h2.AddProperty(p);				 
-/*				
-				Hashtable sp = (Hashtable) h1.Properties;	
-				foreach (string key in sp.Keys) 
-					h2[key] = (string) sp[key];
-*/
+
 				h2.snippet = snippet;
 						
 				authResults.Add(h2);
@@ -394,6 +406,17 @@ namespace Beagle.WebService {
 			return authResults;
 		}				
 
+		public string[] ICollection2StringList(ICollection il)
+		{
+			if (il == null)
+				return new string[0] ;
+			
+			string[] sl = new string[il.Count];			
+			il.CopyTo(sl, 0);
+			
+			return sl;
+		}
+		
 		private const int MAX_RESULTS_PER_CALL = 20;
 		
 		public const int SC_QUERY_SUCCESS = 0;
@@ -463,18 +486,19 @@ namespace Beagle.WebService {
 			//Console.WriteLine("WebServiceBackEnd: Got {0} results from beagled", results.Count);
 			sr = new searchResult();
 
-			if (results.Count != 0) 
-			 lock (results.SyncRoot) { //Lock results ArrayList to prevent more Hits added till we've processed doQuery
+			if (results.Count != 0)
+			{ 
+			  lock (results.SyncRoot) { //Lock results ArrayList to prevent more Hits added till we've processed doQuery
 			
 				sr.numResults = results.Count < MAX_RESULTS_PER_CALL ? results.Count: MAX_RESULTS_PER_CALL;	
 				sr.hitResults = new hitResult[sr.numResults];
 				
-				int i = 0; 
+				//int i = 0; 
 			    // Console.WriteLine(sr.numResults);
 			    				
-				for (int n = 0; n < sr.numResults; n++) {
+				for (int i = 0; i < sr.numResults; i++) {
 				
-					Hit h = (Hit) results[n];
+					Hit h = (Hit) results[i];
 			
 					string snippet = ""; 
 			
@@ -485,7 +509,7 @@ namespace Beagle.WebService {
 						if (queryable == null)
 							snippet = "ERROR: hit.SourceObject is null, uri=" + h.Uri;
 						else
-							snippet = queryable.GetSnippet (query.Text as string[], h);
+							snippet = queryable.GetSnippet (ICollection2StringList(query.Text), h);
 					}
 					else 
 						snippet = ((NetworkHit) h).snippet;					
@@ -498,8 +522,7 @@ namespace Beagle.WebService {
 					sr.hitResults[i].source = h.Source;
 					sr.hitResults[i].scoreRaw = h.ScoreRaw;
 					sr.hitResults[i].scoreMultiplier = h.ScoreMultiplier;
-					
-					//sr.hitResults[i].properties = h.Properties;	
+				
 					int plen = h.Properties.Count;
 					sr.hitResults[i].properties = new HitProperty[plen];
 					for (int j = 0; j < plen; j++) {
@@ -510,26 +533,16 @@ namespace Beagle.WebService {
 						sr.hitResults[i].properties[j].IsKeyword = p.IsKeyword;				
 						sr.hitResults[i].properties[j].IsSearched = p.IsSearched;							
 					}
-/*									
-					Hashtable sp = (Hashtable) h.Properties;
-					sr.hitResults[i].properties = new Property[h.Properties.Count];
-	
-					int j = 0;
-					foreach (string key in sp.Keys) {
-						sr.hitResults[i].properties[j] = new HitProperty();
-						sr.hitResults[i].properties[j].PKey = key;
-						sr.hitResults[i].properties[j++].PVal = (string) sp[key];
-					}
-*/											
+									
 					sr.hitResults[i].snippet = snippet;
-	
-					i++;
+					//i++;
 				}					
-			 } //end lock
+			   } //end lock
+			 }// end if
 			 else {
 
 			    sr.numResults = 0;
-				sr.hitResults = new hitResult[sr.numResults];	
+				//sr.hitResults = new hitResult[sr.numResults];	
 			 }
 
 			 sr.totalResults = results.Count;
@@ -591,7 +604,7 @@ namespace Beagle.WebService {
 						if (queryable == null)
 							snippet = "ERROR: hit.SourceObject is null, uri=" + h.Uri;
 						else
-							snippet = queryable.GetSnippet (query.Text as string[], h);
+							snippet = queryable.GetSnippet (ICollection2StringList(query.Text), h);
 					}
 					else 
 						snippet = ((NetworkHit) h).snippet;					
@@ -604,7 +617,7 @@ namespace Beagle.WebService {
 					sr.hitResults[i].source = h.Source;
 					sr.hitResults[i].scoreRaw = h.ScoreRaw;
 					sr.hitResults[i].scoreMultiplier = h.ScoreMultiplier;
-					
+				
 					int plen = h.Properties.Count;
 					sr.hitResults[i].properties = new HitProperty[plen];
 					for (int j = 0; j < plen; j++) {
@@ -615,17 +628,7 @@ namespace Beagle.WebService {
 						sr.hitResults[i].properties[j].IsKeyword = p.IsKeyword;				
 						sr.hitResults[i].properties[j].IsSearched = p.IsSearched;							
 					}	
-/*									
-					Hashtable sp = (Hashtable) h.Properties;
-					sr.hitResults[i].properties = new HitProperty[sp.Count];
-	
-					int j = 0;
-					foreach (string key in sp.Keys) {
-						sr.hitResults[i].properties[j] = new HitProperty();
-						sr.hitResults[i].properties[j].PKey = key;
-						sr.hitResults[i].properties[j++].PVal = (string) sp[key];
-					}
-*/																	
+														
 					sr.hitResults[i].snippet = snippet;
 					i++;
 				}												
