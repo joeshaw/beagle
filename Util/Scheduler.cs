@@ -582,7 +582,9 @@ namespace Beagle.Util {
 			double idle_time = GetIdleTime ();
 			double idle_scale = 1.0;
 			bool is_idle = false;
-			if (idle_time > idle_threshold) {
+
+			// Never speed up if we are using the battery.
+			if (idle_time > idle_threshold && ! SystemInformation.UsingBattery) {
 				is_idle = true;
 				double t = (idle_time - idle_threshold) / idle_ramp_up_time;				     
 				idle_scale = (1 - Math.Min (t, 1.0));

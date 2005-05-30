@@ -161,7 +161,7 @@ namespace Beagle.Util {
 
 		///////////////////////////////////////////////////////////////
 
-		const double acpi_poll_delay = 5;
+		const double acpi_poll_delay = 30;
 		const string proc_ac_state_filename = "/proc/acpi/ac_adapter/AC/state";
 		const string ac_present_string = "on-line";
 		static bool proc_ac_state_exists = true;
