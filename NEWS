@@ -1,4 +1,97 @@
 
+Version 0.0.10
+May 30, 2005
+
+Daemon/Infrastructure:
+* Remove dbus dependency and replace it with a simple point-to-point
+  Unix domain socket and XmlSerialization message passing system
+  (Joe Shaw, Jon Trowbridge, Robert Love, Daniel Drake, Fredrik Hedberg)
+* Support multiple properties on the same name on hits (Veerapuram Varadhan,
+  Jon)
+* Delete logs older than 7 days on startup (Lukas Lipka)
+* Bail out eariler if we are run the daemon as root (Lukas)
+* Add --help option to beagled (Lukas)
+* Inotify API updates, IsDirectory support and OneShot support (Robert)
+* Inotify event-queue clean-up (Jon)
+* Per-backend index versioning (Fredrik)
+* Allow clients to lower hit limit (Daniel)
+* Queries are now more flexible (Jon)
+* Properly index and query keyword properties (Jon)
+* Removed the old network interface (Fredrik)
+* Use opendir and readdir from Mono.Posix to walk large directories (Jon)
+* Shut down cleanly on SIGINT, SIGTERM and SIGQUIT (Jon)
+
+Backends:
+* HitIsValid for TomboyQueryable (Lukas)
+* Real-time indexing for Tomboy notes works again (Lukas)
+* Fix detection of Evolution IMAP accounts that use authentication
+  methods which aren't the default (Joe)
+* Fix indexing of GAIM IRC logs (Daniel)
+* Don't crash on unreadable .desktop files (Daniel)
+* Index KDE Launchers (Daniel)
+* Launcher backend cleanups (Daniel)
+* Minor changes to the Monodoc backend (Fredrik)
+* Improved relevancy for e-mails (Jon)
+* Look at the REV field to know which contacts have changed since
+  the last time we crawled the local addressbook (Jon)
+
+Filters:
+* Filter infrastructure improvements (Jon, Joe, Daniel)
+* libexif build/dllmap fixes (Daniel, Jon)
+* Spreadsheet filter using ssindex tool from gnumeric, supports
+  Excel, Gnumeric, CSVs (Varadhan)
+* Add identification of file-types using their extension (Varadhan)
+* Added support for extracting header/footer contents in RTF documents
+  (Varadhan)
+* Filter for Javascript files (Anthony Batchelor)
+* Filter for Lisp files (Wojciech Polak)
+
+UI/Tools:
+* Allow highlighting search terms in the IM viewer (Lukas)
+* Make search work in IM viewer (Lukas)
+* Revamped Best quicksearch menu (Lukas)
+* Pull font settings from gconf and apply them to the style; fixes the
+  GIANT FONT PROBLEM people were seeing in non-english locales (Joe)
+* Unify beagle-status, beagle-index-info, and beagle-ping into a single
+  beagle-info program (Joe)
+* Show KDE launcher icons in Best (Daniel)
+* Mouse-over tooltips in Best (Daniel)
+* Fix the TileFolder ranking problem (Fredrik)
+
+Web Services:
+* Added support for Snippets in Beagle Web Interface (KN Vijay)
+* Updated Beagle internal WebServer code to XSP-1.0.9 (Vijay)
+* Added External Access filter for Web & Web-service accesses:
+  Added check to distinguish between local and external web/web-service
+  access, and do basic filtering of hit results for external accesses (Vijay)
+* Added Locks to web & web-service backend code, to prevent changes to
+  results set while generating response (Vijay)
+* Updated web-interface to serve images for Icons from web server,
+  converting file:/// uris into http:// uris. This should resolve the
+  problem where images for web-interface results were not displayed on
+  Mozilla/Firefox browsers, due to security restrictions (Vijay) 
+* Changes in WebServiceBackEnd to update it in line with recent changes
+  in Query, Hit & Property classes (Vijay)
+
+Everything else:
+* Check things more carefully at configure-time (Joe)
+* New Wiki (Joe)
+* Build fixes (Everyone)
+* Removed a bunch of dead code (Everyone)	
+* Added Catalan translation (joseppc)
+* Added Danish translation (mwh)
+* Added Greek translation (pkst)
+* Added Hungarian translation (Gabor Kelemen)
+* Added Spanish translation (Francisco Javier Fernandez)
+* Updated Canadian English translation (Adam Weinberger)
+* Updated German translation (Frank Arnold)
+* Updated Japanese translation (Takeshi AIHANA)
+* Updated Norwegian translation (Terance Edward Sola)
+* Updated Dutch translation (Wouter Bolsterlee)
+* All the stuff I forgot (All of the people I forgot)
+
+------------------------------------------------------
+
 Version 0.0.9
 April 7, 2005
 
