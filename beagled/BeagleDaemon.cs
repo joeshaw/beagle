@@ -253,7 +253,7 @@ namespace Beagle.Daemon {
 			if (! ExtendedAttribute.Test (PathFinder.StorageDir)) {
 				Logger.Log.Fatal ("Could not set extended attributes on a file in your home "
 						  + "directory.  See "
-						  + "http://www.beaglewiki.org/index.php/Enable%20Extended%20Attributes "
+						  + "http://www.beaglewiki.org/Enabling_Extended_Attributes "
 						  + "for more information.");
 				return 1;
 			}
