@@ -64,17 +64,30 @@ $(EXERCISE_FILE_SYSTEM_WRAPPER): $(WRAPPER_IN)
 	$(WRAPPER_SED) -e "s|\@target\@|$(EXERCISE_FILE_SYSTEM_TARGET)|g" < $(srcdir)/$(WRAPPER_IN) > $@
 	chmod +x $(EXERCISE_FILE_SYSTEM_WRAPPER)
 
+CONFIG_TARGET = Config.exe
+CONFIG_WRAPPER = beagle-config
+CONFIG_CSFILES = $(srcdir)/Config.cs
+
+$(CONFIG_TARGET): $(CONFIG_CSFILES) $(LOCAL_ASSEMBLIES)
+	$(CSC) -out:$@ $(CSFLAGS) $(CONFIG_CSFILES) $(ASSEMBLIES)
+
+$(CONFIG_WRAPPER): $(WRAPPER_IN)
+	$(WRAPPER_SED) -e "s|\@target\@|$(CONFIG_TARGET)|g" < $(srcdir)/$(WRAPPER_IN) > $@
+	chmod +x $(CONFIG_WRAPPER)
+
 TARGETS = 				\
 	$(INFO_TARGET)			\
 	$(SHUTDOWN_TARGET)		\
 	$(QUERY_TARGET)			\
-	$(EXERCISE_FILE_SYSTEM_TARGET)
+	$(EXERCISE_FILE_SYSTEM_TARGET)	\
+	$(CONFIG_TARGET)
 
 WRAPPERS = 				\
 	$(INFO_WRAPPER)			\
 	$(SHUTDOWN_WRAPPER)		\
 	$(QUERY_WRAPPER)		\
-	$(EXERCISE_FILE_SYSTEM_WRAPPER)
+	$(EXERCISE_FILE_SYSTEM_WRAPPER)	\
+	$(CONFIG_WRAPPER)
 
 bin_SCRIPTS = 			\
 	$(WRAPPERS) 		\
@@ -85,7 +98,8 @@ bin_SCRIPTS = 			\
 man_MANS = 			\
 	beagle-query.1		\
 	beagle-shutdown.1	\
-	beagle-status.1
+	beagle-status.1		\
+	beagle-config.1
 
 all: $(TARGETS) $(WRAPPERS)
 

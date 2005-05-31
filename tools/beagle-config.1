@@ -1,0 +1,55 @@
+.\" beagle-config(1) manpage
+.\"
+.\" Copyright (C) 2005 Novell, Inc.
+.\"
+.TH BEAGLE-CONFIG "1" "May 2005" "beagle" "Linux User's Manual"
+.SH NAME
+beagle-config \- command-line interface to the Beagle configuration file
+.SH SYNOPSIS
+.B beagle-config
+\fIoptions\fR
+.br
+.B beagle-config
+\fIsections\fR
+.br
+.B beagle-config
+\fIsections\fR \fIsection-options\fR [\fIparams\fR]
+.SH DESCRIPTION
+.BR beagle-config
+is a command line tool designed to manipulate the Beagle configuration.
+.PP
+The configuration is stored in a series of files usually located in the \fB~/.beagle/config\fR directory. The configuration is split up into \fIsections\fR, each section being represented by 1 file.
+.PP
+The format used is the result of serialized objects. Manually modifying the configuration files is not recommended, you should use this utility instead.
+.PP
+Each \fIsection\fR configures a different area of the Beagle system. Each section has a number of preset \fIsection-options\fR (commands) which you can perform on it via this command-line application.
+.PP
+The available sections, and available options for each section, are discovered at runtime. This manual does not attempt to document the sections in detail. This manual demonstrates how you can retrieve a list of available sections and their options.
+.PP
+\fIbeagle-config\fR can be used "offline", it does not require a Beagle daemon to be running for most operations. If a Beagle daemon is running, it will immediately be notified of any configuration changes, and your new settings will come into effect almost immediately. Alternatively, you can force a re-load with the \fB--beagled-reload-config\fR argument.
+.SH OPTIONS
+.TP
+.B --help 
+Print a brief copyright and usage message.
+.TP
+.B --beagled-reload-config
+Asks the beagle daemon to reload the configuration files.
+.TP
+.B --list-sections
+Lists all of the available sections for use as the \fIsections\fR parameter.
+.SH SECTION OPTIONS
+Each section has its own unique set of options available. To see a list of supported options for a particular section, run \fBbeagle-config section-name\fR with no additional parameters.
+.SH PARAMS
+Each option may take a number of parameters (or none). Please refer to online documentation if you require explanations of every available command.
+.SH AUTHOR
+Originally written by Daniel Drake <dsd@gentoo.org>.
+.SH "REPORTING BUGS"
+Report bugs to <dashboard-hackers@gnome.org>.
+.SH COPYRIGHT
+Copyright \(co 2005 Novell, Inc.
+.sp
+This is free software; see the source for copying conditions.  There is NO
+warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+.SH "SEE ALSO"
+.BR beagled (1),
+.BR best (1)

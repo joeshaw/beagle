@@ -30,6 +30,7 @@ $(EXTSTR): $(EXTSTR_IN)
 CSFILES = 			        	\
 	$(srcdir)/camel.cs              	\
 	$(srcdir)/CommandLineFu.cs		\
+	$(srcdir)/Conf.cs			\
 	$(srcdir)/DirectoryWalker.cs		\
 	$(srcdir)/ExceptionHandlingThread.cs	\
 	$(srcdir)/ExifData.cs			\

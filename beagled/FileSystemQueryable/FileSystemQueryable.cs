@@ -271,12 +271,8 @@ namespace Beagle.Daemon.FileSystemQueryable {
 		public void StartWorker ()
 		{
 			event_backend.Start (this);
-
-			// FIXME: Shouldn't be hard-wired
-			model.AddRoot (PathFinder.HomeDir);
-
+			Conf.Subscribe (typeof (Conf.IndexingConfig), model.LoadConf);
 			log.Info ("FileSystemQueryable start-up thread finished");
-			
 			// FIXME: Do we need to re-run queries when we are fully started?
 		}
 

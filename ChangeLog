@@ -1,3 +1,14 @@
+2005-05-31  Daniel Drake  <dsd@gentoo.org>
+
+	* BeagleClient/RemoteControl.cs, Util/Conf.cs, Util/Makefile.am,
+	beagled/BeagleDaemon.cs, beagled/FileSystemQueryable/FileNameFilter.cs,
+	beagled/FileSystemQueryable/FileSystemModel.cs, 
+	beagled/FileSystemQueryable/FileSystemQueryable.cs, 
+	beagled/RemoteControlExecutors.cs, doc/TODO, tools/Config.cs,
+	tools/Makefile.am, tools/beagle-config.1:
+	Configuration system backend and command-line client, with some basic
+	control over indexing.
+
 2005-05-29  Vijay K. Nanjundaswamy <knvijay@novell.com>
 
 	* beagled/WebServices/WebServiceBackEnd.cs: 

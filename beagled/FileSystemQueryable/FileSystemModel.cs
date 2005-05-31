@@ -413,7 +413,7 @@ namespace Beagle.Daemon.FileSystemQueryable {
 		Hashtable path_cache = new Hashtable ();
 		Hashtable by_unique_id = new Hashtable ();
 		Queue to_be_scanned = new Queue ();
-		FileNameFilter filter = new FileNameFilter ();
+		FileNameFilter filter;
 
 		IFileEventBackend event_backend;
 		int needs_crawl_count = 0;
@@ -432,6 +432,7 @@ namespace Beagle.Daemon.FileSystemQueryable {
 
 			unique_id_store = new UniqueIdStore (index_directory, index_fingerprint);
 			name_index = new NameIndex (index_directory, index_fingerprint);
+			filter = new FileNameFilter (this);
 
 			IFileAttributesStore backing_store_i;
 			backing_store_i = new FileAttributesStore_Mixed (index_directory, index_fingerprint);
@@ -440,6 +441,17 @@ namespace Beagle.Daemon.FileSystemQueryable {
 			// This let's us access our own implementation of the FileAttributesStore
 			// using the convenience routines in FileAttributesStore.
 			fa_store = new FileAttributesStore (this);
+		}
+
+		public void LoadConf (Conf.Section section)
+		{
+			if (Conf.Indexing.IndexHomeDir)
+				AddRoot (PathFinder.HomeDir);
+
+			foreach (string root in Conf.Indexing.Roots)
+				AddRoot (root);
+
+			filter.AddPatternToIgnore (Conf.Indexing.IgnorePatterns);
 		}
 
 		// I'd rather not expose these, but we really can't avoid it.
@@ -468,8 +480,6 @@ namespace Beagle.Daemon.FileSystemQueryable {
 			while (path.Length > 0 && path [path.Length-1] == System.IO.Path.DirectorySeparatorChar)
 				path = path.Substring (0, path.Length-1);
 
-			Logger.Log.Debug ("Adding root {0}", path);
-				
 			DirectoryPrivate root = new DirectoryPrivate (big_lock);
 			root.InitRoot (System.IO.Path.GetDirectoryName (path), 
 				       System.IO.Path.GetFileName (path));
@@ -483,13 +493,11 @@ namespace Beagle.Daemon.FileSystemQueryable {
 			lock (big_lock) {
 				// FIXME: We also should make sure the path is not a parent or child
 				// of any existing root.
-				foreach (Directory existing_root in roots) {
-					if (existing_root.FullName == root.FullName) {
-						throw new Exception ("Attempt to re-add root " + root.FullName);
-						// FIXME: Is there a case where we would
-						// want to just return existing_root?
-					}
-				}
+				foreach (Directory existing_root in roots)
+					if (existing_root.FullName == root.FullName)
+						return existing_root;
+
+				Logger.Log.Debug ("Adding root {0}", path);
 				roots.Add (root);
 				to_be_scanned.Enqueue (root);
 				if (to_be_scanned.Count == 1)

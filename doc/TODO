@@ -55,3 +55,8 @@ Mail
   text/plain parts of a mail; at the very least it could index the
   HTML parts of a mail message.
 
+Configuration
+-------------
+
+beagle-config GUI (fredrik?)
+Hardening FSQ against breakage (root-inside-root, etc)

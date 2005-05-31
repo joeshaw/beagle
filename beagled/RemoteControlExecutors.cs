@@ -65,4 +65,14 @@ namespace Beagle.Daemon {
 			return new EmptyResponse ();
 		}
 	}
+
+	[RequestMessage (typeof (ReloadConfigRequest))]
+	public class ReloadConfigExecutor : RequestMessageExecutor {
+		
+		public override ResponseMessage Execute (RequestMessage req)
+		{
+			Conf.Load (true);
+			return new EmptyResponse ();
+		}
+	}
 }

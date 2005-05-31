@@ -29,6 +29,7 @@ namespace Beagle {
 	// These requests have no interesting client-side state
 	public class DaemonInformationRequest : RequestMessage { }
 	public class ShutdownRequest : RequestMessage { }
+	public class ReloadConfigRequest : RequestMessage { }
 
 	public class DaemonInformationResponse : ResponseMessage {
 		public string Version;
