@@ -160,9 +160,20 @@ namespace Beagle.Daemon.EvolutionDataServerQueryable {
 		{
 			if (date_str == null)
 				return DateTime.MinValue;
-			return DateTime.ParseExact (date_str,
-						    "yyyy'-'MM'-'dd'T'HH':'mm':'ss'Z'",
-						    CultureInfo.CurrentCulture);
+
+			string[] formats = {
+				"yyyy'-'MM'-'dd'T'HH':'mm':'ss'Z'",
+				"yyyyMMdd'T'HHmmss'Z'"
+			};
+
+			try {
+				return DateTime.ParseExact (date_str, formats,
+							    CultureInfo.InvariantCulture,
+							    DateTimeStyles.None);
+			} catch (FormatException) {
+				Logger.Log.Warn ("Unable to parse last revision string: {0}", date_str);
+				return DateTime.MinValue;
+			}
 		}
 
 		private Indexable ContactToIndexable (Evolution.Contact contact)
