@@ -204,23 +204,26 @@ namespace Beagle.Util {
 
 		static private void PruneOldLogs (string path, string instance)
 		{
-			DateTime magic_date = DateTime.Now - new TimeSpan (7, 0, 0, 0);
+			DateTime magic_date = DateTime.Now.AddDays (-7);
 			DirectoryInfo dir = new DirectoryInfo (path);
 			
 			foreach (FileInfo file in dir.GetFiles ()) {
 				if (file.Name.StartsWith ("current") || (! file.Name.EndsWith (instance)))
 					continue;
 				
-				string date = file.Name.Substring (0, file.Name.LastIndexOf ("-"));
-				DateTime log_date = DateTime.ParseExact (date, "yyyy-MM-dd-HH-mm-ss", null);
-				
-				if (log_date < magic_date) {
-					try {
+				int last_dash = file.Name.LastIndexOf ("-");
+				if (last_dash == -1)
+					continue; // skip strange-looking files
+
+				string date = file.Name.Substring (0, last_dash);
+
+				try {
+					DateTime log_date;
+					log_date = DateTime.ParseExact (date, "yyyy-MM-dd-HH-mm-ss", null);
+					if (log_date < magic_date)
 						file.Delete ();
-					} catch (Exception e) {
-					}
-				}
-			}
+				} catch (Exception e) {	}
+			}				
 		}
 
 		static public void LogToFile (string path, string name, bool foreground_mode)
