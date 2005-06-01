@@ -1,3 +1,7 @@
+2005-06-01  Alexander Shopov  <ash@contact.bg>
+
+	* configure.in: Added "bg" (Bulgarian) to ALL_LINGUAS
+
 2005-05-31  Daniel Drake  <dsd@gentoo.org>
 
 	* BeagleClient/RemoteControl.cs, Util/Conf.cs, Util/Makefile.am,
