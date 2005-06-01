@@ -1,5 +1,5 @@
 //
-// ImLogViewer.cs
+// ImLogWindow.cs
 //
 // Lukas Lipka <lukas@pmad.net>
 // Raphael  Slinckx <rslinckx@gmail.com>
@@ -12,17 +12,14 @@ using System.Collections;
 using System.IO;
 using Gtk;
 using Glade;
-using System.Text;
-using System.Xml;
-
+using System.Threading;
 using Beagle.Util;
-
 using Mono.Posix;
 
 namespace ImLogViewer {
 
 	public class ImLogWindow {
-		[Widget] Dialog log_dialog;
+		[Widget] Window imviewer;
 		[Widget] TreeView timelinetree;
 		[Widget] Label time_title;
 		[Widget] Entry search_entry;
@@ -30,17 +27,18 @@ namespace ImLogViewer {
 		[Widget] Button clear_button;
 		[Widget] TextView conversation;
 		
-		private TreeStore tree_store;
-		private Timeline timeline;
-
-		private string log_path;
 		private string first_selected_log;
 		private bool have_first_selection_iter = false;
 		private TreeIter first_selection_iter;
 		private string speaking_to;
-
+		private string log_path;
 		private string highlight_text;
 		private string search_text;
+
+		private TreeStore tree_store;
+
+		private ThreadNotify index_thread_notify;
+		private Timeline timeline = new Timeline ();
 
 		public ImLogWindow (string path, string search, string highlight)
 		{
@@ -50,18 +48,16 @@ namespace ImLogViewer {
 			} else if (File.Exists (path)) {
 				log_path = Path.GetDirectoryName (path);
 				first_selected_log = path;
-				highlight_text = highlight;
 			} else {
 				Console.WriteLine ("ERROR: Log path doesn't exist - {0}", path);
 				return;
 			}
 
-			timeline = new Timeline ();
+			highlight_text = highlight;
+			search_text = search;				
+			
+			ShowWindow ();
 
-			IndexLogs();
-
-			if (speaking_to != null && speaking_to != "")
-				ShowWindow (speaking_to);
 		}
 
 		private void SetStatusTitle (DateTime dt)
@@ -69,45 +65,37 @@ namespace ImLogViewer {
 			time_title.Markup = String.Format ("<b>{0}</b>", StringFu.DateTimeToPrettyString (dt));
 		}
 		
-		private void BindKeys ()
+		private void SetWindowTitle (string speaker)
 		{
-			Gtk.AccelGroup accel_group = new Gtk.AccelGroup ();
-			GlobalKeybinder global_keys = new GlobalKeybinder (accel_group);
-
-			global_keys.AddAccelerator (new EventHandler (this.OnWindowClose),
-						    (uint) Gdk.Key.w, Gdk.ModifierType.ControlMask,
-						    Gtk.AccelFlags.Visible);
-
-			global_keys.AddAccelerator (new EventHandler (this.OnWindowClose),
-						    (uint) Gdk.Key.Escape, 0,
-						    Gtk.AccelFlags.Visible);
-
-			log_dialog.AddAccelGroup (accel_group);
-		}
-
-		private void ShowWindow (string speaker)
-		{
-			Application.Init();
-			
-			Glade.XML gxml = new Glade.XML (null, "ImLogViewer.glade", "log_dialog", null);
-			gxml.Autoconnect (this);
-
-			BindKeys ();
+			if (speaker == null || speaker == "")
+				return;
 
 			// Find the buddy
 			ImBuddy buddy = new GaimBuddyListReader ().Search (speaker);
-
+			
 			if (speaker.EndsWith (".chat")) {
-				log_dialog.Title = String.Format (Catalog.GetString ("Conversations in {0}"), speaker.Replace (".chat", ""));
+				imviewer.Title = String.Format (Catalog.GetString ("Conversations in {0}"), speaker.Replace (".chat", ""));
 			} else {
 				string nick = speaker;
 
 				if (buddy != null && buddy.Alias != "")
 					nick = buddy.Alias;
 
-				log_dialog.Title = String.Format (Catalog.GetString ("Conversations with {0}"), nick);
+				imviewer.Title = String.Format (Catalog.GetString ("Conversations with {0}"), nick);
 			}
-								  
+
+			speaking_to = speaker;
+		}
+
+		private void ShowWindow ()
+		{
+			Application.Init();
+			
+			Glade.XML gxml = new Glade.XML (null, "ImLogViewer.glade", "imviewer", null);
+			gxml.Autoconnect (this);
+
+			//BindKeys ();
+
 			conversation.PixelsAboveLines = 3;
 			conversation.LeftMargin = 4;
 			conversation.RightMargin = 4;
@@ -127,20 +115,46 @@ namespace ImLogViewer {
 			timelinetree.AppendColumn ("Snippet", new CellRendererText(), "text", 1);
 			timelinetree.Selection.Changed += OnConversationSelected; 
 
-			PopulateTimelineWidget ();
+			if (highlight_text != null)
+				search_entry.Text = highlight_text;
+
+			if (search_text != null)
+				Search (search_text);
 
 			search_entry.Activated += OnSearchClicked;
 			search_button.Clicked += OnSearchClicked;
 			clear_button.Clicked += OnClearClicked;
+			imviewer.DeleteEvent += new DeleteEventHandler (OnWindowDelete);
 
-			log_dialog.Response += new ResponseHandler (OnWindowResponse);
+			AccelGroup accel_group = new AccelGroup ();
+			GlobalKeybinder global_keys = new GlobalKeybinder (accel_group);
+			global_keys.AddAccelerator (OnWindowClose, (uint) Gdk.Key.Escape, 0, Gtk.AccelFlags.Visible);
+			imviewer.AddAccelGroup (accel_group);
 
-			if (have_first_selection_iter)
-				timelinetree.Selection.SelectIter (first_selection_iter);
-			
+			// Index the logs
+			index_thread_notify = new ThreadNotify (new ReadyEvent (RepopulateTimeline));
+			Thread t = new Thread (new ThreadStart (IndexLogs));
+			t.Start ();
+
 			Application.Run();
 		}
-		
+
+		private void IndexLogs ()
+		{
+			foreach (string file in Directory.GetFiles (log_path)) {
+				ICollection logs = GaimLog.ScanLog (new FileInfo (file));
+				
+				foreach (ImLog log in logs) {
+					if (speaking_to == null)
+						SetWindowTitle (log.SpeakingTo);
+
+					timeline.Add (log, log.StartTime);
+				}
+			}
+
+			index_thread_notify.WakeupMain ();
+		}
+
 		private bool LogContainsString (ImLog log, string text)
  		{
 			string [] words = text.Split (null);
@@ -162,85 +176,74 @@ namespace ImLogViewer {
 			return true;
 		}
 
-		private void UpdateTimelineTree ()
+		private class ImLogPreview
 		{
-			//FIXME: Run this in a thread
-			tree_store.Clear ();
-			PopulateTimelineWidget ();
+			public string Snippet;
+			public ImLog Log;
+
+			public ImLogPreview (ImLog log)
+			{
+				Snippet = log.EllipsizedSnippet;
+				Log = log;
+			}
 		}
 
-		private void PopulateTimelineWidget ()
+		private void DoFoo (ArrayList list, string name, string date_format)
 		{
-			TreeIter parent;
-			
-			if (timeline.Today.Count != 0) {
-				parent = tree_store.AppendValues (String.Format ("<b>{0}</b>", Catalog.GetString ("Today")), "", null);
-				PopulateTimeline (parent, timeline.Today, Catalog.GetString ("HH:mm"));
+			if (list.Count > 0) {
+				ArrayList previews = GetPreviews (list);
+				if (previews.Count > 0) {
+					TreeIter parent = tree_store.AppendValues (String.Format ("<b>{0}</b>", Catalog.GetString (name)), "", null);
+ 					AddPreviews (parent, previews, Catalog.GetString (date_format));
+				}
 			}
-			
-			if (timeline.Yesterday.Count != 0) {
-				parent = tree_store.AppendValues (String.Format ("<b>{0}</b>", Catalog.GetString ("Yesterday")), "", null);
-				PopulateTimeline (parent, timeline.Yesterday, Catalog.GetString ("HH:mm"));
-			}
-			
-			if (timeline.ThisWeek.Count != 0) {
-				parent = tree_store.AppendValues (String.Format ("<b>{0}</b>", Catalog.GetString ("This Week")), "", null);
-				PopulateTimeline (parent, timeline.ThisWeek, Catalog.GetString ("dddd"));
-			}
-		
-			if (timeline.LastWeek.Count != 0) {
-				parent = tree_store.AppendValues (String.Format ("<b>{0}</b>", Catalog.GetString ("Last Week")), "", null);
-				PopulateTimeline (parent, timeline.LastWeek, Catalog.GetString ("dddd"));
-			}
-			
-			if (timeline.ThisMonth.Count != 0) {
-				parent = tree_store.AppendValues (String.Format ("<b>{0}</b>", Catalog.GetString ("This Month")), "", null);
-				PopulateTimeline (parent, timeline.ThisMonth, Catalog.GetString ("MMM d"));
-			}
-			
-			if (timeline.ThisYear.Count != 0) {
-				parent = tree_store.AppendValues (String.Format ("<b>{0}</b>", Catalog.GetString ("This Year")), "", null);
-				PopulateTimeline (parent, timeline.ThisYear, Catalog.GetString ("MMM d"));
-			}
-			
-			if (timeline.Older.Count != 0) {
-				parent = tree_store.AppendValues (String.Format ("<b>{0}</b>", Catalog.GetString ("Older")), "", null);
-				PopulateTimeline (parent, timeline.Older, Catalog.GetString ("yyyy MMM d"));
-			}
+		}
 
+		private void RepopulateTimeline ()
+		{
+			tree_store.Clear ();
+
+			DoFoo (timeline.Today, "Today", "HH:mm");
+			DoFoo (timeline.Yesterday, "Yesterday", "HH:mm");
+			DoFoo (timeline.ThisWeek, "This Week", "dddd");
+			DoFoo (timeline.LastWeek, "Last Week", "dddd");
+			DoFoo (timeline.ThisMonth, "This Month", "MMM d");
+			DoFoo (timeline.ThisYear, "This Year", "MMM d");
+			DoFoo (timeline.Older, "Older", "yyy MMM d");
+		
 			timelinetree.ExpandAll();
 		}
 
-		private void PopulateTimeline (TreeIter parent, ArrayList list, string dateformat)
+		private void AddPreviews (TreeIter parent, ArrayList previews, string date_format)
 		{
+			TreeIter iter;
+
+			foreach (ImLogPreview preview in previews) {
+				string date = preview.Log.StartTime.ToString (date_format);
+				iter = tree_store.AppendValues (parent, date, preview.Snippet, preview.Log);
+				if (! have_first_selection_iter || preview.Log.LogFile == first_selected_log) {
+					have_first_selection_iter = true;
+					first_selection_iter = iter;
+					timelinetree.Selection.SelectIter (first_selection_iter);
+					RenderConversation (preview.Log);
+				}
+			}
+		}
+
+		private ArrayList GetPreviews (ArrayList list)
+		{
+			ArrayList logs = new ArrayList ();
+
 			foreach (ImLog log in list) {
 				if (search_text != null && search_text != "")
 					if (! LogContainsString (log, search_text))
 						continue;
-					
-				string date_str = log.StartTime.ToString (dateformat);
-				TreeIter iter;
-				iter = tree_store.AppendValues (parent, date_str, log.EllipsizedSnippet, log);
-				if (! have_first_selection_iter || log.LogFile == first_selected_log) {
-					have_first_selection_iter = true;
-					first_selection_iter = iter;
-				}
+
+				ImLogPreview preview = new ImLogPreview (log);
+				logs.Add (preview);
 			}
-		}
 
-		private void IndexLogs ()
-		{
-			foreach (string file in Directory.GetFiles (log_path)) {
-				ICollection logs = GaimLog.ScanLog (new FileInfo (file));
-				
-				foreach (ImLog log in logs) {
-
-					if (speaking_to == null)
-						speaking_to = log.SpeakingTo;
-
-					timeline.Add (log, log.StartTime);
-				}
-			}
+			return logs;
 		}
 
  		private void RenderConversation (ImLog im_log)
@@ -272,31 +275,16 @@ namespace ImLogViewer {
 		private void HighlightSearchTerms (string highlight)
 		{
 			TextBuffer buffer = conversation.Buffer;
-			string note_text = buffer.GetText (buffer.StartIter, buffer.EndIter, false);
-
-			string[] words = highlight.Split (' ');
-
-			note_text = note_text.ToLower ();
+			string text = buffer.GetText (buffer.StartIter, buffer.EndIter, false).ToLower ();
+			string [] words = highlight.Split (' ');
 
 			foreach (string word in words) {
 				int idx = 0;
-				bool this_word_found = false;
 
 				if (word == String.Empty)
 					continue;
 
-				while (true) {					
-					idx = note_text.IndexOf (word.ToLower (), idx);
-
-					if (idx == -1) {
-						if (this_word_found)
-							break;
-						else
-							return;
-					}
-
-					this_word_found = true;
-
+				while ((idx = text.IndexOf (word.ToLower (), idx)) != -1) {					
 					Gtk.TextIter start = buffer.GetIterAtOffset (idx);
 					Gtk.TextIter end = start;
 					end.ForwardChars (word.Length);
@@ -308,34 +296,16 @@ namespace ImLogViewer {
 			}
 		}
 
-		private void OnWindowClose (object o, EventArgs args)
+		private void Search (string text)
 		{
-			Application.Quit ();
-		}
-
-		private void OnWindowResponse (object o, ResponseArgs args)
-		{
-			Application.Quit ();
-		}
-
-		private void OnSearchClicked (object o, EventArgs args)
-		{
-			search_text = search_entry.Text;
+			search_entry.Text = text;
 			search_button.Visible = false;
 			clear_button.Visible = true;
 			search_entry.Sensitive = false;
 
-			UpdateTimelineTree ();
-		}
-		
-		private void OnClearClicked (object o, EventArgs args)
-		{
-			search_text = null;
-			search_button.Visible = true;
-			clear_button.Visible = false;
-			search_entry.Sensitive = true;
-
-			UpdateTimelineTree ();
+			search_text = text;
+			highlight_text = null;
+			have_first_selection_iter = false;
 		}
 
 		private void OnConversationSelected (object o, EventArgs args) 
@@ -347,6 +317,32 @@ namespace ImLogViewer {
 				ImLog log = model.GetValue (iter, 2) as ImLog;
 				RenderConversation (log);
 			}
+		}
+
+		private void OnWindowClose (object o, EventArgs args)
+		{
+			Application.Quit ();
+		}
+
+		private void OnWindowDelete (object o, DeleteEventArgs args)
+		{
+			Application.Quit ();
+		}
+
+		private void OnSearchClicked (object o, EventArgs args)
+		{
+			Search (search_entry.Text);
+			RepopulateTimeline ();
+		}
+		
+		private void OnClearClicked (object o, EventArgs args)
+		{
+			highlight_text = search_text = null;
+			search_button.Visible = true;
+			clear_button.Visible = false;
+			search_entry.Sensitive = true;
+
+			RepopulateTimeline ();
 		}
 	}
 }
