@@ -29,10 +29,14 @@ using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Runtime.InteropServices;
+using Mono.Posix;
 
 namespace Beagle.Util {
 
 	public class SystemInformation {
+
+		[DllImport ("libc", SetLastError=true)]
+		static extern int getloadavg (double[] loadavg, int nelem);
 
 		const double loadavg_poll_delay = 3;
 		static DateTime proc_loadavg_time  = DateTime.MinValue;
@@ -42,25 +46,21 @@ namespace Beagle.Util {
 
 		static private void CheckLoadAverage ()
 		{
-			// Only scan /proc/loadavg at most once every 10 seconds
+			// Only call getloadavg() at most once every 10 seconds
 			if ((DateTime.Now - proc_loadavg_time).TotalSeconds < loadavg_poll_delay)
 				return;
 
-			Stream stream = new FileStream ("/proc/loadavg",
-							FileMode.Open,
-							FileAccess.Read,
-							FileShare.Read);
-			TextReader reader = new StreamReader (stream);
+			double [] loadavg = new double [3];
+			int retval = getloadavg (loadavg, 3);
 
-			string line = reader.ReadLine ();
-			
-			reader.Close ();
-			stream.Close ();
+			if (retval == -1)
+				throw new IOException ("Could not get system load average: " + Syscall.strerror (Marshal.GetLastWin32Error ()));
+			else if (retval != 3)
+				throw new IOException ("Could not get system load average: getloadavg() returned an unexpected number of samples");
 
-			string [] parts = line.Split (' ');
-			cached_loadavg_1min = Double.Parse (parts [0], NumberFormatInfo.InvariantInfo);
-			cached_loadavg_5min = Double.Parse (parts [1], NumberFormatInfo.InvariantInfo);
-			cached_loadavg_15min = Double.Parse (parts [2], NumberFormatInfo.InvariantInfo);
+			cached_loadavg_1min  = loadavg [0];
+			cached_loadavg_5min  = loadavg [1];
+			cached_loadavg_15min = loadavg [2];
 
 			proc_loadavg_time = DateTime.Now;
 		}
@@ -183,7 +183,7 @@ namespace Beagle.Util {
 			}
 
 			Stream stream = new FileStream (proc_ac_state_filename,
-							FileMode.Open,
+							System.IO.FileMode.Open,
 							FileAccess.Read,
 							FileShare.Read);
 			TextReader reader = new StreamReader (stream);
