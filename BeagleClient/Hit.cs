@@ -81,7 +81,8 @@ namespace Beagle {
 		private DirectoryInfo directoryInfo = null;
 
 		//////////////////////////
-		
+
+		[XmlAttribute]
 		public int Id {
 			get { return id; }
 			set { id = value; }
@@ -93,7 +94,7 @@ namespace Beagle {
 			set { uri = value; }
 		}
 
-		[XmlElement ("Uri")]
+		[XmlAttribute ("Uri")]
 		public string UriAsString {
 			get {
 				return UriFu.UriToSerializableString (uri);
@@ -104,16 +105,19 @@ namespace Beagle {
 			}
 		}
 
+		[XmlAttribute]
 		public string Type {
 			get { return type; }
 			set { type = value; }
 		}
 
+		[XmlAttribute]
 		public string MimeType {
 			get { return mimeType; }
 			set { mimeType = value; }
 		}
 	
+		[XmlAttribute]
 		public string Source {
 			get { return source; }
 			set { source = value; }
@@ -125,20 +129,24 @@ namespace Beagle {
 			set { sourceObject = value; }
 		}
 
+		[XmlAttribute]
 		public string SourceObjectName {
 			get { return source_object_name; }
 			set { source_object_name = value; }
 		}
 
+		[XmlAttribute]
 		public double Score {
 			get { return scoreRaw * scoreMultiplier; }
 		}
 
+		[XmlAttribute]
 		public double ScoreRaw {
 			get { return scoreRaw; }
 			set { scoreRaw = value; }
 		}
 
+		[XmlAttribute]
 		public double ScoreMultiplier {
 			get { return scoreMultiplier; }
 			set { 
