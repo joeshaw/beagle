@@ -70,7 +70,7 @@ namespace WebService_CodeBehind {
 		Output.Visible = Back.Visible = Forward.Visible = true;
 		
 		if (Session["ResultsOnDisplay"] != null
-		    && ((string)Session["ResultsOnDisplay"]).StartsWith(HeaderMsg + NO_RESULTS)) {
+		    && ((string)Session["ResultsOnDisplay"]).StartsWith(HeaderMsg + NO_RESULTS)) 			{
 		    Back.Visible = Forward.Visible = false;
 		}
 
@@ -200,16 +200,22 @@ namespace WebService_CodeBehind {
 	  string buf2 = buf1.Replace("href=\"dynaction:", "href=\"" + Session["InitialReqUrl"] + "?dynaction:");
 	  
 	  //return buf2;
-	   
-	  string sep = "\"";
+
 	  string[] list = buf2.Split('\"');
 	  
 	  string initUrl = (string) Session["InitialReqUrl"];
 	  int i = initUrl.LastIndexOf('/');
-	  //Get the initial part of url: i.e. http://localhost:8888/beagle/
-	  string p = initUrl.Substring(0, i+1);
-	  string s; 
-	  
+
+	  //Get the initial part of url: i.e. http://localhost:8888/beagle
+	  string p = initUrl.Substring(0, i);
+
+	  //Check if initial url was http://localhost:8888/search.aspx & add a trailing "/"
+	  if (p.EndsWith("beagle"))
+		p += "/";
+	  else 
+		p += "/beagle/";
+		
+	  string s, sep = "\"";	  
 	  for (int k = 0; k < list.Length; k++) {
 	  
 	   		s = list[k];
