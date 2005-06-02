@@ -212,6 +212,11 @@ namespace Beagle.Daemon {
 					++i; 
 					wsargs.web_start = true;
 					break;
+					
+				case "--enable-network":
+					wsargs.web_start = true;
+					wsargs.web_global = true;
+					break;					
 #endif 
 				default:
 					Console.WriteLine ("Ignoring unknown argument '{0}'", arg);
