@@ -5,6 +5,7 @@
 	web-service interface. 
 	* beagled/WebFrontEnd.cs: Logic to handle initial requests directed to
 	http://localhost:8888/search.aspx instead of http://localhost:8888/beagle/search.aspx	
+	* beagled/BeagleDaemon.cs: Addded --enable-network startup command line option for WebServices
 
 2005-06-01  Alexander Shopov  <ash@contact.bg>
 
