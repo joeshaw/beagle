@@ -185,8 +185,6 @@ public class GnomeIconLookup{
 				size,
 				ref icon_data,
 				ref base_size));
-			if(icon_data!=IntPtr.Zero)
-				gnome_icon_data_free(icon_data);
 		}	
 		return icon_path;
 	}
