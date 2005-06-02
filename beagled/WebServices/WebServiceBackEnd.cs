@@ -44,7 +44,7 @@ using Mono.ASPNET;
 namespace Beagle.WebService {
 	
 	[Serializable()]
-	public class searchRequest  {
+	public class SearchRequest  {
 
 		public string[] text;
 		public string[] mimeType;
@@ -81,7 +81,7 @@ namespace Beagle.WebService {
 	}
 
 	[Serializable()]
-	public class hitResult {
+	public class HitResult {
 
 		public int 		id;
 		public string 	uri;
@@ -96,7 +96,7 @@ namespace Beagle.WebService {
 	}
 
 	[Serializable()]
-	public class searchResult  {
+	public class SearchResult  {
 	
 		public int statusCode;			//ReturnCode for programmatic processing
 		public string statusMsg;		//User-friendly return message
@@ -106,7 +106,7 @@ namespace Beagle.WebService {
 		public int firstResultIndex; 	//Index of first result in this response
 		public int numResults;		 	//No. of results in this response
 		public int totalResults;		//Total no. of results from the query
-		public hitResult[] hitResults;
+		public HitResult[] hitResults;
 	}
 					     
 	public class WebServicesArgs {
@@ -271,7 +271,8 @@ namespace Beagle.WebService {
 					
 					lock (results.SyncRoot) {
 						foreach (Hit h in hits)
-							results.AddRange(HitToNetworkHits(h, query));
+							if (AccessFilter.FilterHit(h))
+								results.Add(h);
 					}
 					//Console.WriteLine("OnHitsAdded: Total hits in Results is {0}", results.Count); 												
 				}
@@ -368,52 +369,15 @@ namespace Beagle.WebService {
 			}
 		}
 
-		private ArrayList HitToNetworkHits(Hit h, Query query)
-		{
-			string snippet = "";
-			ArrayList authResults = new ArrayList();		
-						
-			Queryable queryable = h.SourceObject as Queryable;
-			
-			if (queryable == null)
-				snippet = "ERROR: hit.SourceObject is null, uri=" + h.Uri;
-			else
-				snippet = queryable.GetSnippet (ICollection2StringList(query.Text), h);
-										
-			ArrayList tempResults = (ArrayList) AccessFilter.TranslateHit(h);
-
-			foreach (Hit h1 in tempResults) {
-																		
-				NetworkHit h2 = new NetworkHit();
-						
-				h2.Id = h1.Id;
-				h2.Uri = h1.Uri;
-   	    		h2.Type = h1.Type;
-				h2.MimeType = h1.MimeType;
-				h2.Source = h1.Source;
-				h2.ScoreRaw = h1.ScoreRaw;
-				h2.ScoreMultiplier = h1.ScoreMultiplier;
-			
-				h2.SourceObject = h1.SourceObject;
-					
-				foreach (Property p in h1.Properties)
-					h2.AddProperty(p);				 
-
-				h2.snippet = snippet;
-						
-				authResults.Add(h2);
-			}
-			return authResults;
-		}				
-
 		public string[] ICollection2StringList(ICollection il)
 		{
 			if (il == null)
 				return new string[0] ;
 			
-			string[] sl = new string[il.Count];			
+			string[] sl = new string[il.Count];
+						
 			il.CopyTo(sl, 0);
-			
+				
 			return sl;
 		}
 		
@@ -425,15 +389,15 @@ namespace Beagle.WebService {
 		public const int SC_INVALID_SEARCH_TOKEN = -3;
 
 		//Full beagledQuery
-		public searchResult doQuery(searchRequest sreq, bool isLocalReq)
+		public SearchResult doQuery(SearchRequest sreq, bool isLocalReq)
 		{	
-			searchResult sr;
+			SearchResult sr;
 			//if (sreq == (MarshalByRef)(null))
-				//return new searchResult();
+				//return new SearchResult();
 			if (sreq.text == null || sreq.text.Length == 0 ||
 				(sreq.text.Length == 1 && sreq.text[0].Trim() == "") ) {
 				
-			    sr = new searchResult();
+			    sr = new SearchResult();
 			    sr.statusCode = SC_INVALID_QUERY;
 			    sr.statusMsg = "Error: No search terms specified";
 				return sr;
@@ -484,39 +448,35 @@ namespace Beagle.WebService {
 				Thread.Sleep(10);
 
 			//Console.WriteLine("WebServiceBackEnd: Got {0} results from beagled", results.Count);
-			sr = new searchResult();
+			sr = new SearchResult();
 
-			if (results.Count != 0)
+			if (results.Count > 0)
 			{ 
 			  lock (results.SyncRoot) { //Lock results ArrayList to prevent more Hits added till we've processed doQuery
 			
 				sr.numResults = results.Count < MAX_RESULTS_PER_CALL ? results.Count: MAX_RESULTS_PER_CALL;	
-				sr.hitResults = new hitResult[sr.numResults];
-				
-				//int i = 0; 
-			    // Console.WriteLine(sr.numResults);
+				sr.hitResults = new HitResult[sr.numResults];
 			    				
 				for (int i = 0; i < sr.numResults; i++) {
 				
 					Hit h = (Hit) results[i];
-			
+
 					string snippet = ""; 
-			
-					if (isLocalReq) {
 						
-						//Get Snippet before AuthenticateHit call changes the Uri:
-						Queryable queryable = h.SourceObject as Queryable;
-						if (queryable == null)
-							snippet = "ERROR: hit.SourceObject is null, uri=" + h.Uri;
-						else
-							snippet = queryable.GetSnippet (ICollection2StringList(query.Text), h);
-					}
-					else 
-						snippet = ((NetworkHit) h).snippet;					
+					Queryable queryable = h.SourceObject as Queryable;
+					if (queryable == null)
+						snippet = "ERROR: hit.SourceObject is null, uri=" + h.Uri;
+					else
+						snippet = queryable.GetSnippet (ICollection2StringList(query.Text), h);				
 								
-					sr.hitResults[i] = new hitResult();
+					sr.hitResults[i] = new HitResult();
 					sr.hitResults[i].id = h.Id;
-					sr.hitResults[i].uri = h.Uri.ToString();
+					
+					if (isLocalReq)
+						sr.hitResults[i].uri = h.Uri.ToString();
+					else 
+						sr.hitResults[i].uri = AccessFilter.TranslateHit(h);
+
 	        	    sr.hitResults[i].resourceType = h.Type;
 					sr.hitResults[i].mimeType = h.MimeType;
 					sr.hitResults[i].source = h.Source;
@@ -535,14 +495,13 @@ namespace Beagle.WebService {
 					}
 									
 					sr.hitResults[i].snippet = snippet;
-					//i++;
 				}					
 			   } //end lock
 			 }// end if
 			 else {
 
 			    sr.numResults = 0;
-				//sr.hitResults = new hitResult[sr.numResults];	
+				sr.hitResults = new HitResult[sr.numResults];	
 			 }
 
 			 sr.totalResults = results.Count;
@@ -559,10 +518,10 @@ namespace Beagle.WebService {
 			 return sr;
 		}
 
-		public searchResult getMoreResults(string searchToken, int startIndex, bool isLocalReq)
+		public SearchResult getMoreResults(string searchToken, int startIndex, bool isLocalReq)
 		{							
 
-			searchResult sr = new searchResult();
+			SearchResult sr = new SearchResult();
 			sr.numResults = 0;
 			
 			if (!sessionTable.ContainsKey(searchToken)) {
@@ -587,31 +546,30 @@ namespace Beagle.WebService {
 				if (startIndex < results.Count)
 					sr.numResults = (results.Count < startIndex + MAX_RESULTS_PER_CALL) ? (results.Count - startIndex): MAX_RESULTS_PER_CALL;
 				
-				sr.hitResults = new hitResult[sr.numResults];
+				sr.hitResults = new HitResult[sr.numResults];
 				
 				Query query = ((SessionData)sessionTable[searchToken]).query;
 			
 				for (int k = startIndex; (i < sr.numResults) && (k < results.Count); k++)   {		
 				
-					Hit h = (Hit) results[k];
-			
+					Hit h = (Hit) results[k];			
+
 					string snippet = ""; 
-			
-					if (isLocalReq) {
 						
-						//Get Snippet before AuthenticateHit call changes the Uri:
-						Queryable queryable = h.SourceObject as Queryable;
-						if (queryable == null)
-							snippet = "ERROR: hit.SourceObject is null, uri=" + h.Uri;
-						else
-							snippet = queryable.GetSnippet (ICollection2StringList(query.Text), h);
-					}
-					else 
-						snippet = ((NetworkHit) h).snippet;					
+					Queryable queryable = h.SourceObject as Queryable;
+					if (queryable == null)
+						snippet = "ERROR: hit.SourceObject is null, uri=" + h.Uri;
+					else
+						snippet = queryable.GetSnippet (ICollection2StringList(query.Text), h);				
 								
-					sr.hitResults[i] = new hitResult();
+					sr.hitResults[i] = new HitResult();
 					sr.hitResults[i].id = h.Id;
-					sr.hitResults[i].uri = h.Uri.ToString();
+					
+					if (isLocalReq)
+						sr.hitResults[i].uri = h.Uri.ToString();
+					else 
+						sr.hitResults[i].uri = AccessFilter.TranslateHit(h);
+
 	        	    sr.hitResults[i].resourceType = h.Type;
 					sr.hitResults[i].mimeType = h.MimeType;
 					sr.hitResults[i].source = h.Source;
@@ -660,15 +618,5 @@ namespace Beagle.WebService {
 				
 			return (token.Replace('-', alpha));
 		}
-	}
-
-	public class NetworkHit: Hit {
-	
-		private string _snippet;
-	
-		public string snippet {
-			get { return _snippet; }
-			set { _snippet = value; }
-		}
-	} 	
+	}	
 }

@@ -75,15 +75,15 @@ namespace WebService_CodeBehind {
 	
 		private WebServiceBackEnd remoteObj = null;
 
-		private searchResult initialQuery(searchRequest req)
+		private SearchResult initialQuery(SearchRequest BeagleQueryRequest)
 		{
 		try {
-			searchResult sr;
+			SearchResult sr;
 			
-			if (req.text == null || req.text.Length == 0 ||
-				(req.text.Length == 1 && req.text[0].Trim()== "")) {
+			if (BeagleQueryRequest.text == null || BeagleQueryRequest.text.Length == 0 ||
+				(BeagleQueryRequest.text.Length == 1 && BeagleQueryRequest.text[0].Trim()== "")) {
 			
-				sr = new searchResult();
+				sr = new SearchResult();
 			    sr.statusCode = WebServiceBackEnd.SC_INVALID_QUERY;
 			    sr.statusMsg = "No search terms specified";
 			    return sr;
@@ -105,7 +105,7 @@ namespace WebService_CodeBehind {
 				return restrictedAccessResult();
 			}
 
-			sr = remoteObj.doQuery(req, isLocalReq);
+			sr = remoteObj.doQuery(BeagleQueryRequest, isLocalReq);
 			return sr;
 		 }
 		 catch (Exception e) {
@@ -118,9 +118,9 @@ namespace WebService_CodeBehind {
 	"http://www.gnome.org/projects/beagle/webservices/BeagleQuery",
 	RequestNamespace="http://www.gnome.org/projects/beagle/webservices",
 	ResponseNamespace="http://www.gnome.org/projects/beagle/webservices")]
-	public searchResult BeagleQuery(searchRequest req)
+	public SearchResult BeagleQuery(SearchRequest BeagleQueryRequest)
 	{
-		return initialQuery(req);
+		return initialQuery(BeagleQueryRequest);
 	}
 	
 	[WebMethod(Description = "Simple Interface to Beagle")]
@@ -128,19 +128,19 @@ namespace WebService_CodeBehind {
 	"http://www.gnome.org/projects/beagle/webservices/SimpleQuery",
 	RequestNamespace="http://www.gnome.org/projects/beagle/webservices",
 	ResponseNamespace="http://www.gnome.org/projects/beagle/webservices")]
-	public searchResult SimpleQuery(string text)
+	public SearchResult SimpleQuery(string text)
 	{
-		searchResult sr;
+		SearchResult sr;
 			
 		if (text == null || text.Trim() == "") {
 			
-			sr = new searchResult();
+			sr = new SearchResult();
 			sr.statusCode = WebServiceBackEnd.SC_INVALID_QUERY;
 			sr.statusMsg = "No search terms specified";
 			return sr;
 		}
 			
-		searchRequest srq = new searchRequest();
+		SearchRequest srq = new SearchRequest();
 		
 		srq.text = new string[1];
 		srq.text[0] = text.Trim();
@@ -155,19 +155,19 @@ namespace WebService_CodeBehind {
 	"http://www.gnome.org/projects/beagle/webservices/SimpleQuery2",
 	RequestNamespace="http://www.gnome.org/projects/beagle/webservices",
 	ResponseNamespace="http://www.gnome.org/projects/beagle/webservices")]
-	public searchResult SimpleQuery2(string text, string mimeType, string source, string queryDomain)
+	public SearchResult SimpleQuery2(string text, string mimeType, string source, string queryDomain)
 	{
-		searchResult sr;
+		SearchResult sr;
 			
 		if (text == null || text.Trim() == "") {
 			
-			sr = new searchResult();
+			sr = new SearchResult();
 			sr.statusCode = WebServiceBackEnd.SC_INVALID_QUERY;
 			sr.statusMsg = "No search terms specified";
 			return sr;
 		}
 			
-		searchRequest srq = new searchRequest();
+		SearchRequest srq = new SearchRequest();
 		
 		srq.text = new string[1];
 		srq.text[0] = text.Trim();
@@ -229,13 +229,13 @@ namespace WebService_CodeBehind {
 	"http://www.gnome.org/projects/beagle/webservices/GetMoreResults",
 	RequestNamespace="http://www.gnome.org/projects/beagle/webservices",
 	ResponseNamespace="http://www.gnome.org/projects/beagle/webservices")]
-	public searchResult GetMoreResults(string searchToken, int index)
+	public SearchResult GetMoreResults(string searchToken, int index)
 	{
 		try {		
-				searchResult sr;
+				SearchResult sr;
 			
 			if (searchToken == null | searchToken == "")  {
-				sr = new searchResult();
+				sr = new SearchResult();
 				sr.statusCode = WebServiceBackEnd.SC_INVALID_SEARCH_TOKEN;
 				sr.statusMsg = "Invalid Search Token";
 			}
@@ -267,9 +267,9 @@ namespace WebService_CodeBehind {
 
 	private static string localReqOnlyMsg = "Beagle web service unavailable or access restricted to local address only !";
 
-	private searchResult restrictedAccessResult()
+	private SearchResult restrictedAccessResult()
 	{
-		searchResult sr = new searchResult();
+		SearchResult sr = new SearchResult();
 
 		sr.totalResults = 0;
 

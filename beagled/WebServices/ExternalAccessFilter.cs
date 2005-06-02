@@ -41,7 +41,9 @@ namespace Beagle.WebService {
 		ArrayList matchers;
 
 		static readonly string configuration = "shares.cfg";
-
+		
+		bool SharesFileExists = false;
+		
 		public ExternalAccessFilter ()
 		{
 			matchers = new ArrayList();
@@ -49,64 +51,77 @@ namespace Beagle.WebService {
 			if (!File.Exists (Path.Combine (PathFinder.StorageDir, configuration)))
                                 return;
 
+			SharesFileExists = true;
+			
             StreamReader reader = new StreamReader(
                          Path.Combine (PathFinder.StorageDir, configuration));
 
             string entry;
 
             while ( ((entry = reader.ReadLine ()) != null) && (entry.Trim().Length > 1)) {
-            		
+            	//Console.WriteLine("Line: " + entry);
             	if ((entry[0] != '#') && (entry.IndexOf(';') > 0)) {
                 	string[] data = entry.Split (';');
 					SimpleMatcher matcher = new SimpleMatcher ();
-					matcher.Match = data[0];
-					matcher.Rewrite = data[1];
+					matcher.Match = data[0]; 
+					matcher.Rewrite = data[1]; 
 					matchers.Add (matcher);
 				}
             }
 		}
 		
-		public ICollection FilterHit (Hit hit)
+		//Returns: false, if Hit does not match any filter
+		//		   true,  if Hit URI is part of any specified filter		
+		public bool FilterHit (Hit hit)
 		{
-			ArrayList hits = new ArrayList ();
-		
+			if (! SharesFileExists)
+				return false;
+				
 			if (matchers.Count == 0)
-				hits.Add(hit);
-			else
+				return true; 	//Empty Shares.cfg file => Allow all hits
+			
 			foreach (SimpleMatcher matcher in matchers)
 			{
 				if (hit.Uri.ToString ().IndexOf (matcher.Match) == -1)
 					continue;
 
-				hits.Add (hit);
+				return true;
 			}
 
-			return hits;		
+			return false;		
 		}
-
-		public ICollection TranslateHit (Hit hit)
-		{
-			ArrayList hits = new ArrayList ();
 		
+		//Returns: null, if Hit does not match any filter
+		//		   Uri,  after Translation
+		public string TranslateHit (Hit hit)
+		{
+			if ((hit == null) || (! SharesFileExists))
+				return null;
+			
+			string uri = hit.Uri.ToString();			
+			string newuri = null;
+			
 			if (matchers.Count == 0)
-				hits.Add(hit);
-			else
+				return uri; 	//Empty Shares.cfg file => Allow all hits as is
+			
 			foreach (SimpleMatcher matcher in matchers)
 			{
-				if (hit.Uri.ToString ().IndexOf (matcher.Match) == -1)
+				if (uri.IndexOf (matcher.Match) == -1)
 					continue;
-
-				hit.Uri = new Uri (hit.Uri.ToString ().Replace (matcher.Match,matcher.Rewrite));
-				hits.Add (hit);
+						
+				newuri = uri.Replace (matcher.Match, matcher.Rewrite);
+				//Console.WriteLine("TranslateHit: " + newuri);
+				
+				return newuri;
 			}
 
-			return hits;		
-		}
+			return null;	//Hit does not match any specified filter	
+		}		
 		
 		internal struct SimpleMatcher
 		{
 			public string Match;
 			public string Rewrite;
-		}
+		}		
 	}	
 }

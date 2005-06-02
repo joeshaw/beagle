@@ -99,14 +99,13 @@ namespace Beagle.WebService {
 						root.Add(hits);
 					else {
 							foreach (Hit h in hits)
-								root.Add(WebServiceBackEnd.AccessFilter.FilterHit(h));
+							 	if (WebServiceBackEnd.AccessFilter.FilterHit(h))
+									root.Add(h);
 					}
 				}
-				//Console.WriteLine("Hit Added to Root Tile");
 			}
 		}
-
-		
+	
 		void OnHitsSubtracted (QueryResult qres, ICollection uris)
 		{
 			if (result.Contains(qres)) {
