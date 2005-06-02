@@ -103,7 +103,7 @@ namespace Best {
 		private void ShowBeaglePressed (object o, EventArgs args)
 		{
 			if (!win.WindowIsVisible) {
-				win.Show ();
+				win.Present ();
 				win.FocusEntry ();
 			} else {
 				win.Hide ();
@@ -115,7 +115,7 @@ namespace Best {
 			Gdk.EventButton eb = args.Event;
 			if (eb.Button == 1) {
 				if (! win.WindowIsVisible) {
-					win.Show ();
+					win.Present ();
 					win.FocusEntry ();
 				} else {
 					win.Hide ();
@@ -142,8 +142,8 @@ namespace Best {
 		{			
 			string quickQuery = (string)((Gtk.Widget) sender).Data ["Query"];
 						
-			if (! win.Visible) {
-				win.Show ();
+			if (! win.WindowIsVisible) {
+				win.Present ();
 				win.QuickSearch (quickQuery);
 			} else {
 				win.QuickSearch (quickQuery);
