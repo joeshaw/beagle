@@ -98,7 +98,7 @@ fi
 
 sleep 0.5
 
-BEAGLED_PID=`pidof -s $PROCESS_NAME`
-if [ x$BEAGLED_PID == x ] && [ $fg -ne 1 ]; then
+RUNNING_BEAGLED=`ps -o command | grep ^$PROCESS_NAME`
+if [ x$RUNNING_BEAGLED == x ]; then
     echo "Beagle Daemon exited with errors.  See ~/.beagle/Log/current-Beagle for more details."
 fi
