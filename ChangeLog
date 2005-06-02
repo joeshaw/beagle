@@ -1,3 +1,11 @@
+2005-06-02  Vijay K. Nanjundaswamy <knvijay@novell.com>
+
+	* beagled/WebServices/WebServiceFrontEnd.cs, WebServiceBackEnd.cs, WebBackEnd.cs, ExternalAccessFilter.cs:
+	Fixes to filtering/translating logic for external access to Beagle web/
+	web-service interface. 
+	* beagled/WebFrontEnd.cs: Logic to handle initial requests directed to
+	http://localhost:8888/search.aspx instead of http://localhost:8888/beagle/search.aspx	
+
 2005-06-01  Alexander Shopov  <ash@contact.bg>
 
 	* configure.in: Added "bg" (Bulgarian) to ALL_LINGUAS
