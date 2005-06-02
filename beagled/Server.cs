@@ -118,6 +118,11 @@ namespace Beagle.Daemon {
 
 		private void SetupWatch ()
 		{
+			if (this.client == null) {
+				this.Close ();
+				return;
+			}
+
 			this.client.GetStream ().BeginRead (new byte[1024], 0, 1024,
 							    new AsyncCallback (WatchCallback), null);
 		}
