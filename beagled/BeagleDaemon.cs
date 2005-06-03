@@ -45,6 +45,9 @@ namespace Beagle.Daemon {
 
 		private static Server server = null;
 
+		private static bool arg_replace = false;
+		private static bool arg_disable_scheduler = false;
+
 		public static bool StartServer ()
 		{
 			Logger.Log.Debug ("Starting messaging server");
@@ -123,16 +126,72 @@ namespace Beagle.Daemon {
 			Console.WriteLine (usage);
 		}
 
+		public static bool StartupProcess ()
+		{
+			// Profile our initialization
+			Stopwatch stopwatch = new Stopwatch ();
+			stopwatch.Start ();
+
+			SetupSignalHandlers ();
+
+			// Fire up our server
+			if (! StartServer ()) {
+				if (arg_replace)
+					ReplaceExisting ();
+				else {
+					Logger.Log.Fatal ("Could not set up the listener for beagle requests.  "
+							  + "There is probably another beagled instance running.  "
+							  + "Use --replace to replace the running service");
+					Environment.Exit (1);
+				}
+			}
+			
+			// Set up out-of-process indexing
+			if (Environment.GetEnvironmentVariable ("BEAGLE_ENABLE_IN_PROCESS_INDEXING") == null)
+				LuceneQueryable.IndexerHook = new LuceneQueryable.IndexerCreator (RemoteIndexer.NewRemoteIndexer);
+
+			// Start the query driver.
+			Logger.Log.Debug ("Starting QueryDriver");
+			QueryDriver.Start ();
+
+			// Start the Global Scheduler thread
+			if (! arg_disable_scheduler) {
+				Logger.Log.Debug ("Starting Scheduler thread");
+				Scheduler.Global.Start ();
+			}
+
+			// Start our Inotify threads
+			Inotify.Start ();
+	
+			// Test if the FileAdvise stuff is working: This will print a
+			// warning if not.  The actual advice calls will fail silently.
+			FileAdvise.TestAdvise ();
+
+#if ENABLE_WEBSERVICES		
+			//Beagle Web, WebService access initialization code:
+			WebServiceBackEnd.Start(wsargs);
+#endif
+			Shutdown.ShutdownEvent += OnShutdown;
+
+			// Load user configuration
+			Conf.Load ();
+			Conf.WatchForUpdates ();
+
+			stopwatch.Stop ();
+
+			Logger.Log.Debug ("Daemon initialization finished after {0}", stopwatch);
+		
+			return false;
+		}
+
 		public static int Main (string[] args)
 		{
 			// Process the command-line arguments
-			bool arg_replace = false;
 			bool arg_debug = false;
 			bool arg_debug_memory = false;
 			bool arg_fg = false;
-			bool arg_disable_scheduler = false;
 #if ENABLE_WEBSERVICES
-			WebServicesArgs wsargs = new WebServicesArgs();
+			WebServicesArgs wsargs = new WebServicesArgs ();
 #endif
 			int i = 0;
 			while (i < args.Length) {
@@ -271,65 +330,22 @@ namespace Beagle.Daemon {
 
 			Application.InitCheck ("beagled", ref args);
 
-			// Profile our initialization
-			Stopwatch stopwatch = new Stopwatch ();
-			stopwatch.Start ();
+			// Defer all actual startup until the main loop is
+			// running.  That way shutdowns during the startup
+			// process work correctly.
+			GLib.Idle.Add (new GLib.IdleHandler (StartupProcess));
 
-			SetupSignalHandlers ();
-
-			// Fire up our server
-			if (! StartServer ()) {
-				if (arg_replace)
-					ReplaceExisting ();
-				else {
-					Logger.Log.Fatal ("Could not set up the listener for beagle requests.  "
-							  + "There is probably another beagled instance running.  "
-							  + "Use --replace to replace the running service");
-					return 1;
-				}
-			}
-			
-			// Set up out-of-process indexing
-			if (Environment.GetEnvironmentVariable ("BEAGLE_ENABLE_IN_PROCESS_INDEXING") == null)
-				LuceneQueryable.IndexerHook = new LuceneQueryable.IndexerCreator (RemoteIndexer.NewRemoteIndexer);
-
-			// Start the query driver.
-			Logger.Log.Debug ("Starting QueryDriver");
-			QueryDriver.Start ();
-
-			// Start the Global Scheduler thread
-			if (! arg_disable_scheduler) {
-				Logger.Log.Debug ("Starting Scheduler thread");
-				Scheduler.Global.Start ();
-			}
-
-			// Start our Inotify threads
-			Inotify.Start ();
-	
-			// Test if the FileAdvise stuff is working: This will print a
-			// warning if not.  The actual advice calls will fail silently.
-			FileAdvise.TestAdvise ();
-
-#if ENABLE_WEBSERVICES		
-			//Beagle Web, WebService access initialization code:
-			WebServiceBackEnd.Start(wsargs);
-#endif
-			Shutdown.ShutdownEvent += OnShutdown;
-
-			// Load user configuration
-			Conf.Load ();
-			Conf.WatchForUpdates ();
-
-			stopwatch.Stop ();
-
-			Logger.Log.Debug ("Daemon initialization finished after {0}", stopwatch);
-		
 			// Start our event loop.
 			Logger.Log.Debug ("Starting main loop");
 
 			Application.Run ();
 
 			Logger.Log.Debug ("Leaving BeagleDaemon.Main");
+
+			if (Logger.Log.Level == LogLevel.Debug) {
+				Thread.Sleep (500);
+				ExceptionHandlingThread.SpewLiveThreads ();
+			}
 
 			return 0;
 		}

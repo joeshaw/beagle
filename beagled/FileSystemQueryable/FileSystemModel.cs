@@ -794,6 +794,11 @@ namespace Beagle.Daemon.FileSystemQueryable {
 			lock (big_lock) {
 				int old_needs_crawl_count = needs_crawl_count;
 				while (to_be_scanned.Count > 0) {
+					if (Shutdown.ShutdownRequested) {
+						Logger.Log.Debug ("Bailing out of subdir scan -- shutdown requested");
+						return;
+					}
+
 					Directory dir;
 					dir = to_be_scanned.Dequeue () as Directory;
 					ScanOne_Unlocked (dir);

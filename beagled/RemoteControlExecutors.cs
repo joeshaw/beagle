@@ -26,6 +26,7 @@
 
 using System;
 using System.Collections;
+using System.Threading;
 using System.Xml.Serialization;
 
 using Beagle.Util;
@@ -49,18 +50,18 @@ namespace Beagle.Daemon {
 	[RequestMessage (typeof (ShutdownRequest))]
 	public class ShutdownExecutor : RequestMessageExecutor {
 
-		private bool DoShutdown ()
+		private void DoShutdown ()
 		{
-			Beagle.Daemon.Shutdown.BeginShutdown ();
-			return false;
+			Shutdown.BeginShutdown ();
 		}
-		
+
 		public override ResponseMessage Execute (RequestMessage req)
 		{
-			// Defer the shutdown to the main loop so that we
-			// don't wreak havoc with the Server IO stuff and the
-			// shutdown process.
-			GLib.Idle.Add (new GLib.IdleHandler (DoShutdown));
+			// Start the shutdown process in a separate thread
+			// to avoid a deadlock: BeginShutdown() waits until
+			// all worker process are finished, but this method
+			// itself is part of a worker.
+			ExceptionHandlingThread.Start (new ThreadStart (DoShutdown));
 
 			return new EmptyResponse ();
 		}

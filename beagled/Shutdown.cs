@@ -139,11 +139,6 @@ namespace Beagle.Daemon {
 
 			Logger.Log.Info ("Exiting");
 			Gtk.Application.Quit ();
-
-			if (Debug) {
-				Thread.Sleep (500);
-				ExceptionHandlingThread.SpewLiveThreads ();
-			}
 		}
 	}
 }
