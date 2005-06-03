@@ -1,5 +1,9 @@
 2005-06-03  Vijay K. Nanjundaswamy <knvijay@novell.com>
 
+	* Checked in NetworkedBeagle operation support:
+	  New files: BeagleClient/NetworkHit.cs, Tiles/TileNetwork.cs, Tiles/template-network.html, beagled/WebServices/WebServiceProxy.cs, beagled/WebServices/NetBeagleHandler.cs, beagled/WebServices/NetBeagleQueryable.cs, images/netbeagle.png
+	  Modified Files: Tiles/HitFlavor.cs & respective Makefile.am files
+
 	* beagled/WebServices/WebServiceBackEnd.cs, ExternalAccessFilter.cs:
 	Added default access filter for public folder. 
 
