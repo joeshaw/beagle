@@ -44,13 +44,27 @@ namespace Beagle.WebService {
 		
 		bool SharesFileExists = false;
 		
-		public ExternalAccessFilter ()
+		public ExternalAccessFilter (string hostname, string port)
 		{
+			SimpleMatcher defaultMatcher = null;
+			 
 			matchers = new ArrayList();
 
-			if (!File.Exists (Path.Combine (PathFinder.StorageDir, configuration)))
-                                return;
-
+			//Check if public folder exists and setup default mapping for it:
+			if (!hostname.Equals("localhost") && Directory.Exists(PathFinder.HomeDir + "/public"))
+			{				
+				defaultMatcher = new SimpleMatcher ();
+				//file:///home/userid/public/
+				defaultMatcher.Match = "file://" + PathFinder.HomeDir + "/public/"; 
+				//http://hostname:8888/beagle/public/
+				defaultMatcher.Rewrite = "http://" + hostname + ":" + port + "/beagle/public/";	
+			}
+			
+			if (!File.Exists (Path.Combine (PathFinder.StorageDir, configuration))) {
+				matchers.Add(defaultMatcher);
+                return;
+			}
+		
 			SharesFileExists = true;
 			
             StreamReader reader = new StreamReader(
@@ -68,17 +82,18 @@ namespace Beagle.WebService {
 					matchers.Add (matcher);
 				}
             }
+            //Include defaultMatcher at the end of the list. 'shares.cfg', if it exists, 
+            //takes higher precedence.
+            if (defaultMatcher != null)
+            	matchers.Add(defaultMatcher);            	
 		}
 		
 		//Returns: false, if Hit does not match any filter
 		//		   true,  if Hit URI is part of any specified filter		
 		public bool FilterHit (Hit hit)
 		{
-			if (! SharesFileExists)
-				return false;
-				
 			if (matchers.Count == 0)
-				return true; 	//Empty Shares.cfg file => Allow all hits
+				return false;
 			
 			foreach (SimpleMatcher matcher in matchers)
 			{
@@ -95,14 +110,11 @@ namespace Beagle.WebService {
 		//		   Uri,  after Translation
 		public string TranslateHit (Hit hit)
 		{
-			if ((hit == null) || (! SharesFileExists))
+			if ((hit == null) || (matchers.Count == 0))
 				return null;
-			
+							
 			string uri = hit.Uri.ToString();			
 			string newuri = null;
-			
-			if (matchers.Count == 0)
-				return uri; 	//Empty Shares.cfg file => Allow all hits as is
 			
 			foreach (SimpleMatcher matcher in matchers)
 			{
@@ -118,7 +130,7 @@ namespace Beagle.WebService {
 			return null;	//Hit does not match any specified filter	
 		}		
 		
-		internal struct SimpleMatcher
+		internal class SimpleMatcher
 		{
 			public string Match;
 			public string Rewrite;

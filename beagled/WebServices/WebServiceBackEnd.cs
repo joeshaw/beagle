@@ -132,7 +132,18 @@ namespace Beagle.WebService {
 					     "--nonstop"};
 
 		public static void Start(WebServicesArgs wsargs)
-		{
+		{			
+			try {
+				hostname = Dns.GetHostName();
+				Console.WriteLine("This Computer Hostname: " + hostname);
+			}
+			catch (Exception ex) 
+			{
+				Console.WriteLine("Caught exception {0} in Dns.GetHostName: ", ex.Message);
+				Console.WriteLine("Resetting hostname to \"localhost\"");
+				hostname = "localhost";
+			}
+								
 			//start web-access server first
 			Logger.Log.Debug ("Starting WebBackEnd");
 			WebBackEnd.init (wsargs.web_global);
@@ -194,7 +205,9 @@ namespace Beagle.WebService {
 				}
 				else
 					Logger.Log.Debug("BeagleXSP Applications list: " + xsp_param[5]);
-			}		
+			}
+				
+			AccessFilter = new ExternalAccessFilter(hostname, xsp_param[1]);	
 		}
 		
 		public static void Stop() 
@@ -212,6 +225,7 @@ namespace Beagle.WebService {
 		static WebServiceBackEnd instance = null;
 		static bool allow_global_access = false;
 		public static ExternalAccessFilter AccessFilter;
+		public static string hostname = "localhost";
 		
 		private Hashtable resultTable;
 		private Hashtable sessionTable;
@@ -233,20 +247,18 @@ namespace Beagle.WebService {
 		public static void init(bool web_global)
 		{
 		    allow_global_access = web_global;
-
-			AccessFilter = new ExternalAccessFilter();
 			
 		    if (instance == null) {
 
-		  	instance = new WebServiceBackEnd();
+		  		instance = new WebServiceBackEnd();
 
-  		  	//TCP Channel Listener registered in beagledWeb:init()
-		  	//ChannelServices.RegisterChannel(new TcpChannel(8347));
-		  	WellKnownServiceTypeEntry WKSTE =
-				new WellKnownServiceTypeEntry(typeof(WebServiceBackEnd),
-				 "WebServiceBackEnd.rem", WellKnownObjectMode.Singleton);
-		  	RemotingConfiguration.ApplicationName="beagled";
-		  	RemotingConfiguration.RegisterWellKnownServiceType(WKSTE);
+  		  		//TCP Channel Listener registered in beagledWeb:init()
+		  		//ChannelServices.RegisterChannel(new TcpChannel(8347));
+		  		WellKnownServiceTypeEntry WKSTE =
+					new WellKnownServiceTypeEntry(typeof(WebServiceBackEnd),
+				 	"WebServiceBackEnd.rem", WellKnownObjectMode.Singleton);
+		  		RemotingConfiguration.ApplicationName="beagled";
+		  		RemotingConfiguration.RegisterWellKnownServiceType(WKSTE);
 		    }	    
 		}
 
