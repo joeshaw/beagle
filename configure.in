@@ -16,6 +16,9 @@ if test "x$PKG_CONFIG" = "xno"; then
 	AC_MSG_ERROR([You need to install pkg-config])
 fi
 
+AC_PATH_PROG(BASH, bash)
+AC_SUBST(BASH)
+
 # mozilla extension uses zip to create the jar/xpi files
 AC_PATH_PROG(ZIP, zip)
 

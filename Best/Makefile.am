@@ -4,6 +4,14 @@ CSC = mcs -debug
 TARGET = Best.exe
 WRAPPER = best
 
+WRAPPER_SED = sed					\
+	-e "s|\@prefix\@|$(prefix)|g" 			\
+	-e "s|\@pkglibdir\@|$(pkglibdir)|g"		\
+	-e "s|\@target\@|$(TARGET)|g" 			\
+	-e "s|\@gacprefix\@|$(GAC_PREFIX)|g"		\
+	-e "s|\@mozillahome\@|$(MOZILLA_HOME)|g"	\
+	-e "s|\@bash\@|$(BASH)|g"
+
 CSFLAGS = -target:exe
 
 CSFILES =				\
@@ -41,7 +49,7 @@ uninstall-local:
 bin_SCRIPTS = $(WRAPPER)
 
 $(WRAPPER): $(srcdir)/$(WRAPPER).in
-	sed -e "s|\@prefix\@|$(prefix)|g" -e "s|\@pkglibdir\@|$(pkglibdir)|g" -e "s|\@target\@|$(TARGET)|g" -e "s|\@gacprefix\@|$(GAC_PREFIX)|g" -e "s|\@mozillahome\@|$(MOZILLA_HOME)|g" < $^ > $@
+	$(WRAPPER_SED) < $^ > $@
 	chmod +x $(WRAPPER)
 
 desktopdir = $(datadir)/applications

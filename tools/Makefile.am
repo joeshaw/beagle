@@ -17,7 +17,8 @@ WRAPPER_SED = sed 					\
 	-e "s|\@prefix\@|$(prefix)|g"			\
 	-e "s|\@pkglibdir\@|$(pkglibdir)|g"		\
 	-e "s|\@libdir\@|$(libdir)|g"			\
-	-e "s|\@gacprefix\@|$(GAC_PREFIX)|g"
+	-e "s|\@gacprefix\@|$(GAC_PREFIX)|g"		\
+	-e "s|\@bash\@|$(BASH)|"
 
 
 INFO_TARGET  = Info.exe

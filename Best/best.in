@@ -1,5 +1,4 @@
-#!/bin/sh
-
+#!@bash@
 
 MOZILLA_HOME=@mozillahome@
 export MOZILLA_HOME
