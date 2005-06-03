@@ -51,7 +51,7 @@ namespace Beagle.WebService {
 			matchers = new ArrayList();
 
 			//Check if public folder exists and setup default mapping for it:
-			if (!hostname.Equals("localhost") && Directory.Exists(PathFinder.HomeDir + "/public"))
+			if ((!hostname.Equals("localhost")) && Directory.Exists(PathFinder.HomeDir + "/public"))
 			{				
 				defaultMatcher = new SimpleMatcher ();
 				//file:///home/userid/public/
@@ -61,7 +61,8 @@ namespace Beagle.WebService {
 			}
 			
 			if (!File.Exists (Path.Combine (PathFinder.StorageDir, configuration))) {
-				matchers.Add(defaultMatcher);
+				if (defaultMatcher != null)
+					matchers.Add(defaultMatcher);
                 return;
 			}
 		

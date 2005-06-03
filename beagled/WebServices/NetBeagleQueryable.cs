@@ -95,6 +95,9 @@ namespace Beagle.Daemon {
 		{	
 			ArrayList resultHandleList = new ArrayList();
 			
+			if (NetBeagleList.Count == 0) 
+				return;
+				
 			log.Debug("NetBeagleQueryable: DoQuery ... Starting NetBeagleHandler queries");
 			foreach (NetBeagleHandler nb in NetBeagleList)
 			{
