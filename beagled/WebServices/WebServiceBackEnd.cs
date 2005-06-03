@@ -118,7 +118,8 @@ namespace Beagle.WebService {
 	}
 			
 	public class WebServiceBackEnd: MarshalByRefObject   {
-		
+
+		public static string hostname = "localhost";		
 		public static string DEFAULT_XSP_ROOT = Path.Combine (ExternalStringsHack.PkgDataDir, "xsp");
 		public static string DEFAULT_XSP_PORT = "8888";
 		
@@ -225,7 +226,6 @@ namespace Beagle.WebService {
 		static WebServiceBackEnd instance = null;
 		static bool allow_global_access = false;
 		public static ExternalAccessFilter AccessFilter;
-		public static string hostname = "localhost";
 		
 		private Hashtable resultTable;
 		private Hashtable sessionTable;
@@ -279,8 +279,7 @@ namespace Beagle.WebService {
 				}
 				else {
 				
-					Query query = sdata.query;
-					
+					//Query query = sdata.query;					
 					lock (results.SyncRoot) {
 						foreach (Hit h in hits)
 							if (AccessFilter.FilterHit(h))

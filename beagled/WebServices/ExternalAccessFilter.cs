@@ -56,8 +56,10 @@ namespace Beagle.WebService {
 				defaultMatcher = new SimpleMatcher ();
 				//file:///home/userid/public/
 				defaultMatcher.Match = "file://" + PathFinder.HomeDir + "/public/"; 
+				Console.WriteLine("defaultMatch = " + defaultMatcher.Match);
 				//http://hostname:8888/beagle/public/
 				defaultMatcher.Rewrite = "http://" + hostname + ":" + port + "/beagle/public/";	
+				Console.WriteLine("defaultRewrite = " + defaultMatcher.Rewrite);
 			}
 			
 			if (!File.Exists (Path.Combine (PathFinder.StorageDir, configuration))) {
@@ -93,12 +95,13 @@ namespace Beagle.WebService {
 		//		   true,  if Hit URI is part of any specified filter		
 		public bool FilterHit (Hit hit)
 		{
-			if (matchers.Count == 0)
+			if ((hit == null) || (matchers.Count == 0))
 				return false;
-			
+
+			string uri = hit.Uri.ToString();			
 			foreach (SimpleMatcher matcher in matchers)
 			{
-				if (hit.Uri.ToString ().IndexOf (matcher.Match) == -1)
+				if (uri.IndexOf (matcher.Match) == -1)
 					continue;
 
 				return true;
