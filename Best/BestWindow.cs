@@ -448,13 +448,14 @@ namespace Best {
 		private void ChangeType (object o, EventArgs args)
 		{
 			Gtk.OptionMenu opt = (Gtk.OptionMenu) o;
-
 			TypeMenuItem mi = (TypeMenuItem) ((ArrayList) opt.Data["items"])[opt.History];
+
+			if (this.hit_type == mi.Type)
+				return;
 
 			this.hit_type = mi.Type;
 
 			root.SetSource (this.hit_type);
-
 			root.HitCollection.PageFirst ();
 			UpdatePage ();
 
