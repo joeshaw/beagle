@@ -70,6 +70,10 @@ RESOURCEFILES =					\
 	$(srcdir)/white.png			\
 	$(srcdir)/emblem-calendar.png
 
+if ENABLE_WEBSERVICES
+RESOURCEFILES +=	$(srcdir)/netbeagle.png	
+endif
+
 # Makefile-fu to map /path/filename to -resource:/path/filename,filename
 RESOURCES = $(join $(RESOURCEFILES:%=-resource:%,),$(notdir $(RESOURCEFILES)))
 

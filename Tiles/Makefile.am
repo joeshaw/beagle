@@ -76,6 +76,10 @@ RESOURCEFILES =					\
 	$(srcdir)/template-calendar.html	\
 	$(srcdir)/template-spreadsheet.html
 
+if ENABLE_WEBSERVICES
+CSFILES += $(srcdir)/TileNetwork.cs
+RESOURCEFILES += template-network.html
+endif
 
 # Makefile-fu to map /path/filename to -resource:/path/filename,filename
 RESOURCES = $(join $(RESOURCEFILES:%=-resource:%,),$(notdir $(RESOURCEFILES)))

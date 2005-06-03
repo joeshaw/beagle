@@ -337,6 +337,14 @@ endif
 #	$(MOZILLA_QUERYABLE_CSFILES)
 #endif
 
+if ENABLE_WEBSERVICES
+DAEMON_DLL_CSFILES += \
+	$(webservicesdir)/WebServiceProxy.cs	\
+	$(webservicesdir)/NetBeagleHandler.cs	\
+	$(webservicesdir)/NetBeagleQueryable.cs	
+DAEMON_DLL_ASSEMBLIES += -r:System.Web.Services	
+endif
+
 
 $(DAEMON_DLL_TARGET): $(DAEMON_DLL_CSFILES) $(DAEMON_DLL_LOCAL_ASSEMBLIES)
 	$(CSC) -out:$@ $(DAEMON_DLL_CSFLAGS) $(DAEMON_DLL_CSFILES) $(DAEMON_DLL_ASSEMBLIES)
@@ -391,9 +399,9 @@ WEBSERVICES_BACKEND_LOCAL_ASSEMBLIES =	\
 
 WEBSERVICES_BACKEND_ASSEMBLIES = \
 	$(WEBSERVICES_BACKEND_LOCAL_ASSEMBLIES:%=-r:%)	\
-	-r:System				\
+	-r:System					\
 	-r:System.Web 				\
-	-r:System.Runtime.Remoting		\
+	-r:System.Runtime.Remoting	\
 	$(BEAGLED_LIBS)
 
 WEBSERVICES_BACKEND_CSFILES = \

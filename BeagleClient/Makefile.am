@@ -28,7 +28,9 @@ CSFILES = 					\
 	$(srcdir)/Snippet.cs			\
 	$(srcdir)/Versioned.cs
 
-
+if ENABLE_WEBSERVICES
+CSFILES +=	$(srcdir)/NetworkHit.cs
+endif
 
 LOCAL_ASSEMBLIES =			\
 	../Util/Util.dll

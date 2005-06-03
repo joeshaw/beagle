@@ -87,6 +87,12 @@ namespace Beagle.Tile {
 
 		public int Weight {
 			get {
+			
+				//KNV: Ensure Network Tile Flavor gets preference over all others:
+				if (Name.Equals("Network")) {
+					return 100;
+				}		
+						
 				int weight = 0;
 				if (Type != null)
 					weight += 8;
