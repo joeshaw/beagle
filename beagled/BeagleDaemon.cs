@@ -304,7 +304,6 @@ namespace Beagle.Daemon {
 			}
 
 			// Start our Inotify threads
-			Logger.Log.Debug ("Starting Inotify threads");
 			Inotify.Start ();
 	
 			// Test if the FileAdvise stuff is working: This will print a

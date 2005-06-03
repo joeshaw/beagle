@@ -370,6 +370,8 @@ namespace Beagle.Util {
 			if (! Enabled)
 				return;
 
+			Logger.Log.Debug("Starting Inotify threads");
+
 			lock (event_queue) {
 				if (snarf_thread != null)
 					return;

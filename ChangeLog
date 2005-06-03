@@ -1,3 +1,8 @@
+2005-06-03  Daniel Drake  <dsd@gentoo.org>
+
+	* Util/Inotify.cs, beagled/BeagleDaemon.cs: Don't say that we are
+	starting Inotify threads when we aren't using inotify.
+
 2005-06-03  Vijay K. Nanjundaswamy <knvijay@novell.com>
 
 	* Checked in NetworkedBeagle operation support:
