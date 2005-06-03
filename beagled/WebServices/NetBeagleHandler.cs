@@ -190,7 +190,7 @@ log.Info("NetBeagleHandler: DoQueryResponseHandler() Got {0} result(s) from Inde
 		 	catch (Exception ex) {
 		 	
 		 		//Log Error
-				log.Error ("Exception in NetBeagleHandler:DoQueryResponseHandler() - {0) - for {1} ", ex.Message, wsp.Hostname + ":" + wsp.Port);
+				log.Error ("Exception in NetBeagleHandler: DoQueryResponseHandler() - {0} - for {1} ", ex.Message, wsp.Hostname + ":" + wsp.Port);
 				//log.Error ("Exception Source: " + ex.Source);
 				//log.Error ("Exception TargetMethod: " + ex.TargetSite);
 				//log.Error ("Exception StackTrace: " + ex.StackTrace);
