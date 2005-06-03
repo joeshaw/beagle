@@ -1,3 +1,8 @@
+2005-06-03  Vijay K. Nanjundaswamy <knvijay@novell.com>
+
+	* beagled/WebServices/WebServiceBackEnd.cs, ExternalAccessFilter.cs:
+	Added default access filter for public folder. 
+
 2005-06-02  Vijay K. Nanjundaswamy <knvijay@novell.com>
 
 	* beagled/WebServices/WebServiceFrontEnd.cs, WebServiceBackEnd.cs, WebBackEnd.cs, ExternalAccessFilter.cs:
