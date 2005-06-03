@@ -165,9 +165,11 @@ namespace Beagle.Daemon.LifereaQueryable {
 				Indexable indexable = new Indexable ( new Uri (String.Format ("feed:{0};item={1}", feed.Source, item.Source)));
 				indexable.MimeType = "text/html";
 				indexable.Type = "FeedItem";
-				
+
 				DateTime date = new DateTime (1970, 1, 1);
 				date = date.AddSeconds (item.Timestamp);
+				date = TimeZone.CurrentTimeZone.ToLocalTime (date);
+
 				indexable.Timestamp = date;				
 
 				indexable.AddProperty (Property.NewKeyword ("dc:title", item.Title));
