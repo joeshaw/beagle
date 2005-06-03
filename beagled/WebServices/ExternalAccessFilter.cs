@@ -56,10 +56,10 @@ namespace Beagle.WebService {
 				defaultMatcher = new SimpleMatcher ();
 				//file:///home/userid/public/
 				defaultMatcher.Match = "file://" + PathFinder.HomeDir + "/public/"; 
-				Console.WriteLine("defaultMatch = " + defaultMatcher.Match);
+				//Console.WriteLine("defaultMatch = " + defaultMatcher.Match);
 				//http://hostname:8888/beagle/public/
 				defaultMatcher.Rewrite = "http://" + hostname + ":" + port + "/beagle/public/";	
-				Console.WriteLine("defaultRewrite = " + defaultMatcher.Rewrite);
+				//Console.WriteLine("defaultRewrite = " + defaultMatcher.Rewrite);
 			}
 			
 			if (!File.Exists (Path.Combine (PathFinder.StorageDir, configuration))) {
