@@ -33,7 +33,10 @@ using System.Xml.Serialization;
 using Beagle.Util;
 namespace Beagle.Util {
 
-	public static class Conf {
+	public class Conf {
+
+		// No instantiation
+		private Conf () { }
 
 		public static Hashtable Sections;
 		public static IndexingConfig Indexing = null;
