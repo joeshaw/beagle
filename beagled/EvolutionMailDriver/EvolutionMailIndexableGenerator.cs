@@ -875,7 +875,6 @@ namespace Beagle.Daemon.EvolutionMailDriver {
 
 			indexable.AddProperty (Property.NewKeyword ("fixme:account",  this.imap_name));
                         indexable.AddProperty (Property.NewKeyword ("fixme:folder",   this.folder_name));
-			indexable.AddProperty (Property.NewKeyword ("fixme:subject",  messageInfo.subject));
                         indexable.AddProperty (Property.NewKeyword ("fixme:to",       messageInfo.to));
 			indexable.AddProperty (Property.NewKeyword ("fixme:from",     messageInfo.from));
                         indexable.AddProperty (Property.NewKeyword ("fixme:cc",       messageInfo.cc));
