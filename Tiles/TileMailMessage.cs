@@ -63,7 +63,7 @@ namespace Beagle.Tile {
 
 			string str;
 
-			str = Hit ["fixme:subject"];
+			str = Hit ["dc:title"];
 			if (str == null)
 				str = String.Format ("<i>{0}</i>", Catalog.GetString ("No Subject"));
 			if (Hit ["_IsDeleted"] != null)
