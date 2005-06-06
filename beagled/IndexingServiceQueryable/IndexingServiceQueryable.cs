@@ -75,9 +75,13 @@ namespace Beagle.Daemon.IndexingServiceQueryable {
 				ThisScheduler.Add (task);
 			}
 
+			// FIXME: There should be a way for the request to control the
+			// scheduler priority of the task.
+
 			if (isr.ToAdd.Count > 0) {
 				IIndexableGenerator ind_gen = new IndexableGenerator (isr.ToAdd);
 				Scheduler.Task task = NewAddTask (ind_gen);
+				task.Priority = Scheduler.Priority.Immediate;
 				ThisScheduler.Add (task);
 			}
 
