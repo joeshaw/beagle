@@ -280,7 +280,7 @@ namespace Beagle.WebService {
 			//Wait only till we have enough results to display
 			while ((result.Contains(qres)) && 
 					(root.HitCollection.NumResults < 10)) 
-				Thread.Sleep(5);
+				Thread.Sleep(100);
 
 			if (root.HitCollection.IsEmpty)
 				return NO_RESULTS;

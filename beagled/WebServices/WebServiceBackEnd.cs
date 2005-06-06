@@ -458,7 +458,7 @@ namespace Beagle.WebService {
 			QueryDriver.DoQuery (query, qres);
 
 			while (resultTable.Contains(qres) && (results.Count < MAX_RESULTS_PER_CALL) )
-				Thread.Sleep(10);
+				Thread.Sleep(100);
 
 			//Console.WriteLine("WebServiceBackEnd: Got {0} results from beagled", results.Count);
 			sr = new SearchResult();
