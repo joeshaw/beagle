@@ -108,7 +108,12 @@ namespace Beagle.Daemon {
 
 		public void WatchCallback (IAsyncResult ar)
 		{
-			int bytes_read = this.client.GetStream ().EndRead (ar);
+			int bytes_read = 0;
+
+			try {
+				bytes_read = this.client.GetStream ().EndRead (ar);
+			} catch (SocketException) {
+			} catch (IOException) { }
 
 			if (bytes_read == 0)
 				Close ();
