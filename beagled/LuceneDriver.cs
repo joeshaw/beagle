@@ -166,7 +166,7 @@ namespace Beagle.Daemon {
 					indexExists = false;
 				else {
 					foreach (FileInfo info in lockDirInfo.GetFiles ()) {
-						if (info.Name.IndexOf (".lock") != -1) {
+						if (info.Name.IndexOf ("write.lock") != -1) {
 							indexExists = false;
 							break;
 						}
