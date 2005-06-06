@@ -169,7 +169,7 @@ namespace Beagle.Daemon {
 
 #if ENABLE_WEBSERVICES		
 			//Beagle Web, WebService access initialization code:
-			WebServiceBackEnd.Start(wsargs);
+			WebServiceBackEnd.Start();
 #endif
 			Shutdown.ShutdownEvent += OnShutdown;
 
@@ -190,9 +190,7 @@ namespace Beagle.Daemon {
 			bool arg_debug = false;
 			bool arg_debug_memory = false;
 			bool arg_fg = false;
-#if ENABLE_WEBSERVICES
-			WebServicesArgs wsargs = new WebServicesArgs ();
-#endif
+
 			int i = 0;
 			while (i < args.Length) {
 				
@@ -253,28 +251,28 @@ namespace Beagle.Daemon {
 					break;
 #if ENABLE_WEBSERVICES
 				case "--web-global":
-					wsargs.web_global = true;
+					WebServiceBackEnd.wsargs.web_global = true;
 					break;
 
 				case "--web-start":
-					wsargs.web_start = true;
+					WebServiceBackEnd.wsargs.web_start = true;
 					break;
 
 				case "--web-port":
-					wsargs.web_port = next_arg;
+					WebServiceBackEnd.wsargs.web_port = next_arg;
 					++i; 
-					wsargs.web_start = true;
+					WebServiceBackEnd.wsargs.web_start = true;
 					break;
 
 				case "--web-root":
-					wsargs.web_rootDir = next_arg;
+					WebServiceBackEnd.wsargs.web_rootDir = next_arg;
 					++i; 
-					wsargs.web_start = true;
+					WebServiceBackEnd.wsargs.web_start = true;
 					break;
 					
 				case "--enable-network":
-					wsargs.web_start = true;
-					wsargs.web_global = true;
+					WebServiceBackEnd.wsargs.web_start = true;
+					WebServiceBackEnd.wsargs.web_global = true;
 					break;					
 #endif 
 				default:

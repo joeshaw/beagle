@@ -116,13 +116,15 @@ namespace Beagle.WebService {
 		public string web_port = WebServiceBackEnd.DEFAULT_XSP_PORT;
 		public string web_rootDir = WebServiceBackEnd.DEFAULT_XSP_ROOT;
 	}
-			
+	
 	public class WebServiceBackEnd: MarshalByRefObject   {
 
 		public static string hostname = "localhost";		
 		public static string DEFAULT_XSP_ROOT = Path.Combine (ExternalStringsHack.PkgDataDir, "xsp");
 		public static string DEFAULT_XSP_PORT = "8888";
-		
+	
+		public static WebServicesArgs wsargs = new WebServicesArgs();
+			
 		static Mono.ASPNET.ApplicationServer appServer = null;
 		static string DEFAULT_APP_MAPPINGS = "/:" + DEFAULT_XSP_ROOT + ",/beagle:" + DEFAULT_XSP_ROOT;
 
@@ -131,8 +133,8 @@ namespace Beagle.WebService {
 					     "--root", DEFAULT_XSP_ROOT, 
 					     "--applications", DEFAULT_APP_MAPPINGS, 
 					     "--nonstop"};
-
-		public static void Start(WebServicesArgs wsargs)
+		
+		public static void Start()
 		{			
 			try {
 				hostname = Dns.GetHostName();
