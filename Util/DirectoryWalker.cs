@@ -74,15 +74,40 @@ namespace Beagle.Util {
 
 			public bool MoveNext ()
 			{
+				bool skip_file;
+
 				do {
 					current = Mono.Posix.Syscall.readdir (dir_handle);
-				} while (current == "."
-					 || current == ".." 
-					 || (file_filter != null && current != null && ! file_filter (path, current)));
+					if (current == null)
+						break;
+
+					skip_file = false;
+
+					if (current == "." || current == "..") {
+						skip_file = true;
+
+					} else if (file_filter != null) {
+						try {
+							if (! file_filter (path, current))
+								skip_file = true;
+
+						} catch (Exception ex) {
+							Logger.Log.Debug ("Caught exception in file_filter");
+							Logger.Log.Debug (ex);
+
+							// If we have a filter that fails on a file,
+							// it is probably safest to skip that file.
+							skip_file = true;
+						}
+					}
+
+				} while (skip_file);
+
 				if (current == null) {
 					Mono.Posix.Syscall.closedir (dir_handle);
 					dir_handle = IntPtr.Zero;
 				}
+
 				return current != null;
 			}
 
