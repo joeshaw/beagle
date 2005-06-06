@@ -260,7 +260,7 @@ namespace Beagle.WebService {
 			//The root tile is used only for adding hits and generating html.
 			BT.SimpleRootTile root = new BT.SimpleRootTile (); 							
 			root.Query = query;
-			root.SetSource (searchSource); 
+			//root.SetSource (searchSource); Do not SetSource on root! 
 											
 			bufferRenderContext bctx = new bufferRenderContext();
 			Resp resp = new Resp(root, bctx, isLocalReq);
