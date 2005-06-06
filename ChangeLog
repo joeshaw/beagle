@@ -1,3 +1,8 @@
+2005-06-06  Daniel Drake  <dsd@gentoo.org>
+
+	* beagled/beagled.in: Various launcher script fixes/improvements from
+	bug 168329
+
 2005-06-06 Lukas Lipka <lukas@pmad.net>
 
 	* beagled/Lucene.Net/upstream-changes.diff: Merge the patch using TermBuffer

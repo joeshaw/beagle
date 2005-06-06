@@ -45,48 +45,46 @@ fi
 
 export MONO_GAC_PREFIX="@gacprefix@:$MONO_GAC_PREFIX"
 export LD_LIBRARY_PATH="/opt/gnome/lib/evolution/2.0:$LD_LIBRARY_PATH"
-
-
-# Do any necessary processing of the arguments,
-# filtering out ones that are only used by this script
-
-fg=$fg_default
-need_fgbg_arg=1
 monogrind=0
 
-declare -a args
-while [ $# -gt 0 ]; do
-    case "$1" in
-	--fg | --foreground ) fg=1 ; shift ;;
-	--bg | --background ) fg=0 ; shift ;;
-	--monogrind ) monogrind=1; shift ;;
-	*) args[${#args[@]}]=$1 ; shift ;;
+BEAGLED_ARGS="$*"
+for i in $BEAGLED_ARGS; do
+    case "$i" in
+    --help | --list-backends | --fg | --foreground ) fg_user=1 ;;
+    --bg | --background ) fg_user=0 ;;
+    --monogrind ) monogrind=1 ;;
     esac
 done
 
+# If the user didn't specify to run in fg/bg, then use the default
+if [ -z "$fg_user" ]; then
+    fg=$fg_default
+else
+    fg=$fg_user
+fi
 
-# Append a --fg or --bg at the end of the command line so that
-# the daemon can know whether or not it is running in the background.
-FGBG_ARG=""
+# Handle logging, and optionally append the relevent default fg/bg argument if
+# it was not user-specified.
 if [ $fg -eq 1 ]; then
-    FGBG_ARG="--fg";
+    [ ! -z "$fg_user" ] && FGBG_ARG="--fg";
     export BEAGLE_LOG_IN_THE_FOREGROUND_PLEASE=1
 else
-    FGBG_ARG="--bg";
+    [ ! -z "$fg_user" ] && FGBG_ARG="--bg";
     unset BEAGLE_LOG_IN_THE_FOREGROUND_PLEASE
 fi
 
 if [ $monogrind -eq 1 ]; then
     export GC_DONT_GC=1
-    CMDLINE="monogrind $TARGET_EXE $EXTRA_ARGS ${args[@]} $FGBG_ARG"
+    CMDLINE="monogrind $TARGET_EXE $EXTRA_ARGS $BEAGLED_ARGS $FGBG_ARG"
 else
-    CMDLINE="mono --debug $MONO_EXTRA_ARGS $TARGET_EXE $EXTRA_ARGS ${args[@]} $FGBG_ARG"
+    CMDLINE="mono --debug $MONO_EXTRA_ARGS $TARGET_EXE $EXTRA_ARGS $BEAGLED_ARGS $FGBG_ARG"
 fi
 
 PROCESS_NAME="mono-beagled"
 
 if [ $fg -eq 1 ]; then
     exec -a $PROCESS_NAME $CMDLINE
+    exit 1
 else
     exec -a $PROCESS_NAME $CMDLINE &
 fi
@@ -98,7 +96,6 @@ fi
 
 sleep 0.5
 
-RUNNING_BEAGLED=`ps -o command | grep ^$PROCESS_NAME`
-if [ "x$RUNNING_BEAGLED" = "x" ]; then
+if ! ps -p $! > /dev/null; then
     echo "Beagle Daemon exited with errors.  See ~/.beagle/Log/current-Beagle for more details."
 fi
