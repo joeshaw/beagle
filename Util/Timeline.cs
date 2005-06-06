@@ -42,9 +42,9 @@ namespace Beagle.Util {
 		public void UpdateTimespan ()
 		{
 			TodaySpan = DateTime.Today;
-			YesterdaySpan = TodaySpan - new TimeSpan (1, 0, 0, 0);
-			ThisWeekSpan = TodaySpan - new TimeSpan (((int)DateTime.Now.DayOfWeek), 0, 0, 0);
-			LastWeekSpan = ThisWeekSpan - new TimeSpan (7, 0, 0, 0);
+			YesterdaySpan = TodaySpan.AddDays (-1);
+			ThisWeekSpan = TodaySpan.AddDays (-((int)DateTime.Now.DayOfWeek));
+			LastWeekSpan = ThisWeekSpan.AddDays (-7);
 		}
 
 		private class TimelineEvent {
