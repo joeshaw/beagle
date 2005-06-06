@@ -108,23 +108,18 @@ namespace Beagle.WebService {
 		public int totalResults;		//Total no. of results from the query
 		public HitResult[] hitResults;
 	}
-					     
-	public class WebServicesArgs {
-	
-		public bool web_global = false;
-		public bool web_start = false;
-		public string web_port = WebServiceBackEnd.DEFAULT_XSP_PORT;
-		public string web_rootDir = WebServiceBackEnd.DEFAULT_XSP_ROOT;
-	}
-	
+
 	public class WebServiceBackEnd: MarshalByRefObject   {
 
 		public static string hostname = "localhost";		
 		public static string DEFAULT_XSP_ROOT = Path.Combine (ExternalStringsHack.PkgDataDir, "xsp");
 		public static string DEFAULT_XSP_PORT = "8888";
-	
-		public static WebServicesArgs wsargs = new WebServicesArgs();
-			
+
+		public static bool web_global = false;
+		public static bool web_start = false;
+		public static string web_port = DEFAULT_XSP_PORT;
+		public static string web_rootDir = DEFAULT_XSP_ROOT;
+								
 		static Mono.ASPNET.ApplicationServer appServer = null;
 		static string DEFAULT_APP_MAPPINGS = "/:" + DEFAULT_XSP_ROOT + ",/beagle:" + DEFAULT_XSP_ROOT;
 
@@ -149,21 +144,21 @@ namespace Beagle.WebService {
 								
 			//start web-access server first
 			Logger.Log.Debug ("Starting WebBackEnd");
-			WebBackEnd.init (wsargs.web_global);
+			WebBackEnd.init (web_global);
 
 			//Next start web-service server
 			Logger.Log.Info ("Starting WebServiceBackEnd");
-			WebServiceBackEnd.init (wsargs.web_global);
+			WebServiceBackEnd.init (web_global);
 
-			Logger.Log.Debug ("Global WebAccess {0}", wsargs.web_global ? "Enabled" : "Disabled");
+			Logger.Log.Debug ("Global WebAccess {0}", web_global ? "Enabled" : "Disabled");
 
-			xsp_param[1] = wsargs.web_port;
-			xsp_param[3] = wsargs.web_rootDir;
+			xsp_param[1] = web_port;
+			xsp_param[3] = web_rootDir;
 			
 			//Check if web_rootDir_changed:
-			if (String.Compare(wsargs.web_rootDir, DEFAULT_XSP_ROOT, true) != 0)
+			if (String.Compare(web_rootDir, DEFAULT_XSP_ROOT, true) != 0)
 				//Assuming "/beagle" exists as an explicit sub-folder under user specified xsp root directory:
-				xsp_param[5] = "/:" + wsargs.web_rootDir + ",/beagle:" + wsargs.web_rootDir + "/beagle";
+				xsp_param[5] = "/:" + web_rootDir + ",/beagle:" + web_rootDir + "/beagle";
 			
 			try {
 					
@@ -187,7 +182,7 @@ namespace Beagle.WebService {
 				xsp_param[5] = DEFAULT_APP_MAPPINGS;
 			}					
 					     						
-			if (wsargs.web_start) {
+			if (web_start) {
 				
 				Logger.Log.Debug ("Starting Internal Web Server");
 

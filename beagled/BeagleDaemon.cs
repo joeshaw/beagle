@@ -117,10 +117,11 @@ namespace Beagle.Daemon {
 
 #if ENABLE_WEBSERVICES
 			usage += "\n" +
-				"  --web-global\t\tAllow global access to the web interface.\n" +
-				"  --web-start\t\tStart the web server interface for this instance..n" +
-				"  --web-port\t\tPort to use for the web server interface.\n" +
-				"  --web-root\t\tRoot of the web server interface.\n";
+				"  --web-global\t\tAllow global access to the Web & WebService interfaces.\n" +
+				"  --web-start\t\tStart internal web server for this instance.\n" +
+				"  --web-port\t\tPort to use for the internal web server.\n" +
+				"  --web-root\t\tRoot directory to use for the internal web server.\n" +
+				"  --enable-network\tStart internal web server & allow global access.\n";
 #endif 
 
 			Console.WriteLine (usage);
@@ -251,28 +252,28 @@ namespace Beagle.Daemon {
 					break;
 #if ENABLE_WEBSERVICES
 				case "--web-global":
-					WebServiceBackEnd.wsargs.web_global = true;
+					WebServiceBackEnd.web_global = true;
 					break;
 
 				case "--web-start":
-					WebServiceBackEnd.wsargs.web_start = true;
+					WebServiceBackEnd.web_start = true;
 					break;
 
 				case "--web-port":
-					WebServiceBackEnd.wsargs.web_port = next_arg;
+					WebServiceBackEnd.web_port = next_arg;
 					++i; 
-					WebServiceBackEnd.wsargs.web_start = true;
+					WebServiceBackEnd.web_start = true;
 					break;
 
 				case "--web-root":
-					WebServiceBackEnd.wsargs.web_rootDir = next_arg;
+					WebServiceBackEnd.web_rootDir = next_arg;
 					++i; 
-					WebServiceBackEnd.wsargs.web_start = true;
+					WebServiceBackEnd.web_start = true;
 					break;
 					
 				case "--enable-network":
-					WebServiceBackEnd.wsargs.web_start = true;
-					WebServiceBackEnd.wsargs.web_global = true;
+					WebServiceBackEnd.web_start = true;
+					WebServiceBackEnd.web_global = true;
 					break;					
 #endif 
 				default:
