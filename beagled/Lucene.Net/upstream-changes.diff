@@ -1,4 +1,320 @@
-diff -rup /home/joe/lucene-1.4/Lucene.Net-1.4.3.RC2-001/Lucene.Net/Analysis/PorterStemmer.cs ./Analysis/PorterStemmer.cs
+unchanged:
+--- Makefile.am	3 Jun 2005 19:18:59 -0000	1.110
++++ Makefile.am	6 Jun 2005 15:42:57 -0000
+@@ -80,6 +80,7 @@
+ 	$(lucenedir)/Index/SegmentTermPositions.cs			\
+ 	$(lucenedir)/Index/SegmentTermVector.cs				\
+ 	$(lucenedir)/Index/Term.cs					\
++	$(lucenedir)/Index/TermBuffer.cs				\
+ 	$(lucenedir)/Index/TermDocs.cs					\
+ 	$(lucenedir)/Index/TermEnum.cs					\
+ 	$(lucenedir)/Index/TermFreqVector.cs				\
+unchanged:
+--- Lucene.Net/Makefile.am	16 Aug 2004 22:01:40 -0000	1.1
++++ Lucene.Net/Makefile.am	6 Jun 2005 15:43:00 -0000
+@@ -59,6 +59,7 @@
+ 	$(srcdir)/Lucene.Net/Index/SegmentTermEnum.cs			\
+ 	$(srcdir)/Lucene.Net/Index/SegmentTermPositions.cs			\
+ 	$(srcdir)/Lucene.Net/Index/Term.cs					\
++	$(srcdir)/Lucene.Net/Index/TermBuffer.cs			\
+ 	$(srcdir)/Lucene.Net/Index/TermDocs.cs				\
+ 	$(srcdir)/Lucene.Net/Index/TermEnum.cs				\
+ 	$(srcdir)/Lucene.Net/Index/TermInfo.cs				\
+unchanged:
+--- Lucene.Net/Index/SegmentTermEnum.cs	17 Jan 2005 19:54:29 -0000	1.2
++++ Lucene.Net/Index/SegmentTermEnum.cs	6 Jun 2005 15:43:00 -0000
+@@ -25,7 +25,10 @@
+ 		internal long size;
+ 		internal long position = - 1;
+ 		
+-		private Term term = new Term("", "");
++		private TermBuffer termBuffer = new TermBuffer();
++		private TermBuffer prevBuffer = new TermBuffer();
++		private TermBuffer scratch;  // used for scanning
++
+ 		private TermInfo termInfo = new TermInfo();
+ 		
+ 		private int format;
+@@ -34,9 +37,6 @@
+ 		internal int indexInterval;
+ 		internal int skipInterval;
+ 		private int formatM1SkipInterval;
+-		internal Term prev;
+-		
+-		private char[] buffer = new char[]{};
+ 		
+ 		internal SegmentTermEnum(InputStream i, FieldInfos fis, bool isi)
+ 		{
+@@ -98,8 +98,9 @@
+ 			
+ 			clone.input = (InputStream) input.Clone();
+ 			clone.termInfo = new TermInfo(termInfo);
+-			if (term != null)
+-				clone.GrowBuffer(term.text.Length);
++			clone.termBuffer = (TermBuffer) termBuffer.Clone();
++			clone.prevBuffer = (TermBuffer) prevBuffer.Clone();
++			clone.scratch = null;
+ 			
+ 			return clone;
+ 		}
+@@ -108,10 +109,9 @@
+ 		{
+ 			input.Seek(pointer);
+ 			position = p;
+-			term = t;
+-			prev = null;
++			termBuffer.Set(t);
++			prevBuffer.Reset();
+ 			termInfo.Set(ti);
+-			GrowBuffer(term.text.Length); // copy term text into buffer
+ 		}
+ 		
+ 		/// <summary>Increments the enumeration to the next element.  True if one exists.</summary>
+@@ -119,13 +119,13 @@
+ 		{
+ 			if (position++ >= size - 1)
+ 			{
+-				term = null;
++				termBuffer.Reset();
+ 				return false;
+ 			}
+ 			
+-			prev = term;
+-			term = ReadTerm();
+-			
++			prevBuffer.Set(termBuffer);
++			termBuffer.Read(input, fieldInfos);
++
+ 			termInfo.docFreq = input.ReadVInt(); // read doc freq
+ 			termInfo.freqPointer += input.ReadVLong(); // read freq pointer
+ 			termInfo.proxPointer += input.ReadVLong(); // read prox pointer
+@@ -154,24 +154,13 @@
+ 			return true;
+ 		}
+ 		
+-		private Term ReadTerm()
+-		{
+-			int start = input.ReadVInt();
+-			int length = input.ReadVInt();
+-			int totalLength = start + length;
+-			if (buffer.Length < totalLength)
+-				GrowBuffer(totalLength);
+-			
+-			input.ReadChars(buffer, start, length);
+-			return new Term(fieldInfos.FieldName(input.ReadVInt()), new System.String(buffer, 0, totalLength), false);
+-		}
+-		
+-		private void  GrowBuffer(int length)
++		/** Optimized scan, without allocating new terms. */
++		public void  ScanTo(Term term)
+ 		{
+-			buffer = new char[length];
+-			for (int i = 0; i < term.text.Length; i++)
+-			// copy contents
+-				buffer[i] = term.text[i];
++			if (scratch == null)
++				scratch = new TermBuffer();
++			scratch.Set(term);
++			while (scratch.CompareTo(termBuffer) > 0 && Next()) {}
+ 		}
+ 		
+ 		/// <summary>Returns the current Term in the enumeration.
+@@ -179,9 +168,16 @@
+ 		/// </summary>
+ 		public override Term Term()
+ 		{
+-			return term;
++			return termBuffer.ToTerm();
+ 		}
+ 		
++		/// <summary>Returns the previous Term in the enumeration.
++		/// Initially null.
++		/// </summary>
++		public Term Prev() {
++			return prevBuffer.ToTerm();
++		}
++ 
+ 		/// <summary>Returns the current TermInfo in the enumeration.
+ 		/// Initially invalid, valid after next() called for the first time.
+ 		/// </summary>
+@@ -226,4 +222,4 @@
+ 			input.Close();
+ 		}
+ 	}
+-}
+\ No newline at end of file
++}
+unchanged:
+--- Lucene.Net/Index/TermInfosReader.cs	17 Jan 2005 19:54:29 -0000	1.2
++++ Lucene.Net/Index/TermInfosReader.cs	6 Jun 2005 15:43:00 -0000
+@@ -130,10 +130,10 @@
+ 		{
+ 			if (size == 0)
+ 				return null;
+-			
++
+ 			// optimize sequential access: first try scanning cached enum w/o seeking
+ 			SegmentTermEnum enumerator = GetEnum();
+-			if (enumerator.Term() != null && ((enumerator.prev != null && term.CompareTo(enumerator.prev) > 0) || term.CompareTo(enumerator.Term()) >= 0))
++			if (enumerator.Term() != null && ((enumerator.Prev () != null && term.CompareTo(enumerator.Prev ()) > 0) || term.CompareTo(enumerator.Term()) >= 0))
+ 			{
+ 				int enumOffset = (int) (enumerator.position / enumerator.indexInterval) + 1;
+ 				if (indexTerms.Length == enumOffset || term.CompareTo(indexTerms[enumOffset]) < 0)
+@@ -149,9 +149,8 @@
+ 		private TermInfo ScanEnum(Term term)
+ 		{
+ 			SegmentTermEnum enumerator = GetEnum();
+-			while (term.CompareTo(enumerator.Term()) > 0 && enumerator.Next())
+-			{
+-			}
++			enumerator.ScanTo (term);
++
+ 			if (enumerator.Term() != null && term.CompareTo(enumerator.Term()) == 0)
+ 				return enumerator.TermInfo();
+ 			else
+@@ -215,4 +214,4 @@
+ 			return (SegmentTermEnum) GetEnum().Clone();
+ 		}
+ 	}
+-}
+\ No newline at end of file
++}
+unchanged:
+--- /dev/null	2005-03-19 20:36:14.000000000 +0100
++++ Lucene.Net/Index/TermBuffer.cs	2005-06-06 17:42:47.000000000 +0200
+@@ -0,0 +1,130 @@
++/*
++ * Copyright 2004 The Apache Software Foundation
++ * 
++ * Licensed under the Apache License, Version 2.0 (the "License");
++ * you may not use this file except in compliance with the License.
++ * You may obtain a copy of the License at
++ * 
++ * http://www.apache.org/licenses/LICENSE-2.0
++ * 
++ * Unless required by applicable law or agreed to in writing, software
++ * distributed under the License is distributed on an "AS IS" BASIS,
++ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++ * See the License for the specific language governing permissions and
++ * limitations under the License.
++ */
++using System;
++using InputStream = Lucene.Net.Store.InputStream;
++namespace Lucene.Net.Index
++{
++
++	public class TermBuffer:System.ICloneable {
++		private static char[] NO_CHARS = new char[0];
++
++		private String field;
++		private char[] text = NO_CHARS;
++		private int textLength;
++		private Term term; // cached
++
++		public int CompareTo(TermBuffer other)
++		{
++			if (field == other.field) // fields are interned
++				return CompareChars(text, textLength, other.text, other.textLength);
++			else
++				return field.CompareTo(other.field);
++		}
++		
++		private static int CompareChars(char[] v1, int len1, char[] v2, int len2)
++		{
++			int end = Math.Min(len1, len2);
++			for (int k = 0; k < end; k++) {
++				char c1 = v1[k];
++				char c2 = v2[k];
++				if (c1 != c2) {
++					return c1 - c2;
++				}
++			}
++			return len1 - len2;
++		}
++		
++		private void SetTextLength(int newLength)
++		{
++			if (text.Length < newLength) {
++				char[] newText = new char[newLength];
++				System.Array.Copy(text, 0, newText, 0, textLength);
++				text = newText;
++			}
++			textLength = newLength;
++		}
++		
++		public void Read(InputStream input, FieldInfos fieldInfos)
++		{
++			this.term = null; // invalidate cache
++			int start = input.ReadVInt();
++			int length = input.ReadVInt();
++			int totalLength = start + length;
++			SetTextLength(totalLength);
++			input.ReadChars(this.text, start, length);
++			this.field = fieldInfos.FieldName(input.ReadVInt());
++		}
++		
++		public void Set(Term term)
++		{
++			if (term == null) {
++				Reset();
++				return;
++			}
++			
++			// copy text into the buffer
++			SetTextLength(term.Text().Length);
++			text = term.Text().ToCharArray(0, term.Text().Length);
++			
++			this.field = term.Field();
++			this.term = term;
++		}
++		
++		public void Set(TermBuffer other)
++		{
++			SetTextLength(other.textLength);
++			System.Array.Copy(other.text, 0, text, 0, textLength);
++			
++			this.field = other.field;
++			this.term = other.term;
++		}
++
++		public void Reset()
++		{
++			this.field = null;
++			this.textLength = 0;
++			this.term = null;
++		}
++		
++		public Term ToTerm()
++		{
++			if (field == null) // unset
++				return null;
++			
++			if (term == null)
++				term = new Term(field, new String(text, 0, textLength), false);
++			
++			return term;
++		}
++		
++		public System.Object Clone()
++		{
++			TermBuffer clone = null;
++			try
++			{
++				clone = (TermBuffer) base.MemberwiseClone();
++			}
++			catch (System.Exception)
++			{
++			}
++			
++			clone.text = new char[text.Length];
++			System.Array.Copy(text, 0, clone.text, 0, textLength);
++
++			return clone;
++		}
++	}
++}
+only in patch2:
+unchanged:
 --- /home/joe/lucene-1.4/Lucene.Net-1.4.3.RC2-001/Lucene.Net/Analysis/PorterStemmer.cs	2004-11-02 12:55:50.000000000 -0500
 +++ ./Analysis/PorterStemmer.cs	2005-01-10 16:02:22.000000000 -0500
 @@ -587,8 +587,12 @@ namespace Lucene.Net.Analysis
@@ -14,7 +330,8 @@ diff -rup /home/joe/lucene-1.4/Lucene.Net-1.4.3.RC2-001/Lucene.Net/Analysis/Port
  		}
  		
  		/* step6() removes a final -e if m() > 1. */
-diff -rup /home/joe/lucene-1.4/Lucene.Net-1.4.3.RC2-001/Lucene.Net/Analysis/Standard/StandardTokenizer.cs ./Analysis/Standard/StandardTokenizer.cs
+only in patch2:
+unchanged:
 --- /home/joe/lucene-1.4/Lucene.Net-1.4.3.RC2-001/Lucene.Net/Analysis/Standard/StandardTokenizer.cs	2004-12-27 17:15:00.000000000 -0500
 +++ ./Analysis/Standard/StandardTokenizer.cs	2005-01-10 16:01:51.000000000 -0500
 @@ -101,7 +101,8 @@ namespace Lucene.Net.Analysis.Standard
@@ -38,7 +355,8 @@ diff -rup /home/joe/lucene-1.4/Lucene.Net-1.4.3.RC2-001/Lucene.Net/Analysis/Stan
  				token = token.next;
  			else
  				token = token.next = token_source.GetNextToken();
-diff -rup /home/joe/lucene-1.4/Lucene.Net-1.4.3.RC2-001/Lucene.Net/Document/Field.cs ./Document/Field.cs
+only in patch2:
+unchanged:
 --- /home/joe/lucene-1.4/Lucene.Net-1.4.3.RC2-001/Lucene.Net/Document/Field.cs	2004-11-02 12:56:16.000000000 -0500
 +++ ./Document/Field.cs	2005-01-07 17:32:41.000000000 -0500
 @@ -33,7 +33,7 @@ namespace Lucene.Net.Documents
@@ -86,18 +404,8 @@ diff -rup /home/joe/lucene-1.4/Lucene.Net-1.4.3.RC2-001/Lucene.Net/Document/Fiel
  		{
  			if (name == null)
  				throw new System.ArgumentException("name cannot be null");
-Only in /home/joe/lucene-1.4/Lucene.Net-1.4.3.RC2-001/Lucene.Net: Lucene.Net.csproj
-Only in /home/joe/lucene-1.4/Lucene.Net-1.4.3.RC2-001/Lucene.Net: Lucene.Net.csproj.user
-Only in /home/joe/lucene-1.4/Lucene.Net-1.4.3.RC2-001/Lucene.Net: Lucene.Net.Dll
-Only in /home/joe/lucene-1.4/Lucene.Net-1.4.3.RC2-001/Lucene.Net: Lucene.Net.Search.RemoteSearchable.config
-Only in /home/joe/lucene-1.4/Lucene.Net-1.4.3.RC2-001/Lucene.Net: Lucene.Net.Search.TestSort.config
-Only in /home/joe/lucene-1.4/Lucene.Net-1.4.3.RC2-001/Lucene.Net: Lucene.Net.sln
-Only in /home/joe/lucene-1.4/Lucene.Net-1.4.3.RC2-001/Lucene.Net: Lucene.Net.suo
-Only in /home/joe/lucene-1.4/Lucene.Net-1.4.3.RC2-001/Lucene.Net: Lucene.Net.xml
-Only in /home/joe/lucene-1.4/Lucene.Net-1.4.3.RC2-001/Lucene.Net: Overview.html
-Only in ./QueryParser: .#QueryParser.cs
-Only in ./QueryParser: #QueryParser.cs#
-diff -rup /home/joe/lucene-1.4/Lucene.Net-1.4.3.RC2-001/Lucene.Net/QueryParser/QueryParser.cs ./QueryParser/QueryParser.cs
+only in patch2:
+unchanged:
 --- /home/joe/lucene-1.4/Lucene.Net-1.4.3.RC2-001/Lucene.Net/QueryParser/QueryParser.cs	2005-01-07 16:56:32.000000000 -0500
 +++ ./QueryParser/QueryParser.cs	2005-01-10 16:03:16.000000000 -0500
 @@ -629,7 +629,8 @@ namespace Lucene.Net.QueryParsers
@@ -150,7 +458,8 @@ diff -rup /home/joe/lucene-1.4/Lucene.Net-1.4.3.RC2-001/Lucene.Net/QueryParser/Q
  		}
  		
  		private bool Jj_2_1(int xla)
-diff -rup /home/joe/lucene-1.4/Lucene.Net-1.4.3.RC2-001/Lucene.Net/Search/BooleanQuery.cs ./Search/BooleanQuery.cs
+only in patch2:
+unchanged:
 --- /home/joe/lucene-1.4/Lucene.Net-1.4.3.RC2-001/Lucene.Net/Search/BooleanQuery.cs	2004-12-06 12:18:16.000000000 -0500
 +++ ./Search/BooleanQuery.cs	2005-01-07 18:05:15.000000000 -0500
 @@ -299,9 +299,10 @@ namespace Lucene.Net.Search
@@ -166,7 +475,8 @@ diff -rup /home/joe/lucene-1.4/Lucene.Net-1.4.3.RC2-001/Lucene.Net/Search/Boolea
  						query.SetBoost(GetBoost() * query.GetBoost());
  					}
  					
-diff -rup /home/joe/lucene-1.4/Lucene.Net-1.4.3.RC2-001/Lucene.Net/Search/RemoteSearchable.cs ./Search/RemoteSearchable.cs
+only in patch2:
+unchanged:
 --- /home/joe/lucene-1.4/Lucene.Net-1.4.3.RC2-001/Lucene.Net/Search/RemoteSearchable.cs	2004-11-02 13:25:20.000000000 -0500
 +++ ./Search/RemoteSearchable.cs	2005-01-10 16:04:47.000000000 -0500
 @@ -85,11 +85,14 @@ namespace Lucene.Net.Search
@@ -184,7 +494,8 @@ diff -rup /home/joe/lucene-1.4/Lucene.Net-1.4.3.RC2-001/Lucene.Net/Search/Remote
  			
  			Lucene.Net.Search.Searchable local = new IndexSearcher(args[0]);
  			RemoteSearchable impl = new RemoteSearchable(local);
-diff -rup /home/joe/lucene-1.4/Lucene.Net-1.4.3.RC2-001/Lucene.Net/Search/TermQuery.cs ./Search/TermQuery.cs
+only in patch2:
+unchanged:
 --- /home/joe/lucene-1.4/Lucene.Net-1.4.3.RC2-001/Lucene.Net/Search/TermQuery.cs	2004-12-06 12:00:44.000000000 -0500
 +++ ./Search/TermQuery.cs	2005-01-07 17:59:38.000000000 -0500
 @@ -212,7 +212,7 @@ namespace Lucene.Net.Search
@@ -197,7 +508,8 @@ diff -rup /home/joe/lucene-1.4/Lucene.Net-1.4.3.RC2-001/Lucene.Net/Search/TermQu
  	}
  }
 \ No newline at end of file
-diff -rup /home/joe/lucene-1.4/Lucene.Net-1.4.3.RC2-001/Lucene.Net/Store/FSDirectory.cs ./Store/FSDirectory.cs
+only in patch2:
+unchanged:
 --- /home/joe/lucene-1.4/Lucene.Net-1.4.3.RC2-001/Lucene.Net/Store/FSDirectory.cs	2004-12-15 11:25:12.000000000 -0500
 +++ ./Store/FSDirectory.cs	2005-01-10 16:00:59.000000000 -0500
 @@ -15,6 +15,7 @@
@@ -317,7 +629,8 @@ diff -rup /home/joe/lucene-1.4/Lucene.Net-1.4.3.RC2-001/Lucene.Net/Store/FSDirec
  		/// <summary> So we can do some byte-to-hexchar conversion below</summary>
  		private static readonly char[] HEX_DIGITS = new char[]{'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f'};
  		
-diff -rup /home/joe/lucene-1.4/Lucene.Net-1.4.3.RC2-001/Lucene.Net/Store/Lock.cs ./Store/Lock.cs
+only in patch2:
+unchanged:
 --- /home/joe/lucene-1.4/Lucene.Net-1.4.3.RC2-001/Lucene.Net/Store/Lock.cs	2004-11-02 13:26:20.000000000 -0500
 +++ ./Store/Lock.cs	2005-01-10 15:42:13.000000000 -0500
 @@ -59,12 +59,21 @@ namespace Lucene.Net.Store
@@ -343,4 +656,3 @@ diff -rup /home/joe/lucene-1.4/Lucene.Net-1.4.3.RC2-001/Lucene.Net/Store/Lock.cs
  				try
  				{
  					System.Threading.Thread.Sleep(new System.TimeSpan((System.Int64) 10000 * LOCK_POLL_INTERVAL));
-Only in .: upstream-changes.diff

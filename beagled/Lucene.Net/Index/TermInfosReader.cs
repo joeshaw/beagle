@@ -130,10 +130,10 @@ namespace Lucene.Net.Index
 		{
 			if (size == 0)
 				return null;
-			
+
 			// optimize sequential access: first try scanning cached enum w/o seeking
 			SegmentTermEnum enumerator = GetEnum();
-			if (enumerator.Term() != null && ((enumerator.prev != null && term.CompareTo(enumerator.prev) > 0) || term.CompareTo(enumerator.Term()) >= 0))
+			if (enumerator.Term() != null && ((enumerator.Prev () != null && term.CompareTo(enumerator.Prev ()) > 0) || term.CompareTo(enumerator.Term()) >= 0))
 			{
 				int enumOffset = (int) (enumerator.position / enumerator.indexInterval) + 1;
 				if (indexTerms.Length == enumOffset || term.CompareTo(indexTerms[enumOffset]) < 0)
@@ -149,9 +149,8 @@ namespace Lucene.Net.Index
 		private TermInfo ScanEnum(Term term)
 		{
 			SegmentTermEnum enumerator = GetEnum();
-			while (term.CompareTo(enumerator.Term()) > 0 && enumerator.Next())
-			{
-			}
+			enumerator.ScanTo (term);
+
 			if (enumerator.Term() != null && term.CompareTo(enumerator.Term()) == 0)
 				return enumerator.TermInfo();
 			else

@@ -25,7 +25,10 @@ namespace Lucene.Net.Index
 		internal long size;
 		internal long position = - 1;
 		
-		private Term term = new Term("", "");
+		private TermBuffer termBuffer = new TermBuffer();
+		private TermBuffer prevBuffer = new TermBuffer();
+		private TermBuffer scratch;  // used for scanning
+
 		private TermInfo termInfo = new TermInfo();
 		
 		private int format;
@@ -34,9 +37,6 @@ namespace Lucene.Net.Index
 		internal int indexInterval;
 		internal int skipInterval;
 		private int formatM1SkipInterval;
-		internal Term prev;
-		
-		private char[] buffer = new char[]{};
 		
 		internal SegmentTermEnum(InputStream i, FieldInfos fis, bool isi)
 		{
@@ -98,8 +98,9 @@ namespace Lucene.Net.Index
 			
 			clone.input = (InputStream) input.Clone();
 			clone.termInfo = new TermInfo(termInfo);
-			if (term != null)
-				clone.GrowBuffer(term.text.Length);
+			clone.termBuffer = (TermBuffer) termBuffer.Clone();
+			clone.prevBuffer = (TermBuffer) prevBuffer.Clone();
+			clone.scratch = null;
 			
 			return clone;
 		}
@@ -108,10 +109,9 @@ namespace Lucene.Net.Index
 		{
 			input.Seek(pointer);
 			position = p;
-			term = t;
-			prev = null;
+			termBuffer.Set(t);
+			prevBuffer.Reset();
 			termInfo.Set(ti);
-			GrowBuffer(term.text.Length); // copy term text into buffer
 		}
 		
 		/// <summary>Increments the enumeration to the next element.  True if one exists.</summary>
@@ -119,13 +119,13 @@ namespace Lucene.Net.Index
 		{
 			if (position++ >= size - 1)
 			{
-				term = null;
+				termBuffer.Reset();
 				return false;
 			}
 			
-			prev = term;
-			term = ReadTerm();
-			
+			prevBuffer.Set(termBuffer);
+			termBuffer.Read(input, fieldInfos);
+
 			termInfo.docFreq = input.ReadVInt(); // read doc freq
 			termInfo.freqPointer += input.ReadVLong(); // read freq pointer
 			termInfo.proxPointer += input.ReadVLong(); // read prox pointer
@@ -154,24 +154,13 @@ namespace Lucene.Net.Index
 			return true;
 		}
 		
-		private Term ReadTerm()
+		/** Optimized scan, without allocating new terms. */
+		public void  ScanTo(Term term)
 		{
-			int start = input.ReadVInt();
-			int length = input.ReadVInt();
-			int totalLength = start + length;
-			if (buffer.Length < totalLength)
-				GrowBuffer(totalLength);
-			
-			input.ReadChars(buffer, start, length);
-			return new Term(fieldInfos.FieldName(input.ReadVInt()), new System.String(buffer, 0, totalLength), false);
-		}
-		
-		private void  GrowBuffer(int length)
-		{
-			buffer = new char[length];
-			for (int i = 0; i < term.text.Length; i++)
-			// copy contents
-				buffer[i] = term.text[i];
+			if (scratch == null)
+				scratch = new TermBuffer();
+			scratch.Set(term);
+			while (scratch.CompareTo(termBuffer) > 0 && Next()) {}
 		}
 		
 		/// <summary>Returns the current Term in the enumeration.
@@ -179,9 +168,16 @@ namespace Lucene.Net.Index
 		/// </summary>
 		public override Term Term()
 		{
-			return term;
+			return termBuffer.ToTerm();
 		}
 		
+		/// <summary>Returns the previous Term in the enumeration.
+		/// Initially null.
+		/// </summary>
+		public Term Prev() {
+			return prevBuffer.ToTerm();
+		}
+ 
 		/// <summary>Returns the current TermInfo in the enumeration.
 		/// Initially invalid, valid after next() called for the first time.
 		/// </summary>

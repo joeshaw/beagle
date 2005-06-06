@@ -1,3 +1,12 @@
+2005-06-06 Lukas Lipka <lukas@pmad.net>
+
+	* beagled/Lucene.Net/upstream-changes.diff: Merge the patch using TermBuffer
+	* beagled/Makefile.am: Added Lucene.Net/Index/TermBuffer.cs
+	* beagled/Lucene.Net/Makefile.am: Added Lucene.Net/Index/TermBuffer.cs
+	* beagled/Lucene.Net/Index/TermBuffer.cs: Add port from Lucene SVN
+	* beagled/Lucene.Net/Index/SegmentTermEnum.cs: Update for TermBuffer
+	* beagled/Lucene.Net/Index/TermInfosReader.cs: Update for TermBuffer
+
 2005-06-06  Daniel Drake  <dsd@gentoo.org>
 
 	* Util/Conf.cs: Apply forgotten improvements patch

@@ -59,6 +59,7 @@ CSFILES =								\
 	$(srcdir)/Lucene.Net/Index/SegmentTermEnum.cs			\
 	$(srcdir)/Lucene.Net/Index/SegmentTermPositions.cs			\
 	$(srcdir)/Lucene.Net/Index/Term.cs					\
+	$(srcdir)/Lucene.Net/Index/TermBuffer.cs			\
 	$(srcdir)/Lucene.Net/Index/TermDocs.cs				\
 	$(srcdir)/Lucene.Net/Index/TermEnum.cs				\
 	$(srcdir)/Lucene.Net/Index/TermInfo.cs				\

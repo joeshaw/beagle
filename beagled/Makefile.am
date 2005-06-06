@@ -80,6 +80,7 @@ LUCENE_1_4_CSFILES =							\
 	$(lucenedir)/Index/SegmentTermPositions.cs			\
 	$(lucenedir)/Index/SegmentTermVector.cs				\
 	$(lucenedir)/Index/Term.cs					\
+	$(lucenedir)/Index/TermBuffer.cs				\
 	$(lucenedir)/Index/TermDocs.cs					\
 	$(lucenedir)/Index/TermEnum.cs					\
 	$(lucenedir)/Index/TermFreqVector.cs				\
