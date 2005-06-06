@@ -1,3 +1,4 @@
 <configuration>
 	<dllmap dll="libexif.dll" target="libexif.so.@EXIF_SOVERSION@"/>
+	<dllmap dll="libgnomeui-2" target="libgnomeui-2.so.0"/>
 </configuration>
