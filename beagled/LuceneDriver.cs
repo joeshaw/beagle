@@ -159,6 +159,7 @@ namespace Beagle.Daemon {
 
 			// If the index seems to exist but contains dangling locks,
 			// declare the index non-existent.
+
 			if (indexExists) {
 				DirectoryInfo lockDirInfo = new DirectoryInfo (lockDir);
 				if (! lockDirInfo.Exists)
@@ -220,6 +221,11 @@ namespace Beagle.Daemon {
 				// This creates the index if it doesn't exist
 				IndexWriter writer = new IndexWriter (Store, null, true);
 				writer.Close ();
+			}
+
+			if (Environment.GetEnvironmentVariable ("BEAGLE_OPTIMIZE_ON_STARTUP") != null) {
+				cycles_since_last_optimization = 1000; // this can't be zero, or nothing will happen
+				Optimize ();
 			}
 		}
 
@@ -782,22 +788,25 @@ namespace Beagle.Daemon {
 				body_query = new LNS.BooleanQuery ();
 
 				foreach (QueryPart part in query.Parts) {
-
+					
+					LNS.BooleanQuery part_query = new LNS.BooleanQuery ();
+					LNS.Query part_query_override = null;
 					LNS.Query subquery = null;
 
 					if (part.TargetIsAll || part.TargetIsText) {
 
 						subquery = NewTokenizedQuery ("Text", part.Text);
-						body_query.Add (subquery, part.IsRequired, part.IsProhibited);
+						part_query.Add (subquery, false, false);
 
 						subquery = NewTokenizedQuery ("HotText", part.Text);
 						subquery.SetBoost (1.75f);
-						body_query.Add (subquery, part.IsRequired, part.IsProhibited);
+						part_query.Add (subquery, false, false);
 					}
 
 					if (part.TargetIsAll || part.TargetIsProperties) {
 						subquery = NewTokenizedQuery ("PropertyText", part.Text);
-						body_query.Add (subquery, part.IsRequired, part.IsProhibited);
+						subquery.SetBoost (1.75f);
+						part_query.Add (subquery, false, false);
 					}
 
 					if (part.TargetIsSpecificProperty) {
@@ -814,8 +823,13 @@ namespace Beagle.Daemon {
 							subquery = NewTokenizedQuery (prop_name, part.Text);
 						}
 
-						body_query.Add (subquery, part.IsRequired, part.IsProhibited);
+						// Instead of the boolean query, just use the subquery.
+						part_query_override = subquery;
 					}
+
+					if (part_query_override == null)
+						part_query_override = part_query;
+					body_query.Add (part_query_override, part.IsRequired, part.IsProhibited);
 				}
 			}
 

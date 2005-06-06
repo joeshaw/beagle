@@ -137,10 +137,81 @@ namespace Beagle {
 			parts.Add (part);
 		}
 
+		private QueryPart BiteOffPart (ref string str)
+		{
+			if (str == null || str.Length == 0)
+				return null;
+
+			int i = 0;
+
+			// Skip whitespace
+			while (i < str.Length && Char.IsWhiteSpace (str [i]))
+				++i;
+			if (i >= str.Length)
+				return null;
+
+			bool is_required = false;
+			bool is_prohibited = false;
+
+			if (str [i] == '+') {
+				is_required = true;
+				++i;
+			} else if (str [i] == '-') {
+				is_prohibited = true;
+				++i;
+			}
+
+			// Skip any whitespace after the + or -
+			while (i < str.Length && Char.IsWhiteSpace (str [i]))
+				++i;
+			if (i >= str.Length)
+				return null;
+
+			string chunk = null;
+			if (str [i] == '"') {
+				int j = str.IndexOf ('"', i+1);
+				if (j == -1) {
+					if (i+1 < str.Length)
+						chunk = str.Substring (i+1);
+					str = null;
+				} else {
+					if (j-i-1 > 0)
+						chunk = str.Substring (i+1, j-i-1);
+					str = str.Substring (j+1);
+				}
+			} else {
+				int j = str.IndexOf (' ', i);
+				if (j == -1) {
+					chunk = str.Substring (i);
+					str = null;
+				} else {
+					chunk = str.Substring (i, j-i);
+					str = str.Substring (j);
+				}
+			}
+
+			// If this happens, we just bit off an empty query
+			// (i.e. something like "").  If this happens, just
+			// try again with the new value of str.
+			if (chunk == null && str != null)
+				return BiteOffPart (ref str);
+			
+			// Otherwise we assemble the QueryPart.
+			QueryPart part = new QueryPart ();
+			part.Target = QueryPart.TargetAll;
+			part.Text = chunk;
+			part.IsRequired = is_required;
+			part.IsProhibited = is_prohibited;
+
+			return part;
+		}
+
 		public void AddText (string str)
 		{
-			foreach (string textPart in BU.StringFu.SplitQuoted (str))
-				AddTextRaw (textPart);
+			// Parse our magic little query language.
+			QueryPart part;
+			while ((part = BiteOffPart (ref str)) != null)
+				AddPart (part);
 		}
 
 		// FIXME: Since it is possible to introduce quotes via the AddTextRaw
@@ -155,9 +226,15 @@ namespace Beagle {
 					if (part.Text == null)
 						continue;
 
-					bool has_ws = BU.StringFu.ContainsWhiteSpace (part.Text);
 					if (builder.Length > 0)
 						builder.Append (' ');
+					
+					if (part.IsRequired)
+						builder.Append ('+');
+					if (part.IsProhibited)
+						builder.Append ('-');
+
+					bool has_ws = BU.StringFu.ContainsWhiteSpace (part.Text);
 					if (has_ws)
 						builder.Append ('"');
 					builder.Append (part.Text);

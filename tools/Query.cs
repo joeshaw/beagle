@@ -192,7 +192,7 @@ class QueryTool {
 			default:
 				int j = args [i].IndexOf ('=');
 				if (j == -1) {
-					query.AddTextRaw (args [i]);
+					query.AddText (args [i]);
 				} else {
 					QueryPart part = new QueryPart ();
 					part.Target = args [i].Substring (0, j);
