@@ -45,6 +45,7 @@ namespace Beagle.Util {
 		private static Hashtable subscriptions;
 		private static bool watching_for_updates;
 		private static int update_wd;
+		private static BindingFlags method_search_flags = BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.InvokeMethod;
 
 		public delegate void ConfigUpdateHandler (Section section);
 
@@ -97,7 +98,7 @@ namespace Beagle.Util {
 		{
 			if (!subscriptions.ContainsKey (type))
 				subscriptions.Add (type, new ArrayList (1));
-			
+
 			ArrayList callbacks = (ArrayList) subscriptions [type];
 			callbacks.Add (callback);
 		}
@@ -122,7 +123,7 @@ namespace Beagle.Util {
 		public static void Load (bool force)
 		{
 			Section temp;
-	
+
 			LoadFile (typeof (IndexingConfig), Indexing, out temp, force);
 			Indexing = (IndexingConfig) temp;
 			NotifySubscribers (Indexing);
@@ -147,7 +148,7 @@ namespace Beagle.Util {
 			section = current;
 			object [] attrs = Attribute.GetCustomAttributes (type, typeof (ConfigSection));
 			if (attrs.Length == 0)
-				throw new Exception ("Could not find ConfigSection attribute on " + type);
+				throw new ConfigException ("Could not find ConfigSection attribute on " + type);
 
 			string sectionname = ((ConfigSection) attrs [0]).Name;
 			string filename = sectionname + ".xml";
@@ -190,7 +191,7 @@ namespace Beagle.Util {
 			Type type = section.GetType ();
 			object [] attrs = Attribute.GetCustomAttributes (type, typeof (ConfigSection));
 			if (attrs.Length == 0)
-				throw new Exception ("Could not find ConfigSection attribute on " + type);
+				throw new ConfigException ("Could not find ConfigSection attribute on " + type);
 
 			string sectionname = ((ConfigSection) attrs [0]).Name;
 			string filename = sectionname + ".xml";
@@ -232,7 +233,7 @@ namespace Beagle.Util {
 		public static Hashtable GetOptions (Section section)
 		{
 			Hashtable options = new Hashtable ();
-			MemberInfo [] members = section.GetType ().GetMembers ();
+			MemberInfo [] members = section.GetType ().GetMembers (method_search_flags);
 
 			// Find all of the methods ("options") inside the specified section
 			// object which have the ConfigOption attribute.
@@ -247,31 +248,32 @@ namespace Beagle.Util {
 
 		public static bool InvokeOption (Section section, string option, string [] args, out string output)
 		{
-			MethodInfo method = section.GetType ().GetMethod (option);
-			if (method == null)
-				throw new Exception("No such method '" + option + "' for section '" + section + "'");
-
+			MethodInfo method = section.GetType ().GetMethod (option, method_search_flags);
+			if (method == null) {
+				string msg = String.Format ("No such method '{0}' for section '{1}'", option, section);
+				throw new ConfigException(msg);
+			}
 			object [] attrs = method.GetCustomAttributes (typeof (ConfigOption), false);
-			if (attrs.Length == 0)
-				throw new Exception ("Method '" + option + "' is not a configurable option");
+			if (attrs.Length == 0) {
+				string msg = String.Format ("Method '{0}' is not a configurable option", option);
+				throw new ConfigException (msg);
+			}
 
 			// Check the required number of parameters have been provided
 			ConfigOption attr = (ConfigOption) attrs [0];
-			if (attr.Params > 0 && args.Length < attr.Params)
-				throw new Exception ("Option '" + option + "' requires " + attr.Params + " parameter(s): " + attr.ParamsDescription);
+			if (attr.Params > 0 && args.Length < attr.Params) {
+				string msg = String.Format ("Option '{0}' requires {1} parameter(s): {2}", option, attr.Params, attr.ParamsDescription);
+				throw new ConfigException (msg);
+			}
 
-			// Can't pass a ref/out in a MethodInfo.Invoke() call so we box the
-			// output in a single-element array.
-			string [] boxoutput = new string[1];
-
-			object [] methodparams = { boxoutput, args };
+			object [] methodparams = { null, args };
 			bool result = (bool) method.Invoke (section, methodparams);
-			output = boxoutput[0];
+			output = (string) methodparams [0];
 
 			// Mark the section as save-needed if we just changed something
 			if (result && attr.IsMutator)
 				section.SaveNeeded = true;
-				
+
 			return result;
 		}
 
@@ -303,67 +305,67 @@ namespace Beagle.Util {
 				set { ignore_patterns = value; }
 			}
 
-			[ConfigOption (Description="List the indexing roots")]
-			public bool ListRoots (string [] output, string [] args)
+			[ConfigOption (Description="List the indexing roots", IsMutator=false)]
+			internal bool ListRoots (out string output, string [] args)
 			{
-				output [0] = "Current roots:\n";
+				output = "Current roots:\n";
 				if (this.index_home_dir == true)
-					output [0] += " - Your home directory\n";
+					output += " - Your home directory\n";
 				foreach (string root in roots)
-					output [0] += " - " + root + "\n";
+					output += " - " + root + "\n";
 
 				return true;
 			}
 
-			[ConfigOption (Description="Toggles whether your home directory is to be indexed as a root", IsMutator=true)]
-			public bool IndexHome (string [] output, string [] args)
+			[ConfigOption (Description="Toggles whether your home directory is to be indexed as a root")]
+			internal bool IndexHome (out string output, string [] args)
 			{
-				output [0] = "Your home directory will ";
 				if (index_home_dir)
-					output [0] += "not ";
-				output [0] += "be indexed";
+					output = "Your home directory will not be indexed.";
+				else
+					output = "Your home directory will be indexed.";
 				index_home_dir = !index_home_dir;
 				return true;
 			}
 
-			[ConfigOption (Description="Add a root path to be indexed", Params=1, ParamsDescription="A path", IsMutator=true)]
-			public bool AddRoot (string [] output, string [] args)
+			[ConfigOption (Description="Add a root path to be indexed", Params=1, ParamsDescription="A path")]
+			internal bool AddRoot (out string output, string [] args)
 			{
 				roots.Add (args [0]);
-				output [0] = "Root added.";
+				output = "Root added.";
 				return true;
 			}
 
-			[ConfigOption (Description="Remove an indexing root", Params=1, ParamsDescription="A path", IsMutator=true)]
-			public bool DelRoot (string [] output, string [] args)
+			[ConfigOption (Description="Remove an indexing root", Params=1, ParamsDescription="A path")]
+			internal bool DelRoot (out string output, string [] args)
 			{
 				roots.Remove (args [0]);
-				output [0] = "Root removed.";
+				output = "Root removed.";
 				return true;
 			}
 
-			[ConfigOption (Description="List user-specified filename patterns to be ignored")]
-			public bool ListIgnorePatterns (string [] output, string [] args)
+			[ConfigOption (Description="List user-specified filename patterns to be ignored", IsMutator=false)]
+			internal bool ListIgnorePatterns (out string output, string [] args)
 			{
-				output [0] = "User-specified ignore patterns:\n";
+				output = "User-specified ignore patterns:\n";
 				foreach (string pattern in ignore_patterns)
-					output [0] += " - " + pattern + "\n";
+					output += " - " + pattern + "\n";
 				return true;
 			}
 
-			[ConfigOption (Description="Add a filename pattern to be ignored", Params=1, ParamsDescription="A pattern", IsMutator=true)]
-			public bool AddIgnorePattern (string [] output, string [] args)
+			[ConfigOption (Description="Add a filename pattern to be ignored", Params=1, ParamsDescription="A pattern")]
+			internal bool AddIgnorePattern (out string output, string [] args)
 			{
 				ignore_patterns.Add (args [0]);
-				output [0] = "Pattern added.";
+				output = "Pattern added.";
 				return true;
 			}
 
-			[ConfigOption (Description="Remove an ignored filename pattern", Params=1, ParamsDescription="A pattern", IsMutator=true)]
-			public bool DelIgnorePattern (string [] output, string [] args)
+			[ConfigOption (Description="Remove an ignored filename pattern", Params=1, ParamsDescription="A pattern")]
+			internal bool DelIgnorePattern (out string output, string [] args)
 			{
 				ignore_patterns.Remove (args [0]);
-				output [0] = "Pattern removed.";
+				output = "Pattern removed.";
 				return true;
 			}
 
@@ -378,11 +380,15 @@ namespace Beagle.Util {
 			public string Description;
 			public int Params;
 			public string ParamsDescription;
-			public bool IsMutator = false;
+			public bool IsMutator = true;
 		}
 
 		private class ConfigSection : Attribute {
 			public string Name;
+		}
+
+		public class ConfigException : Exception {
+			public ConfigException (string msg) : base (msg) { }
 		}
 
 	}

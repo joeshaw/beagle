@@ -1,3 +1,7 @@
+2005-06-06  Daniel Drake  <dsd@gentoo.org>
+
+	* Util/Conf.cs: Apply forgotten improvements patch
+
 2005-06-04  Daniel Drake  <dsd@gentoo.org>
 
 	* Util/Conf.cs: Don't use static classes just yet
