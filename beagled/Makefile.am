@@ -210,6 +210,25 @@ LUCENE_CSFILES = $(LUCENE_1_4_CSFILES)
 
 ############################################################
 
+sqlitedir = $(srcdir)/Mono.Data.SqliteClient
+
+SQLITE_CSFILES =					\
+	$(sqlitedir)/SqliteCommand.cs			\
+	$(sqlitedir)/SqliteConnection.cs		\
+	$(sqlitedir)/Sqlite.cs				\
+	$(sqlitedir)/SqliteDataAdapter.cs		\
+	$(sqlitedir)/SqliteDataReader.cs		\
+	$(sqlitedir)/SqliteException.cs			\
+	$(sqlitedir)/SqliteParameterCollection.cs	\
+	$(sqlitedir)/SqliteParameter.cs			\
+	$(sqlitedir)/SqliteRowUpdatedEventArgs.cs	\
+	$(sqlitedir)/SqliteRowUpdatedEventHandler.cs	\
+	$(sqlitedir)/SqliteRowUpdatingEventArgs.cs	\
+	$(sqlitedir)/SqliteRowUpdatingEventHandler.cs	\
+	$(sqlitedir)/SqliteTransaction.cs
+
+############################################################
+
 DAEMON_DLL_TARGET = BeagleDaemonLib.dll
 
 DAEMON_DLL_CSFLAGS = -target:library $(BEAGLE_DEFINES)
@@ -323,6 +342,13 @@ DAEMON_DLL_ASSEMBLIES = 			\
 	-r:Mono.Posix				\
 	-r:System.Runtime.Remoting		\
 	-r:System.Web
+
+if USE_LOCAL_SQLITE
+DAEMON_DLL_CSFILES += $(SQLITE_CSFILES)
+DAEMON_DLL_ASSEMBLIES += -r:System.Data
+else
+DAEMON_DLL_ASSEMBLIES += -r:Mono.Data.SqliteClient
+endif
 
 
 if ENABLE_EVO_SHARP

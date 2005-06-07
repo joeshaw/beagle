@@ -28,6 +28,7 @@
 using System;
 using System.Collections;
 using System.IO;
+using System.Threading;
 
 using Mono.Data.SqliteClient;
 
@@ -93,7 +94,18 @@ namespace Beagle.Daemon {
 		private static void DoNonQuery (string format, params object [] args)
 		{
 			SqliteCommand command = NewCommand (format, args);
-			command.ExecuteNonQuery ();
+			while (true) {
+				try {
+					command.ExecuteNonQuery ();
+					break;
+				} catch (SqliteException ex) {
+					// FIXME: should we eventually time out?
+					if (ex.SqliteError == SqliteError.BUSY)
+						Thread.Sleep (50);
+					else
+						throw ex;
+				}
+			}
 			command.Dispose ();
 		}
 
@@ -106,13 +118,40 @@ namespace Beagle.Daemon {
 		private static string LookupPathRawUnlocked (Uri uri, bool create_if_not_found)
 		{
 			SqliteCommand command;
-			SqliteDataReader reader;
+			SqliteDataReader reader = null;
 			string path = null;
 
 			command = NewCommand ("SELECT filename FROM uri_index WHERE uri='{0}'", 
 			                      UriToString (uri));
-			reader = command.ExecuteReader ();
-			if (reader.Read ())
+
+			while (true) {
+				try {
+					reader = command.ExecuteReader ();
+					break;
+				} catch (SqliteException ex) {
+					// FIXME: should we time out eventually?
+					if (ex.SqliteError == SqliteError.BUSY)
+						Thread.Sleep (50);
+					else
+						throw ex;
+				}
+			}
+
+			bool read_rv = false;
+			while (true) {
+				try {
+					read_rv = reader.Read ();
+					break;
+				} catch (SqliteException ex) {
+					// FIXME: should we time out eventually?
+					if (ex.SqliteError == SqliteError.BUSY)
+						Thread.Sleep (50);
+					else
+						throw ex;
+				}
+			}
+
+			if (read_rv)
 				path = reader.GetString (0);
 			reader.Close ();
 			command.Dispose ();

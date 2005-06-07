@@ -280,6 +280,14 @@ AM_CONDITIONAL(ENABLE_EVO_SHARP, test "x$enable_evo_sharp" == "xyes")
 
 dnl ----------------------------------------------
 
+dnl Should we use our own copy of the sqlite bindings or the version
+dnl that got installed along with mono?
+
+use_local_sqlite="yes" # hard-wired for now
+AM_CONDITIONAL(USE_LOCAL_SQLITE, test "x$use_local_sqlite" = "xyes")
+
+dnl ----------------------------------------------
+
 dnl beagled
 
 PKG_CHECK_MODULES(GSF_SHARP, gsf-sharp >= 0.2, enable_gsf_sharp=yes, enable_gsf_sharp=no)
@@ -484,6 +492,8 @@ echo "
 	Epiphany Extension?	${enable_epiphany_extension}
 	Mozilla Extension?	yes
 	wv1?			${enable_wv1}
+
+	Local SqliteClient?	${use_local_sqlite}
 
 	Enable WebServices	${enable_webservices}"
 echo
