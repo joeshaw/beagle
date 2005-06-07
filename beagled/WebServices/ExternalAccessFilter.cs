@@ -91,13 +91,11 @@ namespace Beagle.WebService {
                 	//string[] folders = entry.Split (',');
                 	//foreach (string d in folders) {
                 		string d = entry;
-                		Console.WriteLine("String d = " + d);
                 	    
                 	    //Each entry must start with ~/            	            	
                 		if ((d.Trim().Length > 1) && d.StartsWith("~/")) {
                 			
                 			string d2 = d.Replace("~/", PathFinder.HomeDir + "/");							
-                 			Console.WriteLine("String d2 = " + d2);
                  			
                  			if (!Directory.Exists(d2))
 								continue;
@@ -123,7 +121,7 @@ namespace Beagle.WebService {
 
 										matchers.Add (matcher);
 										
-										Console.WriteLine("Adding Match: " + matcher.Match + "," + matcher.Rewrite); 
+										Logger.Log.Debug("ExternalAccessFilter: Adding Match: " + matcher.Match + "," + matcher.Rewrite); 
 										break;										                															                															
                 					} 
 	               				} //end for                 				
