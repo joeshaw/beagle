@@ -30,9 +30,9 @@ using Beagle;
 namespace Beagle.Tile {
 
 	[HitFlavor (Name="Network", Rank=200, Emblem="emblem-google.png", 
-		Color="#f5f5fe", Uri="netbeagle:*"),
+		Color="#f5f5fe", Source="Network", Uri="netbeagle:*"),
 	 HitFlavor (Name="Network", Rank=200, Emblem="emblem-google.png", 
-		Color="#f5f5fe", Uri="net:*")]
+		Color="#f5f5fe", Source="Network", Uri="net:*")]
 	public class TileNetwork : TileFromHitTemplate {
 	
 		public TileNetwork (Hit _hit) : base (_hit, "template-network.html")
