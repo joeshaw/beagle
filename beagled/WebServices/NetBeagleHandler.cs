@@ -142,7 +142,8 @@ log.Info("NetBeagleHandler: Starting WebService Query for " + Hostname + ":" + P
 						hit.Uri = new Uri(BeagleNetPrefix + wsp.Hostname + ":" + wsp.Port + "/beagle?" + hr.uri);					
 						hit.Type = hr.resourceType;
 						hit.MimeType = hr.mimeType;
-						hit.Source = hr.source;
+						//hit.Source = hr.source;
+						hit.Source = "Network";
 						hit.ScoreRaw = hr.scoreRaw + 0.01;
 						hit.ScoreMultiplier = hr.scoreMultiplier;
 
