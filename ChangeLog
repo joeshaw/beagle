@@ -1,3 +1,9 @@
+2005-06-07  Vijay K. Nanjundaswamy <knvijay@novell.com>
+
+	* beagled/WebServices/WebServiceBackEnd.cs, ExternalAccessFilter.cs: 
+	Added support for exporting multiple folders under user home directory for
+        public webservice access via optional configuration file 'publicfolders.cfg'.
+
 2005-06-06  Daniel Drake  <dsd@gentoo.org>
 
 	* beagled/beagled.in: Various launcher script fixes/improvements from
