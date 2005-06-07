@@ -40,55 +40,111 @@ namespace Beagle.WebService {
 	{
 		ArrayList matchers;
 
-		static readonly string configuration = "shares.cfg";
-		
+		static readonly string ConfigFile = "publicfolders.cfg";
+		string FileUriPrefix = "file://";
+		string HttpUriBase = "http://hostname:8888/beagle/";
 		bool SharesFileExists = false;
-		
-		public ExternalAccessFilter (string hostname, string port)
-		{
-			SimpleMatcher defaultMatcher = null;
-			 
+	
+// User can specify only a sub-directory under home directory in 'publicfolders.cfg'. 
+// All entries must start with ~/ . One entry per line. The leaf folder name should 
+// be unique. This leaf name will be used for the BeagleXSP application list.
+						
+		public ExternalAccessFilter (string HttpUriBase, string[] reserved_suffixes)
+		{						
 			matchers = new ArrayList();
+			
+			ArrayList suffixes = new ArrayList(); 
+			
+			//Populate reserved suffixes
+			suffixes.AddRange(reserved_suffixes);
 
-			//Check if public folder exists and setup default mapping for it:
-			if ((!hostname.Equals("localhost")) && Directory.Exists(PathFinder.HomeDir + "/public"))
+			this.HttpUriBase = HttpUriBase;
+			
+			//Check if 'public' folder exists and setup default mapping for it:
+			if (Directory.Exists(PathFinder.HomeDir + "/public"))
 			{				
-				defaultMatcher = new SimpleMatcher ();
+				SimpleMatcher defaultMatcher = new SimpleMatcher();
+				
 				//file:///home/userid/public/
-				defaultMatcher.Match = "file://" + PathFinder.HomeDir + "/public/"; 
-				//Console.WriteLine("defaultMatch = " + defaultMatcher.Match);
+				defaultMatcher.Match = PathFinder.HomeDir + "/public"; 			
 				//http://hostname:8888/beagle/public/
-				defaultMatcher.Rewrite = "http://" + hostname + ":" + port + "/beagle/public/";	
-				//Console.WriteLine("defaultRewrite = " + defaultMatcher.Rewrite);
+				defaultMatcher.Rewrite = "public";	
+				
+				matchers.Add(defaultMatcher);				
+				suffixes.Add("public");
 			}
 			
-			if (!File.Exists (Path.Combine (PathFinder.StorageDir, configuration))) {
-				if (defaultMatcher != null)
-					matchers.Add(defaultMatcher);
+			if (!File.Exists (Path.Combine (PathFinder.StorageDir, ConfigFile))) {
+
                 return;
 			}
 		
 			SharesFileExists = true;
 			
             StreamReader reader = new StreamReader(
-                         Path.Combine (PathFinder.StorageDir, configuration));
+                         Path.Combine (PathFinder.StorageDir, ConfigFile));
 
             string entry;
-
             while ( ((entry = reader.ReadLine ()) != null) && (entry.Trim().Length > 1)) {
-            	//Console.WriteLine("Line: " + entry);
-            	if ((entry[0] != '#') && (entry.IndexOf(';') > 0)) {
-                	string[] data = entry.Split (';');
-					SimpleMatcher matcher = new SimpleMatcher ();
-					matcher.Match = data[0]; 
-					matcher.Rewrite = data[1]; 
-					matchers.Add (matcher);
+            	
+            	if (entry[0] != '#') {           	
+                	//string[] folders = entry.Split (',');
+                	//foreach (string d in folders) {
+                		string d = entry;
+                		Console.WriteLine("String d = " + d);
+                	    
+                	    //Each entry must start with ~/            	            	
+                		if ((d.Trim().Length > 1) && d.StartsWith("~/")) {
+                			
+                			string d2 = d.Replace("~/", PathFinder.HomeDir + "/");							
+                 			Console.WriteLine("String d2 = " + d2);
+                 			
+                 			if (!Directory.Exists(d2))
+								continue;
+                 			         			
+                			string[] comp = d2.Split('/');
+                			string leaf;
+                			if (comp.Length > 1)
+                				for (int li = comp.Length; li > 0; --li) {
+                					if ((leaf = comp[li - 1].Trim()).Length > 0) {
+                						//Check the leaf component is unique
+                						if (suffixes.Contains(leaf))
+                						{
+                							Logger.Log.Warn("ExternalAccessFilter: Ignoring entry {0}. Reason: Entry suffix not unique", entry);
+                							break;
+                						}
+                						else
+                							suffixes.Add(leaf);
+                								
+										SimpleMatcher matcher = new SimpleMatcher ();
+										
+										matcher.Match = d2;  
+										matcher.Rewrite = leaf; 
+
+										matchers.Add (matcher);
+										
+										Console.WriteLine("Adding Match: " + matcher.Match + "," + matcher.Rewrite); 
+										break;										                															                															
+                					} 
+	               				} //end for                 				
+                		} //end if
+                	//} //end foreach
+                } //end if
+              } //end while        	
+		}
+		
+		public ArrayList Matchers {
+		
+			get { return matchers; } 
+		}
+		
+		public void Initialize() {
+		
+			foreach (SimpleMatcher sm in matchers)			
+				if (! sm.Match.StartsWith(FileUriPrefix)) {
+					sm.Match = FileUriPrefix + sm.Match + "/";
+					sm.Rewrite = HttpUriBase + sm.Rewrite + "/";
 				}
-            }
-            //Include defaultMatcher at the end of the list. 'shares.cfg', if it exists, 
-            //takes higher precedence.
-            if (defaultMatcher != null)
-            	matchers.Add(defaultMatcher);            	
 		}
 		
 		//Returns: false, if Hit does not match any filter
@@ -132,12 +188,12 @@ namespace Beagle.WebService {
 			}
 
 			return null;	//Hit does not match any specified filter	
-		}		
-		
-		internal class SimpleMatcher
-		{
-			public string Match;
-			public string Rewrite;
-		}		
+		}			
+	}	
+	
+	public class SimpleMatcher
+	{
+		public string Match;
+		public string Rewrite;
 	}	
 }

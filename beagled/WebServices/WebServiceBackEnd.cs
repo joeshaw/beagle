@@ -42,72 +42,6 @@ using Beagle.Daemon;
 using Mono.ASPNET;
 
 namespace Beagle.WebService {
-	
-	[Serializable()]
-	public class SearchRequest  {
-
-		public string[] text;
-		public string[] mimeType;
-		public string[] searchSources;
-		public QueryDomain qdomain;
-	}
-
-	[Serializable()]
-	public class HitProperty  {
-
-		private string pKey="";
-		public string PKey  {
-			get {return pKey;}
-			set {pKey = value;}
-		}
-
-		private string pVal="";
-		public string PVal  {
-			get {return pVal;}
-			set {pVal = value;}
-		}
-		
-		private bool  isKeyword;
-		public bool IsKeyword {
-			get { return isKeyword; }
-			set { isKeyword = value; }
-		}
-		
-		private bool   isSearched;
-		public bool IsSearched {
-			get { return isSearched; }
-			set { isSearched = value; }
-		}		
-	}
-
-	[Serializable()]
-	public class HitResult {
-
-		public int 		id;
-		public string 	uri;
-		public string 	resourceType;
-		public string 	mimeType;
-		public string 	source;
-		public double 	scoreRaw;
-		public double 	scoreMultiplier;
-		public HitProperty[] properties;
-		//FIXME: public xxx[] data;
-		public string 	snippet;
-	}
-
-	[Serializable()]
-	public class SearchResult  {
-	
-		public int statusCode;			//ReturnCode for programmatic processing
-		public string statusMsg;		//User-friendly return message
-
-		public string searchToken;		//Token identifying the query,
-										//to enable follow-up queries
-		public int firstResultIndex; 	//Index of first result in this response
-		public int numResults;		 	//No. of results in this response
-		public int totalResults;		//Total no. of results from the query
-		public HitResult[] hitResults;
-	}
 
 	public class WebServiceBackEnd: MarshalByRefObject   {
 
@@ -119,7 +53,8 @@ namespace Beagle.WebService {
 		public static bool web_start = false;
 		public static string web_port = DEFAULT_XSP_PORT;
 		public static string web_rootDir = DEFAULT_XSP_ROOT;
-								
+
+		public static ExternalAccessFilter AccessFilter;																
 		static Mono.ASPNET.ApplicationServer appServer = null;
 		static string DEFAULT_APP_MAPPINGS = "/:" + DEFAULT_XSP_ROOT + ",/beagle:" + DEFAULT_XSP_ROOT;
 
@@ -161,21 +96,32 @@ namespace Beagle.WebService {
 				xsp_param[5] = "/:" + web_rootDir + ",/beagle:" + web_rootDir + "/beagle";
 			
 			try {
-					
-				if (Directory.Exists(PathFinder.HomeDir + "/public"))
-				xsp_param[5] += ",/beagle/public:" + PathFinder.HomeDir + "/public";
-
-				//",/beagle/kde3:" + ExternalStringsHack.KdePrefix +
-				if (Directory.Exists(ExternalStringsHack.KdePrefix))
-				xsp_param[5] += ",/beagle/kde3:" + ExternalStringsHack.KdePrefix;
+				//",/beagle/local:" + ExternalStringsHack.Prefix,	
+				if (Directory.Exists(ExternalStringsHack.Prefix))
+				xsp_param[5] += ",/beagle/local:" + ExternalStringsHack.Prefix;
 							
 				//",/beagle/gnome:" + ExternalStringsHack.GnomePrefix +
 				if (Directory.Exists(ExternalStringsHack.GnomePrefix))
 				xsp_param[5] += ",/beagle/gnome:" + ExternalStringsHack.GnomePrefix;
-								
-				//",/beagle/local:" + ExternalStringsHack.Prefix,	
-				if (Directory.Exists(ExternalStringsHack.Prefix))
-				xsp_param[5] += ",/beagle/local:" + ExternalStringsHack.Prefix;
+												
+				//",/beagle/kde3:" + ExternalStringsHack.KdePrefix +
+				if (Directory.Exists(ExternalStringsHack.KdePrefix))
+				xsp_param[5] += ",/beagle/kde3:" + ExternalStringsHack.KdePrefix;
+				
+				//if (!hostname.Equals("localhost")) {
+
+					string[] reserved_suffixes = new string[] {"local", "gnome", "kde3" };
+					string BeagleHttpUriBase = "http://" + hostname + ":" + xsp_param[1] + "/beagle/";
+				
+					AccessFilter = new ExternalAccessFilter(BeagleHttpUriBase, reserved_suffixes);
+				
+					ArrayList matchers = AccessFilter.Matchers;
+				
+					foreach (SimpleMatcher sm in matchers) 					
+						xsp_param[5] += ",/beagle/" + sm.Rewrite +":" + sm.Match;					
+							
+					AccessFilter.Initialize();
+				//}
 			}
 			catch (Exception e)
 			{
@@ -203,9 +149,7 @@ namespace Beagle.WebService {
 				}
 				else
 					Logger.Log.Debug("BeagleXSP Applications list: " + xsp_param[5]);
-			}
-				
-			AccessFilter = new ExternalAccessFilter(hostname, xsp_param[1]);	
+			}				
 		}
 		
 		public static void Stop() 
@@ -216,13 +160,14 @@ namespace Beagle.WebService {
 				appServer = null;
 			}
 		}
+
+//////////////////////////////////////////////////////////////////////////
 		
 		//KNV: If needed, we can convert this to a Singleton, adding a 
 		//	   static Factory method to get the singleton instance reference,
 		//	   so that front-end code always gets hold of same instance.
 		static WebServiceBackEnd instance = null;
 		static bool allow_global_access = false;
-		public static ExternalAccessFilter AccessFilter;
 		
 		private Hashtable resultTable;
 		private Hashtable sessionTable;
@@ -627,4 +572,75 @@ namespace Beagle.WebService {
 			return (token.Replace('-', alpha));
 		}
 	}	
+	
+//////////////////////////////////////////////////////////////////////////
+/////////////   WebService Request-Response Data Structures   //////////// 	
+//////////////////////////////////////////////////////////////////////////
+
+	[Serializable()]
+	public class SearchRequest  {
+
+		public string[] text;
+		public string[] mimeType;
+		public string[] searchSources;
+		public QueryDomain qdomain;
+	}
+
+	[Serializable()]
+	public class HitProperty  {
+
+		private string pKey="";
+		public string PKey  {
+			get {return pKey;}
+			set {pKey = value;}
+		}
+
+		private string pVal="";
+		public string PVal  {
+			get {return pVal;}
+			set {pVal = value;}
+		}
+		
+		private bool  isKeyword;
+		public bool IsKeyword {
+			get { return isKeyword; }
+			set { isKeyword = value; }
+		}
+		
+		private bool   isSearched;
+		public bool IsSearched {
+			get { return isSearched; }
+			set { isSearched = value; }
+		}		
+	}
+
+	[Serializable()]
+	public class HitResult {
+
+		public int 		id;
+		public string 	uri;
+		public string 	resourceType;
+		public string 	mimeType;
+		public string 	source;
+		public double 	scoreRaw;
+		public double 	scoreMultiplier;
+		public HitProperty[] properties;
+		//FIXME: public xxx[] data;
+		public string 	snippet;
+	}
+
+	[Serializable()]
+	public class SearchResult  {
+	
+		public int statusCode;			//ReturnCode for programmatic processing
+		public string statusMsg;		//User-friendly return message
+
+		public string searchToken;		//Token identifying the query,
+										//to enable follow-up queries
+		public int firstResultIndex; 	//Index of first result in this response
+		public int numResults;		 	//No. of results in this response
+		public int totalResults;		//Total no. of results from the query
+		public HitResult[] hitResults;
+	}
+	
 }
