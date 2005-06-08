@@ -38,7 +38,7 @@ namespace Beagle.Filters {
 
 	public class FilterChm : FilterHtml {
 		
-		CHMFile chmFile;
+		ChmFile chmFile;
 		
 		public FilterChm ()
 		{
@@ -165,7 +165,7 @@ namespace Beagle.Filters {
 		override protected void DoOpen (FileInfo info) 
 		{
 
-			chmFile = new CHMFile();
+			chmFile = new ChmFile();
 
 			try {
 				
