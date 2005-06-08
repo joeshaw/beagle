@@ -16,16 +16,16 @@ using System.Text;
 namespace Beagle.Util {
 namespace Camel {
 	
-	public enum CamelFlags {
-		ANSWERED     = 1<<0,
-		DELETED      = 1<<1,
-		DRAFT        = 1<<2,
-		FLAGGED      = 1<<3,
-		SEEN         = 1<<4,
-		ATTACHMENTS  = 1<<5,
-		ANSWERED_ALL = 1<<6,
-		JUNK         = 1<<7,
-		SECURE       = 1<<8
+	public enum CamelFlags : uint {
+		Answered     = 1 << 0,
+		Deleted      = 1 << 1,
+		Draft        = 1 << 2,
+		Flagged      = 1 << 3,
+		Seen         = 1 << 4,
+		Attachments  = 1 << 5,
+		AnsweredAll  = 1 << 6,
+		Junk         = 1 << 7,
+		Secure       = 1 << 8
 	}
 	
 public abstract class Summary : IEnumerable { 
@@ -275,35 +275,43 @@ public abstract class Summary : IEnumerable {
 		
 		private bool CheckFlag (CamelFlags test)
 		{
-			return (flags & (int) test) == (int) test;
+			return (flags & (uint) test) == (uint) test;
 		}
 		
 		public bool IsAnswered {
-			get { return CheckFlag (CamelFlags.ANSWERED); }
+			get { return CheckFlag (CamelFlags.Answered); }
 		}
 
 		public bool IsDeleted {
-			get { return CheckFlag (CamelFlags.DELETED); }
+			get { return CheckFlag (CamelFlags.Deleted); }
 		}
 
 		public bool IsDraft {
-			get { return CheckFlag (CamelFlags.DRAFT); }
+			get { return CheckFlag (CamelFlags.Draft); }
 		}
 
 		public bool IsFlagged {
-			get { return CheckFlag (CamelFlags.FLAGGED); }
+			get { return CheckFlag (CamelFlags.Flagged); }
 		}
 
 		public bool IsSeen {
-			get { return CheckFlag (CamelFlags.SEEN); }
+			get { return CheckFlag (CamelFlags.Seen); }
 		}
 
 		public bool HasAttachments {
-			get { return CheckFlag (CamelFlags.ATTACHMENTS); }
+			get { return CheckFlag (CamelFlags.Attachments); }
 		}
 
 		public bool IsAnsweredAll {
-			get { return CheckFlag (CamelFlags.ANSWERED_ALL); }
+			get { return CheckFlag (CamelFlags.AnsweredAll); }
+		}
+
+		public bool IsJunk {
+			get { return CheckFlag (CamelFlags.Junk); }
+		}
+
+		public bool IsSecure {
+			get { return CheckFlag (CamelFlags.Secure); }
 		}
 	}
 

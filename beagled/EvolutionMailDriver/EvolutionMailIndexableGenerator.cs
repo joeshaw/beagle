@@ -423,10 +423,17 @@ namespace Beagle.Daemon.EvolutionMailDriver {
 					return null;
 				}
 				
-				string uid_str = x_evolution.Substring (0, x_evolution.IndexOf ('-'));
+				int separator_idx = x_evolution.IndexOf ('-');
+
+				string uid_str = x_evolution.Substring (0, separator_idx);
 				string uid = Convert.ToUInt32 (uid_str, 16).ToString (); // ugh.
+				uint flags = Convert.ToUInt32 (x_evolution.Substring (separator_idx), 16);
 				
-				Indexable indexable = this.GMimeMessageToIndexable (uid, message);
+				Indexable indexable = this.GMimeMessageToIndexable (uid, message, flags);
+				
+				if (indexable == null)
+					return null;
+
 				++this.indexed_count;
 
 				// HACK: update your recipients
@@ -436,8 +443,17 @@ namespace Beagle.Daemon.EvolutionMailDriver {
 			}
 		}
 
-		private Indexable GMimeMessageToIndexable (string uid, GMime.Message message)
+		private static bool CheckFlags (uint flags, Camel.CamelFlags test)
 		{
+			return (flags & (uint) test) == (uint) test;
+		}
+
+		private Indexable GMimeMessageToIndexable (string uid, GMime.Message message, uint flags)
+		{
+			// Don't index messages flagged as junk
+			if (CheckFlags (flags, Camel.CamelFlags.Junk))
+				return null;
+
 			System.Uri uri = EvolutionMailQueryable.EmailUri (this.account_name, this.folder_name, uid);
 			Indexable indexable = new Indexable (uri);
 
@@ -485,37 +501,30 @@ namespace Beagle.Daemon.EvolutionMailDriver {
 				indexable.AddProperty (Property.NewDate ("fixme:sentdate", message.Date));
 			else
 				indexable.AddProperty (Property.NewDate ("fixme:received", message.Date));
-			
-#if false
-			// FIXME - These are stored in the Evolution summary
-			// and we don't parse that anymore.
-                        indexable.AddProperty (Property.NewKeyword ("fixme:flags",    messageInfo.flags));
 
-			if (messageInfo.received != DateTime.MinValue)
-				indexable.AddProperty (Property.NewDate ("fixme:received", messageInfo.received));
+			indexable.AddProperty (Property.NewKeyword ("fixme:flags", flags));
 
-			if (messageInfo.sent != DateTime.MinValue)
-				indexable.AddProperty (Property.NewDate ("fixme:sentdate", messageInfo.sent));
-
-			if (messageInfo.IsAnswered)
+			if (CheckFlags (flags, Camel.CamelFlags.Answered))
 				indexable.AddProperty (Property.NewFlag ("fixme:isAnswered"));
 
-			if (messageInfo.IsDeleted)
+			if (CheckFlags (flags, Camel.CamelFlags.Deleted))
 				indexable.AddProperty (Property.NewFlag ("fixme:isDeleted"));
 
-			if (messageInfo.IsDraft)
+			if (CheckFlags (flags, Camel.CamelFlags.Draft))
 				indexable.AddProperty (Property.NewFlag ("fixme:isDraft"));
 
-			if (messageInfo.IsFlagged)
+			if (CheckFlags (flags, Camel.CamelFlags.Flagged))
 				indexable.AddProperty (Property.NewFlag ("fixme:isFlagged"));
 
-			if (messageInfo.IsSeen)
+			if (CheckFlags (flags, Camel.CamelFlags.Seen))
 				indexable.AddProperty (Property.NewFlag ("fixme:isSeen"));
 
-			if (messageInfo.IsAnsweredAll)
-				indexable.AddProperty (Property.NewFlag ("fixme:isAnsweredAll"));
-#endif
+			if (CheckFlags (flags, Camel.CamelFlags.Attachments))
+				indexable.AddProperty (Property.NewFlag ("fixme:hasAttachments"));
 
+			if (CheckFlags (flags, Camel.CamelFlags.AnsweredAll))
+				indexable.AddProperty (Property.NewFlag ("fixme:isAnsweredAll"));
+			
 			indexable.SetTextReader (PartHandler.GetReader (message));
 
 			return indexable;
@@ -846,13 +855,17 @@ namespace Beagle.Daemon.EvolutionMailDriver {
 				indexable = this.CamelMessageToIndexable (mi, msgReader);
 
 				this.mapping[mi.uid] = mi.flags;
-				++this.indexed_count;
+
+				if (indexable != null)
+					++this.indexed_count;
 			} 
 
-			this.deleted_list.Remove (mi.uid);
-			
-			// HACK: update your recipients
-			EvolutionMailQueryable.AddAsYourRecipient (indexable);
+			if (indexable != null) {
+				this.deleted_list.Remove (mi.uid);
+
+				// HACK: update your recipients
+				EvolutionMailQueryable.AddAsYourRecipient (indexable);
+			}
 
 			return indexable;
 		}
@@ -864,6 +877,10 @@ namespace Beagle.Daemon.EvolutionMailDriver {
 
 		private Indexable CamelMessageToIndexable (Camel.MessageInfo messageInfo, TextReader msgReader)
 		{
+			// Don't index messages flagged as junk
+			if (messageInfo.IsJunk)
+				return null;
+
 			Uri uri = CamelMessageUri (messageInfo);
 			Indexable indexable = new Indexable (uri);
 
