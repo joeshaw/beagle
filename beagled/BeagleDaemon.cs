@@ -322,10 +322,11 @@ namespace Beagle.Daemon {
 			}
 
 			// Start our memory-logging thread
-			if (arg_debug_memory) {
-				Thread th = new Thread (new ThreadStart (LogMemoryUsage));
-				th.Start ();
-			}
+			if (arg_debug_memory)
+				ExceptionHandlingThread.Start (new ThreadStart (LogMemoryUsage));
+
+			// Do BEAGLE_EXERCISE_THE_DOG_HARDER-related processing.
+			ExerciseTheDogHarder ();
 
 			Application.InitCheck ("beagled", ref args);
 
@@ -431,6 +432,63 @@ namespace Beagle.Daemon {
 
 			// Stop the messaging server
 			server.Stop ();
+		}
+
+		/////////////////////////////////////////////////////////////////////////////
+
+
+		private static ArrayList exercise_files = new ArrayList ();
+
+		private static void ExerciseTheDogHarder ()
+		{
+			string path;				
+			path = Environment.GetEnvironmentVariable ("BEAGLE_EXERCISE_THE_DOG_HARDER");
+			if (path == null)
+				return;
+
+			DirectoryInfo dir = new DirectoryInfo (path);
+			foreach (FileInfo file in dir.GetFiles ())
+				exercise_files.Add (file);
+			if (exercise_files.Count == 0)
+				return;
+
+			int N = 5;
+			if (N > exercise_files.Count)
+				N = exercise_files.Count;
+			
+			for (int i = 0; i < N; ++i)
+				ExceptionHandlingThread.Start (new ThreadStart (ExerciseTheDogHarderWorker));
+		}
+
+		private static void ExerciseTheDogHarderWorker ()
+		{
+			Random rng = new Random ();
+
+			while (! Shutdown.ShutdownRequested) {
+
+				FileInfo file = null;			
+				int i;
+
+			
+				lock (exercise_files) {
+					do {
+						i = rng.Next (exercise_files.Count);
+						file = exercise_files [i] as FileInfo;
+					} while (file == null);
+					exercise_files [i] = null;
+				}
+
+				string target;
+				target = Path.Combine (PathFinder.HomeDir, "_HARDER_" + file.Name);
+
+				Logger.Log.Debug ("ETDH: Copying {0}", file.Name);
+				file.CopyTo (target, true);
+				
+				lock (exercise_files)
+					exercise_files [i] = file;
+
+				Thread.Sleep (500 + rng.Next (500));
+			}
 		}
 	}
 }

@@ -42,6 +42,10 @@ namespace Beagle.Util {
 			// We used to support the EXERCISE_THE_DOG env variable, but
 			// that was dropped.  
 			exercise_the_dog = Environment.GetEnvironmentVariable ("BEAGLE_EXERCISE_THE_DOG");
+			if (exercise_the_dog == null &&
+			    Environment.GetEnvironmentVariable ("BEAGLE_EXERCISE_THE_DOG_HARDER") != null)
+				exercise_the_dog = "harder fallback";
+
 			if (exercise_the_dog != null) {
 				
 				global_delay = 0.0;

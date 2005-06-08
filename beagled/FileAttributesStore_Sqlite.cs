@@ -27,6 +27,7 @@
 using System;
 using System.Collections;
 using System.IO;
+using System.Threading;
 
 using Mono.Data.SqliteClient;
 
@@ -63,12 +64,12 @@ namespace Beagle.Daemon {
 				command.CommandText =
 					"SELECT version, fingerprint FROM db_info";
 				try {
-					reader = command.ExecuteReader ();
+					reader = ExecuteReaderOrWait (command);
 				} catch (Exception ex) {
 					create_new_db = true;
 				}
 				if (reader != null && ! create_new_db) {
-					if (reader.Read ()) {
+					if (ReadOrWait (reader)) {
 						stored_version = reader.GetInt32 (0);
 						stored_fingerprint = reader.GetString (1);
 					}
@@ -115,15 +116,18 @@ namespace Beagle.Daemon {
 				command = new SqliteCommand ();
 				command.Connection = connection;
 				command.CommandText = "SELECT directory, filename FROM file_attributes";
-				reader = command.ExecuteReader ();
 
-				while (reader.Read ()) {
+				reader = ExecuteReaderOrWait (command);
+
+				while (ReadOrWait (reader)) {
+
 					string dir = reader.GetString (0);
 					string file = reader.GetString (1);
 					string path = Path.Combine (dir, file);
 					SetPathFlag (path, true);
 					++count;
 				}
+
 				reader.Close ();
 				command.Dispose ();
 
@@ -156,7 +160,19 @@ namespace Beagle.Daemon {
 			command = new SqliteCommand ();
 			command.Connection = connection;
 			command.CommandText = String.Format (format, args);
-			command.ExecuteNonQuery ();
+
+			while (true) {
+				try {
+					command.ExecuteNonQuery ();
+					break;
+				} catch (SqliteException ex) {
+					if (ex.SqliteError == SqliteError.BUSY)
+						Thread.Sleep (50);
+					else
+						throw ex;
+				}
+			}
+
 			command.Dispose ();
 		}
 
@@ -170,6 +186,36 @@ namespace Beagle.Daemon {
 				"FROM file_attributes WHERE " + 
 				String.Format (where_format, where_args);
 			return command;
+		}
+
+		static private SqliteDataReader ExecuteReaderOrWait (SqliteCommand command)
+		{
+			SqliteDataReader reader = null;
+			while (reader == null) {
+				try {
+					reader = command.ExecuteReader ();
+				} catch (SqliteException ex) {
+					if (ex.SqliteError == SqliteError.BUSY)
+						Thread.Sleep (50);
+					else
+						throw ex;
+				}
+			}
+			return reader;
+		}
+
+		static private bool ReadOrWait (SqliteDataReader reader)
+		{
+			while (true) {
+				try {
+					return reader.Read ();
+				} catch (SqliteException ex) {
+					if (ex.SqliteError == SqliteError.BUSY)
+						Thread.Sleep (50);
+					else
+						throw ex;
+				}
+			}
 		}
 
 		private FileAttributes GetFromReader (SqliteDataReader reader)
@@ -237,12 +283,12 @@ namespace Beagle.Daemon {
 			lock (connection) {
 				command = QueryCommand ("directory='{0}' AND filename='{1}'",
 							directory, filename);
-				reader = command.ExecuteReader ();
+				reader = ExecuteReaderOrWait (command);
 				
-				if (reader.Read ()) {
+				if (ReadOrWait (reader)) {
 					attr = GetFromReader (reader);
 					
-					if (reader.Read ())
+					if (ReadOrWait (reader))
 						found_too_many = true;
 				}
 				reader.Close ();

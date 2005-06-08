@@ -117,12 +117,6 @@ namespace Beagle.Util {
 			if ((DateTime.Now - screensaver_time).TotalSeconds < screensaver_poll_delay)
 				return;
 
-			if (Environment.GetEnvironmentVariable ("EXERCISE_THE_DOG") != null) {
-				cached_screensaver_running = true;
-				cached_screensaver_idle_time = 24 * 60 * 60;
-				return;
-			}
-
 			ScreenSaverState state;
 			ScreenSaverKind kind;
 			ulong til_or_since = 0, idle = 0;

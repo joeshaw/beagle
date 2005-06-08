@@ -109,6 +109,36 @@ namespace Beagle.Daemon {
 			command.Dispose ();
 		}
 
+		static private SqliteDataReader ExecuteReaderOrWait (SqliteCommand command)
+		{
+			SqliteDataReader reader = null;
+			while (reader == null) {
+				try {
+					reader = command.ExecuteReader ();
+				} catch (SqliteException ex) {
+					if (ex.SqliteError == SqliteError.BUSY)
+						Thread.Sleep (50);
+					else
+						throw ex;
+				}
+			}
+			return reader;
+		}
+
+		static private bool ReadOrWait (SqliteDataReader reader)
+		{
+			while (true) {
+				try {
+					return reader.Read ();
+				} catch (SqliteException ex) {
+					if (ex.SqliteError == SqliteError.BUSY)
+						Thread.Sleep (50);
+					else
+						throw ex;
+				}
+			}
+		}
+
 		private static void Insert (Uri uri, string filename)
 		{
 			DoNonQuery ("INSERT OR REPLACE INTO uri_index (uri, filename) VALUES ('{0}', '{1}')",
@@ -123,35 +153,8 @@ namespace Beagle.Daemon {
 
 			command = NewCommand ("SELECT filename FROM uri_index WHERE uri='{0}'", 
 			                      UriToString (uri));
-
-			while (true) {
-				try {
-					reader = command.ExecuteReader ();
-					break;
-				} catch (SqliteException ex) {
-					// FIXME: should we time out eventually?
-					if (ex.SqliteError == SqliteError.BUSY)
-						Thread.Sleep (50);
-					else
-						throw ex;
-				}
-			}
-
-			bool read_rv = false;
-			while (true) {
-				try {
-					read_rv = reader.Read ();
-					break;
-				} catch (SqliteException ex) {
-					// FIXME: should we time out eventually?
-					if (ex.SqliteError == SqliteError.BUSY)
-						Thread.Sleep (50);
-					else
-						throw ex;
-				}
-			}
-
-			if (read_rv)
+			reader = ExecuteReaderOrWait (command);
+			if (ReadOrWait (reader))
 				path = reader.GetString (0);
 			reader.Close ();
 			command.Dispose ();
