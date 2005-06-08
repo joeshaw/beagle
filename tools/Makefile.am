@@ -117,6 +117,7 @@ EXTRA_DIST =				\
 	$(SHUTDOWN_CSFILES)		\
 	$(QUERY_CSFILES)		\
 	$(EXERCISE_FILE_SYSTEM_CSFILES)	\
+	$(CONFIG_CSFILES)		\
 	$(man_MANS)			\
 	beagle-index-info		\
 	beagle-ping			\
