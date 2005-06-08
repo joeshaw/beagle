@@ -115,8 +115,7 @@ namespace Beagle.WebService {
 				
 					AccessFilter = new ExternalAccessFilter(BeagleHttpUriBase, reserved_suffixes);
 				
-					ArrayList matchers = AccessFilter.Matchers;
-				
+					ArrayList matchers = AccessFilter.Matchers;				
 					foreach (SimpleMatcher sm in matchers) 					
 						xsp_param[5] += ",/beagle/" + sm.Rewrite +":" + sm.Match;					
 							
@@ -161,7 +160,7 @@ namespace Beagle.WebService {
 			}
 		}
 
-//////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////
 		
 		//KNV: If needed, we can convert this to a Singleton, adding a 
 		//	   static Factory method to get the singleton instance reference,
@@ -211,9 +210,6 @@ namespace Beagle.WebService {
 				SessionData sdata = ((SessionData) resultTable[qres]);	
 				ArrayList results = sdata.results;
 				bool localReq = sdata.localRequest;
-				
-				//if (!localReq)
-				//	Console.WriteLine("OnHitsAdded invoked with {0} hits", hits.Count); 
 			
 				if (localReq){
 					lock (results.SyncRoot) 
@@ -501,21 +497,24 @@ namespace Beagle.WebService {
 				
 				sr.hitResults = new HitResult[sr.numResults];
 				
-				Query query = ((SessionData)sessionTable[searchToken]).query;
+				//Query query = ((SessionData)sessionTable[searchToken]).query;
 			
 				for (int k = startIndex; (i < sr.numResults) && (k < results.Count); k++)   {		
 				
-					Hit h = (Hit) results[k];			
+					Hit h = (Hit) results[k];	
+							
+					sr.hitResults[i] = new HitResult();
+					
+/* 	 GetMoreResults will NOT return Snippets by default. Client must make explicit GetSnippets request to get snippets for these hits.
 
-					string snippet = ""; 
-						
+					string snippet = ""; 						
 					Queryable queryable = h.SourceObject as Queryable;
 					if (queryable == null)
 						snippet = "ERROR: hit.SourceObject is null, uri=" + h.Uri;
 					else
-						snippet = queryable.GetSnippet (ICollection2StringList(query.Text), h);				
-								
-					sr.hitResults[i] = new HitResult();
+						snippet = queryable.GetSnippet (ICollection2StringList(query.Text), h);		
+					sr.hitResults[i].snippet = snippet;			
+*/								
 					sr.hitResults[i].id = h.Id;
 					
 					if (isLocalReq)
@@ -538,9 +537,8 @@ namespace Beagle.WebService {
 						sr.hitResults[i].properties[j].PVal = p.Value;				
 						sr.hitResults[i].properties[j].IsKeyword = p.IsKeyword;				
 						sr.hitResults[i].properties[j].IsSearched = p.IsSearched;							
-					}	
-														
-					sr.hitResults[i].snippet = snippet;
+					}												
+					
 					i++;
 				}												
 			} //end lock
@@ -558,7 +556,72 @@ namespace Beagle.WebService {
 			//Console.WriteLine("WebServiceQuery: Total Results = "  + sr.totalResults);	
 			return sr;
 		}
+		
+		static string InvalidHitSnippetError = "ERROR: Invalid Hit Id";
+		public HitSnippet[] getSnippets(string searchToken, int[] hitIds)
+		{	
+			HitSnippet[] response;
+			
+			if (!sessionTable.ContainsKey(searchToken)) {
+			
+				response = new HitSnippet[0];
+				Console.WriteLine("GetSnippets: Invalid Search Token received ");
+				return response;
+			}
+									
+			ArrayList results = ((SessionData)sessionTable[searchToken]).results;
+			if (results == null) {
 
+				response = new HitSnippet[0];
+				Console.WriteLine("GetSnippets: Invalid Search Token received ");
+				return response;
+			}
+
+			int i = 0; 			
+			response = new HitSnippet[hitIds.Length];
+
+			Query query = ((SessionData)sessionTable[searchToken]).query;
+			
+			lock (results.SyncRoot)  {
+				string snippet = null; 
+				foreach (Hit h in results)  {
+					foreach (int hitId in hitIds)
+							if (h.Id == hitId) {
+
+								Queryable queryable = h.SourceObject as Queryable;
+								if (queryable == null)
+									snippet = "ERROR: hit.SourceObject is null, uri=" + h.Uri;
+								else
+									snippet = queryable.GetSnippet (ICollection2StringList(query.Text), h);		
+										
+								response[i++] = new HitSnippet(hitId, snippet);								
+								if (i == hitIds.Length)
+									return response;
+							}
+				} //end outer foreach
+			} //end lock
+			
+			int k; 
+			foreach (int hitId in hitIds) {
+									
+				for (k = 0; k < i; k++)
+					if (hitId == response[k].hitId)
+						break;
+							
+				if  (k == i) {
+					response[i++] = new HitSnippet(hitId, InvalidHitSnippetError);
+					if (i == hitIds.Length)
+							return response;
+				}
+			}
+			
+			//If you reach here, there are some duplicate invalid hit Id's, which has been flagged once 
+			while (i < hitIds.Length) {
+				response[i++] = new HitSnippet(0, InvalidHitSnippetError);
+			}
+			return response;
+		}
+		
 		//Returns a 15-char random alpha-numeric string similar to ASP.NET sessionId
 		private string TokenGenerator()
 		{
@@ -573,9 +636,9 @@ namespace Beagle.WebService {
 		}
 	}	
 	
-//////////////////////////////////////////////////////////////////////////
-/////////////   WebService Request-Response Data Structures   //////////// 	
-//////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////////
+/////////////   WebService Request-Response Data Structures   	
+////////////////////////////////////////////////////////////////////////////////////////////
 
 	[Serializable()]
 	public class SearchRequest  {
@@ -635,12 +698,25 @@ namespace Beagle.WebService {
 		public int statusCode;			//ReturnCode for programmatic processing
 		public string statusMsg;		//User-friendly return message
 
-		public string searchToken;		//Token identifying the query,
-										//to enable follow-up queries
+		public string searchToken;	//Token identifying the query,
+													//to enable follow-up queries
 		public int firstResultIndex; 	//Index of first result in this response
 		public int numResults;		 	//No. of results in this response
-		public int totalResults;		//Total no. of results from the query
+		public int totalResults;			//Total no. of results from the query
 		public HitResult[] hitResults;
 	}
-	
+
+	[Serializable()]
+	public class HitSnippet {
+		public int hitId;
+		public string snippet;
+		
+		public HitSnippet() { hitId = 0; snippet = null; }
+		public HitSnippet( int i, string s) {
+			this.hitId = i;
+			this.snippet =s;
+		}
+
+	}
+		
 }

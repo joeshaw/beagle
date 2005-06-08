@@ -148,6 +148,29 @@ public class BeagleWebService: System.Web.Services.Protocols.SoapHttpClientProto
         object[] results = this.EndInvoke(asyncResult);
         return ((SearchResult)(results[0]));
     }
+    
+    /// <remarks>
+    ///Common Interface to get Snippets for results
+    ///</remarks>
+    [System.Web.Services.Protocols.SoapDocumentMethodAttribute("http://www.gnome.org/projects/beagle/webservices/GetSnippets",RequestNamespace="http://www.gnome.org/projects/beagle/webservices",ResponseNamespace="http://www.gnome.org/projects/beagle/webservices",ParameterStyle=System.Web.Services.Protocols.SoapParameterStyle.Wrapped,Use=System.Web.Services.Description.SoapBindingUse.Literal)]
+    public HitSnippet[] GetSnippets(string searchToken, [System.Xml.Serialization.XmlArrayItem(IsNullable=false)]
+    int[] hitIds) {
+        object[] results = this.Invoke("GetSnippets", new object[] {
+            searchToken,
+            hitIds});
+        return ((HitSnippet[])(results[0]));
+    }
+
+    public System.IAsyncResult BeginGetSnippets(string searchToken, int[] hitIds, System.AsyncCallback callback, object asyncState) {
+        return this.BeginInvoke("GetSnippets", new object[] {
+            searchToken,
+            hitIds}, callback, asyncState);
+    }
+
+    public HitSnippet[] EndGetSnippets(System.IAsyncResult asyncResult) {
+        object[] results = this.EndInvoke(asyncResult);
+        return ((HitSnippet[])(results[0]));
+    }   
 }
 
 /// <remarks/>
@@ -256,6 +279,17 @@ public class HitProperty {
 
     /// <remarks/>
     public bool IsSearched;
+}
+
+/// <remarks/>
+[System.Xml.Serialization.XmlType(Namespace="http://www.gnome.org/projects/beagle/webservices")]
+public class HitSnippet {
+
+    /// <remarks/>
+    public int hitId;
+
+    /// <remarks/>
+    public string snippet;
 }
 
 }

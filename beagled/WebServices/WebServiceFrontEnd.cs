@@ -77,7 +77,6 @@ namespace WebService_CodeBehind {
 
 		private SearchResult initialQuery(SearchRequest BeagleQueryRequest)
 		{
-		try {
 			SearchResult sr;
 			
 			if (BeagleQueryRequest.text == null || BeagleQueryRequest.text.Length == 0 ||
@@ -107,11 +106,7 @@ namespace WebService_CodeBehind {
 
 			sr = remoteObj.doQuery(BeagleQueryRequest, isLocalReq);
 			return sr;
-		 }
-		 catch (Exception e) {
-			throw e;
-		 }
-	  }
+	   }
 	
 	[WebMethod(Description = "Full object interface to Beagle")]
 	[System.Web.Services.Protocols.SoapDocumentMethodAttribute(
@@ -230,9 +225,8 @@ namespace WebService_CodeBehind {
 	RequestNamespace="http://www.gnome.org/projects/beagle/webservices",
 	ResponseNamespace="http://www.gnome.org/projects/beagle/webservices")]
 	public SearchResult GetMoreResults(string searchToken, int index)
-	{
-		try {		
-				SearchResult sr;
+	{		
+			SearchResult sr;
 			
 			if (searchToken == null | searchToken == "")  {
 				sr = new SearchResult();
@@ -258,11 +252,44 @@ namespace WebService_CodeBehind {
 
 			sr = remoteObj.getMoreResults(searchToken, index, isLocalReq);
 			return sr;
+	}
+		
+	[WebMethod(Description = "Common Interface to get Snippets for results")]
+	[System.Web.Services.Protocols.SoapDocumentMethodAttribute(
+	"http://www.gnome.org/projects/beagle/webservices/GetSnippets",
+	RequestNamespace="http://www.gnome.org/projects/beagle/webservices",
+	ResponseNamespace="http://www.gnome.org/projects/beagle/webservices")]
+	public HitSnippet[] GetSnippets(string searchToken, int[] hitIds)
+	{	
+		HitSnippet[] response;
+					
+		if (searchToken == null | searchToken == "")  {
+			response = new HitSnippet[0];
+			return response;
 		}
-		catch (Exception e)
-		{
-			throw e;
+				
+		remoteChannel.Register();
+			
+		if (remoteObj == null)
+			remoteObj = new WebServiceBackEnd();
+
+		if (Application["allowGlobalAccess"] == null)
+			Application["allowGlobalAccess"] =  remoteObj.allowGlobalAccess;
+			
+		bool isLocalReq = HttpContext.Current.Request.Url.IsLoopback;
+					
+		if ((remoteObj == null) || !((bool)Application["allowGlobalAccess"] ||
+				isLocalReq) ) 	{
+			response = new HitSnippet[0];
+			return response;
 		}
+
+		if (hitIds.Length < 1)
+			response = new HitSnippet[0];
+		else
+			response = remoteObj.getSnippets(searchToken, hitIds);
+			
+		return response;
 	}
 
 	private static string localReqOnlyMsg = "Beagle web service unavailable or access restricted to local address only !";
