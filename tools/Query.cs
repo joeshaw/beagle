@@ -44,6 +44,7 @@ class QueryTool {
 	static bool keepRunning = false;
 	static bool verbose = false;
 	static bool display_hits = true;
+	static bool flood = false;
 
 	static void OnHitsAdded (HitsAddedResponse response)
 	{
@@ -111,7 +112,10 @@ class QueryTool {
 			Console.WriteLine ("Total hits: {0}", count);
 		}
 
-		Gtk.Application.Quit ();
+		if (flood)
+			SendQuery ();
+		else
+			Gtk.Application.Quit ();
 	}
 
 	public static void PrintUsageAndExit () 
@@ -136,6 +140,7 @@ class QueryTool {
 			"              \t\t\tthe actual results.\n" +
 			"  --max-hits\t\t\tLimit number of search results per backend\n" +
 			"            \t\t\t(default = 100, max = 100)\n" +
+			"  --flood\t\t\tExecute the query over and over again.  Don't do that.\n" +
 			"  --help\t\t\tPrint this usage message.\n";
 
 		Console.WriteLine (usage);
@@ -145,7 +150,29 @@ class QueryTool {
 
 	static void OnClosed ()
 	{
-		Gtk.Application.Quit ();
+		if (flood)
+			SendQuery ();
+		else
+			Gtk.Application.Quit ();
+	}
+
+	static int query_counter = 0;
+	static void SendQuery ()
+	{
+		++query_counter;
+		if (flood) {
+			if (query_counter > 1)
+				Console.WriteLine ();
+			Console.WriteLine ("Sending query #{0}", query_counter);
+		}
+
+		queryStartTime = DateTime.Now;
+		try {
+			query.SendAsync ();
+		} catch (System.Net.Sockets.SocketException e) {
+			Console.WriteLine ("Could not connect to the Beagle daemon.  The daemon probably isn't running.");
+			System.Environment.Exit (-1);
+		}
 	}
 	
 	static void Main (string[] args) 
@@ -188,6 +215,9 @@ class QueryTool {
 			    if (++i >= args.Length) PrintUsageAndExit ();
 				query.MaxHits = Int32.Parse (args[i]);
 				break;
+			case "--flood":
+				flood = true;
+				break;
 
 			default:
 				int j = args [i].IndexOf ('=');
@@ -221,18 +251,13 @@ class QueryTool {
 		query.HitsAddedEvent += OnHitsAdded;
 		query.HitsSubtractedEvent += OnHitsSubtracted;
 
+
 		if (! keepRunning)
 			query.FinishedEvent += OnFinished;
 		else
 			query.ClosedEvent += OnClosed;
 
-		queryStartTime = DateTime.Now;
-		try {
-			query.SendAsync ();
-		} catch (System.Net.Sockets.SocketException e) {
-			Console.WriteLine ("Could not connect to the Beagle daemon.  The daemon probably isn't running.");
-			System.Environment.Exit (-1);
-		}
+		SendQuery ();
 
 		Gtk.Application.Run ();
 	}
