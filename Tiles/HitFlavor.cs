@@ -88,14 +88,16 @@ namespace Beagle.Tile {
 		public int Weight {
 			get {
 				int weight = 0;
-				if (Type != null)
-					weight += 8;
-				if (MimeType != null)
-					weight += 4;
-				if (Uri != null)
-					weight += 2;
+
 				if (Source != null)
+					weight += 8;				
+				if (Type != null)
+					weight += 4;
+				if (MimeType != null)
+					weight += 2;
+				if (Uri != null)
 					weight += 1;
+
 				return weight;
 			}
 		}
