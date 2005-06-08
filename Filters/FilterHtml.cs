@@ -38,11 +38,11 @@ namespace Beagle.Filters {
 
 		public FilterHtml ()
 		{
-			AddSupportedMimeType ("text/html");
+			RegisterSupportedTypes ();
 			SnippetMode = true;
 		}
 
-		bool NodeIsHot (String nodeName) 
+		protected bool NodeIsHot (String nodeName) 
 		{
 			return nodeName == "b"
 				|| nodeName == "u"
@@ -59,7 +59,7 @@ namespace Beagle.Filters {
 				|| nodeName == "th";
 		}
 
-		static bool NodeBreaksText (String nodeName) 
+		protected static bool NodeBreaksText (String nodeName) 
 		{
 			return nodeName == "td"
 				|| nodeName == "a"
@@ -67,7 +67,7 @@ namespace Beagle.Filters {
 				|| nodeName == "option";
 		}
 
-		static bool NodeBreaksStructure (string nodeName)
+		protected static bool NodeBreaksStructure (string nodeName)
 		{
 			return nodeName == "p"
 				|| nodeName == "br"
@@ -79,14 +79,14 @@ namespace Beagle.Filters {
 				|| nodeName == "h6";
 		}
 		
-		static bool NodeIsContentFree (String nodeName) 
+		protected static bool NodeIsContentFree (String nodeName) 
 		{
 			return nodeName == "script"
 				|| nodeName == "map"
 				|| nodeName == "style";
 		}
 		
-		String WalkChildNodesForText (HtmlNode node)
+		protected String WalkChildNodesForText (HtmlNode node)
 		{
 			StringBuilder builder = new StringBuilder ("");
 			foreach (HtmlNode subnode in node.ChildNodes) {
@@ -108,7 +108,7 @@ namespace Beagle.Filters {
 			return builder.ToString ().Trim ();
 		}
 		
-		void WalkHeadNodes (HtmlNode node)
+		protected void WalkHeadNodes (HtmlNode node)
 		{
 			foreach (HtmlNode subnode in node.ChildNodes) {
 				if (subnode.NodeType == HtmlNodeType.Element
@@ -127,7 +127,7 @@ namespace Beagle.Filters {
 			}
 		}
 	
-		void WalkBodyNodes (HtmlNode node)
+		protected void WalkBodyNodes (HtmlNode node)
 		{
 			switch (node.NodeType) {
 				
@@ -174,7 +174,7 @@ namespace Beagle.Filters {
 			}
 		}
 	
-		void WalkNodes (HtmlNode node)
+		protected void WalkNodes (HtmlNode node)
 		{
 			foreach (HtmlNode subnode in node.ChildNodes) {
 				if (subnode.NodeType == HtmlNodeType.Element) {
@@ -197,7 +197,7 @@ namespace Beagle.Filters {
 		override protected void DoOpen (FileInfo info)
 		{
 			HtmlDocument doc = new HtmlDocument ();
-
+	
 			try {
 				doc.Load (Stream);
 			} catch (NotSupportedException e) {
@@ -207,6 +207,14 @@ namespace Beagle.Filters {
 			if (doc != null)
 				WalkNodes (doc.DocumentNode);
 			Finished ();
+		}
+
+
+		virtual protected void RegisterSupportedTypes () 
+		{
+		
+			AddSupportedMimeType ("text/html");
+
 		}
 		
 	}

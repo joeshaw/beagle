@@ -458,6 +458,15 @@ AC_SUBST(GAC_PREFIX)
 GNOME_PREFIX="`$PKG_CONFIG --variable=prefix libgnome-2.0`"
 AC_SUBST(GNOME_PREFIX)
 
+dnl ----------------------------------------------
+
+dnl Check if the system has libchm, used by the CHMFilter
+
+AC_CHECK_LIB(chm,chm_open,has_libchm=yes,has_libchm=no)
+AM_CONDITIONAL(HAS_LIBCHM, test "x$has_libchm" = "xyes")
+
+dnl ----------------------------------------------
+
 AC_OUTPUT([
 Makefile
 Util/Makefile
@@ -492,6 +501,7 @@ echo "
 	Epiphany Extension?	${enable_epiphany_extension}
 	Mozilla Extension?	yes
 	wv1?			${enable_wv1}
+	libchm?			${has_libchm}
 
 	Local SqliteClient?	${use_local_sqlite}
 

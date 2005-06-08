@@ -67,6 +67,12 @@ CSFILES += \
 	$(srcdir)/FilterDOC.cs		
 endif
 
+if HAS_LIBCHM
+CSFILES += 				\
+	$(srcdir)/FilterChm.cs
+endif
+
+
 LOCAL_ASSEMBLIES =				\
 	../Util/Util.dll			\
 	../BeagleClient/Beagle.dll		\

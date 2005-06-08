@@ -51,6 +51,8 @@ namespace Beagle.Tile {
 		    Type="File", MimeType="application/x-abiword")]
 	[HitFlavor (Name="Docs", Rank=400, Emblem="", Color="#f5f5fe",
 		    Type="File", MimeType="application/rtf")]
+	[HitFlavor (Name="Docs", Rank=400, Emblem="", Color="#f5f5fe",
+		    Type="File", MimeType="application/x-chm")]
 		
 	// OO 2.0 (writer) formats
 	[HitFlavor (Name="Docs", Rank=400, Emblem="", Color="#f5f5fe",

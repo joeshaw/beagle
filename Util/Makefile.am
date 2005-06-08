@@ -76,6 +76,11 @@ CSFILES +=					\
 	$(srcdir)/Tag.cs			
 endif
 
+if HAS_LIBCHM 
+CSFILES += 					\
+	$(srcdir)/ChmFile.cs
+endif
+
 ASSEMBLIES =					\
 	$(BEAGLE_UI_LIBS)			\
 	-r:System.Web.Services			\
