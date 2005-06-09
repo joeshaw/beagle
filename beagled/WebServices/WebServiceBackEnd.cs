@@ -557,7 +557,7 @@ namespace Beagle.WebService {
 			return sr;
 		}
 		
-		static string InvalidHitSnippetError = "ERROR: Invalid Hit Id";
+		static string InvalidHitSnippetError = "ERROR: Invalid or Duplicate Hit Id";
 		public HitSnippet[] getSnippets(string searchToken, int[] hitIds)
 		{	
 			HitSnippet[] response;
@@ -570,55 +570,49 @@ namespace Beagle.WebService {
 			}
 									
 			ArrayList results = ((SessionData)sessionTable[searchToken]).results;
-			if (results == null) {
+			if ((results == null) || (results.Count == 0)) {
 
 				response = new HitSnippet[0];
 				Console.WriteLine("GetSnippets: Invalid Search Token received ");
 				return response;
 			}
 
-			int i = 0; 			
+			int i = 0; 		
+			ArrayList IdList = new ArrayList();
+			IdList.AddRange(hitIds);	
 			response = new HitSnippet[hitIds.Length];
 
 			Query query = ((SessionData)sessionTable[searchToken]).query;
 			
 			lock (results.SyncRoot)  {
+			
 				string snippet = null; 
 				foreach (Hit h in results)  {
-					foreach (int hitId in hitIds)
-							if (h.Id == hitId) {
-
-								Queryable queryable = h.SourceObject as Queryable;
-								if (queryable == null)
-									snippet = "ERROR: hit.SourceObject is null, uri=" + h.Uri;
-								else
-									snippet = queryable.GetSnippet (ICollection2StringList(query.Text), h);		
+				
+					if (IdList.Contains(h.Id)) {
+					
+							IdList.Remove(h.Id);	
+													
+							Queryable queryable = h.SourceObject as Queryable;
+							if (queryable == null)
+								snippet = "ERROR: hit.SourceObject is null, uri=" + h.Uri;
+							else
+								snippet = queryable.GetSnippet (ICollection2StringList(query.Text), h);		
 										
-								response[i++] = new HitSnippet(hitId, snippet);								
-								if (i == hitIds.Length)
-									return response;
-							}
-				} //end outer foreach
+							response[i++] = new HitSnippet(h.Id, snippet);		
+					
+							if (i == hitIds.Length)
+								return response;
+					}
+				} //end foreach
 			} //end lock
 			
-			int k; 
-			foreach (int hitId in hitIds) {
-									
-				for (k = 0; k < i; k++)
-					if (hitId == response[k].hitId)
-						break;
-							
-				if  (k == i) {
+			foreach (int hitId in IdList) {
 					response[i++] = new HitSnippet(hitId, InvalidHitSnippetError);
 					if (i == hitIds.Length)
-							return response;
-				}
-			}
-			
-			//If you reach here, there are some duplicate invalid hit Id's, which has been flagged once 
-			while (i < hitIds.Length) {
-				response[i++] = new HitSnippet(0, InvalidHitSnippetError);
-			}
+							break;
+			}		
+
 			return response;
 		}
 		
