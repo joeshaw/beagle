@@ -59,6 +59,8 @@ namespace Beagle.Daemon {
 			}
 		}
 
+		static Analyzer analyzer;
+
 		// If Name is null, this is a removal, otherwise it is an add.
 		private class PendingOperation {
 			public Guid UniqueId;
@@ -68,12 +70,16 @@ namespace Beagle.Daemon {
 		const int VERSION = 1;
 
 		Lucene.Net.Store.FSDirectory store;
-		Analyzer analyzer;
 
 		Hashtable pending = new Hashtable ();
 
 		int adds_since_last_optimize = 0;
 		const int optimize_threshold = 5000;
+
+		static NameIndex ()
+		{
+			analyzer = new NameAnalyzer ();
+		}
 
 		public NameIndex (string directory, string fingerprint)
 		{
@@ -138,8 +144,6 @@ namespace Beagle.Daemon {
 
 
 			store = Lucene.Net.Store.FSDirectory.GetDirectory (index_dir, lock_dir, false);
-
-			analyzer = new NameAnalyzer ();
 
 			if (! index_exists) {
 				// This creates the index if it doesn't exist
@@ -272,83 +276,128 @@ namespace Beagle.Daemon {
 
 		///////////////////////////////////////////////////////////////////////////////////////////
 
-		private LNS.Query ToCoreLuceneQuery (Query query, string field)
+		static private LNS.Query NewTokenizedQuery (string field, string text)
 		{
-			LNS.BooleanQuery lucene_query = null;
-			foreach (string text_orig in query.Text) {
-				string text = text_orig;
+			ArrayList tokens = new ArrayList ();
 
-				if (text == null || text == "")
-					continue;
-
-				bool minus_sign = false;
-				if (text [0] == '-') {
-					text = text.Substring (1);
-					minus_sign = true;
-				}
-
-				// Use the analyzer to extract the query's tokens.
-				// This code is taken from Lucene's query parser.
-				// We use the standard Analyzer.
-				TokenStream source = analyzer.TokenStream (field, new StringReader (text));
-				ArrayList tokens = new ArrayList ();
-
-				while (true) {
-					Lucene.Net.Analysis.Token t;
-					try {
-						t = source.Next ();
-					} catch (IOException) {
-						t = null;
-					}
-					if (t == null)
-						break;
-					tokens.Add (t.TermText ());
-				}
+			// Use the analyzer to extract the query's tokens.
+			// This code is taken from Lucene's query parser.
+			// We use the standard Analyzer.
+			TokenStream source = analyzer.TokenStream (field, new StringReader (text));
+			while (true) {
+				Lucene.Net.Analysis.Token t;
 				try {
-					source.Close ();
-				} catch (IOException) { 
-					// ignore
+					t = source.Next ();
+				} catch (IOException) {
+					t = null;
 				}
-
-				LNS.Query q = null;
-				if (tokens.Count == 1) {
-					Term t = new Term (field, (string) tokens [0]);
-					q = new LNS.TermQuery (t);
-				} else if (tokens.Count > 1) {
-					q = new LNS.PhraseQuery ();
-					foreach (string tokenStr in tokens) {
-						Term t = new Term (field, tokenStr);
-						((LNS.PhraseQuery) q).Add (t);
-					}
-				}
-
-				if (q != null) {
-					if (lucene_query == null)
-						lucene_query = new LNS.BooleanQuery ();
-					lucene_query.Add (q, !minus_sign, minus_sign);
+				if (t == null)
+					break;
+				tokens.Add (t.TermText ());
+			}
+			try {
+				source.Close ();
+			} catch (IOException) { 
+				// ignore
+			}
+			
+			LNS.Query q = null;
+			if (tokens.Count == 1) {
+				Term t = new Term (field, (string) tokens [0]);
+				q = new LNS.TermQuery (t);
+			} else if (tokens.Count > 1) {
+				q = new LNS.PhraseQuery ();
+				foreach (string tokenStr in tokens) {
+					Term t = new Term (field, tokenStr);
+					((LNS.PhraseQuery) q).Add (t);
 				}
 			}
-			return lucene_query;
+
+			return q;
 		}
 
-		private LNS.Query ToLuceneQuery (Query query, ICollection uris_to_search)
+		static public LNS.Query ToUidQuery (ICollection list_of_uris)
+		{
+			if (list_of_uris == null || list_of_uris.Count == 0)
+				return null;
+
+			LNS.BooleanQuery query = new LNS.BooleanQuery ();
+			int max_clauses = LNS.BooleanQuery.GetMaxClauseCount ();
+			int clause_count = 0;
+
+			foreach (Uri uri in list_of_uris) {
+
+				// The localpath of a uid: Uri is the short-string version
+				// of the Guid.
+				Term term = new Term ("Uid", uri.LocalPath);
+
+				LNS.Query term_query = new LNS.TermQuery (term);
+				query.Add (term_query, false, false);
+				++clause_count;
+				// If we have to many clases, nest the queries
+				if (clause_count == max_clauses) {
+					LNS.BooleanQuery new_query = new LNS.BooleanQuery ();
+					new_query.Add (query, false, false);
+					query = new_query;
+					clause_count = 1;
+				}
+			}
+
+			return query;
+		}
+
+
+		static private LNS.Query ToLuceneQuery (Query query, ICollection uris_to_search)
 		{
 			if (query.Text.Count == 0)
 				return null;
 
 			LNS.BooleanQuery lucene_query = new LNS.BooleanQuery ();
-			
-			lucene_query.Add (ToCoreLuceneQuery (query, "Name"),  false, false);
-			lucene_query.Add (ToCoreLuceneQuery (query, "NoExt"), false, false);
-			lucene_query.Add (ToCoreLuceneQuery (query, "Split"), false, false);
+			bool used_any_part = false;
+
+			foreach (QueryPart part in query.Parts) {
+				if (part.TargetIsAll || part.TargetIsProperties) {
+					LNS.BooleanQuery part_query;
+					LNS.Query subquery;
+					bool used_this_part = false;
+
+					part_query = new LNS.BooleanQuery ();
+
+					subquery = NewTokenizedQuery ("Name", part.Text);
+					if (subquery != null) {
+						part_query.Add (subquery, false, false);
+						used_this_part = true;
+					}
+
+					subquery = NewTokenizedQuery ("NoExt", part.Text);
+					if (subquery != null) {
+						part_query.Add (subquery, false, false);
+						used_this_part = true;
+					}
+
+					subquery = NewTokenizedQuery ("Split", part.Text);
+					if (subquery != null) {
+						part_query.Add (subquery, false, false);
+						used_this_part = true;
+					}
+
+					if (used_this_part) {
+						lucene_query.Add (part_query, part.IsRequired, part.IsProhibited);
+						used_any_part = true;
+					}
+				}
+			}
+
+			if (! used_any_part)
+				return null;
 
 			// If a list of Uris is specified, we must match one of them.
-			LNS.Query uri_query = LuceneDriver.ToUriQuery (uris_to_search);
-			if (uri_query != null) {
+			LNS.Query uid_query = ToUidQuery (uris_to_search);
+			if (uid_query != null) {
 				LNS.BooleanQuery combined_query = new LNS.BooleanQuery ();
 				combined_query.Add (lucene_query, true, false);
-				combined_query.Add (uri_query, true, false);
-				combined_query = lucene_query;
+				combined_query.Add (uid_query, true, false);
+				lucene_query = combined_query;
 			}
 
 			return lucene_query;

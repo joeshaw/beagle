@@ -710,6 +710,7 @@ namespace Beagle.Daemon {
 				Uri uri = original_uri;
 				if (remapper != null)
 					uri = remapper (uri);
+				Logger.Log.Debug ("ToUriQuery: {0} => {1}", original_uri, uri);
 				Term term = new Term ("Uri", uri.ToString ()); // FIXME: Do we need some UriFu here?
 				LNS.Query term_query = new LNS.TermQuery (term);
 				query.Add (term_query, false, false);
@@ -782,57 +783,76 @@ namespace Beagle.Daemon {
 			LNS.Query        bonus_uris_query = null;
 			LNS.BooleanQuery mime_type_query = null;
 			LNS.BooleanQuery hit_type_query = null;
+
+			body_query = new LNS.BooleanQuery ();
+
+			bool used_any_part = false;
 			
-			if (query.Parts.Count > 0) {
+			foreach (QueryPart part in query.Parts) {
+				
+				LNS.BooleanQuery part_query = new LNS.BooleanQuery ();
+				LNS.Query part_query_override = null;
+				LNS.Query subquery = null;
 
-				body_query = new LNS.BooleanQuery ();
-
-				foreach (QueryPart part in query.Parts) {
+				bool used_this_part = false;
+				
+				if (part.TargetIsAll || part.TargetIsText) {
 					
-					LNS.BooleanQuery part_query = new LNS.BooleanQuery ();
-					LNS.Query part_query_override = null;
-					LNS.Query subquery = null;
-
-					if (part.TargetIsAll || part.TargetIsText) {
-
-						subquery = NewTokenizedQuery ("Text", part.Text);
+					subquery = NewTokenizedQuery ("Text", part.Text); 
+					if (subquery != null) {
 						part_query.Add (subquery, false, false);
-
-						subquery = NewTokenizedQuery ("HotText", part.Text);
-						subquery.SetBoost (1.75f);
-						part_query.Add (subquery, false, false);
+						used_this_part = true;
 					}
 
-					if (part.TargetIsAll || part.TargetIsProperties) {
-						subquery = NewTokenizedQuery ("PropertyText", part.Text);
+					subquery = NewTokenizedQuery ("HotText", part.Text);
+					if (subquery != null) {
 						subquery.SetBoost (1.75f);
 						part_query.Add (subquery, false, false);
+						used_this_part = true;
 					}
+				}
 
-					if (part.TargetIsSpecificProperty) {
+				if (part.TargetIsAll || part.TargetIsProperties) {
+					subquery = NewTokenizedQuery ("PropertyText", part.Text);
+					if (subquery != null) {
+						subquery.SetBoost (1.75f);
+						part_query.Add (subquery, false, false);
+						used_this_part = true;
+					}
+				}
 
-						string prop_name;
-						prop_name = String.Format ("prop:{0}:{1}",
-									   part.IsKeyword ? 'k' : '_',
-									   part.Target);
-						
-						if (part.IsKeyword) {
-							Term term = new Term (prop_name, part.Text);
-							subquery = new LNS.TermQuery (term);
-						} else {
-							subquery = NewTokenizedQuery (prop_name, part.Text);
-						}
-
-						// Instead of the boolean query, just use the subquery.
+				if (part.TargetIsSpecificProperty) {
+					
+					string prop_name;
+					prop_name = String.Format ("prop:{0}:{1}",
+								   part.IsKeyword ? 'k' : '_',
+								   part.Target);
+					
+					if (part.IsKeyword) {
+						Term term = new Term (prop_name, part.Text);
+						subquery = new LNS.TermQuery (term);
+					} else {
+						subquery = NewTokenizedQuery (prop_name, part.Text);
+					}
+					
+					// Instead of the boolean query, just use the subquery.
+					if (subquery != null) {
 						part_query_override = subquery;
+						used_this_part = true;
 					}
-
+				}
+				
+				if (used_this_part) {
 					if (part_query_override == null)
 						part_query_override = part_query;
 					body_query.Add (part_query_override, part.IsRequired, part.IsProhibited);
+					used_any_part = true;
 				}
 			}
 
+			if (! used_any_part)
+				return null;
+		
 			search_subset_query = ToUriQuery (search_subset, null);
 
 			bonus_uris_query = ToUriQuery (bonus_uris, null);
