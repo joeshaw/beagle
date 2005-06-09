@@ -1,3 +1,9 @@
+2005-06-09  Daniel Drake  <dsd@gentoo.org>
+
+	* configure.in, Util/Makefile.am: Add target O/S detection available
+	through OS_LINUX and OS_FREEBSD defines.
+	* Util/ExtendedAttribute.cs: Add support for FreeBSD's extattrs.
+
 2005-06-09  Vijay K. Nanjundaswamy <knvijay@novell.com>
 
 	* beagled/WebServices/WebServiceFrontEnd.cs, WebServiceBackEnd.cs, WebServiceProxy.cs: 

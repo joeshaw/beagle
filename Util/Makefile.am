@@ -10,6 +10,14 @@ TARGET_CONFIG = $(TARGET).config
 
 CSFLAGS = -target:library
 
+if OS_LINUX
+CSFLAGS += -define:OS_LINUX
+endif
+
+if OS_FREEBSD
+CSFLAGS += -define:OS_FREEBSD
+endif
+
 GOOGLE_WSDL = $(srcdir)/GoogleSearch.wsdl
 GOOGLE_CS   = GoogleSearch.cs
 

@@ -46,6 +46,21 @@ for i in $needed_dlls; do
   fi
 done
 
+# check for OS
+case "$target" in
+  *-*-linux*)
+    os=linux
+    ;;
+  *-*-freebsd*)
+    os=freebsd
+    ;;
+  *)
+    AC_MSG_ERROR([Unrecognised target OS: $target])
+    ;;
+esac
+AM_CONDITIONAL(OS_LINUX, test "x$os" == "xlinux")
+AM_CONDITIONAL(OS_FREEBSD, test "x$os" == "xfreebsd")
+
 # check for wsdl
 AC_PATH_PROG(WSDL, wsdl)
 
@@ -491,6 +506,7 @@ po/Makefile.in
 ])
 
 echo "
+	Target OS:		${os}
 	Prefix:			${prefix}
 	GNOME Prefix:           ${GNOME_PREFIX}
 	KDE Prefix:		${kde_prefix_print}
