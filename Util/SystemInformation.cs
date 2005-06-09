@@ -258,12 +258,12 @@ namespace Beagle.Util {
 		// Get the (major,minor) pair for the block device from which the index is mounted.
 		static private void GetIndexDev ()
 		{
-			Mono.Unix.Stat stat = new Mono.Unix.Stat ();
-			if (Mono.Unix.Syscall.stat (PathFinder.StorageDir, out stat) != 0)
+			Mono.Posix.Stat stat = new Mono.Posix.Stat ();
+			if (Mono.Posix.Syscall.stat (PathFinder.StorageDir, out stat) != 0)
 				return;
 
-			major = (uint) stat.st_dev >> 8;
-			minor = (uint) stat.st_dev & 0xff;
+			major = (uint) stat.Device >> 8;
+			minor = (uint) stat.Device & 0xff;
 		}
 
 		static public int DiskStatsReadReqs {
@@ -307,13 +307,14 @@ namespace Beagle.Util {
 		{
 			Gtk.Application.Init ();
 			while (true) {
-				Console.WriteLine ("{0} {1} {2} {3} {4} {5} {6}",
+				Console.WriteLine ("{0} {1} {2} {3} {4} {5} {6} {7}",
 						   LoadAverageOneMinute,
 						   LoadAverageFiveMinute,
 						   LoadAverageFifteenMinute,
 						   ScreenSaverRunning,
 						   InputIdleTime,
 						   UsingBattery,
+						   DiskStatsReadReqs,
 						   VmSize);
 				System.Threading.Thread.Sleep (1000);
 			}
