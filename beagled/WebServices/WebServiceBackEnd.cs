@@ -410,13 +410,17 @@ namespace Beagle.WebService {
 				
 					Hit h = (Hit) results[i];
 
-					string snippet = ""; 
+					string snippet; 
 						
 					Queryable queryable = h.SourceObject as Queryable;
 					if (queryable == null)
 						snippet = "ERROR: hit.SourceObject is null, uri=" + h.Uri;
 					else
 						snippet = queryable.GetSnippet (ICollection2StringList(query.Text), h);				
+					
+					//snippet == "", implies GetSnippet returned empty snippet
+					if (snippet == null)   	
+						snippet = "";		
 								
 					sr.hitResults[i] = new HitResult();
 					sr.hitResults[i].id = h.Id;
@@ -442,7 +446,7 @@ namespace Beagle.WebService {
 						sr.hitResults[i].properties[j].IsKeyword = p.IsKeyword;				
 						sr.hitResults[i].properties[j].IsSearched = p.IsSearched;							
 					}
-									
+
 					sr.hitResults[i].snippet = snippet;
 				}					
 			   } //end lock
@@ -496,8 +500,6 @@ namespace Beagle.WebService {
 					sr.numResults = (results.Count < startIndex + MAX_RESULTS_PER_CALL) ? (results.Count - startIndex): MAX_RESULTS_PER_CALL;
 				
 				sr.hitResults = new HitResult[sr.numResults];
-				
-				//Query query = ((SessionData)sessionTable[searchToken]).query;
 			
 				for (int k = startIndex; (i < sr.numResults) && (k < results.Count); k++)   {		
 				
@@ -513,8 +515,11 @@ namespace Beagle.WebService {
 						snippet = "ERROR: hit.SourceObject is null, uri=" + h.Uri;
 					else
 						snippet = queryable.GetSnippet (ICollection2StringList(query.Text), h);		
-					sr.hitResults[i].snippet = snippet;			
-*/								
+					 = snippet;			
+*/
+// Not initializing sr.hitResults[i].snippet implies there is no <snippets> element in HitResult XML response
+// which implies GetSnippet was not done.
+								
 					sr.hitResults[i].id = h.Id;
 					
 					if (isLocalReq)
@@ -692,11 +697,11 @@ namespace Beagle.WebService {
 		public int statusCode;			//ReturnCode for programmatic processing
 		public string statusMsg;		//User-friendly return message
 
-		public string searchToken;	//Token identifying the query,
-													//to enable follow-up queries
+		public string searchToken;		//Token identifying the query,
+										//to enable follow-up queries
 		public int firstResultIndex; 	//Index of first result in this response
 		public int numResults;		 	//No. of results in this response
-		public int totalResults;			//Total no. of results from the query
+		public int totalResults;		//Total no. of results from the query
 		public HitResult[] hitResults;
 	}
 
