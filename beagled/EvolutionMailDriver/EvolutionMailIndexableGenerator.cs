@@ -427,7 +427,7 @@ namespace Beagle.Daemon.EvolutionMailDriver {
 
 				string uid_str = x_evolution.Substring (0, separator_idx);
 				string uid = Convert.ToUInt32 (uid_str, 16).ToString (); // ugh.
-				uint flags = Convert.ToUInt32 (x_evolution.Substring (separator_idx), 16);
+				uint flags = Convert.ToUInt32 (x_evolution.Substring (separator_idx + 1), 16);
 				
 				Indexable indexable = this.GMimeMessageToIndexable (uid, message, flags);
 				
