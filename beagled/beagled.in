@@ -66,10 +66,10 @@ fi
 # Handle logging, and optionally append the relevent default fg/bg argument if
 # it was not user-specified.
 if [ $fg -eq 1 ]; then
-    [ ! -z "$fg_user" ] && FGBG_ARG="--fg";
+    [ -z "$fg_user" ] && FGBG_ARG="--fg";
     export BEAGLE_LOG_IN_THE_FOREGROUND_PLEASE=1
 else
-    [ ! -z "$fg_user" ] && FGBG_ARG="--bg";
+    [ -z "$fg_user" ] && FGBG_ARG="--bg";
     unset BEAGLE_LOG_IN_THE_FOREGROUND_PLEASE
 fi
 
