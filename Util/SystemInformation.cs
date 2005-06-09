@@ -29,6 +29,7 @@ using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Runtime.InteropServices;
+using System.Text.RegularExpressions;
 using Mono.Posix;
 
 namespace Beagle.Util {
@@ -212,6 +213,93 @@ namespace Beagle.Util {
 
 		static public int VmRss {
 			get { return get_vmrss (); }
+		}
+
+		static private int disk_stats_read_reqs;
+		static private int disk_stats_write_reqs;
+		static private int disk_stats_read_bytes;
+		static private int disk_stats_write_bytes;
+
+		static private DateTime disk_stats_time = DateTime.MinValue;
+		static private double disk_stats_delay = 1.0;
+
+		static private uint major, minor;
+
+		// Update the disk statistics with data for block device on the (major,minor) pair.
+		static private void UpdateDiskStats ()
+		{
+			string buffer;
+
+			if (major == 0)
+				return;
+
+			// We only refresh the stats once per second
+			if ((DateTime.Now - disk_stats_time).TotalSeconds < disk_stats_delay)
+				return;
+
+			// Read in all of the disk stats
+			using (StreamReader stream = new StreamReader ("/proc/diskstats"))
+				buffer = stream.ReadToEnd ();
+
+			// Find our partition and parse it
+			const string REGEX = "[\\s]+{0}[\\s]+{1}[\\s]+[a-zA-Z0-9]+[\\s]+([0-9]+)[\\s]+([0-9]+)[\\s]+([0-9]+)[\\s]+([0-9]+)";
+			string regex = String.Format (REGEX, major, minor);
+			Regex r = new Regex (regex, RegexOptions.IgnoreCase | RegexOptions.Compiled);
+			for (System.Text.RegularExpressions.Match m = r.Match (buffer); m.Success; m = m.NextMatch ()) {
+				disk_stats_read_reqs = Convert.ToInt32 (m.Groups[1].ToString ());
+				disk_stats_read_bytes = Convert.ToInt32 (m.Groups[2].ToString ());
+				disk_stats_write_reqs = Convert.ToInt32 (m.Groups[3].ToString ());
+				disk_stats_write_bytes = Convert.ToInt32 (m.Groups[4].ToString ());
+			}
+
+			disk_stats_time = DateTime.Now;
+		}
+
+		// Get the (major,minor) pair for the block device from which the index is mounted.
+		static private void GetIndexDev ()
+		{
+			Mono.Unix.Stat stat = new Mono.Unix.Stat ();
+			if (Mono.Unix.Syscall.stat (PathFinder.StorageDir, out stat) != 0)
+				return;
+
+			major = (uint) stat.st_dev >> 8;
+			minor = (uint) stat.st_dev & 0xff;
+		}
+
+		static public int DiskStatsReadReqs {
+			get {
+				if (major == 0)
+					 GetIndexDev ();
+				UpdateDiskStats ();
+				return disk_stats_read_reqs;
+			}
+		}
+
+		static public int DiskStatsReadBytes {
+			get {
+				if (major == 0)
+					 GetIndexDev ();
+				UpdateDiskStats ();
+				return disk_stats_read_bytes;
+			}
+		}
+
+		static public int DiskStatsWriteReqs {
+			get {
+				if (major == 0)
+					 GetIndexDev ();
+				UpdateDiskStats ();
+				return disk_stats_write_reqs;
+			}
+		}
+
+		static public int DiskStatsWriteBytes {
+			get {
+				if (major == 0)
+					 GetIndexDev ();
+				UpdateDiskStats ();
+				return disk_stats_write_bytes;
+			}
 		}
 
 #if false
