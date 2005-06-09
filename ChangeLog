@@ -1,3 +1,11 @@
+2005-06-09  Vijay K. Nanjundaswamy <knvijay@novell.com>
+
+	* beagled/WebServices/WebServiceFrontEnd.cs, WebServiceBackEnd.cs, WebServiceProxy.cs: 
+	Added WebService method GetSnippets that allows snippets to be obtained for
+	a list of specified hit Ids. The GetMoreResults webservice method, now does  
+	not return snippets. The client is expected to use GetSnippets method to obtain 
+	snippets for hits that it is interested in. 
+
 2005-06-07  Vijay K. Nanjundaswamy <knvijay@novell.com>
 
 	* beagled/WebServices/WebServiceBackEnd.cs, ExternalAccessFilter.cs: 
