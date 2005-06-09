@@ -519,9 +519,6 @@ namespace Beagle.Daemon.EvolutionMailDriver {
 			if (CheckFlags (flags, Camel.CamelFlags.Seen))
 				indexable.AddProperty (Property.NewFlag ("fixme:isSeen"));
 
-			if (CheckFlags (flags, Camel.CamelFlags.Attachments))
-				indexable.AddProperty (Property.NewFlag ("fixme:hasAttachments"));
-
 			if (CheckFlags (flags, Camel.CamelFlags.AnsweredAll))
 				indexable.AddProperty (Property.NewFlag ("fixme:isAnsweredAll"));
 			
