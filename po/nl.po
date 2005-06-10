@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: beagle\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2005-04-05 21:56+0200\n"
-"PO-Revision-Date: 2005-04-05 21:45+0100\n"
+"POT-Creation-Date: 2005-06-09 10:49+0000\n"
+"PO-Revision-Date: 2005-06-09 20:48+0100\n"
 "Last-Translator: Wouter Bolsterlee <uws+gnome@xs4all.nl>\n"
 "Language-Team: Dutch <vertaling@nl.linux.org>\n"
 "MIME-Version: 1.0\n"
@@ -16,7 +16,7 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: ../Best/Best.cs:120
+#: ../Best/Best.cs:121
 msgid ""
 "If you're wondering whether Best is working check your notification area "
 "(system tray)"
@@ -28,100 +28,108 @@ msgstr ""
 msgid "No Recent Searches"
 msgstr "Geen recente zoekopdrachten"
 
-#: ../Best/BestTray.cs:179
+#: ../Best/BestTray.cs:168
+msgid "Recent Searches"
+msgstr "Recente zoekopdrachten"
+
+#: ../Best/BestTray.cs:183
 msgid "Quit"
 msgstr "Afsluiten"
 
-#: ../Best/BestWindow.cs:302
+#: ../Best/BestWindow.cs:303
 msgid "Anywhere"
 msgstr "Overal"
 
-#: ../Best/BestWindow.cs:304
+#: ../Best/BestWindow.cs:305
 msgid "in Files"
 msgstr "in bestanden"
 
-#: ../Best/BestWindow.cs:306
+#: ../Best/BestWindow.cs:307
 msgid "in Addressbook"
 msgstr "in adresboek"
 
-#: ../Best/BestWindow.cs:308
+#: ../Best/BestWindow.cs:309
 msgid "in Mail"
 msgstr "in e-mail"
 
-#: ../Best/BestWindow.cs:310
+#: ../Best/BestWindow.cs:311
 msgid "in Web Pages"
 msgstr "in webpagina's"
 
-#: ../Best/BestWindow.cs:312
+#: ../Best/BestWindow.cs:313
 msgid "in Chats"
 msgstr "in chats"
 
-#: ../Best/BestWindow.cs:328
+#: ../Best/BestWindow.cs:329
 msgid "Search terms:"
 msgstr "Zoektermen:"
 
-#: ../Best/BestWindow.cs:345
+#: ../Best/BestWindow.cs:346
 msgid "Find"
 msgstr "Zoeken"
 
-#: ../Best/BestWindow.cs:362
+#: ../Best/BestWindow.cs:363
 msgid "Show More Results"
 msgstr "Meer resultaten tonen"
 
-#: ../Best/BestWindow.cs:368
+#: ../Best/BestWindow.cs:369
 msgid "Show Previous Results"
 msgstr "Vorige resultaten tonen"
 
-#: ../Best/BestWindow.cs:402
+#: ../Best/BestWindow.cs:403
 msgid "No results."
 msgstr "Geen resultaten."
 
 #. To translators: {0} is the current count of results shown of {1} in total, this is the message that is initially shown
 #. when results are returned to the user.
-#: ../Best/BestWindow.cs:406
+#: ../Best/BestWindow.cs:407
 #, csharp-format
 msgid "Best <b>{0} results of {1}</b> are shown."
-msgstr "Beste <b>{0} van {1} resultaten</b> worden getoond."
+msgstr "Beste <b>{0} van in totaal {1} resultaten</b> worden getoond."
 
 #. To translators: {0} to {1} is the interval of results currently shown of {2} results in total
-#: ../Best/BestWindow.cs:411
+#: ../Best/BestWindow.cs:412
 #, csharp-format
 msgid "Results <b>{0} through {1} of {2}</b> are shown."
-msgstr "Resultaten <b>{0} tot {1} van {2} totaal</b> worden getoond."
+msgstr "Resultaten <b>{0} tot en met {1} (totaal {2})</b> worden getoond."
 
 #. To translators: {0} represents the current query keywords
-#: ../Best/BestWindow.cs:550
+#: ../Best/BestWindow.cs:523
 #, csharp-format
 msgid ""
 "The query for <i>{0}</i> failed.<br>The likely cause is that the beagle "
 "daemon isn't running."
 msgstr ""
-"De zoekopdracht naar <i>{0}</i> is mislukt. Waarschijnlijk komt dit "
-"doordatde beagle-daemon niet actief is."
-
-#. To translators: {0} represents the current query keywords
-#: ../Best/BestWindow.cs:555
-#, csharp-format
-msgid ""
-"The query for <i>{0}</i> failed.<br>The session bus isn't running.  See "
-"http://beaglewiki.org/index.php/Installing%20Beagle for information on "
-"setting up a session bus."
-msgstr ""
-"De zoekopdracht naar <i>{0}</i> is mislukt. <br>De sessiebus is nietactief. "
-"Zie http://beaglewiki.org/index.php/Installing%20Beagle voormeer informatie "
-"over het activeren van een sessiebus."
+"De zoekopdracht naar <i>{0}</i> is mislukt. Waarschijnlijk is de"
+"beagle-daemon niet actief."
 
 #. To translators: {0} represents the current query keywords, {1} contains the errormessage
-#: ../Best/BestWindow.cs:559
+#: ../Best/BestWindow.cs:528
 #, csharp-format
 msgid "The query for <i>{0}</i> failed with error:<br>{1}<br>"
-msgstr "De zoekopdracht naar <i>{0}</i> is mislukt met de fout:<br>{1}<br>"
+msgstr "De zoekopdracht naar <i>{0}</i> is mislukt met fout:<br>{1}<br>"
 
-#: ../Tiles/TileDocs.cs:75
+#: ../glue/eggtrayicon.c:120
+msgid "Orientation"
+msgstr "Oriëntatie"
+
+#: ../glue/eggtrayicon.c:121
+msgid "The orientation of the tray."
+msgstr "Richting van het mededelingengebied"
+
+#: ../ImLogViewer/ImLogViewer.glade.h:1
+msgid "<b>Conversations History</b>"
+msgstr "<b>Gespreksgeschiedenis</b>"
+
+#: ../ImLogViewer/ImLogViewer.glade.h:2
+msgid "IM Viewer"
+msgstr "IM Viewer"
+
+#: ../Tiles/TileDocs.cs:77
 msgid "Pages:"
 msgstr "Pagina's:"
 
-#: ../Tiles/TileDocs.cs:79
+#: ../Tiles/TileDocs.cs:81
 msgid "Words:"
 msgstr "Woorden:"
 
@@ -135,6 +143,25 @@ msgid "Contains {0} Item"
 msgid_plural "Contains {0} Items"
 msgstr[0] "Bevat {0} item"
 msgstr[1] "Bevat {0} items"
+
+#: ../Tiles/TileImLog.cs:76
+msgid "Send Mail"
+msgstr "in e-mail"
+
+#. For translators: From template Tiles/template-mail-message.html
+#: ../Tiles/TileImLog.cs:80 ../Tiles/TranslationHack.cs:44
+msgid "Send IM"
+msgstr "IM sturen"
+
+#: ../Tiles/TileImLog.cs:89
+#, csharp-format
+msgid "Conversation in {0}"
+msgstr "Gesprek in {0}"
+
+#: ../Tiles/TileImLog.cs:91
+#, csharp-format
+msgid "Conversation with {0}"
+msgstr "Gesprek met {0}"
 
 #: ../Tiles/TileMailMessage.cs:68
 msgid "No Subject"
@@ -241,11 +268,6 @@ msgstr "Toepassing:"
 msgid "Folder:"
 msgstr "Map:"
 
-#. For translators: From template Tiles/template-mail-message.html
-#: ../Tiles/TranslationHack.cs:44
-msgid "Send IM"
-msgstr "IM sturen"
-
 #. For translators: From template Tiles/template-music.html
 #: ../Tiles/TranslationHack.cs:46
 msgid "Track"
@@ -323,32 +345,82 @@ msgstr "Vandaag"
 msgid "Yesterday"
 msgstr "Gisteren"
 
+#: ../Util/StringFu.cs:69
+msgid "MMM d"
+msgstr "d MMMM"
+
+#: ../Util/StringFu.cs:71
+msgid "MMM d, yyyy"
+msgstr "d MMMM yyyy"
+
+#: ../Util/StringFu.cs:73
+msgid "h:mm tt"
+msgstr "H:mm"
+
+#. Translators: {0} is a date (e.g. 'Today' or 'Apr 23'), {1} is the time
+#: ../Util/StringFu.cs:79
+#, csharp-format
+msgid "{0}, {1}"
+msgstr "{0} om {1}"
+
 #. To translators: {0} is the time of the day, eg. 13:45
-#: ../Util/StringFu.cs:95
+#: ../Util/StringFu.cs:96
 #, csharp-format
 msgid "Today, {0}"
-msgstr "Vandaag, om {0}"
+msgstr "Vandaag om {0}"
 
 #. To translators: {0} is the time of the day, eg. 13:45
-#: ../Util/StringFu.cs:98
+#: ../Util/StringFu.cs:99
 #, csharp-format
 msgid "Yesterday, {0}"
-msgstr "Gisteren, om {0}"
+msgstr "Gisteren om {0}"
 
 #. To translators: {0} is the number of days that have passed, {1} is the time of the day, eg. 13:45
-#: ../Util/StringFu.cs:101
+#: ../Util/StringFu.cs:102
 #, csharp-format
 msgid "{0} days ago, {1}"
-msgstr "{0} dagen geleden, om {1}"
+msgstr "{0} dagen geleden om {1}"
 
-#: ../Util/StringFu.cs:119
+#: ../Util/StringFu.cs:106
+msgid "MMMM d, h:mm tt"
+msgstr "d MMMM om H:mm"
+
+#: ../Util/StringFu.cs:110
+msgid "MMMM d yyyy, h:mm tt"
+msgstr "d MMMM yyyy om H:mm"
+
+#: ../Util/StringFu.cs:120
+#, csharp-format
+# Dit is om een tijdspanne aan te duiden, dus ik heb voor "uur" en niet voor
+# "uren" gekozen -- Wouter Bolsterlee
 msgid "{0} hour"
 msgid_plural "{0} hours"
 msgstr[0] "{0} uur"
-msgstr[1] "{0} uren"
+msgstr[1] "{0} uur"
 
-#: ../Util/StringFu.cs:126
+#: ../Util/StringFu.cs:127
+#, csharp-format
+# Tijdspannes in minuten zeggen we weer wel in het meervoud. Rare jongens, die
+# Nederlandstaligen... -- Wouter Bolsterlee
 msgid "{0} minute"
 msgid_plural "{0} minutes"
 msgstr[0] "{0} minuut"
 msgstr[1] "{0} minuten"
+
+#. Translators: {0} is a file size in bytes
+#: ../Util/StringFu.cs:143
+#, csharp-format
+msgid "{0} bytes"
+msgstr "{0} bytes"
+
+#. Translators: {0} is a file size in kilobytes
+#: ../Util/StringFu.cs:147
+#, csharp-format
+msgid "{0:0.0} KB"
+msgstr "{0:0.0} KB"
+
+#. Translators: {0} is a file size in megabytes
+#: ../Util/StringFu.cs:150
+#, csharp-format
+msgid "{0:0.0} MB"
+msgstr "{0:0.0} MB"
