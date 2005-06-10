@@ -167,13 +167,13 @@ namespace Beagle.Daemon {
 
 			string name_noext = Path.GetFileNameWithoutExtension (p.Name);
 			if (name_noext != p.Name) {
-				f = Field.UnStored ("NoExt", name_noext);
+				f = Field.UnStored ("Name", name_noext);
 				doc.Add (f);
 			}
 
 			string name_split = String.Join (" ", StringFu.FuzzySplit (name_noext));
-			if (name_split != name_noext) {
-				f= Field.UnStored ("Split", name_split);
+			if (name_split != name_noext && name_split != p.Name) {
+				f= Field.UnStored ("Name", name_split);
 				doc.Add (f);
 			}
 
@@ -254,11 +254,13 @@ namespace Beagle.Daemon {
 				writer.AddDocument (doc);
 
 				++adds_since_last_optimize;
-				if (adds_since_last_optimize > optimize_threshold) {
-					writer.Optimize ();
-					adds_since_last_optimize = 0;
-					did_optimize = true;
-				}
+			}
+
+			// FIXME: What should be the correct policy for optimizing this index?
+			if (adds_since_last_optimize > optimize_threshold) {
+				writer.Optimize ();
+				adds_since_last_optimize = 0;
+				did_optimize = true;
 			}
 
 			writer.Close ();
@@ -357,31 +359,9 @@ namespace Beagle.Daemon {
 
 			foreach (QueryPart part in query.Parts) {
 				if (part.TargetIsAll || part.TargetIsProperties) {
-					LNS.BooleanQuery part_query;
-					LNS.Query subquery;
-					bool used_this_part = false;
-
-					part_query = new LNS.BooleanQuery ();
-
-					subquery = NewTokenizedQuery ("Name", part.Text);
-					if (subquery != null) {
-						part_query.Add (subquery, false, false);
-						used_this_part = true;
-					}
-
-					subquery = NewTokenizedQuery ("NoExt", part.Text);
-					if (subquery != null) {
-						part_query.Add (subquery, false, false);
-						used_this_part = true;
-					}
-
-					subquery = NewTokenizedQuery ("Split", part.Text);
-					if (subquery != null) {
-						part_query.Add (subquery, false, false);
-						used_this_part = true;
-					}
-
-					if (used_this_part) {
+					LNS.Query part_query;
+					part_query = NewTokenizedQuery ("Name", part.Text);
+					if (part_query != null) {
 						lucene_query.Add (part_query, part.IsRequired, part.IsProhibited);
 						used_any_part = true;
 					}
