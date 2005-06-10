@@ -45,10 +45,14 @@ namespace Beagle.Daemon.FileSystemQueryable {
 
 		private static Logger log = Logger.Get ("FileSystemQueryable");
 
+		// History:
+		// 1: Initially set to force a reindex due to NameIndex changes.
+		const int MINOR_VERSION = 1;
+
 		private IFileEventBackend event_backend;
 		private FileSystemModel model;
 
-		public FileSystemQueryable () : base ("FileSystemIndex")
+		public FileSystemQueryable () : base ("FileSystemIndex", MINOR_VERSION)
 		{
 		}
 
