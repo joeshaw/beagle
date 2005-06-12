@@ -7,6 +7,7 @@ Best/BestWindow.cs
 glue/eggtrayicon.c
 ImLogViewer/ImLogViewer.cs
 ImLogViewer/ImLogViewer.glade
+ImLogViewer/ImLogWindow.cs
 Tiles/TileDocs.cs
 Tiles/TileFolder.cs
 Tiles/TileImLog.cs
