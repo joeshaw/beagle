@@ -36,6 +36,6 @@ namespace Beagle.Util {
 			get { return "@KDE_PREFIX@"; }
 		}
 
-		static public const string XattrLib = "@XATTR_LIB@";
+		public const string XattrLib = "@XATTR_LIB@";
 	}	  
 }
