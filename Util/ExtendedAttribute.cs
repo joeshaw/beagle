@@ -42,25 +42,25 @@ namespace Beagle.Util {
 		// Linux/FreeBSD attributes transparently.
 
 		// Linux xattrs
-		[DllImport ("libc", SetLastError=true)]
+		[DllImport (ExternalStringsHack.XattrLib, SetLastError=true)]
 		static extern int lsetxattr (string path, string name, byte[] value, uint size, int flags);
 
-		[DllImport ("libc", SetLastError=true)]
+		[DllImport (ExternalStringsHack.XattrLib, SetLastError=true)]
 		static extern int lgetxattr (string path, string name, byte[] value, uint size);
 
-		[DllImport ("libc", SetLastError=true)]
+		[DllImport (ExternalStringsHack.XattrLib, SetLastError=true)]
 		static extern int lremovexattr (string path, string name);
 
 		// FreeBSD extattrs
 		// Very similar to Linux xattrs, but the namespace is provided as a
 		// parameter as opposed to a string prefix to the name.
-		[DllImport ("libc", SetLastError=true)]		
+		[DllImport (ExternalStringsHack.XattrLib, SetLastError=true)]		
 		static extern int extattr_set_link (string path, int attrnamespace, string attrname, byte[] value, uint size);
 
-		[DllImport ("libc", SetLastError=true)]
+		[DllImport (ExternalStringsHack.XattrLib, SetLastError=true)]
 		static extern int extattr_get_link (string path, int attrnamespace, string attrname, byte[] value, uint size);
 
-		[DllImport ("libc", SetLastError=true)]		
+		[DllImport (ExternalStringsHack.XattrLib, SetLastError=true)]		
 		static extern int extattr_delete_link (string path, int attrnamespace, string attrname);
 
 		private static string AddPrefix (string name)

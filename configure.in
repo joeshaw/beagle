@@ -50,9 +50,12 @@ done
 case "$target" in
   *-*-linux*)
     os=linux
+    AC_CHECK_LIB(attr, lsetxattr, XATTR_LIB="libattr",)
+    AC_CHECK_FUNC(lsetxattr, XATTR_LIB="libc",)
     ;;
   *-*-freebsd*)
     os=freebsd
+    AC_CHECK_FUNC(extattr_set_link, XATTR_LIB="libc")	
     ;;
   *)
     AC_MSG_ERROR([Unrecognised target OS: $target])
@@ -60,6 +63,14 @@ case "$target" in
 esac
 AM_CONDITIONAL(OS_LINUX, test "x$os" == "xlinux")
 AM_CONDITIONAL(OS_FREEBSD, test "x$os" == "xfreebsd")
+
+# check for xattr implementation
+if test "x$XATTR_LIB" = "x"; then
+    AC_MSG_ERROR([Could not find a support extended attribute implementation (tried libc and libattr)])
+fi
+AC_SUBST(XATTR_LIB)
+
+
 
 # check for wsdl
 AC_PATH_PROG(WSDL, wsdl)
@@ -506,6 +517,8 @@ po/Makefile.in
 
 echo "
 	Target OS:		${os}
+	Extended Attributes:	${XATTR_LIB}
+
 	Prefix:			${prefix}
 	GNOME Prefix:           ${GNOME_PREFIX}
 	KDE Prefix:		${kde_prefix_print}
