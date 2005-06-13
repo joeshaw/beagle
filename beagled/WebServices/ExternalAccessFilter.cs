@@ -120,8 +120,6 @@ namespace Beagle.WebService {
 										matcher.Rewrite = leaf; 
 
 										matchers.Add (matcher);
-										
-										Logger.Log.Debug("ExternalAccessFilter: Adding Match: " + matcher.Match + "," + matcher.Rewrite); 
 										break;										                															                															
                 					} 
 	               				} //end for                 				
@@ -142,6 +140,8 @@ namespace Beagle.WebService {
 				if (! sm.Match.StartsWith(FileUriPrefix)) {
 					sm.Match = FileUriPrefix + sm.Match + "/";
 					sm.Rewrite = HttpUriBase + sm.Rewrite + "/";
+										
+					Logger.Log.Debug("ExternalAccessFilter: Adding Match: " + sm.Match + "," + sm.Rewrite); 					
 				}
 		}
 		
