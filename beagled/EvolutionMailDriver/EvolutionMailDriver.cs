@@ -46,7 +46,6 @@ namespace Beagle.Daemon.EvolutionMailDriver {
 		public static Logger log = Logger.Get ("mail");
 		private string local_path, imap_path, imap4_path;
 
-		private SortedList watched = new SortedList ();
 		private MailCrawler crawler;
 
 		public EvolutionMailQueryable () : base ("MailIndex")
@@ -193,7 +192,6 @@ namespace Beagle.Daemon.EvolutionMailDriver {
 
 			// Get notification when an index or summary file changes
 			if (Inotify.Enabled) {
-				Inotify.Event += OnInotifyEvent;
 				Watch (this.local_path);
 				Watch (this.imap_path);
 				Watch (this.imap4_path);
@@ -239,30 +237,23 @@ namespace Beagle.Daemon.EvolutionMailDriver {
 				if (! dir.Exists)
 					continue;
 
-				int wd = Inotify.Watch (dir.FullName,
+				Inotify.Subscribe (dir.FullName, OnInotifyEvent,
 							Inotify.EventType.Create
 							| Inotify.EventType.Delete
 							| Inotify.EventType.MovedTo);
-				watched [wd] = dir.FullName;
 
 				foreach (DirectoryInfo subdir in dir.GetDirectories ())
 					queue.Enqueue (subdir);
 			}
 		}
 
-		private void Ignore (string path)
-		{
-			Inotify.Ignore (path);
-			watched.RemoveAt (watched.IndexOfValue (path));
-		}
-
-		private void OnInotifyEvent (int wd,
-					     string path,
+		private void OnInotifyEvent (Inotify.Watch watch,
+						 string path,
 					     string subitem,
 					     string srcpath,
 					     Inotify.EventType type)
 		{
-			if (subitem == "" || ! watched.Contains (wd))
+			if (subitem == "")
 				return;
 
 			string fullPath = Path.Combine (path, subitem);
@@ -273,7 +264,7 @@ namespace Beagle.Daemon.EvolutionMailDriver {
 			}
 
 			if ((type & Inotify.EventType.Delete) != 0 && (type & Inotify.EventType.IsDirectory) != 0) {
-				Ignore (fullPath);
+				watch.Unsubscribe ();
 				return;
 			}
 

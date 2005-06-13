@@ -35,75 +35,49 @@ namespace Beagle.Daemon.FileSystemQueryable {
 
 	public class InotifyBackend : IFileEventBackend {
 		
-		Hashtable watching = new Hashtable ();
 		FileSystemQueryable queryable;
 
 		public object WatchDirectories (string path)
 		{
-			int wd;
-
+			object watch = null;
 			try {
-				wd = Inotify.Watch (path, Inotify.EventType.Create);
-				watching [wd] = true;				
+				watch = Inotify.Subscribe (path, OnInotifyEvent, Inotify.EventType.Create);
 			}
 			catch (IOException) {
 				// We can race and files can disappear.  No big deal.
-				wd = -1;
 			}
-
-			return wd;
+			return watch;
 		}
 
 		public object WatchFiles (string path, object old_handle)
 		{
-			int wd;
-			int old_wd = -1;
-			if (old_handle != null)
-				old_wd = (int) old_handle;
-
+			object watch = null;
 			try {
-				wd = Inotify.Watch (path,
+				watch = Inotify.Subscribe (path, OnInotifyEvent,
 						    Inotify.EventType.Open
 						    | Inotify.EventType.Create
 						    | Inotify.EventType.Delete
 						    | Inotify.EventType.CloseWrite
 						    | Inotify.EventType.MovedFrom
 						    | Inotify.EventType.MovedTo);
-				watching [wd] = true;
-				if (old_wd >= 0 && old_wd != wd)
-					watching.Remove (old_wd);
 			}
 			catch (IOException) {
 				// We can race and files can disappear.  No big deal.
-				wd = -1;
 			}
-
-			return wd;
+			return watch;
 		}
 
 		public void Start (FileSystemQueryable queryable)
 		{
 			this.queryable = queryable;
-
-			Inotify.Event += OnInotifyEvent;
 		}
 
-		private void OnInotifyEvent (int               wd,
-					     string            path,
+		private void OnInotifyEvent (Inotify.Watch watch,
+						 string            path,
 					     string            subitem,
 					     string            srcpath,
 					     Inotify.EventType type)
 		{
-			// Filter out any events on unfamiliar watches
-			if (! watching.Contains (wd))
-				return;
-
-			// Clean up after removed watches
-			if ((type & Inotify.EventType.Ignored) != 0) {
-				watching.Remove (wd);
-				return;
-			}
-
 			string full_path;
 			if (subitem.Length == 0)
 				full_path = path;

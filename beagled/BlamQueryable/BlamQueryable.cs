@@ -44,7 +44,6 @@ namespace Beagle.Daemon.BlamQueryable {
 
 		string blam_dir;
 		const string blam_file = "collection.xml";
-		int blam_wd = -1;
 
 		public BlamQueryable () : base ("BlamIndex")
 		{
@@ -69,8 +68,7 @@ namespace Beagle.Daemon.BlamQueryable {
 
 			if (Inotify.Enabled) {
 				Inotify.EventType mask = Inotify.EventType.CloseWrite;
-				blam_wd = Inotify.Watch (blam_dir, mask);
-				Inotify.Event += OnInotifyEvent;
+				Inotify.Subscribe (blam_dir, OnInotifyEvent, mask);
 			} else {
 				FileSystemWatcher fsw = new FileSystemWatcher ();
 			       	fsw.Path = blam_dir;
@@ -99,15 +97,12 @@ namespace Beagle.Daemon.BlamQueryable {
 		/////////////////////////////////////////////////
 
 		// Modified event using Inotify
-		private void OnInotifyEvent (int wd,
+		private void OnInotifyEvent (Inotify.Watch watch,
 					     string path,
 					     string subitem,
 					     string srcpath,
 					     Inotify.EventType type)
 		{
-			if (wd != blam_wd)
-				return;
-
 			if (subitem != blam_file)
 				return;
 

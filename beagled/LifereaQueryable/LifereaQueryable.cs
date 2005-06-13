@@ -42,7 +42,6 @@ namespace Beagle.Daemon.LifereaQueryable {
 		private static Logger log = Logger.Get ("LifereaQueryable");
 
 		string liferea_dir;
-		int liferea_wd = -1;
 
 		public LifereaQueryable () : base ("LifereaIndex")
 		{
@@ -70,8 +69,7 @@ namespace Beagle.Daemon.LifereaQueryable {
 			if (Inotify.Enabled) {
 				Inotify.EventType mask = Inotify.EventType.CloseWrite;
 
-				liferea_wd = Inotify.Watch (liferea_dir, mask);
-				Inotify.Event += OnInotifyEvent;
+				Inotify.Subscribe (liferea_dir, OnInotifyEvent, mask);
 			} else {
                                 FileSystemWatcher fsw = new FileSystemWatcher ();
                                 fsw.Path = liferea_dir;
@@ -113,15 +111,12 @@ namespace Beagle.Daemon.LifereaQueryable {
 
                 // Modified/Created event using Inotify
 
-		private void OnInotifyEvent (int wd,
+		private void OnInotifyEvent (Inotify.Watch watch,
 					     string path,
 					     string subitem,
 					     string srcpath,
 					     Inotify.EventType type)
 		{
-			if (wd != liferea_wd)
-				return;
-
 			if (subitem == "")
 				return;
 

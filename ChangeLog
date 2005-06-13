@@ -1,3 +1,15 @@
+2005-06-14  Daniel Drake  <dsd@gentoo.org>
+
+	* Util/Inotify.cs: Implement subscription system.
+	* Util/Conf.cs, beagled/BlamQueryable/BlamQueryable.cs,
+	beagled/EvolutionMailDriver/EvolutionMailDriver.cs,
+	beagled/FileSystemQueryable/InotifyBackend.cs,
+	beagled/GaimLogQueryable/GaimLogQueryable.cs,
+	beagled/LauncherQueryable/LauncherQueryable.cs,
+	beagled/LifereaQueryable/LifereaQueryable.cs,
+	beagled/TomboyQueryable/TomboyQueryable.cs: Update to work with
+	subscription system.
+
 2005-06-13  Daniel Drake  <dsd@gentoo.org>
 
 	* configure.in, Util/ExternalStringsHack.cs.in, Util/Makefile.am,

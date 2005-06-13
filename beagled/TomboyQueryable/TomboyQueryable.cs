@@ -40,7 +40,6 @@ namespace Beagle.Daemon.TomboyQueryable {
 		private static Logger log = Logger.Get ("TomboyQueryable");
 
 		string tomboy_dir;
-		int tomboy_wd = -1;
 
 		public TomboyQueryable () : base ("TomboyIndex")
 		{
@@ -66,8 +65,7 @@ namespace Beagle.Daemon.TomboyQueryable {
 					Inotify.EventType.MovedTo |
 					Inotify.EventType.MovedFrom;
 
-				tomboy_wd = Inotify.Watch (tomboy_dir, mask);
-				Inotify.Event += OnInotifyEvent;
+				Inotify.Subscribe (tomboy_dir, OnInotifyEvent, mask);
 			} else {
 				FileSystemWatcher fsw = new FileSystemWatcher ();
 				fsw.Path = tomboy_dir;
@@ -113,15 +111,12 @@ namespace Beagle.Daemon.TomboyQueryable {
 		/////////////////////////////////////////////////
 
 		// Modified/Created/Deleted event using Inotify
-		private void OnInotifyEvent (int wd,
+		private void OnInotifyEvent (Inotify.Watch watch,
 					     string path,
 					     string subitem,
 					     string srcpath,
 					     Inotify.EventType type)
 		{
-			if (wd != tomboy_wd)
-				return;
-
 			if (subitem == "")
 				return;
 

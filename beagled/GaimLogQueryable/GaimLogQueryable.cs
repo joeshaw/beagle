@@ -44,8 +44,6 @@ namespace Beagle.Daemon.GaimLogQueryable {
 
 		private int polling_interval_in_seconds = 60;
 		
-		Hashtable watched = new Hashtable ();
-
 		private GaimLogCrawler crawler;
 
 		public GaimLogQueryable () : base ("GaimLogIndex")
@@ -68,10 +66,8 @@ namespace Beagle.Daemon.GaimLogQueryable {
 			Stopwatch stopwatch = new Stopwatch ();
 			stopwatch.Start ();
 
-			if (Inotify.Enabled) {
-				Inotify.Event += OnInotifyEvent;
+			if (Inotify.Enabled)
 				Watch (log_dir);
-			}
 
 			crawler = new GaimLogCrawler (log_dir);
 			Crawl ();
@@ -130,11 +126,9 @@ namespace Beagle.Daemon.GaimLogQueryable {
 				DirectoryInfo dir = queue.Dequeue () as DirectoryInfo;
 				
 				// Setup watches on the present directory.
-				int wd = Inotify.Watch (dir.FullName,
+				Inotify.Subscribe (dir.FullName, OnInotifyEvent,
 							Inotify.EventType.Create | Inotify.EventType.Modify);
 				
-				watched [wd] = true;
-
 				// Add all subdirectories to the queue so their files can be indexed.
 				foreach (DirectoryInfo subdir in dir.GetDirectories ())
 					queue.Enqueue (subdir);
@@ -155,13 +149,13 @@ namespace Beagle.Daemon.GaimLogQueryable {
 
 		/////////////////////////////////////////////////
 
-		private void OnInotifyEvent (int wd,
+		private void OnInotifyEvent (Inotify.Watch watch,
 					     string path,
 					     string subitem,
 					     string srcpath,
 					     Inotify.EventType type)
 		{
-			if (subitem == "" || ! watched.Contains (wd))
+			if (subitem == "")
 				return;
 
 			string full_path = Path.Combine (path, subitem);

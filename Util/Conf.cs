@@ -44,7 +44,7 @@ namespace Beagle.Util {
 		private static Hashtable mtimes;
 		private static Hashtable subscriptions;
 		private static bool watching_for_updates;
-		private static int update_wd;
+		private static bool update_watch_present;
 		private static BindingFlags method_search_flags = BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.InvokeMethod;
 
 		public delegate void ConfigUpdateHandler (Section section);
@@ -66,22 +66,23 @@ namespace Beagle.Util {
 
 		public static void WatchForUpdates ()
 		{
-			if (update_wd > 0)
+			// Make sure we don't try and watch for updates more than once
+			if (update_watch_present)
 				return;
 
 			if (Inotify.Enabled) {
-				Inotify.Event += OnInotifyEvent;
-				update_wd = Inotify.Watch (configs_dir, Inotify.EventType.Create | Inotify.EventType.Modify);
+				Inotify.Subscribe (configs_dir, OnInotifyEvent, Inotify.EventType.Create | Inotify.EventType.Modify);
 			} else {
 				// Poll for updates every 60 secs
 				GLib.Timeout.Add (60000, new GLib.TimeoutHandler (CheckForUpdates));
-				update_wd = 1;
 			}
+
+			update_watch_present = true;
 		}
 
-		private static void OnInotifyEvent (int wd, string path, string subitem, string srcpath, Inotify.EventType type)
+		private static void OnInotifyEvent (Inotify.Watch watch, string path, string subitem, string srcpath, Inotify.EventType type)
 		{
-			if (wd != update_wd || subitem == "" || watching_for_updates == false)
+			if (subitem == "" || watching_for_updates == false)
 				return;
 
 			Load ();

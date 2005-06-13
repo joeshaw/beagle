@@ -40,9 +40,7 @@ namespace Beagle.Util {
 
 	public class Inotify {
 
-		public delegate void Handler (int wd, string path, string subitem, string srcpath, EventType type);
-
-		public static event Handler Event;
+		public delegate void InotifyCallback (Watch watch, string path, string subitem, string srcpath, EventType type);
 
 		/////////////////////////////////////////////////////////////////////////////////////
 
@@ -178,7 +176,44 @@ namespace Beagle.Util {
 
 		/////////////////////////////////////////////////////////////////////////////////////
 
-		private class Watched {
+		public interface Watch {
+			void Unsubscribe ();
+		}
+
+		private class WatchInternal : Watch {
+			private InotifyCallback callback;
+			private EventType mask;
+			private WatchInfo watchinfo;
+			private bool is_subscribed;
+
+			public InotifyCallback Callback {
+				get { return callback; }
+			}
+
+			public EventType Mask {
+				get { return mask; }
+			}
+
+			public WatchInternal (InotifyCallback callback, EventType mask, WatchInfo watchinfo)
+			{
+				this.callback = callback;
+				this.mask = mask;
+				this.watchinfo = watchinfo;
+				this.is_subscribed = true;
+			}
+
+			public void Unsubscribe ()
+			{
+				if (!this.is_subscribed)
+					return;
+
+				Inotify.Unsubscribe (watchinfo, this);
+				this.is_subscribed = false;
+			}
+
+		}
+
+		private class WatchInfo {
 			public int       Wd;
 			public string    Path;
 			public bool      IsDirectory;
@@ -188,20 +223,22 @@ namespace Beagle.Util {
 			public EventType FilterSeen;
 
 			public ArrayList Children;
-			public Watched   Parent;
+			public WatchInfo Parent;
+
+			public ArrayList Subscribers;
 		}
 
 		static Hashtable watched_by_wd = new Hashtable ();
 		static Hashtable watched_by_path = new Hashtable ();
-		static Watched   last_watched = null;
+		static WatchInfo last_watched = null;
 
 		private class PendingMove {
-			public Watched   Watch;
+			public WatchInfo Watch;
 			public string    SrcName;
 			public DateTime  Time;
 			public uint      Cookie;
 
-			public PendingMove (Watched watched, string srcname, DateTime time, uint cookie) {
+			public PendingMove (WatchInfo watched, string srcname, DateTime time, uint cookie) {
 				Watch = watched;
 				SrcName = srcname;
 				Time = time;
@@ -219,17 +256,17 @@ namespace Beagle.Util {
 			return watched_by_path.Contains (path);
 		}
 
-		// Filter Watched items when we do the Lookup.
+		// Filter WatchInfo items when we do the Lookup.
 		// We do the filtering here to avoid having to acquire
 		// the watched_by_wd lock yet again.
-		static private Watched Lookup (int wd, EventType event_type)
+		static private WatchInfo Lookup (int wd, EventType event_type)
 		{
 			lock (watched_by_wd) {
-				Watched watched;
+				WatchInfo watched;
 				if (last_watched != null && last_watched.Wd == wd)
 					watched = last_watched;
 				else {
-					watched = watched_by_wd [wd] as Watched;
+					watched = watched_by_wd [wd] as WatchInfo;
 					if (watched != null)
 						last_watched = watched;
 				}
@@ -244,7 +281,7 @@ namespace Beagle.Util {
 		}
 
 		// The caller has to handle all locking itself
-		static private void Forget (Watched watched)
+		static private void Forget (WatchInfo watched)
 		{
 			if (last_watched == watched)
 				last_watched = null;
@@ -254,9 +291,11 @@ namespace Beagle.Util {
 			watched_by_path.Remove (watched.Path);
 		}
 
-		static public int Watch (string path, EventType mask, EventType initial_filter)
+		static public Watch Subscribe (string path, InotifyCallback callback, EventType mask, EventType initial_filter)
 		{
-			int wd = -1;
+			WatchInternal watch;
+			WatchInfo watched;
+			EventType mask_orig = mask;
 
 			if (!Path.IsPathRooted (path))
 				path = Path.GetFullPath (path);
@@ -268,47 +307,63 @@ namespace Beagle.Util {
 				throw new IOException (path);
 
 			lock (watched_by_wd) {
-				Watched watched;
+				bool new_watch_needed = true;
 
-				watched = watched_by_path [path] as Watched;
+				watched = watched_by_path [path] as WatchInfo;
+
 				if (watched != null) {
-					if (watched.Mask == mask)
-						return watched.Wd;
-					Forget (watched);
+					// We already have a WatchInfo object on this path, so we'll reuse it.
+
+					// Does the existing watch already satisfy the event requirements for this subscriber?
+					if ((watched.Mask & mask) == mask)
+						new_watch_needed = false;
+					else
+						mask |= watched.Mask;
+				} else {
+					// We need an entirely new WatchInfo object
+					watched = new WatchInfo ();
+					watched.Path = path;
+					watched.IsDirectory = is_directory;
+					watched.Subscribers = new ArrayList ();
+					watched.Children = new ArrayList ();
+					DirectoryInfo dir = new DirectoryInfo (path);
+					watched.Parent = watched_by_path [dir.Parent.ToString ()] as WatchInfo;
+					if (watched.Parent != null)
+						watched.Parent.Children.Add (watched);
+					watched_by_path [watched.Path] = watched;
 				}
 
-				wd = inotify_glue_watch (dev_inotify, path, mask | base_mask);
-				if (wd < 0) {
-					string msg = String.Format ("Attempt to watch {0} failed!", path);
-					throw new IOException (msg);
+				if (new_watch_needed) {
+					int wd = -1;
+
+					// We rely on the behaviour that watching the same inode twice won't result
+					// in the wd value changing.
+					// (no need to worry about watched_by_wd being polluted with stale watches)
+					
+					wd = inotify_glue_watch (dev_inotify, path, mask | base_mask);
+					if (wd < 0) {
+						string msg = String.Format ("Attempt to watch {0} failed!", path);
+						throw new IOException (msg);
+					}
+
+					watched.Wd = wd;
+					watched_by_wd [watched.Wd] = watched;
 				}
 
-				watched = new Watched ();
-				watched.Wd = wd;
-				watched.Path = path;
-				watched.IsDirectory = is_directory;
 				watched.Mask = mask;
-
 				watched.FilterMask = initial_filter;
 				watched.FilterSeen = 0;
 
-				watched.Children = new ArrayList ();
-
-				DirectoryInfo dir = new DirectoryInfo (path);
-				watched.Parent = watched_by_path [dir.Parent.ToString ()] as Watched;
-				if (watched.Parent != null)
-					watched.Parent.Children.Add (watched);
-
-				watched_by_wd [watched.Wd] = watched;
-				watched_by_path [watched.Path] = watched;
+				watch = new WatchInternal (callback, mask_orig, watched);
+				watched.Subscribers.Add (watch);
 			}
 
-			return wd;
+			return watch;
 		}
-
-		public static int Watch (string path, EventType mask)
+		
+		static public Watch Subscribe (string path, InotifyCallback callback, EventType mask)
 		{
-			return Watch (path, mask, 0);
+			return Subscribe (path, callback, mask, 0);
 		}
 
 		static public EventType Filter (string path, EventType mask)
@@ -318,8 +373,8 @@ namespace Beagle.Util {
 			path = Path.GetFullPath (path);
 
 			lock (watched_by_wd) {
-				Watched watched;
-				watched = watched_by_path [path] as Watched;
+				WatchInfo watched;
+				watched = watched_by_path [path] as WatchInfo;
 
 				seen = watched.FilterSeen;
 				watched.FilterMask = mask;
@@ -329,33 +384,22 @@ namespace Beagle.Util {
 			return seen;
 		}
 
-		static public int Ignore (string path)
+		static private void Unsubscribe (WatchInfo watched, WatchInternal watch)
 		{
-			path = Path.GetFullPath (path);
+			watched.Subscribers.Remove (watch);
 
-			int wd = 0;
-			lock (watched_by_wd) {
+			// Other subscribers might still be around			
+			if (watched.Subscribers.Count > 0)
+				return;
 
-				Watched watched;
-				watched = watched_by_path [path] as Watched;
-
-				// If we aren't actually watching that path,
-				// silently return.
-				if (watched == null)
-					return 0;
-
-				wd = watched.Wd;
-
-				int retval = inotify_glue_ignore (dev_inotify, wd);
-				if (retval < 0) {
-					string msg = String.Format ("Attempt to ignore {0} failed!", watched.Path);
-					throw new IOException (msg);
-				}
-
-				Forget (watched);
+			int retval = inotify_glue_ignore (dev_inotify, watched.Wd);
+			if (retval < 0) {
+				string msg = String.Format ("Attempt to ignore {0} failed!", watched.Path);
+				throw new IOException (msg);
 			}
 
-			return wd;
+			Forget (watched);
+			return;
 		}
 		
 
@@ -473,7 +517,7 @@ namespace Beagle.Util {
 
 		// Update the watched_by_path hash and the path stored inside the watch
 		// in response to a move event.
-		static private void MoveWatch (Watched watch, string name)
+		static private void MoveWatch (WatchInfo watch, string name)		
 		{
 			watched_by_path.Remove (watch.Path);
 			watch.Path = name;
@@ -487,7 +531,7 @@ namespace Beagle.Util {
 		// all of its subdirectories, their subdirectories, and so on.
 		static private void HandleMove (string srcpath, string dstpath)
 		{
-			Watched start = watched_by_path [srcpath] as Watched;	// not the same as src!
+			WatchInfo start = watched_by_path [srcpath] as WatchInfo;	// not the same as src!
 			if (start == null) {
 				Console.WriteLine ("Lookup failed for {0}", srcpath);
 				return;
@@ -499,9 +543,9 @@ namespace Beagle.Util {
 			Queue queue = new Queue();
 			queue.Enqueue (start);
 			do {
-				Watched target = queue.Dequeue () as Watched;
+				WatchInfo target = queue.Dequeue () as WatchInfo;
 				for (int i = 0; i < target.Children.Count; i++) {
-					Watched child = target.Children[i] as Watched;
+					WatchInfo child = target.Children[i] as WatchInfo;
 					string name = Path.Combine (dstpath, child.Path.Substring (start.Path.Length + 1));
 					MoveWatch (child, name);
 					queue.Enqueue (child);
@@ -512,7 +556,7 @@ namespace Beagle.Util {
 			MoveWatch (start, dstpath);
 		}
 
-		static private void SendEvent (Watched watched, string filename, string srcpath, EventType mask)
+		static private void SendEvent (WatchInfo watched, string filename, string srcpath, EventType mask)
 		{
 			// Does the watch care about this event?
 			if ((watched.Mask & mask) == 0)
@@ -530,14 +574,17 @@ namespace Beagle.Util {
 						   srcpath != null ? "(from " + srcpath + ")" : "");
 			}
 
-			if (Event != null) {
+			if (watched.Subscribers == null)
+				return;
+
+			foreach (WatchInternal watch in watched.Subscribers)
 				try {
-					Event (watched.Wd, watched.Path, filename, srcpath, mask);
+					if (watch.Callback != null && (watch.Mask & mask) != 0)
+						watch.Callback (watch, watched.Path, filename, srcpath, mask);
 				} catch (Exception e) {
-					Logger.Log.Error ("Caught exception inside Inotify.Event");
+					Logger.Log.Error ("Caught exception executing Inotify callbacks");
 					Logger.Log.Error (e); 
 				}
-			}
 		}
 
 		////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -668,7 +715,7 @@ namespace Beagle.Util {
 				// Before we get any further, mark it
 				next_event.Dispatched = true;
 
-				Watched watched;
+				WatchInfo watched;
 				watched = Lookup (next_event.Wd, next_event.Type);
 				if (watched == null)
 					continue;
@@ -677,7 +724,7 @@ namespace Beagle.Util {
 
 				// If this event is a paired MoveTo, there is extra work to do.
 				if ((next_event.Type & EventType.MovedTo) != 0 && next_event.PairedMove != null) {
-					Watched paired_watched;
+					WatchInfo paired_watched;
 					paired_watched = Lookup (next_event.PairedMove.Wd, next_event.PairedMove.Type);
 
 					if (paired_watched != null) {
@@ -724,7 +771,7 @@ namespace Beagle.Util {
 				string path = (string) to_watch.Dequeue ();
 
 				Console.WriteLine ("Watching {0}", path);
-				Inotify.Watch (path, Inotify.EventType.All);
+				Inotify.Subscribe (path, null, Inotify.EventType.All);
 
 				if (recursive) {
 					foreach (string subdir in DirectoryWalker.GetDirectories (path))
