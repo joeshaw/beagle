@@ -91,7 +91,11 @@ AM_GLIB_GNU_GETTEXT
 PKG_CHECK_MODULES(SQLITE, sqlite)
 
 # Needed by glue/screensaver-glue.c
-AC_CHECK_HEADERS(X11/extensions/scrnsaver.h,, [AC_MSG_ERROR([Unable to find scrnsaver.h.  You probably need to install XFree86 development packages])])
+# The OLD_CFLAGS/CFLAGS hack is needed to build on Ubuntu Breezy Badger 
+OLD_CFLAGS="$CFLAGS"
+CFLAGS="$CFLAGS -I/usr/X11R6/include"
+AC_CHECK_HEADER(X11/extensions/scrnsaver.h,, [AC_MSG_ERROR([Unable to find scrnsaver.h.  You probably need to install XFree86 development packages])])
+CFLAGS="$OLD_CFLAGS"
 
 # We pinvoke into gnome-vfs directly from Util/gnome.cs and Util/Vfs.cs, and
 # we get the GNOME prefix from libgnome-2.0
