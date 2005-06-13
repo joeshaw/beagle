@@ -416,16 +416,30 @@ public abstract class Summary : IEnumerable {
 		
 		public SummaryHeader (FileStream f)
 		{
+			bool legacy;
+
 			version = Decode.FixedInt (f);
+
+			if (version > 0xff && (version & 0xff) < 12)
+				throw new Exception ("Summary header version too low");
+
+			if (version < 0x100 && version >= 13)
+				legacy = false;
+			else
+				legacy = true;
+
 			flags   = Decode.FixedInt (f);
 			nextuid = Decode.FixedInt (f);
 			time    = Decode.Time (f);
 			count   = Decode.FixedInt (f);
-			unread  = Decode.FixedInt (f);
-			deleted = Decode.FixedInt (f);
-			junk    = Decode.FixedInt (f);
 
-			//Console.WriteLine ("V={0} time={1}, count={2} unread={3} deleted={4} junk={5}", version, time, count, unread, deleted, junk);
+			if (!legacy) {
+				unread  = Decode.FixedInt (f);
+				deleted = Decode.FixedInt (f);
+				junk    = Decode.FixedInt (f);
+			}
+
+			//Console.WriteLine ("V={0} ({1}) time={2}, count={3} unread={4} deleted={5} junk={6}", version, version & 0xff, time, count, unread, deleted, junk);
 		}
 	}
 
@@ -439,6 +453,8 @@ public abstract class Summary : IEnumerable {
 			local_version = Decode.FixedInt (f);
 			mbox_version = Decode.FixedInt (f);
 			folder_size = Decode.FixedInt (f);
+
+			//Console.WriteLine ("local_version={0}  mbox_version={1}  folder_size={2}", local_version, mbox_version, folder_size);
 		}
 	}
 
@@ -446,14 +462,22 @@ public abstract class Summary : IEnumerable {
 		
 		public ImapSummaryHeader (FileStream f) : base (f)
 		{
-			int version = Decode.FixedInt (f);
+			// Check for legacy version
+			if (base.version != 0x30c) { // 780
+				int version = Decode.FixedInt (f);
 
-			// Right now we only support summary versions 1 through 3
-			if (version > 3)
-				throw new Exception (String.Format ("Reported summary version ({0}) is too new", version));
+				//Console.WriteLine ("imap version={0}", version);
 
-			if (version == 2)
-				Decode.FixedInt (f);
+				if (version < 0)
+					throw new Exception ("IMAP summary version too low");
+
+				// Right now we only support summary versions 1 through 3
+				if (version > 3)
+					throw new Exception (String.Format ("Reported summary version ({0}) is too new", version));
+
+				if (version == 2)
+					Decode.FixedInt (f);
+			}
 
 			// validity
 			Decode.SkipFixedInt (f);
