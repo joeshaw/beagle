@@ -40,7 +40,8 @@ namespace Beagle.Filters {
 			Python_Style,
 			Fortran_Style,
 			Pascal_Style,
-			Lisp_Style
+			Lisp_Style,
+			Matlab_Style
 		};
 		
 		protected LangType SrcLangType;
@@ -120,7 +121,8 @@ namespace Beagle.Filters {
 					}
 				} else if (str[index] == '#' && SrcLangType == LangType.Python_Style ||
 					   str[index] == '!' && SrcLangType == LangType.Fortran_Style ||
-					   str[index] == ';' && SrcLangType == LangType.Lisp_Style) {
+					   str[index] == ';' && SrcLangType == LangType.Lisp_Style ||
+					   str[index] == '%' && SrcLangType == LangType.Matlab_Style) {
 					if (SrcLineType == LineType.None) {
 						SrcLineType = LineType.SingleLineComment;
 						token.Remove (0, token.Length);

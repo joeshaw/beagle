@@ -42,7 +42,9 @@ CSFILES = 				\
 	$(srcdir)/FilterAbiword.cs	\
 	$(srcdir)/FilterSpreadsheet.cs	\
 	$(srcdir)/FilterJs.cs		\
-	$(srcdir)/FilterLisp.cs
+	$(srcdir)/FilterLisp.cs		\
+	$(srcdir)/FilterMatlab.cs	\
+	$(srcdir)/FilterScilab.cs	
 
 if ENABLE_GSF_SHARP
 CSFILES += 				\
