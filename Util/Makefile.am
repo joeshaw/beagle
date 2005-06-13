@@ -39,8 +39,10 @@ $(EXTSTR): $(EXTSTR_IN)
 CSFILES = 			        	\
 	$(srcdir)/camel.cs              	\
 	$(srcdir)/CommandLineFu.cs		\
+	$(srcdir)/CompatFileChooser.cs		\
 	$(srcdir)/Conf.cs			\
 	$(srcdir)/DirectoryWalker.cs		\
+	$(srcdir)/Evolution.cs			\
 	$(srcdir)/ExceptionHandlingThread.cs	\
 	$(srcdir)/ExifData.cs			\
 	$(srcdir)/ExtendedAttribute.cs  	\
@@ -52,6 +54,7 @@ CSFILES = 			        	\
 	$(srcdir)/gnome.cs              	\
 	$(srcdir)/GtkUtils.cs			\
 	$(srcdir)/GuidFu.cs			\
+	$(srcdir)/HigMessageDialog.cs		\
 	$(srcdir)/ImBuddy.cs              	\
 	$(srcdir)/ImLog.cs              	\
 	$(srcdir)/Inotify.cs			\
