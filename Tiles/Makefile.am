@@ -78,7 +78,7 @@ RESOURCEFILES =					\
 
 if ENABLE_WEBSERVICES
 CSFILES += $(srcdir)/TileNetwork.cs
-RESOURCEFILES += template-network.html
+RESOURCEFILES += $(srcdir)/template-network.html
 endif
 
 # Makefile-fu to map /path/filename to -resource:/path/filename,filename
@@ -96,9 +96,11 @@ install-data-local: $(TARGET)
 uninstall-local:
 	rm -f $(DESTDIR)$(pkglibdir)/$(TARGET)
 
-EXTRA_DIST =			\
-	$(CSFILES)		\
-	$(RESOURCEFILES)	\
+EXTRA_DIST =				\
+	$(CSFILES)			\
+	$(RESOURCEFILES)		\
+	$(srcdir)/TileNetwork.cs	\
+	$(srcdir)/template-network.html	\
 	TranslationHack.cs
 
 CLEANFILES =			\

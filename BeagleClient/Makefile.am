@@ -56,8 +56,9 @@ install-data-local: $(TARGET)
 uninstall-local:
 	rm -f $(DESTDIR)$(pkglibdir)/$(TARGET)
 
-EXTRA_DIST =		\
-	$(CSFILES)	\
+EXTRA_DIST =			\
+	$(CSFILES)		\
+	$(srcdir)/NetworkHit.cs	\
 	$(EXTSTR_IN)
 
 CLEANFILES =		\
