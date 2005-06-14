@@ -78,8 +78,11 @@ namespace Beagle.Tile {
 			
 			Template["NetworkedBeagleUrl"] = "http://" + hostNamePort + "/beagle/search.aspx";
 			
-		    if (Hit is NetworkHit) 
-				Template["Snippet"] = ((NetworkHit)this.Hit).snippet;								
+			string snippet = null;
+			if (Hit is NetworkHit) 
+				snippet = ((NetworkHit)this.Hit).snippet;
+
+			Template["Snippet"] = (snippet == null) ? "":snippet;								
 		}
 	}	
 }
