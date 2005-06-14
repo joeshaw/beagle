@@ -58,6 +58,7 @@ RESOURCEFILES =					\
 	$(srcdir)/mail-read.png			\
 	$(srcdir)/mail-replied.png		\
 	$(srcdir)/music.png			\
+	$(srcdir)/netbeagle.png			\
 	$(srcdir)/note.png			\
 	$(srcdir)/person.png			\
 	$(srcdir)/rss.png			\
@@ -69,10 +70,6 @@ RESOURCEFILES =					\
 	$(srcdir)/trayicon.png			\
 	$(srcdir)/white.png			\
 	$(srcdir)/emblem-calendar.png
-
-if ENABLE_WEBSERVICES
-RESOURCEFILES +=	$(srcdir)/netbeagle.png	
-endif
 
 # Makefile-fu to map /path/filename to -resource:/path/filename,filename
 RESOURCES = $(join $(RESOURCEFILES:%=-resource:%,),$(notdir $(RESOURCEFILES)))
