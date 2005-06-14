@@ -1,4 +1,71 @@
 
+Version 0.0.11
+June 14, 2005
+
+Daemon/Infrastructure:
+* Added a shiny new configuration system (Daniel Drake)
+* Collect disk I/O statistics (Robert Love)
+* Backported TermEnum optimizations from SVN Lucene (Lukas Lipka)
+* Clean up the startup/shutdown quite a bit so that the daemon is ready
+  to listen to requests almost immediately, so that early shutdowns are
+  completed in a timely fashion, and to remove hacks from calling the
+  remote shutdown method (Joe Shaw)
+* Tons of portability fixes for FreeBSD (Jean-Yves Lefort,
+  Joe, Daniel Drake)
+* Fix crashes related to early disconnects from the server (Joe)
+* Support extended attributes through libattr if not provided by
+  libc (Daniel)
+* Inotify subsciption system (Daniel)
+* Properly handle exceptions when we walk a directory with strange
+  permissions (Jon Trowbridge)
+* If we are on a laptop running from battery power, don't speed up
+  indexing when the system is idle (Jon)
+* Sqlite locking fixes (Jon)
+* Tons of query fixes (Jon)
+* NameIndex optimizations (Jon)
+
+Backends:
+* Support additional date formats in the vcard Rev field and catch
+  exceptions on unknown ones (Joe)
+* Index flags from mbox mail (Joe)
+* Camel summary fixes (Joe)
+* Assorted property fixes (Jon)
+
+Filters:
+* CHM Filter (Miguel Cabrera)
+* Matlab filter (Damodharan R)
+* Scilab filter (Damodharan R)
+
+UI/Tools:
+* beagle-config utility (Daniel)
+* Better handling of unchanged hits in Best (Lukas)
+* IM Log Viewer clean-ups (Lukas)
+* Present the Best window instead of just showing it; this should fix
+  problems where the window pops up behind other windows (Joe)
+* Fix a crasher in Best that amazingly only one person ever saw but
+  everyone should have seen (Joe)
+
+Web Services:
+* Added new web-services based support for networked beagleds (KN Vijay)
+* Added support for exporting multiple folders for public webservice
+  access (Vijay)
+* Fixes to filtering/translating logic for external access to
+  web/web-service interface (Vijay)
+* Set source for network hits to Network (Vijay)
+* Added snippet support (Vijay)
+
+Everything Else:
+* Add library mappings for certain GNOME libraries so that devel
+  packages aren't required (Brandon Hale)
+* Updated British English translation (Christopher Orr)
+* Added Bulgarian translation (Rostislav Raykov)
+* Updated Canadian English translation (Adam Weinberger)
+* Updated Dutch translation (Wouter Bolsterlee)
+* Added French translation (Christophe Merlet)
+* All the stuff I forgot (All of the people I forgot)
+
+------------------------------------------------------
+
 Version 0.0.10
 May 30, 2005
 
