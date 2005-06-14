@@ -477,10 +477,13 @@ public abstract class Summary : IEnumerable {
 
 				if (version == 2)
 					Decode.FixedInt (f);
-			}
 
-			// validity
-			Decode.SkipFixedInt (f);
+				// validity
+				Decode.SkipFixedInt (f);
+			} else {
+				// validity
+				Decode.UInt (f);
+			}
 		}
 	}
 	
