@@ -56,7 +56,7 @@ namespace Beagle.Tile {
 
 			buddy = list.Search (Hit ["fixme:speakingto"]);
 			if (buddy != null) {
-				Console.WriteLine ("Found buddy info for {0}, icon at {1}", buddy.Alias, buddy.BuddyIconLocation);
+				// Console.WriteLine ("Found buddy info for {0}, icon at {1}", buddy.Alias, buddy.BuddyIconLocation);
 				email = GetEmailForName (buddy.Alias);
 			}
 		}
@@ -105,6 +105,15 @@ namespace Beagle.Tile {
 			} else {
 				Template["Icon"] = Images.GetHtmlSource ("gnome-gaim.png", "image/png");
 			}
+
+#if ENABLE_GALAGO
+			if (Hit ["fixme:protocol"] != "aim")
+				return;
+
+			string status = Presence.GetPresence (Hit ["fixme:protocol"], Hit["fixme:speakingto"]);
+			if (status != null && status != "")
+				Template ["Presence"] = status;
+#endif
 		}
 
 #if ENABLE_EVO_SHARP
@@ -161,50 +170,6 @@ namespace Beagle.Tile {
 
 			return null;
 		}
-
-#if false
-		private string HighlightOrNull (string haystack, string [] needles)
-		{
-			string [] highlight_start_list = {"<font color=red>",
-							  "<font color=orange>",
-							  "<font color=green>",
-							  "<font color=blue>"};
-
-			string highlight_end   = "</font>";
-
-			string hili = haystack;
-			bool dirty = false;
-			int hicolor = -1;
-
-			foreach (string needle in needles) {
-				string h_up = hili.ToUpper ();
-				string n_up = needle.ToUpper ();
-
-				hicolor = (hicolor + 1) % 4;
-				string highlight_start = highlight_start_list [hicolor];
-				
-				int ni = h_up.IndexOf (n_up);
-				if (ni == -1)
-					continue;
-
-				while (ni != -1) {
-					hili = hili.Insert (ni, highlight_start);
-					hili = hili.Insert (ni + highlight_start.Length + needle.Length, highlight_end);
-
-					h_up = hili.ToUpper ();
-					dirty = true;
-
-					ni = h_up.IndexOf (n_up, ni + highlight_start.Length + needle.Length + highlight_end.Length);
-				}
-			}
-
-			if (dirty) {
-				return hili;
-			}
-			else
-				return null;
-		}
-#endif
 
 		[TileAction]
 		public override void Open ()

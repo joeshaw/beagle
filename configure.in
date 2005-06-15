@@ -422,6 +422,14 @@ AM_CONDITIONAL([INSTALL_EPIPHANY_EXTENSION], [test "x$install_epiphany_extension
 
 dnl ----------------------------------------------
 
+dnl Galago
+
+PKG_CHECK_MODULES(GALAGO, galago-sharp, enable_galago=yes, enable_galago=no)
+AM_CONDITIONAL(ENABLE_GALAGO, test "x$enable_galago" = "xyes")
+AC_SUBST(GALAGO_LIBS)
+
+dnl ----------------------------------------------
+
 GTK_BINARY_VERSION=`$PKG_CONFIG --variable=gtk_binary_version gtk+-2.0`
 AC_SUBST(GTK_BINARY_VERSION)
 
@@ -533,6 +541,7 @@ echo "
 	Epiphany Extension?	${enable_epiphany_extension}
 	Mozilla Extension?	yes
 	wv1?			${enable_wv1}
+	galago?			${enable_galago}
 	libchm?			${has_libchm}
 
 	Local SqliteClient?	${use_local_sqlite}

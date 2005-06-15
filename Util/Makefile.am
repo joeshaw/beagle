@@ -99,6 +99,14 @@ ASSEMBLIES =					\
 	-r:Mono.Data.SqliteClient		\
 	-r:Mono.Posix
 
+if ENABLE_GALAGO
+CSFILES +=					\
+	$(srcdir)/Galago.cs
+
+ASSEMBLIES += 					\
+	$(GALAGO_LIBS)
+endif
+
 
 $(TARGET): $(CSFILES) $(GOOGLE_CS) $(EXTSTR)
 	$(CSC) -unsafe -out:$@ $(CSFLAGS) $^ $(ASSEMBLIES)
