@@ -16,6 +16,7 @@ using Mono.Posix;
 
 using Beagle;
 using Beagle.Tile;
+using Beagle.Util;
 
 namespace Best {
 
@@ -67,7 +68,7 @@ namespace Best {
 		
 		Gtk.EventBox eventbox;
 		Gtk.Tooltips tips;
-		Beagle.Util.GConfXKeybinder keybinder;
+		Beagle.Util.XKeybinder keybinder;
 
 		[DllImport ("libtrayiconglue")]
 		private static extern IntPtr egg_tray_icon_new (string name);
@@ -86,7 +87,9 @@ namespace Best {
 			Gdk.Pixbuf smalldog = Images.GetPixbuf ("best.png");
 			eventbox.Add (new Gtk.Image (smalldog.ScaleSimple (24, 24, Gdk.InterpType.Hyper)));
 
-			string tooltip = "Beagle Search (F12)";
+			KeyBinding binding = Conf.Searching.ShowSearchWindowBinding;
+
+			string tooltip = String.Format ("Beagle Search ({0})", binding.ToReadableString ());
 			tips = new Gtk.Tooltips ();
 			tips.SetTip (eventbox, tooltip, null);
 			tips.Enable ();
@@ -94,9 +97,8 @@ namespace Best {
 			Add (eventbox);
 			eventbox.ShowAll ();
 
-			keybinder = new Beagle.Util.GConfXKeybinder ();
-			keybinder.Bind ("/apps/Beagle/keybindings/show_beagle",
-					"F12",
+			keybinder = new Beagle.Util.XKeybinder ();
+			keybinder.Bind (binding.ToString (),
 					new EventHandler (ShowBeaglePressed));
 		}
 

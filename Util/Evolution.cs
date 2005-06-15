@@ -146,13 +146,23 @@ namespace Beagle.Util {
 
 		public override string ToString () 
 		{
-			string display = String.Format ("{0} - ({1})", name, path);
+			return GetNameForPath (path);
+		}
 
-			foreach (MailFolder child in Children) {
-				display += "\n\t " + child.ToString ().Replace ("\n","\n\t");
-			}
+		private static string[] crap = { "/imap/", "/local/", "/imap4/", "/folders", ".sbd"};
 
-			return display;
+		public static string GetNameForPath (string folder_path)
+		{
+			if (folder_path.StartsWith (System.IO.Path.Combine (Environment.GetEnvironmentVariable ("HOME"),".evolution/mail")))
+				folder_path = folder_path.Substring (System.IO.Path.Combine (Environment.GetEnvironmentVariable ("HOME"),".evolution/mail").Length);
+
+			if (folder_path.StartsWith ("/local/"))
+				folder_path = String.Format ("{0}/{1}", Catalog.GetString ("Local"), folder_path);
+
+			foreach (string shit in crap)
+				folder_path = folder_path.Replace (shit, "");
+
+			return folder_path;
 		}
 	}
 }

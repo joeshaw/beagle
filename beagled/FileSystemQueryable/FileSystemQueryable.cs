@@ -31,10 +31,8 @@ using System.Reflection;
 using System.Text;
 using System.Threading;
 
-
 using Beagle.Daemon;
 using Beagle.Util;
-
 
 namespace Beagle.Daemon.FileSystemQueryable {
 
@@ -275,7 +273,11 @@ namespace Beagle.Daemon.FileSystemQueryable {
 		public void StartWorker ()
 		{
 			event_backend.Start (this);
-			Conf.Subscribe (typeof (Conf.IndexingConfig), model.LoadConf);
+
+			model.LoadConf (null);
+			// FIXME: Handle configuration reload properly
+			//Conf.Subscribe (typeof (Conf.IndexingConfig), model.LoadConf);
+
 			log.Info ("FileSystemQueryable start-up thread finished");
 			// FIXME: Do we need to re-run queries when we are fully started?
 		}

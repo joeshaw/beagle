@@ -450,8 +450,24 @@ namespace Beagle.Daemon.FileSystemQueryable {
 
 			foreach (string root in Conf.Indexing.Roots)
 				AddRoot (root);
-
-			filter.AddPatternToIgnore (Conf.Indexing.IgnorePatterns);
+#if false
+			if (Conf.Indexing.IndexWindowsPartitions) {
+				foreach (MountEntry entry in SystemInformation.Mounts) {
+					if (entry.Filesystem == "ntfs" || entry.Filesystem == "vfat")
+						AddRoot (entry.Mountpoint);
+				}
+			}
+#endif 
+			foreach (ExcludeItem exclude_item in Conf.Indexing.Excludes) {
+				switch (exclude_item.Type) {
+				case ExcludeType.Path:
+					filter.AddPathToIgnore (exclude_item.Value);
+					break;
+				case ExcludeType.Pattern:
+					filter.AddPatternToIgnore (exclude_item.Value);
+					break;
+				}
+			}
 		}
 
 		// I'd rather not expose these, but we really can't avoid it.

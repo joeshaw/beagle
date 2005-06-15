@@ -1,6 +1,9 @@
 
 CSC = mcs -debug
 
+applicationsdir = $(datadir)/applications
+applications_DATA = beagle-settings.desktop
+
 LOCAL_ASSEMBLIES =			\
 	../Util/Util.dll		\
 	../BeagleClient/Beagle.dll
@@ -76,19 +79,34 @@ $(CONFIG_WRAPPER): $(WRAPPER_IN)
 	$(WRAPPER_SED) -e "s|\@target\@|$(CONFIG_TARGET)|g" < $(srcdir)/$(WRAPPER_IN) > $@
 	chmod +x $(CONFIG_WRAPPER)
 
+SETTINGS_TARGET    = Settings.exe
+SETTINGS_WRAPPER   = beagle-settings
+SETTINGS_CSFILES   = $(srcdir)/Settings.cs
+SETTINGS_RESOURCES = $(srcdir)/settings.glade
+SETTINGS_RESOURCES_BUILD = $(foreach res,$(SETTINGS_RESOURCES), $(addprefix -resource:,$(srcdir)/$(res)),$(notdir $(res)))
+
+$(SETTINGS_TARGET): $(SETTINGS_CSFILES) $(LOCAL_ASSEMBLIES)
+	$(CSC) -o $@ $(SETTINGS_RESOURCES_BUILD) $(CSFLAGS) $(SETTINGS_CSFILES) $(ASSEMBLIES)
+
+$(SETTINGS_WRAPPER): $(WRAPPER_IN)
+	$(WRAPPER_SED) -e "s|\@target\@|$(SETTINGS_TARGET)|g" < $(srcdir)/$(WRAPPER_IN) > $@
+	chmod +x $(SETTINGS_WRAPPER)
+
 TARGETS = 				\
 	$(INFO_TARGET)			\
 	$(SHUTDOWN_TARGET)		\
 	$(QUERY_TARGET)			\
 	$(EXERCISE_FILE_SYSTEM_TARGET)	\
-	$(CONFIG_TARGET)
+	$(CONFIG_TARGET)		\
+	$(SETTINGS_TARGET)
 
 WRAPPERS = 				\
 	$(INFO_WRAPPER)			\
 	$(SHUTDOWN_WRAPPER)		\
 	$(QUERY_WRAPPER)		\
 	$(EXERCISE_FILE_SYSTEM_WRAPPER)	\
-	$(CONFIG_WRAPPER)
+	$(CONFIG_WRAPPER)		\
+	$(SETTINGS_WRAPPER)		
 
 bin_SCRIPTS = 			\
 	$(WRAPPERS) 		\
@@ -118,11 +136,14 @@ EXTRA_DIST =				\
 	$(QUERY_CSFILES)		\
 	$(EXERCISE_FILE_SYSTEM_CSFILES)	\
 	$(CONFIG_CSFILES)		\
+	$(SETTINGS_CSFILES)		\
+	$(SETTINGS_RESOURCES)		\
 	$(man_MANS)			\
 	beagle-index-info		\
 	beagle-ping			\
 	beagle-status			\
-	boot.inotify.init
+	boot.inotify.init		\
+	beagle-settings.desktop
 
 CLEANFILES = 				\
 	$(TARGETS)			\

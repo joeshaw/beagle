@@ -44,6 +44,15 @@ namespace Beagle.Daemon.EvolutionMailDriver {
 
 		private static bool gmime_initialized = false;
 
+		private static ArrayList paths_to_ignore = new ArrayList ();
+
+		static EvolutionMailIndexableGenerator () {
+			foreach (ExcludeItem exclude_item in Conf.Indexing.Excludes) {
+				if (exclude_item.Type == ExcludeType.MailFolder)
+					paths_to_ignore.Add (exclude_item.Value);
+			}
+		}
+
 		private EvolutionMailQueryable queryable;
 
 		protected string account_name, folder_name;
@@ -80,6 +89,17 @@ namespace Beagle.Daemon.EvolutionMailDriver {
 				return true;
 			else
 				return false;
+		}
+
+		protected bool IgnoreFolder (string path)
+		{
+			// FIXME: Use Path.Shit
+			foreach (string ignore_path in paths_to_ignore) {
+				if (path.StartsWith (ignore_path)) {
+					return true;
+				}
+			}
+			return false;
 		}
 					
 		protected bool CrawlNeeded ()
@@ -333,7 +353,10 @@ namespace Beagle.Daemon.EvolutionMailDriver {
 
 			if (this.IsSpamFolder (this.folder_name))
 				return false;
-			
+
+			if (this.IgnoreFolder (this.mbox_info.FullName))
+				return false;
+
 			return true;
 		}
 
@@ -682,6 +705,10 @@ namespace Beagle.Daemon.EvolutionMailDriver {
 			// since the folder name will be "foo/spam" and not match the check below.
 			DirectoryInfo dir_info = new DirectoryInfo (dir_name);
 			if (this.IsSpamFolder (dir_info.Name))
+				return false;
+
+			// Check if the folder is listed in the configuration as to be excluded from indexing
+			if (this.IgnoreFolder (dir_info.FullName))
 				return false;
 					
 			this.folder_name = GetFolderName (new DirectoryInfo (dir_name));

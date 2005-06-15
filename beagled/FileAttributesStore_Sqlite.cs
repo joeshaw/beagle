@@ -133,7 +133,7 @@ namespace Beagle.Daemon {
 
 				DateTime dt2 = DateTime.Now;
 
-				Logger.Log.Info ("Loaded {0} records from {1} in {2:0.000}s", 
+				Logger.Log.Debug ("Loaded {0} records from {1} in {2:0.000}s", 
 						 count, GetDbPath (directory), (dt2 - dt1).TotalSeconds);
 			}
 		}

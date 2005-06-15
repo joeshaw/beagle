@@ -158,6 +158,24 @@ namespace Beagle.Daemon.FileSystemQueryable {
 			foreach (string pattern in patterns)
 				AddPatternToIgnore (pattern);
 		}
+
+		ArrayList paths_to_ignore = new ArrayList ();
+
+		public void AddPathToIgnore (string path) 
+		{
+			if (paths_to_ignore.Contains (path))
+				return;
+
+			// FIXME: Recursive shit
+
+			paths_to_ignore.Add (path);
+		}
+
+		public void AddPathToIgnore (IEnumerable paths)
+		{
+			foreach (string path in paths)
+				AddPathToIgnore (path);
+		}
 		
 		/////////////////////////////////////////////////////////////
 
@@ -178,6 +196,9 @@ namespace Beagle.Daemon.FileSystemQueryable {
 		{
 			if (! Path.IsPathRooted (path))
 				path = Path.GetFullPath (path);
+
+			if (paths_to_ignore.Contains (path))
+				return true;
 
 			foreach (FileSystemModel.Directory root in model.Roots)
 				if (root.FullName == path)

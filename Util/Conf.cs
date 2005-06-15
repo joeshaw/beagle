@@ -40,11 +40,14 @@ namespace Beagle.Util {
 
 		public static Hashtable Sections;
 		public static IndexingConfig Indexing = null;
+		public static SearchingConfig Searching = null;
 		private static string configs_dir;
 		private static Hashtable mtimes;
 		private static Hashtable subscriptions;
+
 		private static bool watching_for_updates;
 		private static bool update_watch_present;
+
 		private static BindingFlags method_search_flags = BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.InvokeMethod;
 
 		public delegate void ConfigUpdateHandler (Section section);
@@ -59,9 +62,7 @@ namespace Beagle.Util {
 			if (!Directory.Exists (configs_dir))
 				Directory.CreateDirectory (configs_dir);
 
-			// We'll start processing file update notifications after we've loaded the
-			// configuration for the first time.
-			watching_for_updates = false;
+			Conf.Load ();
 		}
 
 		public static void WatchForUpdates ()
@@ -122,12 +123,17 @@ namespace Beagle.Util {
 		}
 
 		public static void Load (bool force)
-		{
+		{			
 			Section temp;
 
+			// FIXME: Yeah
 			LoadFile (typeof (IndexingConfig), Indexing, out temp, force);
 			Indexing = (IndexingConfig) temp;
 			NotifySubscribers (Indexing);
+
+			LoadFile (typeof (SearchingConfig), Searching, out temp, force);
+		        Searching = (SearchingConfig) temp;
+			NotifySubscribers (Searching);
 
 			watching_for_updates = true;
 		}
@@ -278,32 +284,39 @@ namespace Beagle.Util {
 			return result;
 		}
 
-		[ConfigSection (Name="indexing")]
-		public class IndexingConfig : Section {
+		[ConfigSection (Name="searching")]
+		public class SearchingConfig : Section {
+			private KeyBinding show_search_window_binding = new KeyBinding ("F12");
 
-			public IndexingConfig ()
-			{
-				roots = new ArrayList ();
-				ignore_patterns = new ArrayList ();
-				index_home_dir = true;
+			public KeyBinding ShowSearchWindowBinding {
+				get { return show_search_window_binding; }
+				set { show_search_window_binding = value; }
 			}
+		}
 
-			private ArrayList roots;
+		[ConfigSection (Name="indexing")]
+		public class IndexingConfig : Section 
+		{
+			private ArrayList roots = new ArrayList ();
+			[XmlArray]
+			[XmlArrayItem(ElementName="Root", Type=typeof(string))]
 			public ArrayList Roots {
 				get { return ArrayList.ReadOnly (roots); }
 				set { roots = value; }
 			}
 
-			private bool index_home_dir;
+			private bool index_home_dir = true;
 			public bool IndexHomeDir {
 				get { return index_home_dir; }
 				set { index_home_dir = value; }
 			}
 
-			private ArrayList ignore_patterns;
-			public ArrayList IgnorePatterns {
-				get { return ArrayList.ReadOnly (ignore_patterns); }
-				set { ignore_patterns = value; }
+			private ArrayList excludes = new ArrayList ();
+			[XmlArray]
+			[XmlArrayItem (ElementName="ExcludeItem", Type=typeof(ExcludeItem))]
+			public ArrayList Excludes {
+				get { return ArrayList.ReadOnly (excludes); }
+				set { excludes = value; }
 			}
 
 			[ConfigOption (Description="List the indexing roots", IsMutator=false)]
@@ -344,32 +357,17 @@ namespace Beagle.Util {
 				output = "Root removed.";
 				return true;
 			}
-
-			[ConfigOption (Description="List user-specified filename patterns to be ignored", IsMutator=false)]
-			internal bool ListIgnorePatterns (out string output, string [] args)
+			
+			[ConfigOption (Description="List user-specified resources to be excluded from indexing", IsMutator=false)]
+			internal bool ListExcludes (out string output, string [] args)
 			{
-				output = "User-specified ignore patterns:\n";
-				foreach (string pattern in ignore_patterns)
-					output += " - " + pattern + "\n";
+				output = "User-specified resources to be excluded from indexing:\n";
+				foreach (ExcludeItem exclude_item in excludes)
+					output += String.Format (" - [{0}] {1}\n", exclude_item.Type.ToString (), exclude_item.Value);
 				return true;
 			}
-
-			[ConfigOption (Description="Add a filename pattern to be ignored", Params=1, ParamsDescription="A pattern")]
-			internal bool AddIgnorePattern (out string output, string [] args)
-			{
-				ignore_patterns.Add (args [0]);
-				output = "Pattern added.";
-				return true;
-			}
-
-			[ConfigOption (Description="Remove an ignored filename pattern", Params=1, ParamsDescription="A pattern")]
-			internal bool DelIgnorePattern (out string output, string [] args)
-			{
-				ignore_patterns.Remove (args [0]);
-				output = "Pattern removed.";
-				return true;
-			}
-
+		
+			// FIXME: Add methods to manipulate excludes
 		}
 
 		public class Section {
@@ -393,7 +391,64 @@ namespace Beagle.Util {
 		}
 
 	}
+	
+	// Some datastructures that are nice to have
+	
+	public enum ExcludeType {
+		Path,
+		Pattern,
+		MailFolder
+	}
 
+	public class ExcludeItem {
+		[XmlAttribute]
+		public ExcludeType Type;
+		[XmlAttribute]
+		public string Value;
+		
+		public ExcludeItem () {}
 
+		public ExcludeItem (ExcludeType type, string value) {
+			this.Type = type;
+			this.Value = value;
+		}
+	}
 
+	public class KeyBinding {
+		public string Key;
+
+		[XmlAttribute]
+		public bool Ctrl = false;
+		[XmlAttribute]
+		public bool Alt = false;
+
+		public KeyBinding () {}
+		public KeyBinding (string key) : this (key, false, false) {}
+
+		public KeyBinding (string key, bool ctrl, bool alt) 
+		{
+			Key = key;
+			Ctrl = ctrl;
+			Alt = alt;
+		}
+
+		public override string ToString ()
+		{
+			string result = "";
+
+			if (Ctrl)
+				result += "<Ctrl>";
+			if (Alt)
+				result += "<Alt>";
+					
+			result += Key;
+
+			return result;
+		}
+		
+		public string ToReadableString ()
+		{
+			return ToString ().Replace (">", "-").Replace ("<", "");
+		}
+	}
 }

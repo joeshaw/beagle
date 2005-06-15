@@ -25,6 +25,7 @@
 //
 
 using System;
+using System.Collections;
 using System.Diagnostics;
 using System.Globalization;
 using System.IO;
@@ -302,6 +303,30 @@ namespace Beagle.Util {
 			}
 		}
 
+		// FIXME: This is so not portable, can we please depend on Mono.Unix
+		static public ICollection Mounts {
+			get {
+				ArrayList mounts = new ArrayList ();
+
+				string buffer;
+				MountEntry entry;
+				
+				StreamReader reader = new StreamReader ("/proc/mounts");
+
+				while ((buffer = reader.ReadLine ()) != null) {
+					string[] data = buffer.Split (' ');
+					entry = new MountEntry ();
+					entry.Device = data [0];
+					entry.Mountpoint = data [1];
+					entry.Filesystem = data [2];
+					entry.Mode = data [3];
+					
+					mounts.Add (entry);
+				}
+
+				return mounts;
+			}
+		}
 #if false
 		static void Main ()
 		{
@@ -321,6 +346,14 @@ namespace Beagle.Util {
 		}
 #endif
 
+	}
+
+	public class MountEntry {
+		public string Device;
+		public string Mountpoint;
+		public string Filesystem;
+		public string Mode;
+		public ArrayList Options = new ArrayList ();
 	}
 
 }
