@@ -129,7 +129,8 @@ COND_CS_FILES =			\
 	$(srcdir)/FlacReader.cs	\
 	$(srcdir)/OggReader.cs	\
 	$(srcdir)/Tag.cs	\
-	$(srcdir)/ChmFile.cs
+	$(srcdir)/ChmFile.cs	\
+	$(srcdir)/Galago.cs
 
 EXTRA_DIST =			\
 	$(GOOGLE_WSDL)		\

@@ -1,6 +1,6 @@
 AC_INIT(beagled/BeagleDaemon.cs)
 AC_CANONICAL_SYSTEM
-AM_INIT_AUTOMAKE(beagle, 0.0.11.1)
+AM_INIT_AUTOMAKE(beagle, 0.0.12)
 AM_MAINTAINER_MODE
 AM_CONFIG_HEADER(config.h)
 
@@ -424,8 +424,7 @@ dnl ----------------------------------------------
 
 dnl Galago
 
-dnl PKG_CHECK_MODULES(GALAGO, galago-sharp, enable_galago=yes, enable_galago=no)
-enable_galago=no
+PKG_CHECK_MODULES(GALAGO, galago-sharp, enable_galago=yes, enable_galago=no)
 AM_CONDITIONAL(ENABLE_GALAGO, test "x$enable_galago" = "xyes")
 AC_SUBST(GALAGO_LIBS)
 
