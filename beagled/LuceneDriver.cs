@@ -57,6 +57,7 @@ namespace Beagle.Daemon {
 		public delegate double RelevancyMultiplier (Hit hit);
 
 		public event IIndexerChangedHandler ChangedEvent;
+		public event IIndexerChildIndexableHandler ChildIndexableEvent;
 
 		/////////////////////////////////////////////////////
 		
@@ -361,9 +362,13 @@ namespace Beagle.Daemon {
 			IndexReader reader = IndexReader.Open (Store);
 			foreach (Uri uri in pending_uris) {
 				log.Debug ("- {0}", uri);
+
 				Term term = new Term ("Uri", uri.ToString ());
 				reader.Delete (term);
 				++removal_count;
+
+				term = new Term ("ParentUri", uri.ToString ());
+				removal_count += reader.Delete (term);
 			}
 			last_item_count = reader.NumDocs ();
 			reader.Close ();
@@ -379,8 +384,10 @@ namespace Beagle.Daemon {
 				
 				Log.Debug ("+ {0}", indexable.DisplayUri);
 
+				Filter filter = null;
+
 				try {
-					FilterFactory.FilterIndexable (indexable);
+					FilterFactory.FilterIndexable (indexable, out filter);
 				} catch (Exception e) {
 					Log.Error ("Unable to filter {0} (mimetype={1})", indexable.DisplayUri, indexable.MimeType);
 					Log.Error (e);
@@ -401,6 +408,16 @@ namespace Beagle.Daemon {
 					writer.AddDocument (doc);
 					++last_item_count;
 					++add_count;
+				}
+
+				if (filter != null && filter.ChildIndexables.Count > 0) {
+					// Iterate across any indexables created by the
+					// filter and set up the parent-child relationship.
+					foreach (Indexable child in filter.ChildIndexables)
+						child.SetChildOf (indexable);
+
+					if (ChildIndexableEvent != null)
+						ChildIndexableEvent ((Indexable[]) filter.ChildIndexables.ToArray (typeof (Indexable)));
 				}
 			}
 			if (writer != null) 
@@ -672,6 +689,11 @@ namespace Beagle.Daemon {
 
 			f = Field.Keyword ("Type", indexable.Type);
 			doc.Add (f);
+
+			if (indexable.ParentUri != null) {
+				f = Field.Keyword ("ParentUri", UriFu.UriToSerializableString (indexable.ParentUri));
+				doc.Add (f);
+			}
 			
 			if (indexable.MimeType != null) {
 				f = Field.Keyword ("MimeType", indexable.MimeType);
@@ -967,6 +989,10 @@ namespace Beagle.Daemon {
 			if (str == null)
 				throw new Exception ("Got hit from Lucene w/o a Type!");
 			hit.Type = str;
+
+			str = doc.Get ("ParentUri");
+			if (str != null)
+				hit.ParentUri = UriFu.UriStringToUri (str);
 			
 			hit.MimeType = doc.Get ("MimeType");
 

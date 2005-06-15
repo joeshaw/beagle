@@ -173,8 +173,10 @@ namespace Beagle.Daemon {
 			return false;
 		}
 
-		static public bool FilterIndexable (Indexable indexable)
+		static public bool FilterIndexable (Indexable indexable, out Filter filter)
 		{
+			filter = null;
+
 			if (! ShouldWeFilterThis (indexable))
 				return false;
 
@@ -182,8 +184,6 @@ namespace Beagle.Daemon {
 
 			// First, figure out which filter we should use to deal with
 			// the indexable.
-
-			Filter filter = null;
 
 			// If a specific mime type is specified, try to index as that type.
 			if (indexable.MimeType != null)
@@ -224,6 +224,8 @@ namespace Beagle.Daemon {
 				return true;
 			}
 
+			Logger.Log.Debug ("Found filter: {0}", filter);
+
 			// Hook up the snippet writer.
 			if (filter.SnippetMode) {
 				if (filter.OriginalIsText && indexable.IsNonTransient) {
@@ -252,6 +254,13 @@ namespace Beagle.Daemon {
 			indexable.SetHotTextReader (filter.GetHotTextReader ());
 
 			return true;
+		}
+
+		static public bool FilterIndexable (Indexable indexable)
+		{
+			Filter filter = null;
+
+			return FilterIndexable (indexable, out filter);
 		}
 
 		/////////////////////////////////////////////////////////////////////////

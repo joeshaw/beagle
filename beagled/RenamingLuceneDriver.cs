@@ -45,6 +45,7 @@ namespace Beagle.Daemon {
 							 this.driver.Fingerprint);
 
 			this.driver.ChangedEvent += OnLuceneDriverChanged;
+			this.driver.ChildIndexableEvent += OnLuceneChildIndexableEvent;
 		}
 
 		// We assume that
@@ -111,6 +112,7 @@ namespace Beagle.Daemon {
 		}
 
 		public event IIndexerChangedHandler ChangedEvent;
+		public event IIndexerChildIndexableHandler ChildIndexableEvent;
 
 		public void OnLuceneDriverChanged (IIndexer    source,
 						   ICollection list_of_added_uris,
@@ -129,5 +131,10 @@ namespace Beagle.Daemon {
 			renamed_uris.Clear ();
 		}
 
+		public void OnLuceneChildIndexableEvent (Indexable[] child_indexables)
+		{
+			if (ChildIndexableEvent != null)
+				ChildIndexableEvent (child_indexables);
+		}
 	}
 }

@@ -34,6 +34,7 @@ namespace Beagle.Daemon {
 	public class RemoteIndexerResponse : ResponseMessage {
 
 		public int ItemCount = -1;
+		public Indexable[] ChildIndexables;
 
 		public RemoteIndexerResponse ()
 		{

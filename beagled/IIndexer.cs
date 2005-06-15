@@ -36,6 +36,8 @@ namespace Beagle.Daemon {
 						     ICollection list_of_removed_uris,
 						     ICollection list_of_renamed_uris);
 
+	public delegate void IIndexerChildIndexableHandler (Indexable[] child_indexables);
+
 	public interface IIndexer {
 
 		void Add (Indexable indexable);
@@ -47,7 +49,9 @@ namespace Beagle.Daemon {
 		void Flush ();
 
 		int GetItemCount ();
-
+		
 		event IIndexerChangedHandler ChangedEvent;
+
+		event IIndexerChildIndexableHandler ChildIndexableEvent;
 	}
 }

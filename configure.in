@@ -255,7 +255,7 @@ AC_SUBST(LIBGECKOGLUE_LIBS)
 
 dnl -------------------------------------------------------
 
-PKG_CHECK_MODULES(BEAGLE_UI, gtk-sharp glade-sharp gecko-sharp = 0.6 gnome-sharp gconf-sharp gmime-sharp >= 2.1.13)
+PKG_CHECK_MODULES(BEAGLE_UI, gtk-sharp glade-sharp gecko-sharp = 0.6 gnome-sharp gconf-sharp gmime-sharp >= 2.1.15)
 AC_SUBST(BEAGLE_UI_LIBS)
 
 dnl ----------------------------------------------
@@ -345,7 +345,7 @@ else
 fi
 AC_SUBST(EXIF_SOVERSION)
 
-PKG_CHECK_MODULES(BEAGLED, gmime-sharp >= 2.1.13 gtk-sharp gconf-sharp)
+PKG_CHECK_MODULES(BEAGLED, gmime-sharp >= 2.1.15 gtk-sharp gconf-sharp)
 BEAGLED_LIBS="$BEAGLED_LIBS $EVO_SHARP_LIBS $GSF_SHARP_LIBS"
 AC_SUBST(BEAGLED_LIBS)
 

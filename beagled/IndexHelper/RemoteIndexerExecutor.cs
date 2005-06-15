@@ -39,6 +39,7 @@ namespace Beagle.IndexHelper {
 		static public int Count = 0;
 
 		Hashtable indexer_table = new Hashtable ();
+		Indexable[] child_indexables;
 
 		public override ResponseMessage Execute (RequestMessage raw_request)
 		{
@@ -57,15 +58,25 @@ namespace Beagle.IndexHelper {
 				indexer_table [request.RemoteIndexName] = indexer;
 			}
 
+			indexer.ChildIndexableEvent += new IIndexerChildIndexableHandler (ChildIndexableCallback);
+
 			request.Process (indexer);
 
-			// Construct a response containing the item count.
+			// Construct a response containing the item count and
+			// the child indexables created by the filtering
+			// process.
 			RemoteIndexerResponse response = new RemoteIndexerResponse ();
 			response.ItemCount = indexer.GetItemCount ();
+			response.ChildIndexables = child_indexables;
 
 			++Count;
 
 			return response;
+		}
+
+		private void ChildIndexableCallback (Indexable[] child_indexables)
+		{
+			this.child_indexables = child_indexables;
 		}
 	}
 }

@@ -55,67 +55,80 @@ namespace Beagle.Tile {
 		{
 		}
 
+		private static string GetHitProperty (Hit hit, string name)
+		{
+			// FIXME: We should handle this case better, but
+			// for now, if we match an attachment, we just want
+			// to display the properties for the parent message.
+			if (hit.ParentUri == null)
+				return hit [name];
+			else
+				return hit ["parent:" + name];
+		}
+
 		protected override void PopulateTemplate ()
 		{
 			base.PopulateTemplate ();
 
-                        bool sent = (Hit ["fixme:isSent"] != null);
+                        bool sent = (GetHitProperty (Hit, "fixme:isSent") != null);
 
 			string str;
 
-			str = Hit ["dc:title"];
+			str = GetHitProperty (Hit, "dc:title");
+
 			if (str == null)
 				str = String.Format ("<i>{0}</i>", Catalog.GetString ("No Subject"));
-			if (Hit ["_IsDeleted"] != null)
+
+			if (Hit.ParentUri != null)
+				str += " [" + Catalog.GetString ("email attachment") + "]";
+
+			if (GetHitProperty (Hit, "_IsDeleted") != null)
 				str = "<strike>" + str + "</strike>";
 			Template["Subject"] = str;
 
 			Template["ToFrom"] = sent ? Catalog.GetString ("To") : Catalog.GetString ("From");
 
+			// Limit the number of recipients to 3, so the
+			// tile doesn't look terrible.
 			if (sent) {
-				// Limit the number of recipients to 3, so the
-				// tile doesn't look terrible.
-				ICollection list = InternetAddress.ParseString (Hit ["fixme:to"]);
+				string[] values = Hit.GetProperties ("fixme:to");
 
-				if (list.Count <= 3)
-					Template["Who"] = Hit["fixme:to"];
-				else {
+				if (values != null) {
 					StringBuilder sb = new StringBuilder ();
+					int i;
 
-					int count = 0;
-					foreach (InternetAddress ia in list) {
-						sb.Append (ia.ToString (false));
-						sb.Append (", ");
+					for (i = 0; i < 3 && i < values.Length; i++) {
+						if (i != 0)
+							sb.Append (", ");
 
-						++count;
-						if (count == 3)
-							break;
+						sb.Append (values [i]);
 					}
 
-					sb.Append ("et al");
+					if (i < values.Length)
+						sb.Append (", et al");
 
 					Template["Who"] = sb.ToString ();
 				}
 			} else
-				Template["Who"] = Hit ["fixme:from"];
+				Template["Who"] = GetHitProperty (Hit, "fixme:from");
 
-			Template["Folder"] = Hit ["fixme:folder"];
-			Template["Account"] = Hit ["fixme:account"];
+			Template["Folder"] = GetHitProperty (Hit, "fixme:folder");
+			Template["Account"] = GetHitProperty (Hit, "fixme:account");
 			Template["SentReceived"] = sent ? Catalog.GetString ("Sent") : Catalog.GetString ("Received");
-			Template["When"] = sent ? Hit ["fixme:sentdate"] : Hit ["fixme:received"];
+			Template["When"] = sent ? GetHitProperty (Hit, "fixme:sentdate") : GetHitProperty (Hit, "fixme:received");
 
 			string icon;
-			if (Hit ["fixme:isAnswered"] != null)
+			if (GetHitProperty (Hit, "fixme:isAnswered") != null)
 				icon = Images.GetHtmlSourceForStock ("stock_mail-replied", 48);
-			else if (Hit ["fixme:isSeen"] != null)
+			else if (GetHitProperty (Hit, "fixme:isSeen") != null)
 				icon = Images.GetHtmlSourceForStock ("stock_mail-open", 48);
 			else
 				icon = Images.GetHtmlSourceForStock ("stock_mail", 48);
 
 			Template["Icon"] = icon;
-			if (Hit ["fixme:isFlagged"] != null)
+			if (GetHitProperty (Hit, "fixme:isFlagged") != null)
 				Template["FollowupIcon"] = Images.GetHtmlSourceForStock ("stock_mail-priority-high", 16);
-			if (Hit ["fixme:hasAttachments"] != null)
+			if (GetHitProperty (Hit, "fixme:hasAttachments") != null)
 				Template["AttachmentIcon"] = Images.GetHtmlSourceForStock ("stock_attach", 16);
 
 			GetImNames (Template["Who"]);
@@ -194,7 +207,7 @@ namespace Beagle.Tile {
 			Process p = new Process ();
 			p.StartInfo.UseShellExecute = false;
 			p.StartInfo.FileName = "evolution";
-			p.StartInfo.Arguments = "'" + Hit.Uri + "'";
+			p.StartInfo.Arguments = "'" + Hit.ParentUri != null ? Hit.ParentUri.ToString () : Hit.Uri.ToString () + "'";
 
 			try {
 				p.Start ();
@@ -207,8 +220,8 @@ namespace Beagle.Tile {
 		[TileAction]
 		public void Mail ()
 		{
-                        bool sent = (Hit ["fixme:isSent"] != null);
-			string address = sent ? Hit ["fixme:to"] : Hit ["fixme:from"];
+                        bool sent = (GetHitProperty (Hit, "fixme:isSent") != null);
+			string address = sent ? GetHitProperty (Hit, "fixme:to") : GetHitProperty (Hit, "fixme:from");
 			
 			Process p = new Process ();
 			p.StartInfo.UseShellExecute = false;

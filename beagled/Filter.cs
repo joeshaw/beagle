@@ -563,5 +563,18 @@ namespace Beagle.Daemon {
 		public IEnumerable Properties {
 			get { return propertyPool; }
 		}
+
+		//////////////////////////////
+
+		private ArrayList child_indexables = new ArrayList ();
+
+		protected void AddChildIndexable (Indexable indexable)
+		{
+			this.child_indexables.Add (indexable);
+		}
+
+		public ArrayList ChildIndexables {
+			get { return this.child_indexables; }
+		}
 	}
 }

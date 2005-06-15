@@ -44,6 +44,9 @@ namespace Beagle {
 		// A URI we can use to locate the source of this match.
 		private Uri uri = null;
 
+		// A URI of this Hit's container element
+		private Uri parent_uri = null;
+
 		// File, Web, MailMessage, IMLog, etc.
 		private string type = null;
 
@@ -102,6 +105,29 @@ namespace Beagle {
 
 			set {
 				uri = UriFu.UriStringToUri (value);
+			}
+		}
+
+		[XmlIgnore]
+		public Uri ParentUri {
+			get { return parent_uri; }
+			set { parent_uri = value; }
+		}
+
+		[XmlAttribute ("ParentUri")]
+		public string ParentUriAsString {
+			get {
+				if (parent_uri == null)
+					return null;
+
+				return UriFu.UriToSerializableString (parent_uri);
+			}
+
+			set {
+				if (value == null)
+					parent_uri = null;
+				else
+					parent_uri = UriFu.UriStringToUri (value);
 			}
 		}
 
@@ -337,6 +363,22 @@ namespace Beagle {
 				throw new Exception (String.Format ("Attempt to re-set multi-property '{0}' via the indexer", key));
 			}
 		}
+
+		public string[] GetProperties (string key)
+		{
+			int first, top;
+			if (! FindProperty (key, out first, out top))
+				return null;
+
+			string[] values = new string [top - first];
+
+			for (int i = 0; first + i < top; i++) {
+				Property prop = properties [first + i] as Property;
+				values [i] = prop.Value;
+			}
+
+			return values;
+		}			
 
 		//////////////////////////
 

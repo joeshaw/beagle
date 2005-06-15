@@ -247,6 +247,19 @@ namespace Beagle.Daemon.FileSystemQueryable {
 			}
 		}
 
+		override protected void AbusiveChildIndexableHook (Indexable child_indexable)
+		{
+			if (Debug)
+				Logger.Log.Debug ("AbusiveChildIndexableHook: uri={0}", child_indexable.Uri);
+
+			Uri internal_uri = model.ToInternalUri (child_indexable.Uri);
+
+			if (Debug)
+				Logger.Log.Debug ("AbusiveChildIndexableHook: Remapped '{0}' to '{1}'", child_indexable.Uri, internal_uri);
+
+			child_indexable.Uri = internal_uri;
+		}
+
 		//////////////////////////////////////////////////////////////////////////
 
 		// Filter out hits where the files seem to no longer exist.

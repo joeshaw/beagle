@@ -32,7 +32,7 @@ using Beagle.Util;
 namespace Beagle {
 	
 	[XmlInclude (typeof (Property))]
-	public class Property : IComparable {
+		public class Property : IComparable, ICloneable {
 
 		bool   isKeyword;
 		bool   isSearched;
@@ -83,6 +83,13 @@ namespace Beagle {
 
 			return String.Compare (this.Key, other_property.Key);
 		}
+
+		public object Clone ()
+		{
+			object clone = this.MemberwiseClone ();
+
+			return clone;
+		}
 		
 		static public Property New (string key, object value)
 		{
@@ -123,6 +130,11 @@ namespace Beagle {
 		static public Property NewDate (string key, DateTime dt)
 		{
 			return NewUnsearched (key, StringFu.DateTimeToString (dt));
+		}
+
+		override public string ToString ()
+		{
+			return String.Format ("{0}={1}", Key, Value);
 		}
 	}
 }

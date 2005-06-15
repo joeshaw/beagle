@@ -46,6 +46,7 @@ namespace Beagle.Daemon {
 		object pending_request_lock = new object ();
 
 		public event IIndexerChangedHandler ChangedEvent;
+		public event IIndexerChildIndexableHandler ChildIndexableEvent;
 
 		static RemoteIndexer ()
 		{
@@ -171,6 +172,14 @@ namespace Beagle.Daemon {
 			if (response != null) {
 				//Logger.Log.Debug ("Got response!");
 				last_item_count = response.ItemCount;
+
+				if (response.ChildIndexables != null) {
+					Logger.Log.Debug ("Sending {0} child indexables from helper",
+							  response.ChildIndexables.Length);
+
+					if (response.ChildIndexables.Length > 0 && ChildIndexableEvent != null)
+						ChildIndexableEvent (response.ChildIndexables);
+				}
 			} else if (exception_count >= 5) {
 				Logger.Log.Error ("Exception limit exceeded trying to activate a helper.  Giving up on indexing!");
 			}

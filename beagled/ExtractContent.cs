@@ -90,7 +90,6 @@ class ExtractContentTool {
 
 			Console.WriteLine ();
 
-			TextReader reader;
 			bool first;
 
 			first = true;
@@ -104,6 +103,11 @@ class ExtractContentTool {
 			if (! first)
 				Console.WriteLine ();
 
+			Stream stream = indexable.GetBinaryStream ();
+			if (stream != null)
+				Console.WriteLine ("Contains binary data.");
+
+			TextReader reader;
 
 			reader = indexable.GetTextReader ();
 			if (reader != null) {

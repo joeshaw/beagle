@@ -48,7 +48,14 @@ namespace Beagle.Daemon.EvolutionMailDriver {
 
 		private MailCrawler crawler;
 
-		public EvolutionMailQueryable () : base ("MailIndex")
+		// Index versions
+		// 1: Original version, stored all recipient addresses as a
+		//    RFC822 string
+		// 2: Stores recipients in separate properties,
+		//    filters/indexes all attachments
+		private const int INDEX_VERSION = 2;
+
+		public EvolutionMailQueryable () : base ("MailIndex", INDEX_VERSION)
 		{
 			this.local_path = Path.Combine (PathFinder.HomeDir, ".evolution/mail/local");
 			this.imap_path = Path.Combine (PathFinder.HomeDir, ".evolution/mail/imap");

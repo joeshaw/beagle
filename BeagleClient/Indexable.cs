@@ -47,6 +47,9 @@ namespace Beagle {
 		// The URI of the item being indexed.
 		private Uri uri = null;
 
+		// The URI of the parent indexable, if any.
+		private Uri parent_uri = null;
+
 		// The URI of the contents to index
 		private Uri contentUri = null;
 
@@ -81,6 +84,9 @@ namespace Beagle {
 
 		// A stream of the hot content to index
 		private TextReader hotTextReader;
+
+		// A stream of binary data to filter
+		private Stream binary_stream;
 
 		// When should we try to filter this indexable?
 		private IndexableFiltering filtering = IndexableFiltering.Automatic;
@@ -124,6 +130,29 @@ namespace Beagle {
 		public string UriString {
 			get { return UriFu.UriToSerializableString (uri); }
 			set { uri = UriFu.UriStringToUri (value); }
+		}
+
+		[XmlIgnore]
+		public Uri ParentUri { 
+			get { return parent_uri; }
+			set { parent_uri = value; }
+		}
+
+		[XmlAttribute ("ParentUri")]
+		public string ParentUriString {
+			get {
+				if (parent_uri == null)
+					return null;
+
+				return UriFu.UriToSerializableString (parent_uri);
+			}
+
+			set {
+				if (value == null)
+					parent_uri = null;
+				else
+					parent_uri = UriFu.UriStringToUri (value);
+			}
 		}
 
 		[XmlIgnore]
@@ -203,26 +232,35 @@ namespace Beagle {
 		}
 
 		//////////////////////////
-		
-		private TextReader ReaderFromUri (Uri uri)
+
+		private Stream StreamFromUri (Uri uri)
 		{
-			TextReader reader = null;
+			Stream stream = null;
 
 			if (uri != null && uri.IsFile && ! no_content) {
-				Stream stream = new FileStream (uri.LocalPath,
-								FileMode.Open,
-								FileAccess.Read,
-								FileShare.Read);
-
-				reader = new StreamReader (stream);
+				stream = new FileStream (uri.LocalPath,
+							 FileMode.Open,
+							 FileAccess.Read,
+							 FileShare.Read);
 
 				// Paranoia: never delete the thing we are actually indexing.
 				if (DeleteContent && uri != Uri)
 					File.Delete (uri.LocalPath);
 			}
 
-			return reader;
+			return stream;
 		}
+
+		private TextReader ReaderFromUri (Uri uri)
+		{
+			Stream stream = StreamFromUri (uri);
+
+			if (stream == null)
+				return null;
+
+			return new StreamReader (stream);
+		}
+				
 
 		public TextReader GetTextReader ()
 		{
@@ -247,6 +285,19 @@ namespace Beagle {
 		public void SetHotTextReader (TextReader reader)
 		{
 			hotTextReader = reader;
+		}
+
+		public Stream GetBinaryStream ()
+		{
+			if (binary_stream == null)
+				binary_stream = StreamFromUri (ContentUri);
+
+			return binary_stream;
+		}
+
+		public void SetBinaryStream (Stream stream)
+		{
+			binary_stream = stream;
 		}
 
 		[XmlArrayItem (ElementName="Property", Type=typeof (Property))]
@@ -282,6 +333,23 @@ namespace Beagle {
 			get { return PropertiesAsString (true); }
 		}
 		
+		//////////////////////////
+
+		public void SetChildOf (Indexable parent)
+		{
+			this.ParentUri = parent.Uri;
+
+			// FIXME: Set all of the parent's properties on the
+			// child so that we get matches against the child
+			// that otherwise would match only the parent, at
+			// least until we have proper RDF support.
+			foreach (Property prop in parent.Properties) {
+				Property new_prop = (Property) prop.Clone ();
+				new_prop.Key = "parent:" + new_prop.Key;
+				this.AddProperty (new_prop);
+			}
+		}
+
 		//////////////////////////
 
 		public override string ToString () 
@@ -327,9 +395,46 @@ namespace Beagle {
 			return UriFu.PathToFileUri (filename);
 		}
 
+		private static Uri BinaryStreamToTempFileUri (Stream stream)
+		{
+			if (stream == null)
+				return null;
+
+			string filename = Path.GetTempFileName ();
+			FileStream fileStream = File.OpenWrite (filename);
+
+			// When we dump the contents of an indexable into a file, we
+			// expect to use it again soon.
+			FileAdvise.PreLoad (fileStream);
+
+			// Make sure the temporary file is only readable by the owner.
+			// FIXME: There is probably a race here.  Could some malicious program
+			// do something to the file between creation and the chmod?
+			Mono.Posix.Syscall.chmod (filename, (Mono.Posix.FileMode) 256);
+
+			BufferedStream bufferedStream = new BufferedStream (fileStream);
+
+			const int BUFFER_SIZE = 8192;
+			byte [] buffer = new byte [BUFFER_SIZE];
+
+			int read;
+			do {
+				read = stream.Read (buffer, 0, BUFFER_SIZE);
+				if (read > 0)
+					bufferedStream.Write (buffer, 0, read);
+			} while (read > 0);
+
+			bufferedStream.Close ();
+
+			return UriFu.PathToFileUri (filename);
+		}
+
 		public void StoreStream () {
 			if (textReader != null) {
 				ContentUri = TextReaderToTempFileUri (textReader);
+				DeleteContent = true;
+			} else if (binary_stream != null) {
+				ContentUri = BinaryStreamToTempFileUri (binary_stream);
 				DeleteContent = true;
 			}
 

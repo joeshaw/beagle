@@ -109,6 +109,7 @@ namespace Beagle.Daemon {
 				indexer = driver;
 
 			indexer.ChangedEvent += OnIndexerChanged;
+			indexer.ChildIndexableEvent += OnChildIndexableEvent;
 
 			fa_store = new FileAttributesStore (BuildFileAttributesStore (driver.Fingerprint));
 
@@ -162,6 +163,11 @@ namespace Beagle.Daemon {
 		}
 
 		protected virtual void AbusiveRenameHook (Uri old_uri, Uri new_uri)
+		{
+
+		}
+
+		protected virtual void AbusiveChildIndexableHook (Indexable child_indexable)
 		{
 
 		}
@@ -290,6 +296,25 @@ namespace Beagle.Daemon {
 			}
 
 			QueryDriver.QueryableChanged (this, change_data);
+		}
+
+		/////////////////////////////////////////
+
+		private void OnChildIndexableEvent (Indexable[] child_indexables)
+		{
+			foreach (Indexable i in child_indexables) {
+				try {
+					AbusiveChildIndexableHook (i);
+				} catch (Exception ex) {
+					Logger.Log.Warn ("Caught exception in AbusiveChildIndexableHook '{0}'", i.Uri);
+					Logger.Log.Warn (ex);
+				}
+
+				Scheduler.Task task = NewAddTask (i);
+				// FIXME: Probably need a better priority than this
+				task.Priority = Scheduler.Priority.Generator;
+				ThisScheduler.Add (task);
+			}
 		}
 
 		/////////////////////////////////////////
