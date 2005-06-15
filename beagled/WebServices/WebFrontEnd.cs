@@ -168,7 +168,7 @@ namespace WebService_CodeBehind {
 		    		Response.Redirect((string)Session["InitialReqUrl"]);
 				}		
 			}  //end else for if (actionString == null)  
-		}
+		}  //end if (!IsPostBack)
 	
 		//Process Tile!Action HTTP-Get request, if user has clicked on one:
 		if (actionString != null && !queryStringProcessed) {
@@ -200,8 +200,6 @@ namespace WebService_CodeBehind {
 	  string buf2 = buf1.Replace("href=\"dynaction:", "href=\"" + Session["InitialReqUrl"] + "?dynaction:");
 	  
 	  //return buf2;
-
-	  string[] list = buf2.Split('\"');
 	  
 	  string initUrl = (string) Session["InitialReqUrl"];
 	  int i = initUrl.LastIndexOf('/');
@@ -214,15 +212,16 @@ namespace WebService_CodeBehind {
 		p += "/";
 	  else 
 		p += "/beagle/";
-		
+	  
 	  string s, sep = "\"";	  
+	  string[] list = buf2.Split('\"');		  	  
 	  for (int k = 0; k < list.Length; k++) {
 	  
 	   		s = list[k];
-	  		if ((s.Length > 0) && s.StartsWith("file:///") && s.EndsWith(".png")) {	  			
-	  			string s1 = s.Replace("file://" + ExternalStringsHack.KdePrefix, p + "kde3");
+	  		if (s.Length > 0)  {	  			
+	  			string s1 =  s.Replace("file://" + ExternalStringsHack.KdePrefix, 	p + "kde3");
 	  			string s2 = s1.Replace("file://" + ExternalStringsHack.GnomePrefix, p + "gnome"); 
-	  			list[k] = s2.Replace("file://" + ExternalStringsHack.Prefix, p + "local");
+	  			list[k] =   s2.Replace("file://" + ExternalStringsHack.Prefix, 		p + "local");
 	  		}  		
 	  }
 	  
