@@ -38,9 +38,9 @@ namespace Beagle.Daemon {
 		private NameIndex name_index;
 		private ArrayList renamed_uris = new ArrayList ();
 
-		public RenamingLuceneDriver (string index_name)
+		public RenamingLuceneDriver (string index_name, int minor_version)
 		{
-			this.driver = new LuceneDriver (index_name);
+			this.driver = new LuceneDriver (index_name, minor_version);
 			this.name_index = new NameIndex (this.driver.IndexDirectory,
 							 this.driver.Fingerprint);
 

@@ -39,6 +39,7 @@ namespace Beagle.Daemon {
 		static string helper_path;
 
 		string remote_index_name;
+		int remote_index_minor_version = 0;
 		int last_item_count = -1;
 
 		RemoteIndexerRequest pending_request = new RemoteIndexerRequest ();
@@ -58,14 +59,15 @@ namespace Beagle.Daemon {
 			Logger.Log.Debug ("Found index helper at {0}", helper_path);
 		}
 
-		static public IIndexer NewRemoteIndexer (string name)
+		static public IIndexer NewRemoteIndexer (string name, int minor_version)
 		{
-			return new RemoteIndexer (name);
+			return new RemoteIndexer (name, minor_version);
 		}
 
-		public RemoteIndexer (string name)
+		public RemoteIndexer (string name, int minor_version)
 		{
 			this.remote_index_name = name;
+			this.remote_index_minor_version = minor_version;
 		}
 
 		public void Add (Indexable indexable)
@@ -129,6 +131,7 @@ namespace Beagle.Daemon {
 				start_helper_by_hand = true;
 
 			request.RemoteIndexName = remote_index_name;
+			request.RemoteIndexMinorVersion = remote_index_minor_version;
 			
 			while (response == null
 			       && exception_count < 5

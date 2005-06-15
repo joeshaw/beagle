@@ -49,9 +49,11 @@ namespace Beagle.IndexHelper {
 			if (indexer == null) {
 				// FIXME: This shouldn't be hard-wired.
 				if (request.RemoteIndexName == "FileSystemIndex")
-					indexer = new RenamingLuceneDriver (request.RemoteIndexName);
+					indexer = new RenamingLuceneDriver (request.RemoteIndexName,
+									    request.RemoteIndexMinorVersion);
 				else
-					indexer = new LuceneDriver (request.RemoteIndexName);
+					indexer = new LuceneDriver (request.RemoteIndexName,
+								    request.RemoteIndexMinorVersion);
 				indexer_table [request.RemoteIndexName] = indexer;
 			}
 

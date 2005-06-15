@@ -35,6 +35,7 @@ namespace Beagle.Daemon {
 	public class RemoteIndexerRequest : RequestMessage {
 
 		public string RemoteIndexName;
+		public int    RemoteIndexMinorVersion;
 
 		ArrayList indexables_to_add = new ArrayList ();
 		ArrayList uris_to_remove = new ArrayList ();

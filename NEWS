@@ -1,4 +1,12 @@
 
+Version 0.0.11.1
+June 15, 2005
+* Build fixes for CHM filter (Jon)
+* Fixed a bug in index versioning that was causing the file system
+  indexed to get purged on start-up (Jon)
+
+------------------------------------------------------
+
 Version 0.0.11
 June 14, 2005
 

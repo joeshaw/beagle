@@ -123,12 +123,13 @@ install-data-local: $(TARGET)
 uninstall-local:
 	rm -f $(DESTDIR)$(pkglibdir)/$(TARGET)
 
-COND_CS_FILES =	\
+COND_CS_FILES =			\
 	$(srcdir)/ApeReader.cs	\
 	$(srcdir)/Mp3Reader.cs	\
 	$(srcdir)/FlacReader.cs	\
 	$(srcdir)/OggReader.cs	\
-	$(srcdir)/Tag.cs
+	$(srcdir)/Tag.cs	\
+	$(srcdir)/ChmFile.cs
 
 EXTRA_DIST =			\
 	$(GOOGLE_WSDL)		\

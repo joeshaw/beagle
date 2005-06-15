@@ -76,7 +76,8 @@ namespace Beagle.Daemon {
 		//    because one changed)
 		// 9: changed the way properties are stored, changed in conjunction
 		//    with sane handling of multiple properties on hits.
-		private const int MAIN_VERSION = 9;
+		private const int MAJOR_VERSION = 9;
+		private int minor_version = 0;
 
 		private string top_dir;
 		private Hashtable pending_by_uri = UriFu.NewHashtable ();
@@ -86,7 +87,7 @@ namespace Beagle.Daemon {
 		private bool optimizing = false;
 		private int last_item_count = -1;
 
-		public LuceneDriver (string index_name) : this (index_name, -1) { }
+		public LuceneDriver (string index_name) : this (index_name, 0) { }
 
 		public LuceneDriver (string index_name, int index_version)
 		{
@@ -117,7 +118,7 @@ namespace Beagle.Daemon {
 
 		/////////////////////////////////////////////////////
 
-		private void Setup (string index_name, int index_version)
+		private void Setup (string index_name, int _minor_version)
 		{			
 			top_dir = Path.Combine (PathFinder.StorageDir, index_name); 
 			
@@ -131,6 +132,10 @@ namespace Beagle.Daemon {
 			bool fingerprintExists = File.Exists (fingerprintFile);
 			bool indexExists = File.Exists (indexTestFile);
 
+			if (_minor_version < 0)
+				_minor_version = 0;
+			minor_version = _minor_version;
+
 			// Check the index's version number.  If it is wrong,
 			// declare the index non-existent.
 			if (versionExists && indexExists) {
@@ -138,18 +143,24 @@ namespace Beagle.Daemon {
 				string versionStr = sr.ReadLine ();
 				sr.Close ();
 
-				int old_main_version, old_index_version = -1;
+				int old_major_version, old_minor_version;
 				int i = versionStr.IndexOf (".");
 
 				if (i != -1) {
-					old_main_version = Convert.ToInt32 (versionStr.Substring (0,i));
-					old_index_version = Convert.ToInt32 (versionStr.Substring (i+1));
+					old_major_version = Convert.ToInt32 (versionStr.Substring (0,i));
+					old_minor_version = Convert.ToInt32 (versionStr.Substring (i+1));
 				} else {
-					old_main_version = Convert.ToInt32 (versionStr);
+					old_major_version = Convert.ToInt32 (versionStr);
+					old_minor_version = 0;
 				}
 
-				if (old_main_version != MAIN_VERSION || old_index_version != index_version)
+				if (old_major_version != MAJOR_VERSION || old_minor_version != minor_version) {
+					log.Debug ("Version mismatch in {0}", index_name);
+					log.Debug ("Index has version {0}.{1}, expected {2}.{3}",
+						   old_major_version, old_minor_version,
+						   MAJOR_VERSION, minor_version);
 					indexExists = false;
+				}
 			}
 
 			// If there is no fingerprint file, declare the index
@@ -206,7 +217,7 @@ namespace Beagle.Daemon {
 
 				// Write out our version information
 				sw = new StreamWriter (versionFile, false);
-				sw.WriteLine ((index_version == -1) ? "{0}" : "{0}.{1}", MAIN_VERSION, index_version);
+				sw.WriteLine ("{0}.{1}", MAJOR_VERSION, minor_version);
 				sw.Close ();
 			}
 
@@ -710,7 +721,7 @@ namespace Beagle.Daemon {
 				Uri uri = original_uri;
 				if (remapper != null)
 					uri = remapper (uri);
-				Logger.Log.Debug ("ToUriQuery: {0} => {1}", original_uri, uri);
+				//Logger.Log.Debug ("ToUriQuery: {0} => {1}", original_uri, uri);
 				Term term = new Term ("Uri", uri.ToString ()); // FIXME: Do we need some UriFu here?
 				LNS.Query term_query = new LNS.TermQuery (term);
 				query.Add (term_query, false, false);

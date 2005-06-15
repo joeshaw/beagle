@@ -34,7 +34,7 @@ namespace Beagle.Daemon {
 
 	public class LuceneQueryable : IQueryable {
 
-		public delegate IIndexer IndexerCreator (string name);
+		public delegate IIndexer IndexerCreator (string name, int minor_version);
 
 		static private IndexerCreator indexer_hook = null;
 
@@ -52,6 +52,8 @@ namespace Beagle.Daemon {
 		private Scheduler scheduler = Scheduler.Global;
 
 		private string index_name;
+		private int minor_version;
+
 		private LuceneDriver driver;
 		private IIndexer indexer;
 		private LuceneTaskCollector collector;
@@ -93,14 +95,16 @@ namespace Beagle.Daemon {
 
 		public LuceneQueryable (string index_name) : this (index_name, -1) { }
 
-		public LuceneQueryable (string index_name, int index_version)
+		public LuceneQueryable (string index_name, int minor_version)
 		{
 			this.index_name = index_name;
-			driver = new LuceneDriver (this.index_name, index_version);
+			this.minor_version = minor_version;
+
+			driver = new LuceneDriver (this.index_name, minor_version);
 
 			indexer = LocalIndexerHook ();
 			if (indexer == null && indexer_hook != null)
-				indexer = indexer_hook (this.index_name);
+				indexer = indexer_hook (this.index_name, this.minor_version);
 			if (indexer == null)
 				indexer = driver;
 

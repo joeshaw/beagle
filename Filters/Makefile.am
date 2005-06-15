@@ -114,7 +114,8 @@ COND_CS_FILES = \
 	$(srcdir)/FilterApe.cs		\
 	$(srcdir)/FilterMp3.cs		\
 	$(srcdir)/FilterOgg.cs		\
-	$(srcdir)/FilterMpc.cs
+	$(srcdir)/FilterMpc.cs		\
+	$(srcdir)/FilterChm.cs
 
 EXTRA_DIST =		\
 	$(CSFILES)	\
