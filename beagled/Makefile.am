@@ -813,8 +813,10 @@ all: $(ALL_TARGETS)
 install-data-local: $(ALL_TARGETS)
 	$(mkinstalldirs) $(DESTDIR)$(pkglibdir)
 	$(mkinstalldirs) $(DESTDIR)$(pkgdatadir)
+if ENABLE_WEBSERVICES
 	$(mkinstalldirs) $(DESTDIR)$(XSP_DIR)
 	$(mkinstalldirs) $(DESTDIR)$(XSPBIN_DIR)
+endif
 	$(INSTALL_DATA) $(PLUGIN_TARGET) $(DESTDIR)$(pkglibdir)/$(PLUGIN_TARGET)
 	$(INSTALL_DATA) $(DAEMON_DLL_TARGET) $(DESTDIR)$(pkglibdir)/$(DAEMON_DLL_TARGET)
 	$(INSTALL_DATA) $(DAEMON_TARGET) $(DESTDIR)$(pkglibdir)/$(DAEMON_TARGET)
