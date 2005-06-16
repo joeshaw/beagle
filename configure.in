@@ -61,8 +61,8 @@ case "$target" in
     AC_MSG_ERROR([Unrecognised target OS: $target])
     ;;
 esac
-AM_CONDITIONAL(OS_LINUX, test "x$os" == "xlinux")
-AM_CONDITIONAL(OS_FREEBSD, test "x$os" == "xfreebsd")
+AM_CONDITIONAL(OS_LINUX, test "x$os" = "xlinux")
+AM_CONDITIONAL(OS_FREEBSD, test "x$os" = "xfreebsd")
 
 # check for xattr implementation
 if test "x$XATTR_LIB" = "x"; then

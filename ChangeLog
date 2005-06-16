@@ -1,3 +1,8 @@
+2005-06-16  Daniel Drake  <dsd@gentoo.org>
+
+	* configure.in: Use single = for equality thanks to Jeremy Messenger in
+	bug 307847
+
 2005-06-14  Daniel Drake  <dsd@gentoo.org>
 
 	* Util/Inotify.cs: Implement subscription system.
