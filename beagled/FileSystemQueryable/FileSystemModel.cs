@@ -1106,6 +1106,10 @@ namespace Beagle.Daemon.FileSystemQueryable {
 			string path = unique_id_store.GetPathByUidUri (internal_uri);
 			if (path == null)
 				return false;
+
+			if (Ignore (path))
+				return false;
+			
 			return System.IO.File.Exists (path) || System.IO.Directory.Exists (path);
 		}
 

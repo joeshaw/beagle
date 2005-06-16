@@ -210,6 +210,9 @@ namespace Beagle.Daemon.FileSystemQueryable {
 				if (pattern.IsMatch (name))
 					return true;
 
+			if (path == Path.GetPathRoot (path))
+				return true;
+
 			string dir = Path.GetDirectoryName (path);
 
 			// A file should be ignored if any of its parent directories
