@@ -524,6 +524,7 @@ mozilla-extension/Makefile
 searchomatic/Makefile
 chooser-fu/Makefile
 beagle-0.0.pc
+beagle-daemon.pc
 beagle.spec
 po/Makefile.in
 ])
