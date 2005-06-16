@@ -493,10 +493,18 @@ public class SettingsDialog
 						TreeIter iter)
 		{			
 			ExcludeItem exclude_item = (ExcludeItem) model.GetValue (iter, 0);
-			if (exclude_item.Type == ExcludeType.MailFolder)
-				((CellRendererText)renderer).Text = "Mail Folder";
-			else
-				((CellRendererText)renderer).Text = exclude_item.Type.ToString ();
+
+			switch (exclude_item.Type) {
+			case ExcludeType.Path:
+				((CellRendererText)renderer).Text = Catalog.GetString ("Path");
+				break;
+			case ExcludeType.Pattern:
+				((CellRendererText)renderer).Text = Catalog.GetString ("Pattern");
+				break;
+			case ExcludeType.MailFolder:
+				((CellRendererText)renderer).Text = Catalog.GetString ("Mail Folder");
+				break;
+			}
 		}
 	}
 
@@ -525,11 +533,15 @@ public class SettingsDialog
 			folder_sw.Child = folder_view;
 		}
 
-		private void OnDialogResponse (object o, EventArgs args)
+		private void OnDialogResponse (object o, ResponseArgs args)
 		{
+			if (args.ResponseId == ResponseType.Cancel) {
+				mail_folder_dialog.Destroy ();
+				return;
+			}
+
 			ExcludeItem exclude_item;
 			object obj = folder_view.GetCurrentItem ();
-
 
 			if (obj is MailAccount) {
 
@@ -704,17 +716,17 @@ public class SettingsDialog
 			switch (Type) {
 			case ExcludeType.Path:
 				browse_button.Sensitive = true;
-				value_name_label.Text = "Path";
+				value_name_label.Text = Catalog.GetString ("Path");
 				value_entry.IsEditable = true;
 				break;
 			case ExcludeType.MailFolder:
 				browse_button.Sensitive = true;
-				value_name_label.Text = "Folder";
+				value_name_label.Text = Catalog.GetString ("Mail Folder");
 				value_entry.IsEditable = false;
 				break;
 			case ExcludeType.Pattern:
 				browse_button.Sensitive = false;
-				value_name_label.Text = "Pattern";
+				value_name_label.Text = Catalog.GetString ("Pattern");
 				value_entry.IsEditable = true;
 				break;
 			}

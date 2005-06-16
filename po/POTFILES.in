@@ -17,5 +17,6 @@ tools/Config.cs
 tools/Settings.cs
 tools/settings.glade
 Util/Conf.cs
+Util/Evolution.cs
 Util/ExifData.cs
 Util/StringFu.cs
