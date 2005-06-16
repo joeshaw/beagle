@@ -38,7 +38,7 @@ using Beagle.Util;
 namespace Beagle.Daemon.BlamQueryable {
 
 	[QueryableFlavor (Name="Blam", Domain=QueryDomain.Local, RequireInotify=false)]
-	public class BlamQueryable : LuceneQueryable {
+	public class BlamQueryable : LuceneQueryable, IIndexableGenerator {
 
 		private static Logger log = Logger.Get ("BlamQueryable");
 
@@ -72,7 +72,7 @@ namespace Beagle.Daemon.BlamQueryable {
 			} else {
 				FileSystemWatcher fsw = new FileSystemWatcher ();
 			       	fsw.Path = blam_dir;
-				fsw.Filter = "collection.xml";
+				fsw.Filter = blam_file;
 				
 				fsw.Changed += new FileSystemEventHandler (OnChangedEvent);
 				fsw.Created += new FileSystemEventHandler (OnChangedEvent);
@@ -119,82 +119,103 @@ namespace Beagle.Daemon.BlamQueryable {
 
 		private void Index ()
 		{
-			FileInfo file = new FileInfo (Path.Combine (blam_dir, blam_file));
+			log.Debug ("Creating blam indexable generator");
+			Scheduler.Task task = NewAddTask (this);
+			task.Tag = "Blam";
+			ThisScheduler.Add (task);
+		}
 
-			if (this.FileAttributesStore.IsUpToDate (file.FullName))
-				return;
+		/////////////////////////////////////////////////
+		
+		// IIndexableGenerator implementation
 
-			ChannelCollection collection = null;
+		private ChannelCollection collection = null;
+		private IEnumerator channel_enumerator = null;
+		private IEnumerator item_enumerator = null;
 
-			try {
-				collection = ChannelCollection.LoadFromFile (file.FullName);
-			} catch (Exception e) {
-				log.Info ("Could not open Blam! channel list: " + e);
-				return;
+		public Indexable GetNextIndexable ()
+		{
+			Channel channel = (Channel) this.channel_enumerator.Current;
+			Item item = (Item) this.item_enumerator.Current;
+
+			Uri uri = new Uri (String.Format ("feed:{0};item={1}", channel.Url, item.Id));
+
+			Indexable indexable = new Indexable (uri);
+			indexable.MimeType = "text/html";
+			indexable.Type = "FeedItem";
+			indexable.Timestamp = item.PubDate;
+					
+			indexable.AddProperty (Property.New ("dc:title", item.Title));
+			indexable.AddProperty (Property.New ("fixme:author", item.Author));
+			indexable.AddProperty (Property.NewDate ("fixme:published", item.PubDate));
+			indexable.AddProperty (Property.NewKeyword ("fixme:itemuri", item.Link));
+			indexable.AddProperty (Property.NewKeyword ("fixme:webloguri", channel.Url));
+
+			string img = null;
+			int i = item.Text.IndexOf ("<img src=\"");
+			if (i != -1) {
+				i += "<img src=\"".Length;
+				int j = item.Text.IndexOf ("\"", i);
+				if (j != -1)
+					img = item.Text.Substring (i, j-i);
 			}
 
-			if (collection == null)
-				return;
+			if (img != null) {
+				string path = Path.Combine (Path.Combine (blam_dir, "Cache"),
+							    img.GetHashCode ().ToString ());
+				indexable.AddProperty (Property.NewUnsearched ("fixme:cachedimg", path));
+			}
 
-			log.Info ("Scanning Weblogs");
-			Stopwatch stopwatch = new Stopwatch ();
-			int blogCount = 0, itemCount = 0;
-			stopwatch.Start ();
+			StringReader reader = new StringReader (item.Text);
+			indexable.SetTextReader (reader);
 
-			Scheduler.TaskGroup group = NewMarkingTaskGroup (file.FullName, file.LastWriteTime);
-			
-			foreach (Channel channel in collection.Channels) {
+			return indexable;
+		}
 
-				if (channel.Items == null)
-					continue;
+		public bool HasNextIndexable ()
+		{
+			if (this.collection == null) {
+				FileInfo file = new FileInfo (Path.Combine (blam_dir, blam_file));
 
-				foreach(Item item in channel.Items) {
-					Uri uri = new Uri (String.Format ("feed:{0};item={1}", channel.Url, item.Id));
+				if (this.FileAttributesStore.IsUpToDate (file.FullName))
+					return false;
 
-					Indexable indexable = new Indexable (uri);
-					indexable.MimeType = "text/html";
-					indexable.Type = "FeedItem";
-					indexable.Timestamp = item.PubDate;
-					
-					indexable.AddProperty (Property.New ("dc:title", item.Title));
-					indexable.AddProperty (Property.New ("fixme:author", item.Author));
-					indexable.AddProperty (Property.NewDate ("fixme:published", item.PubDate));
-					indexable.AddProperty (Property.NewKeyword ("fixme:itemuri", item.Link));
-					indexable.AddProperty (Property.NewKeyword ("fixme:webloguri", channel.Url));
-
-					string img = null;
-					int i = item.Text.IndexOf ("<img src=\"");
-					if (i != -1) {
-						i += "<img src=\"".Length;
-						int j = item.Text.IndexOf ("\"", i);
-						if (j != -1)
-							img = item.Text.Substring (i, j-i);
-					}
-
-					if (img != null) {
-						string path = Path.Combine (Path.Combine (blam_dir, "Cache"),
-									    img.GetHashCode ().ToString ());
-						indexable.AddProperty (Property.NewUnsearched ("fixme:cachedimg", path));
-					}
-
-					StringReader reader = new StringReader (item.Text);
-					indexable.SetTextReader (reader);
-
-					Scheduler.Task task = NewAddTask (indexable);
-					task.Priority = Scheduler.Priority.Delayed;
-					task.SubPriority = 0;
-					task.AddTaskGroup (group);
-					ThisScheduler.Add (task);
-					
-					++itemCount;
+				try {
+					this.collection = ChannelCollection.LoadFromFile (file.FullName);
+				} catch (Exception e) {
+					log.Warn ("Could not open Blam! channel list: " + e);
+					return false;
 				}
-				
-				++blogCount;
+
+				if (this.collection.Channels == null || this.collection.Channels.Count == 0) {
+					this.collection = null;
+					return false;
+				}
+
+				this.channel_enumerator = this.collection.Channels.GetEnumerator ();
 			}
-			
-			stopwatch.Stop ();
-			log.Info ("Found {0} items in {1} weblogs in {2}", 
-				  itemCount, blogCount, stopwatch);
+
+			while (this.item_enumerator == null || !this.item_enumerator.MoveNext ()) {
+				Channel channel;
+				
+				do {
+					if (!this.channel_enumerator.MoveNext ()) {
+						this.collection = null;
+						this.channel_enumerator = null;
+						return false;
+					}
+				
+					channel = (Channel) this.channel_enumerator.Current;
+				} while (channel.Items == null || channel.Items.Count == 0);
+
+				this.item_enumerator = channel.Items.GetEnumerator ();
+			}
+
+			return true;
+		}
+
+		public string StatusName {
+			get { return null; }
 		}
 	}
 
