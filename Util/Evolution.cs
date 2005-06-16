@@ -157,7 +157,7 @@ namespace Beagle.Util {
 				folder_path = folder_path.Substring (System.IO.Path.Combine (Environment.GetEnvironmentVariable ("HOME"),".evolution/mail").Length);
 
 			if (folder_path.StartsWith ("/local/"))
-				folder_path = String.Format ("{0}/{1}", Catalog.GetString ("Local"), folder_path);
+				folder_path = String.Format ("{0}/{1}", Catalog.GetString ("On This Computer"), folder_path);
 
 			foreach (string shit in crap)
 				folder_path = folder_path.Replace (shit, "");
