@@ -136,7 +136,7 @@ namespace Beagle.Tile {
 			GetImNames (Template["Who"]);
 
 			if (aim_name != null)
-			  Template["CanSendIm"] = "";
+				Template["CanSendIm"] = "";
 #endif
 
 		}
