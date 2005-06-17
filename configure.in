@@ -543,7 +543,7 @@ echo "
 	Epiphany Extension?	${enable_epiphany_extension}
 	Mozilla Extension?	yes
 	wv1?			${enable_wv1}
-	galago?			${enable_galago}
+	galago-sharp?		${enable_galago}
 	libchm?			${has_libchm}
 
 	Local SqliteClient?	${use_local_sqlite}

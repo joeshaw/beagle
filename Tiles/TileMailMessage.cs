@@ -126,17 +126,19 @@ namespace Beagle.Tile {
 				icon = Images.GetHtmlSourceForStock ("stock_mail", 48);
 
 			Template["Icon"] = icon;
+			
 			if (GetHitProperty (Hit, "fixme:isFlagged") != null)
 				Template["FollowupIcon"] = Images.GetHtmlSourceForStock ("stock_mail-priority-high", 16);
 			if (GetHitProperty (Hit, "fixme:hasAttachments") != null)
 				Template["AttachmentIcon"] = Images.GetHtmlSourceForStock ("stock_attach", 16);
 
+#if ENABLE_EVO_SHARP
 			GetImNames (Template["Who"]);
 
-#if ENABLE_EVO_SHARP
 			if (aim_name != null)
-				Template["CanSendIm"] = "";
+			  Template["CanSendIm"] = "";
 #endif
+
 		}
 
 		private string GetEmail (string who)
@@ -152,9 +154,14 @@ namespace Beagle.Tile {
 			return who;
 		}
 
+
+#if ENABLE_EVO_SHARP
+
 		private void GetImNames (string who)
 		{
-#if ENABLE_EVO_SHARP
+			if (who == null || who == "")
+				return;
+
 			Evolution.Book addressbook = null;
 
 			if (ebook_failed)
@@ -198,8 +205,8 @@ namespace Beagle.Tile {
 				if (c.ImGroupwise.Length > 0)
 					groupwise_name = c.ImGroupwise[0];
 			}
-#endif
 		}
+#endif
 
 		[TileAction]
 		public override void Open () 
