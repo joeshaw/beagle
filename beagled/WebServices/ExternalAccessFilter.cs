@@ -39,11 +39,9 @@ namespace Beagle.WebService {
 	public class ExternalAccessFilter 
 	{
 		ArrayList matchers;
-
 		static readonly string ConfigFile = "publicfolders.cfg";
 		string FileUriPrefix = "file://";
 		string HttpUriBase = "http://hostname:8888/beagle/";
-		bool SharesFileExists = false;
 	
 // User can specify only a sub-directory under home directory in 'publicfolders.cfg'. 
 // All entries must start with ~/ . One entry per line. The leaf folder name should 
@@ -78,8 +76,6 @@ namespace Beagle.WebService {
 
                 return;
 			}
-		
-			SharesFileExists = true;
 			
             StreamReader reader = new StreamReader(
                          Path.Combine (PathFinder.StorageDir, ConfigFile));
@@ -122,7 +118,7 @@ namespace Beagle.WebService {
 										matchers.Add (matcher);
 										break;										                															                															
                 					} 
-	               				} //end for                 				
+	               				}                 				
                 		} //end if
                 	//} //end foreach
                 } //end if
