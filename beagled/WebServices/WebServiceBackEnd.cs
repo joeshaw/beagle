@@ -56,7 +56,7 @@ namespace Beagle.WebService {
 
 		public static ExternalAccessFilter AccessFilter;
 
-		static Logger log = Logger.Get ("WebServiceBackEnd");
+		//static Logger log = Logger.Get ("WebServiceBackEnd");
 		static Mono.ASPNET.ApplicationServer appServer = null;
 		static string DEFAULT_APP_MAPPINGS = "/:" + DEFAULT_XSP_ROOT + ",/beagle:" + DEFAULT_XSP_ROOT;
 
@@ -70,24 +70,24 @@ namespace Beagle.WebService {
 		{			
 			try {
 				hostname = Dns.GetHostName();
-				log.Info("This Computer Hostname: " + hostname);
+				Logger.Log.Info("This Computer Hostname: " + hostname);
 			}
 			catch (Exception ex) 
 			{
-				log.Error("Caught exception {0} in Dns.GetHostName: ", ex.Message);
-				log.Error("Resetting hostname to \"localhost\"");
+				Logger.Log.Error("Caught exception {0} in Dns.GetHostName: ", ex.Message);
+				Logger.Log.Error("Resetting hostname to \"localhost\"");
 				hostname = "localhost";
 			}
 								
 			//start web-access server first
-			log.Debug ("Starting WebBackEnd");
+			Logger.Log.Debug ("Starting WebBackEnd");
 			WebBackEnd.init (web_global);
 
 			//Next start web-service server
-			log.Info ("Starting WebServiceBackEnd");
+			Logger.Log.Info ("Starting WebServiceBackEnd");
 			WebServiceBackEnd.init (web_global);
 
-			log.Debug ("Global WebAccess {0}", web_global ? "Enabled" : "Disabled");
+			Logger.Log.Debug ("Global WebAccess {0}", web_global ? "Enabled" : "Disabled");
 
 			xsp_param[1] = web_port;
 			xsp_param[3] = web_rootDir;
@@ -131,7 +131,7 @@ namespace Beagle.WebService {
 					     						
 			if (web_start) {
 				
-				log.Debug ("Starting Internal Web Server");
+				Logger.Log.Debug ("Starting Internal Web Server");
 
 				int retVal = 0;
 				try {
@@ -145,17 +145,17 @@ namespace Beagle.WebService {
 				}
 
 				if (retVal != 0) {
-					log.Warn ("Error starting Internal Web Server (retVal={0})", retVal);
-					log.Warn ("Check if there is another instance of Beagle running");
+					Logger.Log.Warn ("Error starting Internal Web Server (retVal={0})", retVal);
+					Logger.Log.Warn ("Check if there is another instance of Beagle running");
 				}
 				else
-					log.Debug("BeagleXSP Applications list: " + xsp_param[5]);
+					Logger.Log.Debug("BeagleXSP Applications list: " + xsp_param[5]);
 			}				
 		}
 		
 		public static void Stop() 
 		{
-			log.Info ("Stopping WebServiceBackEnd");
+			Logger.Log.Info ("Stopping WebServiceBackEnd");
 			if (appServer != null) {
 			    appServer.Stop(); 
 				appServer = null;
@@ -356,7 +356,7 @@ namespace Beagle.WebService {
 			foreach (string text in sreq.text) 
 				query.AddText(text);				
 			
-			log.Info("WebServiceBackEnd: Received {0} WebService Query with search term: {1}", isLocalReq ? "Local":"External", query.QuotedText);
+			Logger.Log.Info("WebServiceBackEnd: Received {0} WebService Query with search term: {1}", isLocalReq ? "Local":"External", query.QuotedText);
 
 			if (sreq.mimeType != null && sreq.mimeType[0] != null)
 				foreach (string mtype in sreq.mimeType)
@@ -464,7 +464,7 @@ namespace Beagle.WebService {
 					
 			 sr.statusCode = SC_QUERY_SUCCESS;
 			 sr.statusMsg = "Success";
-			 log.Info("WebServiceBackEnd: Total Results = "  + sr.totalResults);			
+			 Logger.Log.Info("WebServiceBackEnd: Total Results = "  + sr.totalResults);			
 			 return sr;
 		}
 
@@ -477,7 +477,7 @@ namespace Beagle.WebService {
 			if (!sessionTable.ContainsKey(searchToken)) {
 				sr.statusCode = SC_INVALID_SEARCH_TOKEN;
 				sr.statusMsg = "Error: Invalid Search Token";
-				log.Warn("GetMoreResults: Invalid Search Token received ");
+				Logger.Log.Warn("GetMoreResults: Invalid Search Token received ");
 				return sr;
 			}
 									
@@ -485,7 +485,7 @@ namespace Beagle.WebService {
 			if (results == null) {
 				sr.statusCode = SC_INVALID_SEARCH_TOKEN;
 				sr.statusMsg = "Error: Invalid Search Token";
-				log.Warn("GetMoreResults: Invalid Search Token received ");
+				Logger.Log.Warn("GetMoreResults: Invalid Search Token received ");
 				return sr;
 			}
 
@@ -565,7 +565,7 @@ namespace Beagle.WebService {
 			if (!sessionTable.ContainsKey(searchToken)) {
 			
 				response = new HitSnippet[0];
-				log.Warn("GetSnippets: Invalid Search Token received ");
+				Logger.Log.Warn("GetSnippets: Invalid Search Token received ");
 				return response;
 			}
 									
@@ -573,7 +573,7 @@ namespace Beagle.WebService {
 			if ((results == null) || (results.Count == 0)) {
 
 				response = new HitSnippet[0];
-				log.Warn("GetSnippets: Invalid Search Token received ");
+				Logger.Log.Warn("GetSnippets: Invalid Search Token received ");
 				return response;
 			}
 
