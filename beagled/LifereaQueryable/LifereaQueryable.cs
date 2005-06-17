@@ -37,7 +37,7 @@ using Beagle.Util;
 namespace Beagle.Daemon.LifereaQueryable {
 
 	[QueryableFlavor (Name="Liferea", Domain=QueryDomain.Local, RequireInotify=false)]
-	public class LifereaQueryable : LuceneQueryable {
+	public class LifereaQueryable : LuceneQueryable, IIndexableGenerator {
 
 		private static Logger log = Logger.Get ("LifereaQueryable");
 
@@ -78,23 +78,22 @@ namespace Beagle.Daemon.LifereaQueryable {
                                 fsw.Created += new FileSystemEventHandler (OnChanged);
 
                                 fsw.EnableRaisingEvents = true;
-                        }                                                                                                                                                                                                     
+			}
+
                         log.Info ("Scanning Liferea feeds...");
 
-                        Stopwatch stopwatch = new Stopwatch ();
-                        int feed_count = 0, item_count = 0;
-
-                        stopwatch.Start ();
+			Stopwatch stopwatch = new Stopwatch ();
+			stopwatch.Start ();
 
                         DirectoryInfo dir = new DirectoryInfo (liferea_dir);
-                        foreach (FileInfo file in dir.GetFiles ()) {
-				item_count += IndexFeed (file.FullName, Scheduler.Priority.Delayed);
-				feed_count++;
-                        }
+			this.files_to_parse = dir.GetFiles ();
 
-                        stopwatch.Stop ();
+			Scheduler.Task task = NewAddTask (this);
+			task.Tag = "Liferea";
+			ThisScheduler.Add (task);
 
-                        log.Info ("Scanned {0} items in {1} feeds in {2}", item_count, feed_count, stopwatch);
+			stopwatch.Stop ();
+                        log.Info ("{0} files will be parsed (scanned in {1})", this.files_to_parse.Count, stopwatch);
 		}
 
 		private bool CheckForExistence ()
@@ -120,21 +119,46 @@ namespace Beagle.Daemon.LifereaQueryable {
 			if (subitem == "")
 				return;
 
-			IndexFeed (Path.Combine (path, subitem), Scheduler.Priority.Immediate);
+			IndexSingleFeed (Path.Combine (path, subitem), Scheduler.Priority.Immediate);
 		}
 
 		// Modified/Created event using FSW
 		
 		private void OnChanged (object o, FileSystemEventArgs args)
 		{
-			IndexFeed (args.FullPath, Scheduler.Priority.Immediate);
+			IndexSingleFeed (args.FullPath, Scheduler.Priority.Immediate);
 		}
 		
 		/////////////////////////////////////////////////
 
-		// Parse and index a feed
+		private Indexable FeedItemToIndexable (Feed feed, Item item)
+		{
+			Indexable indexable = new Indexable (new Uri (String.Format ("feed:{0};item={1}", feed.Source, item.Source)));
+			indexable.MimeType = "text/html";
+			indexable.Type = "FeedItem";
 
-		private int IndexFeed (string filename, Scheduler.Priority priority)
+			DateTime date = new DateTime (1970, 1, 1);
+			date = date.AddSeconds (item.Timestamp);
+			date = TimeZone.CurrentTimeZone.ToLocalTime (date);
+
+			indexable.Timestamp = date;				
+
+			indexable.AddProperty (Property.NewKeyword ("dc:title", item.Title));
+			indexable.AddProperty (Property.NewKeyword ("dc:description", item.Description));
+			indexable.AddProperty (Property.NewKeyword ("fixme:author", item.Attribs.Author));
+			indexable.AddProperty (Property.NewDate ("fixme:published", date));
+			indexable.AddProperty (Property.NewKeyword ("fixme:itemuri", item.Source));
+			indexable.AddProperty (Property.NewKeyword ("fixme:webloguri", feed.Source));
+				
+			StringReader reader = new StringReader (item.Description);
+			indexable.SetTextReader (reader);
+
+			return indexable;
+		}
+
+		// Parse and index a single feed
+
+		private int IndexSingleFeed (string filename, Scheduler.Priority priority)
 		{
 			FileInfo file = new FileInfo(filename);
 			
@@ -146,36 +170,15 @@ namespace Beagle.Daemon.LifereaQueryable {
 
 			Scheduler.TaskGroup group = NewMarkingTaskGroup (file.FullName, file.LastWriteTime);
 			
-			feed = Feed.LoadFromFile(file.FullName);
+			feed = Feed.LoadFromFile (file.FullName);
 			
-			if(feed == null)
-				return 0;
-			
-			if(feed.Items == null)
+			if (feed == null || feed.Items == null)
 				return 0;
 			
 			foreach (Item item in feed.Items) {
 				item_count++;
 				
-				Indexable indexable = new Indexable ( new Uri (String.Format ("feed:{0};item={1}", feed.Source, item.Source)));
-				indexable.MimeType = "text/html";
-				indexable.Type = "FeedItem";
-
-				DateTime date = new DateTime (1970, 1, 1);
-				date = date.AddSeconds (item.Timestamp);
-				date = TimeZone.CurrentTimeZone.ToLocalTime (date);
-
-				indexable.Timestamp = date;				
-
-				indexable.AddProperty (Property.NewKeyword ("dc:title", item.Title));
-				indexable.AddProperty (Property.NewKeyword ("dc:description", item.Description));
-				indexable.AddProperty (Property.NewKeyword ("fixme:author", item.Attribs.Author));
-				indexable.AddProperty (Property.NewDate ("fixme:published", date));
-				indexable.AddProperty (Property.NewKeyword ("fixme:itemuri", item.Source));
-				indexable.AddProperty (Property.NewKeyword ("fixme:webloguri", feed.Source));
-				
-				StringReader reader = new StringReader (item.Description);
-				indexable.SetTextReader (reader);
+				Indexable indexable = FeedItemToIndexable (feed, item);
 				
 				Scheduler.Task task = NewAddTask (indexable);
 				task.Priority = priority;
@@ -187,6 +190,62 @@ namespace Beagle.Daemon.LifereaQueryable {
 		     
 			return item_count;
 		}
+
+		////////////////////////////////////////////////
+
+		// IIndexableGenerator implementation
+
+		private ICollection files_to_parse;
+		private IEnumerator file_enumerator = null;
+		private IEnumerator item_enumerator = null;
+		private Feed current_feed;
+
+		public Indexable GetNextIndexable ()
+		{
+			Item item = (Item) this.item_enumerator.Current;
+
+			return FeedItemToIndexable (this.current_feed, item);
+		}
+
+		public bool HasNextIndexable ()
+		{
+			if (this.files_to_parse.Count == 0)
+				return false;
+
+			while (this.item_enumerator == null || !this.item_enumerator.MoveNext ()) {
+				if (this.file_enumerator == null)
+					this.file_enumerator = this.files_to_parse.GetEnumerator ();
+
+				do {
+					if (!this.file_enumerator.MoveNext ())
+						return false;
+
+					FileInfo file = (FileInfo) this.file_enumerator.Current;
+
+					if (this.FileAttributesStore.IsUpToDate (file.FullName))
+						continue;
+
+					Feed feed = Feed.LoadFromFile (file.FullName);
+
+					this.FileAttributesStore.AttachTimestamp (file.FullName, file.LastWriteTime);
+				
+					if (feed == null || feed.Items == null)
+						continue;
+
+					this.current_feed = feed;
+
+				} while (this.current_feed == null);
+
+				this.item_enumerator = this.current_feed.Items.GetEnumerator ();
+			}
+
+			return true;
+		}
+
+		public string StatusName {
+			get { return null; }
+		}
+
 	}	
 
 	////////////////////////////////////////////////

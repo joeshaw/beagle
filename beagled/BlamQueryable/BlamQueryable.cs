@@ -187,6 +187,8 @@ namespace Beagle.Daemon.BlamQueryable {
 					return false;
 				}
 
+				this.FileAttributesStore.AttachTimestamp (file.FullName, file.LastWriteTime);
+
 				if (this.collection.Channels == null || this.collection.Channels.Count == 0) {
 					this.collection = null;
 					return false;
