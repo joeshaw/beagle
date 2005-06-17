@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: beagle\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2005-06-02 11:30-0400\n"
-"PO-Revision-Date: 2005-06-02 13:55-0400\n"
+"POT-Creation-Date: 2005-06-17 00:38-0400\n"
+"PO-Revision-Date: 2005-06-17 13:55-0400\n"
 "Last-Translator: Adam Weinberger <adamw@gnome.org>\n"
 "Language-Team: Canadian English <adamw@gnome.org>\n"
 "MIME-Version: 1.0\n"
@@ -25,15 +25,15 @@ msgstr ""
 "If you're wondering whether Best is working check your notification area "
 "(system tray)"
 
-#: Best/BestTray.cs:164
+#: Best/BestTray.cs:166
 msgid "No Recent Searches"
 msgstr "No Recent Searches"
 
-#: Best/BestTray.cs:168
+#: Best/BestTray.cs:170
 msgid "Recent Searches"
 msgstr "Recent Searches"
 
-#: Best/BestTray.cs:183
+#: Best/BestTray.cs:185
 msgid "Quit"
 msgstr "Quit"
 
@@ -95,7 +95,7 @@ msgid "Results <b>{0} through {1} of {2}</b> are shown."
 msgstr "Results <b>{0} through {1} of {2}</b> are shown."
 
 #. To translators: {0} represents the current query keywords
-#: Best/BestWindow.cs:522
+#: Best/BestWindow.cs:523
 #, csharp-format
 msgid ""
 "The query for <i>{0}</i> failed.<br>The likely cause is that the beagle "
@@ -105,7 +105,7 @@ msgstr ""
 "daemon isn't running."
 
 #. To translators: {0} represents the current query keywords, {1} contains the errormessage
-#: Best/BestWindow.cs:527
+#: Best/BestWindow.cs:528
 #, csharp-format
 msgid "The query for <i>{0}</i> failed with error:<br>{1}<br>"
 msgstr "The query for <i>{0}</i> failed with error:<br>{1}<br>"
@@ -126,11 +126,21 @@ msgstr "<b>Conversations History</b>"
 msgid "IM Viewer"
 msgstr "IM Viewer"
 
-#: Tiles/TileDocs.cs:75
+#: ImLogViewer/ImLogWindow.cs:77
+#, csharp-format
+msgid "Conversations in {0}"
+msgstr "Conversations in {0}"
+
+#: ImLogViewer/ImLogWindow.cs:84
+#, csharp-format
+msgid "Conversations with {0}"
+msgstr "Conversations with {0}"
+
+#: Tiles/TileDocs.cs:77
 msgid "Pages:"
 msgstr "Pages:"
 
-#: Tiles/TileDocs.cs:79
+#: Tiles/TileDocs.cs:81
 msgid "Words:"
 msgstr "Words:"
 
@@ -164,23 +174,27 @@ msgstr "Conversation in {0}"
 msgid "Conversation with {0}"
 msgstr "Conversation with {0}"
 
-#: Tiles/TileMailMessage.cs:68
+#: Tiles/TileMailMessage.cs:80
 msgid "No Subject"
 msgstr "No Subject"
 
-#: Tiles/TileMailMessage.cs:73
+#: Tiles/TileMailMessage.cs:83
+msgid "email attachment"
+msgstr "email attachment"
+
+#: Tiles/TileMailMessage.cs:89
 msgid "To"
 msgstr "To"
 
-#: Tiles/TileMailMessage.cs:73
+#: Tiles/TileMailMessage.cs:89
 msgid "From"
 msgstr "From"
 
-#: Tiles/TileMailMessage.cs:104
+#: Tiles/TileMailMessage.cs:117
 msgid "Sent"
 msgstr "Sent"
 
-#: Tiles/TileMailMessage.cs:104
+#: Tiles/TileMailMessage.cs:117
 msgid "Received"
 msgstr "Received"
 
@@ -310,6 +324,210 @@ msgstr "Weblog:"
 #: Tiles/TranslationHack.cs:92
 msgid "Published:"
 msgstr "Published:"
+
+#: tools/Settings.cs:174
+msgid "Reload configuration"
+msgstr "Reload configuration"
+
+#: tools/Settings.cs:175
+msgid ""
+"The configuration file has been modified by another application. Do you wish "
+"to discard the currently displayed values and reload configuration from disk?"
+msgstr ""
+"The configuration file has been modified by another application. Do you wish "
+"to discard the currently displayed values and reload configuration from disk?"
+
+#: tools/Settings.cs:213
+msgid "Select Path"
+msgstr "Select Path"
+
+#: tools/Settings.cs:232
+msgid "The selected path is already selected for indexing and wasn't added."
+msgstr "The selected path is already selected for indexing and was not added."
+
+#: tools/Settings.cs:235
+msgid ""
+"The selected path wasn't added. The list contains items that supercedes it "
+"and the data is already being indexed."
+msgstr ""
+"The selected path was not added. The list contains items that supercede it "
+"and the data are already being indexed."
+
+#: tools/Settings.cs:246
+msgid "Path not added"
+msgstr "Path not added"
+
+#: tools/Settings.cs:255
+msgid "Remove obsolete paths"
+msgstr "Remove obsolete paths"
+
+#: tools/Settings.cs:256
+msgid ""
+"Adding this path will obsolete some of the existing include paths. This will "
+"result in the removal of the old obsolete paths. Do you still wish to add it?"
+msgstr ""
+"Adding this path will obsolete some of the existing include paths. This will "
+"result in the removal of the old obsolete paths. Do you still wish to add it?"
+
+#: tools/Settings.cs:282
+msgid "Remove path"
+msgstr "Remove path"
+
+#: tools/Settings.cs:283
+msgid ""
+"Are you sure you wish to remove this path from the list of directories to be "
+"included for indexing?"
+msgstr ""
+"Are you sure you wish to remove this path from the list of directories to be "
+"included for indexing?"
+
+#: tools/Settings.cs:312
+msgid "Remove item"
+msgstr "Remove item"
+
+#: tools/Settings.cs:313
+msgid ""
+"Are you sure you wish to remove this item from the list of data to be "
+"excluded from indexing?"
+msgstr ""
+"Are you sure you wish to remove this item from the list of data to be "
+"excluded from indexing?"
+
+#: tools/Settings.cs:363 tools/Settings.cs:452 tools/Settings.cs:785
+msgid "Name"
+msgstr "Name"
+
+#: tools/Settings.cs:446 tools/settings.glade.h:24
+msgid "Type"
+msgstr "Type"
+
+#: tools/Settings.cs:499 tools/Settings.cs:719 tools/settings.glade.h:17
+msgid "Path"
+msgstr "Path"
+
+#: tools/Settings.cs:502 tools/Settings.cs:729
+msgid "Pattern"
+msgstr "Pattern"
+
+#: tools/Settings.cs:505 tools/Settings.cs:724 tools/settings.glade.h:16
+msgid "Mail Folder"
+msgstr "Mail Folder"
+
+#: tools/Settings.cs:693
+msgid "Select Folder"
+msgstr "Select Folder"
+
+#: tools/Settings.cs:753
+msgid "Error adding path"
+msgstr "Error adding path"
+
+#: tools/Settings.cs:754
+msgid ""
+"The specified path could not be found and therefor it could not be added to "
+"the list of resources excluded for indexing."
+msgstr ""
+"The specified path could not be found and therefore could not be added to "
+"the list of resources excluded for indexing."
+
+#: tools/Settings.cs:784
+msgid "Show"
+msgstr "Show"
+
+#: tools/settings.glade.h:1
+msgid "<b>Add resource</b>"
+msgstr "<b>Add resource</b>"
+
+#: tools/settings.glade.h:2
+msgid "<b>Display</b>"
+msgstr "<b>Display</b>"
+
+#: tools/settings.glade.h:3
+msgid "<b>General</b>"
+msgstr "<b>General</b>"
+
+#: tools/settings.glade.h:4
+msgid "<b>Privacy</b>"
+msgstr "<b>Privacy</b>"
+
+#: tools/settings.glade.h:5
+msgid "<b>Select mail folder</b>"
+msgstr "<b>Select mail folder</b>"
+
+#: tools/settings.glade.h:6
+msgid "Add any additional paths to be included for indexing."
+msgstr "Add any additional paths to be included for indexing."
+
+#: tools/settings.glade.h:7
+msgid "Add resource"
+msgstr "Add resource"
+
+#: tools/settings.glade.h:8
+msgid ""
+"Adjust which types of results that should be visible, and in what order they "
+"should be presented when grouped by type."
+msgstr ""
+"Adjust which types of results should be visible, and in what order they "
+"should be presented when grouped by type."
+
+#: tools/settings.glade.h:9
+msgid "Alt"
+msgstr "Alt"
+
+#: tools/settings.glade.h:10
+msgid "Ctrl"
+msgstr "Ctrl"
+
+#: tools/settings.glade.h:11
+msgid "Directory Path"
+msgstr "Directory Path"
+
+#: tools/settings.glade.h:12
+msgid "Display the search window by pressing"
+msgstr "Display the search window by pressing"
+
+#: tools/settings.glade.h:13
+msgid "Filename Pattern"
+msgstr "Filename Pattern"
+
+#: tools/settings.glade.h:14
+msgid "Index my home directory"
+msgstr "Index my home directory"
+
+#: tools/settings.glade.h:15
+msgid "Indexing"
+msgstr "Indexing"
+
+#: tools/settings.glade.h:18
+msgid "Please select the mail folder you wish to exclude from indexing."
+msgstr "Please select the mail folder you wish to exclude from indexing."
+
+#: tools/settings.glade.h:19
+msgid "Search"
+msgstr "Search"
+
+#: tools/settings.glade.h:20
+msgid "Search & Indexing Preferences"
+msgstr "Search & Indexing Preferences"
+
+#: tools/settings.glade.h:21
+msgid "Select mail folder"
+msgstr "Select mail folder"
+
+#: tools/settings.glade.h:22
+msgid ""
+"Specify any resources, such as paths, patterns, mail folders or type of "
+"objects you wish to exclude from indexing."
+msgstr ""
+"Specify any resources, such as paths, patterns, mail folders or type of "
+"objects you wish to exclude from indexing."
+
+#: tools/settings.glade.h:23
+msgid "Start search & indexing services automatically on login"
+msgstr "Start search & indexing services automatically on login"
+
+#: Util/Evolution.cs:45 Util/Evolution.cs:160
+msgid "On This Computer"
+msgstr "On This Computer"
 
 #: Util/ExifData.cs:226
 msgid "Image Directory"
