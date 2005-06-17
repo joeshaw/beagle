@@ -152,12 +152,11 @@ namespace Best {
 
 		int posX = 0, posY = 0;
 
-		public new void Show ()
+		public new void Present ()
 		{
-			base.Show ();	
+			base.Present ();	
 			
 			Move (posX, posY);
-			Present ();
 		}
 
 		public new void Hide ()
