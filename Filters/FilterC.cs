@@ -43,6 +43,7 @@ namespace Beagle.Filters {
 		public FilterC ()
 		{
 			AddSupportedMimeType ("text/x-csrc");
+			AddSupportedMimeType ("text/x-chdr");
 		}
 
 		override protected void DoOpen (FileInfo info)
