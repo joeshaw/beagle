@@ -35,5 +35,11 @@ namespace Beagle {
 			get { return _snippet; }
 			set { _snippet = value; }
 		}
+
+		private Object 	_ctx;
+		public Object 	context {
+			get { return _ctx; }
+			set { _ctx = value; }
+		}
     }
 }
