@@ -1,3 +1,8 @@
+2005-06-17  Vijay K. Nanjundaswamy <knvijay@novell.com>
+
+	* beagled/WebServices/WebBackEnd.cs, WebServiceBackEnd.cs, NetBeagleHandler.cs: 
+	Added support for Prefetching and Caching of snippets for NetworkHits.
+
 2005-06-16  Daniel Drake  <dsd@gentoo.org>
 
 	* configure.in: Use single = for equality thanks to Jeremy Messenger in
