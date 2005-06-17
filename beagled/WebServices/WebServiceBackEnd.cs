@@ -54,7 +54,9 @@ namespace Beagle.WebService {
 		public static string web_port = DEFAULT_XSP_PORT;
 		public static string web_rootDir = DEFAULT_XSP_ROOT;
 
-		public static ExternalAccessFilter AccessFilter;																
+		public static ExternalAccessFilter AccessFilter;
+
+		static Logger log = Logger.Get ("WebServiceBackEnd");
 		static Mono.ASPNET.ApplicationServer appServer = null;
 		static string DEFAULT_APP_MAPPINGS = "/:" + DEFAULT_XSP_ROOT + ",/beagle:" + DEFAULT_XSP_ROOT;
 
@@ -68,24 +70,24 @@ namespace Beagle.WebService {
 		{			
 			try {
 				hostname = Dns.GetHostName();
-				Console.WriteLine("This Computer Hostname: " + hostname);
+				log.Info("This Computer Hostname: " + hostname);
 			}
 			catch (Exception ex) 
 			{
-				Console.WriteLine("Caught exception {0} in Dns.GetHostName: ", ex.Message);
-				Console.WriteLine("Resetting hostname to \"localhost\"");
+				log.Error("Caught exception {0} in Dns.GetHostName: ", ex.Message);
+				log.Error("Resetting hostname to \"localhost\"");
 				hostname = "localhost";
 			}
 								
 			//start web-access server first
-			Logger.Log.Debug ("Starting WebBackEnd");
+			log.Debug ("Starting WebBackEnd");
 			WebBackEnd.init (web_global);
 
 			//Next start web-service server
-			Logger.Log.Info ("Starting WebServiceBackEnd");
+			log.Info ("Starting WebServiceBackEnd");
 			WebServiceBackEnd.init (web_global);
 
-			Logger.Log.Debug ("Global WebAccess {0}", web_global ? "Enabled" : "Disabled");
+			log.Debug ("Global WebAccess {0}", web_global ? "Enabled" : "Disabled");
 
 			xsp_param[1] = web_port;
 			xsp_param[3] = web_rootDir;
@@ -96,21 +98,21 @@ namespace Beagle.WebService {
 				xsp_param[5] = "/:" + web_rootDir + ",/beagle:" + web_rootDir + "/beagle";
 			
 			try {
-				//",/beagle/local:" + ExternalStringsHack.Prefix,	
+					// Mapping /beagle/local to ExternalStringsHack.Prefix	
 				if (Directory.Exists(ExternalStringsHack.Prefix))
 				xsp_param[5] += ",/beagle/local:" + ExternalStringsHack.Prefix;
 							
-				//",/beagle/gnome:" + ExternalStringsHack.GnomePrefix +
+					//Mapping /beagle/gnome to ExternalStringsHack.GnomePrefix
 				if (Directory.Exists(ExternalStringsHack.GnomePrefix))
 				xsp_param[5] += ",/beagle/gnome:" + ExternalStringsHack.GnomePrefix;
 												
-				//",/beagle/kde3:" + ExternalStringsHack.KdePrefix +
+					//Mapping /beagle/kde3 to ExternalStringsHack.KdePrefix
 				if (Directory.Exists(ExternalStringsHack.KdePrefix))
 				xsp_param[5] += ",/beagle/kde3:" + ExternalStringsHack.KdePrefix;
 				
 				//if (!hostname.Equals("localhost")) {
 
-					string[] reserved_suffixes = new string[] {"local", "gnome", "kde3" };
+					string[] reserved_suffixes = new string[] {"beagle", "local", "gnome", "kde3"};
 					string BeagleHttpUriBase = "http://" + hostname + ":" + xsp_param[1] + "/beagle/";
 				
 					AccessFilter = new ExternalAccessFilter(BeagleHttpUriBase, reserved_suffixes);
@@ -129,7 +131,7 @@ namespace Beagle.WebService {
 					     						
 			if (web_start) {
 				
-				Logger.Log.Debug ("Starting Internal Web Server");
+				log.Debug ("Starting Internal Web Server");
 
 				int retVal = 0;
 				try {
@@ -143,17 +145,17 @@ namespace Beagle.WebService {
 				}
 
 				if (retVal != 0) {
-					Logger.Log.Warn ("Error starting Internal Web Server (retVal={0})", retVal);
-					Logger.Log.Warn ("Check if there is another instance of Beagle running");
+					log.Warn ("Error starting Internal Web Server (retVal={0})", retVal);
+					log.Warn ("Check if there is another instance of Beagle running");
 				}
 				else
-					Logger.Log.Debug("BeagleXSP Applications list: " + xsp_param[5]);
+					log.Debug("BeagleXSP Applications list: " + xsp_param[5]);
 			}				
 		}
 		
 		public static void Stop() 
 		{
-			Logger.Log.Info ("Stopping WebServiceBackEnd");
+			log.Info ("Stopping WebServiceBackEnd");
 			if (appServer != null) {
 			    appServer.Stop(); 
 				appServer = null;
@@ -215,15 +217,13 @@ namespace Beagle.WebService {
 					lock (results.SyncRoot) 
 						results.AddRange(hits);
 				}
-				else {
-				
-					//Query query = sdata.query;					
+				else {				
+						//Query query = sdata.query;					
 					lock (results.SyncRoot) {
 						foreach (Hit h in hits)
 							if (AccessFilter.FilterHit(h))
 								results.Add(h);
 					}
-					//Console.WriteLine("OnHitsAdded: Total hits in Results is {0}", results.Count); 												
 				}
 			}
 		}
@@ -341,8 +341,7 @@ namespace Beagle.WebService {
 		public SearchResult doQuery(SearchRequest sreq, bool isLocalReq)
 		{	
 			SearchResult sr;
-			//if (sreq == (MarshalByRef)(null))
-				//return new SearchResult();
+
 			if (sreq.text == null || sreq.text.Length == 0 ||
 				(sreq.text.Length == 1 && sreq.text[0].Trim() == "") ) {
 				
@@ -357,7 +356,7 @@ namespace Beagle.WebService {
 			foreach (string text in sreq.text) 
 				query.AddText(text);				
 			
-			Console.WriteLine("WebServiceBackEnd: Received {0} WebService Query with search term: {1}", isLocalReq ? "Local":"External", query.QuotedText);
+			log.Info("WebServiceBackEnd: Received {0} WebService Query with search term: {1}", isLocalReq ? "Local":"External", query.QuotedText);
 
 			if (sreq.mimeType != null && sreq.mimeType[0] != null)
 				foreach (string mtype in sreq.mimeType)
@@ -375,8 +374,6 @@ namespace Beagle.WebService {
 			ArrayList results = ArrayList.Synchronized(new ArrayList());
 			
 			QueryResult qres = new QueryResult ();
-			
-			//Console.WriteLine("WebServiceBackEnd: Starting Query for string \"{0}\"",	query.QuotedText);
 
 			string searchId = TokenGenerator();
 						
@@ -418,7 +415,7 @@ namespace Beagle.WebService {
 					else
 						snippet = queryable.GetSnippet (ICollection2StringList(query.Text), h);				
 					
-					//snippet == "", implies GetSnippet returned empty snippet
+					//snippet == "", implies GetSnippet returned null or empty snippet
 					if (snippet == null)   	
 						snippet = "";		
 								
@@ -467,7 +464,7 @@ namespace Beagle.WebService {
 					
 			 sr.statusCode = SC_QUERY_SUCCESS;
 			 sr.statusMsg = "Success";
-			 Console.WriteLine("WebServiceBackEnd: Total Results = "  + sr.totalResults);			
+			 log.Info("WebServiceBackEnd: Total Results = "  + sr.totalResults);			
 			 return sr;
 		}
 
@@ -480,7 +477,7 @@ namespace Beagle.WebService {
 			if (!sessionTable.ContainsKey(searchToken)) {
 				sr.statusCode = SC_INVALID_SEARCH_TOKEN;
 				sr.statusMsg = "Error: Invalid Search Token";
-				Console.WriteLine("GetMoreResults: Invalid Search Token received ");
+				log.Warn("GetMoreResults: Invalid Search Token received ");
 				return sr;
 			}
 									
@@ -488,11 +485,11 @@ namespace Beagle.WebService {
 			if (results == null) {
 				sr.statusCode = SC_INVALID_SEARCH_TOKEN;
 				sr.statusMsg = "Error: Invalid Search Token";
-				Console.WriteLine("GetMoreResults: Invalid Search Token received ");
+				log.Warn("GetMoreResults: Invalid Search Token received ");
 				return sr;
 			}
 
-			lock (results.SyncRoot) { //Lock results ArrayList to prevent more Hits added till we've processed doQuery
+			lock (results.SyncRoot) { //Lock results ArrayList to prevent more Hits getting added till we've processed doQuery
  
  				int i = 0;
  				
@@ -508,17 +505,15 @@ namespace Beagle.WebService {
 					sr.hitResults[i] = new HitResult();
 					
 /* 	 GetMoreResults will NOT return Snippets by default. Client must make explicit GetSnippets request to get snippets for these hits.
-
 					string snippet = ""; 						
 					Queryable queryable = h.SourceObject as Queryable;
 					if (queryable == null)
 						snippet = "ERROR: hit.SourceObject is null, uri=" + h.Uri;
 					else
-						snippet = queryable.GetSnippet (ICollection2StringList(query.Text), h);		
-					 = snippet;			
+						snippet = queryable.GetSnippet (ICollection2StringList(query.Text), h);				
 */
-// Not initializing sr.hitResults[i].snippet implies there is no <snippets> element in HitResult XML response
-// which implies GetSnippet was not done.
+
+// Not initializing sr.hitResults[i].snippet implies there is no <snippets> element in HitResult XML response.
 								
 					sr.hitResults[i].id = h.Id;
 					
@@ -562,7 +557,7 @@ namespace Beagle.WebService {
 			return sr;
 		}
 		
-		static string InvalidHitSnippetError = "ERROR: Invalid or Duplicate Hit Id";
+		public static string InvalidHitSnippetError = "ERROR: Invalid or Duplicate Hit Id";
 		public HitSnippet[] getSnippets(string searchToken, int[] hitIds)
 		{	
 			HitSnippet[] response;
@@ -570,7 +565,7 @@ namespace Beagle.WebService {
 			if (!sessionTable.ContainsKey(searchToken)) {
 			
 				response = new HitSnippet[0];
-				Console.WriteLine("GetSnippets: Invalid Search Token received ");
+				log.Warn("GetSnippets: Invalid Search Token received ");
 				return response;
 			}
 									
@@ -578,7 +573,7 @@ namespace Beagle.WebService {
 			if ((results == null) || (results.Count == 0)) {
 
 				response = new HitSnippet[0];
-				Console.WriteLine("GetSnippets: Invalid Search Token received ");
+				log.Warn("GetSnippets: Invalid Search Token received ");
 				return response;
 			}
 

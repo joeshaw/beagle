@@ -40,8 +40,7 @@ namespace Beagle.Daemon {
 	public class NetworkedBeagle : IQueryable 
 	{
 		static Logger log = Logger.Get ("NetworkedBeagle");
-		
-	    string NetBeagleConfigFile = "netbeagle.cfg";
+	    static readonly string NetBeagleConfigFile = "netbeagle.cfg";
 
 		ArrayList NetBeagleList;
 		
@@ -123,6 +122,9 @@ namespace Beagle.Daemon {
 			if (hit is NetworkHit)
 				s = ((NetworkHit)hit).snippet;
 			
+			if (s == null) 
+				return "";
+				
 			return s;
 		}
 		

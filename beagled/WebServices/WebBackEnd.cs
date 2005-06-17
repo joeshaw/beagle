@@ -49,7 +49,8 @@ namespace Beagle.WebService {
 
 		static WebBackEnd instance = null;
 		static bool allow_global_access = false;
-
+		static Logger log = Logger.Get ("WebBackEnd");
+		
 		private Hashtable result;
 		private Hashtable sessionResp;
 
@@ -87,31 +88,49 @@ namespace Beagle.WebService {
 
 		void OnHitsAdded (QueryResult qres, ICollection hits)
 		{	
-			//Console.WriteLine("WebBackEnd: OnHitsAdded() invoked with {0} hits", hits.Count);
-
 			if (result.Contains(qres)) {
 			
 				Resp resp = ((Resp) result[qres]);
-				BT.SimpleRootTile root = resp.rootTile;
+				BT.SimpleRootTile root = resp.resultPair.rootTile;
+				ArrayList hitsCopy = resp.resultPair.hitsCopy;
 				
 				lock (root)  {
-					if (resp.isLocalReq)
+					if (resp.isLocalReq) {
 						root.Add(hits);
+						lock (hitsCopy.SyncRoot)
+							hitsCopy.AddRange(hits);
+					}
 					else {
 							foreach (Hit h in hits)
-							 	if (WebServiceBackEnd.AccessFilter.FilterHit(h))
+							 	if (WebServiceBackEnd.AccessFilter.FilterHit(h)) {
 									root.Add(h);
+									lock (hitsCopy.SyncRoot)
+										hitsCopy.Add(h);
+								}
 					}
 				}
 			}
 		}
-	
+		
+		void removeUris(ArrayList res, ICollection uris)
+		{
+			foreach(Uri u in uris)
+			   foreach(Hit h in res)
+				if (h.Uri.Equals (u) && h.Uri.Fragment == u.Fragment) {
+					lock (res.SyncRoot) {
+						res.Remove(h);
+					}
+					break;
+				}
+		}
+			
 		void OnHitsSubtracted (QueryResult qres, ICollection uris)
 		{
 			if (result.Contains(qres)) {
-				BT.SimpleRootTile root = ((Resp) result[qres]).rootTile;
+				BT.SimpleRootTile root = ((Resp) result[qres]).resultPair.rootTile;
 				lock (root) {
 					root.Subtract (uris);
+					removeUris(((Resp) result[qres]).resultPair.hitsCopy, uris);
 				}
 			}
 		}
@@ -119,7 +138,7 @@ namespace Beagle.WebService {
 		void OnFinished (QueryResult qres)
 		{
 			if (result.Contains(qres))
-				Console.WriteLine("WebBackEnd:OnFinished() - Got {0} results from beagled QueryDriver", ((Resp) result[qres]).rootTile.HitCollection.NumResults);
+				log.Info("WebBackEnd:OnFinished() - Got {0} results from beagled QueryDriver", ((Resp) result[qres]).resultPair.rootTile.HitCollection.NumResults);
 
 			DetachQueryResult(qres);
 		}
@@ -147,8 +166,15 @@ namespace Beagle.WebService {
 			if (qres != null) {
 			
 				if (result.Contains(qres))
+				{
+					Resp resp = ((Resp) result[qres]);
+					ArrayList hitsCopy = resp.resultPair.hitsCopy;
+					if (hitsCopy != null)
+						hitsCopy.Sort();
+					
 					result.Remove(qres);
-				
+				}
+							
 				qres.HitsAddedEvent -= OnHitsAdded;
 				qres.HitsSubtractedEvent -= OnHitsSubtracted;
 				qres.FinishedEvent -= OnFinished;
@@ -183,7 +209,7 @@ namespace Beagle.WebService {
 			if (resp == null) 
 				return false;
 
-			BT.SimpleRootTile root = resp.rootTile;
+			BT.SimpleRootTile root = resp.resultPair.rootTile;
 			return (root != null)? root.HitCollection.CanPageForward:false;
 		}
 
@@ -193,13 +219,13 @@ namespace Beagle.WebService {
 			if (!canForward(sessId) || (resp == null))
 				return NO_RESULTS;
 				
-			BT.SimpleRootTile root = resp.rootTile;
+			BT.SimpleRootTile root = resp.resultPair.rootTile;
 			if (root != null) {
 				lock (root) {
 					root.HitCollection.PageForward ();
-			
-					bufferRenderContext bctx = new bufferRenderContext();
-					resp.bufferContext = bctx;
+
+					bufferRenderContext bctx = resp.bufferContext;
+					bctx.init();					
 					root.Render(bctx);
 					return (getResultsLabel(root) + bctx.buffer);
 				}
@@ -214,7 +240,7 @@ namespace Beagle.WebService {
 			if (resp == null) 
 				return false;
 
-			BT.SimpleRootTile root = resp.rootTile;
+			BT.SimpleRootTile root = resp.resultPair.rootTile;
 			return (root != null) ? root.HitCollection.CanPageBack:false;
 		}
 
@@ -224,15 +250,15 @@ namespace Beagle.WebService {
 			if (!canBack(sessId) || (resp == null))
 				return NO_RESULTS;
 		
-			BT.SimpleRootTile root = resp.rootTile;
+			BT.SimpleRootTile root = resp.resultPair.rootTile;
 			if (root != null) {
 			
 				lock (root) {
 					root.HitCollection.PageBack();
-			
-					bufferRenderContext bctx = new bufferRenderContext();
-					resp.bufferContext = bctx;
-					root.Render(bctx);
+
+					bufferRenderContext bctx = resp.bufferContext;
+					bctx.init();					
+					root.Render(bctx);									
 					return (getResultsLabel(root) + bctx.buffer);
 				}
 			}
@@ -245,7 +271,7 @@ namespace Beagle.WebService {
 			if (sessId == null || searchString == null || searchString == "")
 				return NO_RESULTS;
 						 
-			Console.WriteLine("WebBackEnd: Got Search String: " + searchString); 
+			log.Debug("WebBackEnd: Got Search String: " + searchString); 
 			
 			Query query = new Query();
 			query.AddText (searchString);
@@ -262,8 +288,9 @@ namespace Beagle.WebService {
 			root.Query = query;
 			//root.SetSource (searchSource); Do not SetSource on root! 
 											
-			bufferRenderContext bctx = new bufferRenderContext();
-			Resp resp = new Resp(root, bctx, isLocalReq);
+			ResultPair rp = new ResultPair(root);
+			bufferRenderContext bctx = new bufferRenderContext(rp);
+			Resp resp = new Resp(rp, bctx, isLocalReq);
 
 			AttachQueryResult (qres, resp);
 
@@ -273,7 +300,7 @@ namespace Beagle.WebService {
 			else
 				sessionResp.Add(sessId, resp);	
 
-			Console.WriteLine("WebBackEnd: Starting Query for string \"{0}\"", query.QuotedText);
+			log.Info("WebBackEnd: Starting Query for string \"{0}\"", query.QuotedText);
 
 			QueryDriver.DoQuery (query, qres);
 
@@ -317,7 +344,7 @@ namespace Beagle.WebService {
 				tile_id = actionString.Substring (pos1, pos2 - pos1);
 				action = actionString.Substring (pos2 + 1);
 			
-				Console.WriteLine("tile_id: {0}, action: {1}", tile_id, action);
+				log.Debug("WebBackEnd tile_id: {0}, action: {1}", tile_id, action);
 
 				BT.Tile t = ((Resp)sessionResp[sessId]).GetTile (tile_id);
 			
@@ -330,7 +357,7 @@ namespace Beagle.WebService {
 					CallingConventions.Any,	 new Type[] {}, null);
 
 				if (info == null) {
-					Console.WriteLine ("Couldn't find method called {0}", action);
+					log.Warn ("WebBackEnd:dispatchAction couldn't find method called {0}", action);
 					return;
 				}
 
@@ -341,7 +368,7 @@ namespace Beagle.WebService {
 						return;
 					}
 				}
-				Console.WriteLine ("{0} does not have the TileAction attribute", t);
+				log.Warn ("WebBackEnd:dispatchAction {0} does not have the TileAction attribute", t);
 			}
 
 			string command = null;
@@ -373,66 +400,74 @@ namespace Beagle.WebService {
 		
 //////////////////////////////////////////////////////////////////////////
 
+	private class ResultPair {
+		private BT.SimpleRootTile 	_rootTile;
+		private ArrayList			_hitsCopy;
+		
+		public ResultPair(BT.SimpleRootTile rootTile) {
+			this._rootTile = rootTile;
+			_hitsCopy = ArrayList.Synchronized(new ArrayList());
+		}
+		
+		public BT.SimpleRootTile rootTile {
+			get { return _rootTile; }
+		}
+		
+		public ArrayList hitsCopy {
+			get { return _hitsCopy; }
+		}		
+	}
+
 	private class Resp {
 
-		private BT.SimpleRootTile root;
-		private Hashtable tileTab = null;
-		private bufferRenderContext bufCtx = null;	
-		
+		private ResultPair _rp; 
+		private bufferRenderContext bufCtx = null;			
 		private bool _localRequest;
+				
+		private Hashtable tileTab = null;
 		
-		public Resp(BT.SimpleRootTile rt, bufferRenderContext bCtx, bool isLocalReq)
+		public Resp(ResultPair rp, bufferRenderContext bCtx, bool isLocalReq)
 		{
-			this.root = rt;
-			this.tileTab = Hashtable.Synchronized(new Hashtable());
+			this._rp = rp;
 			this.bufCtx = bCtx;
 			this._localRequest = isLocalReq;
-			CacheTile(rt);
-			bufCtx.table = tileTab;
-			bufCtx.ClearActions();
-		}
-	
-		public BT.SimpleRootTile rootTile {			
-		 	get {return root;}
-		}
-		public Hashtable tileTable {			
-		 	get { return tileTab; } 
+								
+			this.tileTab = bCtx.table;
+		}		
+		
+		public ResultPair resultPair {
+			get { return _rp; }
 		}
 		public bufferRenderContext bufferContext {
-			get { return bufCtx; }
-			set {
-				bufCtx = value;
-				bufCtx.table = tileTab;
-				bufCtx.ClearActions();
-			}
+			get { return bufCtx; }		
 		}
 		public bool isLocalReq {			
 		 	get { return _localRequest; } 
-		}		
-		
-		public void CacheTile (BT.Tile tile) 
-		{
-			tileTab[tile.UniqueKey] = tile;
 		}
+			
 		public BT.Tile GetTile (string key)  
 		{
 			if (key == "")
-				return root;
+				return resultPair.rootTile;
+				
 			return (Beagle.Tile.Tile) tileTab[key];
-		}
+		}	
 	}
 
 //////////////////////////////////////////////////////////////////////////
         private class bufferRenderContext : BT.TileRenderContext {
 
-		private System.Text.StringBuilder sb;
+		private ResultPair _rp;
 		private Hashtable tileTable = null;
+		private System.Text.StringBuilder sb;		
 		private bool renderStylesDone = false;
 		
-		public bufferRenderContext () 
+		public bufferRenderContext (ResultPair rp) 
 		{
-			sb = new StringBuilder(4096);
-			renderStylesDone = false;
+			this._rp = rp;
+			this.tileTable = Hashtable.Synchronized(new Hashtable());	
+			tileTable[rp.rootTile.UniqueKey] = rp.rootTile;						
+			init();
 		}
 		
 		public string buffer {
@@ -441,9 +476,14 @@ namespace Beagle.WebService {
 		
 		public Hashtable table {
 			get { return tileTable;  }
-			set { tileTable = value; }
 		}
 
+		public void init() 
+		{
+			sb = new StringBuilder(4096);
+			renderStylesDone = false;
+			ClearActions();
+		}
 		/////////////////////////////////////////////////
 
 		Hashtable actionTable = null;
@@ -501,13 +541,169 @@ namespace Beagle.WebService {
 				TileCanvas.RenderStyles (this);
 				Write ("</style>");
 */
-				renderStylesDone = true;
-				
+				renderStylesDone = true;				
 			}
 				
-			if (tile != null)
+			if (tile != null) {
+			
+				if (tile is BT.TileHitCollection) 
+					PrefetchSnippetsForNetworkHits((BT.TileHitCollection)tile);
+					
 				tile.Render (this);
+			}
 		}
+		
+		private int 	maxDisplayed 	= 10;
+		const int MAX_HIT_IDS_PER_REQ 	= 20; //Max no. of hits snippets to seek at a time
+		const int MAX_HITS_AHEAD		= 40; //No. of hits ahead of lastDisplayed to scan
+		
+		private bool tenHits = false;		//Flag to do Prefetch check only every 10 hits
+		
+		private void PrefetchSnippetsForNetworkHits(BT.TileHitCollection thc) 
+		{
+		
+			int lastDisplayed = thc.LastDisplayed + 1;
+			
+			//We have cached snippets for network hits upto maxDisplayed
+			if (lastDisplayed < maxDisplayed)	
+				return;
+			
+			maxDisplayed = lastDisplayed;
+			
+			//Do Prefetch check once every ten hits
+			tenHits = !tenHits;
+			if (!tenHits)					
+				return; 
+				
+			if (lastDisplayed < thc.NumResults) {
+			
+				int limit = 0;
+				ArrayList networkHits = new ArrayList();				
+				
+				if ((thc.NumResults - lastDisplayed) > MAX_HITS_AHEAD)
+					limit = lastDisplayed + MAX_HITS_AHEAD;
+				else
+					limit = thc.NumResults;
+
+				ArrayList hits = _rp.hitsCopy;
+				lock (hits.SyncRoot) {
+				
+					if (limit > hits.Count)
+						limit = hits.Count;
+
+					log.Debug("PrefetchSnippets: Scanning result set for Network Hits from {0} to {1}", lastDisplayed, limit); 					
+							
+					//Get all NetworkHits with snippets field not initialized:
+					for (int si = lastDisplayed; si < limit ; si++)
+					{
+						if ((hits[si] is NetworkHit) && (((NetworkHit)hits[si]).snippet == null)) 
+							networkHits.Add((NetworkHit)hits[si]);
+					}
+				}
+
+				log.Debug("PrefetchSnippets: Found {0} NetworkHits without snippets", networkHits.Count); 
+				
+				while (networkHits.Count > 0) {
+				
+					ArrayList nwHitsPerNode = new ArrayList();
+					NetContext nc = (NetContext) ((NetworkHit)networkHits[0]).context;
+					BeagleWebService wsp = nc.proxy;	
+					string searchToken = nc.searchToken;
+					
+					//Filter NetworkHits from one Networked Beagle
+					foreach	(NetworkHit nh in networkHits)	
+						if (((NetContext) nh.context).proxy == wsp) { 		//if (nh.token.Equals(searchToken))
+							if (nwHitsPerNode.Count < MAX_HIT_IDS_PER_REQ)
+								nwHitsPerNode.Add(nh);
+							else
+								break;
+						}
+						
+					//Remove NetworkHits for this Networked Beagle	
+					int i = networkHits.Count;
+					while (--i >= 0) { 
+						nc = (NetContext) ((NetworkHit)networkHits[i]).context;
+						if (nc.proxy == wsp)
+							networkHits.RemoveAt(i);
+					}
+			
+					if (nwHitsPerNode.Count > 0)
+					{
+						int[] hitIds = new int[nwHitsPerNode.Count];
+						for (int j = 0; j < hitIds.Length; j++)
+							hitIds[j] = ((NetworkHit)nwHitsPerNode[j]).Id;
+							
+						log.Debug("PrefetchSnippets: Invoking GetSnippets on {0} for {1} hits", wsp.Hostname, nwHitsPerNode.Count);
+					
+						ReqContext2 rc = new ReqContext2(wsp, nwHitsPerNode);
+						wsp.BeginGetSnippets(searchToken, hitIds, PrefetchSnippetsResponseHandler, rc);						
+					}
+				}								
+			}
+		} 
+   		
+   		private static void PrefetchSnippetsResponseHandler(IAsyncResult ar) 
+    	{   	
+    		ReqContext2 rc = (ReqContext2)ar.AsyncState;
+    		    		     		
+ 			ArrayList 	nwHits	 = rc.GetNwHits;  
+ 			BeagleWebService wsp = rc.GetProxy; 	
+ 					
+ 			try
+      		{	    		
+    			Beagle.Daemon.HitSnippet[] hslist = wsp.EndGetSnippets(ar);		
+
+				if (hslist.Length > 0)
+				{	
+					log.Debug("PrefetchSnippetsResponseHandler: Got {0} snippet responses from {1}", hslist.Length, wsp.Hostname);    			
+								
+					foreach (Beagle.Daemon.HitSnippet hs in hslist) {
+					
+						if ((hs.hitId ==0) || (hs.snippet.StartsWith(WebServiceBackEnd.InvalidHitSnippetError)))
+								continue;
+						int i;		
+						for (i = 0; i < nwHits.Count; i++)						
+							if (((NetworkHit)nwHits[i]).Id == hs.hitId) {								
+								((NetworkHit)nwHits[i]).snippet = hs.snippet;
+								//log.Debug("Snippet: " + hs.snippet);																	
+								break;		
+							}
+							
+						if (i < nwHits.Count)
+							nwHits.RemoveAt(i);	
+					}
+				}
+			}
+			catch (Exception ex) {
+				log.Error ("Exception in WebBackEnd: PrefetchSnippetsResponseHandler() - {0} - for {1} ", ex.Message, wsp.Hostname + ":" + wsp.Port);			
+			}
+			
+			if (nwHits.Count > 0)	
+				//Possible Error in getting snippets for these hitIds 
+				foreach (NetworkHit nh in nwHits)
+					nh.snippet = "";			
+		}
+
+		private class ReqContext2 {
+	
+			BeagleWebService _wsp;
+			ArrayList _nwHits;
+
+			public ReqContext2(BeagleWebService wsp, ArrayList nwHits)
+			{
+				this._wsp = wsp;
+				this._nwHits = nwHits;
+			}
+			
+			public BeagleWebService GetProxy {
+				get { return _wsp; }
+			}
+		
+			public ArrayList GetNwHits {
+				get { return _nwHits; }
+			}				
+		}					
+			
 
 //////////////////////////////////////////////////////////////////////////
 

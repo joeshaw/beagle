@@ -70,7 +70,6 @@ namespace Beagle.Daemon
 			
 			return sl;
 		}
-
 		
 		public const string BeagleNetPrefix = "netbeagle://";
 				
@@ -97,17 +96,14 @@ namespace Beagle.Daemon
 			//should be Local (or Neighborhood?)
 			sreq.qdomain = QueryDomain.Local;
 
-log.Info("NetBeagleHandler: Starting WebService Query for " + Hostname + ":" + Port);
+			log.Info("NetBeagleHandler: Starting WebService Query for " + Hostname + ":" + Port);
 				
 			ReqContext rc = new ReqContext(wsp, result, netBeagleQueryable);
 				
-			IAsyncResult ar = wsp.BeginBeagleQuery(sreq, NetBeagleHandler.DoQueryResponseHandler, rc);
+			IAsyncResult ar = wsp.BeginBeagleQuery(sreq, DoQueryResponseHandler, rc);
 
 			// Return w/o waiting for Async query to complete.	
 			// Return IAsynResult handle, to allow caller to control it, if required. 
-			
-			//while (!rc.RequestProcessed)
-					//Thread.Sleep(200);
 					   				
 			return ar;
 		}
@@ -121,6 +117,7 @@ log.Info("NetBeagleHandler: Starting WebService Query for " + Hostname + ":" + P
     		IQueryResult 	 result = rc.GetResult;
 			
 			int count = 0;
+			bool hitRejectsLogged = false;
 			
     		try
       		{	    		
@@ -128,6 +125,9 @@ log.Info("NetBeagleHandler: Starting WebService Query for " + Hostname + ":" + P
 
 				if ((resp != null) && (resp.numResults > 0))
 				{
+					if (rc.SearchToken == null)
+						rc.SearchToken = resp.searchToken; 
+						
 			   		HitResult[] hres = resp.hitResults;
 		
   					for (int i = 0; i < hres.Length; i++) {
@@ -135,15 +135,14 @@ log.Info("NetBeagleHandler: Starting WebService Query for " + Hostname + ":" + P
 						HitResult hr = hres[i];
 						Hit hit = new NetworkHit();
 			
-						//FIXME: Generate a random no. b/w 1 .. 99 and multiply by 1000, and add to hr.id ?
+						//FIXME: Generate a random no. b/w 1 .. 99 and multiply by 1000000, and add to hr.id ?
 						hit.Id = hr.id; 
 					 
 						//[Uri Format] netbeagle://164.99.153.134:8888/beagle?file:///....						
 						hit.Uri = new Uri(BeagleNetPrefix + wsp.Hostname + ":" + wsp.Port + "/beagle?" + hr.uri);					
 						hit.Type = hr.resourceType;
 						hit.MimeType = hr.mimeType;
-						//hit.Source = hr.source;
-						hit.Source = "Network";
+						hit.Source = "Network";			//hit.Source = hr.source;
 						hit.ScoreRaw = hr.scoreRaw + 0.01;
 						hit.ScoreMultiplier = hr.scoreMultiplier;
 
@@ -157,27 +156,29 @@ log.Info("NetBeagleHandler: Starting WebService Query for " + Hostname + ":" + P
 							hit.AddProperty(p);
 						}
 			
-						//Add Snippet
-						((NetworkHit)hit).snippet = hr.snippet;
-						
-						//Add NetBeagleQueryable instance, to allow snippet to be retrieved
+						//Add Snippet					
+						((NetworkHit)hit).snippet = hr.snippet;			
+						((NetworkHit)hit).context = new NetContext(wsp, resp.searchToken);
+						  						
+						//Add NetBeagleQueryable instance
 						hit.SourceObject = iq;
 					
-						if (! result.Add (hit))
-							log.Warn("Network Hit rejected by HitRegulator !");
+						if ((! result.Add (hit)) && (! hitRejectsLogged)) {
+							hitRejectsLogged = true;
+							log.Info("NetBeagleHandler: Network Hits rejected by HitRegulator. Too many Hits!");
+						}
 					
 						count++;
 					}  //end for 
 					
-log.Info("NetBeagleHandler: DoQueryResponseHandler() Got {0} result(s) from Index {1} from Networked Beagle at {2}", count, resp.firstResultIndex, wsp.Hostname + ":" + wsp.Port); 		   		
+					log.Info("NetBeagleHandler: DoQueryResponseHandler() Got {0} result(s) from Index {1} from Networked Beagle at {2}", count, resp.firstResultIndex, wsp.Hostname + ":" + wsp.Port); 		   		
 			
 					int index = resp.firstResultIndex + resp.numResults;			
 					if (index  < resp.totalResults) {
 					
 						log.Debug("NetBeagleHandler: DoQueryResponseHandler() invoking GetMoreResults with index: " + index);
 						
-						string searchToken = resp.searchToken;				
-						//resp = wsp.GetMoreResults(searchToken, index);					
+						string searchToken = resp.searchToken;									
 						IAsyncResult ar2 = wsp.BeginGetMoreResults(searchToken, index, NetBeagleHandler.DoQueryResponseHandler, rc);
 						
 						return;						
@@ -190,25 +191,43 @@ log.Info("NetBeagleHandler: DoQueryResponseHandler() Got {0} result(s) from Inde
 		 	}
 		 	catch (Exception ex) {
 		 	
-		 		//Log Error
 				log.Error ("Exception in NetBeagleHandler: DoQueryResponseHandler() - {0} - for {1} ", ex.Message, wsp.Hostname + ":" + wsp.Port);
-				//log.Error ("Exception Source: " + ex.Source);
-				//log.Error ("Exception TargetMethod: " + ex.TargetSite);
 				//log.Error ("Exception StackTrace: " + ex.StackTrace);
 		 	}
 		 	
-		 	//signal completion of request handling						
+		 	//Signal completion of request handling						
 			rc.RequestProcessed = true; 
     	}		
     }
 
+	public class NetContext {
 
-	public class ReqContext {
+		private string token;		
+		private BeagleWebService wsp;
+					
+		public NetContext(BeagleWebService wsp, string token)
+		{
+			this.wsp = wsp;
+			this.token = token;
+		}		
+		
+		public BeagleWebService  proxy {
+			get { return wsp; }
+		}		
+		
+		public string searchToken {
+			get {return token; }
+		} 		
+	}
 	
-		BeagleWebService wsp;
-		IQueryResult result;
-		IQueryable iq;
-		bool reqProcessed = false;
+	public class ReqContext {
+					
+		private IQueryable iq;
+		private IQueryResult result;
+		private BeagleWebService wsp;
+		
+		private bool reqProcessed = false;
+		private string token = null;
 		
 		public ReqContext(BeagleWebService wsp, IQueryResult result, IQueryable iq)
 		{
@@ -233,6 +252,11 @@ log.Info("NetBeagleHandler: DoQueryResponseHandler() Got {0} result(s) from Inde
 		public bool RequestProcessed {
 			get { return reqProcessed; }
 			set { reqProcessed = value; }
+		}
+		
+		public string SearchToken {
+			get {return token; }
+			set {token = value; }
 		}		
 	}
 }
