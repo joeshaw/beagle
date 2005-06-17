@@ -751,7 +751,7 @@ public class SettingsDialog
 										     MessageType.Error,
 										     ButtonsType.Ok,
 										     Catalog.GetString ("Error adding path"),
-										     Catalog.GetString ("The specified path could not be found and therefor it could not be added to the list of resources excluded for indexing."));
+										     Catalog.GetString ("The specified path could not be found and therefore it could not be added to the list of resources excluded for indexing."));
 						return;
 					}
 					break;

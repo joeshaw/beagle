@@ -324,7 +324,7 @@
 			  <child>
 			    <widget class="GtkLabel" id="label16">
 			      <property name="visible">True</property>
-			      <property name="label" translatable="yes">Adjust which types of results that should be visible, and in what order they should be presented when grouped by type.</property>
+			      <property name="label" translatable="yes">Adjust which types of results should be visible, and in what order they should be presented when grouped by type.</property>
 			      <property name="use_underline">False</property>
 			      <property name="use_markup">False</property>
 			      <property name="justify">GTK_JUSTIFY_LEFT</property>
