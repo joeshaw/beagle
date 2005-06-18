@@ -47,6 +47,9 @@ namespace Beagle.Util {
 					accounts.Add (local_account);
 				}
 
+				if (!Directory.Exists (Path.Combine (mail_dir, "imap"))) {
+					return accounts;
+				}
 				DirectoryInfo imap_accounts_dir = new DirectoryInfo (Path.Combine (mail_dir, "imap"));
 				foreach (DirectoryInfo imap_account_dir in imap_accounts_dir.GetDirectories ()) {
 					MailAccount imap_account = new MailAccount (imap_account_dir.Name, imap_account_dir.FullName);
