@@ -47,18 +47,21 @@ namespace Beagle.Tile {
 			string path = Hit ["fixme:cachedimg"];
 
 			if (path != null && File.Exists (path))
-				Template["Icon"] = Images.GetHtmlSource (path, null);
+				Template ["Icon"] = Images.GetHtmlSource (path, null);
 			else
-				Template["Icon"] = Images.GetHtmlSource ("icon-blog", "text/html");
+				Template ["Icon"] = Images.GetHtmlSource ("icon-blog", "text/html");
+
+			if (Hit ["fixme:author"] != null && Hit ["fixme:author"] != "")
+			    Template ["Author"] = Hit ["fixme:author"];
 		}
 
 		[TileAction]
 		public override void Open ()
                 {
 			try {
-				Gnome.Url.Show(Hit["fixme:itemuri"]);
+				Gnome.Url.Show (Hit ["fixme:itemuri"]);
 			} catch (Exception e) {
-				Console.WriteLine ("Could not load handler for {0}: {1}", Hit["fixme:itemuri"], e);
+				Console.WriteLine ("Could not load handler for {0}: {1}", Hit ["fixme:itemuri"], e);
 			}
 		}
 	}
