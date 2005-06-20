@@ -82,7 +82,7 @@ AC_PATH_PROG(WSDL, wsdl)
 AC_PROG_INTLTOOL([0.23])
 GETTEXT_PACKAGE=beagle
 AC_SUBST(GETTEXT_PACKAGE)
-ALL_LINGUAS="bg ca da de el en_CA en_GB es fr hu ja nb nl no pt_BR sv zh_CN zh_TW"
+ALL_LINGUAS="bg ca da de el en_CA en_GB es fr hu ja nb nl no pt_BR sv tr zh_CN zh_TW"
 AM_GLIB_GNU_GETTEXT
 
 # Many distros don't have a dependency on sqlite for their
