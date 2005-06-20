@@ -4,10 +4,9 @@
     <title>Beagle Search Web Form</title>
 </head>
 <body>
-
-<img src="local/share/pixmaps/dog.png" align="center" width="48" height="64"><asp:Label id="Label1" runat="server" text="<b> Beagle Search Page</b>"></asp:Label>
-
-    <form id="SearchForm" runat="server">  
+    <form id="SearchForm" runat="server">      
+		<img src="local/share/pixmaps/dog.png" align="center" width="48" height="64"><asp:Label id="Label1" runat="server" text="<b> Beagle Search Page</b>"></asp:Label>
+		<br>
         <asp:Label id="SearchLabel" runat="server" text="Enter Beagle Search Terms "/>
         <asp:TextBox id="SearchBox" runat="server"/>
 	    <asp:DropDownList id="sourceList" runat="server">
