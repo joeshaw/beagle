@@ -7,5 +7,5 @@ Name: Beagle Daemon
 Description: We Index Your Life
 Version: @VERSION@
 Requires: beagle-0.0
-Libs: -r:${dlldir}/BeagleDaemonLib.dll -r:{dlldir}/BeagleDaemonPlugins.dll
+Libs: -r:${dlldir}/BeagleDaemonLib.dll -r:${dlldir}/BeagleDaemonPlugins.dll
 
