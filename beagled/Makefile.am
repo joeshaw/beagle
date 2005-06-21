@@ -455,25 +455,18 @@ WEBSERVICES_FRONTEND_ASSEMBLIES = 	\
 $(WEBSERVICES_FRONTEND_TARGET): $(WEBSERVICES_FRONTEND_CSFILES) $(WEBSERVICES_BACKEND_TARGET) 
 	$(CSC) -out:$@ $(WEBSERVICES_CSFLAGS) $(WEBSERVICES_FRONTEND_CSFILES) $(WEBSERVICES_FRONTEND_ASSEMBLIES)
 
-WEBSERVICES_RESOURCES = 		\
-	$(SEARCH_DOT_ASPX)		\
+WEBSERVICES_RESOURCES = 			\
+	$(webservicesdir)/search.aspx	\
 	$(webservicesdir)/search.asmx	\
 	$(webservicesdir)/web.config
 
 WEBSERVICES_RESOURCES_DIST = 		\
-	$(SEARCH_DOT_ASPX_IN) 		\
+	$(webservicesdir)/search.aspx	\
 	$(webservicesdir)/search.asmx	\
 	$(webservicesdir)/web.config
 
 XSP_DIR = $(pkgdatadir)/xsp
 XSPBIN_DIR = $(XSP_DIR)/bin
-
-SEARCH_DOT_ASPX = search.aspx
-SEARCH_DOT_ASPX_IN = $(webservicesdir)/search.aspx.in
-
-$(SEARCH_DOT_ASPX): $(SEARCH_DOT_ASPX_IN)
-	$(WRAPPER_SED) < $(SEARCH_DOT_ASPX_IN) > $(SEARCH_DOT_ASPX)
-	chmod +rx $(SEARCH_DOT_ASPX)
 
 ############################################################
 
@@ -801,8 +794,7 @@ if ENABLE_WEBSERVICES
 ALL_TARGETS += 				\
 	$(XSP_TARGET)			\
 	$(WEBSERVICES_FRONTEND_TARGET)	\
-	$(WEBSERVICES_BACKEND_TARGET)	\
-	$(SEARCH_DOT_ASPX)
+	$(WEBSERVICES_BACKEND_TARGET)	
 endif
 
 man_MANS = 				\
@@ -923,6 +915,5 @@ CLEANFILES = \
 	$(WEBSERVICES_FRONTEND_TARGET)		\
 	$(WEBSERVICES_FRONTEND_TARGET).mdb	\
 	$(WEBSERVICES_XSP_TARGET)		\
-	$(WEBSERVICES_XSP_TARGET).mdb		\
-	$(SEARCH_DOT_ASPX)
+	$(WEBSERVICES_XSP_TARGET).mdb		
 
