@@ -1,3 +1,10 @@
+2005-06-21  Vijay K. Nanjundaswamy <knvijay@novell.com>
+
+	* beagled/WebServices/search.aspx, beagled/Makefile.am, :
+	Replaced 'search.aspx.in' with 'search.aspx' since the file:/// url for dog.png has 
+	since been replaced by a http:// url. Updated search.aspx to use a relative url
+	for dog.png, so it works for both local and external accesses. 
+
 2005-06-20  Enver ALTIN  <ealtin@parkyeri.com>
 
 	* configure.in: Add Turkish translation to ALL_LINGUAS.
