@@ -1,94 +1,100 @@
+# translation of nb.po to Norwegian Bokmal
 # translation of beagle.HEAD.po to
 # This file is distributed under the same license as the PACKAGE package.
 # Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER, 2005.
+# Terance Edward Sola <terance@lyse.net>, 2005.
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: beagle.HEAD\n"
+"Project-Id-Version: nb\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2005-04-14 21:46+0200\n"
-"PO-Revision-Date: 2005-04-14 21:54+0200\n"
-"Last-Translator: Terance Edward sola <terance@lyse.net>\n"
-"Language-Team: Norwegian bokmal <i18n-nb@lister.ping.uio.no>\n"
+"POT-Creation-Date: 2005-06-21 01:30+0200\n"
+"PO-Revision-Date: 2005-06-21 02:00+0200\n"
+"Last-Translator: Terance Edward Sola <terance@lyse.net>\n"
+"Language-Team: Norwegian Bokmal <i18n-nb@lister.ping.uio.no>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
 "X-Generator: KBabel 1.10\n"
 
-#: ../Best/Best.cs:120
+#: ../Best/Best.cs:121
 msgid ""
 "If you're wondering whether Best is working check your notification area "
 "(system tray)"
 msgstr "Sjekk varslingsområdet hvis du lurer på om Best virker"
 
-#: ../Best/BestTray.cs:164
+#: ../Best/BestTray.cs:166
 msgid "No Recent Searches"
 msgstr "Ingen nylige søk"
 
-#: ../Best/BestTray.cs:179
+#: ../Best/BestTray.cs:170
+msgid "Recent Searches"
+msgstr "Nylige søk"
+
+#: ../Best/BestTray.cs:185
 msgid "Quit"
 msgstr "Avslutt"
 
-#: ../Best/BestWindow.cs:304
+#: ../Best/BestWindow.cs:302
 msgid "Anywhere"
 msgstr "Hvor som helst"
 
-#: ../Best/BestWindow.cs:306
+#: ../Best/BestWindow.cs:304
 msgid "in Files"
 msgstr "i filer"
 
-#: ../Best/BestWindow.cs:308
+#: ../Best/BestWindow.cs:306
 msgid "in Addressbook"
 msgstr "i adressebok"
 
-#: ../Best/BestWindow.cs:310
+#: ../Best/BestWindow.cs:308
 msgid "in Mail"
 msgstr "i e-post"
 
-#: ../Best/BestWindow.cs:312
+#: ../Best/BestWindow.cs:310
 msgid "in Web Pages"
 msgstr "i vevsider"
 
-#: ../Best/BestWindow.cs:314
+#: ../Best/BestWindow.cs:312
 msgid "in Chats"
 msgstr "i samtaler"
 
-#: ../Best/BestWindow.cs:330
+#: ../Best/BestWindow.cs:328
 msgid "Search terms:"
 msgstr "Søketermer:"
 
-#: ../Best/BestWindow.cs:347
+#: ../Best/BestWindow.cs:345
 msgid "Find"
 msgstr "Finn"
 
-#: ../Best/BestWindow.cs:364
+#: ../Best/BestWindow.cs:362
 msgid "Show More Results"
 msgstr "Vis flere resultater"
 
-#: ../Best/BestWindow.cs:370
+#: ../Best/BestWindow.cs:368
 msgid "Show Previous Results"
 msgstr "Vis tidligere resultater"
 
-#: ../Best/BestWindow.cs:404
+#: ../Best/BestWindow.cs:402
 msgid "No results."
 msgstr "Ingen resultater."
 
 #. To translators: {0} is the current count of results shown of {1} in total, this is the message that is initially shown
 #. when results are returned to the user.
-#: ../Best/BestWindow.cs:408
+#: ../Best/BestWindow.cs:406
 #, csharp-format
 msgid "Best <b>{0} results of {1}</b> are shown."
 msgstr "Beste <b>{0} av {1} resultater</b> er vist."
 
 #. To translators: {0} to {1} is the interval of results currently shown of {2} results in total
-#: ../Best/BestWindow.cs:413
+#: ../Best/BestWindow.cs:411
 #, csharp-format
 msgid "Results <b>{0} through {1} of {2}</b> are shown."
 msgstr "Resultatene <b>{0} til {1} av {2}</b> er vist."
 
 #. To translators: {0} represents the current query keywords
-#: ../Best/BestWindow.cs:552
+#: ../Best/BestWindow.cs:522
 #, csharp-format
 msgid ""
 "The query for <i>{0}</i> failed.<br>The likely cause is that the beagle "
@@ -97,104 +103,44 @@ msgstr ""
 "Spørringen for <i>{0}</i> feilet.<br>Det er mest sannsynlig at nissen til "
 "beagle ikke kjører."
 
-#. To translators: {0} represents the current query keywords
-#: ../Best/BestWindow.cs:557
-#, csharp-format
-msgid ""
-"The query for <i>{0}</i> failed.<br>The session bus isn't running.  See "
-"http://beaglewiki.org/index.php/Installing%20Beagle for information on "
-"setting up a session bus."
-msgstr ""
-"Spørringen for <i>{0}</i> feilet.<br> Økt-buss programmet kjører ikke. Se "
-"http://beaglewiki.org/index.php/Installing%20Beagle for mer informasjon om "
-"hvordan du setter det opp."
-
 #. To translators: {0} represents the current query keywords, {1} contains the errormessage
-#: ../Best/BestWindow.cs:561
+#: ../Best/BestWindow.cs:527
 #, csharp-format
 msgid "The query for <i>{0}</i> failed with error:<br>{1}<br>"
 msgstr "Spørringen for <i>{0}</i> feilet: <br>{1}<br>"
 
-#: ../ImLogViewer/ImLogViewer.cs:100 ../ImLogViewer/ImLogViewer.cs:105
-#, csharp-format
-msgid "Conversations with {0}"
-msgstr "Samtaler med {0}"
+#: ../glue/eggtrayicon.c:120
+msgid "Orientation"
+msgstr "Orientering"
 
-#: ../ImLogViewer/ImLogViewer.cs:103
+#: ../glue/eggtrayicon.c:121
+msgid "The orientation of the tray."
+msgstr ""
+
+#: ../ImLogViewer/ImLogViewer.glade.h:1
+msgid "<b>Conversations History</b>"
+msgstr "<b>Samtalehistorie</b>"
+
+#: ../ImLogViewer/ImLogViewer.glade.h:2
+#, fuzzy
+msgid "IM Viewer"
+msgstr "Lynmeldingsviser"
+
+#: ../ImLogViewer/ImLogWindow.cs:77
 #, csharp-format
 msgid "Conversations in {0}"
 msgstr "Samtaler i {0}"
 
-#: ../ImLogViewer/ImLogViewer.cs:191 ../Util/StringFu.cs:65
-msgid "Today"
-msgstr "I dag"
+#: ../ImLogViewer/ImLogWindow.cs:84
+#, csharp-format
+msgid "Conversations with {0}"
+msgstr "Samtaler med {0}"
 
-#: ../ImLogViewer/ImLogViewer.cs:192 ../ImLogViewer/ImLogViewer.cs:197
-msgid "HH:mm"
-msgstr "HH:mm"
-
-#: ../ImLogViewer/ImLogViewer.cs:196 ../Util/StringFu.cs:67
-msgid "Yesterday"
-msgstr "I går"
-
-#: ../ImLogViewer/ImLogViewer.cs:201
-msgid "This Week"
-msgstr "Denne uken"
-
-#: ../ImLogViewer/ImLogViewer.cs:202 ../ImLogViewer/ImLogViewer.cs:207
-msgid "dddd"
-msgstr "dddd"
-
-#: ../ImLogViewer/ImLogViewer.cs:206
-msgid "Last Week"
-msgstr "Forrige uke"
-
-#: ../ImLogViewer/ImLogViewer.cs:211
-msgid "This Month"
-msgstr "Denne måneden"
-
-#: ../ImLogViewer/ImLogViewer.cs:212 ../ImLogViewer/ImLogViewer.cs:217
-#: ../Util/StringFu.cs:69
-msgid "MMM d"
-msgstr "MMM d"
-
-#: ../ImLogViewer/ImLogViewer.cs:216
-msgid "This Year"
-msgstr "I år"
-
-#: ../ImLogViewer/ImLogViewer.cs:221
-msgid "Older"
-msgstr "Eldre"
-
-#: ../ImLogViewer/ImLogViewer.cs:222
-msgid "yyyy MMM d"
-msgstr "d MMM yyyy"
-
-#: ../ImLogViewer/ImLogViewer.glade.h:1
-msgid "*"
-msgstr "*"
-
-#: ../ImLogViewer/ImLogViewer.glade.h:2
-msgid "<b>Conversations History</b>"
-msgstr "<b>Samtalehistorie</b>"
-
-#: ../ImLogViewer/ImLogViewer.glade.h:3
-msgid "<b>Today, 12:00 PM</b>"
-msgstr "<b>I dag, 12:00 PM</b>"
-
-#: ../ImLogViewer/ImLogViewer.glade.h:4
-msgid "Find "
-msgstr "Finn"
-
-#: ../ImLogViewer/ImLogViewer.glade.h:5
-msgid "IM viewer"
-msgstr "Lynmeldingsviser"
-
-#: ../Tiles/TileDocs.cs:75
+#: ../Tiles/TileDocs.cs:77
 msgid "Pages:"
 msgstr "Sider:"
 
-#: ../Tiles/TileDocs.cs:79
+#: ../Tiles/TileDocs.cs:81
 msgid "Words:"
 msgstr "Ord:"
 
@@ -228,23 +174,27 @@ msgstr "Samtale i {0}"
 msgid "Conversation with {0}"
 msgstr "Samtale med {0}"
 
-#: ../Tiles/TileMailMessage.cs:68
+#: ../Tiles/TileMailMessage.cs:80
 msgid "No Subject"
 msgstr "Inget emne"
 
-#: ../Tiles/TileMailMessage.cs:73
+#: ../Tiles/TileMailMessage.cs:83
+msgid "email attachment"
+msgstr "e-postvedlegg"
+
+#: ../Tiles/TileMailMessage.cs:89
 msgid "To"
 msgstr "Til"
 
-#: ../Tiles/TileMailMessage.cs:73
+#: ../Tiles/TileMailMessage.cs:89
 msgid "From"
 msgstr "Fra"
 
-#: ../Tiles/TileMailMessage.cs:104
+#: ../Tiles/TileMailMessage.cs:117
 msgid "Sent"
 msgstr "Sendt"
 
-#: ../Tiles/TileMailMessage.cs:104
+#: ../Tiles/TileMailMessage.cs:117
 msgid "Received"
 msgstr "Motatt"
 
@@ -375,6 +325,212 @@ msgstr "Weblog:"
 msgid "Published:"
 msgstr "Utgitt:"
 
+#: ../tools/Settings.cs:174
+msgid "Reload configuration"
+msgstr "Last om konfigurasjon"
+
+#: ../tools/Settings.cs:175
+msgid ""
+"The configuration file has been modified by another application. Do you wish "
+"to discard the currently displayed values and reload configuration from disk?"
+msgstr ""
+"Konfigurasjonsfilen har blitt endret av et annet program. Vil du avvise de "
+"viste verdiene og laste om konfigrasjonen fra disk?"
+
+#: ../tools/Settings.cs:213
+msgid "Select Path"
+msgstr "Velg sti"
+
+#: ../tools/Settings.cs:232
+msgid "The selected path is already selected for indexing and wasn't added."
+msgstr "Den valgte stien er allerede valgt for indeksering og ble ikke lagt til."
+
+#: ../tools/Settings.cs:235
+msgid ""
+"The selected path wasn't added. The list contains items that supercedes it "
+"and the data is already being indexed."
+msgstr ""
+"Den valgte stien ble ikke lagt til fordi den blir allerede indeksert av en "
+"sti som inneholder den."
+
+#: ../tools/Settings.cs:246
+msgid "Path not added"
+msgstr "Sti ble ikke lagt til"
+
+#: ../tools/Settings.cs:255
+msgid "Remove obsolete paths"
+msgstr "Fjern overflødige stier"
+
+#: ../tools/Settings.cs:256
+msgid ""
+"Adding this path will obsolete some of the existing include paths. This will "
+"result in the removal of the old obsolete paths. Do you still wish to add it?"
+msgstr ""
+"Hvis du legger til denne stien vil det gjøre noen andre stier overflødige. Dette "
+"vil medføre at de overflødige stiene blir fjernet. Vil du fremdeles legge den til?"
+
+#: ../tools/Settings.cs:282
+msgid "Remove path"
+msgstr "Fjern sti"
+
+#: ../tools/Settings.cs:283
+msgid ""
+"Are you sure you wish to remove this path from the list of directories to be "
+"included for indexing?"
+msgstr ""
+"Vil du fjerne denne stien fra listen av mapper som skal bli "
+"inkludert for indeksering?"
+
+#: ../tools/Settings.cs:312
+msgid "Remove item"
+msgstr "Fjern element"
+
+#: ../tools/Settings.cs:313
+msgid ""
+"Are you sure you wish to remove this item from the list of data to be "
+"excluded from indexing?"
+msgstr ""
+"Vil du fjerne dette elementet fra listen over data som skal bli "
+"ekskludert fra indeksering?"
+
+#: ../tools/Settings.cs:363 ../tools/Settings.cs:452 ../tools/Settings.cs:785
+msgid "Name"
+msgstr "Navn"
+
+#: ../tools/Settings.cs:446 ../tools/settings.glade.h:24
+msgid "Type"
+msgstr "Type"
+
+#: ../tools/Settings.cs:499 ../tools/Settings.cs:719
+#: ../tools/settings.glade.h:17
+msgid "Path"
+msgstr "Sti"
+
+#: ../tools/Settings.cs:502 ../tools/Settings.cs:729
+msgid "Pattern"
+msgstr "Mønster"
+
+#: ../tools/Settings.cs:505 ../tools/Settings.cs:724
+#: ../tools/settings.glade.h:16
+msgid "Mail Folder"
+msgstr "E-postmappe"
+
+#: ../tools/Settings.cs:693
+msgid "Select Folder"
+msgstr "Velg mappe"
+
+#: ../tools/Settings.cs:753
+msgid "Error adding path"
+msgstr "Feil når sti skulle legges til"
+
+#: ../tools/Settings.cs:754
+msgid ""
+"The specified path could not be found and therefore it could not be added to "
+"the list of resources excluded for indexing."
+msgstr ""
+"Stien ble ikke funnet og kan derfor ikke bli lagt til i listen som skal bli "
+"ekskludert i fra indeksering."
+
+#: ../tools/Settings.cs:784
+msgid "Show"
+msgstr "Vis"
+
+#: ../tools/settings.glade.h:1
+msgid "<b>Add resource</b>"
+msgstr "<b>Legg til ressurs</b>"
+
+#: ../tools/settings.glade.h:2
+msgid "<b>Display</b>"
+msgstr "<b>Vise</b>"
+
+#: ../tools/settings.glade.h:3
+msgid "<b>General</b>"
+msgstr "<b>Generelt</b>"
+
+#: ../tools/settings.glade.h:4
+msgid "<b>Privacy</b>"
+msgstr "<b>Personvern</b>"
+
+#: ../tools/settings.glade.h:5
+msgid "<b>Select mail folder</b>"
+msgstr "<b>Velg e-postmappe</b>"
+
+#: ../tools/settings.glade.h:6
+msgid "Add any additional paths to be included for indexing."
+msgstr "Legg til ytterligere stier som skal bli inkludert for indeksering."
+
+#: ../tools/settings.glade.h:7
+msgid "Add resource"
+msgstr "Legg til ressurs"
+
+#: ../tools/settings.glade.h:8
+msgid ""
+"Adjust which types of results should be visible, and in what order they "
+"should be presented when grouped by type."
+msgstr ""
+"Tilpass hvilke typer resultater som skal bli vist og i hvilken rekkefølge de "
+"skal bli presentert når gruppert etter type."
+
+#: ../tools/settings.glade.h:9
+msgid "Alt"
+msgstr "Alt"
+
+#: ../tools/settings.glade.h:10
+msgid "Ctrl"
+msgstr "Ctrl"
+
+#: ../tools/settings.glade.h:11
+msgid "Directory Path"
+msgstr "Sti til mappe"
+
+#: ../tools/settings.glade.h:12
+msgid "Display the search window by pressing"
+msgstr "Vis søkevinduet ved å trykke"
+
+#: ../tools/settings.glade.h:13
+msgid "Filename Pattern"
+msgstr "Filnavnmønster"
+
+#: ../tools/settings.glade.h:14
+msgid "Index my home directory"
+msgstr "Indekser hjemmemappen"
+
+#: ../tools/settings.glade.h:15
+msgid "Indexing"
+msgstr "Indeksering"
+
+#: ../tools/settings.glade.h:18
+msgid "Please select the mail folder you wish to exclude from indexing."
+msgstr "Velg e-postmappen som skal ekskluderes fra indeksering."
+
+#: ../tools/settings.glade.h:19
+msgid "Search"
+msgstr "Søk"
+
+#: ../tools/settings.glade.h:20
+msgid "Search & Indexing Preferences"
+msgstr "Brukervalg for søk og indeksering"
+
+#: ../tools/settings.glade.h:21
+msgid "Select mail folder"
+msgstr "Velg e-postmappe"
+
+#: ../tools/settings.glade.h:22
+msgid ""
+"Specify any resources, such as paths, patterns, mail folders or type of "
+"objects you wish to exclude from indexing."
+msgstr ""
+"Angi en ressurs som f.eks. stier, mønster, e-postmapper eller type objekter du "
+"vil ekskludere fra indeksering."
+
+#: ../tools/settings.glade.h:23
+msgid "Start search & indexing services automatically on login"
+msgstr "Start søk- og indekseringstjenester automatisk ved innlogging"
+
+#: ../Util/Evolution.cs:45 ../Util/Evolution.cs:163
+msgid "On This Computer"
+msgstr "På denne datamaskinen"
+
 #: ../Util/ExifData.cs:226
 msgid "Image Directory"
 msgstr "Bildemappe"
@@ -398,6 +554,18 @@ msgstr "Samspillsevnemappe"
 #: ../Util/ExifData.cs:236
 msgid "Unknown Directory"
 msgstr "Ukjent mappe"
+
+#: ../Util/StringFu.cs:65
+msgid "Today"
+msgstr "I dag"
+
+#: ../Util/StringFu.cs:67
+msgid "Yesterday"
+msgstr "I går"
+
+#: ../Util/StringFu.cs:69
+msgid "MMM d"
+msgstr "MMM d"
 
 #: ../Util/StringFu.cs:71
 msgid "MMM d, yyyy"
@@ -470,3 +638,4 @@ msgstr "{0:0.0} KB"
 #, csharp-format
 msgid "{0:0.0} MB"
 msgstr "{0:0.0} MB"
+
