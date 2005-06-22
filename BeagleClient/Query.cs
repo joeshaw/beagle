@@ -113,12 +113,11 @@ namespace Beagle {
 				this.CancelledEvent (response);
 		}
 
-		// FIXME: Useful?
 		private void OnError (ResponseMessage r)
 		{
 			ErrorResponse response = (ErrorResponse) r;
 
-			throw new Exception (response.Message);
+			throw new ResponseMessageException (response);
 		}
 
 		///////////////////////////////////////////////////////////////

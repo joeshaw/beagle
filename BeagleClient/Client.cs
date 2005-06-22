@@ -116,6 +116,9 @@ namespace Beagle {
 			this.client = new UnixClient (this.socket_name);
 			NetworkStream stream = this.client.GetStream ();
 
+			// The socket may be shut down at some point here.  It
+			// is the caller's responsibility to handle the error
+			// correctly.
 			req_serializer.Serialize (stream, new RequestWrapper (request));
 			// Send end of message marker
 			stream.WriteByte (0xff);
@@ -205,8 +208,23 @@ namespace Beagle {
 
 		public void SendAsync (RequestMessage request)
 		{
-			SendRequest (request);
-			BeginRead ();
+			Exception ex = null;
+
+			try {
+				SendRequest (request);
+			} catch (IOException e) {
+				ex = e;
+			} catch (SocketException e) {
+				ex = e;
+			}
+
+			if (ex != null) {
+				ResponseMessage resp = new ErrorResponse (ex);
+				
+				if (this.AsyncResponseEvent != null)
+					this.AsyncResponseEvent (resp);
+			} else
+				BeginRead ();
 		}
 
 
@@ -215,7 +233,18 @@ namespace Beagle {
 			if (request.Keepalive)
 				throw new Exception ("A blocking connection on a keepalive request is not allowed");
 
-			SendRequest (request);
+			Exception throw_me = null;
+
+			try {
+				SendRequest (request);
+			} catch (IOException e) {
+				throw_me = e;
+			} catch (SocketException e) {
+				throw_me = e;
+			}
+
+			if (throw_me != null)
+				throw new ResponseMessageException (throw_me);
 
 			NetworkStream stream = this.client.GetStream ();
 			int bytes_read, end_index = -1;
@@ -237,7 +266,6 @@ namespace Beagle {
 			this.buffer_stream.Seek (0, SeekOrigin.Begin);
 			
 			ResponseMessage resp = null;
-			Exception throw_me = null;
 
 			try {
 				ResponseWrapper wrapper;

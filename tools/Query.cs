@@ -170,7 +170,7 @@ class QueryTool {
 		queryStartTime = DateTime.Now;
 		try {
 			query.SendAsync ();
-		} catch (System.Net.Sockets.SocketException e) {
+		} catch {
 			Console.WriteLine ("Could not connect to the Beagle daemon.  The daemon probably isn't running.");
 			System.Environment.Exit (-1);
 		}
