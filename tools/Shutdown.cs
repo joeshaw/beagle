@@ -25,14 +25,24 @@
 //
 
 using System;
+using System.Net.Sockets;
 
 using Beagle;
 
 class Shutdown {
 
-	static void Main ()
+	static int Main ()
 	{
 		ShutdownRequest request = new ShutdownRequest ();
-		request.Send ();
+
+		try {
+			request.Send ();
+		} catch {
+			Console.WriteLine ("ERROR: The Beagle daemon does not appear to be running");
+
+			return 1;
+		}
+
+		return 0;
 	}
 }
