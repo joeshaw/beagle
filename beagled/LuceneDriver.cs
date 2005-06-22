@@ -492,13 +492,14 @@ namespace Beagle.Daemon {
 			double t_lucene;
 			double t_assembly;
 
+			LNS.Query lucene_query = ToLuceneQuery (query, search_subset, bonus_uris);
+			if (lucene_query == null)
+				return;
+
 			Stopwatch sw = new Stopwatch ();
 			sw.Start ();
 			IndexReader reader = IndexReader.Open (Store);
-
 			LNS.Searcher searcher = new LNS.IndexSearcher (reader);
-			LNS.Query lucene_query = ToLuceneQuery (query, search_subset, bonus_uris);
-
 			LNS.Hits hits = searcher.Search (lucene_query);
 			sw.Stop ();
 
