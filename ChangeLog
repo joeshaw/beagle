@@ -1,3 +1,7 @@
+2005-06-22  Daniel Drake  <dsd@gentoo.org>
+
+	* glue/inotify-glue.c: Introduce some friendly error messages
+
 2005-06-21  Vijay K. Nanjundaswamy <knvijay@novell.com>
 
 	* beagled/WebServices/search.aspx, beagled/Makefile.am, :
