@@ -64,9 +64,8 @@ namespace Beagle.Daemon {
 					// Send an end of message marker
 					this.client.GetStream ().WriteByte (0xff);
 					this.client.Flush ();
-				} catch (IOException e) {
-					// The socket was shut down, so we can't write
-					// any more.
+				} catch (Exception e) {
+					Logger.Log.Debug ("Caught an exception sending response; socket shut down: {0}", e.Message);
 					return false;
 				}
 

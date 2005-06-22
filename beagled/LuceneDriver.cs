@@ -546,8 +546,8 @@ namespace Beagle.Daemon {
 
 			//////////////////////////////////////
 
-			// The call to searcher.Close () also closes the IndexReader.
 			searcher.Close ();
+			reader.Close ();
 
 			log.Debug ("{0}: n_hits={1} lucene={2:0.00}s assembly={3:0.00}s",
 				   StorePath, n_hits, t_lucene, t_assembly);

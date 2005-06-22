@@ -402,8 +402,8 @@ namespace Beagle.Daemon {
 				uids [i] = GuidFu.FromShortStringToUri (doc.Get ("Uid"));
 			}
 
-			// The call to searcher.Close () also closes the IndexReader
 			searcher.Close ();
+			reader.Close ();
 
 			return uids;
 		}
@@ -450,8 +450,8 @@ namespace Beagle.Daemon {
 				records [i].Name     = doc.Get ("Name");
 			}
 
-			// The call to searcher.Close () also closes the IndexReader
 			searcher.Close ();
+			reader.Close ();
 
 			return records;
 		}
