@@ -97,17 +97,18 @@ inotify_glue_watch (int fd, const char *filename, __u32 mask)
 
 	wd = ioctl (fd, INOTIFY_WATCH, &iwr);
 	if (wd < 0) {
-		switch (errno) {
+		int _errno = errno;
+		perror ("ioctl");
+		switch (_errno) {
 		case ENOSPC:
 			fprintf(stderr, "Maximum watch limit hit. Try adjusting /sys/class/misc/inotify/max_user_watches\n");
 			break;
 		case EFAULT:
-			fprintf(stderr, "Error: Possible inotify version incompatibility detected.\n");
+			fprintf(stderr, "This usually indicates an inotify version incompatibility.\n");
 			break;
 		default:
 			break;
 		}
-		perror ("ioctl");
 	}
 
 	if (close (file_fd))
