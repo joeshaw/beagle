@@ -40,13 +40,13 @@ namespace Beagle.Daemon {
 		const int VERSION = 1;
 
 		private SqliteConnection connection;
-		private byte[] path_flags;
+		private BitArray path_flags;
 
 		public FileAttributesStore_Sqlite (string directory, string index_fingerprint)
 		{
 			bool create_new_db = false;
 
-			path_flags = new byte [8192];
+			path_flags = new BitArray (65536);
 
 			if (! File.Exists (GetDbPath (directory))) {
 				create_new_db = true;
@@ -124,7 +124,7 @@ namespace Beagle.Daemon {
 					string dir = reader.GetString (0);
 					string file = reader.GetString (1);
 					string path = Path.Combine (dir, file);
-					SetPathFlag (path, true);
+					SetPathFlag (path);
 					++count;
 				}
 
@@ -246,21 +246,13 @@ namespace Beagle.Daemon {
 		private bool GetPathFlag (string path)
 		{
 			int hash = GetPathHash (path);
-			int index = hash >> 3;
-			byte mask = (byte) (1 << (hash & 0x7));
-			return (path_flags [index] & mask) != 0;
+			return path_flags [hash];
 		}
 
-		private void SetPathFlag (string path, bool value)
+		private void SetPathFlag (string path)
 		{
 			int hash = GetPathHash (path);
-			int index = hash >> 3;
-			byte mask = (byte) (1 << (hash & 0x7));
-
-			if (value)
-				path_flags [index] |= mask;
-			else
-				path_flags [index] &= (byte) ~mask;
+			path_flags [hash] = true;
 		}
 
 		///////////////////////////////////////////////////////////////////
@@ -310,7 +302,7 @@ namespace Beagle.Daemon {
 
 		public bool Write (FileAttributes fa)
 		{
-			SetPathFlag (fa.Path, true);
+			SetPathFlag (fa.Path);
 
 			// We need to quote any 's that appear in the strings
 			// (in particular, in the path)
@@ -330,7 +322,7 @@ namespace Beagle.Daemon {
 
 		public void Drop (string path)
 		{
-			// We don't want to SetPathFlag (path, false) here, since we have no way of knowing
+			// We don't want to "UnSetPathFlag" here, since we have no way of knowing
 			// if another path hashes to the same value as this one.
 
 			// We need to quote any 's that appear in the strings
