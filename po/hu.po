@@ -9,8 +9,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: beagle.HEAD.hu\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2005-05-14 10:51+0000\n"
-"PO-Revision-Date: 2005-05-14 20:44+0200\n"
+"POT-Creation-Date: 2005-06-23 10:49+0000\n"
+"PO-Revision-Date: 2005-06-23 15:19+0200\n"
 "Last-Translator: Gabor Kelemen <kelemeng@gnome.hu>\n"
 "Language-Team: Hungarian <gnome@gnome.hu>\n"
 "MIME-Version: 1.0\n"
@@ -19,83 +19,83 @@ msgstr ""
 "Plural-Forms:  nplurals=1; plural=0;\n"
 "X-Generator: KBabel 1.10\n"
 
-#: ../Best/Best.cs:120
+#: ../Best/Best.cs:121
 msgid ""
 "If you're wondering whether Best is working check your notification area "
 "(system tray)"
 msgstr "Ha nem biztos benne, hogy a Best működik, ellenőrizze az értesítő területen"
 
-#: ../Best/BestTray.cs:164
+#: ../Best/BestTray.cs:166
 msgid "No Recent Searches"
 msgstr "Nincsenek új keresések"
 
-#: ../Best/BestTray.cs:168
+#: ../Best/BestTray.cs:170
 msgid "Recent Searches"
 msgstr "Legutóbbi keresések"
 
-#: ../Best/BestTray.cs:183
+#: ../Best/BestTray.cs:185
 msgid "Quit"
 msgstr "Kilépés"
 
-#: ../Best/BestWindow.cs:304
+#: ../Best/BestWindow.cs:302
 msgid "Anywhere"
 msgstr "Bárhol"
 
-#: ../Best/BestWindow.cs:306
+#: ../Best/BestWindow.cs:304
 msgid "in Files"
 msgstr "Fájlokban"
 
-#: ../Best/BestWindow.cs:308
+#: ../Best/BestWindow.cs:306
 msgid "in Addressbook"
 msgstr "Címjegyzékben"
 
-#: ../Best/BestWindow.cs:310
+#: ../Best/BestWindow.cs:308
 msgid "in Mail"
 msgstr "Levelek között"
 
-#: ../Best/BestWindow.cs:312
+#: ../Best/BestWindow.cs:310
 msgid "in Web Pages"
 msgstr "Weboldalak között"
 
-#: ../Best/BestWindow.cs:314
+#: ../Best/BestWindow.cs:312
 msgid "in Chats"
 msgstr "Csevegések között"
 
-#: ../Best/BestWindow.cs:330
+#: ../Best/BestWindow.cs:328
 msgid "Search terms:"
 msgstr "Keresendő kifejezések"
 
-#: ../Best/BestWindow.cs:347
+#: ../Best/BestWindow.cs:345
 msgid "Find"
 msgstr "Keresés"
 
-#: ../Best/BestWindow.cs:364
+#: ../Best/BestWindow.cs:362
 msgid "Show More Results"
 msgstr "További eredmények megjelenítése"
 
-#: ../Best/BestWindow.cs:370
+#: ../Best/BestWindow.cs:368
 msgid "Show Previous Results"
 msgstr "Előző eredmények megjelenítése"
 
-#: ../Best/BestWindow.cs:404
+#: ../Best/BestWindow.cs:402
 msgid "No results."
 msgstr "Nincs eredmény."
 
 #. To translators: {0} is the current count of results shown of {1} in total, this is the message that is initially shown
 #. when results are returned to the user.
-#: ../Best/BestWindow.cs:408
+#: ../Best/BestWindow.cs:406
 #, csharp-format
 msgid "Best <b>{0} results of {1}</b> are shown."
 msgstr "A legjobb <b>{0} megjelenítése {1}</b> eredmény közül."
 
 #. To translators: {0} to {1} is the interval of results currently shown of {2} results in total
-#: ../Best/BestWindow.cs:413
+#: ../Best/BestWindow.cs:411
 #, csharp-format
 msgid "Results <b>{0} through {1} of {2}</b> are shown."
 msgstr "Eredmények megjelenítése ettől: <b>{0} eddig: {1}, összesen {2}</b>."
 
 #. To translators: {0} represents the current query keywords
-#: ../Best/BestWindow.cs:552
+#: ../Best/BestWindow.cs:522
 #, csharp-format
 msgid ""
 "The query for <i>{0}</i> failed.<br>The likely cause is that the beagle "
@@ -104,104 +104,43 @@ msgstr ""
 "<i>{0}</i> lekérdezése sikertelen.<br>A hiba valószínűsíthető oka, hogy a "
 "beagle démon nem fut."
 
-#. To translators: {0} represents the current query keywords
-#: ../Best/BestWindow.cs:557
-#, csharp-format
-msgid ""
-"The query for <i>{0}</i> failed.<br>The session bus isn't running.  See "
-"http://beaglewiki.org/index.php/Installing%20Beagle for information on "
-"setting up a session bus."
-msgstr ""
-"<i>{0}</i> lekérdezése sikertelen. A munkamenet busz nem fut. Információk a "
-"munkamenet busz beállításáról: http://beaglewiki.org/index.php/Installing%"
-"20Beagle"
-
 #. To translators: {0} represents the current query keywords, {1} contains the errormessage
-#: ../Best/BestWindow.cs:561
+#: ../Best/BestWindow.cs:527
 #, csharp-format
 msgid "The query for <i>{0}</i> failed with error:<br>{1}<br>"
 msgstr "<i>{0}</i> lekérdezése sikertelen: <br>{1}<br>"
 
-#: ../ImLogViewer/ImLogViewer.cs:103 ../ImLogViewer/ImLogViewer.cs:108
-#, csharp-format
-msgid "Conversations with {0}"
-msgstr "Társalgások a következővel: {0}"
+#: ../glue/eggtrayicon.c:120
+msgid "Orientation"
+msgstr "Tájolás"
 
-#: ../ImLogViewer/ImLogViewer.cs:106
+#: ../glue/eggtrayicon.c:121
+msgid "The orientation of the tray."
+msgstr "A tálca tájolása."
+
+#: ../ImLogViewer/ImLogViewer.glade.h:1
+msgid "<b>Conversations History</b>"
+msgstr "<b>Társalgás előzményei</b>"
+
+#: ../ImLogViewer/ImLogViewer.glade.h:2
+msgid "IM Viewer"
+msgstr "Azonnali üzenetek megjelenítése"
+
+#: ../ImLogViewer/ImLogWindow.cs:77
 #, csharp-format
 msgid "Conversations in {0}"
 msgstr "Társalgások a következőben: {0}"
 
-#: ../ImLogViewer/ImLogViewer.cs:194 ../Util/StringFu.cs:65
-msgid "Today"
-msgstr "Ma"
+#: ../ImLogViewer/ImLogWindow.cs:84
+#, csharp-format
+msgid "Conversations with {0}"
+msgstr "Társalgások a következővel: {0}"
 
-#: ../ImLogViewer/ImLogViewer.cs:195 ../ImLogViewer/ImLogViewer.cs:200
-msgid "HH:mm"
-msgstr "HH.mm"
-
-#: ../ImLogViewer/ImLogViewer.cs:199 ../Util/StringFu.cs:67
-msgid "Yesterday"
-msgstr "Tegnap"
-
-#: ../ImLogViewer/ImLogViewer.cs:204
-msgid "This Week"
-msgstr "Ezen a héten"
-
-#: ../ImLogViewer/ImLogViewer.cs:205 ../ImLogViewer/ImLogViewer.cs:210
-msgid "dddd"
-msgstr "dddd"
-
-#: ../ImLogViewer/ImLogViewer.cs:209
-msgid "Last Week"
-msgstr "Múlt héten"
-
-#: ../ImLogViewer/ImLogViewer.cs:214
-msgid "This Month"
-msgstr "Ebben a hónapban"
-
-#: ../ImLogViewer/ImLogViewer.cs:215 ../ImLogViewer/ImLogViewer.cs:220
-#: ../Util/StringFu.cs:69
-msgid "MMM d"
-msgstr "MMM d"
-
-#: ../ImLogViewer/ImLogViewer.cs:219
-msgid "This Year"
-msgstr "Ebben az évben"
-
-#: ../ImLogViewer/ImLogViewer.cs:224
-msgid "Older"
-msgstr "Korábbi"
-
-#: ../ImLogViewer/ImLogViewer.cs:225
-msgid "yyyy MMM d"
-msgstr "yyyy MMM d"
-
-#: ../ImLogViewer/ImLogViewer.glade.h:1
-msgid "*"
-msgstr "*"
-
-#: ../ImLogViewer/ImLogViewer.glade.h:2
-msgid "<b>Conversations History</b>"
-msgstr "<b>Társalgás előzményei</b>"
-
-#: ../ImLogViewer/ImLogViewer.glade.h:3
-msgid "<b>Today, 12:00 PM</b>"
-msgstr "<b>Ma, 12.00</b>"
-
-#: ../ImLogViewer/ImLogViewer.glade.h:4
-msgid "Find "
-msgstr "Keresés"
-
-#: ../ImLogViewer/ImLogViewer.glade.h:5
-msgid "IM viewer"
-msgstr "Azonnali üzenetek megtekintése"
-
-#: ../Tiles/TileDocs.cs:75
+#: ../Tiles/TileDocs.cs:77
 msgid "Pages:"
 msgstr "Oldalak:"
 
-#: ../Tiles/TileDocs.cs:79
+#: ../Tiles/TileDocs.cs:81
 msgid "Words:"
 msgstr "Szavak:"
 
@@ -235,23 +174,27 @@ msgstr "Társalgás a következőben: {0}"
 msgid "Conversation with {0}"
 msgstr "Társalgás a következővel: {0}"
 
-#: ../Tiles/TileMailMessage.cs:68
+#: ../Tiles/TileMailMessage.cs:80
 msgid "No Subject"
 msgstr "Nincs tárgy"
 
-#: ../Tiles/TileMailMessage.cs:73
+#: ../Tiles/TileMailMessage.cs:83
+msgid "email attachment"
+msgstr "e-mail melléklet"
+
+#: ../Tiles/TileMailMessage.cs:89
 msgid "To"
 msgstr "Címzett"
 
-#: ../Tiles/TileMailMessage.cs:73
+#: ../Tiles/TileMailMessage.cs:89
 msgid "From"
 msgstr "Feladó"
 
-#: ../Tiles/TileMailMessage.cs:104
+#: ../Tiles/TileMailMessage.cs:117
 msgid "Sent"
 msgstr "Elküldött"
 
-#: ../Tiles/TileMailMessage.cs:104
+#: ../Tiles/TileMailMessage.cs:117
 msgid "Received"
 msgstr "Fogadott"
 
@@ -382,6 +325,196 @@ msgstr "Webnapló"
 msgid "Published:"
 msgstr "Közzétéve:"
 
+#: ../tools/Settings.cs:174
+msgid "Reload configuration"
+msgstr "Beállítások újratöltése"
+
+#: ../tools/Settings.cs:175
+msgid ""
+"The configuration file has been modified by another application. Do you wish "
+"to discard the currently displayed values and reload configuration from disk?"
+msgstr "A beállítási fájlt egy másik alkalmazás módosította. El szeretné dobni a jelenleg megjelenített értékeket és újratölteni a beállításokat a lemezről?"
+
+#: ../tools/Settings.cs:213
+msgid "Select Path"
+msgstr "Válassza ki az útvonalat"
+
+#: ../tools/Settings.cs:232
+msgid "The selected path is already selected for indexing and wasn't added."
+msgstr "A kiválasztott útvonal már ki van választva indexelésre, ezért nem lesz hozzáadva."
+
+#: ../tools/Settings.cs:235
+msgid ""
+"The selected path wasn't added. The list contains items that supercedes it "
+"and the data is already being indexed."
+msgstr "A kiválasztott útvonal nem lesz hozzáadva, a lista tartalmaz olyan elemeket, amelyek megelőzik és az adatok már indexelve vannak. "
+
+#: ../tools/Settings.cs:246
+msgid "Path not added"
+msgstr "Az útvonal nem lesz hozzáadva"
+
+#: ../tools/Settings.cs:255
+msgid "Remove obsolete paths"
+msgstr "Elavult útvonalak eltávolítása"
+
+#: ../tools/Settings.cs:256
+msgid ""
+"Adding this path will obsolete some of the existing include paths. This will "
+"result in the removal of the old obsolete paths. Do you still wish to add it?"
+msgstr "Ezen útvonal hozzáadása elavulttá tesz néhány létező útvonalat, emiatt ezek az útvonalak el lesznek távolítva. Biztosan hozzá akarja adni?"
+
+#: ../tools/Settings.cs:282
+msgid "Remove path"
+msgstr "Útvonal eltávolítása"
+
+#: ../tools/Settings.cs:283
+msgid ""
+"Are you sure you wish to remove this path from the list of directories to be "
+"included for indexing?"
+msgstr "Biztosan el akarja távolítani ezt az útvonalat az indexelendő könyvtárak listájából?"
+
+#: ../tools/Settings.cs:312
+msgid "Remove item"
+msgstr "Elem eltávolítása"
+
+#: ../tools/Settings.cs:313
+msgid ""
+"Are you sure you wish to remove this item from the list of data to be "
+"excluded from indexing?"
+msgstr "Biztosan el akarja távolítani ezt az útvonalat a nem indexelendő adatok listájából?"
+
+#: ../tools/Settings.cs:363 ../tools/Settings.cs:452 ../tools/Settings.cs:785
+msgid "Name"
+msgstr "Név"
+
+#: ../tools/Settings.cs:446 ../tools/settings.glade.h:24
+msgid "Type"
+msgstr "Típus"
+
+#: ../tools/Settings.cs:499 ../tools/Settings.cs:719
+#: ../tools/settings.glade.h:17
+msgid "Path"
+msgstr "Útvonal"
+
+#: ../tools/Settings.cs:502 ../tools/Settings.cs:729
+msgid "Pattern"
+msgstr "Minta"
+
+#: ../tools/Settings.cs:505 ../tools/Settings.cs:724
+#: ../tools/settings.glade.h:16
+msgid "Mail Folder"
+msgstr "Levélmappa"
+
+#: ../tools/Settings.cs:693
+msgid "Select Folder"
+msgstr "Mappa kiválasztása"
+
+#: ../tools/Settings.cs:753
+msgid "Error adding path"
+msgstr "Hiba az útvonal hozzáadása közben"
+
+#: ../tools/Settings.cs:754
+msgid ""
+"The specified path could not be found and therefore it could not be added to "
+"the list of resources excluded for indexing."
+msgstr "A megadott útvonal nem található, ezért nem adható hozzá az indexelésből kihagyandó erőforrások listájához."
+
+#: ../tools/Settings.cs:784
+msgid "Show"
+msgstr "Megjelenítés"
+
+#: ../tools/settings.glade.h:1
+msgid "<b>Add resource</b>"
+msgstr "<b>Erőforrás hozzáadása</b>"
+
+#: ../tools/settings.glade.h:2
+msgid "<b>Display</b>"
+msgstr "<b>Megjelenítés</b>"
+
+#: ../tools/settings.glade.h:3
+msgid "<b>General</b>"
+msgstr "<b>Általános</b>"
+
+#: ../tools/settings.glade.h:4
+msgid "<b>Privacy</b>"
+msgstr "<b>Magánszféra</b>"
+
+#: ../tools/settings.glade.h:5
+msgid "<b>Select mail folder</b>"
+msgstr "<b>Levélmappa beállítása</b>"
+
+#: ../tools/settings.glade.h:6
+msgid "Add any additional paths to be included for indexing."
+msgstr "Tetszőleges útvonal felvétele indexeléshez."
+
+#: ../tools/settings.glade.h:7
+msgid "Add resource"
+msgstr "Erőforrás hozzáadása"
+
+#: ../tools/settings.glade.h:8
+msgid ""
+"Adjust which types of results should be visible, and in what order they "
+"should be presented when grouped by type."
+msgstr "Állítsa be, milyen típusú eredmények legyenek láthatóak és milyen sorrendben legyenek rendezve típus szerinti csoportosításkor."
+
+#: ../tools/settings.glade.h:9
+msgid "Alt"
+msgstr "Alt"
+
+#: ../tools/settings.glade.h:10
+msgid "Ctrl"
+msgstr "Ctrl"
+
+#: ../tools/settings.glade.h:11
+msgid "Directory Path"
+msgstr "Könyvtár útvonala"
+
+#: ../tools/settings.glade.h:12
+msgid "Display the search window by pressing"
+msgstr "Keresőablak megjelenítése a következő lenyomásakor:"
+
+#: ../tools/settings.glade.h:13
+msgid "Filename Pattern"
+msgstr "Fájlnév-minta"
+
+#: ../tools/settings.glade.h:14
+msgid "Index my home directory"
+msgstr "Saját könyvtáram indexelése"
+
+#: ../tools/settings.glade.h:15
+msgid "Indexing"
+msgstr "Indexelés"
+
+#: ../tools/settings.glade.h:18
+msgid "Please select the mail folder you wish to exclude from indexing."
+msgstr "Kérem válassza ki a levélkönyvtárat, amit ki szeretne hagyni az indexelésből."
+
+#: ../tools/settings.glade.h:19
+msgid "Search"
+msgstr "Keresés"
+
+#: ../tools/settings.glade.h:20
+msgid "Search & Indexing Preferences"
+msgstr "Keresés és indexelés beállításai"
+
+#: ../tools/settings.glade.h:21
+msgid "Select mail folder"
+msgstr "Levélmappa kiválasztása"
+
+#: ../tools/settings.glade.h:22
+msgid ""
+"Specify any resources, such as paths, patterns, mail folders or type of "
+"objects you wish to exclude from indexing."
+msgstr "Adja meg az indexelésből kihagyandó erőforrásokat, például útvonalakat, mintákat, levélmappákat vagy objektumtípusokat."
+
+#: ../tools/settings.glade.h:23
+msgid "Start search & indexing services automatically on login"
+msgstr "Keresési és indexelési szolgáltatások automatikus indítása bejelentkezéskor"
+
+#: ../Util/Evolution.cs:45 ../Util/Evolution.cs:163
+msgid "On This Computer"
+msgstr "Ezen a számítógépen"
+
 #: ../Util/ExifData.cs:226
 msgid "Image Directory"
 msgstr "Képkönyvtár"
@@ -405,6 +538,18 @@ msgstr "Együttműködési könyvtár"
 #: ../Util/ExifData.cs:236
 msgid "Unknown Directory"
 msgstr "Ismeretlen könyvtár"
+
+#: ../Util/StringFu.cs:65
+msgid "Today"
+msgstr "Ma"
+
+#: ../Util/StringFu.cs:67
+msgid "Yesterday"
+msgstr "Tegnap"
+
+#: ../Util/StringFu.cs:69
+msgid "MMM d"
+msgstr "MMM d"
 
 #: ../Util/StringFu.cs:71
 msgid "MMM d, yyyy"
