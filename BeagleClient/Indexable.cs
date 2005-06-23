@@ -264,6 +264,9 @@ namespace Beagle {
 
 		public TextReader GetTextReader ()
 		{
+			if (NoContent)
+				return null;
+
 			if (textReader == null)
 				textReader = ReaderFromUri (ContentUri);
 
@@ -277,6 +280,9 @@ namespace Beagle {
 
 		public TextReader GetHotTextReader ()
 		{
+			if (NoContent)
+				return null;
+
 			if (hotTextReader == null)
 				hotTextReader = ReaderFromUri (HotContentUri);
 			return hotTextReader;
@@ -289,6 +295,9 @@ namespace Beagle {
 
 		public Stream GetBinaryStream ()
 		{
+			if (NoContent)
+				return null;
+
 			if (binary_stream == null)
 				binary_stream = StreamFromUri (ContentUri);
 
