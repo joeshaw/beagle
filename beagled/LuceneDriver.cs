@@ -713,16 +713,19 @@ namespace Beagle.Daemon {
 				doc.Add (f);
 			}
 			
-			reader = indexable.GetTextReader ();
-			if (reader != null) {
-				f = Field.Text ("Text", reader);
-				doc.Add (f);
-			}
+			if (! indexable.NoContent) {
+				
+				reader = indexable.GetTextReader ();
+				if (reader != null) {
+					f = Field.Text ("Text", reader);
+					doc.Add (f);
+				}
 			
-			reader = indexable.GetHotTextReader ();
-			if (reader != null) {
-				f = Field.Text ("HotText", reader);
-				doc.Add (f);
+				reader = indexable.GetHotTextReader ();
+				if (reader != null) {
+					f = Field.Text ("HotText", reader);
+					doc.Add (f);
+				}
 			}
 
 			foreach (Property prop in indexable.Properties)

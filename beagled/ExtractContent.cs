@@ -103,6 +103,9 @@ class ExtractContentTool {
 			if (! first)
 				Console.WriteLine ();
 
+			if (indexable.NoContent)
+				return;
+
 			Stream stream = indexable.GetBinaryStream ();
 			if (stream != null)
 				Console.WriteLine ("Contains binary data.");

@@ -177,8 +177,10 @@ namespace Beagle.Daemon {
 		{
 			filter = null;
 
-			if (! ShouldWeFilterThis (indexable))
+			if (! ShouldWeFilterThis (indexable)) {
+				indexable.NoContent = true;
 				return false;
+			}
 
 			string path = indexable.ContentUri.LocalPath;
 
@@ -216,11 +218,12 @@ namespace Beagle.Daemon {
 
 			// We don't know how to filter this, so there is nothing else to do.
 			if (filter == null) {
-				if (indexable.NoContent) {
+				if (! indexable.NoContent) {
+					indexable.NoContent = true;
 					Logger.Log.Debug ("No filter for {0}", path);
 					return false;
 				}
-
+				
 				return true;
 			}
 
