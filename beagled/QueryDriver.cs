@@ -108,7 +108,12 @@ namespace Beagle.Daemon {
 						continue;
 
 					if (flavor.RequireInotify && ! Inotify.Enabled) {
-						Logger.Log.Warn ("Can't start backend '{0}' without inotify",  flavor.Name);
+						Logger.Log.Warn ("Can't start backend '{0}' without inotify", flavor.Name);
+						continue;
+					}
+
+					if (flavor.RequireExtendedAttributes && ! ExtendedAttribute.Supported) {
+						Logger.Log.Warn ("Can't start backend '{0}' without extended attributes", flavor.Name);
 						continue;
 					}
 

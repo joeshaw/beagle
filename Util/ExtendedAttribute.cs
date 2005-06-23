@@ -151,5 +151,20 @@ namespace Beagle.Util {
 				return false;
 			}
 		}
+
+		private static bool ea_support_tested = false;
+		private static bool ea_supported = false;
+
+		public static bool Supported {
+			get {
+				if (ea_support_tested)
+					return ea_supported;
+
+				ea_supported = Test (PathFinder.HomeDir);
+				ea_support_tested = true;
+
+				return ea_supported;
+			}
+		}
 	}
 }

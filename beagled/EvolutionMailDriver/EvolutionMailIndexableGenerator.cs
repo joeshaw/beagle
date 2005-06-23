@@ -53,7 +53,7 @@ namespace Beagle.Daemon.EvolutionMailDriver {
 			}
 		}
 
-		private EvolutionMailQueryable queryable;
+		protected EvolutionMailQueryable queryable;
 
 		protected string account_name, folder_name;
 		protected int count, indexed_count;
@@ -103,35 +103,9 @@ namespace Beagle.Daemon.EvolutionMailDriver {
 			return false;
 		}
 					
-		protected bool CrawlNeeded ()
-		{
-			string timeStr;
-
-			try {
-				timeStr = ExtendedAttribute.Get (this.CrawlFile.FullName, "LastCrawl");
-			} catch {
-				EvolutionMailQueryable.log.Debug ("Unable to get last crawl time on {0}",
-								  this.CrawlFile.FullName);
-				return true;
-			}
-
-			DateTime lastCrawl = StringFu.StringToDateTime (timeStr);
-
-			if (this.CrawlFile.LastWriteTime > lastCrawl)
-				return true;
-			else
-				return false;
-		}
-
 		protected void CrawlFinished ()
 		{
-			try {
-				ExtendedAttribute.Set (this.CrawlFile.FullName, "LastCrawl",
-						       StringFu.DateTimeToString (DateTime.Now));
-			} catch {
-				EvolutionMailQueryable.log.Debug ("Unable to set last crawl time on {0}",
-								  this.CrawlFile.FullName);
-			}
+			this.queryable.FileAttributesStore.AttachTimestamp (this.CrawlFile.FullName, DateTime.Now);
 		}
 
 		protected class PartHandler {
@@ -225,50 +199,6 @@ namespace Beagle.Daemon.EvolutionMailDriver {
 			}
 		}
 
-		protected static Stream ReadAppData (string name)
-		{
-			string path = Path.Combine (Path.Combine (PathFinder.StorageDir, "MailIndex"), name);
-			return new FileStream (path, System.IO.FileMode.Open, FileAccess.Read, FileShare.Read);
-		}
-
-		protected static string ReadAppDataLine (string name)
-		{
-			Stream stream;
-
-			try {
-				stream = ReadAppData (name);
-			} catch (FileNotFoundException) {
-				return null;
-			}
-
-			StreamReader sr = new StreamReader (stream);
-			string line = sr.ReadLine ();
-			sr.Close ();
-			return line;
-		}
-
-		protected static Stream WriteAppData (string name)
-		{
-			string path = Path.Combine (Path.Combine (PathFinder.StorageDir, "MailIndex"), name);
-			return new FileStream (path, System.IO.FileMode.Create, FileAccess.Write, FileShare.None);
-		}
-
-		protected static void WriteAppDataLine (string name, string line)
-		{
-			if (line == null) {
-				string path = Path.Combine (Path.Combine (PathFinder.StorageDir, "MailIndex"), name);
-
-				if (File.Exists (path))
-					File.Delete (path);
-
-				return;
-			}
-
-			StreamWriter sw = new StreamWriter (WriteAppData (name));
-			sw.WriteLine (line);
-			sw.Close ();
-		}
-
 		public string StatusName {
 			get { return this.CrawlFile.FullName; }
 		}
@@ -342,7 +272,7 @@ namespace Beagle.Daemon.EvolutionMailDriver {
 
 		private long MboxLastOffset {
 			get {
-				string offset_str = ReadAppDataLine ("offset-" + this.folder_name.Replace ('/', '-'));
+				string offset_str = this.queryable.ReadDataLine ("offset-" + this.folder_name.Replace ('/', '-'));
 				long offset = Convert.ToInt64 (offset_str);
 
 				Logger.Log.Debug ("mbox {0} offset is {1}", this.mbox_info.Name, offset);
@@ -350,7 +280,7 @@ namespace Beagle.Daemon.EvolutionMailDriver {
 			}
 
 			set {
-				WriteAppDataLine ("offset-" + this.folder_name.Replace ('/', '-'), value.ToString ());
+				this.queryable.WriteDataLine ("offset-" + this.folder_name.Replace ('/', '-'), value.ToString ());
 			}
 		}
 
@@ -750,7 +680,7 @@ namespace Beagle.Daemon.EvolutionMailDriver {
 			BinaryFormatter formatter;
 
 			try {
-				cacheStream = ReadAppData (this.FolderCacheName);
+				cacheStream = this.queryable.ReadDataStream (this.FolderCacheName);
 				formatter = new BinaryFormatter ();
 				this.mapping = formatter.Deserialize (cacheStream) as Hashtable;
 				cacheStream.Close ();
@@ -769,7 +699,7 @@ namespace Beagle.Daemon.EvolutionMailDriver {
 			Stream cacheStream;
 			BinaryFormatter formatter;
 			
-			cacheStream = WriteAppData (this.FolderCacheName);
+			cacheStream = this.queryable.WriteDataStream (this.FolderCacheName);
 			formatter = new BinaryFormatter ();
 			formatter.Serialize (cacheStream, mapping);
 			cacheStream.Close ();
@@ -788,7 +718,7 @@ namespace Beagle.Daemon.EvolutionMailDriver {
 				this.deleted_list = new ArrayList (this.mapping.Keys);
 
 				// Check to see if we even need to bother walking the summary
-				if (cache_loaded && ! CrawlNeeded ()) {
+				if (cache_loaded && this.queryable.FileAttributesStore.IsUpToDate (this.CrawlFile.FullName)) {
 					EvolutionMailQueryable.log.Debug ("{0}: summary has not been updated; crawl unncessary", this.folder_name);
 					return false;
 				}

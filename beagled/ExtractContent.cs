@@ -85,8 +85,13 @@ class ExtractContentTool {
 
 			Console.WriteLine ("Filename: " + uri);
 
-			if (! FilterFactory.FilterIndexable (indexable))
+			Filter filter;
+
+			if (! FilterFactory.FilterIndexable (indexable, out filter))
 				Console.WriteLine ("No filter!");
+
+			if (filter != null)
+				Console.WriteLine ("Filter: {0}", filter);
 
 			Console.WriteLine ();
 

@@ -41,11 +41,11 @@ namespace Beagle.Daemon {
 
 		private SqliteConnection connection;
 		private BitArray path_flags;
+		private int transaction_count = 0;
 
 		public FileAttributesStore_Sqlite (string directory, string index_fingerprint)
 		{
 			bool create_new_db = false;
-
 			path_flags = new BitArray (65536);
 
 			if (! File.Exists (GetDbPath (directory))) {
@@ -136,6 +136,8 @@ namespace Beagle.Daemon {
 				Logger.Log.Debug ("Loaded {0} records from {1} in {2:0.000}s", 
 						 count, GetDbPath (directory), (dt2 - dt1).TotalSeconds);
 			}
+
+			Shutdown.ShutdownEvent += OnShutdown;
 		}
 
 		///////////////////////////////////////////////////////////////////
@@ -307,6 +309,11 @@ namespace Beagle.Daemon {
 			// We need to quote any 's that appear in the strings
 			// (in particular, in the path)
 			lock (connection) {
+				if (transaction_count == 0 && ! Shutdown.ShutdownRequested) {
+					Logger.Log.Debug ("Beginning sqlite transaction");
+					DoNonQuery ("BEGIN");
+				}
+
 				DoNonQuery ("INSERT OR REPLACE INTO file_attributes " +
 					    " (unique_id, directory, filename, last_mtime, last_indexed, filter_name, filter_version) " +
 					    " VALUES ('{0}', '{1}', '{2}', '{3}', '{4}', '{5}', '{6}')",
@@ -316,6 +323,16 @@ namespace Beagle.Daemon {
 					    StringFu.DateTimeToString (fa.LastIndexedTime),
 					    fa.FilterName,
 					    fa.FilterVersion);
+
+				if (! Shutdown.ShutdownRequested)
+					++transaction_count;
+
+				// 150 is a pretty arbitrary number
+				if (transaction_count == 150) {
+					Logger.Log.Debug ("Committing sqlite transaction");
+					DoNonQuery ("COMMIT");
+					transaction_count = 0;
+				}
 			}
 			return true;
 		}
@@ -332,6 +349,17 @@ namespace Beagle.Daemon {
 			lock (connection) {
 				DoNonQuery ("DELETE FROM file_attributes WHERE directory='{0}' AND filename='{1}'",
 					    directory, filename);
+			}
+		}
+
+		private void OnShutdown ()
+		{
+			lock (connection) {
+				if (transaction_count > 0) {
+					Logger.Log.Debug ("Shutdown requested -- committing sqlite transaction");
+					DoNonQuery ("COMMIT");
+					transaction_count = 0;
+				}
 			}
 		}
 	}

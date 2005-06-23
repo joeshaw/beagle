@@ -34,5 +34,6 @@ namespace Beagle.Daemon {
 		public string      Name;
 		public QueryDomain Domain;
 		public bool        RequireInotify = true;
+		public bool        RequireExtendedAttributes = false;
 	}
 }

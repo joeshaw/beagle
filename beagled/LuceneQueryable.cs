@@ -118,7 +118,14 @@ namespace Beagle.Daemon {
 
 		virtual protected IFileAttributesStore BuildFileAttributesStore (string index_fingerprint)
 		{
-			return new FileAttributesStore_ExtendedAttribute (index_fingerprint);
+			if (ExtendedAttribute.Supported)
+				return new FileAttributesStore_ExtendedAttribute (index_fingerprint);
+			else
+				return new FileAttributesStore_Sqlite (IndexDirectory, index_fingerprint);
+		}
+
+		protected string IndexName {
+			get { return index_name; }
 		}
 
 		protected string IndexDirectory {
@@ -492,6 +499,59 @@ namespace Beagle.Daemon {
 		{
 			return indexer.GetItemCount ();
 		}
+
+		/////////////////////////////////////////
+
+		public FileStream ReadDataStream (string name)
+		{
+			string path = Path.Combine (Path.Combine (PathFinder.StorageDir, this.IndexName), name);
+
+			if (!File.Exists (path))
+				return null;
+
+			return new FileStream (path, System.IO.FileMode.Open, FileAccess.Read);
+		}
+
+		public string ReadDataLine (string name)
+		{
+			FileStream stream = ReadDataStream (name);
+
+			if (stream == null)
+				return null;
+
+			StreamReader reader = new StreamReader (stream);
+			string line = reader.ReadLine ();
+			reader.Close ();
+
+			return line;
+		}
+
+		public FileStream WriteDataStream (string name)
+		{
+			string path = Path.Combine (Path.Combine (PathFinder.StorageDir, this.IndexName), name);
+			
+			return new FileStream (path, System.IO.FileMode.Create, FileAccess.Write);
+		}
+			
+
+
+		public void WriteDataLine (string name, string line)
+		{
+			if (line == null) {
+				string path = Path.Combine (Path.Combine (PathFinder.StorageDir, this.IndexName), name);
+
+				if (File.Exists (path))
+					File.Delete (path);
+
+				return;
+			}
+
+			FileStream stream = WriteDataStream (name);
+			StreamWriter writer = new StreamWriter (stream);
+			writer.WriteLine (line);
+			writer.Close ();
+		}
+
 
 		//////////////////////////////////////////////////////////////////////////////////
 

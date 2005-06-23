@@ -308,17 +308,9 @@ namespace Beagle.Daemon {
 						  Environment.CommandLine != null ? Environment.CommandLine : "(null)");
 			} catch (Exception ex) { }
 
-			// Make sure that extended attributes can be set.  If not, bail out with a message.
-			// FIXME FIXME FIXME: This assumes that EAs work the same on your storage dir
-			// as they do on your home dir, which is obviously not a good assumption.
-			// We just need to pick a file under the home dir with the right permissions
-			// and test it.
-			if (! ExtendedAttribute.Test (PathFinder.StorageDir)) {
-				Logger.Log.Fatal ("Could not set extended attributes on a file in your home "
-						  + "directory.  See "
-						  + "http://www.beaglewiki.org/Enabling_Extended_Attributes "
-						  + "for more information.");
-				return 1;
+			if (! ExtendedAttribute.Supported) {
+				Logger.Log.Warn ("Extended attributes are not supported on this filesystem.  " +
+						 "Many search backends will not be available");
 			}
 
 			// Start our memory-logging thread
