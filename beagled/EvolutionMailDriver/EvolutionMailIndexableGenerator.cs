@@ -489,7 +489,6 @@ namespace Beagle.Daemon.EvolutionMailDriver {
 
 			string subject = GMime.Utils.HeaderDecodePhrase (message.Subject);
 			indexable.AddProperty (Property.New ("dc:title", subject));
-			indexable.AddProperty (Property.New ("fixme:subject", subject));
 
 			indexable.AddProperty (Property.NewKeyword ("fixme:account", "Local"));
                         indexable.AddProperty (Property.NewKeyword ("fixme:folder", this.folder_name));
@@ -949,7 +948,6 @@ namespace Beagle.Daemon.EvolutionMailDriver {
 			indexable.NoContent = true;
 
 			indexable.AddProperty (Property.New ("dc:title", messageInfo.subject));
-			indexable.AddProperty (Property.New ("fixme:subject",  messageInfo.subject));
 
 			indexable.AddProperty (Property.NewKeyword ("fixme:account",  this.imap_name));
                         indexable.AddProperty (Property.NewKeyword ("fixme:folder",   this.folder_name));
