@@ -78,6 +78,7 @@ fi
 if [ $heap_buddy -eq 1 ]; then
    export _GET_ON_THE_HEAP_BUDDY_BANDWAGON=1
    MONO_EXTRA_ARGS="--profile=heap-buddy:outfile.beagled $MONO_EXTRA_ARGS"
+   rm -f outfile.beagled outfile.helper.*
 fi
 
 if [ $monogrind -eq 1 ]; then

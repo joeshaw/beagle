@@ -21,7 +21,11 @@ else
 fi
 
 if [ -n "$_GET_ON_THE_HEAP_BUDDY_BANDWAGON" ]; then
-   MONO_EXTRA_ARGS="--profile=heap-buddy:outfile.helper $MONO_EXTRA_ARGS"
+   n=1
+   while [ -e outfile.helper.$n ]; do
+	 n=$(($n+1))
+   done	
+   MONO_EXTRA_ARGS="--profile=heap-buddy:outfile.helper.$n $MONO_EXTRA_ARGS"
 fi
 
 export MONO_GAC_PREFIX="@gacprefix@:$MONO_GAC_PREFIX"
