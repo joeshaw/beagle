@@ -211,17 +211,23 @@ namespace Beagle.Tile {
 		[TileAction]
 		public override void Open () 
 		{
+			String str;
+
 			Process p = new Process ();
-			p.StartInfo.UseShellExecute = false;
 			p.StartInfo.FileName = "evolution";
-			p.StartInfo.Arguments = "'" + Hit.ParentUri != null ? Hit.ParentUri.ToString () : Hit.Uri.ToString () + "'";
+			if (Hit.ParentUriAsString != null)
+				str = Hit.ParentUriAsString;
+			else
+				str = Hit.UriAsString;
+
+			p.StartInfo.UseShellExecute = false;
+			p.StartInfo.Arguments  = "'" + str + "'";
 
 			try {
 				p.Start ();
 			} catch (System.ComponentModel.Win32Exception e) {
 				Console.WriteLine ("Unable to run {0}: {1}", p.StartInfo.FileName, e.Message);
 			}
-				
 		}
 
 		[TileAction]

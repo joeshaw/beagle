@@ -1,3 +1,9 @@
+2006-06-24  Veerapuram Varadhan <vvaradhan@novell.com>
+
+	* Tiles/TileMailMessage.cs:
+	(Open): Hit.Uri and Hit.ParentUri are ignored. Use Hit.UriAsString
+	and Hit.ParentUriAsString instead.  This fixes a crasher.
+	
 2006-06-23  Daniel Drake  <dsd@gentoo.org>
 
 	* beagled/EvolutionMailDriver/EvolutionMailIndexableGenerator.cs:
