@@ -1,0 +1,34 @@
+#!@bash@
+
+if [ -e ./@target@ ] && [ -e ./Makefile.am ] ; then
+    echo "*** Running uninstalled @target@ ***"
+    THIS_PATH="../Util:../BeagleClient:."
+    THIS_EXE="./@target@"
+
+    export MONO_PATH="../Util:../BeagleClient:$MONO_PATH"
+    export LD_LIBRARY_PATH="../glue/.libs:$LD_LIBRARY_PATH"
+
+    # In BEAGLE_FILTER_PATH, a trailing ':' means "append the default path".
+    if [ -n "$BEAGLE_FILTER_PATH" ]; then
+	export BEAGLE_FILTER_PATH="../Filters:$BEAGLE_FILTER_PATH"
+    else
+	export BEAGLE_FILTER_PATH="../Filters"
+    fi
+
+else
+    THIS_PATH="@pkglibdir@"
+    THIS_EXE="@pkglibdir@/@target@"
+fi
+
+if [ -n "$_GET_ON_THE_HEAP_BUDDY_BANDWAGON" ]; then
+   MONO_EXTRA_ARGS="--profile=heap-buddy:outfile.helper $MONO_EXTRA_ARGS"
+fi
+
+export MONO_GAC_PREFIX="@gacprefix@:$MONO_GAC_PREFIX"
+export MONO_PATH="$THIS_PATH:$MONO_PATH"
+
+CMDLINE="mono --debug $MONO_EXTRA_ARGS $THIS_EXE $@"
+echo $CMDLINE >> index-helper-command-line
+
+exec $CMDLINE
+

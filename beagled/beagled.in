@@ -46,6 +46,7 @@ fi
 export MONO_GAC_PREFIX="@gacprefix@:$MONO_GAC_PREFIX"
 export LD_LIBRARY_PATH="/opt/gnome/lib/evolution/2.0:$LD_LIBRARY_PATH"
 monogrind=0
+heap_buddy=0
 
 BEAGLED_ARGS="$*"
 for i in $BEAGLED_ARGS; do
@@ -53,6 +54,7 @@ for i in $BEAGLED_ARGS; do
     --help | --list-backends | --fg | --foreground ) fg_user=1 ;;
     --bg | --background ) fg_user=0 ;;
     --monogrind ) monogrind=1 ;;
+    --heap-buddy ) heap_buddy=1 ;;
     esac
 done
 
@@ -71,6 +73,11 @@ if [ $fg -eq 1 ]; then
 else
     [ -z "$fg_user" ] && FGBG_ARG="--bg";
     unset BEAGLE_LOG_IN_THE_FOREGROUND_PLEASE
+fi
+
+if [ $heap_buddy -eq 1 ]; then
+   export _GET_ON_THE_HEAP_BUDDY_BANDWAGON=1
+   MONO_EXTRA_ARGS="--profile=heap-buddy:outfile.beagled $MONO_EXTRA_ARGS"
 fi
 
 if [ $monogrind -eq 1 ]; then

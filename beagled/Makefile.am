@@ -522,10 +522,11 @@ $(DAEMON_TARGET): $(DAEMON_CSFILES) $(DAEMON_LOCAL_ASSEMBLIES)
 # automake.  This is a massive wart on our development platform.
 
 INDEX_HELPER_WRAPPER = beagled-index-helper
+INDEX_HELPER_WRAPPER_IN = $(INDEX_HELPER_WRAPPER).in
 INDEX_HELPER_TARGET = IndexHelper.exe
 
-$(INDEX_HELPER_WRAPPER): $(srcdir)/$(WRAPPER_IN)
-	$(WRAPPER_SED) -e "s|\@target\@|$(INDEX_HELPER_TARGET)|g" < $(srcdir)/$(WRAPPER_IN) > $@
+$(INDEX_HELPER_WRAPPER): $(srcdir)/$(INDEX_HELPER_WRAPPER_IN)
+	$(WRAPPER_SED) -e "s|\@target\@|$(INDEX_HELPER_TARGET)|g" < $(srcdir)/$(INDEX_HELPER_WRAPPER_IN) > $@
 	chmod +x $(INDEX_HELPER_WRAPPER)
 
 INDEX_HELPER_CSFLAGS = -target:exe $(BEAGLE_DEFINES)
@@ -857,6 +858,7 @@ COND_CS_FILES = \
 EXTRA_DIST = \
 	$(WRAPPER_IN)   			\
 	$(DAEMON_WRAPPER_IN)			\
+	$(INDEX_HELPER_WRAPPER_IN)		\
 	$(COND_CS_FILES)			\
 	$(man_MANS)				\
 	$(PLUGIN_CSFILES)			\
