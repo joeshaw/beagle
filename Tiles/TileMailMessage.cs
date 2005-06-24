@@ -211,17 +211,18 @@ namespace Beagle.Tile {
 		[TileAction]
 		public override void Open () 
 		{
-			String str;
+			string uri_str;
 
 			Process p = new Process ();
-			p.StartInfo.FileName = "evolution";
-			if (Hit.ParentUriAsString != null)
-				str = Hit.ParentUriAsString;
-			else
-				str = Hit.UriAsString;
-
 			p.StartInfo.UseShellExecute = false;
-			p.StartInfo.Arguments  = "'" + str + "'";
+			p.StartInfo.FileName = "evolution";
+
+			if (Hit.ParentUriAsString != null)
+				uri_str = Hit.ParentUriAsString;
+			else
+				uri_str = Hit.UriAsString;
+
+			p.StartInfo.Arguments  = "'" + uri_str + "'";
 
 			try {
 				p.Start ();
@@ -247,6 +248,30 @@ namespace Beagle.Tile {
 				Console.WriteLine ("Unable to run {0}: {1}", p.StartInfo.FileName, e.Message);
 			}
 		}
+
+		[TileAction]
+		public void Reply ()
+		{
+			string uri_str;
+
+			Process p = new Process ();
+			p.StartInfo.UseShellExecute = false;
+			p.StartInfo.FileName = "evolution";
+
+			if (Hit.ParentUriAsString != null)
+				uri_str = Hit.ParentUriAsString;
+			else
+				uri_str = Hit.UriAsString;
+			
+			p.StartInfo.Arguments = String.Format ("'{0};reply=sender'", uri_str);
+
+			try {
+				p.Start ();
+			} catch (System.ComponentModel.Win32Exception e) {
+				Console.WriteLine ("Unable to run {0}: {1}", p.StartInfo.FileName, e.Message);
+			}
+				
+		}			
 
 #if ENABLE_EVO_SHARP
 		[TileAction]
