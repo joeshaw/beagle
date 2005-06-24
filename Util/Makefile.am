@@ -37,6 +37,7 @@ $(EXTSTR): $(EXTSTR_IN)
 		< $(EXTSTR_IN) > $@
 
 CSFILES = 			        	\
+	$(srcdir)/ArrayFu.cs              	\
 	$(srcdir)/camel.cs              	\
 	$(srcdir)/CommandLineFu.cs		\
 	$(srcdir)/CompatFileChooser.cs		\
