@@ -367,22 +367,25 @@ namespace Lucene.Net.Store
 		/// <summary>Returns the time the named file was last modified. </summary>
 		public override long FileModified(System.String name)
 		{
+			// FIXED joeshaw@novell.com 24 Jun 2005 - Use UTC
 			System.IO.FileInfo file = new System.IO.FileInfo(System.IO.Path.Combine(directory.FullName, name));
-			return ((file.LastWriteTime.Ticks - 621355968000000000) / 10000);
+			return ((file.LastWriteTimeUtc.Ticks - 621355968000000000) / 10000);
 		}
 		
 		/// <summary>Returns the time the named file was last modified. </summary>
 		public static long FileModified(System.IO.FileInfo directory, System.String name)
 		{
+			// FIXED joeshaw@novell.com 24 Jun 2005 - Use UTC
 			System.IO.FileInfo file = new System.IO.FileInfo(System.IO.Path.Combine(directory.FullName, name));
-			return ((file.LastWriteTime.Ticks - 621355968000000000) / 10000);
+			return ((file.LastWriteTimeUtc.Ticks - 621355968000000000) / 10000);
 		}
 		
 		/// <summary>Set the modified time of an existing file to now. </summary>
 		public override void  TouchFile(System.String name)
 		{
+			// FIXED joeshaw@novell.com 24 Jun 2005 - Use UTC
 			System.IO.FileInfo file = new System.IO.FileInfo(System.IO.Path.Combine(directory.FullName, name));
-            file.LastWriteTime = System.DateTime.Now;
+			file.LastWriteTimeUtc = System.DateTime.UtcNow;
 		}
 		
 		/// <summary>Returns the length in bytes of a file in the directory. </summary>

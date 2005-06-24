@@ -313,7 +313,6 @@ unchanged:
 +		}
 +	}
 +}
-only in patch2:
 unchanged:
 --- /home/joe/lucene-1.4/Lucene.Net-1.4.3.RC2-001/Lucene.Net/Analysis/PorterStemmer.cs	2004-11-02 12:55:50.000000000 -0500
 +++ ./Analysis/PorterStemmer.cs	2005-01-10 16:02:22.000000000 -0500
@@ -330,7 +329,6 @@ unchanged:
  		}
  		
  		/* step6() removes a final -e if m() > 1. */
-only in patch2:
 unchanged:
 --- /home/joe/lucene-1.4/Lucene.Net-1.4.3.RC2-001/Lucene.Net/Analysis/Standard/StandardTokenizer.cs	2004-12-27 17:15:00.000000000 -0500
 +++ ./Analysis/Standard/StandardTokenizer.cs	2005-01-10 16:01:51.000000000 -0500
@@ -355,7 +353,6 @@ unchanged:
  				token = token.next;
  			else
  				token = token.next = token_source.GetNextToken();
-only in patch2:
 unchanged:
 --- /home/joe/lucene-1.4/Lucene.Net-1.4.3.RC2-001/Lucene.Net/Document/Field.cs	2004-11-02 12:56:16.000000000 -0500
 +++ ./Document/Field.cs	2005-01-07 17:32:41.000000000 -0500
@@ -404,7 +401,6 @@ unchanged:
  		{
  			if (name == null)
  				throw new System.ArgumentException("name cannot be null");
-only in patch2:
 unchanged:
 --- /home/joe/lucene-1.4/Lucene.Net-1.4.3.RC2-001/Lucene.Net/QueryParser/QueryParser.cs	2005-01-07 16:56:32.000000000 -0500
 +++ ./QueryParser/QueryParser.cs	2005-01-10 16:03:16.000000000 -0500
@@ -458,7 +454,6 @@ unchanged:
  		}
  		
  		private bool Jj_2_1(int xla)
-only in patch2:
 unchanged:
 --- /home/joe/lucene-1.4/Lucene.Net-1.4.3.RC2-001/Lucene.Net/Search/BooleanQuery.cs	2004-12-06 12:18:16.000000000 -0500
 +++ ./Search/BooleanQuery.cs	2005-01-07 18:05:15.000000000 -0500
@@ -475,7 +470,6 @@ unchanged:
  						query.SetBoost(GetBoost() * query.GetBoost());
  					}
  					
-only in patch2:
 unchanged:
 --- /home/joe/lucene-1.4/Lucene.Net-1.4.3.RC2-001/Lucene.Net/Search/RemoteSearchable.cs	2004-11-02 13:25:20.000000000 -0500
 +++ ./Search/RemoteSearchable.cs	2005-01-10 16:04:47.000000000 -0500
@@ -494,7 +488,6 @@ unchanged:
  			
  			Lucene.Net.Search.Searchable local = new IndexSearcher(args[0]);
  			RemoteSearchable impl = new RemoteSearchable(local);
-only in patch2:
 unchanged:
 --- /home/joe/lucene-1.4/Lucene.Net-1.4.3.RC2-001/Lucene.Net/Search/TermQuery.cs	2004-12-06 12:00:44.000000000 -0500
 +++ ./Search/TermQuery.cs	2005-01-07 17:59:38.000000000 -0500
@@ -508,7 +501,6 @@ unchanged:
  	}
  }
 \ No newline at end of file
-only in patch2:
 unchanged:
 --- /home/joe/lucene-1.4/Lucene.Net-1.4.3.RC2-001/Lucene.Net/Store/FSDirectory.cs	2004-12-15 11:25:12.000000000 -0500
 +++ ./Store/FSDirectory.cs	2005-01-10 16:00:59.000000000 -0500
@@ -629,7 +621,6 @@ unchanged:
  		/// <summary> So we can do some byte-to-hexchar conversion below</summary>
  		private static readonly char[] HEX_DIGITS = new char[]{'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f'};
  		
-only in patch2:
 unchanged:
 --- /home/joe/lucene-1.4/Lucene.Net-1.4.3.RC2-001/Lucene.Net/Store/Lock.cs	2004-11-02 13:26:20.000000000 -0500
 +++ ./Store/Lock.cs	2005-01-10 15:42:13.000000000 -0500
@@ -656,3 +647,89 @@ unchanged:
  				try
  				{
  					System.Threading.Thread.Sleep(new System.TimeSpan((System.Int64) 10000 * LOCK_POLL_INTERVAL));
+only in patch2:
+unchanged:
+--- Lucene.Net/Store/FSDirectory.cs	18 Mar 2005 04:34:19 -0000	1.7
++++ Lucene.Net/Store/FSDirectory.cs	24 Jun 2005 18:24:17 -0000
+@@ -367,22 +367,25 @@ namespace Lucene.Net.Store
+ 		/// <summary>Returns the time the named file was last modified. </summary>
+ 		public override long FileModified(System.String name)
+ 		{
++			// FIXED joeshaw@novell.com 24 Jun 2005 - Use UTC
+ 			System.IO.FileInfo file = new System.IO.FileInfo(System.IO.Path.Combine(directory.FullName, name));
+-			return ((file.LastWriteTime.Ticks - 621355968000000000) / 10000);
++			return ((file.LastWriteTimeUtc.Ticks - 621355968000000000) / 10000);
+ 		}
+ 		
+ 		/// <summary>Returns the time the named file was last modified. </summary>
+ 		public static long FileModified(System.IO.FileInfo directory, System.String name)
+ 		{
++			// FIXED joeshaw@novell.com 24 Jun 2005 - Use UTC
+ 			System.IO.FileInfo file = new System.IO.FileInfo(System.IO.Path.Combine(directory.FullName, name));
+-			return ((file.LastWriteTime.Ticks - 621355968000000000) / 10000);
++			return ((file.LastWriteTimeUtc.Ticks - 621355968000000000) / 10000);
+ 		}
+ 		
+ 		/// <summary>Set the modified time of an existing file to now. </summary>
+ 		public override void  TouchFile(System.String name)
+ 		{
++			// FIXED joeshaw@novell.com 24 Jun 2005 - Use UTC
+ 			System.IO.FileInfo file = new System.IO.FileInfo(System.IO.Path.Combine(directory.FullName, name));
+-            file.LastWriteTime = System.DateTime.Now;
++			file.LastWriteTimeUtc = System.DateTime.UtcNow;
+ 		}
+ 		
+ 		/// <summary>Returns the length in bytes of a file in the directory. </summary>
+only in patch2:
+unchanged:
+--- Lucene.Net/Store/RAMDirectory.cs	17 Jan 2005 19:54:31 -0000	1.2
++++ Lucene.Net/Store/RAMDirectory.cs	24 Jun 2005 18:24:17 -0000
+@@ -159,9 +159,10 @@ namespace Lucene.Net.Store
+ 		public override void  TouchFile(System.String name)
+ 		{
+ 			//     final boolean MONITOR = false;
+-			
++
++			// FIXED joeshaw@novell.com 24 Jun 2005 - Use UTC			
+ 			RAMFile file = (RAMFile) files[name];
+-			long ts2, ts1 = (System.DateTime.Now.Ticks - 621355968000000000) / 10000;
++			long ts2, ts1 = (System.DateTime.UtcNow.Ticks - 621355968000000000) / 10000;
+ 			do 
+ 			{
+ 				try
+@@ -171,7 +172,7 @@ namespace Lucene.Net.Store
+ 				catch (System.Threading.ThreadInterruptedException)
+ 				{
+ 				}
+-				ts2 = (System.DateTime.Now.Ticks - 621355968000000000) / 10000;
++				ts2 = (System.DateTime.UtcNow.Ticks - 621355968000000000) / 10000;
+ 				//       if (MONITOR) {
+ 				//         count++;
+ 				//       }
+only in patch2:
+unchanged:
+--- Lucene.Net/Store/RAMFile.cs	17 Jan 2005 19:54:31 -0000	1.1
++++ Lucene.Net/Store/RAMFile.cs	24 Jun 2005 18:24:17 -0000
+@@ -21,6 +21,7 @@ namespace Lucene.Net.Store
+ 	{
+ 		internal System.Collections.ArrayList buffers = System.Collections.ArrayList.Synchronized(new System.Collections.ArrayList(10));
+ 		internal long length;
+-		internal long lastModified = (System.DateTime.Now.Ticks - 621355968000000000) / 10000;
++		// FIXED joeshaw@novell.com 24 Jun 2005 - Use UTC
++		internal long lastModified = (System.DateTime.UtcNow.Ticks - 621355968000000000) / 10000;
+ 	}
+ }
+only in patch2:
+unchanged:
+--- Lucene.Net/Store/RAMOutputStream.cs	17 Jan 2005 19:54:31 -0000	1.1
++++ Lucene.Net/Store/RAMOutputStream.cs	24 Jun 2005 18:24:17 -0000
+@@ -103,7 +103,8 @@ namespace Lucene.Net.Store
+ 			if (pointer > file.length)
+ 				file.length = pointer;
+ 			
+-			file.lastModified = (System.DateTime.Now.Ticks - 621355968000000000) / 10000;
++			// FIXED joeshaw@novell.com 24 Jun 2005 - Use UTC
++			file.lastModified = (System.DateTime.UtcNow.Ticks - 621355968000000000) / 10000;
+ 		}
+ 		
+ 		public override void  Close()

@@ -159,9 +159,10 @@ namespace Lucene.Net.Store
 		public override void  TouchFile(System.String name)
 		{
 			//     final boolean MONITOR = false;
-			
+
+			// FIXED joeshaw@novell.com 24 Jun 2005 - Use UTC			
 			RAMFile file = (RAMFile) files[name];
-			long ts2, ts1 = (System.DateTime.Now.Ticks - 621355968000000000) / 10000;
+			long ts2, ts1 = (System.DateTime.UtcNow.Ticks - 621355968000000000) / 10000;
 			do 
 			{
 				try
@@ -171,7 +172,7 @@ namespace Lucene.Net.Store
 				catch (System.Threading.ThreadInterruptedException)
 				{
 				}
-				ts2 = (System.DateTime.Now.Ticks - 621355968000000000) / 10000;
+				ts2 = (System.DateTime.UtcNow.Ticks - 621355968000000000) / 10000;
 				//       if (MONITOR) {
 				//         count++;
 				//       }

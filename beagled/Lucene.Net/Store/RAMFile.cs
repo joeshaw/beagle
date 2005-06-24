@@ -21,6 +21,7 @@ namespace Lucene.Net.Store
 	{
 		internal System.Collections.ArrayList buffers = System.Collections.ArrayList.Synchronized(new System.Collections.ArrayList(10));
 		internal long length;
-		internal long lastModified = (System.DateTime.Now.Ticks - 621355968000000000) / 10000;
+		// FIXED joeshaw@novell.com 24 Jun 2005 - Use UTC
+		internal long lastModified = (System.DateTime.UtcNow.Ticks - 621355968000000000) / 10000;
 	}
 }
