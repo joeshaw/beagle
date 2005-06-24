@@ -9,6 +9,14 @@
 	* beagled/EvolutionMailDriver/EvolutionMailIndexableGenerator.cs:
 	Kill fixme:subject as subject is properly stored in dc:title
 
+2005-06-23  Anders Carlsson  <andersca@imendio.com>
+
+	* BeagleClient/IndexingService.cs:
+	Return an empty response after an indexing request.
+
+	* beagled/IndexingServiceQueryable/IndexingServiceQueryable.cs:
+	Make the ToRemove list an xml array.
+
 2005-06-22  Daniel Drake  <dsd@gentoo.org>
 
 	* glue/inotify-glue.c: Introduce some friendly error messages

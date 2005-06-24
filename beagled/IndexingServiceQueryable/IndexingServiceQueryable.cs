@@ -89,7 +89,7 @@ namespace Beagle.Daemon.IndexingServiceQueryable {
 			// that fires when all of the items have been added to the index.
 			
 			// No response
-			return null;
+			return new EmptyResponse ();
 		}
 
 	}

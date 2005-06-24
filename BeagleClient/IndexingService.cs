@@ -48,10 +48,28 @@ namespace Beagle {
 			get { return to_add; }
 		}
 
-		[XmlAttribute ("ToRemove")]
-		public string ToRemoveString {
-			get { return UriFu.UrisToString (to_remove); }
-			set { to_remove = new ArrayList (UriFu.StringToUris (value)); }
+		[XmlArray (ElementName="ToRemove")]
+		[XmlArrayItem (ElementName="Uri")]
+		public string [] ToRemoveAsStrings {
+			get {
+				string[] uris = new string [to_remove.Count];
+				
+				int i = 0;
+				foreach (Uri uri in to_remove) {
+					uris [i] = UriFu.UriToSerializableString (uri);
+					i++;
+				}
+
+				return uris;
+			}
+
+			set {
+				int N = value.Length;
+
+				to_remove.Clear ();
+				for (int i = 0; i < N; i++) 
+					to_remove.Add (UriFu.UriStringToUri (value [i]));
+			}
 		}
 
 		[XmlIgnore]
@@ -61,6 +79,7 @@ namespace Beagle {
 
 		public void Add (Indexable indexable)
 		{
+			indexable.StoreStream ();
 			to_add.Add (indexable);
 		}
 
@@ -68,5 +87,6 @@ namespace Beagle {
 		{
 			to_remove.Add (uri);
 		}
+
 	}
 }
