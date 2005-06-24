@@ -48,5 +48,18 @@ namespace Beagle.Util {
 				}
 			}
 		}
+
+		public static int IndexOfByte (byte [] array, byte target, int start)
+		{
+			for (int i = start; i < array.Length; ++i)
+				if (array [i] == target)
+					return i;
+			return -1;
+		}
+
+		public static int IndexOfByte (byte [] array, byte target)
+		{
+			return IndexOfByte (array, target, 0);
+		}
 	}
 }

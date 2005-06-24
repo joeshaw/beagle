@@ -126,19 +126,6 @@ namespace Beagle {
 		}
 
 		static XmlSerializer resp_serializer = new XmlSerializer (typeof (ResponseWrapper), ResponseMessage.Types);
-
-		private static int IndexOfByte (byte [] array, byte target, int start)
-		{
-			for (int i = start; i < array.Length; ++i)
-				if (array [i] == target)
-					return i;
-			return -1;
-		}
-
-		private static int IndexOfByte (byte [] array, byte target)
-		{
-			return IndexOfByte (array, target, 0);
-		}
 		
 		// This function will be called from its own thread
 		private void ReadCallback (IAsyncResult ar)
@@ -169,7 +156,7 @@ namespace Beagle {
 
 				do {
 					// 0xff signifies end of message
-					end_index = IndexOfByte (this.network_data, (byte) 0xff, prev_index);
+					end_index = ArrayFu.IndexOfByte (this.network_data, (byte) 0xff, prev_index);
 
 					this.buffer_stream.Write (this.network_data, prev_index, (end_index == -1 ? bytes_read : end_index) - prev_index);
 
@@ -269,7 +256,7 @@ namespace Beagle {
 
 				if (bytes_read > 0) {
 					// 0xff signifies end of message
-					end_index = IndexOfByte (this.network_data, (byte) 0xff);
+					end_index = ArrayFu.IndexOfByte (this.network_data, (byte) 0xff);
 					
 					this.buffer_stream.Write (this.network_data, 0,
 								  end_index == -1 ? bytes_read : end_index);
