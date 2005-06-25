@@ -49,6 +49,8 @@ namespace Beagle.Util {
 			}
 		}
 
+		// This is designed to be used instead of Array.IndexOf as it reduces
+		// boxing and is therefore more efficient.
 		public static int IndexOfByte (byte [] array, byte target, int start)
 		{
 			for (int i = start; i < array.Length; ++i)
