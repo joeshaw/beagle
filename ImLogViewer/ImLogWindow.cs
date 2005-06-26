@@ -354,6 +354,7 @@ namespace ImLogViewer {
 							timelinetree.ExpandToPath (path);
 							timelinetree.Selection.SelectPath (path);
 							timelinetree.ScrollToCell (path, null, true, 0.5f, 0.0f);
+							return;
 						}
 					} while (tree_store.IterNext (ref child));
 				}
