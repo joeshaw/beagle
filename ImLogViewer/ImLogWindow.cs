@@ -27,16 +27,14 @@ namespace ImLogViewer {
 		[Widget] Button clear_button;
 		[Widget] TextView conversation;
 		
-		private string first_selected_log;
-		private bool have_first_selection_iter = false;
-		private TreeIter first_selection_iter;
+		private string selected_log;
+
 		private string speaking_to;
 		private string log_path;
 		private string highlight_text;
 		private string search_text;
 
 		private TreeStore tree_store;
-
 		private ThreadNotify index_thread_notify;
 		private Timeline timeline = new Timeline ();
 
@@ -44,10 +42,9 @@ namespace ImLogViewer {
 		{
 			if (Directory.Exists (path)) {
 				log_path = path;
-				first_selected_log = null;
 			} else if (File.Exists (path)) {
 				log_path = Path.GetDirectoryName (path);
-				first_selected_log = path;
+				selected_log = path;
 			} else {
 				Console.WriteLine ("ERROR: Log path doesn't exist - {0}", path);
 				return;
@@ -93,8 +90,6 @@ namespace ImLogViewer {
 			
 			Glade.XML gxml = new Glade.XML (null, "ImLogViewer.glade", "imviewer", null);
 			gxml.Autoconnect (this);
-
-			//BindKeys ();
 
 			conversation.PixelsAboveLines = 3;
 			conversation.LeftMargin = 4;
@@ -188,7 +183,7 @@ namespace ImLogViewer {
 			}
 		}
 
-		private void DoFoo (ArrayList list, string name, string date_format)
+		private void AddCategory (ArrayList list, string name, string date_format)
 		{
 			if (list.Count > 0) {
 				ArrayList previews = GetPreviews (list);
@@ -203,29 +198,27 @@ namespace ImLogViewer {
 		{
 			tree_store.Clear ();
 
-			DoFoo (timeline.Today, "Today", "HH:mm");
-			DoFoo (timeline.Yesterday, "Yesterday", "HH:mm");
-			DoFoo (timeline.ThisWeek, "This Week", "dddd");
-			DoFoo (timeline.LastWeek, "Last Week", "dddd");
-			DoFoo (timeline.ThisMonth, "This Month", "MMM d");
-			DoFoo (timeline.ThisYear, "This Year", "MMM d");
-			DoFoo (timeline.Older, "Older", "yyy MMM d");
+			AddCategory (timeline.Today, "Today", "HH:mm");
+			AddCategory (timeline.Yesterday, "Yesterday", "HH:mm");
+			AddCategory (timeline.ThisWeek, "This Week", "dddd");
+			AddCategory (timeline.LastWeek, "Last Week", "dddd");
+			AddCategory (timeline.ThisMonth, "This Month", "MMM d");
+			AddCategory (timeline.ThisYear, "This Year", "MMM d");
+			AddCategory (timeline.Older, "Older", "yyy MMM d");
 		
 			timelinetree.ExpandAll();
 		}
 
 		private void AddPreviews (TreeIter parent, ArrayList previews, string date_format)
 		{
-			TreeIter iter;
-
 			foreach (ImLogPreview preview in previews) {
 				string date = preview.Log.StartTime.ToString (date_format);
-				iter = tree_store.AppendValues (parent, date, preview.Snippet, preview.Log);
-				if (! have_first_selection_iter || preview.Log.LogFile == first_selected_log) {
-					have_first_selection_iter = true;
-					first_selection_iter = iter;
-					timelinetree.Selection.SelectIter (first_selection_iter);
+				tree_store.AppendValues (parent, date, preview.Snippet, preview.Log);
+	
+				if (selected_log == null || selected_log == preview.Log.LogFile) {
+					selected_log = preview.Log.LogFile;
 					RenderConversation (preview.Log);
+					ScrollToLog (preview.Log.LogFile);
 				}
 			}
 		}
@@ -305,7 +298,7 @@ namespace ImLogViewer {
 
 			search_text = text;
 			highlight_text = null;
-			have_first_selection_iter = false;
+			selected_log = null;
 		}
 
 		private void OnConversationSelected (object o, EventArgs args) 
@@ -315,6 +308,11 @@ namespace ImLogViewer {
 			
 			if (((TreeSelection)o).GetSelected (out model, out iter)) {
 				ImLog log = model.GetValue (iter, 2) as ImLog;
+
+				if (log == null)
+					return;
+
+				selected_log = log.LogFile;
 				RenderConversation (log);
 			}
 		}
@@ -331,8 +329,35 @@ namespace ImLogViewer {
 
 		private void OnSearchClicked (object o, EventArgs args)
 		{
+			if (search_entry.Text == null || search_entry.Text == "")
+				return;
+
 			Search (search_entry.Text);
 			RepopulateTimeline ();
+		}
+
+		private void ScrollToLog (string scroll_log)
+		{
+			TreeIter root_iter;
+			tree_store.GetIterFirst (out root_iter);
+			
+			do {
+				if (tree_store.IterHasChild (root_iter)) {
+					TreeIter child;
+					tree_store.IterNthChild (out child, root_iter, 0);
+					
+					do {
+						ImLog log = tree_store.GetValue (child, 2) as ImLog;
+						
+						if (log.LogFile == scroll_log) {
+							TreePath path = tree_store.GetPath (child);
+							timelinetree.ExpandToPath (path);
+							timelinetree.Selection.SelectPath (path);
+							timelinetree.ScrollToCell (path, null, true, 0.5f, 0.0f);
+						}
+					} while (tree_store.IterNext (ref child));
+				}
+			} while (tree_store.IterNext (ref root_iter));
 		}
 		
 		private void OnClearClicked (object o, EventArgs args)
@@ -343,6 +368,8 @@ namespace ImLogViewer {
 			search_entry.Sensitive = true;
 
 			RepopulateTimeline ();
+
+			ScrollToLog (selected_log);
 		}
 	}
 }
