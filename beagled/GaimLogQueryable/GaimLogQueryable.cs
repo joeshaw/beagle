@@ -177,6 +177,7 @@ namespace Beagle.Daemon.GaimLogQueryable {
 		{
 			Indexable indexable = new Indexable (log.Uri);
 			indexable.Timestamp = log.Timestamp;
+			indexable.MimeType = "text/plain";
 			indexable.Type = "IMLog";
 
 			StringBuilder text = new StringBuilder ();
