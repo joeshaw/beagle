@@ -1,0 +1,640 @@
+# Translation to Polish
+# translation of beagle.HEAD.po to
+# This file is distributed under the same license as the PACKAGE package.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER, 2005.
+# Michał Kastelik <m.kastelik@wp.pl>, 2005.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: nb\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2005-06-21 01:30+0200\n"
+"PO-Revision-Date: 2005-06-21 02:00+0200\n"
+"Last-Translator: Michał Kastelik <m.kastelik@wp.pl>\n"
+"Language-Team: Polish Ubuntu"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=n != 1;\n"
+"X-Generator: KBabel 1.10\n"
+
+#: ../Best/Best.cs:121
+msgid ""
+"If you're wondering whether Best is working check your notification area "
+"(system tray)"
+msgstr "Jeżeli chcesz sprawdzić sposób działania, sprawdź pasek powiadamiania"
+
+#: ../Best/BestTray.cs:166
+msgid "No Recent Searches"
+msgstr "Brak ostatnich wyszukiwań"
+
+#: ../Best/BestTray.cs:170
+msgid "Recent Searches"
+msgstr "Ostatnie wyszukiwania"
+
+#: ../Best/BestTray.cs:185
+msgid "Quit"
+msgstr "Zakończ"
+
+#: ../Best/BestWindow.cs:302
+msgid "Anywhere"
+msgstr "Wszędzie"
+
+#: ../Best/BestWindow.cs:304
+msgid "in Files"
+msgstr "w plikach"
+
+#: ../Best/BestWindow.cs:306
+msgid "in Addressbook"
+msgstr "w książce adresowej"
+
+#: ../Best/BestWindow.cs:308
+msgid "in Mail"
+msgstr "w poczcie e-mail"
+
+#: ../Best/BestWindow.cs:310
+msgid "in Web Pages"
+msgstr "w stronach internetowych"
+
+#: ../Best/BestWindow.cs:312
+msgid "in Chats"
+msgstr "w rozmowach chat"
+
+#: ../Best/BestWindow.cs:328
+msgid "Search terms:"
+msgstr "Znajdź słowa:"
+
+#: ../Best/BestWindow.cs:345
+msgid "Find"
+msgstr "Znajdź"
+
+#: ../Best/BestWindow.cs:362
+msgid "Show More Results"
+msgstr "Pokaż więcej wyników"
+
+#: ../Best/BestWindow.cs:368
+msgid "Show Previous Results"
+msgstr "Pokaż poprzednie wyniki"
+
+#: ../Best/BestWindow.cs:402
+msgid "No results."
+msgstr "Brak wyników."
+
+#. To translators: {0} is the current count of results shown of {1} in total, this is the message that is initially shown
+#. when results are returned to the user.
+#: ../Best/BestWindow.cs:406
+#, csharp-format
+msgid "Best <b>{0} results of {1}</b> are shown."
+msgstr "Najlepsze <b>{0} wyniki z {1}</b> zostały pokazane."
+
+#. To translators: {0} to {1} is the interval of results currently shown of {2} results in total
+#: ../Best/BestWindow.cs:411
+#, csharp-format
+msgid "Results <b>{0} through {1} of {2}</b> are shown."
+msgstr "Wyniki <b>{0} po {1} z {2}</b> zostały pokazane."
+
+#. To translators: {0} represents the current query keywords
+#: ../Best/BestWindow.cs:522
+#, csharp-format
+msgid ""
+"The query for <i>{0}</i> failed.<br>The likely cause is that the beagle "
+"daemon isn't running."
+msgstr ""
+"Zapytanie o <i>{0}</i> zwróciło błąd.<br>Najprawdopodobniej demon beagle"
+"nie został uruchomiony."
+
+#. To translators: {0} represents the current query keywords, {1} contains the errormessage
+#: ../Best/BestWindow.cs:527
+#, csharp-format
+msgid "The query for <i>{0}</i> failed with error:<br>{1}<br>"
+msgstr "Zapytanie o <i>{0}</i> zwróciło błąd: <br>{1}<br>"
+
+#: ../glue/eggtrayicon.c:120
+msgid "Orientation"
+msgstr "Położenie"
+
+#: ../glue/eggtrayicon.c:121
+msgid "The orientation of the tray."
+msgstr "Położenie powiadamiania"
+
+#: ../ImLogViewer/ImLogViewer.glade.h:1
+msgid "<b>Conversations History</b>"
+msgstr "<b>Archiwum rozmów</b>"
+
+#: ../ImLogViewer/ImLogViewer.glade.h:2
+#, fuzzy
+msgid "IM Viewer"
+msgstr "Przeglądarka IM"
+
+#: ../ImLogViewer/ImLogWindow.cs:77
+#, csharp-format
+msgid "Conversations in {0}"
+msgstr "Rozmowa w {0}"
+
+#: ../ImLogViewer/ImLogWindow.cs:84
+#, csharp-format
+msgid "Conversations with {0}"
+msgstr "Rozmowa z {0}"
+
+#: ../Tiles/TileDocs.cs:77
+msgid "Pages:"
+msgstr "Strony:"
+
+#: ../Tiles/TileDocs.cs:81
+msgid "Words:"
+msgstr "Słowa:"
+
+#: ../Tiles/TileFolder.cs:51
+msgid "Empty"
+msgstr "Pusty"
+
+#: ../Tiles/TileFolder.cs:53
+#, csharp-format
+msgid "Contains {0} Item"
+msgid_plural "Contains {0} Items"
+msgstr[0] "Zawiera {0} element"
+msgstr[1] "Zawiera {0} elementów"
+
+#: ../Tiles/TileImLog.cs:76
+msgid "Send Mail"
+msgstr "Wyślij pocztę"
+
+#. For translators: From template Tiles/template-mail-message.html
+#: ../Tiles/TileImLog.cs:80 ../Tiles/TranslationHack.cs:44
+msgid "Send IM"
+msgstr "Wyślij IM"
+
+#: ../Tiles/TileImLog.cs:89
+#, csharp-format
+msgid "Conversation in {0}"
+msgstr "Rozmowa w {0}"
+
+#: ../Tiles/TileImLog.cs:91
+#, csharp-format
+msgid "Conversation with {0}"
+msgstr "Rozmowa z {0}"
+
+#: ../Tiles/TileMailMessage.cs:80
+msgid "No Subject"
+msgstr "Brak tematu"
+
+#: ../Tiles/TileMailMessage.cs:83
+msgid "email attachment"
+msgstr "załącznik poczty"
+
+#: ../Tiles/TileMailMessage.cs:89
+msgid "To"
+msgstr "Do"
+
+#: ../Tiles/TileMailMessage.cs:89
+msgid "From"
+msgstr "Od"
+
+#: ../Tiles/TileMailMessage.cs:117
+msgid "Sent"
+msgstr "Wysłane"
+
+#: ../Tiles/TileMailMessage.cs:117
+msgid "Received"
+msgstr "Otrzymane"
+
+#. For translators: From template Tiles/template-docs.html
+#. For translators: From template Tiles/template-folder.html
+#. For translators: From template Tiles/template-file.html
+#. For translators: From template Tiles/template-picture.html
+#. For translators: From template Tiles/template-presentation.html
+#: ../Tiles/TranslationHack.cs:6 ../Tiles/TranslationHack.cs:24
+#: ../Tiles/TranslationHack.cs:28 ../Tiles/TranslationHack.cs:60
+#: ../Tiles/TranslationHack.cs:70
+msgid "in folder"
+msgstr "w katalogu"
+
+#. For translators: From template Tiles/template-docs.html
+#. For translators: From template Tiles/template-file.html
+#. For translators: From template Tiles/template-presentation.html
+#: ../Tiles/TranslationHack.cs:8 ../Tiles/TranslationHack.cs:30
+#: ../Tiles/TranslationHack.cs:72
+msgid "Last modified"
+msgstr "Ostatnia zmiana"
+
+#. For translators: From template Tiles/template-docs.html
+#. For translators: From template Tiles/template-presentation.html
+#: ../Tiles/TranslationHack.cs:10 ../Tiles/TranslationHack.cs:74
+msgid "Title:"
+msgstr "Tytuł:"
+
+#. For translators: From template Tiles/template-docs.html
+#. For translators: From template Tiles/template-presentation.html
+#: ../Tiles/TranslationHack.cs:12 ../Tiles/TranslationHack.cs:76
+msgid "Author:"
+msgstr "Autor:"
+
+#. For translators: From template Tiles/template-docs.html
+#. For translators: From template Tiles/template-launcher.html
+#. For translators: From template Tiles/template-folder.html
+#. For translators: From template Tiles/template-file.html
+#. For translators: From template Tiles/template-im-log.html
+#. For translators: From template Tiles/template-mail-message.html
+#. For translators: From template Tiles/template-music.html
+#. For translators: From template Tiles/template-note.html
+#. For translators: From template Tiles/template-picture.html
+#. For translators: From template Tiles/template-presentation.html
+#. For translators: From template Tiles/template-web-history.html
+#. For translators: From template Tiles/template-blog.html
+#: ../Tiles/TranslationHack.cs:14 ../Tiles/TranslationHack.cs:22
+#: ../Tiles/TranslationHack.cs:26 ../Tiles/TranslationHack.cs:32
+#: ../Tiles/TranslationHack.cs:38 ../Tiles/TranslationHack.cs:42
+#: ../Tiles/TranslationHack.cs:50 ../Tiles/TranslationHack.cs:58
+#: ../Tiles/TranslationHack.cs:64 ../Tiles/TranslationHack.cs:80
+#: ../Tiles/TranslationHack.cs:88 ../Tiles/TranslationHack.cs:94
+msgid "Open"
+msgstr "Otwórz"
+
+#. For translators: From template Tiles/template-docs.html
+#. For translators: From template Tiles/template-file.html
+#. For translators: From template Tiles/template-picture.html
+#. For translators: From template Tiles/template-presentation.html
+#: ../Tiles/TranslationHack.cs:16 ../Tiles/TranslationHack.cs:34
+#: ../Tiles/TranslationHack.cs:66 ../Tiles/TranslationHack.cs:82
+msgid "Send to..."
+msgstr "Wyślij do..."
+
+#. For translators: From template Tiles/template-docs.html
+#. For translators: From template Tiles/template-file.html
+#. For translators: From template Tiles/template-music.html
+#. For translators: From template Tiles/template-picture.html
+#. For translators: From template Tiles/template-presentation.html
+#: ../Tiles/TranslationHack.cs:18 ../Tiles/TranslationHack.cs:36
+#: ../Tiles/TranslationHack.cs:54 ../Tiles/TranslationHack.cs:68
+#: ../Tiles/TranslationHack.cs:84
+msgid "Reveal in file manager"
+msgstr "Pokaż w menadżerze plików"
+
+#. For translators: From template Tiles/template-launcher.html
+#: ../Tiles/TranslationHack.cs:20
+msgid "Application:"
+msgstr "Program:"
+
+#. For translators: From template Tiles/template-mail-message.html
+#: ../Tiles/TranslationHack.cs:40
+msgid "Folder:"
+msgstr "Katalog:"
+
+#. For translators: From template Tiles/template-music.html
+#: ../Tiles/TranslationHack.cs:46
+msgid "Track"
+msgstr "Ścieżka"
+
+#. For translators: From template Tiles/template-music.html
+#: ../Tiles/TranslationHack.cs:48
+msgid "from"
+msgstr "od"
+
+#. For translators: From template Tiles/template-music.html
+#: ../Tiles/TranslationHack.cs:52
+msgid "Enqueue"
+msgstr "Kolejkuj"
+
+#. For translators: From template Tiles/template-note.html
+#: ../Tiles/TranslationHack.cs:56
+msgid "last modified"
+msgstr "ostatnio zmienione"
+
+#. For translators: From template Tiles/template-picture.html
+#: ../Tiles/TranslationHack.cs:62
+msgid "Modified:"
+msgstr "Zmienione:"
+
+#. For translators: From template Tiles/template-presentation.html
+#: ../Tiles/TranslationHack.cs:78
+msgid "Slides:"
+msgstr "Prezentacje:"
+
+#. For translators: From template Tiles/template-web-history.html
+#: ../Tiles/TranslationHack.cs:86
+msgid "Last viewed:"
+msgstr "Ostatnio przeglądane:"
+
+#. For translators: From template Tiles/template-blog.html
+#: ../Tiles/TranslationHack.cs:90
+msgid "Weblog:"
+msgstr "Blog:"
+
+#. For translators: From template Tiles/template-blog.html
+#: ../Tiles/TranslationHack.cs:92
+msgid "Published:"
+msgstr "Opublikowane:"
+
+#: ../tools/Settings.cs:174
+msgid "Reload configuration"
+msgstr "Przeładuj konfiguracje"
+
+#: ../tools/Settings.cs:175
+msgid ""
+"The configuration file has been modified by another application. Do you wish "
+"to discard the currently displayed values and reload configuration from disk?"
+msgstr ""
+"Plik konfiguracyjny został zmieniony przez inny program. Czy chcesz "
+"odrzucić obecnie wyświetlane wyniki i przeładować konfiguracje z dysku?"
+
+#: ../tools/Settings.cs:213
+msgid "Select Path"
+msgstr "Wybierz położenie"
+
+#: ../tools/Settings.cs:232
+msgid "The selected path is already selected for indexing and wasn't added."
+msgstr "Wybrane położenie jest już zaznaczone do indeksowania i nie zostało dodane."
+
+#: ../tools/Settings.cs:235
+msgid ""
+"The selected path wasn't added. The list contains items that supercedes it "
+"and the data is already being indexed."
+msgstr ""
+"Wybrane położenie nie zostało dodane. Lista zawiera elementy, które są już indeksowane."
+
+#: ../tools/Settings.cs:246
+msgid "Path not added"
+msgstr "Położenie nie dodane"
+
+#: ../tools/Settings.cs:255
+msgid "Remove obsolete paths"
+msgstr "Usuń stare położenia"
+
+#: ../tools/Settings.cs:256
+msgid ""
+"Adding this path will obsolete some of the existing include paths. This will "
+"result in the removal of the old obsolete paths. Do you still wish to add it?"
+msgstr ""
+"Dodanie tego położenia pokryje istniejące. Stare położenia zostaną usunięte. "
+"Czy napewno chcesz dodać nowe położenie?"
+
+#: ../tools/Settings.cs:282
+msgid "Remove path"
+msgstr "Usuń położenie"
+
+#: ../tools/Settings.cs:283
+msgid ""
+"Are you sure you wish to remove this path from the list of directories to be "
+"included for indexing?"
+msgstr ""
+"Czy napewno chcesz usunąć to położenie z listy katalogów które "
+"będą indeksowane?"
+
+#: ../tools/Settings.cs:312
+msgid "Remove item"
+msgstr "Usuń element"
+
+#: ../tools/Settings.cs:313
+msgid ""
+"Are you sure you wish to remove this item from the list of data to be "
+"excluded from indexing?"
+msgstr ""
+"Czy napewno chcesz usunąć ten element z listy danych które "
+"zostaną wyłączone z indeksowania?"
+
+#: ../tools/Settings.cs:363 ../tools/Settings.cs:452 ../tools/Settings.cs:785
+msgid "Name"
+msgstr "Nazwa"
+
+#: ../tools/Settings.cs:446 ../tools/settings.glade.h:24
+msgid "Type"
+msgstr "Typ"
+
+#: ../tools/Settings.cs:499 ../tools/Settings.cs:719
+#: ../tools/settings.glade.h:17
+msgid "Path"
+msgstr "Położenie"
+
+#: ../tools/Settings.cs:502 ../tools/Settings.cs:729
+msgid "Pattern"
+msgstr "Wzór"
+
+#: ../tools/Settings.cs:505 ../tools/Settings.cs:724
+#: ../tools/settings.glade.h:16
+msgid "Mail Folder"
+msgstr "Folder poczty"
+
+#: ../tools/Settings.cs:693
+msgid "Select Folder"
+msgstr "Wybierz folder"
+
+#: ../tools/Settings.cs:753
+msgid "Error adding path"
+msgstr "Błąd dodawania położenia"
+
+#: ../tools/Settings.cs:754
+msgid ""
+"The specified path could not be found and therefore it could not be added to "
+"the list of resources excluded for indexing."
+msgstr ""
+"Określone położenie nie zostało znalezione, dlatego nie zostało dodane do "
+"listy zasobów wyłączonych z indeksowania."
+
+#: ../tools/Settings.cs:784
+msgid "Show"
+msgstr "Wyświetlaj"
+
+#: ../tools/settings.glade.h:1
+msgid "<b>Add resource</b>"
+msgstr "<b>Dodaj zasób</b>"
+
+#: ../tools/settings.glade.h:2
+msgid "<b>Display</b>"
+msgstr "<b>Wyświetlanie</b>"
+
+#: ../tools/settings.glade.h:3
+msgid "<b>General</b>"
+msgstr "<b>Ogólne</b>"
+
+#: ../tools/settings.glade.h:4
+msgid "<b>Privacy</b>"
+msgstr "<b>Prywatność</b>"
+
+#: ../tools/settings.glade.h:5
+msgid "<b>Select mail folder</b>"
+msgstr "<b>Wskaż folder poczty</b>"
+
+#: ../tools/settings.glade.h:6
+msgid "Add any additional paths to be included for indexing."
+msgstr "Dodaj określone położenia do indeksowania."
+
+#: ../tools/settings.glade.h:7
+msgid "Add resource"
+msgstr "Dodaj zasób"
+
+#: ../tools/settings.glade.h:8
+msgid ""
+"Adjust which types of results should be visible, and in what order they "
+"should be presented when grouped by type."
+msgstr ""
+"Określ jaki rodzaj wyników powinien być widoczny, oraz w jakiej kolejności "
+"powinny być pokazane oraz grupowane."
+
+#: ../tools/settings.glade.h:9
+msgid "Alt"
+msgstr "Alt"
+
+#: ../tools/settings.glade.h:10
+msgid "Ctrl"
+msgstr "Ctrl"
+
+#: ../tools/settings.glade.h:11
+msgid "Directory Path"
+msgstr "Położenie katalogu"
+
+#: ../tools/settings.glade.h:12
+msgid "Display the search window by pressing"
+msgstr "Wyświetl okno szukania po naciśnięciu"
+
+#: ../tools/settings.glade.h:13
+msgid "Filename Pattern"
+msgstr "Wzór pliku"
+
+#: ../tools/settings.glade.h:14
+msgid "Index my home directory"
+msgstr "Indeksuj mój katalog domowy"
+
+#: ../tools/settings.glade.h:15
+msgid "Indexing"
+msgstr "Indeksowanie"
+
+#: ../tools/settings.glade.h:18
+msgid "Please select the mail folder you wish to exclude from indexing."
+msgstr "Wskaż folder poczty, który chcesz wyłączyć z indeksowania."
+
+#: ../tools/settings.glade.h:19
+msgid "Search"
+msgstr "Znajdź"
+
+#: ../tools/settings.glade.h:20
+msgid "Search & Indexing Preferences"
+msgstr "Ustawienia szukania i indeksowania"
+
+#: ../tools/settings.glade.h:21
+msgid "Select mail folder"
+msgstr "Wybierz folder poczty"
+
+#: ../tools/settings.glade.h:22
+msgid ""
+"Specify any resources, such as paths, patterns, mail folders or type of "
+"objects you wish to exclude from indexing."
+msgstr ""
+"Określ wszelkie zasoby, takie jak ścieżki, wzory, foldery poczty lub typ "
+"obiektów które chcesz włączyć do indeksowania."
+
+#: ../tools/settings.glade.h:23
+msgid "Start search & indexing services automatically on login"
+msgstr "Uruchom szukanie i indeksowanie automatycznie przy logowaniu"
+
+#: ../Util/Evolution.cs:45 ../Util/Evolution.cs:163
+msgid "On This Computer"
+msgstr "Na tym komputerze"
+
+#: ../Util/ExifData.cs:226
+msgid "Image Directory"
+msgstr "Katalog obrazków"
+
+#: ../Util/ExifData.cs:228
+msgid "Thumbnail Directory"
+msgstr "Katalog miniatur"
+
+#: ../Util/ExifData.cs:230
+msgid "Exif Directory"
+msgstr "Katalog Exif"
+
+#: ../Util/ExifData.cs:232
+msgid "GPS Directory"
+msgstr "Katalog GPS"
+
+#: ../Util/ExifData.cs:234
+msgid "InterOperability Directory"
+msgstr "Katalog InterOperability"
+
+#: ../Util/ExifData.cs:236
+msgid "Unknown Directory"
+msgstr "Nieznany katalog"
+
+#: ../Util/StringFu.cs:65
+msgid "Today"
+msgstr "Dzisiaj"
+
+#: ../Util/StringFu.cs:67
+msgid "Yesterday"
+msgstr "Wczoraj"
+
+#: ../Util/StringFu.cs:69
+msgid "MMM d"
+msgstr "MMM d"
+
+#: ../Util/StringFu.cs:71
+msgid "MMM d, yyyy"
+msgstr "MMM d, yyyy"
+
+#: ../Util/StringFu.cs:73
+msgid "h:mm tt"
+msgstr "h:mm tt"
+
+#. Translators: {0} is a date (e.g. 'Today' or 'Apr 23'), {1} is the time
+#: ../Util/StringFu.cs:79
+#, csharp-format
+msgid "{0}, {1}"
+msgstr "{0}, {1}"
+
+#. To translators: {0} is the time of the day, eg. 13:45
+#: ../Util/StringFu.cs:96
+#, csharp-format
+msgid "Today, {0}"
+msgstr "Dzisiaj, {0}"
+
+#. To translators: {0} is the time of the day, eg. 13:45
+#: ../Util/StringFu.cs:99
+#, csharp-format
+msgid "Yesterday, {0}"
+msgstr "Wczoraj, {0}"
+
+#. To translators: {0} is the number of days that have passed, {1} is the time of the day, eg. 13:45
+#: ../Util/StringFu.cs:102
+#, csharp-format
+msgid "{0} days ago, {1}"
+msgstr "{0} dni temu, {1}"
+
+#: ../Util/StringFu.cs:106
+msgid "MMMM d, h:mm tt"
+msgstr "MMMM d, h:mm tt"
+
+#: ../Util/StringFu.cs:110
+msgid "MMMM d yyyy, h:mm tt"
+msgstr "MMMM d yyyy, h:mm tt"
+
+#: ../Util/StringFu.cs:120
+#, csharp-format
+msgid "{0} hour"
+msgid_plural "{0} hours"
+msgstr[0] "{0} godzina"
+msgstr[1] "{0} godzin"
+
+#: ../Util/StringFu.cs:127
+#, csharp-format
+msgid "{0} minute"
+msgid_plural "{0} minutes"
+msgstr[0] "{0} minuta"
+msgstr[1] "{0} minut"
+
+#. Translators: {0} is a file size in bytes
+#: ../Util/StringFu.cs:143
+#, csharp-format
+msgid "{0} bytes"
+msgstr "{0} bajtów"
+
+#. Translators: {0} is a file size in kilobytes
+#: ../Util/StringFu.cs:147
+#, csharp-format
+msgid "{0:0.0} KB"
+msgstr "{0:0.0} KB"
+
+#. Translators: {0} is a file size in megabytes
+#: ../Util/StringFu.cs:150
+#, csharp-format
+msgid "{0:0.0} MB"
+msgstr "{0:0.0} MB"
+
