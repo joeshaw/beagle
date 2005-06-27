@@ -40,6 +40,7 @@ namespace Beagle.IndexHelper {
 
 		Hashtable indexer_table = new Hashtable ();
 		Indexable[] child_indexables;
+		FilteredStatus[] uris_filtered;
 
 		public override ResponseMessage Execute (RequestMessage raw_request)
 		{
@@ -59,6 +60,7 @@ namespace Beagle.IndexHelper {
 			}
 
 			indexer.ChildIndexableEvent += new IIndexerChildIndexableHandler (ChildIndexableCallback);
+			indexer.UrisFilteredEvent += new IIndexerUrisFilteredHandler (UrisFilteredCallback);
 
 			request.Process (indexer);
 
@@ -68,6 +70,7 @@ namespace Beagle.IndexHelper {
 			RemoteIndexerResponse response = new RemoteIndexerResponse ();
 			response.ItemCount = indexer.GetItemCount ();
 			response.ChildIndexables = child_indexables;
+			response.UrisFiltered = uris_filtered;
 
 			++Count;
 
@@ -77,6 +80,11 @@ namespace Beagle.IndexHelper {
 		private void ChildIndexableCallback (Indexable[] child_indexables)
 		{
 			this.child_indexables = child_indexables;
+		}
+
+		private void UrisFilteredCallback (FilteredStatus[] uris_filtered)
+		{
+			this.uris_filtered = uris_filtered;
 		}
 	}
 }

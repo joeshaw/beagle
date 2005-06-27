@@ -24,11 +24,13 @@
 // DEALINGS IN THE SOFTWARE.
 //
 
-
 using System;
 using System.Collections;
 using System.IO;
 using System.Text;
+
+using Beagle.Daemon;
+
 namespace Beagle.Filters {
 
 	public class FilterJava : FilterSource {
@@ -44,7 +46,7 @@ namespace Beagle.Filters {
 		
 		public FilterJava ()
 		{
-			AddSupportedMimeType ("text/x-java");
+			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("text/x-java"));
 
 		}
 

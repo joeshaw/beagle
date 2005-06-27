@@ -30,6 +30,8 @@ using System.Collections;
 using System.IO;
 using System.Text;
 
+using Beagle.Daemon;
+
 namespace Beagle.Filters {
 
 	public class FilterScheme : FilterSource {
@@ -52,7 +54,7 @@ namespace Beagle.Filters {
 		
 		public FilterScheme ()
 		{
-			AddSupportedMimeType ("text/x-scheme");
+			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("text/x-scheme"));
 		}
 
 		override protected void DoOpen (FileInfo info)

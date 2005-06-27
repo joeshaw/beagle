@@ -44,7 +44,11 @@ CSFILES = 				\
 	$(srcdir)/FilterJs.cs		\
 	$(srcdir)/FilterLisp.cs		\
 	$(srcdir)/FilterMatlab.cs	\
-	$(srcdir)/FilterScilab.cs	
+	$(srcdir)/FilterScilab.cs	\
+	$(srcdir)/FilterDocbook.cs	\
+	$(srcdir)/FilterMonodoc.cs	\
+	$(srcdir)/FilterDesktop.cs	\
+	$(srcdir)/FilterDirectory.cs
 
 if ENABLE_GSF_SHARP
 CSFILES += 				\

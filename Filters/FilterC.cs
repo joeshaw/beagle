@@ -24,11 +24,13 @@
 // DEALINGS IN THE SOFTWARE.
 //
 
-
 using System;
 using System.Collections;
 using System.IO;
 using System.Text;
+
+using Beagle.Daemon;
+
 namespace Beagle.Filters {
 
 	public class FilterC : FilterSource {
@@ -42,8 +44,8 @@ namespace Beagle.Filters {
 			
 		public FilterC ()
 		{
-			AddSupportedMimeType ("text/x-csrc");
-			AddSupportedMimeType ("text/x-chdr");
+			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("text/x-csrc"));
+			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("text/x-chdr"));
 		}
 
 		override protected void DoOpen (FileInfo info)

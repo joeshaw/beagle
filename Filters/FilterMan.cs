@@ -33,6 +33,8 @@ using System.IO;
 using System.Text;
 using System.Text.RegularExpressions;
 
+using Beagle.Daemon;
+
 namespace Beagle.Filters {
 
 	public class FilterMan : Beagle.Daemon.Filter {
@@ -41,10 +43,10 @@ namespace Beagle.Filters {
 		public FilterMan ()
 		{
 			// Make this a general troff filter.
-			AddSupportedMimeType ("application/x-troff-man");
-			AddSupportedMimeType ("text/x-troff-man");
-			AddSupportedMimeType ("application/x-troff");
-			AddSupportedMimeType ("text/x-troff");
+			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("application/x-troff-man"));
+			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("text/x-troff-man"));
+			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("application/x-troff"));
+			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("text/x-troff"));
 		}
  		/*
  			FIXME: 

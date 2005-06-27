@@ -204,7 +204,7 @@ namespace Beagle {
 
 		[XmlIgnore]
 		public bool IsNonTransient {
-			get { return ! DeleteContent && ContentUri.IsFile; }
+			get { return ! DeleteContent && ContentUri.IsFile && ParentUri == null; }
 		}
 
 		[XmlAttribute]

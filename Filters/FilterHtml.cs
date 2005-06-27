@@ -30,6 +30,8 @@ using System.Collections;
 using System.IO;
 using System.Text;
 
+using Beagle.Daemon;
+
 using HtmlAgilityPack;
 
 namespace Beagle.Filters {
@@ -212,11 +214,8 @@ namespace Beagle.Filters {
 
 		virtual protected void RegisterSupportedTypes () 
 		{
-		
-			AddSupportedMimeType ("text/html");
-
+			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("text/html"));
 		}
-		
 	}
 	
 }

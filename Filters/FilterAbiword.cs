@@ -26,13 +26,14 @@
 // DEALINGS IN THE SOFTWARE.
 //
 
-
 using System;
 using System.Collections;
 using System.IO;
 using System.Text;
 using System.Xml;
+
 using Beagle.Util;
+using Beagle.Daemon;
 
 using ICSharpCode.SharpZipLib.GZip;
 
@@ -41,11 +42,10 @@ namespace Beagle.Filters {
 	public class FilterAbiWord : Beagle.Daemon.Filter {
 
 		Hashtable hotStyles;
-		
-		
+				
 		public FilterAbiWord () 
 		{
-			AddSupportedMimeType ("application/x-abiword");
+			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("application/x-abiword"));
 			SnippetMode = true;
 		}
 

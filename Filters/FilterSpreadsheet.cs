@@ -30,28 +30,29 @@ using System.IO;
 using System.Xml;
 
 using Beagle.Util;
+using Beagle.Daemon;
 
 namespace Beagle.Filters {
     
-	public class FilterSpreadsheet : Beagle.Daemon.Filter {
+	public class FilterSpreadsheet : Filter {
 
 		XmlTextReader xmlReader;
 		bool ignoredFirst2lines = false;
 		public FilterSpreadsheet () 
 		{
 			SnippetMode = true;
-			AddSupportedMimeType ("application/x-gnumeric");
-			AddSupportedMimeType ("application/csv");
-			AddSupportedMimeType ("application/tab-separated-values");
-			AddSupportedMimeType ("text/comma-separated-values");
-			AddSupportedMimeType ("text/csv");
-			AddSupportedMimeType ("text/spreadsheet");
-			AddSupportedMimeType ("text/tab-separated-values");
-			AddSupportedMimeType ("text/x-comma-separated-values");
-			AddSupportedMimeType ("application/vnd.ms-excel");
-			AddSupportedMimeType ("application/excel");
-			AddSupportedMimeType ("application/x-msexcel");
-			AddSupportedMimeType ("application/x-excel");
+			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("application/x-gnumeric"));
+			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("application/csv"));
+			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("application/tab-separated-values"));
+			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("text/comma-separated-values"));
+			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("text/csv"));
+			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("text/spreadsheet"));
+			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("text/tab-separated-values"));
+			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("text/x-comma-separated-values"));
+			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("application/vnd.ms-excel"));
+			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("application/excel"));
+			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("application/x-msexcel"));
+			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("application/x-excel"));
 		}
 
 		void WalkContentNodes (XmlReader reader) 

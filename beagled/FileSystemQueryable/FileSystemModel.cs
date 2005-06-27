@@ -716,6 +716,18 @@ namespace Beagle.Daemon.FileSystemQueryable {
 				}
 			}
 
+			// FIXME: This does not take in to account that we might have a better matching filter to use now
+			// That, however, is kind of expensive to figure out since we'd have to do mime-sniffing and shit.
+			if (attr.FilterName != null && attr.FilterVersion > 0) {
+				int current_filter_version = FilterFactory.GetFilterVersion (attr.FilterName);
+
+				if (current_filter_version > attr.FilterVersion) {
+					if (Debug)
+						Logger.Log.Debug ("*** Newer filter version found for filter {0}, re-indexing", attr.FilterName);
+					return RequiredAction.Index;
+				}
+			}
+
 			if (Debug)
 				Logger.Log.Debug ("*** Doing nothing to {0}", path);
 
@@ -953,6 +965,26 @@ namespace Beagle.Daemon.FileSystemQueryable {
 
 		///////////////////////////////////////////////////////////////////////////
 
+		public void MarkAsFiltered (string path, string filter_name, int filter_version)
+		{
+			FileAttributes attr = backing_store.ReadOrCreate (path);
+
+			if (attr == null)
+				return;
+
+			attr.FilterName = filter_name;
+			attr.FilterVersion = filter_version;
+
+			try {
+				Write (attr);
+			} catch (Exception ex) {
+				Logger.Log.Error ("Error writing filtered status attributes: {0}", path);
+				Logger.Log.Error (ex);
+			}
+		}
+
+		///////////////////////////////////////////////////////////////////////////
+
 		private void AddChild_Unlocked (DirectoryPrivate parent, string child_name)
 		{
 			DirectoryPrivate child = new DirectoryPrivate (big_lock);
@@ -1072,6 +1104,13 @@ namespace Beagle.Daemon.FileSystemQueryable {
 				FileAttributes attr;
 				attr = backing_store.ReadOrCreate (path);
 				unique_id = attr.UniqueId;
+
+				if (! unique_id_store.IsCached (attr.UniqueId)) {
+					string dir_name = System.IO.Path.GetDirectoryName (attr.Path);
+					string file_name = System.IO.Path.GetFileName (attr.Path);
+					Directory dir = GetDirectoryByPath (dir_name);
+					unique_id_store.Add (attr.UniqueId, dir.UniqueId, file_name, false);
+				}
 			} else {
 				// Maybe the file got deleted.  If so, try to get it from
 				// the unique id store.
@@ -1104,6 +1143,7 @@ namespace Beagle.Daemon.FileSystemQueryable {
 		public bool InternalUriIsValid (Uri internal_uri)
 		{
 			string path = unique_id_store.GetPathByUidUri (internal_uri);
+
 			if (path == null)
 				return false;
 

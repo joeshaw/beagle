@@ -31,7 +31,7 @@ using System.IO;
 namespace Beagle.Tile {
 
 	[HitFlavor (Name="Documentation", Rank=800, Emblem="icon-monodoc.png", Color="#f5f5fe",
-		    Type="Monodoc")]
+		    Type="MonodocEntry")]
 	public class TileMonodoc : TileFromHitTemplate 
 	{
 		public TileMonodoc (Hit _hit) : base (_hit, "template-monodoc.html")

@@ -37,7 +37,7 @@ using BU = Beagle.Util;
 
 namespace Beagle.Tile {
 	[HitFlavor (Name="Applications",Rank=800, Emblem="emblem-file.png", Color="#f5f5fe",
-	    Type="Launcher", MimeType="application/x-desktop")]
+	    Type="File", MimeType="application/x-desktop")]
 	public class TileLauncher : TileFromHitTemplate {
 		
 		Hit hit;

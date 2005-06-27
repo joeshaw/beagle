@@ -12,6 +12,7 @@ using System.IO;
 using System.Diagnostics;
 
 using Beagle.Util;
+using Beagle.Daemon;
 
 namespace Beagle.Filters {
 
@@ -19,7 +20,7 @@ namespace Beagle.Filters {
 
 		public FilterPdf ()
 		{
-			AddSupportedMimeType ("application/pdf");
+			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("application/pdf"));
 			SnippetMode = true;
 		}
 

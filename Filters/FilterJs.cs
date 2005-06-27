@@ -24,11 +24,13 @@
 // DEALINGS IN THE SOFTWARE.
 //
 
-
 using System;
 using System.Collections;
 using System.IO;
 using System.Text;
+
+using Beagle.Daemon;
+
 namespace Beagle.Filters {
 
 	public class FilterJavascript : FilterSource {
@@ -39,8 +41,7 @@ namespace Beagle.Filters {
 		  
 		public FilterJavascript ()
 		{
-			AddSupportedExtension (".js");
-
+			AddSupportedFlavor (FilterFlavor.NewFromExtension (".js"));
 		}
 
 		override protected void DoOpen (FileInfo info)

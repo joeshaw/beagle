@@ -24,137 +24,145 @@
 // DEALINGS IN THE SOFTWARE.
 //
 
-
 using System;
 using System.IO;
+using System.Collections;
+
+using Beagle.Util;
 
 namespace Beagle.Daemon {
 
-	public class Flavor : IComparable {
+	public class FilterFlavor {
 
-		static readonly public string Wildcard = "*";
-		
-		string mimeType;
-		string extension;
+		private string uri = null;
+		private string mime_type = null;
+		private string extension = null;
 
-		public Flavor (string _mimeType, string _extension)
-		{
-			if (_mimeType == null)
-				_mimeType = "";
-			if (_extension == null)
-				_extension = "";
+		private int priority = 0;
 
-			mimeType = _mimeType;
-			extension = _extension;
-		}
-
-		static public Flavor FromMimeType (string mimeType)
-		{
-			return new Flavor (mimeType, "");
-		}
-
-		static public Flavor FromExtension (string extension)
-		{
-			return new Flavor ("", extension);
-		}
-
-		static public Flavor FromPath (string path)
-		{
-			string mimeType = Beagle.Util.VFS.Mime.GetMimeType (path);
-			string extension = Path.GetExtension (path);
-			return new Flavor (mimeType, extension);
-		}
-
-		static public Flavor FromStream (Stream stream, string path)
-		{
-			const int maxSize = 1024; // default to 1k
-			byte [] buffer = new byte [maxSize];
-			
-			// Read up to maxSize bytes of stream to try to guess mime-type
-			int read = stream.Read (buffer, 0, maxSize);
-			string mimeType = Beagle.Util.VFS.Mime.GetMimeTypeFromData (buffer, read, path);
-			return new Flavor (mimeType, path != null ? Path.GetExtension (path) : "");
-		}
-		
-		static public Flavor FromStream (Stream stream)
-		{
-			return FromStream (stream, null);
-		}
-
-		public string MimeType {
-			get { return mimeType; }
+		public string Uri { 
+			get { return uri; }
+			set { uri = IsWild (value) ? null : value; }
 		}
 
 		public string Extension {
 			get { return extension; }
+			set { extension = IsWild (value) ? null : value; }
 		}
-		
-		int PatternCount {
+
+		public string MimeType {
+			get { return mime_type; }
+			set { mime_type = IsWild (value) ? null : value; }
+		}
+
+		public int Priority {
+			get { return priority; }
+			set { priority = value; }
+		}
+
+		public FilterFlavor (string uri, string extension, string mime_type, int priority) 
+		{
+			this.uri = uri;
+			this.extension = extension;
+			this.mime_type = mime_type;
+			this.priority = priority;
+		}
+
+		private bool IsWild (string str)
+		{
+			if (str == null)
+				return true;
+			if (str == "")
+				return false;
+			foreach (char c in str)
+				if (c != '*')
+					return false;
+			return true;
+		}
+
+		public bool IsMatch (Uri uri, string extension, string mime_type)
+		{
+			if (Uri != null && (uri == null || !StringFu.GlobMatch (Uri, uri.ToString ())))
+				return false;
+
+			if (Extension != null && (extension == null || !StringFu.GlobMatch (Extension, extension)))
+				return false;
+
+			if (MimeType != null && (mime_type == null || !StringFu.GlobMatch (MimeType, mime_type)))
+				return false;
+
+			return true;
+		}
+
+		public int Weight 
+		{
 			get {
-				int count = 0;
-				if (mimeType == Wildcard)
-					++count;
-				if (extension == Wildcard)
-					++count;
-				return count;
+				int weight = priority;
+
+				if (Uri != null)
+					weight += 1;				
+				if (Extension != null)
+					weight += 1;
+				if (MimeType != null)
+					weight += 1;
+
+				return weight;
 			}
 		}
 
-		public bool IsPattern {
-			get { return PatternCount > 0; }
-		}
+		////////////////////////////////////////////
 
-		public bool IsMatch (Flavor other)
+		public override string ToString ()
 		{
-			return (mimeType == Wildcard || mimeType == other.MimeType)
-				&& (extension == Wildcard || extension == other.Extension);
+			string ret = "";
+
+			if (Uri != null)
+				ret += String.Format ("Uri: {0}", Uri);
+
+			if (Extension != null)
+				ret += String.Format ("Extension: {0}", Extension);
+
+			if (MimeType != null)
+				ret += String.Format ("MimeType: {0}", MimeType);
+
+			return ret;
 		}
-		
-		override public int GetHashCode ()
+
+		public class WeightComparer : IComparer 
 		{
-			return mimeType.GetHashCode () ^ extension.GetHashCode ();
+			public int Compare (object obj1, object obj2) 
+			{
+				FilterFlavor flav1 = (FilterFlavor) obj1;
+				FilterFlavor flav2 = (FilterFlavor) obj2;
+
+				return flav1.Weight.CompareTo (flav2.Weight);
+			} 
 		}
-		
-		override public bool Equals (object rhs)
+
+		public class Hasher : IHashCodeProvider
 		{
-			Flavor other = rhs as Flavor;
-			return other != null
-				&& mimeType == other.mimeType
-				&& extension == other.extension;
+			public int GetHashCode (object o)
+			{
+				return o.ToString ().GetHashCode ();
+			}
 		}
 
-		public int CompareTo (object rhs)
+		static WeightComparer the_comparer = new WeightComparer ();
+		static Hasher the_hasher = new Hasher ();
+
+		public static Hashtable NewHashtable ()
 		{
-			if (rhs == null)
-				return 1;
-
-			if (rhs.GetType () != this.GetType ())
-				throw new ArgumentException ();
-
-			Flavor other = rhs as Flavor;
-
-			int cmp = PatternCount.CompareTo (other.PatternCount);
-			
-			if (cmp == 0)
-				cmp = mimeType.CompareTo (other.mimeType);
-			if (cmp == 0)
-				cmp = extension.CompareTo (other.extension);
-			
-			return cmp;
+			return new Hashtable (the_hasher, the_comparer);
 		}
 
-		override public string ToString ()
-		{
-			String str = "[";
-			if (mimeType != "")
-				str += "mime=" + mimeType;
-			if (mimeType != "" && extension != "")
-				str += ", ";
-			if (extension != "")
-				str += "ext=" + extension;
-			str += "]";
-			return str;
+		////////////////////////////////////////////
+
+		public static FilterFlavor NewFromMimeType (string mime_type) {
+			return new FilterFlavor (null, null, mime_type, 0);
 		}
 
+		public static FilterFlavor NewFromExtension (string extension) {
+			return new FilterFlavor (null, extension, null, 0);
+		}
 	}
 }

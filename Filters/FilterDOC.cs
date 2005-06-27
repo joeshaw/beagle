@@ -27,11 +27,12 @@
 // DEALINGS IN THE SOFTWARE.
 //
 
-
 using System;
 using System.IO;
 using System.Runtime.InteropServices;
+
 using Beagle.Util;
+using Beagle.Daemon;
 
 namespace Beagle.Filters {
     
@@ -108,9 +109,9 @@ namespace Beagle.Filters {
 
 		public FilterDOC () 
 		{
-			AddSupportedMimeType ("application/msword");
-			AddSupportedMimeType ("application/vnd.ms-word");
-			AddSupportedMimeType ("application/x-msword");
+			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("application/msword"));
+			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("application/vnd.ms-word"));
+			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("application/x-msword"));
 			SnippetMode = true;
 		}
 		

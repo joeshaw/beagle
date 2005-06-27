@@ -1,5 +1,5 @@
 //
-// IIndexer.cs
+// FilterDirectory.cs
 //
 // Copyright (C) 2005 Novell, Inc.
 //
@@ -26,35 +26,39 @@
 
 using System;
 using System.Collections;
+using System.IO;
+using System.Text;
+using System.Diagnostics;
 
-namespace Beagle.Daemon {
-	
-	// Renamed Uris are interleaved: old uri #1, new uri #1, old uri #2, new uri #2, ...
-	// Yes, I know that is ugly.
-	public delegate void IIndexerChangedHandler (IIndexer source,
-						     ICollection list_of_added_uris,
-						     ICollection list_of_removed_uris,
-						     ICollection list_of_renamed_uris);
+using Beagle.Daemon;
+using Beagle.Util;
 
-	public delegate void IIndexerChildIndexableHandler (Indexable[] child_indexables);
-	public delegate void IIndexerUrisFilteredHandler (FilteredStatus[] list_of_filtered_uris);
+namespace Beagle.Filters {
 
-	public interface IIndexer {
+	public class FilterDirectory : FilterDesktop {
 
-		void Add (Indexable indexable);
+		public FilterDirectory ()
+		{
+			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("x-directory/normal"));
+			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("inode/directory"));
+		}
 
-		void Remove (Uri uri);
+		override protected void DoOpen (DirectoryInfo dir)
+		{
+			FileInfo file = new FileInfo (Path.Combine (dir.FullName, ".directory"));
 
-		void Rename (Uri old_uri, Uri new_uri);
-
-		void Flush ();
-
-		int GetItemCount ();
-		
-		event IIndexerChangedHandler ChangedEvent;
-
-		event IIndexerChildIndexableHandler ChildIndexableEvent;
-
-		event IIndexerUrisFilteredHandler UrisFilteredEvent;
+			if (!file.Exists) {
+				Logger.Log.Debug ("No directory meta-data file found, not filtering: {1}", dir.FullName);
+				Finished ();
+				return;
+			}
+				
+			try {
+				reader = new StreamReader (file.FullName);
+			} catch (Exception e) {
+				Logger.Log.Debug ("Could not open directory meta-data file, not filtering: {1}", dir.FullName);
+				return;
+			}
+		}
 	}
 }

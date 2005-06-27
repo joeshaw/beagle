@@ -26,7 +26,8 @@
 
 using System;
 using System.IO;
-using BU = Beagle.Util;
+
+using Beagle.Daemon;
 
 namespace Beagle.Filters {
 	
@@ -34,7 +35,7 @@ namespace Beagle.Filters {
 
 		public FilterPng ()
 		{
-			AddSupportedMimeType ("image/png");
+			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("image/png"));
 		}
 
 		private byte[] buffer;

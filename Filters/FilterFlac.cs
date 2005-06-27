@@ -29,6 +29,7 @@
 using System;
 using System.IO;
 
+using Beagle.Daemon;
 using Beagle.Util.AudioUtil;
 
 namespace Beagle.Filters {
@@ -44,7 +45,7 @@ namespace Beagle.Filters {
 		
 		protected override void RegisterSupportedTypes ()
 		{
-			AddSupportedMimeType ("audio/x-flac");
+			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("audio/x-flac"));
 		}
 	}
 }

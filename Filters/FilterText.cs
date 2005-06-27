@@ -24,9 +24,10 @@
 // DEALINGS IN THE SOFTWARE.
 //
 
-
 using System;
 using System.IO;
+
+using Beagle.Daemon;
 
 namespace Beagle.Filters {
 
@@ -34,7 +35,7 @@ namespace Beagle.Filters {
 
 		public FilterText ()
 		{
-			AddSupportedMimeType ("text/plain");
+			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("text/plain"));
 			SnippetMode = true;
 			OriginalIsText = true;
 		}

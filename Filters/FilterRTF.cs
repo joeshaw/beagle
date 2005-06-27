@@ -37,7 +37,9 @@ using System;
 using System.Collections;
 using System.IO;
 using System.Text;
+
 using Beagle.Util;
+using Beagle.Daemon;
 
 internal class RTFControlWordType {
 	
@@ -137,7 +139,7 @@ namespace Beagle.Filters {
 		public FilterRTF ()
 		{
 			// Make this a general rtf filter.
-			AddSupportedMimeType ("application/rtf");
+			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("application/rtf"));
 
 			pos = Position.None;
 			groupCount = 0;

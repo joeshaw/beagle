@@ -46,6 +46,7 @@ namespace Beagle.Daemon {
 
 			this.driver.ChangedEvent += OnLuceneDriverChanged;
 			this.driver.ChildIndexableEvent += OnLuceneChildIndexableEvent;
+			this.driver.UrisFilteredEvent += OnLuceneUrisFilteredEvent;
 		}
 
 		// We assume that
@@ -113,6 +114,7 @@ namespace Beagle.Daemon {
 
 		public event IIndexerChangedHandler ChangedEvent;
 		public event IIndexerChildIndexableHandler ChildIndexableEvent;
+		public event IIndexerUrisFilteredHandler UrisFilteredEvent;
 
 		public void OnLuceneDriverChanged (IIndexer    source,
 						   ICollection list_of_added_uris,
@@ -135,6 +137,12 @@ namespace Beagle.Daemon {
 		{
 			if (ChildIndexableEvent != null)
 				ChildIndexableEvent (child_indexables);
+		}
+
+		public void OnLuceneUrisFilteredEvent (FilteredStatus[] list_of_uris_filtered)
+		{
+			if (UrisFilteredEvent != null)
+				UrisFilteredEvent (list_of_uris_filtered);
 		}
 	}
 }

@@ -24,11 +24,13 @@
 // DEALINGS IN THE SOFTWARE.
 //
 
-
 using System;
 using System.Collections;
 using System.IO;
 using System.Text;
+
+using Beagle.Daemon;
+
 namespace Beagle.Filters {
 
 	public class FilterPython : FilterSource {
@@ -41,7 +43,7 @@ namespace Beagle.Filters {
 
 		public FilterPython ()
 		{
-			AddSupportedMimeType ("text/x-python");
+			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("text/x-python"));
 
 		}
 

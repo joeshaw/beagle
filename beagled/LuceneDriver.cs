@@ -58,6 +58,7 @@ namespace Beagle.Daemon {
 
 		public event IIndexerChangedHandler ChangedEvent;
 		public event IIndexerChildIndexableHandler ChildIndexableEvent;
+		public event IIndexerUrisFilteredHandler UrisFilteredEvent;
 
 		/////////////////////////////////////////////////////
 		
@@ -317,6 +318,7 @@ namespace Beagle.Daemon {
 
 			ArrayList added_uris;
 			ArrayList removed_uris;
+			ArrayList filtered_uris;
 			
 			lock (pending_by_uri) {
 				
@@ -327,6 +329,7 @@ namespace Beagle.Daemon {
 				pending_indexables = new ArrayList ();
 				added_uris = new ArrayList ();
 				removed_uris = new ArrayList ();
+				filtered_uris = new ArrayList ();
 
 				// Move our indexables and remove requests out of the
 				// hash and into local data structures.
@@ -410,6 +413,10 @@ namespace Beagle.Daemon {
 					++add_count;
 				}
 
+				if (filter != null) {
+					filtered_uris.Add (FilteredStatus.New (indexable, filter));
+				}
+
 				if (filter != null && filter.ChildIndexables.Count > 0) {
 					// Iterate across any indexables created by the
 					// filter and set up the parent-child relationship.
@@ -430,6 +437,10 @@ namespace Beagle.Daemon {
 			// Step #3: Fire off an event telling what we just did.
 			if (ChangedEvent != null) {
 				ChangedEvent (this, added_uris, removed_uris, empty_collection);
+			}
+
+			if (filtered_uris.Count > 0 && UrisFilteredEvent != null) {
+				UrisFilteredEvent ((FilteredStatus[]) filtered_uris.ToArray (typeof (FilteredStatus)));
 			}
 
 			lock (pending_by_uri)

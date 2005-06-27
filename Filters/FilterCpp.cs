@@ -24,11 +24,13 @@
 // DEALINGS IN THE SOFTWARE.
 //
 
-
 using System;
 using System.Collections;
 using System.IO;
 using System.Text;
+
+using Beagle.Daemon;
+
 namespace Beagle.Filters {
 
 	public class FilterCpp : FilterSource {
@@ -46,7 +48,7 @@ namespace Beagle.Filters {
 						"void", "volatile", "wchar_t"};
 		public FilterCpp ()
 		{
-			AddSupportedMimeType ("text/x-c++src");
+			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("text/x-c++src"));
 		}
 
 		override protected void DoOpen (FileInfo info)

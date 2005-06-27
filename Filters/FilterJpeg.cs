@@ -27,7 +27,9 @@
 using System;
 using System.IO;
 using System.Text;
+
 using Beagle.Util;
+using Beagle.Daemon;
 
 namespace Beagle.Filters {
 	
@@ -35,7 +37,7 @@ namespace Beagle.Filters {
 
 		public FilterJpeg ()
 		{
-			AddSupportedMimeType ("image/jpeg");
+			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("image/jpeg"));
 		}
 
 		// FIXME: This is not particularly efficient

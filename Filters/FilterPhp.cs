@@ -24,11 +24,13 @@
 // DEALINGS IN THE SOFTWARE.
 //
 
-
 using System;
 using System.Collections;
 using System.IO;
 using System.Text;
+
+using Beagle.Daemon;
+
 namespace Beagle.Filters {
 
 	public class FilterPhp : FilterSource {
@@ -48,8 +50,7 @@ namespace Beagle.Filters {
 
 		public FilterPhp ()
 		{
-			AddSupportedMimeType ("text/x-php");
-
+			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("text/x-php"));
 		}
 
 		override protected void DoOpen (FileInfo info)

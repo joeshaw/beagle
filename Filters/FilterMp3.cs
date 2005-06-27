@@ -30,6 +30,8 @@
 
 using System;
 using System.IO;
+
+using Beagle.Daemon;
 using Beagle.Util.AudioUtil;
 
 namespace Beagle.Filters {
@@ -51,8 +53,8 @@ namespace Beagle.Filters {
 		
 		protected override void RegisterSupportedTypes()
 		{
-			AddSupportedMimeType ("audio/x-mp3");
-			AddSupportedMimeType ("audio/mpeg");
+			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("audio/x-mp3"));
+			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("audio/mpeg"));
 		}
 	}
 }

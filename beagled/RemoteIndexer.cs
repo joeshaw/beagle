@@ -47,6 +47,7 @@ namespace Beagle.Daemon {
 
 		public event IIndexerChangedHandler ChangedEvent;
 		public event IIndexerChildIndexableHandler ChildIndexableEvent;
+		public event IIndexerUrisFilteredHandler UrisFilteredEvent;
 
 		static RemoteIndexer ()
 		{
@@ -179,6 +180,13 @@ namespace Beagle.Daemon {
 
 					if (response.ChildIndexables.Length > 0 && ChildIndexableEvent != null)
 						ChildIndexableEvent (response.ChildIndexables);
+				}
+
+				if (response.UrisFiltered != null) {
+					Logger.Log.Debug ("Sending {0} filtered uris from helper", response.UrisFiltered.Length);
+
+					if (response.UrisFiltered.Length > 0 && UrisFilteredEvent != null)
+						UrisFilteredEvent (response.UrisFiltered);
 				}
 			} else if (exception_count >= 5) {
 				Logger.Log.Error ("Exception limit exceeded trying to activate a helper.  Giving up on indexing!");

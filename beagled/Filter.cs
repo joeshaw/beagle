@@ -61,27 +61,17 @@ namespace Beagle.Daemon {
 
 		//////////////////////////
 
-		private   ArrayList supported_mime_types = new ArrayList ();
-		private   ArrayList supported_extensions = new ArrayList ();
+		private ArrayList supported_flavors = new ArrayList ();
 		
-		protected void AddSupportedMimeType (string mime_type)
+		protected void AddSupportedFlavor (FilterFlavor flavor) 
 		{
-			supported_mime_types.Add (mime_type);
+			supported_flavors.Add (flavor);
 		}
 
-		protected void AddSupportedExtension (string extension)
-		{
-			supported_extensions.Add (extension);
+		public ICollection SupportedFlavors {
+			get { return supported_flavors; }
 		}
-
-		public IEnumerable SupportedMimeTypes {
-			get { return supported_mime_types; }
-		}
-
-		public IEnumerable SupportedExtensions {
-			get { return supported_extensions; }
-		}
-
+		
 		//////////////////////////
 
 		// Filters are versioned.  This allows us to automatically re-index
@@ -113,6 +103,8 @@ namespace Beagle.Daemon {
 
 			version = v;
 		}
+
+		
 
 		//////////////////////////
 
@@ -340,9 +332,29 @@ namespace Beagle.Daemon {
 			isFinished = true;
 		}
 
+		private bool has_error = false;
+
+		public bool HasError {
+			get { return has_error; }
+		}
+
+		protected void Error ()
+		{
+			has_error = true;
+		}
+
 		//////////////////////////
 
+		protected virtual void DoOpen (FileSystemInfo info) {
+			if (info is FileInfo)
+				DoOpen (info as FileInfo);
+			else if (info is DirectoryInfo)
+				DoOpen (info as DirectoryInfo);
+		}
+
 		protected virtual void DoOpen (FileInfo info) { }
+
+		protected virtual void DoOpen (DirectoryInfo info) { }
 
 		protected virtual void DoPullProperties () { }
 
@@ -369,11 +381,11 @@ namespace Beagle.Daemon {
 		*/
 
 		private string tempFile = null;
-		private FileInfo currentInfo = null;
+		private FileSystemInfo currentInfo = null;
 		private FileStream currentStream = null;
 		private StreamReader currentReader = null;
 
-		public void Open (Stream stream)
+		public bool Open (Stream stream)
 		{
 			// If we are handed a stream, dump it into
 			// a temporary file.
@@ -389,10 +401,10 @@ namespace Beagle.Daemon {
 
 			tempStream.Close ();
 
-			Open (new FileInfo (tempFile));
+			return Open (new FileInfo (tempFile));
 		}
 
-		public void Open (FileInfo info)
+		public bool Open (FileSystemInfo info)
 		{
 			isFinished = false;
 			textPool = new ArrayList ();
@@ -401,55 +413,74 @@ namespace Beagle.Daemon {
 
 			currentInfo = info;
 
-			// Open a stream for this file.
-			currentStream = new FileStream (info.FullName,
-							FileMode.Open,
-							FileAccess.Read,
-							FileShare.Read);
-
-			// Our default assumption is sequential reads.
-			// FIXME: Is this the right thing to do here?
-			FileAdvise.IncreaseReadAhead (currentStream);
-
-			// Give the OS a hint that we will be reading this
-			// file soon.
-			FileAdvise.PreLoad (currentStream);			
+			if (info is FileInfo) {
+				// Open a stream for this file.
+				currentStream = new FileStream (info.FullName,
+								FileMode.Open,
+								FileAccess.Read,
+								FileShare.Read);
+				
+				// Our default assumption is sequential reads.
+				// FIXME: Is this the right thing to do here?
+				FileAdvise.IncreaseReadAhead (currentStream);
+				
+				// Give the OS a hint that we will be reading this
+				// file soon.
+				FileAdvise.PreLoad (currentStream);				
+			}
 
 			try {
 				DoOpen (info);
+
+				if (IsFinished)
+					return true;
+				else if (HasError)
+					return false;
+				
+				DoPullProperties ();
+				
+				if (IsFinished) 
+					return true;
+				else if (HasError)
+					return false;
+				
+				// Close and reset our TextReader
+				if (currentReader != null) {
+					currentReader.Close ();
+					currentReader = null;
+				}
+				
+				// Seek back to the beginning of our stream
+				currentStream.Seek (0, SeekOrigin.Begin);
+				
+				DoPullSetup ();
+				
+				if (HasError)
+					return false;				
 			} catch (Exception e) {
 				Logger.Log.Warn ("Unable to filter {0}: {1}", info.FullName, e.Message);
-				return;
-			}
-				
-			if (IsFinished)
-				return;
-			
-			DoPullProperties ();
-			if (IsFinished) 
-				return;
-			
-			// Close and reset our TextReader
-			if (currentReader != null) {
-				currentReader.Close ();
-				currentReader = null;
+				return false;
 			}
 
-			// Seek back to the beginning of our stream
-			currentStream.Seek (0, SeekOrigin.Begin);
-
-			DoPullSetup ();
-			if (IsFinished)
-				return;
+			return true;
 		}
 
-		public void Open (string path)
+		public bool Open (string path)
 		{
-			Open (new FileInfo (path));
+			if (File.Exists (path))
+				return Open (new FileInfo (path));
+			else if (Directory.Exists (path))
+				 return Open (new DirectoryInfo (path));
+			else 
+				return false;
 		}
 
 		public FileInfo FileInfo {
-			get { return currentInfo; }
+			get { return currentInfo as FileInfo; }
+		}
+
+		public DirectoryInfo DirectoryInfo {
+			get { return currentInfo as DirectoryInfo; }
 		}
 
 		public Stream Stream {

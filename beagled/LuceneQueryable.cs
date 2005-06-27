@@ -110,6 +110,7 @@ namespace Beagle.Daemon {
 
 			indexer.ChangedEvent += OnIndexerChanged;
 			indexer.ChildIndexableEvent += OnChildIndexableEvent;
+			indexer.UrisFilteredEvent += OnUrisFilteredEvent;
 
 			fa_store = new FileAttributesStore (BuildFileAttributesStore (driver.Fingerprint));
 
@@ -175,6 +176,11 @@ namespace Beagle.Daemon {
 		}
 
 		protected virtual void AbusiveChildIndexableHook (Indexable child_indexable)
+		{
+
+		}
+
+		protected virtual void AbusiveUriFilteredHook (FilteredStatus uri_filtered)
 		{
 
 		}
@@ -312,15 +318,29 @@ namespace Beagle.Daemon {
 			foreach (Indexable i in child_indexables) {
 				try {
 					AbusiveChildIndexableHook (i);
+
+					Scheduler.Task task = NewAddTask (i);
+					// FIXME: Probably need a better priority than this
+					task.Priority = Scheduler.Priority.Generator;
+					ThisScheduler.Add (task);
+				} catch (InvalidOperationException ex) {
+					// Queryable does not support adding children
 				} catch (Exception ex) {
 					Logger.Log.Warn ("Caught exception in AbusiveChildIndexableHook '{0}'", i.Uri);
 					Logger.Log.Warn (ex);
 				}
+			}
+		}
 
-				Scheduler.Task task = NewAddTask (i);
-				// FIXME: Probably need a better priority than this
-				task.Priority = Scheduler.Priority.Generator;
-				ThisScheduler.Add (task);
+		public void OnUrisFilteredEvent (FilteredStatus[] uris_filtered) 
+		{
+			foreach (FilteredStatus uri_filtered in uris_filtered) {
+				try {
+					AbusiveUriFilteredHook (uri_filtered);
+				} catch (Exception ex) {
+					Logger.Log.Warn ("Caught exception in AbusiveUriFilteredHook '{0}'", uri_filtered.Uri);
+					Logger.Log.Warn (ex);
+				}
 			}
 		}
 

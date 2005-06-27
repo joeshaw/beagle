@@ -25,6 +25,7 @@
 //
 
 using System;
+using System.Collections;
 using System.Xml.Serialization;
 
 using Beagle.Util;
@@ -35,6 +36,7 @@ namespace Beagle.Daemon {
 
 		public int ItemCount = -1;
 		public Indexable[] ChildIndexables;
+		public FilteredStatus[] UrisFiltered;
 
 		public RemoteIndexerResponse ()
 		{

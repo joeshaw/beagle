@@ -24,11 +24,13 @@
 // DEALINGS IN THE SOFTWARE.
 //
 
-
 using System;
 using System.Collections;
 using System.IO;
 using System.Text;
+
+using Beagle.Daemon;
+
 namespace Beagle.Filters {
 
 	public class FilterFortran : FilterSource {
@@ -41,8 +43,7 @@ namespace Beagle.Filters {
 
 		public FilterFortran ()
 		{
-			AddSupportedMimeType ("text/x-fortran");
-
+			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("text/x-fortran"));
 		}
 
 		override protected void DoOpen (FileInfo info)

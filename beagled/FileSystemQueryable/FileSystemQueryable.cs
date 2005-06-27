@@ -249,6 +249,11 @@ namespace Beagle.Daemon.FileSystemQueryable {
 
 		override protected void AbusiveChildIndexableHook (Indexable child_indexable)
 		{
+			// FIXME: FileSystemQueryable does not support adding children 
+			// to the NameIndex at the moment, this, however, would be nice 
+			// to have if we are to index compressed archives and such.
+			throw new InvalidOperationException ();
+
 			if (Debug)
 				Logger.Log.Debug ("AbusiveChildIndexableHook: uri={0}", child_indexable.Uri);
 
@@ -260,8 +265,28 @@ namespace Beagle.Daemon.FileSystemQueryable {
 			child_indexable.Uri = internal_uri;
 		}
 
-		//////////////////////////////////////////////////////////////////////////
+		override protected void AbusiveUriFilteredHook (FilteredStatus uri_filtered)
+		{
+			if (!model.InternalUriIsValid (uri_filtered.Uri)) {
+				Logger.Log.Error ("AbusiveUriFilteredHook: Internal uri is not valid: {0}", uri_filtered.Uri);
+				return;
+			}
 
+			Uri external_uri = model.FromInternalUri (uri_filtered.Uri);
+			
+			if (Debug)
+				Logger.Log.Debug ("AbusiveUriFilteredHook: external_uri={0} internal_uri={1}, name={2}, version={3}", external_uri, uri_filtered.Uri, uri_filtered.FilterName, uri_filtered.FilterVersion);
+
+			try {
+				model.MarkAsFiltered (external_uri.LocalPath, uri_filtered.FilterName, uri_filtered.FilterVersion);
+			} catch (Exception ex) {
+				Logger.Log.Error ("Could not mark file filtered");
+				Logger.Log.Error (ex);
+			}
+		}
+		
+		//////////////////////////////////////////////////////////////////////////
+		
 		// Filter out hits where the files seem to no longer exist.
 		override protected bool HitIsValid (Uri uri)
 		{
@@ -288,7 +313,7 @@ namespace Beagle.Daemon.FileSystemQueryable {
 			event_backend.Start (this);
 
 			model.LoadConf (null);
-			// FIXME: Handle configuration reload properly
+                        // FIXME: Handle configuration reload properly
 			//Conf.Subscribe (typeof (Conf.IndexingConfig), model.LoadConf);
 
 			log.Info ("FileSystemQueryable start-up thread finished");

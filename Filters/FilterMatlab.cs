@@ -23,11 +23,13 @@
 // DEALINGS IN THE SOFTWARE.
 //
 
-
 using System;
 using System.Collections;
 using System.IO;
 using System.Text;
+
+using Beagle.Daemon;
+
 namespace Beagle.Filters {
 
 	public class FilterMatlab : FilterSource {
@@ -39,7 +41,7 @@ namespace Beagle.Filters {
 			
 		public FilterMatlab ()
 		{
-			AddSupportedExtension (".m");
+			AddSupportedFlavor (FilterFlavor.NewFromExtension (".m"));
 		}
 
 		override protected void DoOpen (FileInfo info)

@@ -29,11 +29,16 @@ using System.Collections;
 using System.IO;
 using System.Reflection;
 
+using System.Xml;
+using System.Xml.Serialization;
+
 using Beagle.Util;
 
 namespace Beagle.Daemon {
 
 	public class FilterFactory {
+
+		static private bool Debug = true;
 
 		static FilterFactory ()
 		{
@@ -55,103 +60,75 @@ namespace Beagle.Daemon {
 
 		/////////////////////////////////////////////////////////////////////////
 		
-		static Hashtable mime_type_table = new Hashtable ();
-		static Hashtable extension_table = new Hashtable ();
 
-		static private void RegisterMimeType (string mime_type, Type filter_type)
+		static private ICollection CreateFilters (Uri uri, string extension, string mime_type)
 		{
-			// FIXME: Should mime types be case-sensitive?
-			mime_type = mime_type.ToLower ();
-
-			if (mime_type_table.Contains (mime_type)) {
-				Type current_type = (Type) mime_type_table [mime_type];
-				if (current_type != filter_type)
-					Logger.Log.Error ("Filter collision: mime type={0} ({1} vs {2})",
-							  mime_type, current_type, filter_type);
-
-				// If we try to re-register the same filter for the same mime type,
-				// just silently return.
-				return;
-			}
-
-			mime_type_table [mime_type] = filter_type;
-		}
-
-		static private void RegisterExtension (string extension, Type filter_type)
-		{
-			// FIXME: Should mime types be case-sensitive?
-			extension = extension.ToLower ();
-
-			if (extension [0] != '.')
-				extension = "." + extension;
-
-			if (extension_table.Contains (extension)) {
-				Type current_type = (Type) extension_table [extension];
-				if (current_type != filter_type)
-					Logger.Log.Error ("Filter collision: extension={0} ({1} vs {2})",
-							  extension, current_type, filter_type);
-
-				// If we try to re-register the same filter for the same extension,
-				// just silently return.
-				return;
-			}
-
-			extension_table [extension] = filter_type;
-		}
-
-		static private Filter CreateFilter (string mime_type, string extension)
-		{
-			Type filter_type = null;
-			string this_mime_type = null;
-			string this_extension = null;
-
-			// First, try looking it up by extension.
-			// For example, a ".js" file is identified as "text/plain" by gnome-vfs,
-			// which will improperly create an instance of Text filter.
-			if (extension != null && extension.Length > 0) {
-				extension = extension.ToLower ();
-				if (extension [0] != '.')
-					extension = "." + extension;
-				filter_type = (Type) extension_table [extension];
-				if (filter_type != null)
-					this_extension = extension;
-			}
+			Hashtable matched_filters_by_flavor = FilterFlavor.NewHashtable ();
 			
-			// If that didn't work, look it up by the mime-type.
-			if (filter_type == null && mime_type != null && mime_type.Length > 0) {
-				mime_type = mime_type.ToLower ();
-				filter_type = (Type) mime_type_table [mime_type];
-				if (filter_type != null)
-					this_mime_type = mime_type;
+			foreach (FilterFlavor flavor in filter_types_by_flavor.Keys) {
+				if (flavor.IsMatch (uri, extension, mime_type)) {
+					Filter matched_filter = null;
+
+					try {
+						matched_filter = (Filter) Activator.CreateInstance ((Type) filter_types_by_flavor [flavor]);
+
+						if (flavor.MimeType != null)
+							matched_filter.MimeType = flavor.MimeType;
+						if (flavor.Extension != null)
+							matched_filter.Extension = flavor.Extension;
+
+					} catch (Exception e) {
+						continue;
+					}
+					matched_filters_by_flavor [flavor] = matched_filter;
+				}
 			}
 
-			Filter filter = null;
-			if (filter_type != null) {
-				filter = (Filter) Activator.CreateInstance (filter_type);
-				if (this_mime_type != null)
-					filter.MimeType = this_mime_type;
-				if (this_extension != null)
-					filter.Extension = this_extension;
+			foreach (DictionaryEntry entry in matched_filters_by_flavor) {
+				FilterFlavor flav = (FilterFlavor) entry.Key;
+				Filter filter = (Filter) entry.Value;
+				
+				if (Debug)
+					Logger.Log.Debug ("Found matching filter: {0}, Weight: {1}", filter, flav.Weight);
 			}
 
-			return filter;
+			return matched_filters_by_flavor.Values;
 		}
 
-		static public Filter CreateFilterFromMimeType (string mime_type)
+		static public int GetFilterVersion (string filter_name) 
 		{
-			return CreateFilter (mime_type, null);
+			if (filter_versions_by_name.Contains (filter_name)) {
+				return (int) filter_versions_by_name [filter_name];
+			} else {
+				return -1;
+			}
 		}
 
-		static public Filter CreateFilterFromExtension (string extension)
+		/////////////////////////////////////////////////////////////////////////
+
+		static public ICollection CreateFiltersFromMimeType (string mime_type)
 		{
-			return CreateFilter (null, extension);
+			return CreateFilters (null, null, mime_type);
 		}
 
-		static public Filter CreateFilterFromPath (string path)
+		static public ICollection CreateFilterFromExtension (string extension)
+		{
+			return CreateFilters (null, extension, null);
+		}
+
+		static public ICollection CreateFiltersFromPath (string path)
 		{
 			string guessed_mime_type = Beagle.Util.VFS.Mime.GetMimeType (path);
 			string extension = Path.GetExtension (path);
-			return CreateFilter (guessed_mime_type, extension);
+			return CreateFilters (UriFu.PathToFileUri (path), extension, guessed_mime_type);
+		}
+
+		static public ICollection CreateFiltersFromUri (Uri uri)
+		{
+			if (uri.IsFile)
+				return CreateFiltersFromPath (uri.LocalPath);
+			else
+				return CreateFilters (uri, null, null);
 		}
 
 		/////////////////////////////////////////////////////////////////////////
@@ -176,6 +153,7 @@ namespace Beagle.Daemon {
 		static public bool FilterIndexable (Indexable indexable, out Filter filter)
 		{
 			filter = null;
+			ICollection filters = null;
 
 			if (! ShouldWeFilterThis (indexable)) {
 				indexable.NoContent = true;
@@ -189,19 +167,14 @@ namespace Beagle.Daemon {
 
 			// If a specific mime type is specified, try to index as that type.
 			if (indexable.MimeType != null)
-				filter = CreateFilterFromMimeType (indexable.MimeType);
+				filters = CreateFiltersFromMimeType (indexable.MimeType);
 
 			if (indexable.IsNonTransient) {
 				// Otherwise sniff the mime-type from the file
-				if (filter == null) {
-					filter = CreateFilterFromPath (path);
-					if (filter != null)
-						indexable.MimeType = filter.MimeType;
+				if (filters == null || filters.Count == 0) {
+					filters = CreateFiltersFromPath (path);
 				}
 			
-				if (filter != null)
-					filter.Identifier = path;
-				
 				if (Directory.Exists (path)) {
 					indexable.MimeType = "inode/directory";
 					indexable.NoContent = true;
@@ -217,9 +190,10 @@ namespace Beagle.Daemon {
 			}
 
 			// We don't know how to filter this, so there is nothing else to do.
-			if (filter == null) {
+			if (filters.Count == 0) {
 				if (! indexable.NoContent) {
 					indexable.NoContent = true;
+
 					Logger.Log.Debug ("No filter for {0}", path);
 					return false;
 				}
@@ -227,36 +201,51 @@ namespace Beagle.Daemon {
 				return true;
 			}
 
-			Logger.Log.Debug ("Found filter: {0}", filter);
+			foreach (Filter candidate_filter in filters) {
+				if (Debug)
+					Logger.Log.Debug ("Testing filter: {0}", candidate_filter);
+				
+				// Hook up the snippet writer.
+				if (candidate_filter.SnippetMode) {
+					if (candidate_filter.OriginalIsText && indexable.IsNonTransient) {
+						TextCache.MarkAsSelfCached (indexable.Uri);
+					} else if (indexable.CacheContent) {
+						TextWriter writer = TextCache.GetWriter (indexable.Uri);
+						candidate_filter.AttachSnippetWriter (writer);
+					}
+				}
+				
+				if (indexable.Crawled)
+					candidate_filter.EnableCrawlMode ();
+				
+				// Be extra paranoid: never delete the actual
+				// URI we are indexing.
+				if (indexable.DeleteContent && indexable.Uri != indexable.ContentUri)
+					candidate_filter.DeleteContent = indexable.DeleteContent;
+				
+				
+				// Open the filter, copy the file's properties to the indexable,
+				// and hook up the TextReaders.
+				if (candidate_filter.Open (path)) {
+					foreach (Property prop in candidate_filter.Properties)
+						indexable.AddProperty (prop);
+					indexable.SetTextReader (candidate_filter.GetTextReader ());
+					indexable.SetHotTextReader (candidate_filter.GetHotTextReader ());
 
-			// Hook up the snippet writer.
-			if (filter.SnippetMode) {
-				if (filter.OriginalIsText && indexable.IsNonTransient) {
-					TextCache.MarkAsSelfCached (indexable.Uri);
-				} else if (indexable.CacheContent) {
-					TextWriter writer = TextCache.GetWriter (indexable.Uri);
-					filter.AttachSnippetWriter (writer);
+					if (Debug)
+						Logger.Log.Debug ("Successfully filtered {0} with {1}", path, candidate_filter);
+
+					filter = candidate_filter;
+					return true;
+				} else if (Debug) {
+					Logger.Log.Debug ("Unsuccessfully filtered {0} with {1}, falling back", path, candidate_filter);
 				}
 			}
 
-			if (indexable.Crawled)
-				filter.EnableCrawlMode ();
-
-			// Be extra paranoid: never delete the actual
-			// URI we are indexing.
-			if (indexable.DeleteContent && indexable.Uri != indexable.ContentUri)
-				filter.DeleteContent = indexable.DeleteContent;
-
-
-			// Open the filter, copy the file's properties to the indexable,
-			// and hook up the TextReaders.
-			filter.Open (path);
-			foreach (Property prop in filter.Properties)
-				indexable.AddProperty (prop);
-			indexable.SetTextReader (filter.GetTextReader ());
-			indexable.SetHotTextReader (filter.GetHotTextReader ());
-
-			return true;
+			if (Debug)
+				Logger.Log.Debug ("None of the matching filters could process the file: {0}", path);
+			
+			return false;
 		}
 
 		static public bool FilterIndexable (Indexable indexable)
@@ -268,6 +257,9 @@ namespace Beagle.Daemon {
 
 		/////////////////////////////////////////////////////////////////////////
 
+		private static Hashtable filter_types_by_flavor = new Hashtable ();
+		private static Hashtable filter_versions_by_name = new Hashtable ();
+
 		static private int ScanAssemblyForFilters (Assembly assembly)
 		{
 			int count = 0;
@@ -275,6 +267,7 @@ namespace Beagle.Daemon {
 			foreach (Type t in assembly.GetTypes ()) {
 				if (t.IsSubclassOf (typeof (Filter)) && ! t.IsAbstract) {
 					Filter filter = null;
+
 					try {
 						filter = (Filter) Activator.CreateInstance (t);
 					} catch (Exception ex) {
@@ -285,16 +278,15 @@ namespace Beagle.Daemon {
 					if (filter == null)
 						continue;
 
+					filter_versions_by_name [t.ToString ()] = filter.Version;
+
+					foreach (FilterFlavor flavor in filter.SupportedFlavors)
+						filter_types_by_flavor [flavor] = t;
+
 					++count;
-
-					foreach (string mime_type in filter.SupportedMimeTypes)
-						RegisterMimeType (mime_type, t);
-
-					foreach (string extension in filter.SupportedExtensions)
-						RegisterExtension (extension, t);
 				}
 			}
-
+			
 			return count;
 		}
 
@@ -317,6 +309,53 @@ namespace Beagle.Daemon {
 							  n, n == 1 ? "" : "s", file_info.FullName);
 				}
 			}
+		}
+	}
+
+	/////////////////////////////////////////////////////////////////////////
+
+	public class FilteredStatus 
+	{
+		private Uri uri;
+		private string filter_name;
+		private int filter_version;
+
+		[XmlIgnore]
+		public Uri Uri {
+			get { return uri; }
+			set { uri = value; }
+		}
+
+		[XmlAttribute ("Uri")]
+		public string UriAsString {
+			get {
+				return UriFu.UriToSerializableString (uri);
+			}
+
+			set {
+				uri = UriFu.UriStringToUri (value);
+			}
+		}
+
+		public string FilterName {
+			get { return filter_name; }
+			set { filter_name = value; }
+		}
+
+		public int FilterVersion {
+			get { return filter_version; }
+			set { filter_version = value; }
+		}
+
+		public static FilteredStatus New (Indexable indexable, Filter filter)
+		{
+			FilteredStatus status = new FilteredStatus ();
+
+			status.Uri = indexable.Uri;
+			status.FilterName = filter.GetType ().ToString ();
+			status.FilterVersion = filter.Version;
+
+			return status;
 		}
 	}
 }

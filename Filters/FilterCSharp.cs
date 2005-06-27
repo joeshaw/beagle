@@ -24,11 +24,13 @@
 // DEALINGS IN THE SOFTWARE.
 //
 
-
 using System;
 using System.Collections;
 using System.IO;
 using System.Text;
+
+using Beagle.Daemon;
+
 namespace Beagle.Filters {
 
 	public class FilterCSharp : FilterSource {
@@ -52,7 +54,7 @@ namespace Beagle.Filters {
 
 		public FilterCSharp ()
 		{
-			AddSupportedMimeType ("text/x-csharp");
+			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("text/x-csharp"));
 		}
 
 		override protected void DoOpen (FileInfo info)

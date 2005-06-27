@@ -53,6 +53,8 @@ namespace Beagle.Tile {
 				str = String.Format (Catalog.GetPluralString ("Contains {0} Item", "Contains {0} Items", n), n);
 
 			Template["Contents"] = str;
+
+			Template ["Icon"] = (Hit ["fixme:Icon"] != null && File.Exists (Hit ["fixme:Icon"])) ? Images.GetHtmlSource (Hit ["fixme:Icon"], null) : Images.GetHtmlSourceForStock ("gnome-fs-directory", 48);
 		}
 
 		[TileAction]
