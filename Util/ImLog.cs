@@ -76,7 +76,7 @@ namespace Beagle.Util {
 		{ }
 
 		public Uri Uri {
-			get { return UriFu.UriStringToUri (this.LogFile); }
+			get { return UriFu.PathToFileUri (this.LogFile); }
 		}
 
 		public string EllipsizedSnippet {
