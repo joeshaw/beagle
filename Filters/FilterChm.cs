@@ -31,8 +31,9 @@ using System.Collections;
 using System.IO;
 using System.Text;
 using HtmlAgilityPack;
-using Beagle.Util;
 
+using Beagle.Util;
+using Beagle.Daemon;
 
 namespace Beagle.Filters {
 
@@ -227,8 +228,7 @@ namespace Beagle.Filters {
 		
 		override protected  void  RegisterSupportedTypes()
 		{
-
-			AddSupportedMimeType("application/x-chm");
+			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("application/x-chm"));
 		}
 
 	}
