@@ -1,3 +1,7 @@
+2005-06-28  Daniel Drake  <dsd@gentoo.org>
+
+	* Filters/FilterPPT.cs: Compile fix
+
 2005-06-27  Daniel Drake  <dsd@gentoo.org>
 
 	* Util/ImLog.cs: Use PathToFileUri to handle 'odd' file characters better

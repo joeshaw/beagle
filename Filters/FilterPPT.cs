@@ -32,6 +32,7 @@ using System.IO;
 using System.Text;
 using Gsf;
 
+using Beagle.Daemon;
 using Beagle.Util;
 
 internal class RecordType
@@ -391,7 +392,7 @@ namespace Beagle.Filters {
 		string FileName;
 		public FilterPPT () 
 		{
-			AddSupportedMimeType ("application/vnd.ms-powerpoint");
+			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("application/vnd.ms-powerpoint"));
 			textType = TextType.Invalid;
 			file = null;
 			FileName = null;
