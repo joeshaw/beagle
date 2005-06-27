@@ -55,6 +55,7 @@ namespace Beagle.Daemon {
 
 		event IIndexerChildIndexableHandler ChildIndexableEvent;
 
+		// FIXME: Merge this with ChangedEvent and use some better datastructures
 		event IIndexerUrisFilteredHandler UrisFilteredEvent;
 	}
 }
