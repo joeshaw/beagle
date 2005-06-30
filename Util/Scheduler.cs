@@ -625,7 +625,7 @@ namespace Beagle.Util {
 						// added in the last second.  We
 						// definitely need to throttle.
 						if (between_add_delta.Seconds <= 1) {
-							Logger.Log.Debug ("### THROTTLING IMMEDIATE PRIORITY");
+							Logger.Log.Debug ("Thottling immediate priority tasks");
 							need_throttle = true;
 							rate_factor = idle_scale * default_idle_rate_factor;
 						}
@@ -668,8 +668,6 @@ namespace Beagle.Util {
 			// a second and some.
 			if (need_throttle && delay < 1.25)
 				delay = 1.25;
-
-			Console.WriteLine ("delay is {0} seconds", delay);
 
 			return delay;
 		}
