@@ -515,7 +515,7 @@ namespace Best {
 			try {
 				query.SendAsync ();
 				SetBusy (true);
-			} catch (System.Net.Sockets.SocketException e) {
+			} catch (Beagle.ResponseMessageException e) {
 				QueueDelayedQuery (entry.GtkEntry.Text);
 				
 				/* To translators: {0} represents the current query keywords */
