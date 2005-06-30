@@ -46,9 +46,12 @@ namespace Beagle.Util {
 			get { return Path.Combine (PkgLibDir, "Backends"); }
 		}
 
-		// FIXME: automagic
+		static private string LocalStateDir {
+			get { return ExternalStringsHack.LocalStateDir; }
+		}
+
 		static public string SystemDir {
-			get { return "/var/cache/beagle"; }
+			get { return Path.Combine (Path.Combine (LocalStateDir, "cache"), "beagle"); }
 		}
 
 		static public string SystemIndexesDir {

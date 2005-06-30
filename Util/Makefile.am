@@ -27,13 +27,14 @@ $(GOOGLE_CS): $(GOOGLE_WSDL)
 EXTSTR = ExternalStringsHack.cs
 EXTSTR_IN = $(srcdir)/$(EXTSTR).in
 $(EXTSTR): $(EXTSTR_IN)
-	sed	-e "s|\@prefix\@|$(prefix)|g"		\
-		-e "s|\@pkglibdir\@|$(pkglibdir)|g"	\
-		-e "s|\@pkgdatadir\@|$(pkgdatadir)|g"	\
-		-e "s|\@VERSION\@|$(VERSION)|g"		\
+	sed	-e "s|\@prefix\@|$(prefix)|g"			\
+		-e "s|\@pkglibdir\@|$(pkglibdir)|g"		\
+		-e "s|\@pkgdatadir\@|$(pkgdatadir)|g"		\
+		-e "s|\@localstatedir\@|$(localstatedir)|g"	\
+		-e "s|\@VERSION\@|$(VERSION)|g"			\
 		-e "s|\@GNOME_PREFIX\@|$(GNOME_PREFIX)|g"	\
-		-e "s|\@KDE_PREFIX\@|$(KDE_PREFIX)|g"	\
-		-e "s|\@XATTR_LIB\@|$(XATTR_LIB)|g"	\
+		-e "s|\@KDE_PREFIX\@|$(KDE_PREFIX)|g"		\
+		-e "s|\@XATTR_LIB\@|$(XATTR_LIB)|g"		\
 		< $(EXTSTR_IN) > $@
 
 CSFILES = 			        	\
