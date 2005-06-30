@@ -137,7 +137,7 @@ namespace Beagle.Daemon {
 						 count, GetDbPath (directory), (dt2 - dt1).TotalSeconds);
 			}
 
-			Shutdown.ShutdownEvent += OnShutdown;
+			Shutdown.ShutdownEvent += Flush;
 		}
 
 		///////////////////////////////////////////////////////////////////
@@ -352,15 +352,57 @@ namespace Beagle.Daemon {
 			}
 		}
 
-		private void OnShutdown ()
+		public void Flush ()
 		{
 			lock (connection) {
 				if (transaction_count > 0) {
-					Logger.Log.Debug ("Shutdown requested -- committing sqlite transaction");
+					Logger.Log.Debug ("Flushing requested -- committing sqlite transaction");
 					DoNonQuery ("COMMIT");
 					transaction_count = 0;
 				}
 			}
+		}
+
+		///////////////////////////////////////////////////////////////////
+
+		// Return all attributes in the attributes database, used for merging
+
+		private ICollection ReadAllAttributes () 
+		{
+			ArrayList attributes = new ArrayList ();
+			
+			SqliteCommand command;
+			SqliteDataReader reader;
+				
+			FileAttributes attr = null;
+			
+			lock (connection) {
+				command = new SqliteCommand ();
+				command.Connection = connection;
+				command.CommandText =
+					"SELECT unique_id, directory, filename, last_mtime, last_indexed, filter_name, filter_version " +
+					"FROM file_attributes"; 
+				
+				reader = ExecuteReaderOrWait (command);
+				
+				while (ReadOrWait (reader)) {
+					attributes.Add (GetFromReader (reader));
+				}
+				reader.Close ();
+				command.Dispose ();
+			}
+			
+			return attributes;
+		}
+
+		// FIXME: Might wanna do this a bit more intelligently
+
+		public void Merge (FileAttributesStore_Sqlite fa_sqlite_store_to_merge) 
+		{
+			ICollection attributes = fa_sqlite_store_to_merge.ReadAllAttributes ();
+				
+			foreach (FileAttributes attribute in attributes)
+				Write (attribute);
 		}
 	}
 }

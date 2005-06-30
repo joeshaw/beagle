@@ -55,6 +55,10 @@ namespace Lucene.Net.Store
 			{
 				if (Lucene.Net.Store.FSDirectory.DISABLE_LOCKS)
 					return true;
+
+				// ADDED fhedberg@novell.com 16 Jun 2005
+				if (Enclosing_Instance.DisableLocks)
+					return true;
 				
 				bool tmpBool;
 				if (System.IO.File.Exists(Enclosing_Instance.lockDir.FullName))
@@ -111,6 +115,11 @@ namespace Lucene.Net.Store
 			{
 				if (Lucene.Net.Store.FSDirectory.DISABLE_LOCKS)
 					return ;
+				
+				// ADDED fhedberg@novell.com 16 Jun 2005 - disable locks per directory
+				if (Enclosing_Instance.DisableLocks)
+					return;
+				
 				bool tmpBool;
 				if (System.IO.File.Exists(lockFile.FullName))
 				{
@@ -135,6 +144,11 @@ namespace Lucene.Net.Store
 			{
 				if (Lucene.Net.Store.FSDirectory.DISABLE_LOCKS)
 					return false;
+
+				// ADDED fhedberg@novell.com 16 Jun 2005 - disable locks per directory
+				if (Enclosing_Instance.DisableLocks)
+					return false;
+
 				bool tmpBool;
 				if (System.IO.File.Exists(lockFile.FullName))
 					tmpBool = true;
@@ -184,6 +198,15 @@ namespace Lucene.Net.Store
                         }
                 }
 
+		// ADDED fhedberg@novell.com 16 Jun 2005 - disable locks per directory
+		
+		private bool disable_locks = false;
+
+		public bool DisableLocks {
+			get { return disable_locks; }
+			set { disable_locks = value; }
+		}
+
         private static System.Security.Cryptography.MD5 DIGESTER;
 		
 		/// <summary>A buffer optionally used in renameTo method </summary>
@@ -204,14 +227,22 @@ namespace Lucene.Net.Store
 		/// </returns>
 
 		/// CHANGED trow@novell.com 17 Mar 2005 set tmp dir at creation-time
+		/// CHANGED fhedberg@novell.com 16 Jun 2005 - disable locks per directory
 		public static FSDirectory GetDirectory(System.String path, System.String tmpDir, bool create)
 		{
-			return GetDirectory(new System.IO.FileInfo(path), tmpDir, create);
+			return GetDirectory(new System.IO.FileInfo(path), tmpDir, create, false);
 		}
 
+		// ADDED fhedberg@novell.com 16 Jun 2005 - disable locks per directory
+		public static FSDirectory GetDirectory(System.String path, System.String tmpDir, bool create, bool disable_locks)
+		{
+			return GetDirectory(new System.IO.FileInfo(path), tmpDir, create, disable_locks);
+		}
+
+		// CHANGED fhedberg@novell.com 16 Jun 2005 - disable locks per directory
 		public static FSDirectory GetDirectory(System.String path, bool create)
 		{
-			return GetDirectory(new System.IO.FileInfo(path), null, create);
+			return GetDirectory(new System.IO.FileInfo(path), null, create, false);
 		}
 		
 		/// <summary>Returns the directory instance for the named location.
@@ -227,7 +258,8 @@ namespace Lucene.Net.Store
 		/// </param>
 		/// <returns> the FSDirectory for the named file.  
 		/// </returns>
-		public static FSDirectory GetDirectory(System.IO.FileInfo file, System.String tmpDir, bool create)
+		/// CHANGED fhedberg@novell.com 16 Jun 2005 - disable locks per directory
+		public static FSDirectory GetDirectory(System.IO.FileInfo file, System.String tmpDir, bool create, bool disable_locks)
 		{
 			file = new System.IO.FileInfo(file.FullName);
 			FSDirectory dir;
@@ -236,7 +268,8 @@ namespace Lucene.Net.Store
 				dir = (FSDirectory) DIRECTORIES[file];
 				if (dir == null)
 				{
-					dir = new FSDirectory(file, tmpDir, create);
+					// CHANGED fhedberg@novell.com 16 Jun 2005 - disable locks per directory
+					dir = new FSDirectory(file, tmpDir, create, disable_locks);
 					DIRECTORIES[file] = dir;
 				}
 				else if (create)
@@ -251,18 +284,21 @@ namespace Lucene.Net.Store
 			return dir;
 		}
 
+		// CHANGED fhedberg@novell.com 16 Jun 2005 - disable locks per directory
 		public static FSDirectory GetDirectory(System.IO.FileInfo file, bool create)
 		{
-			return GetDirectory (file, null, create);
+			return GetDirectory (file, null, create, false);
 		}
 		
 		private System.IO.FileInfo directory = null;
 		private int refCount;
 		private System.IO.FileInfo lockDir;
 		
-		private FSDirectory(System.IO.FileInfo path, string tmpDir, bool create)
+		/// CHANGED fhedberg@novell.com 16 Jun 2005 - disable locks per directory
+		private FSDirectory(System.IO.FileInfo path, string tmpDir, bool create, bool disable_locks)
 		{
 			directory = path;
+			this.disable_locks = disable_locks;
 			
 			// FIXED joeshaw@novell.com  10 Jan 2005  Use TempDirectoryName to find where locks live
 			// FIXED trow@novell.com  17 Mar 2005  A fix on the fix

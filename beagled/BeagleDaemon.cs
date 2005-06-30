@@ -174,10 +174,6 @@ namespace Beagle.Daemon {
 #endif
 			Shutdown.ShutdownEvent += OnShutdown;
 
-			// Load user configuration
-			Conf.Load ();
-			Conf.WatchForUpdates ();
-
 			stopwatch.Stop ();
 
 			Logger.Log.Debug ("Daemon initialization finished after {0}", stopwatch);

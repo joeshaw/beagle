@@ -14,3 +14,5 @@ beagle-term-stats
 beagle-name-index
 beagle-file-system-sanity-check
 beagle-index-url
+beagle-build-index
+beagle-manage-index

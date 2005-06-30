@@ -37,8 +37,9 @@ namespace Beagle {
 
 	public enum QueryDomain {
 		Local        = 1,
-		Neighborhood = 2,
-		Global       = 4
+		System       = 2,
+		Neighborhood = 4,
+		Global       = 8
 	}
 
 	public class Query : RequestMessage {

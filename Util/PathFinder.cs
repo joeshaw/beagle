@@ -46,6 +46,15 @@ namespace Beagle.Util {
 			get { return Path.Combine (PkgLibDir, "Backends"); }
 		}
 
+		// FIXME: automagic
+		static public string SystemDir {
+			get { return "/var/cache/beagle"; }
+		}
+
+		static public string SystemIndexesDir {
+			get { return Path.Combine (SystemDir, "indexes"); }
+		}
+
 		// The user's personal files are under this and their dotfiles are in it.
 		// It is usually found via HOME, but that can be overridden by setting
 		// BEAGLE_HOME

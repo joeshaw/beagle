@@ -40,6 +40,7 @@ namespace Beagle.Util {
 
 		public static Hashtable Sections;
 		public static IndexingConfig Indexing = null;
+		public static DaemonConfig Daemon = null;
 		public static SearchingConfig Searching = null;
 		private static string configs_dir;
 		private static Hashtable mtimes;
@@ -130,6 +131,10 @@ namespace Beagle.Util {
 			LoadFile (typeof (IndexingConfig), Indexing, out temp, force);
 			Indexing = (IndexingConfig) temp;
 			NotifySubscribers (Indexing);
+
+			LoadFile (typeof (DaemonConfig), Daemon, out temp, force);
+			Daemon = (DaemonConfig) temp;
+			NotifySubscribers (Daemon);
 
 			LoadFile (typeof (SearchingConfig), Searching, out temp, force);
 		        Searching = (SearchingConfig) temp;
@@ -291,6 +296,52 @@ namespace Beagle.Util {
 			public KeyBinding ShowSearchWindowBinding {
 				get { return show_search_window_binding; }
 				set { show_search_window_binding = value; }
+			}
+		}
+
+		[ConfigSection (Name="daemon")]
+		public class DaemonConfig : Section {
+			private ArrayList static_queryables = new ArrayList ();
+			public ArrayList StaticQueryables {
+				get { return static_queryables; }
+				set { static_queryables = value; }
+			}
+
+			private ArrayList allowed_backends = new ArrayList ();
+			public ArrayList AllowedBackends {
+				get { return allowed_backends; }
+				set { allowed_backends = value; }
+			}
+
+			private ArrayList denied_backends = new ArrayList ();
+			public ArrayList DeniedBackends {
+				get { return denied_backends; }
+				set { denied_backends = value; }
+			}
+
+			[ConfigOption (Description="Add a static queryable", Params=1, ParamsDescription="Index path")]
+			internal bool AddStaticQueryable (out string output, string [] args)
+			{
+				static_queryables.Add (args [0]);
+				output = "Static queryable added.";
+				return true;
+			}
+
+			[ConfigOption (Description="Remove a static queryable", Params=1, ParamsDescription="Index path")]
+			internal bool DelStaticQueryable (out string output, string [] args)
+			{
+				static_queryables.Remove (args [0]);
+				output = "Static queryable removed.";
+				return true;
+			}
+			
+			[ConfigOption (Description="List user-specified static queryables", IsMutator=false)]
+			internal bool ListStaticQueryables (out string output, string [] args)
+			{
+				output = "User-specified static queryables:\n";
+				foreach (string index_path in static_queryables)
+					output += String.Format (" - {0}\n", index_path);
+				return true;
 			}
 		}
 

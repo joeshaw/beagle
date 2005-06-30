@@ -273,11 +273,6 @@ lifereaqueryable = $(srcdir)/LifereaQueryable
 LIFEREA_QUERYABLE_CSFILES =				\
 	$(lifereaqueryable)/LifereaQueryable.cs
 
-
-launcherqueryable = $(srcdir)/LauncherQueryable
-LAUNCHER_QUERYABLE_CSFILES =				\
-	$(launcherqueryable)/LauncherQueryable.cs
-
 indexingservicequeryable = $(srcdir)/IndexingServiceQueryable
 INDEXING_SERVICE_QUERYABLE_CSFILES =			\
 	$(indexingservicequeryable)/IndexingServiceQueryable.cs
@@ -294,7 +289,6 @@ DAEMON_DLL_CSFILES = 						\
 	$(BLAM_QUERYABLE_CSFILES)				\
 	$(LIFEREA_QUERYABLE_CSFILES)				\
 	$(EVO_MAIL_QUERYABLE_CSFILES)				\
-	$(LAUNCHER_QUERYABLE_CSFILES)				\
 	$(TOMBOY_QUERYABLE_CSFILES)				\
 	$(INDEXING_SERVICE_QUERYABLE_CSFILES)			\
 	$(srcdir)/FileAttributes.cs				\
@@ -327,6 +321,7 @@ DAEMON_DLL_CSFILES = 						\
 	$(srcdir)/Shutdown.cs					\
 	$(srcdir)/SnippetExecutor.cs				\
 	$(srcdir)/SnippetFu.cs					\
+	$(srcdir)/StaticQueryable.cs				\
 	$(srcdir)/TextCache.cs
 
 DAEMON_DLL_LOCAL_ASSEMBLIES =		\
@@ -768,6 +763,64 @@ FS_SANITY_CHECK_ASSEMBLIES = \
 $(FS_SANITY_CHECK_TARGET): $(FS_SANITY_CHECK_CSFILES) $(FS_SANITY_CHECK_LOCAL_ASSEMBLIES)
 	$(CSC) -out:$@ $(FS_SANITY_CHECK_CSFLAGS) $(FS_SANITY_CHECK_CSFILES) $(FS_SANITY_CHECK_ASSEMBLIES)
 
+############################################################
+
+BUILD_INDEX_WRAPPER = beagle-build-index
+BUILD_INDEX_TARGET = BuildIndex.exe
+
+$(BUILD_INDEX_WRAPPER): $(srcdir)/$(WRAPPER_IN)
+	$(WRAPPER_SED) -e "s|\@target\@|$(BUILD_INDEX_TARGET)|g" < $(srcdir)/$(WRAPPER_IN) > $@
+	chmod +x $(BUILD_INDEX_WRAPPER)
+
+BUILD_INDEX_CSFLAGS = \
+	-target:exe
+
+BUILD_INDEX_CSFILES = \
+	$(srcdir)/BuildIndex.cs
+
+BUILD_INDEX_LOCAL_ASSEMBLIES = \
+	../Util/Util.dll			\
+	../BeagleClient/Beagle.dll		\
+	./$(PLUGIN_TARGET)			\
+	./$(DAEMON_DLL_TARGET)
+
+BUILD_INDEX_ASSEMBLIES = \
+	$(BEAGLED_LIBS)				\
+	$(DAEMON_LOCAL_ASSEMBLIES:%=-r:%)	\
+	-r:Mono.Posix
+
+$(BUILD_INDEX_TARGET): $(BUILD_INDEX_CSFILES) $(BUILD_INDEX_LOCAL_ASSEMBLIES)
+	$(CSC) -out:$@ $(BUILD_INDEX_CSFLAGS) $(BUILD_INDEX_CSFILES) $(BUILD_INDEX_ASSEMBLIES)
+
+############################################################
+
+MANAGE_INDEX_WRAPPER = beagle-manage-index
+MANAGE_INDEX_TARGET = ManageIndex.exe
+
+$(MANAGE_INDEX_WRAPPER): $(srcdir)/$(WRAPPER_IN)
+	$(WRAPPER_SED) -e "s|\@target\@|$(MANAGE_INDEX_TARGET)|g" < $(srcdir)/$(WRAPPER_IN) > $@
+	chmod +x $(MANAGE_INDEX_WRAPPER)
+
+MANAGE_INDEX_CSFLAGS = \
+	-target:exe
+
+MANAGE_INDEX_CSFILES = \
+	$(srcdir)/ManageIndex.cs
+
+MANAGE_INDEX_LOCAL_ASSEMBLIES = \
+	../Util/Util.dll			\
+	../BeagleClient/Beagle.dll		\
+	./$(PLUGIN_TARGET)			\
+	./$(DAEMON_DLL_TARGET)
+
+MANAGE_INDEX_ASSEMBLIES = \
+	$(BEAGLED_LIBS)				\
+	$(DAEMON_LOCAL_ASSEMBLIES:%=-r:%)	\
+	-r:Mono.Posix
+
+$(MANAGE_INDEX_TARGET): $(MANAGE_INDEX_CSFILES) $(MANAGE_INDEX_LOCAL_ASSEMBLIES)
+	$(CSC) -out:$@ $(MANAGE_INDEX_CSFLAGS) $(MANAGE_INDEX_CSFILES) $(MANAGE_INDEX_ASSEMBLIES)
+
 # OK, now back to our regularly scheduled program.  But notice all of the
 # EXTRA_DIST and CLEANFILES stuff at the bottom of the file.  Yuck.
 
@@ -789,7 +842,11 @@ ALL_TARGETS = 				\
 	$(SNIPPET_TEST_TARGET)		\
 	$(TERM_STATS_TARGET)		\
 	$(NAME_INDEX_TARGET)		\
-	$(FS_SANITY_CHECK_TARGET)
+	$(FS_SANITY_CHECK_TARGET)	\
+	$(MANAGE_INDEX_TARGET)		\
+	$(MANAGE_INDEX_WRAPPER)		\
+	$(BUILD_INDEX_TARGET)		\
+	$(BUILD_INDEX_WRAPPER)
 
 if ENABLE_WEBSERVICES
 ALL_TARGETS += 				\
@@ -816,6 +873,8 @@ endif
 	$(INSTALL_DATA) $(INDEX_WEB_CONTENT_TARGET) $(DESTDIR)$(pkglibdir)/$(INDEX_WEB_CONTENT_TARGET)
 	$(INSTALL_DATA) $(INDEX_HELPER_TARGET) $(DESTDIR)$(pkglibdir)/$(INDEX_HELPER_TARGET)
 	$(INSTALL_SCRIPT) $(INDEX_HELPER_WRAPPER) $(DESTDIR)$(pkglibdir)/$(INDEX_HELPER_WRAPPER)
+	$(INSTALL_DATA) $(BUILD_INDEX_TARGET) $(DESTDIR)$(pkglibdir)/$(BUILD_INDEX_TARGET)
+	$(INSTALL_DATA) $(MANAGE_INDEX_TARGET) $(DESTDIR)$(pkglibdir)/$(MANAGE_INDEX_TARGET)
 if ENABLE_WEBSERVICES
 	$(INSTALL_DATA) $(WEBSERVICES_XSP_TARGET) $(DESTDIR)$(pkglibdir)/$(WEBSERVICES_XSP_TARGET)
 	$(INSTALL_DATA) $(WEBSERVICES_BACKEND_TARGET) $(DESTDIR)$(pkglibdir)/$(WEBSERVICES_BACKEND_TARGET)
@@ -838,10 +897,14 @@ endif
 	rm -f $(DESTDIR)$(pkglibdir)/$(INDEX_HELPER_TARGET)
 	rm -f $(DESTDIR)$(pkglibdir)/$(INDEX_HELPER_WRAPPER)
 	rm -f $(DESTDIR)$(pkglibdir)/$(INDEX_WEB_CONTENT_TARGET)
+	rm -f $(DESTDIR)$(pkglibdir)/$(BUILD_INDEX_TARGET)
+	rm -f $(DESTDIR)$(pkglibdir)/$(MANAGE_INDEX_TARGET)
 
 bin_SCRIPTS = \
 	$(DAEMON_WRAPPER)		\
-	$(INDEX_WEB_CONTENT_WRAPPER)
+	$(INDEX_WEB_CONTENT_WRAPPER)	\
+	$(MANAGE_INDEX_WRAPPER)	\
+	$(BUILD_INDEX_WRAPPER)
 
 noinst_SCRIPTS=	\
 	$(EXTRACT_CONTENT_WRAPPER)	\
@@ -872,6 +935,8 @@ EXTRA_DIST = \
 	$(TERM_STATS_CSFILES)			\
 	$(NAME_INDEX_CSFILES)			\
 	$(FS_SANITY_CHECK_CSFILES)		\
+	$(MANAGE_INDEX_CSFILES)		\
+	$(BUILD_INDEX_CSFILES)			\
 	$(WEBSERVICES_XSP_CSFILES)		\
 	$(WEBSERVICES_BACKEND_CSFILES)		\
 	$(WEBSERVICES_FRONTEND_CSFILES)		\
@@ -912,6 +977,12 @@ CLEANFILES = \
 	$(FS_SANITY_CHECK_TARGET)		\
 	$(FS_SANITY_CHECK_TARGET).mdb		\
 	$(FS_SANITY_CHECK_WRAPPER)		\
+	$(MANAGE_INDEX_TARGET)			\
+	$(MANAGE_INDEX_TARGET).mdb		\
+	$(MANAGE_INDEX_WRAPPER)			\
+	$(BUILD_INDEX_TARGET)			\
+	$(BUILD_INDEX_TARGET).mdb		\
+	$(BUILD_INDEX_WRAPPER)			\
 	$(WEBSERVICES_BACKEND_TARGET)		\
 	$(WEBSERVICES_BACKEND_TARGET).mdb	\
 	$(WEBSERVICES_FRONTEND_TARGET)		\

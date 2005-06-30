@@ -32,7 +32,7 @@ using Beagle.Util;
 
 namespace Beagle.Daemon {
 
-	public class LuceneQueryable : IQueryable {
+	public abstract class LuceneQueryable : IQueryable {
 
 		public delegate IIndexer IndexerCreator (string name, int minor_version);
 
@@ -93,14 +93,18 @@ namespace Beagle.Daemon {
 
 		//////////////////////////////////////////////////////////
 
-		public LuceneQueryable (string index_name) : this (index_name, -1) { }
+		public LuceneQueryable (string index_name) : this (index_name, -1, false) { }
 
-		public LuceneQueryable (string index_name, int minor_version)
+		public LuceneQueryable (string index_name, bool disable_locking) : this (index_name, -1, disable_locking) { }
+
+		public LuceneQueryable (string index_name, int minor_version) : this (index_name, minor_version, false) { }
+
+		public LuceneQueryable (string index_name, int minor_version, bool disable_locking)
 		{
 			this.index_name = index_name;
 			this.minor_version = minor_version;
 
-			driver = new LuceneDriver (this.index_name, minor_version);
+			driver = new LuceneDriver (this.index_name, this.minor_version, disable_locking);
 
 			indexer = LocalIndexerHook ();
 			if (indexer == null && indexer_hook != null)
@@ -434,8 +438,6 @@ namespace Beagle.Daemon {
 			return best_m;
 		}
 
-
-		
 		/////////////////////////////////////////
 
 		protected virtual ICollection DoBonusQuery (Query query, ICollection list_of_uris)
@@ -517,7 +519,7 @@ namespace Beagle.Daemon {
 
 		public virtual int GetItemCount ()
 		{
-			return indexer.GetItemCount ();
+			return driver.GetItemCount ();
 		}
 
 		/////////////////////////////////////////

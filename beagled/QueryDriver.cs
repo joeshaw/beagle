@@ -24,7 +24,6 @@
 // DEALINGS IN THE SOFTWARE.
 //
 
-
 using System;
 using System.IO;
 using System.Collections;
@@ -32,7 +31,6 @@ using System.Reflection;
 using System.Text;
 using System.Threading;
 using Beagle.Util;
-
 namespace Beagle.Daemon {
 	
 	public class QueryDriver {
@@ -137,6 +135,85 @@ namespace Beagle.Daemon {
 			Logger.Log.Debug ("Found {0} types in {1}", count, assembly.FullName);
 		}
 
+		////////////////////////////////////////////////////////
+
+		// Scans PathFinder.SystemIndexesDir after available 
+		// system-wide indexes.
+		static void ScanSystemIndexes () 
+		{
+			if (!Directory.Exists (PathFinder.SystemIndexesDir))
+				return;
+			
+			int count = 0;
+
+			foreach (DirectoryInfo index_dir in new DirectoryInfo (PathFinder.SystemIndexesDir).GetDirectories ()) {
+				if (! UseQueryable (index_dir.Name))
+					continue;
+				
+				if (LoadStaticQueryable (index_dir, true, QueryDomain.System))
+					count++;
+			}
+
+			Logger.Log.Debug ("Found {0} system-wide indexes", count);
+		}
+
+		// Scans configuration for user-specified index paths 
+		// to load StaticQueryables from.
+		static void ScanStaticQueryables () 
+		{
+			if (Conf.Daemon.StaticQueryables.Count < 1)
+				return;
+
+			int count = 0;
+
+			foreach (string index_path in Conf.Daemon.StaticQueryables) {
+				DirectoryInfo index_dir = new DirectoryInfo (index_path);
+
+				if (!index_dir.Exists)
+					continue;
+				
+				// FIXME: QueryDomain might be other than local
+				if (LoadStaticQueryable (index_dir, false, QueryDomain.Local))
+					count++;
+			}
+
+			Logger.Log.Debug ("Found {0} user-configured static queryables", count);
+		}
+
+		// Instantiates and loads a StaticQueryable from an index directory
+		static private bool LoadStaticQueryable (DirectoryInfo index_dir, bool disable_locking, QueryDomain query_domain) 
+		{
+			StaticQueryable static_queryable = null;
+			
+			if (!index_dir.Exists)
+				return false;
+			
+			try {
+				static_queryable = new StaticQueryable (index_dir.Name, index_dir.FullName, disable_locking);
+			} catch (Exception e) {
+				Logger.Log.Error ("Caught exception while instantiating static queryable: {0}", index_dir.Name);
+				Logger.Log.Error (e);					
+				return false;
+			}
+			
+			if (static_queryable != null) {
+				QueryableFlavor flavor = new QueryableFlavor ();
+				flavor.Name = index_dir.Name;
+				flavor.Domain = query_domain;
+				
+				Queryable queryable = new Queryable (flavor, static_queryable);
+				queryables.Add (queryable);
+				
+				iqueryable_to_queryable [queryable] = static_queryable;
+
+				return true;
+			}
+
+			return false;
+		}
+
+		////////////////////////////////////////////////////////
+
 		static private Type[] GetQueryableTypes (Assembly assembly)
 		{
 			Type[] assembly_types = assembly.GetTypes ();
@@ -195,17 +272,29 @@ namespace Beagle.Daemon {
 				Server.ScanAssemblyForExecutors (assembly);
 			}
 
+			ScanSystemIndexes ();
+
+			ScanStaticQueryables ();
+
 			foreach (Queryable q in queryables)
 				q.Start ();
 		}
 
 		static public string ListBackends ()
 		{
-			string ret = "";
+			string ret = "User:\n";
 			foreach (Assembly assembly in GetAssemblies ())
 				foreach (Type type in GetQueryableTypes (assembly))
 					foreach (QueryableFlavor flavor in GetQueryableFlavors (type))
-						ret += " - " + flavor.Name + "\n";
+				ret += String.Format (" - {0}\n", flavor.Name);
+			
+			if (!Directory.Exists (PathFinder.SystemIndexesDir)) 
+				return ret;
+			
+			ret += "System:\n";
+			foreach (DirectoryInfo index_dir in new DirectoryInfo (PathFinder.SystemIndexesDir).GetDirectories ()) {
+				ret += String.Format (" - {0}\n", index_dir.Name);
+			}
 
 			return ret;
 		}

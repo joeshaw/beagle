@@ -89,11 +89,19 @@ namespace Beagle.Daemon {
 		private bool optimizing = false;
 		private int last_item_count = -1;
 
-		public LuceneDriver (string index_name) : this (index_name, 0) { }
+		/////////////////////////////////////////////////////
 
-		public LuceneDriver (string index_name, int index_version)
+		public LuceneDriver (string index_name) : this (index_name, 0, false) { }
+
+		public LuceneDriver (string index_name, string index_dir) : this (index_name, 0, false) { }
+
+		public LuceneDriver (string index_name, bool disable_locking) : this (index_name, 0, disable_locking) { }
+
+		public LuceneDriver (string index_name, int index_version) : this (index_name, index_version, false) { }
+
+		public LuceneDriver (string index_name, int index_version, bool disable_locking)
 		{
-			Setup (index_name, index_version);
+			Setup (index_name, index_version, disable_locking);
 		}
 
 		public string IndexDirectory {
@@ -120,9 +128,9 @@ namespace Beagle.Daemon {
 
 		/////////////////////////////////////////////////////
 
-		private void Setup (string index_name, int _minor_version)
+		private void Setup (string index_name, int _minor_version, bool disable_locking)
 		{			
-			top_dir = Path.Combine (PathFinder.StorageDir, index_name); 
+			top_dir = Path.Combine (PathFinder.StorageDir, index_name);
 			
 			string versionFile = Path.Combine (top_dir, "version");
 			string fingerprintFile = Path.Combine (top_dir, "fingerprint");
@@ -194,8 +202,12 @@ namespace Beagle.Daemon {
 				StreamReader sr = new StreamReader (fingerprintFile);
 				fingerprint = sr.ReadLine ();
 				sr.Close ();
-
 			} else {
+				// We can't create the index if we are in 
+				// read-only mode obviously.
+				if (disable_locking)
+					throw new InvalidOperationException ("LuceneDriver is in read-only mode, but requires index-creation");
+
 				// Purge and rebuild the index's directory
 				// structure.
 
@@ -224,10 +236,12 @@ namespace Beagle.Daemon {
 			}
 
 			Lucene.Net.Store.FSDirectory store;
-			store = Lucene.Net.Store.FSDirectory.GetDirectory (indexDir, lockDir, false);
+			
+			store = Lucene.Net.Store.FSDirectory.GetDirectory (indexDir, lockDir, false, disable_locking);
+			
 			ourStore = store;
 			ourStorePath = indexDir;
-
+			
 			//Store = store;
 
 			if (!indexExists) {
@@ -383,6 +397,11 @@ namespace Beagle.Daemon {
 			// Step #2: Write out the pending adds
 			watch.Restart ();
 			IndexWriter writer = null;
+
+			// FIXME: Change this to a queue so that items 
+			// that are added while we flush (like children) also 
+			// gets committed.
+
 			foreach (Indexable indexable in pending_indexables) {
 				
 				Log.Debug ("+ {0}", indexable.DisplayUri);
@@ -422,9 +441,14 @@ namespace Beagle.Daemon {
 					// filter and set up the parent-child relationship.
 					foreach (Indexable child in filter.ChildIndexables)
 						child.SetChildOf (indexable);
-
+					
+					// If nobody is listening for ChildIndexableEvent, 
+					// just add them ourselves so we wont loose them
 					if (ChildIndexableEvent != null)
 						ChildIndexableEvent ((Indexable[]) filter.ChildIndexables.ToArray (typeof (Indexable)));
+					else
+						foreach (Indexable child in filter.ChildIndexables) 
+							Add (child);
 				}
 			}
 			if (writer != null) 
@@ -509,8 +533,10 @@ namespace Beagle.Daemon {
 
 			Stopwatch sw = new Stopwatch ();
 			sw.Start ();
+
 			IndexReader reader = IndexReader.Open (Store);
 			LNS.Searcher searcher = new LNS.IndexSearcher (reader);
+
 			LNS.Hits hits = searcher.Search (lucene_query);
 			sw.Stop ();
 
@@ -549,6 +575,7 @@ namespace Beagle.Daemon {
 					double m = relevancy_multiplier (hit);
 					hit.ScoreMultiplier = (float) m;
 				}
+
 				result.Add (hit);
 			}
 
@@ -701,7 +728,7 @@ namespace Beagle.Daemon {
 
 			f = Field.Keyword ("Type", indexable.Type);
 			doc.Add (f);
-
+			
 			if (indexable.ParentUri != null) {
 				f = Field.Keyword ("ParentUri", UriFu.UriToSerializableString (indexable.ParentUri));
 				doc.Add (f);
@@ -1192,6 +1219,27 @@ namespace Beagle.Daemon {
 
 		/////////////////////////////////////////////////////
 
+		public void Merge (string merge_dir)
+		{
+			string index_dir = Path.Combine (top_dir, "Index");
+			string locks_dir = Path.Combine (top_dir, "Locks");
+
+			if (!Directory.Exists (index_dir) || !Directory.Exists (locks_dir)) {
+				throw new Exception ("Index does not exists");
+			}
+			
+			// FIXME: Error recovery
+
+			Lucene.Net.Store.FSDirectory store = Lucene.Net.Store.FSDirectory.GetDirectory (index_dir, locks_dir, false);
+			Lucene.Net.Store.Directory[] stores = {store};
+			
+			IndexWriter writer = new IndexWriter (Store, null, false);
+			writer.AddIndexes (stores);
+			writer.Close ();
+		}
+
+		/////////////////////////////////////////////////////
+
 		// Expose some information for debugging and analytical purposes.
 
 		public void WriteIndexTermFrequencies (TextWriter writer)
@@ -1200,6 +1248,7 @@ namespace Beagle.Daemon {
 			TermEnum term_enum = reader.Terms ();
 
 			Term term;
+
 			while (term_enum.Next ()) {
 				term = term_enum.Term ();
 				int freq = term_enum.DocFreq ();
