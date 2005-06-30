@@ -390,8 +390,7 @@ namespace Beagle.Daemon {
 			if (lucene_query == null)
 				return new string [0];
 			
-			IndexReader reader = IndexReader.Open (store);
-			LNS.Searcher searcher = new LNS.IndexSearcher (reader);
+			LNS.Searcher searcher = new LNS.IndexSearcher (store);
 			LNS.Hits hits = searcher.Search (lucene_query);
 
 			int n_hits = hits.Length ();
@@ -403,7 +402,6 @@ namespace Beagle.Daemon {
 			}
 
 			searcher.Close ();
-			reader.Close ();
 
 			return uids;
 		}
@@ -438,8 +436,7 @@ namespace Beagle.Daemon {
 				}
 			}
 
-			IndexReader reader = IndexReader.Open (store);
-			LNS.Searcher searcher = new LNS.IndexSearcher (reader);
+			LNS.Searcher searcher = new LNS.IndexSearcher (store);
 			LNS.Hits hits = searcher.Search (query);
 			int n_hits = hits.Length ();
 
@@ -451,7 +448,6 @@ namespace Beagle.Daemon {
 			}
 
 			searcher.Close ();
-			reader.Close ();
 
 			return records;
 		}

@@ -533,10 +533,7 @@ namespace Beagle.Daemon {
 
 			Stopwatch sw = new Stopwatch ();
 			sw.Start ();
-
-			IndexReader reader = IndexReader.Open (Store);
-			LNS.Searcher searcher = new LNS.IndexSearcher (reader);
-
+			LNS.Searcher searcher = new LNS.IndexSearcher (Store);
 			LNS.Hits hits = searcher.Search (lucene_query);
 			sw.Stop ();
 
@@ -586,7 +583,6 @@ namespace Beagle.Daemon {
 			//////////////////////////////////////
 
 			searcher.Close ();
-			reader.Close ();
 
 			log.Debug ("{0}: n_hits={1} lucene={2:0.00}s assembly={3:0.00}s",
 				   StorePath, n_hits, t_lucene, t_assembly);

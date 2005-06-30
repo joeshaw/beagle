@@ -1,4 +1,3 @@
-
 //
 // EvolutionMailDriver.cs
 //
@@ -305,15 +304,30 @@ namespace Beagle.Daemon.EvolutionMailDriver {
 
 		public void IndexSummary (FileInfo summaryInfo)
 		{
+			// If there's already a task running for this folder,
+			// don't interrupt it.
+			if (ThisScheduler.ContainsByTag (summaryInfo.FullName)) {
+				Logger.Log.Debug ("Not adding task for already running task: {0}", summaryInfo.FullName);
+				return;
+			}
+
 			EvolutionMailIndexableGeneratorImap generator = new EvolutionMailIndexableGeneratorImap (this, summaryInfo);
 			Scheduler.Task task;
 			task = NewAddTask (generator, new Scheduler.Hook (generator.Checkpoint));
+			task.Tag = summaryInfo.FullName;
 			// IndexableGenerator tasks default to having priority Scheduler.Priority Generator
 			ThisScheduler.Add (task);
 		}
 
 		public void IndexMbox (FileInfo mboxInfo)
 		{
+			// If there's already a task running for this mbox,
+			// don't interrupt it.
+			if (ThisScheduler.ContainsByTag (mboxInfo.FullName)) {
+				Logger.Log.Debug ("Not adding task for already running task: {0}", mboxInfo.FullName);
+				return;
+			}
+
 			EvolutionMailIndexableGeneratorMbox generator = new EvolutionMailIndexableGeneratorMbox (this, mboxInfo);
 			Scheduler.Task task;
 			task = NewAddTask (generator, new Scheduler.Hook (generator.Checkpoint));

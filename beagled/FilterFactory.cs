@@ -223,6 +223,8 @@ namespace Beagle.Daemon {
 				if (indexable.DeleteContent && indexable.Uri != indexable.ContentUri)
 					candidate_filter.DeleteContent = indexable.DeleteContent;
 				
+				// Set the filter's URI
+				candidate_filter.Uri = indexable.Uri;
 				
 				// Open the filter, copy the file's properties to the indexable,
 				// and hook up the TextReaders.

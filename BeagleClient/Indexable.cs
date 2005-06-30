@@ -356,6 +356,9 @@ namespace Beagle {
 		{
 			this.ParentUri = parent.Uri;
 
+			if (!this.ValidTimestamp)
+				this.Timestamp = parent.Timestamp;
+
 			// FIXME: Set all of the parent's properties on the
 			// child so that we get matches against the child
 			// that otherwise would match only the parent, at

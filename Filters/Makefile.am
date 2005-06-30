@@ -49,7 +49,8 @@ CSFILES = 				\
 	$(srcdir)/FilterDocbook.cs	\
 	$(srcdir)/FilterMonodoc.cs	\
 	$(srcdir)/FilterDesktop.cs	\
-	$(srcdir)/FilterDirectory.cs
+	$(srcdir)/FilterDirectory.cs	\
+	$(srcdir)/FilterMail.cs
 
 if ENABLE_GSF_SHARP
 CSFILES += 				\
@@ -88,6 +89,7 @@ LOCAL_ASSEMBLIES =				\
 ASSEMBLIES =				\
 	$(BEAGLED_LIBS)			\
 	-r:ICSharpCode.SharpZipLib.dll	\
+	-r:Mono.Posix			\
 	$(LOCAL_ASSEMBLIES:%=-r:%)
 
 if ENABLE_GST_SHARP

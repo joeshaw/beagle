@@ -425,6 +425,15 @@ namespace Beagle.Util {
 					if (immediate_priority_only && task.Priority != Priority.Immediate)
 						return false;
 
+					// Keep track of when immediate priority tasks are
+					// added so that we can throttle if the scheduler
+					// is being slammed with them.
+					if (task.Priority == Priority.Immediate) {
+						// Shift our times down by one
+						Array.Copy (last_immediate_times, 1, last_immediate_times, 0, 4);
+						last_immediate_times [4] = DateTime.Now;
+					}
+
 					old_task = task_by_tag [task.Tag] as Task;
 					if (old_task == task)
 						return true;
@@ -566,6 +575,8 @@ namespace Beagle.Util {
 		const double default_idle_rate_factor    = 2.097; // work about 1/3rd of the time
 		const double default_maximum_delay       = 20;    // never wait for more than 20s
 
+		DateTime[] last_immediate_times = new DateTime [5];
+
 		private double GetIdleTime ()
 		{
 			return SystemInformation.InputIdleTime;
@@ -586,6 +597,7 @@ namespace Beagle.Util {
 			double idle_time = GetIdleTime ();
 			double idle_scale = 1.0;
 			bool is_idle = false;
+			bool need_throttle = false;
 
 			// Never speed up if we are using the battery.
 			if (idle_time > idle_threshold && ! SystemInformation.UsingBattery) {
@@ -598,6 +610,28 @@ namespace Beagle.Util {
 				
 			case Priority.Immediate:
 				rate_factor = 0;
+
+				if (last_immediate_times [0] != DateTime.MinValue) {
+					TimeSpan last_add_delta = DateTime.Now.Subtract (last_immediate_times [4]);
+
+					// If less than a second has gone by since the
+					// last immediate task was added, there is
+					// still a torrent of events coming in, and we
+					// may need to throttle.
+					if (last_add_delta.Seconds <= 1) {
+						TimeSpan between_add_delta = last_immediate_times [4].Subtract (last_immediate_times [0]);
+
+						// At least 5 immediate tasks have been
+						// added in the last second.  We
+						// definitely need to throttle.
+						if (between_add_delta.Seconds <= 1) {
+							Logger.Log.Debug ("### THROTTLING IMMEDIATE PRIORITY");
+							need_throttle = true;
+							rate_factor = idle_scale * default_idle_rate_factor;
+						}
+					}
+				}
+
 				break;
 
 			case Priority.Generator:
@@ -629,6 +663,13 @@ namespace Beagle.Util {
 
 			if (delay > default_maximum_delay)
 				delay = default_maximum_delay;
+
+			// If we need to throttle, make sure we don't delay less than
+			// a second and some.
+			if (need_throttle && delay < 1.25)
+				delay = 1.25;
+
+			Console.WriteLine ("delay is {0} seconds", delay);
 
 			return delay;
 		}

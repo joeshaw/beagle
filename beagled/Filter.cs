@@ -597,11 +597,29 @@ namespace Beagle.Daemon {
 
 		//////////////////////////////
 
+		// This is used primarily for the generation of URIs for the
+		// child indexables that can be created as a result of the
+		// filtering process.
+
+		private Uri uri = null;
+
+		public Uri Uri {
+			get { return uri; }
+			set { uri = value; }
+		}
+
+		//////////////////////////////
+
 		private ArrayList child_indexables = new ArrayList ();
 
 		protected void AddChildIndexable (Indexable indexable)
 		{
 			this.child_indexables.Add (indexable);
+		}
+		
+		protected void AddChildIndexables (ICollection indexables)
+		{
+			this.child_indexables.AddRange (indexables);
 		}
 
 		public ArrayList ChildIndexables {

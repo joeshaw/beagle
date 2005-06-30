@@ -57,7 +57,6 @@ namespace Beagle.Daemon.EvolutionMailDriver {
 
 		protected string account_name, folder_name;
 		protected int count, indexed_count;
-		protected Queue child_indexables = new Queue ();
 
 		protected EvolutionMailIndexableGenerator (EvolutionMailQueryable queryable)
 		{
@@ -106,97 +105,6 @@ namespace Beagle.Daemon.EvolutionMailDriver {
 		protected void CrawlFinished ()
 		{
 			this.queryable.FileAttributesStore.AttachTimestamp (this.CrawlFile.FullName, DateTime.Now);
-		}
-
-		protected class PartHandler {
-			private Indexable parent;
-			private int count = 0;
-			private int depth = 0;
-			public ArrayList child_indexables = new ArrayList ();
-
-			public PartHandler (Indexable parent)
-			{
-				this.parent = parent;
-			}
-
-			private void OnEachPart (GMime.Object part)
-			{
-				//for (int i = 0; i < depth; i++)
-				//  Console.Write ("  ");
-				//Console.WriteLine ("Content-Type: {0}", part.ContentType);
-
-				++depth;
-
-				if (part is GMime.MessagePart) {
-					GMime.MessagePart msg_part = (GMime.MessagePart) part;
-
-					using (GMime.Message message = msg_part.Message) {
-						using (GMime.Object subpart = message.MimePart)
-							this.OnEachPart (subpart);
-					}
-				} else if (part is GMime.Multipart) {
-					GMime.Multipart multipart = (GMime.Multipart) part;
-
-					int num_parts = multipart.Number;
-					for (int i = 0; i < num_parts; i++) {
-						using (GMime.Object subpart = multipart.GetPart (i))
-							this.OnEachPart (subpart);
-					}
-				} else if (part is GMime.Part) {
-					MemoryStream stream = null;
-					
-					using (GMime.DataWrapper content_obj = ((GMime.Part) part).ContentObject) {
-						stream = new MemoryStream ();
-						content_obj.WriteToStream (stream);
-						stream.Seek (0, SeekOrigin.Begin);
-					}
-
-					// If this is the only part, we want to attach to the
-					// parent indexable.  Otherwise, we need to create
-					// children for each part.
-					if (this.depth == 1 && this.count == 0) {
-						this.parent.MimeType = part.ContentType.ToString ();
-						this.parent.NoContent = false;
-
-						if (part.ContentType.Type.ToLower () == "text")
-							this.parent.SetTextReader (new StreamReader (stream));
-						else
-							this.parent.SetBinaryStream (stream);
-					} else {
-						string sub_uri = this.parent.Uri.ToString () + "#" + this.count;
-						Indexable child = new Indexable (new Uri (sub_uri));
-
-						child.SetChildOf (this.parent);
-
-						child.Timestamp = parent.Timestamp;
-						child.Type = "MailMessage";
-						child.MimeType = part.ContentType.ToString ();
-						child.CacheContent = false;
-
-						if (part.ContentType.Type.ToLower () == "text")
-							child.SetTextReader (new StreamReader (stream));
-						else
-							child.SetBinaryStream (stream);
-
-						this.child_indexables.Add (child);
-					}
-
-					this.count++;
-				} else {
-					throw new Exception (String.Format ("Unknown part type: {0}", part.GetType ()));
-				}
-
-				--depth;
-			}
-
-			public static ICollection GetIndexables (Indexable parent, GMime.Message message)
-			{
-				PartHandler handler = new PartHandler (parent);
-				using (GMime.Object mime_part = message.MimePart)
-					handler.OnEachPart (mime_part);
-
-				return handler.child_indexables;
-			}
 		}
 
 		public string StatusName {
@@ -333,19 +241,6 @@ namespace Beagle.Daemon.EvolutionMailDriver {
 
 		public override Indexable GetNextIndexable ()
 		{
-			Indexable indexable = null;
-			
-			// First see if there are any child indexables that we
-			// need to deal with first.
-
-			if (this.child_indexables.Count > 0)
-				indexable = this.child_indexables.Dequeue () as Indexable;
-
-			if (indexable != null)
-				return indexable;
-
-			// Ok, none there, let's go ahead with our regularly
-			// scheduled processing.
 			using (GMime.Message message = this.mbox_parser.ConstructMessage ()) {
 				++this.count;
 
@@ -374,15 +269,11 @@ namespace Beagle.Daemon.EvolutionMailDriver {
 				string uid_str = x_evolution.Substring (0, separator_idx);
 				string uid = Convert.ToUInt32 (uid_str, 16).ToString (); // ugh.
 				uint flags = Convert.ToUInt32 (x_evolution.Substring (separator_idx + 1), 16);
-				
-				ICollection child_indexables;
-				indexable = this.GMimeMessageToIndexable (uid, message, flags, out child_indexables);
+
+				Indexable indexable = this.GMimeMessageToIndexable (uid, message, flags);
 				
 				if (indexable == null)
 					return null;
-
-				foreach (Indexable child in child_indexables)
-					this.child_indexables.Enqueue (child);
 
 				++this.indexed_count;
 
@@ -398,10 +289,8 @@ namespace Beagle.Daemon.EvolutionMailDriver {
 			return (flags & (uint) test) == (uint) test;
 		}
 
-		private Indexable GMimeMessageToIndexable (string uid, GMime.Message message, uint flags, out ICollection child_indexables)
+		private Indexable GMimeMessageToIndexable (string uid, GMime.Message message, uint flags)
 		{
-			child_indexables = null;
-
 			// Don't index messages flagged as junk
 			if (CheckFlags (flags, Camel.CamelFlags.Junk))
 				return null;
@@ -411,25 +300,17 @@ namespace Beagle.Daemon.EvolutionMailDriver {
 
 			indexable.Timestamp = message.Date;
 			indexable.Type = "MailMessage";
-			indexable.MimeType = "text/plain";
+			indexable.MimeType = "message/rfc822";
 			indexable.CacheContent = false;
-			indexable.NoContent = true;
 
 			indexable.AddProperty (Property.NewKeyword ("fixme:client", "evolution"));
-
-			string subject = GMime.Utils.HeaderDecodePhrase (message.Subject);
-			indexable.AddProperty (Property.New ("dc:title", subject));
-
 			indexable.AddProperty (Property.NewKeyword ("fixme:account", "Local"));
                         indexable.AddProperty (Property.NewKeyword ("fixme:folder", this.folder_name));
 
 			GMime.InternetAddressList addrs;
+
 			addrs = message.GetRecipients (GMime.Message.RecipientType.To);
 			foreach (GMime.InternetAddress ia in addrs) {
-				indexable.AddProperty (Property.NewKeyword ("fixme:to", ia.ToString (false)));
-				indexable.AddProperty (Property.NewKeyword ("fixme:to_address", ia.Addr));
-				indexable.AddProperty (Property.NewKeyword ("fixme:to_name", ia.Name));
-
 				if (this.folder_name == "Sent")
 					indexable.AddProperty (Property.NewKeyword ("fixme:sentTo", ia.Addr));
 			}
@@ -437,10 +318,6 @@ namespace Beagle.Daemon.EvolutionMailDriver {
 
 			addrs = message.GetRecipients (GMime.Message.RecipientType.Cc);
 			foreach (GMime.InternetAddress ia in addrs) {
-				indexable.AddProperty (Property.NewKeyword ("fixme:cc", ia.ToString (false)));
-				indexable.AddProperty (Property.NewKeyword ("fixme:cc_address", ia.Addr));
-				indexable.AddProperty (Property.NewKeyword ("fixme:cc_name", ia.Name));
-
 				if (this.folder_name == "Sent")
 					indexable.AddProperty (Property.NewKeyword ("fixme:sentTo", ia.Addr));
 			}
@@ -448,10 +325,6 @@ namespace Beagle.Daemon.EvolutionMailDriver {
 
 			addrs = GMime.InternetAddressList.ParseString (GMime.Utils.HeaderDecodePhrase (message.Sender));
 			foreach (GMime.InternetAddress ia in addrs) {
-				indexable.AddProperty (Property.NewKeyword ("fixme:from", ia.ToString (false)));
-				indexable.AddProperty (Property.NewKeyword ("fixme:from_address", ia.Addr));
-				indexable.AddProperty (Property.NewKeyword ("fixme:from_name", ia.Name));
-
 				if (this.folder_name != "Sent")
 					indexable.AddProperty (Property.NewKeyword ("fixme:gotFrom", ia.Addr));
 			}
@@ -459,16 +332,6 @@ namespace Beagle.Daemon.EvolutionMailDriver {
 
 			if (this.folder_name == "Sent")
 				indexable.AddProperty (Property.NewFlag ("fixme:isSent"));
-
-			if (message.MimePart is GMime.Multipart || message.MimePart is GMime.MessagePart)
-				indexable.AddProperty (Property.NewFlag ("fixme:hasAttachments"));
-
-			string list_id = message.GetHeader ("List-Id");
-
-			if (list_id != null) {
-				// FIXME: Might need some additional parsing.
-				indexable.AddProperty (Property.NewKeyword ("fixme:mlist", GMime.Utils.HeaderDecodePhrase (list_id)));
-			}
 
 			if (this.folder_name == "Sent")
 				indexable.AddProperty (Property.NewDate ("fixme:sentdate", message.Date));
@@ -495,7 +358,10 @@ namespace Beagle.Daemon.EvolutionMailDriver {
 			if (CheckFlags (flags, Camel.CamelFlags.AnsweredAll))
 				indexable.AddProperty (Property.NewFlag ("fixme:isAnsweredAll"));
 
-			child_indexables = PartHandler.GetIndexables (indexable, message);
+			MemoryStream stream = new MemoryStream ();
+			message.WriteToStream (stream);
+			stream.Seek (0, SeekOrigin.Begin);
+			indexable.SetBinaryStream (stream);
 
 			return indexable;
 		}
@@ -764,37 +630,6 @@ namespace Beagle.Daemon.EvolutionMailDriver {
 			return false;
 		}
 
-		private ICollection CreateContentIndexables (Indexable indexable, string file)
-		{
-			try {
-				InitializeGMime ();
-			} catch (Exception e) {
-				Logger.Log.Warn ("Caught exception trying to initialize gmime:");
-				Logger.Log.Warn (e);
-				return null;
-			}
-
-			int fd = Syscall.open (file, OpenFlags.O_RDONLY);
-
-			Console.WriteLine ("fd: {0}", fd);
-
-			GMime.StreamFs stream = new GMime.StreamFs (fd);
-			GMime.Parser parser = new GMime.Parser (stream);
-
-			ICollection child_indexables = null;
-
-			using (GMime.Message message = parser.ConstructMessage ())
-				child_indexables = PartHandler.GetIndexables (indexable, message);
-
-			Console.WriteLine ("Got {0} child indexables", child_indexables.Count);
-
-			stream.Close ();
-			stream.Dispose ();
-			parser.Dispose ();
-
-			return child_indexables;
-		}
-
 		// Kind of nasty, but we need the function.
 		[System.Runtime.InteropServices.DllImport("libglib-2.0.so.0")]
 		static extern int g_str_hash (string str);
@@ -806,17 +641,6 @@ namespace Beagle.Daemon.EvolutionMailDriver {
 		{
 			Indexable indexable = null;
 
-			// First see if there are any child indexables that we
-			// need to deal with first.
-
-			if (this.child_indexables.Count > 0)
-				indexable = this.child_indexables.Dequeue () as Indexable;
-
-			if (indexable != null)
-				return indexable;
-
-			// Ok, none there, let's go ahead with our regularly
-			// scheduled processing.
 			Camel.MessageInfo mi = (Camel.MessageInfo) this.summary_enumerator.Current;
 
 			++this.count;
@@ -834,14 +658,8 @@ namespace Beagle.Daemon.EvolutionMailDriver {
 					string cache_path = String.Format ("cache/{0:x}/{1}", hash, mi.uid);
 					msg_file = Path.Combine (summary_info.DirectoryName, cache_path);
 				}
-				
-				indexable = this.CamelMessageToIndexable (mi);
 
-				if (File.Exists (msg_file)) {
-					ICollection child_indexables = CreateContentIndexables (indexable, msg_file);
-					foreach (Indexable child in child_indexables)
-						this.child_indexables.Enqueue (child);
-				}
+				indexable = this.CamelMessageToIndexable (mi, msg_file);
 
 				this.mapping[mi.uid] = mi.flags;
 
@@ -864,30 +682,38 @@ namespace Beagle.Daemon.EvolutionMailDriver {
 			return EvolutionMailQueryable.EmailUri (this.account_name, this.folder_name, message_info.uid);
 		}
 
-		private Indexable CamelMessageToIndexable (Camel.MessageInfo messageInfo)
+		private Indexable CamelMessageToIndexable (Camel.MessageInfo messageInfo, string msg_file)
 		{
 			// Don't index messages flagged as junk
 			if (messageInfo.IsJunk)
 				return null;
 
+			// Many properties will be set by the filter when
+			// processing the cached data, if it's there.  So
+			// don't set a number of properties in that case.
+			bool have_content = File.Exists (msg_file);
+
 			Uri uri = CamelMessageUri (messageInfo);
 			Indexable indexable = new Indexable (uri);
 
 			indexable.Timestamp = messageInfo.Date;
+			indexable.MimeType = "message/rfc822";
 			indexable.Type = "MailMessage";
-			indexable.NoContent = true;
-
-			indexable.AddProperty (Property.New ("dc:title", messageInfo.subject));
 
 			indexable.AddProperty (Property.NewKeyword ("fixme:account",  this.imap_name));
                         indexable.AddProperty (Property.NewKeyword ("fixme:folder",   this.folder_name));
+			
+			if (!have_content)
+				indexable.AddProperty (Property.New ("dc:title", messageInfo.subject));
 
 			GMime.InternetAddressList addrs;
 			addrs = GMime.InternetAddressList.ParseString (messageInfo.to);
 			foreach (GMime.InternetAddress ia in addrs) {
-				indexable.AddProperty (Property.NewKeyword ("fixme:to", ia.ToString (false)));
-				indexable.AddProperty (Property.NewKeyword ("fixme:to_address", ia.Addr));
-				indexable.AddProperty (Property.NewKeyword ("fixme:to_name", ia.Name));
+				if (!have_content) {
+					indexable.AddProperty (Property.NewKeyword ("fixme:to", ia.ToString (false)));
+					indexable.AddProperty (Property.NewKeyword ("fixme:to_address", ia.Addr));
+					indexable.AddProperty (Property.NewKeyword ("fixme:to_name", ia.Name));
+				}
 
 				if (this.folder_name == "Sent")
 					indexable.AddProperty (Property.NewKeyword ("fixme:sentTo", ia.Addr));
@@ -896,9 +722,11 @@ namespace Beagle.Daemon.EvolutionMailDriver {
 
 			addrs = GMime.InternetAddressList.ParseString (messageInfo.cc);
 			foreach (GMime.InternetAddress ia in addrs) {
-				indexable.AddProperty (Property.NewKeyword ("fixme:cc", ia.ToString (false)));
-				indexable.AddProperty (Property.NewKeyword ("fixme:cc_address", ia.Addr));
-				indexable.AddProperty (Property.NewKeyword ("fixme:cc_name", ia.Name));
+				if (!have_content) {
+					indexable.AddProperty (Property.NewKeyword ("fixme:cc", ia.ToString (false)));
+					indexable.AddProperty (Property.NewKeyword ("fixme:cc_address", ia.Addr));
+					indexable.AddProperty (Property.NewKeyword ("fixme:cc_name", ia.Name));
+				}
 
 				if (this.folder_name == "Sent")
 					indexable.AddProperty (Property.NewKeyword ("fixme:sentTo", ia.Addr));
@@ -907,9 +735,11 @@ namespace Beagle.Daemon.EvolutionMailDriver {
 
 			addrs = GMime.InternetAddressList.ParseString (messageInfo.from);
 			foreach (GMime.InternetAddress ia in addrs) {
-				indexable.AddProperty (Property.NewKeyword ("fixme:from", ia.ToString (false)));
-				indexable.AddProperty (Property.NewKeyword ("fixme:from_address", ia.Addr));
-				indexable.AddProperty (Property.NewKeyword ("fixme:from_name", ia.Name));
+				if (!have_content) {
+					indexable.AddProperty (Property.NewKeyword ("fixme:from", ia.ToString (false)));
+					indexable.AddProperty (Property.NewKeyword ("fixme:from_address", ia.Addr));
+					indexable.AddProperty (Property.NewKeyword ("fixme:from_name", ia.Name));
+				}
 
 				if (this.folder_name != "Sent")
 					indexable.AddProperty (Property.NewKeyword ("fixme:gotFrom", ia.Addr));
@@ -943,11 +773,16 @@ namespace Beagle.Daemon.EvolutionMailDriver {
 			if (messageInfo.IsSeen)
 				indexable.AddProperty (Property.NewFlag ("fixme:isSeen"));
 
-			if (messageInfo.HasAttachments)
+			if (messageInfo.HasAttachments && !have_content)
 				indexable.AddProperty (Property.NewFlag ("fixme:hasAttachments"));
 
 			if (messageInfo.IsAnsweredAll)
 				indexable.AddProperty (Property.NewFlag ("fixme:isAnsweredAll"));
+
+			if (have_content)
+				indexable.ContentUri = UriFu.PathToFileUri (msg_file);
+			else
+				indexable.NoContent = true;
 
 			return indexable;
 		}
