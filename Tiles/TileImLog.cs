@@ -107,12 +107,11 @@ namespace Beagle.Tile {
 			}
 
 #if ENABLE_GALAGO
-			if (Hit ["fixme:protocol"] != "aim")
-				return;
-
-			string status = Presence.GetPresence (Hit ["fixme:protocol"], Hit["fixme:speakingto"]);
-			if (status != null && status != "")
-				Template ["Presence"] = status;
+			if (Hit ["fixme:protocol"] == "aim") {
+				string status = GalagoTools.GetPresence (Hit ["fixme:protocol"], Hit["fixme:speakingto"]);
+				if (status != null && status != "")
+					Template ["Presence"] = status;
+			}
 #endif
 		}
 

@@ -30,9 +30,14 @@ using Galago;
 
 namespace Beagle.Util {
 
-	public class Presence {
+	public class GalagoTools {
 
-		private Presence () {} // this class is static
+		private GalagoTools () {} // this class is static
+
+		private static bool Connect ()
+		{
+			return true;
+		}
 
 		public static string GetPresence (string service_id, string username)
 		{
@@ -58,7 +63,8 @@ namespace Beagle.Util {
 			string user_status = null;
 
 			if (presence.Idle == true) 
-				user_status = String.Format ("Idle {0}", StringFu.DurationToPrettyString (DateTime.Now.AddSeconds (presence.IdleTime), DateTime.Now));
+				user_status = String.Format ("Idle {0}",
+							     StringFu.DurationToPrettyString (DateTime.Now.AddSeconds (presence.IdleTime), DateTime.Now));
 			else
 				user_status = presence.ActiveStatus.Name;
 

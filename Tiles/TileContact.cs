@@ -80,6 +80,14 @@ namespace Beagle.Tile {
 
 			if (Hit["fixme:ImAim"] != null)
 				Template["CanSendIm"] = "";
+
+#if ENABLE_GALAGO
+			if (Hit ["fixme:ImAim"] != null) {
+				string status = GalagoTools.GetPresence ("aim", Hit ["fixme:ImAim"]);
+				if (status != null && status != "")
+					Template ["Presence"] = status;
+			}
+#endif
 		}
 
 		[TileAction]
