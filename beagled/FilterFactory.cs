@@ -131,6 +131,14 @@ namespace Beagle.Daemon {
 				return CreateFilters (uri, null, null);
 		}
 
+		static public ICollection CreateFiltersFromIndexable (Indexable indexable)
+		{
+			string path = indexable.ContentUri.LocalPath;
+			string extension = Path.GetExtension (path);
+			string mime_type = indexable.MimeType;
+			return CreateFilters (UriFu.PathToFileUri (path), extension, mime_type);
+		}
+
 		/////////////////////////////////////////////////////////////////////////
 
 		static private bool ShouldWeFilterThis (Indexable indexable)
@@ -171,17 +179,18 @@ namespace Beagle.Daemon {
 
 			if (indexable.IsNonTransient) {
 				// Otherwise sniff the mime-type from the file
+				if (indexable.MimeType == null)
+					indexable.MimeType = Beagle.Util.VFS.Mime.GetMimeType (path);
+
 				if (filters == null || filters.Count == 0) {
-					filters = CreateFiltersFromPath (path);
+					filters = CreateFiltersFromIndexable (indexable);
 				}
-			
+
 				if (Directory.Exists (path)) {
 					indexable.MimeType = "inode/directory";
 					indexable.NoContent = true;
 					indexable.Timestamp = Directory.GetLastWriteTime (path);
 				} else if (File.Exists (path)) {
-					if (indexable.MimeType == null)
-						indexable.MimeType = Beagle.Util.VFS.Mime.GetMimeType (path);
 					indexable.Timestamp = File.GetLastWriteTime (path);
 				} else {
 					Logger.Log.Warn ("No such file: {0}", path);

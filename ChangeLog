@@ -6,6 +6,9 @@
 
 	* Best/BestWindow.cs: Catch the right exception
 
+	* beagled/FilterFactory.cs: Small reorganisation so that we don't try and
+	get the file mime-type twice.
+
 2005-06-28  Daniel Drake  <dsd@gentoo.org>
 
 	* Filters/FilterPPT.cs: Compile fix
