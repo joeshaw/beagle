@@ -318,6 +318,14 @@ namespace Beagle {
 			properties.Add (prop);
 		}
 
+		public bool HasProperty (string keyword) {
+			foreach (Property property in properties)
+				if (property.Key == keyword)
+					return true;
+
+			return false;
+		}
+
 		//////////////////////////
 
 		private string PropertiesAsString (bool keywords)

@@ -48,6 +48,7 @@ namespace Beagle.Filters
 		public FilterDocbook ()
 		{
 			SnippetMode = false;
+			SetVersion (2);
 
 			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("application/docbook+xml"));
 			AddSupportedFlavor (FilterFlavor.NewFromExtension (".docbook"));
@@ -60,7 +61,7 @@ namespace Beagle.Filters
 
 		override protected void DoOpen (FileInfo info)
 		{
-			base_path = info.FullName;
+			base_path = info.FullName;		
 			reader = new XmlTextReader (Stream);
 		}
 
@@ -73,11 +74,21 @@ namespace Beagle.Filters
 			while (reader.Read ()) {
 				switch (reader.NodeType) {
 				case XmlNodeType.Element:
-					if (NodeLooksImportant (reader.Name)) {
+					if (reader.Name.StartsWith ("sect") || reader.Name.StartsWith ("chapter")) {
 						string id = reader.GetAttribute ("id");
-						
 						if (id != null && id != "")
 							CreateIndexable (id, reader.Depth);
+					} else if (reader.Name == "title") {
+						reader.Read (); // Go to the text node
+						if (indexables_stack.Count == 0)
+							break;
+						else {
+							if (((Indexable) indexables_stack.Peek ()).HasProperty ("dc:title"))
+								break;
+
+							// Add the title to the child indexable
+							((Indexable) indexables_stack.Peek ()).AddProperty (Property.NewKeyword ("dc:title", reader.Value)); 
+						}
 					}
 					break;
 					
@@ -136,13 +147,6 @@ namespace Beagle.Filters
 			indexable.SetTextReader (content_reader);
 			
 			AddChildIndexable (indexable);
-		}
-
-		///////////////////////////////////////////////////
-
-		protected bool NodeLooksImportant (string node_name) {
-			return node_name.StartsWith ("sect") || 
-				node_name.StartsWith ("chapter");
 		}
 	}
 }
