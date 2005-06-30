@@ -293,6 +293,20 @@ namespace Beagle.Util {
 			return builder.ToString ();
 		}
 
+		// Translate all %xx codes into real characters
+		static public string HexUnescape (string str)
+		{
+			int i = 0, pos = 0;
+			while ((i = str.IndexOf ('%', pos)) != -1) {
+				pos = i;
+				char unescaped = UriFu.HexUnescape (str, ref pos);
+				str = str.Remove (i, 3);
+				str = str.Insert (i, new String(unescaped, 1));
+				pos -= 2;
+			}
+			return str;
+		}
+
 		static public string PathToQuotedFileUri (string path)
 		{
 			path = Path.GetFullPath (path);

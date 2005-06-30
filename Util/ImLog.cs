@@ -402,8 +402,9 @@ namespace Beagle.Util {
 			
 			log.Timestamp = file.LastWriteTime;	
 
-			log.SpeakingTo = file.Directory.Name;
-			log.Identity   = file.Directory.Parent.Name;
+			// Gaim likes to represent many characters in hex-escaped %xx form
+			log.SpeakingTo = StringFu.HexUnescape (file.Directory.Name);
+			log.Identity   = StringFu.HexUnescape (file.Directory.Parent.Name);
 			
 			array.Add (log);
 		}
