@@ -45,7 +45,7 @@ namespace Beagle {
 	public class Query : RequestMessage {
 
 		// FIXME: This is a good default when on an airplane.
-		private Beagle.QueryDomain domainFlags = Beagle.QueryDomain.Local; 
+		private Beagle.QueryDomain domainFlags = QueryDomain.Local | QueryDomain.System; 
 
 		private ArrayList parts = new ArrayList ();
 		private ArrayList mimeTypes = new ArrayList ();

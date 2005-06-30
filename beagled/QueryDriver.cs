@@ -204,7 +204,7 @@ namespace Beagle.Daemon {
 				Queryable queryable = new Queryable (flavor, static_queryable);
 				queryables.Add (queryable);
 				
-				iqueryable_to_queryable [queryable] = static_queryable;
+				iqueryable_to_queryable [static_queryable] = queryable;
 
 				return true;
 			}
