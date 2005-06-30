@@ -37,8 +37,8 @@ namespace Beagle.IndexHelper {
 	public class RemoteIndexerExecutor : RequestMessageExecutor {
 
 		static public int Count = 0;
+		static Hashtable indexer_table = new Hashtable ();
 
-		Hashtable indexer_table = new Hashtable ();
 		Indexable[] child_indexables;
 		FilteredStatus[] uris_filtered;
 
