@@ -31,9 +31,9 @@ using Beagle.Daemon;
 
 namespace Beagle.Filters {
 	
-	public class FilterPng : Beagle.Daemon.Filter {
+	public class FilterPng : FilterImage {
 
-		public FilterPng ()
+		public FilterPng () : base ()
 		{
 			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("image/png"));
 		}
@@ -73,7 +73,7 @@ namespace Beagle.Filters {
 			}
 		}
 		
-		protected override void DoPullProperties ()
+		protected override void PullImageProperties ()
 		{
 			int width = buffer [18] * 256 + buffer [19];
 			int height = buffer [22] * 256 + buffer [23];

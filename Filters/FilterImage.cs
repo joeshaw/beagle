@@ -1,5 +1,5 @@
 //
-// TilePicture.cs
+// FilterImage.cs
 //
 // Copyright (C) 2004 Novell, Inc.
 //
@@ -25,39 +25,41 @@
 //
 
 using System;
-using System.IO;
 using System.Collections;
+using System.IO;
+using System.Text;
 
-using BU = Beagle.Util;
+using Beagle.Util;
 
-using Gnome;
+namespace Beagle.Filters {
 
-namespace Beagle.Tile {
+	public abstract class FilterImage : Beagle.Daemon.Filter {
 
-	[HitFlavor (Name="Pictures", Rank=500, Emblem="emblem-picture.png", Color="#f5f5fe",
-		    Type="File", MimeType="image/*")]
-	public class TilePicture : TileFile {
-		public TilePicture (Hit _hit) : base (_hit,
-						      "template-picture.html")
-		{			
+		public FilterImage ()
+		{
 		}
 
-		protected override void PopulateTemplate ()
+		protected virtual void PullImageProperties () { }
+
+		protected override void DoPullProperties ()
 		{
-			base.PopulateTemplate ();
+			PullImageProperties ();
 
-			string thumbnail = Thumbnail.PathForUri (BU.StringFu.PathToQuotedFileUri (Hit.Uri.LocalPath), ThumbnailSize.Normal);
+			try {
+				FSpotTools.Photo photo = FSpotTools.GetPhoto (this.FileInfo.FullName);
 
-			if (File.Exists (thumbnail))
-				Template ["Thumbnail"] = Images.GetHtmlSource (thumbnail, Hit.MimeType);
-			else
-				Template ["Thumbnail"] = Images.GetHtmlSource (Hit.Uri.LocalPath, Hit.MimeType);
+				if (photo == null)
+					return;
 
-			// F-Spot hacks
-			string [] properties = Hit.GetProperties ("fspot:Tag");
-
-			if (properties != null) {
-				Template ["Tags"] += String.Join (" ", properties);
+				if (photo.Description != null && photo.Description != "")
+					AddProperty (Beagle.Property.New ("fspot:Description", photo.Description));
+			
+				foreach (FSpotTools.Tag tag in photo.Tags) {				
+					if (tag.Name != null && tag.Name != "")
+						AddProperty (Beagle.Property.New ("fspot:Tag", tag.Name));
+				}
+			} catch (Exception e) {
+				//Console.WriteLine ("Failed extracting F-Spot information for '{0}'", this.FileInfo.Name);
 			}
 		}
 	}

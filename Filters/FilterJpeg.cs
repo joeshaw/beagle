@@ -33,15 +33,15 @@ using Beagle.Daemon;
 
 namespace Beagle.Filters {
 	
-	public class FilterJpeg : Beagle.Daemon.Filter {
+	public class FilterJpeg : FilterImage {
 
-		public FilterJpeg ()
+		public FilterJpeg () : base ()
 		{
 			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("image/jpeg"));
 		}
 
 		// FIXME: This is not particularly efficient
-		protected override void DoPullProperties ()
+		protected override void PullImageProperties ()
 		{
 			JpegHeader header = new JpegHeader (Stream);
 			byte [] commentdata = header.GetJFIFComment();
