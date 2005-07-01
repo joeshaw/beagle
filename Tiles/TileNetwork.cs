@@ -52,8 +52,15 @@ namespace Beagle.Tile {
 			//netURI format ... netbeagle://154.132.45.23:8888/beagle?http://154.132.45.23:8888/beagle/public/testlt		
 			string netUri = this.Hit.Uri.ToString();
 			//Console.WriteLine("Hit Uri is " + netUri);
+			string resourceUrl = netUri;
 			
-			string [] fragments = netUri.Split ('/');
+			string[] fragments, f2 = netUri.Split('?');
+			if (f2.Length > 1) 
+				resourceUrl = f2[1];
+
+			Template["ResourceUrl"] = resourceUrl;
+							
+			fragments = resourceUrl.Split ('/');				
 			string hostNamePort = fragments[2];
 			//Console.WriteLine("HostNamePort fragment is " + hostNamePort);
 			
@@ -66,16 +73,6 @@ namespace Beagle.Tile {
 			fragments = hostNamePort.Split(':');
 						
 			Template["HostName"] = fragments[0];
-			
-			string suffix = "";
-			string resourceUrl = netUri;
-		
-			fragments = netUri.Split('?');
-			if (fragments.Length > 1)
-				resourceUrl = fragments[1];
-
-			Template["ResourceUrl"] = resourceUrl;
-			
 			Template["NetworkedBeagleUrl"] = "http://" + hostNamePort + "/beagle/search.aspx";
 			
 			string snippet = null;
