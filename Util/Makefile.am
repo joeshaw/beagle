@@ -18,6 +18,10 @@ if OS_FREEBSD
 CSFLAGS += -define:OS_FREEBSD
 endif
 
+if ENABLE_WEBSERVICES
+CSFLAGS += -define:ENABLE_WEBSERVICES
+endif
+
 GOOGLE_WSDL = $(srcdir)/GoogleSearch.wsdl
 GOOGLE_CS   = GoogleSearch.cs
 

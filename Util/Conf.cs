@@ -39,9 +39,15 @@ namespace Beagle.Util {
 		private Conf () { }
 
 		public static Hashtable Sections;
+		
 		public static IndexingConfig Indexing = null;
 		public static DaemonConfig Daemon = null;
 		public static SearchingConfig Searching = null;
+
+#if ENABLE_WEBSERVICES		
+		public static NetworkingConfig Networking = null;
+		public static WebServicesConfig WebServices = null;
+#endif 		
 		private static string configs_dir;
 		private static Hashtable mtimes;
 		private static Hashtable subscriptions;
@@ -139,6 +145,16 @@ namespace Beagle.Util {
 			LoadFile (typeof (SearchingConfig), Searching, out temp, force);
 		        Searching = (SearchingConfig) temp;
 			NotifySubscribers (Searching);
+
+#if ENABLE_WEBSERVICES
+			LoadFile (typeof (NetworkingConfig), Networking, out temp, force);
+		    	Networking = (NetworkingConfig) temp;
+			NotifySubscribers (Networking);
+			
+			LoadFile (typeof (WebServicesConfig), WebServices, out temp, force);
+		    	WebServices = (WebServicesConfig) temp;
+			NotifySubscribers (WebServices);
+#endif
 
 			watching_for_updates = true;
 		}
@@ -420,6 +436,106 @@ namespace Beagle.Util {
 		
 			// FIXME: Add methods to manipulate excludes
 		}
+
+#if ENABLE_WEBSERVICES
+		[ConfigSection (Name="webservices")]
+		public class WebServicesConfig: Section 
+		{
+			private ArrayList publicFolders = new ArrayList ();
+			[XmlArray]
+			[XmlArrayItem(ElementName="PublicFolders", Type=typeof(string))]
+			public ArrayList PublicFolders {
+				get { return ArrayList.ReadOnly (publicFolders); }
+				set { publicFolders = value; }
+			}
+
+			private bool allowGlobalAccess = true;
+			public bool AllowGlobalAccess {
+				get { return allowGlobalAccess; }
+				set { allowGlobalAccess = value; }
+			}
+
+			[ConfigOption (Description="List the public folders", IsMutator=false)]
+			internal bool ListPublicFolders(out string output, string [] args)
+			{
+				output = "Current list of public folders:\n";
+
+				foreach (string pf in publicFolders)
+					output += " - " + pf + "\n";
+
+				return true;
+			}
+
+			[ConfigOption (Description="Enable/Disable global access to Beagle web-services")]
+			internal bool SwitchGlobalAccess (out string output, string [] args)
+			{
+				allowGlobalAccess = !allowGlobalAccess;			
+				
+				if (allowGlobalAccess)
+					output = "Global Access to Beagle WebService ENABLED.";
+				else
+					output = "Global Access to Beagle WebService DISABLED.";
+
+				return true;
+			}
+
+			[ConfigOption (Description="Add public web-service access to a folder", Params=1, ParamsDescription="A path")]
+			internal bool AddPublicFolder (out string output, string [] args)
+			{
+				publicFolders.Add (args [0]);
+				output = "PublicFolder added.";
+				return true;
+			}
+
+			[ConfigOption (Description="Remove public web-service access to a folder", Params=1, ParamsDescription="A path")]
+			internal bool DelPublicFolder (out string output, string [] args)
+			{
+				publicFolders.Remove (args [0]);
+				output = "PublicFolder removed.";
+				return true;
+			}			
+		}
+
+		[ConfigSection (Name="networking")]
+		public class NetworkingConfig: Section 
+		{
+			private ArrayList netBeagleNodes = new ArrayList ();
+			
+			[XmlArray]
+			[XmlArrayItem(ElementName="NetBeagleNodes", Type=typeof(string))]
+			public ArrayList NetBeagleNodes {
+				get { return ArrayList.ReadOnly (netBeagleNodes); }
+				set { netBeagleNodes = value; }
+			}
+
+			[ConfigOption (Description="List Networked Beagle Daemons to query", IsMutator=false)]
+			internal bool ListBeagleNodes (out string output, string [] args)
+			{
+				output = "Current list of Networked Beagle Daemons to query:\n";
+
+				foreach (string nb in netBeagleNodes)
+					output += " - " + nb + "\n";
+				
+				return true;
+			}
+
+			[ConfigOption (Description="Add a Networked Beagle Daemon to query", Params=1, ParamsDescription="HostName:PortNo")]
+			internal bool AddBeagleNode (out string output, string [] args)
+			{
+				netBeagleNodes.Add (args [0]);
+				output = "Networked Beagle Daemon \"" + args[0] +"\" added.";
+				return true;
+			}
+
+			[ConfigOption (Description="Remove a configured Networked Beagle Daemon", Params=1, ParamsDescription="HostName:PortNo")]
+			internal bool DelBeagleNode (out string output, string [] args)
+			{
+				netBeagleNodes.Remove (args [0]);
+				output = "Networked Beagle Daemon \"" + args[0] +"\" removed.";
+				return true;
+			}
+		}
+#endif
 
 		public class Section {
 			[XmlIgnore]
