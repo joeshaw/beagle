@@ -1,3 +1,11 @@
+2005-07-01  Vijay K. Nanjundaswamy <knvijay@novell.com>
+
+	* Util/Conf.cs, Util/Makefile.am:
+	Added configuration sections for WebServices and Networking.
+	
+	* beagled/WebServices/*.cs:
+	Updates to files in WebServices, to work with new configuration system.
+	 
 2005-06-30  Daniel Drake  <dsd@gentoo.org>
 
 	* Util/StringFu.cs: Add HexUnescape convenience function.
