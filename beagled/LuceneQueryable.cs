@@ -469,6 +469,11 @@ namespace Beagle.Daemon {
 				    || change_data.AddedUris.Count == 0)
 					return;
 
+				// Remove any added URIs from the result, so that we properly
+				// handle updates and don't get duplicate results in clients.
+				foreach (Uri uri in change_data.AddedUris)
+					query_result.Subtract (uri);
+
 				if (to_internal_uris != null) {
 					Uri [] remapped_uris = new Uri [change_data.AddedUris.Count];
 					int i = 0;
