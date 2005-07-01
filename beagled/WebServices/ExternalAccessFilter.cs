@@ -40,23 +40,93 @@ namespace Beagle.WebService {
 	{
 		ArrayList matchers;
 		static readonly string ConfigFile = "publicfolders.cfg";
+		static Logger log = Logger.Get ("ExternalAccessFilter");
 		string FileUriPrefix = "file://";
 		string HttpUriBase = "http://hostname:8888/beagle/";
-	
+		string[] reserved_suffixes;
+		
 // User can specify only a sub-directory under home directory in 'publicfolders.cfg'. 
 // All entries must start with ~/ . One entry per line. The leaf folder name should 
 // be unique. This leaf name will be used for the BeagleXSP application list.
 						
 		public ExternalAccessFilter (string HttpUriBase, string[] reserved_suffixes)
 		{						
-			matchers = new ArrayList();
+			this.HttpUriBase = HttpUriBase;
+			this.reserved_suffixes = reserved_suffixes;
 			
+			//First check for ~/.beagle/config/webservices.xml configuration:
+			ArrayList publicFolders = Conf.WebServices.PublicFolders;
+			
+			if ((publicFolders != null) && (publicFolders.Count > 0)) {
+				SetupFilters(publicFolders);
+				if (File.Exists (Path.Combine (PathFinder.StorageDir, ConfigFile)))
+				{
+					log.Warn("ExternalAccessFilter: Duplicate configuration of PublicFolders !");
+					log.Info("ExternalAccessFilter: Remove '~/.beagle/publicfolders.cfg' file.\n Use 'beagle-config' instead to setup public folders.");						
+					log.Info("ExternalAccessFilter: Using ~/.beagle/config/webservvices.xml");		
+				}
+				return;
+			}
+
+	    	publicFolders = new ArrayList(); 		
+	    		
+			//Fallback to ~/.beagle/publicfolders.cfg
+			if (File.Exists (Path.Combine (PathFinder.StorageDir, ConfigFile))) {
+			
+            	StreamReader reader = new StreamReader(
+                 			Path.Combine (PathFinder.StorageDir, ConfigFile));
+
+            	string entry;
+            	while ( ((entry = reader.ReadLine ()) != null) && (entry.Trim().Length > 1)) {
+            	   	if (entry[0] != '#')            	
+						publicFolders.Add(entry);                 
+            	} 
+            } 
+	      
+	     	bool fa = SetupFilters(publicFolders);
+		//if (fa)
+			//	log.Warn("NetBeagleQueryable: 'publicfolders.cfg' based configuration deprecated.\n Use 'beagle-config' or 'beagle-settings' instead to configure Public Folders");
+		}
+
+/*
+		public void ReplaceAccessFilter(ArrayList newlist)
+		{					
+			bool fa = SetupFilters(newlist);
+			
+			if (usingPublicFoldersDotCfgFile && fa) {
+				usingPublicFoldersDotCfgFile = false;
+				log.Warn("ExternalAccessFilter: Duplicate configuration of PublicFolders in '~/.beagle/publicfolders.cfg' and '~/.beagle/config/webservices.xml' !");
+				log.Info("ExternalAccessFilter: Remove '~/.beagle/publicfolders.cfg' file. Use 'beagle-config' instead to setup public folders.");		
+				log.Info("ExternalAccessFilter: Replacing PublicFoldersList with new list from \"webservices.xml\"");
+			}
+			
+			//Initialize();
+		}
+*/		
+		public ArrayList Matchers {
+		
+			get { return matchers; } 
+		}
+				
+		public void Initialize() {
+		
+			foreach (SimpleMatcher sm in matchers)			
+				if (! sm.Match.StartsWith(FileUriPrefix)) {
+					sm.Match = FileUriPrefix + sm.Match + "/";
+					sm.Rewrite = HttpUriBase + sm.Rewrite + "/";
+										
+					Logger.Log.Debug("ExternalAccessFilter: Adding Match: " + sm.Match + "," + sm.Rewrite); 					
+				}
+		}
+
+		private bool SetupFilters(ArrayList folders)
+		{
+			bool filterAdded = false;
+			matchers = new ArrayList();			
 			ArrayList suffixes = new ArrayList(); 
 			
 			//Populate reserved suffixes
 			suffixes.AddRange(reserved_suffixes);
-
-			this.HttpUriBase = HttpUriBase;
 			
 			//Check if 'public' folder exists and setup default mapping for it:
 			if (Directory.Exists(PathFinder.HomeDir + "/public"))
@@ -71,76 +141,46 @@ namespace Beagle.WebService {
 				matchers.Add(defaultMatcher);				
 				suffixes.Add("public");
 			}
-			
-			if (!File.Exists (Path.Combine (PathFinder.StorageDir, ConfigFile))) {
-
-                return;
-			}
-			
-            StreamReader reader = new StreamReader(
-                         Path.Combine (PathFinder.StorageDir, ConfigFile));
-
-            string entry;
-            while ( ((entry = reader.ReadLine ()) != null) && (entry.Trim().Length > 1)) {
-            	
-            	if (entry[0] != '#') {           	
-                	//string[] folders = entry.Split (',');
-                	//foreach (string d in folders) {
-                		string d = entry;
+            
+            //string[] folders = entry.Split (',');
+            foreach (string d in folders) {
                 	    
-                	    //Each entry must start with ~/            	            	
-                		if ((d.Trim().Length > 1) && d.StartsWith("~/")) {
+                //Each entry must start with ~/            	            	
+            	if ((d.Trim().Length > 1) && d.StartsWith("~/")) {
                 			
-                			string d2 = d.Replace("~/", PathFinder.HomeDir + "/");							
+            		string d2 = d.Replace("~/", PathFinder.HomeDir + "/");							
                  			
-                 			if (!Directory.Exists(d2))
-								continue;
+            		if (!Directory.Exists(d2))
+						continue;
                  			         			
-                			string[] comp = d2.Split('/');
-                			string leaf;
-                			if (comp.Length > 1)
-                				for (int li = comp.Length; li > 0; --li) {
-                					if ((leaf = comp[li - 1].Trim()).Length > 0) {
-                						//Check the leaf component is unique
-                						if (suffixes.Contains(leaf))
-                						{
-                							Logger.Log.Warn("ExternalAccessFilter: Ignoring entry {0}. Reason: Entry suffix not unique", entry);
-                							break;
-                						}
-                						else
-                							suffixes.Add(leaf);
-                								
-										SimpleMatcher matcher = new SimpleMatcher ();
+            		string[] comp = d2.Split('/');
+            		string leaf;
+            		if (comp.Length > 1)
+            			for (int li = comp.Length; li > 0; --li) {
+            				if ((leaf = comp[li - 1].Trim()).Length > 0) {
+            					//Check the leaf component is unique
+            					if (suffixes.Contains(leaf))
+            					{
+            						Logger.Log.Warn("ExternalAccessFilter: Ignoring entry {0}. Reason: Entry suffix not unique", d);
+            						break;
+            					}
+            					else
+            						suffixes.Add(leaf);
+            							
+								filterAdded = true;
+								SimpleMatcher matcher = new SimpleMatcher ();
 										
-										matcher.Match = d2;  
-										matcher.Rewrite = leaf; 
-
-										matchers.Add (matcher);
-										break;										                															                															
-                					} 
-	               				}                 				
-                		} //end if
-                	//} //end foreach
+								matcher.Match = d2;  
+								matcher.Rewrite = leaf; 
+								matchers.Add (matcher);
+								break;										                															                															
+            				} 
+	      				}                 				
                 } //end if
-              } //end while        	
+            } //end foreach
+			return filterAdded;
 		}
-		
-		public ArrayList Matchers {
-		
-			get { return matchers; } 
-		}
-		
-		public void Initialize() {
-		
-			foreach (SimpleMatcher sm in matchers)			
-				if (! sm.Match.StartsWith(FileUriPrefix)) {
-					sm.Match = FileUriPrefix + sm.Match + "/";
-					sm.Rewrite = HttpUriBase + sm.Rewrite + "/";
-										
-					Logger.Log.Debug("ExternalAccessFilter: Adding Match: " + sm.Match + "," + sm.Rewrite); 					
-				}
-		}
-		
+				
 		//Returns: false, if Hit does not match any filter
 		//		   true,  if Hit URI is part of any specified filter		
 		public bool FilterHit (Hit hit)

@@ -93,13 +93,9 @@ namespace WebService_CodeBehind {
 			if (remoteObj == null)
 				remoteObj = new WebServiceBackEnd();
 
-			if (Application["allowGlobalAccess"] == null)
-				Application["allowGlobalAccess"] =  remoteObj.allowGlobalAccess;
-
 			bool isLocalReq = HttpContext.Current.Request.Url.IsLoopback;
 				
-			if ((remoteObj == null) || !((bool)Application["allowGlobalAccess"] ||
-				isLocalReq) ) 	{
+			if ((remoteObj == null) || !(remoteObj.allowGlobalAccess ||	isLocalReq) ) 	{
 
 				return restrictedAccessResult();
 			}
@@ -238,15 +234,11 @@ namespace WebService_CodeBehind {
 			
 			if (remoteObj == null)
 				remoteObj = new WebServiceBackEnd();
-
-			if (Application["allowGlobalAccess"] == null)
-				Application["allowGlobalAccess"] =  remoteObj.allowGlobalAccess;
 			
 			bool isLocalReq = HttpContext.Current.Request.Url.IsLoopback;
 				
-			if ((remoteObj == null) || !((bool)Application["allowGlobalAccess"] ||
-				isLocalReq) ) 	{
-
+			if ((remoteObj == null) || !(remoteObj.allowGlobalAccess ||	isLocalReq) ) 	{
+				
 				return restrictedAccessResult();
 			}
 
@@ -273,13 +265,10 @@ namespace WebService_CodeBehind {
 		if (remoteObj == null)
 			remoteObj = new WebServiceBackEnd();
 
-		if (Application["allowGlobalAccess"] == null)
-			Application["allowGlobalAccess"] =  remoteObj.allowGlobalAccess;
-			
 		bool isLocalReq = HttpContext.Current.Request.Url.IsLoopback;
 					
-		if ((remoteObj == null) || !((bool)Application["allowGlobalAccess"] ||
-				isLocalReq) ) 	{
+		if ((remoteObj == null) || !(remoteObj.allowGlobalAccess ||	isLocalReq) ) 	{
+				
 			response = new HitSnippet[0];
 			return response;
 		}

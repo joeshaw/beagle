@@ -255,10 +255,8 @@ namespace WebService_CodeBehind {
 		if (remoteObj == null)
 			 remoteObj = new WebBackEnd();
 			 
-		if (Application["allowGlobalAccess"] == null) 
-			Application["allowGlobalAccess"] = remoteObj.allowGlobalAccess;
-		
-		if ( (remoteObj == null) || !((bool)Application["allowGlobalAccess"] || isLocalReq())) {
+		if ( (remoteObj == null) || !(remoteObj.allowGlobalAccess || isLocalReq())) {
+
 			Output.Text = localReqOnlyMsg;
 			Back.Visible = Forward.Visible = false;
 			sourceList.Enabled = SearchBox.Enabled = Search.Enabled = false;
@@ -294,10 +292,8 @@ namespace WebService_CodeBehind {
 			return;
 		} 
 
-		if (Application["allowGlobalAccess"] == null) 
-			Application["allowGlobalAccess"] = remoteObj.allowGlobalAccess;
+		if ( (remoteObj == null) || !(remoteObj.allowGlobalAccess || isLocalReq())) {
 		
-		if ( (remoteObj == null) || !((bool)Application["allowGlobalAccess"] || isLocalReq())) {
 			Output.Text = localReqOnlyMsg;
 			Back.Visible = Forward.Visible = false;
 			sourceList.Enabled = SearchBox.Enabled = Search.Enabled = false;
@@ -327,10 +323,8 @@ namespace WebService_CodeBehind {
 			return;
 		} 
 
-		if (Application["allowGlobalAccess"] == null) 
-			Application["allowGlobalAccess"] = remoteObj.allowGlobalAccess;
-		
-		if ( (remoteObj == null) || !((bool)Application["allowGlobalAccess"] || isLocalReq())) {
+		if ( (remoteObj == null) || !(remoteObj.allowGlobalAccess || isLocalReq())) {
+
 			Output.Text = localReqOnlyMsg;
 			Back.Visible = Forward.Visible = false;
 			sourceList.Enabled = SearchBox.Enabled = Search.Enabled = false;

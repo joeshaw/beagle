@@ -49,12 +49,10 @@ namespace Beagle.WebService {
 		public static string DEFAULT_XSP_ROOT = Path.Combine (ExternalStringsHack.PkgDataDir, "xsp");
 		public static string DEFAULT_XSP_PORT = "8888";
 
-		public static bool web_global = false;
-		public static bool web_start = false;
+		public static bool web_global = true;
+		public static bool web_start = true;
 		public static string web_port = DEFAULT_XSP_PORT;
 		public static string web_rootDir = DEFAULT_XSP_ROOT;
-
-		public static ExternalAccessFilter AccessFilter;
 
 		//static Logger log = Logger.Get ("WebServiceBackEnd");
 		static Mono.ASPNET.ApplicationServer appServer = null;
@@ -65,6 +63,10 @@ namespace Beagle.WebService {
 					     "--root", DEFAULT_XSP_ROOT, 
 					     "--applications", DEFAULT_APP_MAPPINGS, 
 					     "--nonstop"};
+		
+		static string[] reserved_suffixes;
+		static string BeagleHttpUriBase;
+		public static ExternalAccessFilter AccessFilter;
 		
 		public static void Start()
 		{			
@@ -78,7 +80,9 @@ namespace Beagle.WebService {
 				Logger.Log.Error("Resetting hostname to \"localhost\"");
 				hostname = "localhost";
 			}
-								
+			
+			web_global = Conf.WebServices.AllowGlobalAccess;
+			
 			//start web-access server first
 			Logger.Log.Debug ("Starting WebBackEnd");
 			WebBackEnd.init (web_global);
@@ -87,7 +91,7 @@ namespace Beagle.WebService {
 			Logger.Log.Info ("Starting WebServiceBackEnd");
 			WebServiceBackEnd.init (web_global);
 
-			Logger.Log.Debug ("Global WebAccess {0}", web_global ? "Enabled" : "Disabled");
+			Logger.Log.Debug ("Global WebServicesAccess {0}", web_global ? "Enabled" : "Disabled");
 
 			xsp_param[1] = web_port;
 			xsp_param[3] = web_rootDir;
@@ -112,8 +116,8 @@ namespace Beagle.WebService {
 				
 				//if (!hostname.Equals("localhost")) {
 
-					string[] reserved_suffixes = new string[] {"beagle", "local", "gnome", "kde3"};
-					string BeagleHttpUriBase = "http://" + hostname + ":" + xsp_param[1] + "/beagle/";
+					reserved_suffixes = new string[] {"beagle", "local", "gnome", "kde3"};
+					BeagleHttpUriBase = "http://" + hostname + ":" + xsp_param[1] + "/beagle/";
 				
 					AccessFilter = new ExternalAccessFilter(BeagleHttpUriBase, reserved_suffixes);
 				
@@ -150,7 +154,7 @@ namespace Beagle.WebService {
 				}
 				else
 					Logger.Log.Debug("BeagleXSP Applications list: " + xsp_param[5]);
-			}				
+			}
 		}
 		
 		public static void Stop() 
@@ -162,20 +166,66 @@ namespace Beagle.WebService {
 			}
 		}
 
+		private void WebServicesConfigurationChanged (Conf.Section section)
+		{			
+			Logger.Log.Info("WebServicesConfigurationChanged EventHandler invoked");
+			if (! (section is Conf.WebServicesConfig))
+			//&& section.Name.Equals("webservices")))
+				return;
+			
+			Conf.WebServicesConfig wsc = (Conf.WebServicesConfig) section;
+			
+			if (allow_global_access != wsc.AllowGlobalAccess) {
+				// Update AllowGlobalAccess configuration:
+				allow_global_access = wsc.AllowGlobalAccess;
+				WebBackEnd.updateGlobalAccess(wsc.AllowGlobalAccess);
+				Logger.Log.Info("WebServicesBackEnd: Global WebServicesAccess {0}", allow_global_access ? "Enabled" : "Disabled");
+			}
+			
+			if (wsc.PublicFolders.Count == 0)
+				return;
+				
+			Logger.Log.Warn("WebServicesBackEnd: Changes in PublicFolders configuration doesn't take effect until Beagle daemon is restarted!");
+				
+/*			Note: ExternalAccessFilter Matchers can be updated, but app mapping changes in BeagleXsp Server require it to be restarted !
+			
+			ArrayList newList = new ArrayList();
+			foreach (string pf in wsc.PublicFolders) {
+					if (pf == null || pf == "")
+						continue;					
+	
+					newList.Add (new NetBeagleHandler (host, port, this));								
+			}	
+			
+			if (usingPublicFoldersDotCfgFile) {
+				usingPublicFoldersDotCfgFile = false;
+				log.Warn("NetBeagleQueryable: Duplicate configuration of PublicFolders in '~/.beagle/publicfolders.cfg' and '~/.beagle/config/webservices.xml' !");
+				log.Info("NetBeagleQueryable: Remove '~/.beagle/publicfolders.cfg' file. Use 'beagle-config' instead to setup public folders.");		
+				log.Info("NetBeagleQueryable: Replacing PublicFoldersList with new list from \"webservices.xml\" having {0} node(s)", newList.Count);
+			}			
+			
+			AccessFilter.ReplaceAccessFilter(newList);  			
+*/					 
+		}
+		
+		
 /////////////////////////////////////////////////////////////////////////////////////////
 		
 		//KNV: If needed, we can convert this to a Singleton, adding a 
 		//	   static Factory method to get the singleton instance reference,
 		//	   so that front-end code always gets hold of same instance.
-		static WebServiceBackEnd instance = null;
-		static bool allow_global_access = false;
 		
+		static WebServiceBackEnd instance = null;		
+		static bool allow_global_access = false;
+				
 		private Hashtable resultTable;
 		private Hashtable sessionTable;
 		
 		public WebServiceBackEnd() {
 			 resultTable 		= Hashtable.Synchronized(new Hashtable());
 			 sessionTable 		= Hashtable.Synchronized(new Hashtable());
+			
+			Conf.Subscribe (typeof (Conf.WebServicesConfig), new Conf.ConfigUpdateHandler (WebServicesConfigurationChanged));							 
 		}
 
 		~WebServiceBackEnd() {
@@ -184,13 +234,13 @@ namespace Beagle.WebService {
 		}
 	
 		public bool allowGlobalAccess {
-			get { return allow_global_access; }
+			get { return allow_global_access; }		
 		}
 				
 		public static void init(bool web_global)
 		{
 		    allow_global_access = web_global;
-			
+		      		
 		    if (instance == null) {
 
 		  		instance = new WebServiceBackEnd();
@@ -202,7 +252,8 @@ namespace Beagle.WebService {
 				 	"WebServiceBackEnd.rem", WellKnownObjectMode.Singleton);
 		  		RemotingConfiguration.ApplicationName="beagled";
 		  		RemotingConfiguration.RegisterWellKnownServiceType(WKSTE);
-		    }	    
+		    }	 
+ 
 		}
 
 		void OnHitsAdded (QueryResult qres, ICollection hits)

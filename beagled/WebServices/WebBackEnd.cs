@@ -47,9 +47,9 @@ namespace Beagle.WebService {
 	
 	public class WebBackEnd: MarshalByRefObject{
 
-		static WebBackEnd instance = null;
-		static bool allow_global_access = false;
+		static WebBackEnd instance = null;		
 		static Logger log = Logger.Get ("WebBackEnd");
+		static bool allow_global_access = false;
 		
 		private Hashtable result;
 		private Hashtable sessionResp;
@@ -64,14 +64,14 @@ namespace Beagle.WebService {
 			sessionResp.Clear();
 		}		
 
-		public bool allowGlobalAccess{
-			get { return allow_global_access; }
+		public bool allowGlobalAccess {
+			get { return allow_global_access;  }
 		}
 
 		public static void init(bool web_global) 
 		{
 		   allow_global_access = web_global;
-
+		   
 		   if (instance == null) {
 			  instance = new WebBackEnd();
 
@@ -86,6 +86,11 @@ namespace Beagle.WebService {
 		   }
 		}
 
+		public static void updateGlobalAccess(bool web_global)
+		{
+			allow_global_access = web_global;			
+		}
+		
 		void OnHitsAdded (QueryResult qres, ICollection hits)
 		{	
 			if (result.Contains(qres)) {

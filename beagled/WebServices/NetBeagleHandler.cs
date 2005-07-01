@@ -138,8 +138,16 @@ namespace Beagle.Daemon
 						//FIXME: Generate a random no. b/w 1 .. 99 and multiply by 1000000, and add to hr.id ?
 						hit.Id = hr.id; 
 					 
-						//[Uri Format] netbeagle://164.99.153.134:8888/beagle?file:///....						
-						hit.Uri = new Uri(BeagleNetPrefix + wsp.Hostname + ":" + wsp.Port + "/beagle?" + hr.uri);					
+						//[Uri Format] netbeagle://164.99.153.134:8888/beagle?file:///....	
+						if (hr.uri.StartsWith(BeagleNetPrefix))
+							hit.Uri = new Uri(hr.uri);
+						else {							
+							string[] fragments = hr.uri.Split ('/');
+							string hostNamePort = fragments[2];										
+							hit.Uri = new Uri(BeagleNetPrefix + hostNamePort + "/beagle?" + hr.uri);
+						//hit.Uri = new Uri(BeagleNetPrefix + wsp.Hostname + ":" + wsp.Port + "/beagle?" + hr.uri);			
+						}
+														
 						hit.Type = hr.resourceType;
 						hit.MimeType = hr.mimeType;
 						hit.Source = "Network";			//hit.Source = hr.source;

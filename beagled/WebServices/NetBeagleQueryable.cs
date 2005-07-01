@@ -32,6 +32,7 @@ using System.IO;
 using System.Threading;
 using System.Collections;
 
+using Beagle;
 using Beagle.Util;
 
 namespace Beagle.Daemon {
@@ -41,7 +42,7 @@ namespace Beagle.Daemon {
 	{
 		static Logger log = Logger.Get ("NetworkedBeagle");
 	    static readonly string NetBeagleConfigFile = "netbeagle.cfg";
-
+		
 		ArrayList NetBeagleList;
 		
 		public NetworkedBeagle ()
@@ -56,10 +57,41 @@ namespace Beagle.Daemon {
 		public void Start () 
 		{
 			SetupNetBeagleList ();
+			Conf.Subscribe (typeof (Conf.NetworkingConfig), new Conf.ConfigUpdateHandler (NetBeagleConfigurationChanged));
 		}
 
 		void SetupNetBeagleList ()
-		{
+		{	
+			//First check for ~/.beagle/config/networking.xml configuration
+			ArrayList NetBeagleNodes = Conf.Networking.NetBeagleNodes;
+			
+			if ((NetBeagleNodes != null) && (NetBeagleNodes.Count > 0)) {
+					
+					foreach (string nb in NetBeagleNodes) {
+						if (nb == null || nb == "")
+							continue;					
+						string[] data = nb.Split (':');
+						if (data.Length < 2) {
+							log.Warn("NetBeagleQueryable: Ignoring improper NetBeagle entry: {0}", nb);
+							continue; 
+						}
+						string host = data[0];
+						int port = Convert.ToInt32 (data[1]);		
+						NetBeagleList.Add (new NetBeagleHandler (host, port, this));
+					}
+					
+				if (NetBeagleList.Count > 0) {
+				if (File.Exists (Path.Combine (PathFinder.StorageDir, NetBeagleConfigFile)))
+				{
+					log.Warn("NetBeagleQueryable: Duplicate configuration of networked Beagles detected!");
+					log.Info("NetBeagleQueryable: Remove '~/.beagle/netbeagle.cfg' file. Use 'beagle-config' instead to setup networked Beagle nodes.");		
+					log.Info("Using ~/.beagle/config/networking.xml");	
+				}
+				return;
+				}
+			}
+			
+			//Fallback to ~/.beagle/netbeagle.cfg
 			if (!File.Exists (Path.Combine (PathFinder.StorageDir, NetBeagleConfigFile)))
 				return;
 
@@ -71,13 +103,52 @@ namespace Beagle.Daemon {
 			
 				if ((entry[0] != '#') && (entry.IndexOf(':') > 0)) {
 					string[] data = entry.Split (':');
+					if (data.Length < 2) {
+						log.Warn("NetBeagleQueryable: Ignoring improper NetBeagle entry: {0}", entry);
+						continue; 
+					}					
 					string host = data[0];
 					int port = Convert.ToInt32 (data[1]);		
 					NetBeagleList.Add (new NetBeagleHandler (host, port, this));
 				}								
 			}
+			
+			//if (NetBeagleList.Count > 0)
+			//	log.Warn("NetBeagleQueryable: 'netbeagle.cfg' based configuration deprecated.\n Use 'beagle-config' or 'beagle-settings' instead to configure Networked Beagles");
 		}
 
+		private void NetBeagleConfigurationChanged (Conf.Section section)
+		{			
+			Logger.Log.Info("NetBeagleConfigurationChanged EventHandler invoked");		
+			if (! (section is Conf.NetworkingConfig))
+			//&& section.Name.Equals("networking")))
+				return;
+				
+			Conf.NetworkingConfig nc = (Conf.NetworkingConfig) section;
+
+			if (nc.NetBeagleNodes.Count == 0)
+				return;
+					
+			ArrayList newList = new ArrayList();
+			foreach (string nb in nc.NetBeagleNodes) {
+					if (nb == null || nb == "")
+						continue;					
+					string[] data = nb.Split (':');
+					if (data.Length < 2) {
+						log.Warn("NetBeagleQueryable: Ignoring improper NetBeagle entry: {0}", nb);
+						continue; 
+					}					
+					string host = data[0];
+					int port = Convert.ToInt32 (data[1]);		
+					newList.Add (new NetBeagleHandler (host, port, this));								
+			}	
+			
+			lock (NetBeagleList) {
+				NetBeagleList = newList;
+			}			 
+		}
+		
+		
 		public bool AcceptQuery (Query query)
 		{      
 		    if (query.Text.Count <= 0)
@@ -96,12 +167,14 @@ namespace Beagle.Daemon {
 			
 			if (NetBeagleList.Count == 0) 
 				return;
-				
-			log.Debug("NetBeagleQueryable: DoQuery ... Starting NetBeagleHandler queries");
-			foreach (NetBeagleHandler nb in NetBeagleList)
-			{
-				IAsyncResult iar = nb.DoQuery (query, result, changeData);
-				resultHandleList.Add (iar);
+			
+			lock (NetBeagleList) {	
+				log.Debug("NetBeagleQueryable: DoQuery ... Starting NetBeagleHandler queries");
+				foreach (NetBeagleHandler nb in NetBeagleList)
+				{
+					IAsyncResult iar = nb.DoQuery (query, result, changeData);
+					resultHandleList.Add (iar);
+				}
 			}
 			
 			int i = 0;			
