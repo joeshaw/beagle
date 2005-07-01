@@ -79,7 +79,7 @@ namespace Beagle.Util {
 				return;
 
 			if (Inotify.Enabled) {
-				Inotify.Subscribe (configs_dir, OnInotifyEvent, Inotify.EventType.Create | Inotify.EventType.Modify);
+				Inotify.Subscribe (configs_dir, OnInotifyEvent, Inotify.EventType.Create | Inotify.EventType.CloseWrite);
 			} else {
 				// Poll for updates every 60 secs
 				GLib.Timeout.Add (60000, new GLib.TimeoutHandler (CheckForUpdates));
