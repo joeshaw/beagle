@@ -194,7 +194,7 @@ namespace Beagle.Util {
 			FileStream fs = null;
 
 			try {
-				fs = File.OpenRead (filepath);
+				fs = File.Open (filepath, FileMode.Open, FileAccess.Read, FileShare.Read);
 				XmlSerializer serializer = new XmlSerializer (type);
 				section = (Section) serializer.Deserialize (fs);
 			} catch (Exception e) {
