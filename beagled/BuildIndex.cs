@@ -43,10 +43,10 @@ namespace Beagle.Daemon
 	class BuildIndex 
 	{
 		static bool arg_recursive = false, arg_debug = false;
-		
-		static string arg_prefix = null;
-		
-		static string arg_path, arg_output, arg_tag, arg_configuration;
+
+		static Hashtable remap_table = new Hashtable ();
+
+		static string arg_output, arg_tag, arg_configuration;
 		
 		/////////////////////////////////////////////////////////
 		
@@ -54,8 +54,10 @@ namespace Beagle.Daemon
 		static FileAttributesStore fa_store;
 		static LuceneDriver driver;
 		
-		static bool crawling = true;
+		static bool crawling = true, shutdown = false;
+
 		static Queue pending_files = new Queue ();
+		static Queue pending_directories = new Queue ();
 		
 		const int BATCH_SIZE = 30;
 		
@@ -67,7 +69,7 @@ namespace Beagle.Daemon
 				PrintUsage ();
 		
 			int i = 0;
-			while (i < args.Length-2) {
+			while (i < args.Length) {
 			
 				string arg = args [i];
 				++i;
@@ -90,22 +92,37 @@ namespace Beagle.Daemon
 					arg_recursive = true;
 					break;
 					
-				case "--prefix":
-					if (next_arg != null) 
-						arg_prefix = next_arg;
+				case "--remap":
+					if (next_arg == null) 
+						break;
+					
+					int j = next_arg.IndexOf (":");
+
+					if (j == -1) {
+						Console.WriteLine ("Invalid remap argument: {0}", next_arg);
+						Environment.Exit (1);
+					}
+					
+					remap_table [next_arg.Substring (0, j)] = next_arg.Substring (j+1);
+
 					++i;
+					break;
+
+				default:
+					if (next_arg == null) {
+						arg_output = Path.IsPathRooted (arg) ? arg : Path.GetFullPath (arg);
+					} else {
+						string path = Path.IsPathRooted (arg) ? arg : Path.GetFullPath (arg);
+
+						if (Directory.Exists (path))
+							pending_directories.Enqueue (new DirectoryInfo (path));
+						else if (File.Exists (path))
+							pending_files.Enqueue (new FileInfo (path));
+					}
 					break;
 				}
 			}
-			
-			arg_path = args [i];
-			if (!Path.IsPathRooted (arg_path))
-				arg_path = Path.GetFullPath (arg_path);
-			
-			arg_output = args [++i];
-			if (!Path.IsPathRooted (arg_output))
-				arg_output = Path.GetFullPath (arg_output);
-				
+
 			/////////////////////////////////////////////////////////
 			
 			if (!Directory.Exists (Path.GetDirectoryName (arg_output))) {
@@ -119,6 +136,9 @@ namespace Beagle.Daemon
 			backing_fa_store = new FileAttributesStore_Sqlite (driver.IndexDirectory, driver.Fingerprint);
 			fa_store = new FileAttributesStore (backing_fa_store);
 			
+			// Set up signal handlers
+			SetupSignalHandlers ();
+
 			// Start the thread that does the crawling
 			ExceptionHandlingThread.Start (new ThreadStart (CrawlWorker));
 
@@ -132,42 +152,30 @@ namespace Beagle.Daemon
 		{
 			Logger.Log.Debug ("Starting CrawlWorker");
 			
-			if (Directory.Exists (arg_path)) {
-				if (arg_recursive) {
-					int count_dirs = 0;
-					Queue pending_dirs = new Queue ();
-					pending_dirs.Enqueue (arg_path);
-					
-					while (pending_dirs.Count > 0) {
-						string dir = (string) pending_dirs.Dequeue ();
-						
-						try {
-							foreach (string subdir in DirectoryWalker.GetDirectories (dir))
-								if (!Ignore (subdir))
-									pending_dirs.Enqueue (subdir);
-
-							foreach (FileInfo file in DirectoryWalker.GetFileInfos (dir))
-								if (!Ignore (file.FullName))
-									pending_files.Enqueue (file);
-
-						} catch (DirectoryNotFoundException e) {}
-						
-						count_dirs++;
-					}
-					Logger.Log.Debug ("Scanned {0} files in {1} directories", pending_files.Count, count_dirs);
-				} else {
-					foreach (FileInfo file in DirectoryWalker.GetFileInfos (arg_path))
-						pending_files.Enqueue (file);
-					Logger.Log.Debug ("Scanned {0} files", pending_files.Count);
-				}
-			} else if (File.Exists (arg_path)) {
-				pending_files.Enqueue (new FileInfo (arg_path));
-			} else {
-				Console.WriteLine ("No such file or directory: {0}", arg_path);
-				Environment.Exit (1);
-			}
 			
+			int count_dirs = 0;
+			
+			while (pending_directories.Count > 0) {
+				DirectoryInfo dir = (DirectoryInfo) pending_directories.Dequeue ();
+				
+				try {
+					if (arg_recursive)
+						foreach (DirectoryInfo subdir in DirectoryWalker.GetDirectoryInfos (dir))
+							if (!Ignore (subdir.FullName))
+								pending_directories.Enqueue (subdir);
+					
+					foreach (FileInfo file in DirectoryWalker.GetFileInfos (dir))
+						if (!Ignore (file.FullName))
+							pending_files.Enqueue (file);
+					
+				} catch (DirectoryNotFoundException e) {}
+				
+				count_dirs++;
+			}
+
+			Logger.Log.Debug ("Scanned {0} files in {1} directories", pending_files.Count, count_dirs);
 			Logger.Log.Debug ("CrawlWorker Done");
+
 			crawling = false;
 		}
 		
@@ -179,7 +187,7 @@ namespace Beagle.Daemon
 			
 			Indexable indexable;
 			
-			while (true) {
+			while (!shutdown) {
 				if (pending_files.Count > 0) {
 					FileInfo file = (FileInfo) pending_files.Dequeue ();
 					Uri uri = UriFu.PathToFileUri (file.FullName);
@@ -190,7 +198,7 @@ namespace Beagle.Daemon
 
 					// Create the indexable
 					indexable = new Indexable (uri);
-					indexable.Uri = (arg_prefix == null) ? uri : RemapUri (uri);
+					indexable.Uri = RemapUri (uri);
 					indexable.ContentUri = uri;
 					indexable.CacheContent = false;
 					
@@ -233,6 +241,42 @@ namespace Beagle.Daemon
 		
 		/////////////////////////////////////////////////////////////////
 		
+		// From BeagleDaemon.cs
+
+                // The integer values of the Mono.Posix.Signal enumeration don't actually
+		// match the Linux signal numbers of Linux.  Oops!
+		// This is fixed in Mono.Unix, but for the moment we want to maintain
+		// compatibility with mono 1.0.x.
+		const int ACTUAL_LINUX_SIGINT  = 2;
+		const int ACTUAL_LINUX_SIGQUIT = 3;
+		const int ACTUAL_LINUX_SIGTERM = 15;
+		
+		static void SetupSignalHandlers ()
+		{
+			// Force OurSignalHandler to be JITed
+			OurSignalHandler (-1);
+			
+			// Set up our signal handler
+			Mono.Posix.Syscall.sighandler_t sig_handler;
+			sig_handler = new Mono.Posix.Syscall.sighandler_t (OurSignalHandler);
+                        Mono.Posix.Syscall.signal (ACTUAL_LINUX_SIGINT, sig_handler);
+                        Mono.Posix.Syscall.signal (ACTUAL_LINUX_SIGQUIT, sig_handler);
+                        Mono.Posix.Syscall.signal (ACTUAL_LINUX_SIGTERM, sig_handler);
+		}
+		
+		static void OurSignalHandler (int signal)
+		{
+			// This allows us to call OurSignalHandler w/o doing anything.
+			// We want to call it once to ensure that it is pre-JITed.
+			if (signal < 0)
+				return;
+
+			Logger.Log.Debug ("Shutdown Requested");
+			shutdown = true;
+		}
+
+		/////////////////////////////////////////////////////////////////
+		
 		static void PrintUsage ()
 		{
 			string usage = 
@@ -241,13 +285,12 @@ namespace Beagle.Daemon
 				"Copyright (C) 2005 Novell, Inc.\n\n";
 			
 			usage += 
-				"Usage: beagle-build-index [OPTIONS] <data path> <index path>\n\n" +
+				"Usage: beagle-build-index [OPTIONS] <path> [path] [path] <index path>\n\n" +
 				"Options:\n" +
-				"  --prefix [prefix]\tTarget prefix for Uri remapping.\n" + 
+				"  --remap [path1:path2]\tRemap data paths to fit target. \n" +
 				"  --tag [tag]\t\tTag index data for identification.\n" + 
 				"  --recursive\t\tCrawl source path recursivly.\n" + 
 				"  --debug\t\tEcho verbose debugging information.\n";
-			
 			
 			Console.WriteLine (usage);
 			Environment.Exit (0);
@@ -255,12 +298,15 @@ namespace Beagle.Daemon
 		
 		/////////////////////////////////////////////////////////
 		
-		static Uri RemapUri (Uri current_uri)
+		static Uri RemapUri (Uri uri)
 		{
-			if (arg_prefix == null)
-				return current_uri;
-			
-			return new Uri (Path.Combine (arg_prefix, current_uri.LocalPath.Substring (arg_path.Length)));
+			// FIXME: This is ghetto
+			foreach (DictionaryEntry dict in remap_table) {
+				if (uri.LocalPath.IndexOf ((string) dict.Key) == -1)
+					continue;
+				return new Uri (uri.LocalPath.Replace ((string) dict.Key, (string) dict.Value));
+			}
+			return uri;
 		}
 		
 		static bool Ignore (string path)
