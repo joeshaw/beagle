@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: beagle\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2005-06-17 18:54-0400\n"
-"PO-Revision-Date: 2005-06-17 13:55-0400\n"
+"POT-Creation-Date: 2005-07-03 18:48-0400\n"
+"PO-Revision-Date: 2005-07-03 13:55-0400\n"
 "Last-Translator: Adam Weinberger <adamw@gnome.org>\n"
 "Language-Team: Canadian English <adamw@gnome.org>\n"
 "MIME-Version: 1.0\n"
@@ -126,12 +126,12 @@ msgstr "<b>Conversations History</b>"
 msgid "IM Viewer"
 msgstr "IM Viewer"
 
-#: ImLogViewer/ImLogWindow.cs:77
+#: ImLogViewer/ImLogWindow.cs:74
 #, csharp-format
 msgid "Conversations in {0}"
 msgstr "Conversations in {0}"
 
-#: ImLogViewer/ImLogWindow.cs:84
+#: ImLogViewer/ImLogWindow.cs:81
 #, csharp-format
 msgid "Conversations with {0}"
 msgstr "Conversations with {0}"
@@ -160,7 +160,7 @@ msgid "Send Mail"
 msgstr "Send Mail"
 
 #. For translators: From template Tiles/template-mail-message.html
-#: Tiles/TileImLog.cs:80 Tiles/TranslationHack.cs:44
+#: Tiles/TileImLog.cs:80 Tiles/TranslationHack.cs:50
 msgid "Send IM"
 msgstr "Send IM"
 
@@ -198,64 +198,90 @@ msgstr "Sent"
 msgid "Received"
 msgstr "Received"
 
+#. For translators: From template Tiles/template-blog.html
+#: Tiles/TranslationHack.cs:6
+msgid "Weblog:"
+msgstr "Weblog:"
+
+#. For translators: From template Tiles/template-blog.html
+#: Tiles/TranslationHack.cs:8
+msgid "by"
+msgstr "by"
+
+#. For translators: From template Tiles/template-blog.html
+#: Tiles/TranslationHack.cs:10
+msgid "Published:"
+msgstr "Published:"
+
+#. For translators: From template Tiles/template-blog.html
 #. For translators: From template Tiles/template-docs.html
-#. For translators: From template Tiles/template-folder.html
 #. For translators: From template Tiles/template-file.html
+#. For translators: From template Tiles/template-folder.html
+#. For translators: From template Tiles/template-launcher.html
+#. For translators: From template Tiles/template-mail-message.html
+#. For translators: From template Tiles/template-music.html
+#. For translators: From template Tiles/template-note.html
 #. For translators: From template Tiles/template-picture.html
 #. For translators: From template Tiles/template-presentation.html
-#: Tiles/TranslationHack.cs:6 Tiles/TranslationHack.cs:24
-#: Tiles/TranslationHack.cs:28 Tiles/TranslationHack.cs:60
-#: Tiles/TranslationHack.cs:70
+#. For translators: From template Tiles/template-spreadsheet.html
+#. For translators: From template Tiles/template-web-history.html
+#. For translators: From template Tiles/template-network.html
+#. For translators: From template Tiles/template-im-log.html
+#: Tiles/TranslationHack.cs:12 Tiles/TranslationHack.cs:22
+#: Tiles/TranslationHack.cs:32 Tiles/TranslationHack.cs:40
+#: Tiles/TranslationHack.cs:44 Tiles/TranslationHack.cs:48
+#: Tiles/TranslationHack.cs:56 Tiles/TranslationHack.cs:64
+#: Tiles/TranslationHack.cs:74 Tiles/TranslationHack.cs:90
+#: Tiles/TranslationHack.cs:104 Tiles/TranslationHack.cs:112
+#: Tiles/TranslationHack.cs:116 Tiles/TranslationHack.cs:120
+msgid "Open"
+msgstr "Open"
+
+#. For translators: From template Tiles/template-docs.html
+#. For translators: From template Tiles/template-file.html
+#. For translators: From template Tiles/template-folder.html
+#. For translators: From template Tiles/template-picture.html
+#. For translators: From template Tiles/template-presentation.html
+#. For translators: From template Tiles/template-spreadsheet.html
+#: Tiles/TranslationHack.cs:14 Tiles/TranslationHack.cs:28
+#: Tiles/TranslationHack.cs:38 Tiles/TranslationHack.cs:66
+#: Tiles/TranslationHack.cs:80 Tiles/TranslationHack.cs:96
 msgid "in folder"
 msgstr "in folder"
 
 #. For translators: From template Tiles/template-docs.html
 #. For translators: From template Tiles/template-file.html
 #. For translators: From template Tiles/template-presentation.html
-#: Tiles/TranslationHack.cs:8 Tiles/TranslationHack.cs:30
-#: Tiles/TranslationHack.cs:72
+#. For translators: From template Tiles/template-spreadsheet.html
+#: Tiles/TranslationHack.cs:16 Tiles/TranslationHack.cs:30
+#: Tiles/TranslationHack.cs:82 Tiles/TranslationHack.cs:98
 msgid "Last modified"
 msgstr "Last modified"
 
 #. For translators: From template Tiles/template-docs.html
 #. For translators: From template Tiles/template-presentation.html
-#: Tiles/TranslationHack.cs:10 Tiles/TranslationHack.cs:74
+#. For translators: From template Tiles/template-spreadsheet.html
+#: Tiles/TranslationHack.cs:18 Tiles/TranslationHack.cs:84
+#: Tiles/TranslationHack.cs:100
 msgid "Title:"
 msgstr "Title:"
 
 #. For translators: From template Tiles/template-docs.html
 #. For translators: From template Tiles/template-presentation.html
-#: Tiles/TranslationHack.cs:12 Tiles/TranslationHack.cs:76
+#. For translators: From template Tiles/template-spreadsheet.html
+#: Tiles/TranslationHack.cs:20 Tiles/TranslationHack.cs:86
+#: Tiles/TranslationHack.cs:102
 msgid "Author:"
 msgstr "Author:"
 
 #. For translators: From template Tiles/template-docs.html
-#. For translators: From template Tiles/template-launcher.html
-#. For translators: From template Tiles/template-folder.html
-#. For translators: From template Tiles/template-file.html
-#. For translators: From template Tiles/template-im-log.html
-#. For translators: From template Tiles/template-mail-message.html
-#. For translators: From template Tiles/template-music.html
-#. For translators: From template Tiles/template-note.html
-#. For translators: From template Tiles/template-picture.html
-#. For translators: From template Tiles/template-presentation.html
-#. For translators: From template Tiles/template-web-history.html
-#. For translators: From template Tiles/template-blog.html
-#: Tiles/TranslationHack.cs:14 Tiles/TranslationHack.cs:22
-#: Tiles/TranslationHack.cs:26 Tiles/TranslationHack.cs:32
-#: Tiles/TranslationHack.cs:38 Tiles/TranslationHack.cs:42
-#: Tiles/TranslationHack.cs:50 Tiles/TranslationHack.cs:58
-#: Tiles/TranslationHack.cs:64 Tiles/TranslationHack.cs:80
-#: Tiles/TranslationHack.cs:88 Tiles/TranslationHack.cs:94
-msgid "Open"
-msgstr "Open"
-
-#. For translators: From template Tiles/template-docs.html
 #. For translators: From template Tiles/template-file.html
 #. For translators: From template Tiles/template-picture.html
 #. For translators: From template Tiles/template-presentation.html
-#: Tiles/TranslationHack.cs:16 Tiles/TranslationHack.cs:34
-#: Tiles/TranslationHack.cs:66 Tiles/TranslationHack.cs:82
+#. For translators: From template Tiles/template-spreadsheet.html
+#: Tiles/TranslationHack.cs:24 Tiles/TranslationHack.cs:34
+#: Tiles/TranslationHack.cs:76 Tiles/TranslationHack.cs:92
+#: Tiles/TranslationHack.cs:106
 msgid "Send to..."
 msgstr "Send to..."
 
@@ -264,66 +290,77 @@ msgstr "Send to..."
 #. For translators: From template Tiles/template-music.html
 #. For translators: From template Tiles/template-picture.html
 #. For translators: From template Tiles/template-presentation.html
-#: Tiles/TranslationHack.cs:18 Tiles/TranslationHack.cs:36
-#: Tiles/TranslationHack.cs:54 Tiles/TranslationHack.cs:68
-#: Tiles/TranslationHack.cs:84
+#. For translators: From template Tiles/template-spreadsheet.html
+#: Tiles/TranslationHack.cs:26 Tiles/TranslationHack.cs:36
+#: Tiles/TranslationHack.cs:60 Tiles/TranslationHack.cs:78
+#: Tiles/TranslationHack.cs:94 Tiles/TranslationHack.cs:108
 msgid "Reveal in file manager"
 msgstr "Show in file manager"
 
 #. For translators: From template Tiles/template-launcher.html
-#: Tiles/TranslationHack.cs:20
+#: Tiles/TranslationHack.cs:42
 msgid "Application:"
 msgstr "Application:"
 
 #. For translators: From template Tiles/template-mail-message.html
-#: Tiles/TranslationHack.cs:40
+#: Tiles/TranslationHack.cs:46
 msgid "Folder:"
 msgstr "Folder:"
 
 #. For translators: From template Tiles/template-music.html
-#: Tiles/TranslationHack.cs:46
+#: Tiles/TranslationHack.cs:52
 msgid "Track"
 msgstr "Track"
 
 #. For translators: From template Tiles/template-music.html
-#: Tiles/TranslationHack.cs:48
+#: Tiles/TranslationHack.cs:54
 msgid "from"
 msgstr "from"
 
 #. For translators: From template Tiles/template-music.html
-#: Tiles/TranslationHack.cs:52
+#: Tiles/TranslationHack.cs:58
 msgid "Enqueue"
 msgstr "Enqueue"
 
 #. For translators: From template Tiles/template-note.html
-#: Tiles/TranslationHack.cs:56
+#: Tiles/TranslationHack.cs:62
 msgid "last modified"
 msgstr "last modified"
 
 #. For translators: From template Tiles/template-picture.html
-#: Tiles/TranslationHack.cs:62
+#: Tiles/TranslationHack.cs:68
 msgid "Modified:"
 msgstr "Modified:"
 
+#. For translators: From template Tiles/template-picture.html
+#: Tiles/TranslationHack.cs:70
+msgid "Tags:"
+msgstr "Tags:"
+
+#. For translators: From template Tiles/template-picture.html
+#: Tiles/TranslationHack.cs:72
+msgid "Description:"
+msgstr "Description:"
+
 #. For translators: From template Tiles/template-presentation.html
-#: Tiles/TranslationHack.cs:78
+#: Tiles/TranslationHack.cs:88
 msgid "Slides:"
 msgstr "Slides:"
 
 #. For translators: From template Tiles/template-web-history.html
-#: Tiles/TranslationHack.cs:86
+#: Tiles/TranslationHack.cs:110
 msgid "Last viewed:"
 msgstr "Last viewed:"
 
-#. For translators: From template Tiles/template-blog.html
-#: Tiles/TranslationHack.cs:90
-msgid "Weblog:"
-msgstr "Weblog:"
+#. For translators: From template Tiles/template-network.html
+#: Tiles/TranslationHack.cs:114
+msgid "from Networked Beagle on host"
+msgstr "from Networked Beagle on host"
 
-#. For translators: From template Tiles/template-blog.html
-#: Tiles/TranslationHack.cs:92
-msgid "Published:"
-msgstr "Published:"
+#. For translators: From template Tiles/template-network.html
+#: Tiles/TranslationHack.cs:118
+msgid "Search Networked Beagle"
+msgstr "Search Networked Beagle"
 
 #: tools/Settings.cs:174
 msgid "Reload configuration"
@@ -525,7 +562,7 @@ msgstr ""
 msgid "Start search & indexing services automatically on login"
 msgstr "Start search & indexing services automatically on login"
 
-#: Util/Evolution.cs:45 Util/Evolution.cs:160
+#: Util/Evolution.cs:45 Util/Evolution.cs:163
 msgid "On This Computer"
 msgstr "On This Computer"
 
