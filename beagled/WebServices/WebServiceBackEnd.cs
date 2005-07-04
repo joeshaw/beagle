@@ -49,7 +49,7 @@ namespace Beagle.WebService {
 		public static string DEFAULT_XSP_ROOT = Path.Combine (ExternalStringsHack.PkgDataDir, "xsp");
 		public static string DEFAULT_XSP_PORT = "8888";
 
-		public static bool web_global = true;
+		public static bool web_global;
 		public static bool web_start = true;
 		public static string web_port = DEFAULT_XSP_PORT;
 		public static string web_rootDir = DEFAULT_XSP_ROOT;
@@ -85,11 +85,11 @@ namespace Beagle.WebService {
 			
 			//start web-access server first
 			Logger.Log.Debug ("Starting WebBackEnd");
-			WebBackEnd.init (web_global);
+			WebBackEnd.init ();
 
 			//Next start web-service server
 			Logger.Log.Info ("Starting WebServiceBackEnd");
-			WebServiceBackEnd.init (web_global);
+			WebServiceBackEnd.init ();
 
 			Logger.Log.Debug ("Global WebServicesAccess {0}", web_global ? "Enabled" : "Disabled");
 
@@ -175,11 +175,10 @@ namespace Beagle.WebService {
 			
 			Conf.WebServicesConfig wsc = (Conf.WebServicesConfig) section;
 			
-			if (allow_global_access != wsc.AllowGlobalAccess) {
+			if (web_global != wsc.AllowGlobalAccess) {
 				// Update AllowGlobalAccess configuration:
-				allow_global_access = wsc.AllowGlobalAccess;
-				WebBackEnd.updateGlobalAccess(wsc.AllowGlobalAccess);
-				Logger.Log.Info("WebServicesBackEnd: Global WebServicesAccess {0}", allow_global_access ? "Enabled" : "Disabled");
+				web_global = wsc.AllowGlobalAccess;
+				Logger.Log.Info("WebServicesBackEnd: Global WebServicesAccess {0}", web_global ? "Enabled" : "Disabled");
 			}
 			
 			if (wsc.PublicFolders.Count == 0)
@@ -216,7 +215,6 @@ namespace Beagle.WebService {
 		//	   so that front-end code always gets hold of same instance.
 		
 		static WebServiceBackEnd instance = null;		
-		static bool allow_global_access = false;
 				
 		private Hashtable resultTable;
 		private Hashtable sessionTable;
@@ -234,13 +232,11 @@ namespace Beagle.WebService {
 		}
 	
 		public bool allowGlobalAccess {
-			get { return allow_global_access; }		
+			get { return web_global; }		
 		}
 				
-		public static void init(bool web_global)
+		public static void init()
 		{
-		    allow_global_access = web_global;
-		      		
 		    if (instance == null) {
 
 		  		instance = new WebServiceBackEnd();
@@ -692,6 +688,7 @@ namespace Beagle.WebService {
 		public string[] mimeType;
 		public string[] searchSources;
 		public QueryDomain qdomain;
+		public int 	searchId;
 	}
 
 	[Serializable()]

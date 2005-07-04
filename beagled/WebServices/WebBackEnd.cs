@@ -49,7 +49,6 @@ namespace Beagle.WebService {
 
 		static WebBackEnd instance = null;		
 		static Logger log = Logger.Get ("WebBackEnd");
-		static bool allow_global_access = false;
 		
 		private Hashtable result;
 		private Hashtable sessionResp;
@@ -65,12 +64,11 @@ namespace Beagle.WebService {
 		}		
 
 		public bool allowGlobalAccess {
-			get { return allow_global_access;  }
+			get { return WebServiceBackEnd.web_global;  }
 		}
 
-		public static void init(bool web_global) 
+		public static void init() 
 		{
-		   allow_global_access = web_global;
 		   
 		   if (instance == null) {
 			  instance = new WebBackEnd();
@@ -84,11 +82,6 @@ namespace Beagle.WebService {
 			  RemotingConfiguration.ApplicationName="beagled";
 			  RemotingConfiguration.RegisterWellKnownServiceType(WKSTE);
 		   }
-		}
-
-		public static void updateGlobalAccess(bool web_global)
-		{
-			allow_global_access = web_global;			
 		}
 		
 		void OnHitsAdded (QueryResult qres, ICollection hits)
