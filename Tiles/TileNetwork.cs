@@ -49,7 +49,7 @@ namespace Beagle.Tile {
 
 			Template["Icon"] = Images.GetHtmlSource ("netbeagle", "image/png");
 	
-			//netURI format ... netbeagle://154.132.45.23:8888/beagle?http://154.132.45.23:8888/beagle/public/testlt		
+			//netURI format ... netbeagle://154.132.45.23:8888/searchToken?http://154.132.45.23:8888/beagle/public/test.doc		
 			string netUri = this.Hit.Uri.ToString();
 			//Console.WriteLine("Hit Uri is " + netUri);
 			string resourceUrl = netUri;
