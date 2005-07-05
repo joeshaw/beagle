@@ -1,3 +1,8 @@
+2005-07-05  Vijay K. Nanjundaswamy <knvijay@novell.com>
+	
+	* beagled/WebServices/*.cs:
+	Added support for cascaded networked Beagle searches.
+	
 2005-07-01  Vijay K. Nanjundaswamy <knvijay@novell.com>
 
 	* Util/Conf.cs, Util/Makefile.am:
