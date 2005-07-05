@@ -40,7 +40,7 @@ namespace Beagle.Daemon
 	public class NetBeagleHandler
 	{
 		string Hostname;
-		int Port;
+		string Port;
 		IQueryable netBeagleQueryable;
 		
 		BeagleWebService wsp;	
@@ -48,7 +48,7 @@ namespace Beagle.Daemon
 
 		static Logger log = Logger.Get ("NetBeagleHandler");
 		
-		public NetBeagleHandler (string hostname, int port, IQueryable iq)
+		public NetBeagleHandler (string hostname, string port, IQueryable iq)
 		{
 			this.Hostname = hostname;
 			this.Port = port;
@@ -71,8 +71,6 @@ namespace Beagle.Daemon
 			return sl;
 		}
 		
-		public const string BeagleNetPrefix = "netbeagle://";
-				
 		public IAsyncResult DoQuery (Query query,  IQueryResult result,
 				     					IQueryableChangeData changeData)
 		{
@@ -94,8 +92,14 @@ namespace Beagle.Daemon
 				
 			//To prevent circular loops, qdomain in request sent to remote beagled
 			//should be Local (or Neighborhood?)
-			sreq.qdomain = QueryDomain.Local;
+			
+			sreq.qdomain = QueryDomain.Local; 
 
+			//sreq.qdomain = QueryDomain.Global; //Caution: This Enables Cascaded NetBeagle searching !
+
+			//Cache the query request, get a unique searchId for it and include as part of searchRequest:
+			sreq.searchId = NetworkedBeagle.AddRequest(query);
+			 
 			log.Info("NetBeagleHandler: Starting WebService Query for " + Hostname + ":" + Port);
 				
 			ReqContext rc = new ReqContext(wsp, result, netBeagleQueryable);
@@ -128,6 +132,7 @@ namespace Beagle.Daemon
 					if (rc.SearchToken == null)
 						rc.SearchToken = resp.searchToken; 
 						
+					NetContext nc = new NetContext(wsp, resp.searchToken);						
 			   		HitResult[] hres = resp.hitResults;
 		
   					for (int i = 0; i < hres.Length; i++) {
@@ -138,13 +143,13 @@ namespace Beagle.Daemon
 						//FIXME: Generate a random no. b/w 1 .. 99 and multiply by 1000000, and add to hr.id ?
 						hit.Id = hr.id; 
 					 
-						//[Uri Format] netbeagle://164.99.153.134:8888/beagle?file:///....	
-						if (hr.uri.StartsWith(BeagleNetPrefix))
+						//[Uri Format] netbeagle://164.99.153.134:8888/searchToken?http:///....	
+						if (hr.uri.StartsWith(NetworkedBeagle.BeagleNetPrefix))
 							hit.Uri = new Uri(hr.uri);
 						else {							
 							string[] fragments = hr.uri.Split ('/');
 							string hostNamePort = fragments[2];										
-							hit.Uri = new Uri(BeagleNetPrefix + hostNamePort + "/beagle?" + hr.uri);
+							hit.Uri = new Uri(NetworkedBeagle.BeagleNetPrefix + hostNamePort + "/" + resp.searchToken + "?" + hr.uri);
 						//hit.Uri = new Uri(BeagleNetPrefix + wsp.Hostname + ":" + wsp.Port + "/beagle?" + hr.uri);			
 						}
 														
@@ -166,7 +171,7 @@ namespace Beagle.Daemon
 			
 						//Add Snippet					
 						((NetworkHit)hit).snippet = hr.snippet;			
-						((NetworkHit)hit).context = new NetContext(wsp, resp.searchToken);
+						((NetworkHit)hit).context = nc;
 						  						
 						//Add NetBeagleQueryable instance
 						hit.SourceObject = iq;

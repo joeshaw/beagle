@@ -48,24 +48,22 @@ namespace Beagle.WebService {
 		public static string hostname = "localhost";		
 		public static string DEFAULT_XSP_ROOT = Path.Combine (ExternalStringsHack.PkgDataDir, "xsp");
 		public static string DEFAULT_XSP_PORT = "8888";
-
-		public static bool web_global;
-		public static bool web_start = true;
-		public static string web_port = DEFAULT_XSP_PORT;
 		public static string web_rootDir = DEFAULT_XSP_ROOT;
+		public static string web_port = DEFAULT_XSP_PORT;		
+		public static bool web_start = true;
+		public static bool web_global;
 
-		//static Logger log = Logger.Get ("WebServiceBackEnd");
 		static Mono.ASPNET.ApplicationServer appServer = null;
-		static string DEFAULT_APP_MAPPINGS = "/:" + DEFAULT_XSP_ROOT + ",/beagle:" + DEFAULT_XSP_ROOT;
-
 		//Both "/" and "/beagle" aliased to DEFAULT_XSP_ROOT only for BeagleXSP server
-		static string[] xsp_param = {"--port", DEFAULT_XSP_PORT,
-					     "--root", DEFAULT_XSP_ROOT, 
-					     "--applications", DEFAULT_APP_MAPPINGS, 
-					     "--nonstop"};
-		
-		static string[] reserved_suffixes;
-		static string BeagleHttpUriBase;
+		static string DEFAULT_APP_MAPPINGS = "/:" + DEFAULT_XSP_ROOT + ",/beagle:" + DEFAULT_XSP_ROOT;
+		static string[] xsp_param = {"--port", 	DEFAULT_XSP_PORT,
+					     			 "--root", 	DEFAULT_XSP_ROOT, 
+					     			 "--applications", DEFAULT_APP_MAPPINGS, 
+					     			 "--nonstop"};
+		//static Logger log = Logger.Get ("WebServiceBackEnd");		
+		static string 		BeagleHttpUriBase;
+		static string[] 	reserved_suffixes;
+
 		public static ExternalAccessFilter AccessFilter;
 		
 		public static void Start()
@@ -165,6 +163,8 @@ namespace Beagle.WebService {
 				appServer = null;
 			}
 		}
+		
+/////////////////////////////////////////////////////////////////////////////////////////
 
 		private void WebServicesConfigurationChanged (Conf.Section section)
 		{			
@@ -207,19 +207,19 @@ namespace Beagle.WebService {
 */					 
 		}
 		
-		
-/////////////////////////////////////////////////////////////////////////////////////////
-		
+/////////////////////////////////////////////////////////////////////////////////////////		
+				
 		//KNV: If needed, we can convert this to a Singleton, adding a 
 		//	   static Factory method to get the singleton instance reference,
 		//	   so that front-end code always gets hold of same instance.
 		
 		static WebServiceBackEnd instance = null;		
-				
+
 		private Hashtable resultTable;
 		private Hashtable sessionTable;
 		
 		public WebServiceBackEnd() {
+
 			 resultTable 		= Hashtable.Synchronized(new Hashtable());
 			 sessionTable 		= Hashtable.Synchronized(new Hashtable());
 			
@@ -240,7 +240,15 @@ namespace Beagle.WebService {
 		    if (instance == null) {
 
 		  		instance = new WebServiceBackEnd();
-
+/*			
+				//Test
+				Query q = new Query();
+				int i = NetworkedBeagle.AddRequest(q );
+				Console.WriteLine("RequestTable test {0}, searchId = {1}", NetworkedBeagle.IsCachedRequest(i) ? "Passed":"Failed", i);
+				Console.WriteLine("2nd invocation of AddRequest(q) returns {0}", NetworkedBeagle.AddRequest(q)); 
+				NetworkedBeagle.RemoveRequest(q);
+				Console.WriteLine("IsCachedRequest() now is " + NetworkedBeagle.IsCachedRequest(i));
+*/
   		  		//TCP Channel Listener registered in beagledWeb:init()
 		  		//ChannelServices.RegisterChannel(new TcpChannel(8347));
 		  		WellKnownServiceTypeEntry WKSTE =
@@ -249,7 +257,6 @@ namespace Beagle.WebService {
 		  		RemotingConfiguration.ApplicationName="beagled";
 		  		RemotingConfiguration.RegisterWellKnownServiceType(WKSTE);
 		    }	 
- 
 		}
 
 		void OnHitsAdded (QueryResult qres, ICollection hits)
@@ -267,8 +274,9 @@ namespace Beagle.WebService {
 				else {				
 						//Query query = sdata.query;					
 					lock (results.SyncRoot) {
-						foreach (Hit h in hits)
-							if (AccessFilter.FilterHit(h))
+						foreach (Hit h in hits) 
+							if (h.Uri.ToString().StartsWith(NetworkedBeagle.BeagleNetPrefix) ||
+											AccessFilter.FilterHit(h))
 								results.Add(h);
 					}
 				}
@@ -298,7 +306,6 @@ namespace Beagle.WebService {
 
 		void OnFinished (QueryResult qres)
 		{
-
 			DetachQueryResult (qres);
 		}
 
@@ -327,6 +334,8 @@ namespace Beagle.WebService {
 				if (resultTable.Contains(qres)) {
 					SessionData sdata = ((SessionData) resultTable[qres]);	
 					sdata.results.Sort();
+					if (!sdata.localRequest)
+						NetworkedBeagle.RemoveRequest(sdata.query);
 				}
 				qres.HitsAddedEvent -= OnHitsAdded;
 				qres.HitsSubtractedEvent -= OnHitsSubtracted;
@@ -383,7 +392,8 @@ namespace Beagle.WebService {
 		public const int SC_INVALID_QUERY = -1;
 		public const int SC_UNAUTHORIZED_ACCESS = -2;
 		public const int SC_INVALID_SEARCH_TOKEN = -3;
-
+		public const int SC_DUPLICATE_QUERY = -4;
+		
 		//Full beagledQuery
 		public SearchResult doQuery(SearchRequest sreq, bool isLocalReq)
 		{	
@@ -397,9 +407,9 @@ namespace Beagle.WebService {
 			    sr.statusMsg = "Error: No search terms specified";
 				return sr;
 			}
-				
+
 			Query query = new Query();
-			
+						
 			foreach (string text in sreq.text) 
 				query.AddText(text);				
 			
@@ -417,24 +427,45 @@ namespace Beagle.WebService {
 			//Having this Global can cause cascading/looping of requests.
 			if (sreq.qdomain > 0)
 				query.AddDomain(sreq.qdomain);
+						
+			if (!isLocalReq) {	//External Request, check if this Node is already processing it
+
+			 	lock (this) {					
+					if ((sreq.searchId != 0) && NetworkedBeagle.IsCachedRequest(sreq.searchId)) {
+
+						sr = new SearchResult();
+				    	sr.numResults = sr.totalResults = sr.firstResultIndex = 0;
+						sr.hitResults = new HitResult[sr.numResults];	
+				 		sr.searchToken = "";
+
+				 		sr.statusCode = SC_DUPLICATE_QUERY;
+				 		sr.statusMsg = "Error: Duplicate Query loopback";
+				 		Logger.Log.Warn("WebServiceBackEnd: Received duplicate Query for a query already in process!");
+				 		Logger.Log.Warn("WebServiceBackEnd: Check NetBeagle configuration on all nodes to remove possible loops");
+				 		return sr;
+				 	}
+		
+					NetworkedBeagle.CacheRequest(query, sreq.searchId);				 	
+				 }		
+			}
 
 			ArrayList results = ArrayList.Synchronized(new ArrayList());
 			
 			QueryResult qres = new QueryResult ();
 
-			string searchId = TokenGenerator();
+			string searchToken = TokenGenerator();
 						
 			SessionData sdata = new SessionData(query, results, isLocalReq);
 				
 			AttachQueryResult (qres, sdata);
 			
 /* Include this code, if sessionID passed from front-end:
-			if (sessionTable.Contains(searchId))
-				sessionTable[searchId] = sdata;
+			if (sessionTable.Contains(searchToken))
+				sessionTable[searchToken] = sdata;
 			else
 */
-			sessionTable.Add(searchId, sdata);
-		
+			sessionTable.Add(searchToken, sdata);
+			
 			QueryDriver.DoQuery (query, qres);
 
 			while (resultTable.Contains(qres) && (results.Count < MAX_RESULTS_PER_CALL) )
@@ -449,7 +480,8 @@ namespace Beagle.WebService {
 			
 				sr.numResults = results.Count < MAX_RESULTS_PER_CALL ? results.Count: MAX_RESULTS_PER_CALL;	
 				sr.hitResults = new HitResult[sr.numResults];
-			    				
+			    
+			    string hitUri;			
 				for (int i = 0; i < sr.numResults; i++) {
 				
 					Hit h = (Hit) results[i];
@@ -461,19 +493,20 @@ namespace Beagle.WebService {
 						snippet = "ERROR: hit.SourceObject is null, uri=" + h.Uri;
 					else
 						snippet = queryable.GetSnippet (ICollection2StringList(query.Text), h);				
-					
+/*
 					//snippet == "", implies GetSnippet returned null or empty snippet
 					if (snippet == null)   	
 						snippet = "";		
-								
+*/								
 					sr.hitResults[i] = new HitResult();
 					sr.hitResults[i].id = h.Id;
 					
-					if (isLocalReq)
-						sr.hitResults[i].uri = h.Uri.ToString();
-					else 
-						sr.hitResults[i].uri = AccessFilter.TranslateHit(h);
-
+					hitUri = h.Uri.ToString();
+					if (isLocalReq || hitUri.StartsWith(NetworkedBeagle.BeagleNetPrefix))
+							sr.hitResults[i].uri = hitUri;
+					else
+							sr.hitResults[i].uri = AccessFilter.TranslateHit(h);
+					
 	        	    sr.hitResults[i].resourceType = h.Type;
 					sr.hitResults[i].mimeType = h.MimeType;
 					sr.hitResults[i].source = h.Source;
@@ -507,7 +540,7 @@ namespace Beagle.WebService {
 			 sr.searchToken = "";
 				
 			 if (sr.totalResults > 0)
-				sr.searchToken = searchId;
+				sr.searchToken = searchToken;
 					
 			 sr.statusCode = SC_QUERY_SUCCESS;
 			 sr.statusMsg = "Success";
@@ -545,6 +578,7 @@ namespace Beagle.WebService {
 				
 				sr.hitResults = new HitResult[sr.numResults];
 			
+				string hitUri;
 				for (int k = startIndex; (i < sr.numResults) && (k < results.Count); k++)   {		
 				
 					Hit h = (Hit) results[k];	
@@ -563,11 +597,12 @@ namespace Beagle.WebService {
 // Not initializing sr.hitResults[i].snippet implies there is no <snippets> element in HitResult XML response.
 								
 					sr.hitResults[i].id = h.Id;
-					
-					if (isLocalReq)
-						sr.hitResults[i].uri = h.Uri.ToString();
-					else 
-						sr.hitResults[i].uri = AccessFilter.TranslateHit(h);
+							
+					hitUri = h.Uri.ToString();
+					if (isLocalReq || hitUri.StartsWith(NetworkedBeagle.BeagleNetPrefix))
+							sr.hitResults[i].uri = hitUri;
+					else
+							sr.hitResults[i].uri = AccessFilter.TranslateHit(h);
 
 	        	    sr.hitResults[i].resourceType = h.Type;
 					sr.hitResults[i].mimeType = h.MimeType;
@@ -756,9 +791,8 @@ namespace Beagle.WebService {
 		public HitSnippet() { hitId = 0; snippet = null; }
 		public HitSnippet( int i, string s) {
 			this.hitId = i;
-			this.snippet =s;
+			this.snippet = s;
 		}
-
 	}
 		
 }

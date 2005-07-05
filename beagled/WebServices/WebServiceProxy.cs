@@ -29,20 +29,14 @@ public class BeagleWebService: System.Web.Services.Protocols.SoapHttpClientProto
 	string hostname = "localhost";
 	string port = "8888";
     
-    public BeagleWebService (string Hostname, int Port) {
-    
-        if (Port > 1024 && Port < 10000)
-        	this.port = System.Convert.ToString(Port, 10);
-        else
-        	this.port = "8888";
-        	
+    public BeagleWebService (string Hostname, string Port) {
+
     	if (Hostname == null || Hostname == "")
         	this.hostname = "localhost";
         else
         	this.hostname = Hostname;
         	
-        this.Url = "http://" + this.hostname + ":" + this.port + "/beagle/search.asmx";
-      	
+        this.Url = "http://" + this.hostname + ":" + this.port + "/beagle/search.asmx";   	
     }
     
 	public string Hostname {
@@ -188,6 +182,9 @@ public class SearchRequest {
 
     /// <remarks/>
     public QueryDomain qdomain;
+
+    /// <remarks/>
+    public int searchId;    
 }
 
 /*

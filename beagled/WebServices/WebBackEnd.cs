@@ -99,8 +99,9 @@ namespace Beagle.WebService {
 							hitsCopy.AddRange(hits);
 					}
 					else {
-							foreach (Hit h in hits)
-							 	if (WebServiceBackEnd.AccessFilter.FilterHit(h)) {
+							foreach (Hit h in hits)							
+							   if (h.Uri.ToString().StartsWith(NetworkedBeagle.BeagleNetPrefix) ||
+							 	 			WebServiceBackEnd.AccessFilter.FilterHit(h)) {
 									root.Add(h);
 									lock (hitsCopy.SyncRoot)
 										hitsCopy.Add(h);
@@ -551,22 +552,24 @@ namespace Beagle.WebService {
 			}
 		}
 		
-		private int 	maxDisplayed 	= 10;
+		private int 	maxDisplayed 	=  0;
 		const int MAX_HIT_IDS_PER_REQ 	= 20; //Max no. of hits snippets to seek at a time
 		const int MAX_HITS_AHEAD		= 40; //No. of hits ahead of lastDisplayed to scan
 		
 		private bool tenHits = false;		//Flag to do Prefetch check only every 10 hits
 		
 		private void PrefetchSnippetsForNetworkHits(BT.TileHitCollection thc) 
-		{
-		
-			int lastDisplayed = thc.LastDisplayed + 1;
+		{		
+			int lastDisplayed = 0;
+			
+			if (maxDisplayed != 0)
+				lastDisplayed = thc.LastDisplayed + 1;
 			
 			//We have cached snippets for network hits upto maxDisplayed
 			if (lastDisplayed < maxDisplayed)	
 				return;
-			
-			maxDisplayed = lastDisplayed;
+
+			maxDisplayed = thc.LastDisplayed + 1;
 			
 			//Do Prefetch check once every ten hits
 			tenHits = !tenHits;
@@ -599,47 +602,69 @@ namespace Beagle.WebService {
 					}
 				}
 
-				log.Debug("PrefetchSnippets: Found {0} NetworkHits without snippets", networkHits.Count); 
-				
+				log.Debug("PrefetchSnippets: Found {0} NetworkHits without snippets", networkHits.Count);
+				 
 				while (networkHits.Count > 0) {
 				
 					ArrayList nwHitsPerNode = new ArrayList();
-					NetContext nc = (NetContext) ((NetworkHit)networkHits[0]).context;
-					BeagleWebService wsp = nc.proxy;	
-					string searchToken = nc.searchToken;
+					string hostnamePort = GetHostnamePort((NetworkHit)networkHits[0]);
 					
 					//Filter NetworkHits from one Networked Beagle
-					foreach	(NetworkHit nh in networkHits)	
-						if (((NetContext) nh.context).proxy == wsp) { 		//if (nh.token.Equals(searchToken))
+					foreach	(NetworkHit nh in networkHits) 
+					{
+						string hnp = GetHostnamePort(nh);
+						if (hnp == null)
+							continue;
+							
+						if (hnp.Equals(hostnamePort)) {
+
 							if (nwHitsPerNode.Count < MAX_HIT_IDS_PER_REQ)
 								nwHitsPerNode.Add(nh);
 							else
 								break;
 						}
-						
+					}
+											
 					//Remove NetworkHits for this Networked Beagle	
 					int i = networkHits.Count;
 					while (--i >= 0) { 
-						nc = (NetContext) ((NetworkHit)networkHits[i]).context;
-						if (nc.proxy == wsp)
+
+						string hnp = GetHostnamePort((NetworkHit)networkHits[i]);							
+						if ((hnp == null) || hnp.Equals(hostnamePort))
 							networkHits.RemoveAt(i);
 					}
 			
 					if (nwHitsPerNode.Count > 0)
 					{
-						int[] hitIds = new int[nwHitsPerNode.Count];
-						for (int j = 0; j < hitIds.Length; j++)
-							hitIds[j] = ((NetworkHit)nwHitsPerNode[j]).Id;
+						string[] f3 = hostnamePort.Split(':');
+						if (f3.Length < 2)
+						{
+							log.Warn("PrefetchSnippets: Invalid format netBeagle URI in NetworkHit");
+							continue; 
+						}
+						BeagleWebService wsp = new BeagleWebService(f3[0], f3[1]);
 							
-						log.Debug("PrefetchSnippets: Invoking GetSnippets on {0} for {1} hits", wsp.Hostname, nwHitsPerNode.Count);
+						string searchToken = GetSearchToken((NetworkHit)nwHitsPerNode[0]);
+						
+						if (searchToken.Equals("beagle"))  //Check if it is Older version of Beagle networking
+							searchToken = null;
+							 			
+						if (searchToken != null) {
+						
+							int[] hitIds = new int[nwHitsPerNode.Count];
+							for (int j = 0; j < hitIds.Length; j++)
+								hitIds[j] = ((NetworkHit)nwHitsPerNode[j]).Id;
+							
+							log.Debug("PrefetchSnippets: Invoking GetSnippets on {0} for {1} hits", wsp.Hostname, nwHitsPerNode.Count);
 					
-						ReqContext2 rc = new ReqContext2(wsp, nwHitsPerNode);
-						wsp.BeginGetSnippets(searchToken, hitIds, PrefetchSnippetsResponseHandler, rc);						
+							ReqContext2 rc = new ReqContext2(wsp, nwHitsPerNode);
+							wsp.BeginGetSnippets(searchToken, hitIds, PrefetchSnippetsResponseHandler, rc);
+						}						
 					}
-				}								
-			}
+				} //end while								
+			} //end if 
 		} 
-   		
+
    		private static void PrefetchSnippetsResponseHandler(IAsyncResult ar) 
     	{   	
     		ReqContext2 rc = (ReqContext2)ar.AsyncState;
@@ -701,7 +726,43 @@ namespace Beagle.WebService {
 				get { return _nwHits; }
 			}				
 		}					
+   		
+   		private string GetSearchToken(NetworkHit nh)
+   		{
+   			if (nh == null) 
+   				return null;
+   				
+			string netUri = nh.Uri.ToString();		
+			//Console.WriteLine("Hit Uri is " + netUri);
 			
+			//netbeagle://164.99.153.134:8888/searchToken?http:///....	
+			string[] f1, f2 = netUri.Split('?');
+			if (f2.Length > 1) {
+				f1 = f2[0].Split ('/');
+				if (f1.Length > 1)
+					return (f1[f1.Length - 1]);
+			}
+			return null;
+   		}
+
+   		private string GetHostnamePort(NetworkHit nh)
+   		{
+   			if (nh == null) 
+   				return null;
+   				   		
+			string netUri = nh.Uri.ToString();		
+			//Console.WriteLine("Hit Uri is " + netUri);
+			
+			//netbeagle://164.99.153.134:8888/searchToken?http:///....	
+			string[] f1, f2 = netUri.Split('?');
+			if (f2.Length > 1) {
+				f1 = f2[0].Split ('/');
+				if (f1.Length > 1)
+					return (f1[2]);
+			}
+			return null;
+   		}   		
+   					
 
 //////////////////////////////////////////////////////////////////////////
 

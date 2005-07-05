@@ -39,10 +39,11 @@ namespace Beagle.Daemon {
 
 	[QueryableFlavor (Name="NetworkedBeagle", Domain=QueryDomain.Global, RequireInotify=false)]
 	public class NetworkedBeagle : IQueryable 
-	{
+	{					
 		static Logger log = Logger.Get ("NetworkedBeagle");
 	    static readonly string NetBeagleConfigFile = "netbeagle.cfg";
-		
+		public static readonly string BeagleNetPrefix = "netbeagle://";
+				
 		ArrayList NetBeagleList;
 		
 		public NetworkedBeagle ()
@@ -76,7 +77,7 @@ namespace Beagle.Daemon {
 							continue; 
 						}
 						string host = data[0];
-						int port = Convert.ToInt32 (data[1]);		
+						string port = data[1];		
 						NetBeagleList.Add (new NetBeagleHandler (host, port, this));
 					}
 					
@@ -107,9 +108,10 @@ namespace Beagle.Daemon {
 						log.Warn("NetBeagleQueryable: Ignoring improper NetBeagle entry: {0}", entry);
 						continue; 
 					}					
+
 					string host = data[0];
-					int port = Convert.ToInt32 (data[1]);		
-					NetBeagleList.Add (new NetBeagleHandler (host, port, this));
+					string port = data[1];		
+					NetBeagleList.Add (new NetBeagleHandler (host, port, this));					
 				}								
 			}
 			
@@ -137,10 +139,10 @@ namespace Beagle.Daemon {
 					if (data.Length < 2) {
 						log.Warn("NetBeagleQueryable: Ignoring improper NetBeagle entry: {0}", nb);
 						continue; 
-					}					
+					}						
 					string host = data[0];
-					int port = Convert.ToInt32 (data[1]);		
-					newList.Add (new NetBeagleHandler (host, port, this));								
+					string port = data[1];		
+					newList.Add (new NetBeagleHandler (host, port, this));												
 			}	
 			
 			lock (NetBeagleList) {
@@ -159,15 +161,29 @@ namespace Beagle.Daemon {
 
 			return true;
 		}
-
+		
+		public string GetSnippet (string[] query_terms, Hit hit)
+		{
+			string s = "";
+			
+			if (hit is NetworkHit)
+				s = ((NetworkHit)hit).snippet;
+			
+			return s;
+		}
+		
+		public int GetItemCount ()
+		{
+			return -1;
+		}	
+		
 		public void DoQuery (Query query,IQueryResult result,
 				     		 IQueryableChangeData changeData)
-		{	
-			ArrayList resultHandleList = new ArrayList();
-			
+		{				
 			if (NetBeagleList.Count == 0) 
 				return;
-			
+				
+			ArrayList resultHandleList = new ArrayList(); 
 			lock (NetBeagleList) {	
 				log.Debug("NetBeagleQueryable: DoQuery ... Starting NetBeagleHandler queries");
 				foreach (NetBeagleHandler nb in NetBeagleList)
@@ -186,24 +202,41 @@ namespace Beagle.Daemon {
 				}
 				
 			log.Debug("NetBeagleQueryable:DoQuery ... Done");
-		}
-
-		public string GetSnippet (string[] query_terms, Hit hit)
+		}	
+/////////////////////////////////////////////////////////////////////////////////////////			
+		private static Hashtable requestTable = Hashtable.Synchronized(new Hashtable());
+		
+		public static int AddRequest(Query q)
 		{
-			string s = "";
+			if (requestTable.Contains(q))
+				return  (int) requestTable[q];
 			
-			if (hit is NetworkHit)
-				s = ((NetworkHit)hit).snippet;
+			int searchId = System.Guid.NewGuid().GetHashCode();	
+			if (searchId < 0) 
+				searchId = -searchId;
 			
-			if (s == null) 
-				return "";
-				
-			return s;
+			requestTable.Add(q, searchId);
+			return searchId;
 		}
 		
-		public int GetItemCount ()
-		{
-			return -1;
+		public static void CacheRequest(Query q, int searchId)
+		{	
+			if (requestTable.Contains(q))
+				requestTable[q] = searchId; 
+			else
+				requestTable.Add(q, searchId);
 		}		
+		
+		public static void RemoveRequest(Query q)
+		{
+			if (requestTable.Contains(q))
+				requestTable.Remove(q);
+		}
+			
+		public static bool IsCachedRequest(int searchId)
+		{
+			return requestTable.ContainsValue(searchId);
+		}
+
 	}
 }
