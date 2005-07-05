@@ -74,6 +74,21 @@ namespace Beagle.Daemon.FileSystemQueryable {
 			return old_handle;
 		}
 
+
+		public bool ForgetWatch (object watch_object) 
+		{
+			try {
+				FileSystemWatcher fsw = (FileSystemWatcher) watch_object;
+				fsw.EnableRaisingEvents = false;
+				fsw.Dispose ();
+			} catch (Exception ex) {
+				Logger.Log.Error ("Caught exception while doing ForgetWatch");
+				Logger.Log.Error (ex);
+				return false;
+			}
+			return true;
+		}
+
 		public void Start (FileSystemQueryable queryable)
 		{
 			this.queryable = queryable;

@@ -44,13 +44,12 @@ namespace Beagle.Daemon.EvolutionMailDriver {
 
 		private static bool gmime_initialized = false;
 
-		private static ArrayList paths_to_ignore = new ArrayList ();
+		private static ArrayList excludes = new ArrayList ();
 
 		static EvolutionMailIndexableGenerator () {
-			foreach (ExcludeItem exclude_item in Conf.Indexing.Excludes) {
-				if (exclude_item.Type == ExcludeType.MailFolder)
-					paths_to_ignore.Add (exclude_item.Value);
-			}
+			foreach (ExcludeItem exclude in Conf.Indexing.Excludes)
+				if (exclude.Type == ExcludeType.MailFolder)
+					excludes.Add (exclude);
 		}
 
 		protected EvolutionMailQueryable queryable;
@@ -93,11 +92,10 @@ namespace Beagle.Daemon.EvolutionMailDriver {
 
 		protected bool IgnoreFolder (string path)
 		{
-			// FIXME: Use Path.Shit
-			foreach (string ignore_path in paths_to_ignore) {
-				if (path.StartsWith (ignore_path)) {
+			// FIXME: Use System.IO.Path
+			foreach (ExcludeItem exclude in excludes) {
+				if (exclude.IsMatch (path))
 					return true;
-				}
 			}
 			return false;
 		}

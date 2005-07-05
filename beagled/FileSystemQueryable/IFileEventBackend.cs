@@ -30,9 +30,8 @@ namespace Beagle.Daemon.FileSystemQueryable {
 
 		object WatchDirectories (string path);
 		object WatchFiles       (string path, object dir_watch_handle);
-
+		bool   ForgetWatch      (object watch_handle);
+		
 		void Start (FileSystemQueryable queryable);
-
 	}
-
 }

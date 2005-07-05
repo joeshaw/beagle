@@ -443,31 +443,33 @@ namespace Beagle.Daemon.FileSystemQueryable {
 			fa_store = new FileAttributesStore (this);
 		}
 
-		public void LoadConf (Conf.Section section)
+		public void LoadConfiguration () 
 		{
 			if (Conf.Indexing.IndexHomeDir)
 				AddRoot (PathFinder.HomeDir);
-
+			
 			foreach (string root in Conf.Indexing.Roots)
 				AddRoot (root);
-#if false
-			if (Conf.Indexing.IndexWindowsPartitions) {
-				foreach (MountEntry entry in SystemInformation.Mounts) {
-					if (entry.Filesystem == "ntfs" || entry.Filesystem == "vfat")
-						AddRoot (entry.Mountpoint);
-				}
-			}
-#endif 
-			foreach (ExcludeItem exclude_item in Conf.Indexing.Excludes) {
-				switch (exclude_item.Type) {
-				case ExcludeType.Path:
-					filter.AddPathToIgnore (exclude_item.Value);
-					break;
-				case ExcludeType.Pattern:
-					filter.AddPatternToIgnore (exclude_item.Value);
-					break;
-				}
-			}
+
+			Conf.Subscribe (typeof (Conf.IndexingConfig), OnConfigurationChanged);
+		}
+
+		private void OnConfigurationChanged (Conf.Section section)
+		{
+			ArrayList roots_wanted = new ArrayList (Conf.Indexing.Roots);
+			
+			if (Conf.Indexing.IndexHomeDir)
+				roots_wanted.Add (PathFinder.HomeDir);
+			
+			IList roots_to_add, roots_to_remove;
+
+			ArrayFu.IntersectListChanges (roots_wanted, RootsAsPaths, out roots_to_add, out roots_to_remove);
+
+			foreach (string root in roots_to_remove)
+				RemoveRoot (root);
+
+			foreach (string root in roots_to_add)
+				AddRoot (root);
 		}
 
 		// I'd rather not expose these, but we really can't avoid it.
@@ -485,6 +487,18 @@ namespace Beagle.Daemon.FileSystemQueryable {
 			// We return a copy of the list of roots to avoid locking issues.
 			// In practice this shouldn't be a problem.
 			get { lock (big_lock) return roots.Clone () as ArrayList; }
+		}
+
+		private IList RootsAsPaths {
+			get {
+				ArrayList roots = new ArrayList ();
+
+				foreach (Directory root in Roots) {
+					roots.Add (root.FullName);
+				}
+
+				return roots;
+			}
 		}
 
 		public Directory AddRoot (string path)
@@ -535,6 +549,28 @@ namespace Beagle.Daemon.FileSystemQueryable {
 			return root;
 		}
 
+		public bool RemoveRoot (string path) 
+		{
+			return RemoveRoot (GetDirectoryByPath (path));
+		}
+
+		public bool RemoveRoot (Directory root) 
+		{
+			DirectoryPrivate priv = (DirectoryPrivate) root;
+			
+			lock (big_lock) {
+				if (!roots.Contains (root))
+					return false;
+
+				Logger.Log.Debug ("Removing root {0}", root.FullName);
+
+				roots.Remove (root);
+				RecursivelyRemove_Unlocked (priv);
+			}
+			
+			return true;
+		}
+
 		///////////////////////////////////////////////////////////////////////////
 
 		public Directory GetDirectoryByUniqueId (Guid uid)
@@ -570,6 +606,8 @@ namespace Beagle.Daemon.FileSystemQueryable {
 
 					int i = 0;
 
+					// FIXME: FH
+					
 					// Next, find the correct root
 					path = "";
 					for (i = 0; i < path_parts.Count && dir == null; ++i) {
@@ -594,6 +632,23 @@ namespace Beagle.Daemon.FileSystemQueryable {
 
 				return dir;
 			}
+		}
+
+		private void RecursivelyRemove_Unlocked (DirectoryPrivate priv)
+		{
+			if (priv.WatchHandle != null)
+				event_backend.ForgetWatch (priv.WatchHandle);				
+
+			if (priv.FullNameIsCached)
+				path_cache.Remove (priv.FullName);
+			
+			by_unique_id.Remove (priv.UniqueId);
+			unique_id_store.Drop (priv.UniqueId);
+
+			foreach (Directory subdir in priv.Children)
+				RecursivelyRemove_Unlocked ((DirectoryPrivate) subdir);
+
+			//priv.Detatch_Unlocked ();
 		}
 
 		private void RecursivelyRemoveFromPathCache_Unlocked (DirectoryPrivate priv)
@@ -1023,6 +1078,7 @@ namespace Beagle.Daemon.FileSystemQueryable {
 
 				RecursivelyRemoveFromPathCache_Unlocked (priv);
 				priv.Detatch_Unlocked ();
+
 			}
 		}
 

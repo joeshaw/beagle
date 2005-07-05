@@ -312,9 +312,7 @@ namespace Beagle.Daemon.FileSystemQueryable {
 		{
 			event_backend.Start (this);
 
-			model.LoadConf (null);
-                        // FIXME: Handle configuration reload properly
-			//Conf.Subscribe (typeof (Conf.IndexingConfig), model.LoadConf);
+			model.LoadConfiguration ();
 
 			log.Info ("FileSystemQueryable start-up thread finished");
 			// FIXME: Do we need to re-run queries when we are fully started?

@@ -35,77 +35,19 @@ namespace Beagle.Daemon.FileSystemQueryable {
 
 	public class FileNameFilter {
 		
-		static string home_dir;
 		private FileSystemModel model = null;
-
-		static FileNameFilter ()
-		{
-			home_dir = PathFinder.HomeDir;
-		}
-
-		private class Pattern {
-			private string exactMatch;
-			private string prefix;
-			private string suffix;
-			private Regex  regex;
-
-			public Pattern (string pattern)
-			{
-				if (pattern.StartsWith ("/") && pattern.EndsWith ("/")) {
-					regex = new Regex (pattern.Substring (1, pattern.Length - 2));
-					return;
-				}
-
-				int i = pattern.IndexOf ('*');
-				if (i == -1) {
-					exactMatch = pattern;
-				} else {
-					if (i > 0)
-						prefix = pattern.Substring (0, i);
-					if (i < pattern.Length-1)
-						suffix = pattern.Substring (i+1);
-				}
-			}
-
-			public bool IsMatch (string name)
-			{
-				if (exactMatch != null)
-					return name == exactMatch;
-				if (prefix != null && ! name.StartsWith (prefix))
-					return false;
-				if (suffix != null && ! name.EndsWith (suffix))
-					return false;
-				if (regex != null && ! regex.IsMatch (name))
-					return false;
-				return true;
-			}
-
-			public override string ToString ()
-			{
-				string str = "[pattern:";
-				if (exactMatch != null)
-					str += " exact=" + exactMatch;
-				if (prefix != null)
-					str += " prefix=" + prefix;
-				if (suffix != null)
-					str += " suffix=" + suffix;
-				if (regex != null)
-					str += " regex=" + regex.ToString ();
-				str += "]";
-				return str;
-			}
-		}
 
 		//////////////////////////////////////////////////////////////////////
 		
-		private Hashtable patterns_to_ignore;
+		private ArrayList excludes = new ArrayList ();
+		private ArrayList default_excludes = new ArrayList ();
 
 		private void SetupDefaultPatternsToIgnore ()
 		{
 			// Add our default skip patterns.
 			// FIXME: This probably shouldn't be hard-wired.  Or should it?
-			AddPatternToIgnore (new string [] {
-						   ".*",
+			AddDefaultPatternToIgnore (new string [] {
+				                   ".*",
 						   "*~",
 						   "#*#",
 						   "*.o",
@@ -146,11 +88,18 @@ namespace Beagle.Daemon.FileSystemQueryable {
 						   "/conf[0-9]+.file/"
 			});
 		}
+		
+		public void AddDefaultPatternToIgnore (IEnumerable patterns)
+		{
+			foreach (string pattern in patterns)
+				default_excludes.Add (new ExcludeItem (ExcludeType.Pattern, pattern));
+		}
+		
+		/////////////////////////////////////////////////////////////
 
 		public void AddPatternToIgnore (string pattern)
 		{
-			if (! patterns_to_ignore.ContainsKey (pattern))
-				patterns_to_ignore.Add (pattern, new Pattern (pattern));
+			AddExclude (new ExcludeItem (ExcludeType.Pattern, pattern));
 		}
 		
 		public void AddPatternToIgnore (IEnumerable patterns)
@@ -159,16 +108,9 @@ namespace Beagle.Daemon.FileSystemQueryable {
 				AddPatternToIgnore (pattern);
 		}
 
-		ArrayList paths_to_ignore = new ArrayList ();
-
 		public void AddPathToIgnore (string path) 
 		{
-			if (paths_to_ignore.Contains (path))
-				return;
-
-			// FIXME: Recursive shit
-
-			paths_to_ignore.Add (path);
+			AddExclude (new ExcludeItem (ExcludeType.Path, path));
 		}
 
 		public void AddPathToIgnore (IEnumerable paths)
@@ -176,14 +118,64 @@ namespace Beagle.Daemon.FileSystemQueryable {
 			foreach (string path in paths)
 				AddPathToIgnore (path);
 		}
+
+		/////////////////////////////////////////////////////////////
+
+		public void AddExclude (ExcludeItem exclude)
+		{
+			if (exclude.Type != ExcludeType.Path && exclude.Type != ExcludeType.Pattern)
+				return;
+
+			Logger.Log.Debug ("FileNameFilter: Adding ExcludeItem (value={0}, type={1})", exclude.Value, exclude.Type);
+
+			if (!excludes.Contains (exclude))
+				excludes.Add (exclude);
+		}
+
+		public bool RemoveExclude (ExcludeItem exclude)
+		{
+			if (!excludes.Contains (exclude))
+				return false;
+
+			Logger.Log.Debug ("FileNameFilter: Removing ExcludeItem (value={0}, type={1})", exclude.Value, exclude.Type);
+
+			excludes.Remove (exclude);
+			return true;
+		}
 		
 		/////////////////////////////////////////////////////////////
 
 		public FileNameFilter (FileSystemModel model)
 		{
 			this.model = model;
-			patterns_to_ignore = new Hashtable ();
+
 			SetupDefaultPatternsToIgnore ();
+
+			LoadConfiguration ();
+		}
+
+		private void LoadConfiguration () 
+		{
+			foreach (ExcludeItem exclude in Conf.Indexing.Excludes)
+				AddExclude (exclude);
+
+			Conf.Subscribe (typeof (Conf.IndexingConfig), OnConfigurationChanged);
+		}
+
+		private void OnConfigurationChanged (Conf.Section section)
+		{
+			IList excludes_to_add, excludes_to_remove;
+
+			ArrayFu.IntersectListChanges (Conf.Indexing.Excludes, excludes, out excludes_to_add, out excludes_to_remove);
+
+			foreach (ExcludeItem exclude in excludes_to_remove)
+				RemoveExclude (exclude);
+
+			foreach (ExcludeItem exclude in excludes_to_add)
+				AddExclude (exclude);
+
+			// FIXME: Send a re-scan event here when ignore patterns are updated
+			// and do a model.Remove/Add on the directories in question
 		}
 
 		/////////////////////////////////////////////////////////////
@@ -197,8 +189,9 @@ namespace Beagle.Daemon.FileSystemQueryable {
 			if (! Path.IsPathRooted (path))
 				path = Path.GetFullPath (path);
 
-			if (paths_to_ignore.Contains (path))
-				return true;
+			foreach (ExcludeItem exclude in excludes)
+				if (exclude.Type == ExcludeType.Path && exclude.IsMatch (path))
+					return true;
 
 			foreach (FileSystemModel.Directory root in model.Roots)
 				if (root.FullName == path)
@@ -206,8 +199,14 @@ namespace Beagle.Daemon.FileSystemQueryable {
 
 			string name = Path.GetFileName (path);
 
-			foreach (Pattern pattern in patterns_to_ignore.Values)
-				if (pattern.IsMatch (name))
+			// Ugh..
+
+			foreach (ExcludeItem exclude in excludes)
+				if (exclude.Type == ExcludeType.Pattern && exclude.IsMatch (name))
+					return true;
+
+			foreach (ExcludeItem exclude in default_excludes)
+				if (exclude.IsMatch (name))
 					return true;
 
 			if (path == Path.GetPathRoot (path))
@@ -225,27 +224,4 @@ namespace Beagle.Daemon.FileSystemQueryable {
 			return Ignore (info.FullName);
 		}
 	}		
-
-
-#if false
-	class Test {
-		static void Main (string [] args)
-		{
-			FileNameFilter filter = new FileNameFilter ();
-
-			foreach (string arg in args) {
-				FileSystemInfo info = null;
-				if (Directory.Exists (arg))
-					info = new DirectoryInfo (arg);
-				else if (File.Exists (arg))
-					info = new FileInfo (arg);
-
-				if (info != null)
-					Console.WriteLine ("{0} {1}",
-							   filter.Ignore (info) ? "IGNORE" : "      ",
-							   info.FullName);
-			}
-		}
-	}
-#endif
 }

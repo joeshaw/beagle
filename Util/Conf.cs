@@ -29,8 +29,10 @@ using System.Collections;
 using System.IO;
 using System.Reflection;
 using System.Xml.Serialization;
+using System.Text.RegularExpressions;
 
 using Beagle.Util;
+
 namespace Beagle.Util {
 
 	public class Conf {
@@ -558,8 +560,8 @@ namespace Beagle.Util {
 		}
 
 	}
-	
-	// Some datastructures that are nice to have
+
+	//////////////////////////////////////////////////////////////////////
 	
 	public enum ExcludeType {
 		Path,
@@ -568,48 +570,124 @@ namespace Beagle.Util {
 	}
 
 	public class ExcludeItem {
+
+		private ExcludeType type;
+		private string val;
+
 		[XmlAttribute]
-		public ExcludeType Type;
+		public ExcludeType Type {
+			get { return type; }
+			set { type = value; }
+		}
+
+		private string exactMatch;
+		private string prefix;
+		private string suffix;
+		private Regex  regex;
+
 		[XmlAttribute]
-		public string Value;
-		
+		public string Value {
+			get { return val; }
+			set {
+				switch (type) {
+				case ExcludeType.Path:
+				case ExcludeType.MailFolder:
+					prefix = value;
+					break;
+
+				case ExcludeType.Pattern:
+					if (value.StartsWith ("/") && value.EndsWith ("/")) {
+						regex = new Regex (value.Substring (1, value.Length - 2));
+						break;
+					}
+					
+					int i = value.IndexOf ('*');
+					if (i == -1) {
+						exactMatch = value;
+					} else {
+						if (i > 0)
+							prefix = value.Substring (0, i);
+						if (i < value.Length-1)
+							suffix = value.Substring (i+1);
+					}
+					break;
+				}
+
+				val = value;
+			}
+		}
+
 		public ExcludeItem () {}
 
 		public ExcludeItem (ExcludeType type, string value) {
 			this.Type = type;
 			this.Value = value;
 		}
+		
+		public bool IsMatch (string param) 
+		{
+			switch (Type) {
+			case ExcludeType.Path:
+			case ExcludeType.MailFolder:
+				if (prefix != null && ! param.StartsWith (prefix))
+					return false;
+
+				return true;
+
+			case ExcludeType.Pattern:
+				if (exactMatch != null)
+					return param == exactMatch;
+				if (prefix != null && ! param.StartsWith (prefix))
+					return false;
+				if (suffix != null && ! param.EndsWith (suffix))
+					return false;
+				if (regex != null && ! regex.IsMatch (param))
+					return false;
+
+				return true;
+			}
+
+			return false;
+		}
+
+		public override bool Equals (object obj) 
+		{
+			ExcludeItem exclude = obj as ExcludeItem;
+			return (exclude != null && exclude.Type == type && exclude.Value == val);
+		}
 	}
 
+	//////////////////////////////////////////////////////////////////////
+	
 	public class KeyBinding {
 		public string Key;
-
+		
 		[XmlAttribute]
 		public bool Ctrl = false;
 		[XmlAttribute]
 		public bool Alt = false;
-
+		
 		public KeyBinding () {}
 		public KeyBinding (string key) : this (key, false, false) {}
-
+		
 		public KeyBinding (string key, bool ctrl, bool alt) 
 		{
 			Key = key;
 			Ctrl = ctrl;
 			Alt = alt;
 		}
-
+		
 		public override string ToString ()
 		{
 			string result = "";
-
+			
 			if (Ctrl)
 				result += "<Ctrl>";
 			if (Alt)
 				result += "<Alt>";
-					
+			
 			result += Key;
-
+			
 			return result;
 		}
 		
