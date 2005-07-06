@@ -344,7 +344,7 @@ namespace Beagle.Daemon.CalendarQueryable {
 
 			case "summary":
 				// Short summary of the event
-				this.cur.AddProperty (Property.NewKeyword ("fixme:summary", t.TokenText));
+				this.cur.AddProperty (Property.New ("fixme:summary", t.TokenText));
 				break;
 
 			case "description":

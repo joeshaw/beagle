@@ -210,7 +210,7 @@ namespace Beagle.Daemon.LauncherQueryable {
 						have_name = true;
 					indexable.AddProperty (Beagle.Property.NewKeyword ("fixme:" + sline[0], sline[1]));
 				} else if (sline[0].StartsWith ("Comment")) {
-					   indexable.AddProperty (Beagle.Property.NewKeyword ("fixme:" + sline[0], sline[1]));
+					   indexable.AddProperty (Beagle.Property.New ("fixme:" + sline[0], sline[1]));
 				}
 			}
 			reader.Close ();
