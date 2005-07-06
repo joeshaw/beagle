@@ -1,3 +1,8 @@
+2005-07-06  Daniel Drake  <dsd@gentoo.org>
+
+	* libbeagle/beagle/beagle-client.c: Use $BEAGLE_HOME and check for
+	existance of the relevant socket.
+
 2005-07-05  Vijay K. Nanjundaswamy <knvijay@novell.com>
 	
 	* beagled/WebServices/*.cs:

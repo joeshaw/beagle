@@ -27,6 +27,7 @@
 
 #include <stdlib.h>
 #include <sys/types.h>
+#include <sys/stat.h>
 #include <sys/socket.h>
 #include <sys/un.h>
 
@@ -82,13 +83,28 @@ beagle_client_init (BeagleClient *client)
 BeagleClient *
 beagle_client_new (const char *client_name)
 {
-	BeagleClient *client = g_object_new (BEAGLE_TYPE_CLIENT, 0);
-	BeagleClientPrivate *priv = BEAGLE_CLIENT_GET_PRIVATE (client);
+	BeagleClient *client;
+	BeagleClientPrivate *priv;
+	const gchar *beagle_home;
+	gchar *socket_path;
+	struct stat buf;
 	
 	if (!client_name) 
 		client_name = "socket";
 
-	priv->socket_path = g_build_filename (g_get_home_dir (), ".beagle", client_name, NULL);
+	beagle_home = g_getenv ("BEAGLE_HOME");
+	if (beagle_home == NULL)
+		beagle_home = g_get_home_dir ();
+
+	socket_path = g_build_filename (beagle_home, ".beagle", client_name, NULL);
+	if (g_stat (socket_path, &buf) == -1 || !S_ISSOCK (buf.st_mode)) {
+		g_free (socket_path);
+		return NULL;
+	}
+
+	client = g_object_new (BEAGLE_TYPE_CLIENT, 0);
+	priv = BEAGLE_CLIENT_GET_PRIVATE (client);
+	priv->socket_path = socket_path;
 
 	return client;
 }
