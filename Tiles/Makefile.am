@@ -9,6 +9,11 @@ if ENABLE_EVO_SHARP
 CSFLAGS += -define:ENABLE_EVO_SHARP
 endif
 
+if ENABLE_GALAGO
+CSFLAGS += -define:ENABLE_GALAGO
+endif
+
+
 CSFILES =					\
 	$(srcdir)/HitFlavor.cs			\
 	$(srcdir)/HitToHitFlavor.cs		\
