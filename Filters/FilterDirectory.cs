@@ -48,7 +48,7 @@ namespace Beagle.Filters {
 			FileInfo file = new FileInfo (Path.Combine (dir.FullName, ".directory"));
 
 			if (!file.Exists) {
-				Logger.Log.Debug ("No directory meta-data file found, not filtering: {1}", dir.FullName);
+				Logger.Log.Debug ("No directory meta-data file found for directory: {0}", dir.FullName);
 				Finished ();
 				return;
 			}
@@ -56,7 +56,8 @@ namespace Beagle.Filters {
 			try {
 				reader = new StreamReader (file.FullName);
 			} catch (Exception e) {
-				Logger.Log.Debug ("Could not open directory meta-data file, not filtering: {1}", dir.FullName);
+				Logger.Log.Debug ("Could not open directory meta-data file, not filtering: {0}", dir.FullName);
+				Error ();
 				return;
 			}
 		}
