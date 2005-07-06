@@ -245,7 +245,7 @@ namespace Beagle.Daemon.EvolutionDataServerQueryable {
 				w.Close ();
 				s.Close ();
 
-				indexable.AddProperty (Property.NewUnsearched ("Photo", photo_filename));
+				indexable.AddProperty (Property.NewUnsearched ("beagle:Photo", photo_filename));
 			}
 			// FIXME: List?
 			// FIXME: ListShowAddresses?

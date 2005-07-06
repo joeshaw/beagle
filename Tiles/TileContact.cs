@@ -52,7 +52,7 @@ namespace Beagle.Tile {
 		{
 			base.PopulateTemplate ();
 
-			string photo_filename = Hit["Photo"];
+			string photo_filename = Hit["beagle:Photo"];
 
 			if (photo_filename != null) {
 				System.Console.WriteLine ("photo: {0}", photo_filename);
