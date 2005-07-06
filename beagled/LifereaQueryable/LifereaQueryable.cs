@@ -144,7 +144,6 @@ namespace Beagle.Daemon.LifereaQueryable {
 			indexable.Timestamp = date;				
 
 			indexable.AddProperty (Property.NewKeyword ("dc:title", item.Title));
-			indexable.AddProperty (Property.NewKeyword ("dc:description", item.Description));
 			indexable.AddProperty (Property.NewKeyword ("fixme:author", item.Attribs.Author));
 			indexable.AddProperty (Property.NewDate ("fixme:published", date));
 			indexable.AddProperty (Property.NewKeyword ("fixme:itemuri", item.Source));
