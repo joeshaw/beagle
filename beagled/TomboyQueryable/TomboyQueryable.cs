@@ -158,7 +158,7 @@ namespace Beagle.Daemon.TomboyQueryable {
 			indexable.MimeType = "text/plain";
 
 			// Using dc:title for a note's subject is debateable?
-			indexable.AddProperty (Property.NewKeyword ("dc:title", note.subject));
+			indexable.AddProperty (Property.New ("dc:title", note.subject));
 			indexable.AddProperty (Property.NewDate ("fixme:modified", note.timestamp));
 
 			StringReader reader = new StringReader (note.text);

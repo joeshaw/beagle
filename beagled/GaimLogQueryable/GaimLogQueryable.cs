@@ -187,15 +187,16 @@ namespace Beagle.Daemon.GaimLogQueryable {
 				text.Append (" ");
 			}
 
-			indexable.AddProperty (Property.NewKeyword ("fixme:file", log.LogFile));
-			indexable.AddProperty (Property.NewKeyword ("fixme:offset", log.LogOffset));
 			indexable.AddProperty (Property.NewDate ("fixme:starttime", log.StartTime));
-			indexable.AddProperty (Property.NewKeyword ("fixme:speakingto", log.SpeakingTo));
-			indexable.AddProperty (Property.NewKeyword ("fixme:identity", log.Identity));
 			indexable.AddProperty (Property.NewDate ("fixme:endtime", log.EndTime));
+			indexable.AddProperty (Property.NewUnsearched ("fixme:file", log.LogFile));
+			indexable.AddProperty (Property.NewUnsearched ("fixme:offset", log.LogOffset));
+			indexable.AddProperty (Property.NewUnsearched ("fixme:client", log.Client));
+			indexable.AddProperty (Property.NewUnsearched ("fixme:protocol", log.Protocol));
 
-			indexable.AddProperty (Property.New ("fixme:client", log.Client));
-			indexable.AddProperty (Property.New ("fixme:protocol", log.Protocol));
+			// FIXME: Should these use Property.NewKeyword and be searched?
+			indexable.AddProperty (Property.NewUnsearched ("fixme:speakingto", log.SpeakingTo));
+			indexable.AddProperty (Property.NewUnsearched ("fixme:identity", log.Identity));
 
 			StringReader reader = new StringReader (text.ToString ());
 			indexable.SetTextReader (reader);
