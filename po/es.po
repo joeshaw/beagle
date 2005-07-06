@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: es\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2005-06-11 10:50+0000\n"
-"PO-Revision-Date: 2005-06-11 10:05-0500\n"
+"POT-Creation-Date: 2005-06-26 18:50+0000\n"
+"PO-Revision-Date: 2005-06-26 14:27-0500\n"
 "Last-Translator: Antonio Ognio <gnrfan@gnrfan.org>\n"
 "Language-Team: Spanish <traductores@es.gnome.org>\n"
 "MIME-Version: 1.0\n"
@@ -26,78 +26,78 @@ msgstr ""
 "Si se está preguntando si Best está funcionando, por favor compruebe el área "
 "de notificación (bandeja del sistema)"
 
-#: ../Best/BestTray.cs:164
+#: ../Best/BestTray.cs:166
 msgid "No Recent Searches"
 msgstr "No se encontraron búsquedas recientes"
 
-#: ../Best/BestTray.cs:168
+#: ../Best/BestTray.cs:170
 #, fuzzy
 msgid "Recent Searches"
 msgstr "No se encontraron búsquedas recientes"
 
-#: ../Best/BestTray.cs:183
+#: ../Best/BestTray.cs:185
 msgid "Quit"
 msgstr "Salir"
 
-#: ../Best/BestWindow.cs:303
+#: ../Best/BestWindow.cs:302
 msgid "Anywhere"
 msgstr "Todo"
 
-#: ../Best/BestWindow.cs:305
+#: ../Best/BestWindow.cs:304
 msgid "in Files"
 msgstr "en archivos"
 
-#: ../Best/BestWindow.cs:307
+#: ../Best/BestWindow.cs:306
 msgid "in Addressbook"
 msgstr "en la libreta de direcciones"
 
-#: ../Best/BestWindow.cs:309
+#: ../Best/BestWindow.cs:308
 msgid "in Mail"
 msgstr "en el correo electrónico"
 
-#: ../Best/BestWindow.cs:311
+#: ../Best/BestWindow.cs:310
 msgid "in Web Pages"
 msgstr "en páginas web"
 
-#: ../Best/BestWindow.cs:313
+#: ../Best/BestWindow.cs:312
 msgid "in Chats"
 msgstr "en conversaciones"
 
-#: ../Best/BestWindow.cs:329
+#: ../Best/BestWindow.cs:328
 msgid "Search terms:"
 msgstr "Términos de búsqueda:"
 
-#: ../Best/BestWindow.cs:346
+#: ../Best/BestWindow.cs:345
 msgid "Find"
 msgstr "Buscar"
 
-#: ../Best/BestWindow.cs:363
+#: ../Best/BestWindow.cs:362
 msgid "Show More Results"
 msgstr "Mostrar más resultados"
 
-#: ../Best/BestWindow.cs:369
+#: ../Best/BestWindow.cs:368
 msgid "Show Previous Results"
 msgstr "Mostrar resultados anteriores"
 
-#: ../Best/BestWindow.cs:403
+#: ../Best/BestWindow.cs:402
 msgid "No results."
 msgstr "No se encontraron resultados."
 
 #. To translators: {0} is the current count of results shown of {1} in total, this is the message that is initially shown
 #. when results are returned to the user.
-#: ../Best/BestWindow.cs:407
+#: ../Best/BestWindow.cs:406
 #, csharp-format
 msgid "Best <b>{0} results of {1}</b> are shown."
 msgstr "Se muestran los mejores <b>{0} resultados de {1}</b>. "
 
 #. To translators: {0} to {1} is the interval of results currently shown of {2} results in total
-#: ../Best/BestWindow.cs:412
+#: ../Best/BestWindow.cs:411
 #, csharp-format
 msgid "Results <b>{0} through {1} of {2}</b> are shown."
 msgstr "Se muestran los resultados de <b>{0} a {1} de {2}</b>."
 
 #. To translators: {0} represents the current query keywords
-#: ../Best/BestWindow.cs:523
+#: ../Best/BestWindow.cs:522
 #, csharp-format
 msgid ""
 "The query for <i>{0}</i> failed.<br>The likely cause is that the beagle "
@@ -107,7 +107,7 @@ msgstr ""
 "no se esté ejecutando."
 
 #. To translators: {0} represents the current query keywords, {1} contains the errormessage
-#: ../Best/BestWindow.cs:528
+#: ../Best/BestWindow.cs:527
 #, csharp-format
 msgid "The query for <i>{0}</i> failed with error:<br>{1}<br>"
 msgstr "La consulta de <i>{0}</i> ha fallado con el error:<br>{1}<br>"
@@ -128,6 +128,16 @@ msgstr "<b>Histórico de conversaciones</b>"
 #, fuzzy
 msgid "IM Viewer"
 msgstr "Visor de MI"
+
+#: ../ImLogViewer/ImLogWindow.cs:74
+#, csharp-format
+msgid "Conversations in {0}"
+msgstr "Conversaciones en {0}"
+
+#: ../ImLogViewer/ImLogWindow.cs:81
+#, csharp-format
+msgid "Conversations with {0}"
+msgstr "Conversaciones con {0}"
 
 #: ../Tiles/TileDocs.cs:77
 msgid "Pages:"
@@ -167,23 +177,27 @@ msgstr "Conversación en {0}"
 msgid "Conversation with {0}"
 msgstr "Conversación con {0}"
 
-#: ../Tiles/TileMailMessage.cs:68
+#: ../Tiles/TileMailMessage.cs:80
 msgid "No Subject"
 msgstr "Sin asunto"
 
-#: ../Tiles/TileMailMessage.cs:73
+#: ../Tiles/TileMailMessage.cs:83
+msgid "email attachment"
+msgstr "adjunto de correo"
+
+#: ../Tiles/TileMailMessage.cs:89
 msgid "To"
 msgstr "Para"
 
-#: ../Tiles/TileMailMessage.cs:73
+#: ../Tiles/TileMailMessage.cs:89
 msgid "From"
 msgstr "De"
 
-#: ../Tiles/TileMailMessage.cs:104
+#: ../Tiles/TileMailMessage.cs:117
 msgid "Sent"
 msgstr "Enviado"
 
-#: ../Tiles/TileMailMessage.cs:104
+#: ../Tiles/TileMailMessage.cs:117
 msgid "Received"
 msgstr "Recibido"
 
@@ -314,6 +328,212 @@ msgstr "Bitácora:"
 msgid "Published:"
 msgstr "Publicado:"
 
+#: ../tools/Settings.cs:174
+msgid "Reload configuration"
+msgstr "Recargar la configuración"
+
+#: ../tools/Settings.cs:175
+msgid ""
+"The configuration file has been modified by another application. Do you wish "
+"to discard the currently displayed values and reload configuration from disk?"
+msgstr ""
+"El archivo de configuración ha sido modificado por otra aplicación. ¿Desea descartar "
+"los valores mostrados actualmente y volver a leer la configuración desde el disco?"
+
+#: ../tools/Settings.cs:213
+msgid "Select Path"
+msgstr "Seleccione una ruta"
+
+#: ../tools/Settings.cs:232
+msgid "The selected path is already selected for indexing and wasn't added."
+msgstr "La ruta seleccionada ya está considerada en la indexación y no se añadió."
+
+#: ../tools/Settings.cs:235
+msgid ""
+"The selected path wasn't added. The list contains items that supercedes it "
+"and the data is already being indexed."
+msgstr ""
+"La ruta seleccionada no fue añadida. Esta lista contiene elementos que la incluyen"
+"y los datos ya están siendo indexados."
+
+#: ../tools/Settings.cs:246
+msgid "Path not added"
+msgstr "La ruta no fue añadida"
+
+#: ../tools/Settings.cs:255
+msgid "Remove obsolete paths"
+msgstr "Eliminar rutas obsoletas"
+
+#: ../tools/Settings.cs:256
+msgid ""
+"Adding this path will obsolete some of the existing include paths. This will "
+"result in the removal of the old obsolete paths. Do you still wish to add it?"
+msgstr ""
+"Añadir esta ruta volverá obsoletas algunas de las rutas de inclusión existentes. "
+"Esto causará que las rutas obsoletas sean eliminadas. ¿Aún desea añadir esta ruta?"
+
+#: ../tools/Settings.cs:282
+msgid "Remove path"
+msgstr "Eliminar ruta"
+
+#: ../tools/Settings.cs:283
+msgid ""
+"Are you sure you wish to remove this path from the list of directories to be "
+"included for indexing?"
+msgstr ""
+"¿Está seguro de querer eliminar esta ruta de la lista de directorios que serán"
+"excluidos de la indexación?"
+
+#: ../tools/Settings.cs:312
+msgid "Remove item"
+msgstr "Eliminar elemento"
+
+#: ../tools/Settings.cs:313
+msgid ""
+"Are you sure you wish to remove this item from the list of data to be "
+"excluded from indexing?"
+msgstr ""
+"¿Está seguro de querer eliminar este elemento de la lista de recursos a ser "
+"excluidos de la indexación?"
+
+#: ../tools/Settings.cs:363 ../tools/Settings.cs:452 ../tools/Settings.cs:785
+msgid "Name"
+msgstr "Nombre"
+
+#: ../tools/Settings.cs:446 ../tools/settings.glade.h:24
+msgid "Type"
+msgstr "Tipo"
+
+#: ../tools/Settings.cs:499 ../tools/Settings.cs:719
+#: ../tools/settings.glade.h:17
+msgid "Path"
+msgstr "Ruta"
+
+#: ../tools/Settings.cs:502 ../tools/Settings.cs:729
+msgid "Pattern"
+msgstr "Patrón"
+
+#: ../tools/Settings.cs:505 ../tools/Settings.cs:724
+#: ../tools/settings.glade.h:16
+msgid "Mail Folder"
+msgstr "Carpeta de correo"
+
+#: ../tools/Settings.cs:693
+msgid "Select Folder"
+msgstr "Seleccione carpeta:"
+
+#: ../tools/Settings.cs:753
+msgid "Error adding path"
+msgstr "Se produjo un error al añadir la ruta"
+
+#: ../tools/Settings.cs:754
+msgid ""
+"The specified path could not be found and therefore it could not be added to "
+"the list of resources excluded for indexing."
+msgstr ""
+"La ruta especificada no se pudo encontrar y por lo tanto se añadió a "
+"la lista de recursos excluídos de la indexación."
+
+#: ../tools/Settings.cs:784
+msgid "Show"
+msgstr "Mostrar"
+
+#: ../tools/settings.glade.h:1
+msgid "<b>Add resource</b>"
+msgstr "<b>Añadir recurso</b>"
+
+#: ../tools/settings.glade.h:2
+msgid "<b>Display</b>"
+msgstr "<b>Pantalla</b>"
+
+#: ../tools/settings.glade.h:3
+msgid "<b>General</b>"
+msgstr "<b>General</b>"
+
+#: ../tools/settings.glade.h:4
+msgid "<b>Privacy</b>"
+msgstr "<b>Privacidad</b>"
+
+#: ../tools/settings.glade.h:5
+msgid "<b>Select mail folder</b>"
+msgstr "<b>Seleccione la carpeta de correo</b>"
+
+#: ../tools/settings.glade.h:6
+msgid "Add any additional paths to be included for indexing."
+msgstr "Añadir cualquier ruta adicional para incluirla en la indexación."
+
+#: ../tools/settings.glade.h:7
+msgid "Add resource"
+msgstr "Añadir recurso"
+
+#: ../tools/settings.glade.h:8
+msgid ""
+"Adjust which types of results should be visible, and in what order they "
+"should be presented when grouped by type."
+msgstr ""
+"Configurar que tipos de resultados deberían ser visibles, y en que orden "
+"deberian ser presentados cuando son agrupados por tipo."
+
+#: ../tools/settings.glade.h:9
+msgid "Alt"
+msgstr "Alt"
+
+#: ../tools/settings.glade.h:10
+msgid "Ctrl"
+msgstr "Ctrl"
+
+#: ../tools/settings.glade.h:11
+msgid "Directory Path"
+msgstr "Ruta de directorios"
+
+#: ../tools/settings.glade.h:12
+msgid "Display the search window by pressing"
+msgstr "Mostrar la ventana de búsqueda al presionar"
+
+#: ../tools/settings.glade.h:13
+msgid "Filename Pattern"
+msgstr "Patrón de nombre de archivo"
+
+#: ../tools/settings.glade.h:14
+msgid "Index my home directory"
+msgstr "Indexar mi directorio personal"
+
+#: ../tools/settings.glade.h:15
+msgid "Indexing"
+msgstr "Indexación"
+
+#: ../tools/settings.glade.h:18
+msgid "Please select the mail folder you wish to exclude from indexing."
+msgstr "Por favor, seleccione la carpeta con correo que desea excluir de la indexación."
+
+#: ../tools/settings.glade.h:19
+msgid "Search"
+msgstr "Búsqueda"
+
+#: ../tools/settings.glade.h:20
+msgid "Search & Indexing Preferences"
+msgstr "Preferencias de búsqueda e indexación"
+
+#: ../tools/settings.glade.h:21
+msgid "Select mail folder"
+msgstr "Seleccione la carpeta con el correo"
+
+#: ../tools/settings.glade.h:22
+msgid ""
+"Specify any resources, such as paths, patterns, mail folders or type of "
+"objects you wish to exclude from indexing."
+msgstr ""
+"Especifique cualquier recurso, como rutas, patrones, carpetas de correo "
+"ó tipos de objetos que desea que no sea indexado."
+
+#: ../tools/settings.glade.h:23
+msgid "Start search & indexing services automatically on login"
+msgstr "Iniciar los servicios de búsqueda e indexación automáticamente al iniciar sesión"
+
+#: ../Util/Evolution.cs:45 ../Util/Evolution.cs:163
+msgid "On This Computer"
+msgstr "En este equipo"
+
 #: ../Util/ExifData.cs:226
 msgid "Image Directory"
 msgstr "Directorio de imágenes"
@@ -430,12 +650,6 @@ msgstr "{0:0.0} Mib"
 #~ "La consulta de <i>{0}</i> ha fallado.<br>El bus de sesión no se está "
 #~ "ejecutando. Vea http://beaglewiki.org/index.php/Installing%20Beagle para "
 #~ "obtener información sobre como configurar el bus de sesión."
-
-#~ msgid "Conversations with {0}"
-#~ msgstr "Conversaciones con {0}"
-
-#~ msgid "Conversations in {0}"
-#~ msgstr "Conversaciones en {0}"
 
 #~ msgid "HH:mm"
 #~ msgstr "HH:mm"
