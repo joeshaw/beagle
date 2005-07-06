@@ -239,10 +239,11 @@ namespace Beagle.Daemon.EvolutionDataServerQueryable {
 
 			if (photo.Data != null && photo.Data.Length > 0) {
 				string photo_filename = GetPhotoFilename (contact.Id);
-				Stream s = File.OpenWrite (photo_filename);
+				Stream s = new FileStream (photo_filename, FileMode.Create, FileAccess.Write, FileShare.ReadWrite);
 				BinaryWriter w = new BinaryWriter (s);
 				w.Write (photo.Data);
 				w.Close ();
+				s.Close ();
 
 				indexable.AddProperty (Property.NewUnsearched ("Photo", photo_filename));
 			}
