@@ -3,8 +3,13 @@ pkgconfigdir = $(libdir)/pkgconfig
 pkgconfig_DATA = beagle-0.0.pc beagle-daemon.pc
 
 SUBDIRS = 			\
-	po			\
-	libbeagle		\
+	po
+
+if ENABLE_LIBBEAGLE
+SUBDIRS += libbeagle
+endif
+
+SUBDIRS +=			\
 	Util			\
 	images			\
 	templates		\
