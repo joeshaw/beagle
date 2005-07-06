@@ -5,3 +5,6 @@ Makefile.in
 *.o
 *.lo
 *.la
+beagle-marshal.c
+beagle-marshal.h
+test-client
