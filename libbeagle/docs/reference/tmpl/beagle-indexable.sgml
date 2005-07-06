@@ -1,0 +1,239 @@
+<!-- ##### SECTION Title ##### -->
+beagle-indexable
+
+<!-- ##### SECTION Short_Description ##### -->
+
+
+<!-- ##### SECTION Long_Description ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### SECTION See_Also ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### STRUCT BeagleIndexable ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### ENUM BeagleIndexableFiltering ##### -->
+<para>
+
+</para>
+
+@BEAGLE_INDEXABLE_FILTERING_ALWAYS: 
+@BEAGLE_INDEXABLE_FILTERING_AUTOMATIC: 
+@BEAGLE_INDEXABLE_FILTERING_NEVER: 
+
+<!-- ##### FUNCTION beagle_indexable_new ##### -->
+<para>
+
+</para>
+
+@uri: 
+@Returns: 
+
+
+<!-- ##### FUNCTION beagle_indexable_free ##### -->
+<para>
+
+</para>
+
+@indexable: 
+
+
+<!-- ##### FUNCTION beagle_indexable_add_property ##### -->
+<para>
+
+</para>
+
+@indexable: 
+@prop: 
+
+
+<!-- ##### FUNCTION beagle_indexable_get_uri ##### -->
+<para>
+
+</para>
+
+@indexable: 
+@Returns: 
+
+
+<!-- ##### FUNCTION beagle_indexable_set_uri ##### -->
+<para>
+
+</para>
+
+@indexable: 
+@uri: 
+
+
+<!-- ##### FUNCTION beagle_indexable_get_content_uri ##### -->
+<para>
+
+</para>
+
+@indexable: 
+@Returns: 
+
+
+<!-- ##### FUNCTION beagle_indexable_set_content_uri ##### -->
+<para>
+
+</para>
+
+@indexable: 
+@content_uri: 
+
+
+<!-- ##### FUNCTION beagle_indexable_get_hot_content_uri ##### -->
+<para>
+
+</para>
+
+@indexable: 
+@Returns: 
+
+
+<!-- ##### FUNCTION beagle_indexable_set_hot_content_uri ##### -->
+<para>
+
+</para>
+
+@indexable: 
+@hot_content_uri: 
+
+
+<!-- ##### FUNCTION beagle_indexable_get_delete_content ##### -->
+<para>
+
+</para>
+
+@indexable: 
+@Returns: 
+
+
+<!-- ##### FUNCTION beagle_indexable_set_delete_content ##### -->
+<para>
+
+</para>
+
+@indexable: 
+@delete_content: 
+
+
+<!-- ##### FUNCTION beagle_indexable_get_crawled ##### -->
+<para>
+
+</para>
+
+@indexable: 
+@Returns: 
+
+
+<!-- ##### FUNCTION beagle_indexable_set_crawled ##### -->
+<para>
+
+</para>
+
+@indexable: 
+@crawled: 
+
+
+<!-- ##### FUNCTION beagle_indexable_get_no_content ##### -->
+<para>
+
+</para>
+
+@indexable: 
+@Returns: 
+
+
+<!-- ##### FUNCTION beagle_indexable_set_no_content ##### -->
+<para>
+
+</para>
+
+@indexable: 
+@no_content: 
+
+
+<!-- ##### FUNCTION beagle_indexable_get_cache_content ##### -->
+<para>
+
+</para>
+
+@indexable: 
+@Returns: 
+
+
+<!-- ##### FUNCTION beagle_indexable_set_cache_content ##### -->
+<para>
+
+</para>
+
+@indexable: 
+@cache_content: 
+
+
+<!-- ##### FUNCTION beagle_indexable_get_filtering ##### -->
+<para>
+
+</para>
+
+@indexable: 
+@Returns: 
+
+
+<!-- ##### FUNCTION beagle_indexable_set_filtering ##### -->
+<para>
+
+</para>
+
+@indexable: 
+@filtering: 
+
+
+<!-- ##### FUNCTION beagle_indexable_get_type ##### -->
+<para>
+
+</para>
+
+@indexable: 
+@Returns: 
+
+
+<!-- ##### FUNCTION beagle_indexable_set_type ##### -->
+<para>
+
+</para>
+
+@indexable: 
+@type: 
+
+
+<!-- ##### FUNCTION beagle_indexable_get_mime_type ##### -->
+<para>
+
+</para>
+
+@indexable: 
+@Returns: 
+
+
+<!-- ##### FUNCTION beagle_indexable_set_mime_type ##### -->
+<para>
+
+</para>
+
+@indexable: 
+@mime_type: 
+
+

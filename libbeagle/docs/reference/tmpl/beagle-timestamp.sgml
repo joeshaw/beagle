@@ -1,0 +1,54 @@
+<!-- ##### SECTION Title ##### -->
+beagle-timestamp
+
+<!-- ##### SECTION Short_Description ##### -->
+
+
+<!-- ##### SECTION Long_Description ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### SECTION See_Also ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### FUNCTION beagle_timestamp_new_from_string ##### -->
+<para>
+
+</para>
+
+@str: 
+@Returns: 
+
+
+<!-- ##### FUNCTION beagle_timestamp_new_from_unix_time ##### -->
+<para>
+
+</para>
+
+@time: 
+@Returns: 
+
+
+<!-- ##### FUNCTION beagle_timestamp_free ##### -->
+<para>
+
+</para>
+
+@timestamp: 
+
+
+<!-- ##### FUNCTION beagle_timestamp_to_unix_time ##### -->
+<para>
+
+</para>
+
+@timestamp: 
+@time: 
+@Returns: 
+
+

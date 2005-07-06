@@ -1,0 +1,55 @@
+<!-- ##### SECTION Title ##### -->
+BeagleClient
+
+<!-- ##### SECTION Short_Description ##### -->
+
+
+<!-- ##### SECTION Long_Description ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### SECTION See_Also ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### STRUCT BeagleClient ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### FUNCTION beagle_client_new ##### -->
+<para>
+
+</para>
+
+@client_name: 
+@Returns: 
+
+
+<!-- ##### FUNCTION beagle_client_send_request ##### -->
+<para>
+
+</para>
+
+@client: 
+@request: 
+@err: 
+@Returns: 
+
+
+<!-- ##### FUNCTION beagle_client_send_request_async ##### -->
+<para>
+
+</para>
+
+@client: 
+@request: 
+@err: 
+@Returns: 
+
+

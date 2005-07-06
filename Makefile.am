@@ -4,6 +4,7 @@ pkgconfig_DATA = beagle-0.0.pc beagle-daemon.pc
 
 SUBDIRS = 			\
 	po			\
+	libbeagle		\
 	Util			\
 	images			\
 	templates		\
@@ -30,7 +31,7 @@ EXTRA_DIST = 			\
 	$(pkgconfig_DATA) 	\
 	beagle.spec
 
-DISTCHECK_CONFIGURE_FLAGS = --disable-epiphany-extension-install
+DISTCHECK_CONFIGURE_FLAGS = --disable-epiphany-extension-install --enable-gtk-doc
 
 DISTCLEANFILES = 		\
 	intltool-extract	\

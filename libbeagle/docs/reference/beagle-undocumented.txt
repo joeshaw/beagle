@@ -1,0 +1,37 @@
+72% symbol docs coverage.
+79 symbols documented.
+31 not documented.
+
+
+BEAGLE_QUERY_PART_TARGET_ALL
+BEAGLE_QUERY_PART_TARGET_PROPERTIES
+BEAGLE_QUERY_PART_TARGET_TEXT
+BeagleCancelledResponse
+BeagleClient
+BeagleDaemonInformationResponse
+BeagleEmptyResponse
+BeagleErrorResponse
+BeagleFinishedResponse
+BeagleHit
+BeagleHitsAddedResponse
+BeagleHitsSubtractedResponse
+BeagleIndexable
+BeagleIndexableFiltering
+BeagleIndexingServiceRequest
+BeagleProperty
+BeagleQuery
+BeagleQuery::cancelled
+BeagleQuery::finished
+BeagleQuery::hits-added
+BeagleQuery::hits-subtracted
+BeagleQueryPart
+BeagleRequest
+BeagleRequest::closed
+BeagleRequest::error
+BeagleRequest::response
+BeagleRequestClass
+BeagleResponse
+BeagleShutdownRequest
+BeagleSnippetRequest
+BeagleSnippetResponse
+

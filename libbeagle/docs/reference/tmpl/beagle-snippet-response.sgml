@@ -1,0 +1,33 @@
+<!-- ##### SECTION Title ##### -->
+BeagleSnippetResponse
+
+<!-- ##### SECTION Short_Description ##### -->
+
+
+<!-- ##### SECTION Long_Description ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### SECTION See_Also ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### STRUCT BeagleSnippetResponse ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### FUNCTION beagle_snippet_response_get_snippet ##### -->
+<para>
+
+</para>
+
+@response: 
+@Returns: 
+
+

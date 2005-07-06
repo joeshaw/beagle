@@ -1,0 +1,50 @@
+<!-- ##### SECTION Title ##### -->
+BeagleIndexingServiceRequest
+
+<!-- ##### SECTION Short_Description ##### -->
+
+
+<!-- ##### SECTION Long_Description ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### SECTION See_Also ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### STRUCT BeagleIndexingServiceRequest ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### FUNCTION beagle_indexing_service_request_new ##### -->
+<para>
+
+</para>
+
+@Returns: 
+
+
+<!-- ##### FUNCTION beagle_indexing_service_request_add ##### -->
+<para>
+
+</para>
+
+@request: 
+@indexable: 
+
+
+<!-- ##### FUNCTION beagle_indexing_service_request_remove ##### -->
+<para>
+
+</para>
+
+@request: 
+@uri: 
+
+

@@ -1,0 +1,160 @@
+<!-- ##### SECTION Title ##### -->
+BeagleHit
+
+<!-- ##### SECTION Short_Description ##### -->
+
+
+<!-- ##### SECTION Long_Description ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### SECTION See_Also ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### STRUCT BeagleHit ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### FUNCTION beagle_hit_ref ##### -->
+<para>
+
+</para>
+
+@hit: 
+@Returns: 
+
+
+<!-- ##### FUNCTION beagle_hit_unref ##### -->
+<para>
+
+</para>
+
+@hit: 
+
+
+<!-- ##### FUNCTION beagle_hit_get_uri ##### -->
+<para>
+
+</para>
+
+@hit: 
+@Returns: 
+
+
+<!-- ##### FUNCTION beagle_hit_get_timestamp ##### -->
+<para>
+
+</para>
+
+@hit: 
+@Returns: 
+
+
+<!-- ##### FUNCTION beagle_hit_get_type ##### -->
+<para>
+
+</para>
+
+@hit: 
+@Returns: 
+
+
+<!-- ##### FUNCTION beagle_hit_get_mime_type ##### -->
+<para>
+
+</para>
+
+@hit: 
+@Returns: 
+
+
+<!-- ##### FUNCTION beagle_hit_get_source ##### -->
+<para>
+
+</para>
+
+@hit: 
+@Returns: 
+
+
+<!-- ##### FUNCTION beagle_hit_get_source_object_name ##### -->
+<para>
+
+</para>
+
+@hit: 
+@Returns: 
+
+
+<!-- ##### FUNCTION beagle_hit_get_revision ##### -->
+<para>
+
+</para>
+
+@hit: 
+@Returns: 
+
+
+<!-- ##### FUNCTION beagle_hit_get_id ##### -->
+<para>
+
+</para>
+
+@hit: 
+@Returns: 
+
+
+<!-- ##### FUNCTION beagle_hit_get_score ##### -->
+<para>
+
+</para>
+
+@hit: 
+@Returns: 
+
+
+<!-- ##### FUNCTION beagle_hit_get_score_multiplier ##### -->
+<para>
+
+</para>
+
+@hit: 
+@Returns: 
+
+
+<!-- ##### FUNCTION beagle_hit_get_score_raw ##### -->
+<para>
+
+</para>
+
+@hit: 
+@Returns: 
+
+
+<!-- ##### FUNCTION beagle_hit_get_property ##### -->
+<para>
+
+</para>
+
+@hit: 
+@key: 
+@Returns: 
+
+
+<!-- ##### FUNCTION beagle_hit_lookup_property ##### -->
+<para>
+
+</para>
+
+@hit: 
+@key: 
+@Returns: 
+
+

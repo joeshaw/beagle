@@ -1,0 +1,26 @@
+#ifndef __BEAGLE_ERROR_RESPONSE_H
+#define __BEAGLE_ERROR_RESPONSE_H
+
+#include <glib-object.h>
+#include "beagle-response.h"
+
+#define BEAGLE_TYPE_ERROR_RESPONSE            (beagle_error_response_get_type ())
+#define BEAGLE_ERROR_RESPONSE(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), BEAGLE_TYPE_ERROR_RESPONSE, BeagleErrorResponse))
+#define BEAGLE_ERROR_RESPONSE_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), BEAGLE_TYPE_ERROR_RESPONSE, BeagleErrorResponseClass))
+#define BEAGLE_IS_ERROR_RESPONSE(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), BEAGLE_TYPE_ERROR_RESPONSE))
+#define BEAGLE_IS_ERROR_RESPONSE_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), BEAGLE_TYPE_ERROR_RESPONSE))
+#define BEAGLE_ERROR_RESPONSE_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), BEAGLE_TYPE_ERROR_RESPONSE, BeagleErrorResponseClass))
+
+typedef struct {
+	BeagleResponse parent;
+} BeagleErrorResponse;
+
+typedef struct {
+	BeagleResponseClass parent_class;
+} BeagleErrorResponseClass;
+
+GType beagle_error_response_get_type (void);
+
+G_CONST_RETURN char *beagle_error_response_get_message (BeagleErrorResponse *response);
+
+#endif /* __BEAGLE_ERROR_RESPONSE_H */

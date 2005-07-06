@@ -1,0 +1,57 @@
+<?xml version="1.0"?>
+<!DOCTYPE book PUBLIC "-//OASIS//DTD DocBook XML V4.1.2//EN" 
+               "http://www.oasis-open.org/docbook/xml/4.1.2/docbookx.dtd">
+<book id="index" xmlns:xi="http://www.w3.org/2003/XInclude">
+  <bookinfo>
+    <title>Libbeagle Reference Manual</title>
+  </bookinfo>
+
+  <chapter>
+    <title>Fundamental classes</title>
+    <xi:include href="xml/beagle-client.xml"/>
+    <xi:include href="xml/beagle-error-response.xml"/>
+    <xi:include href="xml/beagle-empty-response.xml"/>
+    <xi:include href="xml/beagle-timestamp.xml"/>
+  </chapter>
+  <chapter>
+    <title>Query API</title>
+    <para>
+      This API is used to execute live queries against the beagle daemon.
+    </para>
+    <xi:include href="xml/beagle-query.xml"/>
+    <xi:include href="xml/beagle-query-part.xml"/>
+    <xi:include href="xml/beagle-hits-added-response.xml"/>
+    <xi:include href="xml/beagle-hits-subtracted-response.xml"/>
+    <xi:include href="xml/beagle-cancelled-response.xml"/>
+    <xi:include href="xml/beagle-finished-response.xml"/>
+    <xi:include href="xml/beagle-hit.xml"/>
+    <xi:include href="xml/beagle-property.xml"/>
+    <xi:include href="xml/beagle-snippet-request.xml"/>
+    <xi:include href="xml/beagle-snippet-response.xml"/>
+  </chapter>
+  <chapter>
+    <title>Indexing API</title>
+    <para>
+      This API is used when requesting indexing actions to the beagle daemon.
+    </para>
+    <xi:include href="xml/beagle-indexing-service-request.xml"/>
+    <xi:include href="xml/beagle-indexable.xml"/>
+  </chapter>
+  <chapter>
+    <title>Extra API</title>
+    <para>
+      API used to request extra information from the beagle daemon.
+    </para>
+    <xi:include href="xml/beagle-daemon-information-response.xml"/>
+    <xi:include href="xml/beagle-daemon-information-request.xml"/>
+    <xi:include href="xml/beagle-shutdown-request.xml"/>
+  </chapter>
+  <chapter>
+    <title>Abstract base classes</title>
+    <para>
+      These are the abstract base classes of any request and response.
+    </para>
+    <xi:include href="xml/beagle-request.xml"/>
+    <xi:include href="xml/beagle-response.xml"/>
+  </chapter>
+</book>

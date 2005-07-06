@@ -1,0 +1,33 @@
+<!-- ##### SECTION Title ##### -->
+BeagleErrorResponse
+
+<!-- ##### SECTION Short_Description ##### -->
+
+
+<!-- ##### SECTION Long_Description ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### SECTION See_Also ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### STRUCT BeagleErrorResponse ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### FUNCTION beagle_error_response_get_message ##### -->
+<para>
+
+</para>
+
+@response: 
+@Returns: 
+
+

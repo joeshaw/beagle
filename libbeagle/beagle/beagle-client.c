@@ -1,0 +1,118 @@
+#include <stdlib.h>
+#include <sys/types.h>
+#include <sys/socket.h>
+#include <sys/un.h>
+
+#include "beagle-private.h"
+#include "beagle-client.h"
+
+typedef struct {
+	gchar *socket_path;
+} BeagleClientPrivate;
+
+#define BEAGLE_CLIENT_GET_PRIVATE(o) (G_TYPE_INSTANCE_GET_PRIVATE ((o), BEAGLE_TYPE_CLIENT, BeagleClientPrivate))
+
+static GObjectClass *parent_class = NULL;
+
+G_DEFINE_TYPE (BeagleClient, beagle_client, G_TYPE_OBJECT)
+
+static void
+beagle_client_finalize (GObject *obj)
+{
+	BeagleClientPrivate *priv = BEAGLE_CLIENT_GET_PRIVATE (obj);
+
+	g_free (priv->socket_path);
+
+	if (G_OBJECT_CLASS (parent_class)->finalize)
+		G_OBJECT_CLASS (parent_class)->finalize (obj);
+}
+
+static void
+beagle_client_class_init (BeagleClientClass *klass)
+{
+	GObjectClass *obj_class = G_OBJECT_CLASS (klass);
+
+	parent_class = g_type_class_peek_parent (klass);
+
+	obj_class->finalize = beagle_client_finalize;
+
+	g_type_class_add_private (klass, sizeof (BeagleClientPrivate));
+}
+
+static void
+beagle_client_init (BeagleClient *client)
+{
+}
+
+/**
+ * beagle_client_new:
+ * @client_name: a string
+ *
+ * Creates a new #BeagleClient. If @client_name is %NULL it will default to "socket".
+ *
+ * Return value: a newly created #BeagleClient.
+ **/
+BeagleClient *
+beagle_client_new (const char *client_name)
+{
+	BeagleClient *client = g_object_new (BEAGLE_TYPE_CLIENT, 0);
+	BeagleClientPrivate *priv = BEAGLE_CLIENT_GET_PRIVATE (client);
+	
+	if (!client_name) 
+		client_name = "socket";
+
+	priv->socket_path = g_build_filename (g_get_home_dir (), ".beagle", client_name, NULL);
+
+	return client;
+}
+
+/**
+ * beagle_client_send_request:
+ * @client: a #BeagleClient
+ * @request: a #BeagleRequest
+ * @err: a location to return an error #GError of type #GIOChannelError.
+ *
+ * Synchronously send a #BeagleRequest using the given #BeagleClient. 
+ *
+ * Return value: a #BeagleResponse.
+ **/
+BeagleResponse *
+beagle_client_send_request (BeagleClient   *client,
+			    BeagleRequest  *request,
+			    GError        **err)
+{
+	BeagleClientPrivate *priv;
+
+	g_return_val_if_fail (BEAGLE_IS_CLIENT (client), NULL);
+	g_return_val_if_fail (BEAGLE_IS_REQUEST (request), NULL);
+
+	priv = BEAGLE_CLIENT_GET_PRIVATE (client);
+
+	return _beagle_request_send (request, priv->socket_path, err);
+}
+
+/**
+ * beagle_client_send_request_async:
+ * @client: a #BeagleClient
+ * @request: a #BeagleRequest
+ * @err: a location to store a #GError of type #GIOChannelError
+ *
+ * Asynchronously send a #BeagleRequest using the given #BeagleClient. 
+ *
+ * Return value: %TRUE on success and otherwise %FALSE.
+ **/
+gboolean 
+beagle_client_send_request_async (BeagleClient   *client,
+				  BeagleRequest  *request,
+				  GError        **err)
+{
+	BeagleClientPrivate *priv;
+
+	g_return_val_if_fail (BEAGLE_IS_CLIENT (client), FALSE);
+	g_return_val_if_fail (BEAGLE_IS_REQUEST (request), FALSE);
+
+	priv = BEAGLE_CLIENT_GET_PRIVATE (client);
+
+	return _beagle_request_send_async (request, priv->socket_path, err);
+}
+

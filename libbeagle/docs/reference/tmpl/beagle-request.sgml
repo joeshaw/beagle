@@ -1,0 +1,59 @@
+<!-- ##### SECTION Title ##### -->
+BeagleRequest
+
+<!-- ##### SECTION Short_Description ##### -->
+
+
+<!-- ##### SECTION Long_Description ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### SECTION See_Also ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### STRUCT BeagleRequest ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### SIGNAL BeagleRequest::closed ##### -->
+<para>
+
+</para>
+
+@beaglerequest: the object which received the signal.
+
+<!-- ##### SIGNAL BeagleRequest::error ##### -->
+<para>
+
+</para>
+
+@beaglerequest: the object which received the signal.
+@arg1: 
+
+<!-- ##### SIGNAL BeagleRequest::response ##### -->
+<para>
+
+</para>
+
+@beaglerequest: the object which received the signal.
+@arg1: 
+
+<!-- ##### STRUCT BeagleRequestClass ##### -->
+<para>
+
+</para>
+
+@parent_class: 
+@response_types: 
+@to_xml: 
+@closed: 
+@response: 
+@error: 
+

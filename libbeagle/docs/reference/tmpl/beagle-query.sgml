@@ -1,0 +1,64 @@
+<!-- ##### SECTION Title ##### -->
+BeagleQuery
+
+<!-- ##### SECTION Short_Description ##### -->
+
+
+<!-- ##### SECTION Long_Description ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### SECTION See_Also ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### STRUCT BeagleQuery ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### SIGNAL BeagleQuery::cancelled ##### -->
+<para>
+
+</para>
+
+@beaglequery: the object which received the signal.
+@arg1: 
+
+<!-- ##### SIGNAL BeagleQuery::finished ##### -->
+<para>
+
+</para>
+
+@beaglequery: the object which received the signal.
+@arg1: 
+
+<!-- ##### SIGNAL BeagleQuery::hits-added ##### -->
+<para>
+
+</para>
+
+@beaglequery: the object which received the signal.
+@arg1: 
+
+<!-- ##### SIGNAL BeagleQuery::hits-subtracted ##### -->
+<para>
+
+</para>
+
+@beaglequery: the object which received the signal.
+@arg1: 
+
+<!-- ##### FUNCTION beagle_query_new ##### -->
+<para>
+
+</para>
+
+@Returns: 
+
+

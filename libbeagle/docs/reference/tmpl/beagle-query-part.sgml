@@ -1,0 +1,106 @@
+<!-- ##### SECTION Title ##### -->
+beagle-query-part
+
+<!-- ##### SECTION Short_Description ##### -->
+
+
+<!-- ##### SECTION Long_Description ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### SECTION See_Also ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### MACRO BEAGLE_QUERY_PART_TARGET_ALL ##### -->
+<para>
+
+</para>
+
+
+
+<!-- ##### MACRO BEAGLE_QUERY_PART_TARGET_TEXT ##### -->
+<para>
+
+</para>
+
+
+
+<!-- ##### MACRO BEAGLE_QUERY_PART_TARGET_PROPERTIES ##### -->
+<para>
+
+</para>
+
+
+
+<!-- ##### STRUCT BeagleQueryPart ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### FUNCTION beagle_query_part_new ##### -->
+<para>
+
+</para>
+
+@Returns: 
+
+
+<!-- ##### FUNCTION beagle_query_part_free ##### -->
+<para>
+
+</para>
+
+@part: 
+
+
+<!-- ##### FUNCTION beagle_query_part_set_target ##### -->
+<para>
+
+</para>
+
+@part: 
+@target: 
+
+
+<!-- ##### FUNCTION beagle_query_part_set_text ##### -->
+<para>
+
+</para>
+
+@part: 
+@text: 
+
+
+<!-- ##### FUNCTION beagle_query_part_set_keyword ##### -->
+<para>
+
+</para>
+
+@part: 
+@is_keyword: 
+
+
+<!-- ##### FUNCTION beagle_query_part_set_required ##### -->
+<para>
+
+</para>
+
+@part: 
+@is_required: 
+
+
+<!-- ##### FUNCTION beagle_query_part_set_prohibited ##### -->
+<para>
+
+</para>
+
+@part: 
+@is_prohibited: 
+
+

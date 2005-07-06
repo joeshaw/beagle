@@ -1,0 +1,33 @@
+<!-- ##### SECTION Title ##### -->
+BeagleHitsSubtractedResponse
+
+<!-- ##### SECTION Short_Description ##### -->
+
+
+<!-- ##### SECTION Long_Description ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### SECTION See_Also ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### STRUCT BeagleHitsSubtractedResponse ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### FUNCTION beagle_hits_subtracted_response_get_uris ##### -->
+<para>
+
+</para>
+
+@response: 
+@Returns: 
+
+
