@@ -51,20 +51,19 @@ namespace Beagle.Daemon.FileSystemQueryable {
 
 		public object WatchFiles (string path, object old_handle)
 		{
-			object watch = null;
+			Inotify.Watch watch = (Inotify.Watch) old_handle;
 			try {
-				watch = Inotify.Subscribe (path, OnInotifyEvent,
-						    Inotify.EventType.Open
-						    | Inotify.EventType.Create
-						    | Inotify.EventType.Delete
-						    | Inotify.EventType.CloseWrite
-						    | Inotify.EventType.MovedFrom
-						    | Inotify.EventType.MovedTo);
+				watch.ChangeSubscription (Inotify.EventType.Open
+							   | Inotify.EventType.Create
+							   | Inotify.EventType.Delete
+							   | Inotify.EventType.CloseWrite
+							   | Inotify.EventType.MovedFrom
+							   | Inotify.EventType.MovedTo);
 			}
 			catch (IOException) {
 				// We can race and files can disappear.  No big deal.
 			}
-			return watch;
+			return old_handle;
 		}
 
 		public bool ForgetWatch (object watch_handle)
@@ -84,8 +83,8 @@ namespace Beagle.Daemon.FileSystemQueryable {
 			this.queryable = queryable;
 		}
 
-		private void OnInotifyEvent (Inotify.Watch watch,
-						 string            path,
+		private void OnInotifyEvent (Inotify.Watch     watch,
+					     string            path,
 					     string            subitem,
 					     string            srcpath,
 					     Inotify.EventType type)

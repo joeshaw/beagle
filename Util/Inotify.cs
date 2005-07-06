@@ -178,6 +178,7 @@ namespace Beagle.Util {
 
 		public interface Watch {
 			void Unsubscribe ();
+			void ChangeSubscription (EventType new_mask);
 		}
 
 		private class WatchInternal : Watch {
@@ -192,6 +193,7 @@ namespace Beagle.Util {
 
 			public EventType Mask {
 				get { return mask; }
+				set { mask = value; }
 			}
 
 			public WatchInternal (InotifyCallback callback, EventType mask, WatchInfo watchinfo)
@@ -209,6 +211,14 @@ namespace Beagle.Util {
 
 				Inotify.Unsubscribe (watchinfo, this);
 				this.is_subscribed = false;
+			}
+
+			public void ChangeSubscription (EventType mask)
+			{
+				if (! this.is_subscribed)
+					return;
+
+				Inotify.ChangeSubscription (watchinfo, this, mask);
 			}
 
 		}
@@ -400,6 +410,28 @@ namespace Beagle.Util {
 
 			Forget (watched);
 			return;
+		}
+
+		static private void ChangeSubscription (WatchInfo watched, WatchInternal watch, EventType new_mask)
+		{
+			watch.Mask = new_mask;
+			
+			// If we ask to watch for new events, reset the watch as necessary.
+			// We take advantage of the fact that watching the same inode again
+			// will not change the watch descriptor.
+			if ((watched.Mask & new_mask) != new_mask) {
+				watched.Mask |= new_mask;
+
+				int new_wd;
+				new_wd = inotify_glue_watch (dev_inotify,
+							     watched.Path,
+							     watched.Mask | base_mask);
+
+				if (watched.Wd != new_wd) {
+					string msg = String.Format ("Watch handle changed unexpectedly!", watched.Path);	
+					throw new IOException (msg);
+				}
+			}
 		}
 		
 
