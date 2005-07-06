@@ -183,7 +183,7 @@ namespace Beagle.Daemon.EvolutionDataServerQueryable {
 			string rev_str = ExtractFieldFromVCardString (vcard_str, "REV");
 			DateTime rev = RevStringToDateTime (rev_str);
 
-			if (rev < IndexedThrough)
+			if (rev != DateTime.MinValue && rev < IndexedThrough)
 				return null;
 
 			Indexable indexable = new Indexable (GetContactUri (contact));
