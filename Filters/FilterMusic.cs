@@ -54,7 +54,7 @@ namespace Beagle.Filters {
 			try {
 				tag = GetTag (Stream);
 			} catch (Exception e) {
-				//FIXME: Is it better to throw an exception here ?
+				log.Debug ("Exception filtering music {0}: {1}", this.GetType (), e.Message);
 				Finished();
 				return;
 			}
