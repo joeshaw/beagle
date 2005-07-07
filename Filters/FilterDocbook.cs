@@ -40,15 +40,23 @@ namespace Beagle.Filters
 		protected XmlReader reader;
 
 		protected string base_path;
+		protected string base_title;
 
-		protected Stack indexables_stack = new Stack ();
-		protected Stack contents_stack = new Stack ();
-		protected Stack depth_stack = new Stack ();
+		protected Stack entries_stack = new Stack ();
+
+		protected class DocbookEntry {
+			public string Id = null;
+			public string Title = null;
+			public int Depth = -1;
+			public StringBuilder Content = new StringBuilder ();
+		}
+
+		//////////////////////////////////////////////////
 
 		public FilterDocbook ()
 		{
 			SnippetMode = false;
-			SetVersion (2);
+			SetVersion (3);
 
 			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("application/docbook+xml"));
 			AddSupportedFlavor (FilterFlavor.NewFromExtension (".docbook"));
@@ -76,33 +84,72 @@ namespace Beagle.Filters
 				case XmlNodeType.Element:
 					if (reader.Name.StartsWith ("sect") || reader.Name.StartsWith ("chapter")) {
 						string id = reader.GetAttribute ("id");
-						if (id != null && id != "")
-							CreateIndexable (id, reader.Depth);
+
+						if (id != null && id != "") {
+							DocbookEntry entry = new DocbookEntry ();
+							entry.Id = id;
+							entry.Depth = reader.Depth;
+							entries_stack.Push (entry);
+						}
 					} else if (reader.Name == "title") {
 						reader.Read (); // Go to the text node
-						if (indexables_stack.Count == 0)
-							break;
-						else {
-							if (((Indexable) indexables_stack.Peek ()).HasProperty ("dc:title"))
-								break;
 
-							// Add the title to the child indexable
-							((Indexable) indexables_stack.Peek ()).AddProperty (Property.NewKeyword ("dc:title", reader.Value)); 
+						if (entries_stack.Count == 0 && base_title == null)
+							// This is probably the book title
+							base_title = reader.Value;
+						else if (entries_stack.Count > 0) {
+							DocbookEntry entry = (DocbookEntry) entries_stack.Peek ();
+
+							if (entry.Title == null)
+								entry.Title = reader.Value;
 						}
 					}
 					break;
 					
 				case XmlNodeType.Text:
 					// Append text to the child indexable
-					if (contents_stack.Count > 0)
-						((StringBuilder) contents_stack.Peek ()).Append (reader.Value);
+					if (entries_stack.Count > 0)
+						((DocbookEntry) entries_stack.Peek ()).Content.Append (reader.Value);
+
 					// Append text to the main indexable
 					AppendText (reader.Value);
 					break;
 					
 				case XmlNodeType.EndElement:
-					if (depth_stack.Count > 0 && ((int) depth_stack.Peek ()) == reader.Depth)
-						ProcessIndexable ();
+					if (entries_stack.Count > 0 && ((DocbookEntry) entries_stack.Peek ()).Depth == reader.Depth) {
+						DocbookEntry entry, parent_entry = null;
+
+						entry = (DocbookEntry) entries_stack.Pop ();
+						
+						if (entries_stack.Count > 0)
+							parent_entry = (DocbookEntry) entries_stack.Peek ();
+						
+						Indexable indexable = new Indexable (UriFu.PathToFileUri (String.Format ("{0}#{1}", base_path, entry.Id)));
+						indexable.Type = "DocbookEntry";
+						indexable.MimeType = "text/plain";
+						indexable.AddProperty (Property.NewUnsearched ("fixme:id", entry.Id));
+						
+						if (entry.Title != null)
+							indexable.AddProperty (Property.New ("dc:title", entry.Title));
+						
+						// Add the docbook book title
+						if (base_title != null)
+							indexable.AddProperty (Property.NewUnsearched ("fixme:base_title", base_title));
+						
+						// Add any parent (as in docbook parent entry, not beagle) data if we have it
+						if (parent_entry != null) {
+							indexable.AddProperty (Property.NewUnsearched ("fixme:parent_id", parent_entry.Id));
+
+							if (parent_entry.Title != null)
+								indexable.AddProperty (Property.NewUnsearched ("fixme:parent_title", parent_entry.Title));
+						}
+
+
+						StringReader content_reader = new StringReader (entry.Content.ToString ());
+						indexable.SetTextReader (content_reader);
+						
+						AddChildIndexable (indexable);
+					}
 					break;
 				}
 			}
@@ -120,33 +167,6 @@ namespace Beagle.Filters
 			Logger.Log.Debug ("Parsed docbook file in {0}", watch);
 
 			Finished ();
-		}
-
-		///////////////////////////////////////////////////
-
-		protected void CreateIndexable (string id, int depth)
-		{
-			Indexable indexable = new Indexable (UriFu.PathToFileUri (String.Format ("{0}#{1}", base_path, id)));
-			indexable.Type = "DocBookEntry";
-			indexable.MimeType = "text/plain";
-			indexable.AddProperty (Property.NewKeyword ("fixme:id", id));
-
-			indexables_stack.Push (indexable);
-			contents_stack.Push (new StringBuilder ());
-			depth_stack.Push (depth);
-		}
-
-		protected void ProcessIndexable () 
-		{
-			Indexable indexable = (Indexable) indexables_stack.Pop ();
-			StringBuilder content = (StringBuilder) contents_stack.Pop ();
-		
-			depth_stack.Pop ();
-			
-			StringReader content_reader = new StringReader (content.ToString ());
-			indexable.SetTextReader (content_reader);
-			
-			AddChildIndexable (indexable);
 		}
 	}
 }
