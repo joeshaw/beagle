@@ -524,7 +524,7 @@ namespace Beagle.Daemon {
 
 		public virtual int GetItemCount ()
 		{
-			return driver.GetItemCount ();
+			return indexer.GetItemCount ();
 		}
 
 		/////////////////////////////////////////
