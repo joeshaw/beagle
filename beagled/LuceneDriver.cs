@@ -1199,6 +1199,13 @@ namespace Beagle.Daemon {
 
 		/////////////////////////////////////////////////////
 
+		public static bool IsStopWord (string stemmed_word)
+		{
+			return ArrayFu.IndexOfString (StopAnalyzer.ENGLISH_STOP_WORDS, stemmed_word) != -1;
+		}
+
+		/////////////////////////////////////////////////////
+
 		//
 		// Helpful little utility functions
 		//

@@ -156,10 +156,10 @@ namespace Beagle.Tile {
 			string command = command_fallback;
 			bool expects_uris = expects_uris_fallback;
 
-			if (hit.MimeType == "inode/directory") {
-				OpenFolder (hit.Uri.LocalPath);
-				return;
-			}
+			// FIXME: This is evil.  Nautilus should be handling
+			// inode/directory, not just x-directory/normal
+			if (hit.MimeType == "inode/directory")
+				hit.MimeType = "x-directory/normal";
 			
 			BU.GnomeVFSMimeApplication app;
 			app = BU.GnomeIconLookup.GetDefaultAction (hit.MimeType);

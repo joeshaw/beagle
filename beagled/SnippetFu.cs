@@ -72,6 +72,10 @@ namespace Beagle.Daemon {
 					if (next_pos - pos < stemmed_terms [i].Length)
 						continue;
 
+					// Make sure this isn't a stop word.
+					if (LuceneDriver.IsStopWord (stemmed_terms [i]))
+						continue;
+
 					// We cache the token, so as to avoid stemming it more than once
 					// when considering multiple terms.
 					if (stemmed_token == null) {
