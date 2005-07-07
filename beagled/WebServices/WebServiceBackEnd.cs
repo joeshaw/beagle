@@ -60,6 +60,7 @@ namespace Beagle.WebService {
 					     			 "--root", 	DEFAULT_XSP_ROOT, 
 					     			 "--applications", DEFAULT_APP_MAPPINGS, 
 					     			 "--nonstop"};
+					     			 
 		//static Logger log = Logger.Get ("WebServiceBackEnd");		
 		static string 		BeagleHttpUriBase;
 		static string[] 	reserved_suffixes;
@@ -170,7 +171,6 @@ namespace Beagle.WebService {
 		{			
 			Logger.Log.Info("WebServicesConfigurationChanged EventHandler invoked");
 			if (! (section is Conf.WebServicesConfig))
-			//&& section.Name.Equals("webservices")))
 				return;
 			
 			Conf.WebServicesConfig wsc = (Conf.WebServicesConfig) section;
@@ -186,7 +186,8 @@ namespace Beagle.WebService {
 				
 			Logger.Log.Warn("WebServicesBackEnd: Changes in PublicFolders configuration doesn't take effect until Beagle daemon is restarted!");
 				
-/*			Note: ExternalAccessFilter Matchers can be updated, but app mapping changes in BeagleXsp Server require it to be restarted !
+/*			Note: ExternalAccessFilter Matchers can be updated, 
+				  but app mapping changes in BeagleXsp Server require it to be restarted !
 			
 			ArrayList newList = new ArrayList();
 			foreach (string pf in wsc.PublicFolders) {
@@ -240,15 +241,7 @@ namespace Beagle.WebService {
 		    if (instance == null) {
 
 		  		instance = new WebServiceBackEnd();
-/*			
-				//Test
-				Query q = new Query();
-				int i = NetworkedBeagle.AddRequest(q );
-				Console.WriteLine("RequestTable test {0}, searchId = {1}", NetworkedBeagle.IsCachedRequest(i) ? "Passed":"Failed", i);
-				Console.WriteLine("2nd invocation of AddRequest(q) returns {0}", NetworkedBeagle.AddRequest(q)); 
-				NetworkedBeagle.RemoveRequest(q);
-				Console.WriteLine("IsCachedRequest() now is " + NetworkedBeagle.IsCachedRequest(i));
-*/
+
   		  		//TCP Channel Listener registered in beagledWeb:init()
 		  		//ChannelServices.RegisterChannel(new TcpChannel(8347));
 		  		WellKnownServiceTypeEntry WKSTE =
@@ -334,8 +327,6 @@ namespace Beagle.WebService {
 				if (resultTable.Contains(qres)) {
 					SessionData sdata = ((SessionData) resultTable[qres]);	
 					sdata.results.Sort();
-					if (!sdata.localRequest)
-						NetworkedBeagle.RemoveRequest(sdata.query);
 				}
 				qres.HitsAddedEvent -= OnHitsAdded;
 				qres.HitsSubtractedEvent -= OnHitsSubtracted;
@@ -397,7 +388,7 @@ namespace Beagle.WebService {
 		//Full beagledQuery
 		public SearchResult doQuery(SearchRequest sreq, bool isLocalReq)
 		{	
-			SearchResult sr;
+			SearchResult sr = null;
 
 			if (sreq.text == null || sreq.text.Length == 0 ||
 				(sreq.text.Length == 1 && sreq.text[0].Trim() == "") ) {
@@ -423,8 +414,7 @@ namespace Beagle.WebService {
 				foreach (string src in sreq.searchSources)
 					query.AddSource(src);
 
-			//FIXME: Add check to restrict queryDomain to Local or Neighborhood ?
-			//Having this Global can cause cascading/looping of requests.
+			//If needed, check to restrict queries to System or Neighborhood domain, can be added here
 			if (sreq.qdomain > 0)
 				query.AddDomain(sreq.qdomain);
 						
@@ -442,11 +432,16 @@ namespace Beagle.WebService {
 				 		sr.statusMsg = "Error: Duplicate Query loopback";
 				 		Logger.Log.Warn("WebServiceBackEnd: Received duplicate Query for a query already in process!");
 				 		Logger.Log.Warn("WebServiceBackEnd: Check NetBeagle configuration on all nodes to remove possible loops");
-				 		return sr;
 				 	}
-		
-					NetworkedBeagle.CacheRequest(query, sreq.searchId);				 	
-				 }		
+				 	
+					if ((sr == null) && (sreq.searchId != 0) )
+						NetworkedBeagle.CacheRequest(query, sreq.searchId);				 	
+				 }
+				 
+				 if (sr != null)
+				 	return sr;	
+				 	
+				 //Logger.Log.Info("New external Query: searchId = {0}", sreq.searchId); 	
 			}
 
 			ArrayList results = ArrayList.Synchronized(new ArrayList());
@@ -492,12 +487,8 @@ namespace Beagle.WebService {
 					if (queryable == null)
 						snippet = "ERROR: hit.SourceObject is null, uri=" + h.Uri;
 					else
-						snippet = queryable.GetSnippet (ICollection2StringList(query.Text), h);				
-/*
-					//snippet == "", implies GetSnippet returned null or empty snippet
-					if (snippet == null)   	
-						snippet = "";		
-*/								
+						snippet = queryable.GetSnippet (ICollection2StringList(query.Text), h);											
+								
 					sr.hitResults[i] = new HitResult();
 					sr.hitResults[i].id = h.Id;
 					
@@ -524,7 +515,8 @@ namespace Beagle.WebService {
 						sr.hitResults[i].properties[j].IsSearched = p.IsSearched;							
 					}
 
-					sr.hitResults[i].snippet = snippet;
+					if (snippet != null)
+						sr.hitResults[i].snippet = snippet.Trim();
 				}					
 			   } //end lock
 			 }// end if
@@ -585,15 +577,7 @@ namespace Beagle.WebService {
 							
 					sr.hitResults[i] = new HitResult();
 					
-/* 	 GetMoreResults will NOT return Snippets by default. Client must make explicit GetSnippets request to get snippets for these hits.
-					string snippet = ""; 						
-					Queryable queryable = h.SourceObject as Queryable;
-					if (queryable == null)
-						snippet = "ERROR: hit.SourceObject is null, uri=" + h.Uri;
-					else
-						snippet = queryable.GetSnippet (ICollection2StringList(query.Text), h);				
-*/
-
+// GetMoreResults will NOT return Snippets by default. Client must make explicit GetSnippets request to get snippets for these hits.
 // Not initializing sr.hitResults[i].snippet implies there is no <snippets> element in HitResult XML response.
 								
 					sr.hitResults[i].id = h.Id;
@@ -658,11 +642,12 @@ namespace Beagle.WebService {
 				Logger.Log.Warn("GetSnippets: Invalid Search Token received ");
 				return response;
 			}
-
+			
 			int i = 0; 		
 			ArrayList IdList = new ArrayList();
 			IdList.AddRange(hitIds);	
 			response = new HitSnippet[hitIds.Length];
+			Logger.Log.Debug("GetSnippets invoked with {0} hitIds", hitIds.Length);
 
 			Query query = ((SessionData)sessionTable[searchToken]).query;
 			
@@ -680,8 +665,15 @@ namespace Beagle.WebService {
 								snippet = "ERROR: hit.SourceObject is null, uri=" + h.Uri;
 							else
 								snippet = queryable.GetSnippet (ICollection2StringList(query.Text), h);		
-										
-							response[i++] = new HitSnippet(h.Id, snippet);		
+							
+							//GetSnippets always invoked on Target Beagle Node where hits originate:
+							if (snippet == null)
+								snippet = "";
+								
+							HitSnippet hs = new HitSnippet();
+							hs.hitId = h.Id; 
+							hs.snippet = snippet.Trim();
+							response[i++] = hs;		
 					
 							if (i == hitIds.Length)
 								return response;
@@ -690,11 +682,16 @@ namespace Beagle.WebService {
 			} //end lock
 			
 			foreach (int hitId in IdList) {
-					response[i++] = new HitSnippet(hitId, InvalidHitSnippetError);
+					HitSnippet hs = new HitSnippet();
+					hs.hitId = hitId; 
+					hs.snippet = InvalidHitSnippetError;
+					response[i++] = hs;	
+
 					if (i == hitIds.Length)
 							break;
 			}		
-
+			Logger.Log.Warn("GetSnippets invoked some invalid hitIds");
+			
 			return response;
 		}
 		
@@ -723,7 +720,8 @@ namespace Beagle.WebService {
 		public string[] mimeType;
 		public string[] searchSources;
 		public QueryDomain qdomain;
-		public int 	searchId;
+		//Unique searchId across network
+		public int 	searchId;			
 	}
 
 	[Serializable()]
@@ -787,12 +785,6 @@ namespace Beagle.WebService {
 	public class HitSnippet {
 		public int hitId;
 		public string snippet;
-		
-		public HitSnippet() { hitId = 0; snippet = null; }
-		public HitSnippet( int i, string s) {
-			this.hitId = i;
-			this.snippet = s;
-		}
 	}
 		
 }

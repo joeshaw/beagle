@@ -29,6 +29,7 @@
 
 using System;
 using System.IO;
+using System.Timers;
 using System.Threading;
 using System.Collections;
 
@@ -51,6 +52,27 @@ namespace Beagle.Daemon {
 			NetBeagleList = new ArrayList ();		
 		}
 
+/////////////////////////////////////////////////////////////////////////////////////////			
+		private static Hashtable requestTable 	= Hashtable.Synchronized(new Hashtable());
+		private static Hashtable timerTable 	= Hashtable.Synchronized(new Hashtable());
+		
+		private static int TimerInterval = 15000; 	//15 sec timer
+		private static int RequestCacheTime = 20;  //Cache requests for 5 minutes
+		
+		private static System.Timers.Timer cTimer = null;
+		
+		static NetworkedBeagle () {
+			cTimer = new System.Timers.Timer(TimerInterval);
+			cTimer.Elapsed += new ElapsedEventHandler(TimerEventHandler);
+			cTimer.AutoReset = true;
+			cTimer.Enabled = false;
+		}	
+		
+		~NetworkedBeagle()
+		{
+			cTimer.Close();		
+		}		
+/////////////////////////////////////////////////////////////////////////////////////////				
 		public string Name {
 			get { return "NetworkedBeagle"; }
 		}
@@ -123,7 +145,6 @@ namespace Beagle.Daemon {
 		{			
 			Logger.Log.Info("NetBeagleConfigurationChanged EventHandler invoked");		
 			if (! (section is Conf.NetworkingConfig))
-			//&& section.Name.Equals("networking")))
 				return;
 				
 			Conf.NetworkingConfig nc = (Conf.NetworkingConfig) section;
@@ -149,8 +170,7 @@ namespace Beagle.Daemon {
 				NetBeagleList = newList;
 			}			 
 		}
-		
-		
+				
 		public bool AcceptQuery (Query query)
 		{      
 		    if (query.Text.Count <= 0)
@@ -203,40 +223,106 @@ namespace Beagle.Daemon {
 				
 			log.Debug("NetBeagleQueryable:DoQuery ... Done");
 		}	
-/////////////////////////////////////////////////////////////////////////////////////////			
-		private static Hashtable requestTable = Hashtable.Synchronized(new Hashtable());
-		
+
+/////////////////////////////////////////////////////////////////////////////////////////	
+		//Methods related to checking & caching of networked search requests,
+		//to prevent duplicate queries in cascaded network operation 
 		public static int AddRequest(Query q)
 		{
-			if (requestTable.Contains(q))
-				return  (int) requestTable[q];
+			int searchId = 0;
+			lock (timerTable) {
 			
-			int searchId = System.Guid.NewGuid().GetHashCode();	
-			if (searchId < 0) 
-				searchId = -searchId;
+				if (requestTable.Contains(q))
+					return  (int) requestTable[q];
 			
-			requestTable.Add(q, searchId);
-			return searchId;
+				searchId = System.Guid.NewGuid().GetHashCode();
+					
+				if (searchId < 0) 
+					searchId = -searchId;
+				
+				int count = RequestCacheTime;
+				requestTable.Add(q, searchId);
+				timerTable.Add(q, count);
+				
+				if (!cTimer.Enabled) {
+					cTimer.Start();		
+					log.Debug("CachedRequestCleanupTimer started");
+				}
+			}									
+			
+			return searchId;			
 		}
 		
 		public static void CacheRequest(Query q, int searchId)
 		{	
-			if (requestTable.Contains(q))
-				requestTable[q] = searchId; 
-			else
-				requestTable.Add(q, searchId);
+			lock (timerTable) {
+			
+				int count = RequestCacheTime;
+				
+				if (requestTable.Contains(q)) {
+					requestTable[q] = searchId; 
+					timerTable[q] = count;
+				}
+				else {
+					requestTable.Add(q, searchId);
+					timerTable.Add(q, count);
+				}
+				
+				if (!cTimer.Enabled) {
+					cTimer.Start();		
+					log.Debug("CachedRequestCleanupTimer started");			
+				}
+			}		
 		}		
-		
-		public static void RemoveRequest(Query q)
-		{
-			if (requestTable.Contains(q))
-				requestTable.Remove(q);
-		}
 			
 		public static bool IsCachedRequest(int searchId)
 		{
-			return requestTable.ContainsValue(searchId);
+			bool cached = false;
+			
+			lock (timerTable)
+				cached = requestTable.ContainsValue(searchId);
+			
+			return cached;
 		}
 
+		private static void TimerEventHandler(object source, ElapsedEventArgs e)
+		{
+			int c = 0;
+			
+			ArrayList keys = new ArrayList();
+			keys.AddRange(timerTable.Keys);
+			
+			foreach (Query q in keys)
+      		{
+				c = (int) timerTable[q];
+				if (c > 0) 
+					c--;  
+				
+				if (c == 0)
+					RemoveRequest(q);
+				else 
+					timerTable[q] = c;				
+			}
+			
+			if ((c % 4) == 0)		//Log status every 1 minute
+				log.Debug("CachedRequestCleanupTimer-EventHandler: requestTable has {0} elements, Last entry count={1}", requestTable.Count, c);
+
+			if (timerTable.Count == 0) {				
+				cTimer.Stop();
+				log.Debug("Stopping CachedRequestCleanupTimer");
+			}			
+		}
+		
+		private static void RemoveRequest(Query q)
+		{
+			lock (timerTable) {
+			
+				if (requestTable.Contains(q)) 
+					requestTable.Remove(q);
+				
+				if (timerTable.Contains(q))
+					timerTable.Remove(q);
+			}
+		}						
 	}
 }

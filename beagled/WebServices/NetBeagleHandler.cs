@@ -90,18 +90,14 @@ namespace Beagle.Daemon
       		if ((l != null) && (l.Count > 0))						
 				sreq.searchSources = ICollection2StringList(query.Sources);
 				
-			//To prevent circular loops, qdomain in request sent to remote beagled
-			//should be Local (or Neighborhood?)
+			sreq.qdomain = QueryDomain.Global; //Caution: This Enables Cascaded NetBeagle searching !
+			//sreq.qdomain = QueryDomain.System;
 			
-			sreq.qdomain = QueryDomain.Local; 
-
-			//sreq.qdomain = QueryDomain.Global; //Caution: This Enables Cascaded NetBeagle searching !
-
-			//Cache the query request, get a unique searchId for it and include as part of searchRequest:
+			//Cache the query request, get a unique searchId and include in network searchRequest:
 			sreq.searchId = NetworkedBeagle.AddRequest(query);
 			 
 			log.Info("NetBeagleHandler: Starting WebService Query for " + Hostname + ":" + Port);
-				
+			
 			ReqContext rc = new ReqContext(wsp, result, netBeagleQueryable);
 				
 			IAsyncResult ar = wsp.BeginBeagleQuery(sreq, DoQueryResponseHandler, rc);
@@ -132,56 +128,65 @@ namespace Beagle.Daemon
 					if (rc.SearchToken == null)
 						rc.SearchToken = resp.searchToken; 
 						
-					NetContext nc = new NetContext(wsp, resp.searchToken);						
+					//NetContext nc = new NetContext(wsp, resp.searchToken);						
 			   		HitResult[] hres = resp.hitResults;
 		
   					for (int i = 0; i < hres.Length; i++) {
-				
-						HitResult hr = hres[i];
-						Hit hit = new NetworkHit();
 			
-						//FIXME: Generate a random no. b/w 1 .. 99 and multiply by 1000000, and add to hr.id ?
-						hit.Id = hr.id; 
+						try {	
+							HitResult hr = hres[i];
+							Hit hit = new NetworkHit();
+			
+							//FIXME: Generate a random no. b/w 1 .. 99 and multiply by 1000000, and add to hr.id ?
+							hit.Id = hr.id; 
 					 
-						//[Uri Format] netbeagle://164.99.153.134:8888/searchToken?http:///....	
-						if (hr.uri.StartsWith(NetworkedBeagle.BeagleNetPrefix))
-							hit.Uri = new Uri(hr.uri);
-						else {							
-							string[] fragments = hr.uri.Split ('/');
-							string hostNamePort = fragments[2];										
-							hit.Uri = new Uri(NetworkedBeagle.BeagleNetPrefix + hostNamePort + "/" + resp.searchToken + "?" + hr.uri);
-						//hit.Uri = new Uri(BeagleNetPrefix + wsp.Hostname + ":" + wsp.Port + "/beagle?" + hr.uri);			
-						}
+							//[Uri Format] netbeagle://164.99.153.134:8888/searchToken?http:///....	
+							if (hr.uri.StartsWith(NetworkedBeagle.BeagleNetPrefix))
+								hit.Uri = new Uri(hr.uri);
+							else {							
+								string[] fragments = hr.uri.Split ('/');
+								string hostNamePort = fragments[2];										
+								hit.Uri = new Uri(NetworkedBeagle.BeagleNetPrefix + hostNamePort + "/" + resp.searchToken + "?" + hr.uri);		
+							}
 														
-						hit.Type = hr.resourceType;
-						hit.MimeType = hr.mimeType;
-						hit.Source = "Network";			//hit.Source = hr.source;
-						hit.ScoreRaw = hr.scoreRaw + 0.01;
-						hit.ScoreMultiplier = hr.scoreMultiplier;
-
-						if (hr.properties.Length  > 0)
-						foreach (HitProperty hp in hr.properties) {
+							hit.Type = hr.resourceType;
+							hit.MimeType = hr.mimeType;
+							hit.Source = "Network";			//hit.Source = hr.source;
+							hit.ScoreRaw = hr.scoreRaw + 0.01;
+							hit.ScoreMultiplier = hr.scoreMultiplier;
+	
+							if (hr.properties.Length  > 0)
+							foreach (HitProperty hp in hr.properties) {
+							
+								Property p 		= Property.New(hp.PKey, hp.PVal);
+								p.IsKeyword 	= hp.IsKeyword;
+								p.IsSearched 	= hp.IsSearched;
+	
+								hit.AddProperty(p);
+							}
+				
+							//Add Snippet					
+							((NetworkHit)hit).snippet = hr.snippet;
+								
+							//if (hr.snippet != null) 
+								//log.Debug("\nNBH: URI" + i + "=" + hr.uri + "\n     Snippet=" + hr.snippet);
+										
+							((NetworkHit)hit).context = null;
+							  						
+							//Add NetBeagleQueryable instance
+							hit.SourceObject = iq;
 						
-							Property p 		= Property.New(hp.PKey, hp.PVal);
-							p.IsKeyword 	= hp.IsKeyword;
-							p.IsSearched 	= hp.IsSearched;
-
-							hit.AddProperty(p);
+							if ((! result.Add (hit)) && (! hitRejectsLogged)) {
+								hitRejectsLogged = true;
+								log.Info("NetBeagleHandler: Network Hits rejected by HitRegulator. Too many Hits!");
+							}
+							count++;							
 						}
-			
-						//Add Snippet					
-						((NetworkHit)hit).snippet = hr.snippet;			
-						((NetworkHit)hit).context = nc;
-						  						
-						//Add NetBeagleQueryable instance
-						hit.SourceObject = iq;
-					
-						if ((! result.Add (hit)) && (! hitRejectsLogged)) {
-							hitRejectsLogged = true;
-							log.Info("NetBeagleHandler: Network Hits rejected by HitRegulator. Too many Hits!");
-						}
-					
-						count++;
+						catch (Exception ex2) {
+		 	
+							log.Warn ("Exception in NetBeagleHandler: DoQueryResponseHandler() while processing NetworkHit: {0} from {1}\n Reason: {2} ", hres[i].uri, wsp.Hostname + ":" + wsp.Port, ex2.Message);
+							//log.Error ("Exception StackTrace: " + ex.StackTrace);
+		 				}				
 					}  //end for 
 					
 					log.Info("NetBeagleHandler: DoQueryResponseHandler() Got {0} result(s) from Index {1} from Networked Beagle at {2}", count, resp.firstResultIndex, wsp.Hostname + ":" + wsp.Port); 		   		
@@ -205,7 +210,6 @@ namespace Beagle.Daemon
 		 	catch (Exception ex) {
 		 	
 				log.Error ("Exception in NetBeagleHandler: DoQueryResponseHandler() - {0} - for {1} ", ex.Message, wsp.Hostname + ":" + wsp.Port);
-				//log.Error ("Exception StackTrace: " + ex.StackTrace);
 		 	}
 		 	
 		 	//Signal completion of request handling						
@@ -213,26 +217,6 @@ namespace Beagle.Daemon
     	}		
     }
 
-	public class NetContext {
-
-		private string token;		
-		private BeagleWebService wsp;
-					
-		public NetContext(BeagleWebService wsp, string token)
-		{
-			this.wsp = wsp;
-			this.token = token;
-		}		
-		
-		public BeagleWebService  proxy {
-			get { return wsp; }
-		}		
-		
-		public string searchToken {
-			get {return token; }
-		} 		
-	}
-	
 	public class ReqContext {
 					
 		private IQueryable iq;
@@ -272,4 +256,26 @@ namespace Beagle.Daemon
 			set {token = value; }
 		}		
 	}
+
+/*
+	public class NetContext {
+
+		private string token;		
+		private BeagleWebService wsp;
+					
+		public NetContext(BeagleWebService wsp, string token)
+		{
+			this.wsp = wsp;
+			this.token = token;
+		}		
+		
+		public BeagleWebService  proxy {
+			get { return wsp; }
+		}		
+		
+		public string searchToken {
+			get {return token; }
+		} 		
+	}
+*/		
 }

@@ -39,11 +39,11 @@ namespace Beagle.WebService {
 	public class ExternalAccessFilter 
 	{
 		ArrayList matchers;
-		static readonly string ConfigFile = "publicfolders.cfg";
 		static Logger log = Logger.Get ("ExternalAccessFilter");
 		string FileUriPrefix = "file://";
 		string HttpUriBase = "http://hostname:8888/beagle/";
 		string[] reserved_suffixes;
+		static readonly string ConfigFile = "publicfolders.cfg";
 		
 // User can specify only a sub-directory under home directory in 'publicfolders.cfg'. 
 // All entries must start with ~/ . One entry per line. The leaf folder name should 
@@ -146,9 +146,13 @@ namespace Beagle.WebService {
             foreach (string d in folders) {
                 	    
                 //Each entry must start with ~/            	            	
-            	if ((d.Trim().Length > 1) && d.StartsWith("~/")) {
-                			
-            		string d2 = d.Replace("~/", PathFinder.HomeDir + "/");							
+            	if ((d.Trim().Length > 1) && 
+				(d.StartsWith("~/") || (d.StartsWith(PathFinder.HomeDir + "/"))) ) {
+                	string d2;
+			if (d.StartsWith("~/"))			
+            		 	d2 = d.Replace("~/", PathFinder.HomeDir + "/");
+			else
+				d2 = d;							
                  			
             		if (!Directory.Exists(d2))
 						continue;

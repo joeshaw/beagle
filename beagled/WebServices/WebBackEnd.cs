@@ -171,6 +171,8 @@ namespace Beagle.WebService {
 					if (hitsCopy != null)
 						hitsCopy.Sort();
 					
+					resp.bufferContext.maxDisplayed = 0;
+					
 					result.Remove(qres);
 				}
 							
@@ -458,6 +460,9 @@ namespace Beagle.WebService {
 
 		private ResultPair _rp;
 		private Hashtable tileTable = null;
+		private Hashtable actionTable = null;
+		int actionId = 1;
+				
 		private System.Text.StringBuilder sb;		
 		private bool renderStylesDone = false;
 		
@@ -465,7 +470,7 @@ namespace Beagle.WebService {
 		{
 			this._rp = rp;
 			this.tileTable = Hashtable.Synchronized(new Hashtable());	
-			tileTable[rp.rootTile.UniqueKey] = rp.rootTile;						
+			this.actionTable = new Hashtable ();					
 			init();
 		}
 		
@@ -479,18 +484,18 @@ namespace Beagle.WebService {
 
 		public void init() 
 		{
-			sb = new StringBuilder(4096);
-			renderStylesDone = false;
-			ClearActions();
+			lock (this) { 
+				sb = new StringBuilder(4096);
+				renderStylesDone = false;
+				tileTable.Clear();
+				ClearActions();
+				tileTable[_rp.rootTile.UniqueKey] = _rp.rootTile;
+			}				
 		}
 		/////////////////////////////////////////////////
-
-		Hashtable actionTable = null;
-		int actionId = 1;
-
 		public void ClearActions ()
 		{
-			actionTable = new Hashtable ();
+			actionTable.Clear();
 			actionId = 1;
 		}
 		
@@ -513,7 +518,6 @@ namespace Beagle.WebService {
 			}
 			return false;
 		}
-
 		/////////////////////////////////////////////////
 
 		override public void Write (string markup)
@@ -551,8 +555,10 @@ namespace Beagle.WebService {
 				tile.Render (this);
 			}
 		}
-		
-		private int 	maxDisplayed 	=  0;
+		/////////////////////////////////////////////////
+		// Code to scan forward through result set & prefetch/cache Snippets for Network Hits
+				
+		public int 	maxDisplayed 		=  0;
 		const int MAX_HIT_IDS_PER_REQ 	= 20; //Max no. of hits snippets to seek at a time
 		const int MAX_HITS_AHEAD		= 40; //No. of hits ahead of lastDisplayed to scan
 		
@@ -595,7 +601,7 @@ namespace Beagle.WebService {
 					log.Debug("PrefetchSnippets: Scanning result set for Network Hits from {0} to {1}", lastDisplayed, limit); 					
 							
 					//Get all NetworkHits with snippets field not initialized:
-					for (int si = lastDisplayed; si < limit ; si++)
+					for (int si = lastDisplayed;  si < limit ; si++)
 					{
 						if ((hits[si] is NetworkHit) && (((NetworkHit)hits[si]).snippet == null)) 
 							networkHits.Add((NetworkHit)hits[si]);
@@ -609,7 +615,7 @@ namespace Beagle.WebService {
 					ArrayList nwHitsPerNode = new ArrayList();
 					string hostnamePort = GetHostnamePort((NetworkHit)networkHits[0]);
 					
-					//Filter NetworkHits from one Networked Beagle
+					//Gather NetworkHits from a specific target Networked Beagle
 					foreach	(NetworkHit nh in networkHits) 
 					{
 						string hnp = GetHostnamePort(nh);
@@ -657,9 +663,12 @@ namespace Beagle.WebService {
 							
 							log.Debug("PrefetchSnippets: Invoking GetSnippets on {0} for {1} hits", wsp.Hostname, nwHitsPerNode.Count);
 					
-							ReqContext2 rc = new ReqContext2(wsp, nwHitsPerNode);
+							ReqContext2 rc = new ReqContext2(wsp, nwHitsPerNode, thc);
 							wsp.BeginGetSnippets(searchToken, hitIds, PrefetchSnippetsResponseHandler, rc);
-						}						
+						}	
+						
+						//Signal change in TileHitCollection due to addition of snippets:
+						//_rp.rootTile.HitCollection.ClearSources(null);										
 					}
 				} //end while								
 			} //end if 
@@ -674,57 +683,85 @@ namespace Beagle.WebService {
  					
  			try
       		{	    		
-    			Beagle.Daemon.HitSnippet[] hslist = wsp.EndGetSnippets(ar);		
-
+    			Beagle.Daemon.HitSnippet[] hslist = wsp.EndGetSnippets(ar);	
+    				
+				int j = 0; 
 				if (hslist.Length > 0)
 				{	
 					log.Debug("PrefetchSnippetsResponseHandler: Got {0} snippet responses from {1}", hslist.Length, wsp.Hostname);    			
 								
 					foreach (Beagle.Daemon.HitSnippet hs in hslist) {
 					
-						if ((hs.hitId ==0) || (hs.snippet.StartsWith(WebServiceBackEnd.InvalidHitSnippetError)))
+						int i, hitId;
+						string snippet;
+						
+						try {
+							hitId 	= hs.hitId;
+							snippet = hs.snippet;
+						}
+						catch (Exception ex2)
+						{
+							log.Warn ("Exception in WebBackEnd: PrefetchSnippetsResponseHandler(),  while getting snippet from {1}\n Reason: {2} ", wsp.Hostname + ":" + wsp.Port, ex2.Message);
+							continue;						
+						}
+							
+						if ((hitId == 0) || (snippet.StartsWith(WebServiceBackEnd.InvalidHitSnippetError)))
 								continue;
-						int i;		
+		
 						for (i = 0; i < nwHits.Count; i++)						
-							if (((NetworkHit)nwHits[i]).Id == hs.hitId) {								
-								((NetworkHit)nwHits[i]).snippet = hs.snippet;
-								//log.Debug("Snippet: " + hs.snippet);																	
+							if (((NetworkHit)nwHits[i]).Id == hitId) {	
+														
+								((NetworkHit)nwHits[i]).snippet = snippet;
+								//log.Debug("\nPrefetchSnippetsResponseHandler: URI" + j++ + "=" + ((NetworkHit)nwHits[i]).Uri.ToString()  + "\n     Snippet=" + snippet);																	
 								break;		
 							}
 							
 						if (i < nwHits.Count)
 							nwHits.RemoveAt(i);	
-					}
+					} //end foreach
 				}
 			}
 			catch (Exception ex) {
 				log.Error ("Exception in WebBackEnd: PrefetchSnippetsResponseHandler() - {0} - for {1} ", ex.Message, wsp.Hostname + ":" + wsp.Port);			
 			}
 			
-			if (nwHits.Count > 0)	
+			if (nwHits.Count > 0)	{
 				//Possible Error in getting snippets for these hitIds 
-				foreach (NetworkHit nh in nwHits)
-					nh.snippet = "";			
+				log.Warn("WebBackEnd/PrefetchSnippetsResponseHandler(): Didn't get Snippets for some network Hits");
+				
+				foreach (NetworkHit nh in nwHits) 
+					nh.snippet = "";					
+			}	
+
+			//Signal change in TileHitCollection due to addition of snippets:
+			rc.GetHitCollection.ClearSources(null);		
 		}
 
 		private class ReqContext2 {
 	
+			BT.TileHitCollection _thc;
 			BeagleWebService _wsp;
 			ArrayList _nwHits;
 
-			public ReqContext2(BeagleWebService wsp, ArrayList nwHits)
+			public ReqContext2(BeagleWebService wsp, ArrayList nwHits, BT.TileHitCollection thc)
 			{
+				this._thc = thc;				
 				this._wsp = wsp;
 				this._nwHits = nwHits;
 			}
 			
+			public BT.TileHitCollection GetHitCollection {
+				get { return _thc; }
+			}
+						
 			public BeagleWebService GetProxy {
 				get { return _wsp; }
 			}
 		
 			public ArrayList GetNwHits {
 				get { return _nwHits; }
-			}				
+			}
+							
 		}					
    		
    		private string GetSearchToken(NetworkHit nh)
@@ -733,7 +770,6 @@ namespace Beagle.WebService {
    				return null;
    				
 			string netUri = nh.Uri.ToString();		
-			//Console.WriteLine("Hit Uri is " + netUri);
 			
 			//netbeagle://164.99.153.134:8888/searchToken?http:///....	
 			string[] f1, f2 = netUri.Split('?');
@@ -751,7 +787,6 @@ namespace Beagle.WebService {
    				return null;
    				   		
 			string netUri = nh.Uri.ToString();		
-			//Console.WriteLine("Hit Uri is " + netUri);
 			
 			//netbeagle://164.99.153.134:8888/searchToken?http:///....	
 			string[] f1, f2 = netUri.Split('?');
@@ -761,8 +796,7 @@ namespace Beagle.WebService {
 					return (f1[2]);
 			}
 			return null;
-   		}   		
-   					
+   		}   		   					
 
 //////////////////////////////////////////////////////////////////////////
 
