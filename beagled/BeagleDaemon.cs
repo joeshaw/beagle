@@ -102,16 +102,15 @@ namespace Beagle.Daemon {
 			usage +=
 				"Usage: beagled [OPTIONS]\n\n" +
 				"Options:\n" +
-				"  --foreground\t\tRun the daemon in the foreground.\n" +
-				"  --fg\t\t\tRun the daemon in the foreground.\n" +
-				"  --background\t\tRun the daemon in the background.\n" +
-				"  --bg\t\t\tRun the daemon in the background.\n" +
+				"  --foreground, --fg\tRun the daemon in the foreground.\n" +
+				"  --background, --bg\tRun the daemon in the background.\n" +
 				"  --replace\t\tReplace a running daemon with a new instance.\n" +
 				"  --debug\t\tWrite out debugging information.\n" +
 				"  --debug-memory\tWrite out debugging information about memory use.\n" +
 				"  --deny-backend\tDeny a specific backend.\n" +
 				"  --allow-backend\tAllow a specific backend.\n" +
 				"  --list-backends\tList all the available backends.\n" +
+				"  --add-static-backend\tAdd a static backend by path.\n" + 
 				"  --disable-scheduler\tDisable the use of the scheduler.\n" +
 				"  --help\t\tPrint this usage message.\n";
 
@@ -243,6 +242,12 @@ namespace Beagle.Daemon {
 					if (next_arg != null)
 						QueryDriver.Deny (next_arg);
 					++i; // we used next_arg
+					break;
+
+			       case "--add-static-backend": 
+					if (next_arg != null)
+						QueryDriver.AddStaticQueryable (next_arg);
+					++i;
 					break;
 
 				case "--disable-scheduler":

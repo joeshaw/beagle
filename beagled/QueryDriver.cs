@@ -39,7 +39,7 @@ namespace Beagle.Daemon {
 
 		static ArrayList allowed_queryables = new ArrayList ();
 		static ArrayList denied_queryables = new ArrayList ();
-		
+
 		static public void Allow (string name)
 		{
 			allowed_queryables.Add (name.ToLower ());
@@ -70,6 +70,18 @@ namespace Beagle.Daemon {
 					return false;
 			return true;
 
+		}
+
+		//////////////////////////////////////////////////////////////////////////////////////
+
+		// Paths to static queryables
+
+		static ArrayList static_queryables = new ArrayList ();
+		
+		static public void AddStaticQueryable (string path) {
+
+			if (! static_queryables.Contains (path))
+				static_queryables.Add (path);
 		}
 
 		//////////////////////////////////////////////////////////////////////////////////////
@@ -139,7 +151,7 @@ namespace Beagle.Daemon {
 
 		// Scans PathFinder.SystemIndexesDir after available 
 		// system-wide indexes.
-		static void ScanSystemIndexes () 
+		static void LoadSystemIndexes () 
 		{
 			if (!Directory.Exists (PathFinder.SystemIndexesDir))
 				return;
@@ -150,7 +162,7 @@ namespace Beagle.Daemon {
 				if (! UseQueryable (index_dir.Name))
 					continue;
 				
-				if (LoadStaticQueryable (index_dir, true, QueryDomain.System))
+				if (LoadStaticQueryable (index_dir, QueryDomain.System))
 					count++;
 			}
 
@@ -159,21 +171,21 @@ namespace Beagle.Daemon {
 
 		// Scans configuration for user-specified index paths 
 		// to load StaticQueryables from.
-		static void ScanStaticQueryables () 
+		static void LoadStaticQueryables () 
 		{
-			if (Conf.Daemon.StaticQueryables.Count < 1)
-				return;
-
 			int count = 0;
 
-			foreach (string index_path in Conf.Daemon.StaticQueryables) {
-				DirectoryInfo index_dir = new DirectoryInfo (index_path);
+			foreach (string path in Conf.Daemon.StaticQueryables)
+				static_queryables.Add (path);
+
+			foreach (string path in static_queryables) {
+				DirectoryInfo index_dir = new DirectoryInfo (path);
 
 				if (!index_dir.Exists)
 					continue;
 				
 				// FIXME: QueryDomain might be other than local
-				if (LoadStaticQueryable (index_dir, false, QueryDomain.Local))
+				if (LoadStaticQueryable (index_dir, QueryDomain.Local))
 					count++;
 			}
 
@@ -181,7 +193,7 @@ namespace Beagle.Daemon {
 		}
 
 		// Instantiates and loads a StaticQueryable from an index directory
-		static private bool LoadStaticQueryable (DirectoryInfo index_dir, bool disable_locking, QueryDomain query_domain) 
+		static private bool LoadStaticQueryable (DirectoryInfo index_dir, QueryDomain query_domain) 
 		{
 			StaticQueryable static_queryable = null;
 			
@@ -189,7 +201,7 @@ namespace Beagle.Daemon {
 				return false;
 			
 			try {
-				static_queryable = new StaticQueryable (index_dir.Name, index_dir.FullName, disable_locking);
+				static_queryable = new StaticQueryable (index_dir.Name, index_dir.FullName, true);
 			} catch (Exception e) {
 				Logger.Log.Error ("Caught exception while instantiating static queryable: {0}", index_dir.Name);
 				Logger.Log.Error (e);					
@@ -242,7 +254,7 @@ namespace Beagle.Daemon {
 
 		static private Assembly[] GetAssemblies ()
 		{
-			Assembly[] assemblies;
+ 			Assembly[] assemblies;
 			int i = 0;
 			DirectoryInfo backends = new DirectoryInfo (PathFinder.BackendDir);
 
@@ -272,9 +284,11 @@ namespace Beagle.Daemon {
 				Server.ScanAssemblyForExecutors (assembly);
 			}
 
-			ScanSystemIndexes ();
-
-			ScanStaticQueryables ();
+			// FIXME: This is not nice at all
+			if (UseQueryable ("system"))
+				LoadSystemIndexes ();
+			if (UseQueryable ("static"))
+				LoadStaticQueryables ();
 
 			foreach (Queryable q in queryables)
 				q.Start ();
