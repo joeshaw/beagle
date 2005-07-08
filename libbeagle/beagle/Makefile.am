@@ -71,7 +71,7 @@ libbeagleinclude_HEADERS = 			\
 	beagle-timestamp.h			\
 	beagle-util.h
 
-EXTRA_DIST = beagle-marshal.list libbeagle-0.0.pc.in
+EXTRA_DIST = beagle-marshal.list
 
 CLEANFILES  = $(BUILT_SOURCES)
 
