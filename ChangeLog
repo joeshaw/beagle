@@ -1,3 +1,16 @@
+2005-07-08  Vijay K. Nanjundaswamy <knvijay@novell.com>
+	
+	* beagled/WebServices/WebFrontEnd.cs, WebBackEnd.cs:
+	Updated Web interface handling of Actions for external accesses.
+	
+	* beagled/WebServices/NetBeagle*cs, WebServiceBackEnd.cs, WebServiceProxy.cs:
+	Added an upper limit on the no. of intermediate nodes a Beagle search request is cascaded through.
+
+2005-07-07  Vijay K. Nanjundaswamy <knvijay@novell.com>
+	
+	* beagled/WebServices/NetBeagle*cs, WebServiceBackEnd.cs:
+	Added unique ids for networked Beagle search requests to eliminate duplicate requests during cascaded networked searches, caching of networked search requests with timer logic to clean them up after 5 min.
+	
 2005-07-06  Daniel Drake  <dsd@gentoo.org>
 
 	* libbeagle/beagle/beagle-client.c: Use $BEAGLE_HOME and check for
