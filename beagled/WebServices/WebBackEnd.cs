@@ -484,6 +484,7 @@ namespace Beagle.WebService {
 		}
 
 		public string bufferForExternalQuery {
+		
 			get { 
 				//Substitute "action:_tile_id!Open" with "http://host:port/beagle?xxxx"
 				string s;
@@ -497,7 +498,6 @@ namespace Beagle.WebService {
 	  					if (s1.Length > 1) {
 	  						string[] s2 = s1[1].Split('!');
 	  						if (s2.Length > 1) {
-	  							//string tileId = ;
 	  							BT.Tile t = (BT.Tile) table[s2[0]];
 	  							list[i] =  WebServiceBackEnd.AccessFilter.TranslateHit(t.Hit);
 	  							t.Uri = new Uri(list[i]);
