@@ -72,6 +72,14 @@ namespace Beagle.IndexHelper {
 			response.ChildIndexables = child_indexables;
 			response.UrisFiltered = uris_filtered;
 
+			// The child indexables probably have streams
+			// associated with them.  We need to store them before
+			// sending them back to the daemon.
+			if (child_indexables != null) {
+				foreach (Indexable i in child_indexables)
+					i.StoreStream ();
+			}
+
 			++Count;
 
 			return response;
