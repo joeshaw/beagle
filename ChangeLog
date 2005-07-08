@@ -1,3 +1,8 @@
+2005-07-08  Christopher James Lahey  <clahey@ximian.com>
+
+	* Filters/FilterDocbook.cs: Turn off XmlResolver here so that it
+	doesn't read the DTDs.
+
 2005-07-08  Vijay K. Nanjundaswamy <knvijay@novell.com>
 	
 	* beagled/WebServices/WebFrontEnd.cs, WebBackEnd.cs:

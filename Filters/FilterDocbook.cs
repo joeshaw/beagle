@@ -37,7 +37,7 @@ namespace Beagle.Filters
 {
 	public class FilterDocbook : Filter 
 	{
-		protected XmlReader reader;
+		protected XmlTextReader reader;
 
 		protected string base_path;
 		protected string base_title;
@@ -71,6 +71,7 @@ namespace Beagle.Filters
 		{
 			base_path = info.FullName;		
 			reader = new XmlTextReader (Stream);
+			reader.XmlResolver = null;
 		}
 
 		override protected void DoPullProperties ()
@@ -94,10 +95,11 @@ namespace Beagle.Filters
 					} else if (reader.Name == "title") {
 						reader.Read (); // Go to the text node
 
-						if (entries_stack.Count == 0 && base_title == null)
+						if (entries_stack.Count == 0 && base_title == null) {
 							// This is probably the book title
 							base_title = reader.Value;
-						else if (entries_stack.Count > 0) {
+							Console.WriteLine (base_title);
+						} else if (entries_stack.Count > 0) {
 							DocbookEntry entry = (DocbookEntry) entries_stack.Peek ();
 
 							if (entry.Title == null)
