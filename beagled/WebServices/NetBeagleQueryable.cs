@@ -227,6 +227,27 @@ namespace Beagle.Daemon {
 /////////////////////////////////////////////////////////////////////////////////////////	
 		//Methods related to checking & caching of networked search requests,
 		//to prevent duplicate queries in cascaded network operation 
+		
+		class TimerHopCount {
+			int ttl = 0;
+			int hops = 0;
+			
+			public TimerHopCount (int h) {
+				this.hops = h;
+				this.ttl = RequestCacheTime;
+			}
+			
+			public int TTL {
+				get {return ttl;}
+				set {ttl = value;}
+			} 
+			
+			public int Hops {
+				get {return hops;}
+				//set {hops = value;}			
+			}
+		}
+		
 		public static int AddRequest(Query q)
 		{
 			int searchId = 0;
@@ -239,10 +260,9 @@ namespace Beagle.Daemon {
 					
 				if (searchId < 0) 
 					searchId = -searchId;
-				
-				int count = RequestCacheTime;
+
 				requestTable.Add(q, searchId);
-				timerTable.Add(q, count);
+				timerTable.Add(q, new TimerHopCount(1));
 				
 				if (!cTimer.Enabled) {
 					cTimer.Start();		
@@ -253,19 +273,30 @@ namespace Beagle.Daemon {
 			return searchId;			
 		}
 		
-		public static void CacheRequest(Query q, int searchId)
+		public static int HopCount(Query q) 
+		{
+			int hops = -1; 
+			
+			lock (timerTable)
+			{
+				if (timerTable.Contains(q))
+					hops = ((TimerHopCount) timerTable[q]).Hops; 
+			}
+			
+			return hops;		
+		}
+		
+		public static void CacheRequest(Query q, int searchId, int hops)
 		{	
 			lock (timerTable) {
-			
-				int count = RequestCacheTime;
 				
 				if (requestTable.Contains(q)) {
 					requestTable[q] = searchId; 
-					timerTable[q] = count;
+					timerTable[q] = new TimerHopCount(hops);
 				}
 				else {
 					requestTable.Add(q, searchId);
-					timerTable.Add(q, count);
+					timerTable.Add(q, new TimerHopCount(hops));
 				}
 				
 				if (!cTimer.Enabled) {
@@ -294,14 +325,15 @@ namespace Beagle.Daemon {
 			
 			foreach (Query q in keys)
       		{
-				c = (int) timerTable[q];
+      			TimerHopCount thc = (TimerHopCount) timerTable[q];
+				c = thc.TTL;
 				if (c > 0) 
 					c--;  
 				
 				if (c == 0)
 					RemoveRequest(q);
 				else 
-					timerTable[q] = c;				
+					thc.TTL = c;				
 			}
 			
 			if ((c % 4) == 0)		//Log status every 1 minute

@@ -184,7 +184,10 @@ public class SearchRequest {
     public QueryDomain qdomain;
 
     /// <remarks/>
-    public int searchId;    
+    public int searchId = 0;
+
+    /// <remarks/>
+    public int hopCount = 0; 
 }
 
 /*

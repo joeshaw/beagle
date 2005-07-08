@@ -95,7 +95,10 @@ namespace Beagle.Daemon
 			
 			//Cache the query request, get a unique searchId and include in network searchRequest:
 			sreq.searchId = NetworkedBeagle.AddRequest(query);
-			 
+			
+			int hc = NetworkedBeagle.HopCount(query);
+			sreq.hopCount = (hc > 0) ? hc:1;
+			
 			log.Info("NetBeagleHandler: Starting WebService Query for " + Hostname + ":" + Port);
 			
 			ReqContext rc = new ReqContext(wsp, result, netBeagleQueryable);

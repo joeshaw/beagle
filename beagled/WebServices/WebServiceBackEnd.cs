@@ -433,9 +433,16 @@ namespace Beagle.WebService {
 				 		Logger.Log.Warn("WebServiceBackEnd: Received duplicate Query for a query already in process!");
 				 		Logger.Log.Warn("WebServiceBackEnd: Check NetBeagle configuration on all nodes to remove possible loops");
 				 	}
-				 	
+	
+					if (sreq.hopCount >= 5)  {
+						//If request has traversed 5 nodes in reaching here, stop cascading. 
+						//Make it a Local Query.
+						query.RemoveDomain(sreq.qdomain);
+						query.AddDomain(QueryDomain.Local);
+				 	}
+				 					 	
 					if ((sr == null) && (sreq.searchId != 0) )
-						NetworkedBeagle.CacheRequest(query, sreq.searchId);				 	
+						NetworkedBeagle.CacheRequest(query, sreq.searchId, sreq.hopCount + 1);				 	
 				 }
 				 
 				 if (sr != null)
@@ -722,6 +729,7 @@ namespace Beagle.WebService {
 		public QueryDomain qdomain;
 		//Unique searchId across network
 		public int 	searchId;			
+		public int 	hopCount;
 	}
 
 	[Serializable()]
