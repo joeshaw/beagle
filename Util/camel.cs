@@ -195,7 +195,6 @@ public abstract class Summary : IEnumerable {
 		public string uid, subject, from, to, cc, mlist;
 		public uint size, flags;
 		public DateTime sent, received;
-		public int x, y;
 
 		private void SkipContentInfo (FileStream f)
 		{
@@ -571,10 +570,14 @@ public abstract class Summary : IEnumerable {
 
 		public static DateTime Time (FileStream f)
 		{
-			byte [] b = new byte [4];
+			long seconds = 0;
 
-			f.Read (b, 0, 4);
-			long seconds = (b [0] << 24) | (b [1] << 16) | (b [2] << 8) | b [3];
+			// FIXME: Is it safe to assume that sizeof (time_t) == IntPtr.Size?  Probably not.
+			for (int i = IntPtr.Size - 1; i >= 0; i--) {
+				int v = f.ReadByte ();
+
+				seconds |= v << (i * 8);
+			}
 
 			if (seconds == 0)
 				return new DateTime (0);
