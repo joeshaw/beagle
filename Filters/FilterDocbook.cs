@@ -98,7 +98,6 @@ namespace Beagle.Filters
 						if (entries_stack.Count == 0 && base_title == null) {
 							// This is probably the book title
 							base_title = reader.Value;
-							Console.WriteLine (base_title);
 						} else if (entries_stack.Count > 0) {
 							DocbookEntry entry = (DocbookEntry) entries_stack.Peek ();
 
