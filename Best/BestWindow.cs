@@ -582,6 +582,12 @@ namespace Best {
 		{
 			return recentSearches;
 		}
+
+		public void ClearHistory ()
+		{
+			entry.ClearHistory ();
+			recentSearches.Clear ();
+		}
 		
 		public void QuickSearch (string query) 
 		{

@@ -152,6 +152,11 @@ namespace Best {
 			}
 			
 		}
+
+		private void ClearEvent (object sender, EventArgs args) 
+		{			
+			win.ClearHistory ();
+		}
 		
 		private Gtk.Menu MakeMenu (Gtk.Widget parent) 
 		{
@@ -179,7 +184,14 @@ namespace Best {
 					menu.Append (item);
 				}
 			}			
-			
+
+			if (list != null && list.Count > 0) {
+				item = new Gtk.ImageMenuItem (Catalog.GetString ("Clear"));
+				item.Image = new Gtk.Image (Gtk.Stock.Clear, Gtk.IconSize.Menu);
+				item.Activated += new EventHandler (ClearEvent);
+				menu.Append (item);
+			}
+
 			menu.Append (new Gtk.SeparatorMenuItem ());			
 		
 			item = new Gtk.ImageMenuItem (Catalog.GetString ("Quit"));
