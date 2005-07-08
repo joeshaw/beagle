@@ -217,6 +217,7 @@ namespace Beagle.WebService {
 		public string doForward(string sessId)
 		{	
 			Resp resp = (Resp) sessionResp[sessId];
+
 			if (!canForward(sessId) || (resp == null))
 				return NO_RESULTS;
 				
@@ -228,7 +229,7 @@ namespace Beagle.WebService {
 					bufferRenderContext bctx = resp.bufferContext;
 					bctx.init();					
 					root.Render(bctx);
-					return (getResultsLabel(root) + bctx.buffer);
+					return (getResultsLabel(root) + (resp.isLocalReq ? bctx.buffer:bctx.bufferForExternalQuery));
 				}
 			}
 
@@ -260,7 +261,7 @@ namespace Beagle.WebService {
 					bufferRenderContext bctx = resp.bufferContext;
 					bctx.init();					
 					root.Render(bctx);									
-					return (getResultsLabel(root) + bctx.buffer);
+					return (getResultsLabel(root) + (resp.isLocalReq ? bctx.buffer:bctx.bufferForExternalQuery));
 				}
 			}
 			
@@ -315,7 +316,7 @@ namespace Beagle.WebService {
 						
 			lock (root) {
 				root.Render(bctx);
-				return (getResultsLabel(root) + bctx.buffer);
+				return (getResultsLabel(root) + (isLocalReq ? bctx.buffer:bctx.bufferForExternalQuery));
 			}			
 		}
 
@@ -482,6 +483,32 @@ namespace Beagle.WebService {
 			get { return tileTable;  }
 		}
 
+		public string bufferForExternalQuery {
+			get { 
+				//Substitute "action:_tile_id!Open" with "http://host:port/beagle?xxxx"
+				string s;
+				string[] list = sb.ToString().Split('\"');		  	  
+	  			for (int i = 0; i < list.Length; i++) {
+	  
+	   				s = list[i];
+	  				if (s.StartsWith("action") && s.EndsWith("!Open"))  {
+	  				
+	  					string[] s1 = s.Split(':');	  					
+	  					if (s1.Length > 1) {
+	  						string[] s2 = s1[1].Split('!');
+	  						if (s2.Length > 1) {
+	  							//string tileId = ;
+	  							BT.Tile t = (BT.Tile) table[s2[0]];
+	  							list[i] =  WebServiceBackEnd.AccessFilter.TranslateHit(t.Hit);
+	  							t.Uri = new Uri(list[i]);
+	  						}
+	  					}
+	  				}
+	  			}	  					
+	  			return String.Join ("\"", list);
+	  		}
+		}
+		
 		public void init() 
 		{
 			lock (this) { 

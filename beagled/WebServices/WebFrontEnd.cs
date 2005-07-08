@@ -175,8 +175,10 @@ namespace WebService_CodeBehind {
 
 		    	WebBackEnd remoteObj = (WebBackEnd) Session["RemObj"];
 		    
-		    	if (remoteObj != null)
-		    	     remoteObj.dispatchAction(sessId, actionString);
+		    	if (remoteObj != null) {
+		    		if (isLocalReq())
+		    	    	remoteObj.dispatchAction(sessId, actionString);
+		    	}
 		    	else {
 					Output.Text = enableSessionMsg;
 					Back.Visible = Forward.Visible = false;
