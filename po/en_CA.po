@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: beagle\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2005-07-03 18:48-0400\n"
-"PO-Revision-Date: 2005-07-03 13:55-0400\n"
+"POT-Creation-Date: 2005-07-09 02:13-0400\n"
+"PO-Revision-Date: 2005-07-09 13:55-0400\n"
 "Last-Translator: Adam Weinberger <adamw@gnome.org>\n"
 "Language-Team: Canadian English <adamw@gnome.org>\n"
 "MIME-Version: 1.0\n"
@@ -25,15 +25,19 @@ msgstr ""
 "If you're wondering whether Best is working check your notification area "
 "(system tray)"
 
-#: Best/BestTray.cs:166
+#: Best/BestTray.cs:171
 msgid "No Recent Searches"
 msgstr "No Recent Searches"
 
-#: Best/BestTray.cs:170
+#: Best/BestTray.cs:175
 msgid "Recent Searches"
 msgstr "Recent Searches"
 
-#: Best/BestTray.cs:185
+#: Best/BestTray.cs:189
+msgid "Clear"
+msgstr "Clear"
+
+#: Best/BestTray.cs:197
 msgid "Quit"
 msgstr "Quit"
 
@@ -144,11 +148,11 @@ msgstr "Pages:"
 msgid "Words:"
 msgstr "Words:"
 
-#: Tiles/TileFolder.cs:51
+#: Tiles/TileFolder.cs:53
 msgid "Empty"
 msgstr "Empty"
 
-#: Tiles/TileFolder.cs:53
+#: Tiles/TileFolder.cs:55
 #, csharp-format
 msgid "Contains {0} Item"
 msgid_plural "Contains {0} Items"
