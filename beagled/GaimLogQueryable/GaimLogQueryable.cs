@@ -187,6 +187,9 @@ namespace Beagle.Daemon.GaimLogQueryable {
 				text.Append (" ");
 			}
 
+			// FIXME: It would be cleaner to have a TextReader than streamed out
+			// the utterances.
+
 			indexable.AddProperty (Property.NewDate ("fixme:starttime", log.StartTime));
 			indexable.AddProperty (Property.NewDate ("fixme:endtime", log.EndTime));
 			indexable.AddProperty (Property.NewUnsearched ("fixme:file", log.LogFile));
@@ -200,6 +203,9 @@ namespace Beagle.Daemon.GaimLogQueryable {
 
 			StringReader reader = new StringReader (text.ToString ());
 			indexable.SetTextReader (reader);
+
+			// We provide raw text, so no need for filtering
+			indexable.Filtering = IndexableFiltering.Never;
 			
 			return indexable;
 		}
