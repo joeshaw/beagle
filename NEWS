@@ -96,6 +96,7 @@ UI/Tools:
   bug when the tile didnt show the subject when 'Who' was null. This was
   related to the email attachments (Lukas)
 * Added an author field to the blog template (Lukas)
+* Render mail attachments nicely (Lukas)
 
 Web Services:
 * Support for cascaded Beagle Networking (KN Vijay)
