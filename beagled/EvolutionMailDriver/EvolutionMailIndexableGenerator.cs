@@ -580,6 +580,8 @@ namespace Beagle.Daemon.EvolutionMailDriver {
 				bool cache_loaded = this.LoadCache ();
 
 				this.deleted_list = new ArrayList (this.mapping.Keys);
+				this.deleted_list.Sort ();
+				Logger.Log.Debug ("Deleted list starting at {0} for {1}", this.deleted_list.Count, this.folder_name);
 
 				// Check to see if we even need to bother walking the summary
 				if (cache_loaded && this.queryable.FileAttributesStore.IsUpToDate (this.CrawlFile.FullName)) {
@@ -607,6 +609,7 @@ namespace Beagle.Daemon.EvolutionMailDriver {
 			if (this.summary_enumerator.MoveNext ())
 				return true;
 
+			Logger.Log.Debug ("Queuing up {0} removals for deleted messages in ", this.deleted_list.Count, this.folder_name);
 			foreach (string uid in this.deleted_list) {
 				Uri uri = EvolutionMailQueryable.EmailUri (this.account_name, this.folder_name, uid);
 
@@ -644,7 +647,9 @@ namespace Beagle.Daemon.EvolutionMailDriver {
 			++this.count;
 
 			// Try to load the cached message data off disk
-			if (this.mapping[mi.uid] == null || (uint) mapping[mi.uid] != mi.flags) {
+			object flags = this.mapping[mi.uid];
+
+			if (flags == null || (uint) flags != mi.flags) {
 				string msg_file;
 
 				if (this.backend_type == ImapBackendType.Imap)
@@ -661,16 +666,15 @@ namespace Beagle.Daemon.EvolutionMailDriver {
 
 				this.mapping[mi.uid] = mi.flags;
 
-				if (indexable != null)
+				if (indexable != null) {
 					++this.indexed_count;
-			} 
-
-			if (indexable != null) {
+					this.deleted_list.Remove (mi.uid);
+					
+					// HACK: update your recipients
+					EvolutionMailQueryable.AddAsYourRecipient (indexable);
+				}
+			} else if (flags != null)
 				this.deleted_list.Remove (mi.uid);
-
-				// HACK: update your recipients
-				EvolutionMailQueryable.AddAsYourRecipient (indexable);
-			}
 
 			return indexable;
 		}
