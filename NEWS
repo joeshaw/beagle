@@ -1,4 +1,125 @@
 
+Version 0.0.12
+July 11, 2005
+
+Daemon/Infrastructure:
+* Add the libbeagle C API (Imendio, Joe)
+* Big changes to the filtering code to make it more flexible (Joe, Fredrik)
+* Match multiple filters per indexable, use the highest ranking
+  match (Fredrik)
+* Match filters with a combination of Uri, Extension and/or
+  MimeType (Fredrik)
+* Allow FilterFactory to fall throught the filter list in the case of
+  an error (Fredrik)
+* Introducted events / callbacks when indexables are filtered (Fredrik)
+* Mark files in the file system backend with the Filter used (Fredrik)
+* Re-index files when a newer filter is available (Fredrik)
+* Don't instantiate a new LuceneDriver for every remote indexing
+  request (Fredrik)
+* Allow us to disable Lucene locking per directory (Fredrik)
+* Handle more failure conditions in the message passing code (Joe, Jon)
+* Add support for running without extended attributes, and speed up the
+  sqlite fallback by using transactions (Joe, Fredrik)
+* Use UTC timestamps in Lucene so that we're not boxing integers
+  unnecessarily (Joe)
+* Add throttling to the scheduler when many immediate priority tasks are
+  added, like when untarring a tarball or running rm -r on a directory
+  (Joe)
+* Set the default QueryDomain to both Local and System, so that per-user
+  and the new systemwide indexes are both searched by default (Joe)
+* Fix a bug whereby updates would cause hits to show up multiple times
+  by issuing a subtract event before the add event (Joe, Daniel)
+* Friendlier inotify error messages (Daniel)
+* libbeagle: Try BEAGLE_HOME and check that the bus socket exists (Daniel)
+* Don't try and discover the file mime-type twice (Daniel)
+* Small fixes to libbeagle (Lukas)
+* Better built-in heap-buddy support (Jon)
+* Avoid unnecessary boxing in the message passing code (Jon)
+* Sqlite FileAttributeStore clean-ups (Jon)
+* Added the ability to change an Inotify.Watch's event mask (Jon)
+
+Backends:
+* Indexing of mail attachments (Joe)
+* Add a mail filter, giving us Maildir support, and port the Evolution
+  mail backend to use it (Joe)
+* Use IndexableGenerators for the Blam and Liferea backends so that it
+  scales and performs better (Joe)
+* Configuration option to ignore files by path, pattern etc. (Fredrik)
+* Configuration option to ignore mail folders (Fredrik)
+* Added StaticQueryable for searched canned indexes (Fredrik)
+* Disabled the LauncherQueryable in favor of the system indexing
+  features (Fredrik)
+* Fix the Evolution mail backend to not reschedule a reindex if it's
+  already in the middle of indexing itself, which would otherwise
+  interrupt it (Joe)
+* Fix a bug in the addressbook backend with older (pre-2.2) versions of
+  Evolution in which contacts wouldn't be indexed after the addressbook
+  index was first created (Joe)
+* Fix handling of gaim logs with non-ascii characters represented in
+  names (Daniel)
+* Update the properties in some backends to the be correct (Lukas)
+* Explicitly disable filtering on gaim log indexables, since the stream
+  we produce is already filtered (Jon)
+* To ensure that beagle-index-info returns correct information, get
+  the item count from the IIndexer, not the driver we are using for
+  querying (Jon)
+
+Filters:
+* Added .desktop filter (Fredrik)
+* Added .directory filter (Fredrik)
+* Added Monodoc filter (Fredrik)
+* Added Docbook filter (Fredrik)
+* Filter text/x-chdr (C header files) using the C source code filter (Joe)
+* Image filter abstraction. Created a FilterImage which all the image
+  filters use. This lets us index F-Spot metadata information (Lukas)
+* Added F-Spot metadata support which we now index (Lukas)
+
+UI/Tools:
+* Added beagle-build-index for building static indexes (Fredrik)
+* Added beagle-manage-index for low-level Lucene index management (Fredrik)
+* Configuration UI (Fredrik)
+* Fix a problem with Best whereby the window wasn't being placed in the
+  same place when F12 was pressed (Joe)
+* Add a "Reply" action back to the mail tile, as it's available in Evo
+  2.2 (Joe)
+* Don't show "stop words" in the snippet highlights (Joe)
+* Fix ImLogViewer to work with gaim's character escaping style (Daniel)
+* Remember selected log in the IM timeline tree, improve searching,
+  other random optimizations to the IM viewer (Lukas)
+* Galago support and integration. Added Galago support to the Mail, IM
+  log and Contact tile (Lukas)
+* Fixed a crasher in TileMailMessage.cs and some random cleanups.  Fix a
+  bug when the tile didnt show the subject when 'Who' was null. This was
+  related to the email attachments (Lukas)
+* Added an author field to the blog template (Lukas)
+
+Web Services:
+* Support for cascaded Beagle Networking (Vijay)
+* Configuration of Beagle Web-services and Beagle networking via
+  'beagle-config', with corresponding handlers for real-time update of
+  configuration changes (Vijay)
+* Added on-demand Prefetching and Caching of snippets for network hits
+  (Vijay)
+* Updates to Web interface wrt handling Actions for external accesses
+  (Vijay)
+
+Everything Else:
+* Support either sqlite2 or sqlite3 (Daniel)
+* Build fixes (Jon)
+* Newsletter (Joe Gasiorek)
+* Added Polish translation (Michal Kastelik)
+* Added Turkish translation (Enver Altin)
+* Updated Canadian English translation (Adam Weinberger)
+* Updated Chinese translation (Chao-Hsiung Liao)
+* Updated German translation (Hendrik Brandt)
+* Updated Hungarian translation (Gabor Kelemen)
+* Updated Norwegian translation (Terance Sola)
+* Updated Spanish translation (Francisco Javier F. Serrador)
+* Updated Swedish translation (Fredrik)
+* All the stuff I forgot (All of the people I forgot)
+
+------------------------------------------------------
+
 Version 0.0.11.1
 June 15, 2005
 * Build fixes for CHM filter (Jon)
