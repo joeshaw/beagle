@@ -161,11 +161,11 @@ namespace Beagle.Daemon
 				try {
 					if (arg_recursive)
 						foreach (DirectoryInfo subdir in DirectoryWalker.GetDirectoryInfos (dir))
-							if (!Ignore (subdir.FullName))
+							if (!Ignore (subdir))
 								pending_directories.Enqueue (subdir);
 					
 					foreach (FileInfo file in DirectoryWalker.GetFileInfos (dir))
-						if (!Ignore (file.FullName))
+						if (!Ignore (file))
 							pending_files.Enqueue (file);
 					
 				} catch (DirectoryNotFoundException e) {}
@@ -193,7 +193,7 @@ namespace Beagle.Daemon
 					Uri uri = UriFu.PathToFileUri (file.FullName);
 					
 					// Check that we really should be indexing the file
-					if (!file.Exists || Ignore (file.FullName) || fa_store.IsUpToDate (file.FullName))
+					if (!file.Exists || Ignore (file) || fa_store.IsUpToDate (file.FullName))
 						continue;
 
 					// Create the indexable
@@ -309,9 +309,20 @@ namespace Beagle.Daemon
 			return uri;
 		}
 		
-		static bool Ignore (string path)
+		static bool Ignore (DirectoryInfo directory)
 		{
-			if (FileSystem.IsSymLink (path))
+			if (directory.Name.StartsWith ("."))
+				return true;
+			
+			return false;
+		}
+
+		static bool Ignore (FileInfo file)
+		{
+			if (file.Name.StartsWith ("."))
+				return true;
+
+			if (FileSystem.IsSymLink (file.FullName))
 				return true;
 
 			// FIXME: Add more stuff here
