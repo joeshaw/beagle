@@ -3,8 +3,9 @@ Version 0.0.12
 July 11, 2005
 
 Daemon/Infrastructure:
-* Add the libbeagle C API (Imendio, Joe)
-* Big changes to the filtering code to make it more flexible (Joe, Fredrik)
+* Add the libbeagle C API (Imendio, Joe Shaw)
+* Big changes to the filtering code to make it more flexible (Joe, Fredrik
+  Hedberg)
 * Match multiple filters per indexable, use the highest ranking
   match (Fredrik)
 * Match filters with a combination of Uri, Extension and/or
@@ -17,7 +18,8 @@ Daemon/Infrastructure:
 * Don't instantiate a new LuceneDriver for every remote indexing
   request (Fredrik)
 * Allow us to disable Lucene locking per directory (Fredrik)
-* Handle more failure conditions in the message passing code (Joe, Jon)
+* Handle more failure conditions in the message passing code (Joe, Jon
+  Trowbridge)
 * Add support for running without extended attributes, and speed up the
   sqlite fallback by using transactions (Joe, Fredrik)
 * Use UTC timestamps in Lucene so that we're not boxing integers
@@ -28,11 +30,11 @@ Daemon/Infrastructure:
 * Set the default QueryDomain to both Local and System, so that per-user
   and the new systemwide indexes are both searched by default (Joe)
 * Fix a bug whereby updates would cause hits to show up multiple times
-  by issuing a subtract event before the add event (Joe, Daniel)
+  by issuing a subtract event before the add event (Joe, Daniel Drake)
 * Friendlier inotify error messages (Daniel)
 * libbeagle: Try BEAGLE_HOME and check that the bus socket exists (Daniel)
 * Don't try and discover the file mime-type twice (Daniel)
-* Small fixes to libbeagle (Lukas)
+* Small fixes to libbeagle (Lukas Lipka)
 * Better built-in heap-buddy support (Jon)
 * Avoid unnecessary boxing in the message passing code (Jon)
 * Sqlite FileAttributeStore clean-ups (Jon)
@@ -63,6 +65,8 @@ Backends:
 * To ensure that beagle-index-info returns correct information, get
   the item count from the IIndexer, not the driver we are using for
   querying (Jon)
+* Fix a problem where we were losing mails from the index if an IMAP
+  summary was updated later (Joe)
 
 Filters:
 * Added .desktop filter (Fredrik)
@@ -94,7 +98,7 @@ UI/Tools:
 * Added an author field to the blog template (Lukas)
 
 Web Services:
-* Support for cascaded Beagle Networking (Vijay)
+* Support for cascaded Beagle Networking (KN Vijay)
 * Configuration of Beagle Web-services and Beagle networking via
   'beagle-config', with corresponding handlers for real-time update of
   configuration changes (Vijay)
