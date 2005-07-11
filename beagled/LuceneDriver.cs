@@ -91,7 +91,7 @@ namespace Beagle.Daemon {
 
 		/////////////////////////////////////////////////////
 
-		public LuceneDriver (string index_name) : this (index_name, 0, false) { }
+		public LuceneDriver (string index_name) : this (index_name, -1, false) { }
 
 		public LuceneDriver (string index_name, string index_dir) : this (index_name, 0, false) { }
 
@@ -128,7 +128,7 @@ namespace Beagle.Daemon {
 
 		/////////////////////////////////////////////////////
 
-		private void Setup (string index_name, int _minor_version, bool disable_locking)
+		private void Setup (string index_name, int minor_version, bool disable_locking)
 		{			
 			top_dir = Path.Combine (PathFinder.StorageDir, index_name);
 			
@@ -141,10 +141,6 @@ namespace Beagle.Daemon {
 			bool versionExists = File.Exists (versionFile);
 			bool fingerprintExists = File.Exists (fingerprintFile);
 			bool indexExists = File.Exists (indexTestFile);
-
-			if (_minor_version < 0)
-				_minor_version = 0;
-			minor_version = _minor_version;
 
 			// Check the index's version number.  If it is wrong,
 			// declare the index non-existent.
@@ -164,7 +160,7 @@ namespace Beagle.Daemon {
 					old_minor_version = 0;
 				}
 
-				if (old_major_version != MAJOR_VERSION || old_minor_version != minor_version) {
+				if (minor_version >= 0 && (old_major_version != MAJOR_VERSION || old_minor_version != minor_version)) {
 					log.Debug ("Version mismatch in {0}", index_name);
 					log.Debug ("Index has version {0}.{1}, expected {2}.{3}",
 						   old_major_version, old_minor_version,
@@ -207,6 +203,9 @@ namespace Beagle.Daemon {
 				// read-only mode obviously.
 				if (disable_locking)
 					throw new InvalidOperationException ("LuceneDriver is in read-only mode, but requires index-creation");
+
+				if (minor_version < 0)
+					throw new InvalidOperationException ("LuceneDriver was passed an unspecified minor_version, and index-creation is required.");
 
 				// Purge and rebuild the index's directory
 				// structure.

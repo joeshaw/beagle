@@ -1,3 +1,8 @@
+2005-07-11  Daniel Drake  <dsd@gentoo.org>
+
+	* beagled/LuceneDriver.cs: Allow unspecified index minor versions (= 'dont
+	care'). Allows beagle-manage-index to work on versioned indexes.
+
 2005-07-08  Christopher James Lahey  <clahey@ximian.com>
 
 	* Filters/FilterDocbook.cs: Turn off XmlResolver here so that it
