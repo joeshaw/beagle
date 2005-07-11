@@ -32,7 +32,6 @@ export MONO_GAC_PREFIX="@gacprefix@:$MONO_GAC_PREFIX"
 export MONO_PATH="$THIS_PATH:$MONO_PATH"
 
 CMDLINE="mono --debug $MONO_EXTRA_ARGS $THIS_EXE $@"
-echo $CMDLINE >> index-helper-command-line
 
 exec $CMDLINE
 
