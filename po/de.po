@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: beagle HEAD\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2005-07-10 16:11+0200\n"
-"PO-Revision-Date: 2005-07-10 16:13+0200\n"
+"POT-Creation-Date: 2005-07-11 16:49+0200\n"
+"PO-Revision-Date: 2005-07-11 16:55+0200\n"
 "Last-Translator: Frank Arnold <frank@scirocco-5v-turbo.de>\n"
 "Language-Team: German <gnome-de@gnome.org>\n"
 "MIME-Version: 1.0\n"
@@ -545,7 +545,7 @@ msgstr "Persönlichen Ordner indizieren"
 
 #: ../tools/settings.glade.h:15
 msgid "Indexing"
-msgstr "Indizierung läuft"
+msgstr "Indizierung"
 
 #: ../tools/settings.glade.h:18
 msgid "Please select the mail folder you wish to exclude from indexing."
