@@ -43,6 +43,8 @@ public class TranslationHack {
 		/* For translators: From template Tiles/template-launcher.html */
 		Catalog.GetString ("Open");
 		/* For translators: From template Tiles/template-mail-message.html */
+		Catalog.GetString ("Email subject:");
+		/* For translators: From template Tiles/template-mail-message.html */
 		Catalog.GetString ("Folder:");
 		/* For translators: From template Tiles/template-mail-message.html */
 		Catalog.GetString ("Open");

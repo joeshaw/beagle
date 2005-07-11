@@ -39,19 +39,7 @@ namespace Beagle.Tile {
 		    Type="MailMessage")]
 	public class TileMailMessage : TileFromHitTemplate {
 
-#if ENABLE_EVO_SHARP
-		string aim_name;
-		string groupwise_name;
-		string icq_name;
-		string jabber_name;
-		string msn_name;
-		string yahoo_name;
-
-		static bool ebook_failed = false;
-#endif
-
-		public TileMailMessage (Hit _hit) : base (_hit,
-							  "template-mail-message.html")
+		public TileMailMessage (Hit _hit) : base (_hit, "template-mail-message.html")
 		{
 		}
 
@@ -66,26 +54,35 @@ namespace Beagle.Tile {
 				return hit ["parent:" + name];
 		}
 
+		private string GetMailIcon ()
+		{
+			string icon;
+			
+			if (GetHitProperty (Hit, "fixme:isAnswered") != null)
+				icon = Images.GetHtmlSourceForStock ("stock_mail-replied", 48);
+			else if (GetHitProperty (Hit, "fixme:isSeen") != null)
+				icon = Images.GetHtmlSourceForStock ("stock_mail-open", 48);
+			else
+				icon = Images.GetHtmlSourceForStock ("stock_mail", 48);
+
+			return icon;
+		}
+
 		protected override void PopulateTemplate ()
 		{
 			base.PopulateTemplate ();
 
-                        bool sent = (GetHitProperty (Hit, "fixme:isSent") != null);
-
-			string str;
-
-			str = GetHitProperty (Hit, "dc:title");
+			bool sent = (GetHitProperty (Hit, "fixme:isSent") != null);
+			string str = GetHitProperty (Hit, "dc:title");
 
 			if (str == null)
 				str = String.Format ("<i>{0}</i>", Catalog.GetString ("No Subject"));
 
-			if (Hit.ParentUri != null)
-				str += " [" + Catalog.GetString ("email attachment") + "]";
-
 			if (GetHitProperty (Hit, "_IsDeleted") != null)
 				str = "<strike>" + str + "</strike>";
-			Template["Subject"] = str;
 
+			Template["Icon"] = GetMailIcon ();
+			Template["Subject"] = str;
 			Template["ToFrom"] = sent ? Catalog.GetString ("To") : Catalog.GetString ("From");
 
 			// Limit the number of recipients to 3, so the
@@ -105,7 +102,7 @@ namespace Beagle.Tile {
 					}
 
 					if (i < values.Length)
-						sb.Append (", et al");
+						sb.Append (", ...");
 
 					Template["Who"] = sb.ToString ();
 				}
@@ -117,15 +114,14 @@ namespace Beagle.Tile {
 			Template["SentReceived"] = sent ? Catalog.GetString ("Sent") : Catalog.GetString ("Received");
 			Template["When"] = sent ? GetHitProperty (Hit, "fixme:sentdate") : GetHitProperty (Hit, "fixme:received");
 
-			string icon;
-			if (GetHitProperty (Hit, "fixme:isAnswered") != null)
-				icon = Images.GetHtmlSourceForStock ("stock_mail-replied", 48);
-			else if (GetHitProperty (Hit, "fixme:isSeen") != null)
-				icon = Images.GetHtmlSourceForStock ("stock_mail-open", 48);
-			else
-				icon = Images.GetHtmlSourceForStock ("stock_mail", 48);
-
-			Template["Icon"] = icon;
+			// FIXME: Gross attachment rendering
+			if (Hit.ParentUri != null) {
+				Template["Subject"] = Hit ["fixme:attachment_title"] + " [" + Catalog.GetString ("Email attachment") + "]";
+				Template["EmailSubject"] = str;
+				Gtk.IconSize size = (Gtk.IconSize) 48;
+				string path = BU.GnomeIconLookup.LookupMimeIcon (Hit.MimeType, size);
+				Template["Icon"] = Images.GetHtmlSource (path, BU.GnomeIconLookup.GetFileMimeType (path));
+			}
 			
 			if (GetHitProperty (Hit, "fixme:isFlagged") != null)
 				Template["FollowupIcon"] = Images.GetHtmlSourceForStock ("stock_mail-priority-high", 16);
@@ -163,6 +159,14 @@ namespace Beagle.Tile {
 
 
 #if ENABLE_EVO_SHARP
+		private string aim_name;
+		private string groupwise_name;
+		private string icq_name;
+		private string jabber_name;
+		private string msn_name;
+		private string yahoo_name;
+
+		static bool ebook_failed = false;
 
 		private void GetImNames (string who)
 		{

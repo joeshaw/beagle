@@ -226,6 +226,8 @@ namespace Beagle.Filters {
 						child.MimeType = part.ContentType.ToString ();
 						child.CacheContent = false;
 
+						child.AddProperty (Property.NewKeyword ("fixme:attachment_title", ((GMime.Part)part).Filename));
+
 						if (part.ContentType.Type.ToLower () == "text")
 							child.SetTextReader (new StreamReader (stream));
 						else
