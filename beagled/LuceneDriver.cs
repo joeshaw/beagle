@@ -93,9 +93,9 @@ namespace Beagle.Daemon {
 
 		public LuceneDriver (string index_name) : this (index_name, -1, false) { }
 
-		public LuceneDriver (string index_name, string index_dir) : this (index_name, 0, false) { }
+		public LuceneDriver (string index_name, string index_dir) : this (index_name, -1, false) { }
 
-		public LuceneDriver (string index_name, bool disable_locking) : this (index_name, 0, disable_locking) { }
+		public LuceneDriver (string index_name, bool disable_locking) : this (index_name, -1, disable_locking) { }
 
 		public LuceneDriver (string index_name, int index_version) : this (index_name, index_version, false) { }
 
@@ -204,8 +204,12 @@ namespace Beagle.Daemon {
 				if (disable_locking)
 					throw new InvalidOperationException ("LuceneDriver is in read-only mode, but requires index-creation");
 
+				//if (minor_version < 0)
+				//	throw new InvalidOperationException ("LuceneDriver was passed an unspecified minor_version, and index-creation is required.");
+
+				// FIXME: This isnt exactly the way to do it
 				if (minor_version < 0)
-					throw new InvalidOperationException ("LuceneDriver was passed an unspecified minor_version, and index-creation is required.");
+					minor_version = 0;
 
 				// Purge and rebuild the index's directory
 				// structure.
