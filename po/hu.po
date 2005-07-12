@@ -9,8 +9,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: beagle.HEAD.hu\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2005-07-05 02:50+0000\n"
-"PO-Revision-Date: 2005-07-05 15:02+0200\n"
+"POT-Creation-Date: 2005-07-12 10:50+0000\n"
+"PO-Revision-Date: 2005-07-12 16:36+0200\n"
 "Last-Translator: Gabor Kelemen <kelemeng@gnome.hu>\n"
 "Language-Team: Hungarian <gnome@gnome.hu>\n"
 "MIME-Version: 1.0\n"
@@ -25,15 +25,19 @@ msgid ""
 "(system tray)"
 msgstr "Ha nem biztos benne, hogy a Best működik, ellenőrizze az értesítő területen"
 
-#: ../Best/BestTray.cs:166
+#: ../Best/BestTray.cs:171
 msgid "No Recent Searches"
 msgstr "Nincsenek új keresések"
 
-#: ../Best/BestTray.cs:170
+#: ../Best/BestTray.cs:175
 msgid "Recent Searches"
 msgstr "Legutóbbi keresések"
 
-#: ../Best/BestTray.cs:185
+#: ../Best/BestTray.cs:189
+msgid "Clear"
+msgstr "Törlés"
+
+#: ../Best/BestTray.cs:197
 msgid "Quit"
 msgstr "Kilépés"
 
@@ -144,11 +148,11 @@ msgstr "Oldalak:"
 msgid "Words:"
 msgstr "Szavak:"
 
-#: ../Tiles/TileFolder.cs:51
+#: ../Tiles/TileFolder.cs:53
 msgid "Empty"
 msgstr "Üres"
 
-#: ../Tiles/TileFolder.cs:53
+#: ../Tiles/TileFolder.cs:55
 #, csharp-format
 msgid "Contains {0} Item"
 msgid_plural "Contains {0} Items"
@@ -160,7 +164,7 @@ msgid "Send Mail"
 msgstr "Levél küldése"
 
 #. For translators: From template Tiles/template-mail-message.html
-#: ../Tiles/TileImLog.cs:80 ../Tiles/TranslationHack.cs:50
+#: ../Tiles/TileImLog.cs:80 ../Tiles/TranslationHack.cs:52
 msgid "Send IM"
 msgstr "Azonnali üzenet küldése"
 
@@ -174,29 +178,29 @@ msgstr "Társalgás a következőben: {0}"
 msgid "Conversation with {0}"
 msgstr "Társalgás a következővel: {0}"
 
-#: ../Tiles/TileMailMessage.cs:80
+#: ../Tiles/TileMailMessage.cs:79
 msgid "No Subject"
 msgstr "Nincs tárgy"
 
-#: ../Tiles/TileMailMessage.cs:83
-msgid "email attachment"
-msgstr "e-mail melléklet"
-
-#: ../Tiles/TileMailMessage.cs:89
+#: ../Tiles/TileMailMessage.cs:86
 msgid "To"
 msgstr "Címzett"
 
-#: ../Tiles/TileMailMessage.cs:89
+#: ../Tiles/TileMailMessage.cs:86
 msgid "From"
 msgstr "Feladó"
 
-#: ../Tiles/TileMailMessage.cs:117
+#: ../Tiles/TileMailMessage.cs:114
 msgid "Sent"
 msgstr "Elküldött"
 
-#: ../Tiles/TileMailMessage.cs:117
+#: ../Tiles/TileMailMessage.cs:114
 msgid "Received"
 msgstr "Fogadott"
+
+#: ../Tiles/TileMailMessage.cs:119
+msgid "Email attachment"
+msgstr "E-mail melléklet"
 
 #. For translators: From template Tiles/template-blog.html
 #: ../Tiles/TranslationHack.cs:6
@@ -229,11 +233,11 @@ msgstr "Közzétéve:"
 #. For translators: From template Tiles/template-im-log.html
 #: ../Tiles/TranslationHack.cs:12 ../Tiles/TranslationHack.cs:22
 #: ../Tiles/TranslationHack.cs:32 ../Tiles/TranslationHack.cs:40
-#: ../Tiles/TranslationHack.cs:44 ../Tiles/TranslationHack.cs:48
-#: ../Tiles/TranslationHack.cs:56 ../Tiles/TranslationHack.cs:64
-#: ../Tiles/TranslationHack.cs:74 ../Tiles/TranslationHack.cs:90
-#: ../Tiles/TranslationHack.cs:104 ../Tiles/TranslationHack.cs:112
-#: ../Tiles/TranslationHack.cs:116 ../Tiles/TranslationHack.cs:120
+#: ../Tiles/TranslationHack.cs:44 ../Tiles/TranslationHack.cs:50
+#: ../Tiles/TranslationHack.cs:58 ../Tiles/TranslationHack.cs:66
+#: ../Tiles/TranslationHack.cs:76 ../Tiles/TranslationHack.cs:92
+#: ../Tiles/TranslationHack.cs:106 ../Tiles/TranslationHack.cs:114
+#: ../Tiles/TranslationHack.cs:118 ../Tiles/TranslationHack.cs:122
 msgid "Open"
 msgstr "Megnyitás"
 
@@ -244,8 +248,8 @@ msgstr "Megnyitás"
 #. For translators: From template Tiles/template-presentation.html
 #. For translators: From template Tiles/template-spreadsheet.html
 #: ../Tiles/TranslationHack.cs:14 ../Tiles/TranslationHack.cs:28
-#: ../Tiles/TranslationHack.cs:38 ../Tiles/TranslationHack.cs:66
-#: ../Tiles/TranslationHack.cs:80 ../Tiles/TranslationHack.cs:96
+#: ../Tiles/TranslationHack.cs:38 ../Tiles/TranslationHack.cs:68
+#: ../Tiles/TranslationHack.cs:82 ../Tiles/TranslationHack.cs:98
 msgid "in folder"
 msgstr "Mappában"
 
@@ -254,23 +258,23 @@ msgstr "Mappában"
 #. For translators: From template Tiles/template-presentation.html
 #. For translators: From template Tiles/template-spreadsheet.html
 #: ../Tiles/TranslationHack.cs:16 ../Tiles/TranslationHack.cs:30
-#: ../Tiles/TranslationHack.cs:82 ../Tiles/TranslationHack.cs:98
+#: ../Tiles/TranslationHack.cs:84 ../Tiles/TranslationHack.cs:100
 msgid "Last modified"
 msgstr "Utolsó módosítás"
 
 #. For translators: From template Tiles/template-docs.html
 #. For translators: From template Tiles/template-presentation.html
 #. For translators: From template Tiles/template-spreadsheet.html
-#: ../Tiles/TranslationHack.cs:18 ../Tiles/TranslationHack.cs:84
-#: ../Tiles/TranslationHack.cs:100
+#: ../Tiles/TranslationHack.cs:18 ../Tiles/TranslationHack.cs:86
+#: ../Tiles/TranslationHack.cs:102
 msgid "Title:"
 msgstr "Cím:"
 
 #. For translators: From template Tiles/template-docs.html
 #. For translators: From template Tiles/template-presentation.html
 #. For translators: From template Tiles/template-spreadsheet.html
-#: ../Tiles/TranslationHack.cs:20 ../Tiles/TranslationHack.cs:86
-#: ../Tiles/TranslationHack.cs:102
+#: ../Tiles/TranslationHack.cs:20 ../Tiles/TranslationHack.cs:88
+#: ../Tiles/TranslationHack.cs:104
 msgid "Author:"
 msgstr "Szerző:"
 
@@ -280,8 +284,8 @@ msgstr "Szerző:"
 #. For translators: From template Tiles/template-presentation.html
 #. For translators: From template Tiles/template-spreadsheet.html
 #: ../Tiles/TranslationHack.cs:24 ../Tiles/TranslationHack.cs:34
-#: ../Tiles/TranslationHack.cs:76 ../Tiles/TranslationHack.cs:92
-#: ../Tiles/TranslationHack.cs:106
+#: ../Tiles/TranslationHack.cs:78 ../Tiles/TranslationHack.cs:94
+#: ../Tiles/TranslationHack.cs:108
 msgid "Send to..."
 msgstr "Küldés..."
 
@@ -292,8 +296,8 @@ msgstr "Küldés..."
 #. For translators: From template Tiles/template-presentation.html
 #. For translators: From template Tiles/template-spreadsheet.html
 #: ../Tiles/TranslationHack.cs:26 ../Tiles/TranslationHack.cs:36
-#: ../Tiles/TranslationHack.cs:60 ../Tiles/TranslationHack.cs:78
-#: ../Tiles/TranslationHack.cs:94 ../Tiles/TranslationHack.cs:108
+#: ../Tiles/TranslationHack.cs:62 ../Tiles/TranslationHack.cs:80
+#: ../Tiles/TranslationHack.cs:96 ../Tiles/TranslationHack.cs:110
 msgid "Reveal in file manager"
 msgstr "Megjelenítés fájlkezelőben"
 
@@ -304,61 +308,66 @@ msgstr "Alkalmazás:"
 
 #. For translators: From template Tiles/template-mail-message.html
 #: ../Tiles/TranslationHack.cs:46
+msgid "Email subject:"
+msgstr "E-mail tárgya:"
+
+#. For translators: From template Tiles/template-mail-message.html
+#: ../Tiles/TranslationHack.cs:48
 msgid "Folder:"
 msgstr "Mappa:"
 
 #. For translators: From template Tiles/template-music.html
-#: ../Tiles/TranslationHack.cs:52
+#: ../Tiles/TranslationHack.cs:54
 msgid "Track"
 msgstr "Szám"
 
 #. For translators: From template Tiles/template-music.html
-#: ../Tiles/TranslationHack.cs:54
+#: ../Tiles/TranslationHack.cs:56
 msgid "from"
 msgstr "a következőtől:"
 
 #. For translators: From template Tiles/template-music.html
-#: ../Tiles/TranslationHack.cs:58
+#: ../Tiles/TranslationHack.cs:60
 msgid "Enqueue"
 msgstr "Sorba helyezés"
 
 #. For translators: From template Tiles/template-note.html
-#: ../Tiles/TranslationHack.cs:62
+#: ../Tiles/TranslationHack.cs:64
 msgid "last modified"
 msgstr "utoljára módosítva"
 
 #. For translators: From template Tiles/template-picture.html
-#: ../Tiles/TranslationHack.cs:68
+#: ../Tiles/TranslationHack.cs:70
 msgid "Modified:"
 msgstr "Módosítva:"
 
 #. For translators: From template Tiles/template-picture.html
-#: ../Tiles/TranslationHack.cs:70
+#: ../Tiles/TranslationHack.cs:72
 msgid "Tags:"
 msgstr "Címkék:"
 
 #. For translators: From template Tiles/template-picture.html
-#: ../Tiles/TranslationHack.cs:72
+#: ../Tiles/TranslationHack.cs:74
 msgid "Description:"
 msgstr "Leírás:"
 
 #. For translators: From template Tiles/template-presentation.html
-#: ../Tiles/TranslationHack.cs:88
+#: ../Tiles/TranslationHack.cs:90
 msgid "Slides:"
 msgstr "Diák:"
 
 #. For translators: From template Tiles/template-web-history.html
-#: ../Tiles/TranslationHack.cs:110
+#: ../Tiles/TranslationHack.cs:112
 msgid "Last viewed:"
 msgstr "Utoljára megtekintve:"
 
 #. For translators: From template Tiles/template-network.html
-#: ../Tiles/TranslationHack.cs:114
+#: ../Tiles/TranslationHack.cs:116
 msgid "from Networked Beagle on host"
 msgstr "Hálózati Beagle-ról a kiszolgálón"
 
 #. For translators: From template Tiles/template-network.html
-#: ../Tiles/TranslationHack.cs:118
+#: ../Tiles/TranslationHack.cs:120
 msgid "Search Networked Beagle"
 msgstr "Keresés hálózati Beagle-lel"
 
