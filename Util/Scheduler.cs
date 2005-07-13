@@ -69,10 +69,11 @@ namespace Beagle.Util {
 		//////////////////////////////////////////////////////////////////////////////
 
 		public enum Priority {
-			Idle      = 0, // Do it when the system is idle
-			Generator = 1, // Do it soon, but not *too* soon
-			Delayed   = 2, // Do it soon
-			Immediate = 3, // Do it right now
+			Shutdown  = 0, // Do it on shutdown 
+			Idle      = 1, // Do it when the system is idle
+			Generator = 2, // Do it soon, but not *too* soon
+			Delayed   = 3, // Do it soon
+			Immediate = 4, // Do it right now
 		}
 
 		public delegate void Hook ();
@@ -404,6 +405,9 @@ namespace Beagle.Util {
 
 		//////////////////////////////////////////////////////////////////////////////
 
+		// FIXME: shutdown tasks should probably be ordered by something
+		private Queue shutdown_task_queue = new Queue ();
+		
 		private ArrayList task_queue = new ArrayList ();
 		private Hashtable task_by_tag = new Hashtable ();
 		private int executed_task_count = 0;
@@ -456,11 +460,15 @@ namespace Beagle.Util {
 					task.Timestamp = DateTime.Now;
 					task.Schedule (this);
 
-					int i = task_queue.BinarySearch (task);
-					if (i < 0)
-						i = ~i;
-					task_queue.Insert (i, task);
-					task_by_tag [task.Tag] = task;
+					if (task.Priority == Priority.Shutdown) {
+						shutdown_task_queue.Enqueue (task);
+					} else {
+						int i = task_queue.BinarySearch (task);
+						if (i < 0)
+							i = ~i;
+						task_queue.Insert (i, task);
+						task_by_tag [task.Tag] = task;
+					}
 				}
 					
 				Monitor.Pulse (task_queue);
@@ -909,6 +917,21 @@ namespace Beagle.Util {
 					collection.Clear ();
 				}
 			}
+
+			// Execute all shutdown tasks
+			while (shutdown_task_queue.Count > 0) {
+				Task t = shutdown_task_queue.Dequeue () as Task;
+				if (t != null && ! t.Cancelled && t.Priority == Priority.Shutdown) {
+					try {
+						// FIXME: Support Pre/Post task hooks
+						t.DoTask ();
+					} catch (Exception ex) {
+						Logger.Log.Error ("Caught exception while performing shutdown tasks in the scheduler");
+						Logger.Log.Error (ex);
+					}
+				}
+			}			
+			
 			Logger.Log.Debug ("Scheduler.Worker finished");
 		}
 	}

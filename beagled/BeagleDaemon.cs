@@ -150,6 +150,12 @@ namespace Beagle.Daemon {
 			if (Environment.GetEnvironmentVariable ("BEAGLE_ENABLE_IN_PROCESS_INDEXING") == null)
 				LuceneQueryable.IndexerHook = new LuceneQueryable.IndexerCreator (RemoteIndexer.NewRemoteIndexer);
 
+			// Initialize syncronization to keep the indexes local if PathFinder.HomeDir
+			// is on a non-block device, or if BEAGLE_SYNCHRONIZE_LOCALLY is set
+			if ((! SystemInformation.IsPathOnBlockDevice (PathFinder.HomeDir) && Conf.Daemon.IndexSynchronization) ||
+			    Environment.GetEnvironmentVariable ("BEAGLE_SYNCHRONIZE_LOCALLY") != null)
+				IndexSynchronization.Initialize ();
+
 			// Start the query driver.
 			Logger.Log.Debug ("Starting QueryDriver");
 			QueryDriver.Start ();

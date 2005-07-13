@@ -38,7 +38,7 @@ class SanityCheckTool {
 		Logger.DefaultEcho = true;
 		Logger.DefaultLevel = LogLevel.Debug;
 
-		string fs_dir = Path.Combine (PathFinder.StorageDir, "FileSystemIndex");
+		string fs_dir = Path.Combine (PathFinder.IndexDir, "FileSystemIndex");
 
 		FileSystemModel model = new FileSystemModel (fs_dir, null, null);
 

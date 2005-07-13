@@ -112,6 +112,34 @@ namespace Beagle.Util {
 			}
 		}
 
+		// The directory where beagle stores its indexes
+		// Fun fact #1: It will be synchronized locally if PathFinder.HomeDir
+		// is on a non-block device, or if BEAGLE_SYNCHRONIZE_LOCALLY is set.
+		static string index_dir;
+		static public string IndexDir {
+			get { 
+				if (index_dir == null) {
+					// FIXME: This is kind of a hack but required when using the IndexHelper
+					if ((! SystemInformation.IsPathOnBlockDevice (PathFinder.HomeDir) && Conf.Daemon.IndexSynchronization) ||
+					    Environment.GetEnvironmentVariable ("BEAGLE_SYNCHRONIZE_LOCALLY") != null)
+						index_dir = Path.Combine (Path.GetTempPath (), "beagle-" + Environment.GetEnvironmentVariable ("USER"));
+					
+					if (index_dir == null)
+						index_dir = Path.Combine (StorageDir, "Indexes");
+					
+					if (! Directory.Exists (index_dir)) {
+						Directory.CreateDirectory (index_dir);
+
+						// Make sure that the directory is only readable by the owner. 
+						// Required when using index synchronization as then it resides in /tmp
+						Mono.Posix.Syscall.chmod (storage_dir, (Mono.Posix.FileMode) 448); // 448 == 0700
+					}
+				}
+				
+				return index_dir;
+			}
+		}
+
 		static public string LogDir {
 			get {
 				string dir = Path.Combine (StorageDir, "Log");

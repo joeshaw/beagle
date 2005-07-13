@@ -59,8 +59,7 @@ namespace Beagle.Daemon.EvolutionDataServerQueryable {
 
 		public EvolutionDataServerQueryable () : base ("AddressbookIndex")
 		{
-			string dir = Path.Combine (PathFinder.StorageDir, "AddressbookIndex");
-			photo_dir = Path.Combine (dir, "Photos");
+			photo_dir = Path.Combine (Driver.IndexDirectory, "Photos");
 			System.IO.Directory.CreateDirectory (photo_dir);
 		}
 

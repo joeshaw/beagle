@@ -337,6 +337,13 @@ namespace Beagle.Util {
 				set { denied_backends = value; }
 			}
 
+			private bool index_synchronization = true;
+			public bool IndexSynchronization {
+				get { return index_synchronization; }
+				// Don't really want to expose this, but serialization requires it
+				set { index_synchronization = value; }
+			}
+
 			[ConfigOption (Description="Add a static queryable", Params=1, ParamsDescription="Index path")]
 			internal bool AddStaticQueryable (out string output, string [] args)
 			{
@@ -361,6 +368,15 @@ namespace Beagle.Util {
 					output += String.Format (" - {0}\n", index_path);
 				return true;
 			}
+
+			[ConfigOption (Description="Toggles whether your indexes will be synchronized locally if your home directory is on a network device (eg. NFS/Samba)")]
+			internal bool ToggleIndexSynchronization (out string output, string [] args)
+			{
+				index_synchronization = !index_synchronization;
+				output = "Index Synchronization is " + ((index_synchronization) ? "enabled" : "disabled") + ".";
+				return true;
+			}
+
 		}
 
 		[ConfigSection (Name="indexing")]
@@ -403,11 +419,8 @@ namespace Beagle.Util {
 			[ConfigOption (Description="Toggles whether your home directory is to be indexed as a root")]
 			internal bool IndexHome (out string output, string [] args)
 			{
-				if (index_home_dir)
-					output = "Your home directory will not be indexed.";
-				else
-					output = "Your home directory will be indexed.";
 				index_home_dir = !index_home_dir;
+				output = "Your home directory will " + ((! index_home_dir) ? "not " : "") + "be indexed.";
 				return true;
 			}
 

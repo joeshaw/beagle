@@ -130,7 +130,7 @@ namespace Beagle.Daemon {
 
 		private void Setup (string index_name, int minor_version, bool disable_locking)
 		{			
-			top_dir = Path.Combine (PathFinder.StorageDir, index_name);
+			top_dir = Path.Combine (PathFinder.IndexDir, index_name);
 			
 			string versionFile = Path.Combine (top_dir, "version");
 			string fingerprintFile = Path.Combine (top_dir, "fingerprint");

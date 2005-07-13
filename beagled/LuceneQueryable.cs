@@ -531,7 +531,7 @@ namespace Beagle.Daemon {
 
 		public FileStream ReadDataStream (string name)
 		{
-			string path = Path.Combine (Path.Combine (PathFinder.StorageDir, this.IndexName), name);
+			string path = Path.Combine (Path.Combine (PathFinder.IndexDir, this.IndexName), name);
 
 			if (!File.Exists (path))
 				return null;
@@ -555,7 +555,7 @@ namespace Beagle.Daemon {
 
 		public FileStream WriteDataStream (string name)
 		{
-			string path = Path.Combine (Path.Combine (PathFinder.StorageDir, this.IndexName), name);
+			string path = Path.Combine (Path.Combine (PathFinder.IndexDir, this.IndexName), name);
 			
 			return new FileStream (path, System.IO.FileMode.Create, FileAccess.Write);
 		}
@@ -565,7 +565,7 @@ namespace Beagle.Daemon {
 		public void WriteDataLine (string name, string line)
 		{
 			if (line == null) {
-				string path = Path.Combine (Path.Combine (PathFinder.StorageDir, this.IndexName), name);
+				string path = Path.Combine (Path.Combine (PathFinder.IndexDir, this.IndexName), name);
 
 				if (File.Exists (path))
 					File.Delete (path);

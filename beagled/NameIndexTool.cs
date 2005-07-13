@@ -37,7 +37,7 @@ class NameIndexTool {
 		{
 			NameIndex name_index;
 
-			name_index = new NameIndex (Path.Combine (PathFinder.StorageDir, "FileSystemIndex"), null);
+			name_index = new NameIndex (Path.Combine (PathFinder.IndexDir, "FileSystemIndex"), null);
 
 			if (args.Length == 0) {
 				name_index.SpewIndex ();

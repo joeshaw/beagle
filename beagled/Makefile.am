@@ -302,6 +302,7 @@ DAEMON_DLL_CSFILES = 						\
 	$(srcdir)/HitRegulator.cs				\
 	$(srcdir)/IFileAttributesStore.cs			\
 	$(srcdir)/IIndexer.cs					\
+	$(srcdir)/IndexSynchronization.cs			\
 	$(srcdir)/IQueryResult.cs				\
 	$(srcdir)/IQueryWorker.cs               		\
 	$(srcdir)/IQueryable.cs					\
