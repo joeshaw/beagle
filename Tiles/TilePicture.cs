@@ -57,7 +57,7 @@ namespace Beagle.Tile {
 			string [] properties = Hit.GetProperties ("fspot:Tag");
 
 			if (properties != null) {
-				Template ["Tags"] += String.Join (" ", properties);
+				Template ["Tags"] += String.Join (" / ", properties);
 			}
 		}
 	}
