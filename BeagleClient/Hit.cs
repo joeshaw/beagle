@@ -161,7 +161,6 @@ namespace Beagle {
 			set { source_object_name = value; }
 		}
 
-		[XmlAttribute]
 		public double Score {
 			get { return scoreRaw * scoreMultiplier; }
 		}

@@ -187,7 +187,7 @@ beagle_hit_get_score (BeagleHit *hit)
 {
 	g_return_val_if_fail (hit != NULL, -1);
 
-	return hit->score;
+	return hit->score_raw * hit->score_multiplier;
 }
 
 /**
@@ -378,10 +378,7 @@ _beagle_hit_to_xml (BeagleHit *hit, GString *data)
 	g_string_append_printf (data, " ScoreRaw=\"%f\" ScoreMultiplier=\"%f\"", 
 				hit->score_raw, hit->score_multiplier);
 
-	if (hit->score != 0.0) 
-		g_string_append_printf (data, " Score=\"%f\">", hit->score);
-	else
-		g_string_append (data, ">");
+	g_string_append (data, ">");
 
 	_beagle_properties_to_xml (hit->properties, data);
 
