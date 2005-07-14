@@ -679,6 +679,11 @@ namespace Beagle.Util {
 			ExcludeItem exclude = obj as ExcludeItem;
 			return (exclude != null && exclude.Type == type && exclude.Value == val);
 		}
+
+		public override int GetHashCode ()
+		{
+			return (this.Value.GetHashCode () ^ (int) this.Type);
+		}
 	}
 
 	//////////////////////////////////////////////////////////////////////
