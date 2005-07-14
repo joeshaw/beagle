@@ -1227,16 +1227,16 @@ namespace Beagle.Daemon {
 
 		public void Merge (string merge_dir)
 		{
-			string index_dir = Path.Combine (top_dir, "Index");
-			string locks_dir = Path.Combine (top_dir, "Locks");
+			string merge_index_dir = Path.Combine (merge_dir, "Index");
+			string merge_locks_dir = Path.Combine (merge_dir, "Locks");
 
-			if (!Directory.Exists (index_dir) || !Directory.Exists (locks_dir)) {
+			if (!Directory.Exists (merge_index_dir) || !Directory.Exists (merge_locks_dir)) {
 				throw new Exception ("Index does not exists");
 			}
 			
 			// FIXME: Error recovery
 
-			Lucene.Net.Store.FSDirectory store = Lucene.Net.Store.FSDirectory.GetDirectory (index_dir, locks_dir, false);
+			Lucene.Net.Store.FSDirectory store = Lucene.Net.Store.FSDirectory.GetDirectory (merge_index_dir, merge_locks_dir, false);
 			Lucene.Net.Store.Directory[] stores = {store};
 			
 			IndexWriter writer = new IndexWriter (Store, null, false);
