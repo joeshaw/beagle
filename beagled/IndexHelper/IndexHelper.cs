@@ -81,6 +81,14 @@ namespace Beagle.IndexHelper {
 				ExceptionHandlingThread.Start (new ThreadStart (DaemonMonitorWorker));
 
 				Application.Run ();
+
+				// If we palced our sockets in a temp directory, try to clean it up
+				// Note: this may fail because the daemon is still running
+				if (PathFinder.GetRemoteStorageDir (false) != PathFinder.StorageDir) {
+					try {
+						Directory.Delete (PathFinder.GetRemoteStorageDir (false));
+					} catch (IOException) { }
+				}
 			}
 
 			Environment.Exit (0);
@@ -120,9 +128,18 @@ namespace Beagle.IndexHelper {
 		
 		static void DaemonMonitorWorker ()
 		{
+			string storage_dir = PathFinder.GetRemoteStorageDir (false);
+
+			if (storage_dir == null) {
+				Logger.Log.Debug ("The daemon doesn't appear to have started");
+				Logger.Log.Debug ("Shutting down helper.");
+				Shutdown.BeginShutdown ();
+				return;
+			}
+
 			// FIXME: We shouldn't need to know the  name of the daemon's socket.
 			string socket_name;
-			socket_name = Path.Combine (PathFinder.StorageDir, "socket");
+			socket_name = Path.Combine (storage_dir, "socket");
 
 			try {
 				SNS.Socket socket;

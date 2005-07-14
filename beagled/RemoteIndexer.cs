@@ -199,8 +199,13 @@ namespace Beagle.Daemon {
 
 		static bool CheckHelper ()
 		{
+			string storage_dir = PathFinder.GetRemoteStorageDir (false);
+
+			if (storage_dir == null)
+				return false;
+
 			// FIXME: We shouldn't need to know the path to the helper socket.
-			string socket_name = Path.Combine (PathFinder.StorageDir, "socket-helper");
+			string socket_name = Path.Combine (storage_dir, "socket-helper");
 
 			if (! File.Exists (socket_name))
 				return false;

@@ -79,7 +79,12 @@ namespace Beagle {
 			// use the default socket name when passed null
 			if (client_name == null)
 				client_name = "socket";
-			this.socket_name = Path.Combine (PathFinder.StorageDir, client_name);
+
+			string storage_dir = PathFinder.GetRemoteStorageDir (false);
+			if (storage_dir == null)
+				throw new System.Net.Sockets.SocketException ();
+
+			this.socket_name = Path.Combine (storage_dir, client_name);
 		}
 
 		public Client () : this (null)

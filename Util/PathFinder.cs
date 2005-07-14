@@ -112,6 +112,53 @@ namespace Beagle.Util {
 			}
 		}
 
+		static string remote_storage_dir;
+		static public string GetRemoteStorageDir (bool create)
+		{
+			if (remote_storage_dir == null) {
+				if ((! SystemInformation.IsPathOnBlockDevice (PathFinder.StorageDir) && Conf.Daemon.IndexSynchronization) ||
+				    Environment.GetEnvironmentVariable ("BEAGLE_SYNCHRONIZE_LOCALLY") != null) {
+					string index_pointer = Path.Combine (StorageDir, "remote_storage_dir");
+
+					if (File.Exists (index_pointer)) {
+						StreamReader r = new StreamReader (index_pointer);
+						remote_storage_dir = r.ReadLine ();
+						r.Close ();
+
+						if (!Directory.Exists (remote_storage_dir))
+							remote_storage_dir = null;
+					}
+
+					if (create) {
+						if (remote_storage_dir == null) {
+							do {
+								string p = String.Format ("beagle-{0}-{1}", Environment.GetEnvironmentVariable ("USER"),
+											  Guid.NewGuid ().ToString ());
+
+								remote_storage_dir = Path.Combine (Path.GetTempPath (), p);
+							} while (Directory.Exists (remote_storage_dir) || File.Exists (remote_storage_dir));
+
+							StreamWriter w = new StreamWriter (index_pointer);
+							w.WriteLine (remote_storage_dir);
+							w.Close ();
+
+
+						}
+
+						if (! Directory.Exists (remote_storage_dir)) {
+							Directory.CreateDirectory (remote_storage_dir);
+							// Make sure that the directory is only
+							// readable by the owner.
+							Mono.Posix.Syscall.chmod (remote_storage_dir, (Mono.Posix.FileMode) 448); // 448 == 0700
+						}
+					}
+				} else
+					remote_storage_dir = StorageDir;
+			}
+
+			return remote_storage_dir;
+		}
+
 		// The directory where beagle stores its indexes
 		// Fun fact #1: It will be synchronized locally if PathFinder.HomeDir
 		// is on a non-block device, or if BEAGLE_SYNCHRONIZE_LOCALLY is set.
@@ -119,20 +166,14 @@ namespace Beagle.Util {
 		static public string IndexDir {
 			get { 
 				if (index_dir == null) {
-					// FIXME: This is kind of a hack but required when using the IndexHelper
-					if ((! SystemInformation.IsPathOnBlockDevice (PathFinder.HomeDir) && Conf.Daemon.IndexSynchronization) ||
-					    Environment.GetEnvironmentVariable ("BEAGLE_SYNCHRONIZE_LOCALLY") != null)
-						index_dir = Path.Combine (Path.GetTempPath (), "beagle-" + Environment.GetEnvironmentVariable ("USER"));
-					
-					if (index_dir == null)
-						index_dir = Path.Combine (StorageDir, "Indexes");
+					index_dir = Path.Combine (GetRemoteStorageDir (true), "Indexes");
 					
 					if (! Directory.Exists (index_dir)) {
 						Directory.CreateDirectory (index_dir);
 
 						// Make sure that the directory is only readable by the owner. 
 						// Required when using index synchronization as then it resides in /tmp
-						Mono.Posix.Syscall.chmod (storage_dir, (Mono.Posix.FileMode) 448); // 448 == 0700
+						Mono.Posix.Syscall.chmod (index_dir, (Mono.Posix.FileMode) 448); // 448 == 0700
 					}
 				}
 				

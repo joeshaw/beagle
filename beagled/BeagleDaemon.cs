@@ -341,6 +341,14 @@ namespace Beagle.Daemon {
 
 			Application.Run ();
 
+			// If we placed our sockets in a temp directory, try to clean it up
+			// Note: this may fail because the helper is still running
+			if (PathFinder.GetRemoteStorageDir (false) != PathFinder.StorageDir) {
+				try {
+					Directory.Delete (PathFinder.GetRemoteStorageDir (false));
+				} catch (IOException) { }
+			}
+
 			Logger.Log.Debug ("Leaving BeagleDaemon.Main");
 
 			if (Logger.Log.Level == LogLevel.Debug) {

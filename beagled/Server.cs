@@ -268,7 +268,7 @@ namespace Beagle.Daemon {
 
 	public class Server {
 
-		private string name;
+		private string socket_path;
 		private UnixListener listener;
 		private static Hashtable live_handlers = new Hashtable ();
 		private bool running = false;
@@ -280,8 +280,9 @@ namespace Beagle.Daemon {
 			// Use the default name when passed null
 			if (name == null)
 				name = "socket";
-			this.name = name;
-			this.listener = new UnixListener (Path.Combine (PathFinder.StorageDir, name));
+
+			this.socket_path = Path.Combine (PathFinder.GetRemoteStorageDir (true), name);
+			this.listener = new UnixListener (this.socket_path);
 		}
 
 		public Server () : this (null)
@@ -318,7 +319,7 @@ namespace Beagle.Daemon {
 			this.listener.Start ();
 			this.running = true;
 
-			Shutdown.WorkerStart (this, String.Format ("server '{0}'", name));
+			Shutdown.WorkerStart (this, String.Format ("server '{0}'", socket_path));
 
 			while (this.running) {
 				UnixClient client;
@@ -353,7 +354,7 @@ namespace Beagle.Daemon {
 			
 			Shutdown.WorkerFinished (this);
 
-			Logger.Log.Debug ("Server '{0}' shut down", this.name);
+			Logger.Log.Debug ("Server '{0}' shut down", this.socket_path);
 		}
 
 		public void Start ()
@@ -365,6 +366,7 @@ namespace Beagle.Daemon {
 		{
 			this.running = false;
 			this.listener.Stop ();
+			File.Delete (this.socket_path);
 		}
 
 		//////////////////////////////////////////////////////////////////////////////
