@@ -109,7 +109,7 @@ namespace Beagle.Daemon
 					break;
 
 				default:
-					if (next_arg == null) {
+					if (arg_output == null) {
 						arg_output = Path.IsPathRooted (arg) ? arg : Path.GetFullPath (arg);
 					} else {
 						string path = Path.IsPathRooted (arg) ? arg : Path.GetFullPath (arg);
@@ -215,7 +215,7 @@ namespace Beagle.Daemon
 						driver.Flush ();
 					}
 				} else if (crawling) {
-					Logger.Log.Debug ("IndexWorker: La la la...");
+					//Logger.Log.Debug ("IndexWorker: La la la...");
 					Thread.Sleep (50);
 				} else {
 					break;
@@ -285,7 +285,7 @@ namespace Beagle.Daemon
 				"Copyright (C) 2005 Novell, Inc.\n\n";
 			
 			usage += 
-				"Usage: beagle-build-index [OPTIONS] <path> [path] [path] <index path>\n\n" +
+				"Usage: beagle-build-index [OPTIONS] <index_path> <path> [path path path]\n\n" +
 				"Options:\n" +
 				"  --remap [path1:path2]\tRemap data paths to fit target. \n" +
 				"  --tag [tag]\t\tTag index data for identification.\n" + 

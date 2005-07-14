@@ -857,7 +857,9 @@ ALL_TARGETS += 				\
 endif
 
 man_MANS = 				\
-	beagled.1
+	beagled.1			\
+	beagle-build-index.8		\
+	beagle-manage-index.8
 
 all: $(ALL_TARGETS)
 
@@ -903,8 +905,10 @@ endif
 
 bin_SCRIPTS = \
 	$(DAEMON_WRAPPER)		\
-	$(INDEX_WEB_CONTENT_WRAPPER)	\
-	$(MANAGE_INDEX_WRAPPER)	\
+	$(INDEX_WEB_CONTENT_WRAPPER)
+
+sbin_SCRIPTS = \
+	$(MANAGE_INDEX_WRAPPER)		\
 	$(BUILD_INDEX_WRAPPER)
 
 noinst_SCRIPTS=	\

@@ -91,12 +91,12 @@ namespace Beagle.Daemon
 				"Copyright (C) 2004-2005 Novell, Inc.\n\n";
 			
 			usage += 
-				"Usage: beagle-manage-index <index> <command> [OPTIONS]\n\n" + 
+				"Usage: beagle-manage-index <index_path> <command> [OPTIONS]\n\n" + 
 				"Commands:\n" + 
 				"  list\t\t\t\tList all entries in the index.\n" + 
 				"  remove <uri|tag>\t\tRemove entries corresponding to the criterias specified.\n" + 
 				"  merge <index to merge>\tMerge another Lucene index into the target.\n" + 
-				"  info\t\t\t\tPrint basic index info.\n" + 
+				"  info\t\t\t\tPrint basic index information.\n" + 
 				"  optimize\t\t\tOptimize index.\n";
 			
 			
