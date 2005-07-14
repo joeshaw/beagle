@@ -470,6 +470,30 @@ namespace Beagle.Util {
 				set { allowGlobalAccess = value; }
 			}
 
+
+			[ConfigOption (Description="Show current configuration of GlobalAccess parameter", IsMutator=false)]
+			internal bool CheckGlobalAccess(out string output, string [] args)
+			{
+				output = "Global Access to Beagle WebServices is currently ";
+
+				output += allowGlobalAccess ? "ENABLED":"DISABLED";
+				
+				return true;
+			}
+			
+			[ConfigOption (Description="Enable/Disable global access to Beagle web-services")]
+			internal bool SwitchGlobalAccess (out string output, string [] args)
+			{
+				allowGlobalAccess = !allowGlobalAccess;			
+				
+				if (allowGlobalAccess)
+					output = "Global Access to Beagle WebServices ENABLED.";
+				else
+					output = "Global Access to Beagle WebServices DISABLED.";
+
+				return true;
+			}
+
 			[ConfigOption (Description="List the public folders", IsMutator=false)]
 			internal bool ListPublicFolders(out string output, string [] args)
 			{
@@ -480,20 +504,7 @@ namespace Beagle.Util {
 
 				return true;
 			}
-
-			[ConfigOption (Description="Enable/Disable global access to Beagle web-services")]
-			internal bool SwitchGlobalAccess (out string output, string [] args)
-			{
-				allowGlobalAccess = !allowGlobalAccess;			
-				
-				if (allowGlobalAccess)
-					output = "Global Access to Beagle WebService ENABLED.";
-				else
-					output = "Global Access to Beagle WebService DISABLED.";
-
-				return true;
-			}
-
+			
 			[ConfigOption (Description="Add public web-service access to a folder", Params=1, ParamsDescription="A path")]
 			internal bool AddPublicFolder (out string output, string [] args)
 			{
