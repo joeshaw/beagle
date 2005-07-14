@@ -91,8 +91,6 @@ start_hit (BeagleParserContext *ctx, const char **attrs)
 			priv->hit->score_raw = g_ascii_strtod (attrs[i + 1], NULL);
 		else if (strcmp (attrs[i], "ScoreMultiplier") == 0) 
 			priv->hit->score_multiplier = g_ascii_strtod (attrs[i + 1], NULL);
-		else if (strcmp (attrs[i], "Score") == 0) 
-			priv->hit->score = g_ascii_strtod (attrs[i + 1], NULL);
 		else
 			g_warning ("unknown attribute \"%s\" with value \"%s\"", attrs[i], attrs[i + 1]);
 	}
