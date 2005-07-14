@@ -94,7 +94,7 @@ namespace Beagle.Util {
 		}
 
 		[DllImport ("libinotifyglue")]
-		static extern void inotify_glue_init ();
+		static extern int inotify_glue_init ();
 
 		[DllImport ("libinotifyglue")]
 		static extern int inotify_glue_watch (int fd, string filename, EventType mask);
@@ -148,7 +148,7 @@ namespace Beagle.Util {
 
 		/////////////////////////////////////////////////////////////////////////////////////
 
-		static private int dev_inotify = -1;
+		static private int inotify_fd = -1;
 		static private ArrayList event_queue = new ArrayList ();
 
 		static Inotify ()
@@ -163,15 +163,13 @@ namespace Beagle.Util {
 			if (Environment.GetEnvironmentVariable ("BEAGLE_INOTIFY_VERBOSE") != null)
 				Inotify.Verbose = true;
 
-			inotify_glue_init ();
-
-			dev_inotify = Syscall.open ("/dev/inotify", OpenFlags.O_RDONLY);
-			if (dev_inotify == -1)
-				Logger.Log.Warn ("Could not open /dev/inotify");
+			inotify_fd = inotify_glue_init ();
+			if (inotify_fd == -1)
+				Logger.Log.Warn ("Could not initialize inotify");
 		}
 
 		static public bool Enabled {
-			get { return dev_inotify >= 0; }
+			get { return inotify_fd >= 0; }
 		}
 
 		/////////////////////////////////////////////////////////////////////////////////////
@@ -350,7 +348,7 @@ namespace Beagle.Util {
 					// in the wd value changing.
 					// (no need to worry about watched_by_wd being polluted with stale watches)
 					
-					wd = inotify_glue_watch (dev_inotify, path, mask | base_mask);
+					wd = inotify_glue_watch (inotify_fd, path, mask | base_mask);
 					if (wd < 0) {
 						string msg = String.Format ("Attempt to watch {0} failed!", path);
 						throw new IOException (msg);
@@ -402,7 +400,7 @@ namespace Beagle.Util {
 			if (watched.Subscribers.Count > 0)
 				return;
 
-			int retval = inotify_glue_ignore (dev_inotify, watched.Wd);
+			int retval = inotify_glue_ignore (inotify_fd, watched.Wd);
 			if (retval < 0) {
 				string msg = String.Format ("Attempt to ignore {0} failed!", watched.Path);
 				throw new IOException (msg);
@@ -423,7 +421,7 @@ namespace Beagle.Util {
 				watched.Mask |= new_mask;
 
 				int new_wd;
-				new_wd = inotify_glue_watch (dev_inotify,
+				new_wd = inotify_glue_watch (inotify_fd,
 							     watched.Path,
 							     watched.Mask | base_mask);
 
@@ -489,7 +487,7 @@ namespace Beagle.Util {
 				int nr;
 
 				// Will block while waiting for events, but with a 1s timeout.
-				inotify_snarf_events (dev_inotify, 
+				inotify_snarf_events (inotify_fd, 
 						      1, 
 						      out nr,
 						      out buffer);

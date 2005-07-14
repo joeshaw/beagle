@@ -33,17 +33,19 @@
 #include <errno.h>
 #include <sys/ioctl.h>
 #include <sys/select.h>
+#include <sys/types.h>
 
 #include "inotify.h"
+#include "inotify-syscalls.h"
 
-#define SYSFS_PREFIX           "/sys/class/misc/inotify"
+#define PROCFS_PREFIX           "/proc/sys/fs/inotify"
 
-#define SYSFS_MAX_USER_DEVICES  SYSFS_PREFIX "/max_user_devices"
-#define SYSFS_MAX_USER_WATCHES  SYSFS_PREFIX "/max_user_watches"
-#define SYSFS_MAX_QUEUED_EVENTS SYSFS_PREFIX "/max_queued_events"
+#define PROCFS_MAX_USER_DEVICES  PROCFS_PREFIX "/max_user_instances"
+#define PROCFS_MAX_USER_WATCHES  PROCFS_PREFIX "/max_user_watches"
+#define PROCFS_MAX_QUEUED_EVENTS PROCFS_PREFIX "/max_queued_events"
 
 /* Inotify sysfs knobs, initialized to their pre-sysfs defaults */
-static int max_user_devices = 8;
+static int max_user_instances = 8;
 static int max_user_watches = 8192;
 static unsigned int max_queued_events = 256;
 
@@ -67,52 +69,49 @@ read_int (const char *filename, int *var)
 }
 
 
-void
+int
 inotify_glue_init (void)
 {
-	static int initialized = 0;
-	if (initialized)
+	static int fd = 0;
+	if (fd)
 		return;
-	initialized = 1;
+	fd = inotify_init ();
+	if (fd < 0) {
+		int _errno = errno;
+		perror ("inotify_init");
+		switch (_errno) {
+		case ENOSYS:
+			fprintf(stderr, "Inotify not supported!  You need a "
+				"2.6.13 kernel or later with CONFIG_INOTIFY "
+				"enabled.");
+			break;
+		}
+	}
 
-	read_int (SYSFS_MAX_USER_DEVICES, &max_user_devices);
-	read_int (SYSFS_MAX_USER_WATCHES, &max_user_watches);
-	read_int (SYSFS_MAX_QUEUED_EVENTS, &max_queued_events);
+	read_int (PROCFS_MAX_USER_DEVICES, &max_user_instances);
+	read_int (PROCFS_MAX_USER_WATCHES, &max_user_watches);
+	read_int (PROCFS_MAX_QUEUED_EVENTS, &max_queued_events);
+
+	return fd;
 }
 
 
 int
 inotify_glue_watch (int fd, const char *filename, __u32 mask)
 {
-	struct inotify_watch_request iwr;
-	int file_fd, wd;
+	int wd;
 
-	file_fd = open (filename, O_RDONLY);
-	if (file_fd < 0) {
-		perror ("open");
-		return -1;
-	}
-	iwr.fd = file_fd;
-	iwr.mask = mask;
-
-	wd = ioctl (fd, INOTIFY_WATCH, &iwr);
+	wd = inotify_add_watch (fd, filename, mask);
 	if (wd < 0) {
 		int _errno = errno;
-		perror ("ioctl");
+		perror ("inotify_add_watch");
 		switch (_errno) {
 		case ENOSPC:
-			fprintf(stderr, "Maximum watch limit hit. Try adjusting /sys/class/misc/inotify/max_user_watches\n");
-			break;
-		case EFAULT:
-			fprintf(stderr, "This usually indicates an inotify version incompatibility.\n");
-			break;
-		default:
+			fprintf(stderr, "Maximum watch limit hit. "
+				"Try adjusting " PROCFS_MAX_USER_WATCHES ".\n");
 			break;
 		}
 	}
-
-	if (close (file_fd))
-		perror ("close");
 
 	return wd;
 }
@@ -123,9 +122,9 @@ inotify_glue_ignore (int fd, __s32 wd)
 {
 	int ret;
 
-	ret = ioctl (fd, INOTIFY_IGNORE, &wd);
+	ret = inotify_rm_watch (fd, wd);
 	if (ret < 0)
-		perror ("ioctl");
+		perror ("inotify_rm_watch");
 
 	return ret;
 }
