@@ -324,7 +324,7 @@ namespace Beagle {
 			return true;
 		}
 
-		private string this [string key] {
+		public string this [string key] {
 			get {
 				int first, top;
 				if (! FindProperty (key, out first, out top))
