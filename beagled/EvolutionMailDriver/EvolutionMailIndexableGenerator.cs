@@ -136,6 +136,7 @@ namespace Beagle.Daemon.EvolutionMailDriver {
 		private int mbox_fd = -1;
 		private GMime.StreamFs mbox_stream;
 		private GMime.Parser mbox_parser;
+		private long file_size;
 
 		public EvolutionMailIndexableGeneratorMbox (EvolutionMailQueryable queryable, FileInfo mbox_info) : base (queryable)
 		{
@@ -213,6 +214,9 @@ namespace Beagle.Daemon.EvolutionMailDriver {
 				this.mbox_stream.Seek ((int) this.MboxLastOffset);
 				this.mbox_parser = new GMime.Parser (this.mbox_stream);
 				this.mbox_parser.ScanFrom = true;
+
+				FileInfo info = new FileInfo (this.mbox_info.FullName);
+				this.file_size = info.Length;
 			}
 
 			if (this.mbox_parser.Eos ()) {
@@ -366,11 +370,15 @@ namespace Beagle.Daemon.EvolutionMailDriver {
 
 		public override void Checkpoint ()
 		{
-			EvolutionMailQueryable.log.Debug ("{0}: indexed {1} messages",
-							  this.folder_name, this.indexed_count);
+			long offset = -1;
 
 			if (this.mbox_parser != null)
-				this.MboxLastOffset = this.mbox_parser.FromOffset;
+				this.MboxLastOffset = offset = this.mbox_parser.FromOffset;
+
+			EvolutionMailQueryable.log.Debug ("{0}: indexed {1} messages ({2}/{3} bytes {4:###.0}%)",
+							  this.folder_name, this.indexed_count,
+							  offset, this.file_size,
+							  100.0 * offset / this.file_size);
 		}
 
 		public override string GetTarget ()
