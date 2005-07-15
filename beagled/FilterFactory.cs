@@ -141,6 +141,42 @@ namespace Beagle.Daemon {
 
 		/////////////////////////////////////////////////////////////////////////
 
+		static public TextReader FilterFile (string path)
+		{
+			return FilterFile (path, null);
+		}
+		
+		static public TextReader FilterFile (string path, string mime_type)
+		{
+			if (mime_type == null)
+				mime_type = Beagle.Util.VFS.Mime.GetMimeType (path);
+
+			if (mime_type == null)
+				return null;
+
+			ICollection filters = CreateFilters (UriFu.PathToFileUri (path), Path.GetExtension (path), mime_type);
+			TextReader reader;
+			
+			foreach (Filter candidate_filter in filters) {
+				if (Debug)
+					Logger.Log.Debug ("Testing filter: {0}", candidate_filter);
+						
+				// Open the filter, and hook up the TextReader.
+				if (candidate_filter.Open (path)) {
+					reader = candidate_filter.GetTextReader ();
+					
+					if (Debug)
+						Logger.Log.Debug ("Successfully filtered {0} with {1}", path, candidate_filter);
+					
+					return reader;
+				} else if (Debug) {
+					Logger.Log.Debug ("Unsuccessfully filtered {0} with {1}, falling back", path, candidate_filter);
+				}
+			}		
+
+			return null;
+		} 
+
 		static private bool ShouldWeFilterThis (Indexable indexable)
 		{
 			if (indexable.Filtering == IndexableFiltering.Never
@@ -158,7 +194,7 @@ namespace Beagle.Daemon {
 			return false;
 		}
 
-		static public bool FilterIndexable (Indexable indexable, out Filter filter)
+		static public bool FilterIndexable (Indexable indexable, TextCache text_cache, out Filter filter)
 		{
 			filter = null;
 			ICollection filters = null;
@@ -215,15 +251,15 @@ namespace Beagle.Daemon {
 					Logger.Log.Debug ("Testing filter: {0}", candidate_filter);
 				
 				// Hook up the snippet writer.
-				if (candidate_filter.SnippetMode) {
+				if (candidate_filter.SnippetMode && text_cache != null) {
 					if (candidate_filter.OriginalIsText && indexable.IsNonTransient) {
-						TextCache.MarkAsSelfCached (indexable.Uri);
+						text_cache.MarkAsSelfCached (indexable.Uri);
 					} else if (indexable.CacheContent) {
-						TextWriter writer = TextCache.GetWriter (indexable.Uri);
+						TextWriter writer = text_cache.GetWriter (indexable.Uri);
 						candidate_filter.AttachSnippetWriter (writer);
 					}
 				}
-				
+
 				if (indexable.Crawled)
 					candidate_filter.EnableCrawlMode ();
 				
@@ -259,11 +295,16 @@ namespace Beagle.Daemon {
 			return false;
 		}
 
+		static public bool FilterIndexable (Indexable indexable, out Filter filter)
+		{
+			return FilterIndexable (indexable, null, out filter);
+		}
+
 		static public bool FilterIndexable (Indexable indexable)
 		{
 			Filter filter = null;
 
-			return FilterIndexable (indexable, out filter);
+			return FilterIndexable (indexable, null, out filter);
 		}
 
 		/////////////////////////////////////////////////////////////////////////

@@ -40,15 +40,26 @@ namespace Beagle.Daemon {
 
 		const string SELF_CACHE_TAG = "*self*";
 
-		static string text_cache_dir;
-		static SqliteConnection connection;
+		private string text_cache_dir;
+		private SqliteConnection connection;
 
-		static TextCache () 
+		private static TextCache user_cache = null;
+
+		public static TextCache UserCache {
+			get {
+				if (user_cache == null)
+					user_cache = new TextCache (PathFinder.StorageDir);
+				
+				return user_cache;
+			}
+		}
+
+		public TextCache (string storage_dir) 
 		{
-			text_cache_dir = Path.Combine (PathFinder.StorageDir, "TextCache");
+			text_cache_dir = Path.Combine (storage_dir, "TextCache");
 			if (! Directory.Exists (text_cache_dir)) {
 				Directory.CreateDirectory (text_cache_dir);
-
+				
 				// Create our cache subdirectories.
 				for (int i = 0; i < 256; ++i) {
 					string subdir = i.ToString ("x");
@@ -82,7 +93,7 @@ namespace Beagle.Daemon {
 			return uri.ToString ().Replace ("'", "''");
 		}
 
-		private static SqliteCommand NewCommand (string format, params object [] args)
+		private SqliteCommand NewCommand (string format, params object [] args)
 		{
 			SqliteCommand command;
 			command = new SqliteCommand ();
@@ -91,7 +102,7 @@ namespace Beagle.Daemon {
 			return command;
 		}
 
-		private static void DoNonQuery (string format, params object [] args)
+		private void DoNonQuery (string format, params object [] args)
 		{
 			SqliteCommand command = NewCommand (format, args);
 			while (true) {
@@ -109,7 +120,7 @@ namespace Beagle.Daemon {
 			command.Dispose ();
 		}
 
-		static private SqliteDataReader ExecuteReaderOrWait (SqliteCommand command)
+		private SqliteDataReader ExecuteReaderOrWait (SqliteCommand command)
 		{
 			SqliteDataReader reader = null;
 			while (reader == null) {
@@ -125,7 +136,7 @@ namespace Beagle.Daemon {
 			return reader;
 		}
 
-		static private bool ReadOrWait (SqliteDataReader reader)
+		private bool ReadOrWait (SqliteDataReader reader)
 		{
 			while (true) {
 				try {
@@ -139,13 +150,13 @@ namespace Beagle.Daemon {
 			}
 		}
 
-		private static void Insert (Uri uri, string filename)
+		private void Insert (Uri uri, string filename)
 		{
 			DoNonQuery ("INSERT OR REPLACE INTO uri_index (uri, filename) VALUES ('{0}', '{1}')",
 				    UriToString (uri), filename);
 		}
 
-		private static string LookupPathRawUnlocked (Uri uri, bool create_if_not_found)
+		private string LookupPathRawUnlocked (Uri uri, bool create_if_not_found)
 		{
 			SqliteCommand command;
 			SqliteDataReader reader = null;
@@ -171,9 +182,9 @@ namespace Beagle.Daemon {
 			return path != null ? Path.Combine (text_cache_dir, path) : null;
 		}
 	
-		private static string LookupPath (Uri uri,
-						  LuceneDriver.UriRemapper uri_remapper,
-						  bool create_if_not_found)
+		private string LookupPath (Uri uri,
+					   LuceneDriver.UriRemapper uri_remapper,
+					   bool create_if_not_found)
 		{
 			lock (connection) {
 				string path = LookupPathRawUnlocked (uri, create_if_not_found);
@@ -189,14 +200,14 @@ namespace Beagle.Daemon {
 				return path;
 			}
 		}
-
-		public static void MarkAsSelfCached (Uri uri)
+		
+		public void MarkAsSelfCached (Uri uri)
 		{
 			lock (connection)
 				Insert (uri, SELF_CACHE_TAG);
 		}
 
-		public static TextWriter GetWriter (Uri uri)
+		public TextWriter GetWriter (Uri uri)
 		{
 			string path = LookupPath (uri, null, true);
 
@@ -211,7 +222,12 @@ namespace Beagle.Daemon {
 			return writer;
 		}
 
-		public static TextReader GetReader (Uri uri, LuceneDriver.UriRemapper uri_remapper)
+		public TextReader GetReader (Uri uri)
+		{
+			return GetReader (uri, null);
+		}
+
+		public TextReader GetReader (Uri uri, LuceneDriver.UriRemapper uri_remapper)
 		{
 			string path = LookupPath (uri, uri_remapper, false);
 			if (path == null)
@@ -229,7 +245,7 @@ namespace Beagle.Daemon {
 			return reader;
 		}
 
-		public static void Delete (Uri uri)
+		public void Delete (Uri uri)
 		{
 			lock (connection) {
 				string path = LookupPathRawUnlocked (uri, false);

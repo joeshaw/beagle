@@ -256,7 +256,7 @@ namespace Beagle.Daemon {
 			// Walk across the list of removed Uris and drop them
 			// from the text cache.
 			foreach (Uri uri in list_of_removed_uris)
-				TextCache.Delete (uri);
+				TextCache.UserCache.Delete (uri);
 
 			// Walk across the list of added Uris and mark the local
 			// files with the cached timestamp.
@@ -510,7 +510,7 @@ namespace Beagle.Daemon {
 			if (to_internal_uris != null)
 				uri = to_internal_uris (uri);
 
-			TextReader reader = TextCache.GetReader (uri, from_internal_uris);
+			TextReader reader = TextCache.UserCache.GetReader (uri, from_internal_uris);
 			if (reader == null)
 				return null;
 

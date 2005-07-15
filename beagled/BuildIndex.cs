@@ -42,7 +42,7 @@ namespace Beagle.Daemon
 {
 	class BuildIndex 
 	{
-		static bool arg_recursive = false, arg_debug = false;
+		static bool arg_recursive = false, arg_debug = false, arg_cache_text = false;
 
 		static Hashtable remap_table = new Hashtable ();
 
@@ -53,7 +53,7 @@ namespace Beagle.Daemon
 		static FileAttributesStore_Sqlite backing_fa_store;
 		static FileAttributesStore fa_store;
 		static LuceneDriver driver;
-		
+
 		static bool crawling = true, shutdown = false;
 
 		static Queue pending_files = new Queue ();
@@ -92,6 +92,10 @@ namespace Beagle.Daemon
 					arg_recursive = true;
 					break;
 					
+				case "--cache-text":
+					arg_cache_text = true;
+					break;
+
 				case "--remap":
 					if (next_arg == null) 
 						break;
@@ -132,7 +136,8 @@ namespace Beagle.Daemon
 			
 			driver = new LuceneDriver (arg_output);
 			driver.ChildIndexableEvent += new IIndexerChildIndexableHandler (OnChildIndexableEvent);
-
+			driver.TextCache = (arg_cache_text) ? new TextCache (arg_output) : null;
+			
 			backing_fa_store = new FileAttributesStore_Sqlite (driver.IndexDirectory, driver.Fingerprint);
 			fa_store = new FileAttributesStore (backing_fa_store);
 			
@@ -290,6 +295,7 @@ namespace Beagle.Daemon
 				"  --remap [path1:path2]\tRemap data paths to fit target. \n" +
 				"  --tag [tag]\t\tTag index data for identification.\n" + 
 				"  --recursive\t\tCrawl source path recursivly.\n" + 
+				"  --cache-text\t\tBuild text-cache of documents used for snippets.\n" + 
 				"  --debug\t\tEcho verbose debugging information.\n";
 			
 			Console.WriteLine (usage);

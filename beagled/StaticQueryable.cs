@@ -37,17 +37,31 @@ using Beagle.Util;
 namespace Beagle.Daemon {
 
 	public class StaticQueryable : LuceneQueryable 	{
-
+		
+		protected TextCache text_cache;
+		
 		public StaticQueryable (string index_name, string index_path, bool do_shared_locking) : base (index_path, do_shared_locking)
 		{
-			Logger.Log.Debug ("Starting StaticQueryable in: {0}", index_path);
+			Logger.Log.Debug ("Initializing static queryable: {0}", index_path);
+
+			if (Directory.Exists (Path.Combine (index_path, "TextCache")))
+				text_cache = new TextCache (index_path);
 		}
 
-		override public string GetSnippet (string[] query_terms, Hit hit) {
+		override public string GetSnippet (string[] query_terms, Hit hit) 
+		{
+			if (text_cache == null)
+				return null;
 
-			// FIXME: Implement a shared text-cache
-
-			return null;
+			// Look up the hit in our local text cache.
+			TextReader reader = text_cache.GetReader (hit.Uri);
+			if (reader == null)
+				return null;
+			
+			string snippet = SnippetFu.GetSnippet (query_terms, reader);
+			reader.Close ();
+			
+			return snippet;
 		}
 	}
 }

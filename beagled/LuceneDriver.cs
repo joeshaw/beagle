@@ -89,6 +89,13 @@ namespace Beagle.Daemon {
 		private bool optimizing = false;
 		private int last_item_count = -1;
 
+		private TextCache text_cache = TextCache.UserCache;
+
+		public TextCache TextCache {
+			get { return text_cache; }
+			set { text_cache = value; }
+		}
+		
 		/////////////////////////////////////////////////////
 
 		public LuceneDriver (string index_name) : this (index_name, -1, false) { }
@@ -412,7 +419,7 @@ namespace Beagle.Daemon {
 				Filter filter = null;
 
 				try {
-					FilterFactory.FilterIndexable (indexable, out filter);
+					FilterFactory.FilterIndexable (indexable, this.text_cache, out filter);
 				} catch (Exception e) {
 					Log.Error ("Unable to filter {0} (mimetype={1})", indexable.DisplayUri, indexable.MimeType);
 					Log.Error (e);
