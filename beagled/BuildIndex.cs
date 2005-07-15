@@ -42,11 +42,11 @@ namespace Beagle.Daemon
 {
 	class BuildIndex 
 	{
-		static bool arg_recursive = false, arg_debug = false, arg_cache_text = false;
+		static bool arg_recursive = false, arg_debug = false, arg_cache_text = false, arg_disable_filtering = false;
 
 		static Hashtable remap_table = new Hashtable ();
 
-		static string arg_output, arg_tag, arg_configuration;
+		static string arg_output, arg_tag;
 		
 		/////////////////////////////////////////////////////////
 		
@@ -112,17 +112,23 @@ namespace Beagle.Daemon
 					++i;
 					break;
 
-				default:
-					if (arg_output == null) {
-						arg_output = Path.IsPathRooted (arg) ? arg : Path.GetFullPath (arg);
-					} else {
-						string path = Path.IsPathRooted (arg) ? arg : Path.GetFullPath (arg);
+				case "--target":
+					if (next_arg != null)
+						arg_output = Path.IsPathRooted (next_arg) ? next_arg : Path.GetFullPath (next_arg);					
+					++i;
+					break;
 
-						if (Directory.Exists (path))
+				case "--disable-filtering":
+					arg_disable_filtering = true;
+					break;
+
+				default:
+					string path = Path.IsPathRooted (arg) ? arg : Path.GetFullPath (arg);
+					
+					if (Directory.Exists (path))
 							pending_directories.Enqueue (new DirectoryInfo (path));
-						else if (File.Exists (path))
-							pending_files.Enqueue (new FileInfo (path));
-					}
+					else if (File.Exists (path))
+						pending_files.Enqueue (new FileInfo (path));
 					break;
 				}
 			}
@@ -174,6 +180,9 @@ namespace Beagle.Daemon
 							pending_files.Enqueue (file);
 					
 				} catch (DirectoryNotFoundException e) {}
+
+				if (shutdown)
+					break;
 				
 				count_dirs++;
 			}
@@ -206,10 +215,16 @@ namespace Beagle.Daemon
 					indexable.Uri = RemapUri (uri);
 					indexable.ContentUri = uri;
 					indexable.CacheContent = false;
+
+					// Disable filtering and only index files
+					if (arg_disable_filtering)
+						indexable.Filtering = IndexableFiltering.Never;
 					
 					// Tag the item for easy identification (for say, removal)
 					if (arg_tag != null)
 						indexable.AddProperty (Property.NewKeyword("Tag", arg_tag));
+					
+					indexable.AddProperty (Property.New ("fixme:name", file.Name));
 					
 					driver.Add (indexable);
 					
@@ -290,7 +305,7 @@ namespace Beagle.Daemon
 				"Copyright (C) 2005 Novell, Inc.\n\n";
 			
 			usage += 
-				"Usage: beagle-build-index [OPTIONS] <index_path> <path> [path path path]\n\n" +
+				"Usage: beagle-build-index [OPTIONS] --target <index_path> <path> [path]\n\n" +
 				"Options:\n" +
 				"  --remap [path1:path2]\tRemap data paths to fit target. \n" +
 				"  --tag [tag]\t\tTag index data for identification.\n" + 
