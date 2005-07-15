@@ -203,9 +203,6 @@ namespace Beagle.Daemon.GaimLogQueryable {
 
 			StringReader reader = new StringReader (text.ToString ());
 			indexable.SetTextReader (reader);
-
-			// We provide raw text, so no need for filtering
-			indexable.Filtering = IndexableFiltering.Never;
 			
 			return indexable;
 		}
