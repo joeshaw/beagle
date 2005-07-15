@@ -14,15 +14,36 @@ ASSEMBLIES =				\
 	-r:Mono.Posix			\
 	$(LOCAL_ASSEMBLIES:%=-r:%)
 
-
 WRAPPER_IN = wrapper.in
 WRAPPER_SED = sed 					\
 	-e "s|\@prefix\@|$(prefix)|g"			\
 	-e "s|\@pkglibdir\@|$(pkglibdir)|g"		\
 	-e "s|\@libdir\@|$(libdir)|g"			\
+	-e "s|\@bindir\@|$(bindir)|g"			\
+	-e "s|\@sysconfdir\@|$(sysconfdir)|g"		\
+	-e "s|\@localstatedir\@|$(localstatedir)|g"     \
 	-e "s|\@gacprefix\@|$(GAC_PREFIX)|g"		\
 	-e "s|\@bash\@|$(BASH)|"
 
+CRAWL_WRAPPER = beagle-crawl-system
+CRAWL_WRAPPER_IN = $(CRAWL_WRAPPER).in
+
+$(CRAWL_WRAPPER) : $(CRAWL_WRAPPER_IN)
+	$(WRAPPER_SED) < $(srcdir)/$(CRAWL_WRAPPER_IN) > $@
+	chmod +x $(CRAWL_WRAPPER)
+
+CRAWL_RULES = \
+	$(srcdir)/crawl-rules/crawl-windows		\
+	$(srcdir)/crawl-rules/crawl-documentation
+
+# Install the system crawler into cron.daily and 
+# set up the crawler configuration files
+crondir = $(sysconfdir)/cron.daily
+cron_SCRIPTS = $(CRAWL_WRAPPER)
+
+# FIXME: Per-distribution specific crawl rules
+configdir = $(sysconfdir)/beagle
+config_DATA = $(CRAWL_RULES)
 
 INFO_TARGET  = Info.exe
 INFO_WRAPPER = beagle-info
@@ -131,6 +152,7 @@ uninstall-local:
 
 EXTRA_DIST =				\
 	$(WRAPPER_IN)			\
+	$(CRAWL_WRAPPER_IN)		\
 	$(INFO_CSFILES)			\
 	$(SHUTDOWN_CSFILES)		\
 	$(QUERY_CSFILES)		\
@@ -139,6 +161,7 @@ EXTRA_DIST =				\
 	$(SETTINGS_CSFILES)		\
 	$(SETTINGS_RESOURCES)		\
 	$(man_MANS)			\
+	$(CRAWL_CONFIG)			\
 	beagle-index-info		\
 	beagle-ping			\
 	beagle-status			\
@@ -148,4 +171,6 @@ EXTRA_DIST =				\
 CLEANFILES = 				\
 	$(TARGETS)			\
 	$(TARGETS:%=%.mdb)		\
-	$(WRAPPERS)
+	$(WRAPPERS)			\
+	$(CRAWL_WRAPPER)
+

@@ -8,5 +8,6 @@ beagle-query
 beagle-exercise-file-system
 beagle-shutdown
 beagle-config
+beagle-crawl-system
 beagle-settings
 settings.gladep

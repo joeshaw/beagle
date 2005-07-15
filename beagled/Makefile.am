@@ -1,3 +1,4 @@
+
 # Warnings we don't want to see
 # 0067 = event defined but not used
 # 0618 = Mono.Posix.Syscall is obsolete
@@ -822,6 +823,15 @@ MANAGE_INDEX_ASSEMBLIES = \
 $(MANAGE_INDEX_TARGET): $(MANAGE_INDEX_CSFILES) $(MANAGE_INDEX_LOCAL_ASSEMBLIES)
 	$(CSC) -out:$@ $(MANAGE_INDEX_CSFLAGS) $(MANAGE_INDEX_CSFILES) $(MANAGE_INDEX_ASSEMBLIES)
 
+############################################################
+
+CRAWL_SYSTEM_IN = beagle-crawl-system.in
+CRAWL_SYSTEM = beagle-crawl-system
+
+$(CRAWL_SYSTEM): $(srcdir)/$(CRAWL_SYSTEM_IN)
+	$(WRAPPER_SEB) -e "s|\@target\@|$(CRAWL_SYSTEM)|g" < $(srcdir)/$(CRAWL_SYSTEM_IN) > $@
+	chmod +x $(CRAWL_SYSTEM)
+
 # OK, now back to our regularly scheduled program.  But notice all of the
 # EXTRA_DIST and CLEANFILES stuff at the bottom of the file.  Yuck.
 
@@ -940,7 +950,7 @@ EXTRA_DIST = \
 	$(TERM_STATS_CSFILES)			\
 	$(NAME_INDEX_CSFILES)			\
 	$(FS_SANITY_CHECK_CSFILES)		\
-	$(MANAGE_INDEX_CSFILES)		\
+	$(MANAGE_INDEX_CSFILES)			\
 	$(BUILD_INDEX_CSFILES)			\
 	$(WEBSERVICES_XSP_CSFILES)		\
 	$(WEBSERVICES_BACKEND_CSFILES)		\
