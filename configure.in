@@ -330,7 +330,7 @@ AM_CONDITIONAL(ENABLE_GSF_SHARP, test "x$enable_gsf_sharp" = "xyes")
 dnl ----------------------------------------------
 dnl GST# is not in a usable stage as of 9.3 release, disabling it.
 
-PKG_CHECK_MODULES(GST_SHARP, gst-sharp >= __DISABLE_FOR_NOW__, enable_gst_sharp=yes, enable_gst_sharp=no)
+PKG_CHECK_MODULES(GST_SHARP, gst-sharp >= __DISABLE_FOR_NOW__, enable_gst_sharp=yes, enable_gst_sharp=disabled)
 AM_CONDITIONAL(ENABLE_GST_SHARP, test "x$enable_gst_sharp" = "xyes")
 
 dnl ----------------------------------------------

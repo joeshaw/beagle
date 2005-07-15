@@ -1,3 +1,7 @@
+2005-07-15  Veerapuram Varadhan <vvaradhan@novell.com>
+
+	* configure.in: Display gst-sharp as disabled instead of "no".
+	
 2005-07-11  Daniel Drake  <dsd@gentoo.org>
 
 	* beagled/LuceneDriver.cs: Allow unspecified index minor versions (= 'dont
