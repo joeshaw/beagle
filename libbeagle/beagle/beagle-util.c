@@ -25,6 +25,10 @@
  * DEALINGS IN THE SOFTWARE.
  */
 
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <unistd.h>
+
 #include "beagle-util.h"
 
 GQuark
@@ -36,4 +40,15 @@ beagle_error_quark (void)
 		quark = g_quark_from_static_string ("BEAGLE_ERROR");
 
 	return quark;
+}
+
+gboolean
+beagle_util_is_path_on_block_device (const char *path)
+{
+	struct stat st;
+
+	if (g_stat (path, &st) < 0)
+		return FALSE;
+
+	return (st.st_dev >> 8 != 0);
 }

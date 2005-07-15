@@ -32,10 +32,12 @@
 
 #define BEAGLE_ERROR (beagle_error_quark ())
 
-GQuark beagle_error_quark (void);
-
 typedef enum {
 	BEAGLE_ERROR_DAEMON_ERROR,
 } BeagleError;
+
+GQuark beagle_error_quark (void);
+
+gboolean beagle_util_is_path_on_block_device (const char *path);
 
 #endif /* __BEAGLE_UTIL_H */
