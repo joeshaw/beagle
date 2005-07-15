@@ -36,9 +36,10 @@ using Beagle.Util;
 namespace Beagle {
 
 	public enum IndexableFiltering {
-		Never,     // Never try to filter this indexable
-		Automatic, // Try to determine automatically if this needs to be filtered
-		Always     // Always try to filter this indexable
+		Never,           // Never try to filter this indexable, it contains no content
+		AlreadyFiltered, // The readers promise to return nice clean text, so do nothing
+		Automatic,       // Try to determine automatically if this needs to be filtered
+		Always           // Always try to filter this indexable
 	}
 
 	public class Indexable : Versioned {

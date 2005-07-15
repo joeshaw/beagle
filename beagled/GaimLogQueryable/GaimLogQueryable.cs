@@ -180,6 +180,8 @@ namespace Beagle.Daemon.GaimLogQueryable {
 			indexable.MimeType = "text/plain";
 			indexable.Type = "IMLog";
 
+			indexable.Filtering = IndexableFiltering.AlreadyFiltered;
+
 			StringBuilder text = new StringBuilder ();
 			foreach (ImLog.Utterance utt in log.Utterances) {
 				//Console.WriteLine ("[{0}][{1}]", utt.Who, utt.Text);

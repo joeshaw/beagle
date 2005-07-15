@@ -199,6 +199,9 @@ namespace Beagle.Daemon {
 			filter = null;
 			ICollection filters = null;
 
+			if (indexable.Filtering == IndexableFiltering.AlreadyFiltered)
+				return false;
+
 			if (! ShouldWeFilterThis (indexable)) {
 				indexable.NoContent = true;
 				return false;
