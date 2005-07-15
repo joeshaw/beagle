@@ -1,0 +1,11 @@
+CRAWL_ENABLED="yes"
+
+CRAWL_INDEX_NAME="documentation"
+
+CRAWL_PATHS="/usr/share/doc"
+
+CRAWL_RECURSIVE="yes"
+
+CRAWL_DISABLE_FILTERING="no"
+
+CRAWL_CACHE_TEXT="no"
