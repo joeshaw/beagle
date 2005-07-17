@@ -130,15 +130,20 @@ namespace Beagle.Tile {
 			
 			Process p = new Process ();
 			p.StartInfo.UseShellExecute = false;
-			p.StartInfo.FileName = "nautilus";
+
 			if ((!path.StartsWith ("\"")) && (!path.EndsWith ("\"")))
 				path = "\"" + path + "\"";
+#if ENABLE_DESKTOP_LAUNCH
+			p.StartInfo.FileName = "desktop-launch";
+			p.StartInfo.Arguments = path;
+#else
+			p.StartInfo.FileName = "nautilus";
 			p.StartInfo.Arguments = "--no-desktop " + path;
-
+#endif
 			try {
 				p.Start ();
 			} catch (Exception e) {
-				Console.WriteLine ("Cannot open folder in Nautilus: " + e);
+				Console.WriteLine ("Cannot open folder: " + e);
 			}
 		}
 
@@ -160,7 +165,10 @@ namespace Beagle.Tile {
 			// inode/directory, not just x-directory/normal
 			if (hit.MimeType == "inode/directory")
 				hit.MimeType = "x-directory/normal";
-			
+#if ENABLE_DESKTOP_LAUNCH
+			command = "desktop-launch";
+			expects_uris = true;
+#else		       
 			BU.GnomeVFSMimeApplication app;
 			app = BU.GnomeIconLookup.GetDefaultAction (hit.MimeType);
 			
@@ -168,7 +176,7 @@ namespace Beagle.Tile {
 				command = app.command;
 				expects_uris = (app.expects_uris != BU.GnomeVFSMimeApplicationArgumentType.Path);
 			}
-
+#endif			
 			if (command == null) {
 				LaunchError ("Can't open MimeType '{0}'", hit.MimeType);
 				return;
@@ -177,14 +185,14 @@ namespace Beagle.Tile {
 			if (args_fallback != null)
 				argument = args_fallback;
 			else 
-				argument = "";
-			
+				argument = "";			
+
 			if (expects_uris) {
 				argument = String.Format ("{0} '{1}'", argument, hit.Uri);
 			} else {
 				argument = String.Format ("{0} {1}", argument, hit.PathQuoted);
 			}
-			
+
 			Console.WriteLine ("Cmd: {0}", command);
 			Console.WriteLine ("Arg: {0}", argument);
 

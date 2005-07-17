@@ -70,7 +70,10 @@ if test "x$XATTR_LIB" = "x"; then
 fi
 AC_SUBST(XATTR_LIB)
 
+# check for desktop-launch
 
+AC_PATH_PROG(DESKTOP_LAUNCH, desktop-launch, no)
+AM_CONDITIONAL(ENABLE_DESKTOP_LAUNCH, test "x$DESKTOP_LAUNCH" != "xno")
 
 # check for wsdl
 AC_PATH_PROG(WSDL, wsdl)
