@@ -62,7 +62,7 @@ namespace Beagle.Tile {
 		[TileAction]
 		public override void Open ()
 		{
-			OpenFromMime (Hit, "nautilus", "--no-desktop", true);
+			OpenFolder (Hit.Uri.LocalPath);
 		} 
 
                 [TileAction]
