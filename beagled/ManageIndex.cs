@@ -41,22 +41,19 @@ namespace Beagle.Daemon
 {
 	class ManageIndex 
 	{
-		static private LuceneDriver driver;
+		static string index_dir;
 
 		static void Main (string [] args)
 		{
 			if (args.Length < 2)
 				PrintUsage ();
 			
-			if (!Path.IsPathRooted (args [0]))
-				args [0] = Path.GetFullPath (args [0]);
-			
-			if (!Directory.Exists (args [0])) {
-				Console.WriteLine ("No such index directory: {0}", args [0]);
+			index_dir = (Path.IsPathRooted (args [0])) ? args [0] : Path.GetFullPath (args [0]);
+
+			if (!Directory.Exists (index_dir)) {
+				Console.WriteLine ("No such index directory: {0}", index_dir);
 				Environment.Exit (1);
 			}
-			
-			driver = new LuceneDriver (args [0]);
 			
 			switch (args [1]) {
 			case "list":
@@ -107,7 +104,9 @@ namespace Beagle.Daemon
 		/////////////////////////////////////////////////////////
 		
 		static void ExecuteList ()
-		{
+		
+{			LuceneDriver driver = new LuceneDriver (index_dir, true);
+			
 			IndexReader reader = IndexReader.Open (driver.Store);
 			
 			for (int i = 0; i < reader.NumDocs (); i++) {
@@ -123,6 +122,8 @@ namespace Beagle.Daemon
 		
 		static void ExecuteRemove (string arg)
 		{
+			LuceneDriver driver = new LuceneDriver (index_dir);
+
 			if (arg.IndexOf ("://") != -1) {
 				Uri uri = new Uri (arg);
 				ICollection hits = driver.DoQueryByUri (uri);
@@ -170,6 +171,8 @@ namespace Beagle.Daemon
 		
 		static void ExecuteMerge (string index_to_merge) 
 		{
+			LuceneDriver driver = new LuceneDriver (index_dir);
+
 			if (!Path.IsPathRooted (index_to_merge))
 				index_to_merge = Path.GetFullPath (index_to_merge);
 			
@@ -209,6 +212,8 @@ namespace Beagle.Daemon
 		
 		static void ExecuteInfo ()
 		{
+			LuceneDriver driver = new LuceneDriver (index_dir, true);
+
 			Console.WriteLine ("Total number of entries in index: {0}", driver.GetItemCount());
 		}
 
@@ -216,6 +221,8 @@ namespace Beagle.Daemon
 		
 		static void ExecuteOptimize ()
 		{
+			LuceneDriver driver = new LuceneDriver (index_dir);
+
 			Stopwatch watch = new Stopwatch ();
 			watch.Start ();
 			
