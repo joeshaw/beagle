@@ -397,6 +397,8 @@ namespace Beagle.Daemon.FileSystemQueryable {
 			{
 				if (state == State.Clean)
 					state = State.Unknown;
+				if (this.children == null)
+					return;
 				foreach (DirectoryPrivate subdir in this.children.Values)
 					subdir.SetAllToUnknown_Unlocked ();
 			}
@@ -832,8 +834,16 @@ namespace Beagle.Daemon.FileSystemQueryable {
 			try {
 				foreach (System.IO.DirectoryInfo subinfo in DirectoryWalker.GetDirectoryInfos (info)) {
 					if (! Ignore (subinfo.FullName)) {
-						if (! priv.HasChildWithName (subinfo.Name))
+						Directory child = priv.GetChildByName (subinfo.Name);
+
+						// We don't know about the child, in which case we need to add it
+						// (AddChild_Unlocked adds it to to_be_scanned)
+						if (child == null)
 							AddChild_Unlocked (priv, subinfo.Name);
+
+						// Or, we already know about the child, but we might want to scan it anyway
+						else if (child.NeedsCrawl)
+							to_be_scanned.Enqueue (child);
 					}
 					if (known_children != null)
 						known_children.Remove (subinfo.Name);
@@ -1010,12 +1020,17 @@ namespace Beagle.Daemon.FileSystemQueryable {
 			}
 		}
 
+		// Set entire filesystem state to unknown, and fire a recrawl operation
 		public void SetAllToUnknown ()
 		{
 			lock (big_lock) {
-				foreach (DirectoryPrivate root in roots)
+				foreach (DirectoryPrivate root in roots) {
 					root.SetAllToUnknown_Unlocked ();
+					to_be_scanned.Enqueue (root);
+				}
 			}
+
+			ScanAll ();
 		}
 
 		///////////////////////////////////////////////////////////////////////////

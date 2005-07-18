@@ -1,3 +1,10 @@
+2005-07-18  Daniel Drake  <dsd@gentoo.org>
+
+	* beagled/FileSystemQueryable/FileNameFilter.cs: When we drop an exclude
+	pattern, set the entire filesystem state to unknown.
+	* FileSystemQueryable/FileSystemModel.cs: Setting state to unknown should
+	trigger a recrawl.
+
 2005-07-15  Veerapuram Varadhan <vvaradhan@novell.com>
 
 	* configure.in: Display gst-sharp as disabled instead of "no".

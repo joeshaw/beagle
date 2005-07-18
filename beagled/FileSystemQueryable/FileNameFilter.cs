@@ -165,17 +165,28 @@ namespace Beagle.Daemon.FileSystemQueryable {
 		private void OnConfigurationChanged (Conf.Section section)
 		{
 			IList excludes_to_add, excludes_to_remove;
+			bool clear_fs_state = false;
 
 			ArrayFu.IntersectListChanges (Conf.Indexing.Excludes, excludes, out excludes_to_add, out excludes_to_remove);
 
-			foreach (ExcludeItem exclude in excludes_to_remove)
+			foreach (ExcludeItem exclude in excludes_to_remove) {
+				if (exclude.Type == ExcludeType.Pattern)
+					clear_fs_state = true;
 				RemoveExclude (exclude);
+			}
 
 			foreach (ExcludeItem exclude in excludes_to_add)
 				AddExclude (exclude);
 
-			// FIXME: Send a re-scan event here when ignore patterns are updated
-			// and do a model.Remove/Add on the directories in question
+			// If an exclude pattern is removed, we need to recrawl everything
+			// so that we can index those files which were previously ignored.
+			if (clear_fs_state)
+				model.SetAllToUnknown ();
+
+			// FIXME: When an exclude path/pattern is added, we need to deindex
+			// the files in question.
+			// FIXME: When an exclude path is removed, we need to recrawl that
+			// particular path.
 		}
 
 		/////////////////////////////////////////////////////////////
