@@ -1,3 +1,12 @@
+2005-07-19  Vijay K. Nanjundaswamy <knvijay@novell.com>
+	
+	* beagled/WebServices/Web*End.cs, WebService*End.cs:
+	Updates to provide option in WebInterface to selectively enable/disable NetworkedBeagle
+	search on per-query basis, when NetworkedBeagle nodes are configured.
+	
+	* beagled/WebServices/search.aspx:
+	Added background color for search box in Web interface.
+	
 2005-07-18  Daniel Drake  <dsd@gentoo.org>
 
 	* beagled/FileSystemQueryable/FileNameFilter.cs: When we drop an exclude
