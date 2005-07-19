@@ -8,9 +8,9 @@ msgid ""
 msgstr ""
 "Project-Id-Version: beagle\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2005-07-19 20:09+0100\n"
-"PO-Revision-Date: 2005-07-19 20:09+0100\n"
-"Last-Translator: Christopher Orr <chris@orr.me.uk>\n"
+"POT-Creation-Date: 2005-07-19 22:23+0100\n"
+"PO-Revision-Date: 2005-07-19 22:26+0100\n"
+"Last-Translator: James Ogley <james@usr-local-bin>\n"
 "Language-Team: English/GB <en@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -96,7 +96,7 @@ msgstr "Best <b>{0} results of {1}</b> are shown."
 #: ../Best/BestWindow.cs:411
 #, csharp-format
 msgid "Results <b>{0} through {1} of {2}</b> are shown."
-msgstr "Results <b>{0} through {1} of {2}</b> are shown."
+msgstr "Results <b>{0} to {1} of {2}</b> are shown."
 
 #. To translators: {0} represents the current query keywords
 #: ../Best/BestWindow.cs:522
