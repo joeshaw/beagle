@@ -103,6 +103,7 @@ namespace WebService_CodeBehind {
 					sourceList.SelectedValue = "Anywhere"; 
 					
 					GlobalSearchCheckBox.Visible = true;  //((string)Session["Source"]).Equals("Anywhere");
+					//By default, NetBeagleSearch checkbox is checked for local access & unchecked for ext. access 
 					GlobalSearchCheckBox.Checked = isLocalReq()? true:false; 	
 					Session["GlobalCheckBox"] = GlobalSearchCheckBox.Checked;				
 				}
@@ -158,6 +159,8 @@ namespace WebService_CodeBehind {
 					Session["Source"] = sourceList.SelectedValue;	
 					
 					GlobalSearchCheckBox.Visible = ((string)Session["Source"]).Equals("Anywhere");
+					
+					//By default, NetBeagleSearch checkbox is checked for local access & unchecked for ext. access 					
 					GlobalSearchCheckBox.Checked = isLocalReq()? true:false; 	
 					Session["GlobalCheckBox"] = GlobalSearchCheckBox.Checked;	
 															
@@ -191,10 +194,10 @@ namespace WebService_CodeBehind {
 		    	}
 		    	else {
 					Output.Text = enableSessionMsg;
-					Back.Visible = Forward.Visible = false;
+					Back.Visible = Forward.Visible = GlobalSearchCheckBox.Visible = false;
 					return;
 		    	}
-
+				
 		    	//Redirect client to initial Beagle webaccess URL:
 		    	Response.Redirect((string)Session["InitialReqUrl"]);
 		}
@@ -252,8 +255,10 @@ namespace WebService_CodeBehind {
 		if (SearchBox.Text.Trim() == "") {		
 			Output.Text = HeaderMsg + NO_RESULTS;
 			Back.Visible = Forward.Visible = false;
+			
 			Session["SearchString"] = SearchBox.Text;
 			Session["ResultsOnDisplay"] = Output.Text;
+			Session["GlobalCheckBox"] = GlobalSearchCheckBox.Checked;			
 			return;
 		}
 		
@@ -274,9 +279,7 @@ namespace WebService_CodeBehind {
 			sourceList.Enabled = SearchBox.Enabled = Search.Enabled = false;
 			return;
 		} 
-
-		GlobalSearchCheckBox.Visible = remoteObj.NetworkBeagleActive() && (searchSrc == null);
-	
+		
 		//Setup arguments for WebBackEnd:doQuery()
 		webArgs wargs = new webArgs();
 		wargs.sessId = Session.SessionID;
@@ -296,7 +299,10 @@ namespace WebService_CodeBehind {
 				Back.Enabled = remoteObj.canBack(Session.SessionID);
 				Forward.Enabled = remoteObj.canForward(Session.SessionID);
 		}
-			
+		
+		//Show check-box only if we have one or more NetworkedBeagle nodes configured:
+		GlobalSearchCheckBox.Visible = remoteObj.NetworkBeagleActive() && (searchSrc == null);
+		Session["GlobalCheckBox"] = GlobalSearchCheckBox.Checked;			
 		Session["RemObj"] = remoteObj;
 		Session["ResultsOnDisplay"] = Output.Text;
 		Session["SearchString"] = SearchBox.Text;
@@ -329,7 +335,8 @@ namespace WebService_CodeBehind {
 		//if (remoteObj == null)  { Output.Text = NO_RESULTS; return; }
 		string response = convertUrls(remoteObj.doBack(sessId));	
 		Session["ResultsOnDisplay"] = Output.Text = HeaderMsg + response;
-
+		
+		GlobalSearchCheckBox.Checked = (bool)Session["GlobalCheckBox"];
 		Back.Enabled = (remoteObj != null) && (remoteObj.canBack(sessId));
 		Forward.Enabled = (remoteObj != null) && (remoteObj.canForward(sessId));
 	}
@@ -359,7 +366,8 @@ namespace WebService_CodeBehind {
 		//if (remoteObj == null)  { Output.Text = NO_RESULTS; return; }
 		string response = convertUrls(remoteObj.doForward(sessId));
 		Session["ResultsOnDisplay"] = Output.Text = HeaderMsg + response;
-
+		
+		GlobalSearchCheckBox.Checked = (bool)Session["GlobalCheckBox"];
 		Back.Enabled = (remoteObj != null) && (remoteObj.canBack(sessId));
 		Forward.Enabled = (remoteObj != null) && (remoteObj.canForward(sessId));
 	}
