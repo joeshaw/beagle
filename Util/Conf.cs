@@ -337,13 +337,6 @@ namespace Beagle.Util {
 				set { denied_backends = value; }
 			}
 
-			private bool index_synchronization = true;
-			public bool IndexSynchronization {
-				get { return index_synchronization; }
-				// Don't really want to expose this, but serialization requires it
-				set { index_synchronization = value; }
-			}
-
 			[ConfigOption (Description="Add a static queryable", Params=1, ParamsDescription="Index path")]
 			internal bool AddStaticQueryable (out string output, string [] args)
 			{
@@ -368,15 +361,6 @@ namespace Beagle.Util {
 					output += String.Format (" - {0}\n", index_path);
 				return true;
 			}
-
-			[ConfigOption (Description="Toggles whether your indexes will be synchronized locally if your home directory is on a network device (eg. NFS/Samba)")]
-			internal bool ToggleIndexSynchronization (out string output, string [] args)
-			{
-				index_synchronization = !index_synchronization;
-				output = "Index Synchronization is " + ((index_synchronization) ? "enabled" : "disabled") + ".";
-				return true;
-			}
-
 		}
 
 		[ConfigSection (Name="indexing")]
@@ -419,8 +403,11 @@ namespace Beagle.Util {
 			[ConfigOption (Description="Toggles whether your home directory is to be indexed as a root")]
 			internal bool IndexHome (out string output, string [] args)
 			{
+				if (index_home_dir)
+					output = "Your home directory will not be indexed.";
+				else
+					output = "Your home directory will be indexed.";
 				index_home_dir = !index_home_dir;
-				output = "Your home directory will " + ((! index_home_dir) ? "not " : "") + "be indexed.";
 				return true;
 			}
 
@@ -470,30 +457,6 @@ namespace Beagle.Util {
 				set { allowGlobalAccess = value; }
 			}
 
-
-			[ConfigOption (Description="Show current configuration of GlobalAccess parameter", IsMutator=false)]
-			internal bool CheckGlobalAccess(out string output, string [] args)
-			{
-				output = "Global Access to Beagle WebServices is currently ";
-
-				output += allowGlobalAccess ? "ENABLED":"DISABLED";
-				
-				return true;
-			}
-			
-			[ConfigOption (Description="Enable/Disable global access to Beagle web-services")]
-			internal bool SwitchGlobalAccess (out string output, string [] args)
-			{
-				allowGlobalAccess = !allowGlobalAccess;			
-				
-				if (allowGlobalAccess)
-					output = "Global Access to Beagle WebServices ENABLED.";
-				else
-					output = "Global Access to Beagle WebServices DISABLED.";
-
-				return true;
-			}
-
 			[ConfigOption (Description="List the public folders", IsMutator=false)]
 			internal bool ListPublicFolders(out string output, string [] args)
 			{
@@ -504,20 +467,33 @@ namespace Beagle.Util {
 
 				return true;
 			}
-			
+
+			[ConfigOption (Description="Enable/Disable global access to Beagle web-services")]
+			internal bool SwitchGlobalAccess (out string output, string [] args)
+			{
+				allowGlobalAccess = !allowGlobalAccess;			
+				
+				if (allowGlobalAccess)
+					output = "Global Access to Beagle WebService ENABLED.";
+				else
+					output = "Global Access to Beagle WebService DISABLED.";
+
+				return true;
+			}
+
 			[ConfigOption (Description="Add public web-service access to a folder", Params=1, ParamsDescription="A path")]
 			internal bool AddPublicFolder (out string output, string [] args)
 			{
-				publicFolders.Add (args [0]);
-				output = "PublicFolder added.";
+				publicFolders.Add (args [0]);					
+				output = "PublicFolder " + args[0] + " added.";
 				return true;
 			}
 
 			[ConfigOption (Description="Remove public web-service access to a folder", Params=1, ParamsDescription="A path")]
 			internal bool DelPublicFolder (out string output, string [] args)
 			{
-				publicFolders.Remove (args [0]);
-				output = "PublicFolder removed.";
+				publicFolders.Remove (args [0]);		
+				output = "PublicFolder " + args[0] + " removed.";
 				return true;
 			}			
 		}
@@ -548,16 +524,26 @@ namespace Beagle.Util {
 			[ConfigOption (Description="Add a Networked Beagle Daemon to query", Params=1, ParamsDescription="HostName:PortNo")]
 			internal bool AddBeagleNode (out string output, string [] args)
 			{
-				netBeagleNodes.Add (args [0]);
-				output = "Networked Beagle Daemon \"" + args[0] +"\" added.";
+				string node = args[0];
+				
+				if (((string[])node.Split(':')).Length < 2)
+					node = args [0].Trim() + ":8888";
+							
+				netBeagleNodes.Add(node);			
+				output = "Networked Beagle Daemon \"" + node +"\" added.";
 				return true;
 			}
 
 			[ConfigOption (Description="Remove a configured Networked Beagle Daemon", Params=1, ParamsDescription="HostName:PortNo")]
 			internal bool DelBeagleNode (out string output, string [] args)
 			{
-				netBeagleNodes.Remove (args [0]);
-				output = "Networked Beagle Daemon \"" + args[0] +"\" removed.";
+				string node = args[0];
+				
+				if (((string[])node.Split(':')).Length < 2)
+					node = args [0].Trim() + ":8888";
+							
+				netBeagleNodes.Remove(node);					
+				output = "Networked Beagle Daemon \"" + node +"\" removed.";
 				return true;
 			}
 		}
@@ -678,11 +664,6 @@ namespace Beagle.Util {
 		{
 			ExcludeItem exclude = obj as ExcludeItem;
 			return (exclude != null && exclude.Type == type && exclude.Value == val);
-		}
-
-		public override int GetHashCode ()
-		{
-			return (this.Value.GetHashCode () ^ (int) this.Type);
 		}
 	}
 
