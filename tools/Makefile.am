@@ -20,6 +20,7 @@ WRAPPER_SED = sed 					\
 	-e "s|\@pkglibdir\@|$(pkglibdir)|g"		\
 	-e "s|\@libdir\@|$(libdir)|g"			\
 	-e "s|\@bindir\@|$(bindir)|g"			\
+	-e "s|\@sbindir\@|$(sbindir)|g"			\
 	-e "s|\@sysconfdir\@|$(sysconfdir)|g"		\
 	-e "s|\@localstatedir\@|$(localstatedir)|g"     \
 	-e "s|\@gacprefix\@|$(GAC_PREFIX)|g"		\
