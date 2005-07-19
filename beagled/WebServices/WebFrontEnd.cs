@@ -54,11 +54,12 @@ namespace WebService_CodeBehind {
 	private static string localReqOnlyMsg = HeaderMsg + "Beagle web service unavailable or access restricted to local address only !";
 	
 	protected HtmlForm SearchForm;
-	protected Button  Search, Forward, Back;
-	protected DropDownList sourceList;
-	protected TextBox SearchBox;
 	protected Label Output; 
-
+	protected TextBox SearchBox;
+	protected DropDownList sourceList;
+	protected CheckBox	GlobalSearchCheckBox;
+	protected Button  Search, Forward, Back;
+	
 	const string NO_RESULTS = "No results.";
 	
 	protected void Page_Load(Object o, EventArgs e) {
@@ -99,14 +100,19 @@ namespace WebService_CodeBehind {
 																			
 					Session["SearchString"] = "";
 					Session["Source"] = "Anywhere";
-					sourceList.SelectedValue = "Anywhere"; 					
+					sourceList.SelectedValue = "Anywhere"; 
+					
+					GlobalSearchCheckBox.Visible = true;  //((string)Session["Source"]).Equals("Anywhere");
+					GlobalSearchCheckBox.Checked = isLocalReq()? true:false; 	
+					Session["GlobalCheckBox"] = GlobalSearchCheckBox.Checked;				
 				}
 				else  {
 
 				  //Redirected from Tile-Action invocation, restore Results
 				  SearchBox.Text = (string) Session["SearchString"];
 				  sourceList.SelectedValue = (string) Session["Source"];
-				   
+				  GlobalSearchCheckBox.Checked = (bool) Session["GlobalCheckBox"];
+
 				  Output.Text = (string) Session["ResultsOnDisplay"];
 				  WebBackEnd remoteObj = (WebBackEnd) Session["RemObj"];
 				  if (remoteObj != null) {
@@ -150,7 +156,11 @@ namespace WebService_CodeBehind {
 							sourceList.SelectedValue = "Anywhere"; 
 			
 					Session["Source"] = sourceList.SelectedValue;	
-										
+					
+					GlobalSearchCheckBox.Visible = ((string)Session["Source"]).Equals("Anywhere");
+					GlobalSearchCheckBox.Checked = isLocalReq()? true:false; 	
+					Session["GlobalCheckBox"] = GlobalSearchCheckBox.Checked;	
+															
 					if (Session["ResultsOnDisplay"] == null) {
 	
 						int index2 = reqUrl.IndexOf(".aspx");
@@ -231,11 +241,11 @@ namespace WebService_CodeBehind {
 	}
 
 	protected void Search_Click(object o, EventArgs e) {
-
+		
 		//if (IsPostBack && Session.IsNewSession) 
 		if (Session["InitialReqUrl"] == null) {
 			Output.Text = enableSessionMsg;
-			Back.Visible = Forward.Visible = false;
+			Back.Visible = Forward.Visible = GlobalSearchCheckBox.Visible = false;
 			return;
 		} 
 
@@ -250,7 +260,7 @@ namespace WebService_CodeBehind {
 		string searchSrc = sourceList.SelectedItem.Value;
 		if (searchSrc.Equals("Anywhere"))
 			searchSrc = null;
-
+	
 		remoteChannel.Register(); 
 		
 		WebBackEnd remoteObj = (WebBackEnd) Session["RemObj"];
@@ -260,13 +270,22 @@ namespace WebService_CodeBehind {
 		if ( (remoteObj == null) || !(remoteObj.allowGlobalAccess || isLocalReq())) {
 
 			Output.Text = localReqOnlyMsg;
-			Back.Visible = Forward.Visible = false;
+			Back.Visible = Forward.Visible = GlobalSearchCheckBox.Visible = false;
 			sourceList.Enabled = SearchBox.Enabled = Search.Enabled = false;
 			return;
 		} 
 
-		string sessId = Session.SessionID;
-		string response = remoteObj.doQuery(sessId, SearchBox.Text, searchSrc, isLocalReq());
+		GlobalSearchCheckBox.Visible = remoteObj.NetworkBeagleActive() && (searchSrc == null);
+	
+		//Setup arguments for WebBackEnd:doQuery()
+		webArgs wargs = new webArgs();
+		wargs.sessId = Session.SessionID;
+		wargs.searchString = SearchBox.Text;
+		wargs.searchSource = searchSrc;
+		wargs.isLocalReq = isLocalReq();
+		wargs.globalSearch = GlobalSearchCheckBox.Checked;
+		
+		string response = remoteObj.doQuery(wargs);
 		
 		if (response.StartsWith(NO_RESULTS))  {
 				Output.Text = HeaderMsg + response;
@@ -274,8 +293,8 @@ namespace WebService_CodeBehind {
 		}
 		else {
 				Output.Text = HeaderMsg + convertUrls(response);
-				Back.Enabled = remoteObj.canBack(sessId);
-				Forward.Enabled = remoteObj.canForward(sessId);
+				Back.Enabled = remoteObj.canBack(Session.SessionID);
+				Forward.Enabled = remoteObj.canForward(Session.SessionID);
 		}
 			
 		Session["RemObj"] = remoteObj;
@@ -290,14 +309,14 @@ namespace WebService_CodeBehind {
 		//if (IsPostBack && HttpContext.Current.Session.IsNewSession) 
 		if (remoteObj == null)  {
 			Output.Text = enableSessionMsg;
-			Back.Visible = Forward.Visible = false;
+			Back.Visible = Forward.Visible = GlobalSearchCheckBox.Visible = false;
 			return;
 		} 
 
 		if ( (remoteObj == null) || !(remoteObj.allowGlobalAccess || isLocalReq())) {
 		
 			Output.Text = localReqOnlyMsg;
-			Back.Visible = Forward.Visible = false;
+			Back.Visible = Forward.Visible = GlobalSearchCheckBox.Visible = false;			
 			sourceList.Enabled = SearchBox.Enabled = Search.Enabled = false;
 			return;
 		} 		
@@ -321,20 +340,19 @@ namespace WebService_CodeBehind {
 		//if (IsPostBack && HttpContext.Current.Session.IsNewSession) 
 		if (remoteObj == null) {
 			Output.Text = enableSessionMsg;
-			Back.Visible = Forward.Visible = false;
+			Back.Visible = Forward.Visible = GlobalSearchCheckBox.Visible = false;			
 			return;
 		} 
 
 		if ( (remoteObj == null) || !(remoteObj.allowGlobalAccess || isLocalReq())) {
 
 			Output.Text = localReqOnlyMsg;
-			Back.Visible = Forward.Visible = false;
+			Back.Visible = Forward.Visible = GlobalSearchCheckBox.Visible = false;			
 			sourceList.Enabled = SearchBox.Enabled = Search.Enabled = false;
 			return;
 		} 
 
 		string sessId = Session.SessionID;
-
 		SearchBox.Text = (string) Session["SearchString"];
 		sourceList.SelectedValue = (string) Session["Source"];
 		

@@ -438,7 +438,7 @@ namespace Beagle.WebService {
 						//If request has traversed 5 nodes in reaching here, stop cascading. 
 						//Make it a Local Query.
 						query.RemoveDomain(sreq.qdomain);
-						query.AddDomain(QueryDomain.Local);
+						query.AddDomain(QueryDomain.System);
 				 	}
 				 					 	
 					if ((sr == null) && (sreq.searchId != 0) )

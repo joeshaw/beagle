@@ -44,6 +44,16 @@ using BT = Beagle.Tile;
 using Beagle.Daemon;
 
 namespace Beagle.WebService {
+
+	[Serializable()]
+	public struct webArgs 
+	{
+		public string 	sessId;
+		public string 	searchString;
+		public string 	searchSource;
+		public bool		isLocalReq;
+		public bool 	globalSearch;
+	}
 	
 	public class WebBackEnd: MarshalByRefObject{
 
@@ -268,19 +278,27 @@ namespace Beagle.WebService {
 			return NO_RESULTS;
 		}
 		
-		public string doQuery(string sessId, string searchString, string searchSource, bool isLocalReq)
-		{	
-			if (sessId == null || searchString == null || searchString == "")
+		public bool NetworkBeagleActive()
+		{
+			return NetworkedBeagle.NetBeagleListActive;
+		}
+		
+		public string doQuery(webArgs wargs)
+		{				 
+			if (wargs.sessId == null || wargs.searchString == null || wargs.searchString == "")
 				return NO_RESULTS;
 						 
-			log.Debug("WebBackEnd: Got Search String: " + searchString); 
+			log.Debug("WebBackEnd: Got Search String: " + wargs.searchString); 
 			
 			Query query = new Query();
-			query.AddText (searchString);
-			if (searchSource != null && searchSource != "")
-				query.AddSource(searchSource);	
-				
-			query.AddDomain (isLocalReq ? QueryDomain.Global:QueryDomain.Local);
+			query.AddText (wargs.searchString);
+			if (wargs.searchSource != null && wargs.searchSource != "")
+			{
+				query.AddSource(wargs.searchSource);
+				query.AddDomain(QueryDomain.System);
+			}
+			else	
+				query.AddDomain (wargs.globalSearch ? QueryDomain.Global:QueryDomain.System);
 
 			QueryResult qres = new QueryResult ();
 									
@@ -292,15 +310,15 @@ namespace Beagle.WebService {
 											
 			ResultPair rp = new ResultPair(root);
 			bufferRenderContext bctx = new bufferRenderContext(rp);
-			Resp resp = new Resp(rp, bctx, isLocalReq);
+			Resp resp = new Resp(rp, bctx, wargs.isLocalReq);
 
 			AttachQueryResult (qres, resp);
 
 			//Add sessionId-Resp mapping
-			if (sessionResp.Contains(sessId)) 
-				sessionResp[sessId] = resp;
+			if (sessionResp.Contains(wargs.sessId)) 
+				sessionResp[wargs.sessId] = resp;
 			else
-				sessionResp.Add(sessId, resp);	
+				sessionResp.Add(wargs.sessId, resp);	
 
 			log.Info("WebBackEnd: Starting Query for string \"{0}\"", query.QuotedText);
 
@@ -316,7 +334,7 @@ namespace Beagle.WebService {
 						
 			lock (root) {
 				root.Render(bctx);
-				return (getResultsLabel(root) + (isLocalReq ? bctx.buffer:bctx.bufferForExternalQuery));
+				return (getResultsLabel(root) + (wargs.isLocalReq ? bctx.buffer:bctx.bufferForExternalQuery));
 			}			
 		}
 

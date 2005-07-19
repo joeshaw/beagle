@@ -175,6 +175,9 @@ namespace WebService_CodeBehind {
 			case "local" : 	srq.qdomain = Beagle.QueryDomain.Local;
 							break;
 							
+			case "system" : srq.qdomain = Beagle.QueryDomain.System;
+							break;
+														
 			case "neighborhood" :
 							srq.qdomain = Beagle.QueryDomain.Neighborhood;
 							break;

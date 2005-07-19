@@ -44,12 +44,14 @@ namespace Beagle.Daemon {
 		static Logger log = Logger.Get ("NetworkedBeagle");
 	    static readonly string NetBeagleConfigFile = "netbeagle.cfg";
 		public static readonly string BeagleNetPrefix = "netbeagle://";
+		public static bool NetBeagleListActive = false;
 				
 		ArrayList NetBeagleList;
 		
 		public NetworkedBeagle ()
 		{
-			NetBeagleList = new ArrayList ();		
+			NetBeagleList = new ArrayList ();	
+			NetBeagleListActive = false;	
 		}
 
 /////////////////////////////////////////////////////////////////////////////////////////			
@@ -104,6 +106,7 @@ namespace Beagle.Daemon {
 					}
 					
 				if (NetBeagleList.Count > 0) {
+				NetBeagleListActive = true;
 				if (File.Exists (Path.Combine (PathFinder.StorageDir, NetBeagleConfigFile)))
 				{
 					log.Warn("NetBeagleQueryable: Duplicate configuration of networked Beagles detected!");
@@ -137,8 +140,12 @@ namespace Beagle.Daemon {
 				}								
 			}
 			
-			//if (NetBeagleList.Count > 0)
-			//	log.Warn("NetBeagleQueryable: 'netbeagle.cfg' based configuration deprecated.\n Use 'beagle-config' or 'beagle-settings' instead to configure Networked Beagles");
+			NetBeagleListActive = (NetBeagleList.Count > 0) ? true:false;
+						
+			if (NetBeagleList.Count > 0) {
+				//log.Warn("NetBeagleQueryable: 'netbeagle.cfg' based configuration deprecated.\n Use 'beagle-config' or 'beagle-settings' instead to configure Networked Beagles");
+				log.Warn("NetBeagleQueryable: 'netbeagle.cfg' based configuration deprecated.\n Use 'beagle-config' instead to configure Networked Beagles");				
+			}
 		}
 
 		private void NetBeagleConfigurationChanged (Conf.Section section)
@@ -149,8 +156,8 @@ namespace Beagle.Daemon {
 				
 			Conf.NetworkingConfig nc = (Conf.NetworkingConfig) section;
 
-			if (nc.NetBeagleNodes.Count == 0)
-				return;
+			//if (nc.NetBeagleNodes.Count == 0)
+			//	return;
 					
 			ArrayList newList = new ArrayList();
 			foreach (string nb in nc.NetBeagleNodes) {
@@ -168,9 +175,10 @@ namespace Beagle.Daemon {
 			
 			lock (NetBeagleList) {
 				NetBeagleList = newList;
+				NetBeagleListActive = (NetBeagleList.Count > 0) ? true:false;
 			}			 
 		}
-				
+	
 		public bool AcceptQuery (Query query)
 		{      
 		    if (query.Text.Count <= 0)
@@ -301,8 +309,10 @@ namespace Beagle.Daemon {
 				
 				if (!cTimer.Enabled) {
 					cTimer.Start();		
-					log.Debug("CachedRequestCleanupTimer started");			
+					log.Info("CachedRequestCleanupTimer started");			
 				}
+				
+				log.Info("CacheRequest: HopCount = " + hops);
 			}		
 		}		
 			
@@ -337,11 +347,11 @@ namespace Beagle.Daemon {
 			}
 			
 			if ((c % 4) == 0)		//Log status every 1 minute
-				log.Debug("CachedRequestCleanupTimer-EventHandler: requestTable has {0} elements, Last entry count={1}", requestTable.Count, c);
+				log.Info("CachedRequestCleanupTimer-EventHandler: requestTable has {0} elements, Last entry count={1}", requestTable.Count, c);
 
 			if (timerTable.Count == 0) {				
 				cTimer.Stop();
-				log.Debug("Stopping CachedRequestCleanupTimer");
+				log.Info("Stopping CachedRequestCleanupTimer");
 			}			
 		}
 		
