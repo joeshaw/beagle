@@ -136,11 +136,13 @@ namespace Beagle.Tile {
 #endif
 
 #if ENABLE_GALAGO
+#if ENABLE_EVO_SHARP
 			if (aim_name != null) {
 				string status = BU.GalagoTools.GetPresence ("aim", aim_name);
 				if (status != null && status != "")
 					Template ["Presence"] = status;
 			}
+#endif
 #endif
 		}
 
