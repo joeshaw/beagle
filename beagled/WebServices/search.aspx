@@ -6,7 +6,7 @@
 <body>
     <form id="SearchForm" runat="server">      
 		<img src="local/share/pixmaps/dog.png" align="center" width="48" height="64">
-		<asp:Label id="Label1" ForeColor="Purple" runat="server" text="<b> Beagle Search Page</b>"/>
+		<asp:Label id="TitleLabel" ForeColor="Purple" runat="server" text="<b> Beagle Search Page</b>"/>
 		<br>
         <asp:Label id="SearchLabel" runat="server" text="Enter Search Terms "/>
         <asp:TextBox id="SearchBox" BackColor="LightCyan" Columns="20" runat="server"/>

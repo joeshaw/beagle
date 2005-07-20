@@ -77,6 +77,10 @@ namespace Beagle.WebService {
 			get { return WebServiceBackEnd.web_global;  }
 		}
 
+		public string HostName {
+			get { return WebServiceBackEnd.hostname; }
+		}
+		
 		public static void init() 
 		{
 		   
@@ -278,9 +282,9 @@ namespace Beagle.WebService {
 			return NO_RESULTS;
 		}
 		
-		public bool NetworkBeagleActive()
+		public bool NetworkBeagleActive
 		{
-			return NetworkedBeagle.NetBeagleListActive;
+			get {return NetworkedBeagle.NetBeagleListActive;}
 		}
 		
 		public string doQuery(webArgs wargs)

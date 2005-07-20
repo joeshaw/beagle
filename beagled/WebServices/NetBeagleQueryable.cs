@@ -106,14 +106,14 @@ namespace Beagle.Daemon {
 					}
 					
 				if (NetBeagleList.Count > 0) {
-				NetBeagleListActive = true;
-				if (File.Exists (Path.Combine (PathFinder.StorageDir, NetBeagleConfigFile)))
-				{
-					log.Warn("NetBeagleQueryable: Duplicate configuration of networked Beagles detected!");
-					log.Info("NetBeagleQueryable: Remove '~/.beagle/netbeagle.cfg' file. Use 'beagle-config' instead to setup networked Beagle nodes.");		
-					log.Info("Using ~/.beagle/config/networking.xml");	
-				}
-				return;
+					NetBeagleListActive = true;
+					if (File.Exists (Path.Combine (PathFinder.StorageDir, NetBeagleConfigFile)))
+					{
+						log.Warn("NetBeagleQueryable: Duplicate configuration of networked Beagles detected!");
+						log.Info("NetBeagleQueryable: Remove '~/.beagle/netbeagle.cfg' file. Use 'beagle-config' instead to setup networked Beagle nodes.");		
+						log.Info("Using ~/.beagle/config/networking.xml");	
+					}
+					return;
 				}
 			}
 			
@@ -139,10 +139,9 @@ namespace Beagle.Daemon {
 					NetBeagleList.Add (new NetBeagleHandler (host, port, this));					
 				}								
 			}
-			
-			NetBeagleListActive = (NetBeagleList.Count > 0) ? true:false;
-						
+
 			if (NetBeagleList.Count > 0) {
+				NetBeagleListActive = true;
 				//log.Warn("NetBeagleQueryable: 'netbeagle.cfg' based configuration deprecated.\n Use 'beagle-config' or 'beagle-settings' instead to configure Networked Beagles");
 				log.Warn("NetBeagleQueryable: 'netbeagle.cfg' based configuration deprecated.\n Use 'beagle-config' instead to configure Networked Beagles");				
 			}
@@ -173,9 +172,9 @@ namespace Beagle.Daemon {
 					newList.Add (new NetBeagleHandler (host, port, this));												
 			}	
 			
-			lock (NetBeagleList) {
+			lock (this) {
 				NetBeagleList = newList;
-				NetBeagleListActive = (NetBeagleList.Count > 0) ? true:false;
+				NetBeagleListActive = (newList.Count == 0) ? false:true;
 			}			 
 		}
 	
