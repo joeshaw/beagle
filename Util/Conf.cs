@@ -482,16 +482,27 @@ namespace Beagle.Util {
 
 				return true;
 			}
+			
+			[ConfigOption (Description="Check current configuration of global access to Beagle web-services", IsMutator=false)]
+			internal bool CheckGlobalAccess(out string output, string [] args)
+			{
+				if (allowGlobalAccess)
+					output = "Global Access to Beagle WebServices is currently ENABLED.";
+				else
+					output = "Global Access to Beagle WebServices is currently DISABLED.";
 
+				return true;
+			}
+			
 			[ConfigOption (Description="Enable/Disable global access to Beagle web-services")]
 			internal bool SwitchGlobalAccess (out string output, string [] args)
 			{
 				allowGlobalAccess = !allowGlobalAccess;			
 				
 				if (allowGlobalAccess)
-					output = "Global Access to Beagle WebService ENABLED.";
+					output = "Global Access to Beagle WebServices now ENABLED.";
 				else
-					output = "Global Access to Beagle WebService DISABLED.";
+					output = "Global Access to Beagle WebServices now DISABLED.";
 
 				return true;
 			}
