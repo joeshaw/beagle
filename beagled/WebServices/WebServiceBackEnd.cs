@@ -70,7 +70,9 @@ namespace Beagle.WebService {
 		public static void Start()
 		{			
 			try {
-				hostname = Dns.GetHostName();
+				IPHostEntry hostInfo = Dns.GetHostByName(Dns.GetHostName());
+				//Fully qualified DNS name of host:
+				hostname = hostInfo.HostName;
 				Logger.Log.Info("This Computer Hostname: " + hostname);
 			}
 			catch (Exception ex) 
