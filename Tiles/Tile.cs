@@ -192,6 +192,16 @@ namespace Beagle.Tile {
 			} else {
 				argument = String.Format ("{0} {1}", argument, hit.PathQuoted);
 			}
+			
+			// This won't work if a program really has a space in
+			// the filename, but I think other things would break
+			// with that too, and in practice it doesn't seem to
+			// happen.
+			int idx = command.IndexOf (' ');
+			if (idx != -1) {
+				argument = String.Format ("{0} {1}", command.Substring (idx + 1), argument);
+				command = command.Substring (0, idx);
+			}
 
 			Console.WriteLine ("Cmd: {0}", command);
 			Console.WriteLine ("Arg: {0}", argument);
