@@ -274,6 +274,10 @@ lifereaqueryable = $(srcdir)/LifereaQueryable
 LIFEREA_QUERYABLE_CSFILES =				\
 	$(lifereaqueryable)/LifereaQueryable.cs
 
+akregatorqueryable = $(srcdir)/AkregatorQueryable
+AKREGATOR_QUERYABLE_CSFILES =				\
+	$(akregatorqueryable)/AkregatorQueryable.cs
+
 indexingservicequeryable = $(srcdir)/IndexingServiceQueryable
 INDEXING_SERVICE_QUERYABLE_CSFILES =			\
 	$(indexingservicequeryable)/IndexingServiceQueryable.cs
@@ -289,6 +293,7 @@ DAEMON_DLL_CSFILES = 						\
 	$(GAIM_LOG_QUERYABLE_CSFILES)				\
 	$(BLAM_QUERYABLE_CSFILES)				\
 	$(LIFEREA_QUERYABLE_CSFILES)				\
+	$(AKREGATOR_QUERYABLE_CSFILES)				\
 	$(EVO_MAIL_QUERYABLE_CSFILES)				\
 	$(TOMBOY_QUERYABLE_CSFILES)				\
 	$(INDEXING_SERVICE_QUERYABLE_CSFILES)			\
