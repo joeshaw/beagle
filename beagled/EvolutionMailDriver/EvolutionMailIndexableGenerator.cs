@@ -722,7 +722,7 @@ namespace Beagle.Daemon.EvolutionMailDriver {
 				if (!have_content) {
 					indexable.AddProperty (Property.NewKeyword ("fixme:to", ia.ToString (false)));
 					indexable.AddProperty (Property.NewKeyword ("fixme:to_address", ia.Addr));
-					indexable.AddProperty (Property.NewKeyword ("fixme:to_name", ia.Name));
+					indexable.AddProperty (Property.New ("fixme:to_name", ia.Name));
 				}
 
 				if (this.folder_name == "Sent")
@@ -735,7 +735,7 @@ namespace Beagle.Daemon.EvolutionMailDriver {
 				if (!have_content) {
 					indexable.AddProperty (Property.NewKeyword ("fixme:cc", ia.ToString (false)));
 					indexable.AddProperty (Property.NewKeyword ("fixme:cc_address", ia.Addr));
-					indexable.AddProperty (Property.NewKeyword ("fixme:cc_name", ia.Name));
+					indexable.AddProperty (Property.New ("fixme:cc_name", ia.Name));
 				}
 
 				if (this.folder_name == "Sent")
@@ -748,7 +748,7 @@ namespace Beagle.Daemon.EvolutionMailDriver {
 				if (!have_content) {
 					indexable.AddProperty (Property.NewKeyword ("fixme:from", ia.ToString (false)));
 					indexable.AddProperty (Property.NewKeyword ("fixme:from_address", ia.Addr));
-					indexable.AddProperty (Property.NewKeyword ("fixme:from_name", ia.Name));
+					indexable.AddProperty (Property.New ("fixme:from_name", ia.Name));
 				}
 
 				if (this.folder_name != "Sent")
