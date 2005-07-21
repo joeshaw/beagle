@@ -37,28 +37,19 @@ namespace Beagle.Tile {
 	[HitFlavor (Name="Conversations", Rank=900, Emblem="emblem-im-log.png", Color="#e5f5ef",
 		    Type="IMLog")]
 	public class TileImLog : TileFromHitTemplate {
-		private static GaimBuddyListReader list = null;
 
 #if ENABLE_EVO_SHARP
 		private static Hashtable buddy_emails = new Hashtable ();
 #endif
 		
-		private ImBuddy buddy = null;
-		private string speaking_alias;
 		private string email = null;
+		private string speaking_alias = null;
 
 		public TileImLog (Hit _hit) : base (_hit,
 						    "template-im-log.html")
 		{
-			if (list == null) {
-				list = new GaimBuddyListReader ();
-			}
-
-			buddy = list.Search (Hit ["fixme:speakingto"]);
-			if (buddy != null) {
-				// Console.WriteLine ("Found buddy info for {0}, icon at {1}", buddy.Alias, buddy.BuddyIconLocation);
-				email = GetEmailForName (buddy.Alias);
-			}
+			if (Hit ["fixme:speakingto_alias"] != null)
+				email = GetEmailForName (Hit ["fixme:speakingto_alias"]);
 		}
 
 		protected override void PopulateTemplate ()
@@ -79,10 +70,7 @@ namespace Beagle.Tile {
 			if (Hit ["fixme:protocol"] == "aim")
 				Template ["SendIMAction"] = Catalog.GetString ("Send IM");
 			
-			if (buddy != null && buddy.Alias != "")
-				speaking_alias = buddy.Alias;
-			else 
-				speaking_alias = Hit["fixme:speakingto"];
+			speaking_alias = (Hit ["fixme:speakingto_alias"] != null) ? Hit ["fixme:speakingto_alias"] : Hit ["fixme:speakingto"];
 
 			// FIXME: Hack to figure out if the conversation is taken place in a chat room
 			if (Hit["fixme:speakingto"].EndsWith (".chat"))
@@ -90,22 +78,11 @@ namespace Beagle.Tile {
 			else
 				Template["title"] = String.Format (Catalog.GetString ("Conversation with {0}"), speaking_alias);
 
-
-			if (buddy != null && buddy.BuddyIconLocation != "") {
-				string homedir = Environment.GetEnvironmentVariable ("HOME");
-				string fullpath = Path.Combine (homedir, ".gaim");
-				fullpath = Path.Combine (fullpath, "icons");
-				fullpath = Path.Combine (fullpath, buddy.BuddyIconLocation);
-
-				if (File.Exists (fullpath)) {
-					Template["Icon"] = StringFu.PathToQuotedFileUri (fullpath);
-				} else {
-					Template["Icon"] = Images.GetHtmlSource ("gnome-gaim.png", "image/png");
-				}
-			} else {
+			if (Hit ["fixme:speakingto_icon"] != null && File.Exists (Hit ["fixme:speakingto_icon"]))
+				Template["Icon"] = StringFu.PathToQuotedFileUri (Hit ["fixme:speakingto_icon"]);
+		        else
 				Template["Icon"] = Images.GetHtmlSource ("gnome-gaim.png", "image/png");
-			}
-
+			
 #if ENABLE_GALAGO
 			if (Hit ["fixme:protocol"] == "aim") {
 				string status = GalagoTools.GetPresence (Hit ["fixme:protocol"], Hit["fixme:speakingto"]);

@@ -278,6 +278,11 @@ akregatorqueryable = $(srcdir)/AkregatorQueryable
 AKREGATOR_QUERYABLE_CSFILES =				\
 	$(akregatorqueryable)/AkregatorQueryable.cs
 
+kopetequeryable = $(srcdir)/KopeteQueryable
+KOPETE_QUERYABLE_CSFILES =				\
+	$(kopetequeryable)/KopeteQueryable.cs 	 	\
+	$(kopetequeryable)/KopeteCrawler.cs
+
 indexingservicequeryable = $(srcdir)/IndexingServiceQueryable
 INDEXING_SERVICE_QUERYABLE_CSFILES =			\
 	$(indexingservicequeryable)/IndexingServiceQueryable.cs
@@ -294,6 +299,7 @@ DAEMON_DLL_CSFILES = 						\
 	$(BLAM_QUERYABLE_CSFILES)				\
 	$(LIFEREA_QUERYABLE_CSFILES)				\
 	$(AKREGATOR_QUERYABLE_CSFILES)				\
+	$(KOPETE_QUERYABLE_CSFILES)				\
 	$(EVO_MAIL_QUERYABLE_CSFILES)				\
 	$(TOMBOY_QUERYABLE_CSFILES)				\
 	$(INDEXING_SERVICE_QUERYABLE_CSFILES)			\

@@ -1,7 +1,7 @@
 //
-// GaimLogQueryable.cs
+// KopeteQueryable.cs
 //
-// Copyright (C) 2004 Novell, Inc.
+// Copyright (C) 2005 Novell, Inc.
 //
 
 //
@@ -33,26 +33,23 @@ using System.Threading;
 using Beagle.Daemon;
 using Beagle.Util;
 
-namespace Beagle.Daemon.GaimLogQueryable {
+namespace Beagle.Daemon.KopeteQueryable {
 
-	[QueryableFlavor (Name="IMLog", Domain=QueryDomain.Local, RequireInotify=false)]
-	public class GaimLogQueryable : LuceneQueryable {
+	[QueryableFlavor (Name="Kopete", Domain=QueryDomain.Local, RequireInotify=false)]
+	public class KopeteQueryable : LuceneQueryable {
 
-		private static Logger log = Logger.Get ("GaimLogQueryable");
-
-		private string config_dir, log_dir, icons_dir;
+		private string config_dir, log_dir;
 
 		private int polling_interval_in_seconds = 60;
-		
-		private GaimLogCrawler crawler;
 
-		private GaimBuddyListReader list = new GaimBuddyListReader ();
+		private KopeteCrawler crawler;
 
-		public GaimLogQueryable () : base ("GaimLogIndex")
+		private KopeteBuddyListReader list = new KopeteBuddyListReader ();
+
+		public KopeteQueryable () : base ("KopeteIndex")
 		{
-			config_dir = Path.Combine (PathFinder.HomeDir, ".gaim");
+			config_dir = Path.Combine (PathFinder.HomeDir, ".kde/share/apps/kopete");
 			log_dir = Path.Combine (config_dir, "logs");
-			icons_dir = Path.Combine (config_dir, "icons");
 		}
 
 		/////////////////////////////////////////////////
@@ -64,7 +61,7 @@ namespace Beagle.Daemon.GaimLogQueryable {
 				return;
 			}
 
-			log.Info ("Starting Gaim log backend");
+			Logger.Log.Info ("Starting Kopete log backend");
 
 			Stopwatch stopwatch = new Stopwatch ();
 			stopwatch.Start ();
@@ -72,18 +69,18 @@ namespace Beagle.Daemon.GaimLogQueryable {
 			if (Inotify.Enabled)
 				Watch (log_dir);
 
-			crawler = new GaimLogCrawler (log_dir);
+			crawler = new KopeteCrawler (log_dir);
 			Crawl ();
 
 			if (!Inotify.Enabled) {
 				Scheduler.Task task = Scheduler.TaskFromHook (new Scheduler.TaskHook (CrawlHook));
-                                task.Tag = "Crawling ~/.gaim/logs to find new logfiles";
+                                task.Tag = "Crawling ~/.kopete/logs to find new logfiles";
                                 ThisScheduler.Add (task);
 			}
 
 			stopwatch.Stop ();
 
-			log.Info ("Gaim log backend worker thread done in {0}", stopwatch); 
+			Logger.Log.Info ("Kopete log backend worker thread done in {0}", stopwatch); 
 		}
 		
 		public override void Start () 
@@ -112,15 +109,13 @@ namespace Beagle.Daemon.GaimLogQueryable {
 
 		/////////////////////////////////////////////////
 
-		// Sets up an Inotify watch on all subdirectories withing ~/.gaim/logs
+		// Sets up an Inotify watch on all subdirectories withing ~/.kopete/logs
 		private void Watch (string path)
 		{
 			DirectoryInfo root = new DirectoryInfo (path);
 			
-			if (! root.Exists) {
-				log.Warn ("IM: {0} cannot watch path. It doesn't exist.", path);
+			if (! root.Exists)
 				return;	
-			}
 			
 			Queue queue = new Queue ();
 			queue.Enqueue (root);
@@ -130,7 +125,7 @@ namespace Beagle.Daemon.GaimLogQueryable {
 				
 				// Setup watches on the present directory.
 				Inotify.Subscribe (dir.FullName, OnInotifyEvent,
-							Inotify.EventType.Create | Inotify.EventType.Modify);
+						   Inotify.EventType.Create | Inotify.EventType.CloseWrite);
 				
 				// Add all subdirectories to the queue so their files can be indexed.
 				foreach (DirectoryInfo subdir in dir.GetDirectories ())
@@ -183,8 +178,6 @@ namespace Beagle.Daemon.GaimLogQueryable {
 			indexable.MimeType = "text/plain";
 			indexable.Type = "IMLog";
 
-			indexable.Filtering = IndexableFiltering.AlreadyFiltered;
-
 			StringBuilder text = new StringBuilder ();
 			foreach (ImLog.Utterance utt in log.Utterances) {
 				//Console.WriteLine ("[{0}][{1}]", utt.Who, utt.Text);
@@ -192,19 +185,15 @@ namespace Beagle.Daemon.GaimLogQueryable {
 				text.Append (" ");
 			}
 
-			// FIXME: It would be cleaner to have a TextReader than streamed out
-			// the utterances.
-
+			indexable.AddProperty (Property.NewKeyword ("fixme:file", log.LogFile));
+			indexable.AddProperty (Property.NewKeyword ("fixme:offset", log.LogOffset));
 			indexable.AddProperty (Property.NewDate ("fixme:starttime", log.StartTime));
+			indexable.AddProperty (Property.NewKeyword ("fixme:speakingto", log.SpeakingTo));
+			indexable.AddProperty (Property.NewKeyword ("fixme:identity", log.Identity));
 			indexable.AddProperty (Property.NewDate ("fixme:endtime", log.EndTime));
-			indexable.AddProperty (Property.NewUnsearched ("fixme:file", log.LogFile));
-			indexable.AddProperty (Property.NewUnsearched ("fixme:offset", log.LogOffset));
-			indexable.AddProperty (Property.NewUnsearched ("fixme:client", log.Client));
-			indexable.AddProperty (Property.NewUnsearched ("fixme:protocol", log.Protocol));
 
-			// FIXME: Should these use Property.NewKeyword and be searched?
-			indexable.AddProperty (Property.NewUnsearched ("fixme:speakingto", log.SpeakingTo));
-			indexable.AddProperty (Property.NewUnsearched ("fixme:identity", log.Identity));
+			indexable.AddProperty (Property.New ("fixme:client", log.Client));
+			indexable.AddProperty (Property.New ("fixme:protocol", log.Protocol));
 
 			StringReader reader = new StringReader (text.ToString ());
 			indexable.SetTextReader (reader);
@@ -222,7 +211,7 @@ namespace Beagle.Daemon.GaimLogQueryable {
 			Scheduler.TaskGroup group;
 			group = NewMarkingTaskGroup (filename, info.LastWriteTime);
 
-			ICollection logs = GaimLog.ScanLog (info);
+			ICollection logs = KopeteLog.ScanLog (info);
 			foreach (ImLog log in logs) {
 				Indexable indexable = ImLogToIndexable (log);
 				Scheduler.Task task = NewAddTask (indexable);
@@ -243,7 +232,7 @@ namespace Beagle.Daemon.GaimLogQueryable {
 		{
 			// FIXME: This does the wrong thing for old-style logs.
 			string file = hit ["fixme:file"];
-			ICollection logs = GaimLog.ScanLog (new FileInfo (file));
+			ICollection logs = KopeteLog.ScanLog (new FileInfo (file));
 			IEnumerator iter = logs.GetEnumerator ();
 			ImLog log = null;
 			if (iter.MoveNext ())
@@ -287,15 +276,14 @@ namespace Beagle.Daemon.GaimLogQueryable {
 		override protected Hit PostProcessHit (Hit hit) 
 		{
 			ImBuddy buddy = list.Search (hit ["fixme:speakingto"]);
-
+			
 			if (buddy != null) {
 				if (buddy.Alias != "")
 					hit ["fixme:speakingto_alias"] = buddy.Alias;
 
-				if (buddy.BuddyIconLocation != "")
-					hit ["fixme:speakingto_icon"] = Path.Combine (icons_dir, buddy.BuddyIconLocation);
+				// FIXME: Icons?
 			}
-
+			
 			return hit;
 		}
 	}

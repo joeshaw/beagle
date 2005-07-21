@@ -62,7 +62,7 @@ namespace Beagle.Util {
 		public void DebugPrint (string str) {
 			if (!verbose)
 				return;
-			System.Console.WriteLine (str);
+			Logger.Log.Debug ("{0}", str);
 		}
 
 		public class ImBuddyComparer : IComparer {
@@ -318,4 +318,115 @@ namespace Beagle.Util {
 
 	}
 
+	/////////////////////////////////////////////////////////////
+
+	public class KopeteBuddyListReader : ImBuddyListReader {
+
+		string buddyListPath;
+		string buddyListDir;
+		DateTime buddyListLastWriteTime;
+		uint timeoutId;
+
+		public KopeteBuddyListReader ()
+		{
+			buddyListDir = Path.Combine (PathFinder.HomeDir, ".kde/share/apps/kopete");
+			buddyListPath = Path.Combine (buddyListDir, "contactlist.xml");
+			
+			if (File.Exists (buddyListPath))
+				Read ();
+
+			// Poll the file once every minute
+			timeoutId = GLib.Timeout.Add (60000, new GLib.TimeoutHandler (ReadTimeoutHandler));
+		}
+
+		~KopeteBuddyListReader ()
+		{
+			if (timeoutId > 0)
+				GLib.Source.Remove (timeoutId);
+		}
+
+		private bool ReadTimeoutHandler ()
+		{
+			if (File.Exists (buddyListPath))
+				Read ();
+
+			return true;
+		}
+
+		private string Format (string name) {
+			return name.ToLower ().Replace (" ", "");
+		}
+
+		override public void Read ()
+		{
+			// If the file hasn't changed, don't do anything.
+			DateTime last_write = File.GetLastWriteTime (buddyListPath);
+			if (last_write == buddyListLastWriteTime)
+				return;
+
+			buddyListLastWriteTime = last_write;
+
+			buddyList = new Hashtable ();
+
+			XmlDocument accounts = new XmlDocument ();
+			accounts.Load (buddyListPath);
+
+			// Find all xml contact nodes in the contact list
+			foreach (XmlNode contact in accounts.SelectNodes ("//meta-contact"))
+				AddContact (contact);
+		}
+
+		private void AddContact (XmlNode contact) 
+		{
+			string protocol, owner, other, alias, iconlocation, iconchecksum;
+			
+			protocol = "";
+			owner = "";
+			other = "";
+			alias = "";
+			iconlocation = "";
+			iconchecksum = "";
+
+			// For each and every meta-contact, there can be multiple 
+			// buddy information entries if we have a contact added on
+			// multiple protocols. Loop through them.
+
+ 			foreach (XmlNode plugin_node in contact.SelectNodes ("plugin-data")) {
+				// Determin the protocol
+				XmlAttribute plugin_id_attr = plugin_node.Attributes ["plugin-id"];
+				protocol = plugin_id_attr.Value.Substring (0, plugin_id_attr.Value.Length-8).ToLower ();
+				DebugPrint ("Protocol=" + protocol);
+
+				// Fetch all the buddy properties
+				foreach (XmlNode plugin_data_node in plugin_node.SelectNodes ("plugin-data-field")) { 
+					switch (plugin_data_node.Attributes ["key"].Value) {
+					case "contactId":
+						other = plugin_data_node.InnerText;
+						DebugPrint ("Screen=" + other);
+						break;
+					case "accountId":
+						owner = plugin_data_node.InnerText;
+						DebugPrint ("Account=" + owner);
+						break;
+					case "displayName":
+						alias = plugin_data_node.InnerText;
+						DebugPrint ("Alias=" + alias);
+						break;
+					}
+				}
+				
+				// Replace any earlier buddies with the same screenname
+				// FIXME: Not safe since we can have the same screenname on different accounts.
+				if (buddyList.ContainsKey (Format(other)))
+					buddyList.Remove (Format(other));
+				
+				buddyList.Add (Format(other), new ImBuddy (protocol, owner, Format(other), alias, iconlocation, iconchecksum));
+			}
+		}
+		
+
+		public ImBuddy Search (string buddy) {
+			return (ImBuddy)buddyList[Format(buddy)];
+		}
+	}
 }

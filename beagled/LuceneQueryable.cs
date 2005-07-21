@@ -389,6 +389,13 @@ namespace Beagle.Daemon {
 
 		/////////////////////////////////////////
 
+		virtual protected Hit PostProcessHit (Hit hit)
+		{
+			return hit;
+		}
+
+		/////////////////////////////////////////
+
 		virtual protected double RelevancyMultiplier (Hit hit)
 		{
 			return 1.0;
@@ -496,6 +503,7 @@ namespace Beagle.Daemon {
 					extra_uris,
 					new LuceneDriver.UriFilter (HitIsValidOrElse),
 					from_internal_uris,
+					new LuceneDriver.HitProcessor (PostProcessHit),
 					new LuceneDriver.RelevancyMultiplier (RelevancyMultiplier));
 		}
 

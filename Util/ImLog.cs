@@ -30,6 +30,7 @@ using System.IO;
 using System.Globalization;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Xml;
 
 namespace Beagle.Util {
 
@@ -454,6 +455,109 @@ namespace Beagle.Util {
 				ScanNewStyleLog (file, array);
 			else if (file.Extension == ".log")
 				ScanOldStyleLog (file, array);
+			return array;
+		}
+	}
+
+	///////////////////////////////////////////////////////////////////////////////
+
+	//
+	// Kopete Logs
+	//
+
+	public class KopeteLog : ImLog {
+
+		private KopeteLog (string protocol, string file) : base ("kopete", protocol, file)
+		{ 
+		}
+		
+		private const string date_format = "yyyy M d H:m:s";
+
+		protected override void Load ()
+		{
+			ClearUtterances ();
+
+			XmlReader reader;
+			DateTime base_date = DateTime.MinValue;
+
+			try {
+				reader = new XmlTextReader (new  FileStream (LogFile,
+									     FileMode.Open,
+									     FileAccess.Read,
+									     FileShare.Read));
+			} catch (Exception e) {
+				Console.WriteLine ("Could not open '{0}'", LogFile);
+				Console.WriteLine (e);
+				return;
+			}
+			
+			while (reader.Read ()) {
+				if (reader.NodeType != XmlNodeType.Element)
+					continue;
+				
+				switch (reader.Name) {
+				case "date":
+					base_date = new DateTime (Convert.ToInt32 (reader.GetAttribute ("year")),
+								  Convert.ToInt32 (reader.GetAttribute ("month")),
+								  1);
+					break;
+					
+				case "msg":
+					// Parse the timestamp of the message
+					string timestamp = String.Format ("{0} {1} {2}",
+									  base_date.Year,
+									  base_date.Month,
+									  reader.GetAttribute ("time"));
+
+					DateTime msg_date = DateTime.MinValue;
+
+					try {
+						msg_date = DateTime.ParseExact (timestamp,
+										date_format,
+										null);
+					} catch (Exception ex) {
+						Logger.Log.Error ("Couldn't parse Kopete timestamp: {0}", timestamp);
+						break;
+					}
+					
+					string who = reader.GetAttribute ("nick");
+					if (who == null || who == "")
+						who = reader.GetAttribute ("from");
+					if (who == null || who == "")
+						break;
+					
+					// Advance to the text node for the actual message
+					reader.Read ();
+					
+					AddUtterance (msg_date, who, reader.Value);
+					break;
+				}
+			}
+			
+			reader.Close ();
+		}
+		
+		public static ICollection ScanLog (FileInfo file)
+		{
+			ArrayList array = new ArrayList ();
+			
+			// FIXME: Artificially split logs into conversations depending on the
+			// amount of time elapsed betweet messages?
+			
+			// Figure out the protocol from the parent.parent foldername
+			string protocol = file.Directory.Parent.Name.Substring (0, file.Directory.Parent.Name.Length - 8).ToLower ().ToLower ();
+			string filename = Path.GetFileNameWithoutExtension (file.Name);
+			
+			ImLog log = new KopeteLog (protocol, file.FullName);
+
+			log.Timestamp = file.LastWriteTime;
+			log.Identity   = file.Directory.Name;
+
+			// FIXME: This is not safe for all kinds of file/screennames
+			log.SpeakingTo = filename.Substring (0, filename.LastIndexOf ('.'));
+			
+			array.Add (log);
+
 			return array;
 		}
 	}

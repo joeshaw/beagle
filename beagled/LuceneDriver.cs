@@ -54,6 +54,7 @@ namespace Beagle.Daemon {
 
 		public delegate bool UriFilter (Uri uri);
 		public delegate Uri UriRemapper (Uri uri);
+		public delegate Hit HitProcessor (Hit hit);
 		public delegate double RelevancyMultiplier (Hit hit);
 
 		public event IIndexerChangedHandler ChangedEvent;
@@ -532,6 +533,7 @@ namespace Beagle.Daemon {
 				     ICollection         bonus_uris,    // should be internal uris
 				     UriFilter           uri_filter,
 				     UriRemapper         uri_remapper, // map to external uris
+				     HitProcessor        hit_processor, // post-process hits
 				     RelevancyMultiplier relevancy_multiplier)
 		{
 			double t_lucene;
@@ -577,6 +579,9 @@ namespace Beagle.Daemon {
 				Hit hit = FromLuceneDocToHit (doc, hits.Id (i), score);
 				if (uri_remapper != null)
 					hit.Uri = uri_remapper (hit.Uri);
+
+				if (hit_processor != null)
+					hit = hit_processor (hit);
 
 				if (relevancy_multiplier != null) {
 					double m = relevancy_multiplier (hit);
