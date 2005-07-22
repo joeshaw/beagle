@@ -1,3 +1,8 @@
+2005-07-21  Daniel Drake  <dsd@gentoo.org>
+
+	* Util/Conf.cs: Add ConfigOptions for adding/removing excludes, so that
+	excludes can be manipulated via beagle-config.
+
 2005-07-19  Vijay K. Nanjundaswamy <knvijay@novell.com>
 	
 	* beagled/WebServices/Web*End.cs, WebService*End.cs:

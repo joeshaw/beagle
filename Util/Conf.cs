@@ -63,9 +63,9 @@ namespace Beagle.Util {
 
 		static Conf ()
 		{
-			Sections = new Hashtable (1);
-			mtimes = new Hashtable (1);
-			subscriptions = new Hashtable (1);
+			Sections = new Hashtable (3);
+			mtimes = new Hashtable (3);
+			subscriptions = new Hashtable (3);
 
 			configs_dir = Path.Combine (PathFinder.StorageDir, "config");
 			if (!Directory.Exists (configs_dir))
@@ -450,8 +450,46 @@ namespace Beagle.Util {
 					output += String.Format (" - [{0}] {1}\n", exclude_item.Type.ToString (), exclude_item.Value);
 				return true;
 			}
-		
-			// FIXME: Add methods to manipulate excludes
+
+			[ConfigOption (Description="Add a resource to exclude from indexing", Params=2, ParamsDescription="A type [path/pattern/mailfolder], a path/pattern/name")]
+			internal bool AddExclude (out string output, string [] args)
+			{
+				ExcludeType type;
+				try {
+					type = (ExcludeType) Enum.Parse (typeof (ExcludeType), args [0], true);
+				} catch (Exception e) {
+					output = String.Format("Invalid type '{0}'. Valid types: Path, Pattern, MailFolder", args [0]);
+					return false;
+				}
+
+				excludes.Add (new ExcludeItem (type, args [1]));
+				output = "Exclude added.";
+				return true;
+			}
+
+			[ConfigOption (Description="Remove an excluded resource", Params=2, ParamsDescription="A type [path/pattern/mailfolder], a path/pattern/name")]
+			internal bool DelExclude (out string output, string [] args)
+			{
+				ExcludeType type;
+				try {
+					type = (ExcludeType) Enum.Parse (typeof (ExcludeType), args [0], true);
+				} catch (Exception e) {
+					output = String.Format("Invalid type '{0}'. Valid types: Path, Pattern, MailFolder", args [0]);
+					return false;
+				}
+
+				foreach (ExcludeItem item in excludes) {
+					if (item.Type != type || item.Value != args [1])
+						continue;
+					excludes.Remove (item);
+					output = "Exclude removed.";
+					return true;
+				}
+
+				output = "Could not find requested exclude to remove.";
+				return false;
+			}
+
 		}
 
 #if ENABLE_WEBSERVICES
@@ -696,6 +734,7 @@ namespace Beagle.Util {
 		{
 			return (this.Value.GetHashCode () ^ (int) this.Type);
 		}
+
 	}
 
 	//////////////////////////////////////////////////////////////////////
