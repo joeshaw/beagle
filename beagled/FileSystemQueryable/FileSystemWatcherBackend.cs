@@ -48,7 +48,7 @@ namespace Beagle.Daemon.FileSystemQueryable {
 			to_be_watched [Path.Combine (PathFinder.HomeDir, "Documents")] = true;
 		}
 
-		public object WatchDirectories (string path)
+		public object CreateWatch (string path)
 		{
 			if (! to_be_watched.Contains (path))
 				return null;
@@ -69,8 +69,9 @@ namespace Beagle.Daemon.FileSystemQueryable {
 			return fsw;
 		}
 
-		public object WatchFiles (string path, object old_handle)
+		public object DropOpenWatch (string path, object old_handle)
 		{
+			// Do nothing, FileSystemWatcher doesn't monitor Open events
 			return old_handle;
 		}
 

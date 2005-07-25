@@ -37,11 +37,17 @@ namespace Beagle.Daemon.FileSystemQueryable {
 		
 		FileSystemQueryable queryable;
 
-		public object WatchDirectories (string path)
+		public object CreateWatch (string path)
 		{
 			object watch = null;
 			try {
-				watch = Inotify.Subscribe (path, OnInotifyEvent, Inotify.EventType.Create);
+				watch = Inotify.Subscribe (path, OnInotifyEvent, Inotify.EventType.Create
+							   | Inotify.EventType.Open
+							   | Inotify.EventType.Delete
+							   | Inotify.EventType.CloseWrite
+							   | Inotify.EventType.MovedFrom
+							   | Inotify.EventType.MovedTo);
+
 			}
 			catch (IOException) {
 				// We can race and files can disappear.  No big deal.
@@ -49,12 +55,16 @@ namespace Beagle.Daemon.FileSystemQueryable {
 			return watch;
 		}
 
-		public object WatchFiles (string path, object old_handle)
+		// Modify the watch to not listen for the Open event
+		// The Open event is only useful pre-crawl for bumping directories
+		// up the crawling queue. Once we are crawling them, we don't care about
+		// open events anymore, so we drop that to reduce the chances of an
+		// inotify queue overflow.
+		public object DropOpenWatch (string path, object old_handle)
 		{
 			Inotify.Watch watch = (Inotify.Watch) old_handle;
 			try {
-				watch.ChangeSubscription (Inotify.EventType.Open
-							   | Inotify.EventType.Create
+				watch.ChangeSubscription (Inotify.EventType.Create
 							   | Inotify.EventType.Delete
 							   | Inotify.EventType.CloseWrite
 							   | Inotify.EventType.MovedFrom

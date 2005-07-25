@@ -49,6 +49,7 @@ namespace Beagle.Daemon.FileSystemQueryable {
 
 		private IFileEventBackend event_backend;
 		private FileSystemModel model;
+		private CrawlTask last_crawl_task;
 
 		public FileSystemQueryable () : base ("FileSystemIndex", MINOR_VERSION)
 		{
@@ -75,7 +76,6 @@ namespace Beagle.Daemon.FileSystemQueryable {
 			// The FileSystemModel also implements IFileAttributesStore.
 			model = new FileSystemModel (IndexDirectory, index_fingerprint, event_backend);
 
-			model.NeedsScanEvent += new FileSystemModel.NeedsScanHandler (OnModelNeedsScan);
 			model.NeedsCrawlEvent += new FileSystemModel.NeedsCrawlHandler (OnModelNeedsCrawl);
 
 			SetUriRemappers (new LuceneDriver.UriRemapper (model.ToInternalUri),
@@ -299,13 +299,12 @@ namespace Beagle.Daemon.FileSystemQueryable {
 		// launch a crawling task.
 		private void OnModelNeedsCrawl (FileSystemModel source)
 		{
-			CrawlTask task = new CrawlTask (this);
-			ThisScheduler.Add (task, Scheduler.AddType.DeferToExisting);
-		}
+			// We only ever want one crawling task
+			if (last_crawl_task != null && last_crawl_task.Active)
+				return;
 
-		private void OnModelNeedsScan (FileSystemModel source)
-		{
-			source.ScanAll ();
+			last_crawl_task = new CrawlTask (this);
+			ThisScheduler.Add (last_crawl_task, Scheduler.AddType.DeferToExisting);
 		}
 
 		public void StartWorker ()

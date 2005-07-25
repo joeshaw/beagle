@@ -28,8 +28,8 @@ namespace Beagle.Daemon.FileSystemQueryable {
 
 	public interface IFileEventBackend {
 
-		object WatchDirectories (string path);
-		object WatchFiles       (string path, object dir_watch_handle);
+		object CreateWatch      (string path);
+		object DropOpenWatch    (string path, object dir_watch_handle);
 		bool   ForgetWatch      (object watch_handle);
 		
 		void Start (FileSystemQueryable queryable);

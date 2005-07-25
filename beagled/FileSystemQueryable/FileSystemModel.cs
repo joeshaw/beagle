@@ -121,7 +121,8 @@ namespace Beagle.Daemon.FileSystemQueryable {
 					lock (big_lock) {
 						return state == State.Dirty
 							|| state == State.Unknown
-							|| state == State.PossiblyClean;
+							|| state == State.PossiblyClean
+							|| state == State.Unscanned;
 					}
 				}
 			}
@@ -186,7 +187,7 @@ namespace Beagle.Daemon.FileSystemQueryable {
 				}
 			}
 
-			protected int CompareTo_Unlocked (object obj)
+			public int CompareTo_Unlocked (object obj)
 			{
 				Directory other = obj as Directory;
 				if (other == null)
@@ -238,8 +239,6 @@ namespace Beagle.Daemon.FileSystemQueryable {
 	
 
 		private class DirectoryPrivate : Directory {
-
-			public bool NeedsFinalWatches = true;
 
 			public DirectoryPrivate (object big_lock) : base (big_lock)
 			{
@@ -353,36 +352,6 @@ namespace Beagle.Daemon.FileSystemQueryable {
 				children [new_child.Name] = new_child;
 			}
 
-			public Directory SearchForNextToCrawl_Unlocked (Directory candidate)
-			{
-				if (this.NeedsCrawl && (candidate == null || this.CompareTo_Unlocked (candidate) > 0))
-					candidate = this;
-				if (this.children != null) {
-					foreach (DirectoryPrivate subdir in this.children.Values)
-						candidate = subdir.SearchForNextToCrawl_Unlocked (candidate);
-				}
-				return candidate;
-			}
-
-			public void CountUncrawled_Unlocked (ref int uncrawled, ref int dirty)
-			{
-				if (NeedsCrawl) {
-					++uncrawled;
-					if (state == State.Dirty)
-						++dirty;
-				}
-
-				if (this.children != null) {
-					foreach (DirectoryPrivate subdir in this.children.Values) {
-						int child_uncrawled = 0;
-						int child_dirty = 0;
-						subdir.CountUncrawled_Unlocked (ref child_uncrawled, ref child_dirty);
-						uncrawled += child_uncrawled;
-						dirty += child_dirty;
-					}
-				}
-			}
-
 			public void PutDirectoriesInArray_Unlocked (ArrayList array)
 			{
 				if (NeedsCrawl)
@@ -414,12 +383,10 @@ namespace Beagle.Daemon.FileSystemQueryable {
 		ArrayList roots = new ArrayList ();
 		Hashtable path_cache = new Hashtable ();
 		Hashtable by_unique_id = new Hashtable ();
-		Queue to_be_scanned = new Queue ();
+		ArrayList to_be_crawled = new ArrayList ();
 		FileNameFilter filter;
 
 		IFileEventBackend event_backend;
-		int needs_crawl_count = 0;
-		int block_activity = 0;
 
 		UniqueIdStore unique_id_store;
 		NameIndex name_index;
@@ -521,7 +488,6 @@ namespace Beagle.Daemon.FileSystemQueryable {
 			root.SetFromFileAttributes (attr);
 			unique_id_store.AddRoot (attr.UniqueId, path, true);
 			
-			bool fire_scan_event = false;
 			lock (big_lock) {
 				// FIXME: We also should make sure the path is not a parent or child
 				// of any existing root.
@@ -531,23 +497,14 @@ namespace Beagle.Daemon.FileSystemQueryable {
 
 				Logger.Log.Debug ("Adding root {0}", path);
 				roots.Add (root);
-				to_be_scanned.Enqueue (root);
-				if (to_be_scanned.Count == 1)
-					fire_scan_event = true;
+				to_be_crawled.Add (root);
 
 				path_cache [root.FullName] = root;
 			}
 
-			if (fire_scan_event) {
-				if (NeedsScanEvent != null) {
-					NeedsScanEvent (this);
-				} else {
-					// If nothing else is listening for this event,
-					// just do it ourself.
-					ScanAll ();
-				}
-			}
-
+			ScanSubdirs (root);
+			EnsureWatched (root);
+			NeedsCrawlEvent (this);
 			return root;
 		}
 
@@ -805,116 +762,54 @@ namespace Beagle.Daemon.FileSystemQueryable {
 		}
 
 		///////////////////////////////////////////////////////////////////////////
-
-		public delegate void NeedsScanHandler (FileSystemModel source);
-		public event NeedsScanHandler NeedsScanEvent;
-
-		public bool NeedsScan {
-			get { lock (big_lock) { return to_be_scanned.Count > 0; } }
-		}
-
-		private void ScanOne_Unlocked (Directory dir)
+		
+		public bool ScanSubdirs (Directory dir)
 		{
-			DirectoryPrivate priv = (DirectoryPrivate) dir;
+			bool ret = true;
+			lock (big_lock) {
+				DirectoryPrivate priv = (DirectoryPrivate) dir;
 
-			if (dir.State == State.Unscanned && event_backend != null)
-				priv.SetWatchHandle (event_backend.WatchDirectories (priv.FullName));
+				ArrayList known_children = null;
+				if (dir.State != State.Unscanned)
+					known_children = new ArrayList (dir.Children);
 
-			Hashtable known_children = null;
-			if (dir.State != State.Unscanned) {
-				known_children = new Hashtable ();
-				foreach (Directory kid in dir.Children)
-					known_children [kid.Name] = true;
-			}
+				System.IO.DirectoryInfo info = new System.IO.DirectoryInfo (priv.FullName);
 
-			System.IO.DirectoryInfo info = new System.IO.DirectoryInfo (priv.FullName);
+				// It's the call to GetDirectoryInfos() that may
+				// trigger the exception caught below.
+				try {
+					foreach (System.IO.DirectoryInfo subinfo in DirectoryWalker.GetDirectoryInfos (info)) {
+						if (known_children != null)
+							known_children.Remove (subinfo.Name);
 
-			// It's the call to GetDirectoryInfos() that may
-			// trigger the exception caught below.
-			try {
-				foreach (System.IO.DirectoryInfo subinfo in DirectoryWalker.GetDirectoryInfos (info)) {
-					if (! Ignore (subinfo.FullName)) {
+						if (Ignore (subinfo.FullName))
+							continue;
+
 						Directory child = priv.GetChildByName (subinfo.Name);
 
 						// We don't know about the child, in which case we need to add it
-						// (AddChild_Unlocked adds it to to_be_scanned)
 						if (child == null)
 							AddChild_Unlocked (priv, subinfo.Name);
 
 						// Or, we already know about the child, but we might want to scan it anyway
-						else if (child.NeedsCrawl)
-							to_be_scanned.Enqueue (child);
+						else if (child.NeedsCrawl && !to_be_crawled.Contains (child))
+							to_be_crawled.Add (child);
 					}
-					if (known_children != null)
-						known_children.Remove (subinfo.Name);
-				}
-			} catch (System.IO.DirectoryNotFoundException e) {
-				Logger.Log.Warn ("Skipping over {0}: {1}", priv.FullName, e.Message);
-			}
-
-			if (known_children != null) {
-				foreach (string lost_child_name in known_children.Keys) {
-					Directory lost_child = priv.GetChildByName (lost_child_name);
-					Delete (lost_child);
-				}
-			}
-
-			//if (dir.State == State.Unscanned)
-			//priv.SetWatchHandle (event_backend.WatchFiles (priv.FullName, priv.WatchHandle));
-
-			// If the LastWriteTime is more recent than the LastCrawlTime, we
-			// know that a file was added to or deleted from that directory,
-			// so we mark it as dirty.
-			// Otherwise we can't be sure if anything changed in that directory,
-			// so we mark it as unknown.
-			if (info.LastWriteTime > dir.LastCrawlTime)
-				priv.SetState (State.Dirty);
-			else
-				priv.SetState (State.Unknown);
-
-			++needs_crawl_count;
-		}
-
-		public void ScanAll ()
-		{
-			Stopwatch sw = new Stopwatch ();
-			sw.Start ();
-
-			ArrayList need_watches = new ArrayList ();
-
-			int count = 0;
-			bool fire_crawl_event = false;
-			lock (big_lock) {
-				int old_needs_crawl_count = needs_crawl_count;
-				while (to_be_scanned.Count > 0) {
-					if (Shutdown.ShutdownRequested) {
-						Logger.Log.Debug ("Bailing out of subdir scan -- shutdown requested");
-						return;
-					}
-
-					Directory dir;
-					dir = to_be_scanned.Dequeue () as Directory;
-					ScanOne_Unlocked (dir);
-					need_watches.Add (dir);
-					++count;
+				} catch (System.IO.DirectoryNotFoundException e) {
+					Logger.Log.Warn ("Skipping over {0}: {1}", priv.FullName, e.Message);
+					Delete (dir);
+					ret = false;
 				}
 
-				foreach (DirectoryPrivate priv in need_watches) {
-					if (priv.NeedsFinalWatches) {
-						if (event_backend != null)
-							priv.SetWatchHandle (event_backend.WatchFiles (priv.FullName, priv.WatchHandle));
-						priv.NeedsFinalWatches = false;
+				if (known_children != null) {
+					foreach (string lost_child_name in known_children) {
+						Directory lost_child = priv.GetChildByName (lost_child_name);
+						Delete (lost_child);
 					}
 				}
-
-				if (old_needs_crawl_count == 0 && needs_crawl_count > 0)
-					fire_crawl_event = true;
 			}
-			
-			if (fire_crawl_event && NeedsCrawlEvent != null)
-				NeedsCrawlEvent (this);
 
-			Logger.Log.Debug ("Scanned {0} subdirs in {1}", count, sw);
+			return ret;
 		}
 
 		///////////////////////////////////////////////////////////////////////////
@@ -923,33 +818,21 @@ namespace Beagle.Daemon.FileSystemQueryable {
 		
 		public event NeedsCrawlHandler NeedsCrawlEvent;
 
-		public bool NeedsCrawl {
-			get { return needs_crawl_count > 0; }
-		}
-
-		// FIXME: This is inefficient, since we need to walk the entire data structure
-		// to find the next directory to crawl.
 		public Directory GetNextDirectoryToCrawl ()
 		{
 			Directory next_to_crawl = null;
 			lock (big_lock) {
-				if (needs_crawl_count == 0)
-					return null;
-				foreach (DirectoryPrivate root in roots)
-					next_to_crawl = root.SearchForNextToCrawl_Unlocked (next_to_crawl);
+				foreach (DirectoryPrivate candidate in to_be_crawled)
+					if (next_to_crawl == null || candidate.CompareTo_Unlocked (next_to_crawl) > 0)
+						next_to_crawl = candidate;
 			}
-			
+
 			return next_to_crawl;
 		}
 
-		public void GetUncrawledCounts (out int uncrawled, out int dirty)
+		public int GetUncrawledCounts ()
 		{
-			uncrawled = 0;
-			dirty = 0;
-			lock (big_lock) {
-				foreach (DirectoryPrivate root in roots)
-					root.CountUncrawled_Unlocked (ref uncrawled, ref dirty);
-			}
+			return to_be_crawled.Count;
 		}
 
 		public ICollection GetAllDirectories ()
@@ -969,26 +852,21 @@ namespace Beagle.Daemon.FileSystemQueryable {
 			DirectoryPrivate priv = (DirectoryPrivate) dir;
 
 			lock (big_lock) {
+				to_be_crawled.Remove (priv);
 				if (! priv.NeedsCrawl)
 					return;
-				priv.SetLastCrawlTime (crawl_time);
+
 				// FIXME: What if the directory changes between now and the
 				// crawl time... there is a race here.
-				if (priv.IsWatched) {
-					priv.SetState (State.Clean);
-					--needs_crawl_count;
-				} else {
-					// Re-scan post-crawl
-					ScanOne_Unlocked (priv);
-					if (priv.NeedsFinalWatches) {
-						if (event_backend != null)
-							priv.SetWatchHandle (event_backend.WatchFiles (priv.FullName, priv.WatchHandle));
-						priv.NeedsFinalWatches = false;
-					}
+				priv.SetLastCrawlTime (crawl_time);
 
+				if (priv.IsWatched)
+					// If we've crawled while having watches in place, the
+					// directory is definately clean
+					priv.SetState (State.Clean);
+				else
 					// Unwatched directory can never be clean
 					priv.SetState (State.PossiblyClean);
-				}					
 
 				FileAttributes attr = backing_store.ReadOrCreate (priv.FullName);
 				attr.LastIndexedTime = priv.LastCrawlTime;
@@ -1004,8 +882,7 @@ namespace Beagle.Daemon.FileSystemQueryable {
 		public void ReportActivity (Directory dir)
 		{
 			lock (big_lock) {
-				if (block_activity == 0)
-					((DirectoryPrivate) dir).ReportActivity ();
+				((DirectoryPrivate) dir).ReportActivity ();
 			}
 		}
 
@@ -1024,13 +901,34 @@ namespace Beagle.Daemon.FileSystemQueryable {
 		public void SetAllToUnknown ()
 		{
 			lock (big_lock) {
-				foreach (DirectoryPrivate root in roots) {
+				foreach (DirectoryPrivate root in roots)
 					root.SetAllToUnknown_Unlocked ();
-					to_be_scanned.Enqueue (root);
-				}
 			}
 
-			ScanAll ();
+			NeedsCrawlEvent (this);
+		}
+
+		// Create watches if not already present
+		public void EnsureWatched (Directory dir)
+		{
+			lock (big_lock) {
+				if (dir.IsWatched)
+					return;
+
+				DirectoryPrivate priv = (DirectoryPrivate) dir;
+				priv.SetWatchHandle (event_backend.CreateWatch (priv.FullName));
+			}
+		}
+
+		public void DropOpenWatch (Directory dir)
+		{
+			lock (big_lock) {
+				if (dir.IsWatched)
+					return;
+
+				DirectoryPrivate priv = (DirectoryPrivate) dir;
+				priv.SetWatchHandle (event_backend.DropOpenWatch (priv.FullName, priv.WatchHandle));
+			}
 		}
 
 		///////////////////////////////////////////////////////////////////////////
@@ -1065,24 +963,18 @@ namespace Beagle.Daemon.FileSystemQueryable {
 			FileAttributes attr = backing_store.ReadOrCreate (child.FullName);
 			child.SetFromFileAttributes (attr);
 			unique_id_store.Add (child.UniqueId, parent.UniqueId, child.Name, true);
-
-			to_be_scanned.Enqueue (child);
-					
+			to_be_crawled.Add (child);
+			EnsureWatched (child);
 		}
 
 		public void AddChild (Directory parent, string child_name)
 		{
 			DirectoryPrivate priv = (DirectoryPrivate) parent;
-			bool fire_scan_event = false;
 			lock (big_lock) {
 				AddChild_Unlocked (priv, child_name);
-				if (to_be_scanned.Count == 1)
-					fire_scan_event = true;
 			}
-			if (fire_scan_event && NeedsScanEvent != null)
-				NeedsScanEvent (this);
 		}
-		
+
 		public void Delete (Directory dir)
 		{			
 			DirectoryPrivate priv = (DirectoryPrivate) dir;
@@ -1090,6 +982,7 @@ namespace Beagle.Daemon.FileSystemQueryable {
 			lock (big_lock) {
 				by_unique_id.Remove (priv.UniqueId);
 				unique_id_store.Drop (priv.UniqueId);
+				to_be_crawled.Remove (priv);
 
 				RecursivelyRemoveFromPathCache_Unlocked (priv);
 				priv.Detatch_Unlocked ();

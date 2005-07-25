@@ -37,6 +37,11 @@ namespace Beagle.Daemon.FileSystemQueryable {
 		FileSystemQueryable queryable;
 		IIndexableGenerator current_generator;
 
+		private bool active = true;
+		public bool Active {
+			get { return active; }
+		}
+
 		public CrawlTask (FileSystemQueryable queryable)
 		{
 			this.queryable = queryable;
@@ -71,33 +76,19 @@ namespace Beagle.Daemon.FileSystemQueryable {
 			current_generator = null;
 
 			FileSystemModel.Directory next_dir = model.GetNextDirectoryToCrawl ();
-			if (next_dir == null)
+			if (next_dir == null) {
+				this.active = false;
 				return;
+			}
 
-			int uncrawled, dirty;
-			model.GetUncrawledCounts (out uncrawled, out dirty);
-			this.Description = String.Format ("last={0}, uncrawled={1}, dirty={2})",
-							  next_dir.FullName, uncrawled, dirty);
+			int uncrawled = model.GetUncrawledCounts ();
+			this.Description = String.Format ("last={0}, uncrawled={1}",
+							  next_dir.FullName, uncrawled);
 
 			Logger.Log.Debug ("Crawl Task Scheduling {0} (state={1})", next_dir.FullName, next_dir.State);
 
-			// Check the next directory for new subdirectories.  If we find any,
-			// add them to the model.
-			try {
-				foreach (DirectoryInfo subdir in DirectoryWalker.GetDirectoryInfos (next_dir.FullName)) {
-					Logger.Log.Debug ("Looking at {0} in {1}", subdir.Name, next_dir.FullName);
-					if (! next_dir.HasChildWithName (subdir.Name)
-					    && ! model.Ignore (subdir.FullName)) {
-						Logger.Log.Debug ("Found new subdir {0} under {1}",
-								  subdir.Name, next_dir.FullName);
-						model.AddChild (next_dir, subdir.Name);
-					}
-				}
-			} catch (DirectoryNotFoundException ex) {
-				Logger.Log.Debug ("Caught exception, deleting {0} from model", next_dir.FullName);
-				model.Delete (next_dir);
+			if (! model.ScanSubdirs (next_dir))
 				next_dir = null;
-			}
 
 			// We want this task to get re-scheduled after it is run.
 			Reschedule = true;
@@ -109,6 +100,9 @@ namespace Beagle.Daemon.FileSystemQueryable {
 
 			if (next_dir == null)
 				return;
+
+			// We no longer care about the Open event
+			model.DropOpenWatch (next_dir);
 
 			// Set up a task group to mark the time on the directory
 			// after we finish crawling it.
