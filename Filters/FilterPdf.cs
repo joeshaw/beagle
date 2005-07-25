@@ -108,6 +108,9 @@ namespace Beagle.Filters {
 				return;
 			}
 
+			// Nice the process so we don't monopolize the CPU as much; we might want to even set this to idle
+			pc.PriorityClass = ProcessPriorityClass.BelowNormal;	
+
 			// add pdftotext's output to pool
 			StreamReader pout = pc.StandardOutput;
 
