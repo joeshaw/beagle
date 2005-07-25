@@ -8,6 +8,9 @@
 	beagled/FileSystemQueryable/InotifyBackend.cs: Merge the concept of
 	scanning and crawling into crawling only, to reduce startup expense.
 
+	* Util/Inotify.cs: Consolidate some code, and reduce watches to minimal
+	possible form upon Unsubscribe/ChangeSubscription.
+
 2005-07-21  Daniel Drake  <dsd@gentoo.org>
 
 	* Util/Conf.cs: Add ConfigOptions for adding/removing excludes, so that

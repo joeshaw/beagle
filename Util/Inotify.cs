@@ -216,13 +216,14 @@ namespace Beagle.Util {
 				if (! this.is_subscribed)
 					return;
 
-				Inotify.ChangeSubscription (watchinfo, this, mask);
+				this.mask = mask;
+				CreateOrModifyWatch (this.watchinfo);
 			}
 
 		}
 
 		private class WatchInfo {
-			public int       Wd;
+			public int       Wd = -1;
 			public string    Path;
 			public bool      IsDirectory;
 			public EventType Mask;
@@ -315,19 +316,9 @@ namespace Beagle.Util {
 				throw new IOException (path);
 
 			lock (watched_by_wd) {
-				bool new_watch_needed = true;
-
 				watched = watched_by_path [path] as WatchInfo;
 
-				if (watched != null) {
-					// We already have a WatchInfo object on this path, so we'll reuse it.
-
-					// Does the existing watch already satisfy the event requirements for this subscriber?
-					if ((watched.Mask & mask) == mask)
-						new_watch_needed = false;
-					else
-						mask |= watched.Mask;
-				} else {
+				if (watched == null) {
 					// We need an entirely new WatchInfo object
 					watched = new WatchInfo ();
 					watched.Path = path;
@@ -341,29 +332,14 @@ namespace Beagle.Util {
 					watched_by_path [watched.Path] = watched;
 				}
 
-				if (new_watch_needed) {
-					int wd = -1;
-
-					// We rely on the behaviour that watching the same inode twice won't result
-					// in the wd value changing.
-					// (no need to worry about watched_by_wd being polluted with stale watches)
-					
-					wd = inotify_glue_watch (inotify_fd, path, mask | base_mask);
-					if (wd < 0) {
-						string msg = String.Format ("Attempt to watch {0} failed!", path);
-						throw new IOException (msg);
-					}
-
-					watched.Wd = wd;
-					watched_by_wd [watched.Wd] = watched;
-				}
-
-				watched.Mask = mask;
 				watched.FilterMask = initial_filter;
 				watched.FilterSeen = 0;
 
 				watch = new WatchInternal (callback, mask_orig, watched);
 				watched.Subscribers.Add (watch);
+
+				CreateOrModifyWatch (watched);
+				watched_by_wd [watched.Wd] = watched;
 			}
 
 			return watch;
@@ -397,8 +373,11 @@ namespace Beagle.Util {
 			watched.Subscribers.Remove (watch);
 
 			// Other subscribers might still be around			
-			if (watched.Subscribers.Count > 0)
+			if (watched.Subscribers.Count > 0) {
+				// Minimize it
+				CreateOrModifyWatch (watched);
 				return;
+			}
 
 			int retval = inotify_glue_ignore (inotify_fd, watched.Wd);
 			if (retval < 0) {
@@ -410,28 +389,35 @@ namespace Beagle.Util {
 			return;
 		}
 
-		static private void ChangeSubscription (WatchInfo watched, WatchInternal watch, EventType new_mask)
+		// Ensure our watch exists, meets all the subscribers requirements,
+		// and isn't matching any other events that we don't care about.
+		static private void CreateOrModifyWatch (WatchInfo watched)
 		{
-			watch.Mask = new_mask;
+			EventType new_mask = base_mask;
+			foreach (WatchInternal watch in watched.Subscribers)
+				new_mask |= watch.Mask;
+
+			if (watched.Wd >= 0 && watched.Mask == new_mask)
+				return;
+
+			// We rely on the behaviour that watching the same inode twice won't result
+			// in the wd value changing.
+			// (no need to worry about watched_by_wd being polluted with stale watches)
 			
-			// If we ask to watch for new events, reset the watch as necessary.
-			// We take advantage of the fact that watching the same inode again
-			// will not change the watch descriptor.
-			if ((watched.Mask & new_mask) != new_mask) {
-				watched.Mask |= new_mask;
-
-				int new_wd;
-				new_wd = inotify_glue_watch (inotify_fd,
-							     watched.Path,
-							     watched.Mask | base_mask);
-
-				if (watched.Wd != new_wd) {
-					string msg = String.Format ("Watch handle changed unexpectedly!", watched.Path);	
-					throw new IOException (msg);
-				}
+			int wd = -1;
+			wd = inotify_glue_watch (inotify_fd, watched.Path, new_mask);
+			if (wd < 0) {
+				string msg = String.Format ("Attempt to watch {0} failed!", watched.Path);
+				throw new IOException (msg);
 			}
+			if (watched.Wd >= 0 && watched.Wd != wd) {
+				string msg = String.Format ("Watch handle changed unexpectedly!", watched.Path);	
+				throw new IOException (msg);
+			}
+
+			watched.Wd = wd;
+			watched.Mask = new_mask;
 		}
-		
 
 		/////////////////////////////////////////////////////////////////////////////////////
 
