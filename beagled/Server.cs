@@ -42,6 +42,7 @@ namespace Beagle.Daemon {
 		private static XmlSerializer serializer = new XmlSerializer (typeof (ResponseWrapper), ResponseMessage.Types);
 
 		private object client_lock = new object ();
+		private object blocking_read_lock = new object ();
 
 		private UnixClient client;
 		private RequestMessageExecutor executor = null; // Only set in the keepalive case
@@ -79,8 +80,10 @@ namespace Beagle.Daemon {
 			// close a socket and have it exit out of a blocking
 			// read, so we have to abort the thread it's blocking
 			// in.
-			if (this.in_blocking_read) {
-				this.thread.Abort ();
+			lock (this.blocking_read_lock) {
+				if (this.in_blocking_read) {
+					this.thread.Abort ();
+				}
 			}
 		}
 		
@@ -163,18 +166,24 @@ namespace Beagle.Daemon {
 				bytes_read = 0;
 
 				try {
-					this.in_blocking_read = true;
+					lock (this.blocking_read_lock)
+						this.in_blocking_read = true;
+
 					lock (this.client_lock) {
 						// The connection may have been closed within this loop.
 						if (this.client != null)
 							bytes_read = this.client.GetStream ().Read (network_data, 0, 4096);
 					}
-					this.in_blocking_read = false;
-				} catch (IOException) {
+
+					lock (this.blocking_read_lock)
+						this.in_blocking_read = false;
+				} catch (Exception e) {
 					// Aborting the thread mid-read will
 					// cause an IOException to be thorwn,
 					// which sets the ThreadAbortException
 					// as its InnerException.
+					if (!(e is IOException || e is ThreadAbortException))
+						throw;
 
 					Logger.Log.Debug ("Bailing out of HandleConnection -- shutdown requested");
 					Server.MarkHandlerAsKilled (this);
