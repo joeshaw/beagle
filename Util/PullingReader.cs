@@ -42,7 +42,7 @@ namespace Beagle.Util {
 
 		//////////////////////////
 
-		public delegate string Pull ();
+		public delegate bool Pull (StringBuilder buffer);
 
 		Pull pull;
 		StringBuilder pullBuffer = new StringBuilder ();
@@ -59,18 +59,13 @@ namespace Beagle.Util {
 
 				string str = null;
 				try { 
-					str = pull ();
+					done = ! pull (pullBuffer);
 				} catch (Exception ex) {
 					// If we catch an exception, str will still be null
 					// and thus the code below will set done to true.
 					Logger.Log.Debug ("Caught exception pulling text from {0}", pull);
 					Logger.Log.Debug (ex);
 				}
-
-				if (str != null) {
-					pullBuffer.Append (str);
-				} else
-					done = true;
 			}
 		}
 

@@ -197,11 +197,6 @@ namespace Beagle.Daemon {
 		private ArrayList hotPool;
 		private ArrayList propertyPool;
 		
-		private int max_text_pool_len = 0;
-		private int max_text_pool_size = 0;
-		private int max_hot_pool_len = 0;
-		
-
 		private bool last_was_structural_break = true;
 
 		// This two-arg AppendText() will give flexibility to
@@ -254,19 +249,6 @@ namespace Beagle.Daemon {
 
 			if (str != null) {
 				textPool.Add (str);
-
-				int pool_size = 0;
-				foreach (string x in textPool)
-					pool_size += x.Length;
-
-				if (pool_size > max_text_pool_size)
-					max_text_pool_size = pool_size;
-
-				if (textPool.Count > max_text_pool_len)
-					max_text_pool_len = textPool.Count;
-
-				if (hotPool.Count > max_hot_pool_len)
-					max_hot_pool_len = hotPool.Count;
 
 				if (snippetWriter != null)
 					snippetWriter.Write (str);
@@ -545,38 +527,41 @@ namespace Beagle.Daemon {
 			}
 		}
 
-		private string PullFromArray (ArrayList array)
+		private bool PullFromArray (ArrayList array, StringBuilder sb)
 		{
 			while (array.Count == 0 && Pull ()) { }
+
 			if (array.Count > 0) {
-				string str = (string) array [0];
-				array.RemoveAt (0);
-				return str;
+				foreach (string str in array)
+					sb.Append (str);
+
+				array.Clear ();
+				return true;
 			}
-			return null;
+			return false;
 		}
 
-		private string PullTextCarefully (ArrayList array)
+		private bool PullTextCarefully (ArrayList array, StringBuilder sb)
 		{
-			string text = null;
-			try {	
-				text = PullFromArray (array);
+			bool pulled = false;
+			try {
+				pulled = PullFromArray (array, sb);
 			} catch (Exception ex) {
 				Logger.Log.Debug ("Caught exception while pulling text in filter '{0}'", Name);
 				Logger.Log.Debug (ex);
 			}
-			return text;
 
+			return pulled;
 		}
 
-		private string PullText ()
+		private bool PullText (StringBuilder sb)
 		{
-			return PullTextCarefully (textPool);
+			return PullTextCarefully (textPool, sb);
 		}
 
-		private string PullHotText ()
+		private bool PullHotText (StringBuilder sb)
 		{
-			return PullTextCarefully (hotPool);
+			return PullTextCarefully (hotPool, sb);
 		}
 
 		public TextReader GetTextReader ()
