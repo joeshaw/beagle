@@ -147,29 +147,33 @@ namespace Beagle.Util {
 
 			buddyList = new Hashtable ();
 
-			XmlDocument accounts = new XmlDocument ();
-			accounts.Load (buddyListPath);
-
-			XmlNodeList contacts = accounts.SelectNodes ("//contact");
-
-			foreach (XmlNode contact in contacts) {
-				string groupalias = "";
+			try {
+				XmlDocument accounts = new XmlDocument ();
+				accounts.Load (buddyListPath);
 				
-				foreach (XmlAttribute attr in contact.Attributes) {
-					if (attr.Name == "alias") {
-						groupalias = attr.Value;
+				XmlNodeList contacts = accounts.SelectNodes ("//contact");
+				
+				foreach (XmlNode contact in contacts) {
+					string groupalias = "";
+					
+					foreach (XmlAttribute attr in contact.Attributes) {
+						if (attr.Name == "alias") {
+							groupalias = attr.Value;
+						}
+					}
+					
+					if (groupalias != "") {
+						foreach (XmlNode buddy in contact.ChildNodes) {
+							AddBuddy (buddy, groupalias);
+						}
 					}
 				}
-
-				if (groupalias != "") {
-					foreach (XmlNode buddy in contact.ChildNodes) {
-						AddBuddy (buddy, groupalias);
-					}
+				
+				foreach (XmlNode buddy in accounts.SelectNodes ("//contact[not(@name)]/buddy")) {
+					AddBuddy (buddy);
 				}
-			}
-			
-			foreach (XmlNode buddy in accounts.SelectNodes ("//contact[not(@name)]/buddy")) {
-				AddBuddy (buddy);
+			} catch (Exception ex) {
+				Logger.Log.Error ("Caught exception while trying to parse Gaim contact list: {0}", ex.Message);
 			}
 		}
 
@@ -368,12 +372,16 @@ namespace Beagle.Util {
 
 			buddyList = new Hashtable ();
 
-			XmlDocument accounts = new XmlDocument ();
-			accounts.Load (buddyListPath);
-
-			// Find all xml contact nodes in the contact list
-			foreach (XmlNode contact in accounts.SelectNodes ("//meta-contact"))
-				AddContact (contact);
+			try {
+				XmlDocument accounts = new XmlDocument ();
+				accounts.Load (buddyListPath);
+				
+				// Find all xml contact nodes in the contact list
+				foreach (XmlNode contact in accounts.SelectNodes ("//meta-contact"))
+					AddContact (contact);
+			} catch (Exception ex) {
+				Logger.Log.Error ("Caught exception while trying to parse Kopete contact list: {0}", ex.Message);
+			}
 		}
 
 		private void AddContact (XmlNode contact) 
