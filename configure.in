@@ -620,12 +620,4 @@ if test "x$enable_epiphany_extension" = "xyes"; then
    echo "NOTE: The Beagle Epiphany Extension Is Totally Insecure!"
    echo "      Use it at your own risk!"
    echo
-
-   if test "x${prefix}" != "x$EPIPHANY_PREFIX"; then
-      echo "NOTE: Epiphany seems to be installed in $EPIPHANY_PREFIX, not ${prefix}."
-      echo "      Epiphany will not be able to find Beagle's Epiphany Extension"
-      echo "      unless you do something like:"
-      echo "      # ln -s ${prefix}/lib/epiphany/extensions/libbeagleextension.so \\"
-      echo "        $EPIPHANY_PREFIX/lib/epiphany/extensions"
-   fi
 fi

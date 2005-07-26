@@ -32,6 +32,7 @@
 
 #define _XOPEN_SOURCE /* glibc2 needs this */
 #include <time.h>
+#include <string.h>
 
 void
 beagle_hit_free (BeagleHit *hit)

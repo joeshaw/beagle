@@ -33,6 +33,7 @@
 #include <config.h>
 #endif
 #include <gtk/gtk.h>
+#include <string.h>
 
 static void 
 text_received_cb (GtkClipboard *clipboard, const char *text, gpointer data)

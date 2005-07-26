@@ -22,12 +22,15 @@ SUBDIRS +=			\
 	Best			\
 	ImLogViewer		\
 	mozilla-extension	\
-	searchomatic		\
-	chooser-fu
+	searchomatic
 
 if ENABLE_EPIPHANY_EXTENSION
 SUBDIRS += epiphany-extension
 endif
+
+# When the chooser work has been fixed up to use libbeagle, we can
+# reenable this directory.
+# SUBDIRS += chooser-fu
 
 EXTRA_DIST = 			\
 	intltool-extract.in	\

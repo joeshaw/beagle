@@ -30,6 +30,7 @@
  */
 
 #include <wv.h>
+#include <string.h>
 
 /* Number of structural-break'ed text-chunks to hold
  * in the text/hot pools, before sending them for

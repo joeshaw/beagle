@@ -33,6 +33,7 @@
 #include <fcntl.h>
 #include <unistd.h>
 #include <stdlib.h>
+#include <stdio.h>
 
 /*
   FIXME: It is not safe to call this function from multiple threads.

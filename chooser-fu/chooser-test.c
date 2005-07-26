@@ -44,5 +44,7 @@ main (int argc, char *argv[])
     gtk_widget_show (chooser);
 
     gtk_main ();
+
+    return 0;
 }
 
