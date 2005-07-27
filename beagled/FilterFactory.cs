@@ -207,7 +207,7 @@ namespace Beagle.Daemon {
 				return false;
 			}
 
-			string path = indexable.ContentUri.LocalPath;
+			string path = null;
 
 			// First, figure out which filter we should use to deal with
 			// the indexable.
@@ -217,6 +217,8 @@ namespace Beagle.Daemon {
 				filters = CreateFiltersFromMimeType (indexable.MimeType);
 
 			if (indexable.IsNonTransient) {
+				path = indexable.ContentUri.LocalPath;
+
 				// Otherwise sniff the mime-type from the file
 				if (indexable.MimeType == null)
 					indexable.MimeType = Beagle.Util.VFS.Mime.GetMimeType (path);
@@ -276,7 +278,10 @@ namespace Beagle.Daemon {
 				
 				// Open the filter, copy the file's properties to the indexable,
 				// and hook up the TextReaders.
-				if (candidate_filter.Open (path)) {
+				if ((indexable.IsNonTransient) ? candidate_filter.Open (path) 
+				    : (indexable.GetTextReader () != null) ? candidate_filter.Open (indexable.GetTextReader ()) 
+				    : candidate_filter.Open (indexable.GetBinaryStream ())) 
+				{
 					foreach (Property prop in candidate_filter.Properties)
 						indexable.AddProperty (prop);
 					indexable.SetTextReader (candidate_filter.GetTextReader ());

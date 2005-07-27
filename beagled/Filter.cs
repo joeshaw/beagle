@@ -367,21 +367,65 @@ namespace Beagle.Daemon {
 		private FileStream currentStream = null;
 		private StreamReader currentReader = null;
 
+		public bool Open (TextReader reader)
+		{
+			tempFile = Path.GetTempFileName ();
+                        FileStream file_stream = File.OpenWrite (tempFile);
+
+                        // When we dump the contents of a reader into a file, we
+                        // expect to use it again soon.
+                        FileAdvise.PreLoad (file_stream);
+
+                        // Make sure the temporary file is only readable by the owner.
+                        // FIXME: There is probably a race here.  Could some malicious program
+                        // do something to the file between creation and the chmod?
+                        Mono.Posix.Syscall.chmod (tempFile, (Mono.Posix.FileMode) 256);
+
+                        BufferedStream buffered_stream = new BufferedStream (file_stream);
+                        StreamWriter writer = new StreamWriter (buffered_stream);
+
+                        const int BUFFER_SIZE = 8192;
+                        char [] buffer = new char [BUFFER_SIZE];
+
+                        int read;
+                        do {
+                                read = reader.Read (buffer, 0, BUFFER_SIZE);
+                                if (read > 0)
+                                        writer.Write (buffer, 0, read);
+                        } while (read > 0);
+
+                        writer.Close ();
+
+			return Open (new FileInfo (tempFile));
+		}
+		
 		public bool Open (Stream stream)
 		{
-			// If we are handed a stream, dump it into
-			// a temporary file.
-			tempFile = Path.GetTempFileName();
-			Stream tempStream = File.OpenWrite (tempFile);
+			tempFile = Path.GetTempFileName ();
+                        FileStream file_stream = File.OpenWrite (tempFile);
 
-			const int BUFFER_SIZE = 8192;
-			byte[] buffer = new byte [BUFFER_SIZE];
-			int n;
-			while ((n = stream.Read (buffer, 0, BUFFER_SIZE)) > 0) {
-				tempStream.Write (buffer, 0, n);
-			}
+                        // When we dump the contents of a reader into a file, we
+                        // expect to use it again soon.
+                        FileAdvise.PreLoad (file_stream);
 
-			tempStream.Close ();
+                        // Make sure the temporary file is only readable by the owner.
+                        // FIXME: There is probably a race here.  Could some malicious program
+                        // do something to the file between creation and the chmod?
+                        Mono.Posix.Syscall.chmod (tempFile, (Mono.Posix.FileMode) 256);
+
+                        BufferedStream buffered_stream = new BufferedStream (file_stream);
+
+                        const int BUFFER_SIZE = 8192;
+                        byte [] buffer = new byte [BUFFER_SIZE];
+
+                        int read;
+                        do {
+                                read = stream.Read (buffer, 0, BUFFER_SIZE);
+                                if (read > 0)
+                                        buffered_stream.Write (buffer, 0, read);
+                        } while (read > 0);
+
+                        buffered_stream.Close ();
 
 			return Open (new FileInfo (tempFile));
 		}

@@ -141,7 +141,6 @@ namespace Beagle.Daemon
 			}
 			
 			driver = new LuceneDriver (arg_output);
-			driver.ChildIndexableEvent += new IIndexerChildIndexableHandler (OnChildIndexableEvent);
 			driver.TextCache = (arg_cache_text) ? new TextCache (arg_output) : null;
 			
 			backing_fa_store = new FileAttributesStore_Sqlite (driver.IndexDirectory, driver.Fingerprint);
@@ -250,13 +249,6 @@ namespace Beagle.Daemon
 			backing_fa_store.Flush ();
 
 			Logger.Log.Debug ("IndexWorker Done");
-		}
-
-		static void OnChildIndexableEvent (Indexable[] indexables) {
-			foreach (Indexable indexable in indexables) {
-				indexable.StoreStream ();
-				driver.Add (indexable);
-			}
 		}
 		
 		/////////////////////////////////////////////////////////////////
