@@ -54,6 +54,15 @@ function beagleInit()
     }
   }
 
+  // Get the global enable/disable pref
+  try { bPref = gPref.getBoolPref('beagle.enabled'); }
+  catch(e) { bPref = true }
+
+  if (bPref)
+    gBeagleRunStatus = 0;
+  else
+    gBeagleRunStatus = -1;
+
   // Add listener for page loads
   if (gBeagleIndexerPath) {
     if (document.getElementById("appcontent"))
@@ -63,8 +72,9 @@ function beagleInit()
     dump ("beagleInit : Listening to document['appcontent'].load\n");
   } else {
     gBeagleRunStatus = "beagle-index-url not found in $PATH";
-    beagleUpdateStatus ();
   }
+
+  beagleUpdateStatus ();
 }
 
 //
@@ -263,11 +273,13 @@ function beagleProcessClick(event)
       case 0:
 	// currently enabled. disable by user.
 	gBeagleRunStatus = -1;
+        gPref.setBoolPref('beagle.enabled', false);
 	break;
       case -1:
       case -2:
 	// currently disabled (by user or by secure content). enable.
 	gBeagleRunStatus = 0;
+        gPref.setBoolPref('beagle.enabled', true);
 	break;
       default:
 	// last run was an error, show the error
