@@ -53,6 +53,7 @@ namespace Beagle.Daemon {
 
 		private string index_name;
 		private int minor_version;
+		private bool read_only_mode;
 
 		private LuceneDriver driver;
 		private IIndexer indexer;
@@ -95,16 +96,17 @@ namespace Beagle.Daemon {
 
 		public LuceneQueryable (string index_name) : this (index_name, -1, false) { }
 
-		public LuceneQueryable (string index_name, bool disable_locking) : this (index_name, -1, disable_locking) { }
+		public LuceneQueryable (string index_name, bool read_only_mode) : this (index_name, -1, read_only_mode) { }
 
 		public LuceneQueryable (string index_name, int minor_version) : this (index_name, minor_version, false) { }
 
-		public LuceneQueryable (string index_name, int minor_version, bool disable_locking)
+		public LuceneQueryable (string index_name, int minor_version, bool read_only_mode)
 		{
 			this.index_name = index_name;
 			this.minor_version = minor_version;
+			this.read_only_mode = read_only_mode;
 
-			driver = new LuceneDriver (this.index_name, this.minor_version, disable_locking);
+			driver = new LuceneDriver (this.index_name, this.minor_version, this.read_only_mode);
 
 			indexer = LocalIndexerHook ();
 			if (indexer == null && indexer_hook != null)
@@ -374,7 +376,7 @@ namespace Beagle.Daemon {
 		{
 			bool is_valid = HitIsValid (uri);
 
-			if (! is_valid) {
+			if (! is_valid && ! read_only_mode) {
 
 				// FIXME: There is probably a race here --- what if the hit
 				// becomes valid sometime between calling HitIsValid
