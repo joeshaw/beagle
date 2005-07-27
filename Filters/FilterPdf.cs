@@ -87,6 +87,7 @@ namespace Beagle.Filters {
 				}
 			}
 			pout.Close ();
+			pc.WaitForExit ();
 			pc.Close ();
 		}
 		
@@ -123,8 +124,10 @@ namespace Beagle.Filters {
 				AppendStructuralBreak ();
 			}
 			pout.Close ();
+			pc.WaitForExit ();
 			pc.Close ();
 			Finished ();
 		}
 	}
 }
+

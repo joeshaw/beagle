@@ -1,3 +1,8 @@
+2005-07-27  Daniel Drake  <dsd@gentoo.org>
+
+	* Filters/FilterPdf.cs: Workaround the zombie processes bug for pdftotext
+	invocations
+
 2005-07-25  Daniel Drake  <dsd@gentoo.org>
 
 	* beagled/FileSystemQueryable/CrawlTask.cs,
