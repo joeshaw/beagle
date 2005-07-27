@@ -11,8 +11,12 @@
 # define __NR_inotify_init	253
 # define __NR_inotify_add_watch	254
 # define __NR_inotify_rm_watch	255
+#elif defined(__ppc__)
+# define __NR_inotify_init	275
+# define __NR_inotify_add_watch	276
+# define __NR_inotify_rm_watch	277
 #else
-# error "Unsupported architecture"
+# error "Unsupported architecture!"
 #endif
 
 static inline int inotify_init (void)
