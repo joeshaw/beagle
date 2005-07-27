@@ -105,6 +105,9 @@ namespace Beagle.Filters {
 				Logger.Log.Debug ("Exception occurred while indexing {0}.", FileInfo.FullName);
 				Logger.Log.Debug (e);
 			}
+			pout.Close ();
+			pc.WaitForExit ();
+			pc.Close ();
 			Finished ();
 		}
 		
@@ -114,3 +117,4 @@ namespace Beagle.Filters {
 		}
 	}
 }
+

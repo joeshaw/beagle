@@ -2,6 +2,8 @@
 
 	* Filters/FilterPdf.cs: Workaround the zombie processes bug for pdftotext
 	invocations
+	* Filters/FilterSpreadsheet.cs: Workaround the zombie processes bug for
+	ssindex invocations
 
 2005-07-25  Daniel Drake  <dsd@gentoo.org>
 
