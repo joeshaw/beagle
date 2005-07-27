@@ -40,14 +40,14 @@ namespace Beagle.Filters {
 			OriginalIsText = true;
 		}
 
-		const long LENGTH_CUTOFF = 1024 * 1024; // 1 Mb
+		const long LENGTH_CUTOFF = 5 * 1024 * 1024; // 5 Mb
 
 		override protected void DoOpen (FileInfo file)
 		{
 			// Extremely large files of type text/plain are usually log files,
 			// data files, or other bits of not-particularly-human-readable junk
 			// that will tend to clog up our indexes.
-			if (file.Length > LENGTH_CUTOFF) {
+			if (false && file.Length > LENGTH_CUTOFF) {
 				Beagle.Util.Logger.Log.Debug ("{0} is too large to filter!", file.FullName);
 				Error ();
 			}
