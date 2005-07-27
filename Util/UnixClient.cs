@@ -159,12 +159,6 @@ namespace Beagle.Util {
 			}
 		}
 
-		public void Flush ()
-		{
-			if (stream != null)
-				stream.Flush ();
-		}
-        
 		public void Close ()
 		{
 			CheckDisposed ();

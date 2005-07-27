@@ -64,7 +64,7 @@ namespace Beagle.Daemon {
 					serializer.Serialize (this.client.GetStream (), new ResponseWrapper (response));
 					// Send an end of message marker
 					this.client.GetStream ().WriteByte (0xff);
-					this.client.Flush ();
+					this.client.GetStream ().Flush ();
 				} catch (Exception e) {
 					Logger.Log.Debug ("Caught an exception sending response; socket shut down: {0}", e.Message);
 					return false;
