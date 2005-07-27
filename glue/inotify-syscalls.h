@@ -7,6 +7,10 @@
 # define __NR_inotify_init	291
 # define __NR_inotify_add_watch	292
 # define __NR_inotify_rm_watch	293
+#elif defined(__x86_64__)
+# define __NR_inotify_init	253
+# define __NR_inotify_add_watch	254
+# define __NR_inotify_rm_watch	255
 #else
 # error "Unsupported architecture"
 #endif
