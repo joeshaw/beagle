@@ -113,7 +113,8 @@ namespace Beagle.Filters {
 		
 		override protected void DoClose ()
 		{
-			xmlReader.Close ();
+			if (xmlReader != null)
+				xmlReader.Close ();
 		}
 	}
 }
