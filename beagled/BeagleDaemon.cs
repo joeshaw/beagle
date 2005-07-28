@@ -120,7 +120,7 @@ namespace Beagle.Daemon {
 				"  --web-start\t\tStart internal web server for this instance.\n" +
 				"  --web-port\t\tPort to use for the internal web server.\n" +
 				"  --web-root\t\tRoot directory to use for the internal web server.\n" +
-				"  --web-disablet\t\tDisable Web & WebServices functionality.\n" +				
+				"  --web-disable\t\tDisable Web & WebServices functionality.\n" +				
 				"  --enable-network\tStart internal web server & allow global access.\n";
 #endif 
 
