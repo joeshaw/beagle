@@ -117,11 +117,9 @@ namespace Beagle.Daemon {
 #if ENABLE_WEBSERVICES
 			usage += "\n" +
 				"  --web-global\t\tAllow global access to the Web & WebService interfaces.\n" +
-				"  --web-start\t\tStart internal web server for this instance.\n" +
 				"  --web-port\t\tPort to use for the internal web server.\n" +
 				"  --web-root\t\tRoot directory to use for the internal web server.\n" +
-				"  --web-disable\t\tDisable Web & WebServices functionality.\n" +				
-				"  --enable-network\tStart internal web server & allow global access.\n";
+				"  --web-disable\t\tDisable Web & WebServices functionality.\n";			
 #endif 
 
 			Console.WriteLine (usage);
@@ -263,10 +261,7 @@ namespace Beagle.Daemon {
 #if ENABLE_WEBSERVICES
 				case "--web-global":
 					WebServiceBackEnd.web_global = true;
-					break;
-
-				case "--web-start":
-					WebServiceBackEnd.web_start = true;
+					WebServiceBackEnd.web_start = true;					
 					break;
 
 				case "--web-port":
@@ -280,11 +275,6 @@ namespace Beagle.Daemon {
 					++i; 
 					WebServiceBackEnd.web_start = true;
 					break;
-										
-				case "--enable-network":
-					WebServiceBackEnd.web_start = true;
-					WebServiceBackEnd.web_global = true;
-					break;	
 					
 				case "--web-disable":
 					WebServiceBackEnd.web_start = false;
