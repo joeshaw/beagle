@@ -600,14 +600,15 @@ namespace Beagle.Daemon.FileSystemQueryable {
 
 			if (priv.FullNameIsCached)
 				path_cache.Remove (priv.FullName);
-			
+
+			to_be_crawled.Remove (priv);
 			by_unique_id.Remove (priv.UniqueId);
 			unique_id_store.Drop (priv.UniqueId);
 
-			foreach (Directory subdir in priv.Children)
+			foreach (Directory subdir in new ArrayList (priv.Children))
 				RecursivelyRemove_Unlocked ((DirectoryPrivate) subdir);
 
-			//priv.Detatch_Unlocked ();
+			priv.Detatch_Unlocked ();
 		}
 
 		private void RecursivelyRemoveFromPathCache_Unlocked (DirectoryPrivate priv)
@@ -797,14 +798,14 @@ namespace Beagle.Daemon.FileSystemQueryable {
 					}
 				} catch (System.IO.DirectoryNotFoundException e) {
 					Logger.Log.Warn ("Skipping over {0}: {1}", priv.FullName, e.Message);
-					Delete (dir);
+					RecursivelyRemove_Unlocked (priv);
 					ret = false;
 				}
 
 				if (known_children != null) {
 					foreach (string lost_child_name in known_children) {
 						Directory lost_child = priv.GetChildByName (lost_child_name);
-						Delete (lost_child);
+						RecursivelyRemove_Unlocked ((DirectoryPrivate) lost_child);
 					}
 				}
 			}
@@ -975,18 +976,19 @@ namespace Beagle.Daemon.FileSystemQueryable {
 			}
 		}
 
+		public void Delete (string path)
+		{
+			Directory dir = GetDirectoryByPath (path);
+			if (dir != null)
+				Delete (dir);
+		}
+
 		public void Delete (Directory dir)
 		{			
 			DirectoryPrivate priv = (DirectoryPrivate) dir;
 			
 			lock (big_lock) {
-				by_unique_id.Remove (priv.UniqueId);
-				unique_id_store.Drop (priv.UniqueId);
-				to_be_crawled.Remove (priv);
-
-				RecursivelyRemoveFromPathCache_Unlocked (priv);
-				priv.Detatch_Unlocked ();
-
+				RecursivelyRemove_Unlocked (priv);
 			}
 		}
 
@@ -1132,6 +1134,11 @@ namespace Beagle.Daemon.FileSystemQueryable {
 
 		public bool Write (FileAttributes attr)
 		{
+			// Excludes might have been modified after the indexing process
+			// was started.
+			if (Ignore (attr.Path))
+				return false;
+
 			bool write_rv = backing_store.Write (attr);
 
 			// Since directories are always explicitly cached,

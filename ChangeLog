@@ -1,3 +1,12 @@
+2005-07-28  Daniel Drake  <dsd@gentoo.org>
+
+	* beagled/FileSystemQueryable/FileNameFilter.cs,
+	beagled/FileSystemQueryable/FileSystemModel.cs,
+	beagled/FileSystemQueryable/FileSystemQueryable.cs: When an exclude path is
+	added, we should forget about that in the internal directory structure, drop
+	watches on it, and remove it from the crawling queue. Consolidate code
+	between Delete and RecursivelyRemove_Unlocked.
+
 2005-07-27  Daniel Drake  <dsd@gentoo.org>
 
 	* Filters/FilterPdf.cs: Workaround the zombie processes bug for pdftotext

@@ -269,6 +269,7 @@ namespace Beagle.Daemon.FileSystemQueryable {
 		{
 			if (!model.InternalUriIsValid (uri_filtered.Uri)) {
 				Logger.Log.Error ("AbusiveUriFilteredHook: Internal uri is not valid: {0}", uri_filtered.Uri);
+				Console.WriteLine (new System.Diagnostics.StackTrace ());
 				return;
 			}
 

@@ -128,6 +128,9 @@ namespace Beagle.Daemon.FileSystemQueryable {
 
 			Logger.Log.Debug ("FileNameFilter: Adding ExcludeItem (value={0}, type={1})", exclude.Value, exclude.Type);
 
+			if (exclude.Type == ExcludeType.Path)
+				model.Delete (exclude.Value);
+
 			if (!excludes.Contains (exclude))
 				excludes.Add (exclude);
 		}
