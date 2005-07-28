@@ -46,10 +46,10 @@ namespace Beagle.Util {
 		public static DaemonConfig Daemon = null;
 		public static SearchingConfig Searching = null;
 
-#if ENABLE_WEBSERVICES		
+//#if ENABLE_WEBSERVICES		
 		public static NetworkingConfig Networking = null;
 		public static WebServicesConfig WebServices = null;
-#endif 		
+//#endif 		
 		private static string configs_dir;
 		private static Hashtable mtimes;
 		private static Hashtable subscriptions;
@@ -148,7 +148,7 @@ namespace Beagle.Util {
 		        Searching = (SearchingConfig) temp;
 			NotifySubscribers (Searching);
 
-#if ENABLE_WEBSERVICES
+//#if ENABLE_WEBSERVICES
 			LoadFile (typeof (NetworkingConfig), Networking, out temp, force);
 		    	Networking = (NetworkingConfig) temp;
 			NotifySubscribers (Networking);
@@ -156,7 +156,7 @@ namespace Beagle.Util {
 			LoadFile (typeof (WebServicesConfig), WebServices, out temp, force);
 		    	WebServices = (WebServicesConfig) temp;
 			NotifySubscribers (WebServices);
-#endif
+//#endif
 
 			watching_for_updates = true;
 		}
@@ -492,7 +492,7 @@ namespace Beagle.Util {
 
 		}
 
-#if ENABLE_WEBSERVICES
+//#if ENABLE_WEBSERVICES
 		[ConfigSection (Name="webservices")]
 		public class WebServicesConfig: Section 
 		{
@@ -611,7 +611,7 @@ namespace Beagle.Util {
 				return true;
 			}
 		}
-#endif
+//#endif
 
 		public class Section {
 			[XmlIgnore]

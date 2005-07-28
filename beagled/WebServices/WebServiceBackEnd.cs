@@ -51,7 +51,7 @@ namespace Beagle.WebService {
 		public static string web_rootDir = DEFAULT_XSP_ROOT;
 		public static string web_port = DEFAULT_XSP_PORT;		
 		public static bool web_start = true;
-		public static bool web_global;
+		public static bool web_global = false;
 
 		static Mono.ASPNET.ApplicationServer appServer = null;
 		//Both "/" and "/beagle" aliased to DEFAULT_XSP_ROOT only for BeagleXSP server
@@ -87,7 +87,8 @@ namespace Beagle.WebService {
 				hostname = "localhost";
 			}
 			
-			web_global = Conf.WebServices.AllowGlobalAccess;
+			if (! web_global)
+				web_global = Conf.WebServices.AllowGlobalAccess;
 			
 			//start web-access server first
 			Logger.Log.Debug ("Starting WebBackEnd");
