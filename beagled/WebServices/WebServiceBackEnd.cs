@@ -69,6 +69,11 @@ namespace Beagle.WebService {
 		
 		public static void Start()
 		{			
+			if (! web_start) {
+				Logger.Log.Warn("Beagle running with WebServices DISABLED\n");
+				return;
+			}
+				
 			try {
 				IPHostEntry hostInfo = Dns.GetHostByName(Dns.GetHostName());
 				//Fully qualified DNS name of host:
@@ -133,29 +138,26 @@ namespace Beagle.WebService {
 			{
 				xsp_param[5] = DEFAULT_APP_MAPPINGS;
 			}					
-					     						
-			if (web_start) {
 				
-				Logger.Log.Debug ("Starting Internal Web Server");
+			Logger.Log.Debug ("Starting Internal Web Server");
 
-				int retVal = 0;
-				try {
-					//Start beagled internal web server (BeagleXsp)
-					retVal = Mono.ASPNET.Server.initXSP(xsp_param, out appServer);
-				}
-				catch (ArgumentException e) {
-					//Retry with default application mappings:
-					xsp_param[5] = DEFAULT_APP_MAPPINGS;
-					retVal = Mono.ASPNET.Server.initXSP(xsp_param, out appServer);		
-				}
-
-				if (retVal != 0) {
-					Logger.Log.Warn ("Error starting Internal Web Server (retVal={0})", retVal);
-					Logger.Log.Warn ("Check if there is another instance of Beagle running");
-				}
-				else
-					Logger.Log.Debug("BeagleXSP Applications list: " + xsp_param[5]);
+			int retVal = 0;
+			try {
+				//Start beagled internal web server (BeagleXsp)
+				retVal = Mono.ASPNET.Server.initXSP(xsp_param, out appServer);
 			}
+			catch (ArgumentException e) {
+				//Retry with default application mappings:
+				xsp_param[5] = DEFAULT_APP_MAPPINGS;
+				retVal = Mono.ASPNET.Server.initXSP(xsp_param, out appServer);		
+			}
+
+			if (retVal != 0) {
+				Logger.Log.Warn ("Error starting Internal Web Server (retVal={0})", retVal);
+				Logger.Log.Warn ("Check if there is another instance of Beagle running");
+			}
+			else
+				Logger.Log.Debug("BeagleXSP Applications list: " + xsp_param[5]);
 		}
 		
 		public static void Stop() 
