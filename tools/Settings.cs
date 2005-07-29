@@ -58,7 +58,7 @@ public class SettingsDialog
 	[Widget] CheckButton index_home_toggle;
 	[Widget] Button remove_include_button;
 	[Widget] Button remove_exclude_button;
-
+		
 	[Widget] Button display_up_button;
 	[Widget] Button display_down_button;
 
@@ -68,7 +68,7 @@ public class SettingsDialog
 
 	[Widget] ScrolledWindow include_sw;
 	[Widget] ScrolledWindow exclude_sw;
-
+						
 #if false
 	DisplayView display_view;
 #endif
@@ -76,7 +76,22 @@ public class SettingsDialog
 	IncludeView include_view;
 	ExcludeView exclude_view;
 
-	static string autostart_file = Path.Combine (PathFinder.HomeDir, ".runbeagle");
+	////////////////////////////////////////////////////////////////
+	// WebServices
+
+	[Widget] VBox networking_box;
+	[Widget] CheckButton allow_global_access_toggle;
+	[Widget] Button remove_publicfolder_button;
+	[Widget] Button remove_netbeagle_button;
+
+	[Widget] ScrolledWindow publicfolder_sw;
+	[Widget] ScrolledWindow netbeagle_sw;
+		
+	[Widget] Dialog netbeagle_entry_dialog;
+	[Widget] Entry netbeagle_textentry;
+			
+	PublicfolderView	publicfolder_view;
+	NetbeagleView		netbeagle_view; 
 
 	////////////////////////////////////////////////////////////////
 	// Initialize       
@@ -107,10 +122,28 @@ public class SettingsDialog
 		exclude_view.Show ();
 		exclude_sw.Child = exclude_view;
 
+#if ENABLE_WEBSERVICES	
+		networking_box.Visible = true;
+
+		publicfolder_view = new PublicfolderView ();
+		publicfolder_view.Selection.Changed += new EventHandler (OnPublicfolderSelected);
+		publicfolder_view.Show ();
+		publicfolder_sw.Child = publicfolder_view;
+			
+		netbeagle_view = new NetbeagleView ();
+		netbeagle_view.Selection.Changed += new EventHandler (OnNetbeagleSelected);
+		netbeagle_view.Show ();
+		netbeagle_sw.Child = netbeagle_view;
+#endif
 		LoadConfiguration ();
 
 		Conf.Subscribe (typeof (Conf.IndexingConfig), new Conf.ConfigUpdateHandler (OnConfigurationChanged));
 		Conf.Subscribe (typeof (Conf.SearchingConfig), new Conf.ConfigUpdateHandler (OnConfigurationChanged));
+
+#if ENABLE_WEBSERVICES	
+		Conf.Subscribe (typeof (Conf.NetworkingConfig), new Conf.ConfigUpdateHandler (OnConfigurationChanged));
+		Conf.Subscribe (typeof (Conf.WebServicesConfig), new Conf.ConfigUpdateHandler (OnConfigurationChanged));
+#endif 		
 	}
 
 	public void Run ()
@@ -122,11 +155,9 @@ public class SettingsDialog
 	// Configuration
 
 	private void LoadConfiguration ()
-	{
-		// FIXME: SUSE 9.3 way, how should we really do this?
-		if (File.Exists (autostart_file))
-			start_on_login_toggle.Active = true;
-		
+	{	
+		// FIXME: Autostart
+	
 		KeyBinding show_binding = Conf.Searching.ShowSearchWindowBinding;
 		press_ctrl_toggle.Active = show_binding.Ctrl;
 		press_alt_toggle.Active = show_binding.Alt;
@@ -140,18 +171,22 @@ public class SettingsDialog
 
 		foreach (ExcludeItem exclude_item in Conf.Indexing.Excludes)
 			exclude_view.AddItem (exclude_item);
+
+#if ENABLE_WEBSERVICES				
+		foreach (string netbeagle in Conf.Networking.NetBeagleNodes)
+				netbeagle_view.AddNode (netbeagle);
+
+		if (Conf.WebServices.AllowGlobalAccess)
+				allow_global_access_toggle.Active = true;
+								
+		foreach (string publicfolder in Conf.WebServices.PublicFolders)
+			publicfolder_view.AddPath (publicfolder);
+#endif 											
 	}
 
 	private void SaveConfiguration ()
 	{
-		// FIXME: Suse 9.3 way, how should we really do it?
-		if (start_on_login_toggle.Active) {
-			if (!File.Exists (autostart_file))
-				File.Create (autostart_file);
-		} else  {
-			if (File.Exists (autostart_file))
-				File.Delete (autostart_file);
-		}
+		// FIXME: Autostart
 		
 		Conf.Searching.ShowSearchWindowBinding = new KeyBinding (show_search_window_entry.Text, 
 									 press_ctrl_toggle.Active, 
@@ -162,12 +197,17 @@ public class SettingsDialog
 		Conf.Indexing.Roots = include_view.Includes;
 		Conf.Indexing.Excludes = exclude_view.Excludes;
 
+#if ENABLE_WEBSERVICES	
+		Conf.Networking.NetBeagleNodes = netbeagle_view.Netbeagles;
+		Conf.WebServices.AllowGlobalAccess = allow_global_access_toggle.Active;
+		Conf.WebServices.PublicFolders = publicfolder_view.Publicfolders;
+#endif 			
 		Conf.Save (true);
 	}
 
 	private void OnConfigurationChanged (Conf.Section section)
 	{
-	        HigMessageDialog dialog = new HigMessageDialog (settings_dialog,
+	    HigMessageDialog dialog = new HigMessageDialog (settings_dialog,
 								DialogFlags.Modal,
 								MessageType.Question,
 								ButtonsType.YesNo,
@@ -331,6 +371,144 @@ public class SettingsDialog
 	{
 		exclude_view.AddItem (exclude_item);
 	}
+
+#if ENABLE_WEBSERVICES			
+	//Netbeagle: Add, Remove operations
+	private void OnAddNetbeagleClicked (object o, EventArgs args)
+	{	
+		Glade.XML glade = new Glade.XML (null, "settings.glade", "netbeagle_entry_dialog", "beagle");
+		glade.Autoconnect (this);
+		ResponseType nbed_response = (ResponseType) netbeagle_entry_dialog.Run ();
+
+		string new_node = netbeagle_textentry.Text.Trim();
+								
+		if ((new_node.Length > 1) && (((string[])new_node.Split(':')).Length < 2))
+			new_node += ":8888";
+			
+		netbeagle_entry_dialog.Destroy ();
+		
+		if (nbed_response == ResponseType.Ok) {
+			string error_message = "";
+			bool throw_error = false;
+
+			if (new_node.Length < 2)
+			{
+				throw_error = true;
+				error_message = Catalog.GetString ("Invalid host entry");			
+			}
+			else
+				// Check if the new entry matches an existing netbeagle entry
+				foreach (string old_node in netbeagle_view.Netbeagles) {
+					if (new_node == old_node) {
+						throw_error = true;
+						error_message = Catalog.GetString ("Remote host already present in the list.");
+					} 
+				}
+
+			if (throw_error) {
+				HigMessageDialog.RunHigMessageDialog (settings_dialog,
+								      DialogFlags.Modal,
+								      MessageType.Warning,
+								      ButtonsType.Ok,
+								      Catalog.GetString ("Netbeagle Node not added"),
+								      error_message);
+			} 
+			else 
+					netbeagle_view.AddNode (new_node);
+
+		}
+	}
+
+	private void OnRemoveNetbeagleClicked (object o, EventArgs args)
+	{
+		// Confirm removal
+		HigMessageDialog dialog  = new HigMessageDialog (settings_dialog,
+								 DialogFlags.Modal,
+								 MessageType.Question,
+								 ButtonsType.YesNo,
+								 Catalog.GetString ("Remove host"),
+								 Catalog.GetString ("Are you sure you wish to remove this host from the list?"));
+
+		ResponseType response = (ResponseType) dialog.Run ();
+		dialog.Destroy ();
+
+		if (response != ResponseType.Yes)
+			return;
+
+		netbeagle_view.RemoveSelectedNode ();
+		
+		remove_netbeagle_button.Sensitive = false;
+	}
+
+	private void OnNetbeagleSelected (object o, EventArgs args)
+	{
+		remove_netbeagle_button.Sensitive = true;
+	}
+	
+	//Publicfolders: Add, Remove operations
+	private void OnAddPublicfolderClicked (object o, EventArgs args)
+	{
+		CompatFileChooserDialog fs_dialog = new CompatFileChooserDialog (Catalog.GetString ("Select path"), 
+										 settings_dialog, 
+										 CompatFileChooserDialog.Action.SelectFolder);
+		fs_dialog.SelectMultiple = false;
+
+		ResponseType fs_response = (ResponseType) fs_dialog.Run ();
+		string new_pf = fs_dialog.Filename;
+		fs_dialog.Destroy ();
+		
+		if (fs_response == ResponseType.Ok) {
+		
+			string error_message = "";
+			bool throw_error = false;
+
+			// Check and see if the current data collides with the new path in any way
+			// FIXME: Do this with System.IO.Path or something
+			foreach (string old_pf in publicfolder_view.Publicfolders) {
+				if (new_pf == old_pf) {
+					throw_error = true;
+					error_message = Catalog.GetString ("The selected path is already configured for external access.");
+				} 
+			}
+
+			if (throw_error) {
+				HigMessageDialog.RunHigMessageDialog (settings_dialog,
+								      DialogFlags.Modal,
+								      MessageType.Warning,
+								      ButtonsType.Ok,
+								      Catalog.GetString ("Path not added"),
+								      error_message);
+			} 
+			else 
+					publicfolder_view.AddPath (new_pf);		
+		}
+	}
+
+	private void OnRemovePublicfolderClicked (object o, EventArgs args)
+	{
+		// Confirm removal
+		HigMessageDialog dialog  = new HigMessageDialog (settings_dialog,
+								 DialogFlags.Modal,
+								 MessageType.Question,
+								 ButtonsType.YesNo,
+								 Catalog.GetString ("Remove public path"),
+								 Catalog.GetString ("Are you sure you wish to remove this entry from the list of public paths?"));
+
+		ResponseType response = (ResponseType) dialog.Run ();
+		dialog.Destroy ();
+
+		if (response != ResponseType.Yes)
+			return;
+
+		publicfolder_view.RemoveSelectedPath ();
+		remove_publicfolder_button.Sensitive = false;
+	}
+
+	private void OnPublicfolderSelected (object o, EventArgs args)
+	{
+		remove_publicfolder_button.Sensitive  = true;
+	}
+#endif
 
 	////////////////////////////////////////////////////////////////
 	// IncludeView 
@@ -508,6 +686,168 @@ public class SettingsDialog
 		}
 	}
 
+	////////////////////////////////////////////////////////////////
+
+#if ENABLE_WEBSERVICES	
+
+	// NetbeagleView 	
+	class NetbeagleView : TreeView 
+	{
+		private ListStore store;
+
+		private ArrayList netBeagleList = new ArrayList ();
+
+		public ArrayList Netbeagles {
+			get { return netBeagleList; }
+		}
+
+		public NetbeagleView ()
+		{
+			store = new ListStore (typeof (string));
+
+			this.Model = store;
+
+			AppendColumn (Catalog.GetString ("Name"), new CellRendererText (), "text", 0);
+		}
+
+		public void AddNode (string node)
+		{
+			netBeagleList.Add (node);
+			store.AppendValues (node);
+		} 
+
+		public void RemoveNode (string node)
+		{
+			find_node = node;
+			found_iter = TreeIter.Zero;
+
+			this.Model.Foreach (new TreeModelForeachFunc (ForeachFindNode));
+
+			store.Remove (ref found_iter);
+			netBeagleList.Remove (node);
+		}
+
+		private string find_node;
+		private TreeIter found_iter;
+
+		private bool ForeachFindNode (TreeModel model, TreePath path, TreeIter iter)
+		{
+			if ((string) model.GetValue (iter, 0) == find_node) {
+				found_iter = iter;
+				return true;
+			}
+
+			return false;
+		}
+
+		public void RemoveSelectedNode ()
+		{
+			TreeModel model;
+			TreeIter iter;
+
+			if (!this.Selection.GetSelected(out model, out iter)) {
+				return;
+			}
+			string node = (string)model.GetValue(iter, 0);
+
+			store.Remove (ref iter);
+			netBeagleList.Remove (node);
+		}
+		
+	}
+	////////////////////////////////////////////////////////////////
+	// PublicfolderView 
+
+	class PublicfolderView: TreeView 
+	{
+		private ListStore store;
+
+		private ArrayList publicFolders = new ArrayList ();
+
+		public ArrayList Publicfolders {
+			get { return publicFolders; }
+		}
+
+		private enum TargetType {
+			Uri,
+		};
+
+		private static TargetEntry [] target_table = new TargetEntry [] {
+			new TargetEntry ("STRING", 0, (uint) TargetType.Uri ),
+			new TargetEntry ("text/plain", 0, (uint) TargetType.Uri),
+		};
+
+		public PublicfolderView ()
+		{
+			store = new ListStore (typeof (string));
+
+			this.Model = store;
+
+			AppendColumn (Catalog.GetString ("Name"), new CellRendererText (), "text", 0);
+
+			// Enable drag and drop folders from nautilus
+			Gtk.Drag.DestSet (this, DestDefaults.All, target_table, DragAction.Copy | DragAction.Move);
+			DragDataReceived += new DragDataReceivedHandler (HandleData);
+		}
+
+		public void AddPath (string path)
+		{
+			publicFolders.Add (path);
+			store.AppendValues (path);
+		} 
+
+		public void RemovePath (string path)
+		{
+			find_path = path;
+			found_iter = TreeIter.Zero;
+
+			this.Model.Foreach (new TreeModelForeachFunc (ForeachFindPath));
+
+			store.Remove (ref found_iter);
+			publicFolders.Remove (path);
+		}
+
+		private string find_path;
+		private TreeIter found_iter;
+
+		private bool ForeachFindPath (TreeModel model, TreePath path, TreeIter iter)
+		{
+			if ((string) model.GetValue (iter, 0) == find_path) {
+				found_iter = iter;
+				return true;
+			}
+
+			return false;
+		}
+
+		public void RemoveSelectedPath ()
+		{
+			TreeModel model;
+			TreeIter iter;
+
+			if (!this.Selection.GetSelected(out model, out iter)) {
+				return;
+			}
+			string path = (string)model.GetValue(iter, 0);
+
+			store.Remove (ref iter);
+			publicFolders.Remove (path);
+		}
+
+	    // Handle drag and drop data. Enables users to drag a folder that he wishes 
+		// to add for indexing from Nautilus.
+		// FIXME: Pass checks as in OnAddIncludeButtonClicked
+		private void HandleData (object o, DragDataReceivedArgs args) {
+			Uri uri;
+			if (args.SelectionData.Length >=0 && args.SelectionData.Format == 8) {
+				uri = new Uri (args.SelectionData.Text.Trim ());
+				AddPath (uri.LocalPath);
+				Gtk.Drag.Finish (args.Context, true, false, args.Time);
+			}
+			Gtk.Drag.Finish (args.Context, false, false, args.Time);
+		}
+	}
+#endif	
 	////////////////////////////////////////////////////////////////
 	// Mail folder dialog
 

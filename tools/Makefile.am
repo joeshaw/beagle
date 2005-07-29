@@ -101,6 +101,10 @@ $(CONFIG_WRAPPER): $(WRAPPER_IN)
 	$(WRAPPER_SED) -e "s|\@target\@|$(CONFIG_TARGET)|g" < $(srcdir)/$(WRAPPER_IN) > $@
 	chmod +x $(CONFIG_WRAPPER)
 
+if ENABLE_WEBSERVICES
+SETTINGS_CSFLAGS = -define:ENABLE_WEBSERVICES
+endif
+
 SETTINGS_TARGET    = Settings.exe
 SETTINGS_WRAPPER   = beagle-settings
 SETTINGS_CSFILES   = $(srcdir)/Settings.cs
@@ -108,7 +112,7 @@ SETTINGS_RESOURCES = $(srcdir)/settings.glade
 SETTINGS_RESOURCES_BUILD = $(foreach res,$(SETTINGS_RESOURCES), $(addprefix -resource:,$(srcdir)/$(res)),$(notdir $(res)))
 
 $(SETTINGS_TARGET): $(SETTINGS_CSFILES) $(LOCAL_ASSEMBLIES)
-	$(CSC) -out:$@ $(SETTINGS_RESOURCES_BUILD) $(CSFLAGS) $(SETTINGS_CSFILES) $(ASSEMBLIES)
+	$(CSC) -out:$@ $(SETTINGS_RESOURCES_BUILD) $(CSFLAGS) $(SETTINGS_CSFLAGS) $(SETTINGS_CSFILES) $(ASSEMBLIES)
 
 $(SETTINGS_WRAPPER): $(WRAPPER_IN)
 	$(WRAPPER_SED) -e "s|\@target\@|$(SETTINGS_TARGET)|g" < $(srcdir)/$(WRAPPER_IN) > $@
