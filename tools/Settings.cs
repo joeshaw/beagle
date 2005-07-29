@@ -89,7 +89,7 @@ public class SettingsDialog
 		
 	[Widget] Dialog netbeagle_entry_dialog;
 	[Widget] Entry netbeagle_textentry;
-			
+
 	PublicfolderView	publicfolder_view;
 	NetbeagleView		netbeagle_view; 
 
@@ -372,7 +372,6 @@ public class SettingsDialog
 		exclude_view.AddItem (exclude_item);
 	}
 
-#if ENABLE_WEBSERVICES			
 	//Netbeagle: Add, Remove operations
 	private void OnAddNetbeagleClicked (object o, EventArgs args)
 	{	
@@ -508,7 +507,6 @@ public class SettingsDialog
 	{
 		remove_publicfolder_button.Sensitive  = true;
 	}
-#endif
 
 	////////////////////////////////////////////////////////////////
 	// IncludeView 
@@ -688,8 +686,6 @@ public class SettingsDialog
 
 	////////////////////////////////////////////////////////////////
 
-#if ENABLE_WEBSERVICES	
-
 	// NetbeagleView 	
 	class NetbeagleView : TreeView 
 	{
@@ -847,7 +843,7 @@ public class SettingsDialog
 			Gtk.Drag.Finish (args.Context, false, false, args.Time);
 		}
 	}
-#endif	
+
 	////////////////////////////////////////////////////////////////
 	// Mail folder dialog
 
