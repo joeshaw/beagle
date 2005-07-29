@@ -27,7 +27,11 @@ gluelib_LTLIBRARIES = 		\
 	libsysteminfoglue.la	\
 	libgeckoglue.la         \
 	libkeyglue.la		\
-	libtrayiconglue.la
+	libtrayiconglue.la	\
+	libbeagledglue.la
+
+libbeagledglue_la_SOURCES =	\
+	beagled-utils.c
 
 if ENABLE_WV1
 gluelib_LTLIBRARIES += \

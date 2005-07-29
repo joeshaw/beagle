@@ -27,22 +27,57 @@
 using System;
 using System.Collections;
 using System.IO;
+using System.Runtime.InteropServices;
+using System.Text;
 
 namespace Beagle.Util {
 
 	public class DirectoryWalker {
+#if false
+		public static void Main (string[] args)
+		{
+			IEnumerable en = DirectoryWalker.GetFileInfos (args [0]);
 
+			foreach (FileInfo file in en) {
+				Console.WriteLine (file.FullName);
+			}
+		}
+#endif
 		private delegate bool   FileFilter      (string path, string name);
 		private delegate object FileObjectifier (string path, string name);
 
-		private class FileEnumerator : IEnumerator {
+		[DllImport ("libc", SetLastError = true)]
+		private static extern IntPtr opendir (string name);
+		
+		[DllImport ("libc", SetLastError = true)]
+		private static extern int closedir (IntPtr dir);
 
+		[DllImport ("libbeagledglue", EntryPoint = "beagled_utils_readdir", SetLastError = true)]
+		private static extern int sys_readdir (IntPtr dir, StringBuilder name);
+		
+		private static string readdir (IntPtr dir)
+		{
+			int r = 0;
+			StringBuilder name = new StringBuilder (256);
+
+			while (r == 0 && name.Length == 0) {
+			       r = sys_readdir (dir, name); 
+			}
+
+			if (r == -1)
+				return null;
+
+			return name.ToString ();
+		}
+
+		private class FileEnumerator : IEnumerator {
+			
 			string path;
 			FileFilter file_filter;
 			FileObjectifier file_objectifier;
 			IntPtr dir_handle = IntPtr.Zero;
 			string current;
-
+			
 			public FileEnumerator (string          path,
 					       FileFilter      file_filter,
 					       FileObjectifier file_objectifier)
@@ -52,11 +87,11 @@ namespace Beagle.Util {
 				this.file_objectifier = file_objectifier;
 				Reset ();
 			}
-
+			
 			~FileEnumerator ()
 			{
 				if (dir_handle != IntPtr.Zero)
-					Mono.Posix.Syscall.closedir (dir_handle);
+					closedir (dir_handle);
 			}
 
 			public object Current {
@@ -68,16 +103,17 @@ namespace Beagle.Util {
 						else
 							current_obj = Path.Combine (path, current);
 					}
+
 					return current_obj;
 				}
 			}
 
 			public bool MoveNext ()
 			{
-				bool skip_file;
+				bool skip_file = false;
 
 				do {
-					current = Mono.Posix.Syscall.readdir (dir_handle);
+					current = readdir (dir_handle);
 					if (current == null)
 						break;
 
@@ -104,7 +140,7 @@ namespace Beagle.Util {
 				} while (skip_file);
 
 				if (current == null) {
-					Mono.Posix.Syscall.closedir (dir_handle);
+					closedir (dir_handle);
 					dir_handle = IntPtr.Zero;
 				}
 
@@ -115,8 +151,8 @@ namespace Beagle.Util {
 			{
 				current = null;
 				if (dir_handle != IntPtr.Zero)
-					Mono.Posix.Syscall.closedir (dir_handle);
-				dir_handle = Mono.Posix.Syscall.opendir (path);
+					closedir (dir_handle);
+				dir_handle = opendir (path);
 				if (dir_handle == IntPtr.Zero)
 					throw new DirectoryNotFoundException (path);
 			}
@@ -165,6 +201,7 @@ namespace Beagle.Util {
 
 		static public IEnumerable GetFileInfos (string path)
 		{
+			Console.WriteLine ("Getting files for : {0}", path);
 			return new FileEnumerable (path,
 						   new FileFilter (IsFile),
 						   new FileObjectifier (FileInfoObjectifier));
