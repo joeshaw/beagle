@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: beagle\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2005-07-18 03:58-0400\n"
-"PO-Revision-Date: 2005-07-18 13:55-0400\n"
+"POT-Creation-Date: 2005-07-30 16:12-0400\n"
+"PO-Revision-Date: 2005-07-30 13:55-0400\n"
 "Last-Translator: Adam Weinberger <adamw@gnome.org>\n"
 "Language-Team: Canadian English <adamw@gnome.org>\n"
 "MIME-Version: 1.0\n"
@@ -159,21 +159,21 @@ msgid_plural "Contains {0} Items"
 msgstr[0] "Contains {0} Item"
 msgstr[1] "Contains {0} Items"
 
-#: Tiles/TileImLog.cs:76
+#: Tiles/TileImLog.cs:67
 msgid "Send Mail"
 msgstr "Send Mail"
 
 #. For translators: From template Tiles/template-mail-message.html
-#: Tiles/TileImLog.cs:80 Tiles/TranslationHack.cs:52
+#: Tiles/TileImLog.cs:71 Tiles/TranslationHack.cs:52
 msgid "Send IM"
 msgstr "Send IM"
 
-#: Tiles/TileImLog.cs:89
+#: Tiles/TileImLog.cs:77
 #, csharp-format
 msgid "Conversation in {0}"
 msgstr "Conversation in {0}"
 
-#: Tiles/TileImLog.cs:91
+#: Tiles/TileImLog.cs:79
 #, csharp-format
 msgid "Conversation with {0}"
 msgstr "Conversation with {0}"
@@ -371,11 +371,11 @@ msgstr "from Networked Beagle on host"
 msgid "Search Networked Beagle"
 msgstr "Search Networked Beagle"
 
-#: tools/Settings.cs:174
+#: tools/Settings.cs:214
 msgid "Reload configuration"
 msgstr "Reload configuration"
 
-#: tools/Settings.cs:175
+#: tools/Settings.cs:215
 msgid ""
 "The configuration file has been modified by another application. Do you wish "
 "to discard the currently displayed values and reload configuration from disk?"
@@ -383,15 +383,15 @@ msgstr ""
 "The configuration file has been modified by another application. Do you wish "
 "to discard the currently displayed values and reload configuration from disk?"
 
-#: tools/Settings.cs:213
+#: tools/Settings.cs:253
 msgid "Select Path"
 msgstr "Select Path"
 
-#: tools/Settings.cs:232
+#: tools/Settings.cs:272
 msgid "The selected path is already selected for indexing and wasn't added."
 msgstr "The selected path is already selected for indexing and was not added."
 
-#: tools/Settings.cs:235
+#: tools/Settings.cs:275
 msgid ""
 "The selected path wasn't added. The list contains items that supercedes it "
 "and the data is already being indexed."
@@ -399,15 +399,15 @@ msgstr ""
 "The selected path was not added. The list contains items that supercede it "
 "and the data are already being indexed."
 
-#: tools/Settings.cs:246
+#: tools/Settings.cs:286 tools/Settings.cs:478
 msgid "Path not added"
 msgstr "Path not added"
 
-#: tools/Settings.cs:255
+#: tools/Settings.cs:295
 msgid "Remove obsolete paths"
 msgstr "Remove obsolete paths"
 
-#: tools/Settings.cs:256
+#: tools/Settings.cs:296
 msgid ""
 "Adding this path will obsolete some of the existing include paths. This will "
 "result in the removal of the old obsolete paths. Do you still wish to add it?"
@@ -415,11 +415,11 @@ msgstr ""
 "Adding this path will obsolete some of the existing include paths. This will "
 "result in the removal of the old obsolete paths. Do you still wish to add it?"
 
-#: tools/Settings.cs:282
+#: tools/Settings.cs:322
 msgid "Remove path"
 msgstr "Remove path"
 
-#: tools/Settings.cs:283
+#: tools/Settings.cs:323
 msgid ""
 "Are you sure you wish to remove this path from the list of directories to be "
 "included for indexing?"
@@ -427,11 +427,11 @@ msgstr ""
 "Are you sure you wish to remove this path from the list of directories to be "
 "included for indexing?"
 
-#: tools/Settings.cs:312
+#: tools/Settings.cs:352
 msgid "Remove item"
 msgstr "Remove item"
 
-#: tools/Settings.cs:313
+#: tools/Settings.cs:353
 msgid ""
 "Are you sure you wish to remove this item from the list of data to be "
 "excluded from indexing?"
@@ -439,35 +439,74 @@ msgstr ""
 "Are you sure you wish to remove this item from the list of data to be "
 "excluded from indexing?"
 
-#: tools/Settings.cs:363 tools/Settings.cs:452 tools/Settings.cs:785
+#: tools/Settings.cs:396
+msgid "Invalid host entry"
+msgstr "Invalid host entry"
+
+#: tools/Settings.cs:403
+msgid "Remote host already present in the list."
+msgstr "Remote host already present in the list."
+
+#: tools/Settings.cs:412
+msgid "Netbeagle Node not added"
+msgstr "Netbeagle Node not added"
+
+#: tools/Settings.cs:428
+msgid "Remove host"
+msgstr "Remove host"
+
+#: tools/Settings.cs:429
+msgid "Are you sure you wish to remove this host from the list?"
+msgstr "Are you sure you wish to remove this host from the list?"
+
+#: tools/Settings.cs:450
+msgid "Select path"
+msgstr "Select path"
+
+#: tools/Settings.cs:469
+msgid "The selected path is already configured for external access."
+msgstr "The selected path is already configured for external access."
+
+#: tools/Settings.cs:493
+msgid "Remove public path"
+msgstr "Remove public path"
+
+#: tools/Settings.cs:494
+msgid ""
+"Are you sure you wish to remove this entry from the list of public paths?"
+msgstr ""
+"Are you sure you wish to remove this entry from the list of public paths?"
+
+#: tools/Settings.cs:539 tools/Settings.cs:628 tools/Settings.cs:706
+#: tools/Settings.cs:782 tools/Settings.cs:1121
 msgid "Name"
 msgstr "Name"
 
-#: tools/Settings.cs:446 tools/settings.glade.h:24
+#: tools/Settings.cs:622 tools/settings.glade.h:32
 msgid "Type"
 msgstr "Type"
 
-#: tools/Settings.cs:499 tools/Settings.cs:719 tools/settings.glade.h:17
+#: tools/Settings.cs:675 tools/Settings.cs:1055 tools/settings.glade.h:24
 msgid "Path"
 msgstr "Path"
 
-#: tools/Settings.cs:502 tools/Settings.cs:729
+#: tools/Settings.cs:678 tools/Settings.cs:1065
 msgid "Pattern"
 msgstr "Pattern"
 
-#: tools/Settings.cs:505 tools/Settings.cs:724 tools/settings.glade.h:16
+#: tools/Settings.cs:681 tools/Settings.cs:1060 tools/settings.glade.h:22
 msgid "Mail Folder"
 msgstr "Mail Folder"
 
-#: tools/Settings.cs:693
+#: tools/Settings.cs:1029
 msgid "Select Folder"
 msgstr "Select Folder"
 
-#: tools/Settings.cs:753
+#: tools/Settings.cs:1089
 msgid "Error adding path"
 msgstr "Error adding path"
 
-#: tools/Settings.cs:754
+#: tools/Settings.cs:1090
 msgid ""
 "The specified path could not be found and therefore it could not be added to "
 "the list of resources excluded for indexing."
@@ -475,39 +514,59 @@ msgstr ""
 "The specified path could not be found and therefore could not be added to "
 "the list of resources excluded for indexing."
 
-#: tools/Settings.cs:784
+#: tools/Settings.cs:1120
 msgid "Show"
 msgstr "Show"
 
 #: tools/settings.glade.h:1
+msgid "<b>Add remote host</b>"
+msgstr "<b>Add remote host</b>"
+
+#: tools/settings.glade.h:2
 msgid "<b>Add resource</b>"
 msgstr "<b>Add resource</b>"
 
-#: tools/settings.glade.h:2
+#: tools/settings.glade.h:3
 msgid "<b>Display</b>"
 msgstr "<b>Display</b>"
 
-#: tools/settings.glade.h:3
+#: tools/settings.glade.h:4
 msgid "<b>General</b>"
 msgstr "<b>General</b>"
 
-#: tools/settings.glade.h:4
+#: tools/settings.glade.h:5
+msgid "<b>Networking</b>"
+msgstr "<b>Networking</b>"
+
+#: tools/settings.glade.h:6
 msgid "<b>Privacy</b>"
 msgstr "<b>Privacy</b>"
 
-#: tools/settings.glade.h:5
+#: tools/settings.glade.h:7
 msgid "<b>Select mail folder</b>"
 msgstr "<b>Select mail folder</b>"
 
-#: tools/settings.glade.h:6
+#: tools/settings.glade.h:8
+msgid ""
+"Add a remote search-enabled host you wish \n"
+"to network with."
+msgstr ""
+"Add a remote search-enabled host you wish \n"
+"to network with."
+
+#: tools/settings.glade.h:10
 msgid "Add any additional paths to be included for indexing."
 msgstr "Add any additional paths to be included for indexing."
 
-#: tools/settings.glade.h:7
-msgid "Add resource"
-msgstr "Add resource"
+#: tools/settings.glade.h:11
+msgid "Add any remote search-enabled hosts you wish to network with"
+msgstr "Add any remote search-enabled hosts you wish to network with"
 
-#: tools/settings.glade.h:8
+#: tools/settings.glade.h:12
+msgid "Address"
+msgstr "Address"
+
+#: tools/settings.glade.h:13
 msgid ""
 "Adjust which types of results should be visible, and in what order they "
 "should be presented when grouped by type."
@@ -515,51 +574,59 @@ msgstr ""
 "Adjust which types of results should be visible, and in what order they "
 "should be presented when grouped by type."
 
-#: tools/settings.glade.h:9
+#: tools/settings.glade.h:14
+msgid "Allow external access to local search services"
+msgstr "Allow external access to local search services"
+
+#: tools/settings.glade.h:15
 msgid "Alt"
 msgstr "Alt"
 
-#: tools/settings.glade.h:10
+#: tools/settings.glade.h:16
 msgid "Ctrl"
 msgstr "Ctrl"
 
-#: tools/settings.glade.h:11
+#: tools/settings.glade.h:17
 msgid "Directory Path"
 msgstr "Directory Path"
 
-#: tools/settings.glade.h:12
+#: tools/settings.glade.h:18
 msgid "Display the search window by pressing"
 msgstr "Display the search window by pressing"
 
-#: tools/settings.glade.h:13
+#: tools/settings.glade.h:19
 msgid "Filename Pattern"
 msgstr "Filename Pattern"
 
-#: tools/settings.glade.h:14
+#: tools/settings.glade.h:20
 msgid "Index my home directory"
 msgstr "Index my home directory"
 
-#: tools/settings.glade.h:15
+#: tools/settings.glade.h:21
 msgid "Indexing"
 msgstr "Indexing"
 
-#: tools/settings.glade.h:18
-msgid "Please select the mail folder you wish to exclude from indexing."
-msgstr "Please select the mail folder you wish to exclude from indexing."
+#: tools/settings.glade.h:23
+msgid "Networking"
+msgstr "Networking"
 
-#: tools/settings.glade.h:19
+#: tools/settings.glade.h:25
+msgid "Please select a resource you wish to exclude from indexing."
+msgstr "Please select a resource you wish to exclude from indexing."
+
+#: tools/settings.glade.h:26
+msgid "Please select the mail folder you wish to exclude from indexing. "
+msgstr "Please select the mail folder you wish to exclude from indexing. "
+
+#: tools/settings.glade.h:27
 msgid "Search"
 msgstr "Search"
 
-#: tools/settings.glade.h:20
-msgid "Search & Indexing Preferences"
-msgstr "Search & Indexing Preferences"
+#: tools/settings.glade.h:28
+msgid "Search Preferences"
+msgstr "Search Preferences"
 
-#: tools/settings.glade.h:21
-msgid "Select mail folder"
-msgstr "Select mail folder"
-
-#: tools/settings.glade.h:22
+#: tools/settings.glade.h:29
 msgid ""
 "Specify any resources, such as paths, patterns, mail folders or type of "
 "objects you wish to exclude from indexing."
@@ -567,7 +634,11 @@ msgstr ""
 "Specify any resources, such as paths, patterns, mail folders or type of "
 "objects you wish to exclude from indexing."
 
-#: tools/settings.glade.h:23
+#: tools/settings.glade.h:30
+msgid "Specify paths that should be available for external access"
+msgstr "Specify paths that should be available for external access"
+
+#: tools/settings.glade.h:31
 msgid "Start search & indexing services automatically on login"
 msgstr "Start search & indexing services automatically on login"
 
