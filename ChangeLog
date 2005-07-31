@@ -1,3 +1,7 @@
+2005-07-31  Maxim Dziumanenko  <mvd@mylinux.ua>
+
+	* configure.in: Added "uk" (Ukrainian) to ALL_LINGUAS
+
 2005-07-28  Daniel Drake  <dsd@gentoo.org>
 
 	* beagled/FileSystemQueryable/FileNameFilter.cs,
