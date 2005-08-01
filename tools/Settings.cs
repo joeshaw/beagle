@@ -400,7 +400,7 @@ public class SettingsDialog
 				foreach (string old_node in netbeagle_view.Netbeagles) {
 					if (new_node == old_node) {
 						throw_error = true;
-						error_message = Catalog.GetString ("Remote host already present in the list.");
+						error_message = Catalog.GetString ("Host already present in the list.");
 					} 
 				}
 
@@ -409,7 +409,7 @@ public class SettingsDialog
 								      DialogFlags.Modal,
 								      MessageType.Warning,
 								      ButtonsType.Ok,
-								      Catalog.GetString ("Netbeagle Node not added"),
+								      Catalog.GetString ("Host not added"),
 								      error_message);
 			} 
 			else 
