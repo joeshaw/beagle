@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: beagle\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2005-07-30 16:12-0400\n"
-"PO-Revision-Date: 2005-07-30 13:55-0400\n"
+"POT-Creation-Date: 2005-08-01 15:40-0400\n"
+"PO-Revision-Date: 2005-08-01 13:55-0400\n"
 "Last-Translator: Adam Weinberger <adamw@gnome.org>\n"
 "Language-Team: Canadian English <adamw@gnome.org>\n"
 "MIME-Version: 1.0\n"
@@ -444,12 +444,12 @@ msgid "Invalid host entry"
 msgstr "Invalid host entry"
 
 #: tools/Settings.cs:403
-msgid "Remote host already present in the list."
-msgstr "Remote host already present in the list."
+msgid "Host already present in the list."
+msgstr "Host already present in the list."
 
 #: tools/Settings.cs:412
-msgid "Netbeagle Node not added"
-msgstr "Netbeagle Node not added"
+msgid "Host not added"
+msgstr "Host not added"
 
 #: tools/Settings.cs:428
 msgid "Remove host"
@@ -482,11 +482,11 @@ msgstr ""
 msgid "Name"
 msgstr "Name"
 
-#: tools/Settings.cs:622 tools/settings.glade.h:32
+#: tools/Settings.cs:622 tools/settings.glade.h:30
 msgid "Type"
 msgstr "Type"
 
-#: tools/Settings.cs:675 tools/Settings.cs:1055 tools/settings.glade.h:24
+#: tools/Settings.cs:675 tools/Settings.cs:1055 tools/settings.glade.h:22
 msgid "Path"
 msgstr "Path"
 
@@ -494,7 +494,7 @@ msgstr "Path"
 msgid "Pattern"
 msgstr "Pattern"
 
-#: tools/Settings.cs:681 tools/Settings.cs:1060 tools/settings.glade.h:22
+#: tools/Settings.cs:681 tools/Settings.cs:1060 tools/settings.glade.h:20
 msgid "Mail Folder"
 msgstr "Mail Folder"
 
@@ -519,8 +519,8 @@ msgid "Show"
 msgstr "Show"
 
 #: tools/settings.glade.h:1
-msgid "<b>Add remote host</b>"
-msgstr "<b>Add remote host</b>"
+msgid "<b>Add host</b>"
+msgstr "<b>Add host</b>"
 
 #: tools/settings.glade.h:2
 msgid "<b>Add resource</b>"
@@ -547,26 +547,18 @@ msgid "<b>Select mail folder</b>"
 msgstr "<b>Select mail folder</b>"
 
 #: tools/settings.glade.h:8
-msgid ""
-"Add a remote search-enabled host you wish \n"
-"to network with."
-msgstr ""
-"Add a remote search-enabled host you wish \n"
-"to network with."
+msgid "Add a search-enabled host you wish to network with"
+msgstr "Add a search-enabled host you wish to network with"
 
-#: tools/settings.glade.h:10
+#: tools/settings.glade.h:9
 msgid "Add any additional paths to be included for indexing."
 msgstr "Add any additional paths to be included for indexing."
 
+#: tools/settings.glade.h:10
+msgid "Add any search-enabled hosts you wish to network with"
+msgstr "Add any search-enabled hosts you wish to network with"
+
 #: tools/settings.glade.h:11
-msgid "Add any remote search-enabled hosts you wish to network with"
-msgstr "Add any remote search-enabled hosts you wish to network with"
-
-#: tools/settings.glade.h:12
-msgid "Address"
-msgstr "Address"
-
-#: tools/settings.glade.h:13
 msgid ""
 "Adjust which types of results should be visible, and in what order they "
 "should be presented when grouped by type."
@@ -574,59 +566,59 @@ msgstr ""
 "Adjust which types of results should be visible, and in what order they "
 "should be presented when grouped by type."
 
-#: tools/settings.glade.h:14
+#: tools/settings.glade.h:12
 msgid "Allow external access to local search services"
 msgstr "Allow external access to local search services"
 
-#: tools/settings.glade.h:15
+#: tools/settings.glade.h:13
 msgid "Alt"
 msgstr "Alt"
 
-#: tools/settings.glade.h:16
+#: tools/settings.glade.h:14
 msgid "Ctrl"
 msgstr "Ctrl"
 
-#: tools/settings.glade.h:17
+#: tools/settings.glade.h:15
 msgid "Directory Path"
 msgstr "Directory Path"
 
-#: tools/settings.glade.h:18
+#: tools/settings.glade.h:16
 msgid "Display the search window by pressing"
 msgstr "Display the search window by pressing"
 
-#: tools/settings.glade.h:19
+#: tools/settings.glade.h:17
 msgid "Filename Pattern"
 msgstr "Filename Pattern"
 
-#: tools/settings.glade.h:20
+#: tools/settings.glade.h:18
 msgid "Index my home directory"
 msgstr "Index my home directory"
 
-#: tools/settings.glade.h:21
+#: tools/settings.glade.h:19
 msgid "Indexing"
 msgstr "Indexing"
 
-#: tools/settings.glade.h:23
+#: tools/settings.glade.h:21
 msgid "Networking"
 msgstr "Networking"
 
-#: tools/settings.glade.h:25
+#: tools/settings.glade.h:23
 msgid "Please select a resource you wish to exclude from indexing."
 msgstr "Please select a resource you wish to exclude from indexing."
 
-#: tools/settings.glade.h:26
+#: tools/settings.glade.h:24
 msgid "Please select the mail folder you wish to exclude from indexing. "
 msgstr "Please select the mail folder you wish to exclude from indexing. "
 
-#: tools/settings.glade.h:27
+#: tools/settings.glade.h:25
 msgid "Search"
 msgstr "Search"
 
-#: tools/settings.glade.h:28
+#: tools/settings.glade.h:26
 msgid "Search Preferences"
 msgstr "Search Preferences"
 
-#: tools/settings.glade.h:29
+#: tools/settings.glade.h:27
 msgid ""
 "Specify any resources, such as paths, patterns, mail folders or type of "
 "objects you wish to exclude from indexing."
@@ -634,13 +626,17 @@ msgstr ""
 "Specify any resources, such as paths, patterns, mail folders or type of "
 "objects you wish to exclude from indexing."
 
-#: tools/settings.glade.h:30
+#: tools/settings.glade.h:28
 msgid "Specify paths that should be available for external access"
 msgstr "Specify paths that should be available for external access"
 
-#: tools/settings.glade.h:31
+#: tools/settings.glade.h:29
 msgid "Start search & indexing services automatically on login"
 msgstr "Start search & indexing services automatically on login"
+
+#: tools/settings.glade.h:31
+msgid "_Address"
+msgstr "_Address"
 
 #: Util/Evolution.cs:45 Util/Evolution.cs:163
 msgid "On This Computer"
