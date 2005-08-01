@@ -49,6 +49,11 @@ be used multiple times.
 Constrain the Beagle daemon by disabling specified backends. This argument can
 be used multiple times.
 .TP
+.B --list-backends
+Retrieve a list of all known backends. This list of backends can then be
+used with with the --allow/deny-backend options. Using this argument will
+print out the list of backends and then exit.
+.TP
 .B --disable-scheduler
 Disable the internal scheduler and thus refrain the Beagle daemon from
 performing any crawling or indexing. Search facilities will remain enabled.
