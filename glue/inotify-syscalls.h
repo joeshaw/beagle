@@ -19,6 +19,10 @@
 # define __NR_inotify_init	1277
 # define __NR_inotify_add_watch	1278
 # define __NR_inotify_rm_watch	1279
+#elif defined (__s390__)
+# define __NR_inotify_init	284
+# define __NR_inotify_add_watch	285
+# define __NR_inotify_rm_watch	286
 #else
 # error "Unsupported architecture!"
 #endif
