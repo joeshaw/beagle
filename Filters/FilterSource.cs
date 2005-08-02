@@ -74,7 +74,7 @@ namespace Beagle.Filters {
 		// tokens for indexing.
 		//
 		// FIXME: Perl has embedded "POD" (documentation) style, which needs a little processing.
-		//        Pascal has its own style of comments.
+		//
  		protected void ExtractTokens (string str)
 		{
 			int index;
@@ -82,14 +82,61 @@ namespace Beagle.Filters {
 			string splCharSeq = "";
 
 			for (index = 0; index < str.Length; index++) {
-				if ((str[index] == '/' || str[index] == '*') &&
-				    (SrcLangType == LangType.C_Style ||
-				     SrcLangType == LangType.C_Sharp_Style ||
-				     SrcLangType == LangType.Pascal_Style)) {		
+		         	if (((str[index] == '{' 
+				      || str[index] == '}' 
+				      || str[index] == '(' 
+				      || str[index] == ')'
+				      || str[index] == '*'
+				      || str[index] == '/')
+				     && SrcLangType == LangType.Pascal_Style)
+				    || ((str[index] == '/' 
+					 || str[index] == '*') 
+					&& (SrcLangType == LangType.C_Style 
+					    || SrcLangType == LangType.C_Sharp_Style))) {		
+					
 					splCharSeq += str[index];
 					
 					switch (splCharSeq) {
-						
+
+                                        case "(*":
+                                                if (SrcLineType == LineType.None) {
+							SrcLineType = LineType.BlockComment;
+							token.Remove (0, token.Length);
+						    } else 
+							token.Append (splCharSeq);
+						splCharSeq = ""; 
+                                                break;
+
+					case "*)":
+						if (SrcLineType == LineType.BlockComment) {
+							SrcLineType = LineType.None;
+							token.Append (" ");
+							AppendText (token.ToString());
+							token.Remove (0, token.Length);
+						} else if (SrcLineType != LineType.None)
+							token.Append (splCharSeq);
+						splCharSeq = "";
+						break;          
+                           
+                                        case "{":
+                                                if (SrcLineType == LineType.None) {
+							SrcLineType = LineType.BlockComment;
+							token.Remove (0, token.Length);
+						    } else 
+							token.Append (splCharSeq);
+						splCharSeq = ""; 
+                                                break;
+
+					case "}":
+						if (SrcLineType == LineType.BlockComment) {
+							SrcLineType = LineType.None;
+							token.Append (" ");
+							AppendText (token.ToString());
+							token.Remove (0, token.Length);
+						} else if (SrcLineType != LineType.None)
+							token.Append (splCharSeq);
+						splCharSeq = "";
+						break;
 					case "//":
 						if (SrcLineType == LineType.None) {
 							SrcLineType = LineType.SingleLineComment;
@@ -119,10 +166,10 @@ namespace Beagle.Filters {
 						splCharSeq = "";
 						break;
 					}
-				} else if (str[index] == '#' && SrcLangType == LangType.Python_Style ||
-					   str[index] == '!' && SrcLangType == LangType.Fortran_Style ||
-					   str[index] == ';' && SrcLangType == LangType.Lisp_Style ||
-					   str[index] == '%' && SrcLangType == LangType.Matlab_Style) {
+				} else if ((str[index] == '#' && SrcLangType == LangType.Python_Style) ||
+					   (str[index] == '!' && SrcLangType == LangType.Fortran_Style) ||
+					   (str[index] == ';' && SrcLangType == LangType.Lisp_Style) ||
+					   (str[index] == '%' && SrcLangType == LangType.Matlab_Style)) {
 					if (SrcLineType == LineType.None) {
 						SrcLineType = LineType.SingleLineComment;
 						token.Remove (0, token.Length);
@@ -237,10 +284,9 @@ namespace Beagle.Filters {
 				// the lines that follows it are also considered as a comment,
 				// till a line with out a "\" is found
 				// C# and Lisp don't follow this syntax.
-				if (SrcLangType == LangType.C_Sharp_Style ||
-				    SrcLangType == LangType.Lisp_Style ||
-				    (SrcLineType == LineType.SingleLineComment &&
-				     str.Length > 0 && str[str.Length - 1] != '\\'))
+				if ((SrcLangType == LangType.C_Sharp_Style 
+				     || SrcLangType == LangType.Lisp_Style)
+				    && SrcLineType == LineType.SingleLineComment)
 					SrcLineType = LineType.None;
 			} else if (SrcLangType == LangType.Python_Style) {
 				if (token.Length > 0 && !Char.IsDigit (token[0])) {
