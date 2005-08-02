@@ -1,3 +1,7 @@
+2005-08-02  Daniel Drake  <dsd@gentoo.org>
+
+	* Tiles/Tile.cs: Handle commands which are 'quoted'
+
 2005-08-01  Veerapuram Varadhan <vvaradhan@novell.com>
 
 	Patch from Sreekanth G <sreekanthnaga@gmail.com>

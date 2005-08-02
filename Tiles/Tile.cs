@@ -192,7 +192,11 @@ namespace Beagle.Tile {
 			} else {
 				argument = String.Format ("{0} {1}", argument, hit.PathQuoted);
 			}
-			
+
+			// Sometimes the command is 'quoted'
+			if (command.IndexOf ('\'') == 0 && command.LastIndexOf ('\'') == command.Length - 1)
+				command = command.Trim ('\'');
+
 			// This won't work if a program really has a space in
 			// the filename, but I think other things would break
 			// with that too, and in practice it doesn't seem to
