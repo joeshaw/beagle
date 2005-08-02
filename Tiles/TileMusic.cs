@@ -39,7 +39,7 @@ namespace Beagle.Tile {
 	 HitFlavor (Name="Music", Rank=400, Emblem="emblem-music.png", Color="#f5f5fe",
 		    Type="File", MimeType="application/ogg"),
 	 HitFlavor (Name="Music", Rank=400, Emblem="emblem-music.png", Color="#f5f5fe",
-		    Type="File", MimeType="application/x-flac"),
+		    Type="File", MimeType="audio/x-flac"),
 	 HitFlavor (Name="Music", Rank=400, Emblem="emblem-music.png", Color="#f5f5fe",
 		    Type="File", MimeType="video/x-ms-asf")]
 
