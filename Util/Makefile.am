@@ -64,6 +64,7 @@ CSFILES = 			        	\
 	$(srcdir)/ImBuddy.cs              	\
 	$(srcdir)/ImLog.cs              	\
 	$(srcdir)/Inotify.cs			\
+	$(srcdir)/IoPriority.cs			\
 	$(srcdir)/JpegHeader.cs			\
 	$(srcdir)/KdeUtils.cs			\
 	$(srcdir)/Logger.cs             	\

@@ -24,6 +24,7 @@ gluelibdir = $(pkglibdir)
 
 gluelib_LTLIBRARIES = 		\
 	libinotifyglue.la 	\
+	libioprioglue.la 	\
 	libsysteminfoglue.la	\
 	libgeckoglue.la         \
 	libkeyglue.la		\
@@ -41,6 +42,9 @@ endif
 libinotifyglue_la_SOURCES =	\
 	inotify.h		\
 	inotify-glue.c
+
+libioprioglue_la_SOURCES =	\
+	ioprio-glue.c
 
 libsysteminfoglue_la_SOURCES =	\
 	screensaver-glue.c	\

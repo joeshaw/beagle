@@ -72,6 +72,9 @@ namespace Beagle.IndexHelper {
 			}
 
 			if (server_has_been_started) {
+				// Set the IO priority to idle so we don't slow down the system
+				if (Environment.GetEnvironmentVariable ("BEAGLE_EXERCISE_THE_DOG") == null)
+					IoPriority.SetIdle ();
 				
 				// Start the monitor thread, which keeps an eye on memory usage.
 				ExceptionHandlingThread.Start (new ThreadStart (MemoryMonitorWorker));
