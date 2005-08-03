@@ -38,8 +38,16 @@ namespace ImLogViewer {
 		private ThreadNotify index_thread_notify;
 		private Timeline timeline = new Timeline ();
 
+		private string client;
+
 		public ImLogWindow (string path, string search, string highlight)
 		{
+			// FIXME: This is a bunch of crap, ImLog should be more dynamic.
+			if (path.IndexOf (".gaim/logs") != -1)
+				client = "gaim";
+			else if (path.IndexOf ("apps/kopete/logs") != -1)
+				client = "kopete";
+			
 			if (Directory.Exists (path)) {
 				log_path = path;
 			} else if (File.Exists (path)) {
@@ -68,7 +76,12 @@ namespace ImLogViewer {
 				return;
 
 			// Find the buddy
-			ImBuddy buddy = new GaimBuddyListReader ().Search (speaker);
+			ImBuddy buddy = null;
+
+			if (client == "gaim")
+				buddy = new GaimBuddyListReader ().Search (speaker);
+			else if (client == "kopete")
+				buddy = new KopeteBuddyListReader ().Search (speaker);
 			
 			if (speaker.EndsWith (".chat")) {
 				imviewer.Title = String.Format (Catalog.GetString ("Conversations in {0}"), speaker.Replace (".chat", ""));
@@ -137,8 +150,16 @@ namespace ImLogViewer {
 		private void IndexLogs ()
 		{
 			foreach (string file in Directory.GetFiles (log_path)) {
-				ICollection logs = GaimLog.ScanLog (new FileInfo (file));
+				ICollection logs = null;
 				
+				if (client == "gaim")
+					logs = GaimLog.ScanLog (new FileInfo (file));
+				else if (client == "kopete")
+					logs = KopeteLog.ScanLog (new FileInfo (file));
+				
+				if (logs == null)
+					continue;
+
 				foreach (ImLog log in logs) {
 					if (speaking_to == null)
 						SetWindowTitle (log.SpeakingTo);
