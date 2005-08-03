@@ -201,7 +201,6 @@ namespace Beagle.Util {
 
 		static public IEnumerable GetFileInfos (string path)
 		{
-			Console.WriteLine ("Getting files for : {0}", path);
 			return new FileEnumerable (path,
 						   new FileFilter (IsFile),
 						   new FileObjectifier (FileInfoObjectifier));
