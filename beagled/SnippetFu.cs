@@ -64,6 +64,7 @@ namespace Beagle.Daemon {
 					++next_pos;
 
 				string stemmed_token = null;
+				int hl_offset = 0;
 
 				// Iterate through the stemmed terms and match the token
 				for (int i = 0; i < stemmed_terms.Length; i++) {
@@ -72,9 +73,12 @@ namespace Beagle.Daemon {
 					if (next_pos - pos < stemmed_terms [i].Length)
 						continue;
 
-					// Make sure this isn't a stop word.
-					if (LuceneDriver.IsStopWord (stemmed_terms [i]))
+					// Make sure this isn't a stop word, if it is increment our
+					// hl_offset so we don't waste colors.
+					if (LuceneDriver.IsStopWord (stemmed_terms [i])) {
+						hl_offset++;
 						continue;
+					}
 
 					// We cache the token, so as to avoid stemming it more than once
 					// when considering multiple terms.
@@ -85,7 +89,7 @@ namespace Beagle.Daemon {
 
 					if (stemmed_terms [i] != stemmed_token)
 						continue;
-
+					
 					// We have a match!
 
 				        int start_pos = pos;
@@ -96,6 +100,7 @@ namespace Beagle.Daemon {
 						if ((text[start_pos] == ' '))
 							count++;
 					}
+
 					if (start_pos != 0)
 						start_pos += 2;
 
@@ -103,6 +108,7 @@ namespace Beagle.Daemon {
 						if (text[stop_pos] == ' ')
 							count++;
 					}
+
 					if (stop_pos != text.Length)
 						stop_pos--;
 
@@ -116,7 +122,7 @@ namespace Beagle.Daemon {
 
 					string new_match = String.Concat (text.Substring (start_pos, pos - start_pos),
 									  "<font color=\"",
-									  colors [i%colors.Length],
+									  colors [(i - hl_offset) % colors.Length],
 									  "\"><b>",
 									  text.Substring (pos, next_pos-pos),
 									  "</b></font>",
@@ -132,7 +138,7 @@ namespace Beagle.Daemon {
 
 					prev_stop_pos = stop_pos;
 					prev_end_pos = next_pos;
-					
+
 					break;
 				}
 
@@ -142,11 +148,9 @@ namespace Beagle.Daemon {
 			// Add trailing match
 			if (prev_match != "")
 				matches.Add (prev_match); 
-
-			return;
 		}
 
-		static string[] colors = new string [] { "red", "blue", "green", "orange", "purple", "brown"};
+		static string[] colors = new string [] {"red", "blue", "green", "orange", "purple", "brown"};
 
 		const int soft_snippet_limit = 400;
 
