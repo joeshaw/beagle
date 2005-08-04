@@ -64,6 +64,11 @@ namespace Beagle.Tile {
 				Template["Icon"] = icon;
 			else
 				Template ["Icon"] = Images.GetHtmlSource ("document", "image/png");
+
+			Template["Title"] = Hit ["dc:title"];
+
+			if (Template["Title"] == null)
+				Template["Title"] = Template["FileName"];
 		}
 
 		[TileAction]
