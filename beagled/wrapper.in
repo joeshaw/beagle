@@ -18,6 +18,9 @@ if [ -e ./@target@ ] && [ -e ./Makefile.am ] ; then
 else
     THIS_PATH="@pkglibdir@"
     THIS_EXE="@pkglibdir@/@target@"
+
+    export MONO_PATH="@pkglibdir@:$MONO_PATH"
+    export LD_LIBRARY_PATH="@pkglibdir@:$LD_LIBRARY_PATH"
 fi
 
 MONO_GAC_PREFIX="@gacprefix@:$MONO_GAC_PREFIX" MONO_PATH="$THIS_PATH:$MONO_PATH" exec mono --debug $MONO_EXTRA_ARGS $THIS_EXE "$@"
