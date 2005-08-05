@@ -275,6 +275,7 @@ namespace Best {
 		private Gtk.Label page_label;
 		private Gtk.Button back_button;
 		private Gtk.Button forward_button;
+		private ArrayList menu_items = new ArrayList ();
 
 		private Gtk.Button StockButton (string stockid, string label)
 		{
@@ -297,26 +298,24 @@ namespace Best {
 		{
 			Gtk.OptionMenu opt = new Gtk.OptionMenu ();
 
-			ArrayList items = new ArrayList ();
 			Gtk.MenuItem mi;
 			mi = new TypeMenuItem (Catalog.GetString ("Anywhere"), null);
-			items.Add (mi);
+			this.menu_items.Add (mi);
 			mi = new TypeMenuItem (Catalog.GetString ("in Files"), "File");
-			items.Add (mi);
+			this.menu_items.Add (mi);
 			mi = new TypeMenuItem (Catalog.GetString ("in Addressbook"), "Contact");
-			items.Add (mi);
+			this.menu_items.Add (mi);
 			mi = new TypeMenuItem (Catalog.GetString ("in Mail"), "MailMessage");
-			items.Add (mi);
+			this.menu_items.Add (mi);
 			mi = new TypeMenuItem (Catalog.GetString ("in Web Pages"), "WebHistory");
-			items.Add (mi);
+			this.menu_items.Add (mi);
 			mi = new TypeMenuItem (Catalog.GetString ("in Chats"), "IMLog");
-			items.Add (mi);
+			this.menu_items.Add (mi);
 
 			Gtk.Menu menu = new Gtk.Menu ();
-			foreach (Gtk.MenuItem item in items)
+			foreach (Gtk.MenuItem item in this.menu_items)
 				menu.Append (item);
 			opt.Menu = menu;
-			opt.Data["items"] = items;
 		
 			return opt;
 		}
@@ -447,7 +446,7 @@ namespace Best {
 		private void ChangeType (object o, EventArgs args)
 		{
 			Gtk.OptionMenu opt = (Gtk.OptionMenu) o;
-			TypeMenuItem mi = (TypeMenuItem) ((ArrayList) opt.Data["items"])[opt.History];
+			TypeMenuItem mi = (TypeMenuItem) this.menu_items [opt.History];
 
 			if (this.hit_type == mi.Type)
 				return;
