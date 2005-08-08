@@ -11,7 +11,7 @@
 # define __NR_inotify_init	253
 # define __NR_inotify_add_watch	254
 # define __NR_inotify_rm_watch	255
-#elif defined(__ppc__)
+#elif defined(__powerpc__) || defined(__powerpc64__)
 # define __NR_inotify_init	275
 # define __NR_inotify_add_watch	276
 # define __NR_inotify_rm_watch	277
