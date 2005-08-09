@@ -188,8 +188,9 @@ namespace Beagle.Util {
 					ConstructDefaultSection (type, sectionname, out section);
 				return false;
 			}
+
 			if (!force && current != null && mtimes.ContainsKey (sectionname) &&
-					File.GetLastWriteTimeUtc (filepath).CompareTo ((DateTime) mtimes [sectionname]) < 0)
+					File.GetLastWriteTimeUtc (filepath).CompareTo ((DateTime) mtimes [sectionname]) <= 0)
 				return false;
 
 			Logger.Log.Debug ("Loading {0} from {1}", type, filename);
