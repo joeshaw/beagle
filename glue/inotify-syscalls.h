@@ -23,6 +23,10 @@
 # define __NR_inotify_init	284
 # define __NR_inotify_add_watch	285
 # define __NR_inotify_rm_watch	286
+#elif defined (__alpha__)
+# define __NR_inotify_init	444
+# define __NR_inotify_add_watch	445
+# define __NR_inotify_rm_watch	446
 #else
 # error "Unsupported architecture!"
 #endif
