@@ -27,6 +27,10 @@
 # define __NR_inotify_init	444
 # define __NR_inotify_add_watch	445
 # define __NR_inotify_rm_watch	446
+#elif defined (__sparc__) || defined (__sparc64__)
+# define __NR_inotify_init	151
+# define __NR_inotify_add_watch	152
+# define __NR_inotify_rm_watch	156
 #else
 # error "Unsupported architecture!"
 #endif
