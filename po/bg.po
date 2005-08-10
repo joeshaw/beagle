@@ -2,14 +2,14 @@
 # Copyright (C) 2005 THE beagle'S COPYRIGHT HOLDER
 # This file is distributed under the same license as the beagle package.
 # Rostislav "zbrox" Raykov <zbrox@i-space.org>, 2005.
-#
-#
+# 
+# 
 msgid ""
 msgstr ""
 "Project-Id-Version: beagle\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2005-06-01 18:09+0300\n"
-"PO-Revision-Date: 2005-06-01 18:09+0300\n"
+"POT-Creation-Date: 2005-08-10 20:41+0300\n"
+"PO-Revision-Date: 2005-08-10 20:40+0300\n"
 "Last-Translator: Rostislav \"zbrox\" Raykov <zbrox@i-space.org>\n"
 "Language-Team: Bulgarian <dict@fsa-bg.org>\n"
 "MIME-Version: 1.0\n"
@@ -23,77 +23,81 @@ msgid ""
 "(system tray)"
 msgstr "Ако се чудите дали Best върви, проверете района за уведомявания."
 
-#: ../Best/BestTray.cs:164
+#: ../Best/BestTray.cs:171
 msgid "No Recent Searches"
 msgstr "Няма скорошни търсения"
 
-#: ../Best/BestTray.cs:168
+#: ../Best/BestTray.cs:175
 msgid "Recent Searches"
 msgstr "Скорошния търсения"
 
-#: ../Best/BestTray.cs:183
+#: ../Best/BestTray.cs:189
+msgid "Clear"
+msgstr "Изчистване"
+
+#: ../Best/BestTray.cs:197
 msgid "Quit"
 msgstr "Изход"
 
-#: ../Best/BestWindow.cs:303
+#: ../Best/BestWindow.cs:302
 msgid "Anywhere"
 msgstr "Навсякъде"
 
-#: ../Best/BestWindow.cs:305
+#: ../Best/BestWindow.cs:304
 msgid "in Files"
 msgstr "във Файлове"
 
-#: ../Best/BestWindow.cs:307
+#: ../Best/BestWindow.cs:306
 msgid "in Addressbook"
 msgstr "в Адресната книга"
 
-#: ../Best/BestWindow.cs:309
+#: ../Best/BestWindow.cs:308
 msgid "in Mail"
 msgstr "в Пощата"
 
-#: ../Best/BestWindow.cs:311
+#: ../Best/BestWindow.cs:310
 msgid "in Web Pages"
 msgstr "в Интернет"
 
-#: ../Best/BestWindow.cs:313
+#: ../Best/BestWindow.cs:312
 msgid "in Chats"
 msgstr "в Разговорите"
 
-#: ../Best/BestWindow.cs:329
+#: ../Best/BestWindow.cs:327
 msgid "Search terms:"
 msgstr "Какво да се търси:"
 
-#: ../Best/BestWindow.cs:346
+#: ../Best/BestWindow.cs:344
 msgid "Find"
 msgstr "Търсене"
 
-#: ../Best/BestWindow.cs:363
+#: ../Best/BestWindow.cs:361
 msgid "Show More Results"
 msgstr "Показване на повече резултати"
 
-#: ../Best/BestWindow.cs:369
+#: ../Best/BestWindow.cs:367
 msgid "Show Previous Results"
 msgstr "Показване на предишни резултати"
 
-#: ../Best/BestWindow.cs:403
+#: ../Best/BestWindow.cs:401
 msgid "No results."
 msgstr "Няма резултати."
 
 #. To translators: {0} is the current count of results shown of {1} in total, this is the message that is initially shown
 #. when results are returned to the user.
-#: ../Best/BestWindow.cs:407
+#: ../Best/BestWindow.cs:405
 #, csharp-format
 msgid "Best <b>{0} results of {1}</b> are shown."
 msgstr "Показани са най-добрите <b>{0} от {1}</b> резултата."
 
 #. To translators: {0} to {1} is the interval of results currently shown of {2} results in total
-#: ../Best/BestWindow.cs:412
+#: ../Best/BestWindow.cs:410
 #, csharp-format
 msgid "Results <b>{0} through {1} of {2}</b> are shown."
 msgstr "Показани са резултати <b>от {0} до {1} от общо {2}</b>"
 
 #. To translators: {0} represents the current query keywords
-#: ../Best/BestWindow.cs:522
+#: ../Best/BestWindow.cs:521
 #, csharp-format
 msgid ""
 "The query for <i>{0}</i> failed.<br>The likely cause is that the beagle "
@@ -103,7 +107,7 @@ msgstr ""
 "демона не върви."
 
 #. To translators: {0} represents the current query keywords, {1} contains the errormessage
-#: ../Best/BestWindow.cs:527
+#: ../Best/BestWindow.cs:526
 #, csharp-format
 msgid "The query for <i>{0}</i> failed with error:<br>{1}<br>"
 msgstr "Търсенето за <i>{0}</i> пропадна с грешка: <br>{1}<br>"
@@ -124,122 +128,162 @@ msgstr "<b>История на разговорите</b>"
 msgid "IM Viewer"
 msgstr "Преглед на разговори"
 
-#: ../Tiles/TileDocs.cs:75
+#: ../ImLogViewer/ImLogWindow.cs:87
+#, csharp-format
+msgid "Conversations in {0}"
+msgstr "Разговор в {0}"
+
+#: ../ImLogViewer/ImLogWindow.cs:94
+#, csharp-format
+msgid "Conversations with {0}"
+msgstr "Разговори с {0}"
+
+#: ../Tiles/TileDocs.cs:77
 msgid "Pages:"
 msgstr "Страници:"
 
-#: ../Tiles/TileDocs.cs:79
+#: ../Tiles/TileDocs.cs:81
 msgid "Words:"
 msgstr "Думи:"
 
-#: ../Tiles/TileFolder.cs:51
+#: ../Tiles/TileFolder.cs:53
 msgid "Empty"
 msgstr "Празно"
 
-#: ../Tiles/TileFolder.cs:53
+#: ../Tiles/TileFolder.cs:55
 #, csharp-format
 msgid "Contains {0} Item"
 msgid_plural "Contains {0} Items"
 msgstr[0] "Съдържа {0} елемент"
 msgstr[1] "Съдържа {0} елемента"
 
-#: ../Tiles/TileImLog.cs:76
+#: ../Tiles/TileImLog.cs:67
 msgid "Send Mail"
 msgstr "Изпращане на поща"
 
 #. For translators: From template Tiles/template-mail-message.html
-#: ../Tiles/TileImLog.cs:80 ../Tiles/TranslationHack.cs:44
+#: ../Tiles/TileImLog.cs:71 ../Tiles/TranslationHack.cs:52
 msgid "Send IM"
 msgstr "Изпращане на съобщение"
 
-#: ../Tiles/TileImLog.cs:89
+#: ../Tiles/TileImLog.cs:77
 #, csharp-format
 msgid "Conversation in {0}"
 msgstr "Разговор в {0}"
 
-#: ../Tiles/TileImLog.cs:91
+#: ../Tiles/TileImLog.cs:79
 #, csharp-format
 msgid "Conversation with {0}"
 msgstr "Разговор с {0}"
 
-#: ../Tiles/TileMailMessage.cs:68
+#: ../Tiles/TileMailMessage.cs:79
 msgid "No Subject"
 msgstr "Няма тема"
 
-#: ../Tiles/TileMailMessage.cs:73
+#: ../Tiles/TileMailMessage.cs:86
 msgid "To"
 msgstr "До"
 
-#: ../Tiles/TileMailMessage.cs:73
+#: ../Tiles/TileMailMessage.cs:86
 msgid "From"
 msgstr "От"
 
-#: ../Tiles/TileMailMessage.cs:104
+#: ../Tiles/TileMailMessage.cs:114
 msgid "Sent"
 msgstr "Изпратено"
 
-#: ../Tiles/TileMailMessage.cs:104
+#: ../Tiles/TileMailMessage.cs:114
 msgid "Received"
 msgstr "Получено"
 
+#: ../Tiles/TileMailMessage.cs:119
+msgid "Email attachment"
+msgstr "Прикачен файл към е-писмо"
+
+#. For translators: From template Tiles/template-blog.html
+#: ../Tiles/TranslationHack.cs:6
+msgid "Weblog:"
+msgstr "Блог:"
+
+#. For translators: From template Tiles/template-blog.html
+#: ../Tiles/TranslationHack.cs:8
+msgid "by"
+msgstr "от"
+
+#. For translators: From template Tiles/template-blog.html
+#: ../Tiles/TranslationHack.cs:10
+msgid "Published:"
+msgstr "Публикувано:"
+
+#. For translators: From template Tiles/template-blog.html
 #. For translators: From template Tiles/template-docs.html
-#. For translators: From template Tiles/template-folder.html
 #. For translators: From template Tiles/template-file.html
+#. For translators: From template Tiles/template-folder.html
+#. For translators: From template Tiles/template-launcher.html
+#. For translators: From template Tiles/template-mail-message.html
+#. For translators: From template Tiles/template-music.html
+#. For translators: From template Tiles/template-note.html
 #. For translators: From template Tiles/template-picture.html
 #. For translators: From template Tiles/template-presentation.html
-#: ../Tiles/TranslationHack.cs:6 ../Tiles/TranslationHack.cs:24
-#: ../Tiles/TranslationHack.cs:28 ../Tiles/TranslationHack.cs:60
-#: ../Tiles/TranslationHack.cs:70
+#. For translators: From template Tiles/template-spreadsheet.html
+#. For translators: From template Tiles/template-web-history.html
+#. For translators: From template Tiles/template-network.html
+#. For translators: From template Tiles/template-im-log.html
+#: ../Tiles/TranslationHack.cs:12 ../Tiles/TranslationHack.cs:22
+#: ../Tiles/TranslationHack.cs:32 ../Tiles/TranslationHack.cs:40
+#: ../Tiles/TranslationHack.cs:44 ../Tiles/TranslationHack.cs:50
+#: ../Tiles/TranslationHack.cs:58 ../Tiles/TranslationHack.cs:66
+#: ../Tiles/TranslationHack.cs:76 ../Tiles/TranslationHack.cs:92
+#: ../Tiles/TranslationHack.cs:106 ../Tiles/TranslationHack.cs:114
+#: ../Tiles/TranslationHack.cs:118 ../Tiles/TranslationHack.cs:122
+msgid "Open"
+msgstr "Отваряне"
+
+#. For translators: From template Tiles/template-docs.html
+#. For translators: From template Tiles/template-file.html
+#. For translators: From template Tiles/template-folder.html
+#. For translators: From template Tiles/template-picture.html
+#. For translators: From template Tiles/template-presentation.html
+#. For translators: From template Tiles/template-spreadsheet.html
+#: ../Tiles/TranslationHack.cs:14 ../Tiles/TranslationHack.cs:28
+#: ../Tiles/TranslationHack.cs:38 ../Tiles/TranslationHack.cs:68
+#: ../Tiles/TranslationHack.cs:82 ../Tiles/TranslationHack.cs:98
 msgid "in folder"
 msgstr "в папка"
 
 #. For translators: From template Tiles/template-docs.html
 #. For translators: From template Tiles/template-file.html
 #. For translators: From template Tiles/template-presentation.html
-#: ../Tiles/TranslationHack.cs:8 ../Tiles/TranslationHack.cs:30
-#: ../Tiles/TranslationHack.cs:72
+#. For translators: From template Tiles/template-spreadsheet.html
+#: ../Tiles/TranslationHack.cs:16 ../Tiles/TranslationHack.cs:30
+#: ../Tiles/TranslationHack.cs:84 ../Tiles/TranslationHack.cs:100
 msgid "Last modified"
 msgstr "Последно променено"
 
 #. For translators: From template Tiles/template-docs.html
 #. For translators: From template Tiles/template-presentation.html
-#: ../Tiles/TranslationHack.cs:10 ../Tiles/TranslationHack.cs:74
+#. For translators: From template Tiles/template-spreadsheet.html
+#: ../Tiles/TranslationHack.cs:18 ../Tiles/TranslationHack.cs:86
+#: ../Tiles/TranslationHack.cs:102
 msgid "Title:"
 msgstr "Заглавие:"
 
 #. For translators: From template Tiles/template-docs.html
 #. For translators: From template Tiles/template-presentation.html
-#: ../Tiles/TranslationHack.cs:12 ../Tiles/TranslationHack.cs:76
+#. For translators: From template Tiles/template-spreadsheet.html
+#: ../Tiles/TranslationHack.cs:20 ../Tiles/TranslationHack.cs:88
+#: ../Tiles/TranslationHack.cs:104
 msgid "Author:"
 msgstr "Автор:"
 
 #. For translators: From template Tiles/template-docs.html
-#. For translators: From template Tiles/template-launcher.html
-#. For translators: From template Tiles/template-folder.html
-#. For translators: From template Tiles/template-file.html
-#. For translators: From template Tiles/template-im-log.html
-#. For translators: From template Tiles/template-mail-message.html
-#. For translators: From template Tiles/template-music.html
-#. For translators: From template Tiles/template-note.html
-#. For translators: From template Tiles/template-picture.html
-#. For translators: From template Tiles/template-presentation.html
-#. For translators: From template Tiles/template-web-history.html
-#. For translators: From template Tiles/template-blog.html
-#: ../Tiles/TranslationHack.cs:14 ../Tiles/TranslationHack.cs:22
-#: ../Tiles/TranslationHack.cs:26 ../Tiles/TranslationHack.cs:32
-#: ../Tiles/TranslationHack.cs:38 ../Tiles/TranslationHack.cs:42
-#: ../Tiles/TranslationHack.cs:50 ../Tiles/TranslationHack.cs:58
-#: ../Tiles/TranslationHack.cs:64 ../Tiles/TranslationHack.cs:80
-#: ../Tiles/TranslationHack.cs:88 ../Tiles/TranslationHack.cs:94
-msgid "Open"
-msgstr "Отваряне"
-
-#. For translators: From template Tiles/template-docs.html
 #. For translators: From template Tiles/template-file.html
 #. For translators: From template Tiles/template-picture.html
 #. For translators: From template Tiles/template-presentation.html
-#: ../Tiles/TranslationHack.cs:16 ../Tiles/TranslationHack.cs:34
-#: ../Tiles/TranslationHack.cs:66 ../Tiles/TranslationHack.cs:82
+#. For translators: From template Tiles/template-spreadsheet.html
+#: ../Tiles/TranslationHack.cs:24 ../Tiles/TranslationHack.cs:34
+#: ../Tiles/TranslationHack.cs:78 ../Tiles/TranslationHack.cs:94
+#: ../Tiles/TranslationHack.cs:108
 msgid "Send to..."
 msgstr "Изпращане до..."
 
@@ -248,66 +292,352 @@ msgstr "Изпращане до..."
 #. For translators: From template Tiles/template-music.html
 #. For translators: From template Tiles/template-picture.html
 #. For translators: From template Tiles/template-presentation.html
-#: ../Tiles/TranslationHack.cs:18 ../Tiles/TranslationHack.cs:36
-#: ../Tiles/TranslationHack.cs:54 ../Tiles/TranslationHack.cs:68
-#: ../Tiles/TranslationHack.cs:84
+#. For translators: From template Tiles/template-spreadsheet.html
+#: ../Tiles/TranslationHack.cs:26 ../Tiles/TranslationHack.cs:36
+#: ../Tiles/TranslationHack.cs:62 ../Tiles/TranslationHack.cs:80
+#: ../Tiles/TranslationHack.cs:96 ../Tiles/TranslationHack.cs:110
 msgid "Reveal in file manager"
 msgstr "Показване във файловият мениджър"
 
 #. For translators: From template Tiles/template-launcher.html
-#: ../Tiles/TranslationHack.cs:20
+#: ../Tiles/TranslationHack.cs:42
 msgid "Application:"
 msgstr "Програма:"
 
 #. For translators: From template Tiles/template-mail-message.html
-#: ../Tiles/TranslationHack.cs:40
+#: ../Tiles/TranslationHack.cs:46
+msgid "Email subject:"
+msgstr "Тема на писмото:"
+
+#. For translators: From template Tiles/template-mail-message.html
+#: ../Tiles/TranslationHack.cs:48
 msgid "Folder:"
 msgstr "Папка:"
 
 #. For translators: From template Tiles/template-music.html
-#: ../Tiles/TranslationHack.cs:46
+#: ../Tiles/TranslationHack.cs:54
 msgid "Track"
 msgstr "Песен"
 
 #. For translators: From template Tiles/template-music.html
-#: ../Tiles/TranslationHack.cs:48
+#: ../Tiles/TranslationHack.cs:56
 msgid "from"
 msgstr "от"
 
 #. For translators: From template Tiles/template-music.html
-#: ../Tiles/TranslationHack.cs:52
+#: ../Tiles/TranslationHack.cs:60
 msgid "Enqueue"
 msgstr "Поставяне на опашката"
 
 #. For translators: From template Tiles/template-note.html
-#: ../Tiles/TranslationHack.cs:56
+#: ../Tiles/TranslationHack.cs:64
 msgid "last modified"
 msgstr "последно променено"
 
 #. For translators: From template Tiles/template-picture.html
-#: ../Tiles/TranslationHack.cs:62
+#: ../Tiles/TranslationHack.cs:70
 msgid "Modified:"
 msgstr "Променено:"
 
+#. For translators: From template Tiles/template-picture.html
+#: ../Tiles/TranslationHack.cs:72
+msgid "Tags:"
+msgstr "Етикети:"
+
+#. For translators: From template Tiles/template-picture.html
+#: ../Tiles/TranslationHack.cs:74
+msgid "Description:"
+msgstr "Описание:"
+
 #. For translators: From template Tiles/template-presentation.html
-#: ../Tiles/TranslationHack.cs:78
+#: ../Tiles/TranslationHack.cs:90
 msgid "Slides:"
 msgstr "Кадри:"
 
 #. For translators: From template Tiles/template-web-history.html
-#: ../Tiles/TranslationHack.cs:86
+#: ../Tiles/TranslationHack.cs:112
 msgid "Last viewed:"
 msgstr "Последно видяно:"
 
-#. For translators: From template Tiles/template-blog.html
-#: ../Tiles/TranslationHack.cs:90
-msgid "Weblog:"
-msgstr "Блог:"
+#. For translators: From template Tiles/template-network.html
+#: ../Tiles/TranslationHack.cs:116
+msgid "from Networked Beagle on host"
+msgstr "от мрежовото търсене на хост"
 
-#. For translators: From template Tiles/template-blog.html
-#: ../Tiles/TranslationHack.cs:92
-msgid "Published:"
-msgstr "Публикувано:"
+#. For translators: From template Tiles/template-network.html
+#: ../Tiles/TranslationHack.cs:120
+msgid "Search Networked Beagle"
+msgstr "Мрежово търсене"
+
+#: ../tools/Settings.cs:208
+msgid "Reload configuration"
+msgstr "Презареждане на конфигурацията"
+
+#: ../tools/Settings.cs:209
+msgid ""
+"The configuration file has been modified by another application. Do you wish "
+"to discard the currently displayed values and reload configuration from disk?"
+msgstr ""
+"Файлът с настройките е бил променен от друга програма. Искате ли да "
+"стойностите, които са показани в момента, да се заменят с тези от диска?"
+
+#: ../tools/Settings.cs:247
+msgid "Select Path"
+msgstr "Избор на път"
+
+#: ../tools/Settings.cs:266
+msgid "The selected path is already selected for indexing and wasn't added."
+msgstr "Избраният път е вече въведен за индексиране и не беше добавен."
+
+#: ../tools/Settings.cs:269
+msgid ""
+"The selected path wasn't added. The list contains items that supercedes it "
+"and the data is already being indexed."
+msgstr ""
+"Избраният път не бе добавен. Списъкът вече съдържа елементи, които обхващат "
+"посочения път, а данните вече са индексирани."
+
+#: ../tools/Settings.cs:280 ../tools/Settings.cs:472
+msgid "Path not added"
+msgstr "Пътят не е добавен"
+
+#: ../tools/Settings.cs:289
+msgid "Remove obsolete paths"
+msgstr "Премахване на излишни пътища"
+
+#: ../tools/Settings.cs:290
+msgid ""
+"Adding this path will obsolete some of the existing include paths. This will "
+"result in the removal of the old obsolete paths. Do you still wish to add it?"
+msgstr ""
+"Добавянето на този път ще направи част от вече наличните - излишни. Поради "
+"тази причина те ще бъдат премахнати. Искате ли да го добавите?"
+
+#: ../tools/Settings.cs:316
+msgid "Remove path"
+msgstr "Премахване на пътя"
+
+#: ../tools/Settings.cs:317
+msgid ""
+"Are you sure you wish to remove this path from the list of directories to be "
+"included for indexing?"
+msgstr ""
+"Сигурни ли сте, че искате да махнете този път от списъка с папки, които се "
+"индексират?"
+
+#: ../tools/Settings.cs:346
+msgid "Remove item"
+msgstr "Премахване на елемента"
+
+#: ../tools/Settings.cs:347
+msgid ""
+"Are you sure you wish to remove this item from the list of data to be "
+"excluded from indexing?"
+msgstr ""
+"Сигурни ли сте, че искате да махнете елемент път от списъка с папки, които "
+"се индексират?<"
+
+#: ../tools/Settings.cs:390
+msgid "Invalid host entry"
+msgstr "Невалиден запис за хост"
+
+#: ../tools/Settings.cs:397
+msgid "Host already present in the list."
+msgstr "Хостът е вече в списъка."
+
+#: ../tools/Settings.cs:406
+msgid "Host not added"
+msgstr "Хостът не е добавен"
+
+#: ../tools/Settings.cs:422
+msgid "Remove host"
+msgstr "Премахване на хост"
+
+#: ../tools/Settings.cs:423
+msgid "Are you sure you wish to remove this host from the list?"
+msgstr "Сигурни ли сте, че искате да премахнете този хост от списъка?"
+
+#: ../tools/Settings.cs:444
+msgid "Select path"
+msgstr "Избор на път"
+
+#: ../tools/Settings.cs:463
+msgid "The selected path is already configured for external access."
+msgstr "Избрания път е вече конфигуриран за външен достъп."
+
+#: ../tools/Settings.cs:487
+msgid "Remove public path"
+msgstr "Премахване на публичния път"
+
+#: ../tools/Settings.cs:488
+msgid ""
+"Are you sure you wish to remove this entry from the list of public paths?"
+msgstr ""
+"Сигурни ли сте, че искате да махнете този запис от списъка с публични пътища?"
+
+#: ../tools/Settings.cs:533 ../tools/Settings.cs:622 ../tools/Settings.cs:700
+#: ../tools/Settings.cs:776 ../tools/Settings.cs:1115
+msgid "Name"
+msgstr "Име"
+
+#: ../tools/Settings.cs:616 ../tools/settings.glade.h:29
+msgid "Type"
+msgstr "Вид"
+
+#: ../tools/Settings.cs:669 ../tools/Settings.cs:1049
+#: ../tools/settings.glade.h:22
+msgid "Path"
+msgstr "Път"
+
+#: ../tools/Settings.cs:672 ../tools/Settings.cs:1059
+msgid "Pattern"
+msgstr "Шаблон"
+
+#: ../tools/Settings.cs:675 ../tools/Settings.cs:1054
+#: ../tools/settings.glade.h:20
+msgid "Mail Folder"
+msgstr "Папка за пощата"
+
+#: ../tools/Settings.cs:1023
+msgid "Select Folder"
+msgstr "Избор на папка"
+
+#: ../tools/Settings.cs:1083
+msgid "Error adding path"
+msgstr "Грешка при добавянето на пътя"
+
+#: ../tools/Settings.cs:1084
+msgid ""
+"The specified path could not be found and therefore it could not be added to "
+"the list of resources excluded for indexing."
+msgstr ""
+"Указаният път не бе открит и затова няма да бъде включен в списъка на "
+"ресурси, които се индексират."
+
+#: ../tools/Settings.cs:1114
+msgid "Show"
+msgstr "Показване"
+
+#: ../tools/settings.glade.h:1
+msgid "<b>Add host</b>"
+msgstr "<b>Добавяне на хост</b>"
+
+#: ../tools/settings.glade.h:2
+msgid "<b>Add resource</b>"
+msgstr "<b>Добавяне на ресурс</b>"
+
+#: ../tools/settings.glade.h:3
+msgid "<b>Display</b>"
+msgstr "<b>Показване</b>"
+
+#: ../tools/settings.glade.h:4
+msgid "<b>General</b>"
+msgstr "<b>Общи</b>"
+
+#: ../tools/settings.glade.h:5
+msgid "<b>Networking</b>"
+msgstr "<b>Мрежа</b>"
+
+#: ../tools/settings.glade.h:6
+msgid "<b>Privacy</b>"
+msgstr "<b>Лични данни</b>"
+
+#: ../tools/settings.glade.h:7
+msgid "<b>Select mail folder</b>"
+msgstr "<b>Избор на папка за пощата</b>"
+
+#: ../tools/settings.glade.h:8
+msgid "Add a search-enabled host you wish to network with"
+msgstr "Добавете компютър поддържащ търсене за работа през мрежата"
+
+#: ../tools/settings.glade.h:9
+msgid "Add any additional paths to be included for indexing."
+msgstr "Добавете допълнителни пътища, които да се индексират."
+
+#: ../tools/settings.glade.h:10
+msgid "Add any search-enabled hosts you wish to network with"
+msgstr ""
+"Добавете който и да е компютър поддържащ търсене за работа през мрежата"
+
+#: ../tools/settings.glade.h:11
+msgid ""
+"Adjust which types of results should be visible, and in what order they "
+"should be presented when grouped by type."
+msgstr ""
+"Конфигуриране на видовете резултати, които да бъдат видими, както и на реда "
+"им, по който ще се подреждат при групиране по тип."
+
+#: ../tools/settings.glade.h:12
+msgid "Allow external access to local search services"
+msgstr "Позволяване на външен достъп до локални услуги за търсене"
+
+#: ../tools/settings.glade.h:13
+msgid "Alt"
+msgstr "Alt"
+
+#: ../tools/settings.glade.h:14
+msgid "Ctrl"
+msgstr "Ctrl"
+
+#: ../tools/settings.glade.h:15
+msgid "Directory Path"
+msgstr "Път до папката"
+
+#: ../tools/settings.glade.h:16
+msgid "Display the search window by pressing"
+msgstr "Показване на прозореца за търсене чрез натискане на"
+
+#: ../tools/settings.glade.h:17
+msgid "Filename Pattern"
+msgstr "Шаблон на файловото име"
+
+#: ../tools/settings.glade.h:18
+msgid "Index my home directory"
+msgstr "Индексиране на домашната папка"
+
+#: ../tools/settings.glade.h:19
+msgid "Indexing"
+msgstr "Индексиране"
+
+#: ../tools/settings.glade.h:21
+msgid "Networking"
+msgstr "Мрежови"
+
+#: ../tools/settings.glade.h:23
+msgid "Please select a resource you wish to exclude from indexing."
+msgstr "Изберете ресурс, които да не се индексира."
+
+#: ../tools/settings.glade.h:24
+msgid "Please select the mail folder you wish to exclude from indexing. "
+msgstr "Изберете папка с поща, която да не се индексира."
+
+#: ../tools/settings.glade.h:25
+msgid "Search"
+msgstr "Търсене"
+
+#: ../tools/settings.glade.h:26
+msgid "Search Preferences"
+msgstr "Настройки на търсенето"
+
+#: ../tools/settings.glade.h:27
+msgid ""
+"Specify any resources, such as paths, patterns, mail folders or type of "
+"objects you wish to exclude from indexing."
+msgstr ""
+"Укажете ресурси като папки, шаблони, папки с поща или видове обекти, които "
+"да не се индексират."
+
+#: ../tools/settings.glade.h:28
+msgid "Specify paths that should be available for external access"
+msgstr "Укажете пътища, които да са достъпни за достъп отвън"
+
+#: ../tools/settings.glade.h:30
+msgid "_Address"
+msgstr "_Адрес"
+
+#: ../Util/Evolution.cs:45 ../Util/Evolution.cs:163
+msgid "On This Computer"
+msgstr "На този компютър"
 
 #: ../Util/ExifData.cs:226
 msgid "Image Directory"
@@ -416,6 +746,3 @@ msgstr "{0:0.0} KB"
 #, csharp-format
 msgid "{0:0.0} MB"
 msgstr "{0:0.0} MB"
-
-#~ msgid "<b>Today, 12:00 PM</b>"
-#~ msgstr "<b>Днес, 12:00</b>"
