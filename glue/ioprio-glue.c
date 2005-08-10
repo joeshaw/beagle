@@ -24,9 +24,6 @@
 #elif defined(__s390x__) || defined(__s390__)
 #define __NR_ioprio_set		282
 #define __NR_ioprio_get		283
-#elif defined(__alpha__)
-#define __NR_ioprio_set		442
-#define __NR_ioprio_get		443
 #elif defined(__SH4__)
 #define __NR_ioprio_set		288
 #define __NR_ioprio_get		289
