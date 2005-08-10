@@ -97,7 +97,7 @@ namespace Beagle.Util {
 				} else if (date.DayOfYear == now.DayOfYear - 1) {
 					/* To translators: {0} is the time of the day, eg. 13:45 */
 					return String.Format (Catalog.GetString ("Yesterday, {0}"), short_time);
-				} else if (date.DayOfYear > now.DayOfYear - 6) {
+				} else if (date.DayOfYear > now.DayOfYear - 6 && date.DayOfYear < now.DayOfYear) {
 					/* To translators: {0} is the number of days that have passed, {1} is the time of the day, eg. 13:45 */
 					return String.Format (Catalog.GetString ("{0} days ago, {1}"),
 							      now.DayOfYear - date.DayOfYear,
