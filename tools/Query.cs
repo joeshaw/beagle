@@ -27,6 +27,7 @@
 using System;
 using System.Collections;
 using System.Threading;
+using System.Text;
 
 using Gtk;
 
@@ -77,8 +78,6 @@ class QueryTool {
 				Console.WriteLine ("Score: {0}", hit.Score);
 				if (hit.ValidTimestamp)
 					Console.WriteLine (" Time: {0}", hit.Timestamp);
-				if (hit.ValidRevision)
-					Console.WriteLine ("  Rev: {0}", hit.Revision);
 				
 				foreach (Property prop in hit.Properties)
 					Console.WriteLine ("    {0} = {1}", prop.Key, prop.Value);
@@ -170,8 +169,9 @@ class QueryTool {
 		queryStartTime = DateTime.Now;
 		try {
 			query.SendAsync ();
-		} catch {
+		} catch (Exception ex) {
 			Console.WriteLine ("Could not connect to the Beagle daemon.  The daemon probably isn't running.");
+			Console.WriteLine (ex);
 			System.Environment.Exit (-1);
 		}
 	}
@@ -184,6 +184,8 @@ class QueryTool {
 			PrintUsageAndExit ();
 
 		query = new Query ();
+
+		StringBuilder query_str =  new StringBuilder ();
 
 		// Parse args
 		int i = 0;
@@ -221,33 +223,17 @@ class QueryTool {
 				break;
 
 			default:
-				int j = args [i].IndexOf ('=');
-				if (j == -1) {
-					query.AddText (args [i]);
-				} else {
-					QueryPart part = new QueryPart ();
-					part.Target = args [i].Substring (0, j);
-
-					// This is very obscure notation.
-					if (args [i] [j+1] == '~') {
-						part.Text = args [i].Substring (j+2);
-						part.IsKeyword = false;
-					} else {
-						part.Text = args [i].Substring (j+1);
-						part.IsKeyword = true;
-					}
-
-					Console.WriteLine ("*** '{0}' '{1}' '{2}'",
-							   part.Target, part.Text, part.IsKeyword);
-
-					query.AddPart (part);
-				}
-
+				if (query_str.Length > 0)
+					query_str.Append (' ');
+				query_str.Append (args [i]);
 				break;
 			}
 
 			++i;
 		}
+
+		if (query_str.Length > 0)
+			query.AddText (query_str.ToString ());
 
 		query.HitsAddedEvent += OnHitsAdded;
 		query.HitsSubtractedEvent += OnHitsSubtracted;

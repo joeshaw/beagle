@@ -35,6 +35,7 @@ class SanityCheckTool {
 
 	static void Main (string [] args)
 	{
+#if false
 		Logger.DefaultEcho = true;
 		Logger.DefaultLevel = LogLevel.Debug;
 
@@ -46,5 +47,6 @@ class SanityCheckTool {
 		model.AddRoot (PathFinder.HomeDir);
 
 		SanityCheck.CheckDirectory (PathFinder.HomeDir, null, model);
+#endif
 	}
 }

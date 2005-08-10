@@ -357,12 +357,16 @@ namespace Beagle.Daemon {
 			LNS.BooleanQuery lucene_query = new LNS.BooleanQuery ();
 			bool used_any_part = false;
 
-			foreach (QueryPart part in query.Parts) {
-				if (part.TargetIsAll || part.TargetIsProperties) {
+			foreach (QueryPart  abstract_part in query.Parts) {
+				if (abstract_part is QueryPart_Text) {
+					QueryPart_Text part = (QueryPart_Text) abstract_part;
 					LNS.Query part_query;
 					part_query = NewTokenizedQuery ("Name", part.Text);
 					if (part_query != null) {
-						lucene_query.Add (part_query, part.IsRequired, part.IsProhibited);
+						lucene_query.Add (part_query,
+								  // FIXME: This is wrong.
+								  part.Logic == QueryPartLogic.Required,
+								  part.Logic == QueryPartLogic.Prohibited);
 						used_any_part = true;
 					}
 				}

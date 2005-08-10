@@ -363,6 +363,16 @@ namespace Beagle {
 			}
 		}
 
+		public string GetFirstProperty (string key)
+		{
+			int first, top;
+			if (! FindProperty (key, out first, out top))
+				return null;
+			Property prop;
+			prop = properties [first] as Property;
+			return prop.Value;
+		}
+
 		public string[] GetProperties (string key)
 		{
 			int first, top;

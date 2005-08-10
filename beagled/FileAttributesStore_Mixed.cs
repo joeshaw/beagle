@@ -68,6 +68,20 @@ namespace Beagle.Daemon {
 			store_sqlite.Drop (path);
 		}
 
+		// Transactions do nothing for the EA store, so there is no
+		// point in calling it BeginTransaction or CommitTransaction
+		// on store_ea.
+
+		public void BeginTransaction ()
+		{
+			store_sqlite.BeginTransaction ();
+		}
+
+		public void CommitTransaction ()
+		{
+			store_sqlite.CommitTransaction ();
+		}
+
 	}
 	
 }

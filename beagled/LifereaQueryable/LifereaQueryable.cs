@@ -2,6 +2,7 @@
 // LifereaQueryable.cs
 //
 // Copyright (C) 2005 Carl-Emil Lagerstedt
+// Copyright (C) 2005 Novell, Inc.
 //
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -37,7 +38,7 @@ using Beagle.Util;
 namespace Beagle.Daemon.LifereaQueryable {
 
 	[QueryableFlavor (Name="Liferea", Domain=QueryDomain.Local, RequireInotify=false)]
-	public class LifereaQueryable : LuceneQueryable, IIndexableGenerator {
+	public class LifereaQueryable : LuceneFileQueryable, IIndexableGenerator {
 
 		private static Logger log = Logger.Get ("LifereaQueryable");
 
@@ -131,9 +132,10 @@ namespace Beagle.Daemon.LifereaQueryable {
 		
 		/////////////////////////////////////////////////
 
-		private Indexable FeedItemToIndexable (Feed feed, Item item)
+		private Indexable FeedItemToIndexable (Feed feed, Item item, FileInfo file)
 		{
-			Indexable indexable = new Indexable (new Uri (String.Format ("feed:{0};item={1}", feed.Source, item.Source)));
+			Indexable indexable = new Indexable (new Uri (String.Format ("{0};item={1}", feed.Source, item.Source)));
+			indexable.ParentUri = UriFu.PathToFileUri (file.FullName);
 			indexable.MimeType = "text/html";
 			indexable.Type = "FeedItem";
 
@@ -164,11 +166,9 @@ namespace Beagle.Daemon.LifereaQueryable {
 			Feed feed;
 			int item_count = 0;
 
-			if (this.FileAttributesStore.IsUpToDate (file.FullName))
-			        return 0;
+			if (IsUpToDate (file.FullName))
+				return 0;
 
-			Scheduler.TaskGroup group = NewMarkingTaskGroup (file.FullName, file.LastWriteTime);
-			
 			feed = Feed.LoadFromFile (file.FullName);
 			
 			if (feed == null || feed.Items == null)
@@ -177,14 +177,12 @@ namespace Beagle.Daemon.LifereaQueryable {
 			foreach (Item item in feed.Items) {
 				item_count++;
 				
-				Indexable indexable = FeedItemToIndexable (feed, item);
-				
+				Indexable indexable = FeedItemToIndexable (feed, item, file);
+
 				Scheduler.Task task = NewAddTask (indexable);
 				task.Priority = priority;
 				task.SubPriority = 0;
-				task.AddTaskGroup (group);
-				ThisScheduler.Add (task);
-				
+				ThisScheduler.Add (task);				
 			}
 		     
 			return item_count;
@@ -202,8 +200,8 @@ namespace Beagle.Daemon.LifereaQueryable {
 		public Indexable GetNextIndexable ()
 		{
 			Item item = (Item) this.item_enumerator.Current;
-
-			return FeedItemToIndexable (this.current_feed, item);
+			FileInfo file = (FileInfo) this.file_enumerator.Current;
+			return FeedItemToIndexable (this.current_feed, item, file);
 		}
 
 		public bool HasNextIndexable ()
@@ -221,13 +219,11 @@ namespace Beagle.Daemon.LifereaQueryable {
 
 					FileInfo file = (FileInfo) this.file_enumerator.Current;
 
-					if (this.FileAttributesStore.IsUpToDate (file.FullName))
+					if (IsUpToDate (file.FullName))
 						continue;
 
 					Feed feed = Feed.LoadFromFile (file.FullName);
 
-					this.FileAttributesStore.AttachTimestamp (file.FullName, file.LastWriteTime);
-				
 					if (feed == null || feed.Items == null)
 						continue;
 

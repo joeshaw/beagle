@@ -1,3 +1,4 @@
+/* -*- Mode: C; tab-width: 8; indent-tabs-mode: t; c-basic-offset: 8; -*- */
 /*
  * beagle-private.h
  *
@@ -59,9 +60,10 @@ struct _BeagleHit {
 struct _BeagleProperty {
 	char *key;
 	char *value;
-	
+
+	BeaglePropertyType type;	
 	gboolean is_searched;
-	gboolean is_keyword;
+	gboolean is_mutable;
 };
 
 BeagleHit *_beagle_hit_new (void);
@@ -73,9 +75,6 @@ void _beagle_hit_list_free (GSList *list);
 void _beagle_response_class_set_parser_handlers (BeagleResponseClass *klass,
 						 BeagleParserHandler *handlers);
 
-
-void _beagle_query_part_to_xml (BeagleQueryPart *part,
-				GString         *data);
 void _beagle_hit_add_property (BeagleHit *hit, BeagleProperty *prop);
 void _beagle_hit_list_free    (GSList *list);
 

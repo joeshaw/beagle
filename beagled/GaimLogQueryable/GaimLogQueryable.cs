@@ -36,7 +36,7 @@ using Beagle.Util;
 namespace Beagle.Daemon.GaimLogQueryable {
 
 	[QueryableFlavor (Name="IMLog", Domain=QueryDomain.Local, RequireInotify=false)]
-	public class GaimLogQueryable : LuceneQueryable {
+	public class GaimLogQueryable : LuceneFileQueryable {
 
 		private static Logger log = Logger.Get ("GaimLogQueryable");
 
@@ -130,7 +130,7 @@ namespace Beagle.Daemon.GaimLogQueryable {
 				
 				// Setup watches on the present directory.
 				Inotify.Subscribe (dir.FullName, OnInotifyEvent,
-							Inotify.EventType.Create | Inotify.EventType.Modify);
+						   Inotify.EventType.Create | Inotify.EventType.Modify);
 				
 				// Add all subdirectories to the queue so their files can be indexed.
 				foreach (DirectoryInfo subdir in dir.GetDirectories ())
@@ -215,12 +215,11 @@ namespace Beagle.Daemon.GaimLogQueryable {
 		private void IndexLog (string filename, Scheduler.Priority priority)
 		{
 			FileInfo info = new FileInfo (filename);
-			if (! info.Exists
-			    || this.FileAttributesStore.IsUpToDate (filename))
+			if (! info.Exists)
 				return;
 
-			Scheduler.TaskGroup group;
-			group = NewMarkingTaskGroup (filename, info.LastWriteTime);
+			if (IsUpToDate (filename))
+				return;
 
 			ICollection logs = GaimLog.ScanLog (info);
 			foreach (ImLog log in logs) {
@@ -228,7 +227,6 @@ namespace Beagle.Daemon.GaimLogQueryable {
 				Scheduler.Task task = NewAddTask (indexable);
 				task.Priority = priority;
 				task.SubPriority = 0;
-				task.AddTaskGroup (group);
 				ThisScheduler.Add (task);
 			}
 		}
@@ -275,13 +273,20 @@ namespace Beagle.Daemon.GaimLogQueryable {
 			else
 				return log.Snippet;
 		}
-
-		override protected bool HitIsValid (Uri uri)
+		
+		override protected bool HitFilter (Hit hit) 
 		{
-			if (File.Exists (uri.LocalPath))
-				return true;
+			ImBuddy buddy = list.Search (hit ["fixme:speakingto"]);
 			
-			return false;
+			if (buddy != null) {
+				if (buddy.Alias != "")
+					hit ["fixme:speakingto_alias"] = buddy.Alias;
+				
+				if (buddy.BuddyIconLocation != "")
+					hit ["fixme:speakingto_icon"] = Path.Combine (icons_dir, buddy.BuddyIconLocation);
+			}
+			
+			return true;
 		}
 
 		override protected Hit PostProcessHit (Hit hit) 

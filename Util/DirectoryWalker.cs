@@ -77,6 +77,8 @@ namespace Beagle.Util {
 			FileObjectifier file_objectifier;
 			IntPtr dir_handle = IntPtr.Zero;
 			string current;
+
+			public bool NamesOnly = false;
 			
 			public FileEnumerator (string          path,
 					       FileFilter      file_filter,
@@ -100,6 +102,8 @@ namespace Beagle.Util {
 					if (current != null) {
 						if (file_objectifier != null)
 							current_obj = file_objectifier (path, current); 
+						else if (NamesOnly)
+							current_obj = current;
 						else
 							current_obj = Path.Combine (path, current);
 					}
@@ -163,6 +167,8 @@ namespace Beagle.Util {
 			string path;
 			FileFilter file_filter;
 			FileObjectifier file_objectifier;
+			
+			public bool NamesOnly = false;
 
 			public FileEnumerable (string          path,
 					       FileFilter      file_filter,
@@ -175,7 +181,10 @@ namespace Beagle.Util {
 
 			public IEnumerator GetEnumerator ()
 			{
-				return new FileEnumerator (path, file_filter, file_objectifier);
+				FileEnumerator e;
+				e = new FileEnumerator (path, file_filter, file_objectifier);
+				e.NamesOnly = this.NamesOnly;
+				return e;
 			}
 		}
 
@@ -188,6 +197,20 @@ namespace Beagle.Util {
 		{
 			return new FileInfo (Path.Combine (path, name));
 		}
+
+		/////////////////////////////////////////////////////////////////////////////////
+
+		static public bool IsWalkable (string path)
+		{
+			IntPtr dir_handle;
+			dir_handle = opendir (path);
+			if (dir_handle == IntPtr.Zero)
+				return false;
+			closedir (dir_handle);
+			return true;
+		}
+
+		/////////////////////////////////////////////////////////////////////////////////
 
 		static public IEnumerable GetFiles (string path)
 		{
@@ -229,6 +252,14 @@ namespace Beagle.Util {
 		static public IEnumerable GetDirectories (DirectoryInfo dirinfo)
 		{
 			return GetDirectories (dirinfo.FullName);
+		}
+
+		static public IEnumerable GetDirectoryNames (string path)
+		{
+			FileEnumerable fe;
+			fe = new FileEnumerable (path, new FileFilter (IsDirectory), null);
+			fe.NamesOnly = true;
+			return fe;
 		}
 
 		static public IEnumerable GetDirectoryInfos (string path)

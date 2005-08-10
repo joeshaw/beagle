@@ -38,7 +38,7 @@ using Beagle.Util;
 namespace Beagle.Daemon.AkregatorQueryable {
 
 	[QueryableFlavor (Name="Akregator", Domain=QueryDomain.Local, RequireInotify=false)]
-	public class AkregatorQueryable : LuceneQueryable, IIndexableGenerator  {
+	public class AkregatorQueryable : LuceneFileQueryable, IIndexableGenerator  {
 
 		private static Logger log = Logger.Get ("AkregatorQueryable");
 
@@ -135,9 +135,21 @@ namespace Beagle.Daemon.AkregatorQueryable {
 		
 		/////////////////////////////////////////////////
 		
-		private Indexable FeedItemToIndexable (Channel channel, Item item)
+		private bool IsFeedDeleted (Channel channel, Item item)
+		{
+			for (int i=0; i<item.MetaList.Count; ++i) {
+			    MetaInfo meta = (MetaInfo)item.MetaList[i];
+			    if (meta.Type == "deleted" && meta.value == "true") {
+				    return true;
+			    }
+			}
+			return false;
+		}
+		
+		private Indexable FeedItemToIndexable (Channel channel, Item item, FileInfo file)
 		{
 			Indexable indexable = new Indexable (new Uri (String.Format ("feed:{0};item={1}", channel.Link, item.Link)));
+			indexable.ParentUri = UriFu.PathToFileUri (file.FullName);
 			indexable.MimeType = "text/html";
 			indexable.Type = "FeedItem";
 
@@ -165,25 +177,25 @@ namespace Beagle.Daemon.AkregatorQueryable {
 			RSS feed;
 			int item_count = 0;
 
-			if (this.FileAttributesStore.IsUpToDate (file.FullName))
+			if (IsUpToDate (file.FullName))
 			        return 0;
 
-			Scheduler.TaskGroup group = NewMarkingTaskGroup (file.FullName, file.LastWriteTime);
-			
 			feed = RSS.LoadFromFile(file.FullName);
 			
 			if(feed == null || feed.channel == null || feed.channel.Items == null)
 				return 0;
 			
 			foreach (Item item in feed.channel.Items) {
+				if (IsFeedDeleted (feed.channel, item))
+					continue;
+			    
 				item_count++;
 				
-				Indexable indexable = FeedItemToIndexable (feed.channel, item);
+				Indexable indexable = FeedItemToIndexable (feed.channel, item, file);
 				
 				Scheduler.Task task = NewAddTask (indexable);
 				task.Priority = priority;
 				task.SubPriority = 0;
-				task.AddTaskGroup (group);
 				ThisScheduler.Add (task);
 				
 			}
@@ -203,8 +215,15 @@ namespace Beagle.Daemon.AkregatorQueryable {
 		public Indexable GetNextIndexable ()
 		{
 			Item item = (Item) this.item_enumerator.Current;
+			FileInfo file = (FileInfo) this.file_enumerator.Current;
+			// FIXME: We should find the next valid feed and return that
+			// that wont waste unnecessary function calls
+			// but that would need to handle HasNextIndexable as well
+			// Right now we return null as LuceneQueryable can handle null
+			if (IsFeedDeleted (this.current_feed.channel, item))
+				return null;
 
-			return FeedItemToIndexable (this.current_feed.channel, item);
+			return FeedItemToIndexable (this.current_feed.channel, item, file);
 		}
 
 		public bool HasNextIndexable ()
@@ -222,13 +241,11 @@ namespace Beagle.Daemon.AkregatorQueryable {
 
 					FileInfo file = (FileInfo) this.file_enumerator.Current;
 
-					if (this.FileAttributesStore.IsUpToDate (file.FullName))
+					if (IsUpToDate (file.FullName))
 						continue;
 
 					RSS feed = RSS.LoadFromFile (file.FullName);
 
-					this.FileAttributesStore.AttachTimestamp (file.FullName, file.LastWriteTime);
-				
 					if (feed == null || feed.channel == null || feed.channel.Items == null)
 						continue;
 
@@ -254,11 +271,23 @@ namespace Beagle.Daemon.AkregatorQueryable {
 	// Changing to standard stream parsing will increse performance no doubt
 	// but not sure if it will be noticable
 
+	public class MetaInfo {
+		[XmlText]
+		public string value = "";
+		[XmlAttribute ("type")] public string Type = "";
+	}
+
 	public class Item {
+		[XmlElement ("pubDate")] public string PubDate; 
 		[XmlElement ("title")] public string Title = "";
 		[XmlElement ("description")] public string Description ="";
 		[XmlElement ("link")] public string Link="";
-		[XmlElement ("pubDate")] public string PubDate; 
+		[XmlElement ("meta", typeof (MetaInfo), Namespace="http://foobar")]
+		public ArrayList MetaList {
+		    get { return metaList; }
+		    set { metaList = value; }
+		}
+		private ArrayList metaList = new ArrayList ();
 	}
 	
 	public class Channel{

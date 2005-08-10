@@ -150,57 +150,53 @@ namespace Beagle.Util {
 			return String.Format (Catalog.GetString ("{0:0.0} MB"), len/(double)oneMb);
 		}
 
-		// FIXME: This is pretty inefficient
-		static public string[] FuzzySplit (string line)
+		// Here we:
+		// (1) Replace non-alphanumeric characters with spaces
+		// (2) Inject whitespace between lowercase-to-uppercase
+		//     transitions (so "FooBar" becomes "Foo Bar")
+		//     and transitions between letters and numbers
+		//     (so "cvs2svn" becomes "cvs 2 svn")
+		static public string FuzzyDivide (string line)
 		{
-			int i;
+			// Allocate a space slightly bigger than the
+			// original string.
+			StringBuilder builder;
+			builder = new StringBuilder (line.Length + 4);
 
-			// Replace non-alphanumeric characters with spaces
-			StringBuilder builder = new StringBuilder (line.Length);
-			for (i = 0; i < line.Length; ++i) {
-				if (Char.IsLetterOrDigit (line [i]))
-					builder.Append (line [i]);
-				else
-					builder.Append (" ");
-			}
-			line = builder.ToString ();
+			int prev_case = 0;
+			bool last_was_space = true; // don't start w/ a space
+			for (int i = 0; i < line.Length; ++i) {
+				char c = line [i];
+				int this_case = 0;
+				if (Char.IsLetterOrDigit (c)) {
+					if (Char.IsUpper (c))
+						this_case = +1;
+					else if (Char.IsLower (c))
+						this_case = -1;
+					if (this_case != prev_case
+					    && !(this_case == -1 && prev_case == +1)) {
+						if (! last_was_space) {
+							builder.Append (' ');
+							last_was_space = true;
+						}
+					}
+					
+					if (c != ' ' || !last_was_space) {
+						builder.Append (c);
+						last_was_space = (c == ' ');
+					}
 
-			// Inject whitespace on all case changes except
-			// from upper to lower.
-			i = 0;
-			int prevCase = 0;
-			while (i < line.Length) {
-				int thisCase;
-				if (Char.IsUpper (line [i]))
-					thisCase = +1;
-				else if (Char.IsLower (line [i]))
-					thisCase = -1;
-				else
-					thisCase = 0;
-
-				if (prevCase != thisCase
-				    && !(prevCase == +1 && thisCase == -1)) {
-					line = line.Substring (0, i) + " " + line.Substring (i);
-					++i;
+					prev_case = this_case;
+				} else {
+					if (! last_was_space) {
+						builder.Append (' ');
+						last_was_space = true;
+					}
+					prev_case = 0;
 				}
-
-				prevCase = thisCase;
-				
-				++i;
-			}
-			
-			// Filter out empty parts
-			ArrayList partsArray = new ArrayList ();
-			foreach (string str in line.Split (' ')) {
-				if (str != "")
-					partsArray.Add (str);
 			}
 
-			// Assemble the array to return
-			string[] parts = new string [partsArray.Count];
-			for (i = 0; i < partsArray.Count; ++i)
-				parts [i] = (string) partsArray [i];
-			return parts;
+			return builder.ToString ();
 		}
 		
 		// Match strings against patterns that are allowed to contain
@@ -486,6 +482,12 @@ namespace Beagle.Util {
 		static public int CountWords (string str)
 		{
 			return CountWords (str, -1);
+		}
+
+		static void Main (string [] args)
+		{
+			foreach (string arg in args)
+				Console.WriteLine ("{0}: {1}", arg, FuzzyDivide (arg));
 		}
 	}
 }

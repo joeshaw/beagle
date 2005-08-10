@@ -30,6 +30,10 @@ libbeagle_la_SOURCES = 				\
 	beagle-private.h			\
 	beagle-query.c				\
 	beagle-query-part.c			\
+	beagle-query-part-date.c		\
+	beagle-query-part-human.c		\
+	beagle-query-part-property.c		\
+	beagle-query-part-text.c		\
 	beagle-request.c			\
 	beagle-response.c			\
 	beagle-snippet-request.c		\

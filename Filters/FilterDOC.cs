@@ -216,13 +216,11 @@ namespace Beagle.Filters {
 			
 			intProp = wv1_glue_get_page_count (oleSummaryStream);
 			if (intProp != 0)	
-				AddProperty (Beagle.Property.New ("fixme:page-count", intProp ));
-			intProp = 0;
+				AddProperty (Beagle.Property.New ("fixme:page-count", intProp.ToString ()));
 			
 			intProp = wv1_glue_get_word_count (oleSummaryStream);
 			if (intProp != 0)
-				AddProperty (Beagle.Property.New ("fixme:word-count", intProp));
-			intProp = 0;
+				AddProperty (Beagle.Property.New ("fixme:word-count", intProp.ToString ()));
 
 			wv1_glue_close_stream (oleStream, oleSummaryStream);
 		}

@@ -42,7 +42,10 @@ namespace Beagle.Daemon {
 			this.index_fingerprint = index_fingerprint;
 		}
 
-		const int EA_VERSION = 1;
+		// Version history:
+		// 1: Original
+		// 2: Replace LastIndexedTime with LastAttrTime
+		const int EA_VERSION = 2;
 
 		// FIXME: We should probably serialize the data into a lump and attach
 		// it to just one EA.  The current method has an inherent race condition:
@@ -52,7 +55,7 @@ namespace Beagle.Daemon {
 		const string fingerprint_attr = "Fingerprint";
 		const string unique_id_attr = "Uid";
 		const string last_mtime_attr = "MTime";
-		const string last_indexed_attr = "IndexTime";
+		const string last_attrtime_attr = "AttrTime";
 		const string filter_attr = "Filter";
 
 		public FileAttributes Read (string path)
@@ -76,7 +79,8 @@ namespace Beagle.Daemon {
 				attr.Path = path;
 				attr.LastWriteTime = StringFu.StringToDateTime (ExtendedAttribute.Get (path, last_mtime_attr));
 				
-				attr.LastIndexedTime = StringFu.StringToDateTime (ExtendedAttribute.Get (path, last_indexed_attr));
+				attr.LastAttrTime = StringFu.StringToDateTime (ExtendedAttribute.Get (path, last_attrtime_attr));
+
 				tmp = ExtendedAttribute.Get (path, filter_attr);
 				if (tmp != null) {
 					attr.FilterVersion = int.Parse (tmp.Substring (0, 3));
@@ -101,26 +105,42 @@ namespace Beagle.Daemon {
 			try {
 				string tmp;
 				
-				if (index_fingerprint != null) {
-					tmp = String.Format ("{0:00} {1}", EA_VERSION, index_fingerprint);
-					ExtendedAttribute.Set (attr.Path, fingerprint_attr, tmp);
+				tmp = String.Format ("{0:00} {1}", EA_VERSION, index_fingerprint);
+				ExtendedAttribute.Set (attr.Path, fingerprint_attr, tmp);
+
+				// Try to read the EA we just set.  If we
+				// can't, they won't be much use to us --- so
+				// just return false.
+				string what_we_just_wrote;
+				try {
+					what_we_just_wrote = ExtendedAttribute.Get (attr.Path, fingerprint_attr);
+				} catch (Exception ex) {
+					return false;
 				}
+				if (what_we_just_wrote != tmp)
+					return false;
 
 				ExtendedAttribute.Set (attr.Path, unique_id_attr, GuidFu.ToShortString (attr.UniqueId));
 				ExtendedAttribute.Set (attr.Path, last_mtime_attr,
 						       StringFu.DateTimeToString (attr.LastWriteTime));
 
-				ExtendedAttribute.Set (attr.Path, last_indexed_attr,
-						       StringFu.DateTimeToString (attr.LastIndexedTime));
-				if (attr.HasFilterInfo)
-					ExtendedAttribute.Set (attr.Path, filter_attr,
-							       String.Format ("{0:000} {1}", attr.FilterVersion, attr.FilterName));
+				if (attr.HasFilterInfo) {
+					tmp = String.Format ("{0:000} {1}", attr.FilterVersion, attr.FilterName);
+					ExtendedAttribute.Set (attr.Path, filter_attr, tmp);
+				}
+
+				// This has to be the last thing we write out, to get LastAttrTime as close
+				// to the ctime as possible.
+				attr.LastAttrTime = DateTime.Now;
+				ExtendedAttribute.Set (attr.Path, last_attrtime_attr,
+						       StringFu.DateTimeToString (attr.LastAttrTime));
 				
 				return true;
 			} catch (IOException e) {
 				// An IOException here probably means that we don't have the right
 				// permissions to set the EAs.  We just fail silently and return false rather
 				// than spewing a bunch of scary exceptions.
+				//Logger.Log.Debug (e);
 				return false;
 			} catch (Exception e) {
 				Logger.Log.Debug ("Caught exception writing EAs to {0}", attr.Path);
@@ -139,13 +159,21 @@ namespace Beagle.Daemon {
 				ExtendedAttribute.Remove (path, fingerprint_attr);
 				ExtendedAttribute.Remove (path, unique_id_attr);
 				ExtendedAttribute.Remove (path, last_mtime_attr);
-				ExtendedAttribute.Remove (path, last_indexed_attr);
+				ExtendedAttribute.Remove (path, last_attrtime_attr);
 				ExtendedAttribute.Remove (path, filter_attr);
 
 			} catch (Exception e) {
 				// FIXME: Do something smarter with the exception.
 			}
 		}
+
+		// There are no transactions for EAs
+		
+		public void BeginTransaction ()
+		{ }
+
+		public void CommitTransaction ()
+		{ }
 
 	}
 }

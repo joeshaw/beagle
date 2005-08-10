@@ -681,6 +681,39 @@ namespace Beagle.Daemon {
 		// Code to map to/from Lucene data types
 		//
 
+		static char PropertyTypeToCode (PropertyType type)
+		{
+			switch (type) {
+			case PropertyType.Text:    return '_';
+			case PropertyType.Keyword: return 'k';
+			case PropertyType.Date:    return 'd';
+			}
+
+			throw new Exception ("Unknown property type: " + type);
+		}
+
+		static PropertyType CodeToPropertyType (char c)
+		{
+			switch (c) {
+			case '_': return PropertyType.Text;
+			case 'k': return PropertyType.Keyword;
+			case 'd': return PropertyType.Date;
+			}
+
+			throw new Exception ("Unknown property code: " + c);
+		}
+
+		static string PropertyTypeToWildcardField (PropertyType type)
+		{
+			switch (type) {
+			case PropertyType.Text:    return "PropertyText";
+			case PropertyType.Keyword: return "PropertyKeyword";
+			case PropertyType.Date:    return "PropertyDate";
+			}
+
+			return null;
+		}
+
 		private void AddPropertyToLuceneDocument (Document doc, Property prop)
 		{
 			if (prop.Value == null)
@@ -688,22 +721,29 @@ namespace Beagle.Daemon {
 
 			Field f;
 
+			bool is_text;
+			is_text = prop.Type == PropertyType.Text;
+			
 			if (prop.IsSearched) {
-				f = new Field (prop.IsKeyword ? "PropertyKeyword" : "PropertyText",
-					       prop.Value,
-					       false,              // never stored
-					       true,               // always index
-					       ! prop.IsKeyword);  // only tokenize non-keywords
-				doc.Add (f);
+				string wildcard_field;
+				wildcard_field = PropertyTypeToWildcardField (prop.Type);
+				if (wildcard_field != null) {
+					f = new Field (wildcard_field,
+						       prop.Value,
+						       false,        // never stored
+						       true,         // always index
+						       is_text);     // only tokenize text
+					doc.Add (f);
+				}
 			}
 
 			f = new Field (String.Format ("prop:{0}:{1}",
-						      prop.IsKeyword  ? "k" : "_",
+						      PropertyTypeToCode (prop.Type),
 						      prop.Key),
 				       prop.Value,
-				       true,               // always store
-				       true,               // always index
-				       ! prop.IsKeyword);  // only tokenize non-keywords
+				       true,        // always store
+				       true,        // always index
+				       is_text);    // only tokenize text
 			doc.Add (f);
 		}
 
@@ -718,6 +758,8 @@ namespace Beagle.Daemon {
 			
 			if (name [5] == 'k')
 				return Property.NewKeyword (key, value);
+			else if (name [5] == 'd')
+				return Property.NewDateFromString (key, value);
 			else if (name [6] == 's')
 				return Property.NewUnsearched (key, value);
 			else
@@ -753,12 +795,6 @@ namespace Beagle.Daemon {
 			if (indexable.ValidTimestamp) {
 				str = StringFu.DateTimeToString (indexable.Timestamp);
 				f = Field.Keyword ("Timestamp", str);
-				doc.Add (f);
-			}
-			
-			if (indexable.ValidRevision) {
-				f = Field.UnIndexed ("Revision",
-						     RevisionToString (indexable.Revision));
 				doc.Add (f);
 			}
 			
@@ -1019,11 +1055,6 @@ namespace Beagle.Daemon {
 			str = doc.Get ("Timestamp");
 			if (str != null)
 				versioned.Timestamp = StringFu.StringToDateTime (str);
-			
-			str = doc.Get ("Revision");
-			if (str != null)
-				versioned.Revision = StringToRevision (str);
-
 		}
 
 		private Hit FromLuceneDocToHit (Document doc, int id, double score)

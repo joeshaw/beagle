@@ -143,7 +143,7 @@ namespace Beagle.Filters {
 			indexable.Type = "MonodocEntry";
 
 			indexable.AddProperty (Property.NewKeyword ("fixme:type", node.SelectSingleNode ("MemberType").InnerText.ToLower ()));
-			indexable.AddProperty (Property.New ("fixme:name",memberFullName));
+			indexable.AddProperty (Property.New ("fixme:name", memberFullName.ToString ()));
 
 			StringReader reader = new StringReader (node.SelectSingleNode ("Docs").InnerXml); 
                         indexable.SetTextReader (reader);

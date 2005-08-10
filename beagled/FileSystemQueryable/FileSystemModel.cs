@@ -389,7 +389,6 @@ namespace Beagle.Daemon.FileSystemQueryable {
 		IFileEventBackend event_backend;
 
 		UniqueIdStore unique_id_store;
-		NameIndex name_index;
 		FileAttributesStore backing_store;
 		FileAttributesStore fa_store;
 
@@ -400,7 +399,6 @@ namespace Beagle.Daemon.FileSystemQueryable {
 			this.event_backend = event_backend;
 
 			unique_id_store = new UniqueIdStore (index_directory, index_fingerprint);
-			name_index = new NameIndex (index_directory, index_fingerprint);
 			filter = new FileNameFilter (this);
 
 			IFileAttributesStore backing_store_i;
@@ -445,9 +443,7 @@ namespace Beagle.Daemon.FileSystemQueryable {
 		public UniqueIdStore UniqueIdStore {
 			get { return unique_id_store; }
 		}
-		public NameIndex NameIndex {
-			get { return name_index; }
-		}
+
 		public FileAttributesStore FileAttributesStore {
 			get { return fa_store; }
 		}
@@ -1042,16 +1038,6 @@ namespace Beagle.Daemon.FileSystemQueryable {
 					Console.WriteLine ();
 				}
 			}
-		}
-
-		//////////////////////////////////////////////////////////////////////////////////
-
-		// Search by filename
-
-		// Returns a collection of internal Uris
-		public ICollection Search (Query query, ICollection list_of_uris)
-		{
-			return name_index.Search (query, list_of_uris);
 		}
 
 		//////////////////////////////////////////////////////////////////////////////////

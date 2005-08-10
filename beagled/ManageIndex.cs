@@ -41,7 +41,7 @@ namespace Beagle.Daemon
 {
 	class ManageIndex 
 	{
-		static string index_dir;
+		static private LuceneIndexingDriver driver;
 
 		static void Main (string [] args)
 		{
@@ -55,6 +55,8 @@ namespace Beagle.Daemon
 				Environment.Exit (1);
 			}
 			
+			driver = new LuceneIndexingDriver (args [0]);
+
 			switch (args [1]) {
 			case "list":
 				ExecuteList ();
@@ -181,14 +183,14 @@ namespace Beagle.Daemon
 				Environment.Exit (1);
 			}
 			
-			LuceneDriver driver_to_merge = new LuceneDriver (index_to_merge);
+			LuceneIndexingDriver driver_to_merge = new LuceneIndexingDriver (index_to_merge);
 			
 			Stopwatch watch = new Stopwatch ();
 			watch.Start ();
 			
 			// Merge lucene index
 			try {
-				driver.Merge (driver_to_merge.IndexDirectory);
+				driver.Merge (driver_to_merge);
 			} catch (Exception e) {
 				Console.WriteLine ("Index merging failed: {0}", e);
 				Environment.Exit (1);

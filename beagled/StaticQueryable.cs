@@ -40,7 +40,7 @@ namespace Beagle.Daemon {
 		
 		protected TextCache text_cache;
 		
-		public StaticQueryable (string index_name, string index_path, bool do_shared_locking) : base (index_path, do_shared_locking)
+		public StaticQueryable (string index_name, string index_path, bool read_only_mode) : base (index_path, read_only_mode)
 		{
 			Logger.Log.Debug ("Initializing static queryable: {0}", index_path);
 
@@ -69,7 +69,7 @@ namespace Beagle.Daemon {
 			// We can't check anything else than file uris
 			if (! uri.IsFile)
 				return true;
-
+			
 			// FIXME: This is a hack, we need to support parent Uri's in some sane way
 			int j = uri.LocalPath.LastIndexOf ('#');
 			return File.Exists ((j == -1) ? uri.LocalPath : uri.LocalPath.Substring (0, j));

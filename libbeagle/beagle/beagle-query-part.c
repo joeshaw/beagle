@@ -1,3 +1,5 @@
+/* -*- Mode: C; tab-width: 8; indent-tabs-mode: t; c-basic-offset: 8; -*- */
+
 /*
  * beagle-query-part.c
  *
@@ -30,158 +32,71 @@
 #include "beagle-private.h"
 #include "beagle-query-part.h"
 
-struct _BeagleQueryPart {
-	char *target;
-	char *text;
-	gboolean is_keyword : 1;
-	gboolean is_required : 1;
-	gboolean is_prohibited : 1;
-};
+typedef struct {
+    BeagleQueryPartLogic logic;
+} BeagleQueryPartPrivate;
 
-/**
- * beagle_query_part_new:
- *
- * Creates a new #BeagleQueryPart.
- * 
- * Return value: the newly created #BeagleQueryPart.
- **/
-BeagleQueryPart *
-beagle_query_part_new (void)
+#define BEAGLE_QUERY_PART_GET_PRIVATE(o) (G_TYPE_INSTANCE_GET_PRIVATE ((o), BEAGLE_TYPE_QUERY_PART, BeagleQueryPart))
+
+static GObjectClass *parent_class = NULL;
+
+G_DEFINE_TYPE (BeagleQueryPart, beagle_query_part, G_TYPE_OBJECT)
+
+static void
+beagle_query_part_finalize (GObject *obj)
 {
-	BeagleQueryPart *part;
-
-	part = g_new0 (BeagleQueryPart, 1);
-
-	return part;
-}
-
-/**
- * beagle_query_part_free:
- * @part: a #BeagleQueryPart
- *
- * Frees the memory allocated by the given #BeagleQueryPart.
- **/
-void
-beagle_query_part_free (BeagleQueryPart *part)
-{
-	g_return_if_fail (part != NULL);
-
-	g_free (part->target);
-	g_free (part->text);
-	g_free (part);
-}
-
-/**
- * beagle_query_part_set_target:
- * @part: a #BeagleQueryPart
- * @target: a string
- *
- * Sets the target of the given #BeagleQueryPart to @target.
- **/
-void
-beagle_query_part_set_target (BeagleQueryPart *part,
-			      const char *target)
-{
-	g_return_if_fail (part != NULL);
-
-	part->target = g_strdup (target);
-}
-
-/**
- * beagle_query_part_set_text:
- * @part: a #BeagleQueryPart
- * @text: a string
- *
- * Sets the text of the given #BeagleQueryPart to @text.
- **/
-void
-beagle_query_part_set_text (BeagleQueryPart *part,
-			    const char *text)
-{
-	g_return_if_fail (part != NULL);
-
-	part->text = g_strdup (text);
-}
-
-/**
- * beagle_query_part_set_keyword:
- * @part: a #BeagleQueryPart
- * @is_keyword: a boolean
- *
- * Sets whether the given #BeagleQueryPart is a keyword.
- **/
-void
-beagle_query_part_set_keyword (BeagleQueryPart *part,
-			       gboolean is_keyword)
-{
-	g_return_if_fail (part != NULL);
-
-	part->is_keyword = is_keyword;
-}
-
-/**
- * beagle_query_part_set_required:
- * @part: a #BeagleQueryPart
- * @is_required: a boolean
- *
- * Sets whether the given #BeagleQueryPart is required.
- **/
-void
-beagle_query_part_set_required (BeagleQueryPart *part,
-				gboolean is_required)
-{
-	g_return_if_fail (part != NULL);
-
-	part->is_required = is_required;
-}
-
-/**
- * beagle_query_part_set_prohibited:
- * @part: a #BeagleQueryPart
- * @is_prohibited: a boolean
- *
- * Sets whether the given #BeagleQueryPart is prohibited.
- **/
-void
-beagle_query_part_set_prohibited (BeagleQueryPart *part,
-				  gboolean is_prohibited)
-{
-	g_return_if_fail (part != NULL);
-
-	part->is_prohibited = is_prohibited;
-}
-
-void
-_beagle_query_part_to_xml (BeagleQueryPart *part,
-			   GString *data)
-{
-	g_return_if_fail (part != NULL);
-	g_return_if_fail (data != NULL);
-
-	g_string_append_len (data, "<Part>", 6);
-
-	g_string_append_len (data, "<Target>", 8);
-	g_string_append_len (data, part->target, strlen (part->target));
-	g_string_append_len (data, "</Target>", 9);
-
-	g_string_append_len (data, "<Text>", 6);
-	g_string_append_len (data, part->text, strlen (part->text));
-	g_string_append_len (data, "</Text>", 7);
-
-	if (part->is_keyword)
-		g_string_append_len (data, "<IsKeyword>true</IsKeyword>", 27);
-	else
-		g_string_append_len (data, "<IsKeyword>false</IsKeyword>", 28);
+        BeagleQueryPartPrivate *priv = BEAGLE_QUERY_PART_GET_PRIVATE (obj);
 	
-	if (part->is_required)
-		g_string_append_len (data, "<IsRequired>true</IsRequired>", 29);
-	else
-		g_string_append_len (data, "<IsRequired>false</IsRequired>", 30);
+	if (G_OBJECT_CLASS (parent_class)->finalize)
+		G_OBJECT_CLASS (parent_class)->finalize (obj);
+}
+
+static void 
+beagle_query_part_class_init (BeagleQueryPartClass *klass)
+{
+	GObjectClass *obj_class = G_OBJECT_CLASS (klass);
 	
-	if (part->is_prohibited)
-		g_string_append_len (data, "<IsProhibited>true</IsProhibited>", 33);
-	else
-		g_string_append_len (data, "<IsProhibited>false</IsProhibited>", 34);
+	parent_class = g_type_class_peek_parent (klass);
 	
-	g_string_append_len (data, "</Part>", 7);
+	obj_class->finalize = beagle_query_part_finalize;
+	
+	g_type_class_add_private (klass, sizeof (BeagleQueryPartPrivate));
+}
+
+static void
+beagle_query_part_init (BeagleQueryPart *part)
+{
+	
+}
+
+GString *
+beagle_query_part_to_xml (BeagleQueryPart *part, GError **err)
+{
+    return BEAGLE_QUERY_PART_GET_CLASS (part)->to_xml (part, err);
+}
+
+void
+_beagle_query_part_append_standard_header (GString *data,
+					   const char *xsi_type,
+					   BeagleQueryPartLogic logic)
+{
+	g_string_append_printf (data, "<Part xsi:type=\"QueryPart_%s\">", xsi_type);
+
+	switch (logic) {
+	    case BEAGLE_QUERY_PART_LOGIC_REQUIRED:
+		    g_string_append (data, "<Logic>Required</Logic>");
+		    break;
+	    case BEAGLE_QUERY_PART_LOGIC_OPTIONAL:
+		    g_string_append (data, "<Logic>Optional</Logic>");
+		    break;
+	    case BEAGLE_QUERY_PART_LOGIC_PROHIBITED:
+		    g_string_append (data, "<Logic>Prohibited</Logic>");
+		    break;
+	}
+}
+
+void
+_beagle_query_part_append_standard_footer (GString *data)
+{
+        g_string_append (data, "</Part>");
 }

@@ -57,34 +57,31 @@ namespace Beagle.Daemon {
 					++pos;
 					continue;
 				}
-
+				
 				// Find the end of the next token
 				int next_pos = pos+1;
 				while (next_pos < text.Length && !IsTokenSeparator (text [next_pos]))
 					++next_pos;
-
+				
 				string stemmed_token = null;
 				int hl_offset = 0;
-
+				
 				// Iterate through the stemmed terms and match the token
 				for (int i = 0; i < stemmed_terms.Length; i++) {
-
+					
 					// If this term is longer than the token in question, give up.
 					if (next_pos - pos < stemmed_terms [i].Length)
 						continue;
-
-					// Make sure this isn't a stop word, if it is increment our
-					// hl_offset so we don't waste colors.
-					if (LuceneDriver.IsStopWord (stemmed_terms [i])) {
-						hl_offset++;
+					
+					// Make sure this isn't a stop word.
+					if (LuceneCommon.IsStopWord (stemmed_terms [i]))
 						continue;
-					}
 
 					// We cache the token, so as to avoid stemming it more than once
 					// when considering multiple terms.
 					if (stemmed_token == null) {
 						string token = text.Substring (pos, next_pos - pos).ToLower ();
-						stemmed_token = LuceneDriver.Stem (token);
+						stemmed_token = LuceneCommon.Stem (token);
 					}
 
 					if (stemmed_terms [i] != stemmed_token)
@@ -169,7 +166,7 @@ namespace Beagle.Daemon {
 				string term = query_terms [i];
 				if (term [0] == '-')
 					continue;
-				stemmed_terms [i] = LuceneDriver.Stem (query_terms [i]).ToLower ();
+				stemmed_terms [i] = LuceneCommon.Stem (query_terms [i]).ToLower ();
 			}
 			
 			ArrayList matches = new ArrayList ();

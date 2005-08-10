@@ -91,6 +91,23 @@ namespace Beagle.Util {
 				throw new IOException ("Could not set extended attribute on " + path + ": " + Syscall.strerror (Marshal.GetLastWin32Error ()));
 		}
 
+		public static bool Exists (string path, string name)
+		{
+			if (! FileSystem.Exists (path))
+				throw new IOException (path);
+
+			name = AddPrefix (name);
+
+			byte[] buffer = null;
+#if OS_LINUX
+			int size = lgetxattr (path, name, buffer, 0);
+#elif OS_FREEBSD
+			int size = extattr_get_link (path, 1, name, buffer, 0);
+#endif
+			
+			return size <= 0;
+		}
+
 		public static string Get (string path, string name)
 		{
 			if (! FileSystem.Exists (path))

@@ -1,3 +1,5 @@
+/* -*- Mode: C; tab-width: 8; indent-tabs-mode: t; c-basic-offset: 8; -*- */
+
 /*
  * beagle-property.c
  *
@@ -38,10 +40,11 @@
  * Return value: a newly allocated #BeagleProperty.
  **/
 BeagleProperty *
-beagle_property_new (const char *key, const char *value)
+beagle_property_new (BeaglePropertyType type, const char *key, const char *value)
 {
 	BeagleProperty *prop = g_new0 (BeagleProperty, 1);
 
+	prop->type = type;
 	prop->key = g_strdup (key);
 	prop->value = g_strdup (value);
 
@@ -62,6 +65,37 @@ beagle_property_free (BeagleProperty *prop)
 	g_free (prop->key);
 	g_free (prop->value);
 	g_free (prop);
+}
+
+/**
+ * beagle_property_get_type:
+ * @prop: a #BeagleProperty
+ *
+ * Fetches the type of the #BeagleProperty.
+ *
+ * Return value: the #BeaglePropertyType of the #BeagleProperty.
+ **/
+BeaglePropertyType
+beagle_property_get_type (BeagleProperty *prop)
+{
+	g_return_val_if_fail (prop != NULL, BEAGLE_PROPERTY_TYPE_UNKNOWN);
+
+	return prop->type;
+}
+
+/**
+ * beagle_property_set_type:
+ * @prop: a #BeagleProperty
+ * @type: a #BeaglePropertyType
+ *
+ * Sets the type of the given #BeagleProperty to @type.
+ **/
+void
+beagle_property_set_type (BeagleProperty *prop, BeaglePropertyType type)
+{
+	g_return_if_fail (prop != NULL);
+
+	prop->type = type;
 }
 
 /**
@@ -160,34 +194,34 @@ beagle_property_set_is_searched (BeagleProperty *prop, gboolean is_searched)
 }
 
 /**
- * beagle_property_get_is_keyword:
+ * beagle_property_get_is_mutable:
  * @prop: a #BeagleProperty
  *
- * Fetches whether the given #BeagleProperty is a keyword.
+ * Fetches whether the given #BeagleProperty is mutable.
  *
- * Return value: whether the #BeagleProperty is a keyword.
+ * Return value: whether the #BeagleProperty is mutable.
  **/
 gboolean 
-beagle_property_get_is_keyword (BeagleProperty *prop)
+beagle_property_get_is_mutable (BeagleProperty *prop)
 {
 	g_return_val_if_fail (prop != NULL, FALSE);
 
-	return prop->is_keyword;
+	return prop->is_mutable;
 }
 
 /**
- * beagle_property_set_is_keyword:
+ * beagle_property_set_is_mutable:
  * @prop: a #BeagleProperty
- * @is_keyword: a boolean
+ * @is_mutable: a boolean
  *
- * Sets whether the given #BeagleProperty is a keyword.
+ * Sets whether the given #BeagleProperty is mutable.
  **/
 void
-beagle_property_set_is_keyword (BeagleProperty *prop, gboolean is_keyword)
+beagle_property_set_is_mutable (BeagleProperty *prop, gboolean is_mutable)
 {
 	g_return_if_fail (prop != NULL);
 
-	prop->is_keyword = is_keyword != FALSE;
+	prop->is_mutable = is_mutable != FALSE;
 }
 
 static void
@@ -201,10 +235,11 @@ prop_to_xml (gpointer       key,
 
 	g_string_append (data, "<Property ");
 
-	tmp = g_markup_printf_escaped ("isSearched=\"%s\" isKeyword=\"%s\" "
+	tmp = g_markup_printf_escaped ("Type=\"%d\" isSearched=\"%s\" isMutable=\"%s\" "
 				       "Key=\"%s\" Value=\"%s\"/>",
+				       (int) prop->type,
 				       prop->is_searched ? "true" : "false",
-				       prop->is_keyword ? "true" : "false",
+				       prop->is_mutable ? "true" : "false",
 				       prop->key, prop->value);
 
 	g_string_append (data, tmp);

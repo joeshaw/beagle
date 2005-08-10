@@ -382,6 +382,35 @@ namespace Beagle.Daemon {
 
 		static public void DoQuery (Query query, QueryResult result)
 		{
+			// We need to remap any QueryPart_Human parts into
+			// lower-level part types.  First, we find any
+			// QueryPart_Human parts and explode them into
+			// lower-level types.
+			ArrayList new_parts = null;
+			foreach (QueryPart abstract_part in query.Parts) {
+				if (abstract_part is QueryPart_Human) {
+					QueryPart_Human human = abstract_part as QueryPart_Human;
+					if (new_parts == null)
+						new_parts = new ArrayList ();
+					foreach (QueryPart sub_part in QueryStringParser.Parse (human.QueryString))
+						new_parts.Add (sub_part);
+				}
+			}
+
+			// If we found any QueryPart_Human parts, copy the
+			// non-Human parts over and then replace the parts in
+			// the query.
+			if (new_parts != null) {
+				foreach (QueryPart abstract_part in query.Parts) {
+					if (! (abstract_part is QueryPart_Human))
+						new_parts.Add (abstract_part);
+				}
+				
+				query.ClearParts ();
+				foreach (QueryPart part in new_parts)
+					query.AddPart (part);
+			}
+
 			// The extra pair of calls to WorkerStart/WorkerFinished ensures:
 			// (1) that the QueryResult will fire the StartedEvent
 			// and FinishedEvent, even if no queryable accepts the

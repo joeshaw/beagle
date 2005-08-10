@@ -39,313 +39,1194 @@ namespace Beagle.Daemon.FileSystemQueryable {
 	[QueryableFlavor (Name="Files", Domain=QueryDomain.Local, RequireInotify=false)]
 	public class FileSystemQueryable : LuceneQueryable {
 
-		static public bool Debug = true;
+		static public bool Debug = false;
 
-		private static Logger log = Logger.Get ("FileSystemQueryable");
+		private const string OldExternalUriPropKey = LuceneCommon.UnindexedNamespace + "OldExternalUri";
+		private const string SplitFilenamePropKey = LuceneQueryingDriver.PrivateNamespace + "SplitFilename";
+
+		public const string ExactFilenamePropKey = LuceneQueryingDriver.PrivateNamespace + "ExactFilename";
+		public const string ParentDirUriPropKey = LuceneQueryingDriver.PrivateNamespace + "ParentDirUri";
+		public const string IsDirectoryPropKey = LuceneQueryingDriver.PrivateNamespace + "IsDirectory";
 
 		// History:
 		// 1: Initially set to force a reindex due to NameIndex changes.
-		const int MINOR_VERSION = 1;
+		// 2: Overhauled everything to use new lucene infrastructure.
+		const int MINOR_VERSION = 2;
+
+		private object big_lock = new object ();
 
 		private IFileEventBackend event_backend;
-		private FileSystemModel model;
-		private CrawlTask last_crawl_task;
+
+		// This is the task that walks the tree structure
+		private TreeCrawlTask tree_crawl_task;
+
+		// This is the task that finds the next place that
+		// needs to be crawled in the tree and spawns off
+		// the appropriate IndexableGenerator.
+		private FileCrawlTask file_crawl_task;
+
+		private ArrayList roots = new ArrayList ();
+
+		// These are roots that have not yet been indexed.
+		private Hashtable pending_roots = UriFu.NewHashtable ();
+
+		// This is a cache of the external Uris of removed
+		// objects, keyed on their internal Uris.  We use this
+		// to remap Uris on removes.
+		private Hashtable removed_uri_cache = UriFu.NewHashtable ();
+
+		
+		// This is just a copy of the LuceneQueryable's QueryingDriver
+		// cast into the right type for doing internal->external Uri
+		// lookups.
+		private LuceneNameResolver name_resolver;
+
+		//////////////////////////////////////////////////////////////////////////
+
+		private class PendingInfo {
+			public Uri      Uri; // an internal uid: uri
+			public string   Path;
+			public bool     IsDirectory;
+			public DateTime Mtime;
+
+			// This is set when we are adding a subdirectory to a
+			// given parent directory.
+			public DirectoryModel Parent;
+
+			public bool IsRoot { get { return Parent == null; } }
+		}
+
+		private Hashtable pending_info_cache = UriFu.NewHashtable ();
+
+		//////////////////////////////////////////////////////////////////////////
 
 		public FileSystemQueryable () : base ("FileSystemIndex", MINOR_VERSION)
 		{
-		}
-
-		public FileSystemModel Model {
-			get { return model; }
-		}
-
-		//////////////////////////////////////////////////////////////////////////
-
-		override protected IFileAttributesStore BuildFileAttributesStore (string index_fingerprint)
-		{
-			// A bit of a hack: since we need the event backend to construct
-			// the FileSystemModel, we create it here.
+			// Set up our event backend
 			if (Inotify.Enabled) {
-				Logger.Log.Debug ("Starting Inotify Backend");
-				event_backend = new InotifyBackend ();
-			} else {
-				Logger.Log.Debug ("Starting FileSystemWatcher Backend");
-				event_backend = new FileSystemWatcherBackend ();
-			}
+                                Logger.Log.Debug ("Starting Inotify Backend");
+                                event_backend = new InotifyBackend ();
+                        } else {
+                                Logger.Log.Debug ("Starting FileSystemWatcher Backend");
+                                event_backend = new FileSystemWatcherBackend ();
+                        }
 
-			// The FileSystemModel also implements IFileAttributesStore.
-			model = new FileSystemModel (IndexDirectory, index_fingerprint, event_backend);
+			tree_crawl_task = new TreeCrawlTask (new TreeCrawlTask.Handler (AddDirectory));
+			file_crawl_task = new FileCrawlTask (this);
 
-			model.NeedsCrawlEvent += new FileSystemModel.NeedsCrawlHandler (OnModelNeedsCrawl);
+			name_resolver = (LuceneNameResolver) Driver;
+			PreloadDirectoryNameInfo ();
 
-			SetUriRemappers (new LuceneDriver.UriRemapper (model.ToInternalUri),
-					 new LuceneDriver.UriRemapper (model.FromInternalUri));
-
-			return model;
+			// Do the right thing when paths expire
+			DirectoryModel.ExpireEvent +=
+				new DirectoryModel.ExpireHandler (ExpireDirectoryPath);
 		}
+
+
+		override protected IFileAttributesStore BuildFileAttributesStore ()
+		{
+			return new FileAttributesStore_Mixed (IndexDirectory, IndexFingerprint);
+		}
+
+		override protected LuceneQueryingDriver BuildLuceneQueryingDriver (string index_name,
+										   int    minor_version,
+										   bool   read_only_mode)
+		{
+			return new LuceneNameResolver (index_name, minor_version, read_only_mode);
+		}
+
 
 		//////////////////////////////////////////////////////////////////////////
 
-		public static Indexable FileToIndexable (Uri file_uri, Uri internal_uri, bool crawl_mode)
+		//
+		// This is where we build our Indexables
+		//
+
+		private static Indexable NewIndexable (Guid id)
 		{
-			Indexable indexable = new Indexable (file_uri);
-			indexable.Uri = internal_uri;
-			indexable.ContentUri = file_uri;
+			// This used to do more.  Maybe it will again someday.
+			Indexable indexable;
+			indexable = new Indexable (GuidFu.ToUri (id));
+			return indexable;
+		}
+
+		private static void AddMutablePropertiesToIndexable (Indexable indexable, 
+								     string    name,
+								     Guid      parent_id)
+		{
+			Property prop;
+
+			prop = Property.NewKeyword (ExactFilenamePropKey, name);
+			prop.IsMutable = true;
+			indexable.AddProperty (prop);
+			
+			string str;
+			str = Path.GetFileNameWithoutExtension (name);
+			str = StringFu.FuzzyDivide (str);
+			prop = Property.New (SplitFilenamePropKey, str);
+			prop.IsMutable = true;
+			indexable.AddProperty (prop);
+
+			str = GuidFu.ToUriString (parent_id);
+			// We use the uri here to recycle terms in the index,
+			// since each directory's uri will already be indexed.
+			prop = Property.NewKeyword (ParentDirUriPropKey, str);
+			prop.IsMutable = true;
+			indexable.AddProperty (prop);
+		}
+
+		public static Indexable DirectoryToIndexable (string path, Guid id, Guid parent_id)
+		{
+			Indexable indexable;
+			indexable = NewIndexable (id);
+			indexable.MimeType = "inode/directory";
+			indexable.NoContent = true;
+			indexable.Timestamp = Directory.GetLastWriteTime (path);
+
+			string name;
+			if (parent_id == Guid.Empty)
+				name = path;
+			else
+				name = Path.GetFileName (path);
+			AddMutablePropertiesToIndexable (indexable, name, parent_id);
+
+			Property prop;
+			prop = Property.NewBool (IsDirectoryPropKey, true);
+			prop.IsMutable = true; // we want this in the secondary index, for efficiency
+			indexable.AddProperty (prop);
+
+			return indexable;
+		}
+
+		public static Indexable FileToIndexable (string path,
+							 Guid   id,
+							 Guid   parent_id,
+							 bool   crawl_mode)
+		{
+			Indexable indexable;
+			indexable = NewIndexable (id);
+			indexable.ContentUri = UriFu.PathToFileUri (path);
 			indexable.Crawled = crawl_mode;
 			indexable.Filtering = Beagle.IndexableFiltering.Always;
+
+			AddMutablePropertiesToIndexable (indexable, Path.GetFileName (path), parent_id);
+
+			return indexable;
+		}
+
+		private static Indexable NewRenamingIndexable (string name,
+							       Guid   id,
+							       Guid   parent_id,
+							       string last_known_path)
+		{
+			Indexable indexable;
+			indexable = new Indexable (GuidFu.ToUri (id));
+			indexable.PropertyChangesOnly = true;
+
+			AddMutablePropertiesToIndexable (indexable, name, parent_id);
+
+			Property prop;
+			prop = Property.NewKeyword (OldExternalUriPropKey,
+						    StringFu.PathToQuotedFileUri (last_known_path));
+			prop.IsMutable = true; // since this is a property-change-only Indexable
+			indexable.AddProperty (prop);
+
 			return indexable;
 		}
 
 		//////////////////////////////////////////////////////////////////////////
 
-		public void Add (string path, Scheduler.Priority priority)
-		{
-			FileSystemModel.RequiredAction action;
-			string old_path;
+		//
+		// Mapping from directory ids to paths
+		//
 
-			// Model.DetermineRequiredAction checks whether or not we should
-			// ignore the path, so we don't need to do that separately.
-			action = Model.DetermineRequiredAction (path, out old_path);
+		private Hashtable dir_models_by_id = new Hashtable ();
+		private Hashtable name_info_by_id = new Hashtable ();
+
+		// We fall back to using the name information in the index
+		// until we've fully constructed our set of DirectoryModels.
+		private void PreloadDirectoryNameInfo ()
+		{
+			ICollection all;
+			all = name_resolver.GetAllDirectoryNameInfo ();
+			foreach (LuceneNameResolver.NameInfo info in all)
+				name_info_by_id [info.Id] = info;
+		}
+
+		// This only works for directories.
+		private string UniqueIdToDirectoryName (Guid id)
+		{
+			DirectoryModel dir;
+			dir = dir_models_by_id [id] as DirectoryModel;
+			if (dir != null)
+				return dir.FullName;
+
+			LuceneNameResolver.NameInfo info;
+			info = name_info_by_id [id] as LuceneNameResolver.NameInfo;
+			if (info != null) {
+				if (info.ParentId == Guid.Empty) // i.e. this is a root
+					return info.Name;
+				else {
+					string parent_name;
+					parent_name = UniqueIdToDirectoryName (info.ParentId);
+					if (parent_name == null)
+						return null;
+					return Path.Combine (parent_name, info.Name);
+				}
+			}
+
+			return null;
+		}
+
+		private string ToFullPath (string name, Guid parent_id)
+		{
+			// This is the correct behavior for roots.
+			if (parent_id == Guid.Empty)
+				return name;
+
+			string parent_name;
+			parent_name = UniqueIdToDirectoryName (parent_id);
+			if (parent_name == null)
+				return null;
+
+			return Path.Combine (parent_name, name);
+		}
+
+		// This works for both files and directories.
+		private string UniqueIdToFullPath (Guid id)
+		{
+			// First, check if it is a directory.
+			string path;
+			path = UniqueIdToDirectoryName (id);
+			if (path != null)
+				return path;
+
+			// If not, try to pull name information out of the index.
+			LuceneNameResolver.NameInfo info;
+			info = name_resolver.GetNameInfoById (id);
+			if (info == null)
+				return null;
+			return ToFullPath (info.Name, info.ParentId);
+		}
+
+		//////////////////////////////////////////////////////////////////////////
+
+		//
+		// Ignoring files by name, path, etc.
+		//
+
+		// FIXME: This shouldn't all be hard-wired.
+
+		public bool Ignore (string parent_dir_name, string file_name, bool is_directory)
+		{
+			char name_first_char, name_last_char;
+			name_first_char = file_name [0];
+			name_last_char = file_name [file_name.Length-1];
 			
-			if (action == FileSystemModel.RequiredAction.None)
+			if (name_first_char == '.'
+			    || (name_first_char == '#' && name_last_char == '#')
+			    || name_last_char == '~')
+				return true;
+
+			if (is_directory && (file_name == "CVS" || file_name == "SCCS" || file_name == "po"))
+				return true;
+
+			return false;
+		}
+
+		public bool Ignore  (DirectoryModel parent_dir, string name, bool is_directory)
+		{
+			// This might happen when dealing with a root --- and we should
+			// never want to ignore a root, right?
+			if (parent_dir == null)
+				return false;
+
+			return Ignore (parent_dir.FullName, name, is_directory);
+		}
+
+		//////////////////////////////////////////////////////////////////////////
+
+		//
+		// Directory-related methods
+		//
+
+		private Hashtable dir_models_by_path = new Hashtable ();
+
+		private DirectoryModel GetDirectoryModelByPath (string path)
+		{
+			DirectoryModel dir;
+			dir = dir_models_by_path [path] as DirectoryModel;
+			if (dir != null)
+				return dir;
+
+			// Walk each root until we find the correct path
+			foreach (DirectoryModel root in roots) {
+				dir = root.WalkTree (path);
+				if (dir != null) {
+					dir_models_by_path [path] = dir;
+					break;
+				}
+			}
+
+			return dir;
+		}
+
+		private void ExpireDirectoryPath (string expired_path, Guid unique_id)
+		{
+			if (Debug) 
+				Logger.Log.Debug ("Expired '{0}'", expired_path);
+			dir_models_by_path.Remove (expired_path);
+		}
+
+		public void AddDirectory (DirectoryModel parent, string name)
+		{
+			// Ignore the stuff we want to ignore.
+			if (Ignore (parent, name, true))
 				return;
 
-			if (action == FileSystemModel.RequiredAction.Rename) {
-				Rename (old_path, path);
+			string path;
+			path = (parent == null) ? name : Path.Combine (parent.FullName, name);
+
+			if (Debug)
+				Logger.Log.Debug ("Adding directory '{0}'", path, name);
+
+			if (! Directory.Exists (path)) {
+				Logger.Log.Error ("Can't add directory: '{0}' does not exist", path);
 				return;
 			}
 
-			Scheduler.Task task;
-			Indexable indexable;
-				
-			Uri file_uri = UriFu.PathToFileUri (path);
-			Uri internal_uri = model.ToInternalUri (file_uri);
-			indexable = FileToIndexable (file_uri, internal_uri, false);
-			task = NewAddTask (indexable);
-			task.Priority = priority;
+			FileAttributes attr;
+			attr = FileAttributesStore.Read (path);
+
+			// Note that we don't look at the mtime of a directory when
+			// deciding whether or not to index it.
+			bool needs_indexing = false;
+			if (attr == null) {
+				// If it has no attributes, it definitely needs
+				// indexing.
+				needs_indexing = true;
+			} else {
+				// Make sure that it still has the same name as before.
+				// If not, we need to re-index it.
+				// We can do this since we preloaded all of the name
+				// info in the directory via PreloadDirectoryNameInfo.
+				string last_known_name;
+				last_known_name = UniqueIdToDirectoryName (attr.UniqueId);
+				if (last_known_name != path) {
+					Logger.Log.Debug ("'{0}' now seems to be called '{1}'", last_known_name, path);
+					needs_indexing = true;
+				}
+			}
 			
+			// If we can't descend into this directory, we want to
+			// index it but not build a DirectoryModel for it.
+			// FIXME: We should do the right thing when a
+			// directory's permissions change.
+			bool is_walkable;
+			is_walkable = DirectoryWalker.IsWalkable (path);
+			if (! is_walkable)
+				Logger.Log.Debug ("Can't walk '{0}'", path);
+			
+			if (needs_indexing)
+				ScheduleDirectory (name, parent, attr, is_walkable);
+			else if (is_walkable)
+				RegisterDirectory (name, parent, attr);
+		}
+
+		public void AddRoot (string path)
+		{
+			AddDirectory (null, path);
+		}
+
+		private void ScheduleDirectory (string         name,
+						DirectoryModel parent,
+						FileAttributes attr,
+						bool           is_walkable)
+		{
+			string path;
+			path = (parent == null) ? name : Path.Combine (parent.FullName, name);
+
+			Guid id;
+			id = (attr == null) ? Guid.NewGuid () : attr.UniqueId;
+
+			Guid parent_id;
+			parent_id = (parent == null) ? Guid.Empty : parent.UniqueId;
+
+			DateTime last_crawl;
+			last_crawl = (attr == null) ? DateTime.MinValue : attr.LastWriteTime;
+
+			Indexable indexable;
+			indexable = DirectoryToIndexable (path, id, parent_id);
+
+			PendingInfo info;
+			info = new PendingInfo ();
+			info.Uri = indexable.Uri;
+			info.Path = path;
+			info.Parent = parent;
+			info.Mtime  = last_crawl;
+
+			// We only set the IsDirectory flag if it is actually
+			// walkable.  The IsDirectory flag is what is used to
+			// decide whether or not to call RegisterDirectory
+			// in the PostAddHook.  Thus non-walkable directories
+			// will be indexed but will not have DirectoryModels
+			// created for them.
+			info.IsDirectory = is_walkable;
+
+			pending_info_cache [info.Uri] = info;
+
+			Scheduler.Task task;
+			task = NewAddTask (indexable);
+			task.Priority = Scheduler.Priority.Delayed;
 			ThisScheduler.Add (task);
 		}
 
-		public void Add (string path)
+		private void RegisterDirectory (string name, DirectoryModel parent, FileAttributes attr)
 		{
-			Add (path, Scheduler.Priority.Immediate);
+			string path;
+			path = (parent == null) ? name : Path.Combine (parent.FullName, name);
+
+			if (Debug)
+				Logger.Log.Debug ("Registered directory '{0}' ({1})", path, attr.UniqueId);
+
+			DirectoryModel dir;
+			if (parent == null)
+				dir = DirectoryModel.NewRoot (big_lock, path, attr);
+			else
+				dir = parent.AddChild (name, attr);
+
+			if (Directory.GetLastWriteTime (path) > attr.LastWriteTime) {
+				dir.State = DirectoryState.Dirty;
+				Logger.Log.Debug ("'{0}' is dirty", path);
+			}
+
+			if (Debug) {
+				if (dir.IsRoot)
+					Logger.Log.Debug ("Created model '{0}'", dir.FullName);
+				else
+					Logger.Log.Debug ("Created model '{0}' with parent '{1}'", dir.FullName, dir.Parent.FullName);
+			}
+
+			// Add any roots we create to the list of roots
+			if (dir.IsRoot)
+				roots.Add (dir);
+
+			// Add the directory to our by-id hash, and remove any NameInfo
+			// we might have cached about it.
+			dir_models_by_id [dir.UniqueId] = dir;
+			name_info_by_id.Remove (dir.UniqueId);
+
+			// Start watching the directory.
+			dir.WatchHandle = event_backend.CreateWatch (path);
+			
+			// Schedule this directory for crawling.
+			if (tree_crawl_task.Add (dir))
+				ThisScheduler.Add (tree_crawl_task);
+
+			// Make sure that our file crawling task is active,
+			// since presumably we now have something new to crawl.
+			ActivateFileCrawling ();
 		}
 
-		public void Remove (string path, Scheduler.Priority priority)
+		// FIXME: We should ignore the ignore status and just handle
+		// the event, right?  If it isn't in the index, no harm done.
+		private void RemoveDirectory (DirectoryModel dir)
 		{
-			// If we are ignoring this file, don't do anything.
-			// This should be safe to do even if we weren't ignoring this
-			// file previously --- if it is in the index and matches
-			// a query, that hit will be filtered out by HitIsValid
-			// since the file no longer exists.
-			if (Model.Ignore (path))
+			Uri uri;
+			uri = GuidFu.ToUri (dir.UniqueId);
+
+			// Cache a copy of our external Uri, so that we can
+			// easily remap it in the PostRemoveHook.
+			Uri external_uri;
+			external_uri = UriFu.PathToFileUri (dir.FullName);
+			removed_uri_cache [uri] = external_uri;
+
+			// Calling Remove will expire the path names,
+			// so name caches will be cleaned up accordingly.
+			dir.Remove ();
+
+			Scheduler.Task task;
+			task = NewRemoveTask (GuidFu.ToUri (dir.UniqueId));
+			task.Priority = Scheduler.Priority.Immediate;
+			ThisScheduler.Add (task);
+		}
+
+		private void MoveDirectory (DirectoryModel dir, 
+					    DirectoryModel new_parent, // or null if we are just renaming
+					    string new_name)
+		{
+			// We'll need this later in order to generate the
+			// right change notification.
+			string old_path;
+			old_path = dir.FullName;
+			
+			if (new_parent != null && new_parent != dir.Parent)
+				dir.MoveTo (new_parent, new_name);
+			else
+				dir.Name = new_name;
+
+			Guid parent_id;
+			parent_id = dir.IsRoot ? Guid.Empty : dir.Parent.UniqueId;
+
+			Indexable indexable;
+			indexable = NewRenamingIndexable (new_name,
+							  dir.UniqueId,
+							  parent_id,
+							  old_path);
+
+			Scheduler.Task task;
+			task = NewAddTask (indexable);
+			task.Priority = Scheduler.Priority.Immediate;
+			// Danger Will Robinson!
+			// We need to use BlockUntilNoCollision to get the correct notifications
+			// in a mv a b; mv b c; mv c a situation.
+			ThisScheduler.Add (task, Scheduler.AddType.BlockUntilNoCollision);
+		}
+
+		//////////////////////////////////////////////////////////////////////////
+
+		//
+		// This code controls the directory crawl order
+		//
+
+		private DirectoryModel StupidWalk (DirectoryModel prev_best, DirectoryModel contender)
+		{
+			if (contender.NeedsCrawl) {
+				if (prev_best == null || prev_best.CompareTo (contender) < 0)
+					prev_best = contender;
+			}
+
+			foreach (DirectoryModel child in contender.Children)
+				prev_best = StupidWalk (prev_best, child);
+
+			return prev_best;
+		}
+
+		public DirectoryModel GetNextDirectoryToCrawl ()
+		{
+			DirectoryModel next_dir = null;
+			
+			foreach (DirectoryModel root in roots)
+				next_dir = StupidWalk (next_dir, root);
+
+			return next_dir;
+		}
+
+		public void DoneCrawlingOneDirectory (DirectoryModel dir)
+		{
+			FileAttributes attr;
+			attr = FileAttributesStore.Read (dir.FullName);
+
+			// We don't have to be super-careful about this since
+			// we only use the FileAttributes mtime on a directory
+			// to determine its initial state, not whether or not
+			// its index record is up-to-date.
+			attr.LastWriteTime = DateTime.Now;
+
+			FileAttributesStore.Write (attr);
+			dir.MarkAsClean ();
+		}
+
+		private void ActivateFileCrawling ()
+		{
+			if (! file_crawl_task.IsActive)
+				ThisScheduler.Add (file_crawl_task);
+		}
+
+		//////////////////////////////////////////////////////////////////////////
+
+		//
+		// File-related methods
+		//
+
+		private enum RequiredAction {
+			None,
+			Index,
+			Rename,
+			Forget
+		}
+		
+		private RequiredAction DetermineRequiredAction (DirectoryModel dir,
+								string         name,
+								FileAttributes attr,
+								out string     last_known_path,
+								out DateTime   mtime)
+		{
+			last_known_path = null;
+			mtime = DateTime.MinValue;
+
+			string path;
+			path = Path.Combine (dir.FullName, name);
+
+			if (Debug)
+				Logger.Log.Debug ("*** What should we do with {0}?", path);
+
+			if (Ignore (dir, name, false)) {
+				// If there are attributes on the file, we must have indexed
+				// it previously.  Since we are ignoring it now, we should drop
+				// it from the index.
+				if (attr != null) {
+					if (Debug)
+						Logger.Log.Debug ("*** Forget it: File is ignored but has attributes");
+					return RequiredAction.Forget;
+				}
+				if (Debug)
+					Logger.Log.Debug ("*** Do nothing: File is ignored");
+				return RequiredAction.None;
+			}
+
+			if (attr == null) {
+				if (Debug)
+					Logger.Log.Debug ("*** Index it: File has no attributes");
+				return RequiredAction.Index;
+			}
+
+			// FIXME: This does not take in to account that we might have a better matching filter to use now
+			// That, however, is kind of expensive to figure out since we'd have to do mime-sniffing and shit.
+			if (attr.FilterName != null && attr.FilterVersion > 0) {
+				int current_filter_version;
+				current_filter_version = FilterFactory.GetFilterVersion (attr.FilterName);
+
+				if (current_filter_version > attr.FilterVersion) {
+					if (Debug)
+						Logger.Log.Debug ("*** Index it: Newer filter version found for filter {0}", attr.FilterName);
+					return RequiredAction.Index;
+				}
+			}
+
+			Mono.Posix.Stat stat;
+			try {
+				Mono.Posix.Syscall.stat (path, out stat);
+			} catch (Exception ex) {
+				Logger.Log.Debug ("Caught exception stat-ing {0}", path);
+				Logger.Log.Debug (ex);
+				return RequiredAction.None;
+			}
+			mtime = stat.MTime;
+
+			if (! DatesAreTheSame (attr.LastWriteTime, mtime)) {
+				if (Debug)
+					Logger.Log.Debug ("*** Index it: MTime has changed");
+				
+				// If the file has been copied, it will have the
+				// original file's EAs.  Thus we have to check to
+				// make sure that the unique id in the EAs actually
+				// belongs to this file.  If not, replace it with a new one.
+				// (Thus touching & then immediately renaming a file can
+				// cause its unique id to change, which is less than
+				// optimal but probably can't be helped.)
+				last_known_path = UniqueIdToFullPath (attr.UniqueId);
+				if (path != last_known_path) {
+					if (Debug)
+						Logger.Log.Debug ("*** Name has also changed, assigning new unique id");
+					attr.UniqueId = Guid.NewGuid ();
+				}
+				
+				return RequiredAction.Index;
+			}
+
+			// If the inode ctime is different that the time we last
+			// set file attributes, we might have been moved or copied.
+			if (! DatesAreTheSame (attr.LastAttrTime, stat.CTime)) {
+				if (Debug)
+					Logger.Log.Debug ("*** CTime has changed, checking last known path");
+
+				last_known_path = UniqueIdToFullPath (attr.UniqueId);
+
+				if (last_known_path == null) {
+					if (Debug)
+						Logger.Log.Debug ("*** Index it: CTime has changed, but can't determine last known path");
+					return RequiredAction.Index;
+				}
+
+				// If the name has changed but the mtime
+				// hasn't, the only logical conclusion is that
+				// the file has been renamed.
+				if (path != last_known_path) {
+					if (Debug)
+						Logger.Log.Debug ("*** Rename it: CTime and path has changed");
+					return RequiredAction.Rename;
+				}
+			}
+			
+			// We don't have to do anything, which is always preferable.
+			if (Debug)
+				Logger.Log.Debug ("*** Do nothing");
+			return RequiredAction.None;	
+		}
+
+		// This works around a mono bug: the DateTimes that we get out of stat
+		// don't correctly account for daylight savings time.  We declare the two
+		// dates to be equal if:
+		// (1) They actually are equal
+		// (2) The first date is exactly one hour ahead of the second
+		static private bool DatesAreTheSame (DateTime system_io_datetime, DateTime stat_datetime)
+		{
+			const double epsilon = 1e-5;
+			double t = (system_io_datetime - stat_datetime).TotalSeconds;
+			return Math.Abs (t) < epsilon || Math.Abs (t-3600) < epsilon;
+		}
+
+		// Return an indexable that will do the right thing with a file
+		// (or null, if the right thing is to do nothing)
+		public Indexable GetCrawlingFileIndexable (DirectoryModel dir, string name)
+		{
+			string path;
+			path = Path.Combine (dir.FullName, name);
+
+			FileAttributes attr;
+			attr = FileAttributesStore.Read (path);
+			
+			RequiredAction action;
+			string last_known_path;
+			DateTime mtime;
+			action = DetermineRequiredAction (dir, name, attr, out last_known_path, out mtime);
+
+			if (action == RequiredAction.None)
+				return null;
+
+			Guid unique_id;
+			if (attr != null)
+				unique_id = attr.UniqueId;
+			else
+				unique_id = Guid.NewGuid ();
+			
+			Indexable indexable = null;
+
+			switch (action) {
+
+			case RequiredAction.Index:
+				indexable = FileToIndexable (path, unique_id, dir.UniqueId, true);
+				if (mtime == DateTime.MinValue)
+					mtime = File.GetLastWriteTime (path);
+				break;
+
+			case RequiredAction.Rename:
+				indexable = NewRenamingIndexable (name, unique_id, dir.UniqueId,
+								  last_known_path);
+				break;
+
+			case RequiredAction.Forget:
+				// FIXME: cache the file uri so that notification will work
+				Scheduler.Task task;
+				task = NewRemoveTask (GuidFu.ToUri (unique_id));
+				ThisScheduler.Add (task);
+				break;
+			}
+
+			if (indexable != null) {
+				PendingInfo info;
+				info = new PendingInfo ();
+				info.Uri = indexable.Uri;
+				info.Path = path;
+				info.IsDirectory = false;
+				info.Mtime = mtime;
+				info.Parent = dir;
+				pending_info_cache [info.Uri] = info;
+			}
+
+			return indexable;
+		}
+
+		public void AddFile (DirectoryModel dir, string name)
+		{
+			if (Ignore (dir, name, false))
 				return;
 
-			Uri uri = UriFu.PathToFileUri (path);
+			string path;
+			path = Path.Combine (dir.FullName, name);
+
+			FileAttributes attr;
+			attr = FileAttributesStore.Read (path);
+
+			Guid unique_id;
+			unique_id = (attr != null) ? attr.UniqueId : Guid.NewGuid ();
+
+			Indexable indexable;
+			indexable = FileToIndexable (path, unique_id, dir.UniqueId, false);
+
+			PendingInfo info;
+			info = new PendingInfo ();
+			info.Uri = indexable.Uri;
+			info.Path = path;
+			info.IsDirectory = false;
+			info.Mtime = File.GetLastWriteTime (path);
+			info.Parent = dir;
+			pending_info_cache [info.Uri] = info;
+
+			Scheduler.Task task;
+			task = NewAddTask (indexable);
+			task.Priority = Scheduler.Priority.Immediate;
+			ThisScheduler.Add (task);
+		}
+
+		public void RemoveFile (DirectoryModel dir, string name)
+		{
+			// FIXME: We might as well remove it, even if it was being ignore.
+			// Right?
+
+			Guid unique_id;
+			unique_id = name_resolver.GetIdByNameAndParentId (name, dir.UniqueId);
+			if (unique_id == Guid.Empty) {
+				Logger.Log.Warn ("Couldn't find unique id for '{0}' in '{1}' ({2})",
+						 name, dir.FullName, dir.UniqueId);
+				return;
+			}
+
+			Uri uri, file_uri;
+			uri = GuidFu.ToUri (unique_id);
+			file_uri = UriFu.PathToFileUri (Path.Combine (dir.FullName, name));
+			removed_uri_cache [uri] = file_uri;
+
 			Scheduler.Task task;
 			task = NewRemoveTask (uri);
-			task.Priority = priority;
+			task.Priority = Scheduler.Priority.Immediate;
 			ThisScheduler.Add (task);
 		}
 
-		public void Remove (string path)
+		public void MoveFile (DirectoryModel old_dir, string old_name,
+				      DirectoryModel new_dir, string new_name)
 		{
-			Remove (path, Scheduler.Priority.Immediate);
-		}
+			bool old_ignore, new_ignore;
+			old_ignore = Ignore (old_dir, old_name, false);
+			new_ignore = Ignore (new_dir, new_name, false);
 
-		public void Rename (string old_path, string new_path, Scheduler.Priority priority)
-		{
-			bool ignore_old = Model.Ignore (old_path);
-			bool ignore_new = Model.Ignore (new_path);
-
-			// If we just want to ignore both paths, do nothing.
-			if (ignore_old && ignore_new)
+			if (old_ignore && new_ignore)
 				return;
 
-			// If we were ignoring the old path, treat this as an add
-			if (ignore_old) {
-				Add (new_path, priority);
+			// If our ignore-state is changing, synthesize the appropriate
+			// action.
+
+			if (old_ignore && ! new_ignore) {
+				AddFile (new_dir, new_name);
 				return;
 			}
 
-			// If we want to ignore the new path, treat this as a removal
-			if (ignore_new) {
-				Remove (old_path, priority);
+			if (! old_ignore && new_ignore) {
+				RemoveFile (new_dir, new_name);
 				return;
 			}
 
-			Uri old_uri = UriFu.PathToFileUri (old_path);
-			Uri new_uri = UriFu.PathToFileUri (new_path);
+			string old_path;
+			old_path = Path.Combine (old_dir.FullName, old_name);
+
+			// We need to find the file's unique id.
+			// We can't look at the extended attributes w/o making
+			// assumptions about whether they follow around the
+			// file (EAs) or the path (sqlite)... so we go straight
+			// to the name resolver.
+			
+			Guid unique_id;
+			unique_id = name_resolver.GetIdByNameAndParentId (old_name, old_dir.UniqueId);
+			if (unique_id == Guid.Empty) {
+				Logger.Log.Warn ("Couldn't find unique id for '{0}' in '{1}' ({2})",
+						 old_name, old_dir.FullName, old_dir.UniqueId);
+				return;
+			}
+
+			// FIXME: I think we need to be more conservative when we seen
+			// events in a directory that has not been fully scanned, just to
+			// avoid races.  i.e. what if we are in the middle of crawling that
+			// directory and haven't reached this file yet?  Then the rename
+			// will fail.
+			Indexable indexable;
+			indexable = NewRenamingIndexable (new_name,
+							  unique_id,
+							  new_dir.UniqueId,
+							  old_path);
+			
 			Scheduler.Task task;
-			task = NewRenameTask (old_uri, new_uri);
-			task.Priority = priority;
-			ThisScheduler.Add (task);
+			task = NewAddTask (indexable);
+			task.Priority = Scheduler.Priority.Immediate;
+			// Danger Will Robinson!
+			// We need to use BlockUntilNoCollision to get the correct notifications
+			// in a mv a b; mv b c; mv c a situation.
+			ThisScheduler.Add (task, Scheduler.AddType.BlockUntilNoCollision);
 		}
 
-		public void Rename (string old_path, string new_path)
+		//////////////////////////////////////////////////////////////////////////
+		
+		// Configuration stuff
+
+		private void LoadConfiguration () 
 		{
-			Rename (old_path, new_path, Scheduler.Priority.Immediate);
+			if (Conf.Indexing.IndexHomeDir)
+				AddRoot (PathFinder.HomeDir);
+			
+			foreach (string root in Conf.Indexing.Roots)
+				AddRoot (root);
+
+			Conf.Subscribe (typeof (Conf.IndexingConfig), OnConfigurationChanged);
+		}
+
+		private void OnConfigurationChanged (Conf.Section section)
+		{
+#if false
+			ArrayList roots_wanted = new ArrayList (Conf.Indexing.Roots);
+			
+			if (Conf.Indexing.IndexHomeDir)
+				roots_wanted.Add (PathFinder.HomeDir);
+			
+			IList roots_to_add, roots_to_remove;
+
+			ArrayFu.IntersectListChanges (roots_wanted, RootsAsPaths, out roots_to_add, out roots_to_remove);
+
+			foreach (string root in roots_to_remove)
+				RemoveRoot (root);
+
+			foreach (string root in roots_to_add)
+				AddRoot (root);
+#endif
 		}
 
 		//////////////////////////////////////////////////////////////////////////
 
-		override protected void AbusiveRemoveHook (Uri internal_uri, Uri external_uri)
+		//
+		// Our magic LuceneQueryable hooks
+		//
+
+		override protected void PostAddHook (IndexerAddedReceipt receipt)
 		{
-			if (Debug)
-				Logger.Log.Debug ("AbusiveRemoveHook: internal_uri={0} external_uri={1}",
-						  internal_uri, external_uri);
-			Model.DropUid (GuidFu.FromUri (internal_uri));
-			this.FileAttributesStore.Drop (external_uri.LocalPath);
-		}
+			// If we just changed properties, remap to our *old* external Uri
+			// to make notification work out property.
+			if (receipt.PropertyChangesOnly) {
 
-		override protected void AbusiveRenameHook (Uri old_uri, Uri new_uri)
-		{
-			if (Debug)
-				Logger.Log.Debug ("AbusiveRenameHook: old_uri={0}, new_uri={1}", old_uri, new_uri);
-
-			// If the thing being renamed is a directory, we have to update
-			// our model.
-			FileSystemModel.Directory dir = Model.GetDirectoryByPath (old_uri.LocalPath);
-
-			if (dir != null) {
-
-				if (Debug)
-					Logger.Log.Debug ("AbusiveRenameHook: found directory");
-			
-				string new_dirname = Path.GetDirectoryName (new_uri.LocalPath);
-				string new_filename = Path.GetFileName (new_uri.LocalPath);
-
-				FileSystemModel.Directory new_parent = Model.GetDirectoryByPath (new_dirname);
-
-				if (Debug)
-					Logger.Log.Debug ("AbusiveRenameHook: new_parent={0}", new_parent.FullName);
-			
-				if (dir.Name != new_filename) {
-					if (Debug)
-						Logger.Log.Debug ("AbusiveRenameHook: new name is {0}", new_filename);
-					Model.Rename (dir, new_filename);
+				// FIXME: This linear search sucks --- we should
+				// be able to use the fact that they are sorted.
+				foreach (Property prop in receipt.Properties) {
+					if (prop.Key == OldExternalUriPropKey) {
+						receipt.Uri = UriFu.UriStringToUri (prop.Value);
+						break;
+					}
 				}
-
-				if (dir.Parent != new_parent) {
-					if (Debug)
-						Logger.Log.Debug ("AbusiveRenameHook: new parent is {0}", new_parent.FullName);
-					Model.Move (dir, new_parent);
-				}
-			}
-			
-			// Attach the current time as the last index time.
-			// We didn't actually index anything, of course, but we
-			// need to update this time so that future ctime checks
-			// will be accurate.
-			// This will also make the necessary adjustments to
-			// the unique ID store.
-			FileAttributes attr = FileAttributesStore.Read (new_uri.LocalPath);
-			if (attr != null) {
-				attr.LastIndexedTime = DateTime.Now;
-				FileAttributesStore.Write (attr);
-			}
-		}
-
-		override protected void AbusiveChildIndexableHook (Indexable child_indexable)
-		{
-			// FIXME: FileSystemQueryable does not support adding children 
-			// to the NameIndex at the moment, this, however, would be nice 
-			// to have if we are to index compressed archives and such.
-			throw new InvalidOperationException ();
-
-			if (Debug)
-				Logger.Log.Debug ("AbusiveChildIndexableHook: uri={0}", child_indexable.Uri);
-
-			Uri internal_uri = model.ToInternalUri (child_indexable.Uri);
-
-			if (Debug)
-				Logger.Log.Debug ("AbusiveChildIndexableHook: Remapped '{0}' to '{1}'", child_indexable.Uri, internal_uri);
-
-			child_indexable.Uri = internal_uri;
-		}
-
-		override protected void AbusiveUriFilteredHook (FilteredStatus uri_filtered)
-		{
-			if (!model.InternalUriIsValid (uri_filtered.Uri)) {
-				Logger.Log.Error ("AbusiveUriFilteredHook: Internal uri is not valid: {0}", uri_filtered.Uri);
+				
 				return;
 			}
 
-			Uri external_uri = model.FromInternalUri (uri_filtered.Uri);
+			PendingInfo info;
+			info = pending_info_cache [receipt.Uri] as PendingInfo;
+			pending_info_cache.Remove (receipt.Uri);
+
+			Guid unique_id;
+			unique_id = GuidFu.FromUri (receipt.Uri);
+
+			FileAttributes attr;
+			attr = FileAttributesStore.ReadOrCreate (info.Path, unique_id);
+			attr.Path = info.Path;
+			attr.LastWriteTime = info.Mtime;
 			
-			if (Debug)
-				Logger.Log.Debug ("AbusiveUriFilteredHook: external_uri={0} internal_uri={1}, name={2}, version={3}", external_uri, uri_filtered.Uri, uri_filtered.FilterName, uri_filtered.FilterVersion);
-
-			try {
-				model.MarkAsFiltered (external_uri.LocalPath, uri_filtered.FilterName, uri_filtered.FilterVersion);
-			} catch (Exception ex) {
-				Logger.Log.Error ("Could not mark file filtered");
-				Logger.Log.Error (ex);
+			attr.FilterName = receipt.FilterName;
+			attr.FilterVersion = receipt.FilterVersion;
+			
+			if (info.IsDirectory) {
+				string name;
+				if (info.Parent == null)
+					name = info.Path;
+				else
+					name = Path.GetFileName (info.Path);
+				RegisterDirectory (name, info.Parent, attr);
 			}
+
+			FileAttributesStore.Write (attr);
+
+			// Remap the Uri so that change notification will work properly
+			receipt.Uri = UriFu.PathToFileUri (info.Path);
 		}
-		
-		//////////////////////////////////////////////////////////////////////////
-		
-		// Filter out hits where the files seem to no longer exist.
-		override protected bool HitIsValid (Uri uri)
+
+		override protected void PostRemoveHook (IndexerRemovedReceipt receipt)
 		{
-			return model.InternalUriIsValid (uri);
+			// Find the cached external Uri and remap the Uri in the receipt.
+			// We have to do this to make change notification work.
+			Uri external_uri;
+			external_uri = removed_uri_cache [receipt.Uri] as Uri;
+			if (external_uri == null)
+				throw new Exception ("No cached external Uri for " + receipt.Uri);
+			removed_uri_cache.Remove (receipt.Uri);
+			
+			receipt.Uri = external_uri;
 		}
 
-		//////////////////////////////////////////////////////////////////////////
-
-		// If our file system model contains elements that need to be crawled,
-		// launch a crawling task.
-		private void OnModelNeedsCrawl (FileSystemModel source)
+		// Hit filter: this handles our mapping from internal->external uris,
+		// and checks to see if the file is still there.
+		override protected bool HitFilter (Hit hit)
 		{
-			// We only ever want one crawling task
-			if (last_crawl_task != null && last_crawl_task.Active)
-				return;
+			string name, parent_id_uri;
+			name = hit [ExactFilenamePropKey];
+			if (name == null)
+				return false;
+			parent_id_uri = hit [ParentDirUriPropKey];
+			if (parent_id_uri == null)
+				return false;
+			
+			Guid parent_id;
+			parent_id = GuidFu.FromUriString (parent_id_uri);
 
-			last_crawl_task = new CrawlTask (this);
-			ThisScheduler.Add (last_crawl_task, Scheduler.AddType.DeferToExisting);
+			string path;
+			path = ToFullPath (name, parent_id);
+
+			if (Debug)
+				Logger.Log.Debug ("HitFilter mapped '{0}' {1} to '{2}'",
+						  name, parent_id, path);
+
+			bool exists;
+			if (hit.MimeType == "inode/directory")
+				exists = Directory.Exists (path);
+			else
+				exists = File.Exists (path);
+
+			// FIXME: Need to filter by ignore-status here.
+
+			// If the file doesn't exist, we do not schedule a removal and
+			// return false.  This is to avoid "losing" files if they are
+			// in a directory that has been renamed but which we haven't
+			// scanned yet... if we dropped them from the index, they would
+			// never get re-indexed (or at least not until the next time they
+			// were touched) since they would still be stamped with EAs
+			// indicating they were up-to-date.  And that would be bad.
+			// FIXME: It would be safe if we were in a known state, right?
+			// i.e. every DirectoryModel is clean.
+			if (! exists)
+				return false;
+
+			// Store the hit's internal uri in a property
+			Property prop;
+			prop = Property.NewKeyword ("beagle:InternalUri",
+						    UriFu.UriToSerializableString (hit.Uri));
+			hit.AddProperty (prop);
+
+			// Remap the Uri
+			hit.Uri = UriFu.PathToFileUri (path);
+
+			return true;
 		}
 
-		public void StartWorker ()
+		override public string GetSnippet (string [] query_terms, Hit hit)
 		{
-			event_backend.Start (this);
+			// Uri remapping from a hit is easy: the internal uri
+			// is stored in a property.
+			Uri uri;
+			uri = UriFu.UriStringToUri (hit ["beagle:InternalUri"]);
+			
+			string path;
+			path = TextCache.UserCache.LookupPathRaw (uri);
 
-			model.LoadConfiguration ();
+			if (path == null)
+				return null;
 
-			log.Info ("FileSystemQueryable start-up thread finished");
-			// FIXME: Do we need to re-run queries when we are fully started?
+			// If this is self-cached, use the remapped Uri
+			if (path == TextCache.SELF_CACHE_TAG)
+				path = hit.Uri.LocalPath;
+			
+			return SnippetFu.GetSnippetFromFile (query_terms, path);
 		}
 
-		public override void Start ()
+		override public void Start ()
 		{
 			base.Start ();
+			
+			event_backend.Start (this);
 
-			ExceptionHandlingThread.Start (new ThreadStart (StartWorker));
+			LoadConfiguration ();
+
+			Logger.Log.Debug ("Done starting FileSystemQueryable");
 		}
 
 		//////////////////////////////////////////////////////////////////////////
 
-		protected override ICollection DoBonusQuery (Query query, ICollection list_of_uris)
+		// These are the methods that the IFileEventBackend implementations should
+		// call in response to events.
+		
+		public void ReportEventInDirectory (string directory_name)
 		{
-			return model.Search (query, list_of_uris);
+			DirectoryModel dir;
+			dir = GetDirectoryModelByPath (directory_name);
+
+			// We only use this information to prioritize the order in which
+			// we crawl directories --- so if this directory doesn't
+			// actually need to be crawled, we can safely ignore it.
+			if (! dir.NeedsCrawl)
+				return;
+
+			dir.LastActivityTime = DateTime.Now;
+
+			Logger.Log.Debug ("Saw event in '{0}'", directory_name);
 		}
 
-		protected override double RelevancyMultiplier (Hit hit)
+		public void HandleAddEvent (string directory_name, string file_name, bool is_directory)
 		{
-			FileSystemInfo info = hit.FileSystemInfo;
+			Logger.Log.Debug ("*** Add '{0}' '{1}' {2}", directory_name, file_name,
+					  is_directory ? "(dir)" : "(file)");
+			
+			DirectoryModel dir;
+			dir = GetDirectoryModelByPath (directory_name);
+			if (dir == null) {
+				Logger.Log.Warn ("HandleAddEvent failed: Couldn't find DirectoryModel for '{0}'", directory_name);
+				return;
+			}
 
-			double days = (DateTime.Now - info.LastWriteTime).TotalDays;
-			// Maximize relevancy if the file has been touched within the last seven days.
-			if (0 <= days && days < 7)
-				return 1.0;
-
-			DateTime dt = info.LastAccessTime;
-			if (dt < info.LastWriteTime)
-				dt = info.LastWriteTime;
-
-			return HalfLifeMultiplier (dt);
+			if (is_directory)
+				AddDirectory (dir, file_name);
+			else
+				AddFile (dir, file_name);
 		}
+
+		public void HandleRemoveEvent (string directory_name, string file_name, bool is_directory)
+		{
+			Logger.Log.Debug ("*** Remove '{0}' '{1}' {2}", directory_name, file_name,
+					  is_directory ? "(dir)" : "(file)");
+
+			if (is_directory) {
+				string path;
+				path = Path.Combine (directory_name, file_name);
+
+				DirectoryModel dir;
+				dir = GetDirectoryModelByPath (path);
+				if (dir == null) {
+					Logger.Log.Warn ("HandleRemoveEvent failed: Couldn't find DirectoryModel for '{0}'", path);
+					return;
+				}
+
+				RemoveDirectory (dir);
+			} else {
+				DirectoryModel dir;
+				dir = GetDirectoryModelByPath (directory_name);
+				if (dir == null) {
+					Logger.Log.Warn ("HandleRemoveEvent failed: Couldn't find DirectoryModel for '{0}'", directory_name);
+					return;
+				}
+				
+				RemoveFile (dir, file_name);
+			}
+		}
+
+		public void HandleMoveEvent (string old_directory_name, string old_file_name,
+					     string new_directory_name, string new_file_name,
+					     bool is_directory)
+		{
+			Logger.Log.Debug ("*** Move '{0}' '{1}' -> '{2}' '{3}' {4}",
+					  old_directory_name, old_file_name,
+					  new_directory_name, new_file_name,
+					  is_directory ? "(dir)" : "(file)");
+
+			if (is_directory) {
+				DirectoryModel dir, new_parent;
+				dir = GetDirectoryModelByPath (Path.Combine (old_directory_name, old_file_name));
+				new_parent = GetDirectoryModelByPath (new_directory_name);
+				MoveDirectory (dir, new_parent, new_file_name);
+				return;
+			} else {
+				DirectoryModel old_dir, new_dir;
+				old_dir = GetDirectoryModelByPath (new_directory_name);
+				new_dir = GetDirectoryModelByPath (new_directory_name);
+				MoveFile (old_dir, old_file_name, new_dir, new_file_name);
+			}
+		}
+
+		public void HandleOverflowEvent ()
+		{
+			Logger.Log.Debug ("Queue overflows suck");
+		}
+
 	}
 }
 	

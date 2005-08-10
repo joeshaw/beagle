@@ -102,7 +102,8 @@ namespace Beagle.Daemon.EvolutionMailDriver {
 					
 		protected void CrawlFinished ()
 		{
-			this.queryable.FileAttributesStore.AttachTimestamp (this.CrawlFile.FullName, DateTime.Now);
+			// FIXME: This is a little sketchy
+			this.queryable.FileAttributesStore.AttachLastWriteTime (this.CrawlFile.FullName, DateTime.Now);
 		}
 
 		public string StatusName {
@@ -712,6 +713,7 @@ namespace Beagle.Daemon.EvolutionMailDriver {
 
 			indexable.AddProperty (Property.NewKeyword ("fixme:account",  this.imap_name));
                         indexable.AddProperty (Property.NewKeyword ("fixme:folder",   this.folder_name));
+			indexable.AddProperty (Property.NewKeyword ("fixme:client", "evolution"));
 			
 			if (!have_content)
 				indexable.AddProperty (Property.New ("dc:title", messageInfo.subject));

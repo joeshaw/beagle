@@ -1,3 +1,5 @@
+/* -*- Mode: C; tab-width: 8; indent-tabs-mode: t; c-basic-offset: 8; -*- */
+
 /*
  * beagle-query-part.h
  *
@@ -31,23 +33,32 @@
 #include <glib.h>
 
 #define BEAGLE_QUERY_PART_TARGET_ALL "_all"
-#define BEAGLE_QUERY_PART_TARGET_TEXT "_text"
-#define BEAGLE_QUERY_PART_TARGET_PROPERTIES "_prop"
 
-typedef struct _BeagleQueryPart BeagleQueryPart;
+typedef enum {
+        BEAGLE_QUERY_PART_LOGIC_REQUIRED = 1,
+	BEAGLE_QUERY_PART_LOGIC_OPTIONAL = 2,
+	BEAGLE_QUERY_PART_LOGIC_PROHIBITED = 3,
+} BeagleQueryPartLogic;
 
-BeagleQueryPart *beagle_query_part_new  (void);
-void             beagle_query_part_free (BeagleQueryPart *part);
+#define BEAGLE_TYPE_QUERY_PART            (beagle_query_part_get_type ())
+#define BEAGLE_QUERY_PART(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), BEAGLE_TYPE_QUERY_PART, BeagleQueryPart))
+#define BEAGLE_QUERY_PART_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), BEAGLE_TYPE_QUERY_PART, BeagleQueryPartClass))
+#define BEAGLE_IS_QUERY_PART(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), BEAGLE_TYPE_QUERY_PART))
+#define BEAGLE_IS_QUERY_PART_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), BEAGLE_TYPE_QUERY_PART))
+#define BEAGLE_QUERY_PART_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), BEAGLE_TYPE_QUERY_PART, BeagleQueryPartClass))
 
-void beagle_query_part_set_target     (BeagleQueryPart *part,
-				       const char      *target);
-void beagle_query_part_set_text       (BeagleQueryPart *part,
-				       const char      *text);
-void beagle_query_part_set_keyword    (BeagleQueryPart *part,
-				       gboolean         is_keyword);
-void beagle_query_part_set_required   (BeagleQueryPart *part,
-				       gboolean         is_required);
-void beagle_query_part_set_prohibited (BeagleQueryPart *part,
-				       gboolean         is_prohibited);
+typedef struct {
+	GObject parent;
+} BeagleQueryPart;
+
+typedef struct {
+	GObjectClass parent_class;
+	
+        GString *(* to_xml) (BeagleQueryPart *part, GError **err);
+} BeagleQueryPartClass;
+
+GType     beagle_query_part_get_type (void);
+GString * beagle_query_part_to_xml   (BeagleQueryPart *part,
+				      GError **err);
 
 #endif /* __BEAGLE_QUERY_PART_H */

@@ -46,7 +46,7 @@ namespace Beagle.Daemon {
 			}
 		}
 
-		public FileAttributes ReadOrCreate (string path, out bool created)
+		public FileAttributes ReadOrCreate (string path, Guid unique_id, out bool created)
 		{
 			lock (ifas) {
 				created = false;
@@ -54,24 +54,34 @@ namespace Beagle.Daemon {
 				FileAttributes attr = ifas.Read (path);
 				if (attr == null) {
 					attr = new FileAttributes ();
-					attr.UniqueId = Guid.NewGuid ();
+					attr.UniqueId = unique_id;
 					attr.Path = path;
 					ifas.Write (attr);
 					created = true;
 				}
+				// FIXME: If we were able to successfully read attributes,
+				// and if attr.UniqueId != unique_id, it probably means
+				// that something bad happened.  Right?  Should we throw
+				// an exception?
 				return attr;
 			}
 		}
 
-		public FileAttributes ReadOrCreate (string path)
+		public FileAttributes ReadOrCreate (string path, Guid unique_id)
 		{
 			bool dummy;
-			return ReadOrCreate (path, out dummy);
+			return ReadOrCreate (path, unique_id, out dummy);
+		}
+
+		public FileAttributes ReadOrCreate (string path)
+		{
+			return ReadOrCreate (path, Guid.NewGuid ());
 		}
 
 		public bool Write (FileAttributes attr)
 		{
 			lock (ifas) {
+				attr.LastAttrTime = DateTime.Now;
 				return ifas.Write (attr);
 			}
 		}
@@ -83,31 +93,71 @@ namespace Beagle.Daemon {
 			}
 		}
 
+		public void BeginTransaction ()
+		{
+			lock (ifas)
+				ifas.BeginTransaction ();
+
+		}
+
+		public void CommitTransaction ()
+		{
+			lock (ifas)
+				ifas.CommitTransaction ();
+		}
+
 		//////////////////////////////////////////////////////////
 
-		public bool IsUpToDate (string path)
+		public bool IsUpToDate (string path, Filter filter)
 		{
 			FileAttributes attr;
 
 			attr = Read (path);
 
-			// FIXME: This check is incomplete, we should also check
-			// filter names, filter versions, etc.
-			return attr != null
-				&& FileSystem.GetLastWriteTime (path) <= attr.LastWriteTime;
+			// If there are no attributes set on the file, there is no
+			// way that we can be up-to-date.
+			if (attr == null)
+				return false;
+
+			// Note that when filter is set to null, we ignore
+			// any existing filter data.  That might not be the
+			// expected behavior...
+			if (filter != null) {
+
+				if (! attr.HasFilterInfo)
+					return false;
+
+				if (attr.FilterName != filter.Name)
+					return false;
+				
+				// FIXME: Obviously we want to reindex if
+				// attr.FilterVersion < filter.Version.
+				// But what if the filter we would use is older
+				// than the one that was previously used?
+				if (attr.FilterVersion != filter.Version)
+					return false;
+			} 
+
+			if (FileSystem.GetLastWriteTime (path) > attr.LastWriteTime)
+				return false;
+
+			return true;
 		}
 
-		public void AttachTimestamp (string path, DateTime mtime)
+		public bool IsUpToDate (string path)
+		{
+			return IsUpToDate (path, null);
+		}
+
+		//////////////////////////////////////////////////////////
+
+		// A convenience routine.
+		public void AttachLastWriteTime (string path, DateTime mtime)
 		{
 			FileAttributes attr = ReadOrCreate (path);
-
 			attr.LastWriteTime = mtime;
-			attr.LastIndexedTime = DateTime.Now;
-
-			if (! Write (attr)) {
+			if (! Write (attr))
 				Logger.Log.Warn ("Couldn't store file attributes for {0}", path);
-			}
 		}
-
 	}
 }

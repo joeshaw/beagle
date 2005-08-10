@@ -29,33 +29,26 @@ using System.Collections;
 
 namespace Beagle.Daemon {
 	
-	// Renamed Uris are interleaved: old uri #1, new uri #1, old uri #2, new uri #2, ...
-	// Yes, I know that is ugly.
-	public delegate void IIndexerChangedHandler (IIndexer source,
-						     ICollection list_of_added_uris,
-						     ICollection list_of_removed_uris,
-						     ICollection list_of_renamed_uris);
 
-	public delegate void IIndexerChildIndexableHandler (Indexable[] child_indexables);
-	public delegate void IIndexerUrisFilteredHandler (FilteredStatus[] list_of_filtered_uris);
+	public delegate void IIndexerFlushHandler (IIndexer source, IndexerReceipt [] receipts);
 
 	public interface IIndexer {
+
+		int GetItemCount ();
 
 		void Add (Indexable indexable);
 
 		void Remove (Uri uri);
 
-		void Rename (Uri old_uri, Uri new_uri);
+		IndexerReceipt [] FlushAndBlock ();
 
+		// In general, we don't guarantee that Flush will not block.
+		// FlushEvent might be fired before Flush returns.
+		// Also, FlushEvent might fire multiple times.  We signal
+		// that the flush is finished by firing FlushEvent with
+		// receipts == null.
 		void Flush ();
 
-		int GetItemCount ();
-		
-		event IIndexerChangedHandler ChangedEvent;
-
-		event IIndexerChildIndexableHandler ChildIndexableEvent;
-
-		// FIXME: Merge this with ChangedEvent and use some better datastructures
-		event IIndexerUrisFilteredHandler UrisFilteredEvent;
+		event IIndexerFlushHandler FlushEvent;
 	}
 }

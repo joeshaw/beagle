@@ -38,10 +38,17 @@ namespace Beagle.Daemon {
 
 	public class TextCache {
 
-		const string SELF_CACHE_TAG = "*self*";
+		public const string SELF_CACHE_TAG = "*self*";
 
 		private string text_cache_dir;
 		private SqliteConnection connection;
+
+		private enum TransactionState {
+			None,
+			Requested,
+			Started
+		}
+		private TransactionState transaction_state;
 
 		private static TextCache user_cache = null;
 
@@ -152,6 +159,7 @@ namespace Beagle.Daemon {
 
 		private void Insert (Uri uri, string filename)
 		{
+			MaybeStartTransaction ();
 			DoNonQuery ("INSERT OR REPLACE INTO uri_index (uri, filename) VALUES ('{0}', '{1}')",
 				    UriToString (uri), filename);
 		}
@@ -177,20 +185,32 @@ namespace Beagle.Daemon {
 			}
 
 			if (path == SELF_CACHE_TAG)
-				return path;
+				return SELF_CACHE_TAG;
 
 			return path != null ? Path.Combine (text_cache_dir, path) : null;
 		}
-	
-		private string LookupPath (Uri uri,
-					   LuceneDriver.UriRemapper uri_remapper,
-					   bool create_if_not_found)
+
+		// Don't do this unless you know what you are doing!  If you
+		// do anything to the path you get back other than open and
+		// read the file, you will almost certainly break something.
+		// And it will be evidence that you are a bad person and that
+		// you deserve whatever horrible fate befalls you.
+		public string LookupPathRaw (Uri uri)
+		{
+			lock (connection)
+				return LookupPathRawUnlocked (uri, false);
+		}
+
+		private string LookupPath (Uri uri, bool create_if_not_found)
 		{
 			lock (connection) {
 				string path = LookupPathRawUnlocked (uri, create_if_not_found);
 				if (path == SELF_CACHE_TAG) {
+					// FIXME: How do we handle URI remapping for self-cached items?
+#if false
 					if (uri_remapper != null)
 						uri = uri_remapper (uri);
+#endif
 					if (! uri.IsFile) {
 						string msg = String.Format ("Non-file uri {0} flagged as self-cached", uri);
 						throw new Exception (msg);
@@ -209,7 +229,8 @@ namespace Beagle.Daemon {
 
 		public TextWriter GetWriter (Uri uri)
 		{
-			string path = LookupPath (uri, null, true);
+			// FIXME: Uri remapping?
+			string path = LookupPath (uri, true);
 
 			FileStream stream;
 			stream = new FileStream (path, FileMode.Create, FileAccess.Write, FileShare.ReadWrite);
@@ -222,14 +243,33 @@ namespace Beagle.Daemon {
 			return writer;
 		}
 
-		public TextReader GetReader (Uri uri)
+		public void WriteFromReader (Uri uri, TextReader reader)
 		{
-			return GetReader (uri, null);
+			TextWriter writer;
+			writer = GetWriter (uri);
+			string line;
+			while ((line = reader.ReadLine ()) != null)
+				writer.WriteLine (line);
+			writer.Close ();
 		}
 
-		public TextReader GetReader (Uri uri, LuceneDriver.UriRemapper uri_remapper)
+		public void WriteFromString (Uri uri, string str)
 		{
-			string path = LookupPath (uri, uri_remapper, false);
+			if (str == null) {
+				Delete (uri);
+				return;
+			}
+
+			TextWriter writer;
+			writer = GetWriter (uri);
+			writer.WriteLine (str);
+			writer.Close ();
+		}
+
+		// FIXME: Uri remapping?
+		public TextReader GetReader (Uri uri)
+		{
+			string path = LookupPath (uri, false);
 			if (path == null)
 				return null;
 
@@ -250,12 +290,36 @@ namespace Beagle.Daemon {
 			lock (connection) {
 				string path = LookupPathRawUnlocked (uri, false);
 				if (path != null) {
+					MaybeStartTransaction ();
 					DoNonQuery ("DELETE FROM uri_index WHERE uri='{0}' AND filename='{1}'", 
 					            UriToString (uri), path);
 					if (path != SELF_CACHE_TAG)
 						File.Delete (path);
 				}
 			}
+		}
+
+		private void MaybeStartTransaction ()
+		{
+			if (transaction_state == TransactionState.Requested) {
+				DoNonQuery ("BEGIN");
+				transaction_state = TransactionState.Started;
+			}
+		}
+
+		public void BeginTransaction ()
+		{
+			if (transaction_state == TransactionState.None)
+				transaction_state = TransactionState.Requested;
+		}
+
+		public void CommitTransaction ()
+		{
+			if (transaction_state == TransactionState.Started) {
+				lock (connection)
+					DoNonQuery ("COMMIT");
+			}
+			transaction_state = TransactionState.None;
 		}
 	}
 }

@@ -45,10 +45,6 @@ namespace Beagle.Daemon {
 		RemoteIndexerRequest pending_request = new RemoteIndexerRequest ();
 		object pending_request_lock = new object ();
 
-		public event IIndexerChangedHandler ChangedEvent;
-		public event IIndexerChildIndexableHandler ChildIndexableEvent;
-		public event IIndexerUrisFilteredHandler UrisFilteredEvent;
-
 		static RemoteIndexer ()
 		{
 			string bihp = Environment.GetEnvironmentVariable ("_BEAGLED_INDEX_HELPER_PATH");
@@ -85,16 +81,16 @@ namespace Beagle.Daemon {
 				pending_request.Remove (uri);
 		}
 
-		public void Rename (Uri old_uri, Uri new_uri)
-		{
-			lock (pending_request_lock)
-				pending_request.Rename (old_uri, new_uri);
-		}
-
-		public void Flush ()
+		public IndexerReceipt [] FlushAndBlock ()
 		{
 			RemoteIndexerRequest flushed_request = null;
 			lock (pending_request) {
+				
+				// If there isn't actually any work to do, just return
+				// an empty array.
+				if (pending_request.IsEmpty)
+					return new IndexerReceipt [0];
+
 				flushed_request = pending_request;
 				pending_request = new RemoteIndexerRequest ();
 			}
@@ -104,8 +100,32 @@ namespace Beagle.Daemon {
 
 			if (response == null) {
 				Logger.Log.Error ("Something terrible happened --- Flush failed");
-			} else {
-				flushed_request.FireEvent (this, ChangedEvent);
+				return null;
+			}
+			
+			last_item_count = response.ItemCount;
+
+			if (response.Receipts != null && response.Receipts.Length > 0)
+				return response.Receipts;
+			else
+				return null;
+		}
+
+		public event IIndexerFlushHandler FlushEvent;
+
+		public void Flush ()
+		{
+			// FIXME: Right now we don't support a non-blocking flush,
+			// but it would be easy enough to do it in a thread.
+
+			IndexerReceipt [] receipts;
+
+			receipts = FlushAndBlock ();
+
+			if (FlushEvent != null) {
+				if (receipts != null)
+					FlushEvent (this, receipts);
+				FlushEvent (this, null); // all done
 			}
 		}
 
@@ -114,8 +134,14 @@ namespace Beagle.Daemon {
 			if (last_item_count == -1) {
 				// Send an empty indexing request to cause the last item count to be
 				// initialized.
-				RemoteIndexerRequest request = new RemoteIndexerRequest ();
-				if (SendRequest (request) == null) 
+				RemoteIndexerRequest request;
+				request = new RemoteIndexerRequest ();
+
+				RemoteIndexerResponse response;
+				response = SendRequest (request);
+				if (response != null)
+					last_item_count = response.ItemCount;
+				else
 					Logger.Log.Error ("Something terrible happened --- GetItemCount failed");
 			}
 			return last_item_count;
@@ -170,28 +196,9 @@ namespace Beagle.Daemon {
 				}
 			}
 
-			if (response != null) {
-				//Logger.Log.Debug ("Got response!");
-				last_item_count = response.ItemCount;
-
-				if (response.ChildIndexables != null) {
-					Logger.Log.Debug ("Sending {0} child indexables from helper",
-							  response.ChildIndexables.Length);
-
-					if (response.ChildIndexables.Length > 0 && ChildIndexableEvent != null)
-						ChildIndexableEvent (response.ChildIndexables);
-				}
-
-				if (response.UrisFiltered != null) {
-					Logger.Log.Debug ("Sending {0} filtered uris from helper", response.UrisFiltered.Length);
-
-					if (response.UrisFiltered.Length > 0 && UrisFilteredEvent != null)
-						UrisFilteredEvent (response.UrisFiltered);
-				}
-			} else if (exception_count >= 5) {
+			if (response == null && exception_count >= 5)
 				Logger.Log.Error ("Exception limit exceeded trying to activate a helper.  Giving up on indexing!");
-			}
-	
+			
 			return response;
 		}
 

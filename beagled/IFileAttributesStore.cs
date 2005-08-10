@@ -35,5 +35,9 @@ namespace Beagle.Daemon {
 		bool           Write (FileAttributes attr);
 
 		void           Drop  (string path);
+
+		// These are not guaranteed to actually do anything.
+		void           BeginTransaction ();
+		void           CommitTransaction ();
 	}
 }

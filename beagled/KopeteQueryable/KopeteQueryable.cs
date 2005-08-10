@@ -36,7 +36,7 @@ using Beagle.Util;
 namespace Beagle.Daemon.KopeteQueryable {
 
 	[QueryableFlavor (Name="Kopete", Domain=QueryDomain.Local, RequireInotify=false)]
-	public class KopeteQueryable : LuceneQueryable {
+	public class KopeteQueryable : LuceneFileQueryable {
 
 		private string config_dir, log_dir;
 
@@ -204,12 +204,11 @@ namespace Beagle.Daemon.KopeteQueryable {
 		private void IndexLog (string filename, Scheduler.Priority priority)
 		{
 			FileInfo info = new FileInfo (filename);
-			if (! info.Exists
-			    || this.FileAttributesStore.IsUpToDate (filename))
+			if (! info.Exists)
 				return;
 
-			Scheduler.TaskGroup group;
-			group = NewMarkingTaskGroup (filename, info.LastWriteTime);
+			if (IsUpToDate (filename))
+				return;
 
 			ICollection logs = KopeteLog.ScanLog (info);
 			foreach (ImLog log in logs) {
@@ -217,7 +216,6 @@ namespace Beagle.Daemon.KopeteQueryable {
 				Scheduler.Task task = NewAddTask (indexable);
 				task.Priority = priority;
 				task.SubPriority = 0;
-				task.AddTaskGroup (group);
 				ThisScheduler.Add (task);
 			}
 		}
@@ -265,15 +263,7 @@ namespace Beagle.Daemon.KopeteQueryable {
 				return log.Snippet;
 		}
 
-		override protected bool HitIsValid (Uri uri)
-		{
-			if (File.Exists (uri.LocalPath))
-				return true;
-			
-			return false;
-		}
-
-		override protected Hit PostProcessHit (Hit hit) 
+		override protected bool HitFilter (Hit hit) 
 		{
 			ImBuddy buddy = list.Search (hit ["fixme:speakingto"]);
 			
@@ -284,7 +274,7 @@ namespace Beagle.Daemon.KopeteQueryable {
 				// FIXME: Icons?
 			}
 			
-			return hit;
+			return true;
 		}
 	}
 }

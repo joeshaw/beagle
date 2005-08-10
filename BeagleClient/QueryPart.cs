@@ -34,64 +34,143 @@ using BU = Beagle.Util;
 
 namespace Beagle {
 
-	public class QueryPart {
+	public enum QueryPartLogic {
+		Required,
+		Optional,
+		Prohibited
+	};
 
-		public const string TargetAll = "_all";
-		public const string TargetText = "_text";
-		public const string TargetProperties = "_prop";
+	[XmlInclude (typeof (QueryPart_Text)),
+	 XmlInclude (typeof (QueryPart_Property)),
+	 XmlInclude (typeof (QueryPart_DateRange)),
+	 XmlInclude (typeof (QueryPart_Human)),
+	 XmlInclude (typeof (QueryPart_Or))]
+	abstract public class QueryPart {
 
-		private string target;
-		private string text;
-		private bool is_keyword;
-		private bool is_required;
-		private bool is_prohibited;
+		private QueryPartLogic logic = QueryPartLogic.Optional;
 
 		public QueryPart ()
 		{ }
 
-		public string Target {
-			get { return target; }
-			set { target = value; }
+		public QueryPartLogic Logic {
+			get { return logic; }
+			set { logic = value; }
 		}
+	}
+
+	public class QueryPart_Text : QueryPart {
+
+		private string text;
+		private bool search_full_text = true;
+		private bool search_properties = true;
+
+		public QueryPart_Text ()
+		{ }
 
 		public string Text {
 			get { return text; }
 			set { text = value; }
 		}
 
-		public bool IsKeyword {
-			get { return is_keyword; }
-			set { is_keyword = value; }
+		public bool SearchFullText {
+			get { return search_full_text; }
+			set { search_full_text = value; }
 		}
 
-		public bool IsRequired {
-			get { return is_required; }
-			set { is_required = value; }
+		public bool SearchTextProperties {
+			get { return search_properties; }
+			set { search_properties = value; }
+		}
+	}
+
+	public class QueryPart_Property : QueryPart {
+
+		public const string AllProperties = "_all";
+
+		private PropertyType type;
+		private string key;
+		private string value;
+
+		public QueryPart_Property ()
+		{ }
+
+		public PropertyType Type {
+			get { return type; }
+			set { type = value; }
 		}
 
-		public bool IsProhibited {
-			get { return is_prohibited; }
-			set { is_prohibited = value; }
+		public string Key {
+			get { return key; }
+			set { key = value; }
+		}
+
+		public string Value {
+			get { return value; }
+			set { this.value = value; } // ugh
+		}
+	}
+
+	public class QueryPart_DateRange : QueryPart {
+
+		public const string AllProperties = "_all";
+
+		private string key = AllProperties;
+		private DateTime start_date;
+		private DateTime end_date;
+
+		public QueryPart_DateRange ()
+		{ }
+		
+		public string Key {
+			get { return key; }
+			set { key = value; }
+		}
+
+		public DateTime StartDate {
+			get { return start_date; }
+			set { start_date = value; }
+		}
+
+		public DateTime EndDate {
+			get { return end_date; }
+			set { end_date = value; }
+		}
+	}
+
+	public class QueryPart_Human : QueryPart {
+
+		private string query_string;
+
+		public QueryPart_Human ()
+		{ }
+
+		public string QueryString {
+			get { return query_string; }
+			set { query_string = value; }
+		}
+	}
+
+	public class QueryPart_Or : QueryPart {
+		
+		private ArrayList sub_parts = new ArrayList ();
+
+		public QueryPart_Or ()
+		{ }
+
+		[XmlArray ("SubParts")]
+		[XmlArrayItem (ElementName="SubPart", Type=typeof (QueryPart))]
+		public ArrayList SubParts_ShouldBePrivateSoPleaseDontUseThis {
+			get { return sub_parts; }
 		}
 
 		[XmlIgnore]
-		public bool TargetIsAll {
-			get { return target == TargetAll; }
+		public ICollection SubParts {
+			get { return sub_parts; }
 		}
 
-		[XmlIgnore]
-		public bool TargetIsText {
-			get { return target == TargetText; }
-		}
-
-		[XmlIgnore]
-		public bool TargetIsProperties {
-			get { return target == TargetProperties; }
-		}
-
-		[XmlIgnore]
-		public bool TargetIsSpecificProperty {
-			get { return target != TargetAll && target != TargetText && target != TargetProperties; }
+		public void Add (QueryPart part)
+		{
+			sub_parts.Add (part);
 		}
 	}
 }

@@ -52,7 +52,7 @@ namespace Beagle.Daemon.EvolutionDataServerQueryable {
 
 		public EvolutionDataServerQueryable () : base ("EvolutionDataServerIndex")
 		{
-			photo_dir = Path.Combine (Driver.IndexDirectory, "Photos");
+			photo_dir = Path.Combine (Driver.TopDirectory, "Photos");
 			System.IO.Directory.CreateDirectory (photo_dir);
 		}
 
@@ -183,7 +183,7 @@ namespace Beagle.Daemon.EvolutionDataServerQueryable {
 			
 			get {
 				if (addressbook_indexed_through == DateTime.MinValue) {
-					string filename = Path.Combine (IndexStoreDirectory, "AddressbookIndexedThrough");
+					string filename = Path.Combine (IndexDirectory, "AddressbookIndexedThrough");
 					
 					string line = null;
 					try {
@@ -201,7 +201,7 @@ namespace Beagle.Daemon.EvolutionDataServerQueryable {
 			set {
 				addressbook_indexed_through = value;
 
-				string filename = Path.Combine (IndexStoreDirectory, "AddressbookIndexedThrough");
+				string filename = Path.Combine (IndexDirectory, "AddressbookIndexedThrough");
 				StreamWriter sw = new StreamWriter (filename);
 				sw.WriteLine (StringFu.DateTimeToString (addressbook_indexed_through));
 				sw.Close ();
@@ -477,7 +477,7 @@ namespace Beagle.Daemon.EvolutionDataServerQueryable {
 			
 			get {
 				if (calendar_indexed_through == DateTime.MinValue) {
-					string filename = Path.Combine (IndexStoreDirectory, "CalendarIndexedThrough");
+					string filename = Path.Combine (IndexDirectory, "CalendarIndexedThrough");
 					
 					string line = null;
 					try {
@@ -495,7 +495,7 @@ namespace Beagle.Daemon.EvolutionDataServerQueryable {
 			set {
 				calendar_indexed_through = value;
 
-				string filename = Path.Combine (IndexStoreDirectory, "CalendarIndexedThrough");
+				string filename = Path.Combine (IndexDirectory, "CalendarIndexedThrough");
 				StreamWriter sw = new StreamWriter (filename);
 				sw.WriteLine (StringFu.DateTimeToString (calendar_indexed_through));
 				sw.Close ();

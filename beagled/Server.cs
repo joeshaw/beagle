@@ -216,7 +216,7 @@ namespace Beagle.Daemon {
 
 			try {
 				RequestWrapper wrapper = (RequestWrapper) req_serializer.Deserialize (buffer_stream);
-
+				
 				req = wrapper.Message;
 			} catch (Exception e) {
 				resp = new ErrorResponse (e);

@@ -47,8 +47,15 @@ namespace Beagle.Tile {
 			// FIXME: This is broken, since the resulting shell command will not
 			// necessarily be quoted properly... query.QuotedText might return
 			// something containing quotes or other special characters.
+
+			// FIXME: Disabled this temporarily since Best uses the 
+			// QueryPart_Human and we don't post process and create the
+			// query terms correctly yet.
+#if false
 			string args = String.Format ("--open-note {0} --highlight-search \"{1}\"",
 						     Hit.Uri, Query.QuotedText);
+#endif
+			string args = String.Format ("--open-note {0}", Hit.Uri);
 			
 			Process p = new Process ();
 			p.StartInfo.UseShellExecute = false;

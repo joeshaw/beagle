@@ -33,7 +33,6 @@ namespace Beagle {
 	public class Versioned {
 
 		protected DateTime timestamp = new DateTime (0);
-		protected long revision = -1;
 
 		public bool ValidTimestamp {
 			get { return timestamp.Ticks > 0; }
@@ -50,25 +49,9 @@ namespace Beagle {
 			get { return (DateTime.Now - timestamp).TotalDays; }
 		}
 
-		[XmlAttribute]
-		public bool ValidRevision {
-			get { return revision >= 0; }
-		}
-
-		[XmlAttribute]
-		public long Revision {
-			get { return revision; }
-			set { revision = value; }
-		}
-
 		public bool IsObsoletedBy (DateTime timestamp)
 		{
 			return !ValidTimestamp || Timestamp < timestamp;
-		}
-
-		public bool IsObsoletedBy (long revNum)
-		{
-			return !ValidRevision || Revision < revNum;
 		}
 
 		public bool IsObsoletedBy (Versioned other)
@@ -86,28 +69,12 @@ namespace Beagle {
 					return false;
 			}
 
-			// Anything with a valid revision number is
-			// more recent than something w/o a revision number.
-			if (ValidRevision || other.ValidRevision) {
-				if (other.ValidRevision)
-					return IsObsoletedBy (other.Revision);
-				else
-					return false;
-			}
-
-			// FIXME: we should never reach this point
-
 			return false;
 		}
 
 		public bool IsNewerThan (DateTime timestamp)
 		{
 			return ValidTimestamp && Timestamp > timestamp;
-		}
-
-		public bool IsNewerThan (long revNum)
-		{
-			return ValidRevision && Revision > revNum;
 		}
 
 		public bool IsNewerThan (Versioned other)
@@ -124,17 +91,6 @@ namespace Beagle {
 				else
 					return true;
 			}
-
-			// Anything with a valid revision number is
-			// more recent than something w/o a revision number.
-			if (ValidRevision || other.ValidRevision) {
-				if (other.ValidRevision)
-					return IsNewerThan (other.Revision);
-				else
-					return true;
-			}
-
-			// FIXME: we should never reach this point
 
 			return false;
 		}

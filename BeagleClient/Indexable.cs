@@ -44,7 +44,6 @@ namespace Beagle {
 
 	public class Indexable : Versioned {
 
-
 		// The URI of the item being indexed.
 		private Uri uri = null;
 
@@ -91,6 +90,10 @@ namespace Beagle {
 
 		// When should we try to filter this indexable?
 		private IndexableFiltering filtering = IndexableFiltering.Automatic;
+
+		// If true, this Indexable only contains information about
+		// property changes.
+		private bool prop_changes_only = false;
 
 		//////////////////////////
 
@@ -232,6 +235,12 @@ namespace Beagle {
 			set { filtering = value; }
 		}
 
+		[XmlAttribute]
+		public bool PropertyChangesOnly {
+			get { return prop_changes_only; }
+			set { prop_changes_only = value; }
+		}
+
 		//////////////////////////
 
 		private Stream StreamFromUri (Uri uri)
@@ -316,7 +325,26 @@ namespace Beagle {
 		}
 
 		public void AddProperty (Property prop) {
-			properties.Add (prop);
+			if (prop != null) {
+				
+				if (PropertyChangesOnly && ! prop.IsMutable)
+					throw new ArgumentException ("Non-mutable properties aren't allowed in this indexable");
+
+				// If this is a mutable property, make sure that
+				// we don't already contain another mutable property
+				// with the same name.  If we do, replace it.
+				if (prop.IsMutable) {
+					for (int i = 0; i < properties.Count; ++i) {
+						Property other_prop = properties [i] as Property;
+						if (other_prop.IsMutable && prop.Key == other_prop.Key) {
+							properties [i] = prop;
+							return;
+						}
+					}
+				}
+
+				properties.Add (prop);
+			}
 		}
 
 		public bool HasProperty (string keyword) {
@@ -327,30 +355,18 @@ namespace Beagle {
 			return false;
 		}
 
-		//////////////////////////
-
-		private string PropertiesAsString (bool keywords)
+		public void MergeProperties (Indexable prop_indexable)
 		{
-			StringBuilder sb = new StringBuilder ();
-			foreach (Property prop in Properties) {
-				if (prop.IsSearched 
-				    && keywords ? prop.IsKeyword : ! prop.IsKeyword) {
-					if (sb.Length > 0)
-						sb.Append (" ");
-					sb.Append (prop.Value);
-				}
-			}
-			return sb.ToString ();
+			if (prop_indexable == null)
+				return;
+
+			if (! prop_indexable.PropertyChangesOnly)
+				throw new ArgumentException ("Expected a property-only indexable");
+
+			foreach (Property prop in prop_indexable.Properties)
+				AddProperty (prop);
 		}
 
-		public string TextPropertiesAsString {
-			get { return PropertiesAsString (false); }
-		}
-
-		public string KeywordPropertiesAsString {
-			get { return PropertiesAsString (true); }
-		}
-		
 		//////////////////////////
 
 		public void SetChildOf (Indexable parent)

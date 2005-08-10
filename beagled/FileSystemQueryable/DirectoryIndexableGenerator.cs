@@ -36,12 +36,12 @@ namespace Beagle.Daemon.FileSystemQueryable {
 	public class DirectoryIndexableGenerator : IIndexableGenerator {
 
 		FileSystemQueryable queryable;
-		FileSystemModel.Directory directory;
+		DirectoryModel directory;
 		IEnumerator files;
 		bool done = false;
 
 		public DirectoryIndexableGenerator (FileSystemQueryable queryable,
-						    FileSystemModel.Directory directory)
+						    DirectoryModel      directory)
 		{
 			this.queryable = queryable;
 			this.directory = directory;
@@ -52,29 +52,6 @@ namespace Beagle.Daemon.FileSystemQueryable {
 				files = DirectoryWalker.GetFileInfos (this.directory.FullName).GetEnumerator ();
 		}
 
-		// return null if we don't need to index that file
-		private Indexable BuildIndexableForPath (string path)
-		{
-			FileSystemModel model = queryable.Model;
-
-			FileSystemModel.RequiredAction action;
-			string old_path;
-
-			action = model.DetermineRequiredAction (path, out old_path);
-			
-			if (action == FileSystemModel.RequiredAction.None)
-				return null;
-
-			if (action == FileSystemModel.RequiredAction.Rename) {
-				queryable.Rename (old_path, path, Scheduler.Priority.Delayed);
-				return null;
-			}
-			
-			Uri file_uri = UriFu.PathToFileUri (path);
-			Uri internal_uri = model.ToInternalUri (file_uri);
-			return FileSystemQueryable.FileToIndexable (file_uri, internal_uri, true);
-		}
-		
 		public Indexable GetNextIndexable ()
 		{
 			if (done)
@@ -85,9 +62,9 @@ namespace Beagle.Daemon.FileSystemQueryable {
 				Indexable indexable = null;
 				try { 
 					if (f.Exists)
-						indexable = BuildIndexableForPath (f.FullName);
+						indexable = queryable.GetCrawlingFileIndexable (directory, f.Name);
 				} catch (Exception ex) {
-					Logger.Log.Debug ("Caught exception calling BuildIndexableForPath on '{0}'", f.FullName);
+					Logger.Log.Debug ("Caught exception calling GetCrawlingFileIndexable on '{0}'", f.FullName);
 					Logger.Log.Debug (ex);
 				}
 				if (indexable != null)
@@ -95,9 +72,7 @@ namespace Beagle.Daemon.FileSystemQueryable {
 			}
 
 			done = true;
-
-			// Finally, try to index the directory itself
-			return BuildIndexableForPath (directory.FullName);
+			return null;
 		}
 
 		public bool HasNextIndexable ()

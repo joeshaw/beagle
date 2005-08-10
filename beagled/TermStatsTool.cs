@@ -36,9 +36,11 @@ class SnippetTestTool {
 
 	static void Main (string [] args)
 	{
+#if false
 		LuceneDriver driver;
 
 		driver = new LuceneDriver (args [0]);
 		driver.WriteIndexTermFrequencies (Console.Out);
+#endif
 	}
 }

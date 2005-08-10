@@ -1,11 +1,9 @@
-72% symbol docs coverage.
-79 symbols documented.
-31 not documented.
+71% symbol docs coverage.
+70 symbols documented.
+29 not documented.
 
 
 BEAGLE_QUERY_PART_TARGET_ALL
-BEAGLE_QUERY_PART_TARGET_PROPERTIES
-BEAGLE_QUERY_PART_TARGET_TEXT
 BeagleCancelledResponse
 BeagleClient
 BeagleDaemonInformationResponse

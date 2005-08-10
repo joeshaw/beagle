@@ -37,11 +37,21 @@ namespace Beagle.Daemon {
 
 	public class FileAttributesStore_Sqlite : IFileAttributesStore {
 
-		const int VERSION = 1;
+		// Version history:
+		// 1: Original version
+		// 2: Replaced LastIndexedTime with LastAttrTime
+		const int VERSION = 2;
 
 		private SqliteConnection connection;
 		private BitArray path_flags;
 		private int transaction_count = 0;
+
+		enum TransactionState {
+			None,
+			Requested,
+			Started
+		}
+		private TransactionState transaction_state;
 
 		public FileAttributesStore_Sqlite (string directory, string index_fingerprint)
 		{
@@ -101,7 +111,7 @@ namespace Beagle.Daemon {
 					    "  directory      STRING NOT NULL,        " +
 					    "  filename       STRING NOT NULL,        " +
 					    "  last_mtime     STRING NOT NULL,        " +
-					    "  last_indexed   STRING NOT NULL,        " +
+					    "  last_attrtime  STRING NOT NULL,        " +
 					    "  filter_name    STRING NOT NULL,        " +
 					    "  filter_version STRING NOT NULL         " +
 					    ")");
@@ -136,8 +146,6 @@ namespace Beagle.Daemon {
 				Logger.Log.Debug ("Loaded {0} records from {1} in {2:0.000}s", 
 						 count, GetDbPath (directory), (dt2 - dt1).TotalSeconds);
 			}
-
-			Shutdown.ShutdownEvent += Flush;
 		}
 
 		///////////////////////////////////////////////////////////////////
@@ -184,7 +192,7 @@ namespace Beagle.Daemon {
 			command = new SqliteCommand ();
 			command.Connection = connection;
 			command.CommandText =
-				"SELECT unique_id, directory, filename, last_mtime, last_indexed, filter_name, filter_version " +
+				"SELECT unique_id, directory, filename, last_mtime, last_attrtime, filter_name, filter_version " +
 				"FROM file_attributes WHERE " + 
 				String.Format (where_format, where_args);
 			return command;
@@ -227,9 +235,12 @@ namespace Beagle.Daemon {
 			attr.UniqueId = GuidFu.FromShortString (reader.GetString (0));
 			attr.Path = System.IO.Path.Combine (reader.GetString (1), reader.GetString (2));
 			attr.LastWriteTime = StringFu.StringToDateTime (reader.GetString (3));
-			attr.LastIndexedTime = StringFu.StringToDateTime (reader.GetString (4));
+			attr.LastAttrTime = StringFu.StringToDateTime (reader.GetString (4));
 			attr.FilterName = reader.GetString (5);
 			attr.FilterVersion = int.Parse (reader.GetString (6));
+
+			if (attr.FilterName == "")
+				attr.FilterName = null;
 
 			return attr;
 		}
@@ -309,30 +320,25 @@ namespace Beagle.Daemon {
 			// We need to quote any 's that appear in the strings
 			// (in particular, in the path)
 			lock (connection) {
-				if (transaction_count == 0 && ! Shutdown.ShutdownRequested) {
-					Logger.Log.Debug ("Beginning sqlite transaction");
-					DoNonQuery ("BEGIN");
-				}
+				
+				// If a transaction has been requested, start it now.
+				MaybeStartTransaction ();
+
+				string filter_name;
+				filter_name = fa.FilterName;
+				if (filter_name == null)
+					filter_name = "";
+				filter_name = filter_name.Replace ("'", "''");
 
 				DoNonQuery ("INSERT OR REPLACE INTO file_attributes " +
-					    " (unique_id, directory, filename, last_mtime, last_indexed, filter_name, filter_version) " +
+					    " (unique_id, directory, filename, last_mtime, last_attrtime, filter_name, filter_version) " +
 					    " VALUES ('{0}', '{1}', '{2}', '{3}', '{4}', '{5}', '{6}')",
 					    GuidFu.ToShortString (fa.UniqueId),
 					    fa.Directory.Replace ("'", "''"), fa.Filename.Replace ("'", "''"),
 					    StringFu.DateTimeToString (fa.LastWriteTime),
-					    StringFu.DateTimeToString (fa.LastIndexedTime),
-					    fa.FilterName,
+					    StringFu.DateTimeToString (fa.LastAttrTime),
+					    filter_name,
 					    fa.FilterVersion);
-
-				if (! Shutdown.ShutdownRequested)
-					++transaction_count;
-
-				// 150 is a pretty arbitrary number
-				if (transaction_count == 150) {
-					Logger.Log.Debug ("Committing sqlite transaction");
-					DoNonQuery ("COMMIT");
-					transaction_count = 0;
-				}
 			}
 			return true;
 		}
@@ -347,9 +353,36 @@ namespace Beagle.Daemon {
 			string directory = Path.GetDirectoryName (path).Replace ("'", "''");
 			string filename = Path.GetFileName (path).Replace ("'", "''");
 			lock (connection) {
+
+				// If a transaction has been requested, start it now.
+				MaybeStartTransaction ();
+
 				DoNonQuery ("DELETE FROM file_attributes WHERE directory='{0}' AND filename='{1}'",
 					    directory, filename);
 			}
+		}
+
+		private void MaybeStartTransaction ()
+		{
+			if (transaction_state == TransactionState.Requested) {
+				DoNonQuery ("BEGIN");
+				transaction_state = TransactionState.Started;
+			}
+		}
+
+		public void BeginTransaction ()
+		{
+			if (transaction_state == TransactionState.None)
+				transaction_state = TransactionState.Requested;
+		}
+
+		public void CommitTransaction ()
+		{
+			if (transaction_state == TransactionState.Started) {
+				lock (connection)
+					DoNonQuery ("COMMIT");
+			}
+			transaction_state = TransactionState.None;
 		}
 
 		public void Flush ()
@@ -374,8 +407,6 @@ namespace Beagle.Daemon {
 			SqliteCommand command;
 			SqliteDataReader reader;
 				
-			FileAttributes attr = null;
-			
 			lock (connection) {
 				command = new SqliteCommand ();
 				command.Connection = connection;

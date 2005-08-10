@@ -81,8 +81,10 @@ namespace Beagle.Daemon.EvolutionMailDriver {
 
 		// Evil hack: manipulate the lucene index directly to extract
 		// statistics about who you sent mail to.
-		static private void AnalyzeYourRecipients (LuceneDriver driver)
+		static private void AnalyzeYourRecipients (LuceneQueryingDriver driver)
 		{
+			Logger.Log.Debug ("FIXME: AnalyzeYourRecipients commented out!");
+#if false
 			LNI.IndexReader reader;
 			reader = LNI.IndexReader.Open (driver.Store);
 
@@ -108,6 +110,7 @@ namespace Beagle.Daemon.EvolutionMailDriver {
 			term_enum.Close ();
 
 			reader.Close ();
+#endif
 		}
 
 		static private Hashtable your_recipient_weights = new Hashtable ();

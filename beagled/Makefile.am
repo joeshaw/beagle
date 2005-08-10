@@ -236,16 +236,17 @@ DAEMON_DLL_CSFLAGS = -target:library $(BEAGLE_DEFINES)
 
 fsqueryabledir = $(srcdir)/FileSystemQueryable
 FILE_SYSTEM_QUERYABLE_CSFILES =					\
-	$(fsqueryabledir)/CrawlTask.cs				\
+	$(fsqueryabledir)/DirectoryModel.cs			\
+	$(fsqueryabledir)/DirectoryState.cs			\
+	$(fsqueryabledir)/TreeCrawlTask.cs			\
+	$(fsqueryabledir)/FileCrawlTask.cs			\
 	$(fsqueryabledir)/DirectoryIndexableGenerator.cs	\
-	$(fsqueryabledir)/FileNameFilter.cs			\
-	$(fsqueryabledir)/FileSystemModel.cs			\
+	$(fsqueryabledir)/LuceneNameResolver.cs			\
 	$(fsqueryabledir)/FileSystemQueryable.cs		\
-	$(fsqueryabledir)/FileSystemWatcherBackend.cs		\
 	$(fsqueryabledir)/IFileEventBackend.cs			\
 	$(fsqueryabledir)/InotifyBackend.cs			\
-	$(fsqueryabledir)/SanityCheck.cs			\
-	$(fsqueryabledir)/UniqueIdStore.cs
+	$(fsqueryabledir)/FileSystemWatcherBackend.cs
+
 
 gaimlogqueryable = $(srcdir)/GaimLogQueryable
 GAIM_LOG_QUERYABLE_CSFILES =				\
@@ -290,15 +291,15 @@ INDEXING_SERVICE_QUERYABLE_CSFILES =			\
 
 DAEMON_DLL_CSFILES = 						\
 	$(LUCENE_CSFILES)					\
+	$(EVO_MAIL_QUERYABLE_CSFILES)				\
 	$(FILE_SYSTEM_QUERYABLE_CSFILES)			\
 	$(GAIM_LOG_QUERYABLE_CSFILES)				\
+	$(INDEXING_SERVICE_QUERYABLE_CSFILES)			\
+	$(TOMBOY_QUERYABLE_CSFILES)				\
 	$(BLAM_QUERYABLE_CSFILES)				\
 	$(LIFEREA_QUERYABLE_CSFILES)				\
 	$(AKREGATOR_QUERYABLE_CSFILES)				\
 	$(KOPETE_QUERYABLE_CSFILES)				\
-	$(EVO_MAIL_QUERYABLE_CSFILES)				\
-	$(TOMBOY_QUERYABLE_CSFILES)				\
-	$(INDEXING_SERVICE_QUERYABLE_CSFILES)			\
 	$(srcdir)/FileAttributes.cs				\
 	$(srcdir)/FileAttributesStore.cs			\
 	$(srcdir)/FileAttributesStore_ExtendedAttribute.cs	\
@@ -311,21 +312,25 @@ DAEMON_DLL_CSFILES = 						\
 	$(srcdir)/IFileAttributesStore.cs			\
 	$(srcdir)/IIndexer.cs					\
 	$(srcdir)/IndexSynchronization.cs			\
+	$(srcdir)/IndexerReceipts.cs				\
 	$(srcdir)/IQueryResult.cs				\
 	$(srcdir)/IQueryWorker.cs               		\
 	$(srcdir)/IQueryable.cs					\
-	$(srcdir)/LuceneDriver.cs				\
+	$(srcdir)/LuceneCommon.cs				\
+	$(srcdir)/LuceneIndexingDriver.cs			\
+	$(srcdir)/LuceneQueryingDriver.cs			\
+	$(srcdir)/LuceneFileQueryable.cs			\
 	$(srcdir)/LuceneQueryable.cs				\
-	$(srcdir)/NameIndex.cs					\
+	$(srcdir)/NoiseFilter.cs				\
 	$(srcdir)/QueryDriver.cs				\
 	$(srcdir)/QueryExecutor.cs				\
 	$(srcdir)/QueryResult.cs				\
+	$(srcdir)/QueryStringParser.cs				\
 	$(srcdir)/Queryable.cs					\
 	$(srcdir)/QueryableFlavor.cs				\
 	$(srcdir)/RemoteControlExecutors.cs			\
 	$(srcdir)/RemoteIndexerRequest.cs			\
 	$(srcdir)/RemoteIndexerResponse.cs			\
-	$(srcdir)/RenamingLuceneDriver.cs			\
 	$(srcdir)/Server.cs					\
 	$(srcdir)/Shutdown.cs					\
 	$(srcdir)/SnippetExecutor.cs				\
@@ -846,6 +851,9 @@ $(CRAWL_SYSTEM): $(srcdir)/$(CRAWL_SYSTEM_IN)
 ############################################################
 ############################################################
 
+#	$(MASTER_DELETE_TARGET)
+#	$(MANAGE_INDEX_TARGET)	
+#	$(FS_SANITY_CHECK_TARGET)
 
 ALL_TARGETS = 				\
 	$(PLUGIN_TARGET)		\
@@ -856,12 +864,9 @@ ALL_TARGETS = 				\
 	$(INDEX_WEB_CONTENT_TARGET)	\
 	$(INDEX_WEB_CONTENT_WRAPPER)	\
 	$(EXTRACT_CONTENT_TARGET)	\
-	$(MASTER_DELETE_TARGET)		\
 	$(SNIPPET_TEST_TARGET)		\
 	$(TERM_STATS_TARGET)		\
 	$(NAME_INDEX_TARGET)		\
-	$(FS_SANITY_CHECK_TARGET)	\
-	$(MANAGE_INDEX_TARGET)		\
 	$(MANAGE_INDEX_WRAPPER)		\
 	$(BUILD_INDEX_TARGET)		\
 	$(BUILD_INDEX_WRAPPER)
@@ -928,13 +933,15 @@ sbin_SCRIPTS = \
 	$(MANAGE_INDEX_WRAPPER)		\
 	$(BUILD_INDEX_WRAPPER)
 
+#	$(MASTER_DELETE_WRAPPER)
+#	$(FS_SANITY_CHECK_WRAPPER)
+
 noinst_SCRIPTS=	\
 	$(EXTRACT_CONTENT_WRAPPER)	\
-	$(MASTER_DELETE_WRAPPER)	\
 	$(SNIPPET_TEST_WRAPPER)		\
 	$(TERM_STATS_WRAPPER)		\
-	$(NAME_INDEX_WRAPPER)		\
-	$(FS_SANITY_CHECK_WRAPPER)
+	$(NAME_INDEX_WRAPPER)		
+
 
 COND_CS_FILES = \
 	$(MOZILLA_QUERYABLE_CSFILES)	\

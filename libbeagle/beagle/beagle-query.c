@@ -36,6 +36,7 @@
 #include "beagle-marshal.h"
 #include "beagle-query.h"
 #include "beagle-query-part.h"
+#include "beagle-query-part-text.h"
 #include "beagle-finished-response.h"
 #include "beagle-private.h"
 
@@ -74,7 +75,8 @@ beagle_query_to_xml (BeagleRequest *request, GError **err)
 	for (iter = priv->parts; iter != NULL; iter = iter->next) {
 		BeagleQueryPart *part = (BeagleQueryPart *) iter->data;
 
-		_beagle_query_part_to_xml (part, data);
+		GString * buffer = beagle_query_part_to_xml (part, err);
+		g_string_append_len (data, buffer->str, buffer->len);
 	}
 
 	g_string_append_len (data, "</Parts>", 8);
@@ -138,7 +140,7 @@ beagle_query_finalize (GObject *obj)
 {
 	BeagleQueryPrivate *priv = BEAGLE_QUERY_GET_PRIVATE (obj);
 
-	g_slist_foreach (priv->parts, (GFunc) beagle_query_part_free, NULL);
+	g_slist_foreach (priv->parts, (GFunc) g_object_unref, NULL);
 	g_slist_free (priv->parts);
 
 	g_slist_foreach (priv->mime_types, (GFunc) g_free, NULL);
@@ -256,13 +258,15 @@ beagle_query_add_part (BeagleQuery *query, BeagleQueryPart *part)
 void
 beagle_query_add_text (BeagleQuery *query, const char *str)
 {
-	BeagleQueryPart *part;
+	BeagleQueryPartText *part;
 
 	g_return_if_fail (BEAGLE_IS_QUERY (query));
 
-	part = beagle_query_part_new ();
-	beagle_query_part_set_target (part, BEAGLE_QUERY_PART_TARGET_ALL);
-	beagle_query_part_set_text (part, str);
+	part = beagle_query_part_text_new ();
+	beagle_query_part_text_set_text (part, str);
+	beagle_query_part_text_set_search_full_text (part, TRUE);
+	beagle_query_part_text_set_search_properties (part, TRUE);
+	beagle_query_part_text_set_logic (part, BEAGLE_QUERY_PART_LOGIC_REQUIRED);
 
 	beagle_query_add_part (query, part);
 }

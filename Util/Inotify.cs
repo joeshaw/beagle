@@ -749,8 +749,9 @@ namespace Beagle.Util {
 						
 						// Handle the internal rename of the directory.
 						string dstpath = Path.Combine (watched.Path, next_event.Filename);
-						if (Directory.Exists (dstpath))
-							HandleMove (srcpath, dstpath);
+
+						//if (Directory.Exists (dstpath))
+						HandleMove (srcpath, dstpath);
 					}
 				}
 

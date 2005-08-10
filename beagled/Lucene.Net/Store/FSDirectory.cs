@@ -502,7 +502,9 @@ namespace Lucene.Net.Store
                     try
                     {
                         in_Renamed = new System.IO.BinaryReader(System.IO.File.Open(old.FullName, System.IO.FileMode.Open, System.IO.FileAccess.Read));
-                        out_Renamed = new System.IO.FileStream(nu.FullName, System.IO.FileMode.Create);
+			// FIXED trow@novell.com 18 Jul 2005
+			// Open the FileStream w/ FileShare.ReadWrite.
+                        out_Renamed = new System.IO.FileStream(nu.FullName, System.IO.FileMode.Create, System.IO.FileAccess.Write, System.IO.FileShare.ReadWrite);
                         // see if the buffer needs to be initialized. Initialization is
                         // only done on-demand since many VM's will never run into the renameTo
                         // bug and hence shouldn't waste 1K of mem for no reason.

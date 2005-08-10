@@ -89,7 +89,7 @@ namespace Beagle.Filters {
 					}
 					foreach (Match theMatch in matches) {
 						AddProperty (Beagle.Property.New ("dc:title",
-										  theMatch.Groups ["title"]));
+										  theMatch.Groups ["title"].ToString ()));
 					}
                       		} else {
                       			// A "regular" string

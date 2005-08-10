@@ -24,8 +24,6 @@
 // SOFTWARE.
 //
 
-// FIXME: Implement a shared textcache
-
 using System;
 using System.IO;
 using System.Net;
@@ -37,6 +35,11 @@ using System.Xml.Serialization;
 
 using Beagle;
 using Beagle.Util;
+
+#if false
+// FIXME!
+using FSQ = Beagle.Daemon.FileSystemQueryable.FileSystemQueryable;
+#endif
 
 namespace Beagle.Daemon 
 {
@@ -52,7 +55,8 @@ namespace Beagle.Daemon
 		
 		static FileAttributesStore_Sqlite backing_fa_store;
 		static FileAttributesStore fa_store;
-		static LuceneDriver driver;
+
+		static LuceneIndexingDriver driver;
 
 		static bool crawling = true, shutdown = false;
 
@@ -92,7 +96,7 @@ namespace Beagle.Daemon
 					arg_recursive = true;
 					break;
 					
-				case "--cache-text":
+				case "--enable-text-cache":
 					arg_cache_text = true;
 					break;
 
@@ -140,10 +144,10 @@ namespace Beagle.Daemon
 				Environment.Exit (1);
 			}
 			
-			driver = new LuceneDriver (arg_output);
+			driver = new LuceneIndexingDriver (arg_output);
 			driver.TextCache = (arg_cache_text) ? new TextCache (arg_output) : null;
-			
-			backing_fa_store = new FileAttributesStore_Sqlite (driver.IndexDirectory, driver.Fingerprint);
+
+			backing_fa_store = new FileAttributesStore_Sqlite (driver.TopDirectory, driver.Fingerprint);
 			fa_store = new FileAttributesStore (backing_fa_store);
 			
 			// Set up signal handlers
@@ -193,12 +197,47 @@ namespace Beagle.Daemon
 		}
 		
 		/////////////////////////////////////////////////////////////////
+
+		static IndexerReceipt [] FlushIndexer (IIndexer indexer)
+		{
+			IndexerReceipt [] receipts;
+			receipts = indexer.FlushAndBlock ();
+
+
+			foreach (IndexerReceipt raw_r in receipts) {
+
+				if (raw_r is IndexerAddedReceipt) {
+					// Update the file attributes 
+					IndexerAddedReceipt r = (IndexerAddedReceipt) raw_r;
+
+					string path = r.Uri.LocalPath;
+					
+					FileAttributes attr;
+					attr = fa_store.ReadOrCreate (path);
+
+					attr.LastWriteTime = FileSystem.GetLastWriteTime (path);
+					attr.FilterName = r.FilterName;
+					attr.FilterVersion = r.FilterVersion;
+
+					fa_store.Write (attr);
+
+				} else if (raw_r is IndexerChildIndexablesReceipt) {
+					// Add any child indexables back into our indexer
+					IndexerChildIndexablesReceipt r = (IndexerChildIndexablesReceipt) raw_r;
+					foreach (Indexable i in r.Children)
+						indexer.Add (i);
+				}
+			}
+			
+			return receipts;
+		}
 		
 		static void IndexWorker ()
 		{
 			Logger.Log.Debug ("Starting IndexWorker");
 			
 			Indexable indexable;
+			int pending_adds = 0;
 			
 			while (!shutdown) {
 				if (pending_files.Count > 0) {
@@ -209,13 +248,17 @@ namespace Beagle.Daemon
 					if (!file.Exists || Ignore (file) || fa_store.IsUpToDate (file.FullName))
 						continue;
 
-					// Create the indexable
-					indexable = new Indexable (uri);
-					indexable.Uri = RemapUri (uri);
-					indexable.ContentUri = uri;
-					indexable.CacheContent = false;
+					// This is a bit ugly but it's nice to keep the metadata
+					// consistent with the ones from the FileSystemQueryable if
+					// we introduce any changes there.
+					
+#if false
+					// FIXME!
+					indexable = FSQ.FileToIndexable (uri, RemapUri (uri), true);
+#endif
+					indexable = null;
 
-					// Disable filtering and only index files
+					// Disable filtering and only index file attributes
 					if (arg_disable_filtering)
 						indexable.Filtering = IndexableFiltering.Never;
 					
@@ -223,15 +266,13 @@ namespace Beagle.Daemon
 					if (arg_tag != null)
 						indexable.AddProperty (Property.NewKeyword("Tag", arg_tag));
 					
-					indexable.AddProperty (Property.New ("fixme:name", file.Name));
-					
 					driver.Add (indexable);
+					++pending_adds;
 					
-					fa_store.AttachTimestamp (file.FullName, FileSystem.GetLastWriteTime (file.FullName));
-					
-					if (driver.PendingAdds % BATCH_SIZE == 0) {
+					if (pending_adds % BATCH_SIZE == 0) {
 						Logger.Log.Debug ("Flushing driver, {0} items in queue", pending_files.Count);
-						driver.Flush ();
+						FlushIndexer (driver);
+						pending_adds = 0;
 					}
 				} else if (crawling) {
 					//Logger.Log.Debug ("IndexWorker: La la la...");
@@ -241,16 +282,16 @@ namespace Beagle.Daemon
 				}
 			}
 
-			// Flush out any pending changes in either the
-			// LuceneDriver or the sqlite attributes database.
-			while (driver.PendingAdds != 0)
-				driver.Flush ();
+			// Call Flush one last time.
+			// This should be a totally safe no-op if there are no pending operations.
+			// FIXME: This is incorrect.  We will drop any children in the final flush.
+			FlushIndexer (driver);
 
 			backing_fa_store.Flush ();
 
 			Logger.Log.Debug ("IndexWorker Done");
 		}
-		
+
 		/////////////////////////////////////////////////////////////////
 		
 		// From BeagleDaemon.cs
@@ -302,7 +343,8 @@ namespace Beagle.Daemon
 				"  --remap [path1:path2]\tRemap data paths to fit target. \n" +
 				"  --tag [tag]\t\tTag index data for identification.\n" + 
 				"  --recursive\t\tCrawl source path recursivly.\n" + 
-				"  --cache-text\t\tBuild text-cache of documents used for snippets.\n" + 
+				"  --enable-text-cache\t\tBuild text-cache of documents used for snippets.\n" + 
+				"  --disable-filtering\t\tDisable all filtering of files. Only index attributes.\n" + 
 				"  --debug\t\tEcho verbose debugging information.\n";
 			
 			Console.WriteLine (usage);

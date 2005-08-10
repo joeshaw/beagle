@@ -30,6 +30,10 @@ namespace Beagle.Util {
 
 	public class GuidFu {
 
+		public const string UriScheme = "uid";
+
+		static private string UriPrefix = UriScheme + ":";
+
 		static public string ToShortString (Guid uid)
 		{
 			// When converting 16 bytes to base64, the final two characters
@@ -50,17 +54,27 @@ namespace Beagle.Util {
 
 		static public Uri ToUri (Guid uid)
 		{
-			return new Uri ("uid:" + ToShortString (uid), true);
+			return new Uri (ToUriString (uid), true);
 		}
 
 		static public Uri FromShortStringToUri (string str)
 		{
-			return new Uri ("uid:" + str, true);	
+			return new Uri (UriPrefix + str , true);	
 		}
 
 		static public Guid FromUri (Uri uri)
 		{
 			return FromShortString (uri.LocalPath);
+		}
+
+		static public string ToUriString (Guid uid)
+		{
+			return UriPrefix + ToShortString (uid);
+		}
+
+		static public Guid FromUriString (string str)
+		{
+			return FromShortString (str.Substring (UriPrefix.Length));
 		}
 
 	}

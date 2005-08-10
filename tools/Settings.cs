@@ -154,6 +154,8 @@ public class SettingsDialog
 
 	private void LoadConfiguration ()
 	{	
+		// FIXME: Autostart
+
 		KeyBinding show_binding = Conf.Searching.ShowSearchWindowBinding;
 		press_ctrl_toggle.Active = show_binding.Ctrl;
 		press_alt_toggle.Active = show_binding.Alt;
@@ -182,6 +184,8 @@ public class SettingsDialog
 
 	private void SaveConfiguration ()
 	{
+		// FIXME: Autostart
+		
 		Conf.Searching.ShowSearchWindowBinding = new KeyBinding (show_search_window_entry.Text, 
 									 press_ctrl_toggle.Active, 
 									 press_alt_toggle.Active);
@@ -394,7 +398,7 @@ public class SettingsDialog
 				foreach (string old_node in netbeagle_view.Netbeagles) {
 					if (new_node == old_node) {
 						throw_error = true;
-						error_message = Catalog.GetString ("Host already present in the list.");
+						error_message = Catalog.GetString ("Remote host already present in the list.");
 					} 
 				}
 
@@ -403,7 +407,7 @@ public class SettingsDialog
 								      DialogFlags.Modal,
 								      MessageType.Warning,
 								      ButtonsType.Ok,
-								      Catalog.GetString ("Host not added"),
+								      Catalog.GetString ("Netbeagle Node not added"),
 								      error_message);
 			} 
 			else 

@@ -37,7 +37,8 @@ namespace Beagle.Daemon {
 		private string   path;
 		private DateTime last_mtime;
 
-		private DateTime last_indexed;
+		private DateTime last_attrtime;
+
 		private string   filter_name;
 		private int      filter_version;
 		
@@ -66,9 +67,10 @@ namespace Beagle.Daemon {
 			set { last_mtime = value; }
 		}
 
-		public DateTime LastIndexedTime {
-			get { return last_indexed; }
-			set { last_indexed = value; }
+		// When the attributes were last written out.
+		public DateTime LastAttrTime {
+			get { return last_attrtime; }
+			set { last_attrtime = value; }
 		}
 
 		public bool HasFilterInfo {

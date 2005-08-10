@@ -111,8 +111,9 @@ start_property (BeagleParserContext *ctx, const char **attrs)
 {
 	BeagleHitsAddedResponse *response = BEAGLE_HITS_ADDED_RESPONSE (_beagle_parser_context_get_response (ctx));
 	BeagleHitsAddedResponsePrivate *priv = BEAGLE_HITS_ADDED_RESPONSE_GET_PRIVATE (response);
+	BeaglePropertyType type = BEAGLE_PROPERTY_TYPE_UNKNOWN;
 	const char *key = NULL, *value = NULL;
-	gboolean is_keyword = FALSE, is_searched = FALSE;
+	gboolean is_mutable = FALSE, is_searched = FALSE;
 	int i;
 	
 	for (i = 0; attrs[i] != NULL; i += 2) {
@@ -120,22 +121,28 @@ start_property (BeagleParserContext *ctx, const char **attrs)
 			key = attrs[i + 1];
 		else if (strcmp (attrs[i], "Value") == 0)
 			value = attrs[i + 1];
-		else if (strcmp (attrs[i], "IsKeyword") == 0)
-			is_keyword = strcmp (attrs[i + 1], "true") == 0;
+		else if (strcmp (attrs[i], "IsMutable") == 0)
+			is_mutable = strcmp (attrs[i + 1], "true") == 0;
 		else if (strcmp (attrs[i], "IsSearched") == 0)
 			is_searched = strcmp (attrs[i + 1], "true") == 0;
+		else if (strcmp (attrs[i], "Type") == 0)
+		        if (strcmp (attrs [i + 1], "Text") == 0)
+			        type = BEAGLE_PROPERTY_TYPE_TEXT;
+		        else if (strcmp (attrs [i + 1], "Keyword") == 0)
+			        type = BEAGLE_PROPERTY_TYPE_KEYWORD;
+			else if (strcmp (attrs [i + 1], "Date") == 0)
+			        type = BEAGLE_PROPERTY_TYPE_DATE;
 		else
 			g_warning ("could not handle %s", attrs[i]);
 	}
 
 	if (!key || !value) {
 		g_warning ("key or value was null");
-		
 		return;
 	}
 
-	priv->prop = beagle_property_new (key, value);
-	priv->prop->is_keyword = is_keyword;
+	priv->prop = beagle_property_new (type, key, value);
+	priv->prop->is_mutable = is_mutable;
 	priv->prop->is_searched = is_searched;
 }
 

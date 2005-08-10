@@ -35,6 +35,7 @@ class NameIndexTool {
 
 		static void Main (string [] args)
 		{
+#if false
 			NameIndex name_index;
 
 			name_index = new NameIndex (Path.Combine (PathFinder.IndexDir, "FileSystemIndex"), null);
@@ -48,5 +49,6 @@ class NameIndexTool {
 				foreach (Uri uri in name_index.Search (query, null))
 					Console.WriteLine (GuidFu.ToShortString (GuidFu.FromUri (uri)));
 			}
+#endif
 		}
 }

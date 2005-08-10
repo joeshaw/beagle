@@ -109,12 +109,19 @@ namespace Beagle.Daemon {
 
 				if (some_hits.Count == 0)
 					return;
-		
-				foreach (Hit hit in some_hits)
-					uri_hash [hit.Uri] = hit;
+
+				// Be careful not to report the same hit twice.
+				ArrayList hits_to_report;
+				hits_to_report = new ArrayList ();
+				foreach (Hit hit in some_hits) {
+					if (! uri_hash.Contains (hit.Uri)) {
+						uri_hash [hit.Uri] = hit;
+						hits_to_report.Add (hit);
+					}
+				}
 				
 				if (HitsAddedEvent != null)
-					HitsAddedEvent (this, some_hits);
+					HitsAddedEvent (this, hits_to_report);
 			}
 		}
 

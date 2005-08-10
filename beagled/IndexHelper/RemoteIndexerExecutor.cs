@@ -49,50 +49,37 @@ namespace Beagle.IndexHelper {
 			// Find the appropriate driver for this request.
 			IIndexer indexer = indexer_table [request.RemoteIndexName] as IIndexer;
 			if (indexer == null) {
-				// FIXME: This shouldn't be hard-wired.
-				if (request.RemoteIndexName == "FileSystemIndex")
-					indexer = new RenamingLuceneDriver (request.RemoteIndexName,
-									    request.RemoteIndexMinorVersion);
-				else
-					indexer = new LuceneDriver (request.RemoteIndexName,
+				indexer = new LuceneIndexingDriver (request.RemoteIndexName,
 								    request.RemoteIndexMinorVersion);
 				indexer_table [request.RemoteIndexName] = indexer;
 			}
 
-			indexer.ChildIndexableEvent += new IIndexerChildIndexableHandler (ChildIndexableCallback);
-			indexer.UrisFilteredEvent += new IIndexerUrisFilteredHandler (UrisFilteredCallback);
+			IndexerReceipt [] receipts;
+			receipts = request.Process (indexer);
 
-			request.Process (indexer);
-
-			// Construct a response containing the item count and
-			// the child indexables created by the filtering
-			// process.
-			RemoteIndexerResponse response = new RemoteIndexerResponse ();
-			response.ItemCount = indexer.GetItemCount ();
-			response.ChildIndexables = child_indexables;
-			response.UrisFiltered = uris_filtered;
-
-			// The child indexables probably have streams
+			// Child indexables probably have streams
 			// associated with them.  We need to store them before
 			// sending them back to the daemon.
-			if (child_indexables != null) {
-				foreach (Indexable i in child_indexables)
-					i.StoreStream ();
+			if (receipts != null) {
+				foreach (IndexerReceipt r in receipts) {
+					IndexerChildIndexablesReceipt cir;
+					cir = r as IndexerChildIndexablesReceipt;
+					if (cir != null) {
+						foreach (Indexable i in cir.Children)
+							i.StoreStream ();
+					}
+				}
 			}
+
+			// Construct a response containing the item count and
+			// the receipts produced by the actual indexing.
+			RemoteIndexerResponse response = new RemoteIndexerResponse ();
+			response.ItemCount = indexer.GetItemCount ();
+			response.Receipts = receipts;
 
 			++Count;
 
 			return response;
-		}
-
-		private void ChildIndexableCallback (Indexable[] child_indexables)
-		{
-			this.child_indexables = child_indexables;
-		}
-
-		private void UrisFilteredCallback (FilteredStatus[] uris_filtered)
-		{
-			this.uris_filtered = uris_filtered;
 		}
 	}
 }

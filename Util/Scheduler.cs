@@ -33,6 +33,8 @@ namespace Beagle.Util {
 
 	public class Scheduler {
 
+		static public bool Debug = false;
+
 		static private double global_delay = -1.0;
 		static private bool immediate_priority_only = false;
 		static private string exercise_the_dog = null;
@@ -192,12 +194,14 @@ namespace Beagle.Util {
 				if (! cancelled) {
 					TouchAllTaskGroups ();
 					try {
-						Logger.Log.Debug ("Starting task {0}", Tag);
+						if (Debug)
+							Logger.Log.Debug ("Starting task {0}", Tag);
 						Stopwatch sw = new Stopwatch ();
 						sw.Start ();
 						DoTaskReal ();
 						sw.Stop ();
-						Logger.Log.Debug ("Finished task {0} in {1}", Tag, sw);
+						if (Debug)
+							Logger.Log.Debug ("Finished task {0} in {1}", Tag, sw);
 					} catch (Exception ex) {
 						Logger.Log.Warn ("Caught exception in DoTaskReal");
 						Logger.Log.Warn ("        Tag: {0}", Tag);
@@ -407,7 +411,7 @@ namespace Beagle.Util {
 
 		// FIXME: shutdown tasks should probably be ordered by something
 		private Queue shutdown_task_queue = new Queue ();
-		
+
 		private ArrayList task_queue = new ArrayList ();
 		private Hashtable task_by_tag = new Hashtable ();
 		private int executed_task_count = 0;
@@ -415,7 +419,8 @@ namespace Beagle.Util {
 		public enum AddType {
 			DeferToExisting,
 			OptionallyReplaceExisting,
-			OnlyReplaceExisting
+			OnlyReplaceExisting,
+			BlockUntilNoCollision // This is very dangerous!
 		};
 			
 
@@ -442,6 +447,21 @@ namespace Beagle.Util {
 					if (old_task == task)
 						return true;
 
+					// Wait until there isn't anything in the task queue with this
+					// tag.  This is EXTREMELY DANGEROUS.  It could easily
+					// block for a long time, and might lead to weird deadlocks
+					// if used without the utmost of care.
+					// FIXME: If we are blocking until a task is executed, we should
+					// probably allow it to skip ahead in the queue.
+					if (add_type == AddType.BlockUntilNoCollision) {
+						while (old_task != null) {
+							Monitor.Wait (task_queue);
+							if (! running)
+								return false;
+							old_task = task_by_tag [task.Tag] as Task;
+						}
+					}
+
 					if (add_type == AddType.DeferToExisting
 					    && old_task != null)
 						return false;
@@ -450,12 +470,12 @@ namespace Beagle.Util {
 					    && old_task == null)
 						return false;
 
-#if false
-					Logger.Log.Debug ("Adding task");
-					Logger.Log.Debug ("Tag: {0}", task.Tag);
-					if (task.Description != null)
-						Logger.Log.Debug ("Desc: {0}", task.Description);
-#endif
+					if (Debug) {
+						Logger.Log.Debug ("Adding task");
+						Logger.Log.Debug ("Tag: {0}", task.Tag);
+						if (task.Description != null)
+							Logger.Log.Debug ("Desc: {0}", task.Description);
+					}
 
 					task.Timestamp = DateTime.Now;
 					task.Schedule (this);
@@ -881,6 +901,8 @@ namespace Beagle.Util {
 					// (We need to do this to keep rescheduled tasks from blocking
 					// stuff from getting cleaned off the end of the queue)
 					CleanQueue ();
+
+					Monitor.Pulse (task_queue);
 				}
 
 
@@ -932,7 +954,8 @@ namespace Beagle.Util {
 				}
 			}			
 			
-			Logger.Log.Debug ("Scheduler.Worker finished");
+			if (Debug)
+				Logger.Log.Debug ("Scheduler.Worker finished");
 		}
 	}
 

@@ -26,6 +26,7 @@
 //
 
 using System;
+using System.Collections;
 using System.IO;
 using System.Threading;
 
@@ -35,11 +36,10 @@ using Beagle.Util;
 namespace Beagle.Daemon.TomboyQueryable {
 
 	[QueryableFlavor (Name="Tomboy", Domain=QueryDomain.Local, RequireInotify=false)]
-	public class TomboyQueryable : LuceneQueryable {
-
-		private static Logger log = Logger.Get ("TomboyQueryable");
+	public class TomboyQueryable : LuceneFileQueryable {
 
 		string tomboy_dir;
+		Hashtable note_text_cache = UriFu.NewHashtable ();
 
 		public TomboyQueryable () : base ("TomboyIndex")
 		{
@@ -80,7 +80,7 @@ namespace Beagle.Daemon.TomboyQueryable {
 
 			// Crawl all of our existing notes to make sure that
 			// everything is up-to-date.
-			log.Info ("Scanning Tomboy notes...");
+			Logger.Log.Info ("Scanning Tomboy notes...");
 
 			Stopwatch stopwatch = new Stopwatch ();
 			int count = 0;
@@ -95,7 +95,7 @@ namespace Beagle.Daemon.TomboyQueryable {
 			}
 
 			stopwatch.Stop ();
-			log.Info ("Scanned {0} notes in {1}", count, stopwatch);
+			Logger.Log.Info ("Scanned {0} notes in {1}", count, stopwatch);
 		}
 
 		private bool CheckForExistence ()
@@ -147,7 +147,7 @@ namespace Beagle.Daemon.TomboyQueryable {
 
 		/////////////////////////////////////////////////
 
-		private static Indexable NoteToIndexable (FileInfo file, Note note)
+		private Indexable NoteToIndexable (FileInfo file, Note note)
 		{
 			Indexable indexable = new Indexable (note.Uri);
 
@@ -155,11 +155,13 @@ namespace Beagle.Daemon.TomboyQueryable {
 
 			indexable.Timestamp = note.timestamp;
 			indexable.Type = "Note";
-			indexable.MimeType = "text/plain";
+			indexable.Filtering = IndexableFiltering.AlreadyFiltered;
 
-			// Using dc:title for a note's subject is debateable?
 			indexable.AddProperty (Property.New ("dc:title", note.subject));
-			indexable.AddProperty (Property.NewDate ("fixme:modified", note.timestamp));
+
+			// We remember the note's text so that we can stuff it in
+			// the TextCache later.
+			note_text_cache [note.Uri] = note.text;
 
 			StringReader reader = new StringReader (note.text);
 			indexable.SetTextReader (reader);
@@ -169,7 +171,7 @@ namespace Beagle.Daemon.TomboyQueryable {
 
 		private void IndexNote (FileInfo file, Scheduler.Priority priority)
 		{
-			if (this.FileAttributesStore.IsUpToDate (file.FullName))
+			if (this.IsUpToDate (file.FullName))
 				return;
 
 			// Try and parse a Note from the given path
@@ -194,6 +196,22 @@ namespace Beagle.Daemon.TomboyQueryable {
 			task.Priority = Scheduler.Priority.Immediate;
 			task.SubPriority = 0;
 			ThisScheduler.Add (task);
+		}
+
+		override protected void PostAddHook (IndexerAddedReceipt receipt)
+		{
+			base.PostAddHook (receipt);
+			
+			// Store the note's text in the text cache.
+			// By doing this in the PostAddHook, we ensure that
+			// the TextCache is not modified until we are
+			// sure that the note was actually indexed.
+			string text;
+			text = (string) note_text_cache [receipt.Uri];
+			// If text == null, this is equivalent to
+			// calling Delete (receipt.Uri)
+			TextCache.UserCache.WriteFromString (receipt.Uri, text);
+			note_text_cache.Remove (receipt.Uri);
 		}
 
 		override protected bool HitIsValid (Uri uri)

@@ -1,7 +1,7 @@
 //
 // LuceneQueryable.cs
 //
-// Copyright (C) 2004 Novell, Inc.
+// Copyright (C) 2004-2005 Novell, Inc.
 //
 
 //
@@ -50,47 +50,19 @@ namespace Beagle.Daemon {
 		//////////////////////////////////////////////////////////
 		
 		private Scheduler scheduler = Scheduler.Global;
+		private FileAttributesStore fa_store = null;
 
 		private string index_name;
 		private int minor_version;
 		private bool read_only_mode;
 
-		private LuceneDriver driver;
-		private IIndexer indexer;
+		private LuceneQueryingDriver driver;
+		private IIndexer indexer = null;
 		private LuceneTaskCollector collector;
-		private FileAttributesStore fa_store;
 
-		private LuceneDriver.UriRemapper to_internal_uris = null;
-		private LuceneDriver.UriRemapper from_internal_uris = null;
-
-		//////////////////////////////////////////////////////////
-		
-		private Hashtable indexable_info_cache = UriFu.NewHashtable ();
-		private class IndexableInfo {
-			public Uri      Uri;
-			public string   Path;
-			public DateTime Mtime;
-		}
-
-		internal void CacheIndexableInfo (Indexable indexable)
-		{
-			if (indexable.IsNonTransient) {
-				IndexableInfo info = new IndexableInfo ();
-				info.Uri = indexable.Uri;
-				info.Path = indexable.ContentUri.LocalPath;
-				info.Mtime = FileSystem.GetLastWriteTime (info.Path);
-				indexable_info_cache [info.Uri] = info;
-			}
-		}
-
-		internal void UseCachedIndexableInfo (Uri uri)
-		{
-			IndexableInfo info = indexable_info_cache [uri] as IndexableInfo;
-			if (info != null) {
-				this.FileAttributesStore.AttachTimestamp (info.Path, info.Mtime);
-				indexable_info_cache.Remove (uri);
-			}
-		}
+		private LuceneQueryingDriver.UriFilter our_uri_filter;
+		private LuceneQueryingDriver.HitFilter our_hit_filter;
+		private LuceneQueryingDriver.RelevancyMultiplier our_relevancy_multiplier;
 
 		//////////////////////////////////////////////////////////
 
@@ -106,29 +78,23 @@ namespace Beagle.Daemon {
 			this.minor_version = minor_version;
 			this.read_only_mode = read_only_mode;
 
-			driver = new LuceneDriver (this.index_name, this.minor_version, this.read_only_mode);
+			driver = BuildLuceneQueryingDriver (this.index_name, this.minor_version, this.read_only_mode);
+			our_uri_filter = new LuceneQueryingDriver.UriFilter (this.HitIsValidOrElse);
+			our_hit_filter = new LuceneQueryingDriver.HitFilter (this.HitFilter);
+			our_relevancy_multiplier = new LuceneQueryingDriver.RelevancyMultiplier (this.RelevancyMultiplier);
+
+			// If the queryable is in read-only more, don't 
+			// instantiate an indexer for it.
+			if (read_only_mode)
+				return;
 
 			indexer = LocalIndexerHook ();
 			if (indexer == null && indexer_hook != null)
 				indexer = indexer_hook (this.index_name, this.minor_version);
-			if (indexer == null)
-				indexer = driver;
 
-			indexer.ChangedEvent += OnIndexerChanged;
-			indexer.ChildIndexableEvent += OnChildIndexableEvent;
-			indexer.UrisFilteredEvent += OnUrisFilteredEvent;
-
-			fa_store = new FileAttributesStore (BuildFileAttributesStore (driver.Fingerprint));
+			indexer.FlushEvent += OnFlushEvent;
 
 			collector = new LuceneTaskCollector (indexer);
-		}
-
-		virtual protected IFileAttributesStore BuildFileAttributesStore (string index_fingerprint)
-		{
-			if (ExtendedAttribute.Supported)
-				return new FileAttributesStore_ExtendedAttribute (index_fingerprint);
-			else
-				return new FileAttributesStore_Sqlite (IndexDirectory, index_fingerprint);
 		}
 
 		protected string IndexName {
@@ -136,218 +102,19 @@ namespace Beagle.Daemon {
 		}
 
 		protected string IndexDirectory {
-			get { return driver.IndexDirectory; }
+			get { return driver.TopDirectory; }
 		}
 
-		protected string IndexStoreDirectory {
-			get { return driver.StorePath; }
+		protected string IndexFingerprint {
+			get { return driver.Fingerprint; }
 		}
 
-		protected LuceneDriver Driver {
+		protected LuceneQueryingDriver Driver {
 			get { return driver; }
 		}
 
 		public Scheduler ThisScheduler {
 			get { return scheduler; }
-		}
-
-		public FileAttributesStore FileAttributesStore {
-			get { return fa_store; }
-		}
-
-		/////////////////////////////////////////
-
-		public void SetUriRemappers (LuceneDriver.UriRemapper to_internal_uris,
-					     LuceneDriver.UriRemapper from_internal_uris)
-		{
-			this.to_internal_uris = to_internal_uris;
-			this.from_internal_uris = from_internal_uris;
-		}
-
-		/////////////////////////////////////////
-
-		protected virtual void AbusiveAddHook (Uri uri)
-		{
-
-		}
-
-		protected virtual void AbusiveRemoveHook (Uri internal_uri, Uri external_uri)
-		{
-
-		}
-
-		protected virtual void AbusiveRenameHook (Uri old_uri, Uri new_uri)
-		{
-
-		}
-
-		protected virtual void AbusiveChildIndexableHook (Indexable child_indexable)
-		{
-
-		}
-
-		protected virtual void AbusiveUriFilteredHook (FilteredStatus uri_filtered)
-		{
-
-		}
-
-		/////////////////////////////////////////
-
-		// *** FIXME *** FIXME *** FIXME *** FIXME ***
-		// When we rename a directory, we need to somehow
-		// propagate change information to files under that
-		// directory.  Example: say that file foo is in
-		// directory bar, and there is an open query that
-		// matches foo.  The tile probably says something
-		// like "foo, in folder bar".
-		// Then assume I rename bar to baz.  That notification
-		// will go out, so a query matching bar will get
-		// updated... but the query matching foo will not.
-		// What should really happen is that the tile
-		// should change to say "foo, in folder baz".
-		// But making that work will require some hacking
-		// on the QueryResults.
-		// *** FIXME *** FIXME *** FIXME *** FIXME ***
-
-		private class ChangeData : IQueryableChangeData {
-			public ICollection AddedUris;
-			public ICollection RemovedUris;
-		}
-
-		private void OnIndexerChanged (IIndexer    source,
-					       ICollection list_of_added_uris,
-					       ICollection list_of_removed_uris,
-					       ICollection list_of_renamed_uris)
-		{
-			// If we have renamed uris, synthesize some approproate
-			// ChangeData.
-			// Right now we assume that there will never be adds/removes
-			// and renames in the same event.  That is true now, but could
-			// change in the future.
-			if (list_of_renamed_uris != null && list_of_renamed_uris.Count > 0) {
-
-				IEnumerator x = list_of_renamed_uris.GetEnumerator ();
-
-				while (x.MoveNext ()) {
-					Uri old_uri = x.Current as Uri;
-					if (from_internal_uris != null)
-						old_uri = from_internal_uris (old_uri);
-					if (x.MoveNext ()) {
-						Uri new_uri = x.Current as Uri;
-
-						try {
-							AbusiveRenameHook (old_uri, new_uri);
-						} catch (Exception ex) {
-							Logger.Log.Warn ("*** Caught exception in AbusiveRenameHook '{0}' => '{1}'",
-									 old_uri, new_uri);
-							Logger.Log.Warn (ex);
-						}
-
-						Logger.Log.Debug ("*** Faking change data {0} => {1}", old_uri, new_uri);
-
-						ChangeData fake_change_data = new ChangeData ();
-						fake_change_data.AddedUris = new Uri [1] { new_uri };
-						fake_change_data.RemovedUris = new Uri [1] { old_uri };
-						QueryDriver.QueryableChanged (this, fake_change_data);
-					}
-				}
-
-				return;
-			}
-
-			// Walk across the list of removed Uris and drop them
-			// from the text cache.
-			foreach (Uri uri in list_of_removed_uris)
-				TextCache.UserCache.Delete (uri);
-
-			// Walk across the list of added Uris and mark the local
-			// files with the cached timestamp.
-			foreach (Uri uri in list_of_added_uris) {
-				UseCachedIndexableInfo (uri);
-				try {
-					AbusiveAddHook (uri);
-				} catch (Exception ex) {
-					Logger.Log.Warn ("Caught exception in AbusiveAddHook '{0}'", uri);
-					Logger.Log.Warn (ex);
-				}
-			}
-
-			// Propagate the event up through the Queryable.
-			ChangeData change_data = new ChangeData ();
-
-			// Keep a copy of the original list of Uris to remove
-			ICollection original_list_of_removed_uris = list_of_removed_uris;
-
-			// If necessary, remap Uris
-			if (from_internal_uris != null) {
-				Uri [] remapped_adds = new Uri [list_of_added_uris.Count];
-				Uri [] remapped_removes = new Uri [list_of_removed_uris.Count];
-
-				int i = 0;
-				foreach (Uri uri in list_of_added_uris)
-					remapped_adds [i++] = from_internal_uris (uri);
-				i = 0;
-				foreach (Uri uri in list_of_removed_uris)
-					remapped_removes [i++] = from_internal_uris (uri);
-
-				list_of_added_uris = remapped_adds;
-				list_of_removed_uris = remapped_removes;
-			}
-			
-			change_data.AddedUris = list_of_added_uris;
-			change_data.RemovedUris = list_of_removed_uris;
-
-			// We want to make sure all of our remappings are done
-			// before calling this hook, since it can (and should)
-			// break the link between uids and paths.
-			IEnumerator internal_enumerator = original_list_of_removed_uris.GetEnumerator ();
-			IEnumerator external_enumerator = list_of_removed_uris.GetEnumerator ();
-			while (internal_enumerator.MoveNext () && external_enumerator.MoveNext ()) {
-				Uri internal_uri = internal_enumerator.Current as Uri;
-				Uri external_uri = external_enumerator.Current as Uri;
-				try {
-					AbusiveRemoveHook (internal_uri, external_uri);
-				} catch (Exception ex) {
-					Logger.Log.Warn ("Caught exception in AbusiveRemoveHook '{0}' '{1}'",
-							 internal_uri, external_uri);
-					Logger.Log.Warn (ex);
-				}
-			}
-
-			QueryDriver.QueryableChanged (this, change_data);
-		}
-
-		/////////////////////////////////////////
-
-		private void OnChildIndexableEvent (Indexable[] child_indexables)
-		{
-			foreach (Indexable i in child_indexables) {
-				try {
-					AbusiveChildIndexableHook (i);
-
-					Scheduler.Task task = NewAddTask (i);
-					// FIXME: Probably need a better priority than this
-					task.Priority = Scheduler.Priority.Generator;
-					ThisScheduler.Add (task);
-				} catch (InvalidOperationException ex) {
-					// Queryable does not support adding children
-				} catch (Exception ex) {
-					Logger.Log.Warn ("Caught exception in AbusiveChildIndexableHook '{0}'", i.Uri);
-					Logger.Log.Warn (ex);
-				}
-			}
-		}
-
-		public void OnUrisFilteredEvent (FilteredStatus[] uris_filtered) 
-		{
-			foreach (FilteredStatus uri_filtered in uris_filtered) {
-				try {
-					AbusiveUriFilteredHook (uri_filtered);
-				} catch (Exception ex) {
-					Logger.Log.Warn ("Caught exception in AbusiveUriFilteredHook '{0}'", uri_filtered.Uri);
-					Logger.Log.Warn (ex);
-				}
-			}
 		}
 
 		/////////////////////////////////////////
@@ -382,11 +149,16 @@ namespace Beagle.Daemon {
 				// becomes valid sometime between calling HitIsValid
 				// and the removal task being executed?
 
-				Scheduler.Task task = NewRemoveTask_InternalUri (uri);
+				Scheduler.Task task = NewRemoveTask (uri);
 				ThisScheduler.Add (task, Scheduler.AddType.DeferToExisting);
 			}
 
 			return is_valid;
+		}
+
+		virtual protected bool HitFilter (Hit hit)
+		{
+			return true;
 		}
 
 		/////////////////////////////////////////
@@ -449,9 +221,33 @@ namespace Beagle.Daemon {
 
 		/////////////////////////////////////////
 
-		protected virtual ICollection DoBonusQuery (Query query, ICollection list_of_uris)
-		{
-			return null;
+		// *** FIXME *** FIXME *** FIXME *** FIXME ***
+		// When we rename a directory, we need to somehow
+		// propagate change information to files under that
+		// directory.  Example: say that file foo is in
+		// directory bar, and there is an open query that
+		// matches foo.  The tile probably says something
+		// like "foo, in folder bar".
+		// Then assume I rename bar to baz.  That notification
+		// will go out, so a query matching bar will get
+		// updated... but the query matching foo will not.
+		// What should really happen is that the tile
+		// should change to say "foo, in folder baz".
+		// But making that work will require some hacking
+		// on the QueryResults.
+		// *** FIXME *** FIXME *** FIXME *** FIXME ***
+
+		private class ChangeData : IQueryableChangeData {
+
+			// These get fed back to LuceneQueryingDriver.DoQuery
+			// as a search subset, and hence need to be internal
+			// Uris when we are remapping.
+			public ICollection AddedUris;
+
+			// These get reported directly to clients in
+			// Subtract events, and thus need to be external Uris
+			// when we are remapping.
+			public ICollection RemovedUris;
 		}
 
 		public void DoQuery (Query                query,
@@ -461,15 +257,12 @@ namespace Beagle.Daemon {
 			ChangeData change_data = (ChangeData) i_change_data;
 			
 			ICollection added_uris = null;
-			ICollection extra_uris = null;
 
 			if (change_data != null) {
 				
 				if (change_data.RemovedUris != null) {
-					foreach (Uri uri in change_data.RemovedUris) {
-						Logger.Log.Debug ("**** Removing {0}", uri);
+					foreach (Uri uri in change_data.RemovedUris)
 						query_result.Subtract (uri);
-					}
 				}
 
 				// If nothing was added, we can safely return now: this change
@@ -478,49 +271,26 @@ namespace Beagle.Daemon {
 				    || change_data.AddedUris.Count == 0)
 					return;
 
-				// Remove any added URIs from the result, so that we properly
-				// handle updates and don't get duplicate results in clients.
-				foreach (Uri uri in change_data.AddedUris)
-					query_result.Subtract (uri);
-
-				if (to_internal_uris != null) {
-					Uri [] remapped_uris = new Uri [change_data.AddedUris.Count];
-					int i = 0;
-					foreach (Uri uri in change_data.AddedUris) {
-						Uri new_uri = to_internal_uris (uri);
-						remapped_uris [i++] = new_uri;
-						Logger.Log.Debug ("*** Remapped {0} => {1}", uri, new_uri);
-					}
-					added_uris = remapped_uris;
-				} else {
-					added_uris = change_data.AddedUris;
-				}
+				added_uris = change_data.AddedUris;
 			}
-			
-			extra_uris = DoBonusQuery (query, added_uris);
 			
 			Driver.DoQuery (query, 
 					query_result,
 					added_uris,
-					extra_uris,
-					new LuceneDriver.UriFilter (HitIsValidOrElse),
-					from_internal_uris,
-					new LuceneDriver.HitProcessor (PostProcessHit),
-					new LuceneDriver.RelevancyMultiplier (RelevancyMultiplier));
+					our_uri_filter,
+					our_hit_filter,
+					our_relevancy_multiplier);
 		}
 
 		/////////////////////////////////////////
 
-		public virtual string GetSnippet (string[] query_terms, Hit hit)
+		protected string GetSnippetFromTextCache (string [] query_terms, Uri uri)
 		{
 			// Look up the hit in our text cache.  If it is there,
 			// use the cached version to generate a snippet.
 
-			Uri uri = hit.Uri;
-			if (to_internal_uris != null)
-				uri = to_internal_uris (uri);
-
-			TextReader reader = TextCache.UserCache.GetReader (uri, from_internal_uris);
+			TextReader reader;
+			reader = TextCache.UserCache.GetReader (uri);
 			if (reader == null)
 				return null;
 
@@ -530,11 +300,23 @@ namespace Beagle.Daemon {
 			return snippet;
 		}
 
+		// When remapping, override this with
+		// return GetSnippetFromTextCache (query_terms, remapping_fn (hit.Uri))
+		virtual public string GetSnippet (string [] query_terms, Hit hit)
+		{
+			return GetSnippetFromTextCache (query_terms, hit.Uri);
+		}
+
 		/////////////////////////////////////////
 
 		public virtual int GetItemCount ()
 		{
-			return indexer.GetItemCount ();
+			// If we're in read-only mode, query the driver and 
+			// not the indexer for the item count.
+			if (indexer == null)
+				return driver.GetItemCount ();
+			else
+				return indexer.GetItemCount ();
 		}
 
 		/////////////////////////////////////////
@@ -592,70 +374,6 @@ namespace Beagle.Daemon {
 
 		//////////////////////////////////////////////////////////////////////////////////
 
-		//
-		// The types involved here are defined below
-		//
-
-		public Scheduler.Task NewAddTask (Indexable indexable)
-		{
-			LuceneTask task;
-			task = new LuceneTask (this, this.indexer, indexable);
-			task.Collector = collector;
-			return task;
-		}
-
-		public Scheduler.Task NewAddTask (IIndexableGenerator generator, Scheduler.Hook generator_hook)
-		{
-			LuceneTask task;
-			task = new LuceneTask (this, this.indexer, generator);
-			task.Priority = Scheduler.Priority.Generator;
-			task.GeneratorHook = generator_hook;
-			return task;
-		}
-
-		public Scheduler.Task NewAddTask (IIndexableGenerator generator)
-		{
-			return this.NewAddTask (generator, null);
-		}
-
-		public Scheduler.Task NewRemoveTask (Uri uri) // This should be an external Uri
-		{
-			LuceneTask task;
-			task = new LuceneTask (this, this.indexer, uri, to_internal_uris);
-			task.Collector = collector;
-			return task;
-		}
-
-		public Scheduler.Task NewRemoveTask_InternalUri (Uri uri) // This should be an internal Uri
-		{
-			LuceneTask task;
-			task = new LuceneTask (this, this.indexer, uri, null);
-			task.Collector = collector;
-			return task;
-		}
-
-		// old_uri should be an internal Uri
-		// new_uri should be an external Uri
-		public Scheduler.Task NewRenameTask (Uri old_uri, Uri new_uri)
-		{
-			LuceneTask task;
-			task = new LuceneTask (this, this.indexer, old_uri, to_internal_uris, new_uri, null);
-
-			// To avoid grouping with anything else, we create our own collector
-			task.Collector = new LuceneTaskCollector (indexer);
-			
-			return task;
-		}
-
-		public Scheduler.Task NewTaskFromHook (Scheduler.TaskHook hook)
-		{
-			Scheduler.Task task = Scheduler.TaskFromHook (hook);
-			task.Collector = collector;
-			return task;
-		}
-
-		//////////////////////////////////////////////////////////////////////////////////
-
 		private class LuceneTaskCollector : Scheduler.ITaskCollector {
 
 			IIndexer indexer;
@@ -690,168 +408,350 @@ namespace Beagle.Daemon {
 
 		//////////////////////////////////////////////////////////////////////////////////
 
-		private class LuceneTask : Scheduler.Task {
+		// Adding a single indexable
 
-			LuceneQueryable queryable;
-
+		private delegate bool PreAddHookDelegate (Indexable indexable);
+		
+		private class AddTask : Scheduler.Task {
 			IIndexer indexer;
+			Indexable indexable;
+			PreAddHookDelegate pre_add_hook;
 
-			// If non-null, add this Indexable
-			Indexable indexable = null;
+			public AddTask (IIndexer           indexer,
+					Indexable          indexable,
+					PreAddHookDelegate pre_add_hook)
+			{
+				this.indexer = indexer;
+				this.indexable = indexable;
+				this.pre_add_hook = pre_add_hook;
+				this.Tag = indexable.DisplayUri.ToString ();
+				this.Weight = 1;
+			}
 
-			// If uri != null && other_uri == null, remove uri
-			// If both are non-null, rename uri => other_uri
-			Uri uri = null;
-			Uri other_uri = null;
+			override protected void DoTaskReal ()
+			{
+				if (pre_add_hook == null || pre_add_hook (indexable))
+					indexer.Add (indexable);
+			}
+		}
 
-			LuceneDriver.UriRemapper uri_remapper = null;
-			LuceneDriver.UriRemapper other_uri_remapper = null;
+		virtual protected bool PreAddHook (Indexable indexable)
+		{
+			return true;
+		}
 
-			// If non-null, add this IIndexableGenerator
-			IIndexableGenerator generator = null;
+		// If we are remapping Uris, indexables should be added to the
+		// index with the internal Uri attached.  This the receipt
+		// will come back w/ an internal Uri.  In order for change
+		// notification to work correctly, we have to map it to
+		// an external Uri.
+		virtual protected void PostAddHook (IndexerAddedReceipt receipt)
+		{
+			// Does nothing by default
+		}
+
+		public Scheduler.Task NewAddTask (Indexable indexable)
+		{
+			AddTask task;
+			task = new AddTask (this.indexer, indexable,
+					    new PreAddHookDelegate (this.PreAddHook));
+			task.Collector = collector;
+			return task;
+		}
+
+		//////////////////////////////////////////////////////////////////////////////////
+
+		// Adding an indexable generator
+
+		private class AddGeneratorTask : Scheduler.Task {
+			IIndexer indexer;
+			IIndexableGenerator generator;
+			PreAddHookDelegate pre_add_hook;
+
+			// Hook to be invoked after the IIndexableGenerator
+			// has finished processing a batch of Indexables,
+			// just prior to flushing the driver.
+			Scheduler.Hook pre_flush_hook;
 
 			// FIXME: number of items generated
 			// from the Indexable shouldn't be
 			// hard-wired
 			const int hard_wired_generation_count = 30;
 
-			// Hook to be invoked after the IIndexableGenerator
-			// has finished processing a batch of Indexables,
-			// just prior to flushing the driver.
-			public Scheduler.Hook GeneratorHook;
-
-			public LuceneTask (LuceneQueryable queryable, IIndexer indexer, Indexable indexable) // Add
+			public AddGeneratorTask (IIndexer            indexer,
+						 IIndexableGenerator generator,
+						 PreAddHookDelegate  pre_add_hook,
+						 Scheduler.Hook      pre_flush_hook)
 			{
-				this.queryable = queryable;
-				this.indexer = indexer;
-				this.indexable = indexable;
-				
-				this.Tag = indexable.DisplayUri.ToString ();
-				this.Weight = 1;
-			}
-
-			public LuceneTask (LuceneQueryable queryable, IIndexer indexer, 
-					   Uri uri, LuceneDriver.UriRemapper remapper) // Remove
-			{
-				this.queryable = queryable;
-				this.indexer = indexer;
-				this.uri = uri;
-				this.uri_remapper = remapper;
-
-				this.Tag = uri.ToString ();
-				this.Weight = 0.499999;
-			}
-
-			public LuceneTask (LuceneQueryable queryable, IIndexer indexer, 
-					   Uri old_uri, LuceneDriver.UriRemapper old_remapper,
-					   Uri new_uri, LuceneDriver.UriRemapper new_remapper) // Rename
-			{
-				this.queryable = queryable;
-				this.indexer = indexer;
-
-				this.uri = old_uri;
-				this.other_uri = new_uri;
-
-				this.uri_remapper = old_remapper;
-				this.other_uri_remapper = new_remapper;
-
-				this.Tag = String.Format ("{0} => {1}", old_uri, new_uri);
-				this.Weight = 0.1; // In theory renames are light-weight
-			}
-
-			public LuceneTask (LuceneQueryable queryable, IIndexer indexer, IIndexableGenerator generator) // Add Many
-			{
-				this.queryable = queryable;
 				this.indexer = indexer;
 				this.generator = generator;
-
+				this.pre_add_hook = pre_add_hook;
+				this.pre_flush_hook = pre_flush_hook;
 				this.Tag = generator.StatusName;
 				this.Weight = hard_wired_generation_count;
 			}
 
-			protected override void DoTaskReal ()
+			override protected void DoTaskReal ()
 			{
-				// Remap Uris as necessary
-				if (uri != null && uri_remapper != null)
-					uri = uri_remapper (uri);
-				if (other_uri != null && other_uri_remapper != null)
-					other_uri = other_uri_remapper (other_uri);
+				// Since this is a generator, we want the task to
+				// get re-scheduled after it is run.
+				Reschedule = true;
 
-				if (indexable != null) {
-					if (! (indexable.Uri.IsFile 
-					       && queryable.FileAttributesStore.IsUpToDate (indexable.Uri.LocalPath))) {
-						queryable.CacheIndexableInfo (indexable);
-						indexer.Add (indexable);
-					}
-				} else if (uri != null && other_uri != null) {
-					indexer.Rename (uri, other_uri);
-				} else if (uri != null) {
-					indexer.Remove (uri);
-				} else if (generator != null) {
-
-					// Since this is a generator, we want the task to
-					// get re-scheduled after it is run.
-					Reschedule = true;
-
-					int count;
-					for (count = 0; count < hard_wired_generation_count; ++count) {
-						if (!generator.HasNextIndexable ()) {
-							// ...except if there is no more work to do, of course.
-							Reschedule = false;
-							break;
-						}
-
-						Indexable generated = generator.GetNextIndexable ();
-
-						// Note that the indexable generator can return null.
-						// This means that the generator didn't have an indexable
-						// to return this time through, but it does not mean that
-						// its processing queue is empty.
-						// FIXME: Shouldn't we just break if generated is null?
-						// Right now we just call GetNextIndexable a bunch of times
-						// when we don't have more work to do.
-						if (generated != null) {
-							queryable.CacheIndexableInfo (generated);
-							indexer.Add (generated);
-						}
+				bool did_something = false;
+				for (int count = 0; count < hard_wired_generation_count; ++count) {
+					if (! generator.HasNextIndexable ()) {
+						// ...except if there is no more work to do, of course.
+						Reschedule = false;
+						break;
 					}
 
-					if (count > 0 && this.GeneratorHook != null)
-						this.GeneratorHook ();
+					Indexable generated;
+					generated = generator.GetNextIndexable ();
 
+					// Note that the indexable generator can return null.
+					// This means that the generator didn't have an indexable
+					// to return this time through, but it does not mean that
+					// its processing queue is empty.
+					if (generated == null)
+						break;
+
+					if (pre_add_hook == null || pre_add_hook (generated)) {
+						indexer.Add (generated);
+						did_something = true;
+					}
+				}
+				
+				if (did_something) {
+					if (pre_flush_hook != null)
+						pre_flush_hook ();
 					indexer.Flush ();
 				}
 			}
 		}
 
+		public Scheduler.Task NewAddTask (IIndexableGenerator generator, Scheduler.Hook pre_flush_hook)
+		{
+			AddGeneratorTask task;
+			task = new AddGeneratorTask (this.indexer,
+						     generator,
+						     new PreAddHookDelegate (this.PreAddHook),
+						     pre_flush_hook);
+
+			task.Priority = Scheduler.Priority.Generator;
+			return task;
+		}
+
+		public Scheduler.Task NewAddTask (IIndexableGenerator generator)
+		{
+			return NewAddTask (generator, null);
+		}
+
 		//////////////////////////////////////////////////////////////////////////////////
 
-		private class MarkingClosure {
-			FileAttributesStore fa_store;
-			string path;
-			DateTime mtime;
-			
-			public MarkingClosure (FileAttributesStore fa_store,
-					       string              path,
-					       DateTime            mtime)
+		// Removing a single item from the index
+
+		private delegate bool PreRemoveHookDelegate (Uri uri);
+
+		private class RemoveTask : Scheduler.Task {
+			IIndexer indexer;
+			Uri uri;
+			PreRemoveHookDelegate pre_remove_hook;
+
+			public RemoveTask (IIndexer              indexer,
+					   Uri                   uri,
+					   PreRemoveHookDelegate pre_remove_hook)
 			{
-				this.fa_store = fa_store;
-				this.path = path;
-				this.mtime = mtime;
+				this.indexer = indexer;
+				this.uri = uri;
+				this.pre_remove_hook = pre_remove_hook;
+
+				this.Tag = uri.ToString ();
+				this.Weight = 0.24999; // this is arbitrary
 			}
-				
-			public void Mark ()
+
+			override protected void DoTaskReal ()
 			{
-				fa_store.AttachTimestamp (path, mtime);
+				if (pre_remove_hook == null || pre_remove_hook (uri)) {
+					if (uri != null)
+						indexer.Remove (uri);
+				}
 			}
 		}
-				
-		
-		protected Scheduler.TaskGroup NewMarkingTaskGroup (string path, DateTime mtime)
+
+		virtual protected bool PreRemoveHook (Uri uri)
 		{
-			MarkingClosure mc = new MarkingClosure (FileAttributesStore, path, mtime);
-			Scheduler.Hook post_hook = new Scheduler.Hook (mc.Mark);
-			return Scheduler.NewTaskGroup ("mark " + path, null, post_hook);
+			return true;
 		}
+
+		// If we are remapping Uris, receipt.Uri will be passed in as an
+		// internal Uri.  It needs to be mapped to an external uri for
+		// change notification to work properly.
+		virtual protected void PostRemoveHook (IndexerRemovedReceipt receipt)
+		{
+			// Does nothing by default
+		}
+
+		public Scheduler.Task NewRemoveTask (Uri uri)
+		{
+			RemoveTask task;
+			task = new RemoveTask (this.indexer, uri,
+					       new PreRemoveHookDelegate (this.PreRemoveHook));
+			task.Collector = collector;
+			return task;
+		}
+
+		//////////////////////////////////////////////////////////////////////////////////
+
+		// Other hooks
+
+		// If this returns true, a task will automatically be created to
+		// add the child.  Note that the PreAddHook will also be called,
+		// as usual.
+		virtual protected bool PreChildAddHook (Indexable child)
+		{
+			return true;
+		}
+
+		//////////////////////////////////////////////////////////////////////////////////
+
+		private void OnFlushEvent (IIndexer source, IndexerReceipt [] receipts)
+		{
+			// Just ignore flush-complete notifications
+			// and empty arrays of receipts.
+			if (receipts == null || receipts.Length == 0)
+				return;
+
+			if (fa_store != null)
+				fa_store.BeginTransaction ();
+
+			ArrayList added_uris = new ArrayList ();
+			ArrayList removed_uris  = new ArrayList ();
+
+			for (int i = 0; i < receipts.Length; ++i) {
+				
+				if (receipts [i] is IndexerAddedReceipt) {
+					
+					IndexerAddedReceipt r;
+					r = (IndexerAddedReceipt) receipts [i];
+
+					// Add the Uri to the list for our change data
+					// before doing any post-processing.
+					// This ensures that we have internal uris when
+					// we are remapping.
+					added_uris.Add (r.Uri);
+					
+					// Call the appropriate hook
+					try {
+						// Map from internal->external Uris in the PostAddHook
+						PostAddHook (r);
+					} catch (Exception ex) {
+						Logger.Log.Warn ("Caught exception in PostAddHook '{0}' '{1}' '{2}'",
+								 r.Uri, r.FilterName, r.FilterVersion);
+						Logger.Log.Warn (ex);
+					}
+
+					// Every added Uri also needs to be listed as removed,
+					// to avoid duplicate hits in the query.  Since the
+					// removed Uris need to be external Uris, we add them
+					// to the list *after* post-processing.
+					removed_uris.Add (r.Uri);
+
+
+				} else if (receipts [i] is IndexerRemovedReceipt) {
+
+					IndexerRemovedReceipt r;
+					r = (IndexerRemovedReceipt) receipts [i];
+					
+					// Drop the removed item from the text cache
+					TextCache.UserCache.Delete (r.Uri);
+
+					
+					// Call the appropriate hook
+					try {
+						PostRemoveHook (r);
+					} catch (Exception ex) {
+						Logger.Log.Warn ("Caught exception in PostRemoveHook '{0}'",
+								 r.Uri);
+						Logger.Log.Warn (ex);
+					}
+
+					// Add the removed Uri to the list for our
+					// change data.  This will be an external Uri
+					// when we are remapping.
+					removed_uris.Add (r.Uri);
+					
+				} else if (receipts [i] is IndexerChildIndexablesReceipt) {
+					
+					IndexerChildIndexablesReceipt r;
+					r = (IndexerChildIndexablesReceipt) receipts [i];
+
+					foreach (Indexable child in r.Children) {
+						bool please_add_a_new_task = false;
+
+						try {
+							please_add_a_new_task = PreChildAddHook (child);
+						} catch (InvalidOperationException ex) {
+							// Queryable does not support adding children
+						} catch (Exception ex) {
+							Logger.Log.Warn ("Caught exception in PreChildAddHook '{0}'", child.DisplayUri);
+							Logger.Log.Warn (ex);
+						}
+
+						if (please_add_a_new_task) {
+							Scheduler.Task task = NewAddTask (child);
+							// FIXME: Probably need a better priority than this
+							task.Priority = Scheduler.Priority.Generator;
+							ThisScheduler.Add (task);
+						}
+					}
+				}
+			}
+
+			if (fa_store != null)
+				fa_store.CommitTransaction ();
+
+			// Propagate the change notification to any open queries.
+			if (added_uris.Count > 0 || removed_uris.Count > 0) {
+				ChangeData change_data;
+				change_data = new ChangeData ();
+				change_data.AddedUris = added_uris;
+				change_data.RemovedUris = removed_uris;
+
+				QueryDriver.QueryableChanged (this, change_data);
+			}
+		}
+
+		//////////////////////////////////////////////////////////////////////////////////
+
+		//
+		// It is often convenient to have easy access to a FileAttributeStore
+		//
+
+		virtual protected IFileAttributesStore BuildFileAttributesStore ()
+		{
+                        if (ExtendedAttribute.Supported)
+                                return new FileAttributesStore_ExtendedAttribute (IndexFingerprint);
+                        else
+                                return new FileAttributesStore_Sqlite (IndexDirectory, IndexFingerprint);
+
+		}
+
+		public FileAttributesStore FileAttributesStore {
+			get { 
+				if (fa_store == null)
+					fa_store = new FileAttributesStore (BuildFileAttributesStore ());
+				return fa_store;
+			}
+		}
+
+		//////////////////////////////////////////////////////////////////////////////////
+
+		virtual protected LuceneQueryingDriver BuildLuceneQueryingDriver (string index_name,
+										  int    minor_version,
+										  bool   read_only_mode)
+		{
+			return new LuceneQueryingDriver (index_name, minor_version, read_only_mode);
+		}
+	      
 	}
 }

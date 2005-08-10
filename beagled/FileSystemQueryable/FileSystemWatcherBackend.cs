@@ -69,13 +69,6 @@ namespace Beagle.Daemon.FileSystemQueryable {
 			return fsw;
 		}
 
-		public object DropOpenWatch (string path, object old_handle)
-		{
-			// Do nothing, FileSystemWatcher doesn't monitor Open events
-			return old_handle;
-		}
-
-
 		public bool ForgetWatch (object watch_object) 
 		{
 			try {
@@ -100,6 +93,7 @@ namespace Beagle.Daemon.FileSystemQueryable {
 			if (Debug)
 				Logger.Log.Debug ("FileSystemWatcher: OnChangedEvent {0}", args.FullPath);
 
+#if false
 			try {
 
 				// If a directory changed, mark it as dirty so it will get rescanned
@@ -115,6 +109,7 @@ namespace Beagle.Daemon.FileSystemQueryable {
 				Logger.Log.Warn ("Brain-damage in FileSystemWatcher.OnChangedEvent '{0}'", args.FullPath);
 				Logger.Log.Warn (ex);
 			}
+#endif
 		}
 
 		public void OnCreatedEvent (object source, FileSystemEventArgs args)
@@ -122,6 +117,7 @@ namespace Beagle.Daemon.FileSystemQueryable {
 			if (Debug)
 				Logger.Log.Debug ("FileSystemWatcher: OnCreatedEvent {0}", args.FullPath);
 
+#if false
 			try {
 				
 				// When a new directory is created, add it to our model
@@ -144,6 +140,7 @@ namespace Beagle.Daemon.FileSystemQueryable {
 				Logger.Log.Warn ("Brain-damage in FileSystemWatcher.OnCreatedEvent '{0}'", args.FullPath);
 				Logger.Log.Warn (ex);
 			}
+#endif
 		}
 
 		public void OnDeletedEvent (object source, FileSystemEventArgs args)
@@ -151,6 +148,7 @@ namespace Beagle.Daemon.FileSystemQueryable {
 			if (Debug)
 				Logger.Log.Debug ("FileSystemWatcher: OnDeletedEvent {0}", args.FullPath);
 
+#if false
 			try {
 				
 				FileSystemModel.Directory dir;
@@ -163,6 +161,7 @@ namespace Beagle.Daemon.FileSystemQueryable {
 				Logger.Log.Warn ("Brain-damage in FileSystemWatcher.OnDeletedEvent '{0}'", args.FullPath);
 				Logger.Log.Warn (ex);
 			}
+#endif
 		}
 
 		public void OnRenamedEvent (object source, RenamedEventArgs args)
@@ -170,7 +169,7 @@ namespace Beagle.Daemon.FileSystemQueryable {
 			if (Debug)
 				Logger.Log.Debug ("FileSystemWatcher: OnRenamedEvent {0} {1}",
 						  args.OldFullPath, args.FullPath);
-			
+#if false			
 			try {
 				
 				queryable.Rename (args.OldFullPath, args.FullPath);
@@ -179,6 +178,7 @@ namespace Beagle.Daemon.FileSystemQueryable {
 				Logger.Log.Warn ("Brain-damage in FileSystemWatcher.OnRenamedEvent '{0}'", args.FullPath);
 				Logger.Log.Warn (ex);
 			}
+#endif
 		}
 
 		public void OnErrorEvent (object source, ErrorEventArgs args)

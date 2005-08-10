@@ -1,3 +1,5 @@
+/* -*- Mode: C; tab-width: 8; indent-tabs-mode: t; c-basic-offset: 8; -*- */
+
 /*
  * beagle-property.h
  *
@@ -32,8 +34,20 @@
 
 typedef struct _BeagleProperty BeagleProperty;
 
-BeagleProperty *beagle_property_new (const char *key, const char *value);
+typedef enum {
+	BEAGLE_PROPERTY_TYPE_UNKNOWN = 0,
+	BEAGLE_PROPERTY_TYPE_TEXT    = 1,
+	BEAGLE_PROPERTY_TYPE_KEYWORD = 2,
+	BEAGLE_PROPERTY_TYPE_DATE    = 3,
+	BEAGLE_PROPERTY_TYPE_LAST    = 4
+} BeaglePropertyType;
+
+
+BeagleProperty *beagle_property_new (BeaglePropertyType type, const char *key, const char *value);
 void beagle_property_free (BeagleProperty *prop);
+
+BeaglePropertyType beagle_property_get_type (BeagleProperty *prop);
+void beagle_property_set_type (BeagleProperty *prop, BeaglePropertyType type);
 
 G_CONST_RETURN char *beagle_property_get_key (BeagleProperty *prop);
 void beagle_property_set_key (BeagleProperty *prop, const char *key);
@@ -44,7 +58,7 @@ void beagle_property_set_value (BeagleProperty *prop, const char *value);
 gboolean beagle_property_get_is_searched (BeagleProperty *prop);
 void beagle_property_set_is_searched (BeagleProperty *prop, gboolean is_searched);
 
-gboolean beagle_property_get_is_keyword (BeagleProperty *prop);
-void beagle_property_set_is_keyword (BeagleProperty *prop, gboolean is_keyword);
+gboolean beagle_property_get_is_mutable (BeagleProperty *prop);
+void beagle_property_set_is_mutable (BeagleProperty *prop, gboolean is_keyword);
 
 #endif /* __BEAGLE_PROPERTY_H */

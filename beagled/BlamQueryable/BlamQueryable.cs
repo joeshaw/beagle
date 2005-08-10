@@ -38,16 +38,17 @@ using Beagle.Util;
 namespace Beagle.Daemon.BlamQueryable {
 
 	[QueryableFlavor (Name="Blam", Domain=QueryDomain.Local, RequireInotify=false)]
-	public class BlamQueryable : LuceneQueryable, IIndexableGenerator {
+	public class BlamQueryable : LuceneFileQueryable, IIndexableGenerator {
 
 		private static Logger log = Logger.Get ("BlamQueryable");
 
 		string blam_dir;
-		const string blam_file = "collection.xml";
+		FileInfo blam_file;
 
 		public BlamQueryable () : base ("BlamIndex")
 		{
 			blam_dir = Path.Combine (Path.Combine (PathFinder.HomeDir, ".gnome2"), "blam");
+			blam_file = new FileInfo (Path.Combine (blam_dir, "collection.xml"));
 		}
 
 		/////////////////////////////////////////////////
@@ -72,15 +73,15 @@ namespace Beagle.Daemon.BlamQueryable {
 			} else {
 				FileSystemWatcher fsw = new FileSystemWatcher ();
 			       	fsw.Path = blam_dir;
-				fsw.Filter = blam_file;
-				
+				fsw.Filter = blam_file.Name;
+
 				fsw.Changed += new FileSystemEventHandler (OnChangedEvent);
 				fsw.Created += new FileSystemEventHandler (OnChangedEvent);
 				
 				fsw.EnableRaisingEvents = true;
 			}
 
-			if (File.Exists (Path.Combine (blam_dir, blam_file)))
+			if (File.Exists (blam_file.FullName))
 				Index ();
 		}
 
@@ -103,7 +104,7 @@ namespace Beagle.Daemon.BlamQueryable {
 					     string srcpath,
 					     Inotify.EventType type)
 		{
-			if (subitem != blam_file)
+			if (subitem != blam_file.Name)
 				return;
 
 			Index ();
@@ -139,8 +140,9 @@ namespace Beagle.Daemon.BlamQueryable {
 			Item item = (Item) this.item_enumerator.Current;
 
 			Uri uri = new Uri (String.Format ("feed:{0};item={1}", channel.Url, item.Id));
-
+			
 			Indexable indexable = new Indexable (uri);
+			indexable.ParentUri = UriFu.PathToFileUri (blam_file.FullName);
 			indexable.MimeType = "text/html";
 			indexable.Type = "FeedItem";
 			indexable.Timestamp = item.PubDate;
@@ -175,19 +177,15 @@ namespace Beagle.Daemon.BlamQueryable {
 		public bool HasNextIndexable ()
 		{
 			if (this.collection == null) {
-				FileInfo file = new FileInfo (Path.Combine (blam_dir, blam_file));
-
-				if (this.FileAttributesStore.IsUpToDate (file.FullName))
+				if (IsUpToDate (blam_file.FullName))
 					return false;
 
 				try {
-					this.collection = ChannelCollection.LoadFromFile (file.FullName);
+					this.collection = ChannelCollection.LoadFromFile (blam_file.FullName);
 				} catch (Exception e) {
 					log.Warn ("Could not open Blam! channel list: " + e);
 					return false;
 				}
-
-				this.FileAttributesStore.AttachTimestamp (file.FullName, file.LastWriteTime);
 
 				if (this.collection.Channels == null || this.collection.Channels.Count == 0) {
 					this.collection = null;

@@ -43,6 +43,7 @@ $(EXTSTR): $(EXTSTR_IN)
 
 CSFILES = 			        	\
 	$(srcdir)/ArrayFu.cs              	\
+	$(srcdir)/BetterBitArray.cs		\
 	$(srcdir)/camel.cs              	\
 	$(srcdir)/CommandLineFu.cs		\
 	$(srcdir)/CompatFileChooser.cs		\
@@ -75,11 +76,13 @@ CSFILES = 			        	\
 	$(srcdir)/PathFinder.cs			\
 	$(srcdir)/PullingReader.cs      	\
 	$(srcdir)/Scheduler.cs			\
+	$(srcdir)/SmallIntArray.cs		\
 	$(srcdir)/Stopwatch.cs			\
 	$(srcdir)/StringFu.cs           	\
 	$(srcdir)/StringMatcher.cs		\
 	$(srcdir)/SystemInformation.cs		\
 	$(srcdir)/Timeline.cs			\
+	$(srcdir)/TopScores.cs			\
 	$(srcdir)/UnixClient.cs			\
 	$(srcdir)/UnixListener.cs		\
 	$(srcdir)/UriFu.cs			\
