@@ -35,10 +35,14 @@
 # define __NR_inotify_init	316
 # define __NR_inotify_add_watch	317
 # define __NR_inotify_rm_watch	318
-#elif defined (__sh__)
+#elif defined (__SH4__)
 # define __NR_inotify_init	290
 # define __NR_inotify_add_watch	291
 # define __NR_inotify_rm_watch	292
+#elif defined (__SH5__)
+# define __NR_inotify_init	318
+# define __NR_inotify_add_watch	319
+# define __NR_inotify_rm_watch	320
 #else
 # error "Unsupported architecture!"
 #endif
