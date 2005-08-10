@@ -58,11 +58,24 @@ namespace Beagle.Tile {
 		[TileAction]
 		public override void Open ()
                 {
+#if ENABLE_DESKTOP_LAUNCH
+			Process p = new Process ();
+			p.StartInfo.UseShellExecute = false;
+			p.StartInfo.FileName = "desktop-launch";
+			p.StartInfo.Arguments = Hit ["fixme:itemuri"];
+
+			try {
+				p.Start ();
+			} catch (Exception e) {
+				Console.WriteLine ("Could not load handler for {0}: {1}", Hit ["fixme:itemuri"], e);
+			}
+#else			
 			try {
 				Gnome.Url.Show (Hit ["fixme:itemuri"]);
 			} catch (Exception e) {
 				Console.WriteLine ("Could not load handler for {0}: {1}", Hit ["fixme:itemuri"], e);
 			}
+#endif
 		}
 	}
 }
