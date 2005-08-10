@@ -152,7 +152,7 @@ namespace Beagle.Util {
 			return GetNameForPath (path);
 		}
 
-		private static string[] crap = { "/imap/", "/local/", "/imap4/", "/folders", ".sbd"};
+		private static string[] crap = { "/imap/", "/local/", "/imap4/", "/folders", "/subfolder", ".sbd"};
 
 		public static string GetNameForPath (string folder_path)
 		{
