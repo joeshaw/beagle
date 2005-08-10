@@ -834,11 +834,14 @@ namespace Beagle.Daemon.FileSystemQueryable {
 
 		public void AddFile (DirectoryModel dir, string name)
 		{
-			if (Ignore (dir, name, false))
-				return;
-
 			string path;
 			path = Path.Combine (dir.FullName, name);
+
+			if (! File.Exists (path))
+				return;
+			
+			if (Ignore (dir, name, false))
+				return;
 
 			FileAttributes attr;
 			attr = FileAttributesStore.Read (path);
