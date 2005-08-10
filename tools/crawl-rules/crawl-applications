@@ -1,0 +1,11 @@
+CRAWL_ENABLED="yes"
+
+CRAWL_INDEX_NAME="applications"
+
+CRAWL_PATHS="/usr/share/applications /usr/local/shared/applications /opt/gnome/share/applications /opt/kde/share/applications"
+
+CRAWL_RECURSIVE="yes"
+
+CRAWL_DISABLE_FILTERING="no"
+
+CRAWL_CACHE_TEXT="no"

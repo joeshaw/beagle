@@ -35,6 +35,7 @@ $(CRAWL_WRAPPER) : $(CRAWL_WRAPPER_IN)
 
 CRAWL_RULES = \
 	$(srcdir)/crawl-rules/crawl-windows		\
+	$(srcdir)/crawl-rules/crawl-applications	\
 	$(srcdir)/crawl-rules/crawl-documentation
 
 # Install the system crawler into cron.daily and 
