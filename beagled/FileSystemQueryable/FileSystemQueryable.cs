@@ -150,28 +150,32 @@ namespace Beagle.Daemon.FileSystemQueryable {
 			return indexable;
 		}
 
-		private static void AddMutablePropertiesToIndexable (Indexable indexable, 
-								     string    name,
-								     Guid      parent_id)
+		public static void AddStandardPropertiesToIndexable (Indexable indexable, 
+								      string    name,
+								      Guid      parent_id,
+								      bool      mutable)
 		{
 			Property prop;
 
 			prop = Property.NewKeyword (ExactFilenamePropKey, name);
-			prop.IsMutable = true;
+			prop.IsMutable = mutable;
 			indexable.AddProperty (prop);
 			
 			string str;
 			str = Path.GetFileNameWithoutExtension (name);
 			str = StringFu.FuzzyDivide (str);
 			prop = Property.New (SplitFilenamePropKey, str);
-			prop.IsMutable = true;
+			prop.IsMutable = mutable;
 			indexable.AddProperty (prop);
 
+			if (parent_id == Guid.Empty)
+				return;
+			
 			str = GuidFu.ToUriString (parent_id);
 			// We use the uri here to recycle terms in the index,
 			// since each directory's uri will already be indexed.
 			prop = Property.NewKeyword (ParentDirUriPropKey, str);
-			prop.IsMutable = true;
+			prop.IsMutable = mutable;
 			indexable.AddProperty (prop);
 		}
 
@@ -188,7 +192,7 @@ namespace Beagle.Daemon.FileSystemQueryable {
 				name = path;
 			else
 				name = Path.GetFileName (path);
-			AddMutablePropertiesToIndexable (indexable, name, parent_id);
+			AddStandardPropertiesToIndexable (indexable, name, parent_id, true);
 
 			Property prop;
 			prop = Property.NewBool (IsDirectoryPropKey, true);
@@ -209,7 +213,7 @@ namespace Beagle.Daemon.FileSystemQueryable {
 			indexable.Crawled = crawl_mode;
 			indexable.Filtering = Beagle.IndexableFiltering.Always;
 
-			AddMutablePropertiesToIndexable (indexable, Path.GetFileName (path), parent_id);
+			AddStandardPropertiesToIndexable (indexable, Path.GetFileName (path), parent_id, true);
 
 			return indexable;
 		}
@@ -223,7 +227,7 @@ namespace Beagle.Daemon.FileSystemQueryable {
 			indexable = new Indexable (GuidFu.ToUri (id));
 			indexable.PropertyChangesOnly = true;
 
-			AddMutablePropertiesToIndexable (indexable, name, parent_id);
+			AddStandardPropertiesToIndexable (indexable, name, parent_id, true);
 
 			Property prop;
 			prop = Property.NewKeyword (OldExternalUriPropKey,

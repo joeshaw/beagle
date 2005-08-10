@@ -35,11 +35,7 @@ using System.Xml.Serialization;
 
 using Beagle;
 using Beagle.Util;
-
-#if false
-// FIXME!
 using FSQ = Beagle.Daemon.FileSystemQueryable.FileSystemQueryable;
-#endif
 
 namespace Beagle.Daemon 
 {
@@ -183,7 +179,7 @@ namespace Beagle.Daemon
 							pending_files.Enqueue (file);
 					
 				} catch (DirectoryNotFoundException e) {}
-
+				
 				if (shutdown)
 					break;
 				
@@ -248,15 +244,10 @@ namespace Beagle.Daemon
 					if (!file.Exists || Ignore (file) || fa_store.IsUpToDate (file.FullName))
 						continue;
 
-					// This is a bit ugly but it's nice to keep the metadata
-					// consistent with the ones from the FileSystemQueryable if
-					// we introduce any changes there.
-					
-#if false
-					// FIXME!
-					indexable = FSQ.FileToIndexable (uri, RemapUri (uri), true);
-#endif
-					indexable = null;
+					// Create the indexable and add the standard properties we
+					// use in the FileSystemQueryable.
+					indexable = new Indexable (uri);
+					FSQ.AddStandardPropertiesToIndexable (indexable, file.Name, Guid.Empty, false);
 
 					// Disable filtering and only index file attributes
 					if (arg_disable_filtering)
