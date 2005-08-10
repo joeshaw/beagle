@@ -285,7 +285,7 @@ AC_ARG_ENABLE([evolution-sharp],
 	 enable_evo_sharp=$enableval,
 	 enable_evo_sharp=auto)
 
-EVOLUTION_SHARP_REQUIRED=0.6
+EVOLUTION_SHARP_REQUIRED=0.8
 AC_SUBST(EVO_SHARP_LIBS)
 EVO_SHARP_PREFIX=`$PKG_CONFIG --variable=prefix evolution-sharp`
 

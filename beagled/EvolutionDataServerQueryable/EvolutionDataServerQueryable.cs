@@ -35,29 +35,22 @@ using System.IO;
 using Beagle.Daemon;
 using Beagle.Util;
 
-using Lucene.Net.Index;
-using Lucene.Net.Store;
-using Lucene.Net.Documents;
-using Lucene.Net.QueryParsers;
-using LNS = Lucene.Net.Search;
+using Evolution;
 
 namespace Beagle.Daemon.EvolutionDataServerQueryable {
 
 	[QueryableFlavor (Name="EvolutionDataServer", Domain=QueryDomain.Local, RequireInotify=false)]
 	public class EvolutionDataServerQueryable : LuceneQueryable {
-		private static Logger log = Logger.Get ("addressbook");
 		//private Scheduler.Priority priority = Scheduler.Priority.Immediate;
 		private Scheduler.Priority priority = Scheduler.Priority.Delayed;
 
 		private string photo_dir;
 		private DateTime sequence_start_time;
 		
-		private DateTime indexed_through = DateTime.MinValue;
+		private DateTime addressbook_indexed_through = DateTime.MinValue;
+		private DateTime calendar_indexed_through = DateTime.MinValue;
 
-		private Evolution.Book addressbook = null;
-		private Evolution.BookView book_view;
-
-		public EvolutionDataServerQueryable () : base ("AddressbookIndex")
+		public EvolutionDataServerQueryable () : base ("EvolutionDataServerIndex")
 		{
 			photo_dir = Path.Combine (Driver.IndexDirectory, "Photos");
 			System.IO.Directory.CreateDirectory (photo_dir);
@@ -67,36 +60,130 @@ namespace Beagle.Daemon.EvolutionDataServerQueryable {
 		{
 			base.Start ();
 
-			try {
-				addressbook = Evolution.Book.NewSystemAddressbook ();
-				addressbook.Open (true);
+			Logger.Log.Info ("Scanning addressbooks and calendars");
+			Stopwatch timer = new Stopwatch ();
+			timer.Start ();
 
-				Evolution.BookQuery q = Evolution.BookQuery.AnyFieldContains ("");
-				ArrayList dummy = new ArrayList ();
-				book_view = addressbook.GetBookView (q, 
-								     dummy, 
-								     -1);
+			EdsSource src;
 
-				book_view.ContactsAdded += OnContactsAdded;
-				book_view.ContactsRemoved += OnContactsRemoved;
-				book_view.ContactsChanged += OnContactsChanged;
-				book_view.SequenceComplete += OnSequenceComplete;
-				
-				sequence_start_time = DateTime.Now;
-				book_view.Start ();
+			src = new EdsSource ("/apps/evolution/addressbook/sources");
+			src.IndexSourceAll += AddressbookIndexSourceAll;
+			src.IndexSourceChanges += AddressbookIndexSourceChanges;
+			src.RemoveSource += AddressbookRemoveSource;
+			src.Index ();
 
-			} catch (Exception ex) {
-				addressbook = null;
-				log.Warn ("Could not open Evolution addressbook.  Addressbook searching is disabled.");
-				log.Debug (ex);
-			}
+			src = new EdsSource ("/apps/evolution/calendar/sources");
+			src.IndexSourceAll += CalendarIndexSourceAll;
+			src.IndexSourceChanges += CalendarIndexSourceChanges;
+			src.RemoveSource += CalendarRemoveSource;
+			src.Index ();
+
+			timer.Stop ();
+			Logger.Log.Info ("Scanned addressbooks and calendars in {0}", timer);
 		}
 
-		private DateTime IndexedThrough {
+		public void Add (Indexable indexable, Scheduler.Priority priority)
+		{
+			Scheduler.Task task;
+			task = NewAddTask (indexable);
+			task.Priority = priority;
+			ThisScheduler.Add (task);
+		}
+
+		public void Remove (Uri uri)
+		{
+			Scheduler.Task task;
+			task = NewRemoveTask (uri);
+			task.Priority = Scheduler.Priority.Immediate;
+			ThisScheduler.Add (task);
+		}
+
+		///////////////////////////////////////
+
+		private void AddressbookIndexSourceAll (Evolution.Source src)
+		{
+			if (!src.IsLocal ()) {
+				Logger.Log.Debug ("Skipping remote addressbook {0}", src.Uri);
+				return;
+			}
+
+			Logger.Log.Debug ("Indexing all data in this addressbook ({0})!", src.Uri);
+
+			Book book = new Book (src);
+			book.Open (true);
+
+			BookView book_view = book.GetBookView (BookQuery.AnyFieldContains (""),
+							       new object [0],
+							       -1);
+
+			book_view.ContactsAdded += OnContactsAdded;
+			book_view.ContactsRemoved += OnContactsRemoved;
+			book_view.ContactsChanged += OnContactsChanged;
+			book_view.SequenceComplete += OnSequenceComplete;
+
+			book_view.Start ();
+		}
+
+		private void AddressbookIndexSourceChanges (Evolution.Source src)
+		{
+			if (!src.IsLocal ()) {
+				Logger.Log.Debug ("Skipping remote addressbook {0}", src.Uri);
+				return;
+			}
+
+			Book book = new Book (src);
+			book.Open (true);
+
+			Contact[] added, changed;
+			string[] removed;
+
+			Logger.Log.Debug ("Getting addressbook changes for {0}", src.Uri);
+			book.GetChanges ("beagle-" + Driver.Fingerprint, out added, out changed, out removed);
+			Logger.Log.Debug ("Addressbook {0}: {1} added, {2} changed, {3} removed",
+					  book.Uri, added.Length, changed.Length, removed.Length);
+
+			foreach (Contact contact in added)
+				AddContact (contact);
+
+			foreach (Contact contact in changed)
+				AddContact (contact);
+
+			foreach (string id in removed)
+				RemoveContact (id);
+
+			BookView book_view = book.GetBookView (BookQuery.AnyFieldContains (""),
+							       new object [0],
+							       -1);
+
+			book_view.ContactsAdded += OnContactsAdded;
+			book_view.ContactsRemoved += OnContactsRemoved;
+			book_view.ContactsChanged += OnContactsChanged;
+			book_view.SequenceComplete += OnSequenceComplete;
+
+			book_view.Start ();
+		}
+
+		private void AddressbookRemoveSource (Evolution.Source src)
+		{
+			// FIXME: We need to index the group's UID and then
+			// we need a way to schedule removal tasks for
+			// anything that matches that lucene property
+			Logger.Log.Debug ("FIXME: Remove addressbook source {0}", src.Uri);
+		}
+
+		private static Uri GetContactUri (Evolution.Contact contact) {
+			return GetContactUri (contact.Id);
+		}
+
+		private static Uri GetContactUri (string id) {
+			return new Uri ("contact://" + id, true); // FIXME!
+		}
+
+		private DateTime AddressbookIndexedThrough {
 			
 			get {
-				if (indexed_through == DateTime.MinValue) {
-					string filename = Path.Combine (IndexStoreDirectory, "IndexedThrough");
+				if (addressbook_indexed_through == DateTime.MinValue) {
+					string filename = Path.Combine (IndexStoreDirectory, "AddressbookIndexedThrough");
 					
 					string line = null;
 					try {
@@ -106,53 +193,19 @@ namespace Beagle.Daemon.EvolutionDataServerQueryable {
 					} catch (Exception ex) { }
 
 					if (line != null)
-						indexed_through = StringFu.StringToDateTime (line);
+						addressbook_indexed_through = StringFu.StringToDateTime (line);
 				}
-				return indexed_through;
+				return addressbook_indexed_through;
 			}
 			
 			set {
-				indexed_through = value;
+				addressbook_indexed_through = value;
 
-				string filename = Path.Combine (IndexStoreDirectory, "IndexedThrough");
+				string filename = Path.Combine (IndexStoreDirectory, "AddressbookIndexedThrough");
 				StreamWriter sw = new StreamWriter (filename);
-				sw.WriteLine (StringFu.DateTimeToString (indexed_through));
+				sw.WriteLine (StringFu.DateTimeToString (addressbook_indexed_through));
 				sw.Close ();
 			}
-		}
-		
-		private Uri GetContactUri (Evolution.Contact contact) {
-			return GetContactUri (contact.Id);
-		}
-
-		private Uri GetContactUri (string id) {
-			return new Uri ("contact://" + id, true); // FIXME!
-		}
-
-		private static string ExtractFieldFromVCardString (string vcard_str, string field)
-		{
-			field = "\n" + field + ":";
-
-			int i = vcard_str.IndexOf (field);
-			if (i == -1)
-				return null;
-			i += field.Length;
-			
-			int j = vcard_str.IndexOf ('\n', i);
-			
-			string retval = null;
-			if (j == -1)
-				retval = vcard_str.Substring (i);
-			else
-				retval = vcard_str.Substring (i, j-i);
-
-			if (retval != null) {
-				retval = retval.Trim ();
-				if (retval.Length == 0)
-					retval = null;
-			}
-
-			return retval;
 		}
 
 		private static DateTime RevStringToDateTime (string date_str)
@@ -177,12 +230,9 @@ namespace Beagle.Daemon.EvolutionDataServerQueryable {
 
 		private Indexable ContactToIndexable (Evolution.Contact contact)
 		{
-			string vcard_str = contact.ToString (Evolution.VCardFormat.Three0);
+			DateTime rev = RevStringToDateTime (contact.Rev);
 
-			string rev_str = ExtractFieldFromVCardString (vcard_str, "REV");
-			DateTime rev = RevStringToDateTime (rev_str);
-
-			if (rev != DateTime.MinValue && rev < IndexedThrough)
+			if (rev != DateTime.MinValue && rev < AddressbookIndexedThrough)
 				return null;
 
 			Indexable indexable = new Indexable (GetContactUri (contact));
@@ -277,44 +327,34 @@ namespace Beagle.Daemon.EvolutionDataServerQueryable {
 			return indexable;
 		}
 
-		private void AddContacts (IEnumerable contacts)
+		private void AddContact (Contact contact)
 		{
-			foreach (Evolution.Contact contact in contacts) {
-				Indexable indexable = ContactToIndexable (contact);
-				if (indexable != null) {
-					Scheduler.Task task;
-					task = NewAddTask (indexable);
-					task.Priority = priority;
-					ThisScheduler.Add (task);
-				}
-			}
+			Indexable indexable = ContactToIndexable (contact);
+			if (indexable != null)
+				Add (indexable, priority);
 		}
-		
-		private void RemoveContacts (IEnumerable contacts)
-		{
-			foreach (string id in contacts) {
 
-				Scheduler.Task task;
-				task = NewRemoveTask (GetContactUri (id));
-				task.Priority = priority;
-				ThisScheduler.Add (task);
+		private void RemoveContact (string id)
+		{
+			Remove (GetContactUri (id));
 				
-				string filename = GetPhotoFilename (id);
-				if (filename != null && File.Exists (filename)) 
-					File.Delete (filename);
-			}
+			string filename = GetPhotoFilename (id);
+			if (filename != null && File.Exists (filename)) 
+				File.Delete (filename);
 		}
 
 		private void OnContactsAdded (object o,
 					      Evolution.ContactsAddedArgs args)
 		{
-			AddContacts (args.Contacts);
+			foreach (Evolution.Contact contact in args.Contacts)
+				AddContact (contact);
 		}
 
 		private void OnContactsChanged (object o,
 						Evolution.ContactsChangedArgs args)
 		{
-			AddContacts (args.Contacts);
+			foreach (Evolution.Contact contact in args.Contacts)
+				AddContact (contact);
 		}
 		
 		private void OnContactsRemoved (object o,
@@ -328,8 +368,9 @@ namespace Beagle.Daemon.EvolutionDataServerQueryable {
 			GLib.List id_list = new GLib.List (args.Ids.Handle,
 							   typeof (string));
 
-			
-			RemoveContacts (id_list);
+
+			foreach (string id in id_list)
+				RemoveContact (id);
 		}
 		
 		private string GetPhotoFilename (string id)
@@ -344,7 +385,7 @@ namespace Beagle.Daemon.EvolutionDataServerQueryable {
 			// running will be re-indexed during the next scan.
 			// That isn't optimal, but is much better than the
 			// current situation.
-			IndexedThrough = sequence_start_time;
+			AddressbookIndexedThrough = sequence_start_time;
 
 			// Now that we're done synching with the original
 			// state of the addressbook, switch all new changes to
@@ -352,6 +393,194 @@ namespace Beagle.Daemon.EvolutionDataServerQueryable {
 			priority = Scheduler.Priority.Immediate;
 		}
 
-	}
+		///////////////////////////////////////
 
+		private void CalendarIndexSourceAll (Evolution.Source src)
+		{
+			if (!src.IsLocal ()) {
+				Logger.Log.Debug ("Skipping remote calendar {0}", src.Uri);
+				return;
+			}
+
+			Logger.Log.Debug ("Indexing all data in this calendar ({0})!", src.Uri);
+
+			Cal cal = new Cal (src, CalSourceType.Event);
+			cal.Open (true);
+
+			CalComponent[] event_list = cal.GetItems ("#t");
+
+			Logger.Log.Debug ("Calendar has {0} items", event_list.Length);
+
+			foreach (CalComponent cc in event_list)
+				IndexCalComponent (cc, Scheduler.Priority.Immediate);
+
+			CalView cal_view = cal.GetCalView ("#t");
+			cal_view.ObjectsAdded += OnObjectsAdded;
+			cal_view.ObjectsModified += OnObjectsModified;
+			cal_view.ObjectsRemoved += OnObjectsRemoved;
+			cal_view.Start ();
+		}
+
+		private void CalendarIndexSourceChanges (Evolution.Source src)
+		{
+			if (!src.IsLocal ()) {
+				Logger.Log.Debug ("Skipping remote calendar {0}", src.Uri);
+				return;
+			}
+
+			Cal cal = new Cal (src, CalSourceType.Event);
+			cal.Open (true);
+
+			CalComponent[] new_items, update_items;
+			string[] remove_items;
+
+			Logger.Log.Debug ("Getting calendar changes for {0}", src.Uri);
+			cal.GetChanges ("beagle-" + this.Driver.Fingerprint, out new_items, out update_items, out remove_items);
+			Logger.Log.Debug ("Calendar {0}: {1} new items, {2} updated items, {3} removed items",
+					  cal.Uri, new_items.Length, update_items.Length, remove_items.Length);
+			
+			foreach (CalComponent cc in new_items)
+				IndexCalComponent (cc, Scheduler.Priority.Immediate);
+
+			foreach (CalComponent cc in update_items)
+				IndexCalComponent (cc, Scheduler.Priority.Immediate);
+
+			foreach (string id in remove_items) {
+				// FIXME: Broken in evo-sharp right now
+				//RemoveCalComponent (id);
+			}
+
+			CalView cal_view = cal.GetCalView ("#t");
+			cal_view.ObjectsAdded += OnObjectsAdded;
+			cal_view.ObjectsModified += OnObjectsModified;
+			cal_view.ObjectsRemoved += OnObjectsRemoved;
+			cal_view.Start ();
+		}
+
+		private void CalendarRemoveSource (Evolution.Source src)
+		{
+			// FIXME: We need to index the group's UID and then
+			// we need a way to schedule removal tasks for
+			// anything that matches that lucene property
+			Logger.Log.Debug ("FIXME: Remove calendar source {0}", src.Uri);
+		}
+
+		private static Uri GetCalendarUri (CalComponent cc) {
+			return GetContactUri (cc.Uid);
+		}
+
+		private static Uri GetCalendarUri (string id) {
+			return new Uri ("calendar://" + id, true); // FIXME!
+		}
+
+		private DateTime CalendarIndexedThrough {
+			
+			get {
+				if (calendar_indexed_through == DateTime.MinValue) {
+					string filename = Path.Combine (IndexStoreDirectory, "CalendarIndexedThrough");
+					
+					string line = null;
+					try {
+						StreamReader sr = new StreamReader (filename);
+						line = sr.ReadLine ();
+						sr.Close ();
+					} catch (Exception ex) { }
+
+					if (line != null)
+						calendar_indexed_through = StringFu.StringToDateTime (line);
+				}
+				return calendar_indexed_through;
+			}
+			
+			set {
+				calendar_indexed_through = value;
+
+				string filename = Path.Combine (IndexStoreDirectory, "CalendarIndexedThrough");
+				StreamWriter sw = new StreamWriter (filename);
+				sw.WriteLine (StringFu.DateTimeToString (calendar_indexed_through));
+				sw.Close ();
+			}
+		}
+
+		private void IndexCalComponent (CalComponent cc, Scheduler.Priority priority)
+		{
+			Indexable indexable = CalComponentToIndexable (cc);
+			Add (indexable, priority);
+		}
+
+		private void RemoveCalComponent (string id)
+		{
+			Remove (GetCalendarUri (id));
+		}
+
+		private Indexable CalComponentToIndexable (CalComponent cc)
+		{
+			Indexable indexable = new Indexable (new Uri ("calendar:///" + cc.Uid));
+
+			indexable.Timestamp = cc.Dtstart;
+			indexable.Type = "Calendar";
+
+			indexable.AddProperty (Property.NewKeyword ("fixme:uid", cc.Uid));
+			indexable.AddProperty (Property.NewDate ("fixme:starttime", cc.Dtstart));
+			indexable.AddProperty (Property.NewDate ("fixme:endtime", cc.Dtend));
+
+			foreach (string attendee in cc.Attendees)
+				indexable.AddProperty (Property.New ("fixme:attendee", attendee));
+
+			foreach (string comment in cc.Comments)
+				indexable.AddProperty (Property.New ("fixme:comment", comment));
+			
+			foreach (string description in cc.Descriptions)
+				indexable.AddProperty (Property.New ("fixme:description", description));
+
+			foreach (string summary in cc.Summaries)
+				indexable.AddProperty (Property.New ("fixme:summary", summary));
+
+			foreach (string category in cc.Categories)
+				indexable.AddProperty (Property.NewKeyword ("fixme:category", category));
+
+			foreach (string location in cc.Location)
+				indexable.AddProperty (Property.New ("fixme:location", location));
+
+			return indexable;
+		}
+
+		private void OnObjectsAdded (object o, ObjectsAddedArgs args)
+		{
+			CalView cal_view = (CalView) o;
+
+			foreach (CalComponent cc in CalUtil.CalCompFromICal (args.Objects.Handle, cal_view.Client)) {
+				// If the minimum date is unset/invalid,
+				// index it.
+				if (cc.LastModified <= CalUtil.MinDate || cc.LastModified > CalendarIndexedThrough)
+					IndexCalComponent (cc, Scheduler.Priority.Immediate);
+			}
+		}
+
+		private void OnObjectsModified (object o, ObjectsModifiedArgs args)
+		{
+			CalView cal_view = (CalView) o;
+			
+			foreach (CalComponent cc in CalUtil.CalCompFromICal (args.Objects.Handle, cal_view.Client))
+				IndexCalComponent (cc, Scheduler.Priority.Immediate);
+		}
+
+		private void OnObjectsRemoved (object o, ObjectsRemovedArgs args)
+		{
+			// FIXME: This is a temporary workaround for the 
+			// fact that the evolution bindings return a 
+			// GLib.List with an object type, but there
+			// are really strings in there
+
+			GLib.List id_list = new GLib.List (args.Uids.Handle,
+							   typeof (string));
+
+			foreach (string uid in id_list) {
+				Scheduler.Task task;
+				task = NewRemoveTask (new Uri ("calendar:///" + uid));
+				task.Priority = Scheduler.Priority.Immediate;
+				ThisScheduler.Add (task);
+			}
+		}
+	}
 }

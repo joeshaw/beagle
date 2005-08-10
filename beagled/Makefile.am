@@ -254,7 +254,8 @@ GAIM_LOG_QUERYABLE_CSFILES =				\
 
 edsqueryable = $(srcdir)/EvolutionDataServerQueryable
 EDS_QUERYABLE_CSFILES =                                 \
-	$(edsqueryable)/EvolutionDataServerQueryable.cs
+	$(edsqueryable)/EvolutionDataServerQueryable.cs	\
+	$(edsqueryable)/EdsSource.cs
 
 tomboyqueryable = $(srcdir)/TomboyQueryable
 TOMBOY_QUERYABLE_CSFILES =				\
@@ -286,11 +287,6 @@ KOPETE_QUERYABLE_CSFILES =				\
 indexingservicequeryable = $(srcdir)/IndexingServiceQueryable
 INDEXING_SERVICE_QUERYABLE_CSFILES =			\
 	$(indexingservicequeryable)/IndexingServiceQueryable.cs
-
-#calendarqueryable = $(srcdir)/CalendarQueryable
-#CALENDAR_QUERYABLE_CSFILES =				\
-#	$(calendarqueryable)/CalendarQueryable.cs	\
-#	$(calendarqueryable)/ICalParser/*.cs
 
 DAEMON_DLL_CSFILES = 						\
 	$(LUCENE_CSFILES)					\
@@ -361,7 +357,7 @@ endif
 
 if ENABLE_EVO_SHARP
 DAEMON_DLL_CSFLAGS += -define:ENABLE_EVO_SHARP
-DAEMON_DLL_CSFILES += 	$(EDS_QUERYABLE_CSFILES)
+DAEMON_DLL_CSFILES += $(EDS_QUERYABLE_CSFILES)
 DAEMON_DLL_ASSEMBLIES += $(EVO_SHARP_LIBS)
 endif
 
