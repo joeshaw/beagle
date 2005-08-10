@@ -570,7 +570,6 @@ namespace Beagle.Daemon.EvolutionDataServerQueryable {
 
 		private void OnObjectsModified (object o, ObjectsModifiedArgs args)
 		{
-			Console.WriteLine ("OBJECTS MODIFIED");
 			CalView cal_view = (CalView) o;
 			
 			foreach (CalComponent cc in CalUtil.CalCompFromICal (args.Objects.Handle, cal_view.Client)) {
