@@ -1,7 +1,7 @@
 //
 // FileNameFilter.cs
 //
-// Copyright (C) 2004 Novell, Inc.
+// Copyright (C) 2004, 2005 Novell, Inc.
 //
 
 //
@@ -34,17 +34,30 @@ using Beagle.Util;
 namespace Beagle.Daemon.FileSystemQueryable {
 
 	public class FileNameFilter {
-		
-		private FileSystemModel model = null;
 
-		//////////////////////////////////////////////////////////////////////
+		private FileSystemQueryable queryable;
+
+		private bool Debug = false;
 		
+		// All user defined excludes, used for determining deltas
+		// when the configuration is reloaded.
 		private ArrayList excludes = new ArrayList ();
-		private ArrayList default_excludes = new ArrayList ();
+
+		// User defined paths to exclude
+		private ArrayList exclude_paths = new ArrayList ();
+		
+		// User defined exclude patterns
+		private ArrayList exclude_patterns = new ArrayList ();
+
+		// Our default exclude patterns
+		private ArrayList exclude_patterns_default = new ArrayList ();
+
+		/////////////////////////////////////////////////////////////
+
+		// Setup our default exclude patterns.
 
 		private void SetupDefaultPatternsToIgnore ()
 		{
-			// Add our default skip patterns.
 			// FIXME: This probably shouldn't be hard-wired.  Or should it?
 			AddDefaultPatternToIgnore (new string [] {
 				                   ".*",
@@ -88,74 +101,69 @@ namespace Beagle.Daemon.FileSystemQueryable {
 						   "/conf[0-9]+.file/"
 			});
 		}
-		
-		public void AddDefaultPatternToIgnore (IEnumerable patterns)
+
+		private void AddDefaultPatternToIgnore (IEnumerable patterns)
 		{
 			foreach (string pattern in patterns)
-				default_excludes.Add (new ExcludeItem (ExcludeType.Pattern, pattern));
+				exclude_patterns_default.Add (new ExcludeItem (ExcludeType.Pattern, pattern));
 		}
 		
 		/////////////////////////////////////////////////////////////
 
-		public void AddPatternToIgnore (string pattern)
+		private void AddExclude (ExcludeItem exclude)
 		{
-			AddExclude (new ExcludeItem (ExcludeType.Pattern, pattern));
-		}
-		
-		public void AddPatternToIgnore (IEnumerable patterns)
-		{
-			foreach (string pattern in patterns)
-				AddPatternToIgnore (pattern);
-		}
+			if (Debug)
+				Logger.Log.Debug ("FileNameFilter: Adding ExcludeItem (value={0}, type={1})", exclude.Value, exclude.Type);
 
-		public void AddPathToIgnore (string path) 
-		{
-			AddExclude (new ExcludeItem (ExcludeType.Path, path));
-		}
-
-		public void AddPathToIgnore (IEnumerable paths)
-		{
-			foreach (string path in paths)
-				AddPathToIgnore (path);
-		}
-
-		/////////////////////////////////////////////////////////////
-
-		public void AddExclude (ExcludeItem exclude)
-		{
-			if (exclude.Type != ExcludeType.Path && exclude.Type != ExcludeType.Pattern)
+			switch (exclude.Type) {
+			case ExcludeType.Path:
+				exclude_paths.Add (exclude);
+				break;
+			case ExcludeType.Pattern:
+				exclude_patterns.Add (exclude);
+				break;
+			default: 
 				return;
+			}
 
-			Logger.Log.Debug ("FileNameFilter: Adding ExcludeItem (value={0}, type={1})", exclude.Value, exclude.Type);
-
-			if (exclude.Type == ExcludeType.Path)
-				model.Delete (exclude.Value);
-
-			if (!excludes.Contains (exclude))
-				excludes.Add (exclude);
+			excludes.Add (exclude);
 		}
 
-		public bool RemoveExclude (ExcludeItem exclude)
+		private bool RemoveExclude (ExcludeItem exclude)
 		{
-			if (!excludes.Contains (exclude))
+			if (Debug)
+				Logger.Log.Debug ("FileNameFilter: Removing ExcludeItem (value={0}, type={1})", exclude.Value, exclude.Type);
+
+			switch (exclude.Type) {
+			case ExcludeType.Path:
+				exclude_paths.Remove (exclude);
+				break;
+			case ExcludeType.Pattern:
+				exclude_patterns.Remove (exclude);
+				break;
+			default: 
 				return false;
-
-			Logger.Log.Debug ("FileNameFilter: Removing ExcludeItem (value={0}, type={1})", exclude.Value, exclude.Type);
-
+			}
+			
 			excludes.Remove (exclude);
+
 			return true;
 		}
 		
 		/////////////////////////////////////////////////////////////
 
-		public FileNameFilter (FileSystemModel model)
+		public FileNameFilter (FileSystemQueryable queryable)
 		{
-			this.model = model;
+			this.queryable = queryable;
 
 			SetupDefaultPatternsToIgnore ();
-
 			LoadConfiguration ();
 		}
+
+		/////////////////////////////////////////////////////////////
+
+		// Load data from configuration. Intersect deltas to the currently active excludes and
+		// implement any changes upon notification.
 
 		private void LoadConfiguration () 
 		{
@@ -167,75 +175,84 @@ namespace Beagle.Daemon.FileSystemQueryable {
 
 		private void OnConfigurationChanged (Conf.Section section)
 		{
+			ArrayList exclude_paths_removed = new ArrayList ();
+
+			IList excludes_wanted = Conf.Indexing.Excludes;
 			IList excludes_to_add, excludes_to_remove;
 			bool clear_fs_state = false;
 
-			ArrayFu.IntersectListChanges (Conf.Indexing.Excludes, excludes, out excludes_to_add, out excludes_to_remove);
+			ArrayFu.IntersectListChanges (excludes_wanted, 
+						      excludes, 
+						      out excludes_to_add, 
+						      out excludes_to_remove);
 
+			// Process any excludes we think we should remove
 			foreach (ExcludeItem exclude in excludes_to_remove) {
 				if (exclude.Type == ExcludeType.Pattern)
 					clear_fs_state = true;
+				else if (exclude.Type == ExcludeType.Path)
+					exclude_paths_removed.Add (exclude.Value);
 				RemoveExclude (exclude);
 			}
 
+			// Process any excludes we found to be new
 			foreach (ExcludeItem exclude in excludes_to_add)
 				AddExclude (exclude);
 
 			// If an exclude pattern is removed, we need to recrawl everything
 			// so that we can index those files which were previously ignored.
 			if (clear_fs_state)
-				model.SetAllToUnknown ();
+				queryable.RecrawlEverything ();
 
-			// FIXME: When an exclude path/pattern is added, we need to deindex
-			// the files in question.
-			// FIXME: When an exclude path is removed, we need to recrawl that
-			// particular path.
+			// Make sure we re-crawl the paths we used to ignored but
+			// no longer do.
+			foreach (string path in exclude_paths_removed) 
+				queryable.Recrawl (path);
 		}
 
 		/////////////////////////////////////////////////////////////
 
-		// FIXME: We could make this more efficient by storing more information.
-		// In particular, if ~/foo is an IgnoreAll directory, we could store
-		// that info in the PerDirectoryInfo of subdir ~/foo/bar so that
-		// we could avoid walking up the chain of directories.
-		public bool Ignore (string path)
+		// Try to match any of our current excludes to determine if 
+		// we should ignore a file/directory or not.
+
+		public bool Ignore (DirectoryModel parent, string name, bool is_directory) 
 		{
-			if (! Path.IsPathRooted (path))
-				path = Path.GetFullPath (path);
+			if (Debug)
+				Logger.Log.Debug ("*** Ignore Check (parent={0}, name={1}, is_directory={2})", (parent != null) ? parent.FullName : null, name, is_directory);
 
-			foreach (ExcludeItem exclude in excludes)
-				if (exclude.Type == ExcludeType.Path && exclude.IsMatch (path))
+			// If parent is null, we have a root. But it might not be
+			// active anymore so we need to check if it's still in the list.
+			if (parent == null && queryable.Roots.Contains (name)) {
+				if (Debug)
+					Logger.Log.Debug ("*** Ignore Check Passed");
+				return false;
+			}
+			
+			string path;
+			if (parent != null)
+				path = Path.Combine (parent.FullName, name);
+			else
+				path = name;
+			
+			// Exclude paths
+			foreach (ExcludeItem exclude in exclude_paths)
+				if (exclude.IsMatch (path))
 					return true;
-
-			foreach (FileSystemModel.Directory root in model.Roots)
-				if (root.FullName == path)
-					return false;
-
-			string name = Path.GetFileName (path);
-
-			// Ugh..
-
-			foreach (ExcludeItem exclude in excludes)
-				if (exclude.Type == ExcludeType.Pattern && exclude.IsMatch (name))
-					return true;
-
-			foreach (ExcludeItem exclude in default_excludes)
+			
+			// Exclude patterns
+			foreach (ExcludeItem exclude in exclude_patterns)
 				if (exclude.IsMatch (name))
 					return true;
-
-			if (path == Path.GetPathRoot (path))
-				return true;
-
-			string dir = Path.GetDirectoryName (path);
-
-			// A file should be ignored if any of its parent directories
-			// is ignored.
-			return Ignore (dir);
-		}
-
-		public bool Ignore (FileSystemInfo info)
-		{
-			return Ignore (info.FullName);
+			
+			// Default exclude patterns
+			foreach (ExcludeItem exclude in exclude_patterns_default)
+				if (exclude.IsMatch (name))
+					return true;
+			
+			// This is kind of a hack, but if parent.Parent is null, we need to pass
+			// the full path of the directory as second argument to Ignore to allow
+			// us to do the root check.
+			return Ignore (parent.Parent, (parent.Parent == null) ? parent.FullName : parent.Name, true);
 		}
 	}		
 }

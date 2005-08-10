@@ -243,11 +243,8 @@ namespace Beagle.Daemon.FileSystemQueryable {
 
 		private void Detatch_Unlocked ()
 		{
-			if (IsRoot) {
-				string msg;
-				msg = String.Format ("Can't detatch root '{0}'", FullName);
-				throw new Exception (msg);
-			}
+			if (IsRoot) 
+				rooted_to = null;
 
 			if (parent != null)
 				parent.children.Remove (name);

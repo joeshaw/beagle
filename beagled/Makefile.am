@@ -241,6 +241,7 @@ FILE_SYSTEM_QUERYABLE_CSFILES =					\
 	$(fsqueryabledir)/TreeCrawlTask.cs			\
 	$(fsqueryabledir)/FileCrawlTask.cs			\
 	$(fsqueryabledir)/DirectoryIndexableGenerator.cs	\
+	$(fsqueryabledir)/FileNameFilter.cs			\
 	$(fsqueryabledir)/LuceneNameResolver.cs			\
 	$(fsqueryabledir)/FileSystemQueryable.cs		\
 	$(fsqueryabledir)/IFileEventBackend.cs			\

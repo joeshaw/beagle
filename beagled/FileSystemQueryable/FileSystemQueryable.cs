@@ -39,7 +39,7 @@ namespace Beagle.Daemon.FileSystemQueryable {
 	[QueryableFlavor (Name="Files", Domain=QueryDomain.Local, RequireInotify=false)]
 	public class FileSystemQueryable : LuceneQueryable {
 
-		static public bool Debug = false;
+		static public bool Debug = true;
 
 		private const string OldExternalUriPropKey = LuceneCommon.UnindexedNamespace + "OldExternalUri";
 		private const string SplitFilenamePropKey = LuceneQueryingDriver.PrivateNamespace + "SplitFilename";
@@ -66,15 +66,14 @@ namespace Beagle.Daemon.FileSystemQueryable {
 		private FileCrawlTask file_crawl_task;
 
 		private ArrayList roots = new ArrayList ();
-
-		// These are roots that have not yet been indexed.
-		private Hashtable pending_roots = UriFu.NewHashtable ();
+		private ArrayList roots_by_path = new ArrayList ();
 
 		// This is a cache of the external Uris of removed
 		// objects, keyed on their internal Uris.  We use this
 		// to remap Uris on removes.
 		private Hashtable removed_uri_cache = UriFu.NewHashtable ();
 
+		private FileNameFilter filter;
 		
 		// This is just a copy of the LuceneQueryable's QueryingDriver
 		// cast into the right type for doing internal->external Uri
@@ -117,6 +116,9 @@ namespace Beagle.Daemon.FileSystemQueryable {
 			name_resolver = (LuceneNameResolver) Driver;
 			PreloadDirectoryNameInfo ();
 
+			// Setup our file-name filter
+			filter = new FileNameFilter (this);
+
 			// Do the right thing when paths expire
 			DirectoryModel.ExpireEvent +=
 				new DirectoryModel.ExpireHandler (ExpireDirectoryPath);
@@ -135,6 +137,9 @@ namespace Beagle.Daemon.FileSystemQueryable {
 			return new LuceneNameResolver (index_name, minor_version, read_only_mode);
 		}
 
+		public FileNameFilter Filter {
+			get { return filter; }
+		}
 
 		//////////////////////////////////////////////////////////////////////////
 
@@ -150,10 +155,10 @@ namespace Beagle.Daemon.FileSystemQueryable {
 			return indexable;
 		}
 
-		public static void AddStandardPropertiesToIndexable (Indexable indexable, 
-								      string    name,
-								      Guid      parent_id,
-								      bool      mutable)
+		public static void AddStandardPropertiesToIndexable (Indexable indexable,
+								     string    name, 
+								     Guid      parent_id,
+								     bool      mutable)
 		{
 			Property prop;
 
@@ -316,41 +321,6 @@ namespace Beagle.Daemon.FileSystemQueryable {
 		//////////////////////////////////////////////////////////////////////////
 
 		//
-		// Ignoring files by name, path, etc.
-		//
-
-		// FIXME: This shouldn't all be hard-wired.
-
-		public bool Ignore (string parent_dir_name, string file_name, bool is_directory)
-		{
-			char name_first_char, name_last_char;
-			name_first_char = file_name [0];
-			name_last_char = file_name [file_name.Length-1];
-			
-			if (name_first_char == '.'
-			    || (name_first_char == '#' && name_last_char == '#')
-			    || name_last_char == '~')
-				return true;
-
-			if (is_directory && (file_name == "CVS" || file_name == "SCCS" || file_name == "po"))
-				return true;
-
-			return false;
-		}
-
-		public bool Ignore  (DirectoryModel parent_dir, string name, bool is_directory)
-		{
-			// This might happen when dealing with a root --- and we should
-			// never want to ignore a root, right?
-			if (parent_dir == null)
-				return false;
-
-			return Ignore (parent_dir.FullName, name, is_directory);
-		}
-
-		//////////////////////////////////////////////////////////////////////////
-
-		//
 		// Directory-related methods
 		//
 
@@ -385,7 +355,7 @@ namespace Beagle.Daemon.FileSystemQueryable {
 		public void AddDirectory (DirectoryModel parent, string name)
 		{
 			// Ignore the stuff we want to ignore.
-			if (Ignore (parent, name, true))
+			if (filter.Ignore (parent, name, true))
 				return;
 
 			string path;
@@ -439,7 +409,48 @@ namespace Beagle.Daemon.FileSystemQueryable {
 
 		public void AddRoot (string path)
 		{
+			Logger.Log.Debug ("Adding root: {0}", path);
+
+			if (roots_by_path.Contains (path)) {
+				Logger.Log.Error ("Trying to add an existing root: {0}", path);
+				return;
+			}
+
+			// We need to have the path key in the roots hashtable
+			// for the filtering to work as we'd like before the root 
+			// is actually added.
+			roots_by_path.Add (path);
+
 			AddDirectory (null, path);
+		}
+
+		public void RemoveRoot (string path)
+		{
+			Logger.Log.Debug ("Removing root: {0}", path);
+
+			if (! roots_by_path.Contains (path)) {
+				Logger.Log.Error ("Trying to remove a non-existing root: {0}", path);
+				return;
+			}
+				
+			// Find our directory model for the root
+			DirectoryModel dir;
+			dir = GetDirectoryModelByPath (path);
+
+			if (dir == null) {
+				Logger.Log.Error ("Could not find directory-model for root: {0}", path);
+				return;
+			}
+
+			// FIXME: Make sure we're emptying the crawler task of any sub-directories 
+			// to the root we're removing. It's not a big deal since we do an Ignore-check
+			// in there, but it would be nice.
+
+			roots_by_path.Remove (path);
+			roots.Remove (dir);
+
+			// Clean out the root from our directory cache.
+			RemoveDirectory (dir);
 		}
 
 		private void ScheduleDirectory (string         name,
@@ -631,12 +642,59 @@ namespace Beagle.Daemon.FileSystemQueryable {
 			dir.MarkAsClean ();
 		}
 
+		public void Recrawl (string path) 
+		{
+			// Try to find a directory model for the path specified
+			// so that we can re-crawl it.
+			DirectoryModel dir;
+			dir = GetDirectoryModelByPath (path);
+
+			bool path_is_registered = true;
+
+			if (dir == null) {
+				dir = GetDirectoryModelByPath (Path.GetDirectoryName (path));
+				path_is_registered = false;
+
+				if (dir == null) {
+					Logger.Log.Debug ("Unable to get directory-model for path: {0}", path);
+					return;
+				}
+			}
+			
+			Logger.Log.Debug ("Re-crawling {0}", dir.FullName);
+			
+			if (tree_crawl_task.Add (dir))
+				ThisScheduler.Add (tree_crawl_task);
+			
+			if (path_is_registered)
+				SetDirectoryState_Recursive (dir, DirectoryState.PossiblyClean);
+
+			ActivateFileCrawling ();
+		}
+
+		public void RecrawlEverything ()
+		{
+			Logger.Log.Debug ("Re-crawling all directories");
+			
+			foreach (DirectoryModel root in roots)
+				SetDirectoryState_Recursive (root, DirectoryState.PossiblyClean);
+			
+			ActivateFileCrawling ();
+		}
+		
+		private void SetDirectoryState_Recursive (DirectoryModel dir, DirectoryState state)
+		{
+			dir.State = state;
+			foreach (DirectoryModel sub_dir in dir.Children) 
+				SetDirectoryState_Recursive (sub_dir, state);
+		}
+
 		private void ActivateFileCrawling ()
 		{
 			if (! file_crawl_task.IsActive)
 				ThisScheduler.Add (file_crawl_task);
 		}
-
+		
 		//////////////////////////////////////////////////////////////////////////
 
 		//
@@ -665,10 +723,10 @@ namespace Beagle.Daemon.FileSystemQueryable {
 			if (Debug)
 				Logger.Log.Debug ("*** What should we do with {0}?", path);
 
-			if (Ignore (dir, name, false)) {
+			if (filter.Ignore (dir, name, false)) {
 				// If there are attributes on the file, we must have indexed
-				// it previously.  Since we are ignoring it now, we should drop
-				// it from the index.
+				// it previously.  Since we are ignoring it now, we should strip
+				// any file attributes from it.
 				if (attr != null) {
 					if (Debug)
 						Logger.Log.Debug ("*** Forget it: File is ignored but has attributes");
@@ -811,10 +869,8 @@ namespace Beagle.Daemon.FileSystemQueryable {
 				break;
 
 			case RequiredAction.Forget:
-				// FIXME: cache the file uri so that notification will work
-				Scheduler.Task task;
-				task = NewRemoveTask (GuidFu.ToUri (unique_id));
-				ThisScheduler.Add (task);
+				FileAttributesStore.Drop (path);
+				
 				break;
 			}
 
@@ -840,7 +896,7 @@ namespace Beagle.Daemon.FileSystemQueryable {
 			if (! File.Exists (path))
 				return;
 			
-			if (Ignore (dir, name, false))
+			if (filter.Ignore (dir, name, false))
 				return;
 
 			FileAttributes attr;
@@ -895,8 +951,8 @@ namespace Beagle.Daemon.FileSystemQueryable {
 				      DirectoryModel new_dir, string new_name)
 		{
 			bool old_ignore, new_ignore;
-			old_ignore = Ignore (old_dir, old_name, false);
-			new_ignore = Ignore (new_dir, new_name, false);
+			old_ignore = filter.Ignore (old_dir, old_name, false);
+			new_ignore = filter.Ignore (new_dir, new_name, false);
 
 			if (old_ignore && new_ignore)
 				return;
@@ -955,6 +1011,12 @@ namespace Beagle.Daemon.FileSystemQueryable {
 		
 		// Configuration stuff
 
+		public IList Roots {
+			get {
+				return roots_by_path;
+			}
+		}
+		
 		private void LoadConfiguration () 
 		{
 			if (Conf.Indexing.IndexHomeDir)
@@ -962,28 +1024,25 @@ namespace Beagle.Daemon.FileSystemQueryable {
 			
 			foreach (string root in Conf.Indexing.Roots)
 				AddRoot (root);
-
+			
 			Conf.Subscribe (typeof (Conf.IndexingConfig), OnConfigurationChanged);
 		}
-
+		
 		private void OnConfigurationChanged (Conf.Section section)
 		{
-#if false
 			ArrayList roots_wanted = new ArrayList (Conf.Indexing.Roots);
 			
 			if (Conf.Indexing.IndexHomeDir)
 				roots_wanted.Add (PathFinder.HomeDir);
 			
 			IList roots_to_add, roots_to_remove;
-
-			ArrayFu.IntersectListChanges (roots_wanted, RootsAsPaths, out roots_to_add, out roots_to_remove);
+			ArrayFu.IntersectListChanges (roots_wanted, Roots, out roots_to_add, out roots_to_remove);
 
 			foreach (string root in roots_to_remove)
 				RemoveRoot (root);
 
 			foreach (string root in roots_to_add)
 				AddRoot (root);
-#endif
 		}
 
 		//////////////////////////////////////////////////////////////////////////
@@ -1048,6 +1107,7 @@ namespace Beagle.Daemon.FileSystemQueryable {
 			external_uri = removed_uri_cache [receipt.Uri] as Uri;
 			if (external_uri == null)
 				throw new Exception ("No cached external Uri for " + receipt.Uri);
+
 			removed_uri_cache.Remove (receipt.Uri);
 			
 			receipt.Uri = external_uri;
@@ -1075,13 +1135,13 @@ namespace Beagle.Daemon.FileSystemQueryable {
 				Logger.Log.Debug ("HitFilter mapped '{0}' {1} to '{2}'",
 						  name, parent_id, path);
 
+			bool is_directory = (hit.MimeType == "inode/directory");
+
 			bool exists;
-			if (hit.MimeType == "inode/directory")
+			if (is_directory)
 				exists = Directory.Exists (path);
 			else
 				exists = File.Exists (path);
-
-			// FIXME: Need to filter by ignore-status here.
 
 			// If the file doesn't exist, we do not schedule a removal and
 			// return false.  This is to avoid "losing" files if they are
@@ -1093,6 +1153,15 @@ namespace Beagle.Daemon.FileSystemQueryable {
 			// FIXME: It would be safe if we were in a known state, right?
 			// i.e. every DirectoryModel is clean.
 			if (! exists)
+				return false;
+
+			// Fetch the parent directory model from our cache to do clever 
+			// filterint to determine if we're ignoring it or not.
+			DirectoryModel parent;
+			parent = GetDirectoryModelByPath (Path.GetDirectoryName (path));
+
+			// Check the ignore status of the hit
+			if (filter.Ignore (parent, Path.GetFileName (path), is_directory))
 				return false;
 
 			// Store the hit's internal uri in a property
@@ -1113,7 +1182,7 @@ namespace Beagle.Daemon.FileSystemQueryable {
 			// is stored in a property.
 			Uri uri;
 			uri = UriFu.UriStringToUri (hit ["beagle:InternalUri"]);
-			
+
 			string path;
 			path = TextCache.UserCache.LookupPathRaw (uri);
 
@@ -1123,7 +1192,7 @@ namespace Beagle.Daemon.FileSystemQueryable {
 			// If this is self-cached, use the remapped Uri
 			if (path == TextCache.SELF_CACHE_TAG)
 				path = hit.Uri.LocalPath;
-			
+
 			return SnippetFu.GetSnippetFromFile (query_terms, path);
 		}
 
