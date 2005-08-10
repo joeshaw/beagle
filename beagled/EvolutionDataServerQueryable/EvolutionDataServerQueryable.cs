@@ -45,7 +45,7 @@ namespace Beagle.Daemon.EvolutionDataServerQueryable {
 		private Scheduler.Priority priority = Scheduler.Priority.Delayed;
 
 		private string photo_dir;
-		private DateTime sequence_start_time;
+		private DateTime start_time;
 		
 		private DateTime addressbook_indexed_through = DateTime.MinValue;
 		private DateTime calendar_indexed_through = DateTime.MinValue;
@@ -63,6 +63,8 @@ namespace Beagle.Daemon.EvolutionDataServerQueryable {
 			Logger.Log.Info ("Scanning addressbooks and calendars");
 			Stopwatch timer = new Stopwatch ();
 			timer.Start ();
+
+			start_time = DateTime.Now;
 
 			EdsSource src;
 
@@ -385,7 +387,7 @@ namespace Beagle.Daemon.EvolutionDataServerQueryable {
 			// running will be re-indexed during the next scan.
 			// That isn't optimal, but is much better than the
 			// current situation.
-			AddressbookIndexedThrough = sequence_start_time;
+			AddressbookIndexedThrough = start_time;
 
 			// Now that we're done synching with the original
 			// state of the addressbook, switch all new changes to
@@ -418,6 +420,7 @@ namespace Beagle.Daemon.EvolutionDataServerQueryable {
 			cal_view.ObjectsAdded += OnObjectsAdded;
 			cal_view.ObjectsModified += OnObjectsModified;
 			cal_view.ObjectsRemoved += OnObjectsRemoved;
+			cal_view.ViewDone += OnViewDone;
 			cal_view.Start ();
 		}
 
@@ -446,7 +449,7 @@ namespace Beagle.Daemon.EvolutionDataServerQueryable {
 				IndexCalComponent (cc, Scheduler.Priority.Immediate);
 
 			foreach (string id in remove_items) {
-				// FIXME: Broken in evo-sharp right now
+				// FIXME: Broken in e-d-s right now
 				//RemoveCalComponent (id);
 			}
 
@@ -454,6 +457,7 @@ namespace Beagle.Daemon.EvolutionDataServerQueryable {
 			cal_view.ObjectsAdded += OnObjectsAdded;
 			cal_view.ObjectsModified += OnObjectsModified;
 			cal_view.ObjectsRemoved += OnObjectsRemoved;
+			cal_view.ViewDone += OnViewDone;
 			cal_view.Start ();
 		}
 
@@ -550,19 +554,38 @@ namespace Beagle.Daemon.EvolutionDataServerQueryable {
 			CalView cal_view = (CalView) o;
 
 			foreach (CalComponent cc in CalUtil.CalCompFromICal (args.Objects.Handle, cal_view.Client)) {
-				// If the minimum date is unset/invalid,
-				// index it.
-				if (cc.LastModified <= CalUtil.MinDate || cc.LastModified > CalendarIndexedThrough)
+				DateTime compare_date = DateTime.MinValue;
+
+				if (cc.LastModified > CalUtil.MinDate)
+					compare_date = cc.LastModified;
+				else if (cc.Dtstamp > CalUtil.MinDate)
+					compare_date = cc.Dtstamp;
+				else if (cc.Created > CalUtil.MinDate)
+					compare_date = cc.Created;
+
+				if (compare_date == DateTime.MinValue || compare_date.ToLocalTime () > CalendarIndexedThrough)
 					IndexCalComponent (cc, Scheduler.Priority.Immediate);
 			}
 		}
 
 		private void OnObjectsModified (object o, ObjectsModifiedArgs args)
 		{
+			Console.WriteLine ("OBJECTS MODIFIED");
 			CalView cal_view = (CalView) o;
 			
-			foreach (CalComponent cc in CalUtil.CalCompFromICal (args.Objects.Handle, cal_view.Client))
-				IndexCalComponent (cc, Scheduler.Priority.Immediate);
+			foreach (CalComponent cc in CalUtil.CalCompFromICal (args.Objects.Handle, cal_view.Client)) {
+				DateTime compare_date = DateTime.MinValue;
+
+				if (cc.LastModified > CalUtil.MinDate)
+					compare_date = cc.LastModified;
+				else if (cc.Dtstamp > CalUtil.MinDate)
+					compare_date = cc.Dtstamp;
+				else if (cc.Created > CalUtil.MinDate)
+					compare_date = cc.Created;
+
+				if (compare_date == DateTime.MinValue || compare_date.ToLocalTime () > CalendarIndexedThrough)
+					IndexCalComponent (cc, Scheduler.Priority.Immediate);
+			}
 		}
 
 		private void OnObjectsRemoved (object o, ObjectsRemovedArgs args)
@@ -581,6 +604,15 @@ namespace Beagle.Daemon.EvolutionDataServerQueryable {
 				task.Priority = Scheduler.Priority.Immediate;
 				ThisScheduler.Add (task);
 			}
+		}
+
+		private void OnViewDone (object o, ViewDoneArgs args)
+		{
+			// Contacts that get changed while the beagled is
+			// running will be re-indexed during the next scan.
+			// That isn't optimal, but is much better than the
+			// current situation.
+			CalendarIndexedThrough = start_time;
 		}
 	}
 }
