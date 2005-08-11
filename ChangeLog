@@ -1,3 +1,9 @@
+2005-08-11  Veerapuram Varadhan <vvaradhan@novell.com>
+
+	* Filters/FilterPerl.cs: Add commonly used mime type for perl files.
+
+	* Filters/FilterCpp.cs: Add "while" and "inline" to keywords list.
+	
 2005-08-11  Daniel Drake  <dsd@gentoo.org>
 
 	* beagled/FileSystemQueryable/FileSystemQueryable.cs,

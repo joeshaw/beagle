@@ -39,13 +39,13 @@ namespace Beagle.Filters {
 						"class", "const", "const_cast", "continue", "default", "delete",
 						"do", "double", "dynamic_cast", "else", "enum", "explicit", 
 						"export", "extern", "false", "float", "for", "friend", "goto",
-						"if", "int", "long", "mutable", "namespace", "new", "operator",
-						"private", "public", "protected", "register", 
+						"if", "inline", "int", "long", "mutable", "namespace", "new", 
+						"operator", "private", "public", "protected", "register", 
 						"reinterpret_cast", "return", "short", "signed", "sizeof", 
 						"static", "static_cast", "struct", "switch", "template", 
 						"this", "throw", "true" ,"try", "typedef", "typeid", 
 						"typename", "union", "unsigned", "using", "virtual",
-						"void", "volatile", "wchar_t"};
+						"void", "volatile", "wchar_t", "while"};
 		public FilterCpp ()
 		{
 			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("text/x-c++src"));

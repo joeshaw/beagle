@@ -48,6 +48,7 @@ namespace Beagle.Filters {
 		public FilterPerl ()
 		{
 			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("text/x-perl"));
+			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("application/x-perl"));
 		}
 
 		override protected void DoOpen (FileInfo info)
