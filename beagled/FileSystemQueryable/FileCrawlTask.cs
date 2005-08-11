@@ -86,6 +86,11 @@ namespace Beagle.Daemon.FileSystemQueryable {
 					return;
 				}
 			}
+			
+			if (!current_dir.IsAttached) {
+				Reschedule = true;
+				return;
+			}
 
 			if (FileSystemQueryable.Debug)
 				Logger.Log.Debug ("Starting crawl of '{0}'", current_dir.FullName);

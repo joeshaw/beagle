@@ -350,6 +350,7 @@ namespace Beagle.Daemon.FileSystemQueryable {
 			if (Debug) 
 				Logger.Log.Debug ("Expired '{0}'", expired_path);
 			dir_models_by_path.Remove (expired_path);
+			dir_models_by_id.Remove (unique_id);
 		}
 
 		public void AddDirectory (DirectoryModel parent, string name)
@@ -546,8 +547,6 @@ namespace Beagle.Daemon.FileSystemQueryable {
 			ActivateFileCrawling ();
 		}
 
-		// FIXME: We should ignore the ignore status and just handle
-		// the event, right?  If it isn't in the index, no harm done.
 		private void RemoveDirectory (DirectoryModel dir)
 		{
 			Uri uri;
@@ -1084,6 +1083,10 @@ namespace Beagle.Daemon.FileSystemQueryable {
 			PendingInfo info;
 			info = pending_info_cache [receipt.Uri] as PendingInfo;
 			pending_info_cache.Remove (receipt.Uri);
+
+			// The parent directory might have run away since we were indexed
+			if (info.Parent != null && !info.Parent.IsAttached)
+				return;
 
 			Guid unique_id;
 			unique_id = GuidFu.FromUri (receipt.Uri);

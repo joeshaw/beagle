@@ -140,6 +140,8 @@ namespace Beagle.Daemon.FileSystemQueryable {
 
 		public string FullName {
 			get {
+				if (!IsAttached)
+					return "_HUH_NO_WAY_ARE_YOU_KIDDING_ME_";
 				lock (big_lock) {
 					if (cached_full_name == null) {
 						string directly_above;
@@ -209,6 +211,10 @@ namespace Beagle.Daemon.FileSystemQueryable {
 			set { last_activity_time = value; }
 		}
 
+		public bool IsAttached {
+			get { return parent != null || rooted_to != null; }
+		}
+
 		///////////////////////////////////////////////////////////
 
 		public void MarkAsClean ()
@@ -240,6 +246,15 @@ namespace Beagle.Daemon.FileSystemQueryable {
 		}
 
 		///////////////////////////////////////////////////////////
+
+		private void Detatch_Recursively_Unlocked ()
+		{
+			if (this.children != null)
+				foreach (DirectoryModel child in new ArrayList (this.children.Values))
+					child.Detatch_Recursively_Unlocked ();
+
+			this.Detatch_Unlocked ();
+		}
 
 		private void Detatch_Unlocked ()
 		{
@@ -347,7 +362,7 @@ namespace Beagle.Daemon.FileSystemQueryable {
 		public void Remove ()
 		{
 			lock (big_lock)
-				Detatch_Unlocked ();
+				Detatch_Recursively_Unlocked ();
 		}
 
 		///////////////////////////////////////////////////////////
