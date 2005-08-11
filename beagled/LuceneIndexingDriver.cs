@@ -263,7 +263,7 @@ namespace Beagle.Daemon {
 						indexable.NoContent = true;
 					}
 					
-					Document primary_doc, secondary_doc;
+					Document primary_doc = null, secondary_doc = null;
 
 					try {
 						BuildDocuments (indexable, out primary_doc, out secondary_doc);
