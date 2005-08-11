@@ -68,6 +68,10 @@ libbeagleinclude_HEADERS = 			\
 	beagle-property.h			\
 	beagle-query.h				\
 	beagle-query-part.h			\
+	beagle-query-part-date.h		\
+	beagle-query-part-human.h		\
+	beagle-query-part-property.h		\
+	beagle-query-part-text.h		\
 	beagle-search-term-response.h		\
 	beagle-snippet-request.h		\
 	beagle-snippet-response.h		\
