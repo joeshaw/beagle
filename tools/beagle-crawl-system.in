@@ -45,9 +45,6 @@ for crawl_file in @sysconfdir@/beagle/*; do
 	    OPTIONS="$OPTIONS `test -n "$CRAWL_CACHE_TEXT" -a "$CRAWL_CACHE_TEXT"="yes" && \
                      echo --enable-text-cache`"
 
-	    OPTIONS="$OPTIONS `test -n "$CRAWL_CACHE_TEXT" -a "$CRAWL_CACHE_TEXT"="yes" && \
-                     echo --enable-text-cache`"
-
 	    OPTIONS="$OPTIONS `test -n "$CRAWL_ALLOW_PATTERNS" && \
                      echo --allow-pattern $CRAWL_ALLOW_PATTERNS`"
 
