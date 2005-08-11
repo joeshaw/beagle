@@ -2,7 +2,7 @@ CRAWL_ENABLED="yes"
 
 CRAWL_INDEX_NAME="documentation"
 
-CRAWL_PATHS="/usr/share/doc"
+CRAWL_PATHS="/usr/share/doc /opt/kde3/share/doc /opt/gnome/share/gnome/help"
 
 CRAWL_RECURSIVE="yes"
 
