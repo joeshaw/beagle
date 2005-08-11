@@ -265,9 +265,8 @@ namespace Beagle.Daemon {
 					
 					Document primary_doc, secondary_doc;
 
-					BuildDocuments (indexable, out primary_doc, out secondary_doc);
-
 					try {
+						BuildDocuments (indexable, out primary_doc, out secondary_doc);
 						primary_writer.AddDocument (primary_doc);
 					} catch (Exception ex) {
 
@@ -279,9 +278,9 @@ namespace Beagle.Daemon {
 						Logger.Log.Debug (ex);
 
 						indexable.NoContent = true;
-						BuildDocuments (indexable, out primary_doc, out secondary_doc);
 
 						try {
+							BuildDocuments (indexable, out primary_doc, out secondary_doc);
 							primary_writer.AddDocument (primary_doc);
 						} catch (Exception ex2) {
 							Logger.Log.Debug ("Second attempt to index {0} failed, giving up...", indexable.DisplayUri);
