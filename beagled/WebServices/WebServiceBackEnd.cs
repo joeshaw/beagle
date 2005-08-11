@@ -495,7 +495,9 @@ namespace Beagle.WebService {
 
 					string snippet; 
 						
-					Queryable queryable = h.SourceObject as Queryable;
+					//Queryable queryable = h.SourceObject as Queryable;
+					Queryable queryable = QueryDriver.GetQueryable (h.SourceObjectName);
+					
 					if (queryable == null)
 						snippet = "ERROR: hit.SourceObject is null, uri=" + h.Uri;
 					else
@@ -671,8 +673,10 @@ namespace Beagle.WebService {
 					if (IdList.Contains(h.Id)) {
 					
 							IdList.Remove(h.Id);	
-													
-							Queryable queryable = h.SourceObject as Queryable;
+
+							//Queryable queryable = h.SourceObject as Queryable;
+							Queryable queryable = QueryDriver.GetQueryable (h.SourceObjectName);													
+
 							if (queryable == null)
 								snippet = "ERROR: hit.SourceObject is null, uri=" + h.Uri;
 							else

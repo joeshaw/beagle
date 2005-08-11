@@ -180,6 +180,7 @@ namespace Beagle.Daemon
 							  						
 							//Add NetBeagleQueryable instance
 							hit.SourceObject = iq;
+							hit.SourceObjectName = ((NetworkedBeagle)iq).Name; 
 						
 							nwhits.Add(hit); 
 
