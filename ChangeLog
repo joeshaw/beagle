@@ -1,3 +1,9 @@
+2005-08-11  Daniel Drake  <dsd@gentoo.org>
+
+	* beagled/FileSystemQueryable/FileSystemQueryable.cs,
+	beagled/FileSystemQueryable/TreeCrawlTask.cs: After removing an exclude
+	pattern, recrawl all directories looking for new subdirectories to index.
+
 2005-08-09  Daniel Drake  <dsd@gentoo.org>
 
 	* Util/Conf.cs: Fix DateTime comparison, don't reload config files which

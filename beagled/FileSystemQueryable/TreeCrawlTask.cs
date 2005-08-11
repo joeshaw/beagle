@@ -38,6 +38,7 @@ namespace Beagle.Daemon.FileSystemQueryable {
 		public delegate void Handler (DirectoryModel parent, string name);
 
 		private object big_lock = new object ();
+		private bool is_active = false;
 		private Handler handler;
 		private Queue to_be_crawled = new Queue ();
 
@@ -48,6 +49,10 @@ namespace Beagle.Daemon.FileSystemQueryable {
 			this.Priority = Scheduler.Priority.Delayed;
 		}
 
+		public bool IsActive {
+			get { lock (big_lock) return is_active; }
+		}
+
 		// Returns 'true' if the queue was empty before adding
 		// this item.
 		public bool Add (DirectoryModel dir)
@@ -55,6 +60,10 @@ namespace Beagle.Daemon.FileSystemQueryable {
 			lock (big_lock) {
 				bool was_empty;
 				was_empty = (to_be_crawled.Count == 0);
+
+				if (!was_empty && to_be_crawled.Contains (dir))
+					return false;
+
 				to_be_crawled.Enqueue (dir);
 				Description = String.Format ("Pending directories: {0}", to_be_crawled.Count);
 				return was_empty;
@@ -66,9 +75,12 @@ namespace Beagle.Daemon.FileSystemQueryable {
 			DirectoryModel dir;
 
 			lock (big_lock) {
-				if (to_be_crawled.Count == 0)
+				if (to_be_crawled.Count == 0) {
+					is_active = false;
 					return;
+				}
 				dir = to_be_crawled.Dequeue () as DirectoryModel;
+				is_active = true;
 			}
 
 			if (FileSystemQueryable.Debug)
@@ -84,6 +96,8 @@ namespace Beagle.Daemon.FileSystemQueryable {
 			lock (big_lock) {
 				if (to_be_crawled.Count != 0)
 					Reschedule = true;
+				else
+					is_active = false;
 			}
 		}
 	}

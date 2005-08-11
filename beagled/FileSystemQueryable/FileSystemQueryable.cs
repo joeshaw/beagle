@@ -358,6 +358,9 @@ namespace Beagle.Daemon.FileSystemQueryable {
 			if (filter.Ignore (parent, name, true))
 				return;
 
+			if (parent != null && parent.HasChildWithName (name))
+				return;
+
 			string path;
 			path = (parent == null) ? name : Path.Combine (parent.FullName, name);
 
@@ -667,9 +670,10 @@ namespace Beagle.Daemon.FileSystemQueryable {
 				ThisScheduler.Add (tree_crawl_task);
 			
 			if (path_is_registered)
-				SetDirectoryState_Recursive (dir, DirectoryState.PossiblyClean);
+				Recrawl_Recursive (dir, DirectoryState.PossiblyClean);
 
 			ActivateFileCrawling ();
+			ActivateDirectoryCrawling ();
 		}
 
 		public void RecrawlEverything ()
@@ -677,22 +681,30 @@ namespace Beagle.Daemon.FileSystemQueryable {
 			Logger.Log.Debug ("Re-crawling all directories");
 			
 			foreach (DirectoryModel root in roots)
-				SetDirectoryState_Recursive (root, DirectoryState.PossiblyClean);
+				Recrawl_Recursive (root, DirectoryState.PossiblyClean);
 			
 			ActivateFileCrawling ();
+			ActivateDirectoryCrawling ();
 		}
 		
-		private void SetDirectoryState_Recursive (DirectoryModel dir, DirectoryState state)
+		private void Recrawl_Recursive (DirectoryModel dir, DirectoryState state)
 		{
 			dir.State = state;
+			tree_crawl_task.Add (dir);
 			foreach (DirectoryModel sub_dir in dir.Children) 
-				SetDirectoryState_Recursive (sub_dir, state);
+				Recrawl_Recursive (sub_dir, state);
 		}
 
 		private void ActivateFileCrawling ()
 		{
 			if (! file_crawl_task.IsActive)
 				ThisScheduler.Add (file_crawl_task);
+		}
+
+		private void ActivateDirectoryCrawling ()
+		{
+			if (! tree_crawl_task.IsActive)
+				ThisScheduler.Add (tree_crawl_task);
 		}
 		
 		//////////////////////////////////////////////////////////////////////////
