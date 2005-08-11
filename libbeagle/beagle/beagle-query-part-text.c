@@ -34,7 +34,7 @@
 #include "beagle-query-part-text.h"
 
 typedef struct {
-	char *text;
+	const char *text;
 	gboolean search_full_text : 1;
 	gboolean search_properties : 1;
 	BeagleQueryPartLogic logic;
@@ -47,7 +47,7 @@ static GObjectClass *parent_class = NULL;
 G_DEFINE_TYPE (BeagleQueryPartText, beagle_query_part_text, BEAGLE_TYPE_QUERY_PART)
 
 static GString *
-beagle_query_part_text_to_xml (BeagleQueryPartText *part, GError **err)
+beagle_query_part_text_to_xml (BeagleQueryPart *part, GError **err)
 {
 	BeagleQueryPartTextPrivate *priv;
 	priv = BEAGLE_QUERY_PART_TEXT_GET_PRIVATE (part);    

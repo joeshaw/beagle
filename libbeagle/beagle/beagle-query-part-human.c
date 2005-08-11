@@ -34,7 +34,7 @@
 #include "beagle-query-part-human.h"
 
 typedef struct {
-	char *string;
+	const char *string;
 	BeagleQueryPartLogic logic;
 } BeagleQueryPartHumanPrivate;
 
@@ -45,7 +45,7 @@ static GObjectClass *parent_class = NULL;
 G_DEFINE_TYPE (BeagleQueryPartHuman, beagle_query_part_human, BEAGLE_TYPE_QUERY_PART)
 
 static GString *
-beagle_query_part_human_to_xml (BeagleQueryPartHuman *part, GError **err)
+beagle_query_part_human_to_xml (BeagleQueryPart *part, GError **err)
 {
 	BeagleQueryPartHumanPrivate *priv;
 	priv = BEAGLE_QUERY_PART_HUMAN_GET_PRIVATE (part);    

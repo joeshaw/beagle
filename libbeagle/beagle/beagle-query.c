@@ -31,13 +31,14 @@
 #include <sys/un.h>
 
 #include "beagle-cancelled-response.h"
+#include "beagle-finished-response.h"
 #include "beagle-hits-added-response.h"
 #include "beagle-hits-subtracted-response.h"
 #include "beagle-marshal.h"
 #include "beagle-query.h"
 #include "beagle-query-part.h"
 #include "beagle-query-part-text.h"
-#include "beagle-finished-response.h"
+#include "beagle-search-term-response.h"
 #include "beagle-private.h"
 
 typedef struct {
@@ -220,6 +221,8 @@ beagle_query_class_init (BeagleQueryClass *klass)
 						  BEAGLE_TYPE_FINISHED_RESPONSE,
 						  "CancelledResponse",
 						  BEAGLE_TYPE_CANCELLED_RESPONSE,
+						  "SearchTermResponse",
+						  BEAGLE_TYPE_SEARCH_TERM_RESPONSE,
 						  NULL);
 }
 
@@ -268,7 +271,7 @@ beagle_query_add_text (BeagleQuery *query, const char *str)
 	beagle_query_part_text_set_search_properties (part, TRUE);
 	beagle_query_part_text_set_logic (part, BEAGLE_QUERY_PART_LOGIC_REQUIRED);
 
-	beagle_query_add_part (query, part);
+	beagle_query_add_part (query, BEAGLE_QUERY_PART (part));
 }
 
 

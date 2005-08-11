@@ -34,8 +34,8 @@
 #include "beagle-query-part-property.h"
 
 typedef struct {
-	char *key;
-	char *value;
+	const char *key;
+	const char *value;
 	BeaglePropertyType prop_type;
 	BeagleQueryPartLogic logic;
 } BeagleQueryPartPropertyPrivate;
@@ -47,7 +47,7 @@ static GObjectClass *parent_class = NULL;
 G_DEFINE_TYPE (BeagleQueryPartProperty, beagle_query_part_property, BEAGLE_TYPE_QUERY_PART)
 
 static GString *
-beagle_query_part_property_to_xml (BeagleQueryPartProperty *part, GError **err)
+beagle_query_part_property_to_xml (BeagleQueryPart *part, GError **err)
 {
 	BeagleQueryPartPropertyPrivate *priv;
 	priv = BEAGLE_QUERY_PART_PROPERTY_GET_PRIVATE (part);    

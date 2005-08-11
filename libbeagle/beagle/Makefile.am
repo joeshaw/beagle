@@ -36,6 +36,7 @@ libbeagle_la_SOURCES = 				\
 	beagle-query-part-text.c		\
 	beagle-request.c			\
 	beagle-response.c			\
+	beagle-search-term-response.c		\
 	beagle-snippet-request.c		\
 	beagle-snippet-response.c		\
 	beagle-shutdown-request.c		\
@@ -67,6 +68,7 @@ libbeagleinclude_HEADERS = 			\
 	beagle-property.h			\
 	beagle-query.h				\
 	beagle-query-part.h			\
+	beagle-search-term-response.h		\
 	beagle-snippet-request.h		\
 	beagle-snippet-response.h		\
 	beagle-shutdown-request.h		\

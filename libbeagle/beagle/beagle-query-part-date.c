@@ -45,7 +45,7 @@ typedef struct {
 static GObjectClass *parent_class = NULL;
 
 static GString *
-beagle_query_part_date_to_xml (BeagleQueryPartDate *part, GError **err)
+beagle_query_part_date_to_xml (BeagleQueryPart *part, GError **err)
 {
 	BeagleQueryPartDatePrivate *priv;
 	priv = BEAGLE_QUERY_PART_DATE_GET_PRIVATE (part);    

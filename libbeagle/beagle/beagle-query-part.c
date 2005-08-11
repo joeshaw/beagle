@@ -36,7 +36,7 @@ typedef struct {
     BeagleQueryPartLogic logic;
 } BeagleQueryPartPrivate;
 
-#define BEAGLE_QUERY_PART_GET_PRIVATE(o) (G_TYPE_INSTANCE_GET_PRIVATE ((o), BEAGLE_TYPE_QUERY_PART, BeagleQueryPart))
+#define BEAGLE_QUERY_PART_GET_PRIVATE(o) (G_TYPE_INSTANCE_GET_PRIVATE ((o), BEAGLE_TYPE_QUERY_PART, BeagleQueryPartPrivate))
 
 static GObjectClass *parent_class = NULL;
 
