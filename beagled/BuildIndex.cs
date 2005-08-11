@@ -56,6 +56,9 @@ namespace Beagle.Daemon
 
 		static bool crawling = true, shutdown = false;
 
+		static ArrayList allowed_patterns = new ArrayList ();
+		static ArrayList denied_patterns = new ArrayList ();
+
 		static Queue pending_files = new Queue ();
 		static Queue pending_directories = new Queue ();
 		
@@ -120,6 +123,36 @@ namespace Beagle.Daemon
 
 				case "--disable-filtering":
 					arg_disable_filtering = true;
+					break;
+
+				case "--allow-pattern":
+					if (next_arg == null)
+						break;
+
+					if (next_arg.IndexOf (':') != -1) {
+						foreach (string pattern in next_arg.Split (':'))
+							allowed_patterns.Add (new ExcludeItem (ExcludeType.Pattern, pattern));
+						
+					} else {
+						allowed_patterns.Add (new ExcludeItem (ExcludeType.Pattern, next_arg));
+					}
+					
+					++i;
+					break;
+
+				case "--deny-pattern":
+					if (next_arg == null)
+						break;
+
+					if (next_arg.IndexOf (':') != -1) {
+						foreach (string pattern in next_arg.Split (':'))
+							denied_patterns.Add (new ExcludeItem (ExcludeType.Pattern, pattern));
+
+					} else {
+						denied_patterns.Add (new ExcludeItem (ExcludeType.Pattern, next_arg));
+					}
+
+					++i;
 					break;
 
 				default:
@@ -331,12 +364,14 @@ namespace Beagle.Daemon
 			usage += 
 				"Usage: beagle-build-index [OPTIONS] --target <index_path> <path> [path]\n\n" +
 				"Options:\n" +
-				"  --remap [path1:path2]\tRemap data paths to fit target. \n" +
-				"  --tag [tag]\t\tTag index data for identification.\n" + 
-				"  --recursive\t\tCrawl source path recursivly.\n" + 
+				"  --remap [path1:path2]\t\tRemap data paths to fit target. \n" +
+				"  --tag [tag]\t\t\tTag index data for identification.\n" + 
+				"  --recursive\t\t\tCrawl source path recursivly.\n" + 
 				"  --enable-text-cache\t\tBuild text-cache of documents used for snippets.\n" + 
 				"  --disable-filtering\t\tDisable all filtering of files. Only index attributes.\n" + 
-				"  --debug\t\tEcho verbose debugging information.\n";
+				"  --allow-pattern [pattern]\tOnly allow files that match the pattern to be indexed.\n" + 
+				"  --deny-pattern [pattern]\tKeep any files that match the pattern from being indexed.\n" + 
+				"  --debug\t\t\tEcho verbose debugging information.\n";
 			
 			Console.WriteLine (usage);
 			Environment.Exit (0);
@@ -370,6 +405,18 @@ namespace Beagle.Daemon
 
 			if (FileSystem.IsSymLink (file.FullName))
 				return true;
+
+			if (allowed_patterns.Count > 0) {
+				foreach (ExcludeItem pattern in allowed_patterns)
+					if (pattern.IsMatch (file.Name))
+						return false;
+				
+				return true;
+			}
+
+			foreach (ExcludeItem pattern in denied_patterns)
+				if (pattern.IsMatch (file.Name))
+					return true;
 
 			// FIXME: Add more stuff here
 			

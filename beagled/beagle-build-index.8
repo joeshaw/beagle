@@ -47,6 +47,12 @@ If specified, echo verbose debugging information
 .B --cache-text
 If specified, build text-cache of documents used for snippets
 .TP
+.B --allow-pattern [pattern]
+Only allow files that match the pattern to be indexed.
+.TP
+.B --deny-pattern [pattern]
+Keep any files that match the pattern from being indexed.
+.TP
 .B --remap \fR[\fIpath1\fR:\fIpath2\fR]
 If specified, remap the target path by prefix. \fIpath1\fR will be replaced
 with \fIpath2\fR. This option is intended to be used when generating pre-built
