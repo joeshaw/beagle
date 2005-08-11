@@ -4,7 +4,7 @@ CRAWL_INDEX_NAME="documentation"
 
 CRAWL_PATHS="/usr/share/doc /opt/kde3/share/doc /opt/gnome/share/gnome/help"
 
-CRAWL_ALLOW_PATTERNS="*.xml,*.html"
+CRAWL_ALLOW_PATTERNS="*.xml,*.html,*.docbook"
 
 CRAWL_RECURSIVE="yes"
 
