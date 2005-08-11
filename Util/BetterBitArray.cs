@@ -36,7 +36,7 @@ using System.Collections;
 
 namespace Beagle.Util {
 	[Serializable]
-	public sealed class BetterBitArray : ICollection, ICloneable {
+	public class BetterBitArray : ICollection, ICloneable {
 		int [] _array;
 		int _length;
 		int _version = 0;
@@ -96,6 +96,7 @@ namespace Beagle.Util {
 			_length = length;
 			_array = new int [(_length + 31) / 32];
 			_contains_true = ContainsTrueState.No; // better
+			_cached_true_count = 0; // better
 		}
 
 		public BetterBitArray (int length, bool defaultValue) : this (length)
@@ -104,6 +105,7 @@ namespace Beagle.Util {
 				for (int i = 0; i < _array.Length; i++)
 				_array[i] = ~0;
 				_contains_true = ContainsTrueState.Yes; // better
+				_cached_true_count = length; // better
 			}
 		}
 		
@@ -248,6 +250,7 @@ namespace Beagle.Util {
 			
 			_version++;
 			_contains_true = ContainsTrueState.Maybe; // better
+			_cached_true_count = -1; // better
 			return this;
 		}
 		
@@ -261,6 +264,21 @@ namespace Beagle.Util {
 			
 			_version++;
 			_contains_true = ContainsTrueState.Maybe; // better
+			_cached_true_count = -1; // better
+			return this;
+		}
+
+		public BetterBitArray AndNot (BetterBitArray value)
+		{
+			checkOperand (value);
+			
+			int ints = (_length + 31) / 32;
+			for (int i = 0; i < ints; i++)
+				_array [i] &= ~value._array [i];
+			
+			_version++;
+			_contains_true = ContainsTrueState.Maybe; // better
+			_cached_true_count = -1; // better
 			return this;
 		}
 		
@@ -273,6 +291,7 @@ namespace Beagle.Util {
 				_array [i] |= value._array [i];
 			
 			_version++;
+			_cached_true_count = -1; // better
 			return this;
 		}
 
@@ -285,6 +304,8 @@ namespace Beagle.Util {
 				_array [i] ^= value._array [i];
 
 			_version++;
+			_contains_true = ContainsTrueState.Maybe; // better
+			_cached_true_count = -1; // better
 			return this;
 		}
 		
@@ -305,6 +326,16 @@ namespace Beagle.Util {
 		{
 			if (index < 0 || index >= _length)
 				throw new ArgumentOutOfRangeException ();
+
+			// better
+			if (_cached_true_count != -1) {
+				bool old;
+				old = (_array [index / 32] & (1 << (index % 32))) != 0;
+				if (old)
+					--_cached_true_count;
+				if (value)
+					++_cached_true_count;
+			}
 			
 			if (value) {
 				_array [index / 32] |=  (1 << (index % 32));
@@ -324,10 +355,12 @@ namespace Beagle.Util {
 				for (int i = 0; i < _array.Length; i++)
 					_array[i] = ~0;
 				_contains_true = ContainsTrueState.Yes; // better
+				_cached_true_count = _length;
 			}
 			else {
 				Array.Clear (_array, 0, _array.Length);
 				_contains_true = ContainsTrueState.No; // better
+				_cached_true_count = 0; // better
 			}
 
 			_version++;
@@ -425,37 +458,42 @@ namespace Beagle.Util {
 
 		// Just in case, start in an ambiguous state.
 		private ContainsTrueState _contains_true = ContainsTrueState.Maybe;
+		private int _cached_true_count = -1;
 
 		// Returns the number of array elements that are set to true.
-		public int GetTrueCount ()
-		{
-			int count = 0;
-			for (int i = 0; i < _array.Length; ++i) {
-				int x = _array [i];
-				byte b1 = (byte) (x & 0xff);
-				byte b2 = (byte) ((x & (0xff << 8)) >> 8);
-				byte b3 = (byte) ((x & (0xff << 16)) >> 16);
-				byte b4 = (byte) ((x & (0xff << 24)) >> 24);
-				count += true_count [b1];
-				count += true_count [b2];
-				count += true_count [b3];
-				count += true_count [b4];
+		public int TrueCount {
+			get {
+				if (_cached_true_count < 0) {
+					_cached_true_count = 0;
+					
+					for (int i = 0; i < _array.Length; ++i) {
+						int x = _array [i];
+						byte b1 = (byte) (x & 0xff);
+						byte b2 = (byte) ((x & (0xff << 8)) >> 8);
+						byte b3 = (byte) ((x & (0xff << 16)) >> 16);
+						byte b4 = (byte) ((x & (0xff << 24)) >> 24);
+						_cached_true_count += true_count [b1];
+						_cached_true_count += true_count [b2];
+						_cached_true_count += true_count [b3];
+						_cached_true_count += true_count [b4];
+					}
+					
+					
+					if (_cached_true_count == 0)
+						_contains_true = ContainsTrueState.No;
+					else
+						_contains_true = ContainsTrueState.Yes;
+				}
+				
+				int paranoid_check = 0;
+				for (int i = 0; i < Count; ++i)
+					if (Get (i))
+						++paranoid_check;
+				if (paranoid_check  != _cached_true_count)
+					Logger.Log.Error ("TrueCount mismatch: {0} vs {1}", _cached_true_count, paranoid_check);
+				
+				return _cached_true_count;
 			}
-			
-
-			if (count == 0)
-				_contains_true = ContainsTrueState.No;
-			else
-				_contains_true = ContainsTrueState.Yes;
-
-			int paranoid_check = 0;
-			for (int i = 0; i < Count; ++i)
-				if (Get (i))
-					++paranoid_check;
-			if (paranoid_check  != count)
-				Logger.Log.Error ("TrueCount mismatch: {0} vs {1}", count, paranoid_check);
-
-			return count;
 		}
 		
 		// Returns the index of the next 'true' value greater than or equal to
@@ -504,6 +542,43 @@ namespace Beagle.Util {
 
 			// Failed
 			return _length;
+		}
+
+		// A version of GetNextTrueIndex for walking
+		// backwards across the array.
+		public int GetPreviousTrueIndex (int start)
+		{
+			if (start < 0 || _contains_true == ContainsTrueState.No)
+				return -1;
+			else if (start >= _length)
+				start = _length-1;
+
+			int i, offset;
+			i = start / 32;
+			offset = start % 32;
+
+			while (i >= 0) {
+
+				int array_value;
+				array_value = _array [i];
+				
+				if (array_value != 0) {
+					int mask;
+					mask = 1 << offset;
+					while (offset >= 0) {
+						if ((array_value & mask) != 0)
+							return i * 32 + offset;
+						--offset;
+						mask >>= 1;
+					}
+				}
+
+				--i;
+				offset = 31;
+			}
+
+			// failed
+			return -1;
 		}
 
 		public bool ContainsTrue ()

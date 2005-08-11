@@ -34,7 +34,7 @@ namespace Beagle.Util {
 		private bool Debug = false;
 
 		private struct Node {
-			public double Score;
+			public long Score;
 			public object Obj;
 			public int LtEq;
 			public int Gt;
@@ -51,7 +51,7 @@ namespace Beagle.Util {
 		int free_node = 0;
 		int root_node = -1;
 		Node [] nodes;
-		double cutoff_score;
+		long cutoff_score;
 
 		public TopScores (int count)
 		{
@@ -65,12 +65,12 @@ namespace Beagle.Util {
 			get { return count; }
 		}
 
-		public double MinimumScore {
+		public long MinimumScore {
 			get {
 				if (at_capacity)
 					return cutoff_score;
 
-				double score = 0;
+				long score = 0;
 				int i = root_node;
 				while (i != -1) {
 					score = nodes [i].Score;
@@ -80,12 +80,12 @@ namespace Beagle.Util {
 			}
 		}
 
-		public bool WillAccept (double score)
+		public bool WillAccept (long score)
 		{
 			return (! at_capacity) || score > cutoff_score;
 		}
 
-		public void Add (double score, object obj)
+		public void Add (long score, object obj)
 		{
 			if (at_capacity && score <= cutoff_score) {
 				if (Debug)

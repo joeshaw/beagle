@@ -284,6 +284,18 @@ namespace Beagle.Daemon {
 			if (primary_matches == null || ! primary_matches.ContainsTrue ())
 				return;
 
+			GenerateQueryResults (primary_searcher,
+					      secondary_searcher,
+					      primary_matches,
+					      result,
+					      query.MaxHits,
+					      DateTime.MinValue,
+					      DateTime.MaxValue,
+					      uri_filter,
+					      hit_filter);
+
+#if false
+
 			// Now we need to assemble the hits.
 			// FIXME: For the moment, no relevancy or caps on Hits.  Scary.
 			//
@@ -325,20 +337,6 @@ namespace Beagle.Daemon {
 				
 				if (hit_filter == null || hit_filter (hit)) {
 
-					// Before we broadcast a hit, we strip out any
-					// properties in the PrivateNamespace.  We
-					// manipulate the property ArrayList directory,
-					// which is pretty gross... but this is safe,
-					// since removing items will not change the sort
-					// order.
-					int i = 0;
-					while (i < hit.Properties.Count) {
-						Property prop = hit.Properties [i] as Property;
-						if (prop.Key.StartsWith (PrivateNamespace))
-							hit.Properties.RemoveAt (i);
-						else
-							++i;
-					}
 
 					result.Add (hit); // broadcast the hit we just constructed
 					++hit_count;
@@ -349,6 +347,7 @@ namespace Beagle.Daemon {
 
 				++j;
 			}
+#endif
 
 			//
 			// Finally, we clean up after ourselves.
@@ -362,8 +361,224 @@ namespace Beagle.Daemon {
 
 
 			sw.Stop ();
-			Logger.Log.Debug ("###### Processed {0} hits in {1}", hit_count, sw);
+			Logger.Log.Debug ("###### Processed query in {0}", sw);
 
+		}
+
+		////////////////////////////////////////////////////////////////
+
+		//
+		// Given a set of hits, broadcast some set out as our query
+		// results.
+		//
+
+		private static void GenerateQueryResults (LNS.IndexSearcher primary_searcher,
+							  LNS.IndexSearcher secondary_searcher,
+							  BetterBitArray    primary_matches,
+							  IQueryResult      result,
+							  int               max_results,
+							  DateTime          min_date,
+							  DateTime          max_date,
+							  UriFilter         uri_filter,
+							  HitFilter         hit_filter)
+		{
+			TopScores top_docs = null;
+			ArrayList all_docs = null;
+
+			long min_date_num, max_date_num;
+			min_date_num = Int64.Parse (StringFu.DateTimeToString (min_date));
+			max_date_num = Int64.Parse (StringFu.DateTimeToString (max_date));
+
+			if (max_date_num < min_date_num)
+				return;
+
+			Logger.Log.Debug (">>> Initially handed {0} matches", primary_matches.TrueCount);
+
+			if (primary_matches.TrueCount <= max_results) {
+				Logger.Log.Debug (">>> Initial count is within our limit of {0}", max_results);
+				all_docs = new ArrayList ();
+			} else {
+				Logger.Log.Debug (">>> Number of hits is capped at {0}", max_results);
+				top_docs = new TopScores (max_results);
+			}
+
+			Stopwatch total, a, b, c;
+			total = new Stopwatch ();
+			a = new Stopwatch ();
+			b = new Stopwatch ();
+			c = new Stopwatch ();
+
+			total.Start ();
+			a.Start ();
+
+			// Pull in the primary documents.
+			// We walk across them backwards, since newer 
+			// documents are more likely to be at the end of
+			// the index.
+			int j = primary_matches.Count;
+			while (true) {
+				int i;
+				i = primary_matches.GetPreviousTrueIndex (j);
+				if (i < 0)
+					break;
+				j = i-1; // This way we can't forget to adjust i
+
+				Document doc;
+				doc = primary_searcher.Doc (i);
+
+				// Check the timestamp to make sure it is in range
+				long timestamp_num;
+				timestamp_num = Int64.Parse (doc.Get ("Timestamp"));
+				if (timestamp_num < min_date_num || max_date_num < timestamp_num)
+					continue;
+
+				if (top_docs != null && ! top_docs.WillAccept (timestamp_num))
+					continue;
+
+				// If we have a UriFilter, apply it.
+				if (uri_filter != null) {
+					Uri uri;
+					uri = GetUriFromDocument (doc);
+					if (! uri_filter (uri))
+						continue;
+				}
+
+				// Add the document to the appropriate data structure.
+				// We use the timestamp_num as the score, so high
+				// scores correspond to more-recent timestamps.
+				if (all_docs != null)
+					all_docs.Add (doc);
+				else
+					top_docs.Add (timestamp_num, doc);
+			}
+
+			a.Stop ();
+
+			b.Start ();
+
+			ICollection final_list_of_docs;
+			if (all_docs != null)
+				final_list_of_docs = all_docs;
+			else
+				final_list_of_docs = top_docs.TopScoringObjects;
+
+			ArrayList final_list_of_hits;
+			final_list_of_hits = new ArrayList (final_list_of_docs.Count);
+
+			// If we aren't using the secondary index, the next step is
+			// very straightforward.
+			if (secondary_searcher == null) {
+
+				foreach (Document doc in final_list_of_docs) {
+					Hit hit;
+					hit = DocumentToHit (doc);
+					final_list_of_hits.Add (hit);
+				}
+
+			} else {
+
+				Logger.Log.Debug (">>> Performing cross-index Hit reunification");
+
+				Hashtable hits_by_uri;
+				hits_by_uri = UriFu.NewHashtable ();
+
+				// FIXME: Want to avoid too many clauses
+				// in this query.  Normally our cap will
+				// be set low enough that it won't
+				// be a problem.
+				LNS.BooleanQuery uri_query;
+				uri_query = new LNS.BooleanQuery ();
+
+				foreach (Document primary_doc in final_list_of_docs) {
+				
+					Hit hit;
+					hit = DocumentToHit (primary_doc);
+
+					final_list_of_hits.Add (hit);
+					hits_by_uri [hit.Uri] = hit;
+
+					uri_query.Add (UriQuery ("Uri", hit.Uri), false, false);
+				}
+				
+				// Find the other halves of our matches
+				BetterBitArray secondary_matches = null;
+				DoLowLevelQuery (secondary_searcher,
+						 uri_query,
+						 ref secondary_matches,
+						 null);
+				
+				// Attach all of our secondary properties
+				// to the hits
+				j = 0;
+				while (true) {
+					int i;
+					i = secondary_matches.GetNextTrueIndex (j);
+					if (i >= secondary_matches.Count)
+						break;
+					j = i+1;
+
+					Document secondary_doc;
+					secondary_doc = secondary_searcher.Doc (i);
+					
+					Uri uri;
+					uri = GetUriFromDocument (secondary_doc);
+
+					Hit hit;
+					hit = hits_by_uri [uri] as Hit;
+
+					AddPropertiesToHit (hit, secondary_doc, false);
+				}
+			}
+
+			b.Stop ();
+
+			// If we used the TopScores object, we got our original
+			// list of documents sorted for us.  If not, sort the
+			// final list.
+			if (top_docs == null)
+				final_list_of_hits.Sort ();
+
+			c.Start ();
+
+			// If we have a hit_filter, use it now.
+			if (hit_filter != null) {
+				for (int i = 0; i < final_list_of_hits.Count; ++i) {
+					Hit hit;
+					hit = final_list_of_hits [i] as Hit;
+					if (! hit_filter (hit))
+						final_list_of_hits [i] = null;
+				}
+			}
+
+			// Before we broadcast a hit, we strip out any
+			// properties in the PrivateNamespace.  We
+			// manipulate the property ArrayList directory,
+			// which is pretty gross... but this is safe,
+			// since removing items will not change the sort
+			// order.
+			foreach (Hit hit in final_list_of_hits) {
+				if (hit == null)
+					continue;
+				int i = 0;
+				while (i < hit.Properties.Count) {
+					Property prop = hit.Properties [i] as Property;
+					if (prop.Key.StartsWith (PrivateNamespace))
+						hit.Properties.RemoveAt (i);
+					else
+						++i;
+				}
+			}
+
+			result.Add (final_list_of_hits);
+
+			c.Stop ();
+			total.Stop ();
+
+			Logger.Log.Debug (">>> GenerateQueryResults time statistics:");
+			Logger.Log.Debug (">>>   First pass {0} ({1:0.0}%)", a, 100 * a.ElapsedTime / total.ElapsedTime);
+			Logger.Log.Debug (">>> Hit assembly {0} ({1:0.0}%)", b, 100 * b.ElapsedTime / total.ElapsedTime);
+			Logger.Log.Debug (">>>   Final pass {0} ({1:0.0}%)", c, 100 * c.ElapsedTime / total.ElapsedTime);
+			Logger.Log.Debug (">>>        TOTAL {0}", total);
 		}
 
 		////////////////////////////////////////////////////////////////
@@ -511,7 +726,7 @@ namespace Beagle.Daemon {
 			// enough matches.
 			if (max_match_count < 0
 			    || primary_matches == null 
-			    || primary_matches.GetTrueCount () < max_match_count)
+			    || primary_matches.TrueCount < max_match_count)
 				ProjectMatches (secondary_searcher,
 						secondary_matches,
 						primary_searcher,
@@ -630,7 +845,7 @@ namespace Beagle.Daemon {
 				info = new MatchInfo ();
 				DoLowLevelQuery (primary_searcher, pq, ref info.PrimaryMatches, primary_whitelist);
 				DoLowLevelQuery (secondary_searcher, sq, ref info.SecondaryMatches, secondary_whitelist);
-				info.UpperBound = info.PrimaryMatches.GetTrueCount () + info.SecondaryMatches.GetTrueCount ();
+				info.UpperBound = info.PrimaryMatches.TrueCount + info.SecondaryMatches.TrueCount;
 
 				match_info_list.Add (info);
 			}
@@ -657,7 +872,7 @@ namespace Beagle.Daemon {
 				// need any more matches.
 				if (max_match_count >= 0
 				    && i == match_info_list.Count-1
-				    && info.PrimaryMatches.GetTrueCount () >= max_match_count)
+				    && info.PrimaryMatches.TrueCount >= max_match_count)
 					return info.PrimaryMatches;
 				
 				ProjectMatches_BiDirectional (primary_searcher,

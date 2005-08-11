@@ -33,7 +33,7 @@ using Beagle.Util;
 
 namespace Beagle.Daemon {
 
-	public class QueryResult : IDisposable {
+	public class QueryResult : IQueryResult, IDisposable {
 
 		public delegate void StartedHandler (QueryResult source);
 		public event StartedHandler StartedEvent;
@@ -54,7 +54,6 @@ namespace Beagle.Daemon {
 
 		int workers = 0;
 		bool cancelled = false;
-		Hashtable hit_regulators = new Hashtable ();
 		Hashtable uri_hash = UriFu.NewHashtable ();
 		DateTime started_time;
 		DateTime finished_time;
@@ -99,6 +98,8 @@ namespace Beagle.Daemon {
 			}
 		}
 
+		// Note: some_hits is allowed to contain null.
+		// They are silently ignored.
 		public void Add (ICollection some_hits)
 		{
 			lock (this) {
@@ -114,17 +115,19 @@ namespace Beagle.Daemon {
 				ArrayList hits_to_report;
 				hits_to_report = new ArrayList ();
 				foreach (Hit hit in some_hits) {
-					if (! uri_hash.Contains (hit.Uri)) {
+					if (hit != null && ! uri_hash.Contains (hit.Uri)) {
 						uri_hash [hit.Uri] = hit;
 						hits_to_report.Add (hit);
 					}
 				}
 				
-				if (HitsAddedEvent != null)
+				if (HitsAddedEvent != null && hits_to_report.Count > 0)
 					HitsAddedEvent (this, hits_to_report);
 			}
 		}
 
+		// Note: some_uris is allowed to contain null.
+		// They are silently ignored.
 		public void Subtract (ICollection some_uris)
 		{
 			lock (this) {
@@ -140,30 +143,18 @@ namespace Beagle.Daemon {
 
 				// We only get to subtract a URI if it was previously added.
 				foreach (Uri uri in some_uris) {
-					if (uri_hash.Contains (uri)) {
+					if (uri != null && uri_hash.Contains (uri)) {
 						filtered_uris.Add (uri);
 						uri_hash.Remove (uri);
 					}
 				}
 
-				if (HitsSubtractedEvent != null)
+				if (HitsSubtractedEvent != null && filtered_uris.Count > 0)
 					HitsSubtractedEvent (this, filtered_uris);
 			}
 		}
 
 		//////////////////////////////////
-
-		public HitRegulator GetHitRegulator (Queryable queryable)
-		{
-			lock (hit_regulators) {
-				HitRegulator hr = hit_regulators [queryable] as HitRegulator;
-				if (hr == null) {
-					hr = new HitRegulator (queryable);
-					hit_regulators [queryable] = hr;
-				}
-				return hr;
-			}
-		}
 
 		// Given the Uri of a Hit contained in the QueryResult, return that Hit.
 		public Hit GetHitFromUri (Uri uri)

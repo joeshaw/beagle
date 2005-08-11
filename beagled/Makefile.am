@@ -309,7 +309,6 @@ DAEMON_DLL_CSFILES = 						\
 	$(srcdir)/FilterFactory.cs				\
 	$(srcdir)/GConfThreadHelper.cs				\
 	$(srcdir)/GoogleDriver.cs				\
-	$(srcdir)/HitRegulator.cs				\
 	$(srcdir)/IFileAttributesStore.cs			\
 	$(srcdir)/IIndexer.cs					\
 	$(srcdir)/IndexSynchronization.cs			\
@@ -853,7 +852,7 @@ $(CRAWL_SYSTEM): $(srcdir)/$(CRAWL_SYSTEM_IN)
 ############################################################
 
 #	$(MASTER_DELETE_TARGET)
-#	$(MANAGE_INDEX_TARGET)	
+
 #	$(FS_SANITY_CHECK_TARGET)
 
 ALL_TARGETS = 				\
@@ -868,6 +867,7 @@ ALL_TARGETS = 				\
 	$(SNIPPET_TEST_TARGET)		\
 	$(TERM_STATS_TARGET)		\
 	$(NAME_INDEX_TARGET)		\
+	$(MANAGE_INDEX_TARGET)		\
 	$(MANAGE_INDEX_WRAPPER)		\
 	$(BUILD_INDEX_TARGET)		\
 	$(BUILD_INDEX_WRAPPER)

@@ -48,16 +48,10 @@ namespace Beagle.Daemon
 			if (args.Length < 2)
 				PrintUsage ();
 			
-			index_dir = (Path.IsPathRooted (args [0])) ? args [0] : Path.GetFullPath (args [0]);
-
-			if (!Directory.Exists (index_dir)) {
-				Console.WriteLine ("No such index directory: {0}", index_dir);
-				Environment.Exit (1);
-			}
-			
-			driver = new LuceneIndexingDriver (args [0]);
+			driver = new LuceneIndexingDriver (args [0], -1);
 
 			switch (args [1]) {
+#if false
 			case "list":
 				ExecuteList ();
 				break;
@@ -70,6 +64,7 @@ namespace Beagle.Daemon
 			case "info":
 				ExecuteInfo ();
 				break;
+#endif
 			case "optimize":
 				ExecuteOptimize ();
 				break;
@@ -104,7 +99,8 @@ namespace Beagle.Daemon
 		}
 
 		/////////////////////////////////////////////////////////
-		
+
+#if false		
 		static void ExecuteList ()
 		
 {			LuceneDriver driver = new LuceneDriver (index_dir, true);
@@ -220,25 +216,17 @@ namespace Beagle.Daemon
 		}
 
 		/////////////////////////////////////////////////////////
-		
+#endif		
 		static void ExecuteOptimize ()
 		{
-			LuceneDriver driver = new LuceneDriver (index_dir);
-
 			Stopwatch watch = new Stopwatch ();
 			watch.Start ();
-			
-			try {
-				IndexWriter writer = new IndexWriter (driver.Store, null, false);
-				writer.Optimize ();
-				writer.Close ();
-			} catch (Exception e) {
-				Console.WriteLine ("Error optimizing index: {0}", driver.IndexDirectory);
-				Environment.Exit (1);
-			}
+
+			driver.Optimize ();
+
 			watch.Stop ();
 			
-			Console.WriteLine ("Optimized index {0} in {1}", driver.IndexDirectory, watch);
+			Console.WriteLine ("Optimized index {0} in {1}", driver.TopDirectory, watch);
 		}
 	}
 }

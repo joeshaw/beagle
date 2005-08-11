@@ -33,16 +33,14 @@ namespace Beagle.Daemon {
 
 	QueryResult has a lot of api that is tied to implementation details.
 	The point of this interface is to only expose the minimum amount
-	of QueryResult api to IQueryable.Query implementations. 
+	of QueryResult api to IQueryable.DoQuery implementations. 
 
 	*/
 
 	public interface IQueryResult {
 
-		bool Add (Hit hit);
+		void Add (ICollection some_hits);
 
-		void Subtract (Uri uri);
-
-		bool WillReject (double score);
+		void Subtract (ICollection some_uris);
 	}
 }

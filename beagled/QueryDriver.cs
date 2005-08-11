@@ -342,11 +342,36 @@ namespace Beagle.Daemon {
 
 		////////////////////////////////////////////////////////
 
+		private class MarkAndForwardHits : IQueryResult {
+
+			IQueryResult result;
+			string name;
+			
+			public MarkAndForwardHits (IQueryResult result, string name)
+			{
+				this.result = result;
+				this.name = name;
+			}
+
+			public void Add (ICollection some_hits)
+			{
+				foreach (Hit hit in some_hits)
+					if (hit != null)
+						hit.SourceObjectName = name;
+				result.Add (some_hits);
+			}
+
+			public void Subtract (ICollection some_uris)
+			{
+				result.Subtract (some_uris);
+			}
+		}
+
 		private class QueryClosure : IQueryWorker {
 
 			Queryable queryable;
 			Query query;
-			QueryResult result;
+			IQueryResult result;
 			IQueryableChangeData change_data;
 			
 			public QueryClosure (Queryable            queryable,
@@ -356,16 +381,13 @@ namespace Beagle.Daemon {
 			{
 				this.queryable = queryable;
 				this.query = query;
-				this.result = result;
+				this.result = new MarkAndForwardHits (result, queryable.Name);
 				this.change_data = change_data;
 			}
 
 			public void DoWork ()
 			{
-				HitRegulator regulator = result.GetHitRegulator (queryable);
-				regulator.MaxHits = query.MaxHits;
-				queryable.DoQuery (query, regulator, change_data);
-				regulator.Flush (result);
+				queryable.DoQuery (query, result, change_data);
 			}
 		}
 

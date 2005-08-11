@@ -585,13 +585,12 @@ namespace Beagle.Daemon {
 			return UriFu.UriStringToUri (uri);
 		}
 
-		static protected Hit DocumentToHit (Document doc, Uri uri, int id, double score)
+		static protected Hit DocumentToHit (Document doc)
 		{
 			Hit hit;
 			hit = new Hit ();
 
-			hit.Id = id;
-			hit.Uri = uri;
+			hit.Uri = GetUriFromDocument (doc);
 			hit.Type = doc.Get ("Type");
 
 			string str;
@@ -604,7 +603,9 @@ namespace Beagle.Daemon {
 			hit.Timestamp = StringFu.StringToDateTime (doc.Get ("Timestamp"));
 
 			hit.Source = "lucene";
-			hit.ScoreRaw = score;
+			hit.ScoreRaw = 1.0;
+
+			AddPropertiesToHit (hit, doc, true);
 
 			return hit;
 		}

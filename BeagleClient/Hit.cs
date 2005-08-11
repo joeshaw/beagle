@@ -85,6 +85,8 @@ namespace Beagle {
 
 		//////////////////////////
 
+		// FIXME: Thisn't used for anything, and should
+		// be removed.
 		[XmlAttribute]
 		public int Id {
 			get { return id; }
@@ -403,8 +405,8 @@ namespace Beagle {
 		public int CompareTo (object obj)
 		{
 			Hit otherHit = (Hit) obj;
-			// Notice that we sort from high to low.
-			return otherHit.Score.CompareTo (this.Score);
+			// Notice that we sort by time from most to least recent
+			return DateTime.Compare (otherHit.Timestamp, this.Timestamp);
 		}
 	}
 }

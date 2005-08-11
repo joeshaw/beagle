@@ -115,12 +115,14 @@ namespace Beagle.Daemon {
 								     0, maxResults,
 								     false, "", false, "", "", "");
 
+			ArrayList hits = new ArrayList ();
 			int rank = 0;
 			foreach (ResultElement elt in gsr.resultElements) {
 				Hit hit = FromGoogleResultElement (elt, rank);
+				hits.Add (hit);
 				++rank;
-				result.Add (hit);
 			}
+			result.Add (hits);
 		}
 
 		public string GetSnippet (string[] query_terms, Hit hit)

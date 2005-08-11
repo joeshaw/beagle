@@ -356,6 +356,21 @@ namespace Beagle.Daemon {
 
 		////////////////////////////////////////////////////////////////
 
+		public void Optimize ()
+		{
+			IndexWriter writer;
+
+			writer = new IndexWriter (PrimaryStore, null, false);
+			writer.Optimize ();
+			writer.Close ();
+
+			if (SecondaryStore != null) {
+				writer = new IndexWriter (SecondaryStore, null, false);
+				writer.Optimize ();
+				writer.Close ();
+			}
+		}
+
 		public void Merge (LuceneCommon index_to_merge)
 		{
 			// FIXME: Error recovery
