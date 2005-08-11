@@ -881,7 +881,7 @@ namespace Beagle.Daemon {
 			if (query.HasHitTypes) {
 				subquery = new LNS.BooleanQuery ();
 				foreach (string hit_type in query.HitTypes)
-					subquery.Add (new LNS.TermQuery (new Term ("HitType", hit_type)), false, false);
+					subquery.Add (new LNS.TermQuery (new Term ("Type", hit_type)), false, false);
 				top_query.Add (subquery, true, false);
 			}
 
