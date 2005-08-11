@@ -59,7 +59,7 @@ class InfoTool {
 
 		try {
 			response = (DaemonInformationResponse) request.Send ();
-		} catch (System.Net.Sockets.SocketException) {
+		} catch (Beagle.ResponseMessageException) {
 			Console.WriteLine ("Could not connect to the daemon.");
 			return 1;
 		}

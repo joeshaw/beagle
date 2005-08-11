@@ -1,5 +1,5 @@
 
-CSC = mcs -debug
+CSC = mcs -debug -nowarn:0219
 
 TARGET = ImLogViewer.exe
 WRAPPER = beagle-imlogviewer
