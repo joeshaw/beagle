@@ -45,6 +45,15 @@ for crawl_file in @sysconfdir@/beagle/*; do
 	    OPTIONS="$OPTIONS `test -n "$CRAWL_CACHE_TEXT" -a "$CRAWL_CACHE_TEXT"="yes" && \
                      echo --enable-text-cache`"
 
+	    OPTIONS="$OPTIONS `test -n "$CRAWL_CACHE_TEXT" -a "$CRAWL_CACHE_TEXT"="yes" && \
+                     echo --enable-text-cache`"
+
+	    OPTIONS="$OPTIONS `test -n "$CRAWL_ALLOW_PATTERNS" && \
+                     echo --allow-pattern $CRAWL_ALLOW_PATTERNS`"
+
+	    OPTIONS="$OPTIONS `test -n "$CRAWL_DENY_PATTERNS" && \
+                     echo --allow-pattern $CRAWL_DENY_PATTERNS`"
+
 	    eval nice -n 19 su $CRAWL_USER -c \"@sbindir@/beagle-build-index --target @localstatedir@/cache/beagle/indexes/$CRAWL_INDEX_NAME $OPTIONS $CRAWL_PATHS\" 2> /dev/null
 	fi
     fi
