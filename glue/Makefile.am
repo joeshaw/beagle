@@ -41,6 +41,7 @@ endif
 
 libinotifyglue_la_SOURCES =	\
 	inotify.h		\
+	inotify-syscalls.h	\
 	inotify-glue.c
 
 libioprioglue_la_SOURCES =	\
