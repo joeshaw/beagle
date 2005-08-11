@@ -631,6 +631,9 @@ namespace Beagle.Daemon.FileSystemQueryable {
 
 		public void DoneCrawlingOneDirectory (DirectoryModel dir)
 		{
+			if (! dir.IsAttached)
+				return;
+
 			FileAttributes attr;
 			attr = FileAttributesStore.Read (dir.FullName);
 
