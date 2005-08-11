@@ -10,8 +10,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: beagle HEAD\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2005-08-10 00:07+0200\n"
-"PO-Revision-Date: 2005-08-10 00:08+0200\n"
+"POT-Creation-Date: 2005-08-11 20:09+0200\n"
+"PO-Revision-Date: 2005-08-11 20:11+0200\n"
 "Last-Translator: Hendrik Brandt <heb@gnome-de.org>\n"
 "Language-Team: German <gnome-de@gnome.org>\n"
 "MIME-Version: 1.0\n"
@@ -375,11 +375,11 @@ msgstr "von einem vernetzten Beagle auf Host"
 msgid "Search Networked Beagle"
 msgstr "Vernetzten Beagle durchsuchen"
 
-#: ../tools/Settings.cs:208
+#: ../tools/Settings.cs:212
 msgid "Reload configuration"
 msgstr "Einstellungen neu laden"
 
-#: ../tools/Settings.cs:209
+#: ../tools/Settings.cs:213
 msgid ""
 "The configuration file has been modified by another application. Do you wish "
 "to discard the currently displayed values and reload configuration from disk?"
@@ -388,17 +388,17 @@ msgstr ""
 "Sie, dass die aktuell angezeigten Werte zurückgesetzt werden und eine neu "
 "Konfiguration geladen wird?"
 
-#: ../tools/Settings.cs:247
+#: ../tools/Settings.cs:251
 msgid "Select Path"
 msgstr "Pfad auswählen"
 
-#: ../tools/Settings.cs:266
+#: ../tools/Settings.cs:270
 msgid "The selected path is already selected for indexing and wasn't added."
 msgstr ""
 "Der Pfad ist bereits zur Indizierung vorgesehen und wurde deshalb nicht "
 "hinzugefügt."
 
-#: ../tools/Settings.cs:269
+#: ../tools/Settings.cs:273
 msgid ""
 "The selected path wasn't added. The list contains items that supercedes it "
 "and the data is already being indexed."
@@ -406,15 +406,15 @@ msgstr ""
 "Der ausgewählte Pfad wurde nicht hinzugefügt. Die Liste enthält bereits "
 "einen darüber liegenden Pfad dessen Daten bereits indiziert sind."
 
-#: ../tools/Settings.cs:280 ../tools/Settings.cs:472
+#: ../tools/Settings.cs:284 ../tools/Settings.cs:476
 msgid "Path not added"
 msgstr "Pfad nicht hinzugefügt"
 
-#: ../tools/Settings.cs:289
+#: ../tools/Settings.cs:293
 msgid "Remove obsolete paths"
 msgstr "Veraltete Pfade entfernen"
 
-#: ../tools/Settings.cs:290
+#: ../tools/Settings.cs:294
 msgid ""
 "Adding this path will obsolete some of the existing include paths. This will "
 "result in the removal of the old obsolete paths. Do you still wish to add it?"
@@ -423,11 +423,11 @@ msgstr ""
 "überflüssig. Dadurch werden diese veralteten Pfade aus der Liste entfernt. "
 "Möchten Sie trotzdem fortfahren?"
 
-#: ../tools/Settings.cs:316
+#: ../tools/Settings.cs:320
 msgid "Remove path"
 msgstr "Pfad entfernen"
 
-#: ../tools/Settings.cs:317
+#: ../tools/Settings.cs:321
 msgid ""
 "Are you sure you wish to remove this path from the list of directories to be "
 "included for indexing?"
@@ -435,11 +435,11 @@ msgstr ""
 "Sind Sie sicher, dass Sie diesen Pfad von der Liste der zu indizierenden "
 "Ordner entfernen möchten?"
 
-#: ../tools/Settings.cs:346
+#: ../tools/Settings.cs:350
 msgid "Remove item"
 msgstr "Eintrag entfernen"
 
-#: ../tools/Settings.cs:347
+#: ../tools/Settings.cs:351
 msgid ""
 "Are you sure you wish to remove this item from the list of data to be "
 "excluded from indexing?"
@@ -447,79 +447,79 @@ msgstr ""
 "Sind Sie sicher, dass Sie diesen Eintrag von der Liste der von der "
 "Indizierung auszuschließenden Daten entfernen möchten?"
 
-#: ../tools/Settings.cs:390
+#: ../tools/Settings.cs:394
 msgid "Invalid host entry"
 msgstr "Ungültiger Rechnereintrag"
 
-#: ../tools/Settings.cs:397
-msgid "Host already present in the list."
-msgstr "Der Rechner befindet sich bereits auf der Liste."
+#: ../tools/Settings.cs:401
+msgid "Remote host already present in the list."
+msgstr "Dieser Netzwerkrechner befindet sich bereits auf der Liste."
 
-#: ../tools/Settings.cs:406
-msgid "Host not added"
-msgstr "Rechner nicht hinzugefügt"
+#: ../tools/Settings.cs:410
+msgid "Netbeagle Node not added"
+msgstr "Netbeagle-Knoten nicht hinzugefügt"
 
-#: ../tools/Settings.cs:422
+#: ../tools/Settings.cs:426
 msgid "Remove host"
 msgstr "Entfernter Rechner"
 
-#: ../tools/Settings.cs:423
+#: ../tools/Settings.cs:427
 msgid "Are you sure you wish to remove this host from the list?"
 msgstr ""
 "Sind Sie sicher, dass Sie diesen Rechner von der Liste entfernen möchten?"
 
-#: ../tools/Settings.cs:444
+#: ../tools/Settings.cs:448
 msgid "Select path"
 msgstr "Pfad auswählen"
 
-#: ../tools/Settings.cs:463
+#: ../tools/Settings.cs:467
 msgid "The selected path is already configured for external access."
 msgstr ""
 "Der ausgewählte Pfad ist bereits für den externen Zugriff konfiguriert."
 
-#: ../tools/Settings.cs:487
+#: ../tools/Settings.cs:491
 msgid "Remove public path"
 msgstr "Öffentlichen Pfad entfernen"
 
-#: ../tools/Settings.cs:488
+#: ../tools/Settings.cs:492
 msgid ""
 "Are you sure you wish to remove this entry from the list of public paths?"
 msgstr ""
 "Sind Sie sicher, dass Sie diesen Eintrag von der Liste der öffentlichen "
 "Pfade entfernen möchten?"
 
-#: ../tools/Settings.cs:533 ../tools/Settings.cs:622 ../tools/Settings.cs:700
-#: ../tools/Settings.cs:776 ../tools/Settings.cs:1115
+#: ../tools/Settings.cs:537 ../tools/Settings.cs:626 ../tools/Settings.cs:704
+#: ../tools/Settings.cs:780 ../tools/Settings.cs:1119
 msgid "Name"
 msgstr "Name"
 
-#: ../tools/Settings.cs:616 ../tools/settings.glade.h:29
+#: ../tools/Settings.cs:620 ../tools/settings.glade.h:31
 msgid "Type"
 msgstr "Typ"
 
-#: ../tools/Settings.cs:669 ../tools/Settings.cs:1049
-#: ../tools/settings.glade.h:22
+#: ../tools/Settings.cs:673 ../tools/Settings.cs:1053
+#: ../tools/settings.glade.h:24
 msgid "Path"
 msgstr "Pfad"
 
-#: ../tools/Settings.cs:672 ../tools/Settings.cs:1059
+#: ../tools/Settings.cs:676 ../tools/Settings.cs:1063
 msgid "Pattern"
 msgstr "Muster"
 
-#: ../tools/Settings.cs:675 ../tools/Settings.cs:1054
-#: ../tools/settings.glade.h:20
+#: ../tools/Settings.cs:679 ../tools/Settings.cs:1058
+#: ../tools/settings.glade.h:22
 msgid "Mail Folder"
 msgstr "E-Mail-Ordner"
 
-#: ../tools/Settings.cs:1023
+#: ../tools/Settings.cs:1027
 msgid "Select Folder"
 msgstr "Ordner auswählen"
 
-#: ../tools/Settings.cs:1083
+#: ../tools/Settings.cs:1087
 msgid "Error adding path"
 msgstr "Fehler beim Hinzufügen des Pfades"
 
-#: ../tools/Settings.cs:1084
+#: ../tools/Settings.cs:1088
 msgid ""
 "The specified path could not be found and therefore it could not be added to "
 "the list of resources excluded for indexing."
@@ -528,13 +528,13 @@ msgstr ""
 "Liste der von der Indizierung auszuschließenden Ressourcen aufgenommen "
 "werden."
 
-#: ../tools/Settings.cs:1114
+#: ../tools/Settings.cs:1118
 msgid "Show"
 msgstr "Zeigen"
 
 #: ../tools/settings.glade.h:1
-msgid "<b>Add host</b>"
-msgstr "<b>Rechner hinzufügen</b>"
+msgid "<b>Add remote host</b>"
+msgstr "<b>Netzwerkrechner hinzufügen</b>"
 
 #: ../tools/settings.glade.h:2
 msgid "<b>Add resource</b>"
@@ -561,18 +561,26 @@ msgid "<b>Select mail folder</b>"
 msgstr "<b>E-Mail-Ordner auswählen</b>"
 
 #: ../tools/settings.glade.h:8
-msgid "Add a search-enabled host you wish to network with"
-msgstr "Einen Rechner im Netzwerk mit aktivierter Suche mit dem Sie sich verbinden möchten  hinzufügen"
+msgid ""
+"Add a remote search-enabled host you wish \n"
+"to network with."
+msgstr ""
+"Einen Netzwerkrechner mit aktivierter Suche mit dem\n"
+"Sie sich verbinden möchten  hinzufügen."
 
-#: ../tools/settings.glade.h:9
+#: ../tools/settings.glade.h:10
 msgid "Add any additional paths to be included for indexing."
 msgstr "Weitere zu indizierende Pfade hinzufügen."
 
-#: ../tools/settings.glade.h:10
-msgid "Add any search-enabled hosts you wish to network with"
+#: ../tools/settings.glade.h:11
+msgid "Add any remote search-enabled hosts you wish to network with"
 msgstr "Fügen Sie hier durchsuchbare Netzwerkrechner hinzu, auf die Sie zugreifen möchten"
 
-#: ../tools/settings.glade.h:11
+#: ../tools/settings.glade.h:12
+msgid "Address"
+msgstr "Adresse"
+
+#: ../tools/settings.glade.h:13
 msgid ""
 "Adjust which types of results should be visible, and in what order they "
 "should be presented when grouped by type."
@@ -580,63 +588,63 @@ msgstr ""
 "Stellen Sie hier ein, welche Ergebnisse angezeigt werden sollen und in "
 "welche Reihenfolge sie innerhalb einer Gruppe gesetzt werden sollen."
 
-#: ../tools/settings.glade.h:12
+#: ../tools/settings.glade.h:14
 msgid "Allow external access to local search services"
 msgstr "Externen Zugriff auf lokale Suchdienste erlauben"
 
-#: ../tools/settings.glade.h:13
+#: ../tools/settings.glade.h:15
 msgid "Alt"
 msgstr "Alt"
 
-#: ../tools/settings.glade.h:14
+#: ../tools/settings.glade.h:16
 msgid "Ctrl"
 msgstr "Strg"
 
-#: ../tools/settings.glade.h:15
+#: ../tools/settings.glade.h:17
 msgid "Directory Path"
 msgstr "Ordnerpfad"
 
-#: ../tools/settings.glade.h:16
+#: ../tools/settings.glade.h:18
 msgid "Display the search window by pressing"
 msgstr "Das Suchfenster anzeigen beim Drücken von"
 
-#: ../tools/settings.glade.h:17
+#: ../tools/settings.glade.h:19
 msgid "Filename Pattern"
 msgstr "Dateinamenmuster"
 
-#: ../tools/settings.glade.h:18
+#: ../tools/settings.glade.h:20
 msgid "Index my home directory"
 msgstr "Persönlichen Ordner indizieren"
 
-#: ../tools/settings.glade.h:19
+#: ../tools/settings.glade.h:21
 msgid "Indexing"
 msgstr "Indizierung"
 
-#: ../tools/settings.glade.h:21
+#: ../tools/settings.glade.h:23
 msgid "Networking"
 msgstr "Netzwerk"
 
-#: ../tools/settings.glade.h:23
+#: ../tools/settings.glade.h:25
 msgid "Please select a resource you wish to exclude from indexing."
 msgstr ""
 "Bitte wählen Sie eine Quelle die Sie von der Indizierung ausschließen "
 "möchten."
 
-#: ../tools/settings.glade.h:24
+#: ../tools/settings.glade.h:26
 msgid "Please select the mail folder you wish to exclude from indexing. "
 msgstr ""
 "Bitte wählen Sie den E-Mail-Ordner den Sie von der Indizierung ausschließen "
 "möchten."
 
-#: ../tools/settings.glade.h:25
+#: ../tools/settings.glade.h:27
 msgid "Search"
 msgstr "Suchen"
 
-#: ../tools/settings.glade.h:26
+#: ../tools/settings.glade.h:28
 msgid "Search Preferences"
 msgstr "Such- & Indizierungseinstellungen"
 
-#: ../tools/settings.glade.h:27
+#: ../tools/settings.glade.h:29
 msgid ""
 "Specify any resources, such as paths, patterns, mail folders or type of "
 "objects you wish to exclude from indexing."
@@ -644,14 +652,10 @@ msgstr ""
 "Legen Sie hier fest, welche Ressourcen, wie z.B. Pfade, E-Mail-Ordner, "
 "Muster oder Objektarten von der Indizierung ausgeschlossen werden sollen."
 
-#: ../tools/settings.glade.h:28
+#: ../tools/settings.glade.h:30
 msgid "Specify paths that should be available for external access"
 msgstr ""
 "Geben Sie hier die Pfade an, die für den externen Zugriff verfügbar sind"
-
-#: ../tools/settings.glade.h:30
-msgid "_Address"
-msgstr "_Adresse"
 
 #: ../Util/Evolution.cs:45 ../Util/Evolution.cs:163
 msgid "On This Computer"
