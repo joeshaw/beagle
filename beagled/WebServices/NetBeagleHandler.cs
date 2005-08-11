@@ -95,10 +95,11 @@ namespace Beagle.Daemon
 			
 			//Cache the query request, get a unique searchId and include in network searchRequest:
 			sreq.searchId = NetworkedBeagle.AddRequest(query);
+
 			
 			int hc = NetworkedBeagle.HopCount(query);
 			sreq.hopCount = (hc > 0) ? hc:1;
-			
+
 			log.Info("NetBeagleHandler: Starting WebService Query for " + Hostname + ":" + Port);
 			
 			ReqContext rc = new ReqContext(wsp, result, netBeagleQueryable);
@@ -120,7 +121,7 @@ namespace Beagle.Daemon
     		IQueryResult 	 result = rc.GetResult;
 			
 			int count = 0;
-			bool hitRejectsLogged = false;
+			//bool hitRejectsLogged = false;
 			
     		try
       		{	    		
@@ -133,6 +134,7 @@ namespace Beagle.Daemon
 						
 					//NetContext nc = new NetContext(wsp, resp.searchToken);						
 			   		HitResult[] hres = resp.hitResults;
+			   		ArrayList  nwhits = new ArrayList();
 		
   					for (int i = 0; i < hres.Length; i++) {
 			
@@ -162,7 +164,7 @@ namespace Beagle.Daemon
 							foreach (HitProperty hp in hr.properties) {
 							
 								Property p 		= Property.New(hp.PKey, hp.PVal);
-								p.IsKeyword 	= hp.IsKeyword;
+								p.IsMutable 	= hp.IsMutable;
 								p.IsSearched 	= hp.IsSearched;
 	
 								hit.AddProperty(p);
@@ -179,10 +181,8 @@ namespace Beagle.Daemon
 							//Add NetBeagleQueryable instance
 							hit.SourceObject = iq;
 						
-							if ((! result.Add (hit)) && (! hitRejectsLogged)) {
-								hitRejectsLogged = true;
-								log.Info("NetBeagleHandler: Network Hits rejected by HitRegulator. Too many Hits!");
-							}
+							nwhits.Add(hit); 
+
 							count++;							
 						}
 						catch (Exception ex2) {
@@ -191,7 +191,16 @@ namespace Beagle.Daemon
 							//log.Error ("Exception StackTrace: " + ex.StackTrace);
 		 				}				
 					}  //end for 
-					
+
+					if (nwhits.Count > 0) 
+						result.Add (nwhits);
+/*				
+					if ((! result.Add (nwhits)) && (! hitRejectsLogged)) 
+					{
+						hitRejectsLogged = true;
+						log.Info("NetBeagleHandler: Network Hits rejected by HitRegulator. Too many Hits!");
+					}
+*/					
 					log.Info("NetBeagleHandler: DoQueryResponseHandler() Got {0} result(s) from Index {1} from Networked Beagle at {2}", count, resp.firstResultIndex, wsp.Hostname + ":" + wsp.Port); 		   		
 			
 					int index = resp.firstResultIndex + resp.numResults;			

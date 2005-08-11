@@ -275,7 +275,7 @@ public class HitProperty {
     public string PVal;
 
     /// <remarks/>
-    public bool IsKeyword;
+    public bool IsMutable;
 
     /// <remarks/>
     public bool IsSearched;

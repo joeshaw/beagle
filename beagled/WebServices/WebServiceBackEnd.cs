@@ -523,7 +523,7 @@ namespace Beagle.WebService {
 						sr.hitResults[i].properties[j] = new HitProperty();
 						sr.hitResults[i].properties[j].PKey = p.Key;
 						sr.hitResults[i].properties[j].PVal = p.Value;				
-						sr.hitResults[i].properties[j].IsKeyword = p.IsKeyword;				
+						sr.hitResults[i].properties[j].IsMutable = p.IsMutable;				
 						sr.hitResults[i].properties[j].IsSearched = p.IsSearched;							
 					}
 
@@ -613,7 +613,7 @@ namespace Beagle.WebService {
 						sr.hitResults[i].properties[j] = new HitProperty();
 						sr.hitResults[i].properties[j].PKey = p.Key;
 						sr.hitResults[i].properties[j].PVal = p.Value;				
-						sr.hitResults[i].properties[j].IsKeyword = p.IsKeyword;				
+						sr.hitResults[i].properties[j].IsMutable = p.IsMutable;				
 						sr.hitResults[i].properties[j].IsSearched = p.IsSearched;							
 					}												
 					
@@ -753,7 +753,7 @@ namespace Beagle.WebService {
 		}
 		
 		private bool  isKeyword;
-		public bool IsKeyword {
+		public bool IsMutable {
 			get { return isKeyword; }
 			set { isKeyword = value; }
 		}
