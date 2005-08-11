@@ -439,7 +439,7 @@ namespace Beagle.Daemon {
 				if (uri_filter != null) {
 					Uri uri;
 					uri = GetUriFromDocument (doc);
-					if (! uri_filter (uri))
+					if (! uri_filter (uri)) 
 						continue;
 				}
 
@@ -758,12 +758,11 @@ namespace Beagle.Daemon {
 			// first, excluding items that we know came out of the
 			// first set.
 			BetterBitArray filtered_second_matches;
-			if (first_into_second == null) 
+			if (first_into_second == null || first_into_second.TrueCount == 0) 
 				filtered_second_matches = second_matches;
 			else {
-				filtered_second_matches = new BetterBitArray (first_into_second);
-				filtered_second_matches.Not ();
-				filtered_second_matches.And (second_matches);
+				filtered_second_matches = new BetterBitArray (second_matches);
+				filtered_second_matches.AndNot (first_into_second);
 			}
 
 			ProjectMatches (second_searcher,
