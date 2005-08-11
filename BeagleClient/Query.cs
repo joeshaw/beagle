@@ -31,7 +31,7 @@ using System.Collections;
 using System.Text;
 using System.Xml.Serialization;
 
-using BU = Beagle.Util;
+using Beagle.Util;
 
 namespace Beagle {
 
@@ -51,6 +51,9 @@ namespace Beagle {
 		private ArrayList mimeTypes = new ArrayList ();
 		private ArrayList hitTypes = new ArrayList ();
 		private ArrayList searchSources = new ArrayList ();
+
+		private ArrayList exact_text = null;
+		private ArrayList stemmed_text = null;
 
 		// Events to make things nicer to clients
 		public delegate void HitsAdded (HitsAddedResponse response);
@@ -73,6 +76,7 @@ namespace Beagle {
 			this.RegisterAsyncResponseHandler (typeof (FinishedResponse), OnFinished);
 			this.RegisterAsyncResponseHandler (typeof (CancelledResponse), OnCancelled);
 			this.RegisterAsyncResponseHandler (typeof (ErrorResponse), OnError);
+			this.RegisterAsyncResponseHandler (typeof (SearchTermResponse), OnSearchTerms);
 		}
 
 		public Query (string str) : this ()
@@ -121,6 +125,14 @@ namespace Beagle {
 			throw new ResponseMessageException (response);
 		}
 
+		private void OnSearchTerms (ResponseMessage r)
+		{
+			SearchTermResponse response = (SearchTermResponse) r;
+
+			exact_text = response.ExactText;
+			stemmed_text = response.StemmedText;
+		}
+
 		///////////////////////////////////////////////////////////////
 
 		public void ClearParts ()
@@ -153,16 +165,7 @@ namespace Beagle {
 
 		[XmlIgnore]
 		public ICollection Text {
-			get {
-				ArrayList text = new ArrayList ();
-				foreach (QueryPart part in parts) {
-					QueryPart_Text part_text = part as QueryPart_Text;
-					if (part_text != null && part_text.Text != null) {
-						text.Add (part_text.Text);
-					}
-				}
-				return text;
-			}
+			get { return exact_text; }
 		}
 
 		[XmlIgnore]
@@ -184,6 +187,11 @@ namespace Beagle {
 				}
 				return builder.ToString ();
 			}
+		}
+
+		[XmlIgnore]
+		public ICollection StemmedText {
+			get { return stemmed_text; }
 		}
 						
 		///////////////////////////////////////////////////////////////

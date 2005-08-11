@@ -90,5 +90,24 @@ namespace Beagle {
 	}
 
 	public class FinishedResponse : ResponseMessage { }
+
 	public class CancelledResponse : ResponseMessage { }
+
+	public class SearchTermResponse : ResponseMessage {
+		
+		[XmlArray (ElementName="Exact")]
+		[XmlArrayItem (ElementName="Text", Type=typeof (string))]
+		public ArrayList ExactText;
+
+		[XmlArray (ElementName="Stemmed")]
+		[XmlArrayItem (ElementName="Text", Type=typeof (string))]
+		public ArrayList StemmedText;
+
+
+		public SearchTermResponse ()
+		{
+			ExactText = new ArrayList ();
+			StemmedText = new ArrayList ();
+		}
+	}
 }

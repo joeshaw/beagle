@@ -95,7 +95,9 @@ namespace Beagle.Daemon {
 			AttachResult ();
 
 			QueryDriver.ChangedEvent += OnQueryDriverChanged;
-			QueryDriver.DoQuery (query, this.result);
+			QueryDriver.DoQuery (query,
+					     this.result,
+					     new RequestMessageExecutor.AsyncResponse (this.SendAsyncResponse));
 
 			// Don't send a response; we'll be sending them async
 			return null;

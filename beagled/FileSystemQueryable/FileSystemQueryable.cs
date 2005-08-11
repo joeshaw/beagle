@@ -1131,9 +1131,11 @@ namespace Beagle.Daemon.FileSystemQueryable {
 			string path;
 			path = ToFullPath (name, parent_id);
 
+#if false
 			if (Debug)
 				Logger.Log.Debug ("HitFilter mapped '{0}' {1} to '{2}'",
 						  name, parent_id, path);
+#endif
 
 			bool is_directory = (hit.MimeType == "inode/directory");
 

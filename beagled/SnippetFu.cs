@@ -160,6 +160,7 @@ namespace Beagle.Daemon {
 			if (string_source == null)
 				return null;
 
+#if false
 			int N = query_terms.Length;
 			string[] stemmed_terms = new string [N];
 			for (int i = 0; i < N; ++i) {
@@ -168,12 +169,13 @@ namespace Beagle.Daemon {
 					continue;
 				stemmed_terms [i] = LuceneCommon.Stem (query_terms [i]).ToLower ();
 			}
+#endif
 			
 			ArrayList matches = new ArrayList ();
 
 			string str;
 			while ( (str = string_source ()) != null) {
-				HighlightTerms (stemmed_terms, str, ref matches);
+				HighlightTerms (query_terms, str, ref matches);
 			}
 
 			string snippet = "";

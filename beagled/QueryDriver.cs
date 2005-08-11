@@ -402,7 +402,61 @@ namespace Beagle.Daemon {
 			}
 		}
 
-		static public void DoQuery (Query query, QueryResult result)
+		static void AddSearchTermInfo (QueryPart          part,
+					       SearchTermResponse response)
+		{
+			if (part.Logic == QueryPartLogic.Prohibited)
+				return;
+
+			if (part is QueryPart_Or) {
+				ICollection sub_parts;
+				sub_parts = ((QueryPart_Or) part).SubParts;
+				foreach (QueryPart qp in sub_parts)
+					AddSearchTermInfo (qp, response);
+				return;
+			}
+
+			if (! (part is QueryPart_Text))
+				return;
+
+			QueryPart_Text tp;
+			tp = (QueryPart_Text) part;
+
+			string [] split;
+			split = tp.Text.Split (' ');
+ 
+			// First, remove stop words
+			for (int i = 0; i < split.Length; ++i)
+				if (LuceneCommon.IsStopWord (split [i]))
+					split [i] = null;
+
+			// Assemble the phrase minus stop words
+			StringBuilder sb;
+			sb = new StringBuilder ();
+			for (int i = 0; i < split.Length; ++i) {
+				if (split [i] == null)
+					continue;
+				if (sb.Length > 0)
+					sb.Append (' ');
+				sb.Append (split [i]);
+			}
+			response.ExactText.Add (sb.ToString ());
+
+			// Now assemble a stemmed version
+			sb.Length = 0; // clear the previous value
+			for (int i = 0; i < split.Length; ++i) {
+				if (split [i] == null)
+					continue;
+				if (sb.Length > 0)
+					sb.Append (' ');
+				sb.Append (LuceneCommon.Stem (split [i]));
+			}
+			response.StemmedText.Add (sb.ToString ());
+		}
+
+		static public void DoQuery (Query                                query,
+					    QueryResult                          result,
+					    RequestMessageExecutor.AsyncResponse send_response)
 		{
 			// We need to remap any QueryPart_Human parts into
 			// lower-level part types.  First, we find any
@@ -432,6 +486,12 @@ namespace Beagle.Daemon {
 				foreach (QueryPart part in new_parts)
 					query.AddPart (part);
 			}
+
+			SearchTermResponse search_term_response;
+			search_term_response = new SearchTermResponse ();
+			foreach (QueryPart part in query.Parts)
+				AddSearchTermInfo (part, search_term_response);
+			send_response (search_term_response);
 
 			// The extra pair of calls to WorkerStart/WorkerFinished ensures:
 			// (1) that the QueryResult will fire the StartedEvent
