@@ -48,7 +48,14 @@ namespace Beagle.Daemon
 			if (args.Length < 2)
 				PrintUsage ();
 			
-			driver = new LuceneIndexingDriver (args [0], -1);
+			string index_dir = (Path.IsPathRooted (args [0])) ? args [0] : Path.GetFullPath (args [0]);
+			
+			if (!Directory.Exists (index_dir)) {
+				Console.WriteLine ("Could not find index: {0}", index_dir);
+				Environment.Exit (1);
+			}			
+
+			driver = new LuceneIndexingDriver (index_dir, -1);
 
 			switch (args [1]) {
 #if false
@@ -58,13 +65,15 @@ namespace Beagle.Daemon
 			case "remove":
 				ExecuteRemove (args [2]);
 				break;
-			case "merge":
-				ExecuteMerge (args [2]);
-				break;
+#endif
 			case "info":
 				ExecuteInfo ();
 				break;
-#endif
+
+			case "merge":
+				ExecuteMerge (args [2]);
+				break;
+
 			case "optimize":
 				ExecuteOptimize ();
 				break;
@@ -87,8 +96,10 @@ namespace Beagle.Daemon
 			usage += 
 				"Usage: beagle-manage-index <index_path> <command> [OPTIONS]\n\n" + 
 				"Commands:\n" + 
+#if false
 				"  list\t\t\t\tList all entries in the index.\n" + 
 				"  remove <uri|tag>\t\tRemove entries corresponding to the criterias specified.\n" + 
+#endif
 				"  merge <index to merge>\tMerge another Lucene index into the target.\n" + 
 				"  info\t\t\t\tPrint basic index information.\n" + 
 				"  optimize\t\t\tOptimize index.\n";
@@ -164,13 +175,15 @@ namespace Beagle.Daemon
 				Console.WriteLine ("Successfully removed {0} items with tag: {1}", n_hits, arg);
 			}
 		}
-		
+#endif				
 		/////////////////////////////////////////////////////////
-		
+
+		// Merge an external Beagle index to the current index. Merging will 
+		// join the primary- and secondary lucene indexes and if available, the
+		// file attributes store.
+
 		static void ExecuteMerge (string index_to_merge) 
 		{
-			LuceneDriver driver = new LuceneDriver (index_dir);
-
 			if (!Path.IsPathRooted (index_to_merge))
 				index_to_merge = Path.GetFullPath (index_to_merge);
 			
@@ -179,44 +192,50 @@ namespace Beagle.Daemon
 				Environment.Exit (1);
 			}
 			
-			LuceneIndexingDriver driver_to_merge = new LuceneIndexingDriver (index_to_merge);
+			LuceneQueryingDriver driver_to_merge = new LuceneQueryingDriver (index_to_merge, -1, false);
 			
 			Stopwatch watch = new Stopwatch ();
 			watch.Start ();
 			
-			// Merge lucene index
+			// Merge the lucene index
+
 			try {
 				driver.Merge (driver_to_merge);
 			} catch (Exception e) {
-				Console.WriteLine ("Index merging failed: {0}", e);
+				Console.WriteLine ("Index merging (lucene) failed: {0}", e);
 				Environment.Exit (1);
 			}
 			
 			// Merge file attributes stores
+	
+			FileAttributesStore_Sqlite store;
+ 
 			try {
-				FileAttributesStore_Sqlite store = new FileAttributesStore_Sqlite (driver.IndexDirectory, driver.Fingerprint);
-				store.Merge (new FileAttributesStore_Sqlite (driver_to_merge.IndexDirectory, driver_to_merge.Fingerprint));
+				store = new FileAttributesStore_Sqlite (driver.TopDirectory, driver.Fingerprint);
+				store.Merge (new FileAttributesStore_Sqlite (driver_to_merge.TopDirectory, driver_to_merge.Fingerprint));
 			} catch (Exception e) {
-				Console.WriteLine ("Index merging failed: {0}", e);
+				Console.WriteLine ("Index merging (attributes store) failed: {0}", e);
 				Environment.Exit (1);
 			}
 			
 			watch.Stop ();
 			
-			Console.WriteLine ("Successfully merged index {0} into {1} in {2}", index_to_merge, driver.IndexDirectory, watch);
+			Console.WriteLine ("Successfully merged index {0} into {1} in {2}", index_to_merge, driver.TopDirectory, watch);
 		}
 
 		/////////////////////////////////////////////////////////
 		
+		// Get the total number of entries from the index.
+		
 		static void ExecuteInfo ()
 		{
-			LuceneDriver driver = new LuceneDriver (index_dir, true);
-
 			Console.WriteLine ("Total number of entries in index: {0}", driver.GetItemCount());
 		}
 
 		/////////////////////////////////////////////////////////
-#endif		
+		
+		// Execute a lucene optimize-task on the index.
+
 		static void ExecuteOptimize ()
 		{
 			Stopwatch watch = new Stopwatch ();

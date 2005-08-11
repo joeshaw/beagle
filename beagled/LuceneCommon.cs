@@ -93,16 +93,16 @@ namespace Beagle.Daemon {
 			this.index_name = index_name;
 			this.minor_version = minor_version;
 
-			this.top_dir = Path.Combine (PathFinder.IndexDir, index_name);
+			this.top_dir = (Path.IsPathRooted (index_name)) ? index_name : Path.Combine (PathFinder.IndexDir, index_name);
 		}
 
 		//////////////////////////////////////////////////////////////////////////////
 
 		protected string IndexName { get { return index_name; } }
 
-		protected Lucene.Net.Store.Directory PrimaryStore { get { return primary_store; } }
+		public Lucene.Net.Store.Directory PrimaryStore { get { return primary_store; } }
 
-		protected Lucene.Net.Store.Directory SecondaryStore { get { return secondary_store; } }
+		public Lucene.Net.Store.Directory SecondaryStore { get { return secondary_store; } }
 
 		public string Fingerprint { get { return fingerprint; } }
 

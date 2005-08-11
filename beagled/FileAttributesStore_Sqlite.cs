@@ -411,8 +411,8 @@ namespace Beagle.Daemon {
 				command = new SqliteCommand ();
 				command.Connection = connection;
 				command.CommandText =
-					"SELECT unique_id, directory, filename, last_mtime, last_indexed, filter_name, filter_version " +
-					"FROM file_attributes"; 
+					"SELECT unique_id, directory, filename, last_mtime, last_attrtime, filter_name, filter_version " +
+					"FROM file_attributes";
 				
 				reader = ExecuteReaderOrWait (command);
 				
@@ -432,8 +432,12 @@ namespace Beagle.Daemon {
 		{
 			ICollection attributes = fa_sqlite_store_to_merge.ReadAllAttributes ();
 				
+			BeginTransaction ();
+
 			foreach (FileAttributes attribute in attributes)
 				Write (attribute);
+
+			CommitTransaction ();
 		}
 	}
 }

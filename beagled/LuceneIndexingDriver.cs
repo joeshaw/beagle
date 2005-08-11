@@ -373,17 +373,23 @@ namespace Beagle.Daemon {
 
 		public void Merge (LuceneCommon index_to_merge)
 		{
-			// FIXME: Error recovery
+                        // FIXME: Error recovery
 
-			Lucene.Net.Store.FSDirectory store;
-			store = Lucene.Net.Store.FSDirectory.GetDirectory (index_to_merge.PrimaryIndexDirectory,
-									   index_to_merge.LockDirectory,
-									   false);
-			Lucene.Net.Store.Directory[] stores = {store};
-			
-			IndexWriter writer = new IndexWriter (PrimaryStore, null, false);
-			writer.AddIndexes (stores);
-			writer.Close ();
+			// Merge the primary index
+			IndexWriter primary_writer;
+			Lucene.Net.Store.Directory[] primary_store = {index_to_merge.PrimaryStore};
+			primary_writer = new IndexWriter (PrimaryStore, null, false);
+
+			primary_writer.AddIndexes (primary_store);
+			primary_writer.Close ();
+
+			// Merge the secondary index
+			IndexWriter secondary_writer;
+			Lucene.Net.Store.Directory[] secondary_store = {index_to_merge.SecondaryStore};
+			secondary_writer = new IndexWriter (SecondaryStore, null, false);
+
+			secondary_writer.AddIndexes (secondary_store);
+			secondary_writer.Close ();
 		}
 	}
 }
