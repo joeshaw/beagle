@@ -167,7 +167,7 @@ EXTRA_DIST =				\
 	$(SETTINGS_CSFILES)		\
 	$(SETTINGS_RESOURCES)		\
 	$(man_MANS)			\
-	$(CRAWL_CONFIG)			\
+	$(CRAWL_RULES)			\
 	beagle-index-info		\
 	beagle-ping			\
 	beagle-status			\
