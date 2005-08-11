@@ -129,7 +129,7 @@ beagle_client_new (const char *client_name)
 
 	socket_path = g_build_filename (socket_dir, client_name, NULL);
 	g_free (socket_dir);
-	if (g_stat (socket_path, &buf) == -1 || !S_ISSOCK (buf.st_mode)) {
+	if (stat (socket_path, &buf) == -1 || !S_ISSOCK (buf.st_mode)) {
 		g_free (socket_path);
 		return NULL;
 	}

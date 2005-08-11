@@ -47,7 +47,7 @@ beagle_util_is_path_on_block_device (const char *path)
 {
 	struct stat st;
 
-	if (g_stat (path, &st) < 0)
+	if (stat (path, &st) < 0)
 		return FALSE;
 
 	return (st.st_dev >> 8 != 0);
