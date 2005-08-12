@@ -49,6 +49,8 @@ public class SettingsDialog
 	////////////////////////////////////////////////////////////////
 	// Widgets
 
+	[Widget] CheckButton autostart_toggle;
+
 	[Widget] CheckButton press_ctrl_toggle;
  	[Widget] CheckButton press_alt_toggle;
 	[Widget] Entry show_search_window_entry;
@@ -154,7 +156,7 @@ public class SettingsDialog
 
 	private void LoadConfiguration ()
 	{	
-		// FIXME: Autostart
+		autostart_toggle.Active = Conf.Searching.Autostart;
 
 		KeyBinding show_binding = Conf.Searching.ShowSearchWindowBinding;
 		press_ctrl_toggle.Active = show_binding.Ctrl;
@@ -184,7 +186,7 @@ public class SettingsDialog
 
 	private void SaveConfiguration ()
 	{
-		// FIXME: Autostart
+		Conf.Searching.Autostart = autostart_toggle.Active;
 		
 		Conf.Searching.ShowSearchWindowBinding = new KeyBinding (show_search_window_entry.Text, 
 									 press_ctrl_toggle.Active, 
@@ -205,7 +207,7 @@ public class SettingsDialog
 
 	private void OnConfigurationChanged (Conf.Section section)
 	{
-	    HigMessageDialog dialog = new HigMessageDialog (settings_dialog,
+		HigMessageDialog dialog = new HigMessageDialog (settings_dialog,
 								DialogFlags.Modal,
 								MessageType.Question,
 								ButtonsType.YesNo,

@@ -258,6 +258,13 @@ namespace Beagle.Daemon {
 				case "--disable-scheduler":
 					arg_disable_scheduler = true;
 					break;
+
+				case "--autostart":
+					if (! Conf.Searching.Autostart) {
+						Console.WriteLine ("Autostarting is disabled, not starting");
+						Environment.Exit (0);
+					}
+					break;
 #if ENABLE_WEBSERVICES
 				case "--web-global":
 					WebServiceBackEnd.web_global = true;

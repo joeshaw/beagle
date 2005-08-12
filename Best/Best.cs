@@ -74,6 +74,13 @@ namespace Best {
 					i++;
 					break;
 
+				case "--autostart":
+					if (! Conf.Searching.Autostart){
+						Console.WriteLine ("Autostarting is disabled, not starting");
+                                                Environment.Exit (0);
+					}
+					break;
+
 				default:
 					if (query.Length != 0)
 						query += " ";

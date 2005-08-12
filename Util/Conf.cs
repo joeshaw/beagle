@@ -310,8 +310,14 @@ namespace Beagle.Util {
 
 		[ConfigSection (Name="searching")]
 		public class SearchingConfig : Section {
+			
+			private bool autostart = true;
+			public bool Autostart {
+				get { return autostart; }
+				set { autostart = value; }
+			}
+			
 			private KeyBinding show_search_window_binding = new KeyBinding ("F12");
-
 			public KeyBinding ShowSearchWindowBinding {
 				get { return show_search_window_binding; }
 				set { show_search_window_binding = value; }
