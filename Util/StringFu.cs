@@ -484,6 +484,23 @@ namespace Beagle.Util {
 			return CountWords (str, -1);
 		}
 
+		// Strip trailing slashes and make sure we only have 1 leading slash
+		static public string SanitizePath (string path)
+		{
+			if (path.StartsWith ("//")) {
+				int pos;
+				for (pos = 2; pos < path.Length; pos++)
+					if (path [pos] != '/')
+						break;
+
+				path = path.Substring (pos - 1);
+			}
+			if (!(path.Length == 1 && path [0] == '/'))
+				path = path.TrimEnd ('/');
+
+			return path;
+		}
+
 		static void Main (string [] args)
 		{
 			foreach (string arg in args)

@@ -3,7 +3,10 @@
 	* beagled/FileSystemQueryable/FileNameFilter.cs,
 	beagled/FileSystemQueryable/FileSystemQueryable.cs: Drop internal
 	directory references when we add an exclude path. Also forget inotify
-	watches.
+	watches. Sanitize paths before we add them as roots.
+
+	* Util/StringFu.cs: Add SanitizePath, which trims excess leading and
+	trailing slashes.
 
 2005-08-11  Veerapuram Varadhan <vvaradhan@novell.com>
 
