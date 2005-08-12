@@ -74,7 +74,7 @@ inotify_glue_init (void)
 {
 	static int fd = 0;
 	if (fd)
-		return;
+		return fd;
 	fd = inotify_init ();
 	if (fd < 0) {
 		int _errno = errno;
@@ -132,8 +132,8 @@ inotify_glue_ignore (int fd, __s32 wd)
 
 #define MAX_PENDING_COUNT           5
 #define PENDING_PAUSE_MICROSECONDS  2000
-#define PENDING_THRESHOLD(qsize)    ((qsize) >> 1)
-#define PENDING_MARGINAL_COST(p)    ((unsigned int)(1 << (p)))
+#define PENDING_THRESHOLD(qsize)    ((unsigned int) (qsize) >> 1)
+#define PENDING_MARGINAL_COST(p)    ((unsigned int) (1 << (p)))
 
 void
 inotify_snarf_events (int fd, int timeout_secs, int *nr, void **buffer_out)
