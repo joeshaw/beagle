@@ -418,6 +418,7 @@ namespace Beagle.Daemon.FileSystemQueryable {
 
 		public void AddRoot (string path)
 		{
+			path = StringFu.SanitizePath (path);
 			Logger.Log.Debug ("Adding root: {0}", path);
 
 			if (roots_by_path.Contains (path)) {

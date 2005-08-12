@@ -80,22 +80,9 @@ namespace Beagle.Daemon.FileSystemQueryable {
 
 		///////////////////////////////////////////////////////////
 
-		static private string StripTrailingSlashes (string path)
-		{
-			if (path == null)
-				return null;
-			
-			while (path.Length > 0 && path [path.Length-1] == System.IO.Path.DirectorySeparatorChar)
-				path = path.Substring (0, path.Length-1);
-			
-			return path;
-		}
-
-		///////////////////////////////////////////////////////////
-
 		static public DirectoryModel NewRoot (object big_lock, string path, FileAttributes attr)
 		{
-			path = StripTrailingSlashes (path);
+			path = StringFu.SanitizePath (path);
 			
 			DirectoryModel root;
 			root = new DirectoryModel (attr);
@@ -394,7 +381,7 @@ namespace Beagle.Daemon.FileSystemQueryable {
 		{
 			lock (big_lock) {
 				
-				path = StripTrailingSlashes (path);
+				path = StringFu.SanitizePath (path);
 
 				if (IsRoot) {
 					
