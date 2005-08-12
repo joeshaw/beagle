@@ -44,10 +44,14 @@ namespace Beagle.Util {
 	public class Logger {
 
 		private static Hashtable loggers = new Hashtable ();
-		private static LogLevel defaultLevel = LogLevel.Debug; //LogLevel.Info;
 		private static TextWriter defaultWriter = null;
 		private static bool defaultEcho = true; //false;
 		private static string defaultLogName = null;
+
+		// FIXME: The defaultLevel should be something higher
+		// than just LogLevel.Debug in the future. Users bitch
+		// about disk space.
+		private static LogLevel defaultLevel = LogLevel.Debug; //LogLevel.Info
 
 		public static Logger Log {
 			get {
