@@ -39,7 +39,7 @@ class InfoTool {
 		usage +=
 			"Usage: beagle-info <OPTIONS>\n\n" +
 			"Options:\n" +
-			"  --daemon-version\t\t\tPrint the version of the running daemon.\n" +
+			"  --daemon-version\t\tPrint the version of the running daemon.\n" +
 			"  --status\t\t\tDisplay status of the running daemon.\n" +
 			"  --index-info\t\t\tDisplay statistics of the Beagle indexes.\n" +
 			"  --help\t\t\tPrint this usage message.\n";
