@@ -568,6 +568,13 @@ namespace Beagle.Daemon.FileSystemQueryable {
 			ThisScheduler.Add (task);
 		}
 
+		public void RemoveDirectory (string path)
+		{
+			DirectoryModel dir = GetDirectoryModelByPath (path);
+				if (dir != null)
+					RemoveDirectory (dir);
+		}
+
 		private void MoveDirectory (DirectoryModel dir, 
 					    DirectoryModel new_parent, // or null if we are just renaming
 					    string new_name)

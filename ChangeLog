@@ -1,3 +1,9 @@
+2005-08-12  Daniel Drake  <dsd@gentoo.org>
+
+	* beagled/FileSystemQueryable/FileNameFilter.cs,
+	beagled/FileSystemQueryable/FileSystemQueryable.cs: Drop internal
+	directory references when we add an exclude path.
+
 2005-08-11  Veerapuram Varadhan <vvaradhan@novell.com>
 
 	* Filters/FilterPerl.cs: Add commonly used mime type for perl files.

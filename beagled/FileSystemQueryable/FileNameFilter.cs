@@ -118,6 +118,7 @@ namespace Beagle.Daemon.FileSystemQueryable {
 			switch (exclude.Type) {
 			case ExcludeType.Path:
 				exclude_paths.Add (exclude);
+				queryable.RemoveDirectory (exclude.Value);
 				break;
 			case ExcludeType.Pattern:
 				exclude_patterns.Add (exclude);
