@@ -57,7 +57,8 @@ all: $(TARGET) $(WRAPPER)
 
 EXTRA_DIST =				\
 	$(WRAPPER_IN)			\
-	$(CSFILES)
+	$(CSFILES)			\
+	beagle.dummy
 
 CLEANFILES = 				\
 	$(TARGET)			\
