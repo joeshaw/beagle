@@ -349,6 +349,11 @@ namespace Beagle.Daemon.FileSystemQueryable {
 		{
 			if (Debug) 
 				Logger.Log.Debug ("Expired '{0}'", expired_path);
+
+			DirectoryModel dir = (DirectoryModel) dir_models_by_id [unique_id];
+			if (dir != null && dir.WatchHandle != null)
+				event_backend.ForgetWatch (dir.WatchHandle);
+			
 			dir_models_by_path.Remove (expired_path);
 			dir_models_by_id.Remove (unique_id);
 		}
@@ -1289,6 +1294,7 @@ namespace Beagle.Daemon.FileSystemQueryable {
 					return;
 				}
 
+				dir.WatchHandle = null;
 				RemoveDirectory (dir);
 			} else {
 				DirectoryModel dir;

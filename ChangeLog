@@ -2,7 +2,8 @@
 
 	* beagled/FileSystemQueryable/FileNameFilter.cs,
 	beagled/FileSystemQueryable/FileSystemQueryable.cs: Drop internal
-	directory references when we add an exclude path.
+	directory references when we add an exclude path. Also forget inotify
+	watches.
 
 2005-08-11  Veerapuram Varadhan <vvaradhan@novell.com>
 
