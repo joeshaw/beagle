@@ -46,6 +46,7 @@ namespace Best {
 		static string query = "";
 		static bool doTray = true;
 		static bool showWindow = false;
+		static bool autostarted = false;
 
 		static void ParseArgs (String[] args)
 		{
@@ -74,11 +75,12 @@ namespace Best {
 					i++;
 					break;
 
-				case "--autostart":
+				case "--autostarted":
 					if (! Conf.Searching.Autostart){
 						Console.WriteLine ("Autostarting is disabled, not starting");
                                                 Environment.Exit (0);
 					}
+					autostarted = true;
 					break;
 
 				default:
@@ -123,7 +125,7 @@ namespace Best {
 			// Create the tray icon.
 			BestTray icon;			
 			if (doTray) {
-				icon = new BestTray (win);
+				icon = new BestTray (win, autostarted);
 				icon.Show ();
 				Console.WriteLine (Catalog.GetString ("If you're wondering whether Best is working check " +
 						   "your notification area (system tray)"));

@@ -259,7 +259,7 @@ namespace Beagle.Daemon {
 					arg_disable_scheduler = true;
 					break;
 
-				case "--autostart":
+				case "--autostarted":
 					if (! Conf.Searching.Autostart) {
 						Console.WriteLine ("Autostarting is disabled, not starting");
 						Environment.Exit (0);

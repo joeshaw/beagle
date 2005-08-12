@@ -7,6 +7,7 @@
 
 using System;
 using System.Collections;
+using System.Diagnostics;
 using System.Runtime.InteropServices;
 
 using Gtk;
@@ -65,6 +66,7 @@ namespace Best {
 	public class BestTray : Gtk.Plug
 	{
 		BestWindow win;
+		bool autostarted = false;
 		
 		Gtk.EventBox eventbox;
 		Gtk.Tooltips tips;
@@ -73,8 +75,10 @@ namespace Best {
 		[DllImport ("libtrayiconglue")]
 		private static extern IntPtr egg_tray_icon_new (string name);
 
-		public BestTray (BestWindow bw)
+		public BestTray (BestWindow bw, bool autostarted)
 		{
+			this.autostarted = autostarted;
+
 			Raw = egg_tray_icon_new ("Search");
 
 			win = bw;
@@ -137,6 +141,32 @@ namespace Best {
 
 		void QuitEvent (object sender, EventArgs args)
 		{
+			if (autostarted) {
+				HigMessageDialog dialog = new HigMessageDialog (win,
+										DialogFlags.Modal,
+										MessageType.Question,
+										ButtonsType.YesNo,
+										Catalog.GetString ("Disable Searching"), 
+										Catalog.GetString ("You're about to close the search tray. The search tray is automatically started, do you want to disable it?"));
+
+				Gtk.ResponseType response = (Gtk.ResponseType) dialog.Run ();
+				
+				if (response == Gtk.ResponseType.Yes) {
+					Conf.Searching.Autostart = false;
+					Conf.Save (true);
+					
+					// If the user doesn't want to have Best autostart, he probably doesn't 
+					// want to keep the daemon around either. Bad call dude, bad call.
+					
+					Process p = new Process ();
+					p.StartInfo.UseShellExecute = false;
+					p.StartInfo.FileName = "beagle-shutdown";
+
+					try {
+						p.Start ();
+					} catch (Exception ex) {}
+				}
+			}
 			Application.Quit ();
 		}
 		
