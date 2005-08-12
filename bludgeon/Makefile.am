@@ -42,20 +42,21 @@ $(WRAPPER) : $(WRAPPER_IN)
 	$(WRAPPER_SED) -e "s|\@target\@|$(TARGET)|g" < $(srcdir)/$(WRAPPER_IN) > $@
 	chmod +x $(WRAPPER)
 
-bin_SCRIPTS = 			\
+noinst_SCRIPTS = 			\
 	$(WRAPPER)
 
 all: $(TARGET) $(WRAPPER)
 
-install-data-local: $(TARGET)
-	$(mkinstalldirs) $(DESTDIR)$(pkglibdir)
-	$(INSTALL_DATA) $(TARGET) $(DESTDIR)$(pkglibdir)
-
-uninstall-local:
-	cd $(DESTDIR)$(pkglibdir) && rm -f $(TARGET)
+# don't install anything
+# install-data-local: $(TARGET)
+#	$(mkinstalldirs) $(DESTDIR)$(pkglibdir)
+#	$(INSTALL_DATA) $(TARGET) $(DESTDIR)$(pkglibdir)
+#
+#uninstall-local:
+#	cd $(DESTDIR)$(pkglibdir) && rm -f $(TARGET)
 
 EXTRA_DIST =				\
-	$(WRAPPER_IN)
+	$(WRAPPER_IN)			\
 	$(CSFILES)
 
 CLEANFILES = 				\
