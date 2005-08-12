@@ -802,7 +802,8 @@ namespace Beagle.Daemon {
 
 				// Properties can live in either index
 				primary_query = CombineQueries (prop_query, extra_primary_requirement);
-				secondary_query = prop_query;
+				if (! only_build_primary_query)
+					secondary_query = prop_query.Clone () as LNS.Query;
 
 				return;
 			}

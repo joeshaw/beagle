@@ -22,7 +22,8 @@ SUBDIRS +=			\
 	Best			\
 	ImLogViewer		\
 	mozilla-extension	\
-	searchomatic
+	searchomatic		\
+	bludgeon
 
 if ENABLE_EPIPHANY_EXTENSION
 SUBDIRS += epiphany-extension

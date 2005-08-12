@@ -170,6 +170,14 @@ namespace Beagle {
 			this.client.SendAsync (this);
 		}
 
+		public void SendAsyncBlocking ()
+		{
+			this.client = new Client (this.client_name);
+			this.client.AsyncResponseEvent += OnAsyncResponse;
+			this.client.ClosedEvent += OnClosedEvent;
+			this.client.SendAsyncBlocking (this);
+		}
+
 		public ResponseMessage Send ()
 		{
 			Client client = new Client (this.client_name);

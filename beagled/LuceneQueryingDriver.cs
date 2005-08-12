@@ -624,8 +624,10 @@ namespace Beagle.Daemon {
 
 			// If we have been handed a totally empty whitelist,
 			// we have no hope of being able to match anything.
-			if (whitelist != null && ! whitelist.ContainsTrue ())
+			if (whitelist != null && ! whitelist.ContainsTrue ()) {
+				Logger.Log.Debug ("Query failed on empty whitelist!");
 				return 0;
+			}
 
 			if (matches == null) 
 				matches = new BetterBitArray (searcher.MaxDoc ());
@@ -842,9 +844,15 @@ namespace Beagle.Daemon {
 
 				MatchInfo info;
 				info = new MatchInfo ();
+
 				DoLowLevelQuery (primary_searcher, pq, ref info.PrimaryMatches, primary_whitelist);
 				DoLowLevelQuery (secondary_searcher, sq, ref info.SecondaryMatches, secondary_whitelist);
-				info.UpperBound = info.PrimaryMatches.TrueCount + info.SecondaryMatches.TrueCount;
+
+				info.UpperBound = 0;
+				if (info.PrimaryMatches != null)
+					info.UpperBound += info.PrimaryMatches.TrueCount;
+				if (info.SecondaryMatches != null)
+					info.UpperBound += info.SecondaryMatches.TrueCount;
 
 				match_info_list.Add (info);
 			}
@@ -871,8 +879,10 @@ namespace Beagle.Daemon {
 				// need any more matches.
 				if (max_match_count >= 0
 				    && i == match_info_list.Count-1
-				    && info.PrimaryMatches.TrueCount >= max_match_count)
+				    && info.PrimaryMatches.TrueCount >= max_match_count) {
+					Logger.Log.Debug ("Already have enough matches!");
 					return info.PrimaryMatches;
+				}
 				
 				ProjectMatches_BiDirectional (primary_searcher,
 							      info.PrimaryMatches,

@@ -81,6 +81,9 @@ namespace Beagle.Util {
 				
 				return home_dir;
 			}
+
+			// You probably don't want to do this.
+			set { lock (home_dir_lock) { home_dir = value; } }
 		}
 
 		// The storage directory is the place where beagle stores its private data.

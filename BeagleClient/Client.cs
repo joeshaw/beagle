@@ -232,6 +232,74 @@ namespace Beagle {
 				BeginRead ();
 		}
 
+		public void SendAsyncBlocking (RequestMessage request)
+		{
+			Exception ex = null;
+
+			try {
+				SendRequest (request);
+			} catch (IOException e) {
+				ex = e;
+			} catch (SocketException e) {
+				ex = e;
+			}
+
+			if (ex != null) {
+				ResponseMessage resp = new ErrorResponse (ex);
+				
+				if (this.AsyncResponseEvent != null)
+					this.AsyncResponseEvent (resp);
+				return;
+			}
+			
+
+			NetworkStream stream = this.client.GetStream ();
+			MemoryStream deserialize_stream = new MemoryStream ();
+
+			// This buffer is annoyingly small on purpose, to avoid
+			// having to deal with the case of multiple messages
+			// in a single block.
+			byte [] buffer = new byte [32];
+
+			while (! this.closed) {
+
+				Array.Clear (buffer, 0, buffer.Length);
+
+				int bytes_read;
+				bytes_read = stream.Read (buffer, 0, buffer.Length);
+				if (bytes_read == 0)
+					break;
+
+				int end_index;
+				end_index = ArrayFu.IndexOfByte (buffer, (byte) 0xff);
+
+				if (end_index == -1) {
+					deserialize_stream.Write (buffer, 0, bytes_read);
+				} else {
+					deserialize_stream.Write (buffer, 0, end_index);
+					deserialize_stream.Seek (0, SeekOrigin.Begin);
+
+					ResponseMessage resp;
+					try {
+						ResponseWrapper wrapper;
+						wrapper = (ResponseWrapper) resp_serializer.Deserialize (deserialize_stream);
+						
+						resp = wrapper.Message;
+					} catch (Exception e) {
+						resp = new ErrorResponse (e);
+					}
+
+					if (this.AsyncResponseEvent != null)
+						this.AsyncResponseEvent (resp);
+
+					deserialize_stream.Close ();
+					deserialize_stream = new MemoryStream ();
+					if (bytes_read - end_index - 1 > 0)
+						deserialize_stream.Write (buffer, end_index+1, bytes_read-end_index-1);
+				}
+			}
+		}
+
 
 		public ResponseMessage Send (RequestMessage request)
 		{

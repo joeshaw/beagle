@@ -106,6 +106,9 @@ namespace Beagle.Util {
 				_array[i] = ~0;
 				_contains_true = ContainsTrueState.Yes; // better
 				_cached_true_count = length; // better
+			} else {
+				_contains_true = ContainsTrueState.No;
+				_cached_true_count = 0;
 			}
 		}
 		
@@ -291,6 +294,11 @@ namespace Beagle.Util {
 				_array [i] |= value._array [i];
 			
 			_version++;
+			if (_contains_true == ContainsTrueState.Yes
+			    || value._contains_true == ContainsTrueState.Yes)
+				_contains_true = ContainsTrueState.Yes;
+			else
+				_contains_true = ContainsTrueState.Maybe; // better
 			_cached_true_count = -1; // better
 			return this;
 		}
@@ -584,10 +592,10 @@ namespace Beagle.Util {
 		public bool ContainsTrue ()
 		{
 			if (_contains_true == ContainsTrueState.Maybe) {
-				// We throw away return value, and just take advantage
-				// of the fact that contains_true will be set as
-				// a side-effect of the computation.
-				GetNextTrueIndex (0);
+				if (GetNextTrueIndex (0) < _length)
+					_contains_true = ContainsTrueState.Yes;
+				else
+					_contains_true = ContainsTrueState.No;
 			}
 
 			return _contains_true == ContainsTrueState.Yes;
