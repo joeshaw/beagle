@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: beagle\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2005-08-01 15:40-0400\n"
-"PO-Revision-Date: 2005-08-01 13:55-0400\n"
+"POT-Creation-Date: 2005-08-13 14:11-0400\n"
+"PO-Revision-Date: 2005-08-13 13:55-0400\n"
 "Last-Translator: Adam Weinberger <adamw@gnome.org>\n"
 "Language-Team: Canadian English <adamw@gnome.org>\n"
 "MIME-Version: 1.0\n"
@@ -17,7 +17,7 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: Best/Best.cs:121
+#: Best/Best.cs:130
 msgid ""
 "If you're wondering whether Best is working check your notification area "
 "(system tray)"
@@ -25,19 +25,31 @@ msgstr ""
 "If you're wondering whether Best is working check your notification area "
 "(system tray)"
 
-#: Best/BestTray.cs:171
+#: Best/BestTray.cs:149
+msgid "Disable Searching"
+msgstr "Disable Searching"
+
+#: Best/BestTray.cs:150
+msgid ""
+"You're about to close the search tray. The search tray is automatically "
+"started, do you want to disable it?"
+msgstr ""
+"You re about to close the search tray. The search tray is automatically "
+"started. Do you want to disable it?"
+
+#: Best/BestTray.cs:201
 msgid "No Recent Searches"
 msgstr "No Recent Searches"
 
-#: Best/BestTray.cs:175
+#: Best/BestTray.cs:205
 msgid "Recent Searches"
 msgstr "Recent Searches"
 
-#: Best/BestTray.cs:189
+#: Best/BestTray.cs:219
 msgid "Clear"
 msgstr "Clear"
 
-#: Best/BestTray.cs:197
+#: Best/BestTray.cs:227
 msgid "Quit"
 msgstr "Quit"
 
@@ -65,41 +77,41 @@ msgstr "in Web Pages"
 msgid "in Chats"
 msgstr "in Chats"
 
-#: Best/BestWindow.cs:328
+#: Best/BestWindow.cs:327
 msgid "Search terms:"
 msgstr "Search terms:"
 
-#: Best/BestWindow.cs:345
+#: Best/BestWindow.cs:344
 msgid "Find"
 msgstr "Find"
 
-#: Best/BestWindow.cs:362
+#: Best/BestWindow.cs:361
 msgid "Show More Results"
 msgstr "Show More Results"
 
-#: Best/BestWindow.cs:368
+#: Best/BestWindow.cs:367
 msgid "Show Previous Results"
 msgstr "Show Previous Results"
 
-#: Best/BestWindow.cs:402
+#: Best/BestWindow.cs:401
 msgid "No results."
 msgstr "No results."
 
 #. To translators: {0} is the current count of results shown of {1} in total, this is the message that is initially shown
 #. when results are returned to the user.
-#: Best/BestWindow.cs:406
+#: Best/BestWindow.cs:405
 #, csharp-format
 msgid "Best <b>{0} results of {1}</b> are shown."
 msgstr "Best <b>{0} results of {1}</b> are shown."
 
 #. To translators: {0} to {1} is the interval of results currently shown of {2} results in total
-#: Best/BestWindow.cs:411
+#: Best/BestWindow.cs:410
 #, csharp-format
 msgid "Results <b>{0} through {1} of {2}</b> are shown."
 msgstr "Results <b>{0} through {1} of {2}</b> are shown."
 
 #. To translators: {0} represents the current query keywords
-#: Best/BestWindow.cs:522
+#: Best/BestWindow.cs:521
 #, csharp-format
 msgid ""
 "The query for <i>{0}</i> failed.<br>The likely cause is that the beagle "
@@ -109,7 +121,7 @@ msgstr ""
 "daemon isn't running."
 
 #. To translators: {0} represents the current query keywords, {1} contains the errormessage
-#: Best/BestWindow.cs:527
+#: Best/BestWindow.cs:526
 #, csharp-format
 msgid "The query for <i>{0}</i> failed with error:<br>{1}<br>"
 msgstr "The query for <i>{0}</i> failed with error:<br>{1}<br>"
@@ -130,12 +142,12 @@ msgstr "<b>Conversations History</b>"
 msgid "IM Viewer"
 msgstr "IM Viewer"
 
-#: ImLogViewer/ImLogWindow.cs:74
+#: ImLogViewer/ImLogWindow.cs:87
 #, csharp-format
 msgid "Conversations in {0}"
 msgstr "Conversations in {0}"
 
-#: ImLogViewer/ImLogWindow.cs:81
+#: ImLogViewer/ImLogWindow.cs:94
 #, csharp-format
 msgid "Conversations with {0}"
 msgstr "Conversations with {0}"
@@ -444,12 +456,12 @@ msgid "Invalid host entry"
 msgstr "Invalid host entry"
 
 #: tools/Settings.cs:403
-msgid "Host already present in the list."
-msgstr "Host already present in the list."
+msgid "Remote host already present in the list."
+msgstr "Remote host already present in the list."
 
 #: tools/Settings.cs:412
-msgid "Host not added"
-msgstr "Host not added"
+msgid "Netbeagle Node not added"
+msgstr "Netbeagle Node not added"
 
 #: tools/Settings.cs:428
 msgid "Remove host"
@@ -482,11 +494,11 @@ msgstr ""
 msgid "Name"
 msgstr "Name"
 
-#: tools/Settings.cs:622 tools/settings.glade.h:30
+#: tools/Settings.cs:622 tools/settings.glade.h:32
 msgid "Type"
 msgstr "Type"
 
-#: tools/Settings.cs:675 tools/Settings.cs:1055 tools/settings.glade.h:22
+#: tools/Settings.cs:675 tools/Settings.cs:1055 tools/settings.glade.h:24
 msgid "Path"
 msgstr "Path"
 
@@ -494,7 +506,7 @@ msgstr "Path"
 msgid "Pattern"
 msgstr "Pattern"
 
-#: tools/Settings.cs:681 tools/Settings.cs:1060 tools/settings.glade.h:20
+#: tools/Settings.cs:681 tools/Settings.cs:1060 tools/settings.glade.h:22
 msgid "Mail Folder"
 msgstr "Mail Folder"
 
@@ -519,8 +531,8 @@ msgid "Show"
 msgstr "Show"
 
 #: tools/settings.glade.h:1
-msgid "<b>Add host</b>"
-msgstr "<b>Add host</b>"
+msgid "<b>Add remote host</b>"
+msgstr "<b>Add remote host</b>"
 
 #: tools/settings.glade.h:2
 msgid "<b>Add resource</b>"
@@ -547,18 +559,26 @@ msgid "<b>Select mail folder</b>"
 msgstr "<b>Select mail folder</b>"
 
 #: tools/settings.glade.h:8
-msgid "Add a search-enabled host you wish to network with"
-msgstr "Add a search-enabled host you wish to network with"
+msgid ""
+"Add a remote search-enabled host you wish \n"
+"to network with."
+msgstr ""
+"Add a remote search-enabled host you wish \n"
+"to network with."
 
-#: tools/settings.glade.h:9
+#: tools/settings.glade.h:10
 msgid "Add any additional paths to be included for indexing."
 msgstr "Add any additional paths to be included for indexing."
 
-#: tools/settings.glade.h:10
-msgid "Add any search-enabled hosts you wish to network with"
-msgstr "Add any search-enabled hosts you wish to network with"
-
 #: tools/settings.glade.h:11
+msgid "Add any remote search-enabled hosts you wish to network with"
+msgstr "Add any remote search-enabled hosts you wish to network with"
+
+#: tools/settings.glade.h:12
+msgid "Address"
+msgstr "Address"
+
+#: tools/settings.glade.h:13
 msgid ""
 "Adjust which types of results should be visible, and in what order they "
 "should be presented when grouped by type."
@@ -566,59 +586,59 @@ msgstr ""
 "Adjust which types of results should be visible, and in what order they "
 "should be presented when grouped by type."
 
-#: tools/settings.glade.h:12
+#: tools/settings.glade.h:14
 msgid "Allow external access to local search services"
 msgstr "Allow external access to local search services"
 
-#: tools/settings.glade.h:13
+#: tools/settings.glade.h:15
 msgid "Alt"
 msgstr "Alt"
 
-#: tools/settings.glade.h:14
+#: tools/settings.glade.h:16
 msgid "Ctrl"
 msgstr "Ctrl"
 
-#: tools/settings.glade.h:15
+#: tools/settings.glade.h:17
 msgid "Directory Path"
 msgstr "Directory Path"
 
-#: tools/settings.glade.h:16
+#: tools/settings.glade.h:18
 msgid "Display the search window by pressing"
 msgstr "Display the search window by pressing"
 
-#: tools/settings.glade.h:17
+#: tools/settings.glade.h:19
 msgid "Filename Pattern"
 msgstr "Filename Pattern"
 
-#: tools/settings.glade.h:18
+#: tools/settings.glade.h:20
 msgid "Index my home directory"
 msgstr "Index my home directory"
 
-#: tools/settings.glade.h:19
+#: tools/settings.glade.h:21
 msgid "Indexing"
 msgstr "Indexing"
 
-#: tools/settings.glade.h:21
+#: tools/settings.glade.h:23
 msgid "Networking"
 msgstr "Networking"
 
-#: tools/settings.glade.h:23
+#: tools/settings.glade.h:25
 msgid "Please select a resource you wish to exclude from indexing."
 msgstr "Please select a resource you wish to exclude from indexing."
 
-#: tools/settings.glade.h:24
+#: tools/settings.glade.h:26
 msgid "Please select the mail folder you wish to exclude from indexing. "
 msgstr "Please select the mail folder you wish to exclude from indexing. "
 
-#: tools/settings.glade.h:25
+#: tools/settings.glade.h:27
 msgid "Search"
 msgstr "Search"
 
-#: tools/settings.glade.h:26
+#: tools/settings.glade.h:28
 msgid "Search Preferences"
 msgstr "Search Preferences"
 
-#: tools/settings.glade.h:27
+#: tools/settings.glade.h:29
 msgid ""
 "Specify any resources, such as paths, patterns, mail folders or type of "
 "objects you wish to exclude from indexing."
@@ -626,17 +646,13 @@ msgstr ""
 "Specify any resources, such as paths, patterns, mail folders or type of "
 "objects you wish to exclude from indexing."
 
-#: tools/settings.glade.h:28
+#: tools/settings.glade.h:30
 msgid "Specify paths that should be available for external access"
 msgstr "Specify paths that should be available for external access"
 
-#: tools/settings.glade.h:29
-msgid "Start search & indexing services automatically on login"
-msgstr "Start search & indexing services automatically on login"
-
 #: tools/settings.glade.h:31
-msgid "_Address"
-msgstr "_Address"
+msgid "Start search & indexing services automatically "
+msgstr "Start search & indexing services automatically "
 
 #: Util/Evolution.cs:45 Util/Evolution.cs:163
 msgid "On This Computer"
