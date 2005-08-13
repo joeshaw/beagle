@@ -1,0 +1,749 @@
+# Czech translations for beagle.
+# Copyright (C) 2005 The GNOME Foundation
+# This file is distributed under the same licence as the beagle package.
+# Petr Ferschmann <petr@ferschmann.cz>, 2005.
+# 
+# 
+msgid ""
+msgstr ""
+"Project-Id-Version: beagle\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2005-08-05 18:31+0200\n"
+"PO-Revision-Date: 2005-08-05 19:01+0200\n"
+"Last-Translator: Petr Ferschmann <petr@ferschmann.cz>\n"
+"Language-Team: Czech <cs@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=iso-8859-2\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);"
+
+#: ../Best/Best.cs:121
+msgid ""
+"If you're wondering whether Best is working check your notification area "
+"(system tray)"
+msgstr ""
+"Pokud Vás zajímá zda Best funguje, zkontrolujte prosím systémovou èást "
+"panelu (system tray)"
+
+#: ../Best/BestTray.cs:171
+msgid "No Recent Searches"
+msgstr "®ádné poslední vyhledávání"
+
+#: ../Best/BestTray.cs:175
+msgid "Recent Searches"
+msgstr "Poslední hledané výrazy"
+
+#: ../Best/BestTray.cs:189
+msgid "Clear"
+msgstr "Vymazat"
+
+#: ../Best/BestTray.cs:197
+msgid "Quit"
+msgstr "Ukonèit"
+
+#: ../Best/BestWindow.cs:302
+msgid "Anywhere"
+msgstr "Kdekoliv"
+
+#: ../Best/BestWindow.cs:304
+msgid "in Files"
+msgstr "v Souborech"
+
+#: ../Best/BestWindow.cs:306
+msgid "in Addressbook"
+msgstr "v Adresáøi"
+
+#: ../Best/BestWindow.cs:308
+msgid "in Mail"
+msgstr "v Po¹tì"
+
+#: ../Best/BestWindow.cs:310
+msgid "in Web Pages"
+msgstr "na Webových stránkách"
+
+#: ../Best/BestWindow.cs:312
+msgid "in Chats"
+msgstr "v Chatu"
+
+#: ../Best/BestWindow.cs:328
+msgid "Search terms:"
+msgstr "Hledat výraz:"
+
+#: ../Best/BestWindow.cs:345
+msgid "Find"
+msgstr "Hledat"
+
+#: ../Best/BestWindow.cs:362
+msgid "Show More Results"
+msgstr "Ukázat dal¹í výsledky"
+
+#: ../Best/BestWindow.cs:368
+msgid "Show Previous Results"
+msgstr "Ukázat pøedchozí výsledky"
+
+#: ../Best/BestWindow.cs:402
+msgid "No results."
+msgstr "Nic nenalezeno."
+
+#. To translators: {0} is the current count of results shown of {1} in total, this is the message that is initially shown
+#. when results are returned to the user.
+#: ../Best/BestWindow.cs:406
+#, csharp-format
+msgid "Best <b>{0} results of {1}</b> are shown."
+msgstr "Ukázáno <b>{0}</b> nejlep¹ích výsledkù <b>z {1}</b>."
+
+#. To translators: {0} to {1} is the interval of results currently shown of {2} results in total
+#: ../Best/BestWindow.cs:411
+#, csharp-format
+msgid "Results <b>{0} through {1} of {2}</b> are shown."
+msgstr "Ukázány výsledky <b>od {0} do {1} z {2}."
+
+#. To translators: {0} represents the current query keywords
+#: ../Best/BestWindow.cs:522
+#, csharp-format
+msgid ""
+"The query for <i>{0}</i> failed.<br>The likely cause is that the beagle "
+"daemon isn't running."
+msgstr ""
+"Dotaz na <i>{0}</i> selhal.<br/> S nejvìt¹í pravdìpodobností nebì¾í slu¾ba "
+"beagle."
+
+#. To translators: {0} represents the current query keywords, {1} contains the errormessage
+#: ../Best/BestWindow.cs:527
+#, csharp-format
+msgid "The query for <i>{0}</i> failed with error:<br>{1}<br>"
+msgstr "Dotaz <i>{0}</i> selhal s chybou: <br>{1}<br>"
+
+#: ../glue/eggtrayicon.c:120
+msgid "Orientation"
+msgstr "Orientace"
+
+#: ../glue/eggtrayicon.c:121
+msgid "The orientation of the tray."
+msgstr "Orientace v panelu."
+
+#: ../ImLogViewer/ImLogViewer.glade.h:1
+msgid "<b>Conversations History</b>"
+msgstr "<b>Historie konverzace</b>"
+
+#: ../ImLogViewer/ImLogViewer.glade.h:2
+msgid "IM Viewer"
+msgstr "Prohlí¾eè IM"
+
+#: ../ImLogViewer/ImLogWindow.cs:87
+#, csharp-format
+msgid "Conversations in {0}"
+msgstr "Konverzace v {0}"
+
+#: ../ImLogViewer/ImLogWindow.cs:94
+#, csharp-format
+msgid "Conversations with {0}"
+msgstr "Konverzace s {0}"
+
+#: ../Tiles/TileDocs.cs:77
+msgid "Pages:"
+msgstr "Stránky:"
+
+#: ../Tiles/TileDocs.cs:81
+msgid "Words:"
+msgstr "Slova:"
+
+#: ../Tiles/TileFolder.cs:53
+msgid "Empty"
+msgstr "Prázdné"
+
+#: ../Tiles/TileFolder.cs:55
+#, csharp-format
+msgid "Contains {0} Item"
+msgid_plural "Contains {0} Items"
+msgstr[0] "Obsahuje {0} polo¾ku"
+msgstr[1] "Obsahuje {0} polo¾ek"
+
+#: ../Tiles/TileImLog.cs:67
+msgid "Send Mail"
+msgstr "Odeslat Mail"
+
+#. For translators: From template Tiles/template-mail-message.html
+#: ../Tiles/TileImLog.cs:71 ../Tiles/TranslationHack.cs:52
+msgid "Send IM"
+msgstr "Odeslat IM"
+
+#: ../Tiles/TileImLog.cs:77
+#, csharp-format
+msgid "Conversation in {0}"
+msgstr "Konverzace v {0}"
+
+#: ../Tiles/TileImLog.cs:79
+#, csharp-format
+msgid "Conversation with {0}"
+msgstr "Konverzace s {0}"
+
+#: ../Tiles/TileMailMessage.cs:79
+msgid "No Subject"
+msgstr "Bez názvu"
+
+#: ../Tiles/TileMailMessage.cs:86
+msgid "To"
+msgstr "Pøíjemce"
+
+#: ../Tiles/TileMailMessage.cs:86
+msgid "From"
+msgstr "Od"
+
+#: ../Tiles/TileMailMessage.cs:114
+msgid "Sent"
+msgstr "Odesláno"
+
+#: ../Tiles/TileMailMessage.cs:114
+msgid "Received"
+msgstr "Pøijato"
+
+#: ../Tiles/TileMailMessage.cs:119
+msgid "Email attachment"
+msgstr "Pøíloha emailu"
+
+#. For translators: From template Tiles/template-blog.html
+#: ../Tiles/TranslationHack.cs:6
+msgid "Weblog:"
+msgstr "Weblog:"
+
+#. For translators: From template Tiles/template-blog.html
+#: ../Tiles/TranslationHack.cs:8
+msgid "by"
+msgstr "od"
+
+#. For translators: From template Tiles/template-blog.html
+#: ../Tiles/TranslationHack.cs:10
+msgid "Published:"
+msgstr "Zveøejnìno:"
+
+#. For translators: From template Tiles/template-blog.html
+#. For translators: From template Tiles/template-docs.html
+#. For translators: From template Tiles/template-file.html
+#. For translators: From template Tiles/template-folder.html
+#. For translators: From template Tiles/template-launcher.html
+#. For translators: From template Tiles/template-mail-message.html
+#. For translators: From template Tiles/template-music.html
+#. For translators: From template Tiles/template-note.html
+#. For translators: From template Tiles/template-picture.html
+#. For translators: From template Tiles/template-presentation.html
+#. For translators: From template Tiles/template-spreadsheet.html
+#. For translators: From template Tiles/template-web-history.html
+#. For translators: From template Tiles/template-network.html
+#. For translators: From template Tiles/template-im-log.html
+#: ../Tiles/TranslationHack.cs:12 ../Tiles/TranslationHack.cs:22
+#: ../Tiles/TranslationHack.cs:32 ../Tiles/TranslationHack.cs:40
+#: ../Tiles/TranslationHack.cs:44 ../Tiles/TranslationHack.cs:50
+#: ../Tiles/TranslationHack.cs:58 ../Tiles/TranslationHack.cs:66
+#: ../Tiles/TranslationHack.cs:76 ../Tiles/TranslationHack.cs:92
+#: ../Tiles/TranslationHack.cs:106 ../Tiles/TranslationHack.cs:114
+#: ../Tiles/TranslationHack.cs:118 ../Tiles/TranslationHack.cs:122
+msgid "Open"
+msgstr "Otevøít"
+
+#. For translators: From template Tiles/template-docs.html
+#. For translators: From template Tiles/template-file.html
+#. For translators: From template Tiles/template-folder.html
+#. For translators: From template Tiles/template-picture.html
+#. For translators: From template Tiles/template-presentation.html
+#. For translators: From template Tiles/template-spreadsheet.html
+#: ../Tiles/TranslationHack.cs:14 ../Tiles/TranslationHack.cs:28
+#: ../Tiles/TranslationHack.cs:38 ../Tiles/TranslationHack.cs:68
+#: ../Tiles/TranslationHack.cs:82 ../Tiles/TranslationHack.cs:98
+msgid "in folder"
+msgstr "v adresáøi"
+
+#. For translators: From template Tiles/template-docs.html
+#. For translators: From template Tiles/template-file.html
+#. For translators: From template Tiles/template-presentation.html
+#. For translators: From template Tiles/template-spreadsheet.html
+#: ../Tiles/TranslationHack.cs:16 ../Tiles/TranslationHack.cs:30
+#: ../Tiles/TranslationHack.cs:84 ../Tiles/TranslationHack.cs:100
+msgid "Last modified"
+msgstr "Naposledy zmìnìno"
+
+#. For translators: From template Tiles/template-docs.html
+#. For translators: From template Tiles/template-presentation.html
+#. For translators: From template Tiles/template-spreadsheet.html
+#: ../Tiles/TranslationHack.cs:18 ../Tiles/TranslationHack.cs:86
+#: ../Tiles/TranslationHack.cs:102
+msgid "Title:"
+msgstr "Název:"
+
+#. For translators: From template Tiles/template-docs.html
+#. For translators: From template Tiles/template-presentation.html
+#. For translators: From template Tiles/template-spreadsheet.html
+#: ../Tiles/TranslationHack.cs:20 ../Tiles/TranslationHack.cs:88
+#: ../Tiles/TranslationHack.cs:104
+msgid "Author:"
+msgstr "Autor:"
+
+#. For translators: From template Tiles/template-docs.html
+#. For translators: From template Tiles/template-file.html
+#. For translators: From template Tiles/template-picture.html
+#. For translators: From template Tiles/template-presentation.html
+#. For translators: From template Tiles/template-spreadsheet.html
+#: ../Tiles/TranslationHack.cs:24 ../Tiles/TranslationHack.cs:34
+#: ../Tiles/TranslationHack.cs:78 ../Tiles/TranslationHack.cs:94
+#: ../Tiles/TranslationHack.cs:108
+msgid "Send to..."
+msgstr "Odeslat ..."
+
+#. For translators: From template Tiles/template-docs.html
+#. For translators: From template Tiles/template-file.html
+#. For translators: From template Tiles/template-music.html
+#. For translators: From template Tiles/template-picture.html
+#. For translators: From template Tiles/template-presentation.html
+#. For translators: From template Tiles/template-spreadsheet.html
+#: ../Tiles/TranslationHack.cs:26 ../Tiles/TranslationHack.cs:36
+#: ../Tiles/TranslationHack.cs:62 ../Tiles/TranslationHack.cs:80
+#: ../Tiles/TranslationHack.cs:96 ../Tiles/TranslationHack.cs:110
+msgid "Reveal in file manager"
+msgstr "Otevøít ve správci souborù"
+
+#. For translators: From template Tiles/template-launcher.html
+#: ../Tiles/TranslationHack.cs:42
+msgid "Application:"
+msgstr "Aplikace:"
+
+#. For translators: From template Tiles/template-mail-message.html
+#: ../Tiles/TranslationHack.cs:46
+msgid "Email subject:"
+msgstr "Pøedmìt emailu:"
+
+#. For translators: From template Tiles/template-mail-message.html
+#: ../Tiles/TranslationHack.cs:48
+msgid "Folder:"
+msgstr "Adresáø:"
+
+#. For translators: From template Tiles/template-music.html
+#: ../Tiles/TranslationHack.cs:54
+msgid "Track"
+msgstr "Stopa"
+
+#. For translators: From template Tiles/template-music.html
+#: ../Tiles/TranslationHack.cs:56
+msgid "from"
+msgstr "od"
+
+#. For translators: From template Tiles/template-music.html
+#: ../Tiles/TranslationHack.cs:60
+msgid "Enqueue"
+msgstr "Zaøadit"
+
+#. For translators: From template Tiles/template-note.html
+#: ../Tiles/TranslationHack.cs:64
+msgid "last modified"
+msgstr "naposledy zmìnìno"
+
+#. For translators: From template Tiles/template-picture.html
+#: ../Tiles/TranslationHack.cs:70
+msgid "Modified:"
+msgstr "Zmìnìno:"
+
+#. For translators: From template Tiles/template-picture.html
+#: ../Tiles/TranslationHack.cs:72
+msgid "Tags:"
+msgstr "Znaèky:"
+
+#. For translators: From template Tiles/template-picture.html
+#: ../Tiles/TranslationHack.cs:74
+msgid "Description:"
+msgstr "Popis:"
+
+#. For translators: From template Tiles/template-presentation.html
+#: ../Tiles/TranslationHack.cs:90
+msgid "Slides:"
+msgstr ""
+
+#. For translators: From template Tiles/template-web-history.html
+#: ../Tiles/TranslationHack.cs:112
+msgid "Last viewed:"
+msgstr "Naposledy prohlédnuto:"
+
+#. For translators: From template Tiles/template-network.html
+#: ../Tiles/TranslationHack.cs:116
+msgid "from Networked Beagle on host"
+msgstr "ze sí»ového programu Beagle na stroji"
+
+#. For translators: From template Tiles/template-network.html
+#: ../Tiles/TranslationHack.cs:120
+msgid "Search Networked Beagle"
+msgstr "Hledat pøes sí» v programu Beagle."
+
+#: ../tools/Settings.cs:214
+msgid "Reload configuration"
+msgstr "Obnovit konfiguraci"
+
+#: ../tools/Settings.cs:215
+msgid ""
+"The configuration file has been modified by another application. Do you wish "
+"to discard the currently displayed values and reload configuration from disk?"
+msgstr "Konfigurace byla zmìna jinou aplikací. Chcete zahodit právì zobrazené hodnoty a naèíst konfiguraci znovu z disku?"
+
+#: ../tools/Settings.cs:253
+msgid "Select Path"
+msgstr "Vybrat adresáø"
+
+#: ../tools/Settings.cs:272
+msgid "The selected path is already selected for indexing and wasn't added."
+msgstr ""
+"Vybrana cesta je ji¾ zahrnuta pro indexaci a nebyla tedy znovu pøidána."
+
+#: ../tools/Settings.cs:275
+msgid ""
+"The selected path wasn't added. The list contains items that supercedes it "
+"and the data is already being indexed."
+msgstr "Vybraná cesta nebyla pøidána. Seznam obsahuje polo¾ky, které ji ji¾ obsahují a data jsou tedy ji¾ indexována."
+
+#: ../tools/Settings.cs:286 ../tools/Settings.cs:478
+msgid "Path not added"
+msgstr "Cesta nebyla pøidána"
+
+#: ../tools/Settings.cs:295
+msgid "Remove obsolete paths"
+msgstr "Odstranit neplatné cesty"
+
+#: ../tools/Settings.cs:296
+msgid ""
+"Adding this path will obsolete some of the existing include paths. This will "
+"result in the removal of the old obsolete paths. Do you still wish to add it?"
+msgstr "Pøidáním této cesty nahradíte jednu z existujících cest. Toto odstraní pùvodní cestu. Opravdu ji chcete stále pøidat?"
+
+#: ../tools/Settings.cs:322
+msgid "Remove path"
+msgstr "Vyjmout cestu"
+
+#: ../tools/Settings.cs:323
+msgid ""
+"Are you sure you wish to remove this path from the list of directories to be "
+"included for indexing?"
+msgstr ""
+"Opravdu chcete odstranit cestu ze seznamu adresáøù zahrnutých do indexace?"
+
+#: ../tools/Settings.cs:352
+msgid "Remove item"
+msgstr "Smazat polo¾ku"
+
+#: ../tools/Settings.cs:353
+msgid ""
+"Are you sure you wish to remove this item from the list of data to be "
+"excluded from indexing?"
+msgstr "Opravdu chcete odstranit tuto polo6ku ze seznamu dat, která nemají být indexována?"
+
+#: ../tools/Settings.cs:396
+msgid "Invalid host entry"
+msgstr "©patnì zadaný název poèítaèe"
+
+#: ../tools/Settings.cs:403
+msgid "Host already present in the list."
+msgstr "Poèítaè je ji¾ v seznamu zahrnut."
+
+#: ../tools/Settings.cs:412
+msgid "Host not added"
+msgstr "Poèítaè nebyl pøidán"
+
+#: ../tools/Settings.cs:428
+msgid "Remove host"
+msgstr "Smazat poèítaè"
+
+#: ../tools/Settings.cs:429
+msgid "Are you sure you wish to remove this host from the list?"
+msgstr ""
+"Opravdu chcete odstranit tento poèítaè ze seznamu?"
+
+#: ../tools/Settings.cs:450
+msgid "Select path"
+msgstr "Vybrat cestu"
+
+#: ../tools/Settings.cs:469
+msgid "The selected path is already configured for external access."
+msgstr ""
+"Vybrana cesta je ji¾ zahrnuta nastavena pro vzdálený pøístup."
+
+#: ../tools/Settings.cs:493
+msgid "Remove public path"
+msgstr "Odstranit vìøejné cesty"
+
+#: ../tools/Settings.cs:494
+msgid ""
+"Are you sure you wish to remove this entry from the list of public paths?"
+msgstr ""
+"Opravdu chcete odstranit tuto polo¾ku ze seznamu vìøejných cest?"
+
+#: ../tools/Settings.cs:539 ../tools/Settings.cs:628 ../tools/Settings.cs:706
+#: ../tools/Settings.cs:782 ../tools/Settings.cs:1121
+msgid "Name"
+msgstr "Jméno"
+
+#: ../tools/Settings.cs:622 ../tools/settings.glade.h:30
+msgid "Type"
+msgstr "Typ"
+
+#: ../tools/Settings.cs:675 ../tools/Settings.cs:1055
+#: ../tools/settings.glade.h:22
+msgid "Path"
+msgstr "Cesta"
+
+#: ../tools/Settings.cs:678 ../tools/Settings.cs:1065
+msgid "Pattern"
+msgstr "Vzor"
+
+#: ../tools/Settings.cs:681 ../tools/Settings.cs:1060
+#: ../tools/settings.glade.h:20
+msgid "Mail Folder"
+msgstr "Po¹tovní slo¾ka"
+
+#: ../tools/Settings.cs:1029
+msgid "Select Folder"
+msgstr "Vybrat adresáø"
+
+#: ../tools/Settings.cs:1089
+msgid "Error adding path"
+msgstr "Chyba pøi pøidávání cesty"
+
+#: ../tools/Settings.cs:1090
+msgid ""
+"The specified path could not be found and therefore it could not be added to "
+"the list of resources excluded for indexing."
+msgstr "Specifikovaná cesta nemù¾e být nalezena a proto nemù¾e být pøidána mezi zdroje nezahrnuté do indexace."
+
+#: ../tools/Settings.cs:1120
+msgid "Show"
+msgstr "Ukázat"
+
+#: ../tools/settings.glade.h:1
+msgid "<b>Add host</b>"
+msgstr "<b>Pøidat poèítaè</b>"
+
+#: ../tools/settings.glade.h:2
+msgid "<b>Add resource</b>"
+msgstr "<b>Pøidat zdroj</b>"
+
+#: ../tools/settings.glade.h:3
+msgid "<b>Display</b>"
+msgstr "<b>Zobraz</b>"
+
+#: ../tools/settings.glade.h:4
+msgid "<b>General</b>"
+msgstr "<b>Obecné</b>"
+
+#: ../tools/settings.glade.h:5
+msgid "<b>Networking</b>"
+msgstr "<b>Práce v sítí</b>"
+
+#: ../tools/settings.glade.h:6
+msgid "<b>Privacy</b>"
+msgstr "<b>Soukromí</b>"
+
+#: ../tools/settings.glade.h:7
+msgid "<b>Select mail folder</b>"
+msgstr "<b>Vybrat po¹tovní slo¾ku</b>"
+
+#: ../tools/settings.glade.h:8
+msgid "Add a search-enabled host you wish to network with"
+msgstr "Pøidat poèítaè s povoleným sí»ovým vyhledáváním, který chcete pou¾ívat"
+
+#: ../tools/settings.glade.h:9
+msgid "Add any additional paths to be included for indexing."
+msgstr "Pøidat dal¹í umístìní, která mají být zahrnuta pøi indexování."
+
+#: ../tools/settings.glade.h:10
+msgid "Add any search-enabled hosts you wish to network with"
+msgstr "Pøidat poèítaè s povoleným sí»ovým vyhledáváním se kterým chcete pracovat"
+
+#: ../tools/settings.glade.h:11
+msgid ""
+"Adjust which types of results should be visible, and in what order they "
+"should be presented when grouped by type."
+msgstr ""
+"Nastavení, které druhy výsledkù mají být viditelné a v jakém poøadí mají být "
+"zobrazeny pokud jsou seskupeny podle typu."
+
+#: ../tools/settings.glade.h:12
+msgid "Allow external access to local search services"
+msgstr "Povolit vzdálený pøístup k lokálním vyhledávácím slu¾bám"
+
+#: ../tools/settings.glade.h:13
+msgid "Alt"
+msgstr "Alt"
+
+#: ../tools/settings.glade.h:14
+msgid "Ctrl"
+msgstr "Ctrl"
+
+#: ../tools/settings.glade.h:15
+msgid "Directory Path"
+msgstr "Adresáø:"
+
+#: ../tools/settings.glade.h:16
+msgid "Display the search window by pressing"
+msgstr "Zobrazte vyhledávácí okno stisknutím"
+
+#: ../tools/settings.glade.h:17
+msgid "Filename Pattern"
+msgstr "Vzor názvu souboru"
+
+#: ../tools/settings.glade.h:18
+msgid "Index my home directory"
+msgstr "Indexovat mùj domovský adresáø"
+
+#: ../tools/settings.glade.h:19
+msgid "Indexing"
+msgstr "Indexace"
+
+#: ../tools/settings.glade.h:21
+msgid "Networking"
+msgstr "Sí»ový pøístup"
+
+#: ../tools/settings.glade.h:23
+msgid "Please select a resource you wish to exclude from indexing."
+msgstr "Vyberte, prosím, zdroj, který chcete nezahrnovat do indexace."
+
+#: ../tools/settings.glade.h:24
+msgid "Please select the mail folder you wish to exclude from indexing. "
+msgstr "Prosím vyberte po¹tovní slo¾ku, kterou chcete nezahrnovat do indexace."
+
+#: ../tools/settings.glade.h:25
+msgid "Search"
+msgstr "Vyhledávání"
+
+#: ../tools/settings.glade.h:26
+msgid "Search Preferences"
+msgstr "Nastavení vyhledávání"
+
+#: ../tools/settings.glade.h:27
+msgid ""
+"Specify any resources, such as paths, patterns, mail folders or type of "
+"objects you wish to exclude from indexing."
+msgstr "Specifikujte, prosím, libovolné zdroje jako jsou cesty, vzory cest, po¹tovní slo¾ky nebo typy objektù, které chcete nezahrnovat do indexace."
+
+#: ../tools/settings.glade.h:28
+msgid "Specify paths that should be available for external access"
+msgstr "Definujte cesty, které mají být dostupné pro vzdálený pøístup"
+
+#: ../tools/settings.glade.h:29
+msgid "Start search & indexing services automatically on login"
+msgstr "Spustit vyhledávací a indexovací slu¾by automaticky po pøihlá¹ení"
+
+#: ../tools/settings.glade.h:31
+msgid "_Address"
+msgstr "_Adresa"
+
+#: ../Util/Evolution.cs:45 ../Util/Evolution.cs:163
+msgid "On This Computer"
+msgstr "Na tomto poèítaèi"
+
+#: ../Util/ExifData.cs:226
+msgid "Image Directory"
+msgstr "Adresáø s obrázky"
+
+#: ../Util/ExifData.cs:228
+msgid "Thumbnail Directory"
+msgstr "Adresáø s náhledy"
+
+#: ../Util/ExifData.cs:230
+msgid "Exif Directory"
+msgstr "Adresáø s Exif"
+
+#: ../Util/ExifData.cs:232
+msgid "GPS Directory"
+msgstr "Adresáø s GPS"
+
+#: ../Util/ExifData.cs:234
+msgid "InterOperability Directory"
+msgstr ""
+
+#: ../Util/ExifData.cs:236
+msgid "Unknown Directory"
+msgstr "Neznamý adresáø"
+
+#: ../Util/StringFu.cs:65
+msgid "Today"
+msgstr "Dnes"
+
+#: ../Util/StringFu.cs:67
+msgid "Yesterday"
+msgstr "Vèera"
+
+#: ../Util/StringFu.cs:69
+msgid "MMM d"
+msgstr "d MMM"
+
+#: ../Util/StringFu.cs:71
+msgid "MMM d, yyyy"
+msgstr "d MMM, yyyy"
+
+#: ../Util/StringFu.cs:73
+msgid "h:mm tt"
+msgstr "HH:mm"
+
+#. Translators: {0} is a date (e.g. 'Today' or 'Apr 23'), {1} is the time
+#: ../Util/StringFu.cs:79
+#, csharp-format
+msgid "{0}, {1}"
+msgstr "{0}, {1}"
+
+#. To translators: {0} is the time of the day, eg. 13:45
+#: ../Util/StringFu.cs:96
+#, csharp-format
+msgid "Today, {0}"
+msgstr "Dnes, {0}"
+
+#. To translators: {0} is the time of the day, eg. 13:45
+#: ../Util/StringFu.cs:99
+#, csharp-format
+msgid "Yesterday, {0}"
+msgstr "Vèera, {0}"
+
+#. To translators: {0} is the number of days that have passed, {1} is the time of the day, eg. 13:45
+#: ../Util/StringFu.cs:102
+#, csharp-format
+msgid "{0} days ago, {1}"
+msgstr "pøed {0} dny, {1}"
+
+#: ../Util/StringFu.cs:106
+msgid "MMMM d, h:mm tt"
+msgstr "d MMMM, HH:mm"
+
+#: ../Util/StringFu.cs:110
+msgid "MMMM d yyyy, h:mm tt"
+msgstr "d MMMM yyyy, HH:mm"
+
+#: ../Util/StringFu.cs:120
+#, csharp-format
+msgid "{0} hour"
+msgid_plural "{0} hours"
+msgstr[0] "{0} hodina"
+msgstr[1] "{0} hodin"
+
+#: ../Util/StringFu.cs:127
+#, csharp-format
+msgid "{0} minute"
+msgid_plural "{0} minutes"
+msgstr[0] "{0} minuta"
+msgstr[1] "{0} minut"
+
+#. Translators: {0} is a file size in bytes
+#: ../Util/StringFu.cs:143
+#, csharp-format
+msgid "{0} bytes"
+msgstr "{0} bytù"
+
+#. Translators: {0} is a file size in kilobytes
+#: ../Util/StringFu.cs:147
+#, csharp-format
+msgid "{0:0.0} KB"
+msgstr "{0:0.0} KB"
+
+#. Translators: {0} is a file size in megabytes
+#: ../Util/StringFu.cs:150
+#, csharp-format
+msgid "{0:0.0} MB"
+msgstr "{0:0.0} MB"
+
+#~ msgid "Add resource"
+#~ msgstr "PÅ™idat zdroj"
+
+#~ msgid "Select mail folder"
+#~ msgstr "Vybrat sloÅ¾ku s emaily"
