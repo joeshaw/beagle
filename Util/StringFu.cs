@@ -500,11 +500,5 @@ namespace Beagle.Util {
 
 			return path;
 		}
-
-		static void Main (string [] args)
-		{
-			foreach (string arg in args)
-				Console.WriteLine ("{0}: {1}", arg, FuzzyDivide (arg));
-		}
 	}
 }

@@ -23,21 +23,15 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 //
+
 using System;
 using Galago;
-
-// FIXME: Idea - the icons should be dimmed if idle
 
 namespace Beagle.Util {
 
 	public class GalagoTools {
 
-		private GalagoTools () {} // this class is static
-
-		private static bool Connect ()
-		{
-			return true;
-		}
+		private GalagoTools () {} // This class is static
 
 		public static string GetPresence (string service_id, string username)
 		{
@@ -54,7 +48,7 @@ namespace Beagle.Util {
 			if (account == null)
 				return null;
 
-			Galago.Person person = account.Person;
+			//Galago.Person person = account.Person;
 			Galago.Presence presence = account.Presence;
 
 			if (presence == null)
@@ -63,6 +57,7 @@ namespace Beagle.Util {
 			string user_status = null;
 
 			if (presence.Idle == true) 
+				// FIXME: We need to translate this
 				user_status = String.Format ("Idle {0}",
 							     StringFu.DurationToPrettyString (DateTime.Now.AddSeconds (presence.IdleTime), DateTime.Now));
 			else

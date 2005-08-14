@@ -56,15 +56,11 @@ namespace Beagle.Util {
 		private void DoPull (int neededSize)
 		{
 			while (! done && pullBuffer.Length < neededSize) {
-
-				string str = null;
 				try { 
 					done = ! pull (pullBuffer);
-				} catch (Exception ex) {
-					// If we catch an exception, str will still be null
-					// and thus the code below will set done to true.
+				} catch (Exception e) {
 					Logger.Log.Debug ("Caught exception pulling text from {0}", pull);
-					Logger.Log.Debug (ex);
+					Logger.Log.Debug (e);
 				}
 			}
 		}
@@ -154,5 +150,3 @@ namespace Beagle.Util {
 
 	}
 }
-
-// last line
