@@ -10,8 +10,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: beagle HEAD\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2005-08-11 20:09+0200\n"
-"PO-Revision-Date: 2005-08-11 20:11+0200\n"
+"POT-Creation-Date: 2005-08-15 18:48+0200\n"
+"PO-Revision-Date: 2005-08-15 18:50+0200\n"
 "Last-Translator: Hendrik Brandt <heb@gnome-de.org>\n"
 "Language-Team: German <gnome-de@gnome.org>\n"
 "MIME-Version: 1.0\n"
@@ -19,7 +19,7 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);"
 
-#: ../Best/Best.cs:121
+#: ../Best/Best.cs:130
 msgid ""
 "If you're wondering whether Best is working check your notification area "
 "(system tray)"
@@ -27,19 +27,30 @@ msgstr ""
 "Wenn Sie wissen möchten, ob »Best« aktiv, schauen Sie in einfach im "
 "Benachrichtigungsfeld nach"
 
-#: ../Best/BestTray.cs:171
+#: ../Best/BestTray.cs:149
+msgid "Disable Searching"
+msgstr "Suche deaktivieren"
+
+#: ../Best/BestTray.cs:150
+msgid ""
+"You're about to close the search tray. The search tray is automatically "
+"started, do you want to disable it?"
+msgstr "Sie sind dabei das Suchfeld zu schließen. Dieses wird automatisch gestartet, möchten Sie "
+"dies deaktivieren?"
+
+#: ../Best/BestTray.cs:201
 msgid "No Recent Searches"
 msgstr "Keine zuletzt verwendete Suche"
 
-#: ../Best/BestTray.cs:175
+#: ../Best/BestTray.cs:205
 msgid "Recent Searches"
 msgstr "Letzte Suchanfragen"
 
-#: ../Best/BestTray.cs:189
+#: ../Best/BestTray.cs:219
 msgid "Clear"
 msgstr "Löschen"
 
-#: ../Best/BestTray.cs:197
+#: ../Best/BestTray.cs:227
 msgid "Quit"
 msgstr "Beenden"
 
@@ -375,11 +386,11 @@ msgstr "von einem vernetzten Beagle auf Host"
 msgid "Search Networked Beagle"
 msgstr "Vernetzten Beagle durchsuchen"
 
-#: ../tools/Settings.cs:212
+#: ../tools/Settings.cs:214
 msgid "Reload configuration"
 msgstr "Einstellungen neu laden"
 
-#: ../tools/Settings.cs:213
+#: ../tools/Settings.cs:215
 msgid ""
 "The configuration file has been modified by another application. Do you wish "
 "to discard the currently displayed values and reload configuration from disk?"
@@ -388,17 +399,17 @@ msgstr ""
 "Sie, dass die aktuell angezeigten Werte zurückgesetzt werden und eine neu "
 "Konfiguration geladen wird?"
 
-#: ../tools/Settings.cs:251
+#: ../tools/Settings.cs:253
 msgid "Select Path"
 msgstr "Pfad auswählen"
 
-#: ../tools/Settings.cs:270
+#: ../tools/Settings.cs:272
 msgid "The selected path is already selected for indexing and wasn't added."
 msgstr ""
 "Der Pfad ist bereits zur Indizierung vorgesehen und wurde deshalb nicht "
 "hinzugefügt."
 
-#: ../tools/Settings.cs:273
+#: ../tools/Settings.cs:275
 msgid ""
 "The selected path wasn't added. The list contains items that supercedes it "
 "and the data is already being indexed."
@@ -406,15 +417,15 @@ msgstr ""
 "Der ausgewählte Pfad wurde nicht hinzugefügt. Die Liste enthält bereits "
 "einen darüber liegenden Pfad dessen Daten bereits indiziert sind."
 
-#: ../tools/Settings.cs:284 ../tools/Settings.cs:476
+#: ../tools/Settings.cs:286 ../tools/Settings.cs:478
 msgid "Path not added"
 msgstr "Pfad nicht hinzugefügt"
 
-#: ../tools/Settings.cs:293
+#: ../tools/Settings.cs:295
 msgid "Remove obsolete paths"
 msgstr "Veraltete Pfade entfernen"
 
-#: ../tools/Settings.cs:294
+#: ../tools/Settings.cs:296
 msgid ""
 "Adding this path will obsolete some of the existing include paths. This will "
 "result in the removal of the old obsolete paths. Do you still wish to add it?"
@@ -423,11 +434,11 @@ msgstr ""
 "überflüssig. Dadurch werden diese veralteten Pfade aus der Liste entfernt. "
 "Möchten Sie trotzdem fortfahren?"
 
-#: ../tools/Settings.cs:320
+#: ../tools/Settings.cs:322
 msgid "Remove path"
 msgstr "Pfad entfernen"
 
-#: ../tools/Settings.cs:321
+#: ../tools/Settings.cs:323
 msgid ""
 "Are you sure you wish to remove this path from the list of directories to be "
 "included for indexing?"
@@ -435,11 +446,11 @@ msgstr ""
 "Sind Sie sicher, dass Sie diesen Pfad von der Liste der zu indizierenden "
 "Ordner entfernen möchten?"
 
-#: ../tools/Settings.cs:350
+#: ../tools/Settings.cs:352
 msgid "Remove item"
 msgstr "Eintrag entfernen"
 
-#: ../tools/Settings.cs:351
+#: ../tools/Settings.cs:353
 msgid ""
 "Are you sure you wish to remove this item from the list of data to be "
 "excluded from indexing?"
@@ -447,79 +458,79 @@ msgstr ""
 "Sind Sie sicher, dass Sie diesen Eintrag von der Liste der von der "
 "Indizierung auszuschließenden Daten entfernen möchten?"
 
-#: ../tools/Settings.cs:394
+#: ../tools/Settings.cs:396
 msgid "Invalid host entry"
 msgstr "Ungültiger Rechnereintrag"
 
-#: ../tools/Settings.cs:401
+#: ../tools/Settings.cs:403
 msgid "Remote host already present in the list."
 msgstr "Dieser Netzwerkrechner befindet sich bereits auf der Liste."
 
-#: ../tools/Settings.cs:410
+#: ../tools/Settings.cs:412
 msgid "Netbeagle Node not added"
 msgstr "Netbeagle-Knoten nicht hinzugefügt"
 
-#: ../tools/Settings.cs:426
+#: ../tools/Settings.cs:428
 msgid "Remove host"
 msgstr "Entfernter Rechner"
 
-#: ../tools/Settings.cs:427
+#: ../tools/Settings.cs:429
 msgid "Are you sure you wish to remove this host from the list?"
 msgstr ""
 "Sind Sie sicher, dass Sie diesen Rechner von der Liste entfernen möchten?"
 
-#: ../tools/Settings.cs:448
+#: ../tools/Settings.cs:450
 msgid "Select path"
 msgstr "Pfad auswählen"
 
-#: ../tools/Settings.cs:467
+#: ../tools/Settings.cs:469
 msgid "The selected path is already configured for external access."
 msgstr ""
 "Der ausgewählte Pfad ist bereits für den externen Zugriff konfiguriert."
 
-#: ../tools/Settings.cs:491
+#: ../tools/Settings.cs:493
 msgid "Remove public path"
 msgstr "Öffentlichen Pfad entfernen"
 
-#: ../tools/Settings.cs:492
+#: ../tools/Settings.cs:494
 msgid ""
 "Are you sure you wish to remove this entry from the list of public paths?"
 msgstr ""
 "Sind Sie sicher, dass Sie diesen Eintrag von der Liste der öffentlichen "
 "Pfade entfernen möchten?"
 
-#: ../tools/Settings.cs:537 ../tools/Settings.cs:626 ../tools/Settings.cs:704
-#: ../tools/Settings.cs:780 ../tools/Settings.cs:1119
+#: ../tools/Settings.cs:539 ../tools/Settings.cs:628 ../tools/Settings.cs:706
+#: ../tools/Settings.cs:782 ../tools/Settings.cs:1121
 msgid "Name"
 msgstr "Name"
 
-#: ../tools/Settings.cs:620 ../tools/settings.glade.h:31
+#: ../tools/Settings.cs:622 ../tools/settings.glade.h:32
 msgid "Type"
 msgstr "Typ"
 
-#: ../tools/Settings.cs:673 ../tools/Settings.cs:1053
+#: ../tools/Settings.cs:675 ../tools/Settings.cs:1055
 #: ../tools/settings.glade.h:24
 msgid "Path"
 msgstr "Pfad"
 
-#: ../tools/Settings.cs:676 ../tools/Settings.cs:1063
+#: ../tools/Settings.cs:678 ../tools/Settings.cs:1065
 msgid "Pattern"
 msgstr "Muster"
 
-#: ../tools/Settings.cs:679 ../tools/Settings.cs:1058
+#: ../tools/Settings.cs:681 ../tools/Settings.cs:1060
 #: ../tools/settings.glade.h:22
 msgid "Mail Folder"
 msgstr "E-Mail-Ordner"
 
-#: ../tools/Settings.cs:1027
+#: ../tools/Settings.cs:1029
 msgid "Select Folder"
 msgstr "Ordner auswählen"
 
-#: ../tools/Settings.cs:1087
+#: ../tools/Settings.cs:1089
 msgid "Error adding path"
 msgstr "Fehler beim Hinzufügen des Pfades"
 
-#: ../tools/Settings.cs:1088
+#: ../tools/Settings.cs:1090
 msgid ""
 "The specified path could not be found and therefore it could not be added to "
 "the list of resources excluded for indexing."
@@ -528,7 +539,7 @@ msgstr ""
 "Liste der von der Indizierung auszuschließenden Ressourcen aufgenommen "
 "werden."
 
-#: ../tools/Settings.cs:1118
+#: ../tools/Settings.cs:1120
 msgid "Show"
 msgstr "Zeigen"
 
@@ -574,7 +585,9 @@ msgstr "Weitere zu indizierende Pfade hinzufügen."
 
 #: ../tools/settings.glade.h:11
 msgid "Add any remote search-enabled hosts you wish to network with"
-msgstr "Fügen Sie hier durchsuchbare Netzwerkrechner hinzu, auf die Sie zugreifen möchten"
+msgstr ""
+"Fügen Sie hier durchsuchbare Netzwerkrechner hinzu, auf die Sie zugreifen "
+"möchten"
 
 #: ../tools/settings.glade.h:12
 msgid "Address"
@@ -656,6 +669,10 @@ msgstr ""
 msgid "Specify paths that should be available for external access"
 msgstr ""
 "Geben Sie hier die Pfade an, die für den externen Zugriff verfügbar sind"
+
+#: ../tools/settings.glade.h:31
+msgid "Start search & indexing services automatically "
+msgstr "Such- und Indizierungsdienste automatisch starten"
 
 #: ../Util/Evolution.cs:45 ../Util/Evolution.cs:163
 msgid "On This Computer"
