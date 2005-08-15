@@ -1,116 +1,383 @@
 
 using System;
+using System.Collections;
 using System.IO;
 
 using Beagle.Util;
+using Beagle;
 
 namespace Bludgeon {
 	
 	public class FileModel {
 
-		static private int global_seqno = 1;
+		// Properties of the root directory:
+		// name contains full path of BEAGLE_HOME
+		// parent is null
+		// body is null
+		// children is non-null
 
-		private int seqno;
-		private int name_token = -1;
-		private int [] body;
+		// Properties of a non-root directory:
+		// name is a token
+		// parent is non-null
+		// body is null
+		// children is non-null
 
-		private string name;
-		private string dir;
-		private string path;
-		private Uri uri;
+		// Properties of a file:
+		// name is a token
+		// parent is non-null, and is a directory
+		// body is non-null
+		// children is null
+
+		private string name = null;
+		private FileModel parent = null;
+		private string [] body = null;
+		private Hashtable children = null;
 
 		//////////////////////////////////////////////////////////////
 
-		public int SequenceNumber {
-			get { return seqno; }
+		public bool IsRoot {
+			get { return parent == null; }
+		}
+
+		public bool IsDirectory {
+			get { return body == null; }
+		}
+
+		public bool IsFile {
+			get { return body != null; }
 		}
 
 		public string Name {
 			get { return name; }
 		}
-
+		
 		public string FullName {
-			get { return path; }
+			get { return IsRoot ? Name : Path.Combine (parent.FullName, name); }
 		}
 
 		public Uri Uri {
-			get { return uri; }
+			get { return UriFu.PathToFileUri (FullName); }
 		}
 
-		public int [] Body {
+		public string [] Body {
 			get { return body; }
 		}
 
-		public int NameToken {
-			get { return name_token; }
+		public ICollection Children {
+			get { return children.Values; }
 		}
 
-		public bool BodyContains (int id)
-		{
-			// FIXME: Do a binary search (or something smarter)
-			// instead
-			for (int i = 0; i < body.Length; ++i)
-				if (body [i] == id)
-					return true;
-			return false;
-		}
-
-		public bool Contains (int id)
-		{
-			return (id == name_token) || BodyContains (id);
+		public int Size {
+			get {
+				if (IsFile)
+					return 1;
+				int sum = 0;
+				if (IsDirectory)
+					sum = 1; // count ourselves
+				foreach (FileModel child in children.Values)
+					sum += child.Size;
+				return sum;
+			}
 		}
 
 		//////////////////////////////////////////////////////////////
 
-		private FileModel ()
+		private void RecursiveListAdd (ArrayList list, bool add_dirs, bool add_files)
 		{
-			seqno = global_seqno;
-			++global_seqno;
-
-			name_token = Token.GetRandom ();
-
-			body = new int [10];
-			for (int i = 0; i < body.Length; ++i)
-				body [i] = Token.GetRandom ();
-			Array.Sort (body);
-
-			// A reasonable default
-			SetDirectory (PathFinder.HomeDir);
+			if ((add_dirs && IsDirectory) || (add_files && IsFile))
+				list.Add (this);
+			if (children != null)
+				foreach (FileModel file in children.Values)
+					file.RecursiveListAdd (list, add_files, add_files);
 		}
 
-		private void SetDirectory (string dir)
+		public ArrayList GetDescendants ()
 		{
-			this.dir = dir;
-			
-			if (name_token != -1)
-				this.name = String.Format ("{0}-{1}", seqno, Token.GetString (name_token));
-			else
-				this.name = seqno.ToString ();
+			ArrayList list = new ArrayList ();
+			RecursiveListAdd (list, true, true);
+			list.RemoveAt (0); // remove ourselves
+			return list;
+		}
 
-			this.path = Path.Combine (this.dir, this.name);
+		public ArrayList GetFileDescendants ()
+		{
+			ArrayList list = new ArrayList ();
+			RecursiveListAdd (list, false, true);
+			list.RemoveAt (0); // remove ourselves
+			return list;
+		}
+
+		public ArrayList GetDirectoryDescendants ()
+		{
+			ArrayList list = new ArrayList ();
+			RecursiveListAdd (list, true, false);
+			list.RemoveAt (0); // remove ourselves
+			return list;
+		}
+
+		//////////////////////////////////////////////////////////////
+
+		static Random random = new Random ();
+
+		public FileModel PickDescendant ()
+		{
+			ArrayList all;
+			all = GetDescendants ();
+			if (all.Count == 0)
+				return null;
+			return all [random.Next (all.Count)] as FileModel;
+		}
+
+		public FileModel PickFileDescendant ()
+		{
+			ArrayList all;
+			all = GetFileDescendants ();
+			if (all.Count == 0)
+				return null;
+			return all [random.Next (all.Count)] as FileModel;
+		}
+
+		public FileModel PickDirectoryDescendant ()
+		{
+			ArrayList all;
+			all = GetDirectoryDescendants ();
+			if (all.Count == 0)
+				return null;
+			return all [random.Next (all.Count)] as FileModel;
+		}
+
+		//////////////////////////////////////////////////////////////
+
+		public bool BodyContains (string token)
+		{
+			if (body == null)
+				return false;
+
+			// FIXME: Do a binary search (or something smarter)
+			// instead
+			for (int i = 0; i < body.Length; ++i)
+				if (body [i] == token)
+					return true;
+			return false;
+		}
+
+		public bool Contains (string token)
+		{
+			return name == token || BodyContains (token);
+		}
+
+		//////////////////////////////////////////////////////////////
+
+		private FileModel () { }
+
+		public static FileModel NewRoot ()
+		{
+			FileModel root = new FileModel ();
+			root.name = PathFinder.HomeDir;
+			root.children = new Hashtable ();
+			return root;
+		}
+
+		// Creates a randomly-named new directory.
+		// Avoid name collisions with existing files.
+		public FileModel NewDirectory ()
+		{
+			if (! IsDirectory)
+				throw new ArgumentException ("parent must be a directory");
+
+			// no more names left
+			if (children.Count == Token.Count)
+				return null;
+
+			FileModel child;
+			child = new FileModel ();
+			child.name = PickName (this);
+			child.children = new Hashtable ();
+
+			child.parent = this;
+			children [child.name] = child;
+
+			// Actually create the directory
+			Directory.CreateDirectory (child.FullName);
+
+			return child;
+		}
+
+		public FileModel NewFile ()
+		{
+			if (! IsDirectory)
+				throw new ArgumentException ("parent must be a directory");
+
+			// no more names left
+			if (children.Count == Token.Count)
+				return null;
+
+			FileModel child;
+			child = new FileModel ();
+			child.name = PickName (this);
+			child.body = NewBody (10);
+
+			child.parent = this;
+			children [child.name] = child;
+
+			// Create the file
+			child.Write ();
+
+			return child;
+		}
+
+		//////////////////////////////////////////////////////////////
+		
+		public void Grow (int depth)
+		{
+			const int num_dirs = 2;
+			const int num_files = 5;
+
+			if (depth > 0) {
+				for (int i = 0; i < num_dirs; ++i) {
+					FileModel file;
+					file = NewDirectory ();
+					if (file != null)
+						file.Grow (depth - 1);
+				}
+			}
 			
-			this.uri = UriFu.PathToFileUri (this.path);
+			for (int i = 0; i < num_files; ++i)
+				NewFile ();
+		}
+
+		//////////////////////////////////////////////////////////////
+
+		public void Delete ()
+		{
+			if (IsRoot)
+				throw new Exception ("Can't delete the root!");
+
+			if (IsDirectory)
+				Directory.Delete (FullName, true); // recursive
+			else
+				File.Delete (FullName);
+
+			parent.children.Remove (name);
+			parent = null;
+		}
+
+
+		//////////////////////////////////////////////////////////////
+
+		static private string PickName (FileModel p)
+		{
+			string pick;
+			do {
+				pick = Token.GetRandom ();
+			} while (p.children.Contains (pick));
+			return pick;
+		}
+
+		static private string [] NewBody (int size)
+		{
+			string [] body;
+			body = new string [size];
+			for (int i = 0; i < size; ++i)
+				body [i] = Token.GetRandom ();
+			Array.Sort (body);
+			return body;
 		}
 
 		private void Write ()
 		{
 			TextWriter writer;
 			writer = new StreamWriter (FullName);
-
 			for (int i = 0; i < body.Length; ++i)
-				writer.WriteLine (Token.GetString (body [i]));
-
+				writer.WriteLine (body [i]);
 			writer.Close ();
 		}
 
 		//////////////////////////////////////////////////////////////
-		
-		static public FileModel Create ()
+
+		//
+		// Code to determine a a file will match a particular query
+		//
+
+		private bool MatchesQueryPart (QueryPart abstract_part)
 		{
-			FileModel file;
-			file = new FileModel ();
-			file.Write ();
-			return file;
+			bool is_match;
+			is_match = false;
+
+			if (abstract_part is QueryPart_Text) {
+				QueryPart_Text part;
+				part = abstract_part as QueryPart_Text;
+
+				if ((part.SearchTextProperties && Name == part.Text)
+				    || (part.SearchFullText && BodyContains (part.Text)))
+					is_match = true;
+
+			} else if (abstract_part is QueryPart_Or) {
+				QueryPart_Or part;
+				part = abstract_part as QueryPart_Or;
+
+				foreach (QueryPart sub_part in part.SubParts) {
+					if (MatchesQueryPart (sub_part)) {
+						is_match = true;
+						break;
+					}
+				}
+			} else if (abstract_part is QueryPart_Property) {
+				QueryPart_Property part;
+				part = abstract_part as QueryPart_Property;
+
+				if (part.Key == "beagle:MimeType") {
+					if (part.Value == "inode/directory")
+						is_match = IsDirectory;
+					else if (part.Value == "text/plain")
+						is_match = IsFile;
+					else
+						is_match = false;
+				} else if (part.Key == "beagle:ExactFilename") {
+					is_match = (Name == part.Value);
+				} else {
+					throw new Exception ("Unsupported property " + part.Key);
+				}
+			} else {
+				throw new Exception ("Unsupported part");
+			}
+
+			if (abstract_part.Logic == QueryPartLogic.Prohibited)
+				is_match = ! is_match;
+
+			return is_match;
+		}
+
+		public bool MatchesQuery (Query query)
+		{
+			// We assume the root node never matches any query.
+			if (IsRoot)
+				return false;
+
+			foreach (QueryPart part in query.Parts) {
+				if (! MatchesQueryPart (part))
+					return false;
+			}
+			
+			return true;
+		}
+
+		private void RecursiveQueryCheck (ArrayList match_list, Query query)
+		{
+			if (MatchesQuery (query))
+				match_list.Add (this);
+
+			if (children != null)
+				foreach (FileModel file in children.Values)
+					file.RecursiveQueryCheck (match_list, query);
+		}
+
+		public ArrayList GetMatchingDescendants (Query query)
+		{
+			ArrayList match_list;
+			match_list = new ArrayList ();
+			RecursiveQueryCheck (match_list, query);
+			return match_list;
 		}
 	}	
 }

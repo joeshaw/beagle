@@ -48,6 +48,18 @@ namespace Beagle.Daemon {
 		}
 
 		//////////////////////////////////////////////////////////
+
+		public delegate void OptimizeAllHandler ();
+
+		static private OptimizeAllHandler OptimizeAllEvent;
+
+		static public void OptimizeAll ()
+		{
+			if (OptimizeAllEvent != null)
+				OptimizeAllEvent ();
+		}
+
+		//////////////////////////////////////////////////////////
 		
 		private Scheduler scheduler = Scheduler.Global;
 		private FileAttributesStore fa_store = null;
@@ -61,8 +73,7 @@ namespace Beagle.Daemon {
 		private LuceneTaskCollector collector;
 
 		private LuceneQueryingDriver.UriFilter our_uri_filter;
-		private LuceneQueryingDriver.HitFilter our_hit_filter;
-		private LuceneQueryingDriver.RelevancyMultiplier our_relevancy_multiplier;
+		private LuceneCommon.HitFilter our_hit_filter;
 
 		//////////////////////////////////////////////////////////
 
@@ -80,8 +91,7 @@ namespace Beagle.Daemon {
 
 			driver = BuildLuceneQueryingDriver (this.index_name, this.minor_version, this.read_only_mode);
 			our_uri_filter = new LuceneQueryingDriver.UriFilter (this.HitIsValidOrElse);
-			our_hit_filter = new LuceneQueryingDriver.HitFilter (this.HitFilter);
-			our_relevancy_multiplier = new LuceneQueryingDriver.RelevancyMultiplier (this.RelevancyMultiplier);
+			our_hit_filter = new LuceneCommon.HitFilter (this.HitFilter);
 
 			// If the queryable is in read-only more, don't 
 			// instantiate an indexer for it.
@@ -93,6 +103,8 @@ namespace Beagle.Daemon {
 				indexer = indexer_hook (this.index_name, this.minor_version);
 
 			indexer.FlushEvent += OnFlushEvent;
+
+			OptimizeAllEvent += OnOptimizeAllEvent;
 
 			collector = new LuceneTaskCollector (indexer);
 		}
@@ -170,6 +182,8 @@ namespace Beagle.Daemon {
 
 		/////////////////////////////////////////
 
+		// DEPRECATED: This does nothing, since everything is now
+		// time-based.
 		virtual protected double RelevancyMultiplier (Hit hit)
 		{
 			return 1.0;
@@ -276,8 +290,7 @@ namespace Beagle.Daemon {
 					query_result,
 					added_uris,
 					our_uri_filter,
-					our_hit_filter,
-					our_relevancy_multiplier);
+					our_hit_filter);
 		}
 
 		/////////////////////////////////////////
@@ -596,6 +609,41 @@ namespace Beagle.Daemon {
 					       new PreRemoveHookDelegate (this.PreRemoveHook));
 			task.Collector = collector;
 			return task;
+		}
+
+		//////////////////////////////////////////////////////////////////////////////////
+
+		// Optimize the index
+		
+		private class OptimizeTask : Scheduler.Task {
+			IIndexer indexer;
+
+			public OptimizeTask (IIndexer indexer)
+			{
+				this.indexer = indexer;
+			}
+
+			override protected void DoTaskReal ()
+			{
+				indexer.Optimize ();
+			}
+		}
+
+		public Scheduler.Task NewOptimizeTask ()
+		{
+			OptimizeTask task;
+			task = new OptimizeTask (this.indexer);
+			task.Tag = "Optimize " + IndexName;
+			task.Priority = Scheduler.Priority.Delayed;
+			task.Collector = collector;
+			return task;
+		}
+
+		private void OnOptimizeAllEvent ()
+		{
+			Scheduler.Task task;
+			task = NewOptimizeTask ();
+			ThisScheduler.Add (task);
 		}
 
 		//////////////////////////////////////////////////////////////////////////////////

@@ -47,6 +47,8 @@ namespace Beagle.Daemon {
 
 	public class LuceneCommon {
 
+		public delegate bool HitFilter (Hit hit);
+
 		public const string UnindexedNamespace = "_unindexed:";
 
 		// VERSION HISTORY
@@ -69,7 +71,8 @@ namespace Beagle.Daemon {
 		//  9: changed the way properties are stored, changed in conjunction
 		//     with sane handling of multiple properties on hits.
 		// 10: changed to support typed and mutable properties
-		private const int MAJOR_VERSION = 10;
+		// 11: moved mime type and hit type into properties
+		private const int MAJOR_VERSION = 11;
 		private int minor_version = 0;
 
 		private string index_name;
@@ -381,7 +384,7 @@ namespace Beagle.Daemon {
 		{
 			switch (type) {
 			case PropertyType.Text:    return "PropertyText";
-			case PropertyType.Keyword: return "PropertyKeyword";
+			case PropertyType.Keyword: return null; // wildcard keyword lookups are crack
 			case PropertyType.Date:    return "PropertyDate";
 			}
 
@@ -481,16 +484,8 @@ namespace Beagle.Daemon {
 			f = Field.Keyword ("Uri", UriFu.UriToSerializableString (indexable.Uri));
 			primary_doc.Add (f);
 
-			f = Field.Keyword ("Type", indexable.Type);
-			primary_doc.Add (f);
-
 			if (indexable.ParentUri != null) {
 				f = Field.Keyword ("ParentUri", UriFu.UriToSerializableString (indexable.ParentUri));
-				primary_doc.Add (f);
-			}
-			
-			if (indexable.MimeType != null) {
-				f = Field.Keyword ("MimeType", indexable.MimeType);
 				primary_doc.Add (f);
 			}
 			
@@ -500,8 +495,18 @@ namespace Beagle.Daemon {
 				primary_doc.Add (f);
 			}
 
-			if (! indexable.NoContent) {
-			
+			if (indexable.NoContent) {
+				// If there is no content, make a note of that
+				// in a special property.
+				Property prop;
+				prop = Property.NewBool ("beagle:NoContent", true);
+				AddPropertyToDocument (prop, primary_doc);
+				
+			} else {
+
+				// Since we might have content, add our text
+				// readers.
+
 				TextReader reader;
 				
 				reader = indexable.GetTextReader ();
@@ -516,6 +521,22 @@ namespace Beagle.Daemon {
 					primary_doc.Add (f);
 				}
 			}
+
+			// Store the Type and MimeType in special properties
+
+			if (indexable.Type != null) {
+				Property prop;
+				prop = Property.NewKeyword ("beagle:Type", indexable.Type);
+				AddPropertyToDocument (prop, primary_doc);
+			}
+
+			if (indexable.MimeType != null) {
+				Property prop;
+				prop = Property.NewKeyword ("beagle:MimeType", indexable.MimeType);
+				AddPropertyToDocument (prop, primary_doc);
+			}
+
+			// Store the other properties
 				
 			foreach (Property prop in indexable.Properties) {
 				
@@ -591,21 +612,22 @@ namespace Beagle.Daemon {
 			hit = new Hit ();
 
 			hit.Uri = GetUriFromDocument (doc);
-			hit.Type = doc.Get ("Type");
 
 			string str;
 			str = doc.Get ("ParentUri");
 			if (str != null)
 				hit.ParentUri = UriFu.UriStringToUri (str);
 			
-			hit.MimeType = doc.Get ("MimeType");
-
 			hit.Timestamp = StringFu.StringToDateTime (doc.Get ("Timestamp"));
 
 			hit.Source = "lucene";
 			hit.ScoreRaw = 1.0;
 
 			AddPropertiesToHit (hit, doc, true);
+
+			// Get the Type and MimeType from the properties.
+			hit.Type = hit.GetFirstProperty ("beagle:Type");
+			hit.MimeType = hit.GetFirstProperty ("beagle:MimeType");
 
 			return hit;
 		}
@@ -717,29 +739,17 @@ namespace Beagle.Daemon {
 			return query;
 		}
 
-		static protected LNS.Query CombineQueries (LNS.Query a, LNS.Query b)
-		{
-			if (a == null)
-				return b; // so we return null if both a and b are null
-			else if (b == null)
-				return a;
-			else {
-				LNS.BooleanQuery combined;
-				combined = new LNS.BooleanQuery ();
-				combined.Add (a, true, false);
-				combined.Add (b, true, false);
-				return combined;
-			}
-		}
-
+		// search_subset_uris is a list of Uris that this search should be
+		// limited to.
 		static protected void QueryPartToQuery (QueryPart     abstract_part,
 							bool          only_build_primary_query,
-							LNS.Query     extra_primary_requirement,
 							out LNS.Query primary_query,
-							out LNS.Query secondary_query)
+							out LNS.Query secondary_query,
+							out HitFilter hit_filter)
 		{
 			primary_query = null;
 			secondary_query = null;
+			hit_filter = null;
 
 			if (abstract_part == null)
 				return;
@@ -751,37 +761,32 @@ namespace Beagle.Daemon {
 					return;
 
 				LNS.BooleanQuery p_query = new LNS.BooleanQuery ();
-				LNS.BooleanQuery s_query = null;
-
-				LNS.Query subquery;
+				primary_query = p_query;
 
 				if (part.SearchFullText) {
+					LNS.Query subquery;
 					subquery = StringToQuery ("Text", part.Text);
 					if (subquery != null)
 						p_query.Add (subquery, false, false);
 
-					subquery = StringToQuery ("HotText", part.Text);
-					if (subquery != null) {
-						subquery.SetBoost (1.75f);
-						p_query.Add (subquery, false, false);
-					}
+					// FIXME: HotText is ignored for now!
+					// subquery = StringToQuery ("HotText", part.Text);
+					// if (subquery != null) 
+					//    p_query.Add (subquery, false, false);
 				}
 
 				if (part.SearchTextProperties) {
+					LNS.Query subquery;
 					subquery = StringToQuery ("PropertyText", part.Text);
 					if (subquery != null) {
-						subquery.SetBoost (1.75f);
 						p_query.Add (subquery, false, false);
-						if (! only_build_primary_query) {
-							s_query = new LNS.BooleanQuery ();
-							s_query.Add (subquery, false, false);
-						}
+						
+						// Properties can live in either index
+						if (! only_build_primary_query)
+							secondary_query = subquery.Clone () as LNS.Query;
 					}
 				}
 
-				primary_query = CombineQueries (p_query, extra_primary_requirement);
-				secondary_query = s_query;
-				
 				return;
 			}
 
@@ -789,52 +794,31 @@ namespace Beagle.Daemon {
 				QueryPart_Property part = (QueryPart_Property) abstract_part;
 
 				string field_name;
-				if (part.Key == QueryPart_Property.AllProperties)
+				if (part.Key == QueryPart_Property.AllProperties) {
 					field_name = TypeToWildcardField (part.Type);
-				else
+					// FIXME: probably shouldn't just return silently
+					if (field_name == null)
+						return;
+				} else
 					field_name = PropertyToFieldName (part.Type, part.Key);
 
-				LNS.Query prop_query;
 				if (part.Type == PropertyType.Text)
-					prop_query = StringToQuery (field_name, part.Value);
+					primary_query = StringToQuery (field_name, part.Value);
 				else
-					prop_query = new LNS.TermQuery (new Term (field_name, part.Value));
+					primary_query = new LNS.TermQuery (new Term (field_name, part.Value));
 
 				// Properties can live in either index
-				primary_query = CombineQueries (prop_query, extra_primary_requirement);
-				if (! only_build_primary_query)
-					secondary_query = prop_query.Clone () as LNS.Query;
-
+				if (! only_build_primary_query && primary_query != null)
+					secondary_query = primary_query.Clone () as LNS.Query;
+				
 				return;
 			}
 
-			// FIXME: This will almost certainly generate a TooManyClauses exception.
-			// See http://www.manning-sandbox.com/thread.jspa?messageID=41211
-			// for more information.
-			// To fix this we need to use a finer search granularity, and a post-processing
-			// filter.
 			if (abstract_part is QueryPart_DateRange) {
-				QueryPart_DateRange part = (QueryPart_DateRange) abstract_part;
 
-				string field_name;
-				if (part.Key == QueryPart_DateRange.AllProperties)
-					field_name = TypeToWildcardField (PropertyType.Date);
-				else
-					field_name = PropertyToFieldName (PropertyType.Date, part.Key);
-
-				Term lower_term, upper_term;
-				lower_term = new Term (field_name, StringFu.DateTimeToString (part.StartDate));
-				upper_term = new Term (field_name, StringFu.DateTimeToString (part.EndDate));
-
-				LNS.Query range_query;
-				range_query = new LNS.RangeQuery (lower_term, upper_term, true);
-				
-				// Properties can live in either index
-				primary_query = CombineQueries (range_query, extra_primary_requirement);
-				secondary_query = range_query;
-				
+				// FIXME: Unsupported
 				return;
-			}
+			} 
 
 			if (abstract_part is QueryPart_Or) {
 				QueryPart_Or part = (QueryPart_Or) abstract_part;
@@ -846,52 +830,27 @@ namespace Beagle.Daemon {
 				LNS.BooleanQuery s_query = null;
 				if (! only_build_primary_query)
 					s_query = new LNS.BooleanQuery ();
-				
-				foreach (QueryPart  sub_part in part.SubParts) {
-					LNS.Query p_subq, s_subq;
-					QueryPartToQuery (sub_part, only_build_primary_query, null, out p_subq, out s_subq);
-					p_query.Add (p_subq, false, false);
-					if (s_query != null && s_subq != null)
-						s_query.Add (s_subq, false, false);
-				}
 
 				primary_query = p_query;
 				secondary_query = s_query;
+				
+				foreach (QueryPart  sub_part in part.SubParts) {
+					LNS.Query p_subq, s_subq;
+					HitFilter sub_hit_filter; // FIXME: This is (and must be) ignored
+					QueryPartToQuery (sub_part, only_build_primary_query,
+							  out p_subq, out s_subq, out sub_hit_filter);
+					if (p_subq != null)
+						p_query.Add (p_subq, false, false);
+					if (s_subq != null)
+						s_query.Add (s_subq, false, false);
+				}
 
 				return;
-			}
+			} 
 
 			throw new Exception ("Unhandled QueryPart type! " + abstract_part.ToString ());
 		}
 
-		static protected LNS.Query NonQueryPartQuery (Query query, LNS.Query extra_required_query)
-		{
-			if (! (query.HasMimeTypes || query.HasHitTypes))
-				return extra_required_query;
-
-			LNS.BooleanQuery top_query, subquery;
-			top_query = new LNS.BooleanQuery ();
-
-			if (query.HasMimeTypes) {
-				subquery = new LNS.BooleanQuery ();
-				foreach (string mime_type in query.MimeTypes)
-					subquery.Add (new LNS.TermQuery (new Term ("MimeType", mime_type)), false, false);
-				top_query.Add (subquery, true, false);
-			}
-
-			if (query.HasHitTypes) {
-				subquery = new LNS.BooleanQuery ();
-				foreach (string hit_type in query.HitTypes)
-					subquery.Add (new LNS.TermQuery (new Term ("Type", hit_type)), false, false);
-				top_query.Add (subquery, true, false);
-			}
-
-			if (extra_required_query != null)
-				top_query.Add (extra_required_query, true, false);
-
-			return top_query;
-		}
-		
 		static protected LNS.Query UriQuery (string field_name, Uri uri)
 		{
 			return new LNS.TermQuery (new Term (field_name, UriFu.UriToSerializableString (uri)));
@@ -952,6 +911,35 @@ namespace Beagle.Daemon {
 			}
 
 			return top_query;
+		}
+
+		// query is our main query.
+		// extra_query is a filtering query used for things like
+		// mime-types.  It is cloned instead of used directly.
+		// uri_list is a list of Uris to restrict our
+		// query to.
+		static protected LNS.BooleanQuery LimitQuery (LNS.Query query, 
+							      LNS.Query extra_query,
+							      ICollection uri_list)
+		{
+			if (query == null)
+				return null;
+
+			LNS.BooleanQuery combined;
+			combined = new LNS.BooleanQuery ();
+
+			combined.Add (query, true, false);
+
+			if (extra_query != null)
+				combined.Add (extra_query.Clone () as LNS.Query, true, false);
+			
+			if (uri_list != null && uri_list.Count > 0) {
+				LNS.Query uri_query;
+				uri_query = UriQuery ("Uri", uri_list);
+				combined.Add (uri_query, true, false);
+			}
+
+			return combined;
 		}
 	}
 }

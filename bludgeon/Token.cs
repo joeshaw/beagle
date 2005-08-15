@@ -6,16 +6,16 @@ namespace Bludgeon {
 
 	public class Token {
 
-		public const int Count = 8192;
+		public const int Count = 512;
 
-		static public string GetString (int id)
+		static public string IdToString (int id)
 		{
 			if (id < 0 || id >= Count)
 				throw new ArgumentException ();
 			return token_table [id];
 		}
 
-		static public int GetId (string str)
+		static public int StringToId (string str)
 		{
 			int i;
 			i = Array.BinarySearch (token_table, str);
@@ -26,9 +26,9 @@ namespace Bludgeon {
 
 		private static Random random = new Random ();
 
-		static public int GetRandom ()
+		static public string GetRandom ()
 		{
-			return random.Next (Count);
+			return token_table [random.Next (Count)];
 		}
 
 		///////////////////////////////////////////////////////////////////////
@@ -48,22 +48,13 @@ namespace Bludgeon {
 			for (int i = 1; i < Count; ++i)
 				if (token_table [i-1] == token_table [i])
 					throw new Exception ("Duplicate tokens!");
-
-			for (int id = 0; id < Count; ++id) {
-				string str;
-				str = GetString (id);
-				int id2;
-				id2 = GetId (str);
-				if (id != id2)
-					throw new Exception ("Brain damage!");
-			}
 		}
 		
 		// This is a silly algorithm, but it is an easy way to
-		// reproducibly generate 8192 strings that all stem to
+		// reproducibly generate a bunch of strings that all stem to
 		// distinct values.
 
-		static private char [] buffer = new char [10];
+		static private char [] buffer = new char [8];
 		static private string TokenFromSeed (int seed)
 		{
 			const int first_char = 97; // lower case 'a'
@@ -74,9 +65,9 @@ namespace Bludgeon {
 
 			for (int i = 0; i < buffer.Length; ++i) {
 				
-				// Put 'z' in the last three characters,
+				// Put 'z' in the last two characters,
 				// to avoid unhappy accidents of stemming.
-				if (i >= buffer.Length - 3) {
+				if (i >= buffer.Length - 2) {
 					buffer [i] = 'z';
 					continue;
 				}

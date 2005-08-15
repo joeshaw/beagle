@@ -241,8 +241,8 @@ namespace Beagle.Daemon
 			Stopwatch watch = new Stopwatch ();
 			watch.Start ();
 
-			driver.Optimize ();
-
+			driver.OptimizeNow ();
+			
 			watch.Stop ();
 			
 			Console.WriteLine ("Optimized index {0} in {1}", driver.TopDirectory, watch);

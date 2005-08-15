@@ -37,6 +37,8 @@ namespace Beagle.Daemon {
 		public string RemoteIndexName;
 		public int    RemoteIndexMinorVersion;
 
+		public bool   OptimizeIndex = false;
+
 		ArrayList indexables_to_add = new ArrayList ();
 		ArrayList uris_to_remove = new ArrayList ();
 
@@ -72,7 +74,8 @@ namespace Beagle.Daemon {
 		[XmlIgnore]
 		public bool IsEmpty {
 			get { return indexables_to_add.Count == 0 
-				      && uris_to_remove.Count == 0; }
+				      && uris_to_remove.Count == 0
+				      && ! OptimizeIndex; }
 		}
 
 		////////////////////////////////////////////////////////////////////////////
@@ -84,6 +87,9 @@ namespace Beagle.Daemon {
 
 			foreach (Uri uri in uris_to_remove)
 				indexer.Remove (uri);
+
+			if (OptimizeIndex)
+				indexer.Optimize ();
 
 			return indexer.FlushAndBlock ();
 		}

@@ -185,7 +185,7 @@ namespace Beagle {
 
 		[XmlIgnore]
 		public Uri DisplayUri {
-			get { return uri.Scheme == "uid" ? ContentUri : Uri; }
+			get { return uri.Scheme == GuidFu.UriScheme ? ContentUri : Uri; }
 		}
 
 		[XmlAttribute]

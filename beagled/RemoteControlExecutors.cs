@@ -76,4 +76,14 @@ namespace Beagle.Daemon {
 			return new EmptyResponse ();
 		}
 	}
+
+	[RequestMessage (typeof (OptimizeIndexesRequest))]
+	public class OptimizeIndexesExecutor : RequestMessageExecutor {
+		
+		public override ResponseMessage Execute (RequestMessage req)
+		{
+			LuceneQueryable.OptimizeAll ();
+			return new EmptyResponse ();
+		}
+	}
 }

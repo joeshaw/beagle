@@ -261,8 +261,8 @@ namespace Beagle.Daemon {
 
 				if (workers == 0) {
 					finished_time = now;
-					Logger.Log.Debug ("Last worker finished {0:0.00}s after start",
-							  (finished_time - started_time).TotalSeconds);
+					//Logger.Log.Debug ("Last worker finished {0:0.00}s after start",
+					//(finished_time - started_time).TotalSeconds);
 					if (FinishedEvent != null)
 						FinishedEvent (this);
 					Monitor.Pulse (this);

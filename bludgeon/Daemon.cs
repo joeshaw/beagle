@@ -114,6 +114,20 @@ namespace Bludgeon {
 				Log.Spew ("Waited for {0}", sw);
 		}
 
+		static public void OptimizeIndexes ()
+		{
+			Beagle.RequestMessage request;
+			request = new Beagle.OptimizeIndexesRequest ();
+
+			Log.Spew ("Optimizing Indexes");
+
+			try {
+				request.Send ();
+			} catch {
+				Log.Failure ("Optimize request failed");
+			}
+		}
+
 		static public void Shutdown ()
 		{
 			Beagle.RequestMessage request;

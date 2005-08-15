@@ -86,9 +86,6 @@ _beagle_query_part_append_standard_header (GString *data,
 	    case BEAGLE_QUERY_PART_LOGIC_REQUIRED:
 		    g_string_append (data, "<Logic>Required</Logic>");
 		    break;
-	    case BEAGLE_QUERY_PART_LOGIC_OPTIONAL:
-		    g_string_append (data, "<Logic>Optional</Logic>");
-		    break;
 	    case BEAGLE_QUERY_PART_LOGIC_PROHIBITED:
 		    g_string_append (data, "<Logic>Prohibited</Logic>");
 		    break;

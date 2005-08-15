@@ -35,10 +35,9 @@ using BU = Beagle.Util;
 namespace Beagle {
 
 	public enum QueryPartLogic {
-		Required,
-		Optional,
-		Prohibited
-	};
+		Required = 1,
+		Prohibited = 2
+	}
 
 	[XmlInclude (typeof (QueryPart_Text)),
 	 XmlInclude (typeof (QueryPart_Property)),
@@ -47,7 +46,7 @@ namespace Beagle {
 	 XmlInclude (typeof (QueryPart_Or))]
 	abstract public class QueryPart {
 
-		private QueryPartLogic logic = QueryPartLogic.Optional;
+		private QueryPartLogic logic = QueryPartLogic.Required;
 
 		public QueryPart ()
 		{ }
@@ -83,6 +82,7 @@ namespace Beagle {
 		}
 	}
 
+	// AllProperties queries are not allowed on keywords.
 	public class QueryPart_Property : QueryPart {
 
 		public const string AllProperties = "_all";
@@ -168,6 +168,10 @@ namespace Beagle {
 			get { return sub_parts; }
 		}
 
+		// FIXME: Really the only thing that is allowed as a subpart
+		// of an 'Or' part are required (not prohibited) text or
+		// property queries.  We should be clearer about the rules,
+		// and enforce them.
 		public void Add (QueryPart part)
 		{
 			sub_parts.Add (part);

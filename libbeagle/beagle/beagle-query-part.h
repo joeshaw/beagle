@@ -36,8 +36,7 @@
 
 typedef enum {
         BEAGLE_QUERY_PART_LOGIC_REQUIRED = 1,
-	BEAGLE_QUERY_PART_LOGIC_OPTIONAL = 2,
-	BEAGLE_QUERY_PART_LOGIC_PROHIBITED = 3,
+	BEAGLE_QUERY_PART_LOGIC_PROHIBITED = 2
 } BeagleQueryPartLogic;
 
 #define BEAGLE_TYPE_QUERY_PART            (beagle_query_part_get_type ())

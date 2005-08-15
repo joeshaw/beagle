@@ -133,12 +133,14 @@ namespace Beagle {
 			}
 		}
 
+		// DEPRECATED: This is now stored as a property.
 		[XmlAttribute]
 		public string Type {
 			get { return type; }
 			set { type = value; }
 		}
 
+		// DEPRECATED: This is now stored as a property.
 		[XmlAttribute]
 		public string MimeType {
 			get { return mimeType; }

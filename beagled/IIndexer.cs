@@ -40,6 +40,9 @@ namespace Beagle.Daemon {
 
 		void Remove (Uri uri);
 
+		// The optimization will happen after the next flush.
+		void Optimize ();
+
 		IndexerReceipt [] FlushAndBlock ();
 
 		// In general, we don't guarantee that Flush will not block.
@@ -50,5 +53,9 @@ namespace Beagle.Daemon {
 		void Flush ();
 
 		event IIndexerFlushHandler FlushEvent;
+
+
+
+		
 	}
 }

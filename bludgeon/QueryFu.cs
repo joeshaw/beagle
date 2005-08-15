@@ -10,35 +10,111 @@ namespace Bludgeon {
 
 	public class QueryFu {
 
-		static public void AddToken (Query query, int id)
+		static public Query NewTokenQuery (string token)
 		{
-			if (id < 0 || id >= Token.Count)
-				return;
+			Query query;
+			query = new Query ();
 
 			QueryPart_Text part;
 			part = new QueryPart_Text ();
-			part.Logic = QueryPartLogic.Required;
-			part.Text = Token.GetString (id);
-
+			part.Text = token;
 			query.AddPart (part);
+
+			return query;
 		}
 
-		static public void AddName (Query query, FileModel file)
+		static public Query NewTokenQuery (int id)
 		{
-			QueryPart_Property part;
-			part = new QueryPart_Property ();
-			part.Logic = QueryPartLogic.Required;
-			part.Type = PropertyType.Keyword;
-			part.Key = "_private:ExactFilename";
-			part.Value = file.Name;
-
-			query.AddPart (part);
+			return NewTokenQuery (Token.IdToString (id));
 		}
 
-		static public void AddBody (Query query, FileModel file)
+		static Random random = new Random ();
+
+		static public Query NewRandomQuery (int  length,
+						    bool allow_inexpensive)
 		{
-			for (int i = 0; i < file.Body.Length; ++i)
-				AddToken (query, file.Body [i]);
+			Query query;
+			query = new Query ();
+
+			if (allow_inexpensive) {
+				int mime_type;
+				mime_type = random.Next (3);
+				if (mime_type == 0)
+					query.AddMimeType ("inode/directory");
+				else if (mime_type == 1)
+					query.AddMimeType ("text/plain");
+			}
+
+			// Every query must contain at least
+			// one required part.
+			bool contains_required;
+			contains_required = false;
+
+			for (int i = 0; i < length; ++i) {
+				QueryPart_Text part;
+				part = new QueryPart_Text ();
+				part.Text = Token.GetRandom ();
+
+				if (contains_required) {
+					if (random.Next (2) == 0)
+						part.Logic = QueryPartLogic.Prohibited;
+				} else {
+					// This part will be required.
+					contains_required = true;
+				}
+				
+				if (random.Next (2) == 0)
+					part.SearchTextProperties = false;
+				else if (allow_inexpensive && random.Next (2) == 0)
+					part.SearchFullText = false;
+				
+				query.AddPart (part);
+			}
+
+			return query;
+		}
+
+		static public Query NewRandomQuery ()
+		{
+			return NewRandomQuery (2 + random.Next (4), true);
+		}
+
+		/////////////////////////////////////////////////////////////
+
+		static public void SpewQuery (Query query)
+		{
+			int i = 0;
+
+			foreach (QueryPart abstract_part in query.Parts) {
+
+				++i;
+
+				string msg;
+				msg = "????";
+				
+				if (abstract_part is QueryPart_Text) {
+					QueryPart_Text part;
+					part = (QueryPart_Text) abstract_part;
+
+					msg = "";
+					if (part.Logic == QueryPartLogic.Prohibited)
+						msg = "NOT ";
+					msg += part.Text;
+
+					if (! (part.SearchFullText && part.SearchTextProperties)) {
+						if (part.SearchFullText)
+							msg += " IN FULLTEXT";
+						else if (part.SearchTextProperties)
+							msg += " IN TEXT PROPERTIES";
+					}
+				} else if (abstract_part is QueryPart_Property) {
+					QueryPart_Property part;
+					part = (QueryPart_Property) abstract_part;
+					msg = String.Format ("PROPERTY {0} = {1}", part.Key, part.Value);
+				}
+				
+				Log.Spew ("{0}: {1}", i, msg);
+			}
 		}
 
 		/////////////////////////////////////////////////////////////

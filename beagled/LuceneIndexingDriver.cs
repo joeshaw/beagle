@@ -53,6 +53,7 @@ namespace Beagle.Daemon {
 	public class LuceneIndexingDriver : LuceneCommon, IIndexer {
 
 		Hashtable pending_by_uri = UriFu.NewHashtable ();
+		bool optimize_during_next_flush = false;
 
 		public LuceneIndexingDriver (string index_name, int minor_version) : base (index_name, minor_version)
 		{
@@ -95,9 +96,9 @@ namespace Beagle.Daemon {
 			}
 		}
 
-		public void Rename (Uri old_uri, Uri new_uri)
+		public void Optimize ()
 		{
-			// FIXME!
+			optimize_during_next_flush = true;
 		}
 
 		public IndexerReceipt [] FlushAndBlock ()
@@ -308,13 +309,14 @@ namespace Beagle.Daemon {
 				if (text_cache != null)
 					text_cache.CommitTransaction ();
 
-#if false
-				// FIXME: always optimize
-				Logger.Log.Debug ("Optimizing");
-				primary_writer.Optimize ();
-				if (secondary_writer != null)
+				if (optimize_during_next_flush) {
+					Logger.Log.Debug ("Optimizing");
+					primary_writer.Optimize ();
+					if (secondary_writer == null)
+						secondary_writer = new IndexWriter (SecondaryStore, IndexingAnalyzer, false);
 					secondary_writer.Optimize ();
-#endif
+					optimize_during_next_flush = false;
+				}
 
 				// Step #3. Close our writers and return the events to
 				// indicate what has happened.
@@ -355,7 +357,7 @@ namespace Beagle.Daemon {
 
 		////////////////////////////////////////////////////////////////
 
-		public void Optimize ()
+		public void OptimizeNow ()
 		{
 			IndexWriter writer;
 

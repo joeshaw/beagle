@@ -47,10 +47,11 @@ namespace Beagle.Daemon {
 
 	public class LuceneQueryingDriver : LuceneCommon {
 
+		static public bool Debug = true;
+
 		public const string PrivateNamespace = "_private:";
 
 		public delegate bool UriFilter (Uri uri);
-		public delegate bool HitFilter (Hit hit);
 		public delegate double RelevancyMultiplier (Hit hit);
 
 		public LuceneQueryingDriver (string index_name, int minor_version, bool read_only) 
@@ -66,50 +67,61 @@ namespace Beagle.Daemon {
 
 		////////////////////////////////////////////////////////////////
 
+		private class NotHitFilter_Closure {
+			HitFilter original;
+
+			public NotHitFilter_Closure (HitFilter original)
+			{
+				this.original = original;
+			}
+			
+			public bool Filter (Hit hit)
+			{
+				return ! original (hit);
+			}
+		}
+
+		public HitFilter NotHitFilter (HitFilter filter)
+		{
+			NotHitFilter_Closure closure;
+			closure = new NotHitFilter_Closure (filter);
+			return new HitFilter (closure.Filter);
+		}
+
+		////////////////////////////////////////////////////////////////
+
 		// Returns the lowest matching score before the results are
 		// truncated.
 		public void DoQuery (Query               query,
 				     IQueryResult        result,
-				     ICollection         search_subset, // should be internal uris
+				     ICollection         search_subset_uris, // should be internal uris
 				     UriFilter           uri_filter,
-				     HitFilter           hit_filter,    // post-processing for hits
-				     RelevancyMultiplier relevancy_multiplier)
+				     HitFilter           hit_filter)
 		{
-
 			Stopwatch sw;
 			sw = new Stopwatch ();
 			sw.Start ();
 
-			//
-			// First, we assemble a bunch of queries
-			//
-
-			LNS.Query non_part_query = null;
-			LNS.Query search_subset_query = null;
+			// Assemble all of the parts into a bunch of Lucene queries
 
 			ArrayList primary_required_part_queries = null;
 			ArrayList secondary_required_part_queries = null;
 
-			LNS.BooleanQuery primary_optional_part_query = null;
-			LNS.BooleanQuery secondary_optional_part_query = null;
-
 			LNS.BooleanQuery primary_prohibited_part_query = null;
 			LNS.BooleanQuery secondary_prohibited_part_query = null;
 
-			if (search_subset != null && search_subset.Count > 0)
-				search_subset_query = UriQuery ("Uri", search_subset, non_part_query);
+			ArrayList all_hit_filters = new ArrayList ();
+			all_hit_filters.Add (hit_filter);
 
-			non_part_query = NonQueryPartQuery (query, search_subset_query);
-
-			// Now assemble all of the parts into a bunch of Lucene queries
 			foreach (QueryPart part in query.Parts) {
 				LNS.Query primary_part_query;
 				LNS.Query secondary_part_query;
+				HitFilter part_hit_filter;
 				QueryPartToQuery (part,
 						  false, // we want both primary and secondary queries
-						  non_part_query, // add the non-part stuff to every part's query
 						  out primary_part_query,
-						  out secondary_part_query);
+						  out secondary_part_query,
+						  out part_hit_filter);
 
 				switch (part.Logic) {
 					
@@ -120,18 +132,10 @@ namespace Beagle.Daemon {
 					}
 					primary_required_part_queries.Add (primary_part_query);
 					secondary_required_part_queries.Add (secondary_part_query);
-					break;
-
-				case QueryPartLogic.Optional:
-					if (primary_optional_part_query == null)
-						primary_optional_part_query = new LNS.BooleanQuery ();
-					primary_optional_part_query.Add (primary_part_query, false, false);
-
-					if (secondary_part_query != null) {
-						if (secondary_optional_part_query == null)
-							secondary_optional_part_query = new LNS.BooleanQuery ();
-						secondary_optional_part_query.Add (secondary_part_query, false, false);
-					}
+					
+					if (part_hit_filter != null)
+						all_hit_filters.Add (part_hit_filter);
+					
 					break;
 
 				case QueryPartLogic.Prohibited:
@@ -145,17 +149,26 @@ namespace Beagle.Daemon {
 						secondary_prohibited_part_query.Add (secondary_part_query, false, false);
 					}
 
+					if (part_hit_filter != null)
+						all_hit_filters.Add (NotHitFilter (part_hit_filter));
+
 					break;
 				}
 			}
 
-			// If we have no required or optional parts, give up.
-			if (primary_required_part_queries == null && primary_optional_part_query == null)
+			// If we have no required parts, give up.
+			if (primary_required_part_queries == null) {
+				Logger.Log.Debug ("No required parts, I give up!");
 				return;
+			}
+			
+			Logger.Log.Debug ("Assembled queries!");
 
 			//
 			// Now that we have all of these nice queries, let's execute them!
 			//
+
+			// Create the searchers that we will need.
 
 			LNS.IndexSearcher primary_searcher;
 			IndexReader secondary_reader = null;
@@ -174,71 +187,63 @@ namespace Beagle.Daemon {
 			if (secondary_reader != null)
 				secondary_searcher = new LNS.IndexSearcher (secondary_reader);
 
-			// Sometimes you just need a convenient integer...
-			int N;
 
-			// Create an initial whitelist from the search subset query.
-			BetterBitArray primary_whitelist = null;
-			BetterBitArray secondary_whitelist = null;
-
-			N = DoLowLevelQuery (primary_searcher,
-					     search_subset_query,
-					     ref primary_whitelist,
-					     null); // no whitelist
-
-			// If we didn't match anything (and we know the query was non-null,
-			// or -1 would have been returned), just give up -- nothing
-			// is going to match from here on out.
-			if (N == 0)
-				return;
-
-			DoLowLevelQuery (secondary_searcher,
-					 search_subset_query,
-					 ref secondary_whitelist,
-					 null); // no whitelist
-
-			// Next we build up our blacklists from the query's prohibited parts.
-			BetterBitArray primary_blacklist = null;
-			BetterBitArray secondary_blacklist = null;
+			// Possibly create our whitelists from the search subset.
 			
-			// Don't worry... DoLowLevelQuery is smart about null arguments.
-			DoLowLevelQuery_TwoIndex (primary_searcher,
-						  secondary_searcher,
-						  primary_prohibited_part_query,
-						  secondary_prohibited_part_query,
-						  ref primary_blacklist,
-						  ref secondary_blacklist,
-						  primary_whitelist,
-						  secondary_whitelist,
-						  -1);
+			LuceneBitArray primary_whitelist = null;
+			LuceneBitArray secondary_whitelist = null;
+			
+			if (search_subset_uris != null && search_subset_uris.Count > 0) {
+				primary_whitelist = new LuceneBitArray (primary_searcher);
+				if (secondary_searcher != null)
+					secondary_whitelist = new LuceneBitArray (secondary_searcher);
 
-			// Merge our blacklists into our whitelists.
-			if (primary_blacklist != null) {
-				primary_blacklist.Not ();
-				if (secondary_blacklist != null)
-					secondary_blacklist.Not ();
-				
-				if (primary_whitelist == null)
-					primary_whitelist = primary_blacklist;
-				else
-					primary_whitelist.And (primary_blacklist);
-				
-				if (secondary_whitelist == null)
-					secondary_whitelist = secondary_blacklist;
-				else
-					secondary_whitelist.And (secondary_blacklist);
+				foreach (Uri uri in search_subset_uris) {
+					primary_whitelist.AddUri (uri);
+					if (secondary_whitelist != null)
+						secondary_whitelist.AddUri (uri);
+				}
+				primary_whitelist.FlushUris ();
+				if (secondary_whitelist != null)
+					secondary_whitelist.FlushUris ();
 			}
 
-			// If either of our whitelists are empty, give up.
-			if (primary_whitelist != null && ! primary_whitelist.ContainsTrue ())
-				return;
-			if (secondary_whitelist != null && ! secondary_whitelist.ContainsTrue ())
-				return;
 
-			//
-			// Now we execute the core queries: Either the
-			// required parts, or the optional parts if there are
-			// no required ones.  //
+			// Build blacklists from our prohibited parts.
+			
+			LuceneBitArray primary_blacklist = null;
+			LuceneBitArray secondary_blacklist = null;
+
+			if (primary_prohibited_part_query != null) {
+				primary_blacklist = new LuceneBitArray (primary_searcher,
+									primary_prohibited_part_query);
+				
+				secondary_blacklist = new LuceneBitArray (secondary_searcher);
+				if (secondary_prohibited_part_query != null)
+					secondary_blacklist.Or (secondary_prohibited_part_query);
+				primary_blacklist.Join (secondary_blacklist);
+			}
+
+			
+			// Combine our whitelist and blacklist into just a whitelist.
+			
+			if (primary_blacklist != null) {
+				if (primary_whitelist == null) {
+					primary_blacklist.Not ();
+					primary_whitelist = primary_blacklist;
+				} else {
+					primary_whitelist.AndNot (primary_blacklist);
+				}
+			}
+
+			if (secondary_blacklist != null) {
+				if (secondary_whitelist == null) {
+					secondary_blacklist.Not ();
+					secondary_whitelist = secondary_blacklist;
+				} else {
+					secondary_whitelist.AndNot (secondary_blacklist);
+				}
+			}
 
 			BetterBitArray primary_matches = null;
 
@@ -250,32 +255,17 @@ namespace Beagle.Daemon {
 										      primary_required_part_queries,
 										      secondary_required_part_queries,
 										      primary_whitelist,
-										      secondary_whitelist,
-										      query.MaxHits);
+										      secondary_whitelist);
 				else
 					primary_matches = DoRequiredQueries (primary_searcher,
 									     primary_required_part_queries,
 									     primary_whitelist);
 
-			} else {
-				
-				// This does the optional parts of the query.
-
-				BetterBitArray dummy_secondary_matches = null;
-				
-				DoLowLevelQuery_TwoIndex (primary_searcher,
-							  secondary_searcher,
-							  primary_optional_part_query,
-							  secondary_optional_part_query,
-							  ref primary_matches,
-							  ref dummy_secondary_matches,
-							  primary_whitelist,
-							  secondary_whitelist,
-							  query.MaxHits);
-			}
+			} 
 
 			sw.Stop ();
-			Logger.Log.Debug ("###### Finished low-level queries in {0}", sw);
+			if (Debug)
+				Logger.Log.Debug ("###### Finished low-level queries in {0}", sw);
 			sw.Reset ();
 			sw.Start ();
 
@@ -293,62 +283,6 @@ namespace Beagle.Daemon {
 					      DateTime.MaxValue,
 					      uri_filter,
 					      hit_filter);
-
-#if false
-
-			// Now we need to assemble the hits.
-			// FIXME: For the moment, no relevancy or caps on Hits.  Scary.
-			//
-
-			int j = 0;
-			int hit_count = 0;
-			while (j < primary_matches.Count) {
-				
-				j = primary_matches.GetNextTrueIndex (j);
-				if (j >= primary_matches.Count)
-					break;
-
-				Document primary_doc;
-				primary_doc = primary_searcher.Doc (j);
-
-				Uri uri;
-				uri = GetUriFromDocument (primary_doc);
-				if (uri_filter != null && ! uri_filter (uri))
-					continue;
-
-				float score;
-				score = 1.0f; // FIXME!
-
-				Hit hit;
-				hit = DocumentToHit (primary_doc, uri, j, score);
-				AddPropertiesToHit (hit, primary_doc, true);
-
-				// Find the associated secondary document
-				// and pull in it's properties.
-				if (secondary_searcher != null) {
-					LNS.Hits hits;
-					hits = secondary_searcher.Search (UriQuery ("Uri", uri));
-					if (hits.Length () != 0) {
-						Document secondary_doc;
-						secondary_doc = hits.Doc (0);
-						AddPropertiesToHit (hit, secondary_doc, false);
-					}
-				}
-				
-				if (hit_filter == null || hit_filter (hit)) {
-
-
-					result.Add (hit); // broadcast the hit we just constructed
-					++hit_count;
-
-					if (hit_count > query.MaxHits)
-						break;
-				}
-
-				++j;
-			}
-#endif
-
 			//
 			// Finally, we clean up after ourselves.
 			//
@@ -361,9 +295,143 @@ namespace Beagle.Daemon {
 
 
 			sw.Stop ();
-			Logger.Log.Debug ("###### Processed query in {0}", sw);
+			if (Debug)
+				Logger.Log.Debug ("###### Processed query in {0}", sw);
 
 		}
+
+		////////////////////////////////////////////////////////////////
+
+		//
+		// Special logic for handling our set of required queries
+		//
+
+		// This is the easy case: we just combine all of the queries
+		// into one big BooleanQuery.
+		private static BetterBitArray DoRequiredQueries (LNS.IndexSearcher primary_searcher,
+								 ArrayList primary_queries,
+								 BetterBitArray primary_whitelist)
+		{
+			LNS.BooleanQuery combined_query;
+			combined_query = new LNS.BooleanQuery ();
+			foreach (LNS.Query query in primary_queries)
+				combined_query.Add (query, true, false);
+
+			LuceneBitArray matches;
+			matches = new LuceneBitArray (primary_searcher, combined_query);
+			if (primary_whitelist != null)
+				matches.And (primary_whitelist);
+
+			return matches;
+		}
+
+		// This code attempts to execute N required queries in the
+		// most efficient order to minimize the amount of time spent
+		// joining between the two indexes.  It returns a joined bit
+		// array of matches against the primary index.
+
+		private class MatchInfo : IComparable {
+
+			public LuceneBitArray PrimaryMatches = null;
+			public LuceneBitArray SecondaryMatches = null;
+			public int UpperBound = 0;
+
+			public void Join ()
+			{
+				PrimaryMatches.Join (SecondaryMatches);
+			}
+
+			public void RestrictBy (MatchInfo joined)
+			{
+				if (joined != null) {
+					this.PrimaryMatches.And (joined.PrimaryMatches);
+					this.SecondaryMatches.And (joined.SecondaryMatches);
+				}
+
+				UpperBound = 0;
+				UpperBound += PrimaryMatches.TrueCount;
+				UpperBound += SecondaryMatches.TrueCount;
+			}
+
+			public int CompareTo (object obj)
+			{
+				MatchInfo other = (MatchInfo) obj;
+				return this.UpperBound - other.UpperBound;
+			}
+		}
+
+		// Any whitelists that are passed in must be fully joined, or
+		// query results will be incorrect.
+		private static BetterBitArray DoRequiredQueries_TwoIndex (LNS.IndexSearcher primary_searcher,
+									  LNS.IndexSearcher secondary_searcher,
+									  ArrayList primary_queries,
+									  ArrayList secondary_queries,
+									  BetterBitArray primary_whitelist,
+									  BetterBitArray secondary_whitelist)
+		{
+			ArrayList match_info_list;
+			match_info_list = new ArrayList ();
+
+			// First, do all of the low-level queries
+			// and store them in our MatchInfo 
+			for (int i = 0; i < primary_queries.Count; ++i) {
+				LNS.Query pq, sq;
+				pq = primary_queries [i] as LNS.Query;
+				sq = secondary_queries [i] as LNS.Query;
+
+				LuceneBitArray p_matches = null, s_matches = null;
+				p_matches = new LuceneBitArray (primary_searcher);
+				if (pq != null) {
+					p_matches.Or (pq);
+					if (primary_whitelist != null)
+						p_matches.And (primary_whitelist);
+				}
+
+				s_matches = new LuceneBitArray (secondary_searcher);
+				if (sq != null) {
+					s_matches.Or (sq);
+					if (secondary_whitelist != null)
+						s_matches.And (secondary_whitelist);
+				}
+
+				MatchInfo info;
+				info = new MatchInfo ();
+				info.PrimaryMatches = p_matches;
+				info.SecondaryMatches = s_matches;
+				info.RestrictBy (null); // a hack to initialize the UpperBound
+				match_info_list.Add (info);
+			}
+
+			// We want to be smart about the order we do this in,
+			// to minimize the expense of the Join.
+			while (match_info_list.Count > 1) {
+
+				// FIXME: We don't really need to sort here, it would
+				// be sufficient to just find the minimal element.
+				match_info_list.Sort ();
+				MatchInfo smallest;
+				smallest = match_info_list [0] as MatchInfo;
+				match_info_list.RemoveAt (0);
+
+				// We can short-circuit if our smallest set of
+				// matches is empty.
+				if (smallest.UpperBound == 0)
+					return smallest.PrimaryMatches; // this must be an empty array.
+
+				smallest.Join ();
+
+				foreach (MatchInfo info in match_info_list)
+					info.RestrictBy (smallest);
+			}
+			
+			// For the final pair, we don't need to do a full join:
+			// mapping the secondary onto the primary is sufficient
+			MatchInfo last;
+			last = match_info_list [0] as MatchInfo;
+			last.SecondaryMatches.ProjectOnto (last.PrimaryMatches);
+
+			return last.PrimaryMatches;
+		}		
 
 		////////////////////////////////////////////////////////////////
 
@@ -392,13 +460,16 @@ namespace Beagle.Daemon {
 			if (max_date_num < min_date_num)
 				return;
 
-			Logger.Log.Debug (">>> Initially handed {0} matches", primary_matches.TrueCount);
+			if (Debug)
+				Logger.Log.Debug (">>> Initially handed {0} matches", primary_matches.TrueCount);
 
 			if (primary_matches.TrueCount <= max_results) {
-				Logger.Log.Debug (">>> Initial count is within our limit of {0}", max_results);
+				if (Debug)
+					Logger.Log.Debug (">>> Initial count is within our limit of {0}", max_results);
 				all_docs = new ArrayList ();
 			} else {
-				Logger.Log.Debug (">>> Number of hits is capped at {0}", max_results);
+				if (Debug)
+					Logger.Log.Debug (">>> Number of hits is capped at {0}", max_results);
 				top_docs = new TopScores (max_results);
 			}
 
@@ -477,35 +548,26 @@ namespace Beagle.Daemon {
 
 			} else {
 
-				Logger.Log.Debug (">>> Performing cross-index Hit reunification");
+				if (Debug)
+					Logger.Log.Debug (">>> Performing cross-index Hit reunification");
 
 				Hashtable hits_by_uri;
 				hits_by_uri = UriFu.NewHashtable ();
 
-				// FIXME: Want to avoid too many clauses
-				// in this query.  Normally our cap will
-				// be set low enough that it won't
-				// be a problem.
-				LNS.BooleanQuery uri_query;
-				uri_query = new LNS.BooleanQuery ();
+				LuceneBitArray secondary_matches;
+				secondary_matches = new LuceneBitArray (secondary_searcher);
 
 				foreach (Document primary_doc in final_list_of_docs) {
 				
 					Hit hit;
 					hit = DocumentToHit (primary_doc);
 
-					final_list_of_hits.Add (hit);
 					hits_by_uri [hit.Uri] = hit;
 
-					uri_query.Add (UriQuery ("Uri", hit.Uri), false, false);
+					secondary_matches.AddUri (hit.Uri);
 				}
-				
-				// Find the other halves of our matches
-				BetterBitArray secondary_matches = null;
-				DoLowLevelQuery (secondary_searcher,
-						 uri_query,
-						 ref secondary_matches,
-						 null);
+
+				secondary_matches.FlushUris ();
 				
 				// Attach all of our secondary properties
 				// to the hits
@@ -522,11 +584,14 @@ namespace Beagle.Daemon {
 					
 					Uri uri;
 					uri = GetUriFromDocument (secondary_doc);
+					Logger.Log.Debug ("Joining {0}", uri);
 
 					Hit hit;
 					hit = hits_by_uri [uri] as Hit;
 
 					AddPropertiesToHit (hit, secondary_doc, false);
+
+					final_list_of_hits.Add (hit);
 				}
 			}
 
@@ -540,13 +605,17 @@ namespace Beagle.Daemon {
 
 			c.Start ();
 
+			Logger.Log.Debug ("Final list length = {0}", final_list_of_hits.Count);
+
 			// If we have a hit_filter, use it now.
 			if (hit_filter != null) {
 				for (int i = 0; i < final_list_of_hits.Count; ++i) {
 					Hit hit;
 					hit = final_list_of_hits [i] as Hit;
-					if (! hit_filter (hit))
+					if (! hit_filter (hit)) {
+						Logger.Log.Debug ("Filtered out {0}", hit.Uri);
 						final_list_of_hits [i] = null;
+					}
 				}
 			}
 
@@ -574,328 +643,14 @@ namespace Beagle.Daemon {
 			c.Stop ();
 			total.Stop ();
 
-			Logger.Log.Debug (">>> GenerateQueryResults time statistics:");
-			Logger.Log.Debug (">>>   First pass {0} ({1:0.0}%)", a, 100 * a.ElapsedTime / total.ElapsedTime);
-			Logger.Log.Debug (">>> Hit assembly {0} ({1:0.0}%)", b, 100 * b.ElapsedTime / total.ElapsedTime);
-			Logger.Log.Debug (">>>   Final pass {0} ({1:0.0}%)", c, 100 * c.ElapsedTime / total.ElapsedTime);
-			Logger.Log.Debug (">>>        TOTAL {0}", total);
-		}
-
-		////////////////////////////////////////////////////////////////
-		
-		//
-		// Some extremely low-level operations
-		//
-
-		private class BitArrayHitCollector : LNS.HitCollector {
-
-			private BetterBitArray matches;
-			private BetterBitArray whitelist;
-
-			private int hit_count = 0;
-
-			public BitArrayHitCollector (BetterBitArray matches,
-						     BetterBitArray whitelist)
-			{
-				this.matches = matches;
-				this.whitelist = whitelist;
-			}
-
-			public override void Collect (int id, float score)
-			{
-				if (whitelist == null || whitelist [id]) {
-					matches [id] = true;
-					++hit_count;
-				}
-			}
-
-			public int HitCount { get { return hit_count; } }
-		}
-
-		private static int DoLowLevelQuery (LNS.IndexSearcher  searcher,
-						    LNS.Query          query,
-						    ref BetterBitArray matches,
-						    BetterBitArray     whitelist)
-		{
-			// Do nothing on a null searcher or query.
-			if (searcher == null
-			    || query == null)
-				return -1;
-
-			// If we have been handed a totally empty whitelist,
-			// we have no hope of being able to match anything.
-			if (whitelist != null && ! whitelist.ContainsTrue ()) {
-				Logger.Log.Debug ("Query failed on empty whitelist!");
-				return 0;
-			}
-
-			if (matches == null) 
-				matches = new BetterBitArray (searcher.MaxDoc ());
-
-			BitArrayHitCollector collector;
-			collector = new BitArrayHitCollector (matches, whitelist);
-			
-			searcher.Search (query, null, collector);
-			
-			return collector.HitCount;
-		}
-
-		// Given a set of matches in one index, project them into a set of
-		// matches in the other index.
-		private static void ProjectMatches (LNS.IndexSearcher  source_searcher,
-						    BetterBitArray     source_matches,
-						    LNS.IndexSearcher  target_searcher,
-						    ref BetterBitArray target_matches,
-						    BetterBitArray     target_whitelist)
-		{
-			// If there are no source matches, there is nothing
-			// to do.
-			if (source_searcher == null
-			    || source_matches == null
-			    || ! source_matches.ContainsTrue ())
-				return;
-
-			LNS.BooleanQuery pending_uri_query = null;
-			int pending_uri_count = 0;
-			int pending_uri_max = LNS.BooleanQuery.GetMaxClauseCount ();
-
-			int i = 0;
-
-			while (true) {
-				i = source_matches.GetNextTrueIndex (i);
-				
-				if (i < source_matches.Count) {
-
-					Document doc;
-					doc = source_searcher.Doc (i);
-
-					Uri uri;
-					uri = GetUriFromDocument (doc);
-
-					LNS.Query query;
-					query = UriQuery ("Uri", uri);
-
-					if (pending_uri_query == null) {
-						pending_uri_query = new LNS.BooleanQuery ();
-						pending_uri_count = 0;
-					}
-
-					pending_uri_query.Add (query, false, false);
-
-					++pending_uri_count;
-				}
-
-				++i;
-
-				if (pending_uri_query != null
-				    && (pending_uri_count >= pending_uri_max || i >= source_matches.Count)) {
-					
-					DoLowLevelQuery (target_searcher,
-							 pending_uri_query,
-							 ref target_matches,
-							 target_whitelist);
-
-					pending_uri_query = null;
-				}
-
-				if (i >= source_matches.Count)
-					break;
+			if (Debug) {
+				Logger.Log.Debug (">>> GenerateQueryResults time statistics:");
+				Logger.Log.Debug (">>>   First pass {0} ({1:0.0}%)", a, 100 * a.ElapsedTime / total.ElapsedTime);
+				Logger.Log.Debug (">>> Hit assembly {0} ({1:0.0}%)", b, 100 * b.ElapsedTime / total.ElapsedTime);
+				Logger.Log.Debug (">>>   Final pass {0} ({1:0.0}%)", c, 100 * c.ElapsedTime / total.ElapsedTime);
+				Logger.Log.Debug (">>>        TOTAL {0}", total);
 			}
 		}
 
-		private static void DoLowLevelQuery_TwoIndex (LNS.IndexSearcher  primary_searcher,
-							      LNS.IndexSearcher  secondary_searcher,
-							      LNS.Query          primary_query,
-							      LNS.Query          secondary_query,
-							      ref BetterBitArray primary_matches,
-							      ref BetterBitArray secondary_matches,
-							      BetterBitArray     primary_whitelist,
-							      BetterBitArray     secondary_whitelist,
-							      int                max_match_count)
-		{
-			DoLowLevelQuery (primary_searcher,
-					 primary_query,
-					 ref primary_matches,
-					 primary_whitelist);
-
-			DoLowLevelQuery (secondary_searcher,
-					 secondary_query,
-					 ref secondary_matches,
-					 secondary_whitelist);
-
-			// Project the matches from the secondary searcher
-			// onto the first.  But only if we don't already have
-			// enough matches.
-			if (max_match_count < 0
-			    || primary_matches == null 
-			    || primary_matches.TrueCount < max_match_count)
-				ProjectMatches (secondary_searcher,
-						secondary_matches,
-						primary_searcher,
-						ref primary_matches,
-						primary_whitelist);
-		}
-
-		private static void ProjectMatches_BiDirectional (LNS.IndexSearcher first_searcher,
-								  BetterBitArray    first_matches,
-								  BetterBitArray    first_whitelist,
-								  LNS.IndexSearcher second_searcher,
-								  BetterBitArray    second_matches,
-								  BetterBitArray    second_whitelist)
-		{
-			Stopwatch sw = new Stopwatch ();
-			sw.Start ();
-
-			BetterBitArray first_into_second = null;
-			BetterBitArray second_into_first = null;
-
-			// Map the first set of matches into the second
-			ProjectMatches (first_searcher,
-					first_matches,
-					second_searcher,
-					ref first_into_second,
-					second_whitelist);
-
-			// Now map the second set of matches back to the
-			// first, excluding items that we know came out of the
-			// first set.
-			BetterBitArray filtered_second_matches;
-			if (first_into_second == null || first_into_second.TrueCount == 0) 
-				filtered_second_matches = second_matches;
-			else {
-				filtered_second_matches = new BetterBitArray (second_matches);
-				filtered_second_matches.AndNot (first_into_second);
-			}
-
-			ProjectMatches (second_searcher,
-					filtered_second_matches,
-					first_searcher,
-					ref second_into_first,
-					first_whitelist);
-
-			// Or our projections onto the original sets of matches.
-			if (second_into_first != null)
-				first_matches.Or (second_into_first);
-			if (first_into_second != null)
-				second_matches.Or (first_into_second);
-
-			sw.Stop ();
-		}
-
-		////////////////////////////////////////////////////////////////
-
-		//
-		// Special logic for handling our set of required queries
-		//
-
-		// This is the easy case: we just combine all of the queries
-		// into one big BooleanQuery.
-		private static BetterBitArray DoRequiredQueries (LNS.IndexSearcher primary_searcher,
-								 ArrayList primary_queries,
-								 BetterBitArray primary_whitelist)
-		{
-			LNS.BooleanQuery combined_query;
-			combined_query = new LNS.BooleanQuery ();
-			foreach (LNS.Query query in primary_queries)
-				combined_query.Add (query, true, false);
-			
-			BetterBitArray matches = null;
-			DoLowLevelQuery (primary_searcher,
-					 combined_query,
-					 ref matches,
-					 primary_whitelist);
-
-			return matches;
-		}
-
-		// This code attempts to execute N required queries in the
-		// most efficient order to minimize the amount of time spent
-		// joining between the two indexes.  It returns a joined bit
-		// array of matches against the primary index.
-
-		private class MatchInfo : IComparable {
-			public BetterBitArray PrimaryMatches;
-			public BetterBitArray SecondaryMatches;
-			public int UpperBound;
-
-			public int CompareTo (object obj)
-			{
-				MatchInfo other = (MatchInfo) obj;
-				return this.UpperBound - other.UpperBound;
-			}
-		}
-
-		private static BetterBitArray DoRequiredQueries_TwoIndex (LNS.IndexSearcher primary_searcher,
-									  LNS.IndexSearcher secondary_searcher,
-									  ArrayList primary_queries,
-									  ArrayList secondary_queries,
-									  BetterBitArray primary_whitelist,
-									  BetterBitArray secondary_whitelist,
-									  int max_match_count)
-		{
-			ArrayList match_info_list;
-			match_info_list = new ArrayList ();
-
-			// First, do all of the low-level queries
-			for (int i = 0; i < primary_queries.Count; ++i) {
-				LNS.Query pq, sq;
-				pq = primary_queries [i] as LNS.Query;
-				sq = secondary_queries [i] as LNS.Query;
-
-				MatchInfo info;
-				info = new MatchInfo ();
-
-				DoLowLevelQuery (primary_searcher, pq, ref info.PrimaryMatches, primary_whitelist);
-				DoLowLevelQuery (secondary_searcher, sq, ref info.SecondaryMatches, secondary_whitelist);
-
-				info.UpperBound = 0;
-				if (info.PrimaryMatches != null)
-					info.UpperBound += info.PrimaryMatches.TrueCount;
-				if (info.SecondaryMatches != null)
-					info.UpperBound += info.SecondaryMatches.TrueCount;
-
-				match_info_list.Add (info);
-			}
-
-			// Now sort
-			match_info_list.Sort ();
-
-			BetterBitArray primary_matches = null;
-			BetterBitArray secondary_matches = null;
-
-			for (int i = 0; i < match_info_list.Count; ++i) {
-				
-				MatchInfo info;
-				info = match_info_list [i] as MatchInfo;
-
-				if (primary_matches != null) {
-					info.PrimaryMatches.And (primary_matches);
-					info.SecondaryMatches.And (secondary_matches);
-				}
-
-				// An optimization: If this is the last query
-				// and we are already at or over our query
-				// limit, skip the final projection.  We don't
-				// need any more matches.
-				if (max_match_count >= 0
-				    && i == match_info_list.Count-1
-				    && info.PrimaryMatches.TrueCount >= max_match_count) {
-					Logger.Log.Debug ("Already have enough matches!");
-					return info.PrimaryMatches;
-				}
-				
-				ProjectMatches_BiDirectional (primary_searcher,
-							      info.PrimaryMatches,
-							      primary_matches,
-							      secondary_searcher,
-							      info.SecondaryMatches,
-							      secondary_whitelist);
-
-				primary_matches = info.PrimaryMatches;
-				secondary_matches = info.SecondaryMatches;
-			}
-
-			return primary_matches;
-		}		
 	}
 }

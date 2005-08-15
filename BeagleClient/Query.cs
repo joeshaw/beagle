@@ -55,6 +55,9 @@ namespace Beagle {
 		private ArrayList exact_text = null;
 		private ArrayList stemmed_text = null;
 
+		private QueryPart_Or mime_type_part = null;
+		private QueryPart_Or hit_type_part = null;
+
 		// Events to make things nicer to clients
 		public delegate void HitsAdded (HitsAddedResponse response);
 		public event HitsAdded HitsAddedEvent;
@@ -196,9 +199,26 @@ namespace Beagle {
 						
 		///////////////////////////////////////////////////////////////
 
+		// This API is DEPRECATED.
+		// The mime type is now stored in the beagle:MimeType property.
+		// To restrict on mime type, just do a normal property query.
+
 		public void AddMimeType (string str)
 		{
 			mimeTypes.Add (str);
+
+			if (mime_type_part == null) {
+				mime_type_part = new QueryPart_Or ();
+				AddPart (mime_type_part);
+			}
+
+			// Create a part for this mime type.
+			QueryPart_Property part;
+			part = new QueryPart_Property ();
+			part.Type = PropertyType.Keyword;
+			part.Key = "beagle:MimeType";
+			part.Value = str;
+			mime_type_part.Add (part);
 		}
 
 		public bool AllowsMimeType (string str)
@@ -224,9 +244,26 @@ namespace Beagle {
 
 		///////////////////////////////////////////////////////////////
 
+		// This API is DEPRECATED.
+		// The mime type is now stored in the beagle:Type property.
+		// To restrict on type, just do a normal property query.
+
 		public void AddHitType (string str)
 		{
 			hitTypes.Add (str);
+
+			if (hit_type_part == null) {
+				hit_type_part = new QueryPart_Or ();
+				AddPart (hit_type_part);
+			}
+
+			// Add a part for this hit type.
+			QueryPart_Property part;
+			part = new QueryPart_Property ();
+			part.Type = PropertyType.Keyword;
+			part.Key = "beagle:Type";
+			part.Value = str;
+			hit_type_part.Add (part);
 		}
 
 		public bool AllowsHitType (string str)

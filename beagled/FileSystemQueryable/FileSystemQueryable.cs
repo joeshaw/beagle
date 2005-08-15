@@ -42,9 +42,8 @@ namespace Beagle.Daemon.FileSystemQueryable {
 		static public bool Debug = true;
 
 		private const string OldExternalUriPropKey = LuceneCommon.UnindexedNamespace + "OldExternalUri";
-		private const string SplitFilenamePropKey = LuceneQueryingDriver.PrivateNamespace + "SplitFilename";
-
-		public const string ExactFilenamePropKey = LuceneQueryingDriver.PrivateNamespace + "ExactFilename";
+		private const string SplitFilenamePropKey = "beagle:Filename";
+		public const string ExactFilenamePropKey = "beagle:ExactFilename";
 		public const string ParentDirUriPropKey = LuceneQueryingDriver.PrivateNamespace + "ParentDirUri";
 		public const string IsDirectoryPropKey = LuceneQueryingDriver.PrivateNamespace + "IsDirectory";
 

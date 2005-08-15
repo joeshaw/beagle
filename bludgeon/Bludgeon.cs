@@ -36,29 +36,82 @@ namespace Bludgeon {
 			Log.Spew ("Test home directory is '{0}'", home);
 		}
 
+		static FileModel InitialTree ()
+		{
+			FileModel root;
+			root = FileModel.NewRoot ();
+			root.Grow (3);
+
+			Log.Info ("Initial tree contains {0} files", root.Size);
+
+			return root;
+		}
+
+		static void ManipulateTree (FileModel root)
+		{
+			FileModel grow_at;
+			
+			// Another burst of growth
+			for (int i = 0; i < 10; ++i) {
+				grow_at = root.PickDirectoryDescendant ();
+				if (grow_at == null)
+					grow_at = root;
+				grow_at.Grow (0);
+			}
+			
+
+			grow_at = root.PickDirectoryDescendant ();
+			if (grow_at == null)
+				grow_at = root;
+			
+			grow_at.Grow (1);
+				
+			// Delete some stuff
+			for (int i = 0; i < 10; ++i) {
+				FileModel file;
+				file = root.PickDescendant ();
+				if (file != null)
+					file.Delete ();
+			}
+			
+			
+			// Another burst of growth
+			for (int i = 0; i < 10; ++i) {
+				grow_at = root.PickDirectoryDescendant ();
+				if (grow_at == null)
+					grow_at = root;
+				grow_at.Grow (0);
+			}
+
+			Log.Info ("Perturbed tree contains {0} files", root.Size);
+		}
+
+		static bool DoStaticVerify (FileModel root)
+		{
+			Log.Info ("Starting sanity check");
+
+			Daemon.WaitUntilIdle ();
+
+			Daemon.OptimizeIndexes ();
+
+			Daemon.WaitUntilIdle ();
+
+			return SanityCheck.VerifyIndex (root);
+		}
+
 		static void Main (string [] args)
 		{
 			CreateTestHome ();
 
-			ArrayList all_files;
-			all_files = new ArrayList ();
-
-			for (int i = 0; i < 10; ++i) {
-				FileModel file;
-				file = FileModel.Create ();
-				all_files.Add (file);
-			}
+			FileModel root;
+			root = InitialTree ();
+			root.Grow (5);
+			//ManipulateTree (root);
 			
-			Log.Spew ("Created {0} files", all_files.Count);
-
 			Daemon.Start ();
-			Daemon.WaitUntilIdle ();
 
-			Log.Spew ("Waiting 5s");
-			Thread.Sleep (5000);
-
-			if (! SanityCheck.DoAll (all_files))
-				Log.Info ("Sanity check failed");
+			if (DoStaticVerify (root))
+				SanityCheck.TestRandomQueries (root, 10.0); // run for up to 10 minutes
 
 			Daemon.Shutdown ();
 

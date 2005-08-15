@@ -81,6 +81,11 @@ namespace Beagle.Daemon {
 				pending_request.Remove (uri);
 		}
 
+		public void Optimize ()
+		{
+			pending_request.OptimizeIndex = true;
+		}
+
 		public IndexerReceipt [] FlushAndBlock ()
 		{
 			RemoteIndexerRequest flushed_request = null;
