@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: mk\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2005-08-14 10:49+0000\n"
-"PO-Revision-Date: 2005-08-14 19:55+0200\n"
+"PO-Revision-Date: 2005-08-15 16:37+0200\n"
 "Last-Translator: Арангел Ангов <ufo@linux.net.mk>\n"
 "Language-Team: Macedonian <ossm-members@hedona.on.net.mk>\n"
 "MIME-Version: 1.0\n"
@@ -25,7 +25,7 @@ msgstr ""
 
 #: ../Best/BestTray.cs:149
 msgid "Disable Searching"
-msgstr ""
+msgstr "Исклучи пребарување"
 
 #: ../Best/BestTray.cs:150
 msgid ""
@@ -35,11 +35,11 @@ msgstr ""
 
 #: ../Best/BestTray.cs:201
 msgid "No Recent Searches"
-msgstr ""
+msgstr "Нема скорешни пребарувања"
 
 #: ../Best/BestTray.cs:205
 msgid "Recent Searches"
-msgstr ""
+msgstr "Скорешни пребарувања"
 
 #: ../Best/BestTray.cs:219
 msgid "Clear"
@@ -104,7 +104,7 @@ msgstr "Прикажани се најдобри <b>{0} резултати од 
 #: ../Best/BestWindow.cs:410
 #, csharp-format
 msgid "Results <b>{0} through {1} of {2}</b> are shown."
-msgstr ""
+msgstr "Прикажани се резултатите од <b>{0} до {1} од {2}</b>."
 
 #. To translators: {0} represents the current query keywords
 #: ../Best/BestWindow.cs:521
@@ -126,25 +126,25 @@ msgstr "Ориентација"
 
 #: ../glue/eggtrayicon.c:121
 msgid "The orientation of the tray."
-msgstr ""
+msgstr "Ориентацијата на просторот за спуштање на програми."
 
 #: ../ImLogViewer/ImLogViewer.glade.h:1
 msgid "<b>Conversations History</b>"
-msgstr ""
+msgstr "<b>Историја на разговори</b>"
 
 #: ../ImLogViewer/ImLogViewer.glade.h:2
 msgid "IM Viewer"
-msgstr ""
+msgstr "Прегледувач за ИП"
 
 #: ../ImLogViewer/ImLogWindow.cs:87
 #, csharp-format
 msgid "Conversations in {0}"
-msgstr ""
+msgstr "Разговори во {0}"
 
 #: ../ImLogViewer/ImLogWindow.cs:94
 #, csharp-format
 msgid "Conversations with {0}"
-msgstr ""
+msgstr "Разговори со {0}"
 
 #: ../Tiles/TileDocs.cs:77
 msgid "Pages:"
@@ -177,12 +177,12 @@ msgstr "Испрати ИП"
 #: ../Tiles/TileImLog.cs:77
 #, csharp-format
 msgid "Conversation in {0}"
-msgstr ""
+msgstr "Разговор во {0}"
 
 #: ../Tiles/TileImLog.cs:79
 #, csharp-format
 msgid "Conversation with {0}"
-msgstr ""
+msgstr "Разговор со {0}"
 
 #: ../Tiles/TileMailMessage.cs:79
 msgid "No Subject"
@@ -206,7 +206,7 @@ msgstr "Примени"
 
 #: ../Tiles/TileMailMessage.cs:119
 msgid "Email attachment"
-msgstr ""
+msgstr "Закачено на е-пошта"
 
 #. For translators: From template Tiles/template-blog.html
 #: ../Tiles/TranslationHack.cs:6
@@ -370,12 +370,12 @@ msgstr "Последен пат видено:"
 #. For translators: From template Tiles/template-network.html
 #: ../Tiles/TranslationHack.cs:116
 msgid "from Networked Beagle on host"
-msgstr ""
+msgstr "од мрежен Бигл на хост"
 
 #. For translators: From template Tiles/template-network.html
 #: ../Tiles/TranslationHack.cs:120
 msgid "Search Networked Beagle"
-msgstr ""
+msgstr "Пребарај на мрежен Бигл"
 
 #: ../tools/Settings.cs:214
 msgid "Reload configuration"
@@ -393,13 +393,13 @@ msgstr "Избери патека"
 
 #: ../tools/Settings.cs:272
 msgid "The selected path is already selected for indexing and wasn't added."
-msgstr ""
+msgstr "Избраната патека е веќе избрана за индексирање и не е додадена."
 
 #: ../tools/Settings.cs:275
 msgid ""
 "The selected path wasn't added. The list contains items that supercedes it "
 "and the data is already being indexed."
-msgstr ""
+msgstr "Избраната патека не е додадена. Листата на податоци е веќе индексирана."
 
 #: ../tools/Settings.cs:286 ../tools/Settings.cs:478
 msgid "Path not added"
@@ -441,11 +441,11 @@ msgstr "Невалиден запис за хост"
 
 #: ../tools/Settings.cs:403
 msgid "Remote host already present in the list."
-msgstr ""
+msgstr "Далечниот хост е веќе присутен во листата."
 
 #: ../tools/Settings.cs:412
 msgid "Netbeagle Node not added"
-msgstr ""
+msgstr "Точката за мрежен Бигл не е додадена"
 
 #: ../tools/Settings.cs:428
 msgid "Remove host"
@@ -453,7 +453,7 @@ msgstr "Отстрани хост"
 
 #: ../tools/Settings.cs:429
 msgid "Are you sure you wish to remove this host from the list?"
-msgstr ""
+msgstr "Дали сте сигурни дека сакате да го отстраните хостот од листата?"
 
 #: ../tools/Settings.cs:450
 msgid "Select path"
@@ -461,7 +461,7 @@ msgstr "Изберете патека"
 
 #: ../tools/Settings.cs:469
 msgid "The selected path is already configured for external access."
-msgstr ""
+msgstr "Избраната патека е веќе конфигурирана за надворешен пристап."
 
 #: ../tools/Settings.cs:493
 msgid "Remove public path"
@@ -469,7 +469,7 @@ msgstr "Отстрани јавна патека"
 
 #: ../tools/Settings.cs:494
 msgid "Are you sure you wish to remove this entry from the list of public paths?"
-msgstr ""
+msgstr "Дали сте сигурни дека сакате да го отстраните овој запис од листата на јавни патеки?"
 
 #: ../tools/Settings.cs:539 ../tools/Settings.cs:628 ../tools/Settings.cs:706
 #: ../tools/Settings.cs:782 ../tools/Settings.cs:1121
@@ -548,7 +548,7 @@ msgstr ""
 
 #: ../tools/settings.glade.h:10
 msgid "Add any additional paths to be included for indexing."
-msgstr ""
+msgstr "Додај додатни патеки кои што треба да се користат за индексирањето."
 
 #: ../tools/settings.glade.h:11
 msgid "Add any remote search-enabled hosts you wish to network with"
@@ -566,7 +566,7 @@ msgstr ""
 
 #: ../tools/settings.glade.h:14
 msgid "Allow external access to local search services"
-msgstr ""
+msgstr "Дозволи надворешен пристап на локалните сервиси за пребарување"
 
 #: ../tools/settings.glade.h:15
 msgid "Alt"
@@ -582,7 +582,7 @@ msgstr "Патека на директориумот"
 
 #: ../tools/settings.glade.h:18
 msgid "Display the search window by pressing"
-msgstr ""
+msgstr "Прикажи го прозорецот за пребарување со притискање на"
 
 #: ../tools/settings.glade.h:19
 msgid "Filename Pattern"
@@ -590,7 +590,7 @@ msgstr "Шема на имиња на датотеки"
 
 #: ../tools/settings.glade.h:20
 msgid "Index my home directory"
-msgstr ""
+msgstr "Индексирај ми го домашниот директориум"
 
 #: ../tools/settings.glade.h:21
 msgid "Indexing"
@@ -602,11 +602,11 @@ msgstr "Мрежа"
 
 #: ../tools/settings.glade.h:25
 msgid "Please select a resource you wish to exclude from indexing."
-msgstr ""
+msgstr "Ве молам одберете ресурс кој што сакате да рипнете при индексирањето."
 
 #: ../tools/settings.glade.h:26
 msgid "Please select the mail folder you wish to exclude from indexing. "
-msgstr ""
+msgstr "Ве молам одберете папка со пошта која што сакате да ја рипнете при индексирањето. "
 
 #: ../tools/settings.glade.h:27
 msgid "Search"
@@ -624,11 +624,11 @@ msgstr ""
 
 #: ../tools/settings.glade.h:30
 msgid "Specify paths that should be available for external access"
-msgstr ""
+msgstr "Одредете патеки кои што ќе бидат достапни за надворешен пристап"
 
 #: ../tools/settings.glade.h:31
 msgid "Start search & indexing services automatically "
-msgstr ""
+msgstr "Автоматски започни пребарување и индексирање"
 
 #: ../Util/Evolution.cs:45 ../Util/Evolution.cs:163
 msgid "On This Computer"
@@ -636,23 +636,23 @@ msgstr "На овој компјутер"
 
 #: ../Util/ExifData.cs:226
 msgid "Image Directory"
-msgstr ""
+msgstr "Директориум за слики"
 
 #: ../Util/ExifData.cs:228
 msgid "Thumbnail Directory"
-msgstr ""
+msgstr "Директориум за сликички"
 
 #: ../Util/ExifData.cs:230
 msgid "Exif Directory"
-msgstr ""
+msgstr "Директориум за exif"
 
 #: ../Util/ExifData.cs:232
 msgid "GPS Directory"
-msgstr ""
+msgstr "Директориум за GPS"
 
 #: ../Util/ExifData.cs:234
 msgid "InterOperability Directory"
-msgstr ""
+msgstr "Директориум за интероперабилност"
 
 #: ../Util/ExifData.cs:236
 msgid "Unknown Directory"
@@ -668,77 +668,79 @@ msgstr "Вчера"
 
 #: ../Util/StringFu.cs:69
 msgid "MMM d"
-msgstr ""
+msgstr "МММ д"
 
 #: ../Util/StringFu.cs:71
 msgid "MMM d, yyyy"
-msgstr ""
+msgstr "МММ д, гггг"
 
 #: ../Util/StringFu.cs:73
 msgid "h:mm tt"
-msgstr ""
+msgstr "ч:мм: tt"
 
 #. Translators: {0} is a date (e.g. 'Today' or 'Apr 23'), {1} is the time
 #: ../Util/StringFu.cs:79
 #, csharp-format
 msgid "{0}, {1}"
-msgstr ""
+msgstr "{0}, {1}"
 
 #. To translators: {0} is the time of the day, eg. 13:45
 #: ../Util/StringFu.cs:96
 #, csharp-format
 msgid "Today, {0}"
-msgstr ""
+msgstr "Денес, {0}"
 
 #. To translators: {0} is the time of the day, eg. 13:45
 #: ../Util/StringFu.cs:99
 #, csharp-format
 msgid "Yesterday, {0}"
-msgstr ""
+msgstr "Вчера, {0}"
 
 #. To translators: {0} is the number of days that have passed, {1} is the time of the day, eg. 13:45
 #: ../Util/StringFu.cs:102
 #, csharp-format
 msgid "{0} days ago, {1}"
-msgstr ""
+msgstr "пред {0} дена, {1}"
 
 #: ../Util/StringFu.cs:106
 msgid "MMMM d, h:mm tt"
-msgstr ""
+msgstr "ММММ д, ч:мм tt"
 
 #: ../Util/StringFu.cs:110
 msgid "MMMM d yyyy, h:mm tt"
-msgstr ""
+msgstr "ММММ д гггг, ч:мм tt"
 
 #: ../Util/StringFu.cs:120
 #, csharp-format
 msgid "{0} hour"
 msgid_plural "{0} hours"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "{0} час"
+msgstr[1] "{0} часа"
+msgstr[2] "{0} часа"
 
 #: ../Util/StringFu.cs:127
 #, csharp-format
 msgid "{0} minute"
 msgid_plural "{0} minutes"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "{0} минута"
+msgstr[1] "{0} минути"
+msgstr[2] "{0} минути"
 
 #. Translators: {0} is a file size in bytes
 #: ../Util/StringFu.cs:143
 #, csharp-format
 msgid "{0} bytes"
-msgstr ""
+msgstr "{0} бајти"
 
 #. Translators: {0} is a file size in kilobytes
 #: ../Util/StringFu.cs:147
 #, csharp-format
 msgid "{0:0.0} KB"
-msgstr ""
+msgstr "{0:0.0} КБ"
 
 #. Translators: {0} is a file size in megabytes
 #: ../Util/StringFu.cs:150
 #, csharp-format
 msgid "{0:0.0} MB"
-msgstr ""
+msgstr "{0:0.0} МБ"
 
