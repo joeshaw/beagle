@@ -269,7 +269,7 @@ namespace WebService_CodeBehind {
 					Process pr = new Process ();
 					pr.StartInfo.UseShellExecute = true; 
 					pr.StartInfo.FileName = "ln"; 
-					pr.StartInfo.Arguments = " -sf " + path + PathFinder.StorageDir  + "/img/" + linkName;
+					pr.StartInfo.Arguments = " -sf " + path + " " + PathFinder.StorageDir  + "/img/" + linkName;
 					
 					pr.Start ();
 					
