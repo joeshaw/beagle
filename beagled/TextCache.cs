@@ -159,9 +159,11 @@ namespace Beagle.Daemon {
 
 		private void Insert (Uri uri, string filename)
 		{
-			MaybeStartTransaction ();
-			DoNonQuery ("INSERT OR REPLACE INTO uri_index (uri, filename) VALUES ('{0}', '{1}')",
-				    UriToString (uri), filename);
+			lock (connection) {
+				MaybeStartTransaction_Unlocked ();
+				DoNonQuery ("INSERT OR REPLACE INTO uri_index (uri, filename) VALUES ('{0}', '{1}')",
+					    UriToString (uri), filename);
+			}
 		}
 
 		private string LookupPathRawUnlocked (Uri uri, bool create_if_not_found)
@@ -290,7 +292,7 @@ namespace Beagle.Daemon {
 			lock (connection) {
 				string path = LookupPathRawUnlocked (uri, false);
 				if (path != null) {
-					MaybeStartTransaction ();
+					MaybeStartTransaction_Unlocked ();
 					DoNonQuery ("DELETE FROM uri_index WHERE uri='{0}' AND filename='{1}'", 
 					            UriToString (uri), path);
 					if (path != SELF_CACHE_TAG)
@@ -299,27 +301,28 @@ namespace Beagle.Daemon {
 			}
 		}
 
-		private void MaybeStartTransaction ()
+		private void MaybeStartTransaction_Unlocked ()
 		{
-			if (transaction_state == TransactionState.Requested) {
+			if (transaction_state == TransactionState.Requested)
 				DoNonQuery ("BEGIN");
-				transaction_state = TransactionState.Started;
-			}
+			transaction_state = TransactionState.Started;
 		}
 
 		public void BeginTransaction ()
 		{
-			if (transaction_state == TransactionState.None)
-				transaction_state = TransactionState.Requested;
+			lock (connection) {
+				if (transaction_state == TransactionState.None)
+					transaction_state = TransactionState.Requested;
+			}
 		}
 
 		public void CommitTransaction ()
 		{
-			if (transaction_state == TransactionState.Started) {
-				lock (connection)
+			lock (connection) {
+				if (transaction_state == TransactionState.Started)
 					DoNonQuery ("COMMIT");
+				transaction_state = TransactionState.None;
 			}
-			transaction_state = TransactionState.None;
 		}
 	}
 }
