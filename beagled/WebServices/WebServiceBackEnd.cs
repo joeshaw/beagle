@@ -31,6 +31,7 @@ using System.IO;
 using System.Net;
 using System.Collections;
 using System.Threading;
+using System.Diagnostics;
 
 using System.Runtime.Remoting;
 using System.Runtime.Remoting.Channels;
@@ -120,6 +121,26 @@ namespace Beagle.WebService {
 					//Mapping /beagle/kde3 to ExternalStringsHack.KdePrefix
 				if (Directory.Exists(ExternalStringsHack.KdePrefix))
 				xsp_param[5] += ",/beagle/kde3:" + ExternalStringsHack.KdePrefix;
+
+				string imgDir = PathFinder.StorageDir + "/img";
+				if (!Directory.Exists(imgDir))
+				{
+					Process pr = new Process ();
+					pr.StartInfo.UseShellExecute = true; 
+					pr.StartInfo.FileName = "mkdir"; 
+					pr.StartInfo.Arguments = imgDir;
+
+					try {		
+						pr.Start ();
+						pr.WaitForExit(); 	  				
+	  					pr.Close();
+	  					pr.Dispose();				
+					} 
+					catch (Exception e) { 
+						Logger.Log.Warn("Error creating ~/.beagle/img folder"); 
+					} 				
+				}
+				xsp_param[5] += ",/beagle/img:" + imgDir;
 				
 				//if (!hostname.Equals("localhost")) {
 
@@ -168,6 +189,19 @@ namespace Beagle.WebService {
 			    appServer.Stop(); 
 				appServer = null;
 			}
+			
+			Process pr = new Process ();
+			pr.StartInfo.UseShellExecute = true; 
+			pr.StartInfo.FileName = "rm"; 
+			pr.StartInfo.Arguments = " -rf  " + PathFinder.StorageDir + "/img/*";
+
+			try {		
+				pr.Start ();
+				pr.WaitForExit(); 	  				
+	  			pr.Close();
+	  			pr.Dispose();					
+			} 
+			catch (Exception e) { } 			
 		}
 		
 /////////////////////////////////////////////////////////////////////////////////////////
