@@ -46,12 +46,17 @@ namespace Beagle.IndexHelper {
 		{
 			RemoteIndexerRequest request = (RemoteIndexerRequest) raw_request;
 
+			IndexHelperTool.ReportActivity ();
+
 			// Find the appropriate driver for this request.
-			IIndexer indexer = indexer_table [request.RemoteIndexName] as IIndexer;
-			if (indexer == null) {
-				indexer = new LuceneIndexingDriver (request.RemoteIndexName,
-								    request.RemoteIndexMinorVersion);
-				indexer_table [request.RemoteIndexName] = indexer;
+			IIndexer indexer;
+			lock (indexer_table) {
+				indexer = indexer_table [request.RemoteIndexName] as IIndexer;
+				if (indexer == null) {
+					indexer = new LuceneIndexingDriver (request.RemoteIndexName,
+									    request.RemoteIndexMinorVersion);
+					indexer_table [request.RemoteIndexName] = indexer;
+				}
 			}
 
 			IndexerReceipt [] receipts;
@@ -78,6 +83,8 @@ namespace Beagle.IndexHelper {
 			response.Receipts = receipts;
 
 			++Count;
+
+			IndexHelperTool.ReportActivity ();
 
 			return response;
 		}

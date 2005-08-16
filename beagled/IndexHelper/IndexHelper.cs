@@ -42,12 +42,15 @@ namespace Beagle.IndexHelper {
 	
 	class IndexHelperTool {
 
+		static DateTime last_activity;
 		static Server server;
 
 		static void Main (string [] args)
 		{
 			bool run_by_hand = (Environment.GetEnvironmentVariable ("BEAGLE_RUN_HELPER_BY_HAND") != null);
 			bool log_in_fg = (Environment.GetEnvironmentVariable ("BEAGLE_LOG_IN_THE_FOREGROUND_PLEASE") != null);
+
+			last_activity = DateTime.Now;
 
 			Logger.DefaultLevel = LogLevel.Debug;
 
@@ -76,8 +79,8 @@ namespace Beagle.IndexHelper {
 				if (Environment.GetEnvironmentVariable ("BEAGLE_EXERCISE_THE_DOG") == null)
 					IoPriority.SetIdle ();
 				
-				// Start the monitor thread, which keeps an eye on memory usage.
-				ExceptionHandlingThread.Start (new ThreadStart (MemoryMonitorWorker));
+				// Start the monitor thread, which keeps an eye on memory usage and idle time.
+				ExceptionHandlingThread.Start (new ThreadStart (MemoryAndIdleMonitorWorker));
 
 				// Start a thread that watches the daemon and begins a shutdown
 				// if it terminates.
@@ -97,14 +100,30 @@ namespace Beagle.IndexHelper {
 			Environment.Exit (0);
 		}
 
-		static void MemoryMonitorWorker ()
+		static public void ReportActivity ()
+		{
+			last_activity = DateTime.Now;
+		}
+
+		static void MemoryAndIdleMonitorWorker ()
 		{
 			int vmrss_original = SystemInformation.VmRss;
+
+			const double max_idle_time = 5; // minutes
+
 			const double threshold = 5.0;
 			const int max_request_count = 0;
 			int last_vmrss = 0;
 
 			while (! Shutdown.ShutdownRequested) {
+
+				double idle_time;
+				idle_time = (DateTime.Now - last_activity).TotalMinutes;
+				if (idle_time > max_idle_time && RemoteIndexerExecutor.Count > 0) {
+					Logger.Log.Debug ("No activity for {0:0.0} minutes, shutting down", idle_time);
+					Shutdown.BeginShutdown ();
+					return;
+				}
 
 				// Check resident memory usage
 				int vmrss = SystemInformation.VmRss;
@@ -118,13 +137,14 @@ namespace Beagle.IndexHelper {
 					if (RemoteIndexerExecutor.Count > 0) {
 						Logger.Log.Debug ("Process too big, shutting down!");
 						Shutdown.BeginShutdown ();
+						return;
 					} else {
 						// Paranoia: don't shut down if we haven't done anything yet
 						Logger.Log.Debug ("Deferring shutdown until we've actually done something.");
-						Thread.Sleep (250);
+						Thread.Sleep (1000);
 					}
 				} else {
-					Thread.Sleep (1000);
+					Thread.Sleep (3000);
 				}
 			}
 		}
@@ -236,7 +256,6 @@ namespace Beagle.IndexHelper {
 		{
 			server.Stop ();
 		}
-
 	}
 
 }
