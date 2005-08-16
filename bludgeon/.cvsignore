@@ -1,0 +1,6 @@
+*.exe
+*.mdb
+Makefile
+Makefile.in
+bludgeon
+test-*
