@@ -147,7 +147,7 @@ namespace Best {
 										MessageType.Question,
 										ButtonsType.YesNo,
 										Catalog.GetString ("Disable Searching"), 
-										Catalog.GetString ("You're about to close the search tray. The search tray is automatically started, do you want to disable it?"));
+										Catalog.GetString ("You are about to close the search tray. The search tray is automatically started at login-time. Would you like to disable it for future sessions?"));
 
 				Gtk.ResponseType response = (Gtk.ResponseType) dialog.Run ();
 				
