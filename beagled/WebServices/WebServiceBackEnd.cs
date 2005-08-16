@@ -214,7 +214,7 @@ namespace Beagle.WebService {
 		}
 		
 /////////////////////////////////////////////////////////////////////////////////////////		
-				
+			
 		//KNV: If needed, we can convert this to a Singleton, adding a 
 		//	   static Factory method to get the singleton instance reference,
 		//	   so that front-end code always gets hold of same instance.
@@ -473,8 +473,8 @@ namespace Beagle.WebService {
 */
 			sessionTable.Add(searchToken, sdata);
 			
-			QueryDriver.DoQuery (query, qres);
-
+			QueryDriver.DoQueryLocal (query, qres);
+					
 			while (resultTable.Contains(qres) && (results.Count < MAX_RESULTS_PER_CALL) )
 				Thread.Sleep(100);
 

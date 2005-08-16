@@ -27,8 +27,10 @@
 //
 
 using System;
+using System.Threading;
 using System.Collections;
 using System.Collections.Specialized;
+using System.Diagnostics;
 
 using System.Web;
 using System.Web.UI;
@@ -218,33 +220,81 @@ namespace WebService_CodeBehind {
 	  string buf1 = buf.Replace("href=\"action:", "href=\"" + Session["InitialReqUrl"] + "?action:"); 
 	  string buf2 = buf1.Replace("href=\"dynaction:", "href=\"" + Session["InitialReqUrl"] + "?dynaction:");
 	  
-	  //return buf2;
-	  
 	  string initUrl = (string) Session["InitialReqUrl"];
-	  int i = initUrl.LastIndexOf('/');
 
 	  //Get the initial part of url: i.e. http://localhost:8888/beagle
-	  string p = initUrl.Substring(0, i);
+	  int i = initUrl.LastIndexOf('/');	  
+	  string UrlPrefix = initUrl.Substring(0, i);
 
 	  //Check if initial url was http://localhost:8888/search.aspx & add a trailing "/"
-	  if (p.EndsWith("beagle"))
-		p += "/";
+	  if (UrlPrefix.EndsWith("beagle"))
+		UrlPrefix += "/";
 	  else 
-		p += "/beagle/";
-	  
-	  string s, sep = "\"";	  
+		UrlPrefix += "/beagle/";
+	    
 	  string[] list = buf2.Split('\"');		  	  
 	  for (int k = 0; k < list.Length; k++) {
 	  
-	   		s = list[k];
-	  		if (s.Length > 0)  {	  			
-	  			string s1 =  s.Replace("file://" + ExternalStringsHack.KdePrefix, 	p + "kde3");
-	  			string s2 = s1.Replace("file://" + ExternalStringsHack.GnomePrefix, p + "gnome"); 
-	  			list[k] =   s2.Replace("file://" + ExternalStringsHack.Prefix, 		p + "local");
+	  		if (list[k].Length <= 0)
+	  				continue;
+			
+  			list[k] = list[k].Replace("file://" + ExternalStringsHack.KdePrefix, UrlPrefix + "kde3");
+  			list[k] = list[k].Replace("file://" + ExternalStringsHack.GnomePrefix, UrlPrefix + "gnome"); 
+  			list[k] = list[k].Replace("file://" + ExternalStringsHack.Prefix, 	UrlPrefix + "local");	
+	  }
+
+	  string imgId = "0001";	
+	  ArrayList prList = new ArrayList(); 
+	  const string ImgFilePrefix = "img src=\"file://";	
+		  
+	  list = (String.Join ("\"", list)).Split('<'); 	  	  	 	  
+	  for (int n = 0; n < list.Length; n++) {
+	  
+	  		if (list[n].StartsWith(ImgFilePrefix))  {
+	  			
+	  			string[] l = list[n].Split('\"');	  			
+	  			//l[1] now contains "file:///home/usr/folder/xyz.png"		
+	  			string path = l[1].Remove(0, 7); //remove "file://" prefix
+	  			string[] l2 = path.Split('.');
+				if (l2.Length < 2)
+					continue;
+					
+				string[] guid = (System.Guid.NewGuid().ToString()).Split('-');
+				if (guid.Length > 1)
+					imgId = guid[guid.Length - 1]; //last 12 chars of guid
+
+				string linkName = "i" + imgId + "." + l2[l2.Length - 1]; //like ixxxxxx.png, izzzzzz.jpg				 
+	  								
+				try {
+					Process pr = new Process ();
+					pr.StartInfo.UseShellExecute = true; 
+					pr.StartInfo.FileName = "ln"; 
+					pr.StartInfo.Arguments = " -sf " + path + "  /home/vijay/.beagle/img/" + linkName;
+					
+					pr.Start ();
+					
+					prList.Add(pr);		
+				} 
+				catch (Exception e) 
+				{ 
+					Console.WriteLine("Error creating symbolic link for image file");
+				}
+				
+				//Replace l[1] with "http://localhost:8888/beagle/img/i1.png
+				l[1] = UrlPrefix + "img/" + linkName; 
+	  			list[n] = String.Join ("\"", l);				
 	  		}  		
 	  }
 	  
-	  return String.Join (sep, list);
+	  //Wait for link ops to complete
+	  if (prList.Count > 0) 
+	  	foreach (Process pr in prList) {	  										
+			pr.WaitForExit(); 	  				
+	  		pr.Close();
+	  		pr.Dispose();
+	  	}
+	  
+	  return String.Join ("<", list);
 	}
 
 	protected void Search_Click(object o, EventArgs e) {

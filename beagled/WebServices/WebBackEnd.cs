@@ -286,7 +286,7 @@ namespace Beagle.WebService {
 		{
 			get {return NetworkedBeagle.NetBeagleListActive;}
 		}
-		
+	
 		public string doQuery(webArgs wargs)
 		{				 
 			if (wargs.sessId == null || wargs.searchString == null || wargs.searchString == "")
@@ -324,20 +324,20 @@ namespace Beagle.WebService {
 			else
 				sessionResp.Add(wargs.sessId, resp);	
 
-			log.Info("WebBackEnd: Starting Query for string \"{0}\"", query.QuotedText);
+			log.Info("WebBackEnd: Starting Query for string \"{0}\"", wargs.searchString);
 
-			QueryDriver.DoQuery (query, qres);
+			QueryDriver.DoQueryLocal (query, qres);
 
 			//Wait only till we have enough results to display
 			while ((result.Contains(qres)) && 
 					(root.HitCollection.NumResults < 10)) 
 				Thread.Sleep(100);
-
+				
 			if (root.HitCollection.IsEmpty)
 				return NO_RESULTS;
 						
-			lock (root) {
-				root.Render(bctx);
+			lock (root) {			
+				root.Render(bctx);				
 				return (getResultsLabel(root) + (wargs.isLocalReq ? bctx.buffer:bctx.bufferForExternalQuery));
 			}			
 		}
@@ -849,7 +849,8 @@ namespace Beagle.WebService {
 
 //////////////////////////////////////////////////////////////////////////
 
-string static_stylesheet = "<style type=\"text/css\" media=\"screen\"> body, html { background: white; margin: 0; padding: 0; font-family: Sans, Segoe, Trebuchet MS, Lucida, Sans-Serif;  text-align: left; line-height: 1.5em; } a, a:visited {  text-decoration: none; color: #2b5a8a; } a:hover {  text-decoration: underline; } img {  border: 0px; } table {  width: 100%; border-collapse: collapse;	font-size: 10px; } tr {  border-bottom: 1px dotted #999999; } tr:hover {  background: #f5f5f5; } tr:hover .icon { background-color: #ddddd0; } td {  padding: 6px; } td.icon {  background-color: #eeeee0; min-height: 80px; width: 1%;	min-width: 80px; text-align: center; vertical-align: top; padding: 12px; } .icon img { max-width: 60px; padding: 4px; }	.icon img[src$='.jpg'], img[src$='.jpeg'], img[src*='.thumbnails'] {//  max-width: 48px; border: 1px dotted #bbb; //  padding: 4px;	background: #f9f9f9; } td.content { padding-left: 12px; vertical-align: top; } #hilight {  background-color: #ffee66; color: #000000;  padding-left: 2px; padding-right: 2px; margin-left: -2px; margin-right: -2px; } .name {font-size: 1.3em; font-weight: bold; color: black; } .date { font-size: 1em; color: black; margin-bottom: 0.6em; margin-top: 0.2em; margin-left: 16px; } .snippet {font-size: 1em; color: gray; margin-left: 16px; } .url {font-size: 1em; color: #008200; margin-left: 16px;	} ul {margin-left: 16px; padding: 0px; clear: both;	} .actions {  font-size: 1em; } .actions li {  float: left;  display: block;  vertical-align: middle;  padding: 0;  padding-left: 20px;  padding-right: 12px;  background: url(file:///opt/gnome/share/icons/hicolor/16x16/stock/navigation/stock_right.png) no-repeat;  min-height: 16px; -moz-opacity: 0.5; } tr:hover .actions li {  -moz-opacity: 1.0; } #phone { background: url(file:///opt/gnome/share/icons/hicolor/16x16/stock/generic/stock_landline-phone.png) no-repeat; } #email { background: url(file:///opt/gnome/share/icons/hicolor/16x16/stock/net/stock_mail.png) no-repeat; } #email-forward { background: url(file:///opt/gnome/share/icons/hicolor/16x16/stock/net/stock_mail-forward.png) no-repeat; } #email-reply {  background: url(file:///opt/gnome/share/icons/hicolor/16x16/stock/net/stock_mail-reply.png) no-repeat; }	#message { background: url(file:///opt/gnome/share/icons/hicolor/16x16/apps/im-yahoo.png) no-repeat; } #reveal {  background: url(file:///opt/gnome/share/icons/hicolor/16x16/stock/io/stock_open.png) no-repeat; }	td.footer { text-align: right;   border-bottom: solid 1px white; } </style>";			
+//string static_stylesheet = "<style type=\"text/css\" media=\"screen\"> body, html { background: white; margin: 0; padding: 0; font-family: Sans, Segoe, Trebuchet MS, Lucida, Sans-Serif;  text-align: left; line-height: 1.5em; } a, a:visited {  text-decoration: none; color: #2b5a8a; } a:hover {  text-decoration: underline; } img {  border: 0px; } table {  width: 100%; border-collapse: collapse;	font-size: 10px; } tr {  border-bottom: 1px dotted #999999; } tr:hover {  background: #f5f5f5; } tr:hover .icon { background-color: #ddddd0; } td {  padding: 6px; } td.icon {  background-color: #eeeee0; min-height: 80px; width: 1%;	min-width: 80px; text-align: center; vertical-align: top; padding: 12px; } .icon img { max-width: 60px; padding: 4px; }	.icon img[src$='.jpg'], img[src$='.jpeg'], img[src*='.thumbnails'] {//  max-width: 48px; border: 1px dotted #bbb; //  padding: 4px;	background: #f9f9f9; } td.content { padding-left: 12px; vertical-align: top; } #hilight {  background-color: #ffee66; color: #000000;  padding-left: 2px; padding-right: 2px; margin-left: -2px; margin-right: -2px; } .name {font-size: 1.3em; font-weight: bold; color: black; } .date { font-size: 1em; color: black; margin-bottom: 0.6em; margin-top: 0.2em; margin-left: 16px; } .snippet {font-size: 1em; color: gray; margin-left: 16px; } .url {font-size: 1em; color: #008200; margin-left: 16px;	} ul {margin-left: 16px; padding: 0px; clear: both;	} .actions {  font-size: 1em; } .actions li {  float: left;  display: block;  vertical-align: middle;  padding: 0;  padding-left: 20px;  padding-right: 12px;  background: url(file:///opt/gnome/share/icons/hicolor/16x16/stock/navigation/stock_right.png) no-repeat;  min-height: 16px; -moz-opacity: 0.5; } tr:hover .actions li {  -moz-opacity: 1.0; } #phone { background: url(file:///opt/gnome/share/icons/hicolor/16x16/stock/generic/stock_landline-phone.png) no-repeat; } #email { background: url(file:///opt/gnome/share/icons/hicolor/16x16/stock/net/stock_mail.png) no-repeat; } #email-forward { background: url(file:///opt/gnome/share/icons/hicolor/16x16/stock/net/stock_mail-forward.png) no-repeat; } #email-reply {  background: url(file:///opt/gnome/share/icons/hicolor/16x16/stock/net/stock_mail-reply.png) no-repeat; }	#message { background: url(file:///opt/gnome/share/icons/hicolor/16x16/apps/im-yahoo.png) no-repeat; } #reveal {  background: url(file:///opt/gnome/share/icons/hicolor/16x16/stock/io/stock_open.png) no-repeat; }	td.footer { text-align: right;   border-bottom: solid 1px white; } </style>";			
+string static_stylesheet = "<style type=\"text/css\" media=\"screen\"> body, html { background: white; margin: 0; padding: 0; font-family: Arial KOI-8, Segoe, Trebuchet MS, Lucida, Sans-Serif;   text-align: left; line-height: 1.5em; } a, a:visited { text-decoration: none; color: #2b5a8a; } a:hover { text-decoration: underline; } img { border: 0px; } table { width: 100%; border-collapse: collapse; font-size: 11px; } tr { border-bottom: 1px dotted #999999; } tr:hover { background: #f5f5f5; } tr:hover .icon { background-color: #ddddd0; } td { padding: 6px; } td.icon { background-color: #eeeee0; min-height: 80px;   width: 1%; min-width: 80px; text-align: center;  vertical-align: top; padding: 12px; } .icon img { max-width: 60px; padding: 4px; } .icon img[src$='.jpg'], img[src$='.jpeg'], img[src*='.thumbnails'] { //  max-width: 48px; border: 1px dotted #bbb; //  padding: 4px;  background: #f9f9f9; } td.content { padding-left: 12px;  vertical-align: top;  } #hilight { background-color: #ffee66; color: #000000; padding-left: 2px; padding-right: 2px; margin-left: -2px; margin-right: -2px; } .name { font-size: 1.3em; font-weight: bold;  color: black; } .date { font-size: 1em; color: black;   margin-bottom: 0.6em; margin-top: 0.2em; margin-left:16px; } .snippet { font-size: 1em; color: gray;   margin-left: 16px; } .url { font-size: 1em; color: #008200; margin-left: 16px; } ul { margin-left: 16px;   padding: 0px; clear: both; } .actions { font-size: 1em; } .actions li { float: left; display: block;  vertical-align: middle; padding: 0; padding-left: 20px;  padding-right: 12px; background: url(file:///opt/gnome/share/icons/hicolor/16x16/stock/navigation/stock_right.png) no-repeat; min-height: 16px; -moz-opacity: 0.5; } tr:hover .actions li { -moz-opacity: 1.0;} #phone { background: url(file:///opt/gnome/share/icons/hicolor/16x16/stock/generic/stock_landline-phone.png) no-repeat; } #email { background: url(file:///opt/gnome/share/icons/hicolor/16x16/stock/net/stock_mail.png) no-repeat; } #email-forward { background: url(file:///opt/gnome/share/icons/hicolor/16x16/stock/net/stock_mail-forward.png) no-repeat; } #email-reply { background: url(file:///opt/gnome/share/icons/hicolor/16x16/stock/net/stock_mail-reply.png) no-repeat; } #message { background: url(file:///opt/gnome/share/icons/hicolor/16x16/apps/im-yahoo.png) no-repeat; } #reveal { background: url(file:///opt/gnome/share/icons/hicolor/16x16/stock/io/stock_open.png) no-repeat; } td.footer { text-align: right; border-bottom: solid 1px white; } </style>";
 		}
     }
 }
