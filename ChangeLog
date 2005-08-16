@@ -1,7 +1,8 @@
 2005-08-16  Daniel Drake  <dsd@gentoo.org>
 
 	* Tiles/TileMailMessage.cs: Add message/rfc822 mimetype for filesystem
-	hits.
+	hits. Use fixme:date as the date field. Only open evolution mail in
+	evolution. Don't display the "Reply" link for non-evolution mail.
 
 2005-08-12  Daniel Drake  <dsd@gentoo.org>
 

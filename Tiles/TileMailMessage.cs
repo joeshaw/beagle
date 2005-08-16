@@ -114,7 +114,10 @@ namespace Beagle.Tile {
 			Template["Folder"] = GetHitProperty (Hit, "fixme:folder");
 			Template["Account"] = GetHitProperty (Hit, "fixme:account");
 			Template["SentReceived"] = sent ? Catalog.GetString ("Sent") : Catalog.GetString ("Received");
-			Template["When"] = sent ? GetHitProperty (Hit, "fixme:sentdate") : GetHitProperty (Hit, "fixme:received");
+			Template["When"] = GetHitProperty (Hit, "fixme:date");
+
+			if (GetHitProperty(Hit, "fixme:client") == "evolution")
+				Template ["CanReply"] = "";
 
 			// FIXME: Gross attachment rendering
 			if (Hit.ParentUri != null) {
@@ -227,6 +230,11 @@ namespace Beagle.Tile {
 		public override void Open () 
 		{
 			string uri_str;
+
+			if (GetHitProperty (Hit, "fixme:client") != "evolution") {
+				OpenFromMime (Hit);
+				return;
+			}
 
 			Process p = new Process ();
 			p.StartInfo.UseShellExecute = false;
