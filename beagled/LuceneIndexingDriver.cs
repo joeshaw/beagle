@@ -192,7 +192,6 @@ namespace Beagle.Daemon {
 
 						Uri doc_uri;
 						doc_uri = GetUriFromDocument (doc);
-
 						current_docs [doc_uri] = doc;
 						
 						Term term;
@@ -310,7 +309,7 @@ namespace Beagle.Daemon {
 					text_cache.CommitTransaction ();
 
 				if (optimize_during_next_flush) {
-					Logger.Log.Debug ("Optimizing");
+					Logger.Log.Debug ("Optimizing {0}", IndexName);
 					primary_writer.Optimize ();
 					if (secondary_writer == null)
 						secondary_writer = new IndexWriter (SecondaryStore, IndexingAnalyzer, false);

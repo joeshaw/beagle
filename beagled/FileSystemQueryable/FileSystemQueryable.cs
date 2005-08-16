@@ -1143,9 +1143,7 @@ namespace Beagle.Daemon.FileSystemQueryable {
 			receipt.Uri = external_uri;
 		}
 
-		// Hit filter: this handles our mapping from internal->external uris,
-		// and checks to see if the file is still there.
-		override protected bool HitFilter (Hit hit)
+		private bool RemapUri (Hit hit)
 		{
 			string name, parent_id_uri;
 			name = hit [ExactFilenamePropKey];
@@ -1157,15 +1155,30 @@ namespace Beagle.Daemon.FileSystemQueryable {
 			
 			Guid parent_id;
 			parent_id = GuidFu.FromUriString (parent_id_uri);
-
+			
 			string path;
 			path = ToFullPath (name, parent_id);
 
-#if false
-			if (Debug)
-				Logger.Log.Debug ("HitFilter mapped '{0}' {1} to '{2}'",
-						  name, parent_id, path);
-#endif
+			// Store the hit's internal uri in a property
+			Property prop;
+			prop = Property.NewKeyword ("beagle:InternalUri",
+						    UriFu.UriToSerializableString (hit.Uri));
+			hit.AddProperty (prop);
+
+			hit.Uri = UriFu.PathToFileUri (path);
+
+			return true;
+		}
+
+		// Hit filter: this handles our mapping from internal->external uris,
+		// and checks to see if the file is still there.
+		override protected bool HitFilter (Hit hit)
+		{
+			if (! RemapUri (hit))
+				return false;
+
+			string path;
+			path = hit.Uri.LocalPath;
 
 			bool is_directory = (hit.MimeType == "inode/directory");
 
@@ -1188,22 +1201,13 @@ namespace Beagle.Daemon.FileSystemQueryable {
 				return false;
 
 			// Fetch the parent directory model from our cache to do clever 
-			// filterint to determine if we're ignoring it or not.
+			// filtering to determine if we're ignoring it or not.
 			DirectoryModel parent;
 			parent = GetDirectoryModelByPath (Path.GetDirectoryName (path));
 
 			// Check the ignore status of the hit
 			if (filter.Ignore (parent, Path.GetFileName (path), is_directory))
 				return false;
-
-			// Store the hit's internal uri in a property
-			Property prop;
-			prop = Property.NewKeyword ("beagle:InternalUri",
-						    UriFu.UriToSerializableString (hit.Uri));
-			hit.AddProperty (prop);
-
-			// Remap the Uri
-			hit.Uri = UriFu.PathToFileUri (path);
 
 			return true;
 		}

@@ -82,10 +82,10 @@ namespace Beagle.Daemon {
 
 		public IndexerReceipt [] Process (IIndexer indexer)
 		{
-			foreach (Indexable indexable in indexables_to_add)
+			foreach (Indexable indexable in indexables_to_add) 
 				indexer.Add (indexable);
 
-			foreach (Uri uri in uris_to_remove)
+			foreach (Uri uri in uris_to_remove) 
 				indexer.Remove (uri);
 
 			if (OptimizeIndex)

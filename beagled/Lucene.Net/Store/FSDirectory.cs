@@ -81,6 +81,7 @@ namespace Lucene.Net.Store
 
 				bool obtainedLock = false;
 
+#if false
 				int fd = Mono.Posix.Syscall.open (lockFile.FullName,
 								  Mono.Posix.OpenFlags.O_CREAT
 								  | Mono.Posix.OpenFlags.O_EXCL,
@@ -92,12 +93,14 @@ namespace Lucene.Net.Store
 					lockFile.Refresh ();
 					obtainedLock = true;
 				}
+#endif
 			
-				
-#if false
 				try
 				{
 					System.IO.FileStream createdFile = lockFile.Create();
+					System.IO.StreamWriter writer = new System.IO.StreamWriter (createdFile);
+					writer.WriteLine (Process.GetCurrentProcess().Id);
+					writer.Close ();
 					createdFile.Close();
 					obtainedLock = true;
 				}
@@ -105,7 +108,6 @@ namespace Lucene.Net.Store
 				{
 					// Just fall through
 				}
-#endif
 
 				Log ("{0} lock {1}", obtainedLock ? "Obtained" : "Could not obtain", lockFile.FullName);
 				return obtainedLock;

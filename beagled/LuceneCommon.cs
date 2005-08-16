@@ -144,6 +144,69 @@ namespace Beagle.Daemon {
 			get { return Path.Combine (top_dir, "Locks"); }
 		}
 
+		//////////////////////////////////////////////////////////////////////////////
+
+		// Deal with dangling locks
+
+		private bool IsDanglingLock (FileInfo info)
+		{
+			// It isn't even a lock file
+			if (info.Name.IndexOf ("write.lock") != -1)
+				return false;
+
+			StreamReader reader;
+			string pid = null;
+
+			try {
+				reader = new StreamReader (info.FullName);
+				pid = reader.ReadLine ();
+				reader.Close ();
+
+			} catch {
+				// We couldn't read the lockfile, so it probably went away.
+				return false;
+			}
+
+			string cmdline_file;
+			cmdline_file = String.Format ("/proc/{0}/cmdline", pid);
+			
+			string cmdline = "";
+			try {
+				reader = new StreamReader (cmdline_file);
+				cmdline = reader.ReadLine ();
+				reader.Close ();
+			} catch {
+				// If we can't open that file, either:
+				// (1) The process doesn't exist
+				// (2) It does exist, but it doesn't belong to us.
+				//     Thus it isn't an IndexHelper
+				// In either case, the lock is dangling --- if it
+				// still exists.
+				return info.Exists;
+			}
+
+			// The process exists, but isn't an IndexHelper.
+			// If the lock file is still there, it is dangling.
+			if (cmdline.IndexOf ("IndexHelper.exe") == -1)
+				return info.Exists;
+			
+			// If we reach this point, we know:
+			// (1) The process still exists
+			// (2) We own it
+			// (3) It is an IndexHelper process
+			// Thus it almost certainly isn't a dangling lock.
+			// The process might be wedged, but that is
+			// another issue...
+			return false;
+		}
+		
+
+		// Return true if there are dangling locks
+		protected bool HaveDanglingLocks ()
+		{
+			return false;
+		}
+
 		protected bool Exists ()
 		{
 			if (! (Directory.Exists (top_dir)
@@ -190,7 +253,7 @@ namespace Beagle.Daemon {
 			DirectoryInfo lock_dir_info;
 			lock_dir_info = new DirectoryInfo (LockDirectory);
 			foreach (FileInfo info in lock_dir_info.GetFiles ()) {
-				if (info.Name.IndexOf ("write.lock") != -1)
+				if (IsDanglingLock (info))
 					return false;
 			}
 
@@ -913,33 +976,102 @@ namespace Beagle.Daemon {
 			return top_query;
 		}
 
-		// query is our main query.
-		// extra_query is a filtering query used for things like
-		// mime-types.  It is cloned instead of used directly.
-		// uri_list is a list of Uris to restrict our
-		// query to.
-		static protected LNS.BooleanQuery LimitQuery (LNS.Query query, 
-							      LNS.Query extra_query,
-							      ICollection uri_list)
+		///////////////////////////////////////////////////////////////////////////////////
+
+		//
+		// Grabbing a block of hits
+		//
+
+		public int GetBlockOfHits (int cookie,
+					   Hit [] block_of_hits)
 		{
-			if (query == null)
-				return null;
+			IndexReader primary_reader;
+			IndexReader secondary_reader;
+			primary_reader = IndexReader.Open (PrimaryStore);
+			secondary_reader = IndexReader.Open (SecondaryStore);
 
-			LNS.BooleanQuery combined;
-			combined = new LNS.BooleanQuery ();
+			int request_size;
+			request_size = block_of_hits.Length;
+			if (request_size > primary_reader.NumDocs ())
+				request_size = primary_reader.NumDocs ();
 
-			combined.Add (query, true, false);
+			int max_doc;
+			max_doc = primary_reader.MaxDoc ();
 
-			if (extra_query != null)
-				combined.Add (extra_query.Clone () as LNS.Query, true, false);
-			
-			if (uri_list != null && uri_list.Count > 0) {
-				LNS.Query uri_query;
-				uri_query = UriQuery ("Uri", uri_list);
-				combined.Add (uri_query, true, false);
+			if (cookie < 0) {
+				Random random;
+				random = new Random ();
+				cookie = random.Next (max_doc);
 			}
 
-			return combined;
+			int original_cookie;
+			original_cookie = cookie;
+
+			Hashtable primary_docs, secondary_docs;
+			primary_docs = UriFu.NewHashtable ();
+			secondary_docs = UriFu.NewHashtable ();
+
+			// Load the primary documents
+			for (int i = 0; i < request_size; ++i) {
+				
+				if (! primary_reader.IsDeleted (cookie)) {
+					Document doc;
+					doc = primary_reader.Document (cookie);
+					primary_docs [GetUriFromDocument (doc)] = doc;
+				}
+				
+				++cookie;
+				if (cookie >= max_doc) // wrap around
+					cookie = 0;
+
+				// If we somehow end up back where we started,
+				// give up.
+				if (cookie == original_cookie)
+					break;
+			}
+
+			// If necessary, load the secondary documents
+			if (secondary_reader != null) {
+				LNS.IndexSearcher searcher;
+				searcher = new LNS.IndexSearcher (secondary_reader);
+				
+				LNS.Query uri_query;
+				uri_query = UriQuery ("Uri", primary_docs.Keys);
+				
+				LNS.Hits hits;
+				hits = searcher.Search (uri_query);
+				for (int i = 0; i < hits.Length (); ++i) {
+					Document doc;
+					doc = hits.Doc (i);
+					secondary_docs [GetUriFromDocument (doc)] = doc;
+				}
+				
+				searcher.Close ();
+			}
+
+			// Now assemble the hits
+			int j = 0;
+			foreach (Uri uri in primary_docs.Keys) {
+				Document primary_doc, secondary_doc;
+				primary_doc = primary_docs [uri] as Document;
+				secondary_doc = secondary_docs [uri] as Document;
+
+				Hit hit;
+				hit = DocumentToHit (primary_doc);
+				if (secondary_doc != null)
+					AddPropertiesToHit (hit, secondary_doc, false);
+				
+				block_of_hits [j] = hit;
+				++j;
+			}
+
+			// null-pad the array, if necessary
+			for (; j < block_of_hits.Length; ++j)
+				block_of_hits [j] = null;
+
+
+			// Return the new cookie
+			return cookie;
 		}
 	}
 }
