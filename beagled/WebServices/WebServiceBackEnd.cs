@@ -409,7 +409,7 @@ namespace Beagle.WebService {
 			foreach (string text in sreq.text) 
 				query.AddText(text);				
 			
-			Logger.Log.Info("WebServiceBackEnd: Received {0} WebService Query with search term: {1}", isLocalReq ? "Local":"External", query.QuotedText);
+			Logger.Log.Info("WebServiceBackEnd: Received {0} WebService Query with search term: {1}", isLocalReq ? "Local":"External", sreq.text[0].Trim());
 
 			if (sreq.mimeType != null && sreq.mimeType[0] != null)
 				foreach (string mtype in sreq.mimeType)
