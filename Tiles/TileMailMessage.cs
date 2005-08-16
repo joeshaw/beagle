@@ -36,7 +36,9 @@ using Mono.Posix;
 namespace Beagle.Tile {
 
 	[HitFlavor (Name="Email", Rank=1100, Emblem="emblem-mail-message.png", Color="#f5f5f5",
-		    Type="MailMessage")]
+		    Type="MailMessage"),
+	 HitFlavor (Name="Email", Rank=1100, Emblem="emblem-mail-message.png", Color="#f5f5fe",
+		    Type="File", MimeType="message/rfc822")]
 	public class TileMailMessage : TileFromHitTemplate {
 
 		public TileMailMessage (Hit _hit) : base (_hit, "template-mail-message.html")

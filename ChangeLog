@@ -1,3 +1,8 @@
+2005-08-16  Daniel Drake  <dsd@gentoo.org>
+
+	* Tiles/TileMailMessage.cs: Add message/rfc822 mimetype for filesystem
+	hits.
+
 2005-08-12  Daniel Drake  <dsd@gentoo.org>
 
 	* beagled/FileSystemQueryable/FileNameFilter.cs,
