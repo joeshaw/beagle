@@ -227,7 +227,7 @@ namespace Bludgeon {
 		}
 
 		//////////////////////////////////////////////////////////////
-		
+
 		public void Grow (int depth)
 		{
 			const int num_dirs = 2;
@@ -247,6 +247,14 @@ namespace Bludgeon {
 		}
 
 		//////////////////////////////////////////////////////////////
+
+		public void Touch ()
+		{
+			if (IsFile) {
+				body = NewBody (10);
+				Write ();
+			}
+		}
 
 		public void Delete ()
 		{

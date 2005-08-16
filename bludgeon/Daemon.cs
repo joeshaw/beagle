@@ -11,8 +11,8 @@ namespace Bludgeon {
 
 		private Daemon () { }
 
-		// Returns the daemon's version
-		static public string Ping ()
+		// Returns the daemon's version, or null
+		static public string PingOnce ()
 		{
 			Beagle.RequestMessage request;
 			request = new Beagle.DaemonInformationRequest ();
@@ -23,8 +23,7 @@ namespace Bludgeon {
 				try {
 					response = request.Send ();
 				} catch {
-					Log.Spew ("ERROR: Daemon is not responding");
-					Thread.Sleep (1000);
+					return null;
 				}
 			}
 
@@ -32,6 +31,18 @@ namespace Bludgeon {
 			info = (Beagle.DaemonInformationResponse) response;
 
 			return info.Version;
+		}
+
+		static public string Ping ()
+		{
+			string version;
+
+			while ((version = PingOnce ()) == null) {
+				Log.Spew ("ERROR: Daemon is not responding");
+				Thread.Sleep (1000);
+			}
+
+			return version;
 		}
 		
 		static public void Start ()
