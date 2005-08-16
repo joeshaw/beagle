@@ -9,36 +9,45 @@ msgid ""
 msgstr ""
 "Project-Id-Version: beagle.HEAD.hu\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2005-08-07 18:49+0000\n"
-"PO-Revision-Date: 2005-08-07 21:42+0200\n"
+"POT-Creation-Date: 2005-08-16 10:49+0000\n"
+"PO-Revision-Date: 2005-08-16 16:39+0200\n"
 "Last-Translator: Gabor Kelemen <kelemeng@gnome.hu>\n"
 "Language-Team: Hungarian <gnome@gnome.hu>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms:  nplurals=1; plural=0;\n"
-"X-Generator: KBabel 1.10.2\n"
+"X-Generator: KBabel 1.10.1\n"
 
-#: ../Best/Best.cs:121
+#: ../Best/Best.cs:130
 msgid ""
 "If you're wondering whether Best is working check your notification area "
 "(system tray)"
-msgstr ""
-"Ha nem biztos benne, hogy a Best működik, ellenőrizze az értesítő területen"
+msgstr "Ha nem biztos benne, hogy a Best működik, ellenőrizze az értesítő területen"
 
-#: ../Best/BestTray.cs:171
+#: ../Best/BestTray.cs:149
+msgid "Disable Searching"
+msgstr "Keresés letiltása"
+
+#: ../Best/BestTray.cs:150
+msgid ""
+"You're about to close the search tray. The search tray is automatically "
+"started, do you want to disable it?"
+msgstr "A keresőtálca bezárására készül. A keresőtálca automatikusan elindul, le szeretné tiltani?"
+
+#: ../Best/BestTray.cs:201
 msgid "No Recent Searches"
 msgstr "Nincsenek új keresések"
 
-#: ../Best/BestTray.cs:175
+#: ../Best/BestTray.cs:205
 msgid "Recent Searches"
 msgstr "Legutóbbi keresések"
 
-#: ../Best/BestTray.cs:189
+#: ../Best/BestTray.cs:219
 msgid "Clear"
 msgstr "Törlés"
 
-#: ../Best/BestTray.cs:197
+#: ../Best/BestTray.cs:227
 msgid "Quit"
 msgstr "Kilépés"
 
@@ -447,12 +456,12 @@ msgid "Invalid host entry"
 msgstr "Érvénytelen kiszolgálóbejegyzés"
 
 #: ../tools/Settings.cs:403
-msgid "Host already present in the list."
-msgstr "A kiszolgáló már jelen van a listában."
+msgid "Remote host already present in the list."
+msgstr "A távoli kiszolgáló már jelen van a listában."
 
 #: ../tools/Settings.cs:412
-msgid "Host not added"
-msgstr "A kiszolgáló nem lett hozzáadva"
+msgid "Netbeagle Node not added"
+msgstr "A Netbeagle csomópont nem lett hozzáadva"
 
 #: ../tools/Settings.cs:428
 msgid "Remove host"
@@ -475,8 +484,7 @@ msgid "Remove public path"
 msgstr "Nyilvános útvonal eltávolítása"
 
 #: ../tools/Settings.cs:494
-msgid ""
-"Are you sure you wish to remove this entry from the list of public paths?"
+msgid "Are you sure you wish to remove this entry from the list of public paths?"
 msgstr ""
 "Biztosan el akarja távolítani ezt a bejegyzést a nyilvános útvonalak "
 "listájából?"
@@ -486,12 +494,12 @@ msgstr ""
 msgid "Name"
 msgstr "Név"
 
-#: ../tools/Settings.cs:622 ../tools/settings.glade.h:30
+#: ../tools/Settings.cs:622 ../tools/settings.glade.h:32
 msgid "Type"
 msgstr "Típus"
 
 #: ../tools/Settings.cs:675 ../tools/Settings.cs:1055
-#: ../tools/settings.glade.h:22
+#: ../tools/settings.glade.h:24
 msgid "Path"
 msgstr "Útvonal"
 
@@ -500,7 +508,7 @@ msgid "Pattern"
 msgstr "Minta"
 
 #: ../tools/Settings.cs:681 ../tools/Settings.cs:1060
-#: ../tools/settings.glade.h:20
+#: ../tools/settings.glade.h:22
 msgid "Mail Folder"
 msgstr "Levélmappa"
 
@@ -525,8 +533,8 @@ msgid "Show"
 msgstr "Megjelenítés"
 
 #: ../tools/settings.glade.h:1
-msgid "<b>Add host</b>"
-msgstr "<b>Kiszolgáló hozzáadása</b>"
+msgid "<b>Add remote host</b>"
+msgstr "<b>Távoli kiszolgáló hozzáadása</b>"
 
 #: ../tools/settings.glade.h:2
 msgid "<b>Add resource</b>"
@@ -553,22 +561,28 @@ msgid "<b>Select mail folder</b>"
 msgstr "<b>Levélmappa beállítása</b>"
 
 #: ../tools/settings.glade.h:8
-msgid "Add a search-enabled host you wish to network with"
+msgid ""
+"Add a remote search-enabled host you wish \n"
+"to network with."
 msgstr ""
-"Egy kiszolgáló hozzáadása, melyen engedélyezett a keresés és hálózatban "
-"szeretné használni"
+"Egy távoli kiszolgáló hozzáadása, melyen engedélyezett \n"
+"a keresés és hálózatban szeretné használni"
 
-#: ../tools/settings.glade.h:9
+#: ../tools/settings.glade.h:10
 msgid "Add any additional paths to be included for indexing."
 msgstr "Tetszőleges útvonal felvétele indexeléshez."
 
-#: ../tools/settings.glade.h:10
-msgid "Add any search-enabled hosts you wish to network with"
+#: ../tools/settings.glade.h:11
+msgid "Add any remote search-enabled hosts you wish to network with"
 msgstr ""
-"Kiszolgálók hozzáadása, melyeken engedélyezett a keresés és hálózatban "
+"Távoli kiszolgálók hozzáadása, melyeken engedélyezett a keresés és hálózatban "
 "szeretné őket használni"
 
-#: ../tools/settings.glade.h:11
+#: ../tools/settings.glade.h:12
+msgid "Address"
+msgstr "Cím"
+
+#: ../tools/settings.glade.h:13
 msgid ""
 "Adjust which types of results should be visible, and in what order they "
 "should be presented when grouped by type."
@@ -576,62 +590,61 @@ msgstr ""
 "Állítsa be, milyen típusú eredmények legyenek láthatóak és milyen sorrendben "
 "legyenek rendezve típus szerinti csoportosításkor."
 
-#: ../tools/settings.glade.h:12
+#: ../tools/settings.glade.h:14
 msgid "Allow external access to local search services"
 msgstr "Külső hozzáférés engedélyezése a helyi keresési szolgáltatásokhoz"
 
-#: ../tools/settings.glade.h:13
+#: ../tools/settings.glade.h:15
 msgid "Alt"
 msgstr "Alt"
 
-#: ../tools/settings.glade.h:14
+#: ../tools/settings.glade.h:16
 msgid "Ctrl"
 msgstr "Ctrl"
 
-#: ../tools/settings.glade.h:15
+#: ../tools/settings.glade.h:17
 msgid "Directory Path"
 msgstr "Könyvtár útvonala"
 
-#: ../tools/settings.glade.h:16
+#: ../tools/settings.glade.h:18
 msgid "Display the search window by pressing"
 msgstr "Keresőablak megjelenítése a következő lenyomásakor:"
 
-#: ../tools/settings.glade.h:17
+#: ../tools/settings.glade.h:19
 msgid "Filename Pattern"
 msgstr "Fájlnév-minta"
 
-#: ../tools/settings.glade.h:18
+#: ../tools/settings.glade.h:20
 msgid "Index my home directory"
 msgstr "Saját könyvtáram indexelése"
 
-#: ../tools/settings.glade.h:19
+#: ../tools/settings.glade.h:21
 msgid "Indexing"
 msgstr "Indexelés"
 
-#: ../tools/settings.glade.h:21
+#: ../tools/settings.glade.h:23
 msgid "Networking"
 msgstr "Hálózat"
 
-#: ../tools/settings.glade.h:23
+#: ../tools/settings.glade.h:25
 msgid "Please select a resource you wish to exclude from indexing."
-msgstr ""
-"Kérem válassza ki az erőforrást, amit ki szeretne hagyni az indexelésből."
+msgstr "Kérem válassza ki az erőforrást, amit ki szeretne hagyni az indexelésből."
 
-#: ../tools/settings.glade.h:24
+#: ../tools/settings.glade.h:26
 msgid "Please select the mail folder you wish to exclude from indexing. "
 msgstr ""
 "Kérem válassza ki a levélkönyvtárat, amit ki szeretne hagyni az "
 "indexelésből. "
 
-#: ../tools/settings.glade.h:25
+#: ../tools/settings.glade.h:27
 msgid "Search"
 msgstr "Keresés"
 
-#: ../tools/settings.glade.h:26
+#: ../tools/settings.glade.h:28
 msgid "Search Preferences"
 msgstr "Keresés beállításai"
 
-#: ../tools/settings.glade.h:27
+#: ../tools/settings.glade.h:29
 msgid ""
 "Specify any resources, such as paths, patterns, mail folders or type of "
 "objects you wish to exclude from indexing."
@@ -639,18 +652,13 @@ msgstr ""
 "Adja meg az indexelésből kihagyandó erőforrásokat, például útvonalakat, "
 "mintákat, levélmappákat vagy objektumtípusokat."
 
-#: ../tools/settings.glade.h:28
+#: ../tools/settings.glade.h:30
 msgid "Specify paths that should be available for external access"
 msgstr "Adja meg a külső hozzáférés számára elérhető útvonalakat"
 
-#: ../tools/settings.glade.h:29
-msgid "Start search & indexing services automatically on login"
-msgstr ""
-"Keresési és indexelési szolgáltatások automatikus indítása bejelentkezéskor"
-
 #: ../tools/settings.glade.h:31
-msgid "_Address"
-msgstr "_Cím"
+msgid "Start search & indexing services automatically "
+msgstr "Keresési és indexelési szolgáltatások automatikus indítása "
 
 #: ../Util/Evolution.cs:45 ../Util/Evolution.cs:163
 msgid "On This Computer"
@@ -763,3 +771,4 @@ msgstr "{0:0.0} KB"
 #, csharp-format
 msgid "{0:0.0} MB"
 msgstr "{0:0.0} MB"
+
