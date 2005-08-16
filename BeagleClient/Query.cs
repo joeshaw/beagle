@@ -131,7 +131,14 @@ namespace Beagle {
 		private void OnSearchTerms (ResponseMessage r)
 		{
 			SearchTermResponse response = (SearchTermResponse) r;
+			ProcessSearchTermResponse (response);
+		}
 
+		///////////////////////////////////////////////////////////////
+
+		// This is exposed for the benefit of QueryDriver.DoQueryLocal
+		public void ProcessSearchTermResponse (SearchTermResponse response)
+		{
 			exact_text = response.ExactText;
 			stemmed_text = response.StemmedText;
 		}

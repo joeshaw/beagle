@@ -454,9 +454,9 @@ namespace Beagle.Daemon {
 			response.StemmedText.Add (sb.ToString ());
 		}
 
-		static public void DoQuery (Query                                query,
-					    QueryResult                          result,
-					    RequestMessageExecutor.AsyncResponse send_response)
+		////////////////////////////////////////////////////////
+
+		static private void DehumanizeQuery (Query query)
 		{
 			// We need to remap any QueryPart_Human parts into
 			// lower-level part types.  First, we find any
@@ -487,12 +487,20 @@ namespace Beagle.Daemon {
 					query.AddPart (part);
 			}
 
+		}
+
+		static private SearchTermResponse AssembleSearchTermResponse (Query query)
+		{
 			SearchTermResponse search_term_response;
 			search_term_response = new SearchTermResponse ();
 			foreach (QueryPart part in query.Parts)
 				AddSearchTermInfo (part, search_term_response);
-			send_response (search_term_response);
+			return search_term_response;
+		}
 
+		static private void QueryEachQueryable (Query       query,
+							QueryResult result)
+		{
 			// The extra pair of calls to WorkerStart/WorkerFinished ensures:
 			// (1) that the QueryResult will fire the StartedEvent
 			// and FinishedEvent, even if no queryable accepts the
@@ -509,6 +517,31 @@ namespace Beagle.Daemon {
 				DoOneQuery (queryable, query, result, null);
 			
 			result.WorkerFinished (dummy_worker);
+		}
+		
+		static public void DoQueryLocal (Query       query,
+						 QueryResult result)
+		{
+			DehumanizeQuery (query);
+
+			SearchTermResponse search_term_response;
+			search_term_response = AssembleSearchTermResponse (query);
+			query.ProcessSearchTermResponse (search_term_response);
+
+			QueryEachQueryable (query, result);
+		}
+
+		static public void DoQuery (Query                                query,
+					    QueryResult                          result,
+					    RequestMessageExecutor.AsyncResponse send_response)
+		{
+			DehumanizeQuery (query);
+
+			SearchTermResponse search_term_response;
+			search_term_response = AssembleSearchTermResponse (query);
+			send_response (search_term_response);
+
+			QueryEachQueryable (query, result);
 		}
 
 		////////////////////////////////////////////////////////
