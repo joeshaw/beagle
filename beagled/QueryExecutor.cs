@@ -105,6 +105,7 @@ namespace Beagle.Daemon {
 
 		public override void Cleanup ()
 		{
+			QueryDriver.ChangedEvent -= OnQueryDriverChanged;
 			DisconnectResult ();
 		}
 	}
