@@ -30,11 +30,16 @@ using System.IO;
 
 using BU = Beagle.Util;
 
+using Gnome;
+using Gdk;
+
 namespace Beagle.Tile {
 
 	[HitFlavor (Name="Files", Rank=300, Emblem="emblem-file.png", Color="#f5f5fe",
 		    Type="File")]
 	public class TileFile : TileFromHitTemplate {
+		private static ThumbnailFactory thumb_factory = new ThumbnailFactory (ThumbnailSize.Normal);
+
 		public TileFile (Hit _hit) : base (_hit,
 						   "template-file.html")
 		{
@@ -54,16 +59,30 @@ namespace Beagle.Tile {
 				return;
 			}
 
-			Gtk.IconSize size = (Gtk.IconSize) 48;
-			string path = BU.GnomeIconLookup.LookupMimeIcon (Hit.MimeType,
-									 size);
-			string icon = Images.GetHtmlSource (path,
-								 BU.GnomeIconLookup.GetFileMimeType (path));
+			string quoted_uri = BU.StringFu.PathToQuotedFileUri (Hit.Uri.LocalPath);
+			string thumbnail = Thumbnail.PathForUri (quoted_uri, ThumbnailSize.Normal);
 
-			if (icon != null)
-				Template["Icon"] = icon;
-			else
-				Template ["Icon"] = Images.GetHtmlSource ("document", "image/png");
+			if (File.Exists (thumbnail))
+				Template ["Icon"] = Images.GetHtmlSource (thumbnail, Hit.MimeType);
+			else {
+				Pixbuf pix = thumb_factory.GenerateThumbnail (quoted_uri, Hit.MimeType);
+				FileInfo fi = new FileInfo (Hit.Uri.LocalPath);
+				if (pix == null) {
+					thumb_factory.CreateFailedThumbnail (quoted_uri, fi.LastWriteTime);
+					
+					Gtk.IconSize size = (Gtk.IconSize) 48;
+					string path = BU.GnomeIconLookup.LookupMimeIcon (Hit.MimeType, size);
+					string icon = Images.GetHtmlSource (path, BU.GnomeIconLookup.GetFileMimeType (path));
+
+					if (icon != null)
+						Template ["Icon"] = icon;
+					else
+						Template ["Icon"] = Images.GetHtmlSource ("document", "image/png");
+				} else {
+					thumb_factory.SaveThumbnail (pix, quoted_uri, DateTime.Now);
+					Template ["Icon"] = Images.GetHtmlSource (thumbnail, Hit.MimeType);
+				}
+			}
 
 			Template["Title"] = Hit ["dc:title"];
 
