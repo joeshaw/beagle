@@ -1,3 +1,10 @@
+2005-08-17  Vijay K. Nanjundaswamy <knvijay@novell.com>
+	
+	* beagled/WebServices/Web*End.cs, WebService*End.cs:
+	Update to support display of images in web interface, and other fixes to align with recent changes in Beagle daemon. 
+	* beagled/WebServices/ExternalAccessFilter.cs: 
+	Return only File resources for external accesses.  
+
 2005-08-16  Daniel Drake  <dsd@gentoo.org>
 
 	* Tiles/TileMailMessage.cs: Add message/rfc822 mimetype for filesystem
