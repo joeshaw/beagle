@@ -28,7 +28,7 @@
 
 umask 022
 
-CRAWL_USER=nobody
+CRAWL_USER=beagleindex
 
 for crawl_file in @sysconfdir@/beagle/*; do 
     if [ -f $crawl_file ] ; then
