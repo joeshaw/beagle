@@ -198,7 +198,7 @@ namespace Beagle.WebService {
 				if (uri.IndexOf (matcher.Match) == -1)
 					continue;
 
-				return true;
+				return hit.IsFile;   //return true;
 			}
 
 			return false;		
