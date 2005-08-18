@@ -112,7 +112,12 @@ namespace Beagle.Daemon.EvolutionDataServerQueryable {
 			Logger.Log.Debug ("Indexing all data in this addressbook ({0})!", src.Uri);
 
 			Book book = new Book (src);
-			book.Open (true);
+			try {
+				book.Open (true);
+			} catch (Exception e) {
+				Logger.Log.Warn ("Unable to open addressbook {0}: {1}", src.Uri, e.Message);
+				return;
+			}
 
 			BookView book_view = book.GetBookView (BookQuery.AnyFieldContains (""),
 							       new object [0],
@@ -134,7 +139,12 @@ namespace Beagle.Daemon.EvolutionDataServerQueryable {
 			}
 
 			Book book = new Book (src);
-			book.Open (true);
+			try {
+				book.Open (true);
+			} catch (Exception e) {
+				Logger.Log.Warn ("Unable to open addressbook {0}: {1}", src.Uri, e.Message);
+				return;
+			}
 
 			Contact[] added, changed;
 			string[] removed;
@@ -407,7 +417,12 @@ namespace Beagle.Daemon.EvolutionDataServerQueryable {
 			Logger.Log.Debug ("Indexing all data in this calendar ({0})!", src.Uri);
 
 			Cal cal = new Cal (src, CalSourceType.Event);
-			cal.Open (true);
+			try {
+				cal.Open (true);
+			} catch (Exception e) {
+				Logger.Log.Warn ("Unable to open calendar {0}: {1}", src.Uri, e.Message);
+				return;
+			}
 
 			CalComponent[] event_list = cal.GetItems ("#t");
 
@@ -432,7 +447,12 @@ namespace Beagle.Daemon.EvolutionDataServerQueryable {
 			}
 
 			Cal cal = new Cal (src, CalSourceType.Event);
-			cal.Open (true);
+			try {
+				cal.Open (true);
+			} catch (Exception e) {
+				Logger.Log.Warn ("Unable to open calendar {0}: {1}", src.Uri, e.Message);
+				return;
+			}
 
 			CalComponent[] new_items, update_items;
 			string[] remove_items;
