@@ -104,7 +104,7 @@ namespace Beagle.Util {
 
 		[DllImport ("libinotifyglue")]
 		static extern unsafe void inotify_snarf_events (int fd,
-								int timeout_seconds,
+								int timeout_ms,
 								out int nr,
 								out IntPtr buffer);
 
@@ -474,7 +474,7 @@ namespace Beagle.Util {
 
 				// Will block while waiting for events, but with a 1s timeout.
 				inotify_snarf_events (inotify_fd, 
-						      1, 
+						      1000, 
 						      out nr,
 						      out buffer);
 

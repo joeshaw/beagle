@@ -27,12 +27,12 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-#include <string.h>
 #include <fcntl.h>
+#include <time.h>
 #include <unistd.h>
 #include <errno.h>
 #include <sys/ioctl.h>
-#include <sys/select.h>
+#include <sys/poll.h>
 #include <sys/types.h>
 
 #include "inotify.h"
@@ -47,7 +47,7 @@
 /* Inotify sysfs knobs, initialized to their pre-sysfs defaults */
 static int max_user_instances = 8;
 static int max_user_watches = 8192;
-static unsigned int max_queued_events = 256;
+static int max_queued_events = 256;
 
 /* Paranoid code to read an integer from a sysfs (well, any) file. */
 static void
@@ -73,19 +73,18 @@ int
 inotify_glue_init (void)
 {
 	static int fd = 0;
+
 	if (fd)
 		return fd;
+
 	fd = inotify_init ();
 	if (fd < 0) {
-		int _errno = errno;
+		int err = errno;
 		perror ("inotify_init");
-		switch (_errno) {
-		case ENOSYS:
+		if (err == ENOSYS)
 			fprintf(stderr, "Inotify not supported!  You need a "
 				"2.6.13 kernel or later with CONFIG_INOTIFY "
 				"enabled.");
-			break;
-		}
 	}
 
 	read_int (PROCFS_MAX_USER_DEVICES, &max_user_instances);
@@ -103,14 +102,11 @@ inotify_glue_watch (int fd, const char *filename, __u32 mask)
 
 	wd = inotify_add_watch (fd, filename, mask);
 	if (wd < 0) {
-		int _errno = errno;
+		int err = errno;
 		perror ("inotify_add_watch");
-		switch (_errno) {
-		case ENOSPC:
+		if (err == ENOSPC)
 			fprintf(stderr, "Maximum watch limit hit. "
 				"Try adjusting " PROCFS_MAX_USER_WATCHES ".\n");
-			break;
-		}
 	}
 
 	return wd;
@@ -118,7 +114,7 @@ inotify_glue_watch (int fd, const char *filename, __u32 mask)
 
 
 int
-inotify_glue_ignore (int fd, __s32 wd)
+inotify_glue_ignore (int fd, __u32 wd)
 {
 	int ret;
 
@@ -130,20 +126,19 @@ inotify_glue_ignore (int fd, __s32 wd)
 }
 
 
-#define MAX_PENDING_COUNT           5
-#define PENDING_PAUSE_MICROSECONDS  2000
-#define PENDING_THRESHOLD(qsize)    ((unsigned int) (qsize) >> 1)
-#define PENDING_MARGINAL_COST(p)    ((unsigned int) (1 << (p)))
+#define MAX_PENDING_COUNT		5
+#define PENDING_PAUSE_NANOSECONDS	2000000
+#define PENDING_THRESHOLD(qsize)	((unsigned int) (qsize) >> 1)
+#define PENDING_MARGINAL_COST(p)	((unsigned int) (1 << (p)))
 
 void
-inotify_snarf_events (int fd, int timeout_secs, int *nr, void **buffer_out)
+inotify_snarf_events (int fd, int timeout_ms, int *nr, void **buffer_out)
 {
-	struct timeval timeout;
-	fd_set read_fds;
-	int select_retval;
+	struct pollfd pollfd = { fd, POLLIN | POLLPRI, 0 };
 	unsigned int prev_pending = 0, pending_count = 0;
 	static struct inotify_event *buffer = NULL;
 	static size_t buffer_size;
+	int ret;
 
 	/* Allocate our buffer the first time we try to read events. */
 	if (buffer == NULL) {
@@ -159,21 +154,15 @@ inotify_snarf_events (int fd, int timeout_secs, int *nr, void **buffer_out)
 	}
 
 	/* Set nr to 0, so it will be sure to contain something
-	   valid if the select times out. */
+	   valid if the poll times out. */
 	*nr = 0;
 
 	/* Wait for the file descriptor to be ready to read. */
-
-	timeout.tv_sec = timeout_secs;
-	timeout.tv_usec = 0;
-
-	FD_ZERO (&read_fds);
-	FD_SET (fd, &read_fds);
-
-	select_retval = select (fd + 1, &read_fds, NULL, NULL, &timeout);
-
-	/* If we time out or get an error, just return */
-	if (select_retval <= 0)
+	ret = poll (&pollfd, 1, timeout_ms);
+	if (ret == -1) {
+		perror ("poll");
+		return;
+	} else if (ret == 0)
 		return;
 
 	/* Reading events in groups significantly helps performance.
@@ -181,14 +170,15 @@ inotify_snarf_events (int fd, int timeout_secs, int *nr, void **buffer_out)
 	 * bit more to see if more events come in. */
 
 	while (pending_count < MAX_PENDING_COUNT) {
+		struct timespec ts = {0, PENDING_PAUSE_NANOSECONDS};
 		unsigned int pending;
 
 		if (ioctl (fd, FIONREAD, &pending) == -1)
 			break;
-		pending /= sizeof (struct inotify_event) + 16;	/* guess len */
 
 		/* Don't wait if the number of pending events is too close
 		 * to the maximum queue size. */
+		pending /= sizeof (struct inotify_event) + 16;		
 		if (pending > PENDING_THRESHOLD (max_queued_events))
 			break;
 
@@ -200,9 +190,7 @@ inotify_snarf_events (int fd, int timeout_secs, int *nr, void **buffer_out)
 		prev_pending = pending;
 		++pending_count;
 
-		timeout.tv_sec = 0;
-		timeout.tv_usec = PENDING_PAUSE_MICROSECONDS;
-		select (0, NULL, NULL, NULL, &timeout);
+		nanosleep (&ts, NULL);
 	}
 
 	*nr = read (fd, buffer, buffer_size);
