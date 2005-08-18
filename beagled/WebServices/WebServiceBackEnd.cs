@@ -790,10 +790,10 @@ namespace Beagle.WebService {
 			set {pVal = value;}
 		}
 		
-		private bool  isKeyword;
+		private bool  isMutable;
 		public bool IsMutable {
-			get { return isKeyword; }
-			set { isKeyword = value; }
+			get { return isMutable; }
+			set { isMutable = value; }
 		}
 		
 		private bool   isSearched;
