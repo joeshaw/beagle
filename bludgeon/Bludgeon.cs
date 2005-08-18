@@ -108,12 +108,14 @@ namespace Bludgeon {
 			root.Grow (5);
 			//ManipulateTree (root);
 
+#if false
 			Daemon.Start ();
 			DoStaticVerify (root);
 			SanityCheck.TestRandomQueries (root, 10);
 			Daemon.Shutdown ();
+#endif
 
-#if false
+#if true
 			int count = 0;
 			while (true) {
 				++count;

@@ -187,7 +187,11 @@ namespace Beagle.Daemon {
 
 			// The process exists, but isn't an IndexHelper.
 			// If the lock file is still there, it is dangling.
-			if (cmdline.IndexOf ("IndexHelper.exe") == -1)
+			// FIXME: During one run of bludgeon I got a null reference
+			// exception here, so I added the cmdline == null check.
+			// Why exactly would that happen?  Is this logic correct
+			// in that (odd and presumably rare) case?
+			if (cmdline == null || cmdline.IndexOf ("IndexHelper.exe") == -1)
 				return info.Exists;
 			
 			// If we reach this point, we know:

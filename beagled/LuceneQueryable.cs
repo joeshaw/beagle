@@ -627,6 +627,9 @@ namespace Beagle.Daemon {
 
 		private void ScheduleOptimize ()
 		{
+			if (Environment.GetEnvironmentVariable ("BEAGLE_DISABLE_SCHEDULED_OPTIMIZATIONS") != null)
+				return;
+
 			int segment_count;
 			segment_count = driver.SegmentCount;
 			if (segment_count <= 1)
