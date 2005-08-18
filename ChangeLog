@@ -1,3 +1,14 @@
+2005-08-18  Veerapuram Varadhan <vvaradhan@novell.com>
+
+	* Filters/FilterSource.cs: Last word of a non-commented line is
+	not indexed in case of source-code files other than Python.
+	
+	Patch from Debajyoti Bera <dbera.web@gmail.com>
+	* beagled/LuceneCommon.cs: in the previous branch, non-keyword
+	properties were stored as prop:_: in the current version, they are
+	stored as prop:t: So the analyzer should search for "prop:t" to
+	determine if its a keyword query.
+	
 2005-08-17  Gary Ekker  <gekker@novell.com>
 
 	* tools/beagle-crawl-system.in (CRAWL_USER): change the user to 

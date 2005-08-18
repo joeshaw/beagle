@@ -386,7 +386,7 @@ namespace Beagle.Daemon {
 						} while (c != -1 && c != ':');
 					}
 
-					is_text_prop = fieldName.StartsWith ("prop:_");
+					is_text_prop = fieldName.StartsWith ("prop:t");
 
 					// If this is non-text property, just return one token
 					// containing the entire string.  We do this to avoid

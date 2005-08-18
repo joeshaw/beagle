@@ -288,11 +288,11 @@ namespace Beagle.Filters {
 				     || SrcLangType == LangType.Lisp_Style)
 				    && SrcLineType == LineType.SingleLineComment)
 					SrcLineType = LineType.None;
-			} else if (SrcLangType == LangType.Python_Style) {
-				if (token.Length > 0 && !Char.IsDigit (token[0])) {
-					token.Append (" ");
-					AppendText (token.ToString());
-				}
+			} else if (token.Length > 0 
+				   && !Char.IsDigit (token[0])) { 
+				/* we don't want any numeric const */
+				token.Append (" ");
+				AppendText (token.ToString());
 			}
 		}
 	}
