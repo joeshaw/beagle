@@ -657,6 +657,10 @@ namespace Beagle.Daemon.FileSystemQueryable {
 			// its index record is up-to-date.
 			attr.LastWriteTime = DateTime.Now;
 
+			// ...but we do use this to decide which order directories get
+			// crawled in.
+			dir.LastCrawlTime = DateTime.Now;
+
 			FileAttributesStore.Write (attr);
 			dir.MarkAsClean ();
 		}
