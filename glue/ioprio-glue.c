@@ -6,6 +6,9 @@
  * Copyright (C) 2005 Novell, Inc.
  */
 
+#include <sys/syscall.h>
+#include <unistd.h>
+
 #if defined(__i386__)
 #define __NR_ioprio_set		289
 #define __NR_ioprio_get		290

@@ -63,7 +63,7 @@ tomboy_keybinder_is_modifier (guint keycode)
 	return (get_modifier_mask_for_keycode (keycode) != 0);
 }
 
-static guint
+static int
 get_ignored_modifiers (void)
 {
 	guint keyvals[] = { GDK_Num_Lock, GDK_Scroll_Lock, 0 };
@@ -87,7 +87,7 @@ get_ignored_modifiers (void)
 		}
 	}
 
-	return ignored_modifiers;
+	return (int) ignored_modifiers;
 }
 
 static gboolean 
