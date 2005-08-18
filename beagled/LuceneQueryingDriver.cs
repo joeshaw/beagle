@@ -47,7 +47,7 @@ namespace Beagle.Daemon {
 
 	public class LuceneQueryingDriver : LuceneCommon {
 
-		static public bool Debug = true;
+		static public bool Debug = false;
 
 		public const string PrivateNamespace = "_private:";
 
@@ -157,13 +157,9 @@ namespace Beagle.Daemon {
 			}
 
 			// If we have no required parts, give up.
-			if (primary_required_part_queries == null) {
-				Logger.Log.Debug ("No required parts, I give up!");
+			if (primary_required_part_queries == null)
 				return;
-			}
 			
-			Logger.Log.Debug ("Assembled queries!");
-
 			//
 			// Now that we have all of these nice queries, let's execute them!
 			//
@@ -584,7 +580,6 @@ namespace Beagle.Daemon {
 					
 					Uri uri;
 					uri = GetUriFromDocument (secondary_doc);
-					Logger.Log.Debug ("Joining {0}", uri);
 
 					Hit hit;
 					hit = hits_by_uri [uri] as Hit;
@@ -605,15 +600,14 @@ namespace Beagle.Daemon {
 
 			c.Start ();
 
-			Logger.Log.Debug ("Final list length = {0}", final_list_of_hits.Count);
-
 			// If we have a hit_filter, use it now.
 			if (hit_filter != null) {
 				for (int i = 0; i < final_list_of_hits.Count; ++i) {
 					Hit hit;
 					hit = final_list_of_hits [i] as Hit;
 					if (! hit_filter (hit)) {
-						Logger.Log.Debug ("Filtered out {0}", hit.Uri);
+						if (Debug)
+							Logger.Log.Debug ("Filtered out {0}", hit.Uri);
 						final_list_of_hits [i] = null;
 					}
 				}

@@ -38,7 +38,7 @@ namespace Beagle.Daemon {
 
 	public class FilterFactory {
 
-		static private bool Debug = true;
+		static private bool Debug = false;
 
 		static FilterFactory ()
 		{

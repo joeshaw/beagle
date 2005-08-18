@@ -280,9 +280,6 @@ namespace Beagle.Daemon.EvolutionMailDriver {
 
 				++this.indexed_count;
 
-				// HACK: update your recipients
-				EvolutionMailQueryable.AddAsYourRecipient (indexable);
-				
 				return indexable;
 			}
 		}
@@ -678,9 +675,6 @@ namespace Beagle.Daemon.EvolutionMailDriver {
 				if (indexable != null) {
 					++this.indexed_count;
 					this.deleted_list.Remove (mi.uid);
-					
-					// HACK: update your recipients
-					EvolutionMailQueryable.AddAsYourRecipient (indexable);
 				}
 			} else if (flags != null)
 				this.deleted_list.Remove (mi.uid);

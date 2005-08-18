@@ -109,7 +109,7 @@ namespace Beagle.IndexHelper {
 		{
 			int vmrss_original = SystemInformation.VmRss;
 
-			const double max_idle_time = 5; // minutes
+			const double max_idle_time = 30; // minutes
 
 			const double threshold = 5.0;
 			const int max_request_count = 0;

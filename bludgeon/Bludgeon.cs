@@ -107,13 +107,27 @@ namespace Bludgeon {
 			root = InitialTree ();
 			root.Grow (5);
 			//ManipulateTree (root);
-			
+
 			Daemon.Start ();
-
-			if (DoStaticVerify (root))
-				SanityCheck.TestRandomQueries (root, 10.0); // run for up to 10 minutes
-
+			DoStaticVerify (root);
+			SanityCheck.TestRandomQueries (root, 10);
 			Daemon.Shutdown ();
+
+#if false
+			int count = 0;
+			while (true) {
+				++count;
+				Log.Info ("Test {0}", count);
+
+				FileModel change_me;
+				change_me = root.PickFileDescendant ();
+				change_me.Touch ();
+
+				Daemon.Start ();
+				Daemon.WaitUntilIdle ();
+				Daemon.Shutdown ();
+			}
+#endif
 
 			Log.Spew ("Test home directory was '{0}'", PathFinder.HomeDir);
 		}

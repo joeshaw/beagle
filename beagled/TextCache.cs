@@ -38,6 +38,8 @@ namespace Beagle.Daemon {
 
 	public class TextCache {
 
+		static public bool Debug = false;
+
 		public const string SELF_CACHE_TAG = "*self*";
 
 		private string text_cache_dir;
@@ -111,6 +113,8 @@ namespace Beagle.Daemon {
 
 		private void DoNonQuery (string format, params object [] args)
 		{
+			if (Debug)
+				Logger.Log.Debug ("Executing command '{0}'", String.Format (format, args));
 			SqliteCommand command = NewCommand (format, args);
 			while (true) {
 				try {

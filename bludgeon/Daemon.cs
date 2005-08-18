@@ -110,7 +110,7 @@ namespace Bludgeon {
 			while (true) {
 				string status;
 				status = GetStatus ();
-				if (status.IndexOf ("Waiting on empty queue") != -1)
+				if (status.IndexOf ("Waiting on empty queue") != -1) 
 					break;
 
 				if (first)

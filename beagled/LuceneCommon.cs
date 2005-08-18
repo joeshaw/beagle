@@ -978,6 +978,27 @@ namespace Beagle.Daemon {
 
 		///////////////////////////////////////////////////////////////////////////////////
 
+		public int SegmentCount {
+			get {
+				DirectoryInfo dir_info;
+				int p_count = 0, s_count = 0;
+
+				dir_info = new DirectoryInfo (PrimaryIndexDirectory);
+				foreach (FileInfo file_info in dir_info.GetFiles ())
+					if (file_info.Extension == ".cfs")
+						++p_count;
+
+				dir_info = new DirectoryInfo (SecondaryIndexDirectory);
+				foreach (FileInfo file_info in dir_info.GetFiles ())
+					if (file_info.Extension == ".cfs")
+						++s_count;
+
+				return p_count > s_count ? p_count : s_count;
+			}
+		}
+
+		///////////////////////////////////////////////////////////////////////////////////
+
 		//
 		// Grabbing a block of hits
 		//

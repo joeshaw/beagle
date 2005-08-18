@@ -1,7 +1,7 @@
 //
 // Scheduler.cs
 //
-// Copyright (C) 2004 Novell, Inc.
+// Copyright (C) 2004-2005 Novell, Inc.
 //
 
 //
@@ -35,47 +35,11 @@ namespace Beagle.Util {
 
 		static public bool Debug = false;
 
-		static private double global_delay = -1.0;
-		static private bool immediate_priority_only = false;
-		static private string exercise_the_dog = null;
-
-		static Scheduler ()
-		{
-			// We used to support the EXERCISE_THE_DOG env variable, but
-			// that was dropped.  
-			exercise_the_dog = Environment.GetEnvironmentVariable ("BEAGLE_EXERCISE_THE_DOG");
-			if (exercise_the_dog == null &&
-			    Environment.GetEnvironmentVariable ("BEAGLE_EXERCISE_THE_DOG_HARDER") != null)
-				exercise_the_dog = "harder fallback";
-
-			if (exercise_the_dog != null) {
-				
-				global_delay = 0.0;
-
-				if (exercise_the_dog.Length > 2 && exercise_the_dog [0] == 't')
-					global_delay = Double.Parse (exercise_the_dog.Substring (1));
-			}
-	
-			if (Environment.GetEnvironmentVariable ("BEAGLE_IMMEDIATE_PRIORITY_ONLY") != null)
-				immediate_priority_only = true;
-		}
-
-		//////////////////////////////////////////////////////////////////////////////
-
-		static private Scheduler global = new Scheduler ();
-
-		static public Scheduler Global {
-			get { return global; }
-		}
-
-		//////////////////////////////////////////////////////////////////////////////
-
 		public enum Priority {
 			Shutdown  = 0, // Do it on shutdown 
 			Idle      = 1, // Do it when the system is idle
-			Generator = 2, // Do it soon, but not *too* soon
-			Delayed   = 3, // Do it soon
-			Immediate = 4, // Do it right now
+			Delayed   = 2, // Do it soon
+			Immediate = 3, // Do it right now
 		}
 
 		public delegate void Hook ();
@@ -85,27 +49,82 @@ namespace Beagle.Util {
 
 		public abstract class Task : IComparable {
 
-			// A unique identifier
-			public string    Tag;
+			private string tag = null;
+			private Priority priority = Priority.Delayed;
+			private int sub_priority = 0;
+			private DateTime trigger_time = DateTime.MinValue;
+			private DateTime timestamp; // when added to the scheduler
 
 			// Some metadata
-			public string    Creator;
-			public string    Description;
-			
-			public Priority  Priority = Priority.Idle;
-			public int       SubPriority = 0;
-			
-			public DateTime  Timestamp;
-			public DateTime  TriggerTime = DateTime.MinValue;
+			public string Creator;
+			public string Description;
 
 			public ITaskCollector Collector = null;
-			public double         Weight = 1.0;
+			public double Weight = 1.0;
 
 			public bool Reschedule = false;
 
+			private ArrayList task_groups = null;
+			private TaskGroupPrivate child_task_group = null;
+
 			///////////////////////////////
 
-			private ArrayList task_groups = null;
+
+			// The tag is the task's unique identifier
+			public string Tag {
+
+				get { return tag; }
+
+				set {
+					// Don't allow us to change the tag of a scheduled task
+					if (tag == null || scheduler == null)
+						tag = value;
+					else
+						throw new Exception ("Can't change tag of " + tag + "!");
+				}
+			}
+
+			public Priority Priority {
+
+				get { return priority; }
+
+				set { 
+					if (priority != value) {
+						priority = value;
+						Recompute ();
+					}
+				}
+			}
+
+			public int SubPriority {
+
+				get { return sub_priority; }
+
+				set {
+					if (sub_priority != value) {
+						sub_priority = value;
+						Recompute ();
+					}
+				}
+			}
+
+			public DateTime TriggerTime {
+
+				get { return trigger_time; }
+
+				set {
+					if (trigger_time != value) {
+						trigger_time = value;
+						Recompute ();
+					}
+				}
+			}
+
+			public DateTime Timestamp {
+				get { return timestamp; }
+			}
+			
+			///////////////////////////////
 
 			public void AddTaskGroup (TaskGroup group)
 			{
@@ -148,19 +167,33 @@ namespace Beagle.Util {
 
 			private Scheduler scheduler = null;
 
-			public Scheduler ThisScheduler {
-				get { return scheduler; }
-			}
-
 			public void Schedule (Scheduler scheduler)
 			{
 				// Increment the task groups the first
 				// time a task is scheduled.
 				if (this.scheduler == null)
 					IncrementAllTaskGroups ();
+				this.timestamp = DateTime.Now;
 				this.scheduler = scheduler;
+				this.cancelled = false;
 			}
 
+			private void Recompute ()
+			{
+				if (scheduler != null)
+					Recompute ();
+			}
+
+			///////////////////////////////
+
+			// A blocked task will not execute.
+			public bool Blocked {
+				get {
+					// Block the task if we have unexecuted children
+					return child_task_group != null && ! child_task_group.Finished;
+				}
+			}
+			
 			///////////////////////////////
 
 			private bool cancelled = false;
@@ -189,19 +222,30 @@ namespace Beagle.Util {
 
 			///////////////////////////////
 			
+			public void SpawnChild (Task child_task)
+			{
+				if (child_task_group == null)
+					child_task_group = new TaskGroupPrivate ("Children of " + Tag, null, null);
+				child_task.AddTaskGroup (child_task_group);
+				scheduler.Add (child_task);
+			}
+
+			///////////////////////////////
+			
 			public void DoTask ()
 			{
 				if (! cancelled) {
+					if (Debug)
+						Logger.Log.Debug ("Starting task {0}", Tag);
+					child_task_group = null;
+					Reschedule = false;
 					TouchAllTaskGroups ();
+
+					Stopwatch sw = new Stopwatch ();
+					sw.Start ();
+						
 					try {
-						if (Debug)
-							Logger.Log.Debug ("Starting task {0}", Tag);
-						Stopwatch sw = new Stopwatch ();
-						sw.Start ();
 						DoTaskReal ();
-						sw.Stop ();
-						if (Debug)
-							Logger.Log.Debug ("Finished task {0} in {1}", Tag, sw);
 					} catch (Exception ex) {
 						Logger.Log.Warn ("Caught exception in DoTaskReal");
 						Logger.Log.Warn ("        Tag: {0}", Tag);
@@ -210,12 +254,16 @@ namespace Beagle.Util {
 						Logger.Log.Warn ("   Priority: {0} ({1})", Priority, SubPriority);
 						Logger.Log.Warn (ex);
 					}
+					sw.Stop ();
+					if (Debug)
+						Logger.Log.Debug ("Finished task {0} in {1}", Tag, sw);
+
 					if (Reschedule) {
-						Reschedule = false;
 						++count;
-						ThisScheduler.Add (this);
+						scheduler.Add (this); // re-add ourselves
 					} else {
 						DecrementAllTaskGroups ();
+						scheduler = null;
 					}
 				}
 			}
@@ -240,28 +288,30 @@ namespace Beagle.Util {
 				if (cmp != 0)
 					return cmp;
 
-				cmp = other.Timestamp.CompareTo (this.Timestamp);
+				// Tasks that were added to the scheduler earlier take
+				// precedence over those that were added later.
+				cmp = DateTime.Compare (other.Timestamp, this.Timestamp);
 				if (cmp != 0)
 					return cmp;
 				
 				// Try to break any ties
-				return this.GetHashCode ().CompareTo (other.GetHashCode ());
+				return this.GetHashCode () - other.GetHashCode ();
 			}
 
 			public override string ToString ()
 			{
 				StringBuilder sb = new StringBuilder ();
 
-				sb.AppendFormat ("{0} {1}\n", Priority, SubPriority);
+				sb.AppendFormat ("{0} {1} ({2})\n", Priority, SubPriority, Timestamp);
 					
 				sb.Append (Tag + "\n");
 
 				double t = (TriggerTime - DateTime.Now).TotalSeconds;
 				if (t > 0) {
 					if (t < 120)
-						sb.AppendFormat ("Trigger in {0:0.00} seconds\n", t);
+						sb.AppendFormat ("Hold for {0:0.00} seconds\n", t);
 					else
-						sb.AppendFormat ("Trigger at {0}\n", TriggerTime);
+						sb.AppendFormat ("Hold until {0}\n", TriggerTime);
 				}
 
 				if (Creator != null)
@@ -306,24 +356,15 @@ namespace Beagle.Util {
 			return new TaskGroupPrivate (name, pre_hook, post_hook);
 		}
 
-		// We split the task group data structure into two parts:
-		// TaskGroup and TaskGroupPrivate.  The TaskGroup we hand
-		// back to the user exposes minimal functionality.
-		public abstract class TaskGroup {
-			private string name;
-			
-			protected TaskGroup (string name) {
-				this.name = name;
-			}
-			
-			public string Name {
-				get { return name; }
-			}
-
-			public abstract bool Finished { get; }
+		// The TaskGroup we hand back to the user is an interface that
+		// exposes minimal functionality.
+		public interface TaskGroup {
+			string Name { get; }
+			bool Finished { get; }
 		}
 
 		private class TaskGroupPrivate : TaskGroup {
+			private string name;
 			private int task_count = 0;
 			private bool touched = false;
 			private bool finished = false;
@@ -332,16 +373,22 @@ namespace Beagle.Util {
 
 			public TaskGroupPrivate (string name,
 						 Hook   pre_hook,
-						 Hook   post_hook) : base (name)
+						 Hook   post_hook)
 			{
+				this.name = name;
 				this.pre_hook = pre_hook;
 				this.post_hook = post_hook;
 			}
 
-			public override bool Finished {
+			public string Name {
+				get { return name; }
+			}
+
+			public bool Finished {
 				get { return finished; }
 			}
 
+			// Call this when a task is added to the task group.
 			public void Increment ()
 			{
 				if (finished)
@@ -349,6 +396,7 @@ namespace Beagle.Util {
 				++task_count;
 			}
 
+			// Call this when we execute a task in the task group.
 			public void Touch ()
 			{
 				if (finished)
@@ -367,6 +415,7 @@ namespace Beagle.Util {
 				}
 			}
 
+			// Call this after a task in the task group is complete.
 			public void Decrement ()
 			{
 				if (finished)
@@ -400,7 +449,6 @@ namespace Beagle.Util {
 
 		public interface ITaskCollector {
 
-			double GetMinimumWeight ();
 			double GetMaximumWeight ();
 
 			void PreTaskHook ();
@@ -409,107 +457,91 @@ namespace Beagle.Util {
 
 		//////////////////////////////////////////////////////////////////////////////
 
+		static private double global_delay = -1.0;
+
+		static Scheduler ()
+		{
+			string exercise;
+			exercise = Environment.GetEnvironmentVariable ("BEAGLE_EXERCISE_THE_DOG");
+
+			if (exercise != null) {
+				if (exercise.Length > 2 && exercise [0] == 't')
+					global_delay = Double.Parse (exercise.Substring (1));
+				else
+					global_delay = 0.0;
+			}
+		}
+
+		//////////////////////////////////////////////////////////////////////////////
+
+		static private Scheduler global = new Scheduler ();
+
+		static public Scheduler Global {
+			get { return global; }
+		}
+
+		//////////////////////////////////////////////////////////////////////////////
+
+		private object big_lock = new object ();
+
 		// FIXME: shutdown tasks should probably be ordered by something
 		private Queue shutdown_task_queue = new Queue ();
 
-		private ArrayList task_queue = new ArrayList ();
-		private Hashtable task_by_tag = new Hashtable ();
+		private Hashtable tasks_by_tag = new Hashtable ();
 		private int executed_task_count = 0;
 		
-		public enum AddType {
-			DeferToExisting,
-			OptionallyReplaceExisting,
-			OnlyReplaceExisting,
-			BlockUntilNoCollision // This is very dangerous!
-		};
-			
-
-		public bool Add (Task task, AddType add_type)
+		public void Add (Task task)
 		{
+			if (task == null)
+				return;
+			
 			Task old_task = null;
 
-			lock (task_queue) {
-				if (task != null) {
-					
-					if (immediate_priority_only && task.Priority != Priority.Immediate)
-						return false;
-
-					// Keep track of when immediate priority tasks are
-					// added so that we can throttle if the scheduler
-					// is being slammed with them.
-					if (task.Priority == Priority.Immediate) {
-						// Shift our times down by one
-						Array.Copy (last_immediate_times, 1, last_immediate_times, 0, 4);
-						last_immediate_times [4] = DateTime.Now;
-					}
-
-					old_task = task_by_tag [task.Tag] as Task;
-					if (old_task == task)
-						return true;
-
-					// Wait until there isn't anything in the task queue with this
-					// tag.  This is EXTREMELY DANGEROUS.  It could easily
-					// block for a long time, and might lead to weird deadlocks
-					// if used without the utmost of care.
-					// FIXME: If we are blocking until a task is executed, we should
-					// probably allow it to skip ahead in the queue.
-					if (add_type == AddType.BlockUntilNoCollision) {
-						while (old_task != null) {
-							Monitor.Wait (task_queue);
-							if (! running)
-								return false;
-							old_task = task_by_tag [task.Tag] as Task;
-						}
-					}
-
-					if (add_type == AddType.DeferToExisting
-					    && old_task != null)
-						return false;
-
-					if (add_type == AddType.OnlyReplaceExisting
-					    && old_task == null)
-						return false;
-
-					if (Debug) {
-						Logger.Log.Debug ("Adding task");
-						Logger.Log.Debug ("Tag: {0}", task.Tag);
-						if (task.Description != null)
-							Logger.Log.Debug ("Desc: {0}", task.Description);
-					}
-
-					task.Timestamp = DateTime.Now;
-					task.Schedule (this);
-
-					if (task.Priority == Priority.Shutdown) {
-						shutdown_task_queue.Enqueue (task);
-					} else {
-						int i = task_queue.BinarySearch (task);
-						if (i < 0)
-							i = ~i;
-						task_queue.Insert (i, task);
-						task_by_tag [task.Tag] = task;
-					}
+			lock (big_lock) {
+				
+				// Keep track of when immediate priority tasks are
+				// added so that we can throttle if the scheduler
+				// is being slammed with them.
+				if (task.Priority == Priority.Immediate) {
+					// Shift our times down by one
+					Array.Copy (last_immediate_times, 1, last_immediate_times, 0, 4);
+					last_immediate_times [4] = DateTime.Now;
 				}
-					
-				Monitor.Pulse (task_queue);
+				
+				// Re-adding the same task is a no-op
+				old_task = tasks_by_tag [task.Tag] as Task;
+				if (old_task == task) 
+					return;
+
+				if (Debug) {
+					Logger.Log.Debug ("Adding task");
+					Logger.Log.Debug ("Tag: {0}", task.Tag);
+					if (task.Description != null)
+						Logger.Log.Debug ("Desc: {0}", task.Description);
+				}
+
+				task.Schedule (this);
+
+				if (task.Priority == Priority.Shutdown)
+					shutdown_task_queue.Enqueue (task);
+				else
+					tasks_by_tag [task.Tag] = task;
+				
+				Monitor.Pulse (big_lock);
 			}
 
+			// If we clobbered another task, call cancel on it.
+			// This happens after we release the lock, since
+			// cancellation could result in a task group post-hook
+			// being run.
 			if (old_task != null)
 				old_task.Cancel ();
-
-			return true;
-		}
-
-		public bool Add (Task task)
-		{
-			return Add (task, AddType.OptionallyReplaceExisting);
 		}
 
 		public Task GetByTag (string tag)
 		{
-			lock (task_queue) {
-				return task_by_tag [tag] as Task;
-			}
+			lock (big_lock)
+				return tasks_by_tag [tag] as Task;
 		}
 
 		public bool ContainsByTag (string tag)
@@ -518,49 +550,10 @@ namespace Beagle.Util {
 			return task != null && !task.Cancelled;
 		}
 
-
-
-		//////////////////////////////////////////////////////////////////////////////
-
-		private string status_str = null;
-		private DateTime next_task_time;
-
-		public string GetHumanReadableStatus ()
+		public void Recompute ()
 		{
-			StringBuilder sb = new StringBuilder ();
-
-			sb.Append ("Scheduler:\n");
-
-			sb.Append (String.Format ("Count: {0}\n", executed_task_count));
-
-			if (next_task_time.Ticks > 0)
-				sb.Append (String.Format ("Next task in {0:0.00} seconds\n",
-							  (next_task_time - DateTime.Now).TotalSeconds));
-
-			if (status_str != null)
-				sb.Append ("Status: " + status_str + "\n");
-
-			lock (task_queue) {
-				int pos = 1;
-				for (int i = task_queue.Count - 1; i >= 0; --i) {
-					Task task = task_queue [i] as Task;
-					if (task == null || task.Cancelled)
-						continue;
-
-					sb.AppendFormat ("{0} ", pos);
-					sb.Append (task.ToString ());
-					sb.Append ("\n");
-
-					++pos;
-				}
-
-				if (pos == 1)
-					sb.Append ("Scheduler queue is empty.\n");
-			}
-
-			sb.Append ("\n");
-
-			return sb.ToString ();
+			lock (big_lock)
+				Monitor.Pulse (big_lock);
 		}
 
 		//////////////////////////////////////////////////////////////////////////////
@@ -581,11 +574,10 @@ namespace Beagle.Util {
 
 		public void Stop ()
 		{
-			lock (this) {
+			lock (big_lock) {
 				if (running) {
 					running = false;
-					lock (task_queue)
-						Monitor.Pulse (task_queue);
+					Monitor.Pulse (big_lock);
 				}
 			}
 		}
@@ -597,18 +589,14 @@ namespace Beagle.Util {
 		//
 
 		// FIXME: random magic constants
-		const double idle_threshold      = 5.314159 * 60; // probably should be longer
-		const double idle_ramp_up_time   = 5.271828 * 60; // probably should be longer
-		const double default_delayed_rate_factor =  9.03; // work about 1/10th of the time
-		const double default_idle_rate_factor    = 2.097; // work about 1/3rd of the time
-		const double default_maximum_delay       = 20;    // never wait for more than 20s
+		const double idle_threshold              = 5.314159 * 60; // probably should be longer
+		const double idle_ramp_up_time           = 5.271828 * 60; // probably should be longer
+		const double default_delayed_rate_factor =  9.03;         // work about 1/10th of the time
+		const double default_idle_rate_factor    = 2.097;         // work about 1/3rd of the time
+		const double maximum_delay               = 20;            // never wait for more than 20s
+		const double min_throttled_delay         = 1.5;           // never wait less than this when throttled
 
 		DateTime[] last_immediate_times = new DateTime [5];
-
-		private double GetIdleTime ()
-		{
-			return SystemInformation.InputIdleTime;
-		}
 
 		// The return value and duration_of_previous_task are both measured in seconds.
 		private double ComputeDelay (Priority priority_of_next_task,
@@ -618,11 +606,11 @@ namespace Beagle.Util {
 				return global_delay;
 
 			double rate_factor;
-
+			
 			rate_factor = 2.0;
 
 			// Do everything faster the longer we are idle.
-			double idle_time = GetIdleTime ();
+			double idle_time = SystemInformation.InputIdleTime;
 			double idle_scale = 1.0;
 			bool is_idle = false;
 			bool need_throttle = false;
@@ -662,7 +650,6 @@ namespace Beagle.Util {
 
 				break;
 
-			case Priority.Generator:
 			case Priority.Delayed:
 				rate_factor = idle_scale * default_delayed_rate_factor;
 				break;
@@ -689,13 +676,13 @@ namespace Beagle.Util {
 			    && delay < 0.5)
 				delay = 0.5;
 
-			if (delay > default_maximum_delay)
-				delay = default_maximum_delay;
+			if (delay > maximum_delay)
+				delay = maximum_delay;
 
 			// If we need to throttle, make sure we don't delay less than
 			// a second and some.
-			if (need_throttle && delay < 1.25)
-				delay = 1.25;
+			if (need_throttle && delay < min_throttled_delay)
+				delay = min_throttled_delay;
 
 			return delay;
 		}
@@ -718,105 +705,57 @@ namespace Beagle.Util {
 			return new TimeSpan (ticks);
 		}
 
-#if false
-		private void DescribeTaskQueue (string note, int i0, int i1)
-		{
-			Console.WriteLine ("----------------------");
-			Console.WriteLine (note);
-			for (int i=i0; i<i1; ++i) {
-				Task t = task_queue [i] as Task;
-				string xxx;
-				if (t == null)
-					xxx = "(null)";
-				else if (t.Cancelled)
-					xxx = t.Tag + " CANCELLED";
-				else
-					xxx = t.Tag;
-				Console.WriteLine ("{0}: {1}", i, xxx);
-			}
-			Console.WriteLine ("----------------------");
-		}
-#endif
-
-		// Remove nulls and cancelled tasks from the queue.
-		// Note: this does no locking!
-		private void CleanQueue ()
-		{
-			int i = task_queue.Count - 1;
-			while (i >= 0) {
-				Task t = task_queue [i] as Task;
-				if (t != null) {
-					if (! t.Cancelled)
-						break;
-					// Remove cancelled items from the tag hash
-					task_by_tag.Remove (t.Tag);
-				}
-				--i;
-			}
-			if (i < task_queue.Count - 1)
-				task_queue.RemoveRange  (i+1, task_queue.Count - 1 - i);
-		}
+		private string status_str = null;
 
 		private void Worker ()
 		{
-			DateTime time_of_last_task = DateTime.MinValue;
-			double   duration_of_last_task = 1;
+			DateTime end_time_of_previous_task = DateTime.MinValue;
+			double duration_of_previous_task = 0.0;
 
 			Hook pre_hook = null;
 			Hook post_hook = null;
-			ArrayList collection = new ArrayList ();
+			ArrayList to_be_executed = new ArrayList ();
 
 			while (running) {
 
-				lock (task_queue) {
+				status_str = "Finding next task to execute";
 
-					Task task = null;
-					int task_i = -1;
-					int i;
+				lock (big_lock) {
 
-					// First, remove any null or cancelled tasks
-					// we find in the task_queue.
-					CleanQueue ();
-					
-					// If the task queue is now empty, wait on our lock
-					// and then re-start our while loop
-					if (task_queue.Count == 0) {
-						next_task_time = new DateTime ();
+					// If there are no pending tasks, wait
+					// on our lock and then re-start our
+					// while loop
+					if (tasks_by_tag.Count == 0) {
 						status_str = "Waiting on empty queue";
-						Monitor.Wait (task_queue);
-						status_str = "Working";
+						Monitor.Wait (big_lock);
 						continue;
 					}
 
-					// Find the next event that is past it's trigger time.
-					i = task_queue.Count - 1;
+					// Walk across our list of tasks and find
+					// the next one to execute.
 					DateTime now = DateTime.Now;
 					DateTime next_trigger_time = DateTime.MaxValue;
-					task = null;
-					while (i >= 0) {
-						Task t = task_queue [i] as Task;
-						if (t != null && ! t.Cancelled) {
-							if (t.TriggerTime < now) {
-								task = t;
-								task_i = i; // Remember the task's position in the queue.
-								break;
-							} else {
-								// Keep track of when the next possible trigger time is.
-								if (t.TriggerTime < next_trigger_time)
-									next_trigger_time = t.TriggerTime;
-							}
-						}
-						--i;
+					Task next_task = null;
+					foreach (Task task in tasks_by_tag.Values) {
+						if (task.Blocked)
+							continue;
+						if (task.TriggerTime < now) {
+							if (next_task == null || next_task.CompareTo (task) < 0)
+								next_task = task;
+						} else if (task.TriggerTime < next_trigger_time)
+							next_trigger_time = task.TriggerTime;
 					}
 
 					// If we didn't find a task, wait for the next trigger-time
 					// and then re-start our while loop.
-					if (task == null) {
-						next_task_time = next_trigger_time;
-						status_str = "Waiting for next trigger time.";
-						Monitor.Wait (task_queue, next_trigger_time - now);
-						next_task_time = new DateTime ();
-						status_str = "Working";
+					if (next_task == null) {
+						if (next_trigger_time == DateTime.MaxValue) {
+							status_str = "Waiting for an unblocked task";
+							Monitor.Wait (big_lock);
+						} else {
+							status_str = "Waiting for the next trigger time";
+							Monitor.Wait (big_lock, next_trigger_time - now);
+						}
 						continue;
 					}
 
@@ -825,137 +764,180 @@ namespace Beagle.Util {
 
 					// How should we space things out?
 					double delay = 0;
-					delay = ComputeDelay (task.Priority, duration_of_last_task);
-					delay = Math.Min (delay, (next_trigger_time - DateTime.Now).TotalSeconds);
+					delay = ComputeDelay (next_task.Priority, duration_of_previous_task);
+					delay = Math.Min (delay, (next_trigger_time - now).TotalSeconds);
 
 					// Adjust by the time that has actually elapsed since the
 					// last task.
-					delay -= (DateTime.Now - time_of_last_task).TotalSeconds;
+					delay -= (now - end_time_of_previous_task).TotalSeconds;
 
 					// If we still need to wait a bit longer, wait for the appropriate
 					// amount of time and then re-start our while loop.
 					if (delay > 0.001) {
-						next_task_time = DateTime.Now.AddSeconds (delay);
 						status_str = "Waiting for next task.";
-						// Never wait more than 15 seconds.
-						Monitor.Wait (task_queue, TimeSpanFromSeconds (Math.Min (delay, 15)));
-						next_task_time = new DateTime ();
-						status_str = "Working";
+						Monitor.Wait (big_lock, TimeSpanFromSeconds (delay));
 						continue;
 					}
 
-					// Remove this task from the queue
-					task_queue [task_i] = null;
-					task_by_tag.Remove (task.Tag);
+					//
+					// If we've made it to this point, it is time to start
+					// executing our selected task.
+					//
 
-					if (task.Collector == null) {
+					to_be_executed.Clear ();
 
-						pre_hook = null;
-						post_hook = null;
-						collection.Add (task);
+					if (next_task.Collector == null) {
+
+						to_be_executed.Add (next_task);
 
 					} else {
 
-						// Collect stuff 
-						
-						pre_hook = new Hook (task.Collector.PreTaskHook);
-						post_hook = new Hook (task.Collector.PostTaskHook);
+						pre_hook = new Hook (next_task.Collector.PreTaskHook);
+						post_hook = new Hook (next_task.Collector.PostTaskHook);
 
-						double weight = task.Weight;
-						double min_weight = task.Collector.GetMinimumWeight ();
-						double max_weight = task.Collector.GetMaximumWeight ();
+						// Find all eligible tasks with the same collector,
+						// and add them to the collection list.
+						now = DateTime.Now;
+						foreach (Task task in tasks_by_tag.Values)
+							if (task != next_task
+							    && task.Collector == next_task.Collector
+							    && !task.Blocked
+							    && task.TriggerTime < now)
+								to_be_executed.Add (task);
 
-						collection.Add (task);
-						
-						// We left i pointing at task
-						--i;
-						while (i >= 0 && weight < max_weight) {
-							Task t = task_queue [i] as Task;
-							if (t != null
-							    && ! t.Cancelled
-							    && t.Collector == task.Collector
-							    && t.TriggerTime < now) {
+						// Order the tasks from highest to lowest priority.
+						// Our original task will always be the first item
+						// in the resulting array.
+						to_be_executed.Sort ();
+						to_be_executed.Add (next_task);
+						to_be_executed.Reverse ();
 
-								// Only include differently-prioritized tasks
-								// in the same collection if the total weight so far
-								// is below the minimum.
-								if (t.Priority != task.Priority && weight > min_weight)
-									break;
-
-								weight += t.Weight;
-								if (weight > max_weight)
-									break;
-
-								collection.Add (t);
-
-								// Remove the task from the queue and clean
-								// up the by-tag hash table.
-								task_queue [i] = null;
-								task_by_tag.Remove (t.Tag);
-							}
-							--i;
+						// Now find how many tasks can be executed before we
+						// exceed the collector's maximum weight.  If necessary,
+						// prune the list of tasks.
+						double remaining_weight;
+						remaining_weight = next_task.Collector.GetMaximumWeight ();
+						int i = 0;
+						while (i < to_be_executed.Count && remaining_weight > 0) {
+							Task task;
+							task = to_be_executed [i] as Task;
+							remaining_weight -= task.Weight;
+							++i;
 						}
+						if (i < to_be_executed.Count)
+							to_be_executed.RemoveRange (i, to_be_executed.Count - i);
 					}
 
-					// Clean the queue again
-					// (We need to do this to keep rescheduled tasks from blocking
-					// stuff from getting cleaned off the end of the queue)
-					CleanQueue ();
+					// Remove the tasks we are about to execute from our 
+					// master list.
+					foreach (Task task in to_be_executed)
+						tasks_by_tag.Remove (task.Tag);
 
-					Monitor.Pulse (task_queue);
+					// Pulse our lock, in case anyone is waiting for it.
+					Monitor.Pulse (big_lock);
 				}
 
+				// Now actually execute the set of tasks we found.
 
-				// If we actually found tasks we like, do them now.
-				if (collection.Count > 0) {
-					DateTime t1 = DateTime.Now;
-					if (pre_hook != null) {
-						try {
-							pre_hook ();
-						} catch (Exception ex) {
-							Logger.Log.Error ("Caught exception in pre_hook '{0}'", pre_hook);
-							Logger.Log.Error (ex);
-						}
-					}
-					foreach (Task task in collection) {
-						task.DoTask ();
-						++executed_task_count;
-					}
-					if (post_hook != null) {
-						try {
-							post_hook ();
-						} catch (Exception ex) {
-							Logger.Log.Error ("Caught exception in post_hook '{0}'", post_hook);
-							Logger.Log.Error (ex);
-						}
-					}
-					DateTime t2 = DateTime.Now;
+				status_str = "Executing tasks";
 
-					duration_of_last_task = (t2 - t1).TotalSeconds;
-					time_of_last_task = t2;
-
-					pre_hook = null;
-					post_hook = null;
-					collection.Clear ();
-				}
-			}
-
-			// Execute all shutdown tasks
-			while (shutdown_task_queue.Count > 0) {
-				Task t = shutdown_task_queue.Dequeue () as Task;
-				if (t != null && ! t.Cancelled && t.Priority == Priority.Shutdown) {
+				DateTime start_time = DateTime.Now;
+				if (pre_hook != null) {
 					try {
-						// FIXME: Support Pre/Post task hooks
-						t.DoTask ();
+						pre_hook ();
 					} catch (Exception ex) {
-						Logger.Log.Error ("Caught exception while performing shutdown tasks in the scheduler");
+						Logger.Log.Error ("Caught exception in pre_hook '{0}'", pre_hook);
 						Logger.Log.Error (ex);
 					}
 				}
-			}			
-			
+				foreach (Task task in to_be_executed) {
+					task.DoTask ();
+					++executed_task_count;
+				}
+				if (post_hook != null) {
+					try {
+						post_hook ();
+					} catch (Exception ex) {
+						Logger.Log.Error ("Caught exception in post_hook '{0}'", post_hook);
+						Logger.Log.Error (ex);
+					}
+				}
+
+				end_time_of_previous_task = DateTime.Now;
+				duration_of_previous_task = (end_time_of_previous_task - start_time).TotalSeconds;
+			}
+
+			// Execute all shutdown tasks
+			foreach (Task task in shutdown_task_queue)
+				if (! task.Cancelled && ! task.Blocked)
+					task.DoTask ();
+
 			if (Debug)
 				Logger.Log.Debug ("Scheduler.Worker finished");
+		}
+		
+		//////////////////////////////////////////////////////////////////////////////
+
+		public string GetHumanReadableStatus ()
+		{
+			StringBuilder sb = new StringBuilder ();
+
+			lock (big_lock) {
+				
+				ArrayList blocked_tasks = new ArrayList ();
+				ArrayList future_tasks = new ArrayList ();
+				ArrayList pending_tasks = new ArrayList ();
+
+				DateTime now = DateTime.Now;
+				foreach (Task task in tasks_by_tag.Values) {
+					if (task.Blocked)
+						blocked_tasks.Add (task);
+					else if (task.TriggerTime > now)
+						future_tasks.Add (task);
+					else
+						pending_tasks.Add (task);
+				}
+
+				blocked_tasks.Sort ();
+				blocked_tasks.Reverse ();
+				
+				future_tasks.Sort ();
+				future_tasks.Reverse ();
+
+				pending_tasks.Sort ();
+				pending_tasks.Reverse ();
+
+				sb.Append ("Scheduler:\n");
+				sb.AppendFormat ("Count: {0}\n", executed_task_count);
+
+				if (status_str != null)
+					sb.AppendFormat ("Status: {0}\n", status_str);
+
+				int pos = 1;
+				sb.Append ("\nPending Tasks:\n");
+				foreach (Task task in pending_tasks) {
+					sb.AppendFormat ("{0} {1}\n", pos, task);
+					++pos;
+				}
+				if (pos == 1)
+					sb.Append ("Scheduler queue is empty.\n");
+
+
+				if (future_tasks.Count > 0) {
+					sb.Append ("\nFuture Tasks:\n");
+					foreach (Task task in future_tasks)
+						sb.AppendFormat ("{0}\n", task);
+				}
+
+				if (blocked_tasks.Count > 0) {
+					sb.Append ("\nBlocked Tasks:\n");
+					foreach (Task task in blocked_tasks)
+						sb.AppendFormat ("{0}\n", task);
+				}
+			}
+
+			sb.Append ('\n');
+			return sb.ToString ();
 		}
 	}
 
@@ -1046,4 +1028,4 @@ namespace Beagle.Util {
 	}
 #endif
 }
-	
+

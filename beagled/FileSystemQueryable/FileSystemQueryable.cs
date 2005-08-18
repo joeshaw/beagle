@@ -39,7 +39,7 @@ namespace Beagle.Daemon.FileSystemQueryable {
 	[QueryableFlavor (Name="Files", Domain=QueryDomain.Local, RequireInotify=false)]
 	public class FileSystemQueryable : LuceneQueryable {
 
-		static public bool Debug = true;
+		static public bool Debug = false;
 
 		private const string OldExternalUriPropKey = LuceneCommon.UnindexedNamespace + "OldExternalUri";
 		private const string SplitFilenamePropKey = "beagle:Filename";
@@ -521,7 +521,8 @@ namespace Beagle.Daemon.FileSystemQueryable {
 
 			if (Directory.GetLastWriteTime (path) > attr.LastWriteTime) {
 				dir.State = DirectoryState.Dirty;
-				Logger.Log.Debug ("'{0}' is dirty", path);
+				if (Debug)
+					Logger.Log.Debug ("'{0}' is dirty", path);
 			}
 
 			if (Debug) {
@@ -609,7 +610,8 @@ namespace Beagle.Daemon.FileSystemQueryable {
 			// Danger Will Robinson!
 			// We need to use BlockUntilNoCollision to get the correct notifications
 			// in a mv a b; mv b c; mv c a situation.
-			ThisScheduler.Add (task, Scheduler.AddType.BlockUntilNoCollision);
+			// FIXME: And now that type no longer exists!
+			ThisScheduler.Add (task);
 		}
 
 		//////////////////////////////////////////////////////////////////////////
@@ -1030,7 +1032,8 @@ namespace Beagle.Daemon.FileSystemQueryable {
 			// Danger Will Robinson!
 			// We need to use BlockUntilNoCollision to get the correct notifications
 			// in a mv a b; mv b c; mv c a situation.
-			ThisScheduler.Add (task, Scheduler.AddType.BlockUntilNoCollision);
+			// FIXME: And now AddType no longer exists
+			ThisScheduler.Add (task);
 		}
 
 		//////////////////////////////////////////////////////////////////////////

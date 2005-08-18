@@ -90,7 +90,7 @@ namespace Beagle.Daemon {
 			this.read_only_mode = read_only_mode;
 
 			driver = BuildLuceneQueryingDriver (this.index_name, this.minor_version, this.read_only_mode);
-			our_uri_filter = new LuceneQueryingDriver.UriFilter (this.HitIsValidOrElse);
+			our_uri_filter = new LuceneQueryingDriver.UriFilter (this.HitIsValid);
 			our_hit_filter = new LuceneCommon.HitFilter (this.HitFilter);
 
 			// If the queryable is in read-only more, don't 
@@ -101,12 +101,14 @@ namespace Beagle.Daemon {
 			indexer = LocalIndexerHook ();
 			if (indexer == null && indexer_hook != null)
 				indexer = indexer_hook (this.index_name, this.minor_version);
-
 			indexer.FlushEvent += OnFlushEvent;
+
+			collector = new LuceneTaskCollector (indexer);
 
 			OptimizeAllEvent += OnOptimizeAllEvent;
 
-			collector = new LuceneTaskCollector (indexer);
+			// Schedule an optimize, just in case
+			ScheduleOptimize ();
 		}
 
 		protected string IndexName {
@@ -148,24 +150,6 @@ namespace Beagle.Daemon {
 		virtual protected bool HitIsValid (Uri uri)
 		{
 			return true;
-		}
-
-		// Schedule all non-valid Uris for removal.
-		private bool HitIsValidOrElse (Uri uri)
-		{
-			bool is_valid = HitIsValid (uri);
-
-			if (! is_valid && ! read_only_mode) {
-
-				// FIXME: There is probably a race here --- what if the hit
-				// becomes valid sometime between calling HitIsValid
-				// and the removal task being executed?
-
-				Scheduler.Task task = NewRemoveTask (uri);
-				ThisScheduler.Add (task, Scheduler.AddType.DeferToExisting);
-			}
-
-			return is_valid;
 		}
 
 		virtual protected bool HitFilter (Hit hit)
@@ -362,8 +346,6 @@ namespace Beagle.Daemon {
 			
 			return new FileStream (path, System.IO.FileMode.Create, FileAccess.Write);
 		}
-			
-
 
 		public void WriteDataLine (string name, string line)
 		{
@@ -547,8 +529,6 @@ namespace Beagle.Daemon {
 						     generator,
 						     new PreAddHookDelegate (this.PreAddHook),
 						     pre_flush_hook);
-
-			task.Priority = Scheduler.Priority.Generator;
 			return task;
 		}
 
@@ -631,18 +611,34 @@ namespace Beagle.Daemon {
 
 		public Scheduler.Task NewOptimizeTask ()
 		{
-			OptimizeTask task;
+			Scheduler.Task task;
 			task = new OptimizeTask (this.indexer);
 			task.Tag = "Optimize " + IndexName;
 			task.Priority = Scheduler.Priority.Delayed;
 			task.Collector = collector;
+
 			return task;
 		}
 
 		private void OnOptimizeAllEvent ()
 		{
+			ThisScheduler.Add (NewOptimizeTask ());
+		}
+
+		private void ScheduleOptimize ()
+		{
+			int segment_count;
+			segment_count = driver.SegmentCount;
+			if (segment_count <= 1)
+				return;
+
+			double optimize_delay;
+			optimize_delay = 600.0 / segment_count;
+			Logger.Log.Debug ("Will optimize {0} IN {1}s", IndexName, optimize_delay);
+
 			Scheduler.Task task;
 			task = NewOptimizeTask ();
+			task.TriggerTime = DateTime.Now.AddSeconds (optimize_delay);
 			ThisScheduler.Add (task);
 		}
 
@@ -662,11 +658,16 @@ namespace Beagle.Daemon {
 
 		private void OnFlushEvent (IIndexer source, IndexerReceipt [] receipts)
 		{
-			// Just ignore flush-complete notifications
-			// and empty arrays of receipts.
-			if (receipts == null || receipts.Length == 0)
+			// This means that our flush is complete, so we
+			// schedule an optimize and then return.
+			if (receipts == null) {
+				ScheduleOptimize ();
 				return;
+			}
 
+			if (receipts.Length == 0)
+				return;
+			
 			if (fa_store != null)
 				fa_store.BeginTransaction ();
 
@@ -745,8 +746,6 @@ namespace Beagle.Daemon {
 
 						if (please_add_a_new_task) {
 							Scheduler.Task task = NewAddTask (child);
-							// FIXME: Probably need a better priority than this
-							task.Priority = Scheduler.Priority.Generator;
 							ThisScheduler.Add (task);
 						}
 					}
@@ -798,6 +797,5 @@ namespace Beagle.Daemon {
 		{
 			return new LuceneQueryingDriver (index_name, minor_version, read_only_mode);
 		}
-	      
 	}
 }

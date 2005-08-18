@@ -47,7 +47,7 @@ namespace Beagle.Daemon.FileSystemQueryable {
 		{
 			this.queryable = queryable;
 			this.Tag = "File Crawler";
-			this.Priority = Scheduler.Priority.Generator;
+			this.Priority = Scheduler.Priority.Delayed;
 
 			this.our_post_hook = new Scheduler.Hook (PostCrawlHook);
 		}
@@ -111,7 +111,7 @@ namespace Beagle.Daemon.FileSystemQueryable {
 				Scheduler.Task task;
 				task = queryable.NewAddTask (current_generator);
 				task.AddTaskGroup (group);
-				ThisScheduler.Add (task);
+				SpawnChild (task);
 			}
 
 			Reschedule = true;
