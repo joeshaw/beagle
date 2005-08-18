@@ -38,7 +38,7 @@ namespace Beagle.Daemon {
 
 	public class TextCache {
 
-		static public bool Debug = true;
+		static public bool Debug = false;
 
 		public const string SELF_CACHE_TAG = "*self*";
 
