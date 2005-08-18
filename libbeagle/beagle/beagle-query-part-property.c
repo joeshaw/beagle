@@ -56,6 +56,19 @@ beagle_query_part_property_to_xml (BeagleQueryPart *part, GError **err)
 	
 	_beagle_query_part_append_standard_header (data, "Property", priv->logic);
 	
+	
+	switch (priv->prop_type) {
+	    case BEAGLE_PROPERTY_TYPE_TEXT:
+		    g_string_append (data, "<Type>Text</Type>");
+		    break;
+	    case BEAGLE_PROPERTY_TYPE_KEYWORD:
+		    g_string_append (data, "<Type>Keyword</Type>");
+		    break;
+	    case BEAGLE_PROPERTY_TYPE_DATE:
+		    g_string_append (data, "<Type>Date</Type>");
+		    break;
+	}
+
 	g_string_append_printf (data, "<Key>%s</Key>", priv->key);
 	g_string_append_printf (data, "<Value>%s</Value>", priv->value);
 	
