@@ -87,8 +87,6 @@ namespace Beagle.Tile {
 			values["MimeType"] = hit.MimeType;
 			values["Source"] = hit.Source;
 			values["Score"] = hit.Score.ToString ();
-			values["ScoreRaw"] = hit.ScoreRaw.ToString ();
-			values["ScoreMultiplier"] = hit.ScoreMultiplier.ToString ();
 			values["Timestamp"] = BU.StringFu.DateTimeToString (hit.Timestamp);
 			values["Path"] = hit.Path;
 			values["FileName"] = hit.FileName;

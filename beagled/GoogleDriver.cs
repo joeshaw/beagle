@@ -65,7 +65,7 @@ namespace Beagle.Daemon {
 
 			// FIXME: We don't get scoring information from Google
 			// other than the ranks.  This is a hack.
-			hit.ScoreRaw    = 0.2f / (1 + rank);
+			hit.Score    = 0.2f / (1 + rank);
 
 			hit ["Summary"]        = res.summary;
 			hit ["Snippet"]        = res.snippet;

@@ -806,13 +806,11 @@ namespace Beagle.WebService {
 	[Serializable()]
 	public class HitResult {
 
-		public int 		id;
 		public string 	uri;
 		public string 	resourceType;
 		public string 	mimeType;
 		public string 	source;
-		public double 	scoreRaw;
-		public double 	scoreMultiplier;
+		public double 	score;
 		public HitProperty[] properties;
 		//FIXME: public xxx[] data;
 		public string 	snippet;

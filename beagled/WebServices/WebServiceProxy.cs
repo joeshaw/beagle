@@ -237,9 +237,6 @@ public class SearchResult {
 public class HitResult {
 
     /// <remarks/>
-    public int id;
-
-    /// <remarks/>
     public string uri;
 
     /// <remarks/>
@@ -252,10 +249,7 @@ public class HitResult {
     public string source;
 
     /// <remarks/>
-    public double scoreRaw;
-
-    /// <remarks/>
-    public double scoreMultiplier;
+    public double score;
 
     /// <remarks/>
     public HitProperty[] properties;

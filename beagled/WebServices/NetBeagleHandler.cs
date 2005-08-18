@@ -142,9 +142,6 @@ namespace Beagle.Daemon
 							HitResult hr = hres[i];
 							Hit hit = new NetworkHit();
 			
-							//FIXME: Generate a random no. b/w 1 .. 99 and multiply by 1000000, and add to hr.id ?
-							hit.Id = hr.id; 
-					 
 							//[Uri Format] netbeagle://164.99.153.134:8888/searchToken?http:///....	
 							if (hr.uri.StartsWith(NetworkedBeagle.BeagleNetPrefix))
 								hit.Uri = new Uri(hr.uri);
@@ -157,9 +154,8 @@ namespace Beagle.Daemon
 							hit.Type = hr.resourceType;
 							hit.MimeType = hr.mimeType;
 							hit.Source = "Network";			//hit.Source = hr.source;
-							hit.ScoreRaw = hr.scoreRaw + 0.01;
-							hit.ScoreMultiplier = hr.scoreMultiplier;
-	
+							hit.Score = hr.score;
+							
 							if (hr.properties.Length  > 0)
 							foreach (HitProperty hp in hr.properties) {
 							

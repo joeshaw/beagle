@@ -40,7 +40,6 @@
 struct _BeagleHit {
 	int ref_count;
 
-	int id;
 	char *uri;
 	char *parent_uri;
 	BeagleTimestamp *timestamp;
@@ -49,10 +48,7 @@ struct _BeagleHit {
 	char *source;
 	char *source_object_name;
 
-	double score_multiplier;
-	double score_raw;
-
-	long revision;
+	double score;
 
 	GHashTable *properties;
 };

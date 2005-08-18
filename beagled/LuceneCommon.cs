@@ -688,7 +688,6 @@ namespace Beagle.Daemon {
 			hit.Timestamp = StringFu.StringToDateTime (doc.Get ("Timestamp"));
 
 			hit.Source = "lucene";
-			hit.ScoreRaw = 1.0;
 
 			AddPropertiesToHit (hit, doc, true);
 
@@ -767,7 +766,9 @@ namespace Beagle.Daemon {
 		// Queries
 		//
 
-		static private LNS.Query StringToQuery (string field_name, string text)
+		static private LNS.Query StringToQuery (string field_name,
+							string text,
+							ArrayList term_list)
 		{
 			ArrayList tokens = new ArrayList ();
 
@@ -801,6 +802,8 @@ namespace Beagle.Daemon {
 				Term term;
 				term = new Term (field_name, token);
 				query.Add (term);
+				if (term_list != null)
+					term_list.Add (term);
 			}
 
 			return query;
@@ -810,6 +813,7 @@ namespace Beagle.Daemon {
 		// limited to.
 		static protected void QueryPartToQuery (QueryPart     abstract_part,
 							bool          only_build_primary_query,
+							ArrayList     term_list,
 							out LNS.Query primary_query,
 							out LNS.Query secondary_query,
 							out HitFilter hit_filter)
@@ -832,7 +836,7 @@ namespace Beagle.Daemon {
 
 				if (part.SearchFullText) {
 					LNS.Query subquery;
-					subquery = StringToQuery ("Text", part.Text);
+					subquery = StringToQuery ("Text", part.Text, term_list);
 					if (subquery != null)
 						p_query.Add (subquery, false, false);
 
@@ -844,7 +848,7 @@ namespace Beagle.Daemon {
 
 				if (part.SearchTextProperties) {
 					LNS.Query subquery;
-					subquery = StringToQuery ("PropertyText", part.Text);
+					subquery = StringToQuery ("PropertyText", part.Text, term_list);
 					if (subquery != null) {
 						p_query.Add (subquery, false, false);
 						
@@ -870,9 +874,14 @@ namespace Beagle.Daemon {
 					field_name = PropertyToFieldName (part.Type, part.Key);
 
 				if (part.Type == PropertyType.Text)
-					primary_query = StringToQuery (field_name, part.Value);
-				else
-					primary_query = new LNS.TermQuery (new Term (field_name, part.Value));
+					primary_query = StringToQuery (field_name, part.Value, term_list);
+				else {
+					Term term;
+					term = new Term (field_name, part.Value);
+					if (term_list != null)
+						term_list.Add (term);
+					primary_query = new LNS.TermQuery (term);
+				}
 
 				// Properties can live in either index
 				if (! only_build_primary_query && primary_query != null)
@@ -905,6 +914,7 @@ namespace Beagle.Daemon {
 					LNS.Query p_subq, s_subq;
 					HitFilter sub_hit_filter; // FIXME: This is (and must be) ignored
 					QueryPartToQuery (sub_part, only_build_primary_query,
+							  term_list,
 							  out p_subq, out s_subq, out sub_hit_filter);
 					if (p_subq != null)
 						p_query.Add (p_subq, false, false);

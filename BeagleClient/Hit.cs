@@ -38,9 +38,6 @@ namespace Beagle {
     
 	public class Hit: Versioned, IComparable {
 
-		// A unique ID.  id <= 0 means 'undefined'.
-		private int id = 0;
-
 		// A URI we can use to locate the source of this match.
 		private Uri uri = null;
 
@@ -63,8 +60,7 @@ namespace Beagle {
 		private string source_object_name = null;
 
 		// High scores imply greater relevance.
-		private double scoreRaw = 0.0;
-		private double scoreMultiplier = 1.0;
+		private double score = 0.0;
 
 		private ArrayList properties = new ArrayList ();
 		private bool sorted = true;
@@ -84,14 +80,6 @@ namespace Beagle {
 		private DirectoryInfo directoryInfo = null;
 
 		//////////////////////////
-
-		// FIXME: Thisn't used for anything, and should
-		// be removed.
-		[XmlAttribute]
-		public int Id {
-			get { return id; }
-			set { id = value; }
-		}
 
 		[XmlIgnore]
 		public Uri Uri {
@@ -165,30 +153,10 @@ namespace Beagle {
 			set { source_object_name = value; }
 		}
 
+		[XmlAttribute]
 		public double Score {
-			get { return scoreRaw * scoreMultiplier; }
-		}
-
-		[XmlAttribute]
-		public double ScoreRaw {
-			get { return scoreRaw; }
-			set { scoreRaw = value; }
-		}
-
-		[XmlAttribute]
-		public double ScoreMultiplier {
-			get { return scoreMultiplier; }
-			set { 
-				scoreMultiplier = value;
-				if (scoreMultiplier < 0) {
-					Logger.Log.Warn ("Invalid ScoreMultiplier={0} for {1}", scoreMultiplier, Uri);
-					scoreMultiplier = 0;
-				} else if (scoreMultiplier > 1) {
-					Logger.Log.Warn ("Invalid ScoreMultiplier={0} for {1}", scoreMultiplier, Uri);
-					scoreMultiplier = 1;
-
-				}
-			}
+			get { return score; }
+			set { score = value; }
 		}
 
 		//////////////////////////

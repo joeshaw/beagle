@@ -48,12 +48,7 @@ G_CONST_RETURN char *beagle_hit_get_parent_uri (BeagleHit *hit);
 
 BeagleTimestamp *beagle_hit_get_timestamp (BeagleHit *hit);
 
-long beagle_hit_get_revision (BeagleHit *hit);
-int beagle_hit_get_id (BeagleHit *hit);
-
 double beagle_hit_get_score (BeagleHit *hit);
-double beagle_hit_get_score_multiplier (BeagleHit *hit);
-double beagle_hit_get_score_raw (BeagleHit *hit);
 
 G_CONST_RETURN char *beagle_hit_get_property (BeagleHit *hit, const char *key);
 BeagleProperty *beagle_hit_lookup_property (BeagleHit *hit, const char *key);

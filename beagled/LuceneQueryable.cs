@@ -637,7 +637,7 @@ namespace Beagle.Daemon {
 
 			double optimize_delay;
 			optimize_delay = 600.0 / segment_count;
-			Logger.Log.Debug ("Will optimize {0} IN {1}s", IndexName, optimize_delay);
+			Logger.Log.Debug ("Will optimize {0} in {1:0.0}s", IndexName, optimize_delay);
 
 			Scheduler.Task task;
 			task = NewOptimizeTask ();

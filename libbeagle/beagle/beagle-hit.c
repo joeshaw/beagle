@@ -77,38 +77,6 @@ beagle_hit_get_timestamp (BeagleHit *hit)
 	return hit->timestamp;
 }
 
-/** 
- * beagle_hit_get_revision:
- * @hit: a #BeagleHit
- *
- * Fetches the revision of the given #BeagleHit.
- *
- * Return value: the revision of the #BeagleHit.
- **/
-long 
-beagle_hit_get_revision (BeagleHit *hit)
-{
-	g_return_val_if_fail (hit != NULL, -1);
-	
-	return hit->revision;
-}
-
-/**
- * beagle_hit_get_id:
- * @hit: a #BeagleHit
- *
- * Fetches the id of the given #BeagleHit.
- *
- * Return value: the id of the #BeagleHit.
- **/
-int 
-beagle_hit_get_id (BeagleHit *hit)
-{
-	g_return_val_if_fail (hit != NULL, -1);
-	
-	return hit->id;
-}
-
 /**
  * beagle_hit_get_type:
  * @hit: a #BeagleHit
@@ -187,39 +155,7 @@ beagle_hit_get_score (BeagleHit *hit)
 {
 	g_return_val_if_fail (hit != NULL, -1);
 
-	return hit->score_raw * hit->score_multiplier;
-}
-
-/**
- * beagle_hit_get_score_multiplier:
- * @hit: a #BeagleHit
- *
- * Fetches the score multiplier of the given #BeagleHit.
- *
- * Return value: the score multiplier of the #BeagleHit.
- **/
-double
-beagle_hit_get_score_multiplier (BeagleHit *hit)
-{
-	g_return_val_if_fail (hit != NULL, -1);
-
-	return hit->score_multiplier;
-}
-
-/**
- * beagle_hit_get_score_raw:
- * @hit: a #BeagleHit
- *
- * Fetches the raw score of the given #BeagleHit.
- *
- * Return value: the raw score of the #BeagleHit.
- **/
-double
-beagle_hit_get_score_raw (BeagleHit *hit)
-{
-	g_return_val_if_fail (hit != NULL, -1);
-
-	return hit->score_raw;
+	return hit->score;
 }
 
 BeagleHit *
@@ -364,8 +300,8 @@ _beagle_hit_to_xml (BeagleHit *hit, GString *data)
 	else
 		tmp = _beagle_timestamp_get_start ();
 
-	g_string_append_printf (data, "<Hit Timestamp=\"%s\" Revision=\"%ld\" Id=\"%d\"", 
-				tmp, hit->revision, hit->id);
+	g_string_append_printf (data, "<Hit Timestamp=\"%s\"",
+				tmp);
 
 	g_free (tmp);
 
@@ -375,8 +311,8 @@ _beagle_hit_to_xml (BeagleHit *hit, GString *data)
 	g_string_append_printf (data, " Source=\"%s\" SourceObjectName=\"%s\"", 
 				hit->source, hit->source_object_name);
 
-	g_string_append_printf (data, " ScoreRaw=\"%f\" ScoreMultiplier=\"%f\"", 
-				hit->score_raw, hit->score_multiplier);
+	g_string_append_printf (data, " Score=\"%f\"",
+				hit->score);
 
 	g_string_append (data, ">");
 

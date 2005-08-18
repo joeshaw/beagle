@@ -113,12 +113,15 @@ namespace Beagle.Daemon {
 			ArrayList all_hit_filters = new ArrayList ();
 			all_hit_filters.Add (hit_filter);
 
+			ArrayList term_list = new ArrayList ();
+
 			foreach (QueryPart part in query.Parts) {
 				LNS.Query primary_part_query;
 				LNS.Query secondary_part_query;
 				HitFilter part_hit_filter;
 				QueryPartToQuery (part,
 						  false, // we want both primary and secondary queries
+						  part.Logic == QueryPartLogic.Required ? term_list : null,
 						  out primary_part_query,
 						  out secondary_part_query,
 						  out part_hit_filter);
@@ -166,11 +169,13 @@ namespace Beagle.Daemon {
 
 			// Create the searchers that we will need.
 
+			IndexReader primary_reader;
 			LNS.IndexSearcher primary_searcher;
 			IndexReader secondary_reader = null;
 			LNS.IndexSearcher secondary_searcher = null;
 
-			primary_searcher = new LNS.IndexSearcher (PrimaryStore);
+			primary_reader = IndexReader.Open (PrimaryStore);
+			primary_searcher = new LNS.IndexSearcher (primary_reader);
 			
 			if (SecondaryStore != null) {
 				secondary_reader = IndexReader.Open (SecondaryStore);
@@ -270,10 +275,12 @@ namespace Beagle.Daemon {
 			if (primary_matches == null || ! primary_matches.ContainsTrue ())
 				return;
 
-			GenerateQueryResults (primary_searcher,
+			GenerateQueryResults (primary_reader,
+					      primary_searcher,
 					      secondary_searcher,
 					      primary_matches,
 					      result,
+					      term_list,
 					      query.MaxHits,
 					      DateTime.MinValue,
 					      DateTime.MaxValue,
@@ -283,6 +290,7 @@ namespace Beagle.Daemon {
 			// Finally, we clean up after ourselves.
 			//
 			
+			primary_reader.Close ();
 			if (secondary_reader != null)
 				secondary_reader.Close ();
 			primary_searcher.Close ();
@@ -431,15 +439,65 @@ namespace Beagle.Daemon {
 
 		////////////////////////////////////////////////////////////////
 
+		static private void ScoreHits (Hashtable   hits_by_id,
+					       IndexReader reader,
+					       ICollection term_list)
+		{
+			Stopwatch sw;
+			sw = new Stopwatch ();
+			sw.Start ();
+
+			LNS.Similarity similarity;
+			similarity = LNS.Similarity.GetDefault ();
+
+			foreach (Term term in term_list) {
+
+				double idf;
+				idf = similarity.Idf (reader.DocFreq (term), reader.MaxDoc ());
+
+				int hit_count;
+				hit_count = hits_by_id.Count;
+
+				TermDocs term_docs;
+				term_docs = reader.TermDocs (term);
+				while (term_docs.Next () && hit_count > 0) {
+					
+					int id;
+					id = term_docs.Doc ();
+
+					Hit hit;
+					hit = hits_by_id [id] as Hit;
+					if (hit != null) {
+						double tf;
+						tf = similarity.Tf (term_docs.Freq ());
+						hit.Score += tf * idf;
+						--hit_count;
+					}
+				}
+			}
+
+			sw.Stop ();
+			Logger.Log.Debug ("Scored {0} hits in {1}", hits_by_id.Count, sw);
+		}
+
+		////////////////////////////////////////////////////////////////
+
+		private class DocAndId {
+			public Document Doc;
+			public int Id;
+		}
+
 		//
 		// Given a set of hits, broadcast some set out as our query
 		// results.
 		//
 
-		private static void GenerateQueryResults (LNS.IndexSearcher primary_searcher,
+		private static void GenerateQueryResults (IndexReader       primary_reader,
+							  LNS.IndexSearcher primary_searcher,
 							  LNS.IndexSearcher secondary_searcher,
 							  BetterBitArray    primary_matches,
 							  IQueryResult      result,
+							  ICollection       query_term_list,
 							  int               max_results,
 							  DateTime          min_date,
 							  DateTime          max_date,
@@ -510,13 +568,17 @@ namespace Beagle.Daemon {
 						continue;
 				}
 
+				DocAndId doc_and_id = new DocAndId ();
+				doc_and_id.Doc = doc;
+				doc_and_id.Id = i;
+
 				// Add the document to the appropriate data structure.
 				// We use the timestamp_num as the score, so high
 				// scores correspond to more-recent timestamps.
 				if (all_docs != null)
-					all_docs.Add (doc);
+					all_docs.Add (doc_and_id);
 				else
-					top_docs.Add (timestamp_num, doc);
+					top_docs.Add (timestamp_num, doc_and_id);
 			}
 
 			a.Stop ();
@@ -532,13 +594,18 @@ namespace Beagle.Daemon {
 			ArrayList final_list_of_hits;
 			final_list_of_hits = new ArrayList (final_list_of_docs.Count);
 
+			// This is used only for scoring
+			Hashtable hits_by_id = null;
+			hits_by_id = new Hashtable ();
+
 			// If we aren't using the secondary index, the next step is
 			// very straightforward.
 			if (secondary_searcher == null) {
 
-				foreach (Document doc in final_list_of_docs) {
+				foreach (DocAndId doc_and_id in final_list_of_docs) {
 					Hit hit;
-					hit = DocumentToHit (doc);
+					hit = DocumentToHit (doc_and_id.Doc);
+					hits_by_id [doc_and_id.Id] = hit;
 					final_list_of_hits.Add (hit);
 				}
 
@@ -553,13 +620,11 @@ namespace Beagle.Daemon {
 				LuceneBitArray secondary_matches;
 				secondary_matches = new LuceneBitArray (secondary_searcher);
 
-				foreach (Document primary_doc in final_list_of_docs) {
-				
+				foreach (DocAndId doc_and_id in final_list_of_docs) {
 					Hit hit;
-					hit = DocumentToHit (primary_doc);
-
+					hit = DocumentToHit (doc_and_id.Doc);
+					hits_by_id [doc_and_id.Id] = hit;
 					hits_by_uri [hit.Uri] = hit;
-
 					secondary_matches.AddUri (hit.Uri);
 				}
 
@@ -589,6 +654,8 @@ namespace Beagle.Daemon {
 					final_list_of_hits.Add (hit);
 				}
 			}
+
+			ScoreHits (hits_by_id, primary_reader, query_term_list);
 
 			b.Stop ();
 
