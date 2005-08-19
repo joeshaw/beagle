@@ -160,7 +160,8 @@ inotify_snarf_events (int fd, int timeout_ms, int *nr, void **buffer_out)
 	/* Wait for the file descriptor to be ready to read. */
 	ret = poll (&pollfd, 1, timeout_ms);
 	if (ret == -1) {
-		perror ("poll");
+		if (errno != EINTR)
+			perror ("poll");
 		return;
 	} else if (ret == 0)
 		return;
