@@ -105,7 +105,6 @@ namespace Beagle.Daemon.EvolutionMailDriver {
 
 		public override void Start () 
 		{
-			Logger.Log.Info ("Starting Evolution mail backend");
 			base.Start ();
 			
 			ExceptionHandlingThread.Start (new ThreadStart (StartWorker));
