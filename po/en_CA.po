@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: beagle\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2005-08-13 14:11-0400\n"
-"PO-Revision-Date: 2005-08-13 13:55-0400\n"
+"POT-Creation-Date: 2005-08-19 00:45-0400\n"
+"PO-Revision-Date: 2005-08-19 13:55-0400\n"
 "Last-Translator: Adam Weinberger <adamw@gnome.org>\n"
 "Language-Team: Canadian English <adamw@gnome.org>\n"
 "MIME-Version: 1.0\n"
@@ -31,11 +31,11 @@ msgstr "Disable Searching"
 
 #: Best/BestTray.cs:150
 msgid ""
-"You're about to close the search tray. The search tray is automatically "
-"started, do you want to disable it?"
+"You are about to close the search tray. The search tray is automatically "
+"started at login-time. Would you like to disable it for future sessions?"
 msgstr ""
-"You re about to close the search tray. The search tray is automatically "
-"started. Do you want to disable it?"
+"You are about to close the search tray. The search tray is automatically "
+"started at login-time. Would you like to disable it for future sessions?"
 
 #: Best/BestTray.cs:201
 msgid "No Recent Searches"
@@ -190,27 +190,27 @@ msgstr "Conversation in {0}"
 msgid "Conversation with {0}"
 msgstr "Conversation with {0}"
 
-#: Tiles/TileMailMessage.cs:79
+#: Tiles/TileMailMessage.cs:81
 msgid "No Subject"
 msgstr "No Subject"
 
-#: Tiles/TileMailMessage.cs:86
+#: Tiles/TileMailMessage.cs:88
 msgid "To"
 msgstr "To"
 
-#: Tiles/TileMailMessage.cs:86
+#: Tiles/TileMailMessage.cs:88
 msgid "From"
 msgstr "From"
 
-#: Tiles/TileMailMessage.cs:114
+#: Tiles/TileMailMessage.cs:116
 msgid "Sent"
 msgstr "Sent"
 
-#: Tiles/TileMailMessage.cs:114
+#: Tiles/TileMailMessage.cs:116
 msgid "Received"
 msgstr "Received"
 
-#: Tiles/TileMailMessage.cs:119
+#: Tiles/TileMailMessage.cs:124
 msgid "Email attachment"
 msgstr "Email attachment"
 
