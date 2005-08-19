@@ -477,68 +477,68 @@ namespace Beagle.Filters {
 
 		private void ExtractMetaData (Input sumStream, Input docSumStream)
 		{
-			DocMetaData sumMeta = null;
+			DocMetaData sumMeta = new DocMetaData ();
 			if (sumStream != null)
-				sumMeta = Msole.MetadataReadReal (sumStream);
+				Msole.MetadataRead (sumStream, sumMeta);
 			else
 				Logger.Log.Error ("SummaryInformationStream not found in {0}", FileName);
 
-			DocMetaData docSumMeta = null;
+			DocMetaData docSumMeta = new DocMetaData ();
 			if (docSumStream != null)
-				docSumMeta = Msole.MetadataReadReal (docSumStream);
+				Msole.MetadataRead (docSumStream, docSumMeta);
 			else
 				Logger.Log.Error ("DocumentSummaryInformationStream not found in {0}", FileName);
 
 			DocProp prop = null;
 			string str = null;
 			if (sumMeta != null) {
-				prop = sumMeta.GetProp ("dc:title");
+				prop = sumMeta.Lookup ("dc:title");
 				if (prop != null)
-					str = Gsf.Global.GetPropValStr (prop);
+					str = (string) prop.Val;
 				if (str != null && str.Length > 0)
 					AddProperty (Beagle.Property.New ("dc:title", str));
 
 				str = null;
-				prop = sumMeta.GetProp ("dc:subject");			
+				prop = sumMeta.Lookup ("dc:subject");			
 				if (prop != null)
-					str = Gsf.Global.GetPropValStr (prop);			
+					str = (string) prop.Val;
 				if (str != null && str.Length > 0)
 					AddProperty (Beagle.Property.New ("dc:subject", str));
 
 				str = null;
-				prop = sumMeta.GetProp ("dc:description");		
+				prop = sumMeta.Lookup ("dc:description");		
 				if (prop != null)
-					str = Gsf.Global.GetPropValStr (prop);			
+					str = (string) prop.Val;
 				if (str != null && str.Length > 0)
 					AddProperty (Beagle.Property.New ("dc:description", str));
 
 				str = null;
-				prop = sumMeta.GetProp ("gsf:keywords");
+				prop = sumMeta.Lookup ("gsf:keywords");
 				if (prop != null)
-					str = Gsf.Global.GetPropValStr (prop);
+					str = (string) prop.Val;
 				if (str != null && str.Length > 0)
 					AddProperty (Beagle.Property.New ("fixme:keywords", str));
 
 				str = null;
-				prop = sumMeta.GetProp ("gsf:creator");
+				prop = sumMeta.Lookup ("gsf:creator");
 				if (prop != null)
-					str = Gsf.Global.GetPropValStr (prop);
+					str = (string) prop.Val;
 				if (str != null && str.Length > 0)
 					AddProperty (Beagle.Property.New ("fixme:author", str));
 			}
 			
 			if (docSumMeta != null) {
 				str = null;
-				prop = docSumMeta.GetProp ("gsf:company");
+				prop = docSumMeta.Lookup ("gsf:company");
 				if (prop != null)
-					str = Gsf.Global.GetPropValStr (prop);
+					str = (string) prop.Val;
 				if (str != null && str.Length > 0)
 					AddProperty (Beagle.Property.New ("fixme:company", str));
 
 				str = null;
-				prop = docSumMeta.GetProp ("gsf:slide-count");
+				prop = docSumMeta.Lookup ("gsf:slide-count");
 				if (prop != null)
-					str = Gsf.Global.GetPropValStr (prop);
+					str = (string) prop.Val;
 				if (str != null && str.Length > 0)
 					AddProperty (Beagle.Property.New ("fixme:slide-count", str));
 			}
@@ -573,7 +573,8 @@ namespace Beagle.Filters {
 				}
 				ExtractMetaData (sumStream, docSumStream);
 			} catch (Exception e) {
-				Logger.Log.Error ("Exception {0} occurred duing DoPullProperties.", e.Message);
+				Logger.Log.Error ("Exception occurred duing DoPullProperties.");
+				Logger.Log.Error (e);
 				Finished ();
 			}
 		}

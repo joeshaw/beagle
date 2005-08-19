@@ -12,7 +12,6 @@ endif
 SUBDIRS +=			\
 	Util			\
 	images			\
-	templates		\
 	glue			\
 	BeagleClient            \
 	Tiles			\

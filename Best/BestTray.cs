@@ -171,8 +171,8 @@ namespace Best {
 		}
 		
 		void QuickSearchEvent (object sender, EventArgs args) 
-		{			
-			string quickQuery = (string)((Gtk.Widget) sender).Data ["Query"];
+		{		
+			string quickQuery = (string) menu_to_query_map [sender];
 						
 			if (! win.WindowIsVisible) {
 				win.Present ();
@@ -187,11 +187,17 @@ namespace Best {
 		{			
 			win.ClearHistory ();
 		}
-		
+
+		private void DetachWidget (Gtk.Widget attach_widget, Gtk.Menu menu)
+		{
+		}
+
+		Hashtable menu_to_query_map = null;
+
 		private Gtk.Menu MakeMenu (Gtk.Widget parent) 
 		{
 			Gtk.Menu menu = new Gtk.Menu ();
-			menu.AttachToWidget (parent, null);
+			menu.AttachToWidget (parent, new Gtk.MenuDetachFunc (DetachWidget));
 			
 			Gtk.ImageMenuItem item;
 						
@@ -201,17 +207,20 @@ namespace Best {
 				item = new Gtk.ImageMenuItem (Catalog.GetString ("No Recent Searches"));
 				item.Sensitive = false;
 				menu.Append (item);
+				menu_to_query_map = null;
 			} else {
 				item = new Gtk.ImageMenuItem (Catalog.GetString ("Recent Searches"));
 				item.Sensitive = false;
 				item.Image = new Gtk.Image (Images.GetPixbuf ("icon-search.png"));
 				menu.Append (item);
 
+				menu_to_query_map = new Hashtable ();
+
 				foreach (string s in list) {
 					item = new Gtk.ImageMenuItem (s);
-					item.Data ["Query"] = s;
 					item.Activated += new EventHandler (QuickSearchEvent);
 					menu.Append (item);
+					menu_to_query_map [item] = s;
 				}
 			}			
 

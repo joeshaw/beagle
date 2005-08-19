@@ -62,8 +62,8 @@ namespace Best {
 		}
 		
 		public void FocusEntry () {
-			entry.SelectRegion (0, -1);
-			entry.GtkEntry.GrabFocus ();
+			//entry.SelectRegion (0, -1);
+			entry.GrabFocus ();
 		}
 
 		public void FocusEntryHandler (object o, EventArgs args) {
@@ -268,14 +268,16 @@ namespace Best {
 
 		//////////////////////////
 
-		private Gnome.Entry entry;
+		private Gtk.Entry entry;
+		private Gtk.ListStore history;
+
+		private Gtk.ListStore filter_data;
 		
 		private TileCanvas canvas;
 		private SimpleRootTile root;
 		private Gtk.Label page_label;
 		private Gtk.Button back_button;
 		private Gtk.Button forward_button;
-		private ArrayList menu_items = new ArrayList ();
 
 		private Gtk.Button StockButton (string stockid, string label)
 		{
@@ -294,49 +296,70 @@ namespace Best {
 			return button;
 		}
 
-		private Gtk.OptionMenu TypesOptionMenu ()
+		private Gtk.ComboBox FilterComboBox ()
 		{
-			Gtk.OptionMenu opt = new Gtk.OptionMenu ();
+			filter_data = new Gtk.ListStore (new Type[] { typeof (string), typeof (string) });
+			
+			Gtk.TreeIter iter;
 
-			Gtk.MenuItem mi;
-			mi = new TypeMenuItem (Catalog.GetString ("Anywhere"), null);
-			this.menu_items.Add (mi);
-			mi = new TypeMenuItem (Catalog.GetString ("in Files"), "File");
-			this.menu_items.Add (mi);
-			mi = new TypeMenuItem (Catalog.GetString ("in Addressbook"), "Contact");
-			this.menu_items.Add (mi);
-			mi = new TypeMenuItem (Catalog.GetString ("in Mail"), "MailMessage");
-			this.menu_items.Add (mi);
-			mi = new TypeMenuItem (Catalog.GetString ("in Web Pages"), "WebHistory");
-			this.menu_items.Add (mi);
-			mi = new TypeMenuItem (Catalog.GetString ("in Chats"), "IMLog");
-			this.menu_items.Add (mi);
+			iter = filter_data.Append ();
+			filter_data.SetValue (iter, 0, Catalog.GetString ("Anywhere"));
+			filter_data.SetValue (iter, 1, null);
 
-			Gtk.Menu menu = new Gtk.Menu ();
-			foreach (Gtk.MenuItem item in this.menu_items)
-				menu.Append (item);
-			opt.Menu = menu;
-		
-			return opt;
+			iter = filter_data.Append ();
+			filter_data.SetValue (iter, 0, Catalog.GetString ("in Files"));
+			filter_data.SetValue (iter, 1, "File");
+
+			iter = filter_data.Append ();
+			filter_data.SetValue (iter, 0, Catalog.GetString ("in Addressbook"));
+			filter_data.SetValue (iter, 1, "Contact");
+
+			iter = filter_data.Append ();
+			filter_data.SetValue (iter, 0, Catalog.GetString ("in Mail"));
+			filter_data.SetValue (iter, 1, "MailMessage");
+
+			iter = filter_data.Append ();
+			filter_data.SetValue (iter, 0, Catalog.GetString ("in Web Pages"));
+			filter_data.SetValue (iter, 1, "WebHistory");
+
+			iter = filter_data.Append ();
+			filter_data.SetValue (iter, 0, Catalog.GetString ("in Chats"));
+			filter_data.SetValue (iter, 1, "IMLog");
+
+			Gtk.ComboBox combo = new Gtk.ComboBox (filter_data);
+			combo.Active = 0;
+
+			Gtk.CellRendererText renderer = new Gtk.CellRendererText ();
+			combo.PackStart (renderer, false);
+			combo.SetAttributes (renderer, new object[] { "text", 0 });
+
+			return combo;
 		}
-
+		
 		private Gtk.Widget CreateContents ()
 		{
 			Gtk.HBox entryLine = new HBox (false, 3);
 
 			Gtk.Label words = new Gtk.Label (Catalog.GetString ("Search terms:"));
 			entryLine.PackStart (words, false, false, 3);
+
+			history = new Gtk.ListStore (new Type[] { typeof (string) });
+
+			Gtk.EntryCompletion comp = new Gtk.EntryCompletion ();
+			comp.Model = history;
+			comp.TextColumn = 0;
 			
-			entry = new Gnome.Entry ("");
+			entry = new Gtk.Entry ("");
 			entry.Activated += new EventHandler (this.DoSearch);
+			entry.Completion = comp;
 			entryLine.PackStart (entry, true, true, 3);
 
 			words = new Gtk.Label ("");
 			entryLine.PackStart (words, false, false, 3);
 
-			Gtk.OptionMenu types = TypesOptionMenu ();
-			types.Changed += new EventHandler (this.ChangeType);
-			entryLine.PackStart (types, false, false, 3);
+			Gtk.ComboBox combo = FilterComboBox ();
+			combo.Changed += new EventHandler (this.ChangeType);
+			entryLine.PackStart (combo, false, false, 3);
 
 			Gtk.HBox buttonContents = new HBox (false, 0);
 			Gtk.Widget buttonImg = Beagle.Images.GetWidget ("icon-search.png");
@@ -437,31 +460,29 @@ namespace Best {
 		
 		private void DoSearch (object o, EventArgs args)
 		{
-			if (entry.GtkEntry.Text != null && entry.GtkEntry.Text != "")
-				Search (entry.GtkEntry.Text);
+			if (entry.Text != null && entry.Text != "")
+				Search (entry.Text);
 		}
 
 		//private string lastType = null;
 
 		private void ChangeType (object o, EventArgs args)
 		{
-			Gtk.OptionMenu opt = (Gtk.OptionMenu) o;
-			TypeMenuItem mi = (TypeMenuItem) this.menu_items [opt.History];
+			Gtk.ComboBox combo = (Gtk.ComboBox) o;
+			string hit_type = null;
+			Gtk.TreeIter iter;
 
-			if (this.hit_type == mi.Type)
+			if (combo.GetActiveIter (out iter))
+				hit_type = (string) filter_data.GetValue (iter, 1);
+
+			if (this.hit_type == hit_type)
 				return;
 
-			this.hit_type = mi.Type;
+			this.hit_type = hit_type;
 
 			root.SetSource (this.hit_type);
 			root.HitCollection.PageFirst ();
 			UpdatePage ();
-
-			//if (this.query != null && lastType != this.hit_type) {
-			//	Search (entry.GtkEntry.Text);
-			//	lastType = this.hit_type;
-			//}
-			//UpdatePage ();
 		}
 
 		//////////////////////////
@@ -515,23 +536,23 @@ namespace Best {
 				query.SendAsync ();
 				SetBusy (true);
 			} catch (Beagle.ResponseMessageException e) {
-				QueueDelayedQuery (entry.GtkEntry.Text);
+				QueueDelayedQuery (entry.Text);
 				
 				/* To translators: {0} represents the current query keywords */
 				root.Error (String.Format (Catalog.GetString ("The query for <i>{0}</i> failed." +
-						    "<br>The likely cause is that the beagle daemon isn't running."), entry.GtkEntry.Text));
+						    "<br>The likely cause is that the beagle daemon isn't running."), entry.Text));
 				root.OfferDaemonRestart = true;
 			} catch (Exception e) {
 				/* To translators: {0} represents the current query keywords, {1} contains the errormessage */
 				root.Error (String.Format (Catalog.GetString ("The query for <i>{0}</i> failed with error:<br>{1}<br>"), 
-							   entry.GtkEntry.Text, e));
+							   entry.Text, e));
 			}
 		}
 
 		private void Search (String searchString)
 		{
+			entry.Text = searchString;
 			StoreSearch (searchString);
-			entry.GtkEntry.Text = searchString;
 
 			if (query != null) {
 				try { DetachQuery (); } catch (ObjectDisposedException e) {}
@@ -556,36 +577,44 @@ namespace Best {
 			UpdatePage ();
 		}
 
-		ArrayList recentSearches;
-		
-		private void StoreSearch (string newQuery)
+		private void StoreSearch (string query)
 		{
-			if (recentSearches == null) {
-				recentSearches = new ArrayList ();
+			Gtk.TreeIter iter;
+
+			if (history.GetIterFirst (out iter)) {
+				string val;
+
+				do {
+					val = (string) history.GetValue (iter, 0);
+
+					if (val == query)
+						history.Remove (ref iter);
+				} while (val != query && history.IterNext (ref iter));
 			}
 
-			if (newQuery != null && newQuery != "") {
-				int duplicate = recentSearches.IndexOf (newQuery);
-				if (duplicate >= 0) {
-					recentSearches.RemoveAt (duplicate);
-				}
-				recentSearches.Insert (0, newQuery);				
-			}
-
-			if (recentSearches.Count == 11) {
-				recentSearches.RemoveAt (10);
-			}
+			iter = history.Insert (0);
+			history.SetValue (iter, 0, query);
 		}
 		
 		public ArrayList RetriveSearches () 
 		{
-			return recentSearches;
+			ArrayList searches = new ArrayList ();
+
+			int i = 0;
+			foreach (object[] o in history) {
+				searches.Add (o[0]);
+				i++;
+
+				if (i == 10)
+					break;
+			}
+
+			return searches;
 		}
 
 		public void ClearHistory ()
 		{
-			entry.ClearHistory ();
-			recentSearches.Clear ();
+			history.Clear ();
 		}
 		
 		public void QuickSearch (string query) 

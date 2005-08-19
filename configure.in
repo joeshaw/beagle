@@ -263,7 +263,7 @@ AC_SUBST(LIBGECKOGLUE_LIBS)
 
 dnl -------------------------------------------------------
 
-PKG_CHECK_MODULES(BEAGLE_UI, gtk-sharp glade-sharp gecko-sharp = 0.6 gnome-sharp gconf-sharp gmime-sharp >= 2.1.15)
+PKG_CHECK_MODULES(BEAGLE_UI, gtk-sharp-2.0 glade-sharp-2.0 gecko-sharp-2.0 gnome-sharp-2.0 gconf-sharp-2.0 gmime-sharp >= 2.1.16)
 AC_SUBST(BEAGLE_UI_LIBS)
 
 dnl ----------------------------------------------
@@ -285,7 +285,7 @@ AC_ARG_ENABLE([evolution-sharp],
 	 enable_evo_sharp=$enableval,
 	 enable_evo_sharp=auto)
 
-EVOLUTION_SHARP_REQUIRED=0.8
+EVOLUTION_SHARP_REQUIRED=0.9
 AC_SUBST(EVO_SHARP_LIBS)
 EVO_SHARP_PREFIX=`$PKG_CONFIG --variable=prefix evolution-sharp`
 
@@ -327,7 +327,7 @@ dnl ----------------------------------------------
 
 dnl beagled
 
-PKG_CHECK_MODULES(GSF_SHARP, gsf-sharp >= 0.2, enable_gsf_sharp=yes, enable_gsf_sharp=no)
+PKG_CHECK_MODULES(GSF_SHARP, gsf-sharp >= 0.4, enable_gsf_sharp=yes, enable_gsf_sharp=no)
 AM_CONDITIONAL(ENABLE_GSF_SHARP, test "x$enable_gsf_sharp" = "xyes")
 
 dnl ----------------------------------------------
@@ -353,7 +353,7 @@ else
 fi
 AC_SUBST(EXIF_SOVERSION)
 
-PKG_CHECK_MODULES(BEAGLED, gmime-sharp >= 2.1.15 gtk-sharp gconf-sharp)
+PKG_CHECK_MODULES(BEAGLED, gmime-sharp >= 2.1.16 gtk-sharp-2.0 gconf-sharp-2.0)
 BEAGLED_LIBS="$BEAGLED_LIBS $EVO_SHARP_LIBS $GSF_SHARP_LIBS"
 AC_SUBST(BEAGLED_LIBS)
 

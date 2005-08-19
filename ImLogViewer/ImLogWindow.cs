@@ -263,7 +263,10 @@ namespace ImLogViewer {
  		private void RenderConversation (ImLog im_log)
  		{
 			TextBuffer buffer = conversation.Buffer;
-			buffer.Delete (buffer.StartIter, buffer.EndIter);
+			TextIter start = buffer.StartIter;
+			TextIter end = buffer.EndIter;
+
+			buffer.Delete (ref start, ref end);
 			
  			if (im_log == null) {
  				//SetStatusTitle (new DateTime ());
@@ -274,9 +277,11 @@ namespace ImLogViewer {
 
 			TextTag bold = buffer.TagTable.Lookup ("bold");
 
+			end = buffer.EndIter;
+
  			foreach (ImLog.Utterance utt in im_log.Utterances) {
-				buffer.InsertWithTags (buffer.EndIter, utt.Who + ":", new TextTag[] {bold});
-				buffer.Insert (buffer.EndIter, String.Format(" {0}\n", utt.Text));
+				buffer.InsertWithTags (ref end, utt.Who + ":", new TextTag[] {bold});
+				buffer.Insert (ref end, String.Format(" {0}\n", utt.Text));
 			}
 
 			if (highlight_text != null)
@@ -298,7 +303,7 @@ namespace ImLogViewer {
 				if (word == String.Empty)
 					continue;
 
-				while ((idx = text.IndexOf (word.ToLower (), idx)) != -1) {					
+				while ((idx = text.IndexOf (word.ToLower (), idx)) != -1) {
 					Gtk.TextIter start = buffer.GetIterAtOffset (idx);
 					Gtk.TextIter end = start;
 					end.ForwardChars (word.Length);
