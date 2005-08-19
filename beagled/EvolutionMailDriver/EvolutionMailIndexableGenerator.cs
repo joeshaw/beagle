@@ -183,7 +183,6 @@ namespace Beagle.Daemon.EvolutionMailDriver {
 				string offset_str = this.queryable.ReadDataLine ("offset-" + this.folder_name.Replace ('/', '-'));
 				long offset = Convert.ToInt64 (offset_str);
 
-				Logger.Log.Debug ("mbox {0} offset is {1}", this.mbox_info.Name, offset);
 				return offset;
 			}
 
@@ -200,7 +199,7 @@ namespace Beagle.Daemon.EvolutionMailDriver {
 			}
 
 			if (this.mbox_fd < 0) {
-				Logger.Log.Debug ("opening mbox {0}", this.mbox_info.Name);
+				Logger.Log.Debug ("Opening mbox {0}", this.mbox_info.Name);
 
 				try {
 					InitializeGMime ();
@@ -231,8 +230,7 @@ namespace Beagle.Daemon.EvolutionMailDriver {
 				this.mbox_parser.Dispose ();
 				this.mbox_parser = null;
 				
-				EvolutionMailQueryable.log.Debug ("{0}: Finished indexing {1} messages",
-								  this.folder_name, this.indexed_count);
+				Logger.Log.Debug ("{0}: Finished indexing {1} messages", this.folder_name, this.indexed_count);
 
 				this.MboxLastOffset = offset;
 				this.CrawlFinished ();
@@ -262,8 +260,8 @@ namespace Beagle.Daemon.EvolutionMailDriver {
 				
 				string x_evolution = message.GetHeader ("X-Evolution");
 				if (x_evolution == null || x_evolution == "") {
-					EvolutionMailQueryable.log.Info ("{0}: Message at offset {1} has no X-Evolution header!",
-									 this.folder_name, this.mbox_parser.FromOffset);
+					Logger.Log.Info ("{0}: Message at offset {1} has no X-Evolution header!",
+							 this.folder_name, this.mbox_parser.FromOffset);
 					return null;
 				}
 				
@@ -373,10 +371,10 @@ namespace Beagle.Daemon.EvolutionMailDriver {
 			if (this.mbox_parser != null)
 				this.MboxLastOffset = offset = this.mbox_parser.FromOffset;
 
-			EvolutionMailQueryable.log.Debug ("{0}: indexed {1} messages ({2}/{3} bytes {4:###.0}%)",
-							  this.folder_name, this.indexed_count,
-							  offset, this.file_size,
-							  100.0 * offset / this.file_size);
+			Logger.Log.Debug ("{0}: indexed {1} messages ({2}/{3} bytes {4:###.0}%)",
+					  this.folder_name, this.indexed_count,
+					  offset, this.file_size,
+					  100.0 * offset / this.file_size);
 		}
 
 		public override string GetTarget ()
@@ -450,8 +448,8 @@ namespace Beagle.Daemon.EvolutionMailDriver {
 			try {
 				this.accounts = (ICollection) GConfThreadHelper.Get ("/apps/evolution/mail/accounts");
 			} catch (Exception ex) {
-				EvolutionMailQueryable.log.Warn ("Caught exception in Setup(): " + ex.Message);
-				EvolutionMailQueryable.log.Warn ("There are no configured evolution accounts, ignoring {0}", this.imap_name);
+				Logger.Log.Warn ("Caught exception in Setup(): " + ex.Message);
+				Logger.Log.Warn ("There are no configured evolution accounts, ignoring {0}", this.imap_name);
 				return false;
 			}
 
@@ -516,7 +514,7 @@ namespace Beagle.Daemon.EvolutionMailDriver {
 			}
 
 			if (account_name == null) {
-				EvolutionMailQueryable.log.Info ("Unable to determine account name for {0}", this.imap_name);
+				Logger.Log.Info ("Unable to determine account name for {0}", this.imap_name);
 				return false;
 			}
 
@@ -554,7 +552,7 @@ namespace Beagle.Daemon.EvolutionMailDriver {
 				formatter = new BinaryFormatter ();
 				this.mapping = formatter.Deserialize (cacheStream) as Hashtable;
 				cacheStream.Close ();
-				EvolutionMailQueryable.log.Debug ("Successfully loaded previous crawled data from disk: {0}", this.FolderCacheName);
+				Logger.Log.Debug ("Successfully loaded previous crawled data from disk: {0}", this.FolderCacheName);
 
 				return true;
 			} catch {
@@ -591,7 +589,7 @@ namespace Beagle.Daemon.EvolutionMailDriver {
 
 				// Check to see if we even need to bother walking the summary
 				if (cache_loaded && this.queryable.FileAttributesStore.IsUpToDate (this.CrawlFile.FullName)) {
-					EvolutionMailQueryable.log.Debug ("{0}: summary has not been updated; crawl unncessary", this.folder_name);
+					Logger.Log.Debug ("{0}: summary has not been updated; crawl unncessary", this.folder_name);
 					return false;
 				}
 			}
@@ -603,7 +601,7 @@ namespace Beagle.Daemon.EvolutionMailDriver {
 					else
 						this.summary = Camel.Summary.LoadImap4Summary (this.summary_info.FullName);
 				} catch (Exception e) {
-					EvolutionMailQueryable.log.Warn ("Unable to index {0}: {1}", this.folder_name,
+					Logger.Log.Warn ("Unable to index {0}: {1}", this.folder_name,
 									 e.Message);
 					return false;
 				}
@@ -626,7 +624,7 @@ namespace Beagle.Daemon.EvolutionMailDriver {
 				this.Queryable.ThisScheduler.Add (task);
 			}
 
-			EvolutionMailQueryable.log.Debug ("{0}: Finished indexing {1} ({2}/{3} {4:###.0}%)",
+			Logger.Log.Debug ("{0}: Finished indexing {1} ({2}/{3} {4:###.0}%)",
 							  this.folder_name, this.indexed_count, this.count,
 							  this.summary.header.count,
 							  100.0 * this.count / this.summary.header.count);
@@ -795,7 +793,7 @@ namespace Beagle.Daemon.EvolutionMailDriver {
 
 		public override void Checkpoint ()
 		{
-			EvolutionMailQueryable.log.Debug ("{0}: indexed {1} messages ({2}/{3} {4:###.0}%)",
+			Logger.Log.Debug ("{0}: indexed {1} messages ({2}/{3} {4:###.0}%)",
 							  this.folder_name, this.indexed_count, this.count,
 							  this.summary.header.count,
 							  100.0 * this.count / this.summary.header.count);

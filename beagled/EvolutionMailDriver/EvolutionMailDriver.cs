@@ -42,7 +42,6 @@ namespace Beagle.Daemon.EvolutionMailDriver {
 
 		public int polling_interval_in_seconds = 60;
 
-		public static Logger log = Logger.Get ("mail");
 		private string local_path, imap_path, imap4_path;
 
 		private MailCrawler crawler;
@@ -61,18 +60,9 @@ namespace Beagle.Daemon.EvolutionMailDriver {
 			this.imap4_path = Path.Combine (PathFinder.HomeDir, ".evolution/mail/imap4");
 		}
 
-		private void Crawl ()
-		{
-			crawler.Crawl ();
-			foreach (FileInfo file in crawler.Summaries)
-				IndexSummary (file);
-			foreach (FileInfo file in crawler.Mboxes)
-				IndexMbox (file);
-		}
-
 		private void CrawlHook (Scheduler.Task task)
 		{
-			Crawl ();
+			crawler.Crawl ();
 			task.Reschedule = true;
 			task.TriggerTime = DateTime.Now.AddSeconds (polling_interval_in_seconds);
 		}
@@ -89,21 +79,16 @@ namespace Beagle.Daemon.EvolutionMailDriver {
 			// Check that we have data to index
 			if ((! Directory.Exists (this.local_path)) && (! Directory.Exists (this.imap_path))) {
 				// No mails present, repoll every minute
-				log.Warn ("Evolution mail store not found, watching for it.");
+				Logger.Log.Warn ("Evolution mail store not found, watching for it.");
 				GLib.Timeout.Add (60000, new GLib.TimeoutHandler (CheckForMailData));
 				return;
 			}
 
-			// Get notification when an index or summary file changes
-			if (Inotify.Enabled) {
-				Watch (this.local_path);
-				Watch (this.imap_path);
-				Watch (this.imap4_path);
-			}
-
 			Logger.Log.Debug ("Starting mail crawl");
 			crawler = new MailCrawler (this.local_path, this.imap_path, this.imap4_path);
-			Crawl ();
+			crawler.MboxAddedEvent += IndexMbox;
+			crawler.SummaryAddedEvent += IndexSummary;
+			crawler.Crawl ();
 			Logger.Log.Debug ("Mail crawl finished");
 
 			// If we don't have inotify, we have to poll the file system.  Ugh.
@@ -124,66 +109,6 @@ namespace Beagle.Daemon.EvolutionMailDriver {
 			base.Start ();
 			
 			ExceptionHandlingThread.Start (new ThreadStart (StartWorker));
-		}
-
-		private void Watch (string path)
-		{
-			DirectoryInfo root = new DirectoryInfo (path);
-			if (! root.Exists)
-				return;
-
-			Queue queue = new Queue ();
-			queue.Enqueue (root);
-
-			while (queue.Count > 0) {
-				DirectoryInfo dir = queue.Dequeue () as DirectoryInfo;
-
-				if (! dir.Exists)
-					continue;
-
-				Inotify.Subscribe (dir.FullName, OnInotifyEvent,
-							Inotify.EventType.Create
-							| Inotify.EventType.Delete
-							| Inotify.EventType.MovedTo);
-
-				foreach (DirectoryInfo subdir in dir.GetDirectories ())
-					queue.Enqueue (subdir);
-			}
-		}
-
-		private void OnInotifyEvent (Inotify.Watch watch,
-						 string path,
-					     string subitem,
-					     string srcpath,
-					     Inotify.EventType type)
-		{
-			if (subitem == "")
-				return;
-
-			string fullPath = Path.Combine (path, subitem);
-
-			if ((type & Inotify.EventType.Create) != 0 && (type & Inotify.EventType.IsDirectory) != 0) {
-				Watch (fullPath);
-				return;
-			}
-
-			if ((type & Inotify.EventType.Delete) != 0 && (type & Inotify.EventType.IsDirectory) != 0) {
-				watch.Unsubscribe ();
-				return;
-			}
-
-			if ((type & Inotify.EventType.MovedTo) != 0) {
-				if (subitem == "summary") {
-					// IMAP summary
-					log.Info ("Reindexing updated IMAP summary: {0}", fullPath);
-					this.IndexSummary (new FileInfo (fullPath));
-				} else if (Path.GetExtension (fullPath) == ".ev-summary") {
-					// mbox summary
-					string mbox_file = Path.ChangeExtension (fullPath, null);
-					log.Info ("Reindexing updated mbox: {0}", mbox_file);
-					this.IndexMbox (new FileInfo (mbox_file));
-				}
-			}
 		}
 
 		private bool CheckForMailData ()
@@ -209,6 +134,7 @@ namespace Beagle.Daemon.EvolutionMailDriver {
 				return;
 			}
 
+			Logger.Log.Debug ("Will index summary {0}", summaryInfo.FullName);
 			EvolutionMailIndexableGeneratorImap generator = new EvolutionMailIndexableGeneratorImap (this, summaryInfo);
 			Scheduler.Task task;
 			task = NewAddTask (generator, new Scheduler.Hook (generator.Checkpoint));
@@ -226,6 +152,7 @@ namespace Beagle.Daemon.EvolutionMailDriver {
 				return;
 			}
 
+			Logger.Log.Debug ("Will index mbox {0}", mboxInfo.FullName);
 			EvolutionMailIndexableGeneratorMbox generator = new EvolutionMailIndexableGeneratorMbox (this, mboxInfo);
 			Scheduler.Task task;
 			task = NewAddTask (generator, new Scheduler.Hook (generator.Checkpoint));
