@@ -307,7 +307,7 @@ namespace Beagle.WebService {
 						//Query query = sdata.query;					
 					lock (results.SyncRoot) {
 						foreach (Hit h in hits) 
-							if (h.Uri.ToString().StartsWith(NetworkedBeagle.BeagleNetPrefix) ||
+							if (h.UriAsString.StartsWith(NetworkedBeagle.BeagleNetPrefix) ||
 											AccessFilter.FilterHit(h))
 								results.Add(h);
 					}
@@ -538,9 +538,8 @@ namespace Beagle.WebService {
 						snippet = queryable.GetSnippet (ICollection2StringList(query.Text), h);											
 								
 					sr.hitResults[i] = new HitResult();
-					sr.hitResults[i].id = h.Id;
 					
-					hitUri = h.Uri.ToString();
+					hitUri = h.UriAsString;
 					if (isLocalReq || hitUri.StartsWith(NetworkedBeagle.BeagleNetPrefix))
 							sr.hitResults[i].uri = hitUri;
 					else
@@ -549,8 +548,6 @@ namespace Beagle.WebService {
 	        	    sr.hitResults[i].resourceType = h.Type;
 					sr.hitResults[i].mimeType = h.MimeType;
 					sr.hitResults[i].source = h.Source;
-					sr.hitResults[i].scoreRaw = h.ScoreRaw;
-					sr.hitResults[i].scoreMultiplier = h.ScoreMultiplier;
 				
 					int plen = h.Properties.Count;
 					sr.hitResults[i].properties = new HitProperty[plen];
@@ -627,10 +624,8 @@ namespace Beagle.WebService {
 					
 // GetMoreResults will NOT return Snippets by default. Client must make explicit GetSnippets request to get snippets for these hits.
 // Not initializing sr.hitResults[i].snippet implies there is no <snippets> element in HitResult XML response.
-								
-					sr.hitResults[i].id = h.Id;
 							
-					hitUri = h.Uri.ToString();
+					hitUri = h.UriAsString;
 					if (isLocalReq || hitUri.StartsWith(NetworkedBeagle.BeagleNetPrefix))
 							sr.hitResults[i].uri = hitUri;
 					else
@@ -639,8 +634,6 @@ namespace Beagle.WebService {
 	        	    sr.hitResults[i].resourceType = h.Type;
 					sr.hitResults[i].mimeType = h.MimeType;
 					sr.hitResults[i].source = h.Source;
-					sr.hitResults[i].scoreRaw = h.ScoreRaw;
-					sr.hitResults[i].scoreMultiplier = h.ScoreMultiplier;
 				
 					int plen = h.Properties.Count;
 					sr.hitResults[i].properties = new HitProperty[plen];
@@ -672,7 +665,7 @@ namespace Beagle.WebService {
 		}
 		
 		public static string InvalidHitSnippetError = "ERROR: Invalid or Duplicate Hit Id";
-		public HitSnippet[] getSnippets(string searchToken, int[] hitIds)
+		public HitSnippet[] getSnippets(string searchToken, string[] hitUris)
 		{	
 			HitSnippet[] response;
 			
@@ -692,10 +685,11 @@ namespace Beagle.WebService {
 			}
 			
 			int i = 0; 		
-			ArrayList IdList = new ArrayList();
-			IdList.AddRange(hitIds);	
-			response = new HitSnippet[hitIds.Length];
-			Logger.Log.Debug("GetSnippets invoked with {0} hitIds", hitIds.Length);
+			ArrayList UriList = new ArrayList();
+			UriList.AddRange(hitUris);
+				
+			response = new HitSnippet[hitUris.Length];
+			Logger.Log.Debug("GetSnippets invoked with {0} hitUris", hitUris.Length);
 
 			Query query = ((SessionData)sessionTable[searchToken]).query;
 			
@@ -704,9 +698,10 @@ namespace Beagle.WebService {
 				string snippet = null; 
 				foreach (Hit h in results)  {
 				
-					if (IdList.Contains(h.Id)) {
+					string hitUri = h.UriAsString;
+					if (UriList.Contains(hitUri)) {
 					
-							IdList.Remove(h.Id);	
+							UriList.Remove(hitUri);	
 
 							//Queryable queryable = h.SourceObject as Queryable;
 							Queryable queryable = QueryDriver.GetQueryable (h.SourceObjectName);													
@@ -721,23 +716,23 @@ namespace Beagle.WebService {
 								snippet = "";
 								
 							HitSnippet hs = new HitSnippet();
-							hs.hitId = h.Id; 
+							hs.hitUri = hitUri; 
 							hs.snippet = snippet.Trim();
 							response[i++] = hs;		
 					
-							if (i == hitIds.Length)
+							if (i == hitUris.Length)
 								return response;
 					}
 				} //end foreach
 			} //end lock
 			
-			foreach (int hitId in IdList) {
+			foreach (string hitUri in UriList) {
 					HitSnippet hs = new HitSnippet();
-					hs.hitId = hitId; 
+					hs.hitUri = hitUri; 
 					hs.snippet = InvalidHitSnippetError;
 					response[i++] = hs;	
 
-					if (i == hitIds.Length)
+					if (i == hitUris.Length)
 							break;
 			}		
 			Logger.Log.Warn("GetSnippets invoked some invalid hitIds");
@@ -807,6 +802,7 @@ namespace Beagle.WebService {
 	public class HitResult {
 
 		public string 	uri;
+		//public string 	parentUri;		
 		public string 	resourceType;
 		public string 	mimeType;
 		public string 	source;
@@ -832,7 +828,7 @@ namespace Beagle.WebService {
 
 	[Serializable()]
 	public class HitSnippet {
-		public int hitId;
+		public string hitUri;
 		public string snippet;
 	}
 		

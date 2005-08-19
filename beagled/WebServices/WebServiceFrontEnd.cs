@@ -254,7 +254,7 @@ namespace WebService_CodeBehind {
 	"http://www.gnome.org/projects/beagle/webservices/GetSnippets",
 	RequestNamespace="http://www.gnome.org/projects/beagle/webservices",
 	ResponseNamespace="http://www.gnome.org/projects/beagle/webservices")]
-	public HitSnippet[] GetSnippets(string searchToken, int[] hitIds)
+	public HitSnippet[] GetSnippets(string searchToken, string[] hitUris)
 	{	
 		HitSnippet[] response;
 					
@@ -276,10 +276,10 @@ namespace WebService_CodeBehind {
 			return response;
 		}
 
-		if (hitIds.Length < 1)
+		if (hitUris.Length < 1)
 			response = new HitSnippet[0];
 		else
-			response = remoteObj.getSnippets(searchToken, hitIds);
+			response = remoteObj.getSnippets(searchToken, hitUris);
 			
 		return response;
 	}

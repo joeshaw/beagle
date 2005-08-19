@@ -192,7 +192,7 @@ namespace Beagle.WebService {
 			if ((hit == null) || (matchers.Count == 0))
 				return false;
 
-			string uri = hit.Uri.ToString();			
+			string uri = hit.UriAsString;			
 			foreach (SimpleMatcher matcher in matchers)
 			{
 				if (uri.IndexOf (matcher.Match) == -1)
@@ -211,7 +211,7 @@ namespace Beagle.WebService {
 			if ((hit == null) || (matchers.Count == 0))
 				return null;
 							
-			string uri = hit.Uri.ToString();			
+			string uri = hit.UriAsString;			
 			string newuri = null;
 			
 			foreach (SimpleMatcher matcher in matchers)

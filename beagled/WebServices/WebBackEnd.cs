@@ -114,7 +114,7 @@ namespace Beagle.WebService {
 					}
 					else {
 							foreach (Hit h in hits)							
-							   if (h.Uri.ToString().StartsWith(NetworkedBeagle.BeagleNetPrefix) ||
+							   if (h.UriAsString.StartsWith(NetworkedBeagle.BeagleNetPrefix) ||
 							 	 			WebServiceBackEnd.AccessFilter.FilterHit(h)) {
 									root.Add(h);
 									lock (hitsCopy.SyncRoot)
@@ -706,14 +706,14 @@ namespace Beagle.WebService {
 							 			
 						if (searchToken != null) {
 						
-							int[] hitIds = new int[nwHitsPerNode.Count];
-							for (int j = 0; j < hitIds.Length; j++)
-								hitIds[j] = ((NetworkHit)nwHitsPerNode[j]).Id;
+							string[] hitUris = new string[nwHitsPerNode.Count];
+							for (int j = 0; j < hitUris.Length; j++)
+								hitUris[j] = ((NetworkHit)nwHitsPerNode[j]).UriAsString;
 							
 							log.Debug("PrefetchSnippets: Invoking GetSnippets on {0} for {1} hits", wsp.Hostname, nwHitsPerNode.Count);
 					
 							ReqContext2 rc = new ReqContext2(wsp, nwHitsPerNode, thc);
-							wsp.BeginGetSnippets(searchToken, hitIds, PrefetchSnippetsResponseHandler, rc);
+							wsp.BeginGetSnippets(searchToken, hitUris, PrefetchSnippetsResponseHandler, rc);
 						}	
 						
 						//Signal change in TileHitCollection due to addition of snippets:
@@ -741,11 +741,11 @@ namespace Beagle.WebService {
 								
 					foreach (Beagle.Daemon.HitSnippet hs in hslist) {
 					
-						int i, hitId;
-						string snippet;
+						int i;
+						string snippet, hitUri;
 						
 						try {
-							hitId 	= hs.hitId;
+							hitUri 	= hs.hitUri;
 							snippet = hs.snippet;
 						}
 						catch (Exception ex2)
@@ -754,14 +754,14 @@ namespace Beagle.WebService {
 							continue;						
 						}
 							
-						if ((hitId == 0) || (snippet.StartsWith(WebServiceBackEnd.InvalidHitSnippetError)))
+						if (snippet.StartsWith(WebServiceBackEnd.InvalidHitSnippetError))
 								continue;
 		
 						for (i = 0; i < nwHits.Count; i++)						
-							if (((NetworkHit)nwHits[i]).Id == hitId) {	
+							if (((NetworkHit)nwHits[i]).UriAsString == hitUri) {	
 														
 								((NetworkHit)nwHits[i]).snippet = snippet;
-								//log.Debug("\nPrefetchSnippetsResponseHandler: URI" + j++ + "=" + ((NetworkHit)nwHits[i]).Uri.ToString()  + "\n     Snippet=" + snippet);																	
+								//log.Debug("\nPrefetchSnippetsResponseHandler: URI" + j++ + "=" + ((NetworkHit)nwHits[i]).UriAsString  + "\n     Snippet=" + snippet);																	
 								break;		
 							}
 							
@@ -818,7 +818,7 @@ namespace Beagle.WebService {
    			if (nh == null) 
    				return null;
    				
-			string netUri = nh.Uri.ToString();		
+			string netUri = nh.UriAsString;		
 			
 			//netbeagle://164.99.153.134:8888/searchToken?http:///....	
 			string[] f1, f2 = netUri.Split('?');
@@ -835,7 +835,7 @@ namespace Beagle.WebService {
    			if (nh == null) 
    				return null;
    				   		
-			string netUri = nh.Uri.ToString();		
+			string netUri = nh.UriAsString;		
 			
 			//netbeagle://164.99.153.134:8888/searchToken?http:///....	
 			string[] f1, f2 = netUri.Split('?');

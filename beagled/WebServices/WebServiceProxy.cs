@@ -148,17 +148,17 @@ public class BeagleWebService: System.Web.Services.Protocols.SoapHttpClientProto
     ///</remarks>
     [System.Web.Services.Protocols.SoapDocumentMethodAttribute("http://www.gnome.org/projects/beagle/webservices/GetSnippets",RequestNamespace="http://www.gnome.org/projects/beagle/webservices",ResponseNamespace="http://www.gnome.org/projects/beagle/webservices",ParameterStyle=System.Web.Services.Protocols.SoapParameterStyle.Wrapped,Use=System.Web.Services.Description.SoapBindingUse.Literal)]
     public HitSnippet[] GetSnippets(string searchToken, [System.Xml.Serialization.XmlArrayItem(IsNullable=false)]
-    int[] hitIds) {
+    string[] hitUris) {
         object[] results = this.Invoke("GetSnippets", new object[] {
             searchToken,
-            hitIds});
+            hitUris});
         return ((HitSnippet[])(results[0]));
     }
 
-    public System.IAsyncResult BeginGetSnippets(string searchToken, int[] hitIds, System.AsyncCallback callback, object asyncState) {
+    public System.IAsyncResult BeginGetSnippets(string searchToken, string[] hitUris, System.AsyncCallback callback, object asyncState) {
         return this.BeginInvoke("GetSnippets", new object[] {
             searchToken,
-            hitIds}, callback, asyncState);
+            hitUris}, callback, asyncState);
     }
 
     public HitSnippet[] EndGetSnippets(System.IAsyncResult asyncResult) {
@@ -280,7 +280,7 @@ public class HitProperty {
 public class HitSnippet {
 
     /// <remarks/>
-    public int hitId;
+    public string hitUri;
 
     /// <remarks/>
     public string snippet;

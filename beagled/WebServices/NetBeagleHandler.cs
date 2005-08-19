@@ -144,11 +144,11 @@ namespace Beagle.Daemon
 			
 							//[Uri Format] netbeagle://164.99.153.134:8888/searchToken?http:///....	
 							if (hr.uri.StartsWith(NetworkedBeagle.BeagleNetPrefix))
-								hit.Uri = new Uri(hr.uri);
+								hit.UriAsString = hr.uri;
 							else {							
 								string[] fragments = hr.uri.Split ('/');
 								string hostNamePort = fragments[2];										
-								hit.Uri = new Uri(NetworkedBeagle.BeagleNetPrefix + hostNamePort + "/" + resp.searchToken + "?" + hr.uri);		
+								hit.UriAsString = NetworkedBeagle.BeagleNetPrefix + hostNamePort + "/" + resp.searchToken + "?" + hr.uri;		
 							}
 														
 							hit.Type = hr.resourceType;
