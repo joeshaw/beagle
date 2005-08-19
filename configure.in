@@ -1,6 +1,6 @@
 AC_INIT(beagled/BeagleDaemon.cs)
 AC_CANONICAL_SYSTEM
-AM_INIT_AUTOMAKE(beagle, 0.0.13)
+AM_INIT_AUTOMAKE(beagle, 0.0.13.1)
 AM_MAINTAINER_MODE
 AM_CONFIG_HEADER(config.h)
 
@@ -568,7 +568,6 @@ Makefile
 Util/Makefile
 Util/Util.dll.config
 images/Makefile
-templates/Makefile
 glue/Makefile
 BeagleClient/Makefile
 beagled/Makefile
