@@ -86,7 +86,8 @@ namespace Beagle.Daemon {
 				create_new_db = true;
 			
 			connection = new SqliteConnection ();
-			connection.ConnectionString = "URI=file:" + db_filename;
+			connection.ConnectionString = "version=" + ExternalStringsHack.SqliteVersion
+					+ ",URI=file:" + db_filename;
 			connection.Open ();
 			
 			if (create_new_db) {

@@ -1,3 +1,10 @@
+2005-08-20  Daniel Drake  <dsd@gentoo.org>
+
+	* configure.in, Util/ExternalStringsHack.cs.in, Util/Makefile.am,
+	beagled/FileAttributesStore_Sqlite.cs, beagled/TextCache.cs:
+	Really support (and prefer) sqlite 3.x - requires a modified connection
+	string.
+
 2005-08-19  Daniel Drake  <dsd@gentoo.org>
 
 	* beagled/FileSystemQueryable/FileSystemQueryable.cs: Update the last

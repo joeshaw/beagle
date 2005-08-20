@@ -41,5 +41,6 @@ namespace Beagle.Util {
 		}
 
 		public const string XattrLib = "@XATTR_LIB@";
-	}	  
+		public const string SqliteVersion = "@SQLITE_MAJ_VER@";
+	}
 }
