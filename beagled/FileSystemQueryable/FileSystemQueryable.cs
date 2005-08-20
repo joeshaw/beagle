@@ -1336,7 +1336,7 @@ namespace Beagle.Daemon.FileSystemQueryable {
 				return;
 			} else {
 				DirectoryModel old_dir, new_dir;
-				old_dir = GetDirectoryModelByPath (new_directory_name);
+				old_dir = GetDirectoryModelByPath (old_directory_name);
 				new_dir = GetDirectoryModelByPath (new_directory_name);
 				MoveFile (old_dir, old_file_name, new_dir, new_file_name);
 			}

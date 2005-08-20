@@ -1,3 +1,8 @@
+2005-08-21  Daniel Drake  <dsd@gentoo.org>
+
+	* beagled/FileSystemQueryable/FileSystemQueryable.cs: Fix obvious typo
+	which fixes renaming of files.
+
 2005-08-20  Daniel Drake  <dsd@gentoo.org>
 
 	* configure.in, Util/ExternalStringsHack.cs.in, Util/Makefile.am,
