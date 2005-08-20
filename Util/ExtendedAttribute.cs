@@ -105,7 +105,7 @@ namespace Beagle.Util {
 			int size = extattr_get_link (path, 1, name, buffer, 0);
 #endif
 			
-			return size <= 0;
+			return size >= 0;
 		}
 
 		public static string Get (string path, string name)
