@@ -84,9 +84,11 @@ namespace Best {
 					break;
 
 				default:
-					if (query.Length != 0)
-						query += " ";
-					query += args [i];
+					if (args [i].Length < 2 || args [i].Substring (0, 2) != "--") {
+						if (query.Length != 0)
+							query += " ";
+						query += args [i];
+					}
 					break;
 				}
 
