@@ -93,7 +93,7 @@ AM_GLIB_GNU_GETTEXT
 # doesn't require it.  But we do, so check for it here.
 SQLITE_MAJ_VER="0"
 PKG_CHECK_MODULES(SQLITE, sqlite, SQLITE_MAJ_VER="2", do_nothing="1")
-PKG_CHECK_MODULES(SQLITE, sqlite3, SQLITE_MAJ_VER="3", do_nothing="1")
+#PKG_CHECK_MODULES(SQLITE, sqlite3, SQLITE_MAJ_VER="3", do_nothing="1")
 
 if test "x$SQLITE_MAJ_VER" = "x0"; then
 	AC_MSG_ERROR([You need to install either sqlite2 or sqlite3])
