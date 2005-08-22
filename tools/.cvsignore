@@ -9,5 +9,6 @@ beagle-exercise-file-system
 beagle-shutdown
 beagle-config
 beagle-crawl-system
+beagle-crawl-system.crontab
 beagle-settings
 settings.gladep

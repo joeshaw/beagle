@@ -19,6 +19,7 @@ WRAPPER_SED = sed 					\
 	-e "s|\@prefix\@|$(prefix)|g"			\
 	-e "s|\@pkglibdir\@|$(pkglibdir)|g"		\
 	-e "s|\@libdir\@|$(libdir)|g"			\
+	-e "s|\@libexecdir\@|$(libexecdir)|g"		\
 	-e "s|\@bindir\@|$(bindir)|g"			\
 	-e "s|\@sbindir\@|$(sbindir)|g"			\
 	-e "s|\@sysconfdir\@|$(sysconfdir)|g"		\
@@ -38,10 +39,16 @@ CRAWL_RULES = \
 	$(srcdir)/crawl-rules/crawl-applications	\
 	$(srcdir)/crawl-rules/crawl-documentation
 
-# Install the system crawler into cron.daily and 
-# set up the crawler configuration files
-crondir = $(sysconfdir)/cron.daily
-cron_SCRIPTS = $(CRAWL_WRAPPER)
+libexec_SCRIPTS = $(CRAWL_WRAPPER)
+
+CRAWL_WRAPPER_CRONTAB = beagle-crawl-system.crontab
+CRAWL_WRAPPER_CRONTAB_IN = beagle-crawl-system.crontab.in
+
+$(CRAWL_WRAPPER_CRONTAB): $(CRAWL_WRAPPER_CRONTAB_IN)
+	$(WRAPPER_SED) < $(srcdir)/$(CRAWL_WRAPPER_CRONTAB_IN) > $@
+
+crondir = $(sysconfdir)/cron.d
+cron_DATA = $(CRAWL_WRAPPER_CRONTAB)
 
 # FIXME: Per-distribution specific crawl rules
 configdir = $(sysconfdir)/beagle
@@ -159,6 +166,7 @@ uninstall-local:
 EXTRA_DIST =				\
 	$(WRAPPER_IN)			\
 	$(CRAWL_WRAPPER_IN)		\
+	$(CRAWL_WRAPPER_CRONTAB_IN)	\
 	$(INFO_CSFILES)			\
 	$(SHUTDOWN_CSFILES)		\
 	$(QUERY_CSFILES)		\
@@ -178,5 +186,7 @@ CLEANFILES = 				\
 	$(TARGETS)			\
 	$(TARGETS:%=%.mdb)		\
 	$(WRAPPERS)			\
-	$(CRAWL_WRAPPER)
+	$(CRAWL_WRAPPER)		\
+	$(CRAWL_WRAPPER_CRONTAB)
+
 

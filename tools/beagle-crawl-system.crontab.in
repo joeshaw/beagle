@@ -1,0 +1,4 @@
+SHELL=/bin/sh
+
+# Run at 4:30 am every day
+30 4 * * *	root	@libexecdir@/beagle-crawl-system
