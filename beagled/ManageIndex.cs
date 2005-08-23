@@ -191,6 +191,9 @@ namespace Beagle.Daemon
 				Console.WriteLine ("Could not find index to merge: {0}", index_to_merge);
 				Environment.Exit (1);
 			}
+
+			// Set the IO priority to idle so we don't slow down the system
+			IoPriority.SetIdle ();
 			
 			LuceneQueryingDriver driver_to_merge = new LuceneQueryingDriver (index_to_merge, -1, false);
 			
@@ -238,6 +241,9 @@ namespace Beagle.Daemon
 
 		static void ExecuteOptimize ()
 		{
+			// Set the IO priority to idle so we don't slow down the system
+			IoPriority.SetIdle ();
+
 			Stopwatch watch = new Stopwatch ();
 			watch.Start ();
 

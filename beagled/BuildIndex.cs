@@ -172,6 +172,9 @@ namespace Beagle.Daemon
 				Console.WriteLine ("Index directory not available for construction: {0}", arg_output);
 				Environment.Exit (1);
 			}
+
+			// Set the IO priority to idle so we don't slow down the system
+			IoPriority.SetIdle ();
 			
 			driver = new LuceneIndexingDriver (arg_output);
 			driver.TextCache = (arg_cache_text) ? new TextCache (arg_output) : null;
