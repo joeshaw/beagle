@@ -74,6 +74,7 @@ namespace Beagle.Daemon {
 
 		private LuceneQueryingDriver.UriFilter our_uri_filter;
 		private LuceneCommon.HitFilter our_hit_filter;
+		private Scheduler.Task our_optimize_task = null;
 
 		//////////////////////////////////////////////////////////
 
@@ -449,6 +450,7 @@ namespace Beagle.Daemon {
 			task = new AddTask (this.indexer, indexable,
 					    new PreAddHookDelegate (this.PreAddHook));
 			task.Collector = collector;
+			task.Source = this;
 			return task;
 		}
 
@@ -529,6 +531,7 @@ namespace Beagle.Daemon {
 						     generator,
 						     new PreAddHookDelegate (this.PreAddHook),
 						     pre_flush_hook);
+			task.Source = this;
 			return task;
 		}
 
@@ -588,6 +591,7 @@ namespace Beagle.Daemon {
 			task = new RemoveTask (this.indexer, uri,
 					       new PreRemoveHookDelegate (this.PreRemoveHook));
 			task.Collector = collector;
+			task.Source = this;
 			return task;
 		}
 
@@ -614,35 +618,36 @@ namespace Beagle.Daemon {
 			Scheduler.Task task;
 			task = new OptimizeTask (this.indexer);
 			task.Tag = "Optimize " + IndexName;
-			task.Priority = Scheduler.Priority.Delayed;
+			task.Priority = Scheduler.Priority.Maintenance;
 			task.Collector = collector;
+			task.Source = this;
 
 			return task;
 		}
 
 		private void OnOptimizeAllEvent ()
 		{
-			ThisScheduler.Add (NewOptimizeTask ());
+			Scheduler.Task task;
+			task = NewOptimizeTask (); // construct an optimizer task
+			task.Priority = Scheduler.Priority.Delayed; // but boost the priority
+			ThisScheduler.Add (task);
 		}
 
 		private void ScheduleOptimize ()
 		{
-			if (Environment.GetEnvironmentVariable ("BEAGLE_DISABLE_SCHEDULED_OPTIMIZATIONS") != null)
-				return;
+			if (our_optimize_task == null) {
+				our_optimize_task = NewOptimizeTask ();
+				// When we first create the optimize task, put it two
+				// minutes out into the future.  This should keep us
+				// from having a race where the optimize task gets
+				// executed before the first crawling/indexing tasks
+				// get created.  A bit hacky, but should work in all
+				// pathological cases.
+				our_optimize_task.TriggerTime = DateTime.Now.AddMinutes (2.0);
+			}
 
-			int segment_count;
-			segment_count = driver.SegmentCount;
-			if (segment_count <= 1)
-				return;
-
-			double optimize_delay;
-			optimize_delay = 600.0 / segment_count;
-			Logger.Log.Debug ("Will optimize {0} in {1:0.0}s", IndexName, optimize_delay);
-
-			Scheduler.Task task;
-			task = NewOptimizeTask ();
-			task.TriggerTime = DateTime.Now.AddSeconds (optimize_delay);
-			ThisScheduler.Add (task);
+			// Adding the same task more than once is a harmless no-op.
+			ThisScheduler.Add (our_optimize_task);
 		}
 
 		//////////////////////////////////////////////////////////////////////////////////
@@ -661,15 +666,18 @@ namespace Beagle.Daemon {
 
 		private void OnFlushEvent (IIndexer source, IndexerReceipt [] receipts)
 		{
-			// This means that our flush is complete, so we
-			// schedule an optimize and then return.
-			if (receipts == null) {
-				ScheduleOptimize ();
+			// This means that our flush is complete.  Right now we
+			// do nothing in that case.
+			if (receipts == null)
 				return;
-			}
 
+			// Nothing happened (except maybe an optimize, which does not
+			// generate a receipt).  Also do nothing.
 			if (receipts.Length == 0)
 				return;
+
+			// Something happened, so schedule an optimize just in case.
+			ScheduleOptimize ();
 			
 			if (fa_store != null)
 				fa_store.BeginTransaction ();

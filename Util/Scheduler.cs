@@ -36,10 +36,19 @@ namespace Beagle.Util {
 		static public bool Debug = false;
 
 		public enum Priority {
-			Shutdown  = 0, // Do it on shutdown 
-			Idle      = 1, // Do it when the system is idle
-			Delayed   = 2, // Do it soon
-			Immediate = 3, // Do it right now
+
+			Shutdown    = 0, // Do it on shutdown 
+
+			Idle        = 1, // Execute only when the whole machine is idle
+			                 // Probably should be reserved for computationally-expensive stuff
+			                 // FIXME: These are not properly scheduled right now
+
+			Maintenance = 2, // Only execute when there are no lower-priority
+			                 // tasks from the same source to execute instead
+
+			Delayed     = 3, // Do it soon
+
+			Immediate   = 4, // Do it right now
 		}
 
 		public delegate void Hook ();
@@ -58,6 +67,8 @@ namespace Beagle.Util {
 			// Some metadata
 			public string Creator;
 			public string Description;
+
+			public object Source = null; // this is just an opaque identifier
 
 			public ITaskCollector Collector = null;
 			public double Weight = 1.0;
@@ -227,6 +238,7 @@ namespace Beagle.Util {
 				if (child_task_group == null)
 					child_task_group = new TaskGroupPrivate ("Children of " + Tag, null, null);
 				child_task.AddTaskGroup (child_task_group);
+				child_task.Source = this.Source;
 				scheduler.Add (child_task);
 			}
 
@@ -279,12 +291,27 @@ namespace Beagle.Util {
 				if (other == null)
 					return 1;
 
+				Priority this_priority;
+				Priority other_priority;
+
+				this_priority = this.Priority;
+				other_priority = other.Priority;
+
+				// To other sources, Maintenance tasks looks like
+				// Delayed tasks.
+				if (this.Source != other.Source) {
+					if (this_priority == Priority.Maintenance)
+						this_priority = Priority.Delayed;
+					if (other_priority == Priority.Maintenance)
+						other_priority = Priority.Delayed;
+				} 
+				
 				int cmp;
-				cmp = this.Priority.CompareTo (other.Priority);
+				cmp = (int)this_priority - (int)other_priority;
 				if (cmp != 0)
 					return cmp;
 				
-				cmp = this.SubPriority.CompareTo (other.SubPriority);
+				cmp = this.SubPriority - other.SubPriority;
 				if (cmp != 0)
 					return cmp;
 
@@ -839,7 +866,15 @@ namespace Beagle.Util {
 
 				// Now actually execute the set of tasks we found.
 
-				status_str = "Executing tasks";
+				StringBuilder status_builder;
+				status_builder = new StringBuilder ();
+				status_builder.AppendFormat ("Executing task{0}\n",
+							     to_be_executed.Length > 1 ? "s" : "");
+				foreach (Task task in to_be_executed) {
+					status_builder.Append (task.ToString ());
+					status_builder.Append ('\n');
+				}
+				status_str = status_builder.ToString ();
 
 				DateTime start_time = DateTime.Now;
 				if (pre_hook != null) {
