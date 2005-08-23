@@ -9,17 +9,17 @@ msgid ""
 msgstr ""
 "Project-Id-Version: beagle.HEAD.hu\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2005-08-16 10:49+0000\n"
-"PO-Revision-Date: 2005-08-16 16:39+0200\n"
+"POT-Creation-Date: 2005-08-23 18:50+0000\n"
+"PO-Revision-Date: 2005-08-23 22:29+0200\n"
 "Last-Translator: Gabor Kelemen <kelemeng@gnome.hu>\n"
 "Language-Team: Hungarian <gnome@gnome.hu>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms:  nplurals=1; plural=0;\n"
-"X-Generator: KBabel 1.10.1\n"
+"X-Generator: KBabel 1.10.2\n"
 
-#: ../Best/Best.cs:130
+#: ../Best/Best.cs:132
 msgid ""
 "If you're wondering whether Best is working check your notification area "
 "(system tray)"
@@ -31,85 +31,87 @@ msgstr "Keresés letiltása"
 
 #: ../Best/BestTray.cs:150
 msgid ""
-"You're about to close the search tray. The search tray is automatically "
-"started, do you want to disable it?"
-msgstr "A keresőtálca bezárására készül. A keresőtálca automatikusan elindul, le szeretné tiltani?"
+"You are about to close the search tray. The search tray is automatically "
+"started at login-time. Would you like to disable it for future sessions?"
+msgstr ""
+"A keresőtálca bezárására készül. A keresőtálca bejelentkezéskor "
+"automatikusan elindul, le szeretné tiltani a későbbi munkamenetekre?"
 
-#: ../Best/BestTray.cs:201
+#: ../Best/BestTray.cs:207
 msgid "No Recent Searches"
 msgstr "Nincsenek új keresések"
 
-#: ../Best/BestTray.cs:205
+#: ../Best/BestTray.cs:212
 msgid "Recent Searches"
 msgstr "Legutóbbi keresések"
 
-#: ../Best/BestTray.cs:219
+#: ../Best/BestTray.cs:228
 msgid "Clear"
 msgstr "Törlés"
 
-#: ../Best/BestTray.cs:227
+#: ../Best/BestTray.cs:236
 msgid "Quit"
 msgstr "Kilépés"
 
-#: ../Best/BestWindow.cs:302
+#: ../Best/BestWindow.cs:306
 msgid "Anywhere"
 msgstr "Bárhol"
 
-#: ../Best/BestWindow.cs:304
+#: ../Best/BestWindow.cs:310
 msgid "in Files"
 msgstr "Fájlokban"
 
-#: ../Best/BestWindow.cs:306
+#: ../Best/BestWindow.cs:314
 msgid "in Addressbook"
 msgstr "Címjegyzékben"
 
-#: ../Best/BestWindow.cs:308
+#: ../Best/BestWindow.cs:318
 msgid "in Mail"
 msgstr "Levelek között"
 
-#: ../Best/BestWindow.cs:310
+#: ../Best/BestWindow.cs:322
 msgid "in Web Pages"
 msgstr "Weboldalak között"
 
-#: ../Best/BestWindow.cs:312
+#: ../Best/BestWindow.cs:326
 msgid "in Chats"
 msgstr "Csevegések között"
 
-#: ../Best/BestWindow.cs:327
+#: ../Best/BestWindow.cs:343
 msgid "Search terms:"
 msgstr "Keresendő kifejezések"
 
-#: ../Best/BestWindow.cs:344
+#: ../Best/BestWindow.cs:367
 msgid "Find"
 msgstr "Keresés"
 
-#: ../Best/BestWindow.cs:361
+#: ../Best/BestWindow.cs:384
 msgid "Show More Results"
-msgstr "További eredmények megjelenítése"
+msgstr "További eredmények"
 
-#: ../Best/BestWindow.cs:367
+#: ../Best/BestWindow.cs:390
 msgid "Show Previous Results"
-msgstr "Előző eredmények megjelenítése"
+msgstr "Előző eredmények"
 
-#: ../Best/BestWindow.cs:401
+#: ../Best/BestWindow.cs:424
 msgid "No results."
 msgstr "Nincs eredmény."
 
 #. To translators: {0} is the current count of results shown of {1} in total, this is the message that is initially shown
 #. when results are returned to the user.
-#: ../Best/BestWindow.cs:405
+#: ../Best/BestWindow.cs:428
 #, csharp-format
 msgid "Best <b>{0} results of {1}</b> are shown."
 msgstr "A legjobb <b>{0} megjelenítése {1}</b> eredmény közül."
 
 #. To translators: {0} to {1} is the interval of results currently shown of {2} results in total
-#: ../Best/BestWindow.cs:410
+#: ../Best/BestWindow.cs:433
 #, csharp-format
 msgid "Results <b>{0} through {1} of {2}</b> are shown."
 msgstr "Eredmények megjelenítése ettől: <b>{0} eddig: {1}, összesen {2}</b>."
 
 #. To translators: {0} represents the current query keywords
-#: ../Best/BestWindow.cs:521
+#: ../Best/BestWindow.cs:542
 #, csharp-format
 msgid ""
 "The query for <i>{0}</i> failed.<br>The likely cause is that the beagle "
@@ -119,7 +121,7 @@ msgstr ""
 "beagle démon nem fut."
 
 #. To translators: {0} represents the current query keywords, {1} contains the errormessage
-#: ../Best/BestWindow.cs:526
+#: ../Best/BestWindow.cs:547
 #, csharp-format
 msgid "The query for <i>{0}</i> failed with error:<br>{1}<br>"
 msgstr "<i>{0}</i> lekérdezése sikertelen: <br>{1}<br>"
@@ -188,27 +190,27 @@ msgstr "Társalgás a következőben: {0}"
 msgid "Conversation with {0}"
 msgstr "Társalgás a következővel: {0}"
 
-#: ../Tiles/TileMailMessage.cs:79
+#: ../Tiles/TileMailMessage.cs:81
 msgid "No Subject"
 msgstr "Nincs tárgy"
 
-#: ../Tiles/TileMailMessage.cs:86
+#: ../Tiles/TileMailMessage.cs:88
 msgid "To"
 msgstr "Címzett"
 
-#: ../Tiles/TileMailMessage.cs:86
+#: ../Tiles/TileMailMessage.cs:88
 msgid "From"
-msgstr "Feladó"
+msgstr "Feladó:"
 
-#: ../Tiles/TileMailMessage.cs:114
+#: ../Tiles/TileMailMessage.cs:116
 msgid "Sent"
 msgstr "Elküldött"
 
-#: ../Tiles/TileMailMessage.cs:114
+#: ../Tiles/TileMailMessage.cs:116
 msgid "Received"
 msgstr "Fogadott"
 
-#: ../Tiles/TileMailMessage.cs:119
+#: ../Tiles/TileMailMessage.cs:124
 msgid "Email attachment"
 msgstr "E-mail melléklet"
 
@@ -261,7 +263,7 @@ msgstr "Megnyitás"
 #: ../Tiles/TranslationHack.cs:38 ../Tiles/TranslationHack.cs:68
 #: ../Tiles/TranslationHack.cs:82 ../Tiles/TranslationHack.cs:98
 msgid "in folder"
-msgstr "Mappában"
+msgstr "ebben a mappában:"
 
 #. For translators: From template Tiles/template-docs.html
 #. For translators: From template Tiles/template-file.html
@@ -575,8 +577,8 @@ msgstr "Tetszőleges útvonal felvétele indexeléshez."
 #: ../tools/settings.glade.h:11
 msgid "Add any remote search-enabled hosts you wish to network with"
 msgstr ""
-"Távoli kiszolgálók hozzáadása, melyeken engedélyezett a keresés és hálózatban "
-"szeretné őket használni"
+"Távoli kiszolgálók hozzáadása, melyeken engedélyezett a keresés és "
+"hálózatban szeretné őket használni"
 
 #: ../tools/settings.glade.h:12
 msgid "Address"
@@ -608,7 +610,7 @@ msgstr "Könyvtár útvonala"
 
 #: ../tools/settings.glade.h:18
 msgid "Display the search window by pressing"
-msgstr "Keresőablak megjelenítése a következő lenyomásakor:"
+msgstr "Keresőablak mutatása ennek lenyomásakor:"
 
 #: ../tools/settings.glade.h:19
 msgid "Filename Pattern"
