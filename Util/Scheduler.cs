@@ -869,7 +869,7 @@ namespace Beagle.Util {
 				StringBuilder status_builder;
 				status_builder = new StringBuilder ();
 				status_builder.AppendFormat ("Executing task{0}\n",
-							     to_be_executed.Length > 1 ? "s" : "");
+							     to_be_executed.Count > 1 ? "s" : "");
 				foreach (Task task in to_be_executed) {
 					status_builder.Append (task.ToString ());
 					status_builder.Append ('\n');
