@@ -25,10 +25,11 @@
 //
 
 using System;
+using System.Collections;
+using System.Diagnostics;
 using System.IO;
 using System.Net;
 using System.Threading;
-using System.Collections;
 
 using System.Xml;
 using System.Xml.Serialization;
@@ -41,12 +42,14 @@ namespace Beagle.Daemon
 {
 	class BuildIndex 
 	{
+		static string [] argv;
+
 		static bool arg_recursive = false, arg_debug = false, arg_cache_text = false, arg_disable_filtering = false;
 
 		static Hashtable remap_table = new Hashtable ();
 
 		static string arg_output, arg_tag;
-		
+
 		/////////////////////////////////////////////////////////
 		
 		static FileAttributesStore_Sqlite backing_fa_store;
@@ -54,7 +57,7 @@ namespace Beagle.Daemon
 
 		static LuceneIndexingDriver driver;
 
-		static bool crawling = true, shutdown = false;
+		static bool crawling = true, indexing = true, shutdown = false, restart = false;
 
 		static ArrayList allowed_patterns = new ArrayList ();
 		static ArrayList denied_patterns = new ArrayList ();
@@ -166,6 +169,8 @@ namespace Beagle.Daemon
 				}
 			}
 
+			argv = args;
+
 			/////////////////////////////////////////////////////////
 			
 			if (!Directory.Exists (Path.GetDirectoryName (arg_output))) {
@@ -174,7 +179,7 @@ namespace Beagle.Daemon
 			}
 
 			// Set the IO priority to idle so we don't slow down the system
-			IoPriority.SetIdle ();
+			//IoPriority.SetIdle ();
 			
 			driver = new LuceneIndexingDriver (arg_output);
 			driver.TextCache = (arg_cache_text) ? new TextCache (arg_output) : null;
@@ -185,11 +190,32 @@ namespace Beagle.Daemon
 			// Set up signal handlers
 			SetupSignalHandlers ();
 
+			Thread crawl_thread, index_thread, monitor_thread;
+
 			// Start the thread that does the crawling
-			ExceptionHandlingThread.Start (new ThreadStart (CrawlWorker));
+			crawl_thread = ExceptionHandlingThread.Start (new ThreadStart (CrawlWorker));
 
 			// Start the thread that does the actual indexing
-			ExceptionHandlingThread.Start (new ThreadStart (IndexWorker));
+			index_thread = ExceptionHandlingThread.Start (new ThreadStart (IndexWorker));
+
+			// Start the thread that monitors memory usage.
+			monitor_thread = ExceptionHandlingThread.Start (new ThreadStart (MemoryMonitorWorker));
+
+			// Join all the threads so that we know that we're the only thread still running
+			crawl_thread.Join ();
+			index_thread.Join ();
+			monitor_thread.Join ();
+
+			if (restart) {
+				Logger.Log.Debug ("Restarting helper");
+				Process p = new Process ();
+				p.StartInfo.UseShellExecute = false;
+				// FIXME: Maybe this isn't the right way to do things?  It should be ok,
+				// the PATH is inherited from the shell script which runs mono itself.
+				p.StartInfo.FileName = "mono";
+				p.StartInfo.Arguments = String.Join (" ", Environment.GetCommandLineArgs ());
+				p.Start ();
+			}
 		}
 		
 		/////////////////////////////////////////////////////////////////
@@ -317,6 +343,37 @@ namespace Beagle.Daemon
 			backing_fa_store.Flush ();
 
 			Logger.Log.Debug ("IndexWorker Done");
+
+			indexing = false;
+		}
+
+		/////////////////////////////////////////////////////////////////
+
+		static void MemoryMonitorWorker ()
+		{
+			int vmrss_original = SystemInformation.VmRss;
+
+			const double threshold = 5.0;
+			int last_vmrss = 0;
+
+			while (! shutdown && (crawling || indexing)) {
+
+				// Check resident memory usage
+				int vmrss = SystemInformation.VmRss;
+				double size = vmrss / (double) vmrss_original;
+				if (vmrss != last_vmrss)
+					Logger.Log.Debug ("Size: VmRSS={0:0.0} MB, size={1:0.00}, {2:0.0}%",
+							  vmrss/1024.0, size, 100.0 * (size - 1) / (threshold - 1));
+				last_vmrss = vmrss;
+				if (size > threshold) {
+					Logger.Log.Debug ("Process too big, shutting down!");
+					restart = true;
+					shutdown = true;
+					return;
+				} else {
+					Thread.Sleep (3000);
+				}
+			}
 		}
 
 		/////////////////////////////////////////////////////////////////

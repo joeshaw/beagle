@@ -55,7 +55,7 @@ namespace Beagle.Util {
 				live_threads.Remove (this.thread);
 		}
 
-		public static void Start (ThreadStart method)
+		public static Thread Start (ThreadStart method)
 		{
 			ExceptionHandlingThread eht = new ExceptionHandlingThread (method);
 
@@ -68,6 +68,8 @@ namespace Beagle.Util {
 				live_threads [eht.thread] = eht.thread.Name;
 
 			eht.thread.Start ();
+
+			return eht.thread;
 		}
 
 		public static void SpewLiveThreads ()
