@@ -179,7 +179,7 @@ namespace Beagle.Daemon
 			}
 
 			// Set the IO priority to idle so we don't slow down the system
-			//IoPriority.SetIdle ();
+			IoPriority.SetIdle ();
 			
 			driver = new LuceneIndexingDriver (arg_output);
 			driver.TextCache = (arg_cache_text) ? new TextCache (arg_output) : null;
