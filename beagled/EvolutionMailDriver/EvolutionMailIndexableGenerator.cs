@@ -494,6 +494,9 @@ namespace Beagle.Daemon.EvolutionMailDriver {
 				if (semicolon != -1)
 					imap_url = imap_url.Substring (0, semicolon) + imap_url.Substring (user_end);
 
+				// Escape backslashes, which frequently appear when using IMAP against Exchange servers
+				this.imap_name.Replace ("\\", "%5c");
+
 				// Escape out additional @s in the name.  I hate the class libs so much.
 				int lastIdx = this.imap_name.LastIndexOf ('@');
 				if (this.imap_name.IndexOf ('@') != lastIdx) {
