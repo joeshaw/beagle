@@ -1,3 +1,8 @@
+2005-08-25  Vijay K. Nanjundaswamy <knvijay@novell.com>
+	
+	* beagled/WebServices/WebService*End.cs:
+	Update logic for GetSnippets to use Hit hashCode as unique id. Removed duplicate definitions of Web Service data types. 
+
 2005-08-21  Daniel Drake  <dsd@gentoo.org>
 
 	* beagled/FileSystemQueryable/FileSystemQueryable.cs: Fix obvious typo
