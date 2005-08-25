@@ -706,14 +706,14 @@ namespace Beagle.WebService {
 							 			
 						if (searchToken != null) {
 						
-							string[] hitUris = new string[nwHitsPerNode.Count];
-							for (int j = 0; j < hitUris.Length; j++)
-								hitUris[j] = ((NetworkHit)nwHitsPerNode[j]).UriAsString;
+							int[] hitHashCodes = new int [nwHitsPerNode.Count];
+							for (int j = 0; j < hitHashCodes.Length; j++)
+								hitHashCodes[j] = ((NetContext) ((NetworkHit)nwHitsPerNode[j]).context).hashCode;
 							
 							log.Debug("PrefetchSnippets: Invoking GetSnippets on {0} for {1} hits", wsp.Hostname, nwHitsPerNode.Count);
 					
 							ReqContext2 rc = new ReqContext2(wsp, nwHitsPerNode, thc);
-							wsp.BeginGetSnippets(searchToken, hitUris, PrefetchSnippetsResponseHandler, rc);
+							wsp.BeginGetSnippets(searchToken, hitHashCodes, PrefetchSnippetsResponseHandler, rc);
 						}	
 						
 						//Signal change in TileHitCollection due to addition of snippets:
@@ -741,11 +741,11 @@ namespace Beagle.WebService {
 								
 					foreach (Beagle.Daemon.HitSnippet hs in hslist) {
 					
-						int i;
-						string snippet, hitUri;
+						int i, hitHashCode;
+						string snippet;
 						
 						try {
-							hitUri 	= hs.hitUri;
+							hitHashCode 	= hs.hashCode;
 							snippet = hs.snippet;
 						}
 						catch (Exception ex2)
@@ -758,7 +758,7 @@ namespace Beagle.WebService {
 								continue;
 		
 						for (i = 0; i < nwHits.Count; i++)						
-							if (((NetworkHit)nwHits[i]).UriAsString == hitUri) {	
+							if (   ((NetContext) ((NetworkHit)nwHits[i]).context).hashCode == hitHashCode) {	
 														
 								((NetworkHit)nwHits[i]).snippet = snippet;
 								//log.Debug("\nPrefetchSnippetsResponseHandler: URI" + j++ + "=" + ((NetworkHit)nwHits[i]).UriAsString  + "\n     Snippet=" + snippet);																	

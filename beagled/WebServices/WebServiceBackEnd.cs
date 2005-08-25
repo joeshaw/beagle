@@ -439,11 +439,13 @@ namespace Beagle.WebService {
 			}
 
 			Query query = new Query();
-						
-			foreach (string text in sreq.text) 
+			string searchString = "";						
+			foreach (string text in sreq.text)  {
 				query.AddText(text);				
+				searchString += " " + text;
+			}
 			
-			Logger.Log.Info("WebServiceBackEnd: Received {0} WebService Query with search term: {1}", isLocalReq ? "Local":"External", sreq.text[0].Trim());
+			Logger.Log.Info("WebServiceBackEnd: Received {0} WebService Query with search term: {1}", isLocalReq ? "Local":"External", searchString.Trim());
 
 			if (sreq.mimeType != null && sreq.mimeType[0] != null)
 				foreach (string mtype in sreq.mimeType)
@@ -560,6 +562,8 @@ namespace Beagle.WebService {
 						sr.hitResults[i].properties[j].IsSearched = p.IsSearched;							
 					}
 
+					sr.hitResults[i].hashCode = h.GetHashCode ();
+					
 					if (snippet != null)
 						sr.hitResults[i].snippet = snippet.Trim();
 				}					
@@ -646,6 +650,8 @@ namespace Beagle.WebService {
 						sr.hitResults[i].properties[j].IsSearched = p.IsSearched;							
 					}												
 					
+					sr.hitResults[i].hashCode = h.GetHashCode ();
+					
 					i++;
 				}												
 			} //end lock
@@ -665,7 +671,7 @@ namespace Beagle.WebService {
 		}
 		
 		public static string InvalidHitSnippetError = "ERROR: Invalid or Duplicate Hit Id";
-		public HitSnippet[] getSnippets(string searchToken, string[] hitUris)
+		public HitSnippet[] getSnippets(string searchToken, int[] hitHashCodes)
 		{	
 			HitSnippet[] response;
 			
@@ -685,11 +691,11 @@ namespace Beagle.WebService {
 			}
 			
 			int i = 0; 		
-			ArrayList UriList = new ArrayList();
-			UriList.AddRange(hitUris);
+			ArrayList hashCodeList = new ArrayList();
+			hashCodeList.AddRange(hitHashCodes);
 				
-			response = new HitSnippet[hitUris.Length];
-			Logger.Log.Debug("GetSnippets invoked with {0} hitUris", hitUris.Length);
+			response = new HitSnippet[hitHashCodes.Length];
+			Logger.Log.Debug("GetSnippets invoked with {0} hitHashCodes", hitHashCodes.Length);
 
 			Query query = ((SessionData)sessionTable[searchToken]).query;
 			
@@ -698,10 +704,10 @@ namespace Beagle.WebService {
 				string snippet = null; 
 				foreach (Hit h in results)  {
 				
-					string hitUri = h.UriAsString;
-					if (UriList.Contains(hitUri)) {
+					int hashCode = h.GetHashCode();
+					if (hashCodeList.Contains(hashCode)) {
 					
-							UriList.Remove(hitUri);	
+							hashCodeList.Remove(hashCode);	
 
 							//Queryable queryable = h.SourceObject as Queryable;
 							Queryable queryable = QueryDriver.GetQueryable (h.SourceObjectName);													
@@ -716,23 +722,23 @@ namespace Beagle.WebService {
 								snippet = "";
 								
 							HitSnippet hs = new HitSnippet();
-							hs.hitUri = hitUri; 
+							hs.hashCode = hashCode; 
 							hs.snippet = snippet.Trim();
 							response[i++] = hs;		
 					
-							if (i == hitUris.Length)
+							if ((hashCodeList.Count == 0) || (i == hitHashCodes.Length))
 								return response;
 					}
 				} //end foreach
 			} //end lock
 			
-			foreach (string hitUri in UriList) {
+			foreach (int hashCode in hashCodeList) {
 					HitSnippet hs = new HitSnippet();
-					hs.hitUri = hitUri; 
+					hs.hashCode = hashCode; 
 					hs.snippet = InvalidHitSnippetError;
 					response[i++] = hs;	
 
-					if (i == hitUris.Length)
+					if (i == hitHashCodes.Length)
 							break;
 			}		
 			Logger.Log.Warn("GetSnippets invoked some invalid hitIds");
@@ -753,10 +759,13 @@ namespace Beagle.WebService {
 			return (token.Replace('-', alpha));
 		}
 	}	
-	
+
+
 ////////////////////////////////////////////////////////////////////////////////////////////
 /////////////   WebService Request-Response Data Structures   	
 ////////////////////////////////////////////////////////////////////////////////////////////
+/* These are duplicate definitions to the ones in WebServiceProxy.cs. 
+    So, we will define and use these from one central place: WebServiceProxy.cs
 
 	[Serializable()]
 	public class SearchRequest  {
@@ -809,6 +818,7 @@ namespace Beagle.WebService {
 		public double 	score;
 		public HitProperty[] properties;
 		//FIXME: public xxx[] data;
+		public int 	hashCode;
 		public string 	snippet;
 	}
 
@@ -828,8 +838,9 @@ namespace Beagle.WebService {
 
 	[Serializable()]
 	public class HitSnippet {
-		public string hitUri;
+		public int hashCode;
 		public string snippet;
 	}
+*/	
 		
 }

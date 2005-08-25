@@ -172,7 +172,7 @@ namespace Beagle.Daemon
 							//if (hr.snippet != null) 
 								//log.Debug("\nNBH: URI" + i + "=" + hr.uri + "\n     Snippet=" + hr.snippet);
 										
-							((NetworkHit)hit).context = null;
+							((NetworkHit)hit).context = new NetContext(hr.hashCode);
 							  						
 							//Add NetBeagleQueryable instance
 							hit.SourceObject = iq;
@@ -266,25 +266,19 @@ namespace Beagle.Daemon
 		}		
 	}
 
-/*
+
 	public class NetContext {
 
-		private string token;		
-		private BeagleWebService wsp;
+		private int _hashCode;
 					
-		public NetContext(BeagleWebService wsp, string token)
+		public NetContext(int hashCode)
 		{
-			this.wsp = wsp;
-			this.token = token;
+			this._hashCode = hashCode;
 		}		
 		
-		public BeagleWebService  proxy {
-			get { return wsp; }
-		}		
-		
-		public string searchToken {
-			get {return token; }
-		} 		
+		public int hashCode {
+			get { return _hashCode; }
+		}			
 	}
-*/		
+	
 }
