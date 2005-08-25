@@ -477,7 +477,6 @@ namespace Beagle.Daemon {
 			}
 
 			sw.Stop ();
-			Logger.Log.Debug ("Scored {0} hits in {1}", hits_by_id.Count, sw);
 		}
 
 		////////////////////////////////////////////////////////////////

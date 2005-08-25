@@ -635,16 +635,18 @@ namespace Beagle.Daemon {
 
 		private void ScheduleOptimize ()
 		{
-			if (our_optimize_task == null) {
+			double optimize_delay;
+			optimize_delay = 10.0; // minutes
+
+			if (our_optimize_task == null)
 				our_optimize_task = NewOptimizeTask ();
-				// When we first create the optimize task, put it two
-				// minutes out into the future.  This should keep us
-				// from having a race where the optimize task gets
-				// executed before the first crawling/indexing tasks
-				// get created.  A bit hacky, but should work in all
-				// pathological cases.
-				our_optimize_task.TriggerTime = DateTime.Now.AddMinutes (2.0);
-			}
+
+			if (Environment.GetEnvironmentVariable ("BEAGLE_UNDER_BLUDGEON") != null)
+				optimize_delay = 0.1;
+
+			// Changing the trigger time of an already-scheduled process
+			// does what you would expect.
+			our_optimize_task.TriggerTime = DateTime.Now.AddMinutes (optimize_delay);
 
 			// Adding the same task more than once is a harmless no-op.
 			ThisScheduler.Add (our_optimize_task);

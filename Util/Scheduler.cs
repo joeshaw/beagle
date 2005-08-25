@@ -192,7 +192,7 @@ namespace Beagle.Util {
 			private void Recompute ()
 			{
 				if (scheduler != null)
-					Recompute ();
+					scheduler.Recompute ();
 			}
 
 			///////////////////////////////
@@ -535,9 +535,13 @@ namespace Beagle.Util {
 					last_immediate_times [4] = DateTime.Now;
 				}
 				
-				// Re-adding the same task is a no-op
 				old_task = tasks_by_tag [task.Tag] as Task;
-				if (old_task == task) 
+
+				task.Schedule (this);
+
+				// Re-adding the same task is basically a no-op --- we
+				// just update the timestamp and return.
+				if (old_task == task)
 					return;
 
 				if (Debug) {
@@ -547,7 +551,7 @@ namespace Beagle.Util {
 						Logger.Log.Debug ("Desc: {0}", task.Description);
 				}
 
-				task.Schedule (this);
+
 
 				if (task.Priority == Priority.Shutdown)
 					shutdown_task_queue.Enqueue (task);
