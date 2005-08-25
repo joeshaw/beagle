@@ -124,7 +124,18 @@ namespace Beagle {
 			// The socket may be shut down at some point here.  It
 			// is the caller's responsibility to handle the error
 			// correctly.
+#if ENABLE_XML_DUMP
+			MemoryStream mem_stream = new MemoryStream ();
+			req_serializer.Serialize (mem_stream, new RequestWrapper (request));
+			mem_stream.Seek (0, SeekOrigin.Begin);
+			StreamReader r = new StreamReader (mem_stream);
+			Logger.Log.Debug ("Sending request:\n{0}", r.ReadToEnd ());
+			mem_stream.Seek (0, SeekOrigin.Begin);
+			mem_stream.WriteTo (stream);
+			mem_stream.Close ();
+#else
 			req_serializer.Serialize (stream, new RequestWrapper (request));
+#endif
 			// Send end of message marker
 			stream.WriteByte (0xff);
 			stream.Flush ();

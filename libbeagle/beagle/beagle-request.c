@@ -25,6 +25,10 @@
  * DEALINGS IN THE SOFTWARE.
  */
 
+#ifdef HAVE_CONFIG_H
+#include <config.h>
+#endif
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <sys/types.h>
@@ -235,6 +239,11 @@ request_send (BeagleRequest *request, const char *socket_path, GError **err)
 	buffer = BEAGLE_REQUEST_GET_CLASS (request)->to_xml (request, err);
 	if (buffer == NULL)
 		return FALSE;
+
+#ifdef ENABLE_XML_DUMP
+	printf ("Sending request:\n");
+	printf ("%*s\n", buffer->len, buffer->str);
+#endif
 
 	/* Send the data over the wire */
 	total_written = 0;

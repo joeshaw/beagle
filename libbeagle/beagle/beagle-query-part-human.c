@@ -35,7 +35,6 @@
 
 typedef struct {
 	const char *string;
-	BeagleQueryPartLogic logic;
 } BeagleQueryPartHumanPrivate;
 
 #define BEAGLE_QUERY_PART_HUMAN_GET_PRIVATE(o) (G_TYPE_INSTANCE_GET_PRIVATE ((o), BEAGLE_TYPE_QUERY_PART_HUMAN, BeagleQueryPartHumanPrivate))
@@ -45,14 +44,12 @@ static GObjectClass *parent_class = NULL;
 G_DEFINE_TYPE (BeagleQueryPartHuman, beagle_query_part_human, BEAGLE_TYPE_QUERY_PART)
 
 static GString *
-beagle_query_part_human_to_xml (BeagleQueryPart *part, GError **err)
+beagle_query_part_human_to_xml (BeagleQueryPart *part)
 {
-	BeagleQueryPartHumanPrivate *priv;
-	priv = BEAGLE_QUERY_PART_HUMAN_GET_PRIVATE (part);    
-	
+	BeagleQueryPartHumanPrivate *priv = BEAGLE_QUERY_PART_HUMAN_GET_PRIVATE (part);    
 	GString *data = g_string_new (NULL);
 	
-	_beagle_query_part_append_standard_header (data, "Human", priv->logic);
+	_beagle_query_part_append_standard_header (data, part, "Human");
 
 	g_string_append (data, "<QueryString>");
 	g_string_append (data, priv->string);
@@ -97,22 +94,23 @@ beagle_query_part_human_new (void)
         return part;
 }
 
+/**
+ * beagle_query_part_human_set_string:
+ * @part: a #BeagleQueryPartHuman
+ * @string: a #const char *
+ *
+ * Sets the "human" string on a #BeagleQueryPartHuman.  This should be used
+ * for user input as it can contain query modifiers like "OR".
+ **/
 void
 beagle_query_part_human_set_string (BeagleQueryPartHuman *part,
 				    const char           *string)
 {
 	BeagleQueryPartHumanPrivate *priv;
-	
+
+	g_return_if_fail (BEAGLE_IS_QUERY_PART_HUMAN (part));
 	g_return_if_fail (string != NULL);
 	
 	priv = BEAGLE_QUERY_PART_HUMAN_GET_PRIVATE (part);    
 	priv->string = string;
-}
-
-void
-beagle_query_part_human_set_logic (BeagleQueryPartHuman *part,
-				   BeagleQueryPartLogic logic)
-{
-	BeagleQueryPartHumanPrivate *priv = BEAGLE_QUERY_PART_HUMAN_GET_PRIVATE (part);    
-	priv->logic = logic;
 }

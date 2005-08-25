@@ -37,6 +37,8 @@
 #include "beagle-marshal.h"
 #include "beagle-query.h"
 #include "beagle-query-part.h"
+#include "beagle-query-part-or.h"
+#include "beagle-query-part-property.h"
 #include "beagle-query-part-text.h"
 #include "beagle-search-term-response.h"
 #include "beagle-private.h"
@@ -67,17 +69,58 @@ beagle_query_to_xml (BeagleRequest *request, GError **err)
 {
 	BeagleQueryPrivate *priv = BEAGLE_QUERY_GET_PRIVATE (request);
 	GString *data = g_string_new (NULL);
+	GString *sub_data;
+	BeagleQueryPartOr *or_part;
 	GSList *iter;
 
 	_beagle_request_append_standard_header (data, "Query");
 
 	g_string_append_len (data, "<Parts>", 7);
 
+	if (priv->mime_types != NULL) {
+		or_part = beagle_query_part_or_new ();
+
+		for (iter = priv->mime_types; iter!= NULL; iter = iter->next) {
+			BeagleQueryPartProperty *prop_part = beagle_query_part_property_new ();
+
+			beagle_query_part_property_set_property_type (prop_part, BEAGLE_PROPERTY_TYPE_KEYWORD);
+			beagle_query_part_property_set_key (prop_part, "beagle:MimeType");
+			beagle_query_part_property_set_value (prop_part, (const char *) iter->data);
+
+			beagle_query_part_or_add_subpart (or_part, BEAGLE_QUERY_PART (prop_part));
+		}
+
+		sub_data = _beagle_query_part_to_xml (BEAGLE_QUERY_PART (or_part));
+		g_string_append_len (data, sub_data->str, sub_data->len);
+		g_string_free (sub_data, TRUE);
+		g_object_unref (or_part);
+	}
+
+	if (priv->hit_types != NULL) {
+		or_part = beagle_query_part_or_new ();
+
+		for (iter = priv->hit_types; iter!= NULL; iter = iter->next) {
+			BeagleQueryPartProperty *prop_part = beagle_query_part_property_new ();
+
+			beagle_query_part_property_set_property_type (prop_part, BEAGLE_PROPERTY_TYPE_KEYWORD);
+			beagle_query_part_property_set_key (prop_part, "beagle:Type");
+			beagle_query_part_property_set_value (prop_part, (const char *) iter->data);
+
+			beagle_query_part_or_add_subpart (or_part, BEAGLE_QUERY_PART (prop_part));
+		}
+
+		sub_data = _beagle_query_part_to_xml (BEAGLE_QUERY_PART (or_part));
+		g_string_append_len (data, sub_data->str, sub_data->len);
+		g_string_free (sub_data, TRUE);
+		g_object_unref (or_part);
+	}
+
 	for (iter = priv->parts; iter != NULL; iter = iter->next) {
 		BeagleQueryPart *part = (BeagleQueryPart *) iter->data;
 
-		GString * buffer = beagle_query_part_to_xml (part, err);
-		g_string_append_len (data, buffer->str, buffer->len);
+		sub_data = _beagle_query_part_to_xml (part);
+		g_string_append_len (data, sub_data->str, sub_data->len);
+		g_string_free (sub_data, TRUE);
 	}
 
 	g_string_append_len (data, "</Parts>", 8);
@@ -269,7 +312,8 @@ beagle_query_add_text (BeagleQuery *query, const char *str)
 	beagle_query_part_text_set_text (part, str);
 	beagle_query_part_text_set_search_full_text (part, TRUE);
 	beagle_query_part_text_set_search_properties (part, TRUE);
-	beagle_query_part_text_set_logic (part, BEAGLE_QUERY_PART_LOGIC_REQUIRED);
+	beagle_query_part_set_logic (BEAGLE_QUERY_PART (part),
+				     BEAGLE_QUERY_PART_LOGIC_REQUIRED);
 
 	beagle_query_add_part (query, BEAGLE_QUERY_PART (part));
 }

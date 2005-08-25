@@ -37,7 +37,6 @@ typedef struct {
 	char *key;
 	BeagleTimestamp *start_date;
 	BeagleTimestamp *end_date;
-	BeagleQueryPartLogic logic;
 } BeagleQueryPartDatePrivate;
 
 #define BEAGLE_QUERY_PART_DATE_GET_PRIVATE(o) (G_TYPE_INSTANCE_GET_PRIVATE ((o), BEAGLE_TYPE_QUERY_PART_DATE, BeagleQueryPartDatePrivate))
@@ -45,14 +44,12 @@ typedef struct {
 static GObjectClass *parent_class = NULL;
 
 static GString *
-beagle_query_part_date_to_xml (BeagleQueryPart *part, GError **err)
+beagle_query_part_date_to_xml (BeagleQueryPart *part)
 {
-	BeagleQueryPartDatePrivate *priv;
-	priv = BEAGLE_QUERY_PART_DATE_GET_PRIVATE (part);    
-	
+	BeagleQueryPartDatePrivate *priv = BEAGLE_QUERY_PART_DATE_GET_PRIVATE (part);    
 	GString *data = g_string_new (NULL);
 	
-	_beagle_query_part_append_standard_header (data, "Date", priv->logic);
+	_beagle_query_part_append_standard_header (data, part, "Date");
 	
 	g_string_append_printf (data, "<StartDate>%s</StartDate>", priv->start_date);    
 	g_string_append_printf (data, "<EndDate>%s</EndDate>", priv->end_date);
@@ -98,26 +95,40 @@ beagle_query_part_date_new (void)
         return part;
 }
 
+/**
+ * beagle_query_part_date_set_start_date:
+ * @part: a #BeagleQueryPartDate
+ * @start_date: a #BeagleTimestamp
+ *
+ * Sets the start date for the date range in a #BeagleQueryPartDate.
+ **/
 void
 beagle_query_part_date_set_start_date (BeagleQueryPartDate *part,
 				       BeagleTimestamp *start_date)
 {
-	BeagleQueryPartDatePrivate *priv = BEAGLE_QUERY_PART_DATE_GET_PRIVATE (part);    
+	BeagleQueryPartDatePrivate *priv;
+
+	g_return_if_fail (BEAGLE_IS_QUERY_PART_DATE (part));
+
+	priv = BEAGLE_QUERY_PART_DATE_GET_PRIVATE (part);    
 	priv->start_date = start_date;
 }
 
+/**
+ * beagle_query_part_date_set_end_date:
+ * @part: a #BeagleQueryPartDate
+ * @start_date: a #BeagleTimestamp
+ *
+ * Sets the end date for the date range in a #BeagleQueryPartDate.
+ **/
 void
 beagle_query_part_date_set_end_date (BeagleQueryPartDate *part,
 				     BeagleTimestamp *end_date)
 {
-	BeagleQueryPartDatePrivate *priv = BEAGLE_QUERY_PART_DATE_GET_PRIVATE (part);    
-	priv->end_date = end_date;
-}
+	BeagleQueryPartDatePrivate *priv;
 
-void
-beagle_query_part_date_set_logic (BeagleQueryPartDate *part,
-				  BeagleQueryPartLogic logic)
-{
-	BeagleQueryPartDatePrivate *priv = BEAGLE_QUERY_PART_DATE_GET_PRIVATE (part);    
-	priv->logic = logic;
+	g_return_if_fail (BEAGLE_IS_QUERY_PART_DATE (part));
+
+	priv = BEAGLE_QUERY_PART_DATE_GET_PRIVATE (part);    
+	priv->end_date = end_date;
 }

@@ -59,6 +59,4 @@ void beagle_query_part_property_set_value         (BeagleQueryPartProperty *part
 						   const char              *value);
 void beagle_query_part_property_set_property_type (BeagleQueryPartProperty *part,
 						   BeaglePropertyType      prop_type);
-void beagle_query_part_property_set_logic         (BeagleQueryPartProperty *part,
-						   BeagleQueryPartLogic    logic);
 #endif /* __BEAGLE_QUERY_PART_PROPERTY_H */

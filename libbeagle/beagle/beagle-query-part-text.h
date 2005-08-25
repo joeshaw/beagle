@@ -59,6 +59,4 @@ void beagle_query_part_text_set_search_full_text        (BeagleQueryPartText  *p
 							 gboolean             search_full_text);
 void beagle_query_part_text_set_search_properties       (BeagleQueryPartText  *part,
 							 gboolean             search_properties);
-void beagle_query_part_text_set_logic                   (BeagleQueryPartText  *part,
-							 BeagleQueryPartLogic logic);
 #endif /* __BEAGLE_QUERY_PART_TEXT_H */

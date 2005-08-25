@@ -158,7 +158,7 @@ namespace Beagle {
 		{ }
 
 		[XmlArray ("SubParts")]
-		[XmlArrayItem (ElementName="SubPart", Type=typeof (QueryPart))]
+		[XmlArrayItem (ElementName="Part", Type=typeof (QueryPart))]
 		public ArrayList SubParts_ShouldBePrivateSoPleaseDontUseThis {
 			get { return sub_parts; }
 		}

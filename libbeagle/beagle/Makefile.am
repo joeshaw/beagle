@@ -32,6 +32,7 @@ libbeagle_la_SOURCES = 				\
 	beagle-query-part.c			\
 	beagle-query-part-date.c		\
 	beagle-query-part-human.c		\
+	beagle-query-part-or.c			\
 	beagle-query-part-property.c		\
 	beagle-query-part-text.c		\
 	beagle-request.c			\
@@ -70,6 +71,7 @@ libbeagleinclude_HEADERS = 			\
 	beagle-query-part.h			\
 	beagle-query-part-date.h		\
 	beagle-query-part-human.h		\
+	beagle-query-part-or.h			\
 	beagle-query-part-property.h		\
 	beagle-query-part-text.h		\
 	beagle-search-term-response.h		\

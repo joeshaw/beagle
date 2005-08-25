@@ -37,7 +37,6 @@ typedef struct {
 	const char *text;
 	gboolean search_full_text : 1;
 	gboolean search_properties : 1;
-	BeagleQueryPartLogic logic;
 } BeagleQueryPartTextPrivate;
 
 #define BEAGLE_QUERY_PART_TEXT_GET_PRIVATE(o) (G_TYPE_INSTANCE_GET_PRIVATE ((o), BEAGLE_TYPE_QUERY_PART_TEXT, BeagleQueryPartTextPrivate))
@@ -47,14 +46,12 @@ static GObjectClass *parent_class = NULL;
 G_DEFINE_TYPE (BeagleQueryPartText, beagle_query_part_text, BEAGLE_TYPE_QUERY_PART)
 
 static GString *
-beagle_query_part_text_to_xml (BeagleQueryPart *part, GError **err)
+beagle_query_part_text_to_xml (BeagleQueryPart *part)
 {
-	BeagleQueryPartTextPrivate *priv;
-	priv = BEAGLE_QUERY_PART_TEXT_GET_PRIVATE (part);    
-	
+	BeagleQueryPartTextPrivate *priv = BEAGLE_QUERY_PART_TEXT_GET_PRIVATE (part);    
 	GString *data = g_string_new (NULL);
 	
-	_beagle_query_part_append_standard_header (data, "Text", priv->logic);
+	_beagle_query_part_append_standard_header (data, part, "Text");
 
 	g_string_append (data, "<Text>");
 	g_string_append (data, priv->text);
@@ -109,38 +106,66 @@ beagle_query_part_text_new (void)
         return part;
 }
 
+/**
+ * beagle_query_part_text_set_text:
+ * @part: a #BeagleQueryPartText
+ * @text: a #const char *
+ *
+ * Sets the text to search for in a #BeagleQueryPartText.  This should only
+ * be used for programmatically built queries, because it does not use the
+ * query language and doesn't handle things like "OR".  If you are getting
+ * input from a user, you should use #BeagleQueryPartHuman instead.
+ **/
 void
 beagle_query_part_text_set_text (BeagleQueryPartText *part,
 				 const char          *text)
 {
 	BeagleQueryPartTextPrivate *priv;
-	
+
+	g_return_if_fail (BEAGLE_IS_QUERY_PART_TEXT (part));
 	g_return_if_fail (text != NULL);
 	
 	priv = BEAGLE_QUERY_PART_TEXT_GET_PRIVATE (part);    
 	priv->text = text;
 }
 
+/**
+ * beagle_query_part_text_set_search_full_text:
+ * @part: a #BeagleQueryPartText
+ * @search_full_text: a #gboolean
+ *
+ * Sets whether to search the full text of documents to find the text part
+ * of this #BeagleQueryPartText.
+ **/
 void
 beagle_query_part_text_set_search_full_text (BeagleQueryPartText *part,
 					     gboolean            search_full_text)
 {
-	BeagleQueryPartTextPrivate *priv = BEAGLE_QUERY_PART_TEXT_GET_PRIVATE (part);    
+	BeagleQueryPartTextPrivate *priv;
+
+	g_return_if_fail (BEAGLE_IS_QUERY_PART_TEXT (part));
+
+	priv = BEAGLE_QUERY_PART_TEXT_GET_PRIVATE (part);    
 	priv->search_full_text = search_full_text;
 }
 
+/**
+ * beagle_query_part_text_set_search_properties:
+ * @part: a #BeagleQueryPartText
+ * @search_properties: a #gboolean
+ *
+ * Sets whether to search the properties of documents to find the text part
+ * of this #BeagleQueryPartText.
+ **/
 void
 beagle_query_part_text_set_search_properties (BeagleQueryPartText *part,
 					      gboolean            search_properties)
 {
-	BeagleQueryPartTextPrivate *priv = BEAGLE_QUERY_PART_TEXT_GET_PRIVATE (part);    
+	BeagleQueryPartTextPrivate *priv;
+
+	g_return_if_fail (BEAGLE_IS_QUERY_PART_TEXT (part));
+
+	priv = BEAGLE_QUERY_PART_TEXT_GET_PRIVATE (part);    
 	priv->search_properties = search_properties;
 }
 
-void
-beagle_query_part_text_set_logic (BeagleQueryPartText  *part,
-				  BeagleQueryPartLogic logic)
-{
-	BeagleQueryPartTextPrivate *priv = BEAGLE_QUERY_PART_TEXT_GET_PRIVATE (part);    
-	priv->logic = logic;
-}

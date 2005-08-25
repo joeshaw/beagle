@@ -82,6 +82,12 @@ void _beagle_indexable_to_xml (BeagleIndexable *indexable, GString *data);
 
 BeagleResponse *_beagle_parser_context_get_response (BeagleParserContext *ctx);
 
+GString *_beagle_query_part_to_xml    (BeagleQueryPart *part);
+
+void _beagle_query_part_append_standard_header (GString *data,
+						BeagleQueryPart *part,
+						const char *xsi_type);
+
 BeagleResponse *_beagle_request_send (BeagleRequest *request,
 				      const char *socket_path,
 				      GError **err);

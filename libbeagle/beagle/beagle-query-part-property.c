@@ -37,7 +37,6 @@ typedef struct {
 	const char *key;
 	const char *value;
 	BeaglePropertyType prop_type;
-	BeagleQueryPartLogic logic;
 } BeagleQueryPartPropertyPrivate;
 
 #define BEAGLE_QUERY_PART_PROPERTY_GET_PRIVATE(o) (G_TYPE_INSTANCE_GET_PRIVATE ((o), BEAGLE_TYPE_QUERY_PART_PROPERTY, BeagleQueryPartPropertyPrivate))
@@ -47,15 +46,13 @@ static GObjectClass *parent_class = NULL;
 G_DEFINE_TYPE (BeagleQueryPartProperty, beagle_query_part_property, BEAGLE_TYPE_QUERY_PART)
 
 static GString *
-beagle_query_part_property_to_xml (BeagleQueryPart *part, GError **err)
+beagle_query_part_property_to_xml (BeagleQueryPart *part)
 {
-	BeagleQueryPartPropertyPrivate *priv;
-	priv = BEAGLE_QUERY_PART_PROPERTY_GET_PRIVATE (part);    
+	BeagleQueryPartPropertyPrivate *priv = BEAGLE_QUERY_PART_PROPERTY_GET_PRIVATE (part);    
 	
 	GString *data = g_string_new (NULL);
 	
-	_beagle_query_part_append_standard_header (data, "Property", priv->logic);
-	
+	_beagle_query_part_append_standard_header (data, part, "Property");
 	
 	switch (priv->prop_type) {
 	    case BEAGLE_PROPERTY_TYPE_TEXT:
@@ -110,35 +107,61 @@ beagle_query_part_property_new (void)
         return part;
 }
 
+/**
+ * beagle_query_part_property_set_key:
+ * @part: a #BeagleQueryPartProperty
+ * @key: a #const char *
+ *
+ * Sets the key of the #BeagleQueryPartProperty to be queried against.  For
+ * example, "beagle:Type".
+ **/
 void
 beagle_query_part_property_set_key (BeagleQueryPartProperty *part,
 				    const char *key)
 {
-	BeagleQueryPartPropertyPrivate *priv = BEAGLE_QUERY_PART_PROPERTY_GET_PRIVATE (part);
+	BeagleQueryPartPropertyPrivate *priv;
+
+	g_return_if_fail (BEAGLE_IS_QUERY_PART_PROPERTY (part));
+
+	priv = BEAGLE_QUERY_PART_PROPERTY_GET_PRIVATE (part);
 	priv->key = key;
 }
 
+/**
+ * beagle_query_part_property_set_value:
+ * @part: a #BeagleQueryPartProperty
+ * @value: a #const char *
+ *
+ * Sets the value of the #BeagleQueryPartProperty to be queried for.  For
+ * example, "MailMessage".
+ **/
 void
 beagle_query_part_property_set_value (BeagleQueryPartProperty *part,
 				      const char *value)
 {
-	BeagleQueryPartPropertyPrivate *priv = BEAGLE_QUERY_PART_PROPERTY_GET_PRIVATE (part);
+	BeagleQueryPartPropertyPrivate *priv;
+
+	g_return_if_fail (BEAGLE_IS_QUERY_PART_PROPERTY (part));
+
+	priv = BEAGLE_QUERY_PART_PROPERTY_GET_PRIVATE (part);
 	priv->value = value;
 }
 
+/**
+ * beagle_query_part_property_set_property_type:
+ * @part: a #BeagleQueryPartProperty
+ * @value: a value of #BeaglePropertyType
+ *
+ * Sets the property type of the #BeagleQueryPartProperty to be queried for.
+ **/
 void
 beagle_query_part_property_set_property_type (BeagleQueryPartProperty *part,
 					      BeaglePropertyType prop_type)
 {
-	BeagleQueryPartPropertyPrivate *priv = BEAGLE_QUERY_PART_PROPERTY_GET_PRIVATE (part);
+	BeagleQueryPartPropertyPrivate *priv;
+
+	g_return_if_fail (BEAGLE_IS_QUERY_PART_PROPERTY (part));
+
+	priv = BEAGLE_QUERY_PART_PROPERTY_GET_PRIVATE (part);
 	priv->prop_type = prop_type;
-}
-
-
-void
-beagle_query_part_property_set_logic (BeagleQueryPartProperty *part,
-				      BeagleQueryPartLogic logic)
-{
-	BeagleQueryPartPropertyPrivate *priv = BEAGLE_QUERY_PART_PROPERTY_GET_PRIVATE (part);
-	priv->logic = logic;
 }

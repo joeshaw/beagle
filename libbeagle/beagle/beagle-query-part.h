@@ -53,11 +53,13 @@ typedef struct {
 typedef struct {
 	GObjectClass parent_class;
 	
-        GString *(* to_xml) (BeagleQueryPart *part, GError **err);
+        GString *(* to_xml) (BeagleQueryPart *part);
 } BeagleQueryPartClass;
 
-GType     beagle_query_part_get_type (void);
-GString * beagle_query_part_to_xml   (BeagleQueryPart *part,
-				      GError **err);
+GType    beagle_query_part_get_type  (void);
+
+void     beagle_query_part_set_logic (BeagleQueryPart *part,
+				      BeagleQueryPartLogic logic);
+
 
 #endif /* __BEAGLE_QUERY_PART_H */

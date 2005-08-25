@@ -1,4 +1,3 @@
-/* -*- Mode: csharp; tab-width: 8; indent-tabs-mode: t; c-basic-offset: 8 -*- */
 //
 // FilterPPT.cs
 //
@@ -575,7 +574,7 @@ namespace Beagle.Filters {
 			} catch (Exception e) {
 				Logger.Log.Error ("Exception occurred duing DoPullProperties.");
 				Logger.Log.Error (e);
-				Finished ();
+				Error ();
 			}
 		}
 
@@ -606,10 +605,11 @@ namespace Beagle.Filters {
 				} else {
 					Logger.Log.Error ("Ole stream not found in {0}.  Content extraction skipped.", FileName);
 				}
-			Finished();
+
+				Finished ();
 			} catch (Exception e) {
 				Logger.Log.Error ("Exception {0} occurred during DoPull.", e.Message);
-				Finished ();
+				Error ();
 			}
 		}
 
@@ -626,13 +626,13 @@ namespace Beagle.Filters {
 				}
 				if (input == null || file == null) {
 					Logger.Log.Error ("Unable to open [{0}] ",info.FullName);
-					Finished ();
+					Error ();
 					return;
 				}
 				
 			} catch (Exception e) {
 				Logger.Log.Error ("Unable to open "+info.FullName);
-				Finished ();
+				Error ();
 				return;
 			}
 			
@@ -649,12 +649,12 @@ namespace Beagle.Filters {
 				} else if (((dualStorTemp = file.ChildByName ("Header")) != null) ||
 					   ((dualStorTemp = file.ChildByName ("PowerPoint Document")) == null)) {
 					Logger.Log.Error ("{0} is a PPT 95/4.0 file.  Beagle does not support PPT 95 files. Skipping...", FileName);
-					Finished ();
+					Error ();
 				}
 			} catch (Exception e) {
 				
 				Logger.Log.Error ("Unable to open OleFile stream of "+info.FullName);
-				Finished ();
+				Error ();
 			}
 		}
 

@@ -60,8 +60,19 @@ namespace Beagle.Daemon {
 				if (this.client == null)
 					return false;
 
-				try { 
+				try {
+#if ENABLE_XML_DUMP
+					MemoryStream mem_stream = new MemoryStream ();
+					serializer.Serialize (mem_stream, new ResponseWrapper (response));
+					mem_stream.Seek (0, SeekOrigin.Begin);
+					StreamReader r = new StreamReader (mem_stream);
+					Logger.Log.Debug ("Sending response:\n{0}", r.ReadToEnd ());
+					mem_stream.Seek (0, SeekOrigin.Begin);
+					mem_stream.WriteTo (this.client.GetStream ());
+					mem_stream.Close ();
+#else
 					serializer.Serialize (this.client.GetStream (), new ResponseWrapper (response));
+#endif
 					// Send an end of message marker
 					this.client.GetStream ().WriteByte (0xff);
 					this.client.GetStream ().Flush ();

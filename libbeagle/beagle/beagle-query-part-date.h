@@ -57,6 +57,4 @@ void                  beagle_query_part_date_set_start_date (BeagleQueryPartDate
 							     BeagleTimestamp *start_date);
 void                  beagle_query_part_date_set_end_date   (BeagleQueryPartDate *part,
 							     BeagleTimestamp *end_date);
-void                  beagle_query_part_date_set_logic      (BeagleQueryPartDate *part,
-							     BeagleQueryPartLogic logic);
 #endif /* __BEAGLE_QUERY_PART_DATE_H */

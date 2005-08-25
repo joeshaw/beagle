@@ -69,20 +69,45 @@ beagle_query_part_init (BeagleQueryPart *part)
 	
 }
 
-GString *
-beagle_query_part_to_xml (BeagleQueryPart *part, GError **err)
+/**
+ * beagle_query_part_set_logic:
+ * @part: a #BeagleQueryPart
+ * @logic: a value in enum #BeagleQueryLogic
+ *
+ * Set the #BeagleQueryLogic for a #BeagleQueryPart.  This is used to determine whether
+ * this part should be required or prohibited.
+ **/
+void
+beagle_query_part_set_logic (BeagleQueryPart *part,
+			     BeagleQueryPartLogic logic)
 {
-    return BEAGLE_QUERY_PART_GET_CLASS (part)->to_xml (part, err);
+	BeagleQueryPartPrivate *priv;
+
+	g_return_if_fail (BEAGLE_IS_QUERY_PART (part));
+
+	priv = BEAGLE_QUERY_PART_GET_PRIVATE (part);
+
+	priv->logic = logic;
+}
+
+GString *
+_beagle_query_part_to_xml (BeagleQueryPart *part)
+{
+	g_return_val_if_fail (BEAGLE_IS_QUERY_PART (part), NULL);
+
+	return BEAGLE_QUERY_PART_GET_CLASS (part)->to_xml (part);
 }
 
 void
 _beagle_query_part_append_standard_header (GString *data,
-					   const char *xsi_type,
-					   BeagleQueryPartLogic logic)
+					   BeagleQueryPart *part,
+					   const char *xsi_type)
 {
+	BeagleQueryPartPrivate *priv = BEAGLE_QUERY_PART_GET_PRIVATE (part);
+
 	g_string_append_printf (data, "<Part xsi:type=\"QueryPart_%s\">", xsi_type);
 
-	switch (logic) {
+	switch (priv->logic) {
 	    case BEAGLE_QUERY_PART_LOGIC_REQUIRED:
 		    g_string_append (data, "<Logic>Required</Logic>");
 		    break;
