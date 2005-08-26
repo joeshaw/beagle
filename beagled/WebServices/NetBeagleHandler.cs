@@ -203,10 +203,16 @@ namespace Beagle.Daemon
 					int index = resp.firstResultIndex + resp.numResults;			
 					if (index  < resp.totalResults) {
 					
-						log.Debug("NetBeagleHandler: DoQueryResponseHandler() invoking GetMoreResults with index: " + index);
+						log.Debug("NetBeagleHandler: DoQueryResponseHandler() invoking GetResults with index: " + index);
 						
 						string searchToken = resp.searchToken;									
-						IAsyncResult ar2 = wsp.BeginGetMoreResults(searchToken, index, NetBeagleHandler.DoQueryResponseHandler, rc);
+						
+						GetResultsRequest req = new GetResultsRequest();
+						req.startIndex = index;
+						req.searchToken = searchToken;						
+											
+						IAsyncResult ar2;					
+						ar2 = wsp.BeginGetResults(req, NetBeagleHandler.DoQueryResponseHandler, rc);						
 						
 						return;						
 					}										

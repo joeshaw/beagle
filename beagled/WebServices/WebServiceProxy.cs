@@ -127,20 +127,18 @@ public class BeagleWebService: System.Web.Services.Protocols.SoapHttpClientProto
     ///Common Interface to get more results from Beagle
     ///</remarks>
     [System.Web.Services.Protocols.SoapDocumentMethodAttribute("http://www.gnome.org/projects/beagle/webservices/GetMoreResults",RequestNamespace="http://www.gnome.org/projects/beagle/webservices",ResponseNamespace="http://www.gnome.org/projects/beagle/webservices",ParameterStyle=System.Web.Services.Protocols.SoapParameterStyle.Wrapped,Use=System.Web.Services.Description.SoapBindingUse.Literal)]
-    public SearchResult GetMoreResults(string searchToken, int index) {
-        object[] results = this.Invoke("GetMoreResults", new object[] {
-            searchToken,
-            index});
+    public SearchResult GetResults(GetResultsRequest req) {
+        object[] results = this.Invoke("GetResults", new object[] {
+            req});
         return ((SearchResult)(results[0]));
     }
-
-    public System.IAsyncResult BeginGetMoreResults(string searchToken, int index, System.AsyncCallback callback, object asyncState) {
-        return this.BeginInvoke("GetMoreResults", new object[] {
-            searchToken,
-            index}, callback, asyncState);
+    
+    public System.IAsyncResult BeginGetResults(GetResultsRequest req, System.AsyncCallback callback, object asyncState) {
+        return this.BeginInvoke("GetResults", new object[] {
+            req}, callback, asyncState);
     }
-
-    public SearchResult EndGetMoreResults(System.IAsyncResult asyncResult) {
+    
+    public SearchResult EndGetResults(System.IAsyncResult asyncResult) {
         object[] results = this.EndInvoke(asyncResult);
         return ((SearchResult)(results[0]));
     }
@@ -149,22 +147,21 @@ public class BeagleWebService: System.Web.Services.Protocols.SoapHttpClientProto
     ///Common Interface to get Snippets for results
     ///</remarks>
     [System.Web.Services.Protocols.SoapDocumentMethodAttribute("http://www.gnome.org/projects/beagle/webservices/GetSnippets",RequestNamespace="http://www.gnome.org/projects/beagle/webservices",ResponseNamespace="http://www.gnome.org/projects/beagle/webservices",ParameterStyle=System.Web.Services.Protocols.SoapParameterStyle.Wrapped,Use=System.Web.Services.Description.SoapBindingUse.Literal)]
-    public HitSnippet[] GetSnippets(string searchToken, [System.Xml.Serialization.XmlArrayItem(IsNullable=false)]
-    int[] hitHashCodes) {
+    public HitSnippet[] GetSnippets(GetSnippetsRequest req) {
         object[] results = this.Invoke("GetSnippets", new object[] {
-            searchToken, hitHashCodes});
+            req});
         return ((HitSnippet[])(results[0]));
     }
-
-    public System.IAsyncResult BeginGetSnippets(string searchToken, int[] hitHashCodes, System.AsyncCallback callback, object asyncState) {
+    
+    public System.IAsyncResult BeginGetSnippets(GetSnippetsRequest req, System.AsyncCallback callback, object asyncState) {
         return this.BeginInvoke("GetSnippets", new object[] {
-            searchToken, hitHashCodes}, callback, asyncState);
+            req}, callback, asyncState);
     }
-
+    
     public HitSnippet[] EndGetSnippets(System.IAsyncResult asyncResult) {
         object[] results = this.EndInvoke(asyncResult);
         return ((HitSnippet[])(results[0]));
-    }   
+    }  
 }
 
 /// <remarks/>
@@ -189,6 +186,31 @@ public class SearchRequest {
 
     /// <remarks/>
     public int hopCount = 0; 
+}
+
+/// <remarks/>
+[Serializable()]
+[System.Xml.Serialization.XmlType(Namespace="http://www.gnome.org/projects/beagle/webservices")]
+public class GetResultsRequest {
+    
+    /// <remarks/>
+    public string searchToken;
+    
+    /// <remarks/>
+    public int startIndex;
+}
+
+/// <remarks/>
+[Serializable()]
+[System.Xml.Serialization.XmlType(Namespace="http://www.gnome.org/projects/beagle/webservices")]
+public class GetSnippetsRequest {
+    
+    /// <remarks/>
+    public string searchToken;
+    
+    /// <remarks/>
+    [System.Xml.Serialization.XmlArrayItem(IsNullable=false)]
+    public int[] hitHashCodes;
 }
 
 /*

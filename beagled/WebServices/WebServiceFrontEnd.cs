@@ -76,12 +76,12 @@ namespace WebService_CodeBehind {
 	
 		private WebServiceBackEnd remoteObj = null;
 
-		private SearchResult initialQuery(SearchRequest BeagleQueryRequest)
+		private SearchResult initialQuery(SearchRequest req)
 		{
 			SearchResult sr;
 			
-			if (BeagleQueryRequest.text == null || BeagleQueryRequest.text.Length == 0 ||
-				(BeagleQueryRequest.text.Length == 1 && BeagleQueryRequest.text[0].Trim()== "")) {
+			if (req.text == null || req.text.Length == 0 ||
+				(req.text.Length == 1 && req.text[0].Trim()== "")) {
 			
 				sr = new SearchResult();
 			    sr.statusCode = WebServiceBackEnd.SC_INVALID_QUERY;
@@ -101,7 +101,7 @@ namespace WebService_CodeBehind {
 				return restrictedAccessResult();
 			}
 
-			sr = remoteObj.doQuery(BeagleQueryRequest, isLocalReq);
+			sr = remoteObj.doQuery(req, isLocalReq);
 			return sr;
 	   }
 	
@@ -110,9 +110,9 @@ namespace WebService_CodeBehind {
 	"http://www.gnome.org/projects/beagle/webservices/BeagleQuery",
 	RequestNamespace="http://www.gnome.org/projects/beagle/webservices",
 	ResponseNamespace="http://www.gnome.org/projects/beagle/webservices")]
-	public SearchResult BeagleQuery(SearchRequest BeagleQueryRequest)
+	public SearchResult BeagleQuery(SearchRequest req)
 	{
-		return initialQuery(BeagleQueryRequest);
+		return initialQuery(req);
 	}
 	
 	[WebMethod(Description = "Simple Interface to Beagle")]
@@ -224,11 +224,11 @@ namespace WebService_CodeBehind {
 	"http://www.gnome.org/projects/beagle/webservices/GetMoreResults",
 	RequestNamespace="http://www.gnome.org/projects/beagle/webservices",
 	ResponseNamespace="http://www.gnome.org/projects/beagle/webservices")]
-	public SearchResult GetMoreResults(string searchToken, int index)
+	public SearchResult GetResults(GetResultsRequest req)
 	{		
 			SearchResult sr;
 			
-			if (searchToken == null | searchToken == "")  {
+			if (req.searchToken == null | req.searchToken == "")  {
 				sr = new SearchResult();
 				sr.statusCode = WebServiceBackEnd.SC_INVALID_SEARCH_TOKEN;
 				sr.statusMsg = "Invalid Search Token";
@@ -246,7 +246,7 @@ namespace WebService_CodeBehind {
 				return restrictedAccessResult();
 			}
 
-			sr = remoteObj.getMoreResults(searchToken, index, isLocalReq);
+			sr = remoteObj.getResults(req, isLocalReq);
 			return sr;
 	}
 		
@@ -255,11 +255,11 @@ namespace WebService_CodeBehind {
 	"http://www.gnome.org/projects/beagle/webservices/GetSnippets",
 	RequestNamespace="http://www.gnome.org/projects/beagle/webservices",
 	ResponseNamespace="http://www.gnome.org/projects/beagle/webservices")]
-	public HitSnippet[] GetSnippets(string searchToken, int[] hitHashCodes)
+	public HitSnippet[] GetSnippets(GetSnippetsRequest req)
 	{	
 		HitSnippet[] response;
 					
-		if (searchToken == null | searchToken == "")  {
+		if (req.searchToken == null | req.searchToken == "")  {
 			response = new HitSnippet[0];
 			return response;
 		}
@@ -277,10 +277,10 @@ namespace WebService_CodeBehind {
 			return response;
 		}
 
-		if (hitHashCodes.Length < 1)
+		if (req.hitHashCodes.Length < 1)
 			response = new HitSnippet[0];
 		else
-			response = remoteObj.getSnippets(searchToken, hitHashCodes);
+			response = remoteObj.getSnippets(req);
 			
 		return response;
 	}
@@ -298,5 +298,5 @@ namespace WebService_CodeBehind {
 
 		return sr;
 	}
-   }
+  }
 }

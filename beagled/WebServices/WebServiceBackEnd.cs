@@ -589,16 +589,18 @@ namespace Beagle.WebService {
 			 return sr;
 		}
 
-		public SearchResult getMoreResults(string searchToken, int startIndex, bool isLocalReq)
-		{							
-
+		public SearchResult getResults(GetResultsRequest req, bool isLocalReq)
+		{										
+			int startIndex = req.startIndex;
+			string searchToken = req.searchToken;
+						
 			SearchResult sr = new SearchResult();
 			sr.numResults = 0;
 			
 			if (!sessionTable.ContainsKey(searchToken)) {
 				sr.statusCode = SC_INVALID_SEARCH_TOKEN;
 				sr.statusMsg = "Error: Invalid Search Token";
-				Logger.Log.Warn("GetMoreResults: Invalid Search Token received ");
+				Logger.Log.Warn("GetResults: Invalid Search Token received ");
 				return sr;
 			}
 									
@@ -606,7 +608,7 @@ namespace Beagle.WebService {
 			if (results == null) {
 				sr.statusCode = SC_INVALID_SEARCH_TOKEN;
 				sr.statusMsg = "Error: Invalid Search Token";
-				Logger.Log.Warn("GetMoreResults: Invalid Search Token received ");
+				Logger.Log.Warn("GetResults: Invalid Search Token received ");
 				return sr;
 			}
 
@@ -626,7 +628,7 @@ namespace Beagle.WebService {
 							
 					sr.hitResults[i] = new HitResult();
 					
-// GetMoreResults will NOT return Snippets by default. Client must make explicit GetSnippets request to get snippets for these hits.
+// GetResults will NOT return Snippets by default. Client must make explicit GetSnippets request to get snippets for these hits.
 // Not initializing sr.hitResults[i].snippet implies there is no <snippets> element in HitResult XML response.
 							
 					hitUri = h.UriAsString;
@@ -671,9 +673,11 @@ namespace Beagle.WebService {
 		}
 		
 		public static string InvalidHitSnippetError = "ERROR: Invalid or Duplicate Hit Id";
-		public HitSnippet[] getSnippets(string searchToken, int[] hitHashCodes)
+		public HitSnippet[] getSnippets(GetSnippetsRequest req)
 		{	
 			HitSnippet[] response;
+			string searchToken = req.searchToken;
+			int[] hitHashCodes = req.hitHashCodes;
 			
 			if (!sessionTable.ContainsKey(searchToken)) {
 			
@@ -764,6 +768,7 @@ namespace Beagle.WebService {
 ////////////////////////////////////////////////////////////////////////////////////////////
 /////////////   WebService Request-Response Data Structures   	
 ////////////////////////////////////////////////////////////////////////////////////////////
+
 /* These are duplicate definitions to the ones in WebServiceProxy.cs. 
     So, we will define and use these from one central place: WebServiceProxy.cs
 

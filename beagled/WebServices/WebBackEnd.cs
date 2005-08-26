@@ -712,8 +712,12 @@ namespace Beagle.WebService {
 							
 							log.Debug("PrefetchSnippets: Invoking GetSnippets on {0} for {1} hits", wsp.Hostname, nwHitsPerNode.Count);
 					
+							GetSnippetsRequest sreq = new GetSnippetsRequest();
+							sreq.searchToken = searchToken;
+							sreq.hitHashCodes = hitHashCodes;
+											
 							ReqContext2 rc = new ReqContext2(wsp, nwHitsPerNode, thc);
-							wsp.BeginGetSnippets(searchToken, hitHashCodes, PrefetchSnippetsResponseHandler, rc);
+							wsp.BeginGetSnippets(sreq, PrefetchSnippetsResponseHandler, rc);
 						}	
 						
 						//Signal change in TileHitCollection due to addition of snippets:
