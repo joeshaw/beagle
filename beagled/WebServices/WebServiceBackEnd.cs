@@ -550,6 +550,7 @@ namespace Beagle.WebService {
 	        	    sr.hitResults[i].resourceType = h.Type;
 					sr.hitResults[i].mimeType = h.MimeType;
 					sr.hitResults[i].source = h.Source;
+					sr.hitResults[i].score = h.Score;				
 				
 					int plen = h.Properties.Count;
 					sr.hitResults[i].properties = new HitProperty[plen];
@@ -640,7 +641,8 @@ namespace Beagle.WebService {
 	        	    sr.hitResults[i].resourceType = h.Type;
 					sr.hitResults[i].mimeType = h.MimeType;
 					sr.hitResults[i].source = h.Source;
-				
+					sr.hitResults[i].score = h.Score;
+									
 					int plen = h.Properties.Count;
 					sr.hitResults[i].properties = new HitProperty[plen];
 					for (int j = 0; j < plen; j++) {
