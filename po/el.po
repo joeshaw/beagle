@@ -7,16 +7,16 @@ msgid ""
 msgstr ""
 "Project-Id-Version: el\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2005-08-14 11:15+0300\n"
-"PO-Revision-Date: 2005-08-14 11:11+0300\n"
+"POT-Creation-Date: 2005-08-28 12:10+0300\n"
+"PO-Revision-Date: 2005-08-28 12:18+0300\n"
 "Last-Translator: Kostas Papadimas <pkst@gnome.org>\n"
 "Language-Team: Greek <team@gnome.gr>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms:  nplurals=2; plural=(n != 1);\n"
+"Plural-Forms:  nplurals=2; plural=(n != 1);"
 
-#: ../Best/Best.cs:130
+#: ../Best/Best.cs:132
 msgid ""
 "If you're wondering whether Best is working check your notification area "
 "(system tray)"
@@ -30,87 +30,87 @@ msgstr "Απενεργοποίηση αναζήτησης"
 
 #: ../Best/BestTray.cs:150
 msgid ""
-"You're about to close the search tray. The search tray is automatically "
-"started, do you want to disable it?"
+"You are about to close the search tray. The search tray is automatically "
+"started at login-time. Would you like to disable it for future sessions?"
 msgstr ""
-"Πρόκειται να κλείσετε τη μπάρα αναζήτησης. Η μπάρα αναζήτησης "
-"ξεκινάειαυτόματα, θέλετε να την κλείσετε;"
+"Πρόκειται να κλείσετε τη μπάρα αναζήτησης. Η μπάρα αναζήτησης ξεκινάει αυτόματα "
+"κατά την είσοδο σας στο σύστημα. Θέλετε να την απενεργοποιήσετε και για μελλοντικές συνεδρίες;"
 
-#: ../Best/BestTray.cs:201
+#: ../Best/BestTray.cs:207
 msgid "No Recent Searches"
 msgstr "Δεν υπάρχουν πρόσφατες αναζητήσεις"
 
-#: ../Best/BestTray.cs:205
+#: ../Best/BestTray.cs:212
 msgid "Recent Searches"
 msgstr "Πρόσφατες αναζητήσεις"
 
-#: ../Best/BestTray.cs:219
+#: ../Best/BestTray.cs:228
 msgid "Clear"
 msgstr "Εκκαθάριση"
 
-#: ../Best/BestTray.cs:227
+#: ../Best/BestTray.cs:236
 msgid "Quit"
 msgstr "Έξοδος"
 
-#: ../Best/BestWindow.cs:302
+#: ../Best/BestWindow.cs:306
 msgid "Anywhere"
 msgstr "Οπουδήποτε"
 
-#: ../Best/BestWindow.cs:304
+#: ../Best/BestWindow.cs:310
 msgid "in Files"
-msgstr "Σε αρχεία"
+msgstr "σε αρχεία"
 
-#: ../Best/BestWindow.cs:306
+#: ../Best/BestWindow.cs:314
 msgid "in Addressbook"
-msgstr "Σε ευρετήριο διευθύνσεων"
+msgstr "σε ευρετήριο διευθύνσεων"
 
-#: ../Best/BestWindow.cs:308
+#: ../Best/BestWindow.cs:318
 msgid "in Mail"
 msgstr "σε αλληλογραφία"
 
-#: ../Best/BestWindow.cs:310
+#: ../Best/BestWindow.cs:322
 msgid "in Web Pages"
-msgstr "Σε ιστοσελίδες"
+msgstr "σε ιστοσελίδες"
 
-#: ../Best/BestWindow.cs:312
+#: ../Best/BestWindow.cs:326
 msgid "in Chats"
 msgstr "σε chats"
 
-#: ../Best/BestWindow.cs:327
+#: ../Best/BestWindow.cs:343
 msgid "Search terms:"
 msgstr "Κριτήρια αναζήτησης:"
 
-#: ../Best/BestWindow.cs:344
+#: ../Best/BestWindow.cs:367
 msgid "Find"
 msgstr "Εύρεση"
 
-#: ../Best/BestWindow.cs:361
+#: ../Best/BestWindow.cs:384
 msgid "Show More Results"
 msgstr "Εμφάνιση περισσότερων αποτελεσμάτων"
 
-#: ../Best/BestWindow.cs:367
+#: ../Best/BestWindow.cs:390
 msgid "Show Previous Results"
 msgstr "Εμφάνιση προηγούμενων αποτελεσμάτων"
 
-#: ../Best/BestWindow.cs:401
+#: ../Best/BestWindow.cs:424
 msgid "No results."
 msgstr "Χωρίς αποτελέσματα."
 
 #. To translators: {0} is the current count of results shown of {1} in total, this is the message that is initially shown
 #. when results are returned to the user.
-#: ../Best/BestWindow.cs:405
+#: ../Best/BestWindow.cs:428
 #, csharp-format
 msgid "Best <b>{0} results of {1}</b> are shown."
-msgstr "Εμφανίζοντια τα καλύτερα <b>{0} αποτελέσματα από {1}</b> are shown."
+msgstr "Εμφανίζονται τα καλύτερα <b>{0} αποτελέσματα από {1}</b> are shown."
 
 #. To translators: {0} to {1} is the interval of results currently shown of {2} results in total
-#: ../Best/BestWindow.cs:410
+#: ../Best/BestWindow.cs:433
 #, csharp-format
 msgid "Results <b>{0} through {1} of {2}</b> are shown."
 msgstr "Αποτελέσματα<b>{0} του {1} από {2}</b> εμφανίζονται."
 
 #. To translators: {0} represents the current query keywords
-#: ../Best/BestWindow.cs:521
+#: ../Best/BestWindow.cs:542
 #, csharp-format
 msgid ""
 "The query for <i>{0}</i> failed.<br>The likely cause is that the beagle "
@@ -120,7 +120,7 @@ msgstr ""
 "beagle daemon δεν εκτελείται."
 
 #. To translators: {0} represents the current query keywords, {1} contains the errormessage
-#: ../Best/BestWindow.cs:526
+#: ../Best/BestWindow.cs:547
 #, csharp-format
 msgid "The query for <i>{0}</i> failed with error:<br>{1}<br>"
 msgstr "Η αναζήτηση για <i>{0}</i> απέτυχε με σφάλμα:<br>{1}<br>"
@@ -135,7 +135,7 @@ msgstr "Ο προσαναταλισμός του συρταριού."
 
 #: ../ImLogViewer/ImLogViewer.glade.h:1
 msgid "<b>Conversations History</b>"
-msgstr "<b> Ιστορικό συζητήσεων</b>"
+msgstr "<b>Ιστορικό συζητήσεων</b>"
 
 #: ../ImLogViewer/ImLogViewer.glade.h:2
 msgid "IM Viewer"
@@ -189,27 +189,27 @@ msgstr "Συζήτηση σε {0}"
 msgid "Conversation with {0}"
 msgstr "Συζήτηση με {0}"
 
-#: ../Tiles/TileMailMessage.cs:79
+#: ../Tiles/TileMailMessage.cs:81
 msgid "No Subject"
 msgstr "Χωρίς θέμα"
 
-#: ../Tiles/TileMailMessage.cs:86
+#: ../Tiles/TileMailMessage.cs:88
 msgid "To"
 msgstr "Προς"
 
-#: ../Tiles/TileMailMessage.cs:86
+#: ../Tiles/TileMailMessage.cs:88
 msgid "From"
 msgstr "Από"
 
-#: ../Tiles/TileMailMessage.cs:114
+#: ../Tiles/TileMailMessage.cs:116
 msgid "Sent"
 msgstr "Απεσταλμένα"
 
-#: ../Tiles/TileMailMessage.cs:114
+#: ../Tiles/TileMailMessage.cs:116
 msgid "Received"
 msgstr "Ληφθέντα"
 
-#: ../Tiles/TileMailMessage.cs:119
+#: ../Tiles/TileMailMessage.cs:124
 msgid "Email attachment"
 msgstr "Συνημμένο Email "
 
@@ -375,7 +375,7 @@ msgstr "Τελευταία προβολή:"
 #. For translators: From template Tiles/template-network.html
 #: ../Tiles/TranslationHack.cs:116
 msgid "from Networked Beagle on host"
-msgstr "από δικυωμένο Beagle στο σύστημα"
+msgstr "από δικτυωμένο Beagle στο σύστημα"
 
 #. For translators: From template Tiles/template-network.html
 #: ../Tiles/TranslationHack.cs:120
@@ -392,7 +392,7 @@ msgid ""
 "to discard the currently displayed values and reload configuration from disk?"
 msgstr ""
 "Το αρχείο ρυθμίσεων τροποποιήθηκε από μια άλλη εφαρμογή. Θέλετε να "
-"απορριφθούνπο τρέχουσες τιμές και να φορτωθεί η ρύθμιση από το δίσκο;"
+"απορριφθούν οι τρέχουσες τιμές και να φορτωθεί η ρύθμιση από το δίσκο;"
 
 #: ../tools/Settings.cs:253
 msgid "Select Path"
@@ -410,7 +410,7 @@ msgid ""
 "and the data is already being indexed."
 msgstr ""
 "Η επιλεγμένη διαδρομή δεν προστέθηκε. Η λίστα περιέχει αντικείμενο που "
-"υπερβαίνει τα δεδομέναπου έχουν ήδη καταλογοποιηθεί."
+"υπερβαίνει τα δεδομένα που έχουν ήδη καταλογοποιηθεί."
 
 #: ../tools/Settings.cs:286 ../tools/Settings.cs:478
 msgid "Path not added"
@@ -418,7 +418,7 @@ msgstr "Η σελίδα δεν προστέθηκε"
 
 #: ../tools/Settings.cs:295
 msgid "Remove obsolete paths"
-msgstr "Αφαίρεση ξεπερσαμένων διαδρομών"
+msgstr "Αφαίρεση ξεπερασμένων διαδρομών"
 
 #: ../tools/Settings.cs:296
 msgid ""
@@ -427,7 +427,7 @@ msgid ""
 msgstr ""
 "Η προσθήκη αυτής της διαδρομής θα κάνει ξεπερασμένες μερικές από τις "
 "υπάρχουσες διαδρομές.Αυτό θα έχει ως αποτέλεσμα την απομάκρυνση παλιών "
-"ξεπερασμένων διαδρομών. Θέλετε να τηνπροσθέσετε;"
+"ξεπερασμένων διαδρομών. Θέλετε να την προσθέσετε;"
 
 #: ../tools/Settings.cs:322
 msgid "Remove path"
@@ -439,7 +439,7 @@ msgid ""
 "included for indexing?"
 msgstr ""
 "Είστε σίγουροι ότι θέλετε να απομακρύνετε αυτή τη διαδρομή από τη λίστα των "
-"καταλόγωνπου θα συμπεριληφθούν για καταλογοποίηση;"
+"καταλόγων που θα συμπεριληφθούν για καταλογοποίηση;"
 
 #: ../tools/Settings.cs:352
 msgid "Remove item"
@@ -451,7 +451,7 @@ msgid ""
 "excluded from indexing?"
 msgstr ""
 "Είστε σίγουροι ότι θέλετε να απομακρύνετε αυτό το αντικείμενο από τη λίστα "
-"των δεδομένωνπου θα εξαιρεθούν από τη καταλογοποίηση;"
+"των δεδομένων που θα εξαιρεθούν από τη καταλογοποίηση;"
 
 #: ../tools/Settings.cs:396
 msgid "Invalid host entry"
@@ -471,8 +471,7 @@ msgstr "Απομάκρυνση συστήματος"
 
 #: ../tools/Settings.cs:429
 msgid "Are you sure you wish to remove this host from the list?"
-msgstr ""
-"Είστε σίγουροι ότι θέλετε να απομακρύνετε αυτό το σύστημα από τη λίστα;"
+msgstr "Είστε σίγουροι ότι θέλετε να απομακρύνετε αυτό το σύστημα από τη λίστα;"
 
 #: ../tools/Settings.cs:450
 msgid "Select path"
@@ -514,7 +513,7 @@ msgstr "Μοτίβο"
 #: ../tools/Settings.cs:681 ../tools/Settings.cs:1060
 #: ../tools/settings.glade.h:22
 msgid "Mail Folder"
-msgstr "Φάκελος αληλογραφίας"
+msgstr "Φάκελος αλληλογραφίας"
 
 #: ../tools/Settings.cs:1029
 msgid "Select Folder"
@@ -562,7 +561,7 @@ msgstr "<b>Απόρρητο</b>"
 
 #: ../tools/settings.glade.h:7
 msgid "<b>Select mail folder</b>"
-msgstr "<b>Επιλογή φακέλου αλληλογραφία</b>"
+msgstr "<b>Επιλογή φακέλου αλληλογραφίας</b>"
 
 #: ../tools/settings.glade.h:8
 msgid ""
@@ -574,7 +573,7 @@ msgstr ""
 
 #: ../tools/settings.glade.h:10
 msgid "Add any additional paths to be included for indexing."
-msgstr "Προσθήκη πρόσθτων διαδρομών για να συμπεριληφθούν στη καταλογοποίηση"
+msgstr "Προσθήκη πρόσθετων διαδρομών για να συμπεριληφθούν στη καταλογοποίηση"
 
 #: ../tools/settings.glade.h:11
 msgid "Add any remote search-enabled hosts you wish to network with"
@@ -592,7 +591,7 @@ msgid ""
 "should be presented when grouped by type."
 msgstr ""
 "Προσρμογή των τύπων των αποτελεσμάτων που θα είναι ορατά και της σειράς "
-"μετην οποία θα παρουσιάζονται  όταν θα ομαδοποιούνται κατά τύπο."
+"με την οποία θα παρουσιάζονται  όταν θα ομαδοποιούνται κατά τύπο."
 
 #: ../tools/settings.glade.h:14
 msgid "Allow external access to local search services"
@@ -632,13 +631,11 @@ msgstr "Δικτύωση"
 
 #: ../tools/settings.glade.h:25
 msgid "Please select a resource you wish to exclude from indexing."
-msgstr ""
-"Παρακαλώ επιλέξτε ένα πόρο που θέλετε να εξαιρέσετε από τη καταλογοποίηση."
+msgstr "Παρακαλώ επιλέξτε ένα πόρο που θέλετε να εξαιρέσετε από τη καταλογοποίηση."
 
 #: ../tools/settings.glade.h:26
 msgid "Please select the mail folder you wish to exclude from indexing. "
-msgstr ""
-"Παρακαλώ επιλέξτε το φάκελο αλληλογραφίας που θέλετε να αποκλείσετε από τη "
+msgstr "Παρακαλώ επιλέξτε το φάκελο αλληλογραφίας που θέλετε να αποκλείσετε από τη "
 "καταλογοποίηση"
 
 #: ../tools/settings.glade.h:27
@@ -655,13 +652,12 @@ msgid ""
 "objects you wish to exclude from indexing."
 msgstr ""
 "Καθορίστε τους πόρους εκείνους που θέλετε να εξαιρέσετε από τη "
-"καταλογοποίηση. (όπως διαδρομές, μοτίβα, φακέλους αλληλογραφίας ήτύπους "
+"καταλογοποίηση. (όπως διαδρομές, μοτίβα, φακέλους αλληλογραφίας ή τύπους "
 "αντικειμένων)"
 
 #: ../tools/settings.glade.h:30
 msgid "Specify paths that should be available for external access"
-msgstr ""
-"Καθορίστε τις διαδρομές που θα είναι διαθέσιμες για εξωτερική πρόσβαση."
+msgstr "Καθορίστε τις διαδρομές που θα είναι διαθέσιμες για εξωτερική πρόσβαση."
 
 #: ../tools/settings.glade.h:31
 msgid "Start search & indexing services automatically "
@@ -778,3 +774,4 @@ msgstr "{0:0.0} KB"
 #, csharp-format
 msgid "{0:0.0} MB"
 msgstr "{0:0.0} MB"
+
