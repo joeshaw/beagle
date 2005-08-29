@@ -39,7 +39,7 @@ namespace Beagle.Daemon.FileSystemQueryable {
 	[QueryableFlavor (Name="Files", Domain=QueryDomain.Local, RequireInotify=false)]
 	public class FileSystemQueryable : LuceneQueryable {
 
-		static public bool Debug = true;
+		static public bool Debug = false;
 
 		private const string SplitFilenamePropKey = "beagle:Filename";
 		public const string ExactFilenamePropKey = "beagle:ExactFilename";
