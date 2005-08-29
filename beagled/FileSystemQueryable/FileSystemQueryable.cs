@@ -92,7 +92,10 @@ namespace Beagle.Daemon.FileSystemQueryable {
                         }
 
 			tree_crawl_task = new TreeCrawlTask (new TreeCrawlTask.Handler (AddDirectory));
+			tree_crawl_task.Source = this;
+
 			file_crawl_task = new FileCrawlTask (this);
+			file_crawl_task.Source = this;
 
 			name_resolver = (LuceneNameResolver) Driver;
 			PreloadDirectoryNameInfo ();

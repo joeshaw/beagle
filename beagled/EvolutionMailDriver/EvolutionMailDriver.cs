@@ -95,6 +95,7 @@ namespace Beagle.Daemon.EvolutionMailDriver {
 			if (! Inotify.Enabled) {
 				Scheduler.Task task = Scheduler.TaskFromHook (new Scheduler.TaskHook (CrawlHook));
 				task.Tag = "Crawling ~/.evolution to find summary changes";
+				task.Source = this;
 				ThisScheduler.Add (task);
 			}
 
