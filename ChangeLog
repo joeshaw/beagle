@@ -1,3 +1,9 @@
+2005-08-29  Rodrigo Moya <rodrigo@novell.com>
+
+	* glue/eggtrayicon.[ch]: updated from libegg.
+
+	* configure.in: define GETTEXT_PACKAGE for libegg.
+
 2005-08-29  Daniel Drake  <dsd@gentoo.org>
 
 	* Filters/entagged-sharp/: Import entagged-sharp

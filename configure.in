@@ -87,6 +87,7 @@ GETTEXT_PACKAGE=beagle
 AC_SUBST(GETTEXT_PACKAGE)
 ALL_LINGUAS="bg ca cs da de el en_CA en_GB es fr hu ja mk nb nl no pl pt_BR sv tr uk zh_CN zh_TW"
 AM_GLIB_GNU_GETTEXT
+AC_DEFINE_UNQUOTED(GETTEXT_PACKAGE, "$GETTEXT_PACKAGE", [Name of the package for translations])
 
 # Many distros don't have a dependency on sqlite for their
 # mono-data-sqlite packages, and the mono build process itself
