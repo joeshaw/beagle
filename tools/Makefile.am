@@ -187,6 +187,8 @@ CLEANFILES = 				\
 	$(TARGETS:%=%.mdb)		\
 	$(WRAPPERS)			\
 	$(CRAWL_WRAPPER)		\
-	$(CRAWL_WRAPPER_CRONTAB)
+	$(CRAWL_WRAPPER_CRONTAB)	\
+	settings.glade.h
+
 
 
