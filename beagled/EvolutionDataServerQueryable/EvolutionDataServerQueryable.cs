@@ -249,7 +249,7 @@ namespace Beagle.Daemon.EvolutionDataServerQueryable {
 
 			Indexable indexable = new Indexable (GetContactUri (contact));
 			indexable.Timestamp = rev;
-			indexable.Type = "Contact";
+			indexable.HitType = "Contact";
 						
 			indexable.AddProperty (Property.New ("fixme:FileAs", contact.FileAs));
 			indexable.AddProperty (Property.New ("fixme:GivenName", contact.GivenName));
@@ -542,7 +542,7 @@ namespace Beagle.Daemon.EvolutionDataServerQueryable {
 			Indexable indexable = new Indexable (new Uri ("calendar:///" + cc.Uid));
 
 			indexable.Timestamp = cc.Dtstart;
-			indexable.Type = "Calendar";
+			indexable.HitType = "Calendar";
 
 			indexable.AddProperty (Property.NewKeyword ("fixme:uid", cc.Uid));
 			indexable.AddProperty (Property.NewDate ("fixme:starttime", cc.Dtstart));
