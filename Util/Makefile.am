@@ -90,15 +90,6 @@ CSFILES = 			        	\
 	$(srcdir)/Vfs.cs                        \
 	$(srcdir)/XKeybinder.cs
 
-if ! ENABLE_GST_SHARP
-CSFILES +=					\
-	$(srcdir)/ApeReader.cs			\
-	$(srcdir)/Mp3Reader.cs			\
-	$(srcdir)/FlacReader.cs			\
-	$(srcdir)/OggReader.cs			\
-	$(srcdir)/Tag.cs			
-endif
-
 if HAS_LIBCHM 
 CSFILES += 					\
 	$(srcdir)/ChmFile.cs
@@ -135,11 +126,6 @@ uninstall-local:
 	rm -f $(DESTDIR)$(pkglibdir)/$(TARGET)
 
 COND_CS_FILES =			\
-	$(srcdir)/ApeReader.cs	\
-	$(srcdir)/Mp3Reader.cs	\
-	$(srcdir)/FlacReader.cs	\
-	$(srcdir)/OggReader.cs	\
-	$(srcdir)/Tag.cs	\
 	$(srcdir)/ChmFile.cs	\
 	$(srcdir)/Galago.cs
 
