@@ -72,6 +72,13 @@ namespace Beagle.Daemon {
 			if (request.IsEmpty)
 				return new IndexerReceipt [0];
 
+			// Iterate through the items in the IndexerRequest to
+			// store the streams before passing them to the helper.
+			foreach (Indexable indexable in request.Indexables) {
+				if (indexable.Type == IndexableType.Add)
+					indexable.StoreStream ();
+			}
+
 			RemoteIndexerRequest remote_request;
 			remote_request = new RemoteIndexerRequest ();
 			remote_request.RemoteIndexName = this.remote_index_name;

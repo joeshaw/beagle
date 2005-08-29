@@ -280,12 +280,15 @@ namespace Beagle.Daemon {
 				// and hook up the TextReaders.
 
 				bool succesful_open = false;
+				TextReader text_reader;
+				Stream binary_stream;
+
 				if (path != null)
 					succesful_open = candidate_filter.Open (path);
-				else if (indexable.GetTextReader () != null)
-					succesful_open = candidate_filter.Open (indexable.GetTextReader ());
-				else if (indexable.GetBinaryStream () != null)
-					succesful_open = candidate_filter.Open (indexable.GetBinaryStream ());
+				else if ((text_reader = indexable.GetTextReader ()) != null)
+					succesful_open = candidate_filter.Open (text_reader);
+				else if ((binary_stream = indexable.GetBinaryStream ()) != null)
+					succesful_open = candidate_filter.Open (binary_stream);
 					
 				if (succesful_open) {
 					foreach (Property prop in candidate_filter.Properties)
