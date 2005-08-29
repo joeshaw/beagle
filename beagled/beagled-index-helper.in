@@ -33,5 +33,6 @@ export MONO_PATH="$THIS_PATH:$MONO_PATH"
 
 CMDLINE="mono --debug $MONO_EXTRA_ARGS $THIS_EXE $@"
 
-exec $CMDLINE
+PROCESS_NAME="mono-beagled-helper"
+exec -a $PROCESS_NAME $CMDLINE
 

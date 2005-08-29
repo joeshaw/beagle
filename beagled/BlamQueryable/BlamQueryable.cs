@@ -144,7 +144,7 @@ namespace Beagle.Daemon.BlamQueryable {
 			Indexable indexable = new Indexable (uri);
 			indexable.ParentUri = UriFu.PathToFileUri (blam_file.FullName);
 			indexable.MimeType = "text/html";
-			indexable.Type = "FeedItem";
+			indexable.HitType = "FeedItem";
 			indexable.Timestamp = item.PubDate;
 					
 			indexable.AddProperty (Property.New ("dc:title", item.Title));
@@ -217,6 +217,9 @@ namespace Beagle.Daemon.BlamQueryable {
 		public string StatusName {
 			get { return null; }
 		}
+
+		public void PostFlushHook ()
+		{ }
 	}
 
 	/////////////////////////////////////////////////

@@ -103,7 +103,7 @@ beagle_query_to_xml (BeagleRequest *request, GError **err)
 			BeagleQueryPartProperty *prop_part = beagle_query_part_property_new ();
 
 			beagle_query_part_property_set_property_type (prop_part, BEAGLE_PROPERTY_TYPE_KEYWORD);
-			beagle_query_part_property_set_key (prop_part, "beagle:Type");
+			beagle_query_part_property_set_key (prop_part, "beagle:HitType");
 			beagle_query_part_property_set_value (prop_part, (const char *) iter->data);
 
 			beagle_query_part_or_add_subpart (or_part, BEAGLE_QUERY_PART (prop_part));

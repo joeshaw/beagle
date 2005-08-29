@@ -591,9 +591,9 @@ namespace Beagle.Daemon {
 
 			// Store the Type and MimeType in special properties
 
-			if (indexable.Type != null) {
+			if (indexable.HitType != null) {
 				Property prop;
-				prop = Property.NewKeyword ("beagle:Type", indexable.Type);
+				prop = Property.NewKeyword ("beagle:HitType", indexable.HitType);
 				AddPropertyToDocument (prop, primary_doc);
 			}
 
@@ -692,7 +692,7 @@ namespace Beagle.Daemon {
 			AddPropertiesToHit (hit, doc, true);
 
 			// Get the Type and MimeType from the properties.
-			hit.Type = hit.GetFirstProperty ("beagle:Type");
+			hit.Type = hit.GetFirstProperty ("beagle:HitType");
 			hit.MimeType = hit.GetFirstProperty ("beagle:MimeType");
 
 			return hit;

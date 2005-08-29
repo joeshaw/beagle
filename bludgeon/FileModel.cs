@@ -10,6 +10,68 @@ namespace Bludgeon {
 	
 	public class FileModel {
 
+		static Random random = new Random ();		
+		static private ArrayList roots = new ArrayList ();
+
+		static public ICollection Roots { get { return roots; } }
+
+		static public void AddRoot (FileModel root)
+		{
+			if (! root.IsRoot)
+				throw new Exception ("Attempted to add non-root as root");
+
+			roots.Add (root);
+		}
+
+		static public FileModel PickRoot ()
+		{
+			if (roots.Count == 0)
+				return null;
+			else if (roots.Count == 1)
+				return roots [0] as FileModel;
+
+			return roots [random.Next (roots.Count)] as FileModel;
+		}
+		
+		//
+		// Note that the probability of a FileModel being picked
+		// by any of these "picker" methods is not uniform.
+		// The two-step process where we first pick a root messes
+		// that up.
+		//
+
+
+		// Can be either a file or directory
+		static public FileModel PickNonRoot ()
+		{
+			FileModel root;
+			root = PickRoot ();
+			return root.PickDescendant ();
+		}
+
+		static public FileModel PickFile ()
+		{
+			FileModel root;
+			root = PickRoot ();
+			return root.PickFileDescendant ();
+		}
+
+		static public FileModel PickAnyDirectory ()
+		{
+			FileModel root;
+			root = PickRoot ();
+			return root.PickDirectory ();
+		}
+
+		static public FileModel PickNonRootDirectory ()
+		{
+			FileModel root;
+			root = PickRoot ();
+			return root.PickDirectoryDescendant ();
+		}
+
+		//////////////////////////////////////////////////////////////
+
 		// Properties of the root directory:
 		// name contains full path of BEAGLE_HOME
 		// parent is null
@@ -63,6 +125,10 @@ namespace Bludgeon {
 			get { return body; }
 		}
 
+		public FileModel Parent {
+			get { return parent; }
+		}
+
 		public ICollection Children {
 			get { return children.Values; }
 		}
@@ -80,44 +146,65 @@ namespace Bludgeon {
 			}
 		}
 
+		// IsAbove is easier to think about than IsAncestorOf
+		public bool IsAbove (FileModel other)
+		{
+			return this == other.parent 
+				|| (other.parent != null && IsAbove (other.parent));
+		}
+		
+		// IsBelow is easier to thik about than IsDescendantOf
+		public bool IsBelow (FileModel other)
+		{
+			return other.IsAbove (this);
+		}
+
 		//////////////////////////////////////////////////////////////
 
-		private void RecursiveListAdd (ArrayList list, bool add_dirs, bool add_files)
+		private void RecursiveListAdd (ArrayList list, 
+					       bool add_self,
+					       bool add_dirs, 
+					       bool add_files)
 		{
-			if ((add_dirs && IsDirectory) || (add_files && IsFile))
+			if (add_self && ((add_dirs && IsDirectory) || (add_files && IsFile)))
 				list.Add (this);
+
 			if (children != null)
 				foreach (FileModel file in children.Values)
-					file.RecursiveListAdd (list, add_files, add_files);
+					file.RecursiveListAdd (list, true, add_dirs, add_files);
 		}
 
 		public ArrayList GetDescendants ()
 		{
 			ArrayList list = new ArrayList ();
-			RecursiveListAdd (list, true, true);
-			list.RemoveAt (0); // remove ourselves
+			RecursiveListAdd (list, false, true, true);
 			return list;
 		}
 
 		public ArrayList GetFileDescendants ()
 		{
 			ArrayList list = new ArrayList ();
-			RecursiveListAdd (list, false, true);
-			list.RemoveAt (0); // remove ourselves
+			RecursiveListAdd (list, false, false, true);
 			return list;
 		}
 
+		// Includes ourself
+		public ArrayList GetDirectories ()
+		{
+			ArrayList list = new ArrayList ();
+			RecursiveListAdd (list, true, true, false);
+			return list;
+		}
+
+		// Never includes ourself
 		public ArrayList GetDirectoryDescendants ()
 		{
 			ArrayList list = new ArrayList ();
-			RecursiveListAdd (list, true, false);
-			list.RemoveAt (0); // remove ourselves
+			RecursiveListAdd (list, false, true, false);
 			return list;
 		}
 
 		//////////////////////////////////////////////////////////////
-
-		static Random random = new Random ();
 
 		public FileModel PickDescendant ()
 		{
@@ -143,6 +230,14 @@ namespace Bludgeon {
 			all = GetDirectoryDescendants ();
 			if (all.Count == 0)
 				return null;
+			return all [random.Next (all.Count)] as FileModel;
+		}
+
+		// This can return the root
+		public FileModel PickDirectory ()
+		{
+			ArrayList all;
+			all = GetDirectories ();
 			return all [random.Next (all.Count)] as FileModel;
 		}
 
@@ -228,6 +323,8 @@ namespace Bludgeon {
 
 		//////////////////////////////////////////////////////////////
 
+		// Mutate the tree
+
 		public void Grow (int depth)
 		{
 			const int num_dirs = 2;
@@ -247,6 +344,8 @@ namespace Bludgeon {
 		}
 
 		//////////////////////////////////////////////////////////////
+
+		// Basic file system operations
 
 		public void Touch ()
 		{
@@ -270,8 +369,55 @@ namespace Bludgeon {
 			parent = null;
 		}
 
+		// If the move would cause a filename collision or is
+		// otherwise impossible, return false.  Return true if the
+		// move actually happens.
+		public bool MoveTo (FileModel new_parent, // or null, to just rename
+				    string    new_name)   // or null, to just move
+		{
+			if (! new_parent.IsDirectory)
+				throw new ArgumentException ("Parent must be a directory");
+
+			if (this.IsRoot)
+				throw new ArgumentException ("Can't move a root");
+
+			// Impossible
+			if (this == new_parent || this.IsAbove (new_parent))
+				return false;
+
+			string old_path;
+			old_path = this.FullName;
+
+			if (new_parent == null)
+				new_parent = this.parent;
+			if (new_name == null)
+				new_name = this.name;
+
+			// check for a filename collision
+			if (new_parent.children.Contains (new_name))
+				return false;
+
+			// modify the data structure
+			this.parent.children.Remove (this.name);
+			this.parent = new_parent;
+			this.name = new_name;
+			this.parent.children [this.name] = this;
+			
+			string new_path;
+			new_path = Path.Combine (new_parent.FullName, new_name);
+
+			if (this.IsDirectory)
+				Directory.Move (old_path, new_path);
+			else
+				File.Move (old_path, new_path);
+
+			return true;
+		}
+
 
 		//////////////////////////////////////////////////////////////
+
+		// Useful utility functions
 
 		static private string PickName (FileModel p)
 		{

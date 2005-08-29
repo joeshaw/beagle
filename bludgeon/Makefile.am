@@ -33,6 +33,11 @@ CSFILES = 				\
 	$(srcdir)/Token.cs		\
 	$(srcdir)/QueryFu.cs		\
 	$(srcdir)/SanityCheck.cs	\
+	$(srcdir)/IHammer.cs		\
+	$(srcdir)/HammerAttribute.cs	\
+	$(srcdir)/Toolbox.cs		\
+	$(srcdir)/TestBasic.cs		\
+	$(srcdir)/TestMove.cs		\
 	$(srcdir)/Bludgeon.cs
 
 $(TARGET): $(CSFILES) $(LOCAL_ASSEMBLIES)

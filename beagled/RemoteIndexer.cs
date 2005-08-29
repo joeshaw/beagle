@@ -42,9 +42,6 @@ namespace Beagle.Daemon {
 		int remote_index_minor_version = 0;
 		int last_item_count = -1;
 
-		RemoteIndexerRequest pending_request = new RemoteIndexerRequest ();
-		object pending_request_lock = new object ();
-
 		static RemoteIndexer ()
 		{
 			string bihp = Environment.GetEnvironmentVariable ("_BEAGLED_INDEX_HELPER_PATH");
@@ -68,40 +65,21 @@ namespace Beagle.Daemon {
 			this.remote_index_minor_version = minor_version;
 		}
 
-		public void Add (Indexable indexable)
+		public IndexerReceipt [] Flush (IndexerRequest request)
 		{
-			indexable.StoreStream ();
-			lock (pending_request_lock)
-				pending_request.Add (indexable);
-		}
+			// If there isn't actually any work to do, just return
+			// an empty array.
+			if (request.IsEmpty)
+				return new IndexerReceipt [0];
 
-		public void Remove (Uri uri)
-		{
-			lock (pending_request_lock)
-				pending_request.Remove (uri);
-		}
-
-		public void Optimize ()
-		{
-			pending_request.OptimizeIndex = true;
-		}
-
-		public IndexerReceipt [] FlushAndBlock ()
-		{
-			RemoteIndexerRequest flushed_request = null;
-			lock (pending_request) {
-				
-				// If there isn't actually any work to do, just return
-				// an empty array.
-				if (pending_request.IsEmpty)
-					return new IndexerReceipt [0];
-
-				flushed_request = pending_request;
-				pending_request = new RemoteIndexerRequest ();
-			}
-
+			RemoteIndexerRequest remote_request;
+			remote_request = new RemoteIndexerRequest ();
+			remote_request.RemoteIndexName = this.remote_index_name;
+			remote_request.RemoteIndexMinorVersion = this.remote_index_minor_version;
+			remote_request.Request = request;
+			
 			RemoteIndexerResponse response;
-			response = SendRequest (flushed_request);
+			response = SendRequest (remote_request);
 
 			if (response == null) {
 				Logger.Log.Error ("Something terrible happened --- Flush failed");
@@ -110,28 +88,7 @@ namespace Beagle.Daemon {
 			
 			last_item_count = response.ItemCount;
 
-			if (response.Receipts != null && response.Receipts.Length > 0)
-				return response.Receipts;
-			else
-				return null;
-		}
-
-		public event IIndexerFlushHandler FlushEvent;
-
-		public void Flush ()
-		{
-			// FIXME: Right now we don't support a non-blocking flush,
-			// but it would be easy enough to do it in a thread.
-
-			IndexerReceipt [] receipts;
-
-			receipts = FlushAndBlock ();
-
-			if (FlushEvent != null) {
-				if (receipts != null)
-					FlushEvent (this, receipts);
-				FlushEvent (this, null); // all done
-			}
+			return response.Receipts;
 		}
 
 		public int GetItemCount ()
@@ -149,6 +106,7 @@ namespace Beagle.Daemon {
 				else
 					Logger.Log.Error ("Something terrible happened --- GetItemCount failed");
 			}
+
 			return last_item_count;
 		}
 
@@ -203,7 +161,7 @@ namespace Beagle.Daemon {
 
 			if (response == null && exception_count >= 5)
 				Logger.Log.Error ("Exception limit exceeded trying to activate a helper.  Giving up on indexing!");
-			
+
 			return response;
 		}
 

@@ -39,11 +39,11 @@ namespace Beagle.Daemon.FileSystemQueryable {
 	[QueryableFlavor (Name="Files", Domain=QueryDomain.Local, RequireInotify=false)]
 	public class FileSystemQueryable : LuceneQueryable {
 
-		static public bool Debug = false;
+		static public bool Debug = true;
 
-		private const string OldExternalUriPropKey = LuceneCommon.UnindexedNamespace + "OldExternalUri";
 		private const string SplitFilenamePropKey = "beagle:Filename";
 		public const string ExactFilenamePropKey = "beagle:ExactFilename";
+		public const string TextFilenamePropKey = "beagle:TextFilename";
 		public const string ParentDirUriPropKey = LuceneQueryingDriver.PrivateNamespace + "ParentDirUri";
 		public const string IsDirectoryPropKey = LuceneQueryingDriver.PrivateNamespace + "IsDirectory";
 
@@ -67,11 +67,6 @@ namespace Beagle.Daemon.FileSystemQueryable {
 		private ArrayList roots = new ArrayList ();
 		private ArrayList roots_by_path = new ArrayList ();
 
-		// This is a cache of the external Uris of removed
-		// objects, keyed on their internal Uris.  We use this
-		// to remap Uris on removes.
-		private Hashtable removed_uri_cache = UriFu.NewHashtable ();
-
 		private FileNameFilter filter;
 		
 		// This is just a copy of the LuceneQueryable's QueryingDriver
@@ -81,20 +76,7 @@ namespace Beagle.Daemon.FileSystemQueryable {
 
 		//////////////////////////////////////////////////////////////////////////
 
-		private class PendingInfo {
-			public Uri      Uri; // an internal uid: uri
-			public string   Path;
-			public bool     IsDirectory;
-			public DateTime Mtime;
-
-			// This is set when we are adding a subdirectory to a
-			// given parent directory.
-			public DirectoryModel Parent;
-
-			public bool IsRoot { get { return Parent == null; } }
-		}
-
-		private Hashtable pending_info_cache = UriFu.NewHashtable ();
+		private Hashtable pending_moves_uid_by_path = new Hashtable ();
 
 		//////////////////////////////////////////////////////////////////////////
 
@@ -146,14 +128,6 @@ namespace Beagle.Daemon.FileSystemQueryable {
 		// This is where we build our Indexables
 		//
 
-		private static Indexable NewIndexable (Guid id)
-		{
-			// This used to do more.  Maybe it will again someday.
-			Indexable indexable;
-			indexable = new Indexable (GuidFu.ToUri (id));
-			return indexable;
-		}
-
 		public static void AddStandardPropertiesToIndexable (Indexable indexable,
 								     string    name, 
 								     Guid      parent_id,
@@ -164,7 +138,11 @@ namespace Beagle.Daemon.FileSystemQueryable {
 			prop = Property.NewKeyword (ExactFilenamePropKey, name);
 			prop.IsMutable = mutable;
 			indexable.AddProperty (prop);
-			
+
+			prop = Property.New (TextFilenamePropKey, name);
+			prop.IsMutable = mutable;
+			indexable.AddProperty (prop);
+
 			string str;
 			str = Path.GetFileNameWithoutExtension (name);
 			str = StringFu.FuzzyDivide (str);
@@ -183,65 +161,81 @@ namespace Beagle.Daemon.FileSystemQueryable {
 			indexable.AddProperty (prop);
 		}
 
-		public static Indexable DirectoryToIndexable (string path, Guid id, Guid parent_id)
+		public static void AddStandardPropertiesToIndexable (Indexable      indexable,
+								     string         name,
+								     DirectoryModel parent,
+								     bool           mutable)
+		{
+			AddStandardPropertiesToIndexable (indexable,
+							  name,
+							  parent == null ? Guid.Empty : parent.UniqueId,
+							  mutable);
+
+			indexable.LocalState ["Parent"] = parent;
+		}
+
+		public static Indexable DirectoryToIndexable (string         path,
+							      Guid           id,
+							      DirectoryModel parent)
 		{
 			Indexable indexable;
-			indexable = NewIndexable (id);
+			indexable = new Indexable (IndexableType.Add, GuidFu.ToUri (id));
 			indexable.MimeType = "inode/directory";
 			indexable.NoContent = true;
 			indexable.Timestamp = Directory.GetLastWriteTime (path);
 
 			string name;
-			if (parent_id == Guid.Empty)
+			if (parent == null)
 				name = path;
 			else
 				name = Path.GetFileName (path);
-			AddStandardPropertiesToIndexable (indexable, name, parent_id, true);
+			AddStandardPropertiesToIndexable (indexable, name, parent, true);
 
 			Property prop;
 			prop = Property.NewBool (IsDirectoryPropKey, true);
 			prop.IsMutable = true; // we want this in the secondary index, for efficiency
 			indexable.AddProperty (prop);
 
+			indexable.LocalState ["Path"] = path;
+
 			return indexable;
 		}
 
-		public static Indexable FileToIndexable (string path,
-							 Guid   id,
-							 Guid   parent_id,
-							 bool   crawl_mode)
+		public static Indexable FileToIndexable (string         path,
+							 Guid           id,
+							 DirectoryModel parent,
+							 bool           crawl_mode)
 		{
 			Indexable indexable;
-			indexable = NewIndexable (id);
+			indexable = new Indexable (IndexableType.Add, GuidFu.ToUri (id));
+			indexable.Timestamp = File.GetLastWriteTime (path);
 			indexable.ContentUri = UriFu.PathToFileUri (path);
 			indexable.Crawled = crawl_mode;
 			indexable.Filtering = Beagle.IndexableFiltering.Always;
 
-			AddStandardPropertiesToIndexable (indexable, Path.GetFileName (path), parent_id, true);
+			AddStandardPropertiesToIndexable (indexable, Path.GetFileName (path), parent, true);
+
+			indexable.LocalState ["Path"] = path;
 
 			return indexable;
 		}
 
-		private static Indexable NewRenamingIndexable (string name,
-							       Guid   id,
-							       Guid   parent_id,
+		private static Indexable NewRenamingIndexable (string         name,
+							       Guid           id,
+							       DirectoryModel parent,
 							       string last_known_path)
 		{
 			Indexable indexable;
-			indexable = new Indexable (GuidFu.ToUri (id));
-			indexable.PropertyChangesOnly = true;
+			indexable = new Indexable (IndexableType.PropertyChange, GuidFu.ToUri (id));
 
-			AddStandardPropertiesToIndexable (indexable, name, parent_id, true);
+			AddStandardPropertiesToIndexable (indexable, name, parent, true);
 
-			Property prop;
-			prop = Property.NewKeyword (OldExternalUriPropKey,
-						    StringFu.PathToQuotedFileUri (last_known_path));
-			prop.IsMutable = true; // since this is a property-change-only Indexable
-			indexable.AddProperty (prop);
+			indexable.LocalState ["Id"] = id;
+			indexable.LocalState ["LastKnownPath"] = last_known_path;
 
 			return indexable;
 		}
-
+		
 		//////////////////////////////////////////////////////////////////////////
 
 		//
@@ -286,6 +280,16 @@ namespace Beagle.Daemon.FileSystemQueryable {
 			return null;
 		}
 
+		private void CacheDirectoryNameChange (Guid id, Guid new_parent_id, string new_name)
+		{
+			LuceneNameResolver.NameInfo info;
+			info = name_info_by_id [id] as LuceneNameResolver.NameInfo;
+			if (info != null) {
+				info.ParentId = new_parent_id;
+				info.Name = new_name;
+			}
+		}
+
 		private string ToFullPath (string name, Guid parent_id)
 		{
 			// This is the correct behavior for roots.
@@ -328,15 +332,19 @@ namespace Beagle.Daemon.FileSystemQueryable {
 		private DirectoryModel GetDirectoryModelByPath (string path)
 		{
 			DirectoryModel dir;
-			dir = dir_models_by_path [path] as DirectoryModel;
-			if (dir != null)
-				return dir;
+
+			lock (dir_models_by_path) {
+				dir = dir_models_by_path [path] as DirectoryModel;
+				if (dir != null)
+					return dir;
+			}
 
 			// Walk each root until we find the correct path
 			foreach (DirectoryModel root in roots) {
 				dir = root.WalkTree (path);
 				if (dir != null) {
-					dir_models_by_path [path] = dir;
+					lock (dir_models_by_path)
+						dir_models_by_path [path] = dir;
 					break;
 				}
 			}
@@ -349,12 +357,17 @@ namespace Beagle.Daemon.FileSystemQueryable {
 			if (Debug) 
 				Logger.Log.Debug ("Expired '{0}'", expired_path);
 
+#if false
 			DirectoryModel dir = (DirectoryModel) dir_models_by_id [unique_id];
 			if (dir != null && dir.WatchHandle != null)
 				event_backend.ForgetWatch (dir.WatchHandle);
-			
-			dir_models_by_path.Remove (expired_path);
+#endif
+			lock (dir_models_by_id)
+				dir_models_by_path.Remove (expired_path);
+
+#if false
 			dir_models_by_id.Remove (unique_id);
+#endif
 		}
 
 		public void AddDirectory (DirectoryModel parent, string name)
@@ -473,31 +486,15 @@ namespace Beagle.Daemon.FileSystemQueryable {
 			Guid id;
 			id = (attr == null) ? Guid.NewGuid () : attr.UniqueId;
 
-			Guid parent_id;
-			parent_id = (parent == null) ? Guid.Empty : parent.UniqueId;
-
 			DateTime last_crawl;
 			last_crawl = (attr == null) ? DateTime.MinValue : attr.LastWriteTime;
 
 			Indexable indexable;
-			indexable = DirectoryToIndexable (path, id, parent_id);
+			indexable = DirectoryToIndexable (path, id, parent);
 
-			PendingInfo info;
-			info = new PendingInfo ();
-			info.Uri = indexable.Uri;
-			info.Path = path;
-			info.Parent = parent;
-			info.Mtime  = last_crawl;
-
-			// We only set the IsDirectory flag if it is actually
-			// walkable.  The IsDirectory flag is what is used to
-			// decide whether or not to call RegisterDirectory
-			// in the PostAddHook.  Thus non-walkable directories
-			// will be indexed but will not have DirectoryModels
-			// created for them.
-			info.IsDirectory = is_walkable;
-
-			pending_info_cache [info.Uri] = info;
+			indexable.LocalState ["Name"] = name;
+			indexable.LocalState ["LastCrawl"] = last_crawl;
+			indexable.LocalState ["IsWalkable"] = is_walkable;
 
 			Scheduler.Task task;
 			task = NewAddTask (indexable);
@@ -558,18 +555,19 @@ namespace Beagle.Daemon.FileSystemQueryable {
 			Uri uri;
 			uri = GuidFu.ToUri (dir.UniqueId);
 
-			// Cache a copy of our external Uri, so that we can
+			Indexable indexable;
+			indexable = new Indexable (IndexableType.Remove, uri);
+
+			// Remember a copy of our external Uri, so that we can
 			// easily remap it in the PostRemoveHook.
-			Uri external_uri;
-			external_uri = UriFu.PathToFileUri (dir.FullName);
-			removed_uri_cache [uri] = external_uri;
+			indexable.LocalState ["RemovedUri"] = UriFu.PathToFileUri (dir.FullName);
 
 			// Calling Remove will expire the path names,
 			// so name caches will be cleaned up accordingly.
 			dir.Remove ();
 
 			Scheduler.Task task;
-			task = NewRemoveTask (GuidFu.ToUri (dir.UniqueId));
+			task = NewAddTask (indexable); // We *add* the indexable to *remove* the index item
 			task.Priority = Scheduler.Priority.Immediate;
 			ThisScheduler.Add (task);
 		}
@@ -577,14 +575,17 @@ namespace Beagle.Daemon.FileSystemQueryable {
 		public void RemoveDirectory (string path)
 		{
 			DirectoryModel dir = GetDirectoryModelByPath (path);
-				if (dir != null)
-					RemoveDirectory (dir);
+			if (dir != null)
+				RemoveDirectory (dir);
 		}
 
 		private void MoveDirectory (DirectoryModel dir, 
 					    DirectoryModel new_parent, // or null if we are just renaming
 					    string new_name)
 		{
+			if (dir.IsRoot)
+				throw new Exception ("Can't move root " + dir.FullName);
+
 			// We'll need this later in order to generate the
 			// right change notification.
 			string old_path;
@@ -595,14 +596,18 @@ namespace Beagle.Daemon.FileSystemQueryable {
 			else
 				dir.Name = new_name;
 
-			Guid parent_id;
-			parent_id = dir.IsRoot ? Guid.Empty : dir.Parent.UniqueId;
+			// Remember this by path
+			lock (dir_models_by_path)
+				dir_models_by_path [dir.FullName] = dir;
+
+			CacheDirectoryNameChange (dir.UniqueId, dir.Parent.UniqueId, new_name);
 
 			Indexable indexable;
 			indexable = NewRenamingIndexable (new_name,
 							  dir.UniqueId,
-							  parent_id,
+							  dir.Parent, // == new_parent
 							  old_path);
+			indexable.LocalState ["OurDirectoryModel"] = dir;
 
 			Scheduler.Task task;
 			task = NewAddTask (indexable);
@@ -890,13 +895,13 @@ namespace Beagle.Daemon.FileSystemQueryable {
 			switch (action) {
 
 			case RequiredAction.Index:
-				indexable = FileToIndexable (path, unique_id, dir.UniqueId, true);
+				indexable = FileToIndexable (path, unique_id, dir, true);
 				if (mtime == DateTime.MinValue)
 					mtime = File.GetLastWriteTime (path);
 				break;
 
 			case RequiredAction.Rename:
-				indexable = NewRenamingIndexable (name, unique_id, dir.UniqueId,
+				indexable = NewRenamingIndexable (name, unique_id, dir,
 								  last_known_path);
 				break;
 
@@ -904,17 +909,6 @@ namespace Beagle.Daemon.FileSystemQueryable {
 				FileAttributesStore.Drop (path);
 				
 				break;
-			}
-
-			if (indexable != null) {
-				PendingInfo info;
-				info = new PendingInfo ();
-				info.Uri = indexable.Uri;
-				info.Path = path;
-				info.IsDirectory = false;
-				info.Mtime = mtime;
-				info.Parent = dir;
-				pending_info_cache [info.Uri] = info;
 			}
 
 			return indexable;
@@ -938,16 +932,7 @@ namespace Beagle.Daemon.FileSystemQueryable {
 			unique_id = (attr != null) ? attr.UniqueId : Guid.NewGuid ();
 
 			Indexable indexable;
-			indexable = FileToIndexable (path, unique_id, dir.UniqueId, false);
-
-			PendingInfo info;
-			info = new PendingInfo ();
-			info.Uri = indexable.Uri;
-			info.Path = path;
-			info.IsDirectory = false;
-			info.Mtime = File.GetLastWriteTime (path);
-			info.Parent = dir;
-			pending_info_cache [info.Uri] = info;
+			indexable = FileToIndexable (path, unique_id, dir, false);
 
 			Scheduler.Task task;
 			task = NewAddTask (indexable);
@@ -971,7 +956,10 @@ namespace Beagle.Daemon.FileSystemQueryable {
 			Uri uri, file_uri;
 			uri = GuidFu.ToUri (unique_id);
 			file_uri = UriFu.PathToFileUri (Path.Combine (dir.FullName, name));
-			removed_uri_cache [uri] = file_uri;
+
+			Indexable indexable;
+			indexable = new Indexable (IndexableType.Remove, uri);
+			indexable.LocalState ["RemovedUri"] = file_uri;
 
 			Scheduler.Task task;
 			task = NewRemoveTask (uri);
@@ -1008,16 +996,30 @@ namespace Beagle.Daemon.FileSystemQueryable {
 			// We need to find the file's unique id.
 			// We can't look at the extended attributes w/o making
 			// assumptions about whether they follow around the
-			// file (EAs) or the path (sqlite)... so we go straight
-			// to the name resolver.
+			// file (EAs) or the path (sqlite), so here is what we do:
+			// (1) Look at the pending_moves_uid_by_path hash.  This will
+			//     contain info about things that aren't in the index yet.
+			// (2) If that fails, look in the index using the name resolver.
+			//     to the name resolver.
 			
 			Guid unique_id;
-			unique_id = name_resolver.GetIdByNameAndParentId (old_name, old_dir.UniqueId);
-			if (unique_id == Guid.Empty) {
-				Logger.Log.Warn ("Couldn't find unique id for '{0}' in '{1}' ({2})",
-						 old_name, old_dir.FullName, old_dir.UniqueId);
+			if (pending_moves_uid_by_path.Contains (old_path)) {
+				unique_id = (Guid) pending_moves_uid_by_path [old_path];
+				pending_moves_uid_by_path.Remove (old_path);
+			} else {
+				unique_id = name_resolver.GetIdByNameAndParentId (old_name, old_dir.UniqueId);
+				if (unique_id == Guid.Empty) {
+					Logger.Log.Warn ("Couldn't find unique id for '{0}' in '{1}' ({2})",
+							 old_name, old_dir.FullName, old_dir.UniqueId);
 				return;
+				}
 			}
+			
+			Logger.Log.Debug ("Guid of {0} is {1}", old_path, GuidFu.ToShortString (unique_id));
+
+			string new_path;
+			new_path = Path.Combine (new_dir.FullName, new_name);
+			pending_moves_uid_by_path [new_path] = unique_id;
 
 			// FIXME: I think we need to be more conservative when we seen
 			// events in a directory that has not been fully scanned, just to
@@ -1027,7 +1029,7 @@ namespace Beagle.Daemon.FileSystemQueryable {
 			Indexable indexable;
 			indexable = NewRenamingIndexable (new_name,
 							  unique_id,
-							  new_dir.UniqueId,
+							  new_dir,
 							  old_path);
 			
 			Scheduler.Task task;
@@ -1084,74 +1086,78 @@ namespace Beagle.Daemon.FileSystemQueryable {
 		// Our magic LuceneQueryable hooks
 		//
 
-		override protected void PostAddHook (IndexerAddedReceipt receipt)
+		override protected void PostAddHook (Indexable indexable, IndexerAddedReceipt receipt)
 		{
 			// If we just changed properties, remap to our *old* external Uri
 			// to make notification work out property.
-			if (receipt.PropertyChangesOnly) {
+			if (indexable.Type == IndexableType.PropertyChange) {
 
-				// FIXME: This linear search sucks --- we should
-				// be able to use the fact that they are sorted.
-				foreach (Property prop in receipt.Properties) {
-					if (prop.Key == OldExternalUriPropKey) {
-						receipt.Uri = UriFu.UriStringToUri (prop.Value);
-						break;
-					}
-				}
-				
+				string last_known_path;
+				last_known_path = (string) indexable.LocalState ["LastKnownPath"];
+				receipt.Uri = UriFu.PathToFileUri (last_known_path);
+				Logger.Log.Debug ("Last known path is {0}", last_known_path);
+
+				// This rename is now in the index, so we no longer need to keep
+				// track of the uid in memory.
+				pending_moves_uid_by_path.Remove (last_known_path);
+
 				return;
 			}
 
-			PendingInfo info;
-			info = pending_info_cache [receipt.Uri] as PendingInfo;
-			pending_info_cache.Remove (receipt.Uri);
+			string path;
+			path = (string) indexable.LocalState ["Path"];
+
+			DirectoryModel parent;
+			parent = indexable.LocalState ["Parent"] as DirectoryModel;
 
 			// The parent directory might have run away since we were indexed
-			if (info.Parent != null && !info.Parent.IsAttached)
+			if (parent != null && ! parent.IsAttached)
 				return;
 
 			Guid unique_id;
 			unique_id = GuidFu.FromUri (receipt.Uri);
 
 			FileAttributes attr;
-			attr = FileAttributesStore.ReadOrCreate (info.Path, unique_id);
-			attr.Path = info.Path;
-			attr.LastWriteTime = info.Mtime;
+			attr = FileAttributesStore.ReadOrCreate (path, unique_id);
+			attr.Path = path;
+			attr.LastWriteTime = indexable.Timestamp;
 			
 			attr.FilterName = receipt.FilterName;
 			attr.FilterVersion = receipt.FilterVersion;
 			
-			if (info.IsDirectory) {
+			if (indexable.LocalState ["IsWalkable"] != null) {
 				string name;
-				if (info.Parent == null)
-					name = info.Path;
-				else
-					name = Path.GetFileName (info.Path);
-				RegisterDirectory (name, info.Parent, attr);
+				name = (string) indexable.LocalState ["Name"];
+
+				RegisterDirectory (name, parent, attr);
 			}
 
 			FileAttributesStore.Write (attr);
 
 			// Remap the Uri so that change notification will work properly
-			receipt.Uri = UriFu.PathToFileUri (info.Path);
+			receipt.Uri = UriFu.PathToFileUri (path);
 		}
 
-		override protected void PostRemoveHook (IndexerRemovedReceipt receipt)
+		override protected void PostRemoveHook (Indexable indexable, IndexerRemovedReceipt receipt)
 		{
 			// Find the cached external Uri and remap the Uri in the receipt.
 			// We have to do this to make change notification work.
 			Uri external_uri;
-			external_uri = removed_uri_cache [receipt.Uri] as Uri;
+			external_uri = indexable.LocalState ["RemovedUri"] as Uri;
 			if (external_uri == null)
 				throw new Exception ("No cached external Uri for " + receipt.Uri);
-
-			removed_uri_cache.Remove (receipt.Uri);
-			
 			receipt.Uri = external_uri;
 		}
 
 		private bool RemapUri (Hit hit)
 		{
+			// Store the hit's internal uri in a property
+			Property prop;
+			prop = Property.NewKeyword ("beagle:InternalUri",
+						    UriFu.UriToSerializableString (hit.Uri));
+			hit.AddProperty (prop);
+
+			// Now assemble the path by looking at the parent and name
 			string name, parent_id_uri;
 			name = hit [ExactFilenamePropKey];
 			if (name == null)
@@ -1159,18 +1165,17 @@ namespace Beagle.Daemon.FileSystemQueryable {
 			parent_id_uri = hit [ParentDirUriPropKey];
 			if (parent_id_uri == null)
 				return false;
-			
+
 			Guid parent_id;
 			parent_id = GuidFu.FromUriString (parent_id_uri);
 			
 			string path;
 			path = ToFullPath (name, parent_id);
-
-			// Store the hit's internal uri in a property
-			Property prop;
-			prop = Property.NewKeyword ("beagle:InternalUri",
-						    UriFu.UriToSerializableString (hit.Uri));
-			hit.AddProperty (prop);
+			if (path == null) {
+				Logger.Log.Debug ("Couldn't find path of file with name '{0}' and parent '{1}'",
+						  name, GuidFu.ToShortString (parent_id));
+				return false;
+			}
 
 			hit.Uri = UriFu.PathToFileUri (path);
 
@@ -1259,6 +1264,10 @@ namespace Beagle.Daemon.FileSystemQueryable {
 		{
 			DirectoryModel dir;
 			dir = GetDirectoryModelByPath (directory_name);
+
+			// If something goes wrong, just fail silently.
+			if (dir == null)
+				return;
 
 			// We only use this information to prioritize the order in which
 			// we crawl directories --- so if this directory doesn't

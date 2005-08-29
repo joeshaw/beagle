@@ -222,7 +222,7 @@ namespace Beagle.Filters {
 						string sub_uri = this.filter.Uri.ToString () + "#" + this.count;
 						Indexable child = new Indexable (new Uri (sub_uri));
 
-						child.Type = "MailMessage";
+						child.HitType = "MailMessage";
 						child.MimeType = part.ContentType.ToString ();
 						child.CacheContent = false;
 

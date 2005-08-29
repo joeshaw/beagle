@@ -256,11 +256,13 @@ namespace Beagle.Daemon
 		
 		/////////////////////////////////////////////////////////////////
 
-		static IndexerReceipt [] FlushIndexer (IIndexer indexer)
+		static IndexerReceipt [] FlushIndexer (IIndexer indexer, IndexerRequest request)
 		{
 			IndexerReceipt [] receipts;
-			receipts = indexer.FlushAndBlock ();
+			receipts = indexer.Flush (request);
 
+
+			request.Clear (); // clear out the old request
 
 			foreach (IndexerReceipt raw_r in receipts) {
 
@@ -283,7 +285,7 @@ namespace Beagle.Daemon
 					// Add any child indexables back into our indexer
 					IndexerChildIndexablesReceipt r = (IndexerChildIndexablesReceipt) raw_r;
 					foreach (Indexable i in r.Children)
-						indexer.Add (i);
+						request.Add (i);
 				}
 			}
 			
@@ -295,7 +297,8 @@ namespace Beagle.Daemon
 			Logger.Log.Debug ("Starting IndexWorker");
 			
 			Indexable indexable;
-			int pending_adds = 0;
+			IndexerRequest pending_request;
+			pending_request = new IndexerRequest ();
 			
 			while (!shutdown) {
 				if (pending_files.Count > 0) {
@@ -319,14 +322,14 @@ namespace Beagle.Daemon
 					if (arg_tag != null)
 						indexable.AddProperty (Property.NewKeyword("Tag", arg_tag));
 					
-					driver.Add (indexable);
-					++pending_adds;
+					pending_request.Add (indexable);
 					
-					if (pending_adds % BATCH_SIZE == 0) {
-						Logger.Log.Debug ("Flushing driver, {0} items in queue", pending_files.Count);
-						FlushIndexer (driver);
-						pending_adds = 0;
+					if (pending_request.Count >= BATCH_SIZE) {
+						Logger.Log.Debug ("Flushing driver, {0} items in queue", pending_request.Count);
+						FlushIndexer (driver, pending_request);
+						// FlushIndexer clears the pending_request
 					}
+
 				} else if (crawling) {
 					//Logger.Log.Debug ("IndexWorker: La la la...");
 					Thread.Sleep (50);
@@ -335,10 +338,10 @@ namespace Beagle.Daemon
 				}
 			}
 
-			// Call Flush one last time.
-			// This should be a totally safe no-op if there are no pending operations.
-			// FIXME: This is incorrect.  We will drop any children in the final flush.
-			FlushIndexer (driver);
+			// Call Flush until our request is empty.  We have to do this in a loop
+			// because children can get added back to the pending request in a flush.
+			while (pending_request.Count > 0)
+				FlushIndexer (driver, pending_request);
 
 			backing_fa_store.Flush ();
 

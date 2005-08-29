@@ -35,5 +35,7 @@ namespace Beagle {
 		bool HasNextIndexable ();
 
 		string StatusName { get; }
+
+		void PostFlushHook ();
 	}
 }

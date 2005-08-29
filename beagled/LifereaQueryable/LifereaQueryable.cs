@@ -137,7 +137,7 @@ namespace Beagle.Daemon.LifereaQueryable {
 			Indexable indexable = new Indexable (new Uri (String.Format ("{0};item={1}", feed.Source, item.Source)));
 			indexable.ParentUri = UriFu.PathToFileUri (file.FullName);
 			indexable.MimeType = "text/html";
-			indexable.Type = "FeedItem";
+			indexable.HitType = "FeedItem";
 
 			DateTime date = new DateTime (1970, 1, 1);
 			date = date.AddSeconds (item.Timestamp);
@@ -241,6 +241,8 @@ namespace Beagle.Daemon.LifereaQueryable {
 			get { return null; }
 		}
 
+		public void PostFlushHook ()
+		{ }
 	}	
 
 	////////////////////////////////////////////////

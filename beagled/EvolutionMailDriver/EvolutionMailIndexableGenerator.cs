@@ -70,6 +70,11 @@ namespace Beagle.Daemon.EvolutionMailDriver {
 		public abstract Indexable GetNextIndexable ();
 		public abstract void Checkpoint ();
 
+		public void PostFlushHook ()
+		{
+			Checkpoint ();
+		}
+
 		protected EvolutionMailQueryable Queryable {
 			get { return this.queryable; }
 		}
@@ -297,7 +302,7 @@ namespace Beagle.Daemon.EvolutionMailDriver {
 			Indexable indexable = new Indexable (uri);
 
 			indexable.Timestamp = message.Date;
-			indexable.Type = "MailMessage";
+			indexable.HitType = "MailMessage";
 			indexable.MimeType = "message/rfc822";
 			indexable.CacheContent = false;
 
@@ -331,10 +336,13 @@ namespace Beagle.Daemon.EvolutionMailDriver {
 			if (this.folder_name == "Sent")
 				indexable.AddProperty (Property.NewFlag ("fixme:isSent"));
 
+			//indexable.AddProperty (Property.NewDate ("fixme:date", message.Date));
+#if false
 			if (this.folder_name == "Sent")
 				indexable.AddProperty (Property.NewDate ("fixme:sentdate", message.Date));
 			else
 				indexable.AddProperty (Property.NewDate ("fixme:received", message.Date));
+#endif
 
 			indexable.AddProperty (Property.NewKeyword ("fixme:flags", flags));
 
@@ -371,10 +379,14 @@ namespace Beagle.Daemon.EvolutionMailDriver {
 			if (this.mbox_parser != null)
 				this.MboxLastOffset = offset = this.mbox_parser.FromOffset;
 
-			Logger.Log.Debug ("{0}: indexed {1} messages ({2}/{3} bytes {4:###.0}%)",
-					  this.folder_name, this.indexed_count,
-					  offset, this.file_size,
-					  100.0 * offset / this.file_size);
+			string progress = "";
+			if (this.file_size > 0 && offset > 0) {
+				progress = String.Format (" ({0}/{1} bytes {2:###.0}%)",
+							  offset, this.file_size, 100.0 * offset / this.file_size);
+			}
+
+			Logger.Log.Debug ("{0}: indexed {1} messages{2}",
+					  this.folder_name, this.indexed_count, progress);
 		}
 
 		public override string GetTarget ()
@@ -538,6 +550,9 @@ namespace Beagle.Daemon.EvolutionMailDriver {
 
 		private string FolderCacheName {
 			get {
+				if (this.account_name == null || this.folder_name == null)
+					return null;
+
 				if (this.folder_cache_name == null)
 					this.folder_cache_name = "status-" + this.account_name + "-" + this.folder_name.Replace ('/', '-');
 
@@ -549,6 +564,11 @@ namespace Beagle.Daemon.EvolutionMailDriver {
 		{
 			Stream cacheStream;
 			BinaryFormatter formatter;
+
+			if (this.FolderCacheName == null) {
+				this.mapping = new Hashtable ();
+				return false;
+			}
 
 			try {
 				cacheStream = this.queryable.ReadDataStream (this.FolderCacheName);
@@ -569,6 +589,9 @@ namespace Beagle.Daemon.EvolutionMailDriver {
 		{
 			Stream cacheStream;
 			BinaryFormatter formatter;
+
+			if (this.FolderCacheName == null)
+				return;
 			
 			cacheStream = this.queryable.WriteDataStream (this.FolderCacheName);
 			formatter = new BinaryFormatter ();
@@ -627,10 +650,15 @@ namespace Beagle.Daemon.EvolutionMailDriver {
 				this.Queryable.ThisScheduler.Add (task);
 			}
 
-			Logger.Log.Debug ("{0}: Finished indexing {1} ({2}/{3} {4:###.0}%)",
-							  this.folder_name, this.indexed_count, this.count,
+			string progress = "";
+			if (this.count > 0 && this.summary.header.count > 0) {
+				progress = String.Format (" ({0}/{1} {2:###.0}%)",
+							  this.count,
 							  this.summary.header.count,
 							  100.0 * this.count / this.summary.header.count);
+			}
+
+			Logger.Log.Debug ("{0}: Finished indexing {1} messages{2}", this.folder_name, this.indexed_count, progress);
 
 			this.SaveCache ();
 			this.CrawlFinished ();
@@ -704,14 +732,16 @@ namespace Beagle.Daemon.EvolutionMailDriver {
 
 			indexable.Timestamp = messageInfo.Date;
 			indexable.MimeType = "message/rfc822";
-			indexable.Type = "MailMessage";
+			indexable.HitType = "MailMessage";
 
 			indexable.AddProperty (Property.NewKeyword ("fixme:account",  this.imap_name));
                         indexable.AddProperty (Property.NewKeyword ("fixme:folder",   this.folder_name));
 			indexable.AddProperty (Property.NewKeyword ("fixme:client", "evolution"));
 			
-			if (!have_content)
+			if (!have_content) {
 				indexable.AddProperty (Property.New ("dc:title", messageInfo.subject));
+				indexable.AddProperty (Property.NewDate ("fixme:date", messageInfo.Date));
+			}
 
 			GMime.InternetAddressList addrs;
 			addrs = GMime.InternetAddressList.ParseString (messageInfo.to);
@@ -756,12 +786,6 @@ namespace Beagle.Daemon.EvolutionMailDriver {
                         indexable.AddProperty (Property.NewKeyword ("fixme:mlist",    messageInfo.mlist));
                         indexable.AddProperty (Property.NewKeyword ("fixme:flags",    messageInfo.flags));
 
-			if (messageInfo.received != DateTime.MinValue)
-				indexable.AddProperty (Property.NewDate ("fixme:received", messageInfo.received));
-
-			if (messageInfo.sent != DateTime.MinValue)
-				indexable.AddProperty (Property.NewDate ("fixme:sentdate", messageInfo.sent));
-
 			if (this.folder_name == "Sent")
 				indexable.AddProperty (Property.NewFlag ("fixme:isSent"));
 
@@ -788,7 +812,7 @@ namespace Beagle.Daemon.EvolutionMailDriver {
 
 			if (have_content)
 				indexable.ContentUri = UriFu.PathToFileUri (msg_file);
-			else
+			else 
 				indexable.NoContent = true;
 
 			return indexable;
@@ -796,10 +820,20 @@ namespace Beagle.Daemon.EvolutionMailDriver {
 
 		public override void Checkpoint ()
 		{
-			Logger.Log.Debug ("{0}: indexed {1} messages ({2}/{3} {4:###.0}%)",
-							  this.folder_name, this.indexed_count, this.count,
-							  this.summary.header.count,
-							  100.0 * this.count / this.summary.header.count);
+			if (this.summary != null) {
+
+				string progress = "";
+				if (this.count > 0 && this.summary.header.count > 0) {
+					progress = String.Format (" ({0}/{1} {2:###.0}%)",
+								  this.count,
+								  this.summary.header.count,
+								  100.0 * this.count / this.summary.header.count);
+
+				}
+				
+				Logger.Log.Debug ("{0}: indexed {1} messages{2}",
+						  this.folder_name, this.indexed_count, progress);
+			}
 
 			this.SaveCache ();
 		}

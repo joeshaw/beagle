@@ -176,7 +176,7 @@ namespace Beagle.Daemon.KopeteQueryable {
 			Indexable indexable = new Indexable (log.Uri);
 			indexable.Timestamp = log.Timestamp;
 			indexable.MimeType = "text/plain";
-			indexable.Type = "IMLog";
+			indexable.HitType = "IMLog";
 
 			StringBuilder text = new StringBuilder ();
 			foreach (ImLog.Utterance utt in log.Utterances) {

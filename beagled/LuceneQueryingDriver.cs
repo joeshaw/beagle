@@ -551,13 +551,20 @@ namespace Beagle.Daemon {
 				doc = primary_searcher.Doc (i);
 
 				// Check the timestamp to make sure it is in range
-				long timestamp_num;
-				timestamp_num = Int64.Parse (doc.Get ("Timestamp"));
-				if (timestamp_num < min_date_num || max_date_num < timestamp_num)
-					continue;
+				string timestamp_str;
+				long timestamp_num = 0;
 
-				if (top_docs != null && ! top_docs.WillAccept (timestamp_num))
-					continue;
+				timestamp_str = doc.Get ("Timestamp");
+				if (timestamp_str == null) {
+					Logger.Log.Warn ("No timestamp on {0}!", GetUriFromDocument (doc));
+				} else {
+					timestamp_num = Int64.Parse (doc.Get ("Timestamp"));
+					if (timestamp_num < min_date_num || max_date_num < timestamp_num)
+						continue;
+
+					if (top_docs != null && ! top_docs.WillAccept (timestamp_num))
+						continue;
+				}
 
 				// If we have a UriFilter, apply it.
 				if (uri_filter != null) {

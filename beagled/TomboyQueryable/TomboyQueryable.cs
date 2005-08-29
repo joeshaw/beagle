@@ -154,7 +154,7 @@ namespace Beagle.Daemon.TomboyQueryable {
 			indexable.ContentUri = UriFu.PathToFileUri (file.FullName);
 
 			indexable.Timestamp = note.timestamp;
-			indexable.Type = "Note";
+			indexable.HitType = "Note";
 			indexable.Filtering = IndexableFiltering.AlreadyFiltered;
 
 			indexable.AddProperty (Property.New ("dc:title", note.subject));
@@ -198,9 +198,9 @@ namespace Beagle.Daemon.TomboyQueryable {
 			ThisScheduler.Add (task);
 		}
 
-		override protected void PostAddHook (IndexerAddedReceipt receipt)
+		override protected void PostAddHook (Indexable indexable, IndexerAddedReceipt receipt)
 		{
-			base.PostAddHook (receipt);
+			base.PostAddHook (indexable, receipt);
 			
 			// Store the note's text in the text cache.
 			// By doing this in the PostAddHook, we ensure that

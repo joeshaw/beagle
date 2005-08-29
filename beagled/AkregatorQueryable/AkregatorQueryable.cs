@@ -151,7 +151,7 @@ namespace Beagle.Daemon.AkregatorQueryable {
 			Indexable indexable = new Indexable (new Uri (String.Format ("feed:{0};item={1}", channel.Link, item.Link)));
 			indexable.ParentUri = UriFu.PathToFileUri (file.FullName);
 			indexable.MimeType = "text/html";
-			indexable.Type = "FeedItem";
+			indexable.HitType = "FeedItem";
 
 			int offset; //will be ignored - only store the time at current machine
 			DateTime date = GMime.Utils.HeaderDecodeDate (item.PubDate, out offset);
@@ -262,6 +262,9 @@ namespace Beagle.Daemon.AkregatorQueryable {
 		public string StatusName {
 			get { return null; }
 		}
+
+		public void PostFlushHook ()
+		{ }
 
 	}	
 

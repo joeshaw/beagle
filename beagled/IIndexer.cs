@@ -29,33 +29,10 @@ using System.Collections;
 
 namespace Beagle.Daemon {
 	
-
-	public delegate void IIndexerFlushHandler (IIndexer source, IndexerReceipt [] receipts);
-
 	public interface IIndexer {
 
 		int GetItemCount ();
-
-		void Add (Indexable indexable);
-
-		void Remove (Uri uri);
-
-		// The optimization will happen after the next flush.
-		void Optimize ();
-
-		IndexerReceipt [] FlushAndBlock ();
-
-		// In general, we don't guarantee that Flush will not block.
-		// FlushEvent might be fired before Flush returns.
-		// Also, FlushEvent might fire multiple times.  We signal
-		// that the flush is finished by firing FlushEvent with
-		// receipts == null.
-		void Flush ();
-
-		event IIndexerFlushHandler FlushEvent;
-
-
-
 		
+		IndexerReceipt [] Flush (IndexerRequest request);
 	}
 }

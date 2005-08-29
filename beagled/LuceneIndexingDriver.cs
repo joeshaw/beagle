@@ -52,8 +52,7 @@ namespace Beagle.Daemon {
 
 	public class LuceneIndexingDriver : LuceneCommon, IIndexer {
 
-		Hashtable pending_by_uri = UriFu.NewHashtable ();
-		bool optimize_during_next_flush = false;
+		object flush_lock = new object ();
 
 		public LuceneIndexingDriver (string index_name, int minor_version) : base (index_name, minor_version)
 		{
@@ -65,295 +64,270 @@ namespace Beagle.Daemon {
 
 		public LuceneIndexingDriver (string index_name) : this (index_name, 0)
 		{ }
-
+	
 		////////////////////////////////////////////////////////////////
 
 		//
 		// Implementation of the IIndexer interface
 		//
 
-		public void Add (Indexable indexable)
+		public IndexerReceipt [] Flush (IndexerRequest request)
 		{
-			lock (pending_by_uri) {
-				Indexable existing_indexable;
-				existing_indexable = pending_by_uri [indexable.Uri] as Indexable;
-
-				// If we already have an Indexable queued up and this is a property-change
-				// only Indexable, just change the original Indexable's properties.
-				if (existing_indexable != null && indexable.PropertyChangesOnly) {
-					existing_indexable.MergeProperties (indexable);
-					return;
-				}
-
-				pending_by_uri [indexable.Uri] = indexable;
-			}
-		}
-		
-		public void Remove (Uri uri)
-		{
-			lock (pending_by_uri) {
-				pending_by_uri [uri] = null;
-			}
+			// This is just to keep a big block of code from being
+			// indented an extra eight spaces.
+			lock (flush_lock)
+				return Flush_Unlocked (request);
 		}
 
-		public void Optimize ()
-		{
-			optimize_during_next_flush = true;
-		}
-
-		public IndexerReceipt [] FlushAndBlock ()
+		private IndexerReceipt [] Flush_Unlocked (IndexerRequest request)
 		{
 			ArrayList receipt_queue;
+			receipt_queue = new ArrayList ();
 
-			lock (pending_by_uri) {
+			IndexReader primary_reader, secondary_reader;
+			primary_reader = IndexReader.Open (PrimaryStore);
+			secondary_reader = IndexReader.Open (SecondaryStore);
 
-				receipt_queue = new ArrayList ();
-				
-				// Step #1: Delete all items with the same URIs
-				// as our pending items from the index.
+			// Step #1: Make our first pass over the list of
+			// indexables that make up our request.  For each add
+			// or remove in the request, delete the associated
+			// items from the index.  Assemble a query that will
+			// be used to find the secondary documents for any
+			// property change requests.
 
-				IndexReader primary_reader, secondary_reader;
-				primary_reader = IndexReader.Open (PrimaryStore);
-				secondary_reader = IndexReader.Open (SecondaryStore);
-				
-				LNS.BooleanQuery prop_change_query = null;
+			LNS.BooleanQuery prop_change_query = null;
+			int delete_count = 0;
 
-				int delete_count = 0;
+			foreach (Indexable indexable in request.Indexables) {
 
-				foreach (DictionaryEntry entry in pending_by_uri) {
-					Uri uri = entry.Key as Uri;
-					Indexable indexable = entry.Value as Indexable;
+				switch (indexable.Type) {
 
-					// If this indexable only contains property changes,
-					// all we do at this point is assemble the query that we will
-					// use to retrieve the current property values.  We'll ultimately
-					// need to delete the existing secondary documents, but not
-					// until we've loaded them...
-					if (indexable != null && indexable.PropertyChangesOnly) {
-						if (prop_change_query == null)
-							prop_change_query = new LNS.BooleanQuery ();
-						prop_change_query.Add (UriQuery ("Uri", uri), false, false);
-						continue;
-					}
+				case IndexableType.Add:
+				case IndexableType.Remove:
 
-					Logger.Log.Debug ("-{0}", uri);
+					string uri_str;
+					uri_str = UriFu.UriToSerializableString (indexable.Uri);
+
+					Logger.Log.Debug ("-{0}", indexable.DisplayUri);
 					
 					Term term;
-					term = new Term ("Uri", UriFu.UriToSerializableString (uri));
+					term = new Term ("Uri", uri_str);
 					delete_count += primary_reader.Delete (term);
 					if (secondary_reader != null)
 						secondary_reader.Delete (term);
 
 					// When we delete an indexable, also delete any children.
 					// FIXME: Shouldn't we also delete any children of children, etc.?
-					term = new Term ("ParentUri", UriFu.UriToSerializableString (uri));
+					term = new Term ("ParentUri", uri_str);
 					delete_count += primary_reader.Delete (term);
 					if (secondary_reader != null)
 						secondary_reader.Delete (term);
 
 					// If this is a strict removal (and not a deletion that
 					// we are doing in anticipation of adding something back),
-					// queue up a removed event.
-					if (indexable == null) {
+					// queue up a removed receipt.
+					if (indexable.Type == IndexableType.Remove) {
 						IndexerRemovedReceipt r;
-						r = new IndexerRemovedReceipt (uri);
+						r = new IndexerRemovedReceipt (indexable.Uri);
 						receipt_queue.Add (r);
 					}
+
+					break;
+
+				case IndexableType.PropertyChange:
+					if (prop_change_query == null)
+						prop_change_query = new LNS.BooleanQuery ();
+					prop_change_query.Add (UriQuery ("Uri", indexable.Uri), false, false);
+					break;
 				}
+			}
 
-				if (HaveItemCount)
-					AdjustItemCount (-delete_count);
-				else
-					SetItemCount (primary_reader);
+			if (HaveItemCount)
+				AdjustItemCount (-delete_count);
+			else
+				SetItemCount (primary_reader);
 
-				// If we have are doing any property changes,
-				// we read in the current secondary documents
-				// and store them in a hash table for use
-				// later.  Then we delete the current
-				// secondary documents.
-				Hashtable current_docs = null;
-				if (prop_change_query != null) {
-					current_docs = UriFu.NewHashtable ();
+			
+			
+			// Step #2: If we have are doing any property changes,
+			// we read in the current secondary documents and
+			// store them in a hash table for use later.  Then we
+			// delete the current secondary documents.
+			Hashtable prop_change_docs = null;
+			if (prop_change_query != null) {
+				prop_change_docs = UriFu.NewHashtable ();
 
-					LNS.IndexSearcher secondary_searcher;
-					secondary_searcher = new LNS.IndexSearcher (secondary_reader);
+				LNS.IndexSearcher secondary_searcher;
+				secondary_searcher = new LNS.IndexSearcher (secondary_reader);
 
-					LNS.Hits hits;
-					hits = secondary_searcher.Search (prop_change_query);
+				LNS.Hits hits;
+				hits = secondary_searcher.Search (prop_change_query);
 
-					ArrayList delete_terms;
-					delete_terms = new ArrayList ();
+				ArrayList delete_terms;
+				delete_terms = new ArrayList ();
 
-					int N;
-					N = hits.Length ();
-					for (int i = 0; i < N; ++i) {
-						Document doc;
-						doc = hits.Doc (i);
+				int N = hits.Length ();
+				for (int i = 0; i < N; ++i) {
+					Document doc;
+					doc = hits.Doc (i);
+					
+					string uri_str;
+					uri_str = doc.Get ("Uri");
 
-						Uri doc_uri;
-						doc_uri = GetUriFromDocument (doc);
-						current_docs [doc_uri] = doc;
+					Uri uri;
+					uri = UriFu.UriStringToUri (uri_str);
+					prop_change_docs [uri] = doc;
 						
-						Term term;
-						term = new Term ("Uri", UriFu.UriToSerializableString (doc_uri));
-						delete_terms.Add (term);
-					}
-
-					secondary_searcher.Close ();
-
-					foreach (Term term in delete_terms)
-						secondary_reader.Delete (term);
+					Term term;
+					term = new Term ("Uri", uri_str);
+					delete_terms.Add (term);
 				}
 
-				// FIXME: Would we gain more "transactionality" if we didn't close
-				// the readers until later?  Would that even be possible, or will
-				// it create locking problems?
-				primary_reader.Close ();
-				secondary_reader.Close ();
+				secondary_searcher.Close ();
 
+				foreach (Term term in delete_terms)
+					secondary_reader.Delete (term);
+			}
 
-				// Step #2: Write out the pending adds.
+			// We are now done with the readers, so we close them.
+			primary_reader.Close ();
+			secondary_reader.Close ();
 
-				if (text_cache != null)
-					text_cache.BeginTransaction ();
+			// FIXME: If we crash at exactly this point, we are in
+			// trouble.  Items will have been dropped from the index
+			// without the proper replacements being added.
+
+			// Step #3: Make another pass across our list of indexables
+			// and write out any new documents.
+
+			if (text_cache != null)
+				text_cache.BeginTransaction ();
 				
-				IndexWriter primary_writer, secondary_writer;
-				primary_writer = new IndexWriter (PrimaryStore, IndexingAnalyzer, false);
-				secondary_writer = null;
+			IndexWriter primary_writer, secondary_writer;
+			primary_writer = new IndexWriter (PrimaryStore, IndexingAnalyzer, false);
+			secondary_writer = null;
 
-				foreach (Indexable indexable in pending_by_uri.Values) {
+			foreach (Indexable indexable in request.Indexables) {
+				
+				if (indexable.Type == IndexableType.Remove)
+					continue;
 
-					if (indexable == null)
-						continue;
+				IndexerAddedReceipt r;
+				r = new IndexerAddedReceipt (indexable.Uri);
+				receipt_queue.Add (r);
 
-					IndexerAddedReceipt r;
-					r = new IndexerAddedReceipt (indexable.Uri);
-					r.Properties = indexable.Properties;
+				if (indexable.Type == IndexableType.PropertyChange) {
+
+					Logger.Log.Debug ("+{0} (props only)", indexable.DisplayUri);
+					r.PropertyChangesOnly = true;
+
+					Document doc;
+					doc = prop_change_docs [indexable.Uri] as Document;
+
+					Document new_doc;
+					new_doc = RewriteDocument (doc, indexable);
+
+					// Write out the new document...
+					if (secondary_writer == null)
+						secondary_writer = new IndexWriter (SecondaryStore, IndexingAnalyzer, false);
+					secondary_writer.AddDocument (new_doc);
+
+					continue; // ...and proceed to the next Indexable
+				}
+
+				// If we reach this point we know we are dealing with an IndexableType.Add
+
+				if (indexable.Type != IndexableType.Add)
+					throw new Exception ("When I said it was an IndexableType.Add, I meant it!");
+				
+				Logger.Log.Debug ("+{0}", indexable.DisplayUri);
+
+				Filter filter = null;
+				
+				// If we have content, try to find a filter
+				// which we can use to process the indexable.
+				try {
+					FilterFactory.FilterIndexable (indexable, text_cache, out filter);
+				} catch (Exception e) {
+					Logger.Log.Error ("Unable to filter {0} (mimetype={1})", indexable.DisplayUri, indexable.MimeType);
+					Logger.Log.Error (e);
+					indexable.NoContent = true;
+				}
 					
-					// Handle property changes
-					if (indexable.PropertyChangesOnly) {
-						Logger.Log.Debug ("+{0} (props only)", indexable.DisplayUri);
+				Document primary_doc = null, secondary_doc = null;
 
-						Document current_doc;
-						current_doc = current_docs [indexable.Uri] as Document;
-
-						Document new_doc;
-						new_doc = RewriteDocument (current_doc, indexable);
-
-						// Write out the new document...
-						if (secondary_writer == null)
-							secondary_writer = new IndexWriter (SecondaryStore, IndexingAnalyzer, false);
-						secondary_writer.AddDocument (new_doc);
-
-						r.PropertyChangesOnly = true;
-						receipt_queue.Add (r);
-
-						continue; // ...and proceed to the next Indexable
-					}
-
-					Logger.Log.Debug ("+{0}", indexable.DisplayUri);
-
-					Filter filter = null;
-
-					try {
-						FilterFactory.FilterIndexable (indexable, text_cache, out filter);
-					} catch (Exception e) {
-						Logger.Log.Error ("Unable to filter {0} (mimetype={1})", indexable.DisplayUri, indexable.MimeType);
-						Logger.Log.Error (e);
-						indexable.NoContent = true;
-					}
+				try {
+					BuildDocuments (indexable, out primary_doc, out secondary_doc);
+					primary_writer.AddDocument (primary_doc);
+				} catch (Exception ex) {
 					
-					Document primary_doc = null, secondary_doc = null;
+					// If an exception was thrown, something bad probably happened
+					// while we were filtering the content.  Set NoContent to true
+					// and try again -- that way it will at least end up in the index,
+					// even if we don't manage to extract the fulltext.
 
+					Logger.Log.Debug ("First attempt to index {0} failed", indexable.DisplayUri);
+					Logger.Log.Debug (ex);
+					
+					indexable.NoContent = true;
+						
 					try {
 						BuildDocuments (indexable, out primary_doc, out secondary_doc);
 						primary_writer.AddDocument (primary_doc);
-					} catch (Exception ex) {
-
-						// If an exception was thrown, something bad probably happened
-						// while we were filtering the content.  Set NoContent to true
-						// and try again.
-
-						Logger.Log.Debug ("First attempt to index {0} failed", indexable.DisplayUri);
-						Logger.Log.Debug (ex);
-
-						indexable.NoContent = true;
-
-						try {
-							BuildDocuments (indexable, out primary_doc, out secondary_doc);
-							primary_writer.AddDocument (primary_doc);
-						} catch (Exception ex2) {
-							Logger.Log.Debug ("Second attempt to index {0} failed, giving up...", indexable.DisplayUri);
-							Logger.Log.Debug (ex2);
-						}
+					} catch (Exception ex2) {
+						Logger.Log.Debug ("Second attempt to index {0} failed, giving up...", indexable.DisplayUri);
+						Logger.Log.Debug (ex2);
 					}
-
-					if (filter != null) {
-						r.FilterName = filter.GetType ().ToString ();
-						r.FilterVersion = filter.Version;
-					}
-					
-					receipt_queue.Add (r);
-					
-					if (secondary_doc != null) {
-						if (secondary_writer == null)
-							secondary_writer = new IndexWriter (SecondaryStore, IndexingAnalyzer, false);
-
-						secondary_writer.AddDocument (secondary_doc);
-					}
-
-					AdjustItemCount (1);
 				}
+				
+				if (filter != null) {
+					r.FilterName = filter.GetType ().ToString ();
+					r.FilterVersion = filter.Version;
 
-				if (text_cache != null)
-					text_cache.CommitTransaction ();
-
-				if (optimize_during_next_flush) {
-					Logger.Log.Debug ("Optimizing {0}", IndexName);
-					primary_writer.Optimize ();
+					// Create a receipt containing any child indexables.
+					if (filter.ChildIndexables.Count > 0) {
+						IndexerChildIndexablesReceipt cr;
+						cr = new IndexerChildIndexablesReceipt (filter.ChildIndexables);
+						receipt_queue.Add (cr);
+					}
+				}
+				
+				if (secondary_doc != null) {
 					if (secondary_writer == null)
 						secondary_writer = new IndexWriter (SecondaryStore, IndexingAnalyzer, false);
-					secondary_writer.Optimize ();
-					optimize_during_next_flush = false;
+					
+					secondary_writer.AddDocument (secondary_doc);
 				}
-
-				// Step #3. Close our writers and return the events to
-				// indicate what has happened.
 				
-				primary_writer.Close ();
-				if (secondary_writer != null)
-					secondary_writer.Close ();
+				AdjustItemCount (1);
+			}
 
-				pending_by_uri.Clear ();
+			if (text_cache != null)
+				text_cache.CommitTransaction ();
 
-				IndexerReceipt [] receipt_array;
-				receipt_array = new IndexerReceipt [receipt_queue.Count];
-				for (int i = 0; i < receipt_queue.Count; ++i)
-					receipt_array [i] = (IndexerReceipt) receipt_queue [i];
+			if (request.OptimizeIndex) {
+				Logger.Log.Debug ("Optimizing {0}", IndexName);
+				primary_writer.Optimize ();
+				if (secondary_writer == null)
+					secondary_writer = new IndexWriter (SecondaryStore, IndexingAnalyzer, false);
+				secondary_writer.Optimize ();
+			}
+			
+			// Step #4. Close our writers and return the events to
+			// indicate what has happened.
 				
-				return receipt_array;
-			}
+			primary_writer.Close ();
+			if (secondary_writer != null)
+				secondary_writer.Close ();
+			
+			IndexerReceipt [] receipt_array;
+			receipt_array = new IndexerReceipt [receipt_queue.Count];
+			for (int i = 0; i < receipt_queue.Count; ++i)
+				receipt_array [i] = (IndexerReceipt) receipt_queue [i];
+			
+			return receipt_array;
 		}
-
-		public void Flush ()
-		{
-			// FIXME: Right now we don't support a non-blocking flush,
-			// but it would be easy enough to do it in a thread.
-
-			IndexerReceipt [] receipts;
-
-			receipts = FlushAndBlock ();
-
-			if (FlushEvent != null) {
-				if (receipts != null)
-					FlushEvent (this, receipts); // this returns the receipts to anyone who cares
-				FlushEvent (this, null);             // and this indicates that we are all done
-			}
-		}
-
-
-		public event IIndexerFlushHandler FlushEvent;
-
+		
 		////////////////////////////////////////////////////////////////
 
 		public void OptimizeNow ()
@@ -371,6 +345,7 @@ namespace Beagle.Daemon {
 			}
 		}
 
+		
 		public void Merge (LuceneCommon index_to_merge)
 		{
                         // FIXME: Error recovery

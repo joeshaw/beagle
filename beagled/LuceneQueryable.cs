@@ -70,11 +70,14 @@ namespace Beagle.Daemon {
 
 		private LuceneQueryingDriver driver;
 		private IIndexer indexer = null;
-		private LuceneTaskCollector collector;
 
 		private LuceneQueryingDriver.UriFilter our_uri_filter;
 		private LuceneCommon.HitFilter our_hit_filter;
+		private Scheduler.Task our_final_flush_task = null;
 		private Scheduler.Task our_optimize_task = null;
+
+		private object request_lock = new object ();
+		private IndexerRequest pending_request = new IndexerRequest ();
 
 		//////////////////////////////////////////////////////////
 
@@ -102,9 +105,6 @@ namespace Beagle.Daemon {
 			indexer = LocalIndexerHook ();
 			if (indexer == null && indexer_hook != null)
 				indexer = indexer_hook (this.index_name, this.minor_version);
-			indexer.FlushEvent += OnFlushEvent;
-
-			collector = new LuceneTaskCollector (indexer);
 
 			OptimizeAllEvent += OnOptimizeAllEvent;
 
@@ -368,69 +368,11 @@ namespace Beagle.Daemon {
 
 		//////////////////////////////////////////////////////////////////////////////////
 
-		private class LuceneTaskCollector : Scheduler.ITaskCollector {
+		// More hooks.  These are mostly here for the file system backend.
 
-			IIndexer indexer;
-
-			public LuceneTaskCollector (IIndexer indexer)
-			{
-				this.indexer = indexer;
-			}
-
-			public double GetMinimumWeight ()
-			{
-				return 0;
-			}
-
-			public double GetMaximumWeight ()
-			{
-				// FIXME: this is totally arbitrary
-				return 37;
-			}
-
-			public void PreTaskHook ()
-			{
-				// Do nothing
-			}
-
-			public void PostTaskHook ()
-			{
-				indexer.Flush ();
-			}
-			
-		}
-
-		//////////////////////////////////////////////////////////////////////////////////
-
-		// Adding a single indexable
-
-		private delegate bool PreAddHookDelegate (Indexable indexable);
-		
-		private class AddTask : Scheduler.Task {
-			IIndexer indexer;
-			Indexable indexable;
-			PreAddHookDelegate pre_add_hook;
-
-			public AddTask (IIndexer           indexer,
-					Indexable          indexable,
-					PreAddHookDelegate pre_add_hook)
-			{
-				this.indexer = indexer;
-				this.indexable = indexable;
-				this.pre_add_hook = pre_add_hook;
-				this.Tag = indexable.DisplayUri.ToString ();
-				this.Weight = 1;
-			}
-
-			override protected void DoTaskReal ()
-			{
-				if (pre_add_hook == null || pre_add_hook (indexable))
-					indexer.Add (indexable);
-			}
-		}
-
-		virtual protected bool PreAddHook (Indexable indexable)
+		virtual protected bool PreAddIndexableHook (Indexable indexable)
 		{
+			// By default, we like everything.
 			return true;
 		}
 
@@ -439,17 +381,50 @@ namespace Beagle.Daemon {
 		// will come back w/ an internal Uri.  In order for change
 		// notification to work correctly, we have to map it to
 		// an external Uri.
-		virtual protected void PostAddHook (IndexerAddedReceipt receipt)
+		virtual protected void PostAddHook (Indexable indexable, IndexerAddedReceipt receipt)
 		{
 			// Does nothing by default
+		}
+
+		virtual protected void PostRemoveHook (Indexable indexable, IndexerRemovedReceipt receipt)
+		{
+			// Does nothing by default
+		}
+
+		//////////////////////////////////////////////////////////////////////////////////
+
+		// Adding a single indexable
+		
+		private class AddTask : Scheduler.Task {
+			LuceneQueryable    queryable;
+			Indexable          indexable;
+
+			public AddTask (LuceneQueryable    queryable,
+					Indexable          indexable)
+			{
+				this.queryable = queryable;
+				this.indexable = indexable;
+				this.Tag = indexable.DisplayUri.ToString ();
+				this.Weight = 1;
+			}
+
+			override protected void DoTaskReal ()
+			{
+				if (queryable.PreAddIndexableHook (indexable)) {
+					queryable.AddIndexable (indexable);
+
+					if (Priority == Scheduler.Priority.Immediate)
+						queryable.Flush ();
+					else
+						queryable.ConditionalFlush ();
+				}
+			}
 		}
 
 		public Scheduler.Task NewAddTask (Indexable indexable)
 		{
 			AddTask task;
-			task = new AddTask (this.indexer, indexable,
-					    new PreAddHookDelegate (this.PreAddHook));
-			task.Collector = collector;
+			task = new AddTask (this, indexable);
 			task.Source = this;
 			return task;
 		}
@@ -459,31 +434,20 @@ namespace Beagle.Daemon {
 		// Adding an indexable generator
 
 		private class AddGeneratorTask : Scheduler.Task {
-			IIndexer indexer;
+			LuceneQueryable queryable;
 			IIndexableGenerator generator;
-			PreAddHookDelegate pre_add_hook;
 
 			// Hook to be invoked after the IIndexableGenerator
 			// has finished processing a batch of Indexables,
 			// just prior to flushing the driver.
 			Scheduler.Hook pre_flush_hook;
 
-			// FIXME: number of items generated
-			// from the Indexable shouldn't be
-			// hard-wired
-			const int hard_wired_generation_count = 30;
-
-			public AddGeneratorTask (IIndexer            indexer,
-						 IIndexableGenerator generator,
-						 PreAddHookDelegate  pre_add_hook,
-						 Scheduler.Hook      pre_flush_hook)
+			public AddGeneratorTask (LuceneQueryable     queryable,
+						 IIndexableGenerator generator)
 			{
-				this.indexer = indexer;
+				this.queryable = queryable;
 				this.generator = generator;
-				this.pre_add_hook = pre_add_hook;
-				this.pre_flush_hook = pre_flush_hook;
 				this.Tag = generator.StatusName;
-				this.Weight = hard_wired_generation_count;
 			}
 
 			override protected void DoTaskReal ()
@@ -492,8 +456,7 @@ namespace Beagle.Daemon {
 				// get re-scheduled after it is run.
 				Reschedule = true;
 
-				bool did_something = false;
-				for (int count = 0; count < hard_wired_generation_count; ++count) {
+				do {
 					if (! generator.HasNextIndexable ()) {
 						// ...except if there is no more work to do, of course.
 						Reschedule = false;
@@ -510,116 +473,95 @@ namespace Beagle.Daemon {
 					if (generated == null)
 						break;
 
-					if (pre_add_hook == null || pre_add_hook (generated)) {
-						indexer.Add (generated);
-						did_something = true;
-					}
-				}
-				
-				if (did_something) {
-					if (pre_flush_hook != null)
-						pre_flush_hook ();
-					indexer.Flush ();
-				}
-			}
-		}
+					if (queryable.PreAddIndexableHook (generated))
+						queryable.AddIndexable (generated);
+					
+					// We keep adding indexables until a flush goes through.
+				} while (! queryable.ConditionalFlush ());
 
-		public Scheduler.Task NewAddTask (IIndexableGenerator generator, Scheduler.Hook pre_flush_hook)
-		{
-			AddGeneratorTask task;
-			task = new AddGeneratorTask (this.indexer,
-						     generator,
-						     new PreAddHookDelegate (this.PreAddHook),
-						     pre_flush_hook);
-			task.Source = this;
-			return task;
+				generator.PostFlushHook ();
+			}
 		}
 
 		public Scheduler.Task NewAddTask (IIndexableGenerator generator)
 		{
-			return NewAddTask (generator, null);
+			AddGeneratorTask task;
+			task = new AddGeneratorTask (this, generator);
+			task.Source = this;
+			return task;
 		}
 
 		//////////////////////////////////////////////////////////////////////////////////
 
-		// Removing a single item from the index
+		// There used to be a separate type of task for doing removes.
+		// This is all that remains of that old code.
+		public Scheduler.Task NewRemoveTask (Uri uri)
+		{
+			Indexable indexable;
+			indexable = new Indexable (IndexableType.Remove, uri);
+			
+			return NewAddTask (indexable);
+		}
 
-		private delegate bool PreRemoveHookDelegate (Uri uri);
+		//////////////////////////////////////////////////////////////////////////////////
 
-		private class RemoveTask : Scheduler.Task {
-			IIndexer indexer;
-			Uri uri;
-			PreRemoveHookDelegate pre_remove_hook;
+		// When all other tasks are complete, we need to do a final flush.
+		// We schedule that as a maintenance task.
 
-			public RemoveTask (IIndexer              indexer,
-					   Uri                   uri,
-					   PreRemoveHookDelegate pre_remove_hook)
+		private class FinalFlushTask : Scheduler.Task {
+			LuceneQueryable queryable;
+
+			public FinalFlushTask (LuceneQueryable queryable)
 			{
-				this.indexer = indexer;
-				this.uri = uri;
-				this.pre_remove_hook = pre_remove_hook;
+				this.queryable = queryable;
 
-				this.Tag = uri.ToString ();
-				this.Weight = 0.24999; // this is arbitrary
 			}
 
 			override protected void DoTaskReal ()
 			{
-				if (pre_remove_hook == null || pre_remove_hook (uri)) {
-					if (uri != null)
-						indexer.Remove (uri);
-				}
+				queryable.Flush ();
 			}
 		}
 
-		virtual protected bool PreRemoveHook (Uri uri)
+		private void ScheduleFinalFlush ()
 		{
-			return true;
+			if (our_final_flush_task == null) {
+				our_final_flush_task = new FinalFlushTask (this);
+
+				our_final_flush_task.Tag = "Final Flush for " + IndexName;
+				our_final_flush_task.Priority = Scheduler.Priority.Maintenance;
+				our_final_flush_task.SubPriority = 100; // do this first when starting maintenance
+				our_final_flush_task.Source = this;
+			}
+			
+			ThisScheduler.Add (our_final_flush_task);
 		}
 
-		// If we are remapping Uris, receipt.Uri will be passed in as an
-		// internal Uri.  It needs to be mapped to an external uri for
-		// change notification to work properly.
-		virtual protected void PostRemoveHook (IndexerRemovedReceipt receipt)
-		{
-			// Does nothing by default
-		}
-
-		public Scheduler.Task NewRemoveTask (Uri uri)
-		{
-			RemoveTask task;
-			task = new RemoveTask (this.indexer, uri,
-					       new PreRemoveHookDelegate (this.PreRemoveHook));
-			task.Collector = collector;
-			task.Source = this;
-			return task;
-		}
 
 		//////////////////////////////////////////////////////////////////////////////////
 
 		// Optimize the index
 		
 		private class OptimizeTask : Scheduler.Task {
-			IIndexer indexer;
+			LuceneQueryable queryable;
 
-			public OptimizeTask (IIndexer indexer)
+			public OptimizeTask (LuceneQueryable queryable)
 			{
-				this.indexer = indexer;
+				this.queryable = queryable;
 			}
 
 			override protected void DoTaskReal ()
 			{
-				indexer.Optimize ();
+				queryable.Optimize ();
 			}
 		}
 
 		public Scheduler.Task NewOptimizeTask ()
 		{
 			Scheduler.Task task;
-			task = new OptimizeTask (this.indexer);
+			task = new OptimizeTask (this);
 			task.Tag = "Optimize " + IndexName;
 			task.Priority = Scheduler.Priority.Maintenance;
-			task.Collector = collector;
 			task.Source = this;
 
 			return task;
@@ -642,7 +584,7 @@ namespace Beagle.Daemon {
 				our_optimize_task = NewOptimizeTask ();
 
 			if (Environment.GetEnvironmentVariable ("BEAGLE_UNDER_BLUDGEON") != null)
-				optimize_delay = 0.1;
+				optimize_delay = 1/120.0; // half a second
 
 			// Changing the trigger time of an already-scheduled process
 			// does what you would expect.
@@ -664,12 +606,67 @@ namespace Beagle.Daemon {
 			return true;
 		}
 
+		virtual protected void PreFlushHook (IndexerRequest flushed_request)
+		{ }
+
+		virtual protected void PostFlushHook (IndexerRequest    flushed_request,
+						      IndexerReceipt [] receipts)
+		{ }
+
 		//////////////////////////////////////////////////////////////////////////////////
 
-		private void OnFlushEvent (IIndexer source, IndexerReceipt [] receipts)
+		protected void AddIndexable (Indexable indexable)
 		{
-			// This means that our flush is complete.  Right now we
-			// do nothing in that case.
+			lock (request_lock)
+				pending_request.Add (indexable);
+
+			// Schedule a final flush every time we add anything.
+			// Better safe than sorry.
+			ScheduleFinalFlush ();
+		}
+
+		protected void Optimize ()
+		{
+			lock (request_lock) {
+				pending_request.OptimizeIndex = true;
+				Flush ();
+			}
+		}
+
+		// Returns true if we actually did flush, false otherwise.
+		protected bool ConditionalFlush ()
+		{
+			lock (request_lock) {
+				if (pending_request.Count > 37) { // a total arbitrary magic number
+					Flush ();
+					return true;
+				}
+			}
+			return false;
+		}
+
+		protected void Flush ()
+		{
+			IndexerRequest flushed_request;
+
+			lock (request_lock) {
+				if (pending_request.IsEmpty)
+					return;
+				flushed_request = pending_request;
+				pending_request = new IndexerRequest ();
+
+				// We hold the request_lock when calling PreFlushHook, so
+				// that no other requests can come in until it exits.
+				PreFlushHook (flushed_request);
+			}
+
+			IndexerReceipt [] receipts;
+			receipts = indexer.Flush (flushed_request);
+
+			PostFlushHook (flushed_request, receipts);
+
+			// Silently return if we get a null back.  This is probably
+			// a bad thing to do.
 			if (receipts == null)
 				return;
 
@@ -688,7 +685,7 @@ namespace Beagle.Daemon {
 			ArrayList removed_uris  = new ArrayList ();
 
 			for (int i = 0; i < receipts.Length; ++i) {
-				
+
 				if (receipts [i] is IndexerAddedReceipt) {
 					
 					IndexerAddedReceipt r;
@@ -703,7 +700,7 @@ namespace Beagle.Daemon {
 					// Call the appropriate hook
 					try {
 						// Map from internal->external Uris in the PostAddHook
-						PostAddHook (r);
+						PostAddHook (flushed_request.GetByUri (r.Uri), r);
 					} catch (Exception ex) {
 						Logger.Log.Warn ("Caught exception in PostAddHook '{0}' '{1}' '{2}'",
 								 r.Uri, r.FilterName, r.FilterVersion);
@@ -728,7 +725,7 @@ namespace Beagle.Daemon {
 					
 					// Call the appropriate hook
 					try {
-						PostRemoveHook (r);
+						PostRemoveHook (flushed_request.GetByUri (r.Uri), r);
 					} catch (Exception ex) {
 						Logger.Log.Warn ("Caught exception in PostRemoveHook '{0}'",
 								 r.Uri);
@@ -758,6 +755,7 @@ namespace Beagle.Daemon {
 						}
 
 						if (please_add_a_new_task) {
+							Logger.Log.Debug ("Adding child {0}", child.Uri);
 							Scheduler.Task task = NewAddTask (child);
 							ThisScheduler.Add (task);
 						}

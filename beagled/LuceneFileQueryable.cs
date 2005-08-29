@@ -89,7 +89,7 @@ namespace Beagle.Daemon {
 
 		private Hashtable file_info_cache = UriFu.NewHashtable ();
 		
-		override protected bool PreAddHook (Indexable indexable)
+		override protected bool PreAddIndexableHook (Indexable indexable)
 		{
 			// Remember the file's info and mtime.
 			CachedFileInfo info = new CachedFileInfo ();
@@ -122,7 +122,7 @@ namespace Beagle.Daemon {
 			return true;
 		}
 
-		override protected void PostAddHook (IndexerAddedReceipt receipt)
+		override protected void PostAddHook (Indexable indexable, IndexerAddedReceipt receipt)
 		{
 			// Retrieve our cached info about the file.
 			CachedFileInfo info;

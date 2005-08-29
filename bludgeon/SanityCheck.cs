@@ -1,6 +1,7 @@
 
 using System;
 using System.Collections;
+using System.Threading;
 
 using Beagle.Util;
 
@@ -10,7 +11,7 @@ namespace Bludgeon {
 
 		private SanityCheck () { }
 
-		static public bool CheckQuery (Beagle.Query query, FileModel root)
+		static public bool CheckQuery (Beagle.Query query)
 		{
 			Hashtable matching_path_hash;
 			matching_path_hash = new Hashtable ();
@@ -21,12 +22,15 @@ namespace Bludgeon {
 			bool success;
 			success = true;
 
-			foreach (FileModel file in root.GetMatchingDescendants (query)) {
-				if (! matching_path_hash.Contains (file.FullName)) {
-					Log.Failure ("Missing match {0}", file.FullName);
-					success = false;
+			foreach (FileModel root in FileModel.Roots) {
+				foreach (FileModel file in root.GetMatchingDescendants (query)) {
+					if (matching_path_hash.Contains (file.FullName)) {
+						matching_path_hash.Remove (file.FullName);
+					} else {
+						Log.Failure ("Missing match {0}", file.FullName);
+						success = false;
+					}
 				}
-				matching_path_hash.Remove (file.FullName);
 			}
 
 			foreach (string path in matching_path_hash.Keys) {
@@ -37,36 +41,44 @@ namespace Bludgeon {
 			return success;
 		}
 
-		static public bool VerifyIndex (FileModel root)
+		static public bool VerifyIndex ()
 		{
-			Log.Info ("Verifying index for {0}", root.FullName);
+			Thread.Sleep (1000); // wait one second
 
+			Log.Info ("Starting sanity check");
+
+			Daemon.WaitUntilIdle ();
+			
 			bool success;
 			success = true;
 
-			for (int i = 0; i < Token.Count; ++i) {
-				Beagle.Query query;
-				query = QueryFu.NewTokenQuery (i);
+			foreach (FileModel root in FileModel.Roots) {
 
-				if (! CheckQuery (query, root)) {
-					Log.Spew ("Failed query is:");
-					QueryFu.SpewQuery (query);
-					success = false;
+				Log.Info ("Verifying index for root {0}", root.FullName);
+
+				for (int i = 0; i < Token.Count; ++i) {
+					Beagle.Query query;
+					query = QueryFu.NewTokenQuery (i);
+
+					if (! CheckQuery (query)) {
+						Log.Spew ("Failed query is:");
+						QueryFu.SpewQuery (query);
+						success = false;
+					}
 				}
 			}
 
 			if (success)
-				Log.Info ("Index successfully verified for {0}", root.FullName);
+				Log.Info ("Index successfully verified");
 			else
-				Log.Info ("Verification failed for {0}", root.FullName);
+				Log.Info ("Verification failed");
 
 			return success;
 		}
 		
-		static public bool TestRandomQueries (FileModel root,
-						      double    minutes_to_run)
+		static public bool TestRandomQueries (double minutes_to_run)
 		{
-			Log.Info ("Running random queries on {0} for {1:0.0} minutes", root.FullName, minutes_to_run);
+			Log.Info ("Running random queries for {1:0.0} minutes", minutes_to_run);
 
 			bool success;
 			success = true;
@@ -84,7 +96,7 @@ namespace Bludgeon {
 				Beagle.Query query;
 				query = QueryFu.NewRandomQuery ();
 
-				if (! CheckQuery (query, root)) {
+				if (! CheckQuery (query)) {
 					Log.Spew ("Failed query is:");
 					QueryFu.SpewQuery (query);
 					success = false;

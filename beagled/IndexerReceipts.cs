@@ -70,9 +70,6 @@ namespace Beagle.Daemon {
 			get { return UriFu.UriToSerializableString (Uri); }
 			set { Uri = UriFu.UriStringToUri (value); }
 		}
-
-		[XmlArrayItem (ElementName="Property", Type=typeof (Property))]
-		public ArrayList Properties;
 	}
 	
 	public class IndexerRemovedReceipt : IndexerReceipt {
@@ -98,12 +95,14 @@ namespace Beagle.Daemon {
 
 		public IndexerChildIndexablesReceipt () { }
 
-		public IndexerChildIndexablesReceipt (Indexable [] children)
+		public IndexerChildIndexablesReceipt (ArrayList children)
 		{
 			this.Children = children;
 		}
 
-		public Indexable [] Children;
+		[XmlArray (ElementName="Children")]
+		[XmlArrayItem (ElementName="Child", Type=typeof (Indexable))]
+		public ArrayList Children;
 	}
 
 }

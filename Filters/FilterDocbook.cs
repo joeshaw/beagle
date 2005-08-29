@@ -126,7 +126,7 @@ namespace Beagle.Filters
 							parent_entry = (DocbookEntry) entries_stack.Peek ();
 						
 						Indexable indexable = new Indexable (UriFu.PathToFileUri (String.Format ("{0}#{1}", base_path, entry.Id)));
-						indexable.Type = "DocbookEntry";
+						indexable.HitType = "DocbookEntry";
 						indexable.MimeType = "text/plain";
 						indexable.AddProperty (Property.NewUnsearched ("fixme:id", entry.Id));
 						

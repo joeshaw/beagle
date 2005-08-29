@@ -35,6 +35,12 @@ using Beagle.Util;
 
 namespace Beagle {
 
+	public enum IndexableType {
+		Add,
+		Remove,
+		PropertyChange
+	}
+
 	public enum IndexableFiltering {
 		Never,           // Never try to filter this indexable, it contains no content
 		AlreadyFiltered, // The readers promise to return nice clean text, so do nothing
@@ -42,7 +48,12 @@ namespace Beagle {
 		Always           // Always try to filter this indexable
 	}
 
-	public class Indexable : Versioned {
+	public class Indexable : Versioned, IComparable {
+
+		// This is the type of indexing operation represented by
+		// this Indexable object.  We default to Add, for historical
+		// reasons.
+		private IndexableType type = IndexableType.Add;
 
 		// The URI of the item being indexed.
 		private Uri uri = null;
@@ -60,7 +71,7 @@ namespace Beagle {
 		private bool deleteContent = false;
 		
 		// File, WebLink, MailMessage, IMLog, etc.
-		private String type = null;
+		private String hit_type = null;
 
 		// If applicable, otherwise set to null.
 		private String mimeType = null;
@@ -91,9 +102,9 @@ namespace Beagle {
 		// When should we try to filter this indexable?
 		private IndexableFiltering filtering = IndexableFiltering.Automatic;
 
-		// If true, this Indexable only contains information about
-		// property changes.
-		private bool prop_changes_only = false;
+		// Local state: these are key/value pairs that never get serialized
+		// into XML
+		Hashtable local_state = new Hashtable ();
 
 		//////////////////////////
 
@@ -106,13 +117,19 @@ namespace Beagle {
 
 		//////////////////////////
 
-		public Indexable (Uri _uri) {
-			uri = _uri;
-
-			type = "File";
+		public Indexable (IndexableType type,
+				  Uri           uri)
+		{
+			this.type = type;
+			this.uri = uri;
+			this.hit_type = "File"; // FIXME: Why do we default to this?
 		}
 
-		public Indexable () {
+		public Indexable (Uri uri) : this (IndexableType.Add, uri)
+		{ }
+
+		public Indexable ()
+		{
 			// Only used when reading from xml
 		}
 
@@ -123,6 +140,12 @@ namespace Beagle {
 		}
 
 		//////////////////////////
+
+		[XmlAttribute ("Type")]
+		public IndexableType Type {
+			get { return type; }
+			set { type = value; }
+		}
 
 		[XmlIgnore]
 		public Uri Uri { 
@@ -195,9 +218,9 @@ namespace Beagle {
 		}
 
 		[XmlAttribute]
-		public String Type {
-			get { return type; }
-			set { type = value; }
+		public String HitType {
+			get { return  hit_type; }
+			set { hit_type = value; }
 		}
 
 		[XmlAttribute]
@@ -235,10 +258,9 @@ namespace Beagle {
 			set { filtering = value; }
 		}
 
-		[XmlAttribute]
-		public bool PropertyChangesOnly {
-			get { return prop_changes_only; }
-			set { prop_changes_only = value; }
+		[XmlIgnore]
+		public IDictionary LocalState {
+			get { return local_state; }
 		}
 
 		//////////////////////////
@@ -327,7 +349,7 @@ namespace Beagle {
 		public void AddProperty (Property prop) {
 			if (prop != null) {
 				
-				if (PropertyChangesOnly && ! prop.IsMutable)
+				if (type == IndexableType.PropertyChange && ! prop.IsMutable)
 					throw new ArgumentException ("Non-mutable properties aren't allowed in this indexable");
 
 				// If this is a mutable property, make sure that
@@ -355,16 +377,17 @@ namespace Beagle {
 			return false;
 		}
 
-		public void MergeProperties (Indexable prop_indexable)
+		// This doesn't check if it makes sense to actually
+		// merge the two indexables: it just does it.
+		public void Merge (Indexable other)
 		{
-			if (prop_indexable == null)
-				return;
+			this.Timestamp = other.Timestamp;
 
-			if (! prop_indexable.PropertyChangesOnly)
-				throw new ArgumentException ("Expected a property-only indexable");
+			foreach (Property prop in other.Properties)
+				this.AddProperty (prop);
 
-			foreach (Property prop in prop_indexable.Properties)
-				AddProperty (prop);
+			foreach (DictionaryEntry entry in other.local_state)
+				this.local_state [entry.Key] = entry.Value;
 		}
 
 		//////////////////////////
@@ -486,6 +509,12 @@ namespace Beagle {
 		public override int GetHashCode ()
 		{
 			return (uri != null ? uri.GetHashCode () : 0) ^ type.GetHashCode ();
+		}
+
+		public int CompareTo (object obj)
+		{
+			Indexable other = (Indexable) obj;
+			return DateTime.Compare (this.Timestamp, other.Timestamp);
 		}
 	}
 }

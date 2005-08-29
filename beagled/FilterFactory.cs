@@ -279,12 +279,12 @@ namespace Beagle.Daemon {
 				// Open the filter, copy the file's properties to the indexable,
 				// and hook up the TextReaders.
 
-				bool succesful_open;
+				bool succesful_open = false;
 				if (path != null)
 					succesful_open = candidate_filter.Open (path);
 				else if (indexable.GetTextReader () != null)
 					succesful_open = candidate_filter.Open (indexable.GetTextReader ());
-				else
+				else if (indexable.GetBinaryStream () != null)
 					succesful_open = candidate_filter.Open (indexable.GetBinaryStream ());
 					
 				if (succesful_open) {

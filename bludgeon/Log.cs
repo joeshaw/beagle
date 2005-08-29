@@ -12,8 +12,15 @@ namespace Bludgeon {
 
 		static private void Write (string prefix, string format, params object [] args)
 		{
+			StringBuilder builder;
+			builder = new StringBuilder ();
+			builder.AppendFormat ("{0:yy-MM-dd HH.mm.ss.ff} ", DateTime.Now);
+			builder.Append (prefix);
+			builder.Append (' ');
+			builder.AppendFormat (format, args);
+
 			string message;
-			message = prefix + " " + String.Format (format, args);
+			message = builder.ToString ();
 
 			if (console != null)
 				console.WriteLine (message);

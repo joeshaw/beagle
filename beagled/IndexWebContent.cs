@@ -113,7 +113,7 @@ class IndexWebContentTool {
 		Indexable indexable;
 		
 		indexable = new Indexable (uri);
-		indexable.Type = "WebHistory";
+		indexable.HitType = "WebHistory";
 		indexable.MimeType = "text/html";
 		indexable.Timestamp = DateTime.Now;
 

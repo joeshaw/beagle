@@ -87,5 +87,10 @@ namespace Beagle.Daemon.FileSystemQueryable {
 				return "Crawling " + this.directory.FullName;
 			}
 		}
+
+		public void PostFlushHook () 
+		{
+			// Do nothing
+		}
 	}
 }

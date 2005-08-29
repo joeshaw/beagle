@@ -44,23 +44,24 @@ namespace Beagle.IndexHelper {
 
 		public override ResponseMessage Execute (RequestMessage raw_request)
 		{
-			RemoteIndexerRequest request = (RemoteIndexerRequest) raw_request;
+			RemoteIndexerRequest remote_request = (RemoteIndexerRequest) raw_request;
 
 			IndexHelperTool.ReportActivity ();
 
 			// Find the appropriate driver for this request.
 			IIndexer indexer;
 			lock (indexer_table) {
-				indexer = indexer_table [request.RemoteIndexName] as IIndexer;
+				indexer = indexer_table [remote_request.RemoteIndexName] as IIndexer;
 				if (indexer == null) {
-					indexer = new LuceneIndexingDriver (request.RemoteIndexName,
-									    request.RemoteIndexMinorVersion);
-					indexer_table [request.RemoteIndexName] = indexer;
+					indexer = new LuceneIndexingDriver (remote_request.RemoteIndexName,
+									    remote_request.RemoteIndexMinorVersion);
+					indexer_table [remote_request.RemoteIndexName] = indexer;
 				}
 			}
 
-			IndexerReceipt [] receipts;
-			receipts = request.Process (indexer);
+			IndexerReceipt [] receipts = null;
+			if (remote_request.Request != null) // If we just want the item count, this will be null
+				receipts = indexer.Flush (remote_request.Request);
 
 			// Child indexables probably have streams
 			// associated with them.  We need to store them before

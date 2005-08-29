@@ -104,7 +104,7 @@ namespace Beagle.Filters {
 			Indexable indexable = new Indexable (UriFu.PathToFileUri (file + "#T:" + node.Attributes ["FullName"].Value));
 			
 			indexable.MimeType = "text/html";
-			indexable.Type = "MonodocEntry";
+			indexable.HitType = "MonodocEntry";
 			
 			indexable.AddProperty (Property.NewKeyword ("fixme:type", "type"));
 			indexable.AddProperty (Property.NewKeyword ("fixme:name", "T:" + node.Attributes["FullName"].Value));
@@ -140,7 +140,7 @@ namespace Beagle.Filters {
 			Indexable indexable = new Indexable (UriFu.PathToFileUri (file + "#" + memberFullName));
 
 			indexable.MimeType = "text/html";
-			indexable.Type = "MonodocEntry";
+			indexable.HitType = "MonodocEntry";
 
 			indexable.AddProperty (Property.NewKeyword ("fixme:type", node.SelectSingleNode ("MemberType").InnerText.ToLower ()));
 			indexable.AddProperty (Property.New ("fixme:name", memberFullName.ToString ()));

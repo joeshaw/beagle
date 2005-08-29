@@ -64,6 +64,9 @@ namespace Beagle.Daemon.IndexingServiceQueryable {
 			public string StatusName {
 				get { return String.Format ("IndexingService: {0} of {1}", done_count, count); }
 			}
+
+			public void PostFlushHook ()
+			{ }
 		}
 
 		private ResponseMessage HandleMessage (RequestMessage msg)

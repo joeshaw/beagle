@@ -6,12 +6,13 @@ using System.IO;
 using System.Threading;
 
 using Beagle.Util;
+using CommandLineFu;
 
 namespace Bludgeon {
 
 	class BludgeonMain {
 
-		private BludgeonMain () { }
+		private BludgeonMain () { } // this is a static class
 
 		static void CreateTestHome ()
 		{
@@ -40,94 +41,133 @@ namespace Bludgeon {
 		{
 			FileModel root;
 			root = FileModel.NewRoot ();
-			root.Grow (3);
+			root.Grow (2);
 
 			Log.Info ("Initial tree contains {0} files", root.Size);
 
 			return root;
 		}
 
-		static void ManipulateTree (FileModel root)
-		{
-			FileModel grow_at;
-			
-			// Another burst of growth
-			for (int i = 0; i < 10; ++i) {
-				grow_at = root.PickDirectoryDescendant ();
-				if (grow_at == null)
-					grow_at = root;
-				grow_at.Grow (0);
-			}
-			
+		///////////////////////////////////////////////////////////////////////////
+		
+		// Command-line arguments
 
-			grow_at = root.PickDirectoryDescendant ();
-			if (grow_at == null)
-				grow_at = root;
-			
-			grow_at.Grow (1);
-				
-			// Delete some stuff
-			for (int i = 0; i < 10; ++i) {
-				FileModel file;
-				file = root.PickDescendant ();
-				if (file != null)
-					file.Delete ();
-			}
-			
-			
-			// Another burst of growth
-			for (int i = 0; i < 10; ++i) {
-				grow_at = root.PickDirectoryDescendant ();
-				if (grow_at == null)
-					grow_at = root;
-				grow_at.Grow (0);
-			}
+		[Option (LongName="min-cycles")]
+		static private int min_cycles = -1;
 
-			Log.Info ("Perturbed tree contains {0} files", root.Size);
-		}
+		[Option (LongName="max-cycles")]
+		static private int max_cycles = -1;
 
-		static bool DoStaticVerify (FileModel root)
-		{
-			Log.Info ("Starting sanity check");
+		[Option (LongName="cycles")]
+		static private int cycles = -1;
 
-			Daemon.WaitUntilIdle ();
+		[Option (LongName="disable-verify")]
+		static private bool disable_verify = false;
 
-			Daemon.OptimizeIndexes ();
+		[Option (LongName="total-time")]
+		static private double total_time = -1; // in minutes
 
-			Daemon.WaitUntilIdle ();
+		[Option (LongName="total-count")]
+		static private int total_count = 1;
 
-			return SanityCheck.VerifyIndex (root);
-		}
+		[Option (LongName="pause")] 
+		static private double pause = -1; // in seconds
 
 		static void Main (string [] args)
 		{
+			args = CommandLine.Process (typeof (BludgeonMain), args);
+
+			ArrayList hammers_to_use;
+			hammers_to_use = new ArrayList ();
+			foreach (string name in args) {
+				IHammer hammer;
+				hammer = Toolbox.GetHammer (name);
+				if (hammer != null)
+					hammers_to_use.Add (hammer);
+				else
+					Log.Failure ("Unknown hammer '{0}'", name);
+			}
+
 			CreateTestHome ();
 
 			FileModel root;
 			root = InitialTree ();
-			root.Grow (5);
-			//ManipulateTree (root);
-
-#if true
+			FileModel.AddRoot (root);
+			
 			Daemon.Start ();
-			DoStaticVerify (root);
-			SanityCheck.TestRandomQueries (root, 10);
-			Daemon.Shutdown ();
-#else
-			int count = 0;
-			while (true) {
-				++count;
-				Log.Info ("Test {0}", count);
-
-				FileModel change_me;
-				change_me = root.PickFileDescendant ();
-				change_me.Touch ();
-
-				Daemon.Start ();
-				Daemon.WaitUntilIdle ();
+			if (! SanityCheck.VerifyIndex ()) {
+				Log.Failure ("Initial index verify failed --- shutting down");
 				Daemon.Shutdown ();
+				return;
 			}
-#endif
+
+			if (hammers_to_use.Count == 0) {
+				Log.Info ("No hammers specified --- shutting down");
+				Daemon.Shutdown ();
+				return;
+			}
+				
+			Random random;
+			random = new Random ();
+
+			int test_count = 0;
+
+			Stopwatch sw = null;
+			if (total_time > 0) {
+				sw = new Stopwatch ();
+				sw.Start ();
+			}
+
+			bool failed;
+			failed = false;
+
+			while (true) {
+
+				if (sw != null) {
+					if (sw.ElapsedTime > total_time)
+						break;
+				} else {
+					if (test_count >= total_count)
+						break;
+				}
+
+				IHammer hammer;
+				hammer = hammers_to_use [test_count % hammers_to_use.Count] as IHammer;
+
+				++test_count;
+
+				Log.Info ("Starting test #{0}", test_count);
+
+				int test_cycles;
+				if (min_cycles != -1 && max_cycles != -1) {
+					test_cycles = min_cycles;
+					if (min_cycles < max_cycles)
+						test_cycles = min_cycles + random.Next (max_cycles - min_cycles);
+				} else if (cycles != -1)
+					test_cycles = cycles;
+				else if (max_cycles != -1)
+					test_cycles = max_cycles;
+				else if (min_cycles != -1)
+					test_cycles = min_cycles;
+				else
+					test_cycles = 1;
+
+				for (int i = 0; i < test_cycles; ++i)
+					hammer.HammerOnce ();
+
+				if (! disable_verify && ! SanityCheck.VerifyIndex ()) {
+					failed = true;
+					break;
+				}
+
+				if (pause > 0)
+					Thread.Sleep ((int) (pause * 60 * 1000));
+			}
+
+			if (failed)
+				Log.Failure ("Testing aborted");
+
+			Daemon.Shutdown ();
 
 			Log.Spew ("Test home directory was '{0}'", PathFinder.HomeDir);
 		}

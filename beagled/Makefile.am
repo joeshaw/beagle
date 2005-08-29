@@ -313,6 +313,7 @@ DAEMON_DLL_CSFILES = 						\
 	$(srcdir)/IIndexer.cs					\
 	$(srcdir)/IndexSynchronization.cs			\
 	$(srcdir)/IndexerReceipts.cs				\
+	$(srcdir)/IndexerRequest.cs				\
 	$(srcdir)/IQueryResult.cs				\
 	$(srcdir)/IQueryWorker.cs               		\
 	$(srcdir)/IQueryable.cs					\

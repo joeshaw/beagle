@@ -252,7 +252,7 @@ namespace Beagle {
 		///////////////////////////////////////////////////////////////
 
 		// This API is DEPRECATED.
-		// The mime type is now stored in the beagle:Type property.
+		// The mime type is now stored in the beagle:HitType property.
 		// To restrict on type, just do a normal property query.
 
 		public void AddHitType (string str)
@@ -268,7 +268,7 @@ namespace Beagle {
 			QueryPart_Property part;
 			part = new QueryPart_Property ();
 			part.Type = PropertyType.Keyword;
-			part.Key = "beagle:Type";
+			part.Key = "beagle:HitType";
 			part.Value = str;
 			hit_type_part.Add (part);
 		}

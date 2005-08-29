@@ -535,9 +535,12 @@ namespace Beagle.Util {
 		// in response to a move event.
 		static private void MoveWatch (WatchInfo watch, string name)		
 		{
-			watched_by_path.Remove (watch.Path);
-			watch.Path = name;
-			watched_by_path [watch.Path] = watch;
+			lock (watched_by_wd) {
+
+				watched_by_path.Remove (watch.Path);
+				watch.Path = name;
+				watched_by_path [watch.Path] = watch;
+			}
 
 			if (Verbose)
 				Console.WriteLine ("*** inotify: Moved Watch to {0}", watch.Path);
@@ -547,29 +550,33 @@ namespace Beagle.Util {
 		// all of its subdirectories, their subdirectories, and so on.
 		static private void HandleMove (string srcpath, string dstpath)
 		{
-			WatchInfo start = watched_by_path [srcpath] as WatchInfo;	// not the same as src!
-			if (start == null) {
-				Console.WriteLine ("Lookup failed for {0}", srcpath);
-				return;
-			}
+			lock (watched_by_wd) {
 
-			// Queue our starting point, then walk its subdirectories, invoking MoveWatch() on
-			// each, repeating for their subdirectories.  The relationship between start, child
-			// and dstpath is fickle and important.
-			Queue queue = new Queue();
-			queue.Enqueue (start);
-			do {
-				WatchInfo target = queue.Dequeue () as WatchInfo;
-				for (int i = 0; i < target.Children.Count; i++) {
-					WatchInfo child = target.Children[i] as WatchInfo;
-					string name = Path.Combine (dstpath, child.Path.Substring (start.Path.Length + 1));
-					MoveWatch (child, name);
-					queue.Enqueue (child);
+				WatchInfo start = watched_by_path [srcpath] as WatchInfo;	// not the same as src!
+				if (start == null) {
+					Logger.Log.Warn ("Lookup failed for {0}", srcpath);
+					return;
 				}
-			} while (queue.Count > 0);
-
-			// Ultimately, fixup the original watch, too
-			MoveWatch (start, dstpath);
+				
+				// Queue our starting point, then walk its subdirectories, invoking MoveWatch() on
+				// each, repeating for their subdirectories.  The relationship between start, child
+				// and dstpath is fickle and important.
+				Queue queue = new Queue();
+				queue.Enqueue (start);
+				do {
+					WatchInfo target = queue.Dequeue () as WatchInfo;
+					for (int i = 0; i < target.Children.Count; i++) {
+						WatchInfo child = target.Children[i] as WatchInfo;
+						Logger.Log.Debug ("Moving watch on {0} from {1} to {2}", child.Path, srcpath, dstpath);
+						string name = Path.Combine (dstpath, child.Path.Substring (srcpath.Length + 1));
+						MoveWatch (child, name);
+						queue.Enqueue (child);
+					}
+				} while (queue.Count > 0);
+				
+				// Ultimately, fixup the original watch, too
+				MoveWatch (start, dstpath);
+			}
 		}
 
 		static private void SendEvent (WatchInfo watched, string filename, string srcpath, EventType mask)
@@ -750,8 +757,8 @@ namespace Beagle.Util {
 						// Handle the internal rename of the directory.
 						string dstpath = Path.Combine (watched.Path, next_event.Filename);
 
-						//if (Directory.Exists (dstpath))
-						HandleMove (srcpath, dstpath);
+						if ((next_event.Type & EventType.IsDirectory) != 0)
+							HandleMove (srcpath, dstpath);
 					}
 				}
 

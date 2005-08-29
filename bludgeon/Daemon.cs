@@ -64,7 +64,7 @@ namespace Bludgeon {
 
 			p.StartInfo.EnvironmentVariables ["BEAGLE_HOME"] = Beagle.Util.PathFinder.HomeDir;
 			p.StartInfo.EnvironmentVariables ["BEAGLE_EXERCISE_THE_DOG"] = "1";
-			p.StartInfo.EnvironmentVariables ["BEAGLE_DISABLE_SCHEDULED_OPTIMIZATIONS"] = "1";
+			p.StartInfo.EnvironmentVariables ["BEAGLE_UNDER_BLUDGEON"] = "1";
 
 			Thread.Sleep (2000); // wait 2s to let the daemon get started
 
