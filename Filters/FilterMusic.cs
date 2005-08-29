@@ -1,12 +1,6 @@
 //
-// FilterMusic.cs : This is the parent class of every audio tag-reading class
-//                  It will retreive the tag from the subclass, then fill the
-//                  beagle property as needed.
-//
-// Author:
-//		Raphaël Slinckx <raf.raf@wol.be>
-//
-// Copyright 2004 (C) Raphaël Slinckx
+// FilterMusic.cs : This is our interface to entagged-sharp's AudioFileWrapper
+//                  interface.
 //
 
 //
@@ -31,65 +25,88 @@
 
 using System;
 using System.IO;
-using Beagle.Util.AudioUtil;
+using Beagle.Daemon;
+using Beagle.Util;
+using Entagged;
 
 namespace Beagle.Filters {
 
-	public abstract class FilterMusic : Beagle.Daemon.Filter {
+	public class FilterMusic : Beagle.Daemon.Filter {
 	
-		private static Beagle.Util.Logger log = Beagle.Util.Logger.Get ("FilterMusic");
-		
 		public FilterMusic ()
 		{
-			RegisterSupportedTypes ();
+			// APE / Monkeys Audio
+			AddSupportedFlavor (FilterFlavor.NewFromExtension (".ape"));
+
+			// FLAC
+			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("audio/x-flac"));
+
+			// MP3
+			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("audio/x-mp3"));
+			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("audio/mpeg"));
+
+			// MPC / Musepack / MPEG+
+			AddSupportedFlavor (FilterFlavor.NewFromExtension (".mpc"));
+			AddSupportedFlavor (FilterFlavor.NewFromExtension (".mp+"));
+
+			// M4A / Apple Audio Codec
+			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("audio/x-m4a"));
+			AddSupportedFlavor (FilterFlavor.NewFromExtension (".m4p"));
+
+			// OGG
+			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("application/ogg"));
+
+			// Tracker / Amiga Audio
+			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("audio/x-s3m"));
+			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("audio/x-it"));
+			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("audio/x-mod"));
+			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("audio/x-xm"));
 		}
-		
-		protected abstract Tag GetTag (Stream s);
-		
-		protected abstract void RegisterSupportedTypes ();
+
+		private string GetEntaggedMimeType ()
+		{
+			if (Extension != null && Extension.Length > 0)
+				return "entagged/" + Extension.Substring (1);
+			else
+				return MimeType;
+		}
 
 		protected override void DoPullProperties ()
 		{
-			Tag tag = null;
+			AudioFileWrapper tag;
+			
 			try {
-				tag = GetTag (Stream);
+				tag = new AudioFileWrapper (Stream, GetEntaggedMimeType ());
 			} catch (Exception e) {
-				log.Debug ("Exception filtering music {0}: {1}", this.GetType (), e.Message);
+				Logger.Log.Warn ("Exception filtering music: {0}", e);
 				Finished();
 				return;
 			}
-			
-			log.Debug ("{0}", tag);
-			
-			//FIXME: Do we need to check for non-null empty values ?
-			//This should be done in Beagle.Property.New I think..
-			
-			if (tag.Artist.Length > 0)
-				AddProperty (Beagle.Property.New ("fixme:artist",  tag.Artist));
 
-			if (tag.Album.Length > 0)
-				AddProperty (Beagle.Property.New ("fixme:album",   tag.Album));
-			
-			if (tag.Title.Length > 0)
-				AddProperty (Beagle.Property.New ("fixme:title",    tag.Title));
+			foreach (string artist in tag.Artists)
+				AddProperty (Beagle.Property.New ("fixme:artist", artist));
 
-			if (tag.Comment.Length > 0)
-				AddProperty (Beagle.Property.New ("fixme:comment", tag.Comment));
+			foreach (string album in tag.Albums)
+				AddProperty (Beagle.Property.New ("fixme:album", album));
 
-			if (tag.Track.Length > 0)
-				AddProperty (Beagle.Property.NewKeyword ("fixme:tracknumber", tag.Track));
+			foreach (string title in tag.Titles)
+				AddProperty (Beagle.Property.New ("fixme:title", title));
 
-			if (tag.Year.Length > 0)
-				AddProperty (Beagle.Property.NewKeyword ("fixme:year",  tag.Year));
+			foreach (string comment in tag.Comments)
+				AddProperty (Beagle.Property.New ("fixme:comment", comment));
 
-			if (tag.Genre.Length > 0)
-				AddProperty (Beagle.Property.NewKeyword ("fixme:genre", tag.Genre));
-			
-			/* TBA
-			if (info.HasPicture)
--                               AddProperty (Beagle.Property.NewBool ("fixme:haspicture", true));
-			*/
-			
+			foreach (int track in tag.TrackNumbers)
+				AddProperty (Beagle.Property.NewKeyword ("fixme:tracknumber", track));
+
+			foreach (int track in tag.TrackCounts)
+				AddProperty (Beagle.Property.NewKeyword ("fixme:trackcount", track));
+
+			foreach (int year in tag.Years)
+				AddProperty (Beagle.Property.NewKeyword ("fixme:year", year));
+
+			foreach (string genre in tag.Genres)
+				AddProperty (Beagle.Property.NewKeyword ("fixme:genre", genre));
+
 			Finished ();
 		}
 	}

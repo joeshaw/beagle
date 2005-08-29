@@ -1,6 +1,5 @@
 
 FILTERDIR = $(pkglibdir)/Filters
-
 CSC = mcs -debug
 
 TARGET = Filters.dll
@@ -19,7 +18,10 @@ HAP_CSFILES =						\
 	$(srcdir)/HtmlAgilityPack/MixedCodeDocument.cs	\
 	$(srcdir)/HtmlAgilityPack/tools.cs
 
+include entagged-sharp/entagged-sharp.sources
+
 CSFILES = 				\
+	$(ENTAGGED_CSFILES)		\
 	$(HAP_CSFILES)			\
 	$(srcdir)/FilterHtml.cs		\
 	$(srcdir)/FilterImage.cs	\
@@ -50,24 +52,12 @@ CSFILES = 				\
 	$(srcdir)/FilterMonodoc.cs	\
 	$(srcdir)/FilterDesktop.cs	\
 	$(srcdir)/FilterDirectory.cs	\
-	$(srcdir)/FilterMail.cs
+	$(srcdir)/FilterMail.cs		\
+	$(srcdir)/FilterMusic.cs
 
 if ENABLE_GSF_SHARP
 CSFILES += 				\
 	$(srcdir)/FilterPPT.cs
-endif
-
-if ENABLE_GST_SHARP
-CSFILES +=				\
-	$(srcdir)/FilterGst.cs
-else
-CSFILES +=				\
-	$(srcdir)/FilterMusic.cs	\
-	$(srcdir)/FilterFlac.cs		\
-	$(srcdir)/FilterApe.cs		\
-	$(srcdir)/FilterMp3.cs		\
-	$(srcdir)/FilterOgg.cs		\
-	$(srcdir)/FilterMpc.cs
 endif
 
 if ENABLE_WV1
@@ -84,7 +74,7 @@ endif
 LOCAL_ASSEMBLIES =				\
 	../Util/Util.dll			\
 	../BeagleClient/Beagle.dll		\
-	../beagled/BeagleDaemonPlugins.dll	
+	../beagled/BeagleDaemonPlugins.dll
 
 ASSEMBLIES =				\
 	$(BEAGLED_LIBS)			\
@@ -92,13 +82,7 @@ ASSEMBLIES =				\
 	-r:Mono.Posix			\
 	$(LOCAL_ASSEMBLIES:%=-r:%)
 
-if ENABLE_GST_SHARP
-ASSEMBLIES +=				\
-	$(GST_SHARP_LIBS)
-endif
-
 RESOURCES =
-
 
 $(TARGET): $(CSFILES)
 	$(CSC) -out:$@ $(CSFLAGS) $(CSFILES) $(ASSEMBLIES) $(RESOURCES)
@@ -116,12 +100,6 @@ COND_CS_FILES = \
 	$(srcdir)/FilterPPT.cs		\
 	$(srcdir)/FilterDOC.cs		\
 	$(srcdir)/FilterGst.cs		\
-	$(srcdir)/FilterMusic.cs	\
-	$(srcdir)/FilterFlac.cs		\
-	$(srcdir)/FilterApe.cs		\
-	$(srcdir)/FilterMp3.cs		\
-	$(srcdir)/FilterOgg.cs		\
-	$(srcdir)/FilterMpc.cs		\
 	$(srcdir)/FilterChm.cs
 
 EXTRA_DIST =		\

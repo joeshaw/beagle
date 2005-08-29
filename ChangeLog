@@ -1,3 +1,9 @@
+2005-08-29  Daniel Drake  <dsd@gentoo.org>
+
+	* Filters/entagged-sharp/: Import entagged-sharp
+	* Filters/FilterMusic.cs, Filters/Makefile.am, configure.in: New
+	entagged-sharp-based audio file filter. Remove gst-sharp stuff.
+
 2005-08-25  Vijay K. Nanjundaswamy <knvijay@novell.com>
 	
 	* beagled/WebServices/WebService*End.cs:
