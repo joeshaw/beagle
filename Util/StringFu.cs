@@ -66,10 +66,13 @@ namespace Beagle.Util {
 			else if (sinceToday.TotalDays < 1)
 				date = Catalog.GetString ("Yesterday");
 			else if (today.Year == dt.Year)
+				/* Translators: Example output: Aug 9 */
 				date = dt.ToString (Catalog.GetString ("MMM d"));
 			else
+				/* Translators: Example output: Aug 9, 2000 */
 				date = dt.ToString (Catalog.GetString ("MMM d, yyyy"));
-			
+		
+			/* Translators: Example output: 11:05 AM  (note h = 12-hour time) */
 			time = dt.ToString (Catalog.GetString ("h:mm tt"));
 
 			string fuzzy;
@@ -103,10 +106,12 @@ namespace Beagle.Util {
 							      now.DayOfYear - date.DayOfYear,
 							      short_time);
 				} else {
+					/* Translators: Example output: January 3, 3:45 PM */
 					return date.ToString (Catalog.GetString ("MMMM d, h:mm tt"));
 				}
 			}
 
+			/* Translators: Example output: March 23 2001, 10:04 AM */
 			return date.ToString (Catalog.GetString ("MMMM d yyyy, h:mm tt"));
 		}
 		
