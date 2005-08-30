@@ -310,21 +310,20 @@ namespace Beagle.Daemon.EvolutionDataServerQueryable {
 			}
 			// FIXME: List?
 			// FIXME: ListShowAddresses?
-		
-			// FIXME: Should we not drop the extra Im addresses?
-			if (contact.ImAim.Length > 0)
-				indexable.AddProperty (Property.NewKeyword ("fixme:ImAim", contact.ImAim [0]));
-			if (contact.ImIcq.Length > 0)
-				indexable.AddProperty (Property.NewKeyword ("fixme:ImIcq", contact.ImIcq [0]));
-			if (contact.ImJabber.Length > 0)
-				indexable.AddProperty (Property.NewKeyword ("fixme:ImJabber", contact.ImJabber [0]));
-			if (contact.ImMsn.Length > 0)
-				indexable.AddProperty (Property.NewKeyword ("fixme:ImMsn", contact.ImMsn [0]));
-			if (contact.ImYahoo.Length > 0)
-				indexable.AddProperty (Property.NewKeyword ("fixme:ImYahoo", contact.ImYahoo [0]));
-			if (contact.ImGroupwise.Length > 0)
-				indexable.AddProperty (Property.NewKeyword ("fixme:ImGroupWise", contact.ImGroupwise [0]));
-		
+
+			foreach (string im in contact.ImAim)
+				indexable.AddProperty (Property.NewKeyword ("fixme:ImAim", im));
+			foreach (string im in contact.ImIcq)
+				indexable.AddProperty (Property.NewKeyword ("fixme:ImIcq", im));
+			foreach (string im in contact.ImJabber)
+				indexable.AddProperty (Property.NewKeyword ("fixme:ImJabber", im));
+			foreach (string im in contact.ImMsn)
+				indexable.AddProperty (Property.NewKeyword ("fixme:ImMsn", im));
+			foreach (string im in contact.ImYahoo)
+				indexable.AddProperty (Property.NewKeyword ("fixme:ImYahoo", im));
+			foreach (string im in contact.ImGroupwise)
+				indexable.AddProperty (Property.NewKeyword ("fixme:ImGroupwise", im));
+
 			String name = "";
 			if (contact.GivenName != null && contact.GivenName != "")
 				name = contact.GivenName;
