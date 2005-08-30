@@ -548,8 +548,9 @@ namespace Beagle.Util {
 
 		// A directory we are watching has moved.  We need to fix up its path, and the path of
 		// all of its subdirectories, their subdirectories, and so on.
-		static private void HandleMove (string srcpath, string dstpath)
+		static private void HandleMove (string srcpath, string dstparent, string dstname)
 		{
+			string dstpath = Path.Combine (dstparent, dstname);
 			lock (watched_by_wd) {
 
 				WatchInfo start = watched_by_path [srcpath] as WatchInfo;	// not the same as src!
@@ -557,7 +558,7 @@ namespace Beagle.Util {
 					Logger.Log.Warn ("Lookup failed for {0}", srcpath);
 					return;
 				}
-				
+
 				// Queue our starting point, then walk its subdirectories, invoking MoveWatch() on
 				// each, repeating for their subdirectories.  The relationship between start, child
 				// and dstpath is fickle and important.
@@ -576,6 +577,11 @@ namespace Beagle.Util {
 				
 				// Ultimately, fixup the original watch, too
 				MoveWatch (start, dstpath);
+				if (start.Parent != null)
+					start.Parent.Children.Remove (start);
+				start.Parent = watched_by_path [dstparent] as WatchInfo;
+				if (start.Parent != null)
+					start.Parent.Children.Add (start);				
 			}
 		}
 
@@ -755,10 +761,8 @@ namespace Beagle.Util {
 						srcpath = Path.Combine (paired_watched.Path, next_event.PairedMove.Filename);
 						
 						// Handle the internal rename of the directory.
-						string dstpath = Path.Combine (watched.Path, next_event.Filename);
-
 						if ((next_event.Type & EventType.IsDirectory) != 0)
-							HandleMove (srcpath, dstpath);
+							HandleMove (srcpath, watched.Path, next_event.Filename);
 					}
 				}
 
