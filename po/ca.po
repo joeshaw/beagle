@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Beagle\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2005-04-21 22:41+0200\n"
-"PO-Revision-Date: 2005-04-20 10:38+0000\n"
+"POT-Creation-Date: 2005-08-28 10:50+0000\n"
+"PO-Revision-Date: 2005-08-29 10:38+0000\n"
 "Last-Translator: <Jordi Mas> jmas@softcatala.org\n"
 "Language-Team: tradgnome@softcatala.net\n"
 "MIME-Version: 1.0\n"
@@ -15,298 +15,289 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: ../Best/Best.cs:120
+#: ../Best/Best.cs:132
 msgid ""
 "If you're wondering whether Best is working check your notification area "
 "(system tray)"
 msgstr ""
-"Si no sabeu si el Best està funcionat comproveu l'àrea de notificaciódel "
+"Si no sabeu si el Best està funcionat comproveu l'àrea de notificació del "
 "sistema."
 
-#: ../Best/BestTray.cs:164
+#: ../Best/BestTray.cs:149
+msgid "Disable Searching"
+msgstr "Inhabilita la cerca"
+
+#: ../Best/BestTray.cs:150
+msgid ""
+"You are about to close the search tray. The search tray is automatically "
+"started at login-time. Would you like to disable it for future sessions?"
+msgstr "Ara tancareu la safata de cerca. La safata de cerca s'inicia "
+"automàticament en entrar. Voleu inhabilitar-la en sessions futures?"
+
+#: ../Best/BestTray.cs:207
 msgid "No Recent Searches"
 msgstr "Sense cerques recents"
 
-#: ../Best/BestTray.cs:179
+#: ../Best/BestTray.cs:212
+#
+msgid "Recent Searches"
+msgstr "Cerques recents"
+
+#: ../Best/BestTray.cs:228
+#
+msgid "Clear"
+msgstr "Buida"
+
+#: ../Best/BestTray.cs:236
 msgid "Quit"
 msgstr "Surt"
 
-#: ../Best/BestWindow.cs:304
-msgid "Anywhere"
-msgstr "Des de qualsevol lloc"
-
 #: ../Best/BestWindow.cs:306
-msgid "in Files"
-msgstr "en fitxers"
+msgid "Anywhere"
+msgstr "en qualsevol lloc"
 
-#: ../Best/BestWindow.cs:308
+#: ../Best/BestWindow.cs:310
+msgid "in Files"
+msgstr "en els fitxers"
+
+#: ../Best/BestWindow.cs:314
 msgid "in Addressbook"
 msgstr "en la llibreta d'adreces"
 
-#: ../Best/BestWindow.cs:310
+#: ../Best/BestWindow.cs:318
 msgid "in Mail"
 msgstr "en el correu"
 
-#: ../Best/BestWindow.cs:312
+#: ../Best/BestWindow.cs:322
 msgid "in Web Pages"
 msgstr "en les pàgines web"
 
-#: ../Best/BestWindow.cs:314
+#: ../Best/BestWindow.cs:326
 msgid "in Chats"
 msgstr "en els xats"
 
-#: ../Best/BestWindow.cs:330
+#: ../Best/BestWindow.cs:343
 msgid "Search terms:"
-msgstr "Termes de la cerca"
+msgstr "Termes de la cerca:"
 
-#: ../Best/BestWindow.cs:347
+#: ../Best/BestWindow.cs:367
 msgid "Find"
 msgstr "Cerca"
 
-#: ../Best/BestWindow.cs:364
+#: ../Best/BestWindow.cs:384
 msgid "Show More Results"
 msgstr "Mostra més resultats"
 
-#: ../Best/BestWindow.cs:370
+#: ../Best/BestWindow.cs:390
 msgid "Show Previous Results"
 msgstr "Mostra els resultats anteriors"
 
-#: ../Best/BestWindow.cs:404
+#: ../Best/BestWindow.cs:424
 msgid "No results."
 msgstr "Cap resultat."
 
 #. To translators: {0} is the current count of results shown of {1} in total, this is the message that is initially shown
 #. when results are returned to the user.
-#: ../Best/BestWindow.cs:408
+#: ../Best/BestWindow.cs:428
 #, csharp-format
 msgid "Best <b>{0} results of {1}</b> are shown."
-msgstr "Es mostraran els millors <b>{0} resultats de {1}</b>"
+msgstr "Es mostren els millors <b>{0} resultats de {1}</b>."
 
 #. To translators: {0} to {1} is the interval of results currently shown of {2} results in total
-#: ../Best/BestWindow.cs:413
+#: ../Best/BestWindow.cs:433
 #, csharp-format
 msgid "Results <b>{0} through {1} of {2}</b> are shown."
-msgstr "Es mostraran els resultats <b>{0} a {1} de {2}</b>"
+msgstr "Es mostren els resultats <b>{0} a {1} de {2}</b>"
 
 #. To translators: {0} represents the current query keywords
-#: ../Best/BestWindow.cs:552
+#: ../Best/BestWindow.cs:542
 #, csharp-format
 msgid ""
 "The query for <i>{0}</i> failed.<br>The likely cause is that the beagle "
 "daemon isn't running."
 msgstr ""
 "La consulta per a <i>{0}</i> ha fallat.<br>És probable que sigui perquè el "
-"dimonibeagle no s'està executant."
-
-#. To translators: {0} represents the current query keywords
-#: ../Best/BestWindow.cs:557
-#, csharp-format
-msgid ""
-"The query for <i>{0}</i> failed.<br>The session bus isn't running.  See "
-"http://beaglewiki.org/index.php/Installing%20Beagle for information on "
-"setting up a session bus."
-msgstr ""
-"La consulta per a <i>{0}</i> ha fallat.<br>El bus de la sessió no s'està "
-"executant. Vegeu http://beaglewiki.org/index.php/Installing%20Beagle per "
-"saber com configurar el bus de la sessió."
+"dimoni beagle no s'està executant."
 
 #. To translators: {0} represents the current query keywords, {1} contains the errormessage
-#: ../Best/BestWindow.cs:561
+#: ../Best/BestWindow.cs:547
 #, csharp-format
 msgid "The query for <i>{0}</i> failed with error:<br>{1}<br>"
 msgstr "La consulta per a <i>{0}</i> ha fallat amb l'error:<br>{1}<br>"
 
-#: ../ImLogViewer/ImLogViewer.cs:100 ../ImLogViewer/ImLogViewer.cs:105
-#, csharp-format
-msgid "Conversations with {0}"
-msgstr "Converses amb {0}"
+#: ../glue/eggtrayicon.c:120
+msgid "Orientation"
+msgstr "Orientació"
 
-#: ../ImLogViewer/ImLogViewer.cs:103
+#: ../glue/eggtrayicon.c:121
+msgid "The orientation of the tray."
+msgstr "Orientació de la safata."
+
+#: ../ImLogViewer/ImLogViewer.glade.h:1
+msgid "<b>Conversations History</b>"
+msgstr "<b>Historial de converses</b>"
+
+#: ../ImLogViewer/ImLogViewer.glade.h:2
+#
+msgid "IM Viewer"
+msgstr "Visualitzador d'IM"
+
+#: ../ImLogViewer/ImLogWindow.cs:87
 #, csharp-format
 msgid "Conversations in {0}"
 msgstr "Converses a {0}"
 
-#: ../ImLogViewer/ImLogViewer.cs:191 ../Util/StringFu.cs:65
-msgid "Today"
-msgstr "Avui"
+#: ../ImLogViewer/ImLogWindow.cs:94
+#, csharp-format
+msgid "Conversations with {0}"
+msgstr "Converses amb {0}"
 
-#: ../ImLogViewer/ImLogViewer.cs:192 ../ImLogViewer/ImLogViewer.cs:197
-msgid "HH:mm"
-msgstr "HH:mm"
-
-#: ../ImLogViewer/ImLogViewer.cs:196 ../Util/StringFu.cs:67
-msgid "Yesterday"
-msgstr "Ahir"
-
-#: ../ImLogViewer/ImLogViewer.cs:201
-msgid "This Week"
-msgstr "Aquesta setmana"
-
-#: ../ImLogViewer/ImLogViewer.cs:202 ../ImLogViewer/ImLogViewer.cs:207
-msgid "dddd"
-msgstr "dddd"
-
-#: ../ImLogViewer/ImLogViewer.cs:206
-msgid "Last Week"
-msgstr "La setmana pasada"
-
-#: ../ImLogViewer/ImLogViewer.cs:211
-msgid "This Month"
-msgstr "Aquest mes"
-
-#: ../ImLogViewer/ImLogViewer.cs:212 ../ImLogViewer/ImLogViewer.cs:217
-#: ../Util/StringFu.cs:69
-msgid "MMM d"
-msgstr "MMM d"
-
-#: ../ImLogViewer/ImLogViewer.cs:216
-msgid "This Year"
-msgstr "Enguany"
-
-#: ../ImLogViewer/ImLogViewer.cs:221
-msgid "Older"
-msgstr "Més vell"
-
-#: ../ImLogViewer/ImLogViewer.cs:222
-msgid "yyyy MMM d"
-msgstr "yyyy MMM d"
-
-#: ../ImLogViewer/ImLogViewer.glade.h:1
-msgid "*"
-msgstr "*"
-
-#: ../ImLogViewer/ImLogViewer.glade.h:2
-msgid "<b>Conversations History</b>"
-msgstr "<b>Historial de converses</b>"
-
-#: ../ImLogViewer/ImLogViewer.glade.h:3
-msgid "<b>Today, 12:00 PM</b>"
-msgstr "<b>Avui, 12:00 PM</b>"
-
-#: ../ImLogViewer/ImLogViewer.glade.h:4
-msgid "Find "
-msgstr "Cerca "
-
-#: ../ImLogViewer/ImLogViewer.glade.h:5
-msgid "IM viewer"
-msgstr "Visualitzador IM"
-
-#: ../Tiles/TileDocs.cs:75
+#: ../Tiles/TileDocs.cs:77
 msgid "Pages:"
 msgstr "Pàgines:"
 
-#: ../Tiles/TileDocs.cs:79
+#: ../Tiles/TileDocs.cs:81
 msgid "Words:"
 msgstr "Paraules:"
 
-#: ../Tiles/TileFolder.cs:51
+#: ../Tiles/TileFolder.cs:53
 msgid "Empty"
 msgstr "Buit"
 
-#: ../Tiles/TileFolder.cs:53
+#: ../Tiles/TileFolder.cs:55
 #, csharp-format
 msgid "Contains {0} Item"
 msgid_plural "Contains {0} Items"
 msgstr[0] "Conté {0} ítem"
 msgstr[1] "Conté {0} ítems"
 
-#: ../Tiles/TileImLog.cs:76
+#: ../Tiles/TileImLog.cs:67
 msgid "Send Mail"
 msgstr "Envia el correu"
 
 #. For translators: From template Tiles/template-mail-message.html
-#: ../Tiles/TileImLog.cs:80 ../Tiles/TranslationHack.cs:44
+#: ../Tiles/TileImLog.cs:71 ../Tiles/TranslationHack.cs:52
 msgid "Send IM"
-msgstr "Envia IM"
+msgstr "Envia un IM"
 
-#: ../Tiles/TileImLog.cs:89
+#: ../Tiles/TileImLog.cs:77
 #, csharp-format
 msgid "Conversation in {0}"
 msgstr "Conversa a {0}"
 
-#: ../Tiles/TileImLog.cs:91
+#: ../Tiles/TileImLog.cs:79
 #, csharp-format
 msgid "Conversation with {0}"
 msgstr "Conversa amb {0}"
 
-#: ../Tiles/TileMailMessage.cs:68
+#: ../Tiles/TileMailMessage.cs:81
 msgid "No Subject"
 msgstr "Sense assumpte"
 
-#: ../Tiles/TileMailMessage.cs:73
+#: ../Tiles/TileMailMessage.cs:88
 msgid "To"
 msgstr "A"
 
-#: ../Tiles/TileMailMessage.cs:73
+#: ../Tiles/TileMailMessage.cs:88
 msgid "From"
 msgstr "Des de"
 
-#: ../Tiles/TileMailMessage.cs:104
+#: ../Tiles/TileMailMessage.cs:116
 msgid "Sent"
 msgstr "Enviat"
 
-#: ../Tiles/TileMailMessage.cs:104
+#: ../Tiles/TileMailMessage.cs:116
 msgid "Received"
 msgstr "Rebut"
 
+#: ../Tiles/TileMailMessage.cs:124
+msgid "Email attachment"
+msgstr "Adjunció del correu"
+
+#. For translators: From template Tiles/template-blog.html
+#: ../Tiles/TranslationHack.cs:6
+msgid "Weblog:"
+msgstr "Bloc:"
+
+#. For translators: From template Tiles/template-blog.html
+#: ../Tiles/TranslationHack.cs:8
+msgid "by"
+msgstr "per"
+
+#. For translators: From template Tiles/template-blog.html
+#: ../Tiles/TranslationHack.cs:10
+msgid "Published:"
+msgstr "Publicat:"
+
+#. For translators: From template Tiles/template-blog.html
 #. For translators: From template Tiles/template-docs.html
-#. For translators: From template Tiles/template-folder.html
 #. For translators: From template Tiles/template-file.html
+#. For translators: From template Tiles/template-folder.html
+#. For translators: From template Tiles/template-launcher.html
+#. For translators: From template Tiles/template-mail-message.html
+#. For translators: From template Tiles/template-music.html
+#. For translators: From template Tiles/template-note.html
 #. For translators: From template Tiles/template-picture.html
 #. For translators: From template Tiles/template-presentation.html
-#: ../Tiles/TranslationHack.cs:6 ../Tiles/TranslationHack.cs:24
-#: ../Tiles/TranslationHack.cs:28 ../Tiles/TranslationHack.cs:60
-#: ../Tiles/TranslationHack.cs:70
+#. For translators: From template Tiles/template-spreadsheet.html
+#. For translators: From template Tiles/template-web-history.html
+#. For translators: From template Tiles/template-network.html
+#. For translators: From template Tiles/template-im-log.html
+#: ../Tiles/TranslationHack.cs:12 ../Tiles/TranslationHack.cs:22
+#: ../Tiles/TranslationHack.cs:32 ../Tiles/TranslationHack.cs:40
+#: ../Tiles/TranslationHack.cs:44 ../Tiles/TranslationHack.cs:50
+#: ../Tiles/TranslationHack.cs:58 ../Tiles/TranslationHack.cs:66
+#: ../Tiles/TranslationHack.cs:76 ../Tiles/TranslationHack.cs:92
+#: ../Tiles/TranslationHack.cs:106 ../Tiles/TranslationHack.cs:114
+#: ../Tiles/TranslationHack.cs:118 ../Tiles/TranslationHack.cs:122
+msgid "Open"
+msgstr "Obre"
+
+#. For translators: From template Tiles/template-docs.html
+#. For translators: From template Tiles/template-file.html
+#. For translators: From template Tiles/template-folder.html
+#. For translators: From template Tiles/template-picture.html
+#. For translators: From template Tiles/template-presentation.html
+#. For translators: From template Tiles/template-spreadsheet.html
+#: ../Tiles/TranslationHack.cs:14 ../Tiles/TranslationHack.cs:28
+#: ../Tiles/TranslationHack.cs:38 ../Tiles/TranslationHack.cs:68
+#: ../Tiles/TranslationHack.cs:82 ../Tiles/TranslationHack.cs:98
 msgid "in folder"
 msgstr "a la carpeta"
 
 #. For translators: From template Tiles/template-docs.html
 #. For translators: From template Tiles/template-file.html
 #. For translators: From template Tiles/template-presentation.html
-#: ../Tiles/TranslationHack.cs:8 ../Tiles/TranslationHack.cs:30
-#: ../Tiles/TranslationHack.cs:72
+#. For translators: From template Tiles/template-spreadsheet.html
+#: ../Tiles/TranslationHack.cs:16 ../Tiles/TranslationHack.cs:30
+#: ../Tiles/TranslationHack.cs:84 ../Tiles/TranslationHack.cs:100
 msgid "Last modified"
 msgstr "Darrera modificació"
 
 #. For translators: From template Tiles/template-docs.html
 #. For translators: From template Tiles/template-presentation.html
-#: ../Tiles/TranslationHack.cs:10 ../Tiles/TranslationHack.cs:74
+#. For translators: From template Tiles/template-spreadsheet.html
+#: ../Tiles/TranslationHack.cs:18 ../Tiles/TranslationHack.cs:86
+#: ../Tiles/TranslationHack.cs:102
 msgid "Title:"
 msgstr "Títol"
 
 #. For translators: From template Tiles/template-docs.html
 #. For translators: From template Tiles/template-presentation.html
-#: ../Tiles/TranslationHack.cs:12 ../Tiles/TranslationHack.cs:76
+#. For translators: From template Tiles/template-spreadsheet.html
+#: ../Tiles/TranslationHack.cs:20 ../Tiles/TranslationHack.cs:88
+#: ../Tiles/TranslationHack.cs:104
 msgid "Author:"
 msgstr "Autor:"
 
 #. For translators: From template Tiles/template-docs.html
-#. For translators: From template Tiles/template-launcher.html
-#. For translators: From template Tiles/template-folder.html
-#. For translators: From template Tiles/template-file.html
-#. For translators: From template Tiles/template-im-log.html
-#. For translators: From template Tiles/template-mail-message.html
-#. For translators: From template Tiles/template-music.html
-#. For translators: From template Tiles/template-note.html
-#. For translators: From template Tiles/template-picture.html
-#. For translators: From template Tiles/template-presentation.html
-#. For translators: From template Tiles/template-web-history.html
-#. For translators: From template Tiles/template-blog.html
-#: ../Tiles/TranslationHack.cs:14 ../Tiles/TranslationHack.cs:22
-#: ../Tiles/TranslationHack.cs:26 ../Tiles/TranslationHack.cs:32
-#: ../Tiles/TranslationHack.cs:38 ../Tiles/TranslationHack.cs:42
-#: ../Tiles/TranslationHack.cs:50 ../Tiles/TranslationHack.cs:58
-#: ../Tiles/TranslationHack.cs:64 ../Tiles/TranslationHack.cs:80
-#: ../Tiles/TranslationHack.cs:88 ../Tiles/TranslationHack.cs:94
-msgid "Open"
-msgstr "Obre"
-
-#. For translators: From template Tiles/template-docs.html
 #. For translators: From template Tiles/template-file.html
 #. For translators: From template Tiles/template-picture.html
 #. For translators: From template Tiles/template-presentation.html
-#: ../Tiles/TranslationHack.cs:16 ../Tiles/TranslationHack.cs:34
-#: ../Tiles/TranslationHack.cs:66 ../Tiles/TranslationHack.cs:82
+#. For translators: From template Tiles/template-spreadsheet.html
+#: ../Tiles/TranslationHack.cs:24 ../Tiles/TranslationHack.cs:34
+#: ../Tiles/TranslationHack.cs:78 ../Tiles/TranslationHack.cs:94
+#: ../Tiles/TranslationHack.cs:108
 msgid "Send to..."
 msgstr "Envia a..."
 
@@ -315,66 +306,370 @@ msgstr "Envia a..."
 #. For translators: From template Tiles/template-music.html
 #. For translators: From template Tiles/template-picture.html
 #. For translators: From template Tiles/template-presentation.html
-#: ../Tiles/TranslationHack.cs:18 ../Tiles/TranslationHack.cs:36
-#: ../Tiles/TranslationHack.cs:54 ../Tiles/TranslationHack.cs:68
-#: ../Tiles/TranslationHack.cs:84
+#. For translators: From template Tiles/template-spreadsheet.html
+#: ../Tiles/TranslationHack.cs:26 ../Tiles/TranslationHack.cs:36
+#: ../Tiles/TranslationHack.cs:62 ../Tiles/TranslationHack.cs:80
+#: ../Tiles/TranslationHack.cs:96 ../Tiles/TranslationHack.cs:110
 msgid "Reveal in file manager"
 msgstr "Mostra en el gestor de fitxers"
 
 #. For translators: From template Tiles/template-launcher.html
-#: ../Tiles/TranslationHack.cs:20
+#: ../Tiles/TranslationHack.cs:42
 msgid "Application:"
 msgstr "Aplicació:"
 
 #. For translators: From template Tiles/template-mail-message.html
-#: ../Tiles/TranslationHack.cs:40
+#: ../Tiles/TranslationHack.cs:46
+msgid "Email subject:"
+msgstr "Assumpte del correu"
+
+#. For translators: From template Tiles/template-mail-message.html
+#: ../Tiles/TranslationHack.cs:48
 msgid "Folder:"
 msgstr "Carpeta:"
 
 #. For translators: From template Tiles/template-music.html
-#: ../Tiles/TranslationHack.cs:46
+#: ../Tiles/TranslationHack.cs:54
 msgid "Track"
 msgstr "Pista"
 
 #. For translators: From template Tiles/template-music.html
-#: ../Tiles/TranslationHack.cs:48
+#: ../Tiles/TranslationHack.cs:56
 msgid "from"
 msgstr "des de"
 
 #. For translators: From template Tiles/template-music.html
-#: ../Tiles/TranslationHack.cs:52
+#: ../Tiles/TranslationHack.cs:60
 msgid "Enqueue"
 msgstr "Posa a la cua"
 
 #. For translators: From template Tiles/template-note.html
-#: ../Tiles/TranslationHack.cs:56
+#: ../Tiles/TranslationHack.cs:64
 msgid "last modified"
 msgstr "darrera modificació"
 
 #. For translators: From template Tiles/template-picture.html
-#: ../Tiles/TranslationHack.cs:62
+#: ../Tiles/TranslationHack.cs:70
 msgid "Modified:"
 msgstr "Modificat:"
 
+#. For translators: From template Tiles/template-picture.html
+#: ../Tiles/TranslationHack.cs:72
+#
+msgid "Tags:"
+msgstr "Etiquetes:"
+
+#. For translators: From template Tiles/template-picture.html
+#: ../Tiles/TranslationHack.cs:74
+msgid "Description:"
+msgstr "Descripció:"
+
 #. For translators: From template Tiles/template-presentation.html
-#: ../Tiles/TranslationHack.cs:78
+#: ../Tiles/TranslationHack.cs:90
 msgid "Slides:"
 msgstr "Diapositives:"
 
 #. For translators: From template Tiles/template-web-history.html
-#: ../Tiles/TranslationHack.cs:86
+#: ../Tiles/TranslationHack.cs:112
 msgid "Last viewed:"
 msgstr "Última visualització:"
 
-#. For translators: From template Tiles/template-blog.html
-#: ../Tiles/TranslationHack.cs:90
-msgid "Weblog:"
-msgstr "Bloc:"
+#. For translators: From template Tiles/template-network.html
+#: ../Tiles/TranslationHack.cs:116
+msgid "from Networked Beagle on host"
+msgstr "des de un Beagle en xarxa a l'ordinador"
 
-#. For translators: From template Tiles/template-blog.html
-#: ../Tiles/TranslationHack.cs:92
-msgid "Published:"
-msgstr "Publicat:"
+#. For translators: From template Tiles/template-network.html
+#: ../Tiles/TranslationHack.cs:120
+msgid "Search Networked Beagle"
+msgstr "Cerca a un Beagle en xarxa"
+
+#: ../tools/Settings.cs:214
+msgid "Reload configuration"
+msgstr "Torna a carregar la configuració"
+
+#: ../tools/Settings.cs:215
+msgid ""
+"The configuration file has been modified by another application. Do you wish "
+"to discard the currently displayed values and reload configuration from disk?"
+msgstr ""
+"El fitxer de configuració ha estat modificat per una altra aplicació. Voleu "
+"descartar els valors actuals i tornar a carregar la configuració des del disc?" 
+
+#: ../tools/Settings.cs:253
+msgid "Select Path"
+msgstr "Seleccioneu un camí"
+
+#: ../tools/Settings.cs:272
+msgid "The selected path is already selected for indexing and wasn't added."
+msgstr "El camí seleccionat ja està seleccionat per a ser indexat i no s'ha afegit."
+
+#: ../tools/Settings.cs:275
+msgid ""
+"The selected path wasn't added. The list contains items that supercedes it "
+"and the data is already being indexed."
+msgstr "El camí seleccionat no s'ha afegit. La llista conté elements que "
+"excedeixen la seva capacitat i les dades ja s'estan indexant."
+
+#: ../tools/Settings.cs:286 ../tools/Settings.cs:478
+msgid "Path not added"
+msgstr "El camí no s'ha afegit"
+
+#: ../tools/Settings.cs:295
+msgid "Remove obsolete paths"
+msgstr "Elimina els camins obsolets"
+
+#: ../tools/Settings.cs:296
+msgid ""
+"Adding this path will obsolete some of the existing include paths. This will "
+"result in the removal of the old obsolete paths. Do you still wish to add it?"
+msgstr ""
+"Si afegiu aquest camí, alguns dels camins d'inclusió existents quedaran "
+"obsolets, i això causarà l'eliminació dels antics camins obsolets. Segur que "
+"el voleu afegir?"
+
+#: ../tools/Settings.cs:322
+msgid "Remove path"
+msgstr "Elimina el camí"
+
+#: ../tools/Settings.cs:323
+msgid ""
+"Are you sure you wish to remove this path from the list of directories to be "
+"included for indexing?"
+msgstr "Esteu segur que voleu eliminar aquest camí de la llista de directoris "
+"que s'inclouran a la indexació?"
+
+#: ../tools/Settings.cs:352
+msgid "Remove item"
+msgstr "Elimina l'element"
+
+#: ../tools/Settings.cs:353
+msgid ""
+"Are you sure you wish to remove this item from the list of data to be "
+"excluded from indexing?"
+msgstr "Esteu segur que voleu eliminar aquest element de la llista de dades "
+"que s'exclouran de la indexació?"
+
+
+#: ../tools/Settings.cs:396
+msgid "Invalid host entry"
+msgstr "Entrada d'ordinador no vàlida"
+
+#: ../tools/Settings.cs:403
+msgid "Remote host already present in the list."
+msgstr "L'ordinador remot ja és a la llista."
+
+#: ../tools/Settings.cs:412
+msgid "Netbeagle Node not added"
+msgstr "El node Netbeagle no s'ha afegit"
+
+#: ../tools/Settings.cs:428
+msgid "Remove host"
+msgstr "Elimina l'ordinador"
+
+#: ../tools/Settings.cs:429
+msgid "Are you sure you wish to remove this host from the list?"
+msgstr "Esteu segur que voleu eliminar aquest ordinador de la llista?"
+
+#: ../tools/Settings.cs:450
+msgid "Select path"
+msgstr "Seleccioneu el camí"
+
+#: ../tools/Settings.cs:469
+msgid "The selected path is already configured for external access."
+msgstr "El camí selecionat ja està configurat per a accés extern."
+
+#: ../tools/Settings.cs:493
+msgid "Remove public path"
+msgstr "Elimina el camí públic"
+
+#: ../tools/Settings.cs:494
+msgid ""
+"Are you sure you wish to remove this entry from the list of public paths?"
+msgstr ""
+"Esteu segur que voleu eliminar aquesta entrada de la llista de camins públics?"
+
+#: ../tools/Settings.cs:539 ../tools/Settings.cs:628 ../tools/Settings.cs:706
+#: ../tools/Settings.cs:782 ../tools/Settings.cs:1121
+msgid "Name"
+msgstr "Nom"
+
+#: ../tools/Settings.cs:622 ../tools/settings.glade.h:32
+msgid "Type"
+msgstr "Tipus"
+
+#: ../tools/Settings.cs:675 ../tools/Settings.cs:1055
+#: ../tools/settings.glade.h:24
+msgid "Path"
+
+
+msgstr "Camí"
+
+#: ../tools/Settings.cs:678 ../tools/Settings.cs:1065
+msgid "Pattern"
+msgstr "Patró"
+
+#: ../tools/Settings.cs:681 ../tools/Settings.cs:1060
+#: ../tools/settings.glade.h:22
+#
+msgid "Mail Folder"
+msgstr "Carpeta de correu"
+
+#: ../tools/Settings.cs:1029
+#
+msgid "Select Folder"
+msgstr "Seleccioneu una carpeta"
+
+#: ../tools/Settings.cs:1089
+msgid "Error adding path"
+msgstr "S'ha produït un error en afegir el camí"
+
+#: ../tools/Settings.cs:1090
+msgid ""
+"The specified path could not be found and therefore it could not be added to "
+"the list of resources excluded for indexing."
+msgstr ""
+"El camí indicat no s'ha pogut trobar i per tant no s'ha pogut afegir a la "
+"llista de recursos exclosos de la indexació."
+
+#: ../tools/Settings.cs:1120
+msgid "Show"
+msgstr "Mostra"
+
+#: ../tools/settings.glade.h:1
+msgid "<b>Add remote host</b>"
+msgstr "<b>Afegeix un ordinador remot</b>"
+
+#: ../tools/settings.glade.h:2
+msgid "<b>Add resource</b>"
+msgstr "<b>Afegeix el recurs</b>"
+
+#: ../tools/settings.glade.h:3
+msgid "<b>Display</b>"
+msgstr "<b>Mostra</b>"
+
+#: ../tools/settings.glade.h:4
+msgid "<b>General</b>"
+msgstr "<b>General</b>"
+
+#: ../tools/settings.glade.h:5
+msgid "<b>Networking</b>"
+msgstr "<b>Xarxa</b>"
+
+#: ../tools/settings.glade.h:6
+msgid "<b>Privacy</b>"
+msgstr "<b>Privadesa</b>"
+
+#: ../tools/settings.glade.h:7
+msgid "<b>Select mail folder</b>"
+msgstr "<b>Seleccioneu la carpeta del correu</b>"
+
+#: ../tools/settings.glade.h:8
+msgid ""
+"Add a remote search-enabled host you wish \n"
+"to network with."
+msgstr ""
+"Afegiu l'ordinador amb cerca remota habilitada \n"
+"amb què us voleu connectar."
+
+#: ../tools/settings.glade.h:10
+msgid "Add any additional paths to be included for indexing."
+msgstr "Afegeix camins addicionals per a incloure a la indexació."
+
+#: ../tools/settings.glade.h:11
+msgid "Add any remote search-enabled hosts you wish to network with."
+msgstr "Afegiu els ordinadors amb la cerca remota habilitada amb què "
+"vulgueu connectar-vos."
+
+#: ../tools/settings.glade.h:12
+#
+msgid "Address"
+msgstr "Adreça"
+
+#: ../tools/settings.glade.h:13
+msgid ""
+"Adjust which types of results should be visible, and in what order they "
+"should be presented when grouped by type."
+msgstr ""
+"Definiu els tipus de resultats que han de ser visibles, i amb l'ordre en "
+"què s'han de presentar en ser agrupats per tipus."
+
+#: ../tools/settings.glade.h:14
+msgid "Allow external access to local search services"
+msgstr "Permet l'accés extern als serveis de cerca locals"
+
+#: ../tools/settings.glade.h:15
+msgid "Alt"
+msgstr "Alt"
+
+#: ../tools/settings.glade.h:16
+msgid "Ctrl"
+msgstr "Ctrl"
+
+#: ../tools/settings.glade.h:17
+#
+msgid "Directory Path"
+msgstr "Camí del directori"
+
+#: ../tools/settings.glade.h:18
+msgid "Display the search window by pressing"
+msgstr "Mostra la finestra de cerca en prémer"
+
+#: ../tools/settings.glade.h:19
+msgid "Filename Pattern"
+msgstr "Patró del nom de fitxer"
+
+#: ../tools/settings.glade.h:20
+#
+msgid "Index my home directory"
+msgstr "Indexa el meu directori inicial"
+
+#: ../tools/settings.glade.h:21
+msgid "Indexing"
+msgstr "S'està indexant"
+
+#: ../tools/settings.glade.h:23
+msgid "Networking"
+msgstr "Xarxa"
+
+#: ../tools/settings.glade.h:25
+msgid "Please select a resource you wish to exclude from indexing."
+msgstr "Seleccioneu el recurs que voleu excloure de la indexació."
+
+#: ../tools/settings.glade.h:26
+msgid "Please select the mail folder you wish to exclude from indexing. "
+msgstr "Seleccioneu la carpeta de correu que voleu excloure de la indexació."
+
+#: ../tools/settings.glade.h:27
+#
+msgid "Search"
+msgstr "Cerca"
+
+#: ../tools/settings.glade.h:28
+#
+msgid "Search Preferences"
+msgstr "Preferències de la cerca"
+
+#: ../tools/settings.glade.h:29
+msgid ""
+"Specify any resources, such as paths, patterns, mail folders or type of "
+"objects you wish to exclude from indexing."
+msgstr ""
+"Indiqueu els recursos, com ara camins, patrons, carpetes de correu o tipus d'objectes que voleu excloure de la indexació."
+
+#: ../tools/settings.glade.h:30
+msgid "Specify paths that should be available for external access"
+msgstr "Indiqueu els camins que han d'estar disponibles per l'accés extern"
+
+#: ../tools/settings.glade.h:31
+msgid "Start search & indexing services automatically "
+msgstr "Inicia els serveis de cerca i indexació automàticament "
+
+
+
+#: ../Util/Evolution.cs:45 ../Util/Evolution.cs:163
+msgid "On This Computer"
+msgstr "en aquest ordinador"
 
 #: ../Util/ExifData.cs:226
 msgid "Image Directory"
@@ -399,6 +694,18 @@ msgstr "Directori d'interoperabilitat"
 #: ../Util/ExifData.cs:236
 msgid "Unknown Directory"
 msgstr "Directori desconegut"
+
+#: ../Util/StringFu.cs:65
+msgid "Today"
+msgstr "Avui"
+
+#: ../Util/StringFu.cs:67
+msgid "Yesterday"
+msgstr "Ahir"
+
+#: ../Util/StringFu.cs:69
+msgid "MMM d"
+msgstr "MMM d"
 
 #: ../Util/StringFu.cs:71
 msgid "MMM d, yyyy"
@@ -430,7 +737,7 @@ msgstr "Ahir, {0}"
 #: ../Util/StringFu.cs:102
 #, csharp-format
 msgid "{0} days ago, {1}"
-msgstr "{0} dies abans, {1}"
+msgstr "fa {0} dies, {1}"
 
 #: ../Util/StringFu.cs:106
 msgid "MMMM d, h:mm tt"
@@ -471,3 +778,42 @@ msgstr "{0:0.0} kB"
 #, csharp-format
 msgid "{0:0.0} MB"
 msgstr "{0:0.0} MB"
+
+#~ msgid ""
+#~ "The query for <i>{0}</i> failed.<br>The session bus isn't running.  See "
+#~ "http://beaglewiki.org/index.php/Installing%20Beagle for information on "
+#~ "setting up a session bus."
+#~ msgstr ""
+#~ "La consulta per a <i>{0}</i> ha fallat.<br>El bus de la sessió no s'està "
+#~ "executant. Vegeu http://beaglewiki.org/index.php/Installing%20Beagle per "
+#~ "saber com configurar el bus de la sessió."
+
+#~ msgid "HH:mm"
+#~ msgstr "HH:mm"
+
+#~ msgid "This Week"
+#~ msgstr "Aquesta setmana"
+
+#~ msgid "dddd"
+#~ msgstr "dddd"
+
+#~ msgid "Last Week"
+#~ msgstr "La setmana pasada"
+
+#~ msgid "This Month"
+#~ msgstr "Aquest mes"
+
+#~ msgid "This Year"
+#~ msgstr "Enguany"
+
+#~ msgid "yyyy MMM d"
+#~ msgstr "yyyy MMM d"
+
+#~ msgid "*"
+#~ msgstr "*"
+
+#~ msgid "<b>Today, 12:00 PM</b>"
+#~ msgstr "<b>Avui, 12:00 PM</b>"
+
+#~ msgid "Find "
+#~ msgstr "Cerca "
