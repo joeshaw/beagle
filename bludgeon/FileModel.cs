@@ -109,12 +109,20 @@ namespace Bludgeon {
 			get { return body != null; }
 		}
 
+		public string Type {
+			get { return IsDirectory ? "directory" : "file"; }
+		}
+
 		public string Name {
 			get { return name; }
 		}
 		
 		public string FullName {
 			get { return IsRoot ? Name : Path.Combine (parent.FullName, name); }
+		}
+
+		public string ShortName {
+			get { return  IsRoot ? Path.GetFileName (Name) : Path.Combine (parent.ShortName, name); }
 		}
 
 		public Uri Uri {

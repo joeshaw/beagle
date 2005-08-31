@@ -17,7 +17,7 @@ namespace Bludgeon {
 				created = parent.NewFile ();
 			} while (created == null);
 
-			Log.Info ("Created file {0}", created.FullName);
+			Log.Info ("Created file {0}", created.ShortName);
 		}
 	}
 
@@ -34,7 +34,7 @@ namespace Bludgeon {
 				created = parent.NewDirectory ();
 			} while (created == null);
 
-			Log.Info ("Created directory {0}", created.FullName);
+			Log.Info ("Created directory {0}", created.ShortName);
 		}
 	}
 
@@ -49,7 +49,7 @@ namespace Bludgeon {
 			target = FileModel.PickFile ();
 			
 			if (target != null) {
-				Log.Info ("Deleted file {0}", target.FullName);
+				Log.Info ("Deleted file {0}", target.ShortName);
 				target.Delete ();
 			}
 		}
@@ -64,7 +64,7 @@ namespace Bludgeon {
 			target = FileModel.PickNonRootDirectory ();
 		
 			if (target != null) {
-				Log.Info ("Deleted directory {0}", target.FullName);
+				Log.Info ("Deleted directory {0}", target.ShortName);
 				target.Delete ();
 			}
 		}
@@ -94,14 +94,14 @@ namespace Bludgeon {
 				string new_name;
 				new_name = Token.GetRandom ();
 				
-				old_path = target.FullName;
+				old_path = target.ShortName;
 				if (target.MoveTo (new_parent, new_name)) {
-					new_path = target.FullName;
+					new_path = target.ShortName;
 					break;
 				}
 			}
 
-			Log.Spew ("Moved {0} {1} to {2}", target.IsFile ? "file" : "directory", old_path, new_path);
+			Log.Spew ("Moved {0} {1} to {2}", target.Type, old_path, new_path);
 		}
 	}
 

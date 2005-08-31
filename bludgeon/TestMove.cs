@@ -14,8 +14,7 @@ namespace Bludgeon {
 			tourist = PickTarget ();
 
 			Log.Spew ("Touring {0} {1}",
-				  tourist.IsFile ? "file" : "directory",
-				  tourist);
+				  tourist.Type, tourist.ShortName);
 
 			int count = 10;
 			while (count > 0) {
@@ -27,7 +26,7 @@ namespace Bludgeon {
 				new_name = Token.GetRandom ();
 
 				if (tourist.MoveTo (new_parent, new_name)) {
-					Log.Spew ("{0}: Toured to {1}", count, tourist.FullName);
+					Log.Spew ("{0}: Toured to {1}", count, tourist.ShortName);
 					--count;
 				}
 			}
@@ -62,7 +61,7 @@ namespace Bludgeon {
 		{
 			FileModel short_lived;
 			short_lived = Create ();
-			Log.Spew ("Created {0} {1}", short_lived.IsFile ? "file" : "directory", short_lived.FullName);
+			Log.Spew ("Created {0} {1}", short_lived.Type, short_lived.ShortName);
 
 			int count = 10;
 			// tour the file
@@ -74,13 +73,13 @@ namespace Bludgeon {
 				new_name = Token.GetRandom ();
 
 				if (short_lived.MoveTo (new_parent, new_name)) {
-					Log.Spew ("Moved to {0}", short_lived.FullName);
+					Log.Spew ("Moved to {0}", short_lived.ShortName);
 					--count;
 				}
 			}
 
 			short_lived.Delete ();
-			Log.Spew ("Deleted {0}", short_lived.FullName);
+			Log.Spew ("Deleted {0}", short_lived.ShortName);
 		}
 	}
 
