@@ -143,7 +143,10 @@ namespace Beagle.Daemon {
 
 		virtual public bool AcceptQuery (Query query)
 		{
-			return true;
+			// Don't accept queries on empty indexes.
+			// If nothing else, it causes us to start
+			// up a new thread.
+			return GetItemCount () > 0;
 		}
 
 		/////////////////////////////////////////
