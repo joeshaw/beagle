@@ -95,8 +95,11 @@ namespace Beagle.Daemon {
 
 		public IndexerChildIndexablesReceipt () { }
 
-		public IndexerChildIndexablesReceipt (ArrayList children)
+		public IndexerChildIndexablesReceipt (Indexable parent, ArrayList children)
 		{
+			foreach (Indexable child in children)
+				child.SetChildOf (parent);
+
 			this.Children = children;
 		}
 

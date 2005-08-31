@@ -287,7 +287,7 @@ namespace Beagle.Daemon {
 					// Create a receipt containing any child indexables.
 					if (filter.ChildIndexables.Count > 0) {
 						IndexerChildIndexablesReceipt cr;
-						cr = new IndexerChildIndexablesReceipt (filter.ChildIndexables);
+						cr = new IndexerChildIndexablesReceipt (indexable, filter.ChildIndexables);
 						receipt_queue.Add (cr);
 					}
 				}

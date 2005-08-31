@@ -261,8 +261,8 @@ namespace Beagle.Daemon
 			IndexerReceipt [] receipts;
 			receipts = indexer.Flush (request);
 
-
-			request.Clear (); // clear out the old request
+			ArrayList pending_children;
+			pending_children = new ArrayList ();
 
 			foreach (IndexerReceipt raw_r in receipts) {
 
@@ -270,24 +270,34 @@ namespace Beagle.Daemon
 					// Update the file attributes 
 					IndexerAddedReceipt r = (IndexerAddedReceipt) raw_r;
 
+					Indexable indexable = request.GetByUri (r.Uri);
+
+					// We don't need to write out any file attributes for
+					// children.
+					if (indexable.ParentUri != null) 
+						continue;
+
 					string path = r.Uri.LocalPath;
 					
 					FileAttributes attr;
 					attr = fa_store.ReadOrCreate (path);
 
-					attr.LastWriteTime = FileSystem.GetLastWriteTime (path);
+					attr.LastWriteTime = indexable.Timestamp;
 					attr.FilterName = r.FilterName;
 					attr.FilterVersion = r.FilterVersion;
 
 					fa_store.Write (attr);
-
+					
 				} else if (raw_r is IndexerChildIndexablesReceipt) {
 					// Add any child indexables back into our indexer
 					IndexerChildIndexablesReceipt r = (IndexerChildIndexablesReceipt) raw_r;
-					foreach (Indexable i in r.Children)
-						request.Add (i);
+					pending_children.AddRange (r.Children);
 				}
 			}
+
+			request.Clear (); // clear out the old request
+			foreach (Indexable i in pending_children) // and then add the children
+				request.Add (i);
 			
 			return receipts;
 		}
@@ -312,6 +322,7 @@ namespace Beagle.Daemon
 					// Create the indexable and add the standard properties we
 					// use in the FileSystemQueryable.
 					indexable = new Indexable (uri);
+					indexable.Timestamp = file.LastWriteTime;
 					FSQ.AddStandardPropertiesToIndexable (indexable, file.Name, Guid.Empty, false);
 
 					// Disable filtering and only index file attributes
@@ -344,6 +355,8 @@ namespace Beagle.Daemon
 				FlushIndexer (driver, pending_request);
 
 			backing_fa_store.Flush ();
+
+			driver.OptimizeNow ();
 
 			Logger.Log.Debug ("IndexWorker Done");
 
