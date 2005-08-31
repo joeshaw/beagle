@@ -272,10 +272,14 @@ namespace Beagle.Filters {
 				}
 		        }
 			if (SrcLineType != LineType.None) {
+				bool trailing_backslash = false;
+
 				token.Append (splCharSeq);
 
-				if (token.Length > 0 && token [token.Length - 1] == '\\')
+				if (token.Length > 0 && token [token.Length - 1] == '\\') {
 					token = token.Remove (token.Length-1, 1);
+					trailing_backslash = true;
+				}
 			       
 				token.Append (" ");
 				AppendText (token.ToString());
@@ -284,10 +288,11 @@ namespace Beagle.Filters {
 				// the lines that follows it are also considered as a comment,
 				// till a line with out a "\" is found
 				// C# and Lisp don't follow this syntax.
-				if ((SrcLangType == LangType.C_Sharp_Style 
-				     || SrcLangType == LangType.Lisp_Style)
-				    && SrcLineType == LineType.SingleLineComment)
-					SrcLineType = LineType.None;
+				if (SrcLineType == LineType.SingleLineComment) 
+					if (!trailing_backslash 
+					    || SrcLangType == LangType.C_Sharp_Style
+					    || SrcLangType == LangType.Lisp_Style)
+						SrcLineType = LineType.None;
 			} else if (token.Length > 0 
 				   && !Char.IsDigit (token[0])) { 
 				/* we don't want any numeric const */

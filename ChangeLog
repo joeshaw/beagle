@@ -1,3 +1,9 @@
+2005-08-31  Veerapuram Varadhan <vvaradhan@novell.com>
+
+	* Filters/FilterSource.cs: Reset the line type to none if the line
+	that was being parsed was a single-line-comment without a trailing
+	backslash or language style is either lisp or c#.
+	
 2005-08-29  Rodrigo Moya <rodrigo@novell.com>
 
 	* glue/eggtrayicon.[ch]: updated from libegg.
@@ -80,6 +86,7 @@
 
 2005-08-11  Veerapuram Varadhan <vvaradhan@novell.com>
 
+	Patch from Sreekanth G <sreekanthnaga@gmail.com>	
 	* Filters/FilterPerl.cs: Add commonly used mime type for perl files.
 
 	* Filters/FilterCpp.cs: Add "while" and "inline" to keywords list.
