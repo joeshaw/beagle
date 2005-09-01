@@ -12,6 +12,7 @@ using Gtk;
 using GLib;
 using System;
 using System.Runtime.InteropServices;
+using System.IO;
 
 namespace Beagle.Util {
 
@@ -23,6 +24,9 @@ namespace Beagle.Util {
 			[DllImport ("libgnomevfs-2")] extern static IntPtr gnome_vfs_get_mime_type (string text_uri);
 			[DllImport ("libgnomevfs-2")] extern static IntPtr gnome_vfs_get_mime_type_for_data (byte[] data, int length);
 			[DllImport ("libgnomevfs-2")] extern static IntPtr gnome_vfs_mime_type_from_name_or_default (string filename, string defaultv);
+			[DllImport ("libgnomevfs-2")] extern static IntPtr gnome_vfs_get_file_mime_type (string filename, IntPtr optional_stat_info, bool suffix_only);
+			[DllImport ("libgnomevfs-2")] extern static IntPtr gnome_vfs_get_file_mime_type_fast (string filename, IntPtr optional_stat_info);
+
 
 			static Mime ()
 			{
@@ -31,9 +35,10 @@ namespace Beagle.Util {
 
 			public static string GetMimeType (string text_path)
 			{
-				string full_uri = StringFu.PathToQuotedFileUri (text_path);
-				string mimeType = GLib.Marshaller.PtrToStringGFree (gnome_vfs_get_mime_type (full_uri));
-				return mimeType;
+				if (Path.GetExtension (text_path) == ".xml")
+					return Marshal.PtrToStringAnsi (gnome_vfs_get_file_mime_type (text_path, (IntPtr)null, false));
+				else
+					return Marshal.PtrToStringAnsi (gnome_vfs_get_file_mime_type_fast (text_path, (IntPtr)null));
 			}
 
 			public static string GetMimeTypeFromData (byte[] buffer, int buffSize, string text_uri)

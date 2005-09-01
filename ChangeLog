@@ -1,3 +1,8 @@
+2005-09-01  Chris Lahey  <clahey@ximian.com>
+
+	* Util/gnome.cs: Use file_mime_type stuff and use slow if file
+	extension is .xml.
+
 2005-08-31  Veerapuram Varadhan <vvaradhan@novell.com>
 
 	* Filters/FilterSource.cs: Reset the line type to none if the line
