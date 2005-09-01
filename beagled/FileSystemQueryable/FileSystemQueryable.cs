@@ -1089,6 +1089,15 @@ namespace Beagle.Daemon.FileSystemQueryable {
 		// Our magic LuceneQueryable hooks
 		//
 
+		override protected bool PreChildAddHook (Indexable child)
+		{
+			// FIXME: Handling Uri remapping of children is tricky, and there
+			// is also the issue of properly serializing file: uris that
+			// contain fragments.  For now we just punt it all by dropping
+			// any child indexables of file system objects.
+			return false;
+		}
+
 		override protected void PostAddHook (Indexable indexable, IndexerAddedReceipt receipt)
 		{
 			// If we just changed properties, remap to our *old* external Uri
