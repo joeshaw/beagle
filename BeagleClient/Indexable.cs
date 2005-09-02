@@ -265,6 +265,32 @@ namespace Beagle {
 
 		//////////////////////////
 
+		public void Cleanup ()
+		{
+			if (DeleteContent) {
+				if (contentUri != null) {
+					Logger.Log.Debug ("Cleaning up {0}", contentUri.LocalPath);
+					try {
+						File.Delete (contentUri.LocalPath);
+					} catch (Exception ex)
+					{ 
+						// It might be gone already, so catch the exception.
+					}
+					contentUri = null;
+				}
+				if (hotContentUri != null) {
+					Logger.Log.Debug ("Cleaning up {0}", hotContentUri.LocalPath);
+					try {
+						File.Delete (hotContentUri.LocalPath);
+					} catch (Exception ex)
+					{
+						// Ditto
+					}
+					hotContentUri = null;
+				}
+			}
+		}
+
 		private Stream StreamFromUri (Uri uri)
 		{
 			Stream stream = null;
@@ -274,10 +300,6 @@ namespace Beagle {
 							 FileMode.Open,
 							 FileAccess.Read,
 							 FileShare.Read);
-
-				// Paranoia: never delete the thing we are actually indexing.
-				if (DeleteContent && uri != Uri)
-					File.Delete (uri.LocalPath);
 			}
 
 			return stream;
@@ -492,14 +514,17 @@ namespace Beagle {
 		public void StoreStream () {
 			if (textReader != null) {
 				ContentUri = TextReaderToTempFileUri (textReader);
+				//Logger.Log.Debug ("Storing text content from {0} in {1}", Uri, ContentUri);
 				DeleteContent = true;
 			} else if (binary_stream != null) {
 				ContentUri = BinaryStreamToTempFileUri (binary_stream);
+				//Logger.Log.Debug ("Storing binary content from {0} in {1}", Uri, ContentUri);
 				DeleteContent = true;
 			}
 
 			if (hotTextReader != null) {
 				HotContentUri = TextReaderToTempFileUri (hotTextReader);
+				//Logger.Log.Debug ("Storing hot content from {0} in {1}", Uri, HotContentUri);
 				DeleteContent = true;
 			}
 		}

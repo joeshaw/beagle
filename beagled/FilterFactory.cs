@@ -268,11 +268,6 @@ namespace Beagle.Daemon {
 				if (indexable.Crawled)
 					candidate_filter.EnableCrawlMode ();
 				
-				// Be extra paranoid: never delete the actual
-				// URI we are indexing.
-				if (indexable.DeleteContent && indexable.Uri != indexable.ContentUri)
-					candidate_filter.DeleteContent = indexable.DeleteContent;
-				
 				// Set the filter's URI
 				candidate_filter.Uri = indexable.Uri;
 				
@@ -303,6 +298,7 @@ namespace Beagle.Daemon {
 					return true;
 				} else if (Debug) {
 					Logger.Log.Debug ("Unsuccessfully filtered {0} with {1}, falling back", path, candidate_filter);
+					candidate_filter.Cleanup ();
 				}
 			}
 

@@ -281,6 +281,10 @@ namespace Beagle.Daemon {
 				}
 				
 				if (filter != null) {
+
+					// Force the clean-up of temporary files, just in case.
+					filter.Cleanup ();
+
 					r.FilterName = filter.GetType ().ToString ();
 					r.FilterVersion = filter.Version;
 
@@ -300,6 +304,9 @@ namespace Beagle.Daemon {
 				}
 				
 				AdjustItemCount (1);
+
+				// Clean up any temporary files associated with filtering this indexable.
+				indexable.Cleanup ();
 			}
 
 			if (text_cache != null)

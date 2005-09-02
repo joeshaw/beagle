@@ -52,15 +52,6 @@ namespace Beagle.Daemon {
 
 		//////////////////////////
 
-		private bool delete_content;
-
-		public bool DeleteContent {
-			get { return this.delete_content; }
-			set { this.delete_content = value; }
-		}
-
-		//////////////////////////
-
 		private ArrayList supported_flavors = new ArrayList ();
 		
 		protected void AddSupportedFlavor (FilterFlavor flavor) 
@@ -322,6 +313,7 @@ namespace Beagle.Daemon {
 
 		protected void Error ()
 		{
+			Cleanup (); // force the clean-up of temporary files on an error
 			has_error = true;
 		}
 
@@ -372,6 +364,8 @@ namespace Beagle.Daemon {
 			tempFile = Path.GetTempFileName ();
                         FileStream file_stream = File.OpenWrite (tempFile);
 
+			//Logger.Log.Debug ("Storing text in tempFile {0}", tempFile);
+
                         // When we dump the contents of a reader into a file, we
                         // expect to use it again soon.
                         FileAdvise.PreLoad (file_stream);
@@ -403,6 +397,8 @@ namespace Beagle.Daemon {
 		{
 			tempFile = Path.GetTempFileName ();
                         FileStream file_stream = File.OpenWrite (tempFile);
+			
+			//Logger.Log.Debug ("Storing stream in tempFile {0}", tempFile);
 
                         // When we dump the contents of a reader into a file, we
                         // expect to use it again soon.
@@ -485,6 +481,7 @@ namespace Beagle.Daemon {
 					return false;				
 			} catch (Exception e) {
 				Logger.Log.Warn ("Unable to filter {0}: {1}", info.FullName, e.Message);
+				Cleanup (); // clean up temporary files on an exception
 				return false;
 			}
 
@@ -538,6 +535,8 @@ namespace Beagle.Daemon {
 
 		private void Close ()
 		{
+			Cleanup ();
+
 			if (currentStream == null)
 				return;
 
@@ -556,18 +555,17 @@ namespace Beagle.Daemon {
 
 			if (snippetWriter != null)
 				snippetWriter.Close ();
+		}
 
-			if (tempFile != null)
-				File.Delete (tempFile);
-
-			if (currentInfo != null && this.DeleteContent) {
+		public void Cleanup ()
+		{
+			if (tempFile != null) {
 				try {
-					currentInfo.Delete ();
-				} catch (Exception e) {
-					Logger.Log.Debug ("Caught exception trying to delete {0} in filter '{1}'",
-							  currentInfo.FullName, Name);
-					Logger.Log.Debug (e);					
+					File.Delete (tempFile);
+				} catch (Exception ex) {
+					// Just in case it is gone already
 				}
+				tempFile = null;
 			}
 		}
 
