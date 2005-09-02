@@ -101,6 +101,11 @@ namespace Beagle.Daemon.FileSystemQueryable {
 				current_generator = new DirectoryIndexableGenerator (queryable, current_dir);
 			} catch (DirectoryNotFoundException ex) {
 				Logger.Log.Debug ("Couldn't crawl '{0}'", current_dir.FullName);
+
+				// FIXME: If our attempt to crawl the directory fails, just
+				// mark it as clean and move on.  This isn't optimal behavior,
+				// but works around bugs involving weird permissions for now.
+				queryable.DoneCrawlingOneDirectory (current_dir);
 				current_dir = null;
 			}
 			
