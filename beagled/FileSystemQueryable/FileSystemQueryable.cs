@@ -360,17 +360,8 @@ namespace Beagle.Daemon.FileSystemQueryable {
 			if (Debug) 
 				Logger.Log.Debug ("Expired '{0}'", expired_path);
 
-#if false
-			DirectoryModel dir = (DirectoryModel) dir_models_by_id [unique_id];
-			if (dir != null && dir.WatchHandle != null)
-				event_backend.ForgetWatch (dir.WatchHandle);
-#endif
-			lock (dir_models_by_id)
+			lock (dir_models_by_path)
 				dir_models_by_path.Remove (expired_path);
-
-#if false
-			dir_models_by_id.Remove (unique_id);
-#endif
 		}
 
 		public void AddDirectory (DirectoryModel parent, string name)
@@ -553,6 +544,17 @@ namespace Beagle.Daemon.FileSystemQueryable {
 			ActivateFileCrawling ();
 		}
 
+		private void ForgetDirectoryRecursively (DirectoryModel dir)
+		{
+			foreach (DirectoryModel child in dir.Children)
+				ForgetDirectoryRecursively (child);
+
+			if (dir.WatchHandle != null)
+				event_backend.ForgetWatch (dir.WatchHandle);
+			dir_models_by_id.Remove (dir.UniqueId);
+			// We rely on the expire event to remove it from dir_models_by_path
+		}
+
 		private void RemoveDirectory (DirectoryModel dir)
 		{
 			Uri uri;
@@ -565,6 +567,9 @@ namespace Beagle.Daemon.FileSystemQueryable {
 			// easily remap it in the PostRemoveHook.
 			indexable.LocalState ["RemovedUri"] = UriFu.PathToFileUri (dir.FullName);
 
+			// Forget watches and internal references
+			ForgetDirectoryRecursively (dir);
+			
 			// Calling Remove will expire the path names,
 			// so name caches will be cleaned up accordingly.
 			dir.Remove ();
