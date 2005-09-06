@@ -746,6 +746,7 @@ namespace Beagle.Util {
 			Hook pre_hook = null;
 			Hook post_hook = null;
 			ArrayList to_be_executed = new ArrayList ();
+			Hashtable max_priority_by_source = new Hashtable ();
 
 			while (running) {
 
@@ -766,15 +767,47 @@ namespace Beagle.Util {
 					// the next one to execute.
 					DateTime now = DateTime.Now;
 					DateTime next_trigger_time = DateTime.MaxValue;
+
+					// Make a first pass over our tasks, finding the
+					// highest-priority item per source.
+					max_priority_by_source.Clear ();
+					foreach (Task task in tasks_by_tag.Values) {
+						if (task.Blocked || task.TriggerTime >= now)
+							continue;
+						if (max_priority_by_source.Contains (task.Source)) {
+							Priority p = (Priority) max_priority_by_source [task.Source];
+							if (p < task.Priority)
+								max_priority_by_source [task.Source] = task.Priority;
+						} else {
+							max_priority_by_source [task.Source] = task.Priority;
+						}
+					}
+					
+					// Now make a second pass over the tasks and find
+					// the highest-priority item.  We use the information
+					// from the first pass to correctly prioritize maintenance tasks.
 					Task next_task = null;
 					foreach (Task task in tasks_by_tag.Values) {
 						if (task.Blocked)
 							continue;
+						if (task.TriggerTime >= now) {
+							if (task.TriggerTime < next_trigger_time)
+								next_trigger_time = task.TriggerTime;
+							continue;
+						}
+						
+						// If this is a maintenance task and there is a high-priority
+						// task from the same source, skip it.
+						if (task.Priority == Priority.Maintenance) {
+							Priority p = (Priority) max_priority_by_source [task.Source];
+							if (p > task.Priority)
+								continue;
+						}
+
 						if (task.TriggerTime < now) {
 							if (next_task == null || next_task.CompareTo (task) < 0)
 								next_task = task;
-						} else if (task.TriggerTime < next_trigger_time)
-							next_trigger_time = task.TriggerTime;
+						}
 					}
 
 					// If we didn't find a task, wait for the next trigger-time

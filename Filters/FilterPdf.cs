@@ -97,7 +97,7 @@ namespace Beagle.Filters {
 			Process pc = new Process ();
 			pc.StartInfo.FileName = "pdftotext";
 			// FIXME: We probably need to quote special chars in the path
-			pc.StartInfo.Arguments = String.Format ("-nopgbrk -enc UTF-8 \"{0}\" -", FileInfo.FullName);
+			pc.StartInfo.Arguments = String.Format ("-q -nopgbrk -enc UTF-8 \"{0}\" -", FileInfo.FullName);
 			pc.StartInfo.RedirectStandardInput = false;
 			pc.StartInfo.RedirectStandardOutput = true;
 			pc.StartInfo.UseShellExecute = false;
