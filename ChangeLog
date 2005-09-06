@@ -1,3 +1,7 @@
+2005-09-06  Ilkka Tuohela  <hile@iki.fi>
+
+	* configure.in: Added fi to ALL_LINGUAS
+
 2005-09-01  Chris Lahey  <clahey@ximian.com>
 
 	* Util/gnome.cs: Use file_mime_type stuff and use slow if file
