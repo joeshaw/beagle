@@ -269,7 +269,7 @@ namespace Beagle {
 		{
 			if (DeleteContent) {
 				if (contentUri != null) {
-					Logger.Log.Debug ("Cleaning up {0}", contentUri.LocalPath);
+					//Logger.Log.Debug ("Cleaning up {0}", contentUri.LocalPath);
 					try {
 						File.Delete (contentUri.LocalPath);
 					} catch (Exception ex)
@@ -279,7 +279,7 @@ namespace Beagle {
 					contentUri = null;
 				}
 				if (hotContentUri != null) {
-					Logger.Log.Debug ("Cleaning up {0}", hotContentUri.LocalPath);
+					//Logger.Log.Debug ("Cleaning up {0}", hotContentUri.LocalPath);
 					try {
 						File.Delete (hotContentUri.LocalPath);
 					} catch (Exception ex)
