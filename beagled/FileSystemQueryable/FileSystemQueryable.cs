@@ -970,7 +970,7 @@ namespace Beagle.Daemon.FileSystemQueryable {
 			indexable.LocalState ["RemovedUri"] = file_uri;
 
 			Scheduler.Task task;
-			task = NewRemoveTask (uri);
+			task = NewAddTask (indexable);
 			task.Priority = Scheduler.Priority.Immediate;
 			ThisScheduler.Add (task);
 		}
