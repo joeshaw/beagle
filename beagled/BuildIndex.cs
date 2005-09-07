@@ -109,7 +109,7 @@ namespace Beagle.Daemon
 					int j = next_arg.IndexOf (":");
 
 					if (j == -1) {
-						Console.WriteLine ("Invalid remap argument: {0}", next_arg);
+						Logger.Log.Error ("Invalid remap argument: {0}", next_arg);
 						Environment.Exit (1);
 					}
 					
@@ -172,9 +172,14 @@ namespace Beagle.Daemon
 			argv = args;
 
 			/////////////////////////////////////////////////////////
+
+			if (arg_output == null) {
+				Logger.Log.Error ("--target must be specified");
+				Environment.Exit (1);
+			}
 			
 			if (!Directory.Exists (Path.GetDirectoryName (arg_output))) {
-				Console.WriteLine ("Index directory not available for construction: {0}", arg_output);
+				Logger.Log.Error ("Index directory not available for construction: {0}", arg_output);
 				Environment.Exit (1);
 			}
 
