@@ -119,5 +119,15 @@ namespace Beagle.Daemon {
 		public bool IsEmpty {
 			get { return Count == 0 && ! OptimizeIndex; }
 		}
+
+		public void Cleanup ()
+		{
+			if (indexables_by_uri != null)
+				foreach (Indexable i in indexables_by_uri.Values)
+					i.Cleanup ();
+			else
+				foreach (Indexable i in indexables)
+					i.Cleanup ();
+		}
 	}
 }

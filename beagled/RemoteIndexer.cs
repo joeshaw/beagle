@@ -90,6 +90,7 @@ namespace Beagle.Daemon {
 
 			if (response == null) {
 				Logger.Log.Error ("Something terrible happened --- Flush failed");
+				request.Cleanup ();
 				return null;
 			}
 			

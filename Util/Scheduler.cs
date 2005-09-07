@@ -215,8 +215,10 @@ namespace Beagle.Util {
 
 			public void Cancel ()
 			{
-				if (! cancelled)
+				if (! cancelled) {
 					DecrementAllTaskGroups ();
+					Cleanup (); // clean up after cancelled tasks
+				}
 				cancelled = true;
 			}
 
@@ -284,7 +286,31 @@ namespace Beagle.Util {
 
 			///////////////////////////////
 
+			// Clean-up is called whenever we know that a task will never
+			// be executed.  It is never called on tasks for who DoTaskReal
+			// has been called (except when rescheduled).  Cleanup is also
+			// called when a task is cancelled.
+
+			public void Cleanup ()
+			{
+				try {
+					DoCleanup ();
+				} catch (Exception ex) {
+					Logger.Log.Warn ("Caught exception cleaning up task '{0}'", Tag);
+					Logger.Log.Warn (ex);
+				}
+			}
+
+			protected virtual void DoCleanup ()
+			{
+				// Do nothing by default
+			}
+
+			///////////////////////////////
+
 			// Sort from lowest to highest priority
+			// FIXME: This does not define a total ordering
+			// on the set of all tasks, so use it with care.
 			public int CompareTo (object obj)
 			{
 				Task other = obj as Task;
@@ -943,6 +969,10 @@ namespace Beagle.Util {
 			foreach (Task task in shutdown_task_queue)
 				if (! task.Cancelled && ! task.Blocked)
 					task.DoTask ();
+
+			// Call Cleanup on all of our unexecuted tasks
+			foreach (Task task in tasks_by_tag.Values)
+				task.Cleanup ();
 
 			if (Debug)
 				Logger.Log.Debug ("Scheduler.Worker finished");

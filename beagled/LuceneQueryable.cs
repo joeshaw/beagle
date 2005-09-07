@@ -110,6 +110,8 @@ namespace Beagle.Daemon {
 
 			// Schedule an optimize, just in case
 			ScheduleOptimize ();
+
+			Shutdown.ShutdownEvent += new Shutdown.ShutdownHandler (OnShutdownEvent);
 		}
 
 		protected string IndexName {
@@ -137,6 +139,26 @@ namespace Beagle.Daemon {
 		virtual public void Start ()
 		{
 
+		}
+
+		/////////////////////////////////////////
+
+		virtual protected void ShutdownHook ()
+		{
+
+		}
+
+		private void OnShutdownEvent ()
+		{
+			lock (request_lock) 
+				pending_request.Cleanup ();
+
+			try {
+				ShutdownHook ();
+			} catch (Exception ex) {
+				Logger.Log.Warn ("Caught exception in shutdown hook");
+				Logger.Log.Warn (ex);
+			}
 		}
 
 		/////////////////////////////////////////
@@ -421,6 +443,11 @@ namespace Beagle.Daemon {
 					else
 						queryable.ConditionalFlush ();
 				}
+			}
+
+			override protected void DoCleanup ()
+			{
+				indexable.Cleanup ();
 			}
 		}
 
