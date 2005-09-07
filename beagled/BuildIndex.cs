@@ -44,7 +44,7 @@ namespace Beagle.Daemon
 	{
 		static string [] argv;
 
-		static bool arg_recursive = false, arg_debug = false, arg_cache_text = false, arg_disable_filtering = false;
+		static bool arg_recursive = false, arg_debug = false, arg_cache_text = false, arg_disable_filtering = false, arg_disable_restart = false;
 
 		static Hashtable remap_table = new Hashtable ();
 
@@ -158,6 +158,10 @@ namespace Beagle.Daemon
 					++i;
 					break;
 
+				case "--disable-restart":
+					arg_disable_restart = true;
+					break;
+
 				default:
 					string path = Path.IsPathRooted (arg) ? arg : Path.GetFullPath (arg);
 					
@@ -209,7 +213,7 @@ namespace Beagle.Daemon
 			// Set up signal handlers
 			SetupSignalHandlers ();
 
-			Thread crawl_thread, index_thread, monitor_thread;
+			Thread crawl_thread, index_thread, monitor_thread = null;
 
 			// Start the thread that does the crawling
 			crawl_thread = ExceptionHandlingThread.Start (new ThreadStart (CrawlWorker));
@@ -217,13 +221,16 @@ namespace Beagle.Daemon
 			// Start the thread that does the actual indexing
 			index_thread = ExceptionHandlingThread.Start (new ThreadStart (IndexWorker));
 
-			// Start the thread that monitors memory usage.
-			monitor_thread = ExceptionHandlingThread.Start (new ThreadStart (MemoryMonitorWorker));
+			if (!arg_disable_restart) {
+				// Start the thread that monitors memory usage.
+				monitor_thread = ExceptionHandlingThread.Start (new ThreadStart (MemoryMonitorWorker));
+			}
 
 			// Join all the threads so that we know that we're the only thread still running
 			crawl_thread.Join ();
 			index_thread.Join ();
-			monitor_thread.Join ();
+			if (monitor_thread != null)
+				monitor_thread.Join ();
 
 			if (restart) {
 				Logger.Log.Debug ("Restarting helper");
@@ -466,6 +473,7 @@ namespace Beagle.Daemon
 				"  --disable-filtering\t\tDisable all filtering of files. Only index attributes.\n" + 
 				"  --allow-pattern [pattern]\tOnly allow files that match the pattern to be indexed.\n" + 
 				"  --deny-pattern [pattern]\tKeep any files that match the pattern from being indexed.\n" + 
+				"  --disable-restart\t\tDon't restart when memory usage gets above a certain threshold.\n" +
 				"  --debug\t\t\tEcho verbose debugging information.\n";
 			
 			Console.WriteLine (usage);
