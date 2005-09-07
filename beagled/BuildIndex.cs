@@ -162,20 +162,34 @@ namespace Beagle.Daemon
 					string path = Path.IsPathRooted (arg) ? arg : Path.GetFullPath (arg);
 					
 					if (Directory.Exists (path))
-							pending_directories.Enqueue (new DirectoryInfo (path));
+						pending_directories.Enqueue (new DirectoryInfo (path));
 					else if (File.Exists (path))
 						pending_files.Enqueue (new FileInfo (path));
 					break;
 				}
 			}
-
+			
 			argv = args;
-
+			
 			/////////////////////////////////////////////////////////
-
+				
 			if (arg_output == null) {
 				Logger.Log.Error ("--target must be specified");
 				Environment.Exit (1);
+			}
+
+			foreach (FileSystemInfo info in pending_directories) {
+				if (Path.GetFullPath (arg_output) == info.FullName) {
+					Logger.Log.Error ("Target directory cannot be one of the source paths.");
+					Environment.Exit (1);
+				}
+			}
+
+			foreach (FileSystemInfo info in pending_files) {
+				if (Path.GetFullPath (arg_output) == info.FullName) {
+					Logger.Log.Error ("Target directory cannot be one of the source paths.");
+					Environment.Exit (1);
+				}
 			}
 			
 			if (!Directory.Exists (Path.GetDirectoryName (arg_output))) {
