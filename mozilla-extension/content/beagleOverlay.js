@@ -177,14 +177,19 @@ function beaglePageLoad(event)
   if (!beagleShouldIndex (page))
     return;
 
-  dump("beaglePageLoad : storing page: " + page.location.href + "\n");
+  if (!gFile.exists (gEnv.get("HOME") + "/.beagle")) {
+    dump("beaglePageLoad: ~/.beagle doesn't exist, not indexing");
+    return;
+  }
+
+  dump("beaglePageLoad: storing page: " + page.location.href + "\n");
 
   if (!gFile.exists(gPath)) {
     try {
       gDir.create ();
-      dump ("beagleInit: Created .beagle/firefox\n");
+      dump ("beaglePageLoad: Created .beagle/firefox\n");
     } catch(e) {
-      dump ("beagleInit: Unable to create .beagle/firefox: " + e + "\n");
+      dump ("beaglePageLoad: Unable to create .beagle/firefox: " + e + "\n");
     }
   }
 
