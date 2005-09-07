@@ -1,0 +1,752 @@
+# translation of beagle.HEAD.po to Hebrew
+# This file is distributed under the same license as the PACKAGE package.
+# Yuval Tanny, 2005.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: beagle.HEAD\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2005-09-04 02:50+0000\n"
+"PO-Revision-Date: 2005-09-06 14:19+0300\n"
+"Last-Translator: Yuval Tanny\n"
+"Language-Team: Hebrew <he@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms:  nplurals=2; plural=(n != 1);\n"
+"X-Generator: KBabel 1.10.2\n"
+
+#: ../Best/Best.cs:132
+msgid ""
+"If you're wondering whether Best is working check your notification area "
+"(system tray)"
+msgstr "כדי לדעת אם Beast פועל, בדוק את אזור ההתראה (מגש מערכת)"
+
+#: ../Best/BestTray.cs:149
+msgid "Disable Searching"
+msgstr "בטל חיפוש"
+
+#: ../Best/BestTray.cs:150
+msgid ""
+"You are about to close the search tray. The search tray is automatically "
+"started at login-time. Would you like to disable it for future sessions?"
+msgstr "אתה עומד לסגור את מגש החיפוש. מגש החיפוש מופעל באופן אוטומטי בהפעלה. האם ברצונך לבטל להפעלות עתידות?"
+
+#: ../Best/BestTray.cs:207
+msgid "No Recent Searches"
+msgstr "אין חיפושים אחרונים"
+
+#: ../Best/BestTray.cs:212
+msgid "Recent Searches"
+msgstr "חיפושים אחרונים"
+
+#: ../Best/BestTray.cs:228
+msgid "Clear"
+msgstr "נקה"
+
+#: ../Best/BestTray.cs:236
+msgid "Quit"
+msgstr "יציאה"
+
+#: ../Best/BestWindow.cs:306
+msgid "Anywhere"
+msgstr "בכל מקום"
+
+#: ../Best/BestWindow.cs:310
+msgid "in Files"
+msgstr "בקבצים"
+
+#: ../Best/BestWindow.cs:314
+msgid "in Addressbook"
+msgstr "פנקס כתובות"
+
+#: ../Best/BestWindow.cs:318
+msgid "in Mail"
+msgstr "בדואר"
+
+#: ../Best/BestWindow.cs:322
+msgid "in Web Pages"
+msgstr "בדפי רשת"
+
+#: ../Best/BestWindow.cs:326
+msgid "in Chats"
+msgstr "בצ'אטים"
+
+#: ../Best/BestWindow.cs:343
+msgid "Search terms:"
+msgstr "חפש מושגים:"
+
+#: ../Best/BestWindow.cs:367
+msgid "Find"
+msgstr "מצא"
+
+#: ../Best/BestWindow.cs:384
+msgid "Show More Results"
+msgstr "הראה יותר תוצאות"
+
+#: ../Best/BestWindow.cs:390
+msgid "Show Previous Results"
+msgstr "הראה תוצאות קודמות"
+
+#: ../Best/BestWindow.cs:424
+msgid "No results."
+msgstr "אין תוצרות."
+
+#. To translators: {0} is the current count of results shown of {1} in total, this is the message that is initially shown
+#. when results are returned to the user.
+#: ../Best/BestWindow.cs:428
+#, csharp-format
+msgid "Best <b>{0} results of {1}</b> are shown."
+msgstr "מוצגות <b>{0} התוצאות הכי טובות מתוך {1}</b>."
+
+#. To translators: {0} to {1} is the interval of results currently shown of {2} results in total
+#: ../Best/BestWindow.cs:433
+#, csharp-format
+msgid "Results <b>{0} through {1} of {2}</b> are shown."
+msgstr "מוצגות תוצאות <b>{0} עד {1} מתוך {2}</b>"
+
+#. To translators: {0} represents the current query keywords
+#: ../Best/BestWindow.cs:542
+#, csharp-format
+msgid ""
+"The query for <i>{0}</i> failed.<br>The likely cause is that the beagle "
+"daemon isn't running."
+msgstr ""
+"החיפוש של <i>{0}</i> נכשל. <br> "
+"זה בד\"כ נגרם משום שהשירות beagle  לא רץ."
+
+#. To translators: {0} represents the current query keywords, {1} contains the errormessage
+#: ../Best/BestWindow.cs:547
+#, csharp-format
+msgid "The query for <i>{0}</i> failed with error:<br>{1}<br>"
+msgstr ""
+"החיפוש של <i>{0}</i> נכשל עם שגיאה: "
+"<br>{1}<br>"
+
+#: ../glue/eggtrayicon.c:127
+msgid "Orientation"
+msgstr ""
+
+#: ../glue/eggtrayicon.c:128
+msgid "The orientation of the tray."
+msgstr ""
+
+#: ../ImLogViewer/ImLogViewer.glade.h:1
+msgid "<b>Conversations History</b>"
+msgstr "<b>היסטוריית שיחות</b>"
+
+#: ../ImLogViewer/ImLogViewer.glade.h:2
+msgid "IM Viewer"
+msgstr "מציג מסרים מידיים"
+
+#: ../ImLogViewer/ImLogWindow.cs:87
+#, csharp-format
+msgid "Conversations in {0}"
+msgstr "שיחות ב־{0}"
+
+#: ../ImLogViewer/ImLogWindow.cs:94
+#, csharp-format
+msgid "Conversations with {0}"
+msgstr "שיחות עם {0}"
+
+#: ../Tiles/TileDocs.cs:77
+msgid "Pages:"
+msgstr "עמודים:"
+
+#: ../Tiles/TileDocs.cs:81
+msgid "Words:"
+msgstr "מלים:"
+
+#: ../Tiles/TileFolder.cs:53
+msgid "Empty"
+msgstr "ריק"
+
+#: ../Tiles/TileFolder.cs:55
+#, csharp-format
+msgid "Contains {0} Item"
+msgid_plural "Contains {0} Items"
+msgstr[0] "מכיל פריט אחד"
+msgstr[1] "מכיל {0} פריטים"
+
+#: ../Tiles/TileImLog.cs:67
+msgid "Send Mail"
+msgstr "שלח דואר"
+
+#. For translators: From template Tiles/template-mail-message.html
+#: ../Tiles/TileImLog.cs:71 ../Tiles/TranslationHack.cs:52
+msgid "Send IM"
+msgstr "שלח מסר מיידי"
+
+#: ../Tiles/TileImLog.cs:77
+#, csharp-format
+msgid "Conversation in {0}"
+msgstr "שיחות ב־{0}"
+
+#: ../Tiles/TileImLog.cs:79
+#, csharp-format
+msgid "Conversation with {0}"
+msgstr "שיחות עם {0}"
+
+#: ../Tiles/TileMailMessage.cs:81
+msgid "No Subject"
+msgstr "אין נושא"
+
+#: ../Tiles/TileMailMessage.cs:88
+msgid "To"
+msgstr "אל"
+
+#: ../Tiles/TileMailMessage.cs:88
+msgid "From"
+msgstr "מ"
+
+#: ../Tiles/TileMailMessage.cs:116
+msgid "Sent"
+msgstr "נשלח"
+
+#: ../Tiles/TileMailMessage.cs:116
+msgid "Received"
+msgstr "התקבל"
+
+#: ../Tiles/TileMailMessage.cs:124
+msgid "Email attachment"
+msgstr "תצריף לדוא\"ל"
+
+#. For translators: From template Tiles/template-blog.html
+#: ../Tiles/TranslationHack.cs:6
+msgid "Weblog:"
+msgstr "בלוג:"
+
+#. For translators: From template Tiles/template-blog.html
+#: ../Tiles/TranslationHack.cs:8
+msgid "by"
+msgstr "נכתב ע\"י"
+
+#. For translators: From template Tiles/template-blog.html
+#: ../Tiles/TranslationHack.cs:10
+msgid "Published:"
+msgstr "התפרסם:"
+
+#. For translators: From template Tiles/template-blog.html
+#. For translators: From template Tiles/template-docs.html
+#. For translators: From template Tiles/template-file.html
+#. For translators: From template Tiles/template-folder.html
+#. For translators: From template Tiles/template-launcher.html
+#. For translators: From template Tiles/template-mail-message.html
+#. For translators: From template Tiles/template-music.html
+#. For translators: From template Tiles/template-note.html
+#. For translators: From template Tiles/template-picture.html
+#. For translators: From template Tiles/template-presentation.html
+#. For translators: From template Tiles/template-spreadsheet.html
+#. For translators: From template Tiles/template-web-history.html
+#. For translators: From template Tiles/template-network.html
+#. For translators: From template Tiles/template-im-log.html
+#: ../Tiles/TranslationHack.cs:12 ../Tiles/TranslationHack.cs:22
+#: ../Tiles/TranslationHack.cs:32 ../Tiles/TranslationHack.cs:40
+#: ../Tiles/TranslationHack.cs:44 ../Tiles/TranslationHack.cs:50
+#: ../Tiles/TranslationHack.cs:58 ../Tiles/TranslationHack.cs:66
+#: ../Tiles/TranslationHack.cs:76 ../Tiles/TranslationHack.cs:92
+#: ../Tiles/TranslationHack.cs:106 ../Tiles/TranslationHack.cs:114
+#: ../Tiles/TranslationHack.cs:118 ../Tiles/TranslationHack.cs:122
+msgid "Open"
+msgstr "פתח"
+
+#. For translators: From template Tiles/template-docs.html
+#. For translators: From template Tiles/template-file.html
+#. For translators: From template Tiles/template-folder.html
+#. For translators: From template Tiles/template-picture.html
+#. For translators: From template Tiles/template-presentation.html
+#. For translators: From template Tiles/template-spreadsheet.html
+#: ../Tiles/TranslationHack.cs:14 ../Tiles/TranslationHack.cs:28
+#: ../Tiles/TranslationHack.cs:38 ../Tiles/TranslationHack.cs:68
+#: ../Tiles/TranslationHack.cs:82 ../Tiles/TranslationHack.cs:98
+msgid "in folder"
+msgstr "בתיקייה"
+
+#. For translators: From template Tiles/template-docs.html
+#. For translators: From template Tiles/template-file.html
+#. For translators: From template Tiles/template-presentation.html
+#. For translators: From template Tiles/template-spreadsheet.html
+#: ../Tiles/TranslationHack.cs:16 ../Tiles/TranslationHack.cs:30
+#: ../Tiles/TranslationHack.cs:84 ../Tiles/TranslationHack.cs:100
+msgid "Last modified"
+msgstr "שונה לאחרונה"
+
+#. For translators: From template Tiles/template-docs.html
+#. For translators: From template Tiles/template-presentation.html
+#. For translators: From template Tiles/template-spreadsheet.html
+#: ../Tiles/TranslationHack.cs:18 ../Tiles/TranslationHack.cs:86
+#: ../Tiles/TranslationHack.cs:102
+msgid "Title:"
+msgstr "כותרת:"
+
+#. For translators: From template Tiles/template-docs.html
+#. For translators: From template Tiles/template-presentation.html
+#. For translators: From template Tiles/template-spreadsheet.html
+#: ../Tiles/TranslationHack.cs:20 ../Tiles/TranslationHack.cs:88
+#: ../Tiles/TranslationHack.cs:104
+msgid "Author:"
+msgstr "מחבר:"
+
+#. For translators: From template Tiles/template-docs.html
+#. For translators: From template Tiles/template-file.html
+#. For translators: From template Tiles/template-picture.html
+#. For translators: From template Tiles/template-presentation.html
+#. For translators: From template Tiles/template-spreadsheet.html
+#: ../Tiles/TranslationHack.cs:24 ../Tiles/TranslationHack.cs:34
+#: ../Tiles/TranslationHack.cs:78 ../Tiles/TranslationHack.cs:94
+#: ../Tiles/TranslationHack.cs:108
+msgid "Send to..."
+msgstr "נשלח אל..."
+
+#. For translators: From template Tiles/template-docs.html
+#. For translators: From template Tiles/template-file.html
+#. For translators: From template Tiles/template-music.html
+#. For translators: From template Tiles/template-picture.html
+#. For translators: From template Tiles/template-presentation.html
+#. For translators: From template Tiles/template-spreadsheet.html
+#: ../Tiles/TranslationHack.cs:26 ../Tiles/TranslationHack.cs:36
+#: ../Tiles/TranslationHack.cs:62 ../Tiles/TranslationHack.cs:80
+#: ../Tiles/TranslationHack.cs:96 ../Tiles/TranslationHack.cs:110
+msgid "Reveal in file manager"
+msgstr "הראה במנהל קבצים"
+
+#. For translators: From template Tiles/template-launcher.html
+#: ../Tiles/TranslationHack.cs:42
+msgid "Application:"
+msgstr "יישום:"
+
+#. For translators: From template Tiles/template-mail-message.html
+#: ../Tiles/TranslationHack.cs:46
+msgid "Email subject:"
+msgstr "נושא הדוא\"ל:"
+
+#. For translators: From template Tiles/template-mail-message.html
+#: ../Tiles/TranslationHack.cs:48
+msgid "Folder:"
+msgstr "תיקייה:"
+
+#. For translators: From template Tiles/template-music.html
+#: ../Tiles/TranslationHack.cs:54
+msgid "Track"
+msgstr "רצועה"
+
+#. For translators: From template Tiles/template-music.html
+#: ../Tiles/TranslationHack.cs:56
+msgid "from"
+msgstr "מ"
+
+#. For translators: From template Tiles/template-music.html
+#: ../Tiles/TranslationHack.cs:60
+msgid "Enqueue"
+msgstr ""
+
+#. For translators: From template Tiles/template-note.html
+#: ../Tiles/TranslationHack.cs:64
+msgid "last modified"
+msgstr "שונה לאחרונה"
+
+#. For translators: From template Tiles/template-picture.html
+#: ../Tiles/TranslationHack.cs:70
+msgid "Modified:"
+msgstr "השתנה:"
+
+#. For translators: From template Tiles/template-picture.html
+#: ../Tiles/TranslationHack.cs:72
+msgid "Tags:"
+msgstr "תוויות:"
+
+#. For translators: From template Tiles/template-picture.html
+#: ../Tiles/TranslationHack.cs:74
+msgid "Description:"
+msgstr "תיאור:"
+
+#. For translators: From template Tiles/template-presentation.html
+#: ../Tiles/TranslationHack.cs:90
+msgid "Slides:"
+msgstr "שקופיות:"
+
+#. For translators: From template Tiles/template-web-history.html
+#: ../Tiles/TranslationHack.cs:112
+msgid "Last viewed:"
+msgstr "נראה לאחרונה"
+
+#. For translators: From template Tiles/template-network.html
+#: ../Tiles/TranslationHack.cs:116
+msgid "from Networked Beagle on host"
+msgstr ""
+
+#. For translators: From template Tiles/template-network.html
+#: ../Tiles/TranslationHack.cs:120
+msgid "Search Networked Beagle"
+msgstr ""
+
+#: ../tools/Settings.cs:214
+msgid "Reload configuration"
+msgstr "טוען הגדרות מחדש"
+
+#: ../tools/Settings.cs:215
+msgid ""
+"The configuration file has been modified by another application. Do you wish "
+"to discard the currently displayed values and reload configuration from disk?"
+msgstr ""
+
+#: ../tools/Settings.cs:253
+msgid "Select Path"
+msgstr "נתיב חיפוש"
+
+#: ../tools/Settings.cs:272
+msgid "The selected path is already selected for indexing and wasn't added."
+msgstr ""
+
+#: ../tools/Settings.cs:275
+msgid ""
+"The selected path wasn't added. The list contains items that supercedes it "
+"and the data is already being indexed."
+msgstr ""
+
+#: ../tools/Settings.cs:286 ../tools/Settings.cs:478
+msgid "Path not added"
+msgstr ""
+
+#: ../tools/Settings.cs:295
+msgid "Remove obsolete paths"
+msgstr ""
+
+#: ../tools/Settings.cs:296
+msgid ""
+"Adding this path will obsolete some of the existing include paths. This will "
+"result in the removal of the old obsolete paths. Do you still wish to add it?"
+msgstr ""
+
+#: ../tools/Settings.cs:322
+msgid "Remove path"
+msgstr ""
+
+#: ../tools/Settings.cs:323
+msgid ""
+"Are you sure you wish to remove this path from the list of directories to be "
+"included for indexing?"
+msgstr ""
+
+#: ../tools/Settings.cs:352
+msgid "Remove item"
+msgstr ""
+
+#: ../tools/Settings.cs:353
+msgid ""
+"Are you sure you wish to remove this item from the list of data to be "
+"excluded from indexing?"
+msgstr ""
+
+#: ../tools/Settings.cs:396
+msgid "Invalid host entry"
+msgstr ""
+
+#: ../tools/Settings.cs:403
+msgid "Remote host already present in the list."
+msgstr ""
+
+#: ../tools/Settings.cs:412
+msgid "Netbeagle Node not added"
+msgstr ""
+
+#: ../tools/Settings.cs:428
+msgid "Remove host"
+msgstr ""
+
+#: ../tools/Settings.cs:429
+msgid "Are you sure you wish to remove this host from the list?"
+msgstr ""
+
+#: ../tools/Settings.cs:450
+msgid "Select path"
+msgstr ""
+
+#: ../tools/Settings.cs:469
+msgid "The selected path is already configured for external access."
+msgstr ""
+
+#: ../tools/Settings.cs:493
+msgid "Remove public path"
+msgstr ""
+
+#: ../tools/Settings.cs:494
+msgid "Are you sure you wish to remove this entry from the list of public paths?"
+msgstr ""
+
+#: ../tools/Settings.cs:539 ../tools/Settings.cs:628 ../tools/Settings.cs:706
+#: ../tools/Settings.cs:782 ../tools/Settings.cs:1121
+msgid "Name"
+msgstr ""
+
+#: ../tools/Settings.cs:622 ../tools/settings.glade.h:32
+msgid "Type"
+msgstr ""
+
+#: ../tools/Settings.cs:675 ../tools/Settings.cs:1055
+#: ../tools/settings.glade.h:24
+msgid "Path"
+msgstr ""
+
+#: ../tools/Settings.cs:678 ../tools/Settings.cs:1065
+msgid "Pattern"
+msgstr ""
+
+#: ../tools/Settings.cs:681 ../tools/Settings.cs:1060
+#: ../tools/settings.glade.h:22
+msgid "Mail Folder"
+msgstr ""
+
+#: ../tools/Settings.cs:1029
+msgid "Select Folder"
+msgstr ""
+
+#: ../tools/Settings.cs:1089
+msgid "Error adding path"
+msgstr ""
+
+#: ../tools/Settings.cs:1090
+msgid ""
+"The specified path could not be found and therefore it could not be added to "
+"the list of resources excluded for indexing."
+msgstr ""
+
+#: ../tools/Settings.cs:1120
+msgid "Show"
+msgstr ""
+
+#: ../tools/settings.glade.h:1
+msgid "<b>Add remote host</b>"
+msgstr ""
+
+#: ../tools/settings.glade.h:2
+msgid "<b>Add resource</b>"
+msgstr ""
+
+#: ../tools/settings.glade.h:3
+msgid "<b>Display</b>"
+msgstr ""
+
+#: ../tools/settings.glade.h:4
+msgid "<b>General</b>"
+msgstr ""
+
+#: ../tools/settings.glade.h:5
+msgid "<b>Networking</b>"
+msgstr ""
+
+#: ../tools/settings.glade.h:6
+msgid "<b>Privacy</b>"
+msgstr ""
+
+#: ../tools/settings.glade.h:7
+msgid "<b>Select mail folder</b>"
+msgstr ""
+
+#: ../tools/settings.glade.h:8
+msgid ""
+"Add a remote search-enabled host you wish \n"
+"to network with."
+msgstr ""
+
+#: ../tools/settings.glade.h:10
+msgid "Add any additional paths to be included for indexing."
+msgstr ""
+
+#: ../tools/settings.glade.h:11
+msgid "Add any remote search-enabled hosts you wish to network with"
+msgstr ""
+
+#: ../tools/settings.glade.h:12
+msgid "Address"
+msgstr ""
+
+#: ../tools/settings.glade.h:13
+msgid ""
+"Adjust which types of results should be visible, and in what order they "
+"should be presented when grouped by type."
+msgstr ""
+
+#: ../tools/settings.glade.h:14
+msgid "Allow external access to local search services"
+msgstr ""
+
+#: ../tools/settings.glade.h:15
+msgid "Alt"
+msgstr ""
+
+#: ../tools/settings.glade.h:16
+msgid "Ctrl"
+msgstr ""
+
+#: ../tools/settings.glade.h:17
+msgid "Directory Path"
+msgstr ""
+
+#: ../tools/settings.glade.h:18
+msgid "Display the search window by pressing"
+msgstr ""
+
+#: ../tools/settings.glade.h:19
+msgid "Filename Pattern"
+msgstr ""
+
+#: ../tools/settings.glade.h:20
+msgid "Index my home directory"
+msgstr ""
+
+#: ../tools/settings.glade.h:21
+msgid "Indexing"
+msgstr ""
+
+#: ../tools/settings.glade.h:23
+msgid "Networking"
+msgstr ""
+
+#: ../tools/settings.glade.h:25
+msgid "Please select a resource you wish to exclude from indexing."
+msgstr ""
+
+#: ../tools/settings.glade.h:26
+msgid "Please select the mail folder you wish to exclude from indexing. "
+msgstr ""
+
+#: ../tools/settings.glade.h:27
+msgid "Search"
+msgstr ""
+
+#: ../tools/settings.glade.h:28
+msgid "Search Preferences"
+msgstr ""
+
+#: ../tools/settings.glade.h:29
+msgid ""
+"Specify any resources, such as paths, patterns, mail folders or type of "
+"objects you wish to exclude from indexing."
+msgstr ""
+
+#: ../tools/settings.glade.h:30
+msgid "Specify paths that should be available for external access"
+msgstr ""
+
+#: ../tools/settings.glade.h:31
+msgid "Start search & indexing services automatically "
+msgstr ""
+
+#: ../Util/Evolution.cs:45 ../Util/Evolution.cs:163
+msgid "On This Computer"
+msgstr "על מחשב זה"
+
+#: ../Util/ExifData.cs:226
+msgid "Image Directory"
+msgstr "ספריית תמונות"
+
+#: ../Util/ExifData.cs:228
+msgid "Thumbnail Directory"
+msgstr "ספריית תמונות ממוזערות"
+
+#: ../Util/ExifData.cs:230
+msgid "Exif Directory"
+msgstr "ספריית Exif"
+
+#: ../Util/ExifData.cs:232
+msgid "GPS Directory"
+msgstr "ספריית GPS"
+
+#: ../Util/ExifData.cs:234
+msgid "InterOperability Directory"
+msgstr ""
+
+#: ../Util/ExifData.cs:236
+msgid "Unknown Directory"
+msgstr "ספרייה לא ידועה"
+
+#: ../Util/StringFu.cs:65
+msgid "Today"
+msgstr "היום"
+
+#: ../Util/StringFu.cs:67
+msgid "Yesterday"
+msgstr "אתמול"
+
+#. Translators: Example output: Aug 9
+#: ../Util/StringFu.cs:70
+msgid "MMM d"
+msgstr "d בMMMM"
+
+#. Translators: Example output: Aug 9, 2000
+#: ../Util/StringFu.cs:73
+msgid "MMM d, yyyy"
+msgstr "mm/dd/yy"
+
+#. Translators: Example output: 11:05 AM  (note h = 12-hour time)
+#: ../Util/StringFu.cs:76
+msgid "h:mm tt"
+msgstr "hh:mm"
+
+#. Translators: {0} is a date (e.g. 'Today' or 'Apr 23'), {1} is the time
+#: ../Util/StringFu.cs:82
+#, csharp-format
+msgid "{0}, {1}"
+msgstr ""
+
+#. To translators: {0} is the time of the day, eg. 13:45
+#: ../Util/StringFu.cs:99
+#, csharp-format
+msgid "Today, {0}"
+msgstr "היום, {0}"
+
+#. To translators: {0} is the time of the day, eg. 13:45
+#: ../Util/StringFu.cs:102
+#, csharp-format
+msgid "Yesterday, {0}"
+msgstr "אתמול, {0}"
+
+#. To translators: {0} is the number of days that have passed, {1} is the time of the day, eg. 13:45
+#: ../Util/StringFu.cs:105
+#, csharp-format
+msgid "{0} days ago, {1}"
+msgstr "לפני {0} ימים, {1}"
+
+#. Translators: Example output: January 3, 3:45 PM
+#: ../Util/StringFu.cs:110
+msgid "MMMM d, h:mm tt"
+msgstr "d בMMMM, hh:mm"
+
+#. Translators: Example output: March 23 2001, 10:04 AM
+#: ../Util/StringFu.cs:115
+msgid "MMMM d yyyy, h:mm tt"
+msgstr "d בMMMM yyyy, hh:mm"
+
+#: ../Util/StringFu.cs:125
+#, csharp-format
+msgid "{0} hour"
+msgid_plural "{0} hours"
+msgstr[0] "שעה"
+msgstr[1] "{0} שעות"
+
+#: ../Util/StringFu.cs:132
+#, csharp-format
+msgid "{0} minute"
+msgid_plural "{0} minutes"
+msgstr[0] "דקה"
+msgstr[1] "{0} דקות"
+
+#. Translators: {0} is a file size in bytes
+#: ../Util/StringFu.cs:148
+#, csharp-format
+msgid "{0} bytes"
+msgstr "{0} בתים"
+
+#. Translators: {0} is a file size in kilobytes
+#: ../Util/StringFu.cs:152
+#, csharp-format
+msgid "{0:0.0} KB"
+msgstr "{0:0.0} KB"
+
+#. Translators: {0} is a file size in megabytes
+#: ../Util/StringFu.cs:155
+#, csharp-format
+msgid "{0:0.0} MB"
+msgstr "{0:0.0} MB"
+
