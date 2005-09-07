@@ -507,7 +507,7 @@ namespace Beagle.Daemon.EvolutionMailDriver {
 					imap_url = imap_url.Substring (0, semicolon) + imap_url.Substring (user_end);
 
 				// Escape backslashes, which frequently appear when using IMAP against Exchange servers
-				this.imap_name.Replace ("\\", "%5c");
+				this.imap_name = this.imap_name.Replace ("\\", "%5c");
 
 				// Escape out additional @s in the name.  I hate the class libs so much.
 				int lastIdx = this.imap_name.LastIndexOf ('@');
@@ -528,7 +528,7 @@ namespace Beagle.Daemon.EvolutionMailDriver {
 				}
 			}
 
-			if (account_name == null) {
+			if (this.account_name == null) {
 				Logger.Log.Info ("Unable to determine account name for {0}", this.imap_name);
 				return false;
 			}
