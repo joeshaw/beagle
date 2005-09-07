@@ -76,7 +76,7 @@ namespace Beagle.Daemon.FileSystemQueryable {
 
 		//////////////////////////////////////////////////////////////////////////
 
-		private Hashtable pending_moves_uid_by_path = new Hashtable ();
+		private Hashtable cached_uid_by_path = new Hashtable ();
 
 		//////////////////////////////////////////////////////////////////////////
 
@@ -322,6 +322,33 @@ namespace Beagle.Daemon.FileSystemQueryable {
 			if (info == null)
 				return null;
 			return ToFullPath (info.Name, info.ParentId);
+		}
+
+		private void RegisterId (string name, DirectoryModel dir, Guid id)
+		{
+			cached_uid_by_path [Path.Combine (dir.FullName, name)] = id;
+		}
+
+		private void ForgetId (string path)
+		{
+			cached_uid_by_path.Remove (path);
+		}
+
+		// This works for files.  (It probably works for directories
+		// too, but you should use one of the more efficient means
+		// above if you know it is a directory.)
+		private Guid NameAndParentToId (string name, DirectoryModel dir)
+		{
+			string path;
+			path = Path.Combine (dir.FullName, name);
+
+			Guid unique_id;
+			if (cached_uid_by_path.Contains (path))
+				unique_id = (Guid) cached_uid_by_path [path];
+			else
+				unique_id = name_resolver.GetIdByNameAndParentId (name, dir.UniqueId);
+
+			return unique_id;
 		}
 
 		//////////////////////////////////////////////////////////////////////////
@@ -591,6 +618,13 @@ namespace Beagle.Daemon.FileSystemQueryable {
 					    DirectoryModel new_parent, // or null if we are just renaming
 					    string new_name)
 		{
+			if (dir == null) {
+				Logger.Log.Warn ("Couldn't find DirectoryModel for directory moving to '{0}' in '{1}', so it was hopefully never there.",
+						 new_name, new_parent.FullName);
+				AddDirectory (new_parent, new_name);
+				return;
+			}
+
 			if (dir.IsRoot)
 				throw new Exception ("Can't move root " + dir.FullName);
 
@@ -939,6 +973,8 @@ namespace Beagle.Daemon.FileSystemQueryable {
 			Guid unique_id;
 			unique_id = (attr != null) ? attr.UniqueId : Guid.NewGuid ();
 
+			RegisterId (name, dir, unique_id);
+
 			Indexable indexable;
 			indexable = FileToIndexable (path, unique_id, dir, false);
 
@@ -954,10 +990,10 @@ namespace Beagle.Daemon.FileSystemQueryable {
 			// Right?
 
 			Guid unique_id;
-			unique_id = name_resolver.GetIdByNameAndParentId (name, dir.UniqueId);
+			unique_id = NameAndParentToId (name, dir);
 			if (unique_id == Guid.Empty) {
-				Logger.Log.Warn ("Couldn't find unique id for '{0}' in '{1}' ({2})",
-						 name, dir.FullName, dir.UniqueId);
+				Logger.Log.Warn ("Could resolve unique id of '{0}' in '{1}' for removal, it is probably already gone",
+						 name, dir.FullName);
 				return;
 			}
 
@@ -998,36 +1034,27 @@ namespace Beagle.Daemon.FileSystemQueryable {
 				return;
 			}
 
-			string old_path;
-			old_path = Path.Combine (old_dir.FullName, old_name);
-
 			// We need to find the file's unique id.
 			// We can't look at the extended attributes w/o making
 			// assumptions about whether they follow around the
-			// file (EAs) or the path (sqlite), so here is what we do:
-			// (1) Look at the pending_moves_uid_by_path hash.  This will
-			//     contain info about things that aren't in the index yet.
-			// (2) If that fails, look in the index using the name resolver.
-			//     to the name resolver.
-			
+			// file (EAs) or the path (sqlite)...
 			Guid unique_id;
-			if (pending_moves_uid_by_path.Contains (old_path)) {
-				unique_id = (Guid) pending_moves_uid_by_path [old_path];
-				pending_moves_uid_by_path.Remove (old_path);
-			} else {
-				unique_id = name_resolver.GetIdByNameAndParentId (old_name, old_dir.UniqueId);
-				if (unique_id == Guid.Empty) {
-					Logger.Log.Warn ("Couldn't find unique id for '{0}' in '{1}' ({2})",
-							 old_name, old_dir.FullName, old_dir.UniqueId);
+			unique_id = NameAndParentToId (old_name, old_dir);
+			if (unique_id == Guid.Empty) {
+				// If we can't find the unique ID, we have to
+				// assume that the original file never made it
+				// into the index ---  thus we treat this as
+				// an Add.
+				AddFile (new_dir, new_name);
 				return;
-				}
 			}
-			
-			Logger.Log.Debug ("Guid of {0} is {1}", old_path, GuidFu.ToShortString (unique_id));
 
-			string new_path;
-			new_path = Path.Combine (new_dir.FullName, new_name);
-			pending_moves_uid_by_path [new_path] = unique_id;
+			RegisterId (new_name, new_dir, unique_id);
+
+			string old_path;
+			old_path = Path.Combine (old_dir.FullName, old_name);
+
+			ForgetId (old_path);
 
 			// FIXME: I think we need to be more conservative when we seen
 			// events in a directory that has not been fully scanned, just to
@@ -1116,13 +1143,14 @@ namespace Beagle.Daemon.FileSystemQueryable {
 
 				// This rename is now in the index, so we no longer need to keep
 				// track of the uid in memory.
-				pending_moves_uid_by_path.Remove (last_known_path);
+				ForgetId (last_known_path);
 
 				return;
 			}
 
 			string path;
 			path = (string) indexable.LocalState ["Path"];
+			ForgetId (path);
 
 			DirectoryModel parent;
 			parent = indexable.LocalState ["Parent"] as DirectoryModel;
@@ -1164,6 +1192,7 @@ namespace Beagle.Daemon.FileSystemQueryable {
 			if (external_uri == null)
 				throw new Exception ("No cached external Uri for " + receipt.Uri);
 			receipt.Uri = external_uri;
+			ForgetId (external_uri.LocalPath);
 		}
 
 		private bool RemapUri (Hit hit)
