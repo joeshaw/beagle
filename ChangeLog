@@ -1,3 +1,8 @@
+2005-09-08  Debajyoti Bera <dbera.web@gmail.com>
+
+	* beagled/ExtractContent.cs: Fixed crasher #314716 and added
+	mimetype option to beagle-extract-content
+
 2005-09-07  Yair Hershkovitz  <yairhr@gmail.com>
 
 	* configure.in: Added "he" to ALL_LINGUAS

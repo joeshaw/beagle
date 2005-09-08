@@ -38,6 +38,7 @@ class ExtractContentTool {
 
 	static bool tokenize = false;
 	static bool show_children = false;
+	static string mime_type = null;
 
 	// FIXME: We don't display structural breaks
 	static void DisplayContent (string line)
@@ -163,9 +164,10 @@ class ExtractContentTool {
 		Console.WriteLine ("Usage: beagle-extract-content [OPTIONS] file [file ...]");
 		Console.WriteLine ();
 		Console.WriteLine ("Options:");
-		Console.WriteLine ("  --tokenize\t\tTokenize the text before printing");
-		Console.WriteLine ("  --show-children\tShow filtering information for items created by filters");
-		Console.WriteLine ("  --help\t\tShow this message");
+		Console.WriteLine ("  --tokenize\t\t\tTokenize the text before printing");
+		Console.WriteLine ("  --show-children\t\tShow filtering information for items created by filters");
+		Console.WriteLine ("  --mimetype=<mime_type>\tUse filter for mime_type");
+		Console.WriteLine ("  --help\t\t\tShow this message");
 		Console.WriteLine ();
 	}
 
@@ -187,12 +189,17 @@ class ExtractContentTool {
 
 		foreach (string arg in args) {
 
-			// option, skip it
-			if (arg.Substring (0, 2) == "--")
+			// mime-type option
+			if (arg.StartsWith ("--mimetype=")) {
+				mime_type = arg.Substring (11);    
 				continue;
-
+			} else if (arg.StartsWith ("--")) // option, skip it 
+				continue;
+			
 			Uri uri = UriFu.PathToFileUri (arg);
 			Indexable indexable = new Indexable (uri);
+			if (mime_type != null)
+				indexable.MimeType = mime_type;
 
 			try {
 				Display (indexable);
