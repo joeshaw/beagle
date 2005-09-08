@@ -42,6 +42,7 @@ namespace Beagle.Filters {
 	public class FilterAbiWord : Beagle.Daemon.Filter {
 
 		Hashtable hotStyles;
+		bool is_gzipped;
 				
 		public FilterAbiWord () 
 		{
@@ -312,16 +313,46 @@ namespace Beagle.Filters {
 			}
 		}
 
+		private XmlTextReader BuildReader (string path)
+		{
+			Stream s;
+			s = new FileStream (path,
+					    FileMode.Open,
+					    FileAccess.Read,
+					    FileShare.Read);
+
+			if (is_gzipped)
+				s = new GZipInputStream (s);
+
+			return new XmlTextReader (s);
+		}
+
 		XmlTextReader reader = null;
 		override protected void DoOpen (FileInfo info)
 		{
+			// Try to open the file as if it is gzip.
+			// If that fails, we conclude that it must
+			// just be a regular text file full of xml.
+			is_gzipped = true;
+			try {
+				Stream s;
+				s = new FileStream (info.FullName, FileMode.Open, FileAccess.Read, FileShare.Read);
+				Stream z;
+				z = new GZipInputStream (s);
+				z.ReadByte ();
+				z.Close ();
+				s.Close ();
+			} catch (Exception ex) {
+				is_gzipped = false;
+			}
+
 			hotStyles = new Hashtable ();
-			reader = new XmlTextReader (info.FullName);
+			reader = BuildReader (info.FullName);
 		}
 
 		override protected void DoPullProperties ()
 		{
-			XmlTextReader metaReader = new XmlTextReader (FileInfo.FullName);
+			XmlTextReader metaReader = BuildReader (FileInfo.FullName);
 			try {
 				ExtractMetadata (metaReader);
 				metaReader.Close ();
