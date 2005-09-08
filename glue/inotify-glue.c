@@ -1,3 +1,5 @@
+/* -*- Mode: C; tab-width: 8; indent-tabs-mode: t; c-basic-offset: 8 -*- */
+
 /*
  * inotify-glue.c
  *
@@ -49,6 +51,8 @@ static int max_user_instances = 8;
 static int max_user_watches = 8192;
 static int max_queued_events = 256;
 
+static int snarf_cancellation_pipe [2];
+
 /* Paranoid code to read an integer from a sysfs (well, any) file. */
 static void
 read_int (const char *filename, int *var)
@@ -87,6 +91,9 @@ inotify_glue_init (void)
 				"enabled.");
 	}
 
+	if (pipe (snarf_cancellation_pipe) == -1)
+		perror ("Can't create snarf_cancellation_pipe");
+	
 	read_int (PROCFS_MAX_USER_DEVICES, &max_user_instances);
 	read_int (PROCFS_MAX_USER_WATCHES, &max_user_watches);
 	read_int (PROCFS_MAX_QUEUED_EVENTS, &max_queued_events);
@@ -125,6 +132,13 @@ inotify_glue_ignore (int fd, __u32 wd)
 	return ret;
 }
 
+void
+inotify_snarf_cancel ()
+{
+	write (snarf_cancellation_pipe [1],
+	       &snarf_cancellation_pipe, 1); // write a convenient byte
+}
+
 
 #define MAX_PENDING_COUNT		5
 #define PENDING_PAUSE_NANOSECONDS	2000000
@@ -132,9 +146,9 @@ inotify_glue_ignore (int fd, __u32 wd)
 #define PENDING_MARGINAL_COST(p)	((unsigned int) (1 << (p)))
 
 void
-inotify_snarf_events (int fd, int timeout_ms, int *nr, void **buffer_out)
+inotify_snarf_events (int fd, int *nr, void **buffer_out)
 {
-	struct pollfd pollfd = { fd, POLLIN | POLLPRI, 0 };
+	struct pollfd pollfd [2]  = { { fd, POLLIN | POLLPRI, 0 }, { snarf_cancellation_pipe [0], POLLIN, 0} };
 	unsigned int prev_pending = 0, pending_count = 0;
 	static struct inotify_event *buffer = NULL;
 	static size_t buffer_size;
@@ -158,12 +172,17 @@ inotify_snarf_events (int fd, int timeout_ms, int *nr, void **buffer_out)
 	*nr = 0;
 
 	/* Wait for the file descriptor to be ready to read. */
-	ret = poll (&pollfd, 1, timeout_ms);
+	ret = poll (pollfd, 2, -1);
 	if (ret == -1) {
 		if (errno != EINTR)
 			perror ("poll");
 		return;
 	} else if (ret == 0)
+		return;
+
+	/* Return immediately if something happened on the
+	   snarf cancellation pipe. */
+	if (pollfd [1].revents != 0)
 		return;
 
 	/* Reading events in groups significantly helps performance.
