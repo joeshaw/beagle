@@ -126,6 +126,9 @@ namespace Beagle.Daemon {
 						  out secondary_part_query,
 						  out part_hit_filter);
 
+				if (primary_part_query == null)
+					continue;
+
 				switch (part.Logic) {
 					
 				case QueryPartLogic.Required:
@@ -271,7 +274,6 @@ namespace Beagle.Daemon {
 			sw.Start ();
 
 			// If we didn't get any matches, give up.
-
 			if (primary_matches == null || ! primary_matches.ContainsTrue ())
 				return;
 

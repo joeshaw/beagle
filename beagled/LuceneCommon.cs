@@ -832,13 +832,16 @@ namespace Beagle.Daemon {
 					return;
 
 				LNS.BooleanQuery p_query = new LNS.BooleanQuery ();
-				primary_query = p_query;
 
 				if (part.SearchFullText) {
 					LNS.Query subquery;
 					subquery = StringToQuery ("Text", part.Text, term_list);
-					if (subquery != null)
+					if (subquery != null) {
+						if (primary_query == null)
+							primary_query = p_query;
+
 						p_query.Add (subquery, false, false);
+					}
 
 					// FIXME: HotText is ignored for now!
 					// subquery = StringToQuery ("HotText", part.Text);
@@ -850,6 +853,9 @@ namespace Beagle.Daemon {
 					LNS.Query subquery;
 					subquery = StringToQuery ("PropertyText", part.Text, term_list);
 					if (subquery != null) {
+						if (primary_query == null)
+							primary_query = p_query;
+
 						p_query.Add (subquery, false, false);
 						
 						// Properties can live in either index
@@ -886,7 +892,7 @@ namespace Beagle.Daemon {
 				// Properties can live in either index
 				if (! only_build_primary_query && primary_query != null)
 					secondary_query = primary_query.Clone () as LNS.Query;
-				
+
 				return;
 			}
 
