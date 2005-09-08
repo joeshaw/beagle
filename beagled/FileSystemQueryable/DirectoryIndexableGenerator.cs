@@ -61,7 +61,9 @@ namespace Beagle.Daemon.FileSystemQueryable {
 				FileInfo f = files.Current as FileInfo;
 				Indexable indexable = null;
 				try { 
-					if (f.Exists && this.directory.IsAttached)
+					if (f.Exists
+					    && ! FileSystem.IsSymLink (f.FullName)
+					    && this.directory.IsAttached)
 						indexable = queryable.GetCrawlingFileIndexable (directory, f.Name);
 				} catch (Exception ex) {
 					Logger.Log.Debug ("Caught exception calling GetCrawlingFileIndexable on '{0}'", f.FullName);

@@ -259,11 +259,13 @@ namespace Beagle.Daemon
 				try {
 					if (arg_recursive)
 						foreach (DirectoryInfo subdir in DirectoryWalker.GetDirectoryInfos (dir))
-							if (!Ignore (subdir))
+							if (!Ignore (subdir)
+							    && !FileSystem.IsSymLink (subdir.FullName))
 								pending_directories.Enqueue (subdir);
 					
 					foreach (FileInfo file in DirectoryWalker.GetFileInfos (dir))
-						if (!Ignore (file))
+						if (!Ignore (file)
+						    && !FileSystem.IsSymLink (file.FullName))
 							pending_files.Enqueue (file);
 					
 				} catch (DirectoryNotFoundException e) {}

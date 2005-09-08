@@ -88,8 +88,12 @@ namespace Beagle.Daemon.FileSystemQueryable {
 					Logger.Log.Debug ("Scanning '{0}' for subdirectories", dir.FullName);
 
 				try {
-					foreach (string name in DirectoryWalker.GetDirectoryNames (dir.FullName))
-						handler (dir, name);
+					foreach (string name in DirectoryWalker.GetDirectoryNames (dir.FullName)) {
+						string path;
+						path = Path.Combine (dir.FullName, name);
+						if (! FileSystem.IsSymLink (path))
+							handler (dir, name);
+					}
 				} catch (DirectoryNotFoundException ex) {
 					Logger.Log.Debug ("Couldn't scan '{0}' for subdirectories", dir.FullName);
 				}
