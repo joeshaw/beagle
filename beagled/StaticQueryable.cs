@@ -71,8 +71,13 @@ namespace Beagle.Daemon {
 				return true;
 			
 			// FIXME: This is a hack, we need to support parent Uri's in some sane way
-			int j = uri.LocalPath.LastIndexOf ('#');
-			return File.Exists ((j == -1) ? uri.LocalPath : uri.LocalPath.Substring (0, j));
+			try {
+				int j = uri.LocalPath.LastIndexOf ('#');
+				return File.Exists ((j == -1) ? uri.LocalPath : uri.LocalPath.Substring (0, j));
+			} catch (Exception e) {
+				Logger.Log.Warn ("Exception executing HitIsValid on {0}", uri.LocalPath);
+				return false;
+			}
 		}
 	}
 }

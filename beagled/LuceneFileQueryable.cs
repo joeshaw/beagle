@@ -159,9 +159,15 @@ namespace Beagle.Daemon {
 		{
 			// Do the right thing if the Uri is a file.
 			// If the file Uri we need is the ContentUri, this won't work.
-			if (uri.IsFile)
+			if (! uri.IsFile)
+				return true;
+
+			try {
 				return FileSystem.Exists (uri.LocalPath);
-			return true;
+			} catch (Exception e) {
+				Logger.Log.Warn ("Exception executing HitIsValid on {0}", uri.LocalPath);
+				return false;
+			}
 		}
 
 		///////////////////////////////////////////////////////////////////////////
