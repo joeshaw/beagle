@@ -52,17 +52,16 @@ namespace Beagle.Daemon {
 				created = false;
 
 				FileAttributes attr = ifas.Read (path);
-				if (attr == null) {
+				// If we pass in a Guid that doesn't match the one we found in the
+				// the attributes, clobber the old attributes and the old unique Guid.
+				if (attr == null
+				    || (unique_id != Guid.Empty && unique_id != attr.UniqueId)) {
 					attr = new FileAttributes ();
 					attr.UniqueId = unique_id;
 					attr.Path = path;
 					ifas.Write (attr);
 					created = true;
 				}
-				// FIXME: If we were able to successfully read attributes,
-				// and if attr.UniqueId != unique_id, it probably means
-				// that something bad happened.  Right?  Should we throw
-				// an exception?
 				return attr;
 			}
 		}

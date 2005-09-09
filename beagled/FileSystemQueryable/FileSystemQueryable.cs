@@ -967,11 +967,11 @@ namespace Beagle.Daemon.FileSystemQueryable {
 			if (filter.Ignore (dir, name, false))
 				return;
 
-			FileAttributes attr;
-			attr = FileAttributesStore.Read (path);
-
+			// We unconditionally assign this file a new Guid.
+			// (If it is a copy of an already-indexed file,
+			// we need to clobber the old Guid.)
 			Guid unique_id;
-			unique_id = (attr != null) ? attr.UniqueId : Guid.NewGuid ();
+			unique_id = Guid.NewGuid ();
 
 			RegisterId (name, dir, unique_id);
 
