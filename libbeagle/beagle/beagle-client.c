@@ -142,6 +142,32 @@ beagle_client_new (const char *client_name)
 }
 
 /**
+ * beagle_client_new_from_socket_path:
+ * @socket_path: a string of the path to the daemon socket
+ *
+ * Creates a new #BeagleClient, connecting to the path with @socket_path. NULL
+ * is not allowed.
+ *
+ * Return value: a newly created #BeagleClient, or NULL if the client cannot be created.
+ **/
+BeagleClient *
+beagle_client_new_from_socket_path (const char *socket_path)
+{
+	BeagleClient *client;
+	BeagleClientPrivate *priv;
+	struct stat buf;
+
+	if (stat (socket_path, &buf) == -1 || !S_ISSOCK (buf.st_mode))
+		return NULL;
+
+	client = g_object_new (BEAGLE_TYPE_CLIENT, 0);
+	priv = BEAGLE_CLIENT_GET_PRIVATE (client);
+	priv->socket_path = g_strdup (socket_path);
+
+	return client;
+}
+
+/**
  * beagle_client_send_request:
  * @client: a #BeagleClient
  * @request: a #BeagleRequest

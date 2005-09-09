@@ -47,14 +47,15 @@ typedef struct {
 	GObjectClass parent_class;
 } BeagleClientClass;
 
-GType        beagle_client_get_type     (void);
-BeagleClient *beagle_client_new          (const char *client_name);
+GType        beagle_client_get_type              (void);
+BeagleClient *beagle_client_new                  (const char *client_name);
+BeagleClient *beagle_client_new_from_socket_path (const char *socket_path);
 
 BeagleResponse *beagle_client_send_request (BeagleClient   *client,
 					    BeagleRequest  *request,
 					    GError        **err);
-gboolean beagle_client_send_request_async (BeagleClient   *client,
-					   BeagleRequest  *request,
-					   GError        **err);
+gboolean beagle_client_send_request_async  (BeagleClient   *client,
+					    BeagleRequest  *request,
+					    GError        **err);
 
 #endif /* __BEAGLE_CLIENT_H */

@@ -102,8 +102,14 @@ start_message (BeagleParserContext *ctx, const char **attrs)
 	for (i = 0; i < num_gtypes; i++) {
 		BeagleRequestClass *klass = g_type_class_peek (gtypes [i]);
 
+		/*
+		 * This can validly return NULL if we're trying to peek at a
+		 * class which has never been referenced.  It'll never happen
+		 * for the class we're looking for, however, because it must
+		 * have been referenced to be instantiated in the first place.
+		 */
 		if (klass == NULL)
-			printf ("null class!\n");
+			continue;
 
 		gtype_to_match = (GType) g_hash_table_lookup (klass->response_types,
 							      ctx->message_type);
