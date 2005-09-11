@@ -967,11 +967,25 @@ namespace Beagle.Daemon.FileSystemQueryable {
 			if (filter.Ignore (dir, name, false))
 				return;
 
-			// We unconditionally assign this file a new Guid.
-			// (If it is a copy of an already-indexed file,
-			// we need to clobber the old Guid.)
-			Guid unique_id;
-			unique_id = Guid.NewGuid ();
+			// If this file already has extended attributes,
+			// make sure that the name matches the file
+			// that is in the index.  If not, it could be
+			// a copy of an already-indexed file and should
+			// be assigned a new unique id.
+			Guid unique_id = Guid.Empty;
+			FileAttributes attr;
+			attr = FileAttributesStore.Read (path);
+			if (attr != null) {
+				LuceneNameResolver.NameInfo info;
+				info = name_resolver.GetNameInfoById (attr.UniqueId);
+				if (info != null
+				    && info.Name == name
+				    && info.ParentId == dir.UniqueId)
+					unique_id = attr.UniqueId;
+			}
+
+			if (unique_id == Guid.Empty)
+				unique_id = Guid.NewGuid ();
 
 			RegisterId (name, dir, unique_id);
 

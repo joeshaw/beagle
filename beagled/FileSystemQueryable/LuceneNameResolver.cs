@@ -116,7 +116,8 @@ namespace Beagle.Daemon.FileSystemQueryable {
 			public override void Collect (int id, float score)
 			{
 				if (MatchId != -1)
-					throw new Exception ("What you talkin' about Willis?");
+					Logger.Log.Error ("Duplicate name found: replacing MatchId {0} with {1}",
+							  MatchId, id);
 
 				MatchId = id;
 			}
