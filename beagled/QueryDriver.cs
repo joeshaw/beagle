@@ -175,8 +175,10 @@ namespace Beagle.Daemon {
 		{
 			int count = 0;
 
-			foreach (string path in Conf.Daemon.StaticQueryables)
-				static_queryables.Add (path);
+			if (UseQueryable ("static")) {
+				foreach (string path in Conf.Daemon.StaticQueryables)
+					static_queryables.Add (path);
+			}
 
 			foreach (string path in static_queryables) {
 				DirectoryInfo index_dir = new DirectoryInfo (path);
@@ -285,9 +287,7 @@ namespace Beagle.Daemon {
 			}
 
 			LoadSystemIndexes ();
-
-			if (UseQueryable ("static"))
-				LoadStaticQueryables ();
+			LoadStaticQueryables ();
 
 			foreach (Queryable q in queryables)
 				q.Start ();
