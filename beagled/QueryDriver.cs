@@ -284,9 +284,8 @@ namespace Beagle.Daemon {
 				Server.ScanAssemblyForExecutors (assembly);
 			}
 
-			// FIXME: This is not nice at all
-			if (UseQueryable ("system"))
-				LoadSystemIndexes ();
+			LoadSystemIndexes ();
+
 			if (UseQueryable ("static"))
 				LoadStaticQueryables ();
 
