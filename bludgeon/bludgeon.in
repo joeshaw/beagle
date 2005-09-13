@@ -22,5 +22,11 @@ else
     export LD_LIBRARY_PATH="@pkglibdir@:$LD_LIBRARY_PATH"
 fi
 
-MONO_GAC_PREFIX="@gacprefix@:$MONO_GAC_PREFIX" MONO_PATH="$THIS_PATH:$MONO_PATH" exec mono --debug $MONO_EXTRA_ARGS $THIS_EXE "$@"
+if [ -z "$BEAGLE_MONO_RUNTIME" ]; then
+   BEAGLE_MONO_RUNTIME="mono"
+else
+   echo "*** Using mono runtime at $BEAGLE_MONO_RUNTIME ***"
+fi
+
+MONO_GAC_PREFIX="@gacprefix@:$MONO_GAC_PREFIX" MONO_PATH="$THIS_PATH:$MONO_PATH" exec $BEAGLE_MONO_RUNTIME --debug $MONO_EXTRA_ARGS $THIS_EXE "$@"
 

@@ -1,7 +1,7 @@
 #!@bash@
 
 if [ -e ./@target@ ] && [ -e ./Makefile.am ] ; then
-    echo "Running uninstalled @target@."
+    echo "*** Running uninstalled @target@ ***"
 
     # When we run uninstalled, run in the foreground by default.
     fg_default=1
@@ -81,11 +81,19 @@ if [ $heap_buddy -eq 1 ]; then
    rm -f outfile.beagled outfile.helper.*
 fi
 
+# The BEAGLE_MONO_RUNTIME variable can be used to specify the path
+# to an alternative runtime.
+if [ -z "$BEAGLE_MONO_RUNTIME" ]; then
+   export BEAGLE_MONO_RUNTIME="mono"
+else
+   echo "*** Using mono runtime at $BEAGLE_MONO_RUNTIME ***"
+fi
+
 if [ $monogrind -eq 1 ]; then
     export GC_DONT_GC=1
     CMDLINE="monogrind $TARGET_EXE $EXTRA_ARGS $BEAGLED_ARGS $FGBG_ARG"
 else
-    CMDLINE="mono --debug $MONO_EXTRA_ARGS $TARGET_EXE $EXTRA_ARGS $BEAGLED_ARGS $FGBG_ARG"
+    CMDLINE="$BEAGLE_MONO_RUNTIME --debug $MONO_EXTRA_ARGS $TARGET_EXE $EXTRA_ARGS $BEAGLED_ARGS $FGBG_ARG"
 fi
 
 PROCESS_NAME="mono-beagled"
