@@ -70,8 +70,11 @@ namespace Bludgeon {
 		[Option (LongName="total-count")]
 		static private int total_count = 1;
 
+		[Option (LongName="slowdown")]
+		static private double slowdown = -1; // time between cycles, in seconds
+
 		[Option (LongName="pause")] 
-		static private double pause = -1; // in seconds
+		static private double pause = -1; // time between tests, in seconds
 
 		static void Main (string [] args)
 		{
@@ -124,8 +127,10 @@ namespace Bludgeon {
 			while (true) {
 
 				if (sw != null) {
-					if (sw.ElapsedTime > total_time)
+					if (sw.ElapsedTime > total_time * 60)
 						break;
+					Log.Info ("Elapsed time: {0} ({1:0.0}%",
+						  sw, 100 * sw.ElapsedTime / (total_time * 60));
 				} else {
 					if (test_count >= total_count)
 						break;
@@ -152,8 +157,12 @@ namespace Bludgeon {
 				else
 					test_cycles = 1;
 
-				for (int i = 0; i < test_cycles; ++i)
+				for (int i = 0; i < test_cycles; ++i) {
 					hammer.HammerOnce ();
+					if (slowdown > 0)
+						Thread.Sleep ((int) (slowdown * 1000));
+				}
+
 
 				if (! disable_verify && ! SanityCheck.VerifyIndex ()) {
 					failed = true;
@@ -161,7 +170,7 @@ namespace Bludgeon {
 				}
 
 				if (pause > 0)
-					Thread.Sleep ((int) (pause * 60 * 1000));
+					Thread.Sleep ((int) (pause * 1000));
 			}
 
 			if (failed)
