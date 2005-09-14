@@ -263,6 +263,7 @@ namespace CommandLineFu {
 			foreach (Pair pair in all_pairs) {
 				StringBuilder builder = new StringBuilder ();
 				string usage_name = pair.UsageName;
+				builder.Append ("  ");
 				builder.Append (usage_name);
 				builder.Append (' ', max_usage_name_len - usage_name.Length);
 				builder.Append ("  ");

@@ -70,15 +70,19 @@ namespace Bludgeon {
 		[Option (LongName="total-count")]
 		static private int total_count = 1;
 
-		[Option (LongName="slowdown")]
+		[Option (LongName="slowdown", Description="Time between cycles (in seconds)")]
 		static private double slowdown = -1; // time between cycles, in seconds
 
-		[Option (LongName="pause")] 
+		[Option (LongName="pause", Description="Time between tests (in seconds)")] 
 		static private double pause = -1; // time between tests, in seconds
 
 		static void Main (string [] args)
 		{
 			args = CommandLine.Process (typeof (BludgeonMain), args);
+
+			// BU.CommandLine.Process returns null if --help was passed
+			if (args == null)
+				return;
 
 			ArrayList hammers_to_use;
 			hammers_to_use = new ArrayList ();
