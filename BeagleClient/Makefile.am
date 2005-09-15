@@ -44,8 +44,8 @@ ASSEMBLIES = 				\
 
 RESOURCES =
 
-$(TARGET): $(CSFILES) $(EXTSTR) $(LOCAL_ASSEMBLIES) $(RESOURCES)
-	$(CSC) -out:$@ $(CSFLAGS) $(CSFILES) $(EXTSTR) $(ASSEMBLIES) $(RESOURCES)
+$(TARGET): $(CSFILES) $(LOCAL_ASSEMBLIES) $(RESOURCES)
+	$(CSC) -out:$@ $(CSFLAGS) $(CSFILES) $(ASSEMBLIES) $(RESOURCES)
 
 all: $(TARGET)
 
@@ -58,10 +58,8 @@ uninstall-local:
 
 EXTRA_DIST =			\
 	$(CSFILES)		\
-	$(srcdir)/NetworkHit.cs	\
-	$(EXTSTR_IN)
+	$(srcdir)/NetworkHit.cs
 
 CLEANFILES =		\
 	$(TARGET)	\
-	$(TARGET).mdb	\
-	$(EXTSTR)
+	$(TARGET).mdb
