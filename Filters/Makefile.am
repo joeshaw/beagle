@@ -99,7 +99,6 @@ uninstall-local:
 COND_CS_FILES = \
 	$(srcdir)/FilterPPT.cs		\
 	$(srcdir)/FilterDOC.cs		\
-	$(srcdir)/FilterGst.cs		\
 	$(srcdir)/FilterChm.cs
 
 EXTRA_DIST =		\
