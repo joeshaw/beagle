@@ -1,4 +1,178 @@
 
+Version 0.1.0
+September 15, 2005
+
+Daemon/Infrastructure:
+* New and vastly improved Lucene infrastructure. Highlights include:
+  + The indexing and querying code has been split.  The entire
+    architecture is much cleaner, and we have been able to eliminate
+    several horrible hacks that had been introduced for the benefit
+    of the file system backend.
+  + The index is now semi-transactional; we can make now make some
+    guarantees about the index and the beagle-specific filesystem
+    metadata not getting dangerously out-of-sync in the event of a
+    crash.
+  + It is now possible to efficiently modify certain index properties.
+  + Hits now are returned in time-order, not score-order.  Scores
+    are still available, though will not agree with the old scores
+    in some cases.
+  + Querying is faster, our query language is better, and the query
+    semantics are much more sane.
+  + We are much more intelligent about when we optimize the Lucene indexes.
+  + Indexables are now abstract indexing requests, and IndexableGenerators
+    can thus now manipulate the index in arbitrary ways.
+  + Many, many bugs have been fixed.
+  (Jon Trowbridge, Joe Shaw, Fredrik Hedberg, Daniel Drake)
+* Many bugs involving queries have been fixed, and the query semantics have
+  changed.  Querys now default to 'AND', not 'OR'. (Jon, Joe)
+* Fixes to avoid stop words ("a", "the", etc.) causing problems during
+  queries. (Joe)
+* When using a remote home directory, create the unix domain socket
+  locally since some filesystems don't support them (like smbfs). (Joe)
+* When capping the number of hits returned from the daemon, we now
+  return the N most recent hits, not the N highest-scoring hits. (Jon)
+* Don't reload config files that haven't changed since we last loaded them.
+  (Daniel)
+* Reduce inotify watch masks when we can. (Daniel)
+* Maintain parent-child relationships when watches are moved. (Daniel)
+* Fix a crasher in libbeagle related to using g_stat(). (Joe)
+* Update to gtk-sharp 2.x APIs. (Joe, Lluís Pàmies)
+* Add an --enable-xml-dump configure option for debugging message
+  passing between components. (Joe)
+* Many fixes to libbeagle to keep it up-to-date with the C# code. (Joe)
+* Fixed encoding of keyword property names in Lucene. (Debajyoti Bera)
+* Use gnome-vfs's slow mime sniffing on files with the .xml extension.
+  (Chris Lahey)
+* Local index-synchronization when using NFS & Samba. (Fredrik, Joe)
+* Support IO priorities by setting the indexing thread to idle. (Fredrik,
+  Robert Love)
+* Workaround a bug in Mono.Posix.Syscall.readdir to support strange
+  encodings. (Fredrik)
+* Use transactions more efficiently in our sqlite databases. (Jon)
+* Don't poll to check for Inotify.Stop calls while snarfing events. (Jon)
+* Don't leak files in /tmp on exceptions or daemon shutdown. (Jon)
+* Scheduler improvements and bug fixes.  Tasks are now round-robined
+  correctly. (Jon)
+* Pass a stemmed, stopword-free version of the query back to the client
+  along with the query results, for use by the client app when
+  highlighting matches, etc. (Jon)
+
+Backends:
+* Migrated all of the backends to the new lucene infrastructure.  (Joe,
+  Fredrik, Daniel, Jon)
+* The file system backend has been extensively refactored.  It still isn't
+  perfect, but has been substantially improved. (Jon, Daniel, Joe, Fredrik) 
+* Allow file system exclude patterns/paths to be set through
+  beagle-config. (Daniel)
+* Misc filesystem backend fixes to do the right thing when we add/remove
+  exclude patterns/paths. (Daniel)
+* Fix removing of file system roots. (Daniel)
+* Merge the concepts of 'scan' and 'crawl' in filesystem backend. (Daniel)
+* Rewrite Evolution Data Server backend to support all local
+  addressbooks and calendars with change notification, based on Varadhan's
+  work in evolution-sharp. (Joe)
+* Fix a major bottleneck in starting up the mail backend with IMAP
+  accounts that would use large amounts of CPU at startup. (Joe)
+* Fix a bug where IMAP accounts against Exchange servers weren't being
+  indexed. (Joe)
+* Index all IM accounts, not just the first one of each type, in the
+  Evolution Data Server backend. (Joe)
+* Support snippets, text-caching and hit filtering on static-indexes.
+  (Fredrik)
+* Initial Kopete support. (Fredrik)
+* Better cache buddy lookups with Gaim and Kopete. (Fredrik)
+* More gracefully handle the case of imap folders with unknown accounts. (Jon)
+
+Filters:
+* Cleanup the filtering code. (Fredrik)
+* Add support for Apple/mp4 files (m4a/m4p). (Daniel)
+* Index both id3v1 and id3v2 tags in mp3 files. (Daniel)
+* Fixed small bugs where some tag fields weren't being read from some audio
+  formats. (Daniel)
+* Add support for Amiga tracker audio files (s3m, it, mod, xm). (Daniel,
+  Boris Peterbarg)
+* Don't leave zombie processes when indexing PDF and spreadsheet
+  files. (Daniel)
+* Lower the priority class when calling pdfinfo, so that it doesn't
+  dominate the CPU on expensive runs (Paul Betts)
+* Fix filtering of gaim logs. (Jon, Joe)
+* Index names in emails as text, not keywords. (Joe)
+* Fix serious filtering bottlenecks when indexing large documents
+  (mostly from OpenOffice). (Joe, Jon, Fredrik)
+
+UI/Tools:
+* Arguments might be part of a command-line, so split them out before
+  executing a tile action. (Joe)
+* Allow best to launch commands which are 'quoted'. (Daniel)
+* Add a mozilla preference which enables/disables the plugin in a
+  persistent way. (Joe)
+* Allow beagle-manage-index to work on versioned indexes. (Daniel)
+* Flac files are now displayed using the flac tile. (Daniel)
+* Maildir files are now displayed using the mail tile. (Daniel)
+* Don't use evolution to open non-evolution mails in the mail tile. (Daniel)
+* Use the title of the document as the main link in a file tile if set.
+  Especially nice for HTML files. (Joe)
+* Don't try to put presence on the mail tile if galago support is on,
+  but evolution-sharp isn't. (Joe)
+* Fix a date bug where some results would display as happening "-N days
+  ago". (Joe)
+* Thumbnail file hits. (Debajyoti, Joe)
+* Don't run the crawler as part of cron.daily, because it can happen at
+  any point during the day and it's an expensive operation.  Add a crontab
+  entry which runs at 4:30 am. (Joe)
+* Update the Best keybinding code from Tomboy.  Fixes many bugs related
+  to different modifiers (num lock, scroll lock, alt, etc.) and fixes many
+  "BadValue" crashers. (Alex Graveley, Joe)
+* Updated tray icon code from libegg.  This fixes rendering glitches and
+  other problems with the best tray icon. (Rodrigo Moya)
+* Set IO priorities in beagle-build-inidex and beagle-manage-index. (Joe)
+* Have beagle-build-index restart itself if it detects its memory usage
+  is getting too high, and add a command-line option to disable that
+  behavior. (Joe)
+* Fix the Firefox extension from popping up error dialogs left and right
+  if ~/.beagle doesn't exist. (Joe)
+* beagle-extract-content fixes. (Debajyoti)
+* Fixed a security problem in beagle-crawl-system. (Gary Ekker)
+* Crawl documentation with the .docbook extension. (Chris)
+* System-wide crawler indexing documentation, windows partitions etc.
+  (Fredrik)
+* Various "desktop-launch" fixes to support KDE in SUSE. (Fredrik)
+
+Web Services:
+* Improved Web Interface UI including background color for search box and
+  drop-down in Web interface. (Vijay KN)
+* Added new option in WebInterface to selectively enable/disable
+  NetworkedBeagle search on per-query basis, when NetworkedBeagle nodes are
+  configured.  (Vijay)
+* Support for display of Images in web interface, when hits are images. (Vijay)
+* Hit results returned for external accesses now restricted to File type
+  resources alone.  Removed duplicate definitions of Web Service data types.
+  (Vijay)
+
+Translations:
+* Added Finnish translation. (ituohela)
+* Added Macedonian translation. (Арангел Ангов, strojmir)
+* Added Ukrainian translation. (Maxim Dziumanenko)
+* Updated Bulgarian translation. (Rostislav Raykov)
+* Updated British English translation. (Christopher Orr, James Ogley)
+* Updated Canadian English translation. (Adam Weinberger)
+* Updated Catalan translation. (jmas)
+* Updated Chinese translation. (Chao-Hsiung Liao)
+* Updated German translation. (Hendrik Brandt)
+* Updated Greek translation. (pkst)
+* Updated Hungarian translation. (Gabor Kelemen)
+* Updated Norwegian translation. (Terance Sola)
+* Updated Spanish translation. (Francisco Javier F. Serrador)
+* Updated Vietnamese translation. (clyties)
+
+Everything Else:
+* Added bludgeon, a testing tool. (Jon)
+* Fix a compile error that popped up when mono's compiler rules became
+  more strict. (Joe)
+* All the stuff I forgot. (All of the people I forgot)
+
+------------------------------------------------------
+
 Version 0.0.12
 July 11, 2005
 
