@@ -541,7 +541,7 @@ namespace Beagle.Util {
 		private Queue shutdown_task_queue = new Queue ();
 
 		private Hashtable tasks_by_tag = new Hashtable ();
-		private int executed_task_count = 0;
+		private int total_executed_task_count = 0;
 		
 		public void Add (Task task)
 		{
@@ -652,12 +652,15 @@ namespace Beagle.Util {
 		const double default_idle_rate_factor    = 2.097;         // work about 1/3rd of the time
 		const double maximum_delay               = 20;            // never wait for more than 20s
 		const double min_throttled_delay         = 1.5;           // never wait less than this when throttled
+		const double min_overloaded_delay        = 2.2;           // never wait less than this when there are many tasks
+		const int    task_overload_threshold     = 60;            // number of tasks to process before delaying
 
 		DateTime[] last_immediate_times = new DateTime [5];
 
 		// The return value and duration_of_previous_task are both measured in seconds.
 		private double ComputeDelay (Priority priority_of_next_task,
-					     double   duration_of_previous_task)
+					     double   duration_of_previous_task,
+					     int      executed_task_count)
 		{
 			if (global_delay >= 0.0)
 				return global_delay;
@@ -698,13 +701,18 @@ namespace Beagle.Util {
 						// added in the last second.  We
 						// definitely need to throttle.
 						if (between_add_delta.Seconds <= 1) {
-							Logger.Log.Debug ("Thottling immediate priority tasks");
 							need_throttle = true;
 							rate_factor = idle_scale * default_idle_rate_factor;
 						}
 					}
 				}
 
+				// If we've processed many tasks since the last
+				// time we took a break, ignore the priority and set a
+				// delay equivalent to Priority.Delayed.
+				if (!is_idle && executed_task_count >= task_overload_threshold)
+					rate_factor = idle_scale * default_delayed_rate_factor;
+				
 				break;
 
 			case Priority.Delayed:
@@ -715,6 +723,7 @@ namespace Beagle.Util {
 				rate_factor = idle_scale * default_idle_rate_factor;
 				break;
 			}
+
 
 			// FIXME: we should do something more sophisticated than this
 			// with the load average.
@@ -740,6 +749,13 @@ namespace Beagle.Util {
 			// a second and some.
 			if (need_throttle && delay < min_throttled_delay)
 				delay = min_throttled_delay;
+
+			// If we're not idle and we've just processed more
+			// than a certain number of events, take a break.
+			if (! is_idle
+			    && executed_task_count >= task_overload_threshold
+			    && delay < min_overloaded_delay)
+				delay = min_overloaded_delay;
 
 			return delay;
 		}
@@ -773,6 +789,7 @@ namespace Beagle.Util {
 			Hook post_hook = null;
 			ArrayList to_be_executed = new ArrayList ();
 			Hashtable max_priority_by_source = new Hashtable ();
+			int executed_task_count = 0;
 
 			while (running) {
 
@@ -786,6 +803,7 @@ namespace Beagle.Util {
 					if (tasks_by_tag.Count == 0) {
 						status_str = "Waiting on empty queue";
 						Monitor.Wait (big_lock);
+						executed_task_count = 0;
 						continue;
 					}
 
@@ -846,6 +864,7 @@ namespace Beagle.Util {
 							status_str = "Waiting for the next trigger time";
 							Monitor.Wait (big_lock, next_trigger_time - now);
 						}
+						executed_task_count = 0;
 						continue;
 					}
 
@@ -854,7 +873,7 @@ namespace Beagle.Util {
 
 					// How should we space things out?
 					double delay = 0;
-					delay = ComputeDelay (next_task.Priority, duration_of_previous_task);
+					delay = ComputeDelay (next_task.Priority, duration_of_previous_task, executed_task_count);
 					delay = Math.Min (delay, (next_trigger_time - now).TotalSeconds);
 
 					// Adjust by the time that has actually elapsed since the
@@ -866,6 +885,7 @@ namespace Beagle.Util {
 					if (delay > 0.001) {
 						status_str = "Waiting for next task.";
 						Monitor.Wait (big_lock, TimeSpanFromSeconds (delay));
+						executed_task_count = 0;
 						continue;
 					}
 
@@ -878,7 +898,7 @@ namespace Beagle.Util {
 
 					if (next_task.Collector == null) {
 
-						to_be_executed.Add (next_task);
+							to_be_executed.Add (next_task);
 
 					} else {
 
@@ -950,6 +970,7 @@ namespace Beagle.Util {
 				}
 				foreach (Task task in to_be_executed) {
 					task.DoTask ();
+					++total_executed_task_count;
 					++executed_task_count;
 				}
 				if (post_hook != null) {
@@ -1010,7 +1031,7 @@ namespace Beagle.Util {
 				pending_tasks.Reverse ();
 
 				sb.Append ("Scheduler:\n");
-				sb.AppendFormat ("Count: {0}\n", executed_task_count);
+				sb.AppendFormat ("Count: {0}\n", total_executed_task_count);
 
 				if (status_str != null)
 					sb.AppendFormat ("Status: {0}\n", status_str);
