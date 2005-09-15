@@ -23,7 +23,7 @@ namespace Beagle.Daemon
 System.Diagnostics.DebuggerStepThroughAttribute(),
 System.ComponentModel.DesignerCategoryAttribute("code")]
 public class BeagleWebService: System.Web.Services.Protocols.SoapHttpClientProtocol {
-
+    
     public BeagleWebService () {
         this.Url = "http://localhost:8888/beagle/search.asmx";
     }
@@ -32,13 +32,14 @@ public class BeagleWebService: System.Web.Services.Protocols.SoapHttpClientProto
 	string port = "8888";
     
     public BeagleWebService (string Hostname, string Port) {
-
+        	
     	if (Hostname == null || Hostname == "")
         	this.hostname = "localhost";
         else
         	this.hostname = Hostname;
         	
-        this.Url = "http://" + this.hostname + ":" + this.port + "/beagle/search.asmx";   	
+        this.Url = "http://" + this.hostname + ":" + this.port + "/beagle/search.asmx";
+      	
     }
     
 	public string Hostname {
@@ -56,27 +57,27 @@ public class BeagleWebService: System.Web.Services.Protocols.SoapHttpClientProto
 			this.Url = "http://" + this.hostname + ":" + this.port + "/beagle/search.asmx";
 		}
 	}
-		    
+    
     /// <remarks>
     ///Full object interface to Beagle
     ///</remarks>
     [System.Web.Services.Protocols.SoapDocumentMethodAttribute("http://www.gnome.org/projects/beagle/webservices/BeagleQuery",RequestNamespace="http://www.gnome.org/projects/beagle/webservices",ResponseNamespace="http://www.gnome.org/projects/beagle/webservices",ParameterStyle=System.Web.Services.Protocols.SoapParameterStyle.Wrapped,Use=System.Web.Services.Description.SoapBindingUse.Literal)]
-    public SearchResult BeagleQuery(SearchRequest BeagleQueryRequest) {
+    public SearchResult BeagleQuery(SearchRequest req) {
         object[] results = this.Invoke("BeagleQuery", new object[] {
-            BeagleQueryRequest});
+            req});
         return ((SearchResult)(results[0]));
     }
-
-    public System.IAsyncResult BeginBeagleQuery(SearchRequest BeagleQueryRequest, System.AsyncCallback callback, object asyncState) {
+    
+    public System.IAsyncResult BeginBeagleQuery(SearchRequest req, System.AsyncCallback callback, object asyncState) {
         return this.BeginInvoke("BeagleQuery", new object[] {
-            BeagleQueryRequest}, callback, asyncState);
+            req}, callback, asyncState);
     }
-
+    
     public SearchResult EndBeagleQuery(System.IAsyncResult asyncResult) {
         object[] results = this.EndInvoke(asyncResult);
         return ((SearchResult)(results[0]));
     }
-
+    
     /// <remarks>
     ///Simple Interface to Beagle
     ///</remarks>
@@ -86,17 +87,17 @@ public class BeagleWebService: System.Web.Services.Protocols.SoapHttpClientProto
             text});
         return ((SearchResult)(results[0]));
     }
-
+    
     public System.IAsyncResult BeginSimpleQuery(string text, System.AsyncCallback callback, object asyncState) {
         return this.BeginInvoke("SimpleQuery", new object[] {
             text}, callback, asyncState);
     }
-
+    
     public SearchResult EndSimpleQuery(System.IAsyncResult asyncResult) {
         object[] results = this.EndInvoke(asyncResult);
         return ((SearchResult)(results[0]));
     }
-
+    
     /// <remarks>
     ///Full text Interface to Beagle
     ///</remarks>
@@ -109,7 +110,7 @@ public class BeagleWebService: System.Web.Services.Protocols.SoapHttpClientProto
             queryDomain});
         return ((SearchResult)(results[0]));
     }
-
+    
     public System.IAsyncResult BeginSimpleQuery2(string text, string mimeType, string source, string queryDomain, System.AsyncCallback callback, object asyncState) {
         return this.BeginInvoke("SimpleQuery2", new object[] {
             text,
@@ -117,12 +118,12 @@ public class BeagleWebService: System.Web.Services.Protocols.SoapHttpClientProto
             source,
             queryDomain}, callback, asyncState);
     }
-
+    
     public SearchResult EndSimpleQuery2(System.IAsyncResult asyncResult) {
         object[] results = this.EndInvoke(asyncResult);
         return ((SearchResult)(results[0]));
     }
-
+    
     /// <remarks>
     ///Common Interface to get more results from Beagle
     ///</remarks>
@@ -161,31 +162,126 @@ public class BeagleWebService: System.Web.Services.Protocols.SoapHttpClientProto
     public HitSnippet[] EndGetSnippets(System.IAsyncResult asyncResult) {
         object[] results = this.EndInvoke(asyncResult);
         return ((HitSnippet[])(results[0]));
-    }  
+    }
 }
 
 /// <remarks/>
 [Serializable()]
 [System.Xml.Serialization.XmlType(Namespace="http://www.gnome.org/projects/beagle/webservices")]
 public class SearchRequest {
-
+    
     /// <remarks/>
     public string[] text;
-
+    
     /// <remarks/>
     public string[] mimeType;
-
+    
     /// <remarks/>
     public string[] searchSources;
-
+    
     /// <remarks/>
     public QueryDomain qdomain;
-
+    
     /// <remarks/>
-    public int searchId = 0;
-
+    public int searchId;
+    
     /// <remarks/>
-    public int hopCount = 0; 
+    public int hopCount;
+}
+
+/*
+/// <remarks/>
+[Serializable()]
+[System.Xml.Serialization.XmlTypeAttribute(Namespace="http://www.gnome.org/projects/beagle/webservices")]
+public enum QueryDomain {
+    
+    /// <remarks/>
+    Local,
+    
+    /// <remarks/>
+    System,
+    
+    /// <remarks/>
+    Neighborhood,
+    
+    /// <remarks/>
+    Global,
+}
+*/
+
+/// <remarks/>
+[Serializable()]
+[System.Xml.Serialization.XmlType(Namespace="http://www.gnome.org/projects/beagle/webservices")]
+public class SearchResult {
+    
+    /// <remarks/>
+    public int statusCode;
+    
+    /// <remarks/>
+    public string statusMsg;
+    
+    /// <remarks/>
+    public string searchToken;
+    
+    /// <remarks/>
+    public int firstResultIndex;
+    
+    /// <remarks/>
+    public int numResults;
+    
+    /// <remarks/>
+    public int totalResults;
+    
+    /// <remarks/>
+    public HitResult[] hitResults;
+}
+
+/// <remarks/>
+[Serializable()]
+[System.Xml.Serialization.XmlType(Namespace="http://www.gnome.org/projects/beagle/webservices")]
+public class HitResult {
+    
+    /// <remarks/>
+    public string uri;
+    
+    /// <remarks/>
+    public string resourceType;
+    
+    /// <remarks/>
+    public string mimeType;
+    
+    /// <remarks/>
+    public string source;
+    
+    /// <remarks/>
+    public double score;
+    
+    /// <remarks/>
+    public HitProperty[] properties;
+    
+    /// <remarks/>
+    public int hashCode;
+    
+    /// <remarks/>
+    public string snippet;
+}
+
+/// <remarks/>
+[Serializable()]
+[System.Xml.Serialization.XmlType(Namespace="http://www.gnome.org/projects/beagle/webservices")]
+public class HitProperty {
+    
+    /// <remarks/>
+    public string PKey;
+    
+    /// <remarks/>
+    public string PVal;
+    
+    /// <remarks/>
+    public bool IsMutable;
+    
+    /// <remarks/>
+    public bool IsSearched;
 }
 
 /// <remarks/>
@@ -213,106 +309,14 @@ public class GetSnippetsRequest {
     public int[] hitHashCodes;
 }
 
-/*
-/// <remarks/>
-[Serializable()]
-[System.Xml.Serialization.XmlTypeAttribute(Namespace="http://www.gnome.org/projects/beagle/webservices")]
-public enum QueryDomain {
-
-    /// <remarks/>
-    Local,
-
-    /// <remarks/>
-    Neighborhood,
-
-    /// <remarks/>
-    Global,
-}
-*/
-
-/// <remarks/>
-[Serializable()]
-[System.Xml.Serialization.XmlType(Namespace="http://www.gnome.org/projects/beagle/webservices")]
-public class SearchResult {
-
-    /// <remarks/>
-    public int statusCode;
-
-    /// <remarks/>
-    public string statusMsg;
-
-    /// <remarks/>
-    public string searchToken;
-
-    /// <remarks/>
-    public int firstResultIndex;
-
-    /// <remarks/>
-    public int numResults;
-
-    /// <remarks/>
-    public int totalResults;
-
-    /// <remarks/>
-    public HitResult[] hitResults;
-}
-
-/// <remarks/>
-[Serializable()]
-[System.Xml.Serialization.XmlType(Namespace="http://www.gnome.org/projects/beagle/webservices")]
-public class HitResult {
-
-    /// <remarks/>
-    public string uri;
-
-    /// <remarks/>
-    public string resourceType;
-
-    /// <remarks/>
-    public string mimeType;
-
-    /// <remarks/>
-    public string source;
-
-    /// <remarks/>
-    public double score;
-
-    /// <remarks/>
-    public HitProperty[] properties;
-
-    /// <remarks/>
-    public int hashCode;
-    
-    /// <remarks/>
-    public string snippet;
-}
-
-/// <remarks/>
-[Serializable()]
-[System.Xml.Serialization.XmlType(Namespace="http://www.gnome.org/projects/beagle/webservices")]
-public class HitProperty {
-
-    /// <remarks/>
-    public string PKey;
-
-    /// <remarks/>
-    public string PVal;
-
-    /// <remarks/>
-    public bool IsMutable;
-
-    /// <remarks/>
-    public bool IsSearched;
-}
-
 /// <remarks/>
 [Serializable()]
 [System.Xml.Serialization.XmlType(Namespace="http://www.gnome.org/projects/beagle/webservices")]
 public class HitSnippet {
-
+    
     /// <remarks/>
     public int hashCode;
-
+    
     /// <remarks/>
     public string snippet;
 }
