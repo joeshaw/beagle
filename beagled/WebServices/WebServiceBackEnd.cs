@@ -439,11 +439,12 @@ namespace Beagle.WebService {
 			}
 
 			Query query = new Query();
+
 			string searchString = "";						
 			foreach (string text in sreq.text)  {
-				query.AddText(text);				
-				searchString += " " + text;
-			}
+				query.AddText(text);
+				searchString += (searchString.Length == 0) ? text:" " + text;
+			}			
 			
 			Logger.Log.Info("WebServiceBackEnd: Received {0} WebService Query with search term: {1}", isLocalReq ? "Local":"External", searchString.Trim());
 

@@ -349,8 +349,16 @@ namespace WebService_CodeBehind {
 		wargs.isLocalReq = isLocalReq();
 		wargs.globalSearch = showGlobalCheckBox?GlobalSearchCheckBox.Checked:false;
 		
-		string response = remoteObj.doQuery(wargs);
-		
+		string response = "";		
+		try {
+			response = remoteObj.doQuery(wargs);		
+		}
+		catch (Exception ex) 
+		{
+			response = "Exception in WebBackEnd:doQuery method\n";
+			Console.WriteLine("WebFrontEnd: Caught Exception in WebBackEnd:doQuery()\n" + ex.Message);			
+		}	
+				
 		if (response.StartsWith(NO_RESULTS))  {
 				Output.Text = HeaderMsg + response;
 				Back.Visible = Forward.Visible = false;
@@ -393,7 +401,17 @@ namespace WebService_CodeBehind {
 		sourceList.SelectedValue = (string) Session["Source"];
 		
 		//if (remoteObj == null)  { Output.Text = NO_RESULTS; return; }
-		string response = convertUrls(remoteObj.doBack(sessId));	
+		
+		string response = "";		
+		try {
+			response = convertUrls(remoteObj.doBack(sessId));		
+		}
+		catch (Exception ex) 
+		{
+			response = "Exception in WebBackEnd:doBack method\n";
+			Console.WriteLine("WebFrontEnd: Caught Exception in WebBackEnd:doBack()\n" + ex.Message);			
+		}	
+				
 		Session["ResultsOnDisplay"] = Output.Text = HeaderMsg + response;
 		
 		GlobalSearchCheckBox.Checked = (bool)Session["GlobalCheckBox"];
@@ -423,8 +441,17 @@ namespace WebService_CodeBehind {
 		SearchBox.Text = (string) Session["SearchString"];
 		sourceList.SelectedValue = (string) Session["Source"];
 		
-		//if (remoteObj == null)  { Output.Text = NO_RESULTS; return; }
-		string response = convertUrls(remoteObj.doForward(sessId));
+		//if (remoteObj == null)  { Output.Text = NO_RESULTS; return; }		
+		string response = "";		
+		try {
+			response = convertUrls(remoteObj.doForward(sessId));		
+		}
+		catch (Exception ex) 
+		{
+			response = "Exception in WebBackEnd:doForward method\n";
+			Console.WriteLine("WebFrontEnd: Caught Exception in WebBackEnd:doForward()\n" + ex.Message);			
+		}			
+		
 		Session["ResultsOnDisplay"] = Output.Text = HeaderMsg + response;
 		
 		GlobalSearchCheckBox.Checked = (bool)Session["GlobalCheckBox"];
