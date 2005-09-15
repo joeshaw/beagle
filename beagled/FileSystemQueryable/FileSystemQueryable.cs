@@ -712,6 +712,21 @@ namespace Beagle.Daemon.FileSystemQueryable {
 			dir.MarkAsClean ();
 		}
 
+		public void MarkDirectoryAsUncrawlable (DirectoryModel dir)
+		{
+			if (! dir.IsAttached)
+				return;
+			
+			// If we managed to get set up a watch on this directory,
+			// drop it.
+			if (dir.WatchHandle != null) {
+				event_backend.ForgetWatch (dir.WatchHandle);
+				dir.WatchHandle = null;
+			}
+
+			dir.MarkAsUncrawlable ();
+		}
+
 		public void Recrawl (string path) 
 		{
 			// Try to find a directory model for the path specified

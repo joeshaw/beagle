@@ -172,7 +172,10 @@ namespace Beagle.Daemon.FileSystemQueryable {
 		}
 
 		public bool NeedsCrawl {
-			get { return state != DirectoryState.Clean; }
+			get {
+				return state != DirectoryState.Clean
+					&& state != DirectoryState.Uncrawlable;
+			}
 		}
 
 		public object WatchHandle {
@@ -212,6 +215,11 @@ namespace Beagle.Daemon.FileSystemQueryable {
 				state = DirectoryState.PossiblyClean;
 			else
 				state = DirectoryState.Clean;
+		}
+
+		public void MarkAsUncrawlable ()
+		{
+			state = DirectoryState.Uncrawlable;
 		}
 
 		///////////////////////////////////////////////////////////

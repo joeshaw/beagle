@@ -42,6 +42,10 @@ namespace Beagle.Daemon.FileSystemQueryable {
 
 		// Something definitely has changed.
 		Dirty         = 3,
+
+		// Something is wrong: probably funky permissions.
+		// Never try to crawl a directory in this state.
+		Uncrawlable   = 4
 	}
 
 }
