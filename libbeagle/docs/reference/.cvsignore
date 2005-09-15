@@ -5,3 +5,7 @@ Makefile.in
 *.o
 *.lo
 *.la
+*.stamp
+html
+tmpl
+xml
