@@ -91,6 +91,10 @@ namespace Beagle.Daemon {
 		
 		override protected bool PreAddIndexableHook (Indexable indexable)
 		{
+			// None of this applies for Removes
+			if (indexable.Type == IndexableType.Remove)
+				return true;
+
 			// Remember the file's info and mtime.
 			CachedFileInfo info = new CachedFileInfo ();
 
@@ -153,6 +157,11 @@ namespace Beagle.Daemon {
 
 			if (! FileAttributesStore.Write (attr))
 				Logger.Log.Error ("Couldn't write attributes for {0}", info.Path);
+		}
+
+		override protected void PostRemoveHook (Indexable indexable, IndexerRemovedReceipt receipt)
+		{
+			file_info_cache.Remove (indexable.Uri);
 		}
 
 		override protected bool HitIsValid (Uri uri)

@@ -535,6 +535,66 @@ namespace Beagle.Daemon {
 
 		//////////////////////////////////////////////////////////////////////////////////
 
+		public Scheduler.Task NewRemoveByPropertyTask (Property prop)
+		{
+			PropertyRemovalGenerator prg = new PropertyRemovalGenerator (driver, prop);
+
+			return NewAddTask (prg);
+		}
+
+		///////////////////////////////////////////////////////////////////////////////////
+
+		//
+		// An IIndexableGenerator that returns remove Indexables for
+		// all items which match a certain property
+		//
+
+		private class PropertyRemovalGenerator : IIndexableGenerator {
+
+			private LuceneQueryingDriver driver;
+			private Property prop_to_match;
+			private Uri[] uris_to_remove;
+			private int idx;
+
+			public PropertyRemovalGenerator (LuceneQueryingDriver driver, Property prop)
+			{
+				this.driver = driver;
+				this.prop_to_match = prop;
+			}
+
+			public Indexable GetNextIndexable ()
+			{
+				Indexable indexable;
+
+				indexable = new Indexable (IndexableType.Remove, uris_to_remove [idx]);
+				idx++;
+
+				return indexable;
+			}
+
+			public bool HasNextIndexable ()
+			{
+				if (uris_to_remove == null)
+					uris_to_remove = this.driver.PropertyQuery (this.prop_to_match);
+
+				if (idx < uris_to_remove.Length)
+					return true;
+				else 
+					return false;
+			}
+
+			public string StatusName {
+				get {
+					return String.Format ("Removing {0}={1}", prop_to_match.Key, prop_to_match.Value);
+				}
+			}
+
+			public void PostFlushHook () { }
+		}
+
+
+		//////////////////////////////////////////////////////////////////////////////////
+
 		// When all other tasks are complete, we need to do a final flush.
 		// We schedule that as a maintenance task.
 

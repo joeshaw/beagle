@@ -90,6 +90,36 @@ namespace Beagle.Daemon {
 
 		////////////////////////////////////////////////////////////////
 
+		public Uri[] PropertyQuery (Property prop)
+		{
+			// FIXME: Should we support scanning the secondary
+			// index as well?
+
+			IndexReader primary_reader;
+			LNS.IndexSearcher primary_searcher;
+
+			primary_reader = IndexReader.Open (PrimaryStore);
+			primary_searcher = new LNS.IndexSearcher (primary_reader);
+
+			Term term = new Term (PropertyToFieldName (prop.Type, prop.Key), prop.Value);
+			LNS.TermQuery query = new LNS.TermQuery (term);
+			LNS.Hits hits = primary_searcher.Search (query);
+
+			Uri[] uri_list = new Uri [hits.Length ()];
+			for (int i = 0; i < hits.Length (); i++) {
+				Document doc;
+				doc = hits.Doc (i);
+				uri_list [i] = GetUriFromDocument (doc);
+			}
+
+			primary_reader.Close ();
+			primary_searcher.Close ();
+
+			return uri_list;
+		}
+
+		////////////////////////////////////////////////////////////////
+
 		// Returns the lowest matching score before the results are
 		// truncated.
 		public void DoQuery (Query               query,
