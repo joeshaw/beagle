@@ -256,8 +256,11 @@ GAIM_LOG_QUERYABLE_CSFILES =				\
 
 edsqueryable = $(srcdir)/EvolutionDataServerQueryable
 EDS_QUERYABLE_CSFILES =                                 \
+	$(edsqueryable)/BookContainer.cs		\
+	$(edsqueryable)/CalContainer.cs			\
+	$(edsqueryable)/Container.cs			\
 	$(edsqueryable)/EvolutionDataServerQueryable.cs	\
-	$(edsqueryable)/EdsSource.cs
+	$(edsqueryable)/SourcesHandler.cs
 
 tomboyqueryable = $(srcdir)/TomboyQueryable
 TOMBOY_QUERYABLE_CSFILES =				\

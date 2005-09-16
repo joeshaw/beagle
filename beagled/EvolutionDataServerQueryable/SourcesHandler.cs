@@ -1,5 +1,5 @@
 //
-// EdsSource.cs
+// SourcesHandler.cs
 //
 // Copyright (C) 2005 Novell, Inc.
 //
@@ -25,6 +25,7 @@
 //
 
 using System;
+using System.Collections;
 
 using Beagle.Util;
 
@@ -32,18 +33,19 @@ using Evolution;
 
 namespace Beagle.Daemon.EvolutionDataServerQueryable {
 
-	public delegate void IndexSourceHandler (Evolution.Source src);
+	public class SourcesHandler {
 
-	public class EdsSource {
-
+		Type container_type;
+		EvolutionDataServerQueryable queryable;
+		string fingerprint;
 		SourceList source_list;
+		Hashtable src_to_cont_map = new Hashtable ();
 
-		public IndexSourceHandler IndexSourceAll;
-		public IndexSourceHandler IndexSourceChanges;
-		public IndexSourceHandler RemoveSource;
-
-		public EdsSource (string gconf_key)
+		public SourcesHandler (string gconf_key, Type container_type, EvolutionDataServerQueryable queryable, string fingerprint)
 		{
+			this.container_type = container_type;
+			this.queryable = queryable;
+			this.fingerprint = fingerprint;
 			this.source_list = new SourceList (gconf_key);
 
 			if (this.source_list == null) {
@@ -55,35 +57,44 @@ namespace Beagle.Daemon.EvolutionDataServerQueryable {
 
 			this.source_list.GroupAdded += OnGroupAdded;
 			this.source_list.GroupRemoved += OnGroupRemoved;
-		}
-
-		public void Index ()
-		{
-			if (this.source_list == null)
-				return;
 
 			foreach (SourceGroup group in this.source_list.Groups)
-				IndexSourceGroup (group);
+				IndexSourceGroup (group, false);
 		}
 
-		private void IndexSourceGroup (SourceGroup group)
+		private void IndexSourceGroup (SourceGroup group, bool all_items)
 		{
 			group.SourceAdded += OnSourceAdded;
 			group.SourceRemoved += OnSourceRemoved;
 
-			foreach (Evolution.Source src in group.Sources)
-				this.IndexSourceChanges (src);
+			foreach (Evolution.Source src in group.Sources) {
+				Container cont = (Container) Activator.CreateInstance (this.container_type, new object[] { src, this.queryable, this.fingerprint });
+				if (!cont.OpenClient ())
+					continue;
+
+				src_to_cont_map [src] = cont;
+
+				if (all_items)
+					cont.IndexAll ();
+				else
+					cont.IndexChanges ();
+
+				cont.OpenView ();
+			}
 		}
 
 		private void RemoveSourceGroup (SourceGroup group)
 		{
-			foreach (Evolution.Source src in group.Sources)
-				this.RemoveSource (src);
+			foreach (Evolution.Source src in group.Sources) {
+				Container cont = (Container) src_to_cont_map [src];
+				cont.Remove ();
+				src_to_cont_map.Remove (src);
+			}
 		}
 
 		private void OnGroupAdded (object o, GroupAddedArgs args)
 		{
-			IndexSourceGroup (args.Group);
+			IndexSourceGroup (args.Group, true);
 		}
 
 		private void OnGroupRemoved (object o, GroupRemovedArgs args)
@@ -93,12 +104,17 @@ namespace Beagle.Daemon.EvolutionDataServerQueryable {
 
 		private void OnSourceAdded (object o, SourceAddedArgs args)
 		{
-			this.IndexSourceAll (args.Source);
+			Container cont = (Container) Activator.CreateInstance (this.container_type, new object[] { args.Source, this.fingerprint });
+			if (!cont.OpenClient ())
+				return;
+			cont.IndexAll ();
+			cont.OpenView ();
 		}
 
 		private void OnSourceRemoved (object o, SourceRemovedArgs args)
 		{
-			this.RemoveSource (args.Source);
+			Container cont = (Container) src_to_cont_map [args.Source];
+			cont.Remove ();
 		}
 	}
 }
