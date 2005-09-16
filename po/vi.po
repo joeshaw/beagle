@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: beagle Gnome HEAD\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2005-08-26 02:50+0000\n"
-"PO-Revision-Date: 2005-08-26 22:12+0930\n"
+"PO-Revision-Date: 2005-09-16 18:03+0930\n"
 "Last-Translator: Clytie Siddall <clytie@riverland.net.au>\n"
 "Language-Team: Vietnamese <gnomevi-list@lists.sourceforge.net>\n"
 "MIME-Version: 1.0\n"
@@ -255,7 +255,7 @@ msgstr "Mở"
 #: ../Tiles/TranslationHack.cs:38 ../Tiles/TranslationHack.cs:68
 #: ../Tiles/TranslationHack.cs:82 ../Tiles/TranslationHack.cs:98
 msgid "in folder"
-msgstr "trong danh mục"
+msgstr "trong thư mục"
 
 #. For translators: From template Tiles/template-docs.html
 #. For translators: From template Tiles/template-file.html
@@ -318,7 +318,7 @@ msgstr "Chủ đề thư :"
 #. For translators: From template Tiles/template-mail-message.html
 #: ../Tiles/TranslationHack.cs:48
 msgid "Folder:"
-msgstr "Danh mục:"
+msgstr "thư mục:"
 
 #. For translators: From template Tiles/template-music.html
 #: ../Tiles/TranslationHack.cs:54
@@ -492,11 +492,11 @@ msgstr "Mẫu"
 #: ../tools/Settings.cs:681 ../tools/Settings.cs:1060
 #: ../tools/settings.glade.h:22
 msgid "Mail Folder"
-msgstr "Danh mục thư"
+msgstr "thư mục thư"
 
 #: ../tools/Settings.cs:1029
 msgid "Select Folder"
-msgstr "Chọn danh mục"
+msgstr "Chọn thư mục"
 
 #: ../tools/Settings.cs:1089
 msgid "Error adding path"
@@ -538,7 +538,7 @@ msgstr "<b>Riêng tư</b>"
 
 #: ../tools/settings.glade.h:7
 msgid "<b>Select mail folder</b>"
-msgstr "<b>Chọn danh mục thư</b>"
+msgstr "<b>Chọn thư mục thư</b>"
 
 #: ../tools/settings.glade.h:8
 msgid ""
@@ -607,7 +607,7 @@ msgstr "Hãy chọn tài nguyên bạn muốn loại trừ ra việc chỉ mục
 
 #: ../tools/settings.glade.h:26
 msgid "Please select the mail folder you wish to exclude from indexing. "
-msgstr "Hãy chọn danh mục thư bạn muốn loại trừ ra việc chỉ mục."
+msgstr "Hãy chọn thư mục thư bạn muốn loại trừ ra việc chỉ mục."
 
 #: ../tools/settings.glade.h:27
 msgid "Search"
@@ -615,13 +615,13 @@ msgstr "Tìm kiếm"
 
 #: ../tools/settings.glade.h:28
 msgid "Search Preferences"
-msgstr "Sở thích Tìm kiếm"
+msgstr "Tùy thích Tìm kiếm"
 
 #: ../tools/settings.glade.h:29
 msgid ""
 "Specify any resources, such as paths, patterns, mail folders or type of "
 "objects you wish to exclude from indexing."
-msgstr "Hãy xác định tài nguyên nào, như đường dẫn, mẫu, danh mục thư hoặc kiểu đối tượng mà bạn muốn loại trừ ra việc chỉ mục."
+msgstr "Hãy xác định tài nguyên nào, như đường dẫn, mẫu, thư mục thư hoặc kiểu đối tượng mà bạn muốn loại trừ ra việc chỉ mục."
 
 #: ../tools/settings.glade.h:30
 msgid "Specify paths that should be available for external access"
