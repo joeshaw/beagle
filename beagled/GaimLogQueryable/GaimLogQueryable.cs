@@ -35,7 +35,7 @@ using Beagle.Util;
 
 namespace Beagle.Daemon.GaimLogQueryable {
 
-	[QueryableFlavor (Name="IMLog", Domain=QueryDomain.Local, RequireInotify=false)]
+	[QueryableFlavor (Name="GaimLog", Domain=QueryDomain.Local, RequireInotify=false)]
 	public class GaimLogQueryable : LuceneFileQueryable {
 
 		private static Logger log = Logger.Get ("GaimLogQueryable");
