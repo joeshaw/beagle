@@ -36,6 +36,13 @@ namespace Beagle.Filters {
 		public FilterText ()
 		{
 			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("text/plain"));
+			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("text/x-log"));
+			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("text/x-readme"));
+			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("text/x-install"));
+			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("text/x-credits"));
+			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("text/x-authors"));
+			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("text/x-copying"));
+
 			SnippetMode = true;
 			OriginalIsText = true;
 		}
