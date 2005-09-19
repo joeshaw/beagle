@@ -50,9 +50,8 @@ namespace Beagle.Daemon.EvolutionDataServerQueryable {
 				return false;
 			}
 
-			this.book = new Book (this.source);
-
 			try {
+				this.book = new Book (this.source);
 				this.book.Open (true);
 			} catch (Exception e) {
 				Logger.Log.Warn ("Unable to open addressbook {0}: {1}", this.source.Uri, e.Message);
@@ -172,13 +171,21 @@ namespace Beagle.Daemon.EvolutionDataServerQueryable {
 
 		// URI scheme is:
 		// contacts:///?source-uid=<value>&contact-uid=<value>
-
+		//
+		// The Uri class sucks SO MUCH ASS.  It shits itself
+		// on foo:///?bar so we have to insert something in
+		// before "?bar".  This is filed as Ximian bug #76146.
+		// Hopefully it is just a bug in Mono and not a
+		// fundamental problem of the Uri class.  Fortunately
+		// Evolution can handle the horribly mangled URIs
+		// that come out of it.
+		
 		private Uri GetContactUri (Evolution.Contact contact) {
 			return GetContactUri (contact.Id);
 		}
 
 		private Uri GetContactUri (string id) {
-			return new Uri (String.Format ("contacts:///?source-uid={0}&contact-uid={1}",
+			return new Uri (String.Format ("contacts://uri-class-sucks/?source-uid={0}&contact-uid={1}",
 						       this.source.Uid, id));
 		}
 

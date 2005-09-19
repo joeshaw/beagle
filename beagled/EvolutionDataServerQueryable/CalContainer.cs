@@ -49,9 +49,8 @@ namespace Beagle.Daemon.EvolutionDataServerQueryable {
 				return false;
 			}
 
-			this.cal = new Cal (this.source, CalSourceType.Event);
-
 			try {
+				this.cal = new Cal (this.source, CalSourceType.Event);
 				this.cal.Open (true);
 			} catch (Exception e) {
 				Logger.Log.Warn ("Unable to open calendar {0}: {1}", this.source.Uri, e.Message);
@@ -154,13 +153,21 @@ namespace Beagle.Daemon.EvolutionDataServerQueryable {
 			
 		// URI scheme is:
 		// calendar:///?source-uid=<value>&comp-uid=<value>[&comp-rid=value]
+		//
+		// The Uri class sucks SO MUCH ASS.  It shits itself
+		// on foo:///?bar so we have to insert something in
+		// before "?bar".  This is filed as Ximian bug #76146.
+		// Hopefully it is just a bug in Mono and not a
+		// fundamental problem of the Uri class.  Fortunately
+		// Evolution can handle the horribly mangled URIs
+		// that come out of it.
 
 		private Uri GetCalendarUri (CalComponent cc) {
 			return GetCalendarUri (cc.Uid);
 		}
 
 		private Uri GetCalendarUri (string id) {
-			return new Uri (String.Format ("calendar:///?source-uid={0}&comp-uid={1}",
+			return new Uri (String.Format ("calendar://uri-class-sucks/?source-uid={0}&comp-uid={1}",
 						       this.source.Uid, id));
 		}
 
