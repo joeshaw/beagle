@@ -7,6 +7,8 @@
 
 CSC = mcs -debug -nowarn:0067,0618,0619,0169,0164
 
+BACKENDDIR = $(pkglibdir)/Backends
+
 PLUGIN_TARGET = BeagleDaemonPlugins.dll
 
 PLUGIN_CSFLAGS = -target:library
@@ -254,14 +256,6 @@ GAIM_LOG_QUERYABLE_CSFILES =				\
 	$(gaimlogqueryable)/GaimLogQueryable.cs 	\
 	$(gaimlogqueryable)/GaimLogCrawler.cs
 
-edsqueryable = $(srcdir)/EvolutionDataServerQueryable
-EDS_QUERYABLE_CSFILES =                                 \
-	$(edsqueryable)/BookContainer.cs		\
-	$(edsqueryable)/CalContainer.cs			\
-	$(edsqueryable)/Container.cs			\
-	$(edsqueryable)/EvolutionDataServerQueryable.cs	\
-	$(edsqueryable)/SourcesHandler.cs
-
 tomboyqueryable = $(srcdir)/TomboyQueryable
 TOMBOY_QUERYABLE_CSFILES =				\
 	$(tomboyqueryable)/TomboyQueryable.cs
@@ -364,13 +358,6 @@ else
 DAEMON_DLL_ASSEMBLIES += -r:Mono.Data.SqliteClient
 endif
 
-
-if ENABLE_EVO_SHARP
-DAEMON_DLL_CSFLAGS += -define:ENABLE_EVO_SHARP
-DAEMON_DLL_CSFILES += $(EDS_QUERYABLE_CSFILES)
-DAEMON_DLL_ASSEMBLIES += $(EVO_SHARP_LIBS)
-endif
-
 #if ENABLE_MOZILLA_BACKEND
 #mozillaqueryable = $(srcdir)/MozillaQueryable
 #MOZILLA_QUERYABLE_CSFILES =				\
@@ -390,6 +377,43 @@ endif
 
 $(DAEMON_DLL_TARGET): $(DAEMON_DLL_CSFILES) $(DAEMON_DLL_LOCAL_ASSEMBLIES)
 	$(CSC) -out:$@ $(DAEMON_DLL_CSFLAGS) $(DAEMON_DLL_CSFILES) $(DAEMON_DLL_ASSEMBLIES)
+
+############################################################
+
+###
+### Pluggable backend support
+###
+
+BACKEND_CSFLAGS = -target:library
+BACKEND_LOCAL_ASSEMBLIES =			\
+	../Util/Util.dll			\
+	../BeagleClient/Beagle.dll		\
+	./$(DAEMON_DLL_TARGET)
+
+BACKEND_ASSEMBLIES =				\
+	$(BACKEND_LOCAL_ASSEMBLIES:%=-r:%)	\
+	-r:Mono.Posix				\
+	-r:ICSharpCode.SharpZipLib.dll
+
+###
+### Evolution Data Server backend
+###
+
+edsqueryable = $(srcdir)/EvolutionDataServerQueryable
+EDS_QUERYABLE_CSFILES =                                 \
+	$(edsqueryable)/BookContainer.cs		\
+	$(edsqueryable)/CalContainer.cs			\
+	$(edsqueryable)/Container.cs			\
+	$(edsqueryable)/EvolutionDataServerQueryable.cs	\
+	$(edsqueryable)/SourcesHandler.cs
+
+EDS_DLL_TARGET = EvolutionDataServer.dll
+EDS_DLL_CSFLAGS = $(BACKEND_CSFLAGS)
+EDS_DLL_CSFILES = $(EDS_QUERYABLE_CSFILES)
+EDS_DLL_ASSEMBLIES = $(BACKEND_ASSEMBLIES) $(EVO_SHARP_LIBS)
+
+$(EDS_DLL_TARGET): $(EDS_DLL_CSFILES) $(DAEMON_DLL_LOCAL_ASSEMBLIES)
+	$(CSC) -out:$@ $(EDS_DLL_CSFLAGS) $(EDS_DLL_CSFILES) -r:$(DAEMON_DLL_TARGET) $(DAEMON_DLL_ASSEMBLIES)
 
 ############################################################
 
@@ -884,6 +908,11 @@ ALL_TARGETS += 				\
 	$(WEBSERVICES_BACKEND_TARGET)	
 endif
 
+if ENABLE_EVO_SHARP
+ALL_TARGETS +=				\
+	$(EDS_DLL_TARGET)
+endif
+
 man_MANS = 				\
 	beagled.1			\
 	beagle-build-index.8		\
@@ -894,9 +923,13 @@ all: $(ALL_TARGETS)
 install-data-local: $(ALL_TARGETS)
 	$(mkinstalldirs) $(DESTDIR)$(pkglibdir)
 	$(mkinstalldirs) $(DESTDIR)$(pkgdatadir)
+	$(mkinstalldirs) $(DESTDIR)$(BACKENDDIR)
 if ENABLE_WEBSERVICES
 	$(mkinstalldirs) $(DESTDIR)$(XSP_DIR)
 	$(mkinstalldirs) $(DESTDIR)$(XSPBIN_DIR)
+endif
+if ENABLE_EVO_SHARP
+	$(INSTALL_DATA) $(EDS_DLL_TARGET) $(DESTDIR)$(BACKENDDIR)/$(EDS_DLL_TARGET)
 endif
 	$(INSTALL_DATA) $(PLUGIN_TARGET) $(DESTDIR)$(pkglibdir)/$(PLUGIN_TARGET)
 	$(INSTALL_DATA) $(DAEMON_DLL_TARGET) $(DESTDIR)$(pkglibdir)/$(DAEMON_DLL_TARGET)
@@ -921,6 +954,9 @@ if ENABLE_WEBSERVICES
 	rm -f $(DESTDIR)$(pkglibdir)/$(WEBSERVICES_BACKEND_TARGET)
 	rm -f $(DESTDIR)$(pkglibdir)/$(WEBSERVICES_XSP_TARGET)
 	rm -rf $(DESTDIR)$(XSP_DIR)
+endif
+if ENABLE_EVO_SHARP
+	rm -f $(DESTDIR)$(BACKENDDIR)/$(EDS_DLL_TARGET)
 endif
 	rm -f $(DESTDIR)$(pkglibdir)/$(PLUGIN_TARGET)
 	rm -f $(DESTDIR)$(pkglibdir)/$(DAEMON_DLL_TARGET)
@@ -948,15 +984,10 @@ noinst_SCRIPTS=	\
 	$(TERM_STATS_WRAPPER)		\
 	$(NAME_INDEX_WRAPPER)		
 
-
-COND_CS_FILES = \
-	$(WEBSERVICES_BACKEND_CSFILES)
-
 EXTRA_DIST = \
 	$(WRAPPER_IN)   			\
 	$(DAEMON_WRAPPER_IN)			\
 	$(INDEX_HELPER_WRAPPER_IN)		\
-	$(COND_CS_FILES)			\
 	$(man_MANS)				\
 	$(PLUGIN_CSFILES)			\
 	$(DAEMON_DLL_CSFILES)			\
@@ -988,6 +1019,8 @@ CLEANFILES = \
 	$(DAEMON_TARGET)       			\
 	$(DAEMON_TARGET).mdb   			\
 	$(DAEMON_WRAPPER)      			\
+	$(EDS_DLL_TARGET)			\
+	$(EDS_DLL_TARGET).mdb			\
 	$(INDEX_HELPER_TARGET)			\
 	$(INDEX_HELPER_TARGET).mdb		\
 	$(INDEX_HELPER_WRAPPER)			\
