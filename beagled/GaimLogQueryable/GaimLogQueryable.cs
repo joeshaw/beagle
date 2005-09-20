@@ -78,6 +78,7 @@ namespace Beagle.Daemon.GaimLogQueryable {
 			if (!Inotify.Enabled) {
 				Scheduler.Task task = Scheduler.TaskFromHook (new Scheduler.TaskHook (CrawlHook));
                                 task.Tag = "Crawling ~/.gaim/logs to find new logfiles";
+				task.Source = this;
                                 ThisScheduler.Add (task);
 			}
 
