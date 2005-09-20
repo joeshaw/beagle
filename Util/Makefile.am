@@ -88,7 +88,8 @@ CSFILES = 			        	\
 	$(srcdir)/UnixListener.cs		\
 	$(srcdir)/UriFu.cs			\
 	$(srcdir)/Vfs.cs                        \
-	$(srcdir)/XKeybinder.cs
+	$(srcdir)/XKeybinder.cs			\
+	$(srcdir)/XmlFu.cs
 
 if HAS_LIBCHM 
 CSFILES += 					\

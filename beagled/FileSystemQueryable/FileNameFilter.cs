@@ -250,6 +250,12 @@ namespace Beagle.Daemon.FileSystemQueryable {
 				if (exclude.IsMatch (name))
 					return true;
 			
+			if (parent == null) {
+				if (Debug)
+					Logger.Log.Debug ("*** Parent is null (name={0}, is_directory={1}", name, is_directory);
+				return false;
+			}
+
 			// This is kind of a hack, but if parent.Parent is null, we need to pass
 			// the full path of the directory as second argument to Ignore to allow
 			// us to do the root check.

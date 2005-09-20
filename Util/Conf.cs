@@ -235,7 +235,7 @@ namespace Beagle.Util {
 				watching_for_updates = false;
 				fs = new FileStream (filepath, FileMode.Create);
 				XmlSerializer serializer = new XmlSerializer (type);
-				serializer.Serialize (fs, section);
+				XmlFu.SerializeUtf8 (serializer, fs, section);
 			} catch (Exception e) {
 				if (fs != null)
 					fs.Close ();

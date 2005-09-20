@@ -126,7 +126,7 @@ namespace Beagle {
 			// correctly.
 #if ENABLE_XML_DUMP
 			MemoryStream mem_stream = new MemoryStream ();
-			req_serializer.Serialize (mem_stream, new RequestWrapper (request));
+			XmlFu.SerializeUtf8 (req_serializer, mem_stream, new RequestWrapper (request));
 			mem_stream.Seek (0, SeekOrigin.Begin);
 			StreamReader r = new StreamReader (mem_stream);
 			Logger.Log.Debug ("Sending request:\n{0}", r.ReadToEnd ());
@@ -134,7 +134,7 @@ namespace Beagle {
 			mem_stream.WriteTo (stream);
 			mem_stream.Close ();
 #else
-			req_serializer.Serialize (stream, new RequestWrapper (request));
+			XmlFu.SerializeUtf8 (req_serializer, stream, new RequestWrapper (request));
 #endif
 			// Send end of message marker
 			stream.WriteByte (0xff);
