@@ -256,7 +256,8 @@ namespace Beagle.Daemon {
 					exec.AsyncResponseEvent += OnAsyncResponse;
 				}
 
-				resp = exec.Execute (req);
+				if (exec != null)
+					resp = exec.Execute (req);
 			}
 
 			// It's okay if the response is null; this means
