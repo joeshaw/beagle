@@ -266,6 +266,12 @@ EVO_MAIL_QUERYABLE_CSFILES =					\
 	$(evomailqueryable)/EvolutionMailIndexableGenerator.cs	\
 	$(evomailqueryable)/MailCrawler.cs
 
+kmailqueryable = $(srcdir)/KMailQueryable
+KMAIL_QUERYABLE_CSFILES =				\
+	$(kmailqueryable)/KMailQueryable.cs		\
+	$(kmailqueryable)/KMailIndexableGenerator.cs	\
+	$(kmailqueryable)/KMailIndexer.cs
+
 blamqueryable = $(srcdir)/BlamQueryable
 BLAM_QUERYABLE_CSFILES =				\
 	$(blamqueryable)/BlamQueryable.cs
@@ -290,6 +296,7 @@ INDEXING_SERVICE_QUERYABLE_CSFILES =			\
 DAEMON_DLL_CSFILES = 						\
 	$(LUCENE_CSFILES)					\
 	$(EVO_MAIL_QUERYABLE_CSFILES)				\
+	$(KMAIL_QUERYABLE_CSFILES)				\
 	$(FILE_SYSTEM_QUERYABLE_CSFILES)			\
 	$(GAIM_LOG_QUERYABLE_CSFILES)				\
 	$(INDEXING_SERVICE_QUERYABLE_CSFILES)			\
