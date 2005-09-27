@@ -52,6 +52,8 @@ namespace Beagle.Filters {
 			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("application/vnd.sun.xml.calc.template"));
 			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("application/vnd.sun.xml.impress"));
 			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("application/vnd.sun.xml.impress.template"));
+			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("application/vnd.sun.xml.draw"));
+			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("application/vnd.sun.xml.draw.template"));
 
 			// OO 2.0 mime types
 			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("application/vnd.oasis.opendocument.text"));
@@ -60,6 +62,8 @@ namespace Beagle.Filters {
 			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("application/vnd.oasis.opendocument.spreadsheet-template"));
 			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("application/vnd.oasis.opendocument.presentation"));
 			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("application/vnd.oasis.opendocument.presentation-template"));
+			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("application/vnd.oasis.opendocument.graphics"));
+			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("application/vnd.oasis.opendocument.graphics-template"));
 
 			SnippetMode = true;
 			odtFormat = false;
