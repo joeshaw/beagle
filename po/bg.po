@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: beagle\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2005-08-10 20:41+0300\n"
-"PO-Revision-Date: 2005-08-10 20:40+0300\n"
+"POT-Creation-Date: 2005-09-29 12:59+0300\n"
+"PO-Revision-Date: 2005-09-29 12:58+0300\n"
 "Last-Translator: Rostislav \"zbrox\" Raykov <zbrox@i-space.org>\n"
 "Language-Team: Bulgarian <dict@fsa-bg.org>\n"
 "MIME-Version: 1.0\n"
@@ -17,87 +17,99 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
 
-#: ../Best/Best.cs:121
+#: ../Best/Best.cs:132
 msgid ""
 "If you're wondering whether Best is working check your notification area "
 "(system tray)"
 msgstr "Ако се чудите дали Best върви, проверете района за уведомявания."
 
-#: ../Best/BestTray.cs:171
+#: ../Best/BestTray.cs:149
+msgid "Disable Searching"
+msgstr "Изключване на търсенето"
+
+#: ../Best/BestTray.cs:150
+msgid ""
+"You are about to close the search tray. The search tray is automatically "
+"started at login-time. Would you like to disable it for future sessions?"
+msgstr ""
+"Ще затворите информационната икона. Тя ще се стартира автоматично при "
+"следващо влизане. Искате ли да не се стартира автоматично в бъдещите сесии?"
+
+#: ../Best/BestTray.cs:207
 msgid "No Recent Searches"
 msgstr "Няма скорошни търсения"
 
-#: ../Best/BestTray.cs:175
+#: ../Best/BestTray.cs:212
 msgid "Recent Searches"
 msgstr "Скорошния търсения"
 
-#: ../Best/BestTray.cs:189
+#: ../Best/BestTray.cs:228
 msgid "Clear"
 msgstr "Изчистване"
 
-#: ../Best/BestTray.cs:197
+#: ../Best/BestTray.cs:236
 msgid "Quit"
 msgstr "Изход"
 
-#: ../Best/BestWindow.cs:302
+#: ../Best/BestWindow.cs:306
 msgid "Anywhere"
 msgstr "Навсякъде"
 
-#: ../Best/BestWindow.cs:304
+#: ../Best/BestWindow.cs:310
 msgid "in Files"
 msgstr "във Файлове"
 
-#: ../Best/BestWindow.cs:306
+#: ../Best/BestWindow.cs:314
 msgid "in Addressbook"
 msgstr "в Адресната книга"
 
-#: ../Best/BestWindow.cs:308
+#: ../Best/BestWindow.cs:318
 msgid "in Mail"
 msgstr "в Пощата"
 
-#: ../Best/BestWindow.cs:310
+#: ../Best/BestWindow.cs:322
 msgid "in Web Pages"
 msgstr "в Интернет"
 
-#: ../Best/BestWindow.cs:312
+#: ../Best/BestWindow.cs:326
 msgid "in Chats"
 msgstr "в Разговорите"
 
-#: ../Best/BestWindow.cs:327
+#: ../Best/BestWindow.cs:343
 msgid "Search terms:"
 msgstr "Какво да се търси:"
 
-#: ../Best/BestWindow.cs:344
+#: ../Best/BestWindow.cs:367
 msgid "Find"
 msgstr "Търсене"
 
-#: ../Best/BestWindow.cs:361
+#: ../Best/BestWindow.cs:384
 msgid "Show More Results"
 msgstr "Показване на повече резултати"
 
-#: ../Best/BestWindow.cs:367
+#: ../Best/BestWindow.cs:390
 msgid "Show Previous Results"
 msgstr "Показване на предишни резултати"
 
-#: ../Best/BestWindow.cs:401
+#: ../Best/BestWindow.cs:424
 msgid "No results."
 msgstr "Няма резултати."
 
 #. To translators: {0} is the current count of results shown of {1} in total, this is the message that is initially shown
 #. when results are returned to the user.
-#: ../Best/BestWindow.cs:405
+#: ../Best/BestWindow.cs:428
 #, csharp-format
 msgid "Best <b>{0} results of {1}</b> are shown."
 msgstr "Показани са най-добрите <b>{0} от {1}</b> резултата."
 
 #. To translators: {0} to {1} is the interval of results currently shown of {2} results in total
-#: ../Best/BestWindow.cs:410
+#: ../Best/BestWindow.cs:433
 #, csharp-format
 msgid "Results <b>{0} through {1} of {2}</b> are shown."
 msgstr "Показани са резултати <b>от {0} до {1} от общо {2}</b>"
 
 #. To translators: {0} represents the current query keywords
-#: ../Best/BestWindow.cs:521
+#: ../Best/BestWindow.cs:542
 #, csharp-format
 msgid ""
 "The query for <i>{0}</i> failed.<br>The likely cause is that the beagle "
@@ -107,16 +119,16 @@ msgstr ""
 "демона не върви."
 
 #. To translators: {0} represents the current query keywords, {1} contains the errormessage
-#: ../Best/BestWindow.cs:526
+#: ../Best/BestWindow.cs:547
 #, csharp-format
 msgid "The query for <i>{0}</i> failed with error:<br>{1}<br>"
 msgstr "Търсенето за <i>{0}</i> пропадна с грешка: <br>{1}<br>"
 
-#: ../glue/eggtrayicon.c:120
+#: ../glue/eggtrayicon.c:127
 msgid "Orientation"
 msgstr "Ориентация"
 
-#: ../glue/eggtrayicon.c:121
+#: ../glue/eggtrayicon.c:128
 msgid "The orientation of the tray."
 msgstr "Ориентация на тавата."
 
@@ -176,27 +188,27 @@ msgstr "Разговор в {0}"
 msgid "Conversation with {0}"
 msgstr "Разговор с {0}"
 
-#: ../Tiles/TileMailMessage.cs:79
+#: ../Tiles/TileMailMessage.cs:81
 msgid "No Subject"
 msgstr "Няма тема"
 
-#: ../Tiles/TileMailMessage.cs:86
+#: ../Tiles/TileMailMessage.cs:88
 msgid "To"
 msgstr "До"
 
-#: ../Tiles/TileMailMessage.cs:86
+#: ../Tiles/TileMailMessage.cs:88
 msgid "From"
 msgstr "От"
 
-#: ../Tiles/TileMailMessage.cs:114
+#: ../Tiles/TileMailMessage.cs:116
 msgid "Sent"
 msgstr "Изпратено"
 
-#: ../Tiles/TileMailMessage.cs:114
+#: ../Tiles/TileMailMessage.cs:116
 msgid "Received"
 msgstr "Получено"
 
-#: ../Tiles/TileMailMessage.cs:119
+#: ../Tiles/TileMailMessage.cs:124
 msgid "Email attachment"
 msgstr "Прикачен файл към е-писмо"
 
@@ -369,11 +381,11 @@ msgstr "от мрежовото търсене на хост"
 msgid "Search Networked Beagle"
 msgstr "Мрежово търсене"
 
-#: ../tools/Settings.cs:208
+#: ../tools/Settings.cs:214
 msgid "Reload configuration"
 msgstr "Презареждане на конфигурацията"
 
-#: ../tools/Settings.cs:209
+#: ../tools/Settings.cs:215
 msgid ""
 "The configuration file has been modified by another application. Do you wish "
 "to discard the currently displayed values and reload configuration from disk?"
@@ -381,15 +393,15 @@ msgstr ""
 "Файлът с настройките е бил променен от друга програма. Искате ли да "
 "стойностите, които са показани в момента, да се заменят с тези от диска?"
 
-#: ../tools/Settings.cs:247
+#: ../tools/Settings.cs:253
 msgid "Select Path"
 msgstr "Избор на път"
 
-#: ../tools/Settings.cs:266
+#: ../tools/Settings.cs:272
 msgid "The selected path is already selected for indexing and wasn't added."
 msgstr "Избраният път е вече въведен за индексиране и не беше добавен."
 
-#: ../tools/Settings.cs:269
+#: ../tools/Settings.cs:275
 msgid ""
 "The selected path wasn't added. The list contains items that supercedes it "
 "and the data is already being indexed."
@@ -397,15 +409,15 @@ msgstr ""
 "Избраният път не бе добавен. Списъкът вече съдържа елементи, които обхващат "
 "посочения път, а данните вече са индексирани."
 
-#: ../tools/Settings.cs:280 ../tools/Settings.cs:472
+#: ../tools/Settings.cs:286 ../tools/Settings.cs:478
 msgid "Path not added"
 msgstr "Пътят не е добавен"
 
-#: ../tools/Settings.cs:289
+#: ../tools/Settings.cs:295
 msgid "Remove obsolete paths"
 msgstr "Премахване на излишни пътища"
 
-#: ../tools/Settings.cs:290
+#: ../tools/Settings.cs:296
 msgid ""
 "Adding this path will obsolete some of the existing include paths. This will "
 "result in the removal of the old obsolete paths. Do you still wish to add it?"
@@ -413,11 +425,11 @@ msgstr ""
 "Добавянето на този път ще направи част от вече наличните - излишни. Поради "
 "тази причина те ще бъдат премахнати. Искате ли да го добавите?"
 
-#: ../tools/Settings.cs:316
+#: ../tools/Settings.cs:322
 msgid "Remove path"
 msgstr "Премахване на пътя"
 
-#: ../tools/Settings.cs:317
+#: ../tools/Settings.cs:323
 msgid ""
 "Are you sure you wish to remove this path from the list of directories to be "
 "included for indexing?"
@@ -425,11 +437,11 @@ msgstr ""
 "Сигурни ли сте, че искате да махнете този път от списъка с папки, които се "
 "индексират?"
 
-#: ../tools/Settings.cs:346
+#: ../tools/Settings.cs:352
 msgid "Remove item"
 msgstr "Премахване на елемента"
 
-#: ../tools/Settings.cs:347
+#: ../tools/Settings.cs:353
 msgid ""
 "Are you sure you wish to remove this item from the list of data to be "
 "excluded from indexing?"
@@ -437,76 +449,76 @@ msgstr ""
 "Сигурни ли сте, че искате да махнете елемент път от списъка с папки, които "
 "се индексират?<"
 
-#: ../tools/Settings.cs:390
+#: ../tools/Settings.cs:396
 msgid "Invalid host entry"
 msgstr "Невалиден запис за хост"
 
-#: ../tools/Settings.cs:397
-msgid "Host already present in the list."
-msgstr "Хостът е вече в списъка."
+#: ../tools/Settings.cs:403
+msgid "Remote host already present in the list."
+msgstr "Отдалеченият хост вече присъства в списъка"
 
-#: ../tools/Settings.cs:406
-msgid "Host not added"
-msgstr "Хостът не е добавен"
+#: ../tools/Settings.cs:412
+msgid "Netbeagle Node not added"
+msgstr "Не е добавен възел на Netbeagle"
 
-#: ../tools/Settings.cs:422
+#: ../tools/Settings.cs:428
 msgid "Remove host"
 msgstr "Премахване на хост"
 
-#: ../tools/Settings.cs:423
+#: ../tools/Settings.cs:429
 msgid "Are you sure you wish to remove this host from the list?"
 msgstr "Сигурни ли сте, че искате да премахнете този хост от списъка?"
 
-#: ../tools/Settings.cs:444
+#: ../tools/Settings.cs:450
 msgid "Select path"
 msgstr "Избор на път"
 
-#: ../tools/Settings.cs:463
+#: ../tools/Settings.cs:469
 msgid "The selected path is already configured for external access."
 msgstr "Избрания път е вече конфигуриран за външен достъп."
 
-#: ../tools/Settings.cs:487
+#: ../tools/Settings.cs:493
 msgid "Remove public path"
 msgstr "Премахване на публичния път"
 
-#: ../tools/Settings.cs:488
+#: ../tools/Settings.cs:494
 msgid ""
 "Are you sure you wish to remove this entry from the list of public paths?"
 msgstr ""
 "Сигурни ли сте, че искате да махнете този запис от списъка с публични пътища?"
 
-#: ../tools/Settings.cs:533 ../tools/Settings.cs:622 ../tools/Settings.cs:700
-#: ../tools/Settings.cs:776 ../tools/Settings.cs:1115
+#: ../tools/Settings.cs:539 ../tools/Settings.cs:628 ../tools/Settings.cs:706
+#: ../tools/Settings.cs:782 ../tools/Settings.cs:1121
 msgid "Name"
 msgstr "Име"
 
-#: ../tools/Settings.cs:616 ../tools/settings.glade.h:29
+#: ../tools/Settings.cs:622 ../tools/settings.glade.h:32
 msgid "Type"
 msgstr "Вид"
 
-#: ../tools/Settings.cs:669 ../tools/Settings.cs:1049
-#: ../tools/settings.glade.h:22
+#: ../tools/Settings.cs:675 ../tools/Settings.cs:1055
+#: ../tools/settings.glade.h:24
 msgid "Path"
 msgstr "Път"
 
-#: ../tools/Settings.cs:672 ../tools/Settings.cs:1059
+#: ../tools/Settings.cs:678 ../tools/Settings.cs:1065
 msgid "Pattern"
 msgstr "Шаблон"
 
-#: ../tools/Settings.cs:675 ../tools/Settings.cs:1054
-#: ../tools/settings.glade.h:20
+#: ../tools/Settings.cs:681 ../tools/Settings.cs:1060
+#: ../tools/settings.glade.h:22
 msgid "Mail Folder"
 msgstr "Папка за пощата"
 
-#: ../tools/Settings.cs:1023
+#: ../tools/Settings.cs:1029
 msgid "Select Folder"
 msgstr "Избор на папка"
 
-#: ../tools/Settings.cs:1083
+#: ../tools/Settings.cs:1089
 msgid "Error adding path"
 msgstr "Грешка при добавянето на пътя"
 
-#: ../tools/Settings.cs:1084
+#: ../tools/Settings.cs:1090
 msgid ""
 "The specified path could not be found and therefore it could not be added to "
 "the list of resources excluded for indexing."
@@ -514,13 +526,13 @@ msgstr ""
 "Указаният път не бе открит и затова няма да бъде включен в списъка на "
 "ресурси, които се индексират."
 
-#: ../tools/Settings.cs:1114
+#: ../tools/Settings.cs:1120
 msgid "Show"
 msgstr "Показване"
 
 #: ../tools/settings.glade.h:1
-msgid "<b>Add host</b>"
-msgstr "<b>Добавяне на хост</b>"
+msgid "<b>Add remote host</b>"
+msgstr "<b>Добавяне на отдалечен хост</b>"
 
 #: ../tools/settings.glade.h:2
 msgid "<b>Add resource</b>"
@@ -547,19 +559,28 @@ msgid "<b>Select mail folder</b>"
 msgstr "<b>Избор на папка за пощата</b>"
 
 #: ../tools/settings.glade.h:8
-msgid "Add a search-enabled host you wish to network with"
-msgstr "Добавете компютър поддържащ търсене за работа през мрежата"
+msgid ""
+"Add a remote search-enabled host you wish \n"
+"to network with."
+msgstr ""
+"Добавяне, на който и да е с възможност за търсене\n"
+"хост, с който искате да сте в мрежа."
 
-#: ../tools/settings.glade.h:9
+#: ../tools/settings.glade.h:10
 msgid "Add any additional paths to be included for indexing."
 msgstr "Добавете допълнителни пътища, които да се индексират."
 
-#: ../tools/settings.glade.h:10
-msgid "Add any search-enabled hosts you wish to network with"
-msgstr ""
-"Добавете който и да е компютър поддържащ търсене за работа през мрежата"
-
 #: ../tools/settings.glade.h:11
+msgid "Add any remote search-enabled hosts you wish to network with"
+msgstr ""
+"Добавяне, на който и да е с възможност за търсене хост, с който искате да "
+"сте в мрежа"
+
+#: ../tools/settings.glade.h:12
+msgid "Address"
+msgstr "Адрес"
+
+#: ../tools/settings.glade.h:13
 msgid ""
 "Adjust which types of results should be visible, and in what order they "
 "should be presented when grouped by type."
@@ -567,59 +588,59 @@ msgstr ""
 "Конфигуриране на видовете резултати, които да бъдат видими, както и на реда "
 "им, по който ще се подреждат при групиране по тип."
 
-#: ../tools/settings.glade.h:12
+#: ../tools/settings.glade.h:14
 msgid "Allow external access to local search services"
 msgstr "Позволяване на външен достъп до локални услуги за търсене"
 
-#: ../tools/settings.glade.h:13
+#: ../tools/settings.glade.h:15
 msgid "Alt"
 msgstr "Alt"
 
-#: ../tools/settings.glade.h:14
+#: ../tools/settings.glade.h:16
 msgid "Ctrl"
 msgstr "Ctrl"
 
-#: ../tools/settings.glade.h:15
+#: ../tools/settings.glade.h:17
 msgid "Directory Path"
 msgstr "Път до папката"
 
-#: ../tools/settings.glade.h:16
+#: ../tools/settings.glade.h:18
 msgid "Display the search window by pressing"
 msgstr "Показване на прозореца за търсене чрез натискане на"
 
-#: ../tools/settings.glade.h:17
+#: ../tools/settings.glade.h:19
 msgid "Filename Pattern"
 msgstr "Шаблон на файловото име"
 
-#: ../tools/settings.glade.h:18
+#: ../tools/settings.glade.h:20
 msgid "Index my home directory"
 msgstr "Индексиране на домашната папка"
 
-#: ../tools/settings.glade.h:19
+#: ../tools/settings.glade.h:21
 msgid "Indexing"
 msgstr "Индексиране"
 
-#: ../tools/settings.glade.h:21
+#: ../tools/settings.glade.h:23
 msgid "Networking"
 msgstr "Мрежови"
 
-#: ../tools/settings.glade.h:23
+#: ../tools/settings.glade.h:25
 msgid "Please select a resource you wish to exclude from indexing."
 msgstr "Изберете ресурс, които да не се индексира."
 
-#: ../tools/settings.glade.h:24
+#: ../tools/settings.glade.h:26
 msgid "Please select the mail folder you wish to exclude from indexing. "
 msgstr "Изберете папка с поща, която да не се индексира."
 
-#: ../tools/settings.glade.h:25
+#: ../tools/settings.glade.h:27
 msgid "Search"
 msgstr "Търсене"
 
-#: ../tools/settings.glade.h:26
+#: ../tools/settings.glade.h:28
 msgid "Search Preferences"
 msgstr "Настройки на търсенето"
 
-#: ../tools/settings.glade.h:27
+#: ../tools/settings.glade.h:29
 msgid ""
 "Specify any resources, such as paths, patterns, mail folders or type of "
 "objects you wish to exclude from indexing."
@@ -627,13 +648,13 @@ msgstr ""
 "Укажете ресурси като папки, шаблони, папки с поща или видове обекти, които "
 "да не се индексират."
 
-#: ../tools/settings.glade.h:28
+#: ../tools/settings.glade.h:30
 msgid "Specify paths that should be available for external access"
 msgstr "Укажете пътища, които да са достъпни за достъп отвън"
 
-#: ../tools/settings.glade.h:30
-msgid "_Address"
-msgstr "_Адрес"
+#: ../tools/settings.glade.h:31
+msgid "Start search & indexing services automatically "
+msgstr "Автоматично стартиране на услугите по търсенето и индексирането "
 
 #: ../Util/Evolution.cs:45 ../Util/Evolution.cs:163
 msgid "On This Computer"
@@ -671,58 +692,63 @@ msgstr "Днес"
 msgid "Yesterday"
 msgstr "Вчера"
 
-#: ../Util/StringFu.cs:69
+#. Translators: Example output: Aug 9
+#: ../Util/StringFu.cs:70
 msgid "MMM d"
 msgstr "MMM d"
 
-#: ../Util/StringFu.cs:71
+#. Translators: Example output: Aug 9, 2000
+#: ../Util/StringFu.cs:73
 msgid "MMM d, yyyy"
 msgstr "MMM d, yyyy"
 
-#: ../Util/StringFu.cs:73
+#. Translators: Example output: 11:05 AM  (note h = 12-hour time)
+#: ../Util/StringFu.cs:76
 msgid "h:mm tt"
 msgstr "h:mm tt"
 
 #. Translators: {0} is a date (e.g. 'Today' or 'Apr 23'), {1} is the time
-#: ../Util/StringFu.cs:79
+#: ../Util/StringFu.cs:82
 #, csharp-format
 msgid "{0}, {1}"
 msgstr "{0}, {1}"
 
 #. To translators: {0} is the time of the day, eg. 13:45
-#: ../Util/StringFu.cs:96
+#: ../Util/StringFu.cs:99
 #, csharp-format
 msgid "Today, {0}"
 msgstr "Днес, {0}"
 
 #. To translators: {0} is the time of the day, eg. 13:45
-#: ../Util/StringFu.cs:99
+#: ../Util/StringFu.cs:102
 #, csharp-format
 msgid "Yesterday, {0}"
 msgstr "Вчера, {0}"
 
 #. To translators: {0} is the number of days that have passed, {1} is the time of the day, eg. 13:45
-#: ../Util/StringFu.cs:102
+#: ../Util/StringFu.cs:105
 #, csharp-format
 msgid "{0} days ago, {1}"
 msgstr "Преди {0} дни, {1}"
 
-#: ../Util/StringFu.cs:106
+#. Translators: Example output: January 3, 3:45 PM
+#: ../Util/StringFu.cs:110
 msgid "MMMM d, h:mm tt"
 msgstr "MMMM d, h:mm tt"
 
-#: ../Util/StringFu.cs:110
+#. Translators: Example output: March 23 2001, 10:04 AM
+#: ../Util/StringFu.cs:115
 msgid "MMMM d yyyy, h:mm tt"
 msgstr "MMMM d yyyy, h:mm tt"
 
-#: ../Util/StringFu.cs:120
+#: ../Util/StringFu.cs:125
 #, csharp-format
 msgid "{0} hour"
 msgid_plural "{0} hours"
 msgstr[0] "{0} час"
 msgstr[1] "{0} часа"
 
-#: ../Util/StringFu.cs:127
+#: ../Util/StringFu.cs:132
 #, csharp-format
 msgid "{0} minute"
 msgid_plural "{0} minutes"
@@ -730,19 +756,22 @@ msgstr[0] "{0} минута"
 msgstr[1] "{0} минути"
 
 #. Translators: {0} is a file size in bytes
-#: ../Util/StringFu.cs:143
+#: ../Util/StringFu.cs:148
 #, csharp-format
 msgid "{0} bytes"
 msgstr "{0} байта"
 
 #. Translators: {0} is a file size in kilobytes
-#: ../Util/StringFu.cs:147
+#: ../Util/StringFu.cs:152
 #, csharp-format
 msgid "{0:0.0} KB"
 msgstr "{0:0.0} KB"
 
 #. Translators: {0} is a file size in megabytes
-#: ../Util/StringFu.cs:150
+#: ../Util/StringFu.cs:155
 #, csharp-format
 msgid "{0:0.0} MB"
 msgstr "{0:0.0} MB"
+
+#~ msgid "Host not added"
+#~ msgstr "Хостът не е добавен"
