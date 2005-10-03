@@ -1,4 +1,56 @@
 
+Version 0.1.1
+October 3, 2005
+
+Daemon/Infrastructure:
+* Keep track of the number of tasks we've processed in a given run
+  through the scheulder and yield if we pass a threshold from the CPU
+  stuff.  (Joe)
+* Add a new task type which removes all items which match a certain
+  property.  (Joe)
+* Fixed leaking index file descriptors. (Daniel Drake)
+* Force the encoding of XmlSerializer to be UTF-8 since it defaults to
+  the current system encoding.  (Joe)
+
+Backends:
+* Initial KMail support. (D Bera)
+* Fix an exception in the file system backend when trying to ignore
+  paths whose parent wasn't also being watched.  (Lukas Lipka, Joe)
+* Correctly handle removed items in the Evolution Data Server backend.
+  (Joe)
+* Use a new URI scheme that is compatible with Evolution 2.4, so that
+  calendar items and contacts can be opened in Evo.  (Joe, Lukas)
+* Fix an exception in the Gaim backend when not using inotify.  (Joe)
+* Rename the IMLog backend to GaimLog. (Lukas)
+* Better handling of directories with exotic permissions in the file
+  system backend. (Jon Trowbridge)
+
+Filters:
+* Add a bunch of special text mime types found in shared-mime-info for
+  the plain text filter.  (Joe)
+* Support OOo Draw files in OpenOffice filter. (David Richards)
+
+UI/Tools:
+* Fix an exception that would show up if you used beagle-index-url when
+  the IndexingService backend wasn't enabled.  (Joe)
+* Allow best to start beagled on amd64. (Jack Miller)
+
+Translations:
+* Updated Bulgarian translation. (Alexander Shopov)
+* Updated Chinese translation. (fwang)
+* Updated Dutch translation. (Wouter Bolsterlee)
+* Updated German translation. (Hendrik Brandt)
+* Updated Japanese translation. (Takeshi AIHANA)
+* Updated Vietnamese translation. (clyties)
+
+Everything Else:
+* Build the Evolution Data Server backend into its own assembly and
+  install it into the system backend directory, allowing distributors to
+  package and ship it separately from the main Beagle package.  (Joe)
+* All the stuff I forgot. (All of the people I forgot)
+
+------------------------------------------------------
+
 Version 0.1.0
 September 15, 2005
 
