@@ -112,7 +112,7 @@ namespace Beagle.Tile {
 			string bestdir = System.IO.Path.GetDirectoryName (bestpath);
 
 			string beagled_filename;
-			if (bestdir.EndsWith ("lib/beagle")) {
+			if (bestdir.EndsWith ("lib/beagle") || bestdir.EndsWith ("lib64/beagle")) {
 				Console.WriteLine ("Running installed daemon...");
 				beagled_filename = "beagled"; // Running installed
 			} else {
