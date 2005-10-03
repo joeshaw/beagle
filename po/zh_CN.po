@@ -7,172 +7,741 @@ msgid ""
 msgstr ""
 "Project-Id-Version: beagle HEAD\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2005-04-05 02:39+0200\n"
-"PO-Revision-Date: 2005-04-05 12:39+0800\n"
+"POT-Creation-Date: 2005-10-03 10:03+0200\n"
+"PO-Revision-Date: 2005-10-03 17:17+0800\n"
 "Last-Translator: Funda Wang <fundawang@linux.net.cn>\n"
 "Language-Team: zh_CN <i18n-translation@lists.linux.net.cn>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
 
-#: Best/Best.cs:120
+#: ../Best/Best.cs:132
 msgid ""
 "If you're wondering whether Best is working check your notification area "
 "(system tray)"
-msgstr ""
+msgstr "如果您想要知道工作是否正常，请检查您的系统托盘"
 
-#: Best/BestTray.cs:164
+#: ../Best/BestTray.cs:149
+msgid "Disable Searching"
+msgstr "禁止搜索"
+
+#: ../Best/BestTray.cs:150
+msgid ""
+"You are about to close the search tray. The search tray is automatically "
+"started at login-time. Would you like to disable it for future sessions?"
+msgstr ""
+"您即将关闭搜索托盘。搜索托盘会在登录时自动启动。您是否想要在未来的会话中禁用搜索托盘？"
+
+#: ../Best/BestTray.cs:207
 msgid "No Recent Searches"
 msgstr "没有最近的搜索"
 
-#: Best/BestTray.cs:179
+#: ../Best/BestTray.cs:212
+msgid "Recent Searches"
+msgstr "最近的搜索"
+
+#: ../Best/BestTray.cs:228
+msgid "Clear"
+msgstr "清除"
+
+#: ../Best/BestTray.cs:236
 msgid "Quit"
 msgstr "退出"
 
-#: Best/BestWindow.cs:302
+#: ../Best/BestWindow.cs:306
 msgid "Anywhere"
 msgstr "任何地方"
 
-#: Best/BestWindow.cs:304
+#: ../Best/BestWindow.cs:310
 msgid "in Files"
 msgstr "文件中"
 
-#: Best/BestWindow.cs:306
+#: ../Best/BestWindow.cs:314
 msgid "in Addressbook"
 msgstr "地址簿中"
 
-#: Best/BestWindow.cs:308
+#: ../Best/BestWindow.cs:318
 msgid "in Mail"
 msgstr "邮件中"
 
-#: Best/BestWindow.cs:310
+#: ../Best/BestWindow.cs:322
 msgid "in Web Pages"
 msgstr "网页中"
 
-#: Best/BestWindow.cs:312
+#: ../Best/BestWindow.cs:326
 msgid "in Chats"
 msgstr "聊天记录中"
 
-#: Best/BestWindow.cs:328
+#: ../Best/BestWindow.cs:343
 msgid "Search terms:"
 msgstr "搜索条件："
 
-#: Best/BestWindow.cs:345
+#: ../Best/BestWindow.cs:367
 msgid "Find"
 msgstr "查找"
 
-#: Best/BestWindow.cs:362
+#: ../Best/BestWindow.cs:384
 msgid "Show More Results"
 msgstr "显示更多结果"
 
-#: Best/BestWindow.cs:368
+#: ../Best/BestWindow.cs:390
 msgid "Show Previous Results"
 msgstr "显示上页结果"
 
-#: Best/BestWindow.cs:402
+#: ../Best/BestWindow.cs:424
 msgid "No results."
 msgstr "无结果。"
 
-#: Best/BestWindow.cs:404
+#. To translators: {0} is the current count of results shown of {1} in total, this is the message that is initially shown
+#. when results are returned to the user.
+#: ../Best/BestWindow.cs:428
 #, csharp-format
 msgid "Best <b>{0} results of {1}</b> are shown."
-msgstr ""
+msgstr "显示了<b>{1}个结果中最适合的{0}个</b>。"
 
-#: Best/BestWindow.cs:408
+#. To translators: {0} to {1} is the interval of results currently shown of {2} results in total
+#: ../Best/BestWindow.cs:433
 #, csharp-format
 msgid "Results <b>{0} through {1} of {2}</b> are shown."
-msgstr ""
+msgstr "显示了<b>{2}个结果中第{0}个到第{1}个</b>。"
 
-#: Best/BestWindow.cs:546
+#. To translators: {0} represents the current query keywords
+#: ../Best/BestWindow.cs:542
 #, csharp-format
 msgid ""
 "The query for <i>{0}</i> failed.<br>The likely cause is that the beagle "
 "daemon isn't running."
-msgstr ""
+msgstr "查询 <i>{0}</i> 失败。<br>似乎 Beagle 守护程序未运行。"
 
-#: Best/BestWindow.cs:550
-#, csharp-format
-msgid ""
-"The query for <i>{0}</i> failed.<br>The session bus isn't running.  See "
-"http://beaglewiki.org/index.php/Installing%20Beagle for information on "
-"setting up a session bus."
-msgstr ""
-
-#: Best/BestWindow.cs:553
+#. To translators: {0} represents the current query keywords, {1} contains the errormessage
+#: ../Best/BestWindow.cs:547
 #, csharp-format
 msgid "The query for <i>{0}</i> failed with error:<br>{1}<br>"
-msgstr ""
+msgstr "查询 <i>{0}</i> 失败，错误如下：<br>{1}<br>"
 
-#: Tiles/TileDocs.cs:75
+#: ../glue/eggtrayicon.c:127
+msgid "Orientation"
+msgstr "方向"
+
+#: ../glue/eggtrayicon.c:128
+msgid "The orientation of the tray."
+msgstr "托盘的方向。"
+
+#: ../ImLogViewer/ImLogViewer.glade.h:1
+msgid "<b>Conversations History</b>"
+msgstr "<b>对话历史</b>"
+
+#: ../ImLogViewer/ImLogViewer.glade.h:2
+msgid "IM Viewer"
+msgstr "IM 查看器"
+
+#: ../ImLogViewer/ImLogWindow.cs:87
+#, csharp-format
+msgid "Conversations in {0}"
+msgstr "{0} 中的对话"
+
+#: ../ImLogViewer/ImLogWindow.cs:94
+#, csharp-format
+msgid "Conversations with {0}"
+msgstr "与 {0} 的对话"
+
+#: ../Tiles/TileDocs.cs:77
 msgid "Pages:"
 msgstr "页数："
 
-#: Tiles/TileDocs.cs:79
+#: ../Tiles/TileDocs.cs:81
 msgid "Words:"
 msgstr "单词数："
 
-#: Tiles/TileFolder.cs:51
+#: ../Tiles/TileFolder.cs:53
 msgid "Empty"
 msgstr "空"
 
-#: Tiles/TileFolder.cs:53
-msgid "Contains 1 Item"
-msgstr "包含一项"
-
-#: Tiles/TileFolder.cs:55
+#: ../Tiles/TileFolder.cs:55
 #, csharp-format
-msgid "Contains {0} Items"
-msgstr "包含 {0} 项"
+msgid "Contains {0} Item"
+msgid_plural "Contains {0} Items"
+msgstr[0] "包含 {0} 项"
 
-#: Tiles/TileMailMessage.cs:68
-msgid "<i>No Subject</i>"
-msgstr "<i>无主题</i>"
+#: ../Tiles/TileImLog.cs:67
+msgid "Send Mail"
+msgstr "发送邮件"
 
-#: Tiles/TileMailMessage.cs:73
+#. For translators: From template Tiles/template-mail-message.html
+#: ../Tiles/TileImLog.cs:71 ../Tiles/TranslationHack.cs:52
+msgid "Send IM"
+msgstr "发送即时通讯"
+
+#: ../Tiles/TileImLog.cs:77
+#, csharp-format
+msgid "Conversation in {0}"
+msgstr "{0} 中的对话"
+
+#: ../Tiles/TileImLog.cs:79
+#, csharp-format
+msgid "Conversation with {0}"
+msgstr "与 {0} 的对话"
+
+#: ../Tiles/TileMailMessage.cs:81
+msgid "No Subject"
+msgstr "无主题"
+
+#: ../Tiles/TileMailMessage.cs:88
 msgid "To"
 msgstr "寄给"
 
-#: Tiles/TileMailMessage.cs:73
+#: ../Tiles/TileMailMessage.cs:88
 msgid "From"
 msgstr "来自"
 
-#: Tiles/TileMailMessage.cs:104
+#: ../Tiles/TileMailMessage.cs:116
 msgid "Sent"
 msgstr "发送时间"
 
-#: Tiles/TileMailMessage.cs:104
+#: ../Tiles/TileMailMessage.cs:116
 msgid "Received"
 msgstr "接收时间"
 
-#: Util/StringFu.cs:65
+#: ../Tiles/TileMailMessage.cs:124
+msgid "Email attachment"
+msgstr "电子邮件附件"
+
+#. For translators: From template Tiles/template-blog.html
+#: ../Tiles/TranslationHack.cs:6
+msgid "Weblog:"
+msgstr "网志："
+
+#. For translators: From template Tiles/template-blog.html
+#: ../Tiles/TranslationHack.cs:8
+msgid "by"
+msgstr "发布人："
+
+#. For translators: From template Tiles/template-blog.html
+#: ../Tiles/TranslationHack.cs:10
+msgid "Published:"
+msgstr "发布时间："
+
+#. For translators: From template Tiles/template-blog.html
+#. For translators: From template Tiles/template-docs.html
+#. For translators: From template Tiles/template-file.html
+#. For translators: From template Tiles/template-folder.html
+#. For translators: From template Tiles/template-launcher.html
+#. For translators: From template Tiles/template-mail-message.html
+#. For translators: From template Tiles/template-music.html
+#. For translators: From template Tiles/template-note.html
+#. For translators: From template Tiles/template-picture.html
+#. For translators: From template Tiles/template-presentation.html
+#. For translators: From template Tiles/template-spreadsheet.html
+#. For translators: From template Tiles/template-web-history.html
+#. For translators: From template Tiles/template-network.html
+#. For translators: From template Tiles/template-im-log.html
+#: ../Tiles/TranslationHack.cs:12 ../Tiles/TranslationHack.cs:22
+#: ../Tiles/TranslationHack.cs:32 ../Tiles/TranslationHack.cs:40
+#: ../Tiles/TranslationHack.cs:44 ../Tiles/TranslationHack.cs:50
+#: ../Tiles/TranslationHack.cs:58 ../Tiles/TranslationHack.cs:66
+#: ../Tiles/TranslationHack.cs:76 ../Tiles/TranslationHack.cs:92
+#: ../Tiles/TranslationHack.cs:106 ../Tiles/TranslationHack.cs:114
+#: ../Tiles/TranslationHack.cs:118 ../Tiles/TranslationHack.cs:122
+msgid "Open"
+msgstr "打开"
+
+#. For translators: From template Tiles/template-docs.html
+#. For translators: From template Tiles/template-file.html
+#. For translators: From template Tiles/template-folder.html
+#. For translators: From template Tiles/template-picture.html
+#. For translators: From template Tiles/template-presentation.html
+#. For translators: From template Tiles/template-spreadsheet.html
+#: ../Tiles/TranslationHack.cs:14 ../Tiles/TranslationHack.cs:28
+#: ../Tiles/TranslationHack.cs:38 ../Tiles/TranslationHack.cs:68
+#: ../Tiles/TranslationHack.cs:82 ../Tiles/TranslationHack.cs:98
+msgid "in folder"
+msgstr "于文件夹"
+
+#. For translators: From template Tiles/template-docs.html
+#. For translators: From template Tiles/template-file.html
+#. For translators: From template Tiles/template-presentation.html
+#. For translators: From template Tiles/template-spreadsheet.html
+#: ../Tiles/TranslationHack.cs:16 ../Tiles/TranslationHack.cs:30
+#: ../Tiles/TranslationHack.cs:84 ../Tiles/TranslationHack.cs:100
+msgid "Last modified"
+msgstr "上次修改"
+
+#. For translators: From template Tiles/template-docs.html
+#. For translators: From template Tiles/template-presentation.html
+#. For translators: From template Tiles/template-spreadsheet.html
+#: ../Tiles/TranslationHack.cs:18 ../Tiles/TranslationHack.cs:86
+#: ../Tiles/TranslationHack.cs:102
+msgid "Title:"
+msgstr "标题："
+
+#. For translators: From template Tiles/template-docs.html
+#. For translators: From template Tiles/template-presentation.html
+#. For translators: From template Tiles/template-spreadsheet.html
+#: ../Tiles/TranslationHack.cs:20 ../Tiles/TranslationHack.cs:88
+#: ../Tiles/TranslationHack.cs:104
+msgid "Author:"
+msgstr "作者："
+
+#. For translators: From template Tiles/template-docs.html
+#. For translators: From template Tiles/template-file.html
+#. For translators: From template Tiles/template-picture.html
+#. For translators: From template Tiles/template-presentation.html
+#. For translators: From template Tiles/template-spreadsheet.html
+#: ../Tiles/TranslationHack.cs:24 ../Tiles/TranslationHack.cs:34
+#: ../Tiles/TranslationHack.cs:78 ../Tiles/TranslationHack.cs:94
+#: ../Tiles/TranslationHack.cs:108
+msgid "Send to..."
+msgstr "发送到..."
+
+#. For translators: From template Tiles/template-docs.html
+#. For translators: From template Tiles/template-file.html
+#. For translators: From template Tiles/template-music.html
+#. For translators: From template Tiles/template-picture.html
+#. For translators: From template Tiles/template-presentation.html
+#. For translators: From template Tiles/template-spreadsheet.html
+#: ../Tiles/TranslationHack.cs:26 ../Tiles/TranslationHack.cs:36
+#: ../Tiles/TranslationHack.cs:62 ../Tiles/TranslationHack.cs:80
+#: ../Tiles/TranslationHack.cs:96 ../Tiles/TranslationHack.cs:110
+msgid "Reveal in file manager"
+msgstr "在文件管理器中打开"
+
+#. For translators: From template Tiles/template-launcher.html
+#: ../Tiles/TranslationHack.cs:42
+msgid "Application:"
+msgstr "应用程序："
+
+#. For translators: From template Tiles/template-mail-message.html
+#: ../Tiles/TranslationHack.cs:46
+msgid "Email subject:"
+msgstr "电子邮件主题："
+
+#. For translators: From template Tiles/template-mail-message.html
+#: ../Tiles/TranslationHack.cs:48
+msgid "Folder:"
+msgstr "文件夹："
+
+#. For translators: From template Tiles/template-music.html
+#: ../Tiles/TranslationHack.cs:54
+msgid "Track"
+msgstr "音轨"
+
+#. For translators: From template Tiles/template-music.html
+#: ../Tiles/TranslationHack.cs:56
+msgid "from"
+msgstr "来自"
+
+#. For translators: From template Tiles/template-music.html
+#: ../Tiles/TranslationHack.cs:60
+msgid "Enqueue"
+msgstr "排队"
+
+#. For translators: From template Tiles/template-note.html
+#: ../Tiles/TranslationHack.cs:64
+msgid "last modified"
+msgstr "上次修改"
+
+#. For translators: From template Tiles/template-picture.html
+#: ../Tiles/TranslationHack.cs:70
+msgid "Modified:"
+msgstr "修改时间："
+
+#. For translators: From template Tiles/template-picture.html
+#: ../Tiles/TranslationHack.cs:72
+msgid "Tags:"
+msgstr "标记："
+
+#. For translators: From template Tiles/template-picture.html
+#: ../Tiles/TranslationHack.cs:74
+msgid "Description:"
+msgstr "描述："
+
+#. For translators: From template Tiles/template-presentation.html
+#: ../Tiles/TranslationHack.cs:90
+msgid "Slides:"
+msgstr "张数："
+
+#. For translators: From template Tiles/template-web-history.html
+#: ../Tiles/TranslationHack.cs:112
+msgid "Last viewed:"
+msgstr "上次查看："
+
+#. For translators: From template Tiles/template-network.html
+#: ../Tiles/TranslationHack.cs:116
+msgid "from Networked Beagle on host"
+msgstr "来自以下主机的联网 Beagle"
+
+#. For translators: From template Tiles/template-network.html
+#: ../Tiles/TranslationHack.cs:120
+msgid "Search Networked Beagle"
+msgstr "搜索联网的 Beagle"
+
+#: ../tools/Settings.cs:214
+msgid "Reload configuration"
+msgstr "重新装入配置"
+
+#: ../tools/Settings.cs:215
+msgid ""
+"The configuration file has been modified by another application. Do you wish "
+"to discard the currently displayed values and reload configuration from disk?"
+msgstr ""
+"配置文件已经被其它应用程序修改。您是否像要丢弃目前显示的值，然后从磁盘重新装入配置？"
+
+#: ../tools/Settings.cs:253
+msgid "Select Path"
+msgstr "选择路径"
+
+#: ../tools/Settings.cs:272
+msgid "The selected path is already selected for indexing and wasn't added."
+msgstr "选中的路径早已经选择进行索引了，因此没有添加。"
+
+#: ../tools/Settings.cs:275
+msgid ""
+"The selected path wasn't added. The list contains items that supercedes it "
+"and the data is already being indexed."
+msgstr "选中的路径未添加。列表中包含与其类似的项目，而数据已经加入索引了。"
+
+#: ../tools/Settings.cs:286 ../tools/Settings.cs:478
+msgid "Path not added"
+msgstr "路径未添加"
+
+#: ../tools/Settings.cs:295
+msgid "Remove obsolete paths"
+msgstr "删除过期路径"
+
+#: ../tools/Settings.cs:296
+msgid ""
+"Adding this path will obsolete some of the existing include paths. This will "
+"result in the removal of the old obsolete paths. Do you still wish to add it?"
+msgstr ""
+
+#: ../tools/Settings.cs:322
+msgid "Remove path"
+msgstr "删除路径"
+
+#: ../tools/Settings.cs:323
+msgid ""
+"Are you sure you wish to remove this path from the list of directories to be "
+"included for indexing?"
+msgstr ""
+
+#: ../tools/Settings.cs:352
+msgid "Remove item"
+msgstr "删除项目"
+
+#: ../tools/Settings.cs:353
+msgid ""
+"Are you sure you wish to remove this item from the list of data to be "
+"excluded from indexing?"
+msgstr ""
+
+#: ../tools/Settings.cs:396
+msgid "Invalid host entry"
+msgstr "无效的主机项"
+
+#: ../tools/Settings.cs:403
+msgid "Remote host already present in the list."
+msgstr "远程主机已经位于列表中。"
+
+#: ../tools/Settings.cs:412
+msgid "Netbeagle Node not added"
+msgstr "Netbeagle 节点未添加"
+
+#: ../tools/Settings.cs:428
+msgid "Remove host"
+msgstr "删除主机"
+
+#: ../tools/Settings.cs:429
+msgid "Are you sure you wish to remove this host from the list?"
+msgstr "您是否像要从列表中删除此主机？"
+
+#: ../tools/Settings.cs:450
+msgid "Select path"
+msgstr "选择路径"
+
+#: ../tools/Settings.cs:469
+msgid "The selected path is already configured for external access."
+msgstr "选中的路径已经配置为外部访问。"
+
+#: ../tools/Settings.cs:493
+msgid "Remove public path"
+msgstr "删除公开路径"
+
+#: ../tools/Settings.cs:494
+msgid ""
+"Are you sure you wish to remove this entry from the list of public paths?"
+msgstr "您确定想要从公开路径列表中删除此项吗？"
+
+#: ../tools/Settings.cs:539 ../tools/Settings.cs:628 ../tools/Settings.cs:706
+#: ../tools/Settings.cs:782 ../tools/Settings.cs:1121
+msgid "Name"
+msgstr "名称"
+
+#: ../tools/Settings.cs:622 ../tools/settings.glade.h:32
+msgid "Type"
+msgstr "类型"
+
+#: ../tools/Settings.cs:675 ../tools/Settings.cs:1055
+#: ../tools/settings.glade.h:24
+msgid "Path"
+msgstr "路径"
+
+#: ../tools/Settings.cs:678 ../tools/Settings.cs:1065
+msgid "Pattern"
+msgstr "通配符"
+
+#: ../tools/Settings.cs:681 ../tools/Settings.cs:1060
+#: ../tools/settings.glade.h:22
+msgid "Mail Folder"
+msgstr "邮件文件夹"
+
+#: ../tools/Settings.cs:1029
+msgid "Select Folder"
+msgstr "选择文件夹"
+
+#: ../tools/Settings.cs:1089
+msgid "Error adding path"
+msgstr "添加路径出错"
+
+#: ../tools/Settings.cs:1090
+msgid ""
+"The specified path could not be found and therefore it could not be added to "
+"the list of resources excluded for indexing."
+msgstr ""
+
+#: ../tools/Settings.cs:1120
+msgid "Show"
+msgstr "显示"
+
+#: ../tools/settings.glade.h:1
+msgid "<b>Add remote host</b>"
+msgstr "<b>添加更多远程主机</b>"
+
+#: ../tools/settings.glade.h:2
+msgid "<b>Add resource</b>"
+msgstr "<b>添加资源</b>"
+
+#: ../tools/settings.glade.h:3
+msgid "<b>Display</b>"
+msgstr "<b>显示</b>"
+
+#: ../tools/settings.glade.h:4
+msgid "<b>General</b>"
+msgstr "<b>常规</b>"
+
+#: ../tools/settings.glade.h:5
+msgid "<b>Networking</b>"
+msgstr "<b>联网</b>"
+
+#: ../tools/settings.glade.h:6
+msgid "<b>Privacy</b>"
+msgstr "<b>隐私</b>"
+
+#: ../tools/settings.glade.h:7
+msgid "<b>Select mail folder</b>"
+msgstr "<b>选择邮件文件夹</b>"
+
+#: ../tools/settings.glade.h:8
+msgid ""
+"Add a remote search-enabled host you wish \n"
+"to network with."
+msgstr ""
+
+#: ../tools/settings.glade.h:10
+msgid "Add any additional paths to be included for indexing."
+msgstr ""
+
+#: ../tools/settings.glade.h:11
+msgid "Add any remote search-enabled hosts you wish to network with"
+msgstr ""
+
+#: ../tools/settings.glade.h:12
+msgid "Address"
+msgstr "地址"
+
+#: ../tools/settings.glade.h:13
+msgid ""
+"Adjust which types of results should be visible, and in what order they "
+"should be presented when grouped by type."
+msgstr ""
+
+#: ../tools/settings.glade.h:14
+msgid "Allow external access to local search services"
+msgstr "允许外部访问本地搜索服务"
+
+#: ../tools/settings.glade.h:15
+msgid "Alt"
+msgstr "Alt"
+
+#: ../tools/settings.glade.h:16
+msgid "Ctrl"
+msgstr "Ctrl"
+
+#: ../tools/settings.glade.h:17
+msgid "Directory Path"
+msgstr "目录路径"
+
+#: ../tools/settings.glade.h:18
+msgid "Display the search window by pressing"
+msgstr ""
+
+#: ../tools/settings.glade.h:19
+msgid "Filename Pattern"
+msgstr "文件名通配符"
+
+#: ../tools/settings.glade.h:20
+msgid "Index my home directory"
+msgstr "对我的主目录进行索引"
+
+#: ../tools/settings.glade.h:21
+msgid "Indexing"
+msgstr "索引"
+
+#: ../tools/settings.glade.h:23
+msgid "Networking"
+msgstr "联网"
+
+#: ../tools/settings.glade.h:25
+msgid "Please select a resource you wish to exclude from indexing."
+msgstr "请选择您想要从索引中排除的资源。"
+
+#: ../tools/settings.glade.h:26
+msgid "Please select the mail folder you wish to exclude from indexing. "
+msgstr "请选择您想要从索引中排除的邮件文件夹。"
+
+#: ../tools/settings.glade.h:27
+msgid "Search"
+msgstr "搜索"
+
+#: ../tools/settings.glade.h:28
+msgid "Search Preferences"
+msgstr "搜索首选项"
+
+#: ../tools/settings.glade.h:29
+msgid ""
+"Specify any resources, such as paths, patterns, mail folders or type of "
+"objects you wish to exclude from indexing."
+msgstr ""
+
+#: ../tools/settings.glade.h:30
+msgid "Specify paths that should be available for external access"
+msgstr "指定外部访问可用的路径"
+
+#: ../tools/settings.glade.h:31
+msgid "Start search & indexing services automatically "
+msgstr "自动开始搜索和索引服务"
+
+#: ../Util/Evolution.cs:45 ../Util/Evolution.cs:163
+msgid "On This Computer"
+msgstr "于此计算机中"
+
+#: ../Util/ExifData.cs:226
+msgid "Image Directory"
+msgstr "图像目录"
+
+#: ../Util/ExifData.cs:228
+msgid "Thumbnail Directory"
+msgstr "缩略图目录"
+
+#: ../Util/ExifData.cs:230
+msgid "Exif Directory"
+msgstr "Exif 目录"
+
+#: ../Util/ExifData.cs:232
+msgid "GPS Directory"
+msgstr "GPS 目录"
+
+#: ../Util/ExifData.cs:234
+msgid "InterOperability Directory"
+msgstr "InterOperability 目录"
+
+#: ../Util/ExifData.cs:236
+msgid "Unknown Directory"
+msgstr "未知目录"
+
+#: ../Util/StringFu.cs:65
 msgid "Today"
 msgstr "今天"
 
-#: Util/StringFu.cs:67
+#: ../Util/StringFu.cs:67
 msgid "Yesterday"
 msgstr "昨天"
 
-#: Util/StringFu.cs:94
+#. Translators: Example output: Aug 9
+#: ../Util/StringFu.cs:70
+msgid "MMM d"
+msgstr ""
+
+#. Translators: Example output: Aug 9, 2000
+#: ../Util/StringFu.cs:73
+msgid "MMM d, yyyy"
+msgstr ""
+
+#. Translators: Example output: 11:05 AM  (note h = 12-hour time)
+#: ../Util/StringFu.cs:76
+msgid "h:mm tt"
+msgstr ""
+
+#. Translators: {0} is a date (e.g. 'Today' or 'Apr 23'), {1} is the time
+#: ../Util/StringFu.cs:82
+#, csharp-format
+msgid "{0}, {1}"
+msgstr "{0} {1}"
+
+#. To translators: {0} is the time of the day, eg. 13:45
+#: ../Util/StringFu.cs:99
 #, csharp-format
 msgid "Today, {0}"
 msgstr "今天 {0}"
 
-#: Util/StringFu.cs:96
+#. To translators: {0} is the time of the day, eg. 13:45
+#: ../Util/StringFu.cs:102
 #, csharp-format
 msgid "Yesterday, {0}"
 msgstr "昨天 {0}"
 
-#: Util/StringFu.cs:98
+#. To translators: {0} is the number of days that have passed, {1} is the time of the day, eg. 13:45
+#: ../Util/StringFu.cs:105
 #, csharp-format
 msgid "{0} days ago, {1}"
 msgstr "{0} 天前 {1}"
 
-#: Util/StringFu.cs:118
-#, csharp-format
-msgid "{0} hours"
-msgstr "{0} 个小时"
+#. Translators: Example output: January 3, 3:45 PM
+#: ../Util/StringFu.cs:110
+msgid "MMMM d, h:mm tt"
+msgstr ""
 
-#: Util/StringFu.cs:128
+#. Translators: Example output: March 23 2001, 10:04 AM
+#: ../Util/StringFu.cs:115
+msgid "MMMM d yyyy, h:mm tt"
+msgstr ""
+
+#: ../Util/StringFu.cs:125
 #, csharp-format
-msgid "{0} minutes"
-msgstr "{0} 分钟"
+msgid "{0} hour"
+msgid_plural "{0} hours"
+msgstr[0] "{0} 个小时"
+
+#: ../Util/StringFu.cs:132
+#, csharp-format
+msgid "{0} minute"
+msgid_plural "{0} minutes"
+msgstr[0] "{0} 分钟"
+
+#. Translators: {0} is a file size in bytes
+#: ../Util/StringFu.cs:148
+#, csharp-format
+msgid "{0} bytes"
+msgstr "{0} 字节"
+
+#. Translators: {0} is a file size in kilobytes
+#: ../Util/StringFu.cs:152
+#, csharp-format
+msgid "{0:0.0} KB"
+msgstr "{0:0.0} KB"
+
+#. Translators: {0} is a file size in megabytes
+#: ../Util/StringFu.cs:155
+#, csharp-format
+msgid "{0:0.0} MB"
+msgstr "{0:0.0} MB"
