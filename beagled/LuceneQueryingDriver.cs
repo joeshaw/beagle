@@ -303,21 +303,21 @@ namespace Beagle.Daemon {
 			sw.Reset ();
 			sw.Start ();
 
-			// If we didn't get any matches, give up.
-			if (primary_matches == null || ! primary_matches.ContainsTrue ())
-				return;
+			// Only generate results if we got some matches
+			if (primary_matches != null && primary_matches.ContainsTrue ()) {
+				GenerateQueryResults (primary_reader,
+						      primary_searcher,
+						      secondary_searcher,
+					    	  primary_matches,
+						      result,
+						      term_list,
+						      query.MaxHits,
+						      DateTime.MinValue,
+						      DateTime.MaxValue,
+						      uri_filter,
+					    	  hit_filter);
+			}
 
-			GenerateQueryResults (primary_reader,
-					      primary_searcher,
-					      secondary_searcher,
-					      primary_matches,
-					      result,
-					      term_list,
-					      query.MaxHits,
-					      DateTime.MinValue,
-					      DateTime.MaxValue,
-					      uri_filter,
-					      hit_filter);
 			//
 			// Finally, we clean up after ourselves.
 			//
