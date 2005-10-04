@@ -37,9 +37,9 @@
 #include "beagle-marshal.h"
 #include "beagle-query.h"
 #include "beagle-query-part.h"
+#include "beagle-query-part-human.h"
 #include "beagle-query-part-or.h"
 #include "beagle-query-part-property.h"
-#include "beagle-query-part-text.h"
 #include "beagle-search-term-response.h"
 #include "beagle-private.h"
 
@@ -304,14 +304,12 @@ beagle_query_add_part (BeagleQuery *query, BeagleQueryPart *part)
 void
 beagle_query_add_text (BeagleQuery *query, const char *str)
 {
-	BeagleQueryPartText *part;
+	BeagleQueryPartHuman *part;
 
 	g_return_if_fail (BEAGLE_IS_QUERY (query));
 
-	part = beagle_query_part_text_new ();
-	beagle_query_part_text_set_text (part, str);
-	beagle_query_part_text_set_search_full_text (part, TRUE);
-	beagle_query_part_text_set_search_properties (part, TRUE);
+	part = beagle_query_part_human_new ();
+	beagle_query_part_human_set_string (part, str);
 	beagle_query_part_set_logic (BEAGLE_QUERY_PART (part),
 				     BEAGLE_QUERY_PART_LOGIC_REQUIRED);
 
