@@ -52,7 +52,7 @@ namespace Beagle.Util {
 		[DllImport ("libc", SetLastError = true)]
 		private static extern int closedir (IntPtr dir);
 
-		[DllImport ("libbeagledglue", EntryPoint = "beagled_utils_readdir", SetLastError = true)]
+		[DllImport ("libbeagleglue", EntryPoint = "beagled_utils_readdir", SetLastError = true)]
 		private static extern int sys_readdir (IntPtr dir, StringBuilder name);
 		
 		private static string readdir (IntPtr dir)

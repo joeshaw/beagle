@@ -108,7 +108,7 @@ namespace Beagle.Util {
 			External = 2
 		}
 
-		[DllImport ("libsysteminfoglue.so")]
+		[DllImport ("libbeagleglue.so")]
 		extern static unsafe int screensaver_info (ScreenSaverState *state,
 							   ScreenSaverKind *kind,
 							   ulong *til_or_since,
@@ -202,10 +202,10 @@ namespace Beagle.Util {
 
 		///////////////////////////////////////////////////////////////
 
-		[DllImport ("libsysteminfoglue.so")]
+		[DllImport ("libbeagleglue")]
 		extern static int get_vmsize ();
 
-		[DllImport ("libsysteminfoglue.so")]
+		[DllImport ("libbeagleglue")]
 		extern static int get_vmrss ();
 
 		static public int VmSize {

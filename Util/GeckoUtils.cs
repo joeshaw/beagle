@@ -72,21 +72,21 @@ namespace Beagle.Util {
 			SetFonts ();
 		}
 		
-		[DllImport("libgeckoglue.so")]
+		[DllImport("libbeagleuiglue")]
 		static extern void blam_gecko_utils_init_services ();
 		public static void Init ()
 		{
 			blam_gecko_utils_init_services ();
 		}
 		
-		[DllImport("libgeckoglue.so")]
+		[DllImport("libbeagleuiglue")]
 		static extern void blam_gecko_utils_set_font (int type, string font);
 		public static void SetFont (int type, string font)
 		{
 			blam_gecko_utils_set_font (type, font);
 		}
 		
-		[DllImport("libgeckoglue.so")]
+		[DllImport("libbeagleuiglue")]
 		static extern void blam_gecko_utils_set_proxy (bool use_proxy, string host, int port);
 		
 		public static void SetProxy (bool useProxy, string host, int port)

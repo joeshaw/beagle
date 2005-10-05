@@ -93,21 +93,21 @@ namespace Beagle.Util {
 			public uint      len;
 		}
 
-		[DllImport ("libinotifyglue")]
+		[DllImport ("libbeagleglue")]
 		static extern int inotify_glue_init ();
 
-		[DllImport ("libinotifyglue")]
+		[DllImport ("libbeagleglue")]
 		static extern int inotify_glue_watch (int fd, string filename, EventType mask);
 
-		[DllImport ("libinotifyglue")]
+		[DllImport ("libbeagleglue")]
 		static extern int inotify_glue_ignore (int fd, int wd);
 
-		[DllImport ("libinotifyglue")]
+		[DllImport ("libbeagleglue")]
 		static extern unsafe void inotify_snarf_events (int fd,
 								out int nr,
 								out IntPtr buffer);
 
-		[DllImport ("libinotifyglue")]
+		[DllImport ("libbeagleglue")]
 		static extern void inotify_snarf_cancel ();
 
 		/////////////////////////////////////////////////////////////////////////////////////

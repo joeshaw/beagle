@@ -8,14 +8,14 @@ namespace Beagle.Util
 {
 	public class XKeybinder 
 	{
-		[DllImport("libkeyglue")]
+		[DllImport("libbeagleuiglue")]
 		static extern void tomboy_keybinder_init ();
 
-		[DllImport("libkeyglue")]
+		[DllImport("libbeagleuiglue")]
 		static extern void tomboy_keybinder_bind (string keystring,
 							  BindkeyHandler handler);
 
-		[DllImport("libkeyglue")]
+		[DllImport("libbeagleuiglue")]
 		static extern void tomboy_keybinder_unbind (string keystring,
 							    BindkeyHandler handler);
 

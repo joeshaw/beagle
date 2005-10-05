@@ -33,7 +33,7 @@ namespace Beagle.Util {
 
 		private IoPriority () {} // Static class
 
-		[DllImport ("libioprioglue")]
+		[DllImport ("libbeagleglue")]
 		static extern int set_io_priority_idle ();
 
 		static public void SetIdle ()

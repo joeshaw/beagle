@@ -1,3 +1,9 @@
+2006-10-05  Daniel Drake  <dsd@gentoo.org>
+
+	* glue/Makefile.am: Consolidate glue code into two libraries,
+	libbeagleglue and libbeagleuiglue.
+	* Best/BestTray.cs, Util/*: Use libbeagleglue/libbeagleuiglue
+
 2005-10-03  Daniel Drake  <dsd@gentoo.org>
 
 	* beagled/LuceneQueryingDriver.cs: Fix fd leak on certain codepath

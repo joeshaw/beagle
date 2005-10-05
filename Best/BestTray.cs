@@ -72,7 +72,7 @@ namespace Best {
 		Gtk.Tooltips tips;
 		Beagle.Util.XKeybinder keybinder;
 
-		[DllImport ("libtrayiconglue")]
+		[DllImport ("libbeagleuiglue")]
 		private static extern IntPtr egg_tray_icon_new (string name);
 
 		public BestTray (BestWindow bw, bool autostarted)

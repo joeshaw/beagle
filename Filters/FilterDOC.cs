@@ -46,61 +46,61 @@ namespace Beagle.Filters {
 							   IntPtr byteHotArray, int hotDataLen,
 							   bool appendStructBrk);
 		
-		[DllImport ("wv1glue")]
+		[DllImport ("libbeagleglue")]
 		private static extern int wv1_init ();
 
-		[DllImport ("wv1glue")]
+		[DllImport ("libbeagleglue")]
 		private static extern int wv1_glue_init_doc_parsing (string fname, TextHandlerCallback callback);
 
-		[DllImport ("wv1glue")]
+		[DllImport ("libbeagleglue")]
 		private static extern IntPtr wv1_glue_get_ole_stream (string fname);
 
-		[DllImport ("wv1glue")]
+		[DllImport ("libbeagleglue")]
 		private static extern IntPtr wv1_glue_get_ole_summary_stream (IntPtr oleStream);
 
-		[DllImport ("wv1glue")]
+		[DllImport ("libbeagleglue")]
 		private static extern string wv1_glue_get_title (IntPtr smryStream);
 
-		[DllImport ("wv1glue")]
+		[DllImport ("libbeagleglue")]
 		private static extern string wv1_glue_get_subject (IntPtr smryStream);
 
-		[DllImport ("wv1glue")]
+		[DllImport ("libbeagleglue")]
 	        private static extern string wv1_glue_get_author (IntPtr smryStream);
 
-		[DllImport ("wv1glue")]
+		[DllImport ("libbeagleglue")]
 		private static extern string wv1_glue_get_keywords (IntPtr smryStream);
 
-		[DllImport ("wv1glue")]
+		[DllImport ("libbeagleglue")]
 	        private static extern string wv1_glue_get_comments (IntPtr smryStream);
 
-		[DllImport ("wv1glue")]
+		[DllImport ("libbeagleglue")]
 	        private static extern string wv1_glue_get_template (IntPtr smryStream);
 
-		[DllImport ("wv1glue")]
+		[DllImport ("libbeagleglue")]
 	        private static extern string wv1_glue_get_lastsavedby (IntPtr smryStream);
 
-		[DllImport ("wv1glue")]
+		[DllImport ("libbeagleglue")]
 	        private static extern string wv1_glue_get_revision_number (IntPtr smryStream);
 
-		[DllImport ("wv1glue")]
+		[DllImport ("libbeagleglue")]
 	        private static extern string wv1_glue_get_appname (IntPtr smryStream);
 
-		[DllImport ("wv1glue")]
+		[DllImport ("libbeagleglue")]
 	        private static extern Int32 wv1_glue_get_page_count (IntPtr smryStream);
 
-		[DllImport ("wv1glue")]
+		[DllImport ("libbeagleglue")]
 	        private static extern Int32 wv1_glue_get_word_count (IntPtr smryStream);
 
-		[DllImport ("wv1glue")]
+		[DllImport ("libbeagleglue")]
 		private static extern Int32 wv1_glue_get_character_count (IntPtr smryStream);
 
-		[DllImport ("wv1glue")]
+		[DllImport ("libbeagleglue")]
 		private static extern Int32 wv1_glue_get_security (IntPtr smryStream);
 
-		[DllImport ("wv1glue")]
+		[DllImport ("libbeagleglue")]
 		private static extern Int16 wv1_glue_get_codepage (IntPtr smryStream);
 
-		[DllImport ("wv1glue")]
+		[DllImport ("libbeagleglue")]
 		private static extern void wv1_glue_close_stream (IntPtr oleStream, IntPtr summary);
 
 		//////////////////////////////////////////////////////////

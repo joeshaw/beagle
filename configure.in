@@ -272,7 +272,7 @@ AC_SUBST(BEAGLE_UI_LIBS)
 
 dnl ----------------------------------------------
 
-# Gdk and Atk are needed for libtrayiconglue
+# Gdk and Atk are needed for trayicon glue
 GDK20_MINIMUM_VERSION=2.2.3
 ATK_MINIMUM_VERSION=1.2.4
 
