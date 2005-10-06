@@ -1,3 +1,9 @@
+2005-10-06  Daniel Drake  <dsd@gentoo.org>
+
+	* beagled/KopeteQueryable/KopeteQueryable.cs: Set a source for scheduler
+	tasks. Thanks to raddy on IRC and Henry S. Thompson on bug #317997 for
+	helping to track this down.
+
 2006-10-05  Daniel Drake  <dsd@gentoo.org>
 
 	* glue/Makefile.am: Consolidate glue code into two libraries,

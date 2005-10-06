@@ -74,8 +74,9 @@ namespace Beagle.Daemon.KopeteQueryable {
 
 			if (!Inotify.Enabled) {
 				Scheduler.Task task = Scheduler.TaskFromHook (new Scheduler.TaskHook (CrawlHook));
-                                task.Tag = "Crawling ~/.kopete/logs to find new logfiles";
-                                ThisScheduler.Add (task);
+				task.Tag = "Crawling ~/.kopete/logs to find new logfiles";
+				task.Source = this;
+				ThisScheduler.Add (task);
 			}
 
 			stopwatch.Stop ();
