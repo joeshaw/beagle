@@ -200,6 +200,8 @@ HACKING file.
                                 ...
                         }
 
+		* Private variable and function local variable names are under_scored 
+		  (no camelCase please).
 
 If you are using Emacs, you might want to put something like this
 in your .emacs file:
