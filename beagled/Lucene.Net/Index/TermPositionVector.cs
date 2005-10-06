@@ -17,16 +17,31 @@ using System;
 namespace Lucene.Net.Index
 {
 	
-	/// <summary>Extends <code>TermFreqVector</code> to provide additional information about
-	/// positions in which each of the terms is found.
-	/// </summary>
-	public interface TermPositionVector:TermFreqVector
+    /// <summary>Extends <code>TermFreqVector</code> to provide additional information about
+    /// positions in which each of the terms is found. A TermPositionVector not necessarily
+    /// contains both positions and offsets, but at least one of these arrays exists.
+    /// </summary>
+    public interface TermPositionVector : TermFreqVector
 	{
 		
-		/// <summary>Returns an array of positions in which the term is found.
-		/// Terms are identified by the index at which its number appears in the
-		/// term number array obtained from <code>getTermNumbers</code> method.
-		/// </summary>
-		int[] GetTermPositions(int index);
-	}
+        /// <summary>Returns an array of positions in which the term is found.
+        /// Terms are identified by the index at which its number appears in the
+        /// term String array obtained from the <code>indexOf</code> method.
+        /// May return null if positions have not been stored.
+        /// </summary>
+        int[] GetTermPositions(int index);
+		
+        /// <summary> Returns an array of TermVectorOffsetInfo in which the term is found.
+        /// May return null if offsets have not been stored.
+        /// 
+        /// </summary>
+        /// <seealso cref="Lucene.Net.analysis.Token">
+        /// 
+        /// </seealso>
+        /// <param name="index">The position in the array to get the offsets from
+        /// </param>
+        /// <returns> An array of TermVectorOffsetInfo objects or the empty list
+        /// </returns>
+        TermVectorOffsetInfo[] GetOffsets(int index);
+    }
 }

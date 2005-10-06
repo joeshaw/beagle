@@ -22,10 +22,11 @@ namespace Lucene.Net.Store
 	/// <version>  $Id$
 	/// </version>
 	
-	class RAMInputStream:InputStream, System.ICloneable
+	class RAMInputStream : BufferedIndexInput, System.ICloneable
 	{
 		private RAMFile file;
 		private int pointer = 0;
+        private long length;
 		
 		public RAMInputStream(RAMFile f)
 		{
@@ -60,11 +61,10 @@ namespace Lucene.Net.Store
 		{
 			pointer = (int) pos;
 		}
-        /*
-		override public System.Object Clone()
-		{
-			return null;
-		}
-        */
-	}
+		
+        public override long Length()
+        {
+            return length;
+        }
+    }
 }

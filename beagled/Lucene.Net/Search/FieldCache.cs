@@ -61,6 +61,12 @@ namespace Lucene.Net.Search
 	}
 	public interface FieldCache
 	{
+        /// <summary>Indicator for StringIndex values in the cache. </summary>
+        // NOTE: the value assigned to this constant must not be
+        // the same as any of those in SortField!!
+        //readonly static int STRING_INDEX = - 1;
+        /// <summary>Expert: The cache used internally by sorting and range query classes. </summary>
+        //readonly static FieldCache DEFAULT = new FieldCacheImpl();
 		
 		
 		/// <summary>Checks the internal cache for an appropriate entry, and if none is

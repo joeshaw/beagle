@@ -587,12 +587,8 @@ namespace Lucene.Net.Analysis
 					return ;
 				
 			}
-
-			// FIXED joeshaw@novell.com 10 Jan 2005 - turn off unreachable code
-#if false
 			if (M() > 1)
 				k = j;
-#endif
 		}
 		
 		/* step6() removes a final -e if m() > 1. */

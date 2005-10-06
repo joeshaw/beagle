@@ -28,23 +28,11 @@ namespace Lucene.Net.Search.Spans
 	[Serializable]
 	class SpanWeight : Weight
 	{
-        virtual public Query Query
+        virtual public Query GetQuery()
         {
-            get
-            {
-                return query;
-            }
-			
+            return query;
         }
-        virtual public float Value
-        {
-            get
-            {
-                return value_Renamed;
-            }
-			
-        }
-        private Searcher searcher;
+        private Similarity similarity;
 		private float value_Renamed;
 		private float idf;
 		private float queryNorm;
@@ -55,14 +43,19 @@ namespace Lucene.Net.Search.Spans
 		
 		public SpanWeight(SpanQuery query, Searcher searcher)
 		{
-			this.searcher = searcher;
+			this.similarity = query.GetSimilarity(searcher);
 			this.query = query;
 			this.terms = query.GetTerms();
+
+            idf = this.query.GetSimilarity(searcher).Idf(terms, searcher);
 		}
+        public virtual float GetValue()
+        {
+            return value_Renamed;
+        }
 		
 		public virtual float SumOfSquaredWeights()
 		{
-			idf = this.query.GetSimilarity(searcher).Idf(terms, searcher);
 			queryWeight = idf * query.GetBoost(); // compute query weight
 			return queryWeight * queryWeight; // square it
 		}
@@ -76,15 +69,15 @@ namespace Lucene.Net.Search.Spans
 		
 		public virtual Scorer Scorer(IndexReader reader)
 		{
-			return new SpanScorer(query.GetSpans(reader), this, query.GetSimilarity(searcher), reader.Norms(query.GetField()));
+			return new SpanScorer(query.GetSpans(reader), this, similarity, reader.Norms(query.GetField()));
 		}
 		
 		public virtual Explanation Explain(IndexReader reader, int doc)
 		{
 			
 			Explanation result = new Explanation();
-			result.SetDescription("weight(" + Query + " in " + doc + "), product of:");
-			System.String field = ((SpanQuery) Query).GetField();
+			result.SetDescription("weight(" + GetQuery() + " in " + doc + "), product of:");
+			System.String field = ((SpanQuery) GetQuery()).GetField();
 			
 			System.Text.StringBuilder docFreqs = new System.Text.StringBuilder();
 			System.Collections.IEnumerator i = terms.GetEnumerator();
@@ -93,7 +86,7 @@ namespace Lucene.Net.Search.Spans
 				Term term = (Term) i.Current;
 				docFreqs.Append(term.Text());
 				docFreqs.Append("=");
-				docFreqs.Append(searcher.DocFreq(term));
+				docFreqs.Append(reader.DocFreq(term));
 				
 				if (i.MoveNext())
 				{
@@ -105,10 +98,10 @@ namespace Lucene.Net.Search.Spans
 			
 			// explain query weight
 			Explanation queryExpl = new Explanation();
-			queryExpl.SetDescription("queryWeight(" + Query + "), product of:");
+			queryExpl.SetDescription("queryWeight(" + GetQuery() + "), product of:");
 			
-			Explanation boostExpl = new Explanation(Query.GetBoost(), "boost");
-			if (Query.GetBoost() != 1.0f)
+			Explanation boostExpl = new Explanation(GetQuery().GetBoost(), "boost");
+			if (GetQuery().GetBoost() != 1.0f)
 				queryExpl.AddDetail(boostExpl);
 			queryExpl.AddDetail(idfExpl);
 			

@@ -24,7 +24,7 @@ namespace Lucene.Net.Store
 	/// public Object doBody() {
 	/// <i>... code to execute while locked ...</i>
 	/// }
-	/// }.run();
+	/// }.Run();
 	/// </pre>
 	/// 
 	/// </summary>
@@ -59,15 +59,10 @@ namespace Lucene.Net.Store
 			bool locked = Obtain();
 			int maxSleepCount = (int) (lockWaitTimeout / LOCK_POLL_INTERVAL);
 			int sleepCount = 0;
-
-			// FIXED trow@ximian.com 2004 May 8
-			// We shouldn't just fail right away if lockWaitTimeout < LOCK_POLL_INTERVAL.
-			maxSleepCount = Math.Max (maxSleepCount, 1);
+			maxSleepCount = System.Math.Max (maxSleepCount, 1);
 
 			while (!locked)
 			{
-				// FIXED trow@ximian.com 2004 May 8
-				// Lock would time out before first sleep if maxSleepCount == 1
 				if (sleepCount == maxSleepCount)
 				{
 					throw new System.IO.IOException("Lock obtain timed out: " + this.ToString());
@@ -126,7 +121,7 @@ namespace Lucene.Net.Store
 			/// until it is obtained, or until it has tried ten times. Lock is released when
 			/// {@link #doBody} exits. 
 			/// </summary>
-			public virtual System.Object run()
+			public virtual System.Object Run()
 			{
 				bool locked = false;
 				try

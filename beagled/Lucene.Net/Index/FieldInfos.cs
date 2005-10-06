@@ -17,8 +17,8 @@ using System;
 using Document = Lucene.Net.Documents.Document;
 using Field = Lucene.Net.Documents.Field;
 using Directory = Lucene.Net.Store.Directory;
-using InputStream = Lucene.Net.Store.InputStream;
-using OutputStream = Lucene.Net.Store.OutputStream;
+using IndexInput = Lucene.Net.Store.IndexInput;
+using IndexOutput = Lucene.Net.Store.IndexOutput;
 namespace Lucene.Net.Index
 {
 	
@@ -30,29 +30,30 @@ namespace Lucene.Net.Index
 	/// </summary>
 	sealed public class FieldInfos
 	{
-		private System.Collections.ArrayList byNumber = new System.Collections.ArrayList();
+		
+        internal const byte IS_INDEXED = (byte) (0x1);
+        internal const byte STORE_TERMVECTOR = (byte) (0x2);
+        internal const byte STORE_POSITIONS_WITH_TERMVECTOR = (byte) (0x4);
+        internal const byte STORE_OFFSET_WITH_TERMVECTOR = (byte) (0x8);
+
+        private System.Collections.ArrayList byNumber = new System.Collections.ArrayList();
 		private System.Collections.Hashtable byName = new System.Collections.Hashtable();
 		
 		public /*internal*/ FieldInfos()
 		{
-			Add("", false);
 		}
 		
-		/// <summary> Construct a FieldInfos object using the directory and the name of the file
-		/// InputStream
-		/// </summary>
-		/// <param name="d">The directory to open the InputStream from
-		/// </param>
-		/// <param name="name">The name of the file to open the InputStream from in the Directory
-		/// </param>
-		/// <throws>  IOException </throws>
-		/// <summary> 
-		/// </summary>
-		/// <seealso cref="#read">
-		/// </seealso>
-		public /*internal*/ FieldInfos(Directory d, System.String name)
+        /// <summary> Construct a FieldInfos object using the directory and the name of the file
+        /// IndexInput
+        /// </summary>
+        /// <param name="d">The directory to open the IndexInput from
+        /// </param>
+        /// <param name="name">The name of the file to open the IndexInput from in the Directory
+        /// </param>
+        /// <throws>  IOException </throws>
+        public /*internal*/ FieldInfos(Directory d, System.String name)
 		{
-			InputStream input = d.OpenFile(name);
+			IndexInput input = d.OpenInput(name);
 			try
 			{
 				Read(input);
@@ -68,41 +69,45 @@ namespace Lucene.Net.Index
 		{
             foreach (Field field in doc.Fields())
             {
-                Add(field.Name(), field.IsIndexed(), field.IsTermVectorStored());
+                Add(field.Name(), field.IsIndexed(), field.IsTermVectorStored(), field.IsStorePositionWithTermVector(), field.IsStoreOffsetWithTermVector());
             }
 		}
 		
-		/// <param name="names">The names of the fields
-		/// </param>
-		/// <param name="storeTermVectors">Whether the fields store term vectors or not
-		/// </param>
-		public void  AddIndexed(System.Collections.ICollection names, bool storeTermVectors)
+        /// <summary> Add fields that are indexed. Whether they have termvectors has to be specified.
+        /// 
+        /// </summary>
+        /// <param name="names">The names of the fields
+        /// </param>
+        /// <param name="storeTermVectors">Whether the fields store term vectors or not
+        /// </param>
+        /// <param name="storePositionWithTermVector">treu if positions should be stored.
+        /// </param>
+        /// <param name="storeOffsetWithTermVector">true if offsets should be stored
+        /// </param>
+        public void  AddIndexed(System.Collections.ICollection names, bool storeTermVectors, bool storePositionWithTermVector, bool storeOffsetWithTermVector)
 		{
 			System.Collections.IEnumerator i = names.GetEnumerator();
-			// FIXED trow@novell.com 18 Feb 2005
-			// Commented out unused variable j to avoid compiler warning
-			//int j = 0;
 			while (i.MoveNext())
 			{
                 System.Collections.DictionaryEntry t = (System.Collections.DictionaryEntry) i.Current;
-				Add((System.String) t.Key, true, storeTermVectors);
+                Add((System.String) t.Key, true, storeTermVectors, storePositionWithTermVector, storeOffsetWithTermVector);
 			}
 		}
 		
-		/// <summary> Assumes the Field is not storing term vectors </summary>
-		/// <param name="names">The names of the fields
-		/// </param>
-		/// <param name="isIndexed">Whether the fields are indexed or not
-		/// 
-		/// </param>
-		/// <seealso cref="boolean)">
-		/// </seealso>
-		public void  Add(System.Collections.ICollection names, bool isIndexed)
+        /// <summary> Assumes the fields are not storing term vectors.
+        /// 
+        /// </summary>
+        /// <param name="names">The names of the fields
+        /// </param>
+        /// <param name="isIndexed">Whether the fields are indexed or not
+        /// 
+        /// </param>
+        /// <seealso cref="boolean)">
+        /// </seealso>
+        public void  Add(System.Collections.ICollection names, bool isIndexed)
 		{
 			System.Collections.IEnumerator i = names.GetEnumerator();
-			// FIXED trow@novell.com 18 Feb 2005
-			// Commented out unused variable j to avoid compiler warning
-			//int j = 0;
+			int j = 0;
 			while (i.MoveNext())
 			{
                 System.Collections.DictionaryEntry t = (System.Collections.DictionaryEntry) i.Current;
@@ -110,36 +115,56 @@ namespace Lucene.Net.Index
 			}
 		}
 		
-		/// <summary> Calls three parameter add with false for the storeTermVector parameter </summary>
-		/// <param name="name">The name of the Field
-		/// </param>
-		/// <param name="isIndexed">true if the Field is indexed
-		/// </param>
-		/// <seealso cref="boolean, boolean)">
-		/// </seealso>
-		public void  Add(System.String name, bool isIndexed)
+        /// <summary> Calls 5 parameter add with false for all TermVector parameters.
+        /// 
+        /// </summary>
+        /// <param name="name">The name of the Field
+        /// </param>
+        /// <param name="isIndexed">true if the field is indexed
+        /// </param>
+        /// <seealso cref="boolean, boolean, boolean, boolean)">
+        /// </seealso>
+        public void  Add(System.String name, bool isIndexed)
 		{
-			Add(name, isIndexed, false);
+			Add(name, isIndexed, false, false, false);
 		}
 		
+        /// <summary> Calls 5 parameter add with false for term vector positions and offsets.
+        /// 
+        /// </summary>
+        /// <param name="name">The name of the field
+        /// </param>
+        /// <param name="isIndexed"> true if the field is indexed
+        /// </param>
+        /// <param name="storeTermVector">true if the term vector should be stored
+        /// </param>
+        public void  Add(System.String name, bool isIndexed, bool storeTermVector)
+        {
+            Add(name, isIndexed, storeTermVector, false, false);
+        }
 		
-		/// <summary>If the Field is not yet known, adds it. If it is known, checks to make
-		/// sure that the isIndexed flag is the same as was given previously for this
-		/// Field. If not - marks it as being indexed.  Same goes for storeTermVector
-		/// 
-		/// </summary>
-		/// <param name="name">The name of the Field
-		/// </param>
-		/// <param name="isIndexed">true if the Field is indexed
-		/// </param>
-		/// <param name="storeTermVector">true if the term vector should be stored
-		/// </param>
-		public void  Add(System.String name, bool isIndexed, bool storeTermVector)
+        /// <summary>If the field is not yet known, adds it. If it is known, checks to make
+        /// sure that the isIndexed flag is the same as was given previously for this
+        /// field. If not - marks it as being indexed.  Same goes for the TermVector
+        /// parameters.
+        /// 
+        /// </summary>
+        /// <param name="name">The name of the field
+        /// </param>
+        /// <param name="isIndexed">true if the field is indexed
+        /// </param>
+        /// <param name="storeTermVector">true if the term vector should be stored
+        /// </param>
+        /// <param name="storePositionWithTermVector">true if the term vector with positions should be stored
+        /// </param>
+        /// <param name="storeOffsetWithTermVector">true if the term vector with offsets should be stored
+        /// </param>
+        public void  Add(System.String name, bool isIndexed, bool storeTermVector, bool storePositionWithTermVector, bool storeOffsetWithTermVector)
 		{
 			FieldInfo fi = FieldInfo(name);
 			if (fi == null)
 			{
-				AddInternal(name, isIndexed, storeTermVector);
+				AddInternal(name, isIndexed, storeTermVector, storePositionWithTermVector, storeOffsetWithTermVector);
 			}
 			else
 			{
@@ -151,39 +176,86 @@ namespace Lucene.Net.Index
 				{
 					fi.storeTermVector = true; // once vector, always vector
 				}
-			}
+                if (fi.storePositionWithTermVector != storePositionWithTermVector)
+                {
+                    fi.storePositionWithTermVector = true; // once vector, always vector
+                }
+                if (fi.storeOffsetWithTermVector != storeOffsetWithTermVector)
+                {
+                    fi.storeOffsetWithTermVector = true; // once vector, always vector
+                }
+            }
 		}
 		
-		private void  AddInternal(System.String name, bool isIndexed, bool storeTermVector)
-		{
-			FieldInfo fi = new FieldInfo(name, isIndexed, byNumber.Count, storeTermVector);
-			byNumber.Add(fi);
-			byName[name] = fi;
-		}
+        private void  AddInternal(System.String name, bool isIndexed, bool storeTermVector, bool storePositionWithTermVector, bool storeOffsetWithTermVector)
+        {
+            FieldInfo fi = new FieldInfo(name, isIndexed, byNumber.Count, storeTermVector, storePositionWithTermVector, storeOffsetWithTermVector);
+            byNumber.Add(fi);
+            byName[name] = fi;
+        }
 		
 		public int FieldNumber(System.String fieldName)
 		{
-			FieldInfo fi = FieldInfo(fieldName);
-			if (fi != null)
-				return fi.number;
-			else
-				return - 1;
-		}
+            try
+            {
+                FieldInfo fi = FieldInfo(fieldName);
+                if (fi != null)
+                    return fi.number;
+            }
+            catch (System.IndexOutOfRangeException ioobe)
+            {
+                return - 1;
+            }
+            return - 1;
+        }
 		
 		public FieldInfo FieldInfo(System.String fieldName)
 		{
 			return (FieldInfo) byName[fieldName];
 		}
 		
-		public System.String FieldName(int fieldNumber)
-		{
-			return FieldInfo(fieldNumber).name;
-		}
+        /// <summary> Return the fieldName identified by its number.
+        /// 
+        /// </summary>
+        /// <param name="">fieldNumber
+        /// </param>
+        /// <returns> the fieldName or an empty string when the field
+        /// with the given number doesn't exist.
+        /// </returns>
+        public System.String FieldName(int fieldNumber)
+        {
+            try
+            {
+                return FieldInfo(fieldNumber).name;
+            }
+            catch (System.NullReferenceException npe)
+            {
+                return "";
+            }
+        }
 		
-		public FieldInfo FieldInfo(int fieldNumber)
+        /// <summary> Return the fieldinfo object referenced by the fieldNumber.</summary>
+        /// <param name="">fieldNumber
+        /// </param>
+        /// <returns> the FieldInfo object or null when the given fieldNumber
+        /// doesn't exist.
+        /// </returns>
+        public FieldInfo FieldInfo(int fieldNumber)
 		{
-			return (FieldInfo) byNumber[fieldNumber];
-		}
+            if (fieldNumber < 0)
+            {
+                return null;
+            }
+
+            try
+            {
+                return (FieldInfo) byNumber[fieldNumber];
+            }
+            catch (System.IndexOutOfRangeException ioobe)
+            {
+                return null;
+            }
+        }
 		
 		public int Size()
 		{
@@ -196,14 +268,17 @@ namespace Lucene.Net.Index
 			for (int i = 0; i < Size(); i++)
 			{
 				if (FieldInfo(i).storeTermVector)
-					hasVectors = true;
-			}
+                {
+                    hasVectors = true;
+                    break;
+                }
+            }
 			return hasVectors;
 		}
 		
 		public void  Write(Directory d, System.String name)
 		{
-			OutputStream output = d.CreateFile(name);
+			IndexOutput output = d.CreateOutput(name);
 			try
 			{
 				Write(output);
@@ -214,7 +289,7 @@ namespace Lucene.Net.Index
 			}
 		}
 		
-		public void  Write(OutputStream output)
+		public void  Write(IndexOutput output)
 		{
 			output.WriteVInt(Size());
 			for (int i = 0; i < Size(); i++)
@@ -222,26 +297,30 @@ namespace Lucene.Net.Index
 				FieldInfo fi = FieldInfo(i);
 				byte bits = (byte) (0x0);
 				if (fi.isIndexed)
-					bits |= (byte) (0x1);
+					bits |= IS_INDEXED;
 				if (fi.storeTermVector)
-					bits |= (byte) (0x2);
-				output.WriteString(fi.name);
-				//Was REMOVE
-				//output.writeByte((byte)(fi.isIndexed ? 1 : 0));
+					bits |= STORE_TERMVECTOR;
+                if (fi.storePositionWithTermVector)
+                    bits |= STORE_POSITIONS_WITH_TERMVECTOR;
+                if (fi.storeOffsetWithTermVector)
+                    bits |= STORE_OFFSET_WITH_TERMVECTOR;
+                output.WriteString(fi.name);
 				output.WriteByte(bits);
 			}
 		}
 		
-		private void  Read(InputStream input)
+		private void  Read(IndexInput input)
 		{
 			int size = input.ReadVInt(); //read in the size
 			for (int i = 0; i < size; i++)
 			{
 				System.String name = String.Intern(input.ReadString());
 				byte bits = input.ReadByte();
-				bool isIndexed = (bits & 0x1) != 0;
-				bool storeTermVector = (bits & 0x2) != 0;
-				AddInternal(name, isIndexed, storeTermVector);
+				bool isIndexed = (bits & IS_INDEXED) != 0;
+				bool storeTermVector = (bits & STORE_TERMVECTOR) != 0;
+                bool storePositionsWithTermVector = (bits & STORE_POSITIONS_WITH_TERMVECTOR) != 0;
+                bool storeOffsetWithTermVector = (bits & STORE_OFFSET_WITH_TERMVECTOR) != 0;
+                AddInternal(name, isIndexed, storeTermVector, storePositionsWithTermVector, storeOffsetWithTermVector);
 			}
 		}
 	}

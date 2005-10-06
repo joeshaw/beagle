@@ -21,20 +21,22 @@ using TermPositions = Lucene.Net.Index.TermPositions;
 namespace Lucene.Net.Search
 {
 	
-	/// <summary> PhrasePrefixQuery is a generalized version of PhraseQuery, with an added
-	/// method {@link #Add(Term[])}.
-	/// To use this class, to search for the phrase "Microsoft app*" first use
-	/// add(Term) on the term "Microsoft", then find all terms that has "app" as
-	/// prefix using IndexReader.terms(Term), and use PhrasePrefixQuery.add(Term[]
-	/// terms) to add them to the query.
-	/// 
-	/// </summary>
-	/// <author>  Anders Nielsen
-	/// </author>
-	/// <version>  1.0
-	/// </version>
-	[Serializable]
-	public class PhrasePrefixQuery:Query
+    /// <summary> PhrasePrefixQuery is a generalized version of PhraseQuery, with an added
+    /// method {@link #Add(Term[])}.
+    /// To use this class, to search for the phrase "Microsoft app*" first use
+    /// add(Term) on the term "Microsoft", then find all terms that has "app" as
+    /// prefix using IndexReader.terms(Term), and use PhrasePrefixQuery.add(Term[]
+    /// terms) to add them to the query.
+    /// 
+    /// </summary>
+    /// <deprecated> use {@link Lucene.Net.search.MultiPhraseQuery} instead
+    /// </deprecated>
+    /// <author>  Anders Nielsen
+    /// </author>
+    /// <version>  1.0
+    /// </version>
+    [Serializable]
+	public class PhrasePrefixQuery : Query
 	{
 		private System.String field;
 		private System.Collections.ArrayList termArrays = new System.Collections.ArrayList();
@@ -124,22 +126,10 @@ namespace Lucene.Net.Search
 				this.enclosingInstance = enclosingInstance;
 			}
 			private PhrasePrefixQuery enclosingInstance;
-			virtual public Query Query
+			virtual public Query GetQuery()
 			{
-				get
-				{
-					return Enclosing_Instance;
-				}
-				
+				return Enclosing_Instance;
 			}
-            virtual public float Value
-            {
-                get
-                {
-                    return value_Renamed;
-                }
-				
-            }
             public PhrasePrefixQuery Enclosing_Instance
             {
                 get
@@ -148,8 +138,8 @@ namespace Lucene.Net.Search
                 }
 				
             }
-            private Searcher searcher;
-			private float value_Renamed;
+            private Similarity similarity;
+            private float value_Renamed;
 			private float idf;
 			private float queryNorm;
 			private float queryWeight;
@@ -157,22 +147,29 @@ namespace Lucene.Net.Search
 			public PhrasePrefixWeight(PhrasePrefixQuery enclosingInstance, Searcher searcher)
 			{
 				InitBlock(enclosingInstance);
-				this.searcher = searcher;
-			}
-			
-			public virtual float SumOfSquaredWeights()
-			{
-				System.Collections.IEnumerator i = Enclosing_Instance.termArrays.GetEnumerator();
-				while (i.MoveNext())
-				{
-					Term[] terms = (Term[]) i.Current;
-					for (int j = 0; j < terms.Length; j++)
-						idf += Enclosing_Instance.GetSimilarity(searcher).Idf(terms[j], searcher);
-				}
+                this.similarity = Enclosing_Instance.GetSimilarity(searcher);
 				
-				queryWeight = idf * Enclosing_Instance.GetBoost(); // compute query weight
-				return queryWeight * queryWeight; // square it
-			}
+                // compute idf
+                System.Collections.IEnumerator i = Enclosing_Instance.termArrays.GetEnumerator();
+                while (i.MoveNext())
+                {
+                    Term[] terms = (Term[]) i.Current;
+                    for (int j = 0; j < terms.Length; j++)
+                    {
+                        idf += Enclosing_Instance.GetSimilarity(searcher).Idf(terms[j], searcher);
+                    }
+                }
+            }
+            public virtual float GetValue()
+            {
+                return value_Renamed;
+            }
+			
+            public virtual float SumOfSquaredWeights()
+			{
+                queryWeight = idf * Enclosing_Instance.GetBoost(); // compute query weight
+                return queryWeight * queryWeight; // square it
+            }
 			
 			public virtual void  Normalize(float queryNorm)
 			{
@@ -204,22 +201,22 @@ namespace Lucene.Net.Search
 					tps[i] = p;
 				}
 				
-				if (Enclosing_Instance.slop == 0)
-					return new ExactPhraseScorer(this, tps, Enclosing_Instance.GetPositions(), Enclosing_Instance.GetSimilarity(searcher), reader.Norms(Enclosing_Instance.field));
-				else
-					return new SloppyPhraseScorer(this, tps, Enclosing_Instance.GetPositions(), Enclosing_Instance.GetSimilarity(searcher), Enclosing_Instance.slop, reader.Norms(Enclosing_Instance.field));
-			}
+                if (Enclosing_Instance.slop == 0)
+                    return new ExactPhraseScorer(this, tps, Enclosing_Instance.GetPositions(), similarity, reader.Norms(Enclosing_Instance.field));
+                else
+                    return new SloppyPhraseScorer(this, tps, Enclosing_Instance.GetPositions(), similarity, Enclosing_Instance.slop, reader.Norms(Enclosing_Instance.field));
+            }
 			
 			public virtual Explanation Explain(IndexReader reader, int doc)
 			{
 				Explanation result = new Explanation();
-				result.SetDescription("weight(" + Query + " in " + doc + "), product of:");
+				result.SetDescription("weight(" + GetQuery() + " in " + doc + "), product of:");
 				
-				Explanation idfExpl = new Explanation(idf, "idf(" + Query + ")");
+				Explanation idfExpl = new Explanation(idf, "idf(" + GetQuery() + ")");
 				
 				// explain query weight
 				Explanation queryExpl = new Explanation();
-				queryExpl.SetDescription("queryWeight(" + Query + "), product of:");
+				queryExpl.SetDescription("queryWeight(" + GetQuery() + "), product of:");
 				
 				Explanation boostExpl = new Explanation(Enclosing_Instance.GetBoost(), "boost");
 				if (Enclosing_Instance.GetBoost() != 1.0f)
@@ -236,7 +233,7 @@ namespace Lucene.Net.Search
 				
 				// explain Field weight
 				Explanation fieldExpl = new Explanation();
-				fieldExpl.SetDescription("fieldWeight(" + Query + " in " + doc + "), product of:");
+				fieldExpl.SetDescription("fieldWeight(" + GetQuery() + " in " + doc + "), product of:");
 				
 				Explanation tfExpl = Scorer(reader).Explain(doc);
 				fieldExpl.AddDetail(tfExpl);
@@ -269,10 +266,10 @@ namespace Lucene.Net.Search
 			{
 				// optimize one-term case
 				Term[] terms = (Term[]) termArrays[0];
-				BooleanQuery boq = new BooleanQuery();
+				BooleanQuery boq = new BooleanQuery(true);
 				for (int i = 0; i < terms.Length; i++)
 				{
-					boq.Add(new TermQuery(terms[i]), false, false);
+					boq.Add(new TermQuery(terms[i]), BooleanClause.Occur.SHOULD);
 				}
 				boq.SetBoost(GetBoost());
 				return boq.CreateWeight(searcher);
@@ -314,10 +311,6 @@ namespace Lucene.Net.Search
 			}
 			
 			return buffer.ToString();
-		}
-		override public System.Object Clone()
-		{
-			return null;
 		}
 	}
 }

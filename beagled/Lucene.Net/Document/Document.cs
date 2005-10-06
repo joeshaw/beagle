@@ -150,17 +150,20 @@ namespace Lucene.Net.Documents
 			return null;
 		}
 		
-		/// <summary>Returns the string value of the Field with the given name if any exist in
-		/// this document, or null.  If multiple fields exist with this name, this
-		/// method returns the first value added.
-		/// </summary>
-		public System.String Get(System.String name)
+        /// <summary>Returns the string value of the field with the given name if any exist in
+        /// this document, or null.  If multiple fields exist with this name, this
+        /// method returns the first value added. If only binary fields with this name
+        /// exist, returns null.
+        /// </summary>
+        public System.String Get(System.String name)
 		{
-			Field field = GetField(name);
-			if (field != null)
-				return field.StringValue();
-			else
-				return null;
+            for (int i = 0; i < fields.Count; i++)
+            {
+                Field field = (Field) fields[i];
+                if (field.Name().Equals(name) && (!field.IsBinary()))
+                    return field.StringValue();
+            }
+            return null;
 		}
 		
 		/// <summary>Returns an Enumeration of all the fields in a document. </summary>
@@ -205,18 +208,90 @@ namespace Lucene.Net.Documents
 		/// </returns>
 		public System.String[] GetValues(System.String name)
 		{
-			Field[] namedFields = GetFields(name);
-			if (namedFields == null)
-				return null;
-			System.String[] values = new System.String[namedFields.Length];
-			for (int i = 0; i < namedFields.Length; i++)
-			{
-				values[i] = namedFields[i].StringValue();
-			}
-			return values;
+            System.Collections.ArrayList result = new System.Collections.ArrayList();
+            for (int i = 0; i < fields.Count; i++)
+            {
+                Field field = (Field) fields[i];
+                if (field.Name().Equals(name) && (!field.IsBinary()))
+                    result.Add(field.StringValue());
+            }
+			
+            if (result.Count == 0)
+                return null;
+			
+            return (System.String[]) (result.ToArray(typeof(System.String)));
 		}
 		
-		/// <summary>Prints the fields of a document for human consumption. </summary>
+        /// <summary> Returns an array of byte arrays for of the fields that have the name specified
+        /// as the method parameter. This method will return <code>null</code> if no
+        /// binary fields with the specified name are available.
+        /// 
+        /// </summary>
+        /// <param name="name">the name of the field
+        /// </param>
+        /// <returns> a  <code>byte[][]</code> of binary field values.
+        /// </returns>
+        public byte[][] GetBinaryValues(System.String name)
+        {
+            System.Collections.IList result = new System.Collections.ArrayList();
+            for (int i = 0; i < fields.Count; i++)
+            {
+                Field field = (Field) fields[i];
+                if (field.Name().Equals(name) && (field.IsBinary()))
+                {
+                    byte[] byteArray = field.BinaryValue();
+                    byte[] resultByteArray = new byte[byteArray.Length];
+                    for (int index = 0; index < byteArray.Length; index++)
+                        resultByteArray[index] = (byte) byteArray[index];
+
+                    result.Add(resultByteArray);
+                }
+            }
+			
+            if (result.Count == 0)
+                return null;
+
+            System.Collections.ICollection c = result;
+            System.Object[] objects = new byte[result.Count][];
+
+            System.Type type = objects.GetType().GetElementType();
+            System.Object[] objs = (System.Object[]) Array.CreateInstance(type, c.Count );
+
+            System.Collections.IEnumerator e = c.GetEnumerator();
+            int ii = 0;
+
+            while (e.MoveNext())
+                objs[ii++] = e.Current;
+
+            // If objects is smaller than c then do not return the new array in the parameter
+            if (objects.Length >= c.Count)
+                objs.CopyTo(objects, 0);
+
+            return (byte[][]) objs;
+        }
+		
+        /// <summary> Returns an array of bytes for the first (or only) field that has the name
+        /// specified as the method parameter. This method will return <code>null</code>
+        /// if no binary fields with the specified name are available.
+        /// There may be non-binary fields with the same name.
+        /// 
+        /// </summary>
+        /// <param name="name">the name of the field.
+        /// </param>
+        /// <returns> a <code>byte[]</code> containing the binary field value.
+        /// </returns>
+        public byte[] GetBinaryValue(System.String name)
+        {
+            for (int i = 0; i < fields.Count; i++)
+            {
+                Field field = (Field) fields[i];
+                if (field.Name().Equals(name) && (field.IsBinary()))
+                    return field.BinaryValue();
+            }
+            return null;
+        }
+
+        /// <summary>Prints the fields of a document for human consumption. </summary>
 		public override System.String ToString()
 		{
 			System.Text.StringBuilder buffer = new System.Text.StringBuilder();

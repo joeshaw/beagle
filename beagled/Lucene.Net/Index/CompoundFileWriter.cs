@@ -15,8 +15,8 @@
  */
 using System;
 using Directory = Lucene.Net.Store.Directory;
-using InputStream = Lucene.Net.Store.InputStream;
-using OutputStream = Lucene.Net.Store.OutputStream;
+using IndexInput = Lucene.Net.Store.IndexInput;
+using IndexOutput = Lucene.Net.Store.IndexOutput;
 namespace Lucene.Net.Index
 {
 	
@@ -37,7 +37,7 @@ namespace Lucene.Net.Index
 	/// 
 	/// The fileCount integer indicates how many files are contained in this compound
 	/// file. The {directory} that follows has that many entries. Each directory entry
-	/// contains an encoding identifier, an long pointer to the start of this file's
+	/// contains an encoding identifier, a long pointer to the start of this file's
 	/// data section, and a UTF String with that file's extension.
 	/// 
 	/// </summary>
@@ -45,7 +45,7 @@ namespace Lucene.Net.Index
 	/// </author>
 	/// <version>  $Id$
 	/// </version>
-	sealed public class CompoundFileWriter
+	public sealed class CompoundFileWriter
 	{
 		
 		private sealed class FileEntry
@@ -71,12 +71,13 @@ namespace Lucene.Net.Index
 		/// <summary>Create the compound stream in the specified file. The file name is the
 		/// entire name (no extensions are added).
 		/// </summary>
-		public CompoundFileWriter(Directory dir, System.String name)
+        /// <throws>  NullPointerException if <code>dir</code> or <code>name</code> is null </throws>
+        public CompoundFileWriter(Directory dir, System.String name)
 		{
 			if (dir == null)
-				throw new System.ArgumentException("Missing directory");
+				throw new System.NullReferenceException("directory cannot be null");
 			if (name == null)
-				throw new System.ArgumentException("Missing name");
+				throw new System.NullReferenceException("name cannot be null");
 			
 			directory = dir;
 			fileName = name;
@@ -96,19 +97,22 @@ namespace Lucene.Net.Index
 			return fileName;
 		}
 		
-		/// <summary>Add a source stream. If sourceDir is null, it is set to the
-		/// same value as the directory where this compound stream exists.
-		/// The id is the string by which the sub-stream will be know in the
-		/// compound stream. The caller must ensure that the ID is unique. If the
-		/// id is null, it is set to the name of the source file.
-		/// </summary>
-		public void  AddFile(System.String file)
+        /// <summary>Add a source stream. <code>file</code> is the string by which the 
+        /// sub-stream will be known in the compound stream.
+        /// 
+        /// </summary>
+        /// <throws>  IllegalStateException if this writer is closed </throws>
+        /// <throws>  NullPointerException if <code>file</code> is null </throws>
+        /// <throws>  IllegalArgumentException if a file with the same name </throws>
+        /// <summary>   has been added already
+        /// </summary>
+        public void  AddFile(System.String file)
 		{
 			if (merged)
 				throw new System.SystemException("Can't add extensions after merge has been called");
 			
 			if (file == null)
-				throw new System.ArgumentException("Missing source file");
+				throw new System.NullReferenceException("file cannot be null");
 			
             try
             {
@@ -124,12 +128,15 @@ namespace Lucene.Net.Index
 			entries.Add(entry);
 		}
 		
-		/// <summary>Merge files with the extensions added up to now.
-		/// All files with these extensions are combined sequentially into the
-		/// compound stream. After successful merge, the source files
-		/// are deleted.
-		/// </summary>
-		public void  Close()
+        /// <summary>Merge files with the extensions added up to now.
+        /// All files with these extensions are combined sequentially into the
+        /// compound stream. After successful merge, the source files
+        /// are deleted.
+        /// </summary>
+        /// <throws>  IllegalStateException if close() had been called before or </throws>
+        /// <summary>   if no file has been added to this object
+        /// </summary>
+        public void  Close()
 		{
 			if (merged)
 				throw new System.SystemException("Merge already performed");
@@ -140,10 +147,10 @@ namespace Lucene.Net.Index
 			merged = true;
 			
 			// open the compound stream
-			OutputStream os = null;
+			IndexOutput os = null;
 			try
 			{
-				os = directory.CreateFile(fileName);
+				os = directory.CreateOutput(fileName);
 				
 				// Write the number of entries
 				os.WriteVInt(entries.Count);
@@ -161,7 +168,7 @@ namespace Lucene.Net.Index
 				}
 				
 				// Open the files and copy their data into the stream.
-				// Remeber the locations of each file's data section.
+				// Remember the locations of each file's data section.
 				byte[] buffer = new byte[1024];
 				it = entries.GetEnumerator();
 				while (it.MoveNext())
@@ -184,7 +191,7 @@ namespace Lucene.Net.Index
 				// close so that if an exception occurs during the close, the
 				// finally clause below will not attempt to close the stream
 				// the second time.
-				OutputStream tmp = os;
+				IndexOutput tmp = os;
 				os = null;
 				tmp.Close();
 			}
@@ -205,14 +212,14 @@ namespace Lucene.Net.Index
 		/// provided output stream. Use the provided buffer for moving data
 		/// to reduce memory allocation.
 		/// </summary>
-		private void  CopyFile(FileEntry source, OutputStream os, byte[] buffer)
+		private void  CopyFile(FileEntry source, IndexOutput os, byte[] buffer)
 		{
-			InputStream is_Renamed = null;
+			IndexInput is_Renamed = null;
 			try
 			{
 				long startPtr = os.GetFilePointer();
 				
-				is_Renamed = directory.OpenFile(source.file);
+				is_Renamed = directory.OpenInput(source.file);
 				long length = is_Renamed.Length();
 				long remainder = length;
 				int chunk = buffer.Length;

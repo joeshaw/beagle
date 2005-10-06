@@ -26,7 +26,7 @@ namespace Lucene.Net.Search
 	/// </summary>
 	public class ParallelMultiSearcher:MultiSearcher
 	{
-		private class AnonymousClassHitCollector1:HitCollector
+		private class AnonymousClassHitCollector1 : HitCollector
 		{
 			public AnonymousClassHitCollector1(Lucene.Net.Search.HitCollector results, int start, ParallelMultiSearcher enclosingInstance)
 			{
@@ -59,7 +59,7 @@ namespace Lucene.Net.Search
 		private int[] starts;
 		
 		/// <summary>Creates a searcher which searches <i>searchables</i>. </summary>
-		public ParallelMultiSearcher(Lucene.Net.Search.Searchable[] searchables):base(searchables)
+		public ParallelMultiSearcher(Lucene.Net.Search.Searchable[] searchables) : base(searchables)
 		{
 			this.searchables = searchables;
 			this.starts = GetStarts();
@@ -68,17 +68,14 @@ namespace Lucene.Net.Search
 		/// <summary> TODO: parallelize this one too</summary>
 		public override int DocFreq(Term term)
 		{
-			int docFreq = 0;
-			for (int i = 0; i < searchables.Length; i++)
-				docFreq += searchables[i].DocFreq(term);
-			return docFreq;
-		}
+            return base.DocFreq(term);
+        }
 		
 		/// <summary> A search implementation which spans a new thread for each
 		/// Searchable, waits for each search to complete and merge
 		/// the results back together.
 		/// </summary>
-		public override TopDocs Search(Query query, Filter filter, int nDocs)
+		public override TopDocs Search(Weight weight, Filter filter, int nDocs)
 		{
 			HitQueue hq = new HitQueue(nDocs);
 			int totalHits = 0;
@@ -87,7 +84,7 @@ namespace Lucene.Net.Search
 			{
 				// search each searcher
 				// Assume not too many searchables and cost of creating a thread is by far inferior to a search
-				msta[i] = new MultiSearcherThread(searchables[i], query, filter, nDocs, hq, i, starts, "MultiSearcher thread #" + (i + 1));
+				msta[i] = new MultiSearcherThread(searchables[i], weight, filter, nDocs, hq, i, starts, "MultiSearcher thread #" + (i + 1));
 				msta[i].Start();
 			}
 			
@@ -101,7 +98,7 @@ namespace Lucene.Net.Search
 				{
 					; // TODO: what should we do with this???
 				}
-				System.IO.IOException ioe = msta[i].GetIOException();
+				System.IO.IOException ioe = msta[i].IOException;
 				if (ioe == null)
 				{
 					totalHits += msta[i].Hits();
@@ -125,7 +122,7 @@ namespace Lucene.Net.Search
 		/// Searchable, waits for each search to complete and merges
 		/// the results back together.
 		/// </summary>
-		public override TopFieldDocs Search(Query query, Filter filter, int nDocs, Sort sort)
+		public override TopFieldDocs Search(Weight weight, Filter filter, int nDocs, Sort sort)
 		{
 			// don't specify the fields - we'll wait to do this until we get results
 			FieldDocSortedHitQueue hq = new FieldDocSortedHitQueue(null, nDocs);
@@ -135,7 +132,7 @@ namespace Lucene.Net.Search
 			{
 				// search each searcher
 				// Assume not too many searchables and cost of creating a thread is by far inferior to a search
-				msta[i] = new MultiSearcherThread(searchables[i], query, filter, nDocs, hq, sort, i, starts, "MultiSearcher thread #" + (i + 1));
+				msta[i] = new MultiSearcherThread(searchables[i], weight, filter, nDocs, hq, sort, i, starts, "MultiSearcher thread #" + (i + 1));
 				msta[i].Start();
 			}
 			
@@ -149,7 +146,7 @@ namespace Lucene.Net.Search
 				{
 					; // TODO: what should we do with this???
 				}
-				System.IO.IOException ioe = msta[i].GetIOException();
+				System.IO.IOException ioe = msta[i].IOException;
 				if (ioe == null)
 				{
 					totalHits += msta[i].Hits();
@@ -205,22 +202,25 @@ namespace Lucene.Net.Search
 		*/
 		public override Query Rewrite(Query original)
 		{
-			Query[] queries = new Query[searchables.Length];
-			for (int i = 0; i < searchables.Length; i++)
-			{
-				queries[i] = searchables[i].Rewrite(original);
-			}
-			return original.Combine(queries);
-		}
+            return base.Rewrite(original);
+        }
 	}
 	
 	/// <summary> A thread subclass for searching a single searchable </summary>
 	class MultiSearcherThread : SupportClass.ThreadClass
 	{
+        virtual public System.IO.IOException IOException
+        {
+            get
+            {
+                return ioe;
+            }
+			
+        }
 		
-		private Lucene.Net.Search.Searchable searchable;
-		private Query query;
-		private Filter filter;
+        private Lucene.Net.Search.Searchable searchable;
+        private Weight weight;
+        private Filter filter;
 		private int nDocs;
 		private TopDocs docs;
 		private int i;
@@ -229,10 +229,10 @@ namespace Lucene.Net.Search
 		private System.IO.IOException ioe;
 		private Sort sort;
 		
-		public MultiSearcherThread(Lucene.Net.Search.Searchable searchable, Query query, Filter filter, int nDocs, HitQueue hq, int i, int[] starts, System.String name):base(name)
+		public MultiSearcherThread(Lucene.Net.Search.Searchable searchable, Weight weight, Filter filter, int nDocs, HitQueue hq, int i, int[] starts, System.String name):base(name)
 		{
 			this.searchable = searchable;
-			this.query = query;
+			this.weight = weight;
 			this.filter = filter;
 			this.nDocs = nDocs;
 			this.hq = hq;
@@ -240,11 +240,11 @@ namespace Lucene.Net.Search
 			this.starts = starts;
 		}
 		
-		public MultiSearcherThread(Lucene.Net.Search.Searchable searchable, Query query, Filter filter, int nDocs, FieldDocSortedHitQueue hq, Sort sort, int i, int[] starts, System.String name):base(name)
+		public MultiSearcherThread(Lucene.Net.Search.Searchable searchable, Weight weight, Filter filter, int nDocs, FieldDocSortedHitQueue hq, Sort sort, int i, int[] starts, System.String name) : base(name)
 		{
 			this.searchable = searchable;
-			this.query = query;
-			this.filter = filter;
+            this.weight = weight;
+            this.filter = filter;
 			this.nDocs = nDocs;
 			this.hq = hq;
 			this.i = i;
@@ -256,7 +256,7 @@ namespace Lucene.Net.Search
 		{
 			try
 			{
-				docs = (sort == null)?searchable.Search(query, filter, nDocs):searchable.Search(query, filter, nDocs, sort);
+				docs = (sort == null) ? searchable.Search(weight, filter, nDocs) : searchable.Search(weight, filter, nDocs, sort);
 			}
 			// Store the IOException for later use by the caller of this thread
 			catch (System.IO.IOException ioe)
@@ -291,11 +291,6 @@ namespace Lucene.Net.Search
 		public virtual int Hits()
 		{
 			return docs.totalHits;
-		}
-		
-		public virtual System.IO.IOException GetIOException()
-		{
-			return ioe;
 		}
 	}
 }

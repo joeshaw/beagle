@@ -21,8 +21,8 @@ namespace Lucene.Net.Search
 	/// <summary>A ranked list of documents, used to hold search results. </summary>
 	public sealed class Hits
 	{
-		private Query query;
-		private Searcher searcher;
+        private Weight weight;
+        private Searcher searcher;
 		private Filter filter = null;
 		private Sort sort = null;
 		
@@ -36,7 +36,7 @@ namespace Lucene.Net.Search
 		
 		internal Hits(Searcher s, Query q, Filter f)
 		{
-			query = q;
+			weight = q.Weight(s);
 			searcher = s;
 			filter = f;
 			GetMoreDocs(50); // retrieve 100 initially
@@ -44,7 +44,7 @@ namespace Lucene.Net.Search
 		
 		internal Hits(Searcher s, Query q, Filter f, Sort o)
 		{
-			query = q;
+			weight = q.Weight(s);
 			searcher = s;
 			filter = f;
 			sort = o;
@@ -62,7 +62,7 @@ namespace Lucene.Net.Search
 			}
 			
 			int n = min * 2; // double # retrieved
-			TopDocs topDocs = (sort == null) ? searcher.Search(query, filter, n) : searcher.Search(query, filter, n, sort);
+			TopDocs topDocs = (sort == null) ? searcher.Search(weight, filter, n):searcher.Search(weight, filter, n, sort);
 			length = topDocs.totalHits;
 			ScoreDoc[] scoreDocs = topDocs.scoreDocs;
 			

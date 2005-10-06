@@ -106,7 +106,7 @@ namespace Lucene.Net.Search
 		}
 		private class AnonymousClassScoreDocComparator2 : ScoreDocComparator
 		{
-			public AnonymousClassScoreDocComparator2(Lucene.Net.Search.StringIndex index)
+            public AnonymousClassScoreDocComparator2(Lucene.Net.Search.StringIndex index)
 			{
 				InitBlock(index);
 			}

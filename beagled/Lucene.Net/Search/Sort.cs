@@ -27,8 +27,8 @@ namespace Lucene.Net.Search
 	/// and does not need to be stored (unless you happen to want it back with the
 	/// rest of your document data).  In other words:
 	/// 
-	/// <dl><dd><code>document.add (new Field ("byNumber", Integer.ToString(x), false, true, false));</code>
-	/// </dd></dl>
+	/// <p><code>document.add (new Field ("byNumber", Integer.toString(x), Field.Store.NO, Field.Index.UN_TOKENIZED));</code></p>
+	/// 
 	/// 
 	/// <p><h3>Valid Types of Values</h3>
 	/// 
@@ -102,11 +102,12 @@ namespace Lucene.Net.Search
 	public class Sort
 	{
 		
-		/// <summary>Represents sorting by computed relevance. Using this sort criteria
-		/// returns the same results as calling {@link Searcher#Search(Query) Searcher#search()}
-		/// without a sort criteria, only with slightly more overhead. 
-		/// </summary>
-		public static readonly Sort RELEVANCE = new Sort();
+        /// <summary> Represents sorting by computed relevance. Using this sort criteria returns
+        /// the same results as calling
+        /// {@link Searcher#Search(Query) Searcher#search()}without a sort criteria,
+        /// only with slightly more overhead.
+        /// </summary>
+        public static readonly Sort RELEVANCE = new Sort();
 		
 		/// <summary>Represents sorting by index order. </summary>
 		public static readonly Sort INDEXORDER;
@@ -114,51 +115,48 @@ namespace Lucene.Net.Search
 		// internal representation of the sort criteria
 		internal SortField[] fields;
 		
+        /// <summary> Sorts by computed relevance. This is the same sort criteria as calling
+        /// {@link Searcher#Search(Query) Searcher#search()}without a sort criteria,
+        /// only with slightly more overhead.
+        /// </summary>
+        public Sort() : this(new SortField[]{SortField.FIELD_SCORE, SortField.FIELD_DOC})
+        {
+        }
 		
-		/// <summary>Sorts by computed relevance.  This is the same sort criteria as
-		/// calling {@link Searcher#Search(Query) Searcher#search()} without a sort criteria, only with
-		/// slightly more overhead. 
-		/// </summary>
-		public Sort() : this(new SortField[] {SortField.FIELD_SCORE, SortField.FIELD_DOC})
-		{
-		}
-		
-		
-		/// <summary>Sorts by the terms in <code>Field</code> then by index order (document
-		/// number). The type of value in <code>Field</code> is determined
-		/// automatically.
-		/// </summary>
-		/// <seealso cref="SortField#AUTO">
-		/// </seealso>
-		public Sort(System.String field)
+        /// <summary> Sorts by the terms in <code>field</code> then by index order (document
+        /// number). The type of value in <code>field</code> is determined
+        /// automatically.
+        /// 
+        /// </summary>
+        /// <seealso cref="SortField#AUTO">
+        /// </seealso>
+        public Sort(System.String field)
 		{
 			SetSort(field, false);
 		}
 		
-		
-		/// <summary>Sorts possibly in reverse by the terms in <code>Field</code> then by
-		/// index order (document number). The type of value in <code>Field</code> is determined
-		/// automatically.
-		/// </summary>
-		/// <seealso cref="SortField#AUTO">
-		/// </seealso>
-		public Sort(System.String field, bool reverse)
+        /// <summary> Sorts possibly in reverse by the terms in <code>field</code> then by
+        /// index order (document number). The type of value in <code>field</code> is
+        /// determined automatically.
+        /// 
+        /// </summary>
+        /// <seealso cref="SortField#AUTO">
+        /// </seealso>
+        public Sort(System.String field, bool reverse)
 		{
 			SetSort(field, reverse);
 		}
 		
-		
-		/// <summary>Sorts in succession by the terms in each Field.
-		/// The type of value in <code>Field</code> is determined
-		/// automatically.
-		/// </summary>
-		/// <seealso cref="SortField#AUTO">
-		/// </seealso>
-		public Sort(System.String[] fields)
+        /// <summary> Sorts in succession by the terms in each field. The type of value in
+        /// <code>field</code> is determined automatically.
+        /// 
+        /// </summary>
+        /// <seealso cref="SortField#AUTO">
+        /// </seealso>
+        public Sort(System.String[] fields)
 		{
 			SetSort(fields);
 		}
-		
 		
 		/// <summary>Sorts by the criteria in the given SortField. </summary>
 		public Sort(SortField field)
@@ -166,15 +164,13 @@ namespace Lucene.Net.Search
 			SetSort(field);
 		}
 		
-		
 		/// <summary>Sorts in succession by the criteria in each SortField. </summary>
 		public Sort(SortField[] fields)
 		{
 			SetSort(fields);
 		}
 		
-		
-		/// <summary>Sets the sort to the terms in <code>Field</code> then by index order
+		/// <summary> Sets the sort to the terms in <code>Field</code> then by index order
 		/// (document number). 
 		/// </summary>
 		public void  SetSort(System.String field)
@@ -182,8 +178,7 @@ namespace Lucene.Net.Search
 			SetSort(field, false);
 		}
 		
-		
-		/// <summary>Sets the sort to the terms in <code>Field</code> possibly in reverse,
+		/// <summary> Sets the sort to the terms in <code>Field</code> possibly in reverse,
 		/// then by index order (document number). 
 		/// </summary>
 		public virtual void  SetSort(System.String field, bool reverse)
@@ -191,7 +186,6 @@ namespace Lucene.Net.Search
 			SortField[] nfields = new SortField[]{new SortField(field, SortField.AUTO, reverse), SortField.FIELD_DOC};
 			fields = nfields;
 		}
-		
 		
 		/// <summary>Sets the sort to the terms in each Field in succession. </summary>
 		public virtual void  SetSort(System.String[] fieldnames)
@@ -205,13 +199,11 @@ namespace Lucene.Net.Search
 			fields = nfields;
 		}
 		
-		
 		/// <summary>Sets the sort to the given criteria. </summary>
 		public virtual void  SetSort(SortField field)
 		{
 			this.fields = new SortField[]{field};
 		}
-		
 		
 		/// <summary>Sets the sort to the given criteria in succession. </summary>
 		public virtual void  SetSort(SortField[] fields)
@@ -219,7 +211,15 @@ namespace Lucene.Net.Search
 			this.fields = fields;
 		}
 		
-		public override System.String ToString()
+        /// <summary> Representation of the sort criteria.</summary>
+        /// <returns> Array of SortField objects used in this sort criteria
+        /// </returns>
+        public virtual SortField[] GetSort()
+        {
+            return fields;
+        }
+		
+        public override System.String ToString()
 		{
 			System.Text.StringBuilder buffer = new System.Text.StringBuilder();
 			

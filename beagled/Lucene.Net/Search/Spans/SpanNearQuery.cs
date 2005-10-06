@@ -90,7 +90,6 @@ namespace Lucene.Net.Search.Spans
 			while (i.MoveNext())
 			{
 				SpanQuery clause = (SpanQuery) i.Current;
-                //{{}}// _SupportClass.ICollectionSupport.AddAll(terms, clause.GetTerms()); // {{Aroush}}
                 terms.AddRange(clause.GetTerms());
 			}
 			return terms;

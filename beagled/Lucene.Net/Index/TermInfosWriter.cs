@@ -15,7 +15,7 @@
  */
 using System;
 using Directory = Lucene.Net.Store.Directory;
-using OutputStream = Lucene.Net.Store.OutputStream;
+using IndexOutput = Lucene.Net.Store.IndexOutput;
 using StringHelper = Lucene.Net.Util.StringHelper;
 namespace Lucene.Net.Index
 {
@@ -30,7 +30,7 @@ namespace Lucene.Net.Index
 		public const int FORMAT = - 2;
 		
 		private FieldInfos fieldInfos;
-		private OutputStream output;
+		private IndexOutput output;
 		private Term lastTerm = new Term("", "");
 		private TermInfo lastTi = new TermInfo();
 		private long size = 0;
@@ -63,23 +63,24 @@ namespace Lucene.Net.Index
 		
 		private TermInfosWriter other = null;
 		
-		public /*internal*/ TermInfosWriter(Directory directory, System.String segment, FieldInfos fis)
+		public /*internal*/ TermInfosWriter(Directory directory, System.String segment, FieldInfos fis, int interval)
 		{
-			Initialize(directory, segment, fis, false);
-			other = new TermInfosWriter(directory, segment, fis, true);
+			Initialize(directory, segment, fis, interval, false);
+			other = new TermInfosWriter(directory, segment, fis, interval, true);
 			other.other = this;
 		}
 		
-		private TermInfosWriter(Directory directory, System.String segment, FieldInfos fis, bool isIndex)
+		private TermInfosWriter(Directory directory, System.String segment, FieldInfos fis, int interval, bool isIndex)
 		{
-			Initialize(directory, segment, fis, isIndex);
+			Initialize(directory, segment, fis, interval, isIndex);
 		}
 		
-		private void  Initialize(Directory directory, System.String segment, FieldInfos fis, bool isi)
+		private void  Initialize(Directory directory, System.String segment, FieldInfos fis, int interval, bool isi)
 		{
-			fieldInfos = fis;
+            indexInterval = interval;
+            fieldInfos = fis;
 			isIndex = isi;
-			output = directory.CreateFile(segment + (isIndex?".tii":".tis"));
+			output = directory.CreateOutput(segment + (isIndex ? ".tii" : ".tis"));
 			output.WriteInt(FORMAT); // write format
 			output.WriteLong(0); // leave space for size
 			output.WriteInt(indexInterval); // write indexInterval

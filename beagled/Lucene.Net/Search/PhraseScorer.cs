@@ -36,7 +36,7 @@ namespace Lucene.Net.Search
 		{
 			this.norms = norms;
 			this.weight = weight;
-			this.value_Renamed = weight.Value;
+			this.value_Renamed = weight.GetValue();
 			
 			// convert tps to a list
 			for (int i = 0; i < tps.Length; i++)

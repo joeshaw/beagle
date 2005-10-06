@@ -40,7 +40,7 @@ namespace Lucene.Net.Search
 		
 		public override Query Rewrite(IndexReader reader)
 		{
-			BooleanQuery query = new BooleanQuery();
+			BooleanQuery query = new BooleanQuery(true);
 			TermEnum enumerator = reader.Terms(prefix);
 			try
 			{
@@ -53,7 +53,7 @@ namespace Lucene.Net.Search
 					{
 						TermQuery tq = new TermQuery(term); // found a match
 						tq.SetBoost(GetBoost()); // set the boost
-						query.Add(tq, false, false); // add to query
+						query.Add(tq, BooleanClause.Occur.SHOULD); // add to query
 						//System.out.println("added " + term);
 					}
 					else

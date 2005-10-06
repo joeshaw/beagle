@@ -63,19 +63,10 @@ namespace Lucene.Net.Search
 			this.inclusive = inclusive;
 		}
 		
-		/// <summary> FIXME: Describe <code>rewrite</code> method here.
-		/// 
-		/// </summary>
-		/// <param name="reader">an <code>IndexReader</code> value
-		/// </param>
-		/// <returns> a <code>Query</code> value
-		/// </returns>
-		/// <exception cref=""> IOException if an error occurs
-		/// </exception>
 		public override Query Rewrite(IndexReader reader)
 		{
 			
-			BooleanQuery query = new BooleanQuery();
+			BooleanQuery query = new BooleanQuery(true);
 			TermEnum enumerator = reader.Terms(lowerTerm);
 			
 			try
@@ -106,7 +97,7 @@ namespace Lucene.Net.Search
 							}
 							TermQuery tq = new TermQuery(term); // found a match
 							tq.SetBoost(GetBoost()); // set the boost
-							query.Add(tq, false, false); // add to query
+							query.Add(tq, BooleanClause.Occur.SHOULD); // add to query
 						}
 					}
 					else
@@ -177,9 +168,32 @@ namespace Lucene.Net.Search
 			}
 			return buffer.ToString();
 		}
-		override public System.Object Clone()
-		{
-			return null;
-		}
-	}
+		
+        /// <summary>Returns true iff <code>o</code> is equal to this. </summary>
+        public  override bool Equals(System.Object o)
+        {
+            if (this == o)
+                return true;
+            if (!(o is RangeQuery))
+                return false;
+			
+            RangeQuery other = (RangeQuery) o;
+            if (this.GetBoost() != other.GetBoost())
+                return false;
+            if (this.inclusive != other.inclusive)
+                return false;
+            // one of lowerTerm and upperTerm can be null
+            if (this.lowerTerm != null ? !this.lowerTerm.Equals(other.lowerTerm) : other.lowerTerm != null)
+                return false;
+            if (this.upperTerm != null ? !this.upperTerm.Equals(other.upperTerm) : other.upperTerm != null)
+                return false;
+            return true;
+        }
+		
+        /// <summary>Returns a hash code value for this object.</summary>
+        public override int GetHashCode()
+        {
+            return BitConverter.ToInt32(BitConverter.GetBytes(GetBoost()), 0) ^ (lowerTerm != null ? lowerTerm.GetHashCode() : 0) ^ (upperTerm != null ? upperTerm.GetHashCode() : 0) ^ (this.inclusive ? 1 : 0);
+        }
+    }
 }

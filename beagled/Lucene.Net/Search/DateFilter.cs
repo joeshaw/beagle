@@ -22,12 +22,16 @@ using TermEnum = Lucene.Net.Index.TermEnum;
 namespace Lucene.Net.Search
 {
 	
-	/// <summary> A Filter that restricts search results to a range of time.
-	/// 
-	/// <p>For this to work, documents must have been indexed with a
-	/// {@link DateField}.
-	/// </summary>
-	[Serializable]
+    /// <summary> A Filter that restricts search results to a range of time.
+    /// 
+    /// <p>For this to work, documents must have been indexed with a
+    /// {@link DateField}.</p>
+    /// 
+    /// </summary>
+    /// <deprecated> Instead, use {@link RangeFilter} combined with 
+    /// {@link Lucene.Net.document.DateTools}.
+    /// </deprecated>
+    [Serializable]
 	public class DateFilter:Filter
 	{
 		private void  InitBlock()

@@ -1,0 +1,158 @@
+From: Jon Trowbridge <trow@novell.com>, Fredrik Hedberg <fhedberg@novell.com>
+
+Allow custom per-directory locking behaviour to be defined at initialization
+time.
+
+--- Lucene.Net/Store/FSDirectory.cs.orig	2005-10-02 08:54:56.000000000 +0100
++++ Lucene.Net/Store/FSDirectory.cs	2005-10-02 09:43:39.000000000 +0100
+@@ -52,7 +52,7 @@ namespace Lucene.Net.Store
+ 			}
+ 			public override bool Obtain()
+ 			{
+-				if (Lucene.Net.Store.FSDirectory.DISABLE_LOCKS)
++				if (Lucene.Net.Store.FSDirectory.DISABLE_LOCKS || Enclosing_Instance.DisableLocks)
+ 					return true;
+ 				
+ 				bool tmpBool;
+@@ -85,7 +85,7 @@ namespace Lucene.Net.Store
+ 			}
+ 			public override void  Release()
+ 			{
+-				if (Lucene.Net.Store.FSDirectory.DISABLE_LOCKS)
++				if (Lucene.Net.Store.FSDirectory.DISABLE_LOCKS || Enclosing_Instance.DisableLocks)
+ 					return ;
+ 				bool tmpBool;
+ 				if (System.IO.File.Exists(lockFile.FullName))
+@@ -104,7 +104,7 @@ namespace Lucene.Net.Store
+ 			}
+ 			public override bool IsLocked()
+ 			{
+-				if (Lucene.Net.Store.FSDirectory.DISABLE_LOCKS)
++				if (Lucene.Net.Store.FSDirectory.DISABLE_LOCKS || Enclosing_Instance.DisableLocks)
+ 					return false;
+ 				bool tmpBool;
+ 				if (System.IO.File.Exists(lockFile.FullName))
+@@ -139,6 +139,12 @@ namespace Lucene.Net.Store
+         private static System.Type IMPL;
+ 		
+         private static System.Security.Cryptography.MD5 DIGESTER;
++
++		private bool disable_locks = false;
++		public bool DisableLocks {
++			get { return disable_locks; }
++			set { disable_locks = value; }
++		}
+ 		
+ 		/// <summary>A buffer optionally used in renameTo method </summary>
+ 		private byte[] buffer = null;
+@@ -158,9 +164,9 @@ namespace Lucene.Net.Store
+ 		/// </returns>
+ 		public static FSDirectory GetDirectory(System.String path, bool create)
+ 		{
+-			return GetDirectory(new System.IO.FileInfo(path), create);
++			return GetDirectory(new System.IO.FileInfo(path), null, create, false);
+ 		}
+-		
++
+ 		/// <summary>Returns the directory instance for the named location.
+ 		/// 
+ 		/// <p>Directories are cached, so that, for a given canonical path, the same
+@@ -176,6 +182,70 @@ namespace Lucene.Net.Store
+ 		/// </returns>
+ 		public static FSDirectory GetDirectory(System.IO.FileInfo file, bool create)
+ 		{
++			return GetDirectory(file, null, create, false);
++		}
++
++		/// <summary>Returns the directory instance for the named location.
++		/// 
++		/// <p>Directories are cached, so that, for a given canonical path, the same
++		/// FSDirectory instance will always be returned.  This permits
++		/// synchronization on directories.
++		/// 
++		/// </summary>
++		/// <param name="path">the path to the directory.
++		/// </param>
++		/// <param name="tmpDir">the path to use as lock directory.
++		/// </param>
++		/// <param name="create">if true, create, or erase any existing contents.
++		/// </param>
++		/// <returns> the FSDirectory for the named file.  
++		/// </returns>
++		public static FSDirectory GetDirectory(System.String path, System.String tmpDir, bool create)
++		{
++			return GetDirectory(new System.IO.FileInfo(path), tmpDir, create, false);
++		}
++
++		/// <summary>Returns the directory instance for the named location.
++		/// 
++		/// <p>Directories are cached, so that, for a given canonical path, the same
++		/// FSDirectory instance will always be returned.  This permits
++		/// synchronization on directories.
++		/// 
++		/// </summary>
++		/// <param name="path">the path to the directory.
++		/// </param>
++		/// <param name="tmpDir">the path to use as lock directory.
++		/// </param>
++		/// <param name="create">if true, create, or erase any existing contents.
++		/// </param>
++		/// <param name="disable_locks">if true, disable internal locking
++		/// </param>
++		/// <returns> the FSDirectory for the named file.  
++		/// </returns>
++		public static FSDirectory GetDirectory(System.String path, System.String tmpDir, bool create, bool disable_locks)
++		{
++			return GetDirectory(new System.IO.FileInfo(path), tmpDir, create, disable_locks);
++		}
++
++		/// <summary>Returns the directory instance for the named location.
++		/// 
++		/// <p>Directories are cached, so that, for a given canonical path, the same
++		/// FSDirectory instance will always be returned.  This permits
++		/// synchronization on directories.
++		/// 
++		/// </summary>
++		/// <param name="file">the path to the directory.
++		/// </param>
++		/// <param name="tmpDir">the path to use as lock directory.
++		/// </param>
++		/// <param name="create">if true, create, or erase any existing contents.
++		/// </param>
++		/// <param name="disable_locks">if true, disable internal locking
++		/// </param>
++		/// <returns> the FSDirectory for the named file.  
++		/// </returns>
++		public static FSDirectory GetDirectory(System.IO.FileInfo file, System.String tmpdir, bool create, bool disable_locks)
++		{
+ 			file = new System.IO.FileInfo(file.FullName);
+ 			FSDirectory dir;
+ 			lock (DIRECTORIES.SyncRoot)
+@@ -191,7 +261,7 @@ namespace Lucene.Net.Store
+                     {
+                         throw new System.SystemException("cannot load FSDirectory class: " + e.ToString());
+                     }
+-                    dir.Init(file, create);
++                    dir.Init(file, tmpdir, create, disable_locks);
+                     DIRECTORIES[file] = dir;
+                 }
+                 else if (create)
+@@ -216,11 +286,16 @@ namespace Lucene.Net.Store
+ 		
+         // permit subclassing
+ 		
+-        private void  Init(System.IO.FileInfo path, bool create)
++        private void  Init(System.IO.FileInfo path, System.String tmpDir, bool create, bool disable_locks)
+         {
+             directory = path;
++			this.disable_locks = disable_locks;
+ 			
+-            if (LOCK_DIR == null)
++			if (tmpDir != null)
++			{
++				lockDir = new System.IO.FileInfo(tmpDir);
++			}
++			else if (LOCK_DIR == null)
+             {
+                 lockDir = directory;
+             }

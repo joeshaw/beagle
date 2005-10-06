@@ -14,19 +14,19 @@
  * limitations under the License.
  */
 using System;
-using InputStream = Lucene.Net.Store.InputStream;
+using IndexInput = Lucene.Net.Store.IndexInput;
 namespace Lucene.Net.Index
 {
 	
 	sealed class SegmentTermPositions : SegmentTermDocs, TermPositions
 	{
-		private InputStream proxStream;
+		private IndexInput proxStream;
 		private int proxCount;
 		private int position;
 		
-		internal SegmentTermPositions(SegmentReader p):base(p)
+		internal SegmentTermPositions(SegmentReader p) : base(p)
 		{
-			this.proxStream = (InputStream) parent.proxStream.Clone();
+			this.proxStream = (IndexInput) parent.proxStream.Clone();
 		}
 		
 		internal override void  Seek(TermInfo ti)

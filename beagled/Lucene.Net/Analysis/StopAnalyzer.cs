@@ -19,7 +19,7 @@ namespace Lucene.Net.Analysis
 	
 	/// <summary>Filters LetterTokenizer with LowerCaseFilter and StopFilter. </summary>
 	
-	public sealed class StopAnalyzer:Analyzer
+	public sealed class StopAnalyzer : Analyzer
 	{
 		private System.Collections.Hashtable stopWords;
 		

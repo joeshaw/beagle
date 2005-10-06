@@ -30,9 +30,9 @@ namespace Lucene.Net.Search
 	/// <seealso cref="WildcardTermEnum">
 	/// </seealso>
 	[Serializable]
-	public class WildcardQuery:MultiTermQuery
+	public class WildcardQuery : MultiTermQuery
 	{
-		public WildcardQuery(Term term):base(term)
+		public WildcardQuery(Term term) : base(term)
 		{
 		}
 		
@@ -40,5 +40,13 @@ namespace Lucene.Net.Search
 		{
 			return new WildcardTermEnum(reader, GetTerm());
 		}
-	}
+		
+        public  override bool Equals(System.Object o)
+        {
+            if (o is WildcardQuery)
+                return base.Equals(o);
+			
+            return false;
+        }
+    }
 }

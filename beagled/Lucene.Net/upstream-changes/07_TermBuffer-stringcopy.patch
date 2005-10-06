@@ -1,0 +1,28 @@
+From: Lukas Lipka <lukas@pmad.net>
+
+Small cleanup for converting a string to a char array
+
+--- Lucene.Net/Index/TermBuffer.cs.orig	2005-10-02 10:45:59.000000000 +0100
++++ Lucene.Net/Index/TermBuffer.cs	2005-10-02 10:47:06.000000000 +0100
+@@ -83,13 +83,7 @@ namespace Lucene.Net.Index
+ 			
+             // copy text into the buffer
+             SetTextLength(term.Text().Length);
+-
+-            System.String sourceString = term.Text();
+-            int sourceEnd = term.Text().Length;
+-            for (int i = 0; i < sourceEnd; i++)
+-            {
+-                text[i] = (char) sourceString[i];
+-            }
++			text = term.Text().ToCharArray();
+ 
+             this.field = term.Field();
+             this.term = term;
+@@ -140,4 +134,4 @@ namespace Lucene.Net.Index
+             return clone;
+         }
+     }
+-}
+\ No newline at end of file
++}

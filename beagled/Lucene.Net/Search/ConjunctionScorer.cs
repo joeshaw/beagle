@@ -18,7 +18,7 @@ namespace Lucene.Net.Search
 {
 	
 	/// <summary>Scorer for conjunctions, sets of queries, all of which are required. </summary>
-	sealed class ConjunctionScorer:Scorer
+	class ConjunctionScorer : Scorer
 	{
 		private class AnonymousClassComparator : System.Collections.IComparer
 		{
@@ -40,13 +40,9 @@ namespace Lucene.Net.Search
 				
 			}
 			// sort the array
-			public int Compare(System.Object o1, System.Object o2)
+			public virtual int Compare(System.Object o1, System.Object o2)
 			{
 				return ((Scorer) o1).Doc() - ((Scorer) o2).Doc();
-			}
-			public bool equals(System.Object o1, System.Object o2)
-			{
-				return ((Scorer) o1).Doc() == ((Scorer) o2).Doc();
 			}
 		}
 		private System.Collections.ArrayList scorers = new System.Collections.ArrayList();
@@ -81,7 +77,7 @@ namespace Lucene.Net.Search
 		{
 			if (firstTime)
 			{
-				Init();
+				Init(true);
 			}
 			else if (more)
 			{
@@ -106,14 +102,21 @@ namespace Lucene.Net.Search
 		
 		public override bool SkipTo(int target)
 		{
-			System.Collections.IEnumerator i = scorers.GetEnumerator();
+            if (firstTime)
+            {
+                Init(false);
+            }
+			
+            System.Collections.IEnumerator i = scorers.GetEnumerator();
 			while (more && i.MoveNext())
 			{
 				more = ((Scorer) i.Current).SkipTo(target);
 			}
-			if (more)
+			
+            if (more)
 				SortScorers(); // re-sort scorers
-			return DoNext();
+			
+            return DoNext();
 		}
 		
 		public override float Score()
@@ -128,24 +131,27 @@ namespace Lucene.Net.Search
 			return score;
 		}
 		
-		private void  Init()
+		private void  Init(bool initScorers)
 		{
-			more = scorers.Count > 0;
+            //  compute coord factor
+            coord = GetSimilarity().Coord(scorers.Count, scorers.Count);
 			
-			// compute coord factor
-			coord = GetSimilarity().Coord(scorers.Count, scorers.Count);
+            more = scorers.Count > 0;
 			
-			// move each scorer to its first entry
-			System.Collections.IEnumerator i = scorers.GetEnumerator();
-			while (more && i.MoveNext())
-			{
-				more = ((Scorer) i.Current).Next();
-			}
-			if (more)
-				SortScorers(); // initial sort of list
+            if (initScorers)
+            {
+                // move each scorer to its first entry
+                System.Collections.IEnumerator i = scorers.GetEnumerator();
+                while (more && i.MoveNext())
+                {
+                    more = ((Scorer) i.Current).Next();
+                }
+                if (more)
+                    SortScorers(); // initial sort of list
+            }
 			
-			firstTime = false;
-		}
+            firstTime = false;
+        }
 		
 		private void  SortScorers()
 		{

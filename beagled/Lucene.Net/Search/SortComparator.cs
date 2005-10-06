@@ -84,7 +84,8 @@ namespace Lucene.Net.Search
 		{
 			System.String field = String.Intern(fieldname);
             System.IComparable[] cachedValues = Lucene.Net.Search.FieldCache_Fields.DEFAULT.GetCustom(reader, field, this);
-			return new AnonymousClassScoreDocComparator(cachedValues, this);
+
+            return new AnonymousClassScoreDocComparator(cachedValues, this);
 		}
 		
 		/// <summary> Returns an object which, when sorted according to natural order,

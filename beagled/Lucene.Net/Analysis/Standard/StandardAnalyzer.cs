@@ -18,13 +18,13 @@ using Lucene.Net.Analysis;
 namespace Lucene.Net.Analysis.Standard
 {
 	
-	/// <summary> Filters {@link StandardTokenizer} with {@link StandardFilter}, {@link
-	/// LowerCaseFilter} and {@link StopFilter}.
-	/// 
-	/// </summary>
-	/// <version>  $Id$
-	/// </version>
-	public class StandardAnalyzer : Analyzer
+    /// <summary> Filters {@link StandardTokenizer} with {@link StandardFilter}, {@link
+    /// LowerCaseFilter} and {@link StopFilter}, using a list of English stop words.
+    /// 
+    /// </summary>
+    /// <version>  $Id$
+    /// </version>
+    public class StandardAnalyzer : Analyzer
 	{
 		private System.Collections.Hashtable stopSet;
 		
@@ -33,8 +33,8 @@ namespace Lucene.Net.Analysis.Standard
 		/// </summary>
 		public static readonly System.String[] STOP_WORDS;
 		
-		/// <summary>Builds an analyzer. </summary>
-		public StandardAnalyzer():this(STOP_WORDS)
+        /// <summary>Builds an analyzer with the default stop words ({@link #STOP_WORDS}). </summary>
+        public StandardAnalyzer() : this(STOP_WORDS)
 		{
 		}
 		

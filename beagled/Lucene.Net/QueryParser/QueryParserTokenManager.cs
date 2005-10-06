@@ -37,7 +37,7 @@ namespace Lucene.Net.QueryParsers
 		{
 			debugStream = ds;
 		}
-		private int jjStopStringLiteralDfa_3(int pos, long active0)
+		private int JjStopStringLiteralDfa_3(int pos, long active0)
 		{
 			switch (pos)
 			{
@@ -47,9 +47,9 @@ namespace Lucene.Net.QueryParsers
 				
 			}
 		}
-        private int jjStartNfa_3(int pos, long active0)
+        private int JjStartNfa_3(int pos, long active0)
         {
-            return JjMoveNfa_3(jjStopStringLiteralDfa_3(pos, active0), pos + 1);
+            return JjMoveNfa_3(JjStopStringLiteralDfa_3(pos, active0), pos + 1);
         }
         private int JjStopAtPos(int pos, int kind)
         {
@@ -143,15 +143,12 @@ namespace Lucene.Net.QueryParsers
         internal static readonly ulong[] jjbitVec2 = new ulong[]{0x0L, 0x0L, 0xffffffffffffffffL, 0xffffffffffffffffL};
         private int JjMoveNfa_3(int startState, int curPos)
         {
-	    // FIXED trow@novell.com 18 Feb 2005
-	    // Removed declaration of unused variables nextStates and j
-	    // to avoid compiler warnings.
-
+            int[] nextStates;
             int startsAt = 0;
             jjnewStateCnt = 33;
             int i = 1;
             jjstateSet[0] = startState;
-            int kind = 0x7fffffff;
+            int j, kind = 0x7fffffff;
             for (; ; )
             {
                 if (++jjround == 0x7fffffff)
@@ -486,7 +483,7 @@ MatchLoop1:
 						{
 							
 							case 0: 
-								if (!jjCanMove_0(hiByte, i1, i2, (ulong) l1, (ulong) l2))
+								if (!JjCanMove_0(hiByte, i1, i2, (ulong) l1, (ulong) l2))
 									break;
 								if (kind > 17)
 									kind = 17;
@@ -494,12 +491,12 @@ MatchLoop1:
 								break;
 							
 							case 15: 
-								if (jjCanMove_0(hiByte, i1, i2, (ulong) l1, (ulong) l2))
+								if (JjCanMove_0(hiByte, i1, i2, (ulong) l1, (ulong) l2))
 									JjAddStates(15, 16);
 								break;
 							
 							case 22: 
-								if (!jjCanMove_0(hiByte, i1, i2, (ulong) l1, (ulong) l2))
+								if (!JjCanMove_0(hiByte, i1, i2, (ulong) l1, (ulong) l2))
 									break;
 								if (kind > 17)
 									kind = 17;
@@ -507,12 +504,12 @@ MatchLoop1:
 								break;
 							
 							case 25: 
-								if (jjCanMove_0(hiByte, i1, i2, (ulong) l1, (ulong) l2))
+								if (JjCanMove_0(hiByte, i1, i2, (ulong) l1, (ulong) l2))
 									JjCheckNAddStates(9, 11);
 								break;
 							
 							case 29: 
-								if (!jjCanMove_0(hiByte, i1, i2, (ulong) l1, (ulong) l2))
+								if (!JjCanMove_0(hiByte, i1, i2, (ulong) l1, (ulong) l2))
 									break;
                                 if (kind > 20)
                                     kind = 20;
@@ -623,15 +620,12 @@ MatchLoop1:
 		}
 		private int JjMoveNfa_1(int startState, int curPos)
 		{
-			// FIXED trow@novell.com 18 Feb 2005
-			// Removed declaration of unused variables nextStates and j
-			// to avoid compiler warnings.
-
+			int[] nextStates;
 			int startsAt = 0;
 			jjnewStateCnt = 5;
 			int i = 1;
 			jjstateSet[0] = startState;
-			int kind = 0x7fffffff;
+			int j, kind = 0x7fffffff;
 			for (; ; )
 			{
 				if (++jjround == 0x7fffffff)
@@ -733,7 +727,7 @@ MatchLoop1:
 							
 							case 0: 
 							case 4: 
-								if (!jjCanMove_0(hiByte, i1, i2, (ulong) l1, (ulong) l2))
+								if (!JjCanMove_0(hiByte, i1, i2, (ulong) l1, (ulong) l2))
 									break;
 								if (kind > 31)
 									kind = 31;
@@ -741,7 +735,7 @@ MatchLoop1:
 								break;
 							
 							case 2: 
-								if (jjCanMove_0(hiByte, i1, i2, (ulong) l1, (ulong) l2))
+								if (JjCanMove_0(hiByte, i1, i2, (ulong) l1, (ulong) l2))
 									JjAddStates(17, 18);
 								break;
 							
@@ -776,15 +770,12 @@ MatchLoop1:
 		}
 		private int JjMoveNfa_0(int startState, int curPos)
 		{
-			// FIXED trow@novell.com 18 Feb 2005
-			// Removed declaration of unused variables nextStates and j
-			// to avoid compiler warnings.
-
+			int[] nextStates;
 			int startsAt = 0;
 			jjnewStateCnt = 3;
 			int i = 1;
 			jjstateSet[0] = startState;
-			int kind = 0x7fffffff;
+			int j, kind = 0x7fffffff;
 			for (; ; )
 			{
 				if (++jjround == 0x7fffffff)
@@ -827,9 +818,7 @@ MatchLoop1:
 				}
 				else if (curChar < 128)
 				{
-					// FIXED trow@novell.com 18 Feb 2005
-					// Commented out unused variable l to avoid a compiler warning
-					// ulong l = ((ulong) 1L) << (curChar & 63);
+					ulong l = ((ulong) 1L) << (curChar & 63);
 MatchLoop1: 
 					do 
 					{
@@ -844,13 +833,11 @@ MatchLoop1:
 				}
 				else
 				{
-					// FIXED trow@novell.com 18 Feb 2005
-					// Commented out unused variables hiByte, i1, l1, i2, l2 to avoid compiler warnings
-					// int hiByte = (int) (curChar >> 8);
-					// int i1 = hiByte >> 6;
-					// ulong l1 = ((ulong) 1L) << (hiByte & 63);
-					// int i2 = (curChar & 0xff) >> 6;
-					// ulong l2 = ((ulong) 1L) << (curChar & 63);
+					int hiByte = (int) (curChar >> 8);
+					int i1 = hiByte >> 6;
+					ulong l1 = ((ulong) 1L) << (hiByte & 63);
+					int i2 = (curChar & 0xff) >> 6;
+					ulong l2 = ((ulong) 1L) << (curChar & 63);
 MatchLoop1: 
 					do 
 					{
@@ -961,15 +948,12 @@ MatchLoop1:
 		}
 		private int JjMoveNfa_2(int startState, int curPos)
 		{
-			// FIXED trow@novell.com 18 Feb 2005
-			// Removed declaration of unused variables nextStates and j
-			// to avoid compiler warnings.
-
+			int[] nextStates;
 			int startsAt = 0;
 			jjnewStateCnt = 5;
 			int i = 1;
 			jjstateSet[0] = startState;
-			int kind = 0x7fffffff;
+			int j, kind = 0x7fffffff;
 			for (; ; )
 			{
 				if (++jjround == 0x7fffffff)
@@ -1071,7 +1055,7 @@ MatchLoop1:
 							
 							case 0: 
 							case 4: 
-								if (!jjCanMove_0(hiByte, i1, i2, (ulong) l1, (ulong) l2))
+								if (!JjCanMove_0(hiByte, i1, i2, (ulong) l1, (ulong) l2))
 									break;
 								if (kind > 27)
 									kind = 27;
@@ -1079,7 +1063,7 @@ MatchLoop1:
 								break;
 							
 							case 2: 
-								if (jjCanMove_0(hiByte, i1, i2, (ulong) l1, (ulong) l2))
+								if (JjCanMove_0(hiByte, i1, i2, (ulong) l1, (ulong) l2))
 									JjAddStates(17, 18);
 								break;
 							
@@ -1109,7 +1093,7 @@ MatchLoop1:
 			}
 		}
         internal static readonly int[] jjnextStates = new int[]{22, 25, 26, 29, 30, 27, 23, 18, 19, 25, 26, 27, 24, 28, 31, 15, 16, 2, 3, 0, 1};
-		private static bool jjCanMove_0(int hiByte, int i1, int i2, ulong l1, ulong l2)
+		private static bool JjCanMove_0(int hiByte, int i1, int i2, ulong l1, ulong l2)
 		{
 			switch (hiByte)
 			{
@@ -1191,10 +1175,8 @@ MatchLoop1:
 		
 		public virtual Token GetNextToken()
 		{
-			// FIXED trow@novell.com 18 Feb 2005
-			// Commented out unused variables kind and specialToken to avoid compiler warnings
-			// int kind;
-			// Token specialToken = null;
+			int kind;
+			Token specialToken = null;
 			Token matchedToken;
 			int curPos = 0;
 			
@@ -1237,7 +1219,7 @@ MatchLoop1:
 						jjmatchedPos = 0;
 						curPos = JjMoveStringLiteralDfa0_3();
 						break;
-					}
+				}
 				if (jjmatchedKind != 0x7fffffff)
 				{
 					if (jjmatchedPos + 1 < curPos)

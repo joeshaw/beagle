@@ -21,34 +21,53 @@ using Document = Lucene.Net.Documents.Document;
 using Field = Lucene.Net.Documents.Field;
 using Similarity = Lucene.Net.Search.Similarity;
 using Directory = Lucene.Net.Store.Directory;
-using OutputStream = Lucene.Net.Store.OutputStream;
+using IndexOutput = Lucene.Net.Store.IndexOutput;
 namespace Lucene.Net.Index
 {
 	
 	sealed public class DocumentWriter
 	{
-		private Analyzer analyzer;
+        private void  InitBlock()
+        {
+            termIndexInterval = IndexWriter.DEFAULT_TERM_INDEX_INTERVAL;
+        }
+        private Analyzer analyzer;
 		private Directory directory;
 		private Similarity similarity;
 		private FieldInfos fieldInfos;
 		private int maxFieldLength;
+        private int termIndexInterval;
+        private System.IO.TextWriter infoStream;
 		
-		/// <summary> </summary>
-		/// <param name="directory">The directory to write the document information to
-		/// </param>
-		/// <param name="analyzer">The analyzer to use for the document
-		/// </param>
-		/// <param name="similarity">The Similarity function
-		/// </param>
-		/// <param name="maxFieldLength">The maximum number of tokens a Field may have
-		/// </param>
-		public /*internal*/ DocumentWriter(Directory directory, Analyzer analyzer, Similarity similarity, int maxFieldLength)
+        /// <summary>This ctor used by test code only.
+        /// 
+        /// </summary>
+        /// <param name="directory">The directory to write the document information to
+        /// </param>
+        /// <param name="analyzer">The analyzer to use for the document
+        /// </param>
+        /// <param name="similarity">The Similarity function
+        /// </param>
+        /// <param name="maxFieldLength">The maximum number of tokens a field may have
+        /// </param>
+        internal DocumentWriter(Directory directory, Analyzer analyzer, Similarity similarity, int maxFieldLength)
 		{
+            InitBlock();
 			this.directory = directory;
 			this.analyzer = analyzer;
 			this.similarity = similarity;
 			this.maxFieldLength = maxFieldLength;
 		}
+		
+        internal DocumentWriter(Directory directory, Analyzer analyzer, IndexWriter writer)
+        {
+            InitBlock();
+            this.directory = directory;
+            this.analyzer = analyzer;
+            this.similarity = writer.GetSimilarity();
+            this.maxFieldLength = writer.GetMaxFieldLength();
+            this.termIndexInterval = writer.GetTermIndexInterval();
+        }
 		
 		/*internal*/ public void  AddDocument(System.String segment, Document doc)
 		{
@@ -72,6 +91,7 @@ namespace Lucene.Net.Index
 			postingTable.Clear(); // clear postingTable
 			fieldLengths = new int[fieldInfos.Size()]; // init fieldLengths
 			fieldPositions = new int[fieldInfos.Size()]; // init fieldPositions
+            fieldOffsets = new int[fieldInfos.Size()]; // init fieldOffsets
 			
 			fieldBoosts = new float[fieldInfos.Size()]; // init fieldBoosts
             float boost = doc.GetBoost();
@@ -102,7 +122,7 @@ namespace Lucene.Net.Index
 			WritePostings(postings, segment);
 			
 			// write norms of indexed fields
-			WriteNorms(doc, segment);
+			WriteNorms(segment);
 		}
 		
 		// Keys are Terms, values are Postings.
@@ -110,68 +130,91 @@ namespace Lucene.Net.Index
 		private System.Collections.Hashtable postingTable = System.Collections.Hashtable.Synchronized(new System.Collections.Hashtable());
 		private int[] fieldLengths;
 		private int[] fieldPositions;
-		private float[] fieldBoosts;
+        private int[] fieldOffsets;
+        private float[] fieldBoosts;
 		
 		// Tokenizes the fields of a document into Postings.
 		private void  InvertDocument(Document doc)
 		{
             foreach(Field field in doc.Fields())
             {
-				System.String fieldName = field.Name();
-				int fieldNumber = fieldInfos.FieldNumber(fieldName);
+                System.String fieldName = field.Name();
+                int fieldNumber = fieldInfos.FieldNumber(fieldName);
 				
-				int length = fieldLengths[fieldNumber]; // length of Field
-				int position = fieldPositions[fieldNumber]; // position in Field
+                int length = fieldLengths[fieldNumber]; // length of field
+                int position = fieldPositions[fieldNumber]; // position in field
+                int offset = fieldOffsets[fieldNumber]; // offset field
 				
-				if (field.IsIndexed())
-				{
-					if (!field.IsTokenized())
-					{
-						// un-tokenized Field
-						AddPosition(fieldName, field.StringValue(), position++);
-						length++;
-					}
-					else
-					{
-						System.IO.TextReader reader; // find or make Reader
-						if (field.ReaderValue() != null)
-							reader = field.ReaderValue();
-						else if (field.StringValue() != null)
-							reader = new System.IO.StringReader(field.StringValue());
-						else
-							throw new System.ArgumentException("Field must have either String or Reader value");
+                if (field.IsIndexed())
+                {
+                    if (!field.IsTokenized())
+                    {
+                        // un-tokenized field
+                        System.String stringValue = field.StringValue();
+                        if (field.IsStoreOffsetWithTermVector())
+                            AddPosition(fieldName, stringValue, position++, new TermVectorOffsetInfo(offset, offset + stringValue.Length));
+                        else
+                            AddPosition(fieldName, stringValue, position++, null);
+                        offset += stringValue.Length;
+                        length++;
+                    }
+                    else
+                    {
+                        System.IO.TextReader reader; // find or make Reader
+                        if (field.ReaderValue() != null)
+                            reader = field.ReaderValue();
+                        else if (field.StringValue() != null)
+                            reader = new System.IO.StringReader(field.StringValue());
+                        else
+                            throw new System.ArgumentException("field must have either String or Reader value");
 						
-						// Tokenize Field and add to postingTable
-						TokenStream stream = analyzer.TokenStream(fieldName, reader);
-						try
-						{
-							for (Token t = stream.Next(); t != null; t = stream.Next())
-							{
-								position += (t.GetPositionIncrement() - 1);
-								AddPosition(fieldName, t.TermText(), position++);
-								if (++length > maxFieldLength)
-									break;
-							}
-						}
-						finally
-						{
-							stream.Close();
-						}
-					}
+                        // Tokenize field and add to postingTable
+                        TokenStream stream = analyzer.TokenStream(fieldName, reader);
+                        try
+                        {
+                            Token lastToken = null;
+                            for (Token t = stream.Next(); t != null; t = stream.Next())
+                            {
+                                position += (t.GetPositionIncrement() - 1);
+								
+                                if (field.IsStoreOffsetWithTermVector())
+                                    AddPosition(fieldName, t.TermText(), position++, new TermVectorOffsetInfo(offset + t.StartOffset(), offset + t.EndOffset()));
+                                else
+                                    AddPosition(fieldName, t.TermText(), position++, null);
+								
+                                lastToken = t;
+                                if (++length > maxFieldLength)
+                                {
+                                    if (infoStream != null)
+                                        infoStream.WriteLine("maxFieldLength " + maxFieldLength + " reached, ignoring following tokens");
+                                    break;
+                                }
+                            }
+							
+                            if (lastToken != null)
+                                offset += lastToken.EndOffset() + 1;
+                        }
+                        finally
+                        {
+                            stream.Close();
+                        }
+                    }
 					
-					fieldLengths[fieldNumber] = length; // save Field length
-					fieldPositions[fieldNumber] = position; // save Field position
-					fieldBoosts[fieldNumber] *= field.GetBoost();
-				}
-			}
-		}
+                    fieldLengths[fieldNumber] = length; // save field length
+                    fieldPositions[fieldNumber] = position; // save field position
+                    fieldBoosts[fieldNumber] *= field.GetBoost();
+                    fieldOffsets[fieldNumber] = offset;
+                }
+            }
+        }
 		
 		private Term termBuffer = new Term("", ""); // avoid consing
 		
-		private void  AddPosition(System.String field, System.String text, int position)
+		private void  AddPosition(System.String field, System.String text, int position, TermVectorOffsetInfo offset)
 		{
 			termBuffer.Set(field, text);
-			Posting ti = (Posting) postingTable[termBuffer];
+            //System.out.println("Offset: " + offset);
+            Posting ti = (Posting) postingTable[termBuffer];
 			if (ti != null)
 			{
 				// word seen before
@@ -187,13 +230,28 @@ namespace Lucene.Net.Index
 					ti.positions = newPositions;
 				}
 				ti.positions[freq] = position; // add new position
-				ti.freq = freq + 1; // update frequency
-			}
+				
+                if (offset != null)
+                {
+                    if (ti.offsets.Length == freq)
+                    {
+                        TermVectorOffsetInfo[] newOffsets = new TermVectorOffsetInfo[freq * 2];
+                        TermVectorOffsetInfo[] offsets = ti.offsets;
+                        for (int i = 0; i < freq; i++)
+                        {
+                            newOffsets[i] = offsets[i];
+                        }
+                        ti.offsets = newOffsets;
+                    }
+                    ti.offsets[freq] = offset;
+                }
+                ti.freq = freq + 1; // update frequency
+            }
 			else
 			{
 				// word not seen before
 				Term term = new Term(field, text, false);
-				postingTable[term] = new Posting(term, position);
+				postingTable[term] = new Posting(term, position, offset);
 			}
 		}
 		
@@ -276,15 +334,15 @@ namespace Lucene.Net.Index
 		
 		private void  WritePostings(Posting[] postings, System.String segment)
 		{
-			OutputStream freq = null, prox = null;
+			IndexOutput freq = null, prox = null;
 			TermInfosWriter tis = null;
 			TermVectorsWriter termVectorWriter = null;
 			try
 			{
 				//open files for inverse index storage
-				freq = directory.CreateFile(segment + ".frq");
-				prox = directory.CreateFile(segment + ".prx");
-				tis = new TermInfosWriter(directory, segment, fieldInfos);
+				freq = directory.CreateOutput(segment + ".frq");
+				prox = directory.CreateOutput(segment + ".prx");
+				tis = new TermInfosWriter(directory, segment, fieldInfos, termIndexInterval);
 				TermInfo ti = new TermInfo();
 				System.String currentField = null;
 				
@@ -340,7 +398,7 @@ namespace Lucene.Net.Index
 					}
 					if (termVectorWriter != null && termVectorWriter.IsFieldOpen())
 					{
-						termVectorWriter.AddTerm(posting.term.Text(), postingFreq);
+						termVectorWriter.AddTerm(posting.term.Text(), postingFreq, posting.positions, posting.offsets);
 					}
 				}
 				if (termVectorWriter != null)
@@ -393,12 +451,12 @@ namespace Lucene.Net.Index
 					}
 				if (keep != null)
 				{
-                    throw new System.IO.IOException(keep.StackTrace);
+                    throw new System.IO.IOException(keep.StackTrace); // throw new System.IO.IOException(keep.StackTrace);
 				}
 			}
 		}
 		
-		private void  WriteNorms(Document doc, System.String segment)
+		private void  WriteNorms(System.String segment)
 		{
 			for (int n = 0; n < fieldInfos.Size(); n++)
 			{
@@ -406,10 +464,10 @@ namespace Lucene.Net.Index
 				if (fi.isIndexed)
 				{
 					float norm = fieldBoosts[n] * similarity.LengthNorm(fi.name, fieldLengths[n]);
-					OutputStream norms = directory.CreateFile(segment + ".f" + n);
+					IndexOutput norms = directory.CreateOutput(segment + ".f" + n);
 					try
 					{
-						norms.WriteByte(Lucene.Net.Search.Similarity.EncodeNorm(norm));
+						norms.WriteByte(Similarity.EncodeNorm(norm));
 					}
 					finally
 					{
@@ -418,21 +476,35 @@ namespace Lucene.Net.Index
 				}
 			}
 		}
-	}
+		
+        /// <summary>If non-null, a message will be printed to this if maxFieldLength is reached.</summary>
+        internal void  SetInfoStream(System.IO.TextWriter infoStream)
+        {
+            this.infoStream = infoStream;
+        }
+    }
 	
 	sealed class Posting
 	{
-		// info about a Term in a doc
-		internal Term term; // the Term
-		internal int freq; // its frequency in doc
-		internal int[] positions; // positions it occurs at
+        // info about a Term in a doc
+        internal Term term; // the Term
+        internal int freq; // its frequency in doc
+        internal int[] positions; // positions it occurs at
+        internal TermVectorOffsetInfo[] offsets;
 		
-		internal Posting(Term t, int position)
-		{
-			term = t;
-			freq = 1;
-			positions = new int[1];
-			positions[0] = position;
-		}
-	}
+        internal Posting(Term t, int position, TermVectorOffsetInfo offset)
+        {
+            term = t;
+            freq = 1;
+            positions = new int[1];
+            positions[0] = position;
+            if (offset != null)
+            {
+                offsets = new TermVectorOffsetInfo[1];
+                offsets[0] = offset;
+            }
+            else
+                offsets = null;
+        }
+    }
 }

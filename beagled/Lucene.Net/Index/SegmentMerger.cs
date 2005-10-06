@@ -15,7 +15,7 @@
  */
 using System;
 using Directory = Lucene.Net.Store.Directory;
-using OutputStream = Lucene.Net.Store.OutputStream;
+using IndexOutput = Lucene.Net.Store.IndexOutput;
 using RAMOutputStream = Lucene.Net.Store.RAMOutputStream;
 namespace Lucene.Net.Index
 {
@@ -34,9 +34,13 @@ namespace Lucene.Net.Index
 	/// </seealso>
 	sealed public class SegmentMerger
 	{
-		private bool useCompoundFile;
+        private void  InitBlock()
+        {
+            termIndexInterval = IndexWriter.DEFAULT_TERM_INDEX_INTERVAL;
+        }
 		private Directory directory;
 		private System.String segment;
+        private int termIndexInterval;
 		
 		private System.Collections.ArrayList readers = System.Collections.ArrayList.Synchronized(new System.Collections.ArrayList(10));
 		private FieldInfos fieldInfos;
@@ -45,21 +49,29 @@ namespace Lucene.Net.Index
 		private static readonly System.String[] COMPOUND_EXTENSIONS = new System.String[]{"fnm", "frq", "prx", "fdx", "fdt", "tii", "tis"};
 		private static readonly System.String[] VECTOR_EXTENSIONS = new System.String[]{"tvx", "tvd", "tvf"};
 		
-		/// <summary> </summary>
-		/// <param name="dir">The Directory to merge the other segments into
-		/// </param>
-		/// <param name="name">The name of the new segment
-		/// </param>
-		/// <param name="compoundFile">true if the new segment should use a compoundFile
-		/// </param>
-		public /*internal*/ SegmentMerger(Directory dir, System.String name, bool compoundFile)
+        /// <summary>This ctor used only by test code.
+        /// 
+        /// </summary>
+        /// <param name="dir">The Directory to merge the other segments into
+        /// </param>
+        /// <param name="name">The name of the new segment
+        /// </param>
+        public /*internal*/ SegmentMerger(Directory dir, System.String name)
 		{
-			directory = dir;
-			segment = name;
-			useCompoundFile = compoundFile;
-		}
+            InitBlock();
+            directory = dir;
+            segment = name;
+        }
 		
-		/// <summary> Add an IndexReader to the collection of readers that are to be merged</summary>
+        internal SegmentMerger(IndexWriter writer, System.String name)
+        {
+            InitBlock();
+            directory = writer.GetDirectory();
+            segment = name;
+            termIndexInterval = writer.GetTermIndexInterval();
+        }
+		
+        /// <summary> Add an IndexReader to the collection of readers that are to be merged</summary>
 		/// <param name="">reader
 		/// </param>
 		public /*internal*/ void  Add(IndexReader reader)
@@ -92,9 +104,6 @@ namespace Lucene.Net.Index
 			if (fieldInfos.HasVectors())
 				MergeVectors();
 			
-			if (useCompoundFile)
-				CreateCompoundFile();
-			
 			return value_Renamed;
 		}
 		
@@ -112,11 +121,11 @@ namespace Lucene.Net.Index
 			}
 		}
 		
-		private void  CreateCompoundFile()
+		internal System.Collections.ArrayList CreateCompoundFile(System.String fileName)
 		{
-			CompoundFileWriter cfsWriter = new CompoundFileWriter(directory, segment + ".cfs");
+			CompoundFileWriter cfsWriter = new CompoundFileWriter(directory, fileName);
 			
-			System.Collections.ArrayList files = new System.Collections.ArrayList(COMPOUND_EXTENSIONS.Length + fieldInfos.Size());
+			System.Collections.ArrayList files = System.Collections.ArrayList.Synchronized(new System.Collections.ArrayList(COMPOUND_EXTENSIONS.Length + fieldInfos.Size()));
 			
 			// Basic files
 			for (int i = 0; i < COMPOUND_EXTENSIONS.Length; i++)
@@ -152,14 +161,9 @@ namespace Lucene.Net.Index
 			
 			// Perform the merge
 			cfsWriter.Close();
-			
-			// Now delete the source files
-			it = files.GetEnumerator();
-			while (it.MoveNext())
-			{
-				directory.DeleteFile((System.String) it.Current);
-			}
-		}
+
+            return files;
+        }
 		
 		/// <summary> </summary>
 		/// <returns> The number of documents in all of the readers
@@ -171,11 +175,14 @@ namespace Lucene.Net.Index
 			int docCount = 0;
 			for (int i = 0; i < readers.Count; i++)
 			{
-				IndexReader reader = (IndexReader) readers[i];
-				fieldInfos.AddIndexed(reader.GetIndexedFieldNames(true), true);
-				fieldInfos.AddIndexed(reader.GetIndexedFieldNames(false), false);
-				fieldInfos.Add(reader.GetFieldNames(false), false);
-			}
+                IndexReader reader = (IndexReader) readers[i];
+                fieldInfos.AddIndexed(reader.GetFieldNames(IndexReader.FieldOption.TERMVECTOR_WITH_POSITION_OFFSET), true, true, true);
+                fieldInfos.AddIndexed(reader.GetFieldNames(IndexReader.FieldOption.TERMVECTOR_WITH_POSITION), true, true, false);
+                fieldInfos.AddIndexed(reader.GetFieldNames(IndexReader.FieldOption.TERMVECTOR_WITH_OFFSET), true, false, true);
+                fieldInfos.AddIndexed(reader.GetFieldNames(IndexReader.FieldOption.TERMVECTOR), true, false, false);
+                fieldInfos.AddIndexed(reader.GetFieldNames(IndexReader.FieldOption.INDEXED), false, false, false);
+                fieldInfos.Add(reader.GetFieldNames(IndexReader.FieldOption.UNINDEXED), false);
+            }
 			fieldInfos.Write(directory, segment + ".fnm");
 			
 			FieldsWriter fieldsWriter = new FieldsWriter(directory, segment, fieldInfos);
@@ -217,31 +224,8 @@ namespace Lucene.Net.Index
 					{
 						// skip deleted docs
 						if (reader.IsDeleted(docNum))
-						{
 							continue;
-						}
-						termVectorsWriter.OpenDocument();
-						
-						// get all term vectors
-						TermFreqVector[] sourceTermVector = reader.GetTermFreqVectors(docNum);
-						
-						if (sourceTermVector != null)
-						{
-							for (int f = 0; f < sourceTermVector.Length; f++)
-							{
-								// translate Field numbers
-								TermFreqVector termVector = sourceTermVector[f];
-								termVectorsWriter.OpenField(termVector.GetField());
-								System.String[] terms = termVector.GetTerms();
-								int[] freqs = termVector.GetTermFrequencies();
-								
-								for (int t = 0; t < terms.Length; t++)
-								{
-									termVectorsWriter.AddTerm(terms[t], freqs[t]);
-								}
-							}
-							termVectorsWriter.CloseDocument();
-						}
+                        termVectorsWriter.AddAllDocVectors(reader.GetTermFreqVectors(docNum));
 					}
 				}
 			}
@@ -251,9 +235,9 @@ namespace Lucene.Net.Index
 			}
 		}
 		
-		private OutputStream freqOutput = null;
-		private OutputStream proxOutput = null;
-		private TermInfosWriter termInfosWriter = null;
+        private IndexOutput freqOutput = null;
+        private IndexOutput proxOutput = null;
+        private TermInfosWriter termInfosWriter = null;
 		private int skipInterval;
 		private SegmentMergeQueue queue = null;
 		
@@ -261,9 +245,9 @@ namespace Lucene.Net.Index
 		{
 			try
 			{
-				freqOutput = directory.CreateFile(segment + ".frq");
-				proxOutput = directory.CreateFile(segment + ".prx");
-				termInfosWriter = new TermInfosWriter(directory, segment, fieldInfos);
+				freqOutput = directory.CreateOutput(segment + ".frq");
+				proxOutput = directory.CreateOutput(segment + ".prx");
+				termInfosWriter = new TermInfosWriter(directory, segment, fieldInfos, termIndexInterval);
 				skipInterval = termInfosWriter.skipInterval;
 				queue = new SegmentMergeQueue(readers.Count);
 				
@@ -428,7 +412,7 @@ namespace Lucene.Net.Index
 		
 		private void  ResetSkip()
 		{
-			skipBuffer.Leset();
+			skipBuffer.Reset();
 			lastSkipDoc = 0;
 			lastSkipFreqPointer = freqOutput.GetFilePointer();
 			lastSkipProxPointer = proxOutput.GetFilePointer();
@@ -462,22 +446,22 @@ namespace Lucene.Net.Index
 				FieldInfo fi = fieldInfos.FieldInfo(i);
 				if (fi.isIndexed)
 				{
-					OutputStream output = directory.CreateFile(segment + ".f" + i);
+					IndexOutput output = directory.CreateOutput(segment + ".f" + i);
 					try
 					{
 						for (int j = 0; j < readers.Count; j++)
 						{
 							IndexReader reader = (IndexReader) readers[j];
-							byte[] input = reader.Norms(fi.name);
-							int maxDoc = reader.MaxDoc();
-							for (int k = 0; k < maxDoc; k++)
+                            int maxDoc = reader.MaxDoc();
+                            byte[] input = new byte[maxDoc];
+                            reader.Norms(fi.name, input, 0);
+                            for (int k = 0; k < maxDoc; k++)
 							{
-								byte norm = input != null?input[k]:(byte) 0;
-								if (!reader.IsDeleted(k))
-								{
-									output.WriteByte(norm);
-								}
-							}
+                                if (!reader.IsDeleted(k))
+                                {
+                                    output.WriteByte(input[k]);
+                                }
+                            }
 						}
 					}
 					finally

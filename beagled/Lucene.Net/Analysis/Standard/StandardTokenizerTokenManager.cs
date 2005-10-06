@@ -1262,7 +1262,7 @@ namespace Lucene.Net.Analysis.Standard
 			Token t = Token.NewToken(jjmatchedKind);
 			t.kind = jjmatchedKind;
 			System.String im = jjstrLiteralImages[jjmatchedKind];
-			t.image = (im == null)?input_stream.GetImage():im;
+			t.image = (im == null) ? input_stream.GetImage() : im;
 			t.beginLine = input_stream.GetBeginLine();
 			t.beginColumn = input_stream.GetBeginColumn();
 			t.endLine = input_stream.GetEndLine();

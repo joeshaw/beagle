@@ -15,10 +15,11 @@
  */
 using System;
 using Directory = Lucene.Net.Store.Directory;
-using InputStream = Lucene.Net.Store.InputStream;
-using OutputStream = Lucene.Net.Store.OutputStream;
+using IndexInput = Lucene.Net.Store.IndexInput;
+using IndexOutput = Lucene.Net.Store.IndexOutput;
 namespace Lucene.Net.Index
 {
+
 	[Serializable]
 	sealed public class SegmentInfos : System.Collections.ArrayList
 	{
@@ -38,7 +39,7 @@ namespace Lucene.Net.Index
 		public void  Read(Directory directory)
 		{
 			
-			InputStream input = directory.OpenFile("segments");
+			IndexInput input = directory.OpenInput("segments");
 			try
 			{
 				int format = input.ReadInt();
@@ -82,7 +83,7 @@ namespace Lucene.Net.Index
 		
 		public void  Write(Directory directory)
 		{
-			OutputStream output = directory.CreateFile("segments.new");
+			IndexOutput output = directory.CreateOutput("segments.new");
 			try
 			{
 				output.WriteInt(FORMAT); // write FORMAT
@@ -115,7 +116,7 @@ namespace Lucene.Net.Index
 		public static long ReadCurrentVersion(Directory directory)
 		{
 			
-			InputStream input = directory.OpenFile("segments");
+			IndexInput input = directory.OpenInput("segments");
 			int format = 0;
 			long version = 0;
 			try

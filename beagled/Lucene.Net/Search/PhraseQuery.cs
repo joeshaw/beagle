@@ -24,7 +24,7 @@ namespace Lucene.Net.Search
 	/// This may be combined with other terms with a {@link BooleanQuery}.
 	/// </summary>
 	[Serializable]
-	public class PhraseQuery:Query
+	public class PhraseQuery : Query
 	{
 		private System.String field;
 		private System.Collections.ArrayList terms = System.Collections.ArrayList.Synchronized(new System.Collections.ArrayList(10));
@@ -116,22 +116,10 @@ namespace Lucene.Net.Search
 				this.enclosingInstance = enclosingInstance;
 			}
 			private PhraseQuery enclosingInstance;
-			virtual public Query Query
+			virtual public Query GetQuery()
 			{
-				get
-				{
-					return Enclosing_Instance;
-				}
-				
+				return Enclosing_Instance;
 			}
-            virtual public float Value
-            {
-                get
-                {
-                    return value_Renamed;
-                }
-				
-            }
             public PhraseQuery Enclosing_Instance
             {
                 get
@@ -140,29 +128,35 @@ namespace Lucene.Net.Search
                 }
 				
             }
-            private Searcher searcher;
-			private float value_Renamed;
+            private Similarity similarity;
+            private float value_Renamed;
 			private float idf;
 			private float queryNorm;
 			private float queryWeight;
 			
 			public PhraseWeight(PhraseQuery enclosingInstance, Searcher searcher)
 			{
-				InitBlock(enclosingInstance);
-				this.searcher = searcher;
-			}
+                InitBlock(enclosingInstance);
+                this.similarity = Enclosing_Instance.GetSimilarity(searcher);
+				
+                idf = similarity.Idf(Enclosing_Instance.terms, searcher);
+            }
 			
 			public override System.String ToString()
 			{
 				return "weight(" + Enclosing_Instance + ")";
 			}
+
+            public virtual float GetValue()
+            {
+                return value_Renamed;
+            }
 			
 			public virtual float SumOfSquaredWeights()
 			{
-				idf = Enclosing_Instance.GetSimilarity(searcher).Idf(Enclosing_Instance.terms, searcher);
-				queryWeight = idf * Enclosing_Instance.GetBoost(); // compute query weight
-				return queryWeight * queryWeight; // square it
-			}
+                queryWeight = idf * Enclosing_Instance.GetBoost(); // compute query weight
+                return queryWeight * queryWeight; // square it
+            }
 			
 			public virtual void  Normalize(float queryNorm)
 			{
@@ -188,16 +182,16 @@ namespace Lucene.Net.Search
 				
 				if (Enclosing_Instance.slop == 0)
 				// optimize exact case
-					return new ExactPhraseScorer(this, tps, Enclosing_Instance.GetPositions(), Enclosing_Instance.GetSimilarity(searcher), reader.Norms(Enclosing_Instance.field));
-				else
-					return new SloppyPhraseScorer(this, tps, Enclosing_Instance.GetPositions(), Enclosing_Instance.GetSimilarity(searcher), Enclosing_Instance.slop, reader.Norms(Enclosing_Instance.field));
-			}
+                    return new ExactPhraseScorer(this, tps, Enclosing_Instance.GetPositions(), similarity, reader.Norms(Enclosing_Instance.field));
+                else
+                    return new SloppyPhraseScorer(this, tps, Enclosing_Instance.GetPositions(), similarity, Enclosing_Instance.slop, reader.Norms(Enclosing_Instance.field));
+            }
 			
 			public virtual Explanation Explain(IndexReader reader, int doc)
 			{
 				
 				Explanation result = new Explanation();
-				result.SetDescription("weight(" + Query + " in " + doc + "), product of:");
+				result.SetDescription("weight(" + GetQuery() + " in " + doc + "), product of:");
 				
 				System.Text.StringBuilder docFreqs = new System.Text.StringBuilder();
 				System.Text.StringBuilder query = new System.Text.StringBuilder();
@@ -214,7 +208,7 @@ namespace Lucene.Net.Search
 					
 					docFreqs.Append(term.Text());
 					docFreqs.Append("=");
-					docFreqs.Append(searcher.DocFreq(term));
+					docFreqs.Append(reader.DocFreq(term));
 					
 					query.Append(term.Text());
 				}
@@ -224,7 +218,7 @@ namespace Lucene.Net.Search
 				
 				// explain query weight
 				Explanation queryExpl = new Explanation();
-				queryExpl.SetDescription("queryWeight(" + Query + "), product of:");
+				queryExpl.SetDescription("queryWeight(" + GetQuery() + "), product of:");
 				
 				Explanation boostExpl = new Explanation(Enclosing_Instance.GetBoost(), "boost");
 				if (Enclosing_Instance.GetBoost() != 1.0f)
@@ -280,8 +274,18 @@ namespace Lucene.Net.Search
 			return new PhraseWeight(this, searcher);
 		}
 		
+        /// <seealso cref="Lucene.Net.search.Query#ExtractTerms(java.util.Set)">
+        /// </seealso>
+        public override void  ExtractTerms(System.Collections.Hashtable queryTerms)
+        {
+            // queryTerms.AddAll(terms);
+            foreach (object item in queryTerms)
+            {
+                queryTerms.Add(item, item);
+            }
+        }
 		
-		/// <summary>Prints a user-readable version of this query. </summary>
+        /// <summary>Prints a user-readable version of this query. </summary>
 		public override System.String ToString(System.String f)
 		{
 			System.Text.StringBuilder buffer = new System.Text.StringBuilder();
@@ -337,16 +341,6 @@ namespace Lucene.Net.Search
                 System.BitConverter.ToInt32(System.BitConverter.GetBytes(slop), 0) ^ 
                 terms.GetHashCode() ^ 
                 positions.GetHashCode();
-		}
-		override public System.Object Clone()
-		{
-			PhraseQuery newQuery = new PhraseQuery ();
-
-			newQuery.SetSlop (this.slop);
-			foreach (Term t in this.terms)
-				newQuery.Add (t);
-
-			return newQuery;
 		}
 	}
 }

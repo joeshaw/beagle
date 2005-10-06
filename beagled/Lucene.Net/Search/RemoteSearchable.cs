@@ -21,13 +21,13 @@ namespace Lucene.Net.Search
 	
 	/// <summary>A remote searchable implementation. </summary>
 	[Serializable]
-	public class RemoteSearchable:System.MarshalByRefObject, Lucene.Net.Search.Searchable
+	public class RemoteSearchable : System.MarshalByRefObject, Lucene.Net.Search.Searchable
 	{
 		
 		private Lucene.Net.Search.Searchable local;
 		
 		/// <summary>Constructs and exports a remote searcher. </summary>
-		public RemoteSearchable(Lucene.Net.Search.Searchable local):base()
+		public RemoteSearchable(Lucene.Net.Search.Searchable local) : base()
 		{
 			this.local = local;
 		}
@@ -37,7 +37,12 @@ namespace Lucene.Net.Search
 			local.Search(query, filter, results);
 		}
 		
-		public virtual void  Close()
+        public virtual void  Search(Weight weight, Filter filter, HitCollector results)
+        {
+            local.Search(weight, filter, results);
+        }
+		
+        public virtual void  Close()
 		{
 			local.Close();
 		}
@@ -47,7 +52,13 @@ namespace Lucene.Net.Search
 			return local.DocFreq(term);
 		}
 		
-		public virtual int MaxDoc()
+		
+        public virtual int[] DocFreqs(Term[] terms)
+        {
+            return local.DocFreqs(terms);
+        }
+		
+        public virtual int MaxDoc()
 		{
 			return local.MaxDoc();
 		}
@@ -57,12 +68,22 @@ namespace Lucene.Net.Search
 			return local.Search(query, filter, n);
 		}
 		
-		public virtual TopFieldDocs Search(Query query, Filter filter, int n, Sort sort)
+		public virtual TopDocs Search(Weight weight, Filter filter, int n)
 		{
-			return local.Search(query, filter, n, sort);
+			return local.Search(weight, filter, n);
 		}
 		
-		public virtual Document Doc(int i)
+        public virtual TopFieldDocs Search(Query query, Filter filter, int n, Sort sort)
+        {
+            return local.Search(query, filter, n, sort);
+        }
+		
+        public virtual TopFieldDocs Search(Weight weight, Filter filter, int n, Sort sort)
+        {
+            return local.Search(weight, filter, n, sort);
+        }
+		
+        public virtual Document Doc(int i)
 		{
 			return local.Doc(i);
 		}
@@ -77,22 +98,24 @@ namespace Lucene.Net.Search
 			return local.Explain(query, doc);
 		}
 		
-		/// <summary>Exports a searcher for the index in args[0] named
-		/// "//localhost/Searchable". 
-		/// </summary>
-		[STAThread]
-		public static void  Main(System.String[] args)
-		{
-			System.Runtime.Remoting.RemotingConfiguration.Configure("Lucene.Net.Search.RemoteSearchable.config");
-			System.Runtime.Remoting.Channels.ChannelServices.RegisterChannel(new System.Runtime.Remoting.Channels.Http.HttpChannel(1099));
-			// FIXED joeshaw@novell.com 10 Jan 2005 - turned off unreachable code
-#if false
+        public virtual Explanation Explain(Weight weight, int doc)
+        {
+            return local.Explain(weight, doc);
+        }
+		
+        /// <summary>Exports a searcher for the index in args[0] named
+        /// "//localhost/Searchable". 
+        /// </summary>
+        [STAThread]
+        public static void  Main(System.String[] args)
+        {
+            System.Runtime.Remoting.RemotingConfiguration.Configure("Lucene.Net.Search.RemoteSearchable.config");
+            System.Runtime.Remoting.Channels.ChannelServices.RegisterChannel(new System.Runtime.Remoting.Channels.Http.HttpChannel(1099));
 			// create and install a security manager
-			if (false) //{{}}// if (System.getSecurityManager() == null)    // {{Aroush}} >> 'java.lang.System.getSecurityManager()'
+			if (false) //{{}}// if (System.getSecurityManager() == null)    // {{Aroush-1.4.3}} >> 'java.lang.System.getSecurityManager()'
 			{
-				//{{}}// System.setSecurityManager(new RMISecurityManager());   // {{Aroush}} >> 'java.lang.System.setSecurityManager()' and 'java.rmi.RMISecurityManager.RMISecurityManager()'
+				//{{}}// System.setSecurityManager(new RMISecurityManager());   // {{Aroush-1.4.3}} >> 'java.lang.System.setSecurityManager()' and 'java.rmi.RMISecurityManager.RMISecurityManager()'
 			}
-#endif
 			
 			Lucene.Net.Search.Searchable local = new IndexSearcher(args[0]);
 			RemoteSearchable impl = new RemoteSearchable(local);

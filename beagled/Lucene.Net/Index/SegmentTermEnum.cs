@@ -14,21 +14,21 @@
  * limitations under the License.
  */
 using System;
-using InputStream = Lucene.Net.Store.InputStream;
+using IndexInput = Lucene.Net.Store.IndexInput;
 namespace Lucene.Net.Index
 {
 	
-	sealed public class SegmentTermEnum:TermEnum, System.ICloneable
+	sealed public class SegmentTermEnum : TermEnum, System.ICloneable
 	{
-		private InputStream input;
+		private IndexInput input;
 		internal FieldInfos fieldInfos;
 		internal long size;
 		internal long position = - 1;
 		
-		private TermBuffer termBuffer = new TermBuffer();
-		private TermBuffer prevBuffer = new TermBuffer();
-		private TermBuffer scratch;  // used for scanning
-
+        private TermBuffer termBuffer = new TermBuffer();
+        private TermBuffer prevBuffer = new TermBuffer();
+        private TermBuffer scratch; // used for scanning
+        
 		private TermInfo termInfo = new TermInfo();
 		
 		private int format;
@@ -38,7 +38,7 @@ namespace Lucene.Net.Index
 		internal int skipInterval;
 		private int formatM1SkipInterval;
 		
-		internal SegmentTermEnum(InputStream i, FieldInfos fis, bool isi)
+		internal SegmentTermEnum(IndexInput i, FieldInfos fis, bool isi)
 		{
 			input = i;
 			fieldInfos = fis;
@@ -90,17 +90,18 @@ namespace Lucene.Net.Index
 			SegmentTermEnum clone = null;
 			try
 			{
-				clone = (SegmentTermEnum) base.MemberwiseClone();
+                clone = (SegmentTermEnum) base.MemberwiseClone();
 			}
 			catch (System.Exception)
 			{
 			}
 			
-			clone.input = (InputStream) input.Clone();
+			clone.input = (IndexInput) input.Clone();
 			clone.termInfo = new TermInfo(termInfo);
-			clone.termBuffer = (TermBuffer) termBuffer.Clone();
-			clone.prevBuffer = (TermBuffer) prevBuffer.Clone();
-			clone.scratch = null;
+			
+            clone.termBuffer = (TermBuffer) termBuffer.Clone();
+            clone.prevBuffer = (TermBuffer) prevBuffer.Clone();
+            clone.scratch = null;
 			
 			return clone;
 		}
@@ -109,10 +110,10 @@ namespace Lucene.Net.Index
 		{
 			input.Seek(pointer);
 			position = p;
-			termBuffer.Set(t);
-			prevBuffer.Reset();
-			termInfo.Set(ti);
-		}
+            termBuffer.Set(t);
+            prevBuffer.Reset();
+            termInfo.Set(ti);
+        }
 		
 		/// <summary>Increments the enumeration to the next element.  True if one exists.</summary>
 		public override bool Next()
@@ -123,9 +124,9 @@ namespace Lucene.Net.Index
 				return false;
 			}
 			
-			prevBuffer.Set(termBuffer);
-			termBuffer.Read(input, fieldInfos);
-
+            prevBuffer.Set(termBuffer);
+            termBuffer.Read(input, fieldInfos);
+			
 			termInfo.docFreq = input.ReadVInt(); // read doc freq
 			termInfo.freqPointer += input.ReadVLong(); // read freq pointer
 			termInfo.proxPointer += input.ReadVLong(); // read prox pointer
@@ -154,72 +155,73 @@ namespace Lucene.Net.Index
 			return true;
 		}
 		
-		/** Optimized scan, without allocating new terms. */
-		public void  ScanTo(Term term)
-		{
-			if (scratch == null)
-				scratch = new TermBuffer();
-			scratch.Set(term);
-			while (scratch.CompareTo(termBuffer) > 0 && Next()) {}
-		}
+        /// <summary>Optimized scan, without allocating new terms. </summary>
+        internal void  ScanTo(Term term)
+        {
+            if (scratch == null)
+                scratch = new TermBuffer();
+            scratch.Set(term);
+            while (scratch.CompareTo(termBuffer) > 0 && Next())
+            {
+            }
+        }
 		
-		/// <summary>Returns the current Term in the enumeration.
-		/// Initially invalid, valid after next() called for the first time.
-		/// </summary>
-		public override Term Term()
-		{
-			return termBuffer.ToTerm();
-		}
+        /// <summary>Returns the current Term in the enumeration.
+        /// Initially invalid, valid after next() called for the first time.
+        /// </summary>
+        public override Term Term()
+        {
+            return termBuffer.ToTerm();
+        }
 		
-		/// <summary>Returns the previous Term in the enumeration.
-		/// Initially null.
-		/// </summary>
-		public Term Prev() {
-			return prevBuffer.ToTerm();
-		}
- 
-		/// <summary>Returns the current TermInfo in the enumeration.
-		/// Initially invalid, valid after next() called for the first time.
-		/// </summary>
-		public /*internal*/ TermInfo TermInfo()
-		{
-			return new TermInfo(termInfo);
-		}
+        /// <summary>Returns the previous Term enumerated. Initially null.</summary>
+        internal Term Prev()
+        {
+            return prevBuffer.ToTerm();
+        }
 		
-		/// <summary>Sets the argument to the current TermInfo in the enumeration.
-		/// Initially invalid, valid after next() called for the first time.
-		/// </summary>
-		internal void  TermInfo(TermInfo ti)
-		{
-			ti.Set(termInfo);
-		}
+        /// <summary>Returns the current TermInfo in the enumeration.
+        /// Initially invalid, valid after next() called for the first time.
+        /// </summary>
+        internal TermInfo TermInfo()
+        {
+            return new TermInfo(termInfo);
+        }
 		
-		/// <summary>Returns the docFreq from the current TermInfo in the enumeration.
-		/// Initially invalid, valid after next() called for the first time.
-		/// </summary>
-		public override int DocFreq()
-		{
-			return termInfo.docFreq;
-		}
+        /// <summary>Sets the argument to the current TermInfo in the enumeration.
+        /// Initially invalid, valid after next() called for the first time.
+        /// </summary>
+        internal void  TermInfo(TermInfo ti)
+        {
+            ti.Set(termInfo);
+        }
 		
-		/* Returns the freqPointer from the current TermInfo in the enumeration.
-		Initially invalid, valid after next() called for the first time.*/
-		internal long FreqPointer()
-		{
-			return termInfo.freqPointer;
-		}
+        /// <summary>Returns the docFreq from the current TermInfo in the enumeration.
+        /// Initially invalid, valid after next() called for the first time.
+        /// </summary>
+        public override int DocFreq()
+        {
+            return termInfo.docFreq;
+        }
 		
-		/* Returns the proxPointer from the current TermInfo in the enumeration.
-		Initially invalid, valid after next() called for the first time.*/
-		internal long ProxPointer()
-		{
-			return termInfo.proxPointer;
-		}
+        /* Returns the freqPointer from the current TermInfo in the enumeration.
+        Initially invalid, valid after next() called for the first time.*/
+        internal long FreqPointer()
+        {
+            return termInfo.freqPointer;
+        }
 		
-		/// <summary>Closes the enumeration to further activity, freeing resources. </summary>
-		public override void  Close()
-		{
-			input.Close();
-		}
-	}
+        /* Returns the proxPointer from the current TermInfo in the enumeration.
+        Initially invalid, valid after next() called for the first time.*/
+        internal long ProxPointer()
+        {
+            return termInfo.proxPointer;
+        }
+		
+        /// <summary>Closes the enumeration to further activity, freeing resources. </summary>
+        public override void  Close()
+        {
+            input.Close();
+        }
+    }
 }

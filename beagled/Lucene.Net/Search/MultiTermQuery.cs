@@ -54,7 +54,7 @@ namespace Lucene.Net.Search
 		public override Query Rewrite(IndexReader reader)
 		{
 			FilteredTermEnum enumerator = GetEnum(reader);
-			BooleanQuery query = new BooleanQuery();
+			BooleanQuery query = new BooleanQuery(true);
 			try
 			{
 				do 
@@ -64,7 +64,7 @@ namespace Lucene.Net.Search
 					{
 						TermQuery tq = new TermQuery(t); // found a match
 						tq.SetBoost(GetBoost() * enumerator.Difference()); // set the boost
-						query.Add(tq, false, false); // add to query
+						query.Add(tq, BooleanClause.Occur.SHOULD); // add to query
 					}
 				}
 				while (enumerator.Next());
@@ -102,5 +102,25 @@ namespace Lucene.Net.Search
 			}
 			return buffer.ToString();
 		}
-	}
+		
+        public  override bool Equals(System.Object o)
+        {
+            if (this == o)
+                return true;
+            if (!(o is MultiTermQuery))
+                return false;
+			
+            MultiTermQuery multiTermQuery = (MultiTermQuery) o;
+			
+            if (!term.Equals(multiTermQuery.term))
+                return false;
+			
+            return true;
+        }
+		
+        public override int GetHashCode()
+        {
+            return term.GetHashCode();
+        }
+    }
 }

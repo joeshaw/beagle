@@ -54,7 +54,113 @@ namespace Lucene.Net.Search
 				results.Collect(doc + start, score);
 			}
 		}
-		private Lucene.Net.Search.Searchable[] searchables;
+        /// <summary> Document Frequency cache acting as a Dummy-Searcher.
+        /// This class is no full-fledged Searcher, but only supports
+        /// the methods necessary to initialize Weights.
+        /// </summary>
+        private class CachedDfSource:Searcher
+        {
+            private System.Collections.IDictionary dfMap; // Map from Terms to corresponding doc freqs
+            private int maxDoc; // document count
+			
+            public CachedDfSource(System.Collections.IDictionary dfMap, int maxDoc)
+            {
+                this.dfMap = dfMap;
+                this.maxDoc = maxDoc;
+            }
+			
+            public override int DocFreq(Term term)
+            {
+                int df;
+                try
+                {
+                    df = ((System.Int32) dfMap[term]);
+                }
+                catch (System.NullReferenceException e)
+                {
+                    throw new System.ArgumentException("df for term " + term.Text() + " not available");
+                }
+                return df;
+            }
+			
+            public override int[] DocFreqs(Term[] terms)
+            {
+                int[] result = new int[terms.Length];
+                for (int i = 0; i < terms.Length; i++)
+                {
+                    result[i] = DocFreq(terms[i]);
+                }
+                return result;
+            }
+			
+            public override int MaxDoc()
+            {
+                return maxDoc;
+            }
+			
+            public override Query Rewrite(Query query)
+            {
+                // this is a bit of a hack. We know that a query which
+                // creates a Weight based on this Dummy-Searcher is
+                // always already rewritten (see preparedWeight()).
+                // Therefore we just return the unmodified query here
+                return query;
+            }
+			
+            public override void  Close()
+            {
+                throw new System.NotSupportedException();
+            }
+			
+            public override Document Doc(int i)
+            {
+                throw new System.NotSupportedException();
+            }
+			
+            public override Explanation Explain(Query query, int doc)
+            {
+                throw new System.NotSupportedException();
+            }
+			
+            public override Explanation Explain(Weight weight, int doc)
+            {
+                throw new System.NotSupportedException();
+            }
+			
+            public override void  Search(Query query, Filter filter, HitCollector results)
+            {
+                throw new System.NotSupportedException();
+            }
+			
+            public override void  Search(Weight weight, Filter filter, HitCollector results)
+            {
+                throw new System.NotSupportedException();
+            }
+			
+            public override TopDocs Search(Query query, Filter filter, int n)
+            {
+                throw new System.NotSupportedException();
+            }
+			
+            public override TopDocs Search(Weight weight, Filter filter, int n)
+            {
+                throw new System.NotSupportedException();
+            }
+			
+            public override TopFieldDocs Search(Query query, Filter filter, int n, Sort sort)
+            {
+                throw new System.NotSupportedException();
+            }
+			
+            public override TopFieldDocs Search(Weight weight, Filter filter, int n, Sort sort)
+            {
+                throw new System.NotSupportedException();
+            }
+        }
+		
+		
+		
+        private Lucene.Net.Search.Searchable[] searchables;
 		private int[] starts;
 		private int maxDoc = 0;
 		
@@ -72,7 +178,13 @@ namespace Lucene.Net.Search
 			starts[searchables.Length] = maxDoc;
 		}
 		
-		protected internal virtual int[] GetStarts()
+        /// <summary>Return the array of {@link Searchable}s this searches. </summary>
+        public virtual Lucene.Net.Search.Searchable[] GetSearchables()
+        {
+            return searchables;
+        }
+		
+        protected internal virtual int[] GetStarts()
 		{
 			return starts;
 		}
@@ -151,94 +263,173 @@ namespace Lucene.Net.Search
 			return maxDoc;
 		}
 		
-		public override TopDocs Search(Query query, Filter filter, int nDocs)
-		{
-			HitQueue hq = new HitQueue(nDocs);
-			int totalHits = 0;
+        public override TopDocs Search(Query query, Filter filter, int nDocs)
+        {
+            Weight weight = PrepareWeight(query);
+            return Search(weight, filter, nDocs);
+        }
+		
+        public override TopDocs Search(Weight weight, Filter filter, int nDocs)
+        {
 			
-			for (int i = 0; i < searchables.Length; i++)
-			{
-				// search each searcher
-				TopDocs docs = searchables[i].Search(query, filter, nDocs);
-				totalHits += docs.totalHits; // update totalHits
-				ScoreDoc[] scoreDocs = docs.scoreDocs;
-				for (int j = 0; j < scoreDocs.Length; j++)
-				{
-					// merge scoreDocs into hq
-					ScoreDoc scoreDoc = scoreDocs[j];
-					scoreDoc.doc += starts[i]; // convert doc
-					if (!hq.Insert(scoreDoc))
-						break; // no more scores > minScore
-				}
-			}
+            HitQueue hq = new HitQueue(nDocs);
+            int totalHits = 0;
 			
-			ScoreDoc[] scoreDocs2 = new ScoreDoc[hq.Size()];
-			for (int i = hq.Size() - 1; i >= 0; i--)
-			// put docs in array
-				scoreDocs2[i] = (ScoreDoc) hq.Pop();
+            for (int i = 0; i < searchables.Length; i++)
+            {
+                // search each searcher
+                TopDocs docs = searchables[i].Search(weight, filter, nDocs);
+                totalHits += docs.totalHits; // update totalHits
+                ScoreDoc[] scoreDocs = docs.scoreDocs;
+                for (int j = 0; j < scoreDocs.Length; j++)
+                {
+                    // merge scoreDocs into hq
+                    ScoreDoc scoreDoc = scoreDocs[j];
+                    scoreDoc.doc += starts[i]; // convert doc
+                    if (!hq.Insert(scoreDoc))
+                        break; // no more scores > minScore
+                }
+            }
 			
-			return new TopDocs(totalHits, scoreDocs2);
-		}
+            ScoreDoc[] scoreDocs2 = new ScoreDoc[hq.Size()];
+            for (int i = hq.Size() - 1; i >= 0; i--)
+                // put docs in array
+                scoreDocs2[i] = (ScoreDoc) hq.Pop();
+			
+            return new TopDocs(totalHits, scoreDocs2);
+        }
 		
 		
-		public override TopFieldDocs Search(Query query, Filter filter, int n, Sort sort)
-		{
-			FieldDocSortedHitQueue hq = null;
-			int totalHits = 0;
+        public override TopFieldDocs Search(Query query, Filter filter, int n, Sort sort)
+        {
+            Weight weight = PrepareWeight(query);
+            return Search(weight, filter, n, sort);
+        }
+		
+        public override TopFieldDocs Search(Weight weight, Filter filter, int n, Sort sort)
+        {
+            FieldDocSortedHitQueue hq = null;
+            int totalHits = 0;
 			
-			for (int i = 0; i < searchables.Length; i++)
-			{
-				// search each searcher
-				TopFieldDocs docs = searchables[i].Search(query, filter, n, sort);
-				if (hq == null)
-					hq = new FieldDocSortedHitQueue(docs.fields, n);
-				totalHits += docs.totalHits; // update totalHits
-				ScoreDoc[] scoreDocs = docs.scoreDocs;
-				for (int j = 0; j < scoreDocs.Length; j++)
-				{
-					// merge scoreDocs into hq
-					ScoreDoc scoreDoc = scoreDocs[j];
-					scoreDoc.doc += starts[i]; // convert doc
-					if (!hq.Insert(scoreDoc))
-						break; // no more scores > minScore
-				}
-			}
+            for (int i = 0; i < searchables.Length; i++)
+            {
+                // search each searcher
+                TopFieldDocs docs = searchables[i].Search(weight, filter, n, sort);
+                if (hq == null)
+                    hq = new FieldDocSortedHitQueue(docs.fields, n);
+                totalHits += docs.totalHits; // update totalHits
+                ScoreDoc[] scoreDocs = docs.scoreDocs;
+                for (int j = 0; j < scoreDocs.Length; j++)
+                {
+                    // merge scoreDocs into hq
+                    ScoreDoc scoreDoc = scoreDocs[j];
+                    scoreDoc.doc += starts[i]; // convert doc
+                    if (!hq.Insert(scoreDoc))
+                        break; // no more scores > minScore
+                }
+            }
 			
-			ScoreDoc[] scoreDocs2 = new ScoreDoc[hq.Size()];
-			for (int i = hq.Size() - 1; i >= 0; i--)
-			// put docs in array
-				scoreDocs2[i] = (ScoreDoc) hq.Pop();
+            ScoreDoc[] scoreDocs2 = new ScoreDoc[hq.Size()];
+            for (int i = hq.Size() - 1; i >= 0; i--)
+                // put docs in array
+                scoreDocs2[i] = (ScoreDoc) hq.Pop();
 			
-			return new TopFieldDocs(totalHits, scoreDocs2, hq.GetFields());
-		}
+            return new TopFieldDocs(totalHits, scoreDocs2, hq.GetFields());
+        }
 		
 		
-		// inherit javadoc
-		public override void  Search(Query query, Filter filter, HitCollector results)
-		{
-			for (int i = 0; i < searchables.Length; i++)
-			{
+        // inherit javadoc
+        public override void  Search(Query query, Filter filter, HitCollector results)
+        {
+            Weight weight = PrepareWeight(query);
+            Search(weight, filter, results);
+        }
+		
+        // inherit javadoc
+        public override void  Search(Weight weight, Filter filter, HitCollector results)
+        {
+            for (int i = 0; i < searchables.Length; i++)
+            {
 				
-				int start = starts[i];
+                int start = starts[i];
 				
-				searchables[i].Search(query, filter, new AnonymousClassHitCollector(results, start, this));
-			}
-		}
+                searchables[i].Search(weight, filter, new AnonymousClassHitCollector(results, start, this));
+            }
+        }
 		
-		public override Query Rewrite(Query original)
-		{
-			Query[] queries = new Query[searchables.Length];
-			for (int i = 0; i < searchables.Length; i++)
-			{
-				queries[i] = searchables[i].Rewrite(original);
-			}
-			return original.Combine(queries);
-		}
+        public override Query Rewrite(Query original)
+        {
+            Query[] queries = new Query[searchables.Length];
+            for (int i = 0; i < searchables.Length; i++)
+            {
+                queries[i] = searchables[i].Rewrite(original);
+            }
+            return queries[0].Combine(queries);
+        }
 		
-		public override Explanation Explain(Query query, int doc)
-		{
-			int i = SubSearcher(doc); // find searcher index
-			return searchables[i].Explain(query, doc - starts[i]); // dispatch to searcher
-		}
-	}
+        public override Explanation Explain(Query query, int doc)
+        {
+            Weight weight = PrepareWeight(query);
+            return Explain(weight, doc);
+        }
+		
+		
+        public override Explanation Explain(Weight weight, int doc)
+        {
+            int i = SubSearcher(doc); // find searcher index
+            return searchables[i].Explain(weight, doc - starts[i]); // dispatch to searcher
+        }
+		
+        /// <summary> Distributed query processing is done in the following steps:
+        /// 1. rewrite query
+        /// 2. extract necessary terms
+        /// 3. collect dfs for these terms from the Searchables
+        /// 4. create query weight using aggregate dfs.
+        /// 5. distribute that weight to Searchables
+        /// 6. merge results
+        /// 
+        /// Steps 1-4 are done here, 5+6 in the search() methods
+        /// 
+        /// </summary>
+        /// <returns> rewritten queries
+        /// </returns>
+        private Weight PrepareWeight(Query original)
+        {
+            // step 1
+            Query rewrittenQuery = Rewrite(original);
+			
+            // step 2
+            System.Collections.Hashtable terms = new System.Collections.Hashtable();
+            rewrittenQuery.ExtractTerms(terms);
+			
+            // step3
+            Term[] allTermsArray = new Term[terms.Count];
+            int index = 0;
+            System.Collections.IEnumerator e = terms.GetEnumerator();
+            while (e.MoveNext())
+                allTermsArray[index++] = (Term) e.Current;
+
+            int[] aggregatedDfs = new int[terms.Count];
+            for (int i = 0; i < searchables.Length; i++)
+            {
+                int[] dfs = searchables[i].DocFreqs(allTermsArray);
+                for (int j = 0; j < aggregatedDfs.Length; j++)
+                {
+                    aggregatedDfs[j] += dfs[j];
+                }
+            }
+			
+            System.Collections.Hashtable dfMap = new System.Collections.Hashtable();
+            for (int i = 0; i < allTermsArray.Length; i++)
+            {
+                dfMap[allTermsArray[i]] = (System.Int32) aggregatedDfs[i];
+            }
+			
+            // step4
+            int numDocs = MaxDoc();
+            CachedDfSource cacheSim = new CachedDfSource(dfMap, numDocs);
+			
+            return rewrittenQuery.Weight(cacheSim);
+        }
+    }
 }

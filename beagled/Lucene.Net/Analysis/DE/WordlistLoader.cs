@@ -17,16 +17,17 @@ using System;
 namespace Lucene.Net.Analysis.DE
 {
 	
-	/// <summary> Loader for text files that represent a list of stopwords.
-	/// 
-	/// </summary>
-	/// <author>  Gerhard Schwarz
-	/// </author>
-	/// <version>  $Id$
-	/// 
-	/// </version>
-	/// <todo>  this is not specific to German, it should be moved up </todo>
-	public class WordlistLoader
+    /// <summary> Loader for text files that represent a list of stopwords.
+    /// 
+    /// </summary>
+    /// <deprecated> Use {@link Lucene.Net.analysis.WordlistLoader} instead
+    /// 
+    /// </deprecated>
+    /// <author>  Gerhard Schwarz
+    /// </author>
+    /// <version>  $Id$
+    /// </version>
+    public class WordlistLoader
 	{
 		
 		/// <summary> Loads a text file and adds every line as an entry to a HashSet (omitting

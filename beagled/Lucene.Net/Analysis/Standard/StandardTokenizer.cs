@@ -18,15 +18,23 @@ using System;
 namespace Lucene.Net.Analysis.Standard
 {
 	
-	/// <summary>A grammar-based tokenizer constructed with JavaCC.
-	/// 
-	/// <p> This should be a good tokenizer for most European-language documents.
-	/// 
-	/// <p>Many applications have specific tokenizer needs.  If this tokenizer does
-	/// not suit your application, please consider copying this source code
-	/// directory to your project and maintaining your own grammar-based tokenizer.
-	/// </summary>
-	public class StandardTokenizer : Lucene.Net.Analysis.Tokenizer
+    /// <summary>A grammar-based tokenizer constructed with JavaCC.
+    /// 
+    /// <p> This should be a good tokenizer for most European-language documents:
+    /// 
+    /// <ul>
+    /// <li>Splits words at punctuation characters, removing punctuation. However, a 
+    /// dot that's not followed by whitespace is considered part of a token.
+    /// <li>Splits words at hyphens, unless there's a number in the token, in which case
+    /// the whole token is interpreted as a product number and is not split.
+    /// <li>Recognizes email addresses and internet hostnames as one token.
+    /// </ul>
+    /// 
+    /// <p>Many applications have specific tokenizer needs.  If this tokenizer does
+    /// not suit your application, please consider copying this source code
+    /// directory to your project and maintaining your own grammar-based tokenizer.
+    /// </summary>
+    public class StandardTokenizer : Lucene.Net.Analysis.Tokenizer
 	{
 		
 		/// <summary>Constructs a tokenizer for this Reader. </summary>
@@ -101,8 +109,7 @@ namespace Lucene.Net.Analysis.Standard
 						return new Lucene.Net.Analysis.Token(token.image, token.beginColumn, token.endColumn, Lucene.Net.Analysis.Standard.StandardTokenizerConstants.tokenImage[token.kind]);
 				}
 			}
-			// FIXED joeshaw@novell.com 10 Jan 2005 - Turn off unreachable code
-			//throw new System.ApplicationException("Missing return statement in function");
+			throw new System.ApplicationException("Missing return statement in function");
 		}
 		
 		public StandardTokenizerTokenManager token_source;
@@ -158,8 +165,8 @@ namespace Lucene.Net.Analysis.Standard
 		
 		private Token Jj_consume_token(int kind)
 		{
-			Token oldToken = token;
-			if (token.next != null)
+			Token oldToken;
+			if ((oldToken = token).next != null)
 				token = token.next;
 			else
 				token = token.next = token_source.GetNextToken();

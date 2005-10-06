@@ -44,13 +44,19 @@ WRAPPER_SED = sed 					\
 
 lucenedir = $(srcdir)/Lucene.Net
 
-LUCENE_1_4_CSFILES =							\
+LUCENE_1_9_CSFILES =							\
 	$(lucenedir)/AssemblyInfo.cs					\
+	$(lucenedir)/LucenePackage.cs					\
 	$(lucenedir)/SupportClass.cs					\
+	$(lucenedir)/Store/BufferedIndexInput.cs			\
+	$(lucenedir)/Store/BufferedIndexOutput.cs			\
 	$(lucenedir)/Store/Directory.cs					\
 	$(lucenedir)/Store/FSDirectory.cs				\
+	$(lucenedir)/Store/IndexInput.cs				\
+	$(lucenedir)/Store/IndexOutput.cs				\
 	$(lucenedir)/Store/InputStream.cs				\
 	$(lucenedir)/Store/Lock.cs					\
+	$(lucenedir)/Store/MMapDirectory.cs				\
 	$(lucenedir)/Store/OutputStream.cs				\
 	$(lucenedir)/Store/RAMDirectory.cs				\
 	$(lucenedir)/Store/RAMFile.cs					\
@@ -58,6 +64,7 @@ LUCENE_1_4_CSFILES =							\
 	$(lucenedir)/Store/RAMOutputStream.cs				\
 	$(lucenedir)/Util/BitVector.cs					\
 	$(lucenedir)/Util/Constants.cs					\
+	$(lucenedir)/Util/Parameter.cs					\
 	$(lucenedir)/Util/PriorityQueue.cs				\
 	$(lucenedir)/Util/StringHelper.cs				\
 	$(lucenedir)/Index/CompoundFileReader.cs			\
@@ -81,6 +88,7 @@ LUCENE_1_4_CSFILES =							\
 	$(lucenedir)/Index/SegmentTermDocs.cs				\
 	$(lucenedir)/Index/SegmentTermEnum.cs				\
 	$(lucenedir)/Index/SegmentTermPositions.cs			\
+	$(lucenedir)/Index/SegmentTermPositionVector.cs			\
 	$(lucenedir)/Index/SegmentTermVector.cs				\
 	$(lucenedir)/Index/Term.cs					\
 	$(lucenedir)/Index/TermBuffer.cs				\
@@ -92,21 +100,15 @@ LUCENE_1_4_CSFILES =							\
 	$(lucenedir)/Index/TermInfosWriter.cs				\
 	$(lucenedir)/Index/TermPositions.cs				\
 	$(lucenedir)/Index/TermPositionVector.cs			\
+	$(lucenedir)/Index/TermVectorOffsetInfo.cs			\
 	$(lucenedir)/Index/TermVectorsReader.cs				\
 	$(lucenedir)/Index/TermVectorsWriter.cs				\
 	$(lucenedir)/Document/DateField.cs				\
+	$(lucenedir)/Document/DateTools.cs				\
 	$(lucenedir)/Document/Document.cs				\
 	$(lucenedir)/Document/Field.cs					\
-	$(lucenedir)/Analysis/DE/GermanAnalyzer.cs			\
-	$(lucenedir)/Analysis/DE/GermanStemFilter.cs			\
-	$(lucenedir)/Analysis/DE/GermanStemmer.cs			\
+	$(lucenedir)/Document/NumberTools.cs				\
 	$(lucenedir)/Analysis/DE/WordlistLoader.cs			\
-	$(lucenedir)/Analysis/RU/RussianAnalyzer.cs			\
-	$(lucenedir)/Analysis/RU/RussianCharsets.cs			\
-	$(lucenedir)/Analysis/RU/RussianLetterTokenizer.cs		\
-	$(lucenedir)/Analysis/RU/RussianLowerCaseFilter.cs		\
-	$(lucenedir)/Analysis/RU/RussianStemFilter.cs			\
-	$(lucenedir)/Analysis/RU/RussianStemmer.cs			\
 	$(lucenedir)/Analysis/Standard/CharStream.cs			\
 	$(lucenedir)/Analysis/Standard/FastCharStream.cs		\
 	$(lucenedir)/Analysis/Standard/ParseException.cs		\
@@ -147,10 +149,12 @@ LUCENE_1_4_CSFILES =							\
 	$(lucenedir)/Search/BooleanClause.cs				\
 	$(lucenedir)/Search/BooleanQuery.cs				\
 	$(lucenedir)/Search/BooleanScorer.cs				\
+	$(lucenedir)/Search/BooleanScorer2.cs				\
 	$(lucenedir)/Search/CachingWrapperFilter.cs			\
 	$(lucenedir)/Search/ConjunctionScorer.cs			\
 	$(lucenedir)/Search/DateFilter.cs				\
 	$(lucenedir)/Search/DefaultSimilarity.cs			\
+	$(lucenedir)/Search/DisjunctionSumScorer.cs			\
 	$(lucenedir)/Search/ExactPhraseScorer.cs			\
 	$(lucenedir)/Search/Explanation.cs				\
 	$(lucenedir)/Search/FieldCache.cs				\
@@ -167,8 +171,10 @@ LUCENE_1_4_CSFILES =							\
 	$(lucenedir)/Search/HitQueue.cs					\
 	$(lucenedir)/Search/Hits.cs					\
 	$(lucenedir)/Search/IndexSearcher.cs				\
+	$(lucenedir)/Search/MultiPhraseQuery.cs				\
 	$(lucenedir)/Search/MultiSearcher.cs				\
 	$(lucenedir)/Search/MultiTermQuery.cs				\
+	$(lucenedir)/Search/NonMatchingScorer.cs			\
 	$(lucenedir)/Search/ParallelMultiSearcher.cs			\
 	$(lucenedir)/Search/PhrasePositions.cs				\
 	$(lucenedir)/Search/PhrasePrefixQuery.cs			\
@@ -179,14 +185,18 @@ LUCENE_1_4_CSFILES =							\
 	$(lucenedir)/Search/Query.cs					\
 	$(lucenedir)/Search/QueryFilter.cs				\
 	$(lucenedir)/Search/QueryTermVector.cs				\
+	$(lucenedir)/Search/RangeFilter.cs				\
 	$(lucenedir)/Search/RangeQuery.cs				\
 	$(lucenedir)/Search/RemoteSearchable.cs				\
+	$(lucenedir)/Search/ReqExclScorer.cs				\
+	$(lucenedir)/Search/ReqOptSumScorer.cs				\
 	$(lucenedir)/Search/ScoreDoc.cs					\
 	$(lucenedir)/Search/ScoreDocComparator.cs			\
 	$(lucenedir)/Search/Scorer.cs					\
 	$(lucenedir)/Search/Searchable.cs				\
 	$(lucenedir)/Search/Searcher.cs					\
 	$(lucenedir)/Search/Similarity.cs				\
+	$(lucenedir)/Search/SimilarityDelegator.cs			\
 	$(lucenedir)/Search/SloppyPhraseScorer.cs			\
 	$(lucenedir)/Search/Sort.cs					\
 	$(lucenedir)/Search/SortComparator.cs				\
@@ -199,6 +209,14 @@ LUCENE_1_4_CSFILES =							\
 	$(lucenedir)/Search/Weight.cs					\
 	$(lucenedir)/Search/WildcardQuery.cs				\
 	$(lucenedir)/Search/WildcardTermEnum.cs				\
+	$(lucenedir)/QueryParser/Precedence/CharStream.cs		\
+	$(lucenedir)/QueryParser/Precedence/ParseException.cs		\
+	$(lucenedir)/QueryParser/Precedence/FastCharStream.cs		\
+	$(lucenedir)/QueryParser/Precedence/PrecedenceQueryParserConstants.cs\
+	$(lucenedir)/QueryParser/Precedence/Token.cs			\
+	$(lucenedir)/QueryParser/Precedence/PrecedenceQueryParserTokenManager.cs\
+	$(lucenedir)/QueryParser/Precedence/PrecedenceQueryParser.cs	\
+	$(lucenedir)/QueryParser/Precedence/TokenMgrError.cs		\
 	$(lucenedir)/QueryParser/CharStream.cs				\
 	$(lucenedir)/QueryParser/FastCharStream.cs			\
 	$(lucenedir)/QueryParser/MultiFieldQueryParser.cs		\
@@ -209,7 +227,7 @@ LUCENE_1_4_CSFILES =							\
 	$(lucenedir)/QueryParser/Token.cs				\
 	$(lucenedir)/QueryParser/TokenMgrError.cs
 
-LUCENE_CSFILES = $(LUCENE_1_4_CSFILES)
+LUCENE_CSFILES = $(LUCENE_1_9_CSFILES)
 
 ############################################################
 

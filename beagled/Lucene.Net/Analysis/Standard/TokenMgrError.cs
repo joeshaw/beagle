@@ -19,7 +19,7 @@ namespace Lucene.Net.Analysis.Standard
 {
 	
 	[Serializable]
-	public class TokenMgrError:System.ApplicationException
+	public class TokenMgrError : System.ApplicationException
 	{
 		/// <summary> You can also modify the body of this method to customize your error messages.
 		/// For example, cases like LOOP_DETECTED and INVALID_LEXICAL_STATE are not

@@ -47,7 +47,6 @@ namespace Lucene.Net.Search
 		/// </param>
 		/// <param name="size"> The number of hits to retain.  Must be greater than zero.
 		/// </param>
-		/// <throws>  IOException </throws>
 		internal FieldDocSortedHitQueue(SortField[] fields, int size)
 		{
 			this.fields = fields;

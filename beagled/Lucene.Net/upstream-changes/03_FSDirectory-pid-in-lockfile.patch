@@ -1,0 +1,16 @@
+From: Joe Shaw <joeshaw@novell.com> (?)
+
+Write process ID into lock file to aid debugging stale locks
+
+--- Lucene.Net/Store/FSDirectory.cs.orig	2005-10-02 09:49:19.000000000 +0100
++++ Lucene.Net/Store/FSDirectory.cs	2005-10-02 09:52:42.000000000 +0100
+@@ -75,6 +75,9 @@ namespace Lucene.Net.Store
+                 try
+                 {
+                     System.IO.FileStream createdFile = lockFile.Create();
++					System.IO.StreamWriter writer = new System.IO.StreamWriter (createdFile);
++					writer.WriteLine (System.Diagnostics.Process.GetCurrentProcess().Id);
++					writer.Close ();
+                     createdFile.Close();
+                     return true;
+                 }

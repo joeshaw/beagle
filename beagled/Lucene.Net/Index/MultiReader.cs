@@ -15,6 +15,7 @@
  */
 using System;
 using Document = Lucene.Net.Documents.Document;
+using Field = Lucene.Net.Documents.Field;
 using Directory = Lucene.Net.Store.Directory;
 namespace Lucene.Net.Index
 {
@@ -47,7 +48,7 @@ namespace Lucene.Net.Index
 		}
 		
 		/// <summary>Construct reading the named set of readers. </summary>
-		public /*internal*/ MultiReader(Directory directory, SegmentInfos sis, bool closeDirectory, IndexReader[] subReaders):base(directory, sis, closeDirectory)
+        public /*internal*/ MultiReader(Directory directory, SegmentInfos sis, bool closeDirectory, IndexReader[] subReaders) : base(directory, sis, closeDirectory)
 		{
 			Initialize(subReaders);
 		}
@@ -294,24 +295,48 @@ namespace Lucene.Net.Index
 			return fieldSet;
 		}
 		
-		public override System.Collections.ICollection GetIndexedFieldNames(bool storedTermVector)
+		public override System.Collections.ICollection GetIndexedFieldNames(Field.TermVector tvSpec)
 		{
 			// maintain a unique set of Field names
 			System.Collections.Hashtable fieldSet = new System.Collections.Hashtable();
 			for (int i = 0; i < subReaders.Length; i++)
 			{
 				IndexReader reader = subReaders[i];
-				System.Collections.ICollection names = reader.GetIndexedFieldNames(storedTermVector);
+				System.Collections.ICollection names = reader.GetIndexedFieldNames(tvSpec);
                 foreach (object item in names)
                 {
-                    fieldSet.Add(item,item);
+                    if (fieldSet.ContainsKey(item) == false)
+                    {
+                        fieldSet.Add(item, item);
+                    }
                 }
             }
 			return fieldSet;
 		}
-	}
+		
+        /// <seealso cref="IndexReader#GetFieldNames(IndexReader.FieldOption)">
+        /// </seealso>
+        public override System.Collections.ICollection GetFieldNames(IndexReader.FieldOption fieldNames)
+        {
+            // maintain a unique set of field names
+            System.Collections.Hashtable fieldSet = new System.Collections.Hashtable();
+            for (int i = 0; i < subReaders.Length; i++)
+            {
+                IndexReader reader = subReaders[i];
+                System.Collections.ICollection names = reader.GetFieldNames(fieldNames);
+                foreach (object item in names)
+                {
+                    if (fieldSet.ContainsKey(item) == false)
+                    {
+                        fieldSet.Add(item, item);
+                    }
+                }
+            }
+            return fieldSet;
+        }
+    }
 	
-	class MultiTermEnum:TermEnum
+	class MultiTermEnum : TermEnum
 	{
 		private SegmentMergeQueue queue;
 		
@@ -520,7 +545,7 @@ namespace Lucene.Net.Index
 		}
 	}
 	
-	class MultiTermPositions:MultiTermDocs, TermPositions
+	class MultiTermPositions : MultiTermDocs, TermPositions
 	{
 		public MultiTermPositions(IndexReader[] r, int[] s):base(r, s)
 		{

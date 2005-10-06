@@ -1,0 +1,18 @@
+--- Lucene.Net/Store/FSDirectory.cs.orig	2005-10-02 11:39:56.000000000 +0100
++++ Lucene.Net/Store/FSDirectory.cs	2005-10-02 11:45:26.000000000 +0100
+@@ -568,13 +568,13 @@ namespace Lucene.Net.Store
+ 		/// </summary>
+         public override IndexOutput CreateOutput(System.String name)
+         {
+-            return new FSIndexOutput(new System.IO.FileInfo(directory.FullName + "\\" + name));
++            return new FSIndexOutput(new System.IO.FileInfo(System.IO.Path.Combine(directory.FullName, name)));
+         }
+ 		
+ 		/// <summary>Returns a stream reading an existing file. </summary>
+         public override IndexInput OpenInput(System.String name)
+         {
+-            return new FSIndexInput(new System.IO.FileInfo(directory.FullName + "\\" + name));
++            return new FSIndexInput(new System.IO.FileInfo(System.IO.Path.Combine(directory.FullName, name)));
+         }
+ 
+ 		static public Beagle.Util.Logger Logger = null;

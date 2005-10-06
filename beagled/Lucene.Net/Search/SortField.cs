@@ -213,7 +213,7 @@ namespace Lucene.Net.Search
 		/// <summary>Returns the type of contents in the Field.</summary>
 		/// <returns> One of the constants SCORE, DOC, AUTO, STRING, INT or FLOAT.
 		/// </returns>
-		new public virtual int GetType()
+		public virtual int GetType()
 		{
 			return type;
 		}

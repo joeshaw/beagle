@@ -22,6 +22,7 @@ namespace Lucene.Net.Index
     /// Note that terms may represent more than words from text fields, but also
     /// things like dates, email addresses, urls, etc.  
     /// </summary>
+    
     [Serializable]
 	public sealed class Term : System.IComparable
 	{
@@ -77,12 +78,12 @@ namespace Lucene.Net.Index
 			return CompareTo((Term) other);
 		}
 		
-		/// <summary>Compares two terms, returning an integer which is less than zero iff this
-		/// term belongs after the argument, equal zero iff this term is equal to the
-		/// argument, and greater than zero iff this term belongs after the argument.
-		/// The ordering of terms is first by Field, then by text.
-		/// </summary>
-		public int CompareTo(Term other)
+        /// <summary>Compares two terms, returning a negative integer if this
+        /// term belongs before the argument, zero if this term is equal to the
+        /// argument, and a positive integer if this term belongs after the argument.
+        /// The ordering of terms is first by field, then by text.
+        /// </summary>
+        public int CompareTo(Term other)
 		{
 			if ((System.Object) field == (System.Object) other.field)
 			// fields are interned
@@ -94,7 +95,7 @@ namespace Lucene.Net.Index
 		/// <summary>Resets the Field and text of a Term. </summary>
 		internal void  Set(System.String fld, System.String txt)
 		{
-			field = String.Intern(fld); // FIXED(?) trow@novell.com on May 24, 2005
+			field = fld;
 			text = txt;
 		}
 		
@@ -105,17 +106,17 @@ namespace Lucene.Net.Index
 		
 		private void  ReadObject(System.IO.BinaryReader in_Renamed)
 		{
-			// This function is private and is never been called, so this may not be a port issue. // {{Aroush}}
-			// in_Renamed.defaultReadObject(); // {{Aroush}} >> 'java.io.ObjectInputStream.defaultReadObject()'
-			field = String.Intern(field);
+            // This function is private and is never been called, so this may not be a port issue.          // {{Aroush-1.4.3}}
+            // in_Renamed.defaultReadObject();    >>    'java.io.ObjectInputStream.defaultReadObject()'     // {{Aroush-1.4.3}}
+            field = String.Intern(field);
 		}
 		
-		// {{Aroush: Or is this what we want (vs. the above)?!!
+		// {{Aroush-1.4.3: or is this function what we want (vs. the above)?!!
 		private void GetObjectData(System.Runtime.Serialization.SerializationInfo info, System.Runtime.Serialization.StreamingContext context)
 		{
 			info.AddValue("field", field);
 			info.AddValue("text", text);
 		}
-		// Aroush}}
+		// Aroush-1.4.3}}
 	}
 }

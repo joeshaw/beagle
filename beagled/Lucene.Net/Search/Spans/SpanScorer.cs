@@ -40,7 +40,7 @@ namespace Lucene.Net.Search.Spans
 			this.spans = spans;
 			this.norms = norms;
 			this.weight = weight;
-			this.value_Renamed = weight.Value;
+			this.value_Renamed = weight.GetValue();
 		}
 		
 		public override bool Next()

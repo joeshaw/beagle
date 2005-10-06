@@ -23,7 +23,7 @@ namespace Lucene.Net.Index
 	/// the number of times the term occurred in each document.  <p> The pairs are
 	/// ordered by document number.
 	/// </summary>
-	/// <seealso cref="IndexReader#termDocs">
+	/// <seealso cref="IndexReader#TermDocs()">
 	/// </seealso>
 	
 	public interface TermDocs

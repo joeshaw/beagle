@@ -23,13 +23,13 @@ namespace Lucene.Net.Store
 	/// <version>  $Id$
 	/// </version>
 	
-	public class RAMOutputStream:OutputStream
+	public class RAMOutputStream : BufferedIndexOutput
 	{
 		private RAMFile file;
 		private int pointer = 0;
 		
 		/// <summary>Construct an empty output buffer. </summary>
-		public RAMOutputStream():this(new RAMFile())
+		public RAMOutputStream() : this(new RAMFile())
 		{
 		}
 		
@@ -39,7 +39,7 @@ namespace Lucene.Net.Store
 		}
 		
 		/// <summary>Copy the current contents of this buffer to the named output. </summary>
-		public virtual void  WriteTo(OutputStream out_Renamed)
+		public virtual void  WriteTo(IndexOutput out_Renamed)
 		{
 			Flush();
 			long end = file.length;
@@ -60,7 +60,7 @@ namespace Lucene.Net.Store
 		}
 		
 		/// <summary>Resets this to an empty buffer. </summary>
-		public virtual void  Leset()
+		public virtual void  Reset()
 		{
 			try
 			{
@@ -103,8 +103,7 @@ namespace Lucene.Net.Store
 			if (pointer > file.length)
 				file.length = pointer;
 			
-			// FIXED joeshaw@novell.com 24 Jun 2005 - Use UTC
-			file.lastModified = (System.DateTime.UtcNow.Ticks - 621355968000000000) / 10000;
+			file.lastModified = System.DateTime.UtcNow.Ticks;
 		}
 		
 		public override void  Close()

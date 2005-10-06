@@ -22,44 +22,68 @@ namespace Lucene.Net.Search
 {
 	
 	
-	/// <summary>Expert: Scoring API.
-	/// <p>Subclasses implement search scoring.
-	/// 
-	/// <p>The score of query <code>q</code> for document <code>d</code> is defined
-	/// in terms of these methods as follows:
-	/// 
-	/// <table cellpadding="0" cellspacing="0" border="0">
-	/// <tr>
-	/// <td valign="middle" align="right" rowspan="2">score(q,d) =<br></td>
-	/// <td valign="middle" align="center">
-	/// <big><big><big><big><big>&Sigma;</big></big></big></big></big></td>
-	/// <td valign="middle"><small>
-	/// {@link #Tf(int) tf}(t in d) *
-	/// {@link #Idf(Term,Searcher) idf}(t) *
-	/// {@link Field#getBoost getBoost}(t.Field in d) *
-	/// {@link #LengthNorm(String,int) lengthNorm}(t.Field in d)
-	/// </small></td>
-	/// <td valign="middle" rowspan="2">&nbsp;*
-	/// {@link #Coord(int,int) coord}(q,d) *
-	/// {@link #QueryNorm(float) queryNorm}(q)
-	/// </td>
-	/// </tr>
-	/// <tr>
-	/// <td valign="top" align="right">
-	/// <small>t in q</small>
-	/// </td>
-	/// </tr>
-	/// </table>
-	/// 
-	/// </summary>
-	/// <seealso cref="#SetDefault(Similarity)">
-	/// </seealso>
-	/// <seealso cref="IndexWriter#SetSimilarity(Similarity)">
-	/// </seealso>
-	/// <seealso cref="Searcher#SetSimilarity(Similarity)">
-	/// </seealso>
-	public abstract class Similarity
-	{
+    /// <summary>Expert: Scoring API.
+    /// <p>Subclasses implement search scoring.
+    /// 
+    /// <p>The score of query <code>q</code> for document <code>d</code> is defined
+    /// in terms of these methods as follows:
+    /// 
+    /// <table cellpadding="0" cellspacing="0" border="0">
+    /// <tr>
+    /// <td valign="middle" align="right" rowspan="2">score(q,d) =<br></td>
+    /// <td valign="middle" align="center">
+    /// <big><big><big><big><big>&Sigma;</big></big></big></big></big></td>
+    /// <td valign="middle"><small>
+    /// ( {@link #Tf(int) tf}(t in d) *
+    /// {@link #Idf(Term,Searcher) idf}(t)^2 *
+    /// {@link Query#getBoost getBoost}(t in q) *
+    /// {@link Field#getBoost getBoost}(t.field in d) *
+    /// {@link #LengthNorm(String,int) lengthNorm}(t.field in d) )
+    /// </small></td>
+    /// <td valign="middle" rowspan="2">&nbsp;*
+    /// {@link #Coord(int,int) coord}(q,d) *
+    /// {@link #QueryNorm(float) queryNorm}(sumOfSqaredWeights)
+    /// </td>
+    /// </tr>
+    /// <tr>
+    /// <td valign="top" align="right">
+    /// <small>t in q</small>
+    /// </td>
+    /// </tr>
+    /// </table>
+    /// 
+    /// <p> where
+    /// 
+    /// <table cellpadding="0" cellspacing="0" border="0">
+    /// <tr>
+    /// <td valign="middle" align="right" rowspan="2">sumOfSqaredWeights =<br></td>
+    /// <td valign="middle" align="center">
+    /// <big><big><big><big><big>&Sigma;</big></big></big></big></big></td>
+    /// <td valign="middle"><small>
+    /// ( {@link #Idf(Term,Searcher) idf}(t) *
+    /// {@link Query#getBoost getBoost}(t in q) )^2
+    /// </small></td>
+    /// </tr>
+    /// <tr>
+    /// <td valign="top" align="right">
+    /// <small>t in q</small>
+    /// </td>
+    /// </tr>
+    /// </table>
+    /// 
+    /// <p> Note that the above formula is motivated by the cosine-distance or dot-product
+    /// between document and query vector, which is implemented by {@link DefaultSimilarity}.
+    /// 
+    /// </summary>
+    /// <seealso cref="#SetDefault(Similarity)">
+    /// </seealso>
+    /// <seealso cref="IndexWriter#SetSimilarity(Similarity)">
+    /// </seealso>
+    /// <seealso cref="Searcher#SetSimilarity(Similarity)">
+    /// </seealso>
+    [Serializable]
+    public abstract class Similarity
+    {
 		/// <summary>The Similarity implementation used by default. </summary>
 		private static Similarity defaultImpl = new DefaultSimilarity();
 		
@@ -99,35 +123,43 @@ namespace Lucene.Net.Search
 		/// </seealso>
 		public static float DecodeNorm(byte b)
 		{
-			return NORM_TABLE[b & 0xFF];
+			return NORM_TABLE[b & 0xFF]; // & 0xFF maps negative bytes to positive above 127
 		}
 		
-		/// <summary>Computes the normalization value for a Field given the total number of
-		/// terms contained in a Field.  These values, together with Field boosts, are
-		/// stored in an index and multipled into scores for hits on each Field by the
-		/// search code.
-		/// 
-		/// <p>Matches in longer fields are less precise, so implemenations of this
-		/// method usually return smaller values when <code>numTokens</code> is large,
-		/// and larger values when <code>numTokens</code> is small.
-		/// 
-		/// <p>That these values are computed under {@link
-		/// IndexWriter#AddDocument(Document)} and stored then using
-		/// {#encodeNorm(float)}.  Thus they have limited precision, and documents
-		/// must be re-indexed if this method is altered.
-		/// 
-		/// </summary>
-		/// <param name="fieldName">the name of the Field
-		/// </param>
-		/// <param name="numTokens">the total number of tokens contained in fields named
-		/// <i>fieldName</i> of <i>doc</i>.
-		/// </param>
-		/// <returns> a normalization factor for hits on this Field of this document
-		/// 
-		/// </returns>
-		/// <seealso cref="Field#SetBoost(float)">
-		/// </seealso>
-		public abstract float LengthNorm(System.String fieldName, int numTokens);
+        /// <summary>Returns a table for decoding normalization bytes.</summary>
+        /// <seealso cref="#EncodeNorm(float)">
+        /// </seealso>
+        public static float[] GetNormDecoder()
+        {
+            return NORM_TABLE;
+        }
+		
+        /// <summary>Computes the normalization value for a field given the total number of
+        /// terms contained in a field.  These values, together with field boosts, are
+        /// stored in an index and multipled into scores for hits on each field by the
+        /// search code.
+        /// 
+        /// <p>Matches in longer fields are less precise, so implementations of this
+        /// method usually return smaller values when <code>numTokens</code> is large,
+        /// and larger values when <code>numTokens</code> is small.
+        /// 
+        /// <p>That these values are computed under {@link
+        /// IndexWriter#AddDocument(Lucene.Net.document.Document)} and stored then using
+        /// {@link #EncodeNorm(float)}.  Thus they have limited precision, and documents
+        /// must be re-indexed if this method is altered.
+        /// 
+        /// </summary>
+        /// <param name="fieldName">the name of the field
+        /// </param>
+        /// <param name="numTokens">the total number of tokens contained in fields named
+        /// <i>fieldName</i> of <i>doc</i>.
+        /// </param>
+        /// <returns> a normalization factor for hits on this field of this document
+        /// 
+        /// </returns>
+        /// <seealso cref="Field#SetBoost(float)">
+        /// </seealso>
+        public abstract float LengthNorm(System.String fieldName, int numTokens);
 		
 		/// <summary>Computes the normalization value for a query given the sum of the squared
 		/// weights of each of the query terms.  This value is then multipled into the
@@ -250,7 +282,7 @@ namespace Lucene.Net.Search
 		/// form the initial score for a document.
 		/// 
 		/// <p>Terms and phrases repeated in a document indicate the topic of the
-		/// document, so implemenations of this method usually return larger values
+		/// document, so implementations of this method usually return larger values
 		/// when <code>freq</code> is large, and smaller values when <code>freq</code>
 		/// is small.
 		/// 
@@ -313,7 +345,7 @@ namespace Lucene.Net.Search
 		/// then summed to form the initial score for a document.
 		/// 
 		/// <p>Terms that occur in fewer documents are better indicators of topic, so
-		/// implemenations of this method usually return larger values for rare terms,
+		/// implementations of this method usually return larger values for rare terms,
 		/// and smaller values for common terms.
 		/// 
 		/// </summary>
@@ -329,7 +361,7 @@ namespace Lucene.Net.Search
 		/// document contains.  This value is multiplied into scores.
 		/// 
 		/// <p>The presence of a large portion of the query terms indicates a better
-		/// match with the query, so implemenations of this method usually return
+		/// match with the query, so implementations of this method usually return
 		/// larger values when the ratio between these parameters is large and smaller
 		/// values when the ratio between them is small.
 		/// 

@@ -14,35 +14,35 @@
  * limitations under the License.
  */
 using System;
-using InputStream = Lucene.Net.Store.InputStream;
+using IndexInput = Lucene.Net.Store.IndexInput;
 using BitVector = Lucene.Net.Util.BitVector;
 namespace Lucene.Net.Index
 {
 	
-	public class SegmentTermDocs : TermDocs
+	/*public*/ class SegmentTermDocs : TermDocs
 	{
 		protected internal SegmentReader parent;
-		private InputStream freqStream;
-		private int count;
-		private int df;
-		private BitVector deletedDocs;
+		protected internal IndexInput freqStream;
+		protected internal int count;
+		protected internal int df;
+		protected internal BitVector deletedDocs;
 		internal int doc = 0;
 		internal int freq;
 		
 		private int skipInterval;
 		private int numSkips;
 		private int skipCount;
-		private InputStream skipStream;
+		private IndexInput skipStream;
 		private int skipDoc;
 		private long freqPointer;
 		private long proxPointer;
 		private long skipPointer;
 		private bool haveSkipped;
 		
-		public /*internal*/ SegmentTermDocs(SegmentReader parent)
+		protected internal SegmentTermDocs(SegmentReader parent)
 		{
 			this.parent = parent;
-			this.freqStream = (InputStream) parent.freqStream.Clone();
+			this.freqStream = (IndexInput) parent.freqStream.Clone();
 			this.deletedDocs = parent.deletedDocs;
 			this.skipInterval = parent.tis.GetSkipInterval();
 		}
@@ -177,7 +177,7 @@ namespace Lucene.Net.Index
 				// optimized case
 				
 				if (skipStream == null)
-					skipStream = (InputStream) freqStream.Clone(); // lazily clone
+					skipStream = (IndexInput) freqStream.Clone(); // lazily clone
 				
 				if (!haveSkipped)
 				{

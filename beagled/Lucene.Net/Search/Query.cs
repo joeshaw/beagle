@@ -27,8 +27,8 @@ namespace Lucene.Net.Search
 	/// <li> {@link WildcardQuery}
 	/// <li> {@link PhraseQuery}
 	/// <li> {@link PrefixQuery}
-	/// <li> {@link PhrasePrefixQuery}
-	/// <li> {@link FuzzyQuery}
+    /// <li> {@link MultiPhraseQuery}
+    /// <li> {@link FuzzyQuery}
 	/// <li> {@link RangeQuery}
 	/// <li> {@link Lucene.Net.Search.Spans.SpanQuery}
 	/// </ul>
@@ -46,7 +46,7 @@ namespace Lucene.Net.Search
 		/// matching this clause will (in addition to the normal weightings) have
 		/// their score multiplied by <code>b</code>.
 		/// </summary>
-		public virtual void  SetBoost(float b)
+		public virtual void SetBoost(float b)
 		{
 			boost = b;
 		}
@@ -60,13 +60,20 @@ namespace Lucene.Net.Search
 			return boost;
 		}
 		
-		/// <summary>Prints a query to a string, with <code>Field</code> as the default Field
-		/// for terms.  <p>The representation used is one that is readable by
-		/// {@link Lucene.Net.QueryParser.QueryParser QueryParser}
-		/// (although, if the query was created by the parser, the printed
-		/// representation may not be exactly what was parsed).
-		/// </summary>
-		public abstract System.String ToString(System.String field);
+        /// <summary>Prints a query to a string, with <code>field</code> as the default field
+        /// for terms.  <p>The representation used is one that is supposed to be readable
+        /// by {@link Lucene.Net.queryParser.QueryParser QueryParser}. However,
+        /// there are the following limitations:
+        /// <ul>
+        /// <li>If the query was created by the parser, the printed
+        /// representation may not be exactly what was parsed. For example,
+        /// characters that need to be escaped will be represented without
+        /// the required backslash.</li>
+        /// <li>Some of the more complicated queries (e.g. span queries)
+        /// don't have a representation that can be parsed by QueryParser.</li>
+        /// </ul>
+        /// </summary>
+        public abstract System.String ToString(System.String field);
 		
 		/// <summary>Prints a query to a string. </summary>
 		public override System.String ToString()
@@ -107,11 +114,25 @@ namespace Lucene.Net.Search
 		/// </summary>
 		public virtual Query Combine(Query[] queries)
 		{
-			throw new System.NotSupportedException();
-		}
+            for (int i = 0; i < queries.Length; i++)
+            {
+                if (!this.Equals(queries[i]))
+                {
+                    throw new System.ArgumentException();
+                }
+            }
+            return this;
+        }
+		
+        /// <summary> Expert: adds all terms occuring in this query to the terms set</summary>
+        public virtual void  ExtractTerms(System.Collections.Hashtable terms)
+        {
+            // needs to be implemented by query subclasses
+            throw new System.NotSupportedException();
+        }
 		
 		
-		/// <summary>Expert: merges the clauses of a set of BooleanQuery's into a single
+        /// <summary>Expert: merges the clauses of a set of BooleanQuery's into a single
 		/// BooleanQuery.
 		/// 
 		/// <p>A utility for use by {@link #Combine(Query[])} implementations.
@@ -128,7 +149,8 @@ namespace Lucene.Net.Search
 				}
 			}
 			
-            BooleanQuery result = new BooleanQuery();
+            bool coordDisabled = queries.Length == 0?false:((BooleanQuery) queries[0]).IsCoordDisabled();
+            BooleanQuery result = new BooleanQuery(coordDisabled);
             foreach (BooleanClause booleanClause in allClauses.Keys)
             {
                 result.Add(booleanClause);
@@ -151,7 +173,7 @@ namespace Lucene.Net.Search
 		{
 			try
 			{
-				return (Query) this.MemberwiseClone();
+				return (Query) base.MemberwiseClone();
 			}
 			catch (System.Exception e)
 			{

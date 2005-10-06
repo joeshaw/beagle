@@ -135,15 +135,6 @@ namespace Lucene.Net.Index
 			_posList = new IntQueue();
 		}
 		
-		/// <summary> Describe <code>next</code> method here.
-		/// 
-		/// </summary>
-		/// <returns> a <code>boolean</code> value
-		/// </returns>
-		/// <exception cref=""> IOException if an error occurs
-		/// </exception>
-		/// <seealso cref="TermDocs#Next()">
-		/// </seealso>
 		public bool Next()
 		{
 			if (_termPositionsQueue.Size() == 0)
@@ -176,31 +167,11 @@ namespace Lucene.Net.Index
 			return true;
 		}
 		
-		/// <summary> Describe <code>nextPosition</code> method here.
-		/// 
-		/// </summary>
-		/// <returns> an <code>int</code> value
-		/// </returns>
-		/// <exception cref=""> IOException if an error occurs
-		/// </exception>
-		/// <seealso cref="TermPositions#NextPosition()">
-		/// </seealso>
 		public int NextPosition()
 		{
 			return _posList.Next();
 		}
 		
-		/// <summary> Describe <code>skipTo</code> method here.
-		/// 
-		/// </summary>
-		/// <param name="target">an <code>int</code> value
-		/// </param>
-		/// <returns> a <code>boolean</code> value
-		/// </returns>
-		/// <exception cref=""> IOException if an error occurs
-		/// </exception>
-		/// <seealso cref="TermDocs#SkipTo(int)">
-		/// </seealso>
 		public bool SkipTo(int target)
 		{
 			while (target > _termPositionsQueue.Peek().Doc())
@@ -216,77 +187,39 @@ namespace Lucene.Net.Index
 			return Next();
 		}
 		
-		/// <summary> Describe <code>doc</code> method here.
-		/// 
-		/// </summary>
-		/// <returns> an <code>int</code> value
-		/// </returns>
-		/// <seealso cref="TermDocs#Doc()">
-		/// </seealso>
 		public int Doc()
 		{
 			return _doc;
 		}
 		
-		/// <summary> Describe <code>freq</code> method here.
-		/// 
-		/// </summary>
-		/// <returns> an <code>int</code> value
-		/// </returns>
-		/// <seealso cref="TermDocs#Freq()">
-		/// </seealso>
 		public int Freq()
 		{
 			return _freq;
 		}
 		
-		/// <summary> Describe <code>close</code> method here.
-		/// 
-		/// </summary>
-		/// <exception cref=""> IOException if an error occurs
-		/// </exception>
-		/// <seealso cref="TermDocs#Close()">
-		/// </seealso>
 		public void  Close()
 		{
 			while (_termPositionsQueue.Size() > 0)
 				((TermPositions) _termPositionsQueue.Pop()).Close();
 		}
 		
-		/// <summary> Describe <code>seek</code> method here.
-		/// 
-		/// </summary>
-		/// <param name="arg0">a <code>Term</code> value
-		/// </param>
-		/// <exception cref=""> IOException if an error occurs
-		/// </exception>
-		/// <seealso cref="TermDocs#Seek(Term)">
-		/// </seealso>
-		public virtual void  Seek(Term arg0)
+        /// <summary>Not implemented.</summary>
+        /// <throws>  UnsupportedOperationException </throws>
+        public virtual void  Seek(Term arg0)
 		{
 			throw new System.NotSupportedException();
 		}
 		
-		public virtual void  Seek(TermEnum termEnum)
+        /// <summary>Not implemented.</summary>
+        /// <throws>  UnsupportedOperationException </throws>
+        public virtual void  Seek(TermEnum termEnum)
 		{
 			throw new System.NotSupportedException();
 		}
 		
-		
-		/// <summary> Describe <code>read</code> method here.
-		/// 
-		/// </summary>
-		/// <param name="arg0">an <code>int[]</code> value
-		/// </param>
-		/// <param name="arg1">an <code>int[]</code> value
-		/// </param>
-		/// <returns> an <code>int</code> value
-		/// </returns>
-		/// <exception cref=""> IOException if an error occurs
-		/// </exception>
-		/// <seealso cref="int[])">
-		/// </seealso>
-		public virtual int Read(int[] arg0, int[] arg1)
+        /// <summary>Not implemented.</summary>
+        /// <throws>  UnsupportedOperationException </throws>
+        public virtual int Read(int[] arg0, int[] arg1)
 		{
 			throw new System.NotSupportedException();
 		}

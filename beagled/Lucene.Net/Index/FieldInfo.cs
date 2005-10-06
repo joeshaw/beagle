@@ -23,14 +23,18 @@ namespace Lucene.Net.Index
 		internal int number;
 		
 		// true if term vector for this Field should be stored
-		public /*internal*/ bool storeTermVector;
+        public /*internal*/ bool storeTermVector;
+        public /*internal*/ bool storeOffsetWithTermVector;
+        public /*internal*/ bool storePositionWithTermVector;
 		
-		internal FieldInfo(System.String na, bool tk, int nu, bool storeTermVector)
+		internal FieldInfo(System.String na, bool tk, int nu, bool storeTermVector, bool storePositionWithTermVector, bool storeOffsetWithTermVector)
 		{
-			name = na;
-			isIndexed = tk;
-			number = nu;
-			this.storeTermVector = storeTermVector;
-		}
+            name = na;
+            isIndexed = tk;
+            number = nu;
+            this.storeTermVector = storeTermVector;
+            this.storeOffsetWithTermVector = storeOffsetWithTermVector;
+            this.storePositionWithTermVector = storePositionWithTermVector;
+        }
 	}
 }

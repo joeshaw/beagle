@@ -1,0 +1,30 @@
+From: Daniel Drake <dsd@gentoo.org>
+
+Two threads could obtain the same lock as Obtain() does not check if the file
+it is creating already exists.
+
+This is most likely the result of a porting thinko, the corresponding java
+method fails if the file it wants to create already exists, whereas the C#
+version silently overwrites the existing file.
+
+--- Lucene.Net.Orig/Store/FSDirectory.cs	2005-10-03 21:01:30.000000000 +0100
++++ Lucene.Net/Store/FSDirectory.cs	2005-10-03 21:02:32.000000000 +0100
+@@ -71,7 +71,10 @@ namespace Lucene.Net.Store
+ 						throw new System.IO.IOException("Cannot create lock directory: " + Enclosing_Instance.lockDir);
+ 					}
+ 				}
+-				
++
++				if (System.IO.File.Exists(lockFile.FullName))
++					return false;
++
+                 try
+                 {
+                     System.IO.FileStream createdFile = lockFile.Create();
+@@ -761,4 +764,4 @@ namespace Lucene.Net.Store
+ 			file.Close(); // close the file
+ 		}
+ 	}
+-}
+\ No newline at end of file
++}

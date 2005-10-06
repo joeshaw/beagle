@@ -14,13 +14,14 @@
  * limitations under the License.
  */
 using System;
+using Term = Lucene.Net.Index.Term;
 namespace Lucene.Net.Search
 {
 	
 	/// <summary>An abstract base class for search implementations.
 	/// Implements some common utility methods.
 	/// </summary>
-	public abstract class Searcher : Lucene.Net.Search.Searchable
+	public abstract class Searcher : Lucene.Net.Search.Searchable 
 	{
 		public Searcher()
 		{
@@ -30,16 +31,19 @@ namespace Lucene.Net.Search
 		{
 			similarity = Similarity.GetDefault();
 		}
-		/// <summary>Returns the documents matching <code>query</code>. </summary>
-		public Hits Search(Query query)
+		
+        /// <summary>Returns the documents matching <code>query</code>. </summary>
+        /// <throws>  BooleanQuery.TooManyClauses </throws>
+        public Hits Search(Query query)
 		{
 			return Search(query, (Filter) null);
 		}
 		
-		/// <summary>Returns the documents matching <code>query</code> and
-		/// <code>filter</code>. 
-		/// </summary>
-		public virtual Hits Search(Query query, Filter filter)
+        /// <summary>Returns the documents matching <code>query</code> and
+        /// <code>filter</code>.
+        /// </summary>
+        /// <throws>  BooleanQuery.TooManyClauses </throws>
+        public virtual Hits Search(Query query, Filter filter)
 		{
 			return new Hits(this, query, filter);
 		}
@@ -47,7 +51,8 @@ namespace Lucene.Net.Search
 		/// <summary>Returns documents matching <code>query</code> sorted by
 		/// <code>sort</code>.
 		/// </summary>
-		public virtual Hits Search(Query query, Sort sort)
+        /// <throws>  BooleanQuery.TooManyClauses </throws>
+        public virtual Hits Search(Query query, Sort sort)
 		{
 			return new Hits(this, query, null, sort);
 		}
@@ -55,7 +60,8 @@ namespace Lucene.Net.Search
 		/// <summary>Returns documents matching <code>query</code> and <code>filter</code>,
 		/// sorted by <code>sort</code>.
 		/// </summary>
-		public virtual Hits Search(Query query, Filter filter, Sort sort)
+        /// <throws>  BooleanQuery.TooManyClauses </throws>
+        public virtual Hits Search(Query query, Filter filter, Sort sort)
 		{
 			return new Hits(this, query, filter, sort);
 		}
@@ -73,7 +79,8 @@ namespace Lucene.Net.Search
 		/// In other words, the score will not necessarily be a float whose value is
 		/// between 0 and 1.
 		/// </summary>
-		public virtual void  Search(Query query, HitCollector results)
+        /// <throws>  BooleanQuery.TooManyClauses </throws>
+        public virtual void  Search(Query query, HitCollector results)
 		{
 			Search(query, (Filter) null, results);
 		}
@@ -99,14 +106,30 @@ namespace Lucene.Net.Search
 		{
 			return this.similarity;
 		}
-		public abstract void  Close();
-		public abstract Lucene.Net.Search.Explanation Explain(Lucene.Net.Search.Query param1, int param2);
-		public abstract Lucene.Net.Search.TopFieldDocs Search(Lucene.Net.Search.Query param1, Lucene.Net.Search.Filter param2, int param3, Lucene.Net.Search.Sort param4);
-		public abstract void  Search(Lucene.Net.Search.Query param1, Lucene.Net.Search.Filter param2, Lucene.Net.Search.HitCollector param3);
-		public abstract int DocFreq(Lucene.Net.Index.Term param1);
-		public abstract int MaxDoc();
-		public abstract Lucene.Net.Search.Query Rewrite(Lucene.Net.Search.Query param1);
-		public abstract Lucene.Net.Documents.Document Doc(int param1);
-		public abstract Lucene.Net.Search.TopDocs Search(Lucene.Net.Search.Query param1, Lucene.Net.Search.Filter param2, int param3);
-	}
+		
+		
+        // inherit javadoc
+        public virtual int[] DocFreqs(Term[] terms)
+        {
+            int[] result = new int[terms.Length];
+            for (int i = 0; i < terms.Length; i++)
+            {
+                result[i] = DocFreq(terms[i]);
+            }
+            return result;
+        }
+        public abstract void  Close();
+        public abstract Lucene.Net.Search.Explanation Explain(Lucene.Net.Search.Weight param1, int param2);
+        public abstract Lucene.Net.Search.Query Rewrite(Lucene.Net.Search.Query param1);
+        public abstract void  Search(Lucene.Net.Search.Query param1, Lucene.Net.Search.Filter param2, Lucene.Net.Search.HitCollector param3);
+        public abstract Lucene.Net.Search.TopDocs Search(Lucene.Net.Search.Weight param1, Lucene.Net.Search.Filter param2, int param3);
+        public abstract int DocFreq(Lucene.Net.Index.Term param1);
+        public abstract Lucene.Net.Search.Explanation Explain(Lucene.Net.Search.Query param1, int param2);
+        public abstract int MaxDoc();
+        public abstract Lucene.Net.Documents.Document Doc(int param1);
+        public abstract Lucene.Net.Search.TopDocs Search(Lucene.Net.Search.Query param1, Lucene.Net.Search.Filter param2, int param3);
+        public abstract Lucene.Net.Search.TopFieldDocs Search(Lucene.Net.Search.Query param1, Lucene.Net.Search.Filter param2, int param3, Lucene.Net.Search.Sort param4);
+        public abstract Lucene.Net.Search.TopFieldDocs Search(Lucene.Net.Search.Weight param1, Lucene.Net.Search.Filter param2, int param3, Lucene.Net.Search.Sort param4);
+        public abstract void  Search(Lucene.Net.Search.Weight param1, Lucene.Net.Search.Filter param2, Lucene.Net.Search.HitCollector param3);
+    }
 }

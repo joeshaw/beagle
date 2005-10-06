@@ -51,7 +51,7 @@ namespace Lucene.Net.Store
 				{
 					if (!Enclosing_Instance.FileExists(name))
 					{
-						Enclosing_Instance.CreateFile(name).Close();
+						Enclosing_Instance.CreateOutput(name).Close();
 						return true;
 					}
 					return false;
@@ -84,7 +84,7 @@ namespace Lucene.Net.Store
 		/// </param>
 		/// <exception cref=""> IOException if an error occurs
 		/// </exception>
-		public RAMDirectory(Directory dir):this(dir, false)
+		public RAMDirectory(Directory dir) : this(dir, false)
 		{
 		}
 		
@@ -94,9 +94,9 @@ namespace Lucene.Net.Store
 			for (int i = 0; i < files.Length; i++)
 			{
 				// make place on ram disk
-				OutputStream os = CreateFile(files[i]);
+				IndexOutput os = CreateOutput(files[i]);
 				// read current file
-				InputStream is_Renamed = dir.OpenFile(files[i]);
+				IndexInput is_Renamed = dir.OpenInput(files[i]);
 				// and copy to ram disk
 				int len = (int) is_Renamed.Length();
 				byte[] buf = new byte[len];
@@ -115,7 +115,7 @@ namespace Lucene.Net.Store
 		/// </summary>
 		/// <param name="dir">a <code>File</code> specifying the index directory
 		/// </param>
-		public RAMDirectory(System.IO.FileInfo dir):this(FSDirectory.GetDirectory(dir, false), true)
+		public RAMDirectory(System.IO.FileInfo dir) : this(FSDirectory.GetDirectory(dir, false), true)
 		{
 		}
 		
@@ -124,7 +124,7 @@ namespace Lucene.Net.Store
 		/// </summary>
 		/// <param name="dir">a <code>String</code> specifying the full index directory path
 		/// </param>
-		public RAMDirectory(System.String dir):this(FSDirectory.GetDirectory(dir, false), true)
+		public RAMDirectory(System.String dir) : this(FSDirectory.GetDirectory(dir, false), true)
 		{
 		}
 		
@@ -159,10 +159,9 @@ namespace Lucene.Net.Store
 		public override void  TouchFile(System.String name)
 		{
 			//     final boolean MONITOR = false;
-
-			// FIXED joeshaw@novell.com 24 Jun 2005 - Use UTC			
+			
 			RAMFile file = (RAMFile) files[name];
-			long ts2, ts1 = (System.DateTime.UtcNow.Ticks - 621355968000000000) / 10000;
+			long ts2, ts1 = System.DateTime.UtcNow.Ticks;
 			do 
 			{
 				try
@@ -172,7 +171,7 @@ namespace Lucene.Net.Store
 				catch (System.Threading.ThreadInterruptedException)
 				{
 				}
-				ts2 = (System.DateTime.UtcNow.Ticks - 621355968000000000) / 10000;
+				ts2 = System.DateTime.UtcNow.Ticks;
 				//       if (MONITOR) {
 				//         count++;
 				//       }
@@ -209,7 +208,7 @@ namespace Lucene.Net.Store
 		/// <summary>Creates a new, empty file in the directory with the given name.
 		/// Returns a stream writing this file. 
 		/// </summary>
-		public override OutputStream CreateFile(System.String name)
+		public override IndexOutput CreateOutput(System.String name)
 		{
 			RAMFile file = new RAMFile();
 			files[name] = file;
@@ -217,7 +216,7 @@ namespace Lucene.Net.Store
 		}
 		
 		/// <summary>Returns a stream reading an existing file. </summary>
-		public override InputStream OpenFile(System.String name)
+		public override IndexInput OpenInput(System.String name)
 		{
 			RAMFile file = (RAMFile) files[name];
 			return new RAMInputStream(file);

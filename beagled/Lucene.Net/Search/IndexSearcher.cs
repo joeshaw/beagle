@@ -21,12 +21,13 @@ using Directory = Lucene.Net.Store.Directory;
 namespace Lucene.Net.Search
 {
 	
-	/// <summary>Implements search over a single IndexReader.
-	/// 
-	/// <p>Applications usually need only call the inherited {@link #Search(Query)}
-	/// or {@link #Search(Query,Filter)} methods.
-	/// </summary>
-	public class IndexSearcher : Searcher
+    /// <summary>Implements search over a single IndexReader.
+    /// 
+    /// <p>Applications usually need only call the inherited {@link #Search(Query)}
+    /// or {@link #Search(Query,Filter)} methods. For performance reasons it is 
+    /// recommended to open only one IndexSearcher and use it for all of your searches.
+    /// </summary>
+    public class IndexSearcher : Searcher
 	{
 		private class AnonymousClassHitCollector : HitCollector
 		{
@@ -161,7 +162,13 @@ namespace Lucene.Net.Search
 			this.closeReader = closeReader;
 		}
 		
-		/// <summary> Note that the underlying IndexReader is not closed, if
+        /// <summary>Return the {@link IndexReader} this searches. </summary>
+        public virtual IndexReader GetIndexReader()
+        {
+            return reader;
+        }
+		
+        /// <summary> Note that the underlying IndexReader is not closed, if
 		/// IndexSearcher was constructed with IndexSearcher(IndexReader r).
 		/// If the IndexReader was supplied implicitly by specifying a directory, then
 		/// the IndexReader gets closed.
@@ -190,64 +197,87 @@ namespace Lucene.Net.Search
 			return reader.MaxDoc();
 		}
 		
-		// inherit javadoc
-		public override TopDocs Search(Query query, Filter filter, int nDocs)
-		{
-			Scorer scorer = query.Weight(this).Scorer(reader);
-			if (scorer == null)
-				return new TopDocs(0, new ScoreDoc[0]);
-			
-			System.Collections.BitArray bits = filter != null ? filter.Bits(reader) : null;
-			HitQueue hq = new HitQueue(nDocs);
-			int[] totalHits = new int[1];
-			scorer.Score(new AnonymousClassHitCollector(bits, totalHits, hq, nDocs, this));
-			
-			ScoreDoc[] scoreDocs = new ScoreDoc[hq.Size()];
-			for (int i = hq.Size() - 1; i >= 0; i--)
-			// put docs in array
-				scoreDocs[i] = (ScoreDoc) hq.Pop();
-			
-			return new TopDocs(totalHits[0], scoreDocs);
-		}
+        // inherit javadoc
+        public override TopDocs Search(Query query, Filter filter, int nDocs)
+        {
+            return Search(query.Weight(this), filter, nDocs);
+        }
 		
-		// inherit javadoc
-		public override TopFieldDocs Search(Query query, Filter filter, int nDocs, Sort sort)
-		{
-			Scorer scorer = query.Weight(this).Scorer(reader);
-			if (scorer == null)
-				return new TopFieldDocs(0, new ScoreDoc[0], sort.fields);
+        // inherit javadoc
+        public override TopDocs Search(Weight weight, Filter filter, int nDocs)
+        {
 			
-			System.Collections.BitArray bits = filter != null ? filter.Bits(reader) : null;
-			FieldSortedHitQueue hq = new FieldSortedHitQueue(reader, sort.fields, nDocs);
-			int[] totalHits = new int[1];
-			scorer.Score(new AnonymousClassHitCollector1(bits, totalHits, hq, this));
+            if (nDocs <= 0)
+                // null might be returned from hq.top() below.
+                throw new System.ArgumentException("nDocs must be > 0");
 			
-			ScoreDoc[] scoreDocs = new ScoreDoc[hq.Size()];
-			for (int i = hq.Size() - 1; i >= 0; i--)
-			// put docs in array
-				scoreDocs[i] = hq.FillFields((FieldDoc) hq.Pop());
+            Scorer scorer = weight.Scorer(reader);
+            if (scorer == null)
+                return new TopDocs(0, new ScoreDoc[0]);
 			
-			return new TopFieldDocs(totalHits[0], scoreDocs, hq.GetFields());
-		}
+            System.Collections.BitArray bits = filter != null?filter.Bits(reader):null;
+            HitQueue hq = new HitQueue(nDocs);
+            int[] totalHits = new int[1];
+            scorer.Score(new AnonymousClassHitCollector(bits, totalHits, hq, nDocs, this));
+			
+            ScoreDoc[] scoreDocs = new ScoreDoc[hq.Size()];
+            for (int i = hq.Size() - 1; i >= 0; i--)
+                // put docs in array
+                scoreDocs[i] = (ScoreDoc) hq.Pop();
+			
+            return new TopDocs(totalHits[0], scoreDocs);
+        }
+		
+        // inherit javadoc
+        public override TopFieldDocs Search(Query query, Filter filter, int nDocs, Sort sort)
+        {
+            return Search(query.Weight(this), filter, nDocs, sort);
+        }
+		
+        // inherit javadoc
+        public override TopFieldDocs Search(Weight weight, Filter filter, int nDocs, Sort sort)
+        {
+            Scorer scorer = weight.Scorer(reader);
+            if (scorer == null)
+                return new TopFieldDocs(0, new ScoreDoc[0], sort.fields);
+			
+            System.Collections.BitArray bits = filter != null?filter.Bits(reader):null;
+            FieldSortedHitQueue hq = new FieldSortedHitQueue(reader, sort.fields, nDocs);
+            int[] totalHits = new int[1];
+            scorer.Score(new AnonymousClassHitCollector1(bits, totalHits, hq, this));
+			
+            ScoreDoc[] scoreDocs = new ScoreDoc[hq.Size()];
+            for (int i = hq.Size() - 1; i >= 0; i--)
+                // put docs in array
+                scoreDocs[i] = hq.FillFields((FieldDoc) hq.Pop());
+			
+            return new TopFieldDocs(totalHits[0], scoreDocs, hq.GetFields());
+        }
 		
 		
-		// inherit javadoc
-		public override void  Search(Query query, Filter filter, HitCollector results)
-		{
-			HitCollector collector = results;
-			if (filter != null)
-			{
-				System.Collections.BitArray bits = filter.Bits(reader);
-				collector = new AnonymousClassHitCollector2(bits, results, this);
-			}
-			
-			Scorer scorer = query.Weight(this).Scorer(reader);
-			if (scorer == null)
-				return ;
-			scorer.Score(collector);
-		}
+        // inherit javadoc
+        public override void  Search(Query query, Filter filter, HitCollector results)
+        {
+            Search(query.Weight(this), filter, results);
+        }
 		
-		public override Query Rewrite(Query original)
+        // inherit javadoc
+        public override void  Search(Weight weight, Filter filter, HitCollector results)
+        {
+            HitCollector collector = results;
+            if (filter != null)
+            {
+                System.Collections.BitArray bits = filter.Bits(reader);
+                collector = new AnonymousClassHitCollector2(bits, results, this);
+            }
+			
+            Scorer scorer = weight.Scorer(reader);
+            if (scorer == null)
+                return ;
+            scorer.Score(collector);
+        }
+		
+        public override Query Rewrite(Query original)
 		{
 			Query query = original;
 			for (Query rewrittenQuery = query.Rewrite(reader); rewrittenQuery != query; rewrittenQuery = query.Rewrite(reader))
@@ -257,9 +287,14 @@ namespace Lucene.Net.Search
 			return query;
 		}
 		
-		public override Explanation Explain(Query query, int doc)
-		{
-			return query.Weight(this).Explain(reader, doc);
-		}
-	}
+        public override Explanation Explain(Query query, int doc)
+        {
+            return Explain(query.Weight(this), doc);
+        }
+		
+        public override Explanation Explain(Weight weight, int doc)
+        {
+            return weight.Explain(reader, doc);
+        }
+    }
 }

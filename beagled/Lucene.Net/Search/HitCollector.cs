@@ -16,12 +16,15 @@
 using System;
 namespace Lucene.Net.Search
 {
-	/// <summary>Lower-level search API.</summary>
-	/// <seealso cref="Searcher#Search(Query,HitCollector)">
-	/// </seealso>
-	/// <version>  $Id$
-	/// </version>
-	public abstract class HitCollector
+    /// <summary>Lower-level search API.
+    /// <br>HitCollectors are primarily meant to be used to implement queries,
+    /// sorting and filtering.
+    /// </summary>
+    /// <seealso cref="Searcher#Search(Query,HitCollector)">
+    /// </seealso>
+    /// <version>  $Id$
+    /// </version>
+    public abstract class HitCollector
 	{
 		/// <summary>Called once for every non-zero scoring document, with the document number
 		/// and its score.

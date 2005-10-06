@@ -23,7 +23,7 @@ namespace Lucene.Net.Index
 	/// positions of each occurrence of a term in a document.
 	/// 
 	/// </summary>
-	/// <seealso cref="IndexReader#termPositions">
+	/// <seealso cref="IndexReader#TermPositions()">
 	/// </seealso>
 	
 	public interface TermPositions:TermDocs

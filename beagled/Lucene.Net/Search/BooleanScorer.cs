@@ -93,7 +93,74 @@ namespace Lucene.Net.Search
 		private int end;
 		private Bucket current;
 		
-		public override int Doc()
+        public override void  Score(HitCollector hc)
+        {
+            Next();
+            Score(hc, System.Int32.MaxValue);
+        }
+		
+        protected internal override bool Score(HitCollector hc, int max)
+        {
+            if (coordFactors == null)
+                ComputeCoordFactors();
+			
+            bool more;
+            Bucket tmp;
+			
+            do 
+            {
+                bucketTable.first = null;
+				
+                while (current != null)
+                {
+                    // more queued 
+    					
+                    // check prohibited & required
+                    if ((current.bits & prohibitedMask) == 0 && (current.bits & requiredMask) == requiredMask)
+                    {
+    						
+                        if (current.doc >= max)
+                        {
+                            tmp = current;
+                            current = current.next;
+                            tmp.next = bucketTable.first;
+                            bucketTable.first = tmp;
+                            continue;
+                        }
+    						
+                        hc.Collect(current.doc, current.score * coordFactors[current.coord]);
+                    }
+    					
+                    current = current.next; // pop the queue
+                }
+				
+                if (bucketTable.first != null)
+                {
+                    current = bucketTable.first;
+                    bucketTable.first = current.next;
+                    return true;
+                }
+				
+                // refill the queue
+                more = false;
+                end += BucketTable.SIZE;
+                for (SubScorer sub = scorers; sub != null; sub = sub.next)
+                {
+                    if (!sub.done)
+                    {
+                        sub.done = !sub.scorer.Score(sub.collector, end);
+                        if (!sub.done)
+                            more = true;
+                    }
+                }
+                current = bucketTable.first;
+            }
+            while (current != null || more);
+			
+            return false;
+        }
+		
+        public override int Doc()
 		{
 			return current.doc;
 		}
@@ -133,7 +200,7 @@ namespace Lucene.Net.Search
 					}
 				}
 			}
-			while (bucketTable.first != null | more);
+			while (bucketTable.first != null || more);
 			
 			return false;
 		}
@@ -161,7 +228,7 @@ namespace Lucene.Net.Search
 			{
 				buckets = new Bucket[SIZE];
 			}
-			public const int SIZE = 1 << 10;
+			public const int SIZE = 1 << 11;
 			public static readonly int MASK;
 			
 			internal Bucket[] buckets;
@@ -171,7 +238,6 @@ namespace Lucene.Net.Search
 			
 			public BucketTable(BooleanScorer scorer)
 			{
-                InitBlock();
 				this.scorer = scorer;
 			}
 			
