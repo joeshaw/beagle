@@ -547,7 +547,10 @@ namespace Beagle.Util {
 		{
 			if (task == null)
 				return;
-			
+
+			if (task.Source == null)
+				throw new Exception ("Attempting to add Task with no source!");
+
 			Task old_task = null;
 
 			lock (big_lock) {

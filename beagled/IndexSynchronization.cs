@@ -68,12 +68,14 @@ namespace Beagle.Daemon {
 			task.Tag = "Synchronize Indexes";
 			task.Priority = Scheduler.Priority.Delayed;
 			task.TriggerTime = DateTime.Now.AddMinutes (sync_interval_in_minutes);
+			task.Source = synchronization_lock;
 			Scheduler.Global.Add (task);
 
 			// Set up the shutdown synchronization task
 			task = Scheduler.TaskFromHook (new Scheduler.TaskHook (ShutdownHook));
 			task.Tag = "Synchronize Indexes on Shutdown";
 			task.Priority = Scheduler.Priority.Shutdown;
+			task.Source = synchronization_lock;
 			Scheduler.Global.Add (task);
 		}
 
