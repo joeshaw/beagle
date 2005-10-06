@@ -70,16 +70,15 @@ class ExtractContentTool {
 
 		Console.WriteLine ("Filename: " + indexable.Uri);
 
-		if (indexable.MimeType != null)
-			Console.WriteLine ("MimeType: " + indexable.MimeType);
-
 		Filter filter;
 
 		if (! FilterFactory.FilterIndexable (indexable, out filter))
 			Console.WriteLine ("No filter!");
 
-		if (filter != null)
+		if (filter != null) {
 			Console.WriteLine ("Filter: {0}", filter);
+			Console.WriteLine ("MimeType: {0}", filter.MimeType);
+		}
 
 		Console.WriteLine ();
 
