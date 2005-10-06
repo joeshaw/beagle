@@ -73,7 +73,7 @@ class ExtractContentTool {
 		Filter filter;
 
 		if (! FilterFactory.FilterIndexable (indexable, out filter))
-			Console.WriteLine ("No filter!");
+			Console.WriteLine ("No filter for {0}", indexable.MimeType);
 
 		if (filter != null) {
 			Console.WriteLine ("Filter: {0}", filter);
@@ -91,10 +91,14 @@ class ExtractContentTool {
 			Console.WriteLine ();
 		}
 
-		bool first;
+		// Make sure that the properties are sorted.
+		ArrayList prop_array = new ArrayList (indexable.Properties);
+		prop_array.Sort ();
 
+		bool first;
 		first = true;
-		foreach (Beagle.Property prop in indexable.Properties) {
+
+		foreach (Beagle.Property prop in prop_array) {
 			if (first) {
 				Console.WriteLine ("Properties:");
 				first = false;
@@ -163,6 +167,7 @@ class ExtractContentTool {
 		Console.WriteLine ("Usage: beagle-extract-content [OPTIONS] file [file ...]");
 		Console.WriteLine ();
 		Console.WriteLine ("Options:");
+		Console.WriteLine ("  --debug\t\t\tPrint debug info to the console");
 		Console.WriteLine ("  --tokenize\t\t\tTokenize the text before printing");
 		Console.WriteLine ("  --show-children\t\tShow filtering information for items created by filters");
 		Console.WriteLine ("  --mimetype=<mime_type>\tUse filter for mime_type");
@@ -172,8 +177,8 @@ class ExtractContentTool {
 
 	static int Main (string[] args)
 	{
-		Logger.DefaultEcho = true;
 		Logger.DefaultLevel = LogLevel.Debug;
+		Logger.DefaultEcho = (Array.IndexOf (args, "--debug") != -1);
 
 		if (Array.IndexOf (args, "--help") != -1) {
 			PrintUsage ();
