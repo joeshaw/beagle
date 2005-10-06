@@ -178,6 +178,44 @@ namespace Beagle.Daemon {
 			return token;
 		}
 
+		// FIXME support Date queries
+		static private QueryPart TokenToQueryPart (Token token) {
+			string query_text = token.Text;
+			
+			int pos = query_text.IndexOf (":");
+			if ( pos == -1) {
+				QueryPart_Text query_part = new QueryPart_Text ();
+				query_part.Text = query_text;
+				Logger.Log.Debug ("Parsed query '" + query_text + "' as text_query");
+				return query_part;
+			}
+
+			string prop_name = query_text.Substring (0, pos);
+			string prop_string = null;
+			bool is_present;
+			PropertyType prop_type;
+			is_present = PropertyKeywordFu.GetPropertyDetails (prop_name, out prop_string, out prop_type);
+			// if prop_name is not present in the mapping, assume the query is a text query
+			// i.e. if token is foo:bar and there is no mappable property named foo,
+			// assume "foo:bar" as text query
+			if (!is_present) {
+				QueryPart_Text query_part = new QueryPart_Text ();
+				query_part.Text = query_text;
+				Logger.Log.Debug ("Could not find property, parsed query '" + query_text + "' as text_query");
+				return query_part;
+			}
+
+			QueryPart_Property query_part_prop = new QueryPart_Property ();
+			query_part_prop.Key = prop_string;
+			query_part_prop.Value = query_text.Substring (pos + 1);
+			query_part_prop.Type = prop_type;
+			Logger.Log.Debug ("Parsed query '"	    + query_text + 
+					  "' as prop query:key="    + query_part_prop.Key +
+					  ", value="		    + query_part_prop.Value +
+					  " and property type="	    + query_part_prop.Type);
+			return query_part_prop;
+		}
+
 		static private ICollection TokensToQueryParts (ArrayList token_list)
 		{
 			ArrayList parts;
@@ -203,18 +241,16 @@ namespace Beagle.Daemon {
 
 				// Assemble a part for this token.
 
-				QueryPart_Text text_part;
-				text_part = new QueryPart_Text ();
-				text_part.Text = token.Text;
-					
+				QueryPart query_part = TokenToQueryPart (token);
 				if (token.Type == TokenType.Minus)
-					text_part.Logic = QueryPartLogic.Prohibited;
+					query_part.Logic = QueryPartLogic.Prohibited;
 				else
-					text_part.Logic = QueryPartLogic.Required;
+					query_part.Logic = QueryPartLogic.Required;
 
+					
 				if (or_list != null) {
-					or_list.Add (text_part);
-					text_part = null;
+					or_list.Add (query_part);
+					query_part = null;
 				}
 
 				Token next_token = null;
@@ -230,7 +266,7 @@ namespace Beagle.Daemon {
 				    && next_token.Text == "Or") {
 					if (or_list == null) {
 						or_list = new ArrayList ();
-						or_list.Add (text_part);
+						or_list.Add (query_part);
 					}
 					i += 2;
 					continue;
@@ -250,8 +286,8 @@ namespace Beagle.Daemon {
 				}
 
 				// Add the next text part
-				if (text_part != null)
-					parts.Add (text_part);
+				if (query_part != null)
+					parts.Add (query_part);
 
 				++i;
 			}
