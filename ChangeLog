@@ -7,6 +7,9 @@
 	* Util/Scheduler.cs: Don't allow tasks to be added without a source
 	* beagled/IndexSynchronization.cs: Fake a source for scheduler tasks
 
+	* Util/UriFu.cs: Convert Uri's to a constructable form before
+	serialization.
+
 2006-10-05  Daniel Drake  <dsd@gentoo.org>
 
 	* glue/Makefile.am: Consolidate glue code into two libraries,

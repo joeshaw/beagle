@@ -42,58 +42,37 @@ namespace Beagle.Util {
 
 		static public Uri UriStringToUri (string path)
 		{
-			// Decode our pre-encoded 'odd' characters into their real values
-			int i = 0, pos = 0;
-			while ((i = path.IndexOf ('%', pos)) != -1) {
-				pos = i;
-				char unescaped = UriFu.HexUnescape (path, ref pos);
-				if (unescaped < '!' || unescaped > '~') {
-					path = path.Remove (i, 3);
-					path = path.Insert (i, new String(unescaped, 1));
-					pos -= 2;
-				}
-			}
-		
-			// Paths from the file:// indexer need (re)quoting. For example,
-			// valid characters such as @ need to be converted to their hex
-			// values.
-			if (path.StartsWith ("file://")) {
-				// Remove the file:// prefix
-				path = path.Substring (7);
-
-				return PathToFileUri (path);
-			}
-			
-			// Currently, no other protocols need extra processing
+			// Our current hackery attempts to serialize Uri strings in
+			// escaped and constructable form, so we don't require any
+			// extra processing on deserialization right now.
 			return new Uri (path, true);
 		}
 
 		static public String UriToSerializableString (Uri uri)
 		{
 			int i;
-			string ret;
+			string scheme, path;
 			StringBuilder builder = new StringBuilder ();
-			
-			// The ToString() of a file:// URI is not always representative of
-			// what it was constructed from. For example, it will return a
-			// # (which was inputted as %23) as %23, whereas the more standard
-			// behaviour for other escaped-characters is to return them as
-			// their actual character. (e.g. %40 gets returned as @)
-			// On the other hand, the LocalPath of a file:// URI does seem to
-			// return the literal # so we use that instead.
-			if (uri.IsFile)
-				ret = Uri.UriSchemeFile + Uri.SchemeDelimiter + uri.LocalPath;
-			else
-				ret = uri.ToString ();
+
+			scheme = uri.Scheme;
+			path = StringFu.HexEscape (uri.LocalPath);
 
 			// XmlSerializer is happy to serialize 'odd' characters, but doesn't
 			// like to deserialize them. So we encode all 'odd' characters now.
-			for (i = 0; i < ret.Length; i++)
-				if ((ret [i] < '!') || (ret [i] > '~' && ret [i] < 256))
-					builder.Append (Uri.HexEscape (ret [i]));
+			for (i = 0; i < path.Length; i++)
+				if ((path [i] < '!') || (path [i] > '~' && path [i] < 256))
+					builder.Append (Uri.HexEscape (path [i]));
 				else
-					builder.Append (ret [i]);
+					builder.Append (path [i]);
 
+			if (scheme == "uid")
+				builder.Insert (0, ':');
+			else
+				builder.Insert (0, Uri.SchemeDelimiter);
+
+			builder.Insert (0, scheme);
+			builder.Append (uri.Fragment);
+			
 			return builder.ToString ();
 		}
 
