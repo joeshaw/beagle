@@ -15,8 +15,8 @@ INCLUDES= \
 	-DMOZILLA_HOME=\""$(MOZILLA_HOME)\""		\
 	-include $(MOZILLA_INCLUDE_ROOT)/mozilla-config.h
 
-COND_GLUE_SOURCES =
-COND_GLUE_LIBADD =
+EXTRA_GLUE_SOURCES =
+EXTRA_GLUE_LIBADD =
 
 BEAGLED_GLUE_SOURCES =	\
 	beagled-utils.c
@@ -54,9 +54,9 @@ TRAYICON_GLUE_LIBADD = $(LIBTRAYICON_LIBS)
 if ENABLE_WV1
 INCLUDES += \
 	$(WV1_CFLAGS)
-COND_GLUE_SOURCES +=	\
+EXTRA_GLUE_SOURCES +=	\
 	wv1-glue.c
-COND_GLUE_LIBADD +=	\
+EXTRA_GLUE_LIBADD +=	\
 	$(WV1_LIBS)
 endif
 
@@ -65,11 +65,11 @@ libbeagleglue_la_SOURCES = 		\
 	$(INOTIFY_GLUE_SOURCES)		\
 	$(IOPRIO_GLUE_SOURCES)		\
 	$(SYSINFO_GLUE_SOURCES)		\
-	$(COND_GLUE_SOURCES)
+	$(EXTRA_GLUE_SOURCES)
 
 libbeagleglue_la_LIBADD =	\
 	$(SYSINFO_GLUE_LIBADD)	\
-	$(COND_GLUE_LIBADD)
+	$(EXTRA_GLUE_LIBADD)
 
 libbeagleuiglue_la_SOURCES =	\
 	$(GECKO_GLUE_SOURCES)	\
@@ -84,4 +84,10 @@ gluelibdir = $(pkglibdir)
 gluelib_LTLIBRARIES = 		\
 	libbeagleglue.la	\
 	libbeagleuiglue.la
+
+COND_SOURCES = 			\
+	wv1-glue.c
+
+EXTRA_DIST =			\
+	$(COND_SOURCES)
 
