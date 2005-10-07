@@ -1444,7 +1444,7 @@ label_1_brk: ;
 		
         private Token Jj_consume_token(int kind)
         {
-            Token oldToken;
+            Token oldToken = null;
             if ((oldToken = token).next != null)
                 token = token.next;
             else
