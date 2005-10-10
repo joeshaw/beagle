@@ -152,13 +152,14 @@ namespace Beagle.Util {
 
 	public class GaimLog : ImLog {
 
-		private static string StripTags (string line)
+		private static string StripTags (string line, StringBuilder builder)
 		{
 			int first = line.IndexOf ('<');
 			if (first == -1)
 				return line;
 			
-			StringBuilder builder = new StringBuilder ();
+			builder.Length = 0;
+
 			int i = 0;
 			while (i < line.Length) {
 				
@@ -359,6 +360,9 @@ namespace Beagle.Util {
 				return;
 			}
 
+			StringBuilder builder;
+			builder = new StringBuilder ();
+
 			line = sr.ReadLine (); // throw away first line
 			if (line != null) {
 
@@ -368,7 +372,7 @@ namespace Beagle.Util {
 				
 				while ((line = sr.ReadLine ()) != null) {
 					if (isHtml)
-						line = StripTags (line);
+						line = StripTags (line, builder);
 				
 					if (IsNewConversation (line))
 						break;
@@ -428,10 +432,13 @@ namespace Beagle.Util {
 			bool isHtml = line.ToLower ().StartsWith ("<html>");
 			offset = line.Length + 1;
 
+			StringBuilder builder;
+			builder = new StringBuilder ();
+
 			while ((line = sr.ReadLine ()) != null) {
 				long newOffset = offset + line.Length + 1;
 				if (isHtml)
-					line = StripTags (line);
+					line = StripTags (line, builder);
 				if (IsNewConversation (line)) {
 					ImLog log = new GaimLog ("aim", file.FullName, offset); //FIXME: protocol
 					log.StartTime = NewConversationTime (line);

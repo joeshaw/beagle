@@ -29,6 +29,7 @@ using System;
 using System.Collections;
 using System.IO;
 using System.Text;
+using System.Threading;
 using System.Xml;
 using System.Xml.Serialization;
 using Beagle.Util;
@@ -442,6 +443,48 @@ namespace Beagle {
 			return writer.ToString ();
 		}
 
+		//////////////////////////
+
+		const int BUFFER_SIZE = 8192;
+
+		private static char [] GetCharBuffer ()
+		{
+			LocalDataStoreSlot slot;
+			slot = Thread.GetNamedDataSlot ("Char Buffer");
+
+			object obj;
+			char [] buffer;
+			obj = Thread.GetData (slot);
+			if (obj == null) {
+				buffer = new char [BUFFER_SIZE];
+				Thread.SetData (slot, buffer);
+			} else {
+				buffer = (char []) obj; 
+			}
+
+			return buffer;
+		}
+
+		private static byte [] GetByteBuffer ()
+		{
+			LocalDataStoreSlot slot;
+			slot = Thread.GetNamedDataSlot ("Char Buffer");
+
+			object obj;
+			byte [] buffer;
+			obj = Thread.GetData (slot);
+			if (obj == null) {
+				buffer = new byte [BUFFER_SIZE];
+				Thread.SetData (slot, buffer);
+			} else {
+				buffer = (byte []) obj; 
+			}
+
+			return buffer;
+		}
+
+		//////////////////////////
+
 		private static Uri TextReaderToTempFileUri (TextReader reader)
 		{
 			if (reader == null)
@@ -462,12 +505,13 @@ namespace Beagle {
 			BufferedStream bufferedStream = new BufferedStream (fileStream);
 			StreamWriter writer = new StreamWriter (bufferedStream);
 
-			const int BUFFER_SIZE = 8192;
-			char [] buffer = new char [BUFFER_SIZE];
+
+			char [] buffer;
+			buffer = GetCharBuffer ();
 
 			int read;
 			do {
-				read = reader.Read (buffer, 0, BUFFER_SIZE);
+				read = reader.Read (buffer, 0, buffer.Length);
 				if (read > 0)
 					writer.Write (buffer, 0, read);
 			} while (read > 0);
@@ -496,12 +540,12 @@ namespace Beagle {
 
 			BufferedStream bufferedStream = new BufferedStream (fileStream);
 
-			const int BUFFER_SIZE = 8192;
-			byte [] buffer = new byte [BUFFER_SIZE];
+			byte [] buffer;
+			buffer = GetByteBuffer ();
 
 			int read;
 			do {
-				read = stream.Read (buffer, 0, BUFFER_SIZE);
+				read = stream.Read (buffer, 0, buffer.Length);
 				if (read > 0)
 					bufferedStream.Write (buffer, 0, read);
 			} while (read > 0);

@@ -208,6 +208,11 @@ namespace Beagle.Daemon {
 					Environment.Exit (0);
 					break;
 
+				case "--heap-buddy":
+					// Silently ignore the --heap-buddy argument: it gets handled
+					// in the wrapper script.
+					break;
+
 				case "--list-backends":
 					Console.WriteLine ("Current available backends:");
 					Console.Write (QueryDriver.ListBackends ());

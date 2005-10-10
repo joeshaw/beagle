@@ -33,16 +33,7 @@ using System.Text;
 namespace Beagle.Util {
 
 	public class DirectoryWalker {
-#if false
-		public static void Main (string[] args)
-		{
-			IEnumerable en = DirectoryWalker.GetFileInfos (args [0]);
 
-			foreach (FileInfo file in en) {
-				Console.WriteLine (file.FullName);
-			}
-		}
-#endif
 		private delegate bool   FileFilter      (string path, string name);
 		private delegate object FileObjectifier (string path, string name);
 
@@ -55,19 +46,18 @@ namespace Beagle.Util {
 		[DllImport ("libbeagleglue", EntryPoint = "beagled_utils_readdir", SetLastError = true)]
 		private static extern int sys_readdir (IntPtr dir, StringBuilder name);
 		
-		private static string readdir (IntPtr dir)
+		private static string readdir (IntPtr dir, StringBuilder buffer)
 		{
 			int r = 0;
-			StringBuilder name = new StringBuilder (256);
-
-			while (r == 0 && name.Length == 0) {
-			       r = sys_readdir (dir, name); 
+			buffer.Length = 0;
+			while (r == 0 && buffer.Length == 0) {
+			       r = sys_readdir (dir, buffer); 
 			}
 
 			if (r == -1)
 				return null;
 
-			return name.ToString ();
+			return buffer.ToString ();
 		}
 
 		private class FileEnumerator : IEnumerator {
@@ -77,6 +67,7 @@ namespace Beagle.Util {
 			FileObjectifier file_objectifier;
 			IntPtr dir_handle = IntPtr.Zero;
 			string current;
+			StringBuilder name_buffer = new StringBuilder (256);
 
 			public bool NamesOnly = false;
 			
@@ -117,7 +108,7 @@ namespace Beagle.Util {
 				bool skip_file = false;
 
 				do {
-					current = readdir (dir_handle);
+					current = readdir (dir_handle, name_buffer);
 					if (current == null)
 						break;
 
