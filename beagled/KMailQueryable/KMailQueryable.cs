@@ -217,8 +217,10 @@ namespace Beagle.Daemon.KMailQueryable {
 				string filename = file.Name.Substring (1, file.Name.LastIndexOf (".index")-1);
 				if (!Directory.Exists (Path.Combine (path, filename)) &&
 				    !Directory.Exists (Path.Combine (path, "." + filename + ".directory")) &&
-				    !File.Exists (Path.Combine (path, filename)))
+				    !File.Exists (Path.Combine (path, filename))) {
 					flag = false;
+					Logger.Log.Warn ("KMail backend: " + path + " contains a KMail index file but no corresponding mail file or directory. Ignoring directory!");
+				}
 			}
 			return flag;	
 		}
