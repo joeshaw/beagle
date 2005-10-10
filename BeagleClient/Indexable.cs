@@ -468,7 +468,7 @@ namespace Beagle {
 		private static byte [] GetByteBuffer ()
 		{
 			LocalDataStoreSlot slot;
-			slot = Thread.GetNamedDataSlot ("Char Buffer");
+			slot = Thread.GetNamedDataSlot ("Byte Buffer");
 
 			object obj;
 			byte [] buffer;
