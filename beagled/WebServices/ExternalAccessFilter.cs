@@ -45,31 +45,31 @@ namespace Beagle.WebService {
 		string[] reserved_suffixes;
 		static readonly string ConfigFile = "publicfolders.cfg";
 		
-// User can specify only a sub-directory under home directory in 'publicfolders.cfg'. 
-// All entries must start with ~/ . One entry per line. The leaf folder name should 
-// be unique. This leaf name will be used for the BeagleXSP application list.
+// Exported Folders: The leaf folder name should be unique. 
+// This leaf name will be used for the BeagleXSP application list.
 						
 		public ExternalAccessFilter (string HttpUriBase, string[] reserved_suffixes)
 		{						
 			this.HttpUriBase = HttpUriBase;
 			this.reserved_suffixes = reserved_suffixes;
 			
-			//First check for ~/.beagle/config/webservices.xml configuration:
+			//Check for ~/.beagle/config/webservices.xml configuration:
 			ArrayList publicFolders = Conf.WebServices.PublicFolders;
 			
 			if ((publicFolders != null) && (publicFolders.Count > 0)) {
+			
 				SetupFilters(publicFolders);
+				
 				if (File.Exists (Path.Combine (PathFinder.StorageDir, ConfigFile)))
 				{
-					log.Warn("ExternalAccessFilter: Duplicate configuration of PublicFolders !");
-					log.Info("ExternalAccessFilter: Remove '~/.beagle/publicfolders.cfg' file.\n Use 'beagle-config' instead to setup public folders.");						
-					log.Info("ExternalAccessFilter: Using ~/.beagle/config/webservvices.xml");		
+					log.Warn("ExternalAccessFilter: Detected deprecated configuration file for PublicFolders !");
+					log.Info("ExternalAccessFilter: Remove '~/.beagle/publicfolders.cfg' file.\n Use 'beagle-settings' or 'beagle-config' instead to setup public folders.");								
 				}
 				return;
 			}
 
 	    	publicFolders = new ArrayList(); 		
-	    		
+/*	    		
 			//Fallback to ~/.beagle/publicfolders.cfg
 			if (File.Exists (Path.Combine (PathFinder.StorageDir, ConfigFile))) {
 			
@@ -82,10 +82,8 @@ namespace Beagle.WebService {
 						publicFolders.Add(entry);                 
             	} 
             } 
-	      
-	     	bool fa = SetupFilters(publicFolders);
-		//if (fa)
-			//	log.Warn("NetBeagleQueryable: 'publicfolders.cfg' based configuration deprecated.\n Use 'beagle-config' or 'beagle-settings' instead to configure Public Folders");
+*/	      
+	     	SetupFilters(publicFolders);
 		}
 
 /*
