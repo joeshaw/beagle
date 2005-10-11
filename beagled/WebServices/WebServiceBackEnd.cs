@@ -538,7 +538,7 @@ namespace Beagle.WebService {
 					if (queryable == null)
 						snippet = "ERROR: hit.SourceObject is null, uri=" + h.Uri;
 					else
-						snippet = queryable.GetSnippet (ICollection2StringList(query.Text), h);											
+						snippet = queryable.GetSnippet (ICollection2StringList(query.StemmedText), h);											
 								
 					sr.hitResults[i] = new HitResult();
 					
@@ -722,7 +722,7 @@ namespace Beagle.WebService {
 							if (queryable == null)
 								snippet = "ERROR: hit.SourceObject is null, uri=" + h.Uri;
 							else
-								snippet = queryable.GetSnippet (ICollection2StringList(query.Text), h);		
+								snippet = queryable.GetSnippet (ICollection2StringList(query.StemmedText), h);		
 							
 							//GetSnippets always invoked on Target Beagle Node where hits originate:
 							if (snippet == null)
