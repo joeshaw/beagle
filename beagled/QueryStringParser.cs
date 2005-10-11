@@ -198,6 +198,8 @@ namespace Beagle.Daemon {
 			// if prop_name is not present in the mapping, assume the query is a text query
 			// i.e. if token is foo:bar and there is no mappable property named foo,
 			// assume "foo:bar" as text query
+			// FIXME the analyzer changes the text query "foo:bar" to "foo bar"
+			// which might not be the right thing to do
 			if (!is_present) {
 				QueryPart_Text query_part = new QueryPart_Text ();
 				query_part.Text = query_text;
