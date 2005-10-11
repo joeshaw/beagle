@@ -9,10 +9,10 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: gnome-control-center\n"
+"Project-Id-Version: gnome-screensaver\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2005-08-31 02:51+0000\n"
-"PO-Revision-Date: 2005-09-01 00:25+0200\n"
+"POT-Creation-Date: 2005-10-11 23:16+0200\n"
+"PO-Revision-Date: 2005-10-11 23:17+0200\n"
 "Last-Translator: Francisco Javier F. Serrador <serrador@cvs.gnome.org>\n"
 "Language-Team: Spanish <traductores@es.gnome.org>\n"
 "MIME-Version: 1.0\n"
@@ -37,7 +37,10 @@ msgstr "Desactivar búsqueda"
 msgid ""
 "You are about to close the search tray. The search tray is automatically "
 "started at login-time. Would you like to disable it for future sessions?"
-msgstr "Está a punto de cerrar el icono de búsqueda. El icono de búsqueda se inicia automáticamente junto con la sesión. ¿Le gustaría desactivarlo para futuras sesiones?"
+msgstr ""
+"Está a punto de cerrar el icono de búsqueda. El icono de búsqueda se inicia "
+"automáticamente junto con la sesión. ¿Le gustaría desactivarlo para futuras "
+"sesiones?"
 
 #: ../Best/BestTray.cs:207
 msgid "No Recent Searches"
@@ -192,27 +195,27 @@ msgstr "Conversación en {0}"
 msgid "Conversation with {0}"
 msgstr "Conversación con {0}"
 
-#: ../Tiles/TileMailMessage.cs:81
+#: ../Tiles/TileMailMessage.cs:88
 msgid "No Subject"
 msgstr "Sin asunto"
 
-#: ../Tiles/TileMailMessage.cs:88
+#: ../Tiles/TileMailMessage.cs:95
 msgid "To"
 msgstr "Para"
 
-#: ../Tiles/TileMailMessage.cs:88
+#: ../Tiles/TileMailMessage.cs:95
 msgid "From"
 msgstr "De"
 
-#: ../Tiles/TileMailMessage.cs:116
+#: ../Tiles/TileMailMessage.cs:123
 msgid "Sent"
 msgstr "Enviado"
 
-#: ../Tiles/TileMailMessage.cs:116
+#: ../Tiles/TileMailMessage.cs:123
 msgid "Received"
 msgstr "Recibido"
 
-#: ../Tiles/TileMailMessage.cs:124
+#: ../Tiles/TileMailMessage.cs:131
 msgid "Email attachment"
 msgstr "Adjunto de correo"
 
@@ -440,8 +443,8 @@ msgid ""
 "Are you sure you wish to remove this path from the list of directories to be "
 "included for indexing?"
 msgstr ""
-"¿Seguro que quiere quitar esta ruta de la lista de directorios que "
-"serán excluidos de la indexación?"
+"¿Seguro que quiere quitar esta ruta de la lista de directorios que serán "
+"excluidos de la indexación?"
 
 #: ../tools/Settings.cs:352
 msgid "Remove item"
@@ -574,12 +577,13 @@ msgstr "Añadir cualquier ruta adicional para incluirla en la indexación."
 
 #: ../tools/settings.glade.h:11
 msgid "Add any remote search-enabled hosts you wish to network with"
-msgstr "Agregar cualquier equipo con búsqueda remota activada con el que desee conectarse"
+msgstr ""
+"Agregar cualquier equipo con búsqueda remota activada con el que desee "
+"conectarse"
 
 #: ../tools/settings.glade.h:12
-#, fuzzy
 msgid "Address"
-msgstr "en la libreta de direcciones"
+msgstr "Dirección"
 
 #: ../tools/settings.glade.h:13
 msgid ""
@@ -626,17 +630,13 @@ msgid "Networking"
 msgstr "Redes"
 
 #: ../tools/settings.glade.h:25
-#, fuzzy
 msgid "Please select a resource you wish to exclude from indexing."
-msgstr ""
-"Por favor, seleccione la carpeta con correo que desea excluir de la "
-"indexación."
+msgstr "Seleccione un recurso que desee excluir de la indexación."
 
 #: ../tools/settings.glade.h:26
-#, fuzzy
 msgid "Please select the mail folder you wish to exclude from indexing. "
 msgstr ""
-"Por favor, seleccione la carpeta con correo que desea excluir de la "
+"Seleccione la carpeta de correo que desee excluir de la "
 "indexación."
 
 #: ../tools/settings.glade.h:27
@@ -644,9 +644,8 @@ msgid "Search"
 msgstr "Búsqueda"
 
 #: ../tools/settings.glade.h:28
-#, fuzzy
 msgid "Search Preferences"
-msgstr "Preferencias de búsqueda e indexación"
+msgstr "Preferencias de búsqueda"
 
 #: ../tools/settings.glade.h:29
 msgid ""
@@ -661,11 +660,8 @@ msgid "Specify paths that should be available for external access"
 msgstr "Especificar rutas que deberían estar disponibles para acceso externo"
 
 #: ../tools/settings.glade.h:31
-#, fuzzy
 msgid "Start search & indexing services automatically "
-msgstr ""
-"Iniciar los servicios de búsqueda e indexación automáticamente al iniciar "
-"sesión"
+msgstr "Iniciar los servicios de búsqueda e indexación automáticamente"
 
 #: ../Util/Evolution.cs:45 ../Util/Evolution.cs:163
 msgid "On This Computer"
@@ -783,51 +779,4 @@ msgstr "{0:0.0} Kib"
 #, csharp-format
 msgid "{0:0.0} MB"
 msgstr "{0:0.0} Mib"
-
-msgid "Add resource"
-msgstr "Añadir recurso"
-
-msgid "Select mail folder"
-msgstr "Seleccione la carpeta con el correo"
-
-msgid ""
-"The query for <i>{0}</i> failed.<br>The session bus isn't running.  See "
-"http://beaglewiki.org/index.php/Installing%20Beagle for information on "
-"setting up a session bus."
-msgstr ""
-"La consulta de <i>{0}</i> ha fallado.<br>El bus de sesión no se está "
-"ejecutando. Vea http://beaglewiki.org/index.php/Installing%20Beagle para "
-"obtener información sobre como configurar el bus de sesión."
-
-msgid "HH:mm"
-msgstr "HH:mm"
-
-msgid "This Week"
-msgstr "Esta semana"
-
-msgid "dddd"
-msgstr "dddd"
-
-#, fuzzy
-msgid "Last Week"
-msgstr "Visto por última vez:"
-
-msgid "This Month"
-msgstr "Este mes"
-
-msgid "This Year"
-msgstr "Este año"
-
-#, fuzzy
-msgid "yyyy MMM d"
-msgstr "d MMM"
-
-msgid "*"
-msgstr "*"
-
-msgid "<b>Today, 12:00 PM</b>"
-msgstr "<b>Hoy, 12:00 pm</b>"
-
-msgid "Find "
-msgstr "Buscar "
 
