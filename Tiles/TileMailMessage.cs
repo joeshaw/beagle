@@ -45,12 +45,19 @@ namespace Beagle.Tile {
 		{
 		}
 
+		private static bool IsAttachment (Hit hit)
+		{
+			// check if there is parent and parent has attachments
+			string str = hit ["parent:fixme:hasAttachments"];
+			return (hit.ParentUri != null && str != null && (str == "true"));
+		}
+		
 		private static string GetHitProperty (Hit hit, string name)
 		{
 			// FIXME: We should handle this case better, but
 			// for now, if we match an attachment, we just want
 			// to display the properties for the parent message.
-			if (hit.ParentUri == null)
+			if (!IsAttachment (hit))
 				return hit [name];
 			else
 				return hit ["parent:" + name];
@@ -120,7 +127,7 @@ namespace Beagle.Tile {
 				Template ["CanReply"] = "";
 
 			// FIXME: Gross attachment rendering
-			if (Hit.ParentUri != null) {
+			if (IsAttachment (Hit)) {
 				Template["Subject"] = Hit ["fixme:attachment_title"] + " [" + Catalog.GetString ("Email attachment") + "]";
 				Template["EmailSubject"] = str;
 				Gtk.IconSize size = (Gtk.IconSize) 48;
