@@ -51,11 +51,14 @@ namespace Beagle.Util {
 		static public String UriToSerializableString (Uri uri)
 		{
 			int i;
-			string scheme, path;
+			string path;
 			StringBuilder builder = new StringBuilder ();
 
-			scheme = uri.Scheme;
-			path = StringFu.HexEscape (uri.LocalPath);
+			if (uri.IsFile)
+				path = Uri.UriSchemeFile + Uri.SchemeDelimiter
+					+ StringFu.HexEscape (uri.LocalPath);
+			else
+				path = uri.ToString ();
 
 			// XmlSerializer is happy to serialize 'odd' characters, but doesn't
 			// like to deserialize them. So we encode all 'odd' characters now.
@@ -65,13 +68,8 @@ namespace Beagle.Util {
 				else
 					builder.Append (path [i]);
 
-			if (scheme == "uid")
-				builder.Insert (0, ':');
-			else
-				builder.Insert (0, Uri.SchemeDelimiter);
-
-			builder.Insert (0, scheme);
-			builder.Append (uri.Fragment);
+			if (uri.IsFile)
+				builder.Append (uri.Fragment);
 			
 			return builder.ToString ();
 		}

@@ -1,3 +1,7 @@
+2005-10-12  Daniel Drake  <dsd@gentoo.org>
+
+	* Util/UriFu.cs: Fix serialization of non-file uri's
+
 2005-10-07  Daniel Drake  <dsd@gentoo.org>
 
 	* glue/Makefile.am: Always ship conditional glue
