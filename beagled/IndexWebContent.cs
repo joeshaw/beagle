@@ -36,13 +36,21 @@ using Beagle.Util;
 class IndexWebContentTool {
 
 	static void PrintUsage () {
-		Console.WriteLine ("IndexWebContent.exe: Index web page content using the Beagle Search Engine.");
-		Console.WriteLine ("  --url URL\t\tURL for the web page being indexed.\n" +
-				   "  --title TITLE\t\tTitle for the web page.\n" +
-				   "  --sourcefile PATH\tFile containing content to index.\n" +
-				   "\t\t\tIf not set, content is read from STDIN.\n" +
-				   "  --deletesourcefile\tDelete file passed to --sourcefile after index.\n" +
-				   "  --help\t\tPrint this usage message.\n");
+		string usage =
+			"beagle-index-url: Index web page content using the Beagle Search Engine.\n" +
+			"Web page: http://www.gnome.org/projects/beagle\n" +
+			"Copyright (C) 2004-2005 Novell, Inc.\n\n";
+		usage +=
+			"Usage: beagle-index-url <OPTIONS>\n\n" +
+			"Options:\n" +
+			"  --url URL\t\tURL for the web page being indexed.\n" +
+			"  --title TITLE\t\tTitle for the web page.\n" +
+			"  --sourcefile PATH\tFile containing content to index.\n" +
+			"\t\t\tIf not set, content is read from STDIN.\n" +
+			"  --deletesourcefile\tDelete file passed to --sourcefile after index.\n" +
+			"  --help\t\tPrint this usage message.\n";
+
+		Console.WriteLine (usage);
 	}
 
 	static void Main (String[] args)
@@ -52,7 +60,12 @@ class IndexWebContentTool {
 		string sourcefile = null;
 		bool deletesourcefile = false;
 
-		Logger.LogToFile (PathFinder.LogDir, "IndexWebContent", true);
+		if (args.Length == 0 || Array.IndexOf (args, "--help") > -1) {
+			PrintUsage ();
+			Environment.Exit (1);
+		}
+
+		Logger.LogToFile (PathFinder.LogDir, "IndexWebContent", false);
 		Logger.Log.Info ("Running IndexWebContent");
 		Logger.Log.Debug ("Debug Mode!");
 		
@@ -89,7 +102,7 @@ class IndexWebContentTool {
 		}
 
 		if (uriStr == null) {
-			Console.WriteLine ("ERROR: URI not specified!\n");
+			Logger.Log.Error ("URI not specified!\n");
 			PrintUsage ();
 			Environment.Exit (1);
 		}
@@ -98,7 +111,7 @@ class IndexWebContentTool {
 		if (uri.Scheme == Uri.UriSchemeHttps) {
 			// For security/privacy reasons, we don't index any
 			// SSL-encrypted pages.
-			Console.WriteLine ("ERROR: Indexing secure https:// URIs is not secure!");
+			Logger.Log.Error ("Indexing secure https:// URIs is not secure!");
 			Environment.Exit (1);
 		}
 
@@ -123,8 +136,7 @@ class IndexWebContentTool {
 		if (sourcefile != null) {
 			
 			if (!File.Exists (sourcefile)) {
-				Console.WriteLine ("ERROR: sourcefile '{0}' does not exist!",
-						   sourcefile);
+				Logger.Log.Error ("sourcefile '{0}' does not exist!", sourcefile);
 				Environment.Exit (1);
 			}
 
@@ -134,7 +146,7 @@ class IndexWebContentTool {
 		} else {
 			Stream stdin = Console.OpenStandardInput ();
 			if (stdin == null) {
-				Console.WriteLine ("ERROR: No sourcefile specified, and no standard input!\n");
+				Logger.Log.Error ("No sourcefile specified, and no standard input!\n");
 				PrintUsage ();
 				Environment.Exit (1);
 			}
@@ -146,15 +158,14 @@ class IndexWebContentTool {
 		req.Add (indexable);
 
 		try {
-			System.Console.WriteLine ("Indexing");
+			Logger.Log.Info ("Indexing");
 			Logger.Log.Debug ("SendAsync");
 			req.SendAsync ();
 			Logger.Log.Debug ("Close");
 			req.Close ();
 			Logger.Log.Debug ("Done");
 		} catch (Exception e) {
-			Console.WriteLine ("ERROR: Indexing failed:");
-			Console.Write (e);
+			Logger.Log.Error ("Indexing failed: {0}", e);
 
 			// Still clean up after ourselves, even if we couldn't
 			// index the content.

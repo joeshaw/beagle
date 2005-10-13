@@ -215,16 +215,8 @@ namespace Beagle.Util {
 				if (file.Name.StartsWith ("current") || (! file.Name.EndsWith (instance)))
 					continue;
 				
-				int last_dash = file.Name.LastIndexOf ("-");
-				if (last_dash == -1)
-					continue; // skip strange-looking files
-
-				string date = file.Name.Substring (0, last_dash);
-
 				try {
-					DateTime log_date;
-					log_date = DateTime.ParseExact (date, "yyyy-MM-dd-HH-mm-ss", null);
-					if (log_date < magic_date)
+					if (file.LastWriteTime < magic_date)
 						file.Delete ();
 				} catch (Exception e) {	}
 			}				
@@ -242,7 +234,7 @@ namespace Beagle.Util {
 			string log_path = Path.Combine (path, timestamped_name);
 			string log_link = Path.Combine (path, "current-" + name);
 
-			// Delete old and obsolete log files
+			// Delete log files older than 7 days.
 			PruneOldLogs (path, name);
 
 			// Open the log file and set it as the default
