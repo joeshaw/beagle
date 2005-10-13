@@ -57,7 +57,7 @@ namespace Beagle.Tile {
 			if (Hit ["fixme:title"] != null && Hit ["fixme:title"].Trim().Length > 0)
 				Template ["Title"] = Hit ["fixme:title"];
 
-			Template ["fixme:artist"] = "Unknown Artist";
+			Template ["Artist"] = "Unknown Artist";
 			if (Hit ["fixme:artist"] != null && Hit ["fixme:artist"].Trim().Length > 0)
 				Template ["Artist"] = Hit ["fixme:artist"];
 
