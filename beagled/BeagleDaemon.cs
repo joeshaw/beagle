@@ -47,6 +47,7 @@ namespace Beagle.Daemon {
 
 		private static bool arg_replace = false;
 		private static bool arg_disable_scheduler = false;
+		private static bool arg_indexing_test_mode = false;
 
 		public static bool StartServer ()
 		{
@@ -107,6 +108,7 @@ namespace Beagle.Daemon {
 				"  --replace\t\tReplace a running daemon with a new instance.\n" +
 				"  --debug\t\tWrite out debugging information.\n" +
 				"  --debug-memory\tWrite out debugging information about memory use.\n" +
+				"  --indexing-test-mode\tRun in foreground, and exit when fully indexed.\n" + 
 				"  --deny-backend\tDeny a specific backend.\n" +
 				"  --allow-backend\tAllow a specific backend.\n" +
 				"  --list-backends\tList all the available backends.\n" +
@@ -183,8 +185,21 @@ namespace Beagle.Daemon {
 			stopwatch.Stop ();
 
 			Logger.Log.Debug ("Daemon initialization finished after {0}", stopwatch);
-		
+
+			if (arg_indexing_test_mode) {
+				Thread.Sleep (1000); // Ugly paranoia: wait a second for the backends to settle.
+				Logger.Log.Debug ("Running in indexing test mode");
+				Scheduler.Global.EmptyQueueEvent += OnEmptySchedulerQueue;
+				Scheduler.Global.Add (null); // pulse the scheduler
+			}
 			return false;
+		}
+
+		static void OnEmptySchedulerQueue ()
+		{
+			Logger.Log.Debug ("Scheduler queue is empty: terminating immediately");
+			Shutdown.BeginShutdown ();
+			Environment.Exit (0); // Ugly work-around: We need to call Exit here to avoid deadlocking.
 		}
 
 		public static int Main (string[] args)
@@ -240,6 +255,11 @@ namespace Beagle.Daemon {
 				case "--debug-memory":
 					arg_debug = true;
 					arg_debug_memory = true;
+					break;
+					
+				case "--indexing-test-mode":
+					arg_indexing_test_mode = true;
+					arg_fg = true;
 					break;
 
 				case "--allow-backend":
@@ -298,6 +318,11 @@ namespace Beagle.Daemon {
 
 				}
 			}
+
+			if (arg_indexing_test_mode) {
+				LuceneQueryable.OptimizeRightAway = true;
+			}
+				
 
 			// Bail out if we are trying to run as root
 			if (Environment.UserName == "root") {

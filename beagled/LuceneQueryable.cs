@@ -33,6 +33,8 @@ using Beagle.Util;
 namespace Beagle.Daemon {
 
 	public abstract class LuceneQueryable : IQueryable {
+		
+		static public bool OptimizeRightAway = false;
 
 		public delegate IIndexer IndexerCreator (string name, int minor_version);
 
@@ -673,7 +675,7 @@ namespace Beagle.Daemon {
 			if (our_optimize_task == null)
 				our_optimize_task = NewOptimizeTask ();
 
-			if (Environment.GetEnvironmentVariable ("BEAGLE_UNDER_BLUDGEON") != null)
+			if (OptimizeRightAway || Environment.GetEnvironmentVariable ("BEAGLE_UNDER_BLUDGEON") != null)
 				optimize_delay = 1/120.0; // half a second
 
 			// Changing the trigger time of an already-scheduled process

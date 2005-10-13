@@ -33,6 +33,10 @@ namespace Beagle.Util {
 
 	public class Scheduler {
 
+		// Fire an event if there are no tasks left to execute.
+		public delegate void EmptyQueueDelegate ();
+		public event EmptyQueueDelegate EmptyQueueEvent;
+
 		static public bool Debug = false;
 
 		public enum Priority {
@@ -804,6 +808,8 @@ namespace Beagle.Util {
 					// on our lock and then re-start our
 					// while loop
 					if (tasks_by_tag.Count == 0) {
+						if (EmptyQueueEvent != null)
+							EmptyQueueEvent ();
 						status_str = "Waiting on empty queue";
 						Monitor.Wait (big_lock);
 						executed_task_count = 0;
