@@ -1020,7 +1020,9 @@ namespace Beagle.Daemon {
 		///////////////////////////////////////////////////////////////////////////////////
 
 		//
-		// Grabbing a block of hits
+		// Various ways to grab lots of hits at once.
+		// These should never be used for querying, only for utility
+		// functions.
 		//
 
 		public int GetBlockOfHits (int cookie,
@@ -1113,6 +1115,63 @@ namespace Beagle.Daemon {
 
 			// Return the new cookie
 			return cookie;
+		}
+
+		// For a large index, this will be very slow and will consume
+		// a lot of memory.  Don't call it without a good reason!
+		// We return a hashtable indexed by Uri.
+		public Hashtable GetAllHitsByUri ()
+		{
+			Hashtable all_hits;
+			all_hits = UriFu.NewHashtable ();
+
+			IndexReader primary_reader;
+			IndexReader secondary_reader;
+			primary_reader = IndexReader.Open (PrimaryStore);
+			secondary_reader = IndexReader.Open (SecondaryStore);
+
+			// Load everything from the primary index
+			int max_doc;
+			max_doc = primary_reader.MaxDoc ();
+			for (int i = 0; i < max_doc; ++i) {
+				
+				if (primary_reader.IsDeleted (i))
+					continue;
+
+				Document doc;
+				doc = primary_reader.Document (i);
+
+				Hit hit;
+				hit = DocumentToHit (doc);
+				all_hits [hit.Uri] = hit;
+			}
+
+			// Now add in everything from the secondary index, if it exists
+			if (secondary_reader != null) {
+				max_doc = secondary_reader.MaxDoc ();
+				for (int i = 0; i < max_doc; ++i) {
+
+					if (secondary_reader.IsDeleted (i))
+						continue;
+
+					Document doc;
+					doc = secondary_reader.Document (i);
+					
+					Uri uri;
+					uri = GetUriFromDocument (doc);
+
+					Hit hit;
+					hit = (Hit) all_hits [uri];
+					if (hit != null)
+						AddPropertiesToHit (hit, doc, false);
+				}
+			}
+
+			primary_reader.Close ();
+			if (secondary_reader != null)
+				secondary_reader.Close ();
+
+			return all_hits;
 		}
 	}
 }

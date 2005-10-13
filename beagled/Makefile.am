@@ -650,6 +650,37 @@ $(EXTRACT_CONTENT_TARGET): $(EXTRACT_CONTENT_CSFILES) $(EXTRACT_CONTENT_LOCAL_AS
 
 ############################################################
 
+DUMP_INDEX_WRAPPER = beagle-dump-index
+DUMP_INDEX_TARGET = DumpIndex.exe
+
+$(DUMP_INDEX_WRAPPER): $(srcdir)/$(WRAPPER_IN)
+	$(WRAPPER_SED) -e "s|\@target\@|$(DUMP_INDEX_TARGET)|g" < $(srcdir)/$(WRAPPER_IN) > $@
+	chmod +x $(DUMP_INDEX_WRAPPER)
+
+DUMP_INDEX_CSFLAGS = \
+	-target:exe
+
+DUMP_INDEX_CSFILES = \
+	$(srcdir)/DumpIndex.cs
+
+DUMP_INDEX_LOCAL_ASSEMBLIES = \
+	../Util/Util.dll			\
+	../BeagleClient/Beagle.dll		\
+	./$(PLUGIN_TARGET)			\
+	./$(DAEMON_DLL_TARGET)
+
+DUMP_INDEX_ASSEMBLIES = \
+	$(BEAGLED_LIBS)				\
+	$(DAEMON_LOCAL_ASSEMBLIES:%=-r:%)	\
+	-r:Mono.Posix				\
+	-r:System.Runtime.Remoting		\
+	-r:ICSharpCode.SharpZipLib.dll
+
+$(DUMP_INDEX_TARGET): $(DUMP_INDEX_CSFILES) $(DUMP_INDEX_LOCAL_ASSEMBLIES)
+	$(CSC) -out:$@ $(DUMP_INDEX_CSFLAGS) $(DUMP_INDEX_CSFILES) $(DUMP_INDEX_ASSEMBLIES)
+
+############################################################
+
 INDEX_WEB_CONTENT_WRAPPER = beagle-index-url
 INDEX_WEB_CONTENT_TARGET = IndexWebContent.exe
 
@@ -919,6 +950,7 @@ ALL_TARGETS = 				\
 	$(INDEX_WEB_CONTENT_TARGET)	\
 	$(INDEX_WEB_CONTENT_WRAPPER)	\
 	$(EXTRACT_CONTENT_TARGET)	\
+	$(DUMP_INDEX_TARGET)		\
 	$(SNIPPET_TEST_TARGET)		\
 	$(TERM_STATS_TARGET)		\
 	$(NAME_INDEX_TARGET)		\
@@ -1006,6 +1038,7 @@ sbin_SCRIPTS = \
 
 noinst_SCRIPTS=	\
 	$(EXTRACT_CONTENT_WRAPPER)	\
+	$(DUMP_INDEX_WRAPPER)		\
 	$(SNIPPET_TEST_WRAPPER)		\
 	$(TERM_STATS_WRAPPER)		\
 	$(NAME_INDEX_WRAPPER)		
@@ -1020,6 +1053,7 @@ EXTRA_DIST = \
 	$(DAEMON_CSFILES)			\
 	$(EDS_QUERYABLE_CSFILES)		\
 	$(EXTRACT_CONTENT_CSFILES)		\
+	$(DUMP_INDEX_CSFILES)			\
 	$(INDEX_WEB_CONTENT_CSFILES)		\
 	$(SNIPPET_TEST_CSFILES)			\
 	$(INDEX_HELPER_CSFILES)			\
@@ -1053,6 +1087,9 @@ CLEANFILES = \
 	$(EXTRACT_CONTENT_TARGET)		\
 	$(EXTRACT_CONTENT_TARGET).mdb		\
 	$(EXTRACT_CONTENT_WRAPPER)		\
+	$(DUMP_INDEX_TARGET)			\
+	$(DUMP_INDEX_TARGET).mdb		\
+	$(DUMP_INDEX_WRAPPER)			\
 	$(INDEX_WEB_CONTENT_TARGET)		\
 	$(INDEX_WEB_CONTENT_TARGET).mdb		\
 	$(INDEX_WEB_CONTENT_WRAPPER)		\
