@@ -111,6 +111,9 @@ namespace Beagle.Daemon.EvolutionMailDriver {
 				string dir = (string) pending.Dequeue ();
 
 				foreach (string subdir in DirectoryWalker.GetDirectories (dir)) {
+					if (Shutdown.ShutdownRequested)
+						return;
+
 					if (Inotify.Enabled) {
 						Inotify.Subscribe (dir, OnInotifyEvent,
 								   Inotify.EventType.Create
@@ -122,6 +125,9 @@ namespace Beagle.Daemon.EvolutionMailDriver {
 				}
 
 				foreach (FileInfo file in DirectoryWalker.GetFileInfos (dir)) {
+					if (Shutdown.ShutdownRequested)
+						return;
+
 					if (file.Name == "summary") {
 						if (SummaryAddedEvent != null && FileIsInteresting (file))
 							SummaryAddedEvent (file);
@@ -138,8 +144,12 @@ namespace Beagle.Daemon.EvolutionMailDriver {
 
 		public void Crawl ()
 		{
-			foreach (string root in roots)
+			foreach (string root in roots) {
+				if (Shutdown.ShutdownRequested)
+					return;
+
 				Watch (root);
+			}
 		}
 	}
 }

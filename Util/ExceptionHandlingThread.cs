@@ -38,6 +38,9 @@ namespace Beagle.Util {
 
 		private ExceptionHandlingThread (ThreadStart method)
 		{
+			if (method == null)
+				throw new ArgumentNullException ("method");
+
 			this.method = method;
 		}
 
