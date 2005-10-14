@@ -79,9 +79,10 @@ $(SHUTDOWN_WRAPPER): $(WRAPPER_IN)
 QUERY_TARGET  = Query.exe
 QUERY_WRAPPER = beagle-query
 QUERY_CSFILES = $(srcdir)/Query.cs
+QUERY_ASSEMBLIES= -r:../beagled/BeagleDaemonLib.dll
 
 $(QUERY_TARGET): $(QUERY_CSFILES) $(LOCAL_ASSEMBLIES)
-	$(CSC) -out:$@ $(CSFLAGS) $(QUERY_CSFILES) $(ASSEMBLIES)
+	$(CSC) -out:$@ $(CSFLAGS) $(QUERY_CSFILES) $(QUERY_ASSEMBLIES) $(ASSEMBLIES)
 
 $(QUERY_WRAPPER): $(WRAPPER_IN)
 	$(WRAPPER_SED) -e "s|\@target\@|$(QUERY_TARGET)|g" < $(srcdir)/$(WRAPPER_IN) > $@

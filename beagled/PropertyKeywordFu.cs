@@ -36,7 +36,7 @@ using Beagle.Util;
 
 namespace Beagle.Daemon {
 	
-	class PropertyDetail {
+	public class PropertyDetail {
 		private PropertyType type;
 		private string property_name;
 		// a short description, so that frontends can get the description from here
@@ -71,12 +71,16 @@ namespace Beagle.Daemon {
 	public class PropertyKeywordFu {
 		// mapping
 		private static Hashtable property_table;
-	    
+
 		// static class
 		private PropertyKeywordFu () { }
 
 		static PropertyKeywordFu () {
 			PopulatePropertyTable ();
+		}
+
+		public static IDictionaryEnumerator MappingEnumerator {
+			get { return property_table.GetEnumerator ();}
 		}
 
 		// FIXME handle i18n issues... user might use a i18n-ised string for "title"

@@ -32,7 +32,7 @@ using System.Text;
 using Gtk;
 
 using Beagle;
-using BU = Beagle.Util;
+using Beagle.Daemon;
 
 class QueryTool {
 
@@ -144,6 +144,15 @@ class QueryTool {
 			"  --help\t\t\tPrint this usage message.\n";
 
 		Console.WriteLine (usage);
+
+		Console.WriteLine (
+			"'query string' can include specific keywords e.g. author:jon.\n" +
+			"Supported keywords are:");
+		IDictionaryEnumerator property_keyword_enum = PropertyKeywordFu.MappingEnumerator;
+		while (property_keyword_enum.MoveNext ()) {
+			PropertyDetail prop = property_keyword_enum.Value as PropertyDetail;
+			Console.WriteLine ("  {0,-12} for {1}", property_keyword_enum.Key, prop.Description);
+		}
 
 		System.Environment.Exit (0);
 	}

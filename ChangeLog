@@ -1,3 +1,8 @@
+2005-10-14  Debajyoti Bera <dbera.web@gmail.com>
+
+	* tools/Query.cs, tools/Makefile.am, beagled/PropertyKeywordFu.cs: 
+	output supported keyword queries in beagle-query --help
+
 2005-10-12  Daniel Drake  <dsd@gentoo.org>
 
 	* Util/UriFu.cs: Fix serialization of non-file uri's
