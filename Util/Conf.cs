@@ -322,6 +322,45 @@ namespace Beagle.Util {
 				get { return show_search_window_binding; }
 				set { show_search_window_binding = value; }
 			}
+
+			private int best_pos_x = 0;
+			private int best_pos_y = 0;
+			private int best_width = -1; // dont explicitly set height on first run
+			private int best_height = -1; // -ditto-
+			private int size_history = 10;
+			// arghh... We want a Queue but Queue doesnt serialize *easily*
+			private ArrayList search_history = new ArrayList (); // search history size
+
+			public int BestPosX {
+				get { return best_pos_x; }
+				set { RememberToSave (); best_pos_x = value; }
+			}
+
+			public int BestPosY {
+				get { return best_pos_y; }
+				set { RememberToSave (); best_pos_y = value; }
+			}
+
+			public int BestWidth {
+				get { return best_width; }
+				set { RememberToSave (); best_width = value; }
+			}
+
+			public int BestHeight {
+				get { return best_height; }
+				set { RememberToSave (); best_height = value; }
+			}
+
+			private void RememberToSave ()
+			{
+				SaveNeeded = true;
+			}
+
+			public ArrayList SearchHistory {
+				get { return search_history; }
+				set { search_history = value; }
+			}
+
 		}
 
 		[ConfigSection (Name="daemon")]

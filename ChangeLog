@@ -1,3 +1,8 @@
+2005-10-17  Debajyoti Bera <dbera.web@gmail.org>
+
+	* Util/Conf.cs, Best/BestWindow.cs, Best/BestTray.cs: save window
+	position, dimension and search history across sessions.
+
 2005-10-17  Daniel Drake  <dsd@gentoo.org>
 
 	* beagled/Lucene.Net/: Small optimization; reduce the amount of

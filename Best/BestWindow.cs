@@ -34,7 +34,7 @@ using Gtk;
 using Mono.Posix;
 
 using Beagle;
-using BU = Beagle.Util;
+using Beagle.Util;
 using Beagle.Tile;
 
 namespace Best {
@@ -71,7 +71,7 @@ namespace Best {
 		}
 
 		Gtk.AccelGroup accel_group;
-		BU.GlobalKeybinder global_keys;
+		GlobalKeybinder global_keys;
 
 		void CreateWindow (string query)
 		{
@@ -101,7 +101,7 @@ namespace Best {
 
 			accel_group = new Gtk.AccelGroup ();
 			this.AddAccelGroup (accel_group);
-			global_keys = new BU.GlobalKeybinder (accel_group);
+			global_keys = new GlobalKeybinder (accel_group);
 
 			// Close window (Ctrl-W)
 			global_keys.AddAccelerator (new EventHandler (this.HideWindowHandler),
@@ -141,6 +141,8 @@ namespace Best {
 
 			//DBusisms.BeagleDown += OnBeagleDown;
 
+			UpdateFromConf ();
+			
 			UpdatePage ();
 
 			if (query != null)
@@ -404,6 +406,47 @@ namespace Best {
 			canvas.ShowAll ();
 
 			return contents;
+		}
+
+		private void UpdateFromConf ()
+		{
+			Console.WriteLine ("Reading settings from Config");
+			int pos_x = Conf.Searching.BestPosX;
+			int pos_y = Conf.Searching.BestPosY;
+			int width = Conf.Searching.BestWidth;
+			int height = Conf.Searching.BestHeight;
+			
+			if (pos_x != 0 || pos_y != 0) {
+				posX = pos_x;
+				posY = pos_y;
+				Move (pos_x, pos_y);
+			}
+			if (width != -1)
+				DefaultWidth = width;
+			if (height != -1)
+				DefaultHeight = height;
+			Gtk.TreeIter iter;
+			foreach (string search in Conf.Searching.SearchHistory) {
+				iter = history.Append ();
+				history.SetValue (iter, 0, search);
+			}
+		}
+
+		public void StoreSettingsInConf ()
+		{
+			Console.WriteLine ("Storing setting in Config");
+			int pos_x = posX, pos_y = posY;
+			if (WindowIsVisible)
+				GetPosition (out pos_x, out pos_y);
+			int width = 0, height = 0;
+			GetSize (out width, out height);
+			
+			Conf.Searching.BestPosX = pos_x;
+			Conf.Searching.BestPosY = pos_y;
+			Conf.Searching.BestWidth = width;
+			Conf.Searching.BestHeight = height;
+			Conf.Searching.SearchHistory = RetriveSearches ();
+			Conf.Save ();
 		}
 
 		private void UpdatePage ()

@@ -167,6 +167,7 @@ namespace Best {
 					} catch (Exception ex) {}
 				}
 			}
+			win.StoreSettingsInConf ();
 			Application.Quit ();
 		}
 		
