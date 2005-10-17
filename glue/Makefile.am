@@ -21,10 +21,12 @@ EXTRA_GLUE_LIBADD =
 BEAGLED_GLUE_SOURCES =	\
 	beagled-utils.c
 
-INOTIFY_GLUE_SOURCES =		\
+if ENABLE_INOTIFY
+EXTRA_GLUE_SOURCES +=		\
 	inotify.h		\
 	inotify-syscalls.h	\
 	inotify-glue.c
+endif
 
 IOPRIO_GLUE_SOURCES =	\
 	ioprio-glue.c
@@ -62,7 +64,6 @@ endif
 
 libbeagleglue_la_SOURCES = 		\
 	$(BEAGLED_GLUE_SOURCES)		\
-	$(INOTIFY_GLUE_SOURCES)		\
 	$(IOPRIO_GLUE_SOURCES)		\
 	$(SYSINFO_GLUE_SOURCES)		\
 	$(EXTRA_GLUE_SOURCES)
@@ -86,7 +87,10 @@ gluelib_LTLIBRARIES = 		\
 	libbeagleuiglue.la
 
 COND_SOURCES = 			\
-	wv1-glue.c
+	wv1-glue.c		\
+	inotify.h		\
+	inotify-syscalls.h	\
+	inotify-glue.c
 
 EXTRA_DIST =			\
 	$(COND_SOURCES)

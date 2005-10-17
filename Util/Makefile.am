@@ -110,14 +110,20 @@ ASSEMBLIES += 					\
 	$(GALAGO_LIBS)
 endif
 
+if ENABLE_INOTIFY
+INOTIFY_EXE = Inotify.exe
+CSFLAGS += -define:ENABLE_INOTIFY
+else
+INOTIFY_EXE =
+endif
 
 $(TARGET): $(CSFILES) $(GOOGLE_CS) $(EXTSTR)
 	$(CSC) -unsafe -out:$@ $(CSFLAGS) $^ $(ASSEMBLIES)
 
 Inotify.exe: $(srcdir)/Inotify.cs $(srcdir)/Logger.cs $(srcdir)/DirectoryWalker.cs
-	$(CSC) -unsafe -out:$@ $^ -r:Mono.Posix -define:INOTIFY_TEST
+	$(CSC) -unsafe -out:$@ $^ -r:Mono.Posix -define:INOTIFY_TEST -define:ENABLE_INOTIFY
 
-all: $(TARGET) Inotify.exe
+all: $(TARGET) $(INOTIFY_EXE)
 
 install-data-local: $(TARGET)
 	$(mkinstalldirs) $(DESTDIR)$(pkglibdir)

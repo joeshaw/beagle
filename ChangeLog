@@ -3,6 +3,9 @@
 	* beagled/Lucene.Net/: Small optimization; reduce the amount of
 	exception/throwing catching
 
+	* configure.in, Util/Inotify.cs, Util/Makefile.am, glue/Makefile.am:
+	Conditionally build inotify support. Disable on FreeBSD.
+
 2005-10-14  Debajyoti Bera <dbera.web@gmail.com>
 
 	* tools/Query.cs, tools/Makefile.am, beagled/PropertyKeywordFu.cs: 

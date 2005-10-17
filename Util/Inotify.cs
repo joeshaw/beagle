@@ -42,6 +42,10 @@ namespace Beagle.Util {
 
 		public delegate void InotifyCallback (Watch watch, string path, string subitem, string srcpath, EventType type);
 
+		public interface Watch {
+			void Unsubscribe ();
+			void ChangeSubscription (EventType new_mask);
+		}
 		/////////////////////////////////////////////////////////////////////////////////////
 
 		[Flags]
@@ -112,6 +116,62 @@ namespace Beagle.Util {
 
 		/////////////////////////////////////////////////////////////////////////////////////
 
+		static public bool Verbose = false;
+		static private int inotify_fd = -1;
+
+		static Inotify ()
+		{
+			log = Logger.Get ("Inotify");
+
+			if (Environment.GetEnvironmentVariable ("BEAGLE_DISABLE_INOTIFY") != null) {
+				Logger.Log.Debug ("BEAGLE_DISABLE_INOTIFY is set");
+				return;
+			}
+
+			if (Environment.GetEnvironmentVariable ("BEAGLE_INOTIFY_VERBOSE") != null)
+				Inotify.Verbose = true;
+
+			try {
+				inotify_fd = inotify_glue_init ();
+			} catch (EntryPointNotFoundException) {
+				Logger.Log.Info ("Inotify not available on system.");
+				return;
+			}
+
+			if (inotify_fd == -1)
+				Logger.Log.Warn ("Could not initialize inotify");
+		}
+
+		static public bool Enabled {
+			get { return inotify_fd >= 0; }
+		}
+
+		/////////////////////////////////////////////////////////////////////////////////////
+
+#if ! ENABLE_INOTIFY
+
+		// Stubs for systems where inotify is unavailable
+
+		static public Watch Subscribe (string path, InotifyCallback callback, EventType mask)
+		{
+			return null;
+		}
+
+		static public void Start ()
+		{
+			return;
+		}
+
+		static public void Stop ()
+		{
+			return;
+		}
+
+#else // ENABLE_INOTIFY
+
+		/////////////////////////////////////////////////////////////////////////////////////
+		static private ArrayList event_queue = new ArrayList ();
+
 		private class QueuedEvent {
 			public int       Wd;
 			public EventType Type;
@@ -149,37 +209,6 @@ namespace Beagle.Util {
 		}
 
 		/////////////////////////////////////////////////////////////////////////////////////
-
-		static private int inotify_fd = -1;
-		static private ArrayList event_queue = new ArrayList ();
-
-		static Inotify ()
-		{
-			log = Logger.Get ("Inotify");
-
-			if (Environment.GetEnvironmentVariable ("BEAGLE_DISABLE_INOTIFY") != null) {
-				Logger.Log.Debug ("BEAGLE_DISABLE_INOTIFY is set");
-				return;
-			}
-
-			if (Environment.GetEnvironmentVariable ("BEAGLE_INOTIFY_VERBOSE") != null)
-				Inotify.Verbose = true;
-
-			inotify_fd = inotify_glue_init ();
-			if (inotify_fd == -1)
-				Logger.Log.Warn ("Could not initialize inotify");
-		}
-
-		static public bool Enabled {
-			get { return inotify_fd >= 0; }
-		}
-
-		/////////////////////////////////////////////////////////////////////////////////////
-
-		public interface Watch {
-			void Unsubscribe ();
-			void ChangeSubscription (EventType new_mask);
-		}
 
 		private class WatchInternal : Watch {
 			private InotifyCallback callback;
@@ -532,8 +561,6 @@ namespace Beagle.Util {
 		}
 
 
-		static public bool Verbose = false;
-
 		// Update the watched_by_path hash and the path stored inside the watch
 		// in response to a move event.
 		static private void MoveWatch (WatchInfo watch, string name)		
@@ -823,6 +850,8 @@ namespace Beagle.Util {
 			Inotify.Stop ();
 		}
 #endif
+
+#endif // ENABLE_INOTIFY
 
 	}
 }
