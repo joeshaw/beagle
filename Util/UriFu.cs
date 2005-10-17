@@ -74,66 +74,6 @@ namespace Beagle.Util {
 			return builder.ToString ();
 		}
 
-		// Stolen from Mono SVN 20050319
-		// Fixes bug where non-ASCII characters couldn't be decoded
-		// FIXME: Go back to using Uri.HexUnescape when new Mono 1.1.5+ is 
-		// readily available.
-		public static char HexUnescape (string pattern, ref int index) 
-		{
-			if (pattern == null) 
-				throw new ArgumentException ("pattern");
-				
-			if (index < 0 || index >= pattern.Length)
-				throw new ArgumentOutOfRangeException ("index");
-
-			if (!Uri.IsHexEncoding (pattern, index))
-				return pattern [index++];
-
-			int stage = 0;
-			int c = 0;
-			int b = 0;
-			bool looped = false;
-			do {
-				index++;
-				int msb = Uri.FromHex (pattern [index++]);
-				int lsb = Uri.FromHex (pattern [index++]);
-				b = (msb << 4) + lsb;
-				if (!Uri.IsHexEncoding (pattern, index)) {
-					if (looped)
-						c += (b - 0x80) << ((stage - 1) * 6);
-					else
-						c = b;
-					break;
-				} else if (stage == 0) {
-					if (b < 0xc0)
-						return (char) b;
-					else if (b < 0xE0) {
-						c = b - 0xc0;
-						stage = 2;
-					} else if (b < 0xF0) {
-						c = b - 0xe0;
-						stage = 3;
-					} else if (b < 0xF8) {
-						c = b - 0xf0;
-						stage = 4;
-					} else if (b < 0xFB) {
-						c = b - 0xf8;
-						stage = 5;
-					} else if (b < 0xFE) {
-						c = b - 0xfc;
-						stage = 6;
-					}
-					c <<= (stage - 1) * 6;
-				} else {
-					c += (b - 0x80) << ((stage - 1) * 6);
-				}
-				stage--;
-				looped = true;
-			} while (stage > 0);
-			
-			return (char) c;
-		}
-
 		static public String LocalPathFromUri (Uri uri)
 		{
 			if (uri == null)

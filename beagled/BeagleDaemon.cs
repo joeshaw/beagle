@@ -343,11 +343,8 @@ namespace Beagle.Daemon {
 
 			Logger.Log.Info ("Starting Beagle Daemon (version {0})", ExternalStringsHack.Version);
 			
-			// FIXME: This try/catch is to work around a bug in mono 1.1.3
-			try {
-				Logger.Log.Debug ("Command Line: {0}",
-						  Environment.CommandLine != null ? Environment.CommandLine : "(null)");
-			} catch (Exception ex) { }
+			Logger.Log.Debug ("Command Line: {0}",
+					  Environment.CommandLine != null ? Environment.CommandLine : "(null)");
 
 			if (! ExtendedAttribute.Supported) {
 				Logger.Log.Warn ("Extended attributes are not supported on this filesystem.  " +

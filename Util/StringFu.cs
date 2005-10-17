@@ -300,7 +300,7 @@ namespace Beagle.Util {
 			int i = 0, pos = 0;
 			while ((i = str.IndexOf ('%', pos)) != -1) {
 				pos = i;
-				char unescaped = UriFu.HexUnescape (str, ref pos);
+				char unescaped = Uri.HexUnescape (str, ref pos);
 				str = str.Remove (i, 3);
 				str = str.Insert (i, new String(unescaped, 1));
 				pos -= 2;
