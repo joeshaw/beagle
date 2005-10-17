@@ -96,7 +96,7 @@ msgstr "Ukázáno <b>{0}</b> nejlep¹ích výsledkù <b>z {1}</b>."
 #: ../Best/BestWindow.cs:411
 #, csharp-format
 msgid "Results <b>{0} through {1} of {2}</b> are shown."
-msgstr "Ukázány výsledky <b>od {0} do {1} z {2}."
+msgstr "Ukázány výsledky <b>od {0} do {1} z {2}</b>."
 
 #. To translators: {0} represents the current query keywords
 #: ../Best/BestWindow.cs:522
