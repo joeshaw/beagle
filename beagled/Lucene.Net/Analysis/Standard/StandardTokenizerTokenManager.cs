@@ -1133,14 +1133,11 @@ namespace Lucene.Net.Analysis.Standard
 				++curPos;
 				if ((ii = jjnewStateCnt) == (startsAt = 73 - (jjnewStateCnt = startsAt)))
 					return curPos;
-				try
-				{
-					curChar = input_stream.ReadChar();
-				}
-				catch (System.IO.IOException)
-				{
+				int ret = input_stream.ReadChar();
+				if (ret != -1)
+					curChar = (char) ret;
+				else
 					return curPos;
-				}
 			}
 		}
 		internal static readonly int[] jjnextStates = new int[]{22, 23, 24, 26, 30, 31, 33, 34, 38, 39, 40, 41, 47, 48, 49, 50, 60, 61, 2, 3, 5, 6, 12, 13, 23, 24, 26, 24, 25, 26, 63, 64, 66, 67, 70, 71, 2, 3, 12, 13, 18, 19, 44, 45, 68, 69, 7, 8, 9, 10, 16, 17, 35, 36, 42, 43, 51, 52, 55, 56, 57, 58};
@@ -1284,11 +1281,11 @@ namespace Lucene.Net.Analysis.Standard
 			
 			for (; ; )
 			{
-				try
-				{
-					curChar = input_stream.BeginToken();
-				}
-				catch (System.IO.IOException)
+				
+				int ret = input_stream.BeginToken();
+				if (ret != -1)
+					curChar = (char) ret;
+				else
 				{
 					jjmatchedKind = 0;
 					matchedToken = JjFillToken();
@@ -1320,11 +1317,7 @@ namespace Lucene.Net.Analysis.Standard
 				int error_column = input_stream.GetEndColumn();
 				System.String error_after = null;
 				bool EOFSeen = false;
-				try
-				{
-					input_stream.ReadChar(); input_stream.Backup(1);
-				}
-				catch (System.IO.IOException)
+				if (input_stream.ReadChar() == -1)
 				{
 					EOFSeen = true;
 					error_after = curPos <= 1?"":input_stream.GetImage();
@@ -1336,6 +1329,9 @@ namespace Lucene.Net.Analysis.Standard
 					else
 						error_column++;
 				}
+				else
+					input_stream.Backup(1);
+
 				if (!EOFSeen)
 				{
 					input_stream.Backup(1);

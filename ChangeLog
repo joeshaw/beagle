@@ -1,3 +1,8 @@
+2005-10-17  Daniel Drake  <dsd@gentoo.org>
+
+	* beagled/Lucene.Net/: Small optimization; reduce the amount of
+	exception/throwing catching
+
 2005-10-14  Debajyoti Bera <dbera.web@gmail.com>
 
 	* tools/Query.cs, tools/Makefile.am, beagled/PropertyKeywordFu.cs: 

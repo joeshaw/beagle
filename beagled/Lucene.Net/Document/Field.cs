@@ -299,14 +299,7 @@ namespace Lucene.Net.Documents
         /// </summary>
         public System.String StringValue()
         {
-            try
-            {
-                return (System.String) fieldsData;
-            }
-            catch (System.InvalidCastException ignore)
-            {
-                return null;
-            }
+			return fieldsData as System.String;
         }
 		
         /// <summary>The value of the field as a Reader, or null.  If null, the String value
@@ -315,14 +308,7 @@ namespace Lucene.Net.Documents
         /// </summary>
         public System.IO.TextReader ReaderValue()
         {
-            try
-            {
-                return (System.IO.TextReader) fieldsData;
-            }
-            catch (System.InvalidCastException ignore)
-            {
-                return null;
-            }
+			return fieldsData as System.IO.TextReader;
         }
 		
         /// <summary>The value of the field in Binary, or null.  If null, the Reader or
@@ -331,14 +317,7 @@ namespace Lucene.Net.Documents
         /// </summary>
         public byte[] BinaryValue()
         {
-            try
-            {
-                return (byte[]) fieldsData;
-            }
-            catch (System.InvalidCastException ignore)
-            {
-                return null;
-            }
+			return fieldsData as byte[];
         }
 		
         /// <summary> Create a field by specifying its name, value and how it will

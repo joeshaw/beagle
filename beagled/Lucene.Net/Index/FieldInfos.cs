@@ -196,16 +196,9 @@ namespace Lucene.Net.Index
 		
 		public int FieldNumber(System.String fieldName)
 		{
-            try
-            {
-                FieldInfo fi = FieldInfo(fieldName);
-                if (fi != null)
-                    return fi.number;
-            }
-            catch (System.IndexOutOfRangeException ioobe)
-            {
-                return - 1;
-            }
+			FieldInfo fi = FieldInfo(fieldName);
+            if (fi != null)
+                return fi.number;
             return - 1;
         }
 		
@@ -224,14 +217,11 @@ namespace Lucene.Net.Index
         /// </returns>
         public System.String FieldName(int fieldNumber)
         {
-            try
-            {
-                return FieldInfo(fieldNumber).name;
-            }
-            catch (System.NullReferenceException npe)
-            {
-                return "";
-            }
+			FieldInfo info = FieldInfo(fieldNumber);
+			if (info == null)
+				return "";
+			else
+                return info.name;
         }
 		
         /// <summary> Return the fieldinfo object referenced by the fieldNumber.</summary>
@@ -242,19 +232,12 @@ namespace Lucene.Net.Index
         /// </returns>
         public FieldInfo FieldInfo(int fieldNumber)
 		{
-            if (fieldNumber < 0)
+            if (fieldNumber < 0 || fieldNumber >= byNumber.Count)
             {
                 return null;
             }
 
-            try
-            {
-                return (FieldInfo) byNumber[fieldNumber];
-            }
-            catch (System.IndexOutOfRangeException ioobe)
-            {
-                return null;
-            }
+            return (FieldInfo) byNumber[fieldNumber];
         }
 		
 		public int Size()
