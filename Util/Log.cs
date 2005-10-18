@@ -1,0 +1,328 @@
+//
+// Log.cs
+//
+// Copyright (C) 2004-2005 Novell, Inc.
+//
+
+//
+// Permission is hereby granted, free of charge, to any person obtaining a copy
+// of this software and associated documentation files (the "Software"), to deal
+// in the Software without restriction, including without limitation the rights
+// to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+// copies of the Software, and to permit persons to whom the Software is
+// furnished to do so, subject to the following conditions:
+//
+// The above copyright notice and this permission notice shall be included in all
+// copies or substantial portions of the Software.
+//
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+// SOFTWARE.
+//
+
+using System;
+using System.Collections;
+using System.Text;
+using System.IO;
+using System.Diagnostics;
+
+namespace Beagle.Util {
+
+	public enum LogLevel {
+		Error,
+		Warn,
+		Debug,
+		Ignored
+	}
+		
+	static public class Log {
+
+		static private string log_directory;
+		static private string log_name_prefix;
+		static private string program_identifier;
+		static private string program_identifier_truncated;
+
+		// If we don't call Log.Initialize, these defaults ensure that
+		// everything will just get spewed to the console.
+		static private bool running_in_foreground = true; 
+		static private LogLevel cutoff_level = LogLevel.Debug;
+
+		static private TextWriter log_writer;
+		static private TextWriter exception_writer;
+		static private TextWriter foreground_echo_writer;
+
+		static public void Initialize (string   log_directory,
+					       string   program_identifier,
+					       LogLevel cutoff_level,
+					       bool     running_in_foreground)
+		{
+			Log.log_directory = log_directory;
+			Log.program_identifier = program_identifier;
+			Log.cutoff_level = cutoff_level;
+			Log.running_in_foreground = running_in_foreground;
+
+			PruneOldLogs ();
+
+			log_name_prefix = String.Format ("{0:yyyy-MM-dd-HH-mm-ss}-", DateTime.Now);
+			program_identifier_truncated = program_identifier.Substring (0, 6);
+
+			log_writer = NewLogWriter (program_identifier);
+			exception_writer = NewDelayedLogWriter (program_identifier + "Exceptions");
+			
+			TextWriter console_log_writer;
+			console_log_writer = NewDelayedLogWriter (program_identifier + "Console");
+
+			TextWriter console_redirect_writer;
+			if (running_in_foreground) {
+				foreground_echo_writer = Console.Out;
+				console_redirect_writer = new TeeTextWriter (Console.Out, console_log_writer);
+			} else {
+				console_redirect_writer = console_log_writer;
+			}
+
+			Console.SetOut (console_redirect_writer);
+			Console.SetError (console_redirect_writer);
+
+			// If we are running in the background, redirect stdin to /dev/null
+			if (! running_in_foreground) {
+				FileStream dev_null_stream = new FileStream ("/dev/null",
+									     FileMode.Open,
+									     FileAccess.Read,
+									     FileShare.ReadWrite);
+				TextReader dev_null_reader = new StreamReader (dev_null_stream);
+				Console.SetIn (dev_null_reader);
+			}
+		}
+
+		static public void Disable ()
+		{
+			cutoff_level = LogLevel.Ignored;
+		}
+
+		static private void PruneOldLogs ()
+		{
+			DateTime magic_date = DateTime.Now.AddDays (-7);
+			DirectoryInfo dir = new DirectoryInfo (log_directory);
+
+			string current_str;
+			current_str = "current-" + program_identifier;
+			
+			foreach (FileInfo file in dir.GetFiles ()) {
+
+				// Clean up old symlinks
+				if (file.Name.StartsWith (current_str) && FileSystem.IsSymLink (file.FullName)) {
+					file.Delete ();
+					continue;
+				}
+				
+				int last_dash = file.Name.LastIndexOf ("-");
+				if (last_dash == -1)
+					continue; // skip strange-looking files
+
+				string date = file.Name.Substring (0, last_dash);
+
+				try {
+					DateTime log_date;
+					log_date = DateTime.ParseExact (date, "yyyy-MM-dd-HH-mm-ss", null);
+					if (log_date < magic_date)
+						file.Delete ();
+				} catch (Exception e) {	}
+			}				
+		}
+
+		static private TextWriter NewLogWriter (string name)
+		{
+			string log_path;
+			log_path = Path.Combine (log_directory, log_name_prefix + name);
+
+			FileStream stream;
+			stream = new FileStream (log_path,
+						 FileMode.CreateNew,
+						 FileAccess.Write,
+						 FileShare.ReadWrite);
+
+			StreamWriter writer;
+			writer = new StreamWriter (stream);
+			writer.AutoFlush = true;
+
+			string log_link;
+			log_link = Path.Combine (log_directory, "current-" + name);
+			Mono.Posix.Syscall.symlink (log_path, log_link);
+
+			return writer;
+		}
+
+		private class DelayedClosure {
+
+			string name;
+
+			public DelayedClosure (string name)
+			{
+				this.name = name;
+			}
+
+			public TextWriter Build ()
+			{
+				return NewLogWriter (name);
+			}
+		}
+
+		static private TextWriter NewDelayedLogWriter (string name)
+		{
+			DelayedClosure closure;
+			closure = new DelayedClosure (name);
+			return new DelayedTextWriter (new DelayedTextWriter.Builder (closure.Build));
+		}
+
+		/////////////////////////////////////////////////////////////////////////////////////////
+
+		static object write_lock = new object ();
+
+		static private void WriteLine (LogLevel level, string format, object [] args, Exception ex) 
+		{
+			if (cutoff_level < level)
+				return;
+
+			string ex_str = null;
+			if (ex != null)
+				ex_str = ex.ToString ();
+			
+			// This only happens if Log.Initialize was never called.
+			if (running_in_foreground && foreground_echo_writer == null)
+				foreground_echo_writer = Console.Out;
+
+			if (foreground_echo_writer != null) {
+				foreground_echo_writer.Write (level);
+				foreground_echo_writer.Write (": ");
+				if (format != null)
+					foreground_echo_writer.WriteLine (format, args);
+				if (ex_str != null)
+					foreground_echo_writer.WriteLine (ex_str);
+				foreground_echo_writer.Flush ();
+			}
+
+			if (log_writer == null) // i.e. if Log.Initialize has not been called
+				return;
+
+			StringBuilder prefix_builder;
+			prefix_builder = new StringBuilder ();
+			prefix_builder.Append ('\n'); // start w/ a newline
+			prefix_builder.AppendFormat ("{0:yyMMdd HHmmssff} {1:00000} ",
+						     DateTime.Now, Process.GetCurrentProcess ().Id);
+			prefix_builder.Append (program_identifier_truncated);
+
+			prefix_builder.Append (' ');
+			switch (level) {
+			case LogLevel.Error:
+				prefix_builder.Append ("ERROR");
+				break;
+			case LogLevel.Warn:
+				prefix_builder.Append (" WARN");
+				break;
+			case LogLevel.Debug:
+				prefix_builder.Append ("DEBUG");
+				break;
+			default:
+				prefix_builder.Append (" HUH?");
+				break;
+			}
+
+			if (ex != null)
+				prefix_builder.Append (" EX");
+			prefix_builder.Append (": ");
+			
+			string prefix;
+			prefix = prefix_builder.ToString ();
+			
+			StringBuilder message;
+			message = new StringBuilder ();
+			message.Append (prefix);
+			message.Remove (0, 1); // remove leading \n
+			if (format != null)
+				message.AppendFormat (format, args);
+			if (ex_str != null) {
+				if (format != null)
+					message.Append ('\n');
+				message.Append (ex_str);
+			}
+			message.Replace ("\n", prefix);
+
+			string message_str;
+			message_str = message.ToString ();
+			
+			lock (write_lock) {
+				log_writer.WriteLine (message_str);
+				if (ex != null && exception_writer != null)
+					exception_writer.WriteLine (message_str);
+			}
+		}
+
+		/////////////////////////////////////////////////////////////////////////////////////////
+
+		static public void Debug (string message, params object [] args)
+		{
+			WriteLine (LogLevel.Debug, message, args, null);
+		}
+
+		static public void Debug (Exception ex, string message, params object [] args)
+		{
+			WriteLine (LogLevel.Debug, message, args, ex);
+		}
+
+		static public void Debug (Exception ex)
+		{
+			WriteLine (LogLevel.Debug, null, null, ex);
+		}
+
+		static public void Info (string message, params object [] args)
+		{
+			// The Info log level is deprecated: just map it to Debug.
+			Debug (message, args);
+		}
+
+		static public void Info (Exception ex, string message, params object [] args)
+		{
+			Debug (ex, message, args);
+		}
+
+		static public void Info (Exception ex)
+		{
+			Debug (ex);
+		}
+
+		static public void Warn (string message, params object [] args)
+		{
+			WriteLine (LogLevel.Warn, message, args, null);
+		}
+
+		static public void Warn (Exception ex, string message, params object [] args)
+		{
+			WriteLine (LogLevel.Warn, message, args, ex);
+		}
+
+		static public void Warn (Exception ex)
+		{
+			WriteLine (LogLevel.Warn, null, null, ex);
+		}
+
+		static public void Error (string message, params object [] args)
+		{
+			WriteLine (LogLevel.Error, message, args, null);
+		}
+		
+		static public void Error (Exception ex, string message, params object [] args)
+		{
+			WriteLine (LogLevel.Error, message, args, ex);
+		}
+
+		static public void Error (Exception ex)
+		{
+			WriteLine (LogLevel.Error, null, null, ex);
+		}
+	}
+}
+
