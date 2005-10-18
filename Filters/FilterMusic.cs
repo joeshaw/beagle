@@ -78,7 +78,7 @@ namespace Beagle.Filters {
 			try {
 				tag = new AudioFileWrapper (Stream, GetEntaggedMimeType ());
 			} catch (Exception e) {
-				Logger.Log.Warn ("Exception filtering music: {0}", e);
+				Logger.Log.Warn (e, "Exception filtering music");
 				Finished();
 				return;
 			}

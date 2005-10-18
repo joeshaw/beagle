@@ -49,6 +49,7 @@ CSFILES = 			        	\
 	$(srcdir)/CommandLineFu.cs		\
 	$(srcdir)/CompatFileChooser.cs		\
 	$(srcdir)/Conf.cs			\
+	$(srcdir)/DelayedTextWriter.cs		\
 	$(srcdir)/DirectoryWalker.cs		\
 	$(srcdir)/Evolution.cs			\
 	$(srcdir)/ExceptionHandlingThread.cs	\
@@ -69,6 +70,7 @@ CSFILES = 			        	\
 	$(srcdir)/IoPriority.cs			\
 	$(srcdir)/JpegHeader.cs			\
 	$(srcdir)/KdeUtils.cs			\
+	$(srcdir)/Log.cs			\
 	$(srcdir)/Logger.cs             	\
 	$(srcdir)/Mozilla.cs	        	\
 	$(srcdir)/MultiReader.cs        	\
@@ -82,6 +84,7 @@ CSFILES = 			        	\
 	$(srcdir)/StringFu.cs           	\
 	$(srcdir)/StringMatcher.cs		\
 	$(srcdir)/SystemInformation.cs		\
+	$(srcdir)/TeeTextWriter.cs		\
 	$(srcdir)/Timeline.cs			\
 	$(srcdir)/TopScores.cs			\
 	$(srcdir)/UnixClient.cs			\
@@ -120,8 +123,19 @@ endif
 $(TARGET): $(CSFILES) $(GOOGLE_CS) $(EXTSTR)
 	$(CSC) -unsafe -out:$@ $(CSFLAGS) $^ $(ASSEMBLIES)
 
-Inotify.exe: $(srcdir)/Inotify.cs $(srcdir)/Logger.cs $(srcdir)/DirectoryWalker.cs
+
+INOTIFY_TEST_CSFILES =				\
+	$(srcdir)/Inotify.cs			\
+	$(srcdir)/Log.cs			\
+	$(srcdir)/Logger.cs			\
+	$(srcdir)/DelayedTextWriter.cs		\
+	$(srcdir)/TeeTextWriter.cs		\
+	$(srcdir)/DirectoryWalker.cs		\
+	$(srcdir)/FileSystem.cs
+
+Inotify.exe: $(INOTIFY_TEST_CSFILES)
 	$(CSC) -unsafe -out:$@ $^ -r:Mono.Posix -define:INOTIFY_TEST -define:ENABLE_INOTIFY
+
 
 all: $(TARGET) $(INOTIFY_EXE)
 

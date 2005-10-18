@@ -65,10 +65,6 @@ class IndexWebContentTool {
 			Environment.Exit (1);
 		}
 
-		Logger.LogToFile (PathFinder.LogDir, "IndexWebContent", false);
-		Logger.Log.Info ("Running IndexWebContent");
-		Logger.Log.Debug ("Debug Mode!");
-		
 		for (int i = 0; i < args.Length; i++) {
 			switch (args [i]) {
 			case "--url":

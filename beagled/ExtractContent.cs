@@ -177,8 +177,8 @@ class ExtractContentTool {
 
 	static int Main (string[] args)
 	{
-		Logger.DefaultLevel = LogLevel.Debug;
-		Logger.DefaultEcho = (Array.IndexOf (args, "--debug") != -1);
+		if (Array.IndexOf (args, "--debug") == -1)
+			Log.Disable ();
 
 		if (Array.IndexOf (args, "--help") != -1) {
 			PrintUsage ();

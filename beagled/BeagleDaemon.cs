@@ -140,7 +140,7 @@ namespace Beagle.Daemon {
 				if (arg_replace)
 					ReplaceExisting ();
 				else {
-					Logger.Log.Fatal ("Could not set up the listener for beagle requests.  "
+					Logger.Log.Error ("Could not set up the listener for beagle requests.  "
 							  + "There is probably another beagled instance running.  "
 							  + "Use --replace to replace the running service");
 					Environment.Exit (1);
@@ -333,13 +333,13 @@ namespace Beagle.Daemon {
 
 			MainLoopThread = Thread.CurrentThread;
 
-			// Initialize logging.
-			// If we saw the --debug arg, set the default logging level
-			// accordingly.
-			if (arg_debug)
-				Logger.DefaultLevel = LogLevel.Debug;
-
-			Logger.LogToFile (PathFinder.LogDir, "Beagle", arg_fg);
+			Log.Initialize (PathFinder.LogDir,
+					"Beagle", 
+					// FIXME: We always turn on full debugging output!  We are still
+					// debugging this code, after all...
+					//arg_debug ? LogLevel.Debug : LogLevel.Warn,
+					LogLevel.Debug,
+					arg_fg);
 
 			Logger.Log.Info ("Starting Beagle Daemon (version {0})", ExternalStringsHack.Version);
 			
@@ -380,7 +380,7 @@ namespace Beagle.Daemon {
 
 			Logger.Log.Debug ("Leaving BeagleDaemon.Main");
 
-			if (Logger.Log.Level == LogLevel.Debug) {
+			if (arg_debug) {
 				Thread.Sleep (500);
 				ExceptionHandlingThread.SpewLiveThreads ();
 			}

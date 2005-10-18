@@ -93,14 +93,9 @@ namespace Beagle.Util {
 				FileStream file = new FileStream ("/etc/fstab",
 								  System.IO.FileMode.Open,
 								  FileAccess.Read);
-
 				int ret = GiveAdvice (file, AdviseNormal);
-				if (ret != 0) {
-					Logger log = Logger.Get ("FileAdvise");
-					log.Error ("FileAdvise failed: " +
-						   Syscall.strerror (Marshal.GetLastWin32Error()));
-				}
-
+				if (ret != 0)
+					Log.Error ("FileAdvise failed: {0}", Syscall.strerror (Marshal.GetLastWin32Error()));
 				file.Close ();
 			} catch { }
 		}

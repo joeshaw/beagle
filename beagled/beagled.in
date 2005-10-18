@@ -47,6 +47,7 @@ export MONO_GAC_PREFIX="@gacprefix@:$MONO_GAC_PREFIX"
 export LD_LIBRARY_PATH="/opt/gnome/lib/evolution/2.0:$LD_LIBRARY_PATH"
 monogrind=0
 heap_buddy=0
+debug=0
 
 BEAGLED_ARGS="$*"
 for i in $BEAGLED_ARGS; do
@@ -55,6 +56,7 @@ for i in $BEAGLED_ARGS; do
     --bg | --background ) fg_user=0 ;;
     --monogrind ) monogrind=1 ;;
     --heap-buddy ) heap_buddy=1 ;;
+    --debug ) debug=1 ;;
     esac
 done
 
@@ -79,6 +81,10 @@ if [ $heap_buddy -eq 1 ]; then
    export _GET_ON_THE_HEAP_BUDDY_BANDWAGON=1
    MONO_EXTRA_ARGS="--profile=heap-buddy:outfile.beagled $MONO_EXTRA_ARGS"
    rm -f outfile.beagled outfile.helper.*
+fi
+
+if [ $debug -eq 1 ]; then
+   export BEAGLE_DEBUG_FLAG_IS_SET=1
 fi
 
 # The BEAGLE_MONO_RUNTIME variable can be used to specify the path
