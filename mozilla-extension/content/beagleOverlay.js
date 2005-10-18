@@ -10,12 +10,11 @@ var gEnv = Components.classes["@mozilla.org/process/environment;1"].getService(C
 
 // Load jslib parts used in file execution
 var gFile = new FileUtils();
-var gPath = gEnv.get("HOME") + "/.beagle/firefox";
-var gDir = new Dir(gPath);
 
 // Create the global variables
 var gBeagleRunStatus = 0;
-var gBeagleIndexerPath;
+var gBeagleDataPath = gEnv.get("HOME") + "/.beagle/ToIndex";
+var gBeagleDataDir = new Dir(gBeagleDataPath);
 var gBeagleBestPath;
 
 function beagleFindFileInPath(filename)
@@ -37,10 +36,8 @@ function beagleInit()
 {
   dump ("beagleInit started!\n");
 
-  gBeagleIndexerPath = beagleFindFileInPath("beagle-index-url");
   gBeagleBestPath = beagleFindFileInPath("best");
 
-  dump ("beagleInit: Found beagle-index-url: " + gBeagleIndexerPath + "\n");
   dump ("beagleInit: Found best: " + gBeagleBestPath + "\n");
 
   // Create eventlistener to trigger when context menu is invoked.
@@ -64,15 +61,11 @@ function beagleInit()
     gBeagleRunStatus = -1;
 
   // Add listener for page loads
-  if (gBeagleIndexerPath) {
-    if (document.getElementById("appcontent"))
-      document.getElementById("appcontent").addEventListener("load", 
-							     beaglePageLoad, 
-							     true);
-    dump ("beagleInit : Listening to document['appcontent'].load\n");
-  } else {
-    gBeagleRunStatus = "beagle-index-url not found in $PATH";
-  }
+  if (document.getElementById("appcontent"))
+    document.getElementById("appcontent").addEventListener("load", 
+                                                           beaglePageLoad, 
+                                                           true);
+  dump ("beagleInit : Listening to document['appcontent'].load\n");
 
   beagleUpdateStatus ();
 }
@@ -119,10 +112,41 @@ function beagleWriteContent(page, tmpfilepath)
   persist.saveDocument(page, tmpfile, null, null, ENCODE_MASK, 0);
 }
 
+function beagleWriteMetadata(page, tmpfilepath)
+{
+  var tmpfile = Components.classes["@mozilla.org/file/local;1"].createInstance(Components.interfaces.nsILocalFile);
+  tmpfile.initWithPath(tmpfilepath);
+
+  var stream = Components.classes["@mozilla.org/network/file-output-stream;1"].createInstance(Components.interfaces.nsIFileOutputStream);
+  stream.QueryInterface(Components.interfaces.nsIOutputStream);
+  stream.init(tmpfile, 0x04 | 0x08 | 0x20, 0600, 0);
+
+  var line;
+
+  // First line: URI
+  line = page.location.href + "\n";
+  stream.write(line, line.length);
+  
+  // Second line: Hit Type
+  line = "WebHistory\n";
+  stream.write(line, line.length);
+
+  // Third line: Mime type
+  line = "text/html\n";
+  stream.write(line, line.length);
+
+  // Additional lines: Properties
+  line = "t:dc:title=" + page.title + "\n";
+  stream.write(line, line.length);
+
+  stream.flush();
+  stream.close();
+}
+
 function beagleShouldIndex(page)
 {
   // user disabled, or can't find beagle-index-url.
-  if (gBeagleRunStatus == -1 || !gBeagleIndexerPath)
+  if (gBeagleRunStatus == -1)
     return false;
 
   if (!page || 
@@ -184,9 +208,9 @@ function beaglePageLoad(event)
 
   dump("beaglePageLoad: storing page: " + page.location.href + "\n");
 
-  if (!gFile.exists(gPath)) {
+  if (!gFile.exists(gBeagleDataPath)) {
     try {
-      gDir.create ();
+      gBeagleDataDir.create ();
       dump ("beaglePageLoad: Created .beagle/firefox\n");
     } catch(e) {
       dump ("beaglePageLoad: Unable to create .beagle/firefox: " + e + "\n");
@@ -194,15 +218,16 @@ function beaglePageLoad(event)
   }
 
   var hash = hex_md5(page.location.href);
-  var tmpfilepath = gPath + "/firefox-beagle-" + hash + ".html";
+  var tmpdatapath = gBeagleDataPath + "/firefox-beagle-" + hash + ".html";
+  var tmpmetapath = gBeagleDataPath + "/.firefox-beagle-" + hash + ".html";
 
   try {
-    beagleWriteContent(page, tmpfilepath);
+    beagleWriteContent(page, tmpdatapath);
     dump ("beaglePageLoad: beagleWriteContent sucessful!\n");
-    beagleRunIndexer(page.location.href, page.title, tmpfilepath);
-    dump ("beaglePageLoad: beagleRunIndexer sucessful!\n");
+    beagleWriteMetadata(page, tmpmetapath);
+    dump ("beaglePageLoad: beagleWriteMetadata sucessful!\n");
   } catch (ex) {
-    alert ("beaglePageLoad: beagleWriteContent failed: " + ex);
+    alert ("beaglePageLoad: beagleWriteContent/Metadata failed: " + ex);
   }
 }
 
@@ -216,40 +241,6 @@ function beagleRunBest(query)
   } catch(e) {
     alert("Caught error from best: " + e);
   }
-}
-
-function beagleRunIndexer(url, title, filepath)
-{
-  try {
-    var retval = gFile.spawn(gBeagleIndexerPath, 
-			    ["--url", url, 
-                             "--title", title,
-			     "--sourcefile", filepath, 
-			     "--deletesourcefile"]);
-    if (retval) {
-      alert("Error running beagle-index-url: " + retval);
-
-      try {
-        gFile.remove(filepath);
-      } catch(e) {
-        alert("Couldn't remove " + filepath + ": " + e);
-      }
-
-      gBeagleRunStatus = retval;
-    }
-  } catch(e) {
-    alert("Caught error from beagle-index-url: " + e);
-
-    try {
-      gFile.remove(filepath);
-    } catch(e) {
-      alert("Couldn't remove " + filepath + ": " + e);
-    }
-
-    gBeagleRunStatus = e;
-  }
-
-  beagleUpdateStatus();
 }
 
 function beagleShowPrefs()

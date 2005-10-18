@@ -24,8 +24,27 @@
 // DEALINGS IN THE SOFTWARE.
 //
 
+// The IndexingService has two modes of operation: one is through the standard
+// message-passing system and one where a slightly-structured file is dropped
+// into a known location on the filesystem.
+//
+// (1) Messaging: An IndexingServiceRequest message is sent containing URIs of
+// items to remove and Indexables to add.  This is more reliable, and is best
+// for clients which will also be utilizing Beagle for searching.
+//
+// (2) Files: The file to be indexed is dropped into the ~/.beagle/ToIndex
+// directory.  Another file with the same name prepended with a period is
+// also dropped into the directory.  In that file is the metadata for the
+// file being indexed.  The first line is the URI of the data being indexed.
+// The second line is the hit type.  The third line is the mime type.  Then
+// there are zero or more properties in the form "type:key=value", where
+// "type" is either 't' for text or 'k' for keyword.  This method is a lot
+// easier to use, but requires that Beagle have inotify support enabled to
+// work.
+
 using System;
 using System.Collections;
+using System.IO;
 
 using Beagle.Daemon;
 using Beagle.Util;
@@ -38,6 +57,138 @@ namespace Beagle.Daemon.IndexingServiceQueryable {
 		public IndexingServiceQueryable () : base ("IndexingServiceIndex")
 		{
 			Server.RegisterRequestMessageHandler (typeof (IndexingServiceRequest), new Server.RequestMessageHandler (HandleMessage));
+
+			string index_path = Path.Combine (PathFinder.StorageDir, "ToIndex");
+
+			if (!Directory.Exists (index_path))
+				Directory.CreateDirectory (index_path);
+
+			if (Inotify.Enabled)
+				Inotify.Subscribe (index_path, OnInotifyEvent, Inotify.EventType.CloseWrite);
+
+			foreach (FileInfo file in DirectoryWalker.GetFileInfos (index_path)) {
+				if (file.Name[0] == '.')
+					continue;
+
+				if (File.Exists (Path.Combine (file.DirectoryName, "." + file.Name)))
+					IndexFile (file);
+			}
+		}
+
+		private void OnInotifyEvent (Inotify.Watch watch,
+					     string path,
+					     string subitem,
+					     string srcpath,
+					     Inotify.EventType type)
+		{
+			if (subitem == "")
+				return;
+			
+			if (subitem[0] == '.') {
+				string data_file = Path.Combine (path, subitem.Substring (1));
+
+				if (File.Exists (data_file))
+					IndexFile (new FileInfo (data_file));
+			} else {
+				string meta_file = Path.Combine (path, "." + subitem);
+
+				if (File.Exists (meta_file))
+					IndexFile (new FileInfo (Path.Combine (path, subitem)));
+			}
+		}
+
+		private void IndexFile (FileInfo data_file)
+		{
+			FileInfo meta_file = new FileInfo (Path.Combine (data_file.DirectoryName, "." + data_file.Name));
+			FileStream meta_stream;
+
+			try {
+				meta_stream = meta_file.Open (FileMode.Open, FileAccess.Read, FileShare.Read);
+			} catch (FileNotFoundException) {
+				// The meta file disappeared before we could
+				// open it.
+				return;
+			}
+
+			StreamReader reader = new StreamReader (meta_stream);
+			
+			// First line of the file is a URI
+			string line = reader.ReadLine ();
+			Uri uri;
+
+			try {
+				uri = new Uri (line);
+			} catch (Exception e) {
+				Logger.Log.Warn ("IndexingService: Unable to parse URI in {0}: {1}",
+						 meta_file.FullName, e.Message);
+				meta_stream.Close ();
+				return;
+			}
+
+			Indexable indexable = new Indexable (uri);
+			indexable.Timestamp = data_file.LastWriteTime;
+			indexable.ContentUri = UriFu.PathToFileUri (data_file.FullName);
+			indexable.DeleteContent = true;
+
+			// Second line is the hit type
+			line = reader.ReadLine ();
+			if (line == null) {
+				Logger.Log.Warn ("IndexingService: EOF reached trying to read hit type from {0}",
+						 meta_file.FullName);
+				meta_stream.Close ();
+				return;
+			} else if (line != String.Empty)
+				indexable.HitType = line;
+
+			// Third line is the mime type
+			line = reader.ReadLine ();
+			if (line == null) {
+				Logger.Log.Warn ("IndexingService: EOF reached trying to read mime type from {0}",
+						 meta_file.FullName);
+				meta_stream.Close ();
+				return;
+			} else if (line != String.Empty)
+				indexable.MimeType = line;
+
+			// Following lines are properties in "t:key=value" format
+			do {
+				line = reader.ReadLine ();
+
+				if (line != null && line != String.Empty) {
+					bool keyword = false;
+
+					if (line[0] == 'k')
+						keyword = true;
+					else if (line[0] != 't') {
+						Logger.Log.Warn ("IndexingService: Unknown property type: '{0}'", line[0]);
+						continue;
+					}
+
+					int i = line.IndexOf ('=');
+
+					if (i == -1) {
+						Logger.Log.Warn ("IndexingService: Unknown property line: '{0}'", line);
+						continue;
+					}
+					
+					// FIXME: We should probably handle date types
+					if (keyword) {
+						indexable.AddProperty (Property.NewKeyword (line.Substring (2, i - 2),
+											    line.Substring (i + 1)));
+					} else {
+						indexable.AddProperty (Property.New (line.Substring (2, i - 2),
+										     line.Substring (i + 1)));
+					}
+				}
+			} while (line != null);
+
+			// Ok, we're finished with the meta file.  We can close and delete it.
+			meta_stream.Close ();
+			meta_file.Delete ();
+
+			Scheduler.Task task = NewAddTask (indexable);
+			task.Priority = Scheduler.Priority.Immediate;
+			ThisScheduler.Add (task);
 		}
 
 		private class IndexableGenerator : IIndexableGenerator {
