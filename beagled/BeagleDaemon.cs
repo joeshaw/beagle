@@ -72,7 +72,7 @@ namespace Beagle.Daemon {
 				request.Send ();
 				// Give it a second to shut down the messaging server
 				Thread.Sleep (1000);
-			} while (! StartServer ());
+			} while (! StartServer ());			
 		}
 
 		private static void LogMemoryUsage ()
@@ -138,7 +138,12 @@ namespace Beagle.Daemon {
 			// Fire up our server
 			if (! StartServer ()) {
 				if (arg_replace)
+				{
+#if ENABLE_WEBSERVICES
+					WebServiceBackEnd.Stop();
+#endif			
 					ReplaceExisting ();
+				}		
 				else {
 					Logger.Log.Error ("Could not set up the listener for beagle requests.  "
 							  + "There is probably another beagled instance running.  "

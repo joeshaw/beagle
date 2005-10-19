@@ -81,21 +81,37 @@ namespace Beagle.WebService {
 			get { return WebServiceBackEnd.hostname; }
 		}
 		
+		static TcpChannel tch1 = null;
 		public static void init() 
-		{
-		   
+		{		   
 		   if (instance == null) {
 			  instance = new WebBackEnd();
 
-			  //Register TCP Channel Listener
-		  	  ChannelServices.RegisterChannel(new TcpChannel(8347));	
+			  if (tch1 == null) {
+			  	
+			  	tch1 = new TcpChannel(8347);
 
-			  WellKnownServiceTypeEntry WKSTE = 
-				new WellKnownServiceTypeEntry(typeof(WebBackEnd),
-				 "WebBackEnd.rem", WellKnownObjectMode.Singleton);
-			  RemotingConfiguration.ApplicationName="beagled";
-			  RemotingConfiguration.RegisterWellKnownServiceType(WKSTE);
+			  	//Register TCP Channel Listener
+		  	  	ChannelServices.RegisterChannel(tch1);	
+
+			  	WellKnownServiceTypeEntry WKSTE = 
+			  		new WellKnownServiceTypeEntry(typeof(WebBackEnd),
+				 		"WebBackEnd.rem", WellKnownObjectMode.Singleton);
+			  	RemotingConfiguration.ApplicationName="beagled";
+			  	RemotingConfiguration.RegisterWellKnownServiceType(WKSTE);
+			  }
 		   }
+		}
+		
+		public static void cleanup() 
+		{
+			if (tch1 != null) {
+				tch1.StopListening(null);
+				ChannelServices.UnregisterChannel(tch1);
+				tch1 = null;
+			}
+
+			instance = null;
 		}
 		
 		void OnHitsAdded (QueryResult qres, ICollection hits)

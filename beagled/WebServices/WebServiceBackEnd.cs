@@ -173,12 +173,13 @@ namespace Beagle.WebService {
 				xsp_param[5] = DEFAULT_APP_MAPPINGS;
 				retVal = Mono.ASPNET.Server.initXSP(xsp_param, out appServer);		
 			}
-
-			if (retVal != 0) {
-				Logger.Log.Warn ("Error starting Internal Web Server (retVal={0})", retVal);
-				Logger.Log.Warn ("Check if there is another instance of Beagle running");
+			catch (System.Net.Sockets.SocketException) {
+					Logger.Log.Error ("Error starting Internal Web Server (retVal={0})", retVal);
+					Logger.Log.Error("There is probably another beagled instance running.  "
+							  + "Use --replace to replace the running service");			
 			}
-			else
+
+			if (retVal == 0) 
 				Logger.Log.Debug("BeagleXSP Applications list: " + xsp_param[5]);
 		}
 		
@@ -201,7 +202,10 @@ namespace Beagle.WebService {
 	  			pr.Close();
 	  			pr.Dispose();					
 			} 
-			catch (Exception e) { } 			
+			catch (Exception e) { } 
+									
+			WebBackEnd.cleanup();
+			instance = null;
 		}
 		
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -283,9 +287,9 @@ namespace Beagle.WebService {
 
   		  		//TCP Channel Listener registered in beagledWeb:init()
 		  		//ChannelServices.RegisterChannel(new TcpChannel(8347));
-		  		WellKnownServiceTypeEntry WKSTE =
-					new WellKnownServiceTypeEntry(typeof(WebServiceBackEnd),
-				 	"WebServiceBackEnd.rem", WellKnownObjectMode.Singleton);
+		  		WellKnownServiceTypeEntry WKSTE = 
+		  				new WellKnownServiceTypeEntry(typeof(WebServiceBackEnd),
+				 			"WebServiceBackEnd.rem", WellKnownObjectMode.Singleton);
 		  		RemotingConfiguration.ApplicationName="beagled";
 		  		RemotingConfiguration.RegisterWellKnownServiceType(WKSTE);
 		    }	 
