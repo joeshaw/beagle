@@ -1,3 +1,11 @@
+2005-10-19  Debajyoti Bera <dbera.web@gmail.org>
+
+	* Util/Conf.cs: updated to store positions for holmes
+
+	* Best/BestWindow.cs: store positions and dimensions
+	as percentage of current screen co-ordinate to handle change in screen
+	resolution
+
 2005-10-17  Debajyoti Bera <dbera.web@gmail.org>
 
 	* Util/Conf.cs, Best/BestWindow.cs, Best/BestTray.cs: save window

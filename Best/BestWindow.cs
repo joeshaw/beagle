@@ -30,6 +30,7 @@ using System.Collections;
 
 using Gnome;
 using Gtk;
+using GD=Gdk;
 
 using Mono.Posix;
 
@@ -411,19 +412,25 @@ namespace Best {
 		private void UpdateFromConf ()
 		{
 			Console.WriteLine ("Reading settings from Config");
-			int pos_x = Conf.Searching.BestPosX;
-			int pos_y = Conf.Searching.BestPosY;
-			int width = Conf.Searching.BestWidth;
-			int height = Conf.Searching.BestHeight;
+			// FIXME: there might be weird cases with multiple screens,
+			// multiple monitors, resolution related problems that might
+			// cause problem is remapping the stored values to current
+			// screen coordinates
+			int res_x = GD.Screen.Default.Width;
+			int res_y = GD.Screen.Default.Height;
+			int pos_x = (int)(Conf.Searching.BestPosX * res_x / 100);
+			int pos_y = (int)(Conf.Searching.BestPosY * res_y / 100);
+			int width = (int)(Conf.Searching.BestWidth * res_x / 100 );
+			int height = (int)(Conf.Searching.BestHeight * res_y / 100);
 			
 			if (pos_x != 0 || pos_y != 0) {
 				posX = pos_x;
 				posY = pos_y;
 				Move (pos_x, pos_y);
 			}
-			if (width != -1)
+			if (width != 0)
 				DefaultWidth = width;
-			if (height != -1)
+			if (height != 0)
 				DefaultHeight = height;
 			Gtk.TreeIter iter;
 			foreach (string search in Conf.Searching.SearchHistory) {
@@ -441,10 +448,12 @@ namespace Best {
 			int width = 0, height = 0;
 			GetSize (out width, out height);
 			
-			Conf.Searching.BestPosX = pos_x;
-			Conf.Searching.BestPosY = pos_y;
-			Conf.Searching.BestWidth = width;
-			Conf.Searching.BestHeight = height;
+			int res_x = GD.Screen.Default.Width;
+			int res_y = GD.Screen.Default.Height;
+			Conf.Searching.BestPosX = ((float) pos_x / res_x) * 100;
+			Conf.Searching.BestPosY = ((float) pos_y / res_y) * 100;
+			Conf.Searching.BestWidth = ((float) width / res_x) * 100;
+			Conf.Searching.BestHeight = ((float) height / res_y) * 100;
 			Conf.Searching.SearchHistory = RetriveSearches ();
 			Conf.Save ();
 		}

@@ -323,42 +323,72 @@ namespace Beagle.Util {
 				set { show_search_window_binding = value; }
 			}
 
-			private int best_pos_x = 0;
-			private int best_pos_y = 0;
-			private int best_width = -1; // dont explicitly set height on first run
-			private int best_height = -1; // -ditto-
-			private int size_history = 10;
-			// arghh... We want a Queue but Queue doesnt serialize *easily*
-			private ArrayList search_history = new ArrayList (); // search history size
+			// Best window position and dimension
+			// stored as percentage of screen co-ordinates
+			// to deal with change of resolution problem - hints from tberman
 
-			public int BestPosX {
+			private float best_pos_x = 0;
+			public float BestPosX {
 				get { return best_pos_x; }
 				set { RememberToSave (); best_pos_x = value; }
 			}
-
-			public int BestPosY {
+			
+			private float best_pos_y = 0;
+			public float BestPosY {
 				get { return best_pos_y; }
 				set { RememberToSave (); best_pos_y = value; }
 			}
-
-			public int BestWidth {
+			
+			// dont explicitly set height on first run
+			private float best_width = 0; 
+			public float BestWidth {
 				get { return best_width; }
 				set { RememberToSave (); best_width = value; }
 			}
 
-			public int BestHeight {
+			private float best_height = 0; // -ditto-
+			public float BestHeight {
 				get { return best_height; }
 				set { RememberToSave (); best_height = value; }
+			}
+
+			// FIXME Change names when Holmes is released under new name
+			// Holmes window position and dimension
+
+			private float holmes_pos_x = 0;
+			public float HolmesPosX {
+				get { return holmes_pos_x; }
+				set { RememberToSave (); holmes_pos_x = value; }
+			}
+			
+			private float holmes_pos_y = 0;
+			public float HolmesPosY {
+				get { return holmes_pos_y; }
+				set { RememberToSave (); holmes_pos_y = value; }
+			}
+			
+			private float holmes_width = 0; 
+			public float HolmesWidth {
+				get { return holmes_width; }
+				set { RememberToSave (); holmes_width = value; }
+			}
+
+			private int holmes_height = -1;
+			public int HolmesHeight {
+				get { return holmes_height; }
+				set { RememberToSave (); holmes_height = value; }
+			}
+
+			// ah!We want a Queue but Queue doesnt serialize *easily*
+			private ArrayList search_history = new ArrayList ();
+			public ArrayList SearchHistory {
+				get { return search_history; }
+				set { RememberToSave (); search_history = value; }
 			}
 
 			private void RememberToSave ()
 			{
 				SaveNeeded = true;
-			}
-
-			public ArrayList SearchHistory {
-				get { return search_history; }
-				set { search_history = value; }
 			}
 
 		}
