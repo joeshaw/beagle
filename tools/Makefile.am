@@ -1,5 +1,7 @@
+# Warnings we don't want to see
+# 0169 = The private field is never used
 
-CSC = mcs -debug
+CSC = mcs -debug -nowarn:0169
 
 applicationsdir = $(datadir)/applications
 applications_DATA = beagle-settings.desktop
