@@ -503,7 +503,7 @@ namespace Beagle.Daemon {
 					// to return this time through, but it does not mean that
 					// its processing queue is empty.
 					if (generated == null)
-						break;
+						continue;
 
 					if (queryable.PreAddIndexableHook (generated))
 						queryable.AddIndexable (generated);
@@ -691,8 +691,7 @@ namespace Beagle.Daemon {
 		// Other hooks
 
 		// If this returns true, a task will automatically be created to
-		// add the child.  Note that the PreAddHook will also be called,
-		// as usual.
+		// add the child.
 		virtual protected bool PreChildAddHook (Indexable child)
 		{
 			return true;
