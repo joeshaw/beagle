@@ -167,6 +167,7 @@ namespace Beagle {
 			p.type = PropertyType.Date;
 			p.Key = key;
 			p.Value = StringFu.DateTimeToString (dt);
+			p.is_searched = true;
 			return p;
 		}
 
@@ -180,6 +181,7 @@ namespace Beagle {
 			p.Key = key;
 			// FIXME: Should probably check that value is a valid date string.
 			p.Value = value;
+			p.is_searched = true;
 			return p;
 		}
 

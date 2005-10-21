@@ -112,9 +112,10 @@ namespace Beagle {
 
 	public class QueryPart_DateRange : QueryPart {
 
-		public const string AllProperties = "_all";
+		public const string AllPropertiesKey = "_all";
+		public const string TimestampKey = "Timestamp";
 
-		private string key = AllProperties;
+		private string key = AllPropertiesKey;
 		private DateTime start_date;
 		private DateTime end_date;
 

@@ -30,13 +30,43 @@ namespace Bludgeon {
 
 		static Random random = new Random ();
 
-		static public Query NewRandomQuery (int  length,
+		static public Query NewRandomQuery (int length,
 						    bool allow_inexpensive)
+		{
+			return NewRandomQuery (length, allow_inexpensive, false);
+		}
+
+		static private Query NewRandomQuery (int length,
+						    bool allow_inexpensive,
+						    bool inside_an_or)
 		{
 			Query query;
 			query = new Query ();
 
-			if (allow_inexpensive) {
+			// One in four queries will contain some OR terms.
+			if (! inside_an_or && random.Next (4) == 0) {
+				int N = random.Next (3) + 1;
+				for (int i = 0; i < N; ++i) {
+					QueryPart_Or part;
+					part = new QueryPart_Or ();
+
+					int sub_length;
+					sub_length = random.Next (length) + 1;
+					if (sub_length < 2)
+						sub_length = 2;
+					
+					// We generate a new query at random, and stuff its QueryParts
+					// into our Or QueryPart.
+					Query or_query;
+					or_query = NewRandomQuery (sub_length, allow_inexpensive, true);
+					foreach (QueryPart sub_part in or_query.Parts)
+						part.Add (sub_part);
+					
+					query.AddPart (part);
+				}
+			}
+
+			if (allow_inexpensive && ! inside_an_or) {
 				int mime_type;
 				mime_type = random.Next (3);
 				if (mime_type == 0)
@@ -55,7 +85,8 @@ namespace Bludgeon {
 				part = new QueryPart_Text ();
 				part.Text = Token.GetRandom ();
 
-				if (contains_required) {
+				// Prohibited parts are not allowed inside an or
+				if (contains_required && ! inside_an_or) {
 					if (random.Next (2) == 0)
 						part.Logic = QueryPartLogic.Prohibited;
 				} else {
@@ -71,6 +102,24 @@ namespace Bludgeon {
 				query.AddPart (part);
 			}
 
+			if (allow_inexpensive && random.Next (3) == 0) {
+				DateTime a, b;
+				a = FileModel.PickDateTime ();
+				b = FileModel.PickDateTime ();
+				if (b < a) {
+					DateTime tmp = a;
+					a = b;
+					b = tmp;
+				}
+
+				QueryPart_DateRange part;
+				part = new QueryPart_DateRange ();
+				part.StartDate = a;
+				part.EndDate = b;
+
+				query.AddPart (part);
+			}
+
 			return query;
 		}
 
@@ -81,6 +130,41 @@ namespace Bludgeon {
 
 		/////////////////////////////////////////////////////////////
 
+		static private string QueryPartToString (QueryPart abstract_part)
+		{
+			string msg;
+			msg = "????";
+				
+			if (abstract_part is QueryPart_Text) {
+				QueryPart_Text part;
+				part = (QueryPart_Text) abstract_part;
+				
+				msg = part.Text;
+				if (! (part.SearchFullText && part.SearchTextProperties)) {
+					if (part.SearchFullText)
+						msg += " IN FULLTEXT";
+					else if (part.SearchTextProperties)
+						msg += " IN TEXT PROPERTIES";
+					else
+						msg += " IN ANY TEXT";
+				}
+			} else if (abstract_part is QueryPart_Property) {
+				QueryPart_Property part;
+				part = (QueryPart_Property) abstract_part;
+				msg = String.Format ("PROPERTY {0} = {1}", part.Key, part.Value);
+			} else if (abstract_part is QueryPart_DateRange) {
+				QueryPart_DateRange part;
+				part = (QueryPart_DateRange) abstract_part;
+				msg = String.Format ("DATE RANGE {0} to {1}", part.StartDate, part.EndDate);
+			}
+
+			if (abstract_part.Logic == QueryPartLogic.Prohibited)
+				msg = "NOT " + msg;
+
+			
+			return msg;
+		}
+
 		static public void SpewQuery (Query query)
 		{
 			int i = 0;
@@ -89,31 +173,18 @@ namespace Bludgeon {
 
 				++i;
 
-				string msg;
-				msg = "????";
-				
-				if (abstract_part is QueryPart_Text) {
-					QueryPart_Text part;
-					part = (QueryPart_Text) abstract_part;
-
-					msg = "";
-					if (part.Logic == QueryPartLogic.Prohibited)
-						msg = "NOT ";
-					msg += part.Text;
-
-					if (! (part.SearchFullText && part.SearchTextProperties)) {
-						if (part.SearchFullText)
-							msg += " IN FULLTEXT";
-						else if (part.SearchTextProperties)
-							msg += " IN TEXT PROPERTIES";
+				if (abstract_part is QueryPart_Or) {
+					QueryPart_Or part = abstract_part as QueryPart_Or;
+					int j = 0;
+					Log.Spew ("{0}: OR", i);
+					foreach (QueryPart sub_part in part.SubParts) {
+						++j;
+						Log.Spew ("    {0}.{1}: {2}", i, j, QueryPartToString (sub_part));
 					}
-				} else if (abstract_part is QueryPart_Property) {
-					QueryPart_Property part;
-					part = (QueryPart_Property) abstract_part;
-					msg = String.Format ("PROPERTY {0} = {1}", part.Key, part.Value);
+
+				} else {
+					Log.Spew ("{0}: {1}", i, QueryPartToString (abstract_part));
 				}
-				
-				Log.Spew ("{0}: {1}", i, msg);
 			}
 		}
 

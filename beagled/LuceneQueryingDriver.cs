@@ -67,26 +67,6 @@ namespace Beagle.Daemon {
 
 		////////////////////////////////////////////////////////////////
 
-		private class NotHitFilter_Closure {
-			HitFilter original;
-
-			public NotHitFilter_Closure (HitFilter original)
-			{
-				this.original = original;
-			}
-			
-			public bool Filter (Hit hit)
-			{
-				return ! original (hit);
-			}
-		}
-
-		public HitFilter NotHitFilter (HitFilter filter)
-		{
-			NotHitFilter_Closure closure;
-			closure = new NotHitFilter_Closure (filter);
-			return new HitFilter (closure.Filter);
-		}
 
 		////////////////////////////////////////////////////////////////
 
@@ -140,8 +120,10 @@ namespace Beagle.Daemon {
 			LNS.BooleanQuery primary_prohibited_part_query = null;
 			LNS.BooleanQuery secondary_prohibited_part_query = null;
 
-			ArrayList all_hit_filters = new ArrayList ();
-			all_hit_filters.Add (hit_filter);
+			AndHitFilter all_hit_filters;
+			all_hit_filters = new AndHitFilter ();
+			if (hit_filter != null)
+				all_hit_filters.Add (hit_filter);
 
 			ArrayList term_list = new ArrayList ();
 
@@ -185,11 +167,20 @@ namespace Beagle.Daemon {
 						secondary_prohibited_part_query.Add (secondary_part_query, false, false);
 					}
 
-					if (part_hit_filter != null)
-						all_hit_filters.Add (NotHitFilter (part_hit_filter));
+					if (part_hit_filter != null) {
+						NotHitFilter nhf;
+						nhf = new NotHitFilter (part_hit_filter);
+						all_hit_filters.Add (new HitFilter (nhf.HitFilter));
+					}
 
 					break;
 				}
+
+				// We assume that QueryPartToQuery does the right thing when it returns
+				// a hit filter associated with a Prohibited part, and that we don't
+				// have to invert it or anything like that.
+				if (part_hit_filter != null)
+					all_hit_filters.Add (part_hit_filter);
 			}
 
 			// If we have no required parts, give up.
@@ -308,14 +299,12 @@ namespace Beagle.Daemon {
 				GenerateQueryResults (primary_reader,
 						      primary_searcher,
 						      secondary_searcher,
-					    	  primary_matches,
+						      primary_matches,
 						      result,
 						      term_list,
 						      query.MaxHits,
-						      DateTime.MinValue,
-						      DateTime.MaxValue,
 						      uri_filter,
-					    	  hit_filter);
+						      new HitFilter (all_hit_filters.HitFilter));
 			}
 
 			//
@@ -530,20 +519,11 @@ namespace Beagle.Daemon {
 							  IQueryResult      result,
 							  ICollection       query_term_list,
 							  int               max_results,
-							  DateTime          min_date,
-							  DateTime          max_date,
 							  UriFilter         uri_filter,
 							  HitFilter         hit_filter)
 		{
 			TopScores top_docs = null;
 			ArrayList all_docs = null;
-
-			long min_date_num, max_date_num;
-			min_date_num = Int64.Parse (StringFu.DateTimeToString (min_date));
-			max_date_num = Int64.Parse (StringFu.DateTimeToString (max_date));
-
-			if (max_date_num < min_date_num)
-				return;
 
 			if (Debug)
 				Logger.Log.Debug (">>> Initially handed {0} matches", primary_matches.TrueCount);
@@ -582,7 +562,8 @@ namespace Beagle.Daemon {
 				Document doc;
 				doc = primary_searcher.Doc (i);
 
-				// Check the timestamp to make sure it is in range
+				// Check the timestamp --- if we have already reached our
+				// limit, we might be able to reject it immediately.
 				string timestamp_str;
 				long timestamp_num = 0;
 
@@ -591,9 +572,6 @@ namespace Beagle.Daemon {
 					Logger.Log.Warn ("No timestamp on {0}!", GetUriFromDocument (doc));
 				} else {
 					timestamp_num = Int64.Parse (doc.Get ("Timestamp"));
-					if (timestamp_num < min_date_num || max_date_num < timestamp_num)
-						continue;
-
 					if (top_docs != null && ! top_docs.WillAccept (timestamp_num))
 						continue;
 				}

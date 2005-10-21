@@ -72,7 +72,9 @@ namespace Beagle.Daemon {
 		//     with sane handling of multiple properties on hits.
 		// 10: changed to support typed and mutable properties
 		// 11: moved mime type and hit type into properties
-		private const int MAJOR_VERSION = 11;
+		// 12: added year-month and year-month-day resolutions for all
+		//     date properties
+		private const int MAJOR_VERSION = 12;
 		private int minor_version = 0;
 
 		private string index_name;
@@ -465,6 +467,26 @@ namespace Beagle.Daemon {
 
 		}
 
+		static private void AddDateFields (string field_name, Property prop, Document doc)
+		{
+			DateTime dt = StringFu.StringToDateTime (prop.Value);
+
+			Field f;
+			f = new Field ("YM:" + field_name,
+				       StringFu.DateTimeToYearMonthString (dt),
+				       false,   // never store
+				       true,    // always index
+				       false);  // never tokenize
+			doc.Add (f);
+
+			f = new Field ("D:" + field_name,
+				       StringFu.DateTimeToDayString (dt),
+				       false,   // never store
+				       true,    // always index
+				       false);  // never tokenize
+			doc.Add (f);
+		}
+
 		static protected void AddPropertyToDocument (Property prop, Document doc)
 		{
 			if (prop == null || prop.Value == null)
@@ -487,6 +509,9 @@ namespace Beagle.Daemon {
 						       true,  // always indexed
 						       tokenize);
 					doc.Add (f);
+
+					if (prop.Type == PropertyType.Date)
+						AddDateFields (wildcard_field, prop, doc);
 				}
 			}
 
@@ -495,12 +520,17 @@ namespace Beagle.Daemon {
 						     prop.IsSearched ? 's' : '_',
 						     prop.Value);
 
-			f = new Field (PropertyToFieldName (prop.Type, prop.Key),
+			string field_name = PropertyToFieldName (prop.Type, prop.Key);
+
+			f = new Field (field_name,
 				       coded_value,
 				       true,        // always store
 				       true,        // always index
 				       true);       // always tokenize (just strips off type code for keywords)
 			doc.Add (f);
+
+			if (prop.Type == PropertyType.Date)
+				AddDateFields (field_name, prop, doc);
 		}
 
 		static protected Property GetPropertyFromDocument (Field f, Document doc, bool from_primary_index)
@@ -557,8 +587,29 @@ namespace Beagle.Daemon {
 			}
 			
 			if (indexable.ValidTimestamp) {
+				// Note that we also want to search in the
+				// Timestamp field when we do a wildcard date
+				// query, so that's why we also add a wildcard
+				// field for each item here.
+
+				string wildcard_field = TypeToWildcardField (PropertyType.Date);
+
 				string str = StringFu.DateTimeToString (indexable.Timestamp);
 				f = Field.Keyword ("Timestamp", str);
+				primary_doc.Add (f);
+				f = Field.UnStored (wildcard_field, str);
+				primary_doc.Add (f);
+
+				str = StringFu.DateTimeToYearMonthString (indexable.Timestamp);
+				f = Field.Keyword ("YM:Timestamp", str);
+				primary_doc.Add (f);
+				f = Field.UnStored ("YM:" + wildcard_field, str);
+				primary_doc.Add (f);
+
+				str = StringFu.DateTimeToDayString (indexable.Timestamp);
+				f = Field.Keyword ("D:Timestamp", str);
+				primary_doc.Add (f);
+				f = Field.UnStored ("D:" + wildcard_field, str);
 				primary_doc.Add (f);
 			}
 
@@ -763,6 +814,74 @@ namespace Beagle.Daemon {
 		//////////////////////////////////////////////////////////////////////////////
 
 		//
+		// Special Hit Filtering classes
+		//
+
+		static private bool TrueHitFilter (Hit hit)
+		{
+			return true;
+		}
+
+		static private HitFilter true_hit_filter = new HitFilter (TrueHitFilter);
+
+		public class OrHitFilter {
+
+			private ArrayList all = new ArrayList ();
+			private bool contains_known_true = false;
+
+			public void Add (HitFilter hit_filter)
+			{
+				if (hit_filter == true_hit_filter)
+					contains_known_true = true;
+				all.Add (hit_filter);
+			}
+
+			public bool HitFilter (Hit hit)
+			{
+				if (contains_known_true)
+					return true;
+				foreach (HitFilter hit_filter in all)
+					if (hit_filter (hit))
+						return true;
+				return false;
+			}
+		}
+		
+		public class AndHitFilter {
+
+			private ArrayList all = new ArrayList ();
+			
+			public void Add (HitFilter hit_filter) 
+			{
+				all.Add (hit_filter);
+			}
+
+			public bool HitFilter (Hit hit)
+			{
+				foreach (HitFilter hit_filter in all)
+					if (! hit_filter (hit))
+						return false;
+				return true;
+			}
+		}
+
+		public class NotHitFilter {
+			HitFilter original;
+
+			public NotHitFilter (HitFilter original)
+			{
+				this.original = original;
+			}
+			
+			public bool HitFilter (Hit hit)
+			{
+				return ! original (hit);
+			}
+		}
+
+		//////////////////////////////////////////////////////////////////////////////
+
+		//
 		// Queries
 		//
 
@@ -809,6 +928,214 @@ namespace Beagle.Daemon {
 			return query;
 		}
 
+		//
+		// Date Range Handling
+		//
+
+		// This function will break down dates to discrete chunks of
+		// time to avoid expanding RangeQuerys as much as possible.
+		// For example, searching for
+		//
+		// YMD(5 May 2005, 16 Oct 2006)
+		//
+		// would break down into three queries:
+		//
+		// (YM(May 2005) AND D(5,31)) OR
+		// YM(Jun 2005, Sep 2006) OR
+		// (YM(Oct 2006) AND D(1,16))
+
+		static private DateTime lower_bound = new DateTime (1970, 1, 1);
+
+		// FIXME: we should probably boost this sometime around 2030.
+		// Mark your calendar.
+		static private DateTime upper_bound = new DateTime (2038, 12, 31);
+
+		static private Term NewYearMonthTerm (string field_name, int y, int m)
+		{
+			return new Term ("YM:" + field_name, String.Format ("{0}{1:00}", y, m));
+		}
+
+		static private LNS.Query NewYearMonthQuery (string field_name, int y, int m)
+		{
+			return new LNS.TermQuery (NewYearMonthTerm (field_name, y, m));
+		}
+
+		static private LNS.Query NewYearMonthQuery (string field_name, int y1, int m1, int y2, int m2)
+		{
+			return new LNS.RangeQuery (NewYearMonthTerm (field_name, y1, m1),
+						   NewYearMonthTerm (field_name, y2, m2),
+						   true); // query is inclusive
+		}
+
+		static private Term NewDayTerm (string field_name, int d)
+		{
+			return new Term ("D:" + field_name, String.Format ("{0:00}", d));
+		}
+
+		static private LNS.Query NewDayQuery (string field_name, int d1, int d2)
+		{
+			return new LNS.RangeQuery (NewDayTerm (field_name, d1),
+						   NewDayTerm (field_name, d2),
+						   true); // query is inclusive
+		}
+
+		private class DateRangeHitFilter {
+			public string Key;
+			public DateTime StartDate;
+			public DateTime EndDate;
+
+			public bool HitFilter (Hit hit)
+			{
+				// First, check the Timestamp
+				if (Key == QueryPart_DateRange.AllPropertiesKey 
+				    || Key == QueryPart_DateRange.TimestampKey) {
+					DateTime dt;
+					dt = hit.Timestamp;
+					if (StartDate <= dt && dt <= EndDate)
+						return true;
+					if (Key == QueryPart_DateRange.TimestampKey)
+						return false;
+				}
+
+				if (Key == QueryPart_DateRange.AllPropertiesKey) {
+					// Walk through all of the properties, and see if any
+					// date properties fall inside the range.
+					foreach (Property prop in hit.Properties) {
+						if (prop.Type == PropertyType.Date) {
+							DateTime dt;
+							dt = StringFu.StringToDateTime (prop.Value);
+							if (StartDate <= dt && dt <= EndDate)
+								return true;
+						}
+					}
+					return false;
+				} else {
+					// Walk through all of the properties with the given key,
+					// and see if any of them fall inside of the range.
+					string[] values;
+					values = hit.GetProperties (Key);
+					foreach (string v in values) {
+						DateTime dt;
+						dt = StringFu.StringToDateTime (v);
+						if (StartDate <= dt && dt <= EndDate)
+							return true;
+					}
+					return false;
+				}
+			}
+		}
+
+		static private LNS.Query GetDateRangeQuery (QueryPart_DateRange part, out HitFilter hit_filter)
+		{
+			string field_name;
+			if (part.Key == QueryPart_DateRange.AllPropertiesKey)
+				field_name = TypeToWildcardField (PropertyType.Date);
+			else if (part.Key == QueryPart_DateRange.TimestampKey)
+				field_name = "Timestamp";
+			else
+				field_name = PropertyToFieldName (PropertyType.Date, part.Key);
+
+			// Swap the start and end dates if they come in reversed.
+			if (part.StartDate > part.EndDate) {
+				DateTime swap;
+				swap = part.StartDate;
+				part.StartDate = part.EndDate;
+				part.EndDate = swap;
+			}
+		
+			// FIXME: We could optimize this and reduce the size of our range
+			// queries if we actually new the min and max date that appear in
+			// any properties in the index.  We would need to inspect the index to
+			// determine that at start-up, and then track it as new documents
+			// get added to the index.
+			if (part.StartDate < lower_bound)
+				part.StartDate = lower_bound;
+			if (part.StartDate > upper_bound)
+				part.EndDate = upper_bound;
+			if (part.StartDate == DateTime.MinValue)
+				part.StartDate = new DateTime (1970, 1, 1);
+
+			// Set up our hit filter to cull out the bad dates.
+			DateRangeHitFilter drhf;
+			drhf = new DateRangeHitFilter ();
+			drhf.Key = part.Key;
+			drhf.StartDate = part.StartDate;
+			drhf.EndDate = part.EndDate;
+			hit_filter = new HitFilter (drhf.HitFilter);
+
+			Logger.Log.Debug ("Building new date range query");
+			Logger.Log.Debug ("Start: {0}", part.StartDate);
+			Logger.Log.Debug ("End: {0}", part.EndDate);
+
+			int y1, m1, d1, y2, m2, d2;
+			y1 = part.StartDate.Year;
+			m1 = part.StartDate.Month;
+			d1 = part.StartDate.Day;
+			y2 = part.EndDate.Year;
+			m2 = part.EndDate.Month;
+			d2 = part.EndDate.Day;
+
+			LNS.BooleanQuery top_level_query;
+			top_level_query = new LNS.BooleanQuery ();
+
+			// A special case: both the start and the end of our range fall
+			// in the same month.
+			if (y1 == y2 && m1 == m2) {
+				LNS.Query ym_query;
+				ym_query = NewYearMonthQuery (field_name, y1, m1);
+
+				// If our range only covers a part of the month, do a range query on the days.
+				if (d1 != 1 || d2 != DateTime.DaysInMonth (y2, m2)) {
+					LNS.BooleanQuery sub_query;
+					sub_query = new LNS.BooleanQuery ();
+					sub_query.Add (ym_query, true, false);
+					sub_query.Add (NewDayQuery (field_name, d1, d2), true, false);
+					top_level_query.Add (sub_query, false, false);
+				} else {
+					top_level_query.Add (ym_query, false, false);
+				}
+
+			} else {
+
+				// Handle a partial month at the beginning of our range.
+				if (d1 > 1) {
+					LNS.BooleanQuery sub_query;
+					sub_query = new LNS.BooleanQuery ();
+					sub_query.Add (NewYearMonthQuery (field_name, y1, m1), true, false);
+					sub_query.Add (NewDayQuery (field_name, d1, DateTime.DaysInMonth (y1, m1)), true, false);
+					top_level_query.Add (sub_query, false, false);
+					
+					++m1;
+					if (m1 == 13) {
+						m1 = 1;
+						++y1;
+					}
+				}
+
+				// And likewise, handle a partial month at the end of our range.
+				if (d2 < DateTime.DaysInMonth (y2, m2)) {
+					LNS.BooleanQuery sub_query;
+					sub_query = new LNS.BooleanQuery ();
+					sub_query.Add (NewYearMonthQuery (field_name, y2, m2), true, false);
+					sub_query.Add (NewDayQuery (field_name, 1, d2), true, false);
+					top_level_query.Add (sub_query, false, false);
+
+					--m2;
+					if (m2 == 0) {
+						m2 = 12;
+						--y2;
+					}
+				}
+
+				// Generate the query for the "middle" of our period, if it is non-empty
+				if (y1 < y2 || ((y1 == y2) && m1 <= m2))
+					top_level_query.Add (NewYearMonthQuery (field_name, y1, m1, y2, m2),
+							     false, false);
+			}
+				
+			return top_level_query;
+		}
+
 		// search_subset_uris is a list of Uris that this search should be
 		// limited to.
 		static protected void QueryPartToQuery (QueryPart     abstract_part,
@@ -820,7 +1147,19 @@ namespace Beagle.Daemon {
 		{
 			primary_query = null;
 			secondary_query = null;
-			hit_filter = null;
+
+			// By default, we assume that our lucene queries will return exactly the
+			// matching set of objects.  We need to set the hit filter if further
+			// refinement of the search results is required.  (As in the case of
+			// date range queries, for example.)  We essentially have to do this
+			// to make OR queries work correctly.
+			hit_filter = true_hit_filter;
+
+			// The exception is when dealing with a prohibited part.  Just return
+			// null for the hit filter in that case.  This works since
+			// prohibited parts are not allowed inside of OR queries.
+			if (abstract_part.Logic == QueryPartLogic.Prohibited)
+				hit_filter = null;
 
 			if (abstract_part == null)
 				return;
@@ -898,9 +1237,22 @@ namespace Beagle.Daemon {
 
 			if (abstract_part is QueryPart_DateRange) {
 
-				// FIXME: Unsupported
+				QueryPart_DateRange part = (QueryPart_DateRange) abstract_part;
+
+				primary_query = GetDateRangeQuery (part, out hit_filter);
+				// Date properties can live in either index
+				if (! only_build_primary_query && primary_query != null)
+					secondary_query = primary_query.Clone () as LNS.Query;
+
+				// If this is a prohibited part, invert our hit filter.
+				if (part.Logic == QueryPartLogic.Prohibited) {
+					NotHitFilter nhf;
+					nhf = new NotHitFilter (hit_filter);
+					hit_filter = new HitFilter (nhf.HitFilter);
+				}
+				
 				return;
-			} 
+			}
 
 			if (abstract_part is QueryPart_Or) {
 				QueryPart_Or part = (QueryPart_Or) abstract_part;
@@ -915,10 +1267,13 @@ namespace Beagle.Daemon {
 
 				primary_query = p_query;
 				secondary_query = s_query;
+
+				OrHitFilter or_hit_filter = null;
 				
 				foreach (QueryPart  sub_part in part.SubParts) {
 					LNS.Query p_subq, s_subq;
 					HitFilter sub_hit_filter; // FIXME: This is (and must be) ignored
+					// FIXME: We don't handle dates correctly for OR at all.
 					QueryPartToQuery (sub_part, only_build_primary_query,
 							  term_list,
 							  out p_subq, out s_subq, out sub_hit_filter);
@@ -926,7 +1281,15 @@ namespace Beagle.Daemon {
 						p_query.Add (p_subq, false, false);
 					if (s_subq != null)
 						s_query.Add (s_subq, false, false);
+					if (sub_hit_filter != null) {
+						if (or_hit_filter == null)
+							or_hit_filter = new OrHitFilter ();
+						or_hit_filter.Add (sub_hit_filter);
+					}
 				}
+
+				if (or_hit_filter != null)
+					hit_filter = new HitFilter (or_hit_filter.HitFilter);
 
 				return;
 			} 

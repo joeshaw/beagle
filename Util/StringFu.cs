@@ -46,6 +46,16 @@ namespace Beagle.Util {
 			return dt.ToString (timeFormat);
 		}
 
+		static public string DateTimeToYearMonthString (DateTime dt)
+		{
+			return dt.ToString ("yyyyMM");
+		}
+
+		static public string DateTimeToDayString (DateTime dt)
+		{
+			return dt.ToString ("dd");
+		}
+
                 static public DateTime StringToDateTime (string str)
                 {
 			if (str == null || str == "")

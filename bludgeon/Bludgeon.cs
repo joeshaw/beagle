@@ -76,6 +76,12 @@ namespace Bludgeon {
 		[Option (LongName="pause", Description="Time between tests (in seconds)")] 
 		static private double pause = -1; // time between tests, in seconds
 
+		[Option (LongName="heap-buddy", Description="Profile daemon with heap-buddy")]
+		static private bool heap_buddy = false;
+
+		[Option (LongName="test-queries", Description="Generate random queries and check that they return the correct results")]
+		static private bool test_queries = false;
+
 		static void Main (string [] args)
 		{
 			args = CommandLine.Process (typeof (BludgeonMain), args);
@@ -83,6 +89,8 @@ namespace Bludgeon {
 			// BU.CommandLine.Process returns null if --help was passed
 			if (args == null)
 				return;
+
+			Daemon.UseHeapBuddy = heap_buddy;
 
 			ArrayList hammers_to_use;
 			hammers_to_use = new ArrayList ();
@@ -104,6 +112,14 @@ namespace Bludgeon {
 			Daemon.Start ();
 			if (! SanityCheck.VerifyIndex ()) {
 				Log.Failure ("Initial index verify failed --- shutting down");
+				Daemon.Shutdown ();
+				return;
+			}
+
+			if (test_queries) {
+				if (total_time < 0)
+					total_time = 1.0;
+				SanityCheck.TestRandomQueries (total_time);
 				Daemon.Shutdown ();
 				return;
 			}

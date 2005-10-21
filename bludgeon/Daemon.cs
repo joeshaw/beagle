@@ -1,6 +1,7 @@
 
 using System;
 using System.Diagnostics;
+using System.IO;
 using System.Threading;
 
 using Beagle.Util;
@@ -10,6 +11,8 @@ namespace Bludgeon {
 	public class Daemon {
 
 		private Daemon () { }
+
+		static public bool UseHeapBuddy = false;
 
 		// Returns the daemon's version, or null
 		static public string PingOnce ()
@@ -54,6 +57,9 @@ namespace Bludgeon {
 
 			string args;
 			args = "--debug --bg --allow-backend files";
+
+			if (UseHeapBuddy)
+				args += " --heap-buddy";
 			
 			Process p;
 			p = new Process ();
@@ -65,6 +71,8 @@ namespace Bludgeon {
 			p.StartInfo.EnvironmentVariables ["BEAGLE_HOME"] = Beagle.Util.PathFinder.HomeDir;
 			p.StartInfo.EnvironmentVariables ["BEAGLE_EXERCISE_THE_DOG"] = "1";
 			p.StartInfo.EnvironmentVariables ["BEAGLE_UNDER_BLUDGEON"] = "1";
+			p.StartInfo.EnvironmentVariables ["BEAGLE_HEAP_BUDDY_DIR"] = Path.Combine (Beagle.Util.PathFinder.HomeDir,
+												   ".bludgeon");
 
 			Thread.Sleep (2000); // wait 2s to let the daemon get started
 

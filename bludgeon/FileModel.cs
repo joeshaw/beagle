@@ -91,6 +91,7 @@ namespace Bludgeon {
 		// children is null
 
 		private string name = null;
+		private DateTime mtime;
 		private FileModel parent = null;
 		private string [] body = null;
 		private Hashtable children = null;
@@ -115,6 +116,10 @@ namespace Bludgeon {
 
 		public string Name {
 			get { return name; }
+		}
+
+		public DateTime Mtime {
+			get { return mtime; }
 		}
 		
 		public string FullName {
@@ -271,13 +276,34 @@ namespace Bludgeon {
 
 		//////////////////////////////////////////////////////////////
 
-		private FileModel () { }
+		static DateTime base_time;
+		const int seconds_per_year = 60 * 60 * 24 * 365;
+
+		// Picks a random time in the last year
+		static public DateTime PickDateTime ()
+		{
+			return base_time.AddSeconds (- random.Next (seconds_per_year));
+		}
+
+		//////////////////////////////////////////////////////////////
+		
+		static FileModel ()
+		{
+			base_time = DateTime.Now;
+		}
+
+		private FileModel () 
+		{ 
+			// Pick a random timestamp for every file.
+			mtime = PickDateTime ();
+		}
 
 		public static FileModel NewRoot ()
 		{
 			FileModel root = new FileModel ();
 			root.name = PathFinder.HomeDir;
 			root.children = new Hashtable ();
+			root.mtime = Directory.GetLastWriteTime (root.FullName);
 			return root;
 		}
 
@@ -302,6 +328,7 @@ namespace Bludgeon {
 
 			// Actually create the directory
 			Directory.CreateDirectory (child.FullName);
+			child.mtime = Directory.GetLastWriteTime (child.FullName);
 
 			return child;
 		}
@@ -453,6 +480,10 @@ namespace Bludgeon {
 			for (int i = 0; i < body.Length; ++i)
 				writer.WriteLine (body [i]);
 			writer.Close ();
+
+			FileInfo info;
+			info = new FileInfo (FullName);
+			info.LastWriteTime = Mtime;
 		}
 
 		//////////////////////////////////////////////////////////////
@@ -500,6 +531,14 @@ namespace Bludgeon {
 				} else {
 					throw new Exception ("Unsupported property " + part.Key);
 				}
+			} else if (abstract_part is QueryPart_DateRange) {
+				QueryPart_DateRange part;
+				part = abstract_part as QueryPart_DateRange;
+
+				// FIXME: We assume that the query refers to the file timestamp.
+				// Instead, we should explicitly check part.Key.
+				is_match = (part.StartDate <= Mtime && Mtime <= part.EndDate);
+
 			} else {
 				throw new Exception ("Unsupported part");
 			}

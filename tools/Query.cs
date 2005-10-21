@@ -26,6 +26,7 @@
 
 using System;
 using System.Collections;
+using System.Globalization;
 using System.Threading;
 using System.Text;
 
@@ -46,6 +47,8 @@ class QueryTool {
 	static bool verbose = false;
 	static bool display_hits = true;
 	static bool flood = false;
+	static DateTime start_date = DateTime.MinValue;
+	static DateTime end_date = DateTime.MinValue;
 
 	static void OnHitsAdded (HitsAddedResponse response)
 	{
@@ -134,6 +137,10 @@ class QueryTool {
 			"                    \t\ttype. Can be used multiply.\n" +
 			"  --source <source>\t\tConstrain query to the specified source.\n" +
 			"                   \t\tSources list available from beagle-status.\n" +
+			"  --start <date>\t\t\tConstrain query to items after specified date.\n" +
+			"                \t\t\tDate must be in the form \"yyyyMMdd\" or \"yyyyMMddHHmmss\"\n" +
+			"  --end <date>\t\t\tConstrain query to items before specified date.\n" +
+			"              \t\t\tDate must be in the form \"yyyyMMdd\" or \"yyyyMMddHHmmss\"\n" +
 			"  --live-query\t\t\tRun continuously, printing notifications if a\n" +
 			"              \t\t\tquery changes.\n" +
 			"  --stats-only\t\t\tOnly display statistics about the query, not\n" +
@@ -196,6 +203,11 @@ class QueryTool {
 
 		StringBuilder query_str =  new StringBuilder ();
 
+		string[] formats = {
+			"yyyyMMdd",
+			"yyyyMMddHHmmss"
+		};
+
 		// Parse args
 		int i = 0;
 		while (i < args.Length) {
@@ -231,6 +243,30 @@ class QueryTool {
 				flood = true;
 				break;
 
+			case "--start":
+				if (++i >= args.Length) PrintUsageAndExit ();
+				try {
+					start_date = DateTime.ParseExact (args[i], formats,
+									  CultureInfo.InvariantCulture,
+									  DateTimeStyles.None);
+				} catch (FormatException) {
+					Console.WriteLine ("Invalid start date");
+					System.Environment.Exit (-1);
+				}
+				break;
+
+			case "--end":
+				if (++i >= args.Length) PrintUsageAndExit ();
+				try {
+					end_date = DateTime.ParseExact (args[i], formats,
+									CultureInfo.InvariantCulture,
+									DateTimeStyles.None);
+				} catch (FormatException) {
+					Console.WriteLine ("Invalid end date");
+					System.Environment.Exit (-1);
+				}
+				break;
+
 			default:
 				if (query_str.Length > 0)
 					query_str.Append (' ');
@@ -243,6 +279,18 @@ class QueryTool {
 
 		if (query_str.Length > 0)
 			query.AddText (query_str.ToString ());
+
+		if (start_date != DateTime.MinValue || end_date != DateTime.MinValue) {
+			QueryPart_DateRange part = new QueryPart_DateRange ();
+
+			if (start_date != DateTime.MinValue)
+				part.StartDate = start_date;
+
+			if (end_date != DateTime.MinValue)
+				part.EndDate = end_date;
+
+			query.AddPart (part);
+		}
 
 		query.HitsAddedEvent += OnHitsAdded;
 		query.HitsSubtractedEvent += OnHitsSubtracted;

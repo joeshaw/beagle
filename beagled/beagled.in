@@ -79,8 +79,11 @@ fi
 
 if [ $heap_buddy -eq 1 ]; then
    export _GET_ON_THE_HEAP_BUDDY_BANDWAGON=1
-   MONO_EXTRA_ARGS="--profile=heap-buddy:outfile.beagled $MONO_EXTRA_ARGS"
-   rm -f outfile.beagled outfile.helper.*
+      if [ -z "$BEAGLE_HEAP_BUDDY_DIR" ]; then
+      export BEAGLE_HEAP_BUDDY_DIR=.
+   fi
+   MONO_EXTRA_ARGS="--profile=heap-buddy:$BEAGLE_HEAP_BUDDY_DIR/outfile.beagled $MONO_EXTRA_ARGS"
+   rm -f $BEAGLE_HEAP_BUDDY_DIR/outfile.beagled $BEAGLE_HEAP_BUDDY_DIR/outfile.helper.*
 fi
 
 if [ $debug -eq 1 ]; then

@@ -27,7 +27,7 @@ namespace Bludgeon {
 					if (matching_path_hash.Contains (file.FullName)) {
 						matching_path_hash.Remove (file.FullName);
 					} else {
-						Log.Failure ("Missing match {0}", file.FullName);
+						Log.Failure ("Missing match {0} (mtime={1})", file.FullName, file.Mtime);
 						success = false;
 					}
 				}
@@ -78,7 +78,7 @@ namespace Bludgeon {
 		
 		static public bool TestRandomQueries (double minutes_to_run)
 		{
-			Log.Info ("Running random queries for {1:0.0} minutes", minutes_to_run);
+			Log.Info ("Running random queries for {0:0.0} minutes", minutes_to_run);
 
 			bool success;
 			success = true;
