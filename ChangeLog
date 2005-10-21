@@ -1,3 +1,12 @@
+2005-10-20  Debajyoti Bera <dbera.web@gmail.org>
+
+	* BlamQueryable.cs, LifereaQueryable.cs, AkregatorQueryable.cs:
+	Use stream parsing as much as possible. Fix author value in LifereaQ.
+	Change property names to DC elements (i.e. remove fixme from property
+	names).
+	* beagled/PropertyKeywordFu.cs: Add some comments. Dont allow date
+	queries - not supported.
+
 2005-10-19  Debajyoti Bera <dbera.web@gmail.org>
 
 	* Util/Conf.cs: updated to store positions for holmes

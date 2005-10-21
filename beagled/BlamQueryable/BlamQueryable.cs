@@ -30,7 +30,6 @@ using System.Collections;
 using System.Threading;
 
 using System.Xml;
-using System.Xml.Serialization;
 	
 using Beagle.Daemon;
 using Beagle.Util;
@@ -38,14 +37,18 @@ using Beagle.Util;
 namespace Beagle.Daemon.BlamQueryable {
 
 	[QueryableFlavor (Name="Blam", Domain=QueryDomain.Local, RequireInotify=false)]
-	public class BlamQueryable : LuceneFileQueryable, IIndexableGenerator {
+	public class BlamQueryable : LuceneFileQueryable {
 
 		private static Logger log = Logger.Get ("BlamQueryable");
 
 		string blam_dir;
 		FileInfo blam_file;
 
-		public BlamQueryable () : base ("BlamIndex")
+		// add versioning
+		// v1: changed property names to match DC element names
+		private const int INDEX_VERSION = 1;
+
+		public BlamQueryable () : base ("BlamIndex", INDEX_VERSION)
 		{
 			blam_dir = Path.Combine (Path.Combine (PathFinder.HomeDir, ".gnome2"), "blam");
 			blam_file = new FileInfo (Path.Combine (blam_dir, "collection.xml"));
@@ -120,46 +123,148 @@ namespace Beagle.Daemon.BlamQueryable {
 
 		private void Index ()
 		{
-			log.Debug ("Creating blam indexable generator");
-			Scheduler.Task task = NewAddTask (this);
+			if (ThisScheduler.ContainsByTag ("Blam")) {
+				Logger.Log.Debug ("Not adding task for already running Blam task");
+				return;
+			}
+
+			ItemIndexableGenerator generator = new ItemIndexableGenerator (this, blam_dir, blam_file.FullName);
+			Scheduler.Task task;
+			task = NewAddTask (generator);
 			task.Tag = "Blam";
 			ThisScheduler.Add (task);
 		}
 
-		/////////////////////////////////////////////////
-		
-		// IIndexableGenerator implementation
+	}
 
-		private ChannelCollection collection = null;
-		private IEnumerator channel_enumerator = null;
-		private IEnumerator item_enumerator = null;
+	/**
+	 * Indexable generator for Blam Feeds
+	 */
+	public class ItemIndexableGenerator : IIndexableGenerator {
+		private string feed_file;
+		private string blam_dir;
+		private BlamQueryable queryable;
+		private int indexed_count;
+		
+		private XmlTextReader reader;
+		private bool is_valid_file = true;
+
+		private string channel_url, channel_name;
+		
+		public ItemIndexableGenerator (BlamQueryable queryable, string blam_dir, string feed_file)
+		{
+			this.blam_dir = blam_dir;
+			this.queryable = queryable;
+			this.feed_file = feed_file;
+			ReadFeedHeader ();
+		}
+
+		public void PostFlushHook ()
+		{
+			queryable.FileAttributesStore.AttachLastWriteTime (feed_file, DateTime.Now);
+		}
+
+		public string StatusName {
+			get { return feed_file; }
+		}
+
+		private bool IsUpToDate (string path)
+		{
+			return queryable.FileAttributesStore.IsUpToDate (path);
+		}
+
+		private void ReadFeedHeader () {
+			
+			if (IsUpToDate (feed_file)) {
+				is_valid_file = false;
+				return;
+			}
+			try {
+				Logger.Log.Debug ("Opening blam collection file: {0}", feed_file);
+				reader = new XmlTextReader (feed_file);
+				reader.WhitespaceHandling = WhitespaceHandling.None;
+				
+				is_valid_file = true;
+				// move to beginning of document
+				reader.MoveToContent();
+				// move to <ChannelCollection> node
+				reader.ReadStartElement ("ChannelCollection");
+				channel_name = null;
+				channel_url = null;
+			} catch (XmlException ex) {
+				Logger.Log.Debug ("Invalid feed file: " + ex.Message);
+				is_valid_file = false;
+				reader.Close ();
+			}
+		}
+
+		public bool HasNextIndexable ()
+		{	
+			if (!is_valid_file || reader == null)
+				return false;
+			string elementname = null;
+
+			while (! reader.EOF && ((elementname = reader.Name) != "Item")) {
+				if (reader.NodeType == XmlNodeType.Element && elementname == "Channel") {
+					channel_name = reader.GetAttribute ("Name");
+					channel_url = reader.GetAttribute ("Url");
+				}
+				reader.Read ();
+			}
+
+			if (elementname == "Item") {
+				return true;
+			} else {
+				reader.Close ();
+				return false;
+			}
+			
+		}
 
 		public Indexable GetNextIndexable ()
 		{
-			Channel channel = (Channel) this.channel_enumerator.Current;
-			Item item = (Item) this.item_enumerator.Current;
+			string id = reader.GetAttribute ("Id");
+			string title = reader.GetAttribute ("Title");
+			string author = reader.GetAttribute ("Author");
+			// FIXME stupid mono bug; DateTime.ParseExact ("0001-01-01T00:00:00.0000000+00:00", ...)
+			// http://bugzilla.ximian.com/show_bug.cgi?id=76082
+			// Still present in 1.1.9.2
+			DateTime pub_date;
+			try {
+				pub_date = DateTime.ParseExact (
+						reader.GetAttribute ("PubDate"),
+						"yyyy-MM-ddTHH:mm:ss.fffffffzzz",
+						null);
+			} catch (Exception e) {
+				pub_date = DateTime.MinValue;
+			}
+			string link = reader.GetAttribute ("Link");
+			string text = reader.GetAttribute ("Text");
+			reader.Read ();
 
-			Uri uri = new Uri (String.Format ("feed:{0};item={1}", channel.Url, item.Id));
+			Uri uri = new Uri (String.Format ("feed:{0};item={1}", channel_url, id));
+			Logger.Log.Debug ("BlamQ: Indexing [" + channel_name + "] " + title);
 			
 			Indexable indexable = new Indexable (uri);
-			indexable.ParentUri = UriFu.PathToFileUri (blam_file.FullName);
+			indexable.ParentUri = UriFu.PathToFileUri (feed_file);
 			indexable.MimeType = "text/html";
 			indexable.HitType = "FeedItem";
-			indexable.Timestamp = item.PubDate;
+			indexable.Timestamp = pub_date;
 					
-			indexable.AddProperty (Property.New ("dc:title", item.Title));
-			indexable.AddProperty (Property.New ("fixme:author", item.Author));
-			indexable.AddProperty (Property.NewDate ("fixme:published", item.PubDate));
-			indexable.AddProperty (Property.NewKeyword ("fixme:itemuri", item.Link));
-			indexable.AddProperty (Property.NewKeyword ("fixme:webloguri", channel.Url));
+			// change property names to DC names, as far as allowed
+			indexable.AddProperty (Property.New ("dc:title", title));
+			indexable.AddProperty (Property.New ("dc:creator", author));
+			indexable.AddProperty (Property.NewDate ("dc:date", pub_date));
+			indexable.AddProperty (Property.NewKeyword ("dc:identifier", link));
+			indexable.AddProperty (Property.NewKeyword ("dc:source", channel_url));
 
 			string img = null;
-			int i = item.Text.IndexOf ("<img src=\"");
+			int i = text.IndexOf ("<img src=\"");
 			if (i != -1) {
 				i += "<img src=\"".Length;
-				int j = item.Text.IndexOf ("\"", i);
+				int j = text.IndexOf ("\"", i);
 				if (j != -1)
-					img = item.Text.Substring (i, j-i);
+					img = text.Substring (i, j-i);
 			}
 
 			if (img != null) {
@@ -168,118 +273,12 @@ namespace Beagle.Daemon.BlamQueryable {
 				indexable.AddProperty (Property.NewUnsearched ("fixme:cachedimg", path));
 			}
 
-			StringReader reader = new StringReader (item.Text);
-			indexable.SetTextReader (reader);
+			StringReader string_reader = new StringReader (text);
+			indexable.SetTextReader (string_reader);
 
 			return indexable;
 		}
 
-		public bool HasNextIndexable ()
-		{
-			if (this.collection == null) {
-				if (IsUpToDate (blam_file.FullName))
-					return false;
-
-				try {
-					this.collection = ChannelCollection.LoadFromFile (blam_file.FullName);
-				} catch (Exception e) {
-					log.Warn ("Could not open Blam! channel list: " + e);
-					return false;
-				}
-
-				if (this.collection.Channels == null || this.collection.Channels.Count == 0) {
-					this.collection = null;
-					return false;
-				}
-
-				this.channel_enumerator = this.collection.Channels.GetEnumerator ();
-			}
-
-			while (this.item_enumerator == null || !this.item_enumerator.MoveNext ()) {
-				Channel channel;
-				
-				do {
-					if (!this.channel_enumerator.MoveNext ()) {
-						this.collection = null;
-						this.channel_enumerator = null;
-						return false;
-					}
-				
-					channel = (Channel) this.channel_enumerator.Current;
-				} while (channel.Items == null || channel.Items.Count == 0);
-
-				this.item_enumerator = channel.Items.GetEnumerator ();
-			}
-
-			return true;
-		}
-
-		public string StatusName {
-			get { return null; }
-		}
-
-		public void PostFlushHook ()
-		{ }
 	}
 
-	/////////////////////////////////////////////////
-
-	// Classes from Blam! sources for deserialization
-
-	public class ChannelCollection {
-
-		private ArrayList mChannels;
-		
-		[XmlElement ("Channel", typeof (Channel))]
-		public ArrayList Channels {
-			get { return mChannels; }
-			set { mChannels = value; }
-		}
-		
-		public static ChannelCollection LoadFromFile (string filename)
-		{
-			XmlSerializer serializer = new XmlSerializer (typeof (ChannelCollection));
-			ChannelCollection collection;
-
-			Stream stream = new FileStream (filename,
-							FileMode.Open,
-							FileAccess.Read,
-							FileShare.ReadWrite);
-			XmlTextReader reader = new XmlTextReader (stream);
-
-			collection = (ChannelCollection) serializer.Deserialize (reader);
-			reader.Close ();
-			stream.Close ();
-
-			return collection;
-		}
-	}
-	
-	public class Channel
-	{
-		[XmlAttribute] public string Name = "";
-		[XmlAttribute] public string Url = "";
-
-		[XmlAttribute] public string LastModified = "";
-		[XmlAttribute] public string ETag = "";
-	     
-		ArrayList mItems;
-	    
-		[XmlElement ("Item", typeof (Item))]
-		public ArrayList Items {
-			get { return mItems; }
-			set { mItems = value; }
-		}
-	}
-	
-	public class Item
-	{
-		[XmlAttribute] public string   Id = "";
-		[XmlAttribute] public bool     Unread = true;		
-		[XmlAttribute] public string   Title = "";
-		[XmlAttribute] public string   Text = "";
-		[XmlAttribute] public string   Link = "";
-		[XmlAttribute] public DateTime PubDate;
-		[XmlAttribute] public string   Author = "";
-  	}
 }

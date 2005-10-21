@@ -38,13 +38,26 @@ using Beagle.Util;
 namespace Beagle.Daemon.LifereaQueryable {
 
 	[QueryableFlavor (Name="Liferea", Domain=QueryDomain.Local, RequireInotify=false)]
-	public class LifereaQueryable : LuceneFileQueryable, IIndexableGenerator {
+	public class LifereaQueryable : LuceneFileQueryable {
 
 		private static Logger log = Logger.Get ("LifereaQueryable");
 
 		string liferea_dir;
 
-		public LifereaQueryable () : base ("LifereaIndex")
+		private XmlSerializer serializer = null;
+		public XmlSerializer Serializer {
+			get {
+				if (serializer == null)
+					serializer = new XmlSerializer (typeof (Item));
+				return serializer;
+			}
+		}
+
+		// add versioning info
+		// v1: change property names to match DC element names
+		private const int INDEX_VERSION = 1;
+		
+		public LifereaQueryable () : base ("LifereaIndex", INDEX_VERSION)
 		{
 			liferea_dir = Path.Combine (PathFinder.HomeDir, ".liferea");
 			liferea_dir = Path.Combine (liferea_dir, "cache");
@@ -68,7 +81,8 @@ namespace Beagle.Daemon.LifereaQueryable {
 			}
 				
 			if (Inotify.Enabled) {
-				Inotify.EventType mask = Inotify.EventType.CloseWrite;
+				Inotify.EventType mask = Inotify.EventType.CloseWrite 
+							| Inotify.EventType.Delete;
 
 				Inotify.Subscribe (liferea_dir, OnInotifyEvent, mask);
 			} else {
@@ -87,14 +101,13 @@ namespace Beagle.Daemon.LifereaQueryable {
 			stopwatch.Start ();
 
                         DirectoryInfo dir = new DirectoryInfo (liferea_dir);
-			this.files_to_parse = dir.GetFiles ();
-
-			Scheduler.Task task = NewAddTask (this);
-			task.Tag = "Liferea";
-			ThisScheduler.Add (task);
+			int count = 0;
+			foreach (FileInfo file in DirectoryWalker.GetFileInfos (dir)) {
+				IndexSingleFeed (file.FullName);
+			}
 
 			stopwatch.Stop ();
-                        log.Info ("{0} files will be parsed (scanned in {1})", this.files_to_parse.Count, stopwatch);
+                        log.Info ("{0} files will be parsed (scanned in {1})", count, stopwatch);
 		}
 
 		private bool CheckForExistence ()
@@ -117,139 +130,206 @@ namespace Beagle.Daemon.LifereaQueryable {
 					     string srcpath,
 					     Inotify.EventType type)
 		{
-			if (subitem == "")
+			// someone reported that backup files with abcd~
+			// were being generated
+			if (subitem == "" || subitem.EndsWith ("~"))
 				return;
 
-			IndexSingleFeed (Path.Combine (path, subitem), Scheduler.Priority.Immediate);
+			if ((type & Inotify.EventType.CloseWrite) != 0)
+				IndexSingleFeed (Path.Combine (path, subitem));
+			else if ((type & Inotify.EventType.Delete) != 0)
+				Removefeed_file (Path.Combine (path, subitem));
 		}
 
 		// Modified/Created event using FSW
 		
 		private void OnChanged (object o, FileSystemEventArgs args)
 		{
-			IndexSingleFeed (args.FullPath, Scheduler.Priority.Immediate);
+			IndexSingleFeed (args.FullPath);
 		}
 		
 		/////////////////////////////////////////////////
 
-		private Indexable FeedItemToIndexable (Feed feed, Item item, FileInfo file)
+		private void IndexSingleFeed (string filename) {
+			if (ThisScheduler.ContainsByTag (filename)) {
+				Logger.Log.Debug ("Not adding task for already running task: {0}", filename);
+				return;
+			}
+
+			FeedIndexableGenerator generator = new FeedIndexableGenerator (this, filename);
+			Scheduler.Task task;
+			task = NewAddTask (generator);
+			task.Tag = filename;
+			task.Source = this;
+			ThisScheduler.Add (task);
+		}
+
+		private void Removefeed_file (string file) {
+			Logger.Log.Debug ("Removing Liferea feed_file:" + file);
+			Uri uri = UriFu.PathToFileUri (file);
+			Scheduler.Task task = NewRemoveTask (uri);
+			task.Priority = Scheduler.Priority.Immediate;
+			task.SubPriority = 0;
+			ThisScheduler.Add (task);
+		}
+
+	}
+
+	
+	/**
+	 * Indexable generator for Liferea Feeds
+	 */
+	public class FeedIndexableGenerator : IIndexableGenerator {
+		private string feed_file;
+		private LifereaQueryable queryable;
+		
+		private XmlTextReader reader;
+		private bool is_valid_file = true;
+
+		private string feed_source = "";
+		private Item current_item;
+		private XmlSerializer serializer;
+		
+		public FeedIndexableGenerator (LifereaQueryable queryable, string feed_file)
 		{
-			Indexable indexable = new Indexable (new Uri (String.Format ("{0};item={1}", feed.Source, item.Source)));
-			indexable.ParentUri = UriFu.PathToFileUri (file.FullName);
+			this.queryable = queryable;
+			this.feed_file = feed_file;
+			this.serializer = queryable.Serializer;
+			ReadFeedHeader ();
+		}
+
+		public void PostFlushHook ()
+		{
+			current_item = null;
+			queryable.FileAttributesStore.AttachLastWriteTime (feed_file, DateTime.Now);
+		}
+
+		public string StatusName {
+			get { return feed_file; }
+		}
+
+		private bool IsUpToDate (string path)
+		{
+			return queryable.FileAttributesStore.IsUpToDate (path);
+		}
+
+		private void ReadFeedHeader () {
+			
+			if (IsUpToDate (feed_file)) {
+				is_valid_file = false;
+				return;
+			}
+			try {
+				Logger.Log.Debug ("Opening liferea feed file: {0}", feed_file);
+				reader = new XmlTextReader (feed_file);
+				reader.WhitespaceHandling = WhitespaceHandling.None;
+				
+				is_valid_file = true;
+				
+				// move to beginning of document
+				reader.MoveToContent();
+				// move to <feed> node
+				reader.ReadStartElement ("feed");
+				
+				do {
+					string elementName = reader.Name;
+					if (elementName == "item")
+						break;
+					switch (elementName) {
+					case "feedSource":
+						reader.ReadStartElement ("feedSource");
+						feed_source = reader.ReadString ();
+						reader.ReadEndElement ();
+						break;
+						
+					// ignore other elements
+					default:
+						reader.ReadOuterXml ();
+						break;
+					}
+				} while (!reader.EOF && reader.NodeType == XmlNodeType.Element);
+			} catch (XmlException ex) {
+				Logger.Log.Debug ("Invalid feed file: " + ex.Message);
+				is_valid_file = false;
+				reader.Close ();
+			}
+		}
+
+		public bool HasNextIndexable ()
+		{	
+			current_item = null;
+			if (!is_valid_file || reader == null)
+				return false;
+			string itemString = "";
+			try {
+				// check if the reader is at the startnode
+				if (reader.NodeType == XmlNodeType.Element) {
+					itemString = reader.ReadOuterXml ();
+					// form node object from the <node>...</node> string
+					// FIXME Deserialize(...) is expensive - remove it altogether
+					current_item = (Item) serializer.Deserialize (new StringReader (itemString));
+				}
+			} catch (XmlException ex) {
+				// probably no more <item>
+			}
+
+			if (current_item == null) {
+				Logger.Log.Debug ("LifereaQ: Probably no more feeds left in " + feed_file);
+				Logger.Log.Debug ("Causing string = " + itemString);
+				current_item = null;
+				is_valid_file = false;
+				reader.Close ();
+			}
+			return is_valid_file;
+		}
+
+		public Indexable GetNextIndexable ()
+		{
+			if (current_item != null)
+				return current_itemToIndexable ();
+			else
+				return null;
+		}
+
+		private Indexable current_itemToIndexable ()
+		{
+			Indexable indexable = new Indexable (new Uri (String.Format ("{0};item={1}", feed_source, current_item.Source)));
+			indexable.ParentUri = UriFu.PathToFileUri (feed_file);
 			indexable.MimeType = "text/html";
 			indexable.HitType = "FeedItem";
 
 			DateTime date = new DateTime (1970, 1, 1);
-			date = date.AddSeconds (item.Timestamp);
+			date = date.AddSeconds (current_item.Timestamp);
 			date = TimeZone.CurrentTimeZone.ToLocalTime (date);
 
 			indexable.Timestamp = date;				
 
-			indexable.AddProperty (Property.New ("dc:title", item.Title));
-			indexable.AddProperty (Property.New ("fixme:author", item.Attribs.Author));
-			indexable.AddProperty (Property.NewDate ("fixme:published", date));
-			indexable.AddProperty (Property.NewKeyword ("fixme:itemuri", item.Source));
-			indexable.AddProperty (Property.NewKeyword ("fixme:webloguri", feed.Source));
+			// cleaning up the property names as far as possible
+			// this way querying for specific field is possible
+			// following DC element names wherever applicable
+
+			indexable.AddProperty (Property.New ("dc:title", current_item.Title));
+			Attribute[] attribs = current_item.Attribs.AttribArray;
+			if (attribs != null) {
+				foreach (Attribute attrib in attribs) {
+					if (attrib.Name != "author")
+						continue;
+					indexable.AddProperty (Property.New ("dc:creator", attrib.Value));
+				}
+			}
+			indexable.AddProperty (Property.NewDate ("dc:date", date));
+			indexable.AddProperty (Property.NewKeyword ("dc:identifier", current_item.Source));
+			indexable.AddProperty (Property.NewKeyword ("dc:source", feed_source));
 				
-			StringReader reader = new StringReader (item.Description);
+			StringReader reader = new StringReader (current_item.Description);
 			indexable.SetTextReader (reader);
 
 			return indexable;
 		}
+	}
 
-		// Parse and index a single feed
-
-		private int IndexSingleFeed (string filename, Scheduler.Priority priority)
-		{
-			FileInfo file = new FileInfo(filename);
-			
-			Feed feed;
-			int item_count = 0;
-
-			if (IsUpToDate (file.FullName))
-				return 0;
-
-			feed = Feed.LoadFromFile (file.FullName);
-			
-			if (feed == null || feed.Items == null)
-				return 0;
-			
-			foreach (Item item in feed.Items) {
-				item_count++;
-				
-				Indexable indexable = FeedItemToIndexable (feed, item, file);
-
-				Scheduler.Task task = NewAddTask (indexable);
-				task.Priority = priority;
-				task.SubPriority = 0;
-				ThisScheduler.Add (task);				
-			}
-		     
-			return item_count;
-		}
-
-		////////////////////////////////////////////////
-
-		// IIndexableGenerator implementation
-
-		private ICollection files_to_parse;
-		private IEnumerator file_enumerator = null;
-		private IEnumerator item_enumerator = null;
-		private Feed current_feed;
-
-		public Indexable GetNextIndexable ()
-		{
-			Item item = (Item) this.item_enumerator.Current;
-			FileInfo file = (FileInfo) this.file_enumerator.Current;
-			return FeedItemToIndexable (this.current_feed, item, file);
-		}
-
-		public bool HasNextIndexable ()
-		{
-			if (this.files_to_parse.Count == 0)
-				return false;
-
-			while (this.item_enumerator == null || !this.item_enumerator.MoveNext ()) {
-				if (this.file_enumerator == null)
-					this.file_enumerator = this.files_to_parse.GetEnumerator ();
-
-				do {
-					if (!this.file_enumerator.MoveNext ())
-						return false;
-
-					FileInfo file = (FileInfo) this.file_enumerator.Current;
-
-					if (IsUpToDate (file.FullName))
-						continue;
-
-					Feed feed = Feed.LoadFromFile (file.FullName);
-
-					if (feed == null || feed.Items == null)
-						continue;
-
-					this.current_feed = feed;
-
-				} while (this.current_feed == null);
-
-				this.item_enumerator = this.current_feed.Items.GetEnumerator ();
-			}
-
-			return true;
-		}
-
-		public string StatusName {
-			get { return null; }
-		}
-
-		public void PostFlushHook ()
-		{ }
-	}	
-
-	////////////////////////////////////////////////
-
-	// De-serialization classes
-	// FIXME: Change to standard stream parsing for performance? 
-
+	[System.Xml.Serialization.XmlRoot("item", Namespace="", IsNullable=false)]
+	[System.Xml.Serialization.XmlType("item", Namespace="")]
 	public class Item {
 		[XmlElement ("title")] public string Title = "";
 		[XmlElement ("description")] public string Description ="";
@@ -257,48 +337,14 @@ namespace Beagle.Daemon.LifereaQueryable {
 		[XmlElement ("attributes")] public Attributes Attribs;
 		[XmlElement ("time")] public ulong Timestamp; 
 	}
-	
-	public class Attributes{
-		[XmlAttribute ("author")] public string Author = "";
+
+	public class Attributes {
+		[XmlElement ("attribute")] public Attribute[] AttribArray;
 	}
 	
-	public class Feed{
-		[XmlElement ("feedTitle")] public string Title="";
-		[XmlElement ("feedSource")] public string Source="";
-		[XmlElement ("feedDescription")] public string Description="";
-		
-		[XmlElement ("feedStatus")] public int Status;
-		[XmlElement ("feedUpdateInterval")] public int UpdateInterval;
-		[XmlElement ("feedDiscontinued")] public string Discontinued ="";
-		[XmlElement ("feedLastModified")] public string LastModified ="";
-
-		[XmlElement ("item", typeof (Item))]
-		public ArrayList Items {
-			get { return mItems; }
-			set { mItems = value; }
-		}
-		
-		private ArrayList mItems = new ArrayList ();
-		
-		public static Feed LoadFromFile (string filename) {
-			Feed f;
-			XmlRootAttribute xRoot = new XmlRootAttribute();
-			xRoot.ElementName = "feed";
-			
-			XmlSerializer serializer = new XmlSerializer (typeof (Feed), xRoot);
-			Stream stream = new FileStream (filename,
-							FileMode.Open,
-							FileAccess.Read,
-							FileShare.Read);
-			XmlTextReader reader = new XmlTextReader (stream);
-			
-			if (!serializer.CanDeserialize(reader) )
-				Console.WriteLine ("Muopp");
-			f = (Feed) serializer.Deserialize (reader);
-
-			reader.Close ();
-			stream.Close ();
-			return f;
-		}
+	public class Attribute{
+		[XmlAttribute ("name")] public string Name = "";
+		[XmlTextAttribute] public string Value = "";
 	}
+	
 }
