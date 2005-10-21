@@ -118,6 +118,24 @@ namespace Beagle.Daemon {
 			property_table.Add ("album",
 					    new PropertyDetail (PropertyType.Text, "fixme:album", "Album of the media"));
 
+			// ---------------- content mappings for email ------------------------
+
+			// "from" name
+			property_table.Add ("mailfrom",
+					    new PropertyDetail (PropertyType.Text, "fixme:from_name", "Email sender name"));
+			
+			// "from" email address
+			property_table.Add ("mailfromaddr",
+					    new PropertyDetail (PropertyType.Keyword, "fixme:from_address", "Email sender address"));
+
+			// "to" name
+			property_table.Add ("mailto",
+					    new PropertyDetail (PropertyType.Text, "fixme:to_name", "Email receipient name"));
+			
+			// "to" email address
+			property_table.Add ("mailtoaddr",
+					    new PropertyDetail (PropertyType.Keyword, "fixme:to_address", "Email receipient address"));
+			
 			// ---------------- beaglequery mappings --------------------
 			
 			property_table.Add ("extension",

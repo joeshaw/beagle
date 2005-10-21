@@ -1,3 +1,7 @@
+2005-10-21  Debajyoti Bera <dbera.web@gmail.org>
+
+	* beagled/PropertyKeywordFu.cs: some email related query keywords
+
 2005-10-20  Debajyoti Bera <dbera.web@gmail.org>
 
 	* BlamQueryable.cs, LifereaQueryable.cs, AkregatorQueryable.cs:
