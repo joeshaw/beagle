@@ -29,7 +29,7 @@ using System.Collections;
 using System.IO;
 using System.Text;
 
-using Beagle.Util;
+using Beagle;
 
 // FIXME crude hack, the list of property names should be registered by queryables
 // while calling AddNewKeyword etc.
@@ -91,25 +91,26 @@ namespace Beagle.Daemon {
 			// ---------------- Dublin Core mappings --------------------
 			
 			// title - corresponds to dc:title
-			// FIXME there are alteast two candidates for title: dc:title, fixme:title
+			// FIXME change fixme:title to dc:title in some filters and backends
 			property_table.Add ("title",
 					    new PropertyDetail (PropertyType.Text, "dc:title", "Title"));
 			
-			// creator
+			// creator - maps to DC element "creator"
 			property_table.Add ("creator",
-					    new PropertyDetail (PropertyType.Text, "dc:author", "Creator of the content"));
+					    new PropertyDetail (PropertyType.Text, "dc:creator", "Creator of the content"));
 
-			// author
+			// author - maps to DC element "creator"
 			property_table.Add ("author",
-					    new PropertyDetail (PropertyType.Text, "dc:author", "Author of the content"));
+					    new PropertyDetail (PropertyType.Text, "dc:creator", "Author of the content"));
 
-			// artist
+			// artist - maps to DC element "creator"
 			property_table.Add ("artist",
-					    new PropertyDetail (PropertyType.Text, "fixme:artist", "Artists"));
+					    new PropertyDetail (PropertyType.Text, "fixme:artist", "Artist"));
 
-			// date of content creation
-			property_table.Add ("date",
-					    new PropertyDetail (PropertyType.Date, "dc:date", "Date of creation"));
+			// date of content creation - maps to DC element "date"
+			// well we dont support date queries as of now ...
+			//property_table.Add ("date",
+			//		    new PropertyDetail (PropertyType.Date, "dc:date", "Date of creation"));
 
 			// ---------------- content mappings for media ------------------------
 			
