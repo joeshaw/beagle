@@ -1,3 +1,9 @@
+2005-10-23  Debajyoti Bera <dbera.web@gmail.com>
+
+	* Fixes 315984
+	Adding clear function to best.
+	Patch submitted by Dennis Snell <dmsnell@purdue.edu>
+
 2005-10-21  Debajyoti Bera <dbera.web@gmail.org>
 
 	* beagled/PropertyKeywordFu.cs: some email related query keywords

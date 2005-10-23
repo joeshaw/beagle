@@ -52,6 +52,11 @@ namespace Beagle.Tile {
 			get { return offerDaemonRestart; }
 			set { offerDaemonRestart = value; }
 		}
+		
+		public void Clear ()
+		{
+			hit_collection.Clear ();
+		}
 
 		public void Add (ICollection hits)
 		{

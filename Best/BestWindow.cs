@@ -341,7 +341,7 @@ namespace Best {
 		
 		private Gtk.Widget CreateContents ()
 		{
-			Gtk.HBox entryLine = new HBox (false, 3);
+			Gtk.HBox entryLine = new HBox (false, 4);
 
 			Gtk.Label words = new Gtk.Label (Catalog.GetString ("Search terms:"));
 			entryLine.PackStart (words, false, false, 3);
@@ -374,6 +374,11 @@ namespace Best {
 			button.Add (buttonContents);
 			button.Clicked += new EventHandler (this.DoSearch);
 			entryLine.PackStart (button, false, false, 3);
+			
+			Gtk.Button clearButton = new Gtk.Button ();
+			clearButton.Label = "Clear";
+			clearButton.Clicked += new EventHandler (this.ClearSearch);
+			entryLine.PackStart (clearButton, false, false, 4);
 
 			canvas = new TileCanvas ();
 			canvas.Show ();
@@ -618,6 +623,7 @@ namespace Best {
 			
 			query.AddText (searchString);
 			root.SetSource (hit_type);
+			ClearSearch (null, null);
 			
 			AttachQuery ();
 			
@@ -627,6 +633,13 @@ namespace Best {
 			StartQuery ();
 			
 			UpdatePage ();
+		}
+		
+		private void ClearSearch (object o, EventArgs args)
+		{
+			root.Clear ();
+			UpdatePage ();
+			entry.Text = "";
 		}
 
 		private void StoreSearch (string query)
