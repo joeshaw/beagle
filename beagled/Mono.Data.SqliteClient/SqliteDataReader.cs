@@ -190,7 +190,7 @@ namespace Mono.Data.SqliteClient
 			if (pVm != IntPtr.Zero) {
 				IntPtr errMsg;
 				if (version == 3)
-					Sqlite.sqlite3_finalize (pVm, out errMsg);
+					Sqlite.sqlite3_finalize (pVm);
 				else
 					Sqlite.sqlite_finalize (pVm, out errMsg);
 				pVm = IntPtr.Zero;

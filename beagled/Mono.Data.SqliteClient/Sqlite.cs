@@ -3,7 +3,10 @@
 //
 // Provides C# bindings to the library sqlite.dll
 //
-// Author(s): Everaldo Canuto  <everaldo_canuto@yahoo.com.br>
+//            	Everaldo Canuto  <everaldo_canuto@yahoo.com.br>
+//			Chris Turchin <chris@turchin.net>
+//			Jeroen Zwartepoorte <jeroen@xs4all.nl>
+//			Thomas Zoechling <thomas.zoechling@gmx.at>
 //
 // Copyright (C) 2004  Everaldo Canuto
 //
@@ -120,7 +123,7 @@ namespace Mono.Data.SqliteClient
 		internal static extern void sqliteFree (IntPtr ptr);
 		
 		[DllImport ("sqlite")]
-		internal static extern SqliteError sqlite_compile (IntPtr sqlite_handle, string zSql, out IntPtr pzTail, out IntPtr pVm, out IntPtr errstr);
+		internal static extern SqliteError sqlite_compile (IntPtr sqlite_handle, IntPtr zSql, out IntPtr pzTail, out IntPtr pVm, out IntPtr errstr);
 
 		[DllImport ("sqlite")]
 		internal static extern SqliteError sqlite_step (IntPtr pVm, out int pN, out IntPtr pazValue, out IntPtr pazColName);
@@ -129,7 +132,7 @@ namespace Mono.Data.SqliteClient
 		internal static extern SqliteError sqlite_finalize (IntPtr pVm, out IntPtr pzErrMsg);
 
 		[DllImport ("sqlite")]
-                internal static extern SqliteError sqlite_exec (IntPtr handle, string sql, IntPtr callback, IntPtr user_data, out IntPtr errstr_ptr);
+		internal static extern SqliteError sqlite_exec (IntPtr handle, string sql, IntPtr callback, IntPtr user_data, out IntPtr errstr_ptr);
 		
 		[DllImport("sqlite3")]
 		internal static extern int sqlite3_open (string dbname, out IntPtr handle);
@@ -138,7 +141,7 @@ namespace Mono.Data.SqliteClient
 		internal static extern void sqlite3_close (IntPtr sqlite_handle);
 
 		[DllImport("sqlite3")]
-		internal static extern string sqlite3_errmsg (IntPtr sqlite_handle);
+		internal static extern IntPtr sqlite3_errmsg (IntPtr sqlite_handle);
 
 		[DllImport("sqlite3")]
 		internal static extern int sqlite3_changes (IntPtr handle);
@@ -147,33 +150,69 @@ namespace Mono.Data.SqliteClient
 		internal static extern int sqlite3_last_insert_rowid (IntPtr sqlite_handle);
 
 		[DllImport ("sqlite3")]
-		internal static extern SqliteError sqlite3_prepare (IntPtr sqlite_handle, string zSql, int zSqllen, out IntPtr pVm, out IntPtr pzTail);
+		internal static extern SqliteError sqlite3_prepare (IntPtr sqlite_handle, IntPtr zSql, int zSqllen, out IntPtr pVm, out IntPtr pzTail);
 
 		[DllImport ("sqlite3")]
 		internal static extern SqliteError sqlite3_step (IntPtr pVm);
 
 		[DllImport ("sqlite3")]
-		internal static extern SqliteError sqlite3_finalize (IntPtr pVm, out IntPtr pzErrMsg);
+		internal static extern SqliteError sqlite3_finalize (IntPtr pVm);
 
 		[DllImport ("sqlite3")]
-                internal static extern SqliteError sqlite3_exec (IntPtr handle, string sql, IntPtr callback, IntPtr user_data, out IntPtr errstr_ptr);
+		internal static extern SqliteError sqlite3_exec (IntPtr handle, string sql, IntPtr callback, IntPtr user_data, out IntPtr errstr_ptr);
 	
 		[DllImport ("sqlite3")]
 		internal static extern IntPtr sqlite3_column_name (IntPtr pVm, int col);
+		
 		[DllImport ("sqlite3")]
 		internal static extern IntPtr sqlite3_column_text (IntPtr pVm, int col);
+		
 		[DllImport ("sqlite3")]
 		internal static extern IntPtr sqlite3_column_blob (IntPtr pVm, int col);
+		
 		[DllImport ("sqlite3")]
 		internal static extern int sqlite3_column_bytes (IntPtr pVm, int col);
+		
 		[DllImport ("sqlite3")]
 		internal static extern int sqlite3_column_count (IntPtr pVm);
+		
 		[DllImport ("sqlite3")]
 		internal static extern int sqlite3_column_type (IntPtr pVm, int col);
+		
 		[DllImport ("sqlite3")]
 		internal static extern Int64 sqlite3_column_int64 (IntPtr pVm, int col);
+		
 		[DllImport ("sqlite3")]
 		internal static extern double sqlite3_column_double (IntPtr pVm, int col);
+		
+ 		[DllImport ("sqlite3")]
+		internal static extern int sqlite3_bind_parameter_count (IntPtr pStmt);
+
+		[DllImport ("sqlite3")]
+		internal static extern String sqlite3_bind_parameter_name (IntPtr pStmt, int n);
+
+		[DllImport ("sqlite3")]
+		internal static extern SqliteError sqlite3_bind_blob (IntPtr pStmt, int n, byte[] blob, int length, IntPtr freetype);
+
+		[DllImport ("sqlite3")]
+		internal static extern SqliteError sqlite3_bind_double (IntPtr pStmt, int n, double value);
+
+		[DllImport ("sqlite3")]
+		internal static extern SqliteError sqlite3_bind_int (IntPtr pStmt, int n, int value);
+
+		[DllImport ("sqlite3")]
+		internal static extern SqliteError sqlite3_bind_int64 (IntPtr pStmt, Int64 n, long value);
+
+		[DllImport ("sqlite3")]
+		internal static extern SqliteError sqlite3_bind_null (IntPtr pStmt, int n);
+
+		[DllImport ("sqlite3")]
+		internal static extern SqliteError sqlite3_bind_text (IntPtr pStmt, int n, string value, int length, IntPtr freetype);
+
+		[DllImport ("sqlite3")]
+		internal static extern SqliteError sqlite3_bind_text16 (IntPtr pStmt, int n, byte[] value, int length, IntPtr freetype);
+		
 		#endregion
+
 	}
 }
