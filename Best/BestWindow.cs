@@ -623,7 +623,6 @@ namespace Best {
 			
 			query.AddText (searchString);
 			root.SetSource (hit_type);
-			ClearSearch (null, null);
 			
 			AttachQuery ();
 			
