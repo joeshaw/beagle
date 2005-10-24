@@ -32,8 +32,6 @@ using System.IO;
 using Beagle.Util;
 using Beagle.Daemon;
 
-using Mono.Posix;
-
 namespace Beagle.Daemon.KMailQueryable {
 	
 	/**

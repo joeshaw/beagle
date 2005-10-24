@@ -6,7 +6,7 @@ closedir(DIR);
 
 open (OUTPUT, ">TranslationHack.cs");
 
-print OUTPUT "using Mono.Posix;\n\npublic class TranslationHack {\n\tprivate void NotToBecalled () {\n";
+print OUTPUT "using Mono.Unix;\n\npublic class TranslationHack {\n\tprivate void NotToBecalled () {\n";
 
 foreach $file (@files) {
     open (TEMPLATE, $file);

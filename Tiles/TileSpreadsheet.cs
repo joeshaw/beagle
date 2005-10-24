@@ -29,7 +29,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Text;
 
-using Mono.Posix;
+using Mono.Unix;
 
 using BU = Beagle.Util;
 

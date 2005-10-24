@@ -33,7 +33,7 @@ using System.Net;
 using System.Net.Sockets;
 using System.Runtime.InteropServices;
 
-using Mono.Posix;
+using Mono.Unix;
 
 namespace Beagle.Util {
 

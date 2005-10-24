@@ -106,7 +106,7 @@ namespace Beagle.Util {
 							Directory.CreateDirectory (storage_dir);
 							// Make sure that the directory is only
 							// readable by the owner.
-							Mono.Posix.Syscall.chmod (storage_dir, (Mono.Posix.FileMode) 448); // 448 == 0700
+							Mono.Unix.Syscall.chmod (storage_dir, (Mono.Unix.FilePermissions) 448); // 448 == 0700
 						}
 					}
 				}
@@ -152,7 +152,7 @@ namespace Beagle.Util {
 							Directory.CreateDirectory (remote_storage_dir);
 							// Make sure that the directory is only
 							// readable by the owner.
-							Mono.Posix.Syscall.chmod (remote_storage_dir, (Mono.Posix.FileMode) 448); // 448 == 0700
+							Mono.Unix.Syscall.chmod (remote_storage_dir, (Mono.Unix.FilePermissions) 448); // 448 == 0700
 						}
 					}
 				} else
@@ -176,7 +176,7 @@ namespace Beagle.Util {
 
 						// Make sure that the directory is only readable by the owner. 
 						// Required when using index synchronization as then it resides in /tmp
-						Mono.Posix.Syscall.chmod (index_dir, (Mono.Posix.FileMode) 448); // 448 == 0700
+						Mono.Unix.Syscall.chmod (index_dir, (Mono.Unix.FilePermissions) 448); // 448 == 0700
 					}
 				}
 				

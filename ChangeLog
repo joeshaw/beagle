@@ -1,3 +1,9 @@
+2005-10-25  Daniel Drake  <dsd@gentoo.org>
+
+	* Convert to Mono.Unix everywhere
+	* Add BEAGLE_THERE_BE_NO_QUITTIN environment variable, which when set,
+	disables our SIGQUIT handler.
+
 2005-10-24  Daniel Drake  <dsd@gentoo.org>
 
 	* Various ImLog and ImLogViewer improvements

@@ -29,8 +29,6 @@ using System;
 using System.Collections;
 using System.IO;
 
-using Mono.Posix;
-
 using GMime;
 
 using Beagle;
@@ -64,7 +62,7 @@ namespace Beagle.Filters {
 				}
 			}
 
-			int mail_fd = Syscall.open (info.FullName, OpenFlags.O_RDONLY);
+			int mail_fd = Mono.Unix.Syscall.open (info.FullName, Mono.Unix.OpenFlags.O_RDONLY);
 			
 			if (mail_fd == -1)
 				throw new IOException (String.Format ("Unable to read {0} for parsing mail", info.FullName));

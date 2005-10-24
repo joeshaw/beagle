@@ -31,7 +31,6 @@ using System.Globalization;
 using System.IO;
 using System.Runtime.InteropServices;
 using System.Text.RegularExpressions;
-using Mono.Posix;
 
 namespace Beagle.Util {
 
@@ -56,7 +55,7 @@ namespace Beagle.Util {
 			int retval = getloadavg (loadavg, 3);
 
 			if (retval == -1)
-				throw new IOException ("Could not get system load average: " + Syscall.strerror (Marshal.GetLastWin32Error ()));
+				throw new IOException ("Could not get system load average: " + Mono.Unix.Stdlib.strerror (Mono.Unix.Syscall.GetLastError ()));
 			else if (retval != 3)
 				throw new IOException ("Could not get system load average: getloadavg() returned an unexpected number of samples");
 
@@ -259,12 +258,12 @@ namespace Beagle.Util {
 		// Get the (major,minor) pair for the block device from which the index is mounted.
 		static private void GetIndexDev ()
 		{
-			Mono.Posix.Stat stat = new Mono.Posix.Stat ();
-			if (Mono.Posix.Syscall.stat (PathFinder.StorageDir, out stat) != 0)
+			Mono.Unix.Stat stat;
+			if (Mono.Unix.Syscall.stat (PathFinder.StorageDir, out stat) != 0)
 				return;
 
-			major = (uint) stat.Device >> 8;
-			minor = (uint) stat.Device & 0xff;
+			major = (uint) stat.st_dev >> 8;
+			minor = (uint) stat.st_dev & 0xff;
 		}
 
 		static public int DiskStatsReadReqs {
@@ -305,11 +304,11 @@ namespace Beagle.Util {
 
 		static public bool IsPathOnBlockDevice (string path)
 		{
-			Mono.Posix.Stat stat;
-			if (Mono.Posix.Syscall.stat (path, out stat) != 0)
+			Mono.Unix.Stat stat;
+			if (Mono.Unix.Syscall.stat (path, out stat) != 0)
 				return false;
 			
-			return (stat.Device >> 8 != 0);
+			return (stat.st_dev >> 8 != 0);
 		}
 
 #if false

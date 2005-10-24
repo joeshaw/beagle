@@ -26,7 +26,7 @@
 //
 
 using System;
-using Mono.Posix;
+using Mono.Unix;
 using Beagle.Util;
 
 namespace ImLogViewer {

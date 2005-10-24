@@ -33,7 +33,7 @@ using Gtk;
 using Gdk;
 using GConf;
 using Glade;
-using Mono.Posix;
+using Mono.Unix;
 
 using Beagle;
 using Beagle.Util;

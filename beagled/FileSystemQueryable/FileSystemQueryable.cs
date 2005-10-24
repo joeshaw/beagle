@@ -805,11 +805,9 @@ namespace Beagle.Daemon.FileSystemQueryable {
 		private RequiredAction DetermineRequiredAction (DirectoryModel dir,
 								string         name,
 								FileAttributes attr,
-								out string     last_known_path,
-								out DateTime   mtime)
+								out string     last_known_path)
 		{
 			last_known_path = null;
-			mtime = DateTime.MinValue;
 
 			string path;
 			path = Path.Combine (dir.FullName, name);
@@ -850,17 +848,16 @@ namespace Beagle.Daemon.FileSystemQueryable {
 				}
 			}
 
-			Mono.Posix.Stat stat;
+			Mono.Unix.Stat stat;
 			try {
-				Mono.Posix.Syscall.stat (path, out stat);
+				Mono.Unix.Syscall.stat (path, out stat);
 			} catch (Exception ex) {
 				Logger.Log.Debug ("Caught exception stat-ing {0}", path);
 				Logger.Log.Debug (ex);
 				return RequiredAction.None;
 			}
-			mtime = stat.MTime;
 
-			if (! DatesAreTheSame (attr.LastWriteTime, mtime)) {
+			if (! DatesAreTheSame (attr.LastWriteTime, stat.st_mtime)) {
 				if (Debug)
 					Logger.Log.Debug ("*** Index it: MTime has changed");
 				
@@ -883,7 +880,7 @@ namespace Beagle.Daemon.FileSystemQueryable {
 
 			// If the inode ctime is different that the time we last
 			// set file attributes, we might have been moved or copied.
-			if (! DatesAreTheSame (attr.LastAttrTime, stat.CTime)) {
+			if (! DatesAreTheSame (attr.LastAttrTime, stat.st_ctime)) {
 				if (Debug)
 					Logger.Log.Debug ("*** CTime has changed, checking last known path");
 
@@ -911,16 +908,10 @@ namespace Beagle.Daemon.FileSystemQueryable {
 			return RequiredAction.None;	
 		}
 
-		// This works around a mono bug: the DateTimes that we get out of stat
-		// don't correctly account for daylight savings time.  We declare the two
-		// dates to be equal if:
-		// (1) They actually are equal
-		// (2) The first date is exactly one hour ahead of the second
-		static private bool DatesAreTheSame (DateTime system_io_datetime, DateTime stat_datetime)
+		static private bool DatesAreTheSame (DateTime system_io_datetime, long stat_datetime)
 		{
-			const double epsilon = 1e-5;
-			double t = (system_io_datetime - stat_datetime).TotalSeconds;
-			return Math.Abs (t) < epsilon || Math.Abs (t-3600) < epsilon;
+			long system_epoch_time = Mono.Unix.UnixConvert.FromDateTime (system_io_datetime.ToUniversalTime ());
+			return system_epoch_time == stat_datetime;
 		}
 
 		// Return an indexable that will do the right thing with a file
@@ -935,8 +926,7 @@ namespace Beagle.Daemon.FileSystemQueryable {
 			
 			RequiredAction action;
 			string last_known_path;
-			DateTime mtime;
-			action = DetermineRequiredAction (dir, name, attr, out last_known_path, out mtime);
+			action = DetermineRequiredAction (dir, name, attr, out last_known_path);
 
 			if (action == RequiredAction.None)
 				return null;
@@ -953,8 +943,6 @@ namespace Beagle.Daemon.FileSystemQueryable {
 
 			case RequiredAction.Index:
 				indexable = FileToIndexable (path, unique_id, dir, true);
-				if (mtime == DateTime.MinValue)
-					mtime = File.GetLastWriteTime (path);
 				break;
 
 			case RequiredAction.Rename:

@@ -27,8 +27,6 @@
 using System;
 using System.IO;
 
-using Mono.Posix;
-
 namespace Beagle.Util {
 	
 	public class FileSystem {
@@ -58,10 +56,9 @@ namespace Beagle.Util {
 		// I guess this is as good a place for this as any.
 		static public bool IsSymLink (string path)
 		{
-			Stat stat = new Stat ();
-			Syscall.lstat (path, out stat);
-			int mode = (int) stat.Mode & (int)StatModeMasks.TypeMask;
-			return mode == (int) StatMode.SymLink;
+			Mono.Unix.Stat stat;
+			Mono.Unix.Syscall.lstat (path, out stat);
+			return (stat.st_mode & Mono.Unix.FilePermissions.S_IFLNK) == Mono.Unix.FilePermissions.S_IFLNK;
 		}
 
 	}

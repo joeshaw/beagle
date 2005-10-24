@@ -2,7 +2,6 @@
 using System;
 using System.Collections;
 using System.Runtime.InteropServices;
-using Mono.Posix;
 
 namespace Beagle.Util
 {

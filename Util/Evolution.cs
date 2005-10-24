@@ -29,7 +29,7 @@ using System;
 using System.IO;
 using System.Collections;
 
-using Mono.Posix;
+using Mono.Unix;
 
 namespace Beagle.Util {
 	// FIXME: IMAP4

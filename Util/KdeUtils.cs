@@ -27,7 +27,7 @@
 using System;
 using System.Diagnostics;
 using System.IO;
-using Mono.Posix;
+using System.Text;
 
 namespace Beagle.Util {
 	public class KdeUtils {
@@ -64,7 +64,9 @@ namespace Beagle.Util {
 				// We handle the situations if either (or both) of these aren't present, or
 				// if default.kde == hicolor.
 
-				string icon_theme_default = Syscall.readlink (Path.Combine (icon_prefix, "default.kde"));
+				StringBuilder icon_theme_default_sb = new StringBuilder ();
+				Mono.Unix.Syscall.readlink (Path.Combine (icon_prefix, "default.kde"), icon_theme_default_sb);
+				string icon_theme_default = icon_theme_default_sb.ToString ();
 				if (icon_theme_default != null) {
 					if (! icon_theme_default.StartsWith ("/"))
 						icon_theme_default = Path.Combine (icon_prefix, icon_theme_default);

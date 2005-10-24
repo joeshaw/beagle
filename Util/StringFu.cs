@@ -31,7 +31,7 @@ using System.IO;
 using System.Text;
 using System.Xml;
 
-using Mono.Posix;
+using Mono.Unix;
 
 namespace Beagle.Util {
 

@@ -35,8 +35,6 @@ using System.Xml;
 using Beagle.Util;
 using Beagle.Daemon;
 
-using Mono.Posix;
-
 namespace Beagle.Daemon.KMailQueryable {
 
 	/**
@@ -218,7 +216,7 @@ namespace Beagle.Daemon.KMailQueryable {
 				
 				try {
 					// POSIX rules! once we have the fd, nobody can delete the file... bwahahaha
-					mbox_fd = Syscall.open (mbox_file, OpenFlags.O_RDONLY);
+					mbox_fd = Mono.Unix.Syscall.open (mbox_file, Mono.Unix.OpenFlags.O_RDONLY);
 				} catch (System.IO.FileNotFoundException e) {
 					Logger.Log.Warn ("mbox " + mbox_file + " deleted while indexing.");
 					return false;

@@ -31,7 +31,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using BU = Beagle.Util;
 using GMime;
-using Mono.Posix;
+using Mono.Unix;
 
 namespace Beagle.Tile {
 

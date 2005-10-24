@@ -34,8 +34,6 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
 
-using Mono.Posix;
-
 namespace Beagle.Util {
 
 	public class Inotify {

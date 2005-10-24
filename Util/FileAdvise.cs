@@ -30,7 +30,6 @@ using System;
 using System.IO;
 using System.Text;
 using System.Runtime.InteropServices;
-using Mono.Posix;
 
 using Beagle.Util;
 
@@ -95,7 +94,7 @@ namespace Beagle.Util {
 								  FileAccess.Read);
 				int ret = GiveAdvice (file, AdviseNormal);
 				if (ret != 0)
-					Log.Error ("FileAdvise failed: {0}", Syscall.strerror (Marshal.GetLastWin32Error()));
+					Log.Error ("FileAdvise failed: {0}", Mono.Unix.Stdlib.strerror (Mono.Unix.Syscall.GetLastError()));
 				file.Close ();
 			} catch { }
 		}

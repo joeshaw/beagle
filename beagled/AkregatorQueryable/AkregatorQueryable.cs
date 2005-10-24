@@ -34,8 +34,6 @@ using System.Xml.Serialization;
 using Beagle.Daemon;
 using Beagle.Util;
 
-using Mono.Posix;
-
 namespace Beagle.Daemon.AkregatorQueryable {
 
 	[QueryableFlavor (Name="Akregator", Domain=QueryDomain.Local, RequireInotify=false)]

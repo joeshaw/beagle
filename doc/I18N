@@ -5,7 +5,7 @@ Developers:
 
 I18N support is provided with the use of good old gettext/intltool and is very
 straight forward. In code (C#) you can fetch translated strings with
-Mono.Posix.Catalog.GetString ("Text to be translated") and in the templates'
+Mono.Unix.Catalog.GetString ("Text to be translated") and in the templates'
 HTML files with the new text macro, eg. simply writing @text%Text to be translated@.
 
 Translators:

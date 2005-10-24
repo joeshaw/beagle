@@ -32,7 +32,7 @@ using Gtk;
 using Glade;
 using System.Threading;
 using Beagle.Util;
-using Mono.Posix;
+using Mono.Unix;
 
 namespace ImLogViewer {
 

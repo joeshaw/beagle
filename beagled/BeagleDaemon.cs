@@ -396,25 +396,16 @@ namespace Beagle.Daemon {
 
 		/////////////////////////////////////////////////////////////////////////////
 
-		// The integer values of the Mono.Posix.Signal enumeration don't actually
-		// match the Linux signal numbers of Linux.  Oops!
-		// This is fixed in Mono.Unix, but for the moment we want to maintain
-		// compatibility with mono 1.0.x.
-		const int ACTUAL_LINUX_SIGINT  = 2;
-		const int ACTUAL_LINUX_SIGQUIT = 3;
-		const int ACTUAL_LINUX_SIGTERM = 15;
-
 		static void SetupSignalHandlers ()
 		{
 			// Force OurSignalHandler to be JITed
 			OurSignalHandler (-1);
 
 			// Set up our signal handler
-			Mono.Posix.Syscall.sighandler_t sig_handler;
-			sig_handler = new Mono.Posix.Syscall.sighandler_t (OurSignalHandler);
-                        Mono.Posix.Syscall.signal (ACTUAL_LINUX_SIGINT, sig_handler);
-                        Mono.Posix.Syscall.signal (ACTUAL_LINUX_SIGQUIT, sig_handler);
-                        Mono.Posix.Syscall.signal (ACTUAL_LINUX_SIGTERM, sig_handler);
+			Mono.Unix.Stdlib.signal (Mono.Unix.Signum.SIGINT, OurSignalHandler);
+			Mono.Unix.Stdlib.signal (Mono.Unix.Signum.SIGTERM, OurSignalHandler);
+			if (Environment.GetEnvironmentVariable("BEAGLE_THERE_BE_NO_QUITTIN") == null)
+				Mono.Unix.Stdlib.signal (Mono.Unix.Signum.SIGQUIT, OurSignalHandler);
 		}
 
 		// Our handler triggers an orderly shutdown when it receives a signal.

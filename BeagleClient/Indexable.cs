@@ -500,7 +500,7 @@ namespace Beagle {
 			// Make sure the temporary file is only readable by the owner.
 			// FIXME: There is probably a race here.  Could some malicious program
 			// do something to the file between creation and the chmod?
-			Mono.Posix.Syscall.chmod (filename, (Mono.Posix.FileMode) 256);
+			Mono.Unix.Syscall.chmod (filename, (Mono.Unix.FilePermissions) 256);
 
 			BufferedStream bufferedStream = new BufferedStream (fileStream);
 			StreamWriter writer = new StreamWriter (bufferedStream);
@@ -536,7 +536,7 @@ namespace Beagle {
 			// Make sure the temporary file is only readable by the owner.
 			// FIXME: There is probably a race here.  Could some malicious program
 			// do something to the file between creation and the chmod?
-			Mono.Posix.Syscall.chmod (filename, (Mono.Posix.FileMode) 256);
+			Mono.Unix.Syscall.chmod (filename, (Mono.Unix.FilePermissions) 256);
 
 			BufferedStream bufferedStream = new BufferedStream (fileStream);
 

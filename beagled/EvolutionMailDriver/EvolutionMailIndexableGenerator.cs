@@ -36,7 +36,6 @@ using Beagle.Util;
 using Beagle.Daemon;
 
 using Camel = Beagle.Util.Camel;
-using Mono.Posix;
 
 namespace Beagle.Daemon.EvolutionMailDriver {
 
@@ -214,7 +213,7 @@ namespace Beagle.Daemon.EvolutionMailDriver {
 					return false;
 				}
 
-				this.mbox_fd = Syscall.open (this.mbox_info.FullName, OpenFlags.O_RDONLY);
+				this.mbox_fd = Mono.Unix.Syscall.open (this.mbox_info.FullName, Mono.Unix.OpenFlags.O_RDONLY);
 				this.mbox_stream = new GMime.StreamFs (this.mbox_fd);
 				this.mbox_stream.Seek ((int) this.MboxLastOffset);
 				this.mbox_parser = new GMime.Parser (this.mbox_stream);

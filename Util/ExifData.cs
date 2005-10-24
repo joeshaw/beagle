@@ -223,17 +223,17 @@ namespace Beagle.Util {
 		{
 			switch (ifd) {
 			case ExifIfd.Zero:
-				return Mono.Posix.Catalog.GetString ("Image Directory");
+				return Mono.Unix.Catalog.GetString ("Image Directory");
 			case ExifIfd.One:
-				return Mono.Posix.Catalog.GetString ("Thumbnail Directory");
+				return Mono.Unix.Catalog.GetString ("Thumbnail Directory");
 			case ExifIfd.Exif:
-				return Mono.Posix.Catalog.GetString ("Exif Directory");
+				return Mono.Unix.Catalog.GetString ("Exif Directory");
 			case ExifIfd.Gps:
-				return Mono.Posix.Catalog.GetString ("GPS Directory");
+				return Mono.Unix.Catalog.GetString ("GPS Directory");
 			case ExifIfd.InterOperability:
-				return Mono.Posix.Catalog.GetString ("InterOperability Directory");
+				return Mono.Unix.Catalog.GetString ("InterOperability Directory");
 			default:
-				return Mono.Posix.Catalog.GetString ("Unknown Directory");
+				return Mono.Unix.Catalog.GetString ("Unknown Directory");
 			}
 		}
 		

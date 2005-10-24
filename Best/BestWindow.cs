@@ -32,7 +32,7 @@ using Gnome;
 using Gtk;
 using GD=Gdk;
 
-using Mono.Posix;
+using Mono.Unix;
 
 using Beagle;
 using Beagle.Util;

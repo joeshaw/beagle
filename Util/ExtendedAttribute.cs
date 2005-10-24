@@ -30,16 +30,13 @@ using System;
 using System.IO;
 using System.Text;
 using System.Runtime.InteropServices;
-using Mono.Posix;
 
 namespace Beagle.Util {
 
 	public class ExtendedAttribute {
 
-		// FIXME: Once Mono 1.1/1.2 is required, we should start using the
-		// xattr bindings which are now present in the Mono.Unix.Syscall class.
-		// The interface provided via Syscall in future Mono versions will support both
-		// Linux/FreeBSD attributes transparently.
+		// FIXME: When Mono 1.1.9 is required, start using the Mono.Unix.Syscall
+		// xattr bindings.
 
 		// Linux xattrs
 		[DllImport (ExternalStringsHack.XattrLib, SetLastError=true)]
@@ -88,7 +85,7 @@ namespace Beagle.Util {
 			int retval = extattr_set_link (path, 1, name, buffer, (uint) buffer.Length);
 #endif
 			if (retval == -1)
-				throw new IOException ("Could not set extended attribute on " + path + ": " + Syscall.strerror (Marshal.GetLastWin32Error ()));
+				throw new IOException ("Could not set extended attribute on " + path + ": " + Mono.Unix.Stdlib.strerror (Mono.Unix.Syscall.GetLastError ()));
 		}
 
 		public static bool Exists (string path, string name)
@@ -130,7 +127,7 @@ namespace Beagle.Util {
 			int retval = extattr_get_link (path, 1, name, buffer, (uint) size);
 #endif
 			if (retval < 0)
-				throw new IOException ("Could not get extended attribute on " + path + ": " + Syscall.strerror (Marshal.GetLastWin32Error ()));
+				throw new IOException ("Could not get extended attribute on " + path + ": " + Mono.Unix.Stdlib.strerror (Mono.Unix.Syscall.GetLastError ()));
 
 			return encoding.GetString (buffer);
 		}
@@ -148,7 +145,7 @@ namespace Beagle.Util {
 			int retval = extattr_delete_link (path, 1, name);
 #endif
 			if (retval != 0)
-				throw new IOException ("Could not remove extended attribute on " + path + ": " + Syscall.strerror (Marshal.GetLastWin32Error ()));
+				throw new IOException ("Could not remove extended attribute on " + path + ": " + Mono.Unix.Stdlib.strerror (Mono.Unix.Syscall.GetLastError ()));
 		}
 
 		// Check to see if it is possible to get and set attributes on a given file.

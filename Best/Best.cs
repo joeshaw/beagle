@@ -13,7 +13,7 @@ using Gtk;
 using GtkSharp;
 using Gnome;
 
-using Mono.Posix;
+using Mono.Unix;
 
 using Beagle;
 using Beagle.Util;
