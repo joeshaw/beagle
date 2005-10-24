@@ -11,7 +11,8 @@ CSFILES =				\
 	$(srcdir)/ImLogWindow.cs
 
 LOCAL_ASSEMBLIES =			\
-	../Util/Util.dll
+	../Util/Util.dll		\
+	../images/Images.dll
 
 ASSEMBLIES =				\
 	$(BEAGLE_UI_LIBS)		\

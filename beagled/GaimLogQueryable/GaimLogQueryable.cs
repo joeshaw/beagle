@@ -58,7 +58,7 @@ namespace Beagle.Daemon.GaimLogQueryable {
 		/////////////////////////////////////////////////
 					
 		private void StartWorker() 
-		{		
+		{	
 			if (! Directory.Exists (log_dir)) {
 				GLib.Timeout.Add (60000, new GLib.TimeoutHandler (CheckForExistence));
 				return;
@@ -77,9 +77,9 @@ namespace Beagle.Daemon.GaimLogQueryable {
 
 			if (!Inotify.Enabled) {
 				Scheduler.Task task = Scheduler.TaskFromHook (new Scheduler.TaskHook (CrawlHook));
-                                task.Tag = "Crawling ~/.gaim/logs to find new logfiles";
+				task.Tag = "Crawling ~/.gaim/logs to find new logfiles";
 				task.Source = this;
-                                ThisScheduler.Add (task);
+				ThisScheduler.Add (task);
 			}
 
 			stopwatch.Stop ();
@@ -97,19 +97,18 @@ namespace Beagle.Daemon.GaimLogQueryable {
 		/////////////////////////////////////////////////
 
 		private void Crawl ()
-                {
-                        crawler.Crawl ();
-                        foreach (FileInfo file in crawler.Logs) {			    
-                                IndexLog (file.FullName, Scheduler.Priority.Delayed);
-			}
-                }
+		{
+			crawler.Crawl ();
+			foreach (FileInfo file in crawler.Logs)
+					IndexLog (file.FullName, Scheduler.Priority.Delayed);
+		}
 
-                private void CrawlHook (Scheduler.Task task)
-                {
-                        Crawl ();
-                        task.Reschedule = true;
-                        task.TriggerTime = DateTime.Now.AddSeconds (polling_interval_in_seconds);
-                }
+		private void CrawlHook (Scheduler.Task task)
+		{
+			Crawl ();
+			task.Reschedule = true;
+			task.TriggerTime = DateTime.Now.AddSeconds (polling_interval_in_seconds);
+		}
 
 		/////////////////////////////////////////////////
 
@@ -177,59 +176,32 @@ namespace Beagle.Daemon.GaimLogQueryable {
 
 		/////////////////////////////////////////////////
 		
-		private static Indexable ImLogToIndexable (ImLog log)
+		private static Indexable ImLogToIndexable (string filename)
 		{
-			Indexable indexable = new Indexable (log.Uri);
-			indexable.Timestamp = log.Timestamp;
-			indexable.MimeType = "text/plain";
+			Uri uri = UriFu.PathToFileUri (filename);
+			Indexable indexable = new Indexable (uri);
+			indexable.ContentUri = uri;
+			indexable.Timestamp = File.GetLastWriteTime (filename);
+			indexable.MimeType = GaimLog.MimeType;
 			indexable.HitType = "IMLog";
+			indexable.CacheContent = false;
 
-			indexable.Filtering = IndexableFiltering.AlreadyFiltered;
-
-			StringBuilder text = new StringBuilder ();
-			foreach (ImLog.Utterance utt in log.Utterances) {
-				//Console.WriteLine ("[{0}][{1}]", utt.Who, utt.Text);
-				text.Append (utt.Text);
-				text.Append (" ");
-			}
-
-			// FIXME: It would be cleaner to have a TextReader than streamed out
-			// the utterances.
-
-			indexable.AddProperty (Property.NewDate ("fixme:starttime", log.StartTime));
-			indexable.AddProperty (Property.NewDate ("fixme:endtime", log.EndTime));
-			indexable.AddProperty (Property.NewUnsearched ("fixme:file", log.LogFile));
-			indexable.AddProperty (Property.NewUnsearched ("fixme:offset", log.LogOffset));
-			indexable.AddProperty (Property.NewUnsearched ("fixme:client", log.Client));
-			indexable.AddProperty (Property.NewUnsearched ("fixme:protocol", log.Protocol));
-
-			// FIXME: Should these use Property.NewKeyword and be searched?
-			indexable.AddProperty (Property.NewUnsearched ("fixme:speakingto", log.SpeakingTo));
-			indexable.AddProperty (Property.NewUnsearched ("fixme:identity", log.Identity));
-
-			StringReader reader = new StringReader (text.ToString ());
-			indexable.SetTextReader (reader);
-			
 			return indexable;
 		}
 
 		private void IndexLog (string filename, Scheduler.Priority priority)
 		{
-			FileInfo info = new FileInfo (filename);
-			if (! info.Exists)
+			if (! File.Exists (filename))
 				return;
 
 			if (IsUpToDate (filename))
 				return;
 
-			ICollection logs = GaimLog.ScanLog (info);
-			foreach (ImLog log in logs) {
-				Indexable indexable = ImLogToIndexable (log);
-				Scheduler.Task task = NewAddTask (indexable);
-				task.Priority = priority;
-				task.SubPriority = 0;
-				ThisScheduler.Add (task);
-			}
+			Indexable indexable = ImLogToIndexable (filename);
+			Scheduler.Task task = NewAddTask (indexable);
+			task.Priority = priority;
+			task.SubPriority = 0;
+			ThisScheduler.Add (task);
 		}
 
 		override protected double RelevancyMultiplier (Hit hit)
@@ -238,43 +210,6 @@ namespace Beagle.Daemon.GaimLogQueryable {
 							       "fixme:endtime", "fixme:starttime");
 		}
 
-		override public string GetSnippet (string[] query_terms, Hit hit)
-		{
-			// FIXME: This does the wrong thing for old-style logs.
-			string file = hit ["fixme:file"];
-			ICollection logs = GaimLog.ScanLog (new FileInfo (file));
-			IEnumerator iter = logs.GetEnumerator ();
-			ImLog log = null;
-			if (iter.MoveNext ())
-				log = iter.Current as ImLog;
-			if (log == null)
-				return null;
-
-			string result = "";
-
-			// FIXME: This is very lame, and doesn't do the
-			// right thing w/ stemming, word boundaries, etc.
-			foreach (ImLog.Utterance utt in log.Utterances) {
-				string text = utt.Text;
-				string who = utt.Who;
-				
-				string snippet = SnippetFu.GetSnippet (query_terms, new StringReader (text));
-
-				if (snippet == null || snippet == "")
-					continue;
-
-				result += String.Format ("{0}: {1} ", who, snippet);
-
-				if (result.Length > 300)
-					break;
-			}
-
-			if (result != "")
-				return result;
-			else
-				return log.Snippet;
-		}
-		
 		override protected bool HitFilter (Hit hit) 
 		{
 			ImBuddy buddy = list.Search (hit ["fixme:speakingto"]);
@@ -290,19 +225,6 @@ namespace Beagle.Daemon.GaimLogQueryable {
 			return true;
 		}
 
-		override protected Hit PostProcessHit (Hit hit) 
-		{
-			ImBuddy buddy = list.Search (hit ["fixme:speakingto"]);
-
-			if (buddy != null) {
-				if (buddy.Alias != "")
-					hit ["fixme:speakingto_alias"] = buddy.Alias;
-
-				if (buddy.BuddyIconLocation != "")
-					hit ["fixme:speakingto_icon"] = Path.Combine (icons_dir, buddy.BuddyIconLocation);
-			}
-
-			return hit;
-		}
 	}
 }
+

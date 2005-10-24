@@ -6,6 +6,24 @@
 //
 // Copyright (C) 2005 Novell, Inc.
 //
+// Permission is hereby granted, free of charge, to any person obtaining a
+// copy of this software and associated documentation files (the "Software"),
+// to deal in the Software without restriction, including without limitation
+// the rights to use, copy, modify, merge, publish, distribute, sublicense,
+// and/or sell copies of the Software, and to permit persons to whom the
+// Software is furnished to do so, subject to the following conditions:
+//
+// The above copyright notice and this permission notice shall be included in
+// all copies or substantial portions of the Software.
+//
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+// FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
+// DEALINGS IN THE SOFTWARE.
+//
 
 using System;
 using System.Collections;
@@ -26,9 +44,8 @@ namespace ImLogViewer {
 		[Widget] Button search_button;
 		[Widget] Button clear_button;
 		[Widget] TextView conversation;
+		[Widget] ScrolledWindow scrolledwindow;
 		
-		private string selected_log;
-
 		private string speaking_to;
 		private string log_path;
 		private string highlight_text;
@@ -38,31 +55,29 @@ namespace ImLogViewer {
 		private ThreadNotify index_thread_notify;
 		private Timeline timeline = new Timeline ();
 
-		private string client;
+		private FileInfo initial_select_file;
+		private ImLog initial_select;
 
-		public ImLogWindow (string path, string search, string highlight)
+		private ImClient client;
+
+		public ImLogWindow (ImClient client, string path, string search, string highlight)
 		{
-			// FIXME: This is a bunch of crap, ImLog should be more dynamic.
-			if (path.IndexOf (".gaim/logs") != -1)
-				client = "gaim";
-			else if (path.IndexOf ("apps/kopete/logs") != -1)
-				client = "kopete";
+			this.client = client;
 			
 			if (Directory.Exists (path)) {
 				log_path = path;
 			} else if (File.Exists (path)) {
 				log_path = Path.GetDirectoryName (path);
-				selected_log = path;
+				initial_select_file = new FileInfo (path);
 			} else {
 				Console.WriteLine ("ERROR: Log path doesn't exist - {0}", path);
 				return;
 			}
 
 			highlight_text = highlight;
-			search_text = search;				
-			
-			ShowWindow ();
+			search_text = search;
 
+			ShowWindow ();
 		}
 
 		private void SetStatusTitle (DateTime dt)
@@ -72,23 +87,23 @@ namespace ImLogViewer {
 		
 		private void SetWindowTitle (string speaker)
 		{
-			if (speaker == null || speaker == "")
+			if (speaker == null || speaker.Length == 0)
 				return;
 
 			// Find the buddy
 			ImBuddy buddy = null;
 
-			if (client == "gaim")
+			if (client == ImClient.Gaim)
 				buddy = new GaimBuddyListReader ().Search (speaker);
-			else if (client == "kopete")
+			else if (client == ImClient.Kopete)
 				buddy = new KopeteBuddyListReader ().Search (speaker);
 			
 			if (speaker.EndsWith (".chat")) {
-				imviewer.Title = String.Format (Catalog.GetString ("Conversations in {0}"), speaker.Replace (".chat", ""));
+				imviewer.Title = String.Format (Catalog.GetString ("Conversations in {0}"), speaker.Replace (".chat", String.Empty));
 			} else {
 				string nick = speaker;
 
-				if (buddy != null && buddy.Alias != "")
+				if (buddy != null && buddy.Alias.Length > 0)
 					nick = buddy.Alias;
 
 				imviewer.Title = String.Format (Catalog.GetString ("Conversations with {0}"), nick);
@@ -99,10 +114,11 @@ namespace ImLogViewer {
 
 		private void ShowWindow ()
 		{
-			Application.Init();
+			Application.Init ();
 			
 			Glade.XML gxml = new Glade.XML (null, "ImLogViewer.glade", "imviewer", null);
 			gxml.Autoconnect (this);
+			imviewer.Icon = Beagle.Images.GetPixbuf ("best.png");
 
 			conversation.PixelsAboveLines = 3;
 			conversation.LeftMargin = 4;
@@ -150,22 +166,21 @@ namespace ImLogViewer {
 		private void IndexLogs ()
 		{
 			foreach (string file in Directory.GetFiles (log_path)) {
-				ICollection logs = null;
+				ImLog log = null;
 				
-				if (client == "gaim")
-					logs = GaimLog.ScanLog (new FileInfo (file));
-				else if (client == "kopete")
-					logs = KopeteLog.ScanLog (new FileInfo (file));
-				
-				if (logs == null)
-					continue;
+				if (client == ImClient.Gaim)
+					log = new GaimLog (new FileInfo (file), new StreamReader (file));
+				else if (client == ImClient.Kopete)
+					log = new KopeteLog (new FileInfo (file), new StreamReader (file));
 
-				foreach (ImLog log in logs) {
-					if (speaking_to == null)
-						SetWindowTitle (log.SpeakingTo);
-
-					timeline.Add (log, log.StartTime);
+				if (initial_select_file != null && log.File.FullName == initial_select_file.FullName) {
+					initial_select = log;
+					initial_select_file = null;
 				}
+				
+				if (speaking_to == null)
+					SetWindowTitle (log.SpeakingTo);
+					timeline.Add (log, log.StartTime);
 			}
 
 			index_thread_notify.WakeupMain ();
@@ -192,33 +207,106 @@ namespace ImLogViewer {
 			return true;
 		}
 
-		private class ImLogPreview
+		private string GetPreview (ImLog log)
 		{
-			public string Snippet;
-			public ImLog Log;
+			string preview = null;
 
-			public ImLogPreview (ImLog log)
-			{
-				Snippet = log.EllipsizedSnippet;
-				Log = log;
+			if (log.Utterances.Count == 0)
+				return String.Empty;
+
+			foreach (ImLog.Utterance utt in log.Utterances) {
+				string snippet = utt.Text;
+				int word_count = StringFu.CountWords (snippet, 15);
+				if (word_count > 3) {
+					preview = snippet;
+					break;
+				}
 			}
+
+			if (preview == null)
+				return ((ImLog.Utterance) log.Utterances [0]).Text;
+
+			if (preview.Length > 50)
+				return preview.Substring (0, 50) + "...";
+			return preview;
 		}
 
 		private void AddCategory (ArrayList list, string name, string date_format)
 		{
-			if (list.Count > 0) {
-				ArrayList previews = GetPreviews (list);
-				if (previews.Count > 0) {
-					TreeIter parent = tree_store.AppendValues (String.Format ("<b>{0}</b>", Catalog.GetString (name)), "", null);
- 					AddPreviews (parent, previews, Catalog.GetString (date_format));
-				}
+			if (list.Count == 0)
+				return;
+
+			ImLog selected_log = GetSelectedLog ();
+
+			TreeIter parent = TreeIter.Zero;
+
+			foreach (ImLog log in list) {
+				if (search_text != null && search_text.Length > 0)
+					if (! LogContainsString (log, search_text))
+						continue;
+
+				if (parent.Equals(TreeIter.Zero))
+					parent = tree_store.AppendValues (String.Format ("<b>{0}</b>", Catalog.GetString (name)), String.Empty, null);
+
+				string date = log.StartTime.ToString (Catalog.GetString (date_format));
+				tree_store.AppendValues (parent, date, GetPreview (log), log);
 			}
+		}
+
+		private void SearchTimeline ()
+		{
+			// Remove all timeline entries that don't match the search results
+
+			ImLog selected = GetSelectedLog ();
+
+			TreeIter iter;
+			if (!tree_store.GetIterFirst (out iter))
+				return;
+
+			ArrayList to_remove = new ArrayList ();
+			
+			do {
+				if (tree_store.IterHasChild (iter)) {
+					TreeIter child;
+					tree_store.IterNthChild (out child, iter, 0);
+					
+					do {
+						ImLog log = tree_store.GetValue (child, 2) as ImLog;
+						if (LogContainsString (log, search_text))
+							continue;
+
+						to_remove.Add (tree_store.GetPath (child));
+						if (log == selected)
+							selected = null;
+					} while (tree_store.IterNext (ref child));
+				}
+			} while (tree_store.IterNext (ref iter));
+
+			for (int i = to_remove.Count - 1; i >= 0; i--) {
+				if (!tree_store.GetIter (out iter, to_remove [i] as TreePath))
+					break;
+				tree_store.Remove (ref iter);
+			}
+			
+			ScrollToLog (selected);
+			RenderConversation (selected);
 		}
 
 		private void RepopulateTimeline ()
 		{
-			tree_store.Clear ();
+			RepopulateTimeline (true, 0);
+		}
 
+		private void RepopulateTimeline (bool reset, double vadj)
+		{
+			ImLog log;
+
+			if (!reset)
+				log = GetSelectedLog ();
+			else
+				log = initial_select;
+
+			tree_store.Clear ();
 			AddCategory (timeline.Today, "Today", "HH:mm");
 			AddCategory (timeline.Yesterday, "Yesterday", "HH:mm");
 			AddCategory (timeline.ThisWeek, "This Week", "dddd");
@@ -228,56 +316,37 @@ namespace ImLogViewer {
 			AddCategory (timeline.Older, "Older", "yyy MMM d");
 		
 			timelinetree.ExpandAll();
-		}
+			ScrollToLog (log);
+			RenderConversation (log);
 
-		private void AddPreviews (TreeIter parent, ArrayList previews, string date_format)
-		{
-			foreach (ImLogPreview preview in previews) {
-				string date = preview.Log.StartTime.ToString (date_format);
-				tree_store.AppendValues (parent, date, preview.Snippet, preview.Log);
-	
-				if (selected_log == null || selected_log == preview.Log.LogFile) {
-					selected_log = preview.Log.LogFile;
-					RenderConversation (preview.Log);
-					ScrollToLog (preview.Log.LogFile);
-				}
-			}
-		}
-
-		private ArrayList GetPreviews (ArrayList list)
-		{
-			ArrayList logs = new ArrayList ();
-
-			foreach (ImLog log in list) {
-				if (search_text != null && search_text != "")
-					if (! LogContainsString (log, search_text))
-						continue;
-
-				ImLogPreview preview = new ImLogPreview (log);
-				logs.Add (preview);
-			}
-
-			return logs;
+			if (!reset)
+				SetConversationScroll (vadj);
 		}
 
  		private void RenderConversation (ImLog im_log)
  		{
 			TextBuffer buffer = conversation.Buffer;
-			TextIter start = buffer.StartIter;
-			TextIter end = buffer.EndIter;
+			buffer.Clear ();
 
-			buffer.Delete (ref start, ref end);
-			
  			if (im_log == null) {
- 				//SetStatusTitle (new DateTime ());
- 				return;
- 			}
+				// Find the first (newest) conversation to render
+				TreeIter first_parent;
+				if (!tree_store.GetIterFirst (out first_parent))
+					return;
+
+				TreeIter child;
+				if (!tree_store.IterChildren (out child, first_parent))
+					return;
+
+				im_log = tree_store.GetValue (child, 2) as ImLog;
+			}
  				
  			SetStatusTitle (im_log.StartTime);
 
 			TextTag bold = buffer.TagTable.Lookup ("bold");
 
-			end = buffer.EndIter;
+			TextIter start = buffer.StartIter;
+			TextIter end = buffer.EndIter;
 
  			foreach (ImLog.Utterance utt in im_log.Utterances) {
 				buffer.InsertWithTags (ref end, utt.Who + ":", new TextTag[] {bold});
@@ -287,7 +356,7 @@ namespace ImLogViewer {
 			if (highlight_text != null)
 				HighlightSearchTerms (highlight_text);
 
-			if (search_text != null && search_text != "")
+			if (search_text != null && search_text.Length > 0)
 				HighlightSearchTerms (search_text);
 		}
 
@@ -296,6 +365,7 @@ namespace ImLogViewer {
 			TextBuffer buffer = conversation.Buffer;
 			string text = buffer.GetText (buffer.StartIter, buffer.EndIter, false).ToLower ();
 			string [] words = highlight.Split (' ');
+			bool scrolled = false;
 
 			foreach (string word in words) {
 				int idx = 0;
@@ -307,7 +377,11 @@ namespace ImLogViewer {
 					Gtk.TextIter start = buffer.GetIterAtOffset (idx);
 					Gtk.TextIter end = start;
 					end.ForwardChars (word.Length);
-
+					if (!scrolled) {
+						scrolled = true;
+						TextMark mark = buffer.CreateMark (null, start, false);
+						conversation.ScrollMarkOnscreen (mark);
+					}
 					buffer.ApplyTag ("highlight", start, end);
 
 					idx += word.Length;
@@ -324,7 +398,6 @@ namespace ImLogViewer {
 
 			search_text = text;
 			highlight_text = null;
-			selected_log = null;
 		}
 
 		private void OnConversationSelected (object o, EventArgs args) 
@@ -338,8 +411,8 @@ namespace ImLogViewer {
 				if (log == null)
 					return;
 
-				selected_log = log.LogFile;
 				RenderConversation (log);
+				SetConversationScroll (0);
 			}
 		}
 
@@ -355,38 +428,74 @@ namespace ImLogViewer {
 
 		private void OnSearchClicked (object o, EventArgs args)
 		{
-			if (search_entry.Text == null || search_entry.Text == "")
+			if (search_entry.Text.Length == 0)
 				return;
 
 			Search (search_entry.Text);
-			RepopulateTimeline ();
+			SearchTimeline ();
 		}
 
-		private void ScrollToLog (string scroll_log)
+		private void SetConversationScroll (double vadj)
 		{
+			scrolledwindow.Vadjustment.Value = vadj;
+			scrolledwindow.Vadjustment.ChangeValue ();
+			scrolledwindow.Vadjustment.Change ();
+		}
+
+		private void ScrollToFirstLog ()
+		{
+			SelectPath (new TreePath (new int [] {0, 0}));
+		}
+
+		private void ScrollToLog (ImLog scroll_log)
+		{
+			if (scroll_log == null) {
+				ScrollToFirstLog ();
+				return;
+			}
+
 			TreeIter root_iter;
-			tree_store.GetIterFirst (out root_iter);
+			if (!tree_store.GetIterFirst (out root_iter))
+				return;
 			
 			do {
-				if (tree_store.IterHasChild (root_iter)) {
-					TreeIter child;
-					tree_store.IterNthChild (out child, root_iter, 0);
+				if (! tree_store.IterHasChild (root_iter))
+					continue;
+
+				TreeIter child;
+				tree_store.IterNthChild (out child, root_iter, 0);
 					
-					do {
-						ImLog log = tree_store.GetValue (child, 2) as ImLog;
+				do {
+					ImLog log = tree_store.GetValue (child, 2) as ImLog;
 						
-						if (log.LogFile == scroll_log) {
-							TreePath path = tree_store.GetPath (child);
-							timelinetree.ExpandToPath (path);
-							timelinetree.Selection.SelectPath (path);
-							timelinetree.ScrollToCell (path, null, true, 0.5f, 0.0f);
-							return;
-						}
-					} while (tree_store.IterNext (ref child));
-				}
+					if (log == scroll_log) {
+						SelectPath (tree_store.GetPath (child));
+						return;
+					}
+				} while (tree_store.IterNext (ref child));
 			} while (tree_store.IterNext (ref root_iter));
 		}
-		
+
+		private void SelectPath (TreePath path)
+		{
+			timelinetree.Selection.Changed -= OnConversationSelected; 
+			timelinetree.ExpandToPath (path);
+			timelinetree.Selection.SelectPath (path);
+			timelinetree.ScrollToCell (path, null, true, 0.5f, 0.0f);
+			timelinetree.Selection.Changed += OnConversationSelected; 
+		}
+
+		private ImLog GetSelectedLog ()
+		{
+			TreeSelection selection = timelinetree.Selection;
+			TreeModel model;
+			TreeIter iter;
+
+			if (selection.GetSelected (out model, out iter))
+				return (ImLog) tree_store.GetValue (iter, 2);
+			return null;
+		}
+
 		private void OnClearClicked (object o, EventArgs args)
 		{
 			highlight_text = search_text = null;
@@ -394,9 +503,8 @@ namespace ImLogViewer {
 			clear_button.Visible = false;
 			search_entry.Sensitive = true;
 
-			RepopulateTimeline ();
-
-			ScrollToLog (selected_log);
+			RepopulateTimeline (false, scrolledwindow.Vadjustment.Value);
+			ScrollToLog (GetSelectedLog ());
 		}
 	}
 }

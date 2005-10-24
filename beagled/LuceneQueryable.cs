@@ -187,13 +187,6 @@ namespace Beagle.Daemon {
 
 		/////////////////////////////////////////
 
-		virtual protected Hit PostProcessHit (Hit hit)
-		{
-			return hit;
-		}
-
-		/////////////////////////////////////////
-
 		// DEPRECATED: This does nothing, since everything is now
 		// time-based.
 		virtual protected double RelevancyMultiplier (Hit hit)

@@ -31,25 +31,26 @@ using System.Globalization;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Xml;
+using Mono.Unix;
 
 namespace Beagle.Util {
+
+	public enum ImClient {
+		Gaim,
+		Kopete,
+	}
 
 	public abstract class ImLog {
 
 		public delegate void Sink (ImLog imLog);
 
-		private bool loaded = false;
-
-		public string LogFile;
-		public long   LogOffset;
-
-		public string Protocol;
 		public string Client;
+		public FileInfo File;
+		public TextReader TextReader;
+		public string Protocol;
 
 		public DateTime StartTime;
 		public DateTime EndTime;
-		public DateTime Timestamp;
-		public string   Snippet;
 
 		public string SpeakingTo;
 		public string Identity;
@@ -57,7 +58,13 @@ namespace Beagle.Util {
 		private Hashtable speakerHash = new Hashtable ();
 		
 		public class Utterance {
-			public DateTime Timestamp;
+			private long timestamp;
+
+			public DateTime Timestamp {
+				get { return UnixConvert.ToDateTime (timestamp); }
+				set { timestamp = UnixConvert.FromDateTime (value); }
+			}
+			
 			public String Who;
 			public String Text;
 		}
@@ -65,29 +72,11 @@ namespace Beagle.Util {
 
 		//////////////////////////
 
-		protected ImLog (string client, string protocol, string file, long offset)
+		protected ImLog (string client, FileInfo file, TextReader reader)
 		{
 			Client = client;
-			Protocol = protocol;
-			LogFile = file;
-			LogOffset = offset;
-		}
-
-		protected ImLog (string client, string protocol, string file) : this (client, protocol, file, -1)
-		{ }
-
-		public Uri Uri {
-			get { return UriFu.PathToFileUri (this.LogFile); }
-		}
-
-		public string EllipsizedSnippet {
-			get {
-				string snippet = Snippet;
-				// FIXME: We should try to avoid breaking mid-word
-				if (snippet != null && snippet.Length > 50)
-					snippet = snippet.Substring (0, 50) + "...";
-				return snippet;
-			}
+			TextReader = reader;
+			File = file;
 		}
 
 		public ICollection Speakers {
@@ -95,16 +84,6 @@ namespace Beagle.Util {
 		}
 
 		public IList Utterances {
-			get { 
-				if (! loaded) {
-					Load ();
-					loaded = true;
-				}
-				return utterances;
-			}
-		}
-
-		protected IList RawUtterances {
 			get { return utterances; }
 		}
 
@@ -115,7 +94,7 @@ namespace Beagle.Util {
 			Utterance utt = new Utterance ();
 			utt.Timestamp = timestamp;
 			utt.Who = who;
-			utt.Text = text;
+			utt.Text = text.Trim ();
 
 			if (StartTime.Ticks == 0 || StartTime > timestamp)
 				StartTime = timestamp;
@@ -151,6 +130,8 @@ namespace Beagle.Util {
 	//
 
 	public class GaimLog : ImLog {
+
+		public const string MimeType = "beagle/x-gaim-log";
 
 		private static string StripTags (string line, StringBuilder builder)
 		{
@@ -194,104 +175,43 @@ namespace Beagle.Util {
 			return builder.ToString ();
 		}
 
-		private static bool IsNewConversation (string line)
-		{
-			int i = line.IndexOf ("--- New Conv");
-			return 0 <= i && i < 5;
-		}
-
-		static private string REGEX_DATE =
-		"Conversation @ \\S+\\s+(\\S+)\\s+(\\d+)\\s+(\\d+):(\\d+):(\\d+)\\s+(\\d+)";
-		
-		static private Regex dateRegex = new Regex (REGEX_DATE,
-							    RegexOptions.IgnoreCase | RegexOptions.Compiled);
-		static private DateTimeFormatInfo dtInfo = new DateTimeFormatInfo ();
-
-		private static DateTime NewConversationTime (string line)
-		{
-			Match m = dateRegex.Match (line);
-			if (m.Success) {
-				// I'm sure there is an easier way to do this.
-				String monthName = m.Groups [1].ToString ();
-				int day = int.Parse (m.Groups [2].ToString ());
-				int hr = int.Parse (m.Groups [3].ToString ());
-				int min = int.Parse (m.Groups [4].ToString ());
-				int sec = int.Parse (m.Groups [5].ToString ());
-				int yr = int.Parse (m.Groups [6].ToString ());
-
-				int mo = -1;
-				for (int i = 1; i <= 12; ++i) {
-					if (monthName == dtInfo.GetAbbreviatedMonthName (i)) {
-						mo = i;
-						break;
-					}
-				}
-				
-				if (mo != -1)
-					return new DateTime (yr, mo, day, hr, min, sec);
-			}
-
-			Console.WriteLine ("Failed on '{0}'", line);
-			return new DateTime ();
-		}
-
 		///////////////////////////////////////
 
-		private bool TrySnippet ()
+		public GaimLog (FileInfo file, TextReader reader) : base ("gaim", file, reader)
 		{
-			int best_word_count = 0;
-
-			foreach (Utterance utt in RawUtterances) {
-
-				string possible_snippet = utt.Text.Trim ();
-
-				int word_count = StringFu.CountWords (possible_snippet, 15);
-				if (word_count > best_word_count) {
-					Snippet = possible_snippet;
-					best_word_count = word_count;
-				}
-
-
-				if (word_count > 3)
-					return true;
+			// Parse what we can from the file path
+			try {
+				string str = Path.GetFileNameWithoutExtension (file.Name);
+				StartTime = DateTime.ParseExact (str, "yyyy-MM-dd.HHmmss", null);
+			} catch (Exception) {
+				Logger.Log.Warn ("Could not parse date/time from filename '{0}'", file.Name);
+				StartTime = DateTime.Now;
 			}
 
-			return false;
-		}
+			// Gaim likes to represent many characters in hex-escaped %xx form
+			SpeakingTo = StringFu.HexUnescape (file.Directory.Name);
+			Identity = StringFu.HexUnescape (file.Directory.Parent.Name);
 
-		// FIXME: The ending timestamp in the log will be inaccurate
-		// until Load is called... before that, the ending time will
-		// come from the timestamp of the snippet-line.
+			Protocol = file.Directory.Parent.Parent.Name;
 
-		private void SetSnippet ()
-		{
-			LoadWithTermination (new LoadTerminator (TrySnippet));
-		}
-
-		///////////////////////////////////////
-
-		private GaimLog (string protocol, string file, long offset) : base ("gaim", protocol, file, offset)
-		{ 
-			SetSnippet ();
-		}
-
-		private GaimLog (string protocol, string file) : base ("gaim", protocol, file)
-		{ 
-			SetSnippet ();
+			Load ();
 		}
 
 		// Return true if a new utterance is now available,
 		// and false if the previous utterance was changed.
-		private bool ProcessLine (string line)
+		private void ProcessLine (string line)
 		{
-			if (! line.StartsWith ("(")) {
+			if (line.Length == 0)
+				return;
+
+			if (line [0] != '(') {
 				AppendToPreviousUtterance (line);
-				return false;
+				return;
 			}
 			int j = line.IndexOf (')');
 			if (j == -1) {
 				AppendToPreviousUtterance (line);
-				return false;
+				return;
 			}
 			string whenStr = line.Substring (1, j-1);
 			string[] whenSplit = whenStr.Split (':');
@@ -304,10 +224,10 @@ namespace Beagle.Util {
 				// If something goes wrong, this line probably
 				// spills over from the previous one.
 				AppendToPreviousUtterance (line);
-				return false;
+				return;
 			}
 
-			line = line.Substring (j+1).Trim ();
+			line = line.Substring (j+2);
 
 			// FIXME: this is wrong --- since we just get a time,
 			// the date gets set to 'now'
@@ -322,147 +242,37 @@ namespace Beagle.Util {
 
 			int i = line.IndexOf (':');
 			if (i == -1)
-				return false;
+				return;
 			string alias = line.Substring (0, i);
-			string text = line.Substring (i+1).Trim ();
+			string text = line.Substring (i+2);
 
 			AddUtterance (when, alias, text);
 
-			return true;
+			return;
 		}
-
-		protected delegate bool LoadTerminator ();
 
 		protected override void Load ()
 		{
+			string line;
+
 			ClearUtterances ();
-			LoadWithTermination (null);
-		}
-
-		protected void LoadWithTermination (LoadTerminator terminator)
-		{
-			FileStream fs;
-			StreamReader sr;
-			string line;
-
-			try {
-				fs = new FileStream (LogFile,
-						     FileMode.Open,
-						     FileAccess.Read,
-						     FileShare.Read);
-				if (LogOffset > 0)
-					fs.Seek (LogOffset, SeekOrigin.Begin);
-				sr = new StreamReader (fs);
-			} catch (Exception e) {
-				// If we can't open the file, just fail.
-				Console.WriteLine ("Could not open '{0}' (offset={1})", LogFile, LogOffset);
-				Console.WriteLine (e);
-				return;
-			}
-
 			StringBuilder builder;
 			builder = new StringBuilder ();
 
-			line = sr.ReadLine (); // throw away first line
-			if (line != null) {
-
-				// Could the second line ever start w/ < in a non-html log?
-				// I hope not!
-				bool isHtml = line.Length > 0 && line [0] == '<';
-				
-				while ((line = sr.ReadLine ()) != null) {
-					if (isHtml)
-						line = StripTags (line, builder);
-				
-					if (IsNewConversation (line))
-						break;
-					
-					// Only check termination when a new Utterance has become
-					// available.
-					if (ProcessLine (line)
-					    && terminator != null
-					    && terminator ())
-						break;
-				}
-			}
-
-			sr.Close ();
-			fs.Close ();
-		}
-
-		private static void ScanNewStyleLog (FileInfo file, ArrayList array)
-		{
-			// file.Directory.Parent.Parent.Name is the name of the current protocol (ex. aim)
-			ImLog log = new GaimLog (file.Directory.Parent.Parent.Name, file.FullName);
-
-			string startStr = Path.GetFileNameWithoutExtension (file.Name);
-			try {
-				log.StartTime = DateTime.ParseExact (startStr,
-								     "yyyy-MM-dd.HHmmss",
-								     CultureInfo.CurrentCulture);
-			} catch (FormatException) {
-				Logger.Log.Warn ("IMLog: Could not parse date/time from '{0}', ignoring.", startStr);
+			line = TextReader.ReadLine (); // throw away first line
+			if (line == null)
 				return;
-			}
-			
-			log.Timestamp = file.LastWriteTime;	
 
-			// Gaim likes to represent many characters in hex-escaped %xx form
-			log.SpeakingTo = StringFu.HexUnescape (file.Directory.Name);
-			log.Identity   = StringFu.HexUnescape (file.Directory.Parent.Name);
-			
-			array.Add (log);
-		}
-
-
-		private static void ScanOldStyleLog (FileInfo file, ArrayList array)
-		{
-			Stream stream;
-			stream = new FileStream (file.FullName,
-						 FileMode.Open,
-						 FileAccess.Read,
-						 FileShare.Read);
-			StreamReader sr = new StreamReader (stream);
-			string line;
-			long offset = 0;
-			
-			string speakingTo = Path.GetFileNameWithoutExtension (file.Name);
-			
-			line = sr.ReadLine ();
-			bool isHtml = line.ToLower ().StartsWith ("<html>");
-			offset = line.Length + 1;
-
-			StringBuilder builder;
-			builder = new StringBuilder ();
-
-			while ((line = sr.ReadLine ()) != null) {
-				long newOffset = offset + line.Length + 1;
+			// Could the second line ever start w/ < in a non-html log?
+			// I hope not!
+			bool isHtml = line.Length > 0 && line [0] == '<';
+				
+			while ((line = TextReader.ReadLine ()) != null) {
 				if (isHtml)
 					line = StripTags (line, builder);
-				if (IsNewConversation (line)) {
-					ImLog log = new GaimLog ("aim", file.FullName, offset); //FIXME: protocol
-					log.StartTime = NewConversationTime (line);
-					log.Identity = "_OldGaim_"; // FIXME: parse a few lines of the log to figure this out
-					log.SpeakingTo = speakingTo;
-
-					array.Add (log);
-				}
 				
-				offset = newOffset;
+				ProcessLine (line);
 			}
-
-			sr.Close ();
-			stream.Close ();
-		}
-
-		public static ICollection ScanLog (FileInfo file)
-		{
-			ArrayList array = new ArrayList ();
-			if (file.Extension == ".txt" || file.Extension == ".html")
-				ScanNewStyleLog (file, array);
-			else if (file.Extension == ".log")
-				ScanOldStyleLog (file, array);
-			return array;
 		}
 	}
 
@@ -471,11 +281,24 @@ namespace Beagle.Util {
 	//
 	// Kopete Logs
 	//
-
 	public class KopeteLog : ImLog {
 
-		private KopeteLog (string protocol, string file) : base ("kopete", protocol, file)
-		{ 
+		public const string MimeType = "beagle/x-kopete-log";
+
+		public KopeteLog (FileInfo file, TextReader reader) : base ("kopete", file, reader)
+		{
+			// FIXME: Artificially split logs into conversations depending on the
+			// amount of time elapsed betweet messages?
+			
+			// Figure out the protocol from the parent.parent foldername
+			Protocol = file.Directory.Parent.Name.Substring (0, file.Directory.Parent.Name.Length - 8).ToLower ().ToLower ();
+			Identity = file.Directory.Name;
+
+			// FIXME: This is not safe for all kinds of file/screennames
+			string filename = Path.GetFileNameWithoutExtension (file.Name);
+			SpeakingTo = filename.Substring (0, filename.LastIndexOf ('.'));
+
+			Load ();
 		}
 		
 		private const string date_format = "yyyy M d H:m:s";
@@ -488,12 +311,12 @@ namespace Beagle.Util {
 			DateTime base_date = DateTime.MinValue;
 
 			try {
-				reader = new XmlTextReader (new  FileStream (LogFile,
+				reader = new XmlTextReader (File.Open(
 									     FileMode.Open,
 									     FileAccess.Read,
 									     FileShare.Read));
 			} catch (Exception e) {
-				Console.WriteLine ("Could not open '{0}'", LogFile);
+				Console.WriteLine ("Could not open '{0}'", File.FullName);
 				Console.WriteLine (e);
 				return;
 			}
@@ -543,30 +366,7 @@ namespace Beagle.Util {
 			
 			reader.Close ();
 		}
-		
-		public static ICollection ScanLog (FileInfo file)
-		{
-			ArrayList array = new ArrayList ();
-			
-			// FIXME: Artificially split logs into conversations depending on the
-			// amount of time elapsed betweet messages?
-			
-			// Figure out the protocol from the parent.parent foldername
-			string protocol = file.Directory.Parent.Name.Substring (0, file.Directory.Parent.Name.Length - 8).ToLower ().ToLower ();
-			string filename = Path.GetFileNameWithoutExtension (file.Name);
-			
-			ImLog log = new KopeteLog (protocol, file.FullName);
 
-			log.Timestamp = file.LastWriteTime;
-			log.Identity   = file.Directory.Name;
-
-			// FIXME: This is not safe for all kinds of file/screennames
-			log.SpeakingTo = filename.Substring (0, filename.LastIndexOf ('.'));
-			
-			array.Add (log);
-
-			return array;
-		}
 	}
 }
 

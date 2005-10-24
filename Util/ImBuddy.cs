@@ -65,37 +65,6 @@ namespace Beagle.Util {
 			Logger.Log.Debug ("{0}", str);
 		}
 
-		public class ImBuddyComparer : IComparer {
-			
-			int IComparer.Compare (Object x, Object y) {
-				string accountx, accounty;
-	
-				try {
-					accountx = ((ImBuddy) x).BuddyAccountName;
-				} catch {
-					accountx = "";
-				}
-				
-				try {
-					accounty = ((ImBuddy) y).BuddyAccountName;
-				} catch {
-					accounty = "";
-				}
-	
-				return System.String.Compare (accountx, accounty);
-			}
-		}
-
-		public class ImBuddyAliasComparer : IComparer {
-			
-			int IComparer.Compare (Object x, Object y) {
-				try {
-					return System.String.Compare ((string)x, ((ImBuddy) y).BuddyAccountName);
-				} catch {
-					return System.String.Compare (((ImBuddy) x).BuddyAccountName, (string)y);
-				}
-			}
-		}
 	}
 	
 	public class GaimBuddyListReader : ImBuddyListReader {

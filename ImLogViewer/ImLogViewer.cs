@@ -6,9 +6,28 @@
 //
 // Copyright (C) 2005 Novell, Inc.
 //
+// Permission is hereby granted, free of charge, to any person obtaining a
+// copy of this software and associated documentation files (the "Software"),
+// to deal in the Software without restriction, including without limitation
+// the rights to use, copy, modify, merge, publish, distribute, sublicense,
+// and/or sell copies of the Software, and to permit persons to whom the
+// Software is furnished to do so, subject to the following conditions:
+//
+// The above copyright notice and this permission notice shall be included in
+// all copies or substantial portions of the Software.
+//
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+// FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
+// DEALINGS IN THE SOFTWARE.
+//
 
 using System;
 using Mono.Posix;
+using Beagle.Util;
 
 namespace ImLogViewer {
 
@@ -17,6 +36,7 @@ namespace ImLogViewer {
 		private static string highlight;
 		private static string search;
 		private static string path;
+		private static string client;
 
 		public static void Main (string[] args)
 		{
@@ -24,13 +44,24 @@ namespace ImLogViewer {
 			Catalog.Init ("beagle", Beagle.Util.ExternalStringsHack.LocaleDir);
 
 			ParseArgs (args);
-			ImLogWindow window = new ImLogWindow (path, search, highlight);
+
+			ImClient imclient;
+			try {
+				imclient = (ImClient) Enum.Parse (typeof (ImClient), client, true);
+			} catch (Exception) {
+				Console.WriteLine ("ERROR: '{0}' is not a valid client name.", client);
+				Environment.Exit (3);
+				return;
+			}
+
+			new ImLogWindow (imclient, path, search, highlight);
 		}
 
 		private static void PrintUsageAndExit ()
 		{
-			Console.WriteLine ("USAGE: beagle-imlogviewer [OPTIONS] <log file or directory>\n" +
+			Console.WriteLine ("USAGE: beagle-imlogviewer --client <CLIENT> [OPTIONS] <log file or directory>\n" +
 					   "Options:\n" +
+					   "  --client\t\t\tClient that the log belongs to (e.g. gaim).\n" +					   
 					   "  --highlight-search\t\tWords to highlight in the buffer.\n" +
 					   "  --search\t\t\tSearch query to filter hits on.");
 
@@ -59,6 +90,11 @@ namespace ImLogViewer {
 					i++;
 					break;
 
+				case "--client":
+					client = args [i + 1];
+					i++;
+					break;
+
 				default:
 					if (args [i].StartsWith ("--")) {
 						Console.WriteLine ("WARN: Invalid option {0}", args [i]);
@@ -72,6 +108,11 @@ namespace ImLogViewer {
 			if (path == null) {
 				Console.WriteLine ("ERROR: Please specify a valid log path or log directory.");
 				Environment.Exit (1);
+			}
+
+			if (client == null) {
+				Console.WriteLine ("ERROR: Please specify a valid client name.");
+				Environment.Exit (2);
 			}
 		}
 	}

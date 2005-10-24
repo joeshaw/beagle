@@ -154,8 +154,8 @@ namespace Beagle.Tile {
 			Process p = new Process ();
 			p.StartInfo.UseShellExecute = true;
 			p.StartInfo.FileName = "beagle-imlogviewer";
-			p.StartInfo.Arguments = String.Format ("--highlight-search \"{0}\" {1}",
-							       Query.QuotedText, Hit ["fixme:file"]);
+			p.StartInfo.Arguments = String.Format ("--client \"{0}\" --highlight-search \"{1}\" {2}",
+					Hit ["fixme:client"], Query.QuotedText, Hit.Uri.LocalPath);
 
 			try {
 				p.Start ();

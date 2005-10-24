@@ -94,19 +94,18 @@ namespace Beagle.Daemon.KopeteQueryable {
 		/////////////////////////////////////////////////
 
 		private void Crawl ()
-                {
-                        crawler.Crawl ();
-                        foreach (FileInfo file in crawler.Logs) {			    
-                                IndexLog (file.FullName, Scheduler.Priority.Delayed);
-			}
-                }
+		{
+			crawler.Crawl ();
+			foreach (FileInfo file in crawler.Logs)
+				IndexLog (file.FullName, Scheduler.Priority.Delayed);
+		}
 
-                private void CrawlHook (Scheduler.Task task)
-                {
-                        Crawl ();
-                        task.Reschedule = true;
-                        task.TriggerTime = DateTime.Now.AddSeconds (polling_interval_in_seconds);
-                }
+		private void CrawlHook (Scheduler.Task task)
+		{
+			Crawl ();
+			task.Reschedule = true;
+			task.TriggerTime = DateTime.Now.AddSeconds (polling_interval_in_seconds);
+		}
 
 		/////////////////////////////////////////////////
 
@@ -172,96 +171,38 @@ namespace Beagle.Daemon.KopeteQueryable {
 
 		/////////////////////////////////////////////////
 		
-		private static Indexable ImLogToIndexable (ImLog log)
+		private static Indexable ImLogToIndexable (string filename)
 		{
-			Indexable indexable = new Indexable (log.Uri);
-			indexable.Timestamp = log.Timestamp;
-			indexable.MimeType = "text/plain";
+			Uri uri = UriFu.PathToFileUri (filename);
+			Indexable indexable = new Indexable (uri);
+			indexable.ContentUri = uri;
+			indexable.Timestamp = File.GetLastWriteTime (filename);
+			indexable.MimeType = KopeteLog.MimeType;
 			indexable.HitType = "IMLog";
+			indexable.CacheContent = false;
 
-			StringBuilder text = new StringBuilder ();
-			foreach (ImLog.Utterance utt in log.Utterances) {
-				//Console.WriteLine ("[{0}][{1}]", utt.Who, utt.Text);
-				text.Append (utt.Text);
-				text.Append (" ");
-			}
-
-			indexable.AddProperty (Property.NewKeyword ("fixme:file", log.LogFile));
-			indexable.AddProperty (Property.NewKeyword ("fixme:offset", log.LogOffset));
-			indexable.AddProperty (Property.NewDate ("fixme:starttime", log.StartTime));
-			indexable.AddProperty (Property.NewKeyword ("fixme:speakingto", log.SpeakingTo));
-			indexable.AddProperty (Property.NewKeyword ("fixme:identity", log.Identity));
-			indexable.AddProperty (Property.NewDate ("fixme:endtime", log.EndTime));
-
-			indexable.AddProperty (Property.New ("fixme:client", log.Client));
-			indexable.AddProperty (Property.New ("fixme:protocol", log.Protocol));
-
-			StringReader reader = new StringReader (text.ToString ());
-			indexable.SetTextReader (reader);
-			
 			return indexable;
 		}
 
 		private void IndexLog (string filename, Scheduler.Priority priority)
 		{
-			FileInfo info = new FileInfo (filename);
-			if (! info.Exists)
+			if (! File.Exists (filename))
 				return;
 
 			if (IsUpToDate (filename))
 				return;
 
-			ICollection logs = KopeteLog.ScanLog (info);
-			foreach (ImLog log in logs) {
-				Indexable indexable = ImLogToIndexable (log);
-				Scheduler.Task task = NewAddTask (indexable);
-				task.Priority = priority;
-				task.SubPriority = 0;
-				ThisScheduler.Add (task);
-			}
+			Indexable indexable = ImLogToIndexable (filename);
+			Scheduler.Task task = NewAddTask (indexable);
+			task.Priority = priority;
+			task.SubPriority = 0;
+			ThisScheduler.Add (task);
 		}
 
 		override protected double RelevancyMultiplier (Hit hit)
 		{
 			return HalfLifeMultiplierFromProperty (hit, 0.25,
 							       "fixme:endtime", "fixme:starttime");
-		}
-
-		override public string GetSnippet (string[] query_terms, Hit hit)
-		{
-			// FIXME: This does the wrong thing for old-style logs.
-			string file = hit ["fixme:file"];
-			ICollection logs = KopeteLog.ScanLog (new FileInfo (file));
-			IEnumerator iter = logs.GetEnumerator ();
-			ImLog log = null;
-			if (iter.MoveNext ())
-				log = iter.Current as ImLog;
-			if (log == null)
-				return null;
-
-			string result = "";
-
-			// FIXME: This is very lame, and doesn't do the
-			// right thing w/ stemming, word boundaries, etc.
-			foreach (ImLog.Utterance utt in log.Utterances) {
-				string text = utt.Text;
-				string who = utt.Who;
-				
-				string snippet = SnippetFu.GetSnippet (query_terms, new StringReader (text));
-
-				if (snippet == null || snippet == "")
-					continue;
-
-				result += String.Format ("{0}: {1} ", who, snippet);
-
-				if (result.Length > 300)
-					break;
-			}
-
-			if (result != "")
-				return result;
-			else
-				return log.Snippet;
 		}
 
 		override protected bool HitFilter (Hit hit) 
