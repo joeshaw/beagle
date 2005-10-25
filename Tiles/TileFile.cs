@@ -28,10 +28,11 @@ using System;
 using System.Diagnostics;
 using System.IO;
 
-using BU = Beagle.Util;
+using Beagle.Util;
 
 using Gnome;
 using Gdk;
+using Gtk;
 
 namespace Beagle.Tile {
 
@@ -59,7 +60,7 @@ namespace Beagle.Tile {
 				return;
 			}
 
-			string quoted_uri = BU.StringFu.PathToQuotedFileUri (Hit.Uri.LocalPath);
+			string quoted_uri = StringFu.PathToQuotedFileUri (Hit.Uri.LocalPath);
 			string thumbnail = Thumbnail.PathForUri (quoted_uri, ThumbnailSize.Normal);
 
 			if (File.Exists (thumbnail))
@@ -70,9 +71,8 @@ namespace Beagle.Tile {
 				if (pix == null) {
 					thumb_factory.CreateFailedThumbnail (quoted_uri, fi.LastWriteTime);
 					
-					Gtk.IconSize size = (Gtk.IconSize) 48;
-					string path = BU.GnomeIconLookup.LookupMimeIcon (Hit.MimeType, size);
-					string icon = Images.GetHtmlSource (path, BU.GnomeIconLookup.GetFileMimeType (path));
+					string path = GnomeFu.GetMimeIconPath (Hit.MimeType);
+					string icon = Images.GetHtmlSource (path, GnomeFu.GetMimeType (path));
 
 					if (icon != null)
 						Template ["Icon"] = icon;

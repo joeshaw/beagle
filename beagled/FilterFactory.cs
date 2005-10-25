@@ -118,7 +118,7 @@ namespace Beagle.Daemon {
 
 		static public ICollection CreateFiltersFromPath (string path)
 		{
-			string guessed_mime_type = Beagle.Util.VFS.Mime.GetMimeType (path);
+			string guessed_mime_type = GnomeFu.GetMimeType (path);
 			string extension = Path.GetExtension (path);
 			return CreateFilters (UriFu.PathToFileUri (path), extension, guessed_mime_type);
 		}
@@ -149,7 +149,7 @@ namespace Beagle.Daemon {
 		static public TextReader FilterFile (string path, string mime_type)
 		{
 			if (mime_type == null)
-				mime_type = Beagle.Util.VFS.Mime.GetMimeType (path);
+				mime_type = GnomeFu.GetMimeType (path);
 
 			if (mime_type == null)
 				return null;
@@ -221,7 +221,7 @@ namespace Beagle.Daemon {
 
 				// Otherwise sniff the mime-type from the file
 				if (indexable.MimeType == null)
-					indexable.MimeType = Beagle.Util.VFS.Mime.GetMimeType (path);
+					indexable.MimeType = GnomeFu.GetMimeType (path);
 
 				if (filters == null || filters.Count == 0) {
 					filters = CreateFiltersFromIndexable (indexable);

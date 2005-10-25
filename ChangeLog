@@ -4,6 +4,10 @@
 	* Add BEAGLE_THERE_BE_NO_QUITTIN environment variable, which when set,
 	disables our SIGQUIT handler.
 
+	* Util/GnomeFu.cs: New, reduced bindings to replace gnome.cs and Vfs.cs
+	* Tiles, beagled/FilterFactory.cs: Use gtk-sharp and GnomeFu where
+	appropriate.
+
 2005-10-24  Daniel Drake  <dsd@gentoo.org>
 
 	* Various ImLog and ImLogViewer improvements

@@ -60,7 +60,7 @@ CSFILES = 			        	\
 	$(srcdir)/FrequencyStatistics.cs	\
 	$(srcdir)/FSpotTools.cs         	\
 	$(srcdir)/GeckoUtils.cs                 \
-	$(srcdir)/gnome.cs              	\
+	$(srcdir)/GnomeFu.cs              	\
 	$(srcdir)/GtkUtils.cs			\
 	$(srcdir)/GuidFu.cs			\
 	$(srcdir)/HigMessageDialog.cs		\
@@ -90,7 +90,6 @@ CSFILES = 			        	\
 	$(srcdir)/UnixClient.cs			\
 	$(srcdir)/UnixListener.cs		\
 	$(srcdir)/UriFu.cs			\
-	$(srcdir)/Vfs.cs                        \
 	$(srcdir)/XKeybinder.cs			\
 	$(srcdir)/XmlFu.cs
 

@@ -29,7 +29,7 @@ using System.Collections;
 using System.Diagnostics;
 using System.Text;
 using System.Text.RegularExpressions;
-using BU = Beagle.Util;
+using Beagle.Util;
 using GMime;
 using Mono.Unix;
 
@@ -130,11 +130,10 @@ namespace Beagle.Tile {
 			if (IsAttachment (Hit)) {
 				Template["Subject"] = Hit ["fixme:attachment_title"] + " [" + Catalog.GetString ("Email attachment") + "]";
 				Template["EmailSubject"] = str;
-				Gtk.IconSize size = (Gtk.IconSize) 48;
-				string path = BU.GnomeIconLookup.LookupMimeIcon (Hit.MimeType, size);
-				Template["Icon"] = Images.GetHtmlSource (path, BU.GnomeIconLookup.GetFileMimeType (path));
+				string path = GnomeFu.GetMimeIconPath (Hit.MimeType);
+				Template["Icon"] = Images.GetHtmlSource (path, GnomeFu.GetMimeType (path));
 			}
-			
+
 			if (GetHitProperty (Hit, "fixme:isFlagged") != null)
 				Template["FollowupIcon"] = Images.GetHtmlSourceForStock ("stock_mail-priority-high", 16);
 			if (GetHitProperty (Hit, "fixme:hasAttachments") != null)
@@ -150,7 +149,7 @@ namespace Beagle.Tile {
 #if ENABLE_GALAGO
 #if ENABLE_EVO_SHARP
 			if (aim_name != null) {
-				string status = BU.GalagoTools.GetPresence ("aim", aim_name);
+				string status = GalagoTools.GetPresence ("aim", aim_name);
 				if (status != null && status != "")
 					Template ["Presence"] = status;
 			}

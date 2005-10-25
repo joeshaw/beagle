@@ -169,12 +169,11 @@ namespace Beagle.Tile {
 			command = "desktop-launch";
 			expects_uris = true;
 #else		       
-			BU.GnomeVFSMimeApplication app;
-			app = BU.GnomeIconLookup.GetDefaultAction (hit.MimeType);
-			
-			if (app.command != null) {
-				command = app.command;
-				expects_uris = (app.expects_uris != BU.GnomeVFSMimeApplicationArgumentType.Path);
+			Gnome.Vfs.MimeApplication app;
+			app = Gnome.Vfs.Mime.GetDefaultApplication (hit.MimeType);
+			if (app != null) {
+				command = app.Exec;
+				expects_uris = app.SupportsUris ();
 			}
 #endif			
 			if (command == null) {
