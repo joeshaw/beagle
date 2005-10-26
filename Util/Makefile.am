@@ -130,7 +130,8 @@ INOTIFY_TEST_CSFILES =				\
 	$(srcdir)/DelayedTextWriter.cs		\
 	$(srcdir)/TeeTextWriter.cs		\
 	$(srcdir)/DirectoryWalker.cs		\
-	$(srcdir)/FileSystem.cs
+	$(srcdir)/FileSystem.cs			\
+	$(srcdir)/ExceptionHandlingThread.cs
 
 Inotify.exe: $(INOTIFY_TEST_CSFILES)
 	$(CSC) -unsafe -out:$@ $^ -r:Mono.Posix -define:INOTIFY_TEST -define:ENABLE_INOTIFY

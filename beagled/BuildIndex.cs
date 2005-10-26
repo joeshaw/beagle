@@ -71,6 +71,17 @@ namespace Beagle.Daemon
 		
 		static void Main (string [] args)
 		{
+			try {
+				DoMain (args);
+			} catch (Exception ex) {
+				Logger.Log.Error ("Unhandled exception thrown.  Exiting immediately.");
+				Logger.Log.Error (ex);
+				Environment.Exit (1);
+			}
+		}
+
+		static void DoMain (string [] args)
+		{
 			if (args.Length < 2)
 				PrintUsage ();
 		

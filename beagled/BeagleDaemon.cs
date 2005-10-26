@@ -207,7 +207,18 @@ namespace Beagle.Daemon {
 			Environment.Exit (0); // Ugly work-around: We need to call Exit here to avoid deadlocking.
 		}
 
-		public static int Main (string[] args)
+		public static void Main (string[] args)
+		{
+			try {
+				DoMain (args);
+			} catch (Exception ex) {
+				Logger.Log.Error ("Unhandled exception thrown.  Exiting immediately.");
+				Logger.Log.Error (ex);
+				Environment.Exit (1);
+			}
+		}
+
+		public static void DoMain (string[] args)
 		{
 			// Process the command-line arguments
 			bool arg_debug = false;
@@ -389,8 +400,6 @@ namespace Beagle.Daemon {
 				Thread.Sleep (500);
 				ExceptionHandlingThread.SpewLiveThreads ();
 			}
-
-			return 0;
 		}
 		
 

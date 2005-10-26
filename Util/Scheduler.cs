@@ -584,8 +584,6 @@ namespace Beagle.Util {
 						Logger.Log.Debug ("Desc: {0}", task.Description);
 				}
 
-
-
 				if (task.Priority == Priority.Shutdown)
 					shutdown_task_queue.Enqueue (task);
 				else
@@ -631,8 +629,7 @@ namespace Beagle.Util {
 				if (thread != null)
 					return;
 				running = true;
-				thread = new Thread (new ThreadStart (Worker));
-				thread.Start ();
+				thread = ExceptionHandlingThread.Start (new ThreadStart (Worker));
 			}
 		}
 
@@ -701,13 +698,13 @@ namespace Beagle.Util {
 					// last immediate task was added, there is
 					// still a torrent of events coming in, and we
 					// may need to throttle.
-					if (last_add_delta.Seconds <= 1) {
+					if (last_add_delta.TotalSeconds <= 1) {
 						TimeSpan between_add_delta = last_immediate_times [4].Subtract (last_immediate_times [0]);
 
 						// At least 5 immediate tasks have been
 						// added in the last second.  We
 						// definitely need to throttle.
-						if (between_add_delta.Seconds <= 1) {
+						if (between_add_delta.TotalSeconds <= 1) {
 							need_throttle = true;
 							rate_factor = idle_scale * default_idle_rate_factor;
 						}

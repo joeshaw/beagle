@@ -467,11 +467,8 @@ namespace Beagle.Util {
 
 				running = true;
 
-				snarf_thread = new Thread (new ThreadStart (SnarfWorker));
-				snarf_thread.Start ();
-
-				dispatch_thread = new Thread (new ThreadStart (DispatchWorker));
-				dispatch_thread.Start ();
+				snarf_thread = ExceptionHandlingThread.Start (new ThreadStart (SnarfWorker));
+				dispatch_thread = ExceptionHandlingThread.Start (new ThreadStart (DispatchWorker));
 			}
 		}
 

@@ -220,6 +220,8 @@ namespace Beagle.Daemon {
 				p.StartInfo.FileName = helper_path;
 				p.Start ();
 
+				Logger.Log.Debug ("IndexHelper PID is {0}", p.Id);
+
 				// Poll the helper's socket.  If the 
 				int poll_count = 0;
 				bool found_helper;

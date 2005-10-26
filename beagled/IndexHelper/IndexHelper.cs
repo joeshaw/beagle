@@ -45,6 +45,17 @@ namespace Beagle.IndexHelper {
 
 		static void Main (string [] args)
 		{
+			try {
+				DoMain (args);
+			} catch (Exception ex) {
+				Logger.Log.Error ("Unhandled exception thrown.  Exiting immediately.");
+				Logger.Log.Error (ex);
+				Environment.Exit (1);
+			}
+		}
+
+		static void DoMain (string [] args)
+		{
 			bool run_by_hand = (Environment.GetEnvironmentVariable ("BEAGLE_RUN_HELPER_BY_HAND") != null);
 			bool log_in_fg = (Environment.GetEnvironmentVariable ("BEAGLE_LOG_IN_THE_FOREGROUND_PLEASE") != null);
 			bool debug = (Environment.GetEnvironmentVariable ("BEAGLE_DEBUG_FLAG_IS_SET") != null);
@@ -99,8 +110,6 @@ namespace Beagle.IndexHelper {
 					} catch (IOException) { }
 				}
 			}
-
-			Environment.Exit (0);
 		}
 
 		static public void ReportActivity ()
@@ -248,7 +257,8 @@ namespace Beagle.IndexHelper {
 
 		static void OnShutdown ()
 		{
-			server.Stop ();
+			if (server != null)
+				server.Stop ();
 		}
 	}
 
