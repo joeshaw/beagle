@@ -1,0 +1,5 @@
+content beagle jar:chrome/beagle.jar!/content/
+locale beagle en-US jar:chrome/beagle.jar!/locale/en-US/
+overlay chrome://browser/content/browser.xul chrome://beagle/content/beagleOverlay.xul
+overlay chrome://navigator/content/navigator.xul chrome://beagle/content/beagleOverlay.xul
+skin beagle classic/1.0 jar:chrome/beagle.jar!/skin/classic/

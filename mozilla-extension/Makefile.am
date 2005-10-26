@@ -35,6 +35,7 @@ INNER_JAR_FILES = 			\
 	skin/classic/beagle.png
 
 OUTER_XPI_FILES = 		\
+	chrome.manifest		\
 	install.rdf		\
 	chrome/$(PROJECT).jar
 
