@@ -272,8 +272,19 @@ AC_SUBST(LIBGECKOGLUE_CFLAGS)
 AC_SUBST(LIBGECKOGLUE_LIBS)
 
 dnl -------------------------------------------------------
+dnl Various version requirements
 
-PKG_CHECK_MODULES(BEAGLE_UI, gtk-sharp-2.0 glade-sharp-2.0 gecko-sharp-2.0 gnome-sharp-2.0 gconf-sharp-2.0 gmime-sharp >= 2.1.16)
+GTK_SHARP_REQUIRED=2.3.90
+GMIME_SHARP_REQUIRED=2.1.16
+
+PKG_CHECK_MODULES(BEAGLE_UI,
+                  gtk-sharp-2.0 >= $GTK_SHARP_REQUIRED \
+                  glade-sharp-2.0 >= $GTK_SHARP_REQUIRED \
+                  gnome-sharp-2.0 >= $GTK_SHARP_REQUIRED \
+                  gnome-vfs-sharp-2.0 >= $GTK_SHARP_REQUIRED \
+                  gconf-sharp-2.0 >= $GTK_SHARP_REQUIRED \
+                  gmime-sharp >= $GMIME_SHARP_REQUIRED
+                  gecko-sharp-2.0)
 AC_SUBST(BEAGLE_UI_LIBS)
 
 dnl ----------------------------------------------
@@ -387,7 +398,10 @@ else
 fi
 AC_SUBST(EXIF_SOVERSION)
 
-PKG_CHECK_MODULES(BEAGLED, gmime-sharp >= 2.1.16 gtk-sharp-2.0 gconf-sharp-2.0)
+PKG_CHECK_MODULES(BEAGLED,
+                  gmime-sharp >= $GMIME_SHARP_REQUIRED \
+                  gtk-sharp-2.0 >= $GTK_SHARP_REQUIRED \
+                  gconf-sharp-2.0 >= $GTK_SHARP_REQUIRED)
 BEAGLED_LIBS="$BEAGLED_LIBS $EVO_SHARP_LIBS $GSF_SHARP_LIBS"
 AC_SUBST(BEAGLED_LIBS)
 
