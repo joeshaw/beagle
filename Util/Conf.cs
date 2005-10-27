@@ -373,8 +373,8 @@ namespace Beagle.Util {
 				set { RememberToSave (); holmes_width = value; }
 			}
 
-			private int holmes_height = -1;
-			public int HolmesHeight {
+			private float holmes_height = 0;
+			public float HolmesHeight {
 				get { return holmes_height; }
 				set { RememberToSave (); holmes_height = value; }
 			}
