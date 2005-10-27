@@ -588,13 +588,13 @@ namespace Lucene.Net.Store
 
 		static public Beagle.Util.Logger Logger = null;
 		//static public Beagle.Util.Logger Logger = Beagle.Util.Logger.Log;
-		static private void Log (string format, params object[] args)
+		static public void Log (string format, params object[] args)
 		{
 			if (Logger != null)
 				Logger.Debug (format, args);
 		}
 
-		static private void Log (Exception e)
+		static public void Log (Exception e)
 		{
 			if (Logger != null)
 				Logger.Debug (e);

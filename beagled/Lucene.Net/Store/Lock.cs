@@ -56,10 +56,11 @@ namespace Lucene.Net.Store
 		/// <throws>  IOException if lock wait times out or obtain() throws an IOException </throws>
 		public virtual bool Obtain(long lockWaitTimeout)
 		{
-			bool locked = Obtain();
 			int maxSleepCount = (int) (lockWaitTimeout / LOCK_POLL_INTERVAL);
 			int sleepCount = 0;
 			maxSleepCount = System.Math.Max (maxSleepCount, 1);
+			FSDirectory.Log ("Lock.Obtain timeout={0} maxsleepcount={1}", lockWaitTimeout, maxSleepCount);
+			bool locked = Obtain();
 
 			while (!locked)
 			{

@@ -1,0 +1,46 @@
+? out
+? Store/.FSDirectory.cs.swp
+? Store/.Lock.cs.swp
+Index: Store/FSDirectory.cs
+===================================================================
+RCS file: /cvs/gnome/beagle/beagled/Lucene.Net/Store/FSDirectory.cs,v
+retrieving revision 1.12
+diff -u -B -p -r1.12 FSDirectory.cs
+--- Store/FSDirectory.cs	6 Oct 2005 19:29:58 -0000	1.12
++++ Store/FSDirectory.cs	27 Oct 2005 20:09:39 -0000
+@@ -588,13 +588,13 @@ namespace Lucene.Net.Store
+ 
+ 		static public Beagle.Util.Logger Logger = null;
+ 		//static public Beagle.Util.Logger Logger = Beagle.Util.Logger.Log;
+-		static private void Log (string format, params object[] args)
++		static public void Log (string format, params object[] args)
+ 		{
+ 			if (Logger != null)
+ 				Logger.Debug (format, args);
+ 		}
+ 
+-		static private void Log (Exception e)
++		static public void Log (Exception e)
+ 		{
+ 			if (Logger != null)
+ 				Logger.Debug (e);
+Index: Store/Lock.cs
+===================================================================
+RCS file: /cvs/gnome/beagle/beagled/Lucene.Net/Store/Lock.cs,v
+retrieving revision 1.3
+diff -u -B -p -r1.3 Lock.cs
+--- Store/Lock.cs	6 Oct 2005 19:29:58 -0000	1.3
++++ Store/Lock.cs	27 Oct 2005 20:09:39 -0000
+@@ -56,10 +56,11 @@ namespace Lucene.Net.Store
+ 		/// <throws>  IOException if lock wait times out or obtain() throws an IOException </throws>
+ 		public virtual bool Obtain(long lockWaitTimeout)
+ 		{
+-			bool locked = Obtain();
+ 			int maxSleepCount = (int) (lockWaitTimeout / LOCK_POLL_INTERVAL);
+ 			int sleepCount = 0;
+ 			maxSleepCount = System.Math.Max (maxSleepCount, 1);
++			FSDirectory.Log ("Lock.Obtain timeout={0} maxsleepcount={1}", lockWaitTimeout, maxSleepCount);
++			bool locked = Obtain();
+ 
+ 			while (!locked)
+ 			{
