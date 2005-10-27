@@ -27,7 +27,7 @@
 using System;
 using System.Diagnostics;
 using Gtk;
-using BU = Beagle.Util;
+using Beagle.Util;
 
 namespace Beagle.Tile {
 
@@ -169,11 +169,11 @@ namespace Beagle.Tile {
 			command = "desktop-launch";
 			expects_uris = true;
 #else		       
-			Gnome.Vfs.MimeApplication app;
-			app = Gnome.Vfs.Mime.GetDefaultApplication (hit.MimeType);
-			if (app != null) {
-				command = app.Exec;
-				expects_uris = app.SupportsUris ();
+			GnomeFu.VFSMimeApplication app;
+			app = GnomeFu.GetDefaultAction (hit.MimeType);
+			if (app.command != null) {
+				command = app.command;
+				expects_uris = (app.expects_uris != GnomeFu.VFSMimeApplicationArgumentType.Path);
 			}
 #endif			
 			if (command == null) {

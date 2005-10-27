@@ -1,3 +1,9 @@
+2005-10-27  Daniel Drake  <dsd@gentoo.org>
+
+	* Util/GnomeFu.cs: Readd some gnome bindings, some of the gtk-sharp
+	bindings we were using are only available on gtk-sharp-2.5.
+	* Tiles/Tile.cs: Use GnomeFu to do mime application lookup
+
 2005-10-25  Daniel Drake  <dsd@gentoo.org>
 
 	* Convert to Mono.Unix everywhere
