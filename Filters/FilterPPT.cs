@@ -476,6 +476,9 @@ namespace Beagle.Filters {
 
 		private void ExtractMetaData (Input sumStream, Input docSumStream)
 		{
+			DocProp prop = null;
+			string str = null;
+
 			DocMetaData sumMeta = new DocMetaData ();
 			if (sumStream != null)
 				Msole.MetadataRead (sumStream, sumMeta);
@@ -488,40 +491,38 @@ namespace Beagle.Filters {
 			else
 				Logger.Log.Error ("DocumentSummaryInformationStream not found in {0}", FileName);
 
-			DocProp prop = null;
-			string str = null;
 			if (sumMeta != null) {
 				prop = sumMeta.Lookup ("dc:title");
 				if (prop != null)
-					str = (string) prop.Val;
+					str = prop.Val as string;
 				if (str != null && str.Length > 0)
 					AddProperty (Beagle.Property.New ("dc:title", str));
 
 				str = null;
 				prop = sumMeta.Lookup ("dc:subject");			
 				if (prop != null)
-					str = (string) prop.Val;
+					str = prop.Val as string;
 				if (str != null && str.Length > 0)
 					AddProperty (Beagle.Property.New ("dc:subject", str));
 
 				str = null;
 				prop = sumMeta.Lookup ("dc:description");		
 				if (prop != null)
-					str = (string) prop.Val;
+					str = prop.Val as string;
 				if (str != null && str.Length > 0)
 					AddProperty (Beagle.Property.New ("dc:description", str));
 
 				str = null;
 				prop = sumMeta.Lookup ("gsf:keywords");
 				if (prop != null)
-					str = (string) prop.Val;
+					str = prop.Val as string;
 				if (str != null && str.Length > 0)
 					AddProperty (Beagle.Property.New ("fixme:keywords", str));
 
 				str = null;
 				prop = sumMeta.Lookup ("gsf:creator");
 				if (prop != null)
-					str = (string) prop.Val;
+					str = prop.Val as string;
 				if (str != null && str.Length > 0)
 					AddProperty (Beagle.Property.New ("fixme:author", str));
 			}
@@ -530,14 +531,14 @@ namespace Beagle.Filters {
 				str = null;
 				prop = docSumMeta.Lookup ("gsf:company");
 				if (prop != null)
-					str = (string) prop.Val;
+					str = prop.Val as string;
 				if (str != null && str.Length > 0)
 					AddProperty (Beagle.Property.New ("fixme:company", str));
 
 				str = null;
 				prop = docSumMeta.Lookup ("gsf:slide-count");
 				if (prop != null)
-					str = (string) prop.Val;
+					str = prop.Val as string;
 				if (str != null && str.Length > 0)
 					AddProperty (Beagle.Property.New ("fixme:slide-count", str));
 			}
