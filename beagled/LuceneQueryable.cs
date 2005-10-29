@@ -170,7 +170,7 @@ namespace Beagle.Daemon {
 			// Don't accept queries on empty indexes.
 			// If nothing else, it causes us to start
 			// up a new thread.
-			return driver.GetItemCount () > 0;
+			return GetItemCount () > 0;
 		}
 
 		/////////////////////////////////////////
