@@ -1,0 +1,48 @@
+From: dotLucene 1.4.3 build 003
+
+Fix a leak
+
+Index: Analysis/Standard/StandardTokenizer.cs
+===================================================================
+RCS file: /cvs/gnome/beagle/beagled/Lucene.Net/Analysis/Standard/StandardTokenizer.cs,v
+retrieving revision 1.4
+diff -u -p -r1.4 StandardTokenizer.cs
+--- Analysis/Standard/StandardTokenizer.cs	7 Oct 2005 00:54:06 -0000	1.4
++++ Analysis/Standard/StandardTokenizer.cs	27 Oct 2005 11:22:39 -0000
+@@ -111,6 +111,13 @@ namespace Lucene.Net.Analysis.Standard
+ 			}
+ 			throw new System.ApplicationException("Missing return statement in function");
+ 		}
++
++		/// <summary>By default, closes the input Reader. </summary>
++		public override void Close()
++		{
++			token_source.Close ();
++			base.Close ();
++		}
+ 		
+ 		public StandardTokenizerTokenManager token_source;
+ 		public Token token, jj_nt;
+Index: Analysis/Standard/StandardTokenizerTokenManager.cs
+===================================================================
+RCS file: /cvs/gnome/beagle/beagled/Lucene.Net/Analysis/Standard/StandardTokenizerTokenManager.cs,v
+retrieving revision 1.4
+diff -u -p -r1.4 StandardTokenizerTokenManager.cs
+--- Analysis/Standard/StandardTokenizerTokenManager.cs	17 Oct 2005 18:58:06 -0000	1.4
++++ Analysis/Standard/StandardTokenizerTokenManager.cs	27 Oct 2005 11:22:40 -0000
+@@ -20,6 +20,14 @@ namespace Lucene.Net.Analysis.Standard
+ 	
+ 	public class StandardTokenizerTokenManager : StandardTokenizerConstants
+ 	{
++
++		/// <summary>By default, closes the input Reader.</summary>
++		public void Close()
++		{
++			debugStream.Close();
++			input_stream.Done();
++		}
++
+ 		private void  InitBlock()
+ 		{
+ 			System.IO.StreamWriter temp_writer;
+

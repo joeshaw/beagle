@@ -111,7 +111,14 @@ namespace Lucene.Net.Analysis.Standard
 			}
 			throw new System.ApplicationException("Missing return statement in function");
 		}
-		
+
+		/// <summary>By default, closes the input Reader. </summary>
+		public override void Close()
+		{
+			token_source.Close ();
+			base.Close ();
+		}
+
 		public StandardTokenizerTokenManager token_source;
 		public Token token, jj_nt;
 		private int jj_ntk;

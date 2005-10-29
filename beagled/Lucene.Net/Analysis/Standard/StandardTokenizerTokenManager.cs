@@ -20,6 +20,14 @@ namespace Lucene.Net.Analysis.Standard
 	
 	public class StandardTokenizerTokenManager : StandardTokenizerConstants
 	{
+
+		/// <summary>By default, closes the input Reader.</summary>
+		public void Close()
+		{
+			debugStream.Close();
+			input_stream.Done();
+		}
+
 		private void  InitBlock()
 		{
 			System.IO.StreamWriter temp_writer;

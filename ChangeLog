@@ -1,3 +1,7 @@
+2005-10-29  Daniel Drake  <dsd@gentoo.org>
+
+	* beagled/Lucene.Net: Clean up the locking loop, and fix a leak
+
 2005-10-27  Daniel Drake  <dsd@gentoo.org>
 
 	* Util/GnomeFu.cs: Readd some gnome bindings, some of the gtk-sharp
