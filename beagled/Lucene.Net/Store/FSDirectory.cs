@@ -130,7 +130,7 @@ namespace Lucene.Net.Store
 			
 			public override System.String ToString()
 			{
-				return "Lock@" + lockFile;
+				return lockFile.FullName;
 			}
 		}
 		/// <summary>This cache of directories ensures that there is a unique Directory

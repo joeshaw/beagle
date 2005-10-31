@@ -1,0 +1,57 @@
+From: Daniel Drake <dsd@gentoo.org>
+
+When lock obtain times out, do a little bit of automatic investigation into
+the possibly-stale lockfile.
+
+Index: Store/FSDirectory.cs
+===================================================================
+RCS file: /cvs/gnome/beagle/beagled/Lucene.Net/Store/FSDirectory.cs,v
+retrieving revision 1.13
+diff -u -B -p -r1.13 FSDirectory.cs
+--- Store/FSDirectory.cs	27 Oct 2005 20:10:34 -0000	1.13
++++ Store/FSDirectory.cs	31 Oct 2005 00:33:43 -0000
+@@ -130,7 +130,7 @@ namespace Lucene.Net.Store
+ 			
+ 			public override System.String ToString()
+ 			{
+-				return "Lock@" + lockFile;
++				return lockFile.FullName;
+ 			}
+ 		}
+ 		/// <summary>This cache of directories ensures that there is a unique Directory
+Index: Store/Lock.cs
+===================================================================
+RCS file: /cvs/gnome/beagle/beagled/Lucene.Net/Store/Lock.cs,v
+retrieving revision 1.5
+diff -u -B -p -r1.5 Lock.cs
+--- Store/Lock.cs	29 Oct 2005 15:15:26 -0000	1.5
++++ Store/Lock.cs	31 Oct 2005 00:33:43 -0000
+@@ -66,7 +66,27 @@ namespace Lucene.Net.Store
+ 			{
+ 				if (sleepCount == maxSleepCount)
+ 				{
+-					throw new System.IO.IOException("Lock obtain timed out: " + this.ToString());
++					// Try and be a little more verbose on failure
++					string lockpath = this.ToString ();
++					System.Text.StringBuilder ex = new System.Text.StringBuilder();
++					ex.Append ("Lock obain timed out: ");
++					ex.Append (lockpath);
++					if (System.IO.File.Exists (lockpath)) {
++						System.IO.FileStream fs = System.IO.File.Open (lockpath, System.IO.FileMode.Open, System.IO.FileAccess.Read, System.IO.FileShare.Read);
++						System.IO.StreamReader sr = new System.IO.StreamReader (fs);
++						string pid = sr.ReadToEnd ().Trim ();
++						sr.Close ();
++						fs.Close ();
++						ex.Append (" -- pid ").Append (pid);
++
++						if (System.IO.Directory.Exists ("/proc/" + pid))
++							ex.Append (" -- process exists");
++						else
++							ex.Append (" -- process does not exist, stale lockfile?");
++					} else {
++						ex.Append (" -- lock file doesn't exist!?");
++					}
++					throw new System.IO.IOException(ex.ToString ());
+ 				}
+ 				++sleepCount;
+ 

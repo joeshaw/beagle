@@ -66,7 +66,27 @@ namespace Lucene.Net.Store
 			{
 				if (sleepCount == maxSleepCount)
 				{
-					throw new System.IO.IOException("Lock obtain timed out: " + this.ToString());
+					// Try and be a little more verbose on failure
+					string lockpath = this.ToString ();
+					System.Text.StringBuilder ex = new System.Text.StringBuilder();
+					ex.Append ("Lock obain timed out: ");
+					ex.Append (lockpath);
+					if (System.IO.File.Exists (lockpath)) {
+						System.IO.FileStream fs = System.IO.File.Open (lockpath, System.IO.FileMode.Open, System.IO.FileAccess.Read, System.IO.FileShare.Read);
+						System.IO.StreamReader sr = new System.IO.StreamReader (fs);
+						string pid = sr.ReadToEnd ().Trim ();
+						sr.Close ();
+						fs.Close ();
+						ex.Append (" -- pid ").Append (pid);
+
+						if (System.IO.Directory.Exists ("/proc/" + pid))
+							ex.Append (" -- process exists");
+						else
+							ex.Append (" -- process does not exist, stale lockfile?");
+					} else {
+						ex.Append (" -- lock file doesn't exist!?");
+					}
+					throw new System.IO.IOException(ex.ToString ());
 				}
 				++sleepCount;
 
