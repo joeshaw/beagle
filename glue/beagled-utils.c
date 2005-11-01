@@ -3,15 +3,16 @@
 #include <string.h>
 
 int
-beagled_utils_readdir (void *dir, char *name)
+beagled_utils_readdir (void *dir, char *name, int max_len)
 {
     struct dirent* entry = readdir ((DIR*) dir);
 
     if (entry == NULL) {
-	name = NULL;
+	if (max_len > 0)
+	    *name = '\0';
 	return -1;
     }
     
-    strcpy (name, entry->d_name);
+    strncpy (name, entry->d_name, max_len);
     return 0;
 }

@@ -44,14 +44,14 @@ namespace Beagle.Util {
 		private static extern int closedir (IntPtr dir);
 
 		[DllImport ("libbeagleglue", EntryPoint = "beagled_utils_readdir", SetLastError = true)]
-		private static extern int sys_readdir (IntPtr dir, StringBuilder name);
+		private static extern int sys_readdir (IntPtr dir, [Out] StringBuilder name, int max_len);
 		
 		private static string readdir (IntPtr dir, StringBuilder buffer)
 		{
 			int r = 0;
 			buffer.Length = 0;
 			while (r == 0 && buffer.Length == 0) {
-			       r = sys_readdir (dir, buffer); 
+			       r = sys_readdir (dir, buffer, buffer.Capacity); 
 			}
 
 			if (r == -1)
