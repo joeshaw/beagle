@@ -58,7 +58,7 @@ namespace Beagle.Filters
 		public FilterDocbook ()
 		{
 			SnippetMode = false;
-			SetVersion (3);
+			SetVersion (4);
 
 			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("application/docbook+xml"));
 			AddSupportedFlavor (FilterFlavor.NewFromExtension (".docbook"));
