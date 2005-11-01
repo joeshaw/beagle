@@ -174,12 +174,23 @@ namespace Beagle.Filters
 				}
 			}
 
+			// Add the common properties to the top-level
+			// file item such as Title, Language etc.
+
+			if (base_title != null)
+				AddProperty (Property.New ("dc:title", base_title));
+
+			if (base_language != null)
+				AddProperty (Property.NewUnsearched ("fixme:language", base_language));
+
 			watch.Stop ();
 			
 			// If we've successfully crawled the file but haven't 
 			// found any indexables, we shouldn't consider it
-			// successfull at all.
-			if (ChildIndexables.Count == 0) {
+			// successfull at all (unless we have a title, which
+			// means that it's actually a docbook file, just without
+			// sections.
+			if (ChildIndexables.Count == 0 && base_title == null) {
 				Error ();
 				return;
 			}
