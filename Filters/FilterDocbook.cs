@@ -141,6 +141,8 @@ namespace Beagle.Filters
 						Indexable indexable = new Indexable (UriFu.PathToFileUri (String.Format ("{0}#{1}", base_path, entry.Id)));
 						indexable.HitType = "DocbookEntry";
 						indexable.MimeType = "text/x-docbook-entry";
+						indexable.Filtering = IndexableFiltering.AlreadyFiltered;
+
 						indexable.AddProperty (Property.NewUnsearched ("fixme:id", entry.Id));
 						
 						if (entry.Title != null)
