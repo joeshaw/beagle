@@ -176,7 +176,7 @@ namespace Beagle.Daemon.KopeteQueryable {
 			Uri uri = UriFu.PathToFileUri (filename);
 			Indexable indexable = new Indexable (uri);
 			indexable.ContentUri = uri;
-			indexable.Timestamp = File.GetLastWriteTime (filename);
+			indexable.Timestamp = File.GetLastWriteTimeUtc (filename);
 			indexable.MimeType = KopeteLog.MimeType;
 			indexable.HitType = "IMLog";
 			indexable.CacheContent = false;

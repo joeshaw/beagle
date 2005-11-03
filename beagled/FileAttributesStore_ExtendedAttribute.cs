@@ -131,7 +131,7 @@ namespace Beagle.Daemon {
 
 				// This has to be the last thing we write out, to get LastAttrTime as close
 				// to the ctime as possible.
-				attr.LastAttrTime = DateTime.Now;
+				attr.LastAttrTime = DateTime.UtcNow;
 				ExtendedAttribute.Set (attr.Path, last_attrtime_attr,
 						       StringFu.DateTimeToString (attr.LastAttrTime));
 				

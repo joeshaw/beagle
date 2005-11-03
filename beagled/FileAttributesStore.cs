@@ -80,7 +80,7 @@ namespace Beagle.Daemon {
 		public bool Write (FileAttributes attr)
 		{
 			lock (ifas) {
-				attr.LastAttrTime = DateTime.Now;
+				attr.LastAttrTime = DateTime.UtcNow;
 				return ifas.Write (attr);
 			}
 		}

@@ -136,19 +136,21 @@ namespace Beagle.Daemon.FileSystemQueryable {
 								     Guid      parent_id,
 								     bool      mutable)
 		{
+			string no_ext;
+			no_ext = Path.GetFileNameWithoutExtension (name);
+
 			Property prop;
 
 			prop = Property.NewKeyword (ExactFilenamePropKey, name);
 			prop.IsMutable = mutable;
 			indexable.AddProperty (prop);
 
-			prop = Property.New (TextFilenamePropKey, name);
+			prop = Property.New (TextFilenamePropKey, no_ext);
 			prop.IsMutable = mutable;
 			indexable.AddProperty (prop);
 
 			string str;
-			str = Path.GetFileNameWithoutExtension (name);
-			str = StringFu.FuzzyDivide (str);
+			str = StringFu.FuzzyDivide (no_ext);
 			prop = Property.New (SplitFilenamePropKey, str);
 			prop.IsMutable = mutable;
 			indexable.AddProperty (prop);
@@ -185,7 +187,7 @@ namespace Beagle.Daemon.FileSystemQueryable {
 			indexable = new Indexable (IndexableType.Add, GuidFu.ToUri (id));
 			indexable.MimeType = "inode/directory";
 			indexable.NoContent = true;
-			indexable.Timestamp = Directory.GetLastWriteTime (path);
+			indexable.Timestamp = Directory.GetLastWriteTimeUtc (path);
 
 			string name;
 			if (parent == null)
@@ -211,7 +213,7 @@ namespace Beagle.Daemon.FileSystemQueryable {
 		{
 			Indexable indexable;
 			indexable = new Indexable (IndexableType.Add, GuidFu.ToUri (id));
-			indexable.Timestamp = File.GetLastWriteTime (path);
+			indexable.Timestamp = File.GetLastWriteTimeUtc (path);
 			indexable.ContentUri = UriFu.PathToFileUri (path);
 			indexable.Crawled = crawl_mode;
 			indexable.Filtering = Beagle.IndexableFiltering.Always;
@@ -537,7 +539,7 @@ namespace Beagle.Daemon.FileSystemQueryable {
 			else
 				dir = parent.AddChild (name, attr);
 
-			if (Directory.GetLastWriteTime (path) > attr.LastWriteTime) {
+			if (Directory.GetLastWriteTimeUtc (path) > attr.LastWriteTime) {
 				dir.State = DirectoryState.Dirty;
 				if (Debug)
 					Logger.Log.Debug ("'{0}' is dirty", path);
@@ -702,11 +704,11 @@ namespace Beagle.Daemon.FileSystemQueryable {
 			// we only use the FileAttributes mtime on a directory
 			// to determine its initial state, not whether or not
 			// its index record is up-to-date.
-			attr.LastWriteTime = DateTime.Now;
+			attr.LastWriteTime = DateTime.UtcNow;
 
 			// ...but we do use this to decide which order directories get
 			// crawled in.
-			dir.LastCrawlTime = DateTime.Now;
+			dir.LastCrawlTime = DateTime.UtcNow;
 
 			FileAttributesStore.Write (attr);
 			dir.MarkAsClean ();
@@ -801,6 +803,13 @@ namespace Beagle.Daemon.FileSystemQueryable {
 			Rename,
 			Forget
 		}
+
+		static DateTime epoch = new DateTime (1970, 1, 1, 0, 0, 0);
+
+		static DateTime ToDateTimeUtc (long time_t)
+		{
+			return epoch.AddSeconds (time_t);
+		}
 		
 		private RequiredAction DetermineRequiredAction (DirectoryModel dir,
 								string         name,
@@ -857,9 +866,13 @@ namespace Beagle.Daemon.FileSystemQueryable {
 				return RequiredAction.None;
 			}
 
-			if (! DatesAreTheSame (attr.LastWriteTime, stat.st_mtime)) {
+			DateTime last_write_time, last_attr_time;
+			last_write_time = ToDateTimeUtc (stat.st_mtime);
+			last_attr_time = ToDateTimeUtc (stat.st_ctime);
+
+			if (attr.LastWriteTime != last_write_time) {
 				if (Debug)
-					Logger.Log.Debug ("*** Index it: MTime has changed");
+					Logger.Log.Debug ("*** Index it: MTime has changed ({0} vs {1})", attr.LastWriteTime, last_write_time);
 				
 				// If the file has been copied, it will have the
 				// original file's EAs.  Thus we have to check to
@@ -880,9 +893,9 @@ namespace Beagle.Daemon.FileSystemQueryable {
 
 			// If the inode ctime is different that the time we last
 			// set file attributes, we might have been moved or copied.
-			if (! DatesAreTheSame (attr.LastAttrTime, stat.st_ctime)) {
+			if (attr.LastAttrTime != last_attr_time) {
 				if (Debug)
-					Logger.Log.Debug ("*** CTime has changed, checking last known path");
+					Logger.Log.Debug ("*** CTime has changed, checking last known path ({0} vs {1})", attr.LastAttrTime, last_attr_time);
 
 				last_known_path = UniqueIdToFullPath (attr.UniqueId);
 
@@ -906,14 +919,6 @@ namespace Beagle.Daemon.FileSystemQueryable {
 			if (Debug)
 				Logger.Log.Debug ("*** Do nothing");
 			return RequiredAction.None;	
-		}
-
-		static private bool DatesAreTheSame (DateTime system_io_datetime, long stat_datetime)
-		{
-			// UnixConvert.FromDateTime has no documentation, but the source revealed
-			// that,FromDateTime does the conversion to UTC time internally
-			long system_epoch_time = Mono.Unix.UnixConvert.FromDateTime (system_io_datetime);
-			return system_epoch_time == stat_datetime;
 		}
 
 		// Return an indexable that will do the right thing with a file
