@@ -355,29 +355,28 @@ namespace Beagle.Util {
 				return this.GetHashCode () - other.GetHashCode ();
 			}
 
-			public override string ToString ()
+			public void AppendToStringBuilder (StringBuilder sb)
 			{
-				StringBuilder sb = new StringBuilder ();
-
-				sb.AppendFormat ("{0} {1} ({2})\n", Priority, SubPriority, Timestamp);
+				sb.Append (Priority).Append (' ').Append (SubPriority);
+				sb.Append (" (").Append (Timestamp).Append (")\n");
 					
-				sb.Append (Tag + "\n");
+				sb.Append (Tag).Append ('\n');
 
 				double t = (TriggerTime - DateTime.Now).TotalSeconds;
 				if (t > 0) {
 					if (t < 120)
 						sb.AppendFormat ("Hold for {0:0.00} seconds\n", t);
-					else
-						sb.AppendFormat ("Hold until {0}\n", TriggerTime);
+					else {
+						sb.Append ("Hold until ").Append (TriggerTime);
+						sb.Append ('\n');
+					}
 				}
 
 				if (Creator != null)
-					sb.AppendFormat ("Creator: {0}\n", Creator);
+					sb.Append ("Creator: ").Append (Creator).Append ('\n');
 
 				if (Description != null)
-					sb.Append (Description + "\n");
-
-				return sb.ToString ();
+					sb.Append (Description).Append ('\n');
 			}
 		}
 
@@ -794,6 +793,7 @@ namespace Beagle.Util {
 			ArrayList to_be_executed = new ArrayList ();
 			Hashtable max_priority_by_source = new Hashtable ();
 			int executed_task_count = 0;
+			StringBuilder status_builder = new StringBuilder ();
 
 			while (running) {
 
@@ -955,12 +955,13 @@ namespace Beagle.Util {
 
 				// Now actually execute the set of tasks we found.
 
-				StringBuilder status_builder;
-				status_builder = new StringBuilder ();
-				status_builder.AppendFormat ("Executing task{0}\n",
-							     to_be_executed.Count > 1 ? "s" : "");
+				status_builder.Length = 0;
+				status_builder.Append ("Executing task");
+				if (to_be_executed.Count > 1)
+					status_builder.Append ('s');
+				status_builder.Append ('\n');
 				foreach (Task task in to_be_executed) {
-					status_builder.Append (task.ToString ());
+					task.AppendToStringBuilder (status_builder);
 					status_builder.Append ('\n');
 				}
 				status_str = status_builder.ToString ();
@@ -1037,15 +1038,18 @@ namespace Beagle.Util {
 				pending_tasks.Reverse ();
 
 				sb.Append ("Scheduler:\n");
-				sb.AppendFormat ("Count: {0}\n", total_executed_task_count);
+				sb.Append ("Count: ").Append (total_executed_task_count);
+				sb.Append ('\n');
 
 				if (status_str != null)
-					sb.AppendFormat ("Status: {0}\n", status_str);
+					sb.Append ("Status: ").Append (status_str).Append ('\n');
 
 				int pos = 1;
 				sb.Append ("\nPending Tasks:\n");
 				foreach (Task task in pending_tasks) {
-					sb.AppendFormat ("{0} {1}\n", pos, task);
+					sb.Append (pos).Append (' ');
+					task.AppendToStringBuilder (sb);
+					sb.Append ('\n');
 					++pos;
 				}
 				if (pos == 1)
@@ -1054,14 +1058,18 @@ namespace Beagle.Util {
 
 				if (future_tasks.Count > 0) {
 					sb.Append ("\nFuture Tasks:\n");
-					foreach (Task task in future_tasks)
-						sb.AppendFormat ("{0}\n", task);
+					foreach (Task task in future_tasks) {
+						task.AppendToStringBuilder (sb);
+						sb.Append ('\n');
+					}
 				}
 
 				if (blocked_tasks.Count > 0) {
 					sb.Append ("\nBlocked Tasks:\n");
-					foreach (Task task in blocked_tasks)
-						sb.AppendFormat ("{0}\n", task);
+					foreach (Task task in blocked_tasks) {
+						task.AppendToStringBuilder (sb);
+						sb.Append ('\n');
+					}
 				}
 			}
 

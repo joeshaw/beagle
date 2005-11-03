@@ -402,7 +402,7 @@ namespace Beagle.Daemon {
 		}
 
 		static void AddSearchTermInfo (QueryPart          part,
-					       SearchTermResponse response)
+					       SearchTermResponse response, StringBuilder sb)
 		{
 			if (part.Logic == QueryPartLogic.Prohibited)
 				return;
@@ -411,7 +411,7 @@ namespace Beagle.Daemon {
 				ICollection sub_parts;
 				sub_parts = ((QueryPart_Or) part).SubParts;
 				foreach (QueryPart qp in sub_parts)
-					AddSearchTermInfo (qp, response);
+					AddSearchTermInfo (qp, response, sb);
 				return;
 			}
 
@@ -430,8 +430,7 @@ namespace Beagle.Daemon {
 					split [i] = null;
 
 			// Assemble the phrase minus stop words
-			StringBuilder sb;
-			sb = new StringBuilder ();
+			sb.Length = 0;
 			for (int i = 0; i < split.Length; ++i) {
 				if (split [i] == null)
 					continue;
@@ -490,10 +489,11 @@ namespace Beagle.Daemon {
 
 		static private SearchTermResponse AssembleSearchTermResponse (Query query)
 		{
+			StringBuilder sb = new StringBuilder ();
 			SearchTermResponse search_term_response;
 			search_term_response = new SearchTermResponse ();
 			foreach (QueryPart part in query.Parts)
-				AddSearchTermInfo (part, search_term_response);
+				AddSearchTermInfo (part, search_term_response, sb);
 			return search_term_response;
 		}
 
@@ -547,12 +547,12 @@ namespace Beagle.Daemon {
 
 		static public string GetIndexInformation ()
 		{
-			StringBuilder builder = new StringBuilder ("\n");
+			StringBuilder builder = new StringBuilder ('\n');
 
 			foreach (Queryable q in queryables) {
-				builder.AppendFormat ("Name: {0}\n", q.Name);
-				builder.AppendFormat ("Count: {0}\n", q.GetItemCount ());
-				builder.Append ("\n");
+				builder.Append ("Name: ").Append (q.Name).Append ('\n');
+				builder.Append ("Count: ").Append (q.GetItemCount ()).Append ('\n');
+				builder.Append ('\n');
 			}
 
 			return builder.ToString ();

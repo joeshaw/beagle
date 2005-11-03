@@ -1,3 +1,7 @@
+2005-11-03  Daniel Drake  <dsd@gentoo.org>
+
+	* Util/Scheduler.cs, beagled/QueryDriver.cs: Reuse StringBuilders
+
 2005-11-02  Debajyoti Bera <dbera.web@gmail.com>
 
 	* Conf.cs, BestWindow.cs: Searching.xml was getting saved even
