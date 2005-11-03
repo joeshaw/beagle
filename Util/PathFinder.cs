@@ -74,6 +74,7 @@ namespace Beagle.Util {
 							throw new Exception ("Couldn't get HOME or BEAGLE_HOME");
 						if (home_dir.EndsWith ("/"))
 							home_dir = home_dir.Remove (home_dir.Length - 1, 1);
+						home_dir = Path.GetFullPath (home_dir);
 						if (! Directory.Exists (home_dir))
 							throw new Exception ("Home directory '"+home_dir+"' doesn't exist");
 					}
@@ -99,8 +100,11 @@ namespace Beagle.Util {
 
 						if (storage_dir == null)
 							storage_dir = Path.Combine (HomeDir, ".beagle");
-						else if (storage_dir.EndsWith ("/"))
-							storage_dir = storage_dir.Remove (storage_dir.Length - 1, 1);
+						else {
+							if (storage_dir.EndsWith ("/"))
+								storage_dir = storage_dir.Remove (storage_dir.Length - 1, 1);
+							storage_dir = Path.GetFullPath (storage_dir);
+						}
 
 						if (! Directory.Exists (storage_dir)) {
 							Directory.CreateDirectory (storage_dir);
