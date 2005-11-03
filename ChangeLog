@@ -1,3 +1,15 @@
+2005-11-04  Veerapuram Varadhan <vvaradhan@novell.com>
+
+	* Filters/FilterOle.cs: Abstract base class for PPT and DOC
+	filters.
+	* Filters/FilterPPT.cs: Derived from FilterOle.
+	* Filters/FilterDOC.cs: Derived from FilterOle as wv1 1.2.0 uses
+	libgsf instead of libole2.  Meta data parsing is done using
+	gsf-sharp and text-parsing is done using wv1.
+	* Filters/wv1-glue.c: A totally-random crash is fixed.  This fixes
+	306812 and 31559.  Also, ported to work with both wv-1.2.0 and
+	wv-1.0.3.
+	
 2005-11-03  Daniel Drake  <dsd@gentoo.org>
 
 	* Util/Scheduler.cs, beagled/QueryDriver.cs: Reuse StringBuilders

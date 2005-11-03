@@ -58,12 +58,13 @@ CSFILES = 				\
 
 if ENABLE_GSF_SHARP
 CSFILES += 				\
+	$(srcdir)/FilterOle.cs		\
 	$(srcdir)/FilterPPT.cs
-endif
 
 if ENABLE_WV1
 CSFILES += \
 	$(srcdir)/FilterDOC.cs		
+endif
 endif
 
 if HAS_LIBCHM
@@ -98,6 +99,7 @@ uninstall-local:
 	rm -f $(DESTDIR)$(FILTERDIR)/$(TARGET)
 
 COND_CS_FILES = \
+	$(srcdir)/FilterOle.cs		\
 	$(srcdir)/FilterPPT.cs		\
 	$(srcdir)/FilterDOC.cs		\
 	$(srcdir)/FilterChm.cs

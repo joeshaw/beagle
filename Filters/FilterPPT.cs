@@ -371,7 +371,7 @@ internal class RecordType
 
 namespace Beagle.Filters {
     
-	public class FilterPPT : Beagle.Daemon.Filter {
+	public class FilterPPT : FilterOle {
 
 		private enum TextType {
 			Invalid = -1,
@@ -386,9 +386,7 @@ namespace Beagle.Filters {
 			QuarterBody
 		};
 
-		Infile file;
 		TextType textType;
-		string FileName;
 		public FilterPPT () 
 		{
 			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("application/vnd.ms-powerpoint"));
@@ -474,108 +472,17 @@ namespace Beagle.Filters {
 		}
 		
 
-		private void ExtractMetaData (Input sumStream, Input docSumStream)
+		override protected void ExtractMetaData (Input sumStream, Input docSumStream)
 		{
+			int slide_count = 0;
 			DocProp prop = null;
-			string str = null;
 
-			DocMetaData sumMeta = new DocMetaData ();
-			if (sumStream != null)
-				Msole.MetadataRead (sumStream, sumMeta);
-			else
-				Logger.Log.Error ("SummaryInformationStream not found in {0}", FileName);
-
-			DocMetaData docSumMeta = new DocMetaData ();
-			if (docSumStream != null)
-				Msole.MetadataRead (docSumStream, docSumMeta);
-			else
-				Logger.Log.Error ("DocumentSummaryInformationStream not found in {0}", FileName);
-
-			if (sumMeta != null) {
-				prop = sumMeta.Lookup ("dc:title");
-				if (prop != null)
-					str = prop.Val as string;
-				if (str != null && str.Length > 0)
-					AddProperty (Beagle.Property.New ("dc:title", str));
-
-				str = null;
-				prop = sumMeta.Lookup ("dc:subject");			
-				if (prop != null)
-					str = prop.Val as string;
-				if (str != null && str.Length > 0)
-					AddProperty (Beagle.Property.New ("dc:subject", str));
-
-				str = null;
-				prop = sumMeta.Lookup ("dc:description");		
-				if (prop != null)
-					str = prop.Val as string;
-				if (str != null && str.Length > 0)
-					AddProperty (Beagle.Property.New ("dc:description", str));
-
-				str = null;
-				prop = sumMeta.Lookup ("gsf:keywords");
-				if (prop != null)
-					str = prop.Val as string;
-				if (str != null && str.Length > 0)
-					AddProperty (Beagle.Property.New ("fixme:keywords", str));
-
-				str = null;
-				prop = sumMeta.Lookup ("gsf:creator");
-				if (prop != null)
-					str = prop.Val as string;
-				if (str != null && str.Length > 0)
-					AddProperty (Beagle.Property.New ("fixme:author", str));
-			}
-			
 			if (docSumMeta != null) {
-				str = null;
-				prop = docSumMeta.Lookup ("gsf:company");
-				if (prop != null)
-					str = prop.Val as string;
-				if (str != null && str.Length > 0)
-					AddProperty (Beagle.Property.New ("fixme:company", str));
-
-				str = null;
 				prop = docSumMeta.Lookup ("gsf:slide-count");
 				if (prop != null)
-					str = prop.Val as string;
-				if (str != null && str.Length > 0)
-					AddProperty (Beagle.Property.New ("fixme:slide-count", str));
-			}
-		}
-		override protected void DoPullProperties ()
-		{
-			Input sumStream = null;
-			Input docSumStream = null;
-			string str = null;
-			int childCount = 0;
-			int found = 0;
-			
-			if (file == null) {
-				Finished ();
-				return;
-			}
-			
-			try {
-				// FIXME: Should try to use Encoding instead of 
-				// string.IndexOf ()... Hacky stuff ;-)
-				childCount = file.NumChildren();
-				for (int i = 0; i < childCount && found != 2; i++) {
-					str = file.NameByIndex (i);	
-					if (str.IndexOf ("SummaryInformation") > -1 && found < 1) {
-						sumStream = file.ChildByIndex (i);
-						found = 1;
-					}
-					else if (str.IndexOf ("DocumentSummaryInformation") > -1) {
-						docSumStream = file.ChildByIndex (i);
-						found = 2;
-					}
-				}
-				ExtractMetaData (sumStream, docSumStream);
-			} catch (Exception e) {
-				Logger.Log.Error ("Exception occurred duing DoPullProperties.");
-				Logger.Log.Error (e);
-				Error ();
+					slide_count = (int) prop.Val;
+				if (slide_count > 0)
+					AddProperty (Beagle.Property.NewKeyword ("fixme:slide-count", slide_count));
 			}
 		}
 
@@ -614,29 +521,10 @@ namespace Beagle.Filters {
 			}
 		}
 
-		override protected void DoOpen (FileInfo info)
+		override protected void OpenStorage (FileInfo info)
 		{
 			FileName = info.FullName;
 
-			try {
-				Gsf.Global.Init ();
-				Input input = Input.MmapNew (info.FullName);
-				if (input != null) {
-					input = input.Uncompress();
-					file = new InfileMSOle (input);
-				}
-				if (input == null || file == null) {
-					Logger.Log.Error ("Unable to open [{0}] ",info.FullName);
-					Error ();
-					return;
-				}
-				
-			} catch (Exception e) {
-				Logger.Log.Error ("Unable to open "+info.FullName);
-				Error ();
-				return;
-			}
-			
 			// PPT 95/97-2000 format contains a "PP97_DUALSTORAGE", which is required
 			// to index PPT 97-2000 files.
 			// We don't support PPT 95 files, however, we happily accept patches ;-)
@@ -658,15 +546,5 @@ namespace Beagle.Filters {
 				Error ();
 			}
 		}
-
-		// FIXME: These are utility functions and can be useful 
-		// outside this filter as well.
-		public static int GetInt32 (byte [] data, int offset) {
-			return data[offset] + (data[offset + 1] << 8) + (data[offset + 2] << 16) + (data[offset + 3] << 24);
-		}
-		public static int GetInt16 (byte [] data, int offset) {
-			return data[offset] + (data[offset + 1] << 8);
-		}
-
 	}
 }

@@ -78,7 +78,12 @@ typedef struct _UserData {
   /* beagle specifc formats - for partially formatted
    *  texts.
    */
-  U8 bWasHot;
+  U8 bWasHot:1;
+
+  /*
+    specifies end of para, used to send data to managed code
+  */
+  int bParaEnd:1;
 
   /* buffer to hold text */
   GString* txtWord;
@@ -123,20 +128,24 @@ append_char (UserData * ud, U16 ch)
     return;
 
   switch (ch) {
+  case 0x00: /* End of Document */
+    bNeedStructBrk = 1;
+    break;
+
   case 0x0B: /* hard line break */
   case 0x0D: /* paragraph end */
   case 0x0C:
   case '\n': /* new-line */
     bNeedStructBrk = 1;
-    ch = 0x00;
+    ch = 0x0A;
     break;
 
   case 0x20: /* space */
-      g_string_append_c (ud->txtWord, ch);
+    g_string_append_c (ud->txtWord, ch);
     break;
+
   default: 
     len =  g_unichar_to_utf8 (ch, tmpBuf);
-    int i;
     /*  FIXME: This is not good, pretty hacky code
      *  to get rid of unwanted characters, especially
      *  some graphic symbols used in a document. 
@@ -145,6 +154,7 @@ append_char (UserData * ud, U16 ch)
      *  printable-non-iso characters ;)
      */
     /*
+      int i;
       for (i = 0; i < len; i++)
       if (tmpBuf[i] > 0)
       g_string_append_c (ud->txtWord, tmpBuf[i]);
@@ -153,31 +163,50 @@ append_char (UserData * ud, U16 ch)
     break;
   }
 
-  if (ch == 0x00 || ch == 0x20) {
+  if (ch == 0x00 || ch == 0x20 || ch == 0x0A) {
     if (ud->bWasHot)
-      g_string_append (ud->txtHotPool, ud->txtWord->str);
+      g_string_append_len (ud->txtHotPool, ud->txtWord->str, ud->txtWord->len);
 
-    g_string_append (ud->txtPool, ud->txtWord->str);
-
-    /*      printf ("TxtWord: %s\n", ud->txtWord->str);
-	    printf ("TxtPool: %s\n", ud->txtPool->str);       
-	    printf ("HotTxtPool: %s\n", ud->txtHotPool->str);
+    /*    
+    printf ("TxtWord: %s, len: %d\n", ud->txtWord->str, ud->txtWord->len);
+    printf ("TxtPool: %s, len: %d\n", ud->txtPool->str, ud->txtPool->len);       
+    printf ("HotTxtPool: %s, len: %d\n", ud->txtHotPool->str, ud->txtHotPool->len);
     */
 
+    g_string_append_len (ud->txtPool, ud->txtWord->str, ud->txtWord->len);
     if (bNeedStructBrk) {
       g_string_append_c (ud->txtPool, '\n');
       g_string_append_c (ud->txtHotPool, ' ');
       ud->structBrkCount++;
     }
 
-    if (ud->structBrkCount >= BUFFERED_STRUCT_BREAK) {
+    if (ud->structBrkCount >= BUFFERED_STRUCT_BREAK ||
+	ud->bParaEnd) {
       (*(ud->WordHandler))(ud->txtPool->str, ud->txtPool->len, 
 			   ud->txtHotPool->str, ud->txtHotPool->len, bNeedStructBrk);
-      g_string_erase (ud->txtPool, 0, -1);
-      g_string_erase (ud->txtHotPool, 0, -1);
-      ud->structBrkCount = 0;
+      /* 
+	 g_string_erase () can be used here to erase
+	 the previous content, however, using this 
+	 call will free the "erased-content-memory"
+	 and thereby causing memory fragmentation for
+	 every time we transfer data from unmanaged
+	 to managed code.  Setting "len" to 0 results
+	 in the same way g_string_erase () does, but
+	 doesn't do memory-[de/re]allocation
+      */
+
+      /*
+	ch == 0x00 refers to EOD.  Do not reset len to
+	zero, we have to free the gstrings.
+       */
+      if (ch != 0x00) {
+	ud->txtPool->len = 0;
+	ud->txtHotPool->len = 0;
+	ud->structBrkCount = 0;
+      }
     }
-    g_string_erase (ud->txtWord, 0, -1);
+    if (ch != 0x00)
+      ud->txtWord->len = 0;
     ud->bWasHot = 0;
   }  
 }
@@ -192,6 +221,9 @@ append_char (UserData * ud, U16 ch)
 void
 fill_UserData (UserData * ud, CHP * chp, wvParseStruct * ps)
 {
+  if (!chp || !ud)
+    return;
+
   ud->cCol = 0;
   if (chp->ico)
     ud->cCol = chp->ico - 1;    
@@ -222,7 +254,6 @@ fill_UserData (UserData * ud, CHP * chp, wvParseStruct * ps)
 static int
 charProc (wvParseStruct * ps, U16 eachchar, U8 chartype, U16 lid)
 {
-
   /* convert incoming character to unicode */
   if (chartype) {
     eachchar = wvHandleCodePage (eachchar, lid);
@@ -356,6 +387,7 @@ eleProc (wvParseStruct * ps, wvTag tag, void *props, int dirty)
 	ud->bIsSplStyle = 0;
 	break;
       }
+      ud->bParaEnd = 0;
       break;
 
     case SECTIONEND:
@@ -364,6 +396,7 @@ eleProc (wvParseStruct * ps, wvTag tag, void *props, int dirty)
 
     case PARAEND:		/* pretty much nothing */
       ud->bIsSplStyle = 0;
+      ud->bParaEnd = 1;
       append_char (ud, '\n');
       break;
 
@@ -409,12 +442,14 @@ static int
 docProc (wvParseStruct * ps, wvTag tag)
 {
   UserData *ud = (UserData *) ps->userData;
+
   switch (tag)
     {
     case DOCEND:
       /* flush the text/hot pools at the EOD */
       ud->structBrkCount = BUFFERED_STRUCT_BREAK;
       append_char (ps->userData, 0x00);
+      
       break;
 
     default:
@@ -423,18 +458,6 @@ docProc (wvParseStruct * ps, wvTag tag)
 
   return 0;
 }
-
-/*
- * wv1_init (): Initialize the wv1 library
- * NOTE: Do not call this more than once for an application.
- */
-
-int
-wv1_init ()
-{
-  return (wvInit());
-}
-
 
 /*
  * wv1_glue_init_doc_parsing: Initiates the document parsing 
@@ -493,9 +516,6 @@ wv1_glue_init_doc_parsing (char* fname, wvTextHandlerCallback callback)
   wvSetSpecialCharHandler (&ps, specCharProc);
 
   wvText (&ps);
-
-  /* free associated memory */
-  wvOLEFree (&ps);
   
   /* free userdata memory */
   g_string_free (ud.txtWord, TRUE);
@@ -506,127 +526,24 @@ wv1_glue_init_doc_parsing (char* fname, wvTextHandlerCallback callback)
   /* free hot text pool memory */
   g_string_free (ud.txtHotPool, TRUE);
 
+  /* free associated memory */
+  wvOLEFree (&ps);
+
+  ud.txtPool = NULL;
+  ud.txtWord = NULL;
+  ud.txtHotPool = NULL;
+
   return 0;
 }
 
-void *
-wv1_glue_get_ole_stream (const char* fname)
+/*
+ * wv1_init (): Initialize the wv1 library
+ * NOTE: Do not call this more than once for an application.
+ */
+
+int
+wv1_init ()
 {
-    MsOle *ole = NULL;
-    ms_ole_open (&ole, fname);
-    return ((void *)ole);
+  return (wvInit());
 }
 
-void *
-wv1_glue_get_ole_summary_stream (MsOle *stream)
-{
-  MsOle *oleStream = (MsOle *)stream;
-  MsOleSummary *summary = NULL;
-  summary = ms_ole_summary_open (oleStream);
-  return ((void *)summary);  
-}
-
-char *
-wv1_glue_get_title (MsOleSummary* smryStream)
-{
-  int ret;
-  return (ms_ole_summary_get_string (smryStream, MS_OLE_SUMMARY_TITLE, &ret));  
-}
-
-char *
-wv1_glue_get_subject (MsOleSummary* smryStream)
-{
-  int ret;
-  return (ms_ole_summary_get_string (smryStream, MS_OLE_SUMMARY_SUBJECT, &ret));
-}
-
-char *
-wv1_glue_get_author (MsOleSummary* smryStream)
-{
-  int ret;
-  return (ms_ole_summary_get_string (smryStream, MS_OLE_SUMMARY_AUTHOR, &ret));
-}
-
-char *
-wv1_glue_get_keywords (MsOleSummary* smryStream)
-{
-  int ret;
-  return (ms_ole_summary_get_string (smryStream, MS_OLE_SUMMARY_KEYWORDS, &ret));
-}
-
-char *
-wv1_glue_get_comments (MsOleSummary* smryStream)
-{
-  int ret;
-  return (ms_ole_summary_get_string (smryStream, MS_OLE_SUMMARY_COMMENTS, &ret));
-}
-                                                                                                                            
-char *
-wv1_glue_get_template (MsOleSummary* smryStream)
-{
-  int ret;
-  return (ms_ole_summary_get_string (smryStream, MS_OLE_SUMMARY_TEMPLATE, &ret));
-}
-
-char *
-wv1_glue_get_lastsavedby (MsOleSummary* smryStream)
-{
-  int ret;
-  return (ms_ole_summary_get_string (smryStream, MS_OLE_SUMMARY_LASTAUTHOR, &ret));
-}
-
-char *
-wv1_glue_get_revision_number (MsOleSummary* smryStream)
-{
-  int ret;
-  return (ms_ole_summary_get_string (smryStream, MS_OLE_SUMMARY_REVNUMBER, &ret));
-}
-
-char *
-wv1_glue_get_appname (MsOleSummary* smryStream)
-{
-  int ret;
-  return (ms_ole_summary_get_string (smryStream, MS_OLE_SUMMARY_APPNAME, &ret));
-}
-
-long
-wv1_glue_get_page_count (MsOleSummary* smryStream)
-{
-  int ret;
-  return (ms_ole_summary_get_long (smryStream, MS_OLE_SUMMARY_PAGECOUNT, &ret));
-}
-
-long
-wv1_glue_get_word_count (MsOleSummary* smryStream)
-{
-  int ret;
-  return (ms_ole_summary_get_long (smryStream, MS_OLE_SUMMARY_WORDCOUNT, &ret));
-}
-
-long
-wv1_glue_get_character_count (MsOleSummary* smryStream)
-{
-  int ret;
-  return (ms_ole_summary_get_long (smryStream, MS_OLE_SUMMARY_CHARCOUNT, &ret));
-}
-
-long
-wv1_glue_get_security (MsOleSummary* smryStream)
-{
-  int ret;
-  return (ms_ole_summary_get_long (smryStream, MS_OLE_SUMMARY_SECURITY, &ret));
-}
-
-short
-wv1_glue_get_codepage (MsOleSummary* smryStream)
-{
-  int ret;
-  return (ms_ole_summary_get_short (smryStream, MS_OLE_SUMMARY_CODEPAGE, &ret));
-}
-
-void
-wv1_glue_close_stream (MsOle* oleStream, MsOleSummary* summary)
-{
-    ms_ole_summary_close (summary);
-    ms_ole_destroy (&oleStream);
-}
