@@ -58,9 +58,9 @@ namespace Beagle.Daemon.EvolutionMailDriver {
 			if (last_write_time_cache.Contains (file.FullName))
 				cached_time = (DateTime) last_write_time_cache [file.FullName];
 			
-			last_write_time_cache [file.FullName] = file.LastWriteTime;
+			last_write_time_cache [file.FullName] = file.LastWriteTimeUtc;
 			
-			return cached_time < file.LastWriteTime;
+			return cached_time < file.LastWriteTimeUtc;
 		}
 
 		private void OnInotifyEvent (Inotify.Watch watch,

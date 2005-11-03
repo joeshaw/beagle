@@ -107,7 +107,7 @@ namespace Beagle.Daemon.EvolutionMailDriver {
 		protected void CrawlFinished ()
 		{
 			// FIXME: This is a little sketchy
-			this.queryable.FileAttributesStore.AttachLastWriteTime (this.CrawlFile.FullName, DateTime.Now);
+			this.queryable.FileAttributesStore.AttachLastWriteTime (this.CrawlFile.FullName, DateTime.UtcNow);
 		}
 
 		public string StatusName {
@@ -300,7 +300,7 @@ namespace Beagle.Daemon.EvolutionMailDriver {
 			System.Uri uri = EvolutionMailQueryable.EmailUri (this.account_name, this.folder_name, uid);
 			Indexable indexable = new Indexable (uri);
 
-			indexable.Timestamp = message.Date;
+			indexable.Timestamp = message.Date.ToUniversalTime ();
 			indexable.HitType = "MailMessage";
 			indexable.MimeType = "message/rfc822";
 			indexable.CacheContent = false;
@@ -729,7 +729,7 @@ namespace Beagle.Daemon.EvolutionMailDriver {
 			Uri uri = CamelMessageUri (messageInfo);
 			Indexable indexable = new Indexable (uri);
 
-			indexable.Timestamp = messageInfo.Date;
+			indexable.Timestamp = messageInfo.Date.ToUniversalTime ();
 			indexable.MimeType = "message/rfc822";
 			indexable.HitType = "MailMessage";
 
@@ -739,7 +739,7 @@ namespace Beagle.Daemon.EvolutionMailDriver {
 			
 			if (!have_content) {
 				indexable.AddProperty (Property.New ("dc:title", messageInfo.subject));
-				indexable.AddProperty (Property.NewDate ("fixme:date", messageInfo.Date));
+				indexable.AddProperty (Property.NewDate ("fixme:date", messageInfo.Date.ToUniversalTime ()));
 			}
 
 			GMime.InternetAddressList addrs;
