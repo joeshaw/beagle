@@ -57,7 +57,7 @@ namespace Beagle.Daemon {
 		public QueryDomain Domain {
 			get { return flavor.Domain; }
 		}
-			
+
 		public bool AcceptQuery (Query query)
 		{
 			return query != null
@@ -65,18 +65,6 @@ namespace Beagle.Daemon {
 				&& query.AllowsSource (Name)
 				&& query.AllowsDomain (Domain)
 				&& iqueryable.AcceptQuery (query);
-		}
-
-		public int GetItemCount ()
-		{
-			int n = -1;
-			try {
-				n = iqueryable.GetItemCount ();
-			} catch (Exception ex) {
-				Logger.Log.Warn ("Couldn't get item count for '{0}'", Name);
-				Logger.Log.Warn (ex);
-			}
-			return n;
 		}
 
 		public void DoQuery (Query query, IQueryResult result, IQueryableChangeData change_data)
@@ -108,6 +96,18 @@ namespace Beagle.Daemon {
 			}
 			
 			return null;
+		}
+
+		public QueryableStatus GetQueryableStatus ()
+		{
+		        QueryableStatus status = iqueryable.GetQueryableStatus ();
+
+			if (status == null)
+				status = new QueryableStatus ();
+
+			status.Name = Name;
+
+			return status;
 		}
 	}
 }

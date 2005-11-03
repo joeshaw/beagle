@@ -167,10 +167,8 @@ namespace Beagle.Daemon {
 
 		virtual public bool AcceptQuery (Query query)
 		{
-			// Don't accept queries on empty indexes.
-			// If nothing else, it causes us to start
-			// up a new thread.
-			return GetItemCount () > 0;
+			// Accept all queries by default.
+			return true;
 		}
 
 		/////////////////////////////////////////
@@ -325,14 +323,56 @@ namespace Beagle.Daemon {
 
 		/////////////////////////////////////////
 
-		public virtual int GetItemCount ()
+		private int progress_percent = -1;
+		private QueryableState state = QueryableState.Idle;
+		private DateTime last_state_change = DateTime.MinValue;
+
+		public QueryableStatus GetQueryableStatus ()
 		{
-			// If we're in read-only mode, query the driver and 
-			// not the indexer for the item count.
+			QueryableStatus status = new QueryableStatus ();
+
+			status.State = state;
+			status.ProgressPercent = progress_percent;
+
+			// If we're in read-only mode, query the driver
+			// and not the indexer for the item count.
 			if (indexer == null)
-				return driver.GetItemCount ();
+				status.ItemCount = driver.GetItemCount ();
 			else
-				return indexer.GetItemCount ();
+				status.ItemCount = indexer.GetItemCount ();
+
+			// Frequent state changes are common, and there isn't
+			// a real state machine with continuity when it comes
+			// to the indexing process.  A delayed indexing task,
+			// for example, might not actually run for several
+			// seconds after it is scheduled.  In this case, the
+			// backend might be in an "Idle" state, but the
+			// indexing process clearly isn't done.  To work
+			// around this, we also track the last time the state
+			// changed.  If it's less than some threshold, then
+			// we consider ourselves to still be in the process of
+			// indexing.
+			if (state != QueryableState.NotApplicable
+			    && (state != QueryableState.Idle
+				|| (DateTime.Now - last_state_change).TotalSeconds <= 30))
+				status.IsIndexing = true;
+
+			return status;
+		}
+
+		public QueryableState State {
+			get { return this.state; }
+			set { 
+				//Logger.Log.Debug ("State {0}: {1} -> {2}", this, this.state, value);
+
+				this.state = value;
+				this.last_state_change = DateTime.Now;
+			}
+		}
+
+		public int ProgressPercent {
+			get { return this.progress_percent; }
+			set { this.progress_percent = value; }
 		}
 
 		/////////////////////////////////////////
@@ -430,6 +470,9 @@ namespace Beagle.Daemon {
 
 			override protected void DoTaskReal ()
 			{
+				QueryableState old_state = queryable.State;
+				queryable.State = QueryableState.Indexing;
+
 				if (queryable.PreAddIndexableHook (indexable)) {
 					queryable.AddIndexable (indexable);
 
@@ -438,6 +481,8 @@ namespace Beagle.Daemon {
 					else
 						queryable.ConditionalFlush ();
 				}
+
+				queryable.State = old_state;
 			}
 
 			override protected void DoCleanup ()
@@ -481,6 +526,9 @@ namespace Beagle.Daemon {
 				// get re-scheduled after it is run.
 				Reschedule = true;
 
+				QueryableState old_state = queryable.State;
+				queryable.State = QueryableState.Indexing;
+
 				do {
 					if (! generator.HasNextIndexable ()) {
 						// ...except if there is no more work to do, of course.
@@ -505,6 +553,12 @@ namespace Beagle.Daemon {
 				} while (! queryable.ConditionalFlush ());
 
 				generator.PostFlushHook ();
+
+				queryable.State = old_state;
+			}
+
+			override protected void DoCleanup ()
+			{
 			}
 		}
 
@@ -720,22 +774,42 @@ namespace Beagle.Daemon {
 		// Returns true if we actually did flush, false otherwise.
 		protected bool ConditionalFlush ()
 		{
-			lock (request_lock) {
-				if (pending_request.Count > 37) { // a total arbitrary magic number
-					Flush ();
-					return true;
+			QueryableState old_state = State;
+			State = QueryableState.Flushing;
+
+			try {
+				lock (request_lock) {
+					if (pending_request.Count > 37) { // a total arbitrary magic number
+						Flush ();
+						return true;
+					}
 				}
+				return false;
+			} finally {
+				State = old_state;
 			}
-			return false;
 		}
 
 		protected void Flush ()
+		{
+			QueryableState old_state = State;
+			State = QueryableState.Flushing;
+
+			try {
+				DoFlush ();
+			} finally {
+				State = old_state;
+			}
+		}
+
+		private void DoFlush ()
 		{
 			IndexerRequest flushed_request;
 
 			lock (request_lock) {
 				if (pending_request.IsEmpty)
 					return;
+
 				flushed_request = pending_request;
 				pending_request = new IndexerRequest ();
 
@@ -758,6 +832,9 @@ namespace Beagle.Daemon {
 			// generate a receipt).  Also do nothing.
 			if (receipts.Length == 0)
 				return;
+
+			// Update the cached count of items in the driver
+			driver.SetItemCount (indexer.GetItemCount ());
 
 			// Something happened, so schedule an optimize just in case.
 			ScheduleOptimize ();

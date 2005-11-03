@@ -75,6 +75,9 @@ class InfoTool {
 			Console.WriteLine (response.IndexInformation);
 		}
 
+		if (Array.IndexOf (args, "--is-indexing") > -1)
+			Console.WriteLine ("Daemon indexing: {0}", response.IsIndexing);
+
 		return 0;
 	}
 }

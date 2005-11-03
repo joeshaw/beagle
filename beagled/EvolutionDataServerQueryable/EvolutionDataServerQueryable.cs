@@ -71,9 +71,11 @@ namespace Beagle.Daemon.EvolutionDataServerQueryable {
 			timer.Start ();
 
 			start_time = DateTime.Now;
+			State = QueryableState.Crawling;
 
 			new SourcesHandler ("/apps/evolution/addressbook/sources", typeof (BookContainer), this, Driver.Fingerprint);
 			new SourcesHandler ("/apps/evolution/calendar/sources", typeof (CalContainer), this, Driver.Fingerprint);
+			State = QueryableState.Idle;
 
 			timer.Stop ();
 			Logger.Log.Info ("Scanned addressbooks and calendars in {0}", timer);

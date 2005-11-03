@@ -66,13 +66,25 @@ namespace Beagle.Daemon.IndexingServiceQueryable {
 			if (Inotify.Enabled)
 				Inotify.Subscribe (index_path, OnInotifyEvent, Inotify.EventType.CloseWrite);
 
+			Logger.Log.Info ("Scanning for files in the IndexingService directory...");
+			Stopwatch stopwatch = new Stopwatch ();
+			stopwatch.Start ();
+			int count = 0;
+
+			State = QueryableState.Crawling;
 			foreach (FileInfo file in DirectoryWalker.GetFileInfos (index_path)) {
 				if (file.Name[0] == '.')
 					continue;
 
-				if (File.Exists (Path.Combine (file.DirectoryName, "." + file.Name)))
-					IndexFile (file);
+				if (File.Exists (Path.Combine (file.DirectoryName, "." + file.Name))) {
+					IndexFile (file, Scheduler.Priority.Delayed);
+					count++;
+				}
 			}
+			State = QueryableState.Idle;
+
+			stopwatch.Stop ();
+			Logger.Log.Info ("Indexed {0} Indexing Service items in {1}", count, stopwatch);
 		}
 
 		private void OnInotifyEvent (Inotify.Watch watch,
@@ -88,16 +100,16 @@ namespace Beagle.Daemon.IndexingServiceQueryable {
 				string data_file = Path.Combine (path, subitem.Substring (1));
 
 				if (File.Exists (data_file))
-					IndexFile (new FileInfo (data_file));
+					IndexFile (new FileInfo (data_file), Scheduler.Priority.Immediate);
 			} else {
 				string meta_file = Path.Combine (path, "." + subitem);
 
 				if (File.Exists (meta_file))
-					IndexFile (new FileInfo (Path.Combine (path, subitem)));
+					IndexFile (new FileInfo (Path.Combine (path, subitem)), Scheduler.Priority.Immediate);
 			}
 		}
 
-		private void IndexFile (FileInfo data_file)
+		private void IndexFile (FileInfo data_file, Scheduler.Priority priority)
 		{
 			FileInfo meta_file = new FileInfo (Path.Combine (data_file.DirectoryName, "." + data_file.Name));
 			FileStream meta_stream;
@@ -187,7 +199,7 @@ namespace Beagle.Daemon.IndexingServiceQueryable {
 			meta_file.Delete ();
 
 			Scheduler.Task task = NewAddTask (indexable);
-			task.Priority = Scheduler.Priority.Immediate;
+			task.Priority = priority;
 			ThisScheduler.Add (task);
 		}
 

@@ -72,8 +72,10 @@ namespace Beagle.Daemon.GaimLogQueryable {
 			if (Inotify.Enabled)
 				Watch (log_dir);
 
+			State = QueryableState.Crawling;
 			crawler = new GaimLogCrawler (log_dir);
 			Crawl ();
+			State = QueryableState.Idle;
 
 			if (!Inotify.Enabled) {
 				Scheduler.Task task = Scheduler.TaskFromHook (new Scheduler.TaskHook (CrawlHook));

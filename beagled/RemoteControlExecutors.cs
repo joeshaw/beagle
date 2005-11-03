@@ -42,6 +42,7 @@ namespace Beagle.Daemon {
 			response.Version = ExternalStringsHack.Version;
 			response.HumanReadableStatus = Scheduler.Global.GetHumanReadableStatus ();
 			response.IndexInformation = QueryDriver.GetIndexInformation ();
+			response.IsIndexing = QueryDriver.IsIndexing;
 
 			return response;
 		}

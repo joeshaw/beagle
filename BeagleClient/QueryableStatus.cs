@@ -1,7 +1,7 @@
 //
-// RemoteControl.cs
+// QueryableStatus.cs
 //
-// Copyright (C) 2004-2005 Novell, Inc.
+// Copyright (C) 2005 Novell, Inc.
 //
 
 //
@@ -24,21 +24,49 @@
 // DEALINGS IN THE SOFTWARE.
 //
 
+using System;
+
 namespace Beagle {
 
-	// These requests have no interesting client-side state
-	public class DaemonInformationRequest : RequestMessage { }
+	public enum QueryableState {
+		NotApplicable,
+		Idle,
+		Crawling,
+		Indexing,
+		Flushing
+	}
 
-	public class ShutdownRequest : RequestMessage { }
+	public class QueryableStatus {
 
-	public class ReloadConfigRequest : RequestMessage { }
+		private string name;
+		private int item_count = -1;
+		private QueryableState state = QueryableState.NotApplicable;
+		private int progress_percent = -1;
+		private bool is_indexing = false;
 
-	public class OptimizeIndexesRequest : RequestMessage { }
+		public string Name {
+			get { return this.name; }
+			set { this.name = value; }
+		}
 
-	public class DaemonInformationResponse : ResponseMessage {
-		public string Version;
-		public string HumanReadableStatus;
-		public string IndexInformation;
-		public bool IsIndexing;
+		public int ItemCount {
+			get { return this.item_count; }
+			set { this.item_count = value; }
+		}
+
+		public QueryableState State {
+			get { return this.state; }
+			set { this.state = value; }
+		}
+
+		public int ProgressPercent {
+			get { return this.progress_percent; }
+			set { this.progress_percent = value; }
+		}
+
+		public bool IsIndexing {
+			get { return this.is_indexing; }
+			set { this.is_indexing = value; }
+		}
 	}
 }

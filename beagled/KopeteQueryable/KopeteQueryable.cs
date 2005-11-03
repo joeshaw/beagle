@@ -69,8 +69,10 @@ namespace Beagle.Daemon.KopeteQueryable {
 			if (Inotify.Enabled)
 				Watch (log_dir);
 
+			State = QueryableState.Crawling;
 			crawler = new KopeteCrawler (log_dir);
 			Crawl ();
+			State = QueryableState.Idle;
 
 			if (!Inotify.Enabled) {
 				Scheduler.Task task = Scheduler.TaskFromHook (new Scheduler.TaskHook (CrawlHook));

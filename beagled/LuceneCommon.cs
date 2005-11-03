@@ -787,6 +787,11 @@ namespace Beagle.Daemon {
 			last_item_count = reader.NumDocs ();
 		}
 
+		public void SetItemCount (int count)
+		{
+			last_item_count = count;
+		}
+
 		protected void AdjustItemCount (int delta)
 		{
 			if (last_item_count >= 0)

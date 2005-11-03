@@ -130,13 +130,10 @@ namespace Beagle.Daemon {
 			return hit ["Snippet"];
 		}
 
-		public int GetItemCount ()
+		public QueryableStatus GetQueryableStatus ()
 		{
-			// Is there a way to get the # of indexed pages from
-			// google via the web services api?
-			return -1; 
+			return null;
 		}
-
 	}
 
 }

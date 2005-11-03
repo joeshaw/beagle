@@ -42,9 +42,7 @@ namespace Beagle.Daemon {
 
 		string GetSnippet (string[] query_terms, Hit hit);
 
-		// Returns the total number of items in this Queryable's index,
-		// or a value < 0 if that number is unknown or undefined.
-		int GetItemCount ();
+		QueryableStatus GetQueryableStatus ();
 	}
 
 	public interface IQueryableChangeData { 

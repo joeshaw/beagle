@@ -82,6 +82,10 @@ namespace Beagle.Daemon.FileSystemQueryable {
 				dir = to_be_crawled.Dequeue () as DirectoryModel;
 				is_active = true;
 			}
+			
+			LuceneQueryable queryable = (LuceneQueryable) Source;
+			QueryableState old_state = queryable.State;
+			queryable.State = QueryableState.Crawling;
 
 			if (dir.IsAttached) {
 				if (FileSystemQueryable.Debug)
@@ -105,6 +109,8 @@ namespace Beagle.Daemon.FileSystemQueryable {
 				else
 					is_active = false;
 			}
+
+			queryable.State = old_state;
 		}
 	}
 }

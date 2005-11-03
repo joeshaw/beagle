@@ -550,12 +550,30 @@ namespace Beagle.Daemon {
 			StringBuilder builder = new StringBuilder ('\n');
 
 			foreach (Queryable q in queryables) {
-				builder.Append ("Name: ").Append (q.Name).Append ('\n');
-				builder.Append ("Count: ").Append (q.GetItemCount ()).Append ('\n');
+				QueryableStatus status = q.GetQueryableStatus ();
+
+				builder.Append ("Name: ").Append (status.Name).Append ('\n');
+				builder.Append ("Count: ").Append (status.ItemCount).Append ('\n');
+				builder.Append ("Indexing: ").Append (status.IsIndexing).Append ('\n');
 				builder.Append ('\n');
 			}
 
 			return builder.ToString ();
 		}
+
+		////////////////////////////////////////////////////////
+
+		static public bool IsIndexing {
+			get {
+				foreach (Queryable q in queryables) {
+					QueryableStatus status = q.GetQueryableStatus ();
+
+					if (status.IsIndexing)
+						return true;
+				}
+
+				return false;
+			}
+		}					
 	}
 }

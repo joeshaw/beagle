@@ -68,6 +68,18 @@ namespace Beagle.Daemon.FileSystemQueryable {
 
 		override protected void DoTaskReal ()
 		{
+			QueryableState old_state = queryable.State;
+			queryable.State = QueryableState.Crawling;
+
+			try {
+				DoTask ();
+			} finally {
+				queryable.State = old_state;
+			}
+		}
+
+		private void DoTask ()
+		{
 			// If our last generator is still doing stuff, just reschedule
 			// and return.  This keeps us from generating more tasks until
 			// the last one we started runs to completion.

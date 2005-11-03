@@ -24,6 +24,7 @@ CSFILES = 					\
 	$(srcdir)/Query.cs              	\
 	$(srcdir)/QueryPart.cs			\
 	$(srcdir)/QueryResponses.cs            	\
+	$(srcdir)/QueryableStatus.cs		\
 	$(srcdir)/RemoteControl.cs		\
 	$(srcdir)/Snippet.cs			\
 	$(srcdir)/Versioned.cs

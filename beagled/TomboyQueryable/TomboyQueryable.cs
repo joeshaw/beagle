@@ -87,12 +87,14 @@ namespace Beagle.Daemon.TomboyQueryable {
 			stopwatch.Start ();
 			DirectoryInfo dir = new DirectoryInfo (tomboy_dir);
 
+			State = QueryableState.Crawling;
 			foreach (FileInfo file in dir.GetFiles ()) {
 				if (file.Extension == ".note") {
 					IndexNote (file, Scheduler.Priority.Delayed);
 					++count;
 				}
 			}
+			State = QueryableState.Idle;
 
 			stopwatch.Stop ();
 			Logger.Log.Info ("Scanned {0} notes in {1}", count, stopwatch);

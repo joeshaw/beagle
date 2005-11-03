@@ -146,8 +146,6 @@ namespace Beagle.Daemon {
 				AdjustItemCount (-delete_count);
 			else
 				SetItemCount (primary_reader);
-
-			
 			
 			// Step #2: If we have are doing any property changes,
 			// we read in the current secondary documents and
