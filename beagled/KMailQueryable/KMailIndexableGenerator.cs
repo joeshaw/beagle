@@ -170,7 +170,7 @@ namespace Beagle.Daemon.KMailQueryable {
 		public void Checkpoint ()
 		{
 			if (mbox_parser != null) {
-				MboxLastOffset = mbox_parser.FromOffset;
+				MboxLastOffset = mbox_parser.Tell ();
 				indexer.Queryable.FileAttributesStore.AttachLastWriteTime (mbox_file, DateTime.Now);
 			}
 		}
@@ -215,7 +215,6 @@ namespace Beagle.Daemon.KMailQueryable {
 
 				
 				try {
-					// POSIX rules! once we have the fd, nobody can delete the file... bwahahaha
 					mbox_fd = Mono.Unix.Syscall.open (mbox_file, Mono.Unix.OpenFlags.O_RDONLY);
 				} catch (System.IO.FileNotFoundException e) {
 					Logger.Log.Warn ("mbox " + mbox_file + " deleted while indexing.");

@@ -242,6 +242,14 @@ namespace Beagle.Daemon.KMailQueryable {
 			Queue pending = new Queue ();
 			pending.Enqueue (mail_root);
 			folder_directories.Add (mail_root);
+			// add inotify watch to root folder
+			if (Inotify.Enabled)
+				Inotify.Subscribe (mail_root, OnInotifyEvent,
+					Inotify.EventType.Create
+					| Inotify.EventType.Delete
+					| Inotify.EventType.MovedFrom
+					| Inotify.EventType.MovedTo
+					| Inotify.EventType.Modify);
 
 			while (pending.Count > 0) {
 

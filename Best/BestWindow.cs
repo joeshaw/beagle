@@ -460,6 +460,7 @@ namespace Best {
 			Conf.Searching.BestWidth = ((float) width / res_x) * 100;
 			Conf.Searching.BestHeight = ((float) height / res_y) * 100;
 			Conf.Searching.SearchHistory = RetriveSearches ();
+			Conf.Searching.SaveNeeded = true;
 			Conf.Save ();
 		}
 

@@ -910,7 +910,9 @@ namespace Beagle.Daemon.FileSystemQueryable {
 
 		static private bool DatesAreTheSame (DateTime system_io_datetime, long stat_datetime)
 		{
-			long system_epoch_time = Mono.Unix.UnixConvert.FromDateTime (system_io_datetime.ToUniversalTime ());
+			// UnixConvert.FromDateTime has no documentation, but the source revealed
+			// that,FromDateTime does the conversion to UTC time internally
+			long system_epoch_time = Mono.Unix.UnixConvert.FromDateTime (system_io_datetime);
 			return system_epoch_time == stat_datetime;
 		}
 

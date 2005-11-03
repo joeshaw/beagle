@@ -53,6 +53,20 @@ namespace Beagle.Daemon.AkregatorQueryable {
 			}
 		}
 
+		// store the file size indexed by the filenames
+		// akregator unnecessarily saves files
+		private Hashtable file_sizes;
+		public long GetFileSize (string name)
+		{
+			if (! file_sizes.Contains (name))
+				return -1;
+			return (long)file_sizes [name];
+		}
+		public void SetFileSize (string name, long size)
+		{
+			file_sizes [name] = size;
+		}
+		
 		// add versioning of index
 		// v1: change property names to DC names,
 		//	store feed_file as ParentUri
@@ -65,6 +79,8 @@ namespace Beagle.Daemon.AkregatorQueryable {
 			akregator_dir = Path.Combine (akregator_dir, "apps");
 			akregator_dir = Path.Combine (akregator_dir, "akregator");
 			akregator_dir = Path.Combine (akregator_dir, "Archive");
+
+			file_sizes = new Hashtable ();
 		}
 
 		/////////////////////////////////////////////////
@@ -101,13 +117,12 @@ namespace Beagle.Daemon.AkregatorQueryable {
                         log.Info ("Scanning Akregator feeds...");
 
 			Stopwatch stopwatch = new Stopwatch ();
-                        int feed_count = 0, item_count = 0;
 			stopwatch.Start ();
 
                         DirectoryInfo dir = new DirectoryInfo (akregator_dir);
 			int count = 0;
 			foreach (FileInfo file in DirectoryWalker.GetFileInfos (dir)) {
-				IndexSingleFeed (file.FullName);
+				IndexSingleFeed (file.FullName, true);
 				count ++;
 			}
 
@@ -139,7 +154,7 @@ namespace Beagle.Daemon.AkregatorQueryable {
 				return;
 
 			if ((type & Inotify.EventType.CloseWrite) != 0)
-				IndexSingleFeed (Path.Combine (path, subitem));
+				IndexSingleFeed (Path.Combine (path, subitem), false);
 			else if ((type & Inotify.EventType.Delete) != 0)
 				RemoveFeedFile (Path.Combine (path, subitem));
 		}
@@ -148,20 +163,20 @@ namespace Beagle.Daemon.AkregatorQueryable {
 		
 		private void OnChanged (object o, FileSystemEventArgs args)
 		{
-			IndexSingleFeed (args.FullPath);
+			IndexSingleFeed (args.FullPath, false);
 		}
 		
 		/////////////////////////////////////////////////
 		
 		// Parse and index a single feed
 
-		private void IndexSingleFeed (string filename) {
+		private void IndexSingleFeed (string filename, bool initial_scan) {
 			if (ThisScheduler.ContainsByTag (filename)) {
 				Logger.Log.Debug ("Not adding task for already running task: {0}", filename);
 				return;
 			}
 
-			FeedIndexableGenerator generator = new FeedIndexableGenerator (this, filename, false);
+			FeedIndexableGenerator generator = new FeedIndexableGenerator (this, filename, initial_scan);
 			Scheduler.Task task;
 			task = NewAddTask (generator);
 			task.Tag = filename;
@@ -188,6 +203,7 @@ namespace Beagle.Daemon.AkregatorQueryable {
 		
 		private XmlTextReader reader;
 		private bool is_valid_file = true;
+		private bool initial_scan = false;
 
 		private string channel_title;
 		private string channel_link;
@@ -201,6 +217,7 @@ namespace Beagle.Daemon.AkregatorQueryable {
 			this.queryable = queryable;
 			this.feed_file = feed_file;
 			this.serializer = queryable.Serializer;
+			this.initial_scan = initial_scan;
 			ReadFeedHeader ();
 		}
 
@@ -208,6 +225,9 @@ namespace Beagle.Daemon.AkregatorQueryable {
 		{
 			current_item = null;
 			queryable.FileAttributesStore.AttachLastWriteTime (feed_file, DateTime.Now);
+			// also store the file size
+			FileInfo file = new FileInfo (feed_file);
+			queryable.SetFileSize (feed_file, file.Length);
 		}
 
 		public string StatusName {
@@ -216,7 +236,20 @@ namespace Beagle.Daemon.AkregatorQueryable {
 
 		private bool IsUpToDate (string path)
 		{
-			return queryable.FileAttributesStore.IsUpToDate (path);
+			// first check the file date
+			if (queryable.FileAttributesStore.IsUpToDate (path))
+				return true;
+			// if not up to date and initial scan, then we should index
+			if (initial_scan)
+				return false;
+			// next check the size - its really unlucky if the file is changed
+			// and yet the size is same
+			// FIXME: Maybe store the md5-hash of the file - that is less expensive
+			// that indexing all the feeds in the file!
+			FileInfo file = new FileInfo (path);
+			if (queryable.GetFileSize (path) != file.Length)
+				return false;
+			return true;
 		}
 
 		private void ReadFeedHeader () {

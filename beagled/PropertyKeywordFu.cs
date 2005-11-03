@@ -136,10 +136,14 @@ namespace Beagle.Daemon {
 			property_table.Add ("mailtoaddr",
 					    new PropertyDetail (PropertyType.Keyword, "fixme:to_address", "Email receipient address"));
 			
+			// mailing list name
+			property_table.Add ("mailinglist",
+					    new PropertyDetail (PropertyType.Keyword, "fixme:mlist", "Mailing list id"));
+
 			// ---------------- beaglequery mappings --------------------
-			
-			property_table.Add ("extension",
-					    new PropertyDetail (PropertyType.Keyword, "bq:extension", "File extension"));
+			// the extension patch isnt checked in yet			
+			//property_table.Add ("extension",
+			//		    new PropertyDetail (PropertyType.Keyword, "bq:extension", "File extension"));
 
 			// FIXME add more mappings to support more query
 		}

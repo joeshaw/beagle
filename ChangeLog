@@ -1,3 +1,20 @@
+2005-11-02  Debajyoti Bera <dbera.web@gmail.com>
+
+	* Conf.cs, BestWindow.cs: Searching.xml was getting saved even
+	when nothing was getting written. Fixed.
+	* beagled/PropertyKeywordFu.cs: Add mailinglist queryword and
+	remove extension queryword (not checked in yet).
+	* AkregatorQueryable.cs: Workaround a stupid behaviour of Akregator
+	* FileSystemQueryable.cs: UnixConvert.FromDateTime internally
+	converts the local time to UTC. This was causing reindexing every
+	file on startup.
+	* KMailIndexableGenerator.cs: Use GMime.Parser.Tell () instead of
+	GMime.Parser.FromOffset to calculate the current location of parser.
+	Saves re-indexing of the last message.
+	* KMailIndexer.cs: The mail root folder wasnt watched! How did I miss
+	it!!!
+	* tools/beagle-status: Fix the annoying flashing of beagle-status.
+
 2005-11-01  Christopher James Lahey  <clahey@ximian.com>
 
 	* Filters/FilterDocbook.cs: Use text/x-docbook-entry instead of
