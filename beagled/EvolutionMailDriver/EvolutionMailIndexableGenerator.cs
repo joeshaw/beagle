@@ -729,7 +729,7 @@ namespace Beagle.Daemon.EvolutionMailDriver {
 			Uri uri = CamelMessageUri (messageInfo);
 			Indexable indexable = new Indexable (uri);
 
-			indexable.Timestamp = messageInfo.Date.ToUniversalTime ();
+			indexable.Timestamp = messageInfo.Date;
 			indexable.MimeType = "message/rfc822";
 			indexable.HitType = "MailMessage";
 
@@ -739,7 +739,7 @@ namespace Beagle.Daemon.EvolutionMailDriver {
 			
 			if (!have_content) {
 				indexable.AddProperty (Property.New ("dc:title", messageInfo.subject));
-				indexable.AddProperty (Property.NewDate ("fixme:date", messageInfo.Date.ToUniversalTime ()));
+				indexable.AddProperty (Property.NewDate ("fixme:date", messageInfo.Date));
 			}
 
 			GMime.InternetAddressList addrs;
