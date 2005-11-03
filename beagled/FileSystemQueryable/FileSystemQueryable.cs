@@ -44,13 +44,15 @@ namespace Beagle.Daemon.FileSystemQueryable {
 		private const string SplitFilenamePropKey = "beagle:Filename";
 		public const string ExactFilenamePropKey = "beagle:ExactFilename";
 		public const string TextFilenamePropKey = "beagle:TextFilename";
+		public const string FilenameExtensionPropKey = "beagle:FilenameExtension";
 		public const string ParentDirUriPropKey = LuceneQueryingDriver.PrivateNamespace + "ParentDirUri";
 		public const string IsDirectoryPropKey = LuceneQueryingDriver.PrivateNamespace + "IsDirectory";
 
 		// History:
 		// 1: Initially set to force a reindex due to NameIndex changes.
 		// 2: Overhauled everything to use new lucene infrastructure.
-		const int MINOR_VERSION = 2;
+		// 3: Switched to UTC for all times, changed the properties a bit.
+		const int MINOR_VERSION = 3;
 
 		private object big_lock = new object ();
 
@@ -136,8 +138,9 @@ namespace Beagle.Daemon.FileSystemQueryable {
 								     Guid      parent_id,
 								     bool      mutable)
 		{
-			string no_ext;
+			string no_ext, ext;
 			no_ext = Path.GetFileNameWithoutExtension (name);
+			ext = Path.GetExtension (name);
 
 			Property prop;
 
@@ -146,6 +149,10 @@ namespace Beagle.Daemon.FileSystemQueryable {
 			indexable.AddProperty (prop);
 
 			prop = Property.New (TextFilenamePropKey, no_ext);
+			prop.IsMutable = mutable;
+			indexable.AddProperty (prop);
+
+			prop = Property.NewKeyword (FilenameExtensionPropKey, ext);
 			prop.IsMutable = mutable;
 			indexable.AddProperty (prop);
 
