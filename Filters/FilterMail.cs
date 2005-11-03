@@ -78,7 +78,7 @@ namespace Beagle.Filters {
 			string subject = GMime.Utils.HeaderDecodePhrase (this.message.Subject);
 			AddProperty (Property.New ("dc:title", subject));
 
-			AddProperty (Property.NewDate ("fixme:date", message.Date));
+			AddProperty (Property.NewDate ("fixme:date", message.Date.ToUniversalTime ()));
 
 			GMime.InternetAddressList addrs;
 			addrs = this.message.GetRecipients (GMime.Message.RecipientType.To);
