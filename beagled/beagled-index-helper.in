@@ -28,6 +28,10 @@ if [ -n "$_GET_ON_THE_HEAP_BUDDY_BANDWAGON" ]; then
    MONO_EXTRA_ARGS="--profile=heap-buddy:$BEAGLE_HEAP_BUDDY_DIR/outfile.helper.$n $MONO_EXTRA_ARGS"
 fi
 
+if [ -n "$BEAGLE_DEBUG_FLAG_IS_SET" ]; then
+   MONO_EXTRA_ARGS="--debug $MONO_EXTRA_ARGS"
+fi
+
 export MONO_GAC_PREFIX="@gacprefix@:$MONO_GAC_PREFIX"
 export MONO_PATH="$THIS_PATH:$MONO_PATH"
 

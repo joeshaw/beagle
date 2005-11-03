@@ -7,7 +7,6 @@ if [ -e ./@target@ ] && [ -e ./Makefile.am ] ; then
     fg_default=1
 
     TARGET_EXE="./@target@"
-    EXTRA_ARGS=""
 
     export _BEAGLED_INDEX_HELPER_PATH="."
 
@@ -29,7 +28,6 @@ else
     fg_default=0
 
     TARGET_EXE="@pkglibdir@/@target@"
-    EXTRA_ARGS=""
 
     export _BEAGLED_INDEX_HELPER_PATH="@pkglibdir@"
     export MONO_PATH="@pkglibdir@:$MONO_PATH"
@@ -88,6 +86,7 @@ fi
 
 if [ $debug -eq 1 ]; then
    export BEAGLE_DEBUG_FLAG_IS_SET=1
+   MONO_EXTRA_ARGS="--debug $MONO_EXTRA_ARGS"
 fi
 
 # The BEAGLE_MONO_RUNTIME variable can be used to specify the path
@@ -100,9 +99,9 @@ fi
 
 if [ $monogrind -eq 1 ]; then
     export GC_DONT_GC=1
-    CMDLINE="monogrind $TARGET_EXE $EXTRA_ARGS $BEAGLED_ARGS $FGBG_ARG"
+    CMDLINE="monogrind $TARGET_EXE $MONO_EXTRA_ARGS $BEAGLED_ARGS $FGBG_ARG"
 else
-    CMDLINE="$BEAGLE_MONO_RUNTIME --debug $MONO_EXTRA_ARGS $TARGET_EXE $EXTRA_ARGS $BEAGLED_ARGS $FGBG_ARG"
+    CMDLINE="$BEAGLE_MONO_RUNTIME --debug $MONO_EXTRA_ARGS $TARGET_EXE $BEAGLED_ARGS $FGBG_ARG"
 fi
 
 PROCESS_NAME="mono-beagled"
