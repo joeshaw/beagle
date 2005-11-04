@@ -157,6 +157,14 @@ man_MANS = 			\
 	beagle-status.1		\
 	beagle-config.1
 
+@INTLTOOL_DESKTOP_RULE@
+
+desktop_in_files = beagle-settings.desktop.in
+desktop_files = $(desktop_in_files:.desktop.in=.desktop)
+
+desktopdir = $(datadir)/applications
+desktop_DATA = $(desktop_files)
+
 all: $(TARGETS) $(WRAPPERS)
 
 install-data-local: $(TARGETS)
@@ -179,11 +187,12 @@ EXTRA_DIST =				\
 	$(SETTINGS_RESOURCES)		\
 	$(man_MANS)			\
 	$(CRAWL_RULES)			\
+	$(desktop_DATA) 		\
 	beagle-index-info		\
 	beagle-ping			\
 	beagle-status			\
-	boot.inotify.init		\
-	beagle-settings.desktop
+	boot.inotify.init		
+	
 
 CLEANFILES = 				\
 	$(TARGETS)			\
@@ -191,6 +200,7 @@ CLEANFILES = 				\
 	$(WRAPPERS)			\
 	$(CRAWL_WRAPPER)		\
 	$(CRAWL_WRAPPER_CRONTAB)	\
+	$(desktop_DATA)		 	\
 	settings.glade.h
 
 

@@ -4,6 +4,7 @@
 Best/Best.cs
 Best/BestTray.cs
 Best/BestWindow.cs
+Best/best.desktop.in
 glue/eggtrayicon.c
 ImLogViewer/ImLogViewer.cs
 ImLogViewer/ImLogViewer.glade
@@ -16,6 +17,7 @@ Tiles/TranslationHack.cs
 tools/Config.cs
 tools/Settings.cs
 tools/settings.glade
+tools/beagle-settings.desktop.in
 Util/Conf.cs
 Util/Evolution.cs
 Util/ExifData.cs

@@ -52,8 +52,13 @@ $(WRAPPER): $(srcdir)/$(WRAPPER).in
 	$(WRAPPER_SED) < $^ > $@
 	chmod +x $(WRAPPER)
 
+@INTLTOOL_DESKTOP_RULE@
+
+desktop_in_files = best.desktop.in
+desktop_files = $(desktop_in_files:.desktop.in=.desktop)
+
 desktopdir = $(datadir)/applications
-desktop_DATA = best.desktop
+desktop_DATA = $(desktop_files)
 
 man_MANS = best.1
 
@@ -64,6 +69,7 @@ EXTRA_DIST =		\
 	$(man_MANS)
 
 CLEANFILES =		\
+	$(desktop_DATA) \
 	$(TARGET)	\
 	$(TARGET).mdb	\
 	$(WRAPPER)

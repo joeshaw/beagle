@@ -1,9 +1,9 @@
 [Desktop Entry]
 Encoding=UTF-8
 X-SuSE-translate=true
-Name=Search & Indexing
-GenericName=Configure Desktop Search & Indexing
-Comment=Configure search & indexing properties
+_Name=Search & Indexing
+_GenericName=Configure Desktop Search & Indexing
+_Comment=Configure search & indexing properties
 Exec=beagle-settings
 Icon=gnome-searchtool
 Type=Application

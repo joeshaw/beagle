@@ -1,9 +1,0 @@
-[Desktop Entry]
-X-SuSE-translate=true
-Encoding=UTF-8
-Name=Beagle Search
-GenericName=Desktop Search
-Exec=best --no-tray
-Icon=best
-Type=Application
-Categories=GTK;GNOME;Application;Core;Utility;Filesystem;
