@@ -86,7 +86,7 @@ namespace Beagle.Util {
 
 			// Create new note instance
 			Note note = new TomboyNote(file.FullName);
-			note.timestamp = file.LastWriteTime;
+			note.timestamp = file.LastWriteTimeUtc;
 
 			// Parse XML info from file
 			StreamReader reader = new StreamReader (file.FullName, System.Text.Encoding.UTF8);

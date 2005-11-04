@@ -196,8 +196,8 @@ namespace Beagle.Daemon.EvolutionDataServerQueryable {
 
 			indexable.AddProperty (Property.NewKeyword ("fixme:source_uid", this.source.Uid));
 			indexable.AddProperty (Property.NewKeyword ("fixme:uid", cc.Uid));
-			indexable.AddProperty (Property.NewDate ("fixme:starttime", cc.Dtstart));
-			indexable.AddProperty (Property.NewDate ("fixme:endtime", cc.Dtend));
+			indexable.AddProperty (Property.NewDate ("fixme:starttime", cc.Dtstart.ToUniversalTime ()));
+			indexable.AddProperty (Property.NewDate ("fixme:endtime", cc.Dtend.ToUniversalTime ()));
 
 			foreach (string attendee in cc.Attendees)
 				indexable.AddProperty (Property.New ("fixme:attendee", attendee));

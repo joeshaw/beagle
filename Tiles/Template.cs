@@ -155,9 +155,9 @@ namespace Beagle.Tile {
 								     size);
 			case "date" :
 				try {
-					return BU.StringFu.DateTimeToPrettyString (BU.StringFu.StringToDateTime ((string)values [subkey]));
+					return BU.StringFu.DateTimeToPrettyString (BU.StringFu.StringToDateTime ((string) values [subkey]).ToLocalTime ());
 				} catch {
-					return (string)values[subkey];
+					return (string) values [subkey];
 				}
 			case "text" :
 				return Mono.Unix.Catalog.GetString (subkey); // I18N

@@ -138,7 +138,7 @@ namespace Beagle.Daemon.IndexingServiceQueryable {
 			}
 
 			Indexable indexable = new Indexable (uri);
-			indexable.Timestamp = data_file.LastWriteTime;
+			indexable.Timestamp = data_file.LastWriteTimeUtc;
 			indexable.ContentUri = UriFu.PathToFileUri (data_file.FullName);
 			indexable.DeleteContent = true;
 
