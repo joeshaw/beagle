@@ -254,7 +254,7 @@ namespace Beagle.Daemon.BlamQueryable {
 			// change property names to DC names, as far as allowed
 			indexable.AddProperty (Property.New ("dc:title", title));
 			indexable.AddProperty (Property.New ("dc:creator", author));
-			indexable.AddProperty (Property.NewDate ("dc:date", pub_date));
+			indexable.AddProperty (Property.NewDate ("dc:date", pub_date.ToUniversalTime ()));
 			indexable.AddProperty (Property.NewKeyword ("dc:identifier", link));
 			indexable.AddProperty (Property.NewKeyword ("dc:source", channel_url));
 

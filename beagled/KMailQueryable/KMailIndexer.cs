@@ -424,11 +424,13 @@ namespace Beagle.Daemon.KMailQueryable {
 
 			if (folder_name == Queryable.SentMailFolderName)
 				indexable.AddProperty (Property.NewFlag ("fixme:isSent"));
-
+// no need to store date again, use the issent flag to determine if the date is sentdate or not			
+#if false
 			if (folder_name == Queryable.SentMailFolderName)
-				indexable.AddProperty (Property.NewDate ("fixme:sentdate", message.Date));
+				indexable.AddProperty (Property.NewDate ("fixme:sentdate", message.Date.ToUniversalTime ()));
 			else
-				indexable.AddProperty (Property.NewDate ("fixme:received", message.Date));
+				indexable.AddProperty (Property.NewDate ("fixme:received", message.Date.ToUniversalTime ()));
+#endif
 
 			MemoryStream stream = new MemoryStream ();
 			message.WriteToStream (stream);

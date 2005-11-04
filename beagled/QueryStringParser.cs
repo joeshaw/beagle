@@ -28,6 +28,7 @@ using System;
 using System.Collections;
 
 using Beagle.Util;
+using FSQ=Beagle.Daemon.FileSystemQueryable;
 
 namespace Beagle.Daemon {
 
@@ -182,6 +183,18 @@ namespace Beagle.Daemon {
 		static private QueryPart TokenToQueryPart (Token token) {
 			string query_text = token.Text;
 			
+			// also support extension query of form
+			// beagle .pdf
+			// i.e. the extension is just given as a query word
+			bool is_extension_query = ((query_text [0] == '.') && (query_text.Length != 1));
+			if (is_extension_query) {
+				QueryPart_Property query_part = new QueryPart_Property ();
+				query_part.Key = FSQ.FileSystemQueryable.FilenameExtensionPropKey;
+				query_part.Value = query_text; // the whole .abc part
+				query_part.Type = PropertyType.Keyword;
+				Logger.Log.Debug ("Extension query:" + query_text);
+			}
+
 			int pos = query_text.IndexOf (":");
 			if ( pos == -1) {
 				QueryPart_Text query_part = new QueryPart_Text ();
@@ -210,6 +223,13 @@ namespace Beagle.Daemon {
 			QueryPart_Property query_part_prop = new QueryPart_Property ();
 			query_part_prop.Key = prop_string;
 			query_part_prop.Value = query_text.Substring (pos + 1);
+			// if query was of type ext:mp3 or extension:mp3
+			// change value to .mp3
+			// if query was of type ext:
+			// change value to ""
+			if (query_part_prop.Key == FSQ.FileSystemQueryable.FilenameExtensionPropKey)
+				if (query_part_prop.Value != String.Empty)
+					query_part_prop.Value = "." + query_part_prop.Value;
 			query_part_prop.Type = prop_type;
 			Logger.Log.Debug ("Parsed query '"	    + query_text + 
 					  "' as prop query:key="    + query_part_prop.Key +

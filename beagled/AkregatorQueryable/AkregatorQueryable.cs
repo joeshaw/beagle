@@ -366,7 +366,7 @@ namespace Beagle.Daemon.AkregatorQueryable {
 
 			// replace property names with Dublin Core names
 			indexable.AddProperty (Property.New ("dc:title", current_item.Title));
-			indexable.AddProperty (Property.NewDate ("dc:date", date));
+			indexable.AddProperty (Property.NewDate ("dc:date", date.ToUniversalTime ()));
 			indexable.AddProperty (Property.NewKeyword ("dc:identifier", current_item.Link));
 			indexable.AddProperty (Property.NewKeyword ("dc:source", channel_link));
 				

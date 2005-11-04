@@ -1,5 +1,11 @@
 2005-11-03  Debajyoti Bera <dbera.web@gmail.com>
 
+	* KMailQueryable: Some more UTC changes.
+	* QueryStringParser.cs, PropertyKeywordFu.cs: Added extension
+	as query keyword.
+
+2005-11-03  Debajyoti Bera <dbera.web@gmail.com>
+
 	* AkregatorQueryable.cs, LifereaQueryable.cs,
 	BlamQueryable.cs, KMailQueryable: Move to UTC
 

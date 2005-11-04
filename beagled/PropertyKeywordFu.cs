@@ -30,6 +30,7 @@ using System.IO;
 using System.Text;
 
 using Beagle;
+using FSQ=Beagle.Daemon.FileSystemQueryable;
 
 // FIXME crude hack, the list of property names should be registered by queryables
 // while calling AddNewKeyword etc.
@@ -140,10 +141,14 @@ namespace Beagle.Daemon {
 			property_table.Add ("mailinglist",
 					    new PropertyDetail (PropertyType.Keyword, "fixme:mlist", "Mailing list id"));
 
-			// ---------------- beaglequery mappings --------------------
-			// the extension patch isnt checked in yet			
-			//property_table.Add ("extension",
-			//		    new PropertyDetail (PropertyType.Keyword, "bq:extension", "File extension"));
+			// ---------------- other mappings --------------------
+			// file extension - extension:mp3
+			property_table.Add ("extension",
+					    new PropertyDetail (PropertyType.Keyword, FSQ.FileSystemQueryable.FilenameExtensionPropKey, "File extension, e.g. extension:jpeg. Use extension: to search in files with no extension."));
+
+			// file extension - ext:mp3
+			property_table.Add ("ext",
+					    new PropertyDetail (PropertyType.Keyword, FSQ.FileSystemQueryable.FilenameExtensionPropKey, "File extension, e.g. ext:mp3. Use ext: to search in files with no extension."));
 
 			// FIXME add more mappings to support more query
 		}
