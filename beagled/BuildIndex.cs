@@ -361,7 +361,7 @@ namespace Beagle.Daemon
 					// Create the indexable and add the standard properties we
 					// use in the FileSystemQueryable.
 					indexable = new Indexable (uri);
-					indexable.Timestamp = file.LastWriteTime;
+					indexable.Timestamp = file.LastWriteTimeUtc;
 					FSQ.AddStandardPropertiesToIndexable (indexable, file.Name, Guid.Empty, false);
 
 					// Disable filtering and only index file attributes

@@ -36,12 +36,12 @@ namespace Beagle.Util {
 			return File.Exists (path) || Directory.Exists (path);
 		}
 
-		static public DateTime GetLastWriteTime (string path)
+		static public DateTime GetLastWriteTimeUtc (string path)
 		{
 			if (File.Exists (path))
-				return File.GetLastWriteTime (path);
+				return File.GetLastWriteTimeUtc (path);
 			else if (Directory.Exists (path))
-				return Directory.GetLastWriteTime (path);
+				return Directory.GetLastWriteTimeUtc (path);
 			else
 				throw new IOException (path);
 		}

@@ -230,9 +230,9 @@ namespace Beagle.Daemon {
 				if (Directory.Exists (path)) {
 					indexable.MimeType = "inode/directory";
 					indexable.NoContent = true;
-					indexable.Timestamp = Directory.GetLastWriteTime (path);
+					indexable.Timestamp = Directory.GetLastWriteTimeUtc (path);
 				} else if (File.Exists (path)) {
-					indexable.Timestamp = File.GetLastWriteTime (path);
+					indexable.Timestamp = File.GetLastWriteTimeUtc (path);
 				} else {
 					Logger.Log.Warn ("No such file: {0}", path);
 					return false;

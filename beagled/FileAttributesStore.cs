@@ -137,7 +137,7 @@ namespace Beagle.Daemon {
 					return false;
 			} 
 
-			if (FileSystem.GetLastWriteTime (path) > attr.LastWriteTime)
+			if (FileSystem.GetLastWriteTimeUtc (path) > attr.LastWriteTime)
 				return false;
 
 			return true;

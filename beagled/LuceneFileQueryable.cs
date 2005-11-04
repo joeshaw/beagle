@@ -111,7 +111,7 @@ namespace Beagle.Daemon {
 			}
 
 			try {
-				info.Mtime = FileSystem.GetLastWriteTime (info.Path);
+				info.Mtime = FileSystem.GetLastWriteTimeUtc (info.Path);
 			} catch (Exception ex) {
 				// If we can't get an mtime for the file, it must
 				// have disappeared out from under us.  In that case,
