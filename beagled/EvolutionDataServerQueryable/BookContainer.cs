@@ -244,6 +244,7 @@ namespace Beagle.Daemon.EvolutionDataServerQueryable {
 			indexable.AddProperty (Property.NewKeyword ("fixme:uid", contact.Id));
 						
 			indexable.AddProperty (Property.New ("fixme:FileAs", contact.FileAs));
+			indexable.AddProperty (Property.New ("fixme:FullName", contact.FullName));
 			indexable.AddProperty (Property.New ("fixme:GivenName", contact.GivenName));
 			indexable.AddProperty (Property.New ("fixme:FamilyName", contact.FamilyName));
 			indexable.AddProperty (Property.New ("fixme:Nickname", contact.Nickname));
