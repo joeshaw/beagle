@@ -26,6 +26,7 @@
 
 using System;
 using System.Collections;
+using Beagle.Util;
 
 namespace Beagle.Tile {
 
@@ -63,7 +64,7 @@ namespace Beagle.Tile {
 		private ArrayList all_hits = new ArrayList ();
 		private ArrayList hits = new ArrayList ();
 		int firstDisplayed = 0;
-		int maxDisplayed = 5;
+		int maxDisplayed = Conf.Searching.MaxDisplayed;
 
 		Template head_template;
 		Template foot_template;

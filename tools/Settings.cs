@@ -54,6 +54,7 @@ public class SettingsDialog
 	[Widget] CheckButton press_ctrl_toggle;
  	[Widget] CheckButton press_alt_toggle;
 	[Widget] Entry show_search_window_entry;
+	[Widget] SpinButton max_displayed_spinbutton;
 
 	[Widget] CheckButton index_home_toggle;
 	[Widget] Button remove_include_button;
@@ -162,6 +163,7 @@ public class SettingsDialog
 		press_ctrl_toggle.Active = show_binding.Ctrl;
 		press_alt_toggle.Active = show_binding.Alt;
 		show_search_window_entry.Text = show_binding.Key;
+		max_displayed_spinbutton.Value = (uint) Conf.Searching.MaxDisplayed;
 
 		if (Conf.Indexing.IndexHomeDir)
 			index_home_toggle.Active = true;
@@ -192,6 +194,7 @@ public class SettingsDialog
 									 press_ctrl_toggle.Active, 
 									 press_alt_toggle.Active);
 		
+		Conf.Searching.MaxDisplayed = (int) max_displayed_spinbutton.Value;
 		Conf.Indexing.IndexHomeDir = index_home_toggle.Active;
 		
 		Conf.Indexing.Roots = include_view.Includes;

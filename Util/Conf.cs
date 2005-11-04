@@ -323,6 +323,17 @@ namespace Beagle.Util {
 				set { show_search_window_binding = value; }
 			}
 
+			private int max_displayed = 5;
+			public int MaxDisplayed {
+				get { return max_displayed; }
+				set {
+					if (value <= 0)
+						max_displayed = 1;
+					else
+						max_displayed = value;
+				}
+			}
+
 			// Best window position and dimension
 			// stored as percentage of screen co-ordinates
 			// to deal with change of resolution problem - hints from tberman
