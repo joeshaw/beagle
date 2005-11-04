@@ -390,7 +390,7 @@ namespace Beagle.Daemon.KMailQueryable {
 			// is deleted, all the messages in that file can be deleted
 			indexable.ParentUri = UriFu.PathToFileUri (file_name);
 
-			indexable.Timestamp = message.Date;
+			indexable.Timestamp = message.Date.ToUniversalTime ();
 			indexable.HitType = "MailMessage";
 			indexable.MimeType = "message/rfc822";
 			indexable.CacheContent = false;

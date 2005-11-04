@@ -226,7 +226,7 @@ namespace Beagle.Daemon.AkregatorQueryable {
 		public void PostFlushHook ()
 		{
 			current_item = null;
-			queryable.FileAttributesStore.AttachLastWriteTime (feed_file, DateTime.Now);
+			queryable.FileAttributesStore.AttachLastWriteTime (feed_file, DateTime.UtcNow);
 			// also store the file size
 			FileInfo file = new FileInfo (feed_file);
 			queryable.SetFileSize (feed_file, file.Length);
@@ -362,7 +362,7 @@ namespace Beagle.Daemon.AkregatorQueryable {
 
 			int offset; //will be ignored
 			DateTime date = GMime.Utils.HeaderDecodeDate (current_item.PubDate, out offset);
-			indexable.Timestamp = date;				
+			indexable.Timestamp = date.ToUniversalTime ();				
 
 			// replace property names with Dublin Core names
 			indexable.AddProperty (Property.New ("dc:title", current_item.Title));

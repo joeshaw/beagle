@@ -203,7 +203,7 @@ namespace Beagle.Daemon.LifereaQueryable {
 		public void PostFlushHook ()
 		{
 			current_item = null;
-			queryable.FileAttributesStore.AttachLastWriteTime (feed_file, DateTime.Now);
+			queryable.FileAttributesStore.AttachLastWriteTime (feed_file, DateTime.UtcNow);
 		}
 
 		public string StatusName {
@@ -302,8 +302,6 @@ namespace Beagle.Daemon.LifereaQueryable {
 
 			DateTime date = new DateTime (1970, 1, 1);
 			date = date.AddSeconds (current_item.Timestamp);
-			date = TimeZone.CurrentTimeZone.ToLocalTime (date);
-
 			indexable.Timestamp = date;				
 
 			// cleaning up the property names as far as possible

@@ -171,7 +171,7 @@ namespace Beagle.Daemon.KMailQueryable {
 		{
 			if (mbox_parser != null) {
 				MboxLastOffset = mbox_parser.Tell ();
-				indexer.Queryable.FileAttributesStore.AttachLastWriteTime (mbox_file, DateTime.Now);
+				indexer.Queryable.FileAttributesStore.AttachLastWriteTime (mbox_file, DateTime.UtcNow);
 			}
 		}
 

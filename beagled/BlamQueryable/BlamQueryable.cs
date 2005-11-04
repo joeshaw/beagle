@@ -161,7 +161,7 @@ namespace Beagle.Daemon.BlamQueryable {
 
 		public void PostFlushHook ()
 		{
-			queryable.FileAttributesStore.AttachLastWriteTime (feed_file, DateTime.Now);
+			queryable.FileAttributesStore.AttachLastWriteTime (feed_file, DateTime.UtcNow);
 		}
 
 		public string StatusName {
@@ -249,7 +249,7 @@ namespace Beagle.Daemon.BlamQueryable {
 			indexable.ParentUri = UriFu.PathToFileUri (feed_file);
 			indexable.MimeType = "text/html";
 			indexable.HitType = "FeedItem";
-			indexable.Timestamp = pub_date;
+			indexable.Timestamp = pub_date.ToUniversalTime ();
 					
 			// change property names to DC names, as far as allowed
 			indexable.AddProperty (Property.New ("dc:title", title));
