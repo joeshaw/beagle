@@ -153,7 +153,7 @@ namespace Beagle.Daemon {
 		private bool IsDanglingLock (FileInfo info)
 		{
 			// It isn't even a lock file
-			if (info.Name.IndexOf ("write.lock") != -1)
+			if (! info.Name.EndsWith (".lock"))
 				return false;
 
 			StreamReader reader;
