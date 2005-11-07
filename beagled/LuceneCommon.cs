@@ -1047,7 +1047,7 @@ namespace Beagle.Daemon {
 			// get added to the index.
 			if (part.StartDate < lower_bound)
 				part.StartDate = lower_bound;
-			if (part.StartDate > upper_bound)
+			if (part.EndDate > upper_bound || part.EndDate == DateTime.MinValue)
 				part.EndDate = upper_bound;
 
 			// Swap the start and end dates if they come in reversed.
