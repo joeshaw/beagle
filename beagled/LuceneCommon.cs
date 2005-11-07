@@ -1039,14 +1039,6 @@ namespace Beagle.Daemon {
 				field_name = "Timestamp";
 			else
 				field_name = PropertyToFieldName (PropertyType.Date, part.Key);
-
-			// Swap the start and end dates if they come in reversed.
-			if (part.StartDate > part.EndDate) {
-				DateTime swap;
-				swap = part.StartDate;
-				part.StartDate = part.EndDate;
-				part.EndDate = swap;
-			}
 		
 			// FIXME: We could optimize this and reduce the size of our range
 			// queries if we actually new the min and max date that appear in
@@ -1057,8 +1049,14 @@ namespace Beagle.Daemon {
 				part.StartDate = lower_bound;
 			if (part.StartDate > upper_bound)
 				part.EndDate = upper_bound;
-			if (part.StartDate == DateTime.MinValue)
-				part.StartDate = new DateTime (1970, 1, 1);
+
+			// Swap the start and end dates if they come in reversed.
+			if (part.StartDate > part.EndDate) {
+				DateTime swap;
+				swap = part.StartDate;
+				part.StartDate = part.EndDate;
+				part.EndDate = swap;
+			}
 
 			// Set up our hit filter to cull out the bad dates.
 			DateRangeHitFilter drhf;
