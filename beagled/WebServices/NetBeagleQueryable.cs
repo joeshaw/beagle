@@ -198,12 +198,19 @@ namespace Beagle.Daemon {
 			
 			return s;
 		}
-		
+/*		
 		public int GetItemCount ()
 		{
 			return -1;
 		}	
+*/		
+		public QueryableStatus GetQueryableStatus ()
+		{
 		
+			QueryableStatus status = new QueryableStatus ();
+			return status;
+		}
+				
 		public void DoQuery (Query query,IQueryResult result,
 				     		 IQueryableChangeData changeData)
 		{				
