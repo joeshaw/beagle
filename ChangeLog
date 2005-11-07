@@ -1,3 +1,6 @@
+2005-11-07  Debajyoti Bera <dbera.web@gmail.com>
+	* Filters/FilterSource.cs: Reuse StringBuilder.
+
 2005-11-05  Daniel Drake  <dsd@gentoo.org>
 
 	* beagled/LuceneCommon.cs: Fix detection of dangling locks

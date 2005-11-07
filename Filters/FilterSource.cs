@@ -57,6 +57,7 @@ namespace Beagle.Filters {
 		LineType SrcLineType;
 		string StrConstIdentifier;
 
+		StringBuilder token;
 		public FilterSource ()
 		{
 			// Initialize the linetype member.
@@ -68,6 +69,7 @@ namespace Beagle.Filters {
 
 			SnippetMode = true;
 			OriginalIsText = true;
+			token = new StringBuilder ();
 		}
 
 		// Tokenize the passed string and add the relevant 
@@ -78,7 +80,7 @@ namespace Beagle.Filters {
  		protected void ExtractTokens (string str)
 		{
 			int index;
-			StringBuilder token = new StringBuilder();
+			token.Length = 0;
 			string splCharSeq = "";
 
 			for (index = 0; index < str.Length; index++) {
@@ -266,7 +268,7 @@ namespace Beagle.Filters {
 							}
 						}
 						// reset the token
-						token.Remove (0, token.Length);
+						token.Length = 0;
 					}
 					splCharSeq = "";
 				}
