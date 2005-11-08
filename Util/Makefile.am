@@ -85,8 +85,10 @@ CSFILES = 			        	\
 	$(srcdir)/StringMatcher.cs		\
 	$(srcdir)/SystemInformation.cs		\
 	$(srcdir)/TeeTextWriter.cs		\
+	$(srcdir)/ThreadPond.cs			\
 	$(srcdir)/Timeline.cs			\
 	$(srcdir)/TopScores.cs			\
+	$(srcdir)/UnclosableStream.cs		\
 	$(srcdir)/UnixClient.cs			\
 	$(srcdir)/UnixListener.cs		\
 	$(srcdir)/UriFu.cs			\
