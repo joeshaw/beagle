@@ -37,6 +37,7 @@ typedef struct {
 	char *version;
 	char *index_information;
 	char *status;
+	gboolean is_indexing;
 } BeagleDaemonInformationResponsePrivate;
 
 #define BEAGLE_DAEMON_INFORMATION_RESPONSE_GET_PRIVATE(o) (G_TYPE_INSTANCE_GET_PRIVATE ((o), BEAGLE_TYPE_DAEMON_INFORMATION_RESPONSE, BeagleDaemonInformationResponsePrivate))
@@ -88,10 +89,25 @@ end_index_information (BeagleParserContext *ctx)
 	priv->index_information = _beagle_parser_context_get_text_buffer (ctx);
 }
 
+static void
+end_is_indexing (BeagleParserContext *ctx)
+{
+	BeagleDaemonInformationResponse *response = BEAGLE_DAEMON_INFORMATION_RESPONSE (_beagle_parser_context_get_response (ctx));
+	BeagleDaemonInformationResponsePrivate *priv = BEAGLE_DAEMON_INFORMATION_RESPONSE_GET_PRIVATE (response);
+	char *buf;
+	
+	buf = _beagle_parser_context_get_text_buffer (ctx);
+
+	priv->is_indexing = (strcmp (buf, "true") == 0);
+
+	g_free (buf);
+}
+
 enum {
 	PARSER_STATE_DAEMON_INFORMATION_VERSION,
 	PARSER_STATE_DAEMON_INFORMATION_HUMAN_READABLE_STATUS,
 	PARSER_STATE_DAEMON_INFORMATION_INDEX_INFORMATION,
+	PARSER_STATE_DAEMON_INFORMATION_IS_INDEXING,
 };
 
 static BeagleParserHandler parser_handlers[] = {
@@ -112,6 +128,12 @@ static BeagleParserHandler parser_handlers[] = {
 	  PARSER_STATE_DAEMON_INFORMATION_INDEX_INFORMATION,
 	  NULL,
 	  end_index_information },
+
+	{ "IsIndexing",
+	  -1,
+	  PARSER_STATE_DAEMON_INFORMATION_IS_INDEXING,
+	  NULL,
+	  end_is_indexing },
 
 	{ 0 }
 };
@@ -195,4 +217,24 @@ beagle_daemon_information_response_get_index_information (BeagleDaemonInformatio
 	priv = BEAGLE_DAEMON_INFORMATION_RESPONSE_GET_PRIVATE (response);
 	
 	return priv->index_information;
+}
+
+/**
+ * beagle_daemon_information_response_is_indexing:
+ * @response: a #BeagleDaemonInformationResponse
+ *
+ * Returns whether the daemon is in the process of indexing data.
+ *
+ * Return value: a boolean indicating whether the daemon is indexing.
+ **/
+gboolean
+beagle_daemon_information_response_is_indexing (BeagleDaemonInformationResponse *response)
+{
+	BeagleDaemonInformationResponsePrivate *priv;
+
+	g_return_val_if_fail (BEAGLE_IS_DAEMON_INFORMATION_RESPONSE (response), NULL);
+
+	priv = BEAGLE_DAEMON_INFORMATION_RESPONSE_GET_PRIVATE (response);
+	
+	return priv->is_indexing;
 }

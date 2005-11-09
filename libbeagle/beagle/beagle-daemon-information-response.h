@@ -58,4 +58,7 @@ beagle_daemon_information_response_get_human_readable_status (BeagleDaemonInform
 G_CONST_RETURN char *
 beagle_daemon_information_response_get_index_information (BeagleDaemonInformationResponse *response);
 
+gboolean
+beagle_daemon_information_response_is_indexing (BeagleDaemonInformationResponse *response);
+
 #endif /* __BEAGLE_DAEMON_INFORMATION_RESPONSE_H */
