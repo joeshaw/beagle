@@ -123,8 +123,10 @@ namespace Beagle.Daemon.AkregatorQueryable {
                         DirectoryInfo dir = new DirectoryInfo (akregator_dir);
 			int count = 0;
 			foreach (FileInfo file in DirectoryWalker.GetFileInfos (dir)) {
-				IndexSingleFeed (file.FullName, true);
-				count ++;
+				if (file.Extension == ".xml") {
+					IndexSingleFeed (file.FullName, true);
+					count ++;
+				}
 			}
 
 			State = QueryableState.Idle;
@@ -173,6 +175,8 @@ namespace Beagle.Daemon.AkregatorQueryable {
 		// Parse and index a single feed
 
 		private void IndexSingleFeed (string filename, bool initial_scan) {
+			if (! filename.EndsWith (".xml"))
+				return;
 			if (ThisScheduler.ContainsByTag (filename)) {
 				Logger.Log.Debug ("Not adding task for already running task: {0}", filename);
 				return;
