@@ -1,6 +1,29 @@
+
+###
+### Welcome to Beagle's configure.in.  We hope you enjoy your stay.
+###
+
 AC_INIT(beagled/BeagleDaemon.cs)
 AC_CANONICAL_SYSTEM
 AM_INIT_AUTOMAKE(beagle, 0.1.2)
+
+########################################################################
+
+###
+### Some dependencies
+###
+
+MONO_REQUIRED=1.1.8
+GTK_SHARP_REQUIRED=2.3.90
+GMIME_SHARP_REQUIRED=2.1.16
+EVOLUTION_SHARP_REQUIRED=0.10.2
+GSF_SHARP_REQUIRED=0.6
+
+LIBBEAGLE_GOBJECT_REQUIRED=2.6
+LIBBEAGLE_LIBXML_REQUIRED=2.6.19
+
+########################################################################
+
 AM_MAINTAINER_MODE
 AM_CONFIG_HEADER(config.h)
 
@@ -32,8 +55,8 @@ else
   AC_MSG_RESULT([found])
 fi
 
-# require mono 1.1.7 or newer
-PKG_CHECK_MODULES(MONO, mono >= 1.1.7) 
+# check that we have the require version of mono
+PKG_CHECK_MODULES(MONO, mono >= $MONO_REQUIRED) 
 
 # check for various mono DLLs that we need.
 needed_dlls="Mono.Data.SqliteClient Mono.Posix System.Runtime.Remoting System.Web System.Web.Services"
@@ -274,8 +297,6 @@ AC_SUBST(LIBGECKOGLUE_LIBS)
 dnl -------------------------------------------------------
 dnl Various version requirements
 
-GTK_SHARP_REQUIRED=2.3.90
-GMIME_SHARP_REQUIRED=2.1.16
 
 PKG_CHECK_MODULES(BEAGLE_UI,
                   gtk-sharp-2.0 >= $GTK_SHARP_REQUIRED \
@@ -306,7 +327,6 @@ AC_ARG_ENABLE([evolution-sharp],
 	 enable_evo_sharp=$enableval,
 	 enable_evo_sharp=auto)
 
-EVOLUTION_SHARP_REQUIRED=0.9
 AC_SUBST(EVO_SHARP_LIBS)
 EVO_SHARP_PREFIX=`$PKG_CONFIG --variable=prefix evolution-sharp`
 
@@ -384,6 +404,7 @@ AM_CONDITIONAL(ENABLE_GSF_SHARP, test "x$enable_gsf_sharp" = "xyes")
 dnl ----------------------------------------------
 
 dnl Needed to index jpeg metadata
+
 LIBEXIF_API_CHANGE=0.6.0
 LIBEXIF_REQUIRED_MIN=0.5.7
 LIBEXIF_REQUIRED_MAX=0.7.0
@@ -434,8 +455,8 @@ LIBBEAGLE_VERSION_INFO="$LIBBEAGLE_CURRENT:$LIBBEAGLE_REVISION:$LIBBEAGLE_AGE"
 AC_SUBST(LIBBEAGLE_VERSION_INFO)
 
 PKG_CHECK_MODULES(LIBBEAGLE, [
-	gobject-2.0 >= 2.6
-	libxml-2.0 >= 2.6.19
+	gobject-2.0 >= $LIBBEAGLE_GOBJECT_REQUIRED
+	libxml-2.0  >= $LIBBEAGLE_LIBXML_REQUIRED
 ], have_libbeagle_deps=yes, have_libbeagle_deps=no)
 
 AC_SUBST(LIBBEAGLE_CFLAGS)
@@ -656,6 +677,7 @@ po/Makefile.in
 ])
 
 echo "
+	Beagle Version:         ${BEAGLE_VERSION}
 	Target OS:		${os}
 	Extended Attributes:	${XATTR_LIB}
 	inotify?		${enable_inotify}
@@ -666,11 +688,12 @@ echo "
 
 	Evolution-Sharp?	${enable_evo_sharp}
 	gsf-sharp?		${enable_gsf_sharp}
-	Epiphany Extension?	${enable_epiphany_extension}
-	Mozilla Extension?	yes
 	wv1?			${enable_wv1}
 	galago-sharp?		${enable_galago}
 	libchm?			${has_libchm}
+
+	Mozilla Extension?	yes
+	Epiphany Extension?	${enable_epiphany_extension}
 
 	Local SqliteClient?	${use_local_sqlite}
 	Sqlite version:		${SQLITE_MAJ_VER}.x
