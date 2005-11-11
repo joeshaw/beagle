@@ -1,4 +1,120 @@
 
+Version 0.1.2
+November 10, 2005
+
+Daemon/Infrastructure:
+* Added date range searches. (Joe Shaw, Jon Trowbridge)
+* Fixed a bug where sending a query to the daemon would cause a helper
+  process to start.  (Joe)
+* Fixed a bug in libbeagle to use our query parser rather than plain text.
+  (Joe)
+* Added keyword based query support e.g. title:beagle. (D Bera)
+* Updated pruning of old log files. (Lukas Lipka)
+* Updated to dotLucene 1.9 RC1. (Daniel Drake)
+* Lucene locking bug fix. (Daniel)
+* Small lucene optimizations. (Daniel)
+* Consolidated glue code into two libraries: libbeagleglue and
+  libbeagleuiglue. (Daniel)
+* Fixed two scheduler-related crashes associated with a null task source.
+  (Daniel)
+* New Uri serialization scheme. (Daniel)
+* Allow inotify to be build conditionally. (Daniel)
+* Updated our local copy of SqliteClient with recent upstream changes.
+  (Daniel)
+* Switched from Mono.Posix (which is deprecated) to Mono.Unix. (Daniel)
+* Fixed some possible instances of unhandled exceptions in the
+  inotify and scheduler code. (Joe)
+* Fixed a bug in the scheduler's immediate priority throttling code.
+  (Joe)
+* Added catch-all exception handlers to beagled, the index helper, and
+  beagle-build-index so that if an unhandled exception happens, the
+  program exits immediately and doesn't leave around a hung process.
+  (Joe)
+* Fixed a race in which the user could start a query against an empty
+  index, documents could be added to the index, but live queries would
+  never be updated until the query was rerun. (Joe)
+* Fixed a bug in which the document count in the daemon wasn't being
+  updated after a flush in the helper. (Joe)
+* Converted all times stored in the index and file attribute store to UTC,
+  to avoid time zone issues. (Jon, Joe, Bera)
+* Added a status infrastructure to the daemon, which allows clients to see
+  if the daemon is in the process of indexing.  (Joe)
+* Fixed some bugs related to date range searches, particularly the start
+  date.  (Joe)
+* Reuse StringBuilders in scheduler and query code. (Daniel)
+* Fixed handling of dangling locks. (Daniel)
+* Fixed another lucene leak. (Marcus)
+* Switched to thread-local static buffers when writing indexables out to
+  temporary files.  This avoids a lot of allocations. (Jon)
+* Reuse StringBuilders in the IM Log parser and DirectoryWalker. (Jon)
+* Small improvements to the beagled and index helper wrapper scripts. (Jon)
+* Revamped logging. (Jon)
+* Fixed marshaling of C strings to StringBuilders in sys_readdir. (Joe,
+  Jon)
+* Relative paths in BEAGLE_HOME and BEAGLE_STORAGE now work. (Jon)
+* Added --indexing-test-mode to the daemon, which causes it to shut
+  down automatically when indexing is complete. (Jon)
+
+Backends:
+* Moved gaim and kopete log parsing into a filter.  This can dramatically
+  decrease the amount of memory used by the daemon. (Daniel)
+* If a shutdown is request while the Evolution mail crawler is running,
+  short-circuit for a faster shutdown. (Joe)
+* Add a new inotify-based method of writing data out to the indexing
+  service. (Joe)
+* Fixed a bug in which certain backends would index much more slowly if
+  they had already seen data, like mail. (Joe)
+* Changed Liferea, Blam and Akregator backends to use stream parsing
+  instead of serializer. (D Bera)
+* Better warning if kmail backend finds bad kmail mfolder. (D Bera)
+* Index the full name in the addressbook backend, so that searches on
+  middle names match.  (Joe)
+* In the file system backend, we now store the file extension in a property
+  and drop the file extension in the property containing the
+  "textified" name. (Jon)
+
+Filters:
+* Fixed 316120 - PPT filter crash due to gsf-sharp. (Veerapuram Varadhan)
+* Fixed DOC filter/wv1-glue to be compatible with wv-1.2.0. (Varadhan)
+* Better infrastructure for PPT and DOC filter. (Varadhan)
+* Exclude "include", "main", and "NULL" from the C filter, as those are
+  very common, albeit not language keywords.  (Joe)
+
+UI/Tools:
+* Ported the Firefox extension to use the new indexing service, which
+  speeds up the extension and uses vastly fewer resources.  (Joe)
+* Bumped the supported version of the Firefox extension to 1.5, as it is
+  reported to work with the Firefox 1.5 betas. (Joe)
+* Adding clear function to best. (Dennis Snell)
+* Save Best window position, dimension and search history across
+  sessions. (D Bera)
+* Fixed a bug in mail tiles for determining if the hit is a
+  mail-attachment. (D Bera)
+* Sanitize beagle-index-url ot our standards. (Lukas)
+* Show artist in music tile. (Lukas)
+* ImLogViewer tweaks and improvements. (Daniel)
+* Use more gtk-sharp bindings for better GNOME integration. (Daniel)
+* Make the number of items displayed in Best configurable through
+  beagle-settings.  (Mario Manno, Joe)
+* I18nize the .desktop files.  (Gabor Kelemen)
+* Fixed best to start up correctly on AMD64. (Jack Miller)
+* Added beagle-dump-index tool. (Jon)
+* Fixed beagle-extract-content to always report the mime type (even if
+  there is no matching filter) and to always sort the properties
+  before printing them. (Jon)
+
+Web Services:
+* Enable beagled with web services to support --replace option, and to
+  shutdown and restart cleanly. (KN Vijay)
+
+Translations:
+* Updated Canadian English translation. (Adam Weinberger)
+* Updated Bulgarian translation. (Vladimir Petkov)
+* Updated Spanish translation. (Francisco Javier F. Serrador)
+* Updated Simplified Chinese translation. (fwang)
+
+------------------------------------------------------
+
 Version 0.1.1
 October 3, 2005
 
