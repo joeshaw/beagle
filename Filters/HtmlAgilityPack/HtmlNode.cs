@@ -563,6 +563,14 @@ namespace HtmlAgilityPack
 			}
 		}
 
+		public bool StartTag
+		{
+			get
+			{
+				return _starttag;
+			}
+		}
+
 		/// <summary>
 		/// Gets the line number of this node in the document.
 		/// </summary>

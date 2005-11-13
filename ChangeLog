@@ -1,4 +1,19 @@
 2005-11-07  Debajyoti Bera <dbera.web@gmail.com>
+
+	* Filters/FilterHtml.cs, HtmlAgilityPack:
+	- Instead of building the whole DOM tree, make it event driven.
+	Whenever an HtmlNode is found, a callback function is called 
+	and the node is discarded.
+	- HtmlAgilityPack used to load the whole file content in a string
+	using readtoend() and operate on that. In the patched filter, 
+	there is class which emulates a readtoend() string but is 
+	actually two buffers which are filled on demand.
+	- During encoding detection mode, if the parser sees any non html-head
+	tag, it assumes that <meta ...> tag cannot occur anywhere after.
+	- The filter code undergoes no major change - so the operational
+	behaviour of the filter should be "exactly the same" as before.
+	
+2005-11-07  Debajyoti Bera <dbera.web@gmail.com>
 	* Filters/FilterSource.cs: Reuse StringBuilder.
 
 2005-11-05  Daniel Drake  <dsd@gentoo.org>

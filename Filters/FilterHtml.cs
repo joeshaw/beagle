@@ -1,6 +1,7 @@
 //
 // FilterHtml.cs
 //
+// Copyright (C) 2005 Debajyoti Bera <dbera.web@gmail.com>
 // Copyright (C) 2004 Novell, Inc.
 //
 
@@ -37,13 +38,39 @@ using HtmlAgilityPack;
 namespace Beagle.Filters {
 
 	public class FilterHtml : Beagle.Daemon.Filter {
+		// When see <b> push "b" in the stack
+		// When see </b> pop from the stack
+		// For good error checking, we should compare
+		// current element with what was popped
+		// Currently, we just pop, this might allow
+		// unmatched elements to pass through
+		private Stack hot_stack;
+		private Stack ignore_stack;
+		private bool building_text;
+		private StringBuilder builder;
 
 		public FilterHtml ()
 		{
 			RegisterSupportedTypes ();
 			SnippetMode = true;
+			hot_stack = new Stack ();
+			ignore_stack = new Stack ();
+			building_text = false;
+			builder = new StringBuilder ();
 		}
 
+		// Safeguard against spurious stack pop ups...
+		// caused by mismatched tags in bad html files
+		// FIXME: If matching elements is not required
+		// and if HtmlAgilityPack matches elements itself,
+		// then we can just use a counter hot_stack_depth
+		// instead of the hot_stack
+		private void SafePop (Stack st)
+		{
+			if (st != null && st.Count != 0)
+				st.Pop ();
+		}
+		
 		protected bool NodeIsHot (String nodeName) 
 		{
 			return nodeName == "b"
@@ -87,127 +114,116 @@ namespace Beagle.Filters {
 				|| nodeName == "map"
 				|| nodeName == "style";
 		}
-		
-		protected String WalkChildNodesForText (HtmlNode node)
-		{
-			StringBuilder builder = new StringBuilder ("");
-			foreach (HtmlNode subnode in node.ChildNodes) {
-				switch (subnode.NodeType) {
-				case HtmlNodeType.Element:
-					if (! NodeIsContentFree (subnode.Name)) {
-						String subtext = WalkChildNodesForText (subnode);
-						builder.Append (subtext);
-					}
-					break;
-					
-				case HtmlNodeType.Text:
-					String text = ((HtmlTextNode)subnode).Text;
-					text = HtmlEntity.DeEntitize (text);
-					builder.Append (text);
-					break;
-				}
-			}
-			return builder.ToString ().Trim ();
-		}
-		
-		protected void WalkHeadNodes (HtmlNode node)
-		{
-			foreach (HtmlNode subnode in node.ChildNodes) {
-				if (subnode.NodeType == HtmlNodeType.Element
-				    && subnode.Name == "title") {
-					String title = WalkChildNodesForText (subnode);
-					title = HtmlEntity.DeEntitize (title);
-					AddProperty (Beagle.Property.New ("dc:title", title));
-				}
-				if (subnode.NodeType == HtmlNodeType.Element
-				    && subnode.Name == "meta") {
-	   				string name = subnode.GetAttributeValue ("name", "");
-           				string content = subnode.GetAttributeValue ("content", "");
-					if (name != "" && content != "")
-						AddProperty (Beagle.Property.New (name, content));
-				}
-			}
-		}
-	
-		protected void WalkBodyNodes (HtmlNode node)
+
+		protected void HandleNodeEvent (HtmlNode node)
 		{
 			switch (node.NodeType) {
 				
 			case HtmlNodeType.Document:
 			case HtmlNodeType.Element:
-				if (! NodeIsContentFree (node.Name)) {
+				if (node.Name == "title") {
+					if (node.StartTag) {
+						builder.Length = 0;
+						building_text = true;
+					} else {
+						String title = HtmlEntity.DeEntitize (builder.ToString ().Trim ());
+						AddProperty (Beagle.Property.New ("dc:title", title));
+						builder.Length = 0;
+						building_text = false;
+					}
+				} else if (node.Name == "meta") {
+	   				string name = node.GetAttributeValue ("name", "");
+           				string content = node.GetAttributeValue ("content", "");
+					if (name != "" && content != "")
+						AddProperty (Beagle.Property.New (name, content));
+				} else if (! NodeIsContentFree (node.Name)) {
 					bool isHot = NodeIsHot (node.Name);
 					bool breaksText = NodeBreaksText (node.Name);
 					bool breaksStructure = NodeBreaksStructure (node.Name);
-					if (isHot)
-						HotUp ();
-					if (breaksText)
+					if (isHot && node.StartTag) {
+						if (hot_stack.Count == 0)
+							HotUp ();
+						hot_stack.Push (node.Name);
+					}
+					if (breaksText && node.StartTag)
 						AppendWhiteSpace ();
-					if (node.Name == "img") {
+					if (node.Name == "img" && node.StartTag) {
 						string attr = node.GetAttributeValue ("alt", "");
 						if (attr != "") {
 							AppendText (attr);
 						}
 					}
-					if (node.Name == "a") {
+					if (node.Name == "a" && node.StartTag) {
 						string attr = node.GetAttributeValue ("href", "");
 						if (attr != "") {
 							AppendText (attr);
 						}
+						//Console.WriteLine ("Start AAAAAAAAAAAA = " + node.GetAttributeValue ("href", ""));
 					}
-					foreach (HtmlNode subnode in node.ChildNodes)
-						WalkBodyNodes (subnode);
-					if (breaksText)
+					//if (node.Name == "a" && !node.StartTag)
+					//	Console.WriteLine ("Done AAAAAAAAAAAAA");
+					if (breaksText && !node.StartTag)
 						AppendWhiteSpace ();
-					if (breaksStructure)
+					if (breaksStructure && !node.StartTag)
 						AppendStructuralBreak ();
-					if (isHot)
-						HotDown ();
-
-				}				
+					if (isHot && !node.StartTag) {
+						if (hot_stack.Count != 0)
+							SafePop (hot_stack);
+						if (hot_stack.Count == 0)
+							HotDown ();
+					}	
+				} else {
+					// so node is a content-free node
+					// ignore contents of such node
+					if (node.StartTag)
+						ignore_stack.Push (node.Name);
+					else
+						SafePop (ignore_stack);
+				}
 				break;
 				
 			case HtmlNodeType.Text:
+				// FIXME Do we need to trim the text ?
 				String text = ((HtmlTextNode)node).Text;
-				text = HtmlEntity.DeEntitize (text);
-				AppendText (text);
+				if (ignore_stack.Count != 0)
+					break; // still ignoring ...
+				if (building_text)
+					builder.Append (text);
+				else
+					AppendText (HtmlEntity.DeEntitize (text));
+				//if (hot_stack.Count != 0)
+				//Console.WriteLine (" TEXT:" + text + " ignore=" + ignore_stack.Count);
 				break;
-				
-			}
-		}
-	
-		protected void WalkNodes (HtmlNode node)
-		{
-			foreach (HtmlNode subnode in node.ChildNodes) {
-				if (subnode.NodeType == HtmlNodeType.Element) {
-					switch (subnode.Name) {
-					case "html":
-						WalkNodes (subnode);
-						break;
-					case "head":
-						WalkHeadNodes (subnode);
-						break;
-					case "body":
-					default:
-						WalkBodyNodes (subnode);
-						break;
-					}
-				}
 			}
 		}
 
 		override protected void DoOpen (FileInfo info)
 		{
+			// we need to tell the parser to detect encoding,
+			HtmlDocument temp_doc = new HtmlDocument ();
+			Encoding enc = temp_doc.DetectEncoding (Stream);
+			//Console.WriteLine ("Detected encoding:" + (enc == null ? "null" : enc.EncodingName));
+			temp_doc = null;
+			Stream.Seek (0, SeekOrigin.Begin);
+
 			HtmlDocument doc = new HtmlDocument ();
+			doc.ReportNode += HandleNodeEvent;
+			doc.StreamMode = true;
+			// we already determined encoding
+			doc.OptionReadEncoding = false;
 	
 			try {
-				doc.Load (Stream);
+				if (enc == null)
+					doc.Load (Stream);
+				else
+					doc.Load (Stream, enc);
 			} catch (NotSupportedException e) {
 				doc.Load (Stream, Encoding.ASCII);
+			} catch (Exception e) {
+				Console.WriteLine (e.Message);
+				Console.WriteLine (e.StackTrace);
 			}
 
-			if (doc != null)
-				WalkNodes (doc.DocumentNode);
 			Finished ();
 		}
 
@@ -217,5 +233,5 @@ namespace Beagle.Filters {
 			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("text/html"));
 		}
 	}
-	
+
 }
