@@ -1,4 +1,4 @@
-2005-11-07  Debajyoti Bera <dbera.web@gmail.com>
+2005-11-13  Debajyoti Bera <dbera.web@gmail.com>
 
 	* Filters/FilterHtml.cs, HtmlAgilityPack:
 	- Instead of building the whole DOM tree, make it event driven.
