@@ -11,8 +11,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: gnome-screensaver\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2005-10-11 23:16+0200\n"
-"PO-Revision-Date: 2005-10-11 23:17+0200\n"
+"POT-Creation-Date: 2005-11-13 15:48+0100\n"
+"PO-Revision-Date: 2005-11-13 15:50+0100\n"
 "Last-Translator: Francisco Javier F. Serrador <serrador@cvs.gnome.org>\n"
 "Language-Team: Spanish <traductores@es.gnome.org>\n"
 "MIME-Version: 1.0\n"
@@ -42,81 +42,81 @@ msgstr ""
 "automáticamente junto con la sesión. ¿Le gustaría desactivarlo para futuras "
 "sesiones?"
 
-#: ../Best/BestTray.cs:207
+#: ../Best/BestTray.cs:208
 msgid "No Recent Searches"
 msgstr "No se encontraron búsquedas recientes"
 
-#: ../Best/BestTray.cs:212
+#: ../Best/BestTray.cs:213
 msgid "Recent Searches"
 msgstr "Búsquedas recientes"
 
-#: ../Best/BestTray.cs:228
+#: ../Best/BestTray.cs:229
 msgid "Clear"
 msgstr "Limpiar"
 
-#: ../Best/BestTray.cs:236
+#: ../Best/BestTray.cs:237
 msgid "Quit"
 msgstr "Salir"
 
-#: ../Best/BestWindow.cs:306
+#: ../Best/BestWindow.cs:309
 msgid "Anywhere"
 msgstr "Todo"
 
-#: ../Best/BestWindow.cs:310
+#: ../Best/BestWindow.cs:313
 msgid "in Files"
 msgstr "en archivos"
 
-#: ../Best/BestWindow.cs:314
+#: ../Best/BestWindow.cs:317
 msgid "in Addressbook"
 msgstr "en la libreta de direcciones"
 
-#: ../Best/BestWindow.cs:318
+#: ../Best/BestWindow.cs:321
 msgid "in Mail"
 msgstr "en el correo electrónico"
 
-#: ../Best/BestWindow.cs:322
+#: ../Best/BestWindow.cs:325
 msgid "in Web Pages"
 msgstr "en páginas web"
 
-#: ../Best/BestWindow.cs:326
+#: ../Best/BestWindow.cs:329
 msgid "in Chats"
 msgstr "en conversaciones"
 
-#: ../Best/BestWindow.cs:343
+#: ../Best/BestWindow.cs:346
 msgid "Search terms:"
 msgstr "Términos de búsqueda:"
 
-#: ../Best/BestWindow.cs:367
+#: ../Best/BestWindow.cs:370
 msgid "Find"
 msgstr "Buscar"
 
-#: ../Best/BestWindow.cs:384
+#: ../Best/BestWindow.cs:392
 msgid "Show More Results"
 msgstr "Mostrar más resultados"
 
-#: ../Best/BestWindow.cs:390
+#: ../Best/BestWindow.cs:398
 msgid "Show Previous Results"
 msgstr "Mostrar resultados anteriores"
 
-#: ../Best/BestWindow.cs:424
+#: ../Best/BestWindow.cs:482
 msgid "No results."
 msgstr "No se encontraron resultados."
 
 #. To translators: {0} is the current count of results shown of {1} in total, this is the message that is initially shown
 #. when results are returned to the user.
-#: ../Best/BestWindow.cs:428
+#: ../Best/BestWindow.cs:486
 #, csharp-format
 msgid "Best <b>{0} results of {1}</b> are shown."
 msgstr "Se muestran los mejores <b>{0} resultados de {1}</b>."
 
 #. To translators: {0} to {1} is the interval of results currently shown of {2} results in total
-#: ../Best/BestWindow.cs:433
+#: ../Best/BestWindow.cs:491
 #, csharp-format
 msgid "Results <b>{0} through {1} of {2}</b> are shown."
 msgstr "Se muestran los resultados de <b>{0} a {1} de {2}</b>."
 
 #. To translators: {0} represents the current query keywords
-#: ../Best/BestWindow.cs:542
+#: ../Best/BestWindow.cs:600
 #, csharp-format
 msgid ""
 "The query for <i>{0}</i> failed.<br>The likely cause is that the beagle "
@@ -126,10 +126,18 @@ msgstr ""
 "no se esté ejecutando."
 
 #. To translators: {0} represents the current query keywords, {1} contains the errormessage
-#: ../Best/BestWindow.cs:547
+#: ../Best/BestWindow.cs:605
 #, csharp-format
 msgid "The query for <i>{0}</i> failed with error:<br>{1}<br>"
 msgstr "La consulta de <i>{0}</i> ha fallado con el error:<br>{1}<br>"
+
+#: ../Best/best.desktop.in.h:1
+msgid "Beagle Search"
+msgstr "Búsqueda Beagle"
+
+#: ../Best/best.desktop.in.h:2
+msgid "Desktop Search"
+msgstr "Búsquedas de Escritorio"
 
 #: ../glue/eggtrayicon.c:127
 msgid "Orientation"
@@ -147,12 +155,12 @@ msgstr "<b>Histórico de conversaciones</b>"
 msgid "IM Viewer"
 msgstr "Visor de MI"
 
-#: ../ImLogViewer/ImLogWindow.cs:87
+#: ../ImLogViewer/ImLogWindow.cs:102
 #, csharp-format
 msgid "Conversations in {0}"
 msgstr "Conversaciones en {0}"
 
-#: ../ImLogViewer/ImLogWindow.cs:94
+#: ../ImLogViewer/ImLogWindow.cs:109
 #, csharp-format
 msgid "Conversations with {0}"
 msgstr "Conversaciones con {0}"
@@ -388,11 +396,11 @@ msgstr "de Beagle en red en el equipo"
 msgid "Search Networked Beagle"
 msgstr "Buscar Beagle en red"
 
-#: ../tools/Settings.cs:214
+#: ../tools/Settings.cs:217
 msgid "Reload configuration"
 msgstr "Recargar la configuración"
 
-#: ../tools/Settings.cs:215
+#: ../tools/Settings.cs:218
 msgid ""
 "The configuration file has been modified by another application. Do you wish "
 "to discard the currently displayed values and reload configuration from disk?"
@@ -401,15 +409,16 @@ msgstr ""
 "descartar los valores mostrados actualmente y volver a leer la configuración "
 "desde el disco?"
 
-#: ../tools/Settings.cs:253
+#: ../tools/Settings.cs:256
 msgid "Select Path"
 msgstr "Seleccione una ruta"
 
-#: ../tools/Settings.cs:272
-msgid "The selected path is already selected for indexing and wasn't added."
-msgstr "La ruta seleccionada ya está considerada en la indexación y no se añadió."
-
 #: ../tools/Settings.cs:275
+msgid "The selected path is already selected for indexing and wasn't added."
+msgstr ""
+"La ruta seleccionada ya está considerada en la indexación y no se añadió."
+
+#: ../tools/Settings.cs:278
 msgid ""
 "The selected path wasn't added. The list contains items that supercedes it "
 "and the data is already being indexed."
@@ -417,15 +426,15 @@ msgstr ""
 "La ruta seleccionada no fue añadida. Esta lista contiene elementos que la "
 "incluyen y los datos ya están siendo indexados."
 
-#: ../tools/Settings.cs:286 ../tools/Settings.cs:478
+#: ../tools/Settings.cs:289 ../tools/Settings.cs:481
 msgid "Path not added"
 msgstr "La ruta no fue añadida"
 
-#: ../tools/Settings.cs:295
+#: ../tools/Settings.cs:298
 msgid "Remove obsolete paths"
 msgstr "Quitar rutas obsoletas"
 
-#: ../tools/Settings.cs:296
+#: ../tools/Settings.cs:299
 msgid ""
 "Adding this path will obsolete some of the existing include paths. This will "
 "result in the removal of the old obsolete paths. Do you still wish to add it?"
@@ -434,11 +443,11 @@ msgstr ""
 "existentes. Esto causará que las rutas obsoletas sean eliminadas. ¿Aún desea "
 "añadir esta ruta?"
 
-#: ../tools/Settings.cs:322
+#: ../tools/Settings.cs:325
 msgid "Remove path"
 msgstr "Quitar ruta"
 
-#: ../tools/Settings.cs:323
+#: ../tools/Settings.cs:326
 msgid ""
 "Are you sure you wish to remove this path from the list of directories to be "
 "included for indexing?"
@@ -446,11 +455,11 @@ msgstr ""
 "¿Seguro que quiere quitar esta ruta de la lista de directorios que serán "
 "excluidos de la indexación?"
 
-#: ../tools/Settings.cs:352
+#: ../tools/Settings.cs:355
 msgid "Remove item"
 msgstr "Quitar elemento"
 
-#: ../tools/Settings.cs:353
+#: ../tools/Settings.cs:356
 msgid ""
 "Are you sure you wish to remove this item from the list of data to be "
 "excluded from indexing?"
@@ -458,74 +467,75 @@ msgstr ""
 "¿Seguro que quiere quitar este elemento de la lista de recursos a ser "
 "excluidos de la indexación?"
 
-#: ../tools/Settings.cs:396
+#: ../tools/Settings.cs:399
 msgid "Invalid host entry"
 msgstr "La entrada del equipo no es válida"
 
-#: ../tools/Settings.cs:403
+#: ../tools/Settings.cs:406
 msgid "Remote host already present in the list."
 msgstr "El equipo remoto ya está presente en la lista."
 
-#: ../tools/Settings.cs:412
+#: ../tools/Settings.cs:415
 msgid "Netbeagle Node not added"
 msgstr "El nodo de Netbeagle no fue añadido"
 
-#: ../tools/Settings.cs:428
+#: ../tools/Settings.cs:431
 msgid "Remove host"
 msgstr "Quitar equipo"
 
-#: ../tools/Settings.cs:429
+#: ../tools/Settings.cs:432
 msgid "Are you sure you wish to remove this host from the list?"
 msgstr "¿Seguro que quiere quitar este equipo de la lista?"
 
-#: ../tools/Settings.cs:450
+#: ../tools/Settings.cs:453
 msgid "Select path"
 msgstr "Seleccione una ruta"
 
-#: ../tools/Settings.cs:469
+#: ../tools/Settings.cs:472
 msgid "The selected path is already configured for external access."
 msgstr "La ruta seleccionada ya está configurada para acceso externo"
 
-#: ../tools/Settings.cs:493
+#: ../tools/Settings.cs:496
 msgid "Remove public path"
 msgstr "Quitar ruta pública"
 
-#: ../tools/Settings.cs:494
-msgid "Are you sure you wish to remove this entry from the list of public paths?"
+#: ../tools/Settings.cs:497
+msgid ""
+"Are you sure you wish to remove this entry from the list of public paths?"
 msgstr "¿Seguro que quiere quitar este elemento de la lista de rutas públicas?"
 
-#: ../tools/Settings.cs:539 ../tools/Settings.cs:628 ../tools/Settings.cs:706
-#: ../tools/Settings.cs:782 ../tools/Settings.cs:1121
+#: ../tools/Settings.cs:542 ../tools/Settings.cs:631 ../tools/Settings.cs:709
+#: ../tools/Settings.cs:785 ../tools/Settings.cs:1124
 msgid "Name"
 msgstr "Nombre"
 
-#: ../tools/Settings.cs:622 ../tools/settings.glade.h:32
+#: ../tools/Settings.cs:625 ../tools/settings.glade.h:33
 msgid "Type"
 msgstr "Tipo"
 
-#: ../tools/Settings.cs:675 ../tools/Settings.cs:1055
-#: ../tools/settings.glade.h:24
+#: ../tools/Settings.cs:678 ../tools/Settings.cs:1058
+#: ../tools/settings.glade.h:25
 msgid "Path"
 msgstr "Ruta"
 
-#: ../tools/Settings.cs:678 ../tools/Settings.cs:1065
+#: ../tools/Settings.cs:681 ../tools/Settings.cs:1068
 msgid "Pattern"
 msgstr "Patrón"
 
-#: ../tools/Settings.cs:681 ../tools/Settings.cs:1060
+#: ../tools/Settings.cs:684 ../tools/Settings.cs:1063
 #: ../tools/settings.glade.h:22
 msgid "Mail Folder"
 msgstr "Carpeta de correo"
 
-#: ../tools/Settings.cs:1029
+#: ../tools/Settings.cs:1032
 msgid "Select Folder"
 msgstr "Seleccione carpeta"
 
-#: ../tools/Settings.cs:1089
+#: ../tools/Settings.cs:1092
 msgid "Error adding path"
 msgstr "Se produjo un error al añadir la ruta"
 
-#: ../tools/Settings.cs:1090
+#: ../tools/Settings.cs:1093
 msgid ""
 "The specified path could not be found and therefore it could not be added to "
 "the list of resources excluded for indexing."
@@ -533,7 +543,7 @@ msgstr ""
 "La ruta especificada no se pudo encontrar y por lo tanto se añadió a la "
 "lista de recursos excluidos de la indexación."
 
-#: ../tools/Settings.cs:1120
+#: ../tools/Settings.cs:1123
 msgid "Show"
 msgstr "Mostrar"
 
@@ -626,28 +636,30 @@ msgid "Indexing"
 msgstr "Indexación"
 
 #: ../tools/settings.glade.h:23
+msgid "Maximum number of results displayed "
+msgstr "Número máximo de resultados mostrados"
+
+#: ../tools/settings.glade.h:24
 msgid "Networking"
 msgstr "Redes"
 
-#: ../tools/settings.glade.h:25
+#: ../tools/settings.glade.h:26
 msgid "Please select a resource you wish to exclude from indexing."
 msgstr "Seleccione un recurso que desee excluir de la indexación."
 
-#: ../tools/settings.glade.h:26
-msgid "Please select the mail folder you wish to exclude from indexing. "
-msgstr ""
-"Seleccione la carpeta de correo que desee excluir de la "
-"indexación."
-
 #: ../tools/settings.glade.h:27
+msgid "Please select the mail folder you wish to exclude from indexing. "
+msgstr "Seleccione la carpeta de correo que desee excluir de la indexación."
+
+#: ../tools/settings.glade.h:28
 msgid "Search"
 msgstr "Búsqueda"
 
-#: ../tools/settings.glade.h:28
+#: ../tools/settings.glade.h:29
 msgid "Search Preferences"
 msgstr "Preferencias de búsqueda"
 
-#: ../tools/settings.glade.h:29
+#: ../tools/settings.glade.h:30
 msgid ""
 "Specify any resources, such as paths, patterns, mail folders or type of "
 "objects you wish to exclude from indexing."
@@ -655,13 +667,25 @@ msgstr ""
 "Especifique cualquier recurso, como rutas, patrones, carpetas de correo ó "
 "tipos de objetos que desea que no sea indexado."
 
-#: ../tools/settings.glade.h:30
+#: ../tools/settings.glade.h:31
 msgid "Specify paths that should be available for external access"
 msgstr "Especificar rutas que deberían estar disponibles para acceso externo"
 
-#: ../tools/settings.glade.h:31
+#: ../tools/settings.glade.h:32
 msgid "Start search & indexing services automatically "
 msgstr "Iniciar los servicios de búsqueda e indexación automáticamente"
+
+#: ../tools/beagle-settings.desktop.in.h:1
+msgid "Configure Desktop Search & Indexing"
+msgstr "Configure la búsqueda e indexado del escritorio"
+
+#: ../tools/beagle-settings.desktop.in.h:2
+msgid "Configure search & indexing properties"
+msgstr "Configure las propiedades de búsqueda e indexación"
+
+#: ../tools/beagle-settings.desktop.in.h:3
+msgid "Search & Indexing"
+msgstr "Búsqueda e indexación"
 
 #: ../Util/Evolution.cs:45 ../Util/Evolution.cs:163
 msgid "On This Computer"
@@ -691,71 +715,71 @@ msgstr "Directorio de interoperatividad"
 msgid "Unknown Directory"
 msgstr "Directorio desconocido"
 
-#: ../Util/StringFu.cs:65
+#: ../Util/StringFu.cs:75
 msgid "Today"
 msgstr "Hoy"
 
-#: ../Util/StringFu.cs:67
+#: ../Util/StringFu.cs:77
 msgid "Yesterday"
 msgstr "Ayer"
 
 #. Translators: Example output: Aug 9
-#: ../Util/StringFu.cs:70
+#: ../Util/StringFu.cs:80
 msgid "MMM d"
 msgstr "d MMM"
 
 #. Translators: Example output: Aug 9, 2000
-#: ../Util/StringFu.cs:73
+#: ../Util/StringFu.cs:83
 msgid "MMM d, yyyy"
 msgstr "d MMM, yyyy"
 
 #. Translators: Example output: 11:05 AM  (note h = 12-hour time)
-#: ../Util/StringFu.cs:76
+#: ../Util/StringFu.cs:86
 msgid "h:mm tt"
 msgstr "HH:mm"
 
 #. Translators: {0} is a date (e.g. 'Today' or 'Apr 23'), {1} is the time
-#: ../Util/StringFu.cs:82
+#: ../Util/StringFu.cs:92
 #, csharp-format
 msgid "{0}, {1}"
 msgstr "{0}, {1}"
 
 #. To translators: {0} is the time of the day, eg. 13:45
-#: ../Util/StringFu.cs:99
+#: ../Util/StringFu.cs:109
 #, csharp-format
 msgid "Today, {0}"
 msgstr "Hoy, {0}"
 
 #. To translators: {0} is the time of the day, eg. 13:45
-#: ../Util/StringFu.cs:102
+#: ../Util/StringFu.cs:112
 #, csharp-format
 msgid "Yesterday, {0}"
 msgstr "Ayer, {0}"
 
 #. To translators: {0} is the number of days that have passed, {1} is the time of the day, eg. 13:45
-#: ../Util/StringFu.cs:105
+#: ../Util/StringFu.cs:115
 #, csharp-format
 msgid "{0} days ago, {1}"
 msgstr "Hace {0} días, {1}"
 
 #. Translators: Example output: January 3, 3:45 PM
-#: ../Util/StringFu.cs:110
+#: ../Util/StringFu.cs:120
 msgid "MMMM d, h:mm tt"
 msgstr "d MMMM, HH:mm"
 
 #. Translators: Example output: March 23 2001, 10:04 AM
-#: ../Util/StringFu.cs:115
+#: ../Util/StringFu.cs:125
 msgid "MMMM d yyyy, h:mm tt"
 msgstr "d MMMM yyyy, HH:mm"
 
-#: ../Util/StringFu.cs:125
+#: ../Util/StringFu.cs:135
 #, csharp-format
 msgid "{0} hour"
 msgid_plural "{0} hours"
 msgstr[0] "{0} hora"
 msgstr[1] "{0} horas"
 
-#: ../Util/StringFu.cs:132
+#: ../Util/StringFu.cs:142
 #, csharp-format
 msgid "{0} minute"
 msgid_plural "{0} minutes"
@@ -763,20 +787,19 @@ msgstr[0] "{0} minuto"
 msgstr[1] "{0} minutos"
 
 #. Translators: {0} is a file size in bytes
-#: ../Util/StringFu.cs:148
+#: ../Util/StringFu.cs:158
 #, csharp-format
 msgid "{0} bytes"
 msgstr "{0} bytes"
 
 #. Translators: {0} is a file size in kilobytes
-#: ../Util/StringFu.cs:152
+#: ../Util/StringFu.cs:162
 #, csharp-format
 msgid "{0:0.0} KB"
 msgstr "{0:0.0} Kib"
 
 #. Translators: {0} is a file size in megabytes
-#: ../Util/StringFu.cs:155
+#: ../Util/StringFu.cs:165
 #, csharp-format
 msgid "{0:0.0} MB"
 msgstr "{0:0.0} Mib"
-
