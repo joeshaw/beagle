@@ -1,3 +1,7 @@
+2005-11-14  Debajyoti Bera <dbera.web@gmail.com>
+	
+	* Best: Fix not storing settings when ran with --no-tray
+
 2005-11-13  Debajyoti Bera <dbera.web@gmail.com>
 
 	* Filters/FilterHtml.cs, HtmlAgilityPack:

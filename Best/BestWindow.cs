@@ -444,11 +444,11 @@ namespace Best {
 			}
 		}
 
-		public void StoreSettingsInConf ()
+		public void StoreSettingsInConf (bool with_tray)
 		{
 			Console.WriteLine ("Storing setting in Config");
 			int pos_x = posX, pos_y = posY;
-			if (WindowIsVisible)
+			if (with_tray && WindowIsVisible)
 				GetPosition (out pos_x, out pos_y);
 			int width = 0, height = 0;
 			GetSize (out width, out height);

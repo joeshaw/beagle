@@ -98,6 +98,8 @@ namespace Best {
 
 		static void NoTrayWindowDeleteEvent (object o, Gtk.DeleteEventArgs args)
 		{
+			BestWindow win = (BestWindow) o;
+			win.StoreSettingsInConf (false);
 			Application.Quit ();
 		}
 
