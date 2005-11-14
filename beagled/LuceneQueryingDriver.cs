@@ -243,10 +243,12 @@ namespace Beagle.Daemon {
 				primary_blacklist = new LuceneBitArray (primary_searcher,
 									primary_prohibited_part_query);
 				
-				secondary_blacklist = new LuceneBitArray (secondary_searcher);
-				if (secondary_prohibited_part_query != null)
-					secondary_blacklist.Or (secondary_prohibited_part_query);
-				primary_blacklist.Join (secondary_blacklist);
+				if (secondary_searcher != null) {
+					secondary_blacklist = new LuceneBitArray (secondary_searcher);
+					if (secondary_prohibited_part_query != null)
+						secondary_blacklist.Or (secondary_prohibited_part_query);
+					primary_blacklist.Join (secondary_blacklist);
+				}
 			}
 
 			
