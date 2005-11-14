@@ -187,12 +187,12 @@ EXTRA_DIST =				\
 	$(SETTINGS_RESOURCES)		\
 	$(man_MANS)			\
 	$(CRAWL_RULES)			\
+	$(desktop_in_files)		\
 	$(desktop_DATA) 		\
 	beagle-index-info		\
 	beagle-ping			\
 	beagle-status			\
 	boot.inotify.init		
-	
 
 CLEANFILES = 				\
 	$(TARGETS)			\

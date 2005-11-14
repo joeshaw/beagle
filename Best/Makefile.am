@@ -62,10 +62,11 @@ desktop_DATA = $(desktop_files)
 
 man_MANS = best.1
 
-EXTRA_DIST =		\
-	$(CSFILES)	\
-	$(WRAPPER).in	\
-	$(desktop_DATA) \
+EXTRA_DIST =			\
+	$(CSFILES)		\
+	$(WRAPPER).in		\
+	$(desktop_in_files)	\
+	$(desktop_DATA) 	\
 	$(man_MANS)
 
 CLEANFILES =		\
