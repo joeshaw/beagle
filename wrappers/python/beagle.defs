@@ -1,0 +1,1231 @@
+;; -*- scheme -*-
+; object definitions ...
+(define-object Client
+  (in-module "Beagle")
+  (parent "GObject")
+  (c-name "BeagleClient")
+  (gtype-id "BEAGLE_TYPE_CLIENT")
+)
+
+(define-object Response
+  (in-module "Beagle")
+  (parent "GObject")
+  (c-name "BeagleResponse")
+  (gtype-id "BEAGLE_TYPE_RESPONSE")
+)
+
+(define-object CancelledResponse
+  (in-module "Beagle")
+  (parent "BeagleResponse")
+  (c-name "BeagleCancelledResponse")
+  (gtype-id "BEAGLE_TYPE_CANCELLED_RESPONSE")
+)
+
+(define-object DaemonInformationRequest
+  (in-module "Beagle")
+  (parent "BeagleRequest")
+  (c-name "BeagleDaemonInformationRequest")
+  (gtype-id "BEAGLE_TYPE_DAEMON_INFORMATION_REQUEST")
+)
+
+(define-object DaemonInformationResponse
+  (in-module "Beagle")
+  (parent "BeagleResponse")
+  (c-name "BeagleDaemonInformationResponse")
+  (gtype-id "BEAGLE_TYPE_DAEMON_INFORMATION_RESPONSE")
+)
+
+;(define-object EmptyResponse
+;  (in-module "Beagle")
+;  (parent "BeagleResponse")
+;  (c-name "BeagleEmptyResponse")
+;  (gtype-id "BEAGLE_TYPE_EMPTY_RESPONSE")
+;)
+
+(define-object ErrorResponse
+  (in-module "Beagle")
+  (parent "BeagleResponse")
+  (c-name "BeagleErrorResponse")
+  (gtype-id "BEAGLE_TYPE_ERROR_RESPONSE")
+)
+
+(define-object FinishedResponse
+  (in-module "Beagle")
+  (parent "BeagleResponse")
+  (c-name "BeagleFinishedResponse")
+  (gtype-id "BEAGLE_TYPE_FINISHED_RESPONSE")
+)
+
+(define-object HitsAddedResponse
+  (in-module "Beagle")
+  (parent "BeagleResponse")
+  (c-name "BeagleHitsAddedResponse")
+  (gtype-id "BEAGLE_TYPE_HITS_ADDED_RESPONSE")
+)
+
+(define-object HitsSubtractedResponse
+  (in-module "Beagle")
+  (parent "BeagleResponse")
+  (c-name "BeagleHitsSubtractedResponse")
+  (gtype-id "BEAGLE_TYPE_HITS_SUBTRACTED_RESPONSE")
+)
+
+(define-object IndexingServiceRequest
+  (in-module "Beagle")
+  (parent "BeagleRequest")
+  (c-name "BeagleIndexingServiceRequest")
+  (gtype-id "BEAGLE_TYPE_INDEXING_SERVICE_REQUEST")
+)
+
+(define-object Query
+  (in-module "Beagle")
+  (parent "BeagleRequest")
+  (c-name "BeagleQuery")
+  (gtype-id "BEAGLE_TYPE_QUERY")
+)
+
+;(define-object QueryPartDate
+;  (in-module "Beagle")
+;  (parent "BeagleQueryPart")
+;  (c-name "BeagleQueryPartDate")
+;  (gtype-id "BEAGLE_TYPE_QUERY_PART_DATE")
+;)
+
+(define-object QueryPart
+  (in-module "Beagle")
+  (parent "GObject")
+  (c-name "BeagleQueryPart")
+  (gtype-id "BEAGLE_TYPE_QUERY_PART")
+)
+
+;(define-object QueryPartHuman
+;  (in-module "Beagle")
+;  (parent "BeagleQueryPart")
+;  (c-name "BeagleQueryPartHuman")
+;  (gtype-id "BEAGLE_TYPE_QUERY_PART_HUMAN")
+;)
+
+;(define-object QueryPartOr
+;  (in-module "Beagle")
+;  (parent "BeagleQueryPart")
+;  (c-name "BeagleQueryPartOr")
+;  (gtype-id "BEAGLE_TYPE_QUERY_PART_OR")
+;)
+
+;(define-object QueryPartProperty
+;  (in-module "Beagle")
+;  (parent "BeagleQueryPart")
+;  (c-name "BeagleQueryPartProperty")
+;  (gtype-id "BEAGLE_TYPE_QUERY_PART_PROPERTY")
+;)
+
+;(define-object QueryPartText
+;  (in-module "Beagle")
+;  (parent "BeagleQueryPart")
+;  (c-name "BeagleQueryPartText")
+;  (gtype-id "BEAGLE_TYPE_QUERY_PART_TEXT")
+;)
+
+(define-object Request
+  (in-module "Beagle")
+  (parent "GObject")
+  (c-name "BeagleRequest")
+  (gtype-id "BEAGLE_TYPE_REQUEST")
+)
+
+;(define-object SearchTermResponse
+;  (in-module "Beagle")
+;  (parent "BeagleResponse")
+;  (c-name "BeagleSearchTermResponse")
+;  (gtype-id "BEAGLE_TYPE_SEARCH_TERM_RESPONSE")
+;)
+
+(define-object ShutdownRequest
+  (in-module "Beagle")
+  (parent "BeagleRequest")
+  (c-name "BeagleShutdownRequest")
+  (gtype-id "BEAGLE_TYPE_SHUTDOWN_REQUEST")
+)
+
+(define-object SnippetRequest
+  (in-module "Beagle")
+  (parent "BeagleRequest")
+  (c-name "BeagleSnippetRequest")
+  (gtype-id "BEAGLE_TYPE_SNIPPET_REQUEST")
+)
+
+(define-object SnippetResponse
+  (in-module "Beagle")
+  (parent "BeagleResponse")
+  (c-name "BeagleSnippetResponse")
+  (gtype-id "BEAGLE_TYPE_SNIPPET_RESPONSE")
+)
+
+;; Pointer types
+(define-pointer Hit
+  (in-module "Beagle")
+  (c-name "BeagleHit")
+  (gtype-id "BEAGLE_TYPE_HIT")
+)
+
+;; Enumerations and flags ...
+
+(define-enum IndexableFiltering
+  (in-module "Beagle")
+  (c-name "BeagleIndexableFiltering")
+  (values
+    '("always" "BEAGLE_INDEXABLE_FILTERING_ALWAYS")
+    '("already-filtered" "BEAGLE_INDEXABLE_FILTERING_ALREADY_FILTERED")
+    '("automatic" "BEAGLE_INDEXABLE_FILTERING_AUTOMATIC")
+    '("never" "BEAGLE_INDEXABLE_FILTERING_NEVER")
+  )
+)
+
+(define-enum PropertyType
+  (in-module "Beagle")
+  (c-name "BeaglePropertyType")
+  (values
+    '("unknown" "BEAGLE_PROPERTY_TYPE_UNKNOWN")
+    '("text" "BEAGLE_PROPERTY_TYPE_TEXT")
+    '("keyword" "BEAGLE_PROPERTY_TYPE_KEYWORD")
+    '("date" "BEAGLE_PROPERTY_TYPE_DATE")
+    '("last" "BEAGLE_PROPERTY_TYPE_LAST")
+  )
+)
+
+(define-enum QueryPartLogic
+  (in-module "Beagle")
+  (c-name "BeagleQueryPartLogic")
+  (values
+    '("required" "BEAGLE_QUERY_PART_LOGIC_REQUIRED")
+    '("prohibited" "BEAGLE_QUERY_PART_LOGIC_PROHIBITED")
+  )
+)
+
+(define-enum Error
+  (in-module "Beagle")
+  (c-name "BeagleError")
+  (values
+    '("r" "BEAGLE_ERROR_DAEMON_ERROR")
+  )
+)
+
+
+;; From /usr/include/libbeagle/beagle/beagle-cancelled-response.h
+
+(define-function beagle_cancelled_response_get_type
+  (c-name "beagle_cancelled_response_get_type")
+  (return-type "GType")
+)
+
+
+
+;; From /usr/include/libbeagle/beagle/beagle-client.h
+
+(define-function beagle_client_get_type
+  (c-name "beagle_client_get_type")
+  (return-type "GType")
+)
+
+(define-function beagle_client_new
+  (c-name "beagle_client_new")
+  (is-constructor-of "BeagleClient")
+  (return-type "BeagleClient*")
+  (parameters
+    '("const-char*" "client_name")
+  )
+)
+
+(define-function beagle_client_new_from_socket_path
+  (c-name "beagle_client_new_from_socket_path")
+  (return-type "BeagleClient*")
+  (parameters
+    '("const-char*" "socket_path")
+  )
+)
+
+(define-method send_request
+  (of-object "BeagleClient")
+  (c-name "beagle_client_send_request")
+  (return-type "BeagleResponse*")
+  (parameters
+    '("BeagleRequest*" "request")
+    '("GError**" "err")
+  )
+)
+
+(define-method send_request_async
+  (of-object "BeagleClient")
+  (c-name "beagle_client_send_request_async")
+  (return-type "gboolean")
+  (parameters
+    '("BeagleRequest*" "request")
+    '("GError**" "err")
+  )
+)
+
+
+
+;; From /usr/include/libbeagle/beagle/beagle-daemon-information-request.h
+
+(define-function beagle_daemon_information_request_get_type
+  (c-name "beagle_daemon_information_request_get_type")
+  (return-type "GType")
+)
+
+(define-function beagle_daemon_information_request_new
+  (c-name "beagle_daemon_information_request_new")
+  (is-constructor-of "BeagleDaemonInformationRequest")
+  (return-type "BeagleDaemonInformationRequest*")
+)
+
+
+
+;; From /usr/include/libbeagle/beagle/beagle-daemon-information-response.h
+
+(define-function beagle_daemon_information_response_get_type
+  (c-name "beagle_daemon_information_response_get_type")
+  (return-type "GType")
+)
+
+(define-method get_version
+  (of-object "BeagleDaemonInformationResponse")
+  (c-name "beagle_daemon_information_response_get_version")
+  (return-type "const-char*")
+)
+
+(define-method get_human_readable_status
+  (of-object "BeagleDaemonInformationResponse")
+  (c-name "beagle_daemon_information_response_get_human_readable_status")
+  (return-type "const-char*")
+)
+
+(define-method get_index_information
+  (of-object "BeagleDaemonInformationResponse")
+  (c-name "beagle_daemon_information_response_get_index_information")
+  (return-type "const-char*")
+)
+
+
+
+;; From /usr/include/libbeagle/beagle/beagle-empty-response.h
+
+(define-function beagle_empty_response_get_type
+  (c-name "beagle_empty_response_get_type")
+  (return-type "GType")
+)
+
+
+
+;; From /usr/include/libbeagle/beagle/beagle-error-response.h
+
+(define-function beagle_error_response_get_type
+  (c-name "beagle_error_response_get_type")
+  (return-type "GType")
+)
+
+(define-method get_message
+  (of-object "BeagleErrorResponse")
+  (c-name "beagle_error_response_get_message")
+  (return-type "const-char*")
+)
+
+
+
+;; From /usr/include/libbeagle/beagle/beagle-finished-response.h
+
+(define-function beagle_finished_response_get_type
+  (c-name "beagle_finished_response_get_type")
+  (return-type "GType")
+)
+
+
+
+;; From /usr/include/libbeagle/beagle/beagle.h
+
+
+
+;; From /usr/include/libbeagle/beagle/beagle-hit.h
+
+(define-method ref
+  (of-object "BeagleHit")
+  (c-name "beagle_hit_ref")
+  (return-type "BeagleHit*")
+)
+
+(define-method unref
+  (of-object "BeagleHit")
+  (c-name "beagle_hit_unref")
+  (return-type "none")
+)
+
+(define-method get_uri
+  (of-object "BeagleHit")
+  (c-name "beagle_hit_get_uri")
+  (return-type "const-char*")
+)
+
+(define-method get_type
+  (of-object "BeagleHit")
+  (c-name "beagle_hit_get_type")
+  (return-type "const-char*")
+)
+
+(define-method get_mime_type
+  (of-object "BeagleHit")
+  (c-name "beagle_hit_get_mime_type")
+  (return-type "const-char*")
+)
+
+(define-method get_source
+  (of-object "BeagleHit")
+  (c-name "beagle_hit_get_source")
+  (return-type "const-char*")
+)
+
+(define-method get_source_object_name
+  (of-object "BeagleHit")
+  (c-name "beagle_hit_get_source_object_name")
+  (return-type "const-char*")
+)
+
+(define-method get_parent_uri
+  (of-object "BeagleHit")
+  (c-name "beagle_hit_get_parent_uri")
+  (return-type "const-char*")
+)
+
+(define-method get_timestamp
+  (of-object "BeagleHit")
+  (c-name "beagle_hit_get_timestamp")
+  (return-type "BeagleTimestamp*")
+)
+
+(define-method get_score
+  (of-object "BeagleHit")
+  (c-name "beagle_hit_get_score")
+  (return-type "double")
+)
+
+(define-method get_property
+  (of-object "BeagleHit")
+  (c-name "beagle_hit_get_property")
+  (return-type "const-char*")
+  (parameters
+    '("const-char*" "key")
+  )
+)
+
+(define-method lookup_property
+  (of-object "BeagleHit")
+  (c-name "beagle_hit_lookup_property")
+  (return-type "BeagleProperty*")
+  (parameters
+    '("const-char*" "key")
+  )
+)
+
+
+
+;; From /usr/include/libbeagle/beagle/beagle-hits-added-response.h
+
+(define-function beagle_hits_added_response_get_type
+  (c-name "beagle_hits_added_response_get_type")
+  (return-type "GType")
+)
+
+(define-method get_hits
+  (of-object "BeagleHitsAddedResponse")
+  (c-name "beagle_hits_added_response_get_hits")
+  (return-type "GSList*")
+)
+
+
+
+;; From /usr/include/libbeagle/beagle/beagle-hits-subtracted-response.h
+
+(define-function beagle_hits_subtracted_response_get_type
+  (c-name "beagle_hits_subtracted_response_get_type")
+  (return-type "GType")
+)
+
+(define-method get_uris
+  (of-object "BeagleHitsSubtractedResponse")
+  (c-name "beagle_hits_subtracted_response_get_uris")
+  (return-type "GSList*")
+)
+
+
+
+;; From /usr/include/libbeagle/beagle/beagle-indexable.h
+
+(define-function beagle_indexable_new
+  (c-name "beagle_indexable_new")
+  (is-constructor-of "BeagleIndexable")
+  (return-type "BeagleIndexable*")
+  (parameters
+    '("const-char*" "uri")
+  )
+)
+
+(define-method free
+  (of-object "BeagleIndexable")
+  (c-name "beagle_indexable_free")
+  (return-type "none")
+)
+
+(define-method add_property
+  (of-object "BeagleIndexable")
+  (c-name "beagle_indexable_add_property")
+  (return-type "none")
+  (parameters
+    '("BeagleProperty*" "prop")
+  )
+)
+
+(define-method get_uri
+  (of-object "BeagleIndexable")
+  (c-name "beagle_indexable_get_uri")
+  (return-type "const-char*")
+)
+
+(define-method set_uri
+  (of-object "BeagleIndexable")
+  (c-name "beagle_indexable_set_uri")
+  (return-type "none")
+  (parameters
+    '("const-char*" "uri")
+  )
+)
+
+(define-method get_content_uri
+  (of-object "BeagleIndexable")
+  (c-name "beagle_indexable_get_content_uri")
+  (return-type "const-char*")
+)
+
+(define-method set_content_uri
+  (of-object "BeagleIndexable")
+  (c-name "beagle_indexable_set_content_uri")
+  (return-type "none")
+  (parameters
+    '("const-char*" "content_uri")
+  )
+)
+
+(define-method get_hot_content_uri
+  (of-object "BeagleIndexable")
+  (c-name "beagle_indexable_get_hot_content_uri")
+  (return-type "const-char*")
+)
+
+(define-method set_hot_content_uri
+  (of-object "BeagleIndexable")
+  (c-name "beagle_indexable_set_hot_content_uri")
+  (return-type "none")
+  (parameters
+    '("const-char*" "hot_content_uri")
+  )
+)
+
+(define-method get_delete_content
+  (of-object "BeagleIndexable")
+  (c-name "beagle_indexable_get_delete_content")
+  (return-type "gboolean")
+)
+
+(define-method set_delete_content
+  (of-object "BeagleIndexable")
+  (c-name "beagle_indexable_set_delete_content")
+  (return-type "none")
+  (parameters
+    '("gboolean" "delete_content")
+  )
+)
+
+(define-method get_crawled
+  (of-object "BeagleIndexable")
+  (c-name "beagle_indexable_get_crawled")
+  (return-type "gboolean")
+)
+
+(define-method set_crawled
+  (of-object "BeagleIndexable")
+  (c-name "beagle_indexable_set_crawled")
+  (return-type "none")
+  (parameters
+    '("gboolean" "crawled")
+  )
+)
+
+(define-method get_no_content
+  (of-object "BeagleIndexable")
+  (c-name "beagle_indexable_get_no_content")
+  (return-type "gboolean")
+)
+
+(define-method set_no_content
+  (of-object "BeagleIndexable")
+  (c-name "beagle_indexable_set_no_content")
+  (return-type "none")
+  (parameters
+    '("gboolean" "no_content")
+  )
+)
+
+(define-method get_cache_content
+  (of-object "BeagleIndexable")
+  (c-name "beagle_indexable_get_cache_content")
+  (return-type "gboolean")
+)
+
+(define-method set_cache_content
+  (of-object "BeagleIndexable")
+  (c-name "beagle_indexable_set_cache_content")
+  (return-type "none")
+  (parameters
+    '("gboolean" "cache_content")
+  )
+)
+
+(define-method get_filtering
+  (of-object "BeagleIndexable")
+  (c-name "beagle_indexable_get_filtering")
+  (return-type "BeagleIndexableFiltering")
+)
+
+(define-method set_filtering
+  (of-object "BeagleIndexable")
+  (c-name "beagle_indexable_set_filtering")
+  (return-type "none")
+  (parameters
+    '("BeagleIndexableFiltering" "filtering")
+  )
+)
+
+(define-method get_type
+  (of-object "BeagleIndexable")
+  (c-name "beagle_indexable_get_type")
+  (return-type "const-char*")
+)
+
+(define-method set_type
+  (of-object "BeagleIndexable")
+  (c-name "beagle_indexable_set_type")
+  (return-type "none")
+  (parameters
+    '("const-char*" "type")
+  )
+)
+
+(define-method get_mime_type
+  (of-object "BeagleIndexable")
+  (c-name "beagle_indexable_get_mime_type")
+  (return-type "const-char*")
+)
+
+(define-method set_mime_type
+  (of-object "BeagleIndexable")
+  (c-name "beagle_indexable_set_mime_type")
+  (return-type "none")
+  (parameters
+    '("const-char*" "mime_type")
+  )
+)
+
+(define-method get_timestamp
+  (of-object "BeagleIndexable")
+  (c-name "beagle_indexable_get_timestamp")
+  (return-type "BeagleTimestamp*")
+)
+
+(define-method set_timestamp
+  (of-object "BeagleIndexable")
+  (c-name "beagle_indexable_set_timestamp")
+  (return-type "none")
+  (parameters
+    '("BeagleTimestamp*" "timestamp")
+  )
+)
+
+
+
+;; From /usr/include/libbeagle/beagle/beagle-indexing-service-request.h
+
+(define-function beagle_indexing_service_request_get_type
+  (c-name "beagle_indexing_service_request_get_type")
+  (return-type "GType")
+)
+
+(define-function beagle_indexing_service_request_new
+  (c-name "beagle_indexing_service_request_new")
+  (is-constructor-of "BeagleIndexingServiceRequest")
+  (return-type "BeagleIndexingServiceRequest*")
+)
+
+(define-method add
+  (of-object "BeagleIndexingServiceRequest")
+  (c-name "beagle_indexing_service_request_add")
+  (return-type "none")
+  (parameters
+    '("BeagleIndexable*" "indexable")
+  )
+)
+
+(define-method remove
+  (of-object "BeagleIndexingServiceRequest")
+  (c-name "beagle_indexing_service_request_remove")
+  (return-type "none")
+  (parameters
+    '("const-char*" "uri")
+  )
+)
+
+
+
+;; From /usr/include/libbeagle/beagle/beagle-property.h
+
+(define-function beagle_property_new
+  (c-name "beagle_property_new")
+  (is-constructor-of "BeagleProperty")
+  (return-type "BeagleProperty*")
+  (parameters
+    '("BeaglePropertyType" "type")
+    '("const-char*" "key")
+    '("const-char*" "value")
+  )
+)
+
+(define-method free
+  (of-object "BeagleProperty")
+  (c-name "beagle_property_free")
+  (return-type "none")
+)
+
+(define-method get_type
+  (of-object "BeagleProperty")
+  (c-name "beagle_property_get_type")
+  (return-type "BeaglePropertyType")
+)
+
+(define-method set_type
+  (of-object "BeagleProperty")
+  (c-name "beagle_property_set_type")
+  (return-type "none")
+  (parameters
+    '("BeaglePropertyType" "type")
+  )
+)
+
+(define-method get_key
+  (of-object "BeagleProperty")
+  (c-name "beagle_property_get_key")
+  (return-type "const-char*")
+)
+
+(define-method set_key
+  (of-object "BeagleProperty")
+  (c-name "beagle_property_set_key")
+  (return-type "none")
+  (parameters
+    '("const-char*" "key")
+  )
+)
+
+(define-method get_value
+  (of-object "BeagleProperty")
+  (c-name "beagle_property_get_value")
+  (return-type "const-char*")
+)
+
+(define-method set_value
+  (of-object "BeagleProperty")
+  (c-name "beagle_property_set_value")
+  (return-type "none")
+  (parameters
+    '("const-char*" "value")
+  )
+)
+
+(define-method get_is_searched
+  (of-object "BeagleProperty")
+  (c-name "beagle_property_get_is_searched")
+  (return-type "gboolean")
+)
+
+(define-method set_is_searched
+  (of-object "BeagleProperty")
+  (c-name "beagle_property_set_is_searched")
+  (return-type "none")
+  (parameters
+    '("gboolean" "is_searched")
+  )
+)
+
+(define-method get_is_mutable
+  (of-object "BeagleProperty")
+  (c-name "beagle_property_get_is_mutable")
+  (return-type "gboolean")
+)
+
+(define-method set_is_mutable
+  (of-object "BeagleProperty")
+  (c-name "beagle_property_set_is_mutable")
+  (return-type "none")
+  (parameters
+    '("gboolean" "is_keyword")
+  )
+)
+
+
+
+;; From /usr/include/libbeagle/beagle/beagle-query.h
+
+(define-function beagle_query_get_type
+  (c-name "beagle_query_get_type")
+  (return-type "GType")
+)
+
+(define-function beagle_query_new
+  (c-name "beagle_query_new")
+  (is-constructor-of "BeagleQuery")
+  (return-type "BeagleQuery*")
+)
+
+(define-method add_part
+  (of-object "BeagleQuery")
+  (c-name "beagle_query_add_part")
+  (return-type "none")
+  (parameters
+    '("BeagleQueryPart*" "part")
+  )
+)
+
+(define-method add_text
+  (of-object "BeagleQuery")
+  (c-name "beagle_query_add_text")
+  (return-type "none")
+  (parameters
+    '("const-char*" "str")
+  )
+)
+
+(define-method add_mime_type
+  (of-object "BeagleQuery")
+  (c-name "beagle_query_add_mime_type")
+  (return-type "none")
+  (parameters
+    '("const-char*" "mime_type")
+  )
+)
+
+(define-method add_hit_type
+  (of-object "BeagleQuery")
+  (c-name "beagle_query_add_hit_type")
+  (return-type "none")
+  (parameters
+    '("const-char*" "hit_type")
+  )
+)
+
+(define-method add_source
+  (of-object "BeagleQuery")
+  (c-name "beagle_query_add_source")
+  (return-type "none")
+  (parameters
+    '("const-char*" "source")
+  )
+)
+
+(define-method set_max_hits
+  (of-object "BeagleQuery")
+  (c-name "beagle_query_set_max_hits")
+  (return-type "none")
+  (parameters
+    '("int" "max_hits")
+  )
+)
+
+(define-method get_max_hits
+  (of-object "BeagleQuery")
+  (c-name "beagle_query_get_max_hits")
+  (return-type "int")
+)
+
+
+
+;; From /usr/include/libbeagle/beagle/beagle-query-part-date.h
+
+(define-function beagle_query_part_date_get_type
+  (c-name "beagle_query_part_date_get_type")
+  (return-type "GType")
+)
+
+(define-function beagle_query_part_date_new
+  (c-name "beagle_query_part_date_new")
+  (is-constructor-of "BeagleQueryPartDate")
+  (return-type "BeagleQueryPartDate*")
+)
+
+(define-method free
+  (of-object "BeagleQueryPartDate")
+  (c-name "beagle_query_part_date_free")
+  (return-type "none")
+)
+
+(define-method set_start_date
+  (of-object "BeagleQueryPartDate")
+  (c-name "beagle_query_part_date_set_start_date")
+  (return-type "none")
+  (parameters
+    '("BeagleTimestamp*" "start_date")
+  )
+)
+
+(define-method set_end_date
+  (of-object "BeagleQueryPartDate")
+  (c-name "beagle_query_part_date_set_end_date")
+  (return-type "none")
+  (parameters
+    '("BeagleTimestamp*" "end_date")
+  )
+)
+
+
+
+;; From /usr/include/libbeagle/beagle/beagle-query-part.h
+
+(define-function beagle_query_part_get_type
+  (c-name "beagle_query_part_get_type")
+  (return-type "GType")
+)
+
+(define-method set_logic
+  (of-object "BeagleQueryPart")
+  (c-name "beagle_query_part_set_logic")
+  (return-type "none")
+  (parameters
+    '("BeagleQueryPartLogic" "logic")
+  )
+)
+
+
+
+;; From /usr/include/libbeagle/beagle/beagle-query-part-human.h
+
+(define-function beagle_query_part_human_get_type
+  (c-name "beagle_query_part_human_get_type")
+  (return-type "GType")
+)
+
+(define-function beagle_query_part_human_new
+  (c-name "beagle_query_part_human_new")
+  (is-constructor-of "BeagleQueryPartHuman")
+  (return-type "BeagleQueryPartHuman*")
+)
+
+(define-method free
+  (of-object "BeagleQueryPartHuman")
+  (c-name "beagle_query_part_human_free")
+  (return-type "none")
+)
+
+(define-method set_string
+  (of-object "BeagleQueryPartHuman")
+  (c-name "beagle_query_part_human_set_string")
+  (return-type "none")
+  (parameters
+    '("const-char*" "string")
+  )
+)
+
+
+
+;; From /usr/include/libbeagle/beagle/beagle-query-part-or.h
+
+(define-function beagle_query_part_or_get_type
+  (c-name "beagle_query_part_or_get_type")
+  (return-type "GType")
+)
+
+(define-function beagle_query_part_or_new
+  (c-name "beagle_query_part_or_new")
+  (is-constructor-of "BeagleQueryPartOr")
+  (return-type "BeagleQueryPartOr*")
+)
+
+(define-method free
+  (of-object "BeagleQueryPartOr")
+  (c-name "beagle_query_part_or_free")
+  (return-type "none")
+)
+
+(define-method add_subpart
+  (of-object "BeagleQueryPartOr")
+  (c-name "beagle_query_part_or_add_subpart")
+  (return-type "none")
+  (parameters
+    '("BeagleQueryPart*" "subpart")
+  )
+)
+
+
+
+;; From /usr/include/libbeagle/beagle/beagle-query-part-property.h
+
+(define-function beagle_query_part_property_get_type
+  (c-name "beagle_query_part_property_get_type")
+  (return-type "GType")
+)
+
+(define-function beagle_query_part_property_new
+  (c-name "beagle_query_part_property_new")
+  (is-constructor-of "BeagleQueryPartProperty")
+  (return-type "BeagleQueryPartProperty*")
+)
+
+(define-method free
+  (of-object "BeagleQueryPartProperty")
+  (c-name "beagle_query_part_property_free")
+  (return-type "none")
+)
+
+(define-method set_key
+  (of-object "BeagleQueryPartProperty")
+  (c-name "beagle_query_part_property_set_key")
+  (return-type "none")
+  (parameters
+    '("const-char*" "key")
+  )
+)
+
+(define-method set_value
+  (of-object "BeagleQueryPartProperty")
+  (c-name "beagle_query_part_property_set_value")
+  (return-type "none")
+  (parameters
+    '("const-char*" "value")
+  )
+)
+
+(define-method set_property_type
+  (of-object "BeagleQueryPartProperty")
+  (c-name "beagle_query_part_property_set_property_type")
+  (return-type "none")
+  (parameters
+    '("BeaglePropertyType" "prop_type")
+  )
+)
+
+
+
+;; From /usr/include/libbeagle/beagle/beagle-query-part-text.h
+
+(define-function beagle_query_part_text_get_type
+  (c-name "beagle_query_part_text_get_type")
+  (return-type "GType")
+)
+
+(define-function beagle_query_part_text_new
+  (c-name "beagle_query_part_text_new")
+  (is-constructor-of "BeagleQueryPartText")
+  (return-type "BeagleQueryPartText*")
+)
+
+(define-method free
+  (of-object "BeagleQueryPartText")
+  (c-name "beagle_query_part_text_free")
+  (return-type "none")
+)
+
+(define-method set_text
+  (of-object "BeagleQueryPartText")
+  (c-name "beagle_query_part_text_set_text")
+  (return-type "none")
+  (parameters
+    '("const-char*" "text")
+  )
+)
+
+(define-method set_search_full_text
+  (of-object "BeagleQueryPartText")
+  (c-name "beagle_query_part_text_set_search_full_text")
+  (return-type "none")
+  (parameters
+    '("gboolean" "search_full_text")
+  )
+)
+
+(define-method set_search_properties
+  (of-object "BeagleQueryPartText")
+  (c-name "beagle_query_part_text_set_search_properties")
+  (return-type "none")
+  (parameters
+    '("gboolean" "search_properties")
+  )
+)
+
+
+
+;; From /usr/include/libbeagle/beagle/beagle-request.h
+
+(define-function beagle_request_get_type
+  (c-name "beagle_request_get_type")
+  (return-type "GType")
+)
+
+
+
+;; From /usr/include/libbeagle/beagle/beagle-response.h
+
+(define-function beagle_response_get_type
+  (c-name "beagle_response_get_type")
+  (return-type "GType")
+)
+
+
+
+;; From /usr/include/libbeagle/beagle/beagle-search-term-response.h
+
+(define-function beagle_search_term_response_get_type
+  (c-name "beagle_search_term_response_get_type")
+  (return-type "GType")
+)
+
+(define-method get_exact_text
+  (of-object "BeagleSearchTermResponse")
+  (c-name "beagle_search_term_response_get_exact_text")
+  (return-type "GSList*")
+)
+
+(define-method get_stemmed_text
+  (of-object "BeagleSearchTermResponse")
+  (c-name "beagle_search_term_response_get_stemmed_text")
+  (return-type "GSList*")
+)
+
+
+
+;; From /usr/include/libbeagle/beagle/beagle-shutdown-request.h
+
+(define-function beagle_shutdown_request_get_type
+  (c-name "beagle_shutdown_request_get_type")
+  (return-type "GType")
+)
+
+(define-function beagle_shutdown_request_new
+  (c-name "beagle_shutdown_request_new")
+  (is-constructor-of "BeagleShutdownRequest")
+  (return-type "BeagleShutdownRequest*")
+)
+
+
+
+;; From /usr/include/libbeagle/beagle/beagle-snippet-request.h
+
+(define-function beagle_snippet_request_get_type
+  (c-name "beagle_snippet_request_get_type")
+  (return-type "GType")
+)
+
+(define-function beagle_snippet_request_new
+  (c-name "beagle_snippet_request_new")
+  (is-constructor-of "BeagleSnippetRequest")
+  (return-type "BeagleSnippetRequest*")
+)
+
+(define-method set_hit
+  (of-object "BeagleSnippetRequest")
+  (c-name "beagle_snippet_request_set_hit")
+  (return-type "none")
+  (parameters
+    '("BeagleHit*" "hit")
+  )
+)
+
+(define-method add_query_term
+  (of-object "BeagleSnippetRequest")
+  (c-name "beagle_snippet_request_add_query_term")
+  (return-type "none")
+  (parameters
+    '("const-char*" "text")
+  )
+)
+
+(define-method set_query_terms_from_query
+  (of-object "BeagleSnippetRequest")
+  (c-name "beagle_snippet_request_set_query_terms_from_query")
+  (return-type "none")
+  (parameters
+    '("BeagleQuery*" "query")
+  )
+)
+
+
+
+;; From /usr/include/libbeagle/beagle/beagle-snippet-response.h
+
+(define-function beagle_snippet_response_get_type
+  (c-name "beagle_snippet_response_get_type")
+  (return-type "GType")
+)
+
+(define-method get_snippet
+  (of-object "BeagleSnippetResponse")
+  (c-name "beagle_snippet_response_get_snippet")
+  (return-type "const-char*")
+)
+
+
+
+;; From /usr/include/libbeagle/beagle/beagle-timestamp.h
+
+(define-function beagle_timestamp_new_from_string
+  (c-name "beagle_timestamp_new_from_string")
+  (return-type "BeagleTimestamp*")
+  (parameters
+    '("const-char*" "str")
+  )
+)
+
+(define-function beagle_timestamp_new_from_unix_time
+  (c-name "beagle_timestamp_new_from_unix_time")
+  (return-type "BeagleTimestamp*")
+  (parameters
+    '("time_t" "time")
+  )
+)
+
+(define-method free
+  (of-object "BeagleTimestamp")
+  (c-name "beagle_timestamp_free")
+  (return-type "none")
+)
+
+(define-method to_unix_time
+  (of-object "BeagleTimestamp")
+  (c-name "beagle_timestamp_to_unix_time")
+  (return-type "gboolean")
+  (parameters
+    '("time_t*" "time")
+  )
+)
+
+
+
+;; From /usr/include/libbeagle/beagle/beagle-util.h
+
+(define-function beagle_error_quark
+  (c-name "beagle_error_quark")
+  (return-type "GQuark")
+)
+
+(define-function beagle_util_is_path_on_block_device
+  (c-name "beagle_util_is_path_on_block_device")
+  (return-type "gboolean")
+  (parameters
+    '("const-char*" "path")
+  )
+)
+
+

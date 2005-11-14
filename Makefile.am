@@ -10,6 +10,7 @@ SUBDIRS += libbeagle
 endif
 
 SUBDIRS +=			\
+	wrappers		\
 	Util			\
 	images			\
 	glue			\

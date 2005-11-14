@@ -1,0 +1,107 @@
+/* -*- Mode: C; c-basic-offset: 4 -*- */
+%%
+headers
+#include <Python.h>
+
+#define NO_IMPORT_PYGOBJECT
+#include "pygobject.h"
+
+#include <beagle/beagle.h>
+
+#define BEAGLE_TYPE_HIT     (beagle_hit_get_gtype ())
+
+GType 
+beagle_hit_get_gtype (void)
+{
+	static GType our_type = 0;
+	if (!our_type)
+		our_type = g_pointer_type_register_static ("BeagleHit");
+	return our_type;
+} 
+
+static PyObject *
+_helper_wrap_pointer_gslist (GType type, GSList *list)
+{
+    GSList *tmp;
+    PyObject *py_list;
+
+    if ((py_list = PyList_New(0)) == NULL) {
+        return NULL;
+    }
+    for (tmp = list; tmp != NULL; tmp = tmp->next) {
+        PyObject *obj = pyg_pointer_new (type, tmp->data);
+        PyList_Append(py_list, obj);
+        Py_DECREF(obj);
+    }
+    return py_list;
+}
+
+static PyObject *
+_helper_wrap_string_gslist (GSList *list)
+{
+    GSList *tmp;
+    PyObject *py_list;
+
+    if ((py_list = PyList_New(0)) == NULL) {
+        return NULL;
+    }
+    for (tmp = list; tmp != NULL; tmp = tmp->next) {
+        PyObject *str_obj =  PyString_FromString ((char*)tmp->data);
+
+        if (str_obj == NULL) {
+            Py_DECREF(py_list);
+            return NULL;
+        }
+        PyList_Append(py_list, str_obj);
+        Py_DECREF(str_obj);
+    }
+    return py_list;
+}
+%%
+modulename beagle
+%%
+import gobject.GObject as PyGObject_Type
+%%
+ignore-glob
+	beagle_snippet_request_set_query_terms_from_query
+%%
+override beagle_hits_added_response_get_hits noargs
+static PyObject *
+_wrap_beagle_hits_added_response_get_hits(PyGObject *self)
+{
+    GSList *list;
+
+    list = beagle_hits_added_response_get_hits(BEAGLE_HITS_ADDED_RESPONSE (self->obj));
+
+    return _helper_wrap_pointer_gslist (BEAGLE_TYPE_HIT, list);
+}
+%%
+override beagle_hits_subtracted_response_get_uris noargs
+static PyObject *
+_wrap_beagle_hits_subtracted_response_get_uris(PyGObject *self)
+{
+    GSList *list;
+
+    list = beagle_hits_subtracted_response_get_uris(BEAGLE_HITS_SUBTRACTED_RESPONSE (self->obj));
+
+    return _helper_wrap_string_gslist (list);
+}
+%%
+override beagle_client_new kwargs
+static int
+_wrap_beagle_client_new(PyGObject *self, PyObject *args, PyObject *kwargs)
+{
+    static char *kwlist[] = { "client_name", NULL };
+    char *client_name = NULL;
+
+    if (!PyArg_ParseTupleAndKeywords(args, kwargs, "|s:BeagleClient.__init__", kwlist, &client_name))
+        return -1;
+    self->obj = (GObject *)beagle_client_new(client_name);
+
+    if (!self->obj) {
+        PyErr_SetString(PyExc_RuntimeError, "could not create BeagleClient object");
+        return -1;
+    }
+    pygobject_register_wrapper((PyObject *)self);
+    return 0;
+}
