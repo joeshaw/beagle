@@ -111,3 +111,4 @@ char *_beagle_timestamp_to_string (BeagleTimestamp *timestamp);
 char *_beagle_timestamp_get_start (void);
 
 #endif /* __BEAGLE_PRIVATE_H */
+

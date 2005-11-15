@@ -39,15 +39,19 @@
 #define BEAGLE_IS_SHUTDOWN_REQUEST_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), BEAGLE_TYPE_SHUTDOWN_REQUEST))
 #define BEAGLE_SHUTDOWN_REQUEST_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), BEAGLE_TYPE_SHUTDOWN_REQUEST, BeagleShutdownRequestClass))
 
-typedef struct {
-	BeagleRequest parent;
-} BeagleShutdownRequest;
+typedef struct _BeagleShutdownRequest      BeagleShutdownRequest;
+typedef struct _BeagleShutdownRequestClass BeagleShutdownRequestClass;
 
-typedef struct {
+struct _BeagleShutdownRequest {
+	BeagleRequest parent;
+};
+
+struct _BeagleShutdownRequestClass {
 	BeagleRequestClass parent_class;
-} BeagleShutdownRequestClass;
+};
 
 GType        beagle_shutdown_request_get_type     (void);
 BeagleShutdownRequest *beagle_shutdown_request_new          (void);
 
 #endif /* __BEAGLE_SHUTDOWN_REQUEST_H */
+

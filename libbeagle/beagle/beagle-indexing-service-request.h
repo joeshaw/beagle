@@ -40,13 +40,16 @@
 #define BEAGLE_IS_INDEXING_SERVICE_REQUEST_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), BEAGLE_TYPE_INDEXING_SERVICE_REQUEST))
 #define BEAGLE_INDEXING_SERVICE_REQUEST_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), BEAGLE_TYPE_INDEXING_SERVICE_REQUEST, BeagleIndexingServiceRequestClass))
 
-typedef struct {
-	BeagleRequest parent;
-} BeagleIndexingServiceRequest;
+typedef struct _BeagleIndexingServiceRequest      BeagleIndexingServiceRequest;
+typedef struct _BeagleIndexingServiceRequestClass BeagleIndexingServiceRequestClass;
 
-typedef struct {
+struct _BeagleIndexingServiceRequest {
+	BeagleRequest parent;
+};
+
+struct _BeagleIndexingServiceRequestClass {
 	BeagleRequestClass parent_class;
-} BeagleIndexingServiceRequestClass;
+};
 
 GType        beagle_indexing_service_request_get_type     (void);
 BeagleIndexingServiceRequest *beagle_indexing_service_request_new          (void);
@@ -55,3 +58,4 @@ void beagle_indexing_service_request_add (BeagleIndexingServiceRequest *request,
 void beagle_indexing_service_request_remove (BeagleIndexingServiceRequest *request, const char *uri);
 
 #endif /* __BEAGLE_INDEXING_SERVICE_REQUEST_H */
+

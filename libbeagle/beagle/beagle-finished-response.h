@@ -38,14 +38,18 @@
 #define BEAGLE_IS_FINISHED_RESPONSE_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), BEAGLE_TYPE_FINISHED_RESPONSE))
 #define BEAGLE_FINISHED_RESPONSE_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), BEAGLE_TYPE_FINISHED_RESPONSE, BeagleFinishedResponseClass))
 
-typedef struct {
-	BeagleResponse parent;
-} BeagleFinishedResponse;
+typedef struct _BeagleFinishedResponse      BeagleFinishedResponse;
+typedef struct _BeagleFinishedResponseClass BeagleFinishedResponseClass;
 
-typedef struct {
+struct _BeagleFinishedResponse {
+	BeagleResponse parent;
+};
+
+struct _BeagleFinishedResponseClass {
 	BeagleResponseClass parent_class;
-} BeagleFinishedResponseClass;
+};
 
 GType    beagle_finished_response_get_type (void);
 
 #endif /* __BEAGLE_FINISHED_RESPONSE_H */
+

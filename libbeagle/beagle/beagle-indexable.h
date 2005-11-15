@@ -97,3 +97,4 @@ BeagleTimestamp *beagle_indexable_get_timestamp (BeagleIndexable *indexable);
 void             beagle_indexable_set_timestamp (BeagleIndexable *indexable,
 						 BeagleTimestamp *timestamp);
 #endif /* __BEAGLE_INDEXABLE_H */
+

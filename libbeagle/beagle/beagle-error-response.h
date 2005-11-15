@@ -38,16 +38,20 @@
 #define BEAGLE_IS_ERROR_RESPONSE_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), BEAGLE_TYPE_ERROR_RESPONSE))
 #define BEAGLE_ERROR_RESPONSE_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), BEAGLE_TYPE_ERROR_RESPONSE, BeagleErrorResponseClass))
 
-typedef struct {
-	BeagleResponse parent;
-} BeagleErrorResponse;
+typedef struct _BeagleErrorResponse      BeagleErrorResponse;
+typedef struct _BeagleErrorResponseClass BeagleErrorResponseClass;
 
-typedef struct {
+struct _BeagleErrorResponse {
+	BeagleResponse parent;
+};
+
+struct _BeagleErrorResponseClass {
 	BeagleResponseClass parent_class;
-} BeagleErrorResponseClass;
+};
 
 GType beagle_error_response_get_type (void);
 
 G_CONST_RETURN char *beagle_error_response_get_message (BeagleErrorResponse *response);
 
 #endif /* __BEAGLE_ERROR_RESPONSE_H */
+

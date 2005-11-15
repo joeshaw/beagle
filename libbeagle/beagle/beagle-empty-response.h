@@ -38,14 +38,18 @@
 #define BEAGLE_IS_EMPTY_RESPONSE_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), BEAGLE_TYPE_EMPTY_RESPONSE))
 #define BEAGLE_EMPTY_RESPONSE_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), BEAGLE_TYPE_EMPTY_RESPONSE, BeagleEmptyResponseClass))
 
-typedef struct {
-	BeagleResponse parent;
-} BeagleEmptyResponse;
+typedef struct _BeagleEmptyResponse      BeagleEmptyResponse;
+typedef struct _BeagleEmptyResponseClass BeagleEmptyResponseClass;
 
-typedef struct {
+struct _BeagleEmptyResponse {
+	BeagleResponse parent;
+};
+
+struct _BeagleEmptyResponseClass {
 	BeagleResponseClass parent_class;
-} BeagleEmptyResponseClass;
+};
 
 GType beagle_empty_response_get_type (void);
 
 #endif /* __BEAGLE_EMPTY_RESPONSE_H */
+

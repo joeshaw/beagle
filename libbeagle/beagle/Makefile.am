@@ -74,12 +74,12 @@ libbeagleinclude_HEADERS = 			\
 	beagle-query-part-or.h			\
 	beagle-query-part-property.h		\
 	beagle-query-part-text.h		\
-	beagle-search-term-response.h		\
-	beagle-snippet-request.h		\
-	beagle-snippet-response.h		\
-	beagle-shutdown-request.h		\
 	beagle-request.h			\
 	beagle-response.h			\
+	beagle-search-term-response.h		\
+	beagle-shutdown-request.h		\
+	beagle-snippet-request.h		\
+	beagle-snippet-response.h		\
 	beagle-timestamp.h			\
 	beagle-util.h
 

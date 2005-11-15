@@ -43,18 +43,21 @@
 #define BEAGLE_IS_QUERY_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), BEAGLE_TYPE_QUERY))
 #define BEAGLE_QUERY_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), BEAGLE_TYPE_QUERY, BeagleQueryClass))
 
-typedef struct {
-	BeagleRequest parent;
-} BeagleQuery;
+typedef struct _BeagleQuery      BeagleQuery;
+typedef struct _BeagleQueryClass BeagleQueryClass;
 
-typedef struct {
+struct _BeagleQuery {
+	BeagleRequest parent;
+};
+
+struct _BeagleQueryClass {
 	BeagleRequestClass parent_class;
 
 	void (*hits_added)      (BeagleQuery *query, BeagleHitsAddedResponse *response);
 	void (*hits_subtracted) (BeagleQuery *query, BeagleHitsSubtractedResponse *response);
 	void (*cancelled)       (BeagleQuery *query);
 	void (*finished)        (BeagleQuery *query, BeagleFinishedResponse *response);
-} BeagleQueryClass;
+};
 
 GType        beagle_query_get_type     (void);
 BeagleQuery *beagle_query_new          (void);
@@ -76,3 +79,4 @@ void	     beagle_query_set_max_hits (BeagleQuery *query,
 int          beagle_query_get_max_hits (BeagleQuery *query);
 
 #endif /* __BEAGLE_QUERY_H */
+

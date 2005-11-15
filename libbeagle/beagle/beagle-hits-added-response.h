@@ -39,16 +39,20 @@
 #define BEAGLE_IS_HITS_ADDED_RESPONSE_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), BEAGLE_TYPE_HITS_ADDED_RESPONSE))
 #define BEAGLE_HITS_ADDED_RESPONSE_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), BEAGLE_TYPE_HITS_ADDED_RESPONSE, BeagleHitsAddedResponseClass))
 
-typedef struct {
-	BeagleResponse parent;
-} BeagleHitsAddedResponse;
+typedef struct _BeagleHitsAddedResponse      BeagleHitsAddedResponse;
+typedef struct _BeagleHitsAddedResponseClass BeagleHitsAddedResponseClass;
 
-typedef struct {
+struct _BeagleHitsAddedResponse {
+	BeagleResponse parent;
+};
+
+struct _BeagleHitsAddedResponseClass {
 	BeagleResponseClass parent_class;
-} BeagleHitsAddedResponseClass;
+};
 
 GType    beagle_hits_added_response_get_type (void);
 
 GSList *beagle_hits_added_response_get_hits (BeagleHitsAddedResponse *response);
 
 #endif /* __BEAGLE_HITS_ADDED_RESPONSE_H */
+

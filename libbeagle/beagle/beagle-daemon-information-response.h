@@ -39,13 +39,16 @@
 #define BEAGLE_IS_DAEMON_INFORMATION_RESPONSE_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), BEAGLE_TYPE_DAEMON_INFORMATION_RESPONSE))
 #define BEAGLE_DAEMON_INFORMATION_RESPONSE_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), BEAGLE_TYPE_DAEMON_INFORMATION_RESPONSE, BeagleDaemonInformationResponseClass))
 
-typedef struct {
-	BeagleResponse parent;
-} BeagleDaemonInformationResponse;
+typedef struct _BeagleDaemonInformationResponse      BeagleDaemonInformationResponse;
+typedef struct _BeagleDaemonInformationResponseClass BeagleDaemonInformationResponseClass;
 
-typedef struct {
+struct _BeagleDaemonInformationResponse {
+	BeagleResponse parent;
+};
+
+struct _BeagleDaemonInformationResponseClass {
 	BeagleResponseClass parent_class;
-} BeagleDaemonInformationResponseClass;
+};
 
 GType        beagle_daemon_information_response_get_type     (void);
 
@@ -62,3 +65,4 @@ gboolean
 beagle_daemon_information_response_is_indexing (BeagleDaemonInformationResponse *response);
 
 #endif /* __BEAGLE_DAEMON_INFORMATION_RESPONSE_H */
+

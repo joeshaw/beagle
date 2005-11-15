@@ -39,13 +39,16 @@
 #define BEAGLE_IS_SEARCH_TERM_RESPONSE_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), BEAGLE_TYPE_SEARCH_TERM_RESPONSE))
 #define BEAGLE_SEARCH_TERM_RESPONSE_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), BEAGLE_TYPE_SEARCH_TERM_RESPONSE, BeagleSearchTermResponseClass))
 
-typedef struct {
-	BeagleResponse parent;
-} BeagleSearchTermResponse;
+typedef struct _BeagleSearchTermResponse      BeagleSearchTermResponse;
+typedef struct _BeagleSearchTermResponseClass BeagleSearchTermResponseClass;
 
-typedef struct {
+struct _BeagleSearchTermResponse {
+	BeagleResponse parent;
+};
+
+struct _BeagleSearchTermResponseClass {
 	BeagleResponseClass parent_class;
-} BeagleSearchTermResponseClass;
+};
 
 GType    beagle_search_term_response_get_type (void);
 
@@ -53,3 +56,4 @@ GSList *beagle_search_term_response_get_exact_text (BeagleSearchTermResponse *re
 GSList *beagle_search_term_response_get_stemmed_text (BeagleSearchTermResponse *response);
 
 #endif /* __BEAGLE_SEARCH_TERM_RESPONSE_H */
+

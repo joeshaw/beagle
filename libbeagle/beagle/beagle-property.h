@@ -62,3 +62,4 @@ gboolean beagle_property_get_is_mutable (BeagleProperty *prop);
 void beagle_property_set_is_mutable (BeagleProperty *prop, gboolean is_keyword);
 
 #endif /* __BEAGLE_PROPERTY_H */
+

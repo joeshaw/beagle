@@ -41,17 +41,19 @@
 #define BEAGLE_IS_QUERY_PART_PROPERTY_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), BEAGLE_TYPE_QUERY_PART_PROPERTY))
 #define BEAGLE_QUERY_PART_PROPERTY_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), BEAGLE_TYPE_QUERY_PART_PROPERTY, BeagleQueryPartPropertyClass))
 
-typedef struct {
-	BeagleQueryPart parent;
-} BeagleQueryPartProperty;
+typedef struct _BeagleQueryPartProperty      BeagleQueryPartProperty;
+typedef struct _BeagleQueryPartPropertyClass BeagleQueryPartPropertyClass;
 
-typedef struct {
+struct _BeagleQueryPartProperty {
+	BeagleQueryPart parent;
+};
+
+struct _BeagleQueryPartPropertyClass {
         BeagleQueryPartClass parent_class;
-} BeagleQueryPartPropertyClass;
+};
 
 GType                    beagle_query_part_property_get_type    (void);
 BeagleQueryPartProperty *beagle_query_part_property_new         (void);
-void                     beagle_query_part_property_free        (BeagleQueryPartProperty *part);
 
 void beagle_query_part_property_set_key           (BeagleQueryPartProperty *part, 
 						   const char              *key);
@@ -60,3 +62,4 @@ void beagle_query_part_property_set_value         (BeagleQueryPartProperty *part
 void beagle_query_part_property_set_property_type (BeagleQueryPartProperty *part,
 						   BeaglePropertyType      prop_type);
 #endif /* __BEAGLE_QUERY_PART_PROPERTY_H */
+

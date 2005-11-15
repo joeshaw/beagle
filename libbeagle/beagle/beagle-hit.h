@@ -54,3 +54,4 @@ G_CONST_RETURN char *beagle_hit_get_property (BeagleHit *hit, const char *key);
 BeagleProperty *beagle_hit_lookup_property (BeagleHit *hit, const char *key);
 
 #endif /* __BEAGLE_HIT_H */
+

@@ -61,3 +61,4 @@ BeagleResponse *_beagle_parser_context_finished (BeagleParserContext *ctx);
 extern int _beagle_parser_state_index;
 
 #endif /* __BEAGLE_PARSER_H */
+

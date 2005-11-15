@@ -39,13 +39,16 @@
 #define BEAGLE_IS_CLIENT_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), BEAGLE_TYPE_CLIENT))
 #define BEAGLE_CLIENT_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), BEAGLE_TYPE_CLIENT, BeagleClientClass))
 
-typedef struct {
-	GObject parent;
-} BeagleClient;
+typedef struct _BeagleClient      BeagleClient;
+typedef struct _BeagleClientClass BeagleClientClass;
 
-typedef struct {
+struct _BeagleClient {
+	GObject parent;
+};
+
+struct _BeagleClientClass {
 	GObjectClass parent_class;
-} BeagleClientClass;
+};
 
 GType        beagle_client_get_type              (void);
 BeagleClient *beagle_client_new                  (const char *client_name);
@@ -59,3 +62,4 @@ gboolean beagle_client_send_request_async  (BeagleClient   *client,
 					    GError        **err);
 
 #endif /* __BEAGLE_CLIENT_H */
+

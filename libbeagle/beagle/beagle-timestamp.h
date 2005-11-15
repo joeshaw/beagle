@@ -40,3 +40,4 @@ void beagle_timestamp_free (BeagleTimestamp *timestamp);
 gboolean beagle_timestamp_to_unix_time (BeagleTimestamp *timestamp, time_t *time);
  
 #endif /* __BEAGLE_TIMESTAMP_H */
+

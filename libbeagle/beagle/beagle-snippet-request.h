@@ -41,13 +41,16 @@
 #define BEAGLE_IS_SNIPPET_REQUEST_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), BEAGLE_TYPE_SNIPPET_REQUEST))
 #define BEAGLE_SNIPPET_REQUEST_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), BEAGLE_TYPE_SNIPPET_REQUEST, BeagleSnippetRequestClass))
 
-typedef struct {
-	BeagleRequest parent;
-} BeagleSnippetRequest;
+typedef struct _BeagleSnippetRequest      BeagleSnippetRequest;
+typedef struct _BeagleSnippetRequestClass BeagleSnippetRequestClass;
 
-typedef struct {
+struct _BeagleSnippetRequest {
+	BeagleRequest parent;
+};
+
+struct _BeagleSnippetRequestClass {
 	BeagleRequestClass parent_class;
-} BeagleSnippetRequestClass;
+};
 
 GType        beagle_snippet_request_get_type     (void);
 BeagleSnippetRequest *beagle_snippet_request_new          (void);
@@ -62,3 +65,4 @@ void beagle_snippet_request_set_query_terms_from_query (BeagleSnippetRequest *re
 							BeagleQuery          *query);
 
 #endif /* __BEAGLE_SNIPPET_REQUEST_H */
+

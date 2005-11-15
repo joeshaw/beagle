@@ -39,11 +39,14 @@
 #define BEAGLE_IS_REQUEST_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), BEAGLE_TYPE_REQUEST))
 #define BEAGLE_REQUEST_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), BEAGLE_TYPE_REQUEST, BeagleRequestClass))
 
-typedef struct {
-	GObject parent;
-} BeagleRequest;
+typedef struct _BeagleRequest      BeagleRequest;
+typedef struct _BeagleRequestClass BeagleRequestClass;
 
-typedef struct {
+struct _BeagleRequest {
+	GObject parent;
+};
+
+struct _BeagleRequestClass {
 	GObjectClass parent_class;
 
 	GHashTable *response_types;
@@ -55,9 +58,10 @@ typedef struct {
 	void (* closed) (BeagleRequest *request);
 	void (* response) (BeagleRequest *request, BeagleResponse *response);
 	void (* error) (BeagleRequest *request, GError *error);
-} BeagleRequestClass;
+};
 
 GType    beagle_request_get_type (void);
 
 
 #endif /* __BEAGLE_REQUEST_H */
+

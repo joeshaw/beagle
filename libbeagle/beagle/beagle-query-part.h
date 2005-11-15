@@ -46,15 +46,18 @@ typedef enum {
 #define BEAGLE_IS_QUERY_PART_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), BEAGLE_TYPE_QUERY_PART))
 #define BEAGLE_QUERY_PART_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), BEAGLE_TYPE_QUERY_PART, BeagleQueryPartClass))
 
-typedef struct {
-	GObject parent;
-} BeagleQueryPart;
+typedef struct _BeagleQueryPart      BeagleQueryPart;
+typedef struct _BeagleQueryPartClass BeagleQueryPartClass;
 
-typedef struct {
+struct _BeagleQueryPart {
+	GObject parent;
+};
+
+struct _BeagleQueryPartClass {
 	GObjectClass parent_class;
 	
         GString *(* to_xml) (BeagleQueryPart *part);
-} BeagleQueryPartClass;
+};
 
 GType    beagle_query_part_get_type  (void);
 
@@ -63,3 +66,4 @@ void     beagle_query_part_set_logic (BeagleQueryPart *part,
 
 
 #endif /* __BEAGLE_QUERY_PART_H */
+

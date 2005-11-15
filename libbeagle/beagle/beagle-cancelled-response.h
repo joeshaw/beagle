@@ -38,14 +38,18 @@
 #define BEAGLE_IS_CANCELLED_RESPONSE_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), BEAGLE_TYPE_CANCELLED_RESPONSE))
 #define BEAGLE_CANCELLED_RESPONSE_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), BEAGLE_TYPE_CANCELLED_RESPONSE, BeagleCancelledResponseClass))
 
-typedef struct {
-	BeagleResponse parent;
-} BeagleCancelledResponse;
+typedef struct _BeagleCancelledResponse      BeagleCancelledResponse;
+typedef struct _BeagleCancelledResponseClass BeagleCancelledResponseClass;
 
-typedef struct {
+struct _BeagleCancelledResponse {
+	BeagleResponse parent;
+};
+
+struct _BeagleCancelledResponseClass {
 	BeagleResponseClass parent_class;
-} BeagleCancelledResponseClass;
+};
 
 GType    beagle_cancelled_response_get_type (void);
 
 #endif /* __BEAGLE_CANCELLED_RESPONSE_H */
+

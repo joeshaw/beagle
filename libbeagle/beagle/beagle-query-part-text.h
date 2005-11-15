@@ -41,17 +41,19 @@
 #define BEAGLE_IS_QUERY_PART_TEXT_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), BEAGLE_TYPE_QUERY_PART_TEXT))
 #define BEAGLE_QUERY_PART_TEXT_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), BEAGLE_TYPE_QUERY_PART_TEXT, BeagleQueryPartTextClass))
 
-typedef struct {
-	BeagleQueryPart parent;
-} BeagleQueryPartText;
+typedef struct _BeagleQueryPartText      BeagleQueryPartText;
+typedef struct _BeagleQueryPartTextClass BeagleQueryPartTextClass;
 
-typedef struct {
+struct _BeagleQueryPartText {
+	BeagleQueryPart parent;
+};
+
+struct _BeagleQueryPartTextClass {
         BeagleQueryPartClass parent_class;
-} BeagleQueryPartTextClass;
+};
 
 GType                beagle_query_part_text_get_type    (void);
 BeagleQueryPartText *beagle_query_part_text_new         (void);
-void                 beagle_query_part_text_free        (BeagleQueryPartText *part);
 
 void beagle_query_part_text_set_text                    (BeagleQueryPartText  *part,
 							 const char           *text);
@@ -60,3 +62,4 @@ void beagle_query_part_text_set_search_full_text        (BeagleQueryPartText  *p
 void beagle_query_part_text_set_search_properties       (BeagleQueryPartText  *part,
 							 gboolean             search_properties);
 #endif /* __BEAGLE_QUERY_PART_TEXT_H */
+

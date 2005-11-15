@@ -39,15 +39,19 @@
 #define BEAGLE_IS_DAEMON_INFORMATION_REQUEST_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), BEAGLE_TYPE_DAEMON_INFORMATION_REQUEST))
 #define BEAGLE_DAEMON_INFORMATION_REQUEST_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), BEAGLE_TYPE_DAEMON_INFORMATION_REQUEST, BeagleDaemonInformationRequestClass))
 
-typedef struct {
-	BeagleRequest parent;
-} BeagleDaemonInformationRequest;
+typedef struct _BeagleDaemonInformationRequest      BeagleDaemonInformationRequest;
+typedef struct _BeagleDaemonInformationRequestClass BeagleDaemonInformationRequestClass;
 
-typedef struct {
+struct _BeagleDaemonInformationRequest {
+	BeagleRequest parent;
+};
+
+struct _BeagleDaemonInformationRequestClass {
 	BeagleRequestClass parent_class;
-} BeagleDaemonInformationRequestClass;
+};
 
 GType        beagle_daemon_information_request_get_type     (void);
 BeagleDaemonInformationRequest *beagle_daemon_information_request_new          (void);
 
 #endif /* __BEAGLE_DAEMON_INFORMATION_REQUEST_H */
+

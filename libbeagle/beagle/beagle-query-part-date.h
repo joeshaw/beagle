@@ -41,20 +41,23 @@
 #define BEAGLE_IS_QUERY_PART_DATE_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), BEAGLE_TYPE_QUERY_PART_DATE))
 #define BEAGLE_QUERY_PART_DATE_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), BEAGLE_TYPE_QUERY_PART_DATE, BeagleQueryPartDateClass))
 
-typedef struct {
-	BeagleQueryPart parent;
-} BeagleQueryPartDate;
+typedef struct _BeagleQueryPartDate      BeagleQueryPartDate;
+typedef struct _BeagleQueryPartDateClass BeagleQueryPartDateClass;
 
-typedef struct {
+struct _BeagleQueryPartDate {
+	BeagleQueryPart parent;
+};
+
+struct _BeagleQueryPartDateClass {
         BeagleQueryPartClass parent_class;
-} BeagleQueryPartDateClass;
+};
 
 GType                 beagle_query_part_date_get_type    (void);
 BeagleQueryPartDate * beagle_query_part_date_new         (void);
-void                  beagle_query_part_date_free        (BeagleQueryPartDate *part);
 
 void                  beagle_query_part_date_set_start_date (BeagleQueryPartDate *part,
 							     BeagleTimestamp *start_date);
 void                  beagle_query_part_date_set_end_date   (BeagleQueryPartDate *part,
 							     BeagleTimestamp *end_date);
 #endif /* __BEAGLE_QUERY_PART_DATE_H */
+

@@ -53,3 +53,4 @@ struct _BeagleResponseClass {
 GType    beagle_response_get_type (void);
 
 #endif /* __BEAGLE_RESPONSE_H */
+

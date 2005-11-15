@@ -41,19 +41,22 @@
 #define BEAGLE_IS_QUERY_PART_OR_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), BEAGLE_TYPE_QUERY_PART_OR))
 #define BEAGLE_QUERY_PART_OR_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), BEAGLE_TYPE_QUERY_PART_OR, BeagleQueryPartOrClass))
 
-typedef struct {
-	BeagleQueryPart parent;
-} BeagleQueryPartOr;
+typedef struct _BeagleQueryPartOr      BeagleQueryPartOr;
+typedef struct _BeagleQueryPartOrClass BeagleQueryPartOrClass;
 
-typedef struct {
+struct _BeagleQueryPartOr {
+	BeagleQueryPart parent;
+};
+
+struct _BeagleQueryPartOrClass {
         BeagleQueryPartClass parent_class;
-} BeagleQueryPartOrClass;
+};
 
 GType              beagle_query_part_or_get_type    (void);
 BeagleQueryPartOr *beagle_query_part_or_new         (void);
-void               beagle_query_part_or_free        (BeagleQueryPartOr *part);
 
 void beagle_query_part_or_add_subpart               (BeagleQueryPartOr *part,
 						     BeagleQueryPart   *subpart);
 
 #endif /* __BEAGLE_QUERY_PART_OR_H */
+

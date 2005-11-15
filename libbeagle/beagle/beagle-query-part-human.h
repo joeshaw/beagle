@@ -41,19 +41,22 @@
 #define BEAGLE_IS_QUERY_PART_HUMAN_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), BEAGLE_TYPE_QUERY_PART_HUMAN))
 #define BEAGLE_QUERY_PART_HUMAN_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), BEAGLE_TYPE_QUERY_PART_HUMAN, BeagleQueryPartHumanClass))
 
-typedef struct {
-	BeagleQueryPart parent;
-} BeagleQueryPartHuman;
+typedef struct _BeagleQueryPartHuman      BeagleQueryPartHuman;
+typedef struct _BeagleQueryPartHumanClass BeagleQueryPartHumanClass;
 
-typedef struct {
+struct _BeagleQueryPartHuman {
+	BeagleQueryPart parent;
+};
+
+struct _BeagleQueryPartHumanClass {
         BeagleQueryPartClass parent_class;
-} BeagleQueryPartHumanClass;
+};
 
 GType                 beagle_query_part_human_get_type    (void);
 BeagleQueryPartHuman *beagle_query_part_human_new         (void);
-void                  beagle_query_part_human_free        (BeagleQueryPartHuman *part);
 
 void beagle_query_part_human_set_string                   (BeagleQueryPartHuman *part,
 							   const char           *string);
 
 #endif /* __BEAGLE_QUERY_PART_HUMAN_H */
+

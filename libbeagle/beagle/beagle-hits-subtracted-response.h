@@ -39,16 +39,20 @@
 #define BEAGLE_IS_HITS_SUBTRACTED_RESPONSE_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), BEAGLE_TYPE_HITS_SUBTRACTED_RESPONSE))
 #define BEAGLE_HITS_SUBTRACTED_RESPONSE_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), BEAGLE_TYPE_HITS_SUBTRACTED_RESPONSE, BeagleHitsSubtractedResponseClass))
 
-typedef struct {
-	BeagleResponse parent;
-} BeagleHitsSubtractedResponse;
+typedef struct _BeagleHitsSubtractedResponse      BeagleHitsSubtractedResponse;
+typedef struct _BeagleHitsSubtractedResponseClass BeagleHitsSubtractedResponseClass;
 
-typedef struct {
+struct _BeagleHitsSubtractedResponse {
+	BeagleResponse parent;
+};
+
+struct _BeagleHitsSubtractedResponseClass {
 	BeagleResponseClass parent_class;
-} BeagleHitsSubtractedResponseClass;
+};
 
 GType    beagle_hits_subtracted_response_get_type (void);
 
 GSList *beagle_hits_subtracted_response_get_uris (BeagleHitsSubtractedResponse *response);
 
 #endif /* __BEAGLE_HITS_SUBTRACTED_RESPONSE_H */
+
