@@ -2,6 +2,8 @@
 
 	* Use Mono.Unix.Native. This also includes a switch to Mono's extended
 	attribute bindings which I wrote ages ago.
+	* Tiles/TileBlog.cs, Tiles/template-blog.html: Update with recent property
+	name changes
 
 2005-11-15  Debajyoti Bera <dbera.web@gmail.com>
 

@@ -62,7 +62,7 @@ namespace Beagle.Tile {
 			Process p = new Process ();
 			p.StartInfo.UseShellExecute = false;
 			p.StartInfo.FileName = "desktop-launch";
-			p.StartInfo.Arguments = Hit ["fixme:itemuri"];
+			p.StartInfo.Arguments = Hit ["dc:identifier"];
 
 			try {
 				p.Start ();
@@ -71,7 +71,7 @@ namespace Beagle.Tile {
 			}
 #else			
 			try {
-				Gnome.Url.Show (Hit ["fixme:itemuri"]);
+				Gnome.Url.Show (Hit ["dc:identifier"]);
 			} catch (Exception e) {
 				Console.WriteLine ("Could not load handler for {0}: {1}", Hit ["fixme:itemuri"], e);
 			}
