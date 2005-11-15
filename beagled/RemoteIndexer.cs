@@ -28,6 +28,7 @@ using System;
 using System.Diagnostics;
 using System.IO;
 using System.Threading;
+using Mono.Unix;
 
 using Beagle;
 using Beagle.Util;

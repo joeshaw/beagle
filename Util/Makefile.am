@@ -87,8 +87,6 @@ CSFILES = 			        	\
 	$(srcdir)/Timeline.cs			\
 	$(srcdir)/TopScores.cs			\
 	$(srcdir)/UnclosableStream.cs		\
-	$(srcdir)/UnixClient.cs			\
-	$(srcdir)/UnixListener.cs		\
 	$(srcdir)/UriFu.cs			\
 	$(srcdir)/XKeybinder.cs			\
 	$(srcdir)/XmlFu.cs
