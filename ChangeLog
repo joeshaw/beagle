@@ -1,3 +1,8 @@
+2005-11-15  Debajyoti Bera <dbera.web@gmail.com>
+
+	* beagled/ExtractContent.cs: Add option to specify output file.
+	* HtmlFilter: Filter non-english URLs correctly.
+
 2005-11-14  Debajyoti Bera <dbera.web@gmail.com>
 	
 	* Best: Fix not storing settings when ran with --no-tray

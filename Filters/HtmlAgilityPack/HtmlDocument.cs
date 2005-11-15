@@ -1761,10 +1761,11 @@ namespace HtmlAgilityPack
 			{
 				// only these nodes can occur before meta
 				// if we started seeing any other node, we will never see a meta node
-				if ((node.NodeType == HtmlNodeType.Document || node.NodeType == HtmlNodeType.Element) &&
-					     (node.Name != "head" || node.Name != "script" ||
-					      node.Name != "style" || node.Name != "title") ||
-					      node.Name != "head" )
+				if (node.NodeType == HtmlNodeType.Element &&
+					     (node.Name != "head" && node.Name != "script" &&
+					      node.Name != "style" && node.Name != "title" &&
+					      node.Name != "head" && node.Name != "link" &&
+					      node.Name != "html" && node.Name != "meta"))
 				    throw new EncodingFoundException (null);
 				else if (node.Name == "meta") // all nodes names are lowercase
 				{

@@ -30,6 +30,7 @@ using System;
 using System.Collections;
 using System.IO;
 using System.Text;
+using SW=System.Web;
 
 using Beagle.Daemon;
 
@@ -150,18 +151,15 @@ namespace Beagle.Filters {
 					if (node.Name == "img" && node.StartTag) {
 						string attr = node.GetAttributeValue ("alt", "");
 						if (attr != "") {
-							AppendText (attr);
+							AppendText (HtmlEntity.DeEntitize (attr));
 						}
 					}
 					if (node.Name == "a" && node.StartTag) {
 						string attr = node.GetAttributeValue ("href", "");
 						if (attr != "") {
-							AppendText (attr);
+							AppendText (HtmlEntity.DeEntitize (SW.HttpUtility.UrlDecode (attr)));
 						}
-						//Console.WriteLine ("Start AAAAAAAAAAAA = " + node.GetAttributeValue ("href", ""));
 					}
-					//if (node.Name == "a" && !node.StartTag)
-					//	Console.WriteLine ("Done AAAAAAAAAAAAA");
 					if (breaksText && !node.StartTag)
 						AppendWhiteSpace ();
 					if (breaksStructure && !node.StartTag)

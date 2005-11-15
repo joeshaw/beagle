@@ -82,6 +82,7 @@ ASSEMBLIES =				\
 	$(BEAGLED_LIBS)			\
 	-r:ICSharpCode.SharpZipLib.dll	\
 	-r:Mono.Posix			\
+	-r:System.Web			\
 	$(LOCAL_ASSEMBLIES:%=-r:%)
 
 RESOURCES =

@@ -171,6 +171,7 @@ class ExtractContentTool {
 		Console.WriteLine ("  --tokenize\t\t\tTokenize the text before printing");
 		Console.WriteLine ("  --show-children\t\tShow filtering information for items created by filters");
 		Console.WriteLine ("  --mimetype=<mime_type>\tUse filter for mime_type");
+		Console.WriteLine ("  --outfile=<filename>\t\tOutput file name");
 		Console.WriteLine ("  --help\t\t\tShow this message");
 		Console.WriteLine ();
 	}
@@ -191,11 +192,22 @@ class ExtractContentTool {
 		if (Array.IndexOf (args, "--show-children") != -1)
 			show_children = true;
 
+		StreamWriter writer = null;
+		string outfile = null;
 		foreach (string arg in args) {
 
 			// mime-type option
 			if (arg.StartsWith ("--mimetype=")) {
 				mime_type = arg.Substring (11);    
+				continue;
+			// output file option
+			// we need this in case the output contains different encoding
+			// printing to Console might not always display properly
+			} else if (arg.StartsWith ("--outfile=")) {
+				outfile = arg.Substring (10);    
+				Console.WriteLine ("Redirecting output to " + outfile);
+				FileStream f = new FileStream (outfile, FileMode.Create);
+				writer = new StreamWriter (f, System.Text.Encoding.UTF8);
 				continue;
 			} else if (arg.StartsWith ("--")) // option, skip it 
 				continue;
@@ -206,12 +218,28 @@ class ExtractContentTool {
 				indexable.MimeType = mime_type;
 
 			try {
+				if (writer != null) {
+					Console.SetOut (writer);
+				}
+
 				Display (indexable);
+				if (writer != null) {
+					writer.Flush ();
+				}
+				
+				if (outfile != null) {
+					StreamWriter standardOutput = new StreamWriter(Console.OpenStandardOutput());
+					standardOutput.AutoFlush = true;
+					Console.SetOut(standardOutput);
+				}
+				
 			} catch (Exception e) {
 				Console.WriteLine ("Unable to filter {0}: {1}", uri, e.Message);
 				return -1;
 			}
 		}
+		if (writer != null)
+			writer.Close ();
 
 		return 0;
 	}
