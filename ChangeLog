@@ -1,3 +1,8 @@
+2005-11-15  Daniel Drake  <dsd@gentoo.org>
+
+	* Use Mono.Unix.Native. This also includes a switch to Mono's extended
+	attribute bindings which I wrote ages ago.
+
 2005-11-15  Debajyoti Bera <dbera.web@gmail.com>
 
 	* beagled/ExtractContent.cs: Add option to specify output file.

@@ -215,7 +215,7 @@ namespace Beagle.Daemon.KMailQueryable {
 
 				
 				try {
-					mbox_fd = Mono.Unix.Syscall.open (mbox_file, Mono.Unix.OpenFlags.O_RDONLY);
+					mbox_fd = Mono.Unix.Native.Syscall.open (mbox_file, Mono.Unix.Native.OpenFlags.O_RDONLY);
 				} catch (System.IO.FileNotFoundException e) {
 					Logger.Log.Warn ("mbox " + mbox_file + " deleted while indexing.");
 					return false;

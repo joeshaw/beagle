@@ -65,7 +65,7 @@ namespace Beagle.Util {
 				// if default.kde == hicolor.
 
 				StringBuilder icon_theme_default_sb = new StringBuilder ();
-				Mono.Unix.Syscall.readlink (Path.Combine (icon_prefix, "default.kde"), icon_theme_default_sb);
+				Mono.Unix.Native.Syscall.readlink (Path.Combine (icon_prefix, "default.kde"), icon_theme_default_sb);
 				string icon_theme_default = icon_theme_default_sb.ToString ();
 				if (icon_theme_default != null) {
 					if (! icon_theme_default.StartsWith ("/"))

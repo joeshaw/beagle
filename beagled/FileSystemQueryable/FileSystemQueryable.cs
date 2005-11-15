@@ -864,9 +864,9 @@ namespace Beagle.Daemon.FileSystemQueryable {
 				}
 			}
 
-			Mono.Unix.Stat stat;
+			Mono.Unix.Native.Stat stat;
 			try {
-				Mono.Unix.Syscall.stat (path, out stat);
+				Mono.Unix.Native.Syscall.stat (path, out stat);
 			} catch (Exception ex) {
 				Logger.Log.Debug ("Caught exception stat-ing {0}", path);
 				Logger.Log.Debug (ex);

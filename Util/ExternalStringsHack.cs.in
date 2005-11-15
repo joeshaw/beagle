@@ -40,7 +40,6 @@ namespace Beagle.Util {
 			get { return "@KDE_PREFIX@"; }
 		}
 
-		public const string XattrLib = "@XATTR_LIB@";
 		public const string SqliteVersion = "@SQLITE_MAJ_VER@";
 	}
 }

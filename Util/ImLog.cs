@@ -31,7 +31,7 @@ using System.Globalization;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Xml;
-using Mono.Unix;
+using Mono.Unix.Native;
 
 namespace Beagle.Util {
 
@@ -61,8 +61,8 @@ namespace Beagle.Util {
 			private long timestamp;
 
 			public DateTime Timestamp {
-				get { return UnixConvert.ToDateTime (timestamp); }
-				set { timestamp = UnixConvert.FromDateTime (value); }
+				get { return NativeConvert.ToDateTime (timestamp); }
+				set { timestamp = NativeConvert.FromDateTime (value); }
 			}
 			
 			public String Who;

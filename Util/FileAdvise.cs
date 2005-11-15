@@ -94,7 +94,7 @@ namespace Beagle.Util {
 								  FileAccess.Read);
 				int ret = GiveAdvice (file, AdviseNormal);
 				if (ret != 0)
-					Log.Error ("FileAdvise failed: {0}", Mono.Unix.Stdlib.strerror (Mono.Unix.Syscall.GetLastError()));
+					Log.Error ("FileAdvise failed: {0}", Mono.Unix.Native.Stdlib.strerror (Mono.Unix.Native.Stdlib.GetLastError()));
 				file.Close ();
 			} catch { }
 		}

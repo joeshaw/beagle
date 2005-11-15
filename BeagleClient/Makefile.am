@@ -1,9 +1,8 @@
 
 # Warnings we don't want to see
 # 0067 = event defined but not used
-# 0618 = Mono.Posix.Syscall is obsolete
 
-CSC = mcs -debug -nowarn:0067,0618
+CSC = mcs -debug -nowarn:0067
 
 TARGET = Beagle.dll
 

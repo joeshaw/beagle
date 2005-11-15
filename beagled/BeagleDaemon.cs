@@ -411,10 +411,10 @@ namespace Beagle.Daemon {
 			OurSignalHandler (-1);
 
 			// Set up our signal handler
-			Mono.Unix.Stdlib.signal (Mono.Unix.Signum.SIGINT, OurSignalHandler);
-			Mono.Unix.Stdlib.signal (Mono.Unix.Signum.SIGTERM, OurSignalHandler);
+			Mono.Unix.Native.Stdlib.signal (Mono.Unix.Native.Signum.SIGINT, OurSignalHandler);
+			Mono.Unix.Native.Stdlib.signal (Mono.Unix.Native.Signum.SIGTERM, OurSignalHandler);
 			if (Environment.GetEnvironmentVariable("BEAGLE_THERE_BE_NO_QUITTIN") == null)
-				Mono.Unix.Stdlib.signal (Mono.Unix.Signum.SIGQUIT, OurSignalHandler);
+				Mono.Unix.Native.Stdlib.signal (Mono.Unix.Native.Signum.SIGQUIT, OurSignalHandler);
 		}
 
 		// Our handler triggers an orderly shutdown when it receives a signal.

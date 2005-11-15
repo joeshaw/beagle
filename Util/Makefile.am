@@ -1,8 +1,7 @@
 # Warnings we don't want to see
 # 0067 = event defined but not used
-# 0618 = Mono.Posix.Syscall is obsolete
 
-CSC = mcs -debug -nowarn:0067,0618
+CSC = mcs -debug -nowarn:0067
 
 
 TARGET = Util.dll
@@ -38,7 +37,6 @@ $(EXTSTR): $(EXTSTR_IN)
 		-e "s|\@VERSION\@|$(VERSION)|g"			\
 		-e "s|\@GNOME_PREFIX\@|$(GNOME_PREFIX)|g"	\
 		-e "s|\@KDE_PREFIX\@|$(KDE_PREFIX)|g"		\
-		-e "s|\@XATTR_LIB\@|$(XATTR_LIB)|g"		\
 		-e "s|\@SQLITE_MAJ_VER\@|$(SQLITE_MAJ_VER)|g"	\
 		< $(EXTSTR_IN) > $@
 

@@ -35,7 +35,7 @@
 using System;
 using System.Collections;
 using System.Text;
-using Mono.Unix;
+using Mono.Unix.Native;
 using System.Runtime.InteropServices;
 using System.Text.RegularExpressions;
 using System.Data;
@@ -46,50 +46,6 @@ namespace Mono.Data.SqliteClient
 {
 	public class SqliteCommand : IDbCommand
 	{
-
-		// FIXME: This won't be added to upstream, but Mono.Unix.UnixMarshal.StringToAlloc is not available in any mono releases yet.
-		public static IntPtr StringToAlloc (string s)
-		{
-			return StringToAlloc (s, Encoding.Default);
-		}
-
-		public static IntPtr StringToAlloc (string s, Encoding encoding)
-		{
-			return StringToAlloc (s, 0, s.Length, encoding);
-		}
-
-		public static IntPtr StringToAlloc (string s, int index, int count)
-		{
-			return StringToAlloc (s, index, count, Encoding.Default);
-		}
-
-		public static IntPtr StringToAlloc (string s, int index, int count, Encoding encoding)
-		{
-			int min_byte_count = encoding.GetMaxByteCount(1);
-			char[] copy = s.ToCharArray (index, count);
-			byte[] marshal = new byte [encoding.GetByteCount (copy) + min_byte_count];
-
-			int bytes_copied = encoding.GetBytes (copy, 0, copy.Length, marshal, 0);
-
-			if (bytes_copied != (marshal.Length-min_byte_count))
-				throw new NotSupportedException ("encoding.GetBytes() doesn't equal encoding.GetByteCount()!");
-
-			IntPtr mem = UnixMarshal.Alloc (marshal.Length);
-			if (mem == IntPtr.Zero)
-				throw new OutOfMemoryException ();
-
-			bool copied = false;
-			try {
-				Marshal.Copy (marshal, 0, mem, marshal.Length);
-				copied = true;
-			}
-			finally {
-				if (!copied)
-					UnixMarshal.Free (mem);
-			}
-
-			return mem;
-		}
 
 		#region Fields
 		
@@ -277,7 +233,7 @@ namespace Mono.Data.SqliteClient
 			}
 			
 			SqliteError err = SqliteError.OK;
-			IntPtr psql = StringToAlloc(sqlcmds);
+			IntPtr psql = Mono.Unix.UnixMarshal.StringToHeap(sqlcmds);
 			IntPtr pzTail = psql;
 			try {
 				do { // sql may contain multiple sql commands, loop until they're all processed
@@ -390,7 +346,7 @@ namespace Mono.Data.SqliteClient
 					}
 				} while ((int)pzTail - (int)psql < sql.Length);
 			} finally {
-				UnixMarshal.Free(psql);
+				Mono.Unix.UnixMarshal.FreeHeap(psql);
 			}
 			prepared=true;
 		}

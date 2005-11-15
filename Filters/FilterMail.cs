@@ -62,7 +62,7 @@ namespace Beagle.Filters {
 				}
 			}
 
-			int mail_fd = Mono.Unix.Syscall.open (info.FullName, Mono.Unix.OpenFlags.O_RDONLY);
+			int mail_fd = Mono.Unix.Native.Syscall.open (info.FullName, Mono.Unix.Native.OpenFlags.O_RDONLY);
 			
 			if (mail_fd == -1)
 				throw new IOException (String.Format ("Unable to read {0} for parsing mail", info.FullName));

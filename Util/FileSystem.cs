@@ -56,9 +56,9 @@ namespace Beagle.Util {
 		// I guess this is as good a place for this as any.
 		static public bool IsSymLink (string path)
 		{
-			Mono.Unix.Stat stat;
-			Mono.Unix.Syscall.lstat (path, out stat);
-			return (stat.st_mode & Mono.Unix.FilePermissions.S_IFLNK) == Mono.Unix.FilePermissions.S_IFLNK;
+			Mono.Unix.Native.Stat stat;
+			Mono.Unix.Native.Syscall.lstat (path, out stat);
+			return (stat.st_mode & Mono.Unix.Native.FilePermissions.S_IFLNK) == Mono.Unix.Native.FilePermissions.S_IFLNK;
 		}
 
 	}

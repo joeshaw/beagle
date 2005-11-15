@@ -30,43 +30,15 @@ using System;
 using System.IO;
 using System.Text;
 using System.Runtime.InteropServices;
+using Mono.Unix.Native;
 
 namespace Beagle.Util {
 
 	public class ExtendedAttribute {
 
-		// FIXME: When Mono 1.1.9 is required, start using the Mono.Unix.Syscall
-		// xattr bindings.
-
-		// Linux xattrs
-		[DllImport (ExternalStringsHack.XattrLib, SetLastError=true)]
-		static extern int lsetxattr (string path, string name, byte[] value, uint size, int flags);
-
-		[DllImport (ExternalStringsHack.XattrLib, SetLastError=true)]
-		static extern int lgetxattr (string path, string name, byte[] value, uint size);
-
-		[DllImport (ExternalStringsHack.XattrLib, SetLastError=true)]
-		static extern int lremovexattr (string path, string name);
-
-		// FreeBSD extattrs
-		// Very similar to Linux xattrs, but the namespace is provided as a
-		// parameter as opposed to a string prefix to the name.
-		[DllImport (ExternalStringsHack.XattrLib, SetLastError=true)]		
-		static extern int extattr_set_link (string path, int attrnamespace, string attrname, byte[] value, uint size);
-
-		[DllImport (ExternalStringsHack.XattrLib, SetLastError=true)]
-		static extern int extattr_get_link (string path, int attrnamespace, string attrname, byte[] value, uint size);
-
-		[DllImport (ExternalStringsHack.XattrLib, SetLastError=true)]		
-		static extern int extattr_delete_link (string path, int attrnamespace, string attrname);
-
 		private static string AddPrefix (string name)
 		{
-#if OS_LINUX
 			return "user.Beagle." + name;
-#elif OS_FREEBSD
-			return "Beagle." + name;
-#endif
 		}
 
 		static Encoding encoding = new UTF8Encoding ();
@@ -79,13 +51,9 @@ namespace Beagle.Util {
 			name = AddPrefix (name);
 
 			byte[] buffer = encoding.GetBytes (value);
-#if OS_LINUX
-			int retval = lsetxattr (path, name, buffer, (uint) buffer.Length, 0);
-#elif OS_FREEBSD
-			int retval = extattr_set_link (path, 1, name, buffer, (uint) buffer.Length);
-#endif
+			int retval = Syscall.lsetxattr (path, name, buffer);
 			if (retval == -1)
-				throw new IOException ("Could not set extended attribute on " + path + ": " + Mono.Unix.Stdlib.strerror (Mono.Unix.Syscall.GetLastError ()));
+				throw new IOException ("Could not set extended attribute on " + path + ": " + Mono.Unix.Native.Stdlib.strerror (Mono.Unix.Native.Stdlib.GetLastError ()));
 		}
 
 		public static bool Exists (string path, string name)
@@ -95,13 +63,7 @@ namespace Beagle.Util {
 
 			name = AddPrefix (name);
 
-			byte[] buffer = null;
-#if OS_LINUX
-			int size = lgetxattr (path, name, buffer, 0);
-#elif OS_FREEBSD
-			int size = extattr_get_link (path, 1, name, buffer, 0);
-#endif
-			
+			long size = Syscall.lgetxattr (path, name, null, 0);
 			return size >= 0;
 		}
 
@@ -112,23 +74,10 @@ namespace Beagle.Util {
 
 			name = AddPrefix (name);
 
-			byte[] buffer = null;
-#if OS_LINUX
-			int size = lgetxattr (path, name, buffer, 0);
-#elif OS_FREEBSD
-			int size = extattr_get_link (path, 1, name, buffer, 0);
-#endif
+			byte[] buffer;
+			long size = Syscall.lgetxattr (path, name, out buffer);
 			if (size <= 0)
 				return null;
-			buffer = new byte [size];
-#if OS_LINUX
-			int retval = lgetxattr (path, name, buffer, (uint) size);
-#elif OS_FREEBSD
-			int retval = extattr_get_link (path, 1, name, buffer, (uint) size);
-#endif
-			if (retval < 0)
-				throw new IOException ("Could not get extended attribute on " + path + ": " + Mono.Unix.Stdlib.strerror (Mono.Unix.Syscall.GetLastError ()));
-
 			return encoding.GetString (buffer);
 		}
 
@@ -139,13 +88,9 @@ namespace Beagle.Util {
 			
 			name = AddPrefix (name);
 
-#if OS_LINUX
-			int retval = lremovexattr (path, name);
-#elif OS_FREEBSD
-			int retval = extattr_delete_link (path, 1, name);
-#endif
+			int retval = Syscall.lremovexattr (path, name);
 			if (retval != 0)
-				throw new IOException ("Could not remove extended attribute on " + path + ": " + Mono.Unix.Stdlib.strerror (Mono.Unix.Syscall.GetLastError ()));
+				throw new IOException ("Could not remove extended attribute on " + path + ": " + Mono.Unix.Native.Stdlib.strerror (Mono.Unix.Native.Stdlib.GetLastError ()));
 		}
 
 		// Check to see if it is possible to get and set attributes on a given file.
