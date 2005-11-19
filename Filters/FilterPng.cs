@@ -78,9 +78,9 @@ namespace Beagle.Filters {
 			int width = buffer [18] * 256 + buffer [19];
 			int height = buffer [22] * 256 + buffer [23];
 
-			AddProperty (Beagle.Property.NewKeyword ("fixme:width", width));
-			AddProperty (Beagle.Property.NewKeyword ("fixme:height", height));
-			AddProperty (Beagle.Property.NewKeyword ("fixme:bitdepth", buffer [24]));
+			Width = width;
+			Height = height;
+			Depth = buffer [24];
 
 			string colorType = null;
 			bool hasAlpha = false;

@@ -70,12 +70,16 @@ namespace Beagle.Filters {
 				AddProperty (Beagle.Property.New ("exif:ImageDescription", str));
 
 			str = exif.LookupFirstValue (ExifTag.PixelXDimension);
-			if (str != null && str != "")
+			if (str != null && str != "") {
+				Width = Int32.Parse (str);
 				AddProperty (Beagle.Property.NewKeyword ("exif:PixelXDimension", str));
+			}
 
 			str = exif.LookupFirstValue (ExifTag.PixelYDimension);
-			if (str != null && str != "")
+			if (str != null && str != "") {
+				Height = Int32.Parse (str);
 				AddProperty (Beagle.Property.NewKeyword ("exif:PixelYDimension", str));
+			}
 
 			str = exif.LookupFirstValue (ExifTag.ISOSpeedRatings);
 			if (str != null && str != "")

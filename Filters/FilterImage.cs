@@ -38,15 +38,40 @@ namespace Beagle.Filters {
 		public FilterImage ()
 		{
 			// 1: Base
-			// 2: Added fspot:IsIndexed field
+			// 2: Added fspot:IsIndexed field, added width & height properties
 			SetVersion (2);
 		}
 
 		protected virtual void PullImageProperties () { }
 
+		private int width = -1;
+		private int height = -1;
+		private int depth = -1;
+
+		protected int Width {
+			set { width = value; }
+		}
+
+		protected int Height {
+			set { height = value; }
+		}
+
+		protected int Depth {
+			set { depth = value; }
+		}
+
 		protected override void DoPullProperties ()
 		{
 			PullImageProperties ();
+
+			if (width > 0)
+				AddProperty (Beagle.Property.NewKeyword ("fixme:width", width));
+
+			if (height > 0)
+				AddProperty (Beagle.Property.NewKeyword ("fixme:height", height));
+
+			if (depth > 0)
+				AddProperty (Beagle.Property.NewKeyword ("fixme:depth", depth));
 
 			try {
 				FSpotTools.Photo photo = FSpotTools.GetPhoto (this.FileInfo.FullName);
