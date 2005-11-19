@@ -38,7 +38,7 @@ namespace Beagle.Filters {
 		public FilterImage ()
 		{
 			// 1: Base
-			// 2: Added fspot:Indexed field
+			// 2: Added fspot:IsIndexed field
 			SetVersion (2);
 		}
 
@@ -54,7 +54,7 @@ namespace Beagle.Filters {
 				if (photo == null)
 					return;
 
-				AddProperty (Beagle.Property.NewBool ("fspot:Indexed", true));
+				AddProperty (Beagle.Property.NewBool ("fspot:IsIndexed", true));
 				
 				if (photo.Description != null && photo.Description != "")
 					AddProperty (Beagle.Property.New ("fspot:Description", photo.Description));
@@ -63,7 +63,7 @@ namespace Beagle.Filters {
 					if (tag.Name != null && tag.Name != "")
 						AddProperty (Beagle.Property.New ("fspot:Tag", tag.Name));
 				}
-			} catch (Exception e) {
+			} catch {
 				//Console.WriteLine ("Failed extracting F-Spot information for '{0}'", this.FileInfo.Name);
 			}
 		}
