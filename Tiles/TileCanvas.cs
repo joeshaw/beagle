@@ -134,7 +134,6 @@ namespace Beagle.Tile {
 			set {
 				root = value; 
 				root.SetChangedHandler (new TileChangedHandler (OnTileChanged));
-				Render ();
 			}
 		}
 

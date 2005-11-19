@@ -278,6 +278,11 @@ dnl changed from nsIXULChromeRegistry in 1.8a4
                                                                                 
 AC_CHECK_FILE([$MOZILLA_INCLUDE_ROOT/chrome/nsIChromeRegistrySea.h],
         [AC_DEFINE([HAVE_CHROME_NSICHROMEREGISTRYSEA_H], [1], [Define if nsIChromeRegistrySea.h exists])])
+
+dnl do_GetService moved here in firefox 1.5
+
+AC_CHECK_FILE([$MOZILLA_INCLUDE_ROOT/xpcom/nsServiceManagerUtils.h],
+		[AC_DEFINE([HAVE_XPCOM_NSSERVICEMANAGERUTILS_H], [1], [Define if nsServiceManagerUtils.h exists])])
                                                                                 
 MOZILLA_WARN_CXXFLAGS="-Wall -Wconversion -Wpointer-arith -Wcast-align -Woverloaded-virtual -Wsynth -Wno-ctor-dtor-privacy -Wno-non-virtual-dtor"
 AC_SUBST(MOZILLA_WARN_CXXFLAGS)

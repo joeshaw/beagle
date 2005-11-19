@@ -32,6 +32,11 @@
 #include <nsEmbedString.h>
 #include <nsIPrefService.h>
 #include <nsIServiceManager.h>
+#include <nsCOMPtr.h>
+
+#if defined(HAVE_XPCOM_NSSERVICEMANAGERUTILS_H)
+#include <nsServiceManagerUtils.h>
+#endif
 
 #if defined (HAVE_CHROME_NSICHROMEREGISTRYSEA_H)
 #include <chrome/nsIChromeRegistrySea.h>

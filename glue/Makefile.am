@@ -11,6 +11,7 @@ INCLUDES= \
 	-I$(MOZILLA_INCLUDE_ROOT)/gfx			\
 	-I$(MOZILLA_INCLUDE_ROOT)/embedstring		\
 	-I$(MOZILLA_INCLUDE_ROOT)/chrome		\
+	-I$(MOZILLA_INCLUDE_ROOT)/nspr		\
 	-DALLOW_PRIVATE_API				\
 	-DMOZILLA_HOME=\""$(MOZILLA_HOME)\""		\
 	-include $(MOZILLA_INCLUDE_ROOT)/mozilla-config.h
