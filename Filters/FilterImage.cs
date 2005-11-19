@@ -37,6 +37,9 @@ namespace Beagle.Filters {
 
 		public FilterImage ()
 		{
+			// 1: Base
+			// 2: Added fspot:Indexed field
+			SetVersion (2);
 		}
 
 		protected virtual void PullImageProperties () { }
@@ -51,6 +54,8 @@ namespace Beagle.Filters {
 				if (photo == null)
 					return;
 
+				AddProperty (Beagle.Property.NewBool ("fspot:Indexed", true));
+				
 				if (photo.Description != null && photo.Description != "")
 					AddProperty (Beagle.Property.New ("fspot:Description", photo.Description));
 			
