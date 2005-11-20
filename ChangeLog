@@ -1,3 +1,8 @@
+2005-11-20  Lukas Lipka  <lukas@pmad@net>
+
+	* Filters/Makefile.am: Disable FilterChm.cs build since it was broken
+	with the recent HTML filter updates.
+
 2005-11-19  Daniel Drake  <dsd@gentoo.org>
 
 	* configure.in, glue/Makefile.am, glue/gecko-utils.cpp,

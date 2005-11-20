@@ -67,10 +67,10 @@ CSFILES += \
 endif
 endif
 
-if HAS_LIBCHM
-CSFILES += 				\
-	$(srcdir)/FilterChm.cs
-endif
+#if HAS_LIBCHM
+#CSFILES += 				\
+#	$(srcdir)/FilterChm.cs
+#endif
 
 
 LOCAL_ASSEMBLIES =				\
