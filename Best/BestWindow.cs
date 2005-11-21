@@ -640,6 +640,8 @@ namespace Best {
 			root.Clear ();
 			UpdatePage ();
 			entry.Text = "";
+			// clear search is also "stop current search" - implicitly
+			DetachQuery ();
 		}
 
 		private void StoreSearch (string query)
