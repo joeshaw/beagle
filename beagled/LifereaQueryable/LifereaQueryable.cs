@@ -203,7 +203,7 @@ namespace Beagle.Daemon.LifereaQueryable {
 		public void PostFlushHook ()
 		{
 			current_item = null;
-			queryable.FileAttributesStore.AttachLastWriteTime (feed_file, DateTime.UtcNow);
+			//queryable.FileAttributesStore.AttachLastWriteTime (feed_file, DateTime.UtcNow);
 		}
 
 		public string StatusName {

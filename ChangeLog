@@ -1,3 +1,10 @@
+2005-11-21  Debajyoti Bera <dbera.web@gmail.com>
+
+	* beagled/LuceneFileQueryable: Fix a bug in LFQ where it wasnt
+	setting the attribute of a file shared across multiple indexables.
+	* BlamQueryable.cs, LifereaQueryable.cs, AkregatorQueryable.cs : Use
+	fixed LFQ.
+
 2005-11-20  Lukas Lipka  <lukas@pmad@net>
 
 	* Filters/Makefile.am: Disable FilterChm.cs build since it was broken

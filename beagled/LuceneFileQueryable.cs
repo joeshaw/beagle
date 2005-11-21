@@ -62,6 +62,9 @@ namespace Beagle.Daemon {
 			file_references_count [path] = (int) file_references_count [path] + 1;
 		}
 		
+		// returns
+		// true : reference left
+		// false: no more reference left
 		private bool DecrementReferenceCount (string path)
 		{
 			if (! file_references_count.Contains (path))
@@ -136,7 +139,7 @@ namespace Beagle.Daemon {
 
 			// Yeah, this is ghetto. If it's a file that's shared across multiple
 			// indexables, only tag it with when the last indexable has been indexed.
-			if (info.Shared && ! DecrementReferenceCount (info.Path))
+			if (info.Shared && DecrementReferenceCount (info.Path))
 				return;
 
 			// Since we know that the file has been successfully

@@ -161,7 +161,7 @@ namespace Beagle.Daemon.BlamQueryable {
 
 		public void PostFlushHook ()
 		{
-			queryable.FileAttributesStore.AttachLastWriteTime (feed_file, DateTime.UtcNow);
+			//queryable.FileAttributesStore.AttachLastWriteTime (feed_file, DateTime.UtcNow);
 		}
 
 		public string StatusName {

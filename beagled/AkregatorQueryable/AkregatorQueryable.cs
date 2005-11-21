@@ -229,11 +229,6 @@ namespace Beagle.Daemon.AkregatorQueryable {
 
 		public void PostFlushHook ()
 		{
-			current_item = null;
-			queryable.FileAttributesStore.AttachLastWriteTime (feed_file, DateTime.UtcNow);
-			// also store the file size
-			FileInfo file = new FileInfo (feed_file);
-			queryable.SetFileSize (feed_file, file.Length);
 		}
 
 		public string StatusName {
@@ -251,7 +246,7 @@ namespace Beagle.Daemon.AkregatorQueryable {
 			// next check the size - its really unlucky if the file is changed
 			// and yet the size is same
 			// FIXME: Maybe store the md5-hash of the file - that is less expensive
-			// that indexing all the feeds in the file!
+			// than indexing all the feeds in the file!
 			FileInfo file = new FileInfo (path);
 			if (queryable.GetFileSize (path) != file.Length)
 				return false;
@@ -341,7 +336,16 @@ namespace Beagle.Daemon.AkregatorQueryable {
 				is_valid_file = false;
 				reader.Close ();
 			}
+			if (! is_valid_file)
+				StoreFileSize ();
 			return is_valid_file;
+		}
+
+		private void StoreFileSize ()
+		{
+			// cache the file size
+			FileInfo file = new FileInfo (feed_file);
+			queryable.SetFileSize (feed_file, file.Length);
 		}
 
 		public Indexable GetNextIndexable ()
