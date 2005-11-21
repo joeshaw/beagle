@@ -220,6 +220,9 @@ namespace Beagle.Util {
 		// and probably will fail for weird corner cases.
 		static public bool GlobMatch (string pattern, string str)
 		{
+			if (pattern == null || str == null)
+				return false;
+
 			if (pattern == "*")
 				return true;
 			else if (pattern.StartsWith ("**"))
