@@ -1,3 +1,8 @@
+2005-11-22  Dan Winship  <danw@novell.com>
+
+	* libbeagle/beagle/beagle-property.c (prop_to_xml): encode the
+	"Type" attribute correctly. 322140.
+
 2005-11-21  Debajyoti Bera <dbera.web@gmail.com>
 
 	* beagled/LuceneFileQueryable: Fix a bug in LFQ where it wasnt

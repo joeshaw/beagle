@@ -224,6 +224,13 @@ beagle_property_set_is_mutable (BeagleProperty *prop, gboolean is_mutable)
 	prop->is_mutable = is_mutable != FALSE;
 }
 
+static const char * const property_types[] = {
+	NULL,
+	"Text",
+	"Keyword",
+	"Date"
+};
+
 static void
 prop_to_xml (gpointer       key,
 	     gpointer       value,
@@ -233,11 +240,15 @@ prop_to_xml (gpointer       key,
 	char *tmp;
 	GString *data = user_data;
 
+	if (prop->type <= BEAGLE_PROPERTY_TYPE_UNKNOWN ||
+	    prop->type >= BEAGLE_PROPERTY_TYPE_LAST)
+		return;
+
 	g_string_append (data, "<Property ");
 
-	tmp = g_markup_printf_escaped ("Type=\"%d\" isSearched=\"%s\" isMutable=\"%s\" "
+	tmp = g_markup_printf_escaped ("Type=\"%s\" isSearched=\"%s\" isMutable=\"%s\" "
 				       "Key=\"%s\" Value=\"%s\"/>",
-				       (int) prop->type,
+				       property_types[prop->type],
 				       prop->is_searched ? "true" : "false",
 				       prop->is_mutable ? "true" : "false",
 				       prop->key, prop->value);
