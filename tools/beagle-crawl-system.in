@@ -31,6 +31,8 @@ umask 022
 CRAWL_USER=beagleindex
 
 for crawl_file in @sysconfdir@/beagle/*; do 
+    unset CRAWL_ENABLED CRAWL_DISABLE_FILTERING CRAWL_RECURSIVE CRAWL_CACHE_TEXT CRAWL_ALLOW_PATTERNS CRAWL_DENY_PATTERNS CRAWL_PATHS CRAWL_INDEX_NAME
+
     if [ -f $crawl_file ] ; then
 	. $crawl_file
 
@@ -39,10 +41,10 @@ for crawl_file in @sysconfdir@/beagle/*; do
 	    OPTIONS="`test -n "$CRAWL_DISABLE_FILTERING" -a "$CRAWL_DISABLE_FILTERING" = "yes" && \
                      echo --disable-filtering`"
 
-	    OPTIONS="$OPTIONS `test -n "$CRAWL_RECURSIVE" -a "$CRAWL_RECURSIVE"="yes" && \
+	    OPTIONS="$OPTIONS `test -n "$CRAWL_RECURSIVE" -a "$CRAWL_RECURSIVE" = "yes" && \
                      echo --recursive`"
 
-	    OPTIONS="$OPTIONS `test -n "$CRAWL_CACHE_TEXT" -a "$CRAWL_CACHE_TEXT"="yes" && \
+	    OPTIONS="$OPTIONS `test -n "$CRAWL_CACHE_TEXT" -a "$CRAWL_CACHE_TEXT" = "yes" && \
                      echo --enable-text-cache`"
 
 	    OPTIONS="$OPTIONS `test -n "$CRAWL_ALLOW_PATTERNS" && \
@@ -51,6 +53,7 @@ for crawl_file in @sysconfdir@/beagle/*; do
 	    OPTIONS="$OPTIONS `test -n "$CRAWL_DENY_PATTERNS" && \
                      echo --allow-pattern $CRAWL_DENY_PATTERNS`"
 
+            export TMPDIR=/tmp
 	    eval nice -n 19 su $CRAWL_USER -c \"@sbindir@/beagle-build-index --target @localstatedir@/cache/beagle/indexes/$CRAWL_INDEX_NAME $OPTIONS $CRAWL_PATHS\" 2> /dev/null
 	fi
     fi
