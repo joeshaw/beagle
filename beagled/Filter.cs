@@ -208,19 +208,23 @@ namespace Beagle.Daemon {
 		public void AppendText (string str, string strHot)
 		{
 			if (!IsFrozen && str != null && str != "") {
-				
-				// FIXME: Do we need to handle '\n' in any 
-				// other way?
 				int i = 0;
 				string line;
-				string[] lines = str.Split ('\n');
-				for (i = 0; i < lines.Length; i++) {
-					line = lines[i].Trim();
-					if (line.Length > 0) {
-						ReallyAppendText (line, null);
-						AppendStructuralBreak ();
+				string[] lines;
+
+				// Avoid unnecessary allocation of a string
+				// FIXME: Handle \r, \r\n cases.
+				if (str.IndexOf ('\n') > -1) {
+					lines = str.Split ('\n'); 
+					for (i = 0; i < lines.Length; i++) {
+						line = lines[i].Trim();
+						if (line.Length > 0) {
+							ReallyAppendText (line, null);
+							AppendStructuralBreak ();
+						}
 					}
-				}
+				} else 
+					ReallyAppendText (str, null);
 			}
 			ReallyAppendText (null, strHot);
 		}

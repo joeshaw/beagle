@@ -1,3 +1,9 @@
+2005-11-26  Veerapuram Varadhan <vvaradhan@novell.com>
+
+	* beagled/Filter.cs: (AppendText): Check for "\n" before splitting
+	the argument in to array of lines.  This saves around 600K of
+	memory allocation for a 130K "C" source code file.
+	
 2005-11-25  Veerapuram Varadhan <vvaradhan@novell.com>
 
 	* Filters/FilterShellscript.cs: Shell script filter.
