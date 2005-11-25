@@ -41,7 +41,8 @@ namespace Beagle.Filters {
 			Fortran_Style,
 			Pascal_Style,
 			Lisp_Style,
-			Matlab_Style
+			Matlab_Style,
+			Shell_Style
 		};
 		
 		protected LangType SrcLangType;
@@ -70,6 +71,31 @@ namespace Beagle.Filters {
 			SnippetMode = true;
 			OriginalIsText = true;
 			token = new StringBuilder ();
+		}
+
+		// Validate the character and append it to the token,
+		// that will be added to the text-pool of the filter.
+		// Returns: False, if token is not complete enough to be added to the pool.
+		//          True, if it is a valid word that can be added to the pool.
+		private bool AppendToToken (char ch, int index, int length)
+		{
+			if (ch == ' ' && 
+			    SrcLangType == LangType.Shell_Style) {
+				return true;
+			}
+
+			if (Char.IsLetter (ch) ||
+			    Char.IsDigit (ch) ||
+			    ch == '_') {
+				token.Append (ch);
+				if ((index + 1) < length) 
+					return false;
+				else
+					return true;
+			} else
+				return true;
+
+			return false;
 		}
 
 		// Tokenize the passed string and add the relevant 
@@ -168,7 +194,8 @@ namespace Beagle.Filters {
 						splCharSeq = "";
 						break;
 					}
-				} else if ((str[index] == '#' && SrcLangType == LangType.Python_Style) ||
+				} else if ((str[index] == '#' && (SrcLangType == LangType.Python_Style ||
+								  SrcLangType == LangType.Shell_Style)) ||
 					   (str[index] == '!' && SrcLangType == LangType.Fortran_Style) ||
 					   (str[index] == ';' && SrcLangType == LangType.Lisp_Style) ||
 					   (str[index] == '%' && SrcLangType == LangType.Matlab_Style)) {
@@ -212,7 +239,8 @@ namespace Beagle.Filters {
 				else if (SrcLangType == LangType.Lisp_Style && str[index] == '\'') {
 					continue;
 				}
-				else if (str[index] == '\"' || str[index] == '\'') {
+				else if (str[index] == '\"' || str[index] == '\'' ||
+					 (str[index] == '`' && SrcLangType == LangType.Shell_Style)) {
 
 					if (SrcLineType == LineType.StringConstant &&
 					    StrConstIdentifier.Length == 1 &&
@@ -235,12 +263,8 @@ namespace Beagle.Filters {
 					token.Append (str[index]);
 					splCharSeq = "";
 
-				} else if (SrcLineType == LineType.None) {
-					if (Char.IsLetter (str[index]) ||
-					    Char.IsDigit (str[index]) ||
-					    str[index] == '_') {
-						token.Append (str[index]);
-					} else {
+				} else if (SrcLineType == LineType.None) { 
+					if (AppendToToken (str[index], index, str.Length)) {			       
 						if (SrcLangType == LangType.Lisp_Style) {
 
 							// Lisp identifiers: letters, digits, and:
@@ -260,7 +284,6 @@ namespace Beagle.Filters {
 							string tok = token.ToString(); 
 							if (SrcLangType == LangType.Fortran_Style)
 								tok = token.ToString().ToLower();
-							
 							if (!KeyWordsHash.Contains (tok)) {
 								token.Append (" ");
 								if (!Char.IsDigit (token[0]))

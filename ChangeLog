@@ -1,3 +1,12 @@
+2005-11-25  Veerapuram Varadhan <vvaradhan@novell.com>
+
+	* Filters/FilterShellscript.cs: Shell script filter.
+	* Filters/FilterSource.cs: New style added for Shellscripts.
+	Token generation is moved to a private method.  Actually, tokens
+	in shell-scripts are not separated *ONLY* by operators but also by
+	"SPACES".
+	* Filters/Makefile.am: Include Shellscript filter for compilation.
+	
 2005-11-22  Dan Winship  <danw@novell.com>
 
 	* libbeagle/beagle/beagle-property.c (prop_to_xml): encode the

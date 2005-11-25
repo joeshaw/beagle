@@ -54,7 +54,8 @@ CSFILES = 				\
 	$(srcdir)/FilterDirectory.cs	\
 	$(srcdir)/FilterMail.cs		\
 	$(srcdir)/FilterMusic.cs	\
-	$(srcdir)/FilterImLog.cs
+	$(srcdir)/FilterImLog.cs	\
+	$(srcdir)/FilterShellscript.cs
 
 if ENABLE_GSF_SHARP
 CSFILES += 				\
