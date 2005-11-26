@@ -74,7 +74,7 @@ beagle_query_part_or_to_xml (BeagleQueryPart *part)
 static void
 beagle_query_part_or_finalize (GObject *obj)
 {
-	BeagleQueryPartOr *or = obj;
+	BeagleQueryPartOr *or = BEAGLE_QUERY_PART_OR (obj);
 	BeagleQueryPartOrPrivate *priv = BEAGLE_QUERY_PART_OR_GET_PRIVATE (or);
 
 	g_slist_foreach (priv->subparts, (GFunc) g_object_unref, NULL);

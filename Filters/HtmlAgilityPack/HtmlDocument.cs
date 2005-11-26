@@ -275,7 +275,6 @@ namespace HtmlAgilityPack
 		{
 			_reader.DiscardBufferedData ();
 			_reader.BaseStream.Position = 0;
-			int count = 0;
 			// read in chunks of block_size
 			int n1 = pos / _block_size;
 			int n2 = pos % _block_size;

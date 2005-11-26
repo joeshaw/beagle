@@ -58,14 +58,15 @@ namespace Beagle.IndexHelper {
 		{
 			bool run_by_hand = (Environment.GetEnvironmentVariable ("BEAGLE_RUN_HELPER_BY_HAND") != null);
 			bool log_in_fg = (Environment.GetEnvironmentVariable ("BEAGLE_LOG_IN_THE_FOREGROUND_PLEASE") != null);
-			bool debug = (Environment.GetEnvironmentVariable ("BEAGLE_DEBUG_FLAG_IS_SET") != null);
+			
+			// FIXME: We always turn on full debugging output!  We are still
+			// debugging this code, after all...
+			//bool debug = (Environment.GetEnvironmentVariable ("BEAGLE_DEBUG_FLAG_IS_SET") != null);
 
 			last_activity = DateTime.Now;
 
 			Log.Initialize (PathFinder.LogDir,
 					"IndexHelper",
-					// FIXME: We always turn on full debugging output!  We are still
-					// debugging this code, after all...
 					//debug ? LogLevel.Debug : LogLevel.Warn,
 					LogLevel.Debug,
 					run_by_hand || log_in_fg);

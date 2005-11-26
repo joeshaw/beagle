@@ -52,6 +52,9 @@ namespace Best {
 
 	public class BestWindow : Gtk.Window {
 
+		Gtk.AccelGroup accel_group;
+		GlobalKeybinder global_keys;
+
 		public BestWindow (string query) : base (WindowType.Toplevel)
 		{
 			CreateWindow (query);
@@ -62,19 +65,17 @@ namespace Best {
 			CreateWindow (null);
 		}
 		
-		public void FocusEntry () {
-			//entry.SelectRegion (0, -1);
+		public void FocusEntry ()
+		{
 			entry.GrabFocus ();
 		}
 
-		public void FocusEntryHandler (object o, EventArgs args) {
+		public void FocusEntryHandler (object o, EventArgs args)
+		{
 			FocusEntry ();
 		}
 
-		Gtk.AccelGroup accel_group;
-		GlobalKeybinder global_keys;
-
-		void CreateWindow (string query)
+		private void CreateWindow (string query)
 		{
 			Title = Best.DefaultWindowTitle;
 
@@ -140,10 +141,7 @@ namespace Best {
 						    0,
 						    Gtk.AccelFlags.Visible);
 
-			//DBusisms.BeagleDown += OnBeagleDown;
-
 			UpdateFromConf ();
-			
 			UpdatePage ();
 
 			if (query != null)
@@ -191,12 +189,6 @@ namespace Best {
 				this.GdkWindow.Cursor = null;
 			}
 
-		}
-
-		private void OnBeagleDown ()
-		{
-			SetBusy (false);
-			DetachQuery ();
 		}
 
 		private void DoDelete (object o, DeleteEventArgs args)
@@ -501,7 +493,6 @@ namespace Best {
 		private bool RunDelayedQuery ()
 		{
 			if (delayedQuery != null) {
-				string tmp = delayedQuery;
 				delayedQuery = null;
 				System.Console.WriteLine ("Delayed query fired");
 				StartQuery ();

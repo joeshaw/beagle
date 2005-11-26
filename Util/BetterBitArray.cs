@@ -384,7 +384,7 @@ namespace Beagle.Util {
 			
 			BetterBitArray _bitArray;
 			bool _current;
-			int _index, _max, _version;
+			int _index, _version;
 			
 			public object Clone () {
 				return MemberwiseClone ();
@@ -394,7 +394,6 @@ namespace Beagle.Util {
 			{
 				_index = -1;
 				_bitArray = ba;
-				_max = ba._length;
 				_version = ba._version;
 			}
 

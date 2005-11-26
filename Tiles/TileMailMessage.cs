@@ -157,6 +157,7 @@ namespace Beagle.Tile {
 #endif
 		}
 
+#if ENABLE_EVO_SHARP
 		private string GetEmail (string who)
 		{
 			Regex re = new Regex (@".*<(?<email>.*)>");
@@ -170,8 +171,6 @@ namespace Beagle.Tile {
 			return who;
 		}
 
-
-#if ENABLE_EVO_SHARP
 		private string aim_name;
 		private string groupwise_name;
 		private string icq_name;

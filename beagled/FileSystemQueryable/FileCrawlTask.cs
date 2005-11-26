@@ -78,7 +78,7 @@ namespace Beagle.Daemon.FileSystemQueryable {
 			}
 		}
 
-		private void DoTask ()
+		private new void DoTask ()
 		{
 			// If our last generator is still doing stuff, just reschedule
 			// and return.  This keeps us from generating more tasks until

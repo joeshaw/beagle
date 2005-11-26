@@ -354,7 +354,7 @@ public abstract class Summary : IEnumerable {
 			return false;
 
 		    uint count = Decode.UInt (f);
-		    if (count == -1 || count > 500) {
+		    if (count > 500) {
 			return false;
 		    }
 		    
@@ -379,8 +379,9 @@ public abstract class Summary : IEnumerable {
 
 		    uint count;
 		    count = Decode.UInt (f);
-		    if (count == -1 || count > 500)
+		    if (count > 500)
 			return false;
+
 		    for (int i = 0; i < count; i++) {
 			// Name
 			Decode.SkipToken (f);

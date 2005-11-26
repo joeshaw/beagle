@@ -100,7 +100,7 @@ namespace Beagle.Util {
 					tag.Id = Convert.ToUInt32 (reader [0]);
 					tag.Name = (string) reader [1];
 					tag.CategoryId = Convert.ToUInt32 (reader [2]);
-					tag.IsCategory = (reader [3] == "1");
+					tag.IsCategory = (((string)reader [3]) == "1");
 					tag.SortPriority = Convert.ToInt32 (reader [4]);
 					tagCache [tag.Id] = tag;
 				}

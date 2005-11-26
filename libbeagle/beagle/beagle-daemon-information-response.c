@@ -232,7 +232,7 @@ beagle_daemon_information_response_is_indexing (BeagleDaemonInformationResponse 
 {
 	BeagleDaemonInformationResponsePrivate *priv;
 
-	g_return_val_if_fail (BEAGLE_IS_DAEMON_INFORMATION_RESPONSE (response), NULL);
+	g_return_val_if_fail (BEAGLE_IS_DAEMON_INFORMATION_RESPONSE (response), FALSE);
 
 	priv = BEAGLE_DAEMON_INFORMATION_RESPONSE_GET_PRIVATE (response);
 	

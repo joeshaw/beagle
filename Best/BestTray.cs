@@ -56,7 +56,6 @@ namespace Best {
 			menu.Popup (null, 
 				    null, 
 				    new Gtk.MenuPositionFunc (GetMenuPosition), 
-				    IntPtr.Zero, 
 				    (ev == null) ? 0 : ev.Button, 
 				    (ev == null) ? Gtk.Global.CurrentEventTime : ev.Time);
 		}	

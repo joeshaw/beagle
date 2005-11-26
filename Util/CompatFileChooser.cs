@@ -224,8 +224,8 @@ namespace Beagle.Util {
 		[DllImport ("libgtk-x11-2.0.so.0")]
 		extern static IntPtr gtk_file_chooser_dialog_new (string title, IntPtr parent, int action, IntPtr varargs);
 		
-		[DllImport ("libgtk-x11-2.0.so.0")]
-		extern static IntPtr gtk_file_chooser_dialog_new_with_backend (string title, IntPtr parent, int action, string backend, IntPtr varargs);
+		//[DllImport ("libgtk-x11-2.0.so.0")]
+		//extern static IntPtr gtk_file_chooser_dialog_new_with_backend (string title, IntPtr parent, int action, string backend, IntPtr varargs);
 		
 		[DllImport ("libgtk-x11-2.0.so.0")]
 		extern static string gtk_file_chooser_get_filename (IntPtr handle);

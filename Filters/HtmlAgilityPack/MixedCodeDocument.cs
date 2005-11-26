@@ -266,7 +266,6 @@ namespace HtmlAgilityPack
 		/// <param name="index">The index of the fragment to remove.</param>
 		public void RemoveAt(int index)
 		{
-			MixedCodeDocumentFragment frag = (MixedCodeDocumentFragment)_items[index];
 			_items.RemoveAt(index);
 		}
 
