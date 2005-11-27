@@ -1,3 +1,9 @@
+2005-11-27  Daniel Drake  <dsd@gentoo.org>
+
+	* beagled/GaimLogQueryable/GaimLogQueryable.cs: Misc cleanups, don't index
+	arbitrary files, merge watching and crawling into a single task.
+	* beagled/GaimLogQueryable/GaimLogCrawler.cs: Removed, now unused
+
 2005-11-26  Veerapuram Varadhan <vvaradhan@novell.com>
 
 	* beagled/Filter.cs: (AppendText): Check for "\n" before splitting

@@ -44,8 +44,6 @@ namespace Beagle.Daemon.GaimLogQueryable {
 
 		private int polling_interval_in_seconds = 60;
 		
-		private GaimLogCrawler crawler;
-
 		private GaimBuddyListReader list = new GaimBuddyListReader ();
 
 		public GaimLogQueryable () : base ("GaimLogIndex")
@@ -69,11 +67,7 @@ namespace Beagle.Daemon.GaimLogQueryable {
 			Stopwatch stopwatch = new Stopwatch ();
 			stopwatch.Start ();
 
-			if (Inotify.Enabled)
-				Watch (log_dir);
-
 			State = QueryableState.Crawling;
-			crawler = new GaimLogCrawler (log_dir);
 			Crawl ();
 			State = QueryableState.Idle;
 
@@ -98,13 +92,6 @@ namespace Beagle.Daemon.GaimLogQueryable {
 
 		/////////////////////////////////////////////////
 
-		private void Crawl ()
-		{
-			crawler.Crawl ();
-			foreach (FileInfo file in crawler.Logs)
-					IndexLog (file.FullName, Scheduler.Priority.Delayed);
-		}
-
 		private void CrawlHook (Scheduler.Task task)
 		{
 			Crawl ();
@@ -112,34 +99,42 @@ namespace Beagle.Daemon.GaimLogQueryable {
 			task.TriggerTime = DateTime.Now.AddSeconds (polling_interval_in_seconds);
 		}
 
-		/////////////////////////////////////////////////
-
-		// Sets up an Inotify watch on all subdirectories withing ~/.gaim/logs
-		private void Watch (string path)
+		private void Crawl ()
 		{
-			DirectoryInfo root = new DirectoryInfo (path);
-			
-			if (! root.Exists) {
-				log.Warn ("IM: {0} cannot watch path. It doesn't exist.", path);
-				return;	
-			}
-			
-			Queue queue = new Queue ();
-			queue.Enqueue (root);
+			Inotify.Subscribe (log_dir, OnInotifyNewProtocol, Inotify.EventType.Create);
 
-			while (queue.Count > 0) {
-				DirectoryInfo dir = queue.Dequeue () as DirectoryInfo;
-				
-				// Setup watches on the present directory.
-				Inotify.Subscribe (dir.FullName, OnInotifyEvent,
-						   Inotify.EventType.Create | Inotify.EventType.Modify);
-				
-				// Add all subdirectories to the queue so their files can be indexed.
-				foreach (DirectoryInfo subdir in dir.GetDirectories ())
-					queue.Enqueue (subdir);
-			}
+			// Walk through protocol subdirs
+			foreach (string proto_dir in DirectoryWalker.GetDirectories (log_dir))
+				CrawlProtocolDirectory (proto_dir);
 		}
-		
+
+		private void CrawlProtocolDirectory (string proto_dir)
+		{
+			Inotify.Subscribe (proto_dir, OnInotifyNewAccount, Inotify.EventType.Create);
+
+			// Walk through accounts
+			foreach (string account_dir in DirectoryWalker.GetDirectories (proto_dir))
+				CrawlAccountDirectory (account_dir);
+		}
+
+		private void CrawlAccountDirectory (string account_dir)
+		{
+			Inotify.Subscribe (account_dir, OnInotifyNewRemote, Inotify.EventType.Create);
+
+			// Walk through remote user conversations
+			foreach (string remote_dir in DirectoryWalker.GetDirectories (account_dir))
+				CrawlRemoteDirectory (remote_dir);
+		}
+
+		private void CrawlRemoteDirectory (string remote_dir)
+		{
+			Inotify.Subscribe (remote_dir, OnInotifyNewConversation, Inotify.EventType.CloseWrite);
+
+			foreach (FileInfo file in DirectoryWalker.GetFileInfos (remote_dir))
+				if (FileIsInteresting (file.Name))
+					IndexLog (file.FullName, Scheduler.Priority.Delayed);
+		}
+
 		/////////////////////////////////////////////////
 
 		private bool CheckForExistence ()
@@ -152,28 +147,72 @@ namespace Beagle.Daemon.GaimLogQueryable {
 			return false;
 		}
 
+		private bool FileIsInteresting (string filename)
+		{
+			// Filename must be fixed length, see below
+			if (filename.Length < 21 || filename.Length > 22)
+				return false;
+
+			// Check match on regex: ^[0-9]{4}-[0-9]{2}-[0-9]{2}\\.[0-9]{6}\\.(txt|html)$
+			// e.g. 2005-07-22.161521.txt
+			// We'd use System.Text.RegularExpressions if they werent so much more expensive
+			return Char.IsDigit (filename [0]) && Char.IsDigit (filename [1])
+				&& Char.IsDigit (filename [2]) && Char.IsDigit (filename [3])
+				&& filename [4] == '-'
+				&& Char.IsDigit (filename [5]) && Char.IsDigit (filename [6])
+				&& filename [7] == '-'
+				&& Char.IsDigit (filename [8]) && Char.IsDigit (filename [9])
+				&& filename [10] == '.'
+				&& Char.IsDigit (filename [11]) && Char.IsDigit (filename [12])
+				&& Char.IsDigit (filename [13]) && Char.IsDigit (filename [14])
+				&& Char.IsDigit (filename [15]) && Char.IsDigit (filename [16])
+				&& filename [17] == '.'
+				&&  (	(filename [18] == 't' && filename [19] == 'x' && filename [20] == 't')
+					||	(filename [18] == 'h' && filename [19] == 't' && filename [20] == 'm' && filename [21] == 'l')
+					);
+		}
+
 		/////////////////////////////////////////////////
 
-		private void OnInotifyEvent (Inotify.Watch watch,
-					     string path,
-					     string subitem,
-					     string srcpath,
-					     Inotify.EventType type)
+		private void OnInotifyNewProtocol (Inotify.Watch watch,
+						string path, string subitem, string srcpath,
+						Inotify.EventType type)
 		{
-			if (subitem == "")
+			if (subitem.Length == 0 || (type & Inotify.EventType.IsDirectory) == 0)
 				return;
 
-			string full_path = Path.Combine (path, subitem);
+			CrawlProtocolDirectory (Path.Combine (path, subitem));
+		}
 
-			if ((type & Inotify.EventType.Create) != 0 && (type & Inotify.EventType.IsDirectory) != 0) {
-				Watch (full_path);
+		private void OnInotifyNewAccount (Inotify.Watch watch,
+						string path, string subitem, string srcpath,
+						Inotify.EventType type)
+		{
+			if (subitem.Length == 0 || (type & Inotify.EventType.IsDirectory) == 0)
 				return;
-			}
 
-			if ((type & Inotify.EventType.Modify) != 0) {
-				IndexLog (full_path, Scheduler.Priority.Immediate);
+			CrawlAccountDirectory (Path.Combine (path, subitem));
+		}
+
+		private void OnInotifyNewRemote (Inotify.Watch watch,
+						string path, string subitem, string srcpath,
+						Inotify.EventType type)
+		{
+			if (subitem.Length == 0 || (type & Inotify.EventType.IsDirectory) == 0)
 				return;
-			}
+
+			CrawlRemoteDirectory (Path.Combine (path, subitem));
+		}
+
+		private void OnInotifyNewConversation (Inotify.Watch watch,
+						string path, string subitem, string srcpath,
+						Inotify.EventType type)
+		{
+			if (subitem.Length == 0 || (type & Inotify.EventType.IsDirectory) != 0)
+				return;
+
+			if (FileIsInteresting (subitem))
+				IndexLog (Path.Combine (path, subitem), Scheduler.Priority.Immediate);			
 		}
 
 		/////////////////////////////////////////////////

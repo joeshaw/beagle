@@ -270,8 +270,7 @@ FILE_SYSTEM_QUERYABLE_CSFILES =					\
 
 gaimlogqueryable = $(srcdir)/GaimLogQueryable
 GAIM_LOG_QUERYABLE_CSFILES =				\
-	$(gaimlogqueryable)/GaimLogQueryable.cs 	\
-	$(gaimlogqueryable)/GaimLogCrawler.cs
+	$(gaimlogqueryable)/GaimLogQueryable.cs
 
 tomboyqueryable = $(srcdir)/TomboyQueryable
 TOMBOY_QUERYABLE_CSFILES =				\
