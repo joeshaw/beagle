@@ -41,6 +41,9 @@ namespace Beagle.Filters {
 
 		public FilterDesktop ()
 		{
+			// 1: Added Categories field
+			SetVersion (1);
+
 			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("application/x-desktop"));
 		}
 
@@ -79,13 +82,18 @@ namespace Beagle.Filters {
 					continue;
 				
 				if (sline [0].Equals ("Icon") || sline [0].Equals ("Exec")) {
-					AddProperty (Property.NewUnsearched ("fixme:" + sline[0], sline[1]));
+					AddProperty (Property.NewUnsearched ("fixme:" + sline [0], sline [1]));
 				} else if (sline [0].StartsWith ("Name")) {
 					if (sline [0] == "Name")
 						have_name = true;
-					AddProperty (Property.New ("fixme:" + sline[0], sline[1]));
-				} else if (sline[0].StartsWith ("Comment")) {
-					AddProperty (Property.New ("fixme:" + sline[0], sline[1]));
+					AddProperty (Property.New ("fixme:" + sline [0], sline [1]));
+				} else if (sline [0].StartsWith ("Comment")) {
+					AddProperty (Property.New ("fixme:" + sline [0], sline [1]));
+				} else if (sline [0].StartsWith ("Categories")) {
+					string [] categories =  sline [1].Split (';');
+					foreach (string c in categories)
+						if (c != null && c != "")
+							AddProperty (Property.New ("fixme:" + sline [0], c));
 				}
 			}
 			
