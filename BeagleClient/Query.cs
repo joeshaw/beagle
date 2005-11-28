@@ -58,6 +58,8 @@ namespace Beagle {
 		private QueryPart_Or mime_type_part = null;
 		private QueryPart_Or hit_type_part = null;
 
+		private bool is_index_listener = false;
+
 		// Events to make things nicer to clients
 		public delegate void HitsAdded (HitsAddedResponse response);
 		public event HitsAdded HitsAddedEvent;
@@ -141,6 +143,18 @@ namespace Beagle {
 		{
 			exact_text = response.ExactText;
 			stemmed_text = response.StemmedText;
+		}
+
+		///////////////////////////////////////////////////////////////
+
+		// Warning: For the moment, the daemon is allowed to IGNORE
+		// index listener queries at its discretion... so don't assume
+		// that they will work for you!  Listener queries should only be
+		// used for debugging and testing.
+
+		public bool IsIndexListener {
+			set { is_index_listener = value; }
+			get { return is_index_listener; }
 		}
 
 		///////////////////////////////////////////////////////////////

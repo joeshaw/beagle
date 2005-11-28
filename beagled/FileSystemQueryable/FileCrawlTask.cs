@@ -72,13 +72,13 @@ namespace Beagle.Daemon.FileSystemQueryable {
 			queryable.State = QueryableState.Crawling;
 
 			try {
-				DoTask ();
+				DoCrawl ();
 			} finally {
 				queryable.State = old_state;
 			}
 		}
 
-		private new void DoTask ()
+		private void DoCrawl ()
 		{
 			// If our last generator is still doing stuff, just reschedule
 			// and return.  This keeps us from generating more tasks until

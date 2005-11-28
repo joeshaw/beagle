@@ -275,10 +275,17 @@ namespace Beagle.Daemon {
 			
 			ICollection added_uris = null;
 
+			// Index listeners never return any initial matches.
+			if (change_data == null && query.IsIndexListener)
+				return;
+
 			if (change_data != null) {
 				
-				if (change_data.RemovedUris != null) 
+				if (change_data.RemovedUris != null) {
+					foreach (Uri uri in change_data.RemovedUris)
+						Log.Debug ("Signalling removal of {0}", uri);
 					query_result.Subtract (change_data.RemovedUris);
+				}
 
 				// If nothing was added, we can safely return now: this change
 				// cannot have any further effect on an outstanding live query.
@@ -287,6 +294,24 @@ namespace Beagle.Daemon {
 					return;
 
 				added_uris = change_data.AddedUris;
+
+				// If this is an index listener, we don't need to do a query:
+				// we just build up synthethic hits and add them unconditionally.
+				if (query.IsIndexListener) {
+					ArrayList synthetic_hits = new ArrayList ();
+					foreach (Uri uri in added_uris) {
+						if (our_uri_filter != null && ! our_uri_filter (uri))
+							continue;
+						Hit hit = new Hit ();
+						hit.Uri = uri;
+						if (our_hit_filter != null && ! our_hit_filter (hit))
+							continue;
+						synthetic_hits.Add (hit);
+					}
+					if (synthetic_hits.Count > 0)
+						query_result.Add (synthetic_hits);
+					return;
+				}
 			}
 			
 			Driver.DoQuery (query, 

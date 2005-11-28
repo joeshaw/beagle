@@ -43,10 +43,11 @@ class QueryTool {
 	static DateTime lastQueryTime = DateTime.Now;
 
 	// CLI args
-	static bool keepRunning = false;
+	static bool keep_running = false;
 	static bool verbose = false;
 	static bool display_hits = true;
 	static bool flood = false;
+	static bool listener = false;
 	static DateTime start_date = DateTime.MinValue;
 	static DateTime end_date = DateTime.MinValue;
 
@@ -148,6 +149,7 @@ class QueryTool {
 			"  --max-hits\t\t\tLimit number of search results per backend\n" +
 			"            \t\t\t(default = 100, max = 100)\n" +
 			"  --flood\t\t\tExecute the query over and over again.  Don't do that.\n" +
+			"  --listener\t\t\tExecute an index listener query.  Don't do that either.\n" +
 			"  --help\t\t\tPrint this usage message.\n";
 
 		Console.WriteLine (usage);
@@ -199,8 +201,6 @@ class QueryTool {
 		if (args.Length == 0 || Array.IndexOf (args, "--help") > -1 || Array.IndexOf (args, "--usage") > -1)
 			PrintUsageAndExit ();
 
-		query = new Query ();
-
 		StringBuilder query_str =  new StringBuilder ();
 
 		string[] formats = {
@@ -226,7 +226,7 @@ class QueryTool {
 				query.AddSource (args [i]);
 				break;
 			case "--live-query":
-				keepRunning = true;
+				keep_running = true;
 				break;
 			case "--verbose":
 				verbose = true;
@@ -242,7 +242,10 @@ class QueryTool {
 			case "--flood":
 				flood = true;
 				break;
-
+			case "--listener":
+				listener = true;
+				keep_running = true;
+				break;
 			case "--start":
 				if (++i >= args.Length) PrintUsageAndExit ();
 				try {
@@ -277,26 +280,35 @@ class QueryTool {
 			++i;
 		}
 
-		if (query_str.Length > 0)
-			query.AddText (query_str.ToString ());
+		query = new Query ();
 
-		if (start_date != DateTime.MinValue || end_date != DateTime.MinValue) {
-			QueryPart_DateRange part = new QueryPart_DateRange ();
+		if (listener) {
 
-			if (start_date != DateTime.MinValue)
-				part.StartDate = start_date;
+			query.IsIndexListener = true;
 
-			if (end_date != DateTime.MinValue)
-				part.EndDate = end_date;
+		} else {
+		
+			if (query_str.Length > 0)
+				query.AddText (query_str.ToString ());
 
-			query.AddPart (part);
+			if (start_date != DateTime.MinValue || end_date != DateTime.MinValue) {
+				QueryPart_DateRange part = new QueryPart_DateRange ();
+				
+				if (start_date != DateTime.MinValue)
+					part.StartDate = start_date;
+
+				if (end_date != DateTime.MinValue)
+					part.EndDate = end_date;
+				
+				query.AddPart (part);
+			}
 		}
 
 		query.HitsAddedEvent += OnHitsAdded;
 		query.HitsSubtractedEvent += OnHitsSubtracted;
 
 
-		if (! keepRunning)
+		if (! keep_running)
 			query.FinishedEvent += OnFinished;
 		else
 			query.ClosedEvent += OnClosed;

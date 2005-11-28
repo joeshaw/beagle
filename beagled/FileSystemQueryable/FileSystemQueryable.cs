@@ -1235,47 +1235,66 @@ namespace Beagle.Daemon.FileSystemQueryable {
 			hit.AddProperty (prop);
 
 			// Now assemble the path by looking at the parent and name
-			string name, parent_id_uri;
+			string name, path;
 			name = hit [ExactFilenamePropKey];
-			if (name == null)
-				return false;
-			parent_id_uri = hit [ParentDirUriPropKey];
-			if (parent_id_uri == null)
-				return false;
+			if (name == null) {
+				// If we don't have the filename property, we have to do a lookup
+				// based on the guid.  This happens with synthetic hits produced by
+				// index listeners.
+				Guid hit_id;
+				hit_id = GuidFu.FromUri (hit.Uri);
+				path = UniqueIdToFullPath (hit_id);
+			} else {
+				string parent_id_uri;
+				parent_id_uri = hit [ParentDirUriPropKey];
+				if (parent_id_uri == null)
+					return false;
 
-			Guid parent_id;
-			parent_id = GuidFu.FromUriString (parent_id_uri);
+				Guid parent_id;
+				parent_id = GuidFu.FromUriString (parent_id_uri);
 			
-			string path;
-			path = ToFullPath (name, parent_id);
-			if (path == null) {
-				Logger.Log.Debug ("Couldn't find path of file with name '{0}' and parent '{1}'",
-						  name, GuidFu.ToShortString (parent_id));
-				return false;
+				path = ToFullPath (name, parent_id);
+				if (path == null)
+					Logger.Log.Debug ("Couldn't find path of file with name '{0}' and parent '{1}'",
+							  name, GuidFu.ToShortString (parent_id));
 			}
 
-			hit.Uri = UriFu.PathToFileUri (path);
+			if (path != null) {
+				hit.Uri = UriFu.PathToFileUri (path);
+				return true;
+			}
 
-			return true;
+			return false;
 		}
 
 		// Hit filter: this handles our mapping from internal->external uris,
 		// and checks to see if the file is still there.
 		override protected bool HitFilter (Hit hit)
 		{
+			Uri old_uri = hit.Uri;
+
 			if (! RemapUri (hit))
 				return false;
 
 			string path;
 			path = hit.Uri.LocalPath;
 
-			bool is_directory = (hit.MimeType == "inode/directory");
+			bool is_directory;
+			bool exists = false;
 
-			bool exists;
-			if (is_directory)
-				exists = Directory.Exists (path);
-			else
-				exists = File.Exists (path);
+			is_directory = hit.MimeType == "inode/directory";
+
+			if (hit.MimeType == null && hit.Uri.IsFile && Directory.Exists (path)) {
+				is_directory = true;
+				exists = true;
+			}
+
+			if (! exists) {
+				if (is_directory)
+					exists = Directory.Exists (path);
+				else
+					exists = File.Exists (path);
+			}
 
 			// If the file doesn't exist, we do not schedule a removal and
 			// return false.  This is to avoid "losing" files if they are

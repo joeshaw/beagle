@@ -92,6 +92,7 @@ namespace Beagle.Daemon {
 			this.query = (Query) req;
 
 			this.result = new QueryResult ();
+			this.result.IsIndexListener = this.query.IsIndexListener;
 			AttachResult ();
 
 			QueryDriver.ChangedEvent += OnQueryDriverChanged;

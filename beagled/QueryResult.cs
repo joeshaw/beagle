@@ -58,6 +58,7 @@ namespace Beagle.Daemon {
 		DateTime started_time;
 		DateTime finished_time;
 		Hashtable per_worker_started_time = new Hashtable ();
+		bool is_index_listener = false;
 
 
 		public QueryResult ()
@@ -86,6 +87,11 @@ namespace Beagle.Daemon {
 			get { return cancelled; }
 		}
 
+		public bool IsIndexListener {
+			get { return is_index_listener; }
+			set { is_index_listener = value; }
+		}
+
 		public void Cancel ()
 		{
 			lock (this) {
@@ -110,6 +116,12 @@ namespace Beagle.Daemon {
 
 				if (some_hits.Count == 0)
 					return;
+
+				if (IsIndexListener) {
+					if (HitsAddedEvent != null)
+						HitsAddedEvent (this, some_hits);
+					return;
+				}
 
 				// Be careful not to report the same hit twice.
 				ArrayList hits_to_report;
@@ -138,6 +150,12 @@ namespace Beagle.Daemon {
 
 				if (some_uris.Count == 0)
 					return;
+				
+				if (IsIndexListener) {
+					if (HitsSubtractedEvent != null)
+						HitsSubtractedEvent (this, some_uris);
+					return;
+				}
 
 				ArrayList filtered_uris = new ArrayList ();
 

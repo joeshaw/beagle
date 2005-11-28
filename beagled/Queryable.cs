@@ -61,12 +61,12 @@ namespace Beagle.Daemon {
 		public bool AcceptQuery (Query query)
 		{
 			return query != null
-				&& ! query.IsEmpty
+				&& (query.IsIndexListener || ! query.IsEmpty)
 				&& query.AllowsSource (Name)
 				&& query.AllowsDomain (Domain)
 				&& iqueryable.AcceptQuery (query);
 		}
-
+				    
 		public void DoQuery (Query query, IQueryResult result, IQueryableChangeData change_data)
 		{
 			try {
