@@ -88,7 +88,7 @@ static void
 start_message (BeagleParserContext *ctx, const char **attrs)
 {
 	int i;
-	int num_gtypes;
+	guint num_gtypes;
 	GType *gtypes;
 	GType gtype_to_match = 0;
 

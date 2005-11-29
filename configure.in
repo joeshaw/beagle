@@ -144,7 +144,7 @@ AC_MSG_CHECKING([which mozilla to use])
  
 MOZILLA=
 AC_ARG_WITH([mozilla],
-        AC_HELP_STRING([--with-mozilla@<:@=mozilla|firefox|thunderbird@:>@],
+        AC_HELP_STRING([--with-mozilla@<:@=mozilla|xulrunner|firefox|thunderbird@:>@],
                        [Whether to use mozilla, firefox or thunderbird gtkmozembed (default: mozilla)]),
         [MOZILLA="$withval"])
 
@@ -152,6 +152,8 @@ dnl try to autodetect: if mozilla exists, use it, else try firefox, then thunder
 if test "x$MOZILLA" = "x"; then
   if pkg-config --exists mozilla-gtkmozembed; then
     MOZILLA=mozilla
+  elif pkg-config --exists xulrunner-gtkmozembed; then
+    MOZILLA=xulrunner
   elif pkg-config --exists firefox-gtkmozembed; then
     MOZILLA=firefox
   elif pkg-config --exists thunderbird-gtkmozembed; then
@@ -159,7 +161,7 @@ if test "x$MOZILLA" = "x"; then
   else
     AC_MSG_ERROR([unable to find gtkmozembed; this can be found in mozilla/firefox/thunderbird development packages])
   fi
-elif test "x$with_mozilla" != "xmozilla" -a "x$with_mozilla" != "xfirefox" -a "x$with_mozilla" != "xthunderbird"; then
+elif test "x$with_mozilla" != "xmozilla" -a "x$with_mozilla" != "xulrunner" -a "x$with_mozilla" != "xfirefox" -a "x$with_mozilla" != "xthunderbird"; then
   AC_MSG_ERROR([unknown mozilla name ($MOZILLA)])
 fi
                                                                                 
@@ -169,6 +171,7 @@ AC_MSG_RESULT([$MOZILLA])
 
 case "$MOZILLA" in
 mozilla) min_version=1.6 flavour=mozilla ;;
+xulrunner) min_version=1.8 flavour=toolkit ;;
 firefox) min_version=0.10 flavour=toolkit ;;
 thunderbird) min_version=0.8 flavour=toolkit ;;
 esac
