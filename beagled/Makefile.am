@@ -300,6 +300,11 @@ akregatorqueryable = $(srcdir)/AkregatorQueryable
 AKREGATOR_QUERYABLE_CSFILES =				\
 	$(akregatorqueryable)/AkregatorQueryable.cs
 
+konqhistoryqueryable = $(srcdir)/KonqHistoryQueryable
+KONQHISTORY_QUERYABLE_CSFILES =				\
+	$(kopetequeryable)/KopeteQueryable.cs 	 	\
+	$(kopetequeryable)/KopeteCrawler.cs
+
 kopetequeryable = $(srcdir)/KopeteQueryable
 KOPETE_QUERYABLE_CSFILES =				\
 	$(kopetequeryable)/KopeteQueryable.cs 	 	\

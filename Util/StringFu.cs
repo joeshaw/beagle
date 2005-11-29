@@ -213,6 +213,12 @@ namespace Beagle.Util {
 
 			return builder.ToString ();
 		}
+
+		public static string UrlFuzzyDivide (string url)
+		{
+			int protocol_index = url.IndexOf ("://");
+			return FuzzyDivide (url.Substring (protocol_index + 3));
+		}
 		
 		// Match strings against patterns that are allowed to contain
 		// glob-style * wildcards.

@@ -1,3 +1,9 @@
+2005-11-29  Debajyoti Bera <dbera.web@gmail.com>
+
+	* beagled/KonqHistoryQueryable, Filters/FilterKonqHistory.cs,
+	Util/KonqHistoryUtil.cs, Util/StringFu.cs: Initial support for
+	indexing konqueror webhistory.
+	
 2005-11-29  Veerapuram Varadhan <vvaradhan@novell.com>
 
 	* beagled/Filter.cs (AppendText): Don't "Trim()" the string, as

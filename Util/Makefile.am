@@ -68,6 +68,7 @@ CSFILES = 			        	\
 	$(srcdir)/IoPriority.cs			\
 	$(srcdir)/JpegHeader.cs			\
 	$(srcdir)/KdeUtils.cs			\
+	$(srcdir)/KonqHistoryUtil.cs		\
 	$(srcdir)/Log.cs			\
 	$(srcdir)/Logger.cs             	\
 	$(srcdir)/Mozilla.cs	        	\
@@ -100,7 +101,8 @@ ASSEMBLIES =					\
 	$(BEAGLE_UI_LIBS)			\
 	-r:System.Web.Services			\
 	-r:Mono.Data.SqliteClient		\
-	-r:Mono.Posix
+	-r:Mono.Posix				\
+	-r:System.Web
 
 if ENABLE_GALAGO
 CSFILES +=					\
