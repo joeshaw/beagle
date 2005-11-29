@@ -1,3 +1,12 @@
+2005-11-29  Veerapuram Varadhan <vvaradhan@novell.com>
+
+	* beagled/Filter.cs (AppendText): Don't "Trim()" the string, as
+	lucene takes care of it.  This saves good amount of
+	memory-allocation when we have text with line breaks.
+	* Filters/FilterSource.cs (AppendToTokens) (ExtractTokens):
+	Replace un-necessary calls to StringBuilder.ToString() to reduce
+	memory-allocations.
+	
 2005-11-27  Daniel Drake  <dsd@gentoo.org>
 
 	* beagled/GaimLogQueryable/GaimLogQueryable.cs: Misc cleanups, don't index

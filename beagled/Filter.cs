@@ -209,15 +209,13 @@ namespace Beagle.Daemon {
 		{
 			if (!IsFrozen && str != null && str != "") {
 				int i = 0;
-				string line;
 				string[] lines;
 
 				// Avoid unnecessary allocation of a string
 				// FIXME: Handle \r, \r\n cases.
 				if (str.IndexOf ('\n') > -1) {
 					lines = str.Split ('\n'); 
-					for (i = 0; i < lines.Length; i++) {
-						line = lines[i].Trim();
+					foreach (string line in lines) {
 						if (line.Length > 0) {
 							ReallyAppendText (line, null);
 							AppendStructuralBreak ();

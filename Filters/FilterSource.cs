@@ -79,10 +79,8 @@ namespace Beagle.Filters {
 		//          True, if it is a valid word that can be added to the pool.
 		private bool AppendToToken (char ch, int index, int length)
 		{
-			if (ch == ' ' && 
-			    SrcLangType == LangType.Shell_Style) {
+			if (ch == ' ')
 				return true;
-			}
 
 			if (Char.IsLetter (ch) ||
 			    Char.IsDigit (ch) ||
@@ -129,7 +127,7 @@ namespace Beagle.Filters {
                                         case "(*":
                                                 if (SrcLineType == LineType.None) {
 							SrcLineType = LineType.BlockComment;
-							token.Remove (0, token.Length);
+							token.Length = 0;
 						    } else 
 							token.Append (splCharSeq);
 						splCharSeq = ""; 
@@ -140,7 +138,7 @@ namespace Beagle.Filters {
 							SrcLineType = LineType.None;
 							token.Append (" ");
 							AppendText (token.ToString());
-							token.Remove (0, token.Length);
+							token.Length = 0;
 						} else if (SrcLineType != LineType.None)
 							token.Append (splCharSeq);
 						splCharSeq = "";
@@ -149,7 +147,7 @@ namespace Beagle.Filters {
                                         case "{":
                                                 if (SrcLineType == LineType.None) {
 							SrcLineType = LineType.BlockComment;
-							token.Remove (0, token.Length);
+							token.Length = 0;
 						    } else 
 							token.Append (splCharSeq);
 						splCharSeq = ""; 
@@ -160,7 +158,7 @@ namespace Beagle.Filters {
 							SrcLineType = LineType.None;
 							token.Append (" ");
 							AppendText (token.ToString());
-							token.Remove (0, token.Length);
+							token.Length = 0;
 						} else if (SrcLineType != LineType.None)
 							token.Append (splCharSeq);
 						splCharSeq = "";
@@ -168,7 +166,7 @@ namespace Beagle.Filters {
 					case "//":
 						if (SrcLineType == LineType.None) {
 							SrcLineType = LineType.SingleLineComment;
-							token.Remove (0, token.Length);
+							token.Length = 0;
 						} else
 							token.Append (splCharSeq);
 						splCharSeq = "";
@@ -177,7 +175,7 @@ namespace Beagle.Filters {
 					case "/*":
 						if (SrcLineType == LineType.None) {
 							SrcLineType = LineType.BlockComment;
-							token.Remove (0, token.Length);
+							token.Length = 0;
 						} else 
 							token.Append (splCharSeq);
 						splCharSeq = "";
@@ -188,7 +186,7 @@ namespace Beagle.Filters {
 							SrcLineType = LineType.None;
 							token.Append (" ");
 							AppendText (token.ToString());
-							token.Remove (0, token.Length);
+							token.Length = 0;
 						} else if (SrcLineType != LineType.None)
 							token.Append (splCharSeq);
 						splCharSeq = "";
@@ -201,7 +199,7 @@ namespace Beagle.Filters {
 					   (str[index] == '%' && SrcLangType == LangType.Matlab_Style)) {
 					if (SrcLineType == LineType.None) {
 						SrcLineType = LineType.SingleLineComment;
-						token.Remove (0, token.Length);
+						token.Length = 0;
 					} else
 						token.Append (str[index]);
 				}
@@ -225,11 +223,11 @@ namespace Beagle.Filters {
 						SrcLineType = LineType.None;
 						token.Append (" ");
 						AppendText (token.ToString());
-						token.Remove (0, token.Length);
+						token.Length = 0;
 					} else {
 						StrConstIdentifier = str.Substring (index, 3);
 						SrcLineType = LineType.StringConstant;
-						token.Remove (0, token.Length);
+						token.Length = 0;
 						index += 2;
 					}
 					       
@@ -248,12 +246,12 @@ namespace Beagle.Filters {
 						SrcLineType = LineType.None;
 						token.Append (" ");
 						AppendText (token.ToString());
-						token.Remove (0, token.Length);
+						token.Length = 0;
 
 					} else if (SrcLineType == LineType.None) {
 						StrConstIdentifier = str.Substring (index, 1);
 						SrcLineType = LineType.StringConstant;
-						token.Remove (0, token.Length);
+						token.Length = 0;
 					} else
 						token.Append (str[index]);
 					splCharSeq = "";
@@ -279,15 +277,18 @@ namespace Beagle.Filters {
 								continue;
 							}
 						}
-						token = token.Replace(" ", "");
+						//token = token.Replace(" ", "");
 						if (token.Length > 0) {
-							string tok = token.ToString(); 
+							string tok;
 							if (SrcLangType == LangType.Fortran_Style)
 								tok = token.ToString().ToLower();
+							else
+								tok = token.ToString ();
 							if (!KeyWordsHash.Contains (tok)) {
-								token.Append (" ");
-								if (!Char.IsDigit (token[0]))
-									AppendText (token.ToString());
+								if (!Char.IsDigit (token[0])) {
+									AppendText (tok);
+									AppendWhiteSpace ();
+								}
 							}
 						}
 						// reset the token
