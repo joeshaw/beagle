@@ -57,6 +57,7 @@ namespace Beagle {
 
 		private QueryPart_Or mime_type_part = null;
 		private QueryPart_Or hit_type_part = null;
+		private QueryPart_Or source_part = null;
 
 		private bool is_index_listener = false;
 
@@ -311,9 +312,26 @@ namespace Beagle {
 
 		///////////////////////////////////////////////////////////////
 
+		// This API is DEPRECATED.
+		// The source is now stored in the beagle:Source property.
+		// To restrict on source, just do a normal property query.
+
 		public void AddSource (string str)
 		{
 			searchSources.Add (str);
+
+			if (source_part == null) {
+				source_part = new QueryPart_Or ();
+				AddPart (source_part);
+			}
+
+			// Add a part for this source type.
+			QueryPart_Property part;
+			part = new QueryPart_Property ();
+			part.Type = PropertyType.Keyword;
+			part.Key = "beagle:Source";
+			part.Value = str;
+			source_part.Add (part);
 		}
 		
 
@@ -322,7 +340,7 @@ namespace Beagle {
 			if (searchSources.Count == 0)
 				return true;
 			foreach (string ss in searchSources)
-				if (str.ToUpper () == ss.ToUpper ())
+				if (str == ss)
 					return true;
 			return false;
 		}

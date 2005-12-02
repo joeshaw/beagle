@@ -57,7 +57,6 @@ namespace Beagle {
 		// server-side copy of the Hit.  It is always null
 		// on the client-side.
 		private object sourceObject = null;
-		private string source_object_name = null;
 
 		// High scores imply greater relevance.
 		private double score = 0.0;
@@ -145,12 +144,6 @@ namespace Beagle {
 		public object SourceObject {
 			get { return sourceObject; }
 			set { sourceObject = value; }
-		}
-
-		[XmlAttribute]
-		public string SourceObjectName {
-			get { return source_object_name; }
-			set { source_object_name = value; }
 		}
 
 		[XmlAttribute]

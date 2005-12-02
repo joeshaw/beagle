@@ -204,6 +204,9 @@ namespace Beagle.Daemon {
 			
 			try {
 				static_queryable = new StaticQueryable (index_dir.Name, index_dir.FullName, true);
+			} catch (InvalidOperationException) {
+				Logger.Log.Warn ("Unable to create read-only index (likely due to index version mismatch): {0}", index_dir.FullName);
+				return false;
 			} catch (Exception e) {
 				Logger.Log.Error ("Caught exception while instantiating static queryable: {0}", index_dir.Name);
 				Logger.Log.Error (e);					
@@ -322,6 +325,11 @@ namespace Beagle.Daemon {
 			return null;
 		}
 
+		static public Queryable GetQueryable (IQueryable iqueryable)
+		{
+			return (Queryable) iqueryable_to_queryable [iqueryable];
+		}
+
 		////////////////////////////////////////////////////////
 
 		public delegate void ChangedHandler (Queryable            queryable,
@@ -341,31 +349,6 @@ namespace Beagle.Daemon {
 
 		////////////////////////////////////////////////////////
 
-		private class MarkAndForwardHits : IQueryResult {
-
-			IQueryResult result;
-			string name;
-			
-			public MarkAndForwardHits (IQueryResult result, string name)
-			{
-				this.result = result;
-				this.name = name;
-			}
-
-			public void Add (ICollection some_hits)
-			{
-				foreach (Hit hit in some_hits)
-					if (hit != null)
-						hit.SourceObjectName = name;
-				result.Add (some_hits);
-			}
-
-			public void Subtract (ICollection some_uris)
-			{
-				result.Subtract (some_uris);
-			}
-		}
-
 		private class QueryClosure : IQueryWorker {
 
 			Queryable queryable;
@@ -380,7 +363,7 @@ namespace Beagle.Daemon {
 			{
 				this.queryable = queryable;
 				this.query = query;
-				this.result = new MarkAndForwardHits (result, queryable.Name);
+				this.result = result;
 				this.change_data = change_data;
 			}
 

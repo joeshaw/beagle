@@ -60,9 +60,14 @@ namespace Beagle.Daemon {
 			// FIXME: Maybe the LuceneQueryingDriver should never try to create the index?
 			if (Exists ())
 				Open (read_only);
-			// FIXME: Do something sane if we're in read-only mode and want to create an index.
 			else if (!read_only)
 				Create ();
+			else {
+				// We're in read-only mode, but we can't create an index.
+				// Maybe a different exception would be better?  This one is caught
+				// in QueryDriver.LoadStaticQueryable ()
+				throw new InvalidOperationException ();
+			}
 		}
 
 		////////////////////////////////////////////////////////////////

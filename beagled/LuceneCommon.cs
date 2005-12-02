@@ -74,7 +74,8 @@ namespace Beagle.Daemon {
 		// 11: moved mime type and hit type into properties
 		// 12: added year-month and year-month-day resolutions for all
 		//     date properties
-		private const int MAJOR_VERSION = 12;
+		// 13: moved source into a property
+		private const int MAJOR_VERSION = 13;
 		private int minor_version = 0;
 
 		private string index_name;
@@ -654,6 +655,12 @@ namespace Beagle.Daemon {
 				AddPropertyToDocument (prop, primary_doc);
 			}
 
+			if (indexable.Source != null) {
+				Property prop;
+				prop = Property.NewKeyword ("beagle:Source", indexable.Source);
+				AddPropertyToDocument (prop, primary_doc);
+			}
+
 			// Store the other properties
 				
 			foreach (Property prop in indexable.Properties) {
@@ -738,13 +745,12 @@ namespace Beagle.Daemon {
 			
 			hit.Timestamp = StringFu.StringToDateTime (doc.Get ("Timestamp"));
 
-			hit.Source = "lucene";
-
 			AddPropertiesToHit (hit, doc, true);
 
 			// Get the Type and MimeType from the properties.
 			hit.Type = hit.GetFirstProperty ("beagle:HitType");
 			hit.MimeType = hit.GetFirstProperty ("beagle:MimeType");
+			hit.Source = hit.GetFirstProperty ("beagle:Source");
 
 			return hit;
 		}

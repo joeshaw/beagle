@@ -208,6 +208,8 @@ class QueryTool {
 			"yyyyMMddHHmmss"
 		};
 
+		query = new Query ();
+
 		// Parse args
 		int i = 0;
 		while (i < args.Length) {
@@ -279,8 +281,6 @@ class QueryTool {
 
 			++i;
 		}
-
-		query = new Query ();
 
 		if (listener) {
 

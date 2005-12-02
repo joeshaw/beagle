@@ -77,6 +77,9 @@ namespace Beagle {
 		// If applicable, otherwise set to null.
 		private String mimeType = null;
 
+		// The source backend that generated this indexable
+		private string source = null;
+		
 		// List of Property objects
 		private ArrayList properties = new ArrayList ();
 
@@ -228,6 +231,12 @@ namespace Beagle {
 		public String MimeType {
 			get { return mimeType; }
 			set { mimeType = value; }
+		}
+
+		[XmlAttribute]
+		public string Source {
+			get { return source; }
+			set { source = value; }
 		}
 
 		[XmlIgnore]

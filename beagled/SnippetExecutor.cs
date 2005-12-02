@@ -38,7 +38,7 @@ namespace Beagle.Daemon {
 		public override ResponseMessage Execute (RequestMessage req)
 		{
 			SnippetRequest request = (SnippetRequest) req;
-			Queryable queryable = QueryDriver.GetQueryable (request.Hit.SourceObjectName);
+			Queryable queryable = QueryDriver.GetQueryable (request.Hit.Source);
 			string snippet;
 
 			if (queryable == null)

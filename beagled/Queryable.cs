@@ -62,7 +62,6 @@ namespace Beagle.Daemon {
 		{
 			return query != null
 				&& (query.IsIndexListener || ! query.IsEmpty)
-				&& query.AllowsSource (Name)
 				&& query.AllowsDomain (Domain)
 				&& iqueryable.AcceptQuery (query);
 		}
@@ -83,8 +82,8 @@ namespace Beagle.Daemon {
 				return null;
 
 			// Sanity-check: make sure this Hit actually came out of this Queryable
-			if (QueryDriver.GetQueryable (hit.SourceObjectName) != this) {
-				string msg = String.Format ("Queryable mismatch in GetSnippet: {0} vs {1}", hit.SourceObjectName, this);
+			if (QueryDriver.GetQueryable (hit.Source) != this) {
+				string msg = String.Format ("Queryable mismatch in GetSnippet: {0} vs {1}", hit.Source, this);
 				throw new Exception (msg);
 			}
 
