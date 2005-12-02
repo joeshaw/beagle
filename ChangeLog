@@ -1,3 +1,10 @@
+2005-12-02  Debajyoti Bera <dbera.web@gmail.com>
+
+	* beagled/DumpIndex.cs: term_enumerator returns terms that are
+	already sorted. No need to scan all the terms.
+	* beagled/Server.cs: Pre-initialize the serializer in connection
+	handler. Removes the slight lag(?) in the first response.
+
 2005-11-29  Debajyoti Bera <dbera.web@gmail.com>
 
 	* beagled/KonqHistoryQueryable, Filters/FilterKonqHistory.cs,

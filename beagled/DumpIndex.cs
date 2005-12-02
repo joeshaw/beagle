@@ -104,6 +104,7 @@ class DumpIndexTool {
 		return all_hits.Count;
 	}
 
+	static Term initial_enum_term;
 	// Dump the term frequencies: we do this via direct Lucene access.
 	static void DumpOneIndex_TermFrequencies (string index_name)
 	{
@@ -114,27 +115,31 @@ class DumpIndexTool {
 		reader = IndexReader.Open (driver.PrimaryStore);
 
 		TermEnum term_enum;
-		term_enum = reader.Terms ();
+		term_enum = reader.Terms (initial_enum_term);
 
 		int distinct_term_count = 0;
 		int term_count = 0;
 
-		while (term_enum.Next ()) {
-			Term term;
-			term = term_enum.Term ();
-			if (term.Field () != "Text")
-				continue;
-				
-			int freq;
-			freq = term_enum.DocFreq ();
+		// from LuceneFAQ
+		// Terms are sorted first by field, then by text
+		// so all terms with a given field are adjacent in enumerations.
+		if (term_enum.Term () != null) {
+			while (term_enum.Term().Field() == "Text") {
+				int freq;
+				freq = term_enum.DocFreq ();
 
-			Console.WriteLine ("{0} {1} {2}", index_name, term.Text (), freq);
+				Console.WriteLine ("{0} {1} {2}", index_name, term_enum.Term ().Text (), freq);
 
-			// FIXME: spew these as a count
-			++distinct_term_count;
-			term_count += freq;
+				// FIXME: spew these as a count
+				++distinct_term_count;
+				term_count += freq;
+
+				if (!term_enum.Next ())
+					break;
+			}
 		}
 
+		term_enum.Close ();
 		reader.Close ();
 
 		Console.WriteLine ();
@@ -223,6 +228,10 @@ class DumpIndexTool {
 		index_info_list.Sort ();
 
 		bool set_counts = false;
+		
+		if (mode == Mode.TermFrequencies)
+			initial_enum_term = new Term ("Text", "");
+
 		foreach (IndexInfo info in index_info_list) {
 			if (mode == Mode.Uris || mode == Mode.Properties) {
 				info.Count = DumpOneIndex_Metadata (info.Name, mode == Mode.Uris);

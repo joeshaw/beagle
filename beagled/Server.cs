@@ -40,7 +40,7 @@ namespace Beagle.Daemon {
 	class ConnectionHandler {
 
 		private static int connection_count = 0;
-		private static XmlSerializer serializer = new XmlSerializer (typeof (ResponseWrapper), ResponseMessage.Types);
+		public static XmlSerializer serializer = null;
 
 		private object client_lock = new object ();
 		private object blocking_read_lock = new object ();
@@ -342,6 +342,8 @@ namespace Beagle.Daemon {
 			this.running = true;
 
 			Shutdown.WorkerStart (this, String.Format ("server '{0}'", socket_path));
+			if (ConnectionHandler.serializer == null)
+				ConnectionHandler.serializer = new XmlSerializer (typeof (ResponseWrapper), ResponseMessage.Types);
 
 			while (this.running) {
 				UnixClient client;
