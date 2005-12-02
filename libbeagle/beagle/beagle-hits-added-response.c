@@ -119,14 +119,14 @@ start_property (BeagleParserContext *ctx, const char **attrs)
 			is_mutable = strcmp (attrs[i + 1], "true") == 0;
 		else if (strcmp (attrs[i], "IsSearched") == 0)
 			is_searched = strcmp (attrs[i + 1], "true") == 0;
-		else if (strcmp (attrs[i], "Type") == 0)
+		else if (strcmp (attrs[i], "Type") == 0) {
 		        if (strcmp (attrs [i + 1], "Text") == 0)
 			        type = BEAGLE_PROPERTY_TYPE_TEXT;
 		        else if (strcmp (attrs [i + 1], "Keyword") == 0)
 			        type = BEAGLE_PROPERTY_TYPE_KEYWORD;
 			else if (strcmp (attrs [i + 1], "Date") == 0)
 			        type = BEAGLE_PROPERTY_TYPE_DATE;
-		else
+		} else
 			g_warning ("could not handle %s", attrs[i]);
 	}
 

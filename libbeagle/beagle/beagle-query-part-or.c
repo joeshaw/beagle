@@ -57,7 +57,6 @@ beagle_query_part_or_to_xml (BeagleQueryPart *part)
 	for (iter = priv->subparts; iter != NULL; iter = iter->next) {
 		BeagleQueryPart *subpart = BEAGLE_QUERY_PART (iter->data);
 		GString *sub_data;
-		GError *sub_err = NULL;
 
 		sub_data = _beagle_query_part_to_xml (subpart);
 		g_string_append_len (data, sub_data->str, sub_data->len);

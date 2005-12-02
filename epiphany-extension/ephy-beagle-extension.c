@@ -31,6 +31,7 @@
 #include "ephy-beagle-extension.h"
 
 #include <epiphany/ephy-extension.h>
+#include <epiphany/ephy-embed-factory.h>
 #include <epiphany/ephy-embed-persist.h>
 #include <epiphany/ephy-shell.h>
 #include <epiphany/ephy-node.h>

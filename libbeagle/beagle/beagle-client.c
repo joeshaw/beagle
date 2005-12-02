@@ -33,6 +33,7 @@
 
 #include "beagle-private.h"
 #include "beagle-client.h"
+#include "beagle-util.h"
 
 typedef struct {
 	gchar *socket_path;

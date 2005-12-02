@@ -87,6 +87,7 @@ GString *_beagle_query_part_to_xml    (BeagleQueryPart *part);
 void _beagle_query_part_append_standard_header (GString *data,
 						BeagleQueryPart *part,
 						const char *xsi_type);
+void _beagle_query_part_append_standard_footer (GString *data);
 
 BeagleResponse *_beagle_request_send (BeagleRequest *request,
 				      const char *socket_path,
