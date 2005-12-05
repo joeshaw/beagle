@@ -161,6 +161,7 @@ man_MANS = 			\
 
 desktop_in_files = beagle-settings.desktop.in
 desktop_files = $(desktop_in_files:.desktop.in=.desktop)
+desktop_h_files = $(desktop_in_files:.in=.in.h)
 
 desktopdir = $(datadir)/applications
 desktop_DATA = $(desktop_files)
@@ -201,6 +202,7 @@ CLEANFILES = 				\
 	$(CRAWL_WRAPPER)		\
 	$(CRAWL_WRAPPER_CRONTAB)	\
 	$(desktop_DATA)		 	\
+	$(desktop_h_files)		\
 	settings.glade.h
 
 

@@ -56,6 +56,7 @@ $(WRAPPER): $(srcdir)/$(WRAPPER).in
 
 desktop_in_files = best.desktop.in
 desktop_files = $(desktop_in_files:.desktop.in=.desktop)
+desktop_h_files = $(desktop_in_files:.in=.in.h)
 
 desktopdir = $(datadir)/applications
 desktop_DATA = $(desktop_files)
@@ -69,8 +70,9 @@ EXTRA_DIST =			\
 	$(desktop_DATA) 	\
 	$(man_MANS)
 
-CLEANFILES =		\
-	$(desktop_DATA) \
-	$(TARGET)	\
-	$(TARGET).mdb	\
+CLEANFILES =			\
+	$(desktop_DATA) 	\
+	$(TARGET)		\
+	$(TARGET).mdb		\
+	$(desktop_h_files)	\
 	$(WRAPPER)

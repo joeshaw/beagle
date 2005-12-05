@@ -3,11 +3,11 @@ INCLUDES = $(PYTHON_INCLUDES) $(PYBEAGLE_CFLAGS) -I$(top_srcdir)/libbeagle
 beagledir = $(pythondir)
 beagle_LTLIBRARIES = beagle.la
 beagle_la_LDFLAGS = -module -avoid-version -export-symbols-regex initbeagle
-beagle_la_LIBADD = $(BEAGLE_LIBS) $(top_srcdir)/libbeagle/beagle/libbeagle.la
+beagle_la_LIBADD = $(BEAGLE_LIBS) $(top_builddir)/libbeagle/beagle/libbeagle.la
 beagle_la_SOURCES = \
-	beaglemodule.c 
+	$(srcdir)/beaglemodule.c 
 
-nodist_beagle_la_SOURCES = beagle.c
+nodist_beagle_la_SOURCES = $(srcdir)/beagle.c
 
 CLEANFILES = beagle.c
 EXTRA_DIST = \
