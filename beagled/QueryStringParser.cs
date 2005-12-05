@@ -193,6 +193,7 @@ namespace Beagle.Daemon {
 				query_part.Value = query_text; // the whole .abc part
 				query_part.Type = PropertyType.Keyword;
 				Logger.Log.Debug ("Extension query:" + query_text);
+				return query_part;
 			}
 
 			int pos = query_text.IndexOf (":");
