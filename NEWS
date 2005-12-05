@@ -1,4 +1,64 @@
 
+Version 0.1.3
+December 5, 2005
+
+Daemon/Infrastructure:
+* Python bindings. (Raphael Slinckx, Joe Shaw)
+* Fix a crash when trying to search backends without a secondary index. (Joe)
+* Use Mono's UnixClient and UnixListener, now that we require mono
+  1.1.10. (Joe)
+* Use Mono.Unix.Native. (Daniel Drake)
+* Added support for index-listener queries: these are special queries that
+  return no initial results but which get live query notification of
+  every index change. (Jon Trowbridge)
+
+Backends:
+* Gaim log backend optimizations and cleanups. (Daniel)
+* Fixed a bug in LuceneFileQueryable where it wasnt setting the
+  attribute of a file shared across multiple indexables. (Bera)
+* Properly use LuceneFileQueryable in blog backends. (Bera)
+* Initial release of Konqueror webhistory backend. (Bera)
+
+Filters:
+* FilterHtml optimisations, change it to be event driven instead of DOM-based.
+  (D Bera)
+* Use charset meta-type specified in HTML file to determine file encoding.
+  (Bera)
+* Extract non-english URLs in html documents correctly. (Bera)
+* New Shellscript filter. (Varadhan)
+* Fix for reducing memory-allocations in Filter.cs. (Varadhan)
+* Fix for reducing memory-allocations in FilterSource.cs (Varadhan)
+* Updated image filters. (Lukas)
+* Index width and height for JPEG images into the correct property. (Lukas)
+* Added fspot:IsIndexed field to images. (Lukas)
+* Index category field for .desktop files. (Lukas)
+
+UI/Tools:
+* Fixed the blog tile. (Daniel)
+* Fix some problems in the beagle-crawl-system script that would result
+  in TextCaches being created incorrectly, causing problems when
+  searching.  (Sylvain Goletto, Joe)
+* Fix a crash of the Epiphany extension on x86-64 machines.  (Stanislav
+  Brabec, Joe)
+* Save best window settings even when ran with --no-tray. (Bera)
+* Allow beagle-extract-content to store output in a file. (Bera)
+* Stop live-query when "clear" button is pressed in Best. (Bera)
+
+* Translations:
+* Updated Hungarian translation. (Gabor Kelemen)
+* Updated Spanish translation. (Francisco Javier F. Serrador)
+
+Everything Else:
+* Cleaned up compiler warnings. (Joe, Lukas)
+* Small fixes to the included spec file. (Richard Dawe)
+* Also include pre-i18n desktop files in the tarball; fixes a problem
+  where you couldn't "make" after a "make clean" in the 0.1.2 tarball.
+  (Joe)
+* Best can now be built on firefox 1.5. (Daniel)
+* Allow beagle to be built against Mozilla xulrunner.  (Joe)
+
+------------------------------------------------------
+
 Version 0.1.2
 November 10, 2005
 
