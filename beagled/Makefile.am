@@ -302,8 +302,7 @@ AKREGATOR_QUERYABLE_CSFILES =				\
 
 konqhistoryqueryable = $(srcdir)/KonqHistoryQueryable
 KONQHISTORY_QUERYABLE_CSFILES =				\
-	$(kopetequeryable)/KopeteQueryable.cs 	 	\
-	$(kopetequeryable)/KopeteCrawler.cs
+	$(konqhistoryqueryable)/KonqQueryable.cs
 
 kopetequeryable = $(srcdir)/KopeteQueryable
 KOPETE_QUERYABLE_CSFILES =				\
@@ -325,6 +324,7 @@ DAEMON_DLL_CSFILES = 						\
 	$(BLAM_QUERYABLE_CSFILES)				\
 	$(LIFEREA_QUERYABLE_CSFILES)				\
 	$(AKREGATOR_QUERYABLE_CSFILES)				\
+	$(KONQHISTORY_QUERYABLE_CSFILES)				\
 	$(KOPETE_QUERYABLE_CSFILES)				\
 	$(srcdir)/FileAttributes.cs				\
 	$(srcdir)/FileAttributesStore.cs			\
