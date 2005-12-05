@@ -7,22 +7,19 @@ beagle_la_LIBADD = $(BEAGLE_LIBS) $(top_builddir)/libbeagle/beagle/libbeagle.la
 beagle_la_SOURCES = \
 	$(srcdir)/beaglemodule.c 
 
-nodist_beagle_la_SOURCES = $(srcdir)/beagle.c
+nodist_beagle_la_SOURCES = $(top_builddir)/beagle.c
 
-CLEANFILES = beagle.c
+CLEANFILES = $(top_builddir)/beagle.c
 EXTRA_DIST = \
 	beagle.defs \
 	beagle.override \
 	gen-defs.sh
 
-beagle.c: beagle.defs beagle.override
-.defs.c:
+$(top_builddir)/beagle.c: $(srcdir)/beagle.defs $(srcdir)/beagle.override
 	(cd $(srcdir) \
 	 && $(PYGTK_CODEGEN) \
-	    --override $*.override \
+	    --override $(srcdir)/beagle.override \
 	    --register $(PYGTK_DEFSDIR)/gtk-types.defs \
 	    --register $(PYGTK_DEFSDIR)/gdk-types.defs \
-	    --prefix py$* $*.defs) > gen-$*.c \
-	&& cp gen-$*.c $*.c \
-	&& rm -f gen-$*.c
+	    --prefix pybeagle $(srcdir)/beagle.defs) > $(top_builddir)/beagle.c
 
