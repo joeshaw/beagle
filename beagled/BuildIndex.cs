@@ -48,7 +48,7 @@ namespace Beagle.Daemon
 
 		static Hashtable remap_table = new Hashtable ();
 
-		static string arg_output, arg_tag;
+		static string arg_output, arg_tag, arg_source;
 
 		/////////////////////////////////////////////////////////
 		
@@ -171,6 +171,14 @@ namespace Beagle.Daemon
 
 				case "--disable-restart":
 					arg_disable_restart = true;
+					break;
+
+				case "--source":
+					if (next_arg == null)
+						break;
+
+					arg_source = next_arg;
+					++i;
 					break;
 
 				default:
@@ -371,6 +379,13 @@ namespace Beagle.Daemon
 					// Tag the item for easy identification (for say, removal)
 					if (arg_tag != null)
 						indexable.AddProperty (Property.NewKeyword("Tag", arg_tag));
+
+					if (arg_source == null) {
+						DirectoryInfo dir = new DirectoryInfo (arg_output);
+						arg_source = dir.Name;
+					}
+
+					indexable.Source = arg_source;
 					
 					pending_request.Add (indexable);
 					
@@ -470,6 +485,7 @@ namespace Beagle.Daemon
 			usage += 
 				"Usage: beagle-build-index [OPTIONS] --target <index_path> <path> [path]\n\n" +
 				"Options:\n" +
+				"  --source [name]\t\tThe index's source name.  Defaults to the target directory name\n" +
 				"  --remap [path1:path2]\t\tRemap data paths to fit target. \n" +
 				"  --tag [tag]\t\t\tTag index data for identification.\n" + 
 				"  --recursive\t\t\tCrawl source path recursivly.\n" + 
