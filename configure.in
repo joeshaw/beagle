@@ -335,6 +335,9 @@ AC_ARG_ENABLE([evolution-sharp],
 AC_SUBST(EVO_SHARP_LIBS)
 EVO_SHARP_PREFIX=`$PKG_CONFIG --variable=prefix evolution-sharp`
 
+EVO_LIBDIR=`$PKG_CONFIG --variable=evolibdir evolution-sharp`
+AC_SUBST(EVO_LIBDIR)
+
 PKG_CHECK_MODULES(EVO_SHARP,
    	 evolution-sharp >= $EVOLUTION_SHARP_REQUIRED, \
 	 have_evo_sharp_dependencies=yes,
