@@ -1,3 +1,7 @@
+2005-12-06  Ryan P Skadberg  <skadz@stigmata.org>
+
+	* beagled/Makefile.am: Fix for evolution location in beagled
+
 2005-12-06  Veerapuram Varadhan <vvaradhan@novell.com>
 
 	** Patch from Daniel Naber <lucenebugs@danielnaber.de>
