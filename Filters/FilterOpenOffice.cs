@@ -466,6 +466,12 @@ namespace Beagle.Filters {
 										  reader.Value));
 					}
 					break;
+
+				case "meta:keyword":
+					reader.Read ();
+					AddProperty (Beagle.Property.New ("fixme:keywords",
+									  +  reader.Value));
+					break;
 				}
 				
 				reader.Read ();

@@ -1,5 +1,12 @@
 2005-12-06  Veerapuram Varadhan <vvaradhan@novell.com>
 
+	** Patch from Daniel Naber <lucenebugs@danielnaber.de>
+	** Fixes #316617
+	* Filters/FilterOpenOffice.cs: Extract "meta:keyword" field for
+	indexing.
+	
+2005-12-06  Veerapuram Varadhan <vvaradhan@novell.com>
+
 	* Filters/FilterPPT.cs: Make sure to read till EOF.
 	** Fixes 323312.
 	
