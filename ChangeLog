@@ -1,3 +1,8 @@
+2005-12-06  Veerapuram Varadhan <vvaradhan@novell.com>
+
+	* Filters/FilterPPT.cs: Make sure to read till EOF.
+	** Fixes 323312.
+	
 2005-12-02  Debajyoti Bera <dbera.web@gmail.com>
 
 	* beagled/DumpIndex.cs: term_enumerator returns terms that are

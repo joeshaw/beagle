@@ -398,9 +398,15 @@ namespace Beagle.Filters {
 
 		private int ParseElement (Input stream)
 		{
-			byte [] data = stream.Read(8);
-			if (data == null)
+			int data_remaining = (int) stream.Remaining;
+			//Console.WriteLine ("stream.Remaining = {0}", data_remaining);
+
+			// Weird!! Well, Its a M$ format ;-)
+			// Fixes: 323312
+			byte [] data = stream.Read (data_remaining > 7 ? 8 : data_remaining);
+			if (data == null || data_remaining < 8)
 				return 0;
+
 			RecordType.TypeCode opcode = (RecordType.TypeCode) GetInt16(data, 2);
 			int length = GetInt32(data, 4);
 			RecordType type = RecordType.Find (opcode);
@@ -419,6 +425,8 @@ namespace Beagle.Filters {
 						if (elem_length == 0)
 							return 0;
 						length_remaining -= elem_length;
+						//Console.WriteLine ("ParseElement: length = {0}, rem = {1}", 
+						//		   elem_length, length_remaining);
 					}
 				}
 			} else {
@@ -456,6 +464,7 @@ namespace Beagle.Filters {
 							HotDown ();
 						else
 							AppendStructuralBreak ();
+						//Console.WriteLine ("Text : {0}", strData);
 					}  else if (opcode == RecordType.TypeCode.TextHeaderAtom) {
 						data = stream.Read (4);
 						textType = (TextType) GetInt32 (data, 0);
@@ -508,8 +517,11 @@ namespace Beagle.Filters {
 					// after "Document" container.
 					// And certain PPTs do have some slides in after
 					// "Document" container.
-					while (!stream.Eof)
+					//Console.WriteLine ("Length of stream = {0}", stream.Size);
+					while (!stream.Eof) {
 						ParseElement (stream);
+						//Console.WriteLine ("Position of the ptr in the stream: {0}", stream.Position);
+					}
 				} else {
 					Logger.Log.Error ("Ole stream not found in {0}.  Content extraction skipped.", FileName);
 				}
