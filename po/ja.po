@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: beagle HEAD\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2005-09-26 00:25+0900\n"
-"PO-Revision-Date: 2005-09-26 00:23+0900\n"
+"POT-Creation-Date: 2005-12-06 23:49+0900\n"
+"PO-Revision-Date: 2005-11-13 23:14+0900\n"
 "Last-Translator: Takeshi AIHANA <aihana@gnome.gr.jp>\n"
 "Language-Team: Japanese <gnome-translation@gnome.gr.jp>\n"
 "MIME-Version: 1.0\n"
@@ -16,7 +16,7 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
 
-#: ../Best/Best.cs:132
+#: ../Best/Best.cs:134
 msgid ""
 "If you're wondering whether Best is working check your notification area "
 "(system tray)"
@@ -24,11 +24,11 @@ msgstr ""
 "パネルの通知スペース (システム・トレイ) をご覧になり、Best が実行中かどうか確"
 "認してみて下さい"
 
-#: ../Best/BestTray.cs:149
+#: ../Best/BestTray.cs:148
 msgid "Disable Searching"
 msgstr "検索の無効"
 
-#: ../Best/BestTray.cs:150
+#: ../Best/BestTray.cs:149
 msgid ""
 "You are about to close the search tray. The search tray is automatically "
 "started at login-time. Would you like to disable it for future sessions?"
@@ -52,35 +52,35 @@ msgstr "クリア"
 msgid "Quit"
 msgstr "終了"
 
-#: ../Best/BestWindow.cs:306
+#: ../Best/BestWindow.cs:301
 msgid "Anywhere"
 msgstr "全て"
 
-#: ../Best/BestWindow.cs:310
+#: ../Best/BestWindow.cs:305
 msgid "in Files"
 msgstr "ファイルから"
 
-#: ../Best/BestWindow.cs:314
+#: ../Best/BestWindow.cs:309
 msgid "in Addressbook"
 msgstr "連絡先から"
 
-#: ../Best/BestWindow.cs:318
+#: ../Best/BestWindow.cs:313
 msgid "in Mail"
 msgstr "メールから"
 
-#: ../Best/BestWindow.cs:322
+#: ../Best/BestWindow.cs:317
 msgid "in Web Pages"
 msgstr "ウェブ・ページから"
 
-#: ../Best/BestWindow.cs:326
+#: ../Best/BestWindow.cs:321
 msgid "in Chats"
 msgstr "IM から"
 
-#: ../Best/BestWindow.cs:343
+#: ../Best/BestWindow.cs:338
 msgid "Search terms:"
 msgstr "検索する語句:"
 
-#: ../Best/BestWindow.cs:367
+#: ../Best/BestWindow.cs:362
 msgid "Find"
 msgstr "検索"
 
@@ -92,25 +92,25 @@ msgstr "次の検索結果"
 msgid "Show Previous Results"
 msgstr "前の検索結果"
 
-#: ../Best/BestWindow.cs:424
+#: ../Best/BestWindow.cs:474
 msgid "No results."
 msgstr "該当するものが見つかりませんでした。"
 
 #. To translators: {0} is the current count of results shown of {1} in total, this is the message that is initially shown
 #. when results are returned to the user.
-#: ../Best/BestWindow.cs:428
+#: ../Best/BestWindow.cs:478
 #, csharp-format
 msgid "Best <b>{0} results of {1}</b> are shown."
 msgstr "<b>{1}個のうち1〜{0}番目</b>の結果を表示しました。"
 
 #. To translators: {0} to {1} is the interval of results currently shown of {2} results in total
-#: ../Best/BestWindow.cs:433
+#: ../Best/BestWindow.cs:483
 #, csharp-format
 msgid "Results <b>{0} through {1} of {2}</b> are shown."
 msgstr "<b>{2}個のうち{0}〜{1}番目</b>の結果を表示しました。"
 
 #. To translators: {0} represents the current query keywords
-#: ../Best/BestWindow.cs:542
+#: ../Best/BestWindow.cs:591
 #, csharp-format
 msgid ""
 "The query for <i>{0}</i> failed.<br>The likely cause is that the beagle "
@@ -120,10 +120,18 @@ msgstr ""
 "す。"
 
 #. To translators: {0} represents the current query keywords, {1} contains the errormessage
-#: ../Best/BestWindow.cs:547
+#: ../Best/BestWindow.cs:596
 #, csharp-format
 msgid "The query for <i>{0}</i> failed with error:<br>{1}<br>"
 msgstr "<i>{0}</i> の検索に失敗しました。エラー:<br>{1}<br>"
+
+#: ../Best/best.desktop.in.h:1
+msgid "Beagle Search"
+msgstr "Beagle 検索"
+
+#: ../Best/best.desktop.in.h:2
+msgid "Desktop Search"
+msgstr "デスクトップを検索します"
 
 #: ../glue/eggtrayicon.c:127
 msgid "Orientation"
@@ -141,12 +149,12 @@ msgstr "<b>会話の履歴</b>"
 msgid "IM Viewer"
 msgstr "IM ビューア"
 
-#: ../ImLogViewer/ImLogWindow.cs:87
+#: ../ImLogViewer/ImLogWindow.cs:102
 #, csharp-format
 msgid "Conversations in {0}"
 msgstr "{0} についての会話記録"
 
-#: ../ImLogViewer/ImLogWindow.cs:94
+#: ../ImLogViewer/ImLogWindow.cs:109
 #, csharp-format
 msgid "Conversations with {0}"
 msgstr "{0} さんとの会話記録"
@@ -189,27 +197,27 @@ msgstr "{0} についての会話"
 msgid "Conversation with {0}"
 msgstr "{0} さんとの会話"
 
-#: ../Tiles/TileMailMessage.cs:81
+#: ../Tiles/TileMailMessage.cs:88
 msgid "No Subject"
 msgstr "件名なし"
 
-#: ../Tiles/TileMailMessage.cs:88
+#: ../Tiles/TileMailMessage.cs:95
 msgid "To"
 msgstr "宛先:"
 
-#: ../Tiles/TileMailMessage.cs:88
+#: ../Tiles/TileMailMessage.cs:95
 msgid "From"
 msgstr "差出人:"
 
-#: ../Tiles/TileMailMessage.cs:116
+#: ../Tiles/TileMailMessage.cs:123
 msgid "Sent"
 msgstr "送信日:"
 
-#: ../Tiles/TileMailMessage.cs:116
+#: ../Tiles/TileMailMessage.cs:123
 msgid "Received"
 msgstr "受信日:"
 
-#: ../Tiles/TileMailMessage.cs:124
+#: ../Tiles/TileMailMessage.cs:131
 msgid "Email attachment"
 msgstr "添付ファイル"
 
@@ -382,11 +390,11 @@ msgstr "格納場所: ネットワーク対応 Beagle のホスト"
 msgid "Search Networked Beagle"
 msgstr "ネットワーク対応 Beagle の検索"
 
-#: ../tools/Settings.cs:214
+#: ../tools/Settings.cs:217
 msgid "Reload configuration"
 msgstr "設定の再読込み"
 
-#: ../tools/Settings.cs:215
+#: ../tools/Settings.cs:218
 msgid ""
 "The configuration file has been modified by another application. Do you wish "
 "to discard the currently displayed values and reload configuration from disk?"
@@ -394,15 +402,15 @@ msgstr ""
 "他のアプリケーションが設定ファイルを変更しました。現在表示している内容を破棄"
 "して、再び設定情報を読み直しますか？"
 
-#: ../tools/Settings.cs:253
+#: ../tools/Settings.cs:256
 msgid "Select Path"
 msgstr "パスの選択"
 
-#: ../tools/Settings.cs:272
+#: ../tools/Settings.cs:275
 msgid "The selected path is already selected for indexing and wasn't added."
 msgstr "指定したパスは既にインデックス作成の対象になっているので登録しません。"
 
-#: ../tools/Settings.cs:275
+#: ../tools/Settings.cs:278
 msgid ""
 "The selected path wasn't added. The list contains items that supercedes it "
 "and the data is already being indexed."
@@ -410,15 +418,15 @@ msgstr ""
 "指定したパスの代替となるアイテムが既に登録されており、そのインデックスが作成"
 "されているので、そのパスは登録しません。"
 
-#: ../tools/Settings.cs:286 ../tools/Settings.cs:478
+#: ../tools/Settings.cs:289 ../tools/Settings.cs:481
 msgid "Path not added"
 msgstr "パスを追加しませんでした"
 
-#: ../tools/Settings.cs:295
+#: ../tools/Settings.cs:298
 msgid "Remove obsolete paths"
 msgstr "古いパスの削除"
 
-#: ../tools/Settings.cs:296
+#: ../tools/Settings.cs:299
 msgid ""
 "Adding this path will obsolete some of the existing include paths. This will "
 "result in the removal of the old obsolete paths. Do you still wish to add it?"
@@ -426,98 +434,98 @@ msgstr ""
 "このパスを追加すると既に登録済みの古いパスを破棄することになります。それでも"
 "パスを追加しますか？"
 
-#: ../tools/Settings.cs:322
+#: ../tools/Settings.cs:325
 msgid "Remove path"
 msgstr "パスの削除"
 
-#: ../tools/Settings.cs:323
+#: ../tools/Settings.cs:326
 msgid ""
 "Are you sure you wish to remove this path from the list of directories to be "
 "included for indexing?"
 msgstr ""
 "本当に、このパスをインデックス作成の対象一覧から削除してもよろしいですか？"
 
-#: ../tools/Settings.cs:352
+#: ../tools/Settings.cs:355
 msgid "Remove item"
 msgstr "アイテムの削除"
 
-#: ../tools/Settings.cs:353
+#: ../tools/Settings.cs:356
 msgid ""
 "Are you sure you wish to remove this item from the list of data to be "
 "excluded from indexing?"
 msgstr ""
 "本当に、このパスをインデックス作成の対象外一覧から削除してもよろしいですか？"
 
-#: ../tools/Settings.cs:396
+#: ../tools/Settings.cs:399
 msgid "Invalid host entry"
 msgstr "ホスト名が正しくありません"
 
-#: ../tools/Settings.cs:403
+#: ../tools/Settings.cs:406
 msgid "Remote host already present in the list."
 msgstr "指定したホストは既に登録済みです"
 
-#: ../tools/Settings.cs:412
+#: ../tools/Settings.cs:415
 msgid "Netbeagle Node not added"
 msgstr "Netbeagle ノードを追加しませんでした"
 
-#: ../tools/Settings.cs:428
+#: ../tools/Settings.cs:431
 msgid "Remove host"
 msgstr "ホストの削除"
 
-#: ../tools/Settings.cs:429
+#: ../tools/Settings.cs:432
 msgid "Are you sure you wish to remove this host from the list?"
 msgstr "本当に、このホストを一覧から削除してもよろしいですか？"
 
-#: ../tools/Settings.cs:450
+#: ../tools/Settings.cs:453
 msgid "Select path"
 msgstr "パス名の選択"
 
-#: ../tools/Settings.cs:469
+#: ../tools/Settings.cs:472
 msgid "The selected path is already configured for external access."
 msgstr "指定したパスは既に外部からのアクセス可能として設定済みです。"
 
-#: ../tools/Settings.cs:493
+#: ../tools/Settings.cs:496
 msgid "Remove public path"
 msgstr "パブリックなパスの削除"
 
-#: ../tools/Settings.cs:494
+#: ../tools/Settings.cs:497
 msgid ""
 "Are you sure you wish to remove this entry from the list of public paths?"
 msgstr ""
 "本当に、このエントリをパブリックなパスの一覧から削除してもよろしいですか？"
 
-#: ../tools/Settings.cs:539 ../tools/Settings.cs:628 ../tools/Settings.cs:706
-#: ../tools/Settings.cs:782 ../tools/Settings.cs:1121
+#: ../tools/Settings.cs:542 ../tools/Settings.cs:631 ../tools/Settings.cs:709
+#: ../tools/Settings.cs:785 ../tools/Settings.cs:1124
 msgid "Name"
 msgstr "名前"
 
-#: ../tools/Settings.cs:622 ../tools/settings.glade.h:32
+#: ../tools/Settings.cs:625 ../tools/settings.glade.h:33
 msgid "Type"
 msgstr "種類"
 
-#: ../tools/Settings.cs:675 ../tools/Settings.cs:1055
-#: ../tools/settings.glade.h:24
+#: ../tools/Settings.cs:678 ../tools/Settings.cs:1058
+#: ../tools/settings.glade.h:25
 msgid "Path"
 msgstr "パス名"
 
-#: ../tools/Settings.cs:678 ../tools/Settings.cs:1065
+#: ../tools/Settings.cs:681 ../tools/Settings.cs:1068
 msgid "Pattern"
 msgstr "パターン"
 
-#: ../tools/Settings.cs:681 ../tools/Settings.cs:1060
+#: ../tools/Settings.cs:684 ../tools/Settings.cs:1063
 #: ../tools/settings.glade.h:22
 msgid "Mail Folder"
 msgstr "メール・フォルダ:"
 
-#: ../tools/Settings.cs:1029
+#: ../tools/Settings.cs:1032
 msgid "Select Folder"
 msgstr "フォルダの選択"
 
-#: ../tools/Settings.cs:1089
+#: ../tools/Settings.cs:1092
 msgid "Error adding path"
 msgstr "パス名を追加する際にエラーが発生しました"
 
-#: ../tools/Settings.cs:1090
+#: ../tools/Settings.cs:1093
 msgid ""
 "The specified path could not be found and therefore it could not be added to "
 "the list of resources excluded for indexing."
@@ -525,7 +533,7 @@ msgstr ""
 "指定したパスが見つからなかったので、インデックス生成で除外するリソース一覧に"
 "パスを追加することができませんでした。"
 
-#: ../tools/Settings.cs:1120
+#: ../tools/Settings.cs:1123
 msgid "Show"
 msgstr "表示"
 
@@ -618,26 +626,30 @@ msgid "Indexing"
 msgstr "インデックスの作成"
 
 #: ../tools/settings.glade.h:23
+msgid "Maximum number of results displayed "
+msgstr "表示する検索結果の数 (最大) "
+
+#: ../tools/settings.glade.h:24
 msgid "Networking"
 msgstr "ネットワーク"
 
-#: ../tools/settings.glade.h:25
+#: ../tools/settings.glade.h:26
 msgid "Please select a resource you wish to exclude from indexing."
 msgstr "インデックスの作成で対象外とするリソースを選択して下さい:"
 
-#: ../tools/settings.glade.h:26
+#: ../tools/settings.glade.h:27
 msgid "Please select the mail folder you wish to exclude from indexing. "
 msgstr "インデックスの作成で対象外とするメール・フォルダを選択して下さい:"
 
-#: ../tools/settings.glade.h:27
+#: ../tools/settings.glade.h:28
 msgid "Search"
 msgstr "検索"
 
-#: ../tools/settings.glade.h:28
+#: ../tools/settings.glade.h:29
 msgid "Search Preferences"
 msgstr "デスクトップ検索の設定"
 
-#: ../tools/settings.glade.h:29
+#: ../tools/settings.glade.h:30
 msgid ""
 "Specify any resources, such as paths, patterns, mail folders or type of "
 "objects you wish to exclude from indexing."
@@ -645,13 +657,25 @@ msgstr ""
 "インデックスの作成で対象外とするフォルダ、パターン、メール・フォルダ、オブ"
 "ジェクトの種類を指定して下さい:"
 
-#: ../tools/settings.glade.h:30
+#: ../tools/settings.glade.h:31
 msgid "Specify paths that should be available for external access"
 msgstr "外部からのアクセスを許可するパス名を指定して下さい:"
 
-#: ../tools/settings.glade.h:31
+#: ../tools/settings.glade.h:32
 msgid "Start search & indexing services automatically "
 msgstr "自動的に検索＆インデックス作成サービスを起動する"
+
+#: ../tools/beagle-settings.desktop.in.h:1
+msgid "Configure Desktop Search & Indexing"
+msgstr "デスクトップ検索とインデックスの作成を設定します"
+
+#: ../tools/beagle-settings.desktop.in.h:2
+msgid "Configure search & indexing properties"
+msgstr "検索とインデックスの作成のプロパティを設定します"
+
+#: ../tools/beagle-settings.desktop.in.h:3
+msgid "Search & Indexing"
+msgstr "デスクトップ検索の設定"
 
 #: ../Util/Evolution.cs:45 ../Util/Evolution.cs:163
 msgid "On This Computer"
@@ -681,71 +705,71 @@ msgstr "InterOperability のフォルダ"
 msgid "Unknown Directory"
 msgstr "不明なフォルダ"
 
-#: ../Util/StringFu.cs:65
+#: ../Util/StringFu.cs:75
 msgid "Today"
 msgstr "今日"
 
-#: ../Util/StringFu.cs:67
+#: ../Util/StringFu.cs:77
 msgid "Yesterday"
 msgstr "昨日"
 
 #. Translators: Example output: Aug 9
-#: ../Util/StringFu.cs:70
+#: ../Util/StringFu.cs:80
 msgid "MMM d"
 msgstr "MMM d日"
 
 #. Translators: Example output: Aug 9, 2000
-#: ../Util/StringFu.cs:73
+#: ../Util/StringFu.cs:83
 msgid "MMM d, yyyy"
 msgstr "yyyy年 MMM d日"
 
 #. Translators: Example output: 11:05 AM  (note h = 12-hour time)
-#: ../Util/StringFu.cs:76
+#: ../Util/StringFu.cs:86
 msgid "h:mm tt"
 msgstr "h:mm tt"
 
 #. Translators: {0} is a date (e.g. 'Today' or 'Apr 23'), {1} is the time
-#: ../Util/StringFu.cs:82
+#: ../Util/StringFu.cs:92
 #, csharp-format
 msgid "{0}, {1}"
 msgstr "{0} の {1}"
 
 #. To translators: {0} is the time of the day, eg. 13:45
-#: ../Util/StringFu.cs:99
+#: ../Util/StringFu.cs:109
 #, csharp-format
 msgid "Today, {0}"
 msgstr "今日の {0}"
 
 #. To translators: {0} is the time of the day, eg. 13:45
-#: ../Util/StringFu.cs:102
+#: ../Util/StringFu.cs:112
 #, csharp-format
 msgid "Yesterday, {0}"
 msgstr "昨日の {0}"
 
 #. To translators: {0} is the number of days that have passed, {1} is the time of the day, eg. 13:45
-#: ../Util/StringFu.cs:105
+#: ../Util/StringFu.cs:115
 #, csharp-format
 msgid "{0} days ago, {1}"
 msgstr "{0} 日前の {1}"
 
 #. Translators: Example output: January 3, 3:45 PM
-#: ../Util/StringFu.cs:110
+#: ../Util/StringFu.cs:120
 msgid "MMMM d, h:mm tt"
 msgstr "MMMM d日 tt h:mm"
 
 #. Translators: Example output: March 23 2001, 10:04 AM
-#: ../Util/StringFu.cs:115
+#: ../Util/StringFu.cs:125
 msgid "MMMM d yyyy, h:mm tt"
 msgstr "yyyy年 MMMM d日, tt h:mm"
 
-#: ../Util/StringFu.cs:125
+#: ../Util/StringFu.cs:135
 #, csharp-format
 msgid "{0} hour"
 msgid_plural "{0} hours"
 msgstr[0] "{0} 時間"
 msgstr[1] "{0} 時間"
 
-#: ../Util/StringFu.cs:132
+#: ../Util/StringFu.cs:142
 #, csharp-format
 msgid "{0} minute"
 msgid_plural "{0} minutes"
@@ -753,19 +777,19 @@ msgstr[0] "{0} 分"
 msgstr[1] "{0} 分"
 
 #. Translators: {0} is a file size in bytes
-#: ../Util/StringFu.cs:148
+#: ../Util/StringFu.cs:158
 #, csharp-format
 msgid "{0} bytes"
 msgstr "{0} バイト"
 
 #. Translators: {0} is a file size in kilobytes
-#: ../Util/StringFu.cs:152
+#: ../Util/StringFu.cs:162
 #, csharp-format
 msgid "{0:0.0} KB"
 msgstr "{0:0.0} Kバイト"
 
 #. Translators: {0} is a file size in megabytes
-#: ../Util/StringFu.cs:155
+#: ../Util/StringFu.cs:165
 #, csharp-format
 msgid "{0:0.0} MB"
 msgstr "{0:0.0} Mバイト"
