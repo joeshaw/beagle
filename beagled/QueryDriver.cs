@@ -181,7 +181,7 @@ namespace Beagle.Daemon {
 			}
 
 			foreach (string path in static_queryables) {
-				DirectoryInfo index_dir = new DirectoryInfo (path);
+				DirectoryInfo index_dir = new DirectoryInfo (StringFu.SanitizePath (path));
 
 				if (!index_dir.Exists)
 					continue;

@@ -381,7 +381,7 @@ namespace Beagle.Daemon
 						indexable.AddProperty (Property.NewKeyword("Tag", arg_tag));
 
 					if (arg_source == null) {
-						DirectoryInfo dir = new DirectoryInfo (arg_output);
+						DirectoryInfo dir = new DirectoryInfo (StringFu.SanitizePath (arg_output));
 						arg_source = dir.Name;
 					}
 
