@@ -1,3 +1,7 @@
+2005-12-07  Žygimantas Beručka  <zygis@gnome.org>
+
+	* configure.in: Added Lithuanian to ALL_LINGUAS.
+
 2005-12-06  Ryan P Skadberg  <skadz@stigmata.org>
 
 	* beagled/Makefile.am: Fix for evolution location in beagled
