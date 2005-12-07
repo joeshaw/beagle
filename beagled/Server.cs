@@ -383,7 +383,8 @@ namespace Beagle.Daemon {
 
 		public void Start ()
 		{
-			ExceptionHandlingThread.Start (new ThreadStart (this.Run));
+			if (!Shutdown.ShutdownRequested)
+				ExceptionHandlingThread.Start (new ThreadStart (this.Run));
 		}
 
 		public void Stop ()
