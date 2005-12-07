@@ -128,7 +128,7 @@ namespace Beagle.Daemon.GaimLogQueryable {
 
 		private void CrawlRemoteDirectory (string remote_dir)
 		{
-			Inotify.Subscribe (remote_dir, OnInotifyNewConversation, Inotify.EventType.CloseWrite);
+			Inotify.Subscribe (remote_dir, OnInotifyNewConversation, Inotify.EventType.CloseWrite | Inotify.EventType.Modify);
 
 			foreach (FileInfo file in DirectoryWalker.GetFileInfos (remote_dir))
 				if (FileIsInteresting (file.Name))
