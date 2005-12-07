@@ -52,6 +52,7 @@ struct _BeagleErrorResponseClass {
 GType beagle_error_response_get_type (void);
 
 G_CONST_RETURN char *beagle_error_response_get_message (BeagleErrorResponse *response);
+G_CONST_RETURN char *beagle_error_response_get_details (BeagleErrorResponse *response);
 
 #endif /* __BEAGLE_ERROR_RESPONSE_H */
 

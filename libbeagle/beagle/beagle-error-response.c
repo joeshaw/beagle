@@ -36,6 +36,7 @@
 
 typedef struct {
 	char *message;
+	char *details;
 } BeagleErrorResponsePrivate;
 
 #define BEAGLE_ERROR_RESPONSE_GET_PRIVATE(o) (G_TYPE_INSTANCE_GET_PRIVATE ((o), BEAGLE_TYPE_ERROR_RESPONSE, BeagleErrorResponsePrivate))
@@ -64,8 +65,18 @@ end_error_message (BeagleParserContext *ctx)
 	priv->message = _beagle_parser_context_get_text_buffer (ctx);
 }
 
+static void
+end_error_details (BeagleParserContext *ctx)
+{
+	BeagleErrorResponse *response = BEAGLE_ERROR_RESPONSE (_beagle_parser_context_get_response (ctx));
+	BeagleErrorResponsePrivate *priv = BEAGLE_ERROR_RESPONSE_GET_PRIVATE (response);
+
+	priv->details = _beagle_parser_context_get_text_buffer (ctx);
+}
+
 enum {
 	PARSER_STATE_MESSAGE,
+	PARSER_STATE_DETAILS,
 };
 
 static BeagleParserHandler parser_handlers[] = {
@@ -74,6 +85,13 @@ static BeagleParserHandler parser_handlers[] = {
 	  PARSER_STATE_MESSAGE,
 	  NULL,
 	  end_error_message },
+
+	{ "Details",
+	  -1,
+	  PARSER_STATE_DETAILS,
+	  NULL,
+	  end_error_details },
+
 	{ 0 }
 };
 
@@ -115,6 +133,26 @@ beagle_error_response_get_message (BeagleErrorResponse *response)
 	priv = BEAGLE_ERROR_RESPONSE_GET_PRIVATE (response);
 
 	return priv->message;
+}
+
+/**
+ * beagle_error_response_get_details:
+ * @response: a #BeagleErrorResponse
+ *
+ * Gets the error's details from given #BeagleErrorResponse.
+ *
+ * Return value: the error details from the #BeagleErrorResponse.
+ **/
+const char *
+beagle_error_response_get_details (BeagleErrorResponse *response)
+{
+	BeagleErrorResponsePrivate *priv;
+
+	g_return_val_if_fail (BEAGLE_IS_ERROR_RESPONSE (response), NULL);
+
+	priv = BEAGLE_ERROR_RESPONSE_GET_PRIVATE (response);
+
+	return priv->details;
 }
 
 

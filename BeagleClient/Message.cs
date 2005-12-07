@@ -27,6 +27,7 @@
 using System;
 using System.Collections;
 using System.Reflection;
+using System.Text;
 using System.Xml.Serialization;
 
 using Beagle.Util;
@@ -39,19 +40,9 @@ namespace Beagle {
 			ArrayList types = new ArrayList ();
 			
 			foreach (Assembly ass in AppDomain.CurrentDomain.GetAssemblies ()) {
-				if (ass == null) {
-					Console.WriteLine ("THERE IS A NULL ASSEMBLY IN HERE.  WTF");
-					continue;
-				}
-
 				Type[] ass_types = ass.GetTypes ();
 			
 				foreach (Type t in ass_types) {
-					if (t == null) {
-						Console.WriteLine ("THERE IS A NULL TYPE IN HERE.  WTF");
-						continue;
-					}
-
 					if (t.IsSubclassOf (parent_type))
 						types.Add (t);
 				}
@@ -261,6 +252,7 @@ namespace Beagle {
 
 	public class ErrorResponse : ResponseMessage {
 		public string Message;
+		public string Details;
 
 		// Needed by the XmlSerializer for deserialization
 		public ErrorResponse () { }
@@ -268,6 +260,7 @@ namespace Beagle {
 		public ErrorResponse (Exception e)
 		{
 			this.Message = e.Message;
+			this.Details = e.ToString ();
 		}
 
 		public ErrorResponse (string message)
@@ -278,8 +271,26 @@ namespace Beagle {
 
 	public class ResponseMessageException : Exception {
 
-		internal ResponseMessageException (ErrorResponse response) : base (response.Message) { }
+		private string details;
 
-		internal ResponseMessageException (Exception e) : base (e.Message) { }
+		internal ResponseMessageException (ErrorResponse response) : base (response.Message)
+		{ 
+			details = response.Details;
+		}
+
+		internal ResponseMessageException (Exception e) : base (e.Message, e) { }
+
+		public override string ToString ()
+		{
+			if (details != null) {
+				StringBuilder sb = new StringBuilder ();
+
+				sb.AppendFormat ("{0}: {1}\n", this.GetType (), this.Message);
+				sb.Append (this.details);
+
+				return sb.ToString ();
+			} else
+				return base.ToString ();
+		}
 	}
 }

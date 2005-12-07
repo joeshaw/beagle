@@ -145,12 +145,16 @@ namespace Beagle.Daemon {
 					//Logger.Log.Debug ("Done sending request");
 				} catch (ResponseMessageException ex) {
 					Logger.Log.Debug ("Caught ResponseMessageException: {0}", ex.Message);
-				} catch (System.Net.Sockets.SocketException ex) {
-					Logger.Log.Debug ("Caught SocketException -- we probably need to launch a helper: {0}", ex.Message);
-					need_helper = true;
-				} catch (IOException ex) {
-					Logger.Log.Debug ("Caught IOException --- we probably need to launch a helper: {0}", ex.Message);
-					need_helper = true;
+
+					if (ex.InnerException is System.Net.Sockets.SocketException) {
+						Logger.Log.Debug ("InnerException is SocketException -- we probably need to launch a helper");
+						need_helper = true;
+					} else if (ex.InnerException is IOException) {
+						Logger.Log.Debug ("InnerException is IOException -- we probably need to launch a helper");
+						need_helper = true;
+					} else {
+						Logger.Log.Debug ("Exception was unexpected.  Details: {0}", ex);
+					}
 				}
 
 				// If we caught an exception...
