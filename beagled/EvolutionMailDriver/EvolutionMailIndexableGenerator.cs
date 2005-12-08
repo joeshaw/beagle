@@ -74,10 +74,6 @@ namespace Beagle.Daemon.EvolutionMailDriver {
 			Checkpoint ();
 		}
 
-		protected EvolutionMailQueryable Queryable {
-			get { return this.queryable; }
-		}
-
 		protected static void InitializeGMime ()
 		{
 			if (!gmime_initialized) {
@@ -108,6 +104,8 @@ namespace Beagle.Daemon.EvolutionMailDriver {
 		{
 			// FIXME: This is a little sketchy
 			this.queryable.FileAttributesStore.AttachLastWriteTime (this.CrawlFile.FullName, DateTime.UtcNow);
+
+			this.queryable.SetGeneratorProgress (this, 100);
 		}
 
 		public string StatusName {
@@ -198,8 +196,10 @@ namespace Beagle.Daemon.EvolutionMailDriver {
 		public override bool HasNextIndexable ()
 		{
 			if (this.account_name == null) {
-				if (!Setup ())
+				if (!Setup ()) {
+					this.queryable.RemoveGeneratorProgress (this);
 					return false;
+				}
 			}
 
 			if (this.mbox_fd < 0) {
@@ -382,6 +382,8 @@ namespace Beagle.Daemon.EvolutionMailDriver {
 			if (this.file_size > 0 && offset > 0) {
 				progress = String.Format (" ({0}/{1} bytes {2:###.0}%)",
 							  offset, this.file_size, 100.0 * offset / this.file_size);
+
+				this.queryable.SetGeneratorProgress (this, (int) (100.0 * offset / this.file_size));
 			}
 
 			Logger.Log.Debug ("{0}: indexed {1} messages{2}",
@@ -601,8 +603,10 @@ namespace Beagle.Daemon.EvolutionMailDriver {
 		public override bool HasNextIndexable ()
 		{
 			if (this.account_name == null) {
-				if (!Setup ())
+				if (!Setup ()) {
+					this.queryable.RemoveGeneratorProgress (this);
 					return false;
+				}
 			}
 
 			if (this.mapping == null) {
@@ -615,6 +619,7 @@ namespace Beagle.Daemon.EvolutionMailDriver {
 				// Check to see if we even need to bother walking the summary
 				if (cache_loaded && this.queryable.FileAttributesStore.IsUpToDate (this.CrawlFile.FullName)) {
 					Logger.Log.Debug ("{0}: summary has not been updated; crawl unncessary", this.folder_name);
+					this.queryable.RemoveGeneratorProgress (this);
 					return false;
 				}
 			}
@@ -628,6 +633,7 @@ namespace Beagle.Daemon.EvolutionMailDriver {
 				} catch (Exception e) {
 					Logger.Log.Warn ("Unable to index {0}: {1}", this.folder_name,
 									 e.Message);
+					this.queryable.RemoveGeneratorProgress (this);
 					return false;
 				}
 			}
@@ -644,9 +650,9 @@ namespace Beagle.Daemon.EvolutionMailDriver {
 
 				// FIXME: This is kind of a hack, but it's the only way
 				// with the IndexableGenerator to handle our removals.
-				Scheduler.Task task = this.Queryable.NewRemoveTask (uri);
+				Scheduler.Task task = this.queryable.NewRemoveTask (uri);
 				task.Priority = Scheduler.Priority.Immediate;
-				this.Queryable.ThisScheduler.Add (task);
+				this.queryable.ThisScheduler.Add (task);
 			}
 
 			string progress = "";
@@ -827,6 +833,8 @@ namespace Beagle.Daemon.EvolutionMailDriver {
 								  this.count,
 								  this.summary.header.count,
 								  100.0 * this.count / this.summary.header.count);
+
+					this.queryable.SetGeneratorProgress (this, (int) (100.0 * this.count / this.summary.header.count));
 
 				}
 				

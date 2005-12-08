@@ -46,6 +46,8 @@ namespace Beagle.Daemon.EvolutionMailDriver {
 
 		private MailCrawler crawler;
 
+		private Hashtable generator_progress = new Hashtable ();
+
 		// Index versions
 		// 1: Original version, stored all recipient addresses as a
 		//    RFC822 string
@@ -143,6 +145,8 @@ namespace Beagle.Daemon.EvolutionMailDriver {
 			task.Tag = summaryInfo.FullName;
 			// IndexableGenerator tasks default to having priority Scheduler.Priority Generator
 			ThisScheduler.Add (task);
+
+			SetGeneratorProgress (generator, 0);
 		}
 
 		public void IndexMbox (FileInfo mboxInfo)
@@ -161,6 +165,8 @@ namespace Beagle.Daemon.EvolutionMailDriver {
 			task.Tag = mboxInfo.FullName;
 			// IndexableGenerator tasks default to having priority Scheduler.Priority Generator
 			ThisScheduler.Add (task);
+
+			SetGeneratorProgress (generator, 0);
 		}
 
 		public static Uri EmailUri (string accountName, string folderName, string uid)
@@ -184,6 +190,43 @@ namespace Beagle.Daemon.EvolutionMailDriver {
 
 
 			return t;
+		}
+
+		// An embarrassingly unscientific attempt at getting progress
+		// information from the mail backend as a whole.  Unfortunately
+		// the IMAP and mbox backends don't have a common unit of
+		// measurement (IMAP has number of messages, mbox number of
+		// bytes), so we can't get anything really accurate.  We could
+		// try to normalize the byte count; that'd do us a little
+		// better.
+		public void SetGeneratorProgress (EvolutionMailIndexableGenerator generator, int percent)
+		{
+			this.generator_progress [generator] = percent;
+
+			int i = 0, total_percent = 0;
+			foreach (int progress in this.generator_progress.Values) {
+				total_percent += progress;
+				i++;
+			}
+
+			Logger.Log.Debug ("Overall percent is {0}", (float) total_percent / i);
+
+			this.ProgressPercent = total_percent / i;
+		}
+
+		public void RemoveGeneratorProgress (EvolutionMailIndexableGenerator generator)
+		{
+			this.generator_progress.Remove (generator);
+
+			int i = 0, total_percent = 0;
+			foreach (int progress in this.generator_progress.Values) {
+				total_percent += progress;
+				i++;
+			}
+
+			Logger.Log.Debug ("Overall percent is {0}", (float) total_percent / i);
+
+			this.ProgressPercent = total_percent / i;
 		}
 	}
 
