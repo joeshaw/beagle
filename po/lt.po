@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: beagle HEAD\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2005-12-07 22:38+0200\n"
-"PO-Revision-Date: 2005-12-07 22:38+0200\n"
+"POT-Creation-Date: 2005-12-09 18:55+0200\n"
+"PO-Revision-Date: 2005-12-09 18:56+0200\n"
 "Last-Translator: Žygimantas Beručka <zygis@gnome.org>\n"
 "Language-Team: Lithuanian <komp_lt@konferencijos.lt>\n"
 "MIME-Version: 1.0\n"
@@ -343,7 +343,7 @@ msgstr "Takelis"
 #. For translators: From template Tiles/template-music.html
 #: ../Tiles/TranslationHack.cs:56
 msgid "from"
-msgstr "nuo"
+msgstr "iš"
 
 #. For translators: From template Tiles/template-music.html
 #: ../Tiles/TranslationHack.cs:60
