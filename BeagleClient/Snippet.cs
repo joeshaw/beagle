@@ -39,18 +39,11 @@ namespace Beagle {
 
 		public SnippetRequest () : base (false) { }
 
-		public SnippetRequest (string[] query_terms, Hit hit) : base (false)
+		public SnippetRequest (Query query, Hit hit) : base (false)
 		{
-			this.QueryTerms = query_terms;
-			this.Hit = hit;
-		}
-
-		public SnippetRequest (ICollection query_terms, Hit hit) : base (false)
-		{
-			this.QueryTerms = new string [query_terms.Count];
-
+			this.QueryTerms = new string [query.StemmedText.Count];
 			int i = 0;
-			foreach (string term in query_terms) {
+			foreach (string term in query.StemmedText) {
 				this.QueryTerms [i] = term;
 				++i;
 			}

@@ -35,6 +35,7 @@
 #include "beagle-indexable.h"
 #include "beagle-request.h"
 #include "beagle-error-response.h"
+#include "beagle-search-term-response.h"
 #include "beagle-timestamp.h"
 
 struct _BeagleHit {
@@ -107,6 +108,9 @@ void _beagle_request_append_standard_footer (GString *data);
 
 void _beagle_error_response_to_g_error (BeagleErrorResponse *response,
 					GError **error);
+
+GSList *_beagle_search_term_response_get_exact_text (BeagleSearchTermResponse *response);
+GSList *_beagle_search_term_response_get_stemmed_text (BeagleSearchTermResponse *response);
 
 char *_beagle_timestamp_to_string (BeagleTimestamp *timestamp);
 char *_beagle_timestamp_get_start (void);

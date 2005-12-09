@@ -58,11 +58,8 @@ BeagleSnippetRequest *beagle_snippet_request_new          (void);
 void beagle_snippet_request_set_hit (BeagleSnippetRequest *request,
 				     BeagleHit *hit);
 
-void beagle_snippet_request_add_query_term (BeagleSnippetRequest *request,
-					    const char           *text);
-
-void beagle_snippet_request_set_query_terms_from_query (BeagleSnippetRequest *request,
-							BeagleQuery          *query);
+void beagle_snippet_request_set_query (BeagleSnippetRequest *request,
+				       BeagleQuery          *query);
 
 #endif /* __BEAGLE_SNIPPET_REQUEST_H */
 

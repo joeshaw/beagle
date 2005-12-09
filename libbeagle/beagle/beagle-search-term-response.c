@@ -38,7 +38,7 @@ typedef struct {
 	GSList *exact_text;   /* of string */
 	GSList *stemmed_text; /* of string */
 
-	GSList *current_list; /* points to one of the two above */
+	GSList **current_list; /* points to one of the two above */
 } BeagleSearchTermResponsePrivate;
 
 #define BEAGLE_SEARCH_TERM_RESPONSE_GET_PRIVATE(o) (G_TYPE_INSTANCE_GET_PRIVATE ((o), BEAGLE_TYPE_SEARCH_TERM_RESPONSE, BeagleSearchTermResponsePrivate))
@@ -52,11 +52,14 @@ beagle_search_term_response_finalize (GObject *obj)
 {
 	BeagleSearchTermResponsePrivate *priv = BEAGLE_SEARCH_TERM_RESPONSE_GET_PRIVATE (obj);
 
-	g_slist_foreach (priv->exact_text, (GFunc) g_free, NULL);
-	g_slist_free (priv->exact_text);
-
-	g_slist_foreach (priv->stemmed_text, (GFunc) g_free, NULL);
-	g_slist_free (priv->stemmed_text);
+	/*
+	 * Note, we don't free the lists or their contents here!  This is
+	 * because the BeagleSearchTermResponse is internal to BeagleQuery.
+	 * This response never happens in reply to any other request, and
+	 * the BeagleQuery gets these lists through the get_exact_text()
+	 * and get_stemmed_text() functions below.  They take ownership
+	 * of them.
+	 */
 
 	if (G_OBJECT_CLASS (parent_class)->finalize)
 		G_OBJECT_CLASS (parent_class)->finalize (obj);
@@ -68,7 +71,7 @@ start_exact (BeagleParserContext *ctx, const char **attrs)
 	BeagleSearchTermResponse *response = BEAGLE_SEARCH_TERM_RESPONSE (_beagle_parser_context_get_response (ctx));
 	BeagleSearchTermResponsePrivate *priv = BEAGLE_SEARCH_TERM_RESPONSE_GET_PRIVATE (response);
 
-	priv->current_list = priv->exact_text;
+	priv->current_list = &priv->exact_text;
 }
 
 static void
@@ -77,7 +80,7 @@ start_stemmed (BeagleParserContext *ctx, const char **attrs)
 	BeagleSearchTermResponse *response = BEAGLE_SEARCH_TERM_RESPONSE (_beagle_parser_context_get_response (ctx));
 	BeagleSearchTermResponsePrivate *priv = BEAGLE_SEARCH_TERM_RESPONSE_GET_PRIVATE (response);
 
-	priv->current_list = priv->stemmed_text;
+	priv->current_list = &priv->stemmed_text;
 }
 
 static void
@@ -86,7 +89,7 @@ end_text (BeagleParserContext *ctx)
 	BeagleSearchTermResponse *response = BEAGLE_SEARCH_TERM_RESPONSE (_beagle_parser_context_get_response (ctx));
 	BeagleSearchTermResponsePrivate *priv = BEAGLE_SEARCH_TERM_RESPONSE_GET_PRIVATE (response);
 
-	priv->current_list = g_slist_append (priv->current_list, _beagle_parser_context_get_text_buffer (ctx));
+	*priv->current_list = g_slist_append (*priv->current_list, _beagle_parser_context_get_text_buffer (ctx));
 }
 enum {
 	PARSER_STATE_EXACT,
@@ -142,16 +145,8 @@ beagle_search_term_response_init (BeagleSearchTermResponse *response)
 {
 }	
 
-/**
- * beagle_search_term_response_get_exact_text:
- * @response: a #BeagleSearchTermResponse
- *
- * Returns a list of strings which contain the exact text processed by a #BeagleSearchTermResponse.  The list should not be modified or freed.
- *
- * Return value: A list of strings containing the exact text.
- **/
 GSList *
-beagle_search_term_response_get_exact_text (BeagleSearchTermResponse *response)
+_beagle_search_term_response_get_exact_text (BeagleSearchTermResponse *response)
 {
 	BeagleSearchTermResponsePrivate *priv;
 
@@ -162,16 +157,8 @@ beagle_search_term_response_get_exact_text (BeagleSearchTermResponse *response)
 	return priv->exact_text;
 }
 
-/**
- * beagle_search_term_response_get_stemmed_text:
- * @response: a #BeagleSearchTermResponse
- *
- * Returns a list of strings which contain the stemmed text processed by a #BeagleSearchTermResponse.  The list should not be modified or freed.
- *
- * Return value: A list of strings containing the stemmed text.
- **/
 GSList *
-beagle_search_term_response_get_stemmed_text (BeagleSearchTermResponse *response)
+_beagle_search_term_response_get_stemmed_text (BeagleSearchTermResponse *response)
 {
 	BeagleSearchTermResponsePrivate *priv;
 

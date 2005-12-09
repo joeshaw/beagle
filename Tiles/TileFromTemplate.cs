@@ -51,7 +51,7 @@ namespace Beagle.Tile {
 					Template["action:"] = "action:" + UniqueKey + "!";
 
 					if (this.Uri != null && this.Query != null) {
-						SnippetRequest req = new SnippetRequest (this.Query.StemmedText, this.Hit);
+						SnippetRequest req = new SnippetRequest (this.Query, this.Hit);
 						try {
 							SnippetResponse response = (SnippetResponse) req.Send ();
 							Template["Snippet"] = response.Snippet;

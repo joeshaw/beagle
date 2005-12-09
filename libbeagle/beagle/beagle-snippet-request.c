@@ -35,7 +35,7 @@
 #include "beagle-snippet-response.h"
 
 typedef struct {
-	GSList *query_terms;
+	BeagleQuery *query;
 	BeagleHit *hit;
 } BeagleSnippetRequestPrivate;
 
@@ -50,7 +50,7 @@ beagle_snippet_request_to_xml (BeagleRequest *request, GError **err)
 	GString *data;
 	GSList *list;
 
-	g_return_val_if_fail (priv->query_terms != NULL, NULL);
+	g_return_val_if_fail (priv->query != NULL, NULL);
 	g_return_val_if_fail (priv->hit != NULL, NULL);
 
 	data = g_string_new (NULL);
@@ -60,7 +60,7 @@ beagle_snippet_request_to_xml (BeagleRequest *request, GError **err)
 	_beagle_hit_to_xml (priv->hit, data);
 	
 	g_string_append (data, "<QueryTerms>");
-	for (list = priv->query_terms; list != NULL; list = list->next) {
+	for (list = beagle_query_get_stemmed_text (priv->query); list != NULL; list = list->next) {
 		char *term = list->data;
 
 		g_string_append_printf (data, "<string>%s</string>", term);
@@ -82,8 +82,8 @@ beagle_snippet_request_finalize (GObject *obj)
 	if (priv->hit)
 		beagle_hit_unref (priv->hit);
 
-	g_slist_foreach (priv->query_terms, (GFunc)g_free, NULL);
-	g_slist_free (priv->query_terms);
+	if (priv->query != NULL)
+		g_object_unref (priv->query);
 
 	if (G_OBJECT_CLASS (parent_class)->finalize)
 		G_OBJECT_CLASS (parent_class)->finalize (obj);
@@ -155,33 +155,28 @@ beagle_snippet_request_set_hit (BeagleSnippetRequest *request,
 }
 
 /**
- * beagle_snippet_request_add_query_term:
+ * beagle_snippet_request_set:
  * @request: a #BeagleSnippetRequest
- * @text: a string
+ * @query: a #BeagleQuery
  *
- * Add a query term to the given #BeagleSnippetRequest.
+ * Set the query of the given #BeagleSnippetRequest from which to pull query terms.
  **/
-void
-beagle_snippet_request_add_query_term (BeagleSnippetRequest *request,
-				       const char           *text)
+void 
+beagle_snippet_request_set_query (BeagleSnippetRequest *request,
+				  BeagleQuery          *query)
 {
 	BeagleSnippetRequestPrivate *priv;
 
 	g_return_if_fail (BEAGLE_IS_SNIPPET_REQUEST (request));
-	g_return_if_fail (text != NULL);
+	g_return_if_fail (query != NULL);
 
 	priv = BEAGLE_SNIPPET_REQUEST_GET_PRIVATE (request);
 
-	priv->query_terms = g_slist_prepend (priv->query_terms, g_strdup (text));
+	g_object_ref (query);
+
+	if (priv->query != NULL)
+		g_object_unref (query);
+
+	priv->query = query;
 }
 
-/**
- * beagle_snippet_request_set_query_terms_from_query:
- * @request: a #BeagleSnippetRequest
- * @query: a #BeagleQuery
- *
- * Set the query terms of the given #BeagleSnippetRequest from the passed in #BeagleQuery.
- **/
-void 
-beagle_snippet_request_set_query_terms_from_query (BeagleSnippetRequest *request,
-						   BeagleQuery          *query);

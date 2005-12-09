@@ -49,6 +49,10 @@ typedef struct {
 	GSList *hit_types;  /* of string */
 	GSList *sources;    /* of string */
 	int max_hits;
+
+	/* These are extracted from the BeagleSearchTermResponse */
+	GSList *exact_text;   /* of string */
+	GSList *stemmed_text; /* of string */
 } BeagleQueryPrivate;
 
 #define BEAGLE_QUERY_GET_PRIVATE(o) (G_TYPE_INSTANCE_GET_PRIVATE ((o), BEAGLE_TYPE_QUERY, BeagleQueryPrivate))
@@ -63,6 +67,15 @@ enum {
 
 static GObjectClass *parent_class = NULL;
 static guint signals [LAST_SIGNAL] = { 0 };
+
+static void
+query_set_search_terms (BeagleQuery *query, BeagleSearchTermResponse *response)
+{
+	BeagleQueryPrivate *priv = BEAGLE_QUERY_GET_PRIVATE (query);
+
+	priv->exact_text = _beagle_search_term_response_get_exact_text (response);
+	priv->stemmed_text = _beagle_search_term_response_get_stemmed_text (response);
+}
 
 static GString *
 beagle_query_to_xml (BeagleRequest *request, GError **err)
@@ -165,7 +178,10 @@ beagle_query_to_xml (BeagleRequest *request, GError **err)
 static void
 beagle_query_response (BeagleRequest *request, BeagleResponse *response)
 {
-	if (BEAGLE_IS_HITS_ADDED_RESPONSE (response))
+	if (BEAGLE_IS_SEARCH_TERM_RESPONSE (response)) {
+		query_set_search_terms (BEAGLE_QUERY (request),
+					BEAGLE_SEARCH_TERM_RESPONSE (response));
+	} else if (BEAGLE_IS_HITS_ADDED_RESPONSE (response))
 		g_signal_emit (request, signals[HITS_ADDED], 0, response);
 	else if (BEAGLE_IS_HITS_SUBTRACTED_RESPONSE (response))
 		g_signal_emit (request, signals[HITS_SUBTRACTED], 0, response);
@@ -195,6 +211,13 @@ beagle_query_finalize (GObject *obj)
 
 	g_slist_foreach (priv->sources, (GFunc) g_free, NULL);
 	g_slist_free (priv->sources);
+
+	g_slist_foreach (priv->exact_text, (GFunc) g_free, NULL);
+	g_slist_free (priv->exact_text);
+
+	g_slist_foreach (priv->stemmed_text, (GFunc) g_free, NULL);
+	g_slist_free (priv->stemmed_text);
+
 
 	if (G_OBJECT_CLASS (parent_class)->finalize)
 		G_OBJECT_CLASS (parent_class)->finalize (obj);
@@ -420,7 +443,7 @@ beagle_query_set_max_hits (BeagleQuery *query,
  * beagle_query_get_max_hits
  * @query: a #BeagleQuery
  *
- * Rreturns the max number of hits a given #BeagleQuery should return.
+ * Returns the max number of hits a given #BeagleQuery should return.
  *
  * Return value: Max number of hits
  **/
@@ -434,4 +457,46 @@ beagle_query_get_max_hits (BeagleQuery *query)
 	priv = BEAGLE_QUERY_GET_PRIVATE (query);
 
 	return priv->max_hits;
+}
+
+/**
+ * beagle_query_get_exact_text
+ * @query: a #BeagleQuery
+ *
+ * Returns a list of strings which contain the exact text processed by the
+ * query.  The list should not be modified or freed.
+ *
+ * Return value: A list of strings containing the exact text
+ **/
+GSList *
+beagle_query_get_exact_text (BeagleQuery *query)
+{
+	BeagleQueryPrivate *priv;
+
+	g_return_val_if_fail (BEAGLE_IS_QUERY (query), 0);
+
+	priv = BEAGLE_QUERY_GET_PRIVATE (query);
+
+	return priv->exact_text;
+}
+
+/**
+ * beagle_query_get_stemmed_text
+ * @query: a #BeagleQuery
+ *
+ * Returns a list of strings which contain the stemmed text processed by the
+ * query.  The list should not be modified or freed.
+ *
+ * Return value: A list of strings containing the stemmed text
+ **/
+GSList *
+beagle_query_get_stemmed_text (BeagleQuery *query)
+{
+	BeagleQueryPrivate *priv;
+
+	g_return_val_if_fail (BEAGLE_IS_QUERY (query), 0);
+
+	priv = BEAGLE_QUERY_GET_PRIVATE (query);
+
+	return priv->stemmed_text;
 }

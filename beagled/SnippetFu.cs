@@ -159,17 +159,6 @@ namespace Beagle.Daemon {
 
 			if (string_source == null)
 				return null;
-
-#if false
-			int N = query_terms.Length;
-			string[] stemmed_terms = new string [N];
-			for (int i = 0; i < N; ++i) {
-				string term = query_terms [i];
-				if (term [0] == '-')
-					continue;
-				stemmed_terms [i] = LuceneCommon.Stem (query_terms [i]).ToLower ();
-			}
-#endif
 			
 			ArrayList matches = new ArrayList ();
 

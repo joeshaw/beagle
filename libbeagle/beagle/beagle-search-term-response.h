@@ -52,8 +52,5 @@ struct _BeagleSearchTermResponseClass {
 
 GType    beagle_search_term_response_get_type (void);
 
-GSList *beagle_search_term_response_get_exact_text (BeagleSearchTermResponse *response);
-GSList *beagle_search_term_response_get_stemmed_text (BeagleSearchTermResponse *response);
-
 #endif /* __BEAGLE_SEARCH_TERM_RESPONSE_H */
 

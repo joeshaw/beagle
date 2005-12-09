@@ -78,5 +78,8 @@ void	     beagle_query_set_max_hits (BeagleQuery *query,
 					int max_hits);
 int          beagle_query_get_max_hits (BeagleQuery *query);
 
+GSList      *beagle_query_get_exact_text   (BeagleQuery *query);
+GSList      *beagle_query_get_stemmed_text (BeagleQuery *query);
+
 #endif /* __BEAGLE_QUERY_H */
 
