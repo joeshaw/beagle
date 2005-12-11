@@ -23,35 +23,35 @@
  *  DEALINGS IN THE SOFTWARE.
  */
 
-/*
- * $Log$
- * Revision 1.1  2005/08/29 20:09:37  dsd
- * 	* Filters/entagged-sharp/: Import entagged-sharp
- * 	* Filters/FilterMusic.cs, Filters/Makefile.am, configure.in: New
- * 	entagged-sharp-based audio file filter. Remove gst-sharp stuff.
- *
- * Revision 1.4  2005/02/08 12:54:42  kikidonk
- * Added cvs log and header
- *
- */
-
 using System.IO;
 using Entagged.Audioformats.Util;
 using Entagged.Audioformats.Ape.Util;
 
-namespace Entagged.Audioformats.Ape {
+namespace Entagged.Audioformats.Ape 
+{
+	[SupportedMimeType ("audio/x-musepack")]
+	[SupportedMimeType ("application/x-musepack")]
+	[SupportedMimeType ("audio/musepack")]
+	[SupportedMimeType ("application/musepack")]
+	[SupportedMimeType ("application/x-ape")]
+	[SupportedMimeType ("audio/ape")]
+	[SupportedMimeType ("audio/x-ape")]
 	[SupportedMimeType ("entagged/ape")]
-	public class MonkeyFileReader : AudioFileReader {
-		
+	public class MonkeyFileReader : AudioFileReader 
+	{	
 		private ApeTagReader ape = new ApeTagReader();
 		private MonkeyInfoReader ir = new MonkeyInfoReader();
 		
-		protected override EncodingInfo GetEncodingInfo(Stream raf, string mime)  {
+		protected override EncodingInfo GetEncodingInfo(Stream raf, 
+			string mime)  
+		{
 			return ir.Read(raf);
 		}
 		
-		protected override Tag GetTag(Stream raf, string mime)  {
+		protected override Tag GetTag(Stream raf, string mime)  
+		{
 			return ape.Read(raf);
 		}
 	}
 }
+

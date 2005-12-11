@@ -25,10 +25,12 @@
 
 /*
  * $Log$
- * Revision 1.1  2005/08/29 20:09:39  dsd
- * 	* Filters/entagged-sharp/: Import entagged-sharp
- * 	* Filters/FilterMusic.cs, Filters/Makefile.am, configure.in: New
- * 	entagged-sharp-based audio file filter. Remove gst-sharp stuff.
+ * Revision 1.2  2005/12/11 23:52:11  dsd
+ * 2005-12-11  Daniel Drake  <dsd@gentoo.org>
+ *
+ * 	* Filters/entagged-sharp: Resync. Includes some bugfixes and adds support
+ * 	for ID3v2 v2.4, and ASF/WMA files.
+ * 	* Filters/FilterMusic.cs: Register ASF/WMA mimetype.
  *
  * Revision 1.3  2005/02/08 12:54:40  kikidonk
  * Added cvs log and header
@@ -48,7 +50,8 @@ namespace Entagged.Audioformats.Flac.Util {
 			Unknown
 		};
 		
-		private int blockType, dataLength;
+		private BlockTypes blockType;
+		private int dataLength;
 		private bool lastBlock;
 		private byte[] data;
 		private byte[] bytes;
@@ -60,25 +63,25 @@ namespace Entagged.Audioformats.Flac.Util {
 			
 			int type = bytes[0] & 0x7F;
 			switch (type) {
-				case 0: blockType = (int) BlockTypes.StreamInfo; 
+				case 0: blockType = BlockTypes.StreamInfo; 
 					break;
 
-				case 1: blockType = (int) BlockTypes.Padding; 
+				case 1: blockType = BlockTypes.Padding; 
 					break;
 
-				case 2: blockType = (int) BlockTypes.Application; 
+				case 2: blockType = BlockTypes.Application; 
 					break;
 
-				case 3: blockType = (int) BlockTypes.SeekTable; 
+				case 3: blockType = BlockTypes.SeekTable; 
 					break;
 
-				case 4: blockType = (int) BlockTypes.VorbisComment; 
+				case 4: blockType = BlockTypes.VorbisComment; 
 					break;
 
-				case 5: blockType = (int) BlockTypes.CueSheet; 
+				case 5: blockType = BlockTypes.CueSheet; 
 					break;
 
-				default: blockType = (int) BlockTypes.Unknown; 
+				default: blockType = BlockTypes.Unknown; 
 					break;
 			}
 			
@@ -97,7 +100,7 @@ namespace Entagged.Audioformats.Flac.Util {
 			}
 		}
 
-		public int BlockType {
+		public BlockTypes BlockType {
 			get {
 				return blockType;
 			}
@@ -106,12 +109,12 @@ namespace Entagged.Audioformats.Flac.Util {
 		public string BlockTypeString {
 			get {
 				switch (blockType) {
-					case 0: return "STREAMINFO";
-					case 1: return "PADDING";
-					case 2: return "APPLICATION";
-					case 3: return "SEEKTABLE";
-					case 4: return "VORBIS_COMMENT";
-					case 5: return "CUESHEET";
+					case BlockTypes.StreamInfo: return "STREAMINFO";
+					case BlockTypes.Padding: return "PADDING";
+					case BlockTypes.Application: return "APPLICATION";
+					case BlockTypes.SeekTable: return "SEEKTABLE";
+					case BlockTypes.VorbisComment: return "VORBIS_COMMENT";
+					case BlockTypes.CueSheet: return "CUESHEET";
 					default: return "UNKNOWN-RESERVED";
 				}
 			}

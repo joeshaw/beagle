@@ -25,10 +25,12 @@
 
 /*
  * $Log$
- * Revision 1.1  2005/08/29 20:09:41  dsd
- * 	* Filters/entagged-sharp/: Import entagged-sharp
- * 	* Filters/FilterMusic.cs, Filters/Makefile.am, configure.in: New
- * 	entagged-sharp-based audio file filter. Remove gst-sharp stuff.
+ * Revision 1.2  2005/12/11 23:52:14  dsd
+ * 2005-12-11  Daniel Drake  <dsd@gentoo.org>
+ *
+ * 	* Filters/entagged-sharp: Resync. Includes some bugfixes and adds support
+ * 	for ID3v2 v2.4, and ASF/WMA files.
+ * 	* Filters/FilterMusic.cs: Register ASF/WMA mimetype.
  *
  * Revision 1.4  2005/02/08 12:54:41  kikidonk
  * Added cvs log and header
@@ -40,20 +42,29 @@ using Entagged.Audioformats.Util;
 using Entagged.Audioformats.Mpc.Util;
 using Entagged.Audioformats.Ape.Util;
 
-namespace Entagged.Audioformats.Mpc {
+namespace Entagged.Audioformats.Mpc
+{
+	[SupportedMimeType ("audio/mpc")]
+	[SupportedMimeType ("audio/x-mpc")]
+	[SupportedMimeType ("audio/mp+")]
+	[SupportedMimeType ("audio/x-mp+")]
 	[SupportedMimeType ("entagged/mpc")]
 	[SupportedMimeType ("entagged/mp+")]
-	public class MpcFileReader : AudioFileReader {
-		
+	public class MpcFileReader : AudioFileReader 
+	{	
 		private MpcInfoReader ir = new MpcInfoReader();
 		private ApeTagReader tr = new ApeTagReader();
 		
-		protected override EncodingInfo GetEncodingInfo(Stream raf, string mime)  {
+		protected override EncodingInfo GetEncodingInfo(Stream raf, 
+			string mime)  
+		{
 			return ir.Read(raf);
 		}
 		
-		protected override Tag GetTag(Stream raf, string mime)  {
+		protected override Tag GetTag(Stream raf, string mime)  
+		{
 			return tr.Read(raf);
 		}
 	}
 }
+

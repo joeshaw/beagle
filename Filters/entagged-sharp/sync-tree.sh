@@ -16,7 +16,7 @@ TREE_SOURCE="./$MONO_BRANCH"
 
 #@DO NOT EDIT@#
 
-TREE_BRANCHES="Ape Ape/Util Mpc Mpc/Util M4a M4a/Util Mp3 Mp3/Util Mp3/Util/Id3frames Flac Flac/Util Ogg Ogg/Util Tracker Tracker/Util Exceptions Util"
+TREE_BRANCHES="Ape Ape/Util Asf Asf/Util Mpc Mpc/Util Mp4 Mp4/Util Mp3 Mp3/Util Mp3/Util/Id3frames Flac Flac/Util Ogg Ogg/Util Tracker Tracker/Util Exceptions Util"
 
 rm -f entagged.sources
 # create local branches and update source

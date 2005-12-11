@@ -23,53 +23,44 @@
  *  DEALINGS IN THE SOFTWARE.
  */
 
-/*
- * $Log$
- * Revision 1.1  2005/08/29 20:09:43  dsd
- * 	* Filters/entagged-sharp/: Import entagged-sharp
- * 	* Filters/FilterMusic.cs, Filters/Makefile.am, configure.in: New
- * 	entagged-sharp-based audio file filter. Remove gst-sharp stuff.
- *
- * Revision 1.3  2005/02/08 12:54:41  kikidonk
- * Added cvs log and header
- *
- */
+namespace Entagged.Audioformats.Util 
+{
+    public interface TagField 
+    {
+        string Id {
+            get;
+        }
 
-namespace Entagged.Audioformats.Util {
-	public interface TagField {
-	    string Id {
-	    	get;
-	    }
+        byte [] RawContent {
+            get;
+        }
 
-	    byte[] RawContent {
-	    	get;
-	    }
+        bool IsBinary {
+            get;
+            set;
+        }
 
-	    bool IsBinary {
-	    	get;
-	    	set;
-	    }
+        bool IsCommon {
+            get;
+        }
 
-	    bool IsCommon {
-	    	get;
-	    }
+        bool IsEmpty {
+            get;
+        }
+            
+        void CopyContent(TagField field);
+    }
 
-	    bool IsEmpty {
-	    	get;
-	    }
-	        
-	    void CopyContent(TagField field);
-	}
+    public interface TagTextField : TagField 
+    {
+        string Content {
+            get;
+            set;
+        }
 
-	public interface TagTextField : TagField {
-	    string Content {
-	    	get;
-	    	set;
-	    }
-
-	    string Encoding  {
-	    	get;
-	    	set;
-	    }
-	}
+        string Encoding  {
+            get;
+            set;
+        }
+    }
 }

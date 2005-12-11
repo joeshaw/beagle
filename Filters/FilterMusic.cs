@@ -61,6 +61,9 @@ namespace Beagle.Filters {
 			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("audio/x-it"));
 			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("audio/x-mod"));
 			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("audio/x-xm"));
+
+			// ASF / WMA
+			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("video/x-ms-asf"));
 		}
 
 		private string GetEntaggedMimeType ()
@@ -73,10 +76,10 @@ namespace Beagle.Filters {
 
 		protected override void DoPullProperties ()
 		{
-			AudioFileWrapper tag;
+			AudioFile tag;
 			
 			try {
-				tag = new AudioFileWrapper (Stream, GetEntaggedMimeType ());
+				tag = new AudioFile (Stream, GetEntaggedMimeType ());
 			} catch (Exception e) {
 				Logger.Log.Warn (e, "Exception filtering music");
 				Finished();

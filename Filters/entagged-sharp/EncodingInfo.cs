@@ -23,91 +23,84 @@
  *  DEALINGS IN THE SOFTWARE.
  */
 
-/*
- * $Log$
- * Revision 1.1  2005/08/29 20:09:37  dsd
- * 	* Filters/entagged-sharp/: Import entagged-sharp
- * 	* Filters/FilterMusic.cs, Filters/Makefile.am, configure.in: New
- * 	entagged-sharp-based audio file filter. Remove gst-sharp stuff.
- *
- * Revision 1.4  2005/02/18 13:38:12  kikidonk
- * Adds a isVbr method that checks wether the file is vbr or not, added check in OGG and MP3, other formats are always VBR
- *
- * Revision 1.3  2005/02/08 12:54:41  kikidonk
- * Added cvs log and header
- *
- */
-
+using System;
 using System.Collections;
 using System.Text;
 
-namespace Entagged.Audioformats {
-
-public class EncodingInfo {
-		
-	private Hashtable content;
-	
-	public EncodingInfo() {
-		content = new Hashtable();
-		content["BITRATE"] =  -1;
-		content["CHANNB"] =  -1;
-		content["TYPE"] =  "";
-		content["INFOS"] =  "";
-		content["SAMPLING"] =  -1;
-		content["LENGTH"] = -1;
-		content["VBR"] = true;
-	}
-	
-	//Sets the bitrate in KByte/s
-	public int Bitrate {
-		set { content["BITRATE"] = value; }
-		get { return (int) content["BITRATE"]; }
-	}
-	//Sets the number of channels
-	public int ChannelNumber {
-		set { content["CHANNB"] = value; }
-		get { return (int) content["CHANNB"]; }
-	}
-	//Sets the type of the encoding, this is a bit format specific. eg:Layer I/II/II
-	public string EncodingType {
-		set { content["TYPE"] = value; }
-		get { return (string) content["TYPE"]; }
-	}
-	//A string contianing anything else that might be interesting
-	public string ExtraEncodingInfos {
-		set { content["INFOS"] = value; }
-		get { return (string) content["INFOS"]; }
-	}
-	//Sets the Sampling rate in Hz
-	public int SamplingRate {
-		set { content["SAMPLING"] = value; }
-		get { return (int) content["SAMPLING"]; }
-	}
-	//Sets the length of the song in seconds
-	public int Length {
-		set { content["LENGTH"] = value; }
-		get { return (int) content["LENGTH"]; }
-	}
-	
-	public bool Vbr {
-		set { content["VBR"] = value; }
-		get { return (bool) content["VBR"]; }
-	}
-	
-	
-	//Pretty prints this encoding info
-	public override string ToString() {
-		StringBuilder sb = new StringBuilder();
-		
-		sb.Append("Encoding infos content:\n");
-		foreach(DictionaryEntry entry in content) {
-          sb.Append("\t");
-		  sb.Append(entry.Key);
-		  sb.Append(" : ");
-		  sb.Append(entry.Value);
-		  sb.Append("\n");
-		}
-		return sb.ToString().Substring(0,sb.Length-1);
-	}
-}
+namespace Entagged.Audioformats 
+{
+    public class EncodingInfo 
+    {
+        private Hashtable content;
+        
+        public EncodingInfo() 
+        {
+            content = new Hashtable();
+            content["BITRATE"] =  -1;
+            content["CHANNB"] =  -1;
+            content["TYPE"] =  "";
+            content["INFOS"] =  "";
+            content["SAMPLING"] =  -1;
+            content["DURATION"] = -1;
+            content["VBR"] = true;
+        }
+        
+        //Sets the bitrate in KByte/s
+        public int Bitrate {
+            set { content["BITRATE"] = value; }
+            get { return (int) content["BITRATE"]; }
+        }
+        
+        //Sets the number of channels
+        public int ChannelNumber {
+            set { content["CHANNB"] = value; }
+            get { return (int) content["CHANNB"]; }
+        }
+        
+        //Sets the type of the encoding, this is a bit format specific. eg:Layer I/II/II
+        public string EncodingType {
+            set { content["TYPE"] = value; }
+            get { return (string) content["TYPE"]; }
+        }
+        
+        //A string contianing anything else that might be interesting
+        public string ExtraEncodingInfos {
+            set { content["INFOS"] = value; }
+            get { return (string) content["INFOS"]; }
+        }
+        
+        //Sets the Sampling rate in Hz
+        public int SamplingRate {
+            set { content["SAMPLING"] = value; }
+            get { return (int) content["SAMPLING"]; }
+        }
+        
+        //Sets the length of the song in seconds
+        public TimeSpan Duration {
+            set { content["DURATION"] = value; }
+            get { return (TimeSpan) content["DURATION"]; }
+        }
+        
+        public bool Vbr {
+            set { content["VBR"] = value; }
+            get { return (bool) content["VBR"]; }
+        }
+        
+        //Pretty prints this encoding info
+        public override string ToString() 
+        {
+            StringBuilder sb = new StringBuilder();
+            sb.Append("Encoding infos content:\n");
+            
+            foreach(DictionaryEntry entry in content) {
+              sb.Append("\t");
+              sb.Append(entry.Key);
+              sb.Append(" : ");
+              sb.Append(entry.Value);
+              sb.Append("\n");
+            }
+            
+            return sb.ToString().Substring(0,sb.Length-1);
+        }
+    }
 }

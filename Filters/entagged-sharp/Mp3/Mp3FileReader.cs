@@ -23,42 +23,36 @@
  *  DEALINGS IN THE SOFTWARE.
  */
 
-/*
- * $Log$
- * Revision 1.1  2005/08/29 20:09:40  dsd
- * 	* Filters/entagged-sharp/: Import entagged-sharp
- * 	* Filters/FilterMusic.cs, Filters/Makefile.am, configure.in: New
- * 	entagged-sharp-based audio file filter. Remove gst-sharp stuff.
- *
- * Revision 1.5  2005/02/18 12:31:51  kikidonk
- * Adds a way to know if there was an id3 tag or not
- *
- * Revision 1.4  2005/02/08 12:54:42  kikidonk
- * Added cvs log and header
- *
- */
-
 using System;
 using System.IO;
 using Entagged.Audioformats.Util;
 using Entagged.Audioformats.Exceptions;
 using Entagged.Audioformats.Mp3.Util;
 
-namespace Entagged.Audioformats.Mp3 {
+namespace Entagged.Audioformats.Mp3 
+{
 	[SupportedMimeType ("audio/x-mp3")]
+	[SupportedMimeType ("application/x-id3")]
 	[SupportedMimeType ("audio/mpeg")]
+	[SupportedMimeType ("audio/x-mpeg")]
+	[SupportedMimeType ("audio/x-mpeg-3")]
+	[SupportedMimeType ("audio/mpeg3")]
+	[SupportedMimeType ("audip/mp3")]
 	[SupportedMimeType ("entagged/mp3")]
-	public class Mp3FileReader : AudioFileReader {
-		
+	public class Mp3FileReader : AudioFileReader 
+	{	
 		private Mp3InfoReader ir = new Mp3InfoReader();
 		private Id3v2TagReader idv2tr = new Id3v2TagReader();
 		private Id3v1TagReader idv1tr = new Id3v1TagReader();
 		
-		protected override EncodingInfo GetEncodingInfo(Stream raf, string mime) {
+		protected override EncodingInfo GetEncodingInfo(Stream raf, 
+			string mime) 
+		{
 			return ir.Read(raf);
 		}
 		
-		protected override Tag GetTag(Stream raf, string mime)  {
+		protected override Tag GetTag(Stream raf, string mime)  
+		{
 			Id3Tag tag = new Id3Tag();	
 
 			idv2tr.Read(tag, raf);
@@ -68,3 +62,4 @@ namespace Entagged.Audioformats.Mp3 {
 		}
 	}
 }
+

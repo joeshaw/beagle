@@ -23,36 +23,31 @@
  *  DEALINGS IN THE SOFTWARE.
  */
 
-/*
- * $Log$
- * Revision 1.1  2005/08/29 20:09:38  dsd
- * 	* Filters/entagged-sharp/: Import entagged-sharp
- * 	* Filters/FilterMusic.cs, Filters/Makefile.am, configure.in: New
- * 	entagged-sharp-based audio file filter. Remove gst-sharp stuff.
- *
- * Revision 1.4  2005/02/08 12:54:42  kikidonk
- * Added cvs log and header
- *
- */
-
 using System.IO;
 using Entagged.Audioformats.Flac.Util;
 using Entagged.Audioformats.Util;
 
-namespace Entagged.Audioformats.Flac {
+namespace Entagged.Audioformats.Flac 
+{
 	[SupportedMimeType ("audio/x-flac")]
+	[SupportedMimeType ("application/x-flac")]
+	[SupportedMimeType ("audio/flac")]
 	[SupportedMimeType ("entagged/flac")]
-	public class FlacFileReader : AudioFileReader {
-		
+	public class FlacFileReader : AudioFileReader 
+	{	
 		private FlacInfoReader ir = new FlacInfoReader();
 		private FlacTagReader tr = new FlacTagReader();
 		
-		protected override EncodingInfo GetEncodingInfo(Stream raf, string mime)  {
+		protected override EncodingInfo GetEncodingInfo(Stream raf, 
+			string mime)  
+		{
 			return ir.Read(raf);
 		}
 		
-		protected override Tag GetTag(Stream raf, string mime)  {
+		protected override Tag GetTag(Stream raf, string mime)  
+		{
 			return tr.Read(raf);
 		}
 	}
 }
+

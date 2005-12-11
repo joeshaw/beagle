@@ -25,10 +25,12 @@
 
 /*
  * $Log$
- * Revision 1.1  2005/08/29 20:09:42  dsd
- * 	* Filters/entagged-sharp/: Import entagged-sharp
- * 	* Filters/FilterMusic.cs, Filters/Makefile.am, configure.in: New
- * 	entagged-sharp-based audio file filter. Remove gst-sharp stuff.
+ * Revision 1.2  2005/12/11 23:52:15  dsd
+ * 2005-12-11  Daniel Drake  <dsd@gentoo.org>
+ *
+ * 	* Filters/entagged-sharp: Resync. Includes some bugfixes and adds support
+ * 	for ID3v2 v2.4, and ASF/WMA files.
+ * 	* Filters/FilterMusic.cs: Register ASF/WMA mimetype.
  *
  * Revision 1.4  2005/02/08 12:54:42  kikidonk
  * Added cvs log and header
@@ -39,20 +41,30 @@ using System.IO;
 using Entagged.Audioformats.Util;
 using Entagged.Audioformats.Ogg.Util;
 
-namespace Entagged.Audioformats.Ogg {
+namespace Entagged.Audioformats.Ogg 
+{
 	[SupportedMimeType ("application/ogg")]
+	[SupportedMimeType ("application/x-ogg")]
+	[SupportedMimeType ("audio/vorbis")]
+	[SupportedMimeType ("audio/x-vorbis")]
+	[SupportedMimeType ("audio/ogg")]
+	[SupportedMimeType ("audio/x-ogg")]
 	[SupportedMimeType ("entagged/ogg")]
-	public class OggFileReader : AudioFileReader {
-	
+	public class OggFileReader : AudioFileReader 
+	{
 		private OggInfoReader ir = new OggInfoReader();
 		private VorbisTagReader otr = new VorbisTagReader();
 		
-		protected override EncodingInfo GetEncodingInfo(Stream raf, string mime)  {
+		protected override EncodingInfo GetEncodingInfo(Stream raf, 
+			string mime)  
+		{
 			return ir.Read(raf);
 		}
 		
-		protected override Tag GetTag(Stream raf, string mime)  {
+		protected override Tag GetTag(Stream raf, string mime)  
+		{
 			return otr.Read(raf);
 		}
 	}
 }
+

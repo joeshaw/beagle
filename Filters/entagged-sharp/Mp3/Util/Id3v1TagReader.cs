@@ -25,10 +25,12 @@
 
 /*
  * $Log$
- * Revision 1.1  2005/08/29 20:09:40  dsd
- * 	* Filters/entagged-sharp/: Import entagged-sharp
- * 	* Filters/FilterMusic.cs, Filters/Makefile.am, configure.in: New
- * 	entagged-sharp-based audio file filter. Remove gst-sharp stuff.
+ * Revision 1.2  2005/12/11 23:52:13  dsd
+ * 2005-12-11  Daniel Drake  <dsd@gentoo.org>
+ *
+ * 	* Filters/entagged-sharp: Resync. Includes some bugfixes and adds support
+ * 	for ID3v2 v2.4, and ASF/WMA files.
+ * 	* Filters/FilterMusic.cs: Register ASF/WMA mimetype.
  *
  * Revision 1.4  2005/02/08 12:54:41  kikidonk
  * Added cvs log and header
@@ -62,7 +64,7 @@ namespace Entagged.Audioformats.Mp3.Util {
 			tag.AddYear(Read(mp3Stream, 4));
 			tag.AddComment(Read(mp3Stream, 30));
 
-			string trackNumber;
+			//string trackNumber;
 			mp3Stream.Seek(- 2, SeekOrigin.Current);
 			b = new byte[2];
 			mp3Stream.Read(b, 0, 2);
@@ -81,7 +83,12 @@ namespace Entagged.Audioformats.Mp3.Util {
 		{
 			byte[] b = new byte[length];
 			mp3Stream.Read( b, 0, b.Length );
-			string ret = Encoding.GetEncoding("ISO-8859-1").GetString(b).Trim();
+			string ret;
+			
+            if(Entagged.Audioformats.Util.UnicodeValidator.ValidateUtf8(b))
+                ret = Encoding.UTF8.GetString(b).Trim();
+            else 
+                ret = Encoding.GetEncoding("ISO-8859-1").GetString(b).Trim();
 
 			int pos = ret.IndexOf('\0');
 			if (pos != -1)

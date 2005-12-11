@@ -23,18 +23,6 @@
  *  DEALINGS IN THE SOFTWARE.
  */
 
-/*
- * $Log$
- * Revision 1.1  2005/08/29 20:09:38  dsd
- * 	* Filters/entagged-sharp/: Import entagged-sharp
- * 	* Filters/FilterMusic.cs, Filters/Makefile.am, configure.in: New
- * 	entagged-sharp-based audio file filter. Remove gst-sharp stuff.
- *
- * Revision 1.3  2005/02/08 12:54:43  kikidonk
- * Added cvs log and header
- *
- */
-
 using System;
 
 namespace Entagged.Audioformats.Exceptions {

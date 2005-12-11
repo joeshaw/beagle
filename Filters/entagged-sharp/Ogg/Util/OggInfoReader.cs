@@ -23,21 +23,7 @@
  *  DEALINGS IN THE SOFTWARE.
  */
 
-/*
- * $Log$
- * Revision 1.1  2005/08/29 20:09:42  dsd
- * 	* Filters/entagged-sharp/: Import entagged-sharp
- * 	* Filters/FilterMusic.cs, Filters/Makefile.am, configure.in: New
- * 	entagged-sharp-based audio file filter. Remove gst-sharp stuff.
- *
- * Revision 1.5  2005/02/18 13:38:11  kikidonk
- * Adds a isVbr method that checks wether the file is vbr or not, added check in OGG and MP3, other formats are always VBR
- *
- * Revision 1.4  2005/02/08 12:54:41  kikidonk
- * Added cvs log and header
- *
- */
-
+using System;
 using System.IO;
 using Entagged.Audioformats.Exceptions;
 
@@ -103,7 +89,7 @@ namespace Entagged.Audioformats.Ogg.Util {
 			VorbisCodecHeader vorbisCodecHeader = new VorbisCodecHeader( vorbisData );
 
 			//Populates encodingInfo----------------------------------------------------
-			info.Length = (int) ( PCMSamplesNumber / vorbisCodecHeader.SamplingRate );
+			info.Duration = new TimeSpan((long)(PCMSamplesNumber / vorbisCodecHeader.SamplingRate) * TimeSpan.TicksPerSecond);
 			info.ChannelNumber = vorbisCodecHeader.ChannelNumber;
 			info.SamplingRate = vorbisCodecHeader.SamplingRate;
 			info.EncodingType = vorbisCodecHeader.EncodingType;
@@ -123,7 +109,7 @@ namespace Entagged.Audioformats.Ogg.Util {
 			    info.Vbr = true;
 			}
 			else {
-				info.Bitrate = ComputeBitrate( info.Length, raf.Length );
+				info.Bitrate = ComputeBitrate( info.Duration.Seconds, raf.Length );
 				info.Vbr = true;
 			}
 

@@ -1,6 +1,5 @@
 /***************************************************************************
- *  Copyright 2005 Novell, Inc.
- *  Aaron Bockover <aaron@aaronbock.net>
+ *  Copyright 2005 Raphaël Slinckx <raphael@slinckx.net> 
  ****************************************************************************/
 
 /*  THIS FILE IS LICENSED UNDER THE MIT LICENSE AS OUTLINED IMMEDIATELY BELOW: 
@@ -24,30 +23,26 @@
  *  DEALINGS IN THE SOFTWARE.
  */
 
-using System; 
 using System.IO;
-
+using Entagged.Audioformats.Ape.Util;
 using Entagged.Audioformats.Util;
-using Entagged.Audioformats.Exceptions;
-using Entagged.Audioformats.M4a.Util;
- 
-namespace Entagged.Audioformats.M4a
-{
-	[SupportedMimeType ("audio/x-m4a")]
-	[SupportedMimeType ("entagged/m4a")]
-	[SupportedMimeType ("entagged/m4p")]	
-	public class M4aFileReader : AudioFileReader
-	{
-		private M4aTagReader tr = new M4aTagReader();
+//using Entagged.Audioformats.Mp3;
+
+namespace Entagged.Audioformats.Mpc {
+	public class MpcFileWriter : AudioFileWriter {
+	
+		private ApeTagWriter tw = new ApeTagWriter();
+//		private Mp3FileWriter mp3tw = new Mp3FileWriter();
 		
-		protected override EncodingInfo GetEncodingInfo(Stream raf, string mime)  
-		{
-			return tr.ReadEncodingInfo(raf);
+		protected override void WriteTag(Tag tag, Stream stream, Stream temp) {
+			tw.Write(tag, stream, temp);
 		}
-		
-		protected override Tag GetTag(Stream raf, string mime)  
-		{
-			return tr.ReadTags(raf);
+		protected override void DeleteTag(Stream stream, Stream temp) {
+//			mp3tw.Delete(stream, temp);
+			if(temp.Length > 0)
+				tw.Delete(temp);
+			else
+				tw.Delete(stream);
 		}
 	}
 }

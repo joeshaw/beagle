@@ -23,72 +23,65 @@
  *  DEALINGS IN THE SOFTWARE.
  */
 
-/*
- * $Log$
- * Revision 1.1  2005/08/29 20:09:43  dsd
- * 	* Filters/entagged-sharp/: Import entagged-sharp
- * 	* Filters/FilterMusic.cs, Filters/Makefile.am, configure.in: New
- * 	entagged-sharp-based audio file filter. Remove gst-sharp stuff.
- *
- * Revision 1.4  2005/02/08 12:54:41  kikidonk
- * Added cvs log and header
- *
- */
-
 using System;
 using System.IO;
 using Entagged.Audioformats.Exceptions;
 
-namespace Entagged.Audioformats.Util {
-	public abstract class AudioFileReader {
-		
-		protected abstract EncodingInfo GetEncodingInfo(Stream raf, string mime);
-		protected abstract Tag GetTag(Stream raf, string mime);
+namespace Entagged.Audioformats.Util 
+{
+    public abstract class AudioFileReader 
+    {    
+        protected abstract EncodingInfo GetEncodingInfo(Stream raf, string mime);
+        protected abstract Tag GetTag(Stream raf, string mime);
 
-		public AudioFile Read(string f, string mime) {
-			FileStream stream;
+        public AudioFileContainer Read(string f, string mime) 
+        {
+            FileStream stream;
 
-			try {
-				stream = File.Open (f, FileMode.Open, FileAccess.Read, FileShare.Read);
-			} catch (Exception e) {
-				throw new CannotReadException("\""+f+"\": "+e.Message);
-			}
+            try {
+                stream = File.Open(f, FileMode.Open, FileAccess.Read, FileShare.Read);
+            } catch (Exception e) {
+                throw new CannotReadException("\"" + f + "\": " + e.Message);
+            }
 
-			return Read (stream, mime);
-		}
-		
-		public AudioFile Read(Stream stream, string mime) {
-			if (! stream.CanSeek)
-				throw new CannotReadException("Stream not seekable");
+            return Read(stream, mime);
+        }
+        
+        public AudioFileContainer Read(Stream stream, string mime) {
+            if(! stream.CanSeek) {
+                throw new CannotReadException("Stream not seekable");
+            }
+            
+            if(stream.Length <= 150) {
+                throw new CannotReadException("Less than 150 byte stream");
+            }
+            
+            try {
+                stream.Seek(0, SeekOrigin.Begin);
+                
+                EncodingInfo info = GetEncodingInfo(stream, mime);
+            
+                Tag tag = null;
+                
+                try {
+                    stream.Seek(0, SeekOrigin.Begin);
+                    tag = GetTag(stream, mime);
+                } catch(CannotReadException e) {
+                    // Do nothing
+                }
 
-			if (stream.Length <= 150)
-				throw new CannotReadException("Less than 150 byte stream");
-			
-			try{
-				stream.Seek( 0, SeekOrigin.Begin );
-				
-				EncodingInfo info = GetEncodingInfo(stream, mime);
-			
-				Tag tag = null;
-				try {
-					stream.Seek( 0, SeekOrigin.Begin );
-					tag = GetTag(stream, mime);
-				} catch (CannotReadException e) {
-					// Do nothing
-				}
-
-				return new AudioFile(info, tag);
-			} catch ( Exception e ) {
-				throw new CannotReadException(e.ToString());
-			}
-			finally {
-				try{
-					if(stream != null)
-							stream.Close();
-				}catch(Exception ex){
-					/* We tried everything... */
-				}
-			}
-		}
-	}
+                return new AudioFileContainer(info, tag);
+            } catch(Exception e) {
+                throw new CannotReadException(e.ToString());
+            } finally {
+                try {
+                    if(stream != null) {
+                        stream.Close();
+                    }
+                } catch(Exception ex) {
+                    /* We tried everything... */
+                }
+            }
+        }
+    }
 }

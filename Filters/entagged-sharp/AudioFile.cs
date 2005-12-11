@@ -1,5 +1,6 @@
 /***************************************************************************
- *  Copyright 2005 Raphaël Slinckx <raphael@slinckx.net> 
+ *  Copyright 2005 Novell, Inc.
+ *  Aaron Bockover <aaron@aaronbock.net>
  ****************************************************************************/
 
 /*  THIS FILE IS LICENSED UNDER THE MIT LICENSE AS OUTLINED IMMEDIATELY BELOW: 
@@ -22,89 +23,233 @@
  *  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER 
  *  DEALINGS IN THE SOFTWARE.
  */
-
-/*
- * $Log$
- * Revision 1.1  2005/08/29 20:09:37  dsd
- * 	* Filters/entagged-sharp/: Import entagged-sharp
- * 	* Filters/FilterMusic.cs, Filters/Makefile.am, configure.in: New
- * 	entagged-sharp-based audio file filter. Remove gst-sharp stuff.
- *
- * Revision 1.5  2005/02/25 15:31:16  kikidonk
- * Big structure change
- *
- * Revision 1.4  2005/02/22 19:38:43  kikidonk
- * Adding missing encoding infos accessor methods
- *
- * Revision 1.3  2005/02/08 12:54:41  kikidonk
- * Added cvs log and header
- *
- */
-
+ 
+using System;
+using System.IO;
+using Entagged.Audioformats;
 using Entagged.Audioformats.Util;
 
-namespace Entagged.Audioformats {
+namespace Entagged
+{
+    public class AudioFile
+    {
+        private AudioFileContainer container;
+        private string filename;
+        private string mimetype;
+        
+        public AudioFile(string filename)
+        {
+            this.filename = filename;
+            container = AudioFileIO.Read(filename);
+        }
 
-	public class AudioFile {
-		
-		private EncodingInfo info;
-		private Tag tag;
-		
-		public AudioFile(EncodingInfo info, Tag tag) {
-			this.info = info;
-			this.tag = tag;
-		}
-		
-		public AudioFile(EncodingInfo info) {
-			this.info = info;
-			this.tag = new Tag();
-		}
-		
-		public int Bitrate {
-			get { return info.Bitrate; }
-		}
+        public AudioFile(string filename, string mimetype)
+        {
+            this.filename = filename;
+            this.mimetype = mimetype;
+            container = AudioFileIO.Read(filename, mimetype);
+        }
 
-		public int ChannelNumber {
-			get { return info.ChannelNumber; }
-		}
-		
-		public string EncodingType {
-			get { return info.EncodingType; }
-		}
+        public AudioFile(Stream stream, string mimetype)
+        {
+            this.mimetype = mimetype;
+            container = AudioFileIO.Read(stream, mimetype);
+        }
+        
+        public int Bitrate {
+            get { 
+                return container.EncodingInfo.Bitrate; 
+            }
+        }
 
-		public string ExtraEncodingInfos {
-			get { return info.ExtraEncodingInfos; }
-		}
+        public int Channels {
+            get { 
+                return container.EncodingInfo.ChannelNumber; 
+            }
+        }
+        
+        public string EncodingType {
+            get { 
+                return container.EncodingInfo.EncodingType; 
+            }
+        }
 
-		public int getSamplingRate {
-			get { return info.SamplingRate; }
-		}
+        public string ExtraEncodingInfo {
+            get { 
+                return container.EncodingInfo.ExtraEncodingInfos; 
+            }
+        }
 
-		public int getLength {
-			get { return info.Length; }
-		}
-		
-		public bool IsVbr {
-			get { return info.Vbr; }
-		}
-		
-		public Tag Tag {
-			get { return (tag == null) ? new Tag() : tag; }
-		}
-		
-		public EncodingInfo EncodingInfo
-		{
-			get {
-				return info;
-			}
-		}
-		
-		public override string ToString() {
-			return "AudioFile --------\n" + 
-				info.ToString() + "\n"+ 
-				((tag == null) ? "" : 
-				tag.ToString()) +
-				"\n-------------------";
-		}
-	}
+        public int SampleRate {
+            get { 
+                return container.EncodingInfo.SamplingRate; 
+            }
+        }
+
+        public TimeSpan Duration {
+            get { 
+                return container.EncodingInfo.Duration; 
+            }
+        }
+        
+        public bool IsVbr {
+            get { 
+                return container.EncodingInfo.Vbr; 
+            }
+        }
+
+        public string [] Genres {
+            get { 
+               return Utils.FieldListToStringArray(Tag.Genre); 
+            }
+        }
+
+        public string [] Titles
+        {
+            get { 
+                return Utils.FieldListToStringArray(Tag.Title); 
+            }
+        }
+
+        public int [] TrackNumbers
+        {
+            get { 
+                return Utils.FieldListToIntArray(Tag.Track); 
+            }
+        }
+
+        public int [] TrackCounts
+        {
+            get { 
+                return Utils.FieldListToIntArray(Tag.TrackCount); 
+            }
+        }
+
+        public int [] Years
+        {
+            get { 
+                return Utils.FieldListToIntArray(Tag.Year); 
+            }
+        }
+
+        public string [] Albums {
+            get { 
+                return Utils.FieldListToStringArray(Tag.Album); 
+            }
+        }
+
+        public string [] Artists {
+            get { 
+                return Utils.FieldListToStringArray(Tag.Artist); 
+            }
+        }
+
+        public string [] Comments {
+            get { 
+                return Utils.FieldListToStringArray(Tag.Comment); 
+            }
+        }
+
+        public string [] Licenses {
+            get { 
+                return Utils.FieldListToStringArray(Tag.License);
+            }
+        }
+
+        public string Genre {
+            get {
+                return Tag.Genre.Count > 0 ? Tag.Genre[0] as string : null;
+            }
+        }
+        
+        public string Title {
+            get {
+                return Tag.Title.Count > 0 ? Tag.Title[0] as string : null;
+            }
+        }
+        
+        public int TrackNumber {
+            get {
+                try {
+                    return Convert.ToInt32(Tag.Track[0] as string);
+                } catch(Exception) {
+                    return 0;
+                }
+            }
+        }
+
+        public int TrackCount {
+            get {
+                try {
+                    return Convert.ToInt32(Tag.TrackCount[0] as string);
+                } catch(Exception) {
+                    return 0;
+                }
+            }
+        }
+
+        public int Year {
+            get {
+                try {
+                    return Convert.ToInt32(Tag.Year[0] as string);
+                } catch(Exception) {
+                    return 0;
+                }
+            }
+        }
+
+        public string Album {
+            get {
+                return Tag.Album.Count > 0 ? Tag.Album[0] as string : null;
+            }
+        }
+        
+        public string Artist {
+            get {
+                return Tag.Artist.Count > 0 ? Tag.Artist[0] as string : null;
+            }
+        } 
+        
+        public string Comment {
+            get {
+                return Tag.Comment.Count > 0 ? Tag.Comment[0] as string : null;
+            }
+        }
+        
+        public string License {
+            get {
+                return Tag.License.Count > 0 ? Tag.License[0] as string : null;
+            }
+        }
+        
+        public Tag Tag {
+            get { 
+                return container.Tag; 
+            }
+        }
+        
+        public string FileName {
+            get { 
+                return filename; 
+            }
+        }
+
+        public string MimeType {
+            get { 
+                return mimetype; 
+            }
+        }
+        
+        public EncodingInfo EncodingInfo
+        {
+            get { 
+                return container.EncodingInfo; 
+            }
+        }
+        
+        public override string ToString() 
+        {
+            return container.ToString();
+        }
+    }
 }

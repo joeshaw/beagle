@@ -1,6 +1,5 @@
 /***************************************************************************
- *  Copyright 2005 Novell, Inc.
- *  Aaron Bockover <aaron@aaronbock.net>
+ *  Copyright 2005 Raphaël Slinckx <raphael@slinckx.net> 
  ****************************************************************************/
 
 /*  THIS FILE IS LICENSED UNDER THE MIT LICENSE AS OUTLINED IMMEDIATELY BELOW: 
@@ -24,17 +23,30 @@
  *  DEALINGS IN THE SOFTWARE.
  */
 
-using System.IO;
 using Entagged.Audioformats.Util;
  
-namespace Entagged.Audioformats.M4a.Util
-{
-	public class M4aInfoReader
-	{
-		public EncodingInfo Read(Stream raf)
-		{
-			EncodingInfo info = new EncodingInfo();
-			return info;
+namespace Entagged.Audioformats.Ogg.Util {
+	public class VorbisTagCreator {
+		private OggTagCreator creator = new OggTagCreator();
+		
+		//Creates the ByteBuffer for the ogg tag
+		public ByteBuffer Convert(Tag tag) {
+			ByteBuffer ogg = creator.Create(tag);
+			int tagLength = ogg.Capacity + 8;
+			
+			ByteBuffer buf = new ByteBuffer(tagLength);
+			
+			//[packet type=comment0x03]['vorbis']
+			buf.Put( new byte[]{(byte) 0x03, (byte) 0x76, (byte) 0x6f, (byte) 0x72, (byte) 0x62, (byte) 0x69, (byte) 0x73} );
+			
+			//The actual tag
+			buf.Put(ogg);
+
+			//Framing bit = 1
+			buf.Put( (byte) 0x01 );
+
+			buf.Rewind();
+			return buf;
 		}
 	}
 }

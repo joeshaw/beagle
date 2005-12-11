@@ -25,10 +25,12 @@
 
 /*
  * $Log$
- * Revision 1.1  2005/08/29 20:09:40  dsd
- * 	* Filters/entagged-sharp/: Import entagged-sharp
- * 	* Filters/FilterMusic.cs, Filters/Makefile.am, configure.in: New
- * 	entagged-sharp-based audio file filter. Remove gst-sharp stuff.
+ * Revision 1.2  2005/12/11 23:52:13  dsd
+ * 2005-12-11  Daniel Drake  <dsd@gentoo.org>
+ *
+ * 	* Filters/entagged-sharp: Resync. Includes some bugfixes and adds support
+ * 	for ID3v2 v2.4, and ASF/WMA files.
+ * 	* Filters/FilterMusic.cs: Register ASF/WMA mimetype.
  *
  * Revision 1.4  2005/02/08 12:54:41  kikidonk
  * Added cvs log and header
@@ -47,7 +49,7 @@ namespace Entagged.Audioformats.Mp3.Util {
 		bool[] ID3Flags;
 		Id3v2TagSynchronizer synchronizer = new Id3v2TagSynchronizer();
 		
-		Id3v23TagReader v23 = new Id3v23TagReader();
+		Id3v24TagReader v24 = new Id3v24TagReader();
 		
 		public bool Read(Id3Tag tag, Stream mp3Stream)
 		{
@@ -63,20 +65,20 @@ namespace Entagged.Audioformats.Mp3.Util {
 
 			//Begins tag parsing ---------------------------------------------
 			mp3Stream.Seek(3, SeekOrigin.Begin);
-			//----------------------------------------------------------------------------
-			//Version du tag ID3v2.xx.xx
+
+			// ID3v2.xx.xx
 			string versionHigh=mp3Stream.ReadByte() +"";
-			string versionID3 =versionHigh+ "." + mp3Stream.ReadByte();
-			//------------------------------------------------------------------------- ---
-			//D?tection de certains flags (A COMPLETER)
+			mp3Stream.ReadByte();
+			//string versionID3 =versionHigh+ "." + mp3Stream.ReadByte();
+
+			//Tag Header Flags
 			this.ID3Flags = ProcessID3Flags( (byte) mp3Stream.ReadByte() );
-			//----------------------------------------------------------------------------
+
+			// Tag Length from the header			
+			b = new byte[4];
+			mp3Stream.Read(b, 0, b.Length);
+			int tagSize = Utils.ReadSyncsafeInteger(b);
 			
-	//			On extrait la taille du tag ID3
-			int tagSize = ReadSyncsafeInteger(mp3Stream);
-			//System.err.println("TagSize: "+tagSize);
-			
-	//			------------------NEWNEWNWENENEWNENWEWN-------------------------------
 			//Fill a byte buffer, then process according to correct version
 			b = new byte[tagSize+2];
 			mp3Stream.Read(b, 0, b.Length);
@@ -88,9 +90,11 @@ namespace Entagged.Audioformats.Mp3.Util {
 			}
 			
 			if (versionHigh == "2")
-				v23.Read(tag, bb, ID3Flags, Id3Tag.ID3V22);
+				v24.Read(tag, bb, ID3Flags, Id3Tag.ID3V22);
 			else if (versionHigh == "3")
-			    v23.Read(tag, bb, ID3Flags, Id3Tag.ID3V23);
+			    v24.Read(tag, bb, ID3Flags, Id3Tag.ID3V23);
+		    else if (versionHigh == "4")
+			    v24.Read(tag, bb, ID3Flags, Id3Tag.ID3V24);
 			else
 				return false;
 			
@@ -120,19 +124,6 @@ namespace Entagged.Audioformats.Mp3.Util {
 				flags[3] = true;
 
 			return flags;
-		}
-		
-		
-		private int ReadSyncsafeInteger(Stream mp3Stream)
-		{
-			int value = 0;
-
-			value += (mp3Stream.ReadByte()& 0xFF) << 21;
-			value += (mp3Stream.ReadByte()& 0xFF) << 14;
-			value += (mp3Stream.ReadByte()& 0xFF) << 7;
-			value += mp3Stream.ReadByte()& 0xFF;
-
-			return value;
 		}
 	}
 }

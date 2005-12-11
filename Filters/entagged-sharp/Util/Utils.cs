@@ -23,123 +23,248 @@
  *  DEALINGS IN THE SOFTWARE.
  */
 
-/*
- * $Log$
- * Revision 1.1  2005/08/29 20:09:43  dsd
- * 	* Filters/entagged-sharp/: Import entagged-sharp
- * 	* Filters/FilterMusic.cs, Filters/Makefile.am, configure.in: New
- * 	entagged-sharp-based audio file filter. Remove gst-sharp stuff.
- *
- * Revision 1.3  2005/02/08 12:54:41  kikidonk
- * Added cvs log and header
- *
- */
-
 using System;
 using System.Collections;
 using System.Text;
 
-namespace Entagged.Audioformats.Util {
-	public class Utils {
-		private static Encoding utf = Encoding.UTF8;
-		public static string GetExtension(string f) {
-			string name = f.ToLower ();
-			int i = name.LastIndexOf( "." );
-			if(i == -1)
-				return "";
-			
-			return name.Substring( i + 1 );
-		}
-		
-		public static byte[] GetUTF8Bytes(string s) {
-			return utf.GetBytes(s);
-		}
-		
-		public static long GetLongNumber(byte[] b, int start, int end) {
-			long number = 0;
-			for(int i = 0; i<(end-start+1); i++) {
-				number += ((b[start+i]&0xFF) << i*8);
-			}
-			
-			return number;
-		}
-		
-		public static int GetNumber( byte[] b, int start, int end) {
-			int number = 0;
-			for(int i = 0; i<(end-start+1); i++) {
-				number += ((b[start+i]&0xFF) << i*8);
-			}
-			
-			return number;
-		}
+namespace Entagged.Audioformats.Util 
+{
+    public class Utils 
+    {
+        public static long GetLongNumber(byte [] b, int start, int end) 
+        {
+            long number = 0;
+            
+            for(int i = 0; i < (end - start + 1); i++) {
+                number += ((b[start + i] & 0xFF) << i * 8);
+            }
+            
+            return number;
+        }
+        
+        public static int GetNumber(byte [] b, int start, int end) 
+        {
+            int number = 0;
+        
+            for(int i = 0; i<(end-start+1); i++) {
+                number += ((b[start + i] & 0xFF) << i * 8);
+            }
+            
+            return number;
+        }
+        
+        public static byte [] GetNumber(int number) 
+        {
+            return GetNumber(number, 4);
+        }
+        
+        public static byte [] GetNumber(long number, int size) 
+        {
+            byte [] b = new byte[size];
+            
+            for(int i = 0; i < size; i++) {
+                b[i] = (byte)((size & (0xFF << 8 * i) ) >> 8 * i);
+            }
 
-		public static string[] FieldListToStringArray(IList taglist)
-		{
-			string[] ret = new string[taglist.Count];
-			int i = 0;
-			foreach (string field in taglist)
-				ret[i++] = field;
-			return ret;
-		}
+            return b;
+        }
+        
+        public static int ReadSyncsafeInteger(byte [] b) 
+        {
+            return ((b[0] & 0xFF) << 21) + ((b[1] & 0xFF) << 14) + ((b[2] & 0xFF) << 7) + (b[3] & 0xFF);
+        }
+        
+        public static byte [] GetSyncSafe(int value) 
+        {
+            byte[] result = new byte[4];
+            
+            for(int i = 0; i < 4; i++) {
+                result[i] = (byte)(value >> ((3 - i) * 7) & 0x7F);
+            }
+            
+            return result;
+        }
+    
+        public static byte [] GetBytes(string s, string encoding) 
+        {
+            return System.Text.Encoding.GetEncoding(encoding).GetBytes(s);
+        }
+        
+        public static byte [] GetBytes(string s) 
+        {
+            return System.Text.Encoding.ASCII.GetBytes(s);
+        }
+        
+        public static string [] FieldListToStringArray(IList taglist)
+        {
+            string[] ret = new string[taglist.Count];
+            int i = 0;
+            
+            foreach (string field in taglist) {
+                if(field != null && field.Trim().Length == 0) {
+                    ret[i++] = field;
+                } else {
+                    ret[i++] = field;
+                }
+            }
+            
+            return ret;
+        }
 
-		public static int[] FieldListToIntArray(IList taglist)
-		{
-			int[] ret = new int[taglist.Count];
-			int i = 0;
-			foreach (string field in taglist)
-				if (field.Length > 0)
-					ret[i++] = Convert.ToInt32(field);
-			return ret;
-		}
+        public static int [] FieldListToIntArray(IList taglist)
+        {
+            int [] ret = new int[taglist.Count];
+            int i = 0;
+            
+            foreach(string field in taglist) {
+                if(field.Length > 0) {
+                    ret[i++] = Convert.ToInt32(field);
+                }
+            }
+            
+            return ret;
+        }
 
-		public static Tag CombineTags(params Tag[] tags)
-		{
-			Tag ret = new Tag();
+        public static Tag CombineTags(params Tag [] tags)
+        {
+            Tag ret = new Tag();
 
-			foreach (Tag tag in tags) {
-				if (tag == null)
-					continue;
+            foreach(Tag tag in tags) {
+                if(tag == null) {
+                    continue;
+                }
 
-				foreach (TagTextField artist in tag.Artist)
-					ret.AddArtist (artist.Content);
+                foreach(TagTextField artist in tag.Artist) {
+                    ret.AddArtist (artist.Content);
+                }
+                
+                foreach(TagTextField album in tag.Album) {
+                    ret.AddAlbum(album.Content);
+                }
 
-				foreach (TagTextField album in tag.Album)
-					ret.AddAlbum (album.Content);
+                foreach(TagTextField title in tag.Title) {
+                    ret.AddTitle(title.Content);
+                }
+                
+                foreach(TagTextField track in tag.Track) {
+                    ret.AddTrack(track.Content);
+                }
+                
+                foreach(TagTextField trackcount in tag.TrackCount) {
+                    ret.AddTrackCount(trackcount.Content);
+                }
+                
+                foreach(TagTextField year in tag.Year) {
+                    ret.AddYear(year.Content);
+                }
 
-				foreach (TagTextField title in tag.Title)
-					ret.AddTitle (title.Content);
+                foreach(TagTextField comment in tag.Comment) {
+                    ret.AddComment(comment.Content);
+                }
+                
+                foreach(TagTextField license in tag.License) {
+                    ret.AddLicense(license.Content);
+                }
+                
+                foreach(TagTextField genre in tag.Genre) {
+                    ret.AddGenre(genre.Content);
+                }
+            }
 
-				foreach (TagTextField track in tag.Track)
-					ret.AddTrack (track.Content);
+            return ret;
+        }
 
-				foreach (TagTextField trackcount in tag.TrackCount)
-					ret.AddTrackCount (trackcount.Content);
+        // Splits (e.g.) "1/6" into track 1 of 6.
+        public static void SplitTrackNumber(string content, out string num, out string count)
+        {
+            string [] split = content.Split(new char [] {'/'}, 2);
+            
+            if(split.Length == 1) {
+                num = content;
+                count = null;
+            } else {
+                num = split[0];
+                count = split[1];
+            }
+        }
+    }
+    
+    public static class UnicodeValidator
+    {
+        public static bool ValidateUtf8(byte [] str) 
+        {
+            int i, min = 0, val = 0;
+            
+            try {
+                for(i = 0; i < str.Length; i++) {
+                    if(str[i] < 128) {
+                        continue;
+                    }
+                    
+                    if((str[i] & 0xe0) == 0xc0) { /* 110xxxxx */
+                        if((str[i] & 0x1e) == 0) {
+                            return false;
+                        }
+                        
+                        if((str[++i] & 0xc0) != 0x80) { /* 10xxxxxx */
+                            return false;
+                        }
+                    } else {
+                        bool skip_next_continuation = false;
+                        
+                        if((str[i] & 0xf0) == 0xe0) { /* 1110xxxx */
+                            min = 1 << 11;
+                            val = str[i] & 0x0f;
+                            skip_next_continuation = true;
+                        } else if((str[i] & 0xf8) == 0xf0) { /* 11110xxx */
+                            min = 1 << 16;
+                            val = str[i] & 0x07;  
+                        } else {
+                            return false;
+                        }
+                        
+                        if(!skip_next_continuation && !IsContinuationChar(str, ++i, ref val)) {
+                            return false;
+                        }
+                    
+                        if(!IsContinuationChar(str, ++i, ref val)) {
+                            return false;
+                        }
+                        
+                        if(!IsContinuationChar(str, ++i, ref val)) {
+                            return false;
+                        }
+                        
+                        if(val < min || !IsValidUnicode(val)) {
+                            return false;
+                        }
+                    }
+                }
+            } catch(IndexOutOfRangeException e) {
+                return false;
+            }
 
-				foreach (TagTextField year in tag.Year)
-					ret.AddYear (year.Content);
+            return true;
+        }
+            
+        private static bool IsContinuationChar(byte [] str, int i, ref int val)
+        {
+            if((str[i] & 0xc0) != 0x80) { /* 10xxxxxx */
+                return false;
+            }
 
-				foreach (TagTextField comment in tag.Comment)
-					ret.AddComment (comment.Content);
-
-				foreach (TagTextField genre in tag.Genre)
-					ret.AddGenre (genre.Content);
-			}
-
-			return ret;
-		}
-
-		// Splits (e.g.) "1/6" into track 1 of 6.
-		public static void SplitTrackNumber(string content, out string num, out string count)
-		{
-			string[] split = content.Split(new char[] {'/'}, 2);
-			if (split.Length == 1) {
-				num = content;
-				count = null;
-			} else {
-				num = split[0];
-				count = split[1];
-			}
-		}
-		
-	}
+            val <<= 6;  
+            val |= str[i] & 0x3f;
+            
+            return true;
+        }
+        
+        private static bool IsValidUnicode(int b)
+        {
+            return (b < 0x110000 && 
+                ((b & 0xFFFFF800) != 0xD800) && 
+                (b < 0xFDD0 || b > 0xFDEF) && 
+                (b & 0xFFFE) != 0xFFFE);
+        }
+    }
 }

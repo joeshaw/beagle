@@ -23,18 +23,7 @@
  *  DEALINGS IN THE SOFTWARE.
  */
 
-/*
- * $Log$
- * Revision 1.1  2005/08/29 20:09:39  dsd
- * 	* Filters/entagged-sharp/: Import entagged-sharp
- * 	* Filters/FilterMusic.cs, Filters/Makefile.am, configure.in: New
- * 	entagged-sharp-based audio file filter. Remove gst-sharp stuff.
- *
- * Revision 1.4  2005/02/08 12:54:40  kikidonk
- * Added cvs log and header
- *
- */
-
+using System;
 using System.IO;
 using Entagged.Audioformats.Exceptions;
 
@@ -63,7 +52,7 @@ namespace Entagged.Audioformats.Flac.Util {
 				raf.Read(b, 0, b.Length);
 				MetadataBlockHeader mbh = new MetadataBlockHeader(b);
 
-				if (mbh.BlockType == (int) MetadataBlockHeader.BlockTypes.StreamInfo) {
+				if (mbh.BlockType == MetadataBlockHeader.BlockTypes.StreamInfo) {
 					b = new byte[mbh.DataLength];
 					raf.Read(b, 0, b.Length);
 
@@ -80,7 +69,7 @@ namespace Entagged.Audioformats.Flac.Util {
 			}
 
 			EncodingInfo info = new EncodingInfo();
-			info.Length = mbdsi.Length;
+			info.Duration = new TimeSpan(mbdsi.Length * TimeSpan.TicksPerSecond);
 			info.ChannelNumber = mbdsi.ChannelNumber;
 			info.SamplingRate = mbdsi.SamplingRate;
 			info.EncodingType = mbdsi.EncodingType;
