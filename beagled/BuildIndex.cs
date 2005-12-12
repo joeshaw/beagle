@@ -303,6 +303,26 @@ namespace Beagle.Daemon
 		
 		/////////////////////////////////////////////////////////////////
 
+		static void AddToRequest (IndexerRequest request, Indexable indexable)
+		{
+			// Disable filtering and only index file attributes
+			if (arg_disable_filtering)
+				indexable.Filtering = IndexableFiltering.Never;
+					
+			// Tag the item for easy identification (for say, removal)
+			if (arg_tag != null)
+				indexable.AddProperty (Property.NewKeyword("Tag", arg_tag));
+
+			if (arg_source == null) {
+				DirectoryInfo dir = new DirectoryInfo (StringFu.SanitizePath (arg_output));
+				arg_source = dir.Name;
+			}
+
+			indexable.Source = arg_source;
+
+			request.Add (indexable);
+		}
+
 		static IndexerReceipt [] FlushIndexer (IIndexer indexer, IndexerRequest request)
 		{
 			IndexerReceipt [] receipts;
@@ -344,7 +364,7 @@ namespace Beagle.Daemon
 
 			request.Clear (); // clear out the old request
 			foreach (Indexable i in pending_children) // and then add the children
-				request.Add (i);
+				AddToRequest (request, i);
 			
 			return receipts;
 		}
@@ -371,23 +391,8 @@ namespace Beagle.Daemon
 					indexable = new Indexable (uri);
 					indexable.Timestamp = file.LastWriteTimeUtc;
 					FSQ.AddStandardPropertiesToIndexable (indexable, file.Name, Guid.Empty, false);
-
-					// Disable filtering and only index file attributes
-					if (arg_disable_filtering)
-						indexable.Filtering = IndexableFiltering.Never;
 					
-					// Tag the item for easy identification (for say, removal)
-					if (arg_tag != null)
-						indexable.AddProperty (Property.NewKeyword("Tag", arg_tag));
-
-					if (arg_source == null) {
-						DirectoryInfo dir = new DirectoryInfo (StringFu.SanitizePath (arg_output));
-						arg_source = dir.Name;
-					}
-
-					indexable.Source = arg_source;
-					
-					pending_request.Add (indexable);
+					AddToRequest (pending_request, indexable);
 					
 					if (pending_request.Count >= BATCH_SIZE) {
 						Logger.Log.Debug ("Flushing driver, {0} items in queue", pending_request.Count);
