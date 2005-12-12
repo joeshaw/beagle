@@ -128,6 +128,25 @@ beagle_query_to_xml (BeagleRequest *request, GError **err)
 		g_object_unref (or_part);
 	}
 
+	if (priv->sources != NULL) {
+		or_part = beagle_query_part_or_new ();
+
+		for (iter = priv->sources; iter!= NULL; iter = iter->next) {
+			BeagleQueryPartProperty *prop_part = beagle_query_part_property_new ();
+
+			beagle_query_part_property_set_property_type (prop_part, BEAGLE_PROPERTY_TYPE_KEYWORD);
+			beagle_query_part_property_set_key (prop_part, "beagle:Source");
+			beagle_query_part_property_set_value (prop_part, (const char *) iter->data);
+
+			beagle_query_part_or_add_subpart (or_part, BEAGLE_QUERY_PART (prop_part));
+		}
+
+		sub_data = _beagle_query_part_to_xml (BEAGLE_QUERY_PART (or_part));
+		g_string_append_len (data, sub_data->str, sub_data->len);
+		g_string_free (sub_data, TRUE);
+		g_object_unref (or_part);
+	}
+
 	for (iter = priv->parts; iter != NULL; iter = iter->next) {
 		BeagleQueryPart *part = (BeagleQueryPart *) iter->data;
 
