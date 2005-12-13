@@ -43,7 +43,6 @@ namespace Beagle.Daemon {
 			this.result.HitsAddedEvent -= OnResultHitsAdded;
 			this.result.HitsSubtractedEvent -= OnResultHitsSubtracted;
 			this.result.FinishedEvent -= OnResultFinished;
-			this.result.CancelledEvent -= OnResultCancelled;
 					
 			this.result.Cancel ();
 			this.result.Dispose ();
@@ -54,7 +53,6 @@ namespace Beagle.Daemon {
 			this.result.HitsAddedEvent += OnResultHitsAdded;
 			this.result.HitsSubtractedEvent += OnResultHitsSubtracted;
 			this.result.FinishedEvent += OnResultFinished;
-			this.result.CancelledEvent += OnResultCancelled;
 		}
 
 		public void OnResultHitsAdded (QueryResult result, ICollection some_hits)
@@ -74,11 +72,6 @@ namespace Beagle.Daemon {
 		public void OnResultFinished (QueryResult result)
 		{
 			this.SendAsyncResponse (new FinishedResponse ());
-		}
-
-		public void OnResultCancelled (QueryResult result)
-		{
-			this.SendAsyncResponse (new CancelledResponse ());
 		}
 
 		private void OnQueryDriverChanged (Queryable queryable, IQueryableChangeData change_data)

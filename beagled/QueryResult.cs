@@ -47,9 +47,6 @@ namespace Beagle.Daemon {
 		public delegate void FinishedHandler (QueryResult source);
 		public event FinishedHandler FinishedEvent;
 
-		public delegate void CancelledHandler (QueryResult source);
-		public event CancelledHandler CancelledEvent;
-
 		//////////////////////////////////
 
 		int workers = 0;
@@ -98,9 +95,6 @@ namespace Beagle.Daemon {
 				if (cancelled)
 					return;
 				cancelled = true;
-
-				if (CancelledEvent != null)
-					CancelledEvent (this);
 			}
 		}
 

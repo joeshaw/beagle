@@ -28,7 +28,6 @@
 #ifndef __BEAGLE_H
 #define __BEAGLE_H
 
-#include <beagle/beagle-cancelled-response.h>
 #include <beagle/beagle-client.h>
 #include <beagle/beagle-daemon-information-request.h>
 #include <beagle/beagle-daemon-information-response.h>

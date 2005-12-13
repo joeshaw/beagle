@@ -55,7 +55,6 @@ struct _BeagleQueryClass {
 
 	void (*hits_added)      (BeagleQuery *query, BeagleHitsAddedResponse *response);
 	void (*hits_subtracted) (BeagleQuery *query, BeagleHitsSubtractedResponse *response);
-	void (*cancelled)       (BeagleQuery *query);
 	void (*finished)        (BeagleQuery *query, BeagleFinishedResponse *response);
 };
 

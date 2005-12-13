@@ -553,17 +553,11 @@ namespace Best {
 			SetBusy (false);
 		}
 
-		private void OnCancelled (CancelledResponse response)
-		{
-			SetBusy (false);
-		}
-
 		private void AttachQuery ()
 		{
 			query.HitsAddedEvent += OnHitsAdded;
 			query.HitsSubtractedEvent += OnHitsSubtracted;
 			query.FinishedEvent += OnFinished;
-			query.CancelledEvent += OnCancelled;
 		}
 
 		private void DetachQuery ()
@@ -572,7 +566,6 @@ namespace Best {
 				query.HitsAddedEvent -= OnHitsAdded;
 				query.HitsSubtractedEvent -= OnHitsSubtracted;
 				query.FinishedEvent -= OnFinished;
-				query.CancelledEvent -= OnCancelled;
 				query.Close ();
 
 				query = null;

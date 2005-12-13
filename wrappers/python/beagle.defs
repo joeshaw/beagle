@@ -126,13 +126,6 @@
   (gtype-id "BEAGLE_TYPE_DAEMON_INFORMATION_RESPONSE")
 )
 
-(define-object CancelledResponse
-  (in-module "Beagle")
-  (parent "BeagleResponse")
-  (c-name "BeagleCancelledResponse")
-  (gtype-id "BEAGLE_TYPE_CANCELLED_RESPONSE")
-)
-
 (define-object SearchTermResponse
   (in-module "Beagle")
   (parent "BeagleResponse")
@@ -202,15 +195,6 @@
     '("r" "BEAGLE_ERROR_DAEMON_ERROR")
   )
 )
-
-
-;; From ../../libbeagle/beagle/beagle-cancelled-response.h
-
-(define-function beagle_cancelled_response_get_type
-  (c-name "beagle_cancelled_response_get_type")
-  (return-type "GType")
-)
-
 
 
 ;; From ../../libbeagle/beagle/beagle-client.h

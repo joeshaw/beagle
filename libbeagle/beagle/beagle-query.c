@@ -30,7 +30,6 @@
 #include <sys/socket.h>
 #include <sys/un.h>
 
-#include "beagle-cancelled-response.h"
 #include "beagle-finished-response.h"
 #include "beagle-hits-added-response.h"
 #include "beagle-hits-subtracted-response.h"
@@ -60,7 +59,6 @@ typedef struct {
 enum {
 	HITS_ADDED,
 	HITS_SUBTRACTED,
-	CANCELLED,
 	FINISHED,
 	LAST_SIGNAL
 };
@@ -206,8 +204,6 @@ beagle_query_response (BeagleRequest *request, BeagleResponse *response)
 		g_signal_emit (request, signals[HITS_SUBTRACTED], 0, response);
 	else if (BEAGLE_IS_FINISHED_RESPONSE (response))
 		g_signal_emit (request, signals[FINISHED], 0, response);
-	else if (BEAGLE_IS_CANCELLED_RESPONSE (response))
-		g_signal_emit (request, signals[CANCELLED], 0, response);
 
 }
 
@@ -275,16 +271,6 @@ beagle_query_class_init (BeagleQueryClass *klass)
 			      G_TYPE_NONE, 1,
 			      BEAGLE_TYPE_HITS_SUBTRACTED_RESPONSE);
 
-	signals [CANCELLED] =
-		g_signal_new ("cancelled",
-			      G_TYPE_FROM_CLASS (klass),
-			      G_SIGNAL_RUN_LAST,
-			      G_STRUCT_OFFSET (BeagleQueryClass, cancelled),
-			      NULL, NULL,
-			      g_cclosure_marshal_VOID__OBJECT,
-			      G_TYPE_NONE, 1,
-			      BEAGLE_TYPE_CANCELLED_RESPONSE),
-	
 	signals [FINISHED] =
 		g_signal_new ("finished",
 			      G_TYPE_FROM_CLASS (klass),
@@ -304,8 +290,6 @@ beagle_query_class_init (BeagleQueryClass *klass)
 						  BEAGLE_TYPE_HITS_SUBTRACTED_RESPONSE,
 						  "FinishedResponse",
 						  BEAGLE_TYPE_FINISHED_RESPONSE,
-						  "CancelledResponse",
-						  BEAGLE_TYPE_CANCELLED_RESPONSE,
 						  "SearchTermResponse",
 						  BEAGLE_TYPE_SEARCH_TERM_RESPONSE,
 						  NULL);

@@ -10,7 +10,6 @@ BUILT_SOURCES =			\
 	beagle-marshal.h
 
 libbeagle_la_SOURCES = 				\
-	beagle-cancelled-response.c		\
 	beagle-client.c				\
 	beagle-daemon-information-request.c	\
 	beagle-daemon-information-response.c	\
@@ -54,7 +53,6 @@ libbeagle_la_LIBADD =		\
 libbeagleincludedir = $(includedir)/libbeagle/beagle
 libbeagleinclude_HEADERS = 			\
 	beagle.h				\
-	beagle-cancelled-response.h		\
 	beagle-client.h				\
 	beagle-daemon-information-request.h	\
 	beagle-daemon-information-response.h	\

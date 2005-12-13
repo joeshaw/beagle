@@ -71,16 +71,11 @@ namespace Beagle {
 		public delegate void Finished (FinishedResponse response);
 		public event Finished FinishedEvent;
 
-		public delegate void Cancelled (CancelledResponse response);
-		public event Cancelled CancelledEvent;
-
-
 		public Query () : base (true)
 		{
 			this.RegisterAsyncResponseHandler (typeof (HitsAddedResponse), OnHitsAdded);
 			this.RegisterAsyncResponseHandler (typeof (HitsSubtractedResponse), OnHitsSubtracted);
 			this.RegisterAsyncResponseHandler (typeof (FinishedResponse), OnFinished);
-			this.RegisterAsyncResponseHandler (typeof (CancelledResponse), OnCancelled);
 			this.RegisterAsyncResponseHandler (typeof (ErrorResponse), OnError);
 			this.RegisterAsyncResponseHandler (typeof (SearchTermResponse), OnSearchTerms);
 		}
@@ -114,14 +109,6 @@ namespace Beagle {
 
 			if (this.FinishedEvent != null)
 				this.FinishedEvent (response);
-		}
-
-		private void OnCancelled (ResponseMessage r)
-		{
-			CancelledResponse response = (CancelledResponse) r;
-
-			if (this.CancelledEvent != null)
-				this.CancelledEvent (response);
 		}
 
 		private void OnError (ResponseMessage r)

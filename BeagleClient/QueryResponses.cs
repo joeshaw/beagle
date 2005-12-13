@@ -91,8 +91,6 @@ namespace Beagle {
 
 	public class FinishedResponse : ResponseMessage { }
 
-	public class CancelledResponse : ResponseMessage { }
-
 	public class SearchTermResponse : ResponseMessage {
 		
 		[XmlArray (ElementName="Exact")]
