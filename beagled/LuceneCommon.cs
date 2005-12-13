@@ -560,6 +560,7 @@ namespace Beagle.Daemon {
 			prop.Value = field_value.Substring (2);
 			prop.IsSearched = (field_value [0] == 's');
 			prop.IsMutable = ! from_primary_index;
+			prop.IsStored = false; // obviously
 
 			return prop;
 		}
@@ -664,6 +665,8 @@ namespace Beagle.Daemon {
 			// Store the other properties
 				
 			foreach (Property prop in indexable.Properties) {
+				if (! prop.IsStored)
+					continue;
 				
 				Document target_doc = primary_doc;
 				if (prop.IsMutable) {

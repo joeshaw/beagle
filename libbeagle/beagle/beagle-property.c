@@ -48,6 +48,9 @@ beagle_property_new (BeaglePropertyType type, const char *key, const char *value
 	prop->key = g_strdup (key);
 	prop->value = g_strdup (value);
 
+	prop->is_searched = TRUE;
+	prop->is_stored = TRUE;
+
 	return prop;
 }
 
@@ -183,7 +186,8 @@ beagle_property_get_is_searched (BeagleProperty *prop)
  * @prop: a #BeagleProperty
  * @is_searched: a boolean
  *
- * Sets whether the given #BeagleProperty is searched.
+ * Sets whether the given #BeagleProperty is searched.  By default, properties
+ * are searched.
  **/
 void
 beagle_property_set_is_searched (BeagleProperty *prop, gboolean is_searched)
@@ -222,6 +226,39 @@ beagle_property_set_is_mutable (BeagleProperty *prop, gboolean is_mutable)
 	g_return_if_fail (prop != NULL);
 
 	prop->is_mutable = is_mutable != FALSE;
+}
+
+/**
+ * beagle_property_get_is_stored:
+ * @prop: a #BeagleProperty
+ *
+ * Fetches whether the given #BeagleProperty is stored in the index, or just a
+ * hint to filters.
+ *
+ * Return value: whether the #BeagleProperty is stored.
+ **/
+gboolean 
+beagle_property_get_is_stored (BeagleProperty *prop)
+{
+	g_return_val_if_fail (prop != NULL, FALSE);
+
+	return prop->is_stored;
+}
+
+/**
+ * beagle_property_set_is_stored:
+ * @prop: a #BeagleProperty
+ * @is_stored: a boolean
+ *
+ * Sets whether the given #BeagleProperty is stored in the index, or just a
+ * hint to filters.  By default, properties are stored.
+ **/
+void
+beagle_property_set_is_stored (BeagleProperty *prop, gboolean is_stored)
+{
+	g_return_if_fail (prop != NULL);
+
+	prop->is_stored = is_stored != FALSE;
 }
 
 static const char * const property_types[] = {

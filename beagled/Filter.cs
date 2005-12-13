@@ -101,6 +101,7 @@ namespace Beagle.Daemon {
 
 		private string this_mime_type = null;
 		private string this_extension = null;
+		private ArrayList indexable_properties = null;
 
 		public string MimeType {
 			get { return this_mime_type; }
@@ -112,6 +113,13 @@ namespace Beagle.Daemon {
 			set { this_extension = value; }
 		}
 
+		// allow the filter to access the properties
+		// set by indexable
+		public ArrayList IndexableProperties {
+			get { return indexable_properties; }
+			set { indexable_properties = value; }
+		}
+		
 		//////////////////////////
 		
 		private bool crawl_mode = false;

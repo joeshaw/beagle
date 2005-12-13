@@ -61,6 +61,7 @@ struct _BeagleProperty {
 	BeaglePropertyType type;	
 	gboolean is_searched;
 	gboolean is_mutable;
+	gboolean is_stored;
 };
 
 BeagleHit *_beagle_hit_new (void);

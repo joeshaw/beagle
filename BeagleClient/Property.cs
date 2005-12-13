@@ -44,6 +44,7 @@ namespace Beagle {
 		string       value;
 		bool         is_searched;
 		bool         is_mutable;
+		bool	     is_stored;
 
 		[XmlAttribute]
 		public PropertyType Type {
@@ -79,6 +80,13 @@ namespace Beagle {
 		public bool IsMutable {
 			get { return is_mutable; }
 			set { is_mutable = value; }
+		}
+
+		// When IsStored is false, the property wont be stored in the index
+		[XmlAttribute]
+		public bool IsStored {
+			get { return is_stored; }
+			set { is_stored = value; }
 		}
 
 		/////////////////////////////////////
@@ -122,6 +130,7 @@ namespace Beagle {
 			p.Key = key;
 			p.Value = value;
 			p.is_searched = true;
+			p.is_stored = true;
 			return p;
 		}
 
@@ -135,6 +144,7 @@ namespace Beagle {
 			p.Key = key;
 			p.Value = value.ToString ();
 			p.is_searched = true;
+			p.is_stored = true;
 			return p;
 		}
 
@@ -148,6 +158,21 @@ namespace Beagle {
 			p.Key = key;
 			p.Value = value.ToString ();
 			p.is_searched = false;
+			p.is_stored = true;
+			return p;
+		}
+
+		static public Property NewUnstored (string key, object value)
+		{		
+			if (value == null)
+				return null;
+
+			Property p = new Property ();
+			p.type = PropertyType.Keyword;
+			p.Key = key;
+			p.Value = value.ToString ();
+			p.is_searched = false;
+			p.is_stored = false;
 			return p;
 		}
 
@@ -168,6 +193,7 @@ namespace Beagle {
 			p.Key = key;
 			p.Value = StringFu.DateTimeToString (dt);
 			p.is_searched = true;
+			p.is_stored = true;
 			return p;
 		}
 
@@ -182,6 +208,7 @@ namespace Beagle {
 			// FIXME: Should probably check that value is a valid date string.
 			p.Value = value;
 			p.is_searched = true;
+			p.is_stored = true;
 			return p;
 		}
 

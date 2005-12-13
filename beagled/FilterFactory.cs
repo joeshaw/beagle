@@ -270,6 +270,9 @@ namespace Beagle.Daemon {
 				
 				// Set the filter's URI
 				candidate_filter.Uri = indexable.Uri;
+
+				// allow the filter access to the indexable's properties
+				candidate_filter.IndexableProperties = indexable.Properties;
 				
 				// Open the filter, copy the file's properties to the indexable,
 				// and hook up the TextReaders.

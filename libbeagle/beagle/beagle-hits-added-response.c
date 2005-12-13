@@ -107,7 +107,7 @@ start_property (BeagleParserContext *ctx, const char **attrs)
 	BeagleHitsAddedResponsePrivate *priv = BEAGLE_HITS_ADDED_RESPONSE_GET_PRIVATE (response);
 	BeaglePropertyType type = BEAGLE_PROPERTY_TYPE_UNKNOWN;
 	const char *key = NULL, *value = NULL;
-	gboolean is_mutable = FALSE, is_searched = FALSE;
+	gboolean is_mutable = FALSE, is_searched = FALSE, is_stored = FALSE;
 	int i;
 	
 	for (i = 0; attrs[i] != NULL; i += 2) {
@@ -119,6 +119,8 @@ start_property (BeagleParserContext *ctx, const char **attrs)
 			is_mutable = strcmp (attrs[i + 1], "true") == 0;
 		else if (strcmp (attrs[i], "IsSearched") == 0)
 			is_searched = strcmp (attrs[i + 1], "true") == 0;
+		else if (strcmp (attrs[i], "IsStored") == 0)
+			is_stored = strcmp (attrs[i + 1], "true") == 0;
 		else if (strcmp (attrs[i], "Type") == 0) {
 		        if (strcmp (attrs [i + 1], "Text") == 0)
 			        type = BEAGLE_PROPERTY_TYPE_TEXT;

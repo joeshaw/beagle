@@ -329,6 +329,12 @@
   (return-type "const-char*")
 )
 
+(define-method get_details
+  (of-object "BeagleErrorResponse")
+  (c-name "beagle_error_response_get_details")
+  (return-type "const-char*")
+)
+
 
 
 ;; From ../../libbeagle/beagle/beagle-finished-response.h
@@ -788,6 +794,21 @@
   )
 )
 
+(define-method get_is_stored
+  (of-object "BeagleProperty")
+  (c-name "beagle_property_get_is_stored")
+  (return-type "gboolean")
+)
+
+(define-method set_is_stored
+  (of-object "BeagleProperty")
+  (c-name "beagle_property_set_is_stored")
+  (return-type "none")
+  (parameters
+    '("gboolean" "is_stored")
+  )
+)
+
 
 
 ;; From ../../libbeagle/beagle/beagle-query.h
@@ -861,6 +882,18 @@
   (of-object "BeagleQuery")
   (c-name "beagle_query_get_max_hits")
   (return-type "int")
+)
+
+(define-method get_exact_text
+  (of-object "BeagleQuery")
+  (c-name "beagle_query_get_exact_text")
+  (return-type "GSList*")
+)
+
+(define-method get_stemmed_text
+  (of-object "BeagleQuery")
+  (c-name "beagle_query_get_stemmed_text")
+  (return-type "GSList*")
 )
 
 
@@ -1073,18 +1106,6 @@
   (return-type "GType")
 )
 
-(define-method get_exact_text
-  (of-object "BeagleSearchTermResponse")
-  (c-name "beagle_search_term_response_get_exact_text")
-  (return-type "GSList*")
-)
-
-(define-method get_stemmed_text
-  (of-object "BeagleSearchTermResponse")
-  (c-name "beagle_search_term_response_get_stemmed_text")
-  (return-type "GSList*")
-)
-
 
 
 ;; From ../../libbeagle/beagle/beagle-shutdown-request.h
@@ -1124,18 +1145,9 @@
   )
 )
 
-(define-method add_query_term
+(define-method set_query
   (of-object "BeagleSnippetRequest")
-  (c-name "beagle_snippet_request_add_query_term")
-  (return-type "none")
-  (parameters
-    '("const-char*" "text")
-  )
-)
-
-(define-method set_query_terms_from_query
-  (of-object "BeagleSnippetRequest")
-  (c-name "beagle_snippet_request_set_query_terms_from_query")
+  (c-name "beagle_snippet_request_set_query")
   (return-type "none")
   (parameters
     '("BeagleQuery*" "query")
