@@ -44,6 +44,7 @@ namespace Beagle.Daemon.FileSystemQueryable {
 		private const string SplitFilenamePropKey = "beagle:Filename";
 		public const string ExactFilenamePropKey = "beagle:ExactFilename";
 		public const string TextFilenamePropKey = "beagle:TextFilename";
+		public const string NoPunctFilenamePropKey = "beagle:NoPunctFilename";
 		public const string FilenameExtensionPropKey = "beagle:FilenameExtension";
 		public const string ParentDirUriPropKey = LuceneQueryingDriver.PrivateNamespace + "ParentDirUri";
 		public const string IsDirectoryPropKey = LuceneQueryingDriver.PrivateNamespace + "IsDirectory";
@@ -138,9 +139,19 @@ namespace Beagle.Daemon.FileSystemQueryable {
 								     Guid      parent_id,
 								     bool      mutable)
 		{
-			string no_ext, ext;
+			StringBuilder sb;
+			sb = new StringBuilder ();
+
+			string no_ext, ext, no_punct;
 			no_ext = Path.GetFileNameWithoutExtension (name);
 			ext = Path.GetExtension (name);
+			
+			sb.Append (no_ext);
+			for (int i = 0; i < sb.Length; ++i)
+				if (! Char.IsLetterOrDigit (sb [i]))
+					sb [i] = ' ';
+			no_punct = sb.ToString ();
+
 
 			Property prop;
 
@@ -149,6 +160,10 @@ namespace Beagle.Daemon.FileSystemQueryable {
 			indexable.AddProperty (prop);
 
 			prop = Property.New (TextFilenamePropKey, no_ext);
+			prop.IsMutable = mutable;
+			indexable.AddProperty (prop);
+
+			prop = Property.New (NoPunctFilenamePropKey, no_punct);
 			prop.IsMutable = mutable;
 			indexable.AddProperty (prop);
 
