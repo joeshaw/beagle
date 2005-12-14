@@ -49,15 +49,24 @@ namespace Bludgeon {
 				get { return hammers.Count; }
 			}
 
-			public void HammerOnce ()
+			public bool HammerOnce (DirectoryObject dir, EventTracker tracker)
 			{
+				// We randomly pick an IHammer, and call HammerOnce on it.
+				// If it returns false, we try the next IHammer until we
+				// find one that returns true or until we've exhausted
+				// all possibilities.
 				int i;
 				i = random.Next (hammers.Count);
 
-				IHammer hammer;
-				hammer = hammers [i] as IHammer;
+				for (int j = 0; j < hammers.Count; ++j) {
+					int k = (i + j) % hammers.Count;
+					IHammer hammer;
+					hammer = hammers [k] as IHammer;
+					if (hammer.HammerOnce (dir, tracker))
+						return true;
+				}
 
-				hammer.HammerOnce ();
+				return false;
 			}
 		}
 

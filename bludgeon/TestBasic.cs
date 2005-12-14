@@ -7,34 +7,57 @@ namespace Bludgeon {
 	[Hammer (Name="Basic:CreateFile")]
 	public class Basic_CreateFile : IHammer {
 		
-		public void HammerOnce ()
+		public bool HammerOnce (DirectoryObject dir, EventTracker tracker)
 		{
-			FileModel created;
+			FileObject created;
+			created = new TextFileObject (); // FIXME: or an archive
 
-			do {
-				FileModel parent;
-				parent = FileModel.PickAnyDirectory ();
-				created = parent.NewFile ();
-			} while (created == null);
+			DirectoryObject parent;
+			parent = dir.PickDirectory ();
+			parent.AddChild (created, tracker);
+			
+			Log.Info ("Created file '{0}'", created.ShortName);
 
-			Log.Info ("Created file {0}", created.ShortName);
+			return true;
+		}
+	}
+
+	[Hammer (Name="Basic:ClobberFile")]
+	public class Basic_ClobberFile : IHammer {
+		
+		public bool HammerOnce (DirectoryObject dir, EventTracker tracker)
+		{
+			FileObject victim;
+			victim = dir.PickChildFile ();
+			if (victim == null)
+				return false;
+
+			// Create an object w/ the right type
+			FileObject created;
+			created = TreeBuilder.NewFile (5, 10, victim.Extension, 0.1, 0.5, null); // FIXME: stupid magic numbers
+
+			Log.Info ("Clobbered file '{0}'", victim.ShortName);
+			victim.Parent.ClobberingAddChild (created, victim, tracker);
+
+			return true;
 		}
 	}
 
 	[Hammer (Name="Basic:CreateDirectory")]
 	public class Basic_CreateDirectory : IHammer {
 		
-		public void HammerOnce ()
+		public bool HammerOnce (DirectoryObject dir, EventTracker tracker)
 		{
-			FileModel created;
+			DirectoryObject created;
+			created = new DirectoryObject ();
 
-			do {
-				FileModel parent;
-				parent = FileModel.PickAnyDirectory ();
-				created = parent.NewDirectory ();
-			} while (created == null);
-
+			DirectoryObject parent;
+			parent = dir.PickDirectory ();
+			parent.AddChild (created, tracker);
+			
 			Log.Info ("Created directory {0}", created.ShortName);
+
+			return true;
 		}
 	}
 
@@ -43,30 +66,34 @@ namespace Bludgeon {
 	[Hammer (Name="Basic:DeleteFile")]
 	public class Basic_DeleteFile : IHammer {
 		
-		public void HammerOnce ()
+		public bool HammerOnce (DirectoryObject dir, EventTracker tracker)
 		{
-			FileModel target;
-			target = FileModel.PickFile ();
+			FileObject target;
+			target = dir.PickChildFile ();
+			if (target == null)
+				return false;
+
+			Log.Info ("Deleted file '{0}'", target.ShortName);			
+			target.Parent.RemoveChild (target, tracker);
 			
-			if (target != null) {
-				Log.Info ("Deleted file {0}", target.ShortName);
-				target.Delete ();
-			}
+			return true;
 		}
 	}
 
 	[Hammer (Name="Basic:DeleteDirectory")]
 	public class Basic_DeleteDirectory : IHammer {
 		
-		public void HammerOnce ()
+		public bool HammerOnce (DirectoryObject dir, EventTracker tracker)
 		{
-			FileModel target;
-			target = FileModel.PickNonRootDirectory ();
+			DirectoryObject target;
+			target = dir.PickChildDirectory ();
+			if (target == null)
+				return false;
 		
-			if (target != null) {
-				Log.Info ("Deleted directory {0}", target.ShortName);
-				target.Delete ();
-			}
+			Log.Info ("Deleted directory '{0}'", target.ShortName);
+			target.Parent.RemoveChild (target, tracker);
+
+			return true;
 		}
 	}
 
@@ -74,54 +101,46 @@ namespace Bludgeon {
 
 	public abstract class Basic_Move : IHammer {
 		
-		abstract protected FileModel PickTarget ();
+		abstract protected FileSystemObject PickTarget (DirectoryObject dir);
 
-		public void HammerOnce ()
+		public bool HammerOnce (DirectoryObject dir, EventTracker tracker)
 		{
-			string old_path, new_path;
+			DirectoryObject new_parent;
+			new_parent = dir.PickDirectory ();
 
-			FileModel target;
-
-			while (true) {
-
-				target = PickTarget ();
+			// 10 is a stupid magic number here.
+			FileSystemObject target = null;
+			for (int i = 0; i < 10 && target == null; ++i) {
+				target = PickTarget (dir);
 				if (target == null)
-					return;
-
-				FileModel new_parent;
-				new_parent = FileModel.PickAnyDirectory ();
-
-				string new_name;
-				new_name = Token.GetRandom ();
-				
-				old_path = target.ShortName;
-				if (target.MoveTo (new_parent, new_name)) {
-					new_path = target.ShortName;
-					break;
-				}
+					return false;
+				if (target.IsAncestorOf (new_parent))
+					target = null;
 			}
+			if (target == null)
+				return false;
 
-			Log.Spew ("Moved {0} {1} to {2}", target.Type, old_path, new_path);
+			Log.Spew ("Moved {0} to {1}", target.ShortName, new_parent.ShortName);
+			target.Parent.MoveChild (target, new_parent, tracker);
+			return true;
 		}
 	}
 
 	[Hammer (Name="Basic:MoveFile")]
 	public class Basic_MoveFile : Basic_Move {
 
-		override protected FileModel PickTarget ()
+		override protected FileSystemObject PickTarget (DirectoryObject dir)
 		{
-			return FileModel.PickFile ();
+			return dir.PickChildFile ();
 		}
 	}
 
 	[Hammer (Name="Basic:MoveDirectory")]
 	public class Basic_MoveDirectory : Basic_Move {
 
-		override protected FileModel PickTarget ()
+		override protected FileSystemObject PickTarget (DirectoryObject dir)
 		{
-			return FileModel.PickNonRootDirectory ();
+			return dir.PickChildDirectory ();
 		}
 	}
-
-
 }

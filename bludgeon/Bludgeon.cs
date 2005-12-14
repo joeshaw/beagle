@@ -10,18 +10,26 @@ using CommandLineFu;
 
 namespace Bludgeon {
 
-	class BludgeonMain {
+	static class BludgeonMain {
 
-		private BludgeonMain () { } // this is a static class
-
-		static void CreateTestHome ()
+		static DirectoryObject CreateTestRoot ()
 		{
-			int i = 0;
+
+			string parent;
+			parent = Environment.GetEnvironmentVariable ("BLUDGEON_TEST_DIRECTORY");
+			if (parent == null)
+				parent = ".";
 			
+			if (! Directory.Exists (parent))
+				Directory.CreateDirectory (parent);
+			
+			int i = 0;
 			string home;
-			do 
-				home = Path.GetFullPath (String.Format ("./test-{0}", ++i));
-			while (Directory.Exists (home));
+			do {
+				string name;
+				name = String.Format ("test-{0}", ++i);
+				home = Path.GetFullPath (Path.Combine (parent, name));
+			} while (Directory.Exists (home));
 
 			Directory.CreateDirectory (home);
 			PathFinder.HomeDir = home;
@@ -35,8 +43,11 @@ namespace Bludgeon {
 			Log.Create (log);
 
 			Log.Spew ("Test home directory is '{0}'", home);
+
+			return new DirectoryObject (home);
 		}
 
+#if false
 		static FileModel InitialTree ()
 		{
 			FileModel root;
@@ -47,6 +58,7 @@ namespace Bludgeon {
 
 			return root;
 		}
+#endif
 
 		///////////////////////////////////////////////////////////////////////////
 		
@@ -82,15 +94,51 @@ namespace Bludgeon {
 		[Option (LongName="test-queries", Description="Generate random queries and check that they return the correct results")]
 		static private bool test_queries = false;
 
+		/////////////////////////////////////////////////////////////////
+
+		static private Abuse abuse;
+
+		static bool Startup ()
+		{
+			Daemon.UseHeapBuddy = heap_buddy;
+			Daemon.Start (new Daemon.StartedHandler (OnDaemonStarted));
+			return false;
+		}
+
+		static void OnDaemonStarted (string version)
+		{
+			if (version == null) {
+				Log.Info ("Could not contact daemon -- giving up!");
+				Gtk.Application.Quit ();
+			}
+
+			Daemon.WaitUntilIdle (OnDaemonIdle);
+		}
+
+		static void OnDaemonIdle ()
+		{
+			Log.Info ("Daemon is idle!");
+			abuse.Run ();
+		}
+
+		static public void Shutdown ()
+		{
+			Daemon.Shutdown ();
+			Log.Spew ("Test home directory was '{0}'", PathFinder.HomeDir);
+			Gtk.Application.Quit ();
+		}
+
+		/////////////////////////////////////////////////////////////////
+
 		static void Main (string [] args)
 		{
+			Gtk.Application.InitCheck ("bludgeon", ref args);
+			
 			args = CommandLine.Process (typeof (BludgeonMain), args);
 
 			// BU.CommandLine.Process returns null if --help was passed
 			if (args == null)
 				return;
-
-			Daemon.UseHeapBuddy = heap_buddy;
 
 			ArrayList hammers_to_use;
 			hammers_to_use = new ArrayList ();
@@ -102,6 +150,28 @@ namespace Bludgeon {
 				else
 					Log.Failure ("Unknown hammer '{0}'", name);
 			}
+
+			DirectoryObject root;
+			root = CreateTestRoot ();
+			TreeBuilder.Build (root,
+					   30,    // three directories
+					   100,   // ten files
+					   0.1,   // no archives
+					   0.5,   // archive decay, which does nothing here
+					   false, // build all directories first, not in random order
+					   null); // no need to track events
+			if (! root.VerifyOnDisk ())
+				throw new Exception ("VerifyOnDisk failed for " + root.FullName);
+			
+			EventTracker tracker;
+			tracker = new EventTracker ();
+
+			abuse = new Abuse (root, tracker, hammers_to_use);
+
+			GLib.Idle.Add (new GLib.IdleHandler (Startup));
+			Gtk.Application.Run ();
+#if false
+
 
 			CreateTestHome ();
 
@@ -195,10 +265,7 @@ namespace Bludgeon {
 
 			if (failed)
 				Log.Failure ("Testing aborted");
-
-			Daemon.Shutdown ();
-
-			Log.Spew ("Test home directory was '{0}'", PathFinder.HomeDir);
+#endif
 		}
 	}
 }

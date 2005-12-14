@@ -4,10 +4,9 @@ namespace Bludgeon {
 
 	public interface IHammer {
 
-		// Return false if there is a fatal error
-		// and the test should stop.
-		// Returns true otherwise.
-		void HammerOnce ();
+		// Return true if we actually did something,
+		// false if the hammering ended up being a no-op for some reason.
+		bool HammerOnce (DirectoryObject dir, EventTracker tracker);
 
 	}
 

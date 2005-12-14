@@ -8,7 +8,9 @@ LOCAL_ASSEMBLIES =			\
 ASSEMBLIES =				\
 	$(EVO_SHARP_LIBS)		\
 	$(BEAGLE_UI_LIBS)		\
-	$(LOCAL_ASSEMBLIES:%=-r:%)
+	$(LOCAL_ASSEMBLIES:%=-r:%)	\
+	-r:Mono.Posix			\
+	-r:ICSharpCode.SharpZipLib.dll
 
 WRAPPER_IN = bludgeon.in
 WRAPPER_SED = sed 					\
@@ -27,17 +29,31 @@ WRAPPER = bludgeon
 TARGET = Bludgeon.exe
 
 CSFILES = 				\
-	$(srcdir)/Daemon.cs		\
-	$(srcdir)/FileModel.cs		\
 	$(srcdir)/Log.cs		\
 	$(srcdir)/Token.cs		\
+	$(srcdir)/EventTracker.cs	\
+	$(srcdir)/Action.cs		\
+					\
+	$(srcdir)/FileSystemObject.cs	\
+	$(srcdir)/Bzip2FileObject.cs	\
+	$(srcdir)/DirectoryObject.cs	\
+	$(srcdir)/FileObject.cs		\
+	$(srcdir)/GzipFileObject.cs	\
+	$(srcdir)/TarFileObject.cs	\
+	$(srcdir)/TextFileObject.cs	\
+	$(srcdir)/ZipFileObject.cs	\
+					\
+	$(srcdir)/TreeBuilder.cs	\
 	$(srcdir)/QueryFu.cs		\
 	$(srcdir)/SanityCheck.cs	\
+					\
 	$(srcdir)/IHammer.cs		\
 	$(srcdir)/HammerAttribute.cs	\
 	$(srcdir)/Toolbox.cs		\
 	$(srcdir)/TestBasic.cs		\
-	$(srcdir)/TestMove.cs		\
+					\
+	$(srcdir)/Daemon.cs		\
+	$(srcdir)/Abuse.cs		\
 	$(srcdir)/Bludgeon.cs
 
 $(TARGET): $(CSFILES) $(LOCAL_ASSEMBLIES)

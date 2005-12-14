@@ -37,8 +37,8 @@ namespace Bludgeon {
 		}
 
 		static private Query NewRandomQuery (int length,
-						    bool allow_inexpensive,
-						    bool inside_an_or)
+						     bool allow_inexpensive,
+						     bool inside_an_or)
 		{
 			Query query;
 			query = new Query ();
@@ -104,19 +104,12 @@ namespace Bludgeon {
 
 			if (allow_inexpensive && random.Next (3) == 0) {
 				DateTime a, b;
-				a = FileModel.PickDateTime ();
-				b = FileModel.PickDateTime ();
-				if (b < a) {
-					DateTime tmp = a;
-					a = b;
-					b = tmp;
-				}
+				FileSystemObject.PickTimestampRange (out a, out b);
 
 				QueryPart_DateRange part;
 				part = new QueryPart_DateRange ();
 				part.StartDate = a;
 				part.EndDate = b;
-
 				query.AddPart (part);
 			}
 
@@ -145,9 +138,9 @@ namespace Bludgeon {
 						msg += " IN FULLTEXT";
 					else if (part.SearchTextProperties)
 						msg += " IN TEXT PROPERTIES";
-					else
-						msg += " IN ANY TEXT";
-				}
+				} else
+					msg += " IN ANY TEXT";
+
 			} else if (abstract_part is QueryPart_Property) {
 				QueryPart_Property part;
 				part = (QueryPart_Property) abstract_part;
@@ -192,18 +185,19 @@ namespace Bludgeon {
 
 		private class QueryClosure {
 			
-			public ArrayList Hits = new ArrayList ();
-
+			public Hashtable Hits;
 			private Query query;
 
 			public QueryClosure (Query query)
 			{
+				this.Hits = UriFu.NewHashtable ();
 				this.query = query;
 			}
 
 			public void OnHitsAdded (HitsAddedResponse response)
 			{
-				Hits.AddRange (response.Hits);
+				foreach (Hit hit in response.Hits)
+					Hits [hit.Uri] = hit;
 			}
 
 			public void OnFinished (FinishedResponse response)
@@ -213,7 +207,7 @@ namespace Bludgeon {
 			}
 		}
 		
-		static public ArrayList GetHits (Query q)
+		static public Hashtable GetHits (Query q)
 		{
 			QueryClosure qc;
 			qc = new QueryClosure (q);
@@ -225,13 +219,9 @@ namespace Bludgeon {
 			return qc.Hits;
 		}
 
-		static public ArrayList GetUris (Query q)
+		static public ICollection GetUris (Query q)
 		{
-			ArrayList array;
-			array = GetHits (q);
-			for (int i = 0; i < array.Count; ++i)
-				array [i] = ((Beagle.Hit) array [i]).Uri;
-			return array;
+			return GetHits (q).Keys;
 		}
 	}
 }

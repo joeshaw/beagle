@@ -38,7 +38,7 @@ namespace Bludgeon {
 		///////////////////////////////////////////////////////////////////////
 
 		static private string [] token_table;
-		
+
 		static Token ()
 		{
 			token_table = new string [Count];

@@ -6,4 +6,4 @@
 # We need to do this since we are running uninstalled.
 
 cd ../beagled
-./beagled $@
+./beagled $BLUDGEON_EXTRA_ARGS $@
