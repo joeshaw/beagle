@@ -227,19 +227,26 @@ namespace Beagle.Daemon {
 
 				Logger.Log.Debug ("IndexHelper PID is {0}", p.Id);
 
-				// Poll the helper's socket.  If the 
+				// Poll the helper's socket.  Wait up to a minute
+				// (500 ms * 120 times) for the helper to be ready
+				// to handle requests.
+				Stopwatch watch = new Stopwatch ();
+				watch.Start ();
 				int poll_count = 0;
 				bool found_helper;
 				do {
-					Thread.Sleep (200);
+					Thread.Sleep (500);
 					++poll_count;
 					found_helper = CheckHelper ();
-				} while (poll_count < 20 
+				} while (poll_count < 120 
 					 && ! found_helper
 					 && ! Shutdown.ShutdownRequested);
+				watch.Stop ();
 				
 				if (! found_helper)
-					throw new Exception ("Couldn't launch helper process");
+					throw new Exception (String.Format ("Couldn't launch helper process {0}", p.Id));
+
+				Logger.Log.Debug ("Found IndexHelper ({0}) in {1}", p.Id, watch);
 			}
 		}
 	}
