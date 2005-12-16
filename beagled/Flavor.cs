@@ -157,6 +157,12 @@ namespace Beagle.Daemon {
 
 		////////////////////////////////////////////
 
+		static private ArrayList flavors = new ArrayList ();
+		
+		static public ArrayList Flavors {
+			get { return flavors; }
+		}
+
 		public static FilterFlavor NewFromMimeType (string mime_type) {
 			return new FilterFlavor (null, null, mime_type, 0);
 		}

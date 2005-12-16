@@ -348,8 +348,10 @@ namespace Beagle.Daemon {
 
 					filter_versions_by_name [t.ToString ()] = filter.Version;
 
-					foreach (FilterFlavor flavor in filter.SupportedFlavors)
+					foreach (FilterFlavor flavor in filter.SupportedFlavors) {
 						filter_types_by_flavor [flavor] = t;
+						FilterFlavor.Flavors.Add (flavor);
+					}
 
 					++count;
 				}

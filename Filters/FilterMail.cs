@@ -71,6 +71,19 @@ namespace Beagle.Filters {
 			this.parser = new GMime.Parser (stream);
 		}
 
+		private bool HasAttachments (GMime.Object mime_part)
+		{
+			if (mime_part is GMime.MessagePart)
+				return true;
+
+			// Messages that are multipart/alternative shouldn't be considered as having
+			// attachments.  Unless of course they do.
+			if (mime_part is GMime.Multipart && mime_part.ContentType.Subtype.ToLower () != "alternative")
+				return true;
+
+			return false;
+		}
+
 		protected override void DoPullProperties ()
 		{
 			this.message = this.parser.ConstructMessage ();
@@ -105,7 +118,7 @@ namespace Beagle.Filters {
 			}
 			addrs.Dispose ();
 
-			if (this.message.MimePart is GMime.Multipart || this.message.MimePart is GMime.MessagePart)
+			if (HasAttachments (this.message.MimePart))
 				AddProperty (Property.NewFlag ("fixme:hasAttachments"));
 
 			string list_id = this.message.GetHeader ("List-Id");
@@ -171,30 +184,71 @@ namespace Beagle.Filters {
 				this.filter = filter;
 			}
 
-			public void OnEachPart (GMime.Object part)
+			private bool IsMimeTypeHandled (string mime_type)
 			{
+				foreach (FilterFlavor flavor in FilterFlavor.Flavors) {
+					if (flavor.IsMatch (null, null, mime_type.ToLower ()))
+						return true;
+				}
+
+				return false;
+			}
+
+			public void OnEachPart (GMime.Object mime_part)
+			{
+				GMime.Object part = null;
+				bool part_needs_dispose = false;
+
 				//for (int i = 0; i < depth; i++)
 				//  Console.Write ("  ");
 				//Console.WriteLine ("Content-Type: {0}", part.ContentType);
 			
 				++depth;
 
-				if (part is GMime.MessagePart) {
-					GMime.MessagePart msg_part = (GMime.MessagePart) part;
+				if (mime_part is GMime.MessagePart) {
+					GMime.MessagePart msg_part = (GMime.MessagePart) mime_part;
 
 					using (GMime.Message message = msg_part.Message) {
 						using (GMime.Object subpart = message.MimePart)
 							this.OnEachPart (subpart);
 					}
-				} else if (part is GMime.Multipart) {
-					GMime.Multipart multipart = (GMime.Multipart) part;
+				} else if (mime_part is GMime.Multipart) {
+					GMime.Multipart multipart = (GMime.Multipart) mime_part;
 
 					int num_parts = multipart.Number;
-					for (int i = 0; i < num_parts; i++) {
-						using (GMime.Object subpart = multipart.GetPart (i))
-							this.OnEachPart (subpart);
+
+					// If the mimetype is multipart/alternative, we only want to index
+					// one part -- the richest one we can filter.
+					if (mime_part.ContentType.Subtype.ToLower () == "alternative") {
+						// The richest formats are at the end, so work from there
+						// backward.
+						for (int i = num_parts - 1; i >= 0; i--) {
+							GMime.Object subpart = multipart.GetPart (i);
+
+							if (IsMimeTypeHandled (subpart.ContentType.ToString ())) {
+								part = subpart;
+								part_needs_dispose = true;
+								break;
+							} else {
+								subpart.Dispose ();
+							}
+						}
 					}
-				} else if (part is GMime.Part) {
+
+					// If it's not alternative, or we don't know how to filter any of
+					// the parts, treat them like a bunch of attachments.
+					if (part == null) {
+						for (int i = 0; i < num_parts; i++) {
+							using (GMime.Object subpart = multipart.GetPart (i))
+								this.OnEachPart (subpart);
+						}
+					}
+				} else if (mime_part is GMime.Part)
+					part = mime_part;
+				else
+					throw new Exception (String.Format ("Unknown part type: {0}", part.GetType ()));
+
+				if (part != null) {
 					MemoryStream stream = null;
 					
 					using (GMime.DataWrapper content_obj = ((GMime.Part) part).ContentObject) {
@@ -235,9 +289,10 @@ namespace Beagle.Filters {
 					}
 
 					this.count++;
-				} else {
-					throw new Exception (String.Format ("Unknown part type: {0}", part.GetType ()));
 				}
+
+				if (part_needs_dispose)
+					part.Dispose ();
 
 				--depth;
 			}
