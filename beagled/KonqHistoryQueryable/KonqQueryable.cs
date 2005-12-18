@@ -185,7 +185,6 @@ namespace Beagle.Daemon.KonqQueryable {
 				return null; // we wont index bad files and non-html files
 			}
 
-			url = System.Web.HttpUtility.UrlDecode (url);
 			Logger.Log.Debug ("KonqQ: Indexing " + path + " with url=" + url);
 			Uri uri = new Uri (url, true);
 			if (uri.Scheme == Uri.UriSchemeHttps) {
@@ -199,6 +198,8 @@ namespace Beagle.Daemon.KonqQueryable {
 			// to allow querying for beaglewiki to return
 			// www.beaglewiki.org
 			indexable.AddProperty (Property.New ("fixme:url", StringFu.UrlFuzzyDivide (url)));
+			// hint for the filter about the charset
+			indexable.AddProperty (Property.NewUnstored ("charset", charset));
 			
 			DateTime date = new DateTime (1970, 1, 1);
 			date = date.AddSeconds (Int64.Parse (creation_date));

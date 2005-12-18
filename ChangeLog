@@ -1,3 +1,8 @@
+2005-12-18  Debajyoti Bera <dbera.web@gmail.com>
+
+	* Filters/FilterKonqHistory.cs, beagled/KonqHistoryQueryable: Use
+	indexable hints to pass charset information to the filter.
+
 2005-12-11  Daniel Drake  <dsd@gentoo.org>
 
 	* Filters/entagged-sharp: Resync. Includes some bugfixes and adds support

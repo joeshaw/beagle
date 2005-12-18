@@ -53,6 +53,7 @@ namespace Beagle.Filters {
 				buf = new byte [1024];
 
 			StreamReader reader = new StreamReader (Stream, Encoding.GetEncoding (28591));
+			/*
 			string url = null;
 			string creation_date = null;
 			string mimetype = null;
@@ -61,9 +62,22 @@ namespace Beagle.Filters {
 			if (!is_ok || url == String.Empty)
 				Error ();
 
-			Console.WriteLine (System.Web.HttpUtility.UrlDecode (url));
+			//Console.WriteLine (url);
 			// url, mimetype etc... have been all decided by the backend
 			// we did all this just to get the charset in the filter
+			*/
+
+			// read the charset hint from indexable
+			string charset = null;
+			foreach (Property property in IndexableProperties) {
+				if (property.Key != "charset")
+					continue;
+				charset = (string) property.Value;
+				//Console.WriteLine ("charset hint accepted: " + charset);
+				break;
+			}
+					
+
 			// now create a memorystream where htmlfilter will begin his show
 			Stream.Seek (0, SeekOrigin.Begin);
 			// count past 8 lines ... Streams suck!
