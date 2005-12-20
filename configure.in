@@ -635,7 +635,9 @@ dnl ----------------------------------------------
 
 dnl Check if the system has libchm, used by the CHMFilter
 
-AC_CHECK_LIB(chm,chm_open,has_libchm=yes,has_libchm=no)
+# FIXME: Disabled since its broken
+#AC_CHECK_LIB(chm,chm_open,has_libchm=yes,has_libchm=no)
+has_libchm=no
 AM_CONDITIONAL(HAS_LIBCHM, test "x$has_libchm" = "xyes")
 
 dnl ----------------------------------------------
@@ -773,7 +775,7 @@ echo "
 	gsf-sharp?		${enable_gsf_sharp}
 	wv1?			${enable_wv1}
 	galago-sharp?		${enable_galago}
-	libchm?			${has_libchm}
+	libchm?			${has_libchm} (Deprecated)
 
 	Mozilla Extension?	yes
 	Epiphany Extension?	${enable_epiphany_extension}
