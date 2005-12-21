@@ -1,6 +1,5 @@
 #include <beagle/beagle.h>
 
-beagle_cancelled_response_get_type
 beagle_client_get_type
 beagle_daemon_information_request_get_type
 beagle_daemon_information_response_get_type
@@ -11,8 +10,13 @@ beagle_hits_added_response_get_type
 beagle_hits_subtracted_response_get_type
 beagle_indexing_service_request_get_type
 beagle_query_get_type
+beagle_query_part_human_get_type
+beagle_query_part_or_get_type
+beagle_query_part_property_get_type
+beagle_query_part_text_get_type
 beagle_request_get_type
 beagle_response_get_type
+beagle_search_term_response_get_type
 beagle_shutdown_request_get_type
 beagle_snippet_request_get_type
 beagle_snippet_response_get_type
