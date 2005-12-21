@@ -55,7 +55,7 @@ beagle_timestamp_new (void)
  * beagle_timestamp_new_from_string:
  * @str: a string
  *
- * Creates a newly allocated #BeagleTimestamp from the given string. The string should be of the following format, "2005-06-23T10:05:0000000+01:00".
+ * Creates a newly allocated #BeagleTimestamp from the given string. The string should be of the following format, "2005-06-23T10:05:11.0000000+01:00".
  *
  * Return value: the newly allocated #BeagleTimestamp.
  **/
@@ -67,7 +67,7 @@ beagle_timestamp_new_from_string (const char *str)
 
 	timestamp = beagle_timestamp_new ();
 
-	consumed = sscanf (str, "%04d-%02d-%02dT%02d:%02d:%02d.%07d+%03d:%02d", 
+	consumed = sscanf (str, "%04d-%02d-%02dT%02d:%02d:%02d.%07d%03d:%02d", 
 			   &timestamp->year, &timestamp->month, &timestamp->day,
 			   &timestamp->hour, &timestamp->minute, &timestamp->second,
 			   &timestamp->ticks, &timestamp->tz_hour, &timestamp->tz_minute);
