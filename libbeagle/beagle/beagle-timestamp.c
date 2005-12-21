@@ -67,7 +67,7 @@ beagle_timestamp_new_from_string (const char *str)
 
 	timestamp = beagle_timestamp_new ();
 
-	consumed = sscanf (str, "%04d-%02d-%02dT%02d:%02d:%02d.%07d%03d:%02d", 
+	consumed = sscanf (str, "%04d-%02d-%02dT%02d:%02d:%02d.%07d+%03d:%02d", 
 			   &timestamp->year, &timestamp->month, &timestamp->day,
 			   &timestamp->hour, &timestamp->minute, &timestamp->second,
 			   &timestamp->ticks, &timestamp->tz_hour, &timestamp->tz_minute);

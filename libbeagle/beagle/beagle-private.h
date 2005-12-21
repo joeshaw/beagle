@@ -47,7 +47,6 @@ struct _BeagleHit {
 	char *type;
 	char *mime_type;
 	char *source;
-	char *source_object_name;
 
 	double score;
 

@@ -49,16 +49,22 @@ beagle_query_part_date_to_xml (BeagleQueryPart *part)
 	BeagleQueryPartDatePrivate *priv = BEAGLE_QUERY_PART_DATE_GET_PRIVATE (part);    
 	GString *data = g_string_new (NULL);
 	char *tmp;
-	
-	_beagle_query_part_append_standard_header (data, part, "Date");
-	
-	tmp = _beagle_timestamp_to_string (priv->start_date);
-	g_string_append_printf (data, "<StartDate>%s</StartDate>", tmp);
-	g_free (tmp);
 
-	tmp = _beagle_timestamp_to_string (priv->end_date);
-	g_string_append_printf (data, "<EndDate>%s</EndDate>", tmp);
-	g_free (tmp);
+	_beagle_query_part_append_standard_header (data, part, "DateRange");
+
+	g_string_append (data, "<Key>" BEAGLE_QUERY_PART_TARGET_ALL "</Key>");
+	
+	if (priv->start_date != NULL) {
+		tmp = _beagle_timestamp_to_string (priv->start_date);
+		g_string_append_printf (data, "<StartDate>%s</StartDate>", tmp);
+		g_free (tmp);
+	}
+
+	if (priv->end_date != NULL) {
+		tmp = _beagle_timestamp_to_string (priv->end_date);
+		g_string_append_printf (data, "<EndDate>%s</EndDate>", tmp);
+		g_free (tmp);
+	}
 	
 	_beagle_query_part_append_standard_footer (data);
 	

@@ -43,7 +43,6 @@ G_CONST_RETURN char *beagle_hit_get_uri (BeagleHit *hit);
 G_CONST_RETURN char *beagle_hit_get_type (BeagleHit *hit);
 G_CONST_RETURN char *beagle_hit_get_mime_type (BeagleHit *hit);
 G_CONST_RETURN char *beagle_hit_get_source (BeagleHit *hit);
-G_CONST_RETURN char *beagle_hit_get_source_object_name (BeagleHit *hit);
 G_CONST_RETURN char *beagle_hit_get_parent_uri (BeagleHit *hit);
 
 BeagleTimestamp *beagle_hit_get_timestamp (BeagleHit *hit);

@@ -81,8 +81,6 @@ start_hit (BeagleParserContext *ctx, const char **attrs)
 			priv->hit->mime_type = g_strdup (attrs[i + 1]);
 		else if (strcmp (attrs[i], "Source") == 0)
 			priv->hit->source = g_strdup (attrs[i + 1]);
-		else if (strcmp (attrs[i], "SourceObjectName") == 0)
-			priv->hit->source_object_name = g_strdup (attrs[i + 1]);
 		else if (strcmp (attrs[i], "Score") == 0)
 			priv->hit->score = g_ascii_strtod (attrs[i + 1], NULL);
 		else

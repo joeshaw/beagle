@@ -126,22 +126,6 @@ beagle_hit_get_source (BeagleHit *hit)
 }
 
 /**
- * beagle_hit_get_source_object_name:
- * @hit: a #BeagleHit
- *
- * Fetches the source object name of the given #BeagleHit.
- *
- * Return value: the source object name of the #BeagleHit.
- **/
-G_CONST_RETURN char *
-beagle_hit_get_source_object_name (BeagleHit *hit)
-{
-	g_return_val_if_fail (hit != NULL, NULL);
-
-	return hit->source_object_name;
-}
-
-/**
  * beagle_hit_get_score:
  * @hit: a #BeagleHit
  *
@@ -170,7 +154,6 @@ _beagle_hit_new (void)
 	hit->type = NULL;
 	hit->mime_type = NULL;
 	hit->source = NULL;
-	hit->source_object_name = NULL;
 
 	return hit;
 }
@@ -231,7 +214,6 @@ beagle_hit_unref (BeagleHit *hit)
 		g_free (hit->type);
 		g_free (hit->mime_type);
 		g_free (hit->source);
-		g_free (hit->source_object_name);
 
 		if (hit->timestamp)
 			beagle_timestamp_free (hit->timestamp);
@@ -308,8 +290,8 @@ _beagle_hit_to_xml (BeagleHit *hit, GString *data)
 	g_string_append_printf (data, " Uri=\"%s\" Type=\"%s\" MimeType=\"%s\"", 
 				hit->uri, hit->type, hit->mime_type);
 
-	g_string_append_printf (data, " Source=\"%s\" SourceObjectName=\"%s\"", 
-				hit->source, hit->source_object_name);
+	g_string_append_printf (data, " Source=\"%s\"", 
+				hit->source);
 
 	g_string_append_printf (data, " Score=\"%f\"",
 				hit->score);
