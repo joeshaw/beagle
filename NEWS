@@ -1,4 +1,75 @@
 
+Version 0.1.4
+December 21, 2005
+
+Daemon/Infrastructure:
+* Clean up snippet requesting API to be much simpler for clients.
+  (Joe Shaw, Jon Trowbridge)
+* Fix libbeagle to allow snippets to be requested.  (Joe)
+* Fix date range queries in libbeagle.  (D Bera, Joe)
+* Fix filtering by source in libbeagle.  (Joe)
+* Fix file extension queries.  ie, "ext:jpg".  (Bera)
+* Pre-initialize the serializer in connection handler.  Removes the slight
+  lag in the first response.  (Bera)
+* Added beagle:NoPunctFilename property to files.  (Jon)
+* Clean up error handling in the message passing code to aid
+  debugging.  (Joe)
+* Add unstored properties, so that indexables can send "hints" to
+  filters.  (Bera)
+* Fix properties to be both searched and stored by default in
+  libbeagle.  (Joe)
+* Wait up to a minute for the index helper process to start, as it may
+  take longer than the previous 4 seconds to respond to messages.
+  (Bera, Joe)
+* Fix an unlikely race in the messaging server which would throw an
+  exception if the daemon was shut down before it had finished
+  starting.  (Joe)
+* Remove the unused "cancelled" query response.  (Joe)
+
+Backends:
+* Enable the Konqueror history backend by default.  (Bera)
+* Use indexable hints in KonqQueryable to pass charset information to the 
+  filter.  (Bera)
+* Check for additional inotify events when indexing Gaim logs, so that
+  they are indexed whenever a message is received and not only when the
+  conversation is closed.  (Joe)
+* Add progress percentages to the Evolution mail backend.  (Joe)
+
+Filters:
+* Fix a bug which caused the daemon to hang when indexing certain 
+  Powerpoint files.  (Veerapuram Varadhan)
+* Entagged-sharp tree update.  (Daniel Drake)
+* Id3v2.4 tag parsing.  (Raphael Slinckx)
+* ASF/WMA file support.  (Christian Laireiter)
+* Extract and index keyword fields from OpenOffice documents.  (Daniel
+  Naber)
+* Handle multipart/alternative correctly in the mail filter, only
+  indexing the richest alternative we can support.  (Joe)
+* Don't set the hasAttachment flag based on multipart/alternative parts.
+  (Joe)
+
+UI/Tools:
+* Lots of improvements to Bludgeon.  (Jon)
+* Set the source in beagle-build-index, and allow it to be
+  configurable.  Fixes a bug where snippets were not returned from
+  static queryables that had text caches.  (Joe)
+* Fix a cut-and-paste error beagle-crawl-system to correctly pass in
+  deny patterns to --deny-pattern.  (Joe)
+
+Translations:
+* Added Lithuanian translation.  (Žygimantas Beručka)
+* Updated Japanese translation.  (Takeshi AIHANA)
+* Updated Traditional Chinese translation.  (Chao-Hsiung Liao)
+* Updated German translation.  (Hendrik Brandt)
+
+Everything Else:
+* Look for Firefox 1.5 headers in a few different places for best
+  compatibility.  (Joe)
+* Get the Evolution library directory from evolution-sharp, and pass
+  it into the beagled script.  (Joe, Ryan Skadberg)
+
+------------------------------------------------------
+
 Version 0.1.3
 December 5, 2005
 
