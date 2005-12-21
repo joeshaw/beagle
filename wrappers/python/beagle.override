@@ -115,3 +115,20 @@ _wrap_beagle_client_new(PyGObject *self, PyObject *args, PyObject *kwargs)
     pygobject_register_wrapper((PyObject *)self);
     return 0;
 }
+%%
+override beagle_timestamp_to_unix_time
+static PyObject *
+_wrap_beagle_timestamp_to_unix_time (PyGObject *self)
+{
+    time_t t;
+    gboolean ret;
+
+    ret = beagle_timestamp_to_unix_time ((BeagleTimestamp *) self->obj, &t);
+
+    if (!ret) {
+	PyErr_SetString(PyExc_ValueError, "timestamp is invalid");
+	return NULL;
+    }
+
+    return PyInt_FromLong (t);
+}
