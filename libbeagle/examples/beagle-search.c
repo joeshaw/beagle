@@ -24,7 +24,7 @@ static void
 print_other_hit (BeagleHit *hit)
 {
 	g_print ("%s (%s)", beagle_hit_get_uri (hit),
-		 beagle_hit_get_source_object_name (hit));
+		 beagle_hit_get_source (hit));
 }
 
 static void
