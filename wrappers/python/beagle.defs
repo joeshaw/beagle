@@ -372,12 +372,6 @@
   (return-type "const-char*")
 )
 
-(define-method get_source_object_name
-  (of-object "BeagleHit")
-  (c-name "beagle_hit_get_source_object_name")
-  (return-type "const-char*")
-)
-
 (define-method get_parent_uri
   (of-object "BeagleHit")
   (c-name "beagle_hit_get_parent_uri")
