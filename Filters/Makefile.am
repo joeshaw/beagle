@@ -56,7 +56,8 @@ CSFILES = 				\
 	$(srcdir)/FilterMusic.cs	\
 	$(srcdir)/FilterImLog.cs	\
 	$(srcdir)/FilterKonqHistory.cs	\
-	$(srcdir)/FilterShellscript.cs
+	$(srcdir)/FilterShellscript.cs	\
+	$(srcdir)/FilterRuby.cs
 
 if ENABLE_GSF_SHARP
 CSFILES += 				\

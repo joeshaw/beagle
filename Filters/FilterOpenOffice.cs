@@ -69,21 +69,6 @@ namespace Beagle.Filters {
 			odtFormat = false;
 		}
 		
-		static String FindChildAttribute (XmlNode node,
-						  String nodeName,
-						  String attributeName)
-		{
-			foreach (XmlNode subnode in node.ChildNodes) {
-				if (subnode.Name == nodeName) {
-					XmlAttribute attr = subnode.Attributes [attributeName];
-					if (attr == null)
-						return null;
-					return attr.Value;
-				}
-			}
-			return null;
-		}
-
 		// Parse the "style" nodes and mark appropriate styles as *HOT*
 		// FIXME: Identify and ADD more *HOT* styles. ;)
 		void StudyStyleNode (XmlReader reader)

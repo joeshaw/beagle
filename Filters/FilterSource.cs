@@ -82,18 +82,15 @@ namespace Beagle.Filters {
 			if (ch == ' ')
 				return true;
 
-			if (Char.IsLetter (ch) ||
-			    Char.IsDigit (ch) ||
-			    ch == '_') {
+			if (Char.IsLetter (ch) || Char.IsDigit (ch) || ch == '_') {
 				token.Append (ch);
 				if ((index + 1) < length) 
 					return false;
 				else
 					return true;
-			} else
-				return true;
+			}
 
-			return false;
+			return true;
 		}
 
 		// Tokenize the passed string and add the relevant 
