@@ -30,6 +30,7 @@ using System.Threading;
 using System.Text;
 using System.Xml;
 using System.Xml.Serialization;
+using System.Globalization;
 
 using Beagle.Daemon;
 using Beagle.Util;
@@ -368,13 +369,13 @@ namespace Beagle.Daemon.AkregatorQueryable {
 			indexable.MimeType = "text/html";
 			indexable.HitType = "FeedItem";
 
-			int offset; //will be ignored
-			DateTime date = GMime.Utils.HeaderDecodeDate (current_item.PubDate, out offset);
-			indexable.Timestamp = date.ToUniversalTime ();				
+			string RFC822 = "ddd, dd MMM yyyy HH:mm:ss zzz";
+			DateTime date = DateTime.ParseExact(current_item.PubDate, RFC822, DateTimeFormatInfo.InvariantInfo, DateTimeStyles.AdjustToUniversal);
+			indexable.Timestamp = date;
 
 			// replace property names with Dublin Core names
 			indexable.AddProperty (Property.New ("dc:title", current_item.Title));
-			indexable.AddProperty (Property.NewDate ("dc:date", date.ToUniversalTime ()));
+			indexable.AddProperty (Property.NewDate ("dc:date", date));
 			indexable.AddProperty (Property.NewKeyword ("dc:identifier", current_item.Link));
 			indexable.AddProperty (Property.NewKeyword ("dc:source", channel_link));
 				

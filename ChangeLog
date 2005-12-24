@@ -1,3 +1,8 @@
+2005-12-23  Debajyoti Bera <dbera.web@gmail.com>
+
+	* AkregatorQueryable/AkregatorQueryable.cs: Remove gmime dependency,
+	use ParseExact.
+
 2005-12-18  Debajyoti Bera <dbera.web@gmail.com>
 
 	* Filters/FilterKonqHistory.cs, beagled/KonqHistoryQueryable: Use
