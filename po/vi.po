@@ -1,742 +1,782 @@
 # Vietnamese translation for Beagle.
 # Copyright © 2005 Gnome i18n Project for Vietnamese.
 # Clytie Siddall <clytie@riverland.net.au>, 2005.
-#
+# 
 msgid ""
-msgstr ""
-"Project-Id-Version: beagle Gnome HEAD\n"
+""
+msgstr "Project-Id-Version: beagle Gnome HEAD\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2005-08-26 02:50+0000\n"
-"PO-Revision-Date: 2005-09-16 18:03+0930\n"
+"POT-Creation-Date: 2006-01-02 10:04+0100\n"
+"PO-Revision-Date: 2006-01-02 22:50+1030\n"
 "Last-Translator: Clytie Siddall <clytie@riverland.net.au>\n"
 "Language-Team: Vietnamese <gnomevi-list@lists.sourceforge.net>\n"
 "MIME-Version: 1.0\n"
-"Content-Type: text/plain; charset=utf-8\n"
+"Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0\n"
-"X-Generator: LocFactoryEditor 1.2.2\n"
+"X-Generator: LocFactoryEditor 1.5.1b\n"
 
-#: ../Best/Best.cs:132
+#:../Best/Best.cs:134
 msgid ""
 "If you're wondering whether Best is working check your notification area "
 "(system tray)"
-msgstr "Nếu bạn muốn biết nếu Best hoạt động chưa, hãy kiểm tra vùng thông báo (trong bảng điều khiển)."
+msgstr "Nếu bạn muốn biết nếu Best hoạt động chưa, hãy kiểm tra vùng thông báo "
+"(trong bảng điều khiển)."
 
-#: ../Best/BestTray.cs:149
+#:../Best/BestTray.cs:148
 msgid "Disable Searching"
 msgstr "Tắt khả năng tìm kiếm"
 
-#: ../Best/BestTray.cs:150
+#:../Best/BestTray.cs:149
 msgid ""
 "You are about to close the search tray. The search tray is automatically "
 "started at login-time. Would you like to disable it for future sessions?"
-msgstr "Bạn sắp đóng khay tìm kiếm. Tự động khởi chạy khay tìm kiếm khi đăng nhập. Bạn có muốn vô hiệu hóa nó trong phiên làm việc sau không?"
+msgstr "Bạn sắp đóng khay tìm kiếm. Tự động khởi chạy khay tìm kiếm khi đăng nhập. "
+"Bạn có muốn vô hiệu hóa nó trong phiên làm việc sau không?"
 
-#: ../Best/BestTray.cs:207
+#:../Best/BestTray.cs:207
 msgid "No Recent Searches"
 msgstr "Không có việc tìm kiếm gần đây"
 
-#: ../Best/BestTray.cs:212
+#:../Best/BestTray.cs:212
 msgid "Recent Searches"
 msgstr "Việc tìm kiếm gần đây"
 
-#: ../Best/BestTray.cs:228
+#:../Best/BestTray.cs:228
 msgid "Clear"
 msgstr "Xóa"
 
-#: ../Best/BestTray.cs:236
+#:../Best/BestTray.cs:236
 msgid "Quit"
 msgstr "Thoát"
 
-#: ../Best/BestWindow.cs:306
+#:../Best/BestWindow.cs:301
 msgid "Anywhere"
 msgstr "Bất cứ nơi nào"
 
-#: ../Best/BestWindow.cs:310
+#:../Best/BestWindow.cs:305
 msgid "in Files"
 msgstr "Trong tập tin"
 
-#: ../Best/BestWindow.cs:314
+#:../Best/BestWindow.cs:309
 msgid "in Addressbook"
 msgstr "Trong Sổ địa chỉ"
 
-#: ../Best/BestWindow.cs:318
+#:../Best/BestWindow.cs:313
 msgid "in Mail"
 msgstr "Trong các thư"
 
-#: ../Best/BestWindow.cs:322
+#:../Best/BestWindow.cs:317
 msgid "in Web Pages"
 msgstr "Trong trang Mạng"
 
-#: ../Best/BestWindow.cs:326
+#:../Best/BestWindow.cs:321
 msgid "in Chats"
 msgstr "Trong cuộc trò chuyện"
 
-#: ../Best/BestWindow.cs:343
+#:../Best/BestWindow.cs:338
 msgid "Search terms:"
 msgstr "Chuỗi tìm kiếm:"
 
-#: ../Best/BestWindow.cs:367
+#:../Best/BestWindow.cs:362
 msgid "Find"
 msgstr "Tìm"
 
-#: ../Best/BestWindow.cs:384
+#:../Best/BestWindow.cs:384
 msgid "Show More Results"
 msgstr "Hiện kết quả thêm"
 
-#: ../Best/BestWindow.cs:390
+#:../Best/BestWindow.cs:390
 msgid "Show Previous Results"
 msgstr "Hiện kết quả trước"
 
-#: ../Best/BestWindow.cs:424
+#:../Best/BestWindow.cs:474
 msgid "No results."
 msgstr "Chưa tìm kết quả."
 
-#. To translators: {0} is the current count of results shown of {1} in total, this is the message that is initially shown
-#. when results are returned to the user.
-#: ../Best/BestWindow.cs:428
-#, csharp-format
+#.To translators: {0} is the current count of results shown of {1} in total, this is the message that is initially shown
+#.when results are returned to the user.
+#:../Best/BestWindow.cs:478
+#,csharp-format
 msgid "Best <b>{0} results of {1}</b> are shown."
 msgstr "Best hiển thị <b>{0} kết quả trên {1}</b>."
 
-#. To translators: {0} to {1} is the interval of results currently shown of {2} results in total
-#: ../Best/BestWindow.cs:433
-#, csharp-format
+#.To translators: {0} to {1} is the interval of results currently shown of {2} results in total
+#:../Best/BestWindow.cs:483
+#,csharp-format
 msgid "Results <b>{0} through {1} of {2}</b> are shown."
 msgstr "Hiển thị kết quả <b>{0} đến {1} trong {2}</b>."
 
-#. To translators: {0} represents the current query keywords
-#: ../Best/BestWindow.cs:542
-#, csharp-format
+#.To translators: {0} represents the current query keywords
+#:../Best/BestWindow.cs:584
+#,csharp-format
 msgid ""
 "The query for <i>{0}</i> failed.<br>The likely cause is that the beagle "
 "daemon isn't running."
-msgstr "Truy vấn cho <i>{0}</i> không thành công. Rất có thể vì trình nền beagle không đang chạy."
+msgstr "Truy vấn cho <i>{0}</i> không thành công. Rất có thể vì trình nền beagle "
+"không đang chạy."
 
-#. To translators: {0} represents the current query keywords, {1} contains the errormessage
-#: ../Best/BestWindow.cs:547
-#, csharp-format
+#.To translators: {0} represents the current query keywords, {1} contains the errormessage
+#:../Best/BestWindow.cs:589
+#,csharp-format
 msgid "The query for <i>{0}</i> failed with error:<br>{1}<br>"
 msgstr "Truy vấn cho <i>{0}</i> đã thất bại với lỗi :<br>{1}<br>"
 
-#: ../glue/eggtrayicon.c:120
+#:../Best/best.desktop.in.h:1
+msgid "Beagle Search"
+msgstr "Tim kiếm Beagle"
+
+#:../Best/best.desktop.in.h:2
+msgid "Desktop Search"
+msgstr "Tìm kiếm trong màn hình nền"
+
+#:../glue/eggtrayicon.c:127
 msgid "Orientation"
 msgstr "Hướng"
 
-#: ../glue/eggtrayicon.c:121
+#:../glue/eggtrayicon.c:128
 msgid "The orientation of the tray."
 msgstr "Hướng khay"
 
-#: ../ImLogViewer/ImLogViewer.glade.h:1
+#:../ImLogViewer/ImLogViewer.glade.h:1
 msgid "<b>Conversations History</b>"
 msgstr "<b>Lược sử cuộc đối thoại</b>"
 
-#: ../ImLogViewer/ImLogViewer.glade.h:2
+#:../ImLogViewer/ImLogViewer.glade.h:2
 msgid "IM Viewer"
 msgstr "Bộ xem tin nhắn tức khắc"
 
-#: ../ImLogViewer/ImLogWindow.cs:87
-#, csharp-format
+#:../ImLogViewer/ImLogWindow.cs:102
+#,csharp-format
 msgid "Conversations in {0}"
 msgstr "Cuộc đối thoại trong {0}"
 
-#: ../ImLogViewer/ImLogWindow.cs:94
-#, csharp-format
+#:../ImLogViewer/ImLogWindow.cs:109
+#,csharp-format
 msgid "Conversations with {0}"
 msgstr "Cuộc đối thoại với {0}"
 
-#: ../Tiles/TileDocs.cs:77
+#:../Tiles/TileDocs.cs:77
 msgid "Pages:"
 msgstr "Trang:"
 
-#: ../Tiles/TileDocs.cs:81
+#:../Tiles/TileDocs.cs:81
 msgid "Words:"
 msgstr "Từ :"
 
-#: ../Tiles/TileFolder.cs:53
+#:../Tiles/TileFolder.cs:53
 msgid "Empty"
 msgstr "Rỗng"
 
-#: ../Tiles/TileFolder.cs:55
-#, csharp-format
+#:../Tiles/TileFolder.cs:55
+#,csharp-format
 msgid "Contains {0} Item"
 msgid_plural "Contains {0} Items"
 msgstr[0] "Chứa {0} mục"
 
-#: ../Tiles/TileImLog.cs:67
+#:../Tiles/TileImLog.cs:67
 msgid "Send Mail"
 msgstr "Gởi thư"
 
-#. For translators: From template Tiles/template-mail-message.html
-#: ../Tiles/TileImLog.cs:71 ../Tiles/TranslationHack.cs:52
+#.For translators: From template Tiles/template-mail-message.html
+#:../Tiles/TileImLog.cs:71 ../Tiles/TranslationHack.cs:52
 msgid "Send IM"
 msgstr "Gởi tin nhắn tức khắc"
 
-#: ../Tiles/TileImLog.cs:77
-#, csharp-format
+#:../Tiles/TileImLog.cs:77
+#,csharp-format
 msgid "Conversation in {0}"
 msgstr "Cuộc đối thoại trong {0}"
 
-#: ../Tiles/TileImLog.cs:79
-#, csharp-format
+#:../Tiles/TileImLog.cs:79
+#,csharp-format
 msgid "Conversation with {0}"
 msgstr "Cuộc đối thoại với {0}"
 
-#: ../Tiles/TileMailMessage.cs:81
+#:../Tiles/TileMailMessage.cs:88
 msgid "No Subject"
 msgstr "Không có chủ đề"
 
-#: ../Tiles/TileMailMessage.cs:88
+#:../Tiles/TileMailMessage.cs:95
 msgid "To"
 msgstr "Cho"
 
-#: ../Tiles/TileMailMessage.cs:88
+#:../Tiles/TileMailMessage.cs:95
 msgid "From"
 msgstr "Từ"
 
-#: ../Tiles/TileMailMessage.cs:116
+#:../Tiles/TileMailMessage.cs:123
 msgid "Sent"
 msgstr "Đã gởi"
 
-#: ../Tiles/TileMailMessage.cs:116
+#:../Tiles/TileMailMessage.cs:123
 msgid "Received"
 msgstr "Đã nhận"
 
-#: ../Tiles/TileMailMessage.cs:124
+#:../Tiles/TileMailMessage.cs:131
 msgid "Email attachment"
 msgstr "Đính kèm thư"
 
-#. For translators: From template Tiles/template-blog.html
-#: ../Tiles/TranslationHack.cs:6
+#.For translators: From template Tiles/template-blog.html
+#:../Tiles/TranslationHack.cs:6
 msgid "Weblog:"
 msgstr "Nhật ký Mạng:"
 
-#. For translators: From template Tiles/template-blog.html
-#: ../Tiles/TranslationHack.cs:8
+#.For translators: From template Tiles/template-blog.html
+#:../Tiles/TranslationHack.cs:8
 msgid "by"
 msgstr "Tác giả:"
 
-#. For translators: From template Tiles/template-blog.html
-#: ../Tiles/TranslationHack.cs:10
+#.For translators: From template Tiles/template-blog.html
+#:../Tiles/TranslationHack.cs:10
 msgid "Published:"
 msgstr "Xuất bản:"
 
-#. For translators: From template Tiles/template-blog.html
-#. For translators: From template Tiles/template-docs.html
-#. For translators: From template Tiles/template-file.html
-#. For translators: From template Tiles/template-folder.html
-#. For translators: From template Tiles/template-launcher.html
-#. For translators: From template Tiles/template-mail-message.html
-#. For translators: From template Tiles/template-music.html
-#. For translators: From template Tiles/template-note.html
-#. For translators: From template Tiles/template-picture.html
-#. For translators: From template Tiles/template-presentation.html
-#. For translators: From template Tiles/template-spreadsheet.html
-#. For translators: From template Tiles/template-web-history.html
-#. For translators: From template Tiles/template-network.html
-#. For translators: From template Tiles/template-im-log.html
-#: ../Tiles/TranslationHack.cs:12 ../Tiles/TranslationHack.cs:22
-#: ../Tiles/TranslationHack.cs:32 ../Tiles/TranslationHack.cs:40
-#: ../Tiles/TranslationHack.cs:44 ../Tiles/TranslationHack.cs:50
-#: ../Tiles/TranslationHack.cs:58 ../Tiles/TranslationHack.cs:66
-#: ../Tiles/TranslationHack.cs:76 ../Tiles/TranslationHack.cs:92
-#: ../Tiles/TranslationHack.cs:106 ../Tiles/TranslationHack.cs:114
-#: ../Tiles/TranslationHack.cs:118 ../Tiles/TranslationHack.cs:122
+#.For translators: From template Tiles/template-blog.html
+#.For translators: From template Tiles/template-docs.html
+#.For translators: From template Tiles/template-file.html
+#.For translators: From template Tiles/template-folder.html
+#.For translators: From template Tiles/template-launcher.html
+#.For translators: From template Tiles/template-mail-message.html
+#.For translators: From template Tiles/template-music.html
+#.For translators: From template Tiles/template-note.html
+#.For translators: From template Tiles/template-picture.html
+#.For translators: From template Tiles/template-presentation.html
+#.For translators: From template Tiles/template-spreadsheet.html
+#.For translators: From template Tiles/template-web-history.html
+#.For translators: From template Tiles/template-network.html
+#.For translators: From template Tiles/template-im-log.html
+#:../Tiles/TranslationHack.cs:12 ../Tiles/TranslationHack.cs:22
+#:../Tiles/TranslationHack.cs:32 ../Tiles/TranslationHack.cs:40
+#:../Tiles/TranslationHack.cs:44 ../Tiles/TranslationHack.cs:50
+#:../Tiles/TranslationHack.cs:58 ../Tiles/TranslationHack.cs:66
+#:../Tiles/TranslationHack.cs:76 ../Tiles/TranslationHack.cs:92
+#:../Tiles/TranslationHack.cs:106 ../Tiles/TranslationHack.cs:114
+#:../Tiles/TranslationHack.cs:118 ../Tiles/TranslationHack.cs:122
 msgid "Open"
 msgstr "Mở"
 
-#. For translators: From template Tiles/template-docs.html
-#. For translators: From template Tiles/template-file.html
-#. For translators: From template Tiles/template-folder.html
-#. For translators: From template Tiles/template-picture.html
-#. For translators: From template Tiles/template-presentation.html
-#. For translators: From template Tiles/template-spreadsheet.html
-#: ../Tiles/TranslationHack.cs:14 ../Tiles/TranslationHack.cs:28
-#: ../Tiles/TranslationHack.cs:38 ../Tiles/TranslationHack.cs:68
-#: ../Tiles/TranslationHack.cs:82 ../Tiles/TranslationHack.cs:98
+#.For translators: From template Tiles/template-docs.html
+#.For translators: From template Tiles/template-file.html
+#.For translators: From template Tiles/template-folder.html
+#.For translators: From template Tiles/template-picture.html
+#.For translators: From template Tiles/template-presentation.html
+#.For translators: From template Tiles/template-spreadsheet.html
+#:../Tiles/TranslationHack.cs:14 ../Tiles/TranslationHack.cs:28
+#:../Tiles/TranslationHack.cs:38 ../Tiles/TranslationHack.cs:68
+#:../Tiles/TranslationHack.cs:82 ../Tiles/TranslationHack.cs:98
 msgid "in folder"
 msgstr "trong thư mục"
 
-#. For translators: From template Tiles/template-docs.html
-#. For translators: From template Tiles/template-file.html
-#. For translators: From template Tiles/template-presentation.html
-#. For translators: From template Tiles/template-spreadsheet.html
-#: ../Tiles/TranslationHack.cs:16 ../Tiles/TranslationHack.cs:30
-#: ../Tiles/TranslationHack.cs:84 ../Tiles/TranslationHack.cs:100
+#.For translators: From template Tiles/template-docs.html
+#.For translators: From template Tiles/template-file.html
+#.For translators: From template Tiles/template-presentation.html
+#.For translators: From template Tiles/template-spreadsheet.html
+#:../Tiles/TranslationHack.cs:16 ../Tiles/TranslationHack.cs:30
+#:../Tiles/TranslationHack.cs:84 ../Tiles/TranslationHack.cs:100
 msgid "Last modified"
 msgstr "Sửa đổi cuối cùng"
 
-#. For translators: From template Tiles/template-docs.html
-#. For translators: From template Tiles/template-presentation.html
-#. For translators: From template Tiles/template-spreadsheet.html
-#: ../Tiles/TranslationHack.cs:18 ../Tiles/TranslationHack.cs:86
-#: ../Tiles/TranslationHack.cs:102
+#.For translators: From template Tiles/template-docs.html
+#.For translators: From template Tiles/template-presentation.html
+#.For translators: From template Tiles/template-spreadsheet.html
+#:../Tiles/TranslationHack.cs:18 ../Tiles/TranslationHack.cs:86
+#:../Tiles/TranslationHack.cs:102
 msgid "Title:"
-msgstr "Tiêu đề : "
+msgstr "Tiêu đề :"
 
-#. For translators: From template Tiles/template-docs.html
-#. For translators: From template Tiles/template-presentation.html
-#. For translators: From template Tiles/template-spreadsheet.html
-#: ../Tiles/TranslationHack.cs:20 ../Tiles/TranslationHack.cs:88
-#: ../Tiles/TranslationHack.cs:104
+#.For translators: From template Tiles/template-docs.html
+#.For translators: From template Tiles/template-presentation.html
+#.For translators: From template Tiles/template-spreadsheet.html
+#:../Tiles/TranslationHack.cs:20 ../Tiles/TranslationHack.cs:88
+#:../Tiles/TranslationHack.cs:104
 msgid "Author:"
 msgstr "Tác giả:"
 
-#. For translators: From template Tiles/template-docs.html
-#. For translators: From template Tiles/template-file.html
-#. For translators: From template Tiles/template-picture.html
-#. For translators: From template Tiles/template-presentation.html
-#. For translators: From template Tiles/template-spreadsheet.html
-#: ../Tiles/TranslationHack.cs:24 ../Tiles/TranslationHack.cs:34
-#: ../Tiles/TranslationHack.cs:78 ../Tiles/TranslationHack.cs:94
-#: ../Tiles/TranslationHack.cs:108
+#.For translators: From template Tiles/template-docs.html
+#.For translators: From template Tiles/template-file.html
+#.For translators: From template Tiles/template-picture.html
+#.For translators: From template Tiles/template-presentation.html
+#.For translators: From template Tiles/template-spreadsheet.html
+#:../Tiles/TranslationHack.cs:24 ../Tiles/TranslationHack.cs:34
+#:../Tiles/TranslationHack.cs:78 ../Tiles/TranslationHack.cs:94
+#:../Tiles/TranslationHack.cs:108
 msgid "Send to..."
 msgstr "Gởi cho..."
 
-#. For translators: From template Tiles/template-docs.html
-#. For translators: From template Tiles/template-file.html
-#. For translators: From template Tiles/template-music.html
-#. For translators: From template Tiles/template-picture.html
-#. For translators: From template Tiles/template-presentation.html
-#. For translators: From template Tiles/template-spreadsheet.html
-#: ../Tiles/TranslationHack.cs:26 ../Tiles/TranslationHack.cs:36
-#: ../Tiles/TranslationHack.cs:62 ../Tiles/TranslationHack.cs:80
-#: ../Tiles/TranslationHack.cs:96 ../Tiles/TranslationHack.cs:110
+#.For translators: From template Tiles/template-docs.html
+#.For translators: From template Tiles/template-file.html
+#.For translators: From template Tiles/template-music.html
+#.For translators: From template Tiles/template-picture.html
+#.For translators: From template Tiles/template-presentation.html
+#.For translators: From template Tiles/template-spreadsheet.html
+#:../Tiles/TranslationHack.cs:26 ../Tiles/TranslationHack.cs:36
+#:../Tiles/TranslationHack.cs:62 ../Tiles/TranslationHack.cs:80
+#:../Tiles/TranslationHack.cs:96 ../Tiles/TranslationHack.cs:110
 msgid "Reveal in file manager"
 msgstr "Hiển thị trong bộ quản lý tập tin"
 
-#. For translators: From template Tiles/template-launcher.html
-#: ../Tiles/TranslationHack.cs:42
+#.For translators: From template Tiles/template-launcher.html
+#:../Tiles/TranslationHack.cs:42
 msgid "Application:"
 msgstr "Ứng dụng:"
 
-#. For translators: From template Tiles/template-mail-message.html
-#: ../Tiles/TranslationHack.cs:46
+#.For translators: From template Tiles/template-mail-message.html
+#:../Tiles/TranslationHack.cs:46
 msgid "Email subject:"
 msgstr "Chủ đề thư :"
 
-#. For translators: From template Tiles/template-mail-message.html
-#: ../Tiles/TranslationHack.cs:48
+#.For translators: From template Tiles/template-mail-message.html
+#:../Tiles/TranslationHack.cs:48
 msgid "Folder:"
 msgstr "thư mục:"
 
-#. For translators: From template Tiles/template-music.html
-#: ../Tiles/TranslationHack.cs:54
+#.For translators: From template Tiles/template-music.html
+#:../Tiles/TranslationHack.cs:54
 msgid "Track"
 msgstr "Rãnh ghi"
 
-#. For translators: From template Tiles/template-music.html
-#: ../Tiles/TranslationHack.cs:56
+#.For translators: From template Tiles/template-music.html
+#:../Tiles/TranslationHack.cs:56
 msgid "from"
 msgstr "từ"
 
-#. For translators: From template Tiles/template-music.html
-#: ../Tiles/TranslationHack.cs:60
+#.For translators: From template Tiles/template-music.html
+#:../Tiles/TranslationHack.cs:60
 msgid "Enqueue"
 msgstr "Vào hàng đợi"
 
-#. For translators: From template Tiles/template-note.html
-#: ../Tiles/TranslationHack.cs:64
+#.For translators: From template Tiles/template-note.html
+#:../Tiles/TranslationHack.cs:64
 msgid "last modified"
 msgstr "sửa đổi cuối cùng"
 
-#. For translators: From template Tiles/template-picture.html
-#: ../Tiles/TranslationHack.cs:70
+#.For translators: From template Tiles/template-picture.html
+#:../Tiles/TranslationHack.cs:70
 msgid "Modified:"
 msgstr "Sửa đổi:"
 
-#. For translators: From template Tiles/template-picture.html
-#: ../Tiles/TranslationHack.cs:72
+#.For translators: From template Tiles/template-picture.html
+#:../Tiles/TranslationHack.cs:72
 msgid "Tags:"
 msgstr "Thẻ:"
 
-#. For translators: From template Tiles/template-picture.html
-#: ../Tiles/TranslationHack.cs:74
+#.For translators: From template Tiles/template-picture.html
+#:../Tiles/TranslationHack.cs:74
 msgid "Description:"
 msgstr "Mô tả:"
 
-#. For translators: From template Tiles/template-presentation.html
-#: ../Tiles/TranslationHack.cs:90
+#.For translators: From template Tiles/template-presentation.html
+#:../Tiles/TranslationHack.cs:90
 msgid "Slides:"
 msgstr "Ảnh trượt:"
 
-#. For translators: From template Tiles/template-web-history.html
-#: ../Tiles/TranslationHack.cs:112
+#.For translators: From template Tiles/template-web-history.html
+#:../Tiles/TranslationHack.cs:112
 msgid "Last viewed:"
 msgstr "Xem cuối cùng:"
 
-#. For translators: From template Tiles/template-network.html
-#: ../Tiles/TranslationHack.cs:116
+#.For translators: From template Tiles/template-network.html
+#:../Tiles/TranslationHack.cs:116
 msgid "from Networked Beagle on host"
 msgstr "Từ trình Beagle chạy mạng trên máy"
 
-#. For translators: From template Tiles/template-network.html
-#: ../Tiles/TranslationHack.cs:120
+#.For translators: From template Tiles/template-network.html
+#:../Tiles/TranslationHack.cs:120
 msgid "Search Networked Beagle"
 msgstr "Tìm kiếm trong trình Beagle chạy mạng"
 
-#: ../tools/Settings.cs:214
+#:../tools/Settings.cs:217
 msgid "Reload configuration"
 msgstr "Tải lại cấu hình"
 
-#: ../tools/Settings.cs:215
+#:../tools/Settings.cs:218
 msgid ""
 "The configuration file has been modified by another application. Do you wish "
 "to discard the currently displayed values and reload configuration from disk?"
-msgstr "Một ứng dụng khác đã sửa đổi tập tin cấu hình. Bạn có muốn hủy những giá trị đang xem, rồi tải lại cấu hình từ đĩa không?"
+msgstr "Một ứng dụng khác đã sửa đổi tập tin cấu hình. Bạn có muốn hủy những giá trị "
+"đang xem, rồi tải lại cấu hình từ đĩa không?"
 
-#: ../tools/Settings.cs:253
+#:../tools/Settings.cs:256
 msgid "Select Path"
 msgstr "Chọn đường dẫn"
 
-#: ../tools/Settings.cs:272
+#:../tools/Settings.cs:275
 msgid "The selected path is already selected for indexing and wasn't added."
 msgstr "Chưa thêm đường dẫn đã chọn, vì nó đã chọn để chỉ mục."
 
-#: ../tools/Settings.cs:275
+#:../tools/Settings.cs:278
 msgid ""
 "The selected path wasn't added. The list contains items that supercedes it "
 "and the data is already being indexed."
-msgstr "Chưa thêm đường dẫn đã chọn, vì danh sách chứa mục thay thế nó và đang chỉ mục dữ liệu đó."
+msgstr "Chưa thêm đường dẫn đã chọn, vì danh sách chứa mục thay thế nó và đang chỉ "
+"mục dữ liệu đó."
 
-#: ../tools/Settings.cs:286 ../tools/Settings.cs:478
+#:../tools/Settings.cs:289 ../tools/Settings.cs:481
 msgid "Path not added"
 msgstr "Chưa thêm đường"
 
-#: ../tools/Settings.cs:295
+#:../tools/Settings.cs:298
 msgid "Remove obsolete paths"
 msgstr "Gỡ bỏ các đường dẫn quá thời"
 
-#: ../tools/Settings.cs:296
+#:../tools/Settings.cs:299
 msgid ""
 "Adding this path will obsolete some of the existing include paths. This will "
 "result in the removal of the old obsolete paths. Do you still wish to add it?"
-msgstr "Thêm đường dẫn này sẽ làm cho một số đường dẫn gồm tồn tại có quá thời. Vì vậy việc thêm sẽ gây ra các đường dẫn quá thời này bị gỡ bỏ. Bạn vẫn còn muốn thêm nó không?"
+msgstr "Thêm đường dẫn này sẽ làm cho một số đường dẫn gồm tồn tại có quá thời. Vì "
+"vậy việc thêm sẽ gây ra các đường dẫn quá thời này bị gỡ bỏ. Bạn vẫn còn "
+"muốn thêm nó không?"
 
-#: ../tools/Settings.cs:322
+#:../tools/Settings.cs:325
 msgid "Remove path"
 msgstr "Gỡ bỏ đường dẫn"
 
-#: ../tools/Settings.cs:323
+#:../tools/Settings.cs:326
 msgid ""
 "Are you sure you wish to remove this path from the list of directories to be "
 "included for indexing?"
-msgstr "Bạn có chắc muốn gỡ bỏ đường dẫn này ra danh sách thư mục cần gồm để chỉ mục không?"
+msgstr "Bạn có chắc muốn gỡ bỏ đường dẫn này ra danh sách thư mục cần gồm để chỉ mục "
+"không?"
 
-#: ../tools/Settings.cs:352
+#:../tools/Settings.cs:355
 msgid "Remove item"
 msgstr "Gỡ bỏ mục"
 
-#: ../tools/Settings.cs:353
+#:../tools/Settings.cs:356
 msgid ""
 "Are you sure you wish to remove this item from the list of data to be "
 "excluded from indexing?"
-msgstr "Bạn có chắc muốn gỡ bỏ mục này ra danh sách dữ liệu cần bị loại trừ ra việc chỉ mục không?"
+msgstr "Bạn có chắc muốn gỡ bỏ mục này ra danh sách dữ liệu cần bị loại trừ ra việc "
+"chỉ mục không?"
 
-#: ../tools/Settings.cs:396
+#:../tools/Settings.cs:399
 msgid "Invalid host entry"
 msgstr "Mục nhập máy không hợp lệ"
 
-#: ../tools/Settings.cs:403
+#:../tools/Settings.cs:406
 msgid "Remote host already present in the list."
 msgstr "Máy ở xa đã có trong danh sách."
 
-#: ../tools/Settings.cs:412
+#:../tools/Settings.cs:415
 msgid "Netbeagle Node not added"
 msgstr "Chưa thêm nút thông tin NetBeagle"
 
-#: ../tools/Settings.cs:428
+#:../tools/Settings.cs:431
 msgid "Remove host"
 msgstr "Gỡ bỏ máy"
 
-#: ../tools/Settings.cs:429
+#:../tools/Settings.cs:432
 msgid "Are you sure you wish to remove this host from the list?"
 msgstr "Bạn có chắc muốn gỡ bỏ máy này ra danh sách không?"
 
-#: ../tools/Settings.cs:450
+#:../tools/Settings.cs:453
 msgid "Select path"
 msgstr "Chọn đường dẫn"
 
-#: ../tools/Settings.cs:469
+#:../tools/Settings.cs:472
 msgid "The selected path is already configured for external access."
 msgstr "Đã cấu hình đường dẫn đã chọn cho truy cập bên ngoài."
 
-#: ../tools/Settings.cs:493
+#:../tools/Settings.cs:496
 msgid "Remove public path"
 msgstr "Gỡ bỏ đường dẫn công"
 
-#: ../tools/Settings.cs:494
+#:../tools/Settings.cs:497
 msgid ""
 "Are you sure you wish to remove this entry from the list of public paths?"
-msgstr ""
-"Bạn có chắc chắn là bạn muốn xóa bỏ vĩnh viễn « %s » trong sọt rác không?"
+msgstr "Bạn có chắc chắn là bạn muốn xóa bỏ vĩnh viễn « %s » trong sọt rác không?"
 
-#: ../tools/Settings.cs:539 ../tools/Settings.cs:628 ../tools/Settings.cs:706
-#: ../tools/Settings.cs:782 ../tools/Settings.cs:1121
+#:../tools/Settings.cs:542 ../tools/Settings.cs:631 ../tools/Settings.cs:709
+#:../tools/Settings.cs:785 ../tools/Settings.cs:1124
 msgid "Name"
 msgstr "Tên"
 
-#: ../tools/Settings.cs:622 ../tools/settings.glade.h:32
+#:../tools/Settings.cs:625 ../tools/settings.glade.h:33
 msgid "Type"
 msgstr "Kiểu"
 
-#: ../tools/Settings.cs:675 ../tools/Settings.cs:1055
-#: ../tools/settings.glade.h:24
+#:../tools/Settings.cs:678 ../tools/Settings.cs:1058
+#:../tools/settings.glade.h:25
 msgid "Path"
 msgstr "Đường dẫn"
 
-#: ../tools/Settings.cs:678 ../tools/Settings.cs:1065
+#:../tools/Settings.cs:681 ../tools/Settings.cs:1068
 msgid "Pattern"
 msgstr "Mẫu"
 
-#: ../tools/Settings.cs:681 ../tools/Settings.cs:1060
-#: ../tools/settings.glade.h:22
+#:../tools/Settings.cs:684 ../tools/Settings.cs:1063
+#:../tools/settings.glade.h:22
 msgid "Mail Folder"
 msgstr "thư mục thư"
 
-#: ../tools/Settings.cs:1029
+#:../tools/Settings.cs:1032
 msgid "Select Folder"
 msgstr "Chọn thư mục"
 
-#: ../tools/Settings.cs:1089
+#:../tools/Settings.cs:1092
 msgid "Error adding path"
 msgstr "Gặp lỗi khi thêm đường dẫn"
 
-#: ../tools/Settings.cs:1090
+#:../tools/Settings.cs:1093
 msgid ""
 "The specified path could not be found and therefore it could not be added to "
 "the list of resources excluded for indexing."
-msgstr "Không tìm thấy đường dẫn đã xác định, thì không thể thêm nó vào danh sách tài nguyên cần loại trừ ra việc chỉ mục."
+msgstr "Không tìm thấy đường dẫn đã xác định, thì không thể thêm nó vào danh sách "
+"tài nguyên cần loại trừ ra việc chỉ mục."
 
-#: ../tools/Settings.cs:1120
+#:../tools/Settings.cs:1123
 msgid "Show"
 msgstr "Hiện"
 
-#: ../tools/settings.glade.h:1
+#:../tools/settings.glade.h:1
 msgid "<b>Add remote host</b>"
 msgstr "<b>Thêm máy ở xa</b>"
 
-#: ../tools/settings.glade.h:2
+#:../tools/settings.glade.h:2
 msgid "<b>Add resource</b>"
 msgstr "<b>Thêm tài nguyên</b>"
 
-#: ../tools/settings.glade.h:3
+#:../tools/settings.glade.h:3
 msgid "<b>Display</b>"
 msgstr "<b>Trình bày</b>"
 
-#: ../tools/settings.glade.h:4
+#:../tools/settings.glade.h:4
 msgid "<b>General</b>"
 msgstr "<b>Chung</b>"
 
-#: ../tools/settings.glade.h:5
+#:../tools/settings.glade.h:5
 msgid "<b>Networking</b>"
 msgstr "<b>Chạy mạng</b>"
 
-#: ../tools/settings.glade.h:6
+#:../tools/settings.glade.h:6
 msgid "<b>Privacy</b>"
 msgstr "<b>Riêng tư</b>"
 
-#: ../tools/settings.glade.h:7
+#:../tools/settings.glade.h:7
 msgid "<b>Select mail folder</b>"
 msgstr "<b>Chọn thư mục thư</b>"
 
-#: ../tools/settings.glade.h:8
+#:../tools/settings.glade.h:8
 msgid ""
 "Add a remote search-enabled host you wish \n"
 "to network with."
 msgstr "Thêm máy ở xa có khả năng tìm kiếm\n"
 "với đó bạn muốn chạy mạng."
 
-#: ../tools/settings.glade.h:10
+#:../tools/settings.glade.h:10
 msgid "Add any additional paths to be included for indexing."
 msgstr "Thêm đường dẫn thêm nào cần gồm để chỉ mục."
 
-#: ../tools/settings.glade.h:11
+#:../tools/settings.glade.h:11
 msgid "Add any remote search-enabled hosts you wish to network with"
 msgstr "Thêm máy ở xa nào với đó bạn muốn chạy mạng."
 
-#: ../tools/settings.glade.h:12
+#:../tools/settings.glade.h:12
 msgid "Address"
 msgstr "Địa chỉ"
 
-#: ../tools/settings.glade.h:13
+#:../tools/settings.glade.h:13
 msgid ""
 "Adjust which types of results should be visible, and in what order they "
 "should be presented when grouped by type."
-msgstr "Điều chỉnh kết quả kiểu nào nên hiển thị, và khi nhóm lại kết quả theo kiểu, nên hiển thị theo thứ tự nào."
+msgstr "Điều chỉnh kết quả kiểu nào nên hiển thị, và khi nhóm lại kết quả theo kiểu, "
+"nên hiển thị theo thứ tự nào."
 
-#: ../tools/settings.glade.h:14
+#:../tools/settings.glade.h:14
 msgid "Allow external access to local search services"
 msgstr "Cho phép truy cập bên ngoài vào dịch vụ tìm kiếm địa phương"
 
-#: ../tools/settings.glade.h:15
+#:../tools/settings.glade.h:15
 msgid "Alt"
 msgstr "Alt"
 
-#: ../tools/settings.glade.h:16
+#:../tools/settings.glade.h:16
 msgid "Ctrl"
 msgstr "Ctrl"
 
-#: ../tools/settings.glade.h:17
+#:../tools/settings.glade.h:17
 msgid "Directory Path"
 msgstr "Đường dẫn thư mục"
 
-#: ../tools/settings.glade.h:18
+#:../tools/settings.glade.h:18
 msgid "Display the search window by pressing"
 msgstr "Hiển thị cửa sổ tìm kiếm bằng cách bấm phím"
 
-#: ../tools/settings.glade.h:19
+#:../tools/settings.glade.h:19
 msgid "Filename Pattern"
 msgstr "Mẫu tên tập tin"
 
-#: ../tools/settings.glade.h:20
+#:../tools/settings.glade.h:20
 msgid "Index my home directory"
 msgstr "Chỉ mục thư mục chính của tôi"
 
-#: ../tools/settings.glade.h:21
+#:../tools/settings.glade.h:21
 msgid "Indexing"
 msgstr "Đang chỉ mục"
 
-#: ../tools/settings.glade.h:23
+#:../tools/settings.glade.h:23
+msgid "Maximum number of results displayed "
+msgstr "Số tối đa kết quả đã hiển thị "
+
+#:../tools/settings.glade.h:24
 msgid "Networking"
 msgstr "Chạy mạng"
 
-#: ../tools/settings.glade.h:25
+#:../tools/settings.glade.h:26
 msgid "Please select a resource you wish to exclude from indexing."
 msgstr "Hãy chọn tài nguyên bạn muốn loại trừ ra việc chỉ mục."
 
-#: ../tools/settings.glade.h:26
+#:../tools/settings.glade.h:27
 msgid "Please select the mail folder you wish to exclude from indexing. "
-msgstr "Hãy chọn thư mục thư bạn muốn loại trừ ra việc chỉ mục."
+msgstr "Hãy chọn thư mục thư bạn muốn loại trừ ra việc chỉ mục. "
 
-#: ../tools/settings.glade.h:27
+#:../tools/settings.glade.h:28
 msgid "Search"
 msgstr "Tìm kiếm"
 
-#: ../tools/settings.glade.h:28
+#:../tools/settings.glade.h:29
 msgid "Search Preferences"
 msgstr "Tùy thích Tìm kiếm"
 
-#: ../tools/settings.glade.h:29
+#:../tools/settings.glade.h:30
 msgid ""
 "Specify any resources, such as paths, patterns, mail folders or type of "
 "objects you wish to exclude from indexing."
-msgstr "Hãy xác định tài nguyên nào, như đường dẫn, mẫu, thư mục thư hoặc kiểu đối tượng mà bạn muốn loại trừ ra việc chỉ mục."
+msgstr "Hãy xác định tài nguyên nào, như đường dẫn, mẫu, thư mục thư hoặc kiểu đối "
+"tượng mà bạn muốn loại trừ ra việc chỉ mục."
 
-#: ../tools/settings.glade.h:30
+#:../tools/settings.glade.h:31
 msgid "Specify paths that should be available for external access"
 msgstr "Hãy xác định đường dẫn nào nên cho phép truy cập bên ngoài."
 
-#: ../tools/settings.glade.h:31
+#:../tools/settings.glade.h:32
 msgid "Start search & indexing services automatically "
-msgstr "Tự động khởi chạy dịch vụ tìm kiếm và chỉ mục."
+msgstr "Tự động khởi chạy dịch vụ tìm kiếm và chỉ mục "
 
-#: ../Util/Evolution.cs:45 ../Util/Evolution.cs:163
+#:../tools/beagle-settings.desktop.in.h:1
+msgid "Configure Desktop Search & Indexing"
+msgstr "Cấu hình tìm kiếm và chỉ mục màn hình nền"
+
+#:../tools/beagle-settings.desktop.in.h:2
+msgid "Configure search & indexing properties"
+msgstr "Cấu hình thuộc tính tìm kiếm và chỉ mục"
+
+#:../tools/beagle-settings.desktop.in.h:3
+msgid "Search & Indexing"
+msgstr "Tìm kiếm và Chỉ mục"
+
+#:../Util/Evolution.cs:45 ../Util/Evolution.cs:163
 msgid "On This Computer"
 msgstr "Trên máy này"
 
-#: ../Util/ExifData.cs:226
+#:../Util/ExifData.cs:226
 msgid "Image Directory"
 msgstr "Thư mục ảnh"
 
-#: ../Util/ExifData.cs:228
+#:../Util/ExifData.cs:228
 msgid "Thumbnail Directory"
 msgstr "Thư mục hình thu nhỏ"
 
-#: ../Util/ExifData.cs:230
+#:../Util/ExifData.cs:230
 msgid "Exif Directory"
 msgstr "Thư mục Exif"
 
-#: ../Util/ExifData.cs:232
+#:../Util/ExifData.cs:232
 msgid "GPS Directory"
 msgstr "Thư mục GPS"
 
-#: ../Util/ExifData.cs:234
+#:../Util/ExifData.cs:234
 msgid "InterOperability Directory"
 msgstr "Thư mục thao tác với nhau"
 
-#: ../Util/ExifData.cs:236
+#:../Util/ExifData.cs:236
 msgid "Unknown Directory"
 msgstr "Không biết thư mục này"
 
-#: ../Util/StringFu.cs:65
+#:../Util/StringFu.cs:75
 msgid "Today"
 msgstr "Hôm nay"
 
-#: ../Util/StringFu.cs:67
+#:../Util/StringFu.cs:77
 msgid "Yesterday"
 msgstr "Hôm qua"
 
-#: ../Util/StringFu.cs:69
+#.Translators: Example output: Aug 9
+#:../Util/StringFu.cs:80
 msgid "MMM d"
 msgstr "n Thg"
 
-#: ../Util/StringFu.cs:71
+#.Translators: Example output: Aug 9, 2000
+#:../Util/StringFu.cs:83
 msgid "MMM d, yyyy"
 msgstr "n Thg, năm"
 
-#: ../Util/StringFu.cs:73
+#.Translators: Example output: 11:05 AM  (note h = 12-hour time)
+#:../Util/StringFu.cs:86
 msgid "h:mm tt"
 msgstr "g:ph tg"
 
-#. Translators: {0} is a date (e.g. 'Today' or 'Apr 23'), {1} is the time
-#: ../Util/StringFu.cs:79
-#, csharp-format
+#.Translators: {0} is a date (e.g. 'Today' or 'Apr 23'), {1} is the time
+#:../Util/StringFu.cs:92
+#,csharp-format
 msgid "{0}, {1}"
 msgstr "{0}, {1}"
 
-#. To translators: {0} is the time of the day, eg. 13:45
-#: ../Util/StringFu.cs:96
-#, csharp-format
+#.To translators: {0} is the time of the day, eg. 13:45
+#:../Util/StringFu.cs:109
+#,csharp-format
 msgid "Today, {0}"
 msgstr "Hôm nay, {0}"
 
-#. To translators: {0} is the time of the day, eg. 13:45
-#: ../Util/StringFu.cs:99
-#, csharp-format
+#.To translators: {0} is the time of the day, eg. 13:45
+#:../Util/StringFu.cs:112
+#,csharp-format
 msgid "Yesterday, {0}"
 msgstr "Hôm qua, {0}"
 
-#. To translators: {0} is the number of days that have passed, {1} is the time of the day, eg. 13:45
-#: ../Util/StringFu.cs:102
-#, csharp-format
+#.To translators: {0} is the number of days that have passed, {1} is the time of the day, eg. 13:45
+#:../Util/StringFu.cs:115
+#,csharp-format
 msgid "{0} days ago, {1}"
 msgstr "{0} ngày trước, {1}"
 
-#: ../Util/StringFu.cs:106
+#.Translators: Example output: January 3, 3:45 PM
+#:../Util/StringFu.cs:120
 msgid "MMMM d, h:mm tt"
 msgstr "n thng, g:ph tg"
 
-#: ../Util/StringFu.cs:110
+#.Translators: Example output: March 23 2001, 10:04 AM
+#:../Util/StringFu.cs:125
 msgid "MMMM d yyyy, h:mm tt"
 msgstr "n thng nam, g:ph tg"
 
-#: ../Util/StringFu.cs:120
-#, csharp-format
+#:../Util/StringFu.cs:135
+#,csharp-format
 msgid "{0} hour"
 msgid_plural "{0} hours"
 msgstr[0] "{0} giờ"
 
-#: ../Util/StringFu.cs:127
-#, csharp-format
+#:../Util/StringFu.cs:142
+#,csharp-format
 msgid "{0} minute"
 msgid_plural "{0} minutes"
 msgstr[0] "{0} phút"
 
-#. Translators: {0} is a file size in bytes
-#: ../Util/StringFu.cs:143
-#, csharp-format
+#.Translators: {0} is a file size in bytes
+#:../Util/StringFu.cs:158
+#,csharp-format
 msgid "{0} bytes"
 msgstr "{0} byte"
 
-#. Translators: {0} is a file size in kilobytes
-#: ../Util/StringFu.cs:147
-#, csharp-format
+#.Translators: {0} is a file size in kilobytes
+#:../Util/StringFu.cs:162
+#,csharp-format
 msgid "{0:0.0} KB"
 msgstr "{0:0.0} KB"
 
-#. Translators: {0} is a file size in megabytes
-#: ../Util/StringFu.cs:150
-#, csharp-format
+#.Translators: {0} is a file size in megabytes
+#:../Util/StringFu.cs:165
+#,csharp-format
 msgid "{0:0.0} MB"
 msgstr "{0:0.0} MB"
