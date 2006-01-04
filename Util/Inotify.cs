@@ -631,7 +631,7 @@ namespace Beagle.Util {
 			if (watched.Subscribers == null)
 				return;
 
-			foreach (WatchInternal watch in watched.Subscribers)
+			foreach (WatchInternal watch in (IEnumerable) watched.Subscribers.Clone ())
 				try {
 					if (watch.Callback != null && (watch.Mask & mask) != 0)
 						watch.Callback (watch, watched.Path, filename, srcpath, mask);
