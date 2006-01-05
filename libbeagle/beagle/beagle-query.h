@@ -43,8 +43,15 @@
 #define BEAGLE_IS_QUERY_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), BEAGLE_TYPE_QUERY))
 #define BEAGLE_QUERY_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), BEAGLE_TYPE_QUERY, BeagleQueryClass))
 
-typedef struct _BeagleQuery      BeagleQuery;
-typedef struct _BeagleQueryClass BeagleQueryClass;
+typedef enum {
+	BEAGLE_QUERY_DOMAIN_LOCAL        = 1,
+	BEAGLE_QUERY_DOMAIN_SYSTEM       = 2,
+	BEAGLE_QUERY_DOMAIN_NEIGHBORHOOD = 4,
+	BEAGLE_QUERY_DOMAIN_GLOBAL       = 8
+} BeagleQueryDomain;
+
+typedef struct _BeagleQuery       BeagleQuery;
+typedef struct _BeagleQueryClass  BeagleQueryClass;
 
 struct _BeagleQuery {
 	BeagleRequest parent;
@@ -72,6 +79,13 @@ void	     beagle_query_add_hit_type  (BeagleQuery *query,
 
 void         beagle_query_add_source (BeagleQuery *query,
 				      const char  *source);
+
+void         beagle_query_set_domain    (BeagleQuery *query,
+					 BeagleQueryDomain domain);
+void         beagle_query_add_domain    (BeagleQuery *query,
+					 BeagleQueryDomain domain);
+void         beagle_query_remove_domain (BeagleQuery *query,
+					 BeagleQueryDomain domain);
 
 void	     beagle_query_set_max_hits (BeagleQuery *query, 
 					int max_hits);

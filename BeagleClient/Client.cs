@@ -130,7 +130,7 @@ namespace Beagle {
 			XmlFu.SerializeUtf8 (req_serializer, mem_stream, new RequestWrapper (request));
 			mem_stream.Seek (0, SeekOrigin.Begin);
 			StreamReader r = new StreamReader (mem_stream);
-			Logger.Log.Debug ("Sending request:\n{0}", r.ReadToEnd ());
+			Logger.Log.Debug ("Sending request:\n{0}\n", r.ReadToEnd ());
 			mem_stream.Seek (0, SeekOrigin.Begin);
 			mem_stream.WriteTo (stream);
 			mem_stream.Close ();
@@ -183,6 +183,12 @@ namespace Beagle {
 						this.buffer_stream = new MemoryStream ();
 
 						deserialize_stream.Seek (0, SeekOrigin.Begin);
+
+#if ENABLE_XML_DUMP
+						StreamReader r = new StreamReader (deserialize_stream);
+						Logger.Log.Debug ("Received response:\n{0}\n", r.ReadToEnd ());
+						deserialize_stream.Seek (0, SeekOrigin.Begin);
+#endif
 
 						ResponseWrapper wrapper;
 						wrapper = (ResponseWrapper) resp_serializer.Deserialize (deserialize_stream);

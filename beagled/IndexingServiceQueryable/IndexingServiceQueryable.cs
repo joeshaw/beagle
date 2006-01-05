@@ -57,7 +57,10 @@ namespace Beagle.Daemon.IndexingServiceQueryable {
 		public IndexingServiceQueryable () : base ("IndexingServiceIndex")
 		{
 			Server.RegisterRequestMessageHandler (typeof (IndexingServiceRequest), new Server.RequestMessageHandler (HandleMessage));
+		}
 
+		public override void Start ()
+		{
 			string index_path = Path.Combine (PathFinder.StorageDir, "ToIndex");
 
 			if (!Directory.Exists (index_path))

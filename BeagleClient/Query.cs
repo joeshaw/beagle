@@ -35,6 +35,7 @@ using Beagle.Util;
 
 namespace Beagle {
 
+	[Flags]
 	public enum QueryDomain {
 		Local        = 1,
 		System       = 2,
@@ -345,6 +346,11 @@ namespace Beagle {
 		}
 
 		///////////////////////////////////////////////////////////////
+
+		public QueryDomain QueryDomain {
+			get { return domainFlags; }
+			set { domainFlags = value; }
+		}
 
 		public void AddDomain (Beagle.QueryDomain d)
 		{

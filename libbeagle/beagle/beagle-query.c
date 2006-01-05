@@ -52,6 +52,8 @@ typedef struct {
 	/* These are extracted from the BeagleSearchTermResponse */
 	GSList *exact_text;   /* of string */
 	GSList *stemmed_text; /* of string */
+
+	BeagleQueryDomain domain;
 } BeagleQueryPrivate;
 
 #define BEAGLE_QUERY_GET_PRIVATE(o) (G_TYPE_INSTANCE_GET_PRIVATE ((o), BEAGLE_TYPE_QUERY, BeagleQueryPrivate))
@@ -83,6 +85,7 @@ beagle_query_to_xml (BeagleRequest *request, GError **err)
 	GString *sub_data;
 	BeagleQueryPartOr *or_part;
 	GSList *iter;
+	gboolean first = TRUE;
 
 	_beagle_request_append_standard_header (data, "Query");
 
@@ -184,6 +187,38 @@ beagle_query_to_xml (BeagleRequest *request, GError **err)
 	}
 
 	g_string_append_len (data, "</Sources>", 10);
+
+	g_string_append_len (data, "<QueryDomain>", 13);
+
+	if (priv->domain & BEAGLE_QUERY_DOMAIN_LOCAL) {
+		g_string_append_len (data, "Local", 5);
+		first = FALSE;
+	}
+
+	if (priv->domain & BEAGLE_QUERY_DOMAIN_SYSTEM) {
+		if (!first)
+			g_string_append_c (data, ' ');
+
+		g_string_append_len (data, "System", 6);
+		first = FALSE;
+	}
+
+	if (priv->domain & BEAGLE_QUERY_DOMAIN_NEIGHBORHOOD) {
+		if (!first)
+			g_string_append_c (data, ' ');
+
+		g_string_append_len (data, "Neighborhood", 12);
+		first = FALSE;
+	}
+
+	if (priv->domain & BEAGLE_QUERY_DOMAIN_GLOBAL) {
+		if (!first)
+			g_string_append_c (data, ' ');
+
+		g_string_append_len (data, "Global", 6);
+	}
+
+	g_string_append_len (data, "</QueryDomain>", 14);
 
 	g_string_append_printf (data, "<MaxHits>%d</MaxHits>", priv->max_hits);
 
@@ -301,6 +336,24 @@ beagle_query_init (BeagleQuery *query)
 	BeagleQueryPrivate *priv = BEAGLE_QUERY_GET_PRIVATE (query);
 
 	priv->max_hits = 100;
+
+	/* FIXME: This is a good default when on an airplane. */
+	priv->domain = BEAGLE_QUERY_DOMAIN_LOCAL | BEAGLE_QUERY_DOMAIN_SYSTEM;
+}
+
+/**
+ * beagle_query_new:
+ *
+ * Creates a new #BeagleQuery.
+ *
+ * Return value: the newly created #BeagleQuery.
+ **/
+BeagleQuery *
+beagle_query_new (void)
+{
+	BeagleQuery *query = g_object_new (BEAGLE_TYPE_QUERY, 0);
+
+	return query;
 }
 
 /**
@@ -407,18 +460,64 @@ beagle_query_add_source (BeagleQuery *query,
 }
 
 /**
- * beagle_query_new:
+ * beagle_query_set_domain:
+ * @query: a #BeagleQuery
+ * @domain: a #BeagleQueryDomain
  *
- * Creates a new #BeagleQuery.
- *
- * Return value: the newly created #BeagleQuery.
+ * Sets the search domain for a given #BeagleQuery.  This limits the scope of
+ * a search to certain backends.
  **/
-BeagleQuery *
-beagle_query_new (void)
+void
+beagle_query_set_domain (BeagleQuery *query,
+			 BeagleQueryDomain domain)
 {
-	BeagleQuery *query = g_object_new (BEAGLE_TYPE_QUERY, 0);
+	BeagleQueryPrivate *priv;
 
-	return query;
+	g_return_if_fail (BEAGLE_IS_QUERY (query));
+
+	priv = BEAGLE_QUERY_GET_PRIVATE (query);
+
+	priv->domain = domain;
+}
+
+/**
+ * beagle_query_add_domain:
+ * @query: a #BeagleQuery
+ * @domain: a #BeagleQueryDomain
+ *
+ * Adds a search domain to the list of domains to search.
+ **/
+void
+beagle_query_add_domain (BeagleQuery *query,
+			 BeagleQueryDomain domain)
+{
+	BeagleQueryPrivate *priv;
+
+	g_return_if_fail (BEAGLE_IS_QUERY (query));
+
+	priv = BEAGLE_QUERY_GET_PRIVATE (query);
+
+	priv->domain |= domain;
+}
+
+/**
+ * beagle_query_remove_domain:
+ * @query: a #BeagleQuery
+ * @domain: a #BeagleQueryDomain
+ *
+ * Removes a search domain.
+ **/
+void
+beagle_query_remove_domain (BeagleQuery *query,
+			    BeagleQueryDomain domain)
+{
+	BeagleQueryPrivate *priv;
+
+	g_return_if_fail (BEAGLE_IS_QUERY (query));
+
+	priv = BEAGLE_QUERY_GET_PRIVATE (query);
+
+	priv->domain &= ~domain;
 }
 
 /**

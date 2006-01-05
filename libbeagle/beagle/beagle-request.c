@@ -242,7 +242,7 @@ request_send (BeagleRequest *request, const char *socket_path, GError **err)
 
 #ifdef ENABLE_XML_DUMP
 	printf ("Sending request:\n");
-	printf ("%*s\n", buffer->len, buffer->str);
+	printf ("%*s\n\n", buffer->len, buffer->str);
 #endif
 
 	/* Send the data over the wire */
