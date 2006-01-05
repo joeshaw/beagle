@@ -86,6 +86,16 @@ namespace Beagle.Daemon {
 
 		//////////////////////////////////////////////////////////////////////////////////////
 
+		// Delay before starting the indexing process
+
+		static int indexing_delay = 60;  // Default to 60 seconds
+
+		public static int IndexingDelay {
+			set { indexing_delay = value; }
+		}
+
+		//////////////////////////////////////////////////////////////////////////////////////
+
 		// Use introspection to find all classes that implement IQueryable, the construct
 		// associated Queryables objects.
 
@@ -292,8 +302,22 @@ namespace Beagle.Daemon {
 			LoadSystemIndexes ();
 			LoadStaticQueryables ();
 
+			if (indexing_delay <= 0 || Environment.GetEnvironmentVariable ("BEAGLE_EXERCISE_THE_DOG") != null)
+				StartQueryables ();
+			else {
+				Logger.Log.Debug ("Waiting {0} seconds before starting queryables", indexing_delay);
+				GLib.Timeout.Add ((uint) indexing_delay * 1000, new GLib.TimeoutHandler (StartQueryables));
+			}
+		}
+
+		static private bool StartQueryables ()
+		{
+			Logger.Log.Debug ("Starting queryables");
+
 			foreach (Queryable q in queryables)
 				q.Start ();
+
+			return false;
 		}
 
 		static public string ListBackends ()

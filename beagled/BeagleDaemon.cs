@@ -108,7 +108,8 @@ namespace Beagle.Daemon {
 				"  --replace\t\tReplace a running daemon with a new instance.\n" +
 				"  --debug\t\tWrite out debugging information.\n" +
 				"  --debug-memory\tWrite out debugging information about memory use.\n" +
-				"  --indexing-test-mode\tRun in foreground, and exit when fully indexed.\n" + 
+				"  --indexing-test-mode\tRun in foreground, and exit when fully indexed.\n" +
+				"  --indexing-delay\tTime to wait before indexing.  (Default 60 seconds)\n" +
 				"  --deny-backend\tDeny a specific backend.\n" +
 				"  --allow-backend\tAllow a specific backend.\n" +
 				"  --list-backends\tList all the available backends.\n" +
@@ -298,6 +299,19 @@ namespace Beagle.Daemon {
 
 				case "--disable-scheduler":
 					arg_disable_scheduler = true;
+					break;
+
+				case "--indexing-delay":
+					if (next_arg != null) {
+						try {
+							QueryDriver.IndexingDelay = Int32.Parse (next_arg);
+						} catch {
+							Console.WriteLine ("'{0}' is not a valid number of seconds", next_arg);
+							Environment.Exit (1);
+						}
+					}
+
+					++i;
 					break;
 
 				case "--autostarted":
