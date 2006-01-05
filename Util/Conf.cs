@@ -467,7 +467,7 @@ namespace Beagle.Util {
 			[XmlArray]
 			[XmlArrayItem(ElementName="Root", Type=typeof(string))]
 			public ArrayList Roots {
-				get { return ArrayList.ReadOnly (roots); }
+				get { return roots; }
 				set { roots = value; }
 			}
 
@@ -481,7 +481,7 @@ namespace Beagle.Util {
 			[XmlArray]
 			[XmlArrayItem (ElementName="ExcludeItem", Type=typeof(ExcludeItem))]
 			public ArrayList Excludes {
-				get { return ArrayList.ReadOnly (excludes); }
+				get { return excludes; }
 				set { excludes = value; }
 			}
 
@@ -582,7 +582,7 @@ namespace Beagle.Util {
 			[XmlArray]
 			[XmlArrayItem(ElementName="PublicFolders", Type=typeof(string))]
 			public ArrayList PublicFolders {
-				get { return ArrayList.ReadOnly (publicFolders); }
+				get { return publicFolders; }
 				set { publicFolders = value; }
 			}
 
@@ -652,7 +652,7 @@ namespace Beagle.Util {
 			[XmlArray]
 			[XmlArrayItem(ElementName="NetBeagleNodes", Type=typeof(string))]
 			public ArrayList NetBeagleNodes {
-				get { return ArrayList.ReadOnly (netBeagleNodes); }
+				get { return netBeagleNodes; }
 				set { netBeagleNodes = value; }
 			}
 
