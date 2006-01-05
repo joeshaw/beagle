@@ -364,7 +364,7 @@ namespace Beagle.Daemon {
 
 			if (! ExtendedAttribute.Supported) {
 				Logger.Log.Warn ("Extended attributes are not supported on this filesystem.  " +
-						 "Many search backends will not be available");
+						 "Performance will suffer as a result.");
 			}
 
 			// Start our memory-logging thread
