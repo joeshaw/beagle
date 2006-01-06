@@ -1173,9 +1173,6 @@ namespace Beagle.Daemon.FileSystemQueryable {
 			// is also the issue of properly serializing file: uris that
 			// contain fragments.  For now we just punt it all by dropping
 			// any child indexables of file system objects.
-
-			child.Cleanup ();
-			
 			return false;
 		}
 

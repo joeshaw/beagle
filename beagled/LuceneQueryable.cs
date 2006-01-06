@@ -946,7 +946,8 @@ namespace Beagle.Daemon {
 							//Logger.Log.Debug ("Adding child {0}", child.Uri);
 							Scheduler.Task task = NewAddTask (child);
 							ThisScheduler.Add (task);
-						}
+						} else
+							child.Cleanup ();
 					}
 				}
 			}
