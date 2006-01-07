@@ -1,3 +1,8 @@
+2006-01-07  Debajyoti Bera <dbera.web@gmail.com>
+
+	* Filters/FilterDesktop.cs: Index 'Type' .in desktop files.
+	* Filters/FilterHtml.cs: Use 'meta' namespace for meta keywords.
+
 2005-12-23  Debajyoti Bera <dbera.web@gmail.com>
 
 	* AkregatorQueryable/AkregatorQueryable.cs: Remove gmime dependency,

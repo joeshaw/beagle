@@ -52,6 +52,9 @@ namespace Beagle.Filters {
 
 		public FilterHtml ()
 		{
+			// 1: Add meta keyword fields as meta:key
+			SetVersion (1);
+			
 			RegisterSupportedTypes ();
 			SnippetMode = true;
 			hot_stack = new Stack ();
@@ -136,7 +139,7 @@ namespace Beagle.Filters {
 	   				string name = node.GetAttributeValue ("name", "");
            				string content = node.GetAttributeValue ("content", "");
 					if (name != "" && content != "")
-						AddProperty (Beagle.Property.New (name, content));
+						AddProperty (Beagle.Property.New ("meta:" + name, content));
 				} else if (! NodeIsContentFree (node.Name)) {
 					bool isHot = NodeIsHot (node.Name);
 					bool breaksText = NodeBreaksText (node.Name);

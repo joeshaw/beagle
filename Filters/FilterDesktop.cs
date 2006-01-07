@@ -42,7 +42,8 @@ namespace Beagle.Filters {
 		public FilterDesktop ()
 		{
 			// 1: Added Categories field
-			SetVersion (1);
+			// 2: Added Type field
+			SetVersion (2);
 
 			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("application/x-desktop"));
 		}
@@ -94,6 +95,8 @@ namespace Beagle.Filters {
 					foreach (string c in categories)
 						if (c != null && c != "")
 							AddProperty (Property.New ("fixme:" + sline [0], c));
+				} else if (sline [0].StartsWith ("Type")) {
+					AddProperty (Property.NewKeyword ("fixme:" + sline [0], sline [1]));
 				}
 			}
 			
