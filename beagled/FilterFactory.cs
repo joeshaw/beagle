@@ -244,7 +244,7 @@ namespace Beagle.Daemon {
 				if (! indexable.NoContent) {
 					indexable.NoContent = true;
 
-					Logger.Log.Debug ("No filter for {0}", path);
+					Logger.Log.Debug ("No filter for {0} ({1})", path != null ? path : indexable.Uri.ToString (), indexable.MimeType);
 					return false;
 				}
 				

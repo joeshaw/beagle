@@ -363,10 +363,7 @@ namespace Beagle.Daemon.EvolutionMailDriver {
 			if (CheckFlags (flags, Camel.CamelFlags.AnsweredAll))
 				indexable.AddProperty (Property.NewFlag ("fixme:isAnsweredAll"));
 
-			MemoryStream stream = new MemoryStream ();
-			message.WriteToStream (stream);
-			stream.Seek (0, SeekOrigin.Begin);
-			indexable.SetBinaryStream (stream);
+			indexable.SetBinaryStream (message.Stream);
 
 			return indexable;
 		}

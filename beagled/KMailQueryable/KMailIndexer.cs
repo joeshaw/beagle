@@ -432,10 +432,7 @@ namespace Beagle.Daemon.KMailQueryable {
 				indexable.AddProperty (Property.NewDate ("fixme:received", message.Date.ToUniversalTime ()));
 #endif
 
-			MemoryStream stream = new MemoryStream ();
-			message.WriteToStream (stream);
-			stream.Seek (0, SeekOrigin.Begin);
-			indexable.SetBinaryStream (stream);
+			indexable.SetBinaryStream (message.Stream);
 
 			return indexable;
 		}
