@@ -121,8 +121,17 @@ namespace Beagle.Filters {
 			if (HasAttachments (this.message.MimePart))
 				AddProperty (Property.NewFlag ("fixme:hasAttachments"));
 
-			string list_id = this.message.GetHeader ("List-Id");
+			// Store the message ID and references are unsearched
+			// properties.  They will be used to generate
+			// conversations in the frontend.
+			string msgid = this.message.GetHeader ("Message-Id");
+		        if (msgid != null)
+				AddProperty (Property.NewUnsearched ("fixme:msgid", GMime.Utils.DecodeMessageId (msgid)));
 
+			foreach (GMime.References refs in this.message.References)
+				AddProperty (Property.NewUnsearched ("fixme:reference", refs.Msgid));
+
+			string list_id = this.message.GetHeader ("List-Id");
 			if (list_id != null) {
 				// FIXME: Might need some additional parsing.
 				AddProperty (Property.NewKeyword ("fixme:mlist", GMime.Utils.HeaderDecodePhrase (list_id)));
@@ -249,13 +258,10 @@ namespace Beagle.Filters {
 					throw new Exception (String.Format ("Unknown part type: {0}", part.GetType ()));
 
 				if (part != null) {
-					MemoryStream stream = null;
+					System.IO.Stream stream = null;
 					
-					using (GMime.DataWrapper content_obj = ((GMime.Part) part).ContentObject) {
-						stream = new MemoryStream ();
-						content_obj.WriteToStream (stream);
-						stream.Seek (0, SeekOrigin.Begin);
-					}
+					using (GMime.DataWrapper content_obj = ((GMime.Part) part).ContentObject)
+						stream = content_obj.Stream;
 
 					// If this is the only part and it's plain text, we
 					// want to just attach it to our filter instead of
