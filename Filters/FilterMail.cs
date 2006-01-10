@@ -48,6 +48,10 @@ namespace Beagle.Filters {
 
 		public FilterMail ()
 		{
+			// 1: Make email addresses non-keyword, add sanitized version
+			//    for eaching for parts of an email address.
+			SetVersion (1);
+
 			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("message/rfc822"));
 		}
 

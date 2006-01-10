@@ -53,7 +53,9 @@ namespace Beagle.Daemon.EvolutionMailDriver {
 		//    RFC822 string
 		// 2: Stores recipients in separate properties,
 		//    filters/indexes all attachments
-		private const int INDEX_VERSION = 2;
+		// 3: Make email addresses non-keyword, add sanitized version
+		//    for searching for parts of an email address.
+		private const int INDEX_VERSION = 3;
 
 		public EvolutionMailQueryable () : base ("MailIndex", INDEX_VERSION)
 		{
