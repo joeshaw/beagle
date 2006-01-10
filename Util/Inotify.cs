@@ -451,7 +451,6 @@ namespace Beagle.Util {
 		/////////////////////////////////////////////////////////////////////////////////////
 
 		static Thread snarf_thread = null;
-		static Thread dispatch_thread = null;
 		static bool   running = false;
 
 		static public void Start ()
@@ -468,7 +467,7 @@ namespace Beagle.Util {
 				running = true;
 
 				snarf_thread = ExceptionHandlingThread.Start (new ThreadStart (SnarfWorker));
-				dispatch_thread = ExceptionHandlingThread.Start (new ThreadStart (DispatchWorker));
+				ExceptionHandlingThread.Start (new ThreadStart (DispatchWorker));
 			}
 		}
 

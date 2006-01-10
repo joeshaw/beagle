@@ -33,6 +33,7 @@ using GMime;
 
 using Beagle;
 using Beagle.Daemon;
+using Beagle.Util;
 
 namespace Beagle.Filters {
 
@@ -97,7 +98,8 @@ namespace Beagle.Filters {
 			addrs = this.message.GetRecipients (GMime.Message.RecipientType.To);
 			foreach (GMime.InternetAddress ia in addrs) {
 				AddProperty (Property.NewKeyword ("fixme:to", ia.ToString (false)));
-				AddProperty (Property.NewKeyword ("fixme:to_address", ia.Addr));
+				AddProperty (Property.New ("fixme:to_address", ia.Addr));
+				AddProperty (Property.New ("fixme:to_sanitized", StringFu.SanitizeEmail (ia.Addr)));
 				AddProperty (Property.New ("fixme:to_name", ia.Name));
 			}
 			addrs.Dispose ();
@@ -105,7 +107,8 @@ namespace Beagle.Filters {
 			addrs = this.message.GetRecipients (GMime.Message.RecipientType.Cc);
 			foreach (GMime.InternetAddress ia in addrs) {
 				AddProperty (Property.NewKeyword ("fixme:cc", ia.ToString (false)));
-				AddProperty (Property.NewKeyword ("fixme:cc_address", ia.Addr));
+				AddProperty (Property.New ("fixme:cc_address", ia.Addr));
+				AddProperty (Property.New ("fixme:cc_sanitized", StringFu.SanitizeEmail (ia.Addr)));
 				AddProperty (Property.New ("fixme:cc_name", ia.Name));
 			}
 			addrs.Dispose ();
@@ -113,7 +116,8 @@ namespace Beagle.Filters {
 			addrs = GMime.InternetAddressList.ParseString (GMime.Utils.HeaderDecodePhrase (this.message.Sender));
 			foreach (GMime.InternetAddress ia in addrs) {
 				AddProperty (Property.NewKeyword ("fixme:from", ia.ToString (false)));
-				AddProperty (Property.NewKeyword ("fixme:from_address", ia.Addr));
+				AddProperty (Property.New ("fixme:from_address", ia.Addr));
+				AddProperty (Property.New ("fixme:from_sanitized", StringFu.SanitizeEmail (ia.Addr)));
 				AddProperty (Property.New ("fixme:from_name", ia.Name));
 			}
 			addrs.Dispose ();

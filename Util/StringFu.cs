@@ -524,5 +524,29 @@ namespace Beagle.Util {
 
 			return path;
 		}
+
+		// This method will translate an email address like
+		// "john.doe+spamtrap@foo.com" to "john doe spamtrap foo"
+		//
+		// FIXME: Maybe we should only do the username part?  Ie,
+		// "john doe spamtrap"?  That way searching for "foo" won't
+		// turn up *everything*
+		static public string SanitizeEmail (string email)
+		{
+			char[] replace_array = { '@', '.', '-', '_', '+' };
+			string[] tlds = { "com", "net", "org", "edu", "gov", "mil" }; // Just the Big Six
+
+			string[] tmp = email.Split (replace_array);
+			email = String.Join (" ", tmp);
+
+			foreach (string tld in tlds) {
+				if (email.EndsWith (" " + tld)) {
+					email = email.Substring (0, email.Length - 4);
+					break;
+				}
+			}
+
+			return email;
+		}
 	}
 }
