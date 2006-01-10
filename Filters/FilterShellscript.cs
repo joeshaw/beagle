@@ -1,7 +1,7 @@
 //
 // FilterShellscript.cs
 //
-// Copyright (C) 2004 Novell, Inc.
+// Copyright (C) 2004-2006 Novell, Inc.
 //
 
 //
@@ -30,6 +30,7 @@ using System.IO;
 using System.Text;
 
 using Beagle.Daemon;
+using Beagle.Util;
 
 namespace Beagle.Filters {
 
@@ -42,6 +43,8 @@ namespace Beagle.Filters {
 						  "function", "time", "break", "cd", "continue",
 						  "declare", "fg", "kill", "pwd", "read", "return",
 						  "set", "test", "unset", "wait", "touch" };
+
+		private int count;
 			
 		public FilterShellscript ()
 		{
@@ -56,13 +59,32 @@ namespace Beagle.Filters {
 			SrcLangType = LangType.Shell_Style;
 		}
 
+		override protected void DoPullSetup ()
+		{
+			this.count = 0;
+		}
+
 		override protected void DoPull ()
 		{
 			string str = TextReader.ReadLine ();
 			if (str == null)
 				Finished ();
-			else
+			else {
+				// Shell scripts usually aren't very big, so
+				// never index more than 20k.  This prevents us
+				// from going insane when we *do* index large
+				// ones that embed binaries in them.  We're
+				// really only counting characters here, but we
+				// don't need to be very precise.
+				this.count += str.Length;
+
 				ExtractTokens (str);
+
+				if (this.count > 20 * 1024) {
+					Log.Debug ("Truncating shell script to 20k");
+					Finished ();
+				}
+			}
 		}
 	}
 }
