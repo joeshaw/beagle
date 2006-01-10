@@ -109,7 +109,23 @@ namespace Best {
 
 			Program best = new Program ("best", "0.0", Modules.UI, args);
 
-			GeckoUtils.Init ();
+			try {
+				GeckoUtils.Init ();
+			} catch (DllNotFoundException) {
+				// We might get this exception if there are
+				// missing symbols from the Mozilla runtime if
+				// the user did a Firefox 1.0 -> 1.5 upgrade.
+				// There's nothing we can do about this, it's
+				// an ABI change, so tell the user this is
+				// probably what's wrong.
+				Console.WriteLine (Catalog.GetString ("Best cannot initialize Mozilla's Gecko runtime environment.\n" +
+								      "Have you upgraded Mozilla or Firefox recently?  If so, you\n" +
+								      "probably need to rebuild beagle against this new version.\n" +
+								      "See http://bugzilla.gnome.org/show_bug.cgi?id=326503 for\n" + 
+								      "more information."));
+				Environment.Exit (1);
+			}
+
 			GeckoUtils.SetSystemFonts ();
 
 			// I18N
