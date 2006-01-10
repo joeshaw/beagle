@@ -128,7 +128,7 @@ namespace Beagle.Util {
 				// in our buffer.
 				if (done) {
 					string str = pullBuffer.ToString ();
-					pullBuffer = new StringBuilder ("");
+					pullBuffer.Length = 0;
 					return str;
 				}
 
@@ -142,7 +142,7 @@ namespace Beagle.Util {
 				DoPull (2 * pullBuffer.Length);
 			
 			string str = pullBuffer.ToString ();
-			pullBuffer = new StringBuilder ("");
+			pullBuffer.Length = 0;
 			return str;
 		}
 

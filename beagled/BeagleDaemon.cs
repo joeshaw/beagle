@@ -1,7 +1,7 @@
 //
 // BeagleDaemon.cs
 //
-// Copyright (C) 2004 Novell, Inc.
+// Copyright (C) 2004-2006 Novell, Inc.
 //
 
 //
@@ -97,8 +97,8 @@ namespace Beagle.Daemon {
 		{
 			string usage =
 				"beagled: The daemon to the Beagle search system.\n" +
-				"Web page: http://www.gnome.org/projects/beagle\n" +
-				"Copyright (C) 2004-2005 Novell, Inc.\n\n";
+				"Web page: http://beagle-project.org\n" +
+				"Copyright (C) 2004-2006 Novell, Inc.\n\n";
 
 			usage +=
 				"Usage: beagled [OPTIONS]\n\n" +
