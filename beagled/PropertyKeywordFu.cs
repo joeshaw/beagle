@@ -127,7 +127,7 @@ namespace Beagle.Daemon {
 			
 			// "from" email address
 			property_table.Add ("mailfromaddr",
-					    new PropertyDetail (PropertyType.Keyword, "fixme:from_address", "Email sender address"));
+					    new PropertyDetail (PropertyType.Text, "fixme:from_address", "Email sender address"));
 
 			// "to" name
 			property_table.Add ("mailto",
@@ -135,7 +135,7 @@ namespace Beagle.Daemon {
 			
 			// "to" email address
 			property_table.Add ("mailtoaddr",
-					    new PropertyDetail (PropertyType.Keyword, "fixme:to_address", "Email receipient address"));
+					    new PropertyDetail (PropertyType.Text, "fixme:to_address", "Email receipient address"));
 			
 			// mailing list name
 			property_table.Add ("mailinglist",
