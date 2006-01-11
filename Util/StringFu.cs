@@ -536,6 +536,11 @@ namespace Beagle.Util {
 			char[] replace_array = { '@', '.', '-', '_', '+' };
 			string[] tlds = { "com", "net", "org", "edu", "gov", "mil" }; // Just the Big Six
 
+			if (email == null)
+				return null;
+
+			email = email.ToLower ();
+
 			string[] tmp = email.Split (replace_array);
 			email = String.Join (" ", tmp);
 
