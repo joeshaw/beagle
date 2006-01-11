@@ -261,6 +261,12 @@ beagle_property_set_is_stored (BeagleProperty *prop, gboolean is_stored)
 	prop->is_stored = is_stored != FALSE;
 }
 
+int
+_beagle_property_compare (BeagleProperty *prop_a, BeagleProperty *prop_b)
+{
+    return strcmp (prop_a->key, prop_b->key);
+}
+
 static const char * const property_types[] = {
 	NULL,
 	"Text",
@@ -269,9 +275,7 @@ static const char * const property_types[] = {
 };
 
 static void
-prop_to_xml (gpointer       key,
-	     gpointer       value,
-	     gpointer       user_data)
+prop_to_xml (gpointer value, gpointer user_data)
 {
 	BeagleProperty *prop = value;
 	char *tmp;
@@ -295,12 +299,12 @@ prop_to_xml (gpointer       key,
 }
 
 void 
-_beagle_properties_to_xml (GHashTable *properties, GString *data)
+_beagle_properties_to_xml (GSList *properties, GString *data)
 {
 	g_string_append (data, "<Properties>");
 
-	if (properties)
-		g_hash_table_foreach (properties, prop_to_xml, data);
+	if (properties != NULL)
+		g_slist_foreach (properties, prop_to_xml, data);
 
 	g_string_append (data, "</Properties>");
 

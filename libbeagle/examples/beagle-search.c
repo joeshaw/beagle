@@ -8,10 +8,10 @@ static int total_hits;
 static void
 print_feed_item_hit (BeagleHit *hit)
 {
-	const gchar *text;
-	
-	text = beagle_hit_get_property (hit, "dc:title");
-	g_print ("Blog: %s\n", text);
+	const char *text;
+
+	if (beagle_hit_get_one_property (hit, "dc:title", &text))
+		g_print ("Blog: %s\n", text);
 }
 
 static void

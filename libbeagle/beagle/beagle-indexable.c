@@ -47,7 +47,7 @@ struct _BeagleIndexable {
 	char *type;
 	char *mime_type;
 
-	GHashTable *properties;
+	GSList *properties;
 };
 
 /**
@@ -72,6 +72,8 @@ beagle_indexable_new (const char *uri)
 	indexable->crawled = TRUE;
 	indexable->cache_content = TRUE;
 	indexable->type = g_strdup ("File");
+
+	indexable->properties = NULL;
 
 	indexable->filtering = BEAGLE_INDEXABLE_FILTERING_AUTOMATIC;
 
@@ -99,8 +101,10 @@ beagle_indexable_free (BeagleIndexable *indexable)
 	g_free (indexable->type);
 	g_free (indexable->mime_type);
 
-	if (indexable->properties)
-		g_hash_table_destroy (indexable->properties);
+	if (indexable->properties) {
+		g_slist_foreach (indexable->properties, (GFunc) beagle_property_free, NULL);
+		g_slist_free (indexable->properties);
+	}
 
 	g_free (indexable);
 }
@@ -118,9 +122,7 @@ beagle_indexable_add_property (BeagleIndexable *indexable, BeagleProperty *prop)
 	g_return_if_fail (indexable != NULL);
 	g_return_if_fail (prop != NULL);
 
-	if (!indexable->properties)
-		indexable->properties = g_hash_table_new_full (g_str_hash, g_str_equal, NULL, (GDestroyNotify)beagle_property_free);
-	g_hash_table_replace (indexable->properties, prop->key, prop);
+	indexable->properties = g_slist_insert_sorted (indexable->properties, prop, (GCompareFunc) _beagle_property_compare);
 }
 
 /**

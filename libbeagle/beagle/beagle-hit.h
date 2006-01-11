@@ -49,8 +49,12 @@ BeagleTimestamp *beagle_hit_get_timestamp (BeagleHit *hit);
 
 double beagle_hit_get_score (BeagleHit *hit);
 
-G_CONST_RETURN char *beagle_hit_get_property (BeagleHit *hit, const char *key);
-BeagleProperty *beagle_hit_lookup_property (BeagleHit *hit, const char *key);
+gboolean  beagle_hit_get_one_property   (BeagleHit   *hit,
+					 const char  *key,
+					 const char **value);
+GSList   *beagle_hit_get_properties     (BeagleHit   *hit,
+					 const char  *key);
+GSList   *beagle_hit_get_all_properties (BeagleHit   *hit);
 
 #endif /* __BEAGLE_HIT_H */
 

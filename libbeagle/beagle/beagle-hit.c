@@ -155,18 +155,16 @@ _beagle_hit_new (void)
 	hit->mime_type = NULL;
 	hit->source = NULL;
 
+	hit->properties = NULL;
+
 	return hit;
 }
 
 void
 _beagle_hit_add_property (BeagleHit *hit, BeagleProperty *prop)
 {
-	if (!hit->properties)
-		hit->properties = g_hash_table_new_full (g_str_hash, g_str_equal, NULL, (GDestroyNotify)beagle_property_free);
-
-	g_hash_table_replace (hit->properties, prop->key, prop);
+	hit->properties = g_slist_insert_sorted (hit->properties, prop, (GCompareFunc) _beagle_property_compare);
 }
-
 
 void 
 _beagle_hit_list_free (GSList *list)
@@ -218,58 +216,120 @@ beagle_hit_unref (BeagleHit *hit)
 		if (hit->timestamp)
 			beagle_timestamp_free (hit->timestamp);
 
-		if (hit->properties)
-			g_hash_table_destroy (hit->properties);
-		
+		if (hit->properties) {
+			g_slist_foreach (hit->properties, (GFunc) beagle_property_free, NULL);
+			g_slist_free (hit->properties);
+		}
+
 		g_free (hit);
 	}
 }
 
 /**
- * beagle_hit_get_property:
+ * beagle_hit_get_one_property:
+ * @hit: a #BeagleHit
+ * @key: a string
+ * @value: pointer to a string where value is stored
+ *
+ * Puts the value of the property @key of the given #BeagleHit in the string pointed to by @value.
+ * The value of @value is set to NULL if FALSE is returned.
+ *
+ * This is a shortcut method for getting the value of a property when you know ahead of time that
+ * only one property for a given key exists.  This function will fail if the key isn't found or
+ * if there is more than one value for a given key.
+ *
+ * Return value: TRUE if exactly one property with @key was found, else FALSE.
+ **/ 
+gboolean
+beagle_hit_get_one_property (BeagleHit *hit, const char *key, const char **value)
+{
+	BeagleProperty *property;
+	GSList *pointer_first_property, *next;
+
+	g_return_val_if_fail (hit != NULL, FALSE);
+	g_return_val_if_fail (key != NULL, FALSE);
+	g_return_val_if_fail (value != NULL, FALSE);
+
+	*value = NULL;
+
+	if (! hit->properties)
+		return FALSE;
+	
+	pointer_first_property = g_slist_find_custom (hit->properties, key, (GCompareFunc) _beagle_property_compare);
+
+	if (pointer_first_property == NULL)
+		return FALSE;
+
+	next = g_slist_next (pointer_first_property);
+
+	if (next != NULL) {
+		BeagleProperty *next_prop = (BeagleProperty *) next->data;
+		const char *next_key = beagle_property_get_key (next_prop);
+
+		if (strcmp (key, next_key) == 0)
+			return FALSE;
+	}
+
+	property = (BeagleProperty *) pointer_first_property->data;
+	*value = beagle_property_get_value (property);
+
+	return TRUE;
+}
+
+/**
+ * beagle_hit_get_properties:
  * @hit: a #BeagleHit
  * @key: a string
  *
- * Fetches the value of the property @key of the given #BeagleHit.
+ * Fetches all values of the property @key of the given #BeagleHit.
  *
- * Return value: the value of property @key.
+ * Return value: A list of values (char *) of the of property @key.  The values
+ * contained within the list should not be freed.
  **/ 
-G_CONST_RETURN char *
-beagle_hit_get_property (BeagleHit *hit, const char *key)
+GSList *
+beagle_hit_get_properties (BeagleHit *hit, const char *key)
 {
-	BeagleProperty *property;
+	GSList *property_list = NULL;
+	GSList *iterator_properties;
 
 	g_return_val_if_fail (hit != NULL, NULL);
 	g_return_val_if_fail (key != NULL, NULL);
 	
-	property = beagle_hit_lookup_property (hit, key);
+	if (! hit->properties)
+		return NULL;
+	
+	iterator_properties = g_slist_find_custom (hit->properties, key, (GCompareFunc) _beagle_property_compare);
 
-	if (property) {
-		return property->value;
+	while (iterator_properties != NULL) {
+		BeagleProperty *property = (BeagleProperty *) iterator_properties->data;
+		const char *prop_key = beagle_property_get_key (property);
+		
+		if (strcmp (prop_key, key) != 0)
+			break;
+
+		property_list = g_slist_prepend (property_list, (gpointer) beagle_property_get_value (property));
+
+		iterator_properties = g_slist_next (iterator_properties);
 	}
 
-	return NULL;
+	return property_list;
 }
 
 /**
- * beagle_hit_lookup_property:
+ * beagle_hit_get_all_properties:
  * @hit: a #BeagleHit
- * @key: a string
  *
- * Fetches the property @key of the given #BeagleHit.
+ * Fetches all properties of the given #BeagleHit
  *
- * Return value: the #BeagleProperty matching @key of the #BeagleHit.
- **/
-BeagleProperty *
-beagle_hit_lookup_property (BeagleHit *hit, const char *key)
+ * Return value: A list of all properties (BeagleProperty *) of @hit.  The values
+ * contained within the list should not be freed.
+ **/ 
+GSList *
+beagle_hit_get_all_properties (BeagleHit *hit)
 {
 	g_return_val_if_fail (hit != NULL, NULL);
-	g_return_val_if_fail (key != NULL, NULL);
 
-	if (!hit->properties)
-		return NULL;
-
-	return g_hash_table_lookup (hit->properties, key);
+	return g_slist_copy (hit->properties);
 }
 
 void 

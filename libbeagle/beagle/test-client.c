@@ -40,7 +40,7 @@ hits_added_cb (BeagleQuery *query, BeagleHitsAddedResponse *response, BeagleClie
 	hits = beagle_hits_added_response_get_hits (response);
 	snippet = beagle_snippet_request_new ();
 
-	printf ("%d\n", g_slist_length (beagle_query_get_stemmed_text (query)));
+	g_print ("%d\n", g_slist_length (beagle_query_get_stemmed_text (query)));
 
 	beagle_snippet_request_set_query (snippet, query);
 

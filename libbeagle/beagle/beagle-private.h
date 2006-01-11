@@ -50,7 +50,7 @@ struct _BeagleHit {
 
 	double score;
 
-	GHashTable *properties;
+	GSList *properties;
 };
 
 struct _BeagleProperty {
@@ -72,12 +72,14 @@ void _beagle_hit_list_free (GSList *list);
 void _beagle_response_class_set_parser_handlers (BeagleResponseClass *klass,
 						 BeagleParserHandler *handlers);
 
+int  _beagle_property_compare (BeagleProperty *prop_a, BeagleProperty *prop_b);
+
 void _beagle_hit_add_property (BeagleHit *hit, BeagleProperty *prop);
 void _beagle_hit_list_free    (GSList *list);
 
 void _beagle_hit_to_xml (BeagleHit *hit, GString *data);
 
-void _beagle_properties_to_xml (GHashTable *properties, GString *data);
+void _beagle_properties_to_xml (GSList *properties, GString *data);
 
 void _beagle_indexable_to_xml (BeagleIndexable *indexable, GString *data);
 
