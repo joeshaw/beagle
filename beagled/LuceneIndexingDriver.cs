@@ -311,11 +311,15 @@ namespace Beagle.Daemon {
 				text_cache.CommitTransaction ();
 
 			if (request.OptimizeIndex) {
+				Stopwatch watch = new Stopwatch ();
 				Logger.Log.Debug ("Optimizing {0}", IndexName);
+				watch.Start ();
 				primary_writer.Optimize ();
 				if (secondary_writer == null)
 					secondary_writer = new IndexWriter (SecondaryStore, IndexingAnalyzer, false);
 				secondary_writer.Optimize ();
+				watch.Stop ();
+				Logger.Log.Debug ("{0} optimized in {1}", IndexName, watch);
 			}
 			
 			// Step #4. Close our writers and return the events to

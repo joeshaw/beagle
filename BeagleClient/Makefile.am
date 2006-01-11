@@ -38,8 +38,8 @@ LOCAL_ASSEMBLIES =			\
 
 ASSEMBLIES = 				\
 	$(BEAGLED_LIBS)                 \
+	$(SHARPZIPLIBS_LIBS)		\
 	-r:Mono.Posix			\
-	-r:ICSharpCode.SharpZipLib.dll	\
 	$(LOCAL_ASSEMBLIES:%=-r:%)
 
 RESOURCES =

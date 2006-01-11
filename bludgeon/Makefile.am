@@ -8,9 +8,9 @@ LOCAL_ASSEMBLIES =			\
 ASSEMBLIES =				\
 	$(EVO_SHARP_LIBS)		\
 	$(BEAGLE_UI_LIBS)		\
+	$(SHARPZIPLIB_LIBS)		\
 	$(LOCAL_ASSEMBLIES:%=-r:%)	\
-	-r:Mono.Posix			\
-	-r:ICSharpCode.SharpZipLib.dll
+	-r:Mono.Posix
 
 WRAPPER_IN = bludgeon.in
 WRAPPER_SED = sed 					\

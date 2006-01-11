@@ -375,7 +375,7 @@ DAEMON_DLL_LOCAL_ASSEMBLIES =		\
 DAEMON_DLL_ASSEMBLIES = 			\
 	$(BEAGLED_LIBS)                 	\
 	$(DAEMON_DLL_LOCAL_ASSEMBLIES:%=-r:%)	\
-	-r:ICSharpCode.SharpZipLib.dll		\
+	$(SHARPZIPLIB_LIBS)		\
 	-r:Mono.Data.SqliteClient		\
 	-r:Mono.Posix				\
 	-r:System.Runtime.Remoting		\
@@ -421,9 +421,9 @@ BACKEND_LOCAL_ASSEMBLIES =			\
 	./$(DAEMON_DLL_TARGET)
 
 BACKEND_ASSEMBLIES =				\
+	$(SHARPZIPLIB_LIBS)			\
 	$(BACKEND_LOCAL_ASSEMBLIES:%=-r:%)	\
-	-r:Mono.Posix				\
-	-r:ICSharpCode.SharpZipLib.dll
+	-r:Mono.Posix
 
 ###
 ### Evolution Data Server backend
@@ -562,9 +562,9 @@ DAEMON_LOCAL_ASSEMBLIES =			\
 
 DAEMON_ASSEMBLIES =				\
 	$(BEAGLED_LIBS)				\
+	$(SHARPZIPLIB_LIBS)			\
 	$(DAEMON_LOCAL_ASSEMBLIES:%=-r:%)	\
-	-r:Mono.Posix				\
-	-r:ICSharpCode.SharpZipLib.dll
+	-r:Mono.Posix
 
 if ENABLE_WEBSERVICES
 DAEMON_CSFLAGS += -define:ENABLE_WEBSERVICES
@@ -613,10 +613,10 @@ INDEX_HELPER_LOCAL_ASSEMBLIES =		\
 
 INDEX_HELPER_ASSEMBLIES = \
 	$(BEAGLED_LIBS)				\
+	$(SHARPZIPLIB_LIBS)			\
 	$(INDEX_HELPER_LOCAL_ASSEMBLIES:%=-r:%)	\
 	-r:Mono.Posix				\
-	-r:System.Runtime.Remoting		\
-	-r:ICSharpCode.SharpZipLib.dll
+	-r:System.Runtime.Remoting
 
 $(INDEX_HELPER_TARGET): $(INDEX_HELPER_CSFILES) $(INDEX_HELPER_LOCAL_ASSEMBLIES)
 	$(CSC) -out:$@ $(INDEX_HELPER_CSFLAGS) $(INDEX_HELPER_CSFILES) $(INDEX_HELPER_ASSEMBLIES)
@@ -645,10 +645,10 @@ EXTRACT_CONTENT_LOCAL_ASSEMBLIES = \
 
 EXTRACT_CONTENT_ASSEMBLIES = \
 	$(BEAGLED_LIBS)				\
+	$(SHARPZIPLIB_LIBS)			\
 	$(DAEMON_LOCAL_ASSEMBLIES:%=-r:%)	\
 	-r:Mono.Posix				\
-	-r:System.Runtime.Remoting		\
-	-r:ICSharpCode.SharpZipLib.dll
+	-r:System.Runtime.Remoting
 
 $(EXTRACT_CONTENT_TARGET): $(EXTRACT_CONTENT_CSFILES) $(EXTRACT_CONTENT_LOCAL_ASSEMBLIES)
 	$(CSC) -out:$@ $(EXTRACT_CONTENT_CSFLAGS) $(EXTRACT_CONTENT_CSFILES) $(EXTRACT_CONTENT_ASSEMBLIES)
@@ -676,10 +676,10 @@ DUMP_INDEX_LOCAL_ASSEMBLIES = \
 
 DUMP_INDEX_ASSEMBLIES = \
 	$(BEAGLED_LIBS)				\
+	$(SHARPZIPLIB_LIBS)			\
 	$(DAEMON_LOCAL_ASSEMBLIES:%=-r:%)	\
 	-r:Mono.Posix				\
-	-r:System.Runtime.Remoting		\
-	-r:ICSharpCode.SharpZipLib.dll
+	-r:System.Runtime.Remoting
 
 $(DUMP_INDEX_TARGET): $(DUMP_INDEX_CSFILES) $(DUMP_INDEX_LOCAL_ASSEMBLIES)
 	$(CSC) -out:$@ $(DUMP_INDEX_CSFLAGS) $(DUMP_INDEX_CSFILES) $(DUMP_INDEX_ASSEMBLIES)
@@ -736,10 +736,10 @@ MASTER_DELETE_LOCAL_ASSEMBLIES = \
 
 MASTER_DELETE_ASSEMBLIES = \
 	$(BEAGLED_LIBS)				\
+	$(SHARPZIPLIB_LIBS)			\
 	$(DAEMON_LOCAL_ASSEMBLIES:%=-r:%)	\
 	-r:Mono.Posix				\
-	-r:System.Runtime.Remoting		\
-	-r:ICSharpCode.SharpZipLib.dll
+	-r:System.Runtime.Remoting
 
 $(MASTER_DELETE_TARGET): $(MASTER_DELETE_CSFILES) $(MASTER_DELETE_LOCAL_ASSEMBLIES)
 	$(CSC) -out:$@ $(MASTER_DELETE_CSFLAGS) $(MASTER_DELETE_CSFILES) $(MASTER_DELETE_ASSEMBLIES)
@@ -767,10 +767,10 @@ SNIPPET_TEST_LOCAL_ASSEMBLIES =	\
 
 SNIPPET_TEST_ASSEMBLIES = \
 	$(BEAGLED_LIBS)				\
+	$(SHARPZIPLIB_LIBS)			\
 	$(DAEMON_LOCAL_ASSEMBLIES:%=-r:%)	\
 	-r:Mono.Posix				\
-	-r:System.Runtime.Remoting		\
-	-r:ICSharpCode.SharpZipLib.dll
+	-r:System.Runtime.Remoting
 
 $(SNIPPET_TEST_TARGET): $(SNIPPET_TEST_CSFILES) $(SNIPPET_TEST_LOCAL_ASSEMBLIES)
 	$(CSC) -out:$@ $(SNIPPET_TEST_CSFLAGS) $(SNIPPET_TEST_CSFILES) $(SNIPPET_TEST_ASSEMBLIES)
@@ -798,10 +798,10 @@ TERM_STATS_LOCAL_ASSEMBLIES =	\
 
 TERM_STATS_ASSEMBLIES = \
 	$(BEAGLED_LIBS)				\
+	$(SHARPZIPLIB_LIBS)			\
 	$(DAEMON_LOCAL_ASSEMBLIES:%=-r:%)	\
 	-r:Mono.Posix				\
-	-r:System.Runtime.Remoting		\
-	-r:ICSharpCode.SharpZipLib.dll
+	-r:System.Runtime.Remoting
 
 $(TERM_STATS_TARGET): $(TERM_STATS_CSFILES) $(TERM_STATS_LOCAL_ASSEMBLIES)
 	$(CSC) -out:$@ $(TERM_STATS_CSFLAGS) $(TERM_STATS_CSFILES) $(TERM_STATS_ASSEMBLIES)
@@ -829,10 +829,10 @@ NAME_INDEX_LOCAL_ASSEMBLIES =	\
 
 NAME_INDEX_ASSEMBLIES = \
 	$(BEAGLED_LIBS)				\
+	$(SHARPZIPLIB_LIBS)			\
 	$(DAEMON_LOCAL_ASSEMBLIES:%=-r:%)	\
 	-r:Mono.Posix				\
-	-r:System.Runtime.Remoting		\
-	-r:ICSharpCode.SharpZipLib.dll
+	-r:System.Runtime.Remoting
 
 $(NAME_INDEX_TARGET): $(NAME_INDEX_CSFILES) $(NAME_INDEX_LOCAL_ASSEMBLIES)
 	$(CSC) -out:$@ $(NAME_INDEX_CSFLAGS) $(NAME_INDEX_CSFILES) $(NAME_INDEX_ASSEMBLIES)
@@ -860,10 +860,10 @@ FS_SANITY_CHECK_LOCAL_ASSEMBLIES = \
 
 FS_SANITY_CHECK_ASSEMBLIES = \
 	$(BEAGLED_LIBS)				\
+	$(SHARPZIPLIB_LIBS)			\
 	$(DAEMON_LOCAL_ASSEMBLIES:%=-r:%)	\
 	-r:Mono.Posix				\
-	-r:System.Runtime.Remoting		\
-	-r:ICSharpCode.SharpZipLib.dll
+	-r:System.Runtime.Remoting
 
 $(FS_SANITY_CHECK_TARGET): $(FS_SANITY_CHECK_CSFILES) $(FS_SANITY_CHECK_LOCAL_ASSEMBLIES)
 	$(CSC) -out:$@ $(FS_SANITY_CHECK_CSFLAGS) $(FS_SANITY_CHECK_CSFILES) $(FS_SANITY_CHECK_ASSEMBLIES)

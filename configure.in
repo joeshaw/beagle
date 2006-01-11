@@ -61,6 +61,14 @@ fi
 # check that we have the require version of mono
 PKG_CHECK_MODULES(MONO, mono >= $MONO_REQUIRED) 
 
+# SharpZipLib broke API in 1.1.11.  Route around the damage.
+if `$PKG_CONFIG --atleast-version=1.1.11 mono`; then
+  SHARPZIPLIB_LIBS="-r:`$PKG_CONFIG --variable=prefix mono`/lib/mono/compat-1.0/ICSharpCode.SharpZipLib.dll"
+else
+  SHARPZIPLIB_LIBS="-r:ICSharpCode.SharpZipLib"
+fi
+AC_SUBST(SHARPZIPLIB_LIBS)
+
 # check for various mono DLLs that we need.
 needed_dlls="Mono.Data.SqliteClient Mono.Posix System.Runtime.Remoting System.Web System.Web.Services"
 for i in $needed_dlls; do

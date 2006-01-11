@@ -83,7 +83,7 @@ LOCAL_ASSEMBLIES =				\
 
 ASSEMBLIES =				\
 	$(BEAGLED_LIBS)			\
-	-r:ICSharpCode.SharpZipLib.dll	\
+	$(SHARPZIPLIB_LIBS)		\
 	-r:Mono.Posix			\
 	-r:System.Web			\
 	$(LOCAL_ASSEMBLIES:%=-r:%)
