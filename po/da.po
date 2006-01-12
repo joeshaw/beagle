@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: beagle\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2005-12-16 09:13+0100\n"
-"PO-Revision-Date: 2005-11-23 11:56+0100\n"
+"POT-Creation-Date: 2006-01-12 09:03+0100\n"
+"PO-Revision-Date: 2006-01-12 09:03+0100\n"
 "Last-Translator: Lasse Bang Mikkelsen <lbm@fatalerror.dk>\n"
 "Language-Team: Danish <dansk@dansk-gruppen.dk>\n"
 "MIME-Version: 1.0\n"
@@ -17,7 +17,28 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
 
-#: ../Best/Best.cs:134
+#. We might get this exception if there are
+#. missing symbols from the Mozilla runtime if
+#. the user did a Firefox 1.0 -> 1.5 upgrade.
+#. There's nothing we can do about this, it's
+#. an ABI change, so tell the user this is
+#. probably what's wrong.
+#: ../Best/Best.cs:121
+msgid ""
+"Best cannot initialize Mozilla's Gecko runtime environment.\n"
+"Have you upgraded Mozilla or Firefox recently?  If so, you\n"
+"probably need to rebuild beagle against this new version.\n"
+"See http://bugzilla.gnome.org/show_bug.cgi?id=326503 for\n"
+"more information."
+msgstr ""
+"Best kan ikke initialisere Mozillas Gecko udførselsmiljø.\n"
+"Har du opgraderet Mozilla eller Firefox for nylig? Er det\n"
+"tilfældet, er du muligvis nødt til at oversætte Beagle mod\n"
+"denne nye version.\n"
+"Se http://bugzilla.gnome.org/show_bug.cgi?id=326503 for\n"
+"mere information."
+
+#: ../Best/Best.cs:150
 msgid ""
 "If you're wondering whether Best is working check your notification area "
 "(system tray)"
