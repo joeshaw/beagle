@@ -1,8 +1,8 @@
 # Danish translation of Beagle.
-# Copyright (C) 2005
+# Copyright (C) 2005, 06
 # This file is distributed under the same license as the Beagle package.
 # Martin Willemoes Hansen <mwh@sysrq.dk>, 2005.
-# Lasse Bang Mikkelsen <lbm@fatalerror.dk>, 2005.
+# Lasse Bang Mikkelsen <lbm@fatalerror.dk>, 2005, 06.
 #
 msgid ""
 msgstr ""
