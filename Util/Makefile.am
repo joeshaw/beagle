@@ -57,7 +57,6 @@ CSFILES = 			        	\
 	$(srcdir)/FileSystem.cs			\
 	$(srcdir)/FrequencyStatistics.cs	\
 	$(srcdir)/FSpotTools.cs         	\
-	$(srcdir)/GeckoUtils.cs                 \
 	$(srcdir)/GnomeFu.cs              	\
 	$(srcdir)/GtkUtils.cs			\
 	$(srcdir)/GuidFu.cs			\

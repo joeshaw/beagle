@@ -1,3 +1,13 @@
+2006-01-13  Dan Winship  <danw@novell.com>
+
+	* search/*: import of new search ui (now called beagle-search)
+	from holmes module.
+
+	* configure.in, Makefile.am: Build beagle-search instead of best.
+	Remove all sorts of gecko-related stuff from configure.in
+
+	* glue/*, images/*: add holmes glue/images. Remove gecko glue.
+
 2006-01-07  Debajyoti Bera <dbera.web@gmail.com>
 
 	* Filters/FilterDesktop.cs: Index 'Type' .in desktop files.

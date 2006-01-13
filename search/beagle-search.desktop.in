@@ -1,0 +1,11 @@
+[Desktop Entry]
+X-SuSE-translate=true
+Name=Search
+GenericName=Search
+Icon=tango-system-search
+Exec=@BINDIR@/search
+Terminal=false
+Type=Application
+StartupNotify=true
+Encoding=UTF-8
+Categories=GNOME;Application;Core;Utility;Filesystem;

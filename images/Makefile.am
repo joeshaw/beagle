@@ -27,6 +27,7 @@ RESOURCEFILES =					\
 	$(srcdir)/emblem-contact.png		\
 	$(srcdir)/emblem-file.png		\
 	$(srcdir)/emblem-folder.png		\
+	$(srcdir)/emblem-fspot.png		\
 	$(srcdir)/emblem-google.png		\
 	$(srcdir)/emblem-im-log.png		\
 	$(srcdir)/emblem-mail-message.png	\
@@ -59,14 +60,18 @@ RESOURCEFILES =					\
 	$(srcdir)/mail-replied.png		\
 	$(srcdir)/music.png			\
 	$(srcdir)/netbeagle.png			\
+	$(srcdir)/no-match.png			\
 	$(srcdir)/note.png			\
 	$(srcdir)/person.png			\
+	$(srcdir)/quick-tips.png		\
 	$(srcdir)/rss.png			\
 	$(srcdir)/smalldog.png			\
 	$(srcdir)/smalldogalert.png		\
 	$(srcdir)/status-away.png		\
 	$(srcdir)/status-online.png		\
 	$(srcdir)/stock.png			\
+	$(srcdir)/system-search.png		\
+	$(srcdir)/tip-arrow.png			\
 	$(srcdir)/trayicon.png			\
 	$(srcdir)/white.png			\
 	$(srcdir)/emblem-calendar.png

@@ -1,0 +1,45 @@
+using System;
+using Mono.Posix;
+
+namespace Search.Tiles {
+
+	public class AudioActivator : TileActivator {
+
+		public AudioActivator () : base ()
+		{
+			AddSupportedFlavor (new HitFlavor (null, "File", "audio/*"));
+			AddSupportedFlavor (new HitFlavor (null, "File", "application/ogg")); // FIXME: What about videos?
+		}
+
+		public override Tile BuildTile (Beagle.Hit hit, Beagle.Query query)
+		{
+			return new Audio (hit, query);
+		}
+	}
+
+	public class Audio : TileFile {
+
+		public Audio (Beagle.Hit hit, Beagle.Query query) : base (hit, query)
+		{
+			Group = TileGroup.Audio;
+
+			// FIXME: Show album art if any. Needs implementation in Beagle.Util
+			Icon = WidgetFu.LoadMimeIcon (Hit ["beagle:MimeType"], 32);
+
+			string title = Hit.GetFirstProperty ("fixme:title");
+			if (title != null && title != "")
+				Title = title;
+
+			string artist = Hit.GetFirstProperty ("fixme:artist");
+			if (artist != null && artist != "")
+				Description = artist;
+
+			AddAction (new TileAction ("Add to Library", AddToLibrary));
+		}
+
+		// FIXME: Check if Banshee exists and supports this?
+		public void AddToLibrary ()
+		{
+		}
+	}
+}

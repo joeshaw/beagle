@@ -9,6 +9,7 @@ config.sub
 configure
 libtool
 ltmain.sh
+search-entry-watermark.h
 .libs
 .deps
 *.o

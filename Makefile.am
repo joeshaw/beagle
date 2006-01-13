@@ -15,11 +15,10 @@ SUBDIRS +=			\
 	images			\
 	glue			\
 	BeagleClient            \
-	Tiles			\
 	beagled                 \
 	Filters 		\
 	tools 			\
-	Best			\
+	search			\
 	ImLogViewer		\
 	mozilla-extension	\
 	searchomatic		\

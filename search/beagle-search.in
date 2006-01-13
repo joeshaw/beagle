@@ -1,0 +1,10 @@
+#!/bin/sh
+
+if [ -f Search.exe -a -f ../glue/.libs/libbeagleuiglue.so ]; then
+    export LD_LIBRARY_PATH="../glue/.libs${LD_LIBRARY_PATH+:$LD_LIBRARY_PATH}"
+    export MONO_PATH="../BeagleClient:../images:../Util${MONO_PATH+:MONO_PATH}"
+    mono --debug Search.exe "$@"
+else
+    export LD_LIBRARY_PATH="@PKGLIBDIR@${LD_LIBRARY_PATH+:$LD_LIBRARY_PATH}"
+    mono @PKGLIBDIR@/Search.exe "$@"
+fi

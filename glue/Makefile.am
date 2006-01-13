@@ -1,20 +1,6 @@
 INCLUDES= \
-	$(LIBGECKOGLUE_CFLAGS)				\
 	$(LIBTRAYICON_CFLAGS)				\
-	-I$(MOZILLA_INCLUDE_ROOT)/content		\
-	-I$(MOZILLA_INCLUDE_ROOT)/dom			\
-	-I$(MOZILLA_INCLUDE_ROOT)/find			\
-	-I$(MOZILLA_INCLUDE_ROOT)/locale		\
-	-I$(MOZILLA_INCLUDE_ROOT)/webbrwsr		\
-	-I$(MOZILLA_INCLUDE_ROOT)/string		\
-	-I$(MOZILLA_INCLUDE_ROOT)/pref			\
-	-I$(MOZILLA_INCLUDE_ROOT)/gfx			\
-	-I$(MOZILLA_INCLUDE_ROOT)/embedstring		\
-	-I$(MOZILLA_INCLUDE_ROOT)/chrome		\
-	-I$(MOZILLA_INCLUDE_ROOT)/nspr		\
-	-DALLOW_PRIVATE_API				\
-	-DMOZILLA_HOME=\""$(MOZILLA_HOME)\""		\
-	-include $(MOZILLA_INCLUDE_ROOT)/mozilla-config.h
+	$(UIGLUE_CFLAGS)
 
 EXTRA_GLUE_SOURCES =
 EXTRA_GLUE_LIBADD =
@@ -37,12 +23,6 @@ SYSINFO_GLUE_SOURCES =		\
 	vmsize-glue.c
 SYSINFO_GLUE_LIBADD = $(SYSTEMINFO_GLUE_LIBS) $(SYSTEMINFO_GLUE_X_LIBS)
 
-GECKO_GLUE_SOURCES = 	\
-	gecko-utils.h	\
-	gecko-utils.cpp
-
-GECKO_GLUE_LIBADD = $(LIBGECKOGLUE_LIBS)
-
 KEY_GLUE_SOURCES =	 	\
 	tomboykeybinder.c	\
 	tomboykeybinder.h	\
@@ -53,6 +33,22 @@ TRAYICON_GLUE_SOURCES =		\
 	eggtrayicon.c		\
 	eggtrayicon.h
 TRAYICON_GLUE_LIBADD = $(LIBTRAYICON_LIBS)
+
+UI_GLUE_SOURCES =		\
+	ephy-spinner.c		\
+	ephy-spinner.h		\
+	search-entry.c		\
+	search-entry.h		\
+	search-entry-watermark.h\
+	ui-glue.c
+UI_GLUE_LIBADD = $(UIGLUE_LIBS)
+
+search-entry.c: search-entry-watermark.h
+
+search-entry-watermark.h: search-entry-watermark.svg
+	echo '#define SEARCH_ENTRY_WATERMARK_SVG "\' > $@; \
+	sed -e 's/"/\\"/g' -e 's/$$/\\/' -e 's/#000000/#%s/g' $< >> $@; \
+	echo '"' >> $@
 
 if ENABLE_WV1
 INCLUDES += \
@@ -74,13 +70,13 @@ libbeagleglue_la_LIBADD =	\
 	$(EXTRA_GLUE_LIBADD)
 
 libbeagleuiglue_la_SOURCES =	\
-	$(GECKO_GLUE_SOURCES)	\
 	$(KEY_GLUE_SOURCES)	\
-	$(TRAYICON_GLUE_SOURCES)
+	$(TRAYICON_GLUE_SOURCES)\
+	$(UI_GLUE_SOURCES)
 
 libbeagleuiglue_la_LIBADD =	\
-	$(GECKO_GLUE_LIBADD)	\
-	$(TRAYICON_GLUE_LIBADD)
+	$(TRAYICON_GLUE_LIBADD)	\
+	$(UI_GLUE_LIBADD)
 
 gluelibdir = $(pkglibdir)
 gluelib_LTLIBRARIES = 		\
@@ -94,5 +90,7 @@ COND_SOURCES = 			\
 	inotify-glue.c
 
 EXTRA_DIST =			\
-	$(COND_SOURCES)
+	$(COND_SOURCES)		\
+	search-entry-watermark.svg
+
 
