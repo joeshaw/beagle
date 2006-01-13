@@ -1,5 +1,5 @@
-INCLUDES= \
-	$(LIBTRAYICON_CFLAGS)				\
+INCLUDES = 				\
+	$(LIBTRAYICON_CFLAGS)		\
 	$(UIGLUE_CFLAGS)
 
 EXTRA_GLUE_SOURCES =
@@ -36,12 +36,19 @@ TRAYICON_GLUE_LIBADD = $(LIBTRAYICON_LIBS)
 
 XDGMIME_GLUE_SOURCES =		\
 	xdgmime/xdgmime.c	\
+	xdgmime/xdgmime.h	\
 	xdgmime/xdgmimeglob.c	\
+	xdgmime/xdgmimeglob.h	\
 	xdgmime/xdgmimeint.c	\
+	xdgmime/xdgmimeint.h	\
 	xdgmime/xdgmimemagic.c	\
+	xdgmime/xdgmimemagic.h	\
 	xdgmime/xdgmimealias.c	\
+	xdgmime/xdgmimealias.h	\
 	xdgmime/xdgmimeparent.c	\
-	xdgmime/xdgmimecache.c
+	xdgmime/xdgmimeparent.h	\
+	xdgmime/xdgmimecache.c	\
+	xdgmime/xdgmimecache.h
 
 UI_GLUE_SOURCES =		\
 	ephy-spinner.c		\
