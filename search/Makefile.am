@@ -8,56 +8,56 @@ beagle-search: beagle-search.in
 	sed -e "s:@PKGLIBDIR@:${pkglibdir}:" < $(srcdir)/beagle-search.in > beagle-search
 	chmod a+x beagle-search
 
-CSFILES =				\
-	Category.cs			\
-	ConversationCategory.cs		\
-	Entry.cs			\
-	GroupView.cs			\
-	Panes.cs			\
-	Search.cs			\
-	SortedTileList.cs		\
-	Spinner.cs			\
-	TileCategory.cs			\
-	TypeFilter.cs			\
-	UIManager.cs
+CSFILES =					\
+	$(srcdir)/Category.cs			\
+	$(srcdir)/ConversationCategory.cs	\
+	$(srcdir)/Entry.cs			\
+	$(srcdir)/GroupView.cs			\
+	$(srcdir)/Panes.cs			\
+	$(srcdir)/Search.cs			\
+	$(srcdir)/SortedTileList.cs		\
+	$(srcdir)/Spinner.cs			\
+	$(srcdir)/TileCategory.cs		\
+	$(srcdir)/TypeFilter.cs			\
+	$(srcdir)/UIManager.cs
 
-TILES = 				\
-	Tiles/ActionMenuItem.cs		\
-	Tiles/Application.cs		\
-	Tiles/Audio.cs			\
-	Tiles/CApplet.cs		\
-	Tiles/Contact.cs		\
-	Tiles/File.cs			\
-	Tiles/Folder.cs			\
-	Tiles/HitFlavor.cs		\
-	Tiles/IMLog.cs			\
-	Tiles/Image.cs			\
-	Tiles/MailMessage.cs		\
-	Tiles/MailAttachment.cs		\
-	Tiles/Presentation.cs		\
-	Tiles/RSSFeed.cs		\
-	Tiles/Spreadsheet.cs		\
-	Tiles/TextDocument.cs		\
-	Tiles/Tile.cs			\
-	Tiles/TileAction.cs		\
-	Tiles/TileActivator.cs		\
-	Tiles/TileGroup.cs		\
-	Tiles/TileTemplate.cs		\
-	Tiles/Utils.cs			\
-	Tiles/Video.cs			\
-	Tiles/WebHistory.cs		\
-	Tiles/WidgetFu.cs
+TILES = 					\
+	$(srcdir)/Tiles/ActionMenuItem.cs	\
+	$(srcdir)/Tiles/Application.cs		\
+	$(srcdir)/Tiles/Audio.cs		\
+	$(srcdir)/Tiles/CApplet.cs		\
+	$(srcdir)/Tiles/Contact.cs		\
+	$(srcdir)/Tiles/File.cs			\
+	$(srcdir)/Tiles/Folder.cs		\
+	$(srcdir)/Tiles/HitFlavor.cs		\
+	$(srcdir)/Tiles/IMLog.cs		\
+	$(srcdir)/Tiles/Image.cs		\
+	$(srcdir)/Tiles/MailMessage.cs		\
+	$(srcdir)/Tiles/MailAttachment.cs	\
+	$(srcdir)/Tiles/Presentation.cs		\
+	$(srcdir)/Tiles/RSSFeed.cs		\
+	$(srcdir)/Tiles/Spreadsheet.cs		\
+	$(srcdir)/Tiles/TextDocument.cs		\
+	$(srcdir)/Tiles/Tile.cs			\
+	$(srcdir)/Tiles/TileAction.cs		\
+	$(srcdir)/Tiles/TileActivator.cs	\
+	$(srcdir)/Tiles/TileGroup.cs		\
+	$(srcdir)/Tiles/TileTemplate.cs		\
+	$(srcdir)/Tiles/Utils.cs		\
+	$(srcdir)/Tiles/Video.cs		\
+	$(srcdir)/Tiles/WebHistory.cs		\
+	$(srcdir)/Tiles/WidgetFu.cs
 
 
-PAGES =					\
-	Pages/Base.cs			\
-	Pages/NoMatch.cs		\
-	Pages/QuickTips.cs		\
-	Pages/StartDaemon.cs
+PAGES =						\
+	$(srcdir)/Pages/Base.cs			\
+	$(srcdir)/Pages/NoMatch.cs		\
+	$(srcdir)/Pages/QuickTips.cs		\
+	$(srcdir)/Pages/StartDaemon.cs
 
-TRAY =					\
-	Tray/NotificationArea.cs	\
-	Tray/TrayIcon.cs
+TRAY =						\
+	$(srcdir)/Tray/NotificationArea.cs	\
+	$(srcdir)/Tray/TrayIcon.cs
 
 LOCAL_ASSEMBLIES =			\
 	../Util/Util.dll		\
