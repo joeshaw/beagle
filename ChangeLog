@@ -1,3 +1,10 @@
+2006-01-13  Debajyoti Bera <dbera.web@gmail.com>
+
+	* glue/xdgmime, Util/GnomeFu.cs, Util/XdgMime.cs: Move to XdgMime.
+	Replace all GnomeFu.GetMimeType by XdgMime.GetMimeType.
+	* Tiles/TileFile.cs, Tiles/TileMailMessage.cs: Wont be used still,
+	dont detect mimetype again, reuse Hit.MimeType.
+
 2006-01-13  Dan Winship  <danw@novell.com>
 
 	* search/*: import of new search ui (now called beagle-search)

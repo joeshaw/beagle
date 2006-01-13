@@ -52,14 +52,6 @@ namespace Beagle.Util {
 			Gnome.Vfs.Vfs.Initialize ();
 		}
 
-		public static string GetMimeType (string text_path)
-		{
-			if (Path.GetExtension (text_path) == ".xml")
-				return Marshal.PtrToStringAnsi (gnome_vfs_get_file_mime_type (text_path, (IntPtr)null, false));
-			else
-				return Marshal.PtrToStringAnsi (gnome_vfs_get_file_mime_type_fast (text_path, (IntPtr)null));
-		}
-
 		public static string GetMimeIconPath (string mimetype)
 		{
 			if (icon_theme == null)

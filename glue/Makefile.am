@@ -34,6 +34,15 @@ TRAYICON_GLUE_SOURCES =		\
 	eggtrayicon.h
 TRAYICON_GLUE_LIBADD = $(LIBTRAYICON_LIBS)
 
+XDGMIME_GLUE_SOURCES =		\
+	xdgmime/xdgmime.c	\
+	xdgmime/xdgmimeglob.c	\
+	xdgmime/xdgmimeint.c	\
+	xdgmime/xdgmimemagic.c	\
+	xdgmime/xdgmimealias.c	\
+	xdgmime/xdgmimeparent.c	\
+	xdgmime/xdgmimecache.c
+
 UI_GLUE_SOURCES =		\
 	ephy-spinner.c		\
 	ephy-spinner.h		\
@@ -63,6 +72,7 @@ libbeagleglue_la_SOURCES = 		\
 	$(BEAGLED_GLUE_SOURCES)		\
 	$(IOPRIO_GLUE_SOURCES)		\
 	$(SYSINFO_GLUE_SOURCES)		\
+	$(XDGMIME_GLUE_SOURCES)		\
 	$(EXTRA_GLUE_SOURCES)
 
 libbeagleglue_la_LIBADD =	\

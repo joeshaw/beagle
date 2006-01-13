@@ -72,7 +72,7 @@ namespace Beagle.Tile {
 					thumb_factory.CreateFailedThumbnail (quoted_uri, fi.LastWriteTime);
 					
 					string path = GnomeFu.GetMimeIconPath (Hit.MimeType);
-					string icon = Images.GetHtmlSource (path, GnomeFu.GetMimeType (path));
+					string icon = Images.GetHtmlSource (path, Hit.MimeType);
 
 					if (icon != null)
 						Template ["Icon"] = icon;

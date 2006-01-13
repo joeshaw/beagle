@@ -131,7 +131,7 @@ namespace Beagle.Tile {
 				Template["Subject"] = Hit ["fixme:attachment_title"] + " [" + Catalog.GetString ("Email attachment") + "]";
 				Template["EmailSubject"] = str;
 				string path = GnomeFu.GetMimeIconPath (Hit.MimeType);
-				Template["Icon"] = Images.GetHtmlSource (path, GnomeFu.GetMimeType (path));
+				Template["Icon"] = Images.GetHtmlSource (path, Hit.MimeType);
 			}
 
 			if (GetHitProperty (Hit, "fixme:isFlagged") != null)
