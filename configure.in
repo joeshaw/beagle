@@ -622,7 +622,7 @@ echo "
 	gsf-sharp?		${enable_gsf_sharp}
 	wv1?			${enable_wv1}
 	galago-sharp?		${enable_galago}
-	libchm?			${has_libchm} (Deprecated)
+	libchm?			${has_libchm} (Currently broken)
 
 	Mozilla Extension?	yes
 	Epiphany Extension?	${enable_epiphany_extension}
