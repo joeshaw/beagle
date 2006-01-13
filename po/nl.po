@@ -2,21 +2,41 @@
 # Copyright (C) 2005, Novell Inc.
 # Fredrik Hedberg <fredrik@avafan.com>, 2005
 # Wouter Bolsterlee <uws+gnome@xs4all.nl>, 2005
-#
+# Tino Meinen <a.t.meinen@chello.nl>, 2006.
 msgid ""
 msgstr ""
 "Project-Id-Version: beagle\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2005-09-16 19:39+0200\n"
-"PO-Revision-Date: 2005-09-16 19:41+0200\n"
-"Last-Translator: Wouter Bolsterlee <uws+gnome@xs4all.nl>\n"
-"Language-Team: Dutch <vertaling@nl.linux.org>\n"
+"POT-Creation-Date: 2006-01-13 10:03+0100\n"
+"PO-Revision-Date: 2006-01-13 17:56+0100\n"
+"Last-Translator: Tino Meinen <a.t.meinen@chello.nl>\n"
+"Language-Team: Dutch <vertaling@vrijschrift.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=ISO-8859-15\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=2; plural=(n != 1);"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: ../Best/Best.cs:132
+#. We might get this exception if there are
+#. missing symbols from the Mozilla runtime if
+#. the user did a Firefox 1.0 -> 1.5 upgrade.
+#. There's nothing we can do about this, it's
+#. an ABI change, so tell the user this is
+#. probably what's wrong.
+#: ../Best/Best.cs:121
+msgid ""
+"Best cannot initialize Mozilla's Gecko runtime environment.\n"
+"Have you upgraded Mozilla or Firefox recently?  If so, you\n"
+"probably need to rebuild beagle against this new version.\n"
+"See http://bugzilla.gnome.org/show_bug.cgi?id=326503 for\n"
+"more information."
+msgstr ""
+"'Best' kan de Mozilla Gecko runtime environment niet initialiseren.\n"
+"Heeft u onlangs Mozilla of Firefox een upgrade gegeven? In dat\n"
+"geval moet u waarschijnlijk beagle opnieuw opbouwen met deze nieuwe\n"
+"versie. Kijk op http://bugzilla.gnome.org/show_bug.cgi?id=326503\n"
+"voor meer informatie."
+
+#: ../Best/Best.cs:150
 msgid ""
 "If you're wondering whether Best is working check your notification area "
 "(system tray)"
@@ -24,11 +44,11 @@ msgstr ""
 "Als je je afvraagt of Best werkt, controleer dan je mededelingengebied "
 "(system tray)"
 
-#: ../Best/BestTray.cs:149
+#: ../Best/BestTray.cs:148
 msgid "Disable Searching"
 msgstr "Zoeken uitschakelen"
 
-#: ../Best/BestTray.cs:150
+#: ../Best/BestTray.cs:149
 msgid ""
 "You are about to close the search tray. The search tray is automatically "
 "started at login-time. Would you like to disable it for future sessions?"
@@ -53,35 +73,35 @@ msgstr "Wissen"
 msgid "Quit"
 msgstr "Afsluiten"
 
-#: ../Best/BestWindow.cs:306
+#: ../Best/BestWindow.cs:301
 msgid "Anywhere"
 msgstr "Overal"
 
-#: ../Best/BestWindow.cs:310
+#: ../Best/BestWindow.cs:305
 msgid "in Files"
 msgstr "in bestanden"
 
-#: ../Best/BestWindow.cs:314
+#: ../Best/BestWindow.cs:309
 msgid "in Addressbook"
 msgstr "in adresboek"
 
-#: ../Best/BestWindow.cs:318
+#: ../Best/BestWindow.cs:313
 msgid "in Mail"
 msgstr "in e-mail"
 
-#: ../Best/BestWindow.cs:322
+#: ../Best/BestWindow.cs:317
 msgid "in Web Pages"
 msgstr "in webpagina's"
 
-#: ../Best/BestWindow.cs:326
+#: ../Best/BestWindow.cs:321
 msgid "in Chats"
 msgstr "in chats"
 
-#: ../Best/BestWindow.cs:343
+#: ../Best/BestWindow.cs:338
 msgid "Search terms:"
 msgstr "Zoektermen:"
 
-#: ../Best/BestWindow.cs:367
+#: ../Best/BestWindow.cs:362
 msgid "Find"
 msgstr "Zoeken"
 
@@ -93,25 +113,25 @@ msgstr "Meer resultaten tonen"
 msgid "Show Previous Results"
 msgstr "Vorige resultaten tonen"
 
-#: ../Best/BestWindow.cs:424
+#: ../Best/BestWindow.cs:474
 msgid "No results."
 msgstr "Geen resultaten."
 
 #. To translators: {0} is the current count of results shown of {1} in total, this is the message that is initially shown
 #. when results are returned to the user.
-#: ../Best/BestWindow.cs:428
+#: ../Best/BestWindow.cs:478
 #, csharp-format
 msgid "Best <b>{0} results of {1}</b> are shown."
 msgstr "Beste <b>{0} van in totaal {1} resultaten</b> worden getoond."
 
 #. To translators: {0} to {1} is the interval of results currently shown of {2} results in total
-#: ../Best/BestWindow.cs:433
+#: ../Best/BestWindow.cs:483
 #, csharp-format
 msgid "Results <b>{0} through {1} of {2}</b> are shown."
 msgstr "Resultaten <b>{0} tot en met {1} (totaal {2})</b> worden getoond."
 
 #. To translators: {0} represents the current query keywords
-#: ../Best/BestWindow.cs:542
+#: ../Best/BestWindow.cs:584
 #, csharp-format
 msgid ""
 "The query for <i>{0}</i> failed.<br>The likely cause is that the beagle "
@@ -121,10 +141,20 @@ msgstr ""
 "daemon niet actief."
 
 #. To translators: {0} represents the current query keywords, {1} contains the errormessage
-#: ../Best/BestWindow.cs:547
+#: ../Best/BestWindow.cs:589
 #, csharp-format
 msgid "The query for <i>{0}</i> failed with error:<br>{1}<br>"
 msgstr "De zoekopdracht naar <i>{0}</i> is mislukt met fout:<br>{1}<br>"
+
+# zoekmachine/zoekprogramma/zoeken/zoeker/zoekhulp(je)
+#: ../Best/best.desktop.in.h:1
+msgid "Beagle Search"
+msgstr "Beagle zoekprogramma"
+
+# Bureuablad doorzoeken/desktop doorzoeken/desktop zoekprogramma/zoekhulp
+#: ../Best/best.desktop.in.h:2
+msgid "Desktop Search"
+msgstr "Desktop doorzoeken"
 
 #: ../glue/eggtrayicon.c:127
 msgid "Orientation"
@@ -142,12 +172,12 @@ msgstr "<b>Gespreksgeschiedenis</b>"
 msgid "IM Viewer"
 msgstr "IM Viewer"
 
-#: ../ImLogViewer/ImLogWindow.cs:87
+#: ../ImLogViewer/ImLogWindow.cs:102
 #, csharp-format
 msgid "Conversations in {0}"
 msgstr "Gesprekken in {0}"
 
-#: ../ImLogViewer/ImLogWindow.cs:94
+#: ../ImLogViewer/ImLogWindow.cs:109
 #, csharp-format
 msgid "Conversations with {0}"
 msgstr "Gesprekken met {0}"
@@ -190,27 +220,27 @@ msgstr "Gesprek in {0}"
 msgid "Conversation with {0}"
 msgstr "Gesprek met {0}"
 
-#: ../Tiles/TileMailMessage.cs:81
+#: ../Tiles/TileMailMessage.cs:88
 msgid "No Subject"
 msgstr "Geen onderwerp"
 
-#: ../Tiles/TileMailMessage.cs:88
+#: ../Tiles/TileMailMessage.cs:95
 msgid "To"
 msgstr "Aan"
 
-#: ../Tiles/TileMailMessage.cs:88
+#: ../Tiles/TileMailMessage.cs:95
 msgid "From"
 msgstr "Van"
 
-#: ../Tiles/TileMailMessage.cs:116
+#: ../Tiles/TileMailMessage.cs:123
 msgid "Sent"
 msgstr "Verzonden"
 
-#: ../Tiles/TileMailMessage.cs:116
+#: ../Tiles/TileMailMessage.cs:123
 msgid "Received"
 msgstr "Ontvangen"
 
-#: ../Tiles/TileMailMessage.cs:124
+#: ../Tiles/TileMailMessage.cs:131
 msgid "Email attachment"
 msgstr "Mailbijlage"
 
@@ -364,13 +394,14 @@ msgstr "Tags:"
 #. For translators: From template Tiles/template-picture.html
 #: ../Tiles/TranslationHack.cs:74
 msgid "Description:"
-msgstr "Beschrijving:"
+msgstr "Omschrijving:"
 
 #. For translators: From template Tiles/template-presentation.html
 #: ../Tiles/TranslationHack.cs:90
 msgid "Slides:"
 msgstr "Pagina's:"
 
+# laatst bekeken
 #. For translators: From template Tiles/template-web-history.html
 #: ../Tiles/TranslationHack.cs:112
 msgid "Last viewed:"
@@ -386,11 +417,11 @@ msgstr "van netwerk-Beagle op machine"
 msgid "Search Networked Beagle"
 msgstr "Netwerk-Beagle zoeken"
 
-#: ../tools/Settings.cs:214
+#: ../tools/Settings.cs:217
 msgid "Reload configuration"
 msgstr "Configuratie opnieuw laden"
 
-#: ../tools/Settings.cs:215
+#: ../tools/Settings.cs:218
 msgid ""
 "The configuration file has been modified by another application. Do you wish "
 "to discard the currently displayed values and reload configuration from disk?"
@@ -398,15 +429,15 @@ msgstr ""
 "Het configuratiebestand is door een andere toepassing gewijzigd. Wilt u de "
 "nu weergegeven waardes vervangen door de nieuwe waardes uit dit bestand?"
 
-#: ../tools/Settings.cs:253
+#: ../tools/Settings.cs:256
 msgid "Select Path"
 msgstr "Pad selecteren"
 
-#: ../tools/Settings.cs:272
+#: ../tools/Settings.cs:275
 msgid "The selected path is already selected for indexing and wasn't added."
 msgstr "Het geselecteerde pad is niet toegevoegd, omdat het al aanwezig was."
 
-#: ../tools/Settings.cs:275
+#: ../tools/Settings.cs:278
 msgid ""
 "The selected path wasn't added. The list contains items that supercedes it "
 "and the data is already being indexed."
@@ -414,15 +445,15 @@ msgstr ""
 "Het geselecteerde pad is niet toegevoegd, omdat het onderdeel is van een "
 "ander in de lijst aanwezig pad en de gegevens dus al geïndexeerd worden."
 
-#: ../tools/Settings.cs:286 ../tools/Settings.cs:478
+#: ../tools/Settings.cs:289 ../tools/Settings.cs:481
 msgid "Path not added"
 msgstr "Pad niet toegevoegd"
 
-#: ../tools/Settings.cs:295
+#: ../tools/Settings.cs:298
 msgid "Remove obsolete paths"
 msgstr "Verwijder overbodige paden"
 
-#: ../tools/Settings.cs:296
+#: ../tools/Settings.cs:299
 msgid ""
 "Adding this path will obsolete some of the existing include paths. This will "
 "result in the removal of the old obsolete paths. Do you still wish to add it?"
@@ -431,11 +462,11 @@ msgstr ""
 "zullen na toevoeging verwijderd worden. Weet u zeker dat u dit pad wilt "
 "toevoegen?"
 
-#: ../tools/Settings.cs:322
+#: ../tools/Settings.cs:325
 msgid "Remove path"
 msgstr "Pad verwijderen"
 
-#: ../tools/Settings.cs:323
+#: ../tools/Settings.cs:326
 msgid ""
 "Are you sure you wish to remove this path from the list of directories to be "
 "included for indexing?"
@@ -443,11 +474,11 @@ msgstr ""
 "Weet u zeker dat u dit pad uit de lijst met paden die geïndexeerd worden "
 "wilt verwijderen?"
 
-#: ../tools/Settings.cs:352
+#: ../tools/Settings.cs:355
 msgid "Remove item"
 msgstr "Item verwijderen"
 
-#: ../tools/Settings.cs:353
+#: ../tools/Settings.cs:356
 msgid ""
 "Are you sure you wish to remove this item from the list of data to be "
 "excluded from indexing?"
@@ -455,63 +486,63 @@ msgstr ""
 "Weet u zeker dat u dit item wilt verwijderen van de lijst met gegevens die "
 "geïndexeerd moeten worden?"
 
-#: ../tools/Settings.cs:396
+#: ../tools/Settings.cs:399
 msgid "Invalid host entry"
 msgstr "Ongeldige host"
 
-#: ../tools/Settings.cs:403
+#: ../tools/Settings.cs:406
 msgid "Remote host already present in the list."
 msgstr "Remote host reeds aanwezig in de lijst."
 
-#: ../tools/Settings.cs:412
+#: ../tools/Settings.cs:415
 msgid "Netbeagle Node not added"
 msgstr "Netbeagle node niet toegevoegd"
 
-#: ../tools/Settings.cs:428
+#: ../tools/Settings.cs:431
 msgid "Remove host"
 msgstr "Host verwijderen"
 
-#: ../tools/Settings.cs:429
+#: ../tools/Settings.cs:432
 msgid "Are you sure you wish to remove this host from the list?"
 msgstr "Weet u zeker dat u deze host uit de lijst wilt verwijderen?"
 
-#: ../tools/Settings.cs:450
+#: ../tools/Settings.cs:453
 msgid "Select path"
 msgstr "Selecteer pad"
 
-#: ../tools/Settings.cs:469
+#: ../tools/Settings.cs:472
 msgid "The selected path is already configured for external access."
 msgstr "Het geselecteerde pad is al geconfigureerd voor toegang op afstand."
 
-#: ../tools/Settings.cs:493
+#: ../tools/Settings.cs:496
 msgid "Remove public path"
 msgstr "Publiek pad verwijderen"
 
-#: ../tools/Settings.cs:494
+#: ../tools/Settings.cs:497
 msgid ""
 "Are you sure you wish to remove this entry from the list of public paths?"
 msgstr ""
 "Weet u zeker dat u dit item uit de lijst van publieke paden wilt verwijdern?"
 
-#: ../tools/Settings.cs:539 ../tools/Settings.cs:628 ../tools/Settings.cs:706
-#: ../tools/Settings.cs:782 ../tools/Settings.cs:1121
+#: ../tools/Settings.cs:542 ../tools/Settings.cs:631 ../tools/Settings.cs:709
+#: ../tools/Settings.cs:785 ../tools/Settings.cs:1124
 msgid "Name"
 msgstr "Naam"
 
-#: ../tools/Settings.cs:622 ../tools/settings.glade.h:32
+#: ../tools/Settings.cs:625 ../tools/settings.glade.h:33
 msgid "Type"
 msgstr "Type"
 
-#: ../tools/Settings.cs:675 ../tools/Settings.cs:1055
-#: ../tools/settings.glade.h:24
+#: ../tools/Settings.cs:678 ../tools/Settings.cs:1058
+#: ../tools/settings.glade.h:25
 msgid "Path"
 msgstr "Pad"
 
-#: ../tools/Settings.cs:678 ../tools/Settings.cs:1065
+#: ../tools/Settings.cs:681 ../tools/Settings.cs:1068
 msgid "Pattern"
 msgstr "Patroon"
 
-#: ../tools/Settings.cs:681 ../tools/Settings.cs:1060
+#: ../tools/Settings.cs:684 ../tools/Settings.cs:1063
 #: ../tools/settings.glade.h:22
 msgid "Mail Folder"
 msgstr "E-mailmap"
@@ -519,15 +550,15 @@ msgstr "E-mailmap"
 #
 # Common stuff for the templates
 #
-#: ../tools/Settings.cs:1029
+#: ../tools/Settings.cs:1032
 msgid "Select Folder"
 msgstr "Map selecteren"
 
-#: ../tools/Settings.cs:1089
+#: ../tools/Settings.cs:1092
 msgid "Error adding path"
 msgstr "Fout bij toevoegen van pad"
 
-#: ../tools/Settings.cs:1090
+#: ../tools/Settings.cs:1093
 msgid ""
 "The specified path could not be found and therefore it could not be added to "
 "the list of resources excluded for indexing."
@@ -535,7 +566,7 @@ msgstr ""
 "Het opgegeven pad kon niet gevonden worden en is daarom niet toegevoegd aan "
 "de lijst met bronnen die niet geïndexeerd zullen worden."
 
-#: ../tools/Settings.cs:1120
+#: ../tools/Settings.cs:1123
 msgid "Show"
 msgstr "Tonen"
 
@@ -625,27 +656,32 @@ msgstr "Indexeer mijn persoonlijke map"
 msgid "Indexing"
 msgstr "Indexeren"
 
+# weergegeven/getoonde
 #: ../tools/settings.glade.h:23
+msgid "Maximum number of results displayed "
+msgstr "Maximum aantal getoonde resultaten"
+
+#: ../tools/settings.glade.h:24
 msgid "Networking"
 msgstr "Netwerk"
 
-#: ../tools/settings.glade.h:25
+#: ../tools/settings.glade.h:26
 msgid "Please select a resource you wish to exclude from indexing."
 msgstr "Selecteer een bron die niet geïndexeerd moet worden."
 
-#: ../tools/settings.glade.h:26
+#: ../tools/settings.glade.h:27
 msgid "Please select the mail folder you wish to exclude from indexing. "
 msgstr "Selecteer de E-mailmap die niet geïndexeerd moet worden."
 
-#: ../tools/settings.glade.h:27
+#: ../tools/settings.glade.h:28
 msgid "Search"
 msgstr "Zoeken"
 
-#: ../tools/settings.glade.h:28
+#: ../tools/settings.glade.h:29
 msgid "Search Preferences"
 msgstr "Zoekvoorkeuren"
 
-#: ../tools/settings.glade.h:29
+#: ../tools/settings.glade.h:30
 msgid ""
 "Specify any resources, such as paths, patterns, mail folders or type of "
 "objects you wish to exclude from indexing."
@@ -653,13 +689,25 @@ msgstr ""
 "Geef alle bronnen op (paden, patronen, e-mailmappen, enzovoorts) die niet "
 "geïndexeerd moeten worden."
 
-#: ../tools/settings.glade.h:30
+#: ../tools/settings.glade.h:31
 msgid "Specify paths that should be available for external access"
 msgstr "Geef de paden op die op afstand toegankelijk moeten zijn"
 
-#: ../tools/settings.glade.h:31
+#: ../tools/settings.glade.h:32
 msgid "Start search & indexing services automatically "
 msgstr "Automatisch de zoek- en indexeerdiensten starten"
+
+#: ../tools/beagle-settings.desktop.in.h:1
+msgid "Configure Desktop Search & Indexing"
+msgstr "Desktop zoeken en indexeren configureren"
+
+#: ../tools/beagle-settings.desktop.in.h:2
+msgid "Configure search & indexing properties"
+msgstr "Eigenschappen voor zoeken en indexeren configureren"
+
+#: ../tools/beagle-settings.desktop.in.h:3
+msgid "Search & Indexing"
+msgstr "Zoeken en indexeren"
 
 #: ../Util/Evolution.cs:45 ../Util/Evolution.cs:163
 msgid "On This Computer"
@@ -689,66 +737,66 @@ msgstr "InterOperability-map"
 msgid "Unknown Directory"
 msgstr "Onbekende map"
 
-#: ../Util/StringFu.cs:65
+#: ../Util/StringFu.cs:75
 msgid "Today"
 msgstr "Vandaag"
 
-#: ../Util/StringFu.cs:67
+#: ../Util/StringFu.cs:77
 msgid "Yesterday"
 msgstr "Gisteren"
 
 #. Translators: Example output: Aug 9
-#: ../Util/StringFu.cs:70
+#: ../Util/StringFu.cs:80
 msgid "MMM d"
 msgstr "d MMMM"
 
 #. Translators: Example output: Aug 9, 2000
-#: ../Util/StringFu.cs:73
+#: ../Util/StringFu.cs:83
 msgid "MMM d, yyyy"
 msgstr "d MMMM yyyy"
 
 #. Translators: Example output: 11:05 AM  (note h = 12-hour time)
-#: ../Util/StringFu.cs:76
+#: ../Util/StringFu.cs:86
 msgid "h:mm tt"
 msgstr "H:mm"
 
 #. Translators: {0} is a date (e.g. 'Today' or 'Apr 23'), {1} is the time
-#: ../Util/StringFu.cs:82
+#: ../Util/StringFu.cs:92
 #, csharp-format
 msgid "{0}, {1}"
 msgstr "{0} om {1}"
 
 #. To translators: {0} is the time of the day, eg. 13:45
-#: ../Util/StringFu.cs:99
+#: ../Util/StringFu.cs:109
 #, csharp-format
 msgid "Today, {0}"
 msgstr "Vandaag om {0}"
 
 #. To translators: {0} is the time of the day, eg. 13:45
-#: ../Util/StringFu.cs:102
+#: ../Util/StringFu.cs:112
 #, csharp-format
 msgid "Yesterday, {0}"
 msgstr "Gisteren om {0}"
 
 #. To translators: {0} is the number of days that have passed, {1} is the time of the day, eg. 13:45
-#: ../Util/StringFu.cs:105
+#: ../Util/StringFu.cs:115
 #, csharp-format
 msgid "{0} days ago, {1}"
 msgstr "{0} dagen geleden om {1}"
 
 #. Translators: Example output: January 3, 3:45 PM
-#: ../Util/StringFu.cs:110
+#: ../Util/StringFu.cs:120
 msgid "MMMM d, h:mm tt"
 msgstr "d MMMM om H:mm"
 
 #. Translators: Example output: March 23 2001, 10:04 AM
-#: ../Util/StringFu.cs:115
+#: ../Util/StringFu.cs:125
 msgid "MMMM d yyyy, h:mm tt"
 msgstr "d MMMM yyyy om H:mm"
 
 # Dit is om een tijdspanne aan te duiden, dus ik heb voor "uur" en niet voor
 # "uren" gekozen -- Wouter Bolsterlee
-#: ../Util/StringFu.cs:125
+#: ../Util/StringFu.cs:135
 #, csharp-format
 msgid "{0} hour"
 msgid_plural "{0} hours"
@@ -757,7 +805,7 @@ msgstr[1] "{0} uur"
 
 # Tijdspannes in minuten zeggen we weer wel in het meervoud. Rare jongens, die
 # Nederlandstaligen... -- Wouter Bolsterlee
-#: ../Util/StringFu.cs:132
+#: ../Util/StringFu.cs:142
 #, csharp-format
 msgid "{0} minute"
 msgid_plural "{0} minutes"
@@ -765,20 +813,19 @@ msgstr[0] "{0} minuut"
 msgstr[1] "{0} minuten"
 
 #. Translators: {0} is a file size in bytes
-#: ../Util/StringFu.cs:148
+#: ../Util/StringFu.cs:158
 #, csharp-format
 msgid "{0} bytes"
 msgstr "{0} bytes"
 
 #. Translators: {0} is a file size in kilobytes
-#: ../Util/StringFu.cs:152
+#: ../Util/StringFu.cs:162
 #, csharp-format
 msgid "{0:0.0} KB"
 msgstr "{0:0.0} KB"
 
 #. Translators: {0} is a file size in megabytes
-#: ../Util/StringFu.cs:155
+#: ../Util/StringFu.cs:165
 #, csharp-format
 msgid "{0:0.0} MB"
 msgstr "{0:0.0} MB"
-
