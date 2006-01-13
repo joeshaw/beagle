@@ -88,6 +88,7 @@ CSFILES = 			        	\
 	$(srcdir)/TopScores.cs			\
 	$(srcdir)/UnclosableStream.cs		\
 	$(srcdir)/UriFu.cs			\
+	$(srcdir)/XdgMime.cs			\
 	$(srcdir)/XKeybinder.cs			\
 	$(srcdir)/XmlFu.cs
 
