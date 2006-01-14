@@ -144,7 +144,7 @@ namespace Beagle.Daemon.FileSystemQueryable {
 
 			string no_ext, ext, no_punct;
 			no_ext = Path.GetFileNameWithoutExtension (name);
-			ext = Path.GetExtension (name);
+			ext = Path.GetExtension (name).ToLower ();
 			
 			sb.Append (no_ext);
 			for (int i = 0; i < sb.Length; ++i)

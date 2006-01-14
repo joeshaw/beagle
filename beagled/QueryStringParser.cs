@@ -190,9 +190,9 @@ namespace Beagle.Daemon {
 			if (is_extension_query) {
 				QueryPart_Property query_part = new QueryPart_Property ();
 				query_part.Key = FSQ.FileSystemQueryable.FilenameExtensionPropKey;
-				query_part.Value = query_text; // the whole .abc part
+				query_part.Value = query_text.ToLower (); // the whole .abc part
 				query_part.Type = PropertyType.Keyword;
-				Logger.Log.Debug ("Extension query:" + query_text);
+				Logger.Log.Debug ("Extension query:" + query_text.ToLower ());
 				return query_part;
 			}
 
@@ -228,9 +228,10 @@ namespace Beagle.Daemon {
 			// change value to .mp3
 			// if query was of type ext:
 			// change value to ""
+			// Change extension query value to lowercase - thats how they are stored on disk
 			if (query_part_prop.Key == FSQ.FileSystemQueryable.FilenameExtensionPropKey)
 				if (query_part_prop.Value != String.Empty)
-					query_part_prop.Value = "." + query_part_prop.Value;
+					query_part_prop.Value = "." + query_part_prop.Value.ToLower ();
 			query_part_prop.Type = prop_type;
 			Logger.Log.Debug ("Parsed query '"	    + query_text + 
 					  "' as prop query:key="    + query_part_prop.Key +
