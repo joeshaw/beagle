@@ -204,8 +204,24 @@ namespace Beagle.Daemon.BlamQueryable {
 				return false;
 			string elementname = null;
 
-			while (! reader.EOF && ((elementname = reader.Name) != "Item")) {
-				if (reader.NodeType == XmlNodeType.Element && elementname == "Channel") {
+			while (! reader.EOF) {
+				elementname = reader.Name;
+
+				if (reader.NodeType == XmlNodeType.Element &&
+				    elementname == "Item" &&
+				    reader.IsStartElement ())
+					break;
+
+				// Assuming the structure of tags is flat i.e.
+				// <channel> (<item>...</item>)* </channel>
+				// and <channel> tags are not nested
+				// If later the file format changes,
+				// and channel tags become nested, need to make sure
+				// that when a nested channel ends, channel_name,
+				// channel_url are reset to the parent values
+				if (reader.NodeType == XmlNodeType.Element &&
+				    elementname == "Channel") {
+
 					channel_name = reader.GetAttribute ("Name");
 					channel_url = reader.GetAttribute ("Url");
 				}

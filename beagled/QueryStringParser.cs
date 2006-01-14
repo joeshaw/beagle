@@ -229,9 +229,9 @@ namespace Beagle.Daemon {
 			// if query was of type ext:
 			// change value to ""
 			// Change extension query value to lowercase - thats how they are stored on disk
-			if (query_part_prop.Key == FSQ.FileSystemQueryable.FilenameExtensionPropKey)
-				if (query_part_prop.Value != String.Empty)
-					query_part_prop.Value = "." + query_part_prop.Value.ToLower ();
+			if (query_part_prop.Key == FSQ.FileSystemQueryable.FilenameExtensionPropKey &&
+			    query_part_prop.Value != String.Empty)
+				query_part_prop.Value = "." + query_part_prop.Value.ToLower ();
 			query_part_prop.Type = prop_type;
 			Logger.Log.Debug ("Parsed query '"	    + query_text + 
 					  "' as prop query:key="    + query_part_prop.Key +
