@@ -73,6 +73,7 @@ void _beagle_response_class_set_parser_handlers (BeagleResponseClass *klass,
 						 BeagleParserHandler *handlers);
 
 int  _beagle_property_compare (BeagleProperty *prop_a, BeagleProperty *prop_b);
+int  _beagle_property_key_compare (BeagleProperty *prop_a, char *key);
 
 void _beagle_hit_add_property (BeagleHit *hit, BeagleProperty *prop);
 void _beagle_hit_list_free    (GSList *list);

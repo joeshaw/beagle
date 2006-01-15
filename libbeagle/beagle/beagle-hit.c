@@ -255,7 +255,7 @@ beagle_hit_get_one_property (BeagleHit *hit, const char *key, const char **value
 	if (! hit->properties)
 		return FALSE;
 	
-	pointer_first_property = g_slist_find_custom (hit->properties, key, (GCompareFunc) _beagle_property_compare);
+	pointer_first_property = g_slist_find_custom (hit->properties, key, (GCompareFunc) _beagle_property_key_compare);
 
 	if (pointer_first_property == NULL)
 		return FALSE;
@@ -298,7 +298,7 @@ beagle_hit_get_properties (BeagleHit *hit, const char *key)
 	if (! hit->properties)
 		return NULL;
 	
-	iterator_properties = g_slist_find_custom (hit->properties, key, (GCompareFunc) _beagle_property_compare);
+	iterator_properties = g_slist_find_custom (hit->properties, key, (GCompareFunc) _beagle_property_key_compare);
 
 	while (iterator_properties != NULL) {
 		BeagleProperty *property = (BeagleProperty *) iterator_properties->data;

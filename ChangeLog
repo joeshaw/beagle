@@ -1,5 +1,10 @@
 2006-01-14  Debajyoti Bera <dbera.web@gmail.com>
 
+	* libbeagle/.../beagle-property.c: Fixed a crash when trying to find
+	the right place in a list of BeagleProperty armed with only a key.
+
+2006-01-14  Debajyoti Bera <dbera.web@gmail.com>
+
 	* BlamQueryable.cs: Allow child elements in <item> tag, according to
 	latest blam file format. The example file I had had no information in
 	the child tag, so just read past them.
