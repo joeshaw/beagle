@@ -1,139 +1,23 @@
 # Hungarian translation of beagle.
 # Copyright (C) 2005 THE beagle'S COPYRIGHT HOLDER
 # This file is distributed under the same license as the beagle package.
+#
+#
 # Imre Kálomista <ikalomista@gmail.com>, 2005.
-# Gabor Kelemen <kelemeng@gnome.hu>, 2005.
-#
-#
+# Gabor Kelemen <kelemeng@gnome.hu>, 2005, 2006.
 msgid ""
 msgstr ""
 "Project-Id-Version: beagle.HEAD.hu\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2005-11-21 18:09+0100\n"
-"PO-Revision-Date: 2005-11-19 16:05+0100\n"
+"POT-Creation-Date: 2006-01-14 10:06+0100\n"
+"PO-Revision-Date: 2006-01-15 23:54+0100\n"
 "Last-Translator: Gabor Kelemen <kelemeng@gnome.hu>\n"
 "Language-Team: Hungarian <gnome@gnome.hu>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms:  nplurals=1; plural=0;\n"
-"X-Generator: KBabel 1.10\n"
-
-#: ../Best/Best.cs:134
-msgid ""
-"If you're wondering whether Best is working check your notification area "
-"(system tray)"
-msgstr ""
-"Ha nem biztos benne, hogy a Best működik, ellenőrizze az értesítő területen"
-
-#: ../Best/BestTray.cs:149
-msgid "Disable Searching"
-msgstr "Keresés letiltása"
-
-#: ../Best/BestTray.cs:150
-msgid ""
-"You are about to close the search tray. The search tray is automatically "
-"started at login-time. Would you like to disable it for future sessions?"
-msgstr ""
-"A keresőtálca bezárására készül. A keresőtálca bejelentkezéskor "
-"automatikusan elindul, le szeretné tiltani a későbbi munkamenetekre?"
-
-#: ../Best/BestTray.cs:208
-msgid "No Recent Searches"
-msgstr "Nincsenek új keresések"
-
-#: ../Best/BestTray.cs:213
-msgid "Recent Searches"
-msgstr "Legutóbbi keresések"
-
-#: ../Best/BestTray.cs:229
-msgid "Clear"
-msgstr "Törlés"
-
-#: ../Best/BestTray.cs:237
-msgid "Quit"
-msgstr "Kilépés"
-
-#: ../Best/BestWindow.cs:309
-msgid "Anywhere"
-msgstr "Bárhol"
-
-#: ../Best/BestWindow.cs:313
-msgid "in Files"
-msgstr "Fájlokban"
-
-#: ../Best/BestWindow.cs:317
-msgid "in Addressbook"
-msgstr "Címjegyzékben"
-
-#: ../Best/BestWindow.cs:321
-msgid "in Mail"
-msgstr "Levelek között"
-
-#: ../Best/BestWindow.cs:325
-msgid "in Web Pages"
-msgstr "Weboldalak között"
-
-#: ../Best/BestWindow.cs:329
-msgid "in Chats"
-msgstr "Csevegések között"
-
-#: ../Best/BestWindow.cs:346
-msgid "Search terms:"
-msgstr "Keresendő kifejezések"
-
-#: ../Best/BestWindow.cs:370
-msgid "Find"
-msgstr "Keresés"
-
-#: ../Best/BestWindow.cs:392
-msgid "Show More Results"
-msgstr "További eredmények"
-
-#: ../Best/BestWindow.cs:398
-msgid "Show Previous Results"
-msgstr "Előző eredmények"
-
-#: ../Best/BestWindow.cs:482
-msgid "No results."
-msgstr "Nincs eredmény."
-
-#. To translators: {0} is the current count of results shown of {1} in total, this is the message that is initially shown
-#. when results are returned to the user.
-#: ../Best/BestWindow.cs:486
-#, csharp-format
-msgid "Best <b>{0} results of {1}</b> are shown."
-msgstr "A legjobb <b>{0} megjelenítése {1}</b> eredmény közül."
-
-#. To translators: {0} to {1} is the interval of results currently shown of {2} results in total
-#: ../Best/BestWindow.cs:491
-#, csharp-format
-msgid "Results <b>{0} through {1} of {2}</b> are shown."
-msgstr "Eredmények megjelenítése ettől: <b>{0} eddig: {1}, összesen {2}</b>."
-
-#. To translators: {0} represents the current query keywords
-#: ../Best/BestWindow.cs:600
-#, csharp-format
-msgid ""
-"The query for <i>{0}</i> failed.<br>The likely cause is that the beagle "
-"daemon isn't running."
-msgstr ""
-"<i>{0}</i> lekérdezése sikertelen.<br>A hiba valószínűsíthető oka, hogy a "
-"beagle démon nem fut."
-
-#. To translators: {0} represents the current query keywords, {1} contains the errormessage
-#: ../Best/BestWindow.cs:605
-#, csharp-format
-msgid "The query for <i>{0}</i> failed with error:<br>{1}<br>"
-msgstr "<i>{0}</i> lekérdezése sikertelen: <br>{1}<br>"
-
-#: ../Best/best.desktop.in.h:1
-msgid "Beagle Search"
-msgstr "Beagle keresés"
-
-#: ../Best/best.desktop.in.h:2
-msgid "Desktop Search"
-msgstr "Asztali keresés"
+"X-Generator: KBabel 1.11.1\n"
 
 #: ../glue/eggtrayicon.c:127
 msgid "Orientation"
@@ -161,236 +45,584 @@ msgstr "Társalgások a következőben: {0}"
 msgid "Conversations with {0}"
 msgstr "Társalgások a következővel: {0}"
 
-#: ../Tiles/TileDocs.cs:77
-msgid "Pages:"
-msgstr "Oldalak:"
+#: ../search/Category.cs:85
+#, csharp-format
+msgid "Top {0} Result"
+msgid_plural "Top {0} Results"
+msgstr[0] "Az első {0} eredmény"
+msgstr[1] "Az első {0} eredmény"
 
-#: ../Tiles/TileDocs.cs:81
-msgid "Words:"
-msgstr "Szavak:"
+#: ../search/Category.cs:86
+#, csharp-format
+msgid "Previous {0}"
+msgid_plural "Previous {0}"
+msgstr[0] "Előző {0}"
+msgstr[1] "Előző {0}"
 
-#: ../Tiles/TileFolder.cs:53
+#: ../search/Category.cs:87
+#, csharp-format
+msgid "Next {0}"
+msgid_plural "Next {0}"
+msgstr[0] "Következő {0}"
+msgstr[1] "Következő {0}"
+
+#: ../search/Pages/NoMatch.cs:19
+msgid "No results were found."
+msgstr "Nem található eredmény."
+
+#: ../search/Pages/NoMatch.cs:20
+#, csharp-format
+msgid "Your search for \"{0}\" did not match any files on your computer."
+msgstr "A(z) \"{0}\" keresése nem nem eredményezett fájlokat a számítógépen."
+
+#: ../search/Pages/NoMatch.cs:24
+msgid ""
+"You can change the scope of your search using the \"Search\" menu. A broader "
+"search scope might produce more results."
+msgstr "A Keresés menü használatával módosíthatja a keresés hatókörét. A bővebb keresési hatókör talán több eredményt hoz."
+
+#: ../search/Pages/NoMatch.cs:26
+msgid ""
+"You should check the spelling of your search words to see if you "
+"accidentally misspelled any words."
+msgstr "Ellenőrizze a keresőkifejezések helyesírását, lehet, hogy véletlenül elgépelt egyes szavakat."
+
+#: ../search/Pages/QuickTips.cs:10
+msgid "You can use upper and lower case; search is case-insensitive."
+msgstr "Kis- és nagybetűket egyaránt használhat, a keresés nem érzékeny rájuk."
+
+#: ../search/Pages/QuickTips.cs:11
+msgid "To search for optional terms, use OR.  ex: <b>George OR Ringo</b>"
+msgstr "Elhagyható kifejezések kereséséhez használja az OR-t, például: <b>George OR Ringo</b>"
+
+#: ../search/Pages/QuickTips.cs:12
+msgid "To exclude search terms, use the minus symbol in front, such as <b>-cats</b>"
+msgstr "Keresőkifejezések kihagyásához használja a kivonás jelet a kifejezés előtt, például: <b>-macskák<b>"
+
+#: ../search/Pages/QuickTips.cs:13
+msgid "When searching for a phrase, add quotes. ex: <b>\"There be dragons\"</b>"
+msgstr "Mondatok keresésénél használjon idézőjeleket, például: <b>\"A gép forog, az alkotó pihen\"</b>"
+
+#: ../search/Pages/QuickTips.cs:19 ../search/UIManager.cs:62
+msgid "Quick Tips"
+msgstr "Gyorstippek"
+
+#: ../search/Search.cs:145
+msgid "Find Now"
+msgstr "Keresés most"
+
+#: ../search/Search.cs:185
+msgid "Type in search terms"
+msgstr "Írja be a keresendő kifejezéseket"
+
+#: ../search/Search.cs:186
+msgid "Start searching"
+msgstr "A keresés megkezdése"
+
+#: ../search/Tiles/File.cs:127 ../search/Tiles/RSSFeed.cs:50
+msgid "Title:"
+msgstr "Cím:"
+
+#: ../search/Tiles/File.cs:137
+msgid "Last Edited:"
+msgstr "Utoljára szerkesztve:"
+
+#: ../search/Tiles/File.cs:144
+msgid "Author:"
+msgstr "Szerző:"
+
+#: ../search/Tiles/Folder.cs:31
 msgid "Empty"
 msgstr "Üres"
 
-#: ../Tiles/TileFolder.cs:55
+#: ../search/Tiles/Folder.cs:33
 #, csharp-format
 msgid "Contains {0} Item"
 msgid_plural "Contains {0} Items"
 msgstr[0] "{0} elemet tartalmaz"
 msgstr[1] "{0} elemet tartalmaz"
 
-#: ../Tiles/TileImLog.cs:67
-msgid "Send Mail"
-msgstr "Levél küldése"
+#: ../search/Tiles/Folder.cs:62 ../search/Tiles/Image.cs:79
+msgid "Edited:"
+msgstr "Szerkesztve:"
 
-#. For translators: From template Tiles/template-mail-message.html
-#: ../Tiles/TileImLog.cs:71 ../Tiles/TranslationHack.cs:52
-msgid "Send IM"
-msgstr "Azonnali üzenet küldése"
+#: ../search/Tiles/IMLog.cs:88
+msgid "Name:"
+msgstr "Név:"
 
-#: ../Tiles/TileImLog.cs:77
-#, csharp-format
-msgid "Conversation in {0}"
-msgstr "Társalgás a következőben: {0}"
+#: ../search/Tiles/IMLog.cs:93 ../search/Tiles/MailMessage.cs:125
+msgid "Date Received:"
+msgstr "Fogadás dátuma:"
 
-#: ../Tiles/TileImLog.cs:79
-#, csharp-format
-msgid "Conversation with {0}"
-msgstr "Társalgás a következővel: {0}"
-
-#: ../Tiles/TileMailMessage.cs:88
-msgid "No Subject"
-msgstr "Nincs tárgy"
-
-#: ../Tiles/TileMailMessage.cs:95
-msgid "To"
-msgstr "Címzett"
-
-#: ../Tiles/TileMailMessage.cs:95
-msgid "From"
-msgstr "Feladó:"
-
-#: ../Tiles/TileMailMessage.cs:123
-msgid "Sent"
-msgstr "Elküldött"
-
-#: ../Tiles/TileMailMessage.cs:123
-msgid "Received"
-msgstr "Fogadott"
-
-#: ../Tiles/TileMailMessage.cs:131
-msgid "Email attachment"
+#: ../search/Tiles/MailAttachment.cs:48
+msgid "Mail attachment"
 msgstr "E-mail melléklet"
 
-#. For translators: From template Tiles/template-blog.html
-#: ../Tiles/TranslationHack.cs:6
-msgid "Weblog:"
-msgstr "Webnapló"
+#: ../search/Tiles/MailMessage.cs:115
+msgid "Subject:"
+msgstr "Tárgy:"
 
-#. For translators: From template Tiles/template-blog.html
-#: ../Tiles/TranslationHack.cs:8
-msgid "by"
-msgstr "írta"
+#: ../search/Tiles/MailMessage.cs:120
+msgid "From:"
+msgstr "Feladó:"
 
-#. For translators: From template Tiles/template-blog.html
-#: ../Tiles/TranslationHack.cs:10
-msgid "Published:"
-msgstr "Közzétéve:"
+#: ../search/Tiles/Presentation.cs:33
+#, csharp-format
+msgid "{0} slide"
+msgid_plural "{0} slides"
+msgstr[0] "{0} fólia"
+msgstr[1] "{0} fólia"
 
-#. For translators: From template Tiles/template-blog.html
-#. For translators: From template Tiles/template-docs.html
-#. For translators: From template Tiles/template-file.html
-#. For translators: From template Tiles/template-folder.html
-#. For translators: From template Tiles/template-launcher.html
-#. For translators: From template Tiles/template-mail-message.html
-#. For translators: From template Tiles/template-music.html
-#. For translators: From template Tiles/template-note.html
-#. For translators: From template Tiles/template-picture.html
-#. For translators: From template Tiles/template-presentation.html
-#. For translators: From template Tiles/template-spreadsheet.html
-#. For translators: From template Tiles/template-web-history.html
-#. For translators: From template Tiles/template-network.html
-#. For translators: From template Tiles/template-im-log.html
-#: ../Tiles/TranslationHack.cs:12 ../Tiles/TranslationHack.cs:22
-#: ../Tiles/TranslationHack.cs:32 ../Tiles/TranslationHack.cs:40
-#: ../Tiles/TranslationHack.cs:44 ../Tiles/TranslationHack.cs:50
-#: ../Tiles/TranslationHack.cs:58 ../Tiles/TranslationHack.cs:66
-#: ../Tiles/TranslationHack.cs:76 ../Tiles/TranslationHack.cs:92
-#: ../Tiles/TranslationHack.cs:106 ../Tiles/TranslationHack.cs:114
-#: ../Tiles/TranslationHack.cs:118 ../Tiles/TranslationHack.cs:122
+#: ../search/Tiles/RSSFeed.cs:55
+msgid "Site:"
+msgstr "Hely:"
+
+#: ../search/Tiles/RSSFeed.cs:60
+msgid "Date Viewed:"
+msgstr "Megtekintés dátuma:"
+
+#: ../search/Tiles/TextDocument.cs:37
+#, csharp-format
+msgid "{0} page"
+msgid_plural "{0} pages"
+msgstr[0] "{0} oldal"
+msgstr[1] "{0} oldal"
+
+#: ../search/Tiles/Tile.cs:149
 msgid "Open"
 msgstr "Megnyitás"
 
-#. For translators: From template Tiles/template-docs.html
-#. For translators: From template Tiles/template-file.html
-#. For translators: From template Tiles/template-folder.html
-#. For translators: From template Tiles/template-picture.html
-#. For translators: From template Tiles/template-presentation.html
-#. For translators: From template Tiles/template-spreadsheet.html
-#: ../Tiles/TranslationHack.cs:14 ../Tiles/TranslationHack.cs:28
-#: ../Tiles/TranslationHack.cs:38 ../Tiles/TranslationHack.cs:68
-#: ../Tiles/TranslationHack.cs:82 ../Tiles/TranslationHack.cs:98
-msgid "in folder"
-msgstr "ebben a mappában:"
+#: ../search/Tiles/Utils.cs:25
+msgid "Application"
+msgstr "Alkalmazás"
 
-#. For translators: From template Tiles/template-docs.html
-#. For translators: From template Tiles/template-file.html
-#. For translators: From template Tiles/template-presentation.html
-#. For translators: From template Tiles/template-spreadsheet.html
-#: ../Tiles/TranslationHack.cs:16 ../Tiles/TranslationHack.cs:30
-#: ../Tiles/TranslationHack.cs:84 ../Tiles/TranslationHack.cs:100
-msgid "Last modified"
-msgstr "Utolsó módosítás"
+#: ../search/Tiles/Utils.cs:26
+msgid "More application results..."
+msgstr "Több eredmény-alkalmazás..."
 
-#. For translators: From template Tiles/template-docs.html
-#. For translators: From template Tiles/template-presentation.html
-#. For translators: From template Tiles/template-spreadsheet.html
-#: ../Tiles/TranslationHack.cs:18 ../Tiles/TranslationHack.cs:86
-#: ../Tiles/TranslationHack.cs:102
-msgid "Title:"
-msgstr "Cím:"
+#: ../search/Tiles/Utils.cs:29
+msgid "Contact"
+msgstr "Névjegy"
 
-#. For translators: From template Tiles/template-docs.html
-#. For translators: From template Tiles/template-presentation.html
-#. For translators: From template Tiles/template-spreadsheet.html
-#: ../Tiles/TranslationHack.cs:20 ../Tiles/TranslationHack.cs:88
-#: ../Tiles/TranslationHack.cs:104
-msgid "Author:"
-msgstr "Szerző:"
+#: ../search/Tiles/Utils.cs:30
+msgid "More contact results..."
+msgstr "Több eredmény-névjegy..."
 
-#. For translators: From template Tiles/template-docs.html
-#. For translators: From template Tiles/template-file.html
-#. For translators: From template Tiles/template-picture.html
-#. For translators: From template Tiles/template-presentation.html
-#. For translators: From template Tiles/template-spreadsheet.html
-#: ../Tiles/TranslationHack.cs:24 ../Tiles/TranslationHack.cs:34
-#: ../Tiles/TranslationHack.cs:78 ../Tiles/TranslationHack.cs:94
-#: ../Tiles/TranslationHack.cs:108
-msgid "Send to..."
-msgstr "Küldés..."
+#: ../search/Tiles/Utils.cs:33
+msgid "Folder"
+msgstr "Mappa"
 
-#. For translators: From template Tiles/template-docs.html
-#. For translators: From template Tiles/template-file.html
-#. For translators: From template Tiles/template-music.html
-#. For translators: From template Tiles/template-picture.html
-#. For translators: From template Tiles/template-presentation.html
-#. For translators: From template Tiles/template-spreadsheet.html
-#: ../Tiles/TranslationHack.cs:26 ../Tiles/TranslationHack.cs:36
-#: ../Tiles/TranslationHack.cs:62 ../Tiles/TranslationHack.cs:80
-#: ../Tiles/TranslationHack.cs:96 ../Tiles/TranslationHack.cs:110
-msgid "Reveal in file manager"
-msgstr "Megjelenítés fájlkezelőben"
+#: ../search/Tiles/Utils.cs:34
+msgid "More folder results..."
+msgstr "Több eredmény-mappa..."
 
-#. For translators: From template Tiles/template-launcher.html
-#: ../Tiles/TranslationHack.cs:42
-msgid "Application:"
-msgstr "Alkalmazás:"
+#: ../search/Tiles/Utils.cs:37
+msgid "Image"
+msgstr "Kép"
 
-#. For translators: From template Tiles/template-mail-message.html
-#: ../Tiles/TranslationHack.cs:46
-msgid "Email subject:"
-msgstr "E-mail tárgya:"
+#: ../search/Tiles/Utils.cs:38
+msgid "More image results..."
+msgstr "Több eredmény-kép..."
 
-#. For translators: From template Tiles/template-mail-message.html
-#: ../Tiles/TranslationHack.cs:48
-msgid "Folder:"
-msgstr "Mappa:"
+#: ../search/Tiles/Utils.cs:41
+msgid "Audio"
+msgstr "Hang"
 
-#. For translators: From template Tiles/template-music.html
-#: ../Tiles/TranslationHack.cs:54
-msgid "Track"
-msgstr "Szám"
+#: ../search/Tiles/Utils.cs:42
+msgid "More audio results..."
+msgstr "Több eredmény-hang..."
 
-#. For translators: From template Tiles/template-music.html
-#: ../Tiles/TranslationHack.cs:56
-msgid "from"
-msgstr "a következőtől:"
+#: ../search/Tiles/Utils.cs:45
+msgid "Video"
+msgstr "Videó"
 
-#. For translators: From template Tiles/template-music.html
-#: ../Tiles/TranslationHack.cs:60
-msgid "Enqueue"
-msgstr "Sorba helyezés"
+#: ../search/Tiles/Utils.cs:46
+msgid "More video results..."
+msgstr "Több eredmény-videó..."
 
-#. For translators: From template Tiles/template-note.html
-#: ../Tiles/TranslationHack.cs:64
-msgid "last modified"
-msgstr "utoljára módosítva"
+#: ../search/Tiles/Utils.cs:49
+msgid "Documents"
+msgstr "Dokumentumok"
 
-#. For translators: From template Tiles/template-picture.html
-#: ../Tiles/TranslationHack.cs:70
-msgid "Modified:"
-msgstr "Módosítva:"
+#: ../search/Tiles/Utils.cs:50
+msgid "More document results..."
+msgstr "Több eredmény-dokumentum..."
 
-#. For translators: From template Tiles/template-picture.html
-#: ../Tiles/TranslationHack.cs:72
-msgid "Tags:"
-msgstr "Címkék:"
+#: ../search/Tiles/Utils.cs:53
+msgid "Conversations"
+msgstr "Társalgások"
 
-#. For translators: From template Tiles/template-picture.html
-#: ../Tiles/TranslationHack.cs:74
-msgid "Description:"
-msgstr "Leírás:"
+#: ../search/Tiles/Utils.cs:54
+msgid "More conversation results..."
+msgstr "Több eredmény-társalgás..."
 
-#. For translators: From template Tiles/template-presentation.html
-#: ../Tiles/TranslationHack.cs:90
-msgid "Slides:"
-msgstr "Diák:"
+#: ../search/Tiles/Utils.cs:57
+msgid "Website"
+msgstr "Webhely"
 
-#. For translators: From template Tiles/template-web-history.html
-#: ../Tiles/TranslationHack.cs:112
-msgid "Last viewed:"
-msgstr "Utoljára megtekintve:"
+#: ../search/Tiles/Utils.cs:58
+msgid "More website results..."
+msgstr "Több eredmény-webhely..."
 
-#. For translators: From template Tiles/template-network.html
-#: ../Tiles/TranslationHack.cs:116
-msgid "from Networked Beagle on host"
-msgstr "Hálózati Beagle-ról a kiszolgálón"
+#: ../search/Tiles/Utils.cs:61
+msgid "News Feed"
+msgstr "Hírfolyam"
 
-#. For translators: From template Tiles/template-network.html
-#: ../Tiles/TranslationHack.cs:120
-msgid "Search Networked Beagle"
-msgstr "Keresés hálózati Beagle-lel"
+#: ../search/Tiles/Utils.cs:62
+msgid "More news feed results..."
+msgstr "Több eredmény-hírfolyam..."
+
+#: ../search/Tiles/Utils.cs:65
+msgid "Archive"
+msgstr "Archívum"
+
+#: ../search/Tiles/Utils.cs:66
+msgid "More archive results..."
+msgstr "Több eredmény-archívum..."
+
+#: ../search/Tiles/Utils.cs:170
+#, csharp-format
+msgid "{0} week ago"
+msgid_plural "{0} weeks ago"
+msgstr[0] "{0} héttel ezelőtt"
+msgstr[1] "{0} héttel ezelőtt"
+
+#. Lets say a year and a half to stop saying months
+#: ../search/Tiles/Utils.cs:172
+#, csharp-format
+msgid "{0} month ago"
+msgid_plural "{0} months ago"
+msgstr[0] "{0} hónappal ezelőtt"
+msgstr[1] "{0} hónappal ezelőtt"
+
+#: ../search/Tiles/Utils.cs:174
+#, csharp-format
+msgid "{0} year ago"
+msgid_plural "{0} years ago"
+msgstr[0] "{0} évvel ezelőtt"
+msgstr[1] "{0} évvel ezelőtt"
+
+#: ../search/Tiles/Video.cs:33
+msgid "Unknown duration"
+msgstr "Ismeretlen időtartam"
+
+#: ../search/Tray/TrayIcon.cs:32
+msgid "Desktop Search"
+msgstr "Asztali keresés"
+
+#: ../search/Tray/TrayIcon.cs:57
+msgid "No Recent Searches"
+msgstr "Nincsenek új keresések"
+
+#: ../search/Tray/TrayIcon.cs:62
+msgid "Recent Searches"
+msgstr "Legutóbbi keresések"
+
+#: ../search/Tray/TrayIcon.cs:78
+msgid "Clear"
+msgstr "Törlés"
+
+#: ../search/Tray/TrayIcon.cs:86
+msgid "Quit"
+msgstr "Kilépés"
+
+#. Translators: the strings in TypeFilter.cs are for when the user
+#. * wants to limit search results to a specific type. You don't need
+#. * to give an exact translation of the exact same set of English
+#. * words. Just provide a list of likely words the user might use
+#. * after the "type:" keyword to refer to each type of match.
+#.
+#: ../search/TypeFilter.cs:36
+msgid ""
+"file\n"
+"files"
+msgstr ""
+"fájl\n"
+"fájlok"
+
+#: ../search/TypeFilter.cs:37
+msgid ""
+"mail\n"
+"email\n"
+"e-mail"
+msgstr ""
+"levél\n"
+"e-mail\n"
+"email"
+
+#: ../search/TypeFilter.cs:38
+msgid ""
+"im\n"
+"ims\n"
+"instant message\n"
+"instant messages\n"
+"instant-message\n"
+"instant-messages\n"
+"chat\n"
+"chats"
+msgstr ""
+"azonnali üzenet\n"
+"azonnali üzenetek\n"
+"üzenet\n"
+"üzenetek\n"
+"chat\n"
+"csevegés"
+
+#: ../search/TypeFilter.cs:39
+msgid ""
+"presentation\n"
+"presentations\n"
+"slideshow\n"
+"slideshows\n"
+"slide\n"
+"slides"
+msgstr ""
+"prezentáció\n"
+"prezentációk\n"
+"diavetítés\n"
+"diavetítések\n"
+"fólia\n"
+"fóliák\n"
+"slide"
+
+#: ../search/TypeFilter.cs:41
+msgid ""
+"application\n"
+"applications\n"
+"app\n"
+"apps"
+msgstr ""
+"alkalmazás\n"
+"alkalmazások\n"
+"program\n"
+"programok"
+
+#: ../search/TypeFilter.cs:42
+msgid ""
+"contact\n"
+"contacts\n"
+"vcard\n"
+"vcards"
+msgstr ""
+"névjegy\n"
+"névjegyek\n"
+"vcard"
+
+#: ../search/TypeFilter.cs:43
+msgid ""
+"folder\n"
+"folders"
+msgstr ""
+"mappa\n"
+"mappák\n"
+"könyvtár\n"
+"könyvtárak"
+
+#: ../search/TypeFilter.cs:44
+msgid ""
+"image\n"
+"images\n"
+"img"
+msgstr ""
+"kép\n"
+"képek"
+
+#: ../search/TypeFilter.cs:45
+msgid "audio"
+msgstr "hang"
+
+#: ../search/TypeFilter.cs:46
+msgid "video"
+msgstr "videó"
+
+#: ../search/TypeFilter.cs:47
+msgid "media"
+msgstr "média"
+
+#: ../search/TypeFilter.cs:48
+msgid ""
+"document\n"
+"documents\n"
+"office document\n"
+"office documents"
+msgstr ""
+"dokumentum\n"
+"dokumentumok\n"
+"irodai dokumentum\n"
+"irodai dokumentumok"
+
+#: ../search/TypeFilter.cs:49
+msgid ""
+"conversation\n"
+"conversations"
+msgstr ""
+"társalgás\n"
+"társalgások\n"
+"csevegés\n"
+"csevegések\n"
+"beszélgetés\n"
+"beszélgetések"
+
+#: ../search/TypeFilter.cs:50
+msgid ""
+"web\n"
+"www\n"
+"website\n"
+"websites"
+msgstr ""
+"web\n"
+"www\n"
+"weboldal\n"
+"weboldalak\n"
+"webhely\n"
+"webhelyek\n"
+"weblap\n"
+"weblapok"
+
+#: ../search/TypeFilter.cs:51
+msgid ""
+"feed\n"
+"news\n"
+"blog\n"
+"rss"
+msgstr ""
+"hírfolyam\n"
+"hírek\n"
+"news\n"
+"blog\n"
+"rss"
+
+#: ../search/TypeFilter.cs:52
+msgid ""
+"archive\n"
+"archives"
+msgstr ""
+"archívum\n"
+"archívumok\n"
+"tömörített fájl\n"
+"tömörített fájlok"
+
+#: ../search/TypeFilter.cs:53
+msgid ""
+"person\n"
+"people"
+msgstr ""
+"személy\n"
+"személyek\n"
+"ember\n"
+"emberek"
+
+#: ../search/UIManager.cs:32
+msgid "_Search"
+msgstr "_Keresés"
+
+#: ../search/UIManager.cs:35
+msgid "_Actions"
+msgstr "_Műveletek"
+
+#: ../search/UIManager.cs:38
+msgid "Sor_t"
+msgstr "_Rendezés"
+
+#: ../search/UIManager.cs:41
+msgid "_Help"
+msgstr "_Súgó"
+
+#: ../search/UIManager.cs:46 ../search/UIManager.cs:50
+msgid "Exit Desktop Search"
+msgstr "Kilépés az asztali keresőből"
+
+#: ../search/UIManager.cs:53
+msgid "_Contents"
+msgstr "_Tartalom"
+
+#: ../search/UIManager.cs:55
+msgid "Help - Table of Contents"
+msgstr "Súgó - Tartalom"
+
+#: ../search/UIManager.cs:59
+msgid "About Desktop Search"
+msgstr "Az Asztali kereső névjegye"
+
+#: ../search/UIManager.cs:72
+msgid "_Everywhere"
+msgstr "_Mindenütt"
+
+#: ../search/UIManager.cs:74
+msgid "Search everywhere"
+msgstr "Keresés mindenütt"
+
+#: ../search/UIManager.cs:77
+msgid "_Applications"
+msgstr "_Alkalmazások"
+
+#: ../search/UIManager.cs:79
+msgid "Search applications"
+msgstr "Alkalmazások keresése"
+
+#: ../search/UIManager.cs:82
+msgid "_Contacts"
+msgstr "_Névjegyek"
+
+#: ../search/UIManager.cs:84
+msgid "Search contacts"
+msgstr "Névjegyek keresése"
+
+#: ../search/UIManager.cs:87
+msgid "_Documents"
+msgstr "_Dokumentumok"
+
+#: ../search/UIManager.cs:89
+msgid "Search documents"
+msgstr "Dokumentumok keresése"
+
+#: ../search/UIManager.cs:92
+msgid "Conve_rsations"
+msgstr "_Társalgások"
+
+#: ../search/UIManager.cs:94
+msgid "Search E-Mail and Instant Messaging logs"
+msgstr "E-mailek és azonnaliüzenő-naplók keresése"
+
+#: ../search/UIManager.cs:97
+msgid "Images"
+msgstr "Képek"
+
+#: ../search/UIManager.cs:99
+msgid "Search images"
+msgstr "Képek keresése"
+
+#: ../search/UIManager.cs:102
+msgid "Media"
+msgstr "Média"
+
+#: ../search/UIManager.cs:104
+msgid "Search sound and video files"
+msgstr "Hang- és videofájlok keresése"
+
+#: ../search/UIManager.cs:111
+msgid "_Relevance"
+msgstr "_Fontosság"
+
+#: ../search/UIManager.cs:112
+msgid "Sort the best matches first"
+msgstr "A pontosabb találatok előre"
+
+#: ../search/UIManager.cs:115
+msgid "_Name"
+msgstr "_Név"
+
+#: ../search/UIManager.cs:116
+msgid "Sort matches by name"
+msgstr "Találatok rendezése név szerint"
+
+#: ../search/UIManager.cs:119
+msgid "Date _Modified"
+msgstr "Módosítás _dátuma"
+
+#: ../search/UIManager.cs:120
+msgid "Sort the most-recently-modified matches first"
+msgstr "A legutóbb módosított találatok előre"
 
 #: ../tools/Settings.cs:217
 msgid "Reload configuration"
@@ -495,8 +727,7 @@ msgid "Remove public path"
 msgstr "Nyilvános útvonal eltávolítása"
 
 #: ../tools/Settings.cs:497
-msgid ""
-"Are you sure you wish to remove this entry from the list of public paths?"
+msgid "Are you sure you wish to remove this entry from the list of public paths?"
 msgstr ""
 "Biztosan el akarja távolítani ezt a bejegyzést a nyilvános útvonalak "
 "listájából?"
@@ -636,7 +867,7 @@ msgstr "Indexelés"
 
 #: ../tools/settings.glade.h:23
 msgid "Maximum number of results displayed "
-msgstr "A megjelenített eredmények maximális száma "
+msgstr "A megjelenített eredmények maximális száma"
 
 #: ../tools/settings.glade.h:24
 msgid "Networking"
@@ -644,14 +875,11 @@ msgstr "Hálózat"
 
 #: ../tools/settings.glade.h:26
 msgid "Please select a resource you wish to exclude from indexing."
-msgstr ""
-"Kérem válassza ki az erőforrást, amit ki szeretne hagyni az indexelésből."
+msgstr "Kérem válassza ki az indexelésből kihagyandó erőforrást."
 
 #: ../tools/settings.glade.h:27
 msgid "Please select the mail folder you wish to exclude from indexing. "
-msgstr ""
-"Kérem válassza ki a levélkönyvtárat, amit ki szeretne hagyni az "
-"indexelésből. "
+msgstr "Kérem válassza ki az indexelésből kihagyandó levélkönyvtárat."
 
 #: ../tools/settings.glade.h:28
 msgid "Search"
@@ -675,7 +903,7 @@ msgstr "Adja meg a külső hozzáférés számára elérhető útvonalakat"
 
 #: ../tools/settings.glade.h:32
 msgid "Start search & indexing services automatically "
-msgstr "Keresési és indexelési szolgáltatások automatikus indítása "
+msgstr "Kereső- és indexelőszolgáltatások automatikus"
 
 #: ../tools/beagle-settings.desktop.in.h:1
 msgid "Configure Desktop Search & Indexing"
@@ -805,3 +1033,4 @@ msgstr "{0:0.0} KB"
 #, csharp-format
 msgid "{0:0.0} MB"
 msgstr "{0:0.0} MB"
+
