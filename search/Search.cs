@@ -124,6 +124,7 @@ namespace Search {
 			UIManager uim = new UIManager (this);
 			uim.ScopeChanged += OnScopeChanged;
 			uim.SortChanged += OnSortChanged;
+			uim.ShowQuickTips += OnShowQuickTips;
 			vbox.PackStart (uim.MenuBar, false, false, 0);
 			
 			HBox hbox = new HBox (false, 0);
@@ -192,8 +193,9 @@ namespace Search {
 				tray = new TrayIcon ();
 				tray.Clicked += OnTrayActivated;
 				tray.Search += OnTraySearch;
-			} else
+			} else {
 				ShowAll ();
+			}
 		}
 
 		Gtk.Widget oldFocus;
@@ -281,6 +283,11 @@ namespace Search {
 		private void OnSortChanged (Search.SortType newSort)
 		{
 			view.Sort = sort = newSort;
+		}
+
+		private void OnShowQuickTips ()
+		{
+			pages.CurrentPage = pages.PageNum (quicktips);
 		}
 
 		private void ShowInformation (Tiles.Tile tile)

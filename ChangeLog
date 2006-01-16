@@ -1,3 +1,12 @@
+2006-01-16  Lukas Lipka  <lukas@pmad.net>
+
+	* search/UIManager.cs: Make the quick tips and help menu options work.
+
+	* search/Search.cs: Implement quick tips option.
+
+	* search/Tiles/MailMessage.cs: Files type of message/rfc882 should
+	appear in mail message category.
+
 2006-01-14  Debajyoti Bera <dbera.web@gmail.com>
 
 	* libbeagle/.../beagle-property.c: Fixed a crash when trying to find

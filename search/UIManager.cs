@@ -177,8 +177,13 @@ namespace Search {
 			}
 		}
 
+		public delegate void ShowQuickTipsDelegate ();
+		public event ShowQuickTipsDelegate ShowQuickTips;
+
 		private void QuickTips (object obj, EventArgs args)
 		{
+			if (ShowQuickTips != null)
+				ShowQuickTips ();
 		}
 
 		private void Quit (object obj, EventArgs args)
@@ -188,7 +193,7 @@ namespace Search {
 
 		private void Help (object obj, EventArgs args)
 		{
-			Console.WriteLine ("Help!\n");
+			Gnome.Url.Show ("http://www.beagle-project.org/Getting_Started");
 		}
 
 		private void About (object obj, EventArgs args)

@@ -9,6 +9,7 @@ namespace Search.Tiles {
 		public MailMessageActivator () : base ()
 		{
 			AddSupportedFlavor (new HitFlavor (null, "MailMessage", null));
+			AddSupportedFlavor (new HitFlavor (null, "File", "message/rfc822"));
 		}
 
 		public override Tile BuildTile (Beagle.Hit hit, Beagle.Query query)
