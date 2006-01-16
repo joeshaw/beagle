@@ -52,7 +52,7 @@ namespace Search.Tiles {
 			// should we scale them manually?
 			Icon = LookupIcon (Hit);
 
-			AddAction (new TileAction ("Move to trash", Gtk.Stock.Delete, MoveToTrash));
+			AddAction (new TileAction (Catalog.GetString ("Move to trash"), Gtk.Stock.Delete, MoveToTrash));
 		}
 
 		private static Gdk.Pixbuf LookupIcon (Beagle.Hit hit)

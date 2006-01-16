@@ -75,7 +75,8 @@ namespace Search.Tiles {
 
 		const Gtk.AttachOptions expand = Gtk.AttachOptions.Expand | Gtk.AttachOptions.Fill;
 		const Gtk.AttachOptions fill = Gtk.AttachOptions.Fill;
-		private Gtk.Label snippetLabel;
+
+		private Gtk.Label snippet_label;
 		private string snippet;
 		private bool found_snippet;
 		
@@ -98,10 +99,10 @@ namespace Search.Tiles {
 			Gtk.Image icon = new Gtk.Image (WidgetFu.LoadThemeIcon ("im", 48));
 			table.Attach (icon, 0, 1, 2, 3, fill, fill, 0, 0);
 			
-			snippetLabel = WidgetFu.NewLabel ();
-			snippetLabel.Markup = snippet;
-			WidgetFu.EllipsizeLabel (snippetLabel);
-			table.Attach (snippetLabel, 1, 4, 2, 3, expand, expand, 48, 0);
+			snippet_label = WidgetFu.NewLabel ();
+			snippet_label.Markup = snippet;
+			WidgetFu.EllipsizeLabel (snippet_label);
+			table.Attach (snippet_label, 1, 4, 2, 3, expand, expand, 48, 0);
 
 			if (! found_snippet)
 				RequestSnippet ();
@@ -114,10 +115,9 @@ namespace Search.Tiles {
 
 		protected override void GotSnippet (string snippet, bool found)
 		{
-			found_snippet = found;
 			this.snippet = snippet;
 			subject.Markup = snippet;
-			snippetLabel.Markup = snippet;
+			snippet_label.Markup = snippet;			
 		}
 
 		public override void Open ()

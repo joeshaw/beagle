@@ -35,8 +35,8 @@ namespace Search.Tiles {
 
 			Description += String.Format (" ({0})", BU.StringFu.FileLengthToString (Hit.FileInfo.Length));
 
-			AddAction (new TileAction ("Add to Library", Gtk.Stock.Add, AddToLibrary));
-			AddAction (new TileAction ("Set as Wallpaper", SetAsWallpaper)); // FIXME: This is not in the spec, is it ok?
+			AddAction (new TileAction (Catalog.GetString ("Add to Library"), Gtk.Stock.Add, AddToLibrary));
+			AddAction (new TileAction (Catalog.GetString ("Set as Wallpaper"), SetAsWallpaper)); // FIXME: This is not in the spec, is it ok?
 		}
 
 		public static Gdk.Pixbuf GetIcon (Beagle.Hit hit, int size)

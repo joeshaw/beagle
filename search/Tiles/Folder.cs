@@ -32,10 +32,10 @@ namespace Search.Tiles {
 			else
 				Description = String.Format (Catalog.GetPluralString ("Contains {0} Item", "Contains {0} Items", n), n);
 
-			AddAction (new TileAction ("Open With", OpenWith));
+			AddAction (new TileAction (Catalog.GetString ("Open With"), OpenWith));
 			// FIXME: s/"gtk-info"/Gtk.Stock.Info/ when we can depend on gtk# 2.8
-			AddAction (new TileAction ("Show Information", "gtk-info", ShowInformation));
-			AddAction (new TileAction ("Move to Trash", Gtk.Stock.Delete, MoveToTrash));
+			AddAction (new TileAction (Catalog.GetString ("Show Information"), "gtk-info", ShowInformation));
+			AddAction (new TileAction (Catalog.GetString ("Move to Trash"), Gtk.Stock.Delete, MoveToTrash));
 		}
 
 		const Gtk.AttachOptions expand = Gtk.AttachOptions.Expand | Gtk.AttachOptions.Fill;

@@ -28,49 +28,30 @@ namespace Search.Tiles {
 
 			Icon = GetIcon (Hit, 16);
 
-			subject = WidgetFu.NewLabel (GetHitProperty (Hit, "dc:title"));
-			WidgetFu.EllipsizeLabel (subject, 40);
+			subject = WidgetFu.NewLabel (hit.GetFirstProperty ("dc:title"));
+			WidgetFu.EllipsizeLabel (subject);
 			HBox.PackStart (subject, true, true, 3);
 
-			// FIXME: handle to/from
-			from = WidgetFu.NewBoldLabel (From (hit));
+			from = WidgetFu.NewBoldLabel (GetAddress (hit));
 			from.UseMarkup = true;
 			WidgetFu.EllipsizeLabel (from, 20);
 			HBox.PackStart (from, false, false, 3);
 
-			date = WidgetFu.NewLabel (Utils.NiceShortDate (GetHitProperty (Hit, "fixme:date")));
+			date = WidgetFu.NewLabel (Utils.NiceShortDate (hit.GetFirstProperty ("fixme:date")));
 			HBox.PackStart (date, false, false, 3);
 
 			HBox.ShowAll ();
-		}
 
-		// FIXME: This needs better handling in the daemon, attachments
-		// architecture sucks
-		private static bool IsAttachment (Beagle.Hit hit)
-		{
-			// check if there is parent and parent has attachments
-			string str = hit ["parent:fixme:hasAttachments"];
-			return (hit.ParentUri != null && str != null && (str == "true"));
-		}
-		
-		private static string GetHitProperty (Beagle.Hit hit, string name)
-		{
-			// FIXME: We should handle this case better, but
-			// for now, if we match an attachment, we just want
-			// to display the properties for the parent message.
-			if (!IsAttachment (hit))
-				return hit [name];
-			else
-				return hit ["parent:" + name];
+			//AddAction (new TileAction (Catalog.GetString ("Send in Mail"), SendInMail));
 		}
 
 		private static Gdk.Pixbuf GetIcon (Beagle.Hit hit, int size)
 		{
 			Gdk.Pixbuf icon;
 			
-			if (GetHitProperty (hit, "fixme:isAnswered") != null)
+			if (hit.GetFirstProperty ("fixme:isAnswered") != null)
 				icon = WidgetFu.LoadThemeIcon ("stock_mail-replied", size);
-			else if (GetHitProperty (hit, "fixme:isSeen") != null)
+			else if (hit.GetFirstProperty ("fixme:isSeen") != null)
 				icon = WidgetFu.LoadThemeIcon ("stock_mail-open", size);
 			else
 				icon = WidgetFu.LoadThemeIcon ("stock_mail", size);
@@ -78,14 +59,17 @@ namespace Search.Tiles {
 			return icon;
 		}
 
-		static string From (Beagle.Hit hit)
+		private static string GetAddress (Beagle.Hit hit)
 		{
-			string from = hit.GetFirstProperty ("fixme:from");
-			if (from == null)
+			bool sent = (hit.GetFirstProperty ("fixme:isSent") != null);
+			string address = sent ? hit.GetFirstProperty ("fixme:to") : hit.GetFirstProperty ("fixme:from");
+
+			if (address == null)
 				return "";
-			if (from.IndexOf (" <") != -1)
-				from = from.Substring (0, from.IndexOf (" <"));
-			return from;
+			if (address.IndexOf (" <") != -1)
+				address = address.Substring (0, address.IndexOf (" <"));
+
+			return address;
 		}
 
 		public Gtk.Label SubjectLabel {
@@ -120,7 +104,7 @@ namespace Search.Tiles {
 			table.Attach (label, 1, 2, 0, 1, expand, fill, 0, 0);
 			label = WidgetFu.NewGrayLabel (Catalog.GetString ("From:"));
 			table.Attach (label, 0, 1, 1, 2, fill, fill, 0, 0);
-			label = WidgetFu.NewBoldLabel (From (Hit));
+			label = WidgetFu.NewBoldLabel (GetAddress (Hit));
 			WidgetFu.EllipsizeLabel (label);
 			table.Attach (label, 1, 2, 1, 2, expand, fill, 0, 0);
 			label = WidgetFu.NewGrayLabel (Catalog.GetString ("Date Received:"));
@@ -156,7 +140,7 @@ namespace Search.Tiles {
 		{
 			string uri_str;
 
-			if (GetHitProperty (Hit, "fixme:client") != "evolution") {
+			if (Hit.GetFirstProperty ("fixme:client") != "evolution") {
 				OpenFromMime (Hit);
 				return;
 			}
@@ -176,6 +160,21 @@ namespace Search.Tiles {
 				p.Start ();
 			} catch (System.ComponentModel.Win32Exception e) {
 				Console.WriteLine ("Unable to run {0}: {1}", p.StartInfo.FileName, e.Message);
+			}
+		}
+
+		public void SendInMail ()
+		{
+			// FIXME: This doesnt work, check back with evo guys.
+			Process p = new Process ();
+			p.StartInfo.UseShellExecute = false;
+			p.StartInfo.FileName = "evolution";
+			p.StartInfo.Arguments = String.Format ("\"mailto:?attach={0}\"", Hit.Uri);
+
+			try {
+				p.Start () ;
+			} catch (Exception e) {
+				Console.WriteLine ("Error launching Evolution composer: " + e);
 			}
 		}
 	}

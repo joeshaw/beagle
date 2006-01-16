@@ -32,11 +32,11 @@ namespace Search.Tiles {
 			if (Hit.FileInfo != null)
 				Description = Utils.NiceShortDate (Hit.FileInfo.LastWriteTime);
 
-			AddAction (new TileAction ("Open With", OpenWith));
-			AddAction (new TileAction ("Reveal in Folder", RevealInFolder));
-			AddAction (new TileAction ("E-Mail", Email));
-			AddAction (new TileAction ("Instant-Message", InstantMessage));
-			AddAction (new TileAction ("Move to Trash", Gtk.Stock.Delete, MoveToTrash));
+			AddAction (new TileAction (Catalog.GetString ("Open With"), OpenWith));
+			AddAction (new TileAction (Catalog.GetString ("Reveal in Folder"), RevealInFolder));
+			AddAction (new TileAction (Catalog.GetString ("E-Mail"), Email));
+			AddAction (new TileAction (Catalog.GetString ("Instant-Message"), InstantMessage));
+			AddAction (new TileAction (Catalog.GetString ("Move to Trash"), Gtk.Stock.Delete, MoveToTrash));
 		}
 
 		public override void Open ()
