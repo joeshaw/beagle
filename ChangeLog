@@ -1,5 +1,9 @@
 2006-01-16  Lukas Lipka  <lukas@pmad.net>
 
+	* search/Tiles/MailMessage.cs: Add forward in mail action.
+
+2006-01-16  Lukas Lipka  <lukas@pmad.net>
+
 	* search/Tiles/*: Make all the actions translatable.
 
 	* search/Tiles/MailMessage.cs: Fix To/From stuff. Remove obsolete

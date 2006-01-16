@@ -42,7 +42,7 @@ namespace Search.Tiles {
 
 			HBox.ShowAll ();
 
-			//AddAction (new TileAction (Catalog.GetString ("Send in Mail"), SendInMail));
+			AddAction (new TileAction (Catalog.GetString ("Send in Mail"), SendInMail));
 		}
 
 		private static Gdk.Pixbuf GetIcon (Beagle.Hit hit, int size)
@@ -165,11 +165,13 @@ namespace Search.Tiles {
 
 		public void SendInMail ()
 		{
-			// FIXME: This doesnt work, check back with evo guys.
+			if (Hit.GetFirstProperty ("fixme:client") != "evolution")
+				return;
+			
 			Process p = new Process ();
 			p.StartInfo.UseShellExecute = false;
 			p.StartInfo.FileName = "evolution";
-			p.StartInfo.Arguments = String.Format ("\"mailto:?attach={0}\"", Hit.Uri);
+			p.StartInfo.Arguments = String.Format ("\"{0};forward=attached\"", Hit.Uri);
 
 			try {
 				p.Start () ;
