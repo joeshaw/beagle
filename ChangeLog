@@ -1,5 +1,10 @@
 2006-01-16  Lukas Lipka  <lukas@pmad.net>
 
+	* search/beagle-search.desktop.in (Exec): Reference beagle-search
+	not just search. Spotted by James Ogley.
+
+2006-01-16  Lukas Lipka  <lukas@pmad.net>
+
 	* search/Tiles/MailMessage.cs: Add forward in mail action.
 
 2006-01-16  Lukas Lipka  <lukas@pmad.net>
