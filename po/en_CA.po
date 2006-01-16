@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: beagle\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2006-01-15 23:43-0500\n"
+"POT-Creation-Date: 2006-01-16 11:53-0500\n"
 "PO-Revision-Date: 2005-08-19 13:55-0400\n"
 "Last-Translator: Adam Weinberger <adamw@gnome.org>\n"
 "Language-Team: Canadian English <adamw@gnome.org>\n"
@@ -148,15 +148,19 @@ msgid_plural "Contains {0} Items"
 msgstr[0] "Contains {0} Item"
 msgstr[1] "Contains {0} Items"
 
-#: ../search/Tiles/Folder.cs:62 ../search/Tiles/Image.cs:79
+#: ../search/Tiles/Folder.cs:62
 msgid "Edited:"
 msgstr "Edited:"
+
+#: ../search/Tiles/Image.cs:79
+msgid "Modified:"
+msgstr "Modified:"
 
 #: ../search/Tiles/IMLog.cs:88
 msgid "Name:"
 msgstr "Name:"
 
-#: ../search/Tiles/IMLog.cs:93 ../search/Tiles/MailMessage.cs:125
+#: ../search/Tiles/IMLog.cs:93 ../search/Tiles/MailMessage.cs:126
 msgid "Date Received:"
 msgstr "Date Received:"
 
@@ -164,11 +168,11 @@ msgstr "Date Received:"
 msgid "Mail attachment"
 msgstr "Mail attachment"
 
-#: ../search/Tiles/MailMessage.cs:115
+#: ../search/Tiles/MailMessage.cs:116
 msgid "Subject:"
 msgstr "Subject:"
 
-#: ../search/Tiles/MailMessage.cs:120
+#: ../search/Tiles/MailMessage.cs:121
 msgid "From:"
 msgstr "From:"
 
@@ -423,10 +427,11 @@ msgstr ""
 
 #: ../search/TypeFilter.cs:43
 msgid ""
-"directories\n"
 "folder\n"
 "folders"
 msgstr ""
+"directory\n"
+"directories\n"
 "folder\n"
 "folders"
 
