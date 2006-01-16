@@ -1,5 +1,12 @@
 2006-01-16  Lukas Lipka  <lukas@pmad.net>
 
+	* search/Tiles/*: Make all the actions translatable.
+
+	* search/Tiles/MailMessage.cs: Fix To/From stuff. Remove obsolete
+	attachment stuff.
+
+2006-01-16  Lukas Lipka  <lukas@pmad.net>
+
 	* search/Tiles/File.cs: Make the snippet label use all available space.
 
 	* search/Tiles/Image.cs: Show the f-spot comment if it is available.
