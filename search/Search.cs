@@ -93,24 +93,23 @@ namespace Search {
 		public static void PrintUsageAndExit ()
 		{
 			string usage =
-				"search: GUI interface to the Beagle search system.\n" +
+				"beagle-search: GUI interface to the Beagle search system.\n" +
 				"Web page: http://www.beagle-project.org/\n" +
 				"Copyright (C) 2005-2006 Novell, Inc.\n\n";
 
 			usage +=
-				"Usage: search [OPTIONS] [<query string>]\n\n" +
+				"Usage: beagle-search [OPTIONS] [<query string>]\n\n" +
 				"Options:\n" +
 				"  --help\t\t\tPrint this usage message.\n" +
 				"  --icon\t\t\tAdd an icon to the notification area rather than opening a search window.\n";
 
 			Console.WriteLine (usage);
-
 			System.Environment.Exit (0);
 		}
 
 		public MainWindow () : base (WindowType.Toplevel)
 		{
-			Title = "Search";
+			Title = "Desktop Search";
 			Icon = Beagle.Images.GetPixbuf ("system-search.png");
 
 			BorderWidth = 3;
@@ -129,7 +128,7 @@ namespace Search {
 			
 			HBox hbox = new HBox (false, 0);
 
-			Label label = new Label ("_Search:");
+			Label label = new Label ("_Find:");
 			hbox.PackStart (label, false, false, 6);
 			
 			entry = new Entry ();
@@ -200,6 +199,11 @@ namespace Search {
 
 		Gtk.Widget oldFocus;
 
+		private void SetWindowTitle (string query)
+		{
+			Title = String.Format ("Desktop Search: {0}", query);
+		}
+
 		private void Search ()
 		{
 			if (timeout != 0) {
@@ -210,6 +214,8 @@ namespace Search {
 			string query = queryText = entry.Text;
 			if (query == null || query == "")
 				return;
+
+			SetWindowTitle (query);
 
 			if (tray != null) {
 				tray.AddSearch (query);

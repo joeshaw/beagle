@@ -1,5 +1,14 @@
 2006-01-16  Lukas Lipka  <lukas@pmad.net>
 
+	* search/Tiles/File.cs: Make the snippet label use all available space.
+
+	* search/Tiles/Image.cs: Show the f-spot comment if it is available.
+
+	* search/Search.cs: More spec-ing; update the window title according
+	to the search.
+
+2006-01-16  Lukas Lipka  <lukas@pmad.net>
+
 	* search/UIManager.cs: Make the quick tips and help menu options work.
 
 	* search/Search.cs: Implement quick tips option.

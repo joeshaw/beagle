@@ -137,7 +137,7 @@ namespace Search.Tiles {
 			label = WidgetFu.NewGrayLabel (Catalog.GetString ("Last Edited:"));
 			table.Attach (label, 0, 1, 1, 2, fill, fill, 0, 0);
 
-			label = WidgetFu.NewBoldLabel (Utils.NiceLongDate (Hit.Timestamp));
+			label = WidgetFu.NewLabel (Utils.NiceLongDate (Hit.Timestamp));
 			table.Attach (label, 1, 2, 1, 2, expand, fill, 0, 0);
 
 			if (Hit ["dc:author"] != null) {
@@ -152,10 +152,10 @@ namespace Search.Tiles {
 			table.Attach (icon, 0, 1, 2, 3, fill, fill, 0, 0);
 			
 			snippet_label = WidgetFu.NewLabel (snippet);
-			WidgetFu.EllipsizeLabel (snippet_label, 70);
+			WidgetFu.EllipsizeLabel (snippet_label);
 			table.Attach (snippet_label, 1, 4, 2, 3, expand, expand, 48, 0);
 
-			if (!found_snippet)
+			if (! found_snippet)
 				RequestSnippet ();
 
 			table.WidthRequest = 0;
