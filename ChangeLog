@@ -1,3 +1,8 @@
+2006-01-17  Lukas Lipka  <lukas@pmad.net>
+
+	* search/Pages/StartDaemon.cs: Add a timeout after daemon start after
+	which the query is fired.
+
 2006-01-16  Lukas Lipka  <lukas@pmad.net>
 
 	* search/beagle-search.desktop.in (Exec): Reference beagle-search

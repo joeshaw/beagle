@@ -1,5 +1,6 @@
 using System;
 using System.Diagnostics;
+using Mono.Posix;
 using Gtk;
 
 namespace Search.Pages {
@@ -10,12 +11,14 @@ namespace Search.Pages {
 
 		public DaemonStarted DaemonStarted;
 
+		private Gtk.Button button;
+
 		public StartDaemon ()
 		{
 			HeaderIconStock = Stock.DialogError;
-			HeaderMarkup = "<big><b>Daemon not running</b></big>";
+			HeaderMarkup = "<big><b>" + Catalog.GetString ("Daemon not running") + "</b></big>";
 
-			Gtk.Button button = new Gtk.Button ("Start the daemon");
+			button = new Gtk.Button (Catalog.GetString ("Start the daemon"));
 			button.Clicked += OnStartDaemon;
 			button.Show ();
 			Append (button);
@@ -23,23 +26,8 @@ namespace Search.Pages {
 
 		private void OnStartDaemon (object o, EventArgs args)
 		{
-			// If we're running uninstalled (in the source tree), then run
-			// the uninstalled daemon.  Otherwise run the installed daemon.
-			
-			// FIXME: Uncomment the stuff below when we move to the beagle tree.
-			//string bestpath = System.Environment.GetCommandLineArgs () [0];
-			//string bestdir = System.IO.Path.GetDirectoryName (bestpath);
 			string beagled_filename = "beagled";
 
-			//if (bestdir.EndsWith ("lib/search") || bestdir.EndsWith ("lib64/search")) {
-			//	Console.WriteLine ("Running installed daemon...");
-			//	beagled_filename = "beagled"; // Running installed
-			//} else {
-			//	Console.WriteLine ("Running uninstalled daemon...");
-			//	beagled_filename = System.IO.Path.Combine (bestdir, "../beagled/beagled");
-			//}
-				
-			
 			Process daemon = new Process ();
 			daemon.StartInfo.FileName  = beagled_filename;
 			daemon.StartInfo.UseShellExecute = false;
@@ -50,8 +38,15 @@ namespace Search.Pages {
 				Console.WriteLine ("Unable to start daemon: {0}", e.Message);
 			}
 			
+			// Give the daemon some time to start
 			if (DaemonStarted != null)
-				DaemonStarted ();
+				GLib.Timeout.Add (5000, DaemonStartedTimeout);
+		}
+
+		private bool DaemonStartedTimeout ()
+		{
+			DaemonStarted ();
+			return false;
 		}
 	}
 }
