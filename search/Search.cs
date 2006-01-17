@@ -3,6 +3,7 @@ using System.Collections;
 
 using Gtk;
 using Beagle;
+using Beagle.Util;
 using Mono.Unix;
 
 using Search.Tiles;
@@ -35,6 +36,8 @@ namespace Search {
 
 		public static void Main (string [] args)
 		{
+			Catalog.Init ("beagle", ExternalStringsHack.LocaleDir);
+
 			string query = ParseArgs (args);
 
 			Gnome.Program program = new Gnome.Program ("search", "0.0",
