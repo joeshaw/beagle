@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: beagle\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2006-01-16 11:53-0500\n"
+"POT-Creation-Date: 2006-01-17 19:58-0500\n"
 "PO-Revision-Date: 2005-08-19 13:55-0400\n"
 "Last-Translator: Adam Weinberger <adamw@gnome.org>\n"
 "Language-Team: Canadian English <adamw@gnome.org>\n"
@@ -113,17 +113,53 @@ msgstr ""
 msgid "Quick Tips"
 msgstr "Quick Tips"
 
-#: ../search/Search.cs:145
+#: ../search/Pages/StartDaemon.cs:19
+msgid "Daemon not running"
+msgstr "Daemon not running"
+
+#: ../search/Pages/StartDaemon.cs:21
+msgid "Start the daemon"
+msgstr "Start the daemon"
+
+#: ../search/Search.cs:148
 msgid "Find Now"
 msgstr "Find Now"
 
-#: ../search/Search.cs:185
+#: ../search/Search.cs:188
 msgid "Type in search terms"
 msgstr "Type in search terms"
 
-#: ../search/Search.cs:186
+#: ../search/Search.cs:189
 msgid "Start searching"
 msgstr "Start searching"
+
+#: ../search/Tiles/Application.cs:55
+msgid "Move to trash"
+msgstr "Move to trash"
+
+#: ../search/Tiles/Audio.cs:37 ../search/Tiles/Image.cs:38
+msgid "Add to Library"
+msgstr "Add to Library"
+
+#: ../search/Tiles/File.cs:35 ../search/Tiles/Folder.cs:35
+msgid "Open With"
+msgstr "Open With"
+
+#: ../search/Tiles/File.cs:36
+msgid "Reveal in Folder"
+msgstr "Reveal in Folder"
+
+#: ../search/Tiles/File.cs:37
+msgid "E-Mail"
+msgstr "E-Mail"
+
+#: ../search/Tiles/File.cs:38
+msgid "Instant-Message"
+msgstr "Instant-Message"
+
+#: ../search/Tiles/File.cs:39 ../search/Tiles/Folder.cs:38
+msgid "Move to Trash"
+msgstr "Move to Trash"
 
 #: ../search/Tiles/File.cs:127 ../search/Tiles/RSSFeed.cs:50
 msgid "Title:"
@@ -148,19 +184,28 @@ msgid_plural "Contains {0} Items"
 msgstr[0] "Contains {0} Item"
 msgstr[1] "Contains {0} Items"
 
+#. FIXME: s/"gtk-info"/Gtk.Stock.Info/ when we can depend on gtk# 2.8
+#: ../search/Tiles/Folder.cs:37
+msgid "Show Information"
+msgstr "Show Information"
+
 #: ../search/Tiles/Folder.cs:62
 msgid "Edited:"
 msgstr "Edited:"
+
+#: ../search/Tiles/Image.cs:39
+msgid "Set as Wallpaper"
+msgstr "Set as Wallpaper"
 
 #: ../search/Tiles/Image.cs:79
 msgid "Modified:"
 msgstr "Modified:"
 
-#: ../search/Tiles/IMLog.cs:88
+#: ../search/Tiles/IMLog.cs:89
 msgid "Name:"
 msgstr "Name:"
 
-#: ../search/Tiles/IMLog.cs:93 ../search/Tiles/MailMessage.cs:126
+#: ../search/Tiles/IMLog.cs:94 ../search/Tiles/MailMessage.cs:110
 msgid "Date Received:"
 msgstr "Date Received:"
 
@@ -168,11 +213,15 @@ msgstr "Date Received:"
 msgid "Mail attachment"
 msgstr "Mail attachment"
 
-#: ../search/Tiles/MailMessage.cs:116
+#: ../search/Tiles/MailMessage.cs:45
+msgid "Send in Mail"
+msgstr "Send in Mail"
+
+#: ../search/Tiles/MailMessage.cs:100
 msgid "Subject:"
 msgstr "Subject:"
 
-#: ../search/Tiles/MailMessage.cs:121
+#: ../search/Tiles/MailMessage.cs:105
 msgid "From:"
 msgstr "From:"
 
