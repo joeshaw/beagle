@@ -70,6 +70,7 @@ CSFILES = 			        	\
 	$(srcdir)/KonqHistoryUtil.cs		\
 	$(srcdir)/Log.cs			\
 	$(srcdir)/Logger.cs             	\
+	$(srcdir)/MetadataStore.cs		\
 	$(srcdir)/Mozilla.cs	        	\
 	$(srcdir)/MultiReader.cs        	\
 	$(srcdir)/NautilusTools.cs      	\
@@ -90,7 +91,31 @@ CSFILES = 			        	\
 	$(srcdir)/UriFu.cs			\
 	$(srcdir)/XdgMime.cs			\
 	$(srcdir)/XKeybinder.cs			\
-	$(srcdir)/XmlFu.cs
+	$(srcdir)/XmlFu.cs			\
+	$(srcdir)/XmpFile.cs			\
+	$(srcdir)/SemWeb/ForwardLogic.cs		\
+	$(srcdir)/SemWeb/KnowledgeModel.cs		\
+	$(srcdir)/SemWeb/MemoryStore.cs		\
+	$(srcdir)/SemWeb/N3Parser.cs			\
+	$(srcdir)/SemWeb/N3Writer.cs			\
+	$(srcdir)/SemWeb/NamespaceManager.cs		\
+	$(srcdir)/SemWeb/Query.cs			\
+	$(srcdir)/SemWeb/RdfParser.cs			\
+	$(srcdir)/SemWeb/RdfWriter.cs			\
+	$(srcdir)/SemWeb/Reasoning.cs			\
+	$(srcdir)/SemWeb/Resource.cs			\
+	$(srcdir)/SemWeb/RSquary.cs			\
+	$(srcdir)/SemWeb/RSquaryFilters.cs		\
+	$(srcdir)/SemWeb/Sparql.cs			\
+	$(srcdir)/SemWeb/SQLStore.cs			\
+	$(srcdir)/SemWeb/Statement.cs			\
+	$(srcdir)/SemWeb/Store.cs			\
+	$(srcdir)/SemWeb/UriMap.cs			\
+	$(srcdir)/SemWeb/Util.cs			\
+	$(srcdir)/SemWeb/XmlParser.cs			\
+	$(srcdir)/SemWeb/XmlWriter.cs			\
+	$(srcdir)/SemWeb/XPathSemWebNavigator.cs
+
 
 if HAS_LIBCHM 
 CSFILES += 					\
@@ -100,6 +125,7 @@ endif
 ASSEMBLIES =					\
 	$(BEAGLE_UI_LIBS)			\
 	-r:System.Web.Services			\
+	-r:System.Data				\
 	-r:Mono.Data.SqliteClient		\
 	-r:Mono.Posix				\
 	-r:System.Web

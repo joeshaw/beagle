@@ -31,6 +31,8 @@ using System.Text;
 using Beagle.Util;
 using Beagle.Daemon;
 
+using SemWeb;
+
 namespace Beagle.Filters {
 	
 	public class FilterJpeg : FilterImage {
@@ -124,6 +126,31 @@ namespace Beagle.Filters {
 					AddProperty (Beagle.Property.NewDate ("exif:DateTime", dt));
 				} catch (ArgumentOutOfRangeException e) {
 					Logger.Log.Debug("EXIF DateTime '{0}' is invalid.", str);
+				}
+			}
+
+			byte [] xmp_data = header.GetRawXmp ();
+			if (xmp_data != null) {
+				XmpFile xmp = new XmpFile (new MemoryStream (xmp_data));
+				Resource subject_anon = null;
+				Resource creator_anon = null;
+				
+				foreach (Statement stmt in xmp.Store) {
+					if (stmt.Predicate == MetadataStore.Namespaces.Resolve ("dc:subject"))
+						subject_anon = stmt.Object;
+					else if (stmt.Predicate == MetadataStore.Namespaces.Resolve ("dc:creator"))
+						creator_anon = stmt.Object;
+					else if (stmt.Predicate == MetadataStore.Namespaces.Resolve ("dc:rights"))
+						AddProperty (Beagle.Property.New ("dc:rights", ((Literal)stmt.Object).Value));
+				}
+				
+				foreach (Statement stmt in xmp.Store) {
+					if (stmt.Subject == subject_anon && 
+					    stmt.Predicate == MetadataStore.Namespaces.Resolve ("rdf:li"))
+						AddProperty (Beagle.Property.New ("dc:subject", ((Literal)stmt.Object).Value));
+					else if (stmt.Subject == creator_anon && 
+						 stmt.Predicate == MetadataStore.Namespaces.Resolve ("rdf:li"))
+						AddProperty (Beagle.Property.New ("dc:creator", ((Literal)stmt.Object).Value));
 				}
 			}
 

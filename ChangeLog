@@ -1,3 +1,15 @@
+2006-01-18  Larry Ewing  <lewing@novell.com>
+
+	* Util/XmpFile.cs: Added as a container class for XMP info.
+
+	* Util/MetadataStore.cs: Added a generic rdf store with common
+	namspaces.
+
+	* Util/SemWeb/: import SemWeb rdf parser.
+
+	* Filters/FilterJpeg.cs: extract XMP metadata translate a few
+	triples to beagle properties.
+
 2006-01-17  Lukas Lipka  <lukas@pmad.net>
 
 	* search/Pages/StartDaemon.cs: Add a timeout after daemon start after
