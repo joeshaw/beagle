@@ -390,24 +390,30 @@
   (return-type "double")
 )
 
-(define-method get_property
+(define-method get_one_property
   (of-object "BeagleHit")
-  (c-name "beagle_hit_get_property")
-  (return-type "const-char*")
+  (c-name "beagle_hit_get_one_property")
+  (return-type "gboolean")
+  (parameters
+    '("const-char*" "key")
+    '("const-char**" "value")
+  )
+)
+ 
+(define-method get_properties
+  (of-object "BeagleHit")
+  (c-name "beagle_hit_get_properties")
+  (return-type "GSList*")
   (parameters
     '("const-char*" "key")
   )
 )
 
-(define-method lookup_property
+(define-method get_all_properties
   (of-object "BeagleHit")
-  (c-name "beagle_hit_lookup_property")
-  (return-type "BeagleProperty*")
-  (parameters
-    '("const-char*" "key")
-  )
+  (c-name "beagle_hit_get_all_properties")
+  (return-type "GSList*")
 )
-
 
 
 ;; From ../../libbeagle/beagle/beagle-hits-added-response.h
@@ -1206,6 +1212,12 @@
   (in-module "Beagle")
   (c-name "BeagleHit")
   (gtype-id "BEAGLE_TYPE_HIT")    
+)
+
+(define-pointer Property
+  (in-module "Beagle")
+  (c-name "BeagleProperty")
+  (gtype-id "BEAGLE_TYPE_PROPERTY")    
 )
 
 (define-pointer Timestamp

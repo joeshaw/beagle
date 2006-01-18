@@ -1,3 +1,8 @@
+2006-01-18  Debajyoti Bera <dbera.web@gmail.com>
+
+	* wrappers/python: Updated python bindings to include some of the
+	recent libbeagle Hit functions.
+
 2006-01-18  Larry Ewing  <lewing@novell.com>
 
 	* Util/XmpFile.cs: Added as a container class for XMP info.

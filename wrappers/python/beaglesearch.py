@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+
 import beagle
 import gobject
 import sys
@@ -14,12 +16,16 @@ def hits_added_cb (query, response):
 	
 	for hit in hits:
 		if hit.get_type() == "FeedItem":
-			text = hit.get_property("dc:title")
+			text = hit ['dc:title']
 			print "Blog: %s" % text
 		elif hit.get_type() == "File":
 			print "File: %s" % hit.get_uri()
+		elif hit.get_type() == "MailMessage":
+			print "Email: %s" % hit ['dc:title']
+			for sender in hit.get_properties ('fixme:from'):
+				print "\tSent by: %s" % sender
 		else:
-			print "%s (%s)" % (hit.get_uri(), hit.get_source_object_name())
+			print "%s (%s)" % (hit.get_uri(), hit.get_source())
 
 	print "-------------------------------------------"
 

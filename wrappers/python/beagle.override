@@ -2,6 +2,7 @@
 %%
 headers
 #include <Python.h>
+#include <stdio.h>
 
 #define NO_IMPORT_PYGOBJECT
 #include "pygobject.h"
@@ -9,6 +10,7 @@ headers
 #include <beagle/beagle.h>
 
 #define BEAGLE_TYPE_HIT       (beagle_hit_get_gtype ())
+#define BEAGLE_TYPE_PROPERTY  (beagle_property_get_gtype ())
 #define BEAGLE_TYPE_TIMESTAMP (beagle_timestamp_get_gtype ())
 
 GType
@@ -28,6 +30,15 @@ beagle_timestamp_get_gtype (void)
 		our_type = g_pointer_type_register_static ("BeagleTimestamp");
 	return our_type;
 } 
+
+GType
+beagle_property_get_gtype (void)
+{
+	static GType our_type = 0;
+	if (!our_type)
+		our_type = g_pointer_type_register_static ("BeagleProperty");
+	return our_type;
+}
 
 static PyObject *
 _helper_wrap_pointer_gslist (GType type, GSList *list)
@@ -96,6 +107,89 @@ _wrap_beagle_hits_subtracted_response_get_uris(PyGObject *self)
 
     return _helper_wrap_string_gslist (list);
 }
+%%
+override beagle_hit_get_one_property kwargs
+static PyObject *
+_wrap_beagle_hit_get_one_property (PyGObject *self, PyObject *args, PyObject *kwargs)
+{
+    static char *kwlist[] = { "key", NULL };
+    char *key;
+    const char *value = NULL;
+    gboolean ret;
+
+    if (!PyArg_ParseTupleAndKeywords(args, kwargs, "s:BeagleHit.get_one_property", kwlist, &key))
+        return NULL;
+    ret = beagle_hit_get_one_property (pyg_pointer_get (self, BeagleHit), key, &value);
+    
+    if (!ret) {
+        /* Dont return exception in the method case */
+	Py_INCREF(Py_None);
+	return Py_None;
+    }
+    
+    return PyString_FromString (value);
+}
+%%
+override beagle_hit_get_properties kwargs
+static PyObject *
+_wrap_beagle_hit_get_properties (PyGObject *self, PyObject *args, PyObject *kwargs)
+{
+    static char *kwlist[] = { "key", NULL };
+    char *key;
+    GSList *list;
+
+    if (!PyArg_ParseTupleAndKeywords(args, kwargs, "s:BeagleHit.get_properties", kwlist, &key))
+        return NULL;
+    list = beagle_hit_get_properties (pyg_pointer_get(self, BeagleHit), key);
+    
+    if (list)
+        return _helper_wrap_string_gslist (list);
+    
+    Py_INCREF(Py_None);
+    return Py_None;
+}
+%%
+override beagle_hit_get_all_properties noargs
+static PyObject *
+_wrap_beagle_hit_get_all_properties (PyGObject *self)
+{
+    GSList *list;
+
+    list = beagle_hit_get_all_properties ((BeagleHit *) self->obj);
+
+    return _helper_wrap_pointer_gslist (BEAGLE_TYPE_PROPERTY, list);
+}
+%%
+override-slot BeagleHit.tp_as_mapping
+static PyObject *
+_wrap_beagle_hit_get_one_property_mapping (PyGObject *self, PyObject *item)
+{
+    char *key = NULL;
+    const char *value = NULL;
+    gboolean ret;
+
+    if (! PyString_Check (item)) {
+	    PyErr_SetString(PyExc_TypeError, "key must be a string");
+	    return NULL;
+    }
+
+    key = PyString_AsString (item);
+    ret = beagle_hit_get_one_property ((BeagleHit *) self->obj, key, &value);
+    
+    if (!ret) {
+        PyErr_SetString(PyExc_KeyError, "key doesnt exist or is not single valued");
+        return NULL;
+    }
+    
+    return PyString_FromString (value);
+    
+}
+
+static PyMappingMethods _wrap_beagle_hit_tp_as_mapping = {
+    (inquiry) 0,					    /* number of properties as len (hit) */
+    (binaryfunc) _wrap_beagle_hit_get_one_property_mapping, /* getting value of property as hit [...] */
+    (objobjargproc) 0					    /* for setting value of property as hit[...] = X*/
+};
 %%
 override beagle_client_new kwargs
 static int
