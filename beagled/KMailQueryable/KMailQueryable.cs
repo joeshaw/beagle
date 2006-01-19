@@ -176,6 +176,8 @@ namespace Beagle.Daemon.KMailQueryable {
 		 * ~/.Mail whereas default kmail folder location is ~/Mail
 		 * I guess each distribution can fix this path as they know what is
 		 * the path.
+		 * It is possible to have the path specified in kmailrc. It might not
+		 * be present, in which case try to play a guessing game.
 		 * Till then, using a guesser to find out which of ~/.Mail and ~/Mail
 		 * is valid.
 		 * Guesses the kmail local folder path
@@ -184,14 +186,21 @@ namespace Beagle.Daemon.KMailQueryable {
 		 */
 		private string GuessLocalFolderPath ()
 		{
+			string locationrc = GetLocalFolderPathFromKmailrc ();
+			Logger.Log.Debug ("Reading kmail local-mail location from kmailrc: " + 
+					    (locationrc == null ? "Unavailable" : locationrc));
 			string location1 = Path.Combine (PathFinder.HomeDir, "Mail");
 			string location2 = Path.Combine (PathFinder.HomeDir, ".Mail");
+
 			string location3 = Path.Combine (PathFinder.HomeDir, ".kde");
 			location3 = Path.Combine (location3, "share");
 			location3 = Path.Combine (location3, "apps");
 			location3 = Path.Combine (location3, "kmail");
 			location3 = Path.Combine (location3, "mail");
-			if (GuessLocalFolder (location1))
+
+			if (locationrc != null && GuessLocalFolder (locationrc))
+				return locationrc;
+			else if (GuessLocalFolder (location1))
 				return location1;
 			else if (GuessLocalFolder (location2))
 				return location2;
@@ -202,29 +211,133 @@ namespace Beagle.Daemon.KMailQueryable {
 		}
 
 		/**
-		 * to check if the path represents a kmail directory
-		 * find all file named .name.index
-		 * there should be matching directories/files with name "name"
+		 * to check if the path represents a kmail directory:
+		 * for all directories and files named "ddd" and not starting with a '.',
+		 * there should be matching index file named .ddd.index
 		 */
 		private bool GuessLocalFolder (string path)
 		{
 			if (! Directory.Exists (path))
 				return false;
 			bool flag = true;
-			foreach (FileInfo file in DirectoryWalker.GetFileInfos (path)) {
-				if (!file.Name.EndsWith (".index"))
+
+			foreach (string subdirname in DirectoryWalker.GetDirectoryNames (path)) {
+				if (subdirname.StartsWith ("."))
 					continue;
-				// the filename is of pattern .name.index
-				// get name from filename
-				string filename = file.Name.Substring (1, file.Name.LastIndexOf (".index")-1);
-				if (!Directory.Exists (Path.Combine (path, filename)) &&
-				    !Directory.Exists (Path.Combine (path, "." + filename + ".directory")) &&
-				    !File.Exists (Path.Combine (path, filename))) {
+				// index-file name is of pattern .name.index
+				string indexfile = Path.Combine (path, "." + subdirname + ".index");
+				if (! File.Exists (indexfile)) {
 					flag = false;
-					Logger.Log.Warn ("KMail backend: " + path + " contains a KMail index file but no corresponding mail file or directory. Ignoring directory!");
+					Logger.Log.Warn ( "KMail backend: " + 
+						path + 
+						" contains a maildir directory but no corresponding index file. Probably not a KMail mail directory. Ignoring this location!");
+					break;
 				}
 			}
+
+			if (! flag)
+				return false;
+
+			foreach (FileInfo file in DirectoryWalker.GetFileInfos (path)) {
+				if (file.Name.StartsWith ("."))
+					continue;
+				// index-file name is of pattern .name.index
+				string indexfile = Path.Combine (path, "." + file.Name + ".index");
+				if (! File.Exists (indexfile)) {
+					flag = false;
+					Logger.Log.Warn ( "KMail backend: " + 
+						path + 
+						" contains an mbox file but no corresponding index file. Probably not a KMail mail directory. Ignoring this location!");
+					break;
+				}
+			}
+			
 			return flag;	
+		}
+
+		/**
+		 * tries to extract folder name from ~/.kde/share/config/kmailrc
+		 */
+		private string GetLocalFolderPathFromKmailrc ()
+		{
+			string kmailrc = Path.Combine (PathFinder.HomeDir, ".kde");
+			kmailrc = Path.Combine (kmailrc, "share");
+			kmailrc = Path.Combine (kmailrc, "config");
+			kmailrc = Path.Combine (kmailrc, "kmailrc");
+
+			if (File.Exists (kmailrc)) {
+				StreamReader reader = new StreamReader (kmailrc);
+				string section = "";
+				string line;
+				while ((line = reader.ReadLine ()) != null) {
+					if (line.StartsWith ("[") && line.EndsWith ("]")) {
+						section = line;
+					}
+					if (section == "[General]") {
+						if (line.StartsWith ("folders=") && line.Length > 8) {
+							return ExpandEnvVariables (line.Substring(8));
+						}
+					}
+				}
+			}
+
+			return null;
+		}
+
+		/**
+		 * expands environment variables in the location string e.g.
+		 * folders=$HOME/.kde/share/...
+		 */
+		private string ExpandEnvVariables (string path)
+		{
+			int dollar_pos = path.IndexOf ('$');
+			if (dollar_pos == -1)
+				return path;
+			
+			System.Text.StringBuilder sb = 
+				new System.Text.StringBuilder ( (dollar_pos == 0 ? "" : path.Substring (0, dollar_pos)));
+			
+			while (dollar_pos != -1 && dollar_pos + 1 < path.Length) {
+				// FIXME: kconfigbase.cpp contains an additional case, $(expression)/.kde/...
+				// Ignoring such complicated expressions for now. Volunteers ;) ?
+				int end_pos = dollar_pos;
+				if (path [dollar_pos + 1] != '$') {
+					string var_name;
+					end_pos ++;
+					if (path [end_pos] == '{') {
+						while ((end_pos < path.Length) && 
+						       (path [end_pos] != '}'))
+							end_pos ++;
+						end_pos ++;
+						var_name = path.Substring (dollar_pos + 2, end_pos - dollar_pos - 3);
+					} else {
+						while ((end_pos < path.Length) &&
+						       (Char.IsNumber (path [end_pos]) ||
+							Char.IsLetter (path [end_pos]) ||
+							path [end_pos] == '_'))
+							end_pos ++;
+						var_name = path.Substring (dollar_pos + 1, end_pos - dollar_pos - 1);
+					}
+					string value_env = null;
+					if (var_name != String.Empty)
+						value_env = Environment.GetEnvironmentVariable (var_name);
+					if (value_env != null) {
+						sb.Append (value_env);
+					}
+					// else, no environment variable with that name exists. ignore
+				}else // else, ignore the first '$', second one will be expanded
+					end_pos ++;
+				if (end_pos >= path.Length)
+					break;
+				dollar_pos = path.IndexOf ('$', end_pos);
+				if (dollar_pos == -1) {
+					sb.Append (path.Substring (end_pos));
+				} else {
+					sb.Append (path.Substring (end_pos, dollar_pos - end_pos));
+				}
+			}
+
+			return sb.ToString ();
 		}
 
 	}

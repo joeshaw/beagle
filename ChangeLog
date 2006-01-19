@@ -7,6 +7,10 @@
 
 	* wrappers/python: Updated python bindings to include some of the
 	recent libbeagle Hit functions.
+	* KMailQueryable.cs: Added reading kmail folder location from kmailrc
+	(patch by Vaclav Slavik vslavik@fastmail.fm). Changed logic of
+	deciding whether a directory is a valid kmail folder. Fixes
+	327294, 327365.
 
 2006-01-18  Larry Ewing  <lewing@novell.com>
 
