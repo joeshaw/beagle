@@ -195,11 +195,10 @@ namespace Beagle.Daemon.KonqQueryable {
 			Indexable indexable = new Indexable (uri);
 			indexable.HitType = "WebHistory";
 			indexable.MimeType = KonqHistoryUtil.KonqCacheMimeType;
-			// to allow querying for beaglewiki to return
-			// www.beaglewiki.org
-			indexable.AddProperty (Property.New ("fixme:url", StringFu.UrlFuzzyDivide (url)));
+			// store www.beaglewiki.org as www beagle org, till inpath: query is implemented
+			indexable.AddProperty (Property.NewUnstored ("fixme:urltoken", StringFu.UrlFuzzyDivide (url)));
 			// hint for the filter about the charset
-			indexable.AddProperty (Property.NewUnstored ("charset", charset));
+			indexable.AddProperty (Property.NewKeyword (StringFu.UnindexedNamespace + "charset", charset));
 			
 			DateTime date = new DateTime (1970, 1, 1);
 			date = date.AddSeconds (Int64.Parse (creation_date));

@@ -39,6 +39,8 @@ namespace Beagle.Util {
 
 		private StringFu () { } // class is static
 
+		public const string UnindexedNamespace = "_unindexed:";
+
 		private const String timeFormat = "yyyyMMddHHmmss";
 
 		static public string DateTimeToString (DateTime dt)

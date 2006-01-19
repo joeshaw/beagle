@@ -53,24 +53,11 @@ namespace Beagle.Filters {
 				buf = new byte [1024];
 
 			StreamReader reader = new StreamReader (Stream, Encoding.GetEncoding (28591));
-			/*
-			string url = null;
-			string creation_date = null;
-			string mimetype = null;
-			string charset = null;
-			bool is_ok = KonqHistoryUtil.ShouldIndex (reader, out url, out creation_date, out mimetype, out charset);
-			if (!is_ok || url == String.Empty)
-				Error ();
-
-			//Console.WriteLine (url);
-			// url, mimetype etc... have been all decided by the backend
-			// we did all this just to get the charset in the filter
-			*/
 
 			// read the charset hint from indexable
 			string charset = null;
 			foreach (Property property in IndexableProperties) {
-				if (property.Key != "charset")
+				if (property.Key != (StringFu.UnindexedNamespace + "charset"))
 					continue;
 				charset = (string) property.Value;
 				//Console.WriteLine ("charset hint accepted: " + charset);

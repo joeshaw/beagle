@@ -49,8 +49,6 @@ namespace Beagle.Daemon {
 
 		public delegate bool HitFilter (Hit hit);
 
-		public const string UnindexedNamespace = "_unindexed:";
-
 		// VERSION HISTORY
 		// ---------------
 		//
@@ -495,7 +493,7 @@ namespace Beagle.Daemon {
 
 			// Don't actually put properties in the UnindexedNamespace
 			// in the document.  A horrible (and yet lovely!) hack.
-			if (prop.Key.StartsWith (UnindexedNamespace))
+			if (prop.Key.StartsWith (StringFu.UnindexedNamespace))
 				return;
 
 			Field f;
@@ -525,7 +523,7 @@ namespace Beagle.Daemon {
 
 			f = new Field (field_name,
 				       coded_value,
-				       true,        // always store
+				       prop.IsStored,
 				       true,        // always index
 				       true);       // always tokenize (just strips off type code for keywords)
 			doc.Add (f);
@@ -560,7 +558,7 @@ namespace Beagle.Daemon {
 			prop.Value = field_value.Substring (2);
 			prop.IsSearched = (field_value [0] == 's');
 			prop.IsMutable = ! from_primary_index;
-			prop.IsStored = false; // obviously
+			prop.IsStored = f.IsStored ();
 
 			return prop;
 		}
@@ -665,9 +663,6 @@ namespace Beagle.Daemon {
 			// Store the other properties
 				
 			foreach (Property prop in indexable.Properties) {
-				if (! prop.IsStored)
-					continue;
-				
 				Document target_doc = primary_doc;
 				if (prop.IsMutable) {
 					if (secondary_doc == null) {

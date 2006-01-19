@@ -82,7 +82,7 @@ namespace Beagle {
 			set { is_mutable = value; }
 		}
 
-		// When IsStored is false, the property wont be stored in the index
+		// When IsStored is false, the property will be stored as an "unstored lucene field".
 		[XmlAttribute]
 		public bool IsStored {
 			get { return is_stored; }
@@ -168,10 +168,10 @@ namespace Beagle {
 				return null;
 
 			Property p = new Property ();
-			p.type = PropertyType.Keyword;
+			p.type = PropertyType.Text;
 			p.Key = key;
 			p.Value = value.ToString ();
-			p.is_searched = false;
+			p.is_searched = true;
 			p.is_stored = false;
 			return p;
 		}

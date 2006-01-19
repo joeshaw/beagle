@@ -11,6 +11,14 @@
 	(patch by Vaclav Slavik vslavik@fastmail.fm). Changed logic of
 	deciding whether a directory is a valid kmail folder. Fixes
 	327294, 327365.
+	* BeagleClient/Property.cs, beagled/LuceneCommon.cs, Util/StringFu.cs:
+	Use unstored lucene fields for search-only properties. Move 
+	UnindexedNamespace from LuceneCommon to StringFu so that both backends
+	and Filters can access them.
+	* Filters/FilterKonqHistory.cs, KonqHistoryQueryable/KonqQueryable.cs:
+	Use UnindexedNamespace for hinting filters. 
+	* Filters/FilterMail.cs: Store tokens from sanitized email address as
+	unstored lucene field.
 
 2006-01-18  Larry Ewing  <lewing@novell.com>
 
