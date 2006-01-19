@@ -51,6 +51,8 @@ namespace Beagle {
 
 	public class Indexable : Versioned, IComparable {
 
+		static private bool Debug = false;
+
 		// This is the type of indexing operation represented by
 		// this Indexable object.  We default to Add, for historical
 		// reasons.
@@ -279,7 +281,9 @@ namespace Beagle {
 		{
 			if (DeleteContent) {
 				if (contentUri != null) {
-					//Logger.Log.Debug ("Cleaning up {0}", contentUri.LocalPath);
+					if (Debug)
+						Logger.Log.Debug ("Cleaning up {0}", contentUri.LocalPath);
+
 					try {
 						File.Delete (contentUri.LocalPath);
 					} catch (Exception ex)
@@ -289,7 +293,9 @@ namespace Beagle {
 					contentUri = null;
 				}
 				if (hotContentUri != null) {
-					//Logger.Log.Debug ("Cleaning up {0}", hotContentUri.LocalPath);
+					if (Debug)
+						Logger.Log.Debug ("Cleaning up {0}", hotContentUri.LocalPath);
+
 					try {
 						File.Delete (hotContentUri.LocalPath);
 					} catch (Exception ex)
@@ -567,17 +573,26 @@ namespace Beagle {
 		public void StoreStream () {
 			if (textReader != null) {
 				ContentUri = TextReaderToTempFileUri (textReader);
-				//Logger.Log.Debug ("Storing text content from {0} in {1}", Uri, ContentUri);
+
+				if (Debug)
+					Logger.Log.Debug ("Storing text content from {0} in {1}", Uri, ContentUri);
+
 				DeleteContent = true;
 			} else if (binary_stream != null) {
 				ContentUri = BinaryStreamToTempFileUri (binary_stream);
-				//Logger.Log.Debug ("Storing binary content from {0} in {1}", Uri, ContentUri);
+
+				if (Debug)
+					Logger.Log.Debug ("Storing binary content from {0} in {1}", Uri, ContentUri);
+
 				DeleteContent = true;
 			}
 
 			if (hotTextReader != null) {
 				HotContentUri = TextReaderToTempFileUri (hotTextReader);
-				//Logger.Log.Debug ("Storing hot content from {0} in {1}", Uri, HotContentUri);
+
+				if (Debug)
+					Logger.Log.Debug ("Storing hot content from {0} in {1}", Uri, HotContentUri);
+
 				DeleteContent = true;
 			}
 		}

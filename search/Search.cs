@@ -235,6 +235,15 @@ namespace Search {
 			try {
 				currentQuery = new Query ();
 				currentQuery.AddDomain (QueryDomain.Neighborhood);
+
+				// Don't search documentation by default
+				QueryPart_Property part = new QueryPart_Property ();
+				part.Logic = QueryPartLogic.Prohibited;
+				part.Type = PropertyType.Keyword;
+				part.Key = "beagle:Source";
+				part.Value = "documentation";
+				currentQuery.AddPart (part);
+
 				currentQuery.AddText (query);
 				currentQuery.HitsAddedEvent += OnHitsAdded;
 				currentQuery.HitsSubtractedEvent += OnHitsSubtracted;

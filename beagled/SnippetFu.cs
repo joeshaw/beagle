@@ -45,6 +45,9 @@ namespace Beagle.Daemon {
 				|| Char.IsPunctuation (c);
 		}
 
+		const int max_prior_words = 6;
+		const int max_following_words = 6;
+
 		static private void HighlightTerms (string [] stemmed_terms, string text, ref ArrayList matches)
 		{
 			int pos = 0, prev_stop_pos = 0, prev_end_pos = 0;
@@ -93,7 +96,7 @@ namespace Beagle.Daemon {
 					int stop_pos = next_pos;
 
 					// FIXME: This is a hack, I should be shot.
-					for (int count = 0; count < 3 && start_pos > 0; start_pos--) {
+					for (int count = 0; count <= max_prior_words && start_pos > 0; start_pos--) {
 						if ((text[start_pos] == ' '))
 							count++;
 					}
@@ -101,7 +104,7 @@ namespace Beagle.Daemon {
 					if (start_pos != 0)
 						start_pos += 2;
 
-					for (int count = 0; count < 3 && stop_pos < text.Length; stop_pos++) {
+					for (int count = 0; count <= max_following_words && stop_pos < text.Length; stop_pos++) {
 						if (text[stop_pos] == ' ')
 							count++;
 					}

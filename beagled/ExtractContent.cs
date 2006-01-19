@@ -124,6 +124,7 @@ class ExtractContentTool {
 				}
 				DisplayContent (line);
 			}
+			reader.Close ();
 
 			if (first)
 				Console.WriteLine ("(no content)");
@@ -142,6 +143,7 @@ class ExtractContentTool {
 				}
 				DisplayContent (line);
 			}
+			reader.Close ();
 
 			if (first)
 				Console.WriteLine ("(no hot content)");
@@ -149,13 +151,18 @@ class ExtractContentTool {
 				Console.WriteLine ();
 		}
 
+		Stream stream = indexable.GetBinaryStream ();
+		if (stream != null)
+			stream.Close ();
+
 		if (show_children && filter != null && filter.ChildIndexables != null) {
 			foreach (Indexable i in filter.ChildIndexables) {
 				i.StoreStream ();
-				i.DeleteContent = true;
 				Display (i);
 			}
 		}
+		
+		indexable.Cleanup ();
 
 	}
 
@@ -240,6 +247,12 @@ class ExtractContentTool {
 		}
 		if (writer != null)
 			writer.Close ();
+
+		if (Environment.GetEnvironmentVariable ("BEAGLE_TEST_MEMORY") != null) {
+			GC.Collect ();
+			GLib.Timeout.Add (1000, delegate() { Gtk.Application.Quit (); return false; });
+			Gtk.Application.Run ();
+		}
 
 		return 0;
 	}

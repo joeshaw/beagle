@@ -37,6 +37,8 @@ namespace Beagle.Daemon {
 
 	public class Filter {
 
+		static private bool Debug = false;
+
 		// Derived classes always must have a constructor that
 		// takes no arguments.
 		public Filter () { }
@@ -237,7 +239,9 @@ namespace Beagle.Daemon {
 		
 		public void AppendText (string str)
 		{
-			//Logger.Log.Debug ("AppendText (\"{0}\")", str);
+			if (Debug)
+				Logger.Log.Debug ("AppendText (\"{0}\")", str);
+
 			if (! IsFrozen && str != null && str != "")
 				AppendText (str, IsHot ? str : null);
 		}
@@ -275,7 +279,9 @@ namespace Beagle.Daemon {
 			if (last_was_structural_break)
 				return;
 
-			//Logger.Log.Debug ("AppendWhiteSpace ()");
+			if (Debug)
+				Logger.Log.Debug ("AppendWhiteSpace ()");
+
 			if (NeedsWhiteSpace (textPool)) {
 				textPool.Add (" ");
 				if (snippetWriter != null)
@@ -374,7 +380,8 @@ namespace Beagle.Daemon {
 			tempFile = Path.GetTempFileName ();
                         FileStream file_stream = File.OpenWrite (tempFile);
 
-			//Logger.Log.Debug ("Storing text in tempFile {0}", tempFile);
+			if (Debug)
+				Logger.Log.Debug ("Storing text in tempFile {0}", tempFile);
 
                         // When we dump the contents of a reader into a file, we
                         // expect to use it again soon.
@@ -408,7 +415,8 @@ namespace Beagle.Daemon {
 			tempFile = Path.GetTempFileName ();
                         FileStream file_stream = File.OpenWrite (tempFile);
 			
-			//Logger.Log.Debug ("Storing stream in tempFile {0}", tempFile);
+			if (Debug)
+				Logger.Log.Debug ("Storing stream in tempFile {0}", tempFile);
 
                         // When we dump the contents of a reader into a file, we
                         // expect to use it again soon.

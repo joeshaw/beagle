@@ -41,8 +41,6 @@ namespace Beagle.Filters {
 
 		private static bool gmime_initialized = false;
 
-		private GMime.Stream stream;
-		private GMime.Parser parser;
 		private GMime.Message message;
 		private PartHandler handler;
 
@@ -72,8 +70,11 @@ namespace Beagle.Filters {
 			if (mail_fd == -1)
 				throw new IOException (String.Format ("Unable to read {0} for parsing mail", info.FullName));
 
-			this.stream = new GMime.StreamFs (mail_fd);
-			this.parser = new GMime.Parser (stream);
+			GMime.StreamFs stream = new GMime.StreamFs (mail_fd);
+			GMime.Parser parser = new GMime.Parser (stream);
+			this.message = parser.ConstructMessage ();
+			stream.Dispose ();
+			parser.Dispose ();
 		}
 
 		private bool HasAttachments (GMime.Object mime_part)
@@ -91,8 +92,6 @@ namespace Beagle.Filters {
 
 		protected override void DoPullProperties ()
 		{
-			this.message = this.parser.ConstructMessage ();
-
 			string subject = GMime.Utils.HeaderDecodePhrase (this.message.Subject);
 			AddProperty (Property.New ("dc:title", subject));
 
@@ -177,16 +176,14 @@ namespace Beagle.Filters {
 		
 		public void Dispose ()
 		{
-			if (this.message != null)
+			if (this.handler != null && this.handler.Reader != null)
+				this.handler.Reader.Close ();
+			this.handler = null;
+
+			if (this.message != null) {
 				this.message.Dispose ();
-
-			if (this.stream != null) {
-				this.stream.Close ();
-				this.stream.Dispose ();
+				this.message = null;
 			}
-
-			if (this.parser != null)
-				this.parser.Dispose ();
 		}
 
 		private class PartHandler {
@@ -216,9 +213,9 @@ namespace Beagle.Filters {
 				GMime.Object part = null;
 				bool part_needs_dispose = false;
 
-				//for (int i = 0; i < depth; i++)
+				//for (int i = 0; i < this.depth; i++)
 				//  Console.Write ("  ");
-				//Console.WriteLine ("Content-Type: {0}", part.ContentType);
+				//Console.WriteLine ("Content-Type: {0}", mime_part.ContentType);
 			
 				++depth;
 

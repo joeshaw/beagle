@@ -216,7 +216,7 @@ namespace Beagle.Daemon {
 			if (indexable.MimeType != null)
 				filters = CreateFiltersFromMimeType (indexable.MimeType);
 
-			if (indexable.IsNonTransient) {
+			if (indexable.ContentUri.IsFile) {
 				path = indexable.ContentUri.LocalPath;
 
 				// Otherwise sniff the mime-type from the file

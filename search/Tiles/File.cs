@@ -27,7 +27,7 @@ namespace Search.Tiles {
 			if (Icon == null)
 				Icon = WidgetFu.LoadMimeIcon (Hit ["beagle:MimeType"], 32);
 
-			Title = Hit ["beagle:ExactFilename"];
+			Title = GetTitle ();
 			
 			if (Hit.FileInfo != null)
 				Description = Utils.NiceShortDate (Hit.FileInfo.LastWriteTime);
@@ -37,6 +37,16 @@ namespace Search.Tiles {
 			AddAction (new TileAction (Catalog.GetString ("E-Mail"), Email));
 			AddAction (new TileAction (Catalog.GetString ("Instant-Message"), InstantMessage));
 			AddAction (new TileAction (Catalog.GetString ("Move to Trash"), Gtk.Stock.Delete, MoveToTrash));
+		}
+
+		private string GetTitle ()
+		{
+			string title = Hit.GetFirstProperty ("dc:title");
+
+			if (title == null)
+				title = Hit.GetFirstProperty ("beagle:ExactFilename");
+
+			return title;
 		}
 
 		public override void Open ()
@@ -127,11 +137,7 @@ namespace Search.Tiles {
 			label = WidgetFu.NewGrayLabel (Catalog.GetString ("Title:"));
 			table.Attach (label, 0, 1, 0, 1, fill, fill, 0, 0);
 
-			string title = Hit.GetFirstProperty ("dc:title");
-			if (title == null || title == "")
-				title = Hit.GetFirstProperty ("beagle:ExactFilename");
-			
-			label = WidgetFu.NewBoldLabel (title);
+			label = WidgetFu.NewBoldLabel (GetTitle ());
 			table.Attach (label, 1, 4, 0, 1, expand, fill, 0, 0);
 
 			label = WidgetFu.NewGrayLabel (Catalog.GetString ("Last Edited:"));
@@ -148,12 +154,18 @@ namespace Search.Tiles {
 				table.Attach (label, 3, 4, 1, 2, expand, fill, 0, 0);
 			}
 
+			label = WidgetFu.NewGrayLabel (Catalog.GetString ("Full Path:"));
+			table.Attach (label, 0, 1, 2, 3, fill, fill, 0, 0);
+
+			label = WidgetFu.NewLabel (Hit.Uri.LocalPath);
+			table.Attach (label, 1, 2, 2, 3, expand, fill, 0, 0);
+
 			Gtk.Image icon = new Gtk.Image (Icon);
-			table.Attach (icon, 0, 1, 2, 3, fill, fill, 0, 0);
+			table.Attach (icon, 0, 1, 3, 4, fill, fill, 0, 0);
 			
 			snippet_label = WidgetFu.NewLabel (snippet);
 			WidgetFu.EllipsizeLabel (snippet_label);
-			table.Attach (snippet_label, 1, 4, 2, 3, expand, expand, 48, 0);
+			table.Attach (snippet_label, 1, 4, 3, 4, expand, expand, 48, 0);
 
 			if (! found_snippet)
 				RequestSnippet ();
