@@ -27,7 +27,10 @@
 using System;
 using System.IO;
 
+using Beagle.Util;
 using Beagle.Daemon;
+
+using SemWeb;
 
 namespace Beagle.Filters {
 	
@@ -38,77 +41,86 @@ namespace Beagle.Filters {
 			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("image/png"));
 		}
 
-		private byte[] buffer;
-
-		protected override void DoOpen (FileInfo info)
-		{
-			//  8 bytes of signature
-			// IHDR chunk:
-			//  4 byte chunk length
-			//  4 byte chunk type
-			// 13 bytes of chunk data
-			// total: 29 bytes
-
-			buffer = new byte [29];
-			if (Stream.Read (buffer, 0, 29) != 29) {
-				Finished ();
-				return;
-			}
-
-			// Check the signature --- no harm in being paranoid
-			if (buffer [0] != 137 || buffer [1] != 80
-			    || buffer [2] != 78 || buffer [3] != 71
-			    || buffer [4] != 13 || buffer [5] != 10
-			    || buffer [6] != 26 || buffer [7] != 10) {
-				//Console.WriteLine ("Bad signature!");
-				Finished ();
-				return;
-			}
-
-			if (buffer [12] != 73 || buffer [13] != 72
-			    || buffer [14] != 68 || buffer [15] != 82) {
-				//Console.WriteLine ("First chunk is not IHDR!");
-				Finished ();
-				return;
-			}
-		}
-		
 		protected override void PullImageProperties ()
 		{
-			int width = buffer [18] * 256 + buffer [19];
-			int height = buffer [22] * 256 + buffer [23];
+			PngHeader png = new PngHeader (Stream);
+			
+			foreach (PngHeader.Chunk chunk in png.Chunks){
+				
+				if (chunk is PngHeader.IhdrChunk) {
+					PngHeader.IhdrChunk ihdr = (PngHeader.IhdrChunk)chunk;
 
-			Width = width;
-			Height = height;
-			Depth = buffer [24];
+					Width = (int)ihdr.Width;
+					Height = (int)ihdr.Height;
+					Depth = ihdr.Depth;
 
-			string colorType = null;
-			bool hasAlpha = false;
-			switch (buffer [25]) {
-			case 0:
-				colorType = "Greyscale";
-				hasAlpha = false;
-				break;
-			case 2:
-				colorType = "Truecolor";
-				hasAlpha = false;
-				break;
-			case 3:
-				colorType = "Indexed";
-				hasAlpha = false;
-				break;
-			case 4:
-				colorType = "Greyscale";
-				hasAlpha = true;
-				break;
-			case 6:
-				colorType = "Truecolor";
-				hasAlpha = true;
-				break;
+					bool hasAlpha = false;
+					string colorType = null;
+					
+					switch (ihdr.Color) {
+					case PngHeader.ColorType.Gray:
+						colorType = "Greyscale";
+						hasAlpha = false;
+						break;
+					case PngHeader.ColorType.Rgb:
+						colorType = "Truecolor";
+						hasAlpha = false;
+						break;
+					case PngHeader.ColorType.Indexed:
+						colorType = "Indexed";
+						hasAlpha = false;
+						break;
+					case PngHeader.ColorType.GrayAlpha:
+						colorType = "Greyscale";
+						hasAlpha = true;
+						break;
+					case PngHeader.ColorType.RgbAlpha:
+						colorType = "Truecolor";
+						hasAlpha = true;
+						break;
+					}
+
+					AddProperty (Beagle.Property.NewKeyword ("fixme:colortype", colorType));
+					AddProperty (Beagle.Property.NewBool ("fixme:hasalpha", hasAlpha));
+				} else if (chunk is PngHeader.TextChunk) {
+					ExtractTextProperty ((PngHeader.TextChunk) chunk);
+				}
 			}
 
-			AddProperty (Beagle.Property.NewKeyword ("fixme:colortype", colorType));
-			AddProperty (Beagle.Property.NewBool ("fixme:hasalpha", hasAlpha));
+			Finished ();
+		}
+
+		private void ExtractTextProperty (PngHeader.TextChunk tchunk)
+		{
+			switch (tchunk.Keyword) {
+			case "Title":
+				AddProperty (Beagle.Property.New ("dc:title", tchunk.Text));
+				break;
+			case "Author":
+				AddProperty (Beagle.Property.New ("dc:creator", tchunk.Text));
+				break;
+			case "Copyright":
+				AddProperty (Beagle.Property.New ("dc:rights", tchunk.Text));
+				break;
+			case "Description":
+				AddProperty (Beagle.Property.New ("png:description", tchunk.Text));
+				break;
+			case "Comment":
+				AddProperty (Beagle.Property.New ("png:comment", tchunk.Text));
+				break;
+			case "XMP":
+			case "XML:com.adobe.xmp":
+				/*
+				XmpFile xmp = new XmpFile (new MemoryStream (text.TextData));
+				*/
+				break;
+			case "Disclaimer":
+			case "Warning":
+			case "Source":
+			case "Creation Time":
+			case "Software":
+				break;
+			}
 		}
 	}
 }

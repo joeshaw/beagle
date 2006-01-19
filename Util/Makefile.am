@@ -43,6 +43,7 @@ $(EXTSTR): $(EXTSTR_IN)
 CSFILES = 			        	\
 	$(srcdir)/ArrayFu.cs              	\
 	$(srcdir)/BetterBitArray.cs		\
+	$(srcdir)/EndianConverter.cs		\
 	$(srcdir)/camel.cs              	\
 	$(srcdir)/CommandLineFu.cs		\
 	$(srcdir)/CompatFileChooser.cs		\
@@ -76,6 +77,7 @@ CSFILES = 			        	\
 	$(srcdir)/NautilusTools.cs      	\
 	$(srcdir)/Note.cs               	\
 	$(srcdir)/PathFinder.cs			\
+	$(srcdir)/PngHeader.cs			\
 	$(srcdir)/PullingReader.cs      	\
 	$(srcdir)/Scheduler.cs			\
 	$(srcdir)/SmallIntArray.cs		\
@@ -128,7 +130,8 @@ ASSEMBLIES =					\
 	-r:System.Data				\
 	-r:Mono.Data.SqliteClient		\
 	-r:Mono.Posix				\
-	-r:System.Web
+	-r:System.Web				\
+	-r:ICSharpCode.SharpZipLib
 
 if ENABLE_GALAGO
 CSFILES +=					\
