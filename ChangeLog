@@ -1,3 +1,9 @@
+2006-01-19  Lukas Lipka  <lukas@pmad.net>
+
+	* search/Search.cs: Hide the search window when we click the tray icon.
+	This must have been deleted during merge, since it worked before.
+	Spotted by James Ogley.
+
 2006-01-18  Larry Ewing  <lewing@novell.com>
 
 	* Filters/FilterJpeg.cs: fix the XMP parser in the JpegFilter so
