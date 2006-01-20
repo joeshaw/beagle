@@ -140,34 +140,7 @@ namespace Beagle.Filters {
 					}
 
 				XmpFile xmp = new XmpFile (new MemoryStream (xmp_data, i, xmp_data.Length - i));
-				Resource subject_anon = null;
-				Resource creator_anon = null;
-				
-				foreach (Statement stmt in xmp.Store) {
-					if (stmt.Predicate == MetadataStore.Namespaces.Resolve ("dc:subject")) {
-						System.Console.WriteLine ("found subject");
-						subject_anon = stmt.Object;
-					} else if (stmt.Predicate == MetadataStore.Namespaces.Resolve ("dc:creator")) {
-						System.Console.WriteLine ("found creator");
-						creator_anon = stmt.Object;
-					} else if (stmt.Predicate == MetadataStore.Namespaces.Resolve ("dc:rights")) {
-						AddProperty (Beagle.Property.New ("dc:rights", ((Literal)stmt.Object).Value));
-					} else if (stmt.Predicate == MetadataStore.Namespaces.Resolve ("dc:title")) {
-						AddProperty (Beagle.Property.New ("dc:title", ((Literal)stmt.Object).Value));
-					} else if (stmt.Predicate == MetadataStore.Namespaces.Resolve ("tiff:Model")) {
-						// NOTE: the namespaces for xmp and beagle don't always match up
-						AddProperty (Beagle.Property.New ("exif:Model", ((Literal)stmt.Object).Value));
-					}
-				}
-				
-				foreach (Statement stmt in xmp.Store) {
-					if (stmt.Subject == subject_anon && 
-					    stmt.Predicate != MetadataStore.Namespaces.Resolve ("rdf:type")) {
-						AddProperty (Beagle.Property.New ("dc:subject", ((Literal)stmt.Object).Value));
-					} else if (stmt.Subject == creator_anon && 
-						 stmt.Predicate != MetadataStore.Namespaces.Resolve ("rdf:type"))
-						AddProperty (Beagle.Property.New ("dc:creator", ((Literal)stmt.Object).Value));
-				}
+				AddXmpProperties (xmp);
 			}
 
 			Finished (); // That's all folks...

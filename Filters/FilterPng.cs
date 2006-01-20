@@ -46,7 +46,6 @@ namespace Beagle.Filters {
 			PngHeader png = new PngHeader (Stream);
 			
 			foreach (PngHeader.Chunk chunk in png.Chunks){
-				
 				if (chunk is PngHeader.IhdrChunk) {
 					PngHeader.IhdrChunk ihdr = (PngHeader.IhdrChunk)chunk;
 
@@ -110,9 +109,8 @@ namespace Beagle.Filters {
 				break;
 			case "XMP":
 			case "XML:com.adobe.xmp":
-				/*
-				XmpFile xmp = new XmpFile (new MemoryStream (text.TextData));
-				*/
+				XmpFile xmp = new XmpFile (new MemoryStream (tchunk.TextData));
+				AddXmpProperties (xmp);
 				break;
 			case "Disclaimer":
 			case "Warning":
