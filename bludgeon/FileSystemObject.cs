@@ -336,6 +336,42 @@ namespace Bludgeon {
 
 		abstract protected bool MatchesQueryPart (QueryPart part);
 
+		private int MatchesMetadata (QueryPart abstract_part)
+		{
+			int is_match = 0;
+
+			if (abstract_part is QueryPart_Text) {
+
+				QueryPart_Text part;
+				part = (QueryPart_Text) abstract_part;
+
+				if (part.SearchTextProperties && part.Text == base_name)
+					is_match = 1;
+					
+			} else if (abstract_part is QueryPart_Property) {
+
+				QueryPart_Property part;
+				part = (QueryPart_Property) abstract_part;
+
+				if (part.Key == "beagle:MimeType") {
+					is_match = (part.Value == this.MimeType) ? 1 : -1;
+				} else if (part.Key == "beagle:Filename") {
+					is_match = (part.Value == base_name) ? 1 : -1;
+				} else if (part.Key == "beagle:ExactFilename") {
+					is_match = (part.Value == Name) ? 1 : -1;
+				}
+					
+			} else if (abstract_part is QueryPart_DateRange) {
+
+				QueryPart_DateRange part;
+				part = (QueryPart_DateRange) abstract_part;
+
+				is_match = (part.StartDate <= Timestamp && Timestamp <= part.EndDate) ? 1 : -1;
+			}
+
+			return is_match;
+		}
+
 		virtual public bool MatchesQuery (Query query)
 		{
 			foreach (QueryPart abstract_part in query.Parts) {
@@ -350,45 +386,19 @@ namespace Bludgeon {
 
 					is_match = -1;
 					foreach (QueryPart sub_part in part.SubParts) {
-						if (MatchesQueryPart (sub_part)) {
+						if (MatchesMetadata (sub_part) == 1
+						    || MatchesQueryPart (sub_part)) {
 							is_match = 1;
 							break;
 						}
 					}
-				}
-
-				// Handle certain query parts related to file system metadata.
-				if (abstract_part is QueryPart_Text) {
-
-					QueryPart_Text part;
-					part = (QueryPart_Text) abstract_part;
-
-					if (part.SearchTextProperties && part.Text == base_name)
-						is_match = 1;
-					
-				} else if (abstract_part is QueryPart_Property) {
-
-					QueryPart_Property part;
-					part = (QueryPart_Property) abstract_part;
-
-					if (part.Key == "beagle:MimeType") {
-						is_match = (part.Value == this.MimeType) ? 1 : -1;
-					} else if (part.Key == "beagle:Filename") {
-						is_match = (part.Value == base_name) ? 1 : -1;
-					} else if (part.Key == "beagle:ExactFilename") {
-						is_match = (part.Value == Name) ? 1 : -1;
-					}
-					
-				} else if (abstract_part is QueryPart_DateRange) {
-
-					QueryPart_DateRange part;
-					part = (QueryPart_DateRange) abstract_part;
-
-					is_match = (part.StartDate <= Timestamp && Timestamp <= part.EndDate) ? 1 : -1;
-				}
+				} else {
+					// Handle certain query parts related to file system metadata.
+					is_match = MatchesMetadata (abstract_part);
 				
-				if (is_match == 0)
-					is_match = MatchesQueryPart (abstract_part) ? 1 : -1;
+					if (is_match == 0)
+						is_match = MatchesQueryPart (abstract_part) ? 1 : -1;
+				}
 
 				if (abstract_part.Logic == QueryPartLogic.Prohibited)
 					is_match = - is_match;

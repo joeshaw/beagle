@@ -123,7 +123,7 @@ namespace Bludgeon {
 
 		/////////////////////////////////////////////////////////////
 
-		static private string QueryPartToString (QueryPart abstract_part)
+		static public string QueryPartToString (QueryPart abstract_part)
 		{
 			string msg;
 			msg = "????";

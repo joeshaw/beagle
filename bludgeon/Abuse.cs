@@ -54,7 +54,7 @@ namespace Bludgeon {
 				this.hammers [i++] = hammer;
 
 			idle_handler = new GLib.IdleHandler (AbuseWorker);
-			timeout_handler = new GLib.TimeoutHandler (AbuseWorker);
+			timeout_handler = new GLib.TimeoutHandler (RescheduleAbuse);
 			verified_handler = new Daemon.VerifiedHandler (VerifiedWorker);
 		}
 
@@ -111,6 +111,13 @@ namespace Bludgeon {
 			return true;
 		}
 
+		private bool RescheduleAbuse ()
+		{
+			Action.Add (idle_handler);
+
+			return false;
+		}
+
 		private void VerifiedWorker (bool index_is_sane)
 		{
 			// If the index is bad, just return.  The index-checking
@@ -136,8 +143,12 @@ namespace Bludgeon {
 			}
 			
 			// If we aren't finished, schedule some more abuse.
-			if (! finished)
-				Action.Add (idle_handler);
+			if (! finished) {
+				if (count == 0)
+					Action.Add (idle_handler);
+				else
+					Action.Add ((uint) GetPauseInMs (), timeout_handler);
+			}
 		}
 	}
 }

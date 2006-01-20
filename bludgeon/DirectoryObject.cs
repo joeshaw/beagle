@@ -65,7 +65,7 @@ namespace Bludgeon {
 		}
 
 		override public string MimeType {
-			get { return "directory/inode"; }
+			get { return "inode/directory"; }
 		}
 
 		///////////////////////////////////////////////////////////////////////

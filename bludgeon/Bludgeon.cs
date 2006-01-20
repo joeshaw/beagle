@@ -47,55 +47,49 @@ namespace Bludgeon {
 			return new DirectoryObject (home);
 		}
 
-#if false
-		static FileModel InitialTree ()
-		{
-			FileModel root;
-			root = FileModel.NewRoot ();
-			root.Grow (2);
-
-			Log.Info ("Initial tree contains {0} files", root.Size);
-
-			return root;
-		}
-#endif
-
 		///////////////////////////////////////////////////////////////////////////
 		
 		// Command-line arguments
 
-		[Option (LongName="min-cycles")]
-		static private int min_cycles = -1;
+		[Option (LongName="total-time", Description="Time to run all tests (in minutes)")]
+		static private double total_time = -1;
 
-		[Option (LongName="max-cycles")]
+		[Option (LongName="total-count", Description="Number of tests to run")]
+		static private int total_count = -1;
+
+		[Option (LongName="min_pause", Description="Minimum number of seconds between tests")]
+		static private double min_pause = 0;
+
+		[Option (LongName="max_pause", Description="Maximum number of seconds between tests")] 
+		static private double max_pause = -1;
+
+		[Option (LongName="pause", Description="Exact number of seconds between tests")] 
+		static private double pause = -1;
+
+                [Option (LongName="min-cycles", Description="Minimum number of cycles to run")]
+                static private int min_cycles = 1; // Always at least one cycle
+
+		[Option (LongName="max-cycles", Description="Maximum number of cycles to run")]
 		static private int max_cycles = -1;
 
-		[Option (LongName="cycles")]
+		[Option (LongName="cycles", Description="Exact number of cycles to run")]
 		static private int cycles = -1;
-
-		[Option (LongName="disable-verify")]
-		static private bool disable_verify = false;
-
-		[Option (LongName="total-time")]
-		static private double total_time = -1; // in minutes
-
-		[Option (LongName="total-count")]
-		static private int total_count = 1;
-
-		[Option (LongName="slowdown", Description="Time between cycles (in seconds)")]
-		static private double slowdown = -1; // time between cycles, in seconds
-
-		[Option (LongName="pause", Description="Time between tests (in seconds)")] 
-		static private double pause = -1; // time between tests, in seconds
-
-		[Option (LongName="heap-buddy", Description="Profile daemon with heap-buddy")]
-		static private bool heap_buddy = false;
 
 		[Option (LongName="test-queries", Description="Generate random queries and check that they return the correct results")]
 		static private bool test_queries = false;
 
+		[Option (LongName="total-query-time", Description="Number of minutes to run test queries")]
+		static private double total_query_time = 1;
+
+		[Option (LongName="heap-buddy", Description="Profile daemon with heap-buddy")]
+		static private bool heap_buddy = false;
+
+		[Option (LongName="list-hammers", Description="Lists the available hammers and exits")]
+		static private bool list_hammers = false;
+
 		/////////////////////////////////////////////////////////////////
 
+		static private DirectoryObject root;
 		static private Abuse abuse;
 
 		static bool Startup ()
@@ -119,6 +113,12 @@ namespace Bludgeon {
 		{
 			Log.Info ("Daemon is idle!");
 			abuse.Run ();
+
+			if (test_queries) {
+				SanityCheck.TestRandomQueries (total_query_time, root);
+				Shutdown ();
+			}
+				
 		}
 
 		static public void Shutdown ()
@@ -140,6 +140,12 @@ namespace Bludgeon {
 			if (args == null)
 				return;
 
+			if (list_hammers) {
+				foreach (string hammer in Toolbox.HammerNames)
+					Console.WriteLine ("  - {0}", hammer);
+				return;
+			}
+
 			ArrayList hammers_to_use;
 			hammers_to_use = new ArrayList ();
 			foreach (string name in args) {
@@ -151,7 +157,6 @@ namespace Bludgeon {
 					Log.Failure ("Unknown hammer '{0}'", name);
 			}
 
-			DirectoryObject root;
 			root = CreateTestRoot ();
 			TreeBuilder.Build (root,
 					   30,    // three directories
@@ -168,104 +173,19 @@ namespace Bludgeon {
 
 			abuse = new Abuse (root, tracker, hammers_to_use);
 
+			abuse.TotalCount = total_count;
+			abuse.TotalTime = total_time;
+
+			abuse.Cycles = cycles;
+			abuse.MinCycles = min_cycles;
+			abuse.MaxCycles = max_cycles;
+
+			abuse.Pause = pause;
+			abuse.MinPause = min_pause;
+			abuse.MaxPause = max_pause;
+
 			GLib.Idle.Add (new GLib.IdleHandler (Startup));
 			Gtk.Application.Run ();
-#if false
-
-
-			CreateTestHome ();
-
-			FileModel root;
-			root = InitialTree ();
-			FileModel.AddRoot (root);
-			
-			Daemon.Start ();
-			if (! SanityCheck.VerifyIndex ()) {
-				Log.Failure ("Initial index verify failed --- shutting down");
-				Daemon.Shutdown ();
-				return;
-			}
-
-			if (test_queries) {
-				if (total_time < 0)
-					total_time = 1.0;
-				SanityCheck.TestRandomQueries (total_time);
-				Daemon.Shutdown ();
-				return;
-			}
-
-			if (hammers_to_use.Count == 0) {
-				Log.Info ("No hammers specified --- shutting down");
-				Daemon.Shutdown ();
-				return;
-			}
-				
-			Random random;
-			random = new Random ();
-
-			int test_count = 0;
-
-			Stopwatch sw = null;
-			if (total_time > 0) {
-				sw = new Stopwatch ();
-				sw.Start ();
-			}
-
-			bool failed;
-			failed = false;
-
-			while (true) {
-
-				if (sw != null) {
-					if (sw.ElapsedTime > total_time * 60)
-						break;
-					Log.Info ("Elapsed time: {0} ({1:0.0}%",
-						  sw, 100 * sw.ElapsedTime / (total_time * 60));
-				} else {
-					if (test_count >= total_count)
-						break;
-				}
-
-				IHammer hammer;
-				hammer = hammers_to_use [test_count % hammers_to_use.Count] as IHammer;
-
-				++test_count;
-
-				Log.Info ("Starting test #{0}", test_count);
-
-				int test_cycles;
-				if (min_cycles != -1 && max_cycles != -1) {
-					test_cycles = min_cycles;
-					if (min_cycles < max_cycles)
-						test_cycles = min_cycles + random.Next (max_cycles - min_cycles);
-				} else if (cycles != -1)
-					test_cycles = cycles;
-				else if (max_cycles != -1)
-					test_cycles = max_cycles;
-				else if (min_cycles != -1)
-					test_cycles = min_cycles;
-				else
-					test_cycles = 1;
-
-				for (int i = 0; i < test_cycles; ++i) {
-					hammer.HammerOnce ();
-					if (slowdown > 0)
-						Thread.Sleep ((int) (slowdown * 1000));
-				}
-
-
-				if (! disable_verify && ! SanityCheck.VerifyIndex ()) {
-					failed = true;
-					break;
-				}
-
-				if (pause > 0)
-					Thread.Sleep ((int) (pause * 1000));
-			}
-
-			if (failed)
-				Log.Failure ("Testing aborted");
-#endif
 		}
 	}
 }

@@ -10,6 +10,8 @@ namespace Bludgeon {
 
 	public class SanityCheck {
 
+		const double default_minutes_to_run = 1.0;
+
 		private SanityCheck () { }
 
 		static public bool CheckQuery (Query query, FileSystemObject root)
@@ -71,6 +73,9 @@ namespace Bludgeon {
 		
 		static public bool TestRandomQueries (double minutes_to_run, FileSystemObject root)
 		{
+			if (minutes_to_run < 0)
+				minutes_to_run = default_minutes_to_run;
+
 			Log.Info ("Running random queries for {0:0.0} minutes", minutes_to_run);
 
 			bool success;
@@ -86,6 +91,9 @@ namespace Bludgeon {
 					break;
 				++count;
 
+				if (count % 1000 == 0)
+					Log.Spew ("{0} queries run", count);
+				
 				Beagle.Query query;
 				query = QueryFu.NewRandomQuery ();
 
