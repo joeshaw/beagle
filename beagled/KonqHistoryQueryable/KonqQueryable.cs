@@ -83,7 +83,9 @@ namespace Beagle.Daemon.KonqQueryable {
 			}
 
                         log.Info ("Starting Konq history backend ...");
+			State = QueryableState.Crawling;
 			Crawl ();
+			State = QueryableState.Indexing;
 		}
 
 		private void Crawl ()
@@ -230,6 +232,7 @@ namespace Beagle.Daemon.KonqQueryable {
 						State = QueryableState.Crawling;
 						file_enumerator = null;
 						current_file = null;
+						State = QueryableState.Indexing;
 						return false;
 					}
 					DirectoryInfo current_dir = (DirectoryInfo)directory_enumerator.Current;
