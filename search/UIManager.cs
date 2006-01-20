@@ -201,7 +201,7 @@ namespace Search {
 			Gdk.Pixbuf logo = Beagle.Images.GetPixbuf ("system-search.png");
 
 			string[] people = new string[] {"Dan Winship <danw@novell.com>", "Lukas Lipka <lukas@pmad.net>",
-		       					 "Fredrik Hedberg <fredrik.hedberg@hedbergs.com>", "Joe Shaw <joeshaw@novell.com>"};
+		       					 "Fredrik Hedberg <fredrik@avafan.com>", "Joe Shaw <joeshaw@novell.com>"};
 			string[] documentors = new string[] {""};
 			
 			Gnome.About about = new Gnome.About ("Desktop Search", "0.0",
