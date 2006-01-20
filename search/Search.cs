@@ -29,7 +29,7 @@ namespace Search {
 		string queryText;
 		Beagle.Query currentQuery;
 		Search.ScopeType scope = ScopeType.Everywhere;
-		Search.SortType sort = SortType.Relevance;
+		Search.SortType sort = SortType.Modified;
 		Search.TypeFilter filter = null;
 
 		private static bool icon_enabled = false;

@@ -1,3 +1,11 @@
+2006-01-20  Dan Winship  <danw@novell.com>
+
+	* search/Search.cs: 
+	* search/UIManager.cs: Change default sort criterion to "modtime",
+	since relevance doesn't work very well.
+
+	* search/Tiles/Contact.cs: Fill in the details pane
+
 2006-01-19  Larry Ewing  <lewing@novell.com>
 
 	* Filters/FilterPng.cs: rework FilterPng to use the managed png

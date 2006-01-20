@@ -110,7 +110,7 @@ namespace Search {
 				new RadioActionEntry ("Relevance", null,
 						      Catalog.GetString ("_Relevance"), null,
 						      Catalog.GetString ("Sort the best matches first"),
-						      (int)SortType.Relevance),
+						      (int)SortType.Modified),
 				new RadioActionEntry ("Name", null,
 						      Catalog.GetString ("_Name"), null,
 						      Catalog.GetString ("Sort matches by name"),
