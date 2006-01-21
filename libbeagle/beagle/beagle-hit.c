@@ -25,6 +25,8 @@
  * DEALINGS IN THE SOFTWARE.
  */
 
+#include <string.h>
+
 #include "beagle-hit.h"
 #include "beagle-private.h"
 #include "beagle-property.h"
