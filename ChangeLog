@@ -1,3 +1,8 @@
+2006-01-21  Lukas Lipka  <lukas@pmad.net>
+
+	* search/Tiles/IMLog.cs: found_snippet never got set to true so we
+	always queried for the snippet.
+
 2006-01-21  Chao-Hsiung Liao  <j_h_liau@yahoo.com.tw>
 
 	* configure.in: add "zh_HK" to ALL_LINGUAS.

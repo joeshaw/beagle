@@ -117,7 +117,9 @@ namespace Search.Tiles {
 		{
 			this.snippet = snippet;
 			subject.Markup = snippet;
-			snippet_label.Markup = snippet;			
+			snippet_label.Markup = snippet;
+
+			found_snippet = found;
 		}
 
 		public override void Open ()
