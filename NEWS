@@ -1,4 +1,89 @@
 
+Version 0.2.0
+January 20, 2006
+
+UI/Tools:
+* New user interface, named beagle-search.  (Lukas Lipka, Dan Winship,
+  Fredrik Hedberg, Joe Shaw)
+* Old user interface (Best) removed.  (Dan)
+* Explicitly blacklist the documentation index when searching using
+  beagle-search.  (Joe)
+* Fix up the beagle-extract-content testing tool to clean up after
+  tmpfiles.  (Joe)
+* Many fixes to the bludgeon testing tool.  (Joe)
+
+Daemon/Infrastructure:
+* Add a one minute delay in starting the indexing process when the
+  daemon is started.  (Joe)
+* FINALLY fix the dreaded stale tmpfile bug.  (Joe)
+* Cache Lucene IndexReaders whenever we can, drastically reducing the
+  number of allocations made and saving memory.  (Joe)
+* Move to XdgMime for mime type detection.  (Bera)
+* Fix a compatibility problem with Mono 1.1.11 and newer that caused
+  settings to not be loaded correctly.  (Joe)
+* Fix a pegged CPU and memory problem when loading the text cache for
+  some files with non-ASCII characters.  (Joe)
+* Always use lowercase for file extension queries.  (Bera)
+* Allow clients to set the QueryDomain they wish to search in.  (Joe)
+* When generating snippets, get six prior and following words rather
+  than two for better context.  (Joe)
+* Store search-only properties as unstored Lucene fields.  (Bera)
+* Use a special namespace to hint filters instead of a stored
+  property.  (Bera)
+* Fix an exception in the inotify code when a file is deleted before a
+  change can be handled.  (Joe)
+* Fix a bug in which a stream was being saved to disk twice in the
+  middle of filtering.  (Joe)
+
+Backends:
+* Fix a nasty memory inefficiency when crawling over read-only files
+  in the file system backend.  (Joe)
+* Use GMime's new StreamWrapper in the Evolution and KMail backends,
+  which should dramatically reduce allocations and save memory.  (Joe)
+* Remove gmime dependency from Akregator backend.  (Bera)
+* Update Blam backend to match the current file format.  (Bera)
+* Read KMail folder locations from the kmailrc file.  (Bera, Vaclav
+  Slavik)
+* Changed KMail folder detection to allow stale index files.  (Bera)
+
+Filters:
+* Also use GMime's StreamWrapper in the mail filter.  (Joe)
+* Store email addresses as non-keywords, so that searching for just
+  email addresses works again.  (Joe, Bera)
+* Break up email address into fragments, so that searching for "foo"
+  or "bar" will match "foo@bar.com".  (Joe)
+* Update PNG filter to be entirely managed and extract more metadata.
+  (Larry Ewing)
+* Update JPEG and PNG filters to extract embedded XMP data.  (Larry)
+* Added Ruby Filter.  (Uwe Hermann)
+* Store message ID and references from email for tracking
+  conversations.  (Bera).
+* Truncate indexing of shell scripts to 20k.  (Joe)
+* Touchups to the Source and OpenOffice filters.  (Lukas)
+* Index "Type" in .desktop files.  (Bera)
+* Use the "meta" namespace for meta tags in HTML files.  (Bera)
+* Fix some memory management issues in mail filter.  (Joe)
+
+Bindings:
+* Many libbeagle updates.  (Joe, Bera)
+* Many Python binding updates.  (Bera)
+* Added Python example script.  (Raphael Slinckx)
+
+Translations:
+* Updated Canadian English translation.  (Adam Weinberger)
+* Updated Danish translation.  (Lasse Bang Mikkelsen)
+* Updated Dutch translation.  (Tino Meinen)
+* Updated Hungarian translation.  (Gabor Kelemen)
+* Updated Finnish translation.  (Ilkka Tuohela)
+* Updated Norwegian Bokmål translation.  (Øivind Hoel)
+* Updated Vietnamese translation.  (Clytie Siddall)
+
+Everything Else:
+* Remove gecko-sharp2 and Mozilla dependencies.  (Dan)
+* Detect Mono version to work around SharpZipLib compatibility.  (Joe)
+
+------------------------------------------------------
+
 Version 0.1.4
 December 21, 2005
 
