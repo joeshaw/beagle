@@ -2,7 +2,7 @@
 X-SuSE-translate=true
 Name=Search
 GenericName=Search
-Icon=tango-system-search
+Icon=system-search
 Exec=@BINDIR@/beagle-search
 Terminal=false
 Type=Application
