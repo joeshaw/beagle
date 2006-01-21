@@ -68,19 +68,19 @@ msgstr "找不到符合的結果。"
 #: ../search/Pages/NoMatch.cs:20
 #, csharp-format
 msgid "Your search for \"{0}\" did not match any files on your computer."
-msgstr "在您的電腦上沒有任何符合「{0}」搜尋的檔案。"
+msgstr "在你的電腦上沒有任何符合「{0}」搜尋的檔案。"
 
 #: ../search/Pages/NoMatch.cs:24
 msgid "You can change the scope of your search using the \"Search\" menu. A broader search scope might produce more results."
-msgstr "您可以使用「搜尋」選單來改變搜尋的範圍。愈廣大的搜尋範圍會產生愈多的結果。"
+msgstr "你可以使用「搜尋」選單來改變搜尋的範圍。愈廣大的搜尋範圍會產生愈多的結果。"
 
 #: ../search/Pages/NoMatch.cs:26
 msgid "You should check the spelling of your search words to see if you accidentally misspelled any words."
-msgstr "您應該檢查搜尋文字的拼字以確定是否不小心拼錯了任何字。"
+msgstr "你應該檢查搜尋文字的拼字以確定是否不小心拼錯了任何字。"
 
 #: ../search/Pages/QuickTips.cs:10
 msgid "You can use upper and lower case; search is case-insensitive."
-msgstr "您可以使用大寫及小寫字母；搜尋是不區分大小寫的。"
+msgstr "你可以使用大寫及小寫字母；搜尋是不區分大小寫的。"
 
 #: ../search/Pages/QuickTips.cs:11
 msgid "To search for optional terms, use OR.  ex: <b>George OR Ringo</b>"
@@ -130,11 +130,11 @@ msgstr "加入到書庫"
 
 #: ../search/Tiles/Contact.cs:60
 msgid "E-Mail:"
-msgstr "電子郵件:"
+msgstr "電郵:"
 
 #: ../search/Tiles/Contact.cs:66
 msgid "Mobile Phone:"
-msgstr "行動電話:"
+msgstr "流動電話:"
 
 #: ../search/Tiles/Contact.cs:73
 msgid "Work Phone:"
@@ -155,7 +155,7 @@ msgstr "在資料夾中顯示"
 
 #: ../search/Tiles/File.cs:37
 msgid "E-Mail"
-msgstr "電子郵件"
+msgstr "電郵"
 
 #: ../search/Tiles/File.cs:38
 msgid "Instant-Message"
@@ -222,11 +222,11 @@ msgstr "收到的資料:"
 
 #: ../search/Tiles/MailAttachment.cs:48
 msgid "Mail attachment"
-msgstr "郵件附加檔案"
+msgstr "電郵附加檔案"
 
 #: ../search/Tiles/MailMessage.cs:45
 msgid "Send in Mail"
-msgstr "傳送至郵件"
+msgstr "傳送至電郵"
 
 #: ../search/Tiles/MailMessage.cs:100
 msgid "Subject:"
@@ -272,11 +272,11 @@ msgstr "更多應用程式結果..."
 
 #: ../search/Tiles/Utils.cs:29
 msgid "Contact"
-msgstr "連絡人"
+msgstr "聯絡人"
 
 #: ../search/Tiles/Utils.cs:30
 msgid "More contact results..."
-msgstr "顯示更多連絡人結果..."
+msgstr "顯示更多聯絡人結果..."
 
 #: ../search/Tiles/Utils.cs:33
 msgid "Folder"
@@ -621,11 +621,11 @@ msgstr "搜尋應用程式"
 
 #: ../search/UIManager.cs:82
 msgid "_Contacts"
-msgstr "連絡人(_C)"
+msgstr "聯絡人(_C)"
 
 #: ../search/UIManager.cs:84
 msgid "Search contacts"
-msgstr "搜尋連絡人"
+msgstr "搜尋聯絡人"
 
 #: ../search/UIManager.cs:87
 msgid "_Documents"
@@ -641,7 +641,7 @@ msgstr "交談(_R)"
 
 #: ../search/UIManager.cs:94
 msgid "Search E-Mail and Instant Messaging logs"
-msgstr "搜尋電子郵件與即時訊息紀錄"
+msgstr "搜尋電郵與即時訊息紀錄"
 
 #: ../search/UIManager.cs:97
 msgid "Images"
@@ -689,7 +689,7 @@ msgstr "重新載入組態"
 
 #: ../tools/Settings.cs:218
 msgid "The configuration file has been modified by another application. Do you wish to discard the currently displayed values and reload configuration from disk?"
-msgstr "該組態檔案已經被其他的應用程式修改。您是否希望放棄目前顯示的數值並從磁碟重新載入組態？"
+msgstr "該組態檔案已經被其他的應用程式修改。你是否希望放棄目前顯示的數值並從磁碟重新載入組態？"
 
 #: ../tools/Settings.cs:256
 msgid "Select Path"
@@ -714,7 +714,7 @@ msgstr "移除過時的路徑"
 
 #: ../tools/Settings.cs:299
 msgid "Adding this path will obsolete some of the existing include paths. This will result in the removal of the old obsolete paths. Do you still wish to add it?"
-msgstr "加入此路徑將會廢棄某些已包含的既存路徑。此舉會致使過時的路徑被移除。您仍然希望加入它嗎？"
+msgstr "加入此路徑將會廢棄某些已包含的既存路徑。此舉會致使過時的路徑被移除。你仍然希望加入它嗎？"
 
 #: ../tools/Settings.cs:325
 msgid "Remove path"
@@ -722,7 +722,7 @@ msgstr "移除路徑"
 
 #: ../tools/Settings.cs:326
 msgid "Are you sure you wish to remove this path from the list of directories to be included for indexing?"
-msgstr "您確定要從此做為索引之用的目錄清單中移除此路徑？"
+msgstr "你確定要從此做為索引之用的目錄清單中移除此路徑？"
 
 #: ../tools/Settings.cs:355
 msgid "Remove item"
@@ -730,7 +730,7 @@ msgstr "移除項目"
 
 #: ../tools/Settings.cs:356
 msgid "Are you sure you wish to remove this item from the list of data to be excluded from indexing?"
-msgstr "您確定要從此做為索引之用的目錄清單中移除此項目？"
+msgstr "你確定要從此做為索引之用的目錄清單中移除此項目？"
 
 #: ../tools/Settings.cs:399
 msgid "Invalid host entry"
@@ -750,7 +750,7 @@ msgstr "移除主機"
 
 #: ../tools/Settings.cs:432
 msgid "Are you sure you wish to remove this host from the list?"
-msgstr "您確定要從此清單中移除此主機？"
+msgstr "你確定要從此清單中移除此主機？"
 
 #: ../tools/Settings.cs:453
 msgid "Select path"
@@ -766,7 +766,7 @@ msgstr "移除公用路徑"
 
 #: ../tools/Settings.cs:497
 msgid "Are you sure you wish to remove this entry from the list of public paths?"
-msgstr "您確定要從此公用路徑清單中移除此項目？"
+msgstr "你確定要從此公用路徑清單中移除此項目？"
 
 #: ../tools/Settings.cs:542
 #: ../tools/Settings.cs:631
@@ -796,7 +796,7 @@ msgstr "樣式"
 #: ../tools/Settings.cs:1063
 #: ../tools/settings.glade.h:22
 msgid "Mail Folder"
-msgstr "郵件資料夾"
+msgstr "電郵資料夾"
 
 #: ../tools/Settings.cs:1032
 msgid "Select Folder"
@@ -832,7 +832,7 @@ msgstr "<b>一般</b>"
 
 #: ../tools/settings.glade.h:5
 msgid "<b>Networking</b>"
-msgstr "<b>網路功能</b>"
+msgstr "<b>網絡功能</b>"
 
 #: ../tools/settings.glade.h:6
 msgid "<b>Privacy</b>"
@@ -840,14 +840,14 @@ msgstr "<b>私人</b>"
 
 #: ../tools/settings.glade.h:7
 msgid "<b>Select mail folder</b>"
-msgstr "<b>選擇郵件資料夾</b>"
+msgstr "<b>選擇電郵資料夾</b>"
 
 #: ../tools/settings.glade.h:8
 msgid ""
 "Add a remote search-enabled host you wish \n"
 "to network with."
 msgstr ""
-"加入您希望使用網路搜尋的\n"
+"加入你希望使用網絡搜尋的\n"
 "遠端主機。"
 
 #: ../tools/settings.glade.h:10
@@ -856,7 +856,7 @@ msgstr "加入任何額外的路徑以包含至索引。"
 
 #: ../tools/settings.glade.h:11
 msgid "Add any remote search-enabled hosts you wish to network with"
-msgstr "加入任何您希望使用網路搜尋的遠端主機"
+msgstr "加入任何你希望使用網絡搜尋的遠端主機"
 
 #: ../tools/settings.glade.h:12
 msgid "Address"
@@ -904,15 +904,15 @@ msgstr "最大顯示結果數"
 
 #: ../tools/settings.glade.h:24
 msgid "Networking"
-msgstr "網路功能"
+msgstr "網絡功能"
 
 #: ../tools/settings.glade.h:26
 msgid "Please select a resource you wish to exclude from indexing."
-msgstr "請選擇您希望排除在索引之外的資源。"
+msgstr "請選擇你希望排除在索引之外的資源。"
 
 #: ../tools/settings.glade.h:27
 msgid "Please select the mail folder you wish to exclude from indexing. "
-msgstr "請選擇您希望排除在索引之外的郵件資料夾。"
+msgstr "請選擇你希望排除在索引之外的電郵資料夾。"
 
 #: ../tools/settings.glade.h:28
 msgid "Search"
@@ -924,7 +924,7 @@ msgstr "搜尋偏好設定"
 
 #: ../tools/settings.glade.h:30
 msgid "Specify any resources, such as paths, patterns, mail folders or type of objects you wish to exclude from indexing."
-msgstr "請選擇您希望排除在索引之外的資源，像是路徑、樣式、郵件資料夾或物件的類型。"
+msgstr "請選擇你希望排除在索引之外的資源，像是路徑、樣式、電郵資料夾或物件的類型。"
 
 #: ../tools/settings.glade.h:31
 msgid "Specify paths that should be available for external access"
