@@ -36,9 +36,12 @@ namespace Bludgeon {
 					success = false;
 				}
 			}
-			
-			foreach (Uri uri in matching_hits.Keys) {
-				Log.Failure ("Unexpected extra hit in beagled query results: {0}", uri);
+
+			foreach (Hit hit in matching_hits.Values) {
+				Log.Failure ("Unexpected extra hit in beagled query results: {0}", hit.Uri);
+				Log.Failure ("  Properties:");
+				foreach (Property prop in hit.Properties)
+					Log.Failure ("    {0} = {1}", prop.Key, prop.Value);
 				success = false;
 			}
 

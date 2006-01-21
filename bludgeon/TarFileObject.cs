@@ -34,7 +34,7 @@ namespace Bludgeon {
 		override protected string GetChildUri (FileSystemObject children)
 		{
 			// FIXME: What is the uri scheme for tar files?
-			return null;
+			return this.Uri + "#" + children.Name;
 		}
 
 		override public string MimeType {

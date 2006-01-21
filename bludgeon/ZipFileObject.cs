@@ -29,7 +29,8 @@ namespace Bludgeon {
 		override protected string GetChildUri (FileSystemObject children)
 		{
 			// FIXME: What is the uri scheme for zip files?
-			return null;
+			string uri = this.Uri + "#" + children.Name;
+			return uri;
 		}
 
 		override public string MimeType {
