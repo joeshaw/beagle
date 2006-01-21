@@ -774,9 +774,8 @@ namespace Beagle.Daemon {
 		{
 			if (last_item_count < 0) {
 				IndexReader reader;
-				reader = IndexReader.Open (PrimaryStore);
+				reader = GetReader (PrimaryStore);
 				last_item_count = reader.NumDocs ();
-				reader.Close ();
 			}
 			return last_item_count;
 		}
@@ -1389,6 +1388,68 @@ namespace Beagle.Daemon {
 
 		///////////////////////////////////////////////////////////////////////////////////
 
+		// Cache IndexReaders on a per-Lucene index basis, since they
+		// are extremely expensive to create.  Note that using this
+		// only makes sense in situations where the index only
+		// possibly might change from underneath us, but most of the
+		// time probably won't.  This means it makes sense to do
+		// this in LuceneQueryingDriver.cs, but it doesn't in
+		// LuceneIndexingDriver.cs.
+
+		private class ReaderAndVersion {
+
+			public IndexReader Reader;
+			public long Version;
+
+			public ReaderAndVersion (IndexReader reader, long version)
+			{
+				this.Reader = reader;
+				this.Version = version;
+			}
+		}
+
+		static private Hashtable directory_rav_map = new Hashtable ();
+
+		static public LNS.IndexSearcher GetSearcher (Lucene.Net.Store.Directory directory)
+		{
+			IndexReader reader = GetReader (directory);
+
+			return new LNS.IndexSearcher (reader);
+		}
+
+		static public IndexReader GetReader (Lucene.Net.Store.Directory directory)
+		{
+			IndexReader reader;
+			long version;
+
+			lock (directory_rav_map) {
+				ReaderAndVersion rav = (ReaderAndVersion) directory_rav_map [directory];
+
+				if (rav == null) {
+					version = IndexReader.GetCurrentVersion (directory);
+					reader = IndexReader.Open (directory);
+
+					rav = new ReaderAndVersion (reader, version);
+
+					directory_rav_map [directory] = rav;
+
+					return reader;
+				}
+
+				version = IndexReader.GetCurrentVersion (directory);
+				
+				if (version != rav.Version) {
+					rav.Version = version;
+					rav.Reader.Close ();
+					rav.Reader = IndexReader.Open (directory);
+				}
+				
+				return rav.Reader;
+			}
+		}
+
+		///////////////////////////////////////////////////////////////////////////////////
+
 		//
 		// Various ways to grab lots of hits at once.
 		// These should never be used for querying, only for utility
@@ -1400,8 +1461,8 @@ namespace Beagle.Daemon {
 		{
 			IndexReader primary_reader;
 			IndexReader secondary_reader;
-			primary_reader = IndexReader.Open (PrimaryStore);
-			secondary_reader = IndexReader.Open (SecondaryStore);
+			primary_reader = GetReader (PrimaryStore);
+			secondary_reader = GetReader (SecondaryStore);
 
 			int request_size;
 			request_size = block_of_hits.Length;
@@ -1497,8 +1558,8 @@ namespace Beagle.Daemon {
 
 			IndexReader primary_reader;
 			IndexReader secondary_reader;
-			primary_reader = IndexReader.Open (PrimaryStore);
-			secondary_reader = IndexReader.Open (SecondaryStore);
+			primary_reader = GetReader (PrimaryStore);
+			secondary_reader = GetReader (SecondaryStore);
 
 			// Load everything from the primary index
 			int max_doc;
@@ -1536,10 +1597,6 @@ namespace Beagle.Daemon {
 						AddPropertiesToHit (hit, doc, false);
 				}
 			}
-
-			primary_reader.Close ();
-			if (secondary_reader != null)
-				secondary_reader.Close ();
 
 			return all_hits;
 		}

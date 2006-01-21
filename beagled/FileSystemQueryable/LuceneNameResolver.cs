@@ -135,7 +135,7 @@ namespace Beagle.Daemon.FileSystemQueryable {
 			collector = new SingletonCollector ();
 
 			LNS.IndexSearcher searcher;
-			searcher = new LNS.IndexSearcher (SecondaryStore);
+			searcher = LuceneCommon.GetSearcher (SecondaryStore);
 			searcher.Search (query, null, collector);
 
 			NameInfo info = null;
@@ -179,7 +179,7 @@ namespace Beagle.Daemon.FileSystemQueryable {
 			collector = new SingletonCollector ();
 
 			LNS.IndexSearcher searcher;
-			searcher = new LNS.IndexSearcher (SecondaryStore);
+			searcher = LuceneCommon.GetSearcher (SecondaryStore);
 			searcher.Search (query, null, collector);
 
 			Guid id;
@@ -227,7 +227,8 @@ namespace Beagle.Daemon.FileSystemQueryable {
 
 			// Then we actually run the query
 			LNS.IndexSearcher searcher;
-			searcher = new LNS.IndexSearcher (SecondaryStore);
+			//searcher = new LNS.IndexSearcher (SecondaryStore);
+			searcher = LuceneCommon.GetSearcher (SecondaryStore);
 
 			BetterBitArray matches;
 			matches = new BetterBitArray (searcher.MaxDoc ());
@@ -258,6 +259,8 @@ namespace Beagle.Daemon.FileSystemQueryable {
 
 				++i;
 			}
+
+			searcher.Close ();
 
 			return match_list;
 		}

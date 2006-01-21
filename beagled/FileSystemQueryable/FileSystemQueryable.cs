@@ -913,11 +913,15 @@ namespace Beagle.Daemon.FileSystemQueryable {
 				return RequiredAction.Index;
 			}
 
-			// If the inode ctime is different that the time we last
-			// set file attributes, we might have been moved or copied.
-			if (attr.LastAttrTime != last_attr_time) {
+			// If the inode ctime is newer than the last time we last
+			// set file attributes, we might have been moved.  We don't
+			// strictly compare times due to the fact that although
+			// setting xattrs changes the ctime, if we don't have write
+			// access our metadata will be stored in sqlite, and the
+			// ctime will be at some point in the past.
+			if (attr.LastAttrTime < last_attr_time) {
 				if (Debug)
-					Logger.Log.Debug ("*** CTime has changed, checking last known path ({0} vs {1})", attr.LastAttrTime, last_attr_time);
+					Logger.Log.Debug ("*** CTime is newer, checking last known path ({0} vs {1})", attr.LastAttrTime, last_attr_time);
 
 				last_known_path = UniqueIdToFullPath (attr.UniqueId);
 

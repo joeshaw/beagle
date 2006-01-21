@@ -83,7 +83,7 @@ namespace Beagle.Daemon {
 			IndexReader primary_reader;
 			LNS.IndexSearcher primary_searcher;
 
-			primary_reader = IndexReader.Open (PrimaryStore);
+			primary_reader = LuceneCommon.GetReader (PrimaryStore);
 			primary_searcher = new LNS.IndexSearcher (primary_reader);
 
 			Term term = new Term (PropertyToFieldName (prop.Type, prop.Key), prop.Value);
@@ -97,7 +97,6 @@ namespace Beagle.Daemon {
 				uri_list [i] = GetUriFromDocument (doc);
 			}
 
-			primary_reader.Close ();
 			primary_searcher.Close ();
 
 			return uri_list;
@@ -203,11 +202,11 @@ namespace Beagle.Daemon {
 			IndexReader secondary_reader = null;
 			LNS.IndexSearcher secondary_searcher = null;
 
-			primary_reader = IndexReader.Open (PrimaryStore);
+			primary_reader = LuceneCommon.GetReader (PrimaryStore);
 			primary_searcher = new LNS.IndexSearcher (primary_reader);
 			
 			if (SecondaryStore != null) {
-				secondary_reader = IndexReader.Open (SecondaryStore);
+				secondary_reader = LuceneCommon.GetReader (SecondaryStore);
 				if (secondary_reader.NumDocs () == 0) {
 					secondary_reader.Close ();
 					secondary_reader = null;
@@ -318,9 +317,6 @@ namespace Beagle.Daemon {
 			// Finally, we clean up after ourselves.
 			//
 			
-			primary_reader.Close ();
-			if (secondary_reader != null)
-				secondary_reader.Close ();
 			primary_searcher.Close ();
 			if (secondary_searcher != null)
 				secondary_searcher.Close ();
