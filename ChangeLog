@@ -1,3 +1,22 @@
+2006-01-21  Larry Ewing  <lewing@novell.com>
+
+	* Filters/FilterTiff.cs: add a filter for tiff files.
+
+	* Filters/FilterImage.cs: fix the xmp parser rights is a bag.
+
+	* Util/Tiff.cs: add tiff parser.
+
+2006-01-20  Larry Ewing  <lewing@novell.com>
+
+	* Filters/FilterImage.cs: add AddXmpProperties so that other
+	subclases can share the logic.
+	
+	* Filters/FilterPng.cs: use AddXmpProperties to add the xmp
+	properties.
+	
+	* Filters/FilterJpeg.cs: call FilterImage.AddXmpProperties instead
+	of doing the additions here.
+
 2006-01-21  Lukas Lipka  <lukas@pmad.net>
 
 	* search/Tiles/IMLog.cs: found_snippet never got set to true so we
@@ -7,6 +26,7 @@
 
 	* configure.in: add "zh_HK" to ALL_LINGUAS.
 	
+>>>>>>> 1.309
 2006-01-20  Debajyoti Bera <dbera.web@gmail.com>
 
 	* KonqQueryable.cs: Use QueryableStates for Konqueror webhistory

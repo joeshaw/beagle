@@ -87,6 +87,7 @@ CSFILES = 			        	\
 	$(srcdir)/SystemInformation.cs		\
 	$(srcdir)/TeeTextWriter.cs		\
 	$(srcdir)/ThreadPond.cs			\
+	$(srcdir)/Tiff.cs			\
 	$(srcdir)/Timeline.cs			\
 	$(srcdir)/TopScores.cs			\
 	$(srcdir)/UnclosableStream.cs		\

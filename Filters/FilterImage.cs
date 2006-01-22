@@ -51,14 +51,17 @@ namespace Beagle.Filters {
 
 		protected int Width {
 			set { width = value; }
+			get { return width; }
 		}
 
 		protected int Height {
 			set { height = value; }
+			get { return height; }
 		}
 
 		protected int Depth {
 			set { depth = value; }
+			get { return depth; }
 		}
 
 		protected override void DoPullProperties ()
@@ -94,11 +97,12 @@ namespace Beagle.Filters {
 			}
 		}
 		
-		protected void AddXmpProperties (XmpFile xmp)
+		internal void AddXmpProperties (XmpFile xmp)
 		{
 			Resource subject_anon = null;
 			Resource creator_anon = null;
-			
+			Resource rights_anon = null;
+
 			foreach (Statement stmt in xmp.Store) {
 				if (stmt.Predicate == MetadataStore.Namespaces.Resolve ("dc:subject")) {
 					System.Console.WriteLine ("found subject");
@@ -107,22 +111,26 @@ namespace Beagle.Filters {
 					System.Console.WriteLine ("found creator");
 					creator_anon = stmt.Object;
 				} else if (stmt.Predicate == MetadataStore.Namespaces.Resolve ("dc:rights")) {
-					AddProperty (Beagle.Property.New ("dc:rights", ((Literal)stmt.Object).Value));
+					rights_anon = stmt.Object;
 				} else if (stmt.Predicate == MetadataStore.Namespaces.Resolve ("dc:title")) {
 					AddProperty (Beagle.Property.New ("dc:title", ((Literal)stmt.Object).Value));
 				} else if (stmt.Predicate == MetadataStore.Namespaces.Resolve ("tiff:Model")) {
 					// NOTE: the namespaces for xmp and beagle don't always match up
 					AddProperty (Beagle.Property.New ("exif:Model", ((Literal)stmt.Object).Value));
-					}
+				}
 			}
 			
 			foreach (Statement stmt in xmp.Store) {
 				if (stmt.Subject == subject_anon && 
 				    stmt.Predicate != MetadataStore.Namespaces.Resolve ("rdf:type")) {
 					AddProperty (Beagle.Property.New ("dc:subject", ((Literal)stmt.Object).Value));
-				} else if (stmt.Subject == creator_anon && 
-					   stmt.Predicate != MetadataStore.Namespaces.Resolve ("rdf:type"))
+				} else if (stmt.Subject == creator_anon &&  
+					   stmt.Predicate != MetadataStore.Namespaces.Resolve ("rdf:type")) {
 					AddProperty (Beagle.Property.New ("dc:creator", ((Literal)stmt.Object).Value));
+				} else if (stmt.Subject == rights_anon &&  
+					   stmt.Predicate != MetadataStore.Namespaces.Resolve ("rdf:type")) {
+					AddProperty (Beagle.Property.New ("dc:rights", ((Literal)stmt.Object).Value));
+				}
 			}
 		}
 	}
