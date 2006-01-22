@@ -1,5 +1,19 @@
 2006-01-22  Lukas Lipka  <lukas@pmad.net>
 
+	* search/Category.cs: Make sorting work in real time.
+
+	* search/GroupView.cs: Make live queries update the UI on
+	subtract hit.
+
+	* search/SortedTileList.cs: Implement date comparer.
+	
+	* search/UIManager.cs: Update the sorting menu a little.
+
+	* search/Tiles/Tile.cs: Add a check for a null hit or query to
+	eliminate a really odd crash.
+
+2006-01-22  Lukas Lipka  <lukas@pmad.net>
+
 	* search/Tiles/Tile.cs: Don't set the snippet to "..." when we
 	fire off a request, because if we fail midway, this will break
 	the IM tile.

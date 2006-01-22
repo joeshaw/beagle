@@ -133,20 +133,20 @@ namespace Search {
 	class NameComparer : HitComparer {
 		public override int Compare (Tiles.Tile tx, Tiles.Tile ty)
 		{
+			// FIXME: This comparing only works on tiles derived from TileTemplate
 			Tiles.TileTemplate tsx = tx as Tiles.TileTemplate, tsy = ty as Tiles.TileTemplate;
 
 			if (tsx != null && tsy != null)
 				return String.Compare (tsx.Title, tsy.Title, true);
-			//else
-			//	return tx.Hit.Uri.CompareTo (ty.Hit.Uri); // FIXME
-			return 0; // FIXME: Fixme
+
+			return 0;
 		}
 	}
 
 	class DateComparer : HitComparer {
 		public override int Compare (Tiles.Tile tx, Tiles.Tile ty)
 		{
-			return 0;
+			return -tx.Hit.Timestamp.CompareTo (ty.Hit.Timestamp);
 		}
 	}
 }

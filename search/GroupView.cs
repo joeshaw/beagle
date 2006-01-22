@@ -59,7 +59,14 @@ namespace Search {
 
 		public void SubtractHit (Uri uri)
 		{
-			// FIXME
+			foreach (Category box in categories.Values) {
+				foreach (Tile tile in box.AllTiles) {
+					if (tile.Hit.Uri.Equals (uri)) {
+						box.Remove (tile);
+						return;
+					}
+				}
+			}
 		}
 
 		public void Finished (bool grabFocus)

@@ -107,20 +107,20 @@ namespace Search {
 			actions.Add (scope_entries, (int)ScopeType.Everywhere, OnScopeChanged);
 
 			Gtk.RadioActionEntry[] sort_entries = new RadioActionEntry[] {
-				new RadioActionEntry ("Relevance", null,
-						      Catalog.GetString ("_Relevance"), null,
-						      Catalog.GetString ("Sort the best matches first"),
+				new RadioActionEntry ("Modified", null,
+						      Catalog.GetString ("Date _Modified"), null,
+						      Catalog.GetString ("Sort the most-recently-modified matches first"),
 						      (int)SortType.Modified),
 				new RadioActionEntry ("Name", null,
 						      Catalog.GetString ("_Name"), null,
 						      Catalog.GetString ("Sort matches by name"),
 						      (int)SortType.Name),
-				new RadioActionEntry ("Modified", null,
-						      Catalog.GetString ("Date _Modified"), null,
-						      Catalog.GetString ("Sort the most-recently-modified matches first"),
-						      (int)SortType.Modified),
+				new RadioActionEntry ("Relevance", null,
+						      Catalog.GetString ("_Relevance"), null,
+						      Catalog.GetString ("Sort the best matches first"),
+						      (int)SortType.Relevance),
 			};
-			actions.Add (sort_entries, (int)SortType.Relevance, OnSortChanged);
+			actions.Add (sort_entries, (int)SortType.Modified, OnSortChanged);
 
 			InsertActionGroup (actions, 0);
 			mainWindow.AddAccelGroup (AccelGroup);
@@ -151,9 +151,9 @@ namespace Search {
 		"    <menu action='Actions'>" +
 		"    </menu>" +
 		"    <menu action='SortBy'>" +
-		"      <menuitem action='Relevance'/>" +
-		"      <menuitem action='Name'/>" +
 		"      <menuitem action='Modified'/>" +
+		"      <menuitem action='Name'/>" +
+		"      <menuitem action='Relevance'/>" +
 		"    </menu>" +
 		"    <menu action='Help'>" +
 		"      <menuitem action='Contents'/>" +

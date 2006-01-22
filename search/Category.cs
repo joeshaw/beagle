@@ -252,7 +252,7 @@ namespace Search {
 			}
 		}
 
-		protected IEnumerable AllTiles {
+		public IEnumerable AllTiles {
 			get {
 				return tiles;
 			}
@@ -314,6 +314,7 @@ namespace Search {
 		public Search.SortType Sort {
 			set {
 				tiles.Sort = value;
+				UpdateTileVisibility ();
 			}
 		}
 	}

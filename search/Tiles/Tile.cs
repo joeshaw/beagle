@@ -15,9 +15,9 @@ namespace Search.Tiles {
 
 		public Tile (Hit hit, Query query) : base ()
 		{
+			ModifyBg (Gtk.StateType.Normal, Style.Base (Gtk.StateType.Normal));
 			AboveChild = true;
 			CanFocus = true;
-			ModifyBg (Gtk.StateType.Normal, Style.Base (Gtk.StateType.Normal));
 
 			this.hit = hit;
 			this.query = query;
@@ -29,11 +29,12 @@ namespace Search.Tiles {
 			hbox = new Gtk.HBox (false, 5);
 			hbox.BorderWidth = 2;
 			hbox.Show ();
-			Add (hbox);
 
 			image = new Gtk.Image ();
-			hbox.PackStart (image, false, false, 0);
 			image.NoShowAll = true;
+			hbox.PackStart (image, false, false, 0);
+
+			Add (hbox);
 		}
 
 		private Beagle.Hit hit;
@@ -208,6 +209,9 @@ namespace Search.Tiles {
 
 		protected void RequestSnippet ()
 		{
+			if (hit == null || query == null)
+				return;
+
 			SnippetRequest sreq = new SnippetRequest (query, hit);
 			sreq.RegisterAsyncResponseHandler (typeof (SnippetResponse), SnippetResponseReceived);
 			sreq.SendAsync ();
