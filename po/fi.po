@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: beagle\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2006-01-22 20:43+0200\n"
-"PO-Revision-Date: 2006-01-06 22:05+0200\n"
+"PO-Revision-Date: 2006-01-22 21:39+0200\n"
 "Last-Translator: Ilkka Tuohela <hile@iki.fi>\n"
 "Language-Team: Finnish <gnome-fi-laatu@lists.sourceforge.net>\n"
 "MIME-Version: 1.0\n"
@@ -46,8 +46,8 @@ msgstr "Keskustelut {0} kanssa"
 #, csharp-format
 msgid "Top {0} Result"
 msgid_plural "Top {0} Results"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "Paras {0} tulos"
+msgstr[1] "Parhaat {0} tulosta"
 
 #: ../search/Category.cs:86
 #, csharp-format
@@ -70,49 +70,58 @@ msgstr "Tuloksia ei löytynyt."
 #: ../search/Pages/NoMatch.cs:20
 #, csharp-format
 msgid "Your search for \"{0}\" did not match any files on your computer."
-msgstr ""
+msgstr "Haku \"{0}\" ei täsmännyt tiedostoihin tietokoneellasi."
 
 #: ../search/Pages/NoMatch.cs:24
 msgid ""
 "You can change the scope of your search using the \"Search\" menu. A broader "
 "search scope might produce more results."
 msgstr ""
+"Voit muuttaa haun kattavuutta \"Haku\"-valikosta. Laajempi haun kattavuus "
+"voi antaa enemmän tuloksia."
 
 #: ../search/Pages/NoMatch.cs:26
 msgid ""
 "You should check the spelling of your search words to see if you "
 "accidentally misspelled any words."
 msgstr ""
+"Tarkista haussa käyttämiesi sanojen oikeinkirjoitus siltä varalta että "
+"kirjoitit jonkun sanan vahingossa väärin."
 
 #: ../search/Pages/QuickTips.cs:10
 msgid "You can use upper and lower case; search is case-insensitive."
-msgstr ""
+msgstr "Voit käyttää pieniä ja suuria kirjaimia, haku ei erottele niitä."
 
 #: ../search/Pages/QuickTips.cs:11
 msgid "To search for optional terms, use OR.  ex: <b>George OR Ringo</b>"
-msgstr ""
+msgstr "Voit tehdä vaihtoehtoisia hakuja lisäämällä termin OR, esimerkiksi "
+"<b>George OR Ringo</b>"
 
 #: ../search/Pages/QuickTips.cs:12
 msgid ""
 "To exclude search terms, use the minus symbol in front, such as <b>-cats</b>"
 msgstr ""
+"Jos haluat kieltää tiettyjä haktermejä, käytä miinusmerkkiä edessä, "
+"esimerkiksi <b>-kissa</b>"
 
 #: ../search/Pages/QuickTips.cs:13
 msgid ""
 "When searching for a phrase, add quotes. ex: <b>\"There be dragons\"</b>"
 msgstr ""
+"Hae lauseita lisäämällä lainausmerkit, esimerkiksi <b>\"ollako  vai "
+"eikö olla\"</b>"
 
 #: ../search/Pages/QuickTips.cs:19 ../search/UIManager.cs:62
 msgid "Quick Tips"
-msgstr ""
+msgstr "Pikavinkit"
 
 #: ../search/Pages/StartDaemon.cs:19
 msgid "Daemon not running"
-msgstr ""
+msgstr "Taustaprosessi ei ole käynnissä"
 
 #: ../search/Pages/StartDaemon.cs:21
 msgid "Start the daemon"
-msgstr ""
+msgstr "Käynnistä taustaprosessi"
 
 #: ../search/Search.cs:148
 msgid "Find Now"
@@ -128,27 +137,27 @@ msgstr "Aloita haku"
 
 #: ../search/Tiles/Application.cs:55
 msgid "Move to trash"
-msgstr ""
+msgstr "Siirrä roskakoriin"
 
 #: ../search/Tiles/Audio.cs:37 ../search/Tiles/Image.cs:38
 msgid "Add to Library"
-msgstr ""
+msgstr "Lisää kirjastoon"
 
 #: ../search/Tiles/Contact.cs:60
 msgid "E-Mail:"
-msgstr ""
+msgstr "Sähköposti:"
 
 #: ../search/Tiles/Contact.cs:66
 msgid "Mobile Phone:"
-msgstr ""
+msgstr "Matkapuhelin:"
 
 #: ../search/Tiles/Contact.cs:73
 msgid "Work Phone:"
-msgstr ""
+msgstr "Työpuhelin:"
 
 #: ../search/Tiles/Contact.cs:78
 msgid "Home Phone:"
-msgstr ""
+msgstr "Kotipuhelin:"
 
 #: ../search/Tiles/File.cs:35 ../search/Tiles/Folder.cs:35
 msgid "Open With"
@@ -156,7 +165,7 @@ msgstr "Avaa ohjelmalla"
 
 #: ../search/Tiles/File.cs:36
 msgid "Reveal in Folder"
-msgstr ""
+msgstr "Paljasta kansiossa"
 
 #: ../search/Tiles/File.cs:37
 msgid "E-Mail"
@@ -184,7 +193,7 @@ msgstr "Kirjoittanut:"
 
 #: ../search/Tiles/File.cs:157
 msgid "Full Path:"
-msgstr ""
+msgstr "Koko polku:"
 
 #: ../search/Tiles/Folder.cs:31
 msgid "Empty"
@@ -200,7 +209,7 @@ msgstr[1] "Sisältää {0} kohtaa"
 #. FIXME: s/"gtk-info"/Gtk.Stock.Info/ when we can depend on gtk# 2.8
 #: ../search/Tiles/Folder.cs:37
 msgid "Show Information"
-msgstr ""
+msgstr "Näytä tiedot"
 
 #: ../search/Tiles/Folder.cs:62
 msgid "Edited:"
@@ -251,7 +260,7 @@ msgstr "Sivusto:"
 
 #: ../search/Tiles/RSSFeed.cs:60
 msgid "Date Viewed:"
-msgstr "Katsomispäivä:"
+msgstr "Viimeksi katsottu:"
 
 #: ../search/Tiles/TextDocument.cs:37
 #, csharp-format
@@ -270,15 +279,15 @@ msgstr "Sovellus"
 
 #: ../search/Tiles/Utils.cs:26
 msgid "More application results..."
-msgstr ""
+msgstr "Lisää sovelluksia..."
 
 #: ../search/Tiles/Utils.cs:29
 msgid "Contact"
-msgstr ""
+msgstr "Yhteystieto"
 
 #: ../search/Tiles/Utils.cs:30
 msgid "More contact results..."
-msgstr ""
+msgstr "Lisää yhteystietoja..."
 
 #: ../search/Tiles/Utils.cs:33
 msgid "Folder"
@@ -286,7 +295,7 @@ msgstr "Kansio"
 
 #: ../search/Tiles/Utils.cs:34
 msgid "More folder results..."
-msgstr "Lisää kansiotuloksia..."
+msgstr "Lisää kansioita..."
 
 #: ../search/Tiles/Utils.cs:37
 msgid "Image"
@@ -294,7 +303,7 @@ msgstr "Kuva"
 
 #: ../search/Tiles/Utils.cs:38
 msgid "More image results..."
-msgstr "Lisää kuvatuloksia..."
+msgstr "Lisää kuvia..."
 
 #: ../search/Tiles/Utils.cs:41
 msgid "Audio"
@@ -302,7 +311,7 @@ msgstr "Ääni"
 
 #: ../search/Tiles/Utils.cs:42
 msgid "More audio results..."
-msgstr "Lisää kuvatuloksia..."
+msgstr "Lisää äänitiedostoja..."
 
 #: ../search/Tiles/Utils.cs:45
 msgid "Video"
@@ -310,7 +319,7 @@ msgstr "Video"
 
 #: ../search/Tiles/Utils.cs:46
 msgid "More video results..."
-msgstr "Lisää videotuloksia..."
+msgstr "Lisää videoita..."
 
 #: ../search/Tiles/Utils.cs:49
 msgid "Documents"
@@ -318,7 +327,7 @@ msgstr "Asiakirjat"
 
 #: ../search/Tiles/Utils.cs:50
 msgid "More document results..."
-msgstr "Lisää asiakirjatuloksia..."
+msgstr "Lisää asiakirjoja..."
 
 #: ../search/Tiles/Utils.cs:53
 msgid "Conversations"
@@ -326,23 +335,23 @@ msgstr "Keskustelut"
 
 #: ../search/Tiles/Utils.cs:54
 msgid "More conversation results..."
-msgstr ""
+msgstr "Lisää keskusteluja..."
 
 #: ../search/Tiles/Utils.cs:57
 msgid "Website"
-msgstr ""
+msgstr "WWW-sivu"
 
 #: ../search/Tiles/Utils.cs:58
 msgid "More website results..."
-msgstr ""
+msgstr "Lisää www-sivuja..."
 
 #: ../search/Tiles/Utils.cs:61
 msgid "News Feed"
-msgstr ""
+msgstr "Uutisvirta"
 
 #: ../search/Tiles/Utils.cs:62
 msgid "More news feed results..."
-msgstr ""
+msgstr "Lisää uutisvirtoja..."
 
 #: ../search/Tiles/Utils.cs:65
 msgid "Archive"
@@ -350,7 +359,7 @@ msgstr "Arkisto"
 
 #: ../search/Tiles/Utils.cs:66
 msgid "More archive results..."
-msgstr "Lisää arkistotuloksia..."
+msgstr "Lisää arkistoja..."
 
 #: ../search/Tiles/Utils.cs:170
 #, csharp-format
@@ -664,11 +673,11 @@ msgstr "Etsi ääni- ja videotiedostoja"
 
 #: ../search/UIManager.cs:111
 msgid "_Relevance"
-msgstr ""
+msgstr "_Asiaankuuluvuus"
 
 #: ../search/UIManager.cs:112
 msgid "Sort the best matches first"
-msgstr ""
+msgstr "Järjestä parhaat tulokset ensin"
 
 #: ../search/UIManager.cs:115
 msgid "_Name"
@@ -676,7 +685,7 @@ msgstr "_Nimi"
 
 #: ../search/UIManager.cs:116
 msgid "Sort matches by name"
-msgstr ""
+msgstr "Järjestä nimen mukaan"
 
 #: ../search/UIManager.cs:119
 msgid "Date _Modified"
