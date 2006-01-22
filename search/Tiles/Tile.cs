@@ -208,7 +208,6 @@ namespace Search.Tiles {
 
 		protected void RequestSnippet ()
 		{
-			GotSnippet ("<i>...</i>", false);
 			SnippetRequest sreq = new SnippetRequest (query, hit);
 			sreq.RegisterAsyncResponseHandler (typeof (SnippetResponse), SnippetResponseReceived);
 			sreq.SendAsync ();

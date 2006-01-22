@@ -28,7 +28,8 @@ namespace Search.Tiles {
 			Title = Hit ["beagle:ExactFilename"];
 			Icon = GetIcon (Hit, 32);
 
-			Description = Hit ["beagle:FilenameExtension"].Substring (1).ToUpper ();
+			if (Hit ["beagle:FilenameExtension"].Length > 0)
+				Description = Hit ["beagle:FilenameExtension"].Substring (1).ToUpper ();
 			
 			if (Hit ["fixme:width"] != null && Hit ["fixme:width"] != "")
 				Description += String.Format (" {0}x{1}", Hit ["fixme:width"], Hit ["fixme:height"]);

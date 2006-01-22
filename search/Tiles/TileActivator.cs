@@ -95,21 +95,25 @@ namespace Search.Tiles {
 		{
 			TileActivator best = null;
 
-			foreach (TileActivator activator in activators) {
-				if (! activator.Validate (hit))
-					continue;
-
-				if (best == null) {
-					best = activator;
-					continue;
+			try {
+				foreach (TileActivator activator in activators) {
+					if (! activator.Validate (hit))
+						continue;
+					
+					if (best == null) {
+						best = activator;
+						continue;
+					}
+					
+					if (activator.Weight > best.Weight)
+						best = activator;
 				}
-
-				if (activator.Weight > best.Weight)
-					best = activator;
+				
+				if (best != null)
+					return best.BuildTile (hit, query);
+			} catch (Exception e) {
+				Console.WriteLine ("Error instantiating tile:\n{0}", e);
 			}
-
-			if (best != null)
-				return best.BuildTile (hit, query);
 
 			return null;
 		}
