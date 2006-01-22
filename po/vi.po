@@ -6,15 +6,15 @@ msgid ""
 ""
 msgstr "Project-Id-Version: beagle Gnome HEAD\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2006-01-14 02:05+0100\n"
-"PO-Revision-Date: 2006-01-14 17:42+1030\n"
+"POT-Creation-Date: 2006-01-22 02:07+0100\n"
+"PO-Revision-Date: 2006-01-22 16:11+1030\n"
 "Last-Translator: Clytie Siddall <clytie@riverland.net.au>\n"
 "Language-Team: Vietnamese <gnomevi-list@lists.sourceforge.net>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0\n"
-"X-Generator: LocFactoryEditor 1.6b23\n"
+"X-Generator: LocFactoryEditor 1.6b31\n"
 
 #:../glue/eggtrayicon.c:127
 msgid "Orientation"
@@ -73,7 +73,8 @@ msgstr "Việc tìm kiếm « {0} » không khớp với tập tin nào trên m�
 msgid ""
 "You can change the scope of your search using the \"Search\" menu. A broader "
 "search scope might produce more results."
-msgstr "Bạn có thể sửa đổi phạm vị tìm kiếm bằng mục trình đơn « Tìm kiếm ». Phạm vị tìm kiếm rộng hơn có thể được nhiều kết quả hơn."
+msgstr "Bạn có thể sửa đổi phạm vị tìm kiếm bằng mục trình đơn « Tìm kiếm ». Phạm vị "
+"tìm kiếm rộng hơn có thể được nhiều kết quả hơn."
 
 #:../search/Pages/NoMatch.cs:26
 msgid ""
@@ -83,11 +84,13 @@ msgstr "Bạn nên kiểm trả chính tả chuỗi tìm kiếm, để tìm lỗ
 
 #:../search/Pages/QuickTips.cs:10
 msgid "You can use upper and lower case; search is case-insensitive."
-msgstr "Bạn có thể sử dụng chữ cả hoa lẫn thường đều; việc tìm kiếm không phân biệt chữ hoa/thường."
+msgstr "Bạn có thể sử dụng chữ cả hoa lẫn thường đều; việc tìm kiếm không phân biệt "
+"chữ hoa/thường."
 
 #:../search/Pages/QuickTips.cs:11
 msgid "To search for optional terms, use OR.  ex: <b>George OR Ringo</b>"
-msgstr "Để tìm kiếm chuỗi có phần tùy chọn, hãy sử dụng toán tử « OR » (hoặc), v.d. « phở OR pho »."
+msgstr "Để tìm kiếm chuỗi có phần tùy chọn, hãy sử dụng toán tử « OR » (hoặc), v.d. "
+"« phở OR pho »."
 
 #:../search/Pages/QuickTips.cs:12
 msgid ""
@@ -97,35 +100,92 @@ msgstr "Để loại trừ phần chuỗi tìm kiếm, phụ thêm dấu trừ, 
 #:../search/Pages/QuickTips.cs:13
 msgid ""
 "When searching for a phrase, add quotes. ex: <b>\"There be dragons\"</b>"
-msgstr "Khi tìm kiếm cụm từ (hơn một từ), hãy thêm dấu trích dẫn, v.d. « \"Việt Nam\" OR Vietnam »"
+msgstr "Khi tìm kiếm cụm từ (hơn một từ), hãy thêm dấu trích dẫn, v.d. « \"Việt Nam"
+"\" OR Vietnam »"
 
 #:../search/Pages/QuickTips.cs:19 ../search/UIManager.cs:62
 msgid "Quick Tips"
 msgstr "Mẹo Nhanh"
 
-#:../search/Search.cs:145
+#:../search/Pages/StartDaemon.cs:19
+msgid "Daemon not running"
+msgstr "Trình nền không đang chạy"
+
+#:../search/Pages/StartDaemon.cs:21
+msgid "Start the daemon"
+msgstr "Khởi chạy trình nền"
+
+#:../search/Search.cs:148
 msgid "Find Now"
 msgstr "Tìm ngay bây giờ"
 
-#:../search/Search.cs:185
+#:../search/Search.cs:188
 msgid "Type in search terms"
 msgstr "Gõ chuỗi tìm kiếm"
 
-#:../search/Search.cs:186
+#:../search/Search.cs:189
 msgid "Start searching"
 msgstr "Bắt đầu tìm kiếm"
 
-#:../search/Tiles/File.cs:127 ../search/Tiles/RSSFeed.cs:50
+#:../search/Tiles/Application.cs:55
+msgid "Move to trash"
+msgstr "Chuyển vào Rác"
+
+#:../search/Tiles/Audio.cs:37 ../search/Tiles/Image.cs:38
+msgid "Add to Library"
+msgstr "Thêm vào Thư viên"
+
+#:../search/Tiles/Contact.cs:60
+msgid "E-Mail:"
+msgstr "Thư điện tử :"
+
+#:../search/Tiles/Contact.cs:66
+msgid "Mobile Phone:"
+msgstr "Điện thoại di động:"
+
+#:../search/Tiles/Contact.cs:73
+msgid "Work Phone:"
+msgstr "Điện thoại chỗ làm:"
+
+#:../search/Tiles/Contact.cs:78
+msgid "Home Phone:"
+msgstr "Điện thoại ở nhà:"
+
+#:../search/Tiles/File.cs:35 ../search/Tiles/Folder.cs:35
+msgid "Open With"
+msgstr "Mở bằng"
+
+#:../search/Tiles/File.cs:36
+msgid "Reveal in Folder"
+msgstr "Hiện trong thư mục"
+
+#:../search/Tiles/File.cs:37
+msgid "E-Mail"
+msgstr "Thư điện tử"
+
+#:../search/Tiles/File.cs:38
+msgid "Instant-Message"
+msgstr "Tin nhắn"
+
+#:../search/Tiles/File.cs:39 ../search/Tiles/Folder.cs:38
+msgid "Move to Trash"
+msgstr "Chuyển vào Rác"
+
+#:../search/Tiles/File.cs:137 ../search/Tiles/RSSFeed.cs:50
 msgid "Title:"
 msgstr "Tiêu đề :"
 
-#:../search/Tiles/File.cs:137
+#:../search/Tiles/File.cs:143
 msgid "Last Edited:"
 msgstr "Sửa đổi cuối cùng:"
 
-#:../search/Tiles/File.cs:144
+#:../search/Tiles/File.cs:150
 msgid "Author:"
 msgstr "Tác giả:"
+
+#:../search/Tiles/File.cs:157
+msgid "Full Path:"
+msgstr "Đường dẫn đầy đủ:"
 
 #:../search/Tiles/Folder.cs:31
 msgid "Empty"
@@ -137,15 +197,28 @@ msgid "Contains {0} Item"
 msgid_plural "Contains {0} Items"
 msgstr[0] "Chứa {0} mục"
 
-#:../search/Tiles/Folder.cs:62 ../search/Tiles/Image.cs:79
+#.FIXME: s/"gtk-info"/Gtk.Stock.Info/ when we can depend on gtk# 2.8
+#:../search/Tiles/Folder.cs:37
+msgid "Show Information"
+msgstr "Hiện Thông tin"
+
+#:../search/Tiles/Folder.cs:62
 msgid "Edited:"
 msgstr "Sửa đổi:"
 
-#:../search/Tiles/IMLog.cs:88
+#:../search/Tiles/Image.cs:39
+msgid "Set as Wallpaper"
+msgstr "Đặt làm ảnh nền"
+
+#:../search/Tiles/Image.cs:79
+msgid "Modified:"
+msgstr "Ssửa đổi:"
+
+#:../search/Tiles/IMLog.cs:89
 msgid "Name:"
 msgstr "Tên:"
 
-#:../search/Tiles/IMLog.cs:93 ../search/Tiles/MailMessage.cs:125
+#:../search/Tiles/IMLog.cs:94 ../search/Tiles/MailMessage.cs:110
 msgid "Date Received:"
 msgstr "Ngày nhận:"
 
@@ -153,11 +226,15 @@ msgstr "Ngày nhận:"
 msgid "Mail attachment"
 msgstr "Đính kèm thư"
 
-#:../search/Tiles/MailMessage.cs:115
+#:../search/Tiles/MailMessage.cs:45
+msgid "Send in Mail"
+msgstr "Gởi trong thư"
+
+#:../search/Tiles/MailMessage.cs:100
 msgid "Subject:"
 msgstr "Chủ đề:"
 
-#:../search/Tiles/MailMessage.cs:120
+#:../search/Tiles/MailMessage.cs:105
 msgid "From:"
 msgstr "Từ :"
 
@@ -419,7 +496,6 @@ msgstr "ảnh\n"
 "ảnh chụp\n"
 "hình chụp\n"
 "img"
-""
 
 #:../search/TypeFilter.cs:45
 msgid "audio"
@@ -928,89 +1004,89 @@ msgstr "Thư mục thao tác với nhau"
 msgid "Unknown Directory"
 msgstr "Không biết thư mục này"
 
-#:../Util/StringFu.cs:75
+#:../Util/StringFu.cs:77
 msgid "Today"
 msgstr "Hôm nay"
 
-#:../Util/StringFu.cs:77
+#:../Util/StringFu.cs:79
 msgid "Yesterday"
 msgstr "Hôm qua"
 
 #.Translators: Example output: Aug 9
-#:../Util/StringFu.cs:80
+#:../Util/StringFu.cs:82
 msgid "MMM d"
 msgstr "n Thg"
 
 #.Translators: Example output: Aug 9, 2000
-#:../Util/StringFu.cs:83
+#:../Util/StringFu.cs:85
 msgid "MMM d, yyyy"
 msgstr "n Thg, năm"
 
 #.Translators: Example output: 11:05 AM  (note h = 12-hour time)
-#:../Util/StringFu.cs:86
+#:../Util/StringFu.cs:88
 msgid "h:mm tt"
 msgstr "g:ph tg"
 
 #.Translators: {0} is a date (e.g. 'Today' or 'Apr 23'), {1} is the time
-#:../Util/StringFu.cs:92
+#:../Util/StringFu.cs:94
 #,csharp-format
 msgid "{0}, {1}"
 msgstr "{0}, {1}"
 
 #.To translators: {0} is the time of the day, eg. 13:45
-#:../Util/StringFu.cs:109
+#:../Util/StringFu.cs:111
 #,csharp-format
 msgid "Today, {0}"
 msgstr "Hôm nay, {0}"
 
 #.To translators: {0} is the time of the day, eg. 13:45
-#:../Util/StringFu.cs:112
+#:../Util/StringFu.cs:114
 #,csharp-format
 msgid "Yesterday, {0}"
 msgstr "Hôm qua, {0}"
 
 #.To translators: {0} is the number of days that have passed, {1} is the time of the day, eg. 13:45
-#:../Util/StringFu.cs:115
+#:../Util/StringFu.cs:117
 #,csharp-format
 msgid "{0} days ago, {1}"
 msgstr "{0} ngày trước, {1}"
 
 #.Translators: Example output: January 3, 3:45 PM
-#:../Util/StringFu.cs:120
+#:../Util/StringFu.cs:122
 msgid "MMMM d, h:mm tt"
 msgstr "n thng, g:ph tg"
 
 #.Translators: Example output: March 23 2001, 10:04 AM
-#:../Util/StringFu.cs:125
+#:../Util/StringFu.cs:127
 msgid "MMMM d yyyy, h:mm tt"
 msgstr "n thng nam, g:ph tg"
 
-#:../Util/StringFu.cs:135
+#:../Util/StringFu.cs:137
 #,csharp-format
 msgid "{0} hour"
 msgid_plural "{0} hours"
 msgstr[0] "{0} giờ"
 
-#:../Util/StringFu.cs:142
+#:../Util/StringFu.cs:144
 #,csharp-format
 msgid "{0} minute"
 msgid_plural "{0} minutes"
 msgstr[0] "{0} phút"
 
 #.Translators: {0} is a file size in bytes
-#:../Util/StringFu.cs:158
+#:../Util/StringFu.cs:160
 #,csharp-format
 msgid "{0} bytes"
 msgstr "{0} byte"
 
 #.Translators: {0} is a file size in kilobytes
-#:../Util/StringFu.cs:162
+#:../Util/StringFu.cs:164
 #,csharp-format
 msgid "{0:0.0} KB"
 msgstr "{0:0.0} KB"
 
 #.Translators: {0} is a file size in megabytes
-#:../Util/StringFu.cs:165
+#:../Util/StringFu.cs:167
 #,csharp-format
 msgid "{0:0.0} MB"
 msgstr "{0:0.0} MB"
