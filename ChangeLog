@@ -1,5 +1,10 @@
 2006-01-22  Lukas Lipka  <lukas@pmad.net>
 
+	* search/Search.cs: Dispose the old query before firing a new
+	one so we dont get updates for the old one anymore.
+
+2006-01-22  Lukas Lipka  <lukas@pmad.net>
+
 	* search/Category.cs: Make sorting work in real time.
 
 	* search/GroupView.cs: Make live queries update the UI on

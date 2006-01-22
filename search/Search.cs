@@ -233,6 +233,12 @@ namespace Search {
 			oldFocus = Focus;
 
 			try {
+				if (currentQuery != null) {
+					currentQuery.HitsAddedEvent -= OnHitsAdded;
+					currentQuery.HitsSubtractedEvent -= OnHitsSubtracted;
+					currentQuery.Close ();
+				}
+
 				currentQuery = new Query ();
 				currentQuery.AddDomain (QueryDomain.Neighborhood);
 
