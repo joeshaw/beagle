@@ -7,154 +7,14 @@ msgid ""
 msgstr ""
 "Project-Id-Version: beagle\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2006-01-13 10:03+0100\n"
-"PO-Revision-Date: 2006-01-13 17:56+0100\n"
+"POT-Creation-Date: 2006-01-21 18:07+0100\n"
+"PO-Revision-Date: 2006-01-22 03:23+0100\n"
 "Last-Translator: Tino Meinen <a.t.meinen@chello.nl>\n"
 "Language-Team: Dutch <vertaling@vrijschrift.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=ISO-8859-15\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
-
-#. We might get this exception if there are
-#. missing symbols from the Mozilla runtime if
-#. the user did a Firefox 1.0 -> 1.5 upgrade.
-#. There's nothing we can do about this, it's
-#. an ABI change, so tell the user this is
-#. probably what's wrong.
-#: ../Best/Best.cs:121
-msgid ""
-"Best cannot initialize Mozilla's Gecko runtime environment.\n"
-"Have you upgraded Mozilla or Firefox recently?  If so, you\n"
-"probably need to rebuild beagle against this new version.\n"
-"See http://bugzilla.gnome.org/show_bug.cgi?id=326503 for\n"
-"more information."
-msgstr ""
-"'Best' kan de Mozilla Gecko runtime environment niet initialiseren.\n"
-"Heeft u onlangs Mozilla of Firefox een upgrade gegeven? In dat\n"
-"geval moet u waarschijnlijk beagle opnieuw opbouwen met deze nieuwe\n"
-"versie. Kijk op http://bugzilla.gnome.org/show_bug.cgi?id=326503\n"
-"voor meer informatie."
-
-#: ../Best/Best.cs:150
-msgid ""
-"If you're wondering whether Best is working check your notification area "
-"(system tray)"
-msgstr ""
-"Als je je afvraagt of Best werkt, controleer dan je mededelingengebied "
-"(system tray)"
-
-#: ../Best/BestTray.cs:148
-msgid "Disable Searching"
-msgstr "Zoeken uitschakelen"
-
-#: ../Best/BestTray.cs:149
-msgid ""
-"You are about to close the search tray. The search tray is automatically "
-"started at login-time. Would you like to disable it for future sessions?"
-msgstr ""
-"De zoekfunctie vanuit het mededelingengebied wordt afgesloten. Deze "
-"zoekfunctie wordt automatisch opnieuw opgestart als u zich opnieuw aanmeldt. "
-"Moet de zoekfunctie permanent uitgeschakeld worden?"
-
-#: ../Best/BestTray.cs:207
-msgid "No Recent Searches"
-msgstr "Geen recente zoekopdrachten"
-
-#: ../Best/BestTray.cs:212
-msgid "Recent Searches"
-msgstr "Recente zoekopdrachten"
-
-#: ../Best/BestTray.cs:228
-msgid "Clear"
-msgstr "Wissen"
-
-#: ../Best/BestTray.cs:236
-msgid "Quit"
-msgstr "Afsluiten"
-
-#: ../Best/BestWindow.cs:301
-msgid "Anywhere"
-msgstr "Overal"
-
-#: ../Best/BestWindow.cs:305
-msgid "in Files"
-msgstr "in bestanden"
-
-#: ../Best/BestWindow.cs:309
-msgid "in Addressbook"
-msgstr "in adresboek"
-
-#: ../Best/BestWindow.cs:313
-msgid "in Mail"
-msgstr "in e-mail"
-
-#: ../Best/BestWindow.cs:317
-msgid "in Web Pages"
-msgstr "in webpagina's"
-
-#: ../Best/BestWindow.cs:321
-msgid "in Chats"
-msgstr "in chats"
-
-#: ../Best/BestWindow.cs:338
-msgid "Search terms:"
-msgstr "Zoektermen:"
-
-#: ../Best/BestWindow.cs:362
-msgid "Find"
-msgstr "Zoeken"
-
-#: ../Best/BestWindow.cs:384
-msgid "Show More Results"
-msgstr "Meer resultaten tonen"
-
-#: ../Best/BestWindow.cs:390
-msgid "Show Previous Results"
-msgstr "Vorige resultaten tonen"
-
-#: ../Best/BestWindow.cs:474
-msgid "No results."
-msgstr "Geen resultaten."
-
-#. To translators: {0} is the current count of results shown of {1} in total, this is the message that is initially shown
-#. when results are returned to the user.
-#: ../Best/BestWindow.cs:478
-#, csharp-format
-msgid "Best <b>{0} results of {1}</b> are shown."
-msgstr "Beste <b>{0} van in totaal {1} resultaten</b> worden getoond."
-
-#. To translators: {0} to {1} is the interval of results currently shown of {2} results in total
-#: ../Best/BestWindow.cs:483
-#, csharp-format
-msgid "Results <b>{0} through {1} of {2}</b> are shown."
-msgstr "Resultaten <b>{0} tot en met {1} (totaal {2})</b> worden getoond."
-
-#. To translators: {0} represents the current query keywords
-#: ../Best/BestWindow.cs:584
-#, csharp-format
-msgid ""
-"The query for <i>{0}</i> failed.<br>The likely cause is that the beagle "
-"daemon isn't running."
-msgstr ""
-"De zoekopdracht naar <i>{0}</i> is mislukt. Waarschijnlijk is de beagle-"
-"daemon niet actief."
-
-#. To translators: {0} represents the current query keywords, {1} contains the errormessage
-#: ../Best/BestWindow.cs:589
-#, csharp-format
-msgid "The query for <i>{0}</i> failed with error:<br>{1}<br>"
-msgstr "De zoekopdracht naar <i>{0}</i> is mislukt met fout:<br>{1}<br>"
-
-# zoekmachine/zoekprogramma/zoeken/zoeker/zoekhulp(je)
-#: ../Best/best.desktop.in.h:1
-msgid "Beagle Search"
-msgstr "Beagle zoekprogramma"
-
-# Bureuablad doorzoeken/desktop doorzoeken/desktop zoekprogramma/zoekhulp
-#: ../Best/best.desktop.in.h:2
-msgid "Desktop Search"
-msgstr "Desktop doorzoeken"
 
 #: ../glue/eggtrayicon.c:127
 msgid "Orientation"
@@ -182,240 +42,699 @@ msgstr "Gesprekken in {0}"
 msgid "Conversations with {0}"
 msgstr "Gesprekken met {0}"
 
-#: ../Tiles/TileDocs.cs:77
-msgid "Pages:"
-msgstr "Pagina's:"
+#: ../search/Category.cs:85
+#, csharp-format
+msgid "Top {0} Result"
+msgid_plural "Top {0} Results"
+msgstr[0] "Resultaat top {0}"
+msgstr[1] "Resultaten top {0}"
 
-#: ../Tiles/TileDocs.cs:81
-msgid "Words:"
-msgstr "Woorden:"
+#: ../search/Category.cs:86
+#, csharp-format
+msgid "Previous {0}"
+msgid_plural "Previous {0}"
+msgstr[0] "Vorige {0}"
+msgstr[1] "Vorige {0}"
 
-#: ../Tiles/TileFolder.cs:53
+#: ../search/Category.cs:87
+#, csharp-format
+msgid "Next {0}"
+msgid_plural "Next {0}"
+msgstr[0] "Volgende {0}"
+msgstr[1] "Volgende {0}"
+
+#: ../search/Pages/NoMatch.cs:19
+msgid "No results were found."
+msgstr "Geen resultaten gevonden."
+
+#: ../search/Pages/NoMatch.cs:20
+#, csharp-format
+msgid "Your search for \"{0}\" did not match any files on your computer."
+msgstr "Uw zoekopdracht voor \"{0}\" vond geen bestanden op uw computer."
+
+# levert op/produceert
+#: ../search/Pages/NoMatch.cs:24
+msgid ""
+"You can change the scope of your search using the \"Search\" menu. A broader "
+"search scope might produce more results."
+msgstr "U kunt de zoekopdracht aanpassen via het menu \"Zoeken\". Een meer algemene zoekopdracht levert mogelijk meer resultaten op."
+
+#: ../search/Pages/NoMatch.cs:26
+msgid ""
+"You should check the spelling of your search words to see if you "
+"accidentally misspelled any words."
+msgstr "U zou eens kunnen controleren of u misschien een woord verkeerd gespeld heeft."
+
+# het zoeken is niet gevoelig voor het gebruik van hoofletters en kleine letters.
+#: ../search/Pages/QuickTips.cs:10
+msgid "You can use upper and lower case; search is case-insensitive."
+msgstr "U mag hoofdletters en kleine letters gebruiken, dat maakt voor het zoeken niets uit."
+
+#: ../search/Pages/QuickTips.cs:11
+msgid "To search for optional terms, use OR.  ex: <b>George OR Ringo</b>"
+msgstr "Om naar verschillende termen tegelijk te zoeken gebruikt u OR. Bijvoorbeeld: <b>George OR Ringo</b>"
+
+#: ../search/Pages/QuickTips.cs:12
+msgid ""
+"To exclude search terms, use the minus symbol in front, such as <b>-cats</b>"
+msgstr "Om zoektermen uit te sluiten zet u er een minteken voor, bijvoorbeeld <b>-cats</b>"
+
+#: ../search/Pages/QuickTips.cs:13
+msgid ""
+"When searching for a phrase, add quotes. ex: <b>\"There be dragons\"</b>"
+msgstr "Bij het zoeken naar een zin, voegt u aanhalingstekens toe, bijvoorbeeld <b>\"There be dragons\"</b>"
+
+# handige tips/snelle tips/aanwijzingen/handwijzingen/tips
+#: ../search/Pages/QuickTips.cs:19 ../search/UIManager.cs:62
+msgid "Quick Tips"
+msgstr "Snelle tips"
+
+#: ../search/Pages/StartDaemon.cs:19
+msgid "Daemon not running"
+msgstr "Daemon is niet in werking"
+
+#: ../search/Pages/StartDaemon.cs:21
+msgid "Start the daemon"
+msgstr "De daemon opstarten"
+
+#: ../search/Search.cs:148
+msgid "Find Now"
+msgstr "Nu zoeken"
+
+# intoetsen/typen/
+#: ../search/Search.cs:188
+msgid "Type in search terms"
+msgstr "Zoektermen opgeven"
+
+#: ../search/Search.cs:189
+msgid "Start searching"
+msgstr "Beginnen met zoeken"
+
+#: ../search/Tiles/Application.cs:55
+msgid "Move to trash"
+msgstr "Naar prullenbak verplaatsen"
+
+#: ../search/Tiles/Audio.cs:37 ../search/Tiles/Image.cs:38
+msgid "Add to Library"
+msgstr "Aan bibliotheek toevoegen"
+
+#: ../search/Tiles/Contact.cs:60
+msgid "E-Mail:"
+msgstr "E-Mail:"
+
+#: ../search/Tiles/Contact.cs:66
+msgid "Mobile Phone:"
+msgstr "Mobiele telefoon:"
+
+#: ../search/Tiles/Contact.cs:73
+msgid "Work Phone:"
+msgstr "Telefoon werk:"
+
+#: ../search/Tiles/Contact.cs:78
+msgid "Home Phone:"
+msgstr "Telefoon thuis:"
+
+#: ../search/Tiles/File.cs:35 ../search/Tiles/Folder.cs:35
+msgid "Open With"
+msgstr "Openen met"
+
+#: ../search/Tiles/File.cs:36
+msgid "Reveal in Folder"
+msgstr "Tonen in map"
+
+#: ../search/Tiles/File.cs:37
+msgid "E-Mail"
+msgstr "E-mail"
+
+#: ../search/Tiles/File.cs:38
+msgid "Instant-Message"
+msgstr "Expresbericht"
+
+#: ../search/Tiles/File.cs:39 ../search/Tiles/Folder.cs:38
+msgid "Move to Trash"
+msgstr "Naar prullenbak verplaatsen"
+
+# naam/titel
+#: ../search/Tiles/File.cs:137 ../search/Tiles/RSSFeed.cs:50
+msgid "Title:"
+msgstr "Titel:"
+
+# laatst bekeken
+#: ../search/Tiles/File.cs:143
+msgid "Last Edited:"
+msgstr "Laatst bewerkt:"
+
+#: ../search/Tiles/File.cs:150
+msgid "Author:"
+msgstr "Auteur:"
+
+#: ../search/Tiles/File.cs:157
+msgid "Full Path:"
+msgstr "Volledig pad:"
+
+#: ../search/Tiles/Folder.cs:31
 msgid "Empty"
 msgstr "Leeg"
 
-#: ../Tiles/TileFolder.cs:55
+#: ../search/Tiles/Folder.cs:33
 #, csharp-format
 msgid "Contains {0} Item"
 msgid_plural "Contains {0} Items"
 msgstr[0] "Bevat {0} item"
 msgstr[1] "Bevat {0} items"
 
-#: ../Tiles/TileImLog.cs:67
-msgid "Send Mail"
-msgstr "in e-mail"
+#. FIXME: s/"gtk-info"/Gtk.Stock.Info/ when we can depend on gtk# 2.8
+#: ../search/Tiles/Folder.cs:37
+msgid "Show Information"
+msgstr "Informatie tonen"
 
-#. For translators: From template Tiles/template-mail-message.html
-#: ../Tiles/TileImLog.cs:71 ../Tiles/TranslationHack.cs:52
-msgid "Send IM"
-msgstr "Bericht sturen"
+#: ../search/Tiles/Folder.cs:62
+msgid "Edited:"
+msgstr "Bewerkt:"
 
-#: ../Tiles/TileImLog.cs:77
-#, csharp-format
-msgid "Conversation in {0}"
-msgstr "Gesprek in {0}"
+#: ../search/Tiles/Image.cs:39
+msgid "Set as Wallpaper"
+msgstr "Instellen als achtergrond"
 
-#: ../Tiles/TileImLog.cs:79
-#, csharp-format
-msgid "Conversation with {0}"
-msgstr "Gesprek met {0}"
+#: ../search/Tiles/Image.cs:79
+msgid "Modified:"
+msgstr "Laatste wijziging:"
 
-#: ../Tiles/TileMailMessage.cs:88
-msgid "No Subject"
-msgstr "Geen onderwerp"
+#: ../search/Tiles/IMLog.cs:89
+msgid "Name:"
+msgstr "Naam:"
 
-#: ../Tiles/TileMailMessage.cs:95
-msgid "To"
-msgstr "Aan"
+#: ../search/Tiles/IMLog.cs:94 ../search/Tiles/MailMessage.cs:110
+msgid "Date Received:"
+msgstr "Ontvangen op:"
 
-#: ../Tiles/TileMailMessage.cs:95
-msgid "From"
-msgstr "Van"
-
-#: ../Tiles/TileMailMessage.cs:123
-msgid "Sent"
-msgstr "Verzonden"
-
-#: ../Tiles/TileMailMessage.cs:123
-msgid "Received"
-msgstr "Ontvangen"
-
-#: ../Tiles/TileMailMessage.cs:131
-msgid "Email attachment"
+#: ../search/Tiles/MailAttachment.cs:48
+msgid "Mail attachment"
 msgstr "Mailbijlage"
 
-#. For translators: From template Tiles/template-blog.html
-#: ../Tiles/TranslationHack.cs:6
-msgid "Weblog:"
-msgstr "Weblog:"
+# met/in/via e-mail verzenden
+#: ../search/Tiles/MailMessage.cs:45
+msgid "Send in Mail"
+msgstr "Via e-mail verzenden"
 
-#. For translators: From template Tiles/template-blog.html
-#: ../Tiles/TranslationHack.cs:8
-msgid "by"
-msgstr "door"
+#: ../search/Tiles/MailMessage.cs:100
+msgid "Subject:"
+msgstr "Onderwerp:"
 
-#. For translators: From template Tiles/template-blog.html
-#: ../Tiles/TranslationHack.cs:10
-msgid "Published:"
-msgstr "Geplaatst:"
+#: ../search/Tiles/MailMessage.cs:105
+msgid "From:"
+msgstr "Van:"
 
-#. For translators: From template Tiles/template-blog.html
-#. For translators: From template Tiles/template-docs.html
-#. For translators: From template Tiles/template-file.html
-#. For translators: From template Tiles/template-folder.html
-#. For translators: From template Tiles/template-launcher.html
-#. For translators: From template Tiles/template-mail-message.html
-#. For translators: From template Tiles/template-music.html
-#. For translators: From template Tiles/template-note.html
-#. For translators: From template Tiles/template-picture.html
-#. For translators: From template Tiles/template-presentation.html
-#. For translators: From template Tiles/template-spreadsheet.html
-#. For translators: From template Tiles/template-web-history.html
-#. For translators: From template Tiles/template-network.html
-#. For translators: From template Tiles/template-im-log.html
-#: ../Tiles/TranslationHack.cs:12 ../Tiles/TranslationHack.cs:22
-#: ../Tiles/TranslationHack.cs:32 ../Tiles/TranslationHack.cs:40
-#: ../Tiles/TranslationHack.cs:44 ../Tiles/TranslationHack.cs:50
-#: ../Tiles/TranslationHack.cs:58 ../Tiles/TranslationHack.cs:66
-#: ../Tiles/TranslationHack.cs:76 ../Tiles/TranslationHack.cs:92
-#: ../Tiles/TranslationHack.cs:106 ../Tiles/TranslationHack.cs:114
-#: ../Tiles/TranslationHack.cs:118 ../Tiles/TranslationHack.cs:122
+#: ../search/Tiles/Presentation.cs:33
+#, csharp-format
+msgid "{0} slide"
+msgid_plural "{0} slides"
+msgstr[0] "{0} dia"
+msgstr[1] "{0} dia's"
+
+#: ../search/Tiles/RSSFeed.cs:55
+msgid "Site:"
+msgstr "Site:"
+
+# laatst bekeken/bezocht
+#: ../search/Tiles/RSSFeed.cs:60
+msgid "Date Viewed:"
+msgstr "Laatste bekeken:"
+
+#: ../search/Tiles/TextDocument.cs:37
+#, csharp-format
+msgid "{0} page"
+msgid_plural "{0} pages"
+msgstr[0] "{0} pagina"
+msgstr[1] "{0} pagina's"
+
+#: ../search/Tiles/Tile.cs:149
 msgid "Open"
 msgstr "Openen"
 
-#. For translators: From template Tiles/template-docs.html
-#. For translators: From template Tiles/template-file.html
-#. For translators: From template Tiles/template-folder.html
-#. For translators: From template Tiles/template-picture.html
-#. For translators: From template Tiles/template-presentation.html
-#. For translators: From template Tiles/template-spreadsheet.html
-#: ../Tiles/TranslationHack.cs:14 ../Tiles/TranslationHack.cs:28
-#: ../Tiles/TranslationHack.cs:38 ../Tiles/TranslationHack.cs:68
-#: ../Tiles/TranslationHack.cs:82 ../Tiles/TranslationHack.cs:98
-msgid "in folder"
-msgstr "in map"
+# meervoud is hier beter 
+#: ../search/Tiles/Utils.cs:25
+msgid "Application"
+msgstr "Toepassingen"
 
-#. For translators: From template Tiles/template-docs.html
-#. For translators: From template Tiles/template-file.html
-#. For translators: From template Tiles/template-presentation.html
-#. For translators: From template Tiles/template-spreadsheet.html
-#: ../Tiles/TranslationHack.cs:16 ../Tiles/TranslationHack.cs:30
-#: ../Tiles/TranslationHack.cs:84 ../Tiles/TranslationHack.cs:100
-msgid "Last modified"
-msgstr "Laatste wijziging"
+#: ../search/Tiles/Utils.cs:26
+msgid "More application results..."
+msgstr "Meer resultaten in toepassingen..."
 
-#. For translators: From template Tiles/template-docs.html
-#. For translators: From template Tiles/template-presentation.html
-#. For translators: From template Tiles/template-spreadsheet.html
-#: ../Tiles/TranslationHack.cs:18 ../Tiles/TranslationHack.cs:86
-#: ../Tiles/TranslationHack.cs:102
-msgid "Title:"
-msgstr "Titel:"
+# meervoud is hier beter
+#: ../search/Tiles/Utils.cs:29
+msgid "Contact"
+msgstr "Contacten"
 
-#. For translators: From template Tiles/template-docs.html
-#. For translators: From template Tiles/template-presentation.html
-#. For translators: From template Tiles/template-spreadsheet.html
-#: ../Tiles/TranslationHack.cs:20 ../Tiles/TranslationHack.cs:88
-#: ../Tiles/TranslationHack.cs:104
-msgid "Author:"
-msgstr "Auteur:"
-
-#. For translators: From template Tiles/template-docs.html
-#. For translators: From template Tiles/template-file.html
-#. For translators: From template Tiles/template-picture.html
-#. For translators: From template Tiles/template-presentation.html
-#. For translators: From template Tiles/template-spreadsheet.html
-#: ../Tiles/TranslationHack.cs:24 ../Tiles/TranslationHack.cs:34
-#: ../Tiles/TranslationHack.cs:78 ../Tiles/TranslationHack.cs:94
-#: ../Tiles/TranslationHack.cs:108
-msgid "Send to..."
-msgstr "Sturen naar..."
-
-#. For translators: From template Tiles/template-docs.html
-#. For translators: From template Tiles/template-file.html
-#. For translators: From template Tiles/template-music.html
-#. For translators: From template Tiles/template-picture.html
-#. For translators: From template Tiles/template-presentation.html
-#. For translators: From template Tiles/template-spreadsheet.html
-#: ../Tiles/TranslationHack.cs:26 ../Tiles/TranslationHack.cs:36
-#: ../Tiles/TranslationHack.cs:62 ../Tiles/TranslationHack.cs:80
-#: ../Tiles/TranslationHack.cs:96 ../Tiles/TranslationHack.cs:110
-msgid "Reveal in file manager"
-msgstr "Toon in bestandsbeheer"
-
-#. For translators: From template Tiles/template-launcher.html
-#: ../Tiles/TranslationHack.cs:42
-msgid "Application:"
-msgstr "Toepassing:"
-
-#. For translators: From template Tiles/template-mail-message.html
-#: ../Tiles/TranslationHack.cs:46
-msgid "Email subject:"
-msgstr "E-mail onderwerp:"
+#: ../search/Tiles/Utils.cs:30
+msgid "More contact results..."
+msgstr "Meer resultaten in contacten..."
 
 #
 # Common stuff for the templates
 #
-#. For translators: From template Tiles/template-mail-message.html
-#: ../Tiles/TranslationHack.cs:48
-msgid "Folder:"
-msgstr "Map:"
+#: ../search/Tiles/Utils.cs:33
+msgid "Folder"
+msgstr "Mappen"
 
-#. For translators: From template Tiles/template-music.html
-#: ../Tiles/TranslationHack.cs:54
-msgid "Track"
-msgstr "Nummer"
+#: ../search/Tiles/Utils.cs:34
+msgid "More folder results..."
+msgstr "Meer resultaten in mappen..."
 
-#. For translators: From template Tiles/template-music.html
-#: ../Tiles/TranslationHack.cs:56
-msgid "from"
-msgstr "van"
+# meervoud is hier beter
+#: ../search/Tiles/Utils.cs:37
+msgid "Image"
+msgstr "Afbeeldingen"
 
-#. For translators: From template Tiles/template-music.html
-#: ../Tiles/TranslationHack.cs:60
-msgid "Enqueue"
-msgstr "Toevoegen"
+#: ../search/Tiles/Utils.cs:38
+msgid "More image results..."
+msgstr "Meer resultaten in afbeeldingen..."
 
-#. For translators: From template Tiles/template-note.html
-#: ../Tiles/TranslationHack.cs:64
-msgid "last modified"
-msgstr "laatste wijziging"
+# geluid/audio
+#: ../search/Tiles/Utils.cs:41
+msgid "Audio"
+msgstr "Audio"
 
-#. For translators: From template Tiles/template-picture.html
-#: ../Tiles/TranslationHack.cs:70
-msgid "Modified:"
-msgstr "Laatste wijziging:"
+#: ../search/Tiles/Utils.cs:42
+msgid "More audio results..."
+msgstr "Meer resultaten in audio..."
 
-#. For translators: From template Tiles/template-picture.html
-#: ../Tiles/TranslationHack.cs:72
-msgid "Tags:"
-msgstr "Tags:"
+# beeld/video
+#: ../search/Tiles/Utils.cs:45
+msgid "Video"
+msgstr "Video"
 
-#. For translators: From template Tiles/template-picture.html
-#: ../Tiles/TranslationHack.cs:74
-msgid "Description:"
-msgstr "Omschrijving:"
+#: ../search/Tiles/Utils.cs:46
+msgid "More video results..."
+msgstr "Meer resultaten in video..."
 
-#. For translators: From template Tiles/template-presentation.html
-#: ../Tiles/TranslationHack.cs:90
-msgid "Slides:"
-msgstr "Pagina's:"
+#: ../search/Tiles/Utils.cs:49
+msgid "Documents"
+msgstr "Documenten"
 
-# laatst bekeken
-#. For translators: From template Tiles/template-web-history.html
-#: ../Tiles/TranslationHack.cs:112
-msgid "Last viewed:"
-msgstr "Laatste bezoek:"
+#: ../search/Tiles/Utils.cs:50
+msgid "More document results..."
+msgstr "Meer resultaten in documenten..."
 
-#. For translators: From template Tiles/template-network.html
-#: ../Tiles/TranslationHack.cs:116
-msgid "from Networked Beagle on host"
-msgstr "van netwerk-Beagle op machine"
+#: ../search/Tiles/Utils.cs:53
+msgid "Conversations"
+msgstr "Gesprekken"
 
-#. For translators: From template Tiles/template-network.html
-#: ../Tiles/TranslationHack.cs:120
-msgid "Search Networked Beagle"
-msgstr "Netwerk-Beagle zoeken"
+#: ../search/Tiles/Utils.cs:54
+msgid "More conversation results..."
+msgstr "Meer resultaten in gesprekken..."
+
+#: ../search/Tiles/Utils.cs:57
+msgid "Website"
+msgstr "Websites"
+
+#: ../search/Tiles/Utils.cs:58
+msgid "More website results..."
+msgstr "Meer resultaten in websites..."
+
+#: ../search/Tiles/Utils.cs:61
+msgid "News Feed"
+msgstr "Nieuws-feed"
+
+#: ../search/Tiles/Utils.cs:62
+msgid "More news feed results..."
+msgstr "Meer resultaten in nieuws-feeds..."
+
+# Meervoud is hier beter
+#: ../search/Tiles/Utils.cs:65
+msgid "Archive"
+msgstr "Archieven"
+
+#: ../search/Tiles/Utils.cs:66
+msgid "More archive results..."
+msgstr "Meer resultaten in archieven..."
+
+#: ../search/Tiles/Utils.cs:170
+#, csharp-format
+msgid "{0} week ago"
+msgid_plural "{0} weeks ago"
+msgstr[0] "{0} week geleden"
+msgstr[1] "{0} weken geleden"
+
+#. Lets say a year and a half to stop saying months
+#: ../search/Tiles/Utils.cs:172
+#, csharp-format
+msgid "{0} month ago"
+msgid_plural "{0} months ago"
+msgstr[0] "{0} maand geleden"
+msgstr[1] "{0} maanden geleden"
+
+#: ../search/Tiles/Utils.cs:174
+#, csharp-format
+msgid "{0} year ago"
+msgid_plural "{0} years ago"
+msgstr[0] "{0} jaar geleden"
+msgstr[1] "{0} jaar geleden"
+
+#: ../search/Tiles/Video.cs:33
+msgid "Unknown duration"
+msgstr "Onbekende map"
+
+# Bureuablad doorzoeken/desktop doorzoeken/desktop zoekprogramma/zoekhulp
+#: ../search/Tray/TrayIcon.cs:32
+msgid "Desktop Search"
+msgstr "Desktop doorzoeken"
+
+#: ../search/Tray/TrayIcon.cs:57
+msgid "No Recent Searches"
+msgstr "Geen recente zoekopdrachten"
+
+#: ../search/Tray/TrayIcon.cs:62
+msgid "Recent Searches"
+msgstr "Recente zoekopdrachten"
+
+#: ../search/Tray/TrayIcon.cs:78
+msgid "Clear"
+msgstr "Wissen"
+
+#: ../search/Tray/TrayIcon.cs:86
+msgid "Quit"
+msgstr "Afsluiten"
+
+#. Translators: the strings in TypeFilter.cs are for when the user
+#. * wants to limit search results to a specific type. You don't need
+#. * to give an exact translation of the exact same set of English
+#. * words. Just provide a list of likely words the user might use
+#. * after the "type:" keyword to refer to each type of match.
+#.
+#: ../search/TypeFilter.cs:36
+msgid ""
+"file\n"
+"files"
+msgstr ""
+"bestand\n"
+"bestanden"
+
+#: ../search/TypeFilter.cs:37
+msgid ""
+"mail\n"
+"email\n"
+"e-mail"
+msgstr ""
+"mail\n"
+"email\n"
+"e-mail\n"
+"bericht\n"
+"berichten"
+
+#: ../search/TypeFilter.cs:38
+msgid ""
+"im\n"
+"ims\n"
+"instant message\n"
+"instant messages\n"
+"instant-message\n"
+"instant-messages\n"
+"chat\n"
+"chats"
+msgstr ""
+"im\n"
+"ims\n"
+"instant message\n"
+"instant messages\n"
+"instant-message\n"
+"instant-messages\n"
+"chat\n"
+"chats\n"
+"expresbericht\n"
+"expresberichten"
+
+#: ../search/TypeFilter.cs:39
+msgid ""
+"presentation\n"
+"presentations\n"
+"slideshow\n"
+"slideshows\n"
+"slide\n"
+"slides"
+msgstr ""
+"presentatie\n"
+"presentaties\n"
+"diavoorstelling\n"
+"diavoorstellingen\n"
+"dia-voorstelling\n"
+"dis-voorstellingen\n"
+"dia\n"
+"dia's"
+
+#: ../search/TypeFilter.cs:41
+msgid ""
+"application\n"
+"applications\n"
+"app\n"
+"apps"
+msgstr ""
+"toepassing\n"
+"toepassingen\n"
+"programma\n"
+"programma's"
+
+#: ../search/TypeFilter.cs:42
+msgid ""
+"contact\n"
+"contacts\n"
+"vcard\n"
+"vcards"
+msgstr ""
+"contact\n"
+"contacten\n"
+"vcard\n"
+"vcards"
+
+#: ../search/TypeFilter.cs:43
+msgid ""
+"folder\n"
+"folders"
+msgstr ""
+"map\n"
+"mappen\n"
+"folder\n"
+"folders\n"
+"directory\n"
+"directories"
+
+#: ../search/TypeFilter.cs:44
+msgid ""
+"image\n"
+"images\n"
+"img"
+msgstr ""
+"afbeelding\n"
+"afbeeldingen\n"
+"plaatje\n"
+"plaatjes\n"
+"foto\n"
+"foto's\n"
+"illustratie\n"
+"illustraties\n"
+"afb"
+
+#: ../search/TypeFilter.cs:45
+msgid "audio"
+msgstr ""
+"audio\n"
+"geluid"
+
+#: ../search/TypeFilter.cs:46
+msgid "video"
+msgstr ""
+"video\n"
+"beeld"
+
+#: ../search/TypeFilter.cs:47
+msgid "media"
+msgstr "media"
+
+#: ../search/TypeFilter.cs:48
+msgid ""
+"document\n"
+"documents\n"
+"office document\n"
+"office documents"
+msgstr ""
+"document\n"
+"documenten\n"
+"office document\n"
+"office documenten"
+
+#: ../search/TypeFilter.cs:49
+msgid ""
+"conversation\n"
+"conversations"
+msgstr ""
+"gesprek\n"
+"gesprekken\n"
+"conversatie\n"
+"conversaties"
+
+#: ../search/TypeFilter.cs:50
+msgid ""
+"web\n"
+"www\n"
+"website\n"
+"websites"
+msgstr ""
+"web\n"
+"www\n"
+"website\n"
+"websites\n"
+"homepages"
+
+#: ../search/TypeFilter.cs:51
+msgid ""
+"feed\n"
+"news\n"
+"blog\n"
+"rss"
+msgstr ""
+"feed\n"
+"news\n"
+"blog\n"
+"rss"
+
+#: ../search/TypeFilter.cs:52
+msgid ""
+"archive\n"
+"archives"
+msgstr ""
+"archief\n"
+"archieven\n"
+"zip-bestanden"
+
+#: ../search/TypeFilter.cs:53
+msgid ""
+"person\n"
+"people"
+msgstr ""
+"persoon\n"
+"personen\n"
+"mensen\n"
+"vrienden"
+
+#: ../search/UIManager.cs:32
+msgid "_Search"
+msgstr "_Zoeken"
+
+#: ../search/UIManager.cs:35
+msgid "_Actions"
+msgstr "_Acties"
+
+#: ../search/UIManager.cs:38
+msgid "Sor_t"
+msgstr "_Sorteren"
+
+#: ../search/UIManager.cs:41
+msgid "_Help"
+msgstr "_Hulp"
+
+# Bureuablad doorzoeken/desktop doorzoeken/desktop zoekprogramma/zoekhulp
+#: ../search/UIManager.cs:46 ../search/UIManager.cs:50
+msgid "Exit Desktop Search"
+msgstr "Desktop doorzoeken afsluiten"
+
+#: ../search/UIManager.cs:53
+msgid "_Contents"
+msgstr "In_houd"
+
+#: ../search/UIManager.cs:55
+msgid "Help - Table of Contents"
+msgstr "Hulp - Inhoud"
+
+# Bureuablad doorzoeken/desktop doorzoeken/desktop zoekprogramma/zoekhulp
+#: ../search/UIManager.cs:59
+msgid "About Desktop Search"
+msgstr "Over 'Desktop doorzoeken'"
+
+# alles/overal (doorzoeken)
+#: ../search/UIManager.cs:72
+msgid "_Everywhere"
+msgstr "_Overal"
+
+#: ../search/UIManager.cs:74
+msgid "Search everywhere"
+msgstr "Alles doorzoeken"
+
+#: ../search/UIManager.cs:77
+msgid "_Applications"
+msgstr "_Toepassingen"
+
+# in toepassingen zoeken/toepassingen doorzoeken
+#: ../search/UIManager.cs:79
+msgid "Search applications"
+msgstr "In toepassingen zoeken"
+
+#: ../search/UIManager.cs:82
+msgid "_Contacts"
+msgstr "_Contacten"
+
+#: ../search/UIManager.cs:84
+msgid "Search contacts"
+msgstr "In contacten zoeken"
+
+#: ../search/UIManager.cs:87
+msgid "_Documents"
+msgstr "_Documenten"
+
+#: ../search/UIManager.cs:89
+msgid "Search documents"
+msgstr "In documenten zoeken"
+
+#: ../search/UIManager.cs:92
+msgid "Conve_rsations"
+msgstr "_Gesprekken"
+
+# logboeken van expresberichten/
+#: ../search/UIManager.cs:94
+msgid "Search E-Mail and Instant Messaging logs"
+msgstr "In e-mail en expresberichten zoeken"
+
+#: ../search/UIManager.cs:97
+msgid "Images"
+msgstr "Afbeeldingen"
+
+#: ../search/UIManager.cs:99
+msgid "Search images"
+msgstr "In afbeeldingen zoeken"
+
+#: ../search/UIManager.cs:102
+msgid "Media"
+msgstr "Media"
+
+# in audio en videobestanden/beeld en geluidbestanden
+#: ../search/UIManager.cs:104
+msgid "Search sound and video files"
+msgstr "In beeld- en geluidbestanden zoeken"
+
+#: ../search/UIManager.cs:111
+msgid "_Relevance"
+msgstr "_Relevantie"
+
+# eerst/bovenaan
+#: ../search/UIManager.cs:112
+msgid "Sort the best matches first"
+msgstr "De beste resultaten eerst"
+
+#: ../search/UIManager.cs:115
+msgid "_Name"
+msgstr "_Naam"
+
+#: ../search/UIManager.cs:116
+msgid "Sort matches by name"
+msgstr "Resultaten sorteren op naam"
+
+#: ../search/UIManager.cs:119
+msgid "Date _Modified"
+msgstr "_Laatste wijziging"
+
+# meest recentelijk gewijzigde bestanden
+#: ../search/UIManager.cs:120
+msgid "Sort the most-recently-modified matches first"
+msgstr "Meest recente resultaten eerst"
 
 #: ../tools/Settings.cs:217
 msgid "Reload configuration"
@@ -737,66 +1056,66 @@ msgstr "InterOperability-map"
 msgid "Unknown Directory"
 msgstr "Onbekende map"
 
-#: ../Util/StringFu.cs:75
+#: ../Util/StringFu.cs:77
 msgid "Today"
 msgstr "Vandaag"
 
-#: ../Util/StringFu.cs:77
+#: ../Util/StringFu.cs:79
 msgid "Yesterday"
 msgstr "Gisteren"
 
 #. Translators: Example output: Aug 9
-#: ../Util/StringFu.cs:80
+#: ../Util/StringFu.cs:82
 msgid "MMM d"
 msgstr "d MMMM"
 
 #. Translators: Example output: Aug 9, 2000
-#: ../Util/StringFu.cs:83
+#: ../Util/StringFu.cs:85
 msgid "MMM d, yyyy"
 msgstr "d MMMM yyyy"
 
 #. Translators: Example output: 11:05 AM  (note h = 12-hour time)
-#: ../Util/StringFu.cs:86
+#: ../Util/StringFu.cs:88
 msgid "h:mm tt"
 msgstr "H:mm"
 
 #. Translators: {0} is a date (e.g. 'Today' or 'Apr 23'), {1} is the time
-#: ../Util/StringFu.cs:92
+#: ../Util/StringFu.cs:94
 #, csharp-format
 msgid "{0}, {1}"
 msgstr "{0} om {1}"
 
 #. To translators: {0} is the time of the day, eg. 13:45
-#: ../Util/StringFu.cs:109
+#: ../Util/StringFu.cs:111
 #, csharp-format
 msgid "Today, {0}"
 msgstr "Vandaag om {0}"
 
 #. To translators: {0} is the time of the day, eg. 13:45
-#: ../Util/StringFu.cs:112
+#: ../Util/StringFu.cs:114
 #, csharp-format
 msgid "Yesterday, {0}"
 msgstr "Gisteren om {0}"
 
 #. To translators: {0} is the number of days that have passed, {1} is the time of the day, eg. 13:45
-#: ../Util/StringFu.cs:115
+#: ../Util/StringFu.cs:117
 #, csharp-format
 msgid "{0} days ago, {1}"
 msgstr "{0} dagen geleden om {1}"
 
 #. Translators: Example output: January 3, 3:45 PM
-#: ../Util/StringFu.cs:120
+#: ../Util/StringFu.cs:122
 msgid "MMMM d, h:mm tt"
 msgstr "d MMMM om H:mm"
 
 #. Translators: Example output: March 23 2001, 10:04 AM
-#: ../Util/StringFu.cs:125
+#: ../Util/StringFu.cs:127
 msgid "MMMM d yyyy, h:mm tt"
 msgstr "d MMMM yyyy om H:mm"
 
 # Dit is om een tijdspanne aan te duiden, dus ik heb voor "uur" en niet voor
 # "uren" gekozen -- Wouter Bolsterlee
-#: ../Util/StringFu.cs:135
+#: ../Util/StringFu.cs:137
 #, csharp-format
 msgid "{0} hour"
 msgid_plural "{0} hours"
@@ -805,7 +1124,7 @@ msgstr[1] "{0} uur"
 
 # Tijdspannes in minuten zeggen we weer wel in het meervoud. Rare jongens, die
 # Nederlandstaligen... -- Wouter Bolsterlee
-#: ../Util/StringFu.cs:142
+#: ../Util/StringFu.cs:144
 #, csharp-format
 msgid "{0} minute"
 msgid_plural "{0} minutes"
@@ -813,19 +1132,148 @@ msgstr[0] "{0} minuut"
 msgstr[1] "{0} minuten"
 
 #. Translators: {0} is a file size in bytes
-#: ../Util/StringFu.cs:158
+#: ../Util/StringFu.cs:160
 #, csharp-format
 msgid "{0} bytes"
 msgstr "{0} bytes"
 
 #. Translators: {0} is a file size in kilobytes
-#: ../Util/StringFu.cs:162
+#: ../Util/StringFu.cs:164
 #, csharp-format
 msgid "{0:0.0} KB"
 msgstr "{0:0.0} KB"
 
 #. Translators: {0} is a file size in megabytes
-#: ../Util/StringFu.cs:165
+#: ../Util/StringFu.cs:167
 #, csharp-format
 msgid "{0:0.0} MB"
 msgstr "{0:0.0} MB"
+
+#~ msgid ""
+#~ "Best cannot initialize Mozilla's Gecko runtime environment.\n"
+#~ "Have you upgraded Mozilla or Firefox recently?  If so, you\n"
+#~ "probably need to rebuild beagle against this new version.\n"
+#~ "See http://bugzilla.gnome.org/show_bug.cgi?id=326503 for\n"
+#~ "more information."
+#~ msgstr ""
+#~ "'Best' kan de Mozilla Gecko runtime environment niet initialiseren.\n"
+#~ "Heeft u onlangs Mozilla of Firefox een upgrade gegeven? In dat\n"
+#~ "geval moet u waarschijnlijk beagle opnieuw opbouwen met deze nieuwe\n"
+#~ "versie. Kijk op http://bugzilla.gnome.org/show_bug.cgi?id=326503\n"
+#~ "voor meer informatie."
+
+#~ msgid ""
+#~ "If you're wondering whether Best is working check your notification area "
+#~ "(system tray)"
+#~ msgstr ""
+#~ "Als je je afvraagt of Best werkt, controleer dan je mededelingengebied "
+#~ "(system tray)"
+
+#~ msgid ""
+#~ "You are about to close the search tray. The search tray is automatically "
+#~ "started at login-time. Would you like to disable it for future sessions?"
+#~ msgstr ""
+#~ "De zoekfunctie vanuit het mededelingengebied wordt afgesloten. Deze "
+#~ "zoekfunctie wordt automatisch opnieuw opgestart als u zich opnieuw "
+#~ "aanmeldt. Moet de zoekfunctie permanent uitgeschakeld worden?"
+
+#~ msgid "in Files"
+#~ msgstr "in bestanden"
+
+#~ msgid "in Addressbook"
+#~ msgstr "in adresboek"
+
+#~ msgid "in Web Pages"
+#~ msgstr "in webpagina's"
+
+#~ msgid "in Chats"
+#~ msgstr "in chats"
+
+#~ msgid "Show More Results"
+#~ msgstr "Meer resultaten tonen"
+
+#~ msgid "Show Previous Results"
+#~ msgstr "Vorige resultaten tonen"
+
+#~ msgid "Best <b>{0} results of {1}</b> are shown."
+#~ msgstr "Beste <b>{0} van in totaal {1} resultaten</b> worden getoond."
+
+#~ msgid "Results <b>{0} through {1} of {2}</b> are shown."
+#~ msgstr "Resultaten <b>{0} tot en met {1} (totaal {2})</b> worden getoond."
+
+#~ msgid ""
+#~ "The query for <i>{0}</i> failed.<br>The likely cause is that the beagle "
+#~ "daemon isn't running."
+#~ msgstr ""
+#~ "De zoekopdracht naar <i>{0}</i> is mislukt. Waarschijnlijk is de beagle-"
+#~ "daemon niet actief."
+
+#~ msgid "The query for <i>{0}</i> failed with error:<br>{1}<br>"
+#~ msgstr "De zoekopdracht naar <i>{0}</i> is mislukt met fout:<br>{1}<br>"
+
+# zoekmachine/zoekprogramma/zoeken/zoeker/zoekhulp(je)
+#~ msgid "Beagle Search"
+#~ msgstr "Beagle zoekprogramma"
+
+#~ msgid "Words:"
+#~ msgstr "Woorden:"
+
+#~ msgid "Send IM"
+#~ msgstr "Bericht sturen"
+
+#~ msgid "Conversation in {0}"
+#~ msgstr "Gesprek in {0}"
+
+#~ msgid "Conversation with {0}"
+#~ msgstr "Gesprek met {0}"
+
+#~ msgid "To"
+#~ msgstr "Aan"
+
+#~ msgid "Sent"
+#~ msgstr "Verzonden"
+
+#~ msgid "Weblog:"
+#~ msgstr "Weblog:"
+
+#~ msgid "by"
+#~ msgstr "door"
+
+#~ msgid "Published:"
+#~ msgstr "Geplaatst:"
+
+#~ msgid "in folder"
+#~ msgstr "in map"
+
+#~ msgid "Last modified"
+#~ msgstr "Laatste wijziging"
+
+#~ msgid "Send to..."
+#~ msgstr "Sturen naar..."
+
+#~ msgid "Email subject:"
+#~ msgstr "E-mail onderwerp:"
+
+#~ msgid "Track"
+#~ msgstr "Nummer"
+
+#~ msgid "from"
+#~ msgstr "van"
+
+#~ msgid "Enqueue"
+#~ msgstr "Toevoegen"
+
+#~ msgid "Tags:"
+#~ msgstr "Tags:"
+
+#~ msgid "Description:"
+#~ msgstr "Omschrijving:"
+
+#~ msgid "Slides:"
+#~ msgstr "Pagina's:"
+
+#~ msgid "from Networked Beagle on host"
+#~ msgstr "van netwerk-Beagle op machine"
+
+#~ msgid "Search Networked Beagle"
+#~ msgstr "Netwerk-Beagle zoeken"
