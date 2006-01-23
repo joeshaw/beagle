@@ -741,7 +741,7 @@ namespace Beagle.Daemon.EvolutionMailDriver {
 			indexable.AddProperty (Property.NewKeyword ("fixme:client", "evolution"));
 			
 			if (!have_content) {
-				indexable.AddProperty (Property.New ("dc:title", messageInfo.subject));
+				indexable.AddProperty (Property.New ("dc:title", GMime.Utils.HeaderDecodePhrase (messageInfo.subject)));
 				indexable.AddProperty (Property.NewDate ("fixme:date", messageInfo.Date));
 			}
 
