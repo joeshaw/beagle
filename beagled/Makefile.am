@@ -266,7 +266,7 @@ FILE_SYSTEM_QUERYABLE_CSFILES =					\
 	$(fsqueryabledir)/FileSystemQueryable.cs		\
 	$(fsqueryabledir)/IFileEventBackend.cs			\
 	$(fsqueryabledir)/InotifyBackend.cs			\
-	$(fsqueryabledir)/FileSystemWatcherBackend.cs
+	$(fsqueryabledir)/NullFileEventBackend.cs
 
 
 gaimlogqueryable = $(srcdir)/GaimLogQueryable

@@ -90,8 +90,8 @@ namespace Beagle.Daemon.FileSystemQueryable {
                                 Logger.Log.Debug ("Starting Inotify Backend");
                                 event_backend = new InotifyBackend ();
                         } else {
-                                Logger.Log.Debug ("Starting FileSystemWatcher Backend");
-                                event_backend = new FileSystemWatcherBackend ();
+                                Logger.Log.Debug ("Creating null file event backend");
+				event_backend = new NullFileEventBackend ();
                         }
 
 			tree_crawl_task = new TreeCrawlTask (new TreeCrawlTask.Handler (AddDirectory));
