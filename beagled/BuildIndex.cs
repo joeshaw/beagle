@@ -485,10 +485,15 @@ namespace Beagle.Daemon
 			string usage = 
 				"beagle-build-index: Build an index.\n" + 
 				"Web page: http://www.gnome.org/projects/beagle\n" +
-				"Copyright (C) 2005 Novell, Inc.\n\n";
+				"Copyright (C) 2005-2006 Novell, Inc.\n\n";
 			
 			usage += 
 				"Usage: beagle-build-index [OPTIONS] --target <index_path> <path> [path]\n\n" +
+
+				"** WARNING **\n" +
+				"beagle-build-index will *delete all existing data* within the target\n" +
+				"directory.  Ensure that the target path is set correctly before running.\n\n" +
+
 				"Options:\n" +
 				"  --source [name]\t\tThe index's source name.  Defaults to the target directory name\n" +
 				"  --remap [path1:path2]\t\tRemap data paths to fit target. \n" +
@@ -499,7 +504,8 @@ namespace Beagle.Daemon
 				"  --allow-pattern [pattern]\tOnly allow files that match the pattern to be indexed.\n" + 
 				"  --deny-pattern [pattern]\tKeep any files that match the pattern from being indexed.\n" + 
 				"  --disable-restart\t\tDon't restart when memory usage gets above a certain threshold.\n" +
-				"  --debug\t\t\tEcho verbose debugging information.\n";
+				"  --debug\t\t\tEcho verbose debugging information.\n\n";
+
 			
 			Console.WriteLine (usage);
 			Environment.Exit (0);
