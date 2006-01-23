@@ -261,47 +261,47 @@ namespace Search.Tray {
 			}
 		}
 
-		[DllImport ("gdk-x11-2.0")]
+		[DllImport ("libgdk-x11-2.0.so.0")]
 		private static extern IntPtr gdk_x11_display_get_xdisplay (IntPtr display);
     
-		[DllImport ("gdk-x11-2.0")]
+		[DllImport ("libgdk-x11-2.0.so.0")]
 		private static extern IntPtr gdk_x11_get_server_time (IntPtr window);
     
-		[DllImport ("gdk-x11-2.0")]
+		[DllImport ("libgdk-x11-2.0.so.0")]
 		private static extern void gdk_error_trap_push ();
     
-		[DllImport ("gdk-x11-2.0")]
+		[DllImport ("libgdk-x11-2.0.so.0")]
 		private static extern int gdk_error_trap_pop ();
     
-		[DllImport ("libX11", EntryPoint="XInternAtom")]
+		[DllImport ("libX11.so.6")]
 		private extern static int XInternAtom(IntPtr display, string atom_name, bool only_if_exists);
     
-		[DllImport ("libX11")]
+		[DllImport ("libX11.so.6")]
 		private extern static void XGrabServer (IntPtr display);
     
-		[DllImport ("libX11")]
+		[DllImport ("libX11.so.6")]
 		private extern static void XUngrabServer (IntPtr display);
     
-		[DllImport ("libX11")]
+		[DllImport ("libX11.so.6")]
 		private extern static int XFlush (IntPtr display);
    
-		[DllImport ("libX11")]
+		[DllImport ("libX11.so.6")]
 		private extern static int XSync (IntPtr display, bool discard);
     
-		[DllImport ("libX11")]
+		[DllImport ("libX11.so.6")]
 		private extern static int XFree (IntPtr display);
     
-		[DllImport ("libX11")]
+		[DllImport ("libX11.so.6")]
 		private extern static IntPtr XGetSelectionOwner (IntPtr display, int atom);
    
-		[DllImport ("libX11")]
+		[DllImport ("libX11.so.6")]
 		private extern static IntPtr XSelectInput (IntPtr window, IntPtr display, EventMask mask);
     
-		[DllImport ("libX11", EntryPoint="XSendEvent")]
+		[DllImport ("libX11.so.6")]
 		private extern static int XSendEvent(IntPtr display, IntPtr window, bool propagate, EventMask event_mask, 
 						     ref XClientMessageEvent send_event);
         
-		[DllImport("libX11")]
+		[DllImport("libX11.so.6")]
 		private extern static int XGetWindowProperty(IntPtr display, IntPtr w, int property, IntPtr long_offset, 
 							     IntPtr long_length, bool deleteProp, int req_type,
 							     out int actual_type_return, out int actual_format_return, 

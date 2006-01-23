@@ -1,3 +1,8 @@
+2006-01-23  Dan Winship  <danw@novell.com>
+
+	* search/Tray/NotificationArea.cs: specify full library names here
+	so we don't depend on gtk2-devel and xorg-x11-devel. #328276
+
 2006-01-22  Lukas Lipka  <lukas@pmad.net>
 
 	* search/Search.cs: Dispose the old query before firing a new
