@@ -187,8 +187,8 @@ namespace Beagle.Daemon.KMailQueryable {
 		private string GuessLocalFolderPath ()
 		{
 			string locationrc = GetLocalFolderPathFromKmailrc ();
-			Logger.Log.Debug ("Reading kmail local-mail location from kmailrc: " + 
-					    (locationrc == null ? "Unavailable" : locationrc));
+			//Logger.Log.Debug ("Reading kmail local-mail location from kmailrc: " + 
+			//		    (locationrc == null ? "Unavailable" : locationrc));
 			string location1 = Path.Combine (PathFinder.HomeDir, "Mail");
 			string location2 = Path.Combine (PathFinder.HomeDir, ".Mail");
 
