@@ -118,7 +118,7 @@ namespace ImLogViewer {
 			
 			Glade.XML gxml = new Glade.XML (null, "ImLogViewer.glade", "imviewer", null);
 			gxml.Autoconnect (this);
-			imviewer.Icon = Beagle.Images.GetPixbuf ("best.png");
+			imviewer.Icon = Beagle.Images.GetPixbuf ("system-search.png");
 
 			conversation.PixelsAboveLines = 3;
 			conversation.LeftMargin = 4;
