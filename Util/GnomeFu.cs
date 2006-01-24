@@ -35,13 +35,6 @@ namespace Beagle.Util {
 
 		private static Gtk.IconTheme icon_theme = null;
 
-		// gnomevfs-sharp does not provide gnome_vfs_get_file_* bindings
-		// these functions require a struct stat which gapi does not know how to
-		// handle, and there are currently no plans to add these bindings.
-		// Using these methods is apparently faster than gnome_vfs_get_mime_type
-		[DllImport ("libgnomevfs-2")] extern static IntPtr gnome_vfs_get_file_mime_type (string filename, IntPtr optional_stat_info, bool suffix_only);
-		[DllImport ("libgnomevfs-2")] extern static IntPtr gnome_vfs_get_file_mime_type_fast (string filename, IntPtr optional_stat_info);
-
 		// FIXME: When gtk-sharp 2.5 is a requirement
 		// use Gnome.Vfs.MimeApplication stuff instead
 		[DllImport("libgnomevfs-2")]

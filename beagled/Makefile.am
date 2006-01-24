@@ -277,12 +277,6 @@ tomboyqueryable = $(srcdir)/TomboyQueryable
 TOMBOY_QUERYABLE_CSFILES =				\
 	$(tomboyqueryable)/TomboyQueryable.cs
 
-evomailqueryable = $(srcdir)/EvolutionMailDriver
-EVO_MAIL_QUERYABLE_CSFILES =					\
-	$(evomailqueryable)/EvolutionMailDriver.cs		\
-	$(evomailqueryable)/EvolutionMailIndexableGenerator.cs	\
-	$(evomailqueryable)/MailCrawler.cs
-
 kmailqueryable = $(srcdir)/KMailQueryable
 KMAIL_QUERYABLE_CSFILES =				\
 	$(kmailqueryable)/KMailQueryable.cs		\
@@ -316,7 +310,6 @@ INDEXING_SERVICE_QUERYABLE_CSFILES =			\
 
 DAEMON_DLL_CSFILES = 						\
 	$(LUCENE_CSFILES)					\
-	$(EVO_MAIL_QUERYABLE_CSFILES)				\
 	$(KMAIL_QUERYABLE_CSFILES)				\
 	$(FILE_SYSTEM_QUERYABLE_CSFILES)			\
 	$(GAIM_LOG_QUERYABLE_CSFILES)				\
@@ -333,7 +326,6 @@ DAEMON_DLL_CSFILES = 						\
 	$(srcdir)/FileAttributesStore_Mixed.cs			\
 	$(srcdir)/FileAttributesStore_Sqlite.cs			\
 	$(srcdir)/FilterFactory.cs				\
-	$(srcdir)/GConfThreadHelper.cs				\
 	$(srcdir)/GoogleDriver.cs				\
 	$(srcdir)/IFileAttributesStore.cs			\
 	$(srcdir)/IIndexer.cs					\
@@ -426,7 +418,7 @@ BACKEND_ASSEMBLIES =				\
 	-r:Mono.Posix
 
 ###
-### Evolution Data Server backend
+### Evolution backend
 ###
 
 edsqueryable = $(srcdir)/EvolutionDataServerQueryable
@@ -437,13 +429,20 @@ EDS_QUERYABLE_CSFILES =                                 \
 	$(edsqueryable)/EvolutionDataServerQueryable.cs	\
 	$(edsqueryable)/SourcesHandler.cs
 
-EDS_DLL_TARGET = EvolutionDataServer.dll
-EDS_DLL_CSFLAGS = $(BACKEND_CSFLAGS)
-EDS_DLL_CSFILES = $(EDS_QUERYABLE_CSFILES)
-EDS_DLL_ASSEMBLIES = $(BACKEND_ASSEMBLIES) $(EVO_SHARP_LIBS)
+evomailqueryable = $(srcdir)/EvolutionMailDriver
+EVO_MAIL_QUERYABLE_CSFILES =					\
+	$(evomailqueryable)/EvolutionMailDriver.cs		\
+	$(evomailqueryable)/EvolutionMailIndexableGenerator.cs	\
+	$(evomailqueryable)/GConfThreadHelper.cs		\
+	$(evomailqueryable)/MailCrawler.cs
 
-$(EDS_DLL_TARGET): $(EDS_DLL_CSFILES) $(DAEMON_DLL_LOCAL_ASSEMBLIES) $(DAEMON_DLL_TARGET)
-	$(CSC) -out:$@ $(EDS_DLL_CSFLAGS) $(EDS_DLL_CSFILES) -r:$(DAEMON_DLL_TARGET) $(DAEMON_DLL_ASSEMBLIES)
+EVO_DLL_TARGET = EvolutionBackends.dll
+EVO_DLL_CSFLAGS = $(BACKEND_CSFLAGS)
+EVO_DLL_CSFILES = $(EDS_QUERYABLE_CSFILES) $(EVO_MAIL_QUERYABLE_CSFILES)
+EVO_DLL_ASSEMBLIES = $(BACKEND_ASSEMBLIES) $(EVO_LIBS)
+
+$(EVO_DLL_TARGET): $(EVO_DLL_CSFILES) $(DAEMON_DLL_LOCAL_ASSEMBLIES) $(DAEMON_DLL_TARGET)
+	$(CSC) -out:$@ $(EVO_DLL_CSFLAGS) $(EVO_DLL_CSFILES) -r:$(DAEMON_DLL_TARGET) $(EVO_DLL_ASSEMBLIES)
 
 ############################################################
 
@@ -971,9 +970,9 @@ ALL_TARGETS += 				\
 	$(WEBSERVICES_BACKEND_TARGET)	
 endif
 
-if ENABLE_EVO_SHARP
+if ENABLE_EVOLUTION
 ALL_TARGETS +=				\
-	$(EDS_DLL_TARGET)
+	$(EVO_DLL_TARGET)
 endif
 
 man_MANS = 				\
@@ -991,8 +990,8 @@ if ENABLE_WEBSERVICES
 	$(mkinstalldirs) $(DESTDIR)$(XSP_DIR)
 	$(mkinstalldirs) $(DESTDIR)$(XSPBIN_DIR)
 endif
-if ENABLE_EVO_SHARP
-	$(INSTALL_DATA) $(EDS_DLL_TARGET) $(DESTDIR)$(BACKENDDIR)/$(EDS_DLL_TARGET)
+if ENABLE_EVOLUTION
+	$(INSTALL_DATA) $(EVO_DLL_TARGET) $(DESTDIR)$(BACKENDDIR)/$(EVO_DLL_TARGET)
 endif
 	$(INSTALL_DATA) $(PLUGIN_TARGET) $(DESTDIR)$(pkglibdir)/$(PLUGIN_TARGET)
 	$(INSTALL_DATA) $(DAEMON_DLL_TARGET) $(DESTDIR)$(pkglibdir)/$(DAEMON_DLL_TARGET)
@@ -1018,8 +1017,8 @@ if ENABLE_WEBSERVICES
 	rm -f $(DESTDIR)$(pkglibdir)/$(WEBSERVICES_XSP_TARGET)
 	rm -rf $(DESTDIR)$(XSP_DIR)
 endif
-if ENABLE_EVO_SHARP
-	rm -f $(DESTDIR)$(BACKENDDIR)/$(EDS_DLL_TARGET)
+if ENABLE_EVOLUTION
+	rm -f $(DESTDIR)$(BACKENDDIR)/$(EVO_DLL_TARGET)
 endif
 	rm -f $(DESTDIR)$(pkglibdir)/$(PLUGIN_TARGET)
 	rm -f $(DESTDIR)$(pkglibdir)/$(DAEMON_DLL_TARGET)
@@ -1056,7 +1055,7 @@ EXTRA_DIST = \
 	$(PLUGIN_CSFILES)			\
 	$(DAEMON_DLL_CSFILES)			\
 	$(DAEMON_CSFILES)			\
-	$(EDS_QUERYABLE_CSFILES)		\
+	$(EVO_DLL_CSFILES)			\
 	$(EXTRACT_CONTENT_CSFILES)		\
 	$(DUMP_INDEX_CSFILES)			\
 	$(INDEX_WEB_CONTENT_CSFILES)		\
@@ -1084,8 +1083,8 @@ CLEANFILES = \
 	$(DAEMON_TARGET)       			\
 	$(DAEMON_TARGET).mdb   			\
 	$(DAEMON_WRAPPER)      			\
-	$(EDS_DLL_TARGET)			\
-	$(EDS_DLL_TARGET).mdb			\
+	$(EVO_DLL_TARGET)			\
+	$(EVO_DLL_TARGET).mdb			\
 	$(INDEX_HELPER_TARGET)			\
 	$(INDEX_HELPER_TARGET).mdb		\
 	$(INDEX_HELPER_WRAPPER)			\

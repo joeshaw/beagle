@@ -2,12 +2,13 @@
 # 0067 = event defined but not used
 
 CSC = mcs -debug -nowarn:0067
-
-
-TARGET = Util.dll
-TARGET_CONFIG = $(TARGET).config
-
 CSFLAGS = -target:library
+
+UTIL_TARGET = Util.dll
+UTIL_TARGET_CONFIG = $(UTIL_TARGET).config
+
+UI_UTIL_TARGET = UiUtil.dll
+UI_UTIL_TARGET_CONFIG = $(UI_UTIL_TARGET).config
 
 if OS_LINUX
 CSFLAGS += -define:OS_LINUX
@@ -40,13 +41,12 @@ $(EXTSTR): $(EXTSTR_IN)
 		-e "s|\@SQLITE_MAJ_VER\@|$(SQLITE_MAJ_VER)|g"	\
 		< $(EXTSTR_IN) > $@
 
-CSFILES = 			        	\
+UTIL_CSFILES = 			        	\
 	$(srcdir)/ArrayFu.cs              	\
 	$(srcdir)/BetterBitArray.cs		\
 	$(srcdir)/EndianConverter.cs		\
 	$(srcdir)/camel.cs              	\
 	$(srcdir)/CommandLineFu.cs		\
-	$(srcdir)/CompatFileChooser.cs		\
 	$(srcdir)/Conf.cs			\
 	$(srcdir)/DelayedTextWriter.cs		\
 	$(srcdir)/DirectoryWalker.cs		\
@@ -58,10 +58,7 @@ CSFILES = 			        	\
 	$(srcdir)/FileSystem.cs			\
 	$(srcdir)/FrequencyStatistics.cs	\
 	$(srcdir)/FSpotTools.cs         	\
-	$(srcdir)/GnomeFu.cs              	\
-	$(srcdir)/GtkUtils.cs			\
 	$(srcdir)/GuidFu.cs			\
-	$(srcdir)/HigMessageDialog.cs		\
 	$(srcdir)/ImBuddy.cs              	\
 	$(srcdir)/ImLog.cs              	\
 	$(srcdir)/Inotify.cs			\
@@ -93,7 +90,6 @@ CSFILES = 			        	\
 	$(srcdir)/UnclosableStream.cs		\
 	$(srcdir)/UriFu.cs			\
 	$(srcdir)/XdgMime.cs			\
-	$(srcdir)/XKeybinder.cs			\
 	$(srcdir)/XmlFu.cs			\
 	$(srcdir)/XmpFile.cs			\
 	$(srcdir)/SemWeb/ForwardLogic.cs		\
@@ -121,12 +117,12 @@ CSFILES = 			        	\
 
 
 if HAS_LIBCHM 
-CSFILES += 					\
+UTIL_CSFILES +=					\
 	$(srcdir)/ChmFile.cs
 endif
 
-ASSEMBLIES =					\
-	$(BEAGLE_UI_LIBS)			\
+UTIL_ASSEMBLIES =				\
+	$(BEAGLED_LIBS)				\
 	-r:System.Web.Services			\
 	-r:System.Data				\
 	-r:Mono.Data.SqliteClient		\
@@ -135,10 +131,10 @@ ASSEMBLIES =					\
 	-r:ICSharpCode.SharpZipLib
 
 if ENABLE_GALAGO
-CSFILES +=					\
+UTIL_CSFILES +=					\
 	$(srcdir)/Galago.cs
 
-ASSEMBLIES += 					\
+UTIL_ASSEMBLIES += 				\
 	$(GALAGO_LIBS)
 endif
 
@@ -149,9 +145,22 @@ else
 INOTIFY_EXE =
 endif
 
-$(TARGET): $(CSFILES) $(GOOGLE_CS) $(EXTSTR)
-	$(CSC) -unsafe -out:$@ $(CSFLAGS) $^ $(ASSEMBLIES)
+$(UTIL_TARGET): $(UTIL_CSFILES) $(GOOGLE_CS) $(EXTSTR)
+	$(CSC) -unsafe -out:$@ $(CSFLAGS) $^ $(UTIL_ASSEMBLIES)
 
+UI_UTIL_CSFILES =				\
+	$(srcdir)/CompatFileChooser.cs		\
+	$(srcdir)/GnomeFu.cs              	\
+	$(srcdir)/GtkUtils.cs			\
+	$(srcdir)/HigMessageDialog.cs		\
+	$(srcdir)/XKeybinder.cs
+
+UI_UTIL_ASSEMBLIES =				\
+	$(BEAGLE_UI_LIBS)			\
+	-r:Util.dll
+
+$(UI_UTIL_TARGET): $(UI_UTIL_CSFILES) $(UTIL_TARGET)
+	$(CSC) -unsafe -out:$@ $(CSFLAGS) $(UI_UTIL_CSFILES) $(UI_UTIL_ASSEMBLIES)
 
 INOTIFY_TEST_CSFILES =				\
 	$(srcdir)/Inotify.cs			\
@@ -166,15 +175,27 @@ INOTIFY_TEST_CSFILES =				\
 Inotify.exe: $(INOTIFY_TEST_CSFILES)
 	$(CSC) -unsafe -out:$@ $^ -r:Mono.Posix -define:INOTIFY_TEST -define:ENABLE_INOTIFY
 
+ALL_TARGETS =			\
+	$(UTIL_TARGET)		\
+	$(INOTIFY_EXE)
 
-all: $(TARGET) $(INOTIFY_EXE)
+if ENABLE_GUI
+ALL_TARGETS += $(UI_UTIL_TARGET)
+endif
 
-install-data-local: $(TARGET)
+all: $(ALL_TARGETS)
+
+install-data-local: $(ALL_TARGETS)
 	$(mkinstalldirs) $(DESTDIR)$(pkglibdir)
-	$(INSTALL_DATA) $(TARGET) $(TARGET_CONFIG) $(DESTDIR)$(pkglibdir)
+	$(INSTALL_DATA) $(UTIL_TARGET) $(UTIL_TARGET_CONFIG) $(DESTDIR)$(pkglibdir)
+if ENABLE_GUI
+	$(INSTALL_DATA) $(UI_UTIL_TARGET) $(UI_UTIL_TARGET_CONFIG) $(DESTDIR)$(pkglibdir)
+endif
 
 uninstall-local:
-	rm -f $(DESTDIR)$(pkglibdir)/$(TARGET)
+	rm -f $(DESTDIR)$(pkglibdir)/$(UTIL_TARGET) $(DESTDIR)$(pkglibdir)/$(UTIL_TARGET_CONFIG)
+	rm -f $(DESTDIR)$(pkglibdir)/$(UI_UTIL_TARGET) $(DESTDIR)$(pkglibdir)/$(UI_UTIL_TARGET_CONFIG)
+
 
 COND_CS_FILES =			\
 	$(srcdir)/ChmFile.cs	\
@@ -183,7 +204,8 @@ COND_CS_FILES =			\
 EXTRA_DIST =			\
 	$(GOOGLE_WSDL)		\
 	$(EXTSTR_IN)		\
-	$(CSFILES)		\
+	$(UTIL_CSFILES)		\
+	$(UI_UTIL_CSFILES)	\
 	$(COND_CS_FILES)	\
 	Util.dll.config.in	\
 	inotify-test
@@ -191,7 +213,9 @@ EXTRA_DIST =			\
 CLEANFILES =			\
 	$(GOOGLE_CS)		\
 	$(EXTSTR)		\
-	$(TARGET)		\
-	$(TARGET).mdb		\
+	$(UTIL_TARGET)		\
+	$(UTIL_TARGET).mdb	\
+	$(UI_UTIL_TARGET)	\
+	$(UI_UTIL_TARGET).mdb	\
 	Inotify.exe		\
 	Inotify.exe.mdb

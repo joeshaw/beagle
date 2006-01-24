@@ -12,16 +12,21 @@ endif
 SUBDIRS +=			\
 	wrappers		\
 	Util			\
-	images			\
 	glue			\
 	BeagleClient            \
 	beagled                 \
 	Filters 		\
-	tools 			\
+	tools
+
+if ENABLE_GUI
+SUBDIRS +=			\
+	images			\
 	search			\
-	ImLogViewer		\
+	ImLogViewer
+endif
+
+SUBDIRS +=			\
 	mozilla-extension	\
-	searchomatic		\
 	bludgeon
 
 if ENABLE_EPIPHANY_EXTENSION

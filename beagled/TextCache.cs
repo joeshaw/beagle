@@ -88,7 +88,14 @@ namespace Beagle.Daemon {
 			connection = new SqliteConnection ();
 			connection.ConnectionString = "version=" + ExternalStringsHack.SqliteVersion
 					+ ",URI=file:" + db_filename;
-			connection.Open ();
+			try {
+				connection.Open ();
+			} catch (ApplicationException) {
+				Logger.Log.Error ("Text cache is an incompatible sqlite database. ({0})", db_filename);
+				Logger.Log.Error ("We're trying to open with version {0}.", ExternalStringsHack.SqliteVersion);
+				Logger.Log.Error ("Exiting immediately.");
+				Environment.Exit (1);
+			}
 			
 			if (create_new_db) {
 				DoNonQuery ("CREATE TABLE uri_index (            " +

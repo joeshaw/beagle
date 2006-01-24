@@ -395,8 +395,10 @@ namespace Beagle.Daemon {
 
 		public void Stop ()
 		{
-			this.running = false;
-			this.listener.Stop ();
+			if (this.running) {
+				this.running = false;
+				this.listener.Stop ();
+			}
 			File.Delete (this.socket_path);
 		}
 

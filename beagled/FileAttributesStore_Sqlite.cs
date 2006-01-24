@@ -161,7 +161,14 @@ namespace Beagle.Daemon {
 			c = new SqliteConnection ();
 			c.ConnectionString = "version=" + ExternalStringsHack.SqliteVersion
 				+ ",URI=file:" + GetDbPath (directory);
-			c.Open ();
+			try {
+				c.Open ();
+			} catch (ApplicationException) {
+				Logger.Log.Error ("File attributes store is an incompatible sqlite database. ({0})", GetDbPath (directory));
+				Logger.Log.Error ("We're trying to open with sqlite version {0}.", ExternalStringsHack.SqliteVersion);
+				Logger.Log.Error ("Exiting immediately.");
+				Environment.Exit (1);
+			}
 			return c;
 		}
 

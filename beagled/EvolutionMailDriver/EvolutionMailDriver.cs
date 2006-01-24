@@ -37,7 +37,7 @@ using LNI = Lucene.Net.Index;
 
 namespace Beagle.Daemon.EvolutionMailDriver {
 
-	[QueryableFlavor (Name="Mail", Domain=QueryDomain.Local, RequireInotify=false)]
+	[QueryableFlavor (Name="EvolutionMail", Domain=QueryDomain.Local, RequireInotify=false)]
 	public class EvolutionMailQueryable : LuceneQueryable {
 
 		public int polling_interval_in_seconds = 60;
@@ -57,7 +57,7 @@ namespace Beagle.Daemon.EvolutionMailDriver {
 		//    for searching for parts of an email address.
 		private const int INDEX_VERSION = 3;
 
-		public EvolutionMailQueryable () : base ("MailIndex", INDEX_VERSION)
+		public EvolutionMailQueryable () : base ("EvolutionMailIndex", INDEX_VERSION)
 		{
 			this.local_path = Path.Combine (PathFinder.HomeDir, ".evolution/mail/local");
 			this.imap_path = Path.Combine (PathFinder.HomeDir, ".evolution/mail/imap");

@@ -6,8 +6,7 @@ LOCAL_ASSEMBLIES =			\
 	../BeagleClient/Beagle.dll
 
 ASSEMBLIES =				\
-	$(EVO_SHARP_LIBS)		\
-	$(BEAGLE_UI_LIBS)		\
+	$(BEAGLED_LIBS)			\
 	$(SHARPZIPLIB_LIBS)		\
 	$(LOCAL_ASSEMBLIES:%=-r:%)	\
 	-r:Mono.Posix

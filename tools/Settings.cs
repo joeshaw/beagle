@@ -31,7 +31,6 @@ using System.Threading;
 
 using Gtk;
 using Gdk;
-using GConf;
 using Glade;
 using Mono.Unix;
 
