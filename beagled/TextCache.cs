@@ -84,25 +84,69 @@ namespace Beagle.Daemon {
 			bool create_new_db = false;
 			if (! File.Exists (db_filename))
 				create_new_db = true;
-			
-			connection = new SqliteConnection ();
-			connection.ConnectionString = "version=" + ExternalStringsHack.SqliteVersion
-					+ ",URI=file:" + db_filename;
+
+			// Funky logic here to deal with sqlite versions.
+			//
+			// When sqlite 3 tries to open an sqlite 2 database,
+			// it will throw an SqliteException with SqliteError
+			// NOTADB when trying to execute a command.
+			//
+			// When sqlite 2 tries to open an sqlite 3 database,
+			// it will throw an ApplicationException when it
+			// tries to open the database.
+
 			try {
-				connection.Open ();
+				connection = Open (db_filename);
 			} catch (ApplicationException) {
-				Logger.Log.Error ("Text cache is an incompatible sqlite database. ({0})", db_filename);
-				Logger.Log.Error ("We're trying to open with version {0}.", ExternalStringsHack.SqliteVersion);
-				Logger.Log.Error ("Exiting immediately.");
-				Environment.Exit (1);
+				Logger.Log.Warn ("Likely sqlite database version mismatch trying to open {0}.  Purging.", db_filename);
+				create_new_db = true;
+			}
+
+			if (!create_new_db) {
+				// Run a dummy query to see if we get a NOTADB error.  Sigh.
+				SqliteCommand command;
+				SqliteDataReader reader = null;
+
+				command = new SqliteCommand ();
+				command.Connection = connection;
+				command.CommandText =
+					"SELECT filename FROM uri_index WHERE uri='blah'";
+
+				try {
+					reader = ExecuteReaderOrWait (command);
+				} catch (SqliteException ex) {
+					if (ex.SqliteError == SqliteError.NOTADB) {
+						Logger.Log.Warn ("Likely sqlite database version mismatch trying to read from {0}.  Purging.", db_filename);
+						create_new_db = true;
+					} else
+						throw;
+				}
+
+				if (reader != null)
+					reader.Dispose ();
+				command.Dispose ();
 			}
 			
 			if (create_new_db) {
+				if (connection != null)
+					connection.Dispose ();
+				File.Delete (db_filename);
+				connection = Open (db_filename);
+
 				DoNonQuery ("CREATE TABLE uri_index (            " +
 					    "  uri      STRING UNIQUE NOT NULL,  " +
 					    "  filename STRING NOT NULL          " +
 					    ")");
 			}
+		}
+
+		private SqliteConnection Open (string db_filename)
+		{
+			SqliteConnection connection = new SqliteConnection ();
+			connection.ConnectionString = "version=" + ExternalStringsHack.SqliteVersion
+				+ ",URI=file:" + db_filename;
+			connection.Open ();
+			return connection;
 		}
 
 		private static string UriToString (Uri uri)

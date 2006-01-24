@@ -122,14 +122,10 @@ AC_DEFINE_UNQUOTED(GETTEXT_PACKAGE, "$GETTEXT_PACKAGE", [Name of the package for
 # doesn't require it.  But we do, so check for it here.
 SQLITE_MAJ_VER="0"
 PKG_CHECK_MODULES(SQLITE, sqlite, SQLITE_MAJ_VER="2", do_nothing="1")
-
-# SQLite 3.x has really crap threading semantics (handle must only be used
-# from the thread which opened the handle). We aren't supporting it for now.
-# See bug 308960.
 PKG_CHECK_MODULES(SQLITE, sqlite3 >= 3.3, SQLITE_MAJ_VER="3", do_nothing="1")
 
 if test "x$SQLITE_MAJ_VER" = "x0"; then
-	AC_MSG_ERROR([You need to install sqlite2])
+	AC_MSG_ERROR([You need to install sqlite 2.x or >= 3.3.1])
 fi
 
 AC_SUBST(SQLITE_MAJ_VER)

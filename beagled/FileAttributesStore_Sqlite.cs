@@ -61,35 +61,54 @@ namespace Beagle.Daemon {
 			if (! File.Exists (GetDbPath (directory))) {
 				create_new_db = true;
 			} else {
-				connection = Open (directory);
+				
+				// Funky logic here to deal with sqlite versions.
+				//
+				// When sqlite 3 tries to open an sqlite 2 database,
+				// it will throw an SqliteException with SqliteError
+				// NOTADB when trying to execute a command.
+				//
+				// When sqlite 2 tries to open an sqlite 3 database,
+				// it will throw an ApplicationException when it
+				// tries to open the database.
 
-				SqliteCommand command;
-				SqliteDataReader reader = null;
-				int stored_version = 0;
-				string stored_fingerprint = null;
-
-
-				command = new SqliteCommand ();
-				command.Connection = connection;
-				command.CommandText =
-					"SELECT version, fingerprint FROM db_info";
 				try {
-					reader = ExecuteReaderOrWait (command);
-				} catch (Exception ex) {
+					connection = Open (directory);
+				} catch (ApplicationException) {
+					Logger.Log.Warn ("Likely sqlite database version mismatch trying to open {0}.  Purging.", GetDbPath (directory));
 					create_new_db = true;
 				}
-				if (reader != null && ! create_new_db) {
-					if (ReadOrWait (reader)) {
-						stored_version = reader.GetInt32 (0);
-						stored_fingerprint = reader.GetString (1);
-					}
-					reader.Close ();
-				}
-				command.Dispose ();
 
-				if (VERSION != stored_version
-				    || (index_fingerprint != null && index_fingerprint != stored_fingerprint))
-					create_new_db = true;
+				if (! create_new_db) {
+					SqliteCommand command;
+					SqliteDataReader reader = null;
+					int stored_version = 0;
+					string stored_fingerprint = null;
+
+
+					command = new SqliteCommand ();
+					command.Connection = connection;
+					command.CommandText =
+						"SELECT version, fingerprint FROM db_info";
+					try {
+						reader = ExecuteReaderOrWait (command);
+					} catch (Exception ex) {
+						Logger.Log.Warn ("Likely sqlite database version mismatch trying to read from {0}.  Purging.", GetDbPath (directory));
+						create_new_db = true;
+					}
+					if (reader != null && ! create_new_db) {
+						if (ReadOrWait (reader)) {
+							stored_version = reader.GetInt32 (0);
+							stored_fingerprint = reader.GetString (1);
+						}
+						reader.Close ();
+					}
+					command.Dispose ();
+
+					if (VERSION != stored_version
+					    || (index_fingerprint != null && index_fingerprint != stored_fingerprint))
+						create_new_db = true;
+				}
 			}
 
 			if (create_new_db) {
@@ -161,14 +180,7 @@ namespace Beagle.Daemon {
 			c = new SqliteConnection ();
 			c.ConnectionString = "version=" + ExternalStringsHack.SqliteVersion
 				+ ",URI=file:" + GetDbPath (directory);
-			try {
-				c.Open ();
-			} catch (ApplicationException) {
-				Logger.Log.Error ("File attributes store is an incompatible sqlite database. ({0})", GetDbPath (directory));
-				Logger.Log.Error ("We're trying to open with sqlite version {0}.", ExternalStringsHack.SqliteVersion);
-				Logger.Log.Error ("Exiting immediately.");
-				Environment.Exit (1);
-			}
+			c.Open ();
 			return c;
 		}
 
