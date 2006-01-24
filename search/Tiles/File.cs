@@ -163,7 +163,8 @@ namespace Search.Tiles {
 			Gtk.Image icon = new Gtk.Image (Icon);
 			table.Attach (icon, 0, 1, 3, 4, fill, fill, 0, 0);
 			
-			snippet_label = WidgetFu.NewLabel (snippet);
+			snippet_label = WidgetFu.NewLabel ();
+			snippet_label.Markup = snippet;
 			WidgetFu.EllipsizeLabel (snippet_label);
 			table.Attach (snippet_label, 1, 4, 3, 4, expand, expand, 48, 0);
 

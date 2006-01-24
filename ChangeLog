@@ -1,5 +1,10 @@
 2006-01-24  Lukas Lipka  <lukas@pmad.net>
 
+	* search/Tiles/File.cs:
+	* search/Tiles/RSSFeed.cs: Always set the cached snippet as markup.
+
+2006-01-24  Lukas Lipka  <lukas@pmad.net>
+
 	* search/Tiles/Tile.cs: Revert temporary fix for the snippet crash.
 
 	* search/Search.cs: Fix a bug when the query was getting
