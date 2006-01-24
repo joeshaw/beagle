@@ -209,9 +209,6 @@ namespace Search.Tiles {
 
 		protected void RequestSnippet ()
 		{
-			if (hit == null || query == null)
-				return;
-
 			SnippetRequest sreq = new SnippetRequest (query, hit);
 			sreq.RegisterAsyncResponseHandler (typeof (SnippetResponse), SnippetResponseReceived);
 			sreq.SendAsync ();

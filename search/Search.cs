@@ -325,7 +325,6 @@ namespace Search {
 		private void OnFinished (FinishedResponse response)
 		{
 			spinner.Stop ();
-			currentQuery = null;
 			view.Finished (oldFocus == Focus);
 
 			CheckNoMatch ();

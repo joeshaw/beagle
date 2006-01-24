@@ -1,3 +1,10 @@
+2006-01-24  Lukas Lipka  <lukas@pmad.net>
+
+	* search/Tiles/Tile.cs: Revert temporary fix for the snippet crash.
+
+	* search/Search.cs: Fix a bug when the query was getting
+	unrefrenced too soon.
+
 2006-01-23  Dan Winship  <danw@novell.com>
 
 	* search/Tray/NotificationArea.cs: specify full library names here
