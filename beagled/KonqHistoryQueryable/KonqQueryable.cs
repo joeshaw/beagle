@@ -83,18 +83,17 @@ namespace Beagle.Daemon.KonqQueryable {
 			}
 
                         log.Info ("Starting Konq history backend ...");
-			State = QueryableState.Crawling;
 			Crawl ();
-			State = QueryableState.Indexing;
 		}
 
 		private void Crawl ()
 		{
-			directory_enumerator = DirectoryWalker.GetDirectoryInfos (konq_cache_dir).GetEnumerator ();
                         State = QueryableState.Crawling;
+			directory_enumerator = DirectoryWalker.GetDirectoryInfos (konq_cache_dir).GetEnumerator ();
 			Scheduler.Task crawl_task = NewAddTask (this);
 			crawl_task.Tag = crawler_tag;
 			ThisScheduler.Add (crawl_task);
+			State = QueryableState.Idle;
 		}
 
 		private string crawler_tag = "Konqueror History Crawler";
@@ -228,15 +227,13 @@ namespace Beagle.Daemon.KonqQueryable {
 			do {
 				while (file_enumerator == null || ! file_enumerator.MoveNext ()) {
 					if (! directory_enumerator.MoveNext ()) {
-						Logger.Log.Debug ("Crawling done");
-						State = QueryableState.Crawling;
+						Logger.Log.Debug ("KonqQ: Crawling done");
 						file_enumerator = null;
 						current_file = null;
-						State = QueryableState.Indexing;
 						return false;
 					}
 					DirectoryInfo current_dir = (DirectoryInfo)directory_enumerator.Current;
-					Logger.Log.Debug ("Trying dir:" + current_dir.Name);
+					//Logger.Log.Debug ("Trying dir:" + current_dir.Name);
 					// start watching for new files and get the list of current files
 					// kind of race here - might get duplicate files
 					if (Inotify.Enabled)
@@ -245,8 +242,8 @@ namespace Beagle.Daemon.KonqQueryable {
 					file_enumerator = DirectoryWalker.GetFileInfos (current_dir).GetEnumerator ();
 				}
 				current_file = (FileInfo) file_enumerator.Current;
-				if (!IsUpToDate (current_file.FullName))
-					Logger.Log.Debug (current_file.FullName + " is not upto date");
+				//if (!IsUpToDate (current_file.FullName))
+				//	Logger.Log.Debug (current_file.FullName + " is not upto date");
 			} while (IsUpToDate (current_file.FullName));
 
 			return true;

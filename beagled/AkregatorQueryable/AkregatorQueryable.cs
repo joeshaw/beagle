@@ -331,8 +331,8 @@ namespace Beagle.Daemon.AkregatorQueryable {
 			}
 
 			if (current_item == null) {
-				Logger.Log.Debug ("AkregatorQ: Probably no more feeds left in " + feed_file);
-				Logger.Log.Debug ("Causing string = " + itemString);
+				//Logger.Log.Debug ("AkregatorQ: Probably no more feeds left in " + feed_file);
+				//Logger.Log.Debug ("Causing string = " + itemString);
 				current_item = null;
 				is_valid_file = false;
 				reader.Close ();
