@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: beagle\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2006-01-17 19:58-0500\n"
+"POT-Creation-Date: 2006-01-26 12:20-0500\n"
 "PO-Revision-Date: 2005-08-19 13:55-0400\n"
 "Last-Translator: Adam Weinberger <adamw@gnome.org>\n"
 "Language-Team: Canadian English <adamw@gnome.org>\n"
@@ -137,9 +137,25 @@ msgstr "Start searching"
 msgid "Move to trash"
 msgstr "Move to trash"
 
-#: ../search/Tiles/Audio.cs:37 ../search/Tiles/Image.cs:38
+#: ../search/Tiles/Audio.cs:37 ../search/Tiles/Image.cs:39
 msgid "Add to Library"
 msgstr "Add to Library"
+
+#: ../search/Tiles/Contact.cs:60
+msgid "E-Mail:"
+msgstr "E-Mail:"
+
+#: ../search/Tiles/Contact.cs:66
+msgid "Mobile Phone:"
+msgstr "Mobile Phone:"
+
+#: ../search/Tiles/Contact.cs:73
+msgid "Work Phone:"
+msgstr "Work Phone:"
+
+#: ../search/Tiles/Contact.cs:78
+msgid "Home Phone:"
+msgstr "Home Phone:"
 
 #: ../search/Tiles/File.cs:35 ../search/Tiles/Folder.cs:35
 msgid "Open With"
@@ -161,17 +177,21 @@ msgstr "Instant-Message"
 msgid "Move to Trash"
 msgstr "Move to Trash"
 
-#: ../search/Tiles/File.cs:127 ../search/Tiles/RSSFeed.cs:50
+#: ../search/Tiles/File.cs:137 ../search/Tiles/RSSFeed.cs:50
 msgid "Title:"
 msgstr "Title:"
 
-#: ../search/Tiles/File.cs:137
+#: ../search/Tiles/File.cs:143
 msgid "Last Edited:"
 msgstr "Last Edited:"
 
-#: ../search/Tiles/File.cs:144
+#: ../search/Tiles/File.cs:150
 msgid "Author:"
 msgstr "Author:"
+
+#: ../search/Tiles/File.cs:157
+msgid "Full Path:"
+msgstr "Full Path:"
 
 #: ../search/Tiles/Folder.cs:31
 msgid "Empty"
@@ -193,11 +213,11 @@ msgstr "Show Information"
 msgid "Edited:"
 msgstr "Edited:"
 
-#: ../search/Tiles/Image.cs:39
+#: ../search/Tiles/Image.cs:40
 msgid "Set as Wallpaper"
 msgstr "Set as Wallpaper"
 
-#: ../search/Tiles/Image.cs:79
+#: ../search/Tiles/Image.cs:80
 msgid "Modified:"
 msgstr "Modified:"
 
@@ -247,7 +267,7 @@ msgid_plural "{0} pages"
 msgstr[0] "{0} page"
 msgstr[1] "{0} pages"
 
-#: ../search/Tiles/Tile.cs:149
+#: ../search/Tiles/Tile.cs:150
 msgid "Open"
 msgstr "Open"
 
@@ -659,12 +679,12 @@ msgid "Search sound and video files"
 msgstr "Search sound and video files"
 
 #: ../search/UIManager.cs:111
-msgid "_Relevance"
-msgstr "_Relevance"
+msgid "Date _Modified"
+msgstr "Date _Modified"
 
 #: ../search/UIManager.cs:112
-msgid "Sort the best matches first"
-msgstr "Sort the best matches first"
+msgid "Sort the most-recently-modified matches first"
+msgstr "Sort the most-recently-modified matches first"
 
 #: ../search/UIManager.cs:115
 msgid "_Name"
@@ -675,18 +695,18 @@ msgid "Sort matches by name"
 msgstr "Sort matches by name"
 
 #: ../search/UIManager.cs:119
-msgid "Date _Modified"
-msgstr "Date _Modified"
+msgid "_Relevance"
+msgstr "_Relevance"
 
 #: ../search/UIManager.cs:120
-msgid "Sort the most-recently-modified matches first"
-msgstr "Sort the most-recently-modified matches first"
+msgid "Sort the best matches first"
+msgstr "Sort the best matches first"
 
-#: ../tools/Settings.cs:217
+#: ../tools/Settings.cs:216
 msgid "Reload configuration"
 msgstr "Reload configuration"
 
-#: ../tools/Settings.cs:218
+#: ../tools/Settings.cs:217
 msgid ""
 "The configuration file has been modified by another application. Do you wish "
 "to discard the currently displayed values and reload configuration from disk?"
@@ -694,15 +714,15 @@ msgstr ""
 "The configuration file has been modified by another application. Do you wish "
 "to discard the currently displayed values and reload configuration from disk?"
 
-#: ../tools/Settings.cs:256
+#: ../tools/Settings.cs:255
 msgid "Select Path"
 msgstr "Select Path"
 
-#: ../tools/Settings.cs:275
+#: ../tools/Settings.cs:274
 msgid "The selected path is already selected for indexing and wasn't added."
 msgstr "The selected path is already selected for indexing and was not added."
 
-#: ../tools/Settings.cs:278
+#: ../tools/Settings.cs:277
 msgid ""
 "The selected path wasn't added. The list contains items that supercedes it "
 "and the data is already being indexed."
@@ -710,15 +730,15 @@ msgstr ""
 "The selected path was not added. The list contains items that supercede it "
 "and the data are already being indexed."
 
-#: ../tools/Settings.cs:289 ../tools/Settings.cs:481
+#: ../tools/Settings.cs:288 ../tools/Settings.cs:480
 msgid "Path not added"
 msgstr "Path not added"
 
-#: ../tools/Settings.cs:298
+#: ../tools/Settings.cs:297
 msgid "Remove obsolete paths"
 msgstr "Remove obsolete paths"
 
-#: ../tools/Settings.cs:299
+#: ../tools/Settings.cs:298
 msgid ""
 "Adding this path will obsolete some of the existing include paths. This will "
 "result in the removal of the old obsolete paths. Do you still wish to add it?"
@@ -726,11 +746,11 @@ msgstr ""
 "Adding this path will obsolete some of the existing include paths. This will "
 "result in the removal of the old obsolete paths. Do you still wish to add it?"
 
-#: ../tools/Settings.cs:325
+#: ../tools/Settings.cs:324
 msgid "Remove path"
 msgstr "Remove path"
 
-#: ../tools/Settings.cs:326
+#: ../tools/Settings.cs:325
 msgid ""
 "Are you sure you wish to remove this path from the list of directories to be "
 "included for indexing?"
@@ -738,11 +758,11 @@ msgstr ""
 "Are you sure you wish to remove this path from the list of directories to be "
 "included for indexing?"
 
-#: ../tools/Settings.cs:355
+#: ../tools/Settings.cs:354
 msgid "Remove item"
 msgstr "Remove item"
 
-#: ../tools/Settings.cs:356
+#: ../tools/Settings.cs:355
 msgid ""
 "Are you sure you wish to remove this item from the list of data to be "
 "excluded from indexing?"
@@ -750,76 +770,76 @@ msgstr ""
 "Are you sure you wish to remove this item from the list of data to be "
 "excluded from indexing?"
 
-#: ../tools/Settings.cs:399
+#: ../tools/Settings.cs:398
 msgid "Invalid host entry"
 msgstr "Invalid host entry"
 
-#: ../tools/Settings.cs:406
+#: ../tools/Settings.cs:405
 msgid "Remote host already present in the list."
 msgstr "Remote host already present in the list."
 
-#: ../tools/Settings.cs:415
+#: ../tools/Settings.cs:414
 msgid "Netbeagle Node not added"
 msgstr "Netbeagle Node not added"
 
-#: ../tools/Settings.cs:431
+#: ../tools/Settings.cs:430
 msgid "Remove host"
 msgstr "Remove host"
 
-#: ../tools/Settings.cs:432
+#: ../tools/Settings.cs:431
 msgid "Are you sure you wish to remove this host from the list?"
 msgstr "Are you sure you wish to remove this host from the list?"
 
-#: ../tools/Settings.cs:453
+#: ../tools/Settings.cs:452
 msgid "Select path"
 msgstr "Select path"
 
-#: ../tools/Settings.cs:472
+#: ../tools/Settings.cs:471
 msgid "The selected path is already configured for external access."
 msgstr "The selected path is already configured for external access."
 
-#: ../tools/Settings.cs:496
+#: ../tools/Settings.cs:495
 msgid "Remove public path"
 msgstr "Remove public path"
 
-#: ../tools/Settings.cs:497
+#: ../tools/Settings.cs:496
 msgid ""
 "Are you sure you wish to remove this entry from the list of public paths?"
 msgstr ""
 "Are you sure you wish to remove this entry from the list of public paths?"
 
-#: ../tools/Settings.cs:542 ../tools/Settings.cs:631 ../tools/Settings.cs:709
-#: ../tools/Settings.cs:785 ../tools/Settings.cs:1124
+#: ../tools/Settings.cs:541 ../tools/Settings.cs:630 ../tools/Settings.cs:708
+#: ../tools/Settings.cs:784 ../tools/Settings.cs:1123
 msgid "Name"
 msgstr "Name"
 
-#: ../tools/Settings.cs:625 ../tools/settings.glade.h:33
+#: ../tools/Settings.cs:624 ../tools/settings.glade.h:33
 msgid "Type"
 msgstr "Type"
 
-#: ../tools/Settings.cs:678 ../tools/Settings.cs:1058
+#: ../tools/Settings.cs:677 ../tools/Settings.cs:1057
 #: ../tools/settings.glade.h:25
 msgid "Path"
 msgstr "Path"
 
-#: ../tools/Settings.cs:681 ../tools/Settings.cs:1068
+#: ../tools/Settings.cs:680 ../tools/Settings.cs:1067
 msgid "Pattern"
 msgstr "Pattern"
 
-#: ../tools/Settings.cs:684 ../tools/Settings.cs:1063
+#: ../tools/Settings.cs:683 ../tools/Settings.cs:1062
 #: ../tools/settings.glade.h:22
 msgid "Mail Folder"
 msgstr "Mail Folder"
 
-#: ../tools/Settings.cs:1032
+#: ../tools/Settings.cs:1031
 msgid "Select Folder"
 msgstr "Select Folder"
 
-#: ../tools/Settings.cs:1092
+#: ../tools/Settings.cs:1091
 msgid "Error adding path"
 msgstr "Error adding path"
 
-#: ../tools/Settings.cs:1093
+#: ../tools/Settings.cs:1092
 msgid ""
 "The specified path could not be found and therefore it could not be added to "
 "the list of resources excluded for indexing."
@@ -827,7 +847,7 @@ msgstr ""
 "The specified path could not be found and therefore could not be added to "
 "the list of resources excluded for indexing."
 
-#: ../tools/Settings.cs:1123
+#: ../tools/Settings.cs:1122
 msgid "Show"
 msgstr "Show"
 
@@ -999,71 +1019,71 @@ msgstr "InterOperability Directory"
 msgid "Unknown Directory"
 msgstr "Unknown Directory"
 
-#: ../Util/StringFu.cs:75
+#: ../Util/StringFu.cs:77
 msgid "Today"
 msgstr "Today"
 
-#: ../Util/StringFu.cs:77
+#: ../Util/StringFu.cs:79
 msgid "Yesterday"
 msgstr "Yesterday"
 
 #. Translators: Example output: Aug 9
-#: ../Util/StringFu.cs:80
+#: ../Util/StringFu.cs:82
 msgid "MMM d"
 msgstr "MMM d"
 
 #. Translators: Example output: Aug 9, 2000
-#: ../Util/StringFu.cs:83
+#: ../Util/StringFu.cs:85
 msgid "MMM d, yyyy"
 msgstr "MMM d, yyyy"
 
 #. Translators: Example output: 11:05 AM  (note h = 12-hour time)
-#: ../Util/StringFu.cs:86
+#: ../Util/StringFu.cs:88
 msgid "h:mm tt"
 msgstr "h:mm tt"
 
 #. Translators: {0} is a date (e.g. 'Today' or 'Apr 23'), {1} is the time
-#: ../Util/StringFu.cs:92
+#: ../Util/StringFu.cs:94
 #, csharp-format
 msgid "{0}, {1}"
 msgstr "{0}, {1}"
 
 #. To translators: {0} is the time of the day, eg. 13:45
-#: ../Util/StringFu.cs:109
+#: ../Util/StringFu.cs:111
 #, csharp-format
 msgid "Today, {0}"
 msgstr "Today, {0}"
 
 #. To translators: {0} is the time of the day, eg. 13:45
-#: ../Util/StringFu.cs:112
+#: ../Util/StringFu.cs:114
 #, csharp-format
 msgid "Yesterday, {0}"
 msgstr "Yesterday, {0}"
 
 #. To translators: {0} is the number of days that have passed, {1} is the time of the day, eg. 13:45
-#: ../Util/StringFu.cs:115
+#: ../Util/StringFu.cs:117
 #, csharp-format
 msgid "{0} days ago, {1}"
 msgstr "{0} days ago, {1}"
 
 #. Translators: Example output: January 3, 3:45 PM
-#: ../Util/StringFu.cs:120
+#: ../Util/StringFu.cs:122
 msgid "MMMM d, h:mm tt"
 msgstr "MMMM d, h:mm tt"
 
 #. Translators: Example output: March 23 2001, 10:04 AM
-#: ../Util/StringFu.cs:125
+#: ../Util/StringFu.cs:127
 msgid "MMMM d yyyy, h:mm tt"
 msgstr "MMMM d yyyy, h:mm tt"
 
-#: ../Util/StringFu.cs:135
+#: ../Util/StringFu.cs:137
 #, csharp-format
 msgid "{0} hour"
 msgid_plural "{0} hours"
 msgstr[0] "{0} hour"
 msgstr[1] "{0} hours"
 
-#: ../Util/StringFu.cs:142
+#: ../Util/StringFu.cs:144
 #, csharp-format
 msgid "{0} minute"
 msgid_plural "{0} minutes"
@@ -1071,19 +1091,19 @@ msgstr[0] "{0} minute"
 msgstr[1] "{0} minutes"
 
 #. Translators: {0} is a file size in bytes
-#: ../Util/StringFu.cs:158
+#: ../Util/StringFu.cs:160
 #, csharp-format
 msgid "{0} bytes"
 msgstr "{0} bytes"
 
 #. Translators: {0} is a file size in kilobytes
-#: ../Util/StringFu.cs:162
+#: ../Util/StringFu.cs:164
 #, csharp-format
 msgid "{0:0.0} KB"
 msgstr "{0:0.0} KB"
 
 #. Translators: {0} is a file size in megabytes
-#: ../Util/StringFu.cs:165
+#: ../Util/StringFu.cs:167
 #, csharp-format
 msgid "{0:0.0} MB"
 msgstr "{0:0.0} MB"
