@@ -60,6 +60,7 @@ namespace Search {
 						main.Add (value);
 					else {
 						main.AddWithViewport (value);
+						main.Child.ModifyBg (Gtk.StateType.Normal, main.Child.Style.Base (Gtk.StateType.Normal));
 						if (value is Container)
 							((Container)value).FocusVadjustment = main.Vadjustment;
 					}
