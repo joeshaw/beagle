@@ -44,8 +44,13 @@ namespace Beagle.Daemon {
 		{
 			Logger.Log.Debug ("Initializing static queryable: {0}", index_path);
 
-			if (Directory.Exists (Path.Combine (index_path, "TextCache")))
-				text_cache = new TextCache (index_path);
+			if (Directory.Exists (Path.Combine (index_path, "TextCache"))) {
+				try {
+					text_cache = new TextCache (index_path, true);
+				} catch (UnauthorizedAccessException) {
+					Logger.Log.Warn ("Unable to purge static queryable text cache in {0}.  Will run without it.", index_path);
+				}
+			}
 		}
 
 		override public string GetSnippet (string[] query_terms, Hit hit) 

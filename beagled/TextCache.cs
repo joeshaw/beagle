@@ -63,7 +63,9 @@ namespace Beagle.Daemon {
 			}
 		}
 
-		public TextCache (string storage_dir) 
+		public TextCache (string storage_dir) : this (storage_dir, false) { }
+
+		public TextCache (string storage_dir, bool read_only)
 		{
 			text_cache_dir = Path.Combine (storage_dir, "TextCache");
 			if (! Directory.Exists (text_cache_dir)) {
@@ -130,6 +132,10 @@ namespace Beagle.Daemon {
 			if (create_new_db) {
 				if (connection != null)
 					connection.Dispose ();
+
+				if (read_only)
+					throw new UnauthorizedAccessException (String.Format ("Unable to create read only text cache {0}", db_filename));
+
 				File.Delete (db_filename);
 				connection = Open (db_filename);
 
