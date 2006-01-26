@@ -138,10 +138,12 @@ TOKEN : {					  // token patterns
   >
 | < CJK:                                          // non-alphabets
       [
+        "\u1100"-"\u11f9",
        "\u3040"-"\u318f",
        "\u3300"-"\u337f",
        "\u3400"-"\u3d2d",
        "\u4e00"-"\u9fff",
+        "\uac00"-"\ud7a3",
        "\uf900"-"\ufaff"
       ]
   >

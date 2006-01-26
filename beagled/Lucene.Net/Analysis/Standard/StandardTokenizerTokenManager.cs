@@ -78,20 +78,22 @@ namespace Lucene.Net.Analysis.Standard
 			JjCheckNAdd(jjnextStates[start]);
 			JjCheckNAdd(jjnextStates[start + 1]);
 		}
-		internal static readonly ulong[] jjbitVec0 = new ulong[]{0x1ff0000000000000L, 0xffffffffffffc000L, 0xffffffffL, 0x600000000000000L};
-		internal static readonly ulong[] jjbitVec2 = new ulong[]{0x0L, 0xffffffffffffffffL, 0xffffffffffffffffL, 0xffffffffffffffffL};
-		internal static readonly ulong[] jjbitVec3 = new ulong[]{0xffffffffffffffffL, 0xffffffffffffffffL, 0xffffL, 0x0L};
-		internal static readonly ulong[] jjbitVec4 = new ulong[]{0xffffffffffffffffL, 0xffffffffffffffffL, 0x0L, 0x0L};
-		internal static readonly ulong[] jjbitVec5 = new ulong[]{0x3fffffffffffL, 0x0L, 0x0L, 0x0L};
-		internal static readonly ulong[] jjbitVec6 = new ulong[]{0x1600L, 0x0L, 0x0L, 0x0L};
-		internal static readonly ulong[] jjbitVec7 = new ulong[]{0x0L, 0xffc000000000L, 0x0L, 0xffc000000000L};
-		internal static readonly ulong[] jjbitVec8 = new ulong[]{0x0L, 0x3ff00000000L, 0x0L, 0x3ff000000000000L};
-		internal static readonly ulong[] jjbitVec9 = new ulong[]{0x0L, 0xffc000000000L, 0x0L, 0xff8000000000L};
-		internal static readonly ulong[] jjbitVec10 = new ulong[]{0x0L, 0xffc000000000L, 0x0L, 0x0L};
-		internal static readonly ulong[] jjbitVec11 = new ulong[]{0x0L, 0x3ff0000L, 0x0L, 0x3ff0000L};
-		internal static readonly ulong[] jjbitVec12 = new ulong[]{0x0L, 0x3ffL, 0x0L, 0x0L};
-		internal static readonly ulong[] jjbitVec13 = new ulong[]{0xfffffffeL, 0x0L, 0x0L, 0x0L};
-		internal static readonly ulong[] jjbitVec14 = new ulong[]{0x0L, 0x0L, 0x0L, 0xff7fffffff7fffffL};
+		internal static readonly ulong[] jjbitVec0 = new ulong[]{0x1ff0000000000000L, 0xffffffffffffc000L, 0xfffff000ffffffffL, 0x6000000007fffffL};
+		internal static readonly ulong[] jjbitVec2 = new ulong[]{0xffffffffffffffffL, 0xffffffffffffffffL, 0xffffffffffffffffL, 0x3ffffffffffffffL};
+		internal static readonly ulong[] jjbitVec3 = new ulong[]{0x0L, 0xffffffffffffffffL, 0xffffffffffffffffL, 0xffffffffffffffffL};
+		internal static readonly ulong[] jjbitVec4 = new ulong[]{0xffffffffffffffffL, 0xffffffffffffffffL, 0xffffL, 0x0L};
+		internal static readonly ulong[] jjbitVec5 = new ulong[]{0xffffffffffffffffL, 0xffffffffffffffffL, 0x0L, 0x0L};
+		internal static readonly ulong[] jjbitVec6 = new ulong[]{0x3fffffffffffL, 0x0L, 0x0L, 0x0L};
+		internal static readonly ulong[] jjbitVec7 = new ulong[]{0xffffffffffffffffL, 0xffffffffffffffffL, 0xfffffffffL, 0x0L};
+		internal static readonly ulong[] jjbitVec8 = new ulong[]{0x1600L, 0x0L, 0x0L, 0x0L};
+		internal static readonly ulong[] jjbitVec9 = new ulong[]{0x0L, 0xffc000000000L, 0x0L, 0xffc000000000L};
+		internal static readonly ulong[] jjbitVec10 = new ulong[]{0x0L, 0x3ff00000000L, 0x0L, 0x3ff000000000000L};
+		internal static readonly ulong[] jjbitVec11 = new ulong[]{0x0L, 0xffc000000000L, 0x0L, 0xff8000000000L};
+		internal static readonly ulong[] jjbitVec12 = new ulong[]{0x0L, 0xffc000000000L, 0x0L, 0x0L};
+		internal static readonly ulong[] jjbitVec13 = new ulong[]{0x0L, 0x3ff0000L, 0x0L, 0x3ff0000L};
+		internal static readonly ulong[] jjbitVec14 = new ulong[]{0x0L, 0x3ffL, 0x0L, 0x0L};
+		internal static readonly ulong[] jjbitVec15 = new ulong[]{0xfffffffeL, 0x0L, 0x0L, 0x0L};
+		internal static readonly ulong[] jjbitVec16 = new ulong[]{0x0L, 0x0L, 0x0L, 0xff7fffffff7fffffL};
 		private int JjMoveNfa_0(int startState, int curPos)
 		{
 			int startsAt = 0;
@@ -1154,17 +1156,23 @@ namespace Lucene.Net.Analysis.Standard
 			switch (hiByte)
 			{
 				
-				case 48: 
+				case 17: 
 					return ((jjbitVec2[i2] & l2) != (ulong) 0L);
 				
-				case 49: 
+				case 48: 
 					return ((jjbitVec3[i2] & l2) != (ulong) 0L);
 				
-				case 51: 
+				case 49: 
 					return ((jjbitVec4[i2] & l2) != (ulong) 0L);
 				
-				case 61: 
+				case 51: 
 					return ((jjbitVec5[i2] & l2) != (ulong) 0L);
+			
+				case 61:
+					return ((jjbitVec6[i2] & l2) != (ulong) 0L);
+
+				case 215:
+			 		return ((jjbitVec7[i2] & l2) != (ulong) 0L);
 				
 				default: 
 					if ((jjbitVec0[i1] & l1) != (ulong) 0L)
@@ -1179,23 +1187,23 @@ namespace Lucene.Net.Analysis.Standard
 			{
 				
 				case 6: 
-					return ((jjbitVec8[i2] & l2) != (ulong) 0L);
-				
-				case 11: 
-					return ((jjbitVec9[i2] & l2) != (ulong) 0L);
-				
-				case 13: 
 					return ((jjbitVec10[i2] & l2) != (ulong) 0L);
 				
-				case 14: 
+				case 11: 
 					return ((jjbitVec11[i2] & l2) != (ulong) 0L);
 				
-				case 16: 
+				case 13: 
 					return ((jjbitVec12[i2] & l2) != (ulong) 0L);
 				
+				case 14: 
+					return ((jjbitVec13[i2] & l2) != (ulong) 0L);
+				
+				case 16: 
+					return ((jjbitVec14[i2] & l2) != (ulong) 0L);
+				
 				default: 
-					if ((jjbitVec6[i1] & l1) != (ulong) 0L)
-						if ((jjbitVec7[i2] & l2) == (ulong) 0L)
+					if ((jjbitVec8[i1] & l1) != (ulong) 0L)
+						if ((jjbitVec9[i2] & l2) == (ulong) 0L)
 							return false;
 						else
 							return true;
@@ -1209,10 +1217,10 @@ namespace Lucene.Net.Analysis.Standard
 			{
 				
 				case 0: 
-					return ((jjbitVec14[i2] & l2) != (ulong) 0L);
+					return ((jjbitVec16[i2] & l2) != (ulong) 0L);
 				
 				default: 
-					if ((jjbitVec13[i1] & l1) != (ulong) 0L)
+					if ((jjbitVec15[i1] & l1) != (ulong) 0L)
 						return true;
 					return false;
 				
