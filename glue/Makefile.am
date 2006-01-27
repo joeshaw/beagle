@@ -52,8 +52,6 @@ XDGMIME_GLUE_SOURCES =		\
 	xdgmime/xdgmimecache.h
 
 UI_GLUE_SOURCES =		\
-	ephy-spinner.c		\
-	ephy-spinner.h		\
 	search-entry.c		\
 	search-entry.h		\
 	search-entry-watermark.h\

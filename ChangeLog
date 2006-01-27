@@ -1,3 +1,8 @@
+2006-01-27  Dan Winship  <danw@novell.com>
+
+	* search/Spinner.cs: Reimplement this entirely in C#, based on
+	ImageAnimation.cs from Banshee.
+
 2006-01-26  Dan Winship  <danw@novell.com>
 
 	* search/Panes.cs: fix the background color on the viewport in the

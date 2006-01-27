@@ -1,55 +1,124 @@
 using System;
-using System.Runtime.InteropServices;
+using Gtk;
+using Gdk;
 
 namespace Search {
 
-	public class Spinner : Gtk.EventBox {
+	public class Spinner : Gtk.Image {
 
-		public Spinner (IntPtr raw) : base (raw) {}
+        	private Pixbuf idlePixbuf;
+        	private Pixbuf [] frames;
+        	private int currentFrame;
+        	private uint timeoutId;
 
-		[DllImport("libbeagleuiglue.so")]
-		static extern IntPtr ephy_spinner_new ();
+		private const int targetSize = 24;
+		private const int refreshRate = 125;
 
-		public Spinner () : base (IntPtr.Zero)
+		~Spinner ()
 		{
-			if (GetType () != typeof (Spinner)) {
-				CreateNativeObject (new string [0], new GLib.Value[0]);
+			Stop ();
+		}
+
+		Gtk.IconTheme theme;
+
+		protected override void OnRealized ()
+		{
+			base.OnRealized ();
+
+			theme = Gtk.IconTheme.GetForScreen (Screen);
+			theme.Changed += ThemeChanged;
+			LoadImages ();
+		}
+
+		private void ThemeChanged (object obj, EventArgs args)
+		{
+			LoadImages ();
+		}
+
+        	private void LoadImages ()
+        	{
+			int iconSize = targetSize;
+
+			foreach (int size in theme.GetIconSizes ("gnome-spinner-rest")) {
+				if (size >= targetSize) {
+					iconSize = size;
+					break;
+				}
+			}
+
+			idlePixbuf = theme.LoadIcon ("gnome-spinner-rest", iconSize, 0);
+			if (idlePixbuf == null) {
+				Console.Error.WriteLine ("Could not load idle spinner image");
+				frames = null;
+				Pixbuf = null;
 				return;
 			}
-			Raw = ephy_spinner_new ();
-		}
 
-		[DllImport("libbeagleuiglue.so")]
-		static extern IntPtr ephy_spinner_get_type();
-
-		public static new GLib.GType GType { 
-			get {
-				return new GLib.GType (ephy_spinner_get_type ());
+			Gdk.Pixbuf framesPixbuf = theme.LoadIcon ("gnome-spinner", iconSize, 0);
+			if (framesPixbuf == null) {
+				Console.Error.WriteLine ("Could not load spinner image");
+				frames = null;
+				Pixbuf = idlePixbuf;
+				return;
 			}
-		}
 
-		[DllImport("libbeagleuiglue.so")]
-		static extern void ephy_spinner_start (IntPtr spinner);
+			int frameWidth = idlePixbuf.Width, frameHeight = idlePixbuf.Height;
+        		int width = framesPixbuf.Width, height = framesPixbuf.Height;
+        		if (width % frameWidth != 0 || height % frameHeight != 0) {
+				Console.Error.WriteLine ("Spinner image is wrong size");
+				frames = null;
+				Pixbuf = idlePixbuf;
+				return;
+			}
+
+			int rows = height / frameHeight, cols = width / frameWidth;
+
+        		frames = new Pixbuf[rows * cols];
+
+        		for (int y = 0, n = 0; y < rows; y++) {
+        			for (int x = 0; x < cols; x++, n++) {
+        				frames[n] = new Pixbuf (framesPixbuf,
+								x * frameWidth,
+								y * frameHeight,
+								frameWidth,
+								frameHeight);
+        			}
+        		}
+
+        		currentFrame = 0;
+			if (timeoutId != 0)
+				Pixbuf = frames[currentFrame];
+			else
+				Pixbuf = idlePixbuf;
+        	}
 
 		public void Start ()
 		{
-			ephy_spinner_start (Handle);
-		}
+			if (!IsRealized)
+				return;
+			if (frames == null || frames.Length == 0)
+				return;
+			if (timeoutId != 0)
+				return;
 
-		[DllImport("libbeagleuiglue.so")]
-		static extern void ephy_spinner_stop (IntPtr spinner);
+			timeoutId = GLib.Timeout.Add (refreshRate, TimeoutHandler);
+		}
 
 		public void Stop ()
 		{
-			ephy_spinner_stop (Handle);
+			if (timeoutId == 0)
+				return;
+
+			GLib.Source.Remove (timeoutId);
+			timeoutId = 0;
+			Pixbuf = idlePixbuf;
 		}
 
-		[DllImport("libbeagleuiglue.so")]
-		static extern void ephy_spinner_set_size (IntPtr spinner, IntPtr icon_size);
-
-		public void SetSize (Gtk.IconSize size)
-		{
-			ephy_spinner_set_size (Handle, (IntPtr)size);
-		}
+        	private bool TimeoutHandler ()
+        	{
+        		Pixbuf = frames[currentFrame];
+			currentFrame = (currentFrame + 1) % frames.Length;
+        		return true;
+        	}
 	}
 }
