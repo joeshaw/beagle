@@ -1,5 +1,7 @@
 2006-01-27  Dan Winship  <danw@novell.com>
 
+	* glue/ephy-spinner.[ch]: Remove this; it's GPL
+
 	* search/Spinner.cs: Reimplement this entirely in C#, based on
 	ImageAnimation.cs from Banshee.
 
