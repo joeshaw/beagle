@@ -68,6 +68,13 @@ namespace Beagle.Daemon {
 				// in QueryDriver.LoadStaticQueryable ()
 				throw new InvalidOperationException ();
 			}
+
+			// Initialize the user text cache only if we're not in
+			// read-only mode.  StaticQueryables instantiate their
+			// own text caches that are stored in a separate
+			// location.
+			if (!read_only)
+				text_cache = TextCache.UserCache;
 		}
 
 		////////////////////////////////////////////////////////////////

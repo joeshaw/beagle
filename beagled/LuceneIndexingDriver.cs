@@ -54,16 +54,26 @@ namespace Beagle.Daemon {
 
 		object flush_lock = new object ();
 
-		public LuceneIndexingDriver (string index_name, int minor_version) : base (index_name, minor_version)
+		public LuceneIndexingDriver (string index_name, int minor_version, bool build_usercache) 
+			: base (index_name, minor_version)
 		{
 			if (Exists ())
 				Open ();
 			else
 				Create ();
+
+			if (build_usercache)
+				text_cache = TextCache.UserCache;
 		}
 
-		public LuceneIndexingDriver (string index_name) : this (index_name, 0)
-		{ }
+		public LuceneIndexingDriver (string index_name, int minor_version)
+			: this (index_name, minor_version, true) { }
+		
+		public LuceneIndexingDriver (string index_name, bool build_usercache)
+			: this (index_name, 0, build_usercache) { }
+
+		public LuceneIndexingDriver (string index_name) 
+			: this (index_name, 0, true) { }
 	
 		////////////////////////////////////////////////////////////////
 

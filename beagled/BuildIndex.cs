@@ -223,7 +223,7 @@ namespace Beagle.Daemon
 			// Set the IO priority to idle so we don't slow down the system
 			IoPriority.SetIdle ();
 			
-			driver = new LuceneIndexingDriver (arg_output);
+			driver = new LuceneIndexingDriver (arg_output, false);
 			driver.TextCache = (arg_cache_text) ? new TextCache (arg_output) : null;
 
 			backing_fa_store = new FileAttributesStore_Sqlite (driver.TopDirectory, driver.Fingerprint);

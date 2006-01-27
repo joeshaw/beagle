@@ -114,7 +114,7 @@ namespace Beagle.Daemon {
 
 		//////////////////////////////////////////////////////////////////////////////
 
-		protected TextCache text_cache = TextCache.UserCache;
+		protected TextCache text_cache = null;
 
 		public TextCache TextCache {
 			get { return text_cache; }
