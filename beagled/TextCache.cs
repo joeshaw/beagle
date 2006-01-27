@@ -301,6 +301,9 @@ namespace Beagle.Daemon {
 
 			// We don't expect to need this again in the near future.
 			FileAdvise.FlushCache (stream);
+			
+			// Make files only readable by the owner.
+			Mono.Unix.Native.Syscall.chmod (path, (Mono.Unix.Native.FilePermissions) 256);
 
 			StreamWriter writer;
 			writer = new StreamWriter (stream);
