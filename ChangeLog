@@ -5,6 +5,9 @@
 	* search/Spinner.cs: Reimplement this entirely in C#, based on
 	ImageAnimation.cs from Banshee.
 
+	* search/Tray/NotificationArea.cs: Numerous 64bit-cleanliness
+	fixes to fix #327944.
+
 2006-01-26  Dan Winship  <danw@novell.com>
 
 	* search/Panes.cs: fix the background color on the viewport in the

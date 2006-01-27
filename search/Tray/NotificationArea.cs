@@ -22,10 +22,11 @@ namespace Search.Tray {
 		private uint stamp;
 		private Orientation orientation;
 		
-		private int selection_atom;
-		private int manager_atom;
-		private int system_tray_opcode_atom;
-		private int orientation_atom;
+		private IntPtr selection_atom;
+		private IntPtr manager_atom;
+		private IntPtr system_tray_opcode_atom;
+		private IntPtr orientation_atom;
+		private IntPtr message_data_atom;
 		private IntPtr manager_window;
 		private FilterFunc filter;
 		
@@ -42,13 +43,20 @@ namespace Search.Tray {
 			Init ();
 		}
 		
+		[DllImport ("libc.so.6")]
+		private static extern IntPtr memcpy (ref XClientMessageEvent.DataUnion dest, IntPtr src, IntPtr len);
+
 		public uint SendMessage (uint timeout, string message)
 		{
 			if (manager_window == IntPtr.Zero) {
 				return 0;
 			}
 			
-			SendManagerMessage (SystemTrayMessage.BeginMessage, (IntPtr) Id, timeout, (uint) message.Length, ++stamp);
+			byte[] arr = System.Text.Encoding.UTF8.GetBytes (message);
+			IntPtr unmanaged_arr = Marshal.AllocHGlobal (arr.Length);
+			Marshal.Copy (arr, 0, unmanaged_arr, arr.Length);
+
+			SendManagerMessage (SystemTrayMessage.BeginMessage, (IntPtr) Id, timeout, (uint) arr.Length, ++stamp);
 
 			gdk_error_trap_push ();
 		
@@ -60,13 +68,12 @@ namespace Search.Tray {
 				ev.type = XEventName.ClientMessage;
 				ev.window = (IntPtr) Id;
 				ev.format = 8;
-				ev.message_type = (IntPtr) XInternAtom (display, "_NET_SYSTEM_TRAY_MESSAGE_DATA", false);
+				ev.message_type = message_data_atom;
             
-				byte [] arr = System.Text.Encoding.UTF8.GetBytes (message.Substring (index));
-				int len = Math.Min (arr.Length, 20);
-				Marshal.Copy (arr, 0, ev.data.ptr1, len);
+				int len = Math.Min (arr.Length - index, 20);
+				memcpy (ref ev.data, (IntPtr)((int)unmanaged_arr + index), (IntPtr)len);
 			
-				XSendEvent (display, manager_window, false, EventMask.StructureNotifyMask, ref ev);
+				XSendEvent (display, manager_window, false, (IntPtr) EventMask.StructureNotifyMask, ref ev);
 				XSync (display, false);
 			}
 		
@@ -101,6 +108,7 @@ namespace Search.Tray {
 			manager_atom = XInternAtom (xdisplay, "MANAGER", false);
 			system_tray_opcode_atom = XInternAtom (xdisplay, "_NET_SYSTEM_TRAY_OPCODE", false);
 			orientation_atom = XInternAtom (xdisplay, "_NET_SYSTEM_TRAY_ORIENTATION", false);
+			message_data_atom = XInternAtom (xdisplay, "_NET_SYSTEM_TRAY_MESSAGE_DATA", false);
 			UpdateManagerWindow (false);
 			SendDockRequest ();
 			Screen.RootWindow.AddFilter (filter);
@@ -131,7 +139,7 @@ namespace Search.Tray {
 		
 			manager_window = XGetSelectionOwner (xdisplay, selection_atom);
 			if (manager_window != IntPtr.Zero) {
-				XSelectInput (xdisplay, manager_window, EventMask.StructureNotifyMask | EventMask.PropertyChangeMask);
+				XSelectInput (xdisplay, manager_window, (IntPtr) (EventMask.StructureNotifyMask | EventMask.PropertyChangeMask));
 			}
 		
 			XUngrabServer (xdisplay);
@@ -163,9 +171,9 @@ namespace Search.Tray {
 		
 			ev.type = XEventName.ClientMessage;
 			ev.window = window;
-			ev.message_type = (IntPtr)system_tray_opcode_atom;
+			ev.message_type = system_tray_opcode_atom;
 			ev.format = 32;
-			ev.data.ptr1 = gdk_x11_get_server_time (GdkWindow.Handle);
+			ev.data.ptr1 = (IntPtr)gdk_x11_get_server_time (GdkWindow.Handle);
 			ev.data.ptr2 = (IntPtr)message;
 			ev.data.ptr3 = (IntPtr)data1;
 			ev.data.ptr4 = (IntPtr)data2;
@@ -173,7 +181,7 @@ namespace Search.Tray {
 
 			display = gdk_x11_display_get_xdisplay (Display.Handle);
 			gdk_error_trap_push ();
-			XSendEvent (display, manager_window, false, EventMask.NoEventMask, ref ev);
+			XSendEvent (display, manager_window, false, (IntPtr) EventMask.NoEventMask, ref ev);
 			XSync (display, false);
 			gdk_error_trap_pop ();
 		}
@@ -185,7 +193,7 @@ namespace Search.Tray {
 			if (xev.type == XEventName.ClientMessage){
 				XClientMessageEvent xclient = (XClientMessageEvent) Marshal.PtrToStructure (xevent, typeof(XClientMessageEvent));
 
-				if ((int) xclient.message_type == manager_atom && (int) xclient.data.ptr2 == selection_atom) {
+				if (xclient.message_type == manager_atom && xclient.data.ptr2 == selection_atom) {
 					UpdateManagerWindow (true);
 					return FilterReturn.Continue;
 				}
@@ -225,7 +233,7 @@ namespace Search.Tray {
 		private void GetOrientationProperty ()
 		{
 			IntPtr display;
-			int type;
+			IntPtr type;
 			int format;
 			IntPtr prop_return;
 			IntPtr nitems, bytes_after;
@@ -238,10 +246,10 @@ namespace Search.Tray {
 			display = gdk_x11_display_get_xdisplay (Display.Handle);
         
 			gdk_error_trap_push ();
-			type = 0;
+			type = IntPtr.Zero;
         
 			result = XGetWindowProperty (display, manager_window, orientation_atom, (IntPtr) 0, 
-						     (IntPtr) System.Int32.MaxValue, false, (int) XAtom.Cardinal, out type, out format, 
+						     (IntPtr) System.Int32.MaxValue, false, (IntPtr) XAtom.Cardinal, out type, out format, 
 						     out nitems, out bytes_after, out prop_return);
         
 			error = gdk_error_trap_pop ();
@@ -250,7 +258,7 @@ namespace Search.Tray {
 				return;
 			}
 
-			if (type == (int) XAtom.Cardinal) {
+			if (type == (IntPtr) XAtom.Cardinal) {
 				orientation = ((SystemTrayOrientation) Marshal.ReadInt32 (prop_return) == SystemTrayOrientation.Horz) 
 					? Orientation.Horizontal 
 					: Orientation.Vertical;
@@ -265,7 +273,7 @@ namespace Search.Tray {
 		private static extern IntPtr gdk_x11_display_get_xdisplay (IntPtr display);
     
 		[DllImport ("libgdk-x11-2.0.so.0")]
-		private static extern IntPtr gdk_x11_get_server_time (IntPtr window);
+		private static extern int gdk_x11_get_server_time (IntPtr window);
     
 		[DllImport ("libgdk-x11-2.0.so.0")]
 		private static extern void gdk_error_trap_push ();
@@ -274,7 +282,7 @@ namespace Search.Tray {
 		private static extern int gdk_error_trap_pop ();
     
 		[DllImport ("libX11.so.6")]
-		private extern static int XInternAtom(IntPtr display, string atom_name, bool only_if_exists);
+		private extern static IntPtr XInternAtom(IntPtr display, string atom_name, bool only_if_exists);
     
 		[DllImport ("libX11.so.6")]
 		private extern static void XGrabServer (IntPtr display);
@@ -292,19 +300,19 @@ namespace Search.Tray {
 		private extern static int XFree (IntPtr display);
     
 		[DllImport ("libX11.so.6")]
-		private extern static IntPtr XGetSelectionOwner (IntPtr display, int atom);
+		private extern static IntPtr XGetSelectionOwner (IntPtr display, IntPtr atom);
    
 		[DllImport ("libX11.so.6")]
-		private extern static IntPtr XSelectInput (IntPtr window, IntPtr display, EventMask mask);
+		private extern static IntPtr XSelectInput (IntPtr display, IntPtr window, IntPtr mask);
     
 		[DllImport ("libX11.so.6")]
-		private extern static int XSendEvent(IntPtr display, IntPtr window, bool propagate, EventMask event_mask, 
+		private extern static int XSendEvent(IntPtr display, IntPtr window, bool propagate, IntPtr event_mask, 
 						     ref XClientMessageEvent send_event);
-        
+
 		[DllImport("libX11.so.6")]
-		private extern static int XGetWindowProperty(IntPtr display, IntPtr w, int property, IntPtr long_offset, 
-							     IntPtr long_length, bool deleteProp, int req_type,
-							     out int actual_type_return, out int actual_format_return, 
+		private extern static int XGetWindowProperty(IntPtr display, IntPtr w, IntPtr property, IntPtr long_offset, 
+							     IntPtr long_length, bool deleteProp, IntPtr req_type,
+							     out IntPtr actual_type_return, out int actual_format_return, 
 							     out IntPtr nitems_return, out IntPtr bytes_after_return, 
 							     out IntPtr prop_return);
 
@@ -410,7 +418,7 @@ namespace Search.Tray {
 			internal bool          send_event;
 			internal IntPtr        display;
 			internal IntPtr        window;
-			internal int           atom;
+			internal IntPtr        atom;
 			internal IntPtr        time;
 			internal int           state;
 		}
@@ -426,14 +434,14 @@ namespace Search.Tray {
 			internal IntPtr         message_type;
 			internal int            format;
 	    
-			[StructLayout(LayoutKind.Explicit)]
+			[StructLayout(LayoutKind.Sequential)]
 			internal struct DataUnion 
 			{
-				[FieldOffset(0)]  internal IntPtr ptr1;
-				[FieldOffset(4)]  internal IntPtr ptr2;
-				[FieldOffset(8)]  internal IntPtr ptr3;
-				[FieldOffset(12)] internal IntPtr ptr4;
-				[FieldOffset(16)] internal IntPtr ptr5;
+				internal IntPtr ptr1;
+				internal IntPtr ptr2;
+				internal IntPtr ptr3;
+				internal IntPtr ptr4;
+				internal IntPtr ptr5;
 			}
 	    
 			internal DataUnion      data;
