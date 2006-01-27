@@ -34,7 +34,7 @@ namespace Beagle.Util {
 
 	public class DirectoryWalker {
 
-		private delegate bool   FileFilter      (string path, string name);
+		public  delegate bool   FileFilter      (string path, string name);
 		private delegate object FileObjectifier (string path, string name);
 
 		[DllImport ("libc", SetLastError = true)]
@@ -263,6 +263,11 @@ namespace Beagle.Util {
 		static public IEnumerable GetDirectoryInfos (DirectoryInfo dirinfo)
 		{
 			return GetDirectoryInfos (dirinfo.FullName);
+		}
+
+		static public IEnumerable GetItems (string path, FileFilter filter)
+		{
+			return new FileEnumerable (path, filter, null);
 		}
 	}
 }

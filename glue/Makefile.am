@@ -20,6 +20,7 @@ IOPRIO_GLUE_SOURCES =	\
 
 SYSINFO_GLUE_SOURCES =		\
 	screensaver-glue.c	\
+	thread-glue.c		\
 	vmsize-glue.c
 SYSINFO_GLUE_LIBADD = $(SYSTEMINFO_GLUE_LIBS) $(SYSTEMINFO_GLUE_X_LIBS)
 

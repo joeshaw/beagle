@@ -37,6 +37,8 @@ namespace Beagle.Daemon.EvolutionMailDriver {
 	class MailCrawler {
 		public delegate void ItemAddedHandler (FileInfo file);
 
+		private static bool Debug = false;
+
 		ArrayList roots = new ArrayList ();
 
 		Hashtable last_write_time_cache = new Hashtable ();
@@ -124,9 +126,15 @@ namespace Beagle.Daemon.EvolutionMailDriver {
 					pending.Enqueue (subdir);
 				}
 
-				foreach (FileInfo file in DirectoryWalker.GetFileInfos (dir)) {
+				Stopwatch watch = new Stopwatch ();
+				if (Debug)
+					Logger.Log.Debug ("Starting watch on {0}", dir);
+				watch.Start ();
+				foreach (string path in DirectoryWalker.GetItems (dir, new DirectoryWalker.FileFilter (IsSummary))) {
 					if (Shutdown.ShutdownRequested)
 						return;
+
+					FileInfo file = new FileInfo (path);
 
 					if (file.Name == "summary") {
 						if (SummaryAddedEvent != null && FileIsInteresting (file))
@@ -139,7 +147,21 @@ namespace Beagle.Daemon.EvolutionMailDriver {
 							MboxAddedEvent (mbox_file);
 					}
 				}
+				watch.Stop ();
+				if (Debug)
+					Logger.Log.Debug ("Crawled {0} in {1}", dir, watch);
 			}
+		}
+
+		private bool IsSummary (string path, string name)
+		{
+			if (name == "summary")
+				return true;
+
+			if (Path.GetExtension (name) == ".ev-summary")
+				return true;
+
+			return false;
 		}
 
 		public void Crawl ()

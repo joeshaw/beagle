@@ -77,6 +77,8 @@ namespace Beagle.Daemon {
 
 		private static void LogMemoryUsage ()
 		{
+			int count = 0;
+
 			while (! Shutdown.ShutdownRequested) {
 				int vm_size = SystemInformation.VmSize;
 				int vm_rss = SystemInformation.VmRss;
@@ -89,7 +91,14 @@ namespace Beagle.Daemon {
 					Shutdown.BeginShutdown ();
 				}
 
-				Thread.Sleep (5000);
+				// For the first 10 seconds, run ourselves every
+				// half second for better granularity.
+				if (count < 20)
+					Thread.Sleep (500);
+				else
+					Thread.Sleep (5000);
+
+				++count;
 			}
 		}
 
@@ -445,6 +454,11 @@ namespace Beagle.Daemon {
 				return;
 
 			Logger.Log.Debug ("Handling signal {0}", signal);
+
+			if (signal == (int) Mono.Unix.Native.Signum.SIGQUIT) {
+				ExceptionHandlingThread.AbortThreads ();
+				return;
+			}
 
 			bool first_signal = false;
 			if (signal_time == DateTime.MinValue) {

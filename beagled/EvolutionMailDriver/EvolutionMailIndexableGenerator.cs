@@ -41,6 +41,8 @@ namespace Beagle.Daemon.EvolutionMailDriver {
 
 	public abstract class EvolutionMailIndexableGenerator : IIndexableGenerator {
 
+		protected static bool Debug = false;
+
 		private static bool gmime_initialized = false;
 
 		private static ArrayList excludes = new ArrayList ();
@@ -276,6 +278,11 @@ namespace Beagle.Daemon.EvolutionMailDriver {
 				uint flags = Convert.ToUInt32 (x_evolution.Substring (separator_idx + 1), 16);
 
 				Indexable indexable = this.GMimeMessageToIndexable (uid, message, flags);
+
+				if (Debug) {
+					Logger.Log.Debug ("Constructed message {0} with uid {1}, flags {2}.  Indexable {3} null",
+							  this.count, uid, flags, indexable == null ? "" : "not");
+				}
 				
 				if (indexable == null)
 					return null;
@@ -335,15 +342,9 @@ namespace Beagle.Daemon.EvolutionMailDriver {
 			if (this.folder_name == "Sent")
 				indexable.AddProperty (Property.NewFlag ("fixme:isSent"));
 
-			//indexable.AddProperty (Property.NewDate ("fixme:date", message.Date));
-#if false
-			if (this.folder_name == "Sent")
-				indexable.AddProperty (Property.NewDate ("fixme:sentdate", message.Date));
-			else
-				indexable.AddProperty (Property.NewDate ("fixme:received", message.Date));
-#endif
-
-			indexable.AddProperty (Property.NewKeyword ("fixme:flags", flags));
+	                Property flag_prop = Property.NewKeyword ("fixme:flags", flags);
+			flag_prop.IsMutable = true;
+			indexable.AddProperty (flag_prop);
 
 			if (CheckFlags (flags, Camel.CamelFlags.Answered))
 				indexable.AddProperty (Property.NewFlag ("fixme:isAnswered"));
@@ -683,10 +684,16 @@ namespace Beagle.Daemon.EvolutionMailDriver {
 
 			++this.count;
 
+			if (Debug) {
+				Logger.Log.Debug ("Constructed message {0} with uid {1}, flags {2}.",
+						  this.count, mi.uid, mi.flags);
+			}
+
 			// Try to load the cached message data off disk
 			object flags = this.mapping[mi.uid];
 
-			if (flags == null || (uint) flags != mi.flags) {
+			if (flags == null) {
+				// New, previously unseen message
 				string msg_file;
 
 				if (this.backend_type == ImapBackendType.Imap)
@@ -701,13 +708,33 @@ namespace Beagle.Daemon.EvolutionMailDriver {
 
 				indexable = this.CamelMessageToIndexable (mi, msg_file);
 
+				if (Debug)
+					Logger.Log.Debug ("Unseen message, indexable {0} null", indexable == null ? "" : "not");
+
 				this.mapping[mi.uid] = mi.flags;
 
-				if (indexable != null) {
+				if (indexable != null)
 					++this.indexed_count;
-					this.deleted_list.Remove (mi.uid);
-				}
-			} else if (flags != null)
+			} else if ((uint) flags != mi.flags) {
+				// Previously seen message, but flags have changed.
+				Uri uri = CamelMessageUri (mi);
+				indexable = new Indexable (uri);
+				indexable.Type = IndexableType.PropertyChange;
+
+				Property flag_prop = Property.NewKeyword ("fixme:flags", mi.flags);
+				flag_prop.IsMutable = true;
+				indexable.AddProperty (flag_prop);
+
+				if (Debug)
+					Logger.Log.Debug ("Previously seen message, flags changed: {0} -> {1}", flags, mi.flags);
+
+				++this.indexed_count;
+			} else {
+				if (Debug)
+					Logger.Log.Debug ("Previously seen message, unchanged.");
+			}
+
+			if (flags != null)
 				this.deleted_list.Remove (mi.uid);
 
 			return indexable;
@@ -788,8 +815,11 @@ namespace Beagle.Daemon.EvolutionMailDriver {
 			}
 			addrs.Dispose ();
 
-                        indexable.AddProperty (Property.NewKeyword ("fixme:mlist",    messageInfo.mlist));
-                        indexable.AddProperty (Property.NewKeyword ("fixme:flags",    messageInfo.flags));
+                        indexable.AddProperty (Property.NewKeyword ("fixme:mlist", messageInfo.mlist));
+
+			Property flag_prop = Property.NewKeyword ("fixme:flags", messageInfo.flags);
+			flag_prop.IsMutable = true;
+			indexable.AddProperty (flag_prop);
 
 			if (this.folder_name == "Sent")
 				indexable.AddProperty (Property.NewFlag ("fixme:isSent"));

@@ -26,13 +26,14 @@
 
 using System;
 using System.Collections;
+using System.Runtime.InteropServices;
 using System.Threading;
 
 namespace Beagle.Util {
 
 	public class ExceptionHandlingThread {
 
-		private static Hashtable live_threads = new Hashtable ();
+		private static ArrayList live_threads = new ArrayList ();
 		private Thread thread;
 		private ThreadStart method;
 
@@ -46,8 +47,12 @@ namespace Beagle.Util {
 
 		private void ThreadStarted ()
 		{
+			this.thread.Name = String.Format ("EHT {0:00000} {1}:{2}", wrap_gettid (), method.Target == null ? "(static)" : method.Target.ToString (), method.Method);
+
 			try {
 				this.method ();
+			} catch (ThreadAbortException e) {
+				Logger.Log.Debug ("{0}:\n{1}\n", this.thread.Name, e.StackTrace);
 			} catch (Exception e) {
 				Logger.Log.Warn ("Exception caught while executing {0}:{1}",
 						 this.method.Target, this.method.Method);
@@ -64,11 +69,8 @@ namespace Beagle.Util {
 
 			eht.thread = new Thread (new ThreadStart (eht.ThreadStarted));
 
-			eht.thread.Name = String.Format ("ExceptionHandlingThread: {0}:{1}",
-							 method.Target, method.Method);
-
 			lock (live_threads)
-				live_threads [eht.thread] = eht.thread.Name;
+				live_threads.Add (eht.thread);
 
 			eht.thread.Start ();
 
@@ -80,8 +82,8 @@ namespace Beagle.Util {
 			bool have_live_thread = false;
 
 			lock (live_threads) {
-				foreach (string str in live_threads.Values) {
-					Logger.Log.Debug ("Live ExceptionHandlingThread: {0}", str);
+				foreach (Thread t in live_threads) {
+					Logger.Log.Debug ("Live ExceptionHandlingThread: {0}", t.Name);
 					have_live_thread = true;
 				}
 			}
@@ -89,5 +91,22 @@ namespace Beagle.Util {
 			if (! have_live_thread)
 				Logger.Log.Debug ("No live ExceptionHandlingThreads!");
 		}
+
+		public static void AbortThreads ()
+		{
+			ArrayList cancel_threads = null;
+
+			// Copy the list to avoid recursively locking
+			lock (live_threads)
+				cancel_threads = (ArrayList) live_threads.Clone ();
+
+			foreach (Thread t in cancel_threads) {
+				Logger.Log.Debug ("Aborting thread: {0}", t.Name);
+				t.Abort ();
+			}
+		}
+
+		[DllImport ("libbeagleglue")]
+		static extern uint wrap_gettid ();
 	}
 }

@@ -55,7 +55,9 @@ namespace Beagle.Daemon.EvolutionMailDriver {
 		//    filters/indexes all attachments
 		// 3: Make email addresses non-keyword, add sanitized version
 		//    for searching for parts of an email address.
-		private const int INDEX_VERSION = 3;
+		// 4: Make the flags property mutable, and create a property
+		//    change Indexable when they change for IMAP generators.
+		private const int INDEX_VERSION = 4;
 
 		public EvolutionMailQueryable () : base ("EvolutionMailIndex", INDEX_VERSION)
 		{
@@ -175,23 +177,6 @@ namespace Beagle.Daemon.EvolutionMailDriver {
 		{
 			return new Uri (String.Format ("email://{0}/{1};uid={2}",
 						       accountName, folderName, uid));
-		}
-
-		override protected double RelevancyMultiplier (Hit hit)
-		{
-			double t = 1.0;
-
-			// FIXME: We should probably be more careful
-			// about how we combine these two numbers into one,
-			// since the cardinal value of the score is used for
-			// comparisons with hits of other types.  It isn't
-			// sufficient to just worry about the ordinal relationship
-			// between two scores.
-			t *= HalfLifeMultiplierFromProperty (hit, 0.25,
-							     "fixme:received", "fixme:sentdate");
-
-
-			return t;
 		}
 
 		// An embarrassingly unscientific attempt at getting progress

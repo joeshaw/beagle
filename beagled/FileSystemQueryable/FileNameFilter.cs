@@ -37,7 +37,7 @@ namespace Beagle.Daemon.FileSystemQueryable {
 
 		private FileSystemQueryable queryable;
 
-		private bool Debug = false;
+		private static bool Debug = false;
 		
 		// All user defined excludes, used for determining deltas
 		// when the configuration is reloaded.
