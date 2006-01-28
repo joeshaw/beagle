@@ -9,14 +9,14 @@ msgid ""
 msgstr ""
 "Project-Id-Version: beagle.HEAD.hu\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2006-01-14 10:06+0100\n"
-"PO-Revision-Date: 2006-01-15 23:54+0100\n"
+"POT-Creation-Date: 2006-01-25 10:08+0100\n"
+"PO-Revision-Date: 2006-01-25 17:34+0100\n"
 "Last-Translator: Gabor Kelemen <kelemeng@gnome.hu>\n"
 "Language-Team: Hungarian <gnome@gnome.hu>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms:  nplurals=1; plural=0;\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
 "X-Generator: KBabel 1.11.1\n"
 
 #: ../glue/eggtrayicon.c:127
@@ -76,15 +76,11 @@ msgid "Your search for \"{0}\" did not match any files on your computer."
 msgstr "A(z) \"{0}\" keresése nem nem eredményezett fájlokat a számítógépen."
 
 #: ../search/Pages/NoMatch.cs:24
-msgid ""
-"You can change the scope of your search using the \"Search\" menu. A broader "
-"search scope might produce more results."
+msgid "You can change the scope of your search using the \"Search\" menu. A broader search scope might produce more results."
 msgstr "A Keresés menü használatával módosíthatja a keresés hatókörét. A bővebb keresési hatókör talán több eredményt hoz."
 
 #: ../search/Pages/NoMatch.cs:26
-msgid ""
-"You should check the spelling of your search words to see if you "
-"accidentally misspelled any words."
+msgid "You should check the spelling of your search words to see if you accidentally misspelled any words."
 msgstr "Ellenőrizze a keresőkifejezések helyesírását, lehet, hogy véletlenül elgépelt egyes szavakat."
 
 #: ../search/Pages/QuickTips.cs:10
@@ -103,33 +99,94 @@ msgstr "Keresőkifejezések kihagyásához használja a kivonás jelet a kifejez
 msgid "When searching for a phrase, add quotes. ex: <b>\"There be dragons\"</b>"
 msgstr "Mondatok keresésénél használjon idézőjeleket, például: <b>\"A gép forog, az alkotó pihen\"</b>"
 
-#: ../search/Pages/QuickTips.cs:19 ../search/UIManager.cs:62
+#: ../search/Pages/QuickTips.cs:19
+#: ../search/UIManager.cs:62
 msgid "Quick Tips"
 msgstr "Gyorstippek"
 
-#: ../search/Search.cs:145
+#: ../search/Pages/StartDaemon.cs:19
+msgid "Daemon not running"
+msgstr "A démon nem fut"
+
+#: ../search/Pages/StartDaemon.cs:21
+msgid "Start the daemon"
+msgstr "A démon elindítása"
+
+#: ../search/Search.cs:148
 msgid "Find Now"
 msgstr "Keresés most"
 
-#: ../search/Search.cs:185
+#: ../search/Search.cs:188
 msgid "Type in search terms"
 msgstr "Írja be a keresendő kifejezéseket"
 
-#: ../search/Search.cs:186
+#: ../search/Search.cs:189
 msgid "Start searching"
 msgstr "A keresés megkezdése"
 
-#: ../search/Tiles/File.cs:127 ../search/Tiles/RSSFeed.cs:50
+#: ../search/Tiles/Application.cs:55
+msgid "Move to trash"
+msgstr "Áthelyezés a Kukába"
+
+#: ../search/Tiles/Audio.cs:37
+#: ../search/Tiles/Image.cs:39
+msgid "Add to Library"
+msgstr "Hozzáadás a gyűjteményhez"
+
+#: ../search/Tiles/Contact.cs:60
+msgid "E-Mail:"
+msgstr "E-mail:"
+
+#: ../search/Tiles/Contact.cs:66
+msgid "Mobile Phone:"
+msgstr "Mobiltelefon:"
+
+#: ../search/Tiles/Contact.cs:73
+msgid "Work Phone:"
+msgstr "Munkahelyi telefon:"
+
+#: ../search/Tiles/Contact.cs:78
+msgid "Home Phone:"
+msgstr "Otthoni telefon:"
+
+#: ../search/Tiles/File.cs:35
+#: ../search/Tiles/Folder.cs:35
+msgid "Open With"
+msgstr "Megnyitás ezzel"
+
+#: ../search/Tiles/File.cs:36
+msgid "Reveal in Folder"
+msgstr "Megjelenítés mappában"
+
+#: ../search/Tiles/File.cs:37
+msgid "E-Mail"
+msgstr "E-mail"
+
+#: ../search/Tiles/File.cs:38
+msgid "Instant-Message"
+msgstr "Azonnali üzenet"
+
+#: ../search/Tiles/File.cs:39
+#: ../search/Tiles/Folder.cs:38
+msgid "Move to Trash"
+msgstr "Áthelyezés a Kukába"
+
+#: ../search/Tiles/File.cs:137
+#: ../search/Tiles/RSSFeed.cs:50
 msgid "Title:"
 msgstr "Cím:"
 
-#: ../search/Tiles/File.cs:137
+#: ../search/Tiles/File.cs:143
 msgid "Last Edited:"
 msgstr "Utoljára szerkesztve:"
 
-#: ../search/Tiles/File.cs:144
+#: ../search/Tiles/File.cs:150
 msgid "Author:"
 msgstr "Szerző:"
+
+#: ../search/Tiles/File.cs:157
+msgid "Full Path:"
+msgstr "Teljes útvonal:"
 
 #: ../search/Tiles/Folder.cs:31
 msgid "Empty"
@@ -142,15 +199,29 @@ msgid_plural "Contains {0} Items"
 msgstr[0] "{0} elemet tartalmaz"
 msgstr[1] "{0} elemet tartalmaz"
 
-#: ../search/Tiles/Folder.cs:62 ../search/Tiles/Image.cs:79
+#. FIXME: s/"gtk-info"/Gtk.Stock.Info/ when we can depend on gtk# 2.8
+#: ../search/Tiles/Folder.cs:37
+msgid "Show Information"
+msgstr "Információk megjelenítése"
+
+#: ../search/Tiles/Folder.cs:62
 msgid "Edited:"
 msgstr "Szerkesztve:"
 
-#: ../search/Tiles/IMLog.cs:88
+#: ../search/Tiles/Image.cs:40
+msgid "Set as Wallpaper"
+msgstr "Beállítás háttérképként"
+
+#: ../search/Tiles/Image.cs:80
+msgid "Modified:"
+msgstr "Módosítva:"
+
+#: ../search/Tiles/IMLog.cs:89
 msgid "Name:"
 msgstr "Név:"
 
-#: ../search/Tiles/IMLog.cs:93 ../search/Tiles/MailMessage.cs:125
+#: ../search/Tiles/IMLog.cs:94
+#: ../search/Tiles/MailMessage.cs:110
 msgid "Date Received:"
 msgstr "Fogadás dátuma:"
 
@@ -158,11 +229,15 @@ msgstr "Fogadás dátuma:"
 msgid "Mail attachment"
 msgstr "E-mail melléklet"
 
-#: ../search/Tiles/MailMessage.cs:115
+#: ../search/Tiles/MailMessage.cs:45
+msgid "Send in Mail"
+msgstr "Küldés levélben"
+
+#: ../search/Tiles/MailMessage.cs:100
 msgid "Subject:"
 msgstr "Tárgy:"
 
-#: ../search/Tiles/MailMessage.cs:120
+#: ../search/Tiles/MailMessage.cs:105
 msgid "From:"
 msgstr "Feladó:"
 
@@ -188,7 +263,7 @@ msgid_plural "{0} pages"
 msgstr[0] "{0} oldal"
 msgstr[1] "{0} oldal"
 
-#: ../search/Tiles/Tile.cs:149
+#: ../search/Tiles/Tile.cs:150
 msgid "Open"
 msgstr "Megnyitás"
 
@@ -528,7 +603,8 @@ msgstr "_Rendezés"
 msgid "_Help"
 msgstr "_Súgó"
 
-#: ../search/UIManager.cs:46 ../search/UIManager.cs:50
+#: ../search/UIManager.cs:46
+#: ../search/UIManager.cs:50
 msgid "Exit Desktop Search"
 msgstr "Kilépés az asztali keresőből"
 
@@ -601,12 +677,12 @@ msgid "Search sound and video files"
 msgstr "Hang- és videofájlok keresése"
 
 #: ../search/UIManager.cs:111
-msgid "_Relevance"
-msgstr "_Fontosság"
+msgid "Date _Modified"
+msgstr "Módosítás _dátuma"
 
 #: ../search/UIManager.cs:112
-msgid "Sort the best matches first"
-msgstr "A pontosabb találatok előre"
+msgid "Sort the most-recently-modified matches first"
+msgstr "A legutóbb módosított találatok előre"
 
 #: ../search/UIManager.cs:115
 msgid "_Name"
@@ -617,161 +693,141 @@ msgid "Sort matches by name"
 msgstr "Találatok rendezése név szerint"
 
 #: ../search/UIManager.cs:119
-msgid "Date _Modified"
-msgstr "Módosítás _dátuma"
+msgid "_Relevance"
+msgstr "_Fontosság"
 
 #: ../search/UIManager.cs:120
-msgid "Sort the most-recently-modified matches first"
-msgstr "A legutóbb módosított találatok előre"
+msgid "Sort the best matches first"
+msgstr "A pontosabb találatok előre"
 
-#: ../tools/Settings.cs:217
+#: ../tools/Settings.cs:216
 msgid "Reload configuration"
 msgstr "Beállítások újratöltése"
 
-#: ../tools/Settings.cs:218
-msgid ""
-"The configuration file has been modified by another application. Do you wish "
-"to discard the currently displayed values and reload configuration from disk?"
-msgstr ""
-"A beállítási fájlt egy másik alkalmazás módosította. El szeretné dobni a "
-"jelenleg megjelenített értékeket és újratölteni a beállításokat a lemezről?"
+#: ../tools/Settings.cs:217
+msgid "The configuration file has been modified by another application. Do you wish to discard the currently displayed values and reload configuration from disk?"
+msgstr "A beállítási fájlt egy másik alkalmazás módosította. El szeretné dobni a jelenleg megjelenített értékeket és újratölteni a beállításokat a lemezről?"
 
-#: ../tools/Settings.cs:256
+#: ../tools/Settings.cs:255
 msgid "Select Path"
 msgstr "Válassza ki az útvonalat"
 
-#: ../tools/Settings.cs:275
+#: ../tools/Settings.cs:274
 msgid "The selected path is already selected for indexing and wasn't added."
-msgstr ""
-"A kiválasztott útvonal már ki van választva indexelésre, ezért nem lesz "
-"hozzáadva."
+msgstr "A kiválasztott útvonal már ki van választva indexelésre, ezért nem lesz hozzáadva."
 
-#: ../tools/Settings.cs:278
-msgid ""
-"The selected path wasn't added. The list contains items that supercedes it "
-"and the data is already being indexed."
-msgstr ""
-"A kiválasztott útvonal nem lesz hozzáadva, a lista tartalmaz olyan elemeket, "
-"amelyek megelőzik és az adatok már indexelve vannak. "
+#: ../tools/Settings.cs:277
+msgid "The selected path wasn't added. The list contains items that supercedes it and the data is already being indexed."
+msgstr "A kiválasztott útvonal nem lesz hozzáadva, a lista tartalmaz olyan elemeket, amelyek megelőzik és az adatok már indexelve vannak. "
 
-#: ../tools/Settings.cs:289 ../tools/Settings.cs:481
+#: ../tools/Settings.cs:288
+#: ../tools/Settings.cs:480
 msgid "Path not added"
 msgstr "Az útvonal nem lesz hozzáadva"
 
-#: ../tools/Settings.cs:298
+#: ../tools/Settings.cs:297
 msgid "Remove obsolete paths"
 msgstr "Elavult útvonalak eltávolítása"
 
-#: ../tools/Settings.cs:299
-msgid ""
-"Adding this path will obsolete some of the existing include paths. This will "
-"result in the removal of the old obsolete paths. Do you still wish to add it?"
-msgstr ""
-"Ezen útvonal hozzáadása elavulttá tesz néhány létező útvonalat, emiatt ezek "
-"az útvonalak el lesznek távolítva. Biztosan hozzá akarja adni?"
+#: ../tools/Settings.cs:298
+msgid "Adding this path will obsolete some of the existing include paths. This will result in the removal of the old obsolete paths. Do you still wish to add it?"
+msgstr "Ezen útvonal hozzáadása elavulttá tesz néhány létező útvonalat, emiatt ezek az útvonalak el lesznek távolítva. Biztosan hozzá akarja adni?"
 
-#: ../tools/Settings.cs:325
+#: ../tools/Settings.cs:324
 msgid "Remove path"
 msgstr "Útvonal eltávolítása"
 
-#: ../tools/Settings.cs:326
-msgid ""
-"Are you sure you wish to remove this path from the list of directories to be "
-"included for indexing?"
-msgstr ""
-"Biztosan el akarja távolítani ezt az útvonalat az indexelendő könyvtárak "
-"listájából?"
+#: ../tools/Settings.cs:325
+msgid "Are you sure you wish to remove this path from the list of directories to be included for indexing?"
+msgstr "Biztosan el akarja távolítani ezt az útvonalat az indexelendő könyvtárak listájából?"
 
-#: ../tools/Settings.cs:355
+#: ../tools/Settings.cs:354
 msgid "Remove item"
 msgstr "Elem eltávolítása"
 
-#: ../tools/Settings.cs:356
-msgid ""
-"Are you sure you wish to remove this item from the list of data to be "
-"excluded from indexing?"
-msgstr ""
-"Biztosan el akarja távolítani ezt az útvonalat a nem indexelendő adatok "
-"listájából?"
+#: ../tools/Settings.cs:355
+msgid "Are you sure you wish to remove this item from the list of data to be excluded from indexing?"
+msgstr "Biztosan el akarja távolítani ezt az útvonalat a nem indexelendő adatok listájából?"
 
-#: ../tools/Settings.cs:399
+#: ../tools/Settings.cs:398
 msgid "Invalid host entry"
 msgstr "Érvénytelen kiszolgálóbejegyzés"
 
-#: ../tools/Settings.cs:406
+#: ../tools/Settings.cs:405
 msgid "Remote host already present in the list."
 msgstr "A távoli kiszolgáló már jelen van a listában."
 
-#: ../tools/Settings.cs:415
+#: ../tools/Settings.cs:414
 msgid "Netbeagle Node not added"
 msgstr "A Netbeagle csomópont nem lett hozzáadva"
 
-#: ../tools/Settings.cs:431
+#: ../tools/Settings.cs:430
 msgid "Remove host"
 msgstr "Kiszolgáló eltávolítása"
 
-#: ../tools/Settings.cs:432
+#: ../tools/Settings.cs:431
 msgid "Are you sure you wish to remove this host from the list?"
 msgstr "Biztosan el akarja távolítani ezt a kiszolgálót a listából?"
 
-#: ../tools/Settings.cs:453
+#: ../tools/Settings.cs:452
 msgid "Select path"
 msgstr "Válassza ki az útvonalat"
 
-#: ../tools/Settings.cs:472
+#: ../tools/Settings.cs:471
 msgid "The selected path is already configured for external access."
 msgstr "A kiválasztott útvonal már ki van választva külső hozzáféréshez."
 
-#: ../tools/Settings.cs:496
+#: ../tools/Settings.cs:495
 msgid "Remove public path"
 msgstr "Nyilvános útvonal eltávolítása"
 
-#: ../tools/Settings.cs:497
+#: ../tools/Settings.cs:496
 msgid "Are you sure you wish to remove this entry from the list of public paths?"
-msgstr ""
-"Biztosan el akarja távolítani ezt a bejegyzést a nyilvános útvonalak "
-"listájából?"
+msgstr "Biztosan el akarja távolítani ezt a bejegyzést a nyilvános útvonalak listájából?"
 
-#: ../tools/Settings.cs:542 ../tools/Settings.cs:631 ../tools/Settings.cs:709
-#: ../tools/Settings.cs:785 ../tools/Settings.cs:1124
+#: ../tools/Settings.cs:541
+#: ../tools/Settings.cs:630
+#: ../tools/Settings.cs:708
+#: ../tools/Settings.cs:784
+#: ../tools/Settings.cs:1123
 msgid "Name"
 msgstr "Név"
 
-#: ../tools/Settings.cs:625 ../tools/settings.glade.h:33
+#: ../tools/Settings.cs:624
+#: ../tools/settings.glade.h:33
 msgid "Type"
 msgstr "Típus"
 
-#: ../tools/Settings.cs:678 ../tools/Settings.cs:1058
+#: ../tools/Settings.cs:677
+#: ../tools/Settings.cs:1057
 #: ../tools/settings.glade.h:25
 msgid "Path"
 msgstr "Útvonal"
 
-#: ../tools/Settings.cs:681 ../tools/Settings.cs:1068
+#: ../tools/Settings.cs:680
+#: ../tools/Settings.cs:1067
 msgid "Pattern"
 msgstr "Minta"
 
-#: ../tools/Settings.cs:684 ../tools/Settings.cs:1063
+#: ../tools/Settings.cs:683
+#: ../tools/Settings.cs:1062
 #: ../tools/settings.glade.h:22
 msgid "Mail Folder"
 msgstr "Levélmappa"
 
-#: ../tools/Settings.cs:1032
+#: ../tools/Settings.cs:1031
 msgid "Select Folder"
 msgstr "Mappa kiválasztása"
 
-#: ../tools/Settings.cs:1092
+#: ../tools/Settings.cs:1091
 msgid "Error adding path"
 msgstr "Hiba az útvonal hozzáadása közben"
 
-#: ../tools/Settings.cs:1093
-msgid ""
-"The specified path could not be found and therefore it could not be added to "
-"the list of resources excluded for indexing."
-msgstr ""
-"A megadott útvonal nem található, ezért nem adható hozzá az indexelésből "
-"kihagyandó erőforrások listájához."
+#: ../tools/Settings.cs:1092
+msgid "The specified path could not be found and therefore it could not be added to the list of resources excluded for indexing."
+msgstr "A megadott útvonal nem található, ezért nem adható hozzá az indexelésből kihagyandó erőforrások listájához."
 
-#: ../tools/Settings.cs:1123
+#: ../tools/Settings.cs:1122
 msgid "Show"
 msgstr "Megjelenítés"
 
@@ -817,21 +873,15 @@ msgstr "Tetszőleges útvonal felvétele indexeléshez."
 
 #: ../tools/settings.glade.h:11
 msgid "Add any remote search-enabled hosts you wish to network with"
-msgstr ""
-"Távoli kiszolgálók hozzáadása, melyeken engedélyezett a keresés és "
-"hálózatban szeretné őket használni"
+msgstr "Távoli kiszolgálók hozzáadása, melyeken engedélyezett a keresés és hálózatban szeretné őket használni"
 
 #: ../tools/settings.glade.h:12
 msgid "Address"
 msgstr "Cím"
 
 #: ../tools/settings.glade.h:13
-msgid ""
-"Adjust which types of results should be visible, and in what order they "
-"should be presented when grouped by type."
-msgstr ""
-"Állítsa be, milyen típusú eredmények legyenek láthatóak és milyen sorrendben "
-"legyenek rendezve típus szerinti csoportosításkor."
+msgid "Adjust which types of results should be visible, and in what order they should be presented when grouped by type."
+msgstr "Állítsa be, milyen típusú eredmények legyenek láthatóak és milyen sorrendben legyenek rendezve típus szerinti csoportosításkor."
 
 #: ../tools/settings.glade.h:14
 msgid "Allow external access to local search services"
@@ -890,12 +940,8 @@ msgid "Search Preferences"
 msgstr "Keresés beállításai"
 
 #: ../tools/settings.glade.h:30
-msgid ""
-"Specify any resources, such as paths, patterns, mail folders or type of "
-"objects you wish to exclude from indexing."
-msgstr ""
-"Adja meg az indexelésből kihagyandó erőforrásokat, például útvonalakat, "
-"mintákat, levélmappákat vagy objektumtípusokat."
+msgid "Specify any resources, such as paths, patterns, mail folders or type of objects you wish to exclude from indexing."
+msgstr "Adja meg az indexelésből kihagyandó erőforrásokat, például útvonalakat, mintákat, levélmappákat vagy objektumtípusokat."
 
 #: ../tools/settings.glade.h:31
 msgid "Specify paths that should be available for external access"
@@ -917,7 +963,8 @@ msgstr "Az asztali keresés és indexelés tulajdonságainak beállítása"
 msgid "Search & Indexing"
 msgstr "Keresés és indexelés"
 
-#: ../Util/Evolution.cs:45 ../Util/Evolution.cs:163
+#: ../Util/Evolution.cs:45
+#: ../Util/Evolution.cs:163
 msgid "On This Computer"
 msgstr "Ezen a számítógépen"
 
@@ -945,71 +992,71 @@ msgstr "Együttműködési könyvtár"
 msgid "Unknown Directory"
 msgstr "Ismeretlen könyvtár"
 
-#: ../Util/StringFu.cs:75
+#: ../Util/StringFu.cs:77
 msgid "Today"
 msgstr "Ma"
 
-#: ../Util/StringFu.cs:77
+#: ../Util/StringFu.cs:79
 msgid "Yesterday"
 msgstr "Tegnap"
 
 #. Translators: Example output: Aug 9
-#: ../Util/StringFu.cs:80
+#: ../Util/StringFu.cs:82
 msgid "MMM d"
 msgstr "MMM d"
 
 #. Translators: Example output: Aug 9, 2000
-#: ../Util/StringFu.cs:83
+#: ../Util/StringFu.cs:85
 msgid "MMM d, yyyy"
 msgstr "yyyy MMM d"
 
 #. Translators: Example output: 11:05 AM  (note h = 12-hour time)
-#: ../Util/StringFu.cs:86
+#: ../Util/StringFu.cs:88
 msgid "h:mm tt"
 msgstr "h.mm tt"
 
 #. Translators: {0} is a date (e.g. 'Today' or 'Apr 23'), {1} is the time
-#: ../Util/StringFu.cs:92
+#: ../Util/StringFu.cs:94
 #, csharp-format
 msgid "{0}, {1}"
 msgstr "{0}, {1}"
 
 #. To translators: {0} is the time of the day, eg. 13:45
-#: ../Util/StringFu.cs:109
+#: ../Util/StringFu.cs:111
 #, csharp-format
 msgid "Today, {0}"
 msgstr "Ma, {0}"
 
 #. To translators: {0} is the time of the day, eg. 13:45
-#: ../Util/StringFu.cs:112
+#: ../Util/StringFu.cs:114
 #, csharp-format
 msgid "Yesterday, {0}"
 msgstr "Tegnap, {0}"
 
 #. To translators: {0} is the number of days that have passed, {1} is the time of the day, eg. 13:45
-#: ../Util/StringFu.cs:115
+#: ../Util/StringFu.cs:117
 #, csharp-format
 msgid "{0} days ago, {1}"
 msgstr "{0} nappal ezelőtt, {1}"
 
 #. Translators: Example output: January 3, 3:45 PM
-#: ../Util/StringFu.cs:120
+#: ../Util/StringFu.cs:122
 msgid "MMMM d, h:mm tt"
 msgstr "MMMM d, h.mm tt"
 
 #. Translators: Example output: March 23 2001, 10:04 AM
-#: ../Util/StringFu.cs:125
+#: ../Util/StringFu.cs:127
 msgid "MMMM d yyyy, h:mm tt"
 msgstr "yyyy MMMM d, h.mm tt"
 
-#: ../Util/StringFu.cs:135
+#: ../Util/StringFu.cs:137
 #, csharp-format
 msgid "{0} hour"
 msgid_plural "{0} hours"
 msgstr[0] "{0} óra"
 msgstr[1] "{0} óra"
 
-#: ../Util/StringFu.cs:142
+#: ../Util/StringFu.cs:144
 #, csharp-format
 msgid "{0} minute"
 msgid_plural "{0} minutes"
@@ -1017,19 +1064,19 @@ msgstr[0] "{0} perc"
 msgstr[1] "{0} perc"
 
 #. Translators: {0} is a file size in bytes
-#: ../Util/StringFu.cs:158
+#: ../Util/StringFu.cs:160
 #, csharp-format
 msgid "{0} bytes"
 msgstr "{0} bájt"
 
 #. Translators: {0} is a file size in kilobytes
-#: ../Util/StringFu.cs:162
+#: ../Util/StringFu.cs:164
 #, csharp-format
 msgid "{0:0.0} KB"
 msgstr "{0:0.0} KB"
 
 #. Translators: {0} is a file size in megabytes
-#: ../Util/StringFu.cs:165
+#: ../Util/StringFu.cs:167
 #, csharp-format
 msgid "{0:0.0} MB"
 msgstr "{0:0.0} MB"
