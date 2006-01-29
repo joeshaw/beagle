@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: el\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2005-08-28 12:10+0300\n"
-"PO-Revision-Date: 2005-08-28 12:18+0300\n"
+"POT-Creation-Date: 2006-01-29 02:38+0200\n"
+"PO-Revision-Date: 2006-01-29 02:57+0200\n"
 "Last-Translator: Kostas Papadimas <pkst@gnome.org>\n"
 "Language-Team: Greek <team@gnome.gr>\n"
 "MIME-Version: 1.0\n"
@@ -16,120 +16,11 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms:  nplurals=2; plural=(n != 1);"
 
-#: ../Best/Best.cs:132
-msgid ""
-"If you're wondering whether Best is working check your notification area "
-"(system tray)"
-msgstr ""
-"Αν αναρωτιέστε αν το Best δουλέυει, κοιτάξτε την περιοχή ειδοποίησης σας"
-"(system tray)"
-
-#: ../Best/BestTray.cs:149
-msgid "Disable Searching"
-msgstr "Απενεργοποίηση αναζήτησης"
-
-#: ../Best/BestTray.cs:150
-msgid ""
-"You are about to close the search tray. The search tray is automatically "
-"started at login-time. Would you like to disable it for future sessions?"
-msgstr ""
-"Πρόκειται να κλείσετε τη μπάρα αναζήτησης. Η μπάρα αναζήτησης ξεκινάει αυτόματα "
-"κατά την είσοδο σας στο σύστημα. Θέλετε να την απενεργοποιήσετε και για μελλοντικές συνεδρίες;"
-
-#: ../Best/BestTray.cs:207
-msgid "No Recent Searches"
-msgstr "Δεν υπάρχουν πρόσφατες αναζητήσεις"
-
-#: ../Best/BestTray.cs:212
-msgid "Recent Searches"
-msgstr "Πρόσφατες αναζητήσεις"
-
-#: ../Best/BestTray.cs:228
-msgid "Clear"
-msgstr "Εκκαθάριση"
-
-#: ../Best/BestTray.cs:236
-msgid "Quit"
-msgstr "Έξοδος"
-
-#: ../Best/BestWindow.cs:306
-msgid "Anywhere"
-msgstr "Οπουδήποτε"
-
-#: ../Best/BestWindow.cs:310
-msgid "in Files"
-msgstr "σε αρχεία"
-
-#: ../Best/BestWindow.cs:314
-msgid "in Addressbook"
-msgstr "σε ευρετήριο διευθύνσεων"
-
-#: ../Best/BestWindow.cs:318
-msgid "in Mail"
-msgstr "σε αλληλογραφία"
-
-#: ../Best/BestWindow.cs:322
-msgid "in Web Pages"
-msgstr "σε ιστοσελίδες"
-
-#: ../Best/BestWindow.cs:326
-msgid "in Chats"
-msgstr "σε chats"
-
-#: ../Best/BestWindow.cs:343
-msgid "Search terms:"
-msgstr "Κριτήρια αναζήτησης:"
-
-#: ../Best/BestWindow.cs:367
-msgid "Find"
-msgstr "Εύρεση"
-
-#: ../Best/BestWindow.cs:384
-msgid "Show More Results"
-msgstr "Εμφάνιση περισσότερων αποτελεσμάτων"
-
-#: ../Best/BestWindow.cs:390
-msgid "Show Previous Results"
-msgstr "Εμφάνιση προηγούμενων αποτελεσμάτων"
-
-#: ../Best/BestWindow.cs:424
-msgid "No results."
-msgstr "Χωρίς αποτελέσματα."
-
-#. To translators: {0} is the current count of results shown of {1} in total, this is the message that is initially shown
-#. when results are returned to the user.
-#: ../Best/BestWindow.cs:428
-#, csharp-format
-msgid "Best <b>{0} results of {1}</b> are shown."
-msgstr "Εμφανίζονται τα καλύτερα <b>{0} αποτελέσματα από {1}</b> are shown."
-
-#. To translators: {0} to {1} is the interval of results currently shown of {2} results in total
-#: ../Best/BestWindow.cs:433
-#, csharp-format
-msgid "Results <b>{0} through {1} of {2}</b> are shown."
-msgstr "Αποτελέσματα<b>{0} του {1} από {2}</b> εμφανίζονται."
-
-#. To translators: {0} represents the current query keywords
-#: ../Best/BestWindow.cs:542
-#, csharp-format
-msgid ""
-"The query for <i>{0}</i> failed.<br>The likely cause is that the beagle "
-"daemon isn't running."
-msgstr ""
-"Η αναζήτηση για <i>{0}</i> απέτυχε.<br>. Ο πιό πιθανός λόγος είναι ότι ο "
-"beagle daemon δεν εκτελείται."
-
-#. To translators: {0} represents the current query keywords, {1} contains the errormessage
-#: ../Best/BestWindow.cs:547
-#, csharp-format
-msgid "The query for <i>{0}</i> failed with error:<br>{1}<br>"
-msgstr "Η αναζήτηση για <i>{0}</i> απέτυχε με σφάλμα:<br>{1}<br>"
-
-#: ../glue/eggtrayicon.c:120
+#: ../glue/eggtrayicon.c:127
 msgid "Orientation"
 msgstr "Προσανατολισμός"
 
-#: ../glue/eggtrayicon.c:121
+#: ../glue/eggtrayicon.c:128
 msgid "The orientation of the tray."
 msgstr "Ο προσαναταλισμός του συρταριού."
 
@@ -141,252 +32,637 @@ msgstr "<b>Ιστορικό συζητήσεων</b>"
 msgid "IM Viewer"
 msgstr "Εφαρμογή προβολής IM"
 
-#: ../ImLogViewer/ImLogWindow.cs:87
+#: ../ImLogViewer/ImLogWindow.cs:102
 #, csharp-format
 msgid "Conversations in {0}"
 msgstr "Συζητήσεις σε {0}"
 
-#: ../ImLogViewer/ImLogWindow.cs:94
+#: ../ImLogViewer/ImLogWindow.cs:109
 #, csharp-format
 msgid "Conversations with {0}"
 msgstr "Συζητήσεις με {0}"
 
-#: ../Tiles/TileDocs.cs:77
-msgid "Pages:"
-msgstr "Σελίδες:"
+#: ../search/Category.cs:85
+#, csharp-format
+msgid "Top {0} Result"
+msgstr ""
 
-#: ../Tiles/TileDocs.cs:81
-msgid "Words:"
-msgstr "Λέξεις:"
+#: ../search/Category.cs:86
+#, csharp-format
+msgid "Previous {0}"
+msgstr ""
 
-#: ../Tiles/TileFolder.cs:53
+#: ../search/Category.cs:87
+#, csharp-format
+msgid "Next {0}"
+msgstr ""
+
+#: ../search/Pages/NoMatch.cs:19
+#, fuzzy
+msgid "No results were found."
+msgstr "Χωρίς αποτελέσματα."
+
+#: ../search/Pages/NoMatch.cs:20
+#, csharp-format
+msgid "Your search for \"{0}\" did not match any files on your computer."
+msgstr ""
+
+#: ../search/Pages/NoMatch.cs:24
+msgid ""
+"You can change the scope of your search using the \"Search\" menu. A broader "
+"search scope might produce more results."
+msgstr ""
+
+#: ../search/Pages/NoMatch.cs:26
+msgid ""
+"You should check the spelling of your search words to see if you "
+"accidentally misspelled any words."
+msgstr ""
+
+#: ../search/Pages/QuickTips.cs:10
+msgid "You can use upper and lower case; search is case-insensitive."
+msgstr ""
+
+#: ../search/Pages/QuickTips.cs:11
+msgid "To search for optional terms, use OR.  ex: <b>George OR Ringo</b>"
+msgstr ""
+
+#: ../search/Pages/QuickTips.cs:12
+msgid ""
+"To exclude search terms, use the minus symbol in front, such as <b>-cats</b>"
+msgstr ""
+
+#: ../search/Pages/QuickTips.cs:13
+msgid ""
+"When searching for a phrase, add quotes. ex: <b>\"There be dragons\"</b>"
+msgstr ""
+
+#: ../search/Pages/QuickTips.cs:19 ../search/UIManager.cs:62
+msgid "Quick Tips"
+msgstr ""
+
+#: ../search/Pages/StartDaemon.cs:19
+msgid "Daemon not running"
+msgstr ""
+
+#: ../search/Pages/StartDaemon.cs:21
+msgid "Start the daemon"
+msgstr ""
+
+#: ../search/Search.cs:148
+msgid "Find Now"
+msgstr "Εύρεση τώρα"
+
+#: ../search/Search.cs:188
+#, fuzzy
+msgid "Type in search terms"
+msgstr "Κριτήρια αναζήτησης:"
+
+#: ../search/Search.cs:189
+msgid "Start searching"
+msgstr "Έναρξη αναζήτησης"
+
+#: ../search/Tiles/Application.cs:55
+msgid "Move to trash"
+msgstr "Μετακίνηση στα απορρίμματα"
+
+#: ../search/Tiles/Audio.cs:37 ../search/Tiles/Image.cs:39
+msgid "Add to Library"
+msgstr ""
+
+#: ../search/Tiles/Contact.cs:60
+msgid "E-Mail:"
+msgstr "E-Mail:"
+
+#: ../search/Tiles/Contact.cs:66
+msgid "Mobile Phone:"
+msgstr "Κινητό τηλέφωνο:"
+
+#: ../search/Tiles/Contact.cs:73
+msgid "Work Phone:"
+msgstr ""
+
+#: ../search/Tiles/Contact.cs:78
+msgid "Home Phone:"
+msgstr ""
+
+#: ../search/Tiles/File.cs:35 ../search/Tiles/Folder.cs:35
+msgid "Open With"
+msgstr "Άνοιγμα με"
+
+#: ../search/Tiles/File.cs:36
+#, fuzzy
+msgid "Reveal in Folder"
+msgstr "Εμφάνιση στο διαχειριστή αρχείων"
+
+#: ../search/Tiles/File.cs:37
+msgid "E-Mail"
+msgstr "E-Mail"
+
+#: ../search/Tiles/File.cs:38
+msgid "Instant-Message"
+msgstr ""
+
+#: ../search/Tiles/File.cs:39 ../search/Tiles/Folder.cs:38
+msgid "Move to Trash"
+msgstr "Μετακίνηση στα Απορρίμματα"
+
+#: ../search/Tiles/File.cs:137 ../search/Tiles/RSSFeed.cs:50
+msgid "Title:"
+msgstr "Τίτλος:"
+
+#: ../search/Tiles/File.cs:143
+#, fuzzy
+msgid "Last Edited:"
+msgstr "Τελευταία προβολή:"
+
+#: ../search/Tiles/File.cs:150
+msgid "Author:"
+msgstr "Συγγραφέας:"
+
+#: ../search/Tiles/File.cs:157
+msgid "Full Path:"
+msgstr ""
+
+#: ../search/Tiles/Folder.cs:31
 msgid "Empty"
 msgstr "Κενός"
 
-#: ../Tiles/TileFolder.cs:55
+#: ../search/Tiles/Folder.cs:33
 #, csharp-format
 msgid "Contains {0} Item"
 msgid_plural "Contains {0} Items"
 msgstr[0] "Περιέχει {0}αντικείμενο"
 msgstr[1] "Περιέχει {0}αντικείμενα"
 
-#: ../Tiles/TileImLog.cs:67
-msgid "Send Mail"
-msgstr "Αποστολή Αλληλογραφίας"
+#. FIXME: s/"gtk-info"/Gtk.Stock.Info/ when we can depend on gtk# 2.8
+#: ../search/Tiles/Folder.cs:37
+msgid "Show Information"
+msgstr ""
 
-#. For translators: From template Tiles/template-mail-message.html
-#: ../Tiles/TileImLog.cs:71 ../Tiles/TranslationHack.cs:52
-msgid "Send IM"
-msgstr "Αποστολή IM"
+#: ../search/Tiles/Folder.cs:62
+#, fuzzy
+msgid "Edited:"
+msgstr "Τροποποιήθηκε:"
 
-#: ../Tiles/TileImLog.cs:77
-#, csharp-format
-msgid "Conversation in {0}"
-msgstr "Συζήτηση σε {0}"
+#: ../search/Tiles/Image.cs:40
+msgid "Set as Wallpaper"
+msgstr ""
 
-#: ../Tiles/TileImLog.cs:79
-#, csharp-format
-msgid "Conversation with {0}"
-msgstr "Συζήτηση με {0}"
-
-#: ../Tiles/TileMailMessage.cs:81
-msgid "No Subject"
-msgstr "Χωρίς θέμα"
-
-#: ../Tiles/TileMailMessage.cs:88
-msgid "To"
-msgstr "Προς"
-
-#: ../Tiles/TileMailMessage.cs:88
-msgid "From"
-msgstr "Από"
-
-#: ../Tiles/TileMailMessage.cs:116
-msgid "Sent"
-msgstr "Απεσταλμένα"
-
-#: ../Tiles/TileMailMessage.cs:116
-msgid "Received"
-msgstr "Ληφθέντα"
-
-#: ../Tiles/TileMailMessage.cs:124
-msgid "Email attachment"
-msgstr "Συνημμένο Email "
-
-#. For translators: From template Tiles/template-blog.html
-#: ../Tiles/TranslationHack.cs:6
-msgid "Weblog:"
-msgstr "Ιστολόγιο:"
-
-#. For translators: From template Tiles/template-blog.html
-#: ../Tiles/TranslationHack.cs:8
-msgid "by"
-msgstr "από"
-
-#. For translators: From template Tiles/template-blog.html
-#: ../Tiles/TranslationHack.cs:10
-msgid "Published:"
-msgstr "Δημοσιεύθηκε:"
-
-#. For translators: From template Tiles/template-blog.html
-#. For translators: From template Tiles/template-docs.html
-#. For translators: From template Tiles/template-file.html
-#. For translators: From template Tiles/template-folder.html
-#. For translators: From template Tiles/template-launcher.html
-#. For translators: From template Tiles/template-mail-message.html
-#. For translators: From template Tiles/template-music.html
-#. For translators: From template Tiles/template-note.html
-#. For translators: From template Tiles/template-picture.html
-#. For translators: From template Tiles/template-presentation.html
-#. For translators: From template Tiles/template-spreadsheet.html
-#. For translators: From template Tiles/template-web-history.html
-#. For translators: From template Tiles/template-network.html
-#. For translators: From template Tiles/template-im-log.html
-#: ../Tiles/TranslationHack.cs:12 ../Tiles/TranslationHack.cs:22
-#: ../Tiles/TranslationHack.cs:32 ../Tiles/TranslationHack.cs:40
-#: ../Tiles/TranslationHack.cs:44 ../Tiles/TranslationHack.cs:50
-#: ../Tiles/TranslationHack.cs:58 ../Tiles/TranslationHack.cs:66
-#: ../Tiles/TranslationHack.cs:76 ../Tiles/TranslationHack.cs:92
-#: ../Tiles/TranslationHack.cs:106 ../Tiles/TranslationHack.cs:114
-#: ../Tiles/TranslationHack.cs:118 ../Tiles/TranslationHack.cs:122
-msgid "Open"
-msgstr "Άνοιγμα"
-
-#. For translators: From template Tiles/template-docs.html
-#. For translators: From template Tiles/template-file.html
-#. For translators: From template Tiles/template-folder.html
-#. For translators: From template Tiles/template-picture.html
-#. For translators: From template Tiles/template-presentation.html
-#. For translators: From template Tiles/template-spreadsheet.html
-#: ../Tiles/TranslationHack.cs:14 ../Tiles/TranslationHack.cs:28
-#: ../Tiles/TranslationHack.cs:38 ../Tiles/TranslationHack.cs:68
-#: ../Tiles/TranslationHack.cs:82 ../Tiles/TranslationHack.cs:98
-msgid "in folder"
-msgstr "σε φάκελο"
-
-#. For translators: From template Tiles/template-docs.html
-#. For translators: From template Tiles/template-file.html
-#. For translators: From template Tiles/template-presentation.html
-#. For translators: From template Tiles/template-spreadsheet.html
-#: ../Tiles/TranslationHack.cs:16 ../Tiles/TranslationHack.cs:30
-#: ../Tiles/TranslationHack.cs:84 ../Tiles/TranslationHack.cs:100
-msgid "Last modified"
-msgstr "Τελευταία τροποποίηση"
-
-#. For translators: From template Tiles/template-docs.html
-#. For translators: From template Tiles/template-presentation.html
-#. For translators: From template Tiles/template-spreadsheet.html
-#: ../Tiles/TranslationHack.cs:18 ../Tiles/TranslationHack.cs:86
-#: ../Tiles/TranslationHack.cs:102
-msgid "Title:"
-msgstr "Τίτλος:"
-
-#. For translators: From template Tiles/template-docs.html
-#. For translators: From template Tiles/template-presentation.html
-#. For translators: From template Tiles/template-spreadsheet.html
-#: ../Tiles/TranslationHack.cs:20 ../Tiles/TranslationHack.cs:88
-#: ../Tiles/TranslationHack.cs:104
-msgid "Author:"
-msgstr "Συγγραφέας:"
-
-#. For translators: From template Tiles/template-docs.html
-#. For translators: From template Tiles/template-file.html
-#. For translators: From template Tiles/template-picture.html
-#. For translators: From template Tiles/template-presentation.html
-#. For translators: From template Tiles/template-spreadsheet.html
-#: ../Tiles/TranslationHack.cs:24 ../Tiles/TranslationHack.cs:34
-#: ../Tiles/TranslationHack.cs:78 ../Tiles/TranslationHack.cs:94
-#: ../Tiles/TranslationHack.cs:108
-msgid "Send to..."
-msgstr "Αποστολή σε..."
-
-#. For translators: From template Tiles/template-docs.html
-#. For translators: From template Tiles/template-file.html
-#. For translators: From template Tiles/template-music.html
-#. For translators: From template Tiles/template-picture.html
-#. For translators: From template Tiles/template-presentation.html
-#. For translators: From template Tiles/template-spreadsheet.html
-#: ../Tiles/TranslationHack.cs:26 ../Tiles/TranslationHack.cs:36
-#: ../Tiles/TranslationHack.cs:62 ../Tiles/TranslationHack.cs:80
-#: ../Tiles/TranslationHack.cs:96 ../Tiles/TranslationHack.cs:110
-msgid "Reveal in file manager"
-msgstr "Εμφάνιση στο διαχειριστή αρχείων"
-
-#. For translators: From template Tiles/template-launcher.html
-#: ../Tiles/TranslationHack.cs:42
-msgid "Application:"
-msgstr "Εφαρμογή:"
-
-#. For translators: From template Tiles/template-mail-message.html
-#: ../Tiles/TranslationHack.cs:46
-msgid "Email subject:"
-msgstr "Θέμα Email:"
-
-#. For translators: From template Tiles/template-mail-message.html
-#: ../Tiles/TranslationHack.cs:48
-msgid "Folder:"
-msgstr "Φάκελος:"
-
-#. For translators: From template Tiles/template-music.html
-#: ../Tiles/TranslationHack.cs:54
-msgid "Track"
-msgstr "Κομμάτι"
-
-#. For translators: From template Tiles/template-music.html
-#: ../Tiles/TranslationHack.cs:56
-msgid "from"
-msgstr "από"
-
-#. For translators: From template Tiles/template-music.html
-#: ../Tiles/TranslationHack.cs:60
-msgid "Enqueue"
-msgstr "Enqueue"
-
-#. For translators: From template Tiles/template-note.html
-#: ../Tiles/TranslationHack.cs:64
-msgid "last modified"
-msgstr "τελευταία τροποποίηση"
-
-#. For translators: From template Tiles/template-picture.html
-#: ../Tiles/TranslationHack.cs:70
+#: ../search/Tiles/Image.cs:80
 msgid "Modified:"
 msgstr "Τροποποιήθηκε:"
 
-#. For translators: From template Tiles/template-picture.html
-#: ../Tiles/TranslationHack.cs:72
-msgid "Tags:"
-msgstr "Tags:"
+#: ../search/Tiles/IMLog.cs:89
+msgid "Name:"
+msgstr "Όνομα:"
 
-#. For translators: From template Tiles/template-picture.html
-#: ../Tiles/TranslationHack.cs:74
-msgid "Description:"
-msgstr "Περιγραφή:"
+#: ../search/Tiles/IMLog.cs:94 ../search/Tiles/MailMessage.cs:110
+#, fuzzy
+msgid "Date Received:"
+msgstr "Ληφθέντα"
 
-#. For translators: From template Tiles/template-presentation.html
-#: ../Tiles/TranslationHack.cs:90
-msgid "Slides:"
-msgstr "Διαφάνειες:"
+#: ../search/Tiles/MailAttachment.cs:48
+#, fuzzy
+msgid "Mail attachment"
+msgstr "Συνημμένο Email "
 
-#. For translators: From template Tiles/template-web-history.html
-#: ../Tiles/TranslationHack.cs:112
-msgid "Last viewed:"
+#: ../search/Tiles/MailMessage.cs:45
+#, fuzzy
+msgid "Send in Mail"
+msgstr "Αποστολή Αλληλογραφίας"
+
+#: ../search/Tiles/MailMessage.cs:100
+msgid "Subject:"
+msgstr "θέμα:"
+
+#: ../search/Tiles/MailMessage.cs:105
+msgid "From:"
+msgstr "Από:"
+
+#: ../search/Tiles/Presentation.cs:33
+#, fuzzy, csharp-format
+msgid "{0} slide"
+msgid_plural "{0} slides"
+msgstr[0] "{0} λεπτό"
+msgstr[1] "{0} λεπτά"
+
+#: ../search/Tiles/RSSFeed.cs:55
+#, fuzzy
+msgid "Site:"
+msgstr "Τίτλος:"
+
+#: ../search/Tiles/RSSFeed.cs:60
+#, fuzzy
+msgid "Date Viewed:"
 msgstr "Τελευταία προβολή:"
 
-#. For translators: From template Tiles/template-network.html
-#: ../Tiles/TranslationHack.cs:116
-msgid "from Networked Beagle on host"
-msgstr "από δικτυωμένο Beagle στο σύστημα"
+#: ../search/Tiles/TextDocument.cs:37
+#, csharp-format
+msgid "{0} page"
+msgid_plural "{0} pages"
+msgstr[0] "{0} σελίδα"
+msgstr[1] "{0} σελίδες"
 
-#. For translators: From template Tiles/template-network.html
-#: ../Tiles/TranslationHack.cs:120
-msgid "Search Networked Beagle"
-msgstr "Αναζήτηση δικτυωμένου Beagle"
+#: ../search/Tiles/Tile.cs:150
+msgid "Open"
+msgstr "Άνοιγμα"
 
-#: ../tools/Settings.cs:214
+#: ../search/Tiles/Utils.cs:25
+msgid "Application"
+msgstr "Εφαρμογή"
+
+#: ../search/Tiles/Utils.cs:26
+msgid "More application results..."
+msgstr ""
+
+#: ../search/Tiles/Utils.cs:29
+msgid "Contact"
+msgstr "Επαφή"
+
+#: ../search/Tiles/Utils.cs:30
+msgid "More contact results..."
+msgstr ""
+
+#: ../search/Tiles/Utils.cs:33
+msgid "Folder"
+msgstr "Φάκελος"
+
+#: ../search/Tiles/Utils.cs:34
+#, fuzzy
+msgid "More folder results..."
+msgstr "Χωρίς αποτελέσματα."
+
+#: ../search/Tiles/Utils.cs:37
+msgid "Image"
+msgstr "Εικόνα"
+
+#: ../search/Tiles/Utils.cs:38
+#, fuzzy
+msgid "More image results..."
+msgstr "Χωρίς αποτελέσματα."
+
+#: ../search/Tiles/Utils.cs:41
+msgid "Audio"
+msgstr "Ήχος"
+
+#: ../search/Tiles/Utils.cs:42
+#, fuzzy
+msgid "More audio results..."
+msgstr "Χωρίς αποτελέσματα."
+
+#: ../search/Tiles/Utils.cs:45
+msgid "Video"
+msgstr "Βίντεο"
+
+#: ../search/Tiles/Utils.cs:46
+#, fuzzy
+msgid "More video results..."
+msgstr "Χωρίς αποτελέσματα."
+
+#: ../search/Tiles/Utils.cs:49
+msgid "Documents"
+msgstr "Έγγραφα"
+
+#: ../search/Tiles/Utils.cs:50
+msgid "More document results..."
+msgstr ""
+
+#: ../search/Tiles/Utils.cs:53
+msgid "Conversations"
+msgstr "Συζητήσεις"
+
+#: ../search/Tiles/Utils.cs:54
+msgid "More conversation results..."
+msgstr ""
+
+#: ../search/Tiles/Utils.cs:57
+msgid "Website"
+msgstr ""
+
+#: ../search/Tiles/Utils.cs:58
+msgid "More website results..."
+msgstr ""
+
+#: ../search/Tiles/Utils.cs:61
+msgid "News Feed"
+msgstr ""
+
+#: ../search/Tiles/Utils.cs:62
+msgid "More news feed results..."
+msgstr ""
+
+#: ../search/Tiles/Utils.cs:65
+msgid "Archive"
+msgstr ""
+
+#: ../search/Tiles/Utils.cs:66
+msgid "More archive results..."
+msgstr ""
+
+#: ../search/Tiles/Utils.cs:170
+#, csharp-format
+msgid "{0} week ago"
+msgstr ""
+
+#. Lets say a year and a half to stop saying months
+#: ../search/Tiles/Utils.cs:172
+#, fuzzy, csharp-format
+msgid "{0} month ago"
+msgid_plural "{0} months ago"
+msgstr[0] "{0} λεπτό"
+msgstr[1] "{0} λεπτά"
+
+#: ../search/Tiles/Utils.cs:174
+#, csharp-format
+msgid "{0} year ago"
+msgid_plural "{0} years ago"
+msgstr[0] "{0} έτος πριν"
+msgstr[1] "{0} έτη πριν"
+
+#: ../search/Tiles/Video.cs:33
+msgid "Unknown duration"
+msgstr "Άγνωστή διάρκεια"
+
+#: ../search/Tray/TrayIcon.cs:32
+#, fuzzy
+msgid "Desktop Search"
+msgstr "Πρόσφατες αναζητήσεις"
+
+#: ../search/Tray/TrayIcon.cs:57
+msgid "No Recent Searches"
+msgstr "Δεν υπάρχουν πρόσφατες αναζητήσεις"
+
+#: ../search/Tray/TrayIcon.cs:62
+msgid "Recent Searches"
+msgstr "Πρόσφατες αναζητήσεις"
+
+#: ../search/Tray/TrayIcon.cs:78
+msgid "Clear"
+msgstr "Εκκαθάριση"
+
+#: ../search/Tray/TrayIcon.cs:86
+msgid "Quit"
+msgstr "Έξοδος"
+
+#. Translators: the strings in TypeFilter.cs are for when the user
+#. * wants to limit search results to a specific type. You don't need
+#. * to give an exact translation of the exact same set of English
+#. * words. Just provide a list of likely words the user might use
+#. * after the "type:" keyword to refer to each type of match.
+#.
+#: ../search/TypeFilter.cs:36
+msgid ""
+"file\n"
+"files"
+msgstr ""
+"αρχείο\n"
+"αρχεία"
+
+#: ../search/TypeFilter.cs:37
+msgid ""
+"mail\n"
+"email\n"
+"e-mail"
+msgstr ""
+"mail\n"
+"email\n"
+"e-mail"
+
+#: ../search/TypeFilter.cs:38
+msgid ""
+"im\n"
+"ims\n"
+"instant message\n"
+"instant messages\n"
+"instant-message\n"
+"instant-messages\n"
+"chat\n"
+"chats"
+msgstr ""
+
+#: ../search/TypeFilter.cs:39
+msgid ""
+"presentation\n"
+"presentations\n"
+"slideshow\n"
+"slideshows\n"
+"slide\n"
+"slides"
+msgstr ""
+
+#: ../search/TypeFilter.cs:41
+msgid ""
+"application\n"
+"applications\n"
+"app\n"
+"apps"
+msgstr ""
+
+#: ../search/TypeFilter.cs:42
+msgid ""
+"contact\n"
+"contacts\n"
+"vcard\n"
+"vcards"
+msgstr ""
+
+#: ../search/TypeFilter.cs:43
+msgid ""
+"folder\n"
+"folders"
+msgstr ""
+"φάκελος\n"
+"φάκελοι"
+
+#: ../search/TypeFilter.cs:44
+msgid ""
+"image\n"
+"images\n"
+"img"
+msgstr ""
+
+#: ../search/TypeFilter.cs:45
+msgid "audio"
+msgstr "ήχος"
+
+#: ../search/TypeFilter.cs:46
+msgid "video"
+msgstr "Βίντεο"
+
+#: ../search/TypeFilter.cs:47
+msgid "media"
+msgstr ""
+
+#: ../search/TypeFilter.cs:48
+msgid ""
+"document\n"
+"documents\n"
+"office document\n"
+"office documents"
+msgstr ""
+"έγγραφο\n"
+"έγγραφα\n"
+"έγγραφο γραφείου\n"
+"έγγραφα γραφείου"
+
+#: ../search/TypeFilter.cs:49
+msgid ""
+"conversation\n"
+"conversations"
+msgstr "συζήτηση\n"
+"συζητήσεις"
+
+#: ../search/TypeFilter.cs:50
+msgid ""
+"web\n"
+"www\n"
+"website\n"
+"websites"
+msgstr ""
+
+#: ../search/TypeFilter.cs:51
+msgid ""
+"feed\n"
+"news\n"
+"blog\n"
+"rss"
+msgstr ""
+
+#: ../search/TypeFilter.cs:52
+msgid ""
+"archive\n"
+"archives"
+msgstr ""
+
+#: ../search/TypeFilter.cs:53
+msgid ""
+"person\n"
+"people"
+msgstr ""
+
+#: ../search/UIManager.cs:32
+msgid "_Search"
+msgstr "_Αναζήτηση"
+
+#: ../search/UIManager.cs:35
+msgid "_Actions"
+msgstr "Ε_νέργειες"
+
+#: ../search/UIManager.cs:38
+msgid "Sor_t"
+msgstr ""
+
+#: ../search/UIManager.cs:41
+msgid "_Help"
+msgstr "_Βοήθεια"
+
+#: ../search/UIManager.cs:46 ../search/UIManager.cs:50
+msgid "Exit Desktop Search"
+msgstr ""
+
+#: ../search/UIManager.cs:53
+msgid "_Contents"
+msgstr "_Περιεχόμενα"
+
+#: ../search/UIManager.cs:55
+msgid "Help - Table of Contents"
+msgstr ""
+
+#: ../search/UIManager.cs:59
+msgid "About Desktop Search"
+msgstr ""
+
+#: ../search/UIManager.cs:72
+#, fuzzy
+msgid "_Everywhere"
+msgstr "Οπουδήποτε"
+
+#: ../search/UIManager.cs:74
+#, fuzzy
+msgid "Search everywhere"
+msgstr "Προτιμήσεις αναζήτησης"
+
+#: ../search/UIManager.cs:77
+msgid "_Applications"
+msgstr "_Εφαρμογές:"
+
+#: ../search/UIManager.cs:79
+#, fuzzy
+msgid "Search applications"
+msgstr "Εφαρμογή:"
+
+#: ../search/UIManager.cs:82
+msgid "_Contacts"
+msgstr "_Επαφές"
+
+#: ../search/UIManager.cs:84
+msgid "Search contacts"
+msgstr "Αναζήτηση επαφών"
+
+#: ../search/UIManager.cs:87
+msgid "_Documents"
+msgstr "_Έγγραφα"
+
+#: ../search/UIManager.cs:89
+#, fuzzy
+msgid "Search documents"
+msgstr "Κριτήρια αναζήτησης:"
+
+#: ../search/UIManager.cs:92
+msgid "Conve_rsations"
+msgstr "_Συζητήσεις"
+
+#: ../search/UIManager.cs:94
+msgid "Search E-Mail and Instant Messaging logs"
+msgstr ""
+
+#: ../search/UIManager.cs:97
+msgid "Images"
+msgstr "Εικόνες"
+
+#: ../search/UIManager.cs:99
+msgid "Search images"
+msgstr "Αναζήτηση εικόνων"
+
+#: ../search/UIManager.cs:102
+msgid "Media"
+msgstr ""
+
+#: ../search/UIManager.cs:104
+msgid "Search sound and video files"
+msgstr ""
+
+#: ../search/UIManager.cs:111
+#, fuzzy
+msgid "Date _Modified"
+msgstr "τελευταία τροποποίηση"
+
+#: ../search/UIManager.cs:112
+msgid "Sort the most-recently-modified matches first"
+msgstr ""
+
+#: ../search/UIManager.cs:115
+msgid "_Name"
+msgstr "_Όνομα"
+
+#: ../search/UIManager.cs:116
+msgid "Sort matches by name"
+msgstr ""
+
+#: ../search/UIManager.cs:119
+msgid "_Relevance"
+msgstr ""
+
+#: ../search/UIManager.cs:120
+msgid "Sort the best matches first"
+msgstr ""
+
+#: ../tools/Settings.cs:216
 msgid "Reload configuration"
 msgstr "Επαναφόρτωση ρύθμισης"
 
-#: ../tools/Settings.cs:215
+#: ../tools/Settings.cs:217
 msgid ""
 "The configuration file has been modified by another application. Do you wish "
 "to discard the currently displayed values and reload configuration from disk?"
@@ -394,17 +670,17 @@ msgstr ""
 "Το αρχείο ρυθμίσεων τροποποιήθηκε από μια άλλη εφαρμογή. Θέλετε να "
 "απορριφθούν οι τρέχουσες τιμές και να φορτωθεί η ρύθμιση από το δίσκο;"
 
-#: ../tools/Settings.cs:253
+#: ../tools/Settings.cs:255
 msgid "Select Path"
 msgstr "Επιλογή διαδρομής"
 
-#: ../tools/Settings.cs:272
+#: ../tools/Settings.cs:274
 msgid "The selected path is already selected for indexing and wasn't added."
 msgstr ""
 "Η επιλεγμένη διαδρομή έχει ήδη επιλεχθεί για καταλογοποίηση και δεν "
 "προστέθηκε"
 
-#: ../tools/Settings.cs:275
+#: ../tools/Settings.cs:277
 msgid ""
 "The selected path wasn't added. The list contains items that supercedes it "
 "and the data is already being indexed."
@@ -412,15 +688,15 @@ msgstr ""
 "Η επιλεγμένη διαδρομή δεν προστέθηκε. Η λίστα περιέχει αντικείμενο που "
 "υπερβαίνει τα δεδομένα που έχουν ήδη καταλογοποιηθεί."
 
-#: ../tools/Settings.cs:286 ../tools/Settings.cs:478
+#: ../tools/Settings.cs:288 ../tools/Settings.cs:480
 msgid "Path not added"
 msgstr "Η σελίδα δεν προστέθηκε"
 
-#: ../tools/Settings.cs:295
+#: ../tools/Settings.cs:297
 msgid "Remove obsolete paths"
 msgstr "Αφαίρεση ξεπερασμένων διαδρομών"
 
-#: ../tools/Settings.cs:296
+#: ../tools/Settings.cs:298
 msgid ""
 "Adding this path will obsolete some of the existing include paths. This will "
 "result in the removal of the old obsolete paths. Do you still wish to add it?"
@@ -429,11 +705,11 @@ msgstr ""
 "υπάρχουσες διαδρομές.Αυτό θα έχει ως αποτέλεσμα την απομάκρυνση παλιών "
 "ξεπερασμένων διαδρομών. Θέλετε να την προσθέσετε;"
 
-#: ../tools/Settings.cs:322
+#: ../tools/Settings.cs:324
 msgid "Remove path"
 msgstr "Αφαίρεση διαδρομής"
 
-#: ../tools/Settings.cs:323
+#: ../tools/Settings.cs:325
 msgid ""
 "Are you sure you wish to remove this path from the list of directories to be "
 "included for indexing?"
@@ -441,11 +717,11 @@ msgstr ""
 "Είστε σίγουροι ότι θέλετε να απομακρύνετε αυτή τη διαδρομή από τη λίστα των "
 "καταλόγων που θα συμπεριληφθούν για καταλογοποίηση;"
 
-#: ../tools/Settings.cs:352
+#: ../tools/Settings.cs:354
 msgid "Remove item"
 msgstr "Αφαίρεση αντικειμένου"
 
-#: ../tools/Settings.cs:353
+#: ../tools/Settings.cs:355
 msgid ""
 "Are you sure you wish to remove this item from the list of data to be "
 "excluded from indexing?"
@@ -453,77 +729,78 @@ msgstr ""
 "Είστε σίγουροι ότι θέλετε να απομακρύνετε αυτό το αντικείμενο από τη λίστα "
 "των δεδομένων που θα εξαιρεθούν από τη καταλογοποίηση;"
 
-#: ../tools/Settings.cs:396
+#: ../tools/Settings.cs:398
 msgid "Invalid host entry"
 msgstr "Μη έγκυρη καταχώριση συστήματος"
 
-#: ../tools/Settings.cs:403
+#: ../tools/Settings.cs:405
 msgid "Remote host already present in the list."
 msgstr "Το απομακρυσμένο σύστημα είναι ήδη στη λίστα."
 
-#: ../tools/Settings.cs:412
+#: ../tools/Settings.cs:414
 msgid "Netbeagle Node not added"
 msgstr "Δεν προστέθηκε Netbeagle Node"
 
-#: ../tools/Settings.cs:428
+#: ../tools/Settings.cs:430
 msgid "Remove host"
 msgstr "Απομάκρυνση συστήματος"
 
-#: ../tools/Settings.cs:429
+#: ../tools/Settings.cs:431
 msgid "Are you sure you wish to remove this host from the list?"
-msgstr "Είστε σίγουροι ότι θέλετε να απομακρύνετε αυτό το σύστημα από τη λίστα;"
+msgstr ""
+"Είστε σίγουροι ότι θέλετε να απομακρύνετε αυτό το σύστημα από τη λίστα;"
 
-#: ../tools/Settings.cs:450
+#: ../tools/Settings.cs:452
 msgid "Select path"
 msgstr "Επιλογή διαδρομής"
 
-#: ../tools/Settings.cs:469
+#: ../tools/Settings.cs:471
 msgid "The selected path is already configured for external access."
 msgstr "Η επιλεγμένη διαδρομή είναι ήδη ρυθμισμένη για εξωτερική πρόσβαση."
 
-#: ../tools/Settings.cs:493
+#: ../tools/Settings.cs:495
 msgid "Remove public path"
 msgstr "Αφαίρεση κοινόχρηστης διαδρομής"
 
-#: ../tools/Settings.cs:494
+#: ../tools/Settings.cs:496
 msgid ""
 "Are you sure you wish to remove this entry from the list of public paths?"
 msgstr ""
 "Είστε σίγουροι ότι θέλετε να απομακρύνετε αυτή την εγγραφή από τη λίστα "
 "κοινόχρηστων διαδρομών;"
 
-#: ../tools/Settings.cs:539 ../tools/Settings.cs:628 ../tools/Settings.cs:706
-#: ../tools/Settings.cs:782 ../tools/Settings.cs:1121
+#: ../tools/Settings.cs:541 ../tools/Settings.cs:630 ../tools/Settings.cs:708
+#: ../tools/Settings.cs:784 ../tools/Settings.cs:1123
 msgid "Name"
 msgstr "Όνομα"
 
-#: ../tools/Settings.cs:622 ../tools/settings.glade.h:32
+#: ../tools/Settings.cs:624 ../tools/settings.glade.h:33
 msgid "Type"
 msgstr "Τύπος"
 
-#: ../tools/Settings.cs:675 ../tools/Settings.cs:1055
-#: ../tools/settings.glade.h:24
+#: ../tools/Settings.cs:677 ../tools/Settings.cs:1057
+#: ../tools/settings.glade.h:25
 msgid "Path"
 msgstr "Διαδρομή"
 
-#: ../tools/Settings.cs:678 ../tools/Settings.cs:1065
+#: ../tools/Settings.cs:680 ../tools/Settings.cs:1067
 msgid "Pattern"
 msgstr "Μοτίβο"
 
-#: ../tools/Settings.cs:681 ../tools/Settings.cs:1060
+#: ../tools/Settings.cs:683 ../tools/Settings.cs:1062
 #: ../tools/settings.glade.h:22
 msgid "Mail Folder"
 msgstr "Φάκελος αλληλογραφίας"
 
-#: ../tools/Settings.cs:1029
+#: ../tools/Settings.cs:1031
 msgid "Select Folder"
 msgstr "Επιλογή φακέλου"
 
-#: ../tools/Settings.cs:1089
+#: ../tools/Settings.cs:1091
 msgid "Error adding path"
 msgstr "Σφάλμα προσθήκης διαδρομής"
 
-#: ../tools/Settings.cs:1090
+#: ../tools/Settings.cs:1092
 msgid ""
 "The specified path could not be found and therefore it could not be added to "
 "the list of resources excluded for indexing."
@@ -531,7 +808,7 @@ msgstr ""
 "Δεν βρέθηκε η καθορισμένη διαδρομή και έτσι δεν μπορεί να προστεθεί στη "
 "λίστατων πόρων που έχουν εξαιρεθεί από τη καταλογοποίηση."
 
-#: ../tools/Settings.cs:1120
+#: ../tools/Settings.cs:1122
 msgid "Show"
 msgstr "Εμφάνιση"
 
@@ -590,8 +867,8 @@ msgid ""
 "Adjust which types of results should be visible, and in what order they "
 "should be presented when grouped by type."
 msgstr ""
-"Προσρμογή των τύπων των αποτελεσμάτων που θα είναι ορατά και της σειράς "
-"με την οποία θα παρουσιάζονται  όταν θα ομαδοποιούνται κατά τύπο."
+"Προσρμογή των τύπων των αποτελεσμάτων που θα είναι ορατά και της σειράς με "
+"την οποία θα παρουσιάζονται  όταν θα ομαδοποιούνται κατά τύπο."
 
 #: ../tools/settings.glade.h:14
 msgid "Allow external access to local search services"
@@ -626,27 +903,33 @@ msgid "Indexing"
 msgstr "Καταλογοποίηση"
 
 #: ../tools/settings.glade.h:23
+msgid "Maximum number of results displayed "
+msgstr ""
+
+#: ../tools/settings.glade.h:24
 msgid "Networking"
 msgstr "Δικτύωση"
 
-#: ../tools/settings.glade.h:25
-msgid "Please select a resource you wish to exclude from indexing."
-msgstr "Παρακαλώ επιλέξτε ένα πόρο που θέλετε να εξαιρέσετε από τη καταλογοποίηση."
-
 #: ../tools/settings.glade.h:26
-msgid "Please select the mail folder you wish to exclude from indexing. "
-msgstr "Παρακαλώ επιλέξτε το φάκελο αλληλογραφίας που θέλετε να αποκλείσετε από τη "
-"καταλογοποίηση"
+msgid "Please select a resource you wish to exclude from indexing."
+msgstr ""
+"Παρακαλώ επιλέξτε ένα πόρο που θέλετε να εξαιρέσετε από τη καταλογοποίηση."
 
 #: ../tools/settings.glade.h:27
+msgid "Please select the mail folder you wish to exclude from indexing. "
+msgstr ""
+"Παρακαλώ επιλέξτε το φάκελο αλληλογραφίας που θέλετε να αποκλείσετε από τη "
+"καταλογοποίηση"
+
+#: ../tools/settings.glade.h:28
 msgid "Search"
 msgstr "Αναζήτηση"
 
-#: ../tools/settings.glade.h:28
+#: ../tools/settings.glade.h:29
 msgid "Search Preferences"
 msgstr "Προτιμήσεις αναζήτησης"
 
-#: ../tools/settings.glade.h:29
+#: ../tools/settings.glade.h:30
 msgid ""
 "Specify any resources, such as paths, patterns, mail folders or type of "
 "objects you wish to exclude from indexing."
@@ -655,13 +938,27 @@ msgstr ""
 "καταλογοποίηση. (όπως διαδρομές, μοτίβα, φακέλους αλληλογραφίας ή τύπους "
 "αντικειμένων)"
 
-#: ../tools/settings.glade.h:30
-msgid "Specify paths that should be available for external access"
-msgstr "Καθορίστε τις διαδρομές που θα είναι διαθέσιμες για εξωτερική πρόσβαση."
-
 #: ../tools/settings.glade.h:31
+msgid "Specify paths that should be available for external access"
+msgstr ""
+"Καθορίστε τις διαδρομές που θα είναι διαθέσιμες για εξωτερική πρόσβαση."
+
+#: ../tools/settings.glade.h:32
 msgid "Start search & indexing services automatically "
 msgstr "Έναρξη αναζήτησης και αυτόματη καταλογοποίηση υπηρεσιών"
+
+#: ../tools/beagle-settings.desktop.in.h:1
+msgid "Configure Desktop Search & Indexing"
+msgstr ""
+
+#: ../tools/beagle-settings.desktop.in.h:2
+msgid "Configure search & indexing properties"
+msgstr ""
+
+#: ../tools/beagle-settings.desktop.in.h:3
+#, fuzzy
+msgid "Search & Indexing"
+msgstr "Καταλογοποίηση"
 
 #: ../Util/Evolution.cs:45 ../Util/Evolution.cs:163
 msgid "On This Computer"
@@ -691,66 +988,71 @@ msgstr "Κατάλογος InterOperability"
 msgid "Unknown Directory"
 msgstr "Άγνωστος κατάλογος"
 
-#: ../Util/StringFu.cs:65
+#: ../Util/StringFu.cs:77
 msgid "Today"
 msgstr "Σήμερα"
 
-#: ../Util/StringFu.cs:67
+#: ../Util/StringFu.cs:79
 msgid "Yesterday"
 msgstr "Χθές"
 
-#: ../Util/StringFu.cs:69
+#. Translators: Example output: Aug 9
+#: ../Util/StringFu.cs:82
 msgid "MMM d"
 msgstr "MMM d"
 
-#: ../Util/StringFu.cs:71
+#. Translators: Example output: Aug 9, 2000
+#: ../Util/StringFu.cs:85
 msgid "MMM d, yyyy"
 msgstr "MMM d, yyyy"
 
-#: ../Util/StringFu.cs:73
+#. Translators: Example output: 11:05 AM  (note h = 12-hour time)
+#: ../Util/StringFu.cs:88
 msgid "h:mm tt"
 msgstr "h:mm tt"
 
 #. Translators: {0} is a date (e.g. 'Today' or 'Apr 23'), {1} is the time
-#: ../Util/StringFu.cs:79
+#: ../Util/StringFu.cs:94
 #, csharp-format
 msgid "{0}, {1}"
 msgstr "{0}, {1}"
 
 #. To translators: {0} is the time of the day, eg. 13:45
-#: ../Util/StringFu.cs:96
+#: ../Util/StringFu.cs:111
 #, csharp-format
 msgid "Today, {0}"
 msgstr "Σήμερα, {0}"
 
 #. To translators: {0} is the time of the day, eg. 13:45
-#: ../Util/StringFu.cs:99
+#: ../Util/StringFu.cs:114
 #, csharp-format
 msgid "Yesterday, {0}"
 msgstr "Χθες, {0}"
 
 #. To translators: {0} is the number of days that have passed, {1} is the time of the day, eg. 13:45
-#: ../Util/StringFu.cs:102
+#: ../Util/StringFu.cs:117
 #, csharp-format
 msgid "{0} days ago, {1}"
 msgstr "{0} ημέρες πριν, {1}"
 
-#: ../Util/StringFu.cs:106
+#. Translators: Example output: January 3, 3:45 PM
+#: ../Util/StringFu.cs:122
 msgid "MMMM d, h:mm tt"
 msgstr "MMMM d, h:mm tt"
 
-#: ../Util/StringFu.cs:110
+#. Translators: Example output: March 23 2001, 10:04 AM
+#: ../Util/StringFu.cs:127
 msgid "MMMM d yyyy, h:mm tt"
 msgstr "MMMM d yyyy, h:mm tt"
 
-#: ../Util/StringFu.cs:120
+#: ../Util/StringFu.cs:137
 #, csharp-format
 msgid "{0} hour"
 msgid_plural "{0} hours"
 msgstr[0] "{0} ώρα"
 msgstr[1] "{0} ώρες"
 
-#: ../Util/StringFu.cs:127
+#: ../Util/StringFu.cs:144
 #, csharp-format
 msgid "{0} minute"
 msgid_plural "{0} minutes"
@@ -758,20 +1060,131 @@ msgstr[0] "{0} λεπτό"
 msgstr[1] "{0} λεπτά"
 
 #. Translators: {0} is a file size in bytes
-#: ../Util/StringFu.cs:143
+#: ../Util/StringFu.cs:160
 #, csharp-format
 msgid "{0} bytes"
 msgstr "{0} bytes"
 
 #. Translators: {0} is a file size in kilobytes
-#: ../Util/StringFu.cs:147
+#: ../Util/StringFu.cs:164
 #, csharp-format
 msgid "{0:0.0} KB"
 msgstr "{0:0.0} KB"
 
 #. Translators: {0} is a file size in megabytes
-#: ../Util/StringFu.cs:150
+#: ../Util/StringFu.cs:167
 #, csharp-format
 msgid "{0:0.0} MB"
 msgstr "{0:0.0} MB"
 
+#~ msgid ""
+#~ "If you're wondering whether Best is working check your notification area "
+#~ "(system tray)"
+#~ msgstr ""
+#~ "Αν αναρωτιέστε αν το Best δουλέυει, κοιτάξτε την περιοχή ειδοποίησης σας"
+#~ "(system tray)"
+
+#~ msgid ""
+#~ "You are about to close the search tray. The search tray is automatically "
+#~ "started at login-time. Would you like to disable it for future sessions?"
+#~ msgstr ""
+#~ "Πρόκειται να κλείσετε τη μπάρα αναζήτησης. Η μπάρα αναζήτησης ξεκινάει "
+#~ "αυτόματα κατά την είσοδο σας στο σύστημα. Θέλετε να την απενεργοποιήσετε "
+#~ "και για μελλοντικές συνεδρίες;"
+
+#~ msgid "in Files"
+#~ msgstr "σε αρχεία"
+
+#~ msgid "in Addressbook"
+#~ msgstr "σε ευρετήριο διευθύνσεων"
+
+#~ msgid "in Web Pages"
+#~ msgstr "σε ιστοσελίδες"
+
+#~ msgid "in Chats"
+#~ msgstr "σε chats"
+
+#~ msgid "Show More Results"
+#~ msgstr "Εμφάνιση περισσότερων αποτελεσμάτων"
+
+#~ msgid "Show Previous Results"
+#~ msgstr "Εμφάνιση προηγούμενων αποτελεσμάτων"
+
+#~ msgid "Best <b>{0} results of {1}</b> are shown."
+#~ msgstr "Εμφανίζονται τα καλύτερα <b>{0} αποτελέσματα από {1}</b> are shown."
+
+#~ msgid "Results <b>{0} through {1} of {2}</b> are shown."
+#~ msgstr "Αποτελέσματα<b>{0} του {1} από {2}</b> εμφανίζονται."
+
+#~ msgid ""
+#~ "The query for <i>{0}</i> failed.<br>The likely cause is that the beagle "
+#~ "daemon isn't running."
+#~ msgstr ""
+#~ "Η αναζήτηση για <i>{0}</i> απέτυχε.<br>. Ο πιό πιθανός λόγος είναι ότι ο "
+#~ "beagle daemon δεν εκτελείται."
+
+#~ msgid "The query for <i>{0}</i> failed with error:<br>{1}<br>"
+#~ msgstr "Η αναζήτηση για <i>{0}</i> απέτυχε με σφάλμα:<br>{1}<br>"
+
+#~ msgid "Words:"
+#~ msgstr "Λέξεις:"
+
+#~ msgid "Send IM"
+#~ msgstr "Αποστολή IM"
+
+#~ msgid "Conversation in {0}"
+#~ msgstr "Συζήτηση σε {0}"
+
+#~ msgid "Conversation with {0}"
+#~ msgstr "Συζήτηση με {0}"
+
+#~ msgid "To"
+#~ msgstr "Προς"
+
+#~ msgid "Sent"
+#~ msgstr "Απεσταλμένα"
+
+#~ msgid "Weblog:"
+#~ msgstr "Ιστολόγιο:"
+
+#~ msgid "by"
+#~ msgstr "από"
+
+#~ msgid "Published:"
+#~ msgstr "Δημοσιεύθηκε:"
+
+#~ msgid "in folder"
+#~ msgstr "σε φάκελο"
+
+#~ msgid "Last modified"
+#~ msgstr "Τελευταία τροποποίηση"
+
+#~ msgid "Send to..."
+#~ msgstr "Αποστολή σε..."
+
+#~ msgid "Email subject:"
+#~ msgstr "Θέμα Email:"
+
+#~ msgid "Track"
+#~ msgstr "Κομμάτι"
+
+#~ msgid "from"
+#~ msgstr "από"
+
+#~ msgid "Enqueue"
+#~ msgstr "Enqueue"
+
+#~ msgid "Tags:"
+#~ msgstr "Tags:"
+
+#~ msgid "Description:"
+#~ msgstr "Περιγραφή:"
+
+#~ msgid "Slides:"
+#~ msgstr "Διαφάνειες:"
+
+#~ msgid "from Networked Beagle on host"
+#~ msgstr "από δικτυωμένο Beagle στο σύστημα"
+
+#~ msgid "Search Networked Beagle"
+#~ msgstr "Αναζήτηση δικτυωμένου Beagle"
