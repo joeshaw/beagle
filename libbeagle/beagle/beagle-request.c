@@ -286,12 +286,6 @@ request_io_cb (GIOChannel *channel, GIOCondition condition, gpointer user_data)
 	int start, to_parse;
 	BeagleResponse *response;
 
-	if (condition & G_IO_HUP ||
-	    condition & G_IO_ERR) {
-		request_close (BEAGLE_REQUEST (user_data));
-		return TRUE;
-	}
-
 	if (condition & G_IO_IN) {
 		do {	
 			GError *error = NULL;
@@ -352,6 +346,11 @@ request_io_cb (GIOChannel *channel, GIOCondition condition, gpointer user_data)
 				}
 			}
 		} while (bytes_read == 4096 || status == G_IO_STATUS_AGAIN);
+	}
+
+	if (condition & G_IO_HUP ||
+	    condition & G_IO_ERR) {
+		request_close (BEAGLE_REQUEST (user_data));
 	}
 
 	return TRUE;
