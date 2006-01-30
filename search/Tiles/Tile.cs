@@ -226,7 +226,9 @@ namespace Search.Tiles {
 			// FIXME: hacky, fix the snippeting in the daemon
 			string snippet = GLib.Markup.EscapeText (((SnippetResponse)response).Snippet);
 			snippet = Regex.Replace (snippet, "&lt;font color=&quot;.*?&quot;&gt;&lt;b&gt;(.*?)&lt;/b&gt;&lt;/font&gt;", "<b>$1</b>");
-			GotSnippet (snippet, true);
+
+			if (snippet != null && snippet != "")
+				GotSnippet (snippet, true);
 		}
 
 		protected virtual void GotSnippet (string snippet, bool found)
