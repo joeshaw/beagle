@@ -189,7 +189,7 @@ install-data-local: $(ALL_TARGETS)
 	$(mkinstalldirs) $(DESTDIR)$(pkglibdir)
 	$(INSTALL_DATA) $(UTIL_TARGET) $(UTIL_TARGET_CONFIG) $(DESTDIR)$(pkglibdir)
 if ENABLE_GUI
-	$(INSTALL_DATA) $(UI_UTIL_TARGET) $(UI_UTIL_TARGET_CONFIG) $(DESTDIR)$(pkglibdir)
+	$(INSTALL_DATA) $(UI_UTIL_TARGET) $(srcdir)/$(UI_UTIL_TARGET_CONFIG) $(DESTDIR)$(pkglibdir)
 endif
 
 uninstall-local:
@@ -207,6 +207,7 @@ EXTRA_DIST =			\
 	$(UTIL_CSFILES)		\
 	$(UI_UTIL_CSFILES)	\
 	$(COND_CS_FILES)	\
+	UiUtil.dll.config	\
 	Util.dll.config.in	\
 	inotify-test
 
