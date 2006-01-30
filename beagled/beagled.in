@@ -120,4 +120,5 @@ sleep 0.5
 
 if ! ps -p $! > /dev/null; then
     echo "Beagle Daemon exited with errors.  See ~/.beagle/Log/current-Beagle for more details."
+    exit 1
 fi
