@@ -603,7 +603,6 @@ libbeagle/docs/Makefile
 libbeagle/docs/reference/Makefile
 epiphany-extension/Makefile
 mozilla-extension/Makefile
-searchomatic/Makefile
 bludgeon/Makefile
 wrappers/Makefile
 wrappers/python/Makefile
