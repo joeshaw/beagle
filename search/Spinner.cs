@@ -39,12 +39,15 @@ namespace Search {
         	{
 			int iconSize = targetSize;
 
+#if false
+			// This code requires gtk-sharp 2.6, which we don't (yet) require
 			foreach (int size in theme.GetIconSizes ("gnome-spinner-rest")) {
 				if (size >= targetSize) {
 					iconSize = size;
 					break;
 				}
 			}
+#endif
 
 			idlePixbuf = theme.LoadIcon ("gnome-spinner-rest", iconSize, 0);
 			if (idlePixbuf == null) {
