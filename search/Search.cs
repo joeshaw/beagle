@@ -129,10 +129,10 @@ namespace Search {
 			uim.ShowQuickTips += OnShowQuickTips;
 			vbox.PackStart (uim.MenuBar, false, false, 0);
 			
-			HBox hbox = new HBox (false, 0);
+			HBox hbox = new HBox (false, 6);
 
 			Label label = new Label ("_Find:");
-			hbox.PackStart (label, false, false, 6);
+			hbox.PackStart (label, false, false, 0);
 			
 			entry = new Entry ();
 			label.MnemonicWidget = entry;

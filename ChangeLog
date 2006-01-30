@@ -1,3 +1,27 @@
+2006-01-30  Dan Winship  <danw@novell.com>
+
+	* search/Tiles/Tile.cs: make the tile AppPaintable, so that the
+	theme engine doesn't get a chance to try to draw a pixmap in the
+	background, etc.
+
+	* search/Panes.cs: redo the drawing hacks; put an AppPaintable
+	EventBox into both panes and manually paint the base color. Don't
+	tweak the children's theming.
+
+	* search/Pages/Base.cs: move the ModifyBg to OnRealized, or you
+	get the wrong colors in some themes.
+
+	* search/Search.cs: fix a padding problem that is more noticeable
+	in other themes.
+
+	* images/quick-tips.png: 
+	* images/tip-arrow.png: replace with alphaed versions for themes
+	where the base color isn't white.
+
+	Tested with like a zillion different themes, including gtk-qt
+	(fixing #327947), Crux (fixing a problem Lukas noticed), and the
+	various a11y themes.
+
 2006-01-30  Lukas Lipka  <lukas@pmad.net>
 
 	* search/Tiles/Tile.cs: Don't break on zero-length snippets.

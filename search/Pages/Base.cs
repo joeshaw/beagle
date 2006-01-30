@@ -20,7 +20,6 @@ namespace Search.Pages {
 		public Base ()
 		{
 			HasWindow = true;
-			ModifyBg (Gtk.StateType.Normal, Style.Base (Gtk.StateType.Normal));
 
 			table = new Gtk.Table (1, 2, false);
 			table.RowSpacing = table.ColumnSpacing = 12;
@@ -40,6 +39,12 @@ namespace Search.Pages {
 
 			table.ShowAll ();
 			Add (table);
+		}
+
+		protected override void OnRealized ()
+		{
+			base.OnRealized ();
+			ModifyBg (Gtk.StateType.Normal, Style.Base (Gtk.StateType.Normal));
 		}
 
 		public Gdk.Pixbuf HeaderIcon {

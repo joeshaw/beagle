@@ -15,8 +15,8 @@ namespace Search.Tiles {
 
 		public Tile (Hit hit, Query query) : base ()
 		{
-			ModifyBg (Gtk.StateType.Normal, Style.Base (Gtk.StateType.Normal));
 			AboveChild = true;
+			AppPaintable = true;
 			CanFocus = true;
 
 			this.hit = hit;
@@ -125,10 +125,17 @@ namespace Search.Tiles {
 
 		protected override bool OnExposeEvent (Gdk.EventExpose evt)
 		{
+			if (!IsDrawable)
+				return false;
+
+			GdkWindow.DrawRectangle (Style.BaseGC (State), true,
+						 evt.Area.X, evt.Area.Y,
+						 evt.Area.Width, evt.Area.Height);
+
 			if (base.OnExposeEvent (evt))
 				return true;
 
-			if (IsDrawable && HasFocus) {
+			if (HasFocus) {
 				Gdk.Rectangle alloc = Allocation;
 				int focusPad = (int)StyleGetProperty ("focus-padding");
 
@@ -137,7 +144,7 @@ namespace Search.Tiles {
 				int width = alloc.Width - 2 * (focusPad + Style.Xthickness);
 				int height = alloc.Height - 2 * (focusPad + Style.Ythickness);
 				Style.PaintFocus (Style, GdkWindow, State, evt.Area, this,
-						  "button", x, y, width, height);
+						  null, x, y, width, height);
 			}
 
 			return false;
