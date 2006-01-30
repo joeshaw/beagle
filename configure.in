@@ -290,6 +290,7 @@ AC_SUBST(EXIF_SOVERSION)
 
 PKG_CHECK_MODULES(BEAGLED,
 [
+	shared-mime-info
 	gmime-sharp >= $GMIME_SHARP_REQUIRED
 	gtk-sharp-2.0 >= $GTK_SHARP_REQUIRED
 ])
