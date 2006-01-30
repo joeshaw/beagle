@@ -1,4 +1,78 @@
 
+Version 0.2.1
+January 30, 2006
+
+Daemon/Infrastructure:
+* Split the UI elements from the non-UI elements.  (D Bera, Joe Shaw)
+* Reenable Sqlite 3 support, but only if you have 3.3.1 or
+  newer.  (Joe)
+* Purge Sqlite databases if the major versions mismatch.  (Joe)
+* Fix an unlikely exception when shutting the daemon down in the
+  middle of its startup process.  (Joe)
+* Don't create a user text cache if we dealing only with static
+  querables.  (Bera)
+* Make the text cache only readable by the user.  (Joe)
+* Remove the non-working non-inotify file system watcher.  (Joe)
+* Add Hangul support to Lucene.  (dittos@gmail.com, Young-Ho Cha)
+* Use locale-independent lower casing in the Sqlite code; fixes a
+  problem particularly with Turkish.  (Joe)
+
+Backends:
+* Rename the Evolution mail backend from "Mail" to
+  "EvolutionMail". (Joe)
+* Move the Evolution mail backend into an external assembly with the
+  Evolution Data Server backend.  (Joe)
+* Filter out certain files when walking Evolution IMAP directories,
+  reducing time and memory usage.  (Joe)
+* Decode the subject on Evolution IMAP messages.  (Joe)
+* Store flags as mutable properties in the Evolution mail index,
+  speeding up reindexing mail.
+* Fix the Konqueror backend to correctly report current indexing
+  status.  (Bera)
+
+Filters:
+* Add a filter for TIFF files.  (Larry Ewing)
+
+UI/Tools:
+* Fix sorting to work during live queries.  (Lukas Lipka)
+* Fix a crash when old queries had updated after the user had started
+  a new one.  (Lukas, Joe)
+* Fix the image tile to still work even if an image file lacks an
+  extension.  (Lukas)
+* Don't display a "..." snippet while loading IM snippets.  (Lukas)
+* Fix a bug where markup was being displayed in some tile snippets
+  instead of correctly bolding the text.  (Lukas)
+* Fix a bug where we weren't caching the snippet for IM tiles. (Lukas)
+* Fix the background color on the viewport in the main pane.  (Dan Winship)
+* Specify full library names in the tray icon so we don't depend on
+  devel packages.  (Dan)
+* Many 64 bit fixes to the notification area icon.  (Dan)
+* Remove a bunch of unused images from the image assembly.  (Joe)
+* Remove the accidentally used GPL spinner code from Epiphany and
+  replace it with a managed, MIT-licensed replacement.  (Dan)
+* Fix the beagle-search desktop file to have the right icon.  (Joe)
+* Install the icon into the system pixmaps directory.  (Joe)
+* Update the IM log viewer to use the new icon.  (Joe)
+* Add some warning text to beagle-build-index about the target
+  path.  (Joe)
+
+Translations:
+* Added Traditional Chinese (Hong Kong) translation.  (Chao-Hsiung Liao)
+* Updated Traditional Chinese (Taiwan) translation.  (Chao-Hsiung Liao)
+* Updated German translation.  (Hendrik Brandt)
+* Updated Dutch translation.  (Tino Meinen)
+* Updated Finnish translation.  (Ilkka Tuohela)
+* Updated Catalan translation.  (Jordi Mas i Hernandez)
+* Updated Danish translation.  (Lasse Bang Mikkelsen)
+* Updated Canadian English translation.  (Adam Weinberger)
+* Updated Hungarian translation.  (Gabor Kelemen)
+* Updated Greek translation.  (Nikos Charonitakis)
+
+Everything Else:
+* Add shared-mime-info as a required dependency.  (Joe)
+
+------------------------------------------------------
+
 Version 0.2.0
 January 20, 2006
 
