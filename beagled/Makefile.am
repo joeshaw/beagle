@@ -1,10 +1,15 @@
 
-# Warnings we don't want to see
-# 0067 = event defined but not used
-# 0169 = The private method/field 'foo' is never used
+# Warnings we don't want to see.
+# Most of these are thanks to DotLucene.  It would be nice if we could use
+# "#pragma warning" on these.
+#
+# 0162 = Unreachable code detected
 # 0164 = This label has not been referenced
+# 0169 = The private method/field 'foo' is never used
+# 0219 = Variable is assigned but never used
+# 0436 = Ignore imported type (local SqliteClient)
 
-CSC = mcs -debug -nowarn:0067,0619,0169,0164
+CSC = mcs -debug -nowarn:0162,0164,0169,0219,0436
 
 BACKENDDIR = $(pkglibdir)/Backends
 

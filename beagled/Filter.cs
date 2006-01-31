@@ -218,7 +218,6 @@ namespace Beagle.Daemon {
 		public void AppendText (string str, string strHot)
 		{
 			if (!IsFrozen && str != null && str != "") {
-				int i = 0;
 				string[] lines;
 
 				// Avoid unnecessary allocation of a string

@@ -1,8 +1,8 @@
 using System;
 using System.Diagnostics;
-using Mono.Posix;
+using Mono.Unix;
 
-using BU = Beagle.Util;
+using Beagle.Util;
 
 namespace Search.Tiles {
 
@@ -34,7 +34,7 @@ namespace Search.Tiles {
 			if (Hit ["fixme:width"] != null && Hit ["fixme:width"] != "")
 				Description += String.Format (" {0}x{1}", Hit ["fixme:width"], Hit ["fixme:height"]);
 
-			Description += String.Format (" ({0})", BU.StringFu.FileLengthToString (Hit.FileInfo.Length));
+			Description += String.Format (" ({0})", StringFu.FileLengthToString (Hit.FileInfo.Length));
 
 			AddAction (new TileAction (Catalog.GetString ("Add to Library"), Gtk.Stock.Add, AddToLibrary));
 			AddAction (new TileAction (Catalog.GetString ("Set as Wallpaper"), SetAsWallpaper)); // FIXME: This is not in the spec, is it ok?

@@ -1,6 +1,6 @@
 using System;
 using System.Diagnostics;
-using Mono.Posix;
+using Mono.Unix;
 using Gtk;
 
 namespace Search.Pages {

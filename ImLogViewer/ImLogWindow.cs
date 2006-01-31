@@ -236,8 +236,6 @@ namespace ImLogViewer {
 			if (list.Count == 0)
 				return;
 
-			ImLog selected_log = GetSelectedLog ();
-
 			TreeIter parent = TreeIter.Zero;
 
 			foreach (ImLog log in list) {
@@ -345,7 +343,6 @@ namespace ImLogViewer {
 
 			TextTag bold = buffer.TagTable.Lookup ("bold");
 
-			TextIter start = buffer.StartIter;
 			TextIter end = buffer.EndIter;
 
  			foreach (ImLog.Utterance utt in im_log.Utterances) {

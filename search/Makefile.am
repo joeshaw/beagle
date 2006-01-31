@@ -1,4 +1,4 @@
-CSC = mcs -debug -nowarn:0618
+CSC = mcs -debug
 CSFLAGS = -target:exe
 
 bin_SCRIPTS = beagle-search

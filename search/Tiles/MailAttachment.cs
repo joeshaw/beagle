@@ -1,8 +1,6 @@
 using System;
 using System.Diagnostics;
-using Mono.Posix;
-
-using BU = Beagle.Util;
+using Mono.Unix;
 
 namespace Search.Tiles {
 

@@ -1,8 +1,5 @@
 
-# Warnings we don't want to see
-# 0067 = event defined but not used
-
-CSC = mcs -debug -nowarn:0067
+CSC = mcs -debug
 
 TARGET = Beagle.dll
 

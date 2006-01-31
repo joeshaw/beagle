@@ -98,10 +98,12 @@ namespace Beagle.Daemon.EvolutionDataServerQueryable {
 			foreach (CalComponent cc in changed)
 				AddCalComponent (cc);
 
+#if false
+			// FIXME: Broken in e-d-s right now
 			foreach (string id in removed) {
-				// FIXME: Broken in e-d-s right now
-				//RemoveCalComponent (id);
+				RemoveCalComponent (id);
 			}
+#endif
 		}
 
 		public override void Remove ()
