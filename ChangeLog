@@ -1,3 +1,10 @@
+2006-01-31  Christopher Aillon  <caillon@redhat.com>
+
+	* configure.in: We require sqlite >= 3.3.1 but unfortunately,
+	the upstream sqlite3.pc file only reports version 3.3 for all
+	releases in the 3.3 line; so modify the pkg-config check
+	accordingly.
+
 2006-01-30  Dan Winship  <danw@novell.com>
 
 	* search/Tiles/Tile.cs: make the tile AppPaintable, so that the
