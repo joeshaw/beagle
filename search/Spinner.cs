@@ -49,16 +49,19 @@ namespace Search {
 			}
 #endif
 
-			idlePixbuf = theme.LoadIcon ("gnome-spinner-rest", iconSize, 0);
-			if (idlePixbuf == null) {
-				Console.Error.WriteLine ("Could not load idle spinner image");
+			try {
+				idlePixbuf = theme.LoadIcon ("gnome-spinner-rest", iconSize, 0);
+			} catch {
+				Console.Error.WriteLine ("Could not load spinner image");
 				frames = null;
 				Pixbuf = null;
 				return;
 			}
 
-			Gdk.Pixbuf framesPixbuf = theme.LoadIcon ("gnome-spinner", iconSize, 0);
-			if (framesPixbuf == null) {
+			Gdk.Pixbuf framesPixbuf;
+			try {
+				framesPixbuf = theme.LoadIcon ("gnome-spinner", iconSize, 0);
+			} catch {
 				Console.Error.WriteLine ("Could not load spinner image");
 				frames = null;
 				Pixbuf = idlePixbuf;
