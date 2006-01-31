@@ -140,6 +140,8 @@ if ENABLE_GUI
 TARGETS += $(SETTINGS_TARGET)
 endif
 
+TARGETS_MDB = $(TARGETS:%=%.mdb)
+
 WRAPPERS = 				\
 	$(INFO_WRAPPER)			\
 	$(SHUTDOWN_WRAPPER)		\
@@ -176,7 +178,7 @@ all: $(TARGETS) $(WRAPPERS)
 
 install-data-local: $(TARGETS)
 	$(mkinstalldirs) $(DESTDIR)$(pkglibdir)
-	$(INSTALL_DATA) $(TARGETS) $(DESTDIR)$(pkglibdir)
+	$(INSTALL_DATA) $(TARGETS) $(TARGETS_MDB) $(DESTDIR)$(pkglibdir)
 
 uninstall-local:
 	cd $(DESTDIR)$(pkglibdir) && rm -f $(TARGETS)
@@ -203,7 +205,7 @@ EXTRA_DIST =				\
 
 CLEANFILES = 				\
 	$(TARGETS)			\
-	$(TARGETS:%=%.mdb)		\
+	$(TARGETS_MDB)			\
 	$(WRAPPERS)			\
 	$(CRAWL_WRAPPER)		\
 	$(CRAWL_WRAPPER_CRONTAB)	\

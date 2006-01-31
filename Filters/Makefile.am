@@ -98,7 +98,7 @@ all: $(TARGET)
 
 install-data-local: $(TARGET)
 	$(mkinstalldirs) $(DESTDIR)$(FILTERDIR)
-	$(INSTALL_DATA) $(TARGET) $(DESTDIR)$(FILTERDIR)/$(TARGET)
+	$(INSTALL_DATA) $(TARGET) $(TARGET).mdb $(DESTDIR)$(FILTERDIR)
 
 uninstall-local:
 	rm -f $(DESTDIR)$(FILTERDIR)/$(TARGET)

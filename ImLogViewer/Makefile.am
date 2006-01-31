@@ -33,7 +33,7 @@ all: $(TARGET)
 
 install-data-local: $(TARGET)
 	$(mkinstalldirs) $(DESTDIR)$(pkglibdir)
-	$(INSTALL_DATA) $(TARGET) $(DESTDIR)$(pkglibdir)/$(TARGET)
+	$(INSTALL_DATA) $(TARGET) $(TARGET).mdb $(DESTDIR)$(pkglibdir)
 
 uninstall-local:
 	rm -f $(DESTDIR)$(pkglibdir)/$(TARGET)

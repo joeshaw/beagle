@@ -2,7 +2,7 @@ CSC = mcs -debug -nowarn:0618
 CSFLAGS = -target:exe
 
 bin_SCRIPTS = beagle-search
-pkglib_DATA = Search.exe
+pkglib_DATA = Search.exe Search.exe.mdb
 
 beagle-search: beagle-search.in
 	sed -e "s:@PKGLIBDIR@:${pkglibdir}:" < $(srcdir)/beagle-search.in > beagle-search

@@ -55,10 +55,10 @@ all: $(TARGET)
 
 install-data-local: $(TARGET)
 	$(mkinstalldirs) $(DESTDIR)$(pkglibdir)
-	$(INSTALL_DATA) $(TARGET) $(DESTDIR)$(pkglibdir)/$(TARGET)
+	$(INSTALL_DATA) $(TARGET) $(TARGET).mdb $(DESTDIR)$(pkglibdir)
 
 uninstall-local:
-	rm -f $(DESTDIR)$(pkglibdir)/$(TARGET)
+	rm -f $(DESTDIR)$(pkglibdir)/$(TARGET) $(DESTDIR)$(pkglibdir)/$(TARGET).mdb
 
 otherpixmapsdir = $(datadir)/pixmaps
 otherpixmaps_DATA =	\
