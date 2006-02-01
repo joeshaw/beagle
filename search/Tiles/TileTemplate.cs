@@ -42,12 +42,11 @@ namespace Search.Tiles {
 			//RequestSnippet ();
 		}
 
-		private string title;
-		public string Title {
-			get { return title; }
+		public override string Title {
+			get { return base.Title; }
 			set {
-				title = value;
-				title_label.Markup = "<span weight=\"bold\">" + GLib.Markup.EscapeText (title) + "</span>";
+				base.Title = value;
+				title_label.Markup = "<span weight=\"bold\">" + GLib.Markup.EscapeText (value) + "</span>";
 			}
 		}
 

@@ -67,8 +67,11 @@ namespace Search.Tiles {
 			WidgetFu.EllipsizeLabel (from, 20);
 			HBox.PackStart (from, false, false, 3);
 
-			date = WidgetFu.NewLabel (Utils.NiceShortDate (hit.GetFirstProperty ("fixme:starttime")));
-			HBox.PackStart (date, false, false, 3);
+			try {
+				Timestamp = Utils.ParseTimestamp (hit.GetFirstProperty ("fixme:starttime"));
+				date = WidgetFu.NewLabel (Utils.NiceShortDate (Timestamp));
+				HBox.PackStart (date, false, false, 3);
+			} catch {}
 
 			HBox.ShowAll ();
 		}

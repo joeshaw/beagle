@@ -72,6 +72,8 @@ namespace Search {
 				return columns;
 			}
 			set {
+				HideTiles ();
+
 				if (page > 0) {
 					// Adjust page so that the first visible tile
 					// remains visible
@@ -87,7 +89,7 @@ namespace Search {
 				SetButtonLabel (next, String.Format (Catalog.GetPluralString ("Next {0}", "Next {0}", many), many));
 
 				UpdateButtons ();
-				UpdateTileVisibility ();
+				ShowTiles ();
 				QueueResize ();
 			}
 		}
@@ -133,35 +135,34 @@ namespace Search {
 		protected override void OnAdded (Gtk.Widget widget)
 		{
 			widget.ChildVisible = false;
+			HideTiles ();
 			tiles.Add ((Tiles.Tile)widget);
 			widget.Parent = this;
+			ShowTiles ();
 
 			UpdateButtons ();
-			UpdateTileVisibility ();
 		}
 
 		protected override void OnRemoved (Gtk.Widget widget)
 		{
 			tiles.Remove ((Tiles.Tile)widget);
 			widget.Unparent ();
+			ShowTiles ();
 
 			UpdateButtons ();
-			UpdateTileVisibility ();
 		}
 
-		void UpdateTileVisibility ()
+		void HideTiles ()
 		{
-			int first = FirstVisible, last = LastVisible, i;
+			foreach (Widget tile in VisibleTiles)
+				tile.ChildVisible = false;
+			QueueResize ();
+		}
 
-			for (i = first - 1; i > 0 && tiles[i].ChildVisible; i--)
-				tiles[i].ChildVisible = false;
-
-			for (i = first; i <= last; i++)
-				tiles[i].ChildVisible = true;
-
-			for (i = last + 1; i < tiles.Count && tiles[i].ChildVisible; i++)
-				tiles[i].ChildVisible = false;
-
+		void ShowTiles ()
+		{
+			foreach (Widget tile in VisibleTiles)
+				tile.ChildVisible = true;
 			QueueResize ();
 		}
 
@@ -180,49 +181,42 @@ namespace Search {
 			next.Show ();
 			next.Sensitive = (tiles.Count > many);
 
-			UpdateTileVisibility ();
+			ShowTiles ();
 		}
 
 		void OnFewer (object obj, EventArgs args)
 		{
-			// UpdateTileVisibility won't DTRT in this case
-			foreach (Widget tile in VisibleTiles)
-				tile.ChildVisible = false;
+			HideTiles ();
 
 			fewer.Hide ();
 			next.Hide ();
 			prev.Hide ();
 			more.Show ();
 			page = 0;
-			UpdateTileVisibility ();
+
+			ShowTiles ();
 		}
 
 		void OnPrev (object obj, EventArgs args)
 		{
-			foreach (Gtk.Widget w in VisibleTiles)
-				w.ChildVisible = false;
+			HideTiles ();
 			page--;
-			foreach (Gtk.Widget w in VisibleTiles)
-				w.ChildVisible = true;
+			ShowTiles ();
 
 			if (page == 0)
 				prev.Sensitive = false;
 			next.Sensitive = true;
-			UpdateTileVisibility ();
 		}
 
 		void OnNext (object obj, EventArgs args)
 		{
-			foreach (Gtk.Widget w in VisibleTiles)
-				w.ChildVisible = false;
+			HideTiles ();
 			page++;
-			foreach (Gtk.Widget w in VisibleTiles)
-				w.ChildVisible = true;
+			ShowTiles ();
 
 			if (many * (page + 1) >= tiles.Count)
 				next.Sensitive = false;
 			prev.Sensitive = true;
-			UpdateTileVisibility ();
 		}
 
 		protected int PageSize {
@@ -313,8 +307,9 @@ namespace Search {
 
 		public Search.SortType Sort {
 			set {
+				HideTiles ();
 				tiles.Sort = value;
-				UpdateTileVisibility ();
+				ShowTiles ();
 			}
 		}
 

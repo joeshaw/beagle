@@ -8,8 +8,7 @@ namespace Search.Tiles {
 
 		public MailMessageActivator () : base ()
 		{
-			AddSupportedFlavor (new HitFlavor (null, "MailMessage", null));
-			AddSupportedFlavor (new HitFlavor (null, "File", "message/rfc822"));
+			AddSupportedFlavor (new HitFlavor (null, null, "message/rfc822"));
 		}
 
 		public override Tile BuildTile (Beagle.Hit hit, Beagle.Query query)
@@ -28,7 +27,8 @@ namespace Search.Tiles {
 
 			Icon = GetIcon (Hit, 16);
 
-			subject = WidgetFu.NewLabel (hit.GetFirstProperty ("dc:title"));
+			Title = hit.GetFirstProperty ("dc:title");
+			subject = WidgetFu.NewLabel (Title);
 			WidgetFu.EllipsizeLabel (subject);
 			HBox.PackStart (subject, true, true, 3);
 
@@ -37,8 +37,11 @@ namespace Search.Tiles {
 			WidgetFu.EllipsizeLabel (from, 20);
 			HBox.PackStart (from, false, false, 3);
 
-			date = WidgetFu.NewLabel (Utils.NiceShortDate (hit.GetFirstProperty ("fixme:date")));
-			HBox.PackStart (date, false, false, 3);
+			try {
+				Timestamp = Utils.ParseTimestamp (hit.GetFirstProperty ("fixme:date"));
+				date = WidgetFu.NewLabel (Utils.NiceShortDate (Timestamp));
+				HBox.PackStart (date, false, false, 3);
+			} catch {}
 
 			HBox.ShowAll ();
 

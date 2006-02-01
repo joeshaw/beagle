@@ -20,6 +20,8 @@ namespace Search.Tiles {
 			CanFocus = true;
 
 			this.hit = hit;
+			this.timestamp = hit.Timestamp;
+			this.score = hit.Score;
 			this.query = query;
 			this.group = TileGroup.Documents;
 
@@ -65,6 +67,24 @@ namespace Search.Tiles {
 				image.Pixbuf = value;
 				UpdateIcon ();
 			}
+		}
+
+		private string title;
+		public virtual string Title {
+			get { return title; }
+			set { title = value; }
+		}
+
+		private DateTime timestamp;
+		public virtual DateTime Timestamp {
+			get { return timestamp; }
+			set { timestamp = value; }
+		}
+
+		private double score;
+		public virtual double Score {
+			get { return score; }
+			set { score = value; }
 		}
 
 		static Gtk.TargetEntry[] targets = new Gtk.TargetEntry[] {

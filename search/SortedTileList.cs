@@ -106,7 +106,7 @@ namespace Search {
 		}
 	}
 
-	abstract class HitComparer : IComparer {
+	abstract class TileComparer : IComparer {
 		public int Compare (object x, object y)
 		{
 			Tiles.Tile tx = (Tiles.Tile)x, ty = (Tiles.Tile)y;
@@ -123,30 +123,24 @@ namespace Search {
 		public abstract int Compare (Tiles.Tile tx, Tiles.Tile ty);
 	}
 
-	class RelevanceComparer : HitComparer {
+	class RelevanceComparer : TileComparer {
 		public override int Compare (Tiles.Tile tx, Tiles.Tile ty)
 		{
-			return -tx.Hit.Score.CompareTo (ty.Hit.Score);
+			return -tx.Score.CompareTo (ty.Score);
 		}
 	}
 
-	class NameComparer : HitComparer {
+	class NameComparer : TileComparer {
 		public override int Compare (Tiles.Tile tx, Tiles.Tile ty)
 		{
-			// FIXME: This comparing only works on tiles derived from TileTemplate
-			Tiles.TileTemplate tsx = tx as Tiles.TileTemplate, tsy = ty as Tiles.TileTemplate;
-
-			if (tsx != null && tsy != null)
-				return String.Compare (tsx.Title, tsy.Title, true);
-
-			return 0;
+			return String.Compare (tx.Title, ty.Title, true);
 		}
 	}
 
-	class DateComparer : HitComparer {
+	class DateComparer : TileComparer {
 		public override int Compare (Tiles.Tile tx, Tiles.Tile ty)
 		{
-			return -tx.Hit.Timestamp.CompareTo (ty.Hit.Timestamp);
+			return -tx.Timestamp.CompareTo (ty.Timestamp);
 		}
 	}
 }

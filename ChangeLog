@@ -1,6 +1,23 @@
 2006-02-01  Dan Winship  <danw@novell.com>
 
-	* search/Category.cs: 
+	* search/Tiles/MailMessage.cs (MailMessageActivator): only accept
+	message/rfc822 hits (so we don't get the individual subparts of
+	multipart/alternative messages #328497).
+
+	* search/Tiles/Tile.cs: add Title, Timestamp, and Score properties
+	for use by SortedTileList.
+
+	* search/Tiles/*.cs: set Title and Timestamp appropriately to
+	match the info displayed on the tile
+
+	* search/SortedTileList.cs: change "HitComparer" to
+	"TileComparer", and update to use the new Tiles.Tile properties
+
+	* search/Category.cs: Make sure tiles get relayouted after
+	changing sort order.
+
+2006-02-01  Dan Winship  <danw@novell.com>
+
 	* search/GroupView.cs: if there is only a single category of
 	matches, start it out in "Show More" mode. #328438
 

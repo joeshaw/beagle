@@ -29,8 +29,10 @@ namespace Search.Tiles {
 
 			Title = GetTitle ();
 			
-			if (Hit.FileInfo != null)
-				Description = Utils.NiceShortDate (Hit.FileInfo.LastWriteTime);
+			if (Hit.FileInfo != null) {
+				Timestamp = Hit.FileInfo.LastWriteTime;
+				Description = Utils.NiceShortDate (Timestamp);
+			}
 
 			AddAction (new TileAction (Catalog.GetString ("Open With"), OpenWith));
 			AddAction (new TileAction (Catalog.GetString ("Reveal in Folder"), RevealInFolder));
@@ -158,6 +160,7 @@ namespace Search.Tiles {
 			table.Attach (label, 0, 1, 2, 3, fill, fill, 0, 0);
 
 			label = WidgetFu.NewLabel (Hit.Uri.LocalPath);
+			WidgetFu.EllipsizeLabel (label, 80);
 			table.Attach (label, 1, 2, 2, 3, expand, fill, 0, 0);
 
 			Gtk.Image icon = new Gtk.Image (Icon);
