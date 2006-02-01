@@ -18,9 +18,44 @@ namespace Search.Tiles {
 		[DllImport ("libgnome-desktop-2.so.2")]
 		static extern string gnome_desktop_item_get_string (IntPtr ditem, string attr);
 
+		[DllImport ("libgnome-desktop-2.so.2")]
+		static extern void gnome_desktop_item_unref (IntPtr ditem);
+
+		IntPtr ditem;
+
+		~ApplicationActivator ()
+		{
+			if (ditem != IntPtr.Zero)
+				gnome_desktop_item_unref (ditem);
+		}
+
+		// invalid .desktop files get filtered out by Validate(), so they won't
+		// show up as Application tiles, but will show up as File tiles. But
+		// valid .desktop files marked to not show up in GNOME get eaten by
+		// BuildTile instead, so that they won't get picked up by the File tile.
+
+		// FIXME: we shouldn't be hardcoding GNOME in BuildTile, it should depend
+		// on what the running desktop is.
+
+		public override bool Validate (Beagle.Hit hit)
+		{
+			if (!base.Validate (hit))
+				return false;
+
+			ditem = gnome_desktop_item_new_from_uri (hit.UriAsString, 0, IntPtr.Zero);
+			if (ditem == IntPtr.Zero)
+				return false;
+			
+			// Make sure this is a real desktop file, not a .desktop.in
+			string _name = gnome_desktop_item_get_string (ditem, "_Name");
+			if (_name != null)
+				return false;
+
+			return true;
+		}
+
 		public override Tile BuildTile (Beagle.Hit hit, Beagle.Query query)
 		{
-			IntPtr ditem = gnome_desktop_item_new_from_uri (hit.UriAsString, 0, IntPtr.Zero);
 			if (ditem == IntPtr.Zero)
 				return null;
 

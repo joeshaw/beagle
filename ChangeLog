@@ -1,3 +1,12 @@
+2006-02-01  Dan Winship  <danw@novell.com>
+
+	* search/Category.cs: 
+	* search/GroupView.cs: if there is only a single category of
+	matches, start it out in "Show More" mode. #328438
+
+	* search/Tiles/Application.cs: .desktop.in files should show up as
+	File, not Application.
+
 2006-01-31  Dan Winship  <danw@novell.com>
 
 	* search/Spinner.cs: don't crash if we can't load the spinner

@@ -71,17 +71,22 @@ namespace Search {
 
 		public void Finished (bool grabFocus)
 		{
-			if (!grabFocus)
-				return;
+			Category first = null;
+			bool others = false;
 
 			foreach (Category category in categories.Values) {
 				if (category.Visible) {
-					// We don't use DirectionType.TabForward
-					// because that might select the "More" button
-					category.ChildFocus (DefaultDirection == TextDirection.Ltr ? DirectionType.Right : DirectionType.Left);
-					return;
+					if (first == null)
+						first = category;
+					else {
+						others = true;
+						break;
+					}
 				}
 			}
+
+			if (first != null)
+				first.Select (grabFocus, !others);
 		}
 
 		public MatchType MatchState {

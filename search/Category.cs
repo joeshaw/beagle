@@ -317,5 +317,13 @@ namespace Search {
 				UpdateTileVisibility ();
 			}
 		}
+
+		public void Select (bool focus, bool expand)
+		{
+			if (focus && !Empty)
+				((Gtk.Widget)VisibleTiles[0]).GrabFocus ();
+			if (expand && more.Visible)
+				OnMore (more, EventArgs.Empty);
+		}
 	}
 }
