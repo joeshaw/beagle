@@ -47,8 +47,11 @@ namespace Beagle.Util {
 
 		public override Encoding Encoding {
 			get {
-				if (writer == null)
-					writer = builder ();
+				lock (builder) {
+					if (writer == null)
+						writer = builder ();
+				}
+
 				return writer.Encoding;
 			}
 		}
@@ -67,8 +70,11 @@ namespace Beagle.Util {
 
 		public override void Write (char value)
 		{
-			if (writer == null)
-				writer = builder ();
+			lock (builder) {
+				if (writer == null)
+					writer = builder ();
+			}
+			
 			writer.Write (value);
 		}
 	}

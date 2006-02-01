@@ -24,21 +24,11 @@ namespace Lucene.Net.Analysis.Standard
 		/// <summary>By default, closes the input Reader.</summary>
 		public void Close()
 		{
-			debugStream.Close();
 			input_stream.Done();
 		}
 
 		private void  InitBlock()
 		{
-			System.IO.StreamWriter temp_writer;
-			temp_writer = new System.IO.StreamWriter(System.Console.OpenStandardOutput(), System.Console.Out.Encoding);
-			temp_writer.AutoFlush = true;
-			debugStream = temp_writer;
-		}
-		public System.IO.StreamWriter debugStream;
-		public virtual void  SetDebugStream(System.IO.StreamWriter ds)
-		{
-			debugStream = ds;
 		}
 		private int JjMoveStringLiteralDfa0_0()
 		{
