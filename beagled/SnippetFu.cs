@@ -188,7 +188,9 @@ namespace Beagle.Daemon {
 		static public string GetSnippetFromFile (string[] query_terms,
 							 string   filename)
 		{
-			return GetSnippet (query_terms, new StreamReader (filename));
+			FileStream stream = new FileStream (filename, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
+
+			return GetSnippet (query_terms, new StreamReader (stream));
 		}
 	}
 
