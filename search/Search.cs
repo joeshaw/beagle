@@ -131,7 +131,7 @@ namespace Search {
 			
 			HBox hbox = new HBox (false, 6);
 
-			Label label = new Label ("_Find:");
+			Label label = new Label (Catalog.GetString ("_Find:"));
 			hbox.PackStart (label, false, false, 0);
 			
 			entry = new Entry ();
