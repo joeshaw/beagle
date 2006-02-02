@@ -35,7 +35,7 @@ using Beagle.Util;
 namespace Beagle.Daemon.KMailQueryable {
 
 	[QueryableFlavor (Name="KMail", Domain=QueryDomain.Local, RequireInotify=false)]
-	public class KMailQueryable : LuceneFileQueryable {
+	public class KMailQueryable : LuceneQueryable {
 
 		// for non-inotify case, poll after this number of seconds
 		public const int polling_interval_in_seconds = 300;

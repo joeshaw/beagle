@@ -259,35 +259,38 @@ namespace Beagle.Daemon.KMailQueryable {
 				return null;
 			}
 
-			// Again comment from Evo :P
-			// Work around what I think is a bug in GMime: If you
-			// have a zero-byte file or seek to the end of a
-			// file, parser.Eos () will return true until it
-			// actually tries to read something off the wire.
-			// Since parser.ConstructMessage() always returns a
-			// message (which may also be a bug), we'll often get
-			// one empty message which we need to deal with here.
-			//
-			// Check if its empty by seeing if the Headers
-			// property is null or empty.
-			if (message.Headers == null || message.Headers == "") {
-				return null;
+			try {
+				// Again comment from Evo :P
+				// Work around what I think is a bug in GMime: If you
+				// have a zero-byte file or seek to the end of a
+				// file, parser.Eos () will return true until it
+				// actually tries to read something off the wire.
+				// Since parser.ConstructMessage() always returns a
+				// message (which may also be a bug), we'll often get
+				// one empty message which we need to deal with here.
+				//
+				// Check if its empty by seeing if the Headers
+				// property is null or empty.
+				if (message.Headers == null || message.Headers == "") {
+					return null;
+				}
+			
+				// mbox KIO slave uses the From line as URI - how weird!
+				// are those lines supposed to be unique ???
+				string id = mbox_parser.From;
+				System.Uri uri = EmailUri (id);
+			
+				Indexable indexable = indexer.MessageToIndexable (mbox_file, uri, message, indexer.GetFolderMbox (mbox_file));
+			
+				if (indexable == null)
+					return null;
+
+				++indexed_count;
+
+				return indexable;
+			} finally {
+				message.Dispose ();
 			}
-			
-			// mbox KIO slave uses the From line as URI - how weird!
-			// are those lines supposed to be unique ???
-			string id = mbox_parser.From;
-			System.Uri uri = EmailUri (id);
-			
-			Indexable indexable = indexer.MessageToIndexable (mbox_file, uri, message, indexer.GetFolderMbox (mbox_file));
-			
-			if (indexable == null)
-				return null;
-
-			++indexed_count;
-
-			return indexable;
-			
 		}
 
 		// TODO: confirm that this works with the mbox kio-slave from new kdepim
