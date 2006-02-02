@@ -3,6 +3,11 @@
 	* configure.in: Give the two sqlite checks different names, otherwise it
 	tries to use sqlite3 even when it is not installed.
 
+	* beagled/Makefile.am, beagled/Mono.Data.SqliteClient: Pull in latest
+	upstream version, and update Jon's read-on-demand optimization.
+	* beagled/FileAttributesStore_Sqlite.cs, beagled/TextCache.cs: Update for
+	slightly modified sqlite exception API.
+
 2006-02-01  Dan Winship  <danw@novell.com>
 
 	* search/Tiles/MailMessage.cs (MailMessageActivator): only accept

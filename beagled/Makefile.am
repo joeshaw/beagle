@@ -9,7 +9,8 @@
 # 0219 = Variable is assigned but never used
 # 0436 = Ignore imported type (local SqliteClient)
 
-CSC = mcs -debug -nowarn:0162,0164,0169,0219,0436
+# unsafe arg for Mono.Data.SqliteClient fork
+CSC = mcs -debug -nowarn:0162,0164,0169,0219,0436 -unsafe
 
 BACKENDDIR = $(pkglibdir)/Backends
 
@@ -244,7 +245,7 @@ SQLITE_CSFILES =					\
 	$(sqlitedir)/Sqlite.cs				\
 	$(sqlitedir)/SqliteDataAdapter.cs		\
 	$(sqlitedir)/SqliteDataReader.cs		\
-	$(sqlitedir)/SqliteException.cs			\
+	$(sqlitedir)/SqliteExceptions.cs		\
 	$(sqlitedir)/SqliteParameterCollection.cs	\
 	$(sqlitedir)/SqliteParameter.cs			\
 	$(sqlitedir)/SqliteRowUpdatedEventArgs.cs	\

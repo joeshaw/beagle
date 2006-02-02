@@ -195,11 +195,8 @@ namespace Beagle.Daemon {
 				try {
 					command.ExecuteNonQuery ();
 					break;
-				} catch (SqliteException ex) {
-					if (ex.SqliteError == SqliteError.BUSY)
-						Thread.Sleep (50);
-					else
-						throw ex;
+				} catch (SqliteBusyException ex) {
+					Thread.Sleep (50);
 				}
 			}
 
@@ -224,11 +221,8 @@ namespace Beagle.Daemon {
 			while (reader == null) {
 				try {
 					reader = command.ExecuteReader ();
-				} catch (SqliteException ex) {
-					if (ex.SqliteError == SqliteError.BUSY)
-						Thread.Sleep (50);
-					else
-						throw ex;
+				} catch (SqliteBusyException ex) {
+					Thread.Sleep (50);
 				}
 			}
 			return reader;
@@ -239,11 +233,8 @@ namespace Beagle.Daemon {
 			while (true) {
 				try {
 					return reader.Read ();
-				} catch (SqliteException ex) {
-					if (ex.SqliteError == SqliteError.BUSY)
-						Thread.Sleep (50);
-					else
-						throw ex;
+				} catch (SqliteBusyException ex) {
+					Thread.Sleep (50);
 				}
 			}
 		}

@@ -116,12 +116,9 @@ namespace Beagle.Daemon {
 
 				try {
 					reader = ExecuteReaderOrWait (command);
-				} catch (SqliteException ex) {
-					if (ex.SqliteError == SqliteError.NOTADB) {
-						Logger.Log.Warn ("Likely sqlite database version mismatch trying to read from {0}.  Purging.", db_filename);
-						create_new_db = true;
-					} else
-						throw;
+				} catch (ApplicationException ex) {
+					Logger.Log.Warn ("Likely sqlite database version mismatch trying to read from {0}.  Purging.", db_filename);
+					create_new_db = true;
 				}
 
 				if (reader != null)
@@ -178,12 +175,9 @@ namespace Beagle.Daemon {
 				try {
 					command.ExecuteNonQuery ();
 					break;
-				} catch (SqliteException ex) {
+				} catch (SqliteBusyException ex) {
 					// FIXME: should we eventually time out?
-					if (ex.SqliteError == SqliteError.BUSY)
-						Thread.Sleep (50);
-					else
-						throw ex;
+					Thread.Sleep (50);
 				}
 			}
 			command.Dispose ();
@@ -195,11 +189,8 @@ namespace Beagle.Daemon {
 			while (reader == null) {
 				try {
 					reader = command.ExecuteReader ();
-				} catch (SqliteException ex) {
-					if (ex.SqliteError == SqliteError.BUSY)
-						Thread.Sleep (50);
-					else
-						throw ex;
+				} catch (SqliteBusyException ex) {
+					Thread.Sleep (50);
 				}
 			}
 			return reader;
@@ -210,11 +201,8 @@ namespace Beagle.Daemon {
 			while (true) {
 				try {
 					return reader.Read ();
-				} catch (SqliteException ex) {
-					if (ex.SqliteError == SqliteError.BUSY)
-						Thread.Sleep (50);
-					else
-						throw ex;
+				} catch (SqliteBusyException ex) {
+					Thread.Sleep (50);
 				}
 			}
 		}
