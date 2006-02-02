@@ -124,7 +124,7 @@ SQLITE_MAJ_VER="0"
 PKG_CHECK_MODULES(SQLITE, sqlite, SQLITE_MAJ_VER="2", do_nothing="1")
 # Note we really need 3.3.1, but the pkgconfig file from upstream only
 # reports 3.3 for all releases in the 3.3 line.
-PKG_CHECK_MODULES(SQLITE, sqlite3 >= 3.3, SQLITE_MAJ_VER="3", do_nothing="1")
+PKG_CHECK_MODULES(SQLITE3, sqlite3 >= 3.3, SQLITE_MAJ_VER="3", do_nothing="1")
 
 if test "x$SQLITE_MAJ_VER" = "x0"; then
 	# Note we really need 3.3.1, but the pkgconfig file from upstream only

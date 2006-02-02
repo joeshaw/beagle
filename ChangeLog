@@ -1,3 +1,8 @@
+2006-02-02  Daniel Drake  <dsd@gentoo.org>
+
+	* configure.in: Give the two sqlite checks different names, otherwise it
+	tries to use sqlite3 even when it is not installed.
+
 2006-02-01  Dan Winship  <danw@novell.com>
 
 	* search/Tiles/MailMessage.cs (MailMessageActivator): only accept
