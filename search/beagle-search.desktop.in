@@ -1,11 +1,12 @@
 [Desktop Entry]
 X-SuSE-translate=true
-Name=Search
-GenericName=Search
+_Name=Search
+_GenericName=Search
+_Comment=Search for data on your desktop
 Icon=system-search
-Exec=@BINDIR@/beagle-search
+Exec=beagle-search
 Terminal=false
 Type=Application
 StartupNotify=true
 Encoding=UTF-8
-Categories=GNOME;Application;Core;Utility;Filesystem;
+Categories=GNOME;GTK;Application;Core;Utility;Filesystem;

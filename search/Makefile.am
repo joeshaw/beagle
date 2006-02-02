@@ -73,12 +73,14 @@ ASSEMBLIES =				\
 Search.exe: $(CSFILES) $(TILES) $(PAGES) $(TRAY) $(LOCAL_ASSEMBLIES)
 	$(CSC) -out:$@ $(CSFLAGS) $(CSFILES) $(TILES) $(PAGES) $(TRAY) $(ASSEMBLIES)
 
+@INTLTOOL_DESKTOP_RULE@
+
+desktop_in_files = beagle-search.desktop.in
+desktop_files = $(desktop_in_files:.desktop.in=.desktop)
+desktop_h_files = $(desktop_in_files:.in=.in.h)
+
 desktopdir       = $(datadir)/applications
-desktop_DATA     = beagle-search.desktop
-
-$(desktop_DATA): $(desktop_DATA).in
-	sed -e "s|\@BINDIR\@|$(bindir)|" $< > $@
-
+desktop_DATA     = $(desktop_files)
 
 EXTRA_DIST =			\
 	$(CSFILES)		\
@@ -92,4 +94,5 @@ CLEANFILES =			\
 	Search.exe		\
 	Search.exe.mdb		\
 	beagle-search		\
-	$(desktop_DATA)
+	$(desktop_DATA)		\
+	$(desktop_h_files)
