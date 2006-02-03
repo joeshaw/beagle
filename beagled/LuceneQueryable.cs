@@ -573,6 +573,8 @@ namespace Beagle.Daemon {
 
 					if (queryable.PreAddIndexableHook (generated))
 						queryable.AddIndexable (generated);
+					else
+						generated.Cleanup ();
 					
 					// We keep adding indexables until a flush goes through.
 				} while (! queryable.ConditionalFlush ());

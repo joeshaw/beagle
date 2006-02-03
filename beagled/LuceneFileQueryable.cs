@@ -31,6 +31,7 @@
 
 using System;
 using System.Collections;
+using System.IO;
 
 using Beagle.Util;
 
@@ -98,8 +99,10 @@ namespace Beagle.Daemon {
 			if (indexable.Type == IndexableType.Remove)
 				return true;
 
-			// Remember the file's info and mtime.
-			CachedFileInfo info = new CachedFileInfo ();
+			CachedFileInfo info = (CachedFileInfo) file_info_cache [indexable.Uri];
+
+			if (info == null)
+				info = new CachedFileInfo ();
 
 			info.Uri = indexable.Uri;
 
@@ -113,14 +116,20 @@ namespace Beagle.Daemon {
 				IncrementReferenceCount (info.Path);
 			}
 
+			// The path could be null in certain cases:
+			//    * The indexable is a non-file URI and no
+			//      parent URI is set.
+			//    * The indexable is a child indexable and the
+			//      parent URI is not a file URI.
+			if (info.Path == null)
+				return true;
+
 			try {
 				info.Mtime = FileSystem.GetLastWriteTimeUtc (info.Path);
-			} catch (Exception ex) {
+			} catch (FileNotFoundException ex) {
 				// If we can't get an mtime for the file, it must
 				// have disappeared out from under us.  In that case,
 				// don't bother adding anything.
-				// FIXME: Should we be more specific and only catch
-				// a file not found error here?
 				return false;
 			}
 
@@ -160,6 +169,8 @@ namespace Beagle.Daemon {
 
 			if (! FileAttributesStore.Write (attr))
 				Logger.Log.Error ("Couldn't write attributes for {0}", info.Path);
+
+			file_info_cache.Remove (info.Uri);
 		}
 
 		override protected void PostRemoveHook (Indexable indexable, IndexerRemovedReceipt receipt)

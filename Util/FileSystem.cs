@@ -38,12 +38,15 @@ namespace Beagle.Util {
 
 		static public DateTime GetLastWriteTimeUtc (string path)
 		{
+			if (path == null)
+				throw new ArgumentNullException ("path");
+
 			if (File.Exists (path))
 				return File.GetLastWriteTimeUtc (path);
 			else if (Directory.Exists (path))
 				return Directory.GetLastWriteTimeUtc (path);
 			else
-				throw new IOException (path);
+				throw new FileNotFoundException (path);
 		}
 
 		static public FileSystemInfo New (string path)
