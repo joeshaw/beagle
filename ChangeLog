@@ -1,3 +1,15 @@
+2006-02-03  Dan Winship  <danw@novell.com>
+
+	* search/Tiles/WidgetFu.cs (LoadThumbnailIcon): change this to
+	take a Hit rather than a Uri, so we can pass the MIME type to
+	Gnome.ThumbnailFactory.GenerateThumbnail. #328437
+
+	* search/Tiles/File.cs:
+	* search/Tiles/Image.cs: update for that
+
+	* search/Tiles/Video.cs: don't need to set the icon here; TileFile
+	does it for us.
+
 2006-02-02  Daniel Drake  <dsd@gentoo.org>
 
 	* configure.in: Give the two sqlite checks different names, otherwise it

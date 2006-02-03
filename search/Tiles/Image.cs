@@ -42,7 +42,7 @@ namespace Search.Tiles {
 
 		public static Gdk.Pixbuf GetIcon (Beagle.Hit hit, int size)
 		{
-			Gdk.Pixbuf icon =  WidgetFu.LoadThumbnailIcon (hit.Uri, size);
+			Gdk.Pixbuf icon =  WidgetFu.LoadThumbnailIcon (hit, size);
 
 			if (icon == null)
 				return WidgetFu.LoadMimeIcon (hit ["beagle:MimeType"], size);

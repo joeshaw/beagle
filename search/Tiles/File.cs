@@ -22,7 +22,7 @@ namespace Search.Tiles {
 
 		public TileFile (Beagle.Hit hit, Beagle.Query query) : base (hit, query)
 		{
-			Icon = WidgetFu.LoadThumbnailIcon (Hit.Uri, 32);
+			Icon = WidgetFu.LoadThumbnailIcon (Hit, 32);
 
 			if (Icon == null)
 				Icon = WidgetFu.LoadMimeIcon (Hit ["beagle:MimeType"], 32);

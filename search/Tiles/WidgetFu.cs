@@ -101,17 +101,17 @@ namespace Search.Tiles {
 
 		private static Gnome.ThumbnailFactory thumb_factory = new Gnome.ThumbnailFactory (Gnome.ThumbnailSize.Normal);
 
-		public static Gdk.Pixbuf LoadThumbnailIcon (Uri uri, int size)
+		public static Gdk.Pixbuf LoadThumbnailIcon (Beagle.Hit hit, int size)
 		{
 			Gdk.Pixbuf icon = null;
-			string quoted_uri = Beagle.Util.StringFu.PathToQuotedFileUri (uri.LocalPath);
+			string quoted_uri = Beagle.Util.StringFu.PathToQuotedFileUri (hit.Uri.LocalPath);
 			string thumbnail = Gnome.Thumbnail.PathForUri (quoted_uri, Gnome.ThumbnailSize.Normal);
 
 			if (File.Exists (thumbnail)) {
 				icon = new Gdk.Pixbuf (thumbnail);
 			} else {
-				icon = thumb_factory.GenerateThumbnail (quoted_uri, "");
-				FileInfo fi = new FileInfo (uri.LocalPath);
+				icon = thumb_factory.GenerateThumbnail (quoted_uri, hit.MimeType);
+				FileInfo fi = new FileInfo (hit.Uri.LocalPath);
 
 				if (icon == null) {
 					thumb_factory.CreateFailedThumbnail (quoted_uri, fi.LastWriteTime);
