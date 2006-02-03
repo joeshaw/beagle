@@ -1,3 +1,7 @@
+2006-02-03  Ignacio Casal Quinteiro  <nacho.resa@gmail.com>
+
+	* configure.in: Added 'gl' to ALL_LINGUAS.
+
 2006-02-03  Dan Winship  <danw@novell.com>
 
 	* search/Tiles/WidgetFu.cs (LoadThumbnailIcon): change this to
