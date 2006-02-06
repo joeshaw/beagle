@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: beagle\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2006-02-02 15:29+0200\n"
-"PO-Revision-Date: 2006-02-02 15:29+0200\n"
+"POT-Creation-Date: 2006-02-06 11:53+0200\n"
+"PO-Revision-Date: 2006-02-04 16:54+0200\n"
 "Last-Translator: Rostislav \"zbrox\" Raykov <zbrox@i-space.org>\n"
 "Language-Team: Bulgarian <dict@fsa-bg.org>\n"
 "MIME-Version: 1.0\n"
@@ -43,6 +43,14 @@ msgstr "Разговор в {0}"
 msgid "Conversations with {0}"
 msgstr "Разговори с {0}"
 
+#: ../search/beagle-search.desktop.in.h:1 ../tools/settings.glade.h:28
+msgid "Search"
+msgstr "Търсене"
+
+#: ../search/beagle-search.desktop.in.h:2
+msgid "Search for data on your desktop"
+msgstr "Търсене за данни в работния плот"
+
 #: ../search/Category.cs:87
 #, csharp-format
 msgid "Top {0} Result"
@@ -72,7 +80,7 @@ msgstr "Няма открити съвпадения."
 #, csharp-format
 msgid "Your search for \"{0}\" did not match any files on your computer."
 msgstr ""
-"При търсенето Ви за „{0}“, нямаше съвпадения с никои файлове на компютъра Ви."
+"При търсенето за „{0}“, нямаше съвпадения с никои файлове на компютъра Ви."
 
 #: ../search/Pages/NoMatch.cs:24
 msgid ""
@@ -93,8 +101,8 @@ msgstr ""
 #: ../search/Pages/QuickTips.cs:10
 msgid "You can use upper and lower case; search is case-insensitive."
 msgstr ""
-"Може да използвате горен или долен регистър. Търсенето не е чувствително към "
-"регистъра."
+"Може да използвате големи и малки букви. Големината на буквите няма значение "
+"за търсенето."
 
 #: ../search/Pages/QuickTips.cs:11
 msgid "To search for optional terms, use OR.  ex: <b>George OR Ringo</b>"
@@ -113,12 +121,12 @@ msgstr ""
 msgid ""
 "When searching for a phrase, add quotes. ex: <b>\"There be dragons\"</b>"
 msgstr ""
-"Когато търсите цяла фраза, я ограждайте с кавички. Пример: <b>\"Бургас и "
+"Ако търсите цяла фраза, я ограждайте с кавички. Пример: <b>\"Бургас и "
 "неговите трудови хора\"</b>."
 
 #: ../search/Pages/QuickTips.cs:19 ../search/UIManager.cs:62
 msgid "Quick Tips"
-msgstr "Подсказки"
+msgstr "Хитрини"
 
 #: ../search/Pages/StartDaemon.cs:19
 msgid "Daemon not running"
@@ -127,6 +135,10 @@ msgstr "Услугата (daemon) не е стартирана"
 #: ../search/Pages/StartDaemon.cs:21
 msgid "Start the daemon"
 msgstr "Стартиране на услугата (daemon)"
+
+#: ../search/Search.cs:134
+msgid "_Find:"
+msgstr "_Търсене"
 
 #: ../search/Search.cs:148
 msgid "Find Now"
@@ -178,7 +190,7 @@ msgstr "Е-поща"
 
 #: ../search/Tiles/File.cs:40
 msgid "Instant-Message"
-msgstr "Мигновено съобщение"
+msgstr "Бързо съобщение"
 
 #: ../search/Tiles/File.cs:41 ../search/Tiles/Folder.cs:38
 msgid "Move to Trash"
@@ -190,7 +202,7 @@ msgstr "Заглавие:"
 
 #: ../search/Tiles/File.cs:145
 msgid "Last Edited:"
-msgstr "Последно редактирано:"
+msgstr "Последна редакция:"
 
 #: ../search/Tiles/File.cs:152
 msgid "Author:"
@@ -222,7 +234,7 @@ msgstr "Редактирано:"
 
 #: ../search/Tiles/Image.cs:40
 msgid "Set as Wallpaper"
-msgstr "Поставяне като тапет"
+msgstr "Задаване като фон"
 
 #: ../search/Tiles/Image.cs:80
 msgid "Modified:"
@@ -238,7 +250,7 @@ msgstr "Дата на получаване:"
 
 #: ../search/Tiles/MailAttachment.cs:46
 msgid "Mail attachment"
-msgstr "Прикачен файл към е-поща"
+msgstr "Прикачен файл към е-писмо"
 
 #: ../search/Tiles/MailMessage.cs:48
 msgid "Send in Mail"
@@ -265,7 +277,7 @@ msgstr "Сайт:"
 
 #: ../search/Tiles/RSSFeed.cs:60
 msgid "Date Viewed:"
-msgstr "Датра на преглед:"
+msgstr "Дата на преглед:"
 
 #: ../search/Tiles/TextDocument.cs:37
 #, csharp-format
@@ -348,7 +360,7 @@ msgstr "Интернет сайт"
 
 #: ../search/Tiles/Utils.cs:58
 msgid "More website results..."
-msgstr "Още резултати с интернет сайтове..."
+msgstr "Още резултати с Интернет сайтове..."
 
 #: ../search/Tiles/Utils.cs:61
 msgid "News Feed"
@@ -388,7 +400,9 @@ msgid_plural "{0} years ago"
 msgstr[0] "Преди {0} година"
 msgstr[1] "Преди {0} години"
 
-#: ../search/Tiles/Video.cs:33
+#. FIXME: We need filters for video in Beagle.
+#. They should land soon when entagged-sharp gets video support.
+#: ../search/Tiles/Video.cs:27
 msgid "Unknown duration"
 msgstr "Неизвестна продължителност"
 
@@ -593,7 +607,7 @@ msgstr "_Действия"
 
 #: ../search/UIManager.cs:38
 msgid "Sor_t"
-msgstr "Сорт_иране"
+msgstr "Под_реждане"
 
 #: ../search/UIManager.cs:41
 msgid "_Help"
@@ -677,7 +691,7 @@ msgstr "Дата на пр_омяна"
 
 #: ../search/UIManager.cs:112
 msgid "Sort the most-recently-modified matches first"
-msgstr "Сортиране по дата на промяна"
+msgstr "Подреждане по дата на промяна"
 
 #: ../search/UIManager.cs:115
 msgid "_Name"
@@ -685,7 +699,7 @@ msgstr "_Име"
 
 #: ../search/UIManager.cs:116
 msgid "Sort matches by name"
-msgstr "Сортиране по име"
+msgstr "Подреждане по име"
 
 #: ../search/UIManager.cs:119
 msgid "_Relevance"
@@ -693,7 +707,7 @@ msgstr "_Относителност"
 
 #: ../search/UIManager.cs:120
 msgid "Sort the best matches first"
-msgstr "Сортиране по относителност"
+msgstr "Подреждане по относителност"
 
 #: ../tools/Settings.cs:216
 msgid "Reload configuration"
@@ -950,10 +964,6 @@ msgstr "Изберете ресурс, които да не се индекси�
 msgid "Please select the mail folder you wish to exclude from indexing. "
 msgstr "Изберете папка с поща, която да не се индексира."
 
-#: ../tools/settings.glade.h:28
-msgid "Search"
-msgstr "Търсене"
-
 #: ../tools/settings.glade.h:29
 msgid "Search Preferences"
 msgstr "Настройки на търсенето"
@@ -1004,7 +1014,7 @@ msgstr "Папка за Exif"
 
 #: ../Util/ExifData.cs:232
 msgid "GPS Directory"
-msgstr "Ппка за GPS"
+msgstr "Папка за GPS"
 
 #: ../Util/ExifData.cs:234
 msgid "InterOperability Directory"
