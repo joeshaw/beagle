@@ -40,7 +40,8 @@ namespace Beagle.Filters {
 		{
 			// 1: Base
 			// 2: Added fspot:IsIndexed field, added width & height properties
-			SetVersion (2);
+			// 3: Add Digikam tags and caption
+			SetVersion (3);
 		}
 
 		protected virtual void PullImageProperties () { }
@@ -78,22 +79,54 @@ namespace Beagle.Filters {
 				AddProperty (Beagle.Property.NewKeyword ("fixme:depth", depth));
 
 			try {
-				FSpotTools.Photo photo = FSpotTools.GetPhoto (this.FileInfo.FullName);
+				AddFSpotInformation (this.FileInfo.FullName);
+				AddDigikamInformation (this.FileInfo.FullName);
+			} catch (Exception ex) {
+				Console.WriteLine ("Exception trying to retrieve FSpot/Digikam information:" + ex);
+			}
 
-				if (photo == null)
-					return;
 
-				AddProperty (Beagle.Property.NewBool ("fspot:IsIndexed", true));
-				
-				if (photo.Description != null && photo.Description != "")
-					AddProperty (Beagle.Property.New ("fspot:Description", photo.Description));
+		}
+
+		private void AddFSpotInformation (string path)
+		{
+			FSpotTools.Photo photo = FSpotTools.GetPhoto (this.FileInfo.FullName);
+
+			if (photo == null)
+				return;
+
+			AddProperty (Beagle.Property.NewBool ("fspot:IsIndexed", true));
 			
-				foreach (FSpotTools.Tag tag in photo.Tags) {				
-					if (tag.Name != null && tag.Name != "")
-						AddProperty (Beagle.Property.New ("fspot:Tag", tag.Name));
+			if (photo.Description != null && photo.Description != "") {
+				AddProperty (Beagle.Property.New ("fspot:Description", photo.Description));
+				AddProperty (Beagle.Property.NewUnstored ("fixme:comment", photo.Description));
+			}
+			
+			foreach (FSpotTools.Tag tag in photo.Tags) {				
+				if (tag.Name != null && tag.Name != "") {
+					AddProperty (Beagle.Property.New ("fspot:Tag", tag.Name));
+					AddProperty (Beagle.Property.NewUnstored ("image:tag", tag.Name));
 				}
-			} catch {
-				//Console.WriteLine ("Failed extracting F-Spot information for '{0}'", this.FileInfo.Name);
+			}
+		}
+
+		private void AddDigikamInformation (string path)
+		{
+			DigikamTags.DigikamData digikam_data = DigikamTags.GetDigikamData (this.FileInfo.FullName);
+
+			if (digikam_data == null)
+				return;
+
+			AddProperty (Beagle.Property.NewBool ("digikam:IsIndexed", true));
+			
+			if (digikam_data.caption != null && digikam_data.caption != "") {
+				AddProperty (Beagle.Property.New ("digikam:caption", digikam_data.caption));
+				AddProperty (Beagle.Property.NewUnstored ("fixme:comment", digikam_data.caption));
+			}
+			
+			foreach (string tag in digikam_data.Tags) {
+				AddProperty (Beagle.Property.New ("digikam:Tag", tag));
+				AddProperty (Beagle.Property.NewUnstored ("image:tag", tag));
 			}
 		}
 		

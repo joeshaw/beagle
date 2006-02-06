@@ -378,6 +378,7 @@ namespace Beagle.Daemon.AkregatorQueryable {
 			indexable.AddProperty (Property.NewDate ("dc:date", date));
 			indexable.AddProperty (Property.NewKeyword ("dc:identifier", current_item.Link));
 			indexable.AddProperty (Property.NewKeyword ("dc:source", channel_link));
+			indexable.AddProperty (Property.New ("dc:publisher", channel_title));
 				
 			StringReader reader = new StringReader (current_item.Description);
 			indexable.SetTextReader (reader);

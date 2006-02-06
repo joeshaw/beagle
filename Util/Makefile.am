@@ -49,6 +49,7 @@ UTIL_CSFILES = 			        	\
 	$(srcdir)/CommandLineFu.cs		\
 	$(srcdir)/Conf.cs			\
 	$(srcdir)/DelayedTextWriter.cs		\
+	$(srcdir)/DigikamTags.cs		\
 	$(srcdir)/DirectoryWalker.cs		\
 	$(srcdir)/Evolution.cs			\
 	$(srcdir)/ExceptionHandlingThread.cs	\

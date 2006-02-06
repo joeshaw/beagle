@@ -119,6 +119,11 @@ namespace Beagle.Daemon {
 			property_table.Add ("album",
 					    new PropertyDetail (PropertyType.Text, "fixme:album", "Album of the media"));
 
+			// image tag
+			// FIXME: If there is tag information somewhere else, then change the name to imagetag
+			property_table.Add ("tag",
+					    new PropertyDetail (PropertyType.Text, "image:tag", "FSpot, Digikam image tags"));
+
 			// ---------------- content mappings for email ------------------------
 
 			// "from" name
@@ -149,6 +154,11 @@ namespace Beagle.Daemon {
 			// file extension - ext:mp3
 			property_table.Add ("ext",
 					    new PropertyDetail (PropertyType.Keyword, FSQ.FileSystemQueryable.FilenameExtensionPropKey, "File extension, e.g. ext:mp3. Use ext: to search in files with no extension."));
+
+			// user comment/description/etc - comment:beaglewiki
+			property_table.Add ("comment",
+					    new PropertyDetail (PropertyType.Text, "fixme:comment", "User comments"));
+
 
 			// FIXME add more mappings to support more query
 		}

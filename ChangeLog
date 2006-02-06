@@ -1,3 +1,18 @@
+2006-02--5  Debajyoti Bera <dbera.web@gmail.com>
+
+	* Util/DigikamTags.cs: Extraction of tags and comments from digikam.
+	* Filters/FilterImage.cs,FilterJpeg.cs: Index digikam info, add
+	fixme:comment and image:tag to store all the tags and
+	comments/descriptions. These information are anyway stored, index them
+	as property.unstored to allow keyword queries.
+	* beagled/PropertyKeywordFu.cs: Add keyword mappings to query (image)
+	comments and image tags.
+	* LifereaQueryable.cs, AkregatorQueryable.cs, BlamQueryable.cs: Index
+	publisher/channel-title information.
+	* KMailQueryable.cs, StringFu.cs: Move ExpandEnvVariables() to
+	Util/StringFu.cs; its a quite useful function to expand locations like
+	"$HOME/.beagle".
+	
 2006-02-03  Ignacio Casal Quinteiro  <nacho.resa@gmail.com>
 
 	* configure.in: Added 'gl' to ALL_LINGUAS.

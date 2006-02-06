@@ -49,9 +49,11 @@ namespace Beagle.Filters {
 			byte [] commentdata = header.GetJFIFComment();
 			if (commentdata != null && commentdata.Length != 0)
 			{
-				string comment = System.Text.Encoding.ASCII.GetString( commentdata, 0, commentdata.Length );
-				if (comment != null && comment != "")
+				string comment = System.Text.Encoding.Default.GetString( commentdata, 0, commentdata.Length );
+				if (comment != null && comment != "") {
 					AddProperty (Beagle.Property.New ("jfif:Comment", comment));
+					AddProperty (Beagle.Property.NewUnstored ("fixme:comment", comment));
+				}
 			}
 
 			byte [] data = header.GetRawExif ();
@@ -64,12 +66,17 @@ namespace Beagle.Filters {
 			string str;
 			
 			str = exif.LookupFirstValue (ExifTag.UserComment);
-			if (str != null && str != "")
+			if (str != null && str != "") {
 				AddProperty (Beagle.Property.New ("exif:UserComment", str));
+				AddProperty (Beagle.Property.NewUnstored ("fixme:comment", str));
+			}
+
 
 			str = exif.LookupFirstValue (ExifTag.ImageDescription);
-			if (str != null && str != "")
+			if (str != null && str != "") {
 				AddProperty (Beagle.Property.New ("exif:ImageDescription", str));
+				AddProperty (Beagle.Property.NewUnstored ("fixme:comment", str));
+			}
 
 			str = exif.LookupFirstValue (ExifTag.PixelXDimension);
 			if (str != null && str != "") {

@@ -273,6 +273,7 @@ namespace Beagle.Daemon.BlamQueryable {
 			indexable.AddProperty (Property.NewDate ("dc:date", pub_date.ToUniversalTime ()));
 			indexable.AddProperty (Property.NewKeyword ("dc:identifier", link));
 			indexable.AddProperty (Property.NewKeyword ("dc:source", channel_url));
+			indexable.AddProperty (Property.New ("dc:publisher", channel_name));
 
 			string img = null;
 			int i = text.IndexOf ("<img src=\"");

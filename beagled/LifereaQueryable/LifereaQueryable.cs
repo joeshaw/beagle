@@ -189,6 +189,7 @@ namespace Beagle.Daemon.LifereaQueryable {
 		private bool is_valid_file = true;
 
 		private string feed_source = "";
+		private string publisher = "";
 		private Item current_item;
 		private XmlSerializer serializer;
 		
@@ -243,7 +244,11 @@ namespace Beagle.Daemon.LifereaQueryable {
 						feed_source = reader.ReadString ();
 						reader.ReadEndElement ();
 						break;
-						
+					case "feedTitle":
+						reader.ReadStartElement ("feedTitle");
+						publisher = reader.ReadString ();
+						reader.ReadEndElement ();
+						break;	
 					// ignore other elements
 					default:
 						reader.ReadOuterXml ();
@@ -320,6 +325,7 @@ namespace Beagle.Daemon.LifereaQueryable {
 			indexable.AddProperty (Property.NewDate ("dc:date", date));
 			indexable.AddProperty (Property.NewKeyword ("dc:identifier", current_item.Source));
 			indexable.AddProperty (Property.NewKeyword ("dc:source", feed_source));
+			indexable.AddProperty (Property.New ("dc:publisher", publisher));
 				
 			StringReader reader = new StringReader (current_item.Description);
 			indexable.SetTextReader (reader);
@@ -335,7 +341,7 @@ namespace Beagle.Daemon.LifereaQueryable {
 		[XmlElement ("description")] public string Description ="";
 		[XmlElement ("source")] public string Source="";
 		[XmlElement ("attributes")] public Attributes Attribs;
-		[XmlElement ("time")] public ulong Timestamp; 
+		[XmlElement ("time")] public ulong Timestamp;
 	}
 
 	public class Attributes {
