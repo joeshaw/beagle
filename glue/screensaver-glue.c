@@ -39,6 +39,7 @@ screensaver_info (int *state, int *kind, unsigned long *til_or_since, unsigned l
     XScreenSaverInfo ss_info;
     int retval;
     static int inited = 0;
+    int event_base, error_base;
 
     if (GDK_DISPLAY () == NULL)
         return 0;
@@ -50,7 +51,10 @@ screensaver_info (int *state, int *kind, unsigned long *til_or_since, unsigned l
     }
 
     gdk_threads_enter ();
-    retval = XScreenSaverQueryInfo (GDK_DISPLAY (), DefaultRootWindow (GDK_DISPLAY ()), &ss_info);
+    if (XScreenSaverQueryExtension (GDK_DISPLAY (), &event_base, &error_base))
+        retval = XScreenSaverQueryInfo (GDK_DISPLAY (), DefaultRootWindow (GDK_DISPLAY ()), &ss_info);
+    else
+        retval = 0;
     gdk_threads_leave ();
 
     if (retval != 0) {
