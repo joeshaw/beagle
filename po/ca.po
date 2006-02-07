@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: Beagle\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2006-01-18 10:09+0100\n"
-"PO-Revision-Date: 2006-01-18 10:38+0000\n"
+"PO-Revision-Date: 2006-02-07 10:38+0000\n"
 "Last-Translator: <Jordi Mas> jmas@softcatala.org\n"
 "Language-Team: tradgnome@softcatala.net\n"
 "MIME-Version: 1.0\n"
@@ -30,7 +30,7 @@ msgstr "<b>Historial de converses</b>"
 #
 #: ../ImLogViewer/ImLogViewer.glade.h:2
 msgid "IM Viewer"
-msgstr "Visualitzador d'IM"
+msgstr "Visualitzador d'MI"
 
 #: ../ImLogViewer/ImLogWindow.cs:102
 #, csharp-format
@@ -71,14 +71,14 @@ msgstr "No s'ha trobat cap resultat."
 #: ../search/Pages/NoMatch.cs:20
 #, csharp-format
 msgid "Your search for \"{0}\" did not match any files on your computer."
-msgstr "Cap fitxer del vostre ordinador conté el terme de la vostra cerca  \"{0}\""
+msgstr "Cap fitxer de l'ordinador no conté la cerca \"{0}\""
 
 #: ../search/Pages/NoMatch.cs:24
 msgid ""
 "You can change the scope of your search using the \"Search\" menu. A broader "
 "search scope might produce more results."
 msgstr ""
-"Podeu canviar l'abast de la vostra cerca usant el menú \"Cerca\". Un abast "
+"Podeu canviar l'abast de la cerca usant el menú \"Cerca\". Un abast "
 "més ampli de la cerca pot produir més resultats."
 
 #: ../search/Pages/NoMatch.cs:26
@@ -86,7 +86,7 @@ msgid ""
 "You should check the spelling of your search words to see if you "
 "accidentally misspelled any words."
 msgstr ""
-"Assegureu-vos que heu teclejat correctament les paraules de la cerca "
+"Assegureu-vos que heu escrit correctament les paraules de la cerca "
 "i que accidentalment no heu comès un error tipogràfic."
 
 #: ../search/Pages/QuickTips.cs:10
@@ -95,18 +95,18 @@ msgstr "Podeu emprar majúscules i minúscules; la cerca no diferencia entre maj
 
 #: ../search/Pages/QuickTips.cs:11
 msgid "To search for optional terms, use OR.  ex: <b>George OR Ringo</b>"
-msgstr "Per a cercar per termes opcionals, useu OR. P.ej: <b>Jordi OR Núria</b>"
+msgstr "Per a cercar per termes opcionals, useu OR. P. ex: <b>Jordi OR Núria</b>"
 
 #: ../search/Pages/QuickTips.cs:12
 msgid ""
 "To exclude search terms, use the minus symbol in front, such as <b>-cats</b>"
-msgstr "Per a excloure termes de la cerca, useu el signe menys. P.ej: <b>-gats</b>"
+msgstr "Per a excloure termes de la cerca, useu el signe menys. P. ex: <b>-gats</b>"
 
 #: ../search/Pages/QuickTips.cs:13
 msgid ""
 "When searching for a phrase, add quotes. ex: <b>\"There be dragons\"</b>"
 msgstr ""
-"Quan cerqueu una frase, useu les cometes. P.ej: <b>\"Hi ha dragons\"</b> "
+"Quan cerqueu una frase, useu les cometes. P. ex: <b>\"Hi ha dragons\"</b> "
 
 #: ../search/Pages/QuickTips.cs:19 ../search/UIManager.cs:62
 msgid "Quick Tips"
@@ -177,7 +177,7 @@ msgstr "Última edició:"
 
 #: ../search/Tiles/File.cs:144
 msgid "Author:"
-msgstr "Autor:"
+msgstr "Autor/a:"
 
 #: ../search/Tiles/Folder.cs:31
 msgid "Empty"
@@ -351,7 +351,7 @@ msgstr "Subscripció a notícies"
 
 #: ../search/Tiles/Utils.cs:62
 msgid "More news feed results..."
-msgstr "Més resultats a subscripció a notícies..."
+msgstr "Més resultats en subscripció a notícies..."
 
 #: ../search/Tiles/Utils.cs:65
 msgid "Archive"
@@ -359,7 +359,7 @@ msgstr "Arxiu"
 
 #: ../search/Tiles/Utils.cs:66
 msgid "More archive results..."
-msgstr "Més resultats a arxius..."
+msgstr "Més resultats en arxius..."
 
 #: ../search/Tiles/Utils.cs:170
 #, csharp-format
@@ -650,7 +650,7 @@ msgstr "_Contactes"
 #: ../search/UIManager.cs:84
 #
 msgid "Search contacts"
-msgstr "Cerca als contactes"
+msgstr "Cerca contactes"
 
 #: ../search/UIManager.cs:87
 msgid "_Documents"
@@ -659,7 +659,7 @@ msgstr "_Documents"
 #: ../search/UIManager.cs:89
 #
 msgid "Search documents"
-msgstr "Cerca als documents"
+msgstr "Cerca documents"
 
 #: ../search/UIManager.cs:92
 #
@@ -678,7 +678,7 @@ msgstr "Imatges"
 #: ../search/UIManager.cs:99
 #
 msgid "Search images"
-msgstr "Cerca a les imatges"
+msgstr "Cerca imatges"
 
 #: ../search/UIManager.cs:102
 msgid "Media"
@@ -716,7 +716,7 @@ msgstr "Ordena primer els resultats modificats recentment"
 
 #: ../tools/Settings.cs:217
 msgid "Reload configuration"
-msgstr "Torna a carregar la configuració"
+msgstr "Actualitza la configuració"
 
 #: ../tools/Settings.cs:218
 msgid ""
@@ -724,7 +724,7 @@ msgid ""
 "to discard the currently displayed values and reload configuration from disk?"
 msgstr ""
 "El fitxer de configuració ha estat modificat per una altra aplicació. Voleu "
-"descartar els valors actuals i tornar a carregar la configuració des del "
+"descartar els valors actuals i actualitzar la configuració des del "
 "disc?"
 
 #: ../tools/Settings.cs:256
@@ -875,7 +875,7 @@ msgstr "<b>Afegeix un ordinador remot</b>"
 
 #: ../tools/settings.glade.h:2
 msgid "<b>Add resource</b>"
-msgstr "<b>Afegeix el recurs</b>"
+msgstr "<b>Afegeix un recurs</b>"
 
 #: ../tools/settings.glade.h:3
 msgid "<b>Display</b>"
@@ -907,7 +907,7 @@ msgstr ""
 
 #: ../tools/settings.glade.h:10
 msgid "Add any additional paths to be included for indexing."
-msgstr "Afegeix camins addicionals per a incloure a la indexació."
+msgstr "Afegeiu els camins addicionals per a incloure a la indexació."
 
 #: ../tools/settings.glade.h:11
 #
@@ -926,8 +926,8 @@ msgid ""
 "Adjust which types of results should be visible, and in what order they "
 "should be presented when grouped by type."
 msgstr ""
-"Definiu els tipus de resultats que han de ser visibles, i amb l'ordre en què "
-"s'han de presentar en ser agrupats per tipus."
+"Definiu els tipus de resultats que han de ser visibles, i l'ordre en què "
+"s'han de presentar quan s'agrupin per tipus."
 
 #: ../tools/settings.glade.h:14
 msgid "Allow external access to local search services"
@@ -1003,15 +1003,15 @@ msgstr "Indiqueu els camins que han d'estar disponibles per l'accés extern"
 
 #: ../tools/settings.glade.h:32
 msgid "Start search & indexing services automatically "
-msgstr "Inicia automàticament els serveis de cerca i indexació"
+msgstr "Inicia automàticament els serveis de cerca i d'indexació"
 
 #: ../tools/beagle-settings.desktop.in.h:1
 msgid "Configure Desktop Search & Indexing"
-msgstr "Configura la cerca i l'indexació de l'escriptori"
+msgstr "Configura la cerca i la indexació de l'escriptori"
 
 #: ../tools/beagle-settings.desktop.in.h:2
 msgid "Configure search & indexing properties"
-msgstr "Configura les propietats de la cerca i l'indexació"
+msgstr "Configura les propietats de la cerca i de la indexació"
 
 #: ../tools/beagle-settings.desktop.in.h:3
 #
