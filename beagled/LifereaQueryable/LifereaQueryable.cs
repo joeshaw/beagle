@@ -341,7 +341,7 @@ namespace Beagle.Daemon.LifereaQueryable {
 		[XmlElement ("description")] public string Description ="";
 		[XmlElement ("source")] public string Source="";
 		[XmlElement ("attributes")] public Attributes Attribs;
-		[XmlElement ("time")] public ulong Timestamp;
+		[XmlElement ("time")] public long Timestamp;
 	}
 
 	public class Attributes {
