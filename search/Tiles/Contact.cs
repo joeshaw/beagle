@@ -23,7 +23,6 @@ namespace Search.Tiles {
 		{
 			Group = TileGroup.Contact;
 
-			Icon = GetIcon (32);
 			Title = hit.GetFirstProperty ("fixme:Name");
 			Description = hit.GetFirstProperty ("fixme:Email");
 		}
@@ -35,6 +34,11 @@ namespace Search.Tiles {
 				return icon.ScaleSimple (size, size, Gdk.InterpType.Bilinear);
 			} else
 				return WidgetFu.LoadThemeIcon ("stock_person", size);
+		}
+
+		protected override void LoadIcon (Gtk.Image image, int size)
+		{
+			image.Pixbuf = GetIcon (size);
 		}
 
 		const Gtk.AttachOptions expand = Gtk.AttachOptions.Expand | Gtk.AttachOptions.Fill;

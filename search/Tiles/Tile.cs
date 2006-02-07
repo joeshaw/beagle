@@ -32,9 +32,9 @@ namespace Search.Tiles {
 			hbox.BorderWidth = 2;
 			hbox.Show ();
 
-			image = new Gtk.Image ();
-			image.NoShowAll = true;
-			hbox.PackStart (image, false, false, 0);
+			icon = new Gtk.Image ();
+			icon.Show ();
+			HBox.PackStart (icon, false, false, 0);
 
 			Add (hbox);
 		}
@@ -60,13 +60,10 @@ namespace Search.Tiles {
 			get { return hbox; }
 		}
 
-		private Gtk.Image image;
-		public Gdk.Pixbuf Icon {
-			get { return image.Pixbuf; }
-			set {
-				image.Pixbuf = value;
-				UpdateIcon ();
-			}
+		protected Gtk.Image icon;
+		public Gtk.Image Icon {
+			get { return icon; }
+			set { icon = value; }
 		}
 
 		private string title;
@@ -93,21 +90,12 @@ namespace Search.Tiles {
 
 		public event EventHandler Selected, Deselected;
 
-		private void UpdateIcon ()
-		{
-			if (image.Pixbuf != null) {
-				image.Show ();
-			} else {
-				image.Hide ();
-			}
-		}
-
 		protected override void OnDragBegin (Gdk.DragContext context)
 		{
-			if (!image.Visible)
+			if (!icon.Visible)
 				return;
 
-			WidgetFu.SetDragImage (context, image);
+			WidgetFu.SetDragImage (context, icon);
 		}
 
 		protected override void OnDragDataGet (Gdk.DragContext dragContext,
@@ -232,6 +220,11 @@ namespace Search.Tiles {
 			}
 
 			return base.OnKeyPressEvent (k);
+		}
+
+		protected virtual void LoadIcon (Gtk.Image image, int size)
+		{
+			image.Pixbuf = WidgetFu.LoadMimeIcon (hit.MimeType, size);
 		}
 
 		protected void RequestSnippet ()

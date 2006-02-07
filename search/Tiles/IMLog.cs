@@ -18,62 +18,47 @@ namespace Search.Tiles {
 		}
 	}
 
-	public class IMLog : Tile {
+	public class IMLog : TileFlat {
 
-		private static Hashtable icons;
-
-		static IMLog ()
-		{
-			icons = new Hashtable ();
-
-			icons ["aim"] = WidgetFu.LoadThemeIcon ("im-aim", 16);
-			icons ["icq"] = WidgetFu.LoadThemeIcon ("im-icq", 16);
-			icons ["jabber"] = WidgetFu.LoadThemeIcon ("im-jabber", 16);
-			icons ["msn"] = WidgetFu.LoadThemeIcon ("im-msn", 16);
-			icons ["novell"] = WidgetFu.LoadThemeIcon ("im-nov", 16);
-			icons ["yahoo"] = WidgetFu.LoadThemeIcon ("im-yahoo", 16);
-		}
-
-		private Gtk.Label subject, from, date;
-
-		public Gtk.Label SubjectLabel {
-			get { return subject; }
-		}
-
-		public Gtk.Label FromLabel {
-			get { return from; }
-		}
-
-		public Gtk.Label DateLabel {
-			get { return date; }
-		}
+		private static Hashtable all_icons = new Hashtable ();
 
 		public IMLog (Beagle.Hit hit, Beagle.Query query) : base (hit, query)
 		{
 			Group = TileGroup.Conversations;
 
-			string protocol = hit.GetFirstProperty ("fixme:protocol");
-			if (icons [protocol] != null)
-				Icon = (Gdk.Pixbuf)icons [protocol];
-			else
-				Icon = WidgetFu.LoadThemeIcon ("im", 16);
-
-			subject = WidgetFu.NewLabel ("IM Conversation");
-			WidgetFu.EllipsizeLabel (subject, 40);
-			HBox.PackStart (subject, true, true, 3);
-
-			from = WidgetFu.NewBoldLabel (hit.GetFirstProperty ("fixme:speakingto"));
-			from.UseMarkup = true;
-			WidgetFu.EllipsizeLabel (from, 20);
-			HBox.PackStart (from, false, false, 3);
-
+			subject.LabelProp = Catalog.GetString ("IM Conversation");
+			from.LabelProp = "<b>" + hit.GetFirstProperty ("fixme:speakingto") + "</b>";
 			try {
 				Timestamp = Utils.ParseTimestamp (hit.GetFirstProperty ("fixme:starttime"));
-				date = WidgetFu.NewLabel (Utils.NiceShortDate (Timestamp));
-				HBox.PackStart (date, false, false, 3);
+				date.LabelProp = Utils.NiceShortDate (Timestamp);
 			} catch {}
+		}
 
-			HBox.ShowAll ();
+		private Hashtable IconsForSize (int size)
+		{
+			Hashtable icons = new Hashtable ();
+
+			icons ["aim"] = WidgetFu.LoadThemeIcon ("im-aim", size);
+			icons ["icq"] = WidgetFu.LoadThemeIcon ("im-icq", size);
+			icons ["jabber"] = WidgetFu.LoadThemeIcon ("im-jabber", size);
+			icons ["msn"] = WidgetFu.LoadThemeIcon ("im-msn", size);
+			icons ["novell"] = WidgetFu.LoadThemeIcon ("im-nov", size);
+			icons ["yahoo"] = WidgetFu.LoadThemeIcon ("im-yahoo", size);
+
+			return icons;
+		}
+
+		protected override void LoadIcon (Gtk.Image image, int size)
+		{
+			Hashtable icons = (Hashtable)all_icons[size];
+			if (icons == null)
+				all_icons[size] = icons = IconsForSize (size);
+
+			string protocol = Hit.GetFirstProperty ("fixme:protocol");
+			if (icons [protocol] != null)
+				image.Pixbuf = (Gdk.Pixbuf)icons [protocol];
+			else
+				image.Pixbuf = WidgetFu.LoadThemeIcon ("im", size);
 		}
 
 		const Gtk.AttachOptions expand = Gtk.AttachOptions.Expand | Gtk.AttachOptions.Fill;
@@ -99,7 +84,8 @@ namespace Search.Tiles {
 			label = WidgetFu.NewBoldLabel (DateLabel.Text);
 			table.Attach (label, 3, 4, 0, 1, fill, fill, 0, 0);
 
-			Gtk.Image icon = new Gtk.Image (WidgetFu.LoadThemeIcon ("im", 48));
+			Gtk.Image icon = new Gtk.Image ();
+			LoadIcon (icon, 48);
 			table.Attach (icon, 0, 1, 2, 3, fill, fill, 0, 0);
 			
 			snippet_label = WidgetFu.NewLabel ();

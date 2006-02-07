@@ -20,20 +20,11 @@ namespace Search {
 		{
 			base.OnAdded (widget);
 
-			Tiles.MailMessage mtile = widget as Tiles.MailMessage;
-			if (mtile != null) {
-				col1.AddWidget (mtile.SubjectLabel);
-				col2.AddWidget (mtile.FromLabel);
-				col3.AddWidget (mtile.DateLabel);
-				return;
-			}
-
-			Tiles.IMLog imtile = widget as Tiles.IMLog;
-			if (imtile != null) {
-				col1.AddWidget (imtile.SubjectLabel);
-				col2.AddWidget (imtile.FromLabel);
-				col3.AddWidget (imtile.DateLabel);
-				return;
+			Tiles.TileFlat tile = widget as Tiles.TileFlat;
+			if (tile != null) {
+				col1.AddWidget (tile.SubjectLabel);
+				col2.AddWidget (tile.FromLabel);
+				col3.AddWidget (tile.DateLabel);
 			}
 		}
 

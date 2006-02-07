@@ -22,11 +22,6 @@ namespace Search.Tiles {
 
 		public TileFile (Beagle.Hit hit, Beagle.Query query) : base (hit, query)
 		{
-			Icon = WidgetFu.LoadThumbnailIcon (Hit, 32);
-
-			if (Icon == null)
-				Icon = WidgetFu.LoadMimeIcon (Hit ["beagle:MimeType"], 32);
-
 			Title = GetTitle ();
 			
 			if (Hit.FileInfo != null) {
@@ -39,6 +34,14 @@ namespace Search.Tiles {
 			AddAction (new TileAction (Catalog.GetString ("E-Mail"), Email));
 			AddAction (new TileAction (Catalog.GetString ("Instant-Message"), InstantMessage));
 			AddAction (new TileAction (Catalog.GetString ("Move to Trash"), Gtk.Stock.Delete, MoveToTrash));
+		}
+
+		static ThumbnailFactory thumbnailer = new ThumbnailFactory ();
+
+		protected override void LoadIcon (Gtk.Image image, int size)
+		{
+			if (!thumbnailer.SetThumbnailIcon (image, Hit, size))
+				base.LoadIcon (image, size);
 		}
 
 		private string GetTitle ()
@@ -163,7 +166,7 @@ namespace Search.Tiles {
 			WidgetFu.EllipsizeLabel (label, 80);
 			table.Attach (label, 1, 2, 2, 3, expand, fill, 0, 0);
 
-			Gtk.Image icon = new Gtk.Image (Icon);
+			Gtk.Image icon = new Gtk.Image (Icon.Pixbuf);
 			table.Attach (icon, 0, 1, 3, 4, fill, fill, 0, 0);
 			
 			snippet_label = WidgetFu.NewLabel ();

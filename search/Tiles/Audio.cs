@@ -24,7 +24,6 @@ namespace Search.Tiles {
 			Group = TileGroup.Audio;
 
 			// FIXME: Show album art if any. Needs implementation in Beagle.Util
-			Icon = WidgetFu.LoadMimeIcon (Hit ["beagle:MimeType"], 32);
 
 			string title = Hit.GetFirstProperty ("fixme:title");
 			if (title != null && title != "")

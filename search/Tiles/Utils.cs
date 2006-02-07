@@ -76,7 +76,7 @@ namespace Search.Tiles {
 					   Int32.Parse (timestamp.Substring (8, 2)),
 					   Int32.Parse (timestamp.Substring (10, 2)),
 					   Int32.Parse (timestamp.Substring (12, 2)));
-			return dt.ToLocalTime ();
+			return dt;
 		}
 
 		public static string NiceShortDate (string timestamp)
@@ -97,16 +97,17 @@ namespace Search.Tiles {
 			if (dt.Year <= 1970)
 				return "-";
 
-			DateTime now = DateTime.Now;
-			TimeSpan span = now - dt;
+			dt = dt.ToLocalTime ();
+			DateTime today = DateTime.Today;
+			TimeSpan span = today - dt;
 
-			if (span.TotalDays == 0)
+			if (span.TotalDays < 1)
 				return "Today";
-			else if (span.TotalDays == 1)
+			else if (span.TotalDays < 2)
 				return "Yesterday";
 			else if (span.TotalDays < 7)
 				return dt.ToString ("dddd"); // "Tuesday"
-			else if (dt.Year == now.Year || span.TotalDays < 180)
+			else if (dt.Year == today.Year || span.TotalDays < 180)
 				return dt.ToString ("MMM d"); // "Jul 4"
 			else
 				return dt.ToString ("MMM yyyy"); // Jan 2001
@@ -127,16 +128,20 @@ namespace Search.Tiles {
 
 		public static string NiceLongDate (DateTime dt)
 		{
-			DateTime now = DateTime.Now;
-			TimeSpan span = now - dt;
+			if (dt.Year <= 1970)
+				return "-";
 
-			if (span.TotalDays == 0)
+			dt = dt.ToLocalTime ();
+			DateTime today = DateTime.Today;
+			TimeSpan span = today - dt;
+
+			if (span.TotalDays < 1)
 				return "Today";
-			else if (span.TotalDays == 1)
+			else if (span.TotalDays < 2)
 				return "Yesterday";
 			else if (span.TotalDays < 7)
 				return dt.ToString ("dddd"); // "Tuesday"
-			else if (dt.Year == now.Year || span.TotalDays < 180)
+			else if (dt.Year == today.Year || span.TotalDays < 180)
 				return dt.ToString ("MMMM d"); // "July 4"
 			else
 				return dt.ToString ("MMMM d, yyyy"); // January 7, 2001
@@ -157,18 +162,22 @@ namespace Search.Tiles {
 
 		public static string NiceVeryLongDate (DateTime dt)
 		{
-			DateTime now = DateTime.Now;
+			if (dt.Year <= 1970)
+				return "-";
 
-			TimeSpan span = now - dt;
-			if (span.Days == 0)
+			dt = dt.ToLocalTime ();
+			DateTime today = DateTime.Today;
+			TimeSpan span = today - dt;
+
+			if (span.TotalDays < 1)
 				return String.Format ("Today ({0:MMMM d, yyyy})", dt);
-			else if (span.Days == 1)
+			else if (span.TotalDays < 2)
 				return String.Format ("Yesterday ({0:MMMM d, yyyy})", dt);
-			else if (span.Days < 7)
+			else if (span.TotalDays < 7)
 				return String.Format ("{0:dddd} ({0:MMMM d, yyyy})", dt);
-			else if (span.Days < 30)
+			else if (span.TotalDays < 30)
 				return String.Format (Catalog.GetPluralString ("{0} week ago", "{0} weeks ago", span.Days / 7) + " ({1:MMMM d, yyyy})", span.Days / 7, dt);
-			else if (span.Days < 365 + 180) // Lets say a year and a half to stop saying months
+			else if (span.TotalDays < 365 + 180) // Lets say a year and a half to stop saying months
 				return String.Format (Catalog.GetPluralString ("{0} month ago", "{0} months ago", span.Days / 30) + " ({1:MMMM d, yyyy})", span.Days / 30, dt);
 			else
 				return String.Format (Catalog.GetPluralString ("{0} year ago", "{0} years ago", span.Days / 365) + " ({1:MMMM d, yyyy})", span.Days / 365, dt);

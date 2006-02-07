@@ -17,49 +17,30 @@ namespace Search.Tiles {
 		}
 	}
 
-	public class MailMessage : Tile {
-
-		Gtk.Label subject, from, date;
+	public class MailMessage : TileFlat {
 
 		public MailMessage (Beagle.Hit hit, Beagle.Query query) : base (hit, query)
 		{
 			Group = TileGroup.Conversations;
 
-			Icon = GetIcon (Hit, 16);
-
-			Title = hit.GetFirstProperty ("dc:title");
-			subject = WidgetFu.NewLabel (Title);
-			WidgetFu.EllipsizeLabel (subject);
-			HBox.PackStart (subject, true, true, 3);
-
-			from = WidgetFu.NewBoldLabel (GetAddress (hit));
-			from.UseMarkup = true;
-			WidgetFu.EllipsizeLabel (from, 20);
-			HBox.PackStart (from, false, false, 3);
-
+			subject.LabelProp = Title = hit.GetFirstProperty ("dc:title");
+			from.LabelProp = "<b>" + GetAddress (hit) + "</b>";
 			try {
 				Timestamp = Utils.ParseTimestamp (hit.GetFirstProperty ("fixme:date"));
-				date = WidgetFu.NewLabel (Utils.NiceShortDate (Timestamp));
-				HBox.PackStart (date, false, false, 3);
+				date.LabelProp = Utils.NiceShortDate (Timestamp);
 			} catch {}
-
-			HBox.ShowAll ();
 
 			AddAction (new TileAction (Catalog.GetString ("Send in Mail"), SendInMail));
 		}
 
-		private static Gdk.Pixbuf GetIcon (Beagle.Hit hit, int size)
+		protected override void LoadIcon (Gtk.Image image, int size)
 		{
-			Gdk.Pixbuf icon;
-			
-			if (hit.GetFirstProperty ("fixme:isAnswered") != null)
-				icon = WidgetFu.LoadThemeIcon ("stock_mail-replied", size);
-			else if (hit.GetFirstProperty ("fixme:isSeen") != null)
-				icon = WidgetFu.LoadThemeIcon ("stock_mail-open", size);
+			if (Hit.GetFirstProperty ("fixme:isAnswered") != null)
+				image.Pixbuf = WidgetFu.LoadThemeIcon ("stock_mail-replied", size);
+			else if (Hit.GetFirstProperty ("fixme:isSeen") != null)
+				image.Pixbuf = WidgetFu.LoadThemeIcon ("stock_mail-open", size);
 			else
-				icon = WidgetFu.LoadThemeIcon ("stock_mail", size);
-
-			return icon;
+				image.Pixbuf = WidgetFu.LoadThemeIcon ("stock_mail", size);
 		}
 
 		private static string GetAddress (Beagle.Hit hit)
@@ -73,18 +54,6 @@ namespace Search.Tiles {
 				address = address.Substring (0, address.IndexOf (" <"));
 
 			return address;
-		}
-
-		public Gtk.Label SubjectLabel {
-			get { return subject; }
-		}
-
-		public Gtk.Label FromLabel {
-			get { return from; }
-		}
-
-		public Gtk.Label DateLabel {
-			get { return date; }
 		}
 
 		const Gtk.AttachOptions expand = Gtk.AttachOptions.Expand | Gtk.AttachOptions.Fill;
@@ -115,7 +84,8 @@ namespace Search.Tiles {
 			label = WidgetFu.NewBoldLabel (DateLabel.Text);
 			table.Attach (label, 3, 4, 0, 1, fill, fill, 0, 0);
 
-			Gtk.Image icon = new Gtk.Image (GetIcon (Hit, 48));
+			Gtk.Image icon = new Gtk.Image ();
+			LoadIcon (icon, 48);
 			table.Attach (icon, 0, 1, 2, 3, fill, fill, 0, 0);
 
 			snippetLabel = WidgetFu.NewLabel ();

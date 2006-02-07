@@ -42,7 +42,6 @@ namespace Search.Tiles {
 		public MailAttachment (Beagle.Hit hit, Beagle.Query query) : base (hit, query)
 		{
 			Title = Hit ["fixme:attachment_title"];
-			Icon = WidgetFu.LoadMimeIcon (hit ["beagle:MimeType"], 32);
 			Description = Catalog.GetString ("Mail attachment");
 		}
 

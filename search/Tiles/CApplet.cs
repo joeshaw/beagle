@@ -38,48 +38,9 @@ namespace Search.Tiles {
 		}
 	}
 
-	public class CApplet : TileTemplate {
+	public class CApplet : Application {
 
-		public CApplet (Beagle.Hit hit, Beagle.Query query) : base (hit, query)
-		{
-			Group = TileGroup.Application;
-			Title = Hit.GetFirstProperty ("fixme:Name");
-			Description = Hit ["fixme:Comment"];
-		
-			// FIXME: Some icons do not fit the requested size,
-			// should we scale them manually?
-			Icon = LookupIcon (Hit ["fixme:Icon"]);
-		}
-
-		private static Gdk.Pixbuf LookupIcon (string path)
-		{
-			if (path == null)
-				return null;
-			
-			Gdk.Pixbuf icon;
-
-			if (path.StartsWith ("/")) {
-				icon = new Gdk.Pixbuf (path);
-			} else {
-				
-				if (path.EndsWith (".png")) 
-					icon = WidgetFu.LoadThemeIcon (path.Substring (0, path.Length-4), 32);
-				else
-					icon = WidgetFu.LoadThemeIcon (path, 32);
-
-				if (icon == null) {
-					string kde_path = Beagle.Util.KdeUtils.LookupIcon (path);
-				
-					if (System.IO.File.Exists (kde_path))
-						icon = new Gdk.Pixbuf (kde_path);
-				}
-			}
-
-			if (icon == null)
-				icon = WidgetFu.LoadThemeIcon (Gtk.Stock.Execute, 32);
-
-			return icon;
-		}
+		public CApplet (Beagle.Hit hit, Beagle.Query query) : base (hit, query) {}
 
 		public override void Open ()
 		{

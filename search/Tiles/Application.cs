@@ -75,34 +75,34 @@ namespace Search.Tiles {
 
 		IntPtr ditem;
 
-		public Application (Beagle.Hit hit, Beagle.Query query, IntPtr ditem) : base (hit, query)
+		public Application (Beagle.Hit hit, Beagle.Query query, IntPtr ditem) : this (hit, query)
 		{
 			this.ditem = ditem;
-
-			Group = TileGroup.Application;
-			Title = Hit.GetFirstProperty ("fixme:Name");
-			Description = Hit ["fixme:Comment"];
-		
-			// FIXME: Some icons do not fit the requested size,
-			// should we scale them manually?
-			Icon = LookupIcon (Hit);
-
 			AddAction (new TileAction (Catalog.GetString ("Move to trash"), Gtk.Stock.Delete, MoveToTrash));
 		}
 
-		private static Gdk.Pixbuf LookupIcon (Beagle.Hit hit)
+		protected Application (Beagle.Hit hit, Beagle.Query query) : base (hit, query)
+		{
+			Group = TileGroup.Application;
+			Title = Hit.GetFirstProperty ("fixme:Name");
+			Description = Hit ["fixme:Comment"];
+		}
+
+		// FIXME: Some icons do not fit the requested size,
+		// should we scale them manually?
+		protected override void LoadIcon (Gtk.Image image, int size)
 		{
 			Gdk.Pixbuf icon = null;
-			string path = hit ["fixme:Icon"];
+			string path = Hit ["fixme:Icon"];
 			
 			if (path != null && path != "") {
 				if (path.StartsWith ("/")) {
 					icon = new Gdk.Pixbuf (path);
 				} else {
 					if (path.EndsWith (".png")) 
-						icon = WidgetFu.LoadThemeIcon (path.Substring (0, path.Length-4), 32);
+						icon = WidgetFu.LoadThemeIcon (path.Substring (0, path.Length-4), size);
 					else
-						icon = WidgetFu.LoadThemeIcon (path, 32);
+						icon = WidgetFu.LoadThemeIcon (path, size);
 					
 					if (icon == null) {
 						string kde_path = Beagle.Util.KdeUtils.LookupIcon (path);
@@ -113,11 +113,10 @@ namespace Search.Tiles {
 				}
 			}
 
-			// FIXME: What icon should we use?
-			if (icon == null)
-				icon = WidgetFu.LoadMimeIcon (hit ["beagle:MimeType"], 32);
-
-			return icon;
+			if (icon != null)
+				image.Pixbuf = icon;
+			else
+				base.LoadIcon (image, size);
 		}
 
 		[DllImport ("libgnome-desktop-2.so.2")]

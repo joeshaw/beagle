@@ -25,14 +25,17 @@ namespace Search.Tiles {
 		{
 			Group = TileGroup.Feed;
 
-			string path = Hit ["fixme:cachedimg"];
-			if (path != null && File.Exists (path))
-				Icon = new Gdk.Pixbuf (path, 32, 32);
-			else
-				Icon = WidgetFu.LoadThemeIcon ("gnome-fs-bookmark", 32); // FIXME: RSS icon?
-
 			Title = Hit ["dc:title"];
 			Description = Hit ["dc:creator"]; // FIXME: Blog name
+		}
+
+		protected override void LoadIcon (Gtk.Image image, int size)
+		{
+			string path = Hit ["fixme:cachedimg"];
+			if (path != null && File.Exists (path))
+				image.Pixbuf = new Gdk.Pixbuf (path, size, size);
+			else
+				image.Pixbuf = WidgetFu.LoadThemeIcon ("gnome-fs-bookmark", size); // FIXME: RSS icon?
 		}
 
 		const Gtk.AttachOptions expand = Gtk.AttachOptions.Expand | Gtk.AttachOptions.Fill;
@@ -62,14 +65,8 @@ namespace Search.Tiles {
 			label = WidgetFu.NewBoldLabel (Utils.NiceShortDate (Hit.Timestamp));
 			table.Attach (label, 3, 4, 0, 1, fill, fill, 0, 0);
 
-			Gdk.Pixbuf img;
-			string path = Hit ["fixme:cachedimg"];
-			if (path != null && File.Exists (path))
-				img = new Gdk.Pixbuf (path, 48, 48);
-			else
-				img = WidgetFu.LoadThemeIcon ("gnome-fs-bookmark", 48);
-
-			Gtk.Image icon = new Gtk.Image (img);
+			Gtk.Image icon = new Gtk.Image ();
+			LoadIcon (icon, 48);
 			table.Attach (icon, 0, 1, 2, 3, fill, fill, 0, 0);
 
 			snippet_label = WidgetFu.NewLabel ();

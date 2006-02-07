@@ -38,9 +38,11 @@ TILES = 					\
 	$(srcdir)/Tiles/RSSFeed.cs		\
 	$(srcdir)/Tiles/Spreadsheet.cs		\
 	$(srcdir)/Tiles/TextDocument.cs		\
+	$(srcdir)/Tiles/ThumbnailFactory.cs	\
 	$(srcdir)/Tiles/Tile.cs			\
 	$(srcdir)/Tiles/TileAction.cs		\
 	$(srcdir)/Tiles/TileActivator.cs	\
+	$(srcdir)/Tiles/TileFlat.cs		\
 	$(srcdir)/Tiles/TileGroup.cs		\
 	$(srcdir)/Tiles/TileTemplate.cs		\
 	$(srcdir)/Tiles/Utils.cs		\

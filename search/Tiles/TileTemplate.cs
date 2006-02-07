@@ -8,7 +8,6 @@ namespace Search.Tiles {
 
 		private Gtk.Label title_label;
 		private Gtk.Label desc_label;
-		private Gtk.Label snippet_label;
 		
 		public TileTemplate (Beagle.Hit hit, Beagle.Query query) : base (hit, query)
 		{
@@ -28,18 +27,17 @@ namespace Search.Tiles {
 			WidgetFu.EllipsizeLabel (desc_label, 30);
 			vbox.PackStart (desc_label, false, false, 0);
 
-			snippet_label = WidgetFu.NewGrayLabel ();
-			snippet_label.NoShowAll = true;
-			WidgetFu.EllipsizeLabel (snippet_label, 30);
-			vbox.PackStart (snippet_label, false, false, 0);
-
 			alignment.ShowAll ();
+		}
 
-			// FIXME: We need a constant icon size
-			//IconSize = Gtk.IconSize.Dnd;
+		protected override void OnRealized ()
+		{
+			base.OnRealized ();
 
-			// FIXME: Disabled for now. Needs UI touchups
-			//RequestSnippet ();
+			if ((icon.StorageType == ImageType.Empty ||
+			     icon.StorageType == ImageType.Pixbuf) &&
+			    icon.Pixbuf == null)
+				LoadIcon (icon, 32);
 		}
 
 		public override string Title {
@@ -63,15 +61,6 @@ namespace Search.Tiles {
 					desc_label.Hide ();
 				}
 			}
-		}
-
-		protected override void GotSnippet (string snippet, bool found)
-		{
-			if (snippet == null || snippet == "")
-				return;
-
-			snippet_label.Markup = "<small>" + snippet + "</small>";
-			snippet_label.Show ();
 		}
 	}
 }

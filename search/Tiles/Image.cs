@@ -26,7 +26,6 @@ namespace Search.Tiles {
 			Group = TileGroup.Image;
 
 			Title = Hit ["beagle:ExactFilename"];
-			Icon = GetIcon (Hit, 32);
 
 			if (Hit ["beagle:FilenameExtension"].Length > 0)
 				Description = Hit ["beagle:FilenameExtension"].Substring (1).ToUpper ();
@@ -40,22 +39,21 @@ namespace Search.Tiles {
 			AddAction (new TileAction (Catalog.GetString ("Set as Wallpaper"), SetAsWallpaper)); // FIXME: This is not in the spec, is it ok?
 		}
 
-		public static Gdk.Pixbuf GetIcon (Beagle.Hit hit, int size)
+		protected override void LoadIcon (Gtk.Image image, int size)
 		{
-			Gdk.Pixbuf icon =  WidgetFu.LoadThumbnailIcon (hit, size);
-
-			if (icon == null)
-				return WidgetFu.LoadMimeIcon (hit ["beagle:MimeType"], size);
+			base.LoadIcon (image, size);
 
 			// Draw the F-Spot overlay
-			if (hit ["fspot:IsIndexed"] == "true") {
+			if (Hit ["fspot:IsIndexed"] == "true") {
+				Gdk.Pixbuf icon = image.Pixbuf;
+
 				Gdk.Pixbuf emblem = Beagle.Images.GetPixbuf ("emblem-fspot.png", 16, 16);
 				emblem.Composite (icon, 0,  icon.Height - emblem.Height, emblem.Width,
 						  emblem.Height, 0,  icon.Height - emblem.Height, 1,  1,
 						  Gdk.InterpType.Bilinear, 255);
-			}
 
-			return icon;
+				image.Pixbuf = icon;
+			}
 		}
 
 		const Gtk.AttachOptions expand = Gtk.AttachOptions.Expand | Gtk.AttachOptions.Fill;
@@ -67,7 +65,8 @@ namespace Search.Tiles {
 			table.RowSpacing = table.ColumnSpacing = 6;
 
 			// FIXME: The icon needs a nice frame as in the spec
-			Gtk.Image icon = new Gtk.Image (GetIcon (Hit, 96));
+			Gtk.Image icon = new Gtk.Image ();
+			LoadIcon (icon, 96);
 			table.Attach (icon, 0, 1, 0, 4, fill, fill, 0, 0);
 
 			Gtk.Label label;

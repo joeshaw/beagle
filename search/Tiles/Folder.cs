@@ -23,7 +23,7 @@ namespace Search.Tiles {
 		{
 			Group = TileGroup.Folder;
 			Title = Hit ["beagle:ExactFilename"];
-			Icon = WidgetFu.LoadThemeIcon ("gnome-fs-directory", 32);
+//			Icon = WidgetFu.LoadThemeIcon ("gnome-fs-directory", 32);
 			
 			int n = Hit.DirectoryInfo.GetFileSystemInfos ().Length;
 

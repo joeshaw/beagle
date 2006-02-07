@@ -1,3 +1,42 @@
+2006-02-07  Dan Winship  <danw@novell.com>
+
+	* search/Tiles/Tile.cs: reorganize to make tile images not be
+	loaded until their tiles are realized, so that results will be
+	presented faster.
+
+	* search/Tiles/ThumbnailFactory.cs: new class to generate
+	thumbnails in another thread and update the tile images with them
+	when they're done, so that thumbnail generation doesn't block the
+	UI.
+
+	* search/Tiles/File.cs: update for new icon stuff. Use a
+	ThumbnailFactory.
+
+	* search/Tiles/WebHistory.cs: Create thumbnails if possible (eg,
+	via the gnome-web-photo package) #158112. Uses a separate
+	ThumbnailFactory from TileFile, so that fast local file thumbnails
+	don't get queued behind slow web thumbnails. Also add a details
+	pane.
+
+	* search/Tiles/Utils.cs (NiceShortDate, NiceLongDate,
+	NiceVeryLongDate): Fix local time vs UTC bugs, and fix the
+	calculation and localization of "Today" and "Yesterday".
+
+	* search/Tiles/TileFlat.cs:
+	* search/Tiles/IMLog.cs: 
+	* search/Tiles/MailMessage.cs: add a new base class for IM and
+	Mail tiles and make them use it.
+
+	* search/ConversationCategory.cs: use TileFlat rather than having
+	separate special IM and Mail cases.
+
+	* search/Tiles/Application.cs: 
+	* search/Tiles/CApplet.cs: make CApplet a subclass of Application
+	so they can share icon-loading code.
+
+	* search/Tiles/Calendar.cs: update a bunch, though it's still not
+	being built
+
 2006-02--5  Debajyoti Bera <dbera.web@gmail.com>
 
 	* Util/DigikamTags.cs: Extraction of tags and comments from digikam.
