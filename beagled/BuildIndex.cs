@@ -82,6 +82,8 @@ namespace Beagle.Daemon
 
 		static void DoMain (string [] args)
 		{
+			SystemInformation.SetProcessName ("beagle-build-index");
+
 			if (args.Length < 2)
 				PrintUsage ();
 		
@@ -269,36 +271,38 @@ namespace Beagle.Daemon
 		{
 			Logger.Log.Debug ("Starting CrawlWorker");
 			
+			try {
+				int count_dirs = 0;
 			
-			int count_dirs = 0;
-			
-			while (pending_directories.Count > 0) {
-				DirectoryInfo dir = (DirectoryInfo) pending_directories.Dequeue ();
+				while (pending_directories.Count > 0) {
+					DirectoryInfo dir = (DirectoryInfo) pending_directories.Dequeue ();
 				
-				try {
-					if (arg_recursive)
-						foreach (DirectoryInfo subdir in DirectoryWalker.GetDirectoryInfos (dir))
-							if (!Ignore (subdir)
-							    && !FileSystem.IsSymLink (subdir.FullName))
-								pending_directories.Enqueue (subdir);
+					try {
+						if (arg_recursive)
+							foreach (DirectoryInfo subdir in DirectoryWalker.GetDirectoryInfos (dir))
+								if (!Ignore (subdir)
+								    && !FileSystem.IsSymLink (subdir.FullName))
+									pending_directories.Enqueue (subdir);
 					
-					foreach (FileInfo file in DirectoryWalker.GetFileInfos (dir))
-						if (!Ignore (file)
-						    && !FileSystem.IsSymLink (file.FullName))
-							pending_files.Enqueue (file);
+						foreach (FileInfo file in DirectoryWalker.GetFileInfos (dir))
+							if (!Ignore (file)
+							    && !FileSystem.IsSymLink (file.FullName))
+								pending_files.Enqueue (file);
 					
-				} catch (DirectoryNotFoundException e) {}
+					} catch (DirectoryNotFoundException e) {}
 				
-				if (shutdown)
-					break;
+					if (shutdown)
+						break;
 				
-				count_dirs++;
+					count_dirs++;
+				}
+
+				Logger.Log.Debug ("Scanned {0} files in {1} directories", pending_files.Count, count_dirs);
+			} finally {
+				Logger.Log.Debug ("CrawlWorker Done");
+
+				crawling = false;
 			}
-
-			Logger.Log.Debug ("Scanned {0} files in {1} directories", pending_files.Count, count_dirs);
-			Logger.Log.Debug ("CrawlWorker Done");
-
-			crawling = false;
 		}
 		
 		/////////////////////////////////////////////////////////////////
@@ -373,53 +377,55 @@ namespace Beagle.Daemon
 		{
 			Logger.Log.Debug ("Starting IndexWorker");
 			
-			Indexable indexable;
-			IndexerRequest pending_request;
-			pending_request = new IndexerRequest ();
+			try {
+				Indexable indexable;
+				IndexerRequest pending_request;
+				pending_request = new IndexerRequest ();
 			
-			while (!shutdown) {
-				if (pending_files.Count > 0) {
-					FileInfo file = (FileInfo) pending_files.Dequeue ();
-					Uri uri = UriFu.PathToFileUri (file.FullName);
+				while (!shutdown) {
+					if (pending_files.Count > 0) {
+						FileInfo file = (FileInfo) pending_files.Dequeue ();
+						Uri uri = UriFu.PathToFileUri (file.FullName);
 					
-					// Check that we really should be indexing the file
-					if (!file.Exists || Ignore (file) || fa_store.IsUpToDate (file.FullName))
-						continue;
+						// Check that we really should be indexing the file
+						if (!file.Exists || Ignore (file) || fa_store.IsUpToDate (file.FullName))
+							continue;
 
-					// Create the indexable and add the standard properties we
-					// use in the FileSystemQueryable.
-					indexable = new Indexable (uri);
-					indexable.Timestamp = file.LastWriteTimeUtc;
-					FSQ.AddStandardPropertiesToIndexable (indexable, file.Name, Guid.Empty, false);
+						// Create the indexable and add the standard properties we
+						// use in the FileSystemQueryable.
+						indexable = new Indexable (uri);
+						indexable.Timestamp = file.LastWriteTimeUtc;
+						FSQ.AddStandardPropertiesToIndexable (indexable, file.Name, Guid.Empty, false);
 					
-					AddToRequest (pending_request, indexable);
+						AddToRequest (pending_request, indexable);
 					
-					if (pending_request.Count >= BATCH_SIZE) {
-						Logger.Log.Debug ("Flushing driver, {0} items in queue", pending_request.Count);
-						FlushIndexer (driver, pending_request);
-						// FlushIndexer clears the pending_request
+						if (pending_request.Count >= BATCH_SIZE) {
+							Logger.Log.Debug ("Flushing driver, {0} items in queue", pending_request.Count);
+							FlushIndexer (driver, pending_request);
+							// FlushIndexer clears the pending_request
+						}
+
+					} else if (crawling) {
+						//Logger.Log.Debug ("IndexWorker: La la la...");
+						Thread.Sleep (50);
+					} else {
+						break;
 					}
-
-				} else if (crawling) {
-					//Logger.Log.Debug ("IndexWorker: La la la...");
-					Thread.Sleep (50);
-				} else {
-					break;
 				}
+
+				// Call Flush until our request is empty.  We have to do this in a loop
+				// because children can get added back to the pending request in a flush.
+				while (pending_request.Count > 0)
+					FlushIndexer (driver, pending_request);
+
+				backing_fa_store.Flush ();
+
+				driver.OptimizeNow ();
+			} finally {
+				Logger.Log.Debug ("IndexWorker Done");
+
+				indexing = false;
 			}
-
-			// Call Flush until our request is empty.  We have to do this in a loop
-			// because children can get added back to the pending request in a flush.
-			while (pending_request.Count > 0)
-				FlushIndexer (driver, pending_request);
-
-			backing_fa_store.Flush ();
-
-			driver.OptimizeNow ();
-
-			Logger.Log.Debug ("IndexWorker Done");
-
-			indexing = false;
 		}
 
 		/////////////////////////////////////////////////////////////////

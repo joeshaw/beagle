@@ -53,8 +53,14 @@ for crawl_file in @sysconfdir@/beagle/*; do
 	    OPTIONS="$OPTIONS `test -n "$CRAWL_DENY_PATTERNS" && \
                      echo --deny-pattern $CRAWL_DENY_PATTERNS`"
 
+            if [ -x `which ionice` ]; then
+                IONICE="`which ionice` -c 3"
+            else
+                IONICE=""
+            fi
+
             export TMPDIR=/tmp
-	    eval nice -n 19 su $CRAWL_USER -c \"@sbindir@/beagle-build-index --target @localstatedir@/cache/beagle/indexes/$CRAWL_INDEX_NAME $OPTIONS $CRAWL_PATHS\" 2> /dev/null
+	    eval nice -n 19 $IONICE su $CRAWL_USER -c \"@sbindir@/beagle-build-index --target @localstatedir@/cache/beagle/indexes/$CRAWL_INDEX_NAME $OPTIONS $CRAWL_PATHS\" 2> /dev/null
 	fi
     fi
 done

@@ -102,7 +102,7 @@ else
     CMDLINE="$BEAGLE_MONO_RUNTIME --debug $MONO_EXTRA_ARGS $TARGET_EXE $BEAGLED_ARGS $FGBG_ARG"
 fi
 
-PROCESS_NAME="mono-beagled"
+PROCESS_NAME="beagled"
 
 if [ $fg -eq 1 ]; then
     exec -a $PROCESS_NAME $CMDLINE

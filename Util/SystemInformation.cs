@@ -1,7 +1,7 @@
 //
 // SystemInformation.cs
 //
-// Copyright (C) 2004 Novell, Inc.
+// Copyright (C) 2004-2006 Novell, Inc.
 //
 
 //
@@ -30,6 +30,7 @@ using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Runtime.InteropServices;
+using System.Text;
 using System.Text.RegularExpressions;
 
 namespace Beagle.Util {
@@ -215,6 +216,8 @@ namespace Beagle.Util {
 			get { return get_vmrss (); }
 		}
 
+		///////////////////////////////////////////////////////////////
+
 		static private int disk_stats_read_reqs;
 		static private int disk_stats_write_reqs;
 		static private int disk_stats_read_bytes;
@@ -310,6 +313,26 @@ namespace Beagle.Util {
 			
 			return (stat.st_dev >> 8 != 0);
 		}
+
+		///////////////////////////////////////////////////////////////
+
+		[DllImport("libc")]
+		private static extern int prctl (int option, byte [] arg2, ulong arg3, ulong arg4, ulong arg5);
+
+		// From /usr/include/linux/prctl.h
+		private const int PR_SET_NAME = 15;
+
+		public static void SetProcessName(string name)
+		{
+#if OS_LINUX
+			if (prctl (PR_SET_NAME, Encoding.ASCII.GetBytes (name), 0, 0, 0) < 0) {
+				Logger.Log.Warn ("Couldn't set process name to '{0}': {1}", name,
+						 Mono.Unix.Native.Stdlib.GetLastError ());
+			}
+#endif
+		}
+
+		///////////////////////////////////////////////////////////////
 
 #if false
 		static void Main ()

@@ -44,7 +44,8 @@ WRAPPER_SED = sed 					\
 	-e "s|\@libdir\@|$(libdir)|g"			\
 	-e "s|\@evolibdir\@|$(EVO_LIBDIR)|g"		\
 	-e "s|\@gacprefix\@|$(GAC_PREFIX)|g"		\
-	-e "s|\@bash\@|$(BASH)|"
+	-e "s|\@bash\@|$(BASH)|"			\
+	-e "s|\@wrapper\@|$@|g"
 
 ############################################################
 

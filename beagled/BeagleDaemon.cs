@@ -77,8 +77,6 @@ namespace Beagle.Daemon {
 
 		private static void LogMemoryUsage ()
 		{
-			int count = 0;
-
 			while (! Shutdown.ShutdownRequested) {
 				int vm_size = SystemInformation.VmSize;
 				int vm_rss = SystemInformation.VmRss;
@@ -91,14 +89,7 @@ namespace Beagle.Daemon {
 					Shutdown.BeginShutdown ();
 				}
 
-				// For the first 10 seconds, run ourselves every
-				// half second for better granularity.
-				if (count < 20)
-					Thread.Sleep (500);
-				else
-					Thread.Sleep (5000);
-
-				++count;
+				Thread.Sleep (5000);
 			}
 		}
 
@@ -230,6 +221,8 @@ namespace Beagle.Daemon {
 
 		public static void DoMain (string[] args)
 		{
+			SystemInformation.SetProcessName ("beagled");
+
 			// Process the command-line arguments
 			bool arg_debug = false;
 			bool arg_debug_memory = false;
