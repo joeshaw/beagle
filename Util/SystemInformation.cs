@@ -325,7 +325,7 @@ namespace Beagle.Util {
 		public static void SetProcessName(string name)
 		{
 #if OS_LINUX
-			if (prctl (PR_SET_NAME, Encoding.ASCII.GetBytes (name), 0, 0, 0) < 0) {
+			if (prctl (PR_SET_NAME, Encoding.ASCII.GetBytes (name + '\0'), 0, 0, 0) < 0) {
 				Logger.Log.Warn ("Couldn't set process name to '{0}': {1}", name,
 						 Mono.Unix.Native.Stdlib.GetLastError ());
 			}
