@@ -268,8 +268,12 @@ public abstract class Summary : IEnumerable {
 			return String.Format ("From: {0}\nTo: {1}\nSubject: {2}\nUID: {3}\n", from, to, subject, uid);
 		}
 
-		public DateTime Date {
-			get { return received.Ticks != 0 ? received : sent; }
+		public DateTime SentDate {
+			get { return sent; }
+		}
+		
+		public DateTime ReceivedDate {
+			get { return received; }
 		}
 		
 		private bool CheckFlag (CamelFlags test)
