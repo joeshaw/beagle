@@ -1,5 +1,18 @@
 2006-02-09  Lukas Lipka  <lukas@pmad.net>
 
+	* search/Makefile.am: Added Tiles/OpenWithMenu.cs to build.
+	
+	* search/Tiles/OpenWithMenu.cs: Shamelessly stolen from f-spot and
+	tuned to fit our needs.
+
+	* search/Tiles/Tile.cs: Implement the Open with menu.
+
+	* search/Tiles/File.cs: Enable Open with.
+
+	* search/Tiles/Folder.cs: Enable Open with.
+
+2006-02-09  Lukas Lipka  <lukas@pmad.net>
+
 	* search/Tiles/File.cs: Dont display blank titles for files with an
 	empty subject (bgo #330558).
 

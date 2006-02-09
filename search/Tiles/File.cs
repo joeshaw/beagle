@@ -23,13 +23,13 @@ namespace Search.Tiles {
 		public TileFile (Beagle.Hit hit, Beagle.Query query) : base (hit, query)
 		{
 			Title = GetTitle ();
+			EnableOpenWith = true;
 			
 			if (Hit.FileInfo != null) {
 				Timestamp = Hit.FileInfo.LastWriteTime;
 				Description = Utils.NiceShortDate (Timestamp);
 			}
 
-			AddAction (new TileAction (Catalog.GetString ("Open With"), OpenWith));
 			AddAction (new TileAction (Catalog.GetString ("Reveal in Folder"), RevealInFolder));
 			AddAction (new TileAction (Catalog.GetString ("E-Mail"), Email));
 			AddAction (new TileAction (Catalog.GetString ("Instant-Message"), InstantMessage));

@@ -23,18 +23,18 @@ namespace Search.Tiles {
 		{
 			Group = TileGroup.Folder;
 			Title = Hit ["beagle:ExactFilename"];
-//			Icon = WidgetFu.LoadThemeIcon ("gnome-fs-directory", 32);
+			EnableOpenWith = true;
 			
 			int n = Hit.DirectoryInfo.GetFileSystemInfos ().Length;
 
 			if (n == 0)
 				Description = Catalog.GetString ("Empty");
 			else
-				Description = String.Format (Catalog.GetPluralString ("Contains {0} Item", "Contains {0} Items", n), n);
+				Description = String.Format (Catalog.GetPluralString ("Contains {0} Item",
+										      "Contains {0} Items", n), n);
 
-			AddAction (new TileAction (Catalog.GetString ("Open With"), OpenWith));
 			// FIXME: s/"gtk-info"/Gtk.Stock.Info/ when we can depend on gtk# 2.8
-			AddAction (new TileAction (Catalog.GetString ("Show Information"), "gtk-info", ShowInformation));
+			//AddAction (new TileAction (Catalog.GetString ("Show Information"), "gtk-info", ShowInformation));
 			AddAction (new TileAction (Catalog.GetString ("Move to Trash"), Gtk.Stock.Delete, MoveToTrash));
 		}
 
@@ -76,10 +76,6 @@ namespace Search.Tiles {
 		public override void Open ()
 		{
 			base.OpenFromMime (Hit);
-		}
-
-		public void OpenWith ()
-		{
 		}
 
 		public void ShowInformation ()

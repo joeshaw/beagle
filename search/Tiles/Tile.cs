@@ -84,6 +84,8 @@ namespace Search.Tiles {
 			set { score = value; }
 		}
 
+		protected bool EnableOpenWith = false;
+
 		static Gtk.TargetEntry[] targets = new Gtk.TargetEntry[] {
 			new Gtk.TargetEntry ("text/uri-list", 0, 0)
 		};
@@ -158,12 +160,30 @@ namespace Search.Tiles {
 			return false;
 		}
 
+		///////////////////////////////////////////////////
+
+		public ArrayList actions = new ArrayList ();
+		public ICollection Actions {
+			get { return actions; }
+		}
+
+		protected void AddAction (TileAction action)
+		{
+			actions.Add (action);
+		}
+
 		private void ShowPopupMenu ()
 		{
 			Gtk.Menu menu = new Gtk.Menu ();
 
 			ActionMenuItem mi = new ActionMenuItem (new TileAction (Catalog.GetString ("Open"), Stock.Open, Open));
 			menu.Append (mi);
+
+			if (EnableOpenWith) {
+				OpenWithMenu owm = new OpenWithMenu (Hit ["beagle:MimeType"]);
+				owm.ApplicationActivated += OpenWith;
+				owm.AppendToMenu (menu);
+			}
 
 			if (Actions.Count > 0) {
 				SeparatorMenuItem si = new SeparatorMenuItem ();
@@ -178,6 +198,8 @@ namespace Search.Tiles {
 			menu.ShowAll ();
 			menu.Popup ();
 		}
+
+		///////////////////////////////////////////////////
 
 		protected override bool OnButtonPressEvent (Gdk.EventButton b)
 		{
@@ -264,19 +286,16 @@ namespace Search.Tiles {
 			get { return GetDetails (); }
 		}
 
-		public ArrayList actions = new ArrayList ();
-		public ICollection Actions {
-			get { return actions; }
-		}
-
-		protected void AddAction (TileAction action)
-		{
-			actions.Add (action);
-		}
-
 		public virtual void Open ()
 		{
 			System.Console.WriteLine ("Warning: Open method not implemented for this tile type");
+		}
+
+		private void OpenWith (Gnome.Vfs.MimeApplication mime_application)
+		{
+			GLib.List uri_list = new GLib.List (typeof (string));
+			uri_list.Append (Hit.UriAsString);
+			mime_application.Launch (uri_list);
 		}
 
 		protected void OpenFromMime (Hit hit)
