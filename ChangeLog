@@ -1,3 +1,7 @@
+2006-02-09  Lukas Lipka  <lukas@pmad.net>
+
+	* search/Tiles/Image.cs: Add a full path field in the detail view.
+
 2006-02-07  Dan Winship  <danw@novell.com>
 
 	* search/Tiles/Tile.cs: reorganize to make tile images not be
