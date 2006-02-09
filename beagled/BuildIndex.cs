@@ -51,6 +51,24 @@ namespace Beagle.Daemon
 		static string arg_output, arg_tag, arg_source;
 
 		/////////////////////////////////////////////////////////
+
+		// Files and directories that are allowed to be in the target
+		// directory before we blow it away.  If we encounter any file
+		// or dir not in this list, we'll bail out.
+		static string [] allowed_files = {
+			"FileAttributesStore.db",
+			"fingerprint",
+			"version"
+		};
+		
+		static string [] allowed_dirs = {
+			"Locks",
+			"PrimaryIndex",
+			"SecondaryIndex",
+			"TextCache"
+		};
+
+		/////////////////////////////////////////////////////////
 		
 		static FileAttributesStore_Sqlite backing_fa_store;
 		static FileAttributesStore fa_store;
@@ -220,6 +238,26 @@ namespace Beagle.Daemon
 			if (!Directory.Exists (Path.GetDirectoryName (arg_output))) {
 				Logger.Log.Error ("Index directory not available for construction: {0}", arg_output);
 				Environment.Exit (1);
+			}
+
+			// Be *EXTRA PARANOID* about the contents of the target
+			// directory, because creating an indexing driver will
+			// nuke it.
+			if (Directory.Exists (arg_output)) {
+
+				foreach (FileInfo info in DirectoryWalker.GetFileInfos (arg_output)) {
+					if (Array.IndexOf (allowed_files, info.Name) == -1) {
+						Logger.Log.Error ("{0} doesn't look safe to delete: non-Beagle file {1} was found", arg_output, info.FullName);
+						Environment.Exit (1);
+					}
+				}
+
+				foreach (DirectoryInfo info in DirectoryWalker.GetDirectoryInfos (arg_output)) {
+					if (Array.IndexOf (allowed_dirs, info.Name) == -1) {
+						Logger.Log.Error ("{0} doesn't look safe to delete: non-Beagle directory {1} was found", arg_output, info.FullName);
+						Environment.Exit (1);
+					}
+				}
 			}
 
 			// Set the IO priority to idle so we don't slow down the system
