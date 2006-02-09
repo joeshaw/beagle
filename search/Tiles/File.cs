@@ -48,7 +48,7 @@ namespace Search.Tiles {
 		{
 			string title = Hit.GetFirstProperty ("dc:title");
 
-			if (title == null)
+			if (title == null || title == "")
 				title = Hit.GetFirstProperty ("beagle:ExactFilename");
 
 			return title;
