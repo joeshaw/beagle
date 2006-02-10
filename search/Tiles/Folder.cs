@@ -38,6 +38,11 @@ namespace Search.Tiles {
 			AddAction (new TileAction (Catalog.GetString ("Move to Trash"), Gtk.Stock.Delete, MoveToTrash));
 		}
 
+		protected override void LoadIcon (Gtk.Image image, int size)
+		{
+			image.Pixbuf = WidgetFu.LoadThemeIcon ("gnome-fs-directory", size);
+		}
+
 		const Gtk.AttachOptions expand = Gtk.AttachOptions.Expand | Gtk.AttachOptions.Fill;
 		const Gtk.AttachOptions fill = Gtk.AttachOptions.Fill;
 

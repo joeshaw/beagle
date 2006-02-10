@@ -14,7 +14,7 @@ namespace Search.Tiles {
 
 		private ArrayList list = null;
 
-		private bool show_icons = false;
+		private bool show_icons = true;
 		public bool ShowIcons {
 			get { return show_icons; }
 			set { show_icons = value; }
@@ -71,37 +71,40 @@ namespace Search.Tiles {
 		private void HandleItemActivated (object sender, EventArgs args)
 		{
 			if (ApplicationActivated != null)
-				ApplicationActivated ((sender as ApplicationMenuItem).App);
+				ApplicationActivated ((sender as ApplicationMenuItem).Application);
 		}
 	
 		private class ApplicationMenuItem : ImageMenuItem {
-			public MimeApplication App;
+
+			private MimeApplication application;
+			public MimeApplication Application {
+				get { return application; }
+				set { application = value; }
+			}
 
 			public ApplicationMenuItem (OpenWithMenu menu, MimeApplication mime_application) : base (mime_application.Name)
 			{
-				App = mime_application;
-			
+				application = mime_application;
+				
 				if (menu.ShowIcons) {
 					//System.Console.WriteLine ("icon = {0}", mime_application.Icon);
-				
-					// FIXME this is stupid, the mime_application.Icon is sometimes just a file name
-					// and sometimes a full path.
-					//int w, h;
-					//w = h = (int) IconSize.Menu;
-					//string icon = mime_application.Icon;
-					//Console.WriteLine ("w/h = {0}", w);
-
-					//Pixbuf img = new Pixbuf (icon, w, h);
-					//Image = new Gtk.Image (mime_application.Icon);
-
-					/*if (Image == null)
-					  Image = new Gtk.Image ("/usr/share/pixmaps/" + mime_application.Icon);
-				
-					  if (Image == null)
-					  Image = new Gtk.Image ("/usr/share/icons/gnome/24x24/apps/" + mime_application.Icon);
-
-					  if (Image != null)
-					  (Image as Gtk.Image).IconSize = Gtk.IconSize.Menu;*/
+					
+					if (mime_application.Icon != null) {
+						Gdk.Pixbuf pixbuf = null; 
+						
+						try {
+							if (mime_application.Icon.StartsWith ("/"))
+								pixbuf = new Gdk.Pixbuf (mime_application.Icon, 16, 16);
+							else 
+								pixbuf = IconTheme.Default.LoadIcon (mime_application.Icon,
+												     16, (IconLookupFlags)0);
+						} catch (System.Exception e) {
+							pixbuf = null;
+						}
+						
+						if (pixbuf != null)
+							Image = new Gtk.Image (pixbuf);
+					}
 				}
 			}
 		}

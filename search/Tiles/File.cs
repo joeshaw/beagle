@@ -134,45 +134,46 @@ namespace Search.Tiles {
 
 		protected override Gtk.Widget GetDetails ()
 		{
-			Gtk.Table table = new Gtk.Table (4, 4, false);
+			Gtk.Table table = new Gtk.Table (5, 4, false);
 			table.RowSpacing = table.ColumnSpacing = 6;
+
+			Gtk.Image icon = new Gtk.Image ();
+			LoadIcon (icon, 96);
+			table.Attach (icon, 0, 1, 0, 4, fill, fill, 0, 0);
 
 			Gtk.Label label;
 
 			label = WidgetFu.NewGrayLabel (Catalog.GetString ("Title:"));
-			table.Attach (label, 0, 1, 0, 1, fill, fill, 0, 0);
+			table.Attach (label, 1, 2, 0, 1, fill, fill, 0, 0);
 
 			label = WidgetFu.NewBoldLabel (GetTitle ());
-			table.Attach (label, 1, 4, 0, 1, expand, fill, 0, 0);
-
-			label = WidgetFu.NewGrayLabel (Catalog.GetString ("Last Edited:"));
-			table.Attach (label, 0, 1, 1, 2, fill, fill, 0, 0);
-
-			label = WidgetFu.NewLabel (Utils.NiceLongDate (Hit.Timestamp));
-			table.Attach (label, 1, 2, 1, 2, expand, fill, 0, 0);
+			table.Attach (label, 2, 3, 0, 1, expand, fill, 0, 0);
 
 			if (Hit ["dc:author"] != null) {
 				label = WidgetFu.NewGrayLabel (Catalog.GetString ("Author:"));
-				table.Attach (label, 2, 3, 1, 2, fill, fill, 0, 0);
+				table.Attach (label, 3, 4, 0, 1, fill, fill, 0, 0);
 
 				label = WidgetFu.NewBoldLabel (Hit ["dc:author"]);
-				table.Attach (label, 3, 4, 1, 2, expand, fill, 0, 0);
+				table.Attach (label, 4, 5, 0, 1, fill, fill, 0, 0);
 			}
 
+			label = WidgetFu.NewGrayLabel (Catalog.GetString ("Last Edited:"));
+			table.Attach (label, 1, 2, 1, 2, fill, fill, 0, 0);
+
+			label = WidgetFu.NewLabel (Utils.NiceLongDate (Hit.Timestamp));
+			table.Attach (label, 2, 5, 1, 2, expand, fill, 0, 0);
+
 			label = WidgetFu.NewGrayLabel (Catalog.GetString ("Full Path:"));
-			table.Attach (label, 0, 1, 2, 3, fill, fill, 0, 0);
+			table.Attach (label, 1, 2, 2, 3, fill, fill, 0, 0);
 
 			label = WidgetFu.NewLabel (Hit.Uri.LocalPath);
 			WidgetFu.EllipsizeLabel (label, 80);
-			table.Attach (label, 1, 2, 2, 3, expand, fill, 0, 0);
-
-			Gtk.Image icon = new Gtk.Image (Icon.Pixbuf);
-			table.Attach (icon, 0, 1, 3, 4, fill, fill, 0, 0);
+			table.Attach (label, 2, 5, 2, 3, expand, fill, 0, 0);
 			
 			snippet_label = WidgetFu.NewLabel ();
 			snippet_label.Markup = snippet;
 			WidgetFu.EllipsizeLabel (snippet_label);
-			table.Attach (snippet_label, 1, 4, 3, 4, expand, expand, 48, 0);
+			table.Attach (snippet_label, 1, 5, 3, 4, expand, expand, 48, 0);
 
 			if (! found_snippet)
 				RequestSnippet ();

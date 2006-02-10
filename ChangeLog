@@ -1,6 +1,12 @@
-2006-02-10  Luca Ferretti  <elle.uca@libero.it>
+2006-02-10  Lukas Lipka  <lukas@pmad.net>
 
-	* configure.in: added "it" to ALL_LINGUAS
+	* search/Tiles/OpenWithMenu.cs: Load app icons by default.
+
+	* search/Tiles/File.cs: Use a bigger thumbnail in the detail view
+	(bgo #330551).
+
+	* search/Tiles/Folder.cs: Dont autload the folder icon since it 
+	results in an incorrect one. Also touch up the details pane.
 
 2006-02-09  Lukas Lipka  <lukas@pmad.net>
 
