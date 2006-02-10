@@ -36,6 +36,8 @@ namespace Search {
 
 		public static void Main (string [] args)
 		{
+			SystemInformation.SetProcessName ("beagle-search");
+
 			Catalog.Init ("beagle", ExternalStringsHack.LocaleDir);
 
 			string query = ParseArgs (args);
@@ -67,6 +69,13 @@ namespace Search {
 
 				case "--icon":
 					icon_enabled = true;
+					break;
+
+				case "--autostarted":
+					if (! Conf.Searching.Autostart) {
+						Console.WriteLine ("beagle-search: Autostarting is disabled, not starting");
+						Environment.Exit (0);
+					}
 					break;
 
 				// Ignore session management
