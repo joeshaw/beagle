@@ -51,6 +51,8 @@ namespace Mono.Data.SqliteClient
 		private Hashtable column_names_sens, column_names_insens;
 		private bool closed;
 		private string[] decltypes;
+		private int[] declmode;
+
 		
 		#endregion
 
@@ -110,10 +112,8 @@ namespace Mono.Data.SqliteClient
 			IntPtr pazColName;
 			bool first = true;
 			
-			int[] declmode = null;
-
 			bool hasdata = command.ExecuteStatement(pVm, out pN, out pazValue, out pazColName);
-			
+
 			// For the first row, get the column information (names and types)
 			if (columns == null) {
 				if (version == 3) {
@@ -185,7 +185,6 @@ namespace Mono.Data.SqliteClient
 							// nice and return a DateTime (version 3 only).
 							if (declmode[i] == 2)
 								current_row.Add (DateTime.Parse (strval));
-
 							else
 								current_row.Add (strval);
 
