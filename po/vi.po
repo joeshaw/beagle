@@ -6,8 +6,8 @@ msgid ""
 ""
 msgstr "Project-Id-Version: beagle Gnome HEAD\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2006-02-03 02:08+0100\n"
-"PO-Revision-Date: 2006-02-03 17:59+1030\n"
+"POT-Creation-Date: 2006-02-10 00:45+0100\n"
+"PO-Revision-Date: 2006-02-10 16:06+1030\n"
 "Last-Translator: Clytie Siddall <clytie@riverland.net.au>\n"
 "Language-Team: Vietnamese <gnomevi-list@lists.sourceforge.net>\n"
 "MIME-Version: 1.0\n"
@@ -139,63 +139,62 @@ msgstr "Gõ chuỗi tìm kiếm"
 msgid "Start searching"
 msgstr "Bắt đầu tìm kiếm"
 
-#:../search/Tiles/Application.cs:90
+#:../search/Tiles/Application.cs:81
 msgid "Move to trash"
 msgstr "Chuyển vào Rác"
 
-#:../search/Tiles/Audio.cs:37 ../search/Tiles/Image.cs:39
+#:../search/Tiles/Audio.cs:36 ../search/Tiles/Image.cs:38
 msgid "Add to Library"
 msgstr "Thêm vào Thư viên"
 
-#:../search/Tiles/Contact.cs:60
+#:../search/Tiles/Contact.cs:64
 msgid "E-Mail:"
 msgstr "Thư điện tử :"
 
-#:../search/Tiles/Contact.cs:66
+#:../search/Tiles/Contact.cs:70
 msgid "Mobile Phone:"
 msgstr "Điện thoại di động:"
 
-#:../search/Tiles/Contact.cs:73
+#:../search/Tiles/Contact.cs:77
 msgid "Work Phone:"
 msgstr "Điện thoại chỗ làm:"
 
-#:../search/Tiles/Contact.cs:78
+#:../search/Tiles/Contact.cs:82
 msgid "Home Phone:"
 msgstr "Điện thoại ở nhà:"
 
-#:../search/Tiles/File.cs:37 ../search/Tiles/Folder.cs:35
-msgid "Open With"
-msgstr "Mở bằng"
-
-#:../search/Tiles/File.cs:38
+#:../search/Tiles/File.cs:33
 msgid "Reveal in Folder"
 msgstr "Hiện trong thư mục"
 
-#:../search/Tiles/File.cs:39
+#:../search/Tiles/File.cs:34
 msgid "E-Mail"
 msgstr "Thư điện tử"
 
-#:../search/Tiles/File.cs:40
+#:../search/Tiles/File.cs:35
 msgid "Instant-Message"
 msgstr "Tin nhắn"
 
-#:../search/Tiles/File.cs:41 ../search/Tiles/Folder.cs:38
+#.FIXME: s/"gtk-info"/Gtk.Stock.Info/ when we can depend on gtk# 2.8
+#.AddAction (new TileAction (Catalog.GetString ("Show Information"), "gtk-info", ShowInformation));
+#:../search/Tiles/File.cs:36 ../search/Tiles/Folder.cs:38
 msgid "Move to Trash"
 msgstr "Chuyển vào Rác"
 
-#:../search/Tiles/File.cs:139 ../search/Tiles/RSSFeed.cs:50
+#:../search/Tiles/File.cs:142 ../search/Tiles/RSSFeed.cs:53
+#:../search/Tiles/WebHistory.cs:60
 msgid "Title:"
 msgstr "Tiêu đề :"
 
-#:../search/Tiles/File.cs:145
+#:../search/Tiles/File.cs:148
 msgid "Last Edited:"
 msgstr "Sửa đổi cuối cùng:"
 
-#:../search/Tiles/File.cs:152
+#:../search/Tiles/File.cs:155
 msgid "Author:"
 msgstr "Tác giả:"
 
-#:../search/Tiles/File.cs:159
+#:../search/Tiles/File.cs:162 ../search/Tiles/Image.cs:85
 msgid "Full Path:"
 msgstr "Đường dẫn đầy đủ:"
 
@@ -209,44 +208,43 @@ msgid "Contains {0} Item"
 msgid_plural "Contains {0} Items"
 msgstr[0] "Chứa {0} mục"
 
-#.FIXME: s/"gtk-info"/Gtk.Stock.Info/ when we can depend on gtk# 2.8
-#:../search/Tiles/Folder.cs:37
-msgid "Show Information"
-msgstr "Hiện Thông tin"
-
 #:../search/Tiles/Folder.cs:62
 msgid "Edited:"
 msgstr "Sửa đổi:"
 
-#:../search/Tiles/Image.cs:40
+#:../search/Tiles/Image.cs:39
 msgid "Set as Wallpaper"
 msgstr "Đặt làm ảnh nền"
 
-#:../search/Tiles/Image.cs:80
+#:../search/Tiles/Image.cs:79
 msgid "Modified:"
 msgstr "Ssửa đổi:"
 
-#:../search/Tiles/IMLog.cs:92
+#:../search/Tiles/IMLog.cs:29
+msgid "IM Conversation"
+msgstr "Trò chuyện IM"
+
+#:../search/Tiles/IMLog.cs:77
 msgid "Name:"
 msgstr "Tên:"
 
-#:../search/Tiles/IMLog.cs:97 ../search/Tiles/MailMessage.cs:113
+#:../search/Tiles/IMLog.cs:82 ../search/Tiles/MailMessage.cs:82
 msgid "Date Received:"
 msgstr "Ngày nhận:"
 
-#:../search/Tiles/MailAttachment.cs:46
+#:../search/Tiles/MailAttachment.cs:45
 msgid "Mail attachment"
 msgstr "Đính kèm thư"
 
-#:../search/Tiles/MailMessage.cs:48
+#:../search/Tiles/MailMessage.cs:33
 msgid "Send in Mail"
 msgstr "Gởi trong thư"
 
-#:../search/Tiles/MailMessage.cs:103
+#:../search/Tiles/MailMessage.cs:72
 msgid "Subject:"
 msgstr "Chủ đề:"
 
-#:../search/Tiles/MailMessage.cs:108
+#:../search/Tiles/MailMessage.cs:77
 msgid "From:"
 msgstr "Từ :"
 
@@ -256,11 +254,11 @@ msgid "{0} slide"
 msgid_plural "{0} slides"
 msgstr[0] "{0} ảnh trượt"
 
-#:../search/Tiles/RSSFeed.cs:55
+#:../search/Tiles/RSSFeed.cs:58
 msgid "Site:"
 msgstr "Chỗ :"
 
-#:../search/Tiles/RSSFeed.cs:60
+#:../search/Tiles/RSSFeed.cs:63
 msgid "Date Viewed:"
 msgstr "Ngày xem:"
 
@@ -270,7 +268,7 @@ msgid "{0} page"
 msgid_plural "{0} pages"
 msgstr[0] "{0} trangn"
 
-#:../search/Tiles/Tile.cs:177
+#:../search/Tiles/Tile.cs:179
 msgid "Open"
 msgstr "Mở"
 
@@ -362,28 +360,38 @@ msgstr "Kho"
 msgid "More archive results..."
 msgstr "Kết quả kho thêm..."
 
-#:../search/Tiles/Utils.cs:170
+#:../search/Tiles/Utils.cs:179
 #,csharp-format
 msgid "{0} week ago"
 msgid_plural "{0} weeks ago"
 msgstr[0] "{0} tuần trước"
 
 #.Lets say a year and a half to stop saying months
-#:../search/Tiles/Utils.cs:172
+#:../search/Tiles/Utils.cs:181
 #,csharp-format
 msgid "{0} month ago"
 msgid_plural "{0} months ago"
 msgstr[0] "{0} tháng trước"
 
-#:../search/Tiles/Utils.cs:174
+#:../search/Tiles/Utils.cs:183
 #,csharp-format
 msgid "{0} year ago"
 msgid_plural "{0} years ago"
 msgstr[0] "{0} năm trước"
 
-#:../search/Tiles/Video.cs:33
+#.FIXME: We need filters for video in Beagle.
+#.They should land soon when entagged-sharp gets video support.
+#:../search/Tiles/Video.cs:27
 msgid "Unknown duration"
 msgstr "Không biết thời lượng"
+
+#:../search/Tiles/WebHistory.cs:67
+msgid "URL:"
+msgstr "Địa chỉ Mạng:"
+
+#:../search/Tiles/WebHistory.cs:74
+msgid "Accessed:"
+msgstr "Truy cập:"
 
 #:../search/Tray/TrayIcon.cs:32
 msgid "Desktop Search"
