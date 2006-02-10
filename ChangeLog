@@ -1,3 +1,7 @@
+2006-02-10  Luca Ferretti  <elle.uca@libero.it>
+
+	* configure.in: added "it" to ALL_LINGUAS
+
 2006-02-09  Lukas Lipka  <lukas@pmad.net>
 
 	* search/Makefile.am: Added Tiles/OpenWithMenu.cs to build.
