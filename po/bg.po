@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: beagle\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2006-02-06 11:53+0200\n"
-"PO-Revision-Date: 2006-02-04 16:54+0200\n"
+"POT-Creation-Date: 2006-02-12 19:15+0200\n"
+"PO-Revision-Date: 2006-02-12 19:17+0200\n"
 "Last-Translator: Rostislav \"zbrox\" Raykov <zbrox@i-space.org>\n"
 "Language-Team: Bulgarian <dict@fsa-bg.org>\n"
 "MIME-Version: 1.0\n"
@@ -136,79 +136,78 @@ msgstr "Услугата (daemon) не е стартирана"
 msgid "Start the daemon"
 msgstr "Стартиране на услугата (daemon)"
 
-#: ../search/Search.cs:134
+#: ../search/Search.cs:143
 msgid "_Find:"
 msgstr "_Търсене"
 
-#: ../search/Search.cs:148
+#: ../search/Search.cs:157
 msgid "Find Now"
 msgstr "Търсене"
 
-#: ../search/Search.cs:188
+#: ../search/Search.cs:197
 msgid "Type in search terms"
 msgstr "Въведете какво да се търси"
 
-#: ../search/Search.cs:189
+#: ../search/Search.cs:198
 msgid "Start searching"
 msgstr "Начало на търсенето"
 
-#: ../search/Tiles/Application.cs:90
+#: ../search/Tiles/Application.cs:81
 msgid "Move to trash"
 msgstr "Преместване в кошчето"
 
-#: ../search/Tiles/Audio.cs:37 ../search/Tiles/Image.cs:39
+#: ../search/Tiles/Audio.cs:36 ../search/Tiles/Image.cs:38
 msgid "Add to Library"
 msgstr "Добавяне към библиотека"
 
-#: ../search/Tiles/Contact.cs:60
+#: ../search/Tiles/Contact.cs:64
 msgid "E-Mail:"
 msgstr "Е-поща:"
 
-#: ../search/Tiles/Contact.cs:66
+#: ../search/Tiles/Contact.cs:70
 msgid "Mobile Phone:"
 msgstr "Мобилен телефон:"
 
-#: ../search/Tiles/Contact.cs:73
+#: ../search/Tiles/Contact.cs:77
 msgid "Work Phone:"
 msgstr "Служебен телефон:"
 
-#: ../search/Tiles/Contact.cs:78
+#: ../search/Tiles/Contact.cs:82
 msgid "Home Phone:"
 msgstr "Домашен телефон:"
 
-#: ../search/Tiles/File.cs:37 ../search/Tiles/Folder.cs:35
-msgid "Open With"
-msgstr "Отваряне с"
-
-#: ../search/Tiles/File.cs:38
+#: ../search/Tiles/File.cs:33
 msgid "Reveal in Folder"
 msgstr "Показване в папка"
 
-#: ../search/Tiles/File.cs:39
+#: ../search/Tiles/File.cs:34
 msgid "E-Mail"
 msgstr "Е-поща"
 
-#: ../search/Tiles/File.cs:40
+#: ../search/Tiles/File.cs:35
 msgid "Instant-Message"
 msgstr "Бързо съобщение"
 
-#: ../search/Tiles/File.cs:41 ../search/Tiles/Folder.cs:38
+#. FIXME: s/"gtk-info"/Gtk.Stock.Info/ when we can depend on gtk# 2.8
+#. AddAction (new TileAction (Catalog.GetString ("Show Information"), "gtk-info", ShowInformation));
+#: ../search/Tiles/File.cs:36 ../search/Tiles/Folder.cs:38
 msgid "Move to Trash"
 msgstr "Преместване в кошчето"
 
-#: ../search/Tiles/File.cs:139 ../search/Tiles/RSSFeed.cs:50
+#: ../search/Tiles/File.cs:146 ../search/Tiles/RSSFeed.cs:53
+#: ../search/Tiles/WebHistory.cs:60
 msgid "Title:"
 msgstr "Заглавие:"
 
-#: ../search/Tiles/File.cs:145
-msgid "Last Edited:"
-msgstr "Последна редакция:"
-
-#: ../search/Tiles/File.cs:152
+#: ../search/Tiles/File.cs:153
 msgid "Author:"
 msgstr "Автор:"
 
-#: ../search/Tiles/File.cs:159
+#: ../search/Tiles/File.cs:160
+msgid "Last Edited:"
+msgstr "Последна редакция:"
+
+#: ../search/Tiles/File.cs:166 ../search/Tiles/Image.cs:85
 msgid "Full Path:"
 msgstr "Пълен адрес:"
 
@@ -223,44 +222,43 @@ msgid_plural "Contains {0} Items"
 msgstr[0] "Съдържа {0} елемент"
 msgstr[1] "Съдържа {0} елемента"
 
-#. FIXME: s/"gtk-info"/Gtk.Stock.Info/ when we can depend on gtk# 2.8
-#: ../search/Tiles/Folder.cs:37
-msgid "Show Information"
-msgstr "Показване на информация"
-
-#: ../search/Tiles/Folder.cs:62
+#: ../search/Tiles/Folder.cs:67
 msgid "Edited:"
 msgstr "Редактирано:"
 
-#: ../search/Tiles/Image.cs:40
+#: ../search/Tiles/Image.cs:39
 msgid "Set as Wallpaper"
 msgstr "Задаване като фон"
 
-#: ../search/Tiles/Image.cs:80
+#: ../search/Tiles/Image.cs:79
 msgid "Modified:"
 msgstr "Променено:"
 
-#: ../search/Tiles/IMLog.cs:92
+#: ../search/Tiles/IMLog.cs:29
+msgid "IM Conversation"
+msgstr "Мигновени съобщения"
+
+#: ../search/Tiles/IMLog.cs:77
 msgid "Name:"
 msgstr "Име:"
 
-#: ../search/Tiles/IMLog.cs:97 ../search/Tiles/MailMessage.cs:113
+#: ../search/Tiles/IMLog.cs:82 ../search/Tiles/MailMessage.cs:82
 msgid "Date Received:"
 msgstr "Дата на получаване:"
 
-#: ../search/Tiles/MailAttachment.cs:46
+#: ../search/Tiles/MailAttachment.cs:45
 msgid "Mail attachment"
 msgstr "Прикачен файл към е-писмо"
 
-#: ../search/Tiles/MailMessage.cs:48
+#: ../search/Tiles/MailMessage.cs:33
 msgid "Send in Mail"
 msgstr "Изпращане на поща"
 
-#: ../search/Tiles/MailMessage.cs:103
+#: ../search/Tiles/MailMessage.cs:72
 msgid "Subject:"
 msgstr "Тема:"
 
-#: ../search/Tiles/MailMessage.cs:108
+#: ../search/Tiles/MailMessage.cs:77
 msgid "From:"
 msgstr "От:"
 
@@ -271,11 +269,11 @@ msgid_plural "{0} slides"
 msgstr[0] "{0} кадър"
 msgstr[1] "{0} кадъра"
 
-#: ../search/Tiles/RSSFeed.cs:55
+#: ../search/Tiles/RSSFeed.cs:58
 msgid "Site:"
 msgstr "Сайт:"
 
-#: ../search/Tiles/RSSFeed.cs:60
+#: ../search/Tiles/RSSFeed.cs:63
 msgid "Date Viewed:"
 msgstr "Дата на преглед:"
 
@@ -286,7 +284,7 @@ msgid_plural "{0} pages"
 msgstr[0] "{0} страница"
 msgstr[1] "{0} страници"
 
-#: ../search/Tiles/Tile.cs:177
+#: ../search/Tiles/Tile.cs:179
 msgid "Open"
 msgstr "Отваряне"
 
@@ -378,7 +376,7 @@ msgstr "Архив"
 msgid "More archive results..."
 msgstr "Още резултати с архиви..."
 
-#: ../search/Tiles/Utils.cs:170
+#: ../search/Tiles/Utils.cs:179
 #, csharp-format
 msgid "{0} week ago"
 msgid_plural "{0} weeks ago"
@@ -386,14 +384,14 @@ msgstr[0] "Преди {0} седмица"
 msgstr[1] "Преди {0} седмици"
 
 #. Lets say a year and a half to stop saying months
-#: ../search/Tiles/Utils.cs:172
+#: ../search/Tiles/Utils.cs:181
 #, csharp-format
 msgid "{0} month ago"
 msgid_plural "{0} months ago"
 msgstr[0] "Преди {0} месец"
 msgstr[1] "Преди {0} месеца"
 
-#: ../search/Tiles/Utils.cs:174
+#: ../search/Tiles/Utils.cs:183
 #, csharp-format
 msgid "{0} year ago"
 msgid_plural "{0} years ago"
@@ -405,6 +403,14 @@ msgstr[1] "Преди {0} години"
 #: ../search/Tiles/Video.cs:27
 msgid "Unknown duration"
 msgstr "Неизвестна продължителност"
+
+#: ../search/Tiles/WebHistory.cs:67
+msgid "URL:"
+msgstr "Адрес:"
+
+#: ../search/Tiles/WebHistory.cs:74
+msgid "Accessed:"
+msgstr "Достъпван:"
 
 #: ../search/Tray/TrayIcon.cs:32
 msgid "Desktop Search"
