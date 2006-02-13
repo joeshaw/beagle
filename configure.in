@@ -138,9 +138,13 @@ AC_SUBST(SQLITE_MAJ_VER)
 # Needed by glue/screensaver-glue.c
 # The OLD_CFLAGS/CFLAGS hack is needed to build on Ubuntu Breezy Badger 
 OLD_CFLAGS="$CFLAGS"
+OLD_LDFLAGS="$LDFLAGS"
 CFLAGS="$CFLAGS -I/usr/X11R6/include"
-AC_CHECK_HEADER(X11/extensions/scrnsaver.h,, [AC_MSG_ERROR([Unable to find scrnsaver.h.  You probably need to install XFree86 development packages])])
+LDFLAGS="$LDFLAGS -L/usr/X11R6/lib"
+AC_CHECK_HEADER(X11/extensions/scrnsaver.h,, [AC_MSG_ERROR([Unable to find scrnsaver.h.  You probably need to install X development packages])])
+AC_CHECK_LIB(Xss,XScreenSaverQueryExtension,, [AC_MSG_ERROR([Unable to find libXss.  You probably need to install X development packages])])
 CFLAGS="$OLD_CFLAGS"
+LDFLAGS="$OLD_LDFLAGS"
 
 dnl -------------------------------------------------------
 
