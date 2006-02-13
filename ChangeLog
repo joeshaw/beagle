@@ -1,3 +1,7 @@
+2006-02-13  Lukas Lipka  <lukas@pmad.net>
+
+	* beagled/BeagleDaemon.cs: Exit if we pass in an unknown argument.
+
 2006-02-10  Lukas Lipka  <lukas@pmad.net>
 
 	* search/Tiles/OpenWithMenu.cs: Load app icons by default.

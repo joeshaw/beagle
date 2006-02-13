@@ -345,7 +345,8 @@ namespace Beagle.Daemon {
 					break;				
 #endif 
 				default:
-					Console.WriteLine ("Ignoring unknown argument '{0}'", arg);
+					Console.WriteLine ("Unknown argument '{0}'", arg);
+					Environment.Exit (1);
 					break;
 
 				}
