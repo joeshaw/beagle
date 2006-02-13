@@ -180,9 +180,11 @@ namespace Search.Tiles {
 			menu.Append (mi);
 
 			if (EnableOpenWith) {
-				OpenWithMenu owm = new OpenWithMenu (Hit ["beagle:MimeType"]);
+				// FIXME: Disabled until we have a reasonable workaround
+				// for lower gtk# versions.
+				/*OpenWithMenu owm = new OpenWithMenu (Hit ["beagle:MimeType"]);
 				owm.ApplicationActivated += OpenWith;
-				owm.AppendToMenu (menu);
+				owm.AppendToMenu (menu);*/
 			}
 
 			if (Actions.Count > 0) {
