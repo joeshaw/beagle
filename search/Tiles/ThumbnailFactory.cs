@@ -29,6 +29,7 @@ namespace Search.Tiles {
 			public Gtk.Image Image;
 			public Beagle.Hit Hit;
 			public int Size;
+			public bool Succeeded;
 
 			public ThumbnailRequest (Gtk.Image image, Beagle.Hit hit, int size)
 			{
@@ -67,7 +68,12 @@ namespace Search.Tiles {
 		public bool SetThumbnailIcon (Gtk.Image image, Beagle.Hit hit, int size)
 		{
 			string thumbnail = Gnome.Thumbnail.PathForUri (hit.UriAsString, Gnome.ThumbnailSize.Normal);
-			if (!File.Exists (thumbnail)) {
+			bool failed_thumb = false;
+
+			if (hit.FileInfo != null)
+				failed_thumb = factory.HasValidFailedThumbnail (hit.UriAsString, hit.FileInfo.LastWriteTime);
+
+			if (! File.Exists (thumbnail) && ! failed_thumb) {
 				lock (in_queue) {
 					in_queue.Add (new ThumbnailRequest (image, hit, size));
 					if (thread == null) {
@@ -77,6 +83,9 @@ namespace Search.Tiles {
 				}
 				return false;
 			}
+
+			if (failed_thumb)
+				return false;
 
 			Gdk.Pixbuf icon = new Gdk.Pixbuf (thumbnail);
 			if (icon == null)
@@ -117,12 +126,13 @@ namespace Search.Tiles {
 				}
 
 				Gdk.Pixbuf icon = factory.GenerateThumbnail (req.Hit.UriAsString, req.Hit.MimeType);
-				FileInfo fi = new FileInfo (req.Hit.Uri.LocalPath);
 
 				if (icon == null)
-					factory.CreateFailedThumbnail (req.Hit.UriAsString, fi.LastWriteTime);
-				else
+					factory.CreateFailedThumbnail (req.Hit.UriAsString, req.Hit.FileInfo.LastWriteTime);
+				else {
 					factory.SaveThumbnail (icon, req.Hit.UriAsString, DateTime.Now);
+					req.Succeeded = true;
+				}
 
 				lock (out_queue)
 					out_queue.Add (req);
@@ -138,7 +148,9 @@ namespace Search.Tiles {
 				out_queue.RemoveAt (0);
 			}
 
-			SetThumbnailIcon (req.Image, req.Hit, req.Size);
+			if (req.Succeeded)
+				SetThumbnailIcon (req.Image, req.Hit, req.Size);
+
 			return false;
 		}
 	}
