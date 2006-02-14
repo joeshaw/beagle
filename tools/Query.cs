@@ -275,7 +275,9 @@ class QueryTool {
 			default:
 				if (query_str.Length > 0)
 					query_str.Append (' ');
+				query_str.Append ('"');
 				query_str.Append (args [i]);
+				query_str.Append ('"');
 				break;
 			}
 
