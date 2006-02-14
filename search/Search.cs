@@ -32,6 +32,8 @@ namespace Search {
 		Search.SortType sort = SortType.Modified;
 		Search.TypeFilter filter = null;
 
+		XKeybinder keybinder = new XKeybinder ();
+
 		private static bool icon_enabled = false;
 
 		public static void Main (string [] args)
@@ -204,6 +206,9 @@ namespace Search {
 				tray = new TrayIcon ();
 				tray.Clicked += OnTrayActivated;
 				tray.Search += OnTraySearch;
+
+				// Attach the hide/show keybinding
+				keybinder.Bind (Conf.Searching.ShowSearchWindowBinding.ToString (), OnTrayActivated);
 			} else {
 				ShowAll ();
 			}
