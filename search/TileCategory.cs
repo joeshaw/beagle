@@ -9,7 +9,7 @@ namespace Search {
 
 		Gtk.SizeGroup sizeGroup;
 
-		public TileCategory (string name, string moreString, int few, int many, Gtk.SizeGroup sizeGroup) : base (name, moreString, few, many, 2)
+		public TileCategory (string name, int rows, Gtk.SizeGroup sizeGroup) : base (name, rows, 2)
 		{
 			this.sizeGroup = sizeGroup;
 		}

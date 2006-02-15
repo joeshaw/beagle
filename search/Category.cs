@@ -12,12 +12,13 @@ namespace Search {
 		int page;
 
 		protected Gtk.HBox header;
-		Gtk.Label headerLabel;
-		Gtk.Button more, fewer, prev, next;
+		Gtk.Label headerLabel, position;
+		Gtk.Button prev, next;
 		int fewRows, manyRows, columns;
 		int few, many;
+		bool expanded;
 
-		public Category (string name, string moreString, int fewRows, int manyRows, int columns)
+		public Category (string name, int rows, int columns)
 		{
 			WidgetFlags |= WidgetFlags.NoWindow;
 
@@ -29,11 +30,13 @@ namespace Search {
 			headerLabel.Show ();
 			header.PackStart (headerLabel, true, true, 0);
 
-			more = MakeButton (header, OnMore);
-			SetButtonLabel (more, moreString);
-			fewer = MakeButton (header, OnFewer);
-			prev = MakeButton (header, OnPrev);
-			next = MakeButton (header, OnNext);
+			position = new Gtk.Label ();
+			position.ModifyFg (Gtk.StateType.Normal, position.Style.Base (Gtk.StateType.Selected));
+			header.PackStart (position, false, false, 0);
+			position.Show ();
+
+			prev = MakeButton (header, Gtk.Stock.GoBack, OnPrev);
+			next = MakeButton (header, Gtk.Stock.GoForward, OnNext);
 
 			header.Show ();
 			header.Parent = this;
@@ -42,29 +45,25 @@ namespace Search {
 			tiles = new SortedTileList (SortType.Relevance);
 			page = 0;
 
-			this.fewRows = fewRows;
-			this.manyRows = manyRows;
+			fewRows = rows;
+			manyRows = rows * 2;
 			Columns = columns;
+
+			UpdateButtons ();
 		}
 
-		private Gtk.Button MakeButton (Gtk.HBox header, EventHandler handler)
+		private Gtk.Button MakeButton (Gtk.HBox header, string icon, EventHandler handler)
 		{
-			Gtk.Button button = Gtk.Button.NewWithLabel ("");
+			Gtk.Button button = new Gtk.Button ();
+			Gtk.Image img = new Gtk.Image (icon, Gtk.IconSize.Button);
+			button.Add (img);
 			button.Relief = Gtk.ReliefStyle.None;
-			button.NoShowAll = true;
 			button.Clicked += handler;
 
 			header.PackStart (button, false, false, 0);
+			button.ShowAll ();
 
 			return button;
-		}
-
-		private void SetButtonLabel (Gtk.Button button, string text)
-		{
-			Gtk.Label label = (Gtk.Label)(button.Child);
-			label.Markup = "<u>" + GLib.Markup.EscapeText (text) + "</u>";
-			label.ModifyFg (Gtk.StateType.Normal, label.Style.Base (Gtk.StateType.Selected));
-			label.ModifyFg (Gtk.StateType.Prelight, label.Style.Base (Gtk.StateType.Selected));
 		}
 
 		protected int Columns {
@@ -77,16 +76,15 @@ namespace Search {
 				if (page > 0) {
 					// Adjust page so that the first visible tile
 					// remains visible
-					page = (many * page) / (manyRows * value);
+					if (expanded)
+						page = FirstVisible / (manyRows * value);
+					else
+						page = ((FirstVisible - few) / (manyRows * value)) + 1;
 				}
 
 				columns = value;
 				few = fewRows * columns;
 				many = manyRows * columns;
-
-				SetButtonLabel (fewer, String.Format (Catalog.GetPluralString ("Top {0} Result", "Top {0} Results", few), few));
-				SetButtonLabel (prev, String.Format (Catalog.GetPluralString ("Previous {0}", "Previous {0}", many), many));
-				SetButtonLabel (next, String.Format (Catalog.GetPluralString ("Next {0}", "Next {0}", many), many));
 
 				UpdateButtons ();
 				ShowTiles ();
@@ -106,30 +104,18 @@ namespace Search {
 
 		void UpdateButtons ()
 		{
-			if (tiles.Count <= few) {
-				if (fewer.Visible) {
-					fewer.Hide ();
-					next.Hide ();
-					prev.Hide ();
-				} else if (more.Visible)
-					more.Hide ();
-				page = 0;
-				return;
-			}
-
-			if (!showingMany) {
-				if (!more.Visible)
-					more.Show ();
-				return;
-			}
-
-			if (tiles.Count <= page * many) {
+			if (tiles.Count <= FirstVisible && page > 0) {
 				// The page we were viewing disappeared
 				page--;
 			}
 
 			prev.Sensitive = (page != 0);
-			next.Sensitive = (tiles.Count > (page + 1) * many);
+			next.Sensitive = (tiles.Count > LastVisible + 1);
+
+			if (tiles.Count > 0)
+				position.LabelProp = String.Format (Catalog.GetString ("{0}-{1} of {2}"), FirstVisible + 1, LastVisible + 1, tiles.Count);
+			else
+				position.LabelProp = "";
 		}
 
 		protected override void OnAdded (Gtk.Widget widget)
@@ -168,33 +154,11 @@ namespace Search {
 
 		private bool showingMany {
 			get {
-				return fewer.Visible;
+				// Show extra tiles on every page after the first, unless
+				// there are only two pages and the second one only has
+				// enough tiles to fit the "fewer" size.
+				return (page > 0 && tiles.Count > 2 * few) || expanded;
 			}
-		}
-
-		void OnMore (object obj, EventArgs args)
-		{
-			more.Hide ();
-			fewer.Show ();
-			prev.Show ();
-			prev.Sensitive = false;
-			next.Show ();
-			next.Sensitive = (tiles.Count > many);
-
-			ShowTiles ();
-		}
-
-		void OnFewer (object obj, EventArgs args)
-		{
-			HideTiles ();
-
-			fewer.Hide ();
-			next.Hide ();
-			prev.Hide ();
-			more.Show ();
-			page = 0;
-
-			ShowTiles ();
 		}
 
 		void OnPrev (object obj, EventArgs args)
@@ -202,10 +166,7 @@ namespace Search {
 			HideTiles ();
 			page--;
 			ShowTiles ();
-
-			if (page == 0)
-				prev.Sensitive = false;
-			next.Sensitive = true;
+			UpdateButtons ();
 		}
 
 		void OnNext (object obj, EventArgs args)
@@ -213,10 +174,7 @@ namespace Search {
 			HideTiles ();
 			page++;
 			ShowTiles ();
-
-			if (many * (page + 1) >= tiles.Count)
-				next.Sensitive = false;
-			prev.Sensitive = true;
+			UpdateButtons ();
 		}
 
 		protected int PageSize {
@@ -227,16 +185,18 @@ namespace Search {
 
 		protected int FirstVisible {
 			get {
-				return page * many;
+				if (page == 0)
+					return 0;
+				else if (expanded)
+					return page * many;
+				else
+					return few + (page - 1) * many;
 			}
 		}
 
 		protected int LastVisible {
 			get {
-				if (showingMany)
-					return Math.Min ((page + 1) * many - 1, tiles.Count - 1);
-				else
-					return Math.Min (few - 1, tiles.Count - 1);
+				return Math.Min (FirstVisible + PageSize, tiles.Count) - 1;
 			}
 		}
 
@@ -313,12 +273,11 @@ namespace Search {
 			}
 		}
 
-		public void Select (bool focus, bool expand)
+		public void Select (bool focus, bool expanded)
 		{
 			if (focus && !Empty)
 				((Gtk.Widget)VisibleTiles[0]).GrabFocus ();
-			if (expand && more.Visible)
-				OnMore (more, EventArgs.Empty);
+			this.expanded = expanded;
 		}
 	}
 }

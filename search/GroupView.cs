@@ -32,9 +32,9 @@ namespace Search {
 			foreach (Tiles.TileGroupInfo info in Tiles.Utils.GroupInfo) {
 								
 				if (info.Group == Tiles.TileGroup.Conversations)
-					box = new ConversationCategory (info.Name, info.MoreString, info.FewRows, info.ManyRows);
+					box = new ConversationCategory (info.Name, info.Rows);
 				else
-					box = new TileCategory (info.Name, info.MoreString, info.FewRows, info.ManyRows, tileSizeGroup);
+					box = new TileCategory (info.Name, info.Rows, tileSizeGroup);
 
 				PackStart (box, false, false, 0);
 				box.NoShowAll = true;

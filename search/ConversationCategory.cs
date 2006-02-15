@@ -9,7 +9,7 @@ namespace Search {
 
 		Gtk.SizeGroup col1, col2, col3;
 
-		public ConversationCategory (string name, string moreString, int few, int many) : base (name, moreString, few, many, 1)
+		public ConversationCategory (string name, int rows) : base (name, rows, 1)
 		{
 			col1 = new Gtk.SizeGroup (Gtk.SizeGroupMode.Horizontal);
 			col2 = new Gtk.SizeGroup (Gtk.SizeGroupMode.Horizontal);

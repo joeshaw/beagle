@@ -5,16 +5,14 @@ namespace Search.Tiles {
 
 	public struct TileGroupInfo {
 		public TileGroup Group;
-		public string Name, MoreString;
-		public int FewRows, ManyRows;
+		public string Name;
+		public int Rows;
 
-		public TileGroupInfo (TileGroup group, string name, string moreString, int fewRows, int manyRows)
+		public TileGroupInfo (TileGroup group, string name, int rows)
 		{
 			Group = group;
 			Name = name;
-			MoreString = moreString;
-			FewRows = fewRows;
-			ManyRows = manyRows;
+			Rows = rows;
 		}
 	};
 
@@ -22,49 +20,27 @@ namespace Search.Tiles {
 
 		public static TileGroupInfo[] GroupInfo = new TileGroupInfo[] {
 			new TileGroupInfo (TileGroup.Application,
-					   Catalog.GetString ("Application"),
-					   Catalog.GetString ("More application results..."),
-					   1, 2),
+					   Catalog.GetString ("Application"), 1),
 			new TileGroupInfo (TileGroup.Contact,
-					   Catalog.GetString ("Contact"),
-					   Catalog.GetString ("More contact results..."),
-					   2, 4),
+					   Catalog.GetString ("Contact"), 2),
 			new TileGroupInfo (TileGroup.Folder,
-					   Catalog.GetString ("Folder"),
-					   Catalog.GetString ("More folder results..."),
-					   2, 4),
+					   Catalog.GetString ("Folder"), 2),
 			new TileGroupInfo (TileGroup.Image,
-					   Catalog.GetString ("Image"),
-					   Catalog.GetString ("More image results..."),
-					   2, 4),
+					   Catalog.GetString ("Image"), 2),
 			new TileGroupInfo (TileGroup.Audio,
-					   Catalog.GetString ("Audio"),
-					   Catalog.GetString ("More audio results..."),
-					   2, 4),
+					   Catalog.GetString ("Audio"), 2),
 			new TileGroupInfo (TileGroup.Video,
-					   Catalog.GetString ("Video"),
-					   Catalog.GetString ("More video results..."),
-					   2, 4),
+					   Catalog.GetString ("Video"), 2),
 			new TileGroupInfo (TileGroup.Documents,
-					   Catalog.GetString ("Documents"),
-					   Catalog.GetString ("More document results..."),
-					   2, 4),
+					   Catalog.GetString ("Documents"), 2),
 			new TileGroupInfo (TileGroup.Conversations,
-					   Catalog.GetString ("Conversations"),
-					   Catalog.GetString ("More conversation results..."),
-					   5, 10),
+					   Catalog.GetString ("Conversations"), 5),
 			new TileGroupInfo (TileGroup.Website,
-					   Catalog.GetString ("Website"),
-					   Catalog.GetString ("More website results..."),
-					   2, 4),
+					   Catalog.GetString ("Website"), 2),
 			new TileGroupInfo (TileGroup.Feed,
-					   Catalog.GetString ("News Feed"),
-					   Catalog.GetString ("More news feed results..."),
-					   2, 4),
+					   Catalog.GetString ("News Feed"), 2),
 			new TileGroupInfo (TileGroup.Archive,
-					   Catalog.GetString ("Archive"),
-					   Catalog.GetString ("More archive results..."),
-					   2, 4),
+					   Catalog.GetString ("Archive"), 2),
 		};
 
 		public static DateTime ParseTimestamp (string timestamp)
