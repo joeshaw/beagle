@@ -50,7 +50,7 @@ namespace Beagle.Util {
 			public Tag[]  Tags;
 		}
 
-
+		static private bool tried_connection;
 		static private SqliteConnection connection;
 		static Hashtable tagCache = null;
 		static Hashtable directoryCache = null;
@@ -65,10 +65,20 @@ namespace Beagle.Util {
 
 		static private SqliteConnection PhotoStoreConnection {
 			get {
-				if (connection == null && File.Exists (PhotoStorePath)) {
+				if (! tried_connection && File.Exists (PhotoStorePath)) {
 					connection = new SqliteConnection ();
 					connection.ConnectionString = "URI=file:" + PhotoStorePath;
-					connection.Open ();
+
+					// Try to open the f-spot store.  This
+					// will fail if there is a version
+					// mismatch.
+					try {
+						connection.Open ();
+					} catch (ApplicationException) {
+						Logger.Log.Warn ("Unable to open F-Spot database: sqlite version mismatch");
+					}
+
+					tried_connection = true;
 				}
 			
 				return connection;
