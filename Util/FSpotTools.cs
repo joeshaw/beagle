@@ -67,7 +67,8 @@ namespace Beagle.Util {
 			get {
 				if (! tried_connection && File.Exists (PhotoStorePath)) {
 					connection = new SqliteConnection ();
-					connection.ConnectionString = "URI=file:" + PhotoStorePath;
+					connection.ConnectionString = "version=" + ExternalStringsHack.SqliteVersion
+						+ ",URI=file:" + PhotoStorePath;
 
 					// Try to open the f-spot store.  This
 					// will fail if there is a version
