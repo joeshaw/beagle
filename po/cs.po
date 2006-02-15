@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: cs\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2006-02-15 12:53+0100\n"
-"PO-Revision-Date: 2006-02-15 14:07+0100\n"
+"PO-Revision-Date: 2006-02-15 15:25+0100\n"
 "Last-Translator: Jakub Friedl <jfriedl@suse.cz>\n"
 "Language-Team:  <cs@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -735,457 +735,400 @@ msgid "Reload configuration"
 msgstr "Znovu načíst konfiguraci"
 
 #: ../tools/Settings.cs:217
-#, fuzzy
 msgid ""
 "The configuration file has been modified by another application. Do you wish "
 "to discard the currently displayed values and reload configuration from disk?"
-msgstr "Konfigurace byla změna jinou aplikací. Chcete zahodit právě zobrazené hodnoty a načíst konfiguraci znovu z disku?"
+msgstr ""
+"Konfigurační soubor byl změn jinou aplikací. Chcete zahodit "
+"právě zobrazené hodnoty a načíst konfiguraci znovu z disku?"
 
 #: ../tools/Settings.cs:255
-#, fuzzy
 msgid "Select Path"
-msgstr "Vybrat adresář"
+msgstr "Vyberte cestu"
 
 #: ../tools/Settings.cs:274
-#, fuzzy
 msgid "The selected path is already selected for indexing and wasn't added."
-msgstr "Vybrana cesta je již zahrnuta pro indexaci a nebyla tedy znovu přidána."
+msgstr "Vybraná cesta je již nastavena pro indexaci a nebyla tedy znovu přidána."
 
 #: ../tools/Settings.cs:277
-#, fuzzy
 msgid ""
 "The selected path wasn't added. The list contains items that supercedes it "
 "and the data is already being indexed."
-msgstr "Vybraná cesta nebyla přidána. Seznam obsahuje položky, které ji již obsahují a data jsou tedy již indexována."
+msgstr ""
+"Vybraná cesta nebyla přidána. Seznam obsahuje položky, "
+"které ji zahrnují a data jsou tedy již indexována."
 
 #: ../tools/Settings.cs:288 ../tools/Settings.cs:480
-#, fuzzy
 msgid "Path not added"
 msgstr "Cesta nebyla přidána"
 
 #: ../tools/Settings.cs:297
-#, fuzzy
 msgid "Remove obsolete paths"
 msgstr "Odstranit neplatné cesty"
 
 #: ../tools/Settings.cs:298
-#, fuzzy
 msgid ""
 "Adding this path will obsolete some of the existing include paths. This will "
 "result in the removal of the old obsolete paths. Do you still wish to add it?"
-msgstr "Přidáním této cesty nahradíte jednu z existujících cest. Toto odstraní původní cestu. Opravdu ji chcete stále přidat?"
+msgstr ""
+"Přidáním této cesty nahradíte jednu z existujících cest. "
+"Toto odstraní původní cestu. Opravdu ji chcete přidat?"
 
 #: ../tools/Settings.cs:324
-#, fuzzy
 msgid "Remove path"
-msgstr "Vyjmout cestu"
+msgstr "Odstranit cestu"
 
 #: ../tools/Settings.cs:325
-#, fuzzy
 msgid ""
 "Are you sure you wish to remove this path from the list of directories to be "
 "included for indexing?"
-msgstr "Opravdu chcete odstranit cestu ze seznamu adresářů zahrnutých do indexace?"
+msgstr ""
+"Opravdu chcete odstranit cestu ze seznamu adresářů zahrnutých "
+"do indexace?"
 
 #: ../tools/Settings.cs:354
-#, fuzzy
 msgid "Remove item"
-msgstr "Smazat položku"
+msgstr "Odstranit položku"
 
 #: ../tools/Settings.cs:355
-#, fuzzy
 msgid ""
 "Are you sure you wish to remove this item from the list of data to be "
 "excluded from indexing?"
-msgstr "Opravdu chcete odstranit tuto polo6ku ze seznamu dat, která nemají být indexována?"
+msgstr ""
+"Opravdu chcete odstranit tuto položku ze seznamu dat, "
+"která nemají být indexována?"
 
 #: ../tools/Settings.cs:398
-#, fuzzy
 msgid "Invalid host entry"
-msgstr "Špatně zadaný název počítače"
+msgstr "Neplatný název počítače"
 
 #: ../tools/Settings.cs:405
 msgid "Remote host already present in the list."
-msgstr ""
+msgstr "Vzdálený počítač je již v seznamu."
 
 #: ../tools/Settings.cs:414
 msgid "Netbeagle Node not added"
-msgstr ""
+msgstr "Uzel Netbeagle nebyl přidán"
 
 #: ../tools/Settings.cs:430
-#, fuzzy
 msgid "Remove host"
-msgstr "Smazat počítač"
+msgstr "Odstranit počítač"
 
 #: ../tools/Settings.cs:431
-#, fuzzy
 msgid "Are you sure you wish to remove this host from the list?"
 msgstr "Opravdu chcete odstranit tento počítač ze seznamu?"
 
 #: ../tools/Settings.cs:452
-#, fuzzy
 msgid "Select path"
-msgstr "Vybrat cestu"
+msgstr "Vyberte cestu"
 
 #: ../tools/Settings.cs:471
-#, fuzzy
 msgid "The selected path is already configured for external access."
-msgstr "Vybrana cesta je již zahrnuta nastavena pro vzdálený přístup."
+msgstr "Vybraná cesta je již nastavena pro vzdálený přístup."
 
 #: ../tools/Settings.cs:495
-#, fuzzy
 msgid "Remove public path"
-msgstr "Odstranit věřejné cesty"
+msgstr "Odstranit veřejnou cestu"
 
 #: ../tools/Settings.cs:496
-#, fuzzy
 msgid "Are you sure you wish to remove this entry from the list of public paths?"
-msgstr "Opravdu chcete odstranit tuto položku ze seznamu věřejných cest?"
+msgstr "Opravdu chcete odstranit tuto položku ze seznamu veřejných cest?"
 
 #: ../tools/Settings.cs:541 ../tools/Settings.cs:630 ../tools/Settings.cs:708
 #: ../tools/Settings.cs:784 ../tools/Settings.cs:1123
-#, fuzzy
 msgid "Name"
 msgstr "Jméno"
 
 #: ../tools/Settings.cs:624 ../tools/settings.glade.h:33
-#, fuzzy
 msgid "Type"
 msgstr "Typ"
 
 #: ../tools/Settings.cs:677 ../tools/Settings.cs:1057
 #: ../tools/settings.glade.h:25
-#, fuzzy
 msgid "Path"
 msgstr "Cesta"
 
 #: ../tools/Settings.cs:680 ../tools/Settings.cs:1067
-#, fuzzy
 msgid "Pattern"
 msgstr "Vzor"
 
 #: ../tools/Settings.cs:683 ../tools/Settings.cs:1062
 #: ../tools/settings.glade.h:22
-#, fuzzy
 msgid "Mail Folder"
 msgstr "Poštovní složka"
 
 #: ../tools/Settings.cs:1031
-#, fuzzy
 msgid "Select Folder"
-msgstr "Vybrat adresář"
+msgstr "Vyberte složku"
 
 #: ../tools/Settings.cs:1091
-#, fuzzy
 msgid "Error adding path"
 msgstr "Chyba při přidávání cesty"
 
 #: ../tools/Settings.cs:1092
-#, fuzzy
 msgid ""
 "The specified path could not be found and therefore it could not be added to "
 "the list of resources excluded for indexing."
-msgstr "Specifikovaná cesta nemůže být nalezena a proto nemůže být přidána mezi zdroje nezahrnuté do indexace."
+msgstr ""
+"Zadaná cesta nemůže být nalezena a proto nemůže "
+"být přidána mezi zdroje vyjmuté z indexace."
 
 #: ../tools/Settings.cs:1122
-#, fuzzy
 msgid "Show"
-msgstr "Ukázat"
+msgstr "Zobrazit"
 
 #: ../tools/settings.glade.h:1
 msgid "<b>Add remote host</b>"
-msgstr ""
+msgstr "<b>Přidat vzdálený počítač</b>"
 
 #: ../tools/settings.glade.h:2
-#, fuzzy
 msgid "<b>Add resource</b>"
 msgstr "<b>Přidat zdroj</b>"
 
 #: ../tools/settings.glade.h:3
-#, fuzzy
 msgid "<b>Display</b>"
-msgstr "<b>Zobraz</b>"
+msgstr "<b>Zobrazit</b>"
 
 #: ../tools/settings.glade.h:4
-#, fuzzy
 msgid "<b>General</b>"
 msgstr "<b>Obecné</b>"
 
 #: ../tools/settings.glade.h:5
-#, fuzzy
 msgid "<b>Networking</b>"
 msgstr "<b>Práce v sítí</b>"
 
 #: ../tools/settings.glade.h:6
-#, fuzzy
 msgid "<b>Privacy</b>"
 msgstr "<b>Soukromí</b>"
 
 #: ../tools/settings.glade.h:7
-#, fuzzy
 msgid "<b>Select mail folder</b>"
-msgstr "<b>Vybrat poštovní složku</b>"
+msgstr "<b>Vyberte poštovní složku</b>"
 
 #: ../tools/settings.glade.h:8
 msgid ""
 "Add a remote search-enabled host you wish \n"
 "to network with."
 msgstr ""
+"Přidejte vzdálený počítač pro vyhledávání,\n"
+"se kterým se chcete spojit po síti."
 
 #: ../tools/settings.glade.h:10
-#, fuzzy
 msgid "Add any additional paths to be included for indexing."
-msgstr "Přidat další umístění, která mají být zahrnuta při indexování."
+msgstr "Přidejte další umístění, která mají být zahrnuta do indexování."
 
 #: ../tools/settings.glade.h:11
 msgid "Add any remote search-enabled hosts you wish to network with"
-msgstr ""
+msgstr "Přidejte další vzdálené počítače pro vyhledávání, se kterými se chcete spojit po síti"
 
 #: ../tools/settings.glade.h:12
 msgid "Address"
-msgstr ""
+msgstr "Adresa"
 
 #: ../tools/settings.glade.h:13
-#, fuzzy
 msgid ""
 "Adjust which types of results should be visible, and in what order they "
 "should be presented when grouped by type."
 msgstr ""
-"Nastavení, které druhy výsledků mají být viditelné a v jakém pořadí mají být "
-"zobrazeny pokud jsou seskupeny podle typu."
+"Nastavte, které druhy výsledků mají být viditelné a v jakém pořadí mají být "
+"zobrazeny, pokud jsou seskupeny podle typu."
 
 #: ../tools/settings.glade.h:14
-#, fuzzy
 msgid "Allow external access to local search services"
-msgstr "Povolit vzdálený přístup k lokálním vyhledávácím službám"
+msgstr "Povolit vzdálený přístup k místním vyhledávacím službám"
 
 #: ../tools/settings.glade.h:15
-#, fuzzy
 msgid "Alt"
 msgstr "Alt"
 
 #: ../tools/settings.glade.h:16
-#, fuzzy
 msgid "Ctrl"
 msgstr "Ctrl"
 
 #: ../tools/settings.glade.h:17
-#, fuzzy
 msgid "Directory Path"
-msgstr "Adresář:"
+msgstr "Cesta k adresáři"
 
 #: ../tools/settings.glade.h:18
-#, fuzzy
 msgid "Display the search window by pressing"
-msgstr "Zobrazte vyhledávácí okno stisknutím"
+msgstr "Zobrazit vyhledávací okno stisknutím"
 
 #: ../tools/settings.glade.h:19
-#, fuzzy
 msgid "Filename Pattern"
-msgstr "Vzor názvu souboru"
+msgstr "Vzor jména souboru"
 
 #: ../tools/settings.glade.h:20
-#, fuzzy
 msgid "Index my home directory"
 msgstr "Indexovat můj domovský adresář"
 
 #: ../tools/settings.glade.h:21
-#, fuzzy
 msgid "Indexing"
 msgstr "Indexace"
 
 #: ../tools/settings.glade.h:23
 msgid "Maximum number of results displayed "
-msgstr ""
+msgstr "Maximální počet zobrazených výsledků"
 
 #: ../tools/settings.glade.h:24
-#, fuzzy
 msgid "Networking"
-msgstr "Síťový přístup"
+msgstr "Síť"
 
 #: ../tools/settings.glade.h:26
-#, fuzzy
 msgid "Please select a resource you wish to exclude from indexing."
-msgstr "Vyberte, prosím, zdroj, který chcete nezahrnovat do indexace."
+msgstr "Vyberte prosím zdroj, který chcete vyjmout z indexace."
 
 #: ../tools/settings.glade.h:27
-#, fuzzy
 msgid "Please select the mail folder you wish to exclude from indexing. "
-msgstr "Prosím vyberte poštovní složku, kterou chcete nezahrnovat do indexace."
+msgstr "Prosím vyberte poštovní složku, kterou chcete vyjmout z indexace."
 
 #: ../tools/settings.glade.h:29
-#, fuzzy
 msgid "Search Preferences"
 msgstr "Nastavení vyhledávání"
 
 #: ../tools/settings.glade.h:30
-#, fuzzy
 msgid ""
 "Specify any resources, such as paths, patterns, mail folders or type of "
 "objects you wish to exclude from indexing."
-msgstr "Specifikujte, prosím, libovolné zdroje jako jsou cesty, vzory cest, poštovní složky nebo typy objektů, které chcete nezahrnovat do indexace."
+msgstr ""
+"Zadejte prosím libovolné zdroje jako jsou cesty, vzory cest, poštovní "
+"složky nebo typy objektů, které chcete vyjmout z indexace."
 
 #: ../tools/settings.glade.h:31
-#, fuzzy
 msgid "Specify paths that should be available for external access"
-msgstr "Definujte cesty, které mají být dostupné pro vzdálený přístup"
+msgstr "Zadejte cesty, které mají být dostupné pro vzdálený přístup"
 
 #: ../tools/settings.glade.h:32
 msgid "Start search & indexing services automatically "
 msgstr "Spustit vyhledávací a indexovací služby automaticky"
 
 #: ../tools/beagle-settings.desktop.in.h:1
-#, fuzzy
 msgid "Configure Desktop Search & Indexing"
-msgstr "Vyhledávání Indexace"
+msgstr "Nastavit vyhledávání a indexaci"
 
 #: ../tools/beagle-settings.desktop.in.h:2
 msgid "Configure search & indexing properties"
-msgstr ""
+msgstr "Nastavit vlastnosti vyhledávání a indexace"
 
 #: ../tools/beagle-settings.desktop.in.h:3
-#, fuzzy
 msgid "Search & Indexing"
-msgstr "Vyhledávání Indexace"
+msgstr "Vyhledávání a indexace"
 
 #: ../Util/Evolution.cs:45 ../Util/Evolution.cs:163
-#, fuzzy
 msgid "On This Computer"
 msgstr "Na tomto počítači"
 
 #: ../Util/ExifData.cs:226
-#, fuzzy
 msgid "Image Directory"
 msgstr "Adresář s obrázky"
 
 #: ../Util/ExifData.cs:228
-#, fuzzy
 msgid "Thumbnail Directory"
 msgstr "Adresář s náhledy"
 
 #: ../Util/ExifData.cs:230
-#, fuzzy
 msgid "Exif Directory"
-msgstr "Adresář s Exif"
+msgstr "Adresář s EXIF"
 
 #: ../Util/ExifData.cs:232
-#, fuzzy
 msgid "GPS Directory"
 msgstr "Adresář s GPS"
 
 #: ../Util/ExifData.cs:234
 msgid "InterOperability Directory"
-msgstr ""
+msgstr "Adresář InterOperability"
 
 #: ../Util/ExifData.cs:236
-#, fuzzy
 msgid "Unknown Directory"
-msgstr "Neznamý adresář"
+msgstr "Neznámý adresář"
 
 #: ../Util/StringFu.cs:77
-#, fuzzy
 msgid "Today"
 msgstr "Dnes"
 
 #: ../Util/StringFu.cs:79
-#, fuzzy
 msgid "Yesterday"
 msgstr "Včera"
 
 #. Translators: Example output: Aug 9
 #: ../Util/StringFu.cs:82
-#, fuzzy
 msgid "MMM d"
-msgstr "d MMM"
+msgstr "d. MMM"
 
 #. Translators: Example output: Aug 9, 2000
 #: ../Util/StringFu.cs:85
-#, fuzzy
 msgid "MMM d, yyyy"
-msgstr "d MMM, yyyy"
+msgstr "d. MMM yyyy"
 
 #. Translators: Example output: 11:05 AM  (note h = 12-hour time)
 #: ../Util/StringFu.cs:88
-#, fuzzy
 msgid "h:mm tt"
 msgstr "HH:mm"
 
 #. Translators: {0} is a date (e.g. 'Today' or 'Apr 23'), {1} is the time
 #: ../Util/StringFu.cs:94
 #, csharp-format
-#, fuzzy
 msgid "{0}, {1}"
 msgstr "{0}, {1}"
 
 #. To translators: {0} is the time of the day, eg. 13:45
 #: ../Util/StringFu.cs:111
 #, csharp-format
-#, fuzzy
 msgid "Today, {0}"
 msgstr "Dnes, {0}"
 
 #. To translators: {0} is the time of the day, eg. 13:45
 #: ../Util/StringFu.cs:114
 #, csharp-format
-#, fuzzy
 msgid "Yesterday, {0}"
 msgstr "Včera, {0}"
 
 #. To translators: {0} is the number of days that have passed, {1} is the time of the day, eg. 13:45
 #: ../Util/StringFu.cs:117
 #, csharp-format
-#, fuzzy
 msgid "{0} days ago, {1}"
 msgstr "před {0} dny, {1}"
 
 #. Translators: Example output: January 3, 3:45 PM
 #: ../Util/StringFu.cs:122
-#, fuzzy
 msgid "MMMM d, h:mm tt"
-msgstr "d MMMM, HH:mm"
+msgstr "d. MMMM, HH:mm"
 
 #. Translators: Example output: March 23 2001, 10:04 AM
 #: ../Util/StringFu.cs:127
-#, fuzzy
 msgid "MMMM d yyyy, h:mm tt"
-msgstr "d MMMM yyyy, HH:mm"
+msgstr "d. MMMM yyyy, HH:mm"
 
 #: ../Util/StringFu.cs:137
 #, csharp-format
-#, fuzzy
 msgid "{0} hour"
 msgid_plural "{0} hours"
 msgstr[0] "{0} hodina"
-msgstr[1] "{0} hodina"
-msgstr[2] "{0} hodina"
+msgstr[1] "{0} hodiny"
+msgstr[2] "{0} hodin"
 
 #: ../Util/StringFu.cs:144
 #, csharp-format
-#, fuzzy
 msgid "{0} minute"
 msgid_plural "{0} minutes"
 msgstr[0] "{0} minuta"
-msgstr[1] "{0} minuta"
-msgstr[2] "{0} minuta"
+msgstr[1] "{0} minuty"
+msgstr[2] "{0} minut"
 
 #. Translators: {0} is a file size in bytes
 #: ../Util/StringFu.cs:160
 #, csharp-format
-#, fuzzy
 msgid "{0} bytes"
-msgstr "{0} bytů"
+msgstr "{0} bajtů"
 
 #. Translators: {0} is a file size in kilobytes
 #: ../Util/StringFu.cs:164
 #, csharp-format
-#, fuzzy
 msgid "{0:0.0} KB"
 msgstr "{0:0.0} KB"
 
 #. Translators: {0} is a file size in megabytes
 #: ../Util/StringFu.cs:167
 #, csharp-format
-#, fuzzy
 msgid "{0:0.0} MB"
 msgstr "{0:0.0} MB"
 
