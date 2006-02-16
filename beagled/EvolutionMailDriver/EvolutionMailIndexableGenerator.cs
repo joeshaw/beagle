@@ -271,11 +271,14 @@ namespace Beagle.Daemon.EvolutionMailDriver {
 					return null;
 				}
 				
+				// This extracts the UID and flags from the X-Evolution header.
+				// It may also contain user-defined flags and tags, but we don't
+				// support those right now.
 				int separator_idx = x_evolution.IndexOf ('-');
 
 				string uid_str = x_evolution.Substring (0, separator_idx);
 				string uid = Convert.ToUInt32 (uid_str, 16).ToString (); // ugh.
-				uint flags = Convert.ToUInt32 (x_evolution.Substring (separator_idx + 1), 16);
+				uint flags = Convert.ToUInt32 (x_evolution.Substring (separator_idx + 1, 4), 16);
 
 				Indexable indexable = this.GMimeMessageToIndexable (uid, message, flags);
 
