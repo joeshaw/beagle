@@ -947,6 +947,7 @@ namespace Beagle.Daemon {
 						if (please_add_a_new_task) {
 							//Logger.Log.Debug ("Adding child {0}", child.Uri);
 							Scheduler.Task task = NewAddTask (child);
+							task.SubPriority = 1;
 							ThisScheduler.Add (task);
 						} else
 							child.Cleanup ();
