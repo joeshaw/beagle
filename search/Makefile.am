@@ -34,6 +34,7 @@ TILES = 					\
 	$(srcdir)/Tiles/Image.cs		\
 	$(srcdir)/Tiles/MailMessage.cs		\
 	$(srcdir)/Tiles/MailAttachment.cs	\
+	$(srcdir)/Tiles/Note.cs			\
 	$(srcdir)/Tiles/Presentation.cs		\
 	$(srcdir)/Tiles/RSSFeed.cs		\
 	$(srcdir)/Tiles/Spreadsheet.cs		\
