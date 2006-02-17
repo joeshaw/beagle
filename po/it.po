@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: beagle\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2006-02-02 11:54+0100\n"
-"PO-Revision-Date: 2006-02-02 13:51+0100\n"
+"POT-Creation-Date: 2006-02-17 12:01+0100\n"
+"PO-Revision-Date: 2006-02-17 12:02+0100\n"
 "Last-Translator: Luca Ferretti <elle.uca@libero.it>\n"
 "Language-Team: Italian <tp@lists.linux.it>\n"
 "MIME-Version: 1.0\n"
@@ -42,26 +42,19 @@ msgstr "Conversazioni in {0}"
 msgid "Conversations with {0}"
 msgstr "Conversazioni con {0}"
 
-#: ../search/Category.cs:87
-#, csharp-format
-msgid "Top {0} Result"
-msgid_plural "Top {0} Results"
-msgstr[0] "Migliore {0} risultato"
-msgstr[1] "Migliori {0} risultati"
+#: ../search/beagle-search.desktop.in.h:1 ../tools/settings.glade.h:28
+msgid "Search"
+msgstr "Ricerca"
 
-#: ../search/Category.cs:88
-#, csharp-format
-msgid "Previous {0}"
-msgid_plural "Previous {0}"
-msgstr[0] "{0} precedente"
-msgstr[1] "{0} precedenti"
+#: ../search/beagle-search.desktop.in.h:2
+msgid "Search for data on your desktop"
+msgstr "Ricerca dati nel proprio desktop"
 
-#: ../search/Category.cs:89
+# In perfetto stile Goooooogle :-)
+#: ../search/Category.cs:116
 #, csharp-format
-msgid "Next {0}"
-msgid_plural "Next {0}"
-msgstr[0] "{0} successivo"
-msgstr[1] "{0} successivi"
+msgid "{0}-{1} of {2}"
+msgstr "{1}-{1} su {2}"
 
 #: ../search/Pages/NoMatch.cs:19
 msgid "No results were found."
@@ -99,7 +92,7 @@ msgstr ""
 
 #: ../search/Pages/QuickTips.cs:11
 msgid "To search for optional terms, use OR.  ex: <b>George OR Ringo</b>"
-msgstr "Per cercare termini opzionali, usare OR (esempio <b>Cani OR gatti</b>)"
+msgstr "Per cercare termini opzionali, usare OR (esempio <b>cani OR gatti</b>)"
 
 #: ../search/Pages/QuickTips.cs:12
 msgid ""
@@ -111,7 +104,9 @@ msgstr ""
 #: ../search/Pages/QuickTips.cs:13
 msgid ""
 "When searching for a phrase, add quotes. ex: <b>\"There be dragons\"</b>"
-msgstr "Per cercare una frase esatta, usare le virgolette (esempio <b>\"ci lascia lo zampino\"</b>)"
+msgstr ""
+"Per cercare una frase esatta, usare le virgolette (esempio <b>\"ci lascia lo "
+"zampino\"</b>)"
 
 #: ../search/Pages/QuickTips.cs:19 ../search/UIManager.cs:62
 msgid "Quick Tips"
@@ -125,79 +120,81 @@ msgstr "Daemon non in esecuzione"
 msgid "Start the daemon"
 msgstr "Avvia il daemon"
 
-#: ../search/Search.cs:148
+#: ../search/Search.cs:145
+msgid "_Find:"
+msgstr "_Trova:"
+
+#: ../search/Search.cs:159
 msgid "Find Now"
 msgstr "Trova ora"
 
-#: ../search/Search.cs:188
+#: ../search/Search.cs:199
 msgid "Type in search terms"
 msgstr "Digitare i termini da cercare"
 
-#: ../search/Search.cs:189
+#: ../search/Search.cs:200
 msgid "Start searching"
 msgstr "Avvia la ricerca"
 
-#: ../search/Tiles/Application.cs:90
+#: ../search/Tiles/Application.cs:81
 msgid "Move to trash"
 msgstr "Sposta nel cestino"
 
 # credo funzioni solo con Banshee e F-Spot 
-#: ../search/Tiles/Audio.cs:37 ../search/Tiles/Image.cs:39
+#: ../search/Tiles/Audio.cs:36 ../search/Tiles/Image.cs:38
 msgid "Add to Library"
 msgstr "Aggiungi alla libreria"
 
-#: ../search/Tiles/Contact.cs:60
+#: ../search/Tiles/Contact.cs:64
 msgid "E-Mail:"
 msgstr "Email:"
 
-#: ../search/Tiles/Contact.cs:66
+#: ../search/Tiles/Contact.cs:70
 msgid "Mobile Phone:"
 msgstr "Telefono cellulare:"
 
-#: ../search/Tiles/Contact.cs:73
+#: ../search/Tiles/Contact.cs:77
 msgid "Work Phone:"
-msgstr "Telefono lavoro:"
+msgstr "Telefono di lavoro:"
 
-#: ../search/Tiles/Contact.cs:78
+#: ../search/Tiles/Contact.cs:82
 msgid "Home Phone:"
-msgstr "Telefono casa:"
+msgstr "Telefono di casa:"
 
-#: ../search/Tiles/File.cs:37 ../search/Tiles/Folder.cs:35
-msgid "Open With"
-msgstr "Apri con"
-
-#: ../search/Tiles/File.cs:38
+#: ../search/Tiles/File.cs:33
 msgid "Reveal in Folder"
 msgstr "Mostra nella cartella"
 
-#: ../search/Tiles/File.cs:39
+#: ../search/Tiles/File.cs:34
 msgid "E-Mail"
 msgstr "Email"
 
 # Voce di menù contestuale che permette di inviare un
 # file trovato come allegato IM. Credo solo con gaim
-#: ../search/Tiles/File.cs:40
-#, fuzzy
+#: ../search/Tiles/File.cs:35
 msgid "Instant-Message"
-msgstr "Instant message"
+msgstr "Messaggio istantaneo"
 
-#: ../search/Tiles/File.cs:41 ../search/Tiles/Folder.cs:38
+#. FIXME: s/"gtk-info"/Gtk.Stock.Info/ when we can depend on gtk# 2.8
+#. AddAction (new TileAction (Catalog.GetString ("Show Information"), "gtk-info", ShowInformation));
+#: ../search/Tiles/File.cs:36 ../search/Tiles/Folder.cs:38
 msgid "Move to Trash"
 msgstr "Sposta nel cestino"
 
-#: ../search/Tiles/File.cs:139 ../search/Tiles/RSSFeed.cs:50
+#: ../search/Tiles/File.cs:146 ../search/Tiles/RSSFeed.cs:53
+#: ../search/Tiles/WebHistory.cs:60
 msgid "Title:"
 msgstr "Titolo:"
 
-#: ../search/Tiles/File.cs:145
-msgid "Last Edited:"
-msgstr "Ultima modifica:"
-
-#: ../search/Tiles/File.cs:152
+#: ../search/Tiles/File.cs:153
 msgid "Author:"
 msgstr "Autore:"
 
-#: ../search/Tiles/File.cs:159
+#: ../search/Tiles/File.cs:160
+msgid "Last Edited:"
+msgstr "Ultima modifica:"
+
+#: ../search/Tiles/File.cs:166 ../search/Tiles/Image.cs:85
 msgid "Full Path:"
 msgstr "Percorso completo:"
 
@@ -213,48 +210,46 @@ msgid_plural "Contains {0} Items"
 msgstr[0] "Contiene {0} oggetto"
 msgstr[1] "Contiene {0} oggetti"
 
-#. FIXME: s/"gtk-info"/Gtk.Stock.Info/ when we can depend on gtk# 2.8
-#: ../search/Tiles/Folder.cs:37
-msgid "Show Information"
-msgstr "Mostra informazioni"
-
 # Notare che stando ai file appare per cartella e immagine,
 # quindi femminile -Luca
-#: ../search/Tiles/Folder.cs:62
+#: ../search/Tiles/Folder.cs:67
 msgid "Edited:"
 msgstr "Modificata:"
 
-#: ../search/Tiles/Image.cs:40
+#: ../search/Tiles/Image.cs:39
 msgid "Set as Wallpaper"
 msgstr "Imposta come rivestimento della scrivania"
 
 # immagine, femminile !
-#: ../search/Tiles/Image.cs:80
+#: ../search/Tiles/Image.cs:79
 msgid "Modified:"
 msgstr "Modificata:"
 
-#: ../search/Tiles/IMLog.cs:92
+#: ../search/Tiles/IMLog.cs:29
+msgid "IM Conversation"
+msgstr "Conversazione IM"
+
+#: ../search/Tiles/IMLog.cs:77
 msgid "Name:"
 msgstr "Nome:"
 
-#: ../search/Tiles/IMLog.cs:97 ../search/Tiles/MailMessage.cs:113
+#: ../search/Tiles/IMLog.cs:82 ../search/Tiles/MailMessage.cs:82
 msgid "Date Received:"
 msgstr "Data ricezione:"
 
-#: ../search/Tiles/MailAttachment.cs:46
+#: ../search/Tiles/MailAttachment.cs:45
 msgid "Mail attachment"
 msgstr "Allegato email"
 
-#: ../search/Tiles/MailMessage.cs:48
-#, fuzzy
+#: ../search/Tiles/MailMessage.cs:33
 msgid "Send in Mail"
-msgstr "Invia con email"
+msgstr "Spedisci tramite email"
 
-#: ../search/Tiles/MailMessage.cs:103
+#: ../search/Tiles/MailMessage.cs:72
 msgid "Subject:"
 msgstr "Oggetto:"
 
-#: ../search/Tiles/MailMessage.cs:108
+#: ../search/Tiles/MailMessage.cs:77
 msgid "From:"
 msgstr "Da:"
 
@@ -265,11 +260,11 @@ msgid_plural "{0} slides"
 msgstr[0] "{0} diapositiva"
 msgstr[1] "{0} diapositive"
 
-#: ../search/Tiles/RSSFeed.cs:55
+#: ../search/Tiles/RSSFeed.cs:58
 msgid "Site:"
 msgstr "Sito:"
 
-#: ../search/Tiles/RSSFeed.cs:60
+#: ../search/Tiles/RSSFeed.cs:63
 msgid "Date Viewed:"
 msgstr "Data visualizzazione:"
 
@@ -280,7 +275,7 @@ msgid_plural "{0} pages"
 msgstr[0] "{0} pagina"
 msgstr[1] "{0} pagine"
 
-#: ../search/Tiles/Tile.cs:177
+#: ../search/Tiles/Tile.cs:179
 msgid "Open"
 msgstr "Apri"
 
@@ -294,95 +289,51 @@ msgstr "Apri"
 # 	           [] file.txt		[] documento.doc
 #
 # IMHO è meglio al plurale in italiano, per l'inglese affari loro -Luca
-#: ../search/Tiles/Utils.cs:25
+#: ../search/Tiles/Utils.cs:23
 msgid "Application"
 msgstr "Applicazioni"
 
-#: ../search/Tiles/Utils.cs:26
-msgid "More application results..."
-msgstr "Altri risultati per applicazioni..."
-
-#: ../search/Tiles/Utils.cs:29
+#: ../search/Tiles/Utils.cs:25
 msgid "Contact"
 msgstr "Contatti"
 
-#: ../search/Tiles/Utils.cs:30
-msgid "More contact results..."
-msgstr "Altri risultati per contatti..."
-
-#: ../search/Tiles/Utils.cs:33
+#: ../search/Tiles/Utils.cs:27
 msgid "Folder"
 msgstr "Cartelle"
 
-#: ../search/Tiles/Utils.cs:34
-msgid "More folder results..."
-msgstr "Altri risultati per cartelle..."
-
-#: ../search/Tiles/Utils.cs:37
+#: ../search/Tiles/Utils.cs:29
 msgid "Image"
 msgstr "Immagini"
 
-#: ../search/Tiles/Utils.cs:38
-msgid "More image results..."
-msgstr "Altri risultati per immagini..."
-
-#: ../search/Tiles/Utils.cs:41
+#: ../search/Tiles/Utils.cs:31
 msgid "Audio"
 msgstr "Audio"
 
-#: ../search/Tiles/Utils.cs:42
-msgid "More audio results..."
-msgstr "Altri risultati per audio..."
-
-#: ../search/Tiles/Utils.cs:45
+#: ../search/Tiles/Utils.cs:33
 msgid "Video"
 msgstr "Video"
 
-#: ../search/Tiles/Utils.cs:46
-msgid "More video results..."
-msgstr "Altri risultati per video..."
-
-#: ../search/Tiles/Utils.cs:49
+#: ../search/Tiles/Utils.cs:35
 msgid "Documents"
 msgstr "Documenti"
 
-#: ../search/Tiles/Utils.cs:50
-msgid "More document results..."
-msgstr "Altri risultati per documenti..."
-
-#: ../search/Tiles/Utils.cs:53
+#: ../search/Tiles/Utils.cs:37
 msgid "Conversations"
 msgstr "Conversazioni"
 
-#: ../search/Tiles/Utils.cs:54
-msgid "More conversation results..."
-msgstr "Altri risultati per conversazioni..."
-
-#: ../search/Tiles/Utils.cs:57
+#: ../search/Tiles/Utils.cs:39
 msgid "Website"
 msgstr "Siti web"
 
-#: ../search/Tiles/Utils.cs:58
-msgid "More website results..."
-msgstr "Altri risultati per siti web..."
-
-#: ../search/Tiles/Utils.cs:61
+#: ../search/Tiles/Utils.cs:41
 msgid "News Feed"
 msgstr "Feed di notizie"
 
-#: ../search/Tiles/Utils.cs:62
-msgid "More news feed results..."
-msgstr "Altri risultati per feed di notizie..."
-
-#: ../search/Tiles/Utils.cs:65
+#: ../search/Tiles/Utils.cs:43
 msgid "Archive"
 msgstr "Archivi"
 
-#: ../search/Tiles/Utils.cs:66
-msgid "More archive results..."
-msgstr "Altri risultati per archivi..."
-
-#: ../search/Tiles/Utils.cs:170
+#: ../search/Tiles/Utils.cs:155
 #, csharp-format
 msgid "{0} week ago"
 msgid_plural "{0} weeks ago"
@@ -390,23 +341,33 @@ msgstr[0] "{0} settimana fa"
 msgstr[1] "{0} settimane fa"
 
 #. Lets say a year and a half to stop saying months
-#: ../search/Tiles/Utils.cs:172
+#: ../search/Tiles/Utils.cs:157
 #, csharp-format
 msgid "{0} month ago"
 msgid_plural "{0} months ago"
 msgstr[0] "{0} mese fa"
 msgstr[1] "{0} mesi fa"
 
-#: ../search/Tiles/Utils.cs:174
+#: ../search/Tiles/Utils.cs:159
 #, csharp-format
 msgid "{0} year ago"
 msgid_plural "{0} years ago"
 msgstr[0] "{0} anno fa"
 msgstr[1] "{0} anni fa"
 
-#: ../search/Tiles/Video.cs:33
+#. FIXME: We need filters for video in Beagle.
+#. They should land soon when entagged-sharp gets video support.
+#: ../search/Tiles/Video.cs:27
 msgid "Unknown duration"
 msgstr "Durata sconosciuta"
+
+#: ../search/Tiles/WebHistory.cs:67
+msgid "URL:"
+msgstr "URL:"
+
+#: ../search/Tiles/WebHistory.cs:74
+msgid "Accessed:"
+msgstr "Ultimo accesso:"
 
 # Titolo della finestra di ricerca
 #: ../search/Tray/TrayIcon.cs:32
@@ -479,8 +440,6 @@ msgstr ""
 "chats\n"
 "messaggio istantaneo\n"
 "messaggi istantanei\n"
-"messaggio\n"
-"messaggi\n"
 "istantaneo\n"
 "istantanei\n"
 "messaggi\n"
@@ -687,7 +646,7 @@ msgstr "Or_dina"
 msgid "_Help"
 msgstr "A_iuto"
 
-# Desktop Search è il titolod della finestra di ricerca :-(
+# Desktop Search è il titolo della finestra di ricerca :-(
 #: ../search/UIManager.cs:46 ../search/UIManager.cs:50
 msgid "Exit Desktop Search"
 msgstr "Esce da Ricerca desktop"
@@ -698,11 +657,11 @@ msgstr "_Sommario"
 
 #: ../search/UIManager.cs:55
 msgid "Help - Table of Contents"
-msgstr "Aiuto - tavola del sommario"
+msgstr "Aiuto - Sommario"
 
 #: ../search/UIManager.cs:59
 msgid "About Desktop Search"
-msgstr "Informazioni su ricerca desktop"
+msgstr "Informazioni su Ricerca desktop"
 
 #: ../search/UIManager.cs:72
 msgid "_Everywhere"
@@ -742,7 +701,7 @@ msgstr "Conve_rsazioni"
 
 #: ../search/UIManager.cs:94
 msgid "Search E-Mail and Instant Messaging logs"
-msgstr "Cerca email e registri di instant messaging"
+msgstr "Cerca nelle email e nei registri dei messaggi istantanei"
 
 #: ../search/UIManager.cs:97
 msgid "Images"
@@ -758,7 +717,7 @@ msgstr "Multimedia"
 
 #: ../search/UIManager.cs:104
 msgid "Search sound and video files"
-msgstr "Cerca file audio e video"
+msgstr "Cerca nei file audio e video"
 
 #: ../search/UIManager.cs:111
 msgid "Date _Modified"
@@ -828,7 +787,7 @@ msgid ""
 "Adding this path will obsolete some of the existing include paths. This will "
 "result in the removal of the old obsolete paths. Do you still wish to add it?"
 msgstr ""
-"Aggiungendo questo percorso verranno resi obsoleti alcuni di percorsi già "
+"Aggiungendo questo percorso verranno resi obsoleti alcuni dei percorsi già "
 "inclusi. Tali percorsi obsoleti verranno quindi rimossi. Aggiungere "
 "veramente il percorso?"
 
@@ -841,8 +800,8 @@ msgid ""
 "Are you sure you wish to remove this path from the list of directories to be "
 "included for indexing?"
 msgstr ""
-"Rimuovere veramente questo percorso dall'elenco di directory incluse per "
-"l'indicizzazione?"
+"Rimuovere veramente questo percorso dall'elenco di directory da includere "
+"per l'indicizzazione?"
 
 #: ../tools/Settings.cs:354
 msgid "Remove item"
@@ -853,7 +812,7 @@ msgid ""
 "Are you sure you wish to remove this item from the list of data to be "
 "excluded from indexing?"
 msgstr ""
-"Rimuovere veramente questa voce dall'elenco di dati da escudere per "
+"Rimuovere veramente questa voce dall'elenco di dati da escludere per "
 "l'indicizzazione?"
 
 #: ../tools/Settings.cs:398
@@ -930,7 +889,7 @@ msgid ""
 "the list of resources excluded for indexing."
 msgstr ""
 "Non è possibile trovare il percoso specificato; tale percorso non può quindi "
-"essessere aggiunto all'elenco di risorse da escudere dall'indicizzazione."
+"essessere aggiunto all'elenco di risorse da escludere dall'indicizzazione."
 
 #: ../tools/Settings.cs:1122
 msgid "Show"
@@ -975,13 +934,12 @@ msgstr ""
 
 #: ../tools/settings.glade.h:10
 msgid "Add any additional paths to be included for indexing."
-msgstr ""
-"Aggiungere qualsiasi percorso aggiuntivo da includere per l'indicizzazione."
+msgstr "Aggiungere ogni percorso aggiuntivo da includere per l'indicizzazione."
 
 # più corto altrimenti la finestra diventa un casino... -Luca
 #: ../tools/settings.glade.h:11
 msgid "Add any remote search-enabled hosts you wish to network with"
-msgstr "Aggiungere qualsiasi host remoto abilitato alla ricerca da interrogare"
+msgstr "Aggiungere ogni host remoto abilitato alla ricerca da interrogare"
 
 #: ../tools/settings.glade.h:12
 msgid "Address"
@@ -1042,10 +1000,6 @@ msgstr "Selezionare una risorsa da escludere dall'indicizzazione."
 #: ../tools/settings.glade.h:27
 msgid "Please select the mail folder you wish to exclude from indexing. "
 msgstr "Selezionare la cartella email da escludere dall'indicizzazione."
-
-#: ../tools/settings.glade.h:28
-msgid "Search"
-msgstr "Ricerca"
 
 #: ../tools/settings.glade.h:29
 msgid "Search Preferences"
@@ -1129,7 +1083,7 @@ msgstr "d MMM yyyy"
 #. Translators: Example output: 11:05 AM  (note h = 12-hour time)
 #: ../Util/StringFu.cs:88
 msgid "h:mm tt"
-msgstr "h.mm"
+msgstr "H.mm"
 
 #. Translators: {0} is a date (e.g. 'Today' or 'Apr 23'), {1} is the time
 #: ../Util/StringFu.cs:94
@@ -1158,12 +1112,12 @@ msgstr "{0} giorni fa, {1}"
 #. Translators: Example output: January 3, 3:45 PM
 #: ../Util/StringFu.cs:122
 msgid "MMMM d, h:mm tt"
-msgstr "d MMMM, h.mm"
+msgstr "d MMMM, H.mm"
 
 #. Translators: Example output: March 23 2001, 10:04 AM
 #: ../Util/StringFu.cs:127
 msgid "MMMM d yyyy, h:mm tt"
-msgstr "d MMMM yyyy, h.mm"
+msgstr "d MMMM yyyy, H.mm"
 
 #: ../Util/StringFu.cs:137
 #, csharp-format
@@ -1176,7 +1130,7 @@ msgstr[1] "{0} ore"
 #, csharp-format
 msgid "{0} minute"
 msgid_plural "{0} minutes"
-msgstr[0] "{0} minuti"
+msgstr[0] "{0} minuto"
 msgstr[1] "{0} minuti"
 
 #. Translators: {0} is a file size in bytes
