@@ -179,7 +179,6 @@ namespace Mono.Data.SqliteClient
 							break;
 						case 3:
 							string strval = Marshal.PtrToStringUni (Sqlite.sqlite3_column_text16 (pVm, i));
-							current_row.Add (Marshal.PtrToStringUni (Sqlite.sqlite3_column_text16 (pVm, i)));
 								
 							// If the column was declared as a 'date' or 'datetime', let's play
 							// nice and return a DateTime (version 3 only).
