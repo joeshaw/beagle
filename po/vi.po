@@ -6,8 +6,8 @@ msgid ""
 ""
 msgstr "Project-Id-Version: beagle Gnome HEAD\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2006-02-10 00:45+0100\n"
-"PO-Revision-Date: 2006-02-10 16:06+1030\n"
+"POT-Creation-Date: 2006-02-21 02:10+0100\n"
+"PO-Revision-Date: 2006-02-21 17:44+1030\n"
 "Last-Translator: Clytie Siddall <clytie@riverland.net.au>\n"
 "Language-Team: Vietnamese <gnomevi-list@lists.sourceforge.net>\n"
 "MIME-Version: 1.0\n"
@@ -50,23 +50,10 @@ msgstr "Tìm kiếm"
 msgid "Search for data on your desktop"
 msgstr "Tìm kiếm dữ liệu trong môi trường bạn"
 
-#:../search/Category.cs:87
+#:../search/Category.cs:116
 #,csharp-format
-msgid "Top {0} Result"
-msgid_plural "Top {0} Results"
-msgstr[0] "Kết quả {0} tốt nhất"
-
-#:../search/Category.cs:88
-#,csharp-format
-msgid "Previous {0}"
-msgid_plural "Previous {0}"
-msgstr[0] "{0} trước"
-
-#:../search/Category.cs:89
-#,csharp-format
-msgid "Next {0}"
-msgid_plural "Next {0}"
-msgstr[0] "{0} kế"
+msgid "{0}-{1} of {2}"
+msgstr "{0}-{1} trên {2}"
 
 #:../search/Pages/NoMatch.cs:19
 msgid "No results were found."
@@ -123,19 +110,19 @@ msgstr "Trình nền không đang chạy"
 msgid "Start the daemon"
 msgstr "Khởi chạy trình nền"
 
-#:../search/Search.cs:134
+#:../search/Search.cs:145
 msgid "_Find:"
 msgstr "_Tìm:"
 
-#:../search/Search.cs:148
+#:../search/Search.cs:159
 msgid "Find Now"
 msgstr "Tìm ngay bây giờ"
 
-#:../search/Search.cs:188
+#:../search/Search.cs:199
 msgid "Type in search terms"
 msgstr "Gõ chuỗi tìm kiếm"
 
-#:../search/Search.cs:189
+#:../search/Search.cs:200
 msgid "Start searching"
 msgstr "Bắt đầu tìm kiếm"
 
@@ -181,20 +168,20 @@ msgstr "Tin nhắn"
 msgid "Move to Trash"
 msgstr "Chuyển vào Rác"
 
-#:../search/Tiles/File.cs:142 ../search/Tiles/RSSFeed.cs:53
+#:../search/Tiles/File.cs:146 ../search/Tiles/RSSFeed.cs:53
 #:../search/Tiles/WebHistory.cs:60
 msgid "Title:"
 msgstr "Tiêu đề :"
 
-#:../search/Tiles/File.cs:148
-msgid "Last Edited:"
-msgstr "Sửa đổi cuối cùng:"
-
-#:../search/Tiles/File.cs:155
+#:../search/Tiles/File.cs:153
 msgid "Author:"
 msgstr "Tác giả:"
 
-#:../search/Tiles/File.cs:162 ../search/Tiles/Image.cs:85
+#:../search/Tiles/File.cs:160
+msgid "Last Edited:"
+msgstr "Sửa đổi cuối cùng:"
+
+#:../search/Tiles/File.cs:166 ../search/Tiles/Image.cs:85
 msgid "Full Path:"
 msgstr "Đường dẫn đầy đủ:"
 
@@ -208,7 +195,7 @@ msgid "Contains {0} Item"
 msgid_plural "Contains {0} Items"
 msgstr[0] "Chứa {0} mục"
 
-#:../search/Tiles/Folder.cs:62
+#:../search/Tiles/Folder.cs:67
 msgid "Edited:"
 msgstr "Sửa đổi:"
 
@@ -272,108 +259,64 @@ msgstr[0] "{0} trangn"
 msgid "Open"
 msgstr "Mở"
 
-#:../search/Tiles/Utils.cs:25
+#:../search/Tiles/Utils.cs:23
 msgid "Application"
 msgstr "Ứng dụng"
 
-#:../search/Tiles/Utils.cs:26
-msgid "More application results..."
-msgstr "Kết quả ứng dụng thêm..."
-
-#:../search/Tiles/Utils.cs:29
+#:../search/Tiles/Utils.cs:25
 msgid "Contact"
 msgstr "Liên lạc"
 
-#:../search/Tiles/Utils.cs:30
-msgid "More contact results..."
-msgstr "Kết quả liên lạc thêm..."
-
-#:../search/Tiles/Utils.cs:33
+#:../search/Tiles/Utils.cs:27
 msgid "Folder"
 msgstr "Thư mục"
 
-#:../search/Tiles/Utils.cs:34
-msgid "More folder results..."
-msgstr "Kết quả thư mục thêm..."
-
-#:../search/Tiles/Utils.cs:37
+#:../search/Tiles/Utils.cs:29
 msgid "Image"
 msgstr "Ảnh"
 
-#:../search/Tiles/Utils.cs:38
-msgid "More image results..."
-msgstr "Kết quả ảnh thêm..."
-
-#:../search/Tiles/Utils.cs:41
+#:../search/Tiles/Utils.cs:31
 msgid "Audio"
 msgstr "Âm thanh"
 
-#:../search/Tiles/Utils.cs:42
-msgid "More audio results..."
-msgstr "Kết quả âm thanh thêm..."
-
-#:../search/Tiles/Utils.cs:45
+#:../search/Tiles/Utils.cs:33
 msgid "Video"
 msgstr "Ảnh động"
 
-#:../search/Tiles/Utils.cs:46
-msgid "More video results..."
-msgstr "Kết quả ảnh động thêm..."
-
-#:../search/Tiles/Utils.cs:49
+#:../search/Tiles/Utils.cs:35
 msgid "Documents"
 msgstr "Tài liệu"
 
-#:../search/Tiles/Utils.cs:50
-msgid "More document results..."
-msgstr "Kết quả tài liệu thêm..."
-
-#:../search/Tiles/Utils.cs:53
+#:../search/Tiles/Utils.cs:37
 msgid "Conversations"
 msgstr "Cuộc đối thoại"
 
-#:../search/Tiles/Utils.cs:54
-msgid "More conversation results..."
-msgstr "Kết quả đối thoại thêm..."
-
-#:../search/Tiles/Utils.cs:57
+#:../search/Tiles/Utils.cs:39
 msgid "Website"
 msgstr "Chỗ Mạng"
 
-#:../search/Tiles/Utils.cs:58
-msgid "More website results..."
-msgstr "Kết quả chỗ Mạng thêm..."
-
-#:../search/Tiles/Utils.cs:61
+#:../search/Tiles/Utils.cs:41
 msgid "News Feed"
 msgstr "Dòng tin tức"
 
-#:../search/Tiles/Utils.cs:62
-msgid "More news feed results..."
-msgstr "Kết quả dòng tin tức thêm..."
-
-#:../search/Tiles/Utils.cs:65
+#:../search/Tiles/Utils.cs:43
 msgid "Archive"
 msgstr "Kho"
 
-#:../search/Tiles/Utils.cs:66
-msgid "More archive results..."
-msgstr "Kết quả kho thêm..."
-
-#:../search/Tiles/Utils.cs:179
+#:../search/Tiles/Utils.cs:155
 #,csharp-format
 msgid "{0} week ago"
 msgid_plural "{0} weeks ago"
 msgstr[0] "{0} tuần trước"
 
 #.Lets say a year and a half to stop saying months
-#:../search/Tiles/Utils.cs:181
+#:../search/Tiles/Utils.cs:157
 #,csharp-format
 msgid "{0} month ago"
 msgid_plural "{0} months ago"
 msgstr[0] "{0} tháng trước"
 
-#:../search/Tiles/Utils.cs:183
+#:../search/Tiles/Utils.cs:159
 #,csharp-format
 msgid "{0} year ago"
 msgid_plural "{0} years ago"
