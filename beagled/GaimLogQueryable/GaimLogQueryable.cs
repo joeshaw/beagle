@@ -149,13 +149,18 @@ namespace Beagle.Daemon.GaimLogQueryable {
 
 		private bool FileIsInteresting (string filename)
 		{
-			// Filename must be fixed length, see below
-			if (filename.Length < 21 || filename.Length > 22)
+			if (filename.Length < 21)
 				return false;
 
-			// Check match on regex: ^[0-9]{4}-[0-9]{2}-[0-9]{2}\\.[0-9]{6}\\.(txt|html)$
-			// e.g. 2005-07-22.161521.txt
-			// We'd use System.Text.RegularExpressions if they werent so much more expensive
+			string ext = Path.GetExtension (filename);
+			if (ext != ".txt" && ext != ".html")
+				return false;
+
+			// Pre-gaim 2.0.0 logs are in the format "2005-07-22.161521.txt".  Afterward a
+			// timezone field as added, ie. "2005-07-22.161521-0500EST.txt".
+			//
+			// This is a lot uglier than a regexp, but they are so damn expensive.
+
 			return Char.IsDigit (filename [0]) && Char.IsDigit (filename [1])
 				&& Char.IsDigit (filename [2]) && Char.IsDigit (filename [3])
 				&& filename [4] == '-'
@@ -166,10 +171,7 @@ namespace Beagle.Daemon.GaimLogQueryable {
 				&& Char.IsDigit (filename [11]) && Char.IsDigit (filename [12])
 				&& Char.IsDigit (filename [13]) && Char.IsDigit (filename [14])
 				&& Char.IsDigit (filename [15]) && Char.IsDigit (filename [16])
-				&& filename [17] == '.'
-				&&  (	(filename [18] == 't' && filename [19] == 'x' && filename [20] == 't')
-					||	(filename [18] == 'h' && filename [19] == 't' && filename [20] == 'm' && filename [21] == 'l')
-					);
+				&& (filename [17] == '+' || filename [17] == '-' || filename [17] == '.');
 		}
 
 		/////////////////////////////////////////////////
