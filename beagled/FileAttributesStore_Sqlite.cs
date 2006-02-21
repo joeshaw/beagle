@@ -179,7 +179,7 @@ namespace Beagle.Daemon {
 			SqliteConnection c;			
 			c = new SqliteConnection ();
 			c.ConnectionString = "version=" + ExternalStringsHack.SqliteVersion
-				+ ",URI=file:" + GetDbPath (directory);
+				+ ",encoding=UTF-8,URI=file:" + GetDbPath (directory);
 			c.Open ();
 			return c;
 		}

@@ -147,7 +147,7 @@ namespace Beagle.Daemon {
 		{
 			SqliteConnection connection = new SqliteConnection ();
 			connection.ConnectionString = "version=" + ExternalStringsHack.SqliteVersion
-				+ ",URI=file:" + db_filename;
+				+ ",encoding=UTF-8,URI=file:" + db_filename;
 			connection.Open ();
 			return connection;
 		}
