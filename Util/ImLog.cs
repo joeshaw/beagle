@@ -179,10 +179,41 @@ namespace Beagle.Util {
 
 		public GaimLog (FileInfo file, TextReader reader) : base ("gaim", file, reader)
 		{
+			string filename = file.Name;
+
 			// Parse what we can from the file path
 			try {
-				string str = Path.GetFileNameWithoutExtension (file.Name);
-				StartTime = DateTime.ParseExact (str, "yyyy-MM-dd.HHmmss", null);
+				string str;
+
+				// Character at position 17 will be either a dot, indicating the beginning
+				// of the extension for old gaim logs, or a plus or minus indicating a
+				// timezone offset for new gaim logs.
+				if (filename [17] == '+' || filename [17] == '-') {
+					// New gaim 2.0.0 format, including timezone.
+					//
+					// Ugly hack time: DateTime's format specifiers only know how to
+					// deal with timezones in the format "+HH:mm" and not "+HHmm",
+					// which is how UNIX traditionally encodes them.  I have no idea
+					// why; it would make RFC 822/1123 parsing a hell of a lot easier.
+					// Anyway, in this case, we're going to insert a colon in there so
+					// that DateTime.ParseExact can understand it.
+					//
+					// 2006-02-21-160424-0500EST.html
+					//                     ^
+					//                     offset 20
+
+					str = filename.Substring (0, 20) + ':' + filename.Substring (20, 2);
+					StartTime = DateTime.ParseExact (str, "yyyy-MM-dd.HHmmsszzz", null);
+				} else if (filename [17] == '.') {
+					// Older gaim format.
+					//
+					// 2006-02-21-160424.html
+
+					str = Path.GetFileNameWithoutExtension (filename);
+					StartTime = DateTime.ParseExact (str, "yyyy-MM-dd.HHmmss", null);
+				} else {
+					throw new FormatException ();
+				}
 			} catch (Exception) {
 				Logger.Log.Warn ("Could not parse date/time from filename '{0}'", file.Name);
 				StartTime = DateTime.Now;
