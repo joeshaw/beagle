@@ -10,6 +10,11 @@ namespace Bludgeon {
 		// We also exclude l, since it looks too much like 1
 		private const string token_chars = "bcdfghjkmnpqrstvwxz0123456789";
 
+		// A mixture of ASCII characters and latin characters outside
+		// the normal ISO-8859-1 range to test UTF-8 support.  These
+		// *should* still stem properly.
+		private const string unicode_token_chars = "bĉđfğħjķłmńpqrŝſŧvwxžƀ0123456789";
+
 		public const int Count = 512;
 
 		static public string IdToString (int id)
@@ -35,13 +40,20 @@ namespace Bludgeon {
 			return token_table [random.Next (Count)];
 		}
 
+		static public string GetRandomWithUnicode ()
+		{
+			return unicode_token_table [random.Next (Count)];
+		}
+
 		///////////////////////////////////////////////////////////////////////
 
 		static private string [] token_table;
+		static private string [] unicode_token_table;
 
 		static Token ()
 		{
 			token_table = new string [Count];
+			unicode_token_table = new string [Count];
 
 			char [] buffer = new char [2];
 			
@@ -54,6 +66,17 @@ namespace Bludgeon {
 				buffer [1] = token_chars [b];
 
 				token_table [i] = new string (buffer);
+			}
+
+			for (int i = 0; i < Count; ++i) {
+				int a, b;
+				a = i / token_chars.Length;
+				b = i % unicode_token_chars.Length;
+
+				buffer [0] = token_chars [a];
+				buffer [1] = unicode_token_chars [b];
+
+				unicode_token_table [i] = new string (buffer);
 			}
 		}
 	}

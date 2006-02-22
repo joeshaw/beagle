@@ -67,7 +67,7 @@ namespace Bludgeon {
 			id = next_id;
 			++next_id;
 
-			base_name = Token.GetRandom ();
+			base_name = Token.GetRandomWithUnicode ();
 
 			name = null;
 		}
