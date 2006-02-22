@@ -136,8 +136,8 @@ function beagleWriteMetadata(page, tmpfilepath)
   stream.write(line, line.length);
 
   // Additional lines: Properties
-  // line = "t:dc:title=" + page.title + "\n";
-  // stream.write(line, line.length);
+  line = "k:_unindexed:encoding=" + page.characterSet + "\n";
+  stream.write(line, line.length);
 
   stream.flush();
   stream.close();

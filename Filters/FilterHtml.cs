@@ -33,6 +33,7 @@ using System.Text;
 using SW=System.Web;
 
 using Beagle.Daemon;
+using Beagle.Util;
 
 using HtmlAgilityPack;
 
@@ -200,12 +201,31 @@ namespace Beagle.Filters {
 
 		override protected void DoOpen (FileInfo info)
 		{
-			// we need to tell the parser to detect encoding,
-			HtmlDocument temp_doc = new HtmlDocument ();
-			Encoding enc = temp_doc.DetectEncoding (Stream);
-			//Console.WriteLine ("Detected encoding:" + (enc == null ? "null" : enc.EncodingName));
-			temp_doc = null;
-			Stream.Seek (0, SeekOrigin.Begin);
+			Encoding enc = null;
+
+			foreach (Property prop in IndexableProperties) {
+				if (prop.Key != StringFu.UnindexedNamespace + "encoding")
+					continue;
+
+				try {
+					enc = Encoding.GetEncoding ((string) prop.Value);
+				} catch (NotSupportedException) {
+					// Encoding passed in isn't supported.  Maybe
+					// we'll get lucky detecting it from the
+					// document instead.
+				}
+
+				break;
+			}
+
+			if (enc == null) {
+				// we need to tell the parser to detect encoding,
+				HtmlDocument temp_doc = new HtmlDocument ();
+				enc = temp_doc.DetectEncoding (Stream);
+				//Console.WriteLine ("Detected encoding:" + (enc == null ? "null" : enc.EncodingName));
+				temp_doc = null;
+				Stream.Seek (0, SeekOrigin.Begin);
+			}
 
 			HtmlDocument doc = new HtmlDocument ();
 			doc.ReportNode += HandleNodeEvent;

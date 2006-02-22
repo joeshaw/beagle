@@ -7,7 +7,7 @@
 
     <em:id>{fda00e13-8c62-4f63-9d19-d168115b11ca}</em:id>
     <em:name>Beagle Indexer</em:name>
-    <em:version>0.4</em:version>
+    <em:version>0.5</em:version>
     <em:description>
       Index webpages you visit using Beagle.
     </em:description>
