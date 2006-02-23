@@ -38,54 +38,23 @@ namespace Search.Tiles {
 				image.Pixbuf = WidgetFu.LoadThemeIcon ("gnome-fs-bookmark", size); // FIXME: RSS icon?
 		}
 
-		const Gtk.AttachOptions expand = Gtk.AttachOptions.Expand | Gtk.AttachOptions.Fill;
-		const Gtk.AttachOptions fill = Gtk.AttachOptions.Fill;
-		private Gtk.Label snippet_label;
-		private string snippet;
-		private bool found_snippet;
-		
-		protected override Gtk.Widget GetDetails ()
+		protected override DetailsPane GetDetails ()
 		{
-			Gtk.Table table = new Gtk.Table (3, 4, false);
-			table.RowSpacing = table.ColumnSpacing = 6;
+			DetailsPane details = new DetailsPane ();
 
-			Gtk.Label label;
-			label = WidgetFu.NewGrayLabel (Catalog.GetString ("Title:"));
-			table.Attach (label, 0, 1, 0, 1, fill, fill, 0, 0);
-			label = WidgetFu.NewBoldLabel (Hit ["dc:title"]);
-			WidgetFu.EllipsizeLabel (label);
-			table.Attach (label, 1, 2, 0, 1, expand, fill, 0, 0);
-			label = WidgetFu.NewGrayLabel (Catalog.GetString ("Site:"));
-			table.Attach (label, 0, 1, 1, 2, fill, fill, 0, 0);
-			label = WidgetFu.NewBoldLabel (Hit ["dc:creater"]); // FIXME: Blog name
-			WidgetFu.EllipsizeLabel (label);
-			table.Attach (label, 1, 2, 1, 2, expand, fill, 0, 0);
-			label = WidgetFu.NewGrayLabel (Catalog.GetString ("Date Viewed:"));
-			table.Attach (label, 2, 3, 0, 1, fill, fill, 0, 0);
-			label = WidgetFu.NewBoldLabel (Utils.NiceShortDate (Hit.Timestamp));
-			table.Attach (label, 3, 4, 0, 1, fill, fill, 0, 0);
+			details.AddLabelPair (Catalog.GetString ("Title:"),
+					      Hit ["dc:title"],
+					      0, 1);
+			details.AddLabelPair (Catalog.GetString ("Site:"),
+					      Hit ["dc:creator"], // FIXME: Blog name
+					      1, 1);
+			details.AddLabelPair (Catalog.GetString ("Date Viewed:"),
+					      Utils.NiceShortDate (Hit.Timestamp),
+					      1, 3);
 
-			Gtk.Image icon = new Gtk.Image ();
-			LoadIcon (icon, 48);
-			table.Attach (icon, 0, 1, 2, 3, fill, fill, 0, 0);
+			details.AddSnippet (2, 1);
 
-			snippet_label = WidgetFu.NewLabel ();
-			snippet_label.Markup = snippet;
-			table.Attach (snippet_label, 1, 4, 2, 3, expand, expand, 48, 0);
-
-			if (!found_snippet)
-				RequestSnippet ();
-
-			table.WidthRequest = 0;
-			table.ShowAll ();
-
-			return table;
-		}
-
-		protected override void GotSnippet (string snippet, bool found)
-		{
-			found_snippet = found;
-			snippet_label.Markup = snippet;
+			return details;
 		}
 
 		public override void Open ()

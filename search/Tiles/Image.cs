@@ -56,49 +56,29 @@ namespace Search.Tiles {
 			}
 		}
 
-		const Gtk.AttachOptions expand = Gtk.AttachOptions.Expand | Gtk.AttachOptions.Fill;
-		const Gtk.AttachOptions fill = Gtk.AttachOptions.Fill;
-
-		protected override Gtk.Widget GetDetails ()
+		protected override DetailsPane GetDetails ()
 		{
-			Gtk.Table table = new Gtk.Table (3, 5, false);
-			table.RowSpacing = table.ColumnSpacing = 6;
+			DetailsPane details = new DetailsPane ();
 
-			// FIXME: The icon needs a nice frame as in the spec
-			Gtk.Image icon = new Gtk.Image ();
-			LoadIcon (icon, 96);
-			table.Attach (icon, 0, 1, 0, 5, fill, fill, 0, 0);
+			// FIXME: The icon needs a nice frame as in the spec (?)
 
-			Gtk.Label label;
-			label = WidgetFu.NewBoldLabel (Title);
-			table.Attach (label, 1, 3, 0, 1, expand, fill, 0, 0);
-			
-			label = WidgetFu.NewLabel (Description);
-			table.Attach (label, 1, 3, 1, 2, expand, fill, 0, 0);
+			details.AddBoldLabel (Title, 0, 1);
+			details.AddLabel (Description, 1, 1);
+			details.AddLabel ("", 2, 1);
 
-			label = WidgetFu.NewGrayLabel (Catalog.GetString ("Modified:"));
-			table.Attach (label, 1, 2, 2, 3, fill, fill, 0, 0);
-
-			label = WidgetFu.NewLabel (Utils.NiceVeryLongDate (Hit.FileInfo.LastWriteTime));
-			table.Attach (label, 2, 3, 2, 3, expand, fill, 0, 0);			
-
-			label = WidgetFu.NewGrayLabel (Catalog.GetString ("Full Path:"));
-			table.Attach (label, 1, 2, 3, 4, fill, fill, 0, 0);
-
-			label = WidgetFu.NewLabel (Hit.Uri.LocalPath);
-			WidgetFu.EllipsizeLabel (label, 80);
-			table.Attach (label, 2, 3, 3, 4, expand, fill, 0, 0);
+			details.AddLabelPair (Catalog.GetString ("Modified:"),
+					      Utils.NiceVeryLongDate (Hit.FileInfo.LastWriteTime),
+					      3, 1);
+			details.AddLabelPair (Catalog.GetString ("Full Path:"),
+					      Hit.Uri.LocalPath,
+					      4, 1);
 
 			if (Hit ["fspot:Description"] != null && Hit ["fspot:Description"] != "") {
-				label = WidgetFu.NewLabel (Hit ["fspot:Description"]);
-				WidgetFu.EllipsizeLabel (label);
-				table.Attach (label, 1, 3, 4, 5, expand, expand, 48, 0);
+				details.AddLabel ("", 5, 1);
+				details.AddLabel (Hit ["fspot:Description"], 6, 1);
 			}
 
-			table.WidthRequest = 0;
-			table.ShowAll ();
-			
-			return table;
+			return details;
 		}
 		
 		// FIXME: fspot doesnt allow to import a particular file

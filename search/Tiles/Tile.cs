@@ -251,11 +251,17 @@ namespace Search.Tiles {
 			image.Pixbuf = WidgetFu.LoadMimeIcon (hit.MimeType, size);
 		}
 
+		string snippet;
+
 		protected void RequestSnippet ()
 		{
-			SnippetRequest sreq = new SnippetRequest (query, hit);
-			sreq.RegisterAsyncResponseHandler (typeof (SnippetResponse), SnippetResponseReceived);
-			sreq.SendAsync ();
+			if (snippet != null)
+				EmitGotSnippet ();
+			else {
+				SnippetRequest sreq = new SnippetRequest (query, hit);
+				sreq.RegisterAsyncResponseHandler (typeof (SnippetResponse), SnippetResponseReceived);
+				sreq.SendAsync ();
+			}
 		}
 
 		private void SnippetResponseReceived (ResponseMessage response)
@@ -268,24 +274,45 @@ namespace Search.Tiles {
 			// other tags escaped.
 
 			// FIXME: hacky, fix the snippeting in the daemon
-			string snippet = GLib.Markup.EscapeText (((SnippetResponse)response).Snippet);
+			snippet = GLib.Markup.EscapeText (((SnippetResponse)response).Snippet);
 			snippet = Regex.Replace (snippet, "&lt;font color=&quot;.*?&quot;&gt;&lt;b&gt;(.*?)&lt;/b&gt;&lt;/font&gt;", "<b>$1</b>");
 
-			if (snippet != null && snippet != "")
-				GotSnippet (snippet, true);
+			EmitGotSnippet ();
 		}
 
-		protected virtual void GotSnippet (string snippet, bool found)
+		private void EmitGotSnippet ()
 		{
+			if (snippet != null && snippet != "" && GotSnippet != null)
+				GotSnippet (snippet);
 		}
 
-		protected virtual Gtk.Widget GetDetails ()
+		public delegate void GotSnippetHandler (string snippet);
+		public event GotSnippetHandler GotSnippet;
+
+		protected virtual DetailsPane GetDetails ()
 		{
 			return null;
 		}
 
+		DetailsPane details;
+		bool gotDetails = false;
+
 		public Gtk.Widget Details {
-			get { return GetDetails (); }
+			get {
+				if (!gotDetails) {
+					details = GetDetails ();
+					if (details != null) {
+						LoadIcon (details.Icon, 128);
+						if (details.Snippet != null) {
+							GotSnippet += details.GotSnippet;
+							RequestSnippet ();
+						}
+						details.Show ();
+					}
+					gotDetails = true;
+				}
+				return details;
+			}
 		}
 
 		public virtual void Open ()

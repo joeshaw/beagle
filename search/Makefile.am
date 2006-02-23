@@ -27,6 +27,7 @@ TILES = 					\
 	$(srcdir)/Tiles/Audio.cs		\
 	$(srcdir)/Tiles/CApplet.cs		\
 	$(srcdir)/Tiles/Contact.cs		\
+	$(srcdir)/Tiles/DetailsPane.cs		\
 	$(srcdir)/Tiles/File.cs			\
 	$(srcdir)/Tiles/Folder.cs		\
 	$(srcdir)/Tiles/HitFlavor.cs		\

@@ -127,9 +127,10 @@ namespace Search.Tiles {
 
 				Gdk.Pixbuf icon = factory.GenerateThumbnail (req.Hit.UriAsString, req.Hit.MimeType);
 
-				if (icon == null)
-					factory.CreateFailedThumbnail (req.Hit.UriAsString, req.Hit.FileInfo.LastWriteTime);
-				else {
+				if (icon == null) {
+					if (req.Hit.FileInfo != null)
+						factory.CreateFailedThumbnail (req.Hit.UriAsString, req.Hit.FileInfo.LastWriteTime);
+				} else {
 					factory.SaveThumbnail (icon, req.Hit.UriAsString, DateTime.Now);
 					req.Succeeded = true;
 				}

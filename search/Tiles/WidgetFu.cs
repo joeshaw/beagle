@@ -62,12 +62,30 @@ namespace Search.Tiles {
 		private static extern IntPtr gtk_icon_theme_get_default ();
 		
 		[DllImport ("libgtk-x11-2.0.so.0")]
+		private static extern IntPtr gtk_icon_theme_lookup_icon (IntPtr theme, string name, int size, int flags, IntPtr error);		
+
+		[DllImport ("libgtk-x11-2.0.so.0")]
+		private static extern int gtk_icon_info_get_base_size (IntPtr icon_info);
+
+		[DllImport ("libgtk-x11-2.0.so.0")]
+		private static extern void gtk_icon_info_free (IntPtr icon_info);
+
+		[DllImport ("libgtk-x11-2.0.so.0")]
 		private static extern IntPtr gtk_icon_theme_load_icon (IntPtr theme, string name, int size, int flags, IntPtr error);		
 
 		public static Gdk.Pixbuf LoadThemeIcon (string name, int size)
 		{
 			try {
-				IntPtr native = gtk_icon_theme_load_icon (gtk_icon_theme_get_default (), name, size, 0, IntPtr.Zero);
+				IntPtr info = gtk_icon_theme_lookup_icon (gtk_icon_theme_get_default (), name, size, 0, IntPtr.Zero);
+				if (info == IntPtr.Zero)
+					return null;
+
+				int base_size = gtk_icon_info_get_base_size (info);
+				if (base_size == 0)
+					base_size = size;
+				gtk_icon_info_free (info);
+
+				IntPtr native = gtk_icon_theme_load_icon (gtk_icon_theme_get_default (), name, base_size, 0, IntPtr.Zero);
 				if (native != IntPtr.Zero) {
 					Gdk.Pixbuf ret = (Gdk.Pixbuf) GLib.Object.GetObject(native, true);
 					return ret;

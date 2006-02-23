@@ -43,48 +43,19 @@ namespace Search.Tiles {
 			image.Pixbuf = WidgetFu.LoadThemeIcon ("gnome-fs-directory", size);
 		}
 
-		const Gtk.AttachOptions expand = Gtk.AttachOptions.Expand | Gtk.AttachOptions.Fill;
-		const Gtk.AttachOptions fill = Gtk.AttachOptions.Fill;
-
-		protected override Gtk.Widget GetDetails ()
+		protected override DetailsPane GetDetails ()
 		{
-			Gtk.Table table = new Gtk.Table (3, 3, false);
-			table.RowSpacing = table.ColumnSpacing = 6;
+			DetailsPane details = new DetailsPane ();
 
-			Gtk.Image icon = new Gtk.Image (WidgetFu.LoadThemeIcon ("gnome-fs-directory", 96));
-			table.Attach (icon, 0, 1, 0, 3,
-				      fill, fill, 0, 0);
+			details.AddBoldLabel (Title, 0, 1);
+			details.AddLabel (Description, 1, 1);
+			details.AddLabel ("", 2, 1);
 
-			Gtk.Label label;
-			label = WidgetFu.NewBoldLabel (Title);
-			table.Attach (label, 1, 3, 0, 1,
-				      expand, fill, 0, 0);
-			
-			label = WidgetFu.NewLabel (Description);
-			table.Attach (label, 1, 3, 1, 2,
-				      expand, fill, 0, 0);
+			details.AddLabelPair (Catalog.GetString ("Edited:"),
+					      Utils.NiceVeryLongDate (Hit.DirectoryInfo.LastWriteTime),
+					      3, 1);
 
-			label = WidgetFu.NewGrayLabel (Catalog.GetString ("Edited:"));
-			table.Attach (label, 1, 2, 2, 3,
-				      fill, fill, 0, 0);
-
-			label = WidgetFu.NewLabel (Utils.NiceVeryLongDate (Hit.DirectoryInfo.LastWriteTime));
-			table.Attach (label, 2, 3, 2, 3,
-				      expand, fill, 0, 0);
-
-			table.WidthRequest = 0;
-			table.ShowAll ();
-			
-			return table;
-		}
-
-		public override void Open ()
-		{
-			base.OpenFromMime (Hit);
-		}
-
-		public void ShowInformation ()
-		{
+			return details;
 		}
 
 		public void MoveToTrash ()

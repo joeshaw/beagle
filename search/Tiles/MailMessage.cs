@@ -56,57 +56,23 @@ namespace Search.Tiles {
 			return address;
 		}
 
-		const Gtk.AttachOptions expand = Gtk.AttachOptions.Expand | Gtk.AttachOptions.Fill;
-		const Gtk.AttachOptions fill = Gtk.AttachOptions.Fill;
-
-		Gtk.Label snippetLabel;
-		private string snippet;
-		private bool found_snippet;
-
-		protected override Gtk.Widget GetDetails ()
+		protected override DetailsPane GetDetails ()
 		{
-			Gtk.Table table = new Gtk.Table (3, 4, false);
-			table.RowSpacing = table.ColumnSpacing = 6;
+			DetailsPane details = new DetailsPane ();
 
-			Gtk.Label label;
-			label = WidgetFu.NewGrayLabel (Catalog.GetString ("Subject:"));
-			table.Attach (label, 0, 1, 0, 1, fill, fill, 0, 0);
-			label = WidgetFu.NewBoldLabel (SubjectLabel.Text);
-			WidgetFu.EllipsizeLabel (label);
-			table.Attach (label, 1, 2, 0, 1, expand, fill, 0, 0);
-			label = WidgetFu.NewGrayLabel (Catalog.GetString ("From:"));
-			table.Attach (label, 0, 1, 1, 2, fill, fill, 0, 0);
-			label = WidgetFu.NewBoldLabel (GetAddress (Hit));
-			WidgetFu.EllipsizeLabel (label);
-			table.Attach (label, 1, 2, 1, 2, expand, fill, 0, 0);
-			label = WidgetFu.NewGrayLabel (Catalog.GetString ("Date Received:"));
-			table.Attach (label, 2, 3, 0, 1, fill, fill, 0, 0);
-			label = WidgetFu.NewBoldLabel (DateLabel.Text);
-			table.Attach (label, 3, 4, 0, 1, fill, fill, 0, 0);
+			details.AddLabelPair (Catalog.GetString ("Subject:"),
+					      SubjectLabel.Text,
+					      0, 1);
+			details.AddLabelPair (Catalog.GetString ("From:"),
+					      GetAddress (Hit),
+					      1, 1);
+			details.AddLabelPair (Catalog.GetString ("Date Received:"),
+					      DateLabel.Text,
+					      1, 3);
 
-			Gtk.Image icon = new Gtk.Image ();
-			LoadIcon (icon, 48);
-			table.Attach (icon, 0, 1, 2, 3, fill, fill, 0, 0);
+			details.AddSnippet (2, 1);
 
-			snippetLabel = WidgetFu.NewLabel ();
-			snippetLabel.Markup = snippet;
-			WidgetFu.EllipsizeLabel (snippetLabel);
-			table.Attach (snippetLabel, 1, 4, 2, 3, expand, expand, 48, 0);
-
-			if (!found_snippet)
-				RequestSnippet ();
-
-			table.WidthRequest = 0;
-			table.ShowAll ();
-
-			return table;
-		}
-
-		protected override void GotSnippet (string snippet, bool found)
-		{
-			found_snippet = found;
-			this.snippet = snippet;
-			snippetLabel.Markup = snippet;
+			return details;
 		}
 
 		public override void Open ()

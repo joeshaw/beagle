@@ -41,60 +41,32 @@ namespace Search.Tiles {
 			image.Pixbuf = GetIcon (size);
 		}
 
-		const Gtk.AttachOptions expand = Gtk.AttachOptions.Expand | Gtk.AttachOptions.Fill;
-		const Gtk.AttachOptions fill = Gtk.AttachOptions.Fill;
-
-		protected override Gtk.Widget GetDetails ()
+		protected override DetailsPane GetDetails ()
 		{
-			Gtk.Table table = new Gtk.Table (7, 3, false);
-			table.RowSpacing = 6;
-			table.ColumnSpacing = 12;
+			DetailsPane details = new DetailsPane ();
 
-			Gtk.Label label;
+			details.AddBoldLabel (Title, 0, 1);
+			details.AddLabel (Hit.GetFirstProperty ("fixme:Org"), 1, 1);
+			details.AddLabel (Hit.GetFirstProperty ("fixme:Title"), 2, 1);
+			details.AddLabel ("", 3, 1);
 
-			label = WidgetFu.NewBoldLabel (Title);
-			table.Attach (label, 1, 3, 0, 1, expand, fill, 0, 0);
-
-			label = WidgetFu.NewLabel (Hit.GetFirstProperty ("fixme:Org"));
-			table.Attach (label, 1, 3, 1, 2, expand, fill, 0, 0);
-
-			label = WidgetFu.NewLabel (Hit.GetFirstProperty ("fixme:Title"));
-			table.Attach (label, 1, 3, 2, 3, expand, fill, 0, 0);
-
-			label = WidgetFu.NewGrayLabel (Catalog.GetString ("E-Mail:"));
-			table.Attach (label, 1, 2, 4, 5, fill, fill, 0, 0);
-
-			label = WidgetFu.NewLabel (Hit.GetFirstProperty ("fixme:Email"));
-			table.Attach (label, 2, 3, 4, 5, expand, fill, 0, 0);
-
-			label = WidgetFu.NewGrayLabel (Catalog.GetString ("Mobile Phone:"));
-			table.Attach (label, 1, 2, 5, 6, fill, fill, 0, 0);
-
-			label = WidgetFu.NewLabel (Hit.GetFirstProperty ("fixme:MobilePhone"));
-			table.Attach (label, 2, 3, 5, 6, expand, fill, 0, 0);
-
+			details.AddLabelPair (Catalog.GetString ("E-Mail:"),
+					      Hit.GetFirstProperty ("fixme:Email"),
+					      4, 1);
+			details.AddLabelPair (Catalog.GetString ("Mobile Phone:"),
+					      Hit.GetFirstProperty ("fixme:MobilePhone"),
+					      5, 1);
 			if (Hit.GetFirstProperty ("fixme:BusinessPhone") != null) {
-				label = WidgetFu.NewGrayLabel (Catalog.GetString ("Work Phone:"));
-				table.Attach (label, 1, 2, 6, 7, fill, fill, 0, 0);
-				label = WidgetFu.NewLabel (Hit.GetFirstProperty ("fixme:BusinessPhone"));
-				table.Attach (label, 2, 3, 6, 7, expand, fill, 0, 0);
+				details.AddLabelPair (Catalog.GetString ("Work Phone:"),
+						      Hit.GetFirstProperty ("fixme:BusinessPhone"),
+						      6, 1);
 			} else {
-				label = WidgetFu.NewGrayLabel (Catalog.GetString ("Home Phone:"));
-				table.Attach (label, 1, 2, 6, 7, fill, fill, 0, 0);
-				label = WidgetFu.NewLabel (Hit.GetFirstProperty ("fixme:HomePhone"));
-				table.Attach (label, 2, 3, 6, 7, expand, fill, 0, 0);
+				details.AddLabelPair (Catalog.GetString ("Home Phone:"),
+						      Hit.GetFirstProperty ("fixme:HomePhone"),
+						      6, 1);
 			}
 
-			Gtk.AspectFrame frame = new Gtk.AspectFrame (null, 0.5f, 0.5f, 1.0f, false);
-			Gtk.Image icon = new Gtk.Image (GetIcon (64));
-			frame.Add (icon);
-			frame.ShadowType = Gtk.ShadowType.None;
-			table.Attach (frame, 0, 1, 0, 6, fill, fill, 0, 0);
-
-			table.WidthRequest = 0;
-			table.ShowAll ();
-
-			return table;
+			return details;
 		}
 	}
 }
