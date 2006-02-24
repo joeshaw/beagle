@@ -428,6 +428,7 @@ namespace Beagle.Daemon {
 			OurSignalHandler (-1);
 
 			// Set up our signal handler
+			Mono.Unix.Native.Stdlib.signal (Mono.Unix.Native.Signum.SIGHUP, OurSignalHandler);
 			Mono.Unix.Native.Stdlib.signal (Mono.Unix.Native.Signum.SIGINT, OurSignalHandler);
 			Mono.Unix.Native.Stdlib.signal (Mono.Unix.Native.Signum.SIGTERM, OurSignalHandler);
 			if (Environment.GetEnvironmentVariable("BEAGLE_THERE_BE_NO_QUITTIN") == null)
