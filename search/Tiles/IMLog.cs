@@ -28,6 +28,7 @@ namespace Search.Tiles {
 
 			subject.LabelProp = Catalog.GetString ("IM Conversation");
 			from.LabelProp = "<b>" + hit.GetFirstProperty ("fixme:speakingto") + "</b>";
+
 			try {
 				Timestamp = Utils.ParseTimestamp (hit.GetFirstProperty ("fixme:starttime"));
 				date.LabelProp = Utils.NiceShortDate (Timestamp);
@@ -50,8 +51,15 @@ namespace Search.Tiles {
 
 		protected override void LoadIcon (Gtk.Image image, int size)
 		{
-			// FIXME: for large size, we should be returning a buddy
-			// list picture, if available
+			if (size > 32) {
+				// FIXME: We do not respect the icon size request
+				Gdk.Pixbuf icon = LoadBuddyIcon ();
+				
+				if (icon != null) {
+					image.Pixbuf = icon;
+					return;
+				}
+			}
 
 			Hashtable icons = (Hashtable)all_icons[size];
 			if (icons == null)
@@ -64,16 +72,22 @@ namespace Search.Tiles {
 				image.Pixbuf = WidgetFu.LoadThemeIcon ("im", size);
 		}
 
+		private Gdk.Pixbuf LoadBuddyIcon ()
+		{
+			Gdk.Pixbuf icon = null;
+
+			if (Hit ["fixme:speakingto_icon"] != null && System.IO.File.Exists (Hit ["fixme:speakingto_icon"]))
+				icon = new Gdk.Pixbuf (Hit ["fixme:speakingto_icon"]);
+
+			return icon;				
+		}
+
 		protected override DetailsPane GetDetails ()
 		{
 			DetailsPane details = new DetailsPane ();
 
-			details.AddLabelPair (Catalog.GetString ("Name:"),
-					      FromLabel.Text,
-					      0, 1);
-			details.AddLabelPair (Catalog.GetString ("Date Received:"),
-					      DateLabel.Text,
-					      1, 1);
+			details.AddLabelPair (Catalog.GetString ("Name:"), FromLabel.Text, 0, 1);
+			details.AddLabelPair (Catalog.GetString ("Date Received:"), DateLabel.Text, 1, 1);
 
 			GotSnippet += SetSubject;
 			details.AddSnippet (2, 1);

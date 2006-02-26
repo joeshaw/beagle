@@ -1,3 +1,7 @@
+2006-02-26  Lukas Lipka  <lukas@pmad.net>
+
+	* search/Tiles/IMLog.cs: Load the buddy icon for the detail view.
+
 2006-02-16  Kang Jeong-Hee <keizie@gmail.com>
 
 	* configure.in: ko added. (Korean)
