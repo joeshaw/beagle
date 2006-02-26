@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: beagle.HEAD.hu\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2006-01-25 10:08+0100\n"
+"POT-Creation-Date: 2006-02-26 00:54+0100\n"
 "PO-Revision-Date: 2006-01-25 17:34+0100\n"
 "Last-Translator: Gabor Kelemen <kelemeng@gnome.hu>\n"
 "Language-Team: Hungarian <gnome@gnome.hu>\n"
@@ -45,26 +45,18 @@ msgstr "Társalgások a következőben: {0}"
 msgid "Conversations with {0}"
 msgstr "Társalgások a következővel: {0}"
 
-#: ../search/Category.cs:85
-#, csharp-format
-msgid "Top {0} Result"
-msgid_plural "Top {0} Results"
-msgstr[0] "Az első {0} eredmény"
-msgstr[1] "Az első {0} eredmény"
+#: ../search/beagle-search.desktop.in.h:1 ../tools/settings.glade.h:28
+msgid "Search"
+msgstr "Keresés"
 
-#: ../search/Category.cs:86
-#, csharp-format
-msgid "Previous {0}"
-msgid_plural "Previous {0}"
-msgstr[0] "Előző {0}"
-msgstr[1] "Előző {0}"
+#: ../search/beagle-search.desktop.in.h:2
+msgid "Search for data on your desktop"
+msgstr "Adatok keresése az asztalon"
 
-#: ../search/Category.cs:87
+#: ../search/Category.cs:116
 #, csharp-format
-msgid "Next {0}"
-msgid_plural "Next {0}"
-msgstr[0] "Következő {0}"
-msgstr[1] "Következő {0}"
+msgid "{0}-{1} of {2}"
+msgstr "{0}-{1}, összesen {2}"
 
 #: ../search/Pages/NoMatch.cs:19
 msgid "No results were found."
@@ -76,12 +68,20 @@ msgid "Your search for \"{0}\" did not match any files on your computer."
 msgstr "A(z) \"{0}\" keresése nem nem eredményezett fájlokat a számítógépen."
 
 #: ../search/Pages/NoMatch.cs:24
-msgid "You can change the scope of your search using the \"Search\" menu. A broader search scope might produce more results."
-msgstr "A Keresés menü használatával módosíthatja a keresés hatókörét. A bővebb keresési hatókör talán több eredményt hoz."
+msgid ""
+"You can change the scope of your search using the \"Search\" menu. A broader "
+"search scope might produce more results."
+msgstr ""
+"A Keresés menü használatával módosíthatja a keresés hatókörét. A bővebb "
+"keresési hatókör talán több eredményt hoz."
 
 #: ../search/Pages/NoMatch.cs:26
-msgid "You should check the spelling of your search words to see if you accidentally misspelled any words."
-msgstr "Ellenőrizze a keresőkifejezések helyesírását, lehet, hogy véletlenül elgépelt egyes szavakat."
+msgid ""
+"You should check the spelling of your search words to see if you "
+"accidentally misspelled any words."
+msgstr ""
+"Ellenőrizze a keresőkifejezések helyesírását, lehet, hogy véletlenül "
+"elgépelt egyes szavakat."
 
 #: ../search/Pages/QuickTips.cs:10
 msgid "You can use upper and lower case; search is case-insensitive."
@@ -89,18 +89,23 @@ msgstr "Kis- és nagybetűket egyaránt használhat, a keresés nem érzékeny r
 
 #: ../search/Pages/QuickTips.cs:11
 msgid "To search for optional terms, use OR.  ex: <b>George OR Ringo</b>"
-msgstr "Elhagyható kifejezések kereséséhez használja az OR-t, például: <b>George OR Ringo</b>"
+msgstr ""
+"Elhagyható kifejezések kereséséhez használja az OR-t, például: <b>George OR "
+"Ringo</b>"
 
 #: ../search/Pages/QuickTips.cs:12
 msgid "To exclude search terms, use the minus symbol in front, such as <b>-cats</b>"
-msgstr "Keresőkifejezések kihagyásához használja a kivonás jelet a kifejezés előtt, például: <b>-macskák<b>"
+msgstr ""
+"Keresőkifejezések kihagyásához használja a kivonás jelet a kifejezés előtt, "
+"például: <b>-macskák<b>"
 
 #: ../search/Pages/QuickTips.cs:13
 msgid "When searching for a phrase, add quotes. ex: <b>\"There be dragons\"</b>"
-msgstr "Mondatok keresésénél használjon idézőjeleket, például: <b>\"A gép forog, az alkotó pihen\"</b>"
+msgstr ""
+"Mondatok keresésénél használjon idézőjeleket, például: <b>\"A gép forog, az "
+"alkotó pihen\"</b>"
 
-#: ../search/Pages/QuickTips.cs:19
-#: ../search/UIManager.cs:62
+#: ../search/Pages/QuickTips.cs:19 ../search/UIManager.cs:62
 msgid "Quick Tips"
 msgstr "Gyorstippek"
 
@@ -112,79 +117,78 @@ msgstr "A démon nem fut"
 msgid "Start the daemon"
 msgstr "A démon elindítása"
 
-#: ../search/Search.cs:148
+#: ../search/Search.cs:145
+msgid "_Find:"
+msgstr "_Keresés:"
+
+#: ../search/Search.cs:159
 msgid "Find Now"
 msgstr "Keresés most"
 
-#: ../search/Search.cs:188
+#: ../search/Search.cs:199
 msgid "Type in search terms"
 msgstr "Írja be a keresendő kifejezéseket"
 
-#: ../search/Search.cs:189
+#: ../search/Search.cs:200
 msgid "Start searching"
 msgstr "A keresés megkezdése"
 
-#: ../search/Tiles/Application.cs:55
+#: ../search/Tiles/Application.cs:81
 msgid "Move to trash"
 msgstr "Áthelyezés a Kukába"
 
-#: ../search/Tiles/Audio.cs:37
-#: ../search/Tiles/Image.cs:39
+#: ../search/Tiles/Audio.cs:36 ../search/Tiles/Image.cs:38
 msgid "Add to Library"
 msgstr "Hozzáadás a gyűjteményhez"
 
-#: ../search/Tiles/Contact.cs:60
+#: ../search/Tiles/Contact.cs:53
 msgid "E-Mail:"
 msgstr "E-mail:"
 
-#: ../search/Tiles/Contact.cs:66
+#: ../search/Tiles/Contact.cs:56
 msgid "Mobile Phone:"
 msgstr "Mobiltelefon:"
 
-#: ../search/Tiles/Contact.cs:73
+#: ../search/Tiles/Contact.cs:60
 msgid "Work Phone:"
 msgstr "Munkahelyi telefon:"
 
-#: ../search/Tiles/Contact.cs:78
+#: ../search/Tiles/Contact.cs:64
 msgid "Home Phone:"
 msgstr "Otthoni telefon:"
 
-#: ../search/Tiles/File.cs:35
-#: ../search/Tiles/Folder.cs:35
-msgid "Open With"
-msgstr "Megnyitás ezzel"
-
-#: ../search/Tiles/File.cs:36
+#: ../search/Tiles/File.cs:33
 msgid "Reveal in Folder"
 msgstr "Megjelenítés mappában"
 
-#: ../search/Tiles/File.cs:37
+#: ../search/Tiles/File.cs:34
 msgid "E-Mail"
 msgstr "E-mail"
 
-#: ../search/Tiles/File.cs:38
+#: ../search/Tiles/File.cs:35
 msgid "Instant-Message"
 msgstr "Azonnali üzenet"
 
-#: ../search/Tiles/File.cs:39
-#: ../search/Tiles/Folder.cs:38
+#. FIXME: s/"gtk-info"/Gtk.Stock.Info/ when we can depend on gtk# 2.8
+#. AddAction (new TileAction (Catalog.GetString ("Show Information"), "gtk-info", ShowInformation));
+#: ../search/Tiles/File.cs:36 ../search/Tiles/Folder.cs:38
 msgid "Move to Trash"
 msgstr "Áthelyezés a Kukába"
 
-#: ../search/Tiles/File.cs:137
-#: ../search/Tiles/RSSFeed.cs:50
+#: ../search/Tiles/File.cs:132 ../search/Tiles/RSSFeed.cs:45
+#: ../search/Tiles/WebHistory.cs:50
 msgid "Title:"
 msgstr "Cím:"
 
-#: ../search/Tiles/File.cs:143
+#: ../search/Tiles/File.cs:135
 msgid "Last Edited:"
 msgstr "Utoljára szerkesztve:"
 
-#: ../search/Tiles/File.cs:150
+#: ../search/Tiles/File.cs:139
 msgid "Author:"
 msgstr "Szerző:"
 
-#: ../search/Tiles/File.cs:157
+#: ../search/Tiles/File.cs:143 ../search/Tiles/Image.cs:72
 msgid "Full Path:"
 msgstr "Teljes útvonal:"
 
@@ -199,45 +203,43 @@ msgid_plural "Contains {0} Items"
 msgstr[0] "{0} elemet tartalmaz"
 msgstr[1] "{0} elemet tartalmaz"
 
-#. FIXME: s/"gtk-info"/Gtk.Stock.Info/ when we can depend on gtk# 2.8
-#: ../search/Tiles/Folder.cs:37
-msgid "Show Information"
-msgstr "Információk megjelenítése"
-
-#: ../search/Tiles/Folder.cs:62
+#: ../search/Tiles/Folder.cs:54
 msgid "Edited:"
 msgstr "Szerkesztve:"
 
-#: ../search/Tiles/Image.cs:40
+#: ../search/Tiles/Image.cs:39
 msgid "Set as Wallpaper"
 msgstr "Beállítás háttérképként"
 
-#: ../search/Tiles/Image.cs:80
+#: ../search/Tiles/Image.cs:69
 msgid "Modified:"
 msgstr "Módosítva:"
 
-#: ../search/Tiles/IMLog.cs:89
+#: ../search/Tiles/IMLog.cs:29
+msgid "IM Conversation"
+msgstr "Azonnali üzenő társalgás"
+
+#: ../search/Tiles/IMLog.cs:71
 msgid "Name:"
 msgstr "Név:"
 
-#: ../search/Tiles/IMLog.cs:94
-#: ../search/Tiles/MailMessage.cs:110
+#: ../search/Tiles/IMLog.cs:74 ../search/Tiles/MailMessage.cs:69
 msgid "Date Received:"
 msgstr "Fogadás dátuma:"
 
-#: ../search/Tiles/MailAttachment.cs:48
+#: ../search/Tiles/MailAttachment.cs:45
 msgid "Mail attachment"
 msgstr "E-mail melléklet"
 
-#: ../search/Tiles/MailMessage.cs:45
+#: ../search/Tiles/MailMessage.cs:33
 msgid "Send in Mail"
 msgstr "Küldés levélben"
 
-#: ../search/Tiles/MailMessage.cs:100
+#: ../search/Tiles/MailMessage.cs:63
 msgid "Subject:"
 msgstr "Tárgy:"
 
-#: ../search/Tiles/MailMessage.cs:105
+#: ../search/Tiles/MailMessage.cs:66
 msgid "From:"
 msgstr "Feladó:"
 
@@ -248,11 +250,11 @@ msgid_plural "{0} slides"
 msgstr[0] "{0} fólia"
 msgstr[1] "{0} fólia"
 
-#: ../search/Tiles/RSSFeed.cs:55
+#: ../search/Tiles/RSSFeed.cs:48
 msgid "Site:"
 msgstr "Hely:"
 
-#: ../search/Tiles/RSSFeed.cs:60
+#: ../search/Tiles/RSSFeed.cs:51
 msgid "Date Viewed:"
 msgstr "Megtekintés dátuma:"
 
@@ -263,99 +265,55 @@ msgid_plural "{0} pages"
 msgstr[0] "{0} oldal"
 msgstr[1] "{0} oldal"
 
-#: ../search/Tiles/Tile.cs:150
+#: ../search/Tiles/Tile.cs:179
 msgid "Open"
 msgstr "Megnyitás"
 
-#: ../search/Tiles/Utils.cs:25
+#: ../search/Tiles/Utils.cs:23
 msgid "Application"
 msgstr "Alkalmazás"
 
-#: ../search/Tiles/Utils.cs:26
-msgid "More application results..."
-msgstr "Több eredmény-alkalmazás..."
-
-#: ../search/Tiles/Utils.cs:29
+#: ../search/Tiles/Utils.cs:25
 msgid "Contact"
 msgstr "Névjegy"
 
-#: ../search/Tiles/Utils.cs:30
-msgid "More contact results..."
-msgstr "Több eredmény-névjegy..."
-
-#: ../search/Tiles/Utils.cs:33
+#: ../search/Tiles/Utils.cs:27
 msgid "Folder"
 msgstr "Mappa"
 
-#: ../search/Tiles/Utils.cs:34
-msgid "More folder results..."
-msgstr "Több eredmény-mappa..."
-
-#: ../search/Tiles/Utils.cs:37
+#: ../search/Tiles/Utils.cs:29
 msgid "Image"
 msgstr "Kép"
 
-#: ../search/Tiles/Utils.cs:38
-msgid "More image results..."
-msgstr "Több eredmény-kép..."
-
-#: ../search/Tiles/Utils.cs:41
+#: ../search/Tiles/Utils.cs:31
 msgid "Audio"
 msgstr "Hang"
 
-#: ../search/Tiles/Utils.cs:42
-msgid "More audio results..."
-msgstr "Több eredmény-hang..."
-
-#: ../search/Tiles/Utils.cs:45
+#: ../search/Tiles/Utils.cs:33
 msgid "Video"
 msgstr "Videó"
 
-#: ../search/Tiles/Utils.cs:46
-msgid "More video results..."
-msgstr "Több eredmény-videó..."
-
-#: ../search/Tiles/Utils.cs:49
+#: ../search/Tiles/Utils.cs:35
 msgid "Documents"
 msgstr "Dokumentumok"
 
-#: ../search/Tiles/Utils.cs:50
-msgid "More document results..."
-msgstr "Több eredmény-dokumentum..."
-
-#: ../search/Tiles/Utils.cs:53
+#: ../search/Tiles/Utils.cs:37
 msgid "Conversations"
 msgstr "Társalgások"
 
-#: ../search/Tiles/Utils.cs:54
-msgid "More conversation results..."
-msgstr "Több eredmény-társalgás..."
-
-#: ../search/Tiles/Utils.cs:57
+#: ../search/Tiles/Utils.cs:39
 msgid "Website"
 msgstr "Webhely"
 
-#: ../search/Tiles/Utils.cs:58
-msgid "More website results..."
-msgstr "Több eredmény-webhely..."
-
-#: ../search/Tiles/Utils.cs:61
+#: ../search/Tiles/Utils.cs:41
 msgid "News Feed"
 msgstr "Hírfolyam"
 
-#: ../search/Tiles/Utils.cs:62
-msgid "More news feed results..."
-msgstr "Több eredmény-hírfolyam..."
-
-#: ../search/Tiles/Utils.cs:65
+#: ../search/Tiles/Utils.cs:43
 msgid "Archive"
 msgstr "Archívum"
 
-#: ../search/Tiles/Utils.cs:66
-msgid "More archive results..."
-msgstr "Több eredmény-archívum..."
-
-#: ../search/Tiles/Utils.cs:170
+#: ../search/Tiles/Utils.cs:155
 #, csharp-format
 msgid "{0} week ago"
 msgid_plural "{0} weeks ago"
@@ -363,23 +321,33 @@ msgstr[0] "{0} héttel ezelőtt"
 msgstr[1] "{0} héttel ezelőtt"
 
 #. Lets say a year and a half to stop saying months
-#: ../search/Tiles/Utils.cs:172
+#: ../search/Tiles/Utils.cs:157
 #, csharp-format
 msgid "{0} month ago"
 msgid_plural "{0} months ago"
 msgstr[0] "{0} hónappal ezelőtt"
 msgstr[1] "{0} hónappal ezelőtt"
 
-#: ../search/Tiles/Utils.cs:174
+#: ../search/Tiles/Utils.cs:159
 #, csharp-format
 msgid "{0} year ago"
 msgid_plural "{0} years ago"
 msgstr[0] "{0} évvel ezelőtt"
 msgstr[1] "{0} évvel ezelőtt"
 
-#: ../search/Tiles/Video.cs:33
+#. FIXME: We need filters for video in Beagle.
+#. They should land soon when entagged-sharp gets video support.
+#: ../search/Tiles/Video.cs:27
 msgid "Unknown duration"
 msgstr "Ismeretlen időtartam"
+
+#: ../search/Tiles/WebHistory.cs:53
+msgid "URL:"
+msgstr "URL:"
+
+#: ../search/Tiles/WebHistory.cs:56
+msgid "Accessed:"
+msgstr "Utolsó hozzáférés:"
 
 #: ../search/Tray/TrayIcon.cs:32
 msgid "Desktop Search"
@@ -603,8 +571,7 @@ msgstr "_Rendezés"
 msgid "_Help"
 msgstr "_Súgó"
 
-#: ../search/UIManager.cs:46
-#: ../search/UIManager.cs:50
+#: ../search/UIManager.cs:46 ../search/UIManager.cs:50
 msgid "Exit Desktop Search"
 msgstr "Kilépés az asztali keresőből"
 
@@ -705,8 +672,12 @@ msgid "Reload configuration"
 msgstr "Beállítások újratöltése"
 
 #: ../tools/Settings.cs:217
-msgid "The configuration file has been modified by another application. Do you wish to discard the currently displayed values and reload configuration from disk?"
-msgstr "A beállítási fájlt egy másik alkalmazás módosította. El szeretné dobni a jelenleg megjelenített értékeket és újratölteni a beállításokat a lemezről?"
+msgid ""
+"The configuration file has been modified by another application. Do you wish "
+"to discard the currently displayed values and reload configuration from disk?"
+msgstr ""
+"A beállítási fájlt egy másik alkalmazás módosította. El szeretné dobni a "
+"jelenleg megjelenített értékeket és újratölteni a beállításokat a lemezről?"
 
 #: ../tools/Settings.cs:255
 msgid "Select Path"
@@ -714,14 +685,19 @@ msgstr "Válassza ki az útvonalat"
 
 #: ../tools/Settings.cs:274
 msgid "The selected path is already selected for indexing and wasn't added."
-msgstr "A kiválasztott útvonal már ki van választva indexelésre, ezért nem lesz hozzáadva."
+msgstr ""
+"A kiválasztott útvonal már ki van választva indexelésre, ezért nem lesz "
+"hozzáadva."
 
 #: ../tools/Settings.cs:277
-msgid "The selected path wasn't added. The list contains items that supercedes it and the data is already being indexed."
-msgstr "A kiválasztott útvonal nem lesz hozzáadva, a lista tartalmaz olyan elemeket, amelyek megelőzik és az adatok már indexelve vannak. "
+msgid ""
+"The selected path wasn't added. The list contains items that supercedes it "
+"and the data is already being indexed."
+msgstr ""
+"A kiválasztott útvonal nem lesz hozzáadva, a lista tartalmaz olyan elemeket, "
+"amelyek megelőzik és az adatok már indexelve vannak. "
 
-#: ../tools/Settings.cs:288
-#: ../tools/Settings.cs:480
+#: ../tools/Settings.cs:288 ../tools/Settings.cs:480
 msgid "Path not added"
 msgstr "Az útvonal nem lesz hozzáadva"
 
@@ -730,24 +706,36 @@ msgid "Remove obsolete paths"
 msgstr "Elavult útvonalak eltávolítása"
 
 #: ../tools/Settings.cs:298
-msgid "Adding this path will obsolete some of the existing include paths. This will result in the removal of the old obsolete paths. Do you still wish to add it?"
-msgstr "Ezen útvonal hozzáadása elavulttá tesz néhány létező útvonalat, emiatt ezek az útvonalak el lesznek távolítva. Biztosan hozzá akarja adni?"
+msgid ""
+"Adding this path will obsolete some of the existing include paths. This will "
+"result in the removal of the old obsolete paths. Do you still wish to add it?"
+msgstr ""
+"Ezen útvonal hozzáadása elavulttá tesz néhány létező útvonalat, emiatt ezek "
+"az útvonalak el lesznek távolítva. Biztosan hozzá akarja adni?"
 
 #: ../tools/Settings.cs:324
 msgid "Remove path"
 msgstr "Útvonal eltávolítása"
 
 #: ../tools/Settings.cs:325
-msgid "Are you sure you wish to remove this path from the list of directories to be included for indexing?"
-msgstr "Biztosan el akarja távolítani ezt az útvonalat az indexelendő könyvtárak listájából?"
+msgid ""
+"Are you sure you wish to remove this path from the list of directories to be "
+"included for indexing?"
+msgstr ""
+"Biztosan el akarja távolítani ezt az útvonalat az indexelendő könyvtárak "
+"listájából?"
 
 #: ../tools/Settings.cs:354
 msgid "Remove item"
 msgstr "Elem eltávolítása"
 
 #: ../tools/Settings.cs:355
-msgid "Are you sure you wish to remove this item from the list of data to be excluded from indexing?"
-msgstr "Biztosan el akarja távolítani ezt az útvonalat a nem indexelendő adatok listájából?"
+msgid ""
+"Are you sure you wish to remove this item from the list of data to be "
+"excluded from indexing?"
+msgstr ""
+"Biztosan el akarja távolítani ezt az útvonalat a nem indexelendő adatok "
+"listájából?"
 
 #: ../tools/Settings.cs:398
 msgid "Invalid host entry"
@@ -783,34 +771,29 @@ msgstr "Nyilvános útvonal eltávolítása"
 
 #: ../tools/Settings.cs:496
 msgid "Are you sure you wish to remove this entry from the list of public paths?"
-msgstr "Biztosan el akarja távolítani ezt a bejegyzést a nyilvános útvonalak listájából?"
+msgstr ""
+"Biztosan el akarja távolítani ezt a bejegyzést a nyilvános útvonalak "
+"listájából?"
 
-#: ../tools/Settings.cs:541
-#: ../tools/Settings.cs:630
-#: ../tools/Settings.cs:708
-#: ../tools/Settings.cs:784
-#: ../tools/Settings.cs:1123
+#: ../tools/Settings.cs:541 ../tools/Settings.cs:630 ../tools/Settings.cs:708
+#: ../tools/Settings.cs:784 ../tools/Settings.cs:1123
 msgid "Name"
 msgstr "Név"
 
-#: ../tools/Settings.cs:624
-#: ../tools/settings.glade.h:33
+#: ../tools/Settings.cs:624 ../tools/settings.glade.h:33
 msgid "Type"
 msgstr "Típus"
 
-#: ../tools/Settings.cs:677
-#: ../tools/Settings.cs:1057
+#: ../tools/Settings.cs:677 ../tools/Settings.cs:1057
 #: ../tools/settings.glade.h:25
 msgid "Path"
 msgstr "Útvonal"
 
-#: ../tools/Settings.cs:680
-#: ../tools/Settings.cs:1067
+#: ../tools/Settings.cs:680 ../tools/Settings.cs:1067
 msgid "Pattern"
 msgstr "Minta"
 
-#: ../tools/Settings.cs:683
-#: ../tools/Settings.cs:1062
+#: ../tools/Settings.cs:683 ../tools/Settings.cs:1062
 #: ../tools/settings.glade.h:22
 msgid "Mail Folder"
 msgstr "Levélmappa"
@@ -824,8 +807,12 @@ msgid "Error adding path"
 msgstr "Hiba az útvonal hozzáadása közben"
 
 #: ../tools/Settings.cs:1092
-msgid "The specified path could not be found and therefore it could not be added to the list of resources excluded for indexing."
-msgstr "A megadott útvonal nem található, ezért nem adható hozzá az indexelésből kihagyandó erőforrások listájához."
+msgid ""
+"The specified path could not be found and therefore it could not be added to "
+"the list of resources excluded for indexing."
+msgstr ""
+"A megadott útvonal nem található, ezért nem adható hozzá az indexelésből "
+"kihagyandó erőforrások listájához."
 
 #: ../tools/Settings.cs:1122
 msgid "Show"
@@ -873,15 +860,21 @@ msgstr "Tetszőleges útvonal felvétele indexeléshez."
 
 #: ../tools/settings.glade.h:11
 msgid "Add any remote search-enabled hosts you wish to network with"
-msgstr "Távoli kiszolgálók hozzáadása, melyeken engedélyezett a keresés és hálózatban szeretné őket használni"
+msgstr ""
+"Távoli kiszolgálók hozzáadása, melyeken engedélyezett a keresés és "
+"hálózatban szeretné őket használni"
 
 #: ../tools/settings.glade.h:12
 msgid "Address"
 msgstr "Cím"
 
 #: ../tools/settings.glade.h:13
-msgid "Adjust which types of results should be visible, and in what order they should be presented when grouped by type."
-msgstr "Állítsa be, milyen típusú eredmények legyenek láthatóak és milyen sorrendben legyenek rendezve típus szerinti csoportosításkor."
+msgid ""
+"Adjust which types of results should be visible, and in what order they "
+"should be presented when grouped by type."
+msgstr ""
+"Állítsa be, milyen típusú eredmények legyenek láthatóak és milyen sorrendben "
+"legyenek rendezve típus szerinti csoportosításkor."
 
 #: ../tools/settings.glade.h:14
 msgid "Allow external access to local search services"
@@ -931,17 +924,17 @@ msgstr "Kérem válassza ki az indexelésből kihagyandó erőforrást."
 msgid "Please select the mail folder you wish to exclude from indexing. "
 msgstr "Kérem válassza ki az indexelésből kihagyandó levélkönyvtárat."
 
-#: ../tools/settings.glade.h:28
-msgid "Search"
-msgstr "Keresés"
-
 #: ../tools/settings.glade.h:29
 msgid "Search Preferences"
 msgstr "Keresés beállításai"
 
 #: ../tools/settings.glade.h:30
-msgid "Specify any resources, such as paths, patterns, mail folders or type of objects you wish to exclude from indexing."
-msgstr "Adja meg az indexelésből kihagyandó erőforrásokat, például útvonalakat, mintákat, levélmappákat vagy objektumtípusokat."
+msgid ""
+"Specify any resources, such as paths, patterns, mail folders or type of "
+"objects you wish to exclude from indexing."
+msgstr ""
+"Adja meg az indexelésből kihagyandó erőforrásokat, például útvonalakat, "
+"mintákat, levélmappákat vagy objektumtípusokat."
 
 #: ../tools/settings.glade.h:31
 msgid "Specify paths that should be available for external access"
@@ -963,8 +956,7 @@ msgstr "Az asztali keresés és indexelés tulajdonságainak beállítása"
 msgid "Search & Indexing"
 msgstr "Keresés és indexelés"
 
-#: ../Util/Evolution.cs:45
-#: ../Util/Evolution.cs:163
+#: ../Util/Evolution.cs:45 ../Util/Evolution.cs:163
 msgid "On This Computer"
 msgstr "Ezen a számítógépen"
 
