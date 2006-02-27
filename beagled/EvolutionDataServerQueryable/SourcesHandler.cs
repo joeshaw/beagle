@@ -46,7 +46,18 @@ namespace Beagle.Daemon.EvolutionDataServerQueryable {
 			this.container_type = container_type;
 			this.queryable = queryable;
 			this.fingerprint = fingerprint;
-			this.source_list = new SourceList (gconf_key);
+
+			// This is the first code to hit e-d-s, so we might
+			// get a DllNotFoundException exception if things
+			// aren't configured correctly.  However, since
+			// we're instantiating an object, it might be
+			// wrapped in a TypeInitializationException, so
+			// catch that and rethrow the inner exception.
+			try {
+				this.source_list = new SourceList (gconf_key);
+			} catch (TypeInitializationException ex) {
+				throw ex.InnerException;
+			}
 
 			if (this.source_list == null) {
 				// FIXME: We may want to watch for the creation

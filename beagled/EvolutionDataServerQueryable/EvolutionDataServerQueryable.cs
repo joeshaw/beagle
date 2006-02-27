@@ -73,12 +73,25 @@ namespace Beagle.Daemon.EvolutionDataServerQueryable {
 			start_time = DateTime.Now;
 			State = QueryableState.Crawling;
 
-			new SourcesHandler ("/apps/evolution/addressbook/sources", typeof (BookContainer), this, Driver.Fingerprint);
-			new SourcesHandler ("/apps/evolution/calendar/sources", typeof (CalContainer), this, Driver.Fingerprint);
-			State = QueryableState.Idle;
+			bool success = false;
 
-			timer.Stop ();
-			Logger.Log.Info ("Scanned addressbooks and calendars in {0}", timer);
+			// This is the first code which tries to open the
+			// evolution-data-server APIs.  Try to catch
+			// DllNotFoundException and bail out if things go
+			// badly.
+			try {
+				new SourcesHandler ("/apps/evolution/addressbook/sources", typeof (BookContainer), this, Driver.Fingerprint);
+				new SourcesHandler ("/apps/evolution/calendar/sources", typeof (CalContainer), this, Driver.Fingerprint);
+				success = true;
+			} catch (DllNotFoundException ex) {
+				Logger.Log.Error ("Unable to start EvolutionDataServer backend: Unable to find or open {0}", ex.Message);
+			} finally {
+				State = QueryableState.Idle;
+				timer.Stop ();
+			}
+			
+			if (success)
+				Logger.Log.Info ("Scanned addressbooks and calendars in {0}", timer);
 		}
 
 		public void AddIndexable (Indexable indexable, Scheduler.Priority priority)
