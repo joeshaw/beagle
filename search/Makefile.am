@@ -77,6 +77,8 @@ ASSEMBLIES =				\
 Search.exe: $(CSFILES) $(TILES) $(PAGES) $(TRAY) $(LOCAL_ASSEMBLIES)
 	$(CSC) -out:$@ $(CSFLAGS) $(CSFILES) $(TILES) $(PAGES) $(TRAY) $(ASSEMBLIES)
 
+Search.exe.mdb: Search.exe
+
 @INTLTOOL_DESKTOP_RULE@
 
 desktop_in_files = beagle-search.desktop.in
