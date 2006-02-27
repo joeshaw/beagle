@@ -1,3 +1,8 @@
+2006-02-27  Debajyoti Bera <dbera.web@gmail.com>
+
+	* beagled/DumpIndex.cs: Allow dumpindex to retrieve information about
+	a file as stored in the index.
+
 2006-02-26  Lukas Lipka  <lukas@pmad.net>
 
 	* search/Tiles/IMLog.cs: Load the buddy icon for the detail view.

@@ -35,6 +35,8 @@ using Beagle.Util;
 using Beagle.Daemon;
 
 using Lucene.Net.Index;
+using Lucene.Net.Search;
+using Lucene.Net.Documents;
 
 class DumpIndexTool {
 
@@ -161,62 +163,8 @@ class DumpIndexTool {
 		}
 	}
 
-	enum Mode {
-		Uris,
-		Properties,
-		TermFrequencies
-	}
-		
-
-	static void Main (string [] args)
+	static void DumpIndexInformation (Mode mode, bool show_counts)
 	{
-		Mode mode = Mode.Uris;
-		bool show_counts = true;
-		
-		foreach (string arg in args) {
-
-			switch (arg) {
-				
-			case "--help":
-				Console.WriteLine ("beagle-dump-index command-line arguments");
-				Console.WriteLine ();
-				Console.WriteLine ("--uris             Dump all Uris (default)");
-				Console.WriteLine ("--properties       Dump all properties");
-				Console.WriteLine ("--term-frequencies Dump term frequencies");
-				Console.WriteLine ();
-				Console.WriteLine ("--show-counts      Show index count totals (default)");
-				Console.WriteLine ("--hide-counts      Hide index count totals");
-				Console.WriteLine ();
-				Console.WriteLine ("--help             What you just did");
-				Environment.Exit (0);
-				break;
-				
-			case "--uris":
-				mode = Mode.Uris; 
-				break;
-
-			case "--properties":
-				mode = Mode.Properties;
-				break;
-
-			case "--term-frequencies":
-				mode = Mode.TermFrequencies;
-				break;
-
-			case "--hide-counts":
-				show_counts = false;
-				break;
-
-			case "--show-counts":
-				show_counts = false;
-				break;
-
-			default:
-				Console.WriteLine ("Ignoring unknown argument '{0}'", arg);
-				break;
-			}
-		}
-
 		ArrayList index_info_list;
 		index_info_list = new ArrayList ();
 
@@ -248,5 +196,200 @@ class DumpIndexTool {
 			foreach (IndexInfo info in index_info_list) 
 				Console.WriteLine ("{0} {1}", info.Count.ToString ().PadLeft (7), info.Name);
 		}
+	}
+
+	class DummyQueryResult : IQueryResult {
+		public void Add (ICollection hits)
+		{
+		}
+
+		public void Subtract (ICollection hits)
+		{
+		}
+	}
+
+	static void DumpFileIndexInformation (string path, string indexdir)
+	{
+		//Uri uri = UriFu.PathToFileUri (path);
+	    	//Console.WriteLine ("Dumping information about:" + uri.AbsolutePath);
+	    	//path = uri.AbsolutePath;
+	    	if ((! File.Exists (path)) && (! Directory.Exists (path))) {
+	    	        Console.WriteLine ("No such file or directory:" + path);
+	    	        return;
+	    	}
+
+		if (indexdir == null)
+			// default is ~/.beagle/Indexes/FileSystemIndex
+			indexdir = Path.Combine (PathFinder.IndexDir, "FileSystemIndex");
+		if (! Directory.Exists (indexdir)) {
+			Console.WriteLine ("Index:{0} doesnt exist.", indexdir);
+			return;
+		}
+		
+	    	// get fingerprint
+	    	TextReader reader;
+	    	reader = new StreamReader (Path.Combine (indexdir, "fingerprint"));
+	    	string fingerprint = reader.ReadLine ();
+	    	reader.Close ();
+		//Console.WriteLine ("Read fingerprint:" + fingerprint);
+
+		// find out uid
+	    	FileAttributesStore fa_store = new FileAttributesStore (new FileAttributesStore_Mixed (indexdir, fingerprint));
+	    	Beagle.Daemon.FileAttributes attr = fa_store.Read (path);
+		if (attr == null) {
+			Console.WriteLine ("No information about this file in index. Ignoring.");
+			return;
+		}
+		string uri_string = "uid:" + GuidFu.ToShortString (attr.UniqueId);
+		Console.WriteLine ("Uri = " + uri_string);
+		//Console.WriteLine ("FilterName:" + attr.FilterName);
+		Console.WriteLine ("LastAttrTime:" + attr.LastAttrTime);
+		Console.WriteLine ("LastWriteTime:" + attr.LastWriteTime);
+
+		LuceneQueryingDriver driver;
+		driver = new LuceneQueryingDriver (indexdir, -1, true);
+
+
+		// first try for the Uri:"uid:xxxxxxxxxxxxxxx"
+		Lucene.Net.Search.Query query = new TermQuery(new Term("Uri", uri_string));
+		if (DoQuery (driver, query))
+			return;
+		
+		// else query by path - this is for static indexes
+		path = StringFu.PathToQuotedFileUri (path);
+		Console.WriteLine ("Querying by:[" + path + "]");
+		query = new TermQuery(new Term("Uri", path));
+		DoQuery (driver, query);
+		
+	}
+
+	static bool DoQuery (LuceneQueryingDriver driver, Lucene.Net.Search.Query query)
+	{
+		IndexSearcher primary_searcher = new IndexSearcher (LuceneCommon.GetReader (driver.PrimaryStore));
+		IndexSearcher secondary_searcher = new IndexSearcher (LuceneCommon.GetReader (driver.SecondaryStore));
+		
+		Hits primary_hits = primary_searcher.Search(query);
+		Hits secondary_hits = secondary_searcher.Search (query);
+		Console.WriteLine ("{0} hits from primary store; {1} hits from secondary store", primary_hits.Length (), secondary_hits.Length ());
+		
+		Document primary_doc, secondary_doc;
+		// there should be exactly one primary hit and 0/1 secondary hit
+		if (primary_hits.Length () == 1) {
+			primary_doc = primary_hits.Doc (0);
+			Console.WriteLine (
+			"-----------------------------------------[ Immutable data ]--------------------------------------");
+			foreach (Field f in primary_doc.Fields ()) {
+
+				String name = f.Name ();
+				String val = f.StringValue ();
+				bool stored = f.IsStored ();
+				bool searchable = f.IsIndexed ();
+				bool tokenized = f.IsTokenized();
+				float boost = f.GetBoost();
+
+				Console.WriteLine ("{0,-30} = [{1,-30}] (stored? {2}, searchable? {3}, tokenized? {4}, boost={5})",
+						    name, val, stored, searchable, tokenized, boost);
+			}
+		}
+		
+		if (secondary_hits.Length () == 1) {
+			secondary_doc = secondary_hits.Doc (0);
+			Console.WriteLine (
+			"------------------------------------------[ Mutable data ]---------------------------------------");
+			foreach (Field f in secondary_doc.Fields ()) {
+
+				String name = f.Name ();
+				String val = f.StringValue ();
+				bool stored = f.IsStored ();
+				bool searchable = f.IsIndexed ();
+				bool tokenized = f.IsTokenized();
+				float boost = f.GetBoost();
+
+				Console.WriteLine ("{0,-30} = [{1,-30}] (stored? {2}, searchable? {3}, tokenized? {4}, boost={5})",
+						    name, val, stored, searchable, tokenized, boost);
+			}
+		}
+
+		primary_searcher.Close ();
+		secondary_searcher.Close ();
+		
+		if (primary_hits.Length () != 0 || secondary_hits.Length () != 0)
+			return true;
+		else
+			return false;
+	}
+
+	enum Mode {
+		Uris,
+		Properties,
+		TermFrequencies
+	}
+		
+
+	static void Main (string [] args)
+	{
+		Mode mode = Mode.Uris;
+		bool show_counts = true;
+		string file = null;
+		string indexdir = null;
+		
+		foreach (string arg in args) {
+
+			switch (arg) {
+				
+			case "--help":
+				Console.WriteLine (@"
+beagle-dump-index [options] [ [--indexdir=dir] file]
+			
+--uris                   Dump all Uris (default)
+--properties             Dump all properties
+--term-frequencies       Dump term frequencies
+
+--show-counts            Show index count totals (default)
+--hide-counts            Hide index count totals
+
+--indexdir=<index directory>
+                         Absolute path of the directory storing the index
+                         e.g. /home/user/.beagle/Indexes/FileSystemIndex
+file                     Get information in index about this file or directory
+
+--help                         What you just did");
+				Environment.Exit (0);
+				break;
+				
+			case "--uris":
+				mode = Mode.Uris; 
+				break;
+
+			case "--properties":
+				mode = Mode.Properties;
+				break;
+
+			case "--term-frequencies":
+				mode = Mode.TermFrequencies;
+				break;
+
+			case "--hide-counts":
+				show_counts = false;
+				break;
+
+			case "--show-counts":
+				show_counts = false;
+				break;
+
+			default:
+				if (arg.StartsWith ("--indexdir="))
+					indexdir = arg.Remove (0, 11);
+				else
+					file = arg;
+				break;
+			}
+		}
+
+		if (file == null)
+			DumpIndexInformation (mode, show_counts);
+		else
+			DumpFileIndexInformation (file, indexdir);
+
 	}
 }
