@@ -11,5 +11,5 @@ else
     export LD_LIBRARY_PATH="@pkglibdir@:$LD_LIBRARY_PATH"
 fi
 
-MONO_GAC_PREFIX="@gacprefix@:$MONO_GAC_PREFIX" MONO_PATH="$THIS_PATH:$MONO_PATH" exec -a mono-imlogviewer mono $MONO_EXTRA_ARGS --debug $THIS_EXE "$@"
+MONO_GAC_PREFIX="@gacprefix@:$MONO_GAC_PREFIX" MONO_PATH="$THIS_PATH:$MONO_PATH" exec -a beagle-imlogviewer mono $MONO_EXTRA_ARGS --debug $THIS_EXE "$@"
 

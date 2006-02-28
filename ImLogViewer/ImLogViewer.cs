@@ -43,6 +43,8 @@ namespace ImLogViewer {
 			// I18N
 			Catalog.Init ("beagle", Beagle.Util.ExternalStringsHack.LocaleDir);
 
+			SystemInformation.SetProcessName ("beagle-imlogviewer");
+
 			ParseArgs (args);
 
 			ImClient imclient;

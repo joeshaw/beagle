@@ -167,11 +167,14 @@ namespace ImLogViewer {
 		{
 			foreach (string file in Directory.GetFiles (log_path)) {
 				ImLog log = null;
+				StreamReader reader = new StreamReader (file);
 				
 				if (client == ImClient.Gaim)
-					log = new GaimLog (new FileInfo (file), new StreamReader (file));
+					log = new GaimLog (new FileInfo (file), reader);
 				else if (client == ImClient.Kopete)
-					log = new KopeteLog (new FileInfo (file), new StreamReader (file));
+					log = new KopeteLog (new FileInfo (file), reader);
+
+				reader.Close ();
 
 				if (initial_select_file != null && log.File.FullName == initial_select_file.FullName) {
 					initial_select = log;
