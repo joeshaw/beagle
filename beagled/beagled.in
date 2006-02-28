@@ -22,6 +22,13 @@ if [ -e ./@target@ ] && [ -e ./Makefile.am ] ; then
     else
 	export BEAGLE_FILTER_PATH="../Filters"
     fi
+
+    # Ditto BEAGLE_BACKEND_PATH.
+    if [ -n "$BEAGLE_BACKEND_PATH" ]; then
+	export BEAGLE_BACKEND_PATH=".:$BEAGLE_BACKEND_PATH"
+    else
+	export BEAGLE_BACKEND_PATH="."
+    fi
 else
 
     # Otherwise default to running in the background

@@ -121,45 +121,19 @@ namespace Bludgeon {
 
 		/////////////////////////////////////////////////////
 
-		// Yuck.
-
-		static bool ThisApiSoVeryIsBroken (Type m, object criteria)
-		{
-			return m == (Type) criteria;
-		}
-
-		static bool TypeImplementsInterface (Type t, Type iface)
-		{
-			Type[] impls = t.FindInterfaces (new TypeFilter (ThisApiSoVeryIsBroken),
-							 iface);
-			return impls.Length > 0;
-		}
-
 		static private void LoadAllPairs (Assembly assembly)
 		{
-			foreach (Type type in assembly.GetTypes ()) {
-
-				if (TypeImplementsInterface (type, typeof (IHammer))) {
-
-					object [] attributes;
-					attributes = Attribute.GetCustomAttributes (type);
-
-					foreach (object obj in attributes) {
-						HammerAttribute attr;
-						attr = obj as HammerAttribute;
-						if (attr != null) {
-
-							Pair pair;
-							pair = new Pair ();
-							pair.Attribute = attr;
-							pair.Type = type;
-							
-							all_pairs.Add (pair);
-							pairs_by_name [pair.Attribute.Name] = pair;
-
-							break;
-						}
-					}
+			foreach (Type type in ReflectionFu.ScanAssemblyForInterface (assembly, typeof (IHammer))) {
+				foreach (HammerAttribute attr in ReflectionFu.ScanTypeForAttribute (type, typeof (HammerAttribute))) {
+					Pair pair;
+					pair = new Pair ();
+					pair.Attribute = attr;
+					pair.Type = type;
+					
+					all_pairs.Add (pair);
+					pairs_by_name [pair.Attribute.Name] = pair;
+					
+					break;
 				}
 			}
 		}

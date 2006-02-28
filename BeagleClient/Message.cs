@@ -39,14 +39,8 @@ namespace Beagle {
 		{
 			ArrayList types = new ArrayList ();
 			
-			foreach (Assembly ass in AppDomain.CurrentDomain.GetAssemblies ()) {
-				Type[] ass_types = ass.GetTypes ();
-			
-				foreach (Type t in ass_types) {
-					if (t.IsSubclassOf (parent_type))
-						types.Add (t);
-				}
-			}
+			foreach (Assembly ass in AppDomain.CurrentDomain.GetAssemblies ())
+				types.AddRange (ReflectionFu.ScanAssemblyForClass (ass, parent_type));
 
 			return (Type[]) types.ToArray (typeof (Type));
 		}

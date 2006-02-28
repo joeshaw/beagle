@@ -122,8 +122,8 @@ namespace Beagle.Daemon {
 		{
 			int count = 0;
 
-			foreach (Type type in GetQueryableTypes (assembly)) {
-				foreach (QueryableFlavor flavor in GetQueryableFlavors (type)) {
+			foreach (Type type in ReflectionFu.ScanAssemblyForInterface (assembly, typeof (IQueryable))) {
+				foreach (QueryableFlavor flavor in ReflectionFu.ScanTypeForAttribute (type, typeof (QueryableFlavor))) {
 					if (! UseQueryable (flavor.Name))
 						continue;
 
@@ -154,7 +154,7 @@ namespace Beagle.Daemon {
 					}
 				}
 			}
-			Logger.Log.Debug ("Found {0} types in {1}", count, assembly.FullName);
+			Logger.Log.Debug ("Found {0} backends in {1}", count, assembly.Location);
 		}
 
 		////////////////////////////////////////////////////////
@@ -241,57 +241,15 @@ namespace Beagle.Daemon {
 
 		////////////////////////////////////////////////////////
 
-		static private Type[] GetQueryableTypes (Assembly assembly)
-		{
-			Type[] assembly_types = assembly.GetTypes ();
-			ArrayList types = new ArrayList (assembly_types.Length);
-
-			foreach (Type type in assembly_types)
-				if (TypeImplementsInterface (type, typeof (IQueryable)))
-					types.Add (type);
-		
-			return (Type[]) types.ToArray (typeof (Type));
-		}
-		
-		static private QueryableFlavor[] GetQueryableFlavors (Type type)
-		{
-			object[] attributes = Attribute.GetCustomAttributes (type);
-			ArrayList flavors = new ArrayList (attributes.Length);
-			
-			foreach (object obj in attributes) {
-					QueryableFlavor flavor = obj as QueryableFlavor;
-					if (flavor != null)
-						flavors.Add (flavor);
-			}
-
-			return (QueryableFlavor[]) flavors.ToArray (typeof (QueryableFlavor));
-		}
-
-		static private Assembly[] GetAssemblies ()
-		{
- 			Assembly[] assemblies;
-			int i = 0;
-			DirectoryInfo backends = new DirectoryInfo (PathFinder.BackendDir);
-
-			if (backends.Exists) {
-				FileInfo[] assembly_files = backends.GetFiles ("*.dll");
-				assemblies = new Assembly [assembly_files.Length + 1];
-
-				foreach (FileInfo assembly in assembly_files)
-					assemblies[i++] = Assembly.LoadFile (assembly.ToString ());
-
-			} else {
-				assemblies = new Assembly [1];
-			}
-
-			assemblies[i] = Assembly.GetExecutingAssembly ();
-		
-			return assemblies;
-		}
-
 		static public void Start ()
 		{
-			foreach (Assembly assembly in GetAssemblies ()) {
+			ArrayList assemblies = ReflectionFu.ScanEnvironmentForAssemblies ("BEAGLE_BACKEND_PATH", PathFinder.BackendDir);
+
+			// Only add the executing assembly if we haven't already loaded it.
+			if (assemblies.IndexOf (Assembly.GetExecutingAssembly ()) == -1)
+				assemblies.Add (Assembly.GetExecutingAssembly ());
+
+			foreach (Assembly assembly in assemblies) {
 				ScanAssembly (assembly);
 
 				// This allows backends to define their
@@ -322,11 +280,20 @@ namespace Beagle.Daemon {
 
 		static public string ListBackends ()
 		{
+			ArrayList assemblies = ReflectionFu.ScanEnvironmentForAssemblies ("BEAGLE_BACKEND_PATH", PathFinder.BackendDir);
+
+			// Only add the executing assembly if we haven't already loaded it.
+			if (assemblies.IndexOf (Assembly.GetExecutingAssembly ()) == -1)
+				assemblies.Add (Assembly.GetExecutingAssembly ());
+
 			string ret = "User:\n";
-			foreach (Assembly assembly in GetAssemblies ())
-				foreach (Type type in GetQueryableTypes (assembly))
-					foreach (QueryableFlavor flavor in GetQueryableFlavors (type))
-				ret += String.Format (" - {0}\n", flavor.Name);
+
+			foreach (Assembly assembly in assemblies) {
+				foreach (Type type in ReflectionFu.ScanAssemblyForInterface (assembly, typeof (IQueryable))) {
+					foreach (QueryableFlavor flavor in ReflectionFu.ScanTypeForAttribute (type, typeof (QueryableFlavor)))
+						ret += String.Format (" - {0}\n", flavor.Name);
+				}
+			}
 			
 			if (!Directory.Exists (PathFinder.SystemIndexesDir)) 
 				return ret;

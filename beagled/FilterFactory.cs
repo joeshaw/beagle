@@ -42,20 +42,12 @@ namespace Beagle.Daemon {
 
 		static FilterFactory ()
 		{
-			string path = Environment.GetEnvironmentVariable ("BEAGLE_FILTER_PATH");
-			
-			if (path == null || path == "")
-				path = PathFinder.FilterDir;
-			else if (path [path.Length-1] == ':')
-				path += PathFinder.FilterDir;
-
-			Hashtable seen = new Hashtable ();
-
-			foreach (string dir in path.Split (':')) {
-				if (! seen.Contains (dir))
-					ScanDirectoryForAssemblies (dir);
-				seen [dir] = true;
-			}
+			ReflectionFu.ScanEnvironmentForAssemblies ("BEAGLE_FILTER_PATH", PathFinder.FilterDir,
+								   delegate (Assembly a) {
+									   int n = ScanAssemblyForFilters (a);
+									   Logger.Log.Debug ("Loaded {0} filter{1} from {2}",
+											     n, n == 1 ? "" : "s", a.Location);
+								   });
 		}
 
 		/////////////////////////////////////////////////////////////////////////
@@ -332,54 +324,32 @@ namespace Beagle.Daemon {
 		{
 			int count = 0;
 
-			foreach (Type t in assembly.GetTypes ()) {
-				if (t.IsSubclassOf (typeof (Filter)) && ! t.IsAbstract) {
-					Filter filter = null;
+			foreach (Type t in ReflectionFu.ScanAssemblyForClass (assembly, typeof (Filter))) {
+				Filter filter = null;
 
-					try {
-						filter = (Filter) Activator.CreateInstance (t);
-					} catch (Exception ex) {
-						Logger.Log.Error ("Caught exception while instantiating {0}", t);
-						Logger.Log.Error (ex);
-					}
-
-					if (filter == null)
-						continue;
-
-					filter_versions_by_name [t.ToString ()] = filter.Version;
-
-					foreach (FilterFlavor flavor in filter.SupportedFlavors) {
-						filter_types_by_flavor [flavor] = t;
-						FilterFlavor.Flavors.Add (flavor);
-					}
-
-					++count;
+				try {
+					filter = (Filter) Activator.CreateInstance (t);
+				} catch (Exception ex) {
+					Logger.Log.Error ("Caught exception while instantiating {0}", t);
+					Logger.Log.Error (ex);
 				}
+
+				if (filter == null)
+					continue;
+
+				filter_versions_by_name [t.ToString ()] = filter.Version;
+
+				foreach (FilterFlavor flavor in filter.SupportedFlavors) {
+					filter_types_by_flavor [flavor] = t;
+					FilterFlavor.Flavors.Add (flavor);
+				}
+
+				++count;
 			}
-			
+
 			return count;
 		}
-
-		static private void ScanDirectoryForAssemblies (string dir)
-		{
-			if (dir == null || dir == "")
-				return;
-
-			if (! Directory.Exists (dir)) {
-				Logger.Log.Debug ("'{0}' is not a directory: No filters loaded", dir);
-				return;
-			}
-			
-			DirectoryInfo dir_info = new DirectoryInfo (dir);
-			foreach (FileInfo file_info in dir_info.GetFiles ()) {
-				if (file_info.Extension == ".dll") {
-					Assembly a = Assembly.LoadFrom (file_info.FullName);
-					int n = ScanAssemblyForFilters (a);
-					Logger.Log.Debug ("Loaded {0} filter{1} from {2}",
-							  n, n == 1 ? "" : "s", file_info.FullName);
-				}
-			}
-		}
+		
 	}
 
 	/////////////////////////////////////////////////////////////////////////

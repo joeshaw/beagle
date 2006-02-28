@@ -3,6 +3,8 @@ using System.Collections;
 using System.Reflection;
 using Mono.Posix;
 
+using Beagle.Util;
+
 namespace Search.Tiles {
 
 	// FIXME: Should we call this something else?
@@ -76,11 +78,8 @@ namespace Search.Tiles {
 			activators = new ArrayList ();
 
 			foreach (Assembly assembly in AppDomain.CurrentDomain.GetAssemblies ()) {
-				
-				foreach (Type type in assembly.GetTypes ()) {
-					
-					if (! type.IsSubclassOf (typeof (TileActivator)) || type.IsAbstract)
-						continue;
+
+				foreach (Type type in ReflectionFu.ScanAssemblyForClass (assembly, typeof (TileActivator))) {
 					
 					try {
 						activators.Add ((TileActivator) Activator.CreateInstance (type));
