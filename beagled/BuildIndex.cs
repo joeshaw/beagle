@@ -151,7 +151,7 @@ namespace Beagle.Daemon
 
 				case "--target":
 					if (next_arg != null)
-						arg_output = Path.IsPathRooted (next_arg) ? next_arg : Path.GetFullPath (next_arg);					
+						arg_output = Path.IsPathRooted (next_arg) ? next_arg : Path.GetFullPath (next_arg);
 					++i;
 					break;
 
@@ -265,6 +265,7 @@ namespace Beagle.Daemon
 			
 			driver = new LuceneIndexingDriver (arg_output, false);
 			driver.TextCache = (arg_cache_text) ? new TextCache (arg_output) : null;
+			driver.TextCache.WorldReadable = true;
 
 			backing_fa_store = new FileAttributesStore_Sqlite (driver.TopDirectory, driver.Fingerprint);
 			fa_store = new FileAttributesStore (backing_fa_store);

@@ -279,6 +279,12 @@ namespace Beagle.Daemon {
 				Insert (uri, SELF_CACHE_TAG);
 		}
 
+		private bool world_readable = false;
+		public bool WorldReadable {
+			get { return this.world_readable; }
+			set { this.world_readable = value; }
+		}
+
 		public TextWriter GetWriter (Uri uri)
 		{
 			// FIXME: Uri remapping?
@@ -290,8 +296,10 @@ namespace Beagle.Daemon {
 			// We don't expect to need this again in the near future.
 			FileAdvise.FlushCache (stream);
 			
-			// Make files only readable by the owner.
-			Mono.Unix.Native.Syscall.chmod (path, (Mono.Unix.Native.FilePermissions) 384);
+			if (! world_readable) {
+				// Make files only readable by the owner.
+				Mono.Unix.Native.Syscall.chmod (path, (Mono.Unix.Native.FilePermissions) 384);
+			}
 
 			StreamWriter writer;
 			writer = new StreamWriter (stream);
