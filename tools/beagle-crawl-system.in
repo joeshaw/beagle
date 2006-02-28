@@ -60,7 +60,7 @@ for crawl_file in @sysconfdir@/beagle/*; do
             fi
 
             export TMPDIR=/tmp
-	    eval nice -n 19 $IONICE su $CRAWL_USER -c \"@sbindir@/beagle-build-index --target @localstatedir@/cache/beagle/indexes/$CRAWL_INDEX_NAME $OPTIONS $CRAWL_PATHS\" 2> /dev/null
+	    eval nice -n 19 $IONICE su $CRAWL_USER -c \"@sbindir@/beagle-build-index --target @localstatedir@/cache/beagle/indexes/$CRAWL_INDEX_NAME $OPTIONS $CRAWL_PATHS\" > /dev/null 2>&1
 	fi
     fi
 done
