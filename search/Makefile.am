@@ -57,6 +57,7 @@ PAGES =						\
 	$(srcdir)/Pages/Base.cs			\
 	$(srcdir)/Pages/NoMatch.cs		\
 	$(srcdir)/Pages/QuickTips.cs		\
+	$(srcdir)/Pages/RootUser.cs		\
 	$(srcdir)/Pages/StartDaemon.cs
 
 TRAY =						\

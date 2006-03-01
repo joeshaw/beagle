@@ -23,9 +23,12 @@ namespace Search {
 
 	public class UIManager : Gtk.UIManager {
 
+		private Gtk.ActionGroup actions;
+		private Gtk.RadioActionEntry[] scope_entries, sort_entries;
+
 		public UIManager (Gtk.Window mainWindow)
 		{
-			Gtk.ActionGroup actions = new ActionGroup ("Actions");
+			actions = new ActionGroup ("Actions");
 
 			Gtk.ActionEntry[] entries = new ActionEntry[] {
 				new ActionEntry ("Search", null,
@@ -67,7 +70,7 @@ namespace Search {
 			};
 			actions.Add (entries);
 
-			Gtk.RadioActionEntry[] scope_entries = new RadioActionEntry[] {
+			scope_entries = new RadioActionEntry[] {
 				new RadioActionEntry ("Everywhere", null,
 						      Catalog.GetString ("_Everywhere"),
 						      "<control>E",
@@ -106,7 +109,7 @@ namespace Search {
 			};
 			actions.Add (scope_entries, (int)ScopeType.Everywhere, OnScopeChanged);
 
-			Gtk.RadioActionEntry[] sort_entries = new RadioActionEntry[] {
+			sort_entries = new RadioActionEntry[] {
 				new RadioActionEntry ("Modified", null,
 						      Catalog.GetString ("Date _Modified"), null,
 						      Catalog.GetString ("Sort the most-recently-modified matches first"),
@@ -130,6 +133,22 @@ namespace Search {
 		public Gtk.MenuBar MenuBar {
 			get {
 				return (Gtk.MenuBar)GetWidget ("/MenuBar");
+			}
+		}
+
+		private bool sensitive = true;
+		public bool Sensitive {
+			get { return this.sensitive; }
+			set {
+				this.sensitive = value;
+
+				actions ["QuickTips"].Sensitive = value;
+
+				foreach (Gtk.RadioActionEntry rae in scope_entries)
+					actions [rae.name].Sensitive = value;
+
+				foreach (Gtk.RadioActionEntry rae in sort_entries)
+					actions [rae.name].Sensitive = value;
 			}
 		}
 

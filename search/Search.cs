@@ -15,10 +15,12 @@ namespace Search {
 
 		Search.GroupView view;
 		Search.Entry entry;
+		Gtk.Button button;
 		Search.Spinner spinner;
 		Gtk.Tooltips tips;
 		Gtk.Notebook pages;
 		Search.Pages.QuickTips quicktips;
+		Search.Pages.RootUser rootuser;
 		Search.Pages.StartDaemon startdaemon;
 		Search.Pages.NoMatch nomatch;
 		Search.Panes panes;
@@ -152,7 +154,7 @@ namespace Search {
 			entry.Changed += OnEntryChanged;
 			hbox.PackStart (entry, true, true, 0);
 
-			Gtk.Button button = new Gtk.Button ();
+			button = new Gtk.Button ();
 			Gtk.HBox button_hbox = new Gtk.HBox (false, 2);
 			Gtk.Image icon = new Gtk.Image (Gtk.Stock.Find, Gtk.IconSize.Button);
 			button_hbox.PackStart (icon, false, false, 0);
@@ -180,6 +182,10 @@ namespace Search {
 			quicktips.Show ();
 			pages.Add (quicktips);
 
+			rootuser = new Pages.RootUser ();
+			rootuser.Show ();
+			pages.Add (rootuser);
+
 			startdaemon = new Pages.StartDaemon ();
 			startdaemon.DaemonStarted += Search;
 			startdaemon.Show ();
@@ -200,7 +206,12 @@ namespace Search {
 			tips.SetTip (button, Catalog.GetString ("Start searching"), "");
 			tips.Enable ();
 
-			pages.CurrentPage = pages.PageNum (quicktips);
+			if (Environment.UserName == "root") {
+				pages.CurrentPage = pages.PageNum (rootuser);
+				entry.Sensitive = button.Sensitive = uim.Sensitive = false;
+			} else {
+				pages.CurrentPage = pages.PageNum (quicktips);
+			}
 
 			if (icon_enabled) {
 				tray = new TrayIcon ();

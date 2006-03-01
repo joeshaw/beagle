@@ -31,7 +31,7 @@ namespace Search.Pages {
 				      0, 0);
 
 			header = new Gtk.Label ();
-			header.SetAlignment (0.0f, 0.0f);
+			header.SetAlignment (0.0f, 0.5f);
 			table.Attach (header, 1, 2, 0, 1,
 				      Gtk.AttachOptions.Expand | Gtk.AttachOptions.Fill,
 				      Gtk.AttachOptions.Fill,
