@@ -72,23 +72,10 @@ namespace Search {
 			}
 			set {
 				HideTiles ();
-
-				if (page > 0) {
-					// Adjust page so that the first visible tile
-					// remains visible
-					if (expanded)
-						page = FirstVisible / (manyRows * value);
-					else
-						page = ((FirstVisible - few) / (manyRows * value)) + 1;
-				}
-
 				columns = value;
 				few = fewRows * columns;
 				many = manyRows * columns;
-
-				UpdateButtons ();
-				ShowTiles ();
-				QueueResize ();
+				ShowTiles (true);
 			}
 		}
 
@@ -120,35 +107,62 @@ namespace Search {
 
 		protected override void OnAdded (Gtk.Widget widget)
 		{
-			widget.ChildVisible = false;
 			HideTiles ();
+			widget.ChildVisible = false;
 			tiles.Add ((Tiles.Tile)widget);
 			widget.Parent = this;
-			ShowTiles ();
+			ShowTiles (true);
 
 			UpdateButtons ();
 		}
 
 		protected override void OnRemoved (Gtk.Widget widget)
 		{
+			HideTiles ();
 			tiles.Remove ((Tiles.Tile)widget);
 			widget.Unparent ();
-			ShowTiles ();
+			ShowTiles (true);
 
 			UpdateButtons ();
 		}
 
+		private Tiles.Tile lastTarget;
+		private bool hadFocus;
+
 		void HideTiles ()
 		{
-			foreach (Widget tile in VisibleTiles)
+			lastTarget = null;
+			foreach (Tiles.Tile tile in VisibleTiles) {
+				if (tile.HasFocus || lastTarget == null) {
+					lastTarget = tile;
+					hadFocus = tile.HasFocus;
+				}
 				tile.ChildVisible = false;
+			}
 			QueueResize ();
 		}
 
-		void ShowTiles ()
+		void ShowTiles (bool recenter)
 		{
-			foreach (Widget tile in VisibleTiles)
+			if (recenter && lastTarget != null) {
+				int index = tiles.IndexOf (lastTarget);
+				if (hadFocus || page > 0) {
+					if (index < few)
+						page = 0;
+					else if (expanded)
+						page = index / (manyRows * columns);
+					else
+						page = ((index - few) / (manyRows * columns)) + 1;
+				}
+			}
+
+			foreach (Tiles.Tile tile in VisibleTiles) {
 				tile.ChildVisible = true;
+				if (tile == lastTarget && hadFocus && !tile.HasFocus)
+					tile.GrabFocus ();
+			}
+
+			UpdateButtons ();
 			QueueResize ();
 		}
 
@@ -165,16 +179,14 @@ namespace Search {
 		{
 			HideTiles ();
 			page--;
-			ShowTiles ();
-			UpdateButtons ();
+			ShowTiles (false);
 		}
 
 		void OnNext (object obj, EventArgs args)
 		{
 			HideTiles ();
 			page++;
-			ShowTiles ();
-			UpdateButtons ();
+			ShowTiles (false);
 		}
 
 		protected int PageSize {
@@ -269,7 +281,7 @@ namespace Search {
 			set {
 				HideTiles ();
 				tiles.Sort = value;
-				ShowTiles ();
+				ShowTiles (true);
 			}
 		}
 
