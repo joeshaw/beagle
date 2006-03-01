@@ -17,6 +17,7 @@ namespace Search {
 			mainSW = new Gtk.ScrolledWindow ();
 			mainSW.SetPolicy (Gtk.PolicyType.Never, Gtk.PolicyType.Always);
 			mainSW.ShadowType = Gtk.ShadowType.In;
+			mainSW.SizeAllocated += MainResized;
 			Pack1 (mainSW, true, false);
 
 			vp = new Gtk.Viewport (null, null);
@@ -73,6 +74,19 @@ namespace Search {
 					detailsSW.Show ();
 				} else
 					detailsSW.Hide ();
+			}
+		}
+
+		private void MainResized (object obj, Gtk.SizeAllocatedArgs args)
+		{
+			// If the details pane pops up and covers the selected tile,
+			// fix it.
+
+			Gtk.Container mainChild = main.Child as Gtk.Container;
+			if (mainChild != null) {
+				Gtk.Widget focusChild = mainChild.FocusChild;
+				mainChild.FocusChild = null;
+				mainChild.FocusChild = focusChild;
 			}
 		}
 
