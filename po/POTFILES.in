@@ -13,6 +13,7 @@ search/GroupView.cs
 search/Pages/Base.cs
 search/Pages/NoMatch.cs
 search/Pages/QuickTips.cs
+search/Pages/RootUser.cs
 search/Pages/StartDaemon.cs
 search/Panes.cs
 search/Search.cs
