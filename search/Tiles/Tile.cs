@@ -90,7 +90,7 @@ namespace Search.Tiles {
 			new Gtk.TargetEntry ("text/uri-list", 0, 0)
 		};
 
-		public event EventHandler Selected, Deselected;
+		public event EventHandler Selected;
 
 		protected override void OnDragBegin (Gdk.DragContext context)
 		{
@@ -225,13 +225,6 @@ namespace Search.Tiles {
 			if (Selected != null)
 				Selected (this, EventArgs.Empty);
 			return base.OnFocusInEvent (f);
-		}
-
-		protected override bool OnFocusOutEvent (Gdk.EventFocus f)
-		{
-			if (Deselected != null && !IsFocus)
-				Deselected (this, EventArgs.Empty);
-			return base.OnFocusOutEvent (f);
 		}
 
 		protected override bool OnKeyPressEvent (Gdk.EventKey k)

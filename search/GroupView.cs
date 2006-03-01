@@ -48,7 +48,6 @@ namespace Search {
 		{
 			tile.Show ();
 			tile.Selected += OnTileSelected;
-			tile.Deselected += OnTileDeselected;
 
 			Category box = (Category)categories [tile.Group];
 			box.Add (tile);
@@ -114,15 +113,7 @@ namespace Search {
 			if (selection != null)
 				selection.State = StateType.Normal;
 			selection = (Gtk.Widget)tile;
-			if (selection != null)
-				selection.State = StateType.Selected;
-		}
-
-		private void OnTileDeselected (object tile, EventArgs args)
-		{
-			if (tile != selection)
-				return;
-			OnTileSelected (null, args);
+			selection.State = StateType.Selected;
 		}
 
 		private ScopeType scope;
