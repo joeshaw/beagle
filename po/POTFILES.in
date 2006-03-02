@@ -32,6 +32,7 @@ search/Tiles/Image.cs
 search/Tiles/IMLog.cs
 search/Tiles/MailAttachment.cs
 search/Tiles/MailMessage.cs
+search/Tiles/Note.cs
 search/Tiles/Presentation.cs
 search/Tiles/RSSFeed.cs
 search/Tiles/Spreadsheet.cs
