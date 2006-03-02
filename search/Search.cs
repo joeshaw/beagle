@@ -244,6 +244,7 @@ namespace Search {
 				return;
 
 			SetWindowTitle (query);
+			ShowInformation (null);
 
 			if (tray != null) {
 				tray.AddSearch (query);
