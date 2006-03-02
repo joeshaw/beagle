@@ -219,16 +219,22 @@ namespace Search {
 		{
 			Gdk.Pixbuf logo = Beagle.Images.GetPixbuf ("system-search.png");
 
-			string[] people = new string[] {"Dan Winship <danw@novell.com>", "Lukas Lipka <lukas@pmad.net>",
-		       					 "Fredrik Hedberg <fredrik@avafan.com>", "Joe Shaw <joeshaw@novell.com>"};
-			string[] documentors = new string[] {""};
+			string[] people = new string[] { "Anna Dirks <anna@novell.com>",
+							 "Fredrik Hedberg <fredrik@avafan.com>",
+							 "Lukas Lipka <lukas@pmad.net>",
+							 "Joe Shaw <joeshaw@novell.com>", 
+							 "Jakub Steiner <jimmac@novell.com",
+							 "Dan Winship <danw@novell.com>" };
 			
-			Gnome.About about = new Gnome.About ("Desktop Search", "0.0",
-							     "Copyright 2005 Novell, Inc.",
-							     null, people, documentors, null,
+#pragma warning disable 612 // don't warn that Gnome.About is deprecated
+			Gnome.About about = new Gnome.About ("Beagle Search",
+							     Beagle.Util.ExternalStringsHack.Version,
+							     "Copyright 2005-2006 Novell, Inc.",
+							     null, people, null, null,
 							     logo);
 			about.Run ();
 			about.Dispose ();
+#pragma warning restore 612
 		}
 
 		private void OnFocusSearchEntry (object obj, EventArgs args)
