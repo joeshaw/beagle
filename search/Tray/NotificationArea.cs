@@ -298,12 +298,23 @@ namespace Search.Tray {
 				orientation = ((SystemTrayOrientation) Marshal.ReadInt32 (prop_return) == SystemTrayOrientation.Horz) 
 					? Orientation.Horizontal 
 					: Orientation.Vertical;
+				if (OrientationChanged != null)
+					OrientationChanged (this, orientation);
 			}
 
 			if (prop_return != IntPtr.Zero) {
 				XFree (prop_return);
 			}
 		}
+
+		public Orientation Orientation {
+			get {
+				return orientation;
+			}
+		}
+
+		public delegate void OrientationChangedHandler (NotificationArea area, Orientation orientation);
+		public event OrientationChangedHandler OrientationChanged;
 
 		[DllImport ("libgdk-x11-2.0.so.0")]
 		private static extern IntPtr gdk_x11_display_get_xdisplay (IntPtr display);
