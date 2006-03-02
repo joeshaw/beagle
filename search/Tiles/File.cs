@@ -32,7 +32,7 @@ namespace Search.Tiles {
 
 			AddAction (new TileAction (Catalog.GetString ("Reveal in Folder"), RevealInFolder));
 			AddAction (new TileAction (Catalog.GetString ("E-Mail"), Email));
-			AddAction (new TileAction (Catalog.GetString ("Instant-Message"), InstantMessage));
+			// AddAction (new TileAction (Catalog.GetString ("Instant-Message"), InstantMessage));
 			AddAction (new TileAction (Catalog.GetString ("Move to Trash"), Gtk.Stock.Delete, MoveToTrash));
 		}
 

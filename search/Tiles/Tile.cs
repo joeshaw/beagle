@@ -179,13 +179,15 @@ namespace Search.Tiles {
 			ActionMenuItem mi = new ActionMenuItem (new TileAction (Catalog.GetString ("Open"), Stock.Open, Open));
 			menu.Append (mi);
 
+#if NOT_YET
+			// FIXME: Disabled until we have a reasonable workaround
+			// for lower gtk# versions.
 			if (EnableOpenWith) {
-				// FIXME: Disabled until we have a reasonable workaround
-				// for lower gtk# versions.
-				/*OpenWithMenu owm = new OpenWithMenu (Hit ["beagle:MimeType"]);
+				OpenWithMenu owm = new OpenWithMenu (Hit ["beagle:MimeType"]);
 				owm.ApplicationActivated += OpenWith;
-				owm.AppendToMenu (menu);*/
+				owm.AppendToMenu (menu);
 			}
+#endif
 
 			if (Actions.Count > 0) {
 				SeparatorMenuItem si = new SeparatorMenuItem ();
@@ -313,12 +315,14 @@ namespace Search.Tiles {
 			System.Console.WriteLine ("Warning: Open method not implemented for this tile type");
 		}
 
+#if NOT_YET
 		private void OpenWith (Gnome.Vfs.MimeApplication mime_application)
 		{
 			GLib.List uri_list = new GLib.List (typeof (string));
 			uri_list.Append (Hit.UriAsString);
 			mime_application.Launch (uri_list);
 		}
+#endif
 
 		protected void OpenFromMime (Hit hit)
 		{

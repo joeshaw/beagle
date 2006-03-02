@@ -33,7 +33,7 @@ namespace Search.Tiles {
 			if (artist != null && artist != "")
 				Description = artist;
 
-			AddAction (new TileAction (Catalog.GetString ("Add to Library"), AddToLibrary));
+//			AddAction (new TileAction (Catalog.GetString ("Add to Library"), AddToLibrary));
 		}
 
 		// FIXME: Check if Banshee exists and supports this?

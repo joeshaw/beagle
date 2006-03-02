@@ -35,8 +35,8 @@ namespace Search.Tiles {
 
 			Description += String.Format (" ({0})", StringFu.FileLengthToString (Hit.FileInfo.Length));
 
-			AddAction (new TileAction (Catalog.GetString ("Add to Library"), Gtk.Stock.Add, AddToLibrary));
-			AddAction (new TileAction (Catalog.GetString ("Set as Wallpaper"), SetAsWallpaper)); // FIXME: This is not in the spec, is it ok?
+			// AddAction (new TileAction (Catalog.GetString ("Add to Library"), Gtk.Stock.Add, AddToLibrary));
+			AddAction (new TileAction (Catalog.GetString ("Set as Wallpaper"), SetAsWallpaper));
 		}
 
 		protected override void LoadIcon (Gtk.Image image, int size)
@@ -81,6 +81,7 @@ namespace Search.Tiles {
 			return details;
 		}
 		
+#if NOT_YET
 		// FIXME: fspot doesnt allow to import a particular file
 		// only a whole directory
 		public void AddToLibrary ()
@@ -94,7 +95,7 @@ namespace Search.Tiles {
 			pi.Arguments = String.Format ("--import {0}", Hit.FileInfo.FullName);
 			Process.Start (pi);
 		}
-
+#endif
 		
 		public void SetAsWallpaper ()
 		{

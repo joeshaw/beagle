@@ -78,7 +78,7 @@ namespace Search.Tiles {
 		public Application (Beagle.Hit hit, Beagle.Query query, IntPtr ditem) : this (hit, query)
 		{
 			this.ditem = ditem;
-			AddAction (new TileAction (Catalog.GetString ("Move to trash"), Gtk.Stock.Delete, MoveToTrash));
+//			AddAction (new TileAction (Catalog.GetString ("Move to trash"), Gtk.Stock.Delete, MoveToTrash));
 		}
 
 		protected Application (Beagle.Hit hit, Beagle.Query query) : base (hit, query)
@@ -128,6 +128,7 @@ namespace Search.Tiles {
 				Console.WriteLine ("Unable to launch application");
 		}
 
+#if NOPE
 		public void MoveToTrash ()
 		{
 			// FIXME: What is the default way to uninstall an application
@@ -140,5 +141,6 @@ namespace Search.Tiles {
 
 			Console.WriteLine ("Would run 'rpm {0}'", pi.Arguments);
 		}
+#endif
 	}
 }
