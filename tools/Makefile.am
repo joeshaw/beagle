@@ -3,9 +3,6 @@
 
 CSC = mcs -debug -nowarn:0169
 
-applicationsdir = $(datadir)/applications
-applications_DATA = beagle-settings.desktop
-
 LOCAL_ASSEMBLIES =			\
 	../Util/Util.dll		\
 	../BeagleClient/Beagle.dll
@@ -167,12 +164,13 @@ man_MANS = 			\
 
 @INTLTOOL_DESKTOP_RULE@
 
+if ENABLE_GUI
 desktop_in_files = beagle-settings.desktop.in
 desktop_files = $(desktop_in_files:.desktop.in=.desktop)
-desktop_h_files = $(desktop_in_files:.in=.in.h)
 
 desktopdir = $(datadir)/applications
 desktop_DATA = $(desktop_files)
+endif
 
 all: $(TARGETS) $(WRAPPERS)
 

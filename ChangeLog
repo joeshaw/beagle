@@ -1,3 +1,8 @@
+2006-03-02  Daniel Drake  <dsd@gentoo.org>
+
+	* tools/Makefile.am: Only install beagle-settings.desktop when ENABLE_GUI
+	is chosen. Reported by ph at http://bugs.gentoo.org/124192
+
 2006-02-27  Debajyoti Bera <dbera.web@gmail.com>
 
 	* beagled/DumpIndex.cs: Allow dumpindex to retrieve information about
