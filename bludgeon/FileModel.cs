@@ -303,7 +303,7 @@ namespace Bludgeon {
 			FileModel root = new FileModel ();
 			root.name = PathFinder.HomeDir;
 			root.children = new Hashtable ();
-			root.mtime = Directory.GetLastWriteTime (root.FullName);
+			root.mtime = Directory.GetLastWriteTimeUtc (root.FullName);
 			return root;
 		}
 
@@ -328,7 +328,7 @@ namespace Bludgeon {
 
 			// Actually create the directory
 			Directory.CreateDirectory (child.FullName);
-			child.mtime = Directory.GetLastWriteTime (child.FullName);
+			child.mtime = Directory.GetLastWriteTimeUtc (child.FullName);
 
 			return child;
 		}

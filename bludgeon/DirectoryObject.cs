@@ -160,7 +160,7 @@ namespace Bludgeon {
 					throw new Exception ("Missing root directory " + full_name);
 			} else {
 				Directory.CreateDirectory (full_name);
-				timestamp = Directory.GetLastWriteTime (full_name);
+				timestamp = Directory.GetLastWriteTimeUtc (full_name);
 			}
 
 			if (tracker != null)
