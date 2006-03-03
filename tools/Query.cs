@@ -139,7 +139,7 @@ class QueryTool {
 			"  --source <source>\t\tConstrain query to the specified source.\n" +
 			"                   \t\tSources list available from beagle-status.\n" +
 			"  --start <date>\t\tConstrain query to items after specified date.\n" +
-			"                \t\t\tDate must be in the form \"yyyyMMdd\" or \"yyyyMMddHHmmss\"\n" +
+			"                \t\tDate must be in the form \"yyyyMMdd\" or \"yyyyMMddHHmmss\"\n" +
 			"  --end <date>\t\t\tConstrain query to items before specified date.\n" +
 			"              \t\t\tDate must be in the form \"yyyyMMdd\" or \"yyyyMMddHHmmss\"\n" +
 			"  --live-query\t\t\tRun continuously, printing notifications if a\n" +
