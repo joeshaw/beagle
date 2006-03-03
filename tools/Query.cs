@@ -138,7 +138,7 @@ class QueryTool {
 			"                    \t\ttype. Can be used multiply.\n" +
 			"  --source <source>\t\tConstrain query to the specified source.\n" +
 			"                   \t\tSources list available from beagle-status.\n" +
-			"  --start <date>\t\t\tConstrain query to items after specified date.\n" +
+			"  --start <date>\t\tConstrain query to items after specified date.\n" +
 			"                \t\t\tDate must be in the form \"yyyyMMdd\" or \"yyyyMMddHHmmss\"\n" +
 			"  --end <date>\t\t\tConstrain query to items before specified date.\n" +
 			"              \t\t\tDate must be in the form \"yyyyMMdd\" or \"yyyyMMddHHmmss\"\n" +
@@ -258,6 +258,7 @@ class QueryTool {
 					Console.WriteLine ("Invalid start date");
 					System.Environment.Exit (-1);
 				}
+				start_date = start_date.ToUniversalTime ();
 				break;
 
 			case "--end":
@@ -270,6 +271,7 @@ class QueryTool {
 					Console.WriteLine ("Invalid end date");
 					System.Environment.Exit (-1);
 				}
+				end_date = end_date.ToUniversalTime ();
 				break;
 
 			default:
