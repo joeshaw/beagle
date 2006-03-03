@@ -102,7 +102,11 @@ namespace Bludgeon {
 				query.AddPart (part);
 			}
 
-			if (allow_inexpensive && random.Next (3) == 0) {
+			// Note the ! inside_an_or; date range queries don't
+			// work right inside OR queries when being searched
+			// within the resolution of one day.  See the FIXME
+			// about hit filters in LuceneCommon.cs
+			if (allow_inexpensive && ! inside_an_or && random.Next (3) == 0) {
 				DateTime a, b;
 				FileSystemObject.PickTimestampRange (out a, out b);
 

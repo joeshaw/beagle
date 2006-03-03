@@ -336,6 +336,10 @@ namespace Bludgeon {
 
 		abstract protected bool MatchesQueryPart (QueryPart part);
 
+		// Returns:
+		//   1 if it is a match
+		//   0 if it doesn't apply
+		//  -1 if it doesn't match
 		private int MatchesMetadata (QueryPart abstract_part)
 		{
 			int is_match = 0;

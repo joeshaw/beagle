@@ -186,12 +186,6 @@ namespace Beagle.Daemon {
 
 					break;
 				}
-
-				// We assume that QueryPartToQuery does the right thing when it returns
-				// a hit filter associated with a Prohibited part, and that we don't
-				// have to invert it or anything like that.
-				if (part_hit_filter != null)
-					all_hit_filters.Add (part_hit_filter);
 			}
 
 			// If we have no required parts, give up.

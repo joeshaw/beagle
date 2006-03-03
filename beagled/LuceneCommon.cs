@@ -1279,7 +1279,9 @@ namespace Beagle.Daemon {
 				foreach (QueryPart  sub_part in part.SubParts) {
 					LNS.Query p_subq, s_subq;
 					HitFilter sub_hit_filter; // FIXME: This is (and must be) ignored
-					// FIXME: We don't handle dates correctly for OR at all.
+					// FIXME: Any subpart in an OR which has a hit filter won't work
+					// correctly, because we can't tell which part of an OR we matched
+					// against to filter correctly.  This affects date range queries.
 					QueryPartToQuery (sub_part, only_build_primary_query,
 							  term_list,
 							  out p_subq, out s_subq, out sub_hit_filter);
