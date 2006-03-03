@@ -8,129 +8,14 @@ msgid ""
 msgstr ""
 "Project-Id-Version: beagle HEAD\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2005-12-09 18:55+0200\n"
-"PO-Revision-Date: 2005-12-09 18:56+0200\n"
+"POT-Creation-Date: 2006-03-03 12:33+0200\n"
+"PO-Revision-Date: 2006-03-03 13:08+0200\n"
 "Last-Translator: Žygimantas Beručka <zygis@gnome.org>\n"
 "Language-Team: Lithuanian <komp_lt@konferencijos.lt>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
-
-#: ../Best/Best.cs:134
-msgid ""
-"If you're wondering whether Best is working check your notification area "
-"(system tray)"
-msgstr "Jeigu nežinote ar Best veikia, žvilgterėkite į pranešimų vietą"
-
-#: ../Best/BestTray.cs:148
-msgid "Disable Searching"
-msgstr "Išjungti paiešką"
-
-#: ../Best/BestTray.cs:149
-msgid ""
-"You are about to close the search tray. The search tray is automatically "
-"started at login-time. Would you like to disable it for future sessions?"
-msgstr ""
-"Jūs ketinate užverti paieškos skydelį. Paieškos skydelis automatiškai "
-"paleidžiamas prisijungimo metu. Ar norite jį išjungti būsimoms sesijoms?"
-
-#: ../Best/BestTray.cs:207
-msgid "No Recent Searches"
-msgstr "Nėra paskutiniųjų paieškų"
-
-#: ../Best/BestTray.cs:212
-msgid "Recent Searches"
-msgstr "Paskutiniosios paieškos"
-
-#: ../Best/BestTray.cs:228
-msgid "Clear"
-msgstr "Išvalyti"
-
-#: ../Best/BestTray.cs:236
-msgid "Quit"
-msgstr "Išeiti"
-
-#: ../Best/BestWindow.cs:301
-msgid "Anywhere"
-msgstr "Bet kur"
-
-#: ../Best/BestWindow.cs:305
-msgid "in Files"
-msgstr "Bylose"
-
-#: ../Best/BestWindow.cs:309
-msgid "in Addressbook"
-msgstr "Adresų knygoje"
-
-#: ../Best/BestWindow.cs:313
-msgid "in Mail"
-msgstr "Laiškuose"
-
-#: ../Best/BestWindow.cs:317
-msgid "in Web Pages"
-msgstr "Tinklalapiuose"
-
-#: ../Best/BestWindow.cs:321
-msgid "in Chats"
-msgstr "Pokalbiuose"
-
-#: ../Best/BestWindow.cs:338
-msgid "Search terms:"
-msgstr "Paieškos žodžiai:"
-
-#: ../Best/BestWindow.cs:362
-msgid "Find"
-msgstr "Rasti"
-
-#: ../Best/BestWindow.cs:384
-msgid "Show More Results"
-msgstr "Rodyti daugiau rezultatų"
-
-#: ../Best/BestWindow.cs:390
-msgid "Show Previous Results"
-msgstr "Rodyti ankstesnius rezultatus"
-
-#: ../Best/BestWindow.cs:474
-msgid "No results."
-msgstr "Nėra rezultatų."
-
-#. To translators: {0} is the current count of results shown of {1} in total, this is the message that is initially shown
-#. when results are returned to the user.
-#: ../Best/BestWindow.cs:478
-#, csharp-format
-msgid "Best <b>{0} results of {1}</b> are shown."
-msgstr "Rodomi geriausi <b>{0} rezultatai iš {1}</b>"
-
-#. To translators: {0} to {1} is the interval of results currently shown of {2} results in total
-#: ../Best/BestWindow.cs:483
-#, csharp-format
-msgid "Results <b>{0} through {1} of {2}</b> are shown."
-msgstr "Rodomi rezultatai nuo <b>{0} iki {1} iš viso {2}</b>."
-
-#. To translators: {0} represents the current query keywords
-#: ../Best/BestWindow.cs:591
-#, csharp-format
-msgid ""
-"The query for <i>{0}</i> failed.<br>The likely cause is that the beagle "
-"daemon isn't running."
-msgstr ""
-"Užklausos <i>{0}</i> įvykdyti nepavyko.<br>Greičiausiai todėl, kad "
-"nepaleistas beagle demonas."
-
-#. To translators: {0} represents the current query keywords, {1} contains the errormessage
-#: ../Best/BestWindow.cs:596
-#, csharp-format
-msgid "The query for <i>{0}</i> failed with error:<br>{1}<br>"
-msgstr "Užklausos <i>{0}</i> įvykdyti nepavyko, klaida:<br>{1}<br>"
-
-#: ../Best/best.desktop.in.h:1
-msgid "Beagle Search"
-msgstr "Beagle paieška"
-
-#: ../Best/best.desktop.in.h:2
-msgid "Desktop Search"
-msgstr "Darbo aplinkos paieška"
 
 #: ../glue/eggtrayicon.c:127
 msgid "Orientation"
@@ -158,19 +43,160 @@ msgstr "Pokalbiai esantys {0}"
 msgid "Conversations with {0}"
 msgstr "Pokalbiai su {0}"
 
-#: ../Tiles/TileDocs.cs:77
-msgid "Pages:"
-msgstr "Puslapiai:"
+#: ../search/beagle-search.desktop.in.h:1 ../tools/settings.glade.h:28
+msgid "Search"
+msgstr "Paieška"
 
-#: ../Tiles/TileDocs.cs:81
-msgid "Words:"
-msgstr "Žodžiai:"
+#: ../search/beagle-search.desktop.in.h:2
+msgid "Search for data on your desktop"
+msgstr "Ieškoti duomenų Jūsų darbo aplinkoje"
 
-#: ../Tiles/TileFolder.cs:53
+#: ../search/Category.cs:103
+#, csharp-format
+msgid "{0}-{1} of {2}"
+msgstr "{0}-{1} iš {2}"
+
+#: ../search/Pages/NoMatch.cs:19
+msgid "No results were found."
+msgstr "Rezultatų nerasta."
+
+#: ../search/Pages/NoMatch.cs:20
+#, csharp-format
+msgid "Your search for \"{0}\" did not match any files on your computer."
+msgstr "Jūsų „{0}“ paieška, neatitiko jokių rinkmenų Jūsų kompiuteryje."
+
+#: ../search/Pages/NoMatch.cs:24
+msgid ""
+"You can change the scope of your search using the \"Search\" menu. A broader "
+"search scope might produce more results."
+msgstr ""
+"Galite pakeisti Jūsų paieškos ribas naudodami meniu „Paieška“. Naudojant "
+"didesnes paieškos ribas gali būti rasta daugiau rezultatų."
+
+#: ../search/Pages/NoMatch.cs:26
+msgid ""
+"You should check the spelling of your search words to see if you "
+"accidentally misspelled any words."
+msgstr ""
+"Turėtumėte patikrinti Jūsų ieškotinų žodžių rašybą, galbūt Jūs "
+"netyčia neteisingai parašėte kurį nors žodį."
+
+#: ../search/Pages/QuickTips.cs:10
+msgid "You can use upper and lower case; search is case-insensitive."
+msgstr ""
+"Galite naudoti tiek mažąsias, tiek didžiąsias raides; paieškos rezultatai nesiskirs."
+
+#: ../search/Pages/QuickTips.cs:11
+msgid "To search for optional terms, use OR.  ex: <b>George OR Ringo</b>"
+msgstr ""
+"Norėdami ieškoti vieno arba kito žodžio, naudoktie OR, pvz.: <b>Jonas OR Petras</b>"
+
+#: ../search/Pages/QuickTips.cs:12
+msgid ""
+"To exclude search terms, use the minus symbol in front, such as <b>-cats</b>"
+msgstr ""
+"Norėdami išskirsti paieškos žodžius, priekyje panaudokite minuso ženklą, pvz.: "
+"<b>-katės</b>"
+
+#: ../search/Pages/QuickTips.cs:13
+msgid ""
+"When searching for a phrase, add quotes. ex: <b>\"There be dragons\"</b>"
+msgstr ""
+"Kai ieškote frazės, pridėkite kabutes, pvz.: <b>„Rokenrolo naktys“</b>"
+
+#: ../search/Pages/QuickTips.cs:19 ../search/UIManager.cs:65
+msgid "Quick Tips"
+msgstr "Greiti patarimai"
+
+#: ../search/Pages/RootUser.cs:12
+msgid "Beagle cannot be run as root"
+msgstr "Beagle negalima paleisti root naudotoju"
+
+#: ../search/Pages/RootUser.cs:13
+msgid ""
+"For security reasons, Beagle cannot be run as root.  You should restart as a "
+"regular user."
+msgstr ""
+"Saugumo sumetimais Beagle negalima paleisti root naudotoju. Turėtumėte paleisti "
+"iš naujo paprastu naudotoju."
+
+#: ../search/Pages/StartDaemon.cs:19
+msgid "Daemon not running"
+msgstr "Demonas nepaleistas"
+
+#: ../search/Pages/StartDaemon.cs:21
+msgid "Start the daemon"
+msgstr "Paleisti demoną"
+
+#: ../search/Search.cs:147
+msgid "_Find:"
+msgstr "_Rasti:"
+
+#: ../search/Search.cs:161
+msgid "Find Now"
+msgstr "Rasti dabar"
+
+#: ../search/Search.cs:205
+msgid "Type in search terms"
+msgstr "Įveskite paieškos žodžius"
+
+#: ../search/Search.cs:206
+msgid "Start searching"
+msgstr "Pradėti paiešką"
+
+#: ../search/Tiles/Contact.cs:53
+msgid "E-Mail:"
+msgstr "El. paštas:"
+
+#: ../search/Tiles/Contact.cs:56
+msgid "Mobile Phone:"
+msgstr "Mobilusis telefonas:"
+
+#: ../search/Tiles/Contact.cs:60
+msgid "Work Phone:"
+msgstr "Darbo telefonas:"
+
+#: ../search/Tiles/Contact.cs:64
+msgid "Home Phone:"
+msgstr "Namų telefonas:"
+
+#: ../search/Tiles/File.cs:33
+msgid "Reveal in Folder"
+msgstr "Parodyti aplanke"
+
+#: ../search/Tiles/File.cs:34
+msgid "E-Mail"
+msgstr "El. paštas"
+
+#. AddAction (new TileAction (Catalog.GetString ("Instant-Message"), InstantMessage));
+#. FIXME: s/"gtk-info"/Gtk.Stock.Info/ when we can depend on gtk# 2.8
+#. AddAction (new TileAction (Catalog.GetString ("Show Information"), "gtk-info", ShowInformation));
+#: ../search/Tiles/File.cs:36 ../search/Tiles/Folder.cs:38
+msgid "Move to Trash"
+msgstr "Perkelti į šiukšlinę"
+
+#: ../search/Tiles/File.cs:132 ../search/Tiles/Note.cs:57
+#: ../search/Tiles/RSSFeed.cs:45 ../search/Tiles/WebHistory.cs:50
+msgid "Title:"
+msgstr "Pavadinimas:"
+
+#: ../search/Tiles/File.cs:135 ../search/Tiles/Note.cs:60
+msgid "Last Edited:"
+msgstr "Vėliausiai redaguota:"
+
+#: ../search/Tiles/File.cs:139
+msgid "Author:"
+msgstr "Autorius:"
+
+#: ../search/Tiles/File.cs:143 ../search/Tiles/Image.cs:72
+msgid "Full Path:"
+msgstr "Visas kelias:"
+
+#: ../search/Tiles/Folder.cs:31
 msgid "Empty"
 msgstr "Tuščia"
 
-#: ../Tiles/TileFolder.cs:55
+#: ../search/Tiles/Folder.cs:33
 #, csharp-format
 msgid "Contains {0} Item"
 msgid_plural "Contains {0} Items"
@@ -178,239 +204,491 @@ msgstr[0] "Yra {0} elementas"
 msgstr[1] "Yra {0} elementai"
 msgstr[2] "Yra {0} elementų"
 
-#: ../Tiles/TileImLog.cs:67
-msgid "Send Mail"
-msgstr "Išsiųsti laiškai"
+#: ../search/Tiles/Folder.cs:54
+msgid "Edited:"
+msgstr "Redaguota:"
 
-#. For translators: From template Tiles/template-mail-message.html
-#: ../Tiles/TileImLog.cs:71 ../Tiles/TranslationHack.cs:52
-msgid "Send IM"
-msgstr "Išsiustos IM žinutės"
+#. AddAction (new TileAction (Catalog.GetString ("Add to Library"), Gtk.Stock.Add, AddToLibrary));
+#: ../search/Tiles/Image.cs:39
+msgid "Set as Wallpaper"
+msgstr "Padaryti darbastalio fonu"
 
-#: ../Tiles/TileImLog.cs:77
-#, csharp-format
-msgid "Conversation in {0}"
-msgstr "Pokalbiai esantys {0}"
-
-#: ../Tiles/TileImLog.cs:79
-#, csharp-format
-msgid "Conversation with {0}"
-msgstr "Pokalbiai su {0}"
-
-#: ../Tiles/TileMailMessage.cs:88
-msgid "No Subject"
-msgstr "Be temos"
-
-#: ../Tiles/TileMailMessage.cs:95
-msgid "To"
-msgstr "Kam"
-
-#: ../Tiles/TileMailMessage.cs:95
-msgid "From"
-msgstr "Nuo"
-
-#: ../Tiles/TileMailMessage.cs:123
-msgid "Sent"
-msgstr "Išsiusta"
-
-#: ../Tiles/TileMailMessage.cs:123
-msgid "Received"
-msgstr "Gauta"
-
-#: ../Tiles/TileMailMessage.cs:131
-msgid "Email attachment"
-msgstr "Prisegta byla"
-
-#. For translators: From template Tiles/template-blog.html
-#: ../Tiles/TranslationHack.cs:6
-msgid "Weblog:"
-msgstr "Žurnalas:"
-
-#. For translators: From template Tiles/template-blog.html
-#: ../Tiles/TranslationHack.cs:8
-msgid "by"
-msgstr "parašyta"
-
-#. For translators: From template Tiles/template-blog.html
-#: ../Tiles/TranslationHack.cs:10
-msgid "Published:"
-msgstr "Publikuota:"
-
-#. For translators: From template Tiles/template-blog.html
-#. For translators: From template Tiles/template-docs.html
-#. For translators: From template Tiles/template-file.html
-#. For translators: From template Tiles/template-folder.html
-#. For translators: From template Tiles/template-launcher.html
-#. For translators: From template Tiles/template-mail-message.html
-#. For translators: From template Tiles/template-music.html
-#. For translators: From template Tiles/template-note.html
-#. For translators: From template Tiles/template-picture.html
-#. For translators: From template Tiles/template-presentation.html
-#. For translators: From template Tiles/template-spreadsheet.html
-#. For translators: From template Tiles/template-web-history.html
-#. For translators: From template Tiles/template-network.html
-#. For translators: From template Tiles/template-im-log.html
-#: ../Tiles/TranslationHack.cs:12 ../Tiles/TranslationHack.cs:22
-#: ../Tiles/TranslationHack.cs:32 ../Tiles/TranslationHack.cs:40
-#: ../Tiles/TranslationHack.cs:44 ../Tiles/TranslationHack.cs:50
-#: ../Tiles/TranslationHack.cs:58 ../Tiles/TranslationHack.cs:66
-#: ../Tiles/TranslationHack.cs:76 ../Tiles/TranslationHack.cs:92
-#: ../Tiles/TranslationHack.cs:106 ../Tiles/TranslationHack.cs:114
-#: ../Tiles/TranslationHack.cs:118 ../Tiles/TranslationHack.cs:122
-msgid "Open"
-msgstr "Atverti"
-
-#. For translators: From template Tiles/template-docs.html
-#. For translators: From template Tiles/template-file.html
-#. For translators: From template Tiles/template-folder.html
-#. For translators: From template Tiles/template-picture.html
-#. For translators: From template Tiles/template-presentation.html
-#. For translators: From template Tiles/template-spreadsheet.html
-#: ../Tiles/TranslationHack.cs:14 ../Tiles/TranslationHack.cs:28
-#: ../Tiles/TranslationHack.cs:38 ../Tiles/TranslationHack.cs:68
-#: ../Tiles/TranslationHack.cs:82 ../Tiles/TranslationHack.cs:98
-msgid "in folder"
-msgstr "aplanke"
-
-#. For translators: From template Tiles/template-docs.html
-#. For translators: From template Tiles/template-file.html
-#. For translators: From template Tiles/template-presentation.html
-#. For translators: From template Tiles/template-spreadsheet.html
-#: ../Tiles/TranslationHack.cs:16 ../Tiles/TranslationHack.cs:30
-#: ../Tiles/TranslationHack.cs:84 ../Tiles/TranslationHack.cs:100
-msgid "Last modified"
-msgstr "Vėliausiai modifikuota"
-
-#. For translators: From template Tiles/template-docs.html
-#. For translators: From template Tiles/template-presentation.html
-#. For translators: From template Tiles/template-spreadsheet.html
-#: ../Tiles/TranslationHack.cs:18 ../Tiles/TranslationHack.cs:86
-#: ../Tiles/TranslationHack.cs:102
-msgid "Title:"
-msgstr "Pavadinimas:"
-
-#. For translators: From template Tiles/template-docs.html
-#. For translators: From template Tiles/template-presentation.html
-#. For translators: From template Tiles/template-spreadsheet.html
-#: ../Tiles/TranslationHack.cs:20 ../Tiles/TranslationHack.cs:88
-#: ../Tiles/TranslationHack.cs:104
-msgid "Author:"
-msgstr "Autorius:"
-
-#. For translators: From template Tiles/template-docs.html
-#. For translators: From template Tiles/template-file.html
-#. For translators: From template Tiles/template-picture.html
-#. For translators: From template Tiles/template-presentation.html
-#. For translators: From template Tiles/template-spreadsheet.html
-#: ../Tiles/TranslationHack.cs:24 ../Tiles/TranslationHack.cs:34
-#: ../Tiles/TranslationHack.cs:78 ../Tiles/TranslationHack.cs:94
-#: ../Tiles/TranslationHack.cs:108
-msgid "Send to..."
-msgstr "Siusti į..."
-
-#. For translators: From template Tiles/template-docs.html
-#. For translators: From template Tiles/template-file.html
-#. For translators: From template Tiles/template-music.html
-#. For translators: From template Tiles/template-picture.html
-#. For translators: From template Tiles/template-presentation.html
-#. For translators: From template Tiles/template-spreadsheet.html
-#: ../Tiles/TranslationHack.cs:26 ../Tiles/TranslationHack.cs:36
-#: ../Tiles/TranslationHack.cs:62 ../Tiles/TranslationHack.cs:80
-#: ../Tiles/TranslationHack.cs:96 ../Tiles/TranslationHack.cs:110
-msgid "Reveal in file manager"
-msgstr "Parodyti bylų naršyklėje"
-
-#. For translators: From template Tiles/template-launcher.html
-#: ../Tiles/TranslationHack.cs:42
-msgid "Application:"
-msgstr "Programa:"
-
-#. For translators: From template Tiles/template-mail-message.html
-#: ../Tiles/TranslationHack.cs:46
-msgid "Email subject:"
-msgstr "El.laiško tema:"
-
-#. For translators: From template Tiles/template-mail-message.html
-#: ../Tiles/TranslationHack.cs:48
-msgid "Folder:"
-msgstr "Aplankas:"
-
-#. For translators: From template Tiles/template-music.html
-#: ../Tiles/TranslationHack.cs:54
-msgid "Track"
-msgstr "Takelis"
-
-#. For translators: From template Tiles/template-music.html
-#: ../Tiles/TranslationHack.cs:56
-msgid "from"
-msgstr "iš"
-
-#. For translators: From template Tiles/template-music.html
-#: ../Tiles/TranslationHack.cs:60
-msgid "Enqueue"
-msgstr "Padėti į eilę"
-
-#. For translators: From template Tiles/template-note.html
-#: ../Tiles/TranslationHack.cs:64
-msgid "last modified"
-msgstr "vėliausiai modifikuota"
-
-#. For translators: From template Tiles/template-picture.html
-#: ../Tiles/TranslationHack.cs:70
+#: ../search/Tiles/Image.cs:69
 msgid "Modified:"
 msgstr "Modifikuota:"
 
-#. For translators: From template Tiles/template-picture.html
-#: ../Tiles/TranslationHack.cs:72
-msgid "Tags:"
-msgstr "Žymės:"
+#: ../search/Tiles/IMLog.cs:29
+msgid "IM Conversation"
+msgstr "IM pokalbiai"
 
-#. For translators: From template Tiles/template-picture.html
-#: ../Tiles/TranslationHack.cs:74
-msgid "Description:"
-msgstr "Aprašymas:"
+#: ../search/Tiles/IMLog.cs:89
+msgid "Name:"
+msgstr "Pavadinimas:"
 
-#. For translators: From template Tiles/template-presentation.html
-#: ../Tiles/TranslationHack.cs:90
-msgid "Slides:"
-msgstr "Skaidrės:"
+#: ../search/Tiles/IMLog.cs:90 ../search/Tiles/MailMessage.cs:69
+msgid "Date Received:"
+msgstr "Gavimo data:"
 
-#. For translators: From template Tiles/template-web-history.html
-#: ../Tiles/TranslationHack.cs:112
-msgid "Last viewed:"
-msgstr "Vėliausiai žiūrėta:"
+#: ../search/Tiles/MailAttachment.cs:45
+msgid "Mail attachment"
+msgstr "Laiško priedas"
 
-#. For translators: From template Tiles/template-network.html
-#: ../Tiles/TranslationHack.cs:116
-msgid "from Networked Beagle on host"
-msgstr "nuo Tinklinio Beagle kompiuteryje"
+#: ../search/Tiles/MailMessage.cs:33
+msgid "Send in Mail"
+msgstr "Išsiųsti paštu"
 
-#. For translators: From template Tiles/template-network.html
-#: ../Tiles/TranslationHack.cs:120
-msgid "Search Networked Beagle"
-msgstr "Ieškoti Tinkliniame Beagle"
+#: ../search/Tiles/MailMessage.cs:63
+msgid "Subject:"
+msgstr "Tema:"
 
-#: ../tools/Settings.cs:217
+#: ../search/Tiles/MailMessage.cs:66
+msgid "From:"
+msgstr "Nuo:"
+
+#: ../search/Tiles/Presentation.cs:33
+#, csharp-format
+msgid "{0} slide"
+msgid_plural "{0} slides"
+msgstr[0] "{0} skaidrė"
+msgstr[1] "{0} skaidrės"
+msgstr[2] "{0} skaidrių"
+
+#: ../search/Tiles/RSSFeed.cs:48
+msgid "Site:"
+msgstr "Svetainė:"
+
+#: ../search/Tiles/RSSFeed.cs:51
+msgid "Date Viewed:"
+msgstr "Žiūrėjimo data:"
+
+#: ../search/Tiles/TextDocument.cs:37
+#, csharp-format
+msgid "{0} page"
+msgid_plural "{0} pages"
+msgstr[0] "{0} puslapis"
+msgstr[1] "{0} puslapiai"
+msgstr[2] "{0} puslapių"
+
+#: ../search/Tiles/Tile.cs:179
+msgid "Open"
+msgstr "Atverti"
+
+#: ../search/Tiles/Utils.cs:23
+msgid "Application"
+msgstr "Programa"
+
+#: ../search/Tiles/Utils.cs:25
+msgid "Contact"
+msgstr "Kontaktas"
+
+#: ../search/Tiles/Utils.cs:27
+msgid "Folder"
+msgstr "Aplankas"
+
+#: ../search/Tiles/Utils.cs:29
+msgid "Image"
+msgstr "Paveikslėlis"
+
+#: ../search/Tiles/Utils.cs:31
+msgid "Audio"
+msgstr "Garsas"
+
+#: ../search/Tiles/Utils.cs:33
+msgid "Video"
+msgstr "Vaizdas"
+
+#: ../search/Tiles/Utils.cs:35
+msgid "Documents"
+msgstr "Dokumentai"
+
+#: ../search/Tiles/Utils.cs:37
+msgid "Conversations"
+msgstr "Pokalbiai"
+
+#: ../search/Tiles/Utils.cs:39
+msgid "Website"
+msgstr "Svetainė"
+
+#: ../search/Tiles/Utils.cs:41
+msgid "News Feed"
+msgstr "Naujienų kanalas"
+
+#: ../search/Tiles/Utils.cs:43
+msgid "Archive"
+msgstr "Archyvas"
+
+#: ../search/Tiles/Utils.cs:155
+#, csharp-format
+msgid "{0} week ago"
+msgid_plural "{0} weeks ago"
+msgstr[0] "prieš {0} savaitę"
+msgstr[1] "prieš {0} savaites"
+msgstr[2] "prieš {0} savaičių"
+
+#. Lets say a year and a half to stop saying months
+#: ../search/Tiles/Utils.cs:157
+#, csharp-format
+msgid "{0} month ago"
+msgid_plural "{0} months ago"
+msgstr[0] "prieš {0} mėnesį"
+msgstr[1] "prieš {0} mėnesius"
+msgstr[2] "prieš {0} mėnesių"
+
+#: ../search/Tiles/Utils.cs:159
+#, csharp-format
+msgid "{0} year ago"
+msgid_plural "{0} years ago"
+msgstr[0] "prieš {0} metus"
+msgstr[1] "prieš {0} metus"
+msgstr[2] "prieš {0} metų"
+
+#. FIXME: We need filters for video in Beagle.
+#. They should land soon when entagged-sharp gets video support.
+#: ../search/Tiles/Video.cs:27
+msgid "Unknown duration"
+msgstr "Nežinoma trukmė"
+
+#: ../search/Tiles/WebHistory.cs:53
+msgid "URL:"
+msgstr "URL:"
+
+#: ../search/Tiles/WebHistory.cs:56
+msgid "Accessed:"
+msgstr "Žiūrėta:"
+
+#: ../search/Tray/TrayIcon.cs:32
+msgid "Desktop Search"
+msgstr "Darbo aplinkos paieška"
+
+#: ../search/Tray/TrayIcon.cs:57
+msgid "No Recent Searches"
+msgstr "Nėra paskutiniųjų paieškų"
+
+#: ../search/Tray/TrayIcon.cs:62
+msgid "Recent Searches"
+msgstr "Paskutiniosios paieškos"
+
+#: ../search/Tray/TrayIcon.cs:78
+msgid "Clear"
+msgstr "Išvalyti"
+
+#: ../search/Tray/TrayIcon.cs:86
+msgid "Quit"
+msgstr "Išeiti"
+
+#. Translators: the strings in TypeFilter.cs are for when the user
+#. * wants to limit search results to a specific type. You don't need
+#. * to give an exact translation of the exact same set of English
+#. * words. Just provide a list of likely words the user might use
+#. * after the "type:" keyword to refer to each type of match.
+#.
+#: ../search/TypeFilter.cs:36
+msgid ""
+"file\n"
+"files"
+msgstr ""
+"rinkmena\n"
+"rinkmenos"
+
+#: ../search/TypeFilter.cs:37
+msgid ""
+"mail\n"
+"email\n"
+"e-mail"
+msgstr ""
+"laiškas\n"
+"laiškai\n"
+"el.laiškas\n"
+"el.laiškai\n"
+"el. laiškas\n"
+"el. laiškai"
+
+#: ../search/TypeFilter.cs:38
+msgid ""
+"im\n"
+"ims\n"
+"instant message\n"
+"instant messages\n"
+"instant-message\n"
+"instant-messages\n"
+"chat\n"
+"chats"
+msgstr ""
+"im\n"
+"greita žinutė\n"
+"greitos žinutės\n"
+"pokalbis\n"
+"pokalbiai"
+
+#: ../search/TypeFilter.cs:39
+msgid ""
+"presentation\n"
+"presentations\n"
+"slideshow\n"
+"slideshows\n"
+"slide\n"
+"slides"
+msgstr ""
+"prezentacija\n"
+"prezentacijos\n"
+"pateiktis\n"
+"pateiktys\n"
+"skaidrės"
+
+#: ../search/TypeFilter.cs:41
+msgid ""
+"application\n"
+"applications\n"
+"app\n"
+"apps"
+msgstr ""
+"programa\n"
+"programos"
+
+#: ../search/TypeFilter.cs:42
+msgid ""
+"contact\n"
+"contacts\n"
+"vcard\n"
+"vcards"
+msgstr ""
+"kontaktas\n"
+"kontaktai\n"
+"vizitinė kortelė\n"
+"vizitinės kortelės"
+
+#: ../search/TypeFilter.cs:43
+msgid ""
+"folder\n"
+"folders"
+msgstr ""
+"aplankas\n"
+"aplankai"
+
+#: ../search/TypeFilter.cs:44
+msgid ""
+"image\n"
+"images\n"
+"img"
+msgstr ""
+"paveikslėlis\n"
+"paveikslėliai\n"
+"pav"
+
+#: ../search/TypeFilter.cs:45
+msgid "audio"
+msgstr ""
+"garsas\n"
+"audio"
+
+#: ../search/TypeFilter.cs:46
+msgid "video"
+msgstr ""
+"vaizdas\n"
+"video"
+
+#: ../search/TypeFilter.cs:47
+msgid "media"
+msgstr "multimedija"
+
+#: ../search/TypeFilter.cs:48
+msgid ""
+"document\n"
+"documents\n"
+"office document\n"
+"office documents"
+msgstr ""
+"dokumentas\n"
+"dokumentai\n"
+"biuro dokumentas\n"
+"biuro dokumentai"
+
+#: ../search/TypeFilter.cs:49
+msgid ""
+"conversation\n"
+"conversations"
+msgstr ""
+"pokalbis\n"
+"pokalbiai"
+
+#: ../search/TypeFilter.cs:50
+msgid ""
+"web\n"
+"www\n"
+"website\n"
+"websites"
+msgstr ""
+"www\n"
+"svetainė\n"
+"svetainės\n"
+"tinklalapis\n"
+"tinklalapiai"
+
+#: ../search/TypeFilter.cs:51
+msgid ""
+"feed\n"
+"news\n"
+"blog\n"
+"rss"
+msgstr ""
+"kanalas\n"
+"naujienos\n"
+"žurnalas\n"
+"blogas\n"
+"weblogas\n"
+"rss"
+
+#: ../search/TypeFilter.cs:52
+msgid ""
+"archive\n"
+"archives"
+msgstr ""
+"archyvas\n"
+"archyvai"
+
+#: ../search/TypeFilter.cs:53
+msgid ""
+"person\n"
+"people"
+msgstr ""
+"asmuo\n"
+"asmenys\n"
+"žmogus\n"
+"žmonės"
+
+#: ../search/UIManager.cs:35
+msgid "_Search"
+msgstr "_Paieška"
+
+#: ../search/UIManager.cs:38
+msgid "_Actions"
+msgstr "_Veiksmai"
+
+#: ../search/UIManager.cs:41
+msgid "Sor_t"
+msgstr "Rūšiuo_ti"
+
+#: ../search/UIManager.cs:44
+msgid "_Help"
+msgstr "_Žinynas"
+
+#: ../search/UIManager.cs:49 ../search/UIManager.cs:53
+msgid "Exit Desktop Search"
+msgstr "Uždaryti darbo aplinkos paiešką"
+
+#: ../search/UIManager.cs:56
+msgid "_Contents"
+msgstr "_Turinys"
+
+#: ../search/UIManager.cs:58
+msgid "Help - Table of Contents"
+msgstr "Žinynas - Turinys"
+
+#: ../search/UIManager.cs:62
+msgid "About Desktop Search"
+msgstr "Apie darbo aplinkos paiešką"
+
+#: ../search/UIManager.cs:75
+msgid "_Everywhere"
+msgstr "_Visur"
+
+#: ../search/UIManager.cs:77
+msgid "Search everywhere"
+msgstr "Ieškoti visur"
+
+#: ../search/UIManager.cs:80
+msgid "_Applications"
+msgstr "_Programos"
+
+#: ../search/UIManager.cs:82
+msgid "Search applications"
+msgstr "Ieškoti programose"
+
+#: ../search/UIManager.cs:85
+msgid "_Contacts"
+msgstr "_Kontaktai"
+
+#: ../search/UIManager.cs:87
+msgid "Search contacts"
+msgstr "Ieškoti kontaktuose"
+
+#: ../search/UIManager.cs:90
+msgid "_Documents"
+msgstr "_Dokumentai"
+
+#: ../search/UIManager.cs:92
+msgid "Search documents"
+msgstr "Ieškoti dokumentuose"
+
+#: ../search/UIManager.cs:95
+msgid "Conve_rsations"
+msgstr "P_okalbiai"
+
+#: ../search/UIManager.cs:97
+msgid "Search E-Mail and Instant Messaging logs"
+msgstr "Ieškoti el. laiškų ir greitų žinučių žurnalų"
+
+#: ../search/UIManager.cs:100
+msgid "Images"
+msgstr "Paveikslėliai"
+
+#: ../search/UIManager.cs:102
+msgid "Search images"
+msgstr "Ieškoti paveikslėlių"
+
+#: ../search/UIManager.cs:105
+msgid "Media"
+msgstr "Multimedija"
+
+#: ../search/UIManager.cs:107
+msgid "Search sound and video files"
+msgstr "Ieškoti garso ir vaizdo rinkmenų"
+
+#: ../search/UIManager.cs:114
+msgid "Date _Modified"
+msgstr "_Modifikavimo data"
+
+#: ../search/UIManager.cs:115
+msgid "Sort the most-recently-modified matches first"
+msgstr "Rūšiuoti pagal vėliausiai modifikuotus atitikmenis"
+
+#: ../search/UIManager.cs:118
+msgid "_Name"
+msgstr "_Pavadinimas"
+
+#: ../search/UIManager.cs:119
+msgid "Sort matches by name"
+msgstr "Rūšiuoti atitikmenis pagal pavadinimą"
+
+#: ../search/UIManager.cs:122
+msgid "_Relevance"
+msgstr "_Tinkamumas"
+
+#: ../search/UIManager.cs:123
+msgid "Sort the best matches first"
+msgstr "Rūšiuoti pagal atitikmens tikslumą"
+
+#: ../tools/Settings.cs:216
 msgid "Reload configuration"
 msgstr "Perkrauti konfigūraciją"
 
-#: ../tools/Settings.cs:218
+#: ../tools/Settings.cs:217
 msgid ""
 "The configuration file has been modified by another application. Do you wish "
 "to discard the currently displayed values and reload configuration from disk?"
 msgstr ""
-"Konfigūracijos byla buvo modifikuota kitos programos. Ar norite atsisakyti "
+"Konfigūracijos rinkmena buvo modifikuota kitos programos. Ar norite atsisakyti "
 "dabar rodomų reikšmių ir iš naujo įkelti konfigūraciją iš disko?"
 
-#: ../tools/Settings.cs:256
+#: ../tools/Settings.cs:255
 msgid "Select Path"
 msgstr "Pasirinkite kelią"
 
-#: ../tools/Settings.cs:275
+#: ../tools/Settings.cs:274
 msgid "The selected path is already selected for indexing and wasn't added."
 msgstr "Pasirinktas kelias jau pasirinktas indeksavimui bet nebuvo pridėtas."
 
-#: ../tools/Settings.cs:278
+#: ../tools/Settings.cs:277
 msgid ""
 "The selected path wasn't added. The list contains items that supercedes it "
 "and the data is already being indexed."
@@ -418,15 +696,15 @@ msgstr ""
 "Pasirinktas kelias nebuvo pridėtas. Sąraše yra elementai, kurie jį pakeičia "
 "ir duomenys jau yra indeksuojami."
 
-#: ../tools/Settings.cs:289 ../tools/Settings.cs:481
+#: ../tools/Settings.cs:288 ../tools/Settings.cs:480
 msgid "Path not added"
 msgstr "Kelias nepridėtas"
 
-#: ../tools/Settings.cs:298
+#: ../tools/Settings.cs:297
 msgid "Remove obsolete paths"
 msgstr "Pašalinti nebenaudojamus kelius"
 
-#: ../tools/Settings.cs:299
+#: ../tools/Settings.cs:298
 msgid ""
 "Adding this path will obsolete some of the existing include paths. This will "
 "result in the removal of the old obsolete paths. Do you still wish to add it?"
@@ -434,96 +712,96 @@ msgstr ""
 "Pridėjus šį kelią, kai kurie egzistuojantys keliai taps pasenusiais. Šie "
 "seni ir nebenaudojami keliai bus ištrinti. Vis dar norite jį pridėti?"
 
-#: ../tools/Settings.cs:325
+#: ../tools/Settings.cs:324
 msgid "Remove path"
 msgstr "Pašalinti kelią"
 
-#: ../tools/Settings.cs:326
+#: ../tools/Settings.cs:325
 msgid ""
 "Are you sure you wish to remove this path from the list of directories to be "
 "included for indexing?"
 msgstr "Ar tikrai norite pašalinti šį kelią iš indeksuojamų aplankų sąrašo?"
 
-#: ../tools/Settings.cs:355
+#: ../tools/Settings.cs:354
 msgid "Remove item"
 msgstr "Pašalinti elementą"
 
-#: ../tools/Settings.cs:356
+#: ../tools/Settings.cs:355
 msgid ""
 "Are you sure you wish to remove this item from the list of data to be "
 "excluded from indexing?"
 msgstr ""
 "Ar tikrai norite pašalinti šį elementą iš neindeksuojamų duomenų sąrašo?"
 
-#: ../tools/Settings.cs:399
+#: ../tools/Settings.cs:398
 msgid "Invalid host entry"
 msgstr "Netinkamas kompiuterio įrašas"
 
-#: ../tools/Settings.cs:406
+#: ../tools/Settings.cs:405
 msgid "Remote host already present in the list."
 msgstr "Nutolęs kompiuteris jau sąraše yra."
 
-#: ../tools/Settings.cs:415
+#: ../tools/Settings.cs:414
 msgid "Netbeagle Node not added"
 msgstr "Netbeagle mazgas nepridėtas"
 
-#: ../tools/Settings.cs:431
+#: ../tools/Settings.cs:430
 msgid "Remove host"
 msgstr "Pašalinti kompiuterį"
 
-#: ../tools/Settings.cs:432
+#: ../tools/Settings.cs:431
 msgid "Are you sure you wish to remove this host from the list?"
 msgstr "Ar tikrai norite pašalinti šį kompiuterį iš sąrašo?"
 
-#: ../tools/Settings.cs:453
+#: ../tools/Settings.cs:452
 msgid "Select path"
 msgstr "Pasirinkite kelią"
 
-#: ../tools/Settings.cs:472
+#: ../tools/Settings.cs:471
 msgid "The selected path is already configured for external access."
 msgstr "Pasirinktas kelias jau sukonfigūruotas išoriniam priėjimui."
 
-#: ../tools/Settings.cs:496
+#: ../tools/Settings.cs:495
 msgid "Remove public path"
 msgstr "Pašalinti viešą kelią"
 
-#: ../tools/Settings.cs:497
+#: ../tools/Settings.cs:496
 msgid ""
 "Are you sure you wish to remove this entry from the list of public paths?"
 msgstr "Ar tikrai norite pašalinti šį įrašą iš viešų kelių sąrašo?"
 
-#: ../tools/Settings.cs:542 ../tools/Settings.cs:631 ../tools/Settings.cs:709
-#: ../tools/Settings.cs:785 ../tools/Settings.cs:1124
+#: ../tools/Settings.cs:541 ../tools/Settings.cs:630 ../tools/Settings.cs:708
+#: ../tools/Settings.cs:784 ../tools/Settings.cs:1123
 msgid "Name"
 msgstr "Vardas"
 
-#: ../tools/Settings.cs:625 ../tools/settings.glade.h:33
+#: ../tools/Settings.cs:624 ../tools/settings.glade.h:33
 msgid "Type"
 msgstr "Tipas"
 
-#: ../tools/Settings.cs:678 ../tools/Settings.cs:1058
+#: ../tools/Settings.cs:677 ../tools/Settings.cs:1057
 #: ../tools/settings.glade.h:25
 msgid "Path"
 msgstr "Kelias"
 
-#: ../tools/Settings.cs:681 ../tools/Settings.cs:1068
+#: ../tools/Settings.cs:680 ../tools/Settings.cs:1067
 msgid "Pattern"
 msgstr "Šablonas"
 
-#: ../tools/Settings.cs:684 ../tools/Settings.cs:1063
+#: ../tools/Settings.cs:683 ../tools/Settings.cs:1062
 #: ../tools/settings.glade.h:22
 msgid "Mail Folder"
 msgstr "Pašto aplankas"
 
-#: ../tools/Settings.cs:1032
+#: ../tools/Settings.cs:1031
 msgid "Select Folder"
 msgstr "Pasirinkite aplanką"
 
-#: ../tools/Settings.cs:1092
+#: ../tools/Settings.cs:1091
 msgid "Error adding path"
 msgstr "Klaida pridedant kelią"
 
-#: ../tools/Settings.cs:1093
+#: ../tools/Settings.cs:1092
 msgid ""
 "The specified path could not be found and therefore it could not be added to "
 "the list of resources excluded for indexing."
@@ -531,7 +809,7 @@ msgstr ""
 "Nurodytas kelias nerastas, todėl jis nebuvo įtrauktas į neindeksuojamų "
 "resursų sąrašą."
 
-#: ../tools/Settings.cs:1123
+#: ../tools/Settings.cs:1122
 msgid "Show"
 msgstr "Rodyti"
 
@@ -616,7 +894,7 @@ msgstr "Rodyti paieškos langą paspaudus"
 
 #: ../tools/settings.glade.h:19
 msgid "Filename Pattern"
-msgstr "Bylos vardo šablonas"
+msgstr "Rinkmenos vardo šablonas"
 
 #: ../tools/settings.glade.h:20
 msgid "Index my home directory"
@@ -641,10 +919,6 @@ msgstr "Pasirinkite resursą, kurio indeksuoti nenorite."
 #: ../tools/settings.glade.h:27
 msgid "Please select the mail folder you wish to exclude from indexing. "
 msgstr "Pasirinkite pašto aplanką, kurio indeksuoti nenorite."
-
-#: ../tools/settings.glade.h:28
-msgid "Search"
-msgstr "Paieška"
 
 #: ../tools/settings.glade.h:29
 msgid "Search Preferences"
@@ -706,64 +980,64 @@ msgstr "Suderinamumo aplankas"
 msgid "Unknown Directory"
 msgstr "Nežinomas aplankas"
 
-#: ../Util/StringFu.cs:75
+#: ../Util/StringFu.cs:77
 msgid "Today"
 msgstr "Šiandien"
 
-#: ../Util/StringFu.cs:77
+#: ../Util/StringFu.cs:79
 msgid "Yesterday"
 msgstr "Vakar"
 
 #. Translators: Example output: Aug 9
-#: ../Util/StringFu.cs:80
+#: ../Util/StringFu.cs:82
 msgid "MMM d"
 msgstr "MMM d"
 
 #. Translators: Example output: Aug 9, 2000
-#: ../Util/StringFu.cs:83
+#: ../Util/StringFu.cs:85
 msgid "MMM d, yyyy"
 msgstr "yyyy MMM d"
 
 #. Translators: Example output: 11:05 AM  (note h = 12-hour time)
-#: ../Util/StringFu.cs:86
+#: ../Util/StringFu.cs:88
 msgid "h:mm tt"
 msgstr "H:mm"
 
 #. Translators: {0} is a date (e.g. 'Today' or 'Apr 23'), {1} is the time
-#: ../Util/StringFu.cs:92
+#: ../Util/StringFu.cs:94
 #, csharp-format
 msgid "{0}, {1}"
 msgstr "{0}, {1}"
 
 #. To translators: {0} is the time of the day, eg. 13:45
-#: ../Util/StringFu.cs:109
+#: ../Util/StringFu.cs:111
 #, csharp-format
 msgid "Today, {0}"
 msgstr "Šiandien, {0}"
 
 #. To translators: {0} is the time of the day, eg. 13:45
-#: ../Util/StringFu.cs:112
+#: ../Util/StringFu.cs:114
 #, csharp-format
 msgid "Yesterday, {0}"
 msgstr "Vakar, {0}"
 
 #. To translators: {0} is the number of days that have passed, {1} is the time of the day, eg. 13:45
-#: ../Util/StringFu.cs:115
+#: ../Util/StringFu.cs:117
 #, csharp-format
 msgid "{0} days ago, {1}"
 msgstr "prieš {0} dienas, {1}"
 
 #. Translators: Example output: January 3, 3:45 PM
-#: ../Util/StringFu.cs:120
+#: ../Util/StringFu.cs:122
 msgid "MMMM d, h:mm tt"
 msgstr "MMM d, H:mm"
 
 #. Translators: Example output: March 23 2001, 10:04 AM
-#: ../Util/StringFu.cs:125
+#: ../Util/StringFu.cs:127
 msgid "MMMM d yyyy, h:mm tt"
 msgstr "yyyy MMMM d, H:mm"
 
-#: ../Util/StringFu.cs:135
+#: ../Util/StringFu.cs:137
 #, csharp-format
 msgid "{0} hour"
 msgid_plural "{0} hours"
@@ -771,7 +1045,7 @@ msgstr[0] "{0} valanda"
 msgstr[1] "{0} valandos"
 msgstr[2] "{0} valandų"
 
-#: ../Util/StringFu.cs:142
+#: ../Util/StringFu.cs:144
 #, csharp-format
 msgid "{0} minute"
 msgid_plural "{0} minutes"
@@ -780,19 +1054,19 @@ msgstr[1] "{0} minutės"
 msgstr[2] "{0} minučių"
 
 #. Translators: {0} is a file size in bytes
-#: ../Util/StringFu.cs:158
+#: ../Util/StringFu.cs:160
 #, csharp-format
 msgid "{0} bytes"
 msgstr "{0} bytes"
 
 #. Translators: {0} is a file size in kilobytes
-#: ../Util/StringFu.cs:162
+#: ../Util/StringFu.cs:164
 #, csharp-format
 msgid "{0:0.0} KB"
 msgstr "{0:0.0} KB"
 
 #. Translators: {0} is a file size in megabytes
-#: ../Util/StringFu.cs:165
+#: ../Util/StringFu.cs:167
 #, csharp-format
 msgid "{0:0.0} MB"
 msgstr "{0:0.0} MB"
