@@ -2,7 +2,7 @@
 
 if [ -e ./@target@ ] && [ -e ./Makefile.am ] ; then
     echo "*** Running uninstalled @target@ ***"
-    THIS_PATH="../Util:../BeagleClient"
+    THIS_PATH="../Util:../BeagleClient:../beagle"
     THIS_EXE="./@target@"
     THIS_FILTERS="../Filters"
 else
