@@ -61,6 +61,8 @@ namespace Search {
 			foreach (Category box in categories.Values) {
 				foreach (Tile tile in box.AllTiles) {
 					if (tile.Hit.Uri.Equals (uri)) {
+						if (tile.State == StateType.Selected)
+							OnTileSelected (null, EventArgs.Empty);
 						box.Remove (tile);
 						return;
 					}
@@ -113,7 +115,8 @@ namespace Search {
 			if (selection != null)
 				selection.State = StateType.Normal;
 			selection = (Gtk.Widget)tile;
-			selection.State = StateType.Selected;
+			if (selection != null)
+				selection.State = StateType.Selected;
 		}
 
 		private ScopeType scope;
