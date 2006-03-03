@@ -53,7 +53,7 @@ namespace Search {
 
 			if (query != null && query != "" && !icon_enabled) {
 				window.entry.Text = query;
-				window.Search ();
+				window.Search (true);
 			}
 
 			program.Run ();
@@ -187,7 +187,7 @@ namespace Search {
 			pages.Add (rootuser);
 
 			startdaemon = new Pages.StartDaemon ();
-			startdaemon.DaemonStarted += Search;
+			startdaemon.DaemonStarted += OnDaemonStarted;
 			startdaemon.Show ();
 			pages.Add (startdaemon);
 
@@ -232,7 +232,7 @@ namespace Search {
 			Title = String.Format ("Desktop Search: {0}", query);
 		}
 
-		private void Search ()
+		private void Search (bool grabFocus)
 		{
 			if (timeout != 0) {
 				GLib.Source.Remove (timeout);
@@ -256,7 +256,9 @@ namespace Search {
 			view.Scope = scope;
 			view.Sort = sort;
 			pages.CurrentPage = pages.PageNum (panes);
-			oldFocus = Focus;
+
+			if (grabFocus)
+				oldFocus = Focus;
 
 			try {
 				if (currentQuery != null) {
@@ -292,7 +294,12 @@ namespace Search {
 
 		private void OnEntryActivated (object obj, EventArgs args)
 		{
-			Search ();
+			Search (true);
+		}
+
+		private void OnDaemonStarted ()
+		{
+			Search (true);
 		}
 
 		private void OnEntryChanged (object obj, EventArgs args)
@@ -305,13 +312,13 @@ namespace Search {
 		private bool OnEntryTimeout ()
 		{
 			timeout = 0;
-			Search ();
+			Search (false);
 			return false;
 		}
 
 		private void OnButtonClicked (object obj, EventArgs args)
 		{
-			Search ();
+			Search (true);
 		}
 
 		private void OnWindowDelete (object o, Gtk.DeleteEventArgs args)
@@ -414,7 +421,7 @@ namespace Search {
 				ShowAll ();
 
 			entry.Text = query;
-			Search ();
+			Search (true);
 		}
 	}
 }
