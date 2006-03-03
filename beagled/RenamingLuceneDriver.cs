@@ -58,7 +58,7 @@ namespace Beagle.Daemon {
 			driver.Add (indexable);
 			
 			Guid uid = GuidFu.FromUri (indexable.Uri);
-			string name = Path.GetFileName (indexable.ContentUri.LocalPath);
+			string name = FileSystem.GetFileName (indexable.ContentUri.LocalPath);
 			name_index.Add (uid, name);
 		}
 
@@ -78,7 +78,7 @@ namespace Beagle.Daemon {
 		public void Rename (Uri old_uri, Uri new_uri)
 		{
 			Guid uid = GuidFu.FromUri (old_uri);
-			string name = Path.GetFileName (new_uri.LocalPath);
+			string name = FileSystem.GetFileName (new_uri.LocalPath);
 			name_index.Add (uid, name);
 			renamed_uris.Add (old_uri);
 			renamed_uris.Add (new_uri);

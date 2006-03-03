@@ -88,7 +88,7 @@ namespace Beagle.Daemon.FileSystemQueryable {
 			root = new DirectoryModel (attr);
 
 			root.big_lock = big_lock;
-			root.rooted_to = Path.GetDirectoryName (path);
+			root.rooted_to = FileSystem.GetDirectoryNameRootOk (path);
 			root.name = Path.GetFileName (path);
 
 			return root;
@@ -392,7 +392,7 @@ namespace Beagle.Daemon.FileSystemQueryable {
 				path = StringFu.SanitizePath (path);
 
 				if (IsRoot) {
-					
+
 					if (! Path.IsPathRooted (path)) {
 						string msg;
 						msg = String.Format ("Attempt to walk non-rooted path '{0}' on root node '{1}'",
@@ -408,15 +408,20 @@ namespace Beagle.Daemon.FileSystemQueryable {
 
 					if (path == FullName)
 						return this;
+
+					// The root directory is special in that it's the only
+					// path that contains a trailing slash.  It has to be
+					// handled specially.  What a pain.
+					string fn = FullName == "/" ? "" : FullName;
 				
 					// This is safe: Since we know that path != FullName but
 					// that path.StartsWith (FullName), we can conclude that
 					// path.Length > FullName.Length.
-					if (path [FullName.Length] != Path.DirectorySeparatorChar) 
+					if (path [fn.Length] != Path.DirectorySeparatorChar) 
 						return null;
 
 					// Drop the part of the path containing the root's path.
-					path = path.Substring (FullName.Length+1);
+					path = path.Substring (fn.Length+1);
 
 				} else if (Path.IsPathRooted (path)) {
 					string msg;
@@ -424,7 +429,7 @@ namespace Beagle.Daemon.FileSystemQueryable {
 							     path, FullName);
 					throw new Exception (msg);
 				}
-				
+
 				if (path.Length == 0)
 					return this;
 				
@@ -444,7 +449,7 @@ namespace Beagle.Daemon.FileSystemQueryable {
 					child_name = path.Substring (0, i);
 					rest_of_path = path.Substring (i+1);
 				}
-				
+
 				DirectoryModel dir;
 				dir = children [child_name] as DirectoryModel;
 

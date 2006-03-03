@@ -765,7 +765,7 @@ namespace Beagle.Daemon.FileSystemQueryable {
 			bool path_is_registered = true;
 
 			if (dir == null) {
-				dir = GetDirectoryModelByPath (Path.GetDirectoryName (path));
+				dir = GetDirectoryModelByPath (FileSystem.GetDirectoryNameRootOk (path));
 				path_is_registered = false;
 
 				if (dir == null) {

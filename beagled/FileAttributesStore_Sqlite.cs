@@ -294,7 +294,7 @@ namespace Beagle.Daemon {
 
 			// We need to quote any 's that appear in the strings
 			// (int particular, in the path)
-			string directory = Path.GetDirectoryName (path).Replace ("'", "''");
+			string directory = FileSystem.GetDirectoryNameRootOk (path).Replace ("'", "''");
 			string filename = Path.GetFileName (path).Replace ("'", "''");
 			lock (connection) {
 				command = QueryCommand ("directory='{0}' AND filename='{1}'",
@@ -361,7 +361,7 @@ namespace Beagle.Daemon {
 
 			// We need to quote any 's that appear in the strings
 			// (in particular, in the path)
-			string directory = Path.GetDirectoryName (path).Replace ("'", "''");
+			string directory = FileSystem.GetDirectoryNameRootOk (path).Replace ("'", "''");
 			string filename = Path.GetFileName (path).Replace ("'", "''");
 			lock (connection) {
 

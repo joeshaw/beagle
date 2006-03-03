@@ -355,7 +355,8 @@ namespace Beagle.Util {
 					watched.Subscribers = new ArrayList ();
 					watched.Children = new ArrayList ();
 					DirectoryInfo dir = new DirectoryInfo (path);
-					watched.Parent = watched_by_path [dir.Parent.ToString ()] as WatchInfo;
+					if (dir.Parent != null)
+						watched.Parent = watched_by_path [dir.Parent.ToString ()] as WatchInfo;
 					if (watched.Parent != null)
 						watched.Parent.Children.Add (watched);
 					watched_by_path [watched.Path] = watched;

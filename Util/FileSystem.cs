@@ -64,6 +64,16 @@ namespace Beagle.Util {
 			return (stat.st_mode & Mono.Unix.Native.FilePermissions.S_IFLNK) == Mono.Unix.Native.FilePermissions.S_IFLNK;
 		}
 
+		// Special version of this function which handles the root directory.
+		static public string GetDirectoryNameRootOk (string path)
+		{
+			// System.IO.Path.GetDirectoryName ("/") returns null.
+			// Handle it specially.
+			if (path == "/")
+				return path;
+
+			return System.IO.Path.GetDirectoryName (path);
+		}
 	}
 
 }

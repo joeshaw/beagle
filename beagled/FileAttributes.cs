@@ -48,7 +48,7 @@ namespace Beagle.Daemon {
 		}
 
 		public string Directory {
-			get { return System.IO.Path.GetDirectoryName (path); }
+			get { return FileSystem.GetDirectoryNameRootOk (path); }
 			set { path = System.IO.Path.Combine (value, Filename); }
 		}
 
