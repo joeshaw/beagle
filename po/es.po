@@ -11,8 +11,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: es\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2006-02-10 16:21+0100\n"
-"PO-Revision-Date: 2006-02-10 16:40+0100\n"
+"POT-Creation-Date: 2006-03-04 16:11+0100\n"
+"PO-Revision-Date: 2006-03-04 16:20+0100\n"
 "Last-Translator: Francisco Javier F. Serrador <serrador@cvs.gnome.org>\n"
 "Language-Team: Spanish <traductores@es.gnome.org>\n"
 "MIME-Version: 1.0\n"
@@ -55,26 +55,10 @@ msgstr "Búsqueda"
 msgid "Search for data on your desktop"
 msgstr "Buscar datos en el escritorio"
 
-#: ../search/Category.cs:87
+#: ../search/Category.cs:103
 #, csharp-format
-msgid "Top {0} Result"
-msgid_plural "Top {0} Results"
-msgstr[0] ""
-msgstr[1] ""
-
-#: ../search/Category.cs:88
-#, csharp-format
-msgid "Previous {0}"
-msgid_plural "Previous {0}"
-msgstr[0] "Anterior {0}"
-msgstr[1] "Anteriores {0}"
-
-#: ../search/Category.cs:89
-#, csharp-format
-msgid "Next {0}"
-msgid_plural "Next {0}"
-msgstr[0] "Siguiente {0}"
-msgstr[1] "Siguientes {0}"
+msgid "{0}-{1} of {2}"
+msgstr "{0}-{1} de {2}"
 
 #: ../search/Pages/NoMatch.cs:19
 msgid "No results were found."
@@ -89,33 +73,49 @@ msgstr "Su búsqueda de {0} no encontró ningún archivo en su equipo."
 msgid ""
 "You can change the scope of your search using the \"Search\" menu. A broader "
 "search scope might produce more results."
-msgstr "Puedes cambiar el ámbito de tu búsqueda usando el menú «Buscar». Un ámbito de búsqueda más ancho quizá produzca más resultados."
+msgstr ""
+"Puedes cambiar el ámbito de tu búsqueda usando el menú «Buscar». Un ámbito "
+"de búsqueda más ancho quizá produzca más resultados."
 
 #: ../search/Pages/NoMatch.cs:26
 msgid ""
 "You should check the spelling of your search words to see if you "
 "accidentally misspelled any words."
-msgstr "Debería comprobar la ortografía de sus palabras de búsqueda para ver si accidentalmente las ha escrito mal."
+msgstr ""
+"Debería comprobar la ortografía de sus palabras de búsqueda para ver si "
+"accidentalmente las ha escrito mal."
 
 #: ../search/Pages/QuickTips.cs:10
 msgid "You can use upper and lower case; search is case-insensitive."
-msgstr "Puede usar mayúsculas o minúsculas. La búsqueda no es sensible a la capitalización."
+msgstr ""
+"Puede usar mayúsculas o minúsculas. La búsqueda no es sensible a la "
+"capitalización."
 
 #: ../search/Pages/QuickTips.cs:11
 msgid "To search for optional terms, use OR.  ex: <b>George OR Ringo</b>"
-msgstr ""
+msgstr "Para buscar términos opcionales, use OR. ej: <b>George or Ringo</b>"
 
 #: ../search/Pages/QuickTips.cs:12
 msgid "To exclude search terms, use the minus symbol in front, such as <b>-cats</b>"
-msgstr ""
+msgstr "Para excluir términos de búsqueda, use el símbolo menos como prefijo, como <b>-gatos</b>"
 
 #: ../search/Pages/QuickTips.cs:13
 msgid "When searching for a phrase, add quotes. ex: <b>\"There be dragons\"</b>"
-msgstr ""
+msgstr "Cuando busque una frase, añada comillas. Ej: <b>\"En un lugar de La Mancha</b>"
 
-#: ../search/Pages/QuickTips.cs:19 ../search/UIManager.cs:62
+#: ../search/Pages/QuickTips.cs:19 ../search/UIManager.cs:65
 msgid "Quick Tips"
 msgstr "Consejos rápidos"
+
+#: ../search/Pages/RootUser.cs:12
+msgid "Beagle cannot be run as root"
+msgstr "Beagle no se puede ejecutar como root"
+
+#: ../search/Pages/RootUser.cs:13
+msgid ""
+"For security reasons, Beagle cannot be run as root.  You should restart as a "
+"regular user."
+msgstr "Por razones de seguridad, Beagle no se puede ejecutar como root. Debería reiniciarlo como un usuario normal."
 
 #: ../search/Pages/StartDaemon.cs:19
 msgid "Daemon not running"
@@ -125,43 +125,35 @@ msgstr "El demonio no está en ejecución"
 msgid "Start the daemon"
 msgstr "Iniciar el demonio"
 
-#: ../search/Search.cs:134
+#: ../search/Search.cs:147
 msgid "_Find:"
 msgstr "_Buscar:"
 
-#: ../search/Search.cs:148
+#: ../search/Search.cs:161
 msgid "Find Now"
 msgstr "Buscar ahora"
 
-#: ../search/Search.cs:188
+#: ../search/Search.cs:205
 msgid "Type in search terms"
 msgstr "Teclee los términos de búsqueda"
 
-#: ../search/Search.cs:189
+#: ../search/Search.cs:206
 msgid "Start searching"
 msgstr "Empezar a buscar"
 
-#: ../search/Tiles/Application.cs:81
-msgid "Move to trash"
-msgstr "Mover a la papelera"
-
-#: ../search/Tiles/Audio.cs:36 ../search/Tiles/Image.cs:38
-msgid "Add to Library"
-msgstr "Añadir a la biblioteca"
-
-#: ../search/Tiles/Contact.cs:64
+#: ../search/Tiles/Contact.cs:53
 msgid "E-Mail:"
 msgstr "Correo-e:"
 
-#: ../search/Tiles/Contact.cs:70
+#: ../search/Tiles/Contact.cs:56
 msgid "Mobile Phone:"
 msgstr "Tlf móvil:"
 
-#: ../search/Tiles/Contact.cs:77
+#: ../search/Tiles/Contact.cs:60
 msgid "Work Phone:"
 msgstr "Tlf. trabajo:"
 
-#: ../search/Tiles/Contact.cs:82
+#: ../search/Tiles/Contact.cs:64
 msgid "Home Phone:"
 msgstr "Tlf. casa:"
 
@@ -173,30 +165,27 @@ msgstr "Revelar en la carpeta"
 msgid "E-Mail"
 msgstr "Correo-e"
 
-#: ../search/Tiles/File.cs:35
-msgid "Instant-Message"
-msgstr "Mensaje instantáneo"
-
+#. AddAction (new TileAction (Catalog.GetString ("Instant-Message"), InstantMessage));
 #. FIXME: s/"gtk-info"/Gtk.Stock.Info/ when we can depend on gtk# 2.8
 #. AddAction (new TileAction (Catalog.GetString ("Show Information"), "gtk-info", ShowInformation));
 #: ../search/Tiles/File.cs:36 ../search/Tiles/Folder.cs:38
 msgid "Move to Trash"
 msgstr "Mover a la papelera"
 
-#: ../search/Tiles/File.cs:146 ../search/Tiles/RSSFeed.cs:53
-#: ../search/Tiles/WebHistory.cs:60
+#: ../search/Tiles/File.cs:132 ../search/Tiles/Note.cs:57
+#: ../search/Tiles/RSSFeed.cs:45 ../search/Tiles/WebHistory.cs:50
 msgid "Title:"
 msgstr "Título:"
 
-#: ../search/Tiles/File.cs:153
-msgid "Author:"
-msgstr "Autor:"
-
-#: ../search/Tiles/File.cs:160
+#: ../search/Tiles/File.cs:135 ../search/Tiles/Note.cs:60
 msgid "Last Edited:"
 msgstr "Modificado por última vez:"
 
-#: ../search/Tiles/File.cs:166 ../search/Tiles/Image.cs:85
+#: ../search/Tiles/File.cs:139
+msgid "Author:"
+msgstr "Autor:"
+
+#: ../search/Tiles/File.cs:143 ../search/Tiles/Image.cs:72
 msgid "Full Path:"
 msgstr "Ruta completa:"
 
@@ -211,15 +200,16 @@ msgid_plural "Contains {0} Items"
 msgstr[0] "Contiene {0} elemento"
 msgstr[1] "Contiene {0} elementos"
 
-#: ../search/Tiles/Folder.cs:67
+#: ../search/Tiles/Folder.cs:54
 msgid "Edited:"
 msgstr "Editado:"
 
+#. AddAction (new TileAction (Catalog.GetString ("Add to Library"), Gtk.Stock.Add, AddToLibrary));
 #: ../search/Tiles/Image.cs:39
 msgid "Set as Wallpaper"
 msgstr "Poner como tapiz"
 
-#: ../search/Tiles/Image.cs:79
+#: ../search/Tiles/Image.cs:69
 msgid "Modified:"
 msgstr "Modificado:"
 
@@ -227,11 +217,11 @@ msgstr "Modificado:"
 msgid "IM Conversation"
 msgstr "Conversación MI"
 
-#: ../search/Tiles/IMLog.cs:77
+#: ../search/Tiles/IMLog.cs:89
 msgid "Name:"
 msgstr "Nombre:"
 
-#: ../search/Tiles/IMLog.cs:82 ../search/Tiles/MailMessage.cs:82
+#: ../search/Tiles/IMLog.cs:90 ../search/Tiles/MailMessage.cs:69
 msgid "Date Received:"
 msgstr "Fecha de recepción:"
 
@@ -243,11 +233,11 @@ msgstr "Adjunto de correo"
 msgid "Send in Mail"
 msgstr "Enviar por correo"
 
-#: ../search/Tiles/MailMessage.cs:72
+#: ../search/Tiles/MailMessage.cs:63
 msgid "Subject:"
 msgstr "Asunto:"
 
-#: ../search/Tiles/MailMessage.cs:77
+#: ../search/Tiles/MailMessage.cs:66
 msgid "From:"
 msgstr "De:"
 
@@ -258,11 +248,11 @@ msgid_plural "{0} slides"
 msgstr[0] "{0} diapositiva"
 msgstr[1] "{0} diapositivas"
 
-#: ../search/Tiles/RSSFeed.cs:58
+#: ../search/Tiles/RSSFeed.cs:48
 msgid "Site:"
 msgstr "Sitio:"
 
-#: ../search/Tiles/RSSFeed.cs:63
+#: ../search/Tiles/RSSFeed.cs:51
 msgid "Date Viewed:"
 msgstr "Visto por última vez:"
 
@@ -277,95 +267,51 @@ msgstr[1] "{0} páginas"
 msgid "Open"
 msgstr "Abrir"
 
-#: ../search/Tiles/Utils.cs:25
+#: ../search/Tiles/Utils.cs:23
 msgid "Application"
 msgstr "Aplicación"
 
-#: ../search/Tiles/Utils.cs:26
-msgid "More application results..."
-msgstr "Más resultados de la aplicación..."
-
-#: ../search/Tiles/Utils.cs:29
+#: ../search/Tiles/Utils.cs:25
 msgid "Contact"
 msgstr "Contacto"
 
-#: ../search/Tiles/Utils.cs:30
-msgid "More contact results..."
-msgstr "Más resultados de contactos..."
-
-#: ../search/Tiles/Utils.cs:33
+#: ../search/Tiles/Utils.cs:27
 msgid "Folder"
 msgstr "Carpeta"
 
-#: ../search/Tiles/Utils.cs:34
-msgid "More folder results..."
-msgstr "Más resultados de carpetas..."
-
-#: ../search/Tiles/Utils.cs:37
+#: ../search/Tiles/Utils.cs:29
 msgid "Image"
 msgstr "Imagen"
 
-#: ../search/Tiles/Utils.cs:38
-msgid "More image results..."
-msgstr "Más resultados de la imagen..."
-
-#: ../search/Tiles/Utils.cs:41
+#: ../search/Tiles/Utils.cs:31
 msgid "Audio"
 msgstr "Sonido"
 
-#: ../search/Tiles/Utils.cs:42
-msgid "More audio results..."
-msgstr "Más resultados de sonido..."
-
-#: ../search/Tiles/Utils.cs:45
+#: ../search/Tiles/Utils.cs:33
 msgid "Video"
 msgstr "Vídeo"
 
-#: ../search/Tiles/Utils.cs:46
-msgid "More video results..."
-msgstr "Más resultados de vídeo..."
-
-#: ../search/Tiles/Utils.cs:49
+#: ../search/Tiles/Utils.cs:35
 msgid "Documents"
 msgstr "Documentos"
 
-#: ../search/Tiles/Utils.cs:50
-msgid "More document results..."
-msgstr "Más resultados de documentos..."
-
-#: ../search/Tiles/Utils.cs:53
+#: ../search/Tiles/Utils.cs:37
 msgid "Conversations"
 msgstr "Conversaciones"
 
-#: ../search/Tiles/Utils.cs:54
-msgid "More conversation results..."
-msgstr "Más resultados de conversaciones..."
-
-#: ../search/Tiles/Utils.cs:57
+#: ../search/Tiles/Utils.cs:39
 msgid "Website"
 msgstr "Sitio web"
 
-#: ../search/Tiles/Utils.cs:58
-msgid "More website results..."
-msgstr "Más resultados de sitios web..."
-
-#: ../search/Tiles/Utils.cs:61
+#: ../search/Tiles/Utils.cs:41
 msgid "News Feed"
 msgstr "Proveedor de noticias"
 
-#: ../search/Tiles/Utils.cs:62
-msgid "More news feed results..."
-msgstr "Más resultados de proveedores de noticias..."
-
-#: ../search/Tiles/Utils.cs:65
+#: ../search/Tiles/Utils.cs:43
 msgid "Archive"
 msgstr "Archivador"
 
-#: ../search/Tiles/Utils.cs:66
-msgid "More archive results..."
-msgstr "Más resultados de archivadores..."
-
-#: ../search/Tiles/Utils.cs:179
+#: ../search/Tiles/Utils.cs:155
 #, csharp-format
 msgid "{0} week ago"
 msgid_plural "{0} weeks ago"
@@ -373,14 +319,14 @@ msgstr[0] "hace {0} semana"
 msgstr[1] "hace {0} semanas"
 
 #. Lets say a year and a half to stop saying months
-#: ../search/Tiles/Utils.cs:181
+#: ../search/Tiles/Utils.cs:157
 #, csharp-format
 msgid "{0} month ago"
 msgid_plural "{0} months ago"
 msgstr[0] "hace {0} mes"
 msgstr[1] "hace {0} meses"
 
-#: ../search/Tiles/Utils.cs:183
+#: ../search/Tiles/Utils.cs:159
 #, csharp-format
 msgid "{0} year ago"
 msgid_plural "{0} years ago"
@@ -393,11 +339,11 @@ msgstr[1] "Hace {0} años"
 msgid "Unknown duration"
 msgstr "Duración desconocida"
 
-#: ../search/Tiles/WebHistory.cs:67
+#: ../search/Tiles/WebHistory.cs:53
 msgid "URL:"
 msgstr "URL:"
 
-#: ../search/Tiles/WebHistory.cs:74
+#: ../search/Tiles/WebHistory.cs:56
 msgid "Accessed:"
 msgstr "Accedido:"
 
@@ -432,6 +378,8 @@ msgid ""
 "file\n"
 "files"
 msgstr ""
+"archivo\n"
+"archivos"
 
 #: ../search/TypeFilter.cs:37
 msgid ""
@@ -439,6 +387,9 @@ msgid ""
 "email\n"
 "e-mail"
 msgstr ""
+"correo\n"
+"e-mail\n"
+"correo-e"
 
 #: ../search/TypeFilter.cs:38
 msgid ""
@@ -469,6 +420,12 @@ msgid ""
 "slide\n"
 "slides"
 msgstr ""
+"presentación\n"
+"presentaciones\n"
+"muestra de diapositivas\n"
+"muestras de diapositivas\n"
+"diapositiva\n"
+"diapositivas"
 
 #: ../search/TypeFilter.cs:41
 msgid ""
@@ -489,12 +446,18 @@ msgid ""
 "vcard\n"
 "vcards"
 msgstr ""
+"contacto\n"
+"contactos\n"
+"vcard\n"
+"vcards"
 
 #: ../search/TypeFilter.cs:43
 msgid ""
 "folder\n"
 "folders"
 msgstr ""
+"carpeta\n"
+"carpetas"
 
 #: ../search/TypeFilter.cs:44
 msgid ""
@@ -502,18 +465,21 @@ msgid ""
 "images\n"
 "img"
 msgstr ""
+"imagen\n"
+"imágenes\n"
+"img"
 
 #: ../search/TypeFilter.cs:45
 msgid "audio"
-msgstr ""
+msgstr "audio"
 
 #: ../search/TypeFilter.cs:46
 msgid "video"
-msgstr ""
+msgstr "vídeo"
 
 #: ../search/TypeFilter.cs:47
 msgid "media"
-msgstr ""
+msgstr "media"
 
 #: ../search/TypeFilter.cs:48
 msgid ""
@@ -522,6 +488,10 @@ msgid ""
 "office document\n"
 "office documents"
 msgstr ""
+"documento\n"
+"documentos\n"
+"documento de oficina\n"
+"documentos de oficina"
 
 #: ../search/TypeFilter.cs:49
 msgid ""
@@ -568,116 +538,118 @@ msgid ""
 "person\n"
 "people"
 msgstr ""
+"persona\n"
+"personas"
 
-#: ../search/UIManager.cs:32
+#: ../search/UIManager.cs:35
 msgid "_Search"
 msgstr "_Búsqueda"
 
-#: ../search/UIManager.cs:35
+#: ../search/UIManager.cs:38
 msgid "_Actions"
 msgstr "_Acciones"
 
-#: ../search/UIManager.cs:38
+#: ../search/UIManager.cs:41
 msgid "Sor_t"
 msgstr "_Ordenar"
 
-#: ../search/UIManager.cs:41
+#: ../search/UIManager.cs:44
 msgid "_Help"
 msgstr "A_yuda"
 
-#: ../search/UIManager.cs:46 ../search/UIManager.cs:50
+#: ../search/UIManager.cs:49 ../search/UIManager.cs:53
 msgid "Exit Desktop Search"
 msgstr "Salir de la búsqueda de Escritorio"
 
-#: ../search/UIManager.cs:53
+#: ../search/UIManager.cs:56
 msgid "_Contents"
 msgstr "_Contenido"
 
-#: ../search/UIManager.cs:55
+#: ../search/UIManager.cs:58
 msgid "Help - Table of Contents"
 msgstr "Ayuda - Tabla de contenido"
 
-#: ../search/UIManager.cs:59
+#: ../search/UIManager.cs:62
 msgid "About Desktop Search"
 msgstr "Acerca de la búsquedas de Escritorio"
 
-#: ../search/UIManager.cs:72
+#: ../search/UIManager.cs:75
 msgid "_Everywhere"
 msgstr "_En todos los lugares"
 
-#: ../search/UIManager.cs:74
+#: ../search/UIManager.cs:77
 msgid "Search everywhere"
 msgstr "Buscar en todos los lugares"
 
-#: ../search/UIManager.cs:77
+#: ../search/UIManager.cs:80
 msgid "_Applications"
 msgstr "_Aplicaciones"
 
-#: ../search/UIManager.cs:79
+#: ../search/UIManager.cs:82
 msgid "Search applications"
 msgstr "Buscar aplicaciones"
 
-#: ../search/UIManager.cs:82
+#: ../search/UIManager.cs:85
 msgid "_Contacts"
 msgstr "_Contactos"
 
-#: ../search/UIManager.cs:84
+#: ../search/UIManager.cs:87
 msgid "Search contacts"
 msgstr "Buscar contactos"
 
-#: ../search/UIManager.cs:87
+#: ../search/UIManager.cs:90
 msgid "_Documents"
 msgstr "_Documentos"
 
-#: ../search/UIManager.cs:89
+#: ../search/UIManager.cs:92
 msgid "Search documents"
 msgstr "Buscar documentos"
 
-#: ../search/UIManager.cs:92
+#: ../search/UIManager.cs:95
 msgid "Conve_rsations"
 msgstr "Con_versaciones"
 
-#: ../search/UIManager.cs:94
+#: ../search/UIManager.cs:97
 msgid "Search E-Mail and Instant Messaging logs"
 msgstr "Buscar registros de MI y correos electrónicos"
 
-#: ../search/UIManager.cs:97
+#: ../search/UIManager.cs:100
 msgid "Images"
 msgstr "Imágenes:"
 
-#: ../search/UIManager.cs:99
+#: ../search/UIManager.cs:102
 msgid "Search images"
 msgstr "Buscar imágenes"
 
-#: ../search/UIManager.cs:102
+#: ../search/UIManager.cs:105
 msgid "Media"
 msgstr "Media"
 
-#: ../search/UIManager.cs:104
+#: ../search/UIManager.cs:107
 msgid "Search sound and video files"
 msgstr "Buscar archivos de vídeo y sonido"
 
-#: ../search/UIManager.cs:111
+#: ../search/UIManager.cs:114
 msgid "Date _Modified"
 msgstr "Fecha de _modificación"
 
-#: ../search/UIManager.cs:112
+#: ../search/UIManager.cs:115
 msgid "Sort the most-recently-modified matches first"
 msgstr "Ordenar con el más recientemente modificado primero"
 
-#: ../search/UIManager.cs:115
+#: ../search/UIManager.cs:118
 msgid "_Name"
 msgstr "_Nombre"
 
-#: ../search/UIManager.cs:116
+#: ../search/UIManager.cs:119
 msgid "Sort matches by name"
 msgstr "Ordenar coincidencias por nombre"
 
-#: ../search/UIManager.cs:119
+#: ../search/UIManager.cs:122
 msgid "_Relevance"
 msgstr "_Relevancia"
 
-#: ../search/UIManager.cs:120
+#: ../search/UIManager.cs:123
 msgid "Sort the best matches first"
 msgstr "Ordenar las mejores coincidencias primero"
 
