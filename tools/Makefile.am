@@ -179,7 +179,7 @@ install-data-local: $(TARGETS)
 	$(INSTALL_DATA) $(TARGETS) $(TARGETS_MDB) $(DESTDIR)$(pkglibdir)
 
 uninstall-local:
-	cd $(DESTDIR)$(pkglibdir) && rm -f $(TARGETS)
+	cd $(DESTDIR)$(pkglibdir) && rm -f $(TARGETS) && rm -f $(TARGETS_MDB)
 
 EXTRA_DIST =				\
 	$(WRAPPER_IN)			\

@@ -37,6 +37,7 @@ install-data-local: $(TARGET)
 
 uninstall-local:
 	rm -f $(DESTDIR)$(pkglibdir)/$(TARGET)
+	rm -f $(DESTDIR)$(pkglibdir)/$(TARGET).mdb
 
 
 bin_SCRIPTS = $(WRAPPER)

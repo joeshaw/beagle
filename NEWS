@@ -1,4 +1,139 @@
 
+Version 0.2.2
+March 6, 2006
+
+Daemon/Infrastructure:
+* Fix an access violation crash when opening snippets on large
+  documents.  (Joe Shaw)
+* Update our internal sqlite bindings to include many upstream fixes.
+  (Daniel Drake, Joe)
+* Fix a crash in the sqlite code on 64-bit machines.  (Joe)
+* Fix a nasty bug in which certain items with non-file URIs weren't
+  being indexed at all.  (Joe, D Bera)
+* Fix a bug in which temp files weren't being cleaned up if a document
+  wasn't indexed.  (Joe)
+* Exit the daemon with error code 1 if it completely fails to run.
+  (Joe)
+* Fix a bug in libbeagle in which some asynchronous requests would
+  never return.  (Joe)
+* Bump up priorities of child indexable tasks so that they don't queue
+  up for a long time when the daemon is very busy.  (Joe)
+* Fix an occasional but harmless exception on startup, and don't
+  unnecessarily create BeagleConsole log files.  (Joe)
+* Add keyword mappings for querying image comments and tags.  (Bera)
+* Query the screensaver X extension before using it.  (Joe)
+* Exit with an error if an unknown argument is passed into beagled.
+  (Likas Lipka)
+
+Backends:
+* Fix the file system backend so that you can now index the root
+  directory.  (Joe)
+* Index publisher/channel title information from RSS feeds.  (Bera)
+* Fix a leak in the KMail backend.  (Joe)
+* Fix a useless cache that was leaking memory in the file system
+  backend.  (Joe)
+* Handle negative date values in the Liferea backend.  (Joe)
+* Use the sent date when timestamping Evolution IMAP messages.  (Joe)
+* Fix an exception with Evolution mails that used labels.  (Joe)
+* Support new gaim 2.0 log files.  (Joe)
+* Add checks to the Evolution Data Server backend so that having an
+  unsupported e-d-s doesn't kill the daemon.  (Joe)
+* Allow loading of backends from BEAGLE_BACKEND_PATH environment
+  variable.  (Joe)
+
+Filters:
+* Extract tags and comments from images with Digikam metadata.  (Bera)
+* Don't pass in the document's title from the Firefox extension, since
+  it will be extracted in the HTML filter.  (Bera)
+* Pass encoding/charset information from the Firefox extension to the
+  HTML filter so that documents that specify it in HTTP headers and not
+  the HTML are indexed correctly.  (Joe)
+* Catch exceptions stemming from sqlite version mismatches when
+  opening the F-Spot database.  (Joe)
+
+UI/Tools:
+* Fix colors and theming for many themes in beagle-search, including
+  gtk-qt, Crux, and others.  (Dan Winship)
+* Fix a crash when the spinner icon isn't available.  (Dan)
+* Improve the UI when displaying many matches at once.  (Dan)
+* Added a Tomboy note tile.  (Joe)
+* Added a calendar tile.  (Dan)
+* If there is only a single category of matches, start out in "Show
+  More" mode.  (Dan)
+* Don't display mail attachments as blank mail tiles.  (Dan)
+* Allow results to be sorted by title, timestamp, and score.  (Dan)
+* Fix thumbnailing in beagle-search, and make it asynchronous so that
+  it doesn't block the UI.  (Dan)
+* Fix a bug in which tiles would be unselected if a tile was resized
+  or re-sorted.  (Dan)
+* Fix a bug in which focus was lost if the user resized the details
+  pane.  (Dan)
+* Don't hide the details pane if the user clicks somewhere that isn't
+  a tile.  (Dan)
+* Hide the details pane when starting a new search.  (Dan)
+* Hide the details pane if the selected hit disappears.  (Dan)
+* Don't automatically focus the search results if the search happened
+  because of a timeout.  (Dan)
+* Display the full path to image files.  (Lukas)
+* Don't display blank titles for files with empty title fields.  (Lukas)
+* Make the generated thumbnails bigger in the details pane.  (Lukas)
+* Load the buddy icon for the IM details pane.  (Lukas)
+* Added support to beagle-search for the hide/show keybinding in icon
+  mode.  (Joe)
+* Added a page to tell root users that Beagle cannot be used as root.
+  (Joe)
+* Make the creation of tiles easier by sharing much of the details
+  code between them.  (Dan)
+* Fix a problem in which the background of the tray icon wasn't
+  transparent on KDE panels.  (Dan)
+* Put the right version and copyright information inside the
+  beagle-search about box.  (Dan)
+* Various local time vs. UTC bugs in several tools.  (Dan, Joe)
+* Many other localization fixes.  (Dan, Joe)
+* Fix a file descriptor leak in the IM log viewer.  (Joe)
+* Fix a quoting problem with beagle-query so that quoted phrases are
+  searched properly.  (Joe)
+* Fix beagle-build-index to handle failure conditions better.  (Joe)
+* Be even more paranoid about deleting the target directory in
+  beagle-build-index; refuse to do it if any non-Beagle files or
+  directories are present.  (Joe)
+* When creating indexes with beagle-build-index, don't make the text
+  caches unreadable by default.
+* Use ionice in beagle-crawl-system to set the IO priority to idle.
+  (Joe)
+* Add a new option to beagle-dump-index to get information about a
+  file from the index.  (Bera)
+
+Everything Else:
+* Most processes set their names using prctl(); meaning you can now
+  use pidof or killall when dealing with Beagle processes.  (Joe,
+  Aaron Bockover)
+* Fix our sqlite version detection in configure.in.  (Daniel)
+* Only install beagle-settings.desktop when ENABLE_GUI is chosen.
+  (Daniel)
+* Internationalize the beagle-search.desktop file.  (Joe)
+* Install mono's mdb files so that stack traces include additional
+  information for easier debugging.  (Joe)
+
+Translations:
+* Added Italian translation.  (Luca Ferretti)
+* Updated British English translation.  (Christopher Orr)
+* Updated Bulgarian translation.  (Rostislav Raykov, Vladimir Petkov)
+* Updated Czech translation.  (Jakub Friedl)
+* Updated Dutch translation.  (Vincent van Adrighem)
+* Updated Finnish translation.  (Ilkka Tuohela)
+* Updated Galician translation.  (Ignacio Casal Quinteiro)
+* Updated Hungarian translation.  (Gabor Kelemen)
+* Updated Lithuanian translation.  (Žygimantas Beručka)
+* Updated Norwegian bokmål translation.  (Kjartan Maraas)
+* Updated Polish translation.  (Krzysztof Rosiński)
+* Updated Russian translation.  (Leonid Kanter)
+* Updated Simplified Chinese translation.  (Funda Wang)
+* Updated Spanish translation.  (Francisco Javier F. Serrador)
+* Updated Vietnamese translation.  (Clytie Siddall)
+
+------------------------------------------------------
+
 Version 0.2.1
 January 30, 2006
 

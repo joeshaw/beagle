@@ -51,7 +51,7 @@ install-data-local: $(TARGET)
 	$(INSTALL_DATA) $(TARGET) $(TARGET).mdb $(DESTDIR)$(pkglibdir)
 
 uninstall-local:
-	rm -f $(DESTDIR)$(pkglibdir)/$(TARGET)
+	rm -f $(DESTDIR)$(pkglibdir)/$(TARGET) $(DESTDIR)$(pkglibdir)/$(TARGET).mdb
 
 EXTRA_DIST =			\
 	$(CSFILES)		\

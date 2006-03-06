@@ -1033,15 +1033,24 @@ if ENABLE_WEBSERVICES
 endif
 if ENABLE_EVOLUTION
 	rm -f $(DESTDIR)$(BACKENDDIR)/$(EVO_DLL_TARGET)
+	rm -f $(DESTDIR)$(BACKENDDIR)/$(EVO_DLL_TARGET).mdb
 endif
 	rm -f $(DESTDIR)$(pkglibdir)/$(PLUGIN_TARGET)
+	rm -f $(DESTDIR)$(pkglibdir)/$(PLUGIN_TARGET).mdb
 	rm -f $(DESTDIR)$(pkglibdir)/$(DAEMON_DLL_TARGET)
+	rm -f $(DESTDIR)$(pkglibdir)/$(DAEMON_DLL_TARGET).mdb
 	rm -f $(DESTDIR)$(pkglibdir)/$(DAEMON_TARGET)
+	rm -f $(DESTDIR)$(pkglibdir)/$(DAEMON_TARGET).mdb
 	rm -f $(DESTDIR)$(pkglibdir)/$(INDEX_HELPER_TARGET)
+	rm -f $(DESTDIR)$(pkglibdir)/$(INDEX_HELPER_TARGET).mdb
 	rm -f $(DESTDIR)$(pkglibdir)/$(INDEX_HELPER_WRAPPER)
+	rm -f $(DESTDIR)$(pkglibdir)/$(INDEX_HELPER_WRAPPER).mdb
 	rm -f $(DESTDIR)$(pkglibdir)/$(INDEX_WEB_CONTENT_TARGET)
+	rm -f $(DESTDIR)$(pkglibdir)/$(INDEX_WEB_CONTENT_TARGET).mdb
 	rm -f $(DESTDIR)$(pkglibdir)/$(BUILD_INDEX_TARGET)
+	rm -f $(DESTDIR)$(pkglibdir)/$(BUILD_INDEX_TARGET).mdb
 	rm -f $(DESTDIR)$(pkglibdir)/$(MANAGE_INDEX_TARGET)
+	rm -f $(DESTDIR)$(pkglibdir)/$(MANAGE_INDEX_TARGET).mdb
 
 bin_SCRIPTS = \
 	$(DAEMON_WRAPPER)		\
