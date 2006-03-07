@@ -86,10 +86,12 @@ namespace Beagle.Filters {
 				return "16x10";
 			else if (rounded_aspect == 1.333f)
 				return "4x3";
-			else {
-				Logger.Log.Debug ("Unknown aspect ratio: {0}", rounded_aspect);
+			else if (rounded_aspect == 1.25f)
+				return "5x4";
+			else if (rounded_aspect == 0.0f)
+				return "unknown";
+			else
 				return "other";
-			}
 		}
 
 		protected override void DoPullProperties ()
@@ -200,12 +202,14 @@ namespace Beagle.Filters {
 			
 			// If an aspect ratio wasn't set in the file then work out the
 			// pixel aspect ratio
-			if (aspect <= 0.0f && width > 0 && height > 0)
-				aspect = (float) width / (float) height;
-			else
-				aspect = 1.0f;
+			if (aspect <= 0.0f) {
+				if (width > 0 && height > 0)
+					aspect = (float) width / (float) height;
+			}
 			
-			AddProperty (Beagle.Property.NewKeyword ("fixme:video:aspect", aspect));
+			if (aspect <= 0.0f)
+				AddProperty (Beagle.Property.NewKeyword ("fixme:video:aspect", aspect));
+
 			AddProperty (Beagle.Property.NewKeyword ("fixme:video:aspect", AspectString (aspect)));
 
 			if (width > 0)
