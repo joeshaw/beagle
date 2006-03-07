@@ -35,7 +35,6 @@ namespace Beagle.Filters {
 
 	public class FilterMPlayerVideo : Beagle.Daemon.Filter {
 	
-		private string video_codec, audio_codec, container;
 		private int width = -1;
 		private int height = -1;
 		private float aspect = 0.0f;
@@ -117,7 +116,7 @@ namespace Beagle.Filters {
 			string name = "";
 			
 			while ((str = pout.ReadLine ()) != null) {
-				if (!str.StartWith ("ID_"))
+				if (!str.StartsWith ("ID_"))
 					continue;
 
 				string[] tokens = str.Split ('=');
@@ -174,7 +173,6 @@ namespace Beagle.Filters {
 
 					case "ID_VIDEO_FORMAT":
 						AddProperty (Beagle.Property.NewKeyword ("fixme:video:codec", tokens [1]));
-						video_codec = tokens [1];
 						break;
 
 					case "ID_LENGTH":
@@ -187,12 +185,10 @@ namespace Beagle.Filters {
 
 					case "ID_AUDIO_CODEC":
 						AddProperty (Beagle.Property.NewKeyword ("fixme:audio:codec", tokens [1]));
-						audio_codec = tokens [1];
 						break;
 
 					case "ID_DEMUXER":
 						AddProperty (Beagle.Property.NewKeyword ("fixme:video:container", tokens [1]));
-						container = tokens [1];
 						break;
 					}
 				}
