@@ -137,6 +137,19 @@ namespace Beagle.Daemon {
 
 		//////////////////////////
 
+		// Filters which deal with big files, and that don't need
+		// to read in whole files may want to set this to false
+		// to avoid wasting cycles in disk wait.
+
+		private bool preload = true;
+
+		protected bool PreLoad {
+			get { return preload; }
+			set { preload = value; }
+		}
+
+		//////////////////////////
+
 		int hotCount = 0;
 		int freezeCount = 0;
 
@@ -384,7 +397,7 @@ namespace Beagle.Daemon {
 
                         // When we dump the contents of a reader into a file, we
                         // expect to use it again soon.
-                        FileAdvise.PreLoad (file_stream);
+			FileAdvise.PreLoad (file_stream);
 
                         // Make sure the temporary file is only readable by the owner.
                         // FIXME: There is probably a race here.  Could some malicious program
@@ -459,13 +472,15 @@ namespace Beagle.Daemon {
 								FileAccess.Read,
 								FileShare.Read);
 				
-				// Our default assumption is sequential reads.
-				// FIXME: Is this the right thing to do here?
-				FileAdvise.IncreaseReadAhead (currentStream);
+				if (preload) {
+					// Our default assumption is sequential reads.
+					// FIXME: Is this the right thing to do here?
+					FileAdvise.IncreaseReadAhead (currentStream);
 				
-				// Give the OS a hint that we will be reading this
-				// file soon.
-				FileAdvise.PreLoad (currentStream);				
+					// Give the OS a hint that we will be reading this
+					// file soon.
+					FileAdvise.PreLoad (currentStream);				
+				}
 			}
 
 			try {
