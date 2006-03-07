@@ -265,7 +265,8 @@ namespace Beagle.Daemon
 			
 			driver = new LuceneIndexingDriver (arg_output, false);
 			driver.TextCache = (arg_cache_text) ? new TextCache (arg_output) : null;
-			driver.TextCache.WorldReadable = true;
+			if (driver.TextCache != null)
+				driver.TextCache.WorldReadable = true;
 
 			backing_fa_store = new FileAttributesStore_Sqlite (driver.TopDirectory, driver.Fingerprint);
 			fa_store = new FileAttributesStore (backing_fa_store);
