@@ -403,21 +403,21 @@ namespace Beagle.Daemon.KMailQueryable {
 
 			addrs = message.GetRecipients (GMime.Message.RecipientType.To);
 			foreach (GMime.InternetAddress ia in addrs) {
-				if (folder_name == Queryable.SentMailFolderName)
+				if (folder_name == Queryable.SentMailFolderName && ia.AddressType != GMime.InternetAddressType.Group)
 					indexable.AddProperty (Property.NewKeyword ("fixme:sentTo", ia.Addr));
 			}
 			addrs.Dispose ();
 
 			addrs = message.GetRecipients (GMime.Message.RecipientType.Cc);
 			foreach (GMime.InternetAddress ia in addrs) {
-				if (folder_name == Queryable.SentMailFolderName)
+				if (folder_name == Queryable.SentMailFolderName && ia.AddressType != GMime.InternetAddressType.Group)
 					indexable.AddProperty (Property.NewKeyword ("fixme:sentTo", ia.Addr));
 			}
 			addrs.Dispose ();
 
 			addrs = GMime.InternetAddressList.ParseString (GMime.Utils.HeaderDecodePhrase (message.Sender));
 			foreach (GMime.InternetAddress ia in addrs) {
-				if (folder_name != Queryable.SentMailFolderName)
+				if (folder_name != Queryable.SentMailFolderName && ia.AddressType != GMime.InternetAddressType.Group)
 					indexable.AddProperty (Property.NewKeyword ("fixme:gotFrom", ia.Addr));
 			}
 			addrs.Dispose ();

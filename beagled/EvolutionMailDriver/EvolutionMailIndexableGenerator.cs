@@ -323,21 +323,21 @@ namespace Beagle.Daemon.EvolutionMailDriver {
 
 			addrs = message.GetRecipients (GMime.Message.RecipientType.To);
 			foreach (GMime.InternetAddress ia in addrs) {
-				if (this.folder_name == "Sent")
+				if (this.folder_name == "Sent" && ia.AddressType != GMime.InternetAddressType.Group)
 					indexable.AddProperty (Property.NewKeyword ("fixme:sentTo", ia.Addr));
 			}
 			addrs.Dispose ();
 
 			addrs = message.GetRecipients (GMime.Message.RecipientType.Cc);
 			foreach (GMime.InternetAddress ia in addrs) {
-				if (this.folder_name == "Sent")
+				if (this.folder_name == "Sent"  && ia.AddressType != GMime.InternetAddressType.Group)
 					indexable.AddProperty (Property.NewKeyword ("fixme:sentTo", ia.Addr));
 			}
 			addrs.Dispose ();
 
 			addrs = GMime.InternetAddressList.ParseString (GMime.Utils.HeaderDecodePhrase (message.Sender));
 			foreach (GMime.InternetAddress ia in addrs) {
-				if (this.folder_name != "Sent")
+				if (this.folder_name != "Sent"  && ia.AddressType != GMime.InternetAddressType.Group)
 					indexable.AddProperty (Property.NewKeyword ("fixme:gotFrom", ia.Addr));
 			}
 			addrs.Dispose ();
@@ -780,12 +780,14 @@ namespace Beagle.Daemon.EvolutionMailDriver {
 			foreach (GMime.InternetAddress ia in addrs) {
 				if (!have_content) {
 					indexable.AddProperty (Property.NewKeyword ("fixme:to", ia.ToString (false)));
-					indexable.AddProperty (Property.New ("fixme:to_address", ia.Addr));
-					indexable.AddProperty (Property.New ("fixme:to_sanitized", StringFu.SanitizeEmail (ia.Addr)));
+					if (ia.AddressType != GMime.InternetAddressType.Group) {
+						indexable.AddProperty (Property.New ("fixme:to_address", ia.Addr));
+						indexable.AddProperty (Property.New ("fixme:to_sanitized", StringFu.SanitizeEmail (ia.Addr)));
+					}
 					indexable.AddProperty (Property.New ("fixme:to_name", ia.Name));
 				}
 
-				if (this.folder_name == "Sent")
+				if (this.folder_name == "Sent" && ia.AddressType != GMime.InternetAddressType.Group)
 					indexable.AddProperty (Property.NewKeyword ("fixme:sentTo", ia.Addr));
 			}
 			addrs.Dispose ();
@@ -794,12 +796,14 @@ namespace Beagle.Daemon.EvolutionMailDriver {
 			foreach (GMime.InternetAddress ia in addrs) {
 				if (!have_content) {
 					indexable.AddProperty (Property.NewKeyword ("fixme:cc", ia.ToString (false)));
-					indexable.AddProperty (Property.New ("fixme:cc_address", ia.Addr));
-					indexable.AddProperty (Property.New ("fixme:cc_sanitized", StringFu.SanitizeEmail (ia.Addr)));
+					if (ia.AddressType != GMime.InternetAddressType.Group) {
+						indexable.AddProperty (Property.New ("fixme:cc_address", ia.Addr));
+						indexable.AddProperty (Property.New ("fixme:cc_sanitized", StringFu.SanitizeEmail (ia.Addr)));
+					}
 					indexable.AddProperty (Property.New ("fixme:cc_name", ia.Name));
 				}
 
-				if (this.folder_name == "Sent")
+				if (this.folder_name == "Sent" && ia.AddressType != GMime.InternetAddressType.Group)
 					indexable.AddProperty (Property.NewKeyword ("fixme:sentTo", ia.Addr));
 			}
 			addrs.Dispose ();
@@ -808,12 +812,14 @@ namespace Beagle.Daemon.EvolutionMailDriver {
 			foreach (GMime.InternetAddress ia in addrs) {
 				if (!have_content) {
 					indexable.AddProperty (Property.NewKeyword ("fixme:from", ia.ToString (false)));
-					indexable.AddProperty (Property.New ("fixme:from_address", ia.Addr));
-					indexable.AddProperty (Property.New ("fixme:from_sanitized", StringFu.SanitizeEmail (ia.Addr)));
+					if (ia.AddressType != GMime.InternetAddressType.Group) {
+						indexable.AddProperty (Property.New ("fixme:from_address", ia.Addr));
+						indexable.AddProperty (Property.New ("fixme:from_sanitized", StringFu.SanitizeEmail (ia.Addr)));
+					}
 					indexable.AddProperty (Property.New ("fixme:from_name", ia.Name));
 				}
 
-				if (this.folder_name != "Sent")
+				if (this.folder_name != "Sent" && ia.AddressType != GMime.InternetAddressType.Group)
 					indexable.AddProperty (Property.NewKeyword ("fixme:gotFrom", ia.Addr));
 			}
 			addrs.Dispose ();
