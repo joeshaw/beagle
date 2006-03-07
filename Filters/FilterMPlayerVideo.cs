@@ -207,7 +207,7 @@ namespace Beagle.Filters {
 					aspect = (float) width / (float) height;
 			}
 			
-			if (aspect <= 0.0f)
+			if (aspect > 0.0f)
 				AddProperty (Beagle.Property.NewKeyword ("fixme:video:aspect", aspect));
 
 			AddProperty (Beagle.Property.NewKeyword ("fixme:video:aspect", AspectString (aspect)));
