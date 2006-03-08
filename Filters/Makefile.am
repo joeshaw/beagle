@@ -59,7 +59,8 @@ CSFILES = 				\
 	$(srcdir)/FilterKonqHistory.cs	\
 	$(srcdir)/FilterShellscript.cs	\
 	$(srcdir)/FilterRuby.cs		\
-	$(srcdir)/FilterMPlayerVideo.cs
+	$(srcdir)/FilterMPlayerVideo.cs	\
+	$(srcdir)/FilterBmp.cs
 
 if ENABLE_GSF_SHARP
 CSFILES += 				\
