@@ -206,7 +206,7 @@ namespace Search {
 			tips.SetTip (button, Catalog.GetString ("Start searching"), "");
 			tips.Enable ();
 
-			if (Environment.UserName == "root") {
+			if (Environment.UserName == "root" && ! Conf.Daemon.AllowRoot) {
 				pages.CurrentPage = pages.PageNum (rootuser);
 				entry.Sensitive = button.Sensitive = uim.Sensitive = false;
 			} else {

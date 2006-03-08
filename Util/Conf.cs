@@ -426,6 +426,12 @@ namespace Beagle.Util {
 				set { index_synchronization = value; }
 			}
 
+			private bool allow_root = false;
+			public bool AllowRoot {
+				get { return allow_root; }
+				set { allow_root = value; }
+			}
+
 			[ConfigOption (Description="Add a static queryable", Params=1, ParamsDescription="Index path")]
 			internal bool AddStaticQueryable (out string output, string [] args)
 			{
@@ -457,7 +463,18 @@ namespace Beagle.Util {
 				index_synchronization = !index_synchronization;
 				output = "Index Synchronization is " + ((index_synchronization) ? "enabled" : "disabled") + ".";
 				return true;
-			}		
+			}
+
+			[ConfigOption (Description="Toggles whether Beagle can be run as root")]
+			internal bool ToggleAllowRoot (out string output, string [] args)
+			{
+				allow_root = ! allow_root;
+				if (allow_root)
+					output = "Beagle is now permitted to run as root";
+				else
+					output = "Beagle is no longer permitted to run as root";
+				return true;
+			}
 		}
 
 		[ConfigSection (Name="indexing")]

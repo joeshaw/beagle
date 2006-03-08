@@ -48,6 +48,9 @@ public class SettingsDialog
 	////////////////////////////////////////////////////////////////
 	// Widgets
 
+	[Widget] Frame administration_frame;
+	[Widget] CheckButton allow_root_toggle;
+
 	[Widget] CheckButton autostart_toggle;
 
 	[Widget] CheckButton press_ctrl_toggle;
@@ -105,6 +108,8 @@ public class SettingsDialog
 		Glade.XML glade = new Glade.XML (null, "settings.glade", "settings_dialog", "beagle");
 		glade.Autoconnect (this);
 
+		administration_frame.Visible = (Environment.UserName == "root");
+
 #if false
 		display_view = new DisplayView ();
 		display_view.Selection.Changed += new EventHandler (OnDisplaySelected);
@@ -156,6 +161,7 @@ public class SettingsDialog
 
 	private void LoadConfiguration ()
 	{	
+		allow_root_toggle.Active = Conf.Daemon.AllowRoot;
 		autostart_toggle.Active = Conf.Searching.Autostart;
 
 		KeyBinding show_binding = Conf.Searching.ShowSearchWindowBinding;
@@ -187,6 +193,7 @@ public class SettingsDialog
 
 	private void SaveConfiguration ()
 	{
+		Conf.Daemon.AllowRoot = allow_root_toggle.Active;
 		Conf.Searching.Autostart = autostart_toggle.Active;
 		
 		Conf.Searching.ShowSearchWindowBinding = new KeyBinding (show_search_window_entry.Text, 

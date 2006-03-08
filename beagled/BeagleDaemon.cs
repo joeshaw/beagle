@@ -358,9 +358,12 @@ namespace Beagle.Daemon {
 				
 
 			// Bail out if we are trying to run as root
-			if (Environment.UserName == "root") {
-				Console.WriteLine ("You can not run beagle as root.");
-				Console.WriteLine ("Beagle is designed to be run from your own user account.");
+			if (Environment.UserName == "root" && ! Conf.Daemon.AllowRoot) {
+				Console.WriteLine ("You can not run beagle as root.  Beagle is designed to run from your own");
+				Console.WriteLine ("user account.  If you want to create multiuser or system-wide indexes, use");
+				Console.WriteLine ("the beagle-build-index tool.");
+				Console.WriteLine ();
+				Console.WriteLine ("You can override this setting using the beagle-config or beagle-settings tools.");
 				Environment.Exit (-1);
 			}
 
