@@ -16,9 +16,9 @@ namespace Search.Pages {
 		public StartDaemon ()
 		{
 			HeaderIconStock = Stock.DialogError;
-			HeaderMarkup = "<big><b>" + Catalog.GetString ("Daemon not running") + "</b></big>";
+			HeaderMarkup = "<big><b>" + Catalog.GetString ("Search service not running") + "</b></big>";
 
-			button = new Gtk.Button (Catalog.GetString ("Start the daemon"));
+			button = new Gtk.Button (Catalog.GetString ("Start search service"));
 			button.Clicked += OnStartDaemon;
 			button.Show ();
 			Append (button);
