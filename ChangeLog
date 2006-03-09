@@ -1,3 +1,8 @@
+2006-03-08  Debajyoti Bera <dbera.web@gmail.com>
+
+	* beagled/NoiseFilter.cs: Dont search tokens of type email, hostname
+	and small numbers for noise.
+
 2006-03-02  Daniel Drake  <dsd@gentoo.org>
 
 	* tools/Makefile.am: Only install beagle-settings.desktop when ENABLE_GUI

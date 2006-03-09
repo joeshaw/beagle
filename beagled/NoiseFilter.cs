@@ -27,6 +27,7 @@
 using System;
 
 using Lucene.Net.Analysis;
+using LNSA = Lucene.Net.Analysis.Standard;
 
 namespace Beagle.Daemon {
 
@@ -118,6 +119,31 @@ namespace Beagle.Daemon {
 				
 		}
 
+		// Dont scan these tokens for additional noise
+		// Someone might like to search for emails, hostnames and
+		// phone numbers (which fall under type NUM)
+		private static readonly string tokentype_email
+			= LNSA.StandardTokenizerConstants.tokenImage [LNSA.StandardTokenizerConstants.EMAIL];
+		private static readonly string tokentype_host 
+			= LNSA.StandardTokenizerConstants.tokenImage [LNSA.StandardTokenizerConstants.HOST];
+		private static readonly string tokentype_number 
+			= LNSA.StandardTokenizerConstants.tokenImage [LNSA.StandardTokenizerConstants.NUM];
+
+		private bool IgnoreNoise (Lucene.Net.Analysis.Token token)
+		{
+			string type = token.Type ();
+
+			if (type == tokentype_email ||
+			    type == tokentype_host)
+				return true;
+
+			if (type == tokentype_number)
+				// nobody will remember more than 10 digits
+				return (token.TermText ().Length <= 10);
+
+			return false;
+		}
+
 		public override Lucene.Net.Analysis.Token Next ()
 		{
 			Lucene.Net.Analysis.Token token;
@@ -128,6 +154,8 @@ namespace Beagle.Daemon {
 							  noise_count, total_count, 100.0 * noise_count / total_count);
 #endif
 				++total_count;
+				if (IgnoreNoise (token))
+					return token;
 				if (IsNoise (token.TermText ())) {
 					++noise_count;
 					continue;
