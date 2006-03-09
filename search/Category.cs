@@ -84,7 +84,12 @@ namespace Search {
 			Gtk.Requisition req = args.Requisition;
 			Gtk.Requisition labelReq = headerLabel.ChildRequisition;
 
-			req.Height = (int)(labelReq.Height * 1.5);
+			req.Height = (int) (labelReq.Height * 1.5);
+
+			int icon_height, icon_width;
+
+			if (Gtk.Icon.SizeLookup (Gtk.IconSize.Button, out icon_height, out icon_width) && req.Height < icon_height * 1.5)
+				req.Height = (int) (icon_height * 1.5);
 
 			args.Requisition = req;
 		}
