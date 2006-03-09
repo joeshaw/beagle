@@ -16,6 +16,10 @@ namespace Beagle.Util {
 			get { return "@prefix@"; }
 		}
 
+		static public string SysConfDir {
+			get { return "@sysconfdir@"; }
+		}
+
 		static public string PkgLibDir {
 			get { return "@pkglibdir@"; }
 		}

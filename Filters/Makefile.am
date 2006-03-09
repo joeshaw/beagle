@@ -60,7 +60,8 @@ CSFILES = 				\
 	$(srcdir)/FilterShellscript.cs	\
 	$(srcdir)/FilterRuby.cs		\
 	$(srcdir)/FilterMPlayerVideo.cs	\
-	$(srcdir)/FilterBmp.cs
+	$(srcdir)/FilterBmp.cs		\
+	$(srcdir)/FilterExternal.cs
 
 if ENABLE_GSF_SHARP
 CSFILES += 				\
@@ -111,9 +112,13 @@ COND_CS_FILES = \
 	$(srcdir)/FilterDOC.cs		\
 	$(srcdir)/FilterChm.cs
 
-EXTRA_DIST =		\
-	$(CSFILES)	\
-	$(COND_CS_FILES)
+confdir = $(sysconfdir)/beagle
+conf_DATA = external-filters.xml
+
+EXTRA_DIST =			\
+	$(CSFILES)		\
+	$(COND_CS_FILES)	\
+	$(conf_DATA)
 
 CLEANFILES =		\
 	$(TARGET)	\

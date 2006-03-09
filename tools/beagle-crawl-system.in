@@ -30,7 +30,7 @@ umask 022
 
 CRAWL_USER=beagleindex
 
-for crawl_file in @sysconfdir@/beagle/*; do 
+for crawl_file in @sysconfdir@/beagle/crawl-*; do 
     unset CRAWL_ENABLED CRAWL_DISABLE_FILTERING CRAWL_RECURSIVE CRAWL_CACHE_TEXT CRAWL_ALLOW_PATTERNS CRAWL_DENY_PATTERNS CRAWL_PATHS CRAWL_INDEX_NAME
 
     if [ -f $crawl_file ] ; then
