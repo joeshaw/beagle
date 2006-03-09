@@ -88,8 +88,6 @@ namespace Search.Tiles {
 			Description = Hit ["fixme:Comment"];
 		}
 
-		// FIXME: Some icons do not fit the requested size,
-		// should we scale them manually?
 		protected override void LoadIcon (Gtk.Image image, int size)
 		{
 			Gdk.Pixbuf icon = null;
@@ -113,9 +111,15 @@ namespace Search.Tiles {
 				}
 			}
 
-			if (icon != null)
+			if (icon != null) {
+				if (icon.Height > size) {
+					int scaled_width = (int) ((double) size / (double) icon.Height * icon.Width);
+
+					icon = icon.ScaleSimple (scaled_width, size, Gdk.InterpType.Bilinear);
+				}
+
 				image.Pixbuf = icon;
-			else
+			} else
 				base.LoadIcon (image, size);
 		}
 
