@@ -60,7 +60,7 @@ namespace Search.Tiles {
 
 		public override void Open ()
 		{
-			base.OpenFromMime ();
+			base.OpenFromMime (Hit);
 		}
 
 		public void MoveToTrash ()
