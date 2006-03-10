@@ -58,6 +58,11 @@ namespace Search.Tiles {
 			return details;
 		}
 
+		public override void Open ()
+		{
+			base.OpenFromMime ();
+		}
+
 		public void MoveToTrash ()
 		{
 			// FIXME: Ask for confirmation
