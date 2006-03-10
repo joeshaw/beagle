@@ -99,7 +99,7 @@ namespace Beagle.Filters {
 			// create new external process
 			Process pc = new Process ();
 			pc.StartInfo.FileName = "mplayer";
-			pc.StartInfo.Arguments = " -vo dummy -identify \"" + FileInfo.FullName+"\"";
+			pc.StartInfo.Arguments = " -vo dummy -ao dummy -identify \"" + FileInfo.FullName+"\"";
 			pc.StartInfo.RedirectStandardInput = false;
 			pc.StartInfo.RedirectStandardOutput = true;
 			pc.StartInfo.RedirectStandardError = true;
