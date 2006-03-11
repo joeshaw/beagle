@@ -2,6 +2,8 @@
 
 	* Filters/FilterMail.cs: Use kmail link-type message header to set
 	fixme:issent flag for replies that are kept in the same folder.
+	* beagled/SnippetFu.cs: Fixes 332378 and some snippet extraction
+	optimisations.
 
 2006-03-10  Lukas Lipka  <lukas@pmad.net>
 

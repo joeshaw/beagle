@@ -48,10 +48,11 @@ namespace Beagle.Daemon {
 		const int max_prior_words = 6;
 		const int max_following_words = 6;
 
-		static private void HighlightTerms (string [] stemmed_terms, string text, ref ArrayList matches)
+		static private int HighlightTerms (ArrayList stemmed_terms, string text, ref ArrayList matches)
 		{
 			int pos = 0, prev_stop_pos = 0, prev_end_pos = 0;
 			string prev_match = "";
+			int length = 0;
 
 			while (pos < text.Length) {
 				
@@ -70,24 +71,20 @@ namespace Beagle.Daemon {
 				int hl_offset = 0;
 				
 				// Iterate through the stemmed terms and match the token
-				for (int i = 0; i < stemmed_terms.Length; i++) {
+				for (int i = 0; i < stemmed_terms.Count; i++) {
 					
 					// If this term is longer than the token in question, give up.
-					if (next_pos - pos < stemmed_terms [i].Length)
+					if (next_pos - pos < ((string)stemmed_terms [i]).Length)
 						continue;
 					
-					// Make sure this isn't a stop word.
-					if (LuceneCommon.IsStopWord (stemmed_terms [i]))
-						continue;
-
 					// We cache the token, so as to avoid stemming it more than once
 					// when considering multiple terms.
 					if (stemmed_token == null) {
-						string token = text.Substring (pos, next_pos - pos).ToLower ();
+						string token = text.Substring (pos, next_pos - pos);
 						stemmed_token = LuceneCommon.Stem (token);
 					}
 
-					if (stemmed_terms [i] != stemmed_token)
+					if (String.Compare ((string) stemmed_terms [i], stemmed_token, true) != 0)
 						continue;
 					
 					// We have a match!
@@ -131,8 +128,10 @@ namespace Beagle.Daemon {
 					if (append_to_prev_match) {
 						prev_match += new_match;
 					} else {					
-						if (prev_match != "")
+						if (prev_match != "") {
 							matches.Add (prev_match);
+							length += prev_match.Length;
+						}
 						prev_match = new_match;
 					}
 
@@ -146,8 +145,12 @@ namespace Beagle.Daemon {
 			}
 			
 			// Add trailing match
-			if (prev_match != "")
-				matches.Add (prev_match); 
+			if (prev_match != "") {
+				matches.Add (prev_match);
+				length += prev_match.Length;
+			}
+
+			return length;
 		}
 
 		static string[] colors = new string [] {"red", "blue", "green", "orange", "purple", "brown"};
@@ -164,17 +167,27 @@ namespace Beagle.Daemon {
 				return null;
 			
 			ArrayList matches = new ArrayList ();
+			int found_snippet_length = 0;
+
+			// remove stop words from query_terms
+			ArrayList query_terms_list = new ArrayList (query_terms.Length);
+			foreach (string term in query_terms) {
+				if (LuceneCommon.IsStopWord (term))
+					continue;
+				query_terms_list.Add (term);
+			}
 
 			string str;
 			while ( (str = string_source ()) != null) {
-				HighlightTerms (query_terms, str, ref matches);
+				found_snippet_length += HighlightTerms (query_terms_list, str, ref matches);
+				if (found_snippet_length >= soft_snippet_limit)
+					break;
 			}
 
 			string snippet = "";
 
 			for (int i = 0; i < matches.Count && snippet.Length < soft_snippet_limit; i++)
-				snippet += String.Concat((string)matches[i], " ... ");
-			
+				snippet += String.Concat((string)matches[i], " ... ");		
 			return snippet;
 		
 		}
