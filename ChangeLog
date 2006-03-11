@@ -1,3 +1,8 @@
+2006-03-11  Debajyoti Bera <dbera.web@gmail.com>
+
+	* Filters/FilterMail.cs: Use kmail link-type message header to set
+	fixme:issent flag for replies that are kept in the same folder.
+
 2006-03-10  Lukas Lipka  <lukas@pmad.net>
 
 	* search/Tiles/Folder.cs: The open action for folders got accidently

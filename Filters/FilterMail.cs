@@ -149,6 +149,20 @@ namespace Beagle.Filters {
 				// FIXME: Might need some additional parsing.
 				AddProperty (Property.NewKeyword ("fixme:mlist", GMime.Utils.HeaderDecodePhrase (list_id)));
 			}
+
+			// KMail can store replies in the same folder
+			// Use issent flag to distinguish between incoming
+			// and outgoing message
+			string kmail_msg_sent = this.message.GetHeader ("X-KMail-Link-Type");
+			bool issent_is_set = false;
+			foreach (Property property in IndexableProperties) {
+				if (property.Key == "fixme:isSent") {
+					issent_is_set = true;
+					break;
+				}
+			}
+			if (!issent_is_set && kmail_msg_sent != null && kmail_msg_sent == "reply")
+				AddProperty (Property.NewFlag ("fixme:isSent"));
 		}
 
 		protected override void DoPullSetup ()
