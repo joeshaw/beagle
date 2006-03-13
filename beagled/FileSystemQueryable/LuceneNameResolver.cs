@@ -146,7 +146,7 @@ namespace Beagle.Daemon.FileSystemQueryable {
 				info = DocumentToNameInfo (doc);
 			}
 
-			searcher.Close ();
+			LuceneCommon.ReleaseSearcher (searcher);
 			
 			return info;
 		}
@@ -190,7 +190,7 @@ namespace Beagle.Daemon.FileSystemQueryable {
 			} else 
 				id = Guid.Empty;
 
-			searcher.Close ();
+			LuceneCommon.ReleaseSearcher (searcher);
 
 			return id;
 		}
@@ -260,7 +260,7 @@ namespace Beagle.Daemon.FileSystemQueryable {
 				++i;
 			}
 
-			searcher.Close ();
+			LuceneCommon.ReleaseSearcher (searcher);
 
 			return match_list;
 		}

@@ -281,11 +281,8 @@ namespace Beagle.Daemon {
 
 			if (change_data != null) {
 				
-				if (change_data.RemovedUris != null) {
-					foreach (Uri uri in change_data.RemovedUris)
-						Log.Debug ("Signalling removal of {0}", uri);
+				if (change_data.RemovedUris != null)
 					query_result.Subtract (change_data.RemovedUris);
-				}
 
 				// If nothing was added, we can safely return now: this change
 				// cannot have any further effect on an outstanding live query.

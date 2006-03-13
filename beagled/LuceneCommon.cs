@@ -776,6 +776,7 @@ namespace Beagle.Daemon {
 				IndexReader reader;
 				reader = GetReader (PrimaryStore);
 				last_item_count = reader.NumDocs ();
+				ReleaseReader (reader);
 			}
 			return last_item_count;
 		}
@@ -1402,15 +1403,18 @@ namespace Beagle.Daemon {
 
 			public IndexReader Reader;
 			public long Version;
+			public int Refcount;
 
 			public ReaderAndVersion (IndexReader reader, long version)
 			{
 				this.Reader = reader;
 				this.Version = version;
+				this.Refcount = 1;
 			}
 		}
 
 		static private Hashtable directory_rav_map = new Hashtable ();
+		static private Hashtable reader_rav_map = new Hashtable ();
 
 		static public LNS.IndexSearcher GetSearcher (Lucene.Net.Store.Directory directory)
 		{
@@ -1424,7 +1428,7 @@ namespace Beagle.Daemon {
 			IndexReader reader;
 			long version;
 
-			lock (directory_rav_map) {
+			lock (reader_rav_map) {
 				ReaderAndVersion rav = (ReaderAndVersion) directory_rav_map [directory];
 
 				if (rav == null) {
@@ -1432,8 +1436,10 @@ namespace Beagle.Daemon {
 					reader = IndexReader.Open (directory);
 
 					rav = new ReaderAndVersion (reader, version);
+					rav.Refcount++;
 
 					directory_rav_map [directory] = rav;
+					reader_rav_map [reader] = rav;
 
 					return reader;
 				}
@@ -1441,13 +1447,47 @@ namespace Beagle.Daemon {
 				version = IndexReader.GetCurrentVersion (directory);
 				
 				if (version != rav.Version) {
-					rav.Version = version;
-					rav.Reader.Close ();
-					rav.Reader = IndexReader.Open (directory);
-				}
-				
+					UnrefReaderAndVersion_Unlocked (rav);
+
+					reader = IndexReader.Open (directory);
+
+					rav = new ReaderAndVersion (reader, version);
+					rav.Refcount++;
+
+					directory_rav_map [directory] = rav;
+					reader_rav_map [reader] = rav;
+				} else
+					rav.Refcount++;
+
 				return rav.Reader;
 			}
+		}
+
+		static private void UnrefReaderAndVersion_Unlocked (ReaderAndVersion rav)
+		{
+			rav.Refcount--;
+
+			if (rav.Refcount == 0) {
+				rav.Reader.Close ();
+				reader_rav_map.Remove (rav.Reader);
+			}
+		}
+
+		static public void ReleaseReader (IndexReader reader)
+		{
+			lock (reader_rav_map) {
+				ReaderAndVersion rav = (ReaderAndVersion) reader_rav_map [reader];
+
+				UnrefReaderAndVersion_Unlocked (rav);
+			}
+		}
+
+		static public void ReleaseSearcher (LNS.IndexSearcher searcher)
+		{
+			IndexReader reader = searcher.GetIndexReader ();
+
+			searcher.Close ();
+			ReleaseReader (reader);
 		}
 
 		///////////////////////////////////////////////////////////////////////////////////
@@ -1525,6 +1565,9 @@ namespace Beagle.Daemon {
 				searcher.Close ();
 			}
 
+			ReleaseReader (primary_reader);
+			ReleaseReader (secondary_reader);
+
 			// Now assemble the hits
 			int j = 0;
 			foreach (Uri uri in primary_docs.Keys) {
@@ -1599,6 +1642,9 @@ namespace Beagle.Daemon {
 						AddPropertiesToHit (hit, doc, false);
 				}
 			}
+
+			ReleaseReader (primary_reader);
+			ReleaseReader (secondary_reader);
 
 			return all_hits;
 		}

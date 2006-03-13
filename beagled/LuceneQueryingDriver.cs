@@ -105,6 +105,7 @@ namespace Beagle.Daemon {
 			}
 
 			primary_searcher.Close ();
+			ReleaseReader (primary_reader);
 
 			return uri_list;
 		}
@@ -205,11 +206,11 @@ namespace Beagle.Daemon {
 
 			primary_reader = LuceneCommon.GetReader (PrimaryStore);
 			primary_searcher = new LNS.IndexSearcher (primary_reader);
-			
+
 			if (SecondaryStore != null) {
 				secondary_reader = LuceneCommon.GetReader (SecondaryStore);
 				if (secondary_reader.NumDocs () == 0) {
-					secondary_reader.Close ();
+					ReleaseReader (secondary_reader);
 					secondary_reader = null;
 				}
 			}
@@ -321,6 +322,9 @@ namespace Beagle.Daemon {
 			primary_searcher.Close ();
 			if (secondary_searcher != null)
 				secondary_searcher.Close ();
+			ReleaseReader (primary_reader);
+			if (secondary_reader != null)
+				ReleaseReader (secondary_reader);
 
 
 			sw.Stop ();

@@ -224,12 +224,7 @@ namespace Beagle.Daemon {
 				if (!WorkerStartNoLock (worker)) 
 					return;
 
-				// We don't need to use an ExceptionHandlingThread
-				// here, because qwc.Start is careful about catching
-				// any exceptions.
-				Thread th;
-				th = new Thread (new ThreadStart (qwc.Start));
-				th.Start ();
+				ExceptionHandlingThread.Start (new ThreadStart (qwc.Start));
 			}
 		}
 

@@ -265,8 +265,8 @@ class DumpIndexTool {
 
 	static bool DoQuery (LuceneQueryingDriver driver, Lucene.Net.Search.Query query)
 	{
-		IndexSearcher primary_searcher = new IndexSearcher (LuceneCommon.GetReader (driver.PrimaryStore));
-		IndexSearcher secondary_searcher = new IndexSearcher (LuceneCommon.GetReader (driver.SecondaryStore));
+		IndexSearcher primary_searcher = LuceneCommon.GetSearcher (driver.PrimaryStore);
+		IndexSearcher secondary_searcher = LuceneCommon.GetSearcher (driver.SecondaryStore);
 		
 		Hits primary_hits = primary_searcher.Search(query);
 		Hits secondary_hits = secondary_searcher.Search (query);
@@ -310,8 +310,8 @@ class DumpIndexTool {
 			}
 		}
 
-		primary_searcher.Close ();
-		secondary_searcher.Close ();
+		LuceneCommon.ReleaseSearcher (primary_searcher);
+		LuceneCommon.ReleaseSearcher (secondary_searcher);
 		
 		if (primary_hits.Length () != 0 || secondary_hits.Length () != 0)
 			return true;

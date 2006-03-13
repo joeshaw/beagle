@@ -403,13 +403,9 @@ namespace Lucene.Net.Store
 		/// <summary>Returns true iff a file with the given name exists. </summary>
 		public override bool FileExists(System.String name)
 		{
-			System.IO.FileInfo file = new System.IO.FileInfo(System.IO.Path.Combine(directory.FullName, name));
-			bool tmpBool;
-			if (System.IO.File.Exists(file.FullName))
-				tmpBool = true;
-			else
-				tmpBool = System.IO.Directory.Exists(file.FullName);
-			return tmpBool;
+			string path = System.IO.Path.Combine (directory.FullName, name);
+
+			return System.IO.File.Exists (path) || System.IO.Directory.Exists (path);
 		}
 		
 		/// <summary>Returns the time the named file was last modified. </summary>
