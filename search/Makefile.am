@@ -1,6 +1,10 @@
 CSC = mcs -debug
 CSFLAGS = -target:exe
 
+if ENABLE_DESKTOP_LAUNCH
+CSFLAGS += -define:ENABLE_DESKTOP_LAUNCH
+endif
+
 bin_SCRIPTS = beagle-search
 pkglib_DATA = Search.exe Search.exe.mdb
 
