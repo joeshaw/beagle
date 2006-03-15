@@ -52,11 +52,10 @@ for crawl_file in @sysconfdir@/beagle/crawl-*; do
 
 	    OPTIONS="$OPTIONS `test -n "$CRAWL_DENY_PATTERNS" && \
                      echo --deny-pattern $CRAWL_DENY_PATTERNS`"
-
-            if [ -x `which ionice` ]; then
-                IONICE="`which ionice` -c 3"
-            else
-                IONICE=""
+	    
+	    IONICE=`which ionice 2>/dev/null`
+            if [ -n "$IONICE" ]; then
+                IONICE="$IONICE -c 3"
             fi
 
             export TMPDIR=/tmp
