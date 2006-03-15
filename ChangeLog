@@ -1,3 +1,7 @@
+2006-03-15  Daniel Drake  <dsd@gentoo.org>
+
+	* Filters/entagged-sharp: Resync, includes a couple of small fixes.
+
 2006-03-11  Debajyoti Bera <dbera.web@gmail.com>
 
 	* Filters/FilterMail.cs: Use kmail link-type message header to set

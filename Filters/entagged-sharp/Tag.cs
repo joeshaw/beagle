@@ -69,7 +69,7 @@ namespace Entagged.Audioformats
         public static string Get(int i) 
         {
             if(i > TagGenres.Genres.Length - 1) {
-                return "Unknown";
+                return null;
             }
             
             return DEFAULT_GENRES[i];

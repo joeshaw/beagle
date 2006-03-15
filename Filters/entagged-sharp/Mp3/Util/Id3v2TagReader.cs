@@ -23,20 +23,6 @@
  *  DEALINGS IN THE SOFTWARE.
  */
 
-/*
- * $Log$
- * Revision 1.2  2005/12/11 23:52:13  dsd
- * 2005-12-11  Daniel Drake  <dsd@gentoo.org>
- *
- * 	* Filters/entagged-sharp: Resync. Includes some bugfixes and adds support
- * 	for ID3v2 v2.4, and ASF/WMA files.
- * 	* Filters/FilterMusic.cs: Register ASF/WMA mimetype.
- *
- * Revision 1.4  2005/02/08 12:54:41  kikidonk
- * Added cvs log and header
- *
- */
-
 using System;
 using System.IO;
 using System.Text;

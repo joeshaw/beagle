@@ -23,23 +23,6 @@
  *  DEALINGS IN THE SOFTWARE.
  */
 
-/*
- * $Log$
- * Revision 1.2  2005/12/11 23:52:15  dsd
- * 2005-12-11  Daniel Drake  <dsd@gentoo.org>
- *
- * 	* Filters/entagged-sharp: Resync. Includes some bugfixes and adds support
- * 	for ID3v2 v2.4, and ASF/WMA files.
- * 	* Filters/FilterMusic.cs: Register ASF/WMA mimetype.
- *
- * Revision 1.4  2005/02/18 13:38:11  kikidonk
- * Adds a isVbr method that checks wether the file is vbr or not, added check in OGG and MP3, other formats are always VBR
- *
- * Revision 1.3  2005/02/08 12:54:41  kikidonk
- * Added cvs log and header
- *
- */
-
 namespace Entagged.Audioformats.Ogg.Util {
 	public class VorbisCodecHeader {
 		private int audioChannels;

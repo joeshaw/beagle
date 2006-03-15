@@ -109,7 +109,7 @@ namespace Entagged.Audioformats.Ogg.Util {
 			    info.Vbr = true;
 			}
 			else {
-				info.Bitrate = ComputeBitrate( info.Duration.Seconds, raf.Length );
+				info.Bitrate = ComputeBitrate( (int)info.Duration.TotalSeconds, raf.Length );
 				info.Vbr = true;
 			}
 
@@ -117,7 +117,7 @@ namespace Entagged.Audioformats.Ogg.Util {
 		}
 
 		private int ComputeBitrate( int length, long size ) {
-			return (int) ( ( size / 1000 ) * 8 / length );
+			return (int) ( ( size / 1024 ) * 8 / length );
 		}
 	}
 }

@@ -23,18 +23,6 @@
  *  DEALINGS IN THE SOFTWARE.
  */
 
-/*
- * $Log$
- * Revision 1.1  2005/12/11 23:52:10  dsd
- * 2005-12-11  Daniel Drake  <dsd@gentoo.org>
- *
- * 	* Filters/entagged-sharp: Resync. Includes some bugfixes and adds support
- * 	for ID3v2 v2.4, and ASF/WMA files.
- * 	* Filters/FilterMusic.cs: Register ASF/WMA mimetype.
- *
- *
- */
-
 using System;
 
 namespace Entagged.Audioformats.Exceptions {
