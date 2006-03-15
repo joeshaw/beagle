@@ -28,8 +28,8 @@ namespace Lucene.Net.Index
 		private Directory directory;
 		private System.String segment;
 		private FieldInfos fieldInfos;
-		
-		private System.LocalDataStoreSlot enumerators = System.Threading.Thread.AllocateDataSlot();
+
+		private SegmentTermEnum termEnum;
 		private SegmentTermEnum origEnum;
 		private long size;
 		
@@ -50,20 +50,7 @@ namespace Lucene.Net.Index
 			
             indexEnum = new SegmentTermEnum(directory.OpenInput(segment + ".tii"), fieldInfos, true);
 		}
-		
-        ~TermInfosReader()
-        {
-            // patch for pre-1.4.2 JVMs, whose ThreadLocals leak
-            try
-            {
-                System.Threading.Thread.SetData(enumerators, null);     // {{Aroush-1.9}} is this required for .NET ?!
-            }
-            catch (Exception ex)
-            {
-                System.Console.WriteLine(ex.Message);
-            }
-        }
-		
+				
         public int GetSkipInterval()
 		{
 			return origEnum.skipInterval;
@@ -85,11 +72,9 @@ namespace Lucene.Net.Index
 		
 		private SegmentTermEnum GetEnum()
 		{
-			SegmentTermEnum termEnum = (SegmentTermEnum) System.Threading.Thread.GetData(enumerators);
 			if (termEnum == null)
 			{
 				termEnum = Terms();
-				System.Threading.Thread.SetData(enumerators, termEnum);
 			}
 			return termEnum;
 		}
