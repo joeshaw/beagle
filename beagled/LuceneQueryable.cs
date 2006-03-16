@@ -427,7 +427,7 @@ namespace Beagle.Daemon {
 		{
 			string path = Path.Combine (Path.Combine (PathFinder.IndexDir, this.IndexName), name);
 			
-			return new FileStream (path, System.IO.FileMode.Create, FileAccess.Write);
+			return new FileStream (path, System.IO.FileMode.Create, FileAccess.Write, FileShare.ReadWrite);
 		}
 
 		public void WriteDataLine (string name, string line)
