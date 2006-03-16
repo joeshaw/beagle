@@ -362,7 +362,8 @@ namespace Search.Tiles {
 				argument = "";			
 
 			if (expects_uris) {
-				argument = String.Format ("{0} '{1}'", argument, hit.Uri);
+				argument = String.Format ("{0} '{1}'", argument,
+						UriFu.UriToSerializableString(hit.Uri));
 			} else {
 				argument = String.Format ("{0} {1}", argument, hit.PathQuoted);
 			}
