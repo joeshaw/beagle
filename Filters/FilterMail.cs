@@ -75,6 +75,9 @@ namespace Beagle.Filters {
 			this.message = parser.ConstructMessage ();
 			stream.Dispose ();
 			parser.Dispose ();
+
+			if (this.message == null)
+				Error ();
 		}
 
 		private bool HasAttachments (GMime.Object mime_part)

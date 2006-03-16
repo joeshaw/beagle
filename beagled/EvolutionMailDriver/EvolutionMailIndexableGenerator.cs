@@ -238,7 +238,8 @@ namespace Beagle.Daemon.EvolutionMailDriver {
 				
 				Logger.Log.Debug ("{0}: Finished indexing {1} messages", this.folder_name, this.indexed_count);
 
-				this.MboxLastOffset = offset;
+				if (offset >= 0)
+					this.MboxLastOffset = offset;
 				this.CrawlFinished ();
 
 				return false;
@@ -249,8 +250,6 @@ namespace Beagle.Daemon.EvolutionMailDriver {
 		public override Indexable GetNextIndexable ()
 		{
 			using (GMime.Message message = this.mbox_parser.ConstructMessage ()) {
-				++this.count;
-
 				// Work around what I think is a bug in GMime: If you
 				// have a zero-byte file or seek to the end of a
 				// file, parser.Eos () will return true until it
@@ -261,9 +260,11 @@ namespace Beagle.Daemon.EvolutionMailDriver {
 				//
 				// Check if its empty by seeing if the Headers
 				// property is null or empty.
-				if (message.Headers == null || message.Headers == "")
+				if (message == null || message.Headers == null || message.Headers == "")
 					return null;
 				
+				++this.count;
+
 				string x_evolution = message.GetHeader ("X-Evolution");
 				if (x_evolution == null || x_evolution == "") {
 					Logger.Log.Info ("{0}: Message at offset {1} has no X-Evolution header!",
@@ -376,8 +377,12 @@ namespace Beagle.Daemon.EvolutionMailDriver {
 		{
 			long offset = -1;
 
-			if (this.mbox_parser != null)
-				this.MboxLastOffset = offset = this.mbox_parser.FromOffset;
+			if (this.mbox_parser != null) {
+				offset = this.mbox_parser.FromOffset;
+
+				if (offset >= 0)
+					this.MboxLastOffset = offset;
+			}
 
 			string progress = "";
 			if (this.file_size > 0 && offset > 0) {

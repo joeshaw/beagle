@@ -118,11 +118,15 @@ namespace Bludgeon {
 					parent = (FileSystemObject) all_dirs [random.Next (all_dirs.Count)];
 					parent.AddChild (file, tracker);
 
+#if false
+					// Commented out because it breaks queries
+	
 					// 20% of the time make the file unwritable, which prevents us from
 					// being able to set extended attributes and makes us fall back to
 					// our sqlite store.
 					if (random.Next (5) == 0)
 						Syscall.chmod (file.FullName, (FilePermissions) 292); // 0444
+#endif
 
 					//Log.Spew ("file {0}: {1}", n_files - nf, file.FullName);
 					--nf;

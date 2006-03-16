@@ -28,7 +28,11 @@ namespace Bludgeon {
 		public bool HammerOnce (DirectoryObject dir, EventTracker tracker)
 		{
 			FileObject victim;
-			victim = dir.PickChildFile ();
+
+			do {
+				victim = dir.PickChildFile ();
+			} while (victim != null && victim.IsWritable);
+
 			if (victim == null)
 				return false;
 

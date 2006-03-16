@@ -271,7 +271,7 @@ namespace Beagle.Daemon.KMailQueryable {
 				//
 				// Check if its empty by seeing if the Headers
 				// property is null or empty.
-				if (message.Headers == null || message.Headers == "") {
+				if (message == null || message.Headers == null || message.Headers == "") {
 					return null;
 				}
 			
@@ -289,7 +289,8 @@ namespace Beagle.Daemon.KMailQueryable {
 
 				return indexable;
 			} finally {
-				message.Dispose ();
+				if (message != null)
+					message.Dispose ();
 			}
 		}
 

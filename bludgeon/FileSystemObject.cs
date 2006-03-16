@@ -129,6 +129,32 @@ namespace Bludgeon {
 			}
 		}
 
+		public bool IsReadable {
+			get {
+				Mono.Unix.Native.Stat stat;
+
+				Mono.Unix.Native.Syscall.stat (Name, out stat);
+
+				if ((stat.st_mode & Mono.Unix.Native.FilePermissions.S_IRUSR) != 0)
+					return true;
+				else
+					return false;
+			}
+		}
+
+		public bool IsWritable {
+			get {
+				Mono.Unix.Native.Stat stat;
+
+				Mono.Unix.Native.Syscall.stat (Name, out stat);
+
+				if ((stat.st_mode & Mono.Unix.Native.FilePermissions.S_IWUSR) != 0)
+					return true;
+				else
+					return false;
+			}
+		}
+
 		virtual public string Name {
 			get {
 				if (name == null)
