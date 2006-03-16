@@ -258,8 +258,10 @@ namespace Beagle.Daemon {
 			DirectoryInfo lock_dir_info;
 			lock_dir_info = new DirectoryInfo (LockDirectory);
 			foreach (FileInfo info in lock_dir_info.GetFiles ()) {
-				if (IsDanglingLock (info))
+				if (IsDanglingLock (info)) {
+					Logger.Log.Warn ("Found a dangling index lock on {0}", info.FullName);
 					return false;
+				}
 			}
 
 			return true;

@@ -551,6 +551,11 @@ namespace Beagle.Daemon {
 				QueryableState old_state = queryable.State;
 				queryable.State = QueryableState.Indexing;
 
+				// Number of times a null indexable was returned.  We don't want
+				// to spin tightly in a loop here if we're not actually indexing
+				// things.
+				int misfires = 0;
+
 				do {
 					if (! generator.HasNextIndexable ()) {
 						// ...except if there is no more work to do, of course.
@@ -565,8 +570,14 @@ namespace Beagle.Daemon {
 					// This means that the generator didn't have an indexable
 					// to return this time through, but it does not mean that
 					// its processing queue is empty.
-					if (generated == null)
-						continue;
+					if (generated == null) {
+						misfires++;
+
+						if (misfires > 179) // Another totally arbitrary number
+							break;
+						else
+							continue;
+					}
 
 					if (queryable.PreAddIndexableHook (generated))
 						queryable.AddIndexable (generated);
