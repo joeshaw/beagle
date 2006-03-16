@@ -43,6 +43,23 @@ namespace Beagle.Daemon
 	{
 		static private LuceneIndexingDriver driver;
 
+		// Files and directories that are allowed to be in the target
+		// directory before we blow it away.  If we encounter any file
+		// or dir not in this list, we'll bail out.
+		static string [] allowed_files = {
+			"FileAttributesStore.db",
+			"fingerprint",
+			"version"
+		};
+		
+		static string [] allowed_dirs = {
+			"Locks",
+			"PrimaryIndex",
+			"SecondaryIndex",
+			"TextCache"
+		};
+
+
 		static void Main (string [] args)
 		{
 			if (args.Length < 2)
@@ -55,7 +72,27 @@ namespace Beagle.Daemon
 				Environment.Exit (1);
 			}			
 
-			driver = new LuceneIndexingDriver (index_dir, -1);
+			// Be *EXTRA PARANOID* about the contents of the target
+			// directory, because creating an indexing driver will
+			// nuke it.
+			if (Directory.Exists (index_dir)) {
+
+				foreach (FileInfo info in DirectoryWalker.GetFileInfos (index_dir)) {
+					if (Array.IndexOf (allowed_files, info.Name) == -1) {
+						Logger.Log.Error ("{0} doesn't look safe to delete: non-Beagle file {1} was found", index_dir, info.FullName);
+						Environment.Exit (1);
+					}
+				}
+
+				foreach (DirectoryInfo info in DirectoryWalker.GetDirectoryInfos (index_dir)) {
+					if (Array.IndexOf (allowed_dirs, info.Name) == -1) {
+						Logger.Log.Error ("{0} doesn't look safe to delete: non-Beagle directory {1} was found", index_dir, info.FullName);
+						Environment.Exit (1);
+					}
+				}
+			}
+
+			driver = new LuceneIndexingDriver (index_dir, false);
 
 			switch (args [1]) {
 #if false
