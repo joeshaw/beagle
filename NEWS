@@ -1,4 +1,71 @@
 
+Version 0.2.3
+March 17, 2006
+
+Daemon/Infrastructure:
+* Allow Beagle to be run as root, although this is still disabled by
+  default and not recommended.  (Joe Shaw)
+* Allow emails, hostnames, and numeric strings to leak through noise
+  filter.  (D Bera)
+* Don't read the whole file if enough snippets are found; speeds up
+  snippet extraction a lot.  (Bera)
+* More closely track cached IndexReaders, fixing a race which would
+  result in exceptions.  (Joe)
+* Don't use thread-local storage in Lucene due to a Mono leak up
+  through 1.1.13.4.  This fixes huge memory leaks in the daemon.
+  (Joe)
+
+Backends:
+* Use message headers to detect incoming/outgoing mails in KMail
+  backend.  (Bera)
+* Fix a hard-to-hit exception when checkpointing Evolution mail data
+  to disk.  (Joe)
+
+Filters:
+* Add a PreLoad flag so filters can indicate whether or not to preload
+  files.  (Joe)
+* New video filter which uses mplayer to extract metadata.  (Alexander
+  Macdonald, Joe, Bera)
+* New BMP filter.  (Alexander)
+* New filter which lets administrators configure external programs for
+  filtering more unusual or specialized file types.  (Joe)
+* Update our entagged-sharp version, which include a few small fixes
+  for audio filters.  (Daniel Drake)
+* Eliminate a critical warning from GMime about address types on
+  emails with undisclosed recipients.  (Joe)
+* Handle a new failure condition from GMime when trying to read a
+  message toward the end of a stream.  (Joe)
+
+UI:
+* Say "Start Search Service" rather than "Start Daemon".  (Dan
+  Winship)
+* Don't clip the forward and back buttons if the text size is smaller
+  than the height of the icons.  (Joe)
+* Scale launcher icons to fit the requested size.  (Joe)
+* Add the "Open" action back for Folders.  (Lukas Lipka)
+* Use desktop-launch when possible, for KDE support.  (Dan)
+* Escape URIs before passing them to apps.  (Daniel, Brandon Hale)
+
+Tools:
+* Fix a crash in beagle-build-index when not using text caches.
+  (Alexander Larsson)
+* Be extra paraoid in beagle-manage-index so that we don't delete any
+  user data.  (Joe)
+
+Everything Else:
+* Fix a compilation error on some 64-bit machines.  (Joe)
+* Updated Beagle icons in the Firefox extension.  (Garrett LeSage)
+
+Translations:
+* Updated Bulgarian translation.  (Alexander Shopov)
+* Updated Czech translation.  (Jakub Friedl)
+* Updated Finnish translation.  (Ilkka Tuohela)
+* Updated Galician translation.  (Ignacio Casal Quinteiro)
+* Updated Japanese translation.  (Takeshi AIHANA)
+* Updated Vietnamese translation.  (Clytie Siddall)
+
+------------------------------------------------------
+
 Version 0.2.2
 March 6, 2006
 
