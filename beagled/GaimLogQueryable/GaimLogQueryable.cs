@@ -249,8 +249,7 @@ namespace Beagle.Daemon.GaimLogQueryable {
 
 		override protected double RelevancyMultiplier (Hit hit)
 		{
-			return HalfLifeMultiplierFromProperty (hit, 0.25,
-							       "fixme:endtime", "fixme:starttime");
+			return HalfLifeMultiplierFromProperty (hit, 0.25, "fixme:endtime", "fixme:starttime");
 		}
 
 		override protected bool HitFilter (Hit hit) 

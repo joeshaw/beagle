@@ -87,9 +87,7 @@ namespace Beagle.Util {
 			get { return utterances; }
 		}
 
-		protected void AddUtterance (DateTime timestamp,
-					     String   who,
-					     String   text)
+		protected void AddUtterance (DateTime timestamp, string who, string text)
 		{
 			Utterance utt = new Utterance ();
 			utt.Timestamp = timestamp;
@@ -244,11 +242,27 @@ namespace Beagle.Util {
 				AppendToPreviousUtterance (line);
 				return;
 			}
+
+			// Gaim 2.0 hack
+			// The new version of Gaim adds AM or PM right after the time
+			// 1.x: (19:07:07)
+			// 2.0: (19:07:07 AM)
+			// This is a nasty workaround :-)
+
 			string whenStr = line.Substring (1, j-1);
+			int hour = 0, minute, second;
+
+			if (whenStr [whenStr.Length-1] == 'M') {
+				// Handle AM and PM
+				if (whenStr [whenStr.Length-2] == 'P')
+					hour = 12;
+								
+				whenStr = line.Substring (1, j-4);
+			}
+
 			string[] whenSplit = whenStr.Split (':');
-			int hour, minute, second;
 			try {
-				hour   = int.Parse (whenSplit [0]);
+				hour += int.Parse (whenSplit [0]);
 				minute = int.Parse (whenSplit [1]);
 				second = int.Parse (whenSplit [2]);
 			} catch {
@@ -266,7 +280,7 @@ namespace Beagle.Util {
 						      StartTime.Month,
 						      StartTime.Day,
 						      hour, minute, second);
-
+			
 			// Try to deal with time wrapping around.
 			while (when < EndTime)
 				when = when.AddDays (1);
@@ -301,7 +315,7 @@ namespace Beagle.Util {
 			while ((line = TextReader.ReadLine ()) != null) {
 				if (isHtml)
 					line = StripTags (line, builder);
-				
+			
 				ProcessLine (line);
 			}
 		}

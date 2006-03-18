@@ -1,3 +1,11 @@
+2006-03-18  Lukas Lipka  <lukas@pmad.net>
+
+	* Util/ImLog.cs: Fix the broken parsing of Gaim 2.0 logs which added
+	AM or PM to the utterance timestamp. Thanks to Zafar for providing
+	sample logs.
+
+	* beagled/GaimLogQueryable/GaimLogQueryable.cs: Cosmetic fixes.
+
 2006-03-16  Daniel Drake  <dsd@gentoo.org>
 
 	* search/Tiles/Tile.cs: Escape uri's before passing them to applications,
