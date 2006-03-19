@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: beagle HEAD\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2006-03-10 22:25+0900\n"
-"PO-Revision-Date: 2006-03-10 22:20+0900\n"
+"POT-Creation-Date: 2006-03-19 20:35+0900\n"
+"PO-Revision-Date: 2006-03-19 20:31+0900\n"
 "Last-Translator: Takeshi AIHANA <aihana@gnome.gr.jp>\n"
 "Language-Team: Japanese <gnome-translation@gnome.gr.jp>\n"
 "MIME-Version: 1.0\n"
@@ -121,14 +121,12 @@ msgstr ""
 "ユーザ権限で再起動して下さい。"
 
 #: ../search/Pages/StartDaemon.cs:19
-#, fuzzy
 msgid "Search service not running"
-msgstr "Beagle デーモンが起動されていません"
+msgstr "検索サービスが起動されていません"
 
 #: ../search/Pages/StartDaemon.cs:21
-#, fuzzy
 msgid "Start search service"
-msgstr "検索を始めます"
+msgstr "検索サービスを起動する"
 
 #: ../search/Search.cs:147
 msgid "_Find:"
@@ -1065,6 +1063,3 @@ msgstr "{0:0.0} Kバイト"
 #, csharp-format
 msgid "{0:0.0} MB"
 msgstr "{0:0.0} Mバイト"
-
-#~ msgid "Start the daemon"
-#~ msgstr "Beagle デーモンを起動する"
