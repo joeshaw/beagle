@@ -1,3 +1,7 @@
+2006-03-19  Vladimer Sichinava  <vlsichinava@gmail.com>
+
+        * configure.in: Added "ka" (Georgian) to ALL_LINGUAS
+
 2006-03-18  Lukas Lipka  <lukas@pmad.net>
 
 	* Util/ImLog.cs: Fix the broken parsing of Gaim 2.0 logs which added
