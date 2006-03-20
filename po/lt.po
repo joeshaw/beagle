@@ -1,15 +1,15 @@
 # Lithuanian translation of Beagle.
-# Copyright (C) 2005 The Free Software Foundation, Inc.
+# Copyright (C) 2005-2006 The Free Software Foundation, Inc.
 # This file is distributed under the same license as the Beagle package.
-# Žygimantas Beručka <zygis@gnome.org>, 2005.
+# Žygimantas Beručka <zygis@gnome.org>, 2005-2006.
 #
 #
 msgid ""
 msgstr ""
 "Project-Id-Version: beagle HEAD\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2006-03-03 12:33+0200\n"
-"PO-Revision-Date: 2006-03-03 13:08+0200\n"
+"POT-Creation-Date: 2006-03-20 14:07+0200\n"
+"PO-Revision-Date: 2006-03-20 14:11+0200\n"
 "Last-Translator: Žygimantas Beručka <zygis@gnome.org>\n"
 "Language-Team: Lithuanian <komp_lt@konferencijos.lt>\n"
 "MIME-Version: 1.0\n"
@@ -43,7 +43,7 @@ msgstr "Pokalbiai esantys {0}"
 msgid "Conversations with {0}"
 msgstr "Pokalbiai su {0}"
 
-#: ../search/beagle-search.desktop.in.h:1 ../tools/settings.glade.h:28
+#: ../search/beagle-search.desktop.in.h:1 ../tools/settings.glade.h:30
 msgid "Search"
 msgstr "Paieška"
 
@@ -51,7 +51,7 @@ msgstr "Paieška"
 msgid "Search for data on your desktop"
 msgstr "Ieškoti duomenų Jūsų darbo aplinkoje"
 
-#: ../search/Category.cs:103
+#: ../search/Category.cs:108
 #, csharp-format
 msgid "{0}-{1} of {2}"
 msgstr "{0}-{1} iš {2}"
@@ -78,31 +78,32 @@ msgid ""
 "You should check the spelling of your search words to see if you "
 "accidentally misspelled any words."
 msgstr ""
-"Turėtumėte patikrinti Jūsų ieškotinų žodžių rašybą, galbūt Jūs "
-"netyčia neteisingai parašėte kurį nors žodį."
+"Turėtumėte patikrinti Jūsų ieškotinų žodžių rašybą, galbūt Jūs netyčia "
+"neteisingai parašėte kurį nors žodį."
 
 #: ../search/Pages/QuickTips.cs:10
 msgid "You can use upper and lower case; search is case-insensitive."
 msgstr ""
-"Galite naudoti tiek mažąsias, tiek didžiąsias raides; paieškos rezultatai nesiskirs."
+"Galite naudoti tiek mažąsias, tiek didžiąsias raides; paieškos rezultatai "
+"nesiskirs."
 
 #: ../search/Pages/QuickTips.cs:11
 msgid "To search for optional terms, use OR.  ex: <b>George OR Ringo</b>"
 msgstr ""
-"Norėdami ieškoti vieno arba kito žodžio, naudoktie OR, pvz.: <b>Jonas OR Petras</b>"
+"Norėdami ieškoti vieno arba kito žodžio, naudoktie OR, pvz.: <b>Jonas OR "
+"Petras</b>"
 
 #: ../search/Pages/QuickTips.cs:12
 msgid ""
 "To exclude search terms, use the minus symbol in front, such as <b>-cats</b>"
 msgstr ""
-"Norėdami išskirsti paieškos žodžius, priekyje panaudokite minuso ženklą, pvz.: "
-"<b>-katės</b>"
+"Norėdami išskirsti paieškos žodžius, priekyje panaudokite minuso ženklą, "
+"pvz.: <b>-katės</b>"
 
 #: ../search/Pages/QuickTips.cs:13
 msgid ""
 "When searching for a phrase, add quotes. ex: <b>\"There be dragons\"</b>"
-msgstr ""
-"Kai ieškote frazės, pridėkite kabutes, pvz.: <b>„Rokenrolo naktys“</b>"
+msgstr "Kai ieškote frazės, pridėkite kabutes, pvz.: <b>„Rokenrolo naktys“</b>"
 
 #: ../search/Pages/QuickTips.cs:19 ../search/UIManager.cs:65
 msgid "Quick Tips"
@@ -117,16 +118,16 @@ msgid ""
 "For security reasons, Beagle cannot be run as root.  You should restart as a "
 "regular user."
 msgstr ""
-"Saugumo sumetimais Beagle negalima paleisti root naudotoju. Turėtumėte paleisti "
-"iš naujo paprastu naudotoju."
+"Saugumo sumetimais Beagle negalima paleisti root naudotoju. Turėtumėte "
+"paleisti iš naujo paprastu naudotoju."
 
 #: ../search/Pages/StartDaemon.cs:19
-msgid "Daemon not running"
-msgstr "Demonas nepaleistas"
+msgid "Search service not running"
+msgstr "Paieškos paslauga nepaleista"
 
 #: ../search/Pages/StartDaemon.cs:21
-msgid "Start the daemon"
-msgstr "Paleisti demoną"
+msgid "Start search service"
+msgstr "Paleisti paieškos paslaugą"
 
 #: ../search/Search.cs:147
 msgid "_Find:"
@@ -668,27 +669,27 @@ msgstr "_Tinkamumas"
 msgid "Sort the best matches first"
 msgstr "Rūšiuoti pagal atitikmens tikslumą"
 
-#: ../tools/Settings.cs:216
+#: ../tools/Settings.cs:223
 msgid "Reload configuration"
 msgstr "Perkrauti konfigūraciją"
 
-#: ../tools/Settings.cs:217
+#: ../tools/Settings.cs:224
 msgid ""
 "The configuration file has been modified by another application. Do you wish "
 "to discard the currently displayed values and reload configuration from disk?"
 msgstr ""
-"Konfigūracijos rinkmena buvo modifikuota kitos programos. Ar norite atsisakyti "
-"dabar rodomų reikšmių ir iš naujo įkelti konfigūraciją iš disko?"
+"Konfigūracijos rinkmena buvo modifikuota kitos programos. Ar norite "
+"atsisakyti dabar rodomų reikšmių ir iš naujo įkelti konfigūraciją iš disko?"
 
-#: ../tools/Settings.cs:255
+#: ../tools/Settings.cs:262
 msgid "Select Path"
 msgstr "Pasirinkite kelią"
 
-#: ../tools/Settings.cs:274
+#: ../tools/Settings.cs:281
 msgid "The selected path is already selected for indexing and wasn't added."
 msgstr "Pasirinktas kelias jau pasirinktas indeksavimui bet nebuvo pridėtas."
 
-#: ../tools/Settings.cs:277
+#: ../tools/Settings.cs:284
 msgid ""
 "The selected path wasn't added. The list contains items that supercedes it "
 "and the data is already being indexed."
@@ -696,15 +697,15 @@ msgstr ""
 "Pasirinktas kelias nebuvo pridėtas. Sąraše yra elementai, kurie jį pakeičia "
 "ir duomenys jau yra indeksuojami."
 
-#: ../tools/Settings.cs:288 ../tools/Settings.cs:480
+#: ../tools/Settings.cs:295 ../tools/Settings.cs:487
 msgid "Path not added"
 msgstr "Kelias nepridėtas"
 
-#: ../tools/Settings.cs:297
+#: ../tools/Settings.cs:304
 msgid "Remove obsolete paths"
 msgstr "Pašalinti nebenaudojamus kelius"
 
-#: ../tools/Settings.cs:298
+#: ../tools/Settings.cs:305
 msgid ""
 "Adding this path will obsolete some of the existing include paths. This will "
 "result in the removal of the old obsolete paths. Do you still wish to add it?"
@@ -712,96 +713,96 @@ msgstr ""
 "Pridėjus šį kelią, kai kurie egzistuojantys keliai taps pasenusiais. Šie "
 "seni ir nebenaudojami keliai bus ištrinti. Vis dar norite jį pridėti?"
 
-#: ../tools/Settings.cs:324
+#: ../tools/Settings.cs:331
 msgid "Remove path"
 msgstr "Pašalinti kelią"
 
-#: ../tools/Settings.cs:325
+#: ../tools/Settings.cs:332
 msgid ""
 "Are you sure you wish to remove this path from the list of directories to be "
 "included for indexing?"
 msgstr "Ar tikrai norite pašalinti šį kelią iš indeksuojamų aplankų sąrašo?"
 
-#: ../tools/Settings.cs:354
+#: ../tools/Settings.cs:361
 msgid "Remove item"
 msgstr "Pašalinti elementą"
 
-#: ../tools/Settings.cs:355
+#: ../tools/Settings.cs:362
 msgid ""
 "Are you sure you wish to remove this item from the list of data to be "
 "excluded from indexing?"
 msgstr ""
 "Ar tikrai norite pašalinti šį elementą iš neindeksuojamų duomenų sąrašo?"
 
-#: ../tools/Settings.cs:398
+#: ../tools/Settings.cs:405
 msgid "Invalid host entry"
 msgstr "Netinkamas kompiuterio įrašas"
 
-#: ../tools/Settings.cs:405
+#: ../tools/Settings.cs:412
 msgid "Remote host already present in the list."
 msgstr "Nutolęs kompiuteris jau sąraše yra."
 
-#: ../tools/Settings.cs:414
+#: ../tools/Settings.cs:421
 msgid "Netbeagle Node not added"
 msgstr "Netbeagle mazgas nepridėtas"
 
-#: ../tools/Settings.cs:430
+#: ../tools/Settings.cs:437
 msgid "Remove host"
 msgstr "Pašalinti kompiuterį"
 
-#: ../tools/Settings.cs:431
+#: ../tools/Settings.cs:438
 msgid "Are you sure you wish to remove this host from the list?"
 msgstr "Ar tikrai norite pašalinti šį kompiuterį iš sąrašo?"
 
-#: ../tools/Settings.cs:452
+#: ../tools/Settings.cs:459
 msgid "Select path"
 msgstr "Pasirinkite kelią"
 
-#: ../tools/Settings.cs:471
+#: ../tools/Settings.cs:478
 msgid "The selected path is already configured for external access."
 msgstr "Pasirinktas kelias jau sukonfigūruotas išoriniam priėjimui."
 
-#: ../tools/Settings.cs:495
+#: ../tools/Settings.cs:502
 msgid "Remove public path"
 msgstr "Pašalinti viešą kelią"
 
-#: ../tools/Settings.cs:496
+#: ../tools/Settings.cs:503
 msgid ""
 "Are you sure you wish to remove this entry from the list of public paths?"
 msgstr "Ar tikrai norite pašalinti šį įrašą iš viešų kelių sąrašo?"
 
-#: ../tools/Settings.cs:541 ../tools/Settings.cs:630 ../tools/Settings.cs:708
-#: ../tools/Settings.cs:784 ../tools/Settings.cs:1123
+#: ../tools/Settings.cs:548 ../tools/Settings.cs:637 ../tools/Settings.cs:715
+#: ../tools/Settings.cs:791 ../tools/Settings.cs:1130
 msgid "Name"
 msgstr "Vardas"
 
-#: ../tools/Settings.cs:624 ../tools/settings.glade.h:33
+#: ../tools/Settings.cs:631 ../tools/settings.glade.h:35
 msgid "Type"
 msgstr "Tipas"
 
-#: ../tools/Settings.cs:677 ../tools/Settings.cs:1057
-#: ../tools/settings.glade.h:25
+#: ../tools/Settings.cs:684 ../tools/Settings.cs:1064
+#: ../tools/settings.glade.h:27
 msgid "Path"
 msgstr "Kelias"
 
-#: ../tools/Settings.cs:680 ../tools/Settings.cs:1067
+#: ../tools/Settings.cs:687 ../tools/Settings.cs:1074
 msgid "Pattern"
 msgstr "Šablonas"
 
-#: ../tools/Settings.cs:683 ../tools/Settings.cs:1062
-#: ../tools/settings.glade.h:22
+#: ../tools/Settings.cs:690 ../tools/Settings.cs:1069
+#: ../tools/settings.glade.h:24
 msgid "Mail Folder"
 msgstr "Pašto aplankas"
 
-#: ../tools/Settings.cs:1031
+#: ../tools/Settings.cs:1038
 msgid "Select Folder"
 msgstr "Pasirinkite aplanką"
 
-#: ../tools/Settings.cs:1091
+#: ../tools/Settings.cs:1098
 msgid "Error adding path"
 msgstr "Klaida pridedant kelią"
 
-#: ../tools/Settings.cs:1092
+#: ../tools/Settings.cs:1099
 msgid ""
 "The specified path could not be found and therefore it could not be added to "
 "the list of resources excluded for indexing."
@@ -809,7 +810,7 @@ msgstr ""
 "Nurodytas kelias nerastas, todėl jis nebuvo įtrauktas į neindeksuojamų "
 "resursų sąrašą."
 
-#: ../tools/Settings.cs:1122
+#: ../tools/Settings.cs:1129
 msgid "Show"
 msgstr "Rodyti"
 
@@ -822,26 +823,30 @@ msgid "<b>Add resource</b>"
 msgstr "<b>Pridėti resursą</b>"
 
 #: ../tools/settings.glade.h:3
+msgid "<b>Administration</b>"
+msgstr "<b>Administravimas</b>"
+
+#: ../tools/settings.glade.h:4
 msgid "<b>Display</b>"
 msgstr "<b>Rodymas</b>"
 
-#: ../tools/settings.glade.h:4
+#: ../tools/settings.glade.h:5
 msgid "<b>General</b>"
 msgstr "<b>Bendri</b>"
 
-#: ../tools/settings.glade.h:5
+#: ../tools/settings.glade.h:6
 msgid "<b>Networking</b>"
 msgstr "<b>Tinklas</b>"
 
-#: ../tools/settings.glade.h:6
+#: ../tools/settings.glade.h:7
 msgid "<b>Privacy</b>"
 msgstr "<b>Privatumas</b>"
 
-#: ../tools/settings.glade.h:7
+#: ../tools/settings.glade.h:8
 msgid "<b>Select mail folder</b>"
 msgstr "<b>Pasirinkite pašto aplanką</b>"
 
-#: ../tools/settings.glade.h:8
+#: ../tools/settings.glade.h:9
 msgid ""
 "Add a remote search-enabled host you wish \n"
 "to network with."
@@ -850,21 +855,21 @@ msgstr ""
 "paieškos galimybe, su kuriuo norite susijungti\n"
 "tinkle."
 
-#: ../tools/settings.glade.h:10
+#: ../tools/settings.glade.h:11
 msgid "Add any additional paths to be included for indexing."
 msgstr "Pridėkite bet kokius papildomus indeksuojamus kelius."
 
-#: ../tools/settings.glade.h:11
+#: ../tools/settings.glade.h:12
 msgid "Add any remote search-enabled hosts you wish to network with"
 msgstr ""
 "Pridėkite bet kokius tinkle esančius kompiuterius su įjungta nutolusios "
 "paieškos galimybe"
 
-#: ../tools/settings.glade.h:12
+#: ../tools/settings.glade.h:13
 msgid "Address"
 msgstr "Adresas"
 
-#: ../tools/settings.glade.h:13
+#: ../tools/settings.glade.h:14
 msgid ""
 "Adjust which types of results should be visible, and in what order they "
 "should be presented when grouped by type."
@@ -872,59 +877,63 @@ msgstr ""
 "Nurodykite kokių tipų rezultatai turėtų būti matomi ir kokia tvarka jie "
 "turėtų būti rodomi, kai sugrupuojami pagal tipą."
 
-#: ../tools/settings.glade.h:14
+#: ../tools/settings.glade.h:15
+msgid "Allow Beagle to be run as root"
+msgstr "Leisti Beagle veikti kaip root"
+
+#: ../tools/settings.glade.h:16
 msgid "Allow external access to local search services"
 msgstr "Leisti priėjimą iš išorės prie vietinių paieškos aplankų"
 
-#: ../tools/settings.glade.h:15
+#: ../tools/settings.glade.h:17
 msgid "Alt"
 msgstr "Alt"
 
-#: ../tools/settings.glade.h:16
+#: ../tools/settings.glade.h:18
 msgid "Ctrl"
 msgstr "Ctrl"
 
-#: ../tools/settings.glade.h:17
+#: ../tools/settings.glade.h:19
 msgid "Directory Path"
 msgstr "Aplanko kelias"
 
-#: ../tools/settings.glade.h:18
+#: ../tools/settings.glade.h:20
 msgid "Display the search window by pressing"
 msgstr "Rodyti paieškos langą paspaudus"
 
-#: ../tools/settings.glade.h:19
+#: ../tools/settings.glade.h:21
 msgid "Filename Pattern"
 msgstr "Rinkmenos vardo šablonas"
 
-#: ../tools/settings.glade.h:20
+#: ../tools/settings.glade.h:22
 msgid "Index my home directory"
 msgstr "Indeksuoti mano namų aplanką"
 
-#: ../tools/settings.glade.h:21
+#: ../tools/settings.glade.h:23
 msgid "Indexing"
 msgstr "Indeksavimas"
 
-#: ../tools/settings.glade.h:23
+#: ../tools/settings.glade.h:25
 msgid "Maximum number of results displayed "
 msgstr "Maksimalus rodomų rezultatų skaičius"
 
-#: ../tools/settings.glade.h:24
+#: ../tools/settings.glade.h:26
 msgid "Networking"
 msgstr "Tinklas"
 
-#: ../tools/settings.glade.h:26
+#: ../tools/settings.glade.h:28
 msgid "Please select a resource you wish to exclude from indexing."
 msgstr "Pasirinkite resursą, kurio indeksuoti nenorite."
 
-#: ../tools/settings.glade.h:27
+#: ../tools/settings.glade.h:29
 msgid "Please select the mail folder you wish to exclude from indexing. "
 msgstr "Pasirinkite pašto aplanką, kurio indeksuoti nenorite."
 
-#: ../tools/settings.glade.h:29
+#: ../tools/settings.glade.h:31
 msgid "Search Preferences"
 msgstr "Paieškos nustatymai"
 
-#: ../tools/settings.glade.h:30
+#: ../tools/settings.glade.h:32
 msgid ""
 "Specify any resources, such as paths, patterns, mail folders or type of "
 "objects you wish to exclude from indexing."
@@ -932,11 +941,11 @@ msgstr ""
 "Nurodykite bet kokius resursus, tokius kaip kelius, šablonus, pašto aplankus "
 "arba objektų tipus, kurių indeksuoti nenorite."
 
-#: ../tools/settings.glade.h:31
+#: ../tools/settings.glade.h:33
 msgid "Specify paths that should be available for external access"
 msgstr "Nurodykite kelius, prie kurių būtų galima prieiti iš išorės"
 
-#: ../tools/settings.glade.h:32
+#: ../tools/settings.glade.h:34
 msgid "Start search & indexing services automatically "
 msgstr "Paleisti paieškos ir indeksavimo paslaugas automatiškai"
 
@@ -1070,3 +1079,6 @@ msgstr "{0:0.0} KB"
 #, csharp-format
 msgid "{0:0.0} MB"
 msgstr "{0:0.0} MB"
+
+#~ msgid "Start the daemon"
+#~ msgstr "Paleisti demoną"
