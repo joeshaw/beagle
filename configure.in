@@ -178,22 +178,25 @@ if test "x$enable_gui" = "xyes"; then
 	gmime-sharp >= $GMIME_SHARP_REQUIRED
 ])
 	AC_SUBST(BEAGLE_UI_LIBS)
+
+	PKG_CHECK_MODULES(UIGLUE, gtk+-2.0 >= $GTK_REQUIRED librsvg-2.0)
+	AC_SUBST(UIGLUE_CFLAGS)
+	AC_SUBST(UIGLUE_LIBS)
+	
+	dnl Gdk and Atk are needed for trayicon glue
+	
+	GDK20_MINIMUM_VERSION=2.2.3
+	ATK_MINIMUM_VERSION=1.2.4
+	
+	PKG_CHECK_MODULES(LIBTRAYICON,
+[
+	gdk-2.0 >= $GDK20_MINIMUM_VERSION 
+	atk >= $ATK_MINIMUM_VERSION
+])
+	AC_SUBST(LIBTRAYICON_CFLAGS)
+	AC_SUBST(LIBTRAYICON_LIBS)
+	
 fi
-
-PKG_CHECK_MODULES(UIGLUE, gtk+-2.0 >= $GTK_REQUIRED librsvg-2.0)
-AC_SUBST(UIGLUE_CFLAGS)
-AC_SUBST(UIGLUE_LIBS)
-
-dnl ----------------------------------------------
-
-dnl Gdk and Atk are needed for trayicon glue
-
-GDK20_MINIMUM_VERSION=2.2.3
-ATK_MINIMUM_VERSION=1.2.4
-
-PKG_CHECK_MODULES(LIBTRAYICON, gdk-2.0 >= $GDK20_MINIMUM_VERSION atk >= $ATK_MINIMUM_VERSION)
-AC_SUBST(LIBTRAYICON_CFLAGS)
-AC_SUBST(LIBTRAYICON_LIBS)
 
 dnl ----------------------------------------------
 

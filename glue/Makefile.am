@@ -1,6 +1,10 @@
-INCLUDES = 				\
+INCLUDES = $(SYSTEMINFO_GLUE_CFLAGS)
+
+if ENABLE_GUI
+INCLUDES += 				\
 	$(LIBTRAYICON_CFLAGS)		\
 	$(UIGLUE_CFLAGS)
+endif
 
 EXTRA_GLUE_SOURCES =
 EXTRA_GLUE_LIBADD =
@@ -96,8 +100,12 @@ libbeagleuiglue_la_LIBADD =	\
 
 gluelibdir = $(pkglibdir)
 gluelib_LTLIBRARIES = 		\
-	libbeagleglue.la	\
+	libbeagleglue.la
+
+if ENABLE_GUI
+gluelib_LTLIBRARIES +=		\
 	libbeagleuiglue.la
+endif
 
 COND_SOURCES = 			\
 	wv1-glue.c		\
