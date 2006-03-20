@@ -82,7 +82,7 @@ namespace Beagle.Filters {
 				AddFSpotInformation (this.FileInfo.FullName);
 				AddDigikamInformation (this.FileInfo.FullName);
 			} catch (Exception ex) {
-				Console.WriteLine ("Exception trying to retrieve FSpot/Digikam information:" + ex);
+				Logger.Log.Error ("Exception trying to retrieve FSpot/Digikam information:" + ex);
 			}
 
 
@@ -138,10 +138,10 @@ namespace Beagle.Filters {
 
 			foreach (Statement stmt in xmp.Store) {
 				if (stmt.Predicate == MetadataStore.Namespaces.Resolve ("dc:subject")) {
-					System.Console.WriteLine ("found subject");
+					//Console.WriteLine ("found subject");
 					subject_anon = stmt.Object;
 				} else if (stmt.Predicate == MetadataStore.Namespaces.Resolve ("dc:creator")) {
-					System.Console.WriteLine ("found creator");
+					//Console.WriteLine ("found creator");
 					creator_anon = stmt.Object;
 				} else if (stmt.Predicate == MetadataStore.Namespaces.Resolve ("dc:rights")) {
 					rights_anon = stmt.Object;
