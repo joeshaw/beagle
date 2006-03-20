@@ -295,6 +295,7 @@ namespace Search {
 			if (focus && !Empty)
 				((Gtk.Widget)VisibleTiles[0]).GrabFocus ();
 			this.expanded = expanded;
+			UpdateButtons ();
 		}
 	}
 }
