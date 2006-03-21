@@ -74,6 +74,9 @@ namespace Search.Tiles {
 				failed_thumb = factory.HasValidFailedThumbnail (hit.UriAsString, hit.FileInfo.LastWriteTime);
 
 			if (! File.Exists (thumbnail) && ! failed_thumb) {
+				if (hit.MimeType == null)
+					return false;
+
 				lock (in_queue) {
 					in_queue.Add (new ThumbnailRequest (image, hit, size));
 					if (thread == null) {
