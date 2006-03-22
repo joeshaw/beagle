@@ -67,16 +67,16 @@ namespace Search.Tiles {
 
 		public bool SetThumbnailIcon (Gtk.Image image, Beagle.Hit hit, int size)
 		{
-			string thumbnail = Gnome.Thumbnail.PathForUri (hit.UriAsString, Gnome.ThumbnailSize.Normal);
-			bool failed_thumb = false;
+			DateTime mtime = (hit.FileInfo != null) ? hit.FileInfo.LastWriteTime : DateTime.Now;
 
-			if (hit.FileInfo != null)
-				failed_thumb = factory.HasValidFailedThumbnail (hit.UriAsString, hit.FileInfo.LastWriteTime);
+			if (hit.MimeType == null ||
+			    !factory.CanThumbnail (hit.UriAsString, hit.MimeType, mtime))
+				return false;
+
+			string thumbnail = Gnome.Thumbnail.PathForUri (hit.UriAsString, Gnome.ThumbnailSize.Normal);
+			bool failed_thumb = factory.HasValidFailedThumbnail (hit.UriAsString, mtime);
 
 			if (! File.Exists (thumbnail) && ! failed_thumb) {
-				if (hit.MimeType == null)
-					return false;
-
 				lock (in_queue) {
 					in_queue.Add (new ThumbnailRequest (image, hit, size));
 					if (thread == null) {
