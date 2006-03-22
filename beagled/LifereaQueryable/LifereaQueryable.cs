@@ -300,7 +300,12 @@ namespace Beagle.Daemon.LifereaQueryable {
 
 		private Indexable current_itemToIndexable ()
 		{
-			Indexable indexable = new Indexable (new Uri (String.Format ("{0};item={1}", feed_source, current_item.Source)));
+			Indexable indexable;
+			try {
+				indexable = new Indexable (new Uri (String.Format ("{0};item={1}", feed_source, current_item.Source)));
+			} catch (System.UriFormatException) {
+				indexable = new Indexable (new Uri (String.Format ("liferea://dummy?{0};item={1}", feed_source, current_item.Source)));
+			}
 			indexable.ParentUri = UriFu.PathToFileUri (feed_file);
 			indexable.MimeType = "text/html";
 			indexable.HitType = "FeedItem";
