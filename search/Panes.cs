@@ -42,7 +42,6 @@ namespace Search {
 			vp.Show ();
 
 			details = new WhiteBox ();
-			details.BorderWidth = 6;
 			vp.Add (details);
 			details.Show ();
 		}
