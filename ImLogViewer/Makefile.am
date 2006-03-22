@@ -29,18 +29,20 @@ RESOURCES = $(join $(RESOURCEFILES:%=-resource:%,),$(notdir $(RESOURCEFILES)))
 $(TARGET): $(CSFILES) $(LOCAL_ASSEMBLIES) $(RESOURCEFILES)
 	$(CSC) -out:$@ $(CSFLAGS) $(CSFILES) $(ASSEMBLIES) $(RESOURCES)
 
-all: $(TARGET)
+all: $(TARGET) $(WRAPPER)
 
 install-data-local: $(TARGET)
+	$(mkinstalldirs) $(DESTDIR)$(bindir)
 	$(mkinstalldirs) $(DESTDIR)$(pkglibdir)
 	$(INSTALL_DATA) $(TARGET) $(TARGET).mdb $(DESTDIR)$(pkglibdir)
+	sed -e "s|\#installed=1|installed=1|" < $(WRAPPER) > $(WRAPPER).tmp
+	$(INSTALL_SCRIPT) $(WRAPPER).tmp $(DESTDIR)$(bindir)/$(WRAPPER)
+	rm -f $(WRAPPER).tmp
 
 uninstall-local:
 	rm -f $(DESTDIR)$(pkglibdir)/$(TARGET)
 	rm -f $(DESTDIR)$(pkglibdir)/$(TARGET).mdb
-
-
-bin_SCRIPTS = $(WRAPPER)
+	rm -f $(DESTDIR)$(bindir)/$(WRAPPER)
 
 $(WRAPPER): $(srcdir)/$(WRAPPER).in
 	sed -e "s|\@prefix\@|$(prefix)|g" -e "s|\@pkglibdir\@|$(pkglibdir)|g" -e "s|\@target\@|$(TARGET)|g" -e "s|\@gacprefix\@|$(GAC_PREFIX)|g" < $^ > $@

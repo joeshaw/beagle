@@ -1,6 +1,9 @@
 #!@bash@
 
-if [ -e ./@target@ ] && [ -e ./Makefile.am ] ; then
+# This line will be automatically uncommented when you "make install"
+#installed=1
+
+if [ -z $installed ] ; then
     echo "*** Running uninstalled @target@ ***"
 
     # When we run uninstalled, run in the foreground by default.
@@ -12,23 +15,13 @@ if [ -e ./@target@ ] && [ -e ./Makefile.am ] ; then
 
     # The stuff in webserver, Tiles and images is only needed when
     # web services are enabled.
-    export MONO_PATH="../Util:../BeagleClient:./webserver:../Tiles:../images:$MONO_PATH"
+    export MONO_PATH="../Util:../BeagleClient:./webserver:../Tiles:../images${MONO_PATH+:$MONO_PATH}"
 
-    export LD_LIBRARY_PATH="../glue/.libs:$LD_LIBRARY_PATH"
+    export LD_LIBRARY_PATH="../glue/.libs${LD_LIBRARY_PATH+:$LD_LIBRARY_PATH}"
+    
+    export BEAGLE_FILTER_PATH="../Filters${BEAGLE_FILTER_PATH+:$BEAGLE_FILTER_PATH}"
+    export BEAGLE_BACKEND_PATH=".${BEAGLE_BACKEND_PATH+:$BEAGLE_BACKEND_PATH}"
 
-    # In BEAGLE_FILTER_PATH, a trailing ':' means "append the default path".
-    if [ -n "$BEAGLE_FILTER_PATH" ]; then
-	export BEAGLE_FILTER_PATH="../Filters:$BEAGLE_FILTER_PATH"
-    else
-	export BEAGLE_FILTER_PATH="../Filters"
-    fi
-
-    # Ditto BEAGLE_BACKEND_PATH.
-    if [ -n "$BEAGLE_BACKEND_PATH" ]; then
-	export BEAGLE_BACKEND_PATH=".:$BEAGLE_BACKEND_PATH"
-    else
-	export BEAGLE_BACKEND_PATH="."
-    fi
 else
 
     # Otherwise default to running in the background
@@ -37,15 +30,15 @@ else
     TARGET_EXE="@pkglibdir@/@target@"
 
     export _BEAGLED_INDEX_HELPER_PATH="@pkglibdir@"
-    export MONO_PATH="@pkglibdir@:$MONO_PATH"
-    export LD_LIBRARY_PATH="@pkglibdir@:$LD_LIBRARY_PATH"
+    export MONO_PATH="@pkglibdir@${MONO_PATH+:$MONO_PATH}"
+    export LD_LIBRARY_PATH="@pkglibdir@${LD_LIBRARY_PATH+:$LD_LIBRARY_PATH}"
 fi
 
-export MONO_GAC_PREFIX="@gacprefix@:$MONO_GAC_PREFIX"
+export MONO_GAC_PREFIX="@gacprefix@${MONO_GAC_PREFIX+:$MONO_GAC_PREFIX}"
 
 EVO_LIBDIR="@evolibdir@"
 if [ -n "$EVO_LIBDIR" ]; then
-    export LD_LIBRARY_PATH="$EVO_LIBDIR:$LD_LIBRARY_PATH"
+    export LD_LIBRARY_PATH="$EVO_LIBDIR${LD_LIBRARY_PATH+:$LD_LIBRARY_PATH}"
 fi
 
 monogrind=0

@@ -105,6 +105,7 @@ install-data-local: $(TARGET)
 
 uninstall-local:
 	rm -f $(DESTDIR)$(FILTERDIR)/$(TARGET)
+	rm -f $(DESTDIR)$(FILTERDIR)/$(TARGET).mdb
 
 COND_CS_FILES = \
 	$(srcdir)/FilterOle.cs		\

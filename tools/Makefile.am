@@ -150,11 +150,14 @@ if ENABLE_GUI
 WRAPPERS += $(SETTINGS_WRAPPER)
 endif
 
-bin_SCRIPTS = 			\
-	$(WRAPPERS) 		\
+PREBUILT_WRAPPERS =		\
 	beagle-index-info	\
-	beagle-ping             \
+	beagle-ping		\
 	beagle-status
+
+BIN_WRAPPERS = 			\
+	$(WRAPPERS)		\
+	$(PREBUILT_WRAPPERS)
 
 man_MANS = 			\
 	beagle-query.1		\
@@ -175,11 +178,31 @@ endif
 all: $(TARGETS) $(WRAPPERS)
 
 install-data-local: $(TARGETS)
+	$(mkinstalldirs) $(DESTDIR)$(bindir)
 	$(mkinstalldirs) $(DESTDIR)$(pkglibdir)
 	$(INSTALL_DATA) $(TARGETS) $(TARGETS_MDB) $(DESTDIR)$(pkglibdir)
 
+	@for i in $(WRAPPERS); do						\
+		sed -e "s|\#installed=1|installed=1|" < $$i > $$i.tmp;		\
+		echo "$(INSTALL_SCRIPT) $$i.tmp $(DESTDIR)$(bindir)/$$i";	\
+		$(INSTALL_SCRIPT) $$i.tmp $(DESTDIR)$(bindir)/$$i || exit 1;	\
+		rm -f $$i.tmp;							\
+	done
+
+	@for i in $(PREBUILT_WRAPPERS); do					\
+		sed -e "s|\#installed=1|installed=1|" < $(srcdir)/$$i > $$i.tmp;		\
+		echo "$(INSTALL_SCRIPT) $$i.tmp $(DESTDIR)$(bindir)/$$i";	\
+		$(INSTALL_SCRIPT) $$i.tmp $(DESTDIR)$(bindir)/$$i || exit 1;	\
+		rm -f $$i.tmp;							\
+	done
+
 uninstall-local:
 	cd $(DESTDIR)$(pkglibdir) && rm -f $(TARGETS) && rm -f $(TARGETS_MDB)
+
+	@for i in $(BIN_WRAPPERS); do				\
+		echo "rm -f $(DESTDIR)$(bindir)/$$i";		\
+		rm -f $(DESTDIR)$(bindir)/$$i || exit 1;	\
+	done
 
 EXTRA_DIST =				\
 	$(WRAPPER_IN)			\

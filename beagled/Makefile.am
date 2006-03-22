@@ -956,6 +956,7 @@ ALL_TARGETS = 				\
 	$(PLUGIN_TARGET)		\
 	$(DAEMON_DLL_TARGET)		\
 	$(DAEMON_TARGET)		\
+	$(DAEMON_WRAPPER)		\
 	$(INDEX_HELPER_TARGET)		\
 	$(INDEX_HELPER_WRAPPER)		\
 	$(INDEX_WEB_CONTENT_TARGET)	\
@@ -990,6 +991,8 @@ man_MANS = 				\
 all: $(ALL_TARGETS)
 
 install-data-local: $(ALL_TARGETS)
+	$(mkinstalldirs) $(DESTDIR)$(bindir)
+	$(mkinstalldirs) $(DESTDIR)$(sbindir)
 	$(mkinstalldirs) $(DESTDIR)$(pkglibdir)
 	$(mkinstalldirs) $(DESTDIR)$(pkgdatadir)
 	$(mkinstalldirs) $(DESTDIR)$(BACKENDDIR)
@@ -1000,6 +1003,20 @@ endif
 if ENABLE_EVOLUTION
 	$(INSTALL_DATA) $(EVO_DLL_TARGET) $(EVO_DLL_TARGET).mdb $(DESTDIR)$(BACKENDDIR)
 endif
+	@for i in $(BIN_WRAPPERS); do						\
+		sed -e "s|\#installed=1|installed=1|" < $$i > $$i.tmp;		\
+		echo "$(INSTALL_SCRIPT) $$i.tmp $(DESTDIR)$(bindir)/$$i";	\
+		$(INSTALL_SCRIPT) $$i.tmp $(DESTDIR)$(bindir)/$$i || exit 1;	\
+		rm -f $$i.tmp;							\
+	done
+
+	@for i in $(SBIN_WRAPPERS); do						\
+		sed -e "s|\#installed=1|installed=1|" < $$i > $$i.tmp;		\
+		echo "$(INSTALL_SCRIPT) $$i.tmp $(DESTDIR)$(sbindir)/$$i";	\
+		$(INSTALL_SCRIPT) $$i.tmp $(DESTDIR)$(sbindir)/$$i || exit 1;	\
+		rm -f $$i.tmp;							\
+	done
+
 	$(INSTALL_DATA) $(PLUGIN_TARGET)                 $(DESTDIR)$(pkglibdir)
 	$(INSTALL_DATA) $(PLUGIN_TARGET).mdb             $(DESTDIR)$(pkglibdir)
 	$(INSTALL_DATA) $(DAEMON_DLL_TARGET)             $(DESTDIR)$(pkglibdir)
@@ -1035,6 +1052,17 @@ if ENABLE_EVOLUTION
 	rm -f $(DESTDIR)$(BACKENDDIR)/$(EVO_DLL_TARGET)
 	rm -f $(DESTDIR)$(BACKENDDIR)/$(EVO_DLL_TARGET).mdb
 endif
+
+	@for i in $(BIN_WRAPPERS); do				\
+		echo "rm -f $(DESTDIR)$(bindir)/$$i";		\
+		rm -f $(DESTDIR)$(bindir)/$$i || exit 1;	\
+	done
+
+	@for i in $(SBIN_WRAPPERS); do				\
+		echo "rm -f $(DESTDIR)$(sbindir)/$$i";		\
+		rm -f $(DESTDIR)$(sbindir)/$$i || exit 1;	\
+	done
+
 	rm -f $(DESTDIR)$(pkglibdir)/$(PLUGIN_TARGET)
 	rm -f $(DESTDIR)$(pkglibdir)/$(PLUGIN_TARGET).mdb
 	rm -f $(DESTDIR)$(pkglibdir)/$(DAEMON_DLL_TARGET)
@@ -1052,11 +1080,11 @@ endif
 	rm -f $(DESTDIR)$(pkglibdir)/$(MANAGE_INDEX_TARGET)
 	rm -f $(DESTDIR)$(pkglibdir)/$(MANAGE_INDEX_TARGET).mdb
 
-bin_SCRIPTS = \
+BIN_WRAPPERS = \
 	$(DAEMON_WRAPPER)		\
 	$(INDEX_WEB_CONTENT_WRAPPER)
 
-sbin_SCRIPTS = \
+SBIN_WRAPPERS = \
 	$(BUILD_INDEX_WRAPPER)		\
 	$(MANAGE_INDEX_WRAPPER)
 

@@ -1,20 +1,16 @@
 #!@bash@
 
-if [ -e ./@target@ ] && [ -e ./Makefile.am ] ; then
+# This line will be automatically uncommented when you "make install"
+#installed=1
+
+if [ -z $installed ] ; then
     echo "*** Running uninstalled @target@ ***"
     THIS_PATH="../Util:../BeagleClient:."
     THIS_EXE="./@target@"
 
-    export MONO_PATH="../Util:../BeagleClient:$MONO_PATH"
-    export LD_LIBRARY_PATH="../glue/.libs:$LD_LIBRARY_PATH"
-
-    # In BEAGLE_FILTER_PATH, a trailing ':' means "append the default path".
-    if [ -n "$BEAGLE_FILTER_PATH" ]; then
-	export BEAGLE_FILTER_PATH="../Filters:$BEAGLE_FILTER_PATH"
-    else
-	export BEAGLE_FILTER_PATH="../Filters"
-    fi
-
+    export MONO_PATH="../Util:../BeagleClient${MONO_PATH+:$MONO_PATH}"
+    export LD_LIBRARY_PATH="../glue/.libs${LD_LIBRARY_PATH+:$LD_LIBRARY_PATH}"
+    export BEAGLE_FILTER_PATH="../Filters${BEAGLE_FILTER_PATH+:$BEAGLE_FILTER_PATH}"
 else
     THIS_PATH="@pkglibdir@"
     THIS_EXE="@pkglibdir@/@target@"
@@ -32,8 +28,8 @@ if [ -n "$BEAGLE_DEBUG_FLAG_IS_SET" ]; then
    MONO_EXTRA_ARGS="--debug $MONO_EXTRA_ARGS"
 fi
 
-export MONO_GAC_PREFIX="@gacprefix@:$MONO_GAC_PREFIX"
-export MONO_PATH="$THIS_PATH:$MONO_PATH"
+export MONO_GAC_PREFIX="@gacprefix@${MONO_GAC_PREFIX+:$MONO_GAC_PREFIX}"
+export MONO_PATH="$THIS_PATH${MONO_PATH+:$MONO_PATH}"
 
 CMDLINE="mono --debug $MONO_EXTRA_ARGS $THIS_EXE $@"
 

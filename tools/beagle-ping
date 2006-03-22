@@ -1,6 +1,9 @@
 #!/bin/sh
 
-if [ -x "./beagle-info" ]; then
+# This line will be automatically uncommented when you "make install"
+#installed=1
+
+if [ -z $installed ]; then
     CMD="./beagle-info"
 else
     CMD="beagle-info"
