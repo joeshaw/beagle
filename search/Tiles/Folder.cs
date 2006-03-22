@@ -48,12 +48,15 @@ namespace Search.Tiles {
 			DetailsPane details = new DetailsPane ();
 
 			details.AddBoldLabel (Title, 0, 1);
-			details.AddLabel (Description, 1, 1);
-			details.AddLabel ("", 2, 1);
+			details.AddLabelPair (Catalog.GetString ("Last Edited:"),
+					      Utils.NiceLongDate (Hit.DirectoryInfo.LastWriteTime),
+					      1, 1);
+			details.AddLabelPair (Catalog.GetString ("Full Path:"),
+					      Hit.Uri.LocalPath,
+					      2, 1);
 
-			details.AddLabelPair (Catalog.GetString ("Edited:"),
-					      Utils.NiceVeryLongDate (Hit.DirectoryInfo.LastWriteTime),
-					      3, 1);
+			details.AddLabel ("", 3, 1);
+			details.AddLabel (Description, 4, 1);
 
 			return details;
 		}
