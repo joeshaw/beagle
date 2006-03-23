@@ -597,8 +597,8 @@ namespace Lucene.Net.Store
             return new FSIndexInput(new System.IO.FileInfo(System.IO.Path.Combine(directory.FullName, name)));
         }
 
-		//static public Beagle.Util.Logger Logger = null;
-		static public Beagle.Util.Logger Logger = Beagle.Util.Logger.Log;
+		static public Beagle.Util.Logger Logger = null;
+		//static public Beagle.Util.Logger Logger = Beagle.Util.Logger.Log;
 		static public void Log (string format, params object[] args)
 		{
 			if (Logger != null)
