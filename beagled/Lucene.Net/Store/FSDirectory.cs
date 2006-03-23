@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 using System;
+using Mono.Unix.Native;
 using Constants = Lucene.Net.Util.Constants;
 namespace Lucene.Net.Store
 {
@@ -52,6 +53,7 @@ namespace Lucene.Net.Store
 			}
 			public override bool Obtain()
 			{
+				Log ("Trying to obtain lock " + lockFile.FullName);
 				if (Lucene.Net.Store.FSDirectory.DISABLE_LOCKS || Enclosing_Instance.DisableLocks)
 					return true;
 				
@@ -62,36 +64,45 @@ namespace Lucene.Net.Store
 					tmpBool = System.IO.Directory.Exists(Enclosing_Instance.lockDir.FullName);
 				if (!tmpBool)
 				{
-                    try
-                    {
-                        System.IO.Directory.CreateDirectory(Enclosing_Instance.lockDir.FullName);
-                    }
-                    catch (Exception)
+					try
+                    			{
+						System.IO.Directory.CreateDirectory(Enclosing_Instance.lockDir.FullName);
+                    			}
+                    			catch (Exception)
 					{
 						throw new System.IO.IOException("Cannot create lock directory: " + Enclosing_Instance.lockDir);
 					}
 				}
 
-				bool obtainedLock = false;
+                try
+                {
+		    int fd = Mono.Unix.Native.Syscall.open (
+				lockFile.FullName,
+				Mono.Unix.Native.OpenFlags.O_RDWR | 
+				Mono.Unix.Native.OpenFlags.O_CREAT |
+				Mono.Unix.Native.OpenFlags.O_EXCL,
+				Mono.Unix.Native.FilePermissions.S_IRUSR);
+		    if (fd == -1)
+			    throw new System.IO.IOException ("Could not create lock file: "
+				    + Mono.Unix.Native.Stdlib.strerror (
+					    Mono.Unix.Native.Stdlib.GetLastError ()
+				    ));
+		    int ret = Mono.Unix.Native.Syscall.close (fd);
+		    if (ret == -1)
+			    throw new System.IO.IOException ("Could not close lock file: "
+				    + Mono.Unix.Native.Stdlib.strerror (
+					    Mono.Unix.Native.Stdlib.GetLastError ()
+				    ));
+		    // FIXME: Should the file be cleaned up if we can open it but not close it ?
 
-				if (! System.IO.File.Exists(lockFile.FullName)) {
-                	try
-	                {
-    	                System.IO.FileStream createdFile = lockFile.Create();
-						System.IO.StreamWriter writer = new System.IO.StreamWriter (createdFile);
-						writer.WriteLine (System.Diagnostics.Process.GetCurrentProcess().Id);
-						writer.Close ();
-                    	createdFile.Close();
-	                    obtainedLock = true;
-    	            }
-        	        catch (Exception e)
-            	    {
-                	    // Fall through
-	                }
-				}
-
-				Log ("{0} lock {1}", obtainedLock ? "Obtained" : "Could not obtain", lockFile.FullName);
-				return obtainedLock;
+		    Log ("Obtained lock " + lockFile.FullName);
+                    return true;
+                }
+                catch (Exception e)
+                {
+		    Log ("Exception in CreateNew for file:" + lockFile.FullName + ":" + e);
+                    return false;
+                }
 			}
 			public override void  Release()
 			{
@@ -110,6 +121,10 @@ namespace Lucene.Net.Store
 				}
 				else
 					tmpBool = false;
+				if (System.IO.File.Exists(lockFile.FullName)) {
+					Log ("Release didnt delete lockfile {0}.", lockFile.FullName);
+					tmpBool = false;
+				}
 				bool generatedAux = tmpBool;
 				if (tmpBool)
 					Log ("Released lock {0}", lockFile.FullName);
@@ -582,8 +597,8 @@ namespace Lucene.Net.Store
             return new FSIndexInput(new System.IO.FileInfo(System.IO.Path.Combine(directory.FullName, name)));
         }
 
-		static public Beagle.Util.Logger Logger = null;
-		//static public Beagle.Util.Logger Logger = Beagle.Util.Logger.Log;
+		//static public Beagle.Util.Logger Logger = null;
+		static public Beagle.Util.Logger Logger = Beagle.Util.Logger.Log;
 		static public void Log (string format, params object[] args)
 		{
 			if (Logger != null)
