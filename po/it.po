@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: beagle\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2006-03-24 19:40+0100\n"
-"PO-Revision-Date: 2006-03-24 19:49+0100\n"
+"PO-Revision-Date: 2006-03-24 22:04+0100\n"
 "Last-Translator: Luca Ferretti <elle.uca@libero.it>\n"
 "Language-Team: Italian <tp@lists.linux.it>\n"
 "MIME-Version: 1.0\n"
@@ -54,7 +54,7 @@ msgstr "Ricerca dati nel proprio desktop"
 #: ../search/Category.cs:108
 #, csharp-format
 msgid "{0}-{1} of {2}"
-msgstr "{1}-{1} su {2}"
+msgstr "{0}-{1} su {2}"
 
 #: ../search/Pages/NoMatch.cs:19
 msgid "No results were found."
