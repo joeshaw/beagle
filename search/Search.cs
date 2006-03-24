@@ -141,9 +141,11 @@ namespace Search {
 			uim.SortChanged += OnSortChanged;
 			uim.ShowQuickTips += OnShowQuickTips;
 			vbox.PackStart (uim.MenuBar, false, false, 0);
-			
-			HBox hbox = new HBox (false, 6);
 
+			HBox padding_hbox = new HBox ();
+
+			HBox hbox = new HBox (false, 6);
+			
 			Label label = new Label (Catalog.GetString ("_Find:"));
 			hbox.PackStart (label, false, false, 0);
 			
@@ -171,7 +173,9 @@ namespace Search {
 
 			hbox.PackStart (spinner, false, false, 0);
 
-			vbox.PackStart (hbox, false, true, 6);
+			padding_hbox.PackStart (hbox, true, true, 9);
+
+			vbox.PackStart (padding_hbox, false, true, 6);
 
 			pages = new Gtk.Notebook ();
 			pages.ShowTabs = false;

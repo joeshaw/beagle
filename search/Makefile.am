@@ -5,11 +5,12 @@ if ENABLE_DESKTOP_LAUNCH
 CSFLAGS += -define:ENABLE_DESKTOP_LAUNCH
 endif
 
-bin_SCRIPTS = beagle-search
 pkglib_DATA = Search.exe Search.exe.mdb
 
+BIN_WRAPPERS = beagle-search
+
 beagle-search: beagle-search.in
-	sed -e "s:@PKGLIBDIR@:${pkglibdir}:" < $(srcdir)/beagle-search.in > beagle-search
+	sed -e "s:@pkglibdir@:${pkglibdir}:" < $(srcdir)/beagle-search.in > beagle-search
 	chmod a+x beagle-search
 
 CSFILES =					\
@@ -92,6 +93,18 @@ desktop_h_files = $(desktop_in_files:.in=.in.h)
 
 desktopdir       = $(datadir)/applications
 desktop_DATA     = $(desktop_files)
+
+all: $(BIN_WRAPPERS)
+
+install-data-local: $(BIN_WRAPPERS)
+	$(mkinstalldirs) $(DESTDIR)$(bindir)
+
+	@sed -e "s|\#installed=1|installed=1|" < beagle-search > beagle-search.tmp
+	$(INSTALL_SCRIPT) beagle-search.tmp $(DESTDIR)$(bindir)/beagle-search
+	@rm -f beagle-search.tmp
+
+uninstall-local:
+	rm -f $(DESTDIR)$(bindir)/beagle-search
 
 EXTRA_DIST =			\
 	$(CSFILES)		\
