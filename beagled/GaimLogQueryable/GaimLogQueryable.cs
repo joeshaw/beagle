@@ -35,6 +35,7 @@ using Beagle.Util;
 
 namespace Beagle.Daemon.GaimLogQueryable {
 
+	// FIXME: This should be rather renamed to Gaim to be compliant with other backend names
 	[QueryableFlavor (Name="GaimLog", Domain=QueryDomain.Local, RequireInotify=false)]
 	public class GaimLogQueryable : LuceneFileQueryable {
 
@@ -122,8 +123,10 @@ namespace Beagle.Daemon.GaimLogQueryable {
 			Inotify.Subscribe (account_dir, OnInotifyNewRemote, Inotify.EventType.Create);
 
 			// Walk through remote user conversations
-			foreach (string remote_dir in DirectoryWalker.GetDirectories (account_dir))
-				CrawlRemoteDirectory (remote_dir);
+			foreach (string remote_dir in DirectoryWalker.GetDirectories (account_dir)) {
+				if (remote_dir.IndexOf (".system") < 0)
+					CrawlRemoteDirectory (remote_dir);
+			}
 		}
 
 		private void CrawlRemoteDirectory (string remote_dir)
