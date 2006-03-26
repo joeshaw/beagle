@@ -1,3 +1,7 @@
+2006-03-27  Amanpreet Singh Alam <apbrar@gmail.com>
+
+	* configure.in: "pa" Punjabi is added to ALL_LINGUAS
+
 2006-03-23  Debajyoti Bera <dbera.web@gmail.com>
 
 	* beagled/Lucene.Net/Store/FSDirectory.cs: Fix lock obtain timeout.
