@@ -31,8 +31,8 @@ chunks of semi-independent code and placed in Beagle/Util.  That kind of code
 is just ugly by nature, and I want to keep it from getting mixed into the
 beagle code as much as possible.
 
-We also want to avoid non-core dependencies in Util.  Anything in Util that
-requires gtk+ or gnome should go into a separate UtilUi at some point.
+Anything in Util that requires gtk+ or gnome should be added to the UiUtil.dll
+assembly.  Otherwise, add it to the Util.dll assembly.
 
 
 Coding Style
@@ -113,7 +113,7 @@ HACKING file.
                                         Code ();
                                 }
 
-                * Avoid using unecessary open/close braces, vertical space
+                * Avoid using unnecessary open/close braces, vertical space
                   is usually limited:
 
                         good:
@@ -124,6 +124,22 @@ HACKING file.
                                 if (a) {
                                         Code ();
                                 }
+
+		* However, when defining loops where the subpart could be
+		  considered one statement, use open/close braces for
+		  clarity.  For example:
+
+			good:
+				while (true) {
+					if (a)
+					        foo = true;
+				}
+
+			bad:
+				while (true)
+					if (a)
+					        foo = true;
+
 
                 * When defining a method, use the C style for brace placement, 
                   that means, use a new line for the brace, like this:
@@ -178,16 +194,21 @@ HACKING file.
                         bad:
                                 if (a+5>Method(Blah()+4))
 
+		* This also applies for "for" loops:
+
+			good:
+				for (int i = 0; i < 100; i++)
+
+			bad:
+				for (int i=0;i<100;i++)
+
                 * For any new files, please use a descriptive introduction, like
                   this:
 
                         //
                         // System.Comment.cs: Handles comments in System files.
                         //
-                        // Author:
-                        //   Juan Perez (juan@address.com)
-                        //
-                        // (C) 2002 Address, Inc (http://www.address.com)
+                        // Copyright (C) 2002 Address, Inc. (http://www.address.com)
                         //
 
                 * Switch statements have the case at the same indentation as the
@@ -200,8 +221,26 @@ HACKING file.
                                 ...
                         }
 
-		* Private variable and function local variable names are under_scored 
-		  (no camelCase please).
+		* Large switch statements should have blank lines
+		  between case statements:
+			 
+			 switch (x) {
+
+			 case 'a':
+				large code chunk;
+
+			 case 'b':
+				another code chunk;
+
+			 default:
+				another code chunk;
+			 }
+
+		* All method names and properties should be StudlyCapped.
+
+		* Private variable members of a class and function
+		  local variable names should be under_scored (no
+		  camelCase please).
 
 If you are using Emacs, you might want to put something like this
 in your .emacs file:
