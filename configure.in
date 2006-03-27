@@ -144,8 +144,12 @@ OLD_LDFLAGS="$LDFLAGS"
 OLD_LIBS="$LIBS"
 CFLAGS="$CFLAGS $X_CFLAGS"
 LDFLAGS="$LDFLAGS $X_LIBS"
-AC_CHECK_HEADER(X11/extensions/scrnsaver.h,, [AC_MSG_ERROR([Unable to find scrnsaver.h.  You probably need to install X development packages])])
-AC_CHECK_LIB(Xss,XScreenSaverQueryExtension,, [AC_MSG_ERROR([Unable to find libXss.  You probably need to install X development packages])])
+AC_CHECK_HEADER(X11/extensions/scrnsaver.h, has_scrnsaver=yes, has_scrnsaver=no)
+AC_CHECK_LIB(Xss,XScreenSaverQueryExtension, has_libxss=yes, has_libxss=no)
+AM_CONDITIONAL(HAS_LIBXSS, test "x$enable_scrnsaver$enable_libxss" = "xyesyes")
+if test "x$enable_scrnsaver$enable_libxss" = "xyesyes"; then
+	XSS_LIBS = "-lXss"
+fi
 CFLAGS="$OLD_CFLAGS"
 LDFLAGS="$OLD_LDFLAGS"
 LIBS="$OLD_LIBS"
@@ -449,7 +453,7 @@ AC_SUBST(GTK_BINARY_VERSION)
 dnl For the systeminfo glue
 
 PKG_CHECK_MODULES(SYSTEMINFO_GLUE, gdk-2.0)
-SYSTEMINFO_GLUE_X_LIBS="$X_PRE_LIBS $X_LIBS -lX11 -lXss $X_EXTRA_LIBS"
+SYSTEMINFO_GLUE_X_LIBS="$X_PRE_LIBS $X_LIBS -lX11 $XSS_LIBS $X_EXTRA_LIBS"
 AC_SUBST(SYSTEMINFO_GLUE_X_LIBS)
 
 dnl ----------------------------------------------

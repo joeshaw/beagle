@@ -78,6 +78,9 @@ namespace Beagle.Filters {
 			} catch (FileNotFoundException) {
 				// Probably not an error if the file isn't there.
 
+			} catch (DirectoryNotFoundException) {
+				// The directory isn't there either, not an error.
+
 			} catch (InvalidOperationException ex) {
 				// Something wrong with the XML
 				Logger.Log.Error ("Unable to parse {0}: {1}", path, ex.Message);

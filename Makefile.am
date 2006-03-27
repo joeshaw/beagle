@@ -38,6 +38,7 @@ endif
 # SUBDIRS += chooser-fu
 
 EXTRA_DIST = 			\
+	HACKING			\
 	intltool-extract.in	\
 	intltool-merge.in	\
 	intltool-update.in	\

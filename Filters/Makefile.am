@@ -61,7 +61,8 @@ CSFILES = 				\
 	$(srcdir)/FilterRuby.cs		\
 	$(srcdir)/FilterMPlayerVideo.cs	\
 	$(srcdir)/FilterBmp.cs		\
-	$(srcdir)/FilterExternal.cs
+	$(srcdir)/FilterExternal.cs	\
+	$(srcdir)/FilterEbuild.cs
 
 if ENABLE_GSF_SHARP
 CSFILES += 				\
