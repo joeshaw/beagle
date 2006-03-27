@@ -381,7 +381,10 @@ AC_ARG_ENABLE([epiphany-extension],
 	enable_epiphany_extension=$enableval,
 	enable_epiphany_extension=auto)
 
-if $PKG_CONFIG --exists epiphany-1.8; then
+if $PKG_CONFIG --exists epiphany-1.10; then
+        EPIPHANY_MAJOR=1.10
+        EPIPHANY_REQUIRED=1.9.0
+elif $PKG_CONFIG --exists epiphany-1.8; then
 	EPIPHANY_MAJOR=1.8
 	EPIPHANY_REQUIRED=1.7.0
 elif $PKG_CONFIG --exists epiphany-1.6; then
