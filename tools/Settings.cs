@@ -48,7 +48,7 @@ public class SettingsDialog
 	////////////////////////////////////////////////////////////////
 	// Widgets
 
-	[Widget] Frame administration_frame;
+	[Widget] VBox administration_frame;
 	[Widget] CheckButton allow_root_toggle;
 
 	[Widget] CheckButton autostart_toggle;
@@ -681,13 +681,13 @@ public class SettingsDialog
 
 			switch (exclude_item.Type) {
 			case ExcludeType.Path:
-				((CellRendererText)renderer).Text = Catalog.GetString ("Path");
+				((CellRendererText)renderer).Text = Catalog.GetString ("P_ath:");
 				break;
 			case ExcludeType.Pattern:
-				((CellRendererText)renderer).Text = Catalog.GetString ("Pattern");
+				((CellRendererText)renderer).Text = Catalog.GetString ("P_attern:");
 				break;
 			case ExcludeType.MailFolder:
-				((CellRendererText)renderer).Text = Catalog.GetString ("Mail Folder");
+				((CellRendererText)renderer).Text = Catalog.GetString ("M_ail folder:");
 				break;
 			}
 		}
@@ -1061,17 +1061,17 @@ public class SettingsDialog
 			switch (Type) {
 			case ExcludeType.Path:
 				browse_button.Sensitive = true;
-				value_name_label.Text = Catalog.GetString ("Path");
+				value_name_label.TextWithMnemonic = Catalog.GetString ("P_ath:");
 				value_entry.IsEditable = true;
 				break;
 			case ExcludeType.MailFolder:
 				browse_button.Sensitive = true;
-				value_name_label.Text = Catalog.GetString ("Mail Folder");
+				value_name_label.TextWithMnemonic = Catalog.GetString ("M_ail folder:");
 				value_entry.IsEditable = false;
 				break;
 			case ExcludeType.Pattern:
 				browse_button.Sensitive = false;
-				value_name_label.Text = Catalog.GetString ("Pattern");
+				value_name_label.TextWithMnemonic = Catalog.GetString ("P_attern:");
 				value_entry.IsEditable = true;
 				break;
 			}
