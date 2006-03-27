@@ -62,7 +62,8 @@ CSFILES = 				\
 	$(srcdir)/FilterMPlayerVideo.cs	\
 	$(srcdir)/FilterBmp.cs		\
 	$(srcdir)/FilterExternal.cs	\
-	$(srcdir)/FilterEbuild.cs
+	$(srcdir)/FilterEbuild.cs	\
+	$(srcdir)/FilterGif.cs
 
 if ENABLE_GSF_SHARP
 CSFILES += 				\
