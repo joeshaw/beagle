@@ -29,6 +29,7 @@ using System.Collections;
 using System.Diagnostics;
 using System.Globalization;
 using System.IO;
+using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -330,6 +331,24 @@ namespace Beagle.Util {
 						 Mono.Unix.Native.Stdlib.GetLastError ());
 			}
 #endif
+		}
+
+		///////////////////////////////////////////////////////////////
+
+		public static string MonoRuntimeVersion {
+			get {
+				Type t = typeof (object).Assembly.GetType ("Mono.Runtime");
+
+				string ver = (string) t.InvokeMember ("GetDisplayName",
+								      BindingFlags.InvokeMethod
+								      | BindingFlags.NonPublic
+								      | BindingFlags.Static
+								      | BindingFlags.DeclaredOnly
+								      | BindingFlags.ExactBinding,
+								      null, null, null);
+				
+				return ver;
+			}
 		}
 
 		///////////////////////////////////////////////////////////////
