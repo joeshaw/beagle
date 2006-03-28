@@ -1,4 +1,3 @@
-
 ###
 ### Welcome to Beagle's configure.in.  We hope you enjoy your stay.
 ###
@@ -144,11 +143,11 @@ OLD_LDFLAGS="$LDFLAGS"
 OLD_LIBS="$LIBS"
 CFLAGS="$CFLAGS $X_CFLAGS"
 LDFLAGS="$LDFLAGS $X_LIBS"
-AC_CHECK_HEADER(X11/extensions/scrnsaver.h, has_scrnsaver=yes, has_scrnsaver=no)
-AC_CHECK_LIB(Xss,XScreenSaverQueryExtension, has_libxss=yes, has_libxss=no)
+AC_CHECK_HEADER(X11/extensions/scrnsaver.h, enable_scrnsaver=yes, enable_scrnsaver=no)
+AC_CHECK_LIB(Xss,XScreenSaverQueryExtension, enable_libxss=yes, enable_libxss=no)
 AM_CONDITIONAL(HAS_LIBXSS, test "x$enable_scrnsaver$enable_libxss" = "xyesyes")
 if test "x$enable_scrnsaver$enable_libxss" = "xyesyes"; then
-	XSS_LIBS = "-lXss"
+	XSS_LIBS="-lXss"
 fi
 CFLAGS="$OLD_CFLAGS"
 LDFLAGS="$OLD_LDFLAGS"
