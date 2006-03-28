@@ -681,13 +681,13 @@ public class SettingsDialog
 
 			switch (exclude_item.Type) {
 			case ExcludeType.Path:
-				((CellRendererText)renderer).Text = Catalog.GetString ("P_ath:");
+				((CellRendererText)renderer).Text = Catalog.GetString ("Path:");
 				break;
 			case ExcludeType.Pattern:
-				((CellRendererText)renderer).Text = Catalog.GetString ("P_attern:");
+				((CellRendererText)renderer).Text = Catalog.GetString ("Pattern:");
 				break;
 			case ExcludeType.MailFolder:
-				((CellRendererText)renderer).Text = Catalog.GetString ("M_ail folder:");
+				((CellRendererText)renderer).Text = Catalog.GetString ("Mail folder:");
 				break;
 			}
 		}
