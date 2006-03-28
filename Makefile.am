@@ -26,11 +26,14 @@ SUBDIRS +=			\
 endif
 
 SUBDIRS +=			\
-	mozilla-extension	\
-	bludgeon
-
+	mozilla-extension	
+	
 if ENABLE_EPIPHANY_EXTENSION
 SUBDIRS += epiphany-extension
+endif
+
+if ENABLE_BLUDGEON
+SUBDIRS += bludgeon
 endif
 
 # When the chooser work has been fixed up to use libbeagle, we can

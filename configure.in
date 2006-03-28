@@ -371,7 +371,14 @@ fi
 AM_CONDITIONAL(ENABLE_LIBBEAGLE, test "x$enable_libbeagle" = "xyes")
 
 dnl ----------------------------------------------
+AC_ARG_ENABLE([bludgeon],
+	AC_HELP_STRING([--disable-bludgeon], [Disable bludgeon testing tool]),
+	enable_bludgeon=$enableval,
+	enable_bludgeon=yes)
+AM_CONDITIONAL(ENABLE_BLUDGEON, test "x$enable_bludgeon" = "xyes")
 
+	
+dnl ----------------------------------------------
 dnl Epiphany Extension
 dnl Much of this is cut&pasted from epiphany-extensions/configure.ac
 
@@ -380,9 +387,9 @@ AC_ARG_ENABLE([epiphany-extension],
 	enable_epiphany_extension=$enableval,
 	enable_epiphany_extension=auto)
 
-if $PKG_CONFIG --exists epiphany-1.10; then
-        EPIPHANY_MAJOR=1.10
-        EPIPHANY_REQUIRED=1.9.0
+if $PKG_CONFIG --exists epiphany-2.14; then
+        EPIPHANY_MAJOR=2.14
+        EPIPHANY_REQUIRED=2.14.0
 elif $PKG_CONFIG --exists epiphany-1.8; then
 	EPIPHANY_MAJOR=1.8
 	EPIPHANY_REQUIRED=1.7.0
