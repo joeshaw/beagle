@@ -67,7 +67,7 @@ namespace Beagle.Filters {
 
 		public FilterExternal ()
 		{
-			string path = Path.Combine (ExternalStringsHack.SysConfDir, "external-filters.xml");
+			string path = Path.Combine (Path.Combine (ExternalStringsHack.SysConfDir, "beagle"), "external-filters.xml");
 
 			try {
 				FileStream fs = File.Open (path, FileMode.Open, FileAccess.Read, FileShare.Read);
