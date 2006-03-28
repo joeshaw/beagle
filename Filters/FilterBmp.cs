@@ -96,10 +96,11 @@ namespace Beagle.Filters
 			bmih.ncolors            = EndianConverter.ToUInt32 (data, 46, true);
 			bmih.importantcolors    = EndianConverter.ToUInt32 (data, 50, true);
 
-			AddProperty (Beagle.Property.NewKeyword ("exif:PixelXDimension", bmih.width));
-			AddProperty (Beagle.Property.NewKeyword ("exif:PixelYDimension", bmih.height));
+			Width = bmih.width;
+			Height = bmih.height;
+			Depth = bmih.bits;
+			
 			AddProperty (Beagle.Property.NewKeyword ("exif:Planes", bmih.planes));
-			AddProperty (Beagle.Property.NewKeyword ("exif:Depth", bmih.bits));
 			
 			switch	(bmih.compression) {
 				case BitmapCompressionTypes.None:

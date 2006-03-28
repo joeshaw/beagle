@@ -66,8 +66,9 @@ namespace Beagle.Filters {
 				char [] gif_version = { (char) data [3], (char) data [4], (char) data [5] };
 
 				AddProperty (Beagle.Property.NewKeyword ("gif:version", new string (gif_version)));
-				AddProperty (Beagle.Property.NewKeyword ("exif:PixelXDimension", width));
-				AddProperty (Beagle.Property.NewKeyword ("exif:PixelYDimension", height));
+				
+				Width = width;
+				Height = height;
 
 				/*
 				 * Everything from here onwards is for parsing the GIF Stream

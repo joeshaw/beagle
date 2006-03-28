@@ -88,11 +88,11 @@ namespace Beagle.Filters {
 					break;
 				case TagId.PixelXDimension:
 					filter.Width = (int) e.ValueAsLong [0];
-					filter.AddProperty (Beagle.Property.NewKeyword ("exif:PixelXDimension", e.ValueAsString [0]));
+					//filter.AddProperty (Beagle.Property.NewKeyword ("exif:PixelXDimension", e.ValueAsString [0]));
 					break;
 				case TagId.PixelYDimension:
 					filter.Height = (int) e.ValueAsLong [0];
-					filter.AddProperty (Beagle.Property.NewKeyword ("exif:PixelYDimension", e.ValueAsString [0]));
+					//filter.AddProperty (Beagle.Property.NewKeyword ("exif:PixelYDimension", e.ValueAsString [0]));
 					break;
 				case TagId.ImageWidth:
 					uint wval = e.ValueAsLong [0];
