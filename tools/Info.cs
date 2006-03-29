@@ -118,14 +118,23 @@ class InfoTool {
 			if (filter == null)
 				continue;
 
-			Console.WriteLine (t.ToString () + " Version-" + filter.Version + " (" + assembly.Location + ")");
+			string name;
+
+			if (t.FullName.StartsWith (t.Namespace))
+				name = t.FullName.Substring (t.Namespace.Length + 1);
+			else
+				name = t.FullName;
+
+			Console.WriteLine (name + " - Version " + filter.Version + " (" + assembly.Location + ")");
 
 			foreach (FilterFlavor flavor in filter.SupportedFlavors) {
 				if (flavor.MimeType != null)
-					Console.WriteLine ("\t- " + flavor.MimeType);
+					Console.WriteLine ("  - " + flavor.MimeType);
 				if (flavor.Extension != null)
-					Console.WriteLine ("\t- *" + flavor.Extension);
+					Console.WriteLine ("  - *" + flavor.Extension);
 			}
+
+			Console.WriteLine ();
 		}
 	}
 }
