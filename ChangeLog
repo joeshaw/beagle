@@ -1,6 +1,8 @@
 2006-03-29  Debajyoti Bera <dbera.web@gmail.com>
 
 	* Filters/FilterRPM.cs: RPM filter.
+	* tools/Info.cs: Add --list-filters to beagle-info to list all
+	available filters. Useful stuff.
 
 2006-03-27  Amanpreet Singh Alam <apbrar@gmail.com>
 

@@ -2,6 +2,7 @@
 // Info.cs
 //
 // Copyright (C) 2005 Novell, Inc.
+// Copyright (C) 2006 Debajyoti Bera <dbera.web@gmail.com>
 //
 
 //
@@ -25,8 +26,11 @@
 //
 
 using System;
+using System.Reflection;
 
 using Beagle;
+using Beagle.Daemon;
+using Beagle.Util;
 
 class InfoTool {
 
@@ -42,6 +46,7 @@ class InfoTool {
 			"  --daemon-version\t\tPrint the version of the running daemon.\n" +
 			"  --status\t\t\tDisplay status of the running daemon.\n" +
 			"  --index-info\t\t\tDisplay statistics of the Beagle indexes.\n" +
+			"  --list-filters\t\tList the currently available filters.\n" +
 			"  --help\t\t\tPrint this usage message.\n";
 
 		Console.WriteLine (usage);
@@ -54,11 +59,23 @@ class InfoTool {
 		if (args.Length == 0 || Array.IndexOf (args, "--help") > -1)
 			PrintUsageAndExit ();
 
+		if (Array.IndexOf (args, "--list-filters") > -1)
+			PrintFilterInformation ();
+		else
+			return PrintDaemonInformation (args);
+
+		return 0;
+	}
+	
+	private static int PrintDaemonInformation (string[] args)
+	{
 		DaemonInformationRequest request = new DaemonInformationRequest ();
 		DaemonInformationResponse response;
 
 		try {
+			Console.WriteLine ("Sending begins at:" + DateTime.Now);
 			response = (DaemonInformationResponse) request.Send ();
+			Console.WriteLine ("Sending done at:" + DateTime.Now);
 		} catch (Beagle.ResponseMessageException) {
 			Console.WriteLine ("Could not connect to the daemon.");
 			return 1;
@@ -79,6 +96,37 @@ class InfoTool {
 			Console.WriteLine ("Daemon indexing: {0}", response.IsIndexing);
 
 		return 0;
+	}
+	
+	private static void PrintFilterInformation ()
+	{
+		ReflectionFu.ScanEnvironmentForAssemblies ("BEAGLE_FILTER_PATH", PathFinder.FilterDir, PrintFilterDetails);
+	}
+
+	static void PrintFilterDetails (Assembly assembly)
+	{
+		foreach (Type t in ReflectionFu.ScanAssemblyForClass (assembly, typeof (Filter))) {
+			Filter filter = null;
+
+			try {
+				filter = (Filter) Activator.CreateInstance (t);
+			} catch (Exception ex) {
+				Logger.Log.Error ("Caught exception while instantiating {0}", t);
+				Logger.Log.Error (ex);
+			}
+
+			if (filter == null)
+				continue;
+
+			Console.WriteLine (t.ToString () + " Version-" + filter.Version + " (" + assembly.Location + ")");
+
+			foreach (FilterFlavor flavor in filter.SupportedFlavors) {
+				if (flavor.MimeType != null)
+					Console.WriteLine ("\t- " + flavor.MimeType);
+				if (flavor.Extension != null)
+					Console.WriteLine ("\t- *" + flavor.Extension);
+			}
+		}
 	}
 }
 		
