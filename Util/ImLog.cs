@@ -243,28 +243,23 @@ namespace Beagle.Util {
 				return;
 			}
 
-			// Gaim 2.0 hack
+			// Gaim 2.0
 			// The new version of Gaim adds AM or PM right after the time
 			// 1.x: (19:07:07)
 			// 2.0: (19:07:07 AM)
-			// This is a nasty workaround :-)
 
-			string whenStr = line.Substring (1, j-1);
-			int hour = 0, minute, second;
-
-			if (whenStr [whenStr.Length-1] == 'M') {
-				// Handle AM and PM
-				if (whenStr [whenStr.Length-2] == 'P')
-					hour = 12;
-								
-				whenStr = line.Substring (1, j-4);
-			}
-
-			string[] whenSplit = whenStr.Split (':');
+			string when = line.Substring (1, j-1);
+			DateTime timestamp;
+			
 			try {
-				hour += int.Parse (whenSplit [0]);
-				minute = int.Parse (whenSplit [1]);
-				second = int.Parse (whenSplit [2]);
+				DateTime time = DateTime.Parse (when);
+				
+				timestamp = new DateTime (StartTime.Year, StartTime.Month, StartTime.Day,
+						time.Hour, time.Minute, time.Second);
+
+				// Try to deal with time wrapping around.
+				if (timestamp < EndTime)
+					timestamp.AddDays (1);
 			} catch {
 				// If something goes wrong, this line probably
 				// spills over from the previous one.
@@ -273,25 +268,16 @@ namespace Beagle.Util {
 			}
 
 			line = line.Substring (j+2);
-
-			// FIXME: this is wrong --- since we just get a time,
-			// the date gets set to 'now'
-			DateTime when = new DateTime (StartTime.Year,
-						      StartTime.Month,
-						      StartTime.Day,
-						      hour, minute, second);
-			
-			// Try to deal with time wrapping around.
-			while (when < EndTime)
-				when = when.AddDays (1);
-
+						
+			// Extract the alias
+			// FIXME: This will break if there is a ':' in the nickname
 			int i = line.IndexOf (':');
 			if (i == -1)
 				return;
 			string alias = line.Substring (0, i);
 			string text = line.Substring (i+2);
 
-			AddUtterance (when, alias, text);
+			AddUtterance (timestamp, alias, text);
 
 			return;
 		}
