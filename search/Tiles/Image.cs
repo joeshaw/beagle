@@ -44,10 +44,17 @@ namespace Search.Tiles {
 			base.LoadIcon (image, size);
 
 			// Draw the F-Spot overlay
-			if (Hit ["fspot:IsIndexed"] == "true") {
+			if (size > 32 && Hit ["fspot:IsIndexed"] == "true") {
 				Gdk.Pixbuf icon = image.Pixbuf;
 
 				Gdk.Pixbuf emblem = Beagle.Images.GetPixbuf ("emblem-fspot.png", 16, 16);
+
+				// FIXME: Ideally we'd composite into a fresh new pixbuf of
+				// the correct size in this case, but really, who's going to
+				// have images shorter or narrower than 16 pixels in f-spot??
+				if (icon.Height < emblem.Height || icon.Width < emblem.Width)
+					return;
+
 				emblem.Composite (icon, 0,  icon.Height - emblem.Height, emblem.Width,
 						  emblem.Height, 0,  icon.Height - emblem.Height, 1,  1,
 						  Gdk.InterpType.Bilinear, 255);
