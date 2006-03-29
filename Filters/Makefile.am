@@ -64,7 +64,8 @@ CSFILES = 				\
 	$(srcdir)/FilterExternal.cs	\
 	$(srcdir)/FilterEbuild.cs	\
 	$(srcdir)/FilterGif.cs		\
-	$(srcdir)/FilterXslt.cs
+	$(srcdir)/FilterXslt.cs		\
+	$(srcdir)/FilterRPM.cs
 
 if ENABLE_GSF_SHARP
 CSFILES += 				\

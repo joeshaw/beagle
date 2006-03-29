@@ -1,3 +1,7 @@
+2006-03-29  Debajyoti Bera <dbera.web@gmail.com>
+
+	* Filters/FilterRPM.cs: RPM filter.
+
 2006-03-27  Amanpreet Singh Alam <apbrar@gmail.com>
 
 	* configure.in: "pa" Punjabi is added to ALL_LINGUAS
