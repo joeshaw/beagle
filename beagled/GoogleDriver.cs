@@ -29,6 +29,8 @@
 
 using System;
 using System.Collections;
+using System.Text;
+
 using Beagle.Util;
 
 namespace Beagle.Daemon {
@@ -110,8 +112,20 @@ namespace Beagle.Daemon {
 				     IQueryResult result,
 				     IQueryableChangeData changeData)
 		{
+			StringBuilder sb = new StringBuilder ();
+			
+			foreach (QueryPart part in query.Parts) {
+				if (part is QueryPart_Human) {
+				        sb.Append (((QueryPart_Human) part).QueryString);
+				} else if (part is QueryPart_Text) {
+				        sb.Append (((QueryPart_Text) part).Text);
+				} else
+					continue; // ignore other query parts
+			}
+
+			Logger.Log.Debug ("Querying google for '" + sb.ToString () + "'");
 			GoogleSearchResult gsr = gss.doGoogleSearch (googleKey,
-								     query.QuotedText,
+								     sb.ToString (),
 								     0, maxResults,
 								     false, "", false, "", "", "");
 
