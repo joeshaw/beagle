@@ -6,8 +6,8 @@ msgid ""
 ""
 msgstr "Project-Id-Version: beagle Gnome HEAD\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2006-03-10 02:07+0100\n"
-"PO-Revision-Date: 2006-03-10 18:21+1030\n"
+"POT-Creation-Date: 2006-03-30 02:05+0200\n"
+"PO-Revision-Date: 2006-03-30 16:21+1030\n"
 "Last-Translator: Clytie Siddall <clytie@riverland.net.au>\n"
 "Language-Team: Vietnamese <gnomevi-list@lists.sourceforge.net>\n"
 "MIME-Version: 1.0\n"
@@ -42,7 +42,7 @@ msgstr "Cuộc đối thoại trong {0}"
 msgid "Conversations with {0}"
 msgstr "Cuộc đối thoại với {0}"
 
-#:../search/beagle-search.desktop.in.h:1 ../tools/settings.glade.h:30
+#:../search/beagle-search.desktop.in.h:1 ../tools/settings.glade.h:27
 msgid "Search"
 msgstr "Tìm kiếm"
 
@@ -110,7 +110,8 @@ msgstr "Không cho phép chạy Beagle với tư cách người chủ"
 msgid ""
 "For security reasons, Beagle cannot be run as root.  You should restart as a "
 "regular user."
-msgstr "Vì lý do bảo mật, trình Beagle không có khả năng chạy với tư cách người chủ (root). Bạn nên khởi chạy lại với tư cách người dùng chuẩn."
+msgstr "Vì lý do bảo mật, trình Beagle không có khả năng chạy với tư cách người chủ "
+"(root). Bạn nên khởi chạy lại với tư cách người dùng chuẩn."
 
 #:../search/Pages/StartDaemon.cs:19
 msgid "Search service not running"
@@ -120,19 +121,19 @@ msgstr "Dịch vụ tìm kiếm không đang chạy"
 msgid "Start search service"
 msgstr "Khởi chạy dịch vụ tìm kiếm"
 
-#:../search/Search.cs:147
+#:../search/Search.cs:149
 msgid "_Find:"
 msgstr "_Tìm:"
 
-#:../search/Search.cs:161
+#:../search/Search.cs:163
 msgid "Find Now"
 msgstr "Tìm ngay bây giờ"
 
-#:../search/Search.cs:205
+#:../search/Search.cs:209
 msgid "Type in search terms"
 msgstr "Gõ chuỗi tìm kiếm"
 
-#:../search/Search.cs:206
+#:../search/Search.cs:210
 msgid "Start searching"
 msgstr "Bắt đầu tìm kiếm"
 
@@ -172,7 +173,8 @@ msgstr "Chuyển vào Rác"
 msgid "Title:"
 msgstr "Tiêu đề :"
 
-#:../search/Tiles/File.cs:135 ../search/Tiles/Note.cs:60
+#:../search/Tiles/File.cs:135 ../search/Tiles/Folder.cs:51
+#:../search/Tiles/Note.cs:60
 msgid "Last Edited:"
 msgstr "Sửa đổi cuối cùng:"
 
@@ -180,7 +182,8 @@ msgstr "Sửa đổi cuối cùng:"
 msgid "Author:"
 msgstr "Tác giả:"
 
-#:../search/Tiles/File.cs:143 ../search/Tiles/Image.cs:72
+#:../search/Tiles/File.cs:143 ../search/Tiles/Folder.cs:54
+#:../search/Tiles/Image.cs:79
 msgid "Full Path:"
 msgstr "Đường dẫn đầy đủ:"
 
@@ -194,16 +197,12 @@ msgid "Contains {0} Item"
 msgid_plural "Contains {0} Items"
 msgstr[0] "Chứa {0} mục"
 
-#:../search/Tiles/Folder.cs:54
-msgid "Edited:"
-msgstr "Sửa đổi:"
-
 #.AddAction (new TileAction (Catalog.GetString ("Add to Library"), Gtk.Stock.Add, AddToLibrary));
 #:../search/Tiles/Image.cs:39
 msgid "Set as Wallpaper"
 msgstr "Đặt làm ảnh nền"
 
-#:../search/Tiles/Image.cs:69
+#:../search/Tiles/Image.cs:76
 msgid "Modified:"
 msgstr "Ssửa đổi:"
 
@@ -765,27 +764,37 @@ msgstr "Bạn có chắc chắn là bạn muốn xóa bỏ vĩnh viễn « %s »
 msgid "Name"
 msgstr "Tên"
 
-#:../tools/Settings.cs:631 ../tools/settings.glade.h:35
+#:../tools/Settings.cs:631
 msgid "Type"
 msgstr "Kiểu"
 
-#:../tools/Settings.cs:684 ../tools/Settings.cs:1064
-#:../tools/settings.glade.h:27
-msgid "Path"
-msgstr "Đường dẫn"
+#:../tools/Settings.cs:684
+msgid "Path:"
+msgstr "Đường dẫn:"
 
-#:../tools/Settings.cs:687 ../tools/Settings.cs:1074
-msgid "Pattern"
-msgstr "Mẫu"
+#:../tools/Settings.cs:687
+msgid "Pattern:"
+msgstr "Mẫu :"
 
-#:../tools/Settings.cs:690 ../tools/Settings.cs:1069
-#:../tools/settings.glade.h:24
-msgid "Mail Folder"
-msgstr "thư mục thư"
+#:../tools/Settings.cs:690
+msgid "Mail folder:"
+msgstr "Thư mục Thư :"
 
 #:../tools/Settings.cs:1038
 msgid "Select Folder"
 msgstr "Chọn thư mục"
+
+#:../tools/Settings.cs:1064 ../tools/settings.glade.h:24
+msgid "P_ath:"
+msgstr "Đường _dẫn:"
+
+#:../tools/Settings.cs:1069
+msgid "M_ail folder:"
+msgstr "Thư mục _Thư :"
+
+#:../tools/Settings.cs:1074
+msgid "P_attern:"
+msgstr "_Mẫu :"
 
 #:../tools/Settings.cs:1098
 msgid "Error adding path"
@@ -803,20 +812,20 @@ msgid "Show"
 msgstr "Hiện"
 
 #:../tools/settings.glade.h:1
-msgid "<b>Add remote host</b>"
+msgid "<b>Add Remote Host</b>"
 msgstr "<b>Thêm máy ở xa</b>"
 
 #:../tools/settings.glade.h:2
-msgid "<b>Add resource</b>"
-msgstr "<b>Thêm tài nguyên</b>"
-
-#:../tools/settings.glade.h:3
 msgid "<b>Administration</b>"
 msgstr "<b>Quản lý</b>"
 
-#:../tools/settings.glade.h:4
+#:../tools/settings.glade.h:3
 msgid "<b>Display</b>"
 msgstr "<b>Trình bày</b>"
+
+#:../tools/settings.glade.h:4
+msgid "<b>Exclude Resource</b>"
+msgstr "<b>Loại trừ tài nguyên</b>"
 
 #:../tools/settings.glade.h:5
 msgid "<b>General</b>"
@@ -831,27 +840,27 @@ msgid "<b>Privacy</b>"
 msgstr "<b>Riêng tư</b>"
 
 #:../tools/settings.glade.h:8
-msgid "<b>Select mail folder</b>"
-msgstr "<b>Chọn thư mục thư</b>"
+msgid "<b>Select Mail Folder</b>"
+msgstr "<b>Chọn thư mục Thư</b>"
 
 #:../tools/settings.glade.h:9
+msgid "Add Remote Host"
+msgstr "Thêm máy ở xa"
+
+#:../tools/settings.glade.h:10
 msgid ""
 "Add a remote search-enabled host you wish \n"
 "to network with."
 msgstr "Thêm máy ở xa có khả năng tìm kiếm\n"
 "với đó bạn muốn chạy mạng."
 
-#:../tools/settings.glade.h:11
+#:../tools/settings.glade.h:12
 msgid "Add any additional paths to be included for indexing."
 msgstr "Thêm đường dẫn thêm nào cần gồm để chỉ mục."
 
-#:../tools/settings.glade.h:12
-msgid "Add any remote search-enabled hosts you wish to network with"
-msgstr "Thêm máy ở xa nào với đó bạn muốn chạy mạng."
-
 #:../tools/settings.glade.h:13
-msgid "Address"
-msgstr "Địa chỉ"
+msgid "Add any remote search-enabled hosts you wish to network with."
+msgstr "Thêm máy ở xa có khả năng tìm kiếm với đó bạn muốn chạy mạng."
 
 #:../tools/settings.glade.h:14
 msgid ""
@@ -861,75 +870,95 @@ msgstr "Điều chỉnh kết quả kiểu nào nên hiển thị, và khi nhóm
 "nên hiển thị theo thứ tự nào."
 
 #:../tools/settings.glade.h:15
-msgid "Allow Beagle to be run as root"
-msgstr "Cho phép chạy Beagle với tư cách người chủ"
+msgid "Allow _external access to local search services"
+msgstr "Cho phép truy cập bên _ngoài vào dịch vụ tìm kiếm cục bộ"
 
 #:../tools/settings.glade.h:16
-msgid "Allow external access to local search services"
-msgstr "Cho phép truy cập bên ngoài vào dịch vụ tìm kiếm địa phương"
-
-#:../tools/settings.glade.h:17
 msgid "Alt"
 msgstr "Alt"
 
-#:../tools/settings.glade.h:18
+#:../tools/settings.glade.h:17
 msgid "Ctrl"
 msgstr "Ctrl"
 
+#:../tools/settings.glade.h:18
+msgid "Display the search window by pressing:"
+msgstr "Hiển thị cửa sổ tìm kiếm bằng cách bấm phím:"
+
 #:../tools/settings.glade.h:19
-msgid "Directory Path"
-msgstr "Đường dẫn thư mục"
+msgid "Exclude Resource"
+msgstr "Loại trừ tài nguyên"
 
 #:../tools/settings.glade.h:20
-msgid "Display the search window by pressing"
-msgstr "Hiển thị cửa sổ tìm kiếm bằng cách bấm phím"
+msgid "Filename _pattern"
+msgstr "_Mẫu tên tập tin"
 
 #:../tools/settings.glade.h:21
-msgid "Filename Pattern"
-msgstr "Mẫu tên tập tin"
+msgid "I_ndex my home directory"
+msgstr "_Chỉ mục thư mục chính của tôi"
 
 #:../tools/settings.glade.h:22
-msgid "Index my home directory"
-msgstr "Chỉ mục thư mục chính của tôi"
-
-#:../tools/settings.glade.h:23
 msgid "Indexing"
 msgstr "Đang chỉ mục"
 
-#:../tools/settings.glade.h:25
-msgid "Maximum number of results displayed "
-msgstr "Số tối đa kết quả đã hiển thị "
-
-#:../tools/settings.glade.h:26
+#:../tools/settings.glade.h:23
 msgid "Networking"
 msgstr "Chạy mạng"
 
-#:../tools/settings.glade.h:28
+#:../tools/settings.glade.h:25
 msgid "Please select a resource you wish to exclude from indexing."
 msgstr "Hãy chọn tài nguyên bạn muốn loại trừ ra việc chỉ mục."
 
-#:../tools/settings.glade.h:29
+#:../tools/settings.glade.h:26
 msgid "Please select the mail folder you wish to exclude from indexing. "
 msgstr "Hãy chọn thư mục thư bạn muốn loại trừ ra việc chỉ mục. "
 
-#:../tools/settings.glade.h:31
+#:../tools/settings.glade.h:28
 msgid "Search Preferences"
 msgstr "Tùy thích Tìm kiếm"
 
-#:../tools/settings.glade.h:32
+#:../tools/settings.glade.h:29
+msgid "Select Mail Folder"
+msgstr "Chọn thư mục Thư"
+
+#:../tools/settings.glade.h:30
 msgid ""
 "Specify any resources, such as paths, patterns, mail folders or type of "
 "objects you wish to exclude from indexing."
 msgstr "Hãy xác định tài nguyên nào, như đường dẫn, mẫu, thư mục thư hoặc kiểu đối "
 "tượng mà bạn muốn loại trừ ra việc chỉ mục."
 
-#:../tools/settings.glade.h:33
-msgid "Specify paths that should be available for external access"
+#:../tools/settings.glade.h:31
+msgid "Specify paths that should be available for external access."
 msgstr "Hãy xác định đường dẫn nào nên cho phép truy cập bên ngoài."
 
+#:../tools/settings.glade.h:32
+msgid "Type:"
+msgstr "Kiểu :"
+
+#:../tools/settings.glade.h:33
+msgid "_Address:"
+msgstr "_Địa chỉ :"
+
 #:../tools/settings.glade.h:34
-msgid "Start search & indexing services automatically "
-msgstr "Tự động khởi chạy dịch vụ tìm kiếm và chỉ mục "
+msgid "_Allow Beagle to be run as root"
+msgstr "Cho _phép chạy Beagle với tư cách người chủ"
+
+#:../tools/settings.glade.h:35
+msgid "_Folder path"
+msgstr "Đường dẫn th_ư mục"
+
+#:../tools/settings.glade.h:36
+msgid "_Mail folder"
+msgstr "Thư mục _Thư"
+
+#:../tools/settings.glade.h:37
+msgid "_Maximum number of results displayed:"
+msgstr "_Số tối đa kết quả đã hiển thị :"
+
+#:../tools/settings.glade.h:38
+msgid "_Start search & indexing services automatically "
+msgstr "Tự động khởi chạ_y dịch vụ tìm kiếm và chỉ mục "
 
 #:../tools/beagle-settings.desktop.in.h:1
 msgid "Configure Desktop Search & Indexing"
