@@ -46,8 +46,10 @@ namespace Search.Tiles {
 			// Draw the F-Spot overlay
 			if (size > 32 && Hit ["fspot:IsIndexed"] == "true") {
 				Gdk.Pixbuf icon = image.Pixbuf;
-
 				Gdk.Pixbuf emblem = Beagle.Images.GetPixbuf ("emblem-fspot.png", 16, 16);
+
+				if (icon == null || emblem == null)
+					return;
 
 				// FIXME: Ideally we'd composite into a fresh new pixbuf of
 				// the correct size in this case, but really, who's going to
