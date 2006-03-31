@@ -11,6 +11,26 @@ namespace Search.Tiles {
 			AddSupportedFlavor (new HitFlavor (null, null, "message/rfc822"));
 		}
 
+		public override bool Validate (Beagle.Hit hit)
+		{
+			if (! base.Validate (hit))
+				return false;
+			
+			// This handles a case when a file with the message/rfc822
+			// mimetype is indexed without gmime. Thus we fail to extract
+			// any info and this tile is useless.
+			if (hit ["beagle:HitType"] == "File") {
+				string subject = hit.GetFirstProperty ("dc:title");
+				
+				if (subject != null && subject != "")
+					return true;
+
+				return false;
+			}
+
+			return true;
+		}
+		
 		public override Tile BuildTile (Beagle.Hit hit, Beagle.Query query)
 		{
 			return new MailMessage (hit, query);
