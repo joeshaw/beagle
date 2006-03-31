@@ -114,7 +114,7 @@ namespace Search {
 
 			ret = Compare (tx, ty);
 			if (ret == 0)
-				ret = -tx.Hit.Timestamp.CompareTo (ty.Hit.Timestamp);
+				ret = -tx.Timestamp.CompareTo (ty.Timestamp);
 			if (ret == 0)
 				ret = tx.GetHashCode ().CompareTo (ty.GetHashCode ());
 			return ret;

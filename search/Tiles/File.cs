@@ -133,7 +133,7 @@ namespace Search.Tiles {
 					      GetTitle (),
 					      0, 1);
 			details.AddLabelPair (Catalog.GetString ("Last Edited:"),
-					      Utils.NiceLongDate (Hit.Timestamp),
+					      Utils.NiceLongDate (Timestamp),
 					      1, 1);
 			if (Hit ["dc:author"] != null) {
 				details.AddLabelPair (Catalog.GetString ("Author:"),

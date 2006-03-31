@@ -54,7 +54,7 @@ namespace Search.Tiles {
 					      Hit.Uri.ToString (),
 					      1, 1);
 			details.AddLabelPair (Catalog.GetString ("Accessed:"),
-					      Utils.NiceLongDate (Hit.Timestamp),
+					      Utils.NiceLongDate (Timestamp),
 					      2, 1);
 
 			details.AddSnippet (3, 1);

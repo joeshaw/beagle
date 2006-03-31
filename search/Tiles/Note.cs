@@ -58,7 +58,7 @@ namespace Search.Tiles {
 					      Title,
 					      0, 1);
 			details.AddLabelPair (Catalog.GetString ("Last Edited:"),
-					      Utils.NiceLongDate (Hit.Timestamp),
+					      Utils.NiceLongDate (Timestamp),
 					      1, 1);
 			
 			details.AddSnippet (2, 1);
