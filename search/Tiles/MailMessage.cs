@@ -88,9 +88,9 @@ namespace Search.Tiles {
 					      1, 1);
 			details.AddLabelPair (Catalog.GetString ("Date Received:"),
 					      DateLabel.Text,
-					      1, 3);
+					      2, 1);
 
-			details.AddSnippet (2, 1);
+			details.AddSnippet (3, 1);
 
 			return details;
 		}
