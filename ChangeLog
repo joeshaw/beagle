@@ -1,3 +1,9 @@
+2006-03-31  Debajyoti Bera <dbera.web@gmail.com>
+
+	* beagled/Filter.cs, Filters/FilterPdf.cs,FilterHtml.cs,
+	Util/StringFu.cs: Extract maximum 40000 (4 times that allowed by
+	lucene) words in the filters.
+
 2006-03-30  Debajyoti Bera <dbera.web@gmail.com>
 
 	* beagled/GoogleDriver.cs: Fix extraction of query text. Googledriver

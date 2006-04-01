@@ -329,11 +329,13 @@ namespace HtmlAgilityPack
 	public class HtmlDocument: IXPathNavigable
 	{
 		// SLIM: Make the parser event driven
-		// callbacks for FilterHtml
-		public delegate void NodeHandler (HtmlNode node);
+		// callback for FilterHtml
+		// return value is a way for the callback to signal to continue or stop parsing
+		public delegate bool NodeHandler (HtmlNode node);
 		public NodeHandler ReportNode;
 		// misnomer ... should be called event_driven_mode
 		private bool _streammode = false;
+		private bool _stop_parsing = false;
 
 		internal static readonly string HtmlExceptionRefNotChild = "Reference node must be a child of this node";
 		internal static readonly string HtmlExceptionUseIdAttributeFalse = "You need to set UseIdAttribute property to true to enable this feature";
@@ -1352,7 +1354,7 @@ namespace HtmlAgilityPack
 			_index = 0;
 			PushNodeStart(HtmlNodeType.Text, 0);
 			// SLIM: while (_index<_text.Length)
-			while (! _text.Eof (_index))
+			while (! _stop_parsing && ! _text.Eof (_index))
 			{
 				_c = _text[_index];
 				IncrementPosition();
@@ -1658,7 +1660,7 @@ namespace HtmlAgilityPack
 										_currentnode._outerstartindex + _currentnode._outerlength);
 									script._outerlength = _index-1 - script._outerstartindex;
 									if (_streammode && ReportNode != null)
-										ReportNode (script);
+										_stop_parsing = ReportNode (script);
 									else
 										_currentnode.AppendChild(script);
 									Debug ("Found script: [" + script.InnerText + "]");
@@ -1848,7 +1850,7 @@ namespace HtmlAgilityPack
 
 			//SLIM: inform caller
 			if (_streammode && ReportNode != null)
-				ReportNode (_currentnode);
+				_stop_parsing = ReportNode (_currentnode);
 
 			if (_debug) {
 				if (_currentnode._nodetype == HtmlNodeType.Text)

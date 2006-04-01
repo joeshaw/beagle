@@ -482,19 +482,26 @@ namespace Beagle.Util {
 			return new string (char_array);
 		}
 		
-		static public int CountWords (string str, int max_words)
+		// Words of less than min_word_length characters are not counted
+		static public int CountWords (string str, int max_words, int min_word_length)
 		{
 			if (str == null)
 				return 0;
 
 			bool last_was_white = true;
 			int words = 0;
+			int word_start_pos = -1;
+
 			for (int i = 0; i < str.Length; ++i) {
 				if (Char.IsWhiteSpace (str [i])) {
+					// if just seen word is too short, ignore it
+					if (! last_was_white && (i - word_start_pos < min_word_length))
+						--words;
 					last_was_white = true;
 				} else {
 					if (last_was_white) {
 						++words;
+						word_start_pos = i;
 						if (max_words > 0 && words >= max_words)
 							break;
 					}
@@ -503,6 +510,11 @@ namespace Beagle.Util {
 			}
 
 			return words;
+		}
+
+		static public int CountWords (string str, int max_words)
+		{
+			return CountWords (str, max_words, -1);
 		}
 
 		static public int CountWords (string str)

@@ -120,7 +120,7 @@ namespace Beagle.Filters {
 				|| nodeName == "style";
 		}
 
-		protected void HandleNodeEvent (HtmlNode node)
+		protected bool HandleNodeEvent (HtmlNode node)
 		{
 			switch (node.NodeType) {
 				
@@ -197,6 +197,10 @@ namespace Beagle.Filters {
 				//Console.WriteLine (" TEXT:" + text + " ignore=" + ignore_stack.Count);
 				break;
 			}
+
+			if (! AllowMoreWords ())
+				return false;
+			return true;
 		}
 
 		override protected void DoOpen (FileInfo info)

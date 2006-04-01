@@ -122,6 +122,8 @@ namespace Beagle.Filters {
 			while ((str = pout.ReadLine()) != null) {
 				AppendText (str);
 				AppendStructuralBreak ();
+				if (! AllowMoreWords ())
+					break;
 			}
 			pout.Close ();
 			pc.WaitForExit ();

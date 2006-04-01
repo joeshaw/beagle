@@ -38,6 +38,10 @@ namespace Beagle.Daemon {
 	public class Filter {
 
 		static private bool Debug = false;
+		// Lucene fields allow a maximum of 10000 words
+		// Some of the words will be stop words... so a failsafe maximum of 40000 words
+		// Dont accept more words than that
+		const int MAXWORDS = 40000; // Lucene.Net.Index.IndexWriter.DEFAULT_MAX_FIELD_LENGTH * 4
 
 		// Derived classes always must have a constructor that
 		// takes no arguments.
@@ -210,6 +214,14 @@ namespace Beagle.Daemon {
 		private ArrayList textPool;
 		private ArrayList hotPool;
 		private ArrayList propertyPool;
+
+		private int word_count = 0;
+		private int hotword_count = 0;
+
+		protected bool AllowMoreWords ()
+		{
+			return (word_count < MAXWORDS);
+		}
 		
 		private bool last_was_structural_break = true;
 
@@ -228,9 +240,11 @@ namespace Beagle.Daemon {
 		// NOTE: HotUp() or HotDown() has NO-EFFECT on this variant 
 		// of AppendText ()
 		
-		public void AppendText (string str, string strHot)
+		public int AppendText (string str, string strHot)
 		{
-			if (!IsFrozen && str != null && str != "") {
+			int num_words = 0;
+
+			if (!IsFrozen && word_count < MAXWORDS && str != null && str != "") {
 				string[] lines;
 
 				// Avoid unnecessary allocation of a string
@@ -245,17 +259,28 @@ namespace Beagle.Daemon {
 					}
 				} else 
 					ReallyAppendText (str, null);
+				num_words = StringFu.CountWords (str, 3, -1);
+				word_count += num_words;
 			}
-			ReallyAppendText (null, strHot);
+
+			if (hotword_count < MAXWORDS) {
+				ReallyAppendText (null, strHot);
+				hotword_count += StringFu.CountWords (strHot, 3, -1);
+			}
+
+			Logger.Log.Debug ("oooooooooooo " + word_count);
+			return num_words;
 		}
 		
-		public void AppendText (string str)
+		public int AppendText (string str)
 		{
 			if (Debug)
 				Logger.Log.Debug ("AppendText (\"{0}\")", str);
 
 			if (! IsFrozen && str != null && str != "")
-				AppendText (str, IsHot ? str : null);
+				return AppendText (str, IsHot ? str : null);
+
+			return 0;
 		}
 
 		// Does adding text to to text/hot pools respectively.
