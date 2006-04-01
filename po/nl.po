@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: beagle\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2006-03-19 02:13+0100\n"
-"PO-Revision-Date: 2006-03-19 05:02+0100\n"
+"POT-Creation-Date: 2006-04-01 02:05+0200\n"
+"PO-Revision-Date: 2006-04-01 10:03+0200\n"
 "Last-Translator: Tino Meinen <a.t.meinen@chello.nl>\n"
 "Language-Team: Dutch <vertaling@vrijschrift.org>\n"
 "MIME-Version: 1.0\n"
@@ -43,7 +43,7 @@ msgstr "Gesprekken in {0}"
 msgid "Conversations with {0}"
 msgstr "Gesprekken met {0}"
 
-#: ../search/beagle-search.desktop.in.h:1 ../tools/settings.glade.h:30
+#: ../search/beagle-search.desktop.in.h:1 ../tools/settings.glade.h:27
 msgid "Search"
 msgstr "Zoeken"
 
@@ -122,7 +122,9 @@ msgstr "Beagle kan niet worden uitgevoerd als 'root'"
 msgid ""
 "For security reasons, Beagle cannot be run as root.  You should restart as a "
 "regular user."
-msgstr "Voor beveilingsredenen kan Beagle niet worden uitgevoerd als 'root'. U moet het opstarten als normale gebruiker."
+msgstr ""
+"Voor beveilingsredenen kan Beagle niet worden uitgevoerd als 'root'. U moet "
+"het opstarten als normale gebruiker."
 
 #: ../search/Pages/StartDaemon.cs:19
 msgid "Search service not running"
@@ -133,20 +135,20 @@ msgstr "Zoekdienst draait niet"
 msgid "Start search service"
 msgstr "De zoekdienst opstarten"
 
-#: ../search/Search.cs:147
+#: ../search/Search.cs:149
 msgid "_Find:"
 msgstr "_Zoeken:"
 
-#: ../search/Search.cs:161
+#: ../search/Search.cs:163
 msgid "Find Now"
 msgstr "Nu zoeken"
 
 # intoetsen/typen/
-#: ../search/Search.cs:205
+#: ../search/Search.cs:209
 msgid "Type in search terms"
 msgstr "Zoektermen opgeven"
 
-#: ../search/Search.cs:206
+#: ../search/Search.cs:210
 msgid "Start searching"
 msgstr "Beginnen met zoeken"
 
@@ -188,7 +190,8 @@ msgid "Title:"
 msgstr "Titel:"
 
 # laatst bekeken
-#: ../search/Tiles/File.cs:135 ../search/Tiles/Note.cs:60
+#: ../search/Tiles/File.cs:135 ../search/Tiles/Folder.cs:51
+#: ../search/Tiles/Note.cs:60
 msgid "Last Edited:"
 msgstr "Laatst bewerkt:"
 
@@ -196,7 +199,8 @@ msgstr "Laatst bewerkt:"
 msgid "Author:"
 msgstr "Auteur:"
 
-#: ../search/Tiles/File.cs:143 ../search/Tiles/Image.cs:72
+#: ../search/Tiles/File.cs:143 ../search/Tiles/Folder.cs:54
+#: ../search/Tiles/Image.cs:81
 msgid "Full Path:"
 msgstr "Volledig pad:"
 
@@ -211,16 +215,12 @@ msgid_plural "Contains {0} Items"
 msgstr[0] "Bevat {0} item"
 msgstr[1] "Bevat {0} items"
 
-#: ../search/Tiles/Folder.cs:54
-msgid "Edited:"
-msgstr "Bewerkt:"
-
 #. AddAction (new TileAction (Catalog.GetString ("Add to Library"), Gtk.Stock.Add, AddToLibrary));
 #: ../search/Tiles/Image.cs:39
 msgid "Set as Wallpaper"
 msgstr "Instellen als achtergrond"
 
-#: ../search/Tiles/Image.cs:69
+#: ../search/Tiles/Image.cs:78
 msgid "Modified:"
 msgstr "Laatste wijziging:"
 
@@ -232,7 +232,7 @@ msgstr "On-line gesprekken"
 msgid "Name:"
 msgstr "Naam:"
 
-#: ../search/Tiles/IMLog.cs:90 ../search/Tiles/MailMessage.cs:69
+#: ../search/Tiles/IMLog.cs:90 ../search/Tiles/MailMessage.cs:89
 msgid "Date Received:"
 msgstr "Ontvangen op:"
 
@@ -241,15 +241,15 @@ msgid "Mail attachment"
 msgstr "Mailbijlage"
 
 # met/in/via e-mail verzenden
-#: ../search/Tiles/MailMessage.cs:33
+#: ../search/Tiles/MailMessage.cs:53
 msgid "Send in Mail"
 msgstr "Via e-mail verzenden"
 
-#: ../search/Tiles/MailMessage.cs:63
+#: ../search/Tiles/MailMessage.cs:83
 msgid "Subject:"
 msgstr "Onderwerp:"
 
-#: ../search/Tiles/MailMessage.cs:66
+#: ../search/Tiles/MailMessage.cs:86
 msgid "From:"
 msgstr "Van:"
 
@@ -281,74 +281,84 @@ msgid "Open"
 msgstr "Openen"
 
 # meervoud is hier beter
-#: ../search/Tiles/Utils.cs:23
+#: ../search/Tiles/Utils.cs:24
 msgid "Application"
 msgstr "Toepassingen"
 
 # meervoud is hier beter
-#: ../search/Tiles/Utils.cs:25
+#: ../search/Tiles/Utils.cs:26
 msgid "Contact"
 msgstr "Contacten"
 
 #
 # Common stuff for the templates
 #
-#: ../search/Tiles/Utils.cs:27
+#: ../search/Tiles/Utils.cs:28
 msgid "Folder"
 msgstr "Mappen"
 
 # meervoud is hier beter
-#: ../search/Tiles/Utils.cs:29
+#: ../search/Tiles/Utils.cs:30
 msgid "Image"
 msgstr "Afbeeldingen"
 
 # geluid/audio
-#: ../search/Tiles/Utils.cs:31
+#: ../search/Tiles/Utils.cs:32
 msgid "Audio"
 msgstr "Audio"
 
 # beeld/video
-#: ../search/Tiles/Utils.cs:33
+#: ../search/Tiles/Utils.cs:34
 msgid "Video"
 msgstr "Video"
 
-#: ../search/Tiles/Utils.cs:35
+#: ../search/Tiles/Utils.cs:36
 msgid "Documents"
 msgstr "Documenten"
 
-#: ../search/Tiles/Utils.cs:37
+#: ../search/Tiles/Utils.cs:38
 msgid "Conversations"
 msgstr "Gesprekken"
 
-#: ../search/Tiles/Utils.cs:39
+#: ../search/Tiles/Utils.cs:40
 msgid "Website"
 msgstr "Websites"
 
-#: ../search/Tiles/Utils.cs:41
+#: ../search/Tiles/Utils.cs:42
 msgid "News Feed"
 msgstr "Nieuws-feed"
 
 # Meervoud is hier beter
-#: ../search/Tiles/Utils.cs:43
+#: ../search/Tiles/Utils.cs:44
 msgid "Archive"
 msgstr "Archieven"
 
-#: ../search/Tiles/Utils.cs:155
+#: ../search/Tiles/Utils.cs:88 ../search/Tiles/Utils.cs:122
+#: ../search/Tiles/Utils.cs:156 ../Util/StringFu.cs:77
+msgid "Today"
+msgstr "Vandaag"
+
+#: ../search/Tiles/Utils.cs:90 ../search/Tiles/Utils.cs:124
+#: ../search/Tiles/Utils.cs:158 ../Util/StringFu.cs:79
+msgid "Yesterday"
+msgstr "Gisteren"
+
+#: ../search/Tiles/Utils.cs:162
 #, csharp-format
 msgid "{0} week ago"
 msgid_plural "{0} weeks ago"
 msgstr[0] "{0} week geleden"
 msgstr[1] "{0} weken geleden"
 
-#. Lets say a year and a half to stop saying months
-#: ../search/Tiles/Utils.cs:157
+#. Let's say a year and a half to stop saying months
+#: ../search/Tiles/Utils.cs:164
 #, csharp-format
 msgid "{0} month ago"
 msgid_plural "{0} months ago"
 msgstr[0] "{0} maand geleden"
 msgstr[1] "{0} maanden geleden"
 
-#: ../search/Tiles/Utils.cs:159
+#: ../search/Tiles/Utils.cs:166
 #, csharp-format
 msgid "{0} year ago"
 msgid_plural "{0} years ago"
@@ -785,7 +795,7 @@ msgstr "Ongeldige host"
 
 #: ../tools/Settings.cs:412
 msgid "Remote host already present in the list."
-msgstr "Remote host reeds aanwezig in de lijst."
+msgstr "Externe host reeds aanwezig in de lijst."
 
 #: ../tools/Settings.cs:421
 msgid "Netbeagle Node not added"
@@ -822,23 +832,21 @@ msgstr ""
 msgid "Name"
 msgstr "Naam"
 
-#: ../tools/Settings.cs:631 ../tools/settings.glade.h:35
+#: ../tools/Settings.cs:631
 msgid "Type"
 msgstr "Type"
 
-#: ../tools/Settings.cs:684 ../tools/Settings.cs:1064
-#: ../tools/settings.glade.h:27
-msgid "Path"
-msgstr "Pad"
+#: ../tools/Settings.cs:684
+msgid "Path:"
+msgstr "Pad:"
 
-#: ../tools/Settings.cs:687 ../tools/Settings.cs:1074
-msgid "Pattern"
-msgstr "Patroon"
+#: ../tools/Settings.cs:687
+msgid "Pattern:"
+msgstr "Patroon:"
 
-#: ../tools/Settings.cs:690 ../tools/Settings.cs:1069
-#: ../tools/settings.glade.h:24
-msgid "Mail Folder"
-msgstr "E-mailmap"
+#: ../tools/Settings.cs:690
+msgid "Mail folder:"
+msgstr "E-mailmap:"
 
 #
 # Common stuff for the templates
@@ -846,6 +854,18 @@ msgstr "E-mailmap"
 #: ../tools/Settings.cs:1038
 msgid "Select Folder"
 msgstr "Map selecteren"
+
+#: ../tools/Settings.cs:1064 ../tools/settings.glade.h:24
+msgid "P_ath:"
+msgstr "_Pad:"
+
+#: ../tools/Settings.cs:1069
+msgid "M_ail folder:"
+msgstr "_E-mailmap:"
+
+#: ../tools/Settings.cs:1074
+msgid "P_attern:"
+msgstr "P_atroon:"
 
 #: ../tools/Settings.cs:1098
 msgid "Error adding path"
@@ -864,21 +884,21 @@ msgid "Show"
 msgstr "Tonen"
 
 #: ../tools/settings.glade.h:1
-msgid "<b>Add remote host</b>"
-msgstr "<b>Remote host toevoegen</b>"
-
-#: ../tools/settings.glade.h:2
-msgid "<b>Add resource</b>"
-msgstr "<b>Bron toevoegen</b>"
+msgid "<b>Add Remote Host</b>"
+msgstr "<b>Externe host toevoegen</b>"
 
 # beheer/systeembeheer
-#: ../tools/settings.glade.h:3
+#: ../tools/settings.glade.h:2
 msgid "<b>Administration</b>"
 msgstr "<b>Systeembeheer</b>"
 
-#: ../tools/settings.glade.h:4
+#: ../tools/settings.glade.h:3
 msgid "<b>Display</b>"
 msgstr "<b>Weergave</b>"
+
+#: ../tools/settings.glade.h:4
+msgid "<b>Exclude Resource</b>"
+msgstr "<b>Bronnen uitsluiten</b>"
 
 #: ../tools/settings.glade.h:5
 msgid "<b>General</b>"
@@ -893,27 +913,27 @@ msgid "<b>Privacy</b>"
 msgstr "<b>Privacy</b>"
 
 #: ../tools/settings.glade.h:8
-msgid "<b>Select mail folder</b>"
-msgstr "<b>Mail in deze map selecteren</b>"
+msgid "<b>Select Mail Folder</b>"
+msgstr "<b>Mailmap selecteren</b>"
 
 #: ../tools/settings.glade.h:9
+msgid "Add Remote Host"
+msgstr "Externe host toevoegen"
+
+#: ../tools/settings.glade.h:10
 msgid ""
 "Add a remote search-enabled host you wish \n"
 "to network with."
 msgstr "Voeg een op afstand doorzoekbare host toe."
 
-#: ../tools/settings.glade.h:11
+#: ../tools/settings.glade.h:12
 msgid "Add any additional paths to be included for indexing."
 msgstr ""
 "Voeg hier een willekeurig aantal paden toe dat ook geïndexeerd zal worden."
 
-#: ../tools/settings.glade.h:12
-msgid "Add any remote search-enabled hosts you wish to network with"
-msgstr "Voeg een willekeurig aantal op afstand doorzoekbare hosts toe."
-
 #: ../tools/settings.glade.h:13
-msgid "Address"
-msgstr "Adres"
+msgid "Add any remote search-enabled hosts you wish to network with."
+msgstr "Voeg een willekeurig aantal op afstand doorzoekbare hosts toe."
 
 #: ../tools/settings.glade.h:14
 msgid ""
@@ -924,76 +944,104 @@ msgstr ""
 "getoond moeten worden als op type gesorteerd wordt."
 
 #: ../tools/settings.glade.h:15
-msgid "Allow Beagle to be run as root"
-msgstr "Beagle kunnen uitvoeren als 'root'"
+msgid "Allow _external access to local search services"
+msgstr "E_xterne toegang tot lokale zoekdiensten toestaan"
 
 #: ../tools/settings.glade.h:16
-msgid "Allow external access to local search services"
-msgstr "Externe toegang tot lokale zoekdiensten toestaan"
-
-#: ../tools/settings.glade.h:17
 msgid "Alt"
 msgstr "Alt"
 
-#: ../tools/settings.glade.h:18
+#: ../tools/settings.glade.h:17
 msgid "Ctrl"
 msgstr "Ctrl"
 
-#: ../tools/settings.glade.h:19
-msgid "Directory Path"
-msgstr "Het pad naar de map"
-
 # tonen met/oproepen met
+#: ../tools/settings.glade.h:18
+msgid "Display the search window by pressing:"
+msgstr "Het zoekvenster oproepen met:"
+
+#: ../tools/settings.glade.h:19
+msgid "Exclude Resource"
+msgstr "Bron uitsluiten"
+
 #: ../tools/settings.glade.h:20
-msgid "Display the search window by pressing"
-msgstr "Het zoekvenster oproepen met"
+msgid "Filename _pattern"
+msgstr "Bestandsnaam_patroon"
 
 #: ../tools/settings.glade.h:21
-msgid "Filename Pattern"
-msgstr "Bestandsnaampatroon"
+msgid "I_ndex my home directory"
+msgstr "_Mijn persoonlijke map indexeren"
 
 #: ../tools/settings.glade.h:22
-msgid "Index my home directory"
-msgstr "Persoonlijke map indexeren"
-
-#: ../tools/settings.glade.h:23
 msgid "Indexing"
 msgstr "Indexeren"
 
-# weergegeven/getoonde
-#: ../tools/settings.glade.h:25
-msgid "Maximum number of results displayed "
-msgstr "Maximum aantal getoonde resultaten"
-
-#: ../tools/settings.glade.h:26
+#: ../tools/settings.glade.h:23
 msgid "Networking"
 msgstr "Netwerk"
 
-#: ../tools/settings.glade.h:28
+#: ../tools/settings.glade.h:25
 msgid "Please select a resource you wish to exclude from indexing."
 msgstr "Selecteer een bron die niet geïndexeerd moet worden."
 
-#: ../tools/settings.glade.h:29
+#: ../tools/settings.glade.h:26
 msgid "Please select the mail folder you wish to exclude from indexing. "
 msgstr "Selecteer de E-mailmap die niet geïndexeerd moet worden."
 
-#: ../tools/settings.glade.h:31
+#: ../tools/settings.glade.h:28
 msgid "Search Preferences"
 msgstr "Zoekvoorkeuren"
 
-#: ../tools/settings.glade.h:32
+#
+# Common stuff for the templates
+#
+#: ../tools/settings.glade.h:29
+msgid "Select Mail Folder"
+msgstr "E-mailmap selecteren"
+
+#: ../tools/settings.glade.h:30
 msgid ""
 "Specify any resources, such as paths, patterns, mail folders or type of "
 "objects you wish to exclude from indexing."
-msgstr "Geef alle bronnen op zoals paden, patronen, e-mailmappen, of soort objecten, die niet geïndexeerd moeten worden."
+msgstr ""
+"Geef alle bronnen op zoals paden, patronen, e-mailmappen, of soort objecten, "
+"die niet geïndexeerd moeten worden."
+
+#: ../tools/settings.glade.h:31
+msgid "Specify paths that should be available for external access."
+msgstr "Geef de paden op die extern toegankelijk moeten zijn."
+
+#: ../tools/settings.glade.h:32
+msgid "Type:"
+msgstr "Type:"
 
 #: ../tools/settings.glade.h:33
-msgid "Specify paths that should be available for external access"
-msgstr "Geef de paden op die op afstand toegankelijk moeten zijn"
+msgid "_Address:"
+msgstr "_Adres:"
 
 #: ../tools/settings.glade.h:34
-msgid "Start search & indexing services automatically "
-msgstr "Automatisch de zoek- en indexeerdiensten starten"
+msgid "_Allow Beagle to be run as root"
+msgstr "_Beagle uit kunnen laten voeren als 'root'"
+
+#
+# Common stuff for the templates
+#
+#: ../tools/settings.glade.h:35
+msgid "_Folder path"
+msgstr "_Mappenpad"
+
+#: ../tools/settings.glade.h:36
+msgid "_Mail folder"
+msgstr "_E-mailmap"
+
+# weergegeven/getoonde
+#: ../tools/settings.glade.h:37
+msgid "_Maximum number of results displayed:"
+msgstr "_Maximum aantal getoonde resultaten:"
+
+#: ../tools/settings.glade.h:38
+msgid "_Start search & indexing services automatically "
+msgstr "A_utomatisch de zoek- en indexeerdiensten starten"
 
 #: ../tools/beagle-settings.desktop.in.h:1
 msgid "Configure Desktop Search & Indexing"
@@ -1034,14 +1082,6 @@ msgstr "InterOperability-map"
 #: ../Util/ExifData.cs:236
 msgid "Unknown Directory"
 msgstr "Onbekende map"
-
-#: ../Util/StringFu.cs:77
-msgid "Today"
-msgstr "Vandaag"
-
-#: ../Util/StringFu.cs:79
-msgid "Yesterday"
-msgstr "Gisteren"
 
 #. Translators: Example output: Aug 9
 #: ../Util/StringFu.cs:82
@@ -1127,6 +1167,12 @@ msgstr "{0:0.0} KB"
 #, csharp-format
 msgid "{0:0.0} MB"
 msgstr "{0:0.0} MB"
+
+#~ msgid "Edited:"
+#~ msgstr "Bewerkt:"
+
+#~ msgid "Directory Path"
+#~ msgstr "Het pad naar de map"
 
 #~ msgid "Start the daemon"
 #~ msgstr "De daemon opstarten"
