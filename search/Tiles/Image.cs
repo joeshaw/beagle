@@ -46,7 +46,7 @@ namespace Search.Tiles {
 			// Draw the F-Spot overlay
 			if (size > 32 && Hit ["fspot:IsIndexed"] == "true") {
 				Gdk.Pixbuf icon = image.Pixbuf;
-				Gdk.Pixbuf emblem = Beagle.Images.GetPixbuf ("emblem-fspot.png", 16, 16);
+				Gdk.Pixbuf emblem = Beagle.Images.GetPixbuf ("emblem-fspot.png", 24, 24);
 
 				if (icon == null || emblem == null)
 					return;
