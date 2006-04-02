@@ -110,7 +110,7 @@ namespace Beagle.Daemon.EvolutionDataServerQueryable {
 		{
 			Logger.Log.Debug ("Removing calendar source {0}", this.source.Uid);
 
-			Property prop = Property.NewKeyword ("fixme:source_uid", this.source.Uid);
+			Property prop = Property.NewUnsearched ("fixme:source_uid", this.source.Uid);
 			this.queryable.RemovePropertyIndexable (prop);
 
 			this.cal_view.Dispose ();
@@ -196,8 +196,8 @@ namespace Beagle.Daemon.EvolutionDataServerQueryable {
 			indexable.Timestamp = cc.Dtstart;
 			indexable.HitType = "Calendar";
 
-			indexable.AddProperty (Property.NewKeyword ("fixme:source_uid", this.source.Uid));
-			indexable.AddProperty (Property.NewKeyword ("fixme:uid", cc.Uid));
+			indexable.AddProperty (Property.NewUnsearched ("fixme:source_uid", this.source.Uid));
+			indexable.AddProperty (Property.NewUnsearched ("fixme:uid", cc.Uid));
 			indexable.AddProperty (Property.NewDate ("fixme:starttime", cc.Dtstart.ToUniversalTime ()));
 			indexable.AddProperty (Property.NewDate ("fixme:endtime", cc.Dtend.ToUniversalTime ()));
 
@@ -214,7 +214,7 @@ namespace Beagle.Daemon.EvolutionDataServerQueryable {
 				indexable.AddProperty (Property.New ("fixme:summary", summary));
 
 			foreach (string category in cc.Categories)
-				indexable.AddProperty (Property.NewKeyword ("fixme:category", category));
+				indexable.AddProperty (Property.NewUnsearched ("fixme:category", category));
 
 			foreach (string location in cc.Location)
 				indexable.AddProperty (Property.New ("fixme:location", location));

@@ -65,7 +65,7 @@ namespace Beagle.Filters {
 
 				char [] gif_version = { (char) data [3], (char) data [4], (char) data [5] };
 
-				AddProperty (Beagle.Property.NewKeyword ("gif:version", new string (gif_version)));
+				AddProperty (Beagle.Property.NewUnsearched ("gif:version", new string (gif_version)));
 				
 				Width = width;
 				Height = height;
@@ -181,9 +181,9 @@ namespace Beagle.Filters {
 								b = Stream.ReadByte();
 
 								if (b == 0)
-									AddProperty (Beagle.Property.NewKeyword ("gif:loopcount", "infinite"));
+									AddProperty (Beagle.Property.NewUnsearched ("gif:loopcount", "infinite"));
 								else
-									AddProperty (Beagle.Property.NewKeyword ("gif:loopcount", b));
+									AddProperty (Beagle.Property.NewUnsearched ("gif:loopcount", b));
 
 								Stream.ReadByte();
 							} else {
@@ -200,7 +200,7 @@ namespace Beagle.Filters {
 							break;
 					}	
 				}
-				AddProperty (Beagle.Property.NewKeyword ("gif:numframes", num_frames));
+				AddProperty (Beagle.Property.NewUnsearched ("gif:numframes", num_frames));
 			} catch (Exception) {
 				//System.Console.WriteLine("-- Exception! " + Stream.Position);
 				Error ();

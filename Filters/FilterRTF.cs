@@ -363,7 +363,7 @@ namespace Beagle.Filters {
 								if ((String.Compare (strTemp, "fixme:word-count") == 0) ||
 								    (String.Compare (strTemp, "fixme:page-count") == 0)) {
 									str.Append ((string) MetaDataStack.Pop ());
-									AddProperty (Beagle.Property.NewKeyword (strTemp,
+									AddProperty (Beagle.Property.NewUnsearched (strTemp,
 														 str.ToString()));
 								}
 								else

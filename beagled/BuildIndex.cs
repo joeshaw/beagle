@@ -355,7 +355,7 @@ namespace Beagle.Daemon
 					
 			// Tag the item for easy identification (for say, removal)
 			if (arg_tag != null)
-				indexable.AddProperty (Property.NewKeyword("Tag", arg_tag));
+				indexable.AddProperty (Property.NewUnsearched("Tag", arg_tag));
 
 			if (arg_source == null) {
 				DirectoryInfo dir = new DirectoryInfo (StringFu.SanitizePath (arg_output));

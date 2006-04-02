@@ -41,9 +41,9 @@ namespace Beagle.Daemon.FileSystemQueryable {
 
 		static public bool Debug = false;
 
-		private const string SplitFilenamePropKey = "beagle:Filename";
+		private const string SplitFilenamePropKey = "beagle:SplitFilename";
 		public const string ExactFilenamePropKey = "beagle:ExactFilename";
-		public const string TextFilenamePropKey = "beagle:TextFilename";
+		public const string TextFilenamePropKey = "beagle:Filename";
 		public const string NoPunctFilenamePropKey = "beagle:NoPunctFilename";
 		public const string FilenameExtensionPropKey = "beagle:FilenameExtension";
 		public const string ParentDirUriPropKey = LuceneQueryingDriver.PrivateNamespace + "ParentDirUri";
@@ -53,6 +53,8 @@ namespace Beagle.Daemon.FileSystemQueryable {
 		// 1: Initially set to force a reindex due to NameIndex changes.
 		// 2: Overhauled everything to use new lucene infrastructure.
 		// 3: Switched to UTC for all times, changed the properties a bit.
+		// 4: Changed the key of TextFilenamePropKey to beagle:Filename - it might be useful in clients.
+		//    Make SplitFilenamePropKey unstored
 		const int MINOR_VERSION = 3;
 
 		private object big_lock = new object ();
@@ -167,13 +169,13 @@ namespace Beagle.Daemon.FileSystemQueryable {
 			prop.IsMutable = mutable;
 			indexable.AddProperty (prop);
 
-			prop = Property.NewKeyword (FilenameExtensionPropKey, ext);
+			prop = Property.NewUnsearched (FilenameExtensionPropKey, ext);
 			prop.IsMutable = mutable;
 			indexable.AddProperty (prop);
 
 			string str;
 			str = StringFu.FuzzyDivide (no_ext);
-			prop = Property.New (SplitFilenamePropKey, str);
+			prop = Property.NewUnstored (SplitFilenamePropKey, str);
 			prop.IsMutable = mutable;
 			indexable.AddProperty (prop);
 
@@ -183,7 +185,7 @@ namespace Beagle.Daemon.FileSystemQueryable {
 			str = GuidFu.ToUriString (parent_id);
 			// We use the uri here to recycle terms in the index,
 			// since each directory's uri will already be indexed.
-			prop = Property.NewKeyword (ParentDirUriPropKey, str);
+			prop = Property.NewUnsearched (ParentDirUriPropKey, str);
 			prop.IsMutable = mutable;
 			indexable.AddProperty (prop);
 		}
@@ -1253,7 +1255,7 @@ namespace Beagle.Daemon.FileSystemQueryable {
 		{
 			// Store the hit's internal uri in a property
 			Property prop;
-			prop = Property.NewKeyword ("beagle:InternalUri",
+			prop = Property.NewUnsearched ("beagle:InternalUri",
 						    UriFu.UriToSerializableString (hit.Uri));
 			hit.AddProperty (prop);
 

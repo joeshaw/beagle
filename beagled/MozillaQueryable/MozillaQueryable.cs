@@ -85,11 +85,11 @@ namespace Beagle.Daemon.Mozilla {
 
 			indexable.AddProperty (Property.New ("fixme:client", "mozilla"));
 
-			indexable.AddProperty (Property.NewKeyword ("dc:title", message.Subject));
+			indexable.AddProperty (Property.New ("dc:title", message.Subject));
 
-			indexable.AddProperty (Property.NewKeyword ("fixme:subject", message.Subject));
-			indexable.AddProperty (Property.NewKeyword ("fixme:to", message.To));
-			indexable.AddProperty (Property.NewKeyword ("fixme:from", message.From));
+			indexable.AddProperty (Property.New ("fixme:subject", message.Subject));
+			indexable.AddProperty (Property.New ("fixme:to", message.To));
+			indexable.AddProperty (Property.New ("fixme:from", message.From));
 
 			indexable.AddProperty (Property.New ("fixme:offset", message.Offset));
 
@@ -118,10 +118,10 @@ namespace Beagle.Daemon.Mozilla {
 
 			indexable.AddProperty (Property.New ("fixme:client", "mozilla"));
 
-			indexable.AddProperty(Property.NewKeyword ("dc:title", message.Subject));
-			indexable.AddProperty(Property.NewKeyword ("fixme:author", message.From));
+			indexable.AddProperty(Property.New ("dc:title", message.Subject));
+			indexable.AddProperty(Property.New ("fixme:author", message.From));
 			//indexable.AddProperty(Property.NewDate ("fixme:published", item.PubDate));
-			indexable.AddProperty(Property.NewKeyword ("fixme:itemuri", message.Headers ["Content-Base"]));
+			indexable.AddProperty(Property.NewUnsearched ("fixme:itemuri", message.Headers ["Content-Base"]));
 
 			indexable.AddProperty (Property.New ("fixme:offset", message.Offset));
 

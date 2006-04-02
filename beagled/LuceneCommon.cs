@@ -73,7 +73,8 @@ namespace Beagle.Daemon {
 		// 12: added year-month and year-month-day resolutions for all
 		//     date properties
 		// 13: moved source into a property
-		private const int MAJOR_VERSION = 13;
+		// 14: allow wildcard queries to also match keywords
+		private const int MAJOR_VERSION = 14;
 		private int minor_version = 0;
 
 		private string index_name;
@@ -454,7 +455,7 @@ namespace Beagle.Daemon {
 		{
 			switch (type) {
 			case PropertyType.Text:    return "PropertyText";
-			case PropertyType.Keyword: return null; // wildcard keyword lookups are crack
+			case PropertyType.Keyword: return "PropertyKeyword";
 			case PropertyType.Date:    return "PropertyDate";
 			}
 
@@ -646,19 +647,19 @@ namespace Beagle.Daemon {
 
 			if (indexable.HitType != null) {
 				Property prop;
-				prop = Property.NewKeyword ("beagle:HitType", indexable.HitType);
+				prop = Property.NewUnsearched ("beagle:HitType", indexable.HitType);
 				AddPropertyToDocument (prop, primary_doc);
 			}
 
 			if (indexable.MimeType != null) {
 				Property prop;
-				prop = Property.NewKeyword ("beagle:MimeType", indexable.MimeType);
+				prop = Property.NewUnsearched ("beagle:MimeType", indexable.MimeType);
 				AddPropertyToDocument (prop, primary_doc);
 			}
 
 			if (indexable.Source != null) {
 				Property prop;
-				prop = Property.NewKeyword ("beagle:Source", indexable.Source);
+				prop = Property.NewUnsearched ("beagle:Source", indexable.Source);
 				AddPropertyToDocument (prop, primary_doc);
 			}
 
@@ -1180,16 +1181,13 @@ namespace Beagle.Daemon {
 					return;
 
 				LNS.BooleanQuery p_query = new LNS.BooleanQuery ();
+				LNS.BooleanQuery s_query = new LNS.BooleanQuery ();
 
 				if (part.SearchFullText) {
 					LNS.Query subquery;
 					subquery = StringToQuery ("Text", part.Text, term_list);
-					if (subquery != null) {
-						if (primary_query == null)
-							primary_query = p_query;
-
+					if (subquery != null)
 						p_query.Add (subquery, false, false);
-					}
 
 					// FIXME: HotText is ignored for now!
 					// subquery = StringToQuery ("HotText", part.Text);
@@ -1201,16 +1199,29 @@ namespace Beagle.Daemon {
 					LNS.Query subquery;
 					subquery = StringToQuery ("PropertyText", part.Text, term_list);
 					if (subquery != null) {
-						if (primary_query == null)
-							primary_query = p_query;
-
 						p_query.Add (subquery, false, false);
-						
 						// Properties can live in either index
 						if (! only_build_primary_query)
-							secondary_query = subquery.Clone () as LNS.Query;
+							s_query.Add (subquery.Clone () as LNS.Query, false, false);
 					}
+
+					Term term;
+					term = new Term ("PropertyKeyword", part.Text);
+					// FIXME: terms are already added in term_list. But they may have been tokenized
+					// The term here is non-tokenized version. Should this be added to term_list ?
+					// term_list is used to calculate scores
+					if (term_list != null)
+						term_list.Add (term);
+					subquery = new LNS.TermQuery (term);
+					p_query.Add (subquery, false, false);
+					// Properties can live in either index
+					if (! only_build_primary_query)
+						s_query.Add (subquery.Clone () as LNS.Query, false, false);
 				}
+
+				primary_query = p_query;
+				if (! only_build_primary_query)
+					secondary_query = s_query;
 
 				return;
 			}

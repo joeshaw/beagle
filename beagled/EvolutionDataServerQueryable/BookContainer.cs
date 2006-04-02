@@ -111,7 +111,7 @@ namespace Beagle.Daemon.EvolutionDataServerQueryable {
 		{
 			Logger.Log.Debug ("Removing addressbook source {0}", this.source.Uid);
 
-			Property prop = Property.NewKeyword ("fixme:source_uid", this.source.Uid);
+			Property prop = Property.NewUnsearched ("fixme:source_uid", this.source.Uid);
 			this.queryable.RemovePropertyIndexable (prop);
 
 			this.book_view.Stop ();
@@ -240,8 +240,8 @@ namespace Beagle.Daemon.EvolutionDataServerQueryable {
 			indexable.Timestamp = rev;
 			indexable.HitType = "Contact";
 
-			indexable.AddProperty (Property.NewKeyword ("fixme:source_uid", this.source.Uid));
-			indexable.AddProperty (Property.NewKeyword ("fixme:uid", contact.Id));
+			indexable.AddProperty (Property.NewUnsearched ("fixme:source_uid", this.source.Uid));
+			indexable.AddProperty (Property.NewUnsearched ("fixme:uid", contact.Id));
 						
 			indexable.AddProperty (Property.New ("fixme:FileAs", contact.FileAs));
 			indexable.AddProperty (Property.New ("fixme:FullName", contact.FullName));
@@ -269,11 +269,11 @@ namespace Beagle.Daemon.EvolutionDataServerQueryable {
 			indexable.AddProperty (Property.New ("fixme:PrimaryPhone", contact.PrimaryPhone));
 			indexable.AddProperty (Property.New ("fixme:Radio", contact.Radio));
 			indexable.AddProperty (Property.New ("fixme:Telex", contact.Telex));
-			indexable.AddProperty (Property.NewKeyword ("fixme:Tty", contact.Tty));
+			indexable.AddProperty (Property.NewUnsearched ("fixme:Tty", contact.Tty));
 			indexable.AddProperty (Property.NewKeyword ("fixme:Email1", contact.Email1));
 			indexable.AddProperty (Property.NewKeyword ("fixme:Email2", contact.Email2));
 			indexable.AddProperty (Property.NewKeyword ("fixme:Email3", contact.Email3));
-			indexable.AddProperty (Property.NewKeyword ("fixme:Mailer", contact.Mailer));
+			indexable.AddProperty (Property.NewUnsearched ("fixme:Mailer", contact.Mailer));
 			indexable.AddProperty (Property.New ("fixme:Org", contact.Org));
 			indexable.AddProperty (Property.New ("fixme:OrgUnit", contact.OrgUnit));
 			indexable.AddProperty (Property.New ("fixme:Office", contact.Office));
@@ -283,9 +283,9 @@ namespace Beagle.Daemon.EvolutionDataServerQueryable {
 			indexable.AddProperty (Property.New ("fixme:Assistant", contact.Assistant));
 			indexable.AddProperty (Property.NewKeyword ("fixme:HomepageUrl", contact.HomepageUrl));
 			indexable.AddProperty (Property.NewKeyword ("fixme:BlogUrl", contact.BlogUrl));
-			indexable.AddProperty (Property.NewKeyword ("fixme:Categories", contact.Categories));
-			indexable.AddProperty (Property.NewKeyword ("fixme:Caluri", contact.Caluri));
-			indexable.AddProperty (Property.NewKeyword ("fixme:Icscalendar", contact.Icscalendar));
+			indexable.AddProperty (Property.NewUnsearched ("fixme:Categories", contact.Categories));
+			indexable.AddProperty (Property.NewUnsearched ("fixme:Caluri", contact.Caluri));
+			indexable.AddProperty (Property.NewUnsearched ("fixme:Icscalendar", contact.Icscalendar));
 			indexable.AddProperty (Property.New ("fixme:Spouse", contact.Spouse));
 			indexable.AddProperty (Property.New ("fixme:Note", contact.Note));
 			
@@ -303,17 +303,17 @@ namespace Beagle.Daemon.EvolutionDataServerQueryable {
 			}
 
 			foreach (string im in contact.ImAim)
-				indexable.AddProperty (Property.NewKeyword ("fixme:ImAim", im));
+				indexable.AddProperty (Property.NewUnsearched ("fixme:ImAim", im));
 			foreach (string im in contact.ImIcq)
-				indexable.AddProperty (Property.NewKeyword ("fixme:ImIcq", im));
+				indexable.AddProperty (Property.NewUnsearched ("fixme:ImIcq", im));
 			foreach (string im in contact.ImJabber)
-				indexable.AddProperty (Property.NewKeyword ("fixme:ImJabber", im));
+				indexable.AddProperty (Property.NewUnsearched ("fixme:ImJabber", im));
 			foreach (string im in contact.ImMsn)
-				indexable.AddProperty (Property.NewKeyword ("fixme:ImMsn", im));
+				indexable.AddProperty (Property.NewUnsearched ("fixme:ImMsn", im));
 			foreach (string im in contact.ImYahoo)
-				indexable.AddProperty (Property.NewKeyword ("fixme:ImYahoo", im));
+				indexable.AddProperty (Property.NewUnsearched ("fixme:ImYahoo", im));
 			foreach (string im in contact.ImGroupwise)
-				indexable.AddProperty (Property.NewKeyword ("fixme:ImGroupwise", im));
+				indexable.AddProperty (Property.NewUnsearched ("fixme:ImGroupwise", im));
 
 			String name = "";
 			if (contact.GivenName != null && contact.GivenName != "")

@@ -268,7 +268,6 @@ namespace Beagle.Daemon {
 				hotword_count += StringFu.CountWords (strHot, 3, -1);
 			}
 
-			Logger.Log.Debug ("oooooooooooo " + word_count);
 			return num_words;
 		}
 		
@@ -329,7 +328,7 @@ namespace Beagle.Daemon {
 
 		public void AddProperty (Property prop)
 		{
-			if (prop != null && prop.Value != null)
+			if (prop != null && prop.Value != null && prop.Value != "")
 				propertyPool.Add (prop);
 		}
 

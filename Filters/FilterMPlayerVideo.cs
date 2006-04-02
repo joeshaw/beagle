@@ -135,23 +135,23 @@ namespace Beagle.Filters {
 						break;
 
 					case "name":
-						AddProperty (Beagle.Property.NewKeyword ("dc:title", tokens [1]));
+						AddProperty (Beagle.Property.New ("dc:title", tokens [1]));
 						break;
 
 					case "language":
-						AddProperty (Beagle.Property.NewKeyword ("dc:language", tokens [1]));
+						AddProperty (Beagle.Property.NewUnsearched ("dc:language", tokens [1]));
 						break;
 
 					case "copyright":
-						AddProperty (Beagle.Property.NewKeyword ("dc:copyright", tokens [1]));
+						AddProperty (Beagle.Property.NewUnsearched ("dc:copyright", tokens [1]));
 						break;
 
 					case "comments":
-						AddProperty (Beagle.Property.NewKeyword ("dc:description", tokens [1]));
+						AddProperty (Beagle.Property.New ("dc:description", tokens [1]));
 						break;
 
 					default:
-						AddProperty (Beagle.Property.NewKeyword ("fixme:info:" + name, tokens [1]));
+						AddProperty (Beagle.Property.NewUnsearched ("fixme:info:" + name, tokens [1]));
 						break;
 					}
 				} else {
@@ -190,7 +190,7 @@ namespace Beagle.Filters {
 						break;
 
 					case "ID_DEMUXER":
-						AddProperty (Beagle.Property.NewKeyword ("fixme:video:container", tokens [1]));
+						AddProperty (Beagle.Property.NewUnsearched ("fixme:video:container", tokens [1]));
 						break;
 					}
 				}
@@ -208,48 +208,48 @@ namespace Beagle.Filters {
 			}
 			
 			if (aspect > 0.0f)
-				AddProperty (Beagle.Property.NewKeyword ("fixme:video:aspect", aspect));
+				AddProperty (Beagle.Property.NewUnsearched ("fixme:video:aspect", aspect));
 
-			AddProperty (Beagle.Property.NewKeyword ("fixme:video:aspect", AspectString (aspect)));
+			AddProperty (Beagle.Property.NewUnsearched ("fixme:video:aspect", AspectString (aspect)));
 
 			if (width > 0)
-				AddProperty (Beagle.Property.NewKeyword ("fixme:video:width", width));
+				AddProperty (Beagle.Property.NewUnsearched ("fixme:video:width", width));
 
 			if (height > 0)
-				AddProperty (Beagle.Property.NewKeyword ("fixme:video:height", height));	
+				AddProperty (Beagle.Property.NewUnsearched ("fixme:video:height", height));	
 			
 			if (fps > 0.0f)
-				AddProperty (Beagle.Property.NewKeyword ("fixme:video:fps", fps));
+				AddProperty (Beagle.Property.NewUnsearched ("fixme:video:fps", fps));
 			
 			if (length_seconds > 0)
-				AddProperty (Beagle.Property.NewKeyword ("dc:extent", length_seconds));
+				AddProperty (Beagle.Property.NewUnsearched ("dc:extent", length_seconds));
 			
 			switch (audio_channels) {
 
 			case 0:
-				AddProperty (Beagle.Property.NewKeyword ("fixme:audio:channel_setup", "none"));
+				AddProperty (Beagle.Property.NewUnsearched ("fixme:audio:channel_setup", "none"));
 				break;
 			case 1:
-				AddProperty (Beagle.Property.NewKeyword ("fixme:audio:channel_setup", "mono"));
+				AddProperty (Beagle.Property.NewUnsearched ("fixme:audio:channel_setup", "mono"));
 				break;
 			case 2:
-				AddProperty (Beagle.Property.NewKeyword ("fixme:audio:channel_setup", "stereo"));
+				AddProperty (Beagle.Property.NewUnsearched ("fixme:audio:channel_setup", "stereo"));
 				break;
 			case 5:
-				AddProperty (Beagle.Property.NewKeyword ("fixme:audio:channel_setup", "4.1"));
+				AddProperty (Beagle.Property.NewUnsearched ("fixme:audio:channel_setup", "4.1"));
 				break;
 			case 6:
-				AddProperty (Beagle.Property.NewKeyword ("fixme:audio:channel_setup", "5.1"));
+				AddProperty (Beagle.Property.NewUnsearched ("fixme:audio:channel_setup", "5.1"));
 				break;
 			case 7:
-				AddProperty (Beagle.Property.NewKeyword ("fixme:audio:channel_setup", "6.1"));
+				AddProperty (Beagle.Property.NewUnsearched ("fixme:audio:channel_setup", "6.1"));
 				break;
 			case 8:
-				AddProperty (Beagle.Property.NewKeyword ("fixme:audio:channel_setup", "7.1"));
+				AddProperty (Beagle.Property.NewUnsearched ("fixme:audio:channel_setup", "7.1"));
 				break;
 			}
 			
-			AddProperty (Beagle.Property.NewKeyword ("fixme:audio:channels", audio_channels));
+			AddProperty (Beagle.Property.NewUnsearched ("fixme:audio:channels", audio_channels));
 
 			Finished ();
 		}

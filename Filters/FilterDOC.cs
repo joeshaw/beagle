@@ -113,14 +113,14 @@ namespace Beagle.Filters {
 				if (prop != null)
 					count = (int) prop.Val;
 				if (count > 0)
-					AddProperty (Beagle.Property.NewKeyword ("fixme:word-count", count));
+					AddProperty (Beagle.Property.NewUnsearched ("fixme:word-count", count));
 
 				count = 0;
 				prop = sumMeta.Lookup ("gsf:page-count");		
 				if (prop != null)
 					count = (int) prop.Val;
 				if (count > 0)
-					AddProperty (Beagle.Property.NewKeyword ("fixme:page-count", count));
+					AddProperty (Beagle.Property.NewUnsearched ("fixme:page-count", count));
 			}
 		}
 

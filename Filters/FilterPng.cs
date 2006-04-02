@@ -79,7 +79,7 @@ namespace Beagle.Filters {
 						break;
 					}
 
-					AddProperty (Beagle.Property.NewKeyword ("fixme:colortype", colorType));
+					AddProperty (Beagle.Property.NewUnsearched ("fixme:colortype", colorType));
 					AddProperty (Beagle.Property.NewBool ("fixme:hasalpha", hasAlpha));
 				} else if (chunk is PngHeader.TextChunk) {
 					ExtractTextProperty ((PngHeader.TextChunk) chunk);

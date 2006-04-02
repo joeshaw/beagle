@@ -188,7 +188,7 @@ namespace Beagle.Daemon.IndexingServiceQueryable {
 					
 					// FIXME: We should probably handle date types
 					if (keyword) {
-						indexable.AddProperty (Property.NewKeyword (line.Substring (2, i - 2),
+						indexable.AddProperty (Property.NewUnsearched (line.Substring (2, i - 2),
 											    line.Substring (i + 1)));
 					} else {
 						indexable.AddProperty (Property.New (line.Substring (2, i - 2),

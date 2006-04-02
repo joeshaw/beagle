@@ -106,8 +106,8 @@ namespace Beagle.Filters {
 			indexable.MimeType = "text/html";
 			indexable.HitType = "MonodocEntry";
 			
-			indexable.AddProperty (Property.NewKeyword ("fixme:type", "type"));
-			indexable.AddProperty (Property.NewKeyword ("fixme:name", "T:" + node.Attributes["FullName"].Value));
+			indexable.AddProperty (Property.NewUnsearched ("fixme:type", "type"));
+			indexable.AddProperty (Property.NewUnsearched ("fixme:name", "T:" + node.Attributes["FullName"].Value));
 			
 			StringReader reader = new StringReader (node.SelectSingleNode ("Docs").InnerXml); 
                         indexable.SetTextReader (reader);
@@ -142,7 +142,7 @@ namespace Beagle.Filters {
 			indexable.MimeType = "text/html";
 			indexable.HitType = "MonodocEntry";
 
-			indexable.AddProperty (Property.NewKeyword ("fixme:type", node.SelectSingleNode ("MemberType").InnerText.ToLower ()));
+			indexable.AddProperty (Property.NewUnsearched ("fixme:type", node.SelectSingleNode ("MemberType").InnerText.ToLower ()));
 			indexable.AddProperty (Property.New ("fixme:name", memberFullName.ToString ()));
 
 			StringReader reader = new StringReader (node.SelectSingleNode ("Docs").InnerXml); 

@@ -390,7 +390,7 @@ namespace Beagle.Filters {
 				reader.Read ();
 			}
 			if (slideCount != null)
-				AddProperty (Beagle.Property.NewKeyword ("fixme:slide-count", slideCount));
+				AddProperty (Beagle.Property.NewUnsearched ("fixme:slide-count", slideCount));
 		}
 
 		private void ExtractMetadata (XmlReader reader)
@@ -428,10 +428,10 @@ namespace Beagle.Filters {
 				case "meta:document-statistic":
 					string attr = reader.GetAttribute ("meta:page-count");
 					if (attr != null)
-						AddProperty (Beagle.Property.NewKeyword ("fixme:page-count", attr));
+						AddProperty (Beagle.Property.NewUnsearched ("fixme:page-count", attr));
 					attr = reader.GetAttribute ("meta:word-count");
 					if (attr != null)
-						AddProperty (Beagle.Property.NewKeyword ("fixme:word-count", attr));
+						AddProperty (Beagle.Property.NewUnsearched ("fixme:word-count", attr));
 
 					// Both writer and calc uses this attribute.  writer stores the
 					// count of tables in a sxw whereas calc stores the count of
@@ -439,7 +439,7 @@ namespace Beagle.Filters {
 					attr = reader.GetAttribute ("meta:table-count");
 					if (attr != null && Convert.ToInt32 (attr) > 0 
 					    && MimeType == "application/vnd.sun.xml.calc")
-						AddProperty (Beagle.Property.NewKeyword ("fixme:spreadsheet-count", attr));
+						AddProperty (Beagle.Property.NewUnsearched ("fixme:spreadsheet-count", attr));
 					break;
 
 				case "meta:user-defined":

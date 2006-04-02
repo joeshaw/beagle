@@ -63,7 +63,7 @@ namespace Beagle.Filters {
 			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("audio/x-xm"));
 
 			// ASF / WMA
-			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("video/x-ms-asf"));
+			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("audio/x-ms-wma"));
 		}
 
 		private string GetEntaggedMimeType ()
@@ -99,13 +99,13 @@ namespace Beagle.Filters {
 				AddProperty (Beagle.Property.New ("fixme:comment", comment));
 
 			foreach (int track in tag.TrackNumbers)
-				AddProperty (Beagle.Property.NewKeyword ("fixme:tracknumber", track));
+				AddProperty (Beagle.Property.NewUnsearched ("fixme:tracknumber", track));
 
 			foreach (int track in tag.TrackCounts)
-				AddProperty (Beagle.Property.NewKeyword ("fixme:trackcount", track));
+				AddProperty (Beagle.Property.NewUnsearched ("fixme:trackcount", track));
 
 			foreach (int year in tag.Years)
-				AddProperty (Beagle.Property.NewKeyword ("fixme:year", year));
+				AddProperty (Beagle.Property.NewUnsearched ("fixme:year", year));
 
 			foreach (string genre in tag.Genres)
 				AddProperty (Beagle.Property.NewKeyword ("fixme:genre", genre));

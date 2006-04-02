@@ -100,30 +100,30 @@ namespace Beagle.Filters
 			Height = bmih.height;
 			Depth = bmih.bits;
 			
-			AddProperty (Beagle.Property.NewKeyword ("exif:Planes", bmih.planes));
+			AddProperty (Beagle.Property.NewUnsearched ("exif:Planes", bmih.planes));
 			
 			switch	(bmih.compression) {
 				case BitmapCompressionTypes.None:
-					AddProperty (Beagle.Property.NewKeyword ("exif:Compression", "none"));
+					AddProperty (Beagle.Property.NewUnsearched ("exif:Compression", "none"));
 					break;
 				case BitmapCompressionTypes.RunLength8Bit:
-					AddProperty (Beagle.Property.NewKeyword ("exif:Compression", "8bit Runlength"));
+					AddProperty (Beagle.Property.NewUnsearched ("exif:Compression", "8bit Runlength"));
 					break;
 				case BitmapCompressionTypes.RunLength4Bit:
-					AddProperty (Beagle.Property.NewKeyword ("exif:Compression", "4bit Runlength"));
+					AddProperty (Beagle.Property.NewUnsearched ("exif:Compression", "4bit Runlength"));
 					break;
 				case BitmapCompressionTypes.RGBBitmapWithMask:
-					AddProperty (Beagle.Property.NewKeyword ("exif:Compression", "RGB bitmap with mask"));
+					AddProperty (Beagle.Property.NewUnsearched ("exif:Compression", "RGB bitmap with mask"));
 					break;
 				default:
-					AddProperty (Beagle.Property.NewKeyword ("exif:Compression", "unknown"));
+					AddProperty (Beagle.Property.NewUnsearched ("exif:Compression", "unknown"));
 					break;
 			}
 			
-			AddProperty (Beagle.Property.NewKeyword ("exif:XResolution",     bmih.xresolution));
-			AddProperty (Beagle.Property.NewKeyword ("exif:YResolution",     bmih.yresolution));
-			AddProperty (Beagle.Property.NewKeyword ("exif:NumberOfColors",  bmih.ncolors));
-			AddProperty (Beagle.Property.NewKeyword ("exif:ImportantColors", bmih.importantcolors));
+			AddProperty (Beagle.Property.NewUnsearched ("exif:XResolution",     bmih.xresolution));
+			AddProperty (Beagle.Property.NewUnsearched ("exif:YResolution",     bmih.yresolution));
+			AddProperty (Beagle.Property.NewUnsearched ("exif:NumberOfColors",  bmih.ncolors));
+			AddProperty (Beagle.Property.NewUnsearched ("exif:ImportantColors", bmih.importantcolors));
 		}
 	}
 }

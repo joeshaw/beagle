@@ -199,7 +199,7 @@ namespace Beagle.Daemon.KonqQueryable {
 			// store www.beaglewiki.org as www beagle org, till inpath: query is implemented
 			indexable.AddProperty (Property.NewUnstored ("fixme:urltoken", StringFu.UrlFuzzyDivide (url)));
 			// hint for the filter about the charset
-			indexable.AddProperty (Property.NewKeyword (StringFu.UnindexedNamespace + "charset", charset));
+			indexable.AddProperty (Property.NewUnsearched (StringFu.UnindexedNamespace + "charset", charset));
 			
 			DateTime date = new DateTime (1970, 1, 1);
 			date = date.AddSeconds (Int64.Parse (creation_date));

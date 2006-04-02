@@ -316,37 +316,37 @@ namespace Beagle.Daemon.EvolutionMailDriver {
 			indexable.MimeType = "message/rfc822";
 			indexable.CacheContent = false;
 
-			indexable.AddProperty (Property.NewKeyword ("fixme:client", "evolution"));
-			indexable.AddProperty (Property.NewKeyword ("fixme:account", "Local"));
-                        indexable.AddProperty (Property.NewKeyword ("fixme:folder", this.folder_name));
+			indexable.AddProperty (Property.NewUnsearched ("fixme:client", "evolution"));
+			indexable.AddProperty (Property.NewUnsearched ("fixme:account", "Local"));
+                        indexable.AddProperty (Property.NewUnsearched ("fixme:folder", this.folder_name));
 
 			GMime.InternetAddressList addrs;
 
 			addrs = message.GetRecipients (GMime.Message.RecipientType.To);
 			foreach (GMime.InternetAddress ia in addrs) {
 				if (this.folder_name == "Sent" && ia.AddressType != GMime.InternetAddressType.Group)
-					indexable.AddProperty (Property.NewKeyword ("fixme:sentTo", ia.Addr));
+					indexable.AddProperty (Property.NewUnsearched ("fixme:sentTo", ia.Addr));
 			}
 			addrs.Dispose ();
 
 			addrs = message.GetRecipients (GMime.Message.RecipientType.Cc);
 			foreach (GMime.InternetAddress ia in addrs) {
 				if (this.folder_name == "Sent"  && ia.AddressType != GMime.InternetAddressType.Group)
-					indexable.AddProperty (Property.NewKeyword ("fixme:sentTo", ia.Addr));
+					indexable.AddProperty (Property.NewUnsearched ("fixme:sentTo", ia.Addr));
 			}
 			addrs.Dispose ();
 
 			addrs = GMime.InternetAddressList.ParseString (GMime.Utils.HeaderDecodePhrase (message.Sender));
 			foreach (GMime.InternetAddress ia in addrs) {
 				if (this.folder_name != "Sent"  && ia.AddressType != GMime.InternetAddressType.Group)
-					indexable.AddProperty (Property.NewKeyword ("fixme:gotFrom", ia.Addr));
+					indexable.AddProperty (Property.NewUnsearched ("fixme:gotFrom", ia.Addr));
 			}
 			addrs.Dispose ();
 
 			if (this.folder_name == "Sent")
 				indexable.AddProperty (Property.NewFlag ("fixme:isSent"));
 
-	                Property flag_prop = Property.NewKeyword ("fixme:flags", flags);
+	                Property flag_prop = Property.NewUnsearched ("fixme:flags", flags);
 			flag_prop.IsMutable = true;
 			indexable.AddProperty (flag_prop);
 
@@ -729,7 +729,7 @@ namespace Beagle.Daemon.EvolutionMailDriver {
 				indexable = new Indexable (uri);
 				indexable.Type = IndexableType.PropertyChange;
 
-				Property flag_prop = Property.NewKeyword ("fixme:flags", mi.flags);
+				Property flag_prop = Property.NewUnsearched ("fixme:flags", mi.flags);
 				flag_prop.IsMutable = true;
 				indexable.AddProperty (flag_prop);
 
@@ -771,9 +771,9 @@ namespace Beagle.Daemon.EvolutionMailDriver {
 			indexable.MimeType = "message/rfc822";
 			indexable.HitType = "MailMessage";
 
-			indexable.AddProperty (Property.NewKeyword ("fixme:account",  this.imap_name));
-                        indexable.AddProperty (Property.NewKeyword ("fixme:folder",   this.folder_name));
-			indexable.AddProperty (Property.NewKeyword ("fixme:client", "evolution"));
+			indexable.AddProperty (Property.NewUnsearched ("fixme:account",  this.imap_name));
+                        indexable.AddProperty (Property.NewUnsearched ("fixme:folder",   this.folder_name));
+			indexable.AddProperty (Property.NewUnsearched ("fixme:client", "evolution"));
 			
 			if (!have_content) {
 				indexable.AddProperty (Property.New ("dc:title", GMime.Utils.HeaderDecodePhrase (messageInfo.subject)));
@@ -784,7 +784,7 @@ namespace Beagle.Daemon.EvolutionMailDriver {
 			addrs = GMime.InternetAddressList.ParseString (messageInfo.to);
 			foreach (GMime.InternetAddress ia in addrs) {
 				if (!have_content) {
-					indexable.AddProperty (Property.NewKeyword ("fixme:to", ia.ToString (false)));
+					indexable.AddProperty (Property.NewUnsearched ("fixme:to", ia.ToString (false)));
 					if (ia.AddressType != GMime.InternetAddressType.Group) {
 						indexable.AddProperty (Property.New ("fixme:to_address", ia.Addr));
 						indexable.AddProperty (Property.New ("fixme:to_sanitized", StringFu.SanitizeEmail (ia.Addr)));
@@ -793,14 +793,14 @@ namespace Beagle.Daemon.EvolutionMailDriver {
 				}
 
 				if (this.folder_name == "Sent" && ia.AddressType != GMime.InternetAddressType.Group)
-					indexable.AddProperty (Property.NewKeyword ("fixme:sentTo", ia.Addr));
+					indexable.AddProperty (Property.NewUnsearched ("fixme:sentTo", ia.Addr));
 			}
 			addrs.Dispose ();
 
 			addrs = GMime.InternetAddressList.ParseString (messageInfo.cc);
 			foreach (GMime.InternetAddress ia in addrs) {
 				if (!have_content) {
-					indexable.AddProperty (Property.NewKeyword ("fixme:cc", ia.ToString (false)));
+					indexable.AddProperty (Property.NewUnsearched ("fixme:cc", ia.ToString (false)));
 					if (ia.AddressType != GMime.InternetAddressType.Group) {
 						indexable.AddProperty (Property.New ("fixme:cc_address", ia.Addr));
 						indexable.AddProperty (Property.New ("fixme:cc_sanitized", StringFu.SanitizeEmail (ia.Addr)));
@@ -809,14 +809,14 @@ namespace Beagle.Daemon.EvolutionMailDriver {
 				}
 
 				if (this.folder_name == "Sent" && ia.AddressType != GMime.InternetAddressType.Group)
-					indexable.AddProperty (Property.NewKeyword ("fixme:sentTo", ia.Addr));
+					indexable.AddProperty (Property.NewUnsearched ("fixme:sentTo", ia.Addr));
 			}
 			addrs.Dispose ();
 
 			addrs = GMime.InternetAddressList.ParseString (messageInfo.from);
 			foreach (GMime.InternetAddress ia in addrs) {
 				if (!have_content) {
-					indexable.AddProperty (Property.NewKeyword ("fixme:from", ia.ToString (false)));
+					indexable.AddProperty (Property.NewUnsearched ("fixme:from", ia.ToString (false)));
 					if (ia.AddressType != GMime.InternetAddressType.Group) {
 						indexable.AddProperty (Property.New ("fixme:from_address", ia.Addr));
 						indexable.AddProperty (Property.New ("fixme:from_sanitized", StringFu.SanitizeEmail (ia.Addr)));
@@ -825,13 +825,13 @@ namespace Beagle.Daemon.EvolutionMailDriver {
 				}
 
 				if (this.folder_name != "Sent" && ia.AddressType != GMime.InternetAddressType.Group)
-					indexable.AddProperty (Property.NewKeyword ("fixme:gotFrom", ia.Addr));
+					indexable.AddProperty (Property.NewUnsearched ("fixme:gotFrom", ia.Addr));
 			}
 			addrs.Dispose ();
 
                         indexable.AddProperty (Property.NewKeyword ("fixme:mlist", messageInfo.mlist));
 
-			Property flag_prop = Property.NewKeyword ("fixme:flags", messageInfo.flags);
+			Property flag_prop = Property.NewUnsearched ("fixme:flags", messageInfo.flags);
 			flag_prop.IsMutable = true;
 			indexable.AddProperty (flag_prop);
 

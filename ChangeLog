@@ -1,3 +1,10 @@
+2006-04-02  Debajyoti Bera <dbera.web@gmail.com>
+
+	* Filters/, *Queryable/, beagled/Filter.cs, beagled/LuceneCommon.cs: Allow
+	keyword queries in non-property queries. Make most keyword properties
+	unsearched properties. Remove video/* mimetypes from filteraudio - let
+	our videofilter handle them. Dont allow empty properties to be stored.
+
 2006-03-31  Debajyoti Bera <dbera.web@gmail.com>
 
 	* beagled/Filter.cs, Filters/FilterPdf.cs,FilterHtml.cs,

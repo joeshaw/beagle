@@ -370,9 +370,9 @@ namespace Beagle.Daemon.KMailQueryable {
 			indexable.MimeType = "message/rfc822";
 			indexable.CacheContent = false;
 
-			indexable.AddProperty (Property.NewKeyword ("fixme:client", "kmail"));
-			indexable.AddProperty (Property.NewKeyword ("fixme:account", account_name));
-                        indexable.AddProperty (Property.NewKeyword ("fixme:folder", folder));
+			indexable.AddProperty (Property.NewUnsearched ("fixme:client", "kmail"));
+			indexable.AddProperty (Property.NewUnsearched ("fixme:account", account_name));
+                        indexable.AddProperty (Property.NewUnsearched ("fixme:folder", folder));
 			indexable.ContentUri = file_uri;
 
 			return indexable;
@@ -395,9 +395,9 @@ namespace Beagle.Daemon.KMailQueryable {
 			indexable.MimeType = "message/rfc822";
 			indexable.CacheContent = false;
 
-			indexable.AddProperty (Property.NewKeyword ("fixme:client", "kmail"));
-			indexable.AddProperty (Property.NewKeyword ("fixme:account", account_name));
-                        indexable.AddProperty (Property.NewKeyword ("fixme:folder", folder_name));
+			indexable.AddProperty (Property.NewUnsearched ("fixme:client", "kmail"));
+			indexable.AddProperty (Property.NewUnsearched ("fixme:account", account_name));
+                        indexable.AddProperty (Property.NewUnsearched ("fixme:folder", folder_name));
 
 			GMime.InternetAddressList addrs;
 
@@ -424,6 +424,12 @@ namespace Beagle.Daemon.KMailQueryable {
 
 			if (folder_name == Queryable.SentMailFolderName)
 				indexable.AddProperty (Property.NewFlag ("fixme:isSent"));
+			else {
+				string kmail_msg_sent = message.GetHeader ("X-KMail-Link-Type");
+				if (kmail_msg_sent == "reply")
+					indexable.AddProperty (Property.NewFlag ("fixme:isSent"));
+			}
+				
 // no need to store date again, use the issent flag to determine if the date is sentdate or not			
 #if false
 			if (folder_name == Queryable.SentMailFolderName)

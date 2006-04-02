@@ -70,13 +70,13 @@ namespace Beagle.Filters {
 			PullImageProperties ();
 
 			if (width > 0)
-				AddProperty (Beagle.Property.NewKeyword ("fixme:width", width));
+				AddProperty (Beagle.Property.NewUnsearched ("fixme:width", width));
 
 			if (height > 0)
-				AddProperty (Beagle.Property.NewKeyword ("fixme:height", height));
+				AddProperty (Beagle.Property.NewUnsearched ("fixme:height", height));
 
 			if (depth > 0)
-				AddProperty (Beagle.Property.NewKeyword ("fixme:depth", depth));
+				AddProperty (Beagle.Property.NewUnsearched ("fixme:depth", depth));
 
 			try {
 				AddFSpotInformation (this.FileInfo.FullName);

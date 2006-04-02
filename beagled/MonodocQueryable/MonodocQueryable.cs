@@ -196,8 +196,8 @@ namespace Beagle.Daemon.MonodocQueryable {
 			indexable.MimeType = "application/monodoc";
 			indexable.Type = "Monodoc";
 
-			indexable.AddProperty (Property.NewKeyword ("fixme:type", "type"));
-			indexable.AddProperty (Property.NewKeyword ("fixme:name", "T:" + node.Attributes["FullName"].Value));
+			indexable.AddProperty (Property.NewUnsearched ("fixme:type", "type"));
+			indexable.AddProperty (Property.NewUnsearched ("fixme:name", "T:" + node.Attributes["FullName"].Value));
 
 			string splitname = String.Join (" ", 
 							StringFu.FuzzySplit (node.Attributes["FullName"].Value.ToString ()));
@@ -242,7 +242,7 @@ namespace Beagle.Daemon.MonodocQueryable {
 			indexable.Type = "Monodoc";
 
 			indexable.AddProperty (
-				Property.NewKeyword ("fixme:type", node.SelectSingleNode ("MemberType").InnerText.ToLower ()));
+				Property.NewUnsearched ("fixme:type", node.SelectSingleNode ("MemberType").InnerText.ToLower ()));
 			indexable.AddProperty (
 				Property.New ("fixme:name",memberFullName));
 

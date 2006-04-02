@@ -77,7 +77,7 @@ namespace Beagle.Filters {
 					}
 					if (strMetaTag != null) {
 						if (bKeyword)
-							AddProperty (Beagle.Property.NewKeyword (strMetaTag, 
+							AddProperty (Beagle.Property.NewUnsearched (strMetaTag, 
 												 tokens[1].Trim()));
 						else
 							AddProperty (Beagle.Property.New (strMetaTag, 

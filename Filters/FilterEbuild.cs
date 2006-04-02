@@ -50,7 +50,7 @@ namespace Beagle.Filters {
 			
 			String version = match.Groups ["version"].ToString();
 			if (version.Length > 0)
-				AddProperty (Beagle.Property.NewKeyword ("fixme:version", version));
+				AddProperty (Beagle.Property.NewUnsearched ("fixme:version", version));
 
 			StreamReader reader = new StreamReader (new FileStream (file.FullName, FileMode.Open, FileAccess.Read, FileShare.Read));
 

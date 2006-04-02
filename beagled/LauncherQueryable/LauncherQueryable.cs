@@ -208,7 +208,7 @@ namespace Beagle.Daemon.LauncherQueryable {
 				} else if (sline [0].StartsWith ("Name")) {
 					if (sline [0] == "Name")
 						have_name = true;
-					indexable.AddProperty (Beagle.Property.NewKeyword ("fixme:" + sline[0], sline[1]));
+					indexable.AddProperty (Beagle.Property.NewUnsearched ("fixme:" + sline[0], sline[1]));
 				} else if (sline[0].StartsWith ("Comment")) {
 					   indexable.AddProperty (Beagle.Property.New ("fixme:" + sline[0], sline[1]));
 				}

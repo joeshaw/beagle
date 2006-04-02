@@ -491,7 +491,7 @@ namespace Beagle.Filters {
 				if (prop != null)
 					slide_count = (int) prop.Val;
 				if (slide_count > 0)
-					AddProperty (Beagle.Property.NewKeyword ("fixme:slide-count", slide_count));
+					AddProperty (Beagle.Property.NewUnsearched ("fixme:slide-count", slide_count));
 			}
 		}
 

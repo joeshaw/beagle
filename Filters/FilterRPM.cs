@@ -153,7 +153,7 @@ namespace Beagle.Filters {
 				if (prop_info.is_keyword)
 					AddProperty (Beagle.Property.New (prop_info.property_name, content));
 				else
-					AddProperty (Beagle.Property.NewKeyword (prop_info.property_name, content));
+					AddProperty (Beagle.Property.NewUnsearched (prop_info.property_name, content));
 			}
 
 			//Logger.Log.Debug ("    Done reading values. Now at " + 
