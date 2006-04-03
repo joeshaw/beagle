@@ -579,12 +579,15 @@ namespace Beagle.Daemon {
 
 		private bool Pull ()
 		{
-			if (IsFinished) {
+			if (IsFinished || HasError) {
 				Close ();
 				return false;
 			}
 
 			DoPull ();
+
+			if (HasError)
+				return false;
 
 			return true;
 		}
@@ -628,6 +631,10 @@ namespace Beagle.Daemon {
 		private bool PullFromArray (ArrayList array, StringBuilder sb)
 		{
 			while (array.Count == 0 && Pull ()) { }
+
+			// FIXME: Do we want to try to extract as much data as
+			// possible from the filter if we get an error, or
+			// should we just give up afterward entirely?
 
 			if (array.Count > 0) {
 				foreach (string str in array)
