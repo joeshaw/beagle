@@ -37,6 +37,8 @@ namespace Lucene.Net.Index
 		
 		internal TermInfosReader tis;
 		internal TermVectorsReader termVectorsReaderOrig = null;
+
+		[ThreadStatic]
 		private TermVectorsReader tvReader;
 		
 		internal BitVector deletedDocs = null;

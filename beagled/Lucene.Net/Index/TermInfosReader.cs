@@ -29,7 +29,9 @@ namespace Lucene.Net.Index
 		private System.String segment;
 		private FieldInfos fieldInfos;
 
+		[ThreadStatic]
 		private SegmentTermEnum termEnum;
+
 		private SegmentTermEnum origEnum;
 		private long size;
 		

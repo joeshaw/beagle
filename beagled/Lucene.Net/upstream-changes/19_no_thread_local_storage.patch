@@ -3,28 +3,39 @@ From: Joe Shaw <joeshaw@novell.com>
 Lucene uses thread-local storage for caching some data in a threadsafe way.
 Mono up through 1.1.13.4 leaks all data set using Thread.SetData(), and this
 accounts for huge memory spikes in Beagle in the file system backend on
-inotify events and any time a query is run.  It is safe for us because we
-never share these instances across threads.
+inotify events and any time a query is run.  Instead we'll just declare the
+items ThreadStatic. 
 
 Index: Index/SegmentReader.cs
 ===================================================================
 RCS file: /cvs/gnome/beagle/beagled/Lucene.Net/Index/SegmentReader.cs,v
 retrieving revision 1.3
-diff -u -p -u -r1.3 SegmentReader.cs
+diff -u -p -r1.3 SegmentReader.cs
 --- Index/SegmentReader.cs	6 Oct 2005 19:29:55 -0000	1.3
-+++ Index/SegmentReader.cs	15 Mar 2006 18:58:16 -0000
-@@ -36,8 +36,8 @@ namespace Lucene.Net.Index
++++ Index/SegmentReader.cs	3 Apr 2006 17:09:07 -0000
+@@ -26,7 +26,7 @@ namespace Lucene.Net.Index
+ 	/// <summary> FIXME: Describe class <code>SegmentReader</code> here.
+ 	/// 
+ 	/// </summary>
+-	/// <version>  $Id$
++	/// <version>  $Id$
+ 	/// </version>
+ 	class SegmentReader : IndexReader
+ 	{
+@@ -36,8 +36,10 @@ namespace Lucene.Net.Index
  		private FieldsReader fieldsReader;
  		
  		internal TermInfosReader tis;
 -        internal TermVectorsReader termVectorsReaderOrig = null;
 -        internal System.LocalDataStoreSlot termVectorsLocal = System.Threading.Thread.AllocateDataSlot();
 +		internal TermVectorsReader termVectorsReaderOrig = null;
++
++		[ThreadStatic]
 +		private TermVectorsReader tvReader;
  		
  		internal BitVector deletedDocs = null;
  		private bool deletedDocsDirty = false;
-@@ -172,19 +172,6 @@ namespace Lucene.Net.Index
+@@ -172,19 +174,6 @@ namespace Lucene.Net.Index
  			}
  		}
  		
@@ -44,7 +55,7 @@ diff -u -p -u -r1.3 SegmentReader.cs
  		protected internal override void  DoCommit()
  		{
  			if (deletedDocsDirty)
-@@ -609,11 +596,9 @@ namespace Lucene.Net.Index
+@@ -609,11 +598,9 @@ namespace Lucene.Net.Index
          /// </returns>
          private TermVectorsReader GetTermVectorsReader()
          {
@@ -60,21 +71,23 @@ Index: Index/TermInfosReader.cs
 ===================================================================
 RCS file: /cvs/gnome/beagle/beagled/Lucene.Net/Index/TermInfosReader.cs,v
 retrieving revision 1.4
-diff -u -p -u -r1.4 TermInfosReader.cs
+diff -u -p -r1.4 TermInfosReader.cs
 --- Index/TermInfosReader.cs	6 Oct 2005 19:29:55 -0000	1.4
-+++ Index/TermInfosReader.cs	15 Mar 2006 18:58:16 -0000
-@@ -28,8 +28,8 @@ namespace Lucene.Net.Index
++++ Index/TermInfosReader.cs	3 Apr 2006 17:09:07 -0000
+@@ -28,8 +28,10 @@ namespace Lucene.Net.Index
  		private Directory directory;
  		private System.String segment;
  		private FieldInfos fieldInfos;
 -		
 -		private System.LocalDataStoreSlot enumerators = System.Threading.Thread.AllocateDataSlot();
 +
++		[ThreadStatic]
 +		private SegmentTermEnum termEnum;
++
  		private SegmentTermEnum origEnum;
  		private long size;
  		
-@@ -50,20 +50,7 @@ namespace Lucene.Net.Index
+@@ -50,20 +52,7 @@ namespace Lucene.Net.Index
  			
              indexEnum = new SegmentTermEnum(directory.OpenInput(segment + ".tii"), fieldInfos, true);
  		}
@@ -96,7 +109,7 @@ diff -u -p -u -r1.4 TermInfosReader.cs
          public int GetSkipInterval()
  		{
  			return origEnum.skipInterval;
-@@ -85,11 +72,9 @@ namespace Lucene.Net.Index
+@@ -85,11 +74,9 @@ namespace Lucene.Net.Index
  		
  		private SegmentTermEnum GetEnum()
  		{
