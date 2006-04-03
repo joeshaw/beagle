@@ -1205,6 +1205,11 @@
   )
 )
 
+(define-function beagle_util_daemon_is_running
+  (c-name "beagle_util_daemon_is_running")
+  (return-type "gboolean")
+)
+
 
 
 ;; Pointer types

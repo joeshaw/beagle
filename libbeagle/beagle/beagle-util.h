@@ -40,5 +40,7 @@ GQuark beagle_error_quark (void);
 
 gboolean beagle_util_is_path_on_block_device (const char *path);
 
+gboolean beagle_util_daemon_is_running (void);
+
 #endif /* __BEAGLE_UTIL_H */
 

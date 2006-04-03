@@ -25,9 +25,13 @@
  * DEALINGS IN THE SOFTWARE.
  */
 
+#include <stdio.h>
+#include <stdlib.h>
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <unistd.h>
+#include <sys/socket.h>
+#include <sys/un.h>
 
 #include "beagle-util.h"
 
@@ -51,4 +55,41 @@ beagle_util_is_path_on_block_device (const char *path)
 		return FALSE;
 
 	return (st.st_dev >> 8 != 0);
+}
+
+gboolean
+beagle_util_daemon_is_running (void)
+{
+	const gchar *beagle_home;
+	gchar *socket_dir;
+	gchar *socket_path;
+	int sockfd;
+	struct sockaddr_un sun;
+
+	beagle_home = g_getenv ("BEAGLE_HOME");
+	if (beagle_home == NULL)
+		beagle_home = g_get_home_dir ();
+	
+	socket_dir = g_build_filename (beagle_home, ".beagle", NULL);
+	socket_path = g_build_filename (socket_dir, "socket", NULL);
+
+	bzero (&sun, sizeof (sun));
+	sun.sun_family = AF_UNIX;
+	snprintf (sun.sun_path, sizeof (sun.sun_path), socket_path);
+
+	g_free (socket_path);
+	g_free (socket_dir);
+
+	sockfd = socket (AF_UNIX, SOCK_STREAM, 0);
+	if (sockfd < 0) {
+		return FALSE;
+	}
+
+	if (connect (sockfd, (struct sockaddr *) &sun, sizeof (sun)) < 0) {
+		return FALSE;
+	}
+
+	close (sockfd);
+	
+	return TRUE;
 }
