@@ -55,7 +55,7 @@ namespace Beagle.Daemon.FileSystemQueryable {
 		// 3: Switched to UTC for all times, changed the properties a bit.
 		// 4: Changed the key of TextFilenamePropKey to beagle:Filename - it might be useful in clients.
 		//    Make SplitFilenamePropKey unstored
-		const int MINOR_VERSION = 3;
+		const int MINOR_VERSION = 4;
 
 		private object big_lock = new object ();
 
