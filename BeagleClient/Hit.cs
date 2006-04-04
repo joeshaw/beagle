@@ -257,7 +257,6 @@ namespace Beagle {
 
 		private bool FindProperty (string key, out int first, out int top)
 		{
-			// FIXME: Should use binary search on sorted property list
 			if (! sorted) {
 				properties.Sort ();
 				sorted = true;
@@ -265,21 +264,44 @@ namespace Beagle {
 			
 			first = 0;
 			top = 0;
+			int range = properties.Count - 1;
+			Property prop;
 
-			while  (first < properties.Count) {
-				Property prop;
-				prop = properties [first] as Property;
-				if (prop.Key == key)
-					break;
-				++first;
+			// O(log n + |range|)-time algorithm for 1-d range query
+			while (range > 1) {
+				// find middle index
+				int mid = first + (range/2);
+				
+				prop = properties [mid] as Property;
+				// Properties are sorted first by Key, then by Value
+				// We only need to compare the key of the middle element to the key in parameter
+				if (String.Compare (key, prop.Key) > 0) {
+					// minimum item in right subtree is smaller
+					// move right
+					first = mid;
+					range -= (range/2);
+				} else
+					// move left
+					range = (range/2);
 			}
 
+			// first points to 
+			// - either the previous item in the BST
+			// - or the next to the previous item in the BST
+			prop = (Property) properties [first];
+			if (prop.Key != key)
+				first = first + 1;
 			if (first >= properties.Count)
+				return false;
+			prop = (Property) properties [first];
+			if (prop.Key != key)
 				return false;
 
 			top = first + 1;
+			// Since range will be small, do a linear scan from here.
+			// We could do another BST traversal at the cost of O(log-n),
+			// but its not worth it.
 			while (top < properties.Count) {
-				Property prop;
 				prop = properties [top] as Property;
 				if (prop.Key != key)
 					break;
