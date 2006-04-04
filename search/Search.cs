@@ -348,6 +348,12 @@ namespace Search {
 
 		private void OnShowQuickTips ()
 		{
+			if (currentQuery != null) {
+				currentQuery.HitsAddedEvent -= OnHitsAdded;
+				currentQuery.HitsSubtractedEvent -= OnHitsSubtracted;
+				currentQuery.Close ();
+			}
+
 			pages.CurrentPage = pages.PageNum (quicktips);
 		}
 
