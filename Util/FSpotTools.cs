@@ -77,6 +77,7 @@ namespace Beagle.Util {
 						connection.Open ();
 					} catch (ApplicationException) {
 						Logger.Log.Warn ("Unable to open F-Spot database: sqlite version mismatch");
+						connection = null;
 					}
 
 					tried_connection = true;
