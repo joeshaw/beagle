@@ -62,13 +62,19 @@ namespace Beagle.Filters {
 				byte [] data = new byte [13];
 				Stream.Read (data, 0, data.Length);
 
-				ushort width = EndianConverter.ToUInt16 (data, 6, true);
-				ushort height = EndianConverter.ToUInt16 (data, 8, true);
+				if (data [0] != 'G' || data [1] != 'I' || data [2] != 'F') {
+					Logger.Log.Debug ("File is not a GIF file!");
+					Error ();
+					return;
+				}
 
 				char [] gif_version = { (char) data [3], (char) data [4], (char) data [5] };
 
 				AddProperty (Beagle.Property.NewUnsearched ("gif:version", new string (gif_version)));
-				
+
+				ushort width = EndianConverter.ToUInt16 (data, 6, true);
+				ushort height = EndianConverter.ToUInt16 (data, 8, true);
+
 				Width = width;
 				Height = height;
 
@@ -123,6 +129,12 @@ namespace Beagle.Filters {
 								if (Debug)
 									Logger.Log.Debug ("-- Image Data Block size: " + b + " pos: " + Stream.Position);
 
+								if (b == -1) {
+									Logger.Log.Warn ("Invalid Data Block size");
+									Error ();
+									return;
+								}
+
 								Stream.Seek (b, SeekOrigin.Current);
 							}
 
@@ -152,6 +164,12 @@ namespace Beagle.Filters {
 								if (Debug)
 									Logger.Log.Debug ("-- Plaintext Data Block size: " + b + " pos: " + Stream.Position);
 
+								if (b == -1) {
+									Logger.Log.Warn ("Invalid Plaintext Data Block size!");
+									Error ();
+									return;
+								}
+
 								char [] cbuffer = new char [b];
 
 								for (int i = 0; i < b; i++)
@@ -174,6 +192,12 @@ namespace Beagle.Filters {
 							while ((b = Stream.ReadByte ()) != 0x0) {
 								if (Debug)
 									Logger.Log.Debug ("-- Comment Data Block size: " + b + " pos: " + Stream.Position);
+
+								if (b == -1) {
+									Logger.Log.Warn ("Invalid Comment Data Block size!");
+									Error ();
+									return;
+								}
 
 								char [] cbuffer = new char [b];
 
@@ -224,6 +248,13 @@ namespace Beagle.Filters {
 								while ((b = Stream.ReadByte ()) != 0x0) {
 									if (Debug)
 										Logger.Log.Debug ("-- Application Data Block size: " + b + " pos: " + Stream.Position);
+
+									if (b == -1) {
+										Logger.Log.Warn ("Invalid Application Data Block size!");
+										Error ();
+										return;
+									}
+
 									Stream.Seek (b, SeekOrigin.Current);
 								}
 							}
@@ -248,9 +279,9 @@ namespace Beagle.Filters {
 				}
 
 				AddProperty (Beagle.Property.NewUnsearched ("gif:numframes", num_frames));
-			} catch (Exception) {
+			} catch (Exception e) {
 				if (Debug)
-					Logger.Log.Debug ("-- Exception! " + Stream.Position);
+					Logger.Log.Debug ("-- Exception: {0} - {1}", Stream.Position, e);
 				Error ();
 			}
 		}
