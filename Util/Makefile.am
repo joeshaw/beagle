@@ -22,12 +22,6 @@ if ENABLE_WEBSERVICES
 CSFLAGS += -define:ENABLE_WEBSERVICES
 endif
 
-GOOGLE_WSDL = $(srcdir)/GoogleSearch.wsdl
-GOOGLE_CS   = GoogleSearch.cs
-
-$(GOOGLE_CS): $(GOOGLE_WSDL)
-	wsdl -namespace:Beagle.Util -out:$@ $^
-
 EXTSTR = ExternalStringsHack.cs
 EXTSTR_IN = $(srcdir)/$(EXTSTR).in
 $(EXTSTR): $(EXTSTR_IN)
@@ -148,7 +142,20 @@ else
 INOTIFY_EXE =
 endif
 
-$(UTIL_TARGET): $(UTIL_CSFILES) $(GOOGLE_CS) $(EXTSTR)
+UTIL_TARGET_FILES = $(UTIL_CSFILES) $(EXTSTR)
+
+if ENABLE_GOOGLEDRIVER
+GOOGLE_WSDL = $(srcdir)/GoogleSearch.wsdl
+GOOGLE_CS   = GoogleSearch.cs
+
+$(GOOGLE_CS): $(GOOGLE_WSDL)
+	wsdl -namespace:Beagle.Util -out:$@ $^
+
+UTIL_TARGET_FILES +=				\
+	$(GOOGLE_CS)
+endif
+
+$(UTIL_TARGET): $(UTIL_TARGET_FILES)
 	$(CSC) -unsafe -out:$@ $(CSFLAGS) $^ $(UTIL_ASSEMBLIES)
 
 UI_UTIL_CSFILES =				\
@@ -205,7 +212,6 @@ COND_CS_FILES =			\
 	$(srcdir)/Galago.cs
 
 EXTRA_DIST =			\
-	$(GOOGLE_WSDL)		\
 	$(EXTSTR_IN)		\
 	$(UTIL_CSFILES)		\
 	$(UI_UTIL_CSFILES)	\
@@ -215,7 +221,6 @@ EXTRA_DIST =			\
 	inotify-test
 
 CLEANFILES =			\
-	$(GOOGLE_CS)		\
 	$(EXTSTR)		\
 	$(UTIL_TARGET)		\
 	$(UTIL_TARGET).mdb	\
@@ -223,3 +228,12 @@ CLEANFILES =			\
 	$(UI_UTIL_TARGET).mdb	\
 	Inotify.exe		\
 	Inotify.exe.mdb
+
+if ENABLE_GOOGLEDRIVER
+EXTRA_DIST +=			\
+	$(GOOGLE_WSDL)
+
+CLEANFILES +=			\
+	$(GOOGLE_CS)
+endif
+

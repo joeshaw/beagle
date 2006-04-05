@@ -73,9 +73,7 @@ class InfoTool {
 		DaemonInformationResponse response;
 
 		try {
-			Console.WriteLine ("Sending begins at:" + DateTime.Now);
 			response = (DaemonInformationResponse) request.Send ();
-			Console.WriteLine ("Sending done at:" + DateTime.Now);
 		} catch (Beagle.ResponseMessageException) {
 			Console.WriteLine ("Could not connect to the daemon.");
 			return 1;

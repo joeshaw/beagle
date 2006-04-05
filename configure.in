@@ -102,8 +102,20 @@ AM_CONDITIONAL(OS_FREEBSD, test "x$os" = "xfreebsd")
 AC_PATH_PROG(DESKTOP_LAUNCH, desktop-launch, no)
 AM_CONDITIONAL(ENABLE_DESKTOP_LAUNCH, test "x$DESKTOP_LAUNCH" != "xno")
 
-# check for wsdl
-AC_PATH_PROG(WSDL, wsdl)
+# Google QueryDriver
+# Disable GoogleDriver by default, enable if you want know what you are doing
+dnl -----------------------------------------------
+AC_ARG_ENABLE([googledriver],
+	AC_HELP_STRING([--enable-googledriver], [Enable Google backend]),
+	enable_googledriver=$enableval,
+	enable_googledriver=no)
+
+if test "x$enable_googledriver" = "xyes"; then
+	# check for wsdl
+	AC_PATH_PROG(WSDL, wsdl)
+fi
+
+AM_CONDITIONAL(ENABLE_GOOGLEDRIVER, test "x$enable_googledriver" = "xyes")
 
 #
 # I18N
@@ -654,6 +666,7 @@ echo "
 	wv1?			  ${enable_wv1}
 	galago-sharp?		  ${enable_galago}
 	libchm?			  ${has_libchm} (Currently broken)
+	google backend?		  ${enable_googledriver} (Unsupported)
 
 	Mozilla Extension?	  yes
 	Epiphany Extension?	  ${enable_epiphany_extension}

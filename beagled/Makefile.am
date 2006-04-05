@@ -333,7 +333,6 @@ DAEMON_DLL_CSFILES = 						\
 	$(srcdir)/FileAttributesStore_Mixed.cs			\
 	$(srcdir)/FileAttributesStore_Sqlite.cs			\
 	$(srcdir)/FilterFactory.cs				\
-	$(srcdir)/GoogleDriver.cs				\
 	$(srcdir)/IFileAttributesStore.cs			\
 	$(srcdir)/IIndexer.cs					\
 	$(srcdir)/IndexSynchronization.cs			\
@@ -403,6 +402,10 @@ DAEMON_DLL_CSFILES += \
 DAEMON_DLL_ASSEMBLIES += -r:System.Web.Services	
 endif
 
+if ENABLE_GOOGLEDRIVER
+DAEMON_DLL_CSFILES +=                  \
+       $(srcdir)/GoogleDriver.cs
+endif
 
 $(DAEMON_DLL_TARGET): $(DAEMON_DLL_CSFILES) $(DAEMON_DLL_LOCAL_ASSEMBLIES)
 	$(CSC) -out:$@ $(DAEMON_DLL_CSFLAGS) $(DAEMON_DLL_CSFILES) $(DAEMON_DLL_ASSEMBLIES)
