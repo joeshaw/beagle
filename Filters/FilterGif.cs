@@ -48,6 +48,8 @@ namespace Beagle.Filters {
 			ApplicationExtension = 0xff
 		}
 
+		static public bool Debug = false;
+
 		public FilterGif () : base ()
 		{
 			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("image/gif"));
@@ -83,70 +85,96 @@ namespace Beagle.Filters {
 				if ((data [10] & 0x80) == 0x80) {
 					/* A Global Color Table exists */
 					ct_size = (int) (3 * Math.Pow(2, (data[10] & 0x07) + 1));
-					//System.Console.WriteLine("ct_size: " + ct_size);
+
+					if (Debug)
+						Logger.Log.Debug ("ct_size: " + ct_size);
+
 					Stream.Seek (ct_size, SeekOrigin.Current);
 				}
 
-				while ((gb = (GifBytes) Stream.ReadByte ()) != GifBytes.Trailer) {
+				while ((gb = (GifBytes) Stream.ReadByte ()) != GifBytes.Trailer
+				       && (int) gb != -1) {
+
 					switch (gb) {
 						case GifBytes.ImageBlockSeparator:
 							num_frames++;
 
-							//System.Console.WriteLine("Start of Image Block : " + Stream.Position);
+							if (Debug)
+								Logger.Log.Debug ("Start of Image Block : " + Stream.Position);
 
 							Stream.Seek (8, SeekOrigin.Current);
 							b = Stream.ReadByte ();
 
 							if ((b & 0x80) == 0x80) {
 								/* A Local Color Table exists */
-								//System.Console.WriteLine("-- Image Block has local color table");
+
 								ct_size = (int) (3 * Math.Pow(2, (b & 0x07) + 1));
-								//System.Console.WriteLine("ct_size: " + ct_size);
+								
+								if (Debug) {
+									Logger.Log.Debug ("-- Image Block has local color table");
+									Logger.Log.Debug ("ct_size: " + ct_size);
+								}
+
 								Stream.Seek (ct_size, SeekOrigin.Current);
 							}
 
 							Stream.ReadByte ();
 							while ((b = Stream.ReadByte ()) != 0x0) {
-								//System.Console.WriteLine("-- Image Data Block size: " + b + " pos: " + Stream.Position);
+								if (Debug)
+									Logger.Log.Debug ("-- Image Data Block size: " + b + " pos: " + Stream.Position);
+
 								Stream.Seek (b, SeekOrigin.Current);
 							}
 
-							//System.Console.WriteLine("-- Image Block end: " + Stream.Position);
+							if (Debug)
+								Logger.Log.Debug ("-- Image Block end: " + Stream.Position);
 							break;
 
 						case GifBytes.BlockIntroducer:
-							//System.Console.WriteLine("Start of Extension : " + Stream.Position);
+							if (Debug)
+								Logger.Log.Debug ("Start of Extension : " + Stream.Position);
 							break;
 
 						case GifBytes.GraphicControlExtension:
-							//System.Console.WriteLine("-- Graphic Control Extension : " + Stream.Position);
+							if (Debug)
+								Logger.Log.Debug ("-- Graphic Control Extension : " + Stream.Position);
+
 							Stream.Seek (6, SeekOrigin.Current);
 							break;
 
 						case GifBytes.PlaintextExtension:
-							//System.Console.WriteLine("Plaintext Extension: " + Stream.Position);
+							if (Debug)
+								Logger.Log.Debug ("Plaintext Extension: " + Stream.Position);
 
 							Stream.Seek (13, SeekOrigin.Current);
 
 							while ((b = Stream.ReadByte ()) != 0x0) {
-								//System.Console.WriteLine("-- Plaintext Data Block size: " + b + " pos: " + Stream.Position);
+								if (Debug)
+									Logger.Log.Debug ("-- Plaintext Data Block size: " + b + " pos: " + Stream.Position);
+
 								char [] cbuffer = new char [b];
 
 								for (int i = 0; i < b; i++)
 									cbuffer [i] = (char) Stream.ReadByte ();
 
 								AppendText (new string (cbuffer));
-								//System.Console.WriteLine("-- Plaintext Data: " + new string(cbuffer));
+
+								if (Debug)
+									Logger.Log.Debug ("-- Plaintext Data: " + new string(cbuffer));
 							}
 
-							//System.Console.WriteLine("-- Plaintext Extension End: " + Stream.Position);
+							if (Debug)
+								Logger.Log.Debug ("-- Plaintext Extension End: " + Stream.Position);
 							break;
 
 						case GifBytes.CommentExtension:
-							//System.Console.WriteLine("Comment Extension: " + Stream.Position);
+							if (Debug)
+								Logger.Log.Debug ("Comment Extension: " + Stream.Position);
 
 							while ((b = Stream.ReadByte ()) != 0x0) {
-								//System.Console.WriteLine("-- Comment Data Block size: " + b + " pos: " + Stream.Position);
+								if (Debug)
+									Logger.Log.Debug ("-- Comment Data Block size: " + b + " pos: " + Stream.Position);
+
 								char [] cbuffer = new char [b];
 
 								for (int i = 0; i < b; i++) {
@@ -154,14 +182,18 @@ namespace Beagle.Filters {
 								}
 
 								AppendText (new string (cbuffer));
-								//System.Console.WriteLine("-- Comment Data: " + new string(cbuffer));
+
+								if (Debug)
+									Logger.Log.Debug ("-- Comment Data: " + new string(cbuffer));
 							}
 
-							//System.Console.WriteLine("-- Comment Extension End: " + Stream.Position);
+							if (Debug)
+								Logger.Log.Debug ("-- Comment Extension End: " + Stream.Position);
 							break;
 
 						case GifBytes.ApplicationExtension:
-							//System.Console.WriteLine("Application Extension: " + Stream.Position);
+							if (Debug)
+								Logger.Log.Debug ("Application Extension: " + Stream.Position);
 
 							Stream.ReadByte ();
 
@@ -173,7 +205,8 @@ namespace Beagle.Filters {
 							string application = new string (cbuffer);
 
 							if (application == "NETSCAPE2.0") {
-								//System.Console.WriteLine("-- Application: 'NETSCAPE2.0'>");
+								if (Debug)
+									Logger.Log.Debug ("-- Application: 'NETSCAPE2.0'>");
 
 								Stream.ReadByte ();
 								Stream.ReadByte ();
@@ -189,20 +222,35 @@ namespace Beagle.Filters {
 							} else {
 								//unknown extension...
 								while ((b = Stream.ReadByte ()) != 0x0) {
-									//System.Console.WriteLine("-- Application Data Block size: " + b + " pos: " + Stream.Position);
+									if (Debug)
+										Logger.Log.Debug ("-- Application Data Block size: " + b + " pos: " + Stream.Position);
 									Stream.Seek (b, SeekOrigin.Current);
 								}
 							}
-							//System.Console.WriteLine("-- Application Extension End: " + Stream.Position);
+
+							if (Debug)
+								Logger.Log.Debug ("-- Application Extension End: " + Stream.Position);
 							break;
 
 						default:
 							break;
 					}	
 				}
+
+				if (Debug && gb == GifBytes.Trailer)
+					Logger.Log.Debug ("Trailer marker: " + Stream.Position);
+
+				// We got zero frames, this isn't actually a valid GIF file.
+				if (num_frames == 0) {
+					Logger.Log.Debug ("File doesn't contain any GIF frames");
+					Error ();
+					return;
+				}
+
 				AddProperty (Beagle.Property.NewUnsearched ("gif:numframes", num_frames));
 			} catch (Exception) {
-				//System.Console.WriteLine("-- Exception! " + Stream.Position);
+				if (Debug)
+					Logger.Log.Debug ("-- Exception! " + Stream.Position);
 				Error ();
 			}
 		}
