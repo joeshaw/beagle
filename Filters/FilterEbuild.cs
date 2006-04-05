@@ -52,6 +52,24 @@ namespace Beagle.Filters {
 			if (version.Length > 0)
 				AddProperty (Beagle.Property.NewUnsearched ("fixme:version", version));
 
+			// get download file size
+			if (pkgname.Length > 0 && version.Length > 0) {
+				FileInfo digest = new FileInfo (file.Directory.FullName + "/files/digest-" + pkgname + "-" + version);
+				if (digest.Exists) {
+					long download_size = 0;
+					StreamReader digest_reader = new StreamReader (new FileStream (digest.FullName, FileMode.Open, FileAccess.Read, FileShare.Read));
+					string digest_line = null;
+					while ((digest_line = digest_reader.ReadLine ()) != null) {
+						string[] digest_parts = digest_line.Split (' ');
+						if (digest_parts.Length < 4)
+							continue;
+						if (digest_parts[0].Equals ("MD5"))
+							download_size += Int64.Parse (digest_parts[3]);
+					}
+					AddProperty (Beagle.Property.NewUnsearched ("fixme:download_size", download_size));
+				}
+			}
+
 			StreamReader reader = new StreamReader (new FileStream (file.FullName, FileMode.Open, FileAccess.Read, FileShare.Read));
 
 			string str = null;
