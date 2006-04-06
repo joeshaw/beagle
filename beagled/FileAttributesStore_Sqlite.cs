@@ -134,6 +134,11 @@ namespace Beagle.Daemon {
 					    "  filter_name    STRING NOT NULL,        " +
 					    "  filter_version STRING NOT NULL         " +
 					    ")");
+
+				DoNonQuery ("CREATE INDEX file_path on file_attributes (" +
+					    "  directory,      " +
+					    "  filename        " +
+					    ")");
 			} else {
 				SqliteCommand command;
 				SqliteDataReader reader;
