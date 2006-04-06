@@ -40,14 +40,8 @@ CRAWL_RULES = \
 
 libexec_SCRIPTS = $(CRAWL_WRAPPER)
 
-CRAWL_WRAPPER_CRONTAB = beagle-crawl-system.crontab
-CRAWL_WRAPPER_CRONTAB_IN = beagle-crawl-system.crontab.in
-
-$(CRAWL_WRAPPER_CRONTAB): $(CRAWL_WRAPPER_CRONTAB_IN)
-	$(WRAPPER_SED) < $(srcdir)/$(CRAWL_WRAPPER_CRONTAB_IN) > $@
-
-crondir = $(sysconfdir)/cron.d
-cron_DATA = $(CRAWL_WRAPPER_CRONTAB)
+crondir = $(sysconfdir)/cron.daily
+cron_SCRIPTS = $(CRAWL_WRAPPER)
 
 # FIXME: Per-distribution specific crawl rules
 configdir = $(sysconfdir)/beagle

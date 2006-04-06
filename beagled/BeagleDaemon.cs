@@ -454,11 +454,6 @@ namespace Beagle.Daemon {
 
 			Logger.Log.Debug ("Handling signal {0}", signal);
 
-			if (signal == (int) Mono.Unix.Native.Signum.SIGQUIT) {
-				ExceptionHandlingThread.AbortThreads ();
-				return;
-			}
-
 			bool first_signal = false;
 			if (signal_time == DateTime.MinValue) {
 				signal_time = DateTime.Now;

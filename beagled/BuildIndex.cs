@@ -276,6 +276,9 @@ namespace Beagle.Daemon
 
 			Thread crawl_thread, index_thread, monitor_thread = null;
 
+			Stopwatch watch = new Stopwatch ();
+			watch.Start ();
+
 			// Start the thread that does the crawling
 			crawl_thread = ExceptionHandlingThread.Start (new ThreadStart (CrawlWorker));
 
@@ -292,6 +295,9 @@ namespace Beagle.Daemon
 			index_thread.Join ();
 			if (monitor_thread != null)
 				monitor_thread.Join ();
+
+			watch.Stop ();
+			Logger.Log.Debug ("Elapsed time {0}.", watch);
 
 			if (restart) {
 				Logger.Log.Debug ("Restarting helper");
