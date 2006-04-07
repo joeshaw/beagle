@@ -164,6 +164,46 @@ namespace Beagle.Daemon.KMailQueryable {
 
 		/////////////////////////////////////////////////////////////////////////////
 
+		override public string GetSnippet (string[] query_terms, Hit hit)
+		{
+			Logger.Log.Debug ("Fetching snippet for " + hit.Uri.LocalPath);
+			// FIXME: Also handle mbox emails
+			if (! hit.Uri.IsFile)
+				return null;
+
+			// Dont get snippets from attachments, they arent even indexed currently
+			if (hit.ParentUri != null)
+				return null;
+			
+			int mail_fd = Mono.Unix.Native.Syscall.open (hit.Uri.LocalPath, Mono.Unix.Native.OpenFlags.O_RDONLY);
+			if (mail_fd == -1)
+				return null;
+
+			InitializeGMime ();
+			GMime.StreamFs stream = new GMime.StreamFs (mail_fd);
+			GMime.Parser parser = new GMime.Parser (stream);
+			GMime.Message message = parser.ConstructMessage ();
+			stream.Dispose ();
+			parser.Dispose ();
+
+			bool html = false;
+			string body = message.GetBody (true, out html);
+			// FIXME: Also handle snippets from html message parts - involves invoking html filter
+			if (html) {
+				Logger.Log.Debug ("No text/plain message part in " + hit.UriAsString);
+				message.Dispose ();
+				return null;
+			}
+
+			StringReader reader = new StringReader (body);
+			string snippet = SnippetFu.GetSnippet (query_terms, reader);
+			message.Dispose ();
+
+			return snippet;
+		}
+
+		/////////////////////////////////////////////////////////////////////////////
+
 		// FIXME: How to determine if an mbox hit is valid without scanning the whole file
 
 		public string Name {

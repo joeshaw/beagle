@@ -67,7 +67,7 @@ namespace Beagle.Filters {
 			AddTiffDirectoryProperties (this, header.Directory);
 		}
 
-		internal static void AddTiffDirectoryProperties (FilterImage filter, ImageDirectory directory)
+		internal static void AddTiffDirectoryProperties (FilterTiff filter, ImageDirectory directory)
 		{
 			foreach (DirectoryEntry e in directory.Entries) {
 				switch (e.Id) {
