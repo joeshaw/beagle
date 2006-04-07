@@ -1,4 +1,100 @@
 
+Version 0.2.4
+April 7, 2006
+
+Daemon/Infrastructure:
+* Use POSIX calls to create Lucene lockfiles, to work around the lock
+  obtail timeout bug.  (D Bera)
+* Check the first 256 bytes of application/octet-stream to make sure
+  it's not actually text/plain.  (Bera)
+* Extract a maximum for 40,000 words from filters.  (Bera)
+* Allow keyword queries in non-property queries, and make most
+  keywords throughout the backends and filters unsearched.  (Bera)
+* Fix the thread local storage patch, to fix exceptions and memory
+  explosions.  (Joe)
+* Add indices to the fallback sqlite databases, dramatically speeding
+  up creation and searching.  (Pat Double)
+* Do a binary search when searching properties in a hit.  (Bera)
+* Print out the Mono version at daemon startup.  (Joe)
+
+Backends:
+* Work around pipe URIs in Liferea backend.  (Bera)
+* Don't index .system folders in Gaim directories.  (Lukas Lipka)
+* Get the Google backend working again, but disable it by default.
+  (Bera)
+
+Filters:
+* New GIF filter.  (Alexander Macdonald, Joe)
+* New XSLT filter.  (Alexander)
+* New RPM filter.  (Bera)
+* New Ebuild filter.  (Pat)
+* Make the new image filters use FilterImage.  (Lukas)
+* Fix parsing of Gaim 2.0 logs.  (Lukas, Zafar)
+* Fix the external filter to look in $sysconfdir/beagle, rather than
+  $sysconfdir.  (Joe)
+* Fixed up the HTML and PDF filters to not extract more than 40,000
+  words.  (Bera)
+* If an error is set when pulling text from filters, stop trying to
+  pull.  (Joe)
+* Fix an exception when trying to read from an F-Spot database we
+  failed to open.  (Joe)
+* Index the download size from an Ebuild file.
+
+UI:
+* Fix an exception when clicking the forward and back buttons.  (Dan
+  Winship)
+* Fix a crash if we got an empty MIME type.  (Dan)
+* Fix crashes when drawing the F-Spot emblem on image tiles.  (Dan,
+  Lukas)
+* Make the folder tile look more like the file tile.  (Dan)
+* Check whether we can thumbnail an item, so that we don't fill up the
+  failed thumbnail cache.  (Dan)
+* Remove some padding that is no longer needed and looks bad in some
+  themes.  (Dan)
+* Fix up a few localization issues.  (Dan)
+* Fix up some timestamp bugs, especially with files.  (Dan)
+* Don't use the MailMessage tile for messages not parsed through
+  gmime.  (Lukas)
+* Fix the awkwardly positioned date label in the MailMessage's details
+  pane.  (Lukas)
+* Close the query when we open the Quick Tips page, to prevent the
+  page from disappearing.  (Lukas)
+
+Tools:
+* Fix the scripts to allow being run uninstalled from the source
+  directory, but only from the system directories once installed, in a
+  safe manner.  (Joe)
+* GNOME HIG fixes for beagle-settings.  (Dennis Cranston)
+* Add a --list-filters option to beagle-info.  (Bera, Joe)
+* Fix a typo in the crawl-applications rule.  (Lukas)
+* Add /usr/local/share/doc to the crawl-documentations rule.  (Lukas)
+* Allow bludgeon to be disabled at configure time.  (Kevin Kubasik)
+* Install the beagle-extract-content tool.  (Joe)
+* Use cron.daily for beagle-crawl-system, rather than cron.d.  (Joe)
+
+Bindings:
+* Add a beagle_util_daemon_is_running() to libbeagle.  (Lukas)
+
+Everything Else:
+* Check for a newer version of Epiphany.  (Kyle Ambroff, Christian
+  Persch)
+* Move some more dependencies only required when building the GUI.
+  (Bera)
+* Allow beagle to be built without the X screensaver extension.
+  (Marijn, Lipka)
+
+Translations:
+* Added Georgian translation.  (Vladimer Sichinava)
+* Added Punjabi translation.  (Amanpreet Singh Alam)
+* Updated Dutch translation.  (Vincent van Adrighem)
+* Updated Italian translation.  (Luca Ferretti)
+* Updated Japanese translation.  (Takeshi AIHANA)
+* Updated Lithuanian translation.  (Žygimantas Beručka)
+* Updated Spanish translation.  (Francisco Javier F. Serrador)
+* Updated Vietnamese translation.  (Clytie Siddall)
+
+------------------------------------------------------
+
 Version 0.2.3
 March 17, 2006
 
