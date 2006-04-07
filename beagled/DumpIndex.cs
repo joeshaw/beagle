@@ -283,11 +283,13 @@ class DumpIndexTool {
 				String name = f.Name ();
 				String val = f.StringValue ();
 				bool stored = f.IsStored ();
-				bool searchable = f.IsIndexed ();
+				bool searchable = (val [0] == 's');
 				bool tokenized = f.IsTokenized();
+				if (name.Length >= 7 && name.StartsWith ("prop:"))
+					tokenized = (name [5] != 't');
 				float boost = f.GetBoost();
 
-				Console.WriteLine ("{0,-30} = [{1,-30}] (stored? {2}, searchable? {3}, tokenized? {4}, boost={5})",
+				Console.WriteLine ("{0,-30} = [{1}] (stored? {2}, searchable? {3}, tokenized? {4}, boost={5})",
 						    name, val, stored, searchable, tokenized, boost);
 			}
 		}
@@ -301,11 +303,13 @@ class DumpIndexTool {
 				String name = f.Name ();
 				String val = f.StringValue ();
 				bool stored = f.IsStored ();
-				bool searchable = f.IsIndexed ();
+				bool searchable = (val [0] == 's');
 				bool tokenized = f.IsTokenized();
+				if (name.Length >= 7 && name.StartsWith ("prop:"))
+					tokenized = (name [5] != 't');
 				float boost = f.GetBoost();
 
-				Console.WriteLine ("{0,-30} = [{1,-30}] (stored? {2}, searchable? {3}, tokenized? {4}, boost={5})",
+				Console.WriteLine ("{0,-30} = [{1}] (stored? {2}, searchable? {3}, tokenized? {4}, boost={5})",
 						    name, val, stored, searchable, tokenized, boost);
 			}
 		}
