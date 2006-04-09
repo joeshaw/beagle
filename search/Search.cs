@@ -352,6 +352,7 @@ namespace Search {
 				currentQuery.HitsAddedEvent -= OnHitsAdded;
 				currentQuery.HitsSubtractedEvent -= OnHitsSubtracted;
 				currentQuery.Close ();
+				currentQuery = null;
 			}
 
 			pages.CurrentPage = pages.PageNum (quicktips);
