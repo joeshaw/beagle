@@ -261,8 +261,7 @@ namespace Search {
 			view.Sort = sort;
 			pages.CurrentPage = pages.PageNum (panes);
 
-			if (grabFocus)
-				oldFocus = Focus;
+			oldFocus = grabFocus ? Focus : null;
 
 			try {
 				if (currentQuery != null) {
