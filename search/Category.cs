@@ -117,8 +117,6 @@ namespace Search {
 			tiles.Add ((Tiles.Tile)widget);
 			widget.Parent = this;
 			ShowTiles (true);
-
-			UpdateButtons ();
 		}
 
 		protected override void OnRemoved (Gtk.Widget widget)
@@ -127,8 +125,6 @@ namespace Search {
 			tiles.Remove ((Tiles.Tile)widget);
 			widget.Unparent ();
 			ShowTiles (true);
-
-			UpdateButtons ();
 		}
 
 		private Tiles.Tile lastTarget;
@@ -292,10 +288,13 @@ namespace Search {
 
 		public void Select (bool focus, bool expanded)
 		{
+			if (expanded) {
+				HideTiles ();
+				this.expanded = expanded;
+				ShowTiles (false);
+			}
 			if (focus && !Empty)
 				((Gtk.Widget)VisibleTiles[0]).GrabFocus ();
-			this.expanded = expanded;
-			UpdateButtons ();
 		}
 	}
 }
