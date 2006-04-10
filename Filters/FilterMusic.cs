@@ -53,8 +53,9 @@ namespace Beagle.Filters {
 			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("audio/x-m4a"));
 			AddSupportedFlavor (FilterFlavor.NewFromExtension (".m4p"));
 
-			// OGG
+			// OGG Vorbis
 			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("application/ogg"));
+			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("audio/x-vorbis+ogg"));
 
 			// Tracker / Amiga Audio
 			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("audio/x-s3m"));
