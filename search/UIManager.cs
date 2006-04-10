@@ -66,6 +66,9 @@ namespace Search {
 						 null, null, QuickTips),
 				new ActionEntry ("FocusSearchEntry", null, "",
 						 "<control>K", null,
+						 OnFocusSearchEntry),
+				new ActionEntry ("FocusSearchEntry2", null, "",
+						 "<control>L", null,
 						 OnFocusSearchEntry)
 			};
 			actions.Add (entries);
@@ -181,6 +184,7 @@ namespace Search {
 		"    </menu>" +
 		"  </menubar>" +
 		"  <accelerator action='FocusSearchEntry'/>" +
+		"  <accelerator action='FocusSearchEntry2'/>" +
 		"</ui>";
 
 		private void Preferences (object obj, EventArgs args)
