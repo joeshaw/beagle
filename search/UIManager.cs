@@ -227,7 +227,7 @@ namespace Search {
 							 "Fredrik Hedberg <fredrik@avafan.com>",
 							 "Lukas Lipka <lukas@pmad.net>",
 							 "Joe Shaw <joeshaw@novell.com>", 
-							 "Jakub Steiner <jimmac@novell.com",
+							 "Jakub Steiner <jimmac@novell.com>",
 							 "Dan Winship <danw@novell.com>" };
 			
 #pragma warning disable 612 // don't warn that Gnome.About is deprecated
