@@ -358,12 +358,27 @@ namespace Beagle.Daemon {
 				
 
 			// Bail out if we are trying to run as root
+			if (Environment.UserName == "root" && Environment.GetEnvironmentVariable ("SUDO_USER") != null) {
+				Console.WriteLine ("You appear to be running beagle using sudo.  This can cause problems with");
+				Console.WriteLine ("permissions in your .beagle and .wapi directories if you later try to run");
+				Console.WriteLine ("as an unprivileged user.  If you need to run beagle as root, please use");
+				Console.WriteLine ("'su -c' instead.");
+				Environment.Exit (-1);
+			}
+
 			if (Environment.UserName == "root" && ! Conf.Daemon.AllowRoot) {
 				Console.WriteLine ("You can not run beagle as root.  Beagle is designed to run from your own");
 				Console.WriteLine ("user account.  If you want to create multiuser or system-wide indexes, use");
 				Console.WriteLine ("the beagle-build-index tool.");
 				Console.WriteLine ();
 				Console.WriteLine ("You can override this setting using the beagle-config or beagle-settings tools.");
+				Environment.Exit (-1);
+			}
+
+			try {
+				string tmp = PathFinder.HomeDir;
+			} catch (Exception e) {
+				Console.WriteLine ("Unable to start the daemon: {0}", e.Message);
 				Environment.Exit (-1);
 			}
 
