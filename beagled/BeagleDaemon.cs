@@ -28,6 +28,7 @@ using System;
 using System.Collections;
 using System.IO;
 using System.Reflection;
+using System.Runtime.InteropServices;
 using System.Threading;
 
 using Gtk;
@@ -411,7 +412,12 @@ namespace Beagle.Daemon {
 			// Do BEAGLE_EXERCISE_THE_DOG_HARDER-related processing.
 			ExerciseTheDogHarder ();
 
-			Application.InitCheck ("beagled", ref args);
+			if (Application.InitCheck ("beagled", ref args))
+				Logger.Log.Debug ("Established a connection to the X server");
+			else
+				Logger.Log.Debug ("Unable to establish a connection to the X server");
+
+			XSetIOErrorHandler (BeagleXIOErrorHandler);
 
 			// Defer all actual startup until the main loop is
 			// running.  That way shutdowns during the startup
@@ -438,7 +444,28 @@ namespace Beagle.Daemon {
 				ExceptionHandlingThread.SpewLiveThreads ();
 			}
 		}
-		
+
+		/////////////////////////////////////////////////////////////////////////////
+
+		private delegate int XIOErrorHandler (IntPtr display);
+
+		[DllImport ("libX11.so.6")]
+		extern static private int XSetIOErrorHandler (XIOErrorHandler handler);
+
+		private static int BeagleXIOErrorHandler (IntPtr display)
+		{
+			Logger.Log.Debug ("Lost our connection to the X server!  Trying to shut down gracefully");
+
+			if (! Shutdown.ShutdownRequested)
+				Shutdown.BeginShutdown ();
+
+			Logger.Log.Debug ("Xlib is forcing us to exit!");
+
+			ExceptionHandlingThread.SpewLiveThreads ();
+	
+			// Returning will cause xlib to exit immediately.
+			return 0;
+		}
 
 		/////////////////////////////////////////////////////////////////////////////
 
@@ -452,6 +479,9 @@ namespace Beagle.Daemon {
 			Mono.Unix.Native.Stdlib.signal (Mono.Unix.Native.Signum.SIGTERM, OurSignalHandler);
 			if (Environment.GetEnvironmentVariable("BEAGLE_THERE_BE_NO_QUITTIN") == null)
 				Mono.Unix.Native.Stdlib.signal (Mono.Unix.Native.Signum.SIGQUIT, OurSignalHandler);
+
+			// Ignore SIGPIPE
+			Mono.Unix.Native.Stdlib.signal (Mono.Unix.Native.Signum.SIGPIPE, Mono.Unix.Native.Stdlib.SIG_IGN);
 		}
 
 		// Our handler triggers an orderly shutdown when it receives a signal.
@@ -467,7 +497,7 @@ namespace Beagle.Daemon {
 			if (signal < 0)
 				return;
 
-			Logger.Log.Debug ("Handling signal {0}", signal);
+			Logger.Log.Debug ("Handling signal {0} ({1})", signal, (Mono.Unix.Native.Signum) signal);
 
 			bool first_signal = false;
 			if (signal_time == DateTime.MinValue) {

@@ -29,6 +29,7 @@ using System;
 using System.Collections;
 using System.IO;
 using SNS = System.Net.Sockets;
+using System.Runtime.InteropServices;
 using System.Threading;
 
 using Gtk;
@@ -42,6 +43,9 @@ namespace Beagle.IndexHelper {
 
 		static DateTime last_activity;
 		static Server server;
+
+		[DllImport ("libc")]
+		extern static private int unsetenv (string name);
 
 		static void Main (string [] args)
 		{
@@ -72,6 +76,13 @@ namespace Beagle.IndexHelper {
 					//debug ? LogLevel.Debug : LogLevel.Warn,
 					LogLevel.Debug,
 					run_by_hand || log_in_fg);
+
+			// Intentionally unset DISPLAY so that we can't connect
+			// to the X server and aren't influenced by it if it
+			// goes away.  It's important to do this before
+			// Application.InitCheck(), since that's what makes the
+			// connection.
+			unsetenv ("DISPLAY");
 
 			Application.InitCheck ("IndexHelper", ref args);
 
@@ -214,6 +225,9 @@ namespace Beagle.IndexHelper {
 			Mono.Unix.Native.Stdlib.signal (Mono.Unix.Native.Signum.SIGTERM, OurSignalHandler);
 			if (Environment.GetEnvironmentVariable("BEAGLE_THERE_BE_NO_QUITTIN") == null)
 				Mono.Unix.Native.Stdlib.signal (Mono.Unix.Native.Signum.SIGQUIT, OurSignalHandler);
+
+			// Ignore SIGPIPE
+			Mono.Unix.Native.Stdlib.signal (Mono.Unix.Native.Signum.SIGPIPE, Mono.Unix.Native.Stdlib.SIG_IGN);
 		}
 
 		// Our handler triggers an orderly shutdown when it receives a signal.
@@ -228,7 +242,7 @@ namespace Beagle.IndexHelper {
 			// We want to call it once to ensure that it is pre-JITed.
 			if (signal < 0)
 				return;
-			Logger.Log.Debug ("Handling signal {0}", signal);
+			Logger.Log.Debug ("Handling signal {0} ({1})", signal, (Mono.Unix.Native.Signum) signal);
 
 			bool first_signal = false;
 			if (signal_time == DateTime.MinValue) {

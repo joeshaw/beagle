@@ -38,8 +38,6 @@ CRAWL_RULES = \
 	$(srcdir)/crawl-rules/crawl-applications	\
 	$(srcdir)/crawl-rules/crawl-documentation
 
-libexec_SCRIPTS = $(CRAWL_WRAPPER)
-
 crondir = $(sysconfdir)/cron.daily
 cron_SCRIPTS = $(CRAWL_WRAPPER)
 
