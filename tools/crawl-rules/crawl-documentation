@@ -2,7 +2,7 @@ CRAWL_ENABLED="yes"
 
 CRAWL_INDEX_NAME="documentation"
 
-CRAWL_PATHS="/usr/share/doc /usr/local/share/doc /opt/kde3/share/doc /opt/gnome/share/gnome/help"
+CRAWL_PATHS="/usr/share/doc /usr/local/share/doc /opt/kde3/share/doc /opt/gnome/share/gnome/help /usr/share/gnome/help"
 
 CRAWL_ALLOW_PATTERNS="*.xml,*.html,*.docbook"
 
