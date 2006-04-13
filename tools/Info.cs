@@ -26,6 +26,7 @@
 //
 
 using System;
+using System.Text;
 using System.Reflection;
 
 using Beagle;
@@ -103,6 +104,7 @@ class InfoTool {
 
 	static void PrintFilterDetails (Assembly assembly)
 	{
+		StringBuilder sb = new StringBuilder ();
 		foreach (Type t in ReflectionFu.ScanAssemblyForClass (assembly, typeof (Filter))) {
 			Filter filter = null;
 
@@ -123,16 +125,23 @@ class InfoTool {
 			else
 				name = t.FullName;
 
-			Console.WriteLine (name + " - Version " + filter.Version + " (" + assembly.Location + ")");
+			sb.Length = 0;
+			sb.Append (name + " - Version " + filter.Version + " (" + assembly.Location + ")\n");
+			bool has_filter = false;
 
 			foreach (FilterFlavor flavor in filter.SupportedFlavors) {
-				if (flavor.MimeType != null)
-					Console.WriteLine ("  - " + flavor.MimeType);
-				if (flavor.Extension != null)
-					Console.WriteLine ("  - *" + flavor.Extension);
+				if (flavor.MimeType != null && (! flavor.MimeType.StartsWith ("beagle"))) {
+					sb.Append ("  - " + flavor.MimeType + "\n");
+					has_filter = true;
+				}
+				if (flavor.Extension != null) {
+					sb.Append ("  - *" + flavor.Extension + "\n");
+					has_filter = true;
+				}
 			}
 
-			Console.WriteLine ();
+			if (has_filter)
+				Console.WriteLine (sb.ToString ());
 		}
 	}
 }
