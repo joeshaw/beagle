@@ -89,7 +89,7 @@ namespace Search.Tiles {
 		public void Email ()
 		{
 			SafeProcess p = new SafeProcess ();
-			p.Arguments = new string [] { "evolution", String.Format ("mailto:?attach{0}", Hit.FileInfo.FullName) };
+			p.Arguments = new string [] { "evolution", String.Format ("mailto:?attach={0}", Hit.FileInfo.FullName) };
 
 			try {
 				p.Start () ;
