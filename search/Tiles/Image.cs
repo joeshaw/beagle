@@ -100,9 +100,14 @@ namespace Search.Tiles {
 			if (Hit ["fspot:IsIndexed"] == "true")
 				return;
 
-			ProcessStartInfo pi = new ProcessStartInfo ("f-spot");
-			pi.Arguments = String.Format ("--import {0}", Hit.FileInfo.FullName);
-			Process.Start (pi);
+			SafeProcess p = new SafeProcess ();
+			p.Arguments = new string[] { "f-spot", "--import", Hit.FileInfo.FullName };
+
+			try {
+				p.Start ();
+			} catch (Exception e) {
+				Console.WriteLine ("Error launching F-Spot: " + e);
+			}
 		}
 #endif
 		

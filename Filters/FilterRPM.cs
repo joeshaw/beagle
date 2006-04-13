@@ -74,32 +74,32 @@ namespace Beagle.Filters {
 
 		protected override void DoPullProperties ()
 		{
-			Process pc = new Process ();
-			pc.StartInfo.FileName = "rpm";
-			pc.StartInfo.Arguments = " -qp --queryformat '[%{*:xml}\n]' \"" + FileInfo.FullName+"\"";
-			pc.StartInfo.RedirectStandardInput = false;
-			pc.StartInfo.RedirectStandardOutput = true;
-			pc.StartInfo.RedirectStandardError = true;
-			pc.StartInfo.UseShellExecute = false;
+			SafeProcess pc = new SafeProcess ();
+			pc.Arguments = new string [] { "rpm", "-qp", "--queryformat", "[%{*:xml}\n]", FileInfo.FullName };
+			pc.RedirectStandardOutput = true;
+			pc.RedirectStandardError = true;
 			
 			try {
 				pc.Start ();
-			} catch (System.ComponentModel.Win32Exception) {
-				Log.Warn ("Error: 'rpm' command not found or unable to run");
+			} catch (SafeProcessException e) {
+				Log.Warn (e.Message);
 				Error ();
 				return;
 			}
 
-			StreamReader pout = pc.StandardOutput;
-			XmlTextReader reader = new XmlTextReader (pout);
+			XmlTextReader reader = new XmlTextReader (new StreamReader (pc.StandardOutput));
 			reader.WhitespaceHandling = WhitespaceHandling.None;
 
 			try {
 				ParseRpmTags (reader);
-			} catch (XmlException) {
-				Logger.Log.Debug ("FilterRPM: Error parsing output of rpmquery!");
+			} catch (XmlException e) {
+				Logger.Log.Warn ("FilterRPM: Error parsing output of rpmquery: {0}", e.Message);
 				Error ();
+			} finally {
+				reader.Close ();
+				pc.Close ();
 			}
+
 			Finished ();
 		}
 

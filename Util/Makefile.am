@@ -73,6 +73,7 @@ UTIL_CSFILES = 			        	\
 	$(srcdir)/PngHeader.cs			\
 	$(srcdir)/PullingReader.cs      	\
 	$(srcdir)/ReflectionFu.cs		\
+	$(srcdir)/SafeProcess.cs		\
 	$(srcdir)/Scheduler.cs			\
 	$(srcdir)/SmallIntArray.cs		\
 	$(srcdir)/Stopwatch.cs			\

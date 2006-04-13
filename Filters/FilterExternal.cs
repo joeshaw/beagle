@@ -143,29 +143,37 @@ namespace Beagle.Filters {
 				Error ();
 			}
 
-			string args = efi.Arguments.Replace ("%s", String.Format ("\"{0}\"", FileInfo.FullName));
+			// FIXME: Need to deal with quotation marks in the XML file, probably.
+			string[] tmp_argv = efi.Arguments.Split (' ');
+			string[] argv = new string [tmp_argv.Length + 1];
 
-			Process pc = new Process ();
+			argv [0] = efi.Command;
 
-			pc.StartInfo.FileName = efi.Command;
-			pc.StartInfo.Arguments = args;
-			pc.StartInfo.RedirectStandardInput = false;
-			pc.StartInfo.RedirectStandardOutput = true;
-			pc.StartInfo.UseShellExecute = false;
+			int j = 1;
+			for (int i = 0; i < tmp_argv.Length; i++) {
+				if (tmp_argv [i] == String.Empty)
+					continue;
+
+				if (tmp_argv [i] == "%s")
+					argv [j] = FileInfo.FullName;
+				else
+					argv [j] = tmp_argv [i];
+				j++;
+			}
+
+			SafeProcess pc = new SafeProcess ();
+			pc.Arguments = argv;
+			pc.RedirectStandardOutput = true;
 
 			try {
 				pc.Start ();
-			} catch (System.ComponentModel.Win32Exception ex) {
-				Logger.Log.Warn ("Unable to execute {0}: {1}",
-						 pc.StartInfo.FileName, ex);
+			} catch (SafeProcessException e) {
+				Log.Warn (e.Message);
 				Error ();
 				return;
 			}
 
-			// Nice the process so that we don't monopolize the CPU
-			pc.PriorityClass = ProcessPriorityClass.BelowNormal;
-
-			StreamReader pout = pc.StandardOutput;
+			StreamReader pout = new StreamReader (pc.StandardOutput);
 
 			string str;
 			while ((str = pout.ReadLine ()) != null) {
@@ -174,7 +182,6 @@ namespace Beagle.Filters {
 			}
 
 			pout.Close ();
-			pc.WaitForExit ();
 			pc.Close ();
 			Finished ();
 		}

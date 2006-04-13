@@ -30,23 +30,20 @@ namespace Beagle.Filters {
 		protected override void DoPullProperties ()
 		{
 			// create new external process
-			Process pc = new Process ();
-			pc.StartInfo.FileName = "pdfinfo";
-			// FIXME: We probably need to quote special chars in the path
-			pc.StartInfo.Arguments = String.Format (" \"{0}\"", FileInfo.FullName);
-			pc.StartInfo.RedirectStandardInput = false;
-			pc.StartInfo.RedirectStandardOutput = true;
-			pc.StartInfo.UseShellExecute = false;
+			SafeProcess pc = new SafeProcess ();
+			pc.Arguments = new string [] { "pdfinfo", FileInfo.FullName };
+			pc.RedirectStandardOutput = true;
+
 			try {
 				pc.Start ();
-			} catch (System.ComponentModel.Win32Exception) {
-				Logger.Log.Warn ("Unable to find pdfinfo in path; PDF file not indexed.");
-				Finished ();
+			} catch (SafeProcessException e) {
+				Log.Warn (e.Message);
+				Error ();
 				return;
 			}
-			
+
 			// add pdfinfo's output to pool
-			StreamReader pout = pc.StandardOutput;
+			StreamReader pout = new StreamReader (pc.StandardOutput);
 			string str = null;
 			string[] tokens = null;
 			string strMetaTag = null;
@@ -87,33 +84,26 @@ namespace Beagle.Filters {
 				}
 			}
 			pout.Close ();
-			pc.WaitForExit ();
 			pc.Close ();
 		}
 		
 		protected override void DoPull ()
 		{
 			// create new external process
-			Process pc = new Process ();
-			pc.StartInfo.FileName = "pdftotext";
-			// FIXME: We probably need to quote special chars in the path
-			pc.StartInfo.Arguments = String.Format ("-q -nopgbrk -enc UTF-8 \"{0}\" -", FileInfo.FullName);
-			pc.StartInfo.RedirectStandardInput = false;
-			pc.StartInfo.RedirectStandardOutput = true;
-			pc.StartInfo.UseShellExecute = false;
+			SafeProcess pc = new SafeProcess ();
+			pc.Arguments = new string [] { "pdftotext", "-q", "-nopgbrk", "-enc", "UTF-8", FileInfo.FullName, "-" };
+			pc.RedirectStandardOutput = true;
+
 			try {
 				pc.Start ();
-			} catch (System.ComponentModel.Win32Exception) {
-				Logger.Log.Warn ("Unable to find pdftotext in path; PDF file not indexed.");
-				Finished ();
+			} catch (SafeProcessException e) {
+				Log.Warn (e.Message);
+				Error ();
 				return;
 			}
 
-			// Nice the process so we don't monopolize the CPU as much; we might want to even set this to idle
-			pc.PriorityClass = ProcessPriorityClass.BelowNormal;	
-
 			// add pdftotext's output to pool
-			StreamReader pout = pc.StandardOutput;
+			StreamReader pout = new StreamReader (pc.StandardOutput);
 
 			// FIXME:  I don't think this is really required
 			// Line by line parsing, however, we have to make
@@ -126,7 +116,6 @@ namespace Beagle.Filters {
 					break;
 			}
 			pout.Close ();
-			pc.WaitForExit ();
 			pc.Close ();
 			Finished ();
 		}

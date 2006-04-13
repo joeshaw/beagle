@@ -2,6 +2,7 @@ using System;
 using System.Diagnostics;
 using System.Collections;
 using Mono.Unix;
+using Beagle.Util;
 
 namespace Search.Tiles {
 
@@ -102,16 +103,16 @@ namespace Search.Tiles {
 
 		public override void Open ()
 		{
-			Process p = new Process ();
-			p.StartInfo.UseShellExecute = true;
-			p.StartInfo.FileName = "beagle-imlogviewer";
-			p.StartInfo.Arguments = String.Format ("--client \"{0}\" --highlight-search \"{1}\" {2}",
-							       Hit ["fixme:client"], Query.QuotedText, Hit.Uri.LocalPath);
+			SafeProcess p = new SafeProcess ();
+			p.Arguments = new string [] { "beagle-imlogviewer",
+						      "--client", Hit ["fixme:client"],
+						      "--highlight-search", Query.QuotedText,
+						      Hit.Uri.LocalPath };
 
 			try {
 				p.Start ();
 			} catch (Exception e) {
-				Console.WriteLine ("Unable to run {0}: {1}", p.StartInfo.FileName, e.Message);
+				Console.WriteLine ("Unable to run {0}: {1}", p.Arguments [0], e.Message);
 			}
 		}
 	}

@@ -2,6 +2,7 @@ using System;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
 using Mono.Unix;
+using Beagle.Util;
 
 namespace Search.Tiles {
 
@@ -32,16 +33,14 @@ namespace Search.Tiles {
 
 		public override void Open ()
 		{
+			SafeProcess p = new SafeProcess ();
+
 			// This doesn't work very well if you have multiple
 			// terms that match.  Tomboy doesn't seem to have a way
 			// to specify more than one thing to highlight.
-			string args = String.Format ("--open-note {0} --highlight-search \"{1}\"",
-						     Hit.Uri, Query.QuotedText);
-			
-			Process p = new Process ();
-			p.StartInfo.UseShellExecute = false;
-			p.StartInfo.FileName = "tomboy";
-			p.StartInfo.Arguments = args;
+			p.Arguments = new string [] { "tomboy",
+						      "--open-note", Hit.UriAsString,
+						      "--highlight-search", Query.QuotedText };
 
 			try {
 				p.Start ();

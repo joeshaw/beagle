@@ -96,24 +96,20 @@ namespace Beagle.Filters {
 
 		protected override void DoPullProperties ()
 		{
-			// create new external process
-			Process pc = new Process ();
-			pc.StartInfo.FileName = "mplayer";
-			pc.StartInfo.Arguments = " -vo null -ao null -frames 0 -identify \"" + FileInfo.FullName+"\"";
-			pc.StartInfo.RedirectStandardInput = false;
-			pc.StartInfo.RedirectStandardOutput = true;
-			pc.StartInfo.RedirectStandardError = true;
-			pc.StartInfo.UseShellExecute = false;
-			
+			SafeProcess pc = new SafeProcess ();
+			pc.Arguments = new string [] { "mplayer", "-vo", "null", "-ao", "null", "-frames", "0", "-identify", FileInfo.FullName };
+			pc.RedirectStandardOutput = true;
+			pc.RedirectStandardError = true;
+
 			try {
 				pc.Start ();
-			} catch (System.ComponentModel.Win32Exception) {
-				Log.Warn ("Error: mplayer not found or unable to run");
+			} catch (SafeProcessException e) {
+				Log.Warn (e.Message);
 				Error ();
 				return;
 			}
 
-			StreamReader pout = pc.StandardOutput;
+			StreamReader pout = new StreamReader (pc.StandardOutput);
 			string str;
 			string name = "";
 			
@@ -197,7 +193,6 @@ namespace Beagle.Filters {
 			}
 			
 			pout.Close ();
-			pc.WaitForExit ();
 			pc.Close ();
 			
 			// If an aspect ratio wasn't set in the file then work out the

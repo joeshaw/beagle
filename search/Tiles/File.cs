@@ -2,6 +2,7 @@ using System;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
 using Mono.Unix;
+using Beagle.Util;
 
 namespace Search.Tiles {
 
@@ -68,21 +69,15 @@ namespace Search.Tiles {
 		{
 			string path = Hit.FileInfo.DirectoryName;
 
-			Process p = new Process ();
-			p.StartInfo.UseShellExecute = false;
-
-			if ((! path.StartsWith ("\"")) && (! path.EndsWith ("\"")))
-				path = "\"" + path + "\"";
-
 			// FIXME: When nautilus implements this, then we should
 			// also select the file in the folder.
 
+			SafeProcess p = new SafeProcess ();
+
 #if ENABLE_DESKTOP_LAUNCH
-			p.StartInfo.FileName = "desktop-launch";
-			p.StartInfo.Arguments = path;
+			p.Arguments = new string [] { "desktop-launch", path };
 #else
-			p.StartInfo.FileName = "nautilus";
-			p.StartInfo.Arguments = "--no-desktop " + path;
+			p.Arguments = new string [] { "nautilus", "--no-desktop", path };
 #endif
 			try {
 				p.Start ();
@@ -93,10 +88,8 @@ namespace Search.Tiles {
 
 		public void Email ()
 		{
-			Process p = new Process ();
-			p.StartInfo.UseShellExecute = false;
-			p.StartInfo.FileName = "evolution";
-			p.StartInfo.Arguments = String.Format ("\"mailto:?attach={0}\"", Hit.FileInfo.FullName);
+			SafeProcess p = new SafeProcess ();
+			p.Arguments = new string [] { "evolution", String.Format ("mailto:?attach{0}", Hit.FileInfo.FullName) };
 
 			try {
 				p.Start () ;

@@ -326,20 +326,14 @@ namespace Search.Tiles {
 
 		protected void OpenFromMime (Hit hit)
 		{
-			OpenFromMime (hit, null, null, false);
-		}
-
-		protected void OpenFromMime (Hit hit, string command_fallback,
-					     string args_fallback, bool expects_uris_fallback)
-		{
-			string argument;
-			string command = command_fallback;
-			bool expects_uris = expects_uris_fallback;
+			string command = null, item;
+			bool expects_uris = false;
 
 			// FIXME: This is evil.  Nautilus should be handling
 			// inode/directory, not just x-directory/normal
 			if (hit.MimeType == "inode/directory")
 				hit.MimeType = "x-directory/normal";
+
 #if ENABLE_DESKTOP_LAUNCH
 			command = "desktop-launch";
 			expects_uris = true;
@@ -356,39 +350,47 @@ namespace Search.Tiles {
 				return;
 			}
 
-			if (args_fallback != null)
-				argument = args_fallback;
-			else 
-				argument = "";			
-
-			if (expects_uris) {
-				argument = String.Format ("{0} '{1}'", argument,
-						UriFu.UriToSerializableString(hit.Uri));
-			} else {
-				argument = String.Format ("{0} {1}", argument, hit.PathQuoted);
-			}
+			if (expects_uris)
+				item = UriFu.UriToSerializableString (hit.Uri);
+			else
+				item = hit.Path;
 
 			// Sometimes the command is 'quoted'
 			if (command.IndexOf ('\'') == 0 && command.LastIndexOf ('\'') == command.Length - 1)
 				command = command.Trim ('\'');
 
 			// This won't work if a program really has a space in
-			// the filename, but I think other things would break
-			// with that too, and in practice it doesn't seem to
+			// the command filename, but I think other things would
+			// break with that too, and in practice it doesn't seem to
 			// happen.
+			//
+			// A bigger issue is that the arguments are split up by
+			// spaces, so quotation marks used to indicate a single
+			// entry in the argv won't work.  This probably should
+			// be fixed.
+			string[] arguments = null;
 			int idx = command.IndexOf (' ');
 			if (idx != -1) {
-				argument = String.Format ("{0} {1}", command.Substring (idx + 1), argument);
+				arguments = command.Substring (idx + 1).Split (' ');
 				command = command.Substring (0, idx);
 			}
 
-			Console.WriteLine ("Cmd: {0}", command);
-			Console.WriteLine ("Arg: {0}", argument);
+			string[] argv;
+			if (arguments == null)
+				argv = new string [] { command, item };
+			else {
+				argv = new string [arguments.Length + 2];
+				argv [0] = command;
+				argv [argv.Length - 1] = item;
+				Array.Copy (arguments, 0, argv, 1, arguments.Length);
+			}
 
-			Process p = new Process ();
-			p.StartInfo.UseShellExecute = false;
-			p.StartInfo.FileName = command;
-			p.StartInfo.Arguments = argument;
+			Console.WriteLine ("Cmd: {0}", command);
+			Console.WriteLine ("Arg: {0}", String.Join (" ", argv, 1, argv.Length - 2));
+			Console.WriteLine ("Itm: {0}", item);
+
+			SafeProcess p = new SafeProcess ();
+			p.Arguments = argv;
 
 			try {
 				p.Start ();
@@ -405,10 +407,8 @@ namespace Search.Tiles {
 		public void OpenFromUri (string uri)
                 {
 #if ENABLE_DESKTOP_LAUNCH
-			Process p = new Process ();
-			p.StartInfo.UseShellExecute = false;
-			p.StartInfo.FileName = "desktop-launch";
-			p.StartInfo.Arguments = uri;
+			SafeProcess p = new SafeProcess ();
+			p.Arguments = new string[] { "desktop-launch", uri };
 
 			try {
 				p.Start ();

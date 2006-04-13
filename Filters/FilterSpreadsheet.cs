@@ -75,39 +75,37 @@ namespace Beagle.Filters {
 		override protected void DoPull ()
 		{
 			// create new external process
-			Process pc = new Process ();
-			pc.StartInfo.FileName = "ssindex";
+			SafeProcess pc = new SafeProcess ();
+			pc.Arguments = new string [] { "ssindex", "-i", FileInfo.FullName };
+			pc.RedirectStandardOutput = true;
 
-			pc.StartInfo.Arguments = String.Format ("-i \"{0}\"", FileInfo.FullName);
-			pc.StartInfo.RedirectStandardInput = false;
-			pc.StartInfo.RedirectStandardOutput = true;
-			pc.StartInfo.UseShellExecute = false;
 			try {
 				pc.Start ();
-			} catch (System.ComponentModel.Win32Exception) {
-				Logger.Log.Warn ("Unable to find ssindex in path; {0} file not indexed.",
-						 FileInfo.FullName);
-				Finished ();
+			} catch (SafeProcessException e) {
+				Log.Warn (e.Message);
+				Error ();
 				return;
 			}
 
 			// process ssindex output
-			StreamReader pout = pc.StandardOutput;
+			StreamReader pout = new StreamReader (pc.StandardOutput);
 			if (!ignoredFirst2lines) {
 				pout.ReadLine ();
 				pout.ReadLine ();
 				xmlReader = new XmlTextReader (pout);
 				ignoredFirst2lines = true;
 			}
+
 			try {
 				WalkContentNodes (xmlReader);
 			} catch (Exception e) {
 				Logger.Log.Debug ("Exception occurred while indexing {0}.", FileInfo.FullName);
 				Logger.Log.Debug (e);
 			}
+
 			pout.Close ();
-			pc.WaitForExit ();
 			pc.Close ();
+
 			Finished ();
 		}
 		

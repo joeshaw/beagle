@@ -1,6 +1,7 @@
 using System;
 using System.Diagnostics;
 using Mono.Unix;
+using Beagle.Util;
 
 namespace Search.Tiles {
 
@@ -97,28 +98,24 @@ namespace Search.Tiles {
 
 		public override void Open ()
 		{
-			string uri_str;
-
 			if (Hit.GetFirstProperty ("fixme:client") != "evolution") {
 				OpenFromMime (Hit);
 				return;
 			}
 
-			Process p = new Process ();
-			p.StartInfo.UseShellExecute = false;
-			p.StartInfo.FileName = "evolution";
+			SafeProcess p = new SafeProcess ();
+			p.Arguments = new string [2];
+			p.Arguments [0] = "evolution";
 
 			if (Hit.ParentUriAsString != null)
-				uri_str = Hit.ParentUriAsString;
+				p.Arguments [1] = Hit.ParentUriAsString;
 			else
-				uri_str = Hit.UriAsString;
-
-			p.StartInfo.Arguments  = "'" + uri_str + "'";
+				p.Arguments [1] = Hit.UriAsString;
 
 			try {
 				p.Start ();
-			} catch (System.ComponentModel.Win32Exception e) {
-				Console.WriteLine ("Unable to run {0}: {1}", p.StartInfo.FileName, e.Message);
+			} catch (SafeProcessException e) {
+				Console.WriteLine ("Unable to run {0}: {1}", p.Arguments [0], e.Message);
 			}
 		}
 
@@ -127,15 +124,13 @@ namespace Search.Tiles {
 			if (Hit.GetFirstProperty ("fixme:client") != "evolution")
 				return;
 			
-			Process p = new Process ();
-			p.StartInfo.UseShellExecute = false;
-			p.StartInfo.FileName = "evolution";
-			p.StartInfo.Arguments = String.Format ("\"{0};forward=attached\"", Hit.Uri);
+			SafeProcess p = new SafeProcess ();
+			p.Arguments = new string [] { "evolution", String.Format ("{0};forward=attached", Hit.Uri) };
 
 			try {
 				p.Start () ;
 			} catch (Exception e) {
-				Console.WriteLine ("Error launching Evolution composer: " + e);
+				Console.WriteLine ("Error launching Evolution composer: " + e.Message);
 			}
 		}
 	}
