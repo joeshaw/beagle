@@ -1,4 +1,3 @@
-/* -*- Mode: csharp; tab-width: 8; indent-tabs-mode: t; c-basic-offset: 8 -*- */
 //
 // FilterOle.cs
 //
@@ -59,7 +58,7 @@ namespace Beagle.Filters {
 		{
 			try {
 				Gsf.Global.Init ();
-				Input input = Input.MmapNew (info.FullName);
+				Input input = new InputStdio (info.FullName);
 				if (input != null) {
 					input = input.Uncompress();
 					file = new InfileMSOle (input);
@@ -90,13 +89,13 @@ namespace Beagle.Filters {
 			if (sum_stream != null)
 				Msole.MetadataRead (sum_stream, sumMeta);
 			else
-				Logger.Log.Error ("SummaryInformationStream not found in {0}", FileName);
+				Logger.Log.Warn ("SummaryInformationStream not found in {0}", FileName);
 
 			docSumMeta = new DocMetaData ();
 			if (doc_stream != null)
 				Msole.MetadataRead (doc_stream, docSumMeta);
 			else
-				Logger.Log.Error ("DocumentSummaryInformationStream not found in {0}", FileName);
+				Logger.Log.Warn ("DocumentSummaryInformationStream not found in {0}", FileName);
 
 			if (sumMeta != null) {
 				prop = sumMeta.Lookup ("dc:title");
