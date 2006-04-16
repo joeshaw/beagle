@@ -148,7 +148,7 @@ namespace Beagle.Daemon.KMailQueryable {
 					RemoveMail (srcpath);
 				if (mbox_files.Contains (fullPath)) {
 					// check if this because of compaction, in which case need to delete previous mbox
-					if (srcpath.EndsWith ("." + subitem + ".compacted"))
+					if (srcpath != null && srcpath.EndsWith ("." + subitem + ".compacted"))
 						RemoveMbox (fullPath);
 					// FIXME need to ensure IndexMbox is scheduled *after* RemoveMbox finishes
 					// RemoveMbox creates a job with immediate priority while
@@ -159,7 +159,7 @@ namespace Beagle.Daemon.KMailQueryable {
 				return;
 			}
 
-			// Case: file is modified
+			// Case: file is modified i.e. there was no create event but closewrite event
 			// - possibly some mbox was changed
 			// FIXME kmail doesnt physically delete the deleted mails from mbox files unless compacted
 			// - which means one has to read the .index files to find deleted messages...
@@ -473,7 +473,7 @@ namespace Beagle.Daemon.KMailQueryable {
 		 */
 		public bool IsMailDir (string dirPath)
 		{
-			if (! (dirPath.EndsWith("cur") || dirPath.EndsWith("new")))
+			if (dirPath == null || ! (dirPath.EndsWith("cur") || dirPath.EndsWith("new")))
 				return false;
 
 			string possibleMaildir = (Directory.GetParent (dirPath)).FullName;

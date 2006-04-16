@@ -27,6 +27,7 @@
 
 using System;
 using System.IO;
+using System.Text;
 using System.Xml;
 
 namespace Beagle.Util {
@@ -93,21 +94,36 @@ namespace Beagle.Util {
 			XmlTextReader doc = new XmlTextReader (reader);
 			doc.Namespaces = false;
 
+			bool read_text = false;
+			StringBuilder sb = new StringBuilder ();
+
 			while (doc.Read ()) {
-				if (doc.NodeType != XmlNodeType.Element)
+				// FIXME: Extract more information than mere text from the tags in note-content
+				// for hottext, linking notes etc.
+				if (doc.NodeType == XmlNodeType.Element && doc.Name == "note-content") {
+					read_text = true;
 					continue;
-					
-				switch (doc.Name) {
-				case "title":
+				}
+
+				if (doc.NodeType == XmlNodeType.EndElement && doc.Name == "note-content") {
+					read_text = false;
+					continue;
+				}
+
+				if (doc.NodeType == XmlNodeType.Element && doc.Name == "title") {
 					note.subject = doc.ReadString ();
-					break;
-				case "note-content":
-					// FIXME: don't discard XML style info	
-					note.text = StripTags (doc.ReadInnerXml ());
-					break;
+					continue;
+				}
+
+				if (doc.NodeType == XmlNodeType.Text) {
+					if (read_text)
+						sb.Append (doc.Value);
+					continue;
 				}
 			}
+
 			doc.Close ();
+			note.text = sb.ToString ();
 
 			return note;
 		}

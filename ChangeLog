@@ -1,3 +1,9 @@
+2006-04-16  Debajyoti Bera <dbera.web@gmail.com>
+
+	* beagled/KMailQueryable/KMailIndexer.cs: Minor protection against
+	null values.
+	* Util/Note.cs: Extract text correctly from tomboy notes.
+
 2006-04-07  Debajyoti Bera <dbera.web@gmail.com>
 
 	* beagled/KMailQueryable/KMailQueryable.cs: Enable snippets for KMail
