@@ -1,3 +1,8 @@
+2006-04-17  Debajyoti Bera <dbera.web@gmail.com>
+
+	* tools/beagle-crawl-system.in: Use MONO_SHARED_DIR to point to a
+	temporary wapi directory - mono needs one for beagle-build-index.
+
 2006-04-17  Kjartan Maraas  <kmaraas@gnome.org>
 
 	* configure.in: Remove obsolete no_NO locale.
