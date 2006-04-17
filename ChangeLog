@@ -1,3 +1,9 @@
+2006-04-17  Kjartan Maraas  <kmaraas@gnome.org>
+
+	* configure.in: Remove obsolete no_NO locale.
+	* po/no.po: And the translation. Hey Joe, where you going
+	with that gun in your hand?
+
 2006-04-16  Debajyoti Bera <dbera.web@gmail.com>
 
 	* beagled/KMailQueryable/KMailIndexer.cs: Minor protection against
