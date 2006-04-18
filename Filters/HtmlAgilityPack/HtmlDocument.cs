@@ -1660,7 +1660,7 @@ namespace HtmlAgilityPack
 										_currentnode._outerstartindex + _currentnode._outerlength);
 									script._outerlength = _index-1 - script._outerstartindex;
 									if (_streammode && ReportNode != null)
-										_stop_parsing = ReportNode (script);
+										_stop_parsing = ! ReportNode (script);
 									else
 										_currentnode.AppendChild(script);
 									Debug ("Found script: [" + script.InnerText + "]");
@@ -1850,7 +1850,7 @@ namespace HtmlAgilityPack
 
 			//SLIM: inform caller
 			if (_streammode && ReportNode != null)
-				_stop_parsing = ReportNode (_currentnode);
+				_stop_parsing = ! ReportNode (_currentnode);
 
 			if (_debug) {
 				if (_currentnode._nodetype == HtmlNodeType.Text)
