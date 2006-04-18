@@ -988,7 +988,7 @@ msgstr "A megjelenített eredmények ma_ximális száma"
 
 #: ../tools/settings.glade.h:38
 msgid "_Start search & indexing services automatically "
-msgstr "Kereső- és indexelőszolgáltatások _automatikus indítása"
+msgstr "Kereső- és indexelőszolgáltatások _automatikus indítása indítása"
 
 #: ../tools/beagle-settings.desktop.in.h:1
 msgid "Configure Desktop Search & Indexing"

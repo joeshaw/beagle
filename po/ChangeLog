@@ -1,3 +1,7 @@
+2006-04-18  Stanislav Brabec  <sbrabec@suse.cz>
+
+	* hu.po: Fixed Hungarian translation (Novell #167345).
+
 2006-04-14  Ilkka Tuohela  <hile@iki.fi>
 
 	* fi.po: Updated Finnish translation.
