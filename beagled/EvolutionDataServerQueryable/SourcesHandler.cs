@@ -115,7 +115,7 @@ namespace Beagle.Daemon.EvolutionDataServerQueryable {
 
 		private void OnSourceAdded (object o, SourceAddedArgs args)
 		{
-			Container cont = (Container) Activator.CreateInstance (this.container_type, new object[] { args.Source, this.fingerprint });
+			Container cont = (Container) Activator.CreateInstance (this.container_type, new object[] { args.Source, this.queryable, this.fingerprint });
 			if (!cont.OpenClient ())
 				return;
 			cont.IndexAll ();
