@@ -36,6 +36,7 @@
 int 
 screensaver_info (int *state, int *kind, unsigned long *til_or_since, unsigned long *idle)
 {
+#if HAVE_LIBXSS == 1
     XScreenSaverInfo ss_info;
     int retval;
     static int inited = 0;
@@ -66,6 +67,9 @@ screensaver_info (int *state, int *kind, unsigned long *til_or_since, unsigned l
     } else {
         return 0;
     }
+#else
+    return 0;
+#endif
 }
 
 
