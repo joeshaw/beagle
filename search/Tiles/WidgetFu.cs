@@ -87,7 +87,7 @@ namespace Search.Tiles {
 				// 1.33334 is pretty arbitrary, roughly calculated
 				// as the difference between icon sizes 48 and 64.
 				if (base_size == 0 || base_size > size * 1.33334)
-					base_size = size;
+					base_size = 16; //size;
 				gtk_icon_info_free (info);
 
 				IntPtr native = gtk_icon_theme_load_icon (gtk_icon_theme_get_default (), name, base_size, 0, IntPtr.Zero);
