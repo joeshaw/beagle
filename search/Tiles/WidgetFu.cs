@@ -81,7 +81,12 @@ namespace Search.Tiles {
 					return null;
 
 				int base_size = gtk_icon_info_get_base_size (info);
-				if (base_size == 0)
+
+				// If the icon has no base size, or it would be huge
+				// compared to what we asked for, scale it down.
+				// 1.33334 is pretty arbitrary, roughly calculated
+				// as the difference between icon sizes 48 and 64.
+				if (base_size == 0 || base_size > size * 1.33334)
 					base_size = size;
 				gtk_icon_info_free (info);
 
