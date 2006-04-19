@@ -111,8 +111,11 @@ namespace Beagle.Daemon {
 				"  --debug-memory\tWrite out debugging information about memory use.\n" +
 				"  --indexing-test-mode\tRun in foreground, and exit when fully indexed.\n" +
 				"  --indexing-delay\tTime to wait before indexing.  (Default 60 seconds)\n" +
-				"  --deny-backend\tDeny a specific backend.\n" +
-				"  --allow-backend\tAllow a specific backend.\n" +
+				"  --backend [+-]name\t--backend name: only start backend 'name'\n" +
+				"                    \t--backend +name: also start backend 'name' besides those mentioned in config\n" +
+				"                    \t--backend -name: dont start backend 'name' if it is enabled in config\n" +
+				"  --allow-backend\t(DEPRECATED) Start only the specific backend.\n" +
+				"  --deny-backend\t(DEPRECATED) Deny a specific backend.\n" +
 				"  --list-backends\tList all the available backends.\n" +
 				"  --add-static-backend\tAdd a static backend by path.\n" + 
 				"  --disable-scheduler\tDisable the use of the scheduler.\n" +
@@ -282,13 +285,42 @@ namespace Beagle.Daemon {
 					arg_fg = true;
 					break;
 
+				case "--backend":
+					if (next_arg == null) {
+						Console.WriteLine ("--backend requires a backend name");
+						Environment.Exit (1);
+						break;
+					}
+
+					if (next_arg.StartsWith ("--")) {
+						Console.WriteLine ("--backend requires a backend name. Invalid name '{0}'", next_arg);
+						Environment.Exit (1);
+						break;
+					}
+
+					if (next_arg [0] != '+' && next_arg [0] != '-')
+						QueryDriver.OnlyAllow (next_arg);
+					else {
+						if (next_arg [0] == '+')
+							QueryDriver.Allow (next_arg.Substring (1));
+						else
+							QueryDriver.Deny (next_arg.Substring (1));
+					}
+
+					++i; // we used next_arg
+					break;
+				
 				case "--allow-backend":
+					// --allow-backend is deprecated, use --backends 'name' instead
+					// it will disable reading the list of enabled/disabled backends
+					// from conf and start the backend given
 					if (next_arg != null)
-						QueryDriver.Allow (next_arg);
+						QueryDriver.OnlyAllow (next_arg);
 					++i; // we used next_arg
 					break;
 					
 				case "--deny-backend":
+					// deprecated: use --backends -'name' instead
 					if (next_arg != null)
 						QueryDriver.Deny (next_arg);
 					++i; // we used next_arg

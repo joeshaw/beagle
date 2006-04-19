@@ -35,41 +35,73 @@ namespace Beagle.Daemon {
 	
 	public class QueryDriver {
 
-		// Enable or Disable specific Queryables by name
+		// Contains list of queryables explicitly asked by --allow-backend or --backend name
+		// --allow-backend/--backend name : dont read config information and only start backend 'name'
+		static ArrayList excl_allowed_queryables = new ArrayList ();
 
-		static ArrayList allowed_queryables = new ArrayList ();
+		// Contains list of denied queryables from config/arguments (every queryable is enabled by default)
+		// Unless overruled by --allow-backend/--backend name, deny backend only if names appears here.
 		static ArrayList denied_queryables = new ArrayList ();
+		
+		static bool to_read_conf = true; // read backends from conf if true
+		static bool done_reading_conf = false;
 
+		static private void ReadBackendsFromConf ()
+		{
+			if (! to_read_conf || done_reading_conf)
+				return;
+
+			// set flag here to stop Allow() from calling ReadBackendsFromConf() again
+			done_reading_conf = true;
+
+			// To allow static indexes, "static" should be in allowed_queryables
+			if (Conf.Daemon.AllowStaticBackend)
+				Allow ("static");
+
+			if (Conf.Daemon.DeniedBackends == null)
+				return;
+			
+			foreach (string name in Conf.Daemon.DeniedBackends)
+				denied_queryables.Add (name.ToLower ());
+		}
+
+		static public void OnlyAllow (string name)
+		{
+			excl_allowed_queryables.Add (name.ToLower ());
+			to_read_conf = false;
+		}
+		
 		static public void Allow (string name)
 		{
-			allowed_queryables.Add (name.ToLower ());
+			if (! done_reading_conf && to_read_conf)
+				ReadBackendsFromConf ();
+
+			denied_queryables.Remove (name.ToLower ());
 		}
 		
 		static public void Deny (string name)
 		{
-			denied_queryables.Add (name.ToLower ());
+			if (! done_reading_conf && to_read_conf)
+				ReadBackendsFromConf ();
+
+			name = name.ToLower ();
+			if (!denied_queryables.Contains (name))
+				denied_queryables.Add (name);
 		}
 
 		static private bool UseQueryable (string name)
 		{
-			if (allowed_queryables.Count == 0
-			    && denied_queryables.Count == 0)
-				return true;
-
 			name = name.ToLower ();
 
-			if (allowed_queryables.Count > 0) {
-				foreach (string allowed in allowed_queryables)
-					if (name == allowed)
-						return true;
+			if (excl_allowed_queryables.Contains (name))
+				return true;
+			if (excl_allowed_queryables.Count != 0)
 				return false;
-			}
 
-			foreach (string denied in denied_queryables)
-				if (name == denied)
-					return false;
+			if (denied_queryables.Contains (name))
+				return false;
+
 			return true;
-
 		}
 
 		//////////////////////////////////////////////////////////////////////////////////////
@@ -166,6 +198,8 @@ namespace Beagle.Daemon {
 			if (!Directory.Exists (PathFinder.SystemIndexesDir))
 				return;
 			
+			Logger.Log.Info ("Loading system static indexes.");
+
 			int count = 0;
 
 			foreach (DirectoryInfo index_dir in new DirectoryInfo (PathFinder.SystemIndexesDir).GetDirectories ()) {
@@ -176,7 +210,7 @@ namespace Beagle.Daemon {
 					count++;
 			}
 
-			Logger.Log.Debug ("Found {0} system-wide indexes", count);
+			Logger.Log.Info ("Found {0} system-wide indexes.", count);
 		}
 
 		// Scans configuration for user-specified index paths 
@@ -186,6 +220,7 @@ namespace Beagle.Daemon {
 			int count = 0;
 
 			if (UseQueryable ("static")) {
+				Logger.Log.Info ("Loading user-configured static indexes.");
 				foreach (string path in Conf.Daemon.StaticQueryables)
 					static_queryables.Add (path);
 			}
@@ -201,7 +236,7 @@ namespace Beagle.Daemon {
 					count++;
 			}
 
-			Logger.Log.Debug ("Found {0} user-configured static queryables", count);
+			Logger.Log.Info ("Found {0} user-configured static indexes..", count);
 		}
 
 		// Instantiates and loads a StaticQueryable from an index directory
@@ -243,6 +278,8 @@ namespace Beagle.Daemon {
 
 		static public void Start ()
 		{
+			ReadBackendsFromConf ();
+
 			ArrayList assemblies = ReflectionFu.ScanEnvironmentForAssemblies ("BEAGLE_BACKEND_PATH", PathFinder.BackendDir);
 
 			// Only add the executing assembly if we haven't already loaded it.
@@ -272,8 +309,10 @@ namespace Beagle.Daemon {
 		{
 			Logger.Log.Debug ("Starting queryables");
 
-			foreach (Queryable q in queryables)
+			foreach (Queryable q in queryables) {
+				Logger.Log.Info ("Starting backend: '{0}'", q.Name);
 				q.Start ();
+			}
 
 			return false;
 		}

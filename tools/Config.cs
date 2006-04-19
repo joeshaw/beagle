@@ -25,6 +25,8 @@
 //
 
 using System;
+using System.IO;
+using System.Diagnostics;
 using System.Collections;
 using System.Collections.Specialized;
 using System.Reflection;
@@ -77,6 +79,8 @@ public static class ConfigTool {
 
 			Console.WriteLine ();
 		}
+		if (sectionname == "daemon")
+			Console.WriteLine (" - ListBackends (List enabled and disabled backends)");
 		
 		System.Environment.Exit (0);
 	}
@@ -143,8 +147,13 @@ public static class ConfigTool {
 		
 		string optionname = args [1];
 		if (! options.ContainsKey (optionname)) {
-			Console.Error.WriteLine ("ERROR: Invalid option name '{0}'", optionname);
-			Environment.Exit (-2);
+			if (sectionname == "daemon" && optionname == "ListBackends") {
+				ListBackends ();
+				Environment.Exit (0);
+			} else {
+				Console.Error.WriteLine ("ERROR: Invalid option name '{0}'", optionname);
+				Environment.Exit (-2);
+			}
 		}
 
 		//
@@ -184,5 +193,36 @@ public static class ConfigTool {
 
 	}
 
+	private static void ListBackends ()
+	{
+		ArrayList backends = new ArrayList ();
+
+		ArrayList assemblies = ReflectionFu.ScanEnvironmentForAssemblies ("BEAGLE_BACKEND_PATH", PathFinder.BackendDir);
+		assemblies.Add (Assembly.LoadFrom (Path.Combine (PathFinder.PkgLibDir, "BeagleDaemonLib.dll")));
+
+		foreach (Assembly assembly in assemblies) {
+			foreach (Type type in ReflectionFu.ScanAssemblyForInterface (assembly, typeof (Beagle.Daemon.IQueryable))) {
+				foreach (Beagle.Daemon.QueryableFlavor flavor in ReflectionFu.ScanTypeForAttribute (type, typeof (Beagle.Daemon.QueryableFlavor)))
+					backends.Add (flavor.Name);
+			}
+		}
+		
+		if (!Directory.Exists (PathFinder.SystemIndexesDir)) 
+			return;
+		
+		foreach (DirectoryInfo index_dir in new DirectoryInfo (PathFinder.SystemIndexesDir).GetDirectories ())
+			backends.Add (index_dir.Name);
+
+		Console.WriteLine ("Allowed backends:");
+		foreach (string name in backends) {
+			if (Conf.Daemon.DeniedBackends.Contains (name))
+				continue;
+			Console.WriteLine (" - {0}", name);
+		}
+		
+		Console.WriteLine ("Denied backends:");
+		foreach (string name in Conf.Daemon.DeniedBackends)
+			Console.WriteLine (" - {0}", name);
+	}
 
 }

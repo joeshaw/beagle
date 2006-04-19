@@ -27,6 +27,7 @@
 using System;
 using System.Collections;
 using System.IO;
+using System.Diagnostics;
 using System.Reflection;
 using System.Xml.Serialization;
 using System.Text.RegularExpressions;
@@ -407,16 +408,19 @@ namespace Beagle.Util {
 				set { static_queryables = value; }
 			}
 
-			private ArrayList allowed_backends = new ArrayList ();
-			public ArrayList AllowedBackends {
-				get { return allowed_backends; }
-				set { allowed_backends = value; }
-			}
-
+			// By default, every backend is allowed.
+			// Only maintain a list of denied backends.
 			private ArrayList denied_backends = new ArrayList ();
 			public ArrayList DeniedBackends {
 				get { return denied_backends; }
 				set { denied_backends = value; }
+			}
+
+			private bool allow_static_backend = false; // by default, false
+			public bool AllowStaticBackend {
+				get { return allow_static_backend; }
+				// Don't really want to expose this, but serialization requires it
+				set { allow_static_backend = value; }
 			}
 
 			private bool index_synchronization = true;
@@ -426,6 +430,22 @@ namespace Beagle.Util {
 				set { index_synchronization = value; }
 			}
 
+			[ConfigOption (Description="Enable a backend", Params=1, ParamsDescription="Name of the backend to enable")]
+			internal bool AllowBackend (out string output, string [] args)
+			{
+				denied_backends.Remove (args [0]);
+				output = "Backend allowed (need to restart beagled for changes to take effect).";
+				return true;
+			}
+
+			[ConfigOption (Description="Disable a backend", Params=1, ParamsDescription="Name of the backend to disable")]
+			internal bool DenyBackend (out string output, string [] args)
+			{
+				denied_backends.Add (args [0]);
+				output = "Backend disabled (need to restart beagled for changes to take effect).";
+				return true;
+			}
+			
 			private bool allow_root = false;
 			public bool AllowRoot {
 				get { return allow_root; }
@@ -456,6 +476,14 @@ namespace Beagle.Util {
 					output += String.Format (" - {0}\n", index_path);
 				return true;
 			}
+
+			[ConfigOption (Description="Toggles whether static indexes will be enabled")]
+			internal bool ToggleAllowStaticBackend (out string output, string [] args)
+			{
+				allow_static_backend = !allow_static_backend;
+				output = "Static indexes are " + ((allow_static_backend) ? "enabled" : "disabled") + " (need to restart beagled for changes to take effect).";
+				return true;
+			}		
 
 			[ConfigOption (Description="Toggles whether your indexes will be synchronized locally if your home directory is on a network device (eg. NFS/Samba)")]
 			internal bool ToggleIndexSynchronization (out string output, string [] args)
@@ -659,6 +687,7 @@ namespace Beagle.Util {
 				output = "PublicFolder " + args[0] + " removed.";
 				return true;
 			}			
+
 		}
 
 		[ConfigSection (Name="networking")]

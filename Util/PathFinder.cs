@@ -34,7 +34,7 @@ namespace Beagle.Util {
 
 		private PathFinder () { }
 
-		static private string PkgLibDir {
+		static public string PkgLibDir {
 			get { return ExternalStringsHack.PkgLibDir; }
 		}
 

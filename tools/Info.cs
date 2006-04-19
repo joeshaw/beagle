@@ -26,8 +26,10 @@
 //
 
 using System;
+using System.IO;
 using System.Text;
 using System.Reflection;
+using System.Collections;
 
 using Beagle;
 using Beagle.Daemon;
@@ -47,7 +49,9 @@ class InfoTool {
 			"  --daemon-version\t\tPrint the version of the running daemon.\n" +
 			"  --status\t\t\tDisplay status of the running daemon.\n" +
 			"  --index-info\t\t\tDisplay statistics of the Beagle indexes.\n" +
+			"  --list-backends\t\tList the currently available backends.\n" +
 			"  --list-filters\t\tList the currently available filters.\n" +
+			"  --list-static-indexes\t\tList the available static indexes.\n" +
 			"  --help\t\t\tPrint this usage message.\n";
 
 		Console.WriteLine (usage);
@@ -62,6 +66,10 @@ class InfoTool {
 
 		if (Array.IndexOf (args, "--list-filters") > -1)
 			PrintFilterInformation ();
+		else if (Array.IndexOf (args, "--list-backends") > -1)
+			PrintBackendInformation ();
+		else if (Array.IndexOf (args, "--list-static-indexes") > -1)
+			PrintStaticIndexInformation ();
 		else
 			return PrintDaemonInformation (args);
 
@@ -96,7 +104,7 @@ class InfoTool {
 
 		return 0;
 	}
-	
+
 	private static void PrintFilterInformation ()
 	{
 		ReflectionFu.ScanEnvironmentForAssemblies ("BEAGLE_FILTER_PATH", PathFinder.FilterDir, PrintFilterDetails);
@@ -144,6 +152,30 @@ class InfoTool {
 				Console.WriteLine (sb.ToString ());
 		}
 	}
+
+	private static void PrintBackendInformation ()
+	{
+		ArrayList assemblies = ReflectionFu.ScanEnvironmentForAssemblies ("BEAGLE_BACKEND_PATH", PathFinder.BackendDir);
+		assemblies.Add (Assembly.LoadFrom (Path.Combine (PathFinder.PkgLibDir, "BeagleDaemonLib.dll")));
+
+		foreach (Assembly assembly in assemblies) {
+			foreach (Type type in ReflectionFu.ScanAssemblyForInterface (assembly, typeof (Beagle.Daemon.IQueryable))) {
+				foreach (Beagle.Daemon.QueryableFlavor flavor in ReflectionFu.ScanTypeForAttribute (type, typeof (Beagle.Daemon.QueryableFlavor))) {
+					Console.WriteLine ("{0,-20} (" + assembly.Location + ")", flavor.Name);
+				}
+			}
+		}
+	}
+
+	private static void PrintStaticIndexInformation ()
+	{
+		foreach (DirectoryInfo index_dir in new DirectoryInfo (PathFinder.SystemIndexesDir).GetDirectories ())
+			Console.WriteLine ("[System index] " + index_dir.Name + " (" + index_dir.FullName + ")");
+
+		foreach (string index_path in Conf.Daemon.StaticQueryables)
+			Console.WriteLine ("[User index]   " + index_path);
+	}
+	
 }
 		
 		

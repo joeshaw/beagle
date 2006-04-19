@@ -6,7 +6,8 @@ CSC = mcs -debug -nowarn:0169
 LOCAL_ASSEMBLIES =			\
 	../Util/Util.dll		\
 	../BeagleClient/Beagle.dll	\
-	../beagled/BeagleDaemonPlugins.dll
+	../beagled/BeagleDaemonPlugins.dll \
+	../beagled/BeagleDaemonLib.dll
 
 ASSEMBLIES =				\
 	$(BEAGLED_LIBS)			\

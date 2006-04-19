@@ -1,3 +1,18 @@
+2006-04-18  Debajyoti Bera <dbera.web@gmail.com>
+
+	* tools/Info.cs: Add --list-backends, --list-static-indexes to
+	beagle-info. Make beagle-info a tool to gather all kind of information
+	about beagle.
+	* beagled/BeagleDaemon.cs, beagled/QueryDriver.cs, Util/Conf.cs: 
+	Allow enabling/disabling backends in the config. Use new syntax
+	--backend [+-]name.
+	* tools/Config.cs: Add "beagle-config daemon ListBackends" to show the
+	currently enabled and disabled backend in config. Should be emulated
+	in beagle-settings too.
+	* tools/*.1: Removed reference of Best from man pages. Someone should
+	write a man-page for beagle-search (or linux users have
+	stopped reading man-pages these days :O ?)
+
 2006-04-17  Debajyoti Bera <dbera.web@gmail.com>
 
 	* tools/beagle-crawl-system.in: Use MONO_SHARED_DIR to point to a
