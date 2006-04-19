@@ -72,17 +72,17 @@ class ExtractContentTool {
 
 		Filter filter;
 
-		if (! FilterFactory.FilterIndexable (indexable, out filter))
+		if (! FilterFactory.FilterIndexable (indexable, out filter)) {
 			Console.WriteLine ("No filter for {0}", indexable.MimeType);
-
-		if (filter != null) {
-			Console.WriteLine ("Filter: {0}", filter);
-			Console.WriteLine ("MimeType: {0}", filter.MimeType);
+			indexable.Cleanup ();
+			return;
 		}
 
+		Console.WriteLine ("Filter: {0}", filter);
+		Console.WriteLine ("MimeType: {0}", filter.MimeType);
 		Console.WriteLine ();
 
-		if (filter != null && filter.ChildIndexables != null && filter.ChildIndexables.Count > 0) {
+		if (filter.ChildIndexables != null && filter.ChildIndexables.Count > 0) {
 			Console.WriteLine ("Child indexables:");
 
 			foreach (Indexable i in filter.ChildIndexables)
@@ -155,7 +155,7 @@ class ExtractContentTool {
 		if (stream != null)
 			stream.Close ();
 
-		if (show_children && filter != null && filter.ChildIndexables != null) {
+		if (show_children && filter.ChildIndexables != null) {
 			foreach (Indexable i in filter.ChildIndexables) {
 				i.StoreStream ();
 				Display (i);
