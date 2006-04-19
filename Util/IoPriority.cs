@@ -36,12 +36,31 @@ namespace Beagle.Util {
 		[DllImport ("libbeagleglue")]
 		static extern int set_io_priority_idle ();
 
-		static public void SetIdle ()
+		[DllImport ("libbeagleglue")]
+		static extern int set_io_priority_best_effort (int ioprio);
+
+		static public bool SetIdle ()
 		{
 			// Continue with a warning if we can't set the 
 			// IO-priority to idle, not a big deal.
-			if (set_io_priority_idle () == -1)
-				Logger.Log.Warn ("Unable to set IO-priority for process to idle");
+			if (set_io_priority_idle () == -1) {
+				Logger.Log.Warn ("Unable to set IO priority for process to idle");
+				return false;
+			}
+
+			Logger.Log.Debug ("IO priority for process set to idle");
+			return true;
+		}
+
+		static public bool SetIoPriority (int ioprio)
+		{
+			if (set_io_priority_best_effort (ioprio) == -1) {
+				Logger.Log.Warn ("Unable to set best effort IO priority for process to {0}", ioprio);
+				return false;
+			}
+
+			Logger.Log.Debug ("IO priority for process set to best effort {0}", ioprio);
+			return true;
 		}
 	}
 }

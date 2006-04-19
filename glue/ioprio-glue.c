@@ -78,3 +78,12 @@ int set_io_priority_idle (void)
 
 	return ioprio_set (IOPRIO_WHO_PROCESS, 0, ioprio | ioclass);
 }
+
+int set_io_priority_best_effort (int ioprio)
+{
+	int ioclass;
+
+	ioclass = IOPRIO_CLASS_BE << IOPRIO_CLASS_SHIFT;
+
+	return ioprio_set (IOPRIO_WHO_PROCESS, 0, ioprio | ioclass);
+}
