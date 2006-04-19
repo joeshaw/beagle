@@ -156,7 +156,24 @@ class InfoTool {
 	private static void PrintBackendInformation ()
 	{
 		ArrayList assemblies = ReflectionFu.ScanEnvironmentForAssemblies ("BEAGLE_BACKEND_PATH", PathFinder.BackendDir);
-		assemblies.Add (Assembly.LoadFrom (Path.Combine (PathFinder.PkgLibDir, "BeagleDaemonLib.dll")));
+
+		// Add BeagleDaemonLib if it hasn't already been added.
+		bool found_daemon_lib = false;
+		foreach (Assembly assembly in assemblies) {
+			if (assembly.GetName ().Name == "BeagleDaemonLib") {
+				found_daemon_lib = true;
+				break;
+			}
+		}
+
+		if (!found_daemon_lib) {
+			try {
+				assemblies.Add (Assembly.LoadFrom (Path.Combine (PathFinder.PkgLibDir, "BeagleDaemonLib.dll")));
+			} catch (FileNotFoundException) {
+				Console.WriteLine ("WARNING: Could not find backend list.");
+				Environment.Exit (1);
+			}
+		}
 
 		foreach (Assembly assembly in assemblies) {
 			foreach (Type type in ReflectionFu.ScanAssemblyForInterface (assembly, typeof (Beagle.Daemon.IQueryable))) {
@@ -169,8 +186,10 @@ class InfoTool {
 
 	private static void PrintStaticIndexInformation ()
 	{
-		foreach (DirectoryInfo index_dir in new DirectoryInfo (PathFinder.SystemIndexesDir).GetDirectories ())
-			Console.WriteLine ("[System index] " + index_dir.Name + " (" + index_dir.FullName + ")");
+		try {
+			foreach (DirectoryInfo index_dir in new DirectoryInfo (PathFinder.SystemIndexesDir).GetDirectories ())
+				Console.WriteLine ("[System index] " + index_dir.Name + " (" + index_dir.FullName + ")");
+		} catch (DirectoryNotFoundException) { }
 
 		foreach (string index_path in Conf.Daemon.StaticQueryables)
 			Console.WriteLine ("[User index]   " + index_path);
