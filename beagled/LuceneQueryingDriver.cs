@@ -439,12 +439,15 @@ namespace Beagle.Daemon {
 			// to minimize the expense of the Join.
 			while (match_info_list.Count > 1) {
 
-				// FIXME: We don't really need to sort here, it would
-				// be sufficient to just find the minimal element.
-				match_info_list.Sort ();
+				// linear scan to find the minimum
+				int index_min = 0;
+				for (int i = 1; i < match_info_list.Count; ++i)
+					if (((MatchInfo) match_info_list [i]).CompareTo ((MatchInfo) match_info_list [index_min]) < 0)
+						index_min = i;
+
 				MatchInfo smallest;
-				smallest = match_info_list [0] as MatchInfo;
-				match_info_list.RemoveAt (0);
+				smallest = match_info_list [index_min] as MatchInfo;
+				match_info_list.RemoveAt (index_min);
 
 				// We can short-circuit if our smallest set of
 				// matches is empty.
