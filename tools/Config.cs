@@ -198,7 +198,24 @@ public static class ConfigTool {
 		ArrayList backends = new ArrayList ();
 
 		ArrayList assemblies = ReflectionFu.ScanEnvironmentForAssemblies ("BEAGLE_BACKEND_PATH", PathFinder.BackendDir);
-		assemblies.Add (Assembly.LoadFrom (Path.Combine (PathFinder.PkgLibDir, "BeagleDaemonLib.dll")));
+
+		// Add BeagleDaemonLib if it hasn't already been added.
+		bool found_daemon_lib = false;
+		foreach (Assembly assembly in assemblies) {
+			if (assembly.GetName ().Name == "BeagleDaemonLib") {
+				found_daemon_lib = true;
+				break;
+			}
+		}
+
+		if (!found_daemon_lib) {
+			try {
+				assemblies.Add (Assembly.LoadFrom (Path.Combine (PathFinder.PkgLibDir, "BeagleDaemonLib.dll")));
+			} catch (FileNotFoundException) {
+				Console.WriteLine ("WARNING: Could not find backend list.");
+				Environment.Exit (1);
+			}
+		}
 
 		foreach (Assembly assembly in assemblies) {
 			foreach (Type type in ReflectionFu.ScanAssemblyForInterface (assembly, typeof (Beagle.Daemon.IQueryable))) {
@@ -207,22 +224,36 @@ public static class ConfigTool {
 			}
 		}
 		
-		if (!Directory.Exists (PathFinder.SystemIndexesDir)) 
-			return;
-		
-		foreach (DirectoryInfo index_dir in new DirectoryInfo (PathFinder.SystemIndexesDir).GetDirectories ())
-			backends.Add (index_dir.Name);
+		if ( Directory.Exists (PathFinder.SystemIndexesDir)) {
+			foreach (DirectoryInfo index_dir in new DirectoryInfo (PathFinder.SystemIndexesDir).GetDirectories ())
+				backends.Add (index_dir.Name);
+		}
+
+		bool found_any = false;
 
 		Console.WriteLine ("Allowed backends:");
 		foreach (string name in backends) {
 			if (Conf.Daemon.DeniedBackends.Contains (name))
 				continue;
 			Console.WriteLine (" - {0}", name);
+			found_any = true;
 		}
+
+		if (! found_any)
+			Console.WriteLine (" (none)");
 		
+		Console.WriteLine ();
+
+		found_any = false;
+
 		Console.WriteLine ("Denied backends:");
-		foreach (string name in Conf.Daemon.DeniedBackends)
+		foreach (string name in Conf.Daemon.DeniedBackends) {
 			Console.WriteLine (" - {0}", name);
+			found_any = true;
+		}
+
+		if (! found_any)
+			Console.WriteLine (" (none)");
 	}
 
 }
