@@ -335,60 +335,32 @@ namespace Beagle.Util {
 				}
 			}
 
-			// Best window position and dimension
+			// BeagleSearch window position and dimension
 			// stored as percentage of screen co-ordinates
 			// to deal with change of resolution problem - hints from tberman
 
-			private float best_pos_x = 0;
-			public float BestPosX {
-				get { return best_pos_x; }
-				set { best_pos_x = value; }
+			private float beagle_search_pos_x = 0;
+			public float BeaglePosX {
+				get { return beagle_search_pos_x; }
+				set { beagle_search_pos_x = value; }
 			}
 			
-			private float best_pos_y = 0;
-			public float BestPosY {
-				get { return best_pos_y; }
-				set { best_pos_y = value; }
+			private float beagle_search_pos_y = 0;
+			public float BeaglePosY {
+				get { return beagle_search_pos_y; }
+				set { beagle_search_pos_y = value; }
 			}
 			
-			// dont explicitly set height on first run
-			private float best_width = 0; 
-			public float BestWidth {
-				get { return best_width; }
-				set { best_width = value; }
+			private float beagle_search_width = 0; 
+			public float BeagleSearchWidth {
+				get { return beagle_search_width; }
+				set { beagle_search_width = value; }
 			}
 
-			private float best_height = 0; // -ditto-
-			public float BestHeight {
-				get { return best_height; }
-				set { best_height = value; }
-			}
-
-			// FIXME Change names when Holmes is released under new name
-			// Holmes window position and dimension
-
-			private float holmes_pos_x = 0;
-			public float HolmesPosX {
-				get { return holmes_pos_x; }
-				set { holmes_pos_x = value; }
-			}
-			
-			private float holmes_pos_y = 0;
-			public float HolmesPosY {
-				get { return holmes_pos_y; }
-				set { holmes_pos_y = value; }
-			}
-			
-			private float holmes_width = 0; 
-			public float HolmesWidth {
-				get { return holmes_width; }
-				set { holmes_width = value; }
-			}
-
-			private float holmes_height = 0;
-			public float HolmesHeight {
-				get { return holmes_height; }
-				set { holmes_height = value; }
+			private float beagle_search_height = 0;
+			public float BeagleSearchHeight {
+				get { return beagle_search_height; }
+				set { beagle_search_height = value; }
 			}
 
 			// ah!We want a Queue but Queue doesnt serialize *easily*
