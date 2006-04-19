@@ -4,6 +4,8 @@ using System.Collections;
 using Mono.Unix;
 using Beagle.Util;
 
+using Beagle;
+
 namespace Search.Tiles {
 
 	public class IMLogActivator : TileActivator {
@@ -22,6 +24,7 @@ namespace Search.Tiles {
 	public class IMLog : TileFlat {
 
 		private static Hashtable all_icons = new Hashtable ();
+		private static Hashtable email_cache = new Hashtable ();
 
 		public IMLog (Beagle.Hit hit, Beagle.Query query) : base (hit, query)
 		{
@@ -34,6 +37,8 @@ namespace Search.Tiles {
 				Timestamp = Utils.ParseTimestamp (hit.GetFirstProperty ("fixme:starttime"));
 				date.LabelProp = Utils.NiceShortDate (Timestamp);
 			} catch {}
+
+			MaybeAddEmailAction ();
 		}
 
 		private Hashtable IconsForSize (int size)
@@ -71,6 +76,89 @@ namespace Search.Tiles {
 				image.Pixbuf = (Gdk.Pixbuf)icons [protocol];
 			else
 				image.Pixbuf = WidgetFu.LoadThemeIcon ("im", size);
+		}
+
+		private void MaybeAddEmailAction ()
+		{
+			string alias = Hit.GetFirstProperty ("fixme:speakingto_alias");
+
+			if (alias == null)
+				return;
+
+			Console.WriteLine ("Non null alias!  {0}", alias);
+
+			string email;
+
+			if (email_cache.Contains (alias)) {
+				email = (string) email_cache [alias];
+
+				if (email == null)
+					return;
+
+				AddAction (new TileAction (Catalog.GetString ("Email"), Email));
+			} else
+				RequestEmail (alias);
+		}
+
+		private Query email_query = null;
+		private string alias = null;
+
+		private void RequestEmail (string alias)
+		{
+			this.alias = alias;
+
+			email_query = new Query ();
+			email_query.AddDomain (QueryDomain.Local);
+			
+			QueryPart_Property part = new QueryPart_Property ();
+			part.Logic = QueryPartLogic.Required;
+			part.Type = PropertyType.Text;
+			part.Key = "fixme:FullName";
+			part.Value = alias;
+			email_query.AddPart (part);
+
+			part = new QueryPart_Property ();
+			part.Logic = QueryPartLogic.Required;
+			part.Type = PropertyType.Keyword;
+			part.Key = "beagle:Source";
+			part.Value = "EvolutionDataServer";
+			email_query.AddPart (part);
+
+			email_query.HitsAddedEvent += OnHitsAdded;
+			email_query.FinishedEvent += OnFinished;
+
+			Console.WriteLine ("Sending query!");
+
+			email_query.SendAsync ();
+		}
+
+		private void OnHitsAdded (HitsAddedResponse response)
+		{
+			Console.WriteLine ("Got hits!");
+
+			// FIXME: Handle multiple hits?
+			if (response.Hits.Count == 0) {
+				// Nothing matches
+				email_cache [alias] = null;
+				return;
+			}
+
+			Hit email_hit = (Hit) response.Hits [0];
+			string email = email_hit.GetFirstProperty ("fixme:Email");
+
+			email_cache [alias] = email;
+			AddAction (new TileAction (Catalog.GetString ("Email"), Email));
+		}
+			
+		private void OnFinished (FinishedResponse response)
+		{
+			Console.WriteLine ("Finished query!");
+
+			email_query.HitsAddedEvent -= OnHitsAdded;
+			email_query.FinishedEvent -= OnFinished;
+
+			alias = null;
+			email_query = null;
 		}
 
 		private Gdk.Pixbuf LoadBuddyIcon ()
@@ -113,6 +201,22 @@ namespace Search.Tiles {
 				p.Start ();
 			} catch (Exception e) {
 				Console.WriteLine ("Unable to run {0}: {1}", p.Arguments [0], e.Message);
+			}
+		}
+
+		public void Email ()
+		{
+			string alias = Hit.GetFirstProperty ("fixme:speakingto_alias");
+
+			Process p = new Process ();
+			p.StartInfo.UseShellExecute = false;
+			p.StartInfo.FileName = "evolution";
+			p.StartInfo.Arguments = String.Format ("\"mailto:{0}\"", email_cache [alias]);
+
+			try {
+				p.Start ();
+			} catch (Exception e) {
+				Console.WriteLine ("Error launching Evolution composer: " + e);
 			}
 		}
 	}

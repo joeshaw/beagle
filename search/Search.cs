@@ -57,6 +57,8 @@ namespace Search {
 			}
 
 			program.Run ();
+
+			Inotify.Stop ();
 		}
 
 		private static string ParseArgs (String[] args)
@@ -217,6 +219,11 @@ namespace Search {
 				pages.CurrentPage = pages.PageNum (quicktips);
 			}
 
+			Inotify.Start ();
+			Conf.WatchForUpdates ();
+			Conf.Subscribe (typeof (Conf.SearchingConfig), OnConfigUpdated);
+			BindKeys ();
+
 			if (icon_enabled) {
 				tray = new TrayIcon ();
 				tray.Clicked += OnTrayActivated;
@@ -227,6 +234,23 @@ namespace Search {
 			} else {
 				ShowAll ();
 			}
+		}
+
+		private bool BindKeys ()
+		{
+			keybinder.UnbindAll ();
+			keybinder.Bind (Conf.Searching.ShowSearchWindowBinding.ToString (), OnTrayActivated);
+
+			return false;
+		}
+
+		// This method is called from an inotify thread.  Make sure any
+		// UI changes happen in the main thread.
+		private void OnConfigUpdated (Conf.Section section)
+		{
+			Console.WriteLine ("Conf updated! {0}", section);
+
+			GLib.Idle.Add (BindKeys);
 		}
 
 		Gtk.Widget oldFocus;
