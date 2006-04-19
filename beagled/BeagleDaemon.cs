@@ -111,9 +111,10 @@ namespace Beagle.Daemon {
 				"  --debug-memory\tWrite out debugging information about memory use.\n" +
 				"  --indexing-test-mode\tRun in foreground, and exit when fully indexed.\n" +
 				"  --indexing-delay\tTime to wait before indexing.  (Default 60 seconds)\n" +
-				"  --backend [+-]name\t--backend name: only start backend 'name'\n" +
-				"                    \t--backend +name: also start backend 'name' besides those mentioned in config\n" +
-				"                    \t--backend -name: dont start backend 'name' if it is enabled in config\n" +
+				"  --backend\t\tConfigure which backends to use.  Specifically:\n" +
+				"    --backend <name>\tOnly start backend 'name'\n" +
+				"    --backend +<name>\tAdditionally start backend 'name'\n" +
+				"    --backend -<name>\tDisable backend 'name'\n" +
 				"  --allow-backend\t(DEPRECATED) Start only the specific backend.\n" +
 				"  --deny-backend\t(DEPRECATED) Deny a specific backend.\n" +
 				"  --list-backends\tList all the available backends.\n" +
