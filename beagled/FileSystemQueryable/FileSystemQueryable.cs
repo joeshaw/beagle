@@ -208,10 +208,15 @@ namespace Beagle.Daemon.FileSystemQueryable {
 							      DirectoryModel parent)
 		{
 			Indexable indexable;
-			indexable = new Indexable (IndexableType.Add, GuidFu.ToUri (id));
-			indexable.MimeType = "inode/directory";
-			indexable.NoContent = true;
-			indexable.Timestamp = Directory.GetLastWriteTimeUtc (path);
+			try {
+				indexable = new Indexable (IndexableType.Add, GuidFu.ToUri (id));
+				indexable.MimeType = "inode/directory";
+				indexable.NoContent = true;
+				indexable.Timestamp = Directory.GetLastWriteTimeUtc (path);
+			} catch (IOException) {
+				// Looks like the directory was deleted.
+				return null;
+			}
 
 			string name;
 			if (parent == null)
@@ -236,11 +241,17 @@ namespace Beagle.Daemon.FileSystemQueryable {
 							 bool           crawl_mode)
 		{
 			Indexable indexable;
-			indexable = new Indexable (IndexableType.Add, GuidFu.ToUri (id));
-			indexable.Timestamp = File.GetLastWriteTimeUtc (path);
-			indexable.ContentUri = UriFu.PathToFileUri (path);
-			indexable.Crawled = crawl_mode;
-			indexable.Filtering = Beagle.IndexableFiltering.Always;
+
+			try {
+				indexable = new Indexable (IndexableType.Add, GuidFu.ToUri (id));
+				indexable.Timestamp = File.GetLastWriteTimeUtc (path);
+				indexable.ContentUri = UriFu.PathToFileUri (path);
+				indexable.Crawled = crawl_mode;
+				indexable.Filtering = Beagle.IndexableFiltering.Always;
+			} catch (IOException) {
+				// Looks like the file was deleted.
+				return null;
+			}
 
 			AddStandardPropertiesToIndexable (indexable, Path.GetFileName (path), parent, true);
 
@@ -539,17 +550,19 @@ namespace Beagle.Daemon.FileSystemQueryable {
 			Indexable indexable;
 			indexable = DirectoryToIndexable (path, id, parent);
 
-			indexable.LocalState ["Name"] = name;
-			indexable.LocalState ["LastCrawl"] = last_crawl;
-			indexable.LocalState ["IsWalkable"] = is_walkable;
+			if (indexable != null) {
+				indexable.LocalState ["Name"] = name;
+				indexable.LocalState ["LastCrawl"] = last_crawl;
+				indexable.LocalState ["IsWalkable"] = is_walkable;
 
-			Scheduler.Task task;
-			task = NewAddTask (indexable);
-			task.Priority = Scheduler.Priority.Delayed;
-			ThisScheduler.Add (task);
+				Scheduler.Task task;
+				task = NewAddTask (indexable);
+				task.Priority = Scheduler.Priority.Delayed;
+				ThisScheduler.Add (task);
+			}
 		}
 
-		private void RegisterDirectory (string name, DirectoryModel parent, FileAttributes attr)
+		private bool RegisterDirectory (string name, DirectoryModel parent, FileAttributes attr)
 		{
 			string path;
 			path = (parent == null) ? name : Path.Combine (parent.FullName, name);
@@ -557,13 +570,22 @@ namespace Beagle.Daemon.FileSystemQueryable {
 			if (Debug)
 				Logger.Log.Debug ("Registered directory '{0}' ({1})", path, attr.UniqueId);
 
+			DateTime mtime;
+
+			try {
+				mtime = Directory.GetLastWriteTimeUtc (path);
+			} catch (IOException) {
+				Log.Debug ("Directory '{0}' ({1}) appears to have gone away", path, attr.UniqueId);
+				return false;
+			}
+
 			DirectoryModel dir;
 			if (parent == null)
 				dir = DirectoryModel.NewRoot (big_lock, path, attr);
 			else
 				dir = parent.AddChild (name, attr);
 
-			if (Directory.GetLastWriteTimeUtc (path) > attr.LastWriteTime) {
+			if (mtime > attr.LastWriteTime) {
 				dir.State = DirectoryState.Dirty;
 				if (Debug)
 					Logger.Log.Debug ("'{0}' is dirty", path);
@@ -595,6 +617,8 @@ namespace Beagle.Daemon.FileSystemQueryable {
 			// Make sure that our file crawling task is active,
 			// since presumably we now have something new to crawl.
 			ActivateFileCrawling ();
+
+			return true;
 		}
 
 		private void ForgetDirectoryRecursively (DirectoryModel dir)
@@ -1034,10 +1058,12 @@ namespace Beagle.Daemon.FileSystemQueryable {
 			Indexable indexable;
 			indexable = FileToIndexable (path, unique_id, dir, false);
 
-			Scheduler.Task task;
-			task = NewAddTask (indexable);
-			task.Priority = Scheduler.Priority.Immediate;
-			ThisScheduler.Add (task);
+			if (indexable != null) {
+				Scheduler.Task task;
+				task = NewAddTask (indexable);
+				task.Priority = Scheduler.Priority.Immediate;
+				ThisScheduler.Add (task);
+			}
 		}
 
 		public void RemoveFile (DirectoryModel dir, string name)
@@ -1048,7 +1074,7 @@ namespace Beagle.Daemon.FileSystemQueryable {
 			Guid unique_id;
 			unique_id = NameAndParentToId (name, dir);
 			if (unique_id == Guid.Empty) {
-				Logger.Log.Warn ("Could resolve unique id of '{0}' in '{1}' for removal, it is probably already gone",
+				Logger.Log.Info ("Could not resolve unique id of '{0}' in '{1}' for removal, it is probably already gone",
 						 name, dir.FullName);
 				return;
 			}
@@ -1230,7 +1256,8 @@ namespace Beagle.Daemon.FileSystemQueryable {
 				string name;
 				name = (string) indexable.LocalState ["Name"];
 
-				RegisterDirectory (name, parent, attr);
+				if (! RegisterDirectory (name, parent, attr))
+					return;
 			}
 
 			FileAttributesStore.Write (attr);
