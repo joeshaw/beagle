@@ -1,4 +1,82 @@
 
+Version 0.2.5
+April 20, 2006
+
+Daemon/Infrastructure:
+* Shut the daemon down cleanly on a broken X connection, since we
+  can't gracefully recover from it.  (Joe Shaw)
+* Unset the DISPLAY variable in the index helper, since it should
+  never get an X connection.  (Joe)
+* Enabled and disabled backends can now be saved as part of the
+  configuration, through the beagle-config tool.  (D Bera)
+* Add a new --backends command-line that gives the user more control
+  over what backends are started, given the new configuration.  The
+  --allow-backend and --deny-backend options are now deprecated.
+  (Bera)
+* Don't allow the daemon to be run from sudo, since its default
+  configuration causes broken permissions in ~/.beagle and ~/.wapi.
+  (Joe)
+* Make sure HOME or BEAGLE_HOME is set before starting the daemon.
+  (Joe)
+* Change to using glib's g_spawn to launch programs, rather than
+  .Net's own internal Process class.  (Joe)
+* If we can't set the IO priority class to idle, at least set the
+  priority to the lowest in our current class.  (Joe)
+* Use the newner kernel syscall interface for gettid().  (LaMont
+  Jones)
+
+Backends:
+* Add a bunch of checks to the file system backend to help deal with
+  rapid creation and deletion of files and directories.  (Joe)
+* Enable snippets for KMail maildir emails.  (Bera)
+* Extract text more correctly from Tomboy notes.  (Bera)
+* Fix a crash in the EvolutionDataServer backend when new sources are
+  added for indexing.  (Joe)
+
+Filters:
+* Fix a logical error in the HTML filter which prevented it from
+  working properly in 0.2.4.  (Joe)
+* Fix compilation of FilterTiff.cs with Mono 1.1.14.  (Bera)
+* Add audio/x-vorbis+ogg as a supported MIME type for the music
+  filter.  (Joe)
+* Open OLE filters (like MS Word) with libgsf's stdio interface rather
+  than mmap, so that changes on disk don't corrupt the stream as it's
+  being filtered.  (Joe)
+
+UI:
+* Reset a finished query so that we don't crash.  (Lukas Lipka)
+* Add Ctrl-L as an alternate keybinding to focus the search entry.
+  (Dan Winship)
+* Don't steal the focus from the search entry if you do a search
+  activated by timeout after a search activated by pressing enter.
+  (Dan)
+* Make sure tiles are redrawn when you expand or contract the group.
+  (Dan)
+* If an icon theme only has icons that are much larger than what is
+  asked for, scale them down to the appropriate size.  (Joe)
+
+Tools:
+* Explicitly set our .wapi dir in beagle-crawl-system to a temporary
+  directory, so that it works without a home directory.  (Bera)
+* Add --list-backends and --list-static-indexes options to
+  beagle-info.  (Bera, Joe)
+* If we don't match a filter using beagle-extract-content, don't
+  assume it's plain text.  (Joe)
+* Display correct values for flags in beagle-dump-index.  (Bera)
+* Don't install the beagle-crawl-system cronjob into libexec.  (Joe)
+
+Bindings:
+* Use pyexecdir instead of pythondir for installing the python
+  module.  (Gentoo)
+
+Translations:
+* Updated Finnish translation.  (Ilkka Tuohela)
+* Updated Hungarian translation.  (Gabor Kelemen, Stanislav Brabec)
+* Updated Japanese translation.  (Takeshi AIHANA)
+* Updated Swedish translation.  (Daniel Nylander)
+
+------------------------------------------------------
+
 Version 0.2.4
 April 7, 2006
 
