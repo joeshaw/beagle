@@ -30,12 +30,14 @@
 #include "beagle-timestamp.h"
 
 struct _BeagleIndexable {
+	BeagleIndexableType type;
+
 	char *uri;
+	char *parent_uri;
 	char *content_uri;
 	char *hot_content_uri;
 
 	BeagleTimestamp *timestamp;
-	long revision;
 
 	gboolean delete_content;
 	gboolean crawled;
@@ -44,8 +46,9 @@ struct _BeagleIndexable {
 	
 	BeagleIndexableFiltering filtering;
 
-	char *type;
+	char *hit_type;
 	char *mime_type;
+	char *source;
 
 	GSList *properties;
 };
@@ -68,13 +71,18 @@ beagle_indexable_new (const char *uri)
 	indexable = g_new0 (BeagleIndexable, 1);
 	indexable->uri = g_strdup (uri);
 	
-	indexable->revision = -1;
+	// Use current time as the indexable timestamp, similar to C# API
+	indexable->timestamp = beagle_timestamp_new_from_unix_time (time ());
+	
+	indexable->delete_content = FALSE;
 	indexable->crawled = TRUE;
+	indexable->no_content = FALSE;
 	indexable->cache_content = TRUE;
-	indexable->type = g_strdup ("File");
 
 	indexable->properties = NULL;
 
+	indexable->hit_type = g_strdup ("File");
+	indexable->type = BEAGLE_INDEXABLE_TYPE_ADD;
 	indexable->filtering = BEAGLE_INDEXABLE_FILTERING_AUTOMATIC;
 
 	return indexable;
@@ -95,11 +103,13 @@ beagle_indexable_free (BeagleIndexable *indexable)
 		beagle_timestamp_free (indexable->timestamp);
 
 	g_free (indexable->uri);
+	g_free (indexable->parent_uri);
 	g_free (indexable->content_uri);
 	g_free (indexable->hot_content_uri);
 	
-	g_free (indexable->type);
+	g_free (indexable->hit_type);
 	g_free (indexable->mime_type);
+	g_free (indexable->source);
 
 	if (indexable->properties) {
 		g_slist_foreach (indexable->properties, (GFunc) beagle_property_free, NULL);
@@ -156,6 +166,39 @@ beagle_indexable_set_uri (BeagleIndexable *indexable, const char *uri)
 
 	g_free (indexable->uri);
 	indexable->uri = g_strdup (uri);
+}
+
+/**
+ * beagle_indexable_get_parent_uri:
+ * @indexable: a #BeagleIndexable
+ *
+ * Fetches the URI for the given #BeagleIndexable.
+ *
+ * Return value: the parent URI of the #BeagleIndexable.
+ **/
+G_CONST_RETURN char *
+beagle_indexable_get_parent_uri (BeagleIndexable *indexable)
+{
+	g_return_val_if_fail (indexable != NULL, NULL);
+
+	return indexable->parent_uri;
+}
+
+/**
+ * beagle_indexable_set_parent_uri:
+ * @indexable: a #BeagleIndexable
+ * @parent_uri: a string
+ *
+ * Sets the parent URI of the #BeagleIndexable to @parent_uri.
+ **/
+void
+beagle_indexable_set_parent_uri (BeagleIndexable *indexable, const char *parent_uri)
+{
+	g_return_if_fail (indexable != NULL);
+	g_return_if_fail (parent_uri != NULL);
+
+	g_free (indexable->parent_uri);
+	indexable->parent_uri = g_strdup (parent_uri);
 }
 
 /**
@@ -348,6 +391,38 @@ beagle_indexable_set_cache_content (BeagleIndexable *indexable, gboolean cache_c
 	indexable->cache_content = cache_content != FALSE;
 }
 
+/**
+ * beagle_indexable_get_type:
+ * @indexable: a #BeagleIndexable
+ *
+ * Fetches the #BeagleIndexableType of the given #BeagleIndexable.
+ *
+ * Return value: Fetches the #BeagleIndexableType of the #BeagleIndexable.
+ **/
+BeagleIndexableType 
+beagle_indexable_get_type (BeagleIndexable *indexable)
+{
+	g_return_val_if_fail (indexable != NULL, BEAGLE_INDEXABLE_TYPE_ADD);
+	
+	return indexable->type;
+}
+
+/**
+ * beagle_indexable_set_type:
+ * @indexable: a #BeagleIndexable
+ * @filtering: a #BeagleIndexableType
+ *
+ * Sets the #BeagleIndexableType of the given #BeagleIndexable.
+ **/
+void 
+beagle_indexable_set_type (BeagleIndexable *indexable, BeagleIndexableType type)
+{
+	g_return_if_fail (indexable != NULL);
+	g_return_if_fail (type >= BEAGLE_INDEXABLE_TYPE_ADD && type <= BEAGLE_INDEXABLE_TYPE_PROPERTY_CHANGE);
+
+	indexable->type = type;
+}
+
 
 /**
  * beagle_indexable_get_filtering:
@@ -382,36 +457,36 @@ beagle_indexable_set_filtering (BeagleIndexable *indexable, BeagleIndexableFilte
 }
 
 /**
- * beagle_indexable_get_type:
+ * beagle_indexable_get_hit_type:
  * @indexable: a #BeagleIndexable
  *
- * Fetches the type of the given #BeagleIndexable.
+ * Fetches the hit type of the given #BeagleIndexable.
  *
- * Return value: the type of the #BeagleIndexable.
+ * Return value: the hit type of the #BeagleIndexable.
  **/
 
 G_CONST_RETURN char *
-beagle_indexable_get_type (BeagleIndexable *indexable)
+beagle_indexable_get_hit_type (BeagleIndexable *indexable)
 {
 	g_return_val_if_fail (indexable != NULL, NULL);
 
-	return indexable->type;
+	return indexable->hit_type;
 }
 
 /**
- * beagle_indexable_set_type:
+ * beagle_indexable_set_hit_type:
  * @indexable: a #BeagleIndexable
- * @type: a string
+ * @hit_type: a string
  *
- * Sets the type of the given #BeagleIndexable to @type.
+ * Sets the hit type of the given #BeagleIndexable to @hit_type.
  **/
 void 
-beagle_indexable_set_type (BeagleIndexable *indexable, const char *type)
+beagle_indexable_set_hit_type (BeagleIndexable *indexable, const char *hit_type)
 {
 	g_return_if_fail (indexable != NULL);
 
-	g_free (indexable->type);
-	indexable->type = g_strdup (type);
+	g_free (indexable->hit_type);
+	indexable->hit_type = g_strdup (hit_type);
 }
 
 
@@ -447,6 +522,38 @@ beagle_indexable_set_mime_type (BeagleIndexable *indexable, const char *mime_typ
 	indexable->mime_type = g_strdup (mime_type);
 }
 
+/**
+ * beagle_indexable_get_source:
+ * @indexable: a #BeagleIndexable
+ *
+ * Fetches the source of the given #BeagleIndexable.
+ *
+ * Return value: the source of the #BeagleIndexable.
+ **/
+G_CONST_RETURN char *
+beagle_indexable_get_source (BeagleIndexable *indexable)
+{
+	g_return_val_if_fail (indexable != NULL, NULL);
+
+	return indexable->source;
+}
+
+/**
+ * beagle_indexable_set_source:
+ * @indexable: a #BeagleIndexable
+ * @source: a string
+ *
+ * Sets the source of the given #BeagleIndexable to @source.
+ **/
+void 
+beagle_indexable_set_source (BeagleIndexable *indexable, const char *source)
+{
+	g_return_if_fail (indexable != NULL);
+
+	g_free (indexable->source);
+	indexable->source = g_strdup (source);
+}
+
 
 BeagleTimestamp *
 beagle_indexable_get_timestamp (BeagleIndexable *indexable)
@@ -474,16 +581,19 @@ _beagle_indexable_to_xml (BeagleIndexable *indexable, GString *data)
 {
 	char *tmp;
 
-	if (indexable->timestamp)
+	g_string_append_printf (data, "<Indexable");
+
+	if (indexable->timestamp) {
 		tmp = _beagle_timestamp_to_string (indexable->timestamp);
-	else
-		tmp = _beagle_timestamp_get_start ();
+		g_string_append_printf (data, " Timestamp=\"%s\"", tmp);
+		g_free (tmp);
+	}
+		
+	g_string_append_printf (data, " Uri=\"%s\"", indexable->uri);
 
-	g_string_append_printf (data, "<Indexable Timestamp=\"%s\" Revision=\"%ld\" Uri=\"%s\"",
-				tmp, indexable->revision, 
-				indexable->uri);
-
-	g_free (tmp);
+	if (indexable->parent_uri)
+		g_string_append_printf (data, " ParentUri=\"%s\"",
+					indexable->parent_uri);
 
 	g_string_append_printf (data, " ContentUri=\"%s\" HotContentUri=\"%s\"",
 				indexable->content_uri ? indexable->content_uri : indexable->uri,
@@ -495,6 +605,22 @@ _beagle_indexable_to_xml (BeagleIndexable *indexable, GString *data)
 				indexable->crawled ? "true" : "false",
 				indexable->no_content ? "true" : "false",
 				indexable->cache_content ? "true" : "false");
+
+	switch (indexable->type) {
+	case BEAGLE_INDEXABLE_TYPE_ADD:
+		tmp = "Add";
+		break;
+	    case BEAGLE_INDEXABLE_TYPE_REMOVE:
+		tmp = "Remove";
+		break;
+	case BEAGLE_INDEXABLE_TYPE_PROPERTY_CHANGE:
+		tmp = "PropertyChange";
+		break;
+	default:
+		g_assert_not_reached ();
+	}
+
+	g_string_append_printf (data, " Type=\"%s\"", tmp);
 
 	switch (indexable->filtering) {
 	case BEAGLE_INDEXABLE_FILTERING_ALWAYS:
@@ -515,8 +641,14 @@ _beagle_indexable_to_xml (BeagleIndexable *indexable, GString *data)
 
 	g_string_append_printf (data, " Filtering=\"%s\"", tmp);
 	
-	if (indexable->type)
-		g_string_append_printf (data, " Type=\"%s\"", indexable->type);
+	if (indexable->hit_type)
+		g_string_append_printf (data, " HitType=\"%s\"", indexable->hit_type);
+
+	if (indexable->mime_type)
+		g_string_append_printf (data, " MimeType=\"%s\"", indexable->mime_type);
+
+	if (indexable->source)
+		g_string_append_printf (data, " Source=\"%s\"", indexable->source);
 
 	g_string_append (data, ">");
 

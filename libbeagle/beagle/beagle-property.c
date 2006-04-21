@@ -50,7 +50,11 @@ beagle_property_new (BeaglePropertyType type, const char *key, const char *value
 	prop->key = g_strdup (key);
 	prop->value = g_strdup (value);
 
-	prop->is_searched = TRUE;
+	if (type == BEAGLE_PROPERTY_TYPE_TEXT)
+		prop->is_searched = TRUE;
+	else
+		prop->is_searched = FALSE;
+
 	prop->is_stored = TRUE;
 
 	return prop;
@@ -188,8 +192,8 @@ beagle_property_get_is_searched (BeagleProperty *prop)
  * @prop: a #BeagleProperty
  * @is_searched: a boolean
  *
- * Sets whether the given #BeagleProperty is searched.  By default, properties
- * are searched.
+ * Sets whether the given #BeagleProperty is searched.  By default, text properties
+ * are searched and keyword properties are not searched.
  **/
 void
 beagle_property_set_is_searched (BeagleProperty *prop, gboolean is_searched)
@@ -302,11 +306,12 @@ prop_to_xml (gpointer value, gpointer user_data)
 
 	g_string_append (data, "<Property ");
 
-	tmp = g_markup_printf_escaped ("Type=\"%s\" isSearched=\"%s\" isMutable=\"%s\" "
-				       "Key=\"%s\" Value=\"%s\"/>",
+	tmp = g_markup_printf_escaped ("Type=\"%s\" IsSearched=\"%s\" IsMutable=\"%s\" "
+				       "IsStored=\"%s\" Key=\"%s\" Value=\"%s\"/>",
 				       property_types[prop->type],
 				       prop->is_searched ? "true" : "false",
 				       prop->is_mutable ? "true" : "false",
+				       prop->is_stored ? "true" : "false",
 				       prop->key, prop->value);
 
 	g_string_append (data, tmp);

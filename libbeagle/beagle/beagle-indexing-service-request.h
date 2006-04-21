@@ -53,6 +53,7 @@ struct _BeagleIndexingServiceRequestClass {
 
 GType        beagle_indexing_service_request_get_type     (void);
 BeagleIndexingServiceRequest *beagle_indexing_service_request_new          (void);
+BeagleIndexingServiceRequest *beagle_indexing_service_request_new_for_service (const char *name);
 void beagle_indexing_service_request_add (BeagleIndexingServiceRequest *request, 
 					  BeagleIndexable *indexable);
 void beagle_indexing_service_request_remove (BeagleIndexingServiceRequest *request, const char *uri);

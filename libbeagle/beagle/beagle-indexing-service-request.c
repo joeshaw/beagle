@@ -37,6 +37,7 @@
 #include <libxml/parser.h>
 
 typedef struct {
+	const char *service_name;
 	GSList *to_add;
 	GSList *to_remove;
 } BeagleIndexingServiceRequestPrivate;
@@ -52,7 +53,7 @@ beagle_indexing_service_request_to_xml (BeagleRequest *request, GError **err)
 	GString *data = g_string_new (NULL);
 	GSList *list;
 
-	_beagle_request_append_standard_header (data, "IndexingServiceRequest");
+	_beagle_request_append_standard_header (data, priv->service_name);
 
 	g_string_append (data, "<ToAdd>");
 	
@@ -64,7 +65,7 @@ beagle_indexing_service_request_to_xml (BeagleRequest *request, GError **err)
 
 	g_string_append (data, "</ToAdd>");
 
-	g_string_append (data, "</ToRemove>");
+	g_string_append (data, "<ToRemove>");
 	
 	for (list = priv->to_remove; list != NULL; list = list->next) {
 		char *str = list->data;
@@ -119,6 +120,19 @@ beagle_indexing_service_request_init (BeagleIndexingServiceRequest *indexing_ser
 {
 }
 
+BeagleIndexingServiceRequest *
+beagle_indexing_service_request_new_for_service (const char *name)
+{
+	BeagleIndexingServiceRequest *indexing_service_request = g_object_new (BEAGLE_TYPE_INDEXING_SERVICE_REQUEST, 0);
+	// should indexing_service_request be checked by g_return_if_fail ?
+
+	BeagleIndexingServiceRequestPrivate *priv;
+	priv = BEAGLE_INDEXING_SERVICE_REQUEST_GET_PRIVATE (indexing_service_request);
+	priv->service_name = name;
+
+	return indexing_service_request;
+}
+
 /**
  * beagle_indexing_service_request_new:
  *
@@ -129,9 +143,7 @@ beagle_indexing_service_request_init (BeagleIndexingServiceRequest *indexing_ser
 BeagleIndexingServiceRequest *
 beagle_indexing_service_request_new (void)
 {
-	BeagleIndexingServiceRequest *indexing_service_request = g_object_new (BEAGLE_TYPE_INDEXING_SERVICE_REQUEST, 0);
-
-	return indexing_service_request;
+	return beagle_indexing_service_request_new_for_service ("IndexingServiceRequest");
 }
 
 /**

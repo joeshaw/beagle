@@ -35,6 +35,12 @@
 typedef struct _BeagleIndexable BeagleIndexable;
 
 typedef enum {
+	BEAGLE_INDEXABLE_TYPE_ADD,
+	BEAGLE_INDEXABLE_TYPE_REMOVE,
+	BEAGLE_INDEXABLE_TYPE_PROPERTY_CHANGE
+} BeagleIndexableType;
+
+typedef enum {
 	BEAGLE_INDEXABLE_FILTERING_ALWAYS,
 	BEAGLE_INDEXABLE_FILTERING_ALREADY_FILTERED,
 	BEAGLE_INDEXABLE_FILTERING_AUTOMATIC,
@@ -48,9 +54,18 @@ void             beagle_indexable_free             (BeagleIndexable *indexable);
 void             beagle_indexable_add_property     (BeagleIndexable *indexable,
 						    BeagleProperty  *prop);
 
+BeagleIndexableType beagle_indexable_get_type   (BeagleIndexable *indexable);
+void		 beagle_indexable_set_type	(BeagleIndexable *indexable, 
+						 BeagleIndexableType type);
+
 G_CONST_RETURN char *
 beagle_indexable_get_uri                           (BeagleIndexable *indexable);
 void             beagle_indexable_set_uri          (BeagleIndexable *indexable,
+						    const char      *uri);
+
+G_CONST_RETURN char *
+beagle_indexable_get_parent_uri			    (BeagleIndexable *indexable);
+void             beagle_indexable_set_parent_uri    (BeagleIndexable *indexable,
 						    const char      *uri);
 
 G_CONST_RETURN char *
@@ -64,6 +79,10 @@ beagle_indexable_get_hot_content_uri               (BeagleIndexable *indexable);
 void           
 beagle_indexable_set_hot_content_uri               (BeagleIndexable *indexable,
 						    const char      *hot_content_uri);
+
+BeagleTimestamp *beagle_indexable_get_timestamp (BeagleIndexable *indexable);
+void             beagle_indexable_set_timestamp (BeagleIndexable *indexable,
+						 BeagleTimestamp *timestamp);
 
 gboolean beagle_indexable_get_delete_content       (BeagleIndexable *indexable);
 void     beagle_indexable_set_delete_content       (BeagleIndexable *indexable,
@@ -85,16 +104,17 @@ beagle_indexable_get_filtering                     (BeagleIndexable *indexable);
 void             beagle_indexable_set_filtering    (BeagleIndexable *indexable,
 						    BeagleIndexableFiltering filtering);
 
-G_CONST_RETURN char * beagle_indexable_get_type    (BeagleIndexable *indexable);
-void                  beagle_indexable_set_type    (BeagleIndexable *indexable, 
-						    const char      *type);
+G_CONST_RETURN char *beagle_indexable_get_hit_type  (BeagleIndexable *indexable);
+void             beagle_indexable_set_hit_type	    (BeagleIndexable *indexable, 
+						    const char      *hit_type);
 
 G_CONST_RETURN char *beagle_indexable_get_mime_type(BeagleIndexable *indexable);
 void             beagle_indexable_set_mime_type    (BeagleIndexable *indexable, 
 						    const char      *mime_type);
 
-BeagleTimestamp *beagle_indexable_get_timestamp (BeagleIndexable *indexable);
-void             beagle_indexable_set_timestamp (BeagleIndexable *indexable,
-						 BeagleTimestamp *timestamp);
+G_CONST_RETURN char *beagle_indexable_get_source    (BeagleIndexable *indexable);
+void             beagle_indexable_set_source	    (BeagleIndexable *indexable, 
+						    const char      *source);
+
 #endif /* __BEAGLE_INDEXABLE_H */
 

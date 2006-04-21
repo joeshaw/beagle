@@ -4,6 +4,9 @@
 	Filters/FilterEbuild.cs: Add FilterPackage base class to contain the
 	basic information about packages. Change FilterRPM, FilterEbuild to
 	derive from FilterPackage.
+	* libbeagle/beagle: Revive the C API for indexable-service. Also,
+	allow creating indexable-service type index-request messages for
+	others services.
 
 2006-04-18  Debajyoti Bera <dbera.web@gmail.com>
 

@@ -156,6 +156,16 @@
 
 ;; Enumerations and flags ...
 
+(define-enum IndexableType
+  (in-module "Beagle")
+  (c-name "BeagleIndexableType")
+  (values
+    '("always" "BEAGLE_INDEXABLE_TYPE_ADD")
+    '("already-filtered" "BEAGLE_INDEXABLE_TYPE_REMOVE")
+    '("automatic" "BEAGLE_INDEXABLE_TYPE_PROPERTY_CHANGE")
+  )
+)
+
 (define-enum IndexableFiltering
   (in-module "Beagle")
   (c-name "BeagleIndexableFiltering")
@@ -487,6 +497,21 @@
   )
 )
 
+(define-method get_parent_uri
+  (of-object "BeagleIndexable")
+  (c-name "beagle_indexable_get_parent_uri")
+  (return-type "const-char*")
+)
+
+(define-method set_parent_uri
+  (of-object "BeagleIndexable")
+  (c-name "beagle_indexable_set_parent_uri")
+  (return-type "none")
+  (parameters
+    '("const-char*" "uri")
+  )
+)
+
 (define-method get_content_uri
   (of-object "BeagleIndexable")
   (c-name "beagle_indexable_get_content_uri")
@@ -577,6 +602,21 @@
   )
 )
 
+(define-method get_type
+  (of-object "BeagleIndexable")
+  (c-name "beagle_indexable_get_type")
+  (return-type "BeagleIndexableType")
+)
+
+(define-method set_type
+  (of-object "BeagleIndexable")
+  (c-name "beagle_indexable_set_type")
+  (return-type "none")
+  (parameters
+    '("BeagleIndexableType" "type")
+  )
+)
+
 (define-method get_filtering
   (of-object "BeagleIndexable")
   (c-name "beagle_indexable_get_filtering")
@@ -592,18 +632,18 @@
   )
 )
 
-(define-method get_type
+(define-method get_hit_type
   (of-object "BeagleIndexable")
-  (c-name "beagle_indexable_get_type")
+  (c-name "beagle_indexable_get_hit_type")
   (return-type "const-char*")
 )
 
-(define-method set_type
+(define-method set_hit_type
   (of-object "BeagleIndexable")
-  (c-name "beagle_indexable_set_type")
+  (c-name "beagle_indexable_set_hit_type")
   (return-type "none")
   (parameters
-    '("const-char*" "type")
+    '("const-char*" "hit_type")
   )
 )
 
@@ -619,6 +659,21 @@
   (return-type "none")
   (parameters
     '("const-char*" "mime_type")
+  )
+)
+
+(define-method get_source
+  (of-object "BeagleIndexable")
+  (c-name "beagle_indexable_get_source")
+  (return-type "const-char*")
+)
+
+(define-method set_source
+  (of-object "BeagleIndexable")
+  (c-name "beagle_indexable_set_source")
+  (return-type "none")
+  (parameters
+    '("const-char*" "source")
   )
 )
 
