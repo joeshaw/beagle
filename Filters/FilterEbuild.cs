@@ -31,7 +31,7 @@ using Beagle.Daemon;
 
 namespace Beagle.Filters {
 
-	public class FilterEbuild : Beagle.Daemon.Filter {
+	public class FilterEbuild : FilterPackage {
 		static Regex metadata_pattern = new Regex ("\\s*(?<key>([A-Z_]+))\\s*=\\s*\"(?<value>(.*))\"\\s*");
 		static Regex einfo_pattern = new Regex ("\\s*(einfo|ewarn)\\s+\"(?<message>(.*))\"\\s*");
 		static Regex package_pattern = new Regex ("(?<name>([^0-9]+))-(?<version>(.+)).ebuild");
@@ -41,46 +41,47 @@ namespace Beagle.Filters {
 			AddSupportedFlavor (FilterFlavor.NewFromExtension (".ebuild"));
 		}
 
-		override protected void DoOpen (FileInfo file) 
+		override protected void DoOpen (FileInfo file)
 		{
 			Match match = package_pattern.Match (file.Name);
-			String pkgname = match.Groups ["name"].ToString();
-			if (pkgname.Length > 0)
-				AddProperty (Beagle.Property.New ("dc:title", pkgname));
-			
-			String version = match.Groups ["version"].ToString();
-			if (version.Length > 0)
-				AddProperty (Beagle.Property.NewUnsearched ("fixme:version", version));
+
+			PackageName = match.Groups ["name"].ToString();
+			PackageVersion = match.Groups ["version"].ToString();
+
+			if (PackageName.Length == 0 && PackageVersion.Length == 0)
+				return;
 
 			// get download file size
-			if (pkgname.Length > 0 && version.Length > 0) {
-				FileInfo digest = new FileInfo (file.Directory.FullName + "/files/digest-" + pkgname + "-" + version);
-				if (digest.Exists) {
-					long download_size = 0;
-					StreamReader digest_reader = new StreamReader (new FileStream (digest.FullName, FileMode.Open, FileAccess.Read, FileShare.Read));
-					string digest_line = null;
-					while ((digest_line = digest_reader.ReadLine ()) != null) {
-						string[] digest_parts = digest_line.Split (' ');
-						if (digest_parts.Length < 4)
-							continue;
-						if (digest_parts[0].Equals ("MD5"))
-							download_size += Int64.Parse (digest_parts[3]);
-					}
-					AddProperty (Beagle.Property.NewUnsearched ("fixme:download_size", download_size));
+			FileInfo digest = new FileInfo (file.Directory.FullName + "/files/digest-" + PackageName + "-" + PackageVersion);
+			if (digest.Exists) {
+				long download_size = 0;
+				StreamReader digest_reader = new StreamReader (new FileStream (digest.FullName, FileMode.Open, FileAccess.Read, FileShare.Read));
+				string digest_line = null;
+				while ((digest_line = digest_reader.ReadLine ()) != null) {
+					string[] digest_parts = digest_line.Split (' ');
+					if (digest_parts.Length < 4)
+						continue;
+					if (digest_parts[0].Equals ("MD5"))
+						download_size += Int64.Parse (digest_parts[3]);
 				}
+				AddProperty (Beagle.Property.NewUnsearched ("fixme:download_size", download_size));
+				digest_reader.Close ();
 			}
+			
 
-			StreamReader reader = new StreamReader (new FileStream (file.FullName, FileMode.Open, FileAccess.Read, FileShare.Read));
+		}
 
+		override protected void PullPackageProperties () 
+		{
 			string str = null;
-			while ((str = reader.ReadLine ()) != null) {
+			while ((str = TextReader.ReadLine ()) != null) {
 				// Skip comments
 				if (str.StartsWith ("#"))
 					continue;
 
 				// Handle line continuation
 				string str2 = null;
-				while (str.Trim ().EndsWith ("\\") && ((str2 = reader.ReadLine ()) != null) ) {
+				while (str.Trim ().EndsWith ("\\") && ((str2 = TextReader.ReadLine ()) != null) ) {
 					str = str.Trim ();
 					if (str.Length == 1)
 						str = str2;
@@ -97,13 +98,13 @@ namespace Beagle.Filters {
 				if (matches.Count > 0) {
 					foreach (Match the_match in matches) {
 						String key = the_match.Groups ["key"].ToString ();
-						String value = the_match.Groups ["value"].ToString ();
+						String val = the_match.Groups ["value"].ToString ();
 						if (key.Equals ("DESCRIPTION"))
-							AddProperty (Beagle.Property.New ("dc:description", value));
+							Description = val;
 						else if (key.Equals ("LICENSE"))
-							AddProperty (Beagle.Property.New ("dc:rights", value));
+							License = val;
 						else if (key.Equals ("HOMEPAGE"))
-							AddProperty (Beagle.Property.New ("dc:source", value));
+							Homepage = val;
 					}
 				} else {
 					// check for einfo/ewarn
@@ -114,7 +115,6 @@ namespace Beagle.Filters {
 					}
 				}
 			}
-			Finished ();
 		}
 	}
 }

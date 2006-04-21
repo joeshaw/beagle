@@ -35,7 +35,7 @@ using Beagle.Daemon;
 using Beagle.Util;
 
 namespace Beagle.Filters {
-	public class FilterRPM : Beagle.Daemon.Filter {
+	public class FilterRPM : FilterPackage {
 		
 		private class RpmPropertyInfo {
 			public string property_name;
@@ -54,14 +54,8 @@ namespace Beagle.Filters {
 		    hash_property_list = new Hashtable ();
 
 		    // mapping between rpm tagname and beagle property name
-    		    hash_property_list ["Name"]          = new RpmPropertyInfo ("dc:title", false);
-    		    hash_property_list ["Version"]       = new RpmPropertyInfo ("fixme:version", true);
     		    hash_property_list ["Release"]       = new RpmPropertyInfo ("fixme:release", true);
-    		    hash_property_list ["Summary"]       = new RpmPropertyInfo ("dc:subject", false);
-    		    hash_property_list ["Description"]   = new RpmPropertyInfo ("dc:description", false);
-    		    hash_property_list ["License"]       = new RpmPropertyInfo ("dc:rights", false);
     		    hash_property_list ["Group"]         = new RpmPropertyInfo ("fixme:group", false);
-		    hash_property_list ["Url"]           = new RpmPropertyInfo ("dc:source", true);
     		    hash_property_list ["Os"]            = new RpmPropertyInfo ("fixme:os", false);
     		    hash_property_list ["Arch"]          = new RpmPropertyInfo ("fixme:arch", false);
     		    hash_property_list ["Changelogtext"] = new RpmPropertyInfo ("fixme:changelog", false);
@@ -72,7 +66,7 @@ namespace Beagle.Filters {
 			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("application/x-rpm"));
 		}
 
-		protected override void DoPullProperties ()
+		protected override void PullPackageProperties ()
 		{
 			SafeProcess pc = new SafeProcess ();
 			pc.Arguments = new string [] { "rpm", "-qp", "--queryformat", "[%{*:xml}\n]", FileInfo.FullName };
@@ -99,14 +93,10 @@ namespace Beagle.Filters {
 				reader.Close ();
 				pc.Close ();
 			}
-
-			Finished ();
 		}
 
 		private void ParseRpmTags (XmlTextReader reader)
 		{
-			RpmPropertyInfo prop_info = null;
-	
 			reader.Read ();
 			while (reader.Read ()) {
 				if (reader.IsEmptyElement || ! reader.IsStartElement ())
@@ -118,20 +108,23 @@ namespace Beagle.Filters {
 				string attr_name = reader ["name"];
 				//Logger.Log.Debug ("Read element:" + reader.Name + " - " + attr_name);
 
-				// store basenames values as Text - they are like the "text"-content of rpm files
-				if (attr_name == "Basenames") {
-					ReadStringValues (reader, true, null);
-					continue;
-				}
-
-				prop_info = (RpmPropertyInfo) hash_property_list [attr_name];
-				if (prop_info != null)
-					ReadStringValues (reader, false, prop_info);
+				ReadStringValues (reader, attr_name);
 			}
 		}
 
-		private void ReadStringValues (XmlTextReader reader, bool store_as_text, RpmPropertyInfo prop_info)
+		private void ReadStringValues (XmlTextReader reader, string attr_name)
 		{
+			RpmPropertyInfo prop_info = (RpmPropertyInfo) hash_property_list [attr_name];
+			if (attr_name != "Basenames" &&
+			    attr_name != "Name" &&
+			    attr_name != "Version" &&
+			    attr_name != "License" &&
+			    attr_name != "Description" &&
+			    attr_name != "Url" &&
+			    attr_name != "Summary" &&
+			    prop_info == null)
+				return;
+
 			reader.ReadStartElement ();
 
 			while (reader.IsStartElement ()) {
@@ -140,20 +133,47 @@ namespace Beagle.Filters {
 					reader.Skip ();
 				
 				string content = HtmlAgilityPack.HtmlEntity.DeEntitize (reader.ReadInnerXml ());
-				//Logger.Log.Debug (prop_info.property_name 
-				//	+ (prop_info.is_keyword ? " (keyword)" : " (text)") 
-				//	+ " = [" + content + "]");
 				
-				if (store_as_text) {
-					AppendText (content);
-					AppendWhiteSpace ();
-					continue;
-				}
+				switch (attr_name) {
+					case "Basenames":
+						// store basenames values as Text - they are like the "text"-content of rpm files
+						AppendText (content);
+						AppendWhiteSpace ();
+						break;
 
-				if (prop_info.is_keyword)
-					AddProperty (Beagle.Property.New (prop_info.property_name, content));
-				else
-					AddProperty (Beagle.Property.NewUnsearched (prop_info.property_name, content));
+					case "Name":
+						PackageName = content;
+						break;
+
+					case "Version":
+						PackageVersion = content;
+						break;
+
+					case "License":
+						License = content;
+						break;
+
+					case "Summary":
+						Summary = content;
+						break;
+
+					case "Description":
+						Description = content;
+						break;
+
+					case "Url":
+						Homepage = content;
+						break;
+						
+					default:
+						if (prop_info == null)
+							break;
+						if (prop_info.is_keyword)
+							AddProperty (Beagle.Property.NewUnsearched (prop_info.property_name, content));
+						else
+							AddProperty (Beagle.Property.New (prop_info.property_name, content));
+						break;
+				}
 			}
 
 			//Logger.Log.Debug ("    Done reading values. Now at " + 
