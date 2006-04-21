@@ -64,7 +64,7 @@ for crawl_file in @sysconfdir@/beagle/crawl-*; do
                 IONICE="$IONICE -c 3"
             fi
 
-	    eval nice -n 19 $IONICE su $CRAWL_USER -s /bin/bash -c \" MONO_SHARED_DIR=$MONO_SHARED_DIR @sbindir@/beagle-build-index --target @localstatedir@/cache/beagle/indexes/$CRAWL_INDEX_NAME $OPTIONS $CRAWL_PATHS\" > /dev/null 2>&1
+	    eval nice -n 19 $IONICE su -s /bin/bash $CRAWL_USER -c \"MONO_SHARED_DIR=$MONO_SHARED_DIR @sbindir@/beagle-build-index --target @localstatedir@/cache/beagle/indexes/$CRAWL_INDEX_NAME $OPTIONS $CRAWL_PATHS\" > /dev/null 2>&1
 	fi
     fi
 done
