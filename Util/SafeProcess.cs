@@ -79,9 +79,9 @@ namespace Beagle.Util {
 							     IntPtr child_setup,
 							     IntPtr child_data,
 							     IntPtr pid,
-							     ref int standard_input,
-							     ref int standard_output,
-							     ref int standard_error,
+							     [In,Out] IntPtr standard_input,
+							     [In,Out] IntPtr standard_output,
+							     [In,Out] IntPtr standard_error,
 							     out IntPtr error);
 
 		public void Start ()
@@ -98,28 +98,51 @@ namespace Beagle.Util {
 				args = tmp_args;
 			}
 
-			g_spawn_async_with_pipes (null, args, null,
-						  1 << 2, // G_SPAWN_SEARCH_PATH
-						  IntPtr.Zero, IntPtr.Zero, IntPtr.Zero,
-						  ref stdin, ref stdout, ref stderr, out error);
+			IntPtr in_ptr = IntPtr.Zero, out_ptr = IntPtr.Zero, err_ptr = IntPtr.Zero;
 
-			if (error != IntPtr.Zero)
-				throw new SafeProcessException (new GException (error));
+			try {
+				if (RedirectStandardInput)
+					in_ptr = Marshal.AllocHGlobal (IntPtr.Size);
+				
+				if (RedirectStandardOutput)
+					out_ptr = Marshal.AllocHGlobal (IntPtr.Size);
+				
+				if (RedirectStandardError)
+					err_ptr = Marshal.AllocHGlobal (IntPtr.Size);
 
-			if (! RedirectStandardInput)
-				Mono.Unix.Native.Syscall.close (stdin);
-			else
-				stdin_stream = new UnixStream (stdin);
+				g_spawn_async_with_pipes (null, args, null,
+							  1 << 2, // G_SPAWN_SEARCH_PATH
+							  IntPtr.Zero, IntPtr.Zero, IntPtr.Zero,
+							  in_ptr, out_ptr, err_ptr, out error);
 
-			if (! RedirectStandardOutput)
-				Mono.Unix.Native.Syscall.close (stdout);
-			else
-				stdout_stream = new UnixStream (stdout);
+				if (error != IntPtr.Zero)
+					throw new SafeProcessException (new GException (error));
 
-			if (! RedirectStandardError)
-				Mono.Unix.Native.Syscall.close (stderr);
-			else
-				stderr_stream = new UnixStream (stderr);
+				if (in_ptr != IntPtr.Zero) {
+					IntPtr v = Marshal.ReadIntPtr (in_ptr);
+					stdin_stream = new UnixStream ((int) v);
+				}
+
+				if (out_ptr != IntPtr.Zero) {
+					IntPtr v = Marshal.ReadIntPtr (out_ptr);
+					stdout_stream = new UnixStream ((int) v);
+				}
+
+				if (err_ptr != IntPtr.Zero) {
+					IntPtr v = Marshal.ReadIntPtr (err_ptr);
+					stderr_stream = new UnixStream ((int) v);
+				}
+
+			} finally {
+				if (in_ptr != IntPtr.Zero)
+					Marshal.FreeHGlobal (in_ptr);
+
+				if (out_ptr != IntPtr.Zero)
+					Marshal.FreeHGlobal (out_ptr);
+
+				if (err_ptr != IntPtr.Zero)
+					Marshal.FreeHGlobal (err_ptr);
+			}
 		}
 
 		public void Close ()
