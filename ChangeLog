@@ -1,3 +1,10 @@
+2006-04-21  Debajyoti Bera <dbera.web@gmail.com>
+
+	* Filters/FilterPackage.cs, Filters/FilterRPM.cs,
+	Filters/FilterEbuild.cs: Add FilterPackage base class to contain the
+	basic information about packages. Change FilterRPM, FilterEbuild to
+	derive from FilterPackage.
+
 2006-04-18  Debajyoti Bera <dbera.web@gmail.com>
 
 	* tools/Info.cs: Add --list-backends, --list-static-indexes to
