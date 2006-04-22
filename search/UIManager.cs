@@ -23,12 +23,30 @@ namespace Search {
 
 	public class UIManager : Gtk.UIManager {
 
+		private MainWindow main_window;
+		
 		private Gtk.ActionGroup actions;
 		private Gtk.RadioActionEntry[] scope_entries, sort_entries;
 
-		public UIManager (Gtk.Window mainWindow)
+		public UIManager (MainWindow main_window)
 		{
+			this.main_window = main_window;
+			
 			actions = new ActionGroup ("Actions");
+
+			ActionEntry quit_action_entry;
+			if (MainWindow.IconEnabled) {
+				quit_action_entry = new ActionEntry ("Quit", Gtk.Stock.Close,
+								     null, "<control>Q",
+						 		     Catalog.GetString ("Close Desktop Search"),
+						 		     Quit);
+			} else {
+				quit_action_entry = new ActionEntry ("Quit", Gtk.Stock.Quit,
+								     null, "<control>Q",
+						 		     Catalog.GetString ("Exit Desktop Search"),
+						 		     Quit);
+
+			}
 
 			Gtk.ActionEntry[] entries = new ActionEntry[] {
 				new ActionEntry ("Search", null,
@@ -44,10 +62,7 @@ namespace Search {
 						 Catalog.GetString ("_Help"),
 						 null, null, null),
 
-				new ActionEntry ("Quit", Gtk.Stock.Quit,
-						 null, "<control>Q",
-						 Catalog.GetString ("Exit Desktop Search"),
-						 Quit),
+				quit_action_entry,
 				new ActionEntry ("Preferences", Gtk.Stock.Preferences,
 						 null, null,
 						 Catalog.GetString ("Exit Desktop Search"),
@@ -129,7 +144,7 @@ namespace Search {
 			actions.Add (sort_entries, (int)SortType.Modified, OnSortChanged);
 
 			InsertActionGroup (actions, 0);
-			mainWindow.AddAccelGroup (AccelGroup);
+			main_window.AddAccelGroup (AccelGroup);
 			AddUiFromString (ui_def);
 		}
 
@@ -211,7 +226,11 @@ namespace Search {
 
 		private void Quit (object obj, EventArgs args)
 		{
-			Gtk.Application.Quit ();
+			if (MainWindow.IconEnabled) {
+				main_window.Hide ();
+			} else {
+				Gtk.Application.Quit ();
+			}
 		}
 
 		private void Help (object obj, EventArgs args)

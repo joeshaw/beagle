@@ -36,7 +36,7 @@ namespace Search {
 
 		XKeybinder keybinder = new XKeybinder ();
 
-		private static bool icon_enabled = false;
+		public static bool IconEnabled = false;
 
 		public static void Main (string [] args)
 		{
@@ -51,7 +51,7 @@ namespace Search {
 
 			MainWindow window = new MainWindow ();
 
-			if (query != null && query != "" && !icon_enabled) {
+			if (query != null && query != "" && !IconEnabled) {
 				window.entry.Text = query;
 				window.Search (true);
 			}
@@ -72,7 +72,7 @@ namespace Search {
 					return null;
 
 				case "--icon":
-					icon_enabled = true;
+					IconEnabled = true;
 					break;
 
 				case "--autostarted":
@@ -217,7 +217,7 @@ namespace Search {
 				pages.CurrentPage = pages.PageNum (quicktips);
 			}
 
-			if (icon_enabled) {
+			if (IconEnabled) {
 				tray = new TrayIcon ();
 				tray.Clicked += OnTrayActivated;
 				tray.Search += OnTraySearch;
@@ -326,7 +326,7 @@ namespace Search {
 
 		private void OnWindowDelete (object o, Gtk.DeleteEventArgs args)
 		{
-			if (icon_enabled) {
+			if (IconEnabled) {
 				Hide ();
 				args.RetVal = true;
 			} else {
