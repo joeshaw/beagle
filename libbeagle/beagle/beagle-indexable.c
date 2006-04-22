@@ -72,7 +72,7 @@ beagle_indexable_new (const char *uri)
 	indexable->uri = g_strdup (uri);
 	
 	// Use current time as the indexable timestamp, similar to C# API
-	indexable->timestamp = beagle_timestamp_new_from_unix_time (time ());
+	indexable->timestamp = beagle_timestamp_new_from_unix_time (time (NULL));
 	
 	indexable->delete_content = FALSE;
 	indexable->crawled = TRUE;
