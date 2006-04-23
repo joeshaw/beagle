@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: beagle\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2006-04-01 02:05+0200\n"
-"PO-Revision-Date: 2006-04-01 10:03+0200\n"
+"POT-Creation-Date: 2006-04-23 18:05+0200\n"
+"PO-Revision-Date: 2006-04-23 18:55+0200\n"
 "Last-Translator: Tino Meinen <a.t.meinen@chello.nl>\n"
 "Language-Team: Dutch <vertaling@vrijschrift.org>\n"
 "MIME-Version: 1.0\n"
@@ -110,7 +110,7 @@ msgstr ""
 "\"There be dragons\"</b>"
 
 # handige tips/snelle tips/aanwijzingen/handwijzingen/tips
-#: ../search/Pages/QuickTips.cs:19 ../search/UIManager.cs:65
+#: ../search/Pages/QuickTips.cs:19 ../search/UIManager.cs:80
 msgid "Quick Tips"
 msgstr "Snelle tips"
 
@@ -168,38 +168,38 @@ msgstr "Telefoon werk:"
 msgid "Home Phone:"
 msgstr "Telefoon thuis:"
 
-#: ../search/Tiles/File.cs:33
+#: ../search/Tiles/File.cs:34
 msgid "Reveal in Folder"
 msgstr "Tonen in map"
 
-#: ../search/Tiles/File.cs:34
+#: ../search/Tiles/File.cs:35
 msgid "E-Mail"
 msgstr "E-mail"
 
 #. AddAction (new TileAction (Catalog.GetString ("Instant-Message"), InstantMessage));
 #. FIXME: s/"gtk-info"/Gtk.Stock.Info/ when we can depend on gtk# 2.8
 #. AddAction (new TileAction (Catalog.GetString ("Show Information"), "gtk-info", ShowInformation));
-#: ../search/Tiles/File.cs:36 ../search/Tiles/Folder.cs:38
+#: ../search/Tiles/File.cs:37 ../search/Tiles/Folder.cs:38
 msgid "Move to Trash"
 msgstr "Naar prullenbak verplaatsen"
 
 # naam/titel
-#: ../search/Tiles/File.cs:132 ../search/Tiles/Note.cs:57
+#: ../search/Tiles/File.cs:125 ../search/Tiles/Note.cs:56
 #: ../search/Tiles/RSSFeed.cs:45 ../search/Tiles/WebHistory.cs:50
 msgid "Title:"
 msgstr "Titel:"
 
 # laatst bekeken
-#: ../search/Tiles/File.cs:135 ../search/Tiles/Folder.cs:51
-#: ../search/Tiles/Note.cs:60
+#: ../search/Tiles/File.cs:128 ../search/Tiles/Folder.cs:51
+#: ../search/Tiles/Note.cs:59
 msgid "Last Edited:"
 msgstr "Laatst bewerkt:"
 
-#: ../search/Tiles/File.cs:139
+#: ../search/Tiles/File.cs:132
 msgid "Author:"
 msgstr "Auteur:"
 
-#: ../search/Tiles/File.cs:143 ../search/Tiles/Folder.cs:54
+#: ../search/Tiles/File.cs:136 ../search/Tiles/Folder.cs:54
 #: ../search/Tiles/Image.cs:81
 msgid "Full Path:"
 msgstr "Volledig pad:"
@@ -224,32 +224,32 @@ msgstr "Instellen als achtergrond"
 msgid "Modified:"
 msgstr "Laatste wijziging:"
 
-#: ../search/Tiles/IMLog.cs:29
+#: ../search/Tiles/IMLog.cs:30
 msgid "IM Conversation"
 msgstr "On-line gesprekken"
 
-#: ../search/Tiles/IMLog.cs:89
+#: ../search/Tiles/IMLog.cs:90
 msgid "Name:"
 msgstr "Naam:"
 
-#: ../search/Tiles/IMLog.cs:90 ../search/Tiles/MailMessage.cs:89
+#: ../search/Tiles/IMLog.cs:91 ../search/Tiles/MailMessage.cs:90
 msgid "Date Received:"
 msgstr "Ontvangen op:"
 
-#: ../search/Tiles/MailAttachment.cs:45
+#: ../search/Tiles/MailAttachment.cs:46
 msgid "Mail attachment"
 msgstr "Mailbijlage"
 
 # met/in/via e-mail verzenden
-#: ../search/Tiles/MailMessage.cs:53
+#: ../search/Tiles/MailMessage.cs:54
 msgid "Send in Mail"
 msgstr "Via e-mail verzenden"
 
-#: ../search/Tiles/MailMessage.cs:83
+#: ../search/Tiles/MailMessage.cs:84
 msgid "Subject:"
 msgstr "Onderwerp:"
 
-#: ../search/Tiles/MailMessage.cs:86
+#: ../search/Tiles/MailMessage.cs:87
 msgid "From:"
 msgstr "Van:"
 
@@ -365,11 +365,12 @@ msgid_plural "{0} years ago"
 msgstr[0] "{0} jaar geleden"
 msgstr[1] "{0} jaar geleden"
 
+# duur/lengte
 #. FIXME: We need filters for video in Beagle.
 #. They should land soon when entagged-sharp gets video support.
 #: ../search/Tiles/Video.cs:27
 msgid "Unknown duration"
-msgstr "Onbekende map"
+msgstr "Onbekende lengte"
 
 #: ../search/Tiles/WebHistory.cs:53
 msgid "URL:"
@@ -382,7 +383,7 @@ msgstr "Benaderd:"
 # Bureuablad doorzoeken/desktop doorzoeken/desktop zoekprogramma/zoekhulp
 #: ../search/Tray/TrayIcon.cs:32
 msgid "Desktop Search"
-msgstr "Desktop doorzoeken"
+msgstr "Desktop doorzoeking"
 
 #: ../search/Tray/TrayIcon.cs:57
 msgid "No Recent Searches"
@@ -600,123 +601,128 @@ msgstr ""
 "mensen\n"
 "vrienden"
 
-#: ../search/UIManager.cs:35
+# Bureuablad doorzoeken/desktop doorzoeken/desktop zoekprogramma/zoekhulp
+#: ../search/UIManager.cs:41
+msgid "Close Desktop Search"
+msgstr "Desktop doorzoeking sluiten"
+
+# Bureuablad doorzoeken/desktop doorzoeken/desktop zoekprogramma/zoekhulp
+#: ../search/UIManager.cs:46 ../search/UIManager.cs:68
+msgid "Exit Desktop Search"
+msgstr "Desktop doorzoeking afsluiten"
+
+#: ../search/UIManager.cs:53
 msgid "_Search"
 msgstr "_Zoeken"
 
-#: ../search/UIManager.cs:38
+#: ../search/UIManager.cs:56
 msgid "_Actions"
 msgstr "_Acties"
 
-#: ../search/UIManager.cs:41
+#: ../search/UIManager.cs:59
 msgid "Sor_t"
 msgstr "_Sorteren"
 
-#: ../search/UIManager.cs:44
+#: ../search/UIManager.cs:62
 msgid "_Help"
 msgstr "_Hulp"
 
-# Bureuablad doorzoeken/desktop doorzoeken/desktop zoekprogramma/zoekhulp
-#: ../search/UIManager.cs:49 ../search/UIManager.cs:53
-msgid "Exit Desktop Search"
-msgstr "Desktop doorzoeken afsluiten"
-
-#: ../search/UIManager.cs:56
+#: ../search/UIManager.cs:71
 msgid "_Contents"
 msgstr "In_houd"
 
-#: ../search/UIManager.cs:58
+#: ../search/UIManager.cs:73
 msgid "Help - Table of Contents"
 msgstr "Hulp - Inhoud"
 
 # Bureuablad doorzoeken/desktop doorzoeken/desktop zoekprogramma/zoekhulp
-#: ../search/UIManager.cs:62
+#: ../search/UIManager.cs:77
 msgid "About Desktop Search"
-msgstr "Over 'Desktop doorzoeken'"
+msgstr "Over 'Desktop doorzoeking'"
 
 # alles/overal (doorzoeken)
-#: ../search/UIManager.cs:75
+#: ../search/UIManager.cs:99
 msgid "_Everywhere"
 msgstr "_Overal"
 
-#: ../search/UIManager.cs:77
+#: ../search/UIManager.cs:101
 msgid "Search everywhere"
 msgstr "Alles doorzoeken"
 
-#: ../search/UIManager.cs:80
+#: ../search/UIManager.cs:104
 msgid "_Applications"
 msgstr "_Toepassingen"
 
 # in toepassingen zoeken/toepassingen doorzoeken
-#: ../search/UIManager.cs:82
+#: ../search/UIManager.cs:106
 msgid "Search applications"
 msgstr "In toepassingen zoeken"
 
-#: ../search/UIManager.cs:85
+#: ../search/UIManager.cs:109
 msgid "_Contacts"
 msgstr "_Contacten"
 
-#: ../search/UIManager.cs:87
+#: ../search/UIManager.cs:111
 msgid "Search contacts"
 msgstr "In contacten zoeken"
 
-#: ../search/UIManager.cs:90
+#: ../search/UIManager.cs:114
 msgid "_Documents"
 msgstr "_Documenten"
 
-#: ../search/UIManager.cs:92
+#: ../search/UIManager.cs:116
 msgid "Search documents"
 msgstr "In documenten zoeken"
 
-#: ../search/UIManager.cs:95
+#: ../search/UIManager.cs:119
 msgid "Conve_rsations"
 msgstr "_Gesprekken"
 
 # logboeken van expresberichten/
-#: ../search/UIManager.cs:97
+#: ../search/UIManager.cs:121
 msgid "Search E-Mail and Instant Messaging logs"
 msgstr "In e-mail en expresberichten zoeken"
 
-#: ../search/UIManager.cs:100
+#: ../search/UIManager.cs:124
 msgid "Images"
 msgstr "Afbeeldingen"
 
-#: ../search/UIManager.cs:102
+#: ../search/UIManager.cs:126
 msgid "Search images"
 msgstr "In afbeeldingen zoeken"
 
-#: ../search/UIManager.cs:105
+#: ../search/UIManager.cs:129
 msgid "Media"
 msgstr "Media"
 
 # in audio en videobestanden/beeld en geluidbestanden
-#: ../search/UIManager.cs:107
+#: ../search/UIManager.cs:131
 msgid "Search sound and video files"
 msgstr "In beeld- en geluidbestanden zoeken"
 
-#: ../search/UIManager.cs:114
+#: ../search/UIManager.cs:138
 msgid "Date _Modified"
 msgstr "_Laatste wijziging"
 
 # meest recentelijk gewijzigde bestanden
-#: ../search/UIManager.cs:115
+#: ../search/UIManager.cs:139
 msgid "Sort the most-recently-modified matches first"
 msgstr "Meest recente resultaten eerst"
 
-#: ../search/UIManager.cs:118
+#: ../search/UIManager.cs:142
 msgid "_Name"
 msgstr "_Naam"
 
-#: ../search/UIManager.cs:119
+#: ../search/UIManager.cs:143
 msgid "Sort matches by name"
 msgstr "Resultaten sorteren op naam"
 
-#: ../search/UIManager.cs:122
+#: ../search/UIManager.cs:146
 msgid "_Relevance"
 msgstr "_Relevantie"
 
 # eerst/bovenaan
-#: ../search/UIManager.cs:123
+#: ../search/UIManager.cs:147
 msgid "Sort the best matches first"
 msgstr "De beste resultaten eerst"
 
@@ -1045,7 +1051,7 @@ msgstr "A_utomatisch de zoek- en indexeerdiensten starten"
 
 #: ../tools/beagle-settings.desktop.in.h:1
 msgid "Configure Desktop Search & Indexing"
-msgstr "Desktop zoeken en indexeren configureren"
+msgstr "Desktop doorzoeking en indexeren configureren"
 
 #: ../tools/beagle-settings.desktop.in.h:2
 msgid "Configure search & indexing properties"
