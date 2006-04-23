@@ -84,7 +84,13 @@ namespace Search {
 						 OnFocusSearchEntry),
 				new ActionEntry ("FocusSearchEntry2", null, "",
 						 "<control>L", null,
-						 OnFocusSearchEntry)
+						 OnFocusSearchEntry),
+				new ActionEntry ("HideWindow", null, "",
+						 "Escape", null,
+						 Quit),
+				new ActionEntry ("HideWindow2", null, "",
+						 "<control>W", null,
+						 Quit)
 			};
 			actions.Add (entries);
 
@@ -200,6 +206,8 @@ namespace Search {
 		"  </menubar>" +
 		"  <accelerator action='FocusSearchEntry'/>" +
 		"  <accelerator action='FocusSearchEntry2'/>" +
+		"  <accelerator action='HideWindow'/>" +
+		"  <accelerator action='HideWindow2'/>" +
 		"</ui>";
 
 		private void Preferences (object obj, EventArgs args)
