@@ -64,11 +64,9 @@ namespace Beagle.Filters {
 					if (digest_parts[0].Equals ("MD5"))
 						download_size += Int64.Parse (digest_parts[3]);
 				}
-				AddProperty (Beagle.Property.NewUnsearched ("fixme:download_size", download_size));
+				Size = download_size.ToString ();
 				digest_reader.Close ();
 			}
-			
-
 		}
 
 		override protected void PullPackageProperties () 
@@ -95,14 +93,15 @@ namespace Beagle.Filters {
 				// check for meta data
 				MatchCollection matches;
 				matches = metadata_pattern.Matches (str);
+
 				if (matches.Count > 0) {
 					foreach (Match the_match in matches) {
 						String key = the_match.Groups ["key"].ToString ();
 						String val = the_match.Groups ["value"].ToString ();
 						if (key.Equals ("DESCRIPTION"))
-							Description = val;
+							Summary = val; // Ebuild descriptions are short - use them as summary.
 						else if (key.Equals ("LICENSE"))
-							License = val;
+							AddProperty (Beagle.Property.NewUnsearched ("dc:rights", val));
 						else if (key.Equals ("HOMEPAGE"))
 							Homepage = val;
 					}

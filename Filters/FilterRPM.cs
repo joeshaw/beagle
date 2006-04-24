@@ -55,9 +55,9 @@ namespace Beagle.Filters {
 
 		    // mapping between rpm tagname and beagle property name
     		    hash_property_list ["Release"]       = new RpmPropertyInfo ("fixme:release", true);
-    		    hash_property_list ["Group"]         = new RpmPropertyInfo ("fixme:group", false);
-    		    hash_property_list ["Os"]            = new RpmPropertyInfo ("fixme:os", false);
-    		    hash_property_list ["Arch"]          = new RpmPropertyInfo ("fixme:arch", false);
+    		    hash_property_list ["License"]       = new RpmPropertyInfo ("dc:rights", true);
+    		    hash_property_list ["Os"]            = new RpmPropertyInfo ("fixme:os", true);
+    		    hash_property_list ["Arch"]          = new RpmPropertyInfo ("fixme:arch", true);
     		    hash_property_list ["Changelogtext"] = new RpmPropertyInfo ("fixme:changelog", false);
     		}
 
@@ -118,10 +118,12 @@ namespace Beagle.Filters {
 			if (attr_name != "Basenames" &&
 			    attr_name != "Name" &&
 			    attr_name != "Version" &&
-			    attr_name != "License" &&
-			    attr_name != "Description" &&
-			    attr_name != "Url" &&
 			    attr_name != "Summary" &&
+			    attr_name != "Description" &&
+			    attr_name != "Size" &&
+			    attr_name != "Packager" &&
+			    attr_name != "Group" &&
+			    attr_name != "Url" &&
 			    prop_info == null)
 				return;
 
@@ -135,12 +137,6 @@ namespace Beagle.Filters {
 				string content = HtmlAgilityPack.HtmlEntity.DeEntitize (reader.ReadInnerXml ());
 				
 				switch (attr_name) {
-					case "Basenames":
-						// store basenames values as Text - they are like the "text"-content of rpm files
-						AppendText (content);
-						AppendWhiteSpace ();
-						break;
-
 					case "Name":
 						PackageName = content;
 						break;
@@ -149,22 +145,39 @@ namespace Beagle.Filters {
 						PackageVersion = content;
 						break;
 
-					case "License":
-						License = content;
-						break;
-
 					case "Summary":
 						Summary = content;
 						break;
 
 					case "Description":
-						Description = content;
+						AppendText (content);
+						AppendWhiteSpace ();
+						break;
+
+					case "Basenames":
+						AddProperty (Beagle.Property.NewUnstored ("fixme:files", content));
+						break;
+
+					case "Size":
+						Size = content;
+						break;
+
+					case "Group":
+						Category = content.Replace ('/', ' ');
 						break;
 
 					case "Url":
 						Homepage = content;
 						break;
-						
+
+					case "Packager":
+						// FIXME: Not a correct way to extract name-email info.
+						string[] name_email = content.Split ('<');
+						PackagerName = name_email [0];
+						if (name_email.Length > 1)
+							PackagerEmail = name_email [1].Replace ('>', ' ');
+						break;
+
 					default:
 						if (prop_info == null)
 							break;

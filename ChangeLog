@@ -1,3 +1,9 @@
+2006-04-24  Debajyoti Bera <dbera.web@gmail.com>
+
+	* Filters/FilterPackage.cs,FilterDeb.cs,FilterEbuild.cs,FilterRPM.cs:
+	Add FilterDeb. Modified FilterPackage and deriving packages to add
+	make some of the fields generic to any package.
+
 2006-04-24  Daniel Drake <dsd@gentoo.org>
 
 	* Filters/entagged-sharp/: Resync. Includes ID3 UTF16 fix, new vorbis
