@@ -44,6 +44,13 @@ namespace Beagle.Filters {
 
 		/* Some of the metadata common in all packages.
 		 * Use them to display general package information in beagle frontends.
+		 *  - PackageName - name of the package
+		 *  - PackageVersion - package version
+		 *  - Summary - short description of the package (if available)
+		 *  - Category - category of the package (if available)
+		 *  - Homepage - Homepage URL of the package/project (if available)
+		 *  - Packager - Packager information of the package (if available)
+		 *  - Size - Size of the package (in bytes)
 		 */
 
 		// Name of the package
@@ -72,10 +79,6 @@ namespace Beagle.Filters {
 			set { category = value; }
 		}
 
-		/* Use either the homepage or packager to provide a external link for more information
-		 * Not all packages have both set; however most have at least one
-		 */
-
 		// Homepage of the package
 		protected string Homepage {
 			get { return homepage; }
@@ -83,6 +86,8 @@ namespace Beagle.Filters {
 		}
 
 		// Packager.
+		// Use either the homepage or packager to provide a external link for more information
+		// Not all packages have both set; however most have at least one
 		protected string PackagerName {
 			get { return packager_name; }
 			set { packager_name = value; }
