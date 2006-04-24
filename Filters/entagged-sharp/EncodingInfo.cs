@@ -78,7 +78,15 @@ namespace Entagged.Audioformats
         //Sets the length of the song in seconds
         public TimeSpan Duration {
             set { content["DURATION"] = value; }
-            get { return (TimeSpan) content["DURATION"]; }
+            get { 
+                object o = content["DURATION"];
+                if(o is TimeSpan) {
+                    return (TimeSpan)o;
+                }
+                
+                int duration = (int)o;
+                return duration < 0 ? new TimeSpan(0) : new TimeSpan(duration * TimeSpan.TicksPerSecond);
+            }
         }
         
         public bool Vbr {

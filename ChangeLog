@@ -1,3 +1,8 @@
+2006-04-24  Daniel Drake <dsd@gentoo.org>
+
+	* Filters/entagged-sharp/: Resync. Includes ID3 UTF16 fix, new vorbis
+	mimetype, and a couple of other bits.
+
 2006-04-21  Debajyoti Bera <dbera.web@gmail.com>
 
 	* Filters/FilterPackage.cs, Filters/FilterRPM.cs,

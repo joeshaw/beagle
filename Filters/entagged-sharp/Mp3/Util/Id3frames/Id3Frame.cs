@@ -147,16 +147,16 @@ namespace Entagged.Audioformats.Mp3.Util.Id3Frames {
 					zerochars = 2;
 				}
 				if (b[offset] == (byte) 0xFE && b[offset + 1] == (byte) 0xFF) {
-					result = Encoding.GetEncoding("UTF-16BE").GetString(b, offset + 2, length - 2 - zerochars);
+					result = Encoding.Unicode.GetString(b, offset + 2, length - 2 - zerochars);
 				} else if (b[offset] == (byte) 0xFF && b[offset + 1] == (byte) 0xFE) {
-					result = Encoding.GetEncoding("UTF-16LE").GetString(b, offset + 2, length - 2 - zerochars);
+					result = Encoding.Unicode.GetString(b, offset + 2, length - 2 - zerochars);
 				}  else {
 					/*
 					 * Now we have a little problem. The tag is not id3-spec
 					 * conform. And since I don't have a way to see if its little or
 					 * big endian, i decide for the windows default little endian.
 					 */
-					result = Encoding.GetEncoding("UTF-16LE").GetString(b, offset, length - zerochars);
+					result = Encoding.Unicode.GetString(b, offset, length - zerochars);
 				}
 			} else {
 				int zerochars = 0;
@@ -179,7 +179,7 @@ namespace Entagged.Audioformats.Mp3.Util.Id3Frames {
 		protected byte[] GetBytes(string s, string encoding) {
 			byte[] result = null;
 			if (encoding == "UTF-16") {
-				result = System.Text.Encoding.GetEncoding("UTF-16LE").GetBytes(s);
+				result = System.Text.Encoding.Unicode.GetBytes(s);
 				// 2 for BOM and 2 for terminal character
 				byte[] tmp = new byte[result.Length + 4];
 				Copy(result, tmp, 2);

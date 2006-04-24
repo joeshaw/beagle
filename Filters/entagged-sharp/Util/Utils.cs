@@ -100,13 +100,9 @@ namespace Entagged.Audioformats.Util
             string[] ret = new string[taglist.Count];
             int i = 0;
             
-            foreach (string field in taglist) {
-                if(field != null && field.Trim().Length == 0) {
-                    ret[i++] = field;
-                } else {
-                    ret[i++] = field;
-                }
-            }
+            foreach (string field in taglist)
+                ret[i++] = (field != null && field.Trim().Length > 0) ?
+                    field : null;
             
             return ret;
         }

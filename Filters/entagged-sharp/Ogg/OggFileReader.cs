@@ -33,6 +33,7 @@ namespace Entagged.Audioformats.Ogg
 	[SupportedMimeType ("application/x-ogg")]
 	[SupportedMimeType ("audio/vorbis")]
 	[SupportedMimeType ("audio/x-vorbis")]
+	[SupportedMimeType ("audio/x-vorbis+ogg")]
 	[SupportedMimeType ("audio/ogg")]
 	[SupportedMimeType ("audio/x-ogg")]
 	[SupportedMimeType ("entagged/ogg")]
