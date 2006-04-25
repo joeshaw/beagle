@@ -44,28 +44,33 @@ namespace Search.Tiles {
 		protected override DetailsPane GetDetails ()
 		{
 			DetailsPane details = new DetailsPane ();
+			uint i = 0;
+				
+			details.AddBoldLabel (Title, i++, 1);
+			
+			string org = Hit.GetFirstProperty ("fixme:Org");
+			string title = Hit.GetFirstProperty ("fixme:Title");
+			string email = Hit.GetFirstProperty ("fixme:Email");
+			string mobile_phone = Hit.GetFirstProperty ("fixme:MobilePhone");
+			string work_phone = Hit.GetFirstProperty ("fixme:BusinessPhone");
+			string home_phone = Hit.GetFirstProperty ("fixme:HomePhone");
+			
+			if (org != null && org != "")
+				details.AddLabel (org, i++, 1);
+			if (title != null && title != "")
+				details.AddLabel (title, i++, 1);
 
-			details.AddBoldLabel (Title, 0, 1);
-			details.AddLabel (Hit.GetFirstProperty ("fixme:Org"), 1, 1);
-			details.AddLabel (Hit.GetFirstProperty ("fixme:Title"), 2, 1);
-			details.AddLabel ("", 3, 1);
+			details.AddLabel ("", i++, 1);
 
-			details.AddLabelPair (Catalog.GetString ("E-Mail:"),
-					      Hit.GetFirstProperty ("fixme:Email"),
-					      4, 1);
-			details.AddLabelPair (Catalog.GetString ("Mobile Phone:"),
-					      Hit.GetFirstProperty ("fixme:MobilePhone"),
-					      5, 1);
-			if (Hit.GetFirstProperty ("fixme:BusinessPhone") != null) {
-				details.AddLabelPair (Catalog.GetString ("Work Phone:"),
-						      Hit.GetFirstProperty ("fixme:BusinessPhone"),
-						      6, 1);
-			} else {
-				details.AddLabelPair (Catalog.GetString ("Home Phone:"),
-						      Hit.GetFirstProperty ("fixme:HomePhone"),
-						      6, 1);
-			}
-
+			if (email != null && email != "")
+				details.AddLabelPair (Catalog.GetString ("E-Mail:"), email, i++, 1);			
+			if (mobile_phone != null && mobile_phone != "")
+				details.AddLabelPair (Catalog.GetString ("Mobile Phone:"), mobile_phone, i++, 1);	
+			if (work_phone != null && work_phone != "")
+				details.AddLabelPair (Catalog.GetString ("Work Phone:"), work_phone, i++, 1);
+			if (home_phone != null && home_phone != "")
+				details.AddLabelPair (Catalog.GetString ("Home Phone:"), home_phone, i++, 1);
+			
 			return details;
 		}
 	}

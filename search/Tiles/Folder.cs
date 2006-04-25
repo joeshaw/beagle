@@ -55,8 +55,8 @@ namespace Search.Tiles {
 					      Hit.Uri.LocalPath,
 					      2, 1);
 
-			details.AddLabel ("", 3, 1);
-			details.AddLabel (Description, 4, 1);
+			//details.AddLabel ("", 3, 1);
+			details.AddLabel (Description, 3, 1);
 
 			return details;
 		}

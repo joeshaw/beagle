@@ -5,21 +5,21 @@ namespace Search.Tiles {
 
 	public abstract class TileFlat : Tile {
 
-		protected Gtk.Label subject, from, date;
+		protected Gtk.Label Subject, From, Date;
 
 		protected TileFlat (Beagle.Hit hit, Beagle.Query query) : base (hit, query)
 		{
-			subject = WidgetFu.NewLabel ();
-			WidgetFu.EllipsizeLabel (subject, 40);
-			HBox.PackStart (subject, true, true, 3);
+			Subject = WidgetFu.NewLabel ();
+			WidgetFu.EllipsizeLabel (Subject, 40);
+			HBox.PackStart (Subject, true, true, 3);
 
-			from = WidgetFu.NewLabel ();
-			from.UseMarkup = true;
-			WidgetFu.EllipsizeLabel (from, 20);
-			HBox.PackStart (from, false, false, 3);
+			From = WidgetFu.NewLabel ();
+			From.UseMarkup = true;
+			WidgetFu.EllipsizeLabel (From, 20);
+			HBox.PackStart (From, false, false, 3);
 
-			date = WidgetFu.NewLabel ();
-			HBox.PackStart (date, false, false, 3);
+			Date = WidgetFu.NewLabel ();
+			HBox.PackStart (Date, false, false, 3);
 
 			HBox.ShowAll ();
 		}
@@ -28,22 +28,21 @@ namespace Search.Tiles {
 		{
 			base.OnRealized ();
 
-			if ((icon.StorageType == ImageType.Empty ||
-			     icon.StorageType == ImageType.Pixbuf) &&
-			    icon.Pixbuf == null)
-				LoadIcon (icon, 16);
+			if ((Icon.StorageType == ImageType.Empty || Icon.StorageType == ImageType.Pixbuf) &&
+			    Icon.Pixbuf == null)
+				LoadIcon (Icon, 16);
 		}
 
 		public Gtk.Label SubjectLabel {
-			get { return subject; }
+			get { return Subject; }
 		}
 
 		public Gtk.Label FromLabel {
-			get { return from; }
+			get { return From; }
 		}
 
 		public Gtk.Label DateLabel {
-			get { return date; }
+			get { return Date; }
 		}
 	}
 }

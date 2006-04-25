@@ -27,12 +27,12 @@ namespace Search.Tiles {
 		{
 			Group = TileGroup.Conversations;
 
-			subject.LabelProp = Catalog.GetString ("IM Conversation");
-			from.LabelProp = "<b>" + hit.GetFirstProperty ("fixme:speakingto") + "</b>";
+			Subject.LabelProp = Catalog.GetString ("IM Conversation");
+			From.LabelProp = "<b>" + hit.GetFirstProperty ("fixme:speakingto") + "</b>";
 
 			try {
 				Timestamp = Utils.ParseTimestamp (hit.GetFirstProperty ("fixme:starttime"));
-				date.LabelProp = Utils.NiceShortDate (Timestamp);
+				Date.LabelProp = Utils.NiceShortDate (Timestamp);
 			} catch {}
 		}
 
@@ -52,16 +52,6 @@ namespace Search.Tiles {
 
 		protected override void LoadIcon (Gtk.Image image, int size)
 		{
-			if (size > 32) {
-				// FIXME: We do not respect the icon size request
-				Gdk.Pixbuf icon = LoadBuddyIcon ();
-				
-				if (icon != null) {
-					image.Pixbuf = icon;
-					return;
-				}
-			}
-
 			Hashtable icons = (Hashtable)all_icons[size];
 			if (icons == null)
 				all_icons[size] = icons = IconsForSize (size);
@@ -87,8 +77,9 @@ namespace Search.Tiles {
 		{
 			DetailsPane details = new DetailsPane ();
 
+			details.Icon.Pixbuf = LoadBuddyIcon ();			
 			details.AddLabelPair (Catalog.GetString ("Name:"), FromLabel.Text, 0, 1);
-			details.AddLabelPair (Catalog.GetString ("Date Received:"), DateLabel.Text, 1, 1);
+			details.AddLabelPair (Catalog.GetString ("Date Received:"), Utils.NiceLongDate (Timestamp), 1, 1);
 
 			GotSnippet += SetSubject;
 			details.AddSnippet (2, 1);
@@ -98,7 +89,7 @@ namespace Search.Tiles {
 
 		private void SetSubject (string snippet)
 		{
-			subject.Markup = snippet;
+			Subject.Markup = snippet;
 		}
 
 		public override void Open ()

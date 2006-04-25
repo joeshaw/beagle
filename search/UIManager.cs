@@ -87,10 +87,10 @@ namespace Search {
 						 OnFocusSearchEntry),
 				new ActionEntry ("HideWindow", null, "",
 						 "Escape", null,
-						 Quit),
+						 OnHideWindow),
 				new ActionEntry ("HideWindow2", null, "",
 						 "<control>W", null,
-						 Quit)
+						 OnHideWindow)
 			};
 			actions.Add (entries);
 
@@ -230,6 +230,12 @@ namespace Search {
 		{
 			if (ShowQuickTips != null)
 				ShowQuickTips ();
+		}
+
+		private void OnHideWindow (object obj, EventArgs args)
+		{
+			if (MainWindow.IconEnabled)
+				main_window.Hide ();
 		}
 
 		private void Quit (object obj, EventArgs args)

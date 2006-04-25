@@ -49,7 +49,7 @@ namespace Search.Tiles {
 			get { return query; }
 		}
 
-		protected TileGroup group;
+		private TileGroup group;
 		public TileGroup Group {
 			get { return group; }
 			set { group = value; }
@@ -60,7 +60,7 @@ namespace Search.Tiles {
 			get { return hbox; }
 		}
 
-		protected Gtk.Image icon;
+		private Gtk.Image icon;
 		public Gtk.Image Icon {
 			get { return icon; }
 			set { icon = value; }
@@ -290,21 +290,21 @@ namespace Search.Tiles {
 		}
 
 		DetailsPane details;
-		bool gotDetails = false;
-
 		public Gtk.Widget Details {
 			get {
-				if (!gotDetails) {
+				if (details == null) {
 					details = GetDetails ();
 					if (details != null) {
-						LoadIcon (details.Icon, 128);
+						if (details.Icon.Pixbuf == null)
+							LoadIcon (details.Icon, 128);
+
 						if (details.Snippet != null) {
 							GotSnippet += details.GotSnippet;
 							RequestSnippet ();
 						}
+						
 						details.Show ();
 					}
-					gotDetails = true;
 				}
 				return details;
 			}

@@ -49,10 +49,10 @@ namespace Search.Tiles {
 					      Hit ["dc:creator"], // FIXME: Blog name
 					      1, 1);
 			details.AddLabelPair (Catalog.GetString ("Date Viewed:"),
-					      Utils.NiceShortDate (Timestamp),
-					      1, 3);
+					      Utils.NiceLongDate (Timestamp),
+					      2, 1);
 
-			details.AddSnippet (2, 1);
+			details.AddSnippet (3, 1);
 
 			return details;
 		}

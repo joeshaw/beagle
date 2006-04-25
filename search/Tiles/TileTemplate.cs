@@ -34,10 +34,9 @@ namespace Search.Tiles {
 		{
 			base.OnRealized ();
 
-			if ((icon.StorageType == ImageType.Empty ||
-			     icon.StorageType == ImageType.Pixbuf) &&
-			    icon.Pixbuf == null)
-				LoadIcon (icon, 32);
+			if ((Icon.StorageType == ImageType.Empty || Icon.StorageType == ImageType.Pixbuf) &&
+			    Icon.Pixbuf == null)
+				LoadIcon (Icon, 32);
 		}
 
 		public override string Title {

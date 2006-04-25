@@ -44,11 +44,11 @@ namespace Search.Tiles {
 		{
 			Group = TileGroup.Conversations;
 
-			subject.LabelProp = Title = hit.GetFirstProperty ("dc:title");
-			from.LabelProp = "<b>" + GetAddress (hit) + "</b>";
+			Subject.LabelProp = Title = hit.GetFirstProperty ("dc:title");
+			From.LabelProp = "<b>" + GetAddress (hit) + "</b>";
 			try {
 				Timestamp = Utils.ParseTimestamp (hit.GetFirstProperty ("fixme:date"));
-				date.LabelProp = Utils.NiceShortDate (Timestamp);
+				Date.LabelProp = Utils.NiceShortDate (Timestamp);
 			} catch {}
 
 			AddAction (new TileAction (Catalog.GetString ("Send in Mail"), SendInMail));
@@ -88,7 +88,7 @@ namespace Search.Tiles {
 					      GetAddress (Hit),
 					      1, 1);
 			details.AddLabelPair (Catalog.GetString ("Date Received:"),
-					      DateLabel.Text,
+					      Utils.NiceLongDate (Timestamp),
 					      2, 1);
 
 			details.AddSnippet (3, 1);
