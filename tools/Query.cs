@@ -314,9 +314,7 @@ class QueryTool {
 				ReadBackendMappings ();
 				QueryDriver.ReadKeywordMappings ();
 
-				Console.WriteLine (
-					"'query string' can include specific keywords.\n" +
-					"Supported keywords are:");
+				Console.WriteLine ("Supported query keywords are:");
 
 				IDictionaryEnumerator property_keyword_enum = PropertyKeywordFu.MappingEnumerator;
 				while (property_keyword_enum.MoveNext ()) {
