@@ -108,11 +108,6 @@ namespace Beagle.Daemon {
 			property_table.Add ("artist",
 					    new PropertyDetail (PropertyType.Text, "fixme:artist", "Artist"));
 
-			// date of content creation - maps to DC element "date"
-			// well we dont support date queries as of now ...
-			//property_table.Add ("date",
-			//		    new PropertyDetail (PropertyType.Date, "dc:date", "Date of creation"));
-
 			// ---------------- content mappings for media ------------------------
 			
 			// album

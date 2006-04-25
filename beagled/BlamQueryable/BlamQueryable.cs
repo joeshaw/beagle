@@ -46,7 +46,8 @@ namespace Beagle.Daemon.BlamQueryable {
 
 		// add versioning
 		// v1: changed property names to match DC element names
-		private const int INDEX_VERSION = 1;
+		// v2: remove dc:date, use Timestamp property.
+		private const int INDEX_VERSION = 2;
 
 		public BlamQueryable () : base ("BlamIndex", INDEX_VERSION)
 		{
@@ -270,7 +271,6 @@ namespace Beagle.Daemon.BlamQueryable {
 			// change property names to DC names, as far as allowed
 			indexable.AddProperty (Property.New ("dc:title", title));
 			indexable.AddProperty (Property.New ("dc:creator", author));
-			indexable.AddProperty (Property.NewDate ("dc:date", pub_date.ToUniversalTime ()));
 			indexable.AddProperty (Property.NewKeyword ("dc:identifier", link));
 			indexable.AddProperty (Property.NewKeyword ("dc:source", channel_url));
 			indexable.AddProperty (Property.New ("dc:publisher", channel_name));

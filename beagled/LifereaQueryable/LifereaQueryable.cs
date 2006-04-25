@@ -55,7 +55,8 @@ namespace Beagle.Daemon.LifereaQueryable {
 
 		// add versioning info
 		// v1: change property names to match DC element names
-		private const int INDEX_VERSION = 1;
+		// v2: remove dc:date, use Timestamp property.
+		private const int INDEX_VERSION = 2;
 		
 		public LifereaQueryable () : base ("LifereaIndex", INDEX_VERSION)
 		{
@@ -327,7 +328,6 @@ namespace Beagle.Daemon.LifereaQueryable {
 					indexable.AddProperty (Property.New ("dc:creator", attrib.Value));
 				}
 			}
-			indexable.AddProperty (Property.NewDate ("dc:date", date));
 			indexable.AddProperty (Property.NewKeyword ("dc:identifier", current_item.Source));
 			indexable.AddProperty (Property.NewKeyword ("dc:source", feed_source));
 			indexable.AddProperty (Property.New ("dc:publisher", publisher));

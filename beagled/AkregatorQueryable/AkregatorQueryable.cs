@@ -71,7 +71,8 @@ namespace Beagle.Daemon.AkregatorQueryable {
 		// add versioning of index
 		// v1: change property names to DC names,
 		//	store feed_file as ParentUri
-		private const int INDEX_VERSION = 1;
+		// v2: remove dc:date, use Timestamp property.
+		private const int INDEX_VERSION = 2;
 		
 		public AkregatorQueryable () : base ("AkregatorIndex", INDEX_VERSION)
 		{
@@ -375,7 +376,6 @@ namespace Beagle.Daemon.AkregatorQueryable {
 
 			// replace property names with Dublin Core names
 			indexable.AddProperty (Property.New ("dc:title", current_item.Title));
-			indexable.AddProperty (Property.NewDate ("dc:date", date));
 			indexable.AddProperty (Property.NewKeyword ("dc:identifier", current_item.Link));
 			indexable.AddProperty (Property.NewKeyword ("dc:source", channel_link));
 			indexable.AddProperty (Property.New ("dc:publisher", channel_title));

@@ -1,3 +1,10 @@
+2006-04-25  Debajyoti Bera <dbera.web@gmail.com>
+
+	* beagled/FilterFactory.cs: Only set indexable timestamp if the
+	already set timestamp is invalid (i.e. the default DateTime(0)).
+	* beagled/FeedBackends: Remove dc:date properties. Use
+	indexable.Timestamp for storing the date.
+
 2006-04-24  Debajyoti Bera <dbera.web@gmail.com>
 
 	* Filters/FilterPackage.cs,FilterDeb.cs,FilterEbuild.cs,FilterRPM.cs:
