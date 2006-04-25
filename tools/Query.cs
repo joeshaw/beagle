@@ -25,14 +25,17 @@
 //
 
 using System;
+using System.IO;
 using System.Collections;
 using System.Globalization;
+using System.Reflection;
 using System.Threading;
 using System.Text;
 
 using Gtk;
 
 using Beagle;
+using Beagle.Util;
 using Beagle.Daemon;
 
 class QueryTool {
@@ -142,6 +145,8 @@ class QueryTool {
 			"                \t\tDate must be in the form \"yyyyMMdd\" or \"yyyyMMddHHmmss\"\n" +
 			"  --end <date>\t\t\tConstrain query to items before specified date.\n" +
 			"              \t\t\tDate must be in the form \"yyyyMMdd\" or \"yyyyMMddHHmmss\"\n" +
+			"  --keywords\t\t\tLists the keywords allowed in 'query string'.\n" +
+			"            \t\t\tKeyword queries can be specified as keywordname:value e.g. ext:jpg\n" +
 			"  --live-query\t\t\tRun continuously, printing notifications if a\n" +
 			"              \t\t\tquery changes.\n" +
 			"  --stats-only\t\t\tOnly display statistics about the query, not\n" +
@@ -154,16 +159,47 @@ class QueryTool {
 
 		Console.WriteLine (usage);
 
-		Console.WriteLine (
-			"'query string' can include specific keywords e.g. author:jon.\n" +
-			"Supported keywords are:");
-		IDictionaryEnumerator property_keyword_enum = PropertyKeywordFu.MappingEnumerator;
-		while (property_keyword_enum.MoveNext ()) {
-			PropertyDetail prop = property_keyword_enum.Value as PropertyDetail;
-			Console.WriteLine ("  {0,-12} for {1}", property_keyword_enum.Key, prop.Description);
+		System.Environment.Exit (0);
+	}
+
+	static void ReadBackendMappings ()
+	{
+		ArrayList assemblies = ReflectionFu.ScanEnvironmentForAssemblies ("BEAGLE_BACKEND_PATH", PathFinder.BackendDir);
+
+		// Add BeagleDaemonLib if it hasn't already been added.
+		bool found_daemon_lib = false;
+		foreach (Assembly assembly in assemblies) {
+			if (assembly.GetName ().Name == "BeagleDaemonLib") {
+				found_daemon_lib = true;
+				break;
+			}
 		}
 
-		System.Environment.Exit (0);
+		if (!found_daemon_lib) {
+			try {
+				assemblies.Add (Assembly.LoadFrom (Path.Combine (PathFinder.PkgLibDir, "BeagleDaemonLib.dll")));
+			} catch (FileNotFoundException) {
+				Console.WriteLine ("WARNING: Could not find backend list.");
+				Environment.Exit (1);
+			}
+		}
+
+		foreach (Assembly assembly in assemblies) {
+			foreach (Type type in ReflectionFu.ScanAssemblyForInterface (assembly, typeof (Beagle.Daemon.IQueryable))) {
+				object[] attributes = type.GetCustomAttributes (false);
+				foreach (object attribute in attributes) {
+					PropertyKeywordMapping mapping = attribute as PropertyKeywordMapping;
+					if (mapping == null)
+						continue;
+					//Logger.Log.Debug (mapping.Keyword + " => " 
+					//		+ mapping.PropertyName + 
+					//		+ " is-keyword=" + mapping.IsKeyword + " (" 
+					//		+ mapping.Description + ") "
+					//		+ "(" + type.FullName + ")");
+					PropertyKeywordFu.RegisterMapping (mapping);
+				}
+			}
+		}
 	}
 
 	static void OnClosed ()
@@ -272,6 +308,26 @@ class QueryTool {
 					System.Environment.Exit (-1);
 				}
 				end_date = end_date.ToUniversalTime ();
+				break;
+
+			case "--keywords":
+				ReadBackendMappings ();
+				QueryDriver.ReadKeywordMappings ();
+
+				Console.WriteLine (
+					"'query string' can include specific keywords.\n" +
+					"Supported keywords are:");
+
+				IDictionaryEnumerator property_keyword_enum = PropertyKeywordFu.MappingEnumerator;
+				while (property_keyword_enum.MoveNext ()) {
+					PropertyDetail prop = property_keyword_enum.Value as PropertyDetail;
+					if (prop.Description != null)
+						Console.WriteLine ("  {0,-20} for {1}", property_keyword_enum.Key, prop.Description);
+					else
+						Console.WriteLine ("  {0,-20}", property_keyword_enum.Key);
+				}
+
+				System.Environment.Exit (0);
 				break;
 
 			default:

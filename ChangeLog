@@ -1,5 +1,10 @@
 2006-04-25  Debajyoti Bera <dbera.web@gmail.com>
 
+	* beagled/QueryDriver.cs,beagled/PropertyKeywordFu.cs,
+	Util/PropertyKeywordAttribute.cs: Allow filters to register mapping
+	between query keyword and propertyname.
+	* Filters/,beagled/Backends: Register some of the existing mappings
+	from the corresponding filters and backends.
 	* beagled/FilterFactory.cs: Only set indexable timestamp if the
 	already set timestamp is invalid (i.e. the default DateTime(0)).
 	* beagled/FeedBackends: Remove dc:date properties. Use

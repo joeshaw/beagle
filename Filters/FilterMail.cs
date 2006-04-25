@@ -37,6 +37,11 @@ using Beagle.Util;
 
 namespace Beagle.Filters {
 
+	[PropertyKeywordMapping (Keyword="mailfrom",     PropertyName="fixme:from_name",    IsKeyword=false)]
+	[PropertyKeywordMapping (Keyword="mailfromaddr", PropertyName="fixme:from_address", IsKeyword=false)]
+	[PropertyKeywordMapping (Keyword="mailto",       PropertyName="fixme:to_name",      IsKeyword=false)]
+	[PropertyKeywordMapping (Keyword="mailtoaddr",   PropertyName="fixme:to_address",   IsKeyword=false)]
+	[PropertyKeywordMapping (Keyword="mailinglist",  PropertyName="fixme:mlist",        IsKeyword=true, Description="Mailing list id")]
 	public class FilterMail : Beagle.Daemon.Filter, IDisposable {
 
 		private static bool gmime_initialized = false;

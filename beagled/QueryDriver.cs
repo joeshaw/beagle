@@ -155,6 +155,7 @@ namespace Beagle.Daemon {
 			int count = 0;
 
 			foreach (Type type in ReflectionFu.ScanAssemblyForInterface (assembly, typeof (IQueryable))) {
+				bool type_accepted = false;
 				foreach (QueryableFlavor flavor in ReflectionFu.ScanTypeForAttribute (type, typeof (QueryableFlavor))) {
 					if (! UseQueryable (flavor.Name))
 						continue;
@@ -182,11 +183,63 @@ namespace Beagle.Daemon {
 						queryables.Add (q);
 						iqueryable_to_queryable [iq] = q;
 						++count;
+						type_accepted = true;
 						break;
 					}
 				}
+
+				if (! type_accepted)
+					continue;
+
+				object[] attributes = type.GetCustomAttributes (false);
+				foreach (object attribute in attributes) {
+					PropertyKeywordMapping mapping = attribute as PropertyKeywordMapping;
+					if (mapping == null)
+						continue;
+					//Logger.Log.Debug (mapping.Keyword + " => " 
+					//		+ mapping.PropertyName + 
+					//		+ " is-keyword=" + mapping.IsKeyword + " (" 
+					//		+ mapping.Description + ") "
+					//		+ "(" + type.FullName + ")");
+					PropertyKeywordFu.RegisterMapping (mapping);
+				}
+					
 			}
 			Logger.Log.Debug ("Found {0} backends in {1}", count, assembly.Location);
+		}
+
+		////////////////////////////////////////////////////////
+
+		public static void ReadKeywordMappings ()
+		{
+			Logger.Log.Debug ("Reading mapping from filters");
+			ArrayList assemblies = ReflectionFu.ScanEnvironmentForAssemblies ("BEAGLE_FILTER_PATH", PathFinder.FilterDir);
+
+			foreach (Assembly assembly in assemblies) {
+				foreach (Type type in assembly.GetTypes ())
+					if (type.FullName.StartsWith ("Beagle.Filters")) {
+
+						if (type.IsNestedPrivate ||
+						    type.IsNestedPublic ||
+						    type.IsNestedAssembly ||
+						    type.IsNestedFamily)
+							continue;
+
+						object[] attributes = type.GetCustomAttributes (false);
+						foreach (object attribute in attributes) {
+
+							PropertyKeywordMapping mapping = attribute as PropertyKeywordMapping;
+							if (mapping == null)
+								continue;
+							//Logger.Log.Debug (mapping.Keyword + " => " 
+							//		+ mapping.PropertyName
+							//		+ " is-keyword=" + mapping.IsKeyword + " (" 
+							//		+ mapping.Description + ") "
+							//		+ "(" + type.FullName + ")");
+							PropertyKeywordFu.RegisterMapping (mapping);
+						}
+					}
+			}
 		}
 
 		////////////////////////////////////////////////////////
@@ -293,6 +346,8 @@ namespace Beagle.Daemon {
 				// own executors.
 				Server.ScanAssemblyForExecutors (assembly);
 			}
+
+			ReadKeywordMappings ();
 
 			LoadSystemIndexes ();
 			LoadStaticQueryables ();

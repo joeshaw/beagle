@@ -30,10 +30,7 @@ using System.IO;
 using System.Text;
 
 using Beagle;
-using FSQ=Beagle.Daemon.FileSystemQueryable;
-
-// FIXME crude hack, the list of property names should be registered by queryables
-// while calling AddNewKeyword etc.
+using Beagle.Util;
 
 namespace Beagle.Daemon {
 	
@@ -89,73 +86,28 @@ namespace Beagle.Daemon {
 			property_table = new Hashtable ();
 			
 			// Mapping between human query keywords and beagle index property keywords
-			// ---------------- Dublin Core mappings --------------------
+			// These are some of the standard mapping which is available to all backends and filters.
 			
-			// title - corresponds to dc:title
-			// FIXME change fixme:title to dc:title in some filters and backends
 			property_table.Add ("title",
 					    new PropertyDetail (PropertyType.Text, "dc:title", "Title"));
 			
-			// creator - maps to DC element "creator"
 			property_table.Add ("creator",
 					    new PropertyDetail (PropertyType.Text, "dc:creator", "Creator of the content"));
 
-			// author - maps to DC element "creator"
 			property_table.Add ("author",
 					    new PropertyDetail (PropertyType.Text, "dc:creator", "Author of the content"));
+		}
 
-			// artist - maps to DC element "creator"
-			property_table.Add ("artist",
-					    new PropertyDetail (PropertyType.Text, "fixme:artist", "Artist"));
+		public static void RegisterMapping (PropertyKeywordMapping mapping)
+		{
+			if (property_table.Contains (mapping.Keyword))
+				return;
 
-			// ---------------- content mappings for media ------------------------
-			
-			// album
-			property_table.Add ("album",
-					    new PropertyDetail (PropertyType.Text, "fixme:album", "Album of the media"));
-
-			// image tag
-			// FIXME: If there is tag information somewhere else, then change the name to imagetag
-			property_table.Add ("tag",
-					    new PropertyDetail (PropertyType.Text, "image:tag", "FSpot, Digikam image tags"));
-
-			// ---------------- content mappings for email ------------------------
-
-			// "from" name
-			property_table.Add ("mailfrom",
-					    new PropertyDetail (PropertyType.Text, "fixme:from_name", "Email sender name"));
-			
-			// "from" email address
-			property_table.Add ("mailfromaddr",
-					    new PropertyDetail (PropertyType.Text, "fixme:from_address", "Email sender address"));
-
-			// "to" name
-			property_table.Add ("mailto",
-					    new PropertyDetail (PropertyType.Text, "fixme:to_name", "Email receipient name"));
-			
-			// "to" email address
-			property_table.Add ("mailtoaddr",
-					    new PropertyDetail (PropertyType.Text, "fixme:to_address", "Email receipient address"));
-			
-			// mailing list name
-			property_table.Add ("mailinglist",
-					    new PropertyDetail (PropertyType.Keyword, "fixme:mlist", "Mailing list id"));
-
-			// ---------------- other mappings --------------------
-			// file extension - extension:mp3
-			property_table.Add ("extension",
-					    new PropertyDetail (PropertyType.Keyword, FSQ.FileSystemQueryable.FilenameExtensionPropKey, "File extension, e.g. extension:jpeg. Use extension: to search in files with no extension."));
-
-			// file extension - ext:mp3
-			property_table.Add ("ext",
-					    new PropertyDetail (PropertyType.Keyword, FSQ.FileSystemQueryable.FilenameExtensionPropKey, "File extension, e.g. ext:mp3. Use ext: to search in files with no extension."));
-
-			// user comment/description/etc - comment:beaglewiki
-			property_table.Add ("comment",
-					    new PropertyDetail (PropertyType.Text, "fixme:comment", "User comments"));
-
-
-			// FIXME add more mappings to support more query
+			property_table.Add (mapping.Keyword,
+					    new PropertyDetail ( 
+						mapping.IsKeyword ? PropertyType.Keyword : PropertyType.Text,
+						mapping.PropertyName, 
+						mapping.Description));
 		}
 
 		// return false if property not found!

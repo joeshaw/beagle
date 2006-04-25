@@ -111,7 +111,8 @@ UTIL_CSFILES = 			        	\
 	$(srcdir)/SemWeb/Util.cs			\
 	$(srcdir)/SemWeb/XmlParser.cs			\
 	$(srcdir)/SemWeb/XmlWriter.cs			\
-	$(srcdir)/SemWeb/XPathSemWebNavigator.cs
+	$(srcdir)/SemWeb/XPathSemWebNavigator.cs	\
+	$(srcdir)/PropertyKeywordAttribute.cs
 
 
 if HAS_LIBCHM 

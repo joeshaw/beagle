@@ -34,6 +34,8 @@ using SemWeb;
 
 namespace Beagle.Filters {
 
+	[PropertyKeywordMapping (Keyword="imagetag", PropertyName="image:tag", IsKeyword=false, Description="FSpot, Digikam image tags")]
+	[PropertyKeywordMapping (Keyword="comment", PropertyName="fixme:comment", IsKeyword=false, Description="User comments")]
 	public abstract class FilterImage : Beagle.Daemon.Filter {
 
 		public FilterImage ()
