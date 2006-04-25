@@ -26,7 +26,7 @@ namespace Search.Tiles {
 			Group = TileGroup.Feed;
 
 			Title = Hit ["dc:title"];
-			Description = Hit ["dc:creator"]; // FIXME: Blog name
+			Description = Hit ["dc:publisher"];
 		}
 
 		protected override void LoadIcon (Gtk.Image image, int size)
@@ -46,7 +46,7 @@ namespace Search.Tiles {
 					      Hit ["dc:title"],
 					      0, 1);
 			details.AddLabelPair (Catalog.GetString ("Site:"),
-					      Hit ["dc:creator"], // FIXME: Blog name
+					      Hit ["dc:identifier"], // FIXME: Blog name
 					      1, 1);
 			details.AddLabelPair (Catalog.GetString ("Date Viewed:"),
 					      Utils.NiceLongDate (Timestamp),
