@@ -1,3 +1,7 @@
+2006-04-25  Joe Shaw  <joeshaw@novell.com>
+
+	* hu.po: Fix a markup bug in the Hungarian translation.
+
 2006-04-23  Vincent van Adrighem  <adrighem@gnome.org>
 
 	* nl.po: Translation updated by Tino Meinen.

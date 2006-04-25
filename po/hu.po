@@ -97,7 +97,7 @@ msgstr ""
 msgid "To exclude search terms, use the minus symbol in front, such as <b>-cats</b>"
 msgstr ""
 "Keresőkifejezések kihagyásához használja a kivonás jelet a kifejezés előtt, "
-"például: <b>-macskák<b>"
+"például: <b>-macskák</b>"
 
 #: ../search/Pages/QuickTips.cs:13
 msgid "When searching for a phrase, add quotes. ex: <b>\"There be dragons\"</b>"
