@@ -4,6 +4,7 @@ namespace Search.Tiles {
 
 	public enum TileGroup {
 		Application,
+		Calendar,
 		Contact,
 		Folder,
 		Image,

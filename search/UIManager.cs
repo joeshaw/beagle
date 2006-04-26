@@ -8,6 +8,7 @@ namespace Search {
 	public enum ScopeType {
 		Everywhere,
 		Applications,
+		Calendar,
 		Contacts,
 		Documents,
 		Conversations,
@@ -110,6 +111,11 @@ namespace Search {
 						      null,
 						      Catalog.GetString ("Search contacts"),
 						      (int)ScopeType.Contacts),
+				new RadioActionEntry ("Calendar", null,
+						      Catalog.GetString ("Ca_lendar events"),
+						      null,
+						      Catalog.GetString ("Search calendar events"),
+						      (int)ScopeType.Contacts),
 				new RadioActionEntry ("Documents", null,
 						      Catalog.GetString ("_Documents"),
 						      null,
@@ -121,12 +127,12 @@ namespace Search {
 						      Catalog.GetString ("Search E-Mail and Instant Messaging logs"),
 						      (int)ScopeType.Conversations),
 				new RadioActionEntry ("Images", null,
-						      Catalog.GetString ("Images"),
+						      Catalog.GetString ("_Images"),
 						      null,
 						      Catalog.GetString ("Search images"),
 						      (int)ScopeType.Images),
 				new RadioActionEntry ("Media", null,
-						      Catalog.GetString ("Media"),
+						      Catalog.GetString ("_Media"),
 						      null,
 						      Catalog.GetString ("Search sound and video files"),
 						      (int)ScopeType.Media),
@@ -183,6 +189,7 @@ namespace Search {
 		"      <menuitem action='Everywhere'/>" +
 		"      <menuitem action='Applications'/>" +
 		"      <menuitem action='Contacts'/>" +
+		"      <menuitem action='Calendar'/>" +
 		"      <menuitem action='Documents'/>" +
 		"      <menuitem action='Conversations'/>" +
 		"      <menuitem action='Images'/>" +

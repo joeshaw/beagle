@@ -142,6 +142,9 @@ namespace Search {
 			case ScopeType.Applications:
 				return group == TileGroup.Application;
 
+			case ScopeType.Calendar:
+				return group == TileGroup.Calendar;
+
 			case ScopeType.Contacts:
 				return group == TileGroup.Contact;
 

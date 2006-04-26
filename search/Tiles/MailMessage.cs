@@ -79,15 +79,21 @@ namespace Search.Tiles {
 
 		protected override DetailsPane GetDetails ()
 		{
+			bool sent = (Hit.GetFirstProperty ("fixme:isSent") != null);
+
 			DetailsPane details = new DetailsPane ();
 
 			details.AddLabelPair (Catalog.GetString ("Subject:"),
 					      SubjectLabel.Text,
 					      0, 1);
-			details.AddLabelPair (Catalog.GetString ("From:"),
+
+			string label = sent ? Catalog.GetString ("To:") : Catalog.GetString ("From:");
+			details.AddLabelPair (label,
 					      GetAddress (Hit),
 					      1, 1);
-			details.AddLabelPair (Catalog.GetString ("Date Received:"),
+
+			label = sent ? Catalog.GetString ("Date Sent:") : Catalog.GetString ("Date Received:");
+			details.AddLabelPair (label,
 					      Utils.NiceLongDate (Timestamp),
 					      2, 1);
 

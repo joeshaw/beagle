@@ -24,6 +24,8 @@ namespace Search.Tiles {
 					   Catalog.GetString ("Application"), 1),
 			new TileGroupInfo (TileGroup.Contact,
 					   Catalog.GetString ("Contact"), 2),
+			new TileGroupInfo (TileGroup.Calendar,
+					   Catalog.GetString ("Calendar Events"), 2),
 			new TileGroupInfo (TileGroup.Folder,
 					   Catalog.GetString ("Folder"), 2),
 			new TileGroupInfo (TileGroup.Image,
@@ -82,12 +84,24 @@ namespace Search.Tiles {
 
 			dt = dt.ToLocalTime ();
 			DateTime today = DateTime.Today;
-			TimeSpan span = today - dt;
+
+			TimeSpan span;
+			bool future;
+
+			if (today > dt) {
+				span = today - dt;
+				future = false;
+			} else {
+				span = dt - today;
+				future = true;
+			}
 
 			if (span.TotalDays < 1)
 				return Catalog.GetString ("Today");
-			else if (span.TotalDays < 2)
+			else if (span.TotalDays < 2 && ! future)
 				return Catalog.GetString ("Yesterday");
+			else if (span.TotalDays < 2 && future)
+				return Catalog.GetString ("Tomorrow");
 			else if (span.TotalDays < 7)
 				return dt.ToString ("dddd"); // "Tuesday"
 			else if (dt.Year == today.Year || span.TotalDays < 180)
@@ -116,12 +130,24 @@ namespace Search.Tiles {
 
 			dt = dt.ToLocalTime ();
 			DateTime today = DateTime.Today;
-			TimeSpan span = today - dt;
+
+			TimeSpan span;
+			bool future;
+
+			if (today > dt) {
+				span = today - dt;
+				future = false;
+			} else {
+				span = dt - today;
+				future = true;
+			}
 
 			if (span.TotalDays < 1)
 				return Catalog.GetString ("Today");
-			else if (span.TotalDays < 2)
+			else if (span.TotalDays < 2 && ! future)
 				return Catalog.GetString ("Yesterday");
+			else if (span.TotalDays < 2 && future)
+				return Catalog.GetString ("Tomorrow");
 			else if (span.TotalDays < 7)
 				return dt.ToString ("dddd"); // "Tuesday"
 			else if (dt.Year == today.Year || span.TotalDays < 180)
@@ -150,20 +176,38 @@ namespace Search.Tiles {
 
 			dt = dt.ToLocalTime ();
 			DateTime today = DateTime.Today;
-			TimeSpan span = today - dt;
+
+			TimeSpan span;
+			bool future;
+
+			if (today > dt) {
+				span = today - dt;
+				future = false;
+			} else {
+				span = dt - today;
+				future = true;
+			}
 
 			if (span.TotalDays < 1)
 				return Catalog.GetString ("Today");
-			else if (span.TotalDays < 2)
+			else if (span.TotalDays < 2 && ! future)
 				return Catalog.GetString ("Yesterday");
+			else if (span.TotalDays < 2 && future)
+				return Catalog.GetString ("Tomorrow");
 			else if (span.TotalDays < 7)
 				return dt.ToString ("dddd"); // "Tuesday"
-			else if (span.TotalDays < 30)
+			else if (span.TotalDays < 30 && ! future)
 				return String.Format (Catalog.GetPluralString ("{0} week ago", "{0} weeks ago", span.Days / 7) + " ({1:MMMM d, yyyy})", span.Days / 7, dt);
-			else if (span.TotalDays < 365 + 180) // Let's say a year and a half to stop saying months
+			else if (span.TotalDays < 30 && future)
+				return String.Format (Catalog.GetPluralString ("In {0} week", "In {0} weeks", span.Days / 7) + " {1:MMMM d, yyyy})", span.Days / 7, dt);
+			else if (span.TotalDays < 365 + 180 && ! future) // Let's say a year and a half to stop saying months
 				return String.Format (Catalog.GetPluralString ("{0} month ago", "{0} months ago", span.Days / 30) + " ({1:MMMM d, yyyy})", span.Days / 30, dt);
-			else
+			else if (span.TotalDays < 365 + 180 && future)
+				return String.Format (Catalog.GetPluralString ("In {0} month", "In {0} months", span.Days / 30) + " ({1:MMMM d, yyyy})", span.Days / 30, dt);
+			else if (! future)
 				return String.Format (Catalog.GetPluralString ("{0} year ago", "{0} years ago", span.Days / 365) + " ({1:MMMM d, yyyy})", span.Days / 365, dt);
+			else
+				return String.Format (Catalog.GetPluralString ("In {0} year", "In {0} years", span.Days / 365) + " ({1:MMMM d, yyyy})", span.Days / 365, dt);
 		}
 	}
 }

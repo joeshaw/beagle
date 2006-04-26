@@ -25,6 +25,9 @@ namespace Search.Tiles {
 
 			Title = hit.GetFirstProperty ("fixme:Name");
 			Description = hit.GetFirstProperty ("fixme:Email");
+
+			if (Hit.GetFirstProperty ("fixme:Email") != null)
+				AddAction (new TileAction (Catalog.GetString ("Send Mail"), SendMail));
 		}
 
 		private Gdk.Pixbuf GetIcon (int size)
@@ -72,6 +75,23 @@ namespace Search.Tiles {
 				details.AddLabelPair (Catalog.GetString ("Home Phone:"), home_phone, i++, 1);
 			
 			return details;
+		}
+
+		public override void Open ()
+		{
+			SafeProcess p = new SafeProcess ();
+			p.Arguments = new string [] { "evolution", Hit.UriAsString };
+
+			try {
+				p.Start ();
+			} catch (SafeProcessException e) {
+				Console.WriteLine (e.Message);
+			}
+		}
+
+		private void SendMail ()
+		{
+			OpenFromUri ("mailto:" + Hit.GetFirstProperty ("fixme:Email"));
 		}
 	}
 }

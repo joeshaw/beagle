@@ -31,6 +31,7 @@ TILES = 					\
 	$(srcdir)/Tiles/Application.cs		\
 	$(srcdir)/Tiles/Audio.cs		\
 	$(srcdir)/Tiles/CApplet.cs		\
+	$(srcdir)/Tiles/Calendar.cs		\
 	$(srcdir)/Tiles/Contact.cs		\
 	$(srcdir)/Tiles/DetailsPane.cs		\
 	$(srcdir)/Tiles/File.cs			\
