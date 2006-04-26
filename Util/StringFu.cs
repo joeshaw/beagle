@@ -624,5 +624,79 @@ namespace Beagle.Util {
 			return sb.ToString ();
 		}
 
+		public static string StripTags (string line, StringBuilder builder)
+		{
+			int first = line.IndexOf ('<');
+			if (first == -1)
+				return line;
+			
+			builder.Length = 0;
+
+			int i = 0;
+			while (i < line.Length) {
+				
+				int j;
+				if (first == -1) {
+					j = line.IndexOf ('<', i);
+				} else {
+					j = first;
+					first = -1;
+				}
+				
+				int k = -1;
+				if (j != -1) {
+					k = line.IndexOf ('>', j);
+					
+					// If a "<" is unmatched, preserve it, and the
+					// rest of the line
+					if (k == -1)
+						j = -1;
+				}
+				
+				if (j == -1) {
+					builder.Append (line, i, line.Length - i);
+					break;
+				}
+				
+				builder.Append (line, i, j-i);
+				
+				i = k+1;
+			}
+			
+			return builder.ToString ();
+		}
+
+		public static string StripTags (string line)
+		{
+			StringBuilder sb = new StringBuilder ();
+			return StripTags (line, sb);
+		}
+
+	}
+
+	public class HtmlRemovingReader : TextReader {
+		private TextReader reader;	
+		private StringBuilder sb;
+	    
+		public HtmlRemovingReader (TextReader reader)
+		{
+			this.reader = reader;
+			sb = new StringBuilder ();
+		}
+
+		public override string ReadLine ()
+		{
+			string line = reader.ReadLine ();
+			if (line == null)
+				return null;
+
+			sb.Length = 0;
+			return StringFu.StripTags (line, sb);
+		}
+
+		public override void Close ()
+		{
+			reader.Close ();
+		}
 	}
 }

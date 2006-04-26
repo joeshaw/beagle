@@ -128,18 +128,6 @@ namespace Beagle.Util {
 			return note;
 		}
 
-		private static string StripTags (string line)
-		{
-			int i, j;
-			while (true) {
-				i = line.IndexOf ('<');
-				if (i == -1)
-					break;
-				j = line.IndexOf ('>', i);
-				line = line.Substring (0, i) + line.Substring (j+1);
-			}
-			return line;
-		}
 	}
 }
 

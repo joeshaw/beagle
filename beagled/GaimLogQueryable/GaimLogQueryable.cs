@@ -270,6 +270,19 @@ namespace Beagle.Daemon.GaimLogQueryable {
 			return true;
 		}
 
+		override public string GetSnippet (string [] query_terms, Hit hit)
+		{
+			TextReader reader;
+			reader = TextCache.UserCache.GetReader (hit.Uri);
+			if (reader == null)
+				return null;
+			HtmlRemovingReader html_removing_reader = new HtmlRemovingReader (reader);
+			string snippet = SnippetFu.GetSnippet (query_terms, html_removing_reader);
+			html_removing_reader.Close ();
+
+			return snippet;
+		}
+
 	}
 }
 

@@ -36,10 +36,8 @@ namespace Lucene.Net.Index
 		private FieldsReader fieldsReader;
 		
 		internal TermInfosReader tis;
-		internal TermVectorsReader termVectorsReaderOrig = null;
-
-		[ThreadStatic]
-		private TermVectorsReader tvReader;
+        internal TermVectorsReader termVectorsReaderOrig = null;
+        internal System.LocalDataStoreSlot termVectorsLocal = System.Threading.Thread.AllocateDataSlot();
 		
 		internal BitVector deletedDocs = null;
 		private bool deletedDocsDirty = false;
@@ -173,6 +171,19 @@ namespace Lucene.Net.Index
 				termVectorsReaderOrig = new TermVectorsReader(cfsDir, segment, fieldInfos);
 			}
 		}
+		
+        ~SegmentReader()
+        {
+            // patch for pre-1.4.2 JVMs, whose ThreadLocals leak
+            try
+            {            
+                System.Threading.Thread.SetData(termVectorsLocal, null);     // {{Aroush-1.9}} is this required for .NET ?!
+            }
+            catch (Exception ex)
+            {
+                // System.Console.WriteLine(ex.Message);
+            }
+        }
 		
 		protected internal override void  DoCommit()
 		{
@@ -598,9 +609,11 @@ namespace Lucene.Net.Index
         /// </returns>
         private TermVectorsReader GetTermVectorsReader()
         {
+            TermVectorsReader tvReader = (TermVectorsReader) System.Threading.Thread.GetData(termVectorsLocal);
             if (tvReader == null)
             {
                 tvReader = (TermVectorsReader) termVectorsReaderOrig.Clone();
+                System.Threading.Thread.SetData(termVectorsLocal, tvReader);
             }
             return tvReader;
         }
