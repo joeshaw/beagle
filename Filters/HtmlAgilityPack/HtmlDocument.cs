@@ -168,9 +168,17 @@ namespace HtmlAgilityPack
 		}
 	}
 	
+
+	abstract class StreamAsArray {
+		public abstract bool Eof (int index);
+		public abstract char this [int index] { get;}
+		public abstract string Substring (int startindex, int length);
+		public abstract int FullLength { get;}
+	}
+		
 	// SLIM: creating this class to wrap around a textreader
 	//	 to emulate ReadToEnd () behaviour
-	class StreamAsArray {
+	class ImplStreamAsArray : StreamAsArray {
 		private StreamReader _reader;
 		private int _length;
 		private int _position;
@@ -179,7 +187,7 @@ namespace HtmlAgilityPack
 		private char[] _buf_current; // but, this is cleaner
 		private int _block_size;
 		
-		public StreamAsArray (StreamReader r)
+		public ImplStreamAsArray (StreamReader r)
 		{
 			_reader = r;
 			_length = 0;
@@ -209,7 +217,7 @@ namespace HtmlAgilityPack
 			HtmlDocument.Debug ("[" + new string (_buf_current, 0, num_read) + "]");
 		}
 		
-		public bool Eof (int index) {
+		public override bool Eof (int index) {
 			if (_eof)
 				return (index == _length);
 			else {
@@ -223,7 +231,7 @@ namespace HtmlAgilityPack
 			}
 		}
 		
-		public new char this[int index] {
+		public override char this[int index] {
 			get {
 				if (index >= _position && 
 				    index < _position + _block_size)
@@ -288,7 +296,7 @@ namespace HtmlAgilityPack
 			tmp = null;
 		}
 
-		public string Substring (int startindex, int length)
+		public override string Substring (int startindex, int length)
 		{
 			if (length == 0) {
 				HtmlDocument.Debug ("substring:" + startindex + " " + length + " " + _position + ":");
@@ -316,10 +324,40 @@ namespace HtmlAgilityPack
 		}
 
 		// FIXME: Is this costly ?
-		public int FullLength {
+		public override int FullLength {
 			get {
 				return (int)_reader.BaseStream.Length;
 			}
+		}
+	}
+
+	// A dummy StreamAsArray wrapper around a string
+	class DummyStreamAsArray : StreamAsArray {
+		private string _base_string;
+		private int _length;
+
+		public DummyStreamAsArray(string str)
+		{
+			_base_string = str;
+			_length = str.Length;
+		}
+
+		public override bool Eof(int index)
+		{
+			return (index >= _length);
+		}
+
+		public new char this[int index] {
+			get { return _base_string [index]; }
+		}
+
+		public override string Substring (int startindex, int length)
+		{
+			return _base_string.Substring (startindex, length);
+		}
+
+		public override int FullLength {
+			get { return _length; }
 		}
 	}
 
@@ -608,15 +646,17 @@ namespace HtmlAgilityPack
 			if (sr != null)
 			{
 				_streamencoding = sr.CurrentEncoding;
+				_text = new ImplStreamAsArray (sr);
 			}
 			else
 			{
 				_streamencoding = null;
+				// Expensive, but cannot avoid since TextReader doesnt have any length of the underlying data
+				_text = new DummyStreamAsArray (reader.ReadToEnd());
 			}
 			_declaredencoding = null;
 
 			// SLIM: _text = reader.ReadToEnd();
-			_text = new StreamAsArray (sr);
 			_documentnode = CreateNode(HtmlNodeType.Document, 0);
 
 			// this is a hack, but it allows us not to muck with the original parsing code
@@ -878,15 +918,17 @@ namespace HtmlAgilityPack
 				    // void on purpose
 				}
 				_streamencoding = sr.CurrentEncoding;
+				_text = new ImplStreamAsArray (sr);
 			}
 			else
 			{
 				_streamencoding = null;
+				// Expensive, but cannot avoid since TextReader doesnt have any length of the underlying data
+				_text = new DummyStreamAsArray (reader.ReadToEnd());
 			}
 			_declaredencoding = null;
 
 			// SLIM: _text = reader.ReadToEnd();
-			_text = new StreamAsArray (sr);
 			_documentnode = CreateNode(HtmlNodeType.Document, 0);
 			Parse();
 
