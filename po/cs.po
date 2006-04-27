@@ -54,7 +54,7 @@ msgstr "Vyhledávání dat ve vašem počítači"
 #: ../search/Category.cs:103
 #, csharp-format
 msgid "{0}-{1} of {2}"
-msgstr "{0}-{1} x {2}"
+msgstr "{0}-{1} z {2}"
 
 #: ../search/Pages/NoMatch.cs:19
 msgid "No results were found."
