@@ -1,4 +1,61 @@
 
+Version 0.2.6
+April 29, 2006
+
+Daemon/Infrastructure:
+* Don't always redirect stdin/stdout/stderr and close them if we
+  don't want them in the first place.  Fixes a problem where
+  shell scripts wouldn't launch.  (Joe Shaw)
+* Only set timestamps on files if the backend hasn't already
+  set them.  (Debajyoti Bera)
+* Allow filters and backends to register mappings between query
+  keywords and property names.  (Bera)
+* Back out the buggy Mono leak workaround and just require Mono
+  1.1.13.5.  (Joe)
+
+Backends:
+* Store the date in the indexable's timestamp instead of using a
+  dc:date property in the various feed backends.  (Bera)
+* Strip HTML tags from Gaim logs so that they don't show up in
+  beagle-search anymore.  (Bera)
+* Ignore all special files in the file system backend, not just
+  symlinks.  (Joe)
+
+Filters:
+* Add a package base class for EBuild, RPM, and deb filters.  (Bera)
+* Add a Debian package filter.  (Kevin Kubasik)
+* Resync entagged-sharp with upstream, which includes the new Ogg
+  Vorbis mime type.  (Daniel Drake)
+
+UI:
+* Add a calendar tile to the build.  (Joe)
+* When running in icon mode, change the Exit menu item to Close.
+  (Lukas Lipka)
+* Add Escape and Ctrl-W accelerators for closing the window.  (Lukas)
+* Use the long date instead in the details pane for IM logs and mail
+  messages.  (Lukas)
+* Update the description and site fields with the correct properties
+  in the RSS feed tile.  (Lukas)
+* Various layout fixes in different tiles.  (Lukas)
+* Fix an incorrect "From" label in emails that you send.  (Max Wiehle)
+
+Tools:
+* Move the -s argument before the username in beagle-crawl-system to
+  appease some versions of su.  (Joe)
+* Don't hardcode the beagle-settings size, just set a default size.
+  (Joe)
+
+Bindings:
+* Add the indexable service calls to the C API.  (Bera)
+
+Translations:
+* Fix a markup bug in the Hungarian translation.  (Joe)
+* Fix a typo in the Czech translation.  (Stanislav Brabec)
+* Updated Dutch translation.  (Tino Meinen)
+* Updated German translation.  (Hendrik Brandt)
+
+------------------------------------------------------
+
 Version 0.2.5
 April 20, 2006
 
