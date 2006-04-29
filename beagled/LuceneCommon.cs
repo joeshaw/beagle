@@ -225,6 +225,7 @@ namespace Beagle.Daemon {
 			       && Directory.Exists (LockDirectory)))
 				return false;
 
+			return true;
 			// Check the index's version number.  If it is wrong,
 			// declare the index non-existent.
 

@@ -95,7 +95,7 @@ namespace Beagle.Daemon.FileSystemQueryable {
 					foreach (string name in DirectoryWalker.GetDirectoryNames (dir.FullName)) {
 						string path;
 						path = Path.Combine (dir.FullName, name);
-						if (! FileSystem.IsSymLink (path))
+						if (!FileSystem.IsSpecialFile (path))
 							handler (dir, name);
 					}
 				} catch (DirectoryNotFoundException ex) {

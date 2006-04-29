@@ -1031,6 +1031,9 @@ namespace Beagle.Daemon.FileSystemQueryable {
 
 			if (! File.Exists (path))
 				return;
+
+			if (FileSystem.IsSpecialFile (path))
+				return;
 			
 			if (filter.Ignore (dir, name, false))
 				return;

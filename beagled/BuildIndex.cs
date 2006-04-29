@@ -328,12 +328,12 @@ namespace Beagle.Daemon
 						if (arg_recursive)
 							foreach (DirectoryInfo subdir in DirectoryWalker.GetDirectoryInfos (dir))
 								if (!Ignore (subdir)
-								    && !FileSystem.IsSymLink (subdir.FullName))
+								    && !FileSystem.IsSpecialFile (subdir.FullName))
 									pending_directories.Enqueue (subdir);
 					
 						foreach (FileInfo file in DirectoryWalker.GetFileInfos (dir))
 							if (!Ignore (file)
-							    && !FileSystem.IsSymLink (file.FullName))
+							    && !FileSystem.IsSpecialFile (file.FullName))
 								pending_files.Enqueue (file);
 					
 					} catch (DirectoryNotFoundException e) {}
@@ -590,7 +590,7 @@ namespace Beagle.Daemon
 			if (file.Name.StartsWith ("."))
 				return true;
 
-			if (FileSystem.IsSymLink (file.FullName))
+			if (FileSystem.IsSpecialFile (file.FullName))
 				return true;
 
 			if (allowed_patterns.Count > 0) {

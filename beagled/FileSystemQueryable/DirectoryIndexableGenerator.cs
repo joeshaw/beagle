@@ -62,7 +62,7 @@ namespace Beagle.Daemon.FileSystemQueryable {
 				Indexable indexable = null;
 				try { 
 					if (f.Exists
-					    && ! FileSystem.IsSymLink (f.FullName)
+					    && ! FileSystem.IsSpecialFile (f.FullName)
 					    && this.directory.IsAttached)
 						indexable = queryable.GetCrawlingFileIndexable (directory, f.Name);
 				} catch (Exception ex) {
