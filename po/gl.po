@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: gl\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2006-03-29 00:09+0200\n"
-"PO-Revision-Date: 2006-03-29 00:13+0200\n"
+"POT-Creation-Date: 2006-04-30 23:20+0200\n"
+"PO-Revision-Date: 2006-04-30 23:24+0200\n"
 "Last-Translator: Ignacio Casal Quinteiro <nacho.resa@gmail.com>\n"
 "Language-Team: Galego <trasno@ceu.fi.udc.es>\n"
 "MIME-Version: 1.0\n"
@@ -99,7 +99,7 @@ msgstr ""
 msgid "When searching for a phrase, add quotes. ex: <b>\"There be dragons\"</b>"
 msgstr "Cando procure unha frase, engada comillas. ex: <b>\"A Santa Compaña\"</b>"
 
-#: ../search/Pages/QuickTips.cs:19 ../search/UIManager.cs:65
+#: ../search/Pages/QuickTips.cs:19 ../search/UIManager.cs:81
 msgid "Quick Tips"
 msgstr "Consellos rápidos"
 
@@ -139,53 +139,57 @@ msgstr "Teclee os termos de busca"
 msgid "Start searching"
 msgstr "Comezar a buscar"
 
-#: ../search/Tiles/Contact.cs:53
+#: ../search/Tiles/Contact.cs:30
+msgid "Send Mail"
+msgstr "Enviar correo"
+
+#: ../search/Tiles/Contact.cs:69
 msgid "E-Mail:"
 msgstr "Correo-e:"
 
-#: ../search/Tiles/Contact.cs:56
+#: ../search/Tiles/Contact.cs:71
 msgid "Mobile Phone:"
 msgstr "Teléfono móbil:"
 
-#: ../search/Tiles/Contact.cs:60
+#: ../search/Tiles/Contact.cs:73
 msgid "Work Phone:"
 msgstr "Teléfono de traballo:"
 
-#: ../search/Tiles/Contact.cs:64
+#: ../search/Tiles/Contact.cs:75
 msgid "Home Phone:"
 msgstr "Teléfono de casa:"
 
-#: ../search/Tiles/File.cs:33
+#: ../search/Tiles/File.cs:34
 msgid "Reveal in Folder"
 msgstr "Revelar no cartafol"
 
-#: ../search/Tiles/File.cs:34
+#: ../search/Tiles/File.cs:35
 msgid "E-Mail"
 msgstr "Correo-e"
 
 #. AddAction (new TileAction (Catalog.GetString ("Instant-Message"), InstantMessage));
 #. FIXME: s/"gtk-info"/Gtk.Stock.Info/ when we can depend on gtk# 2.8
 #. AddAction (new TileAction (Catalog.GetString ("Show Information"), "gtk-info", ShowInformation));
-#: ../search/Tiles/File.cs:36 ../search/Tiles/Folder.cs:38
+#: ../search/Tiles/File.cs:37 ../search/Tiles/Folder.cs:38
 msgid "Move to Trash"
 msgstr "Mover ao lixo"
 
-#: ../search/Tiles/File.cs:132 ../search/Tiles/Note.cs:57
+#: ../search/Tiles/File.cs:125 ../search/Tiles/Note.cs:56
 #: ../search/Tiles/RSSFeed.cs:45 ../search/Tiles/WebHistory.cs:50
 msgid "Title:"
 msgstr "Título:"
 
-#: ../search/Tiles/File.cs:135 ../search/Tiles/Folder.cs:51
-#: ../search/Tiles/Note.cs:60
+#: ../search/Tiles/File.cs:128 ../search/Tiles/Folder.cs:51
+#: ../search/Tiles/Note.cs:59
 msgid "Last Edited:"
 msgstr "Editado por última vez:"
 
-#: ../search/Tiles/File.cs:139
+#: ../search/Tiles/File.cs:132
 msgid "Author:"
 msgstr "Autor:"
 
-#: ../search/Tiles/File.cs:143 ../search/Tiles/Folder.cs:54
-#: ../search/Tiles/Image.cs:72
+#: ../search/Tiles/File.cs:136 ../search/Tiles/Folder.cs:54
+#: ../search/Tiles/Image.cs:81
 msgid "Full Path:"
 msgstr "Ruta completa:"
 
@@ -205,37 +209,45 @@ msgstr[1] "Contén {0} elementos"
 msgid "Set as Wallpaper"
 msgstr "Establecer coma tapiz"
 
-#: ../search/Tiles/Image.cs:69
+#: ../search/Tiles/Image.cs:78
 msgid "Modified:"
 msgstr "Modificado:"
 
-#: ../search/Tiles/IMLog.cs:29
+#: ../search/Tiles/IMLog.cs:30
 msgid "IM Conversation"
 msgstr "Conversación MI"
 
-#: ../search/Tiles/IMLog.cs:89
+#: ../search/Tiles/IMLog.cs:81
 msgid "Name:"
 msgstr "Nome:"
 
-#: ../search/Tiles/IMLog.cs:90 ../search/Tiles/MailMessage.cs:69
+#: ../search/Tiles/IMLog.cs:82 ../search/Tiles/MailMessage.cs:95
 msgid "Date Received:"
 msgstr "Data de recepción:"
 
-#: ../search/Tiles/MailAttachment.cs:45
+#: ../search/Tiles/MailAttachment.cs:46
 msgid "Mail attachment"
 msgstr "Adxunto de correo"
 
-#: ../search/Tiles/MailMessage.cs:33
+#: ../search/Tiles/MailMessage.cs:54
 msgid "Send in Mail"
 msgstr "Enviar por correo"
 
-#: ../search/Tiles/MailMessage.cs:63
+#: ../search/Tiles/MailMessage.cs:86
 msgid "Subject:"
 msgstr "Asunto:"
 
-#: ../search/Tiles/MailMessage.cs:66
+#: ../search/Tiles/MailMessage.cs:90
+msgid "To:"
+msgstr "A:"
+
+#: ../search/Tiles/MailMessage.cs:90
 msgid "From:"
 msgstr "De:"
+
+#: ../search/Tiles/MailMessage.cs:95
+msgid "Date Sent:"
+msgstr "Data de envío:"
 
 #: ../search/Tiles/Presentation.cs:33
 #, csharp-format
@@ -263,71 +275,111 @@ msgstr[1] "{0} páxinas"
 msgid "Open"
 msgstr "Abrir"
 
-#: ../search/Tiles/Utils.cs:23
+#: ../search/Tiles/Utils.cs:24
 msgid "Application"
 msgstr "Aplicación"
 
-#: ../search/Tiles/Utils.cs:25
+#: ../search/Tiles/Utils.cs:26
 msgid "Contact"
 msgstr "Contacto"
 
-#: ../search/Tiles/Utils.cs:27
+#: ../search/Tiles/Utils.cs:28
+msgid "Calendar Events"
+msgstr "Eventos de calendario"
+
+#: ../search/Tiles/Utils.cs:30
 msgid "Folder"
 msgstr "Cartafol"
 
-#: ../search/Tiles/Utils.cs:29
+#: ../search/Tiles/Utils.cs:32
 msgid "Image"
 msgstr "Imaxe"
 
-#: ../search/Tiles/Utils.cs:31
+#: ../search/Tiles/Utils.cs:34
 msgid "Audio"
 msgstr "Son"
 
-#: ../search/Tiles/Utils.cs:33
+#: ../search/Tiles/Utils.cs:36
 msgid "Video"
 msgstr "Vídeo"
 
-#: ../search/Tiles/Utils.cs:35
+#: ../search/Tiles/Utils.cs:38
 msgid "Documents"
 msgstr "Documentos"
 
-#: ../search/Tiles/Utils.cs:37
+#: ../search/Tiles/Utils.cs:40
 msgid "Conversations"
 msgstr "Conversacións"
 
-#: ../search/Tiles/Utils.cs:39
+#: ../search/Tiles/Utils.cs:42
 msgid "Website"
 msgstr "Sitio web"
 
-#: ../search/Tiles/Utils.cs:41
+#: ../search/Tiles/Utils.cs:44
 msgid "News Feed"
 msgstr "Proveedor de noticias"
 
-#: ../search/Tiles/Utils.cs:43
+#: ../search/Tiles/Utils.cs:46
 msgid "Archive"
 msgstr "Arquivo"
 
-#: ../search/Tiles/Utils.cs:155
+#: ../search/Tiles/Utils.cs:100 ../search/Tiles/Utils.cs:146
+#: ../search/Tiles/Utils.cs:192 ../Util/StringFu.cs:77
+msgid "Today"
+msgstr "Hoxe"
+
+#: ../search/Tiles/Utils.cs:102 ../search/Tiles/Utils.cs:148
+#: ../search/Tiles/Utils.cs:194 ../Util/StringFu.cs:79
+msgid "Yesterday"
+msgstr "Onte"
+
+#: ../search/Tiles/Utils.cs:104 ../search/Tiles/Utils.cs:150
+#: ../search/Tiles/Utils.cs:196
+msgid "Tomorrow"
+msgstr "Mañá"
+
+#: ../search/Tiles/Utils.cs:200
 #, csharp-format
 msgid "{0} week ago"
 msgid_plural "{0} weeks ago"
 msgstr[0] "fai {0} semana"
 msgstr[1] "fai {0} semanas"
 
-#. Lets say a year and a half to stop saying months
-#: ../search/Tiles/Utils.cs:157
+#: ../search/Tiles/Utils.cs:202
+#, csharp-format
+msgid "In {0} week"
+msgid_plural "In {0} weeks"
+msgstr[0] "Na semana {0}"
+msgstr[1] "Nas semanas {0}"
+
+#. Let's say a year and a half to stop saying months
+#: ../search/Tiles/Utils.cs:204
 #, csharp-format
 msgid "{0} month ago"
 msgid_plural "{0} months ago"
 msgstr[0] "fai {0} mes"
 msgstr[1] "fai {0} meses"
 
-#: ../search/Tiles/Utils.cs:159
+#: ../search/Tiles/Utils.cs:206
+#, csharp-format
+msgid "In {0} month"
+msgid_plural "In {0} months"
+msgstr[0] "No mes {0}"
+msgstr[1] "Nos meses {0}"
+
+#: ../search/Tiles/Utils.cs:208
 #, csharp-format
 msgid "{0} year ago"
 msgid_plural "{0} years ago"
 msgstr[0] "fai {0} ano"
 msgstr[1] "fai {0} anos"
+
+#: ../search/Tiles/Utils.cs:210
+#, csharp-format
+msgid "In {0} year"
+msgid_plural "In {0} years"
+msgstr[0] "No ano {0}"
+msgstr[1] "Nos anos {0}"
 
 #. FIXME: We need filters for video in Beagle.
 #. They should land soon when entagged-sharp gets video support.
@@ -537,115 +589,127 @@ msgstr ""
 "persoa\n"
 "persoas"
 
-#: ../search/UIManager.cs:35
-msgid "_Search"
-msgstr "_Busca"
+#: ../search/UIManager.cs:42
+msgid "Close Desktop Search"
+msgstr "Pechar busca de escritorio"
 
-#: ../search/UIManager.cs:38
-msgid "_Actions"
-msgstr "_Accións"
-
-#: ../search/UIManager.cs:41
-msgid "Sor_t"
-msgstr "Arran_xar"
-
-#: ../search/UIManager.cs:44
-msgid "_Help"
-msgstr "A_xuda"
-
-#: ../search/UIManager.cs:49 ../search/UIManager.cs:53
+#: ../search/UIManager.cs:47 ../search/UIManager.cs:69
 msgid "Exit Desktop Search"
 msgstr "Saír da busca de Escritorio"
 
-#: ../search/UIManager.cs:56
+#: ../search/UIManager.cs:54
+msgid "_Search"
+msgstr "_Busca"
+
+#: ../search/UIManager.cs:57
+msgid "_Actions"
+msgstr "_Accións"
+
+#: ../search/UIManager.cs:60
+msgid "Sor_t"
+msgstr "Arran_xar"
+
+#: ../search/UIManager.cs:63
+msgid "_Help"
+msgstr "A_xuda"
+
+#: ../search/UIManager.cs:72
 msgid "_Contents"
 msgstr "_Contidos"
 
-#: ../search/UIManager.cs:58
+#: ../search/UIManager.cs:74
 msgid "Help - Table of Contents"
 msgstr "Axuda - Táboa de contido"
 
-#: ../search/UIManager.cs:62
+#: ../search/UIManager.cs:78
 msgid "About Desktop Search"
 msgstr "Acerca da busca de Escritorio"
 
-#: ../search/UIManager.cs:75
+#: ../search/UIManager.cs:100
 msgid "_Everywhere"
 msgstr "_En todos os lugares"
 
-#: ../search/UIManager.cs:77
+#: ../search/UIManager.cs:102
 msgid "Search everywhere"
 msgstr "Buscar en todos os lugares"
 
-#: ../search/UIManager.cs:80
+#: ../search/UIManager.cs:105
 msgid "_Applications"
 msgstr "_Aplicacións"
 
-#: ../search/UIManager.cs:82
+#: ../search/UIManager.cs:107
 msgid "Search applications"
 msgstr "Buscar aplicacións"
 
-#: ../search/UIManager.cs:85
+#: ../search/UIManager.cs:110
 msgid "_Contacts"
 msgstr "_Contactos"
 
-#: ../search/UIManager.cs:87
+#: ../search/UIManager.cs:112
 msgid "Search contacts"
 msgstr "Procurar contactos"
 
-#: ../search/UIManager.cs:90
+#: ../search/UIManager.cs:115
+msgid "Ca_lendar events"
+msgstr "Eventos de ca_lendario"
+
+#: ../search/UIManager.cs:117
+msgid "Search calendar events"
+msgstr "Procurar eventos de calendario"
+
+#: ../search/UIManager.cs:120
 msgid "_Documents"
 msgstr "_Documentos"
 
-#: ../search/UIManager.cs:92
+#: ../search/UIManager.cs:122
 msgid "Search documents"
 msgstr "Procurar documentos"
 
-#: ../search/UIManager.cs:95
+#: ../search/UIManager.cs:125
 msgid "Conve_rsations"
 msgstr "Con_versacións"
 
-#: ../search/UIManager.cs:97
+#: ../search/UIManager.cs:127
 msgid "Search E-Mail and Instant Messaging logs"
 msgstr "Procurar rexistros de MI e correos electrónicos"
 
-#: ../search/UIManager.cs:100
-msgid "Images"
-msgstr "Imaxes"
+#: ../search/UIManager.cs:130
+msgid "_Images"
+msgstr "_Imaxes"
 
-#: ../search/UIManager.cs:102
+#: ../search/UIManager.cs:132
 msgid "Search images"
 msgstr "Procurar imaxes"
 
-#: ../search/UIManager.cs:105
-msgid "Media"
-msgstr "Media"
+#: ../search/UIManager.cs:135
+msgid "_Media"
+msgstr "_Media"
 
-#: ../search/UIManager.cs:107
+#: ../search/UIManager.cs:137
 msgid "Search sound and video files"
 msgstr "Procurar ficheiros de vídeo e son"
 
-#: ../search/UIManager.cs:114
+#: ../search/UIManager.cs:144
 msgid "Date _Modified"
 msgstr "Data de _Modificación"
 
-#: ../search/UIManager.cs:115
+#: ../search/UIManager.cs:145
 msgid "Sort the most-recently-modified matches first"
 msgstr "Arranxar co máis recentemente modificado primeiro"
 
-#: ../search/UIManager.cs:118
+#: ../search/UIManager.cs:148
 msgid "_Name"
 msgstr "_Nome"
 
-#: ../search/UIManager.cs:119
+#: ../search/UIManager.cs:149
 msgid "Sort matches by name"
 msgstr "Arranxar coincidencias por nome"
 
-#: ../search/UIManager.cs:122
+#: ../search/UIManager.cs:152
 msgid "_Relevance"
 msgstr "_Relevancia"
 
-#: ../search/UIManager.cs:123
+#: ../search/UIManager.cs:153
 msgid "Sort the best matches first"
 msgstr "Arranxar as mellores coincidencias primeiro"
 
@@ -999,14 +1063,6 @@ msgstr "Directorio de Interoperatividade"
 #: ../Util/ExifData.cs:236
 msgid "Unknown Directory"
 msgstr "Directorio descoñecido"
-
-#: ../Util/StringFu.cs:77
-msgid "Today"
-msgstr "Hoxe"
-
-#: ../Util/StringFu.cs:79
-msgid "Yesterday"
-msgstr "Onte"
 
 #. Translators: Example output: Aug 9
 #: ../Util/StringFu.cs:82
