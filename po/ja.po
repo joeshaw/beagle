@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: beagle HEAD\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2006-04-09 01:14+0900\n"
-"PO-Revision-Date: 2006-04-09 01:13+0900\n"
+"POT-Creation-Date: 2006-04-30 13:10+0900\n"
+"PO-Revision-Date: 2006-04-30 13:03+0900\n"
 "Last-Translator: Takeshi AIHANA <aihana@gnome.gr.jp>\n"
 "Language-Team: Japanese <gnome-translation@gnome.gr.jp>\n"
 "MIME-Version: 1.0\n"
@@ -104,7 +104,7 @@ msgstr ""
 "文章を検索する場合は、引用符 \"\" で括って下さい (例: <b>\"我輩は猫である\"</"
 "b>)。"
 
-#: ../search/Pages/QuickTips.cs:19 ../search/UIManager.cs:65
+#: ../search/Pages/QuickTips.cs:19 ../search/UIManager.cs:81
 msgid "Quick Tips"
 msgstr "検索する際のヒント"
 
@@ -144,52 +144,56 @@ msgstr "検索する語句を入力して下さい"
 msgid "Start searching"
 msgstr "検索を始めます"
 
-#: ../search/Tiles/Contact.cs:53
+#: ../search/Tiles/Contact.cs:30
+msgid "Send Mail"
+msgstr "メールの送信"
+
+#: ../search/Tiles/Contact.cs:69
 msgid "E-Mail:"
 msgstr "E-メール:"
 
-#: ../search/Tiles/Contact.cs:56
+#: ../search/Tiles/Contact.cs:71
 msgid "Mobile Phone:"
 msgstr "携帯電話:"
 
-#: ../search/Tiles/Contact.cs:60
+#: ../search/Tiles/Contact.cs:73
 msgid "Work Phone:"
 msgstr "会社の電話番号:"
 
-#: ../search/Tiles/Contact.cs:64
+#: ../search/Tiles/Contact.cs:75
 msgid "Home Phone:"
 msgstr "自宅の電話番号:"
 
-#: ../search/Tiles/File.cs:33
+#: ../search/Tiles/File.cs:34
 msgid "Reveal in Folder"
 msgstr "フォルダの中を表示する"
 
-#: ../search/Tiles/File.cs:34
+#: ../search/Tiles/File.cs:35
 msgid "E-Mail"
 msgstr "E-メールを送信する"
 
 #. AddAction (new TileAction (Catalog.GetString ("Instant-Message"), InstantMessage));
 #. FIXME: s/"gtk-info"/Gtk.Stock.Info/ when we can depend on gtk# 2.8
 #. AddAction (new TileAction (Catalog.GetString ("Show Information"), "gtk-info", ShowInformation));
-#: ../search/Tiles/File.cs:36 ../search/Tiles/Folder.cs:38
+#: ../search/Tiles/File.cs:37 ../search/Tiles/Folder.cs:38
 msgid "Move to Trash"
 msgstr "ゴミ箱へ移動する"
 
-#: ../search/Tiles/File.cs:132 ../search/Tiles/Note.cs:57
+#: ../search/Tiles/File.cs:125 ../search/Tiles/Note.cs:56
 #: ../search/Tiles/RSSFeed.cs:45 ../search/Tiles/WebHistory.cs:50
 msgid "Title:"
 msgstr "タイトル:"
 
-#: ../search/Tiles/File.cs:135 ../search/Tiles/Folder.cs:51
-#: ../search/Tiles/Note.cs:60
+#: ../search/Tiles/File.cs:128 ../search/Tiles/Folder.cs:51
+#: ../search/Tiles/Note.cs:59
 msgid "Last Edited:"
 msgstr "最終変更日時:"
 
-#: ../search/Tiles/File.cs:139
+#: ../search/Tiles/File.cs:132
 msgid "Author:"
 msgstr "作者:"
 
-#: ../search/Tiles/File.cs:143 ../search/Tiles/Folder.cs:54
+#: ../search/Tiles/File.cs:136 ../search/Tiles/Folder.cs:54
 #: ../search/Tiles/Image.cs:81
 msgid "Full Path:"
 msgstr "パス名:"
@@ -214,33 +218,41 @@ msgstr "壁紙にセットする"
 msgid "Modified:"
 msgstr "変更日時:"
 
-#: ../search/Tiles/IMLog.cs:29
+#: ../search/Tiles/IMLog.cs:30
 msgid "IM Conversation"
 msgstr "IM 上での会話"
 
-#: ../search/Tiles/IMLog.cs:89
+#: ../search/Tiles/IMLog.cs:81
 msgid "Name:"
 msgstr "名前:"
 
-#: ../search/Tiles/IMLog.cs:90 ../search/Tiles/MailMessage.cs:89
+#: ../search/Tiles/IMLog.cs:82 ../search/Tiles/MailMessage.cs:95
 msgid "Date Received:"
 msgstr "受信した日付:"
 
-#: ../search/Tiles/MailAttachment.cs:45
+#: ../search/Tiles/MailAttachment.cs:46
 msgid "Mail attachment"
 msgstr "添付ファイル"
 
-#: ../search/Tiles/MailMessage.cs:53
+#: ../search/Tiles/MailMessage.cs:54
 msgid "Send in Mail"
 msgstr "メールの送信"
 
-#: ../search/Tiles/MailMessage.cs:83
+#: ../search/Tiles/MailMessage.cs:86
 msgid "Subject:"
 msgstr "件名:"
 
-#: ../search/Tiles/MailMessage.cs:86
+#: ../search/Tiles/MailMessage.cs:90
+msgid "To:"
+msgstr "宛先:"
+
+#: ../search/Tiles/MailMessage.cs:90
 msgid "From:"
 msgstr "差出人:"
+
+#: ../search/Tiles/MailMessage.cs:95
+msgid "Date Sent:"
+msgstr "送信した日付:"
 
 #: ../search/Tiles/Presentation.cs:33
 #, csharp-format
@@ -277,72 +289,102 @@ msgid "Contact"
 msgstr "連絡先"
 
 #: ../search/Tiles/Utils.cs:28
+msgid "Calendar Events"
+msgstr "予定"
+
+#: ../search/Tiles/Utils.cs:30
 msgid "Folder"
 msgstr "フォルダ"
 
-#: ../search/Tiles/Utils.cs:30
+#: ../search/Tiles/Utils.cs:32
 msgid "Image"
 msgstr "画像"
 
-#: ../search/Tiles/Utils.cs:32
+#: ../search/Tiles/Utils.cs:34
 msgid "Audio"
 msgstr "オーディオ"
 
-#: ../search/Tiles/Utils.cs:34
+#: ../search/Tiles/Utils.cs:36
 msgid "Video"
 msgstr "ビデオ"
 
-#: ../search/Tiles/Utils.cs:36
+#: ../search/Tiles/Utils.cs:38
 msgid "Documents"
 msgstr "ドキュメント"
 
-#: ../search/Tiles/Utils.cs:38
+#: ../search/Tiles/Utils.cs:40
 msgid "Conversations"
 msgstr "会話"
 
-#: ../search/Tiles/Utils.cs:40
+#: ../search/Tiles/Utils.cs:42
 msgid "Website"
 msgstr "ウェブサイト"
 
-#: ../search/Tiles/Utils.cs:42
+#: ../search/Tiles/Utils.cs:44
 msgid "News Feed"
 msgstr "ニュース"
 
-#: ../search/Tiles/Utils.cs:44
+#: ../search/Tiles/Utils.cs:46
 msgid "Archive"
 msgstr "書庫"
 
-#: ../search/Tiles/Utils.cs:88 ../search/Tiles/Utils.cs:122
-#: ../search/Tiles/Utils.cs:156 ../Util/StringFu.cs:77
+#: ../search/Tiles/Utils.cs:100 ../search/Tiles/Utils.cs:146
+#: ../search/Tiles/Utils.cs:192 ../Util/StringFu.cs:77
 msgid "Today"
 msgstr "今日"
 
-#: ../search/Tiles/Utils.cs:90 ../search/Tiles/Utils.cs:124
-#: ../search/Tiles/Utils.cs:158 ../Util/StringFu.cs:79
+#: ../search/Tiles/Utils.cs:102 ../search/Tiles/Utils.cs:148
+#: ../search/Tiles/Utils.cs:194 ../Util/StringFu.cs:79
 msgid "Yesterday"
 msgstr "昨日"
 
-#: ../search/Tiles/Utils.cs:162
+#: ../search/Tiles/Utils.cs:104 ../search/Tiles/Utils.cs:150
+#: ../search/Tiles/Utils.cs:196
+msgid "Tomorrow"
+msgstr "明日"
+
+#: ../search/Tiles/Utils.cs:200
 #, csharp-format
 msgid "{0} week ago"
 msgid_plural "{0} weeks ago"
 msgstr[0] "{0}週間前"
 msgstr[1] "{0}週間前"
 
+#: ../search/Tiles/Utils.cs:202
+#, csharp-format
+msgid "In {0} week"
+msgid_plural "In {0} weeks"
+msgstr[0] "{0}週間以内"
+msgstr[1] "{0}週間以内"
+
 #. Let's say a year and a half to stop saying months
-#: ../search/Tiles/Utils.cs:164
+#: ../search/Tiles/Utils.cs:204
 #, csharp-format
 msgid "{0} month ago"
 msgid_plural "{0} months ago"
 msgstr[0] "{0}ヶ月前"
 msgstr[1] "{0}ヶ月前"
 
-#: ../search/Tiles/Utils.cs:166
+#: ../search/Tiles/Utils.cs:206
+#, csharp-format
+msgid "In {0} month"
+msgid_plural "In {0} months"
+msgstr[0] "{0}ヶ月以内"
+msgstr[1] "{0}ヶ月以内"
+
+#: ../search/Tiles/Utils.cs:208
 #, csharp-format
 msgid "{0} year ago"
 msgid_plural "{0} years ago"
 msgstr[0] "{0}年前"
 msgstr[1] "{0}年前"
+
+#: ../search/Tiles/Utils.cs:210
+#, csharp-format
+msgid "In {0} year"
+msgid_plural "In {0} years"
+msgstr[0] "{0}年以内"
+msgstr[1] "{0}年以内"
 
 #. FIXME: We need filters for video in Beagle.
 #. They should land soon when entagged-sharp gets video support.
@@ -552,115 +594,127 @@ msgstr ""
 "person\n"
 "people"
 
-#: ../search/UIManager.cs:35
-msgid "_Search"
-msgstr "検索(_S)"
+#: ../search/UIManager.cs:42
+msgid "Close Desktop Search"
+msgstr "デスクトップ検索を閉じる"
 
-#: ../search/UIManager.cs:38
-msgid "_Actions"
-msgstr "アクション(_A)"
-
-#: ../search/UIManager.cs:41
-msgid "Sor_t"
-msgstr "並び替え(_T)"
-
-#: ../search/UIManager.cs:44
-msgid "_Help"
-msgstr "ヘルプ(_H)"
-
-#: ../search/UIManager.cs:49 ../search/UIManager.cs:53
+#: ../search/UIManager.cs:47 ../search/UIManager.cs:69
 msgid "Exit Desktop Search"
 msgstr "デスクトップ検索を終了します"
 
-#: ../search/UIManager.cs:56
+#: ../search/UIManager.cs:54
+msgid "_Search"
+msgstr "検索(_S)"
+
+#: ../search/UIManager.cs:57
+msgid "_Actions"
+msgstr "アクション(_A)"
+
+#: ../search/UIManager.cs:60
+msgid "Sor_t"
+msgstr "並び替え(_T)"
+
+#: ../search/UIManager.cs:63
+msgid "_Help"
+msgstr "ヘルプ(_H)"
+
+#: ../search/UIManager.cs:72
 msgid "_Contents"
 msgstr "目次(_C)"
 
-#: ../search/UIManager.cs:58
+#: ../search/UIManager.cs:74
 msgid "Help - Table of Contents"
 msgstr "ヘルプ - 目次"
 
-#: ../search/UIManager.cs:62
+#: ../search/UIManager.cs:78
 msgid "About Desktop Search"
 msgstr "デスクトップ検索について"
 
-#: ../search/UIManager.cs:75
+#: ../search/UIManager.cs:100
 msgid "_Everywhere"
 msgstr "全て(_E)"
 
-#: ../search/UIManager.cs:77
+#: ../search/UIManager.cs:102
 msgid "Search everywhere"
 msgstr "全ての場所から検索します"
 
-#: ../search/UIManager.cs:80
+#: ../search/UIManager.cs:105
 msgid "_Applications"
 msgstr "アプリケーション(_A)"
 
-#: ../search/UIManager.cs:82
+#: ../search/UIManager.cs:107
 msgid "Search applications"
 msgstr "アプリケーションを検索します"
 
-#: ../search/UIManager.cs:85
+#: ../search/UIManager.cs:110
 msgid "_Contacts"
 msgstr "連絡先(_C)"
 
-#: ../search/UIManager.cs:87
+#: ../search/UIManager.cs:112
 msgid "Search contacts"
 msgstr "連絡先を検索します"
 
-#: ../search/UIManager.cs:90
+#: ../search/UIManager.cs:115
+msgid "Ca_lendar events"
+msgstr "予定(_L)"
+
+#: ../search/UIManager.cs:117
+msgid "Search calendar events"
+msgstr "カレンダからイベントを検索します"
+
+#: ../search/UIManager.cs:120
 msgid "_Documents"
 msgstr "ドキュメント(_D)"
 
-#: ../search/UIManager.cs:92
+#: ../search/UIManager.cs:122
 msgid "Search documents"
 msgstr "ドキュメントを検索します"
 
-#: ../search/UIManager.cs:95
+#: ../search/UIManager.cs:125
 msgid "Conve_rsations"
 msgstr "会話(_R)"
 
-#: ../search/UIManager.cs:97
+#: ../search/UIManager.cs:127
 msgid "Search E-Mail and Instant Messaging logs"
 msgstr "E-メールやインスタント・メッセンジャーのログを検索します"
 
-#: ../search/UIManager.cs:100
-msgid "Images"
-msgstr "画像"
+#: ../search/UIManager.cs:130
+msgid "_Images"
+msgstr "画像(_I)"
 
-#: ../search/UIManager.cs:102
+#: ../search/UIManager.cs:132
 msgid "Search images"
 msgstr "画像を検索します"
 
-#: ../search/UIManager.cs:105
-msgid "Media"
-msgstr "メディア"
+#: ../search/UIManager.cs:135
+msgid "_Media"
+msgstr "メディア(_M)"
 
-#: ../search/UIManager.cs:107
+#: ../search/UIManager.cs:137
 msgid "Search sound and video files"
 msgstr "楽曲やビデオのファイルを検索します"
 
-#: ../search/UIManager.cs:114
+#: ../search/UIManager.cs:144
 msgid "Date _Modified"
 msgstr "変更日時順(_M)"
 
-#: ../search/UIManager.cs:115
+#: ../search/UIManager.cs:145
 msgid "Sort the most-recently-modified matches first"
 msgstr "検索結果を最近変更した順番で並べ替えます"
 
-#: ../search/UIManager.cs:118
+#: ../search/UIManager.cs:148
 msgid "_Name"
 msgstr "名前順(_N)"
 
-#: ../search/UIManager.cs:119
+#: ../search/UIManager.cs:149
 msgid "Sort matches by name"
 msgstr "検索結果を名前の順番で並べ替えます"
 
-#: ../search/UIManager.cs:122
+#: ../search/UIManager.cs:152
 msgid "_Relevance"
 msgstr "関連順(_R)"
 
-#: ../search/UIManager.cs:123
+#: ../search/UIManager.cs:153
 msgid "Sort the best matches first"
 msgstr "検索結果を最も一致する順番で並べ替えます"
 
@@ -748,7 +802,7 @@ msgstr "ホストの削除"
 
 #: ../tools/Settings.cs:438
 msgid "Are you sure you wish to remove this host from the list?"
-msgstr "本当に、このホストを一覧から削除してもよろしいですか？"
+msgstr "このホストを一覧から削除してもよろしいですか？"
 
 #: ../tools/Settings.cs:459
 msgid "Select path"
@@ -765,8 +819,7 @@ msgstr "パブリックなパスの削除"
 #: ../tools/Settings.cs:503
 msgid ""
 "Are you sure you wish to remove this entry from the list of public paths?"
-msgstr ""
-"本当に、このエントリをパブリックなパスの一覧から削除してもよろしいですか？"
+msgstr "このエントリをパブリックなパスの一覧から削除してもよろしいですか？"
 
 #: ../tools/Settings.cs:548 ../tools/Settings.cs:637 ../tools/Settings.cs:715
 #: ../tools/Settings.cs:791 ../tools/Settings.cs:1130
@@ -799,7 +852,7 @@ msgstr "パス名(_A):"
 
 #: ../tools/Settings.cs:1069
 msgid "M_ail folder:"
-msgstr "メール・フォルダ(_A):"
+msgstr "フォルダ(_A):"
 
 #: ../tools/Settings.cs:1074
 msgid "P_attern:"
@@ -899,7 +952,7 @@ msgstr "検索ウィンドウを表示するホット・キー:"
 
 #: ../tools/settings.glade.h:19
 msgid "Exclude Resource"
-msgstr "対象外にするリソース"
+msgstr "対象外のリソース"
 
 #: ../tools/settings.glade.h:20
 msgid "Filename _pattern"
@@ -938,7 +991,7 @@ msgid ""
 "Specify any resources, such as paths, patterns, mail folders or type of "
 "objects you wish to exclude from indexing."
 msgstr ""
-"インデックスの作成で対象外とするフォルダ、パターン、メール・フォルダ、オブ"
+"インデックスの作成で対象外にするフォルダ、パターン、メール・フォルダ、オブ"
 "ジェクトの種類を指定して下さい:"
 
 #: ../tools/settings.glade.h:31
@@ -959,7 +1012,7 @@ msgstr "root 権限で Beagle を実行できるようにする(_A)"
 
 #: ../tools/settings.glade.h:35
 msgid "_Folder path"
-msgstr "フォルダのパス(_F)"
+msgstr "フォルダ(_F)"
 
 #: ../tools/settings.glade.h:36
 msgid "_Mail folder"
@@ -1016,12 +1069,12 @@ msgstr "不明なフォルダ"
 #. Translators: Example output: Aug 9
 #: ../Util/StringFu.cs:82
 msgid "MMM d"
-msgstr "MMM月 d日"
+msgstr "MMM月d日"
 
 #. Translators: Example output: Aug 9, 2000
 #: ../Util/StringFu.cs:85
 msgid "MMM d, yyyy"
-msgstr "yyyy年 MMM月 d日"
+msgstr "yyyy年MMM月d日"
 
 #. Translators: Example output: 11:05 AM  (note h = 12-hour time)
 #: ../Util/StringFu.cs:88
@@ -1055,12 +1108,12 @@ msgstr "{0}日前の {1}"
 #. Translators: Example output: January 3, 3:45 PM
 #: ../Util/StringFu.cs:122
 msgid "MMMM d, h:mm tt"
-msgstr "MMMM月 d日 tt h:mm"
+msgstr "MMMM月d日 h:mm tt"
 
 #. Translators: Example output: March 23 2001, 10:04 AM
 #: ../Util/StringFu.cs:127
 msgid "MMMM d yyyy, h:mm tt"
-msgstr "yyyy年 MMMM月 d日, tt h:mm"
+msgstr "yyyy年MMMM月d日 h:mm tt"
 
 #: ../Util/StringFu.cs:137
 #, csharp-format
