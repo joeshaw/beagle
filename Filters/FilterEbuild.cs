@@ -69,7 +69,7 @@ namespace Beagle.Filters {
 			}
 
 			// get installation information
-			if (pkgname.Length == 0 || version.Length == 0 || !file.FullName.StartsWith ("/var/db/pkg/"))
+			if (! file.FullName.StartsWith ("/var/db/pkg/"))
 				return;
 			FileInfo contents = new FileInfo (Path.Combine (file.Directory.FullName, "CONTENTS"));
 			if (!contents.Exists)
