@@ -67,6 +67,66 @@ namespace Beagle.Filters {
 				Size = download_size.ToString ();
 				digest_reader.Close ();
 			}
+
+			// get installation information
+			if (pkgname.Length == 0 || version.Length == 0 || !file.FullName.StartsWith ("/var/db/pkg/"))
+				return;
+			FileInfo contents = new FileInfo (Path.Combine (file.Directory.FullName, "CONTENTS"));
+			if (!contents.Exists)
+				return;
+			AddProperty (Beagle.Property.NewDate ("fixme:install_time", contents.LastWriteTime));
+
+			// find installed objects
+			long file_count = 0;
+			long dir_count = 0;
+			long byte_count = 0;
+			StreamReader contents_reader = new StreamReader (new FileStream (contents.FullName, FileMode.Open, FileAccess.Read, FileShare.Read));
+			string contents_line = null;
+			while ((contents_line = contents_reader.ReadLine ()) != null) {
+				if (contents_line.StartsWith ("dir"))
+					dir_count ++;
+				else if (!contents_line.StartsWith ("obj"))
+					continue;
+
+				file_count ++;
+				string[] contents_parts = contents_line.Split (' ');
+				if (contents_parts.Length < 2)
+					continue;
+				FileInfo desktop_file = null;
+				try {
+					FileInfo installed = new FileInfo (contents_parts[1]);
+					if (installed.Exists)
+					{
+						byte_count += installed.Length;
+						if (contents_parts[1].EndsWith (".desktop"))
+							desktop_file = installed;
+					}
+				}
+				catch (IOException e) {
+					// Mostly likely caused by permission error
+				}
+
+				if (desktop_file == null)
+					continue;
+				// verify this is a desktop file
+				StreamReader desktop_reader = new StreamReader (new FileStream (desktop_file.FullName, FileMode.Open, FileAccess.Read, FileShare.Read));
+				string desktop_line = null;
+				bool desktop_valid = false;
+				while ((desktop_line = desktop_reader.ReadLine ()) != null) {
+					if (desktop_line.Trim ().Length > 0) {
+						desktop_valid = desktop_line.Equals ("[Desktop Entry]");
+						break;
+					}
+				}
+				
+				// add property
+				if (desktop_valid)
+					AddProperty (Beagle.Property.NewUnsearched ("fixme:desktop_file", desktop_file.FullName));
+			}
+
+			AddProperty (Beagle.Property.NewUnsearched ("fixme:contents_byte_count", byte_count));
+			AddProperty (Beagle.Property.NewUnsearched ("fixme:contents_file_count", file_count));
+			AddProperty (Beagle.Property.NewUnsearched ("fixme:contents_dir_count", dir_count));
 		}
 
 		override protected void PullPackageProperties () 

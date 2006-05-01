@@ -648,6 +648,7 @@ wrappers/Makefile
 wrappers/python/Makefile
 beagle-0.0.pc
 beagle-daemon.pc
+beagle-ui-0.0.pc
 beagle.spec
 po/Makefile.in
 ])
