@@ -24,6 +24,7 @@ namespace Search.Tiles {
 		public TileNote (Beagle.Hit hit, Beagle.Query query) : base (hit, query)
 		{
 			Title = Hit.GetFirstProperty ("dc:title");
+			Description = Utils.NiceShortDate (Timestamp);
 		}
 
 		protected override void LoadIcon (Gtk.Image image, int size)
