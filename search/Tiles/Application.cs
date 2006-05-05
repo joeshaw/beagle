@@ -94,20 +94,24 @@ namespace Search.Tiles {
 			string path = Hit ["fixme:Icon"];
 			
 			if (path != null && path != "") {
-				if (path.StartsWith ("/")) {
-					icon = new Gdk.Pixbuf (path);
-				} else {
-					if (path.EndsWith (".png")) 
-						icon = WidgetFu.LoadThemeIcon (path.Substring (0, path.Length-4), size);
-					else
-						icon = WidgetFu.LoadThemeIcon (path, size);
+				try {
+					if (path.StartsWith ("/")) {
+						icon = new Gdk.Pixbuf (path);
+					} else {
+						if (path.EndsWith (".png")) 
+							icon = WidgetFu.LoadThemeIcon (path.Substring (0, path.Length-4), size);
+						else
+							icon = WidgetFu.LoadThemeIcon (path, size);
 					
-					if (icon == null) {
-						string kde_path = Beagle.Util.KdeUtils.LookupIcon (path);
-				
-						if (System.IO.File.Exists (kde_path))
-							icon = new Gdk.Pixbuf (kde_path);
+						if (icon == null) {
+							string kde_path = Beagle.Util.KdeUtils.LookupIcon (path);
+							
+							if (System.IO.File.Exists (kde_path))
+								icon = new Gdk.Pixbuf (kde_path);
+						}
 					}
+				} catch (Exception e) {
+					Console.WriteLine ("Unable to load icon '{0}': {1}", path, e.Message);
 				}
 			}
 
