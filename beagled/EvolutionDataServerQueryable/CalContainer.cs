@@ -88,7 +88,14 @@ namespace Beagle.Daemon.EvolutionDataServerQueryable {
 			string[] removed;
 
 			Logger.Log.Debug ("Getting calendar changes for {0}", this.source.Uri);
-			this.cal.GetChanges ("beagle-" + this.fingerprint, out added, out changed, out removed);
+
+			try { 
+				this.cal.GetChanges ("beagle-" + this.fingerprint, out added, out changed, out removed);
+			} catch (Exception e) {
+				Logger.Log.Warn ("Unable to get changes for {0}: {1}", this.source.Uri, e.Message);
+				return;
+			}
+
 			Logger.Log.Debug ("Calendar {0}: {1} added, {2} changed, {3} removed",
 					  this.cal.Uri, added.Length, changed.Length, removed.Length);
 
