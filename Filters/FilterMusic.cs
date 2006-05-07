@@ -37,6 +37,9 @@ namespace Beagle.Filters {
 	
 		public FilterMusic ()
 		{
+			// 1: Added duration and bitrate property
+			SetVersion (1);
+			
 			// APE / Monkeys Audio
 			AddSupportedFlavor (FilterFlavor.NewFromExtension (".ape"));
 
@@ -112,6 +115,9 @@ namespace Beagle.Filters {
 
 			foreach (string genre in tag.Genres)
 				AddProperty (Beagle.Property.NewKeyword ("fixme:genre", genre));
+
+			AddProperty (Beagle.Property.NewUnsearched ("fixme:duration", tag.Duration));
+			AddProperty (Beagle.Property.NewUnsearched ("fixme:bitrate", tag.Bitrate));
 
 			Finished ();
 		}
