@@ -85,7 +85,7 @@ inotify_glue_init (void)
 	if (fd < 0) {
 		int err = errno;
 		perror ("inotify_init");
-		if (err == ENOSYS)
+		if (err == ENOSYS) 
 			fprintf(stderr, "Inotify not supported!  You need a "
 				"2.6.13 kernel or later with CONFIG_INOTIFY "
 				"enabled.");
@@ -109,11 +109,18 @@ inotify_glue_watch (int fd, const char *filename, __u32 mask)
 
 	wd = inotify_add_watch (fd, filename, mask);
 	if (wd < 0) {
+		static int watch_limit_hit = 0;
+
 		int err = errno;
-		perror ("inotify_add_watch");
-		if (err == ENOSPC)
+
+		if (! watch_limit_hit || err != ENOSPC)
+			perror ("inotify_add_watch");
+
+		if (! watch_limit_hit && err == ENOSPC) {
 			fprintf(stderr, "Maximum watch limit hit. "
 				"Try adjusting " PROCFS_MAX_USER_WATCHES ".\n");
+			watch_limit_hit = 1;
+		}
 	}
 
 	return wd;
