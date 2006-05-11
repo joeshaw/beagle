@@ -21,13 +21,22 @@ namespace Search.Tiles {
 
 		public Calendar (Beagle.Hit hit, Beagle.Query query) : base (hit, query)
 		{
+			string description;
+			int newline;
+
 			Group = TileGroup.Calendar;
 
 			string summary = hit.GetFirstProperty ("fixme:summary");
 			string time = Utils.NiceShortDate (hit.GetFirstProperty ("fixme:starttime"));
 
 			Title = (time == "") ? summary : time + ": " + summary;
-			Description = hit.GetFirstProperty ("fixme:description");
+
+			description = hit.GetFirstProperty ("fixme:description");
+			newline = description.IndexOf ('\n');
+			if (newline == -1)
+				Description = description;
+			else
+				Description = description.Substring (0, newline);
 		}
 
 		protected override void LoadIcon (Gtk.Image image, int size)
