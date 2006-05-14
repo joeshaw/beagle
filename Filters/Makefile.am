@@ -68,6 +68,7 @@ CSFILES = 				\
 	$(srcdir)/FilterRPM.cs		\
 	$(srcdir)/FilterPackage.cs	\
 	$(srcdir)/FilterDeb.cs		\
+	$(srcdir)/FilterBoo.cs		\
 	$(srcdir)/FilterSvg.cs
 
 if ENABLE_GSF_SHARP

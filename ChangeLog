@@ -1,3 +1,8 @@
+2006-05-11  Paul Betts <paul.betts@gmail.com>
+
+	* Filters/FilterBoo.cs: Add filter for Boo source code based on 
+	FilterPython.
+
 2006-04-25  Debajyoti Bera <dbera.web@gmail.com>
 
 	* beagled/QueryDriver.cs,beagled/PropertyKeywordFu.cs,
