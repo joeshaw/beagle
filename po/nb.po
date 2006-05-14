@@ -9,8 +9,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: beagle\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2006-05-02 18:18+0200\n"
-"PO-Revision-Date: 2006-05-02 18:32+0100\n"
+"POT-Creation-Date: 2006-05-14 17:58+0200\n"
+"PO-Revision-Date: 2006-05-14 18:06+0100\n"
 "Last-Translator: Øivind Hoel <oivind.hoel@gmail.com>\n"
 "Language-Team: Norwegian Bokmal <i18n-nb@lister.ping.uio.no>\n"
 "MIME-Version: 1.0\n"
@@ -69,7 +69,7 @@ msgstr "Ditt søk etter \"{0}\" samsvarte ikke med noen filer på din datamaskin
 
 #: ../search/Pages/NoMatch.cs:24
 msgid "You can change the scope of your search using the \"Search\" menu. A broader search scope might produce more results."
-msgstr "Du kan endre omfanget for søket ved å bruke menyen «Søk». Et større omfang kan gi flere resultater."
+msgstr "Du kan endre omfanget av søket ved å bruke menyen «Søk». Et større omfang kan gi flere resultater."
 
 #: ../search/Pages/NoMatch.cs:26
 msgid "You should check the spelling of your search words to see if you accidentally misspelled any words."
@@ -165,7 +165,7 @@ msgid "Move to Trash"
 msgstr "Flytt til papirkurv"
 
 #: ../search/Tiles/File.cs:125
-#: ../search/Tiles/Note.cs:56
+#: ../search/Tiles/Note.cs:57
 #: ../search/Tiles/RSSFeed.cs:45
 #: ../search/Tiles/WebHistory.cs:50
 msgid "Title:"
@@ -173,7 +173,7 @@ msgstr "Tittel"
 
 #: ../search/Tiles/File.cs:128
 #: ../search/Tiles/Folder.cs:51
-#: ../search/Tiles/Note.cs:59
+#: ../search/Tiles/Note.cs:60
 msgid "Last Edited:"
 msgstr "Sist endret:"
 
@@ -934,7 +934,7 @@ msgstr "Filnavn_mønster"
 
 #: ../tools/settings.glade.h:21
 msgid "I_ndex my home directory"
-msgstr "I_ndekser min hjemmekatalog"
+msgstr "I_ndekser min hjemmemappe"
 
 #: ../tools/settings.glade.h:22
 msgid "Indexing"
