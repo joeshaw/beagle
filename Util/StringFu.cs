@@ -671,27 +671,42 @@ namespace Beagle.Util {
 			StringBuilder sb = new StringBuilder ();
 			return StripTags (line, sb);
 		}
+		
+		public static string ConvertSpecialEntities (string line)
+		{
+			line.Replace ("&lt;", "<");
+			line.Replace ("&gt;", ">");
+			line.Replace ("&quot;", "\"");
+			line.Replace ("&amp;", "&");
+			line.Replace ("&nbsp", " ");
 
+			return line;
+  		}
 	}
 
 	public class HtmlRemovingReader : TextReader {
-		private TextReader reader;	
+
+		private TextReader reader;
 		private StringBuilder sb;
 	    
 		public HtmlRemovingReader (TextReader reader)
 		{
 			this.reader = reader;
-			sb = new StringBuilder ();
+			this.sb = new StringBuilder ();
 		}
 
 		public override string ReadLine ()
 		{
 			string line = reader.ReadLine ();
+
 			if (line == null)
 				return null;
 
 			sb.Length = 0;
-			return StringFu.StripTags (line, sb);
+			line = StringFu.StripTags (line, sb);
+			line = StringFu.ConvertSpecialEntities (line);
+
+			return line;
 		}
 
 		public override void Close ()
