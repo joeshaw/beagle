@@ -88,13 +88,10 @@ namespace Search.Tiles {
 
 		public void Email ()
 		{
-			SafeProcess p = new SafeProcess ();
-			p.Arguments = new string [] { "evolution", String.Format ("mailto:?attach={0}", Hit.FileInfo.FullName) };
-
 			try {
-				p.Start () ;
+				Gnome.Url.Show (String.Format ("mailto:?attach={0}", Hit.FileInfo.FullName));
 			} catch (Exception e) {
-				Console.WriteLine ("Error launching Evolution composer: " + e);
+				Console.WriteLine ("Error sending email: " + e);
 			}
 		}
 

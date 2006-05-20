@@ -42,6 +42,7 @@ namespace Search.Tiles {
 
 		public MailAttachment (Beagle.Hit hit, Beagle.Query query) : base (hit, query)
 		{
+			Group = TileGroup.Documents;
 			Title = Hit ["fixme:attachment_title"];
 			Description = Catalog.GetString ("Mail attachment");
 		}

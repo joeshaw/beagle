@@ -51,7 +51,8 @@ namespace Search.Tiles {
 				Date.LabelProp = Utils.NiceShortDate (Timestamp);
 			} catch {}
 
-			AddAction (new TileAction (Catalog.GetString ("Send in Mail"), SendInMail));
+			if (Hit.GetFirstProperty ("fixme:client") == "evolution")
+				AddAction (new TileAction (Catalog.GetString ("Send in Mail"), SendInMail));
 		}
 
 		protected override void LoadIcon (Gtk.Image image, int size)
@@ -127,9 +128,6 @@ namespace Search.Tiles {
 
 		public void SendInMail ()
 		{
-			if (Hit.GetFirstProperty ("fixme:client") != "evolution")
-				return;
-			
 			SafeProcess p = new SafeProcess ();
 			p.Arguments = new string [] { "evolution", String.Format ("{0};forward=attached", Hit.Uri) };
 
