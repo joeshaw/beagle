@@ -21,15 +21,15 @@ namespace Search.Tiles {
 
 		public static TileGroupInfo[] GroupInfo = new TileGroupInfo[] {
 			new TileGroupInfo (TileGroup.Application,
-					   Catalog.GetString ("Application"), 1),
+					   Catalog.GetString ("Applications"), 1),
 			new TileGroupInfo (TileGroup.Contact,
-					   Catalog.GetString ("Contact"), 2),
+					   Catalog.GetString ("Contacts"), 2),
 			new TileGroupInfo (TileGroup.Calendar,
 					   Catalog.GetString ("Calendar Events"), 2),
 			new TileGroupInfo (TileGroup.Folder,
-					   Catalog.GetString ("Folder"), 2),
+					   Catalog.GetString ("Folders"), 2),
 			new TileGroupInfo (TileGroup.Image,
-					   Catalog.GetString ("Image"), 2),
+					   Catalog.GetString ("Images"), 2),
 			new TileGroupInfo (TileGroup.Audio,
 					   Catalog.GetString ("Audio"), 2),
 			new TileGroupInfo (TileGroup.Video,
@@ -39,11 +39,11 @@ namespace Search.Tiles {
 			new TileGroupInfo (TileGroup.Conversations,
 					   Catalog.GetString ("Conversations"), 5),
 			new TileGroupInfo (TileGroup.Website,
-					   Catalog.GetString ("Website"), 2),
+					   Catalog.GetString ("Websites"), 2),
 			new TileGroupInfo (TileGroup.Feed,
-					   Catalog.GetString ("News Feed"), 2),
+					   Catalog.GetString ("News Feeds"), 2),
 			new TileGroupInfo (TileGroup.Archive,
-					   Catalog.GetString ("Archive"), 2),
+					   Catalog.GetString ("Archives"), 2),
 		};
 
 		public static DateTime ParseTimestamp (string timestamp)
