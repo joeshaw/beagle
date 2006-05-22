@@ -1,5 +1,5 @@
 # Finnish messages for Beagle
-# Copyright (C) 2005 Ilkka Tuohela
+# Copyright (C) 2005-2006 Ilkka Tuohela
 # This file is distributed under the same license as the beagle package.
 # Ilkka Tuohela <hile@iki.fi>, 2005-2006.
 #
@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: beagle\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2006-05-06 08:45+0300\n"
-"PO-Revision-Date: 2006-05-06 08:48+0300\n"
+"POT-Creation-Date: 2006-05-22 19:16+0300\n"
+"PO-Revision-Date: 2006-05-22 19:16+0300\n"
 "Last-Translator: Ilkka Tuohela <hile@iki.fi>\n"
 "Language-Team: Finnish <gnome-fi-laatu@lists.sourceforge.net>\n"
 "MIME-Version: 1.0\n"
@@ -179,21 +179,21 @@ msgstr "Sähköposti"
 msgid "Move to Trash"
 msgstr "Siirrä roskakoriin"
 
-#: ../search/Tiles/File.cs:125 ../search/Tiles/Note.cs:57
+#: ../search/Tiles/File.cs:122 ../search/Tiles/Note.cs:57
 #: ../search/Tiles/RSSFeed.cs:45 ../search/Tiles/WebHistory.cs:50
 msgid "Title:"
 msgstr "Otsikko:"
 
-#: ../search/Tiles/File.cs:128 ../search/Tiles/Folder.cs:51
+#: ../search/Tiles/File.cs:125 ../search/Tiles/Folder.cs:51
 #: ../search/Tiles/Note.cs:60
 msgid "Last Edited:"
 msgstr "Viimeksi muokattu:"
 
-#: ../search/Tiles/File.cs:132
+#: ../search/Tiles/File.cs:129
 msgid "Author:"
 msgstr "Kirjoittanut:"
 
-#: ../search/Tiles/File.cs:136 ../search/Tiles/Folder.cs:54
+#: ../search/Tiles/File.cs:133 ../search/Tiles/Folder.cs:54
 #: ../search/Tiles/Image.cs:81
 msgid "Full Path:"
 msgstr "Koko polku:"
@@ -226,31 +226,31 @@ msgstr "IM-keskustelut"
 msgid "Name:"
 msgstr "Nimi:"
 
-#: ../search/Tiles/IMLog.cs:82 ../search/Tiles/MailMessage.cs:95
+#: ../search/Tiles/IMLog.cs:82 ../search/Tiles/MailMessage.cs:96
 msgid "Date Received:"
 msgstr "Vastaanottopäivä:"
 
-#: ../search/Tiles/MailAttachment.cs:46
+#: ../search/Tiles/MailAttachment.cs:47
 msgid "Mail attachment"
 msgstr "Sähköpostiliite"
 
-#: ../search/Tiles/MailMessage.cs:54
+#: ../search/Tiles/MailMessage.cs:55
 msgid "Send in Mail"
 msgstr "Lähetä sähköpostissa"
 
-#: ../search/Tiles/MailMessage.cs:86
+#: ../search/Tiles/MailMessage.cs:87
 msgid "Subject:"
 msgstr "Aihe:"
 
-#: ../search/Tiles/MailMessage.cs:90
+#: ../search/Tiles/MailMessage.cs:91
 msgid "To:"
 msgstr "Vastaanottaja:"
 
-#: ../search/Tiles/MailMessage.cs:90
+#: ../search/Tiles/MailMessage.cs:91
 msgid "From:"
 msgstr "Lähettäjä:"
 
-#: ../search/Tiles/MailMessage.cs:95
+#: ../search/Tiles/MailMessage.cs:96
 msgid "Date Sent:"
 msgstr "Lähetyspäivä:"
 
@@ -281,24 +281,24 @@ msgid "Open"
 msgstr "Avaa"
 
 #: ../search/Tiles/Utils.cs:24
-msgid "Application"
-msgstr "Sovellus"
+msgid "Applications"
+msgstr "Sovellukset"
 
 #: ../search/Tiles/Utils.cs:26
-msgid "Contact"
-msgstr "Yhteystieto"
+msgid "Contacts"
+msgstr "Yhteystiedot"
 
 #: ../search/Tiles/Utils.cs:28
 msgid "Calendar Events"
 msgstr "Kalenteritapahtumat"
 
 #: ../search/Tiles/Utils.cs:30
-msgid "Folder"
-msgstr "Kansio"
+msgid "Folders"
+msgstr "Kansiot"
 
 #: ../search/Tiles/Utils.cs:32
-msgid "Image"
-msgstr "Kuva"
+msgid "Images"
+msgstr "Kuvat"
 
 #: ../search/Tiles/Utils.cs:34
 msgid "Audio"
@@ -317,16 +317,16 @@ msgid "Conversations"
 msgstr "Keskustelut"
 
 #: ../search/Tiles/Utils.cs:42
-msgid "Website"
-msgstr "WWW-sivu"
+msgid "Websites"
+msgstr "WWW-sivut"
 
 #: ../search/Tiles/Utils.cs:44
-msgid "News Feed"
-msgstr "Uutisvirta"
+msgid "News Feeds"
+msgstr "Uutisvirrat"
 
 #: ../search/Tiles/Utils.cs:46
-msgid "Archive"
-msgstr "Arkisto"
+msgid "Archives"
+msgstr "Arkistot"
 
 #: ../search/Tiles/Utils.cs:100 ../search/Tiles/Utils.cs:146
 #: ../search/Tiles/Utils.cs:192 ../Util/StringFu.cs:77
@@ -1151,6 +1151,15 @@ msgstr "{0:0.0} kt"
 #, csharp-format
 msgid "{0:0.0} MB"
 msgstr "{0:0.0} Mt"
+
+#~ msgid "Application"
+#~ msgstr "Sovellus"
+
+#~ msgid "Contact"
+#~ msgstr "Yhteystieto"
+
+#~ msgid "Image"
+#~ msgstr "Kuva"
 
 #~ msgid "Start the daemon"
 #~ msgstr "Käynnistä taustaprosessi"
