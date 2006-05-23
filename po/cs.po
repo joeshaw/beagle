@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: cs\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2006-03-09 12:11+0100\n"
-"PO-Revision-Date: 2006-03-09 12:13+0100\n"
+"POT-Creation-Date: 2006-05-23 12:20+0200\n"
+"PO-Revision-Date: 2006-05-23 13:38+0200\n"
 "Last-Translator: Jakub Friedl <jfriedl@suse.cz>\n"
 "Language-Team:  <cs@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -43,7 +43,7 @@ msgstr "Konverzace v {0}"
 msgid "Conversations with {0}"
 msgstr "Konverzace s {0}"
 
-#: ../search/beagle-search.desktop.in.h:1 ../tools/settings.glade.h:30
+#: ../search/beagle-search.desktop.in.h:1 ../tools/settings.glade.h:27
 msgid "Search"
 msgstr "Vyhledávání"
 
@@ -51,7 +51,7 @@ msgstr "Vyhledávání"
 msgid "Search for data on your desktop"
 msgstr "Vyhledávání dat ve vašem počítači"
 
-#: ../search/Category.cs:103
+#: ../search/Category.cs:108
 #, csharp-format
 msgid "{0}-{1} of {2}"
 msgstr "{0}-{1} z {2}"
@@ -103,7 +103,7 @@ msgstr ""
 msgid "When searching for a phrase, add quotes. ex: <b>\"There be dragons\"</b>"
 msgstr "Hledáte-li přesnou frázi, přidejte uvozovky, např: <b>\"Draci tu nejsou\"</b>"
 
-#: ../search/Pages/QuickTips.cs:19 ../search/UIManager.cs:65
+#: ../search/Pages/QuickTips.cs:19 ../search/UIManager.cs:81
 msgid "Quick Tips"
 msgstr "Rychlé rady"
 
@@ -116,78 +116,84 @@ msgid ""
 "For security reasons, Beagle cannot be run as root.  You should restart as a "
 "regular user."
 msgstr ""
-"Z bezpečnostních důvodů není možné spouštět Beagle pod rootem. "
-"Přepněte se do běžného uživatele."
+"Z bezpečnostních důvodů není možné spouštět Beagle pod rootem. Přepněte se "
+"do běžného uživatele."
 
 #: ../search/Pages/StartDaemon.cs:19
-msgid "Daemon not running"
-msgstr "Démon neběží"
+msgid "Search service not running"
+msgstr "Vyhledávací služba neběží"
 
 #: ../search/Pages/StartDaemon.cs:21
-msgid "Start the daemon"
-msgstr "Spustit démona"
+msgid "Start search service"
+msgstr "Spustit vyhledávací službu"
 
-#: ../search/Search.cs:147
+#: ../search/Search.cs:149
 msgid "_Find:"
 msgstr "_Hledat:"
 
-#: ../search/Search.cs:161
+#: ../search/Search.cs:163
 msgid "Find Now"
 msgstr "Najít"
 
-#: ../search/Search.cs:205
+#: ../search/Search.cs:209
 msgid "Type in search terms"
 msgstr "Zadejte hledané termíny"
 
-#: ../search/Search.cs:206
+#: ../search/Search.cs:210
 msgid "Start searching"
 msgstr "Začít hledání"
 
-#: ../search/Tiles/Contact.cs:53
+#: ../search/Tiles/Contact.cs:30
+msgid "Send Mail"
+msgstr "Poslat e-mail"
+
+#: ../search/Tiles/Contact.cs:69
 msgid "E-Mail:"
 msgstr "E-mail:"
 
-#: ../search/Tiles/Contact.cs:56
+#: ../search/Tiles/Contact.cs:71
 msgid "Mobile Phone:"
 msgstr "Mobilní telefon:"
 
-#: ../search/Tiles/Contact.cs:60
+#: ../search/Tiles/Contact.cs:73
 msgid "Work Phone:"
 msgstr "Pracovní telefon:"
 
-#: ../search/Tiles/Contact.cs:64
+#: ../search/Tiles/Contact.cs:75
 msgid "Home Phone:"
 msgstr "Domácí telefon:"
 
-#: ../search/Tiles/File.cs:33
+#: ../search/Tiles/File.cs:34
 msgid "Reveal in Folder"
 msgstr "Zobrazit v adresáři"
 
-#: ../search/Tiles/File.cs:34
+#: ../search/Tiles/File.cs:35
 msgid "E-Mail"
 msgstr "E-mail"
 
 #. AddAction (new TileAction (Catalog.GetString ("Instant-Message"), InstantMessage));
 #. FIXME: s/"gtk-info"/Gtk.Stock.Info/ when we can depend on gtk# 2.8
 #. AddAction (new TileAction (Catalog.GetString ("Show Information"), "gtk-info", ShowInformation));
-#: ../search/Tiles/File.cs:36 ../search/Tiles/Folder.cs:38
+#: ../search/Tiles/File.cs:37 ../search/Tiles/Folder.cs:38
 msgid "Move to Trash"
 msgstr "Přesunout do koše"
 
-#: ../search/Tiles/File.cs:132 ../search/Tiles/Note.cs:57
+#: ../search/Tiles/File.cs:122 ../search/Tiles/Note.cs:57
 #: ../search/Tiles/RSSFeed.cs:45 ../search/Tiles/WebHistory.cs:50
 msgid "Title:"
 msgstr "Název:"
 
-#: ../search/Tiles/File.cs:135 ../search/Tiles/Note.cs:60
+#: ../search/Tiles/File.cs:125 ../search/Tiles/Folder.cs:51
+#: ../search/Tiles/Note.cs:60
 msgid "Last Edited:"
 msgstr "Naposledy změněno"
 
-#: ../search/Tiles/File.cs:139
+#: ../search/Tiles/File.cs:129
 msgid "Author:"
 msgstr "Autor:"
 
-#: ../search/Tiles/File.cs:143 ../search/Tiles/Image.cs:72
+#: ../search/Tiles/File.cs:133 ../search/Tiles/Folder.cs:54
+#: ../search/Tiles/Image.cs:81
 msgid "Full Path:"
 msgstr "Plná cesta:"
 
@@ -203,46 +209,50 @@ msgstr[0] "Obsahuje {0} položku"
 msgstr[1] "Obsahuje {0} položky"
 msgstr[2] "Obsahuje {0} položek"
 
-#: ../search/Tiles/Folder.cs:54
-msgid "Edited:"
-msgstr "Upraveno:"
-
 #. AddAction (new TileAction (Catalog.GetString ("Add to Library"), Gtk.Stock.Add, AddToLibrary));
 #: ../search/Tiles/Image.cs:39
 msgid "Set as Wallpaper"
 msgstr "Použít jako pozadí"
 
-#: ../search/Tiles/Image.cs:69
+#: ../search/Tiles/Image.cs:78
 msgid "Modified:"
 msgstr "Změněno:"
 
-#: ../search/Tiles/IMLog.cs:29
+#: ../search/Tiles/IMLog.cs:30
 msgid "IM Conversation"
 msgstr "IM konverzace"
 
-#: ../search/Tiles/IMLog.cs:89
+#: ../search/Tiles/IMLog.cs:81
 msgid "Name:"
 msgstr "Jméno:"
 
-#: ../search/Tiles/IMLog.cs:90 ../search/Tiles/MailMessage.cs:69
+#: ../search/Tiles/IMLog.cs:82 ../search/Tiles/MailMessage.cs:96
 msgid "Date Received:"
 msgstr "Přijato:"
 
-#: ../search/Tiles/MailAttachment.cs:45
+#: ../search/Tiles/MailAttachment.cs:47
 msgid "Mail attachment"
 msgstr "Příloha e-mailu"
 
-#: ../search/Tiles/MailMessage.cs:33
+#: ../search/Tiles/MailMessage.cs:55
 msgid "Send in Mail"
 msgstr "Poslat e-mailem"
 
-#: ../search/Tiles/MailMessage.cs:63
+#: ../search/Tiles/MailMessage.cs:87
 msgid "Subject:"
 msgstr "Předmět:"
 
-#: ../search/Tiles/MailMessage.cs:66
+#: ../search/Tiles/MailMessage.cs:91
+msgid "To:"
+msgstr "Komu:"
+
+#: ../search/Tiles/MailMessage.cs:91
 msgid "From:"
 msgstr "Od:"
+
+#: ../search/Tiles/MailMessage.cs:96
+msgid "Date Sent:"
+msgstr "Datum odeslání:"
 
 #: ../search/Tiles/Presentation.cs:33
 #, csharp-format
@@ -272,51 +282,70 @@ msgstr[2] "{0} stránek"
 msgid "Open"
 msgstr "Otevřít"
 
-#: ../search/Tiles/Utils.cs:23
-msgid "Application"
+#: ../search/Tiles/Utils.cs:24
+msgid "Applications"
 msgstr "Aplikace"
 
-#: ../search/Tiles/Utils.cs:25
-msgid "Contact"
-msgstr "Kontakt"
+#: ../search/Tiles/Utils.cs:26
+msgid "Contacts"
+msgstr "Kontakty"
 
-#: ../search/Tiles/Utils.cs:27
-msgid "Folder"
-msgstr "Složka"
+#: ../search/Tiles/Utils.cs:28
+msgid "Calendar Events"
+msgstr "Kalendářové události"
 
-#: ../search/Tiles/Utils.cs:29
-msgid "Image"
-msgstr "Obrázek"
+#: ../search/Tiles/Utils.cs:30
+msgid "Folders"
+msgstr "Složky"
 
-#: ../search/Tiles/Utils.cs:31
+#: ../search/Tiles/Utils.cs:32
+msgid "Images"
+msgstr "Obrázky"
+
+#: ../search/Tiles/Utils.cs:34
 msgid "Audio"
 msgstr "Zvuk"
 
-#: ../search/Tiles/Utils.cs:33
+#: ../search/Tiles/Utils.cs:36
 msgid "Video"
 msgstr "Video"
 
-#: ../search/Tiles/Utils.cs:35
+#: ../search/Tiles/Utils.cs:38
 msgid "Documents"
 msgstr "Dokumenty"
 
-#: ../search/Tiles/Utils.cs:37
+#: ../search/Tiles/Utils.cs:40
 msgid "Conversations"
 msgstr "Konverzace"
 
-#: ../search/Tiles/Utils.cs:39
-msgid "Website"
+#: ../search/Tiles/Utils.cs:42
+msgid "Websites"
 msgstr "Webové stránky"
 
-#: ../search/Tiles/Utils.cs:41
-msgid "News Feed"
+#: ../search/Tiles/Utils.cs:44
+msgid "News Feeds"
 msgstr "Kanály zpráv"
 
-#: ../search/Tiles/Utils.cs:43
-msgid "Archive"
-msgstr "Archív"
+#: ../search/Tiles/Utils.cs:46
+msgid "Archives"
+msgstr "Archívy"
 
-#: ../search/Tiles/Utils.cs:155
+#: ../search/Tiles/Utils.cs:100 ../search/Tiles/Utils.cs:146
+#: ../search/Tiles/Utils.cs:192 ../Util/StringFu.cs:77
+msgid "Today"
+msgstr "Dnes"
+
+#: ../search/Tiles/Utils.cs:102 ../search/Tiles/Utils.cs:148
+#: ../search/Tiles/Utils.cs:194 ../Util/StringFu.cs:79
+msgid "Yesterday"
+msgstr "Včera"
+
+#: ../search/Tiles/Utils.cs:104 ../search/Tiles/Utils.cs:150
+#: ../search/Tiles/Utils.cs:196
+msgid "Tomorrow"
+msgstr "Zítra"
+
+#: ../search/Tiles/Utils.cs:200
 #, csharp-format
 msgid "{0} week ago"
 msgid_plural "{0} weeks ago"
@@ -324,8 +353,16 @@ msgstr[0] "Před týdnem"
 msgstr[1] "Před {0} týdny"
 msgstr[2] "Před {0} týdny"
 
-#. Lets say a year and a half to stop saying months
-#: ../search/Tiles/Utils.cs:157
+#: ../search/Tiles/Utils.cs:202
+#, csharp-format
+msgid "In {0} week"
+msgid_plural "In {0} weeks"
+msgstr[0] "Za týden"
+msgstr[1] "Za {0} týdny"
+msgstr[2] "Za {0} týdnů"
+
+#. Let's say a year and a half to stop saying months
+#: ../search/Tiles/Utils.cs:204
 #, csharp-format
 msgid "{0} month ago"
 msgid_plural "{0} months ago"
@@ -333,13 +370,29 @@ msgstr[0] "Před měsícem"
 msgstr[1] "Před {0} měsíci"
 msgstr[2] "Před {0} měsíci"
 
-#: ../search/Tiles/Utils.cs:159
+#: ../search/Tiles/Utils.cs:206
+#, csharp-format
+msgid "In {0} month"
+msgid_plural "In {0} months"
+msgstr[0] "Za měsíc"
+msgstr[1] "Za {0} měsíce"
+msgstr[2] "Za {0} měsíců"
+
+#: ../search/Tiles/Utils.cs:208
 #, csharp-format
 msgid "{0} year ago"
 msgid_plural "{0} years ago"
 msgstr[0] "Před rokem"
 msgstr[1] "Před {0} lety"
 msgstr[2] "Před {0} lety"
+
+#: ../search/Tiles/Utils.cs:210
+#, csharp-format
+msgid "In {0} year"
+msgid_plural "In {0} years"
+msgstr[0] "Za rok"
+msgstr[1] "Za {0} roky"
+msgstr[2] "Za {0} let"
 
 #. FIXME: We need filters for video in Beagle.
 #. They should land soon when entagged-sharp gets video support.
@@ -557,115 +610,127 @@ msgstr ""
 "člověk\n"
 "lidé"
 
-#: ../search/UIManager.cs:35
-msgid "_Search"
-msgstr "_Vyhledávání"
+#: ../search/UIManager.cs:42
+msgid "Close Desktop Search"
+msgstr "Zavřít vyhledávání"
 
-#: ../search/UIManager.cs:38
-msgid "_Actions"
-msgstr "_Akce"
-
-#: ../search/UIManager.cs:41
-msgid "Sor_t"
-msgstr "_Třídění"
-
-#: ../search/UIManager.cs:44
-msgid "_Help"
-msgstr "_Nápověda"
-
-#: ../search/UIManager.cs:49 ../search/UIManager.cs:53
+#: ../search/UIManager.cs:47 ../search/UIManager.cs:69
 msgid "Exit Desktop Search"
 msgstr "Ukončit vyhledávání"
 
-#: ../search/UIManager.cs:56
+#: ../search/UIManager.cs:54
+msgid "_Search"
+msgstr "_Vyhledávání"
+
+#: ../search/UIManager.cs:57
+msgid "_Actions"
+msgstr "_Akce"
+
+#: ../search/UIManager.cs:60
+msgid "Sor_t"
+msgstr "_Třídění"
+
+#: ../search/UIManager.cs:63
+msgid "_Help"
+msgstr "_Nápověda"
+
+#: ../search/UIManager.cs:72
 msgid "_Contents"
 msgstr "_Obsah"
 
-#: ../search/UIManager.cs:58
+#: ../search/UIManager.cs:74
 msgid "Help - Table of Contents"
 msgstr "Nápověda - Obsah"
 
-#: ../search/UIManager.cs:62
+#: ../search/UIManager.cs:78
 msgid "About Desktop Search"
 msgstr "O Vyhledávání"
 
-#: ../search/UIManager.cs:75
+#: ../search/UIManager.cs:100
 msgid "_Everywhere"
 msgstr "_Všude"
 
-#: ../search/UIManager.cs:77
+#: ../search/UIManager.cs:102
 msgid "Search everywhere"
 msgstr "Hledat všude"
 
-#: ../search/UIManager.cs:80
+#: ../search/UIManager.cs:105
 msgid "_Applications"
 msgstr "_Aplikace"
 
-#: ../search/UIManager.cs:82
+#: ../search/UIManager.cs:107
 msgid "Search applications"
 msgstr "Hledat aplikace"
 
-#: ../search/UIManager.cs:85
+#: ../search/UIManager.cs:110
 msgid "_Contacts"
 msgstr "_Kontakty"
 
-#: ../search/UIManager.cs:87
+#: ../search/UIManager.cs:112
 msgid "Search contacts"
 msgstr "Hledat kontakty"
 
-#: ../search/UIManager.cs:90
+#: ../search/UIManager.cs:115
+msgid "Ca_lendar events"
+msgstr "_Kalendářové události"
+
+#: ../search/UIManager.cs:117
+msgid "Search calendar events"
+msgstr "Hledat kalendářové události"
+
+#: ../search/UIManager.cs:120
 msgid "_Documents"
 msgstr "_Dokumenty"
 
-#: ../search/UIManager.cs:92
+#: ../search/UIManager.cs:122
 msgid "Search documents"
 msgstr "Hledat dokumenty"
 
-#: ../search/UIManager.cs:95
+#: ../search/UIManager.cs:125
 msgid "Conve_rsations"
 msgstr "Konve_rzace"
 
-#: ../search/UIManager.cs:97
+#: ../search/UIManager.cs:127
 msgid "Search E-Mail and Instant Messaging logs"
 msgstr "Hledat poštu a záznamy konverzací"
 
-#: ../search/UIManager.cs:100
-msgid "Images"
-msgstr "Obrázky"
+#: ../search/UIManager.cs:130
+msgid "_Images"
+msgstr "_Obrázky"
 
-#: ../search/UIManager.cs:102
+#: ../search/UIManager.cs:132
 msgid "Search images"
 msgstr "Hledat obrázky"
 
-#: ../search/UIManager.cs:105
-msgid "Media"
-msgstr "Média"
+#: ../search/UIManager.cs:135
+msgid "_Media"
+msgstr "_Média"
 
-#: ../search/UIManager.cs:107
+#: ../search/UIManager.cs:137
 msgid "Search sound and video files"
 msgstr "Hledat zvukové a video soubory"
 
-#: ../search/UIManager.cs:114
+#: ../search/UIManager.cs:144
 msgid "Date _Modified"
 msgstr "Datum z_měny"
 
-#: ../search/UIManager.cs:115
+#: ../search/UIManager.cs:145
 msgid "Sort the most-recently-modified matches first"
 msgstr "Na začátek řadit naposledy změněné výsledky"
 
-#: ../search/UIManager.cs:118
+#: ../search/UIManager.cs:148
 msgid "_Name"
 msgstr "_Jméno"
 
-#: ../search/UIManager.cs:119
+#: ../search/UIManager.cs:149
 msgid "Sort matches by name"
 msgstr "Řadit výsledky podle jména"
 
-#: ../search/UIManager.cs:122
+#: ../search/UIManager.cs:152
 msgid "_Relevance"
 msgstr "_Relevance"
 
-#: ../search/UIManager.cs:123
+#: ../search/UIManager.cs:153
 msgid "Sort the best matches first"
 msgstr "Na začátek řadit nejlépe odpovídající výsledky"
 
@@ -776,27 +841,37 @@ msgstr "Opravdu chcete odstranit tuto položku ze seznamu veřejných cest?"
 msgid "Name"
 msgstr "Jméno"
 
-#: ../tools/Settings.cs:631 ../tools/settings.glade.h:35
+#: ../tools/Settings.cs:631
 msgid "Type"
 msgstr "Typ"
 
-#: ../tools/Settings.cs:684 ../tools/Settings.cs:1064
-#: ../tools/settings.glade.h:27
-msgid "Path"
-msgstr "Cesta"
+#: ../tools/Settings.cs:684
+msgid "Path:"
+msgstr "Cesta:"
 
-#: ../tools/Settings.cs:687 ../tools/Settings.cs:1074
-msgid "Pattern"
-msgstr "Vzor"
+#: ../tools/Settings.cs:687
+msgid "Pattern:"
+msgstr "Vzor:"
 
-#: ../tools/Settings.cs:690 ../tools/Settings.cs:1069
-#: ../tools/settings.glade.h:24
-msgid "Mail Folder"
-msgstr "Poštovní složka"
+#: ../tools/Settings.cs:690
+msgid "Mail folder:"
+msgstr "Poštovní složka:"
 
 #: ../tools/Settings.cs:1038
 msgid "Select Folder"
 msgstr "Vyberte složku"
+
+#: ../tools/Settings.cs:1064 ../tools/settings.glade.h:24
+msgid "P_ath:"
+msgstr "_Cesta"
+
+#: ../tools/Settings.cs:1069
+msgid "M_ail folder:"
+msgstr "_Poštovní složka:"
+
+#: ../tools/Settings.cs:1074
+msgid "P_attern:"
+msgstr "_Vzor:"
 
 #: ../tools/Settings.cs:1098
 msgid "Error adding path"
@@ -815,20 +890,20 @@ msgid "Show"
 msgstr "Zobrazit"
 
 #: ../tools/settings.glade.h:1
-msgid "<b>Add remote host</b>"
+msgid "<b>Add Remote Host</b>"
 msgstr "<b>Přidat vzdálený počítač</b>"
 
 #: ../tools/settings.glade.h:2
-msgid "<b>Add resource</b>"
-msgstr "<b>Přidat zdroj</b>"
-
-#: ../tools/settings.glade.h:3
 msgid "<b>Administration</b>"
 msgstr "<b>Administrace</b>"
 
-#: ../tools/settings.glade.h:4
+#: ../tools/settings.glade.h:3
 msgid "<b>Display</b>"
 msgstr "<b>Zobrazit</b>"
+
+#: ../tools/settings.glade.h:4
+msgid "<b>Exclude Resource</b>"
+msgstr "<b>Vyřadit zdroj</b>"
 
 #: ../tools/settings.glade.h:5
 msgid "<b>General</b>"
@@ -843,10 +918,14 @@ msgid "<b>Privacy</b>"
 msgstr "<b>Soukromí</b>"
 
 #: ../tools/settings.glade.h:8
-msgid "<b>Select mail folder</b>"
+msgid "<b>Select Mail Folder</b>"
 msgstr "<b>Vyberte poštovní složku</b>"
 
 #: ../tools/settings.glade.h:9
+msgid "Add Remote Host"
+msgstr "Přidat vzdálený počítač"
+
+#: ../tools/settings.glade.h:10
 msgid ""
 "Add a remote search-enabled host you wish \n"
 "to network with."
@@ -854,19 +933,15 @@ msgstr ""
 "Přidejte vzdálený počítač pro vyhledávání,\n"
 "se kterým se chcete spojit po síti."
 
-#: ../tools/settings.glade.h:11
+#: ../tools/settings.glade.h:12
 msgid "Add any additional paths to be included for indexing."
 msgstr "Přidejte další umístění, která mají být zahrnuta do indexování."
 
-#: ../tools/settings.glade.h:12
-msgid "Add any remote search-enabled hosts you wish to network with"
-msgstr ""
-"Přidejte další vzdálené počítače pro vyhledávání, se kterými se chcete "
-"spojit po síti"
-
 #: ../tools/settings.glade.h:13
-msgid "Address"
-msgstr "Adresa"
+msgid "Add any remote search-enabled hosts you wish to network with."
+msgstr ""
+"Přidejte další vzdálené počítače pro vyhledávání, "
+"se kterými se chcete spojit po síti."
 
 #: ../tools/settings.glade.h:14
 msgid ""
@@ -877,62 +952,58 @@ msgstr ""
 "zobrazeny, pokud jsou seskupeny podle typu."
 
 #: ../tools/settings.glade.h:15
-msgid "Allow Beagle to be run as root"
-msgstr "Povolit běh Beagle pod rootem"
+msgid "Allow _external access to local search services"
+msgstr "Povolit _vzdálený přístup k místním vyhledávacím službám"
 
 #: ../tools/settings.glade.h:16
-msgid "Allow external access to local search services"
-msgstr "Povolit vzdálený přístup k místním vyhledávacím službám"
-
-#: ../tools/settings.glade.h:17
 msgid "Alt"
 msgstr "Alt"
 
-#: ../tools/settings.glade.h:18
+#: ../tools/settings.glade.h:17
 msgid "Ctrl"
 msgstr "Ctrl"
 
+#: ../tools/settings.glade.h:18
+msgid "Display the search window by pressing:"
+msgstr "Zobrazit vyhledávací okno stisknutím:"
+
 #: ../tools/settings.glade.h:19
-msgid "Directory Path"
-msgstr "Cesta k adresáři"
+msgid "Exclude Resource"
+msgstr "Vyřadit zdroj"
 
 #: ../tools/settings.glade.h:20
-msgid "Display the search window by pressing"
-msgstr "Zobrazit vyhledávací okno stisknutím"
+msgid "Filename _pattern"
+msgstr "_Vzor jména souboru"
 
 #: ../tools/settings.glade.h:21
-msgid "Filename Pattern"
-msgstr "Vzor jména souboru"
+msgid "I_ndex my home directory"
+msgstr "_Indexovat můj domovský adresář"
 
 #: ../tools/settings.glade.h:22
-msgid "Index my home directory"
-msgstr "Indexovat můj domovský adresář"
-
-#: ../tools/settings.glade.h:23
 msgid "Indexing"
 msgstr "Indexace"
 
-#: ../tools/settings.glade.h:25
-msgid "Maximum number of results displayed "
-msgstr "Maximální počet zobrazených výsledků"
-
-#: ../tools/settings.glade.h:26
+#: ../tools/settings.glade.h:23
 msgid "Networking"
 msgstr "Síť"
 
-#: ../tools/settings.glade.h:28
+#: ../tools/settings.glade.h:25
 msgid "Please select a resource you wish to exclude from indexing."
 msgstr "Vyberte prosím zdroj, který chcete vyjmout z indexace."
 
-#: ../tools/settings.glade.h:29
+#: ../tools/settings.glade.h:26
 msgid "Please select the mail folder you wish to exclude from indexing. "
 msgstr "Prosím vyberte poštovní složku, kterou chcete vyjmout z indexace."
 
-#: ../tools/settings.glade.h:31
+#: ../tools/settings.glade.h:28
 msgid "Search Preferences"
 msgstr "Nastavení vyhledávání"
 
-#: ../tools/settings.glade.h:32
+#: ../tools/settings.glade.h:29
+msgid "Select Mail Folder"
+msgstr "Vybrat poštovní složku"
+
+#: ../tools/settings.glade.h:30
 msgid ""
 "Specify any resources, such as paths, patterns, mail folders or type of "
 "objects you wish to exclude from indexing."
@@ -940,13 +1011,37 @@ msgstr ""
 "Zadejte prosím libovolné zdroje jako jsou cesty, vzory cest, poštovní složky "
 "nebo typy objektů, které chcete vyjmout z indexace."
 
+#: ../tools/settings.glade.h:31
+msgid "Specify paths that should be available for external access."
+msgstr "Zadejte cesty, které mají být dostupné pro vzdálený přístup."
+
+#: ../tools/settings.glade.h:32
+msgid "Type:"
+msgstr "Typ:"
+
 #: ../tools/settings.glade.h:33
-msgid "Specify paths that should be available for external access"
-msgstr "Zadejte cesty, které mají být dostupné pro vzdálený přístup"
+msgid "_Address:"
+msgstr "_Adresa:"
 
 #: ../tools/settings.glade.h:34
-msgid "Start search & indexing services automatically "
-msgstr "Spustit vyhledávací a indexovací služby automaticky"
+msgid "_Allow Beagle to be run as root"
+msgstr "_Povolit běh Beagle pod rootem"
+
+#: ../tools/settings.glade.h:35
+msgid "_Folder path"
+msgstr "_Cesta ke složce"
+
+#: ../tools/settings.glade.h:36
+msgid "_Mail folder"
+msgstr "_Poštovní složka"
+
+#: ../tools/settings.glade.h:37
+msgid "_Maximum number of results displayed:"
+msgstr "_Maximální počet zobrazených výsledků"
+
+#: ../tools/settings.glade.h:38
+msgid "_Start search & indexing services automatically "
+msgstr "_Spustit vyhledávací a indexovací služby automaticky"
 
 #: ../tools/beagle-settings.desktop.in.h:1
 msgid "Configure Desktop Search & Indexing"
@@ -987,14 +1082,6 @@ msgstr "Adresář InterOperability"
 #: ../Util/ExifData.cs:236
 msgid "Unknown Directory"
 msgstr "Neznámý adresář"
-
-#: ../Util/StringFu.cs:77
-msgid "Today"
-msgstr "Dnes"
-
-#: ../Util/StringFu.cs:79
-msgid "Yesterday"
-msgstr "Včera"
 
 #. Translators: Example output: Aug 9
 #: ../Util/StringFu.cs:82
