@@ -89,7 +89,7 @@ namespace Search.Tiles {
 		public void Email ()
 		{
 			try {
-				Gnome.Url.Show (String.Format ("mailto:?attach={0}", Hit.FileInfo.FullName));
+				OpenFromUri (String.Format ("mailto:?attach={0}", Hit.FileInfo.FullName));
 			} catch (Exception e) {
 				Console.WriteLine ("Error sending email: " + e);
 			}
