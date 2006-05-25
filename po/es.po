@@ -12,7 +12,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: es\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2006-03-31 22:39+0200\n"
+"POT-Creation-Date: 2006-05-25 21:06+0200\n"
 "PO-Revision-Date: 2006-03-31 22:44+0200\n"
 "Last-Translator: Francisco Javier F. Serrador <serrador@cvs.gnome.org>\n"
 "Language-Team:  <traductores@es.gnome.org>\n"
@@ -97,13 +97,15 @@ msgid "To search for optional terms, use OR.  ex: <b>George OR Ringo</b>"
 msgstr "Para buscar términos opcionales, use OR. ej: <b>George or Ringo</b>"
 
 #: ../search/Pages/QuickTips.cs:12
-msgid "To exclude search terms, use the minus symbol in front, such as <b>-cats</b>"
+msgid ""
+"To exclude search terms, use the minus symbol in front, such as <b>-cats</b>"
 msgstr ""
 "Para excluir términos de búsqueda, use el símbolo menos como prefijo, como "
 "<b>-gatos</b>"
 
 #: ../search/Pages/QuickTips.cs:13
-msgid "When searching for a phrase, add quotes. ex: <b>\"There be dragons\"</b>"
+msgid ""
+"When searching for a phrase, add quotes. ex: <b>\"There be dragons\"</b>"
 msgstr ""
 "Cuando busque una frase, añada comillas. Ej: <b>\"En un lugar de La Mancha</"
 "b>"
@@ -687,7 +689,8 @@ msgstr "Seleccione una ruta"
 
 #: ../tools/Settings.cs:281
 msgid "The selected path is already selected for indexing and wasn't added."
-msgstr "La ruta seleccionada ya está considerada en la indexación y no se añadió."
+msgstr ""
+"La ruta seleccionada ya está considerada en la indexación y no se añadió."
 
 #: ../tools/Settings.cs:284
 msgid ""
@@ -771,7 +774,8 @@ msgid "Remove public path"
 msgstr "Quitar ruta pública"
 
 #: ../tools/Settings.cs:503
-msgid "Are you sure you wish to remove this entry from the list of public paths?"
+msgid ""
+"Are you sure you wish to remove this entry from the list of public paths?"
 msgstr "¿Seguro que quiere quitar este elemento de la lista de rutas públicas?"
 
 #: ../tools/Settings.cs:548 ../tools/Settings.cs:637 ../tools/Settings.cs:715
@@ -1099,4 +1103,3 @@ msgstr "{0:0.0} Kib"
 #, csharp-format
 msgid "{0:0.0} MB"
 msgstr "{0:0.0} Mib"
-
