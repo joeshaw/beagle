@@ -1,18 +1,19 @@
+# translation of beagle.HEAD.mk.po to Macedonian
 # translation of beagle.HEAD.mk.po to
-# translation of mk.po to Macedonian
 # This file is distributed under the same license as the PACKAGE package.
 # Copyright (C) 2006 THE PACKAGE'S COPYRIGHT HOLDER.
 #
 # Арангел Ангов <ufo@linux.net.mk>, 2005, 2006.
 # Ivica Micev <icko@elfasko.org.mk>, 2006.
 # Arangel Angov <ufo@linux.net.mk>, 2006.
+# Jovan Naumovski <jovan@lugola.net>, 2006.
 msgid ""
 msgstr ""
-"Project-Id-Version: mk\n"
+"Project-Id-Version: beagle.HEAD.mk\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2006-04-12 10:05+0200\n"
-"PO-Revision-Date: 2006-04-12 16:12+0200\n"
-"Last-Translator: Arangel Angov <ufo@linux.net.mk>\n"
+"POT-Creation-Date: 2006-05-24 10:10+0200\n"
+"PO-Revision-Date: 2006-05-24 18:29+0200\n"
+"Last-Translator: Jovan Naumovski <jovan@lugola.net>\n"
 "Language-Team: Macedonian <ossm-members@hedona.on.net.mk>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -102,7 +103,7 @@ msgstr ""
 msgid "When searching for a phrase, add quotes. ex: <b>\"There be dragons\"</b>"
 msgstr "Кога пребарувате за фраза додадете наводници. пр: <b>\"There be dragons\"</b>"
 
-#: ../search/Pages/QuickTips.cs:19 ../search/UIManager.cs:65
+#: ../search/Pages/QuickTips.cs:19 ../search/UIManager.cs:81
 msgid "Quick Tips"
 msgstr "Кратки совети"
 
@@ -115,8 +116,8 @@ msgid ""
 "For security reasons, Beagle cannot be run as root.  You should restart as a "
 "regular user."
 msgstr ""
-"Поради безбедносни причини, Бигл не може да се изврши како root.  Треба"
-" да се најавите како обичен корисник."
+"Поради безбедносни причини, Бигл не може да се изврши како root.  Треба да "
+"се најавите како обичен корисник."
 
 #: ../search/Pages/StartDaemon.cs:19
 msgid "Search service not running"
@@ -142,52 +143,56 @@ msgstr "Внесете пребарувачки термини"
 msgid "Start searching"
 msgstr "Почни пребарување"
 
-#: ../search/Tiles/Contact.cs:53
+#: ../search/Tiles/Contact.cs:30
+msgid "Send Mail"
+msgstr "Испрати пошта"
+
+#: ../search/Tiles/Contact.cs:69
 msgid "E-Mail:"
 msgstr "Е-пошта:"
 
-#: ../search/Tiles/Contact.cs:56
+#: ../search/Tiles/Contact.cs:71
 msgid "Mobile Phone:"
 msgstr "Мобилен телефон:"
 
-#: ../search/Tiles/Contact.cs:60
+#: ../search/Tiles/Contact.cs:73
 msgid "Work Phone:"
 msgstr "Телефон на работа:"
 
-#: ../search/Tiles/Contact.cs:64
+#: ../search/Tiles/Contact.cs:75
 msgid "Home Phone:"
 msgstr "Домашен телефон:"
 
-#: ../search/Tiles/File.cs:33
+#: ../search/Tiles/File.cs:34
 msgid "Reveal in Folder"
 msgstr "Прикажи во папка"
 
-#: ../search/Tiles/File.cs:34
+#: ../search/Tiles/File.cs:35
 msgid "E-Mail"
 msgstr "Е-пошта"
 
 #. AddAction (new TileAction (Catalog.GetString ("Instant-Message"), InstantMessage));
 #. FIXME: s/"gtk-info"/Gtk.Stock.Info/ when we can depend on gtk# 2.8
 #. AddAction (new TileAction (Catalog.GetString ("Show Information"), "gtk-info", ShowInformation));
-#: ../search/Tiles/File.cs:36 ../search/Tiles/Folder.cs:38
+#: ../search/Tiles/File.cs:37 ../search/Tiles/Folder.cs:38
 msgid "Move to Trash"
 msgstr "Премести во ѓубре"
 
-#: ../search/Tiles/File.cs:132 ../search/Tiles/Note.cs:57
+#: ../search/Tiles/File.cs:122 ../search/Tiles/Note.cs:57
 #: ../search/Tiles/RSSFeed.cs:45 ../search/Tiles/WebHistory.cs:50
 msgid "Title:"
 msgstr "Наслов:"
 
-#: ../search/Tiles/File.cs:135 ../search/Tiles/Folder.cs:51
+#: ../search/Tiles/File.cs:125 ../search/Tiles/Folder.cs:51
 #: ../search/Tiles/Note.cs:60
 msgid "Last Edited:"
 msgstr "Последен пат уредено:"
 
-#: ../search/Tiles/File.cs:139
+#: ../search/Tiles/File.cs:129
 msgid "Author:"
 msgstr "Автор:"
 
-#: ../search/Tiles/File.cs:143 ../search/Tiles/Folder.cs:54
+#: ../search/Tiles/File.cs:133 ../search/Tiles/Folder.cs:54
 #: ../search/Tiles/Image.cs:81
 msgid "Full Path:"
 msgstr "Цела патека:"
@@ -213,33 +218,41 @@ msgstr "Постави како позадина"
 msgid "Modified:"
 msgstr "Променето:"
 
-#: ../search/Tiles/IMLog.cs:29
+#: ../search/Tiles/IMLog.cs:30
 msgid "IM Conversation"
 msgstr "IM разговор"
 
-#: ../search/Tiles/IMLog.cs:89
+#: ../search/Tiles/IMLog.cs:81
 msgid "Name:"
 msgstr "Име:"
 
-#: ../search/Tiles/IMLog.cs:90 ../search/Tiles/MailMessage.cs:89
+#: ../search/Tiles/IMLog.cs:82 ../search/Tiles/MailMessage.cs:96
 msgid "Date Received:"
 msgstr "Датум на примање:"
 
-#: ../search/Tiles/MailAttachment.cs:45
+#: ../search/Tiles/MailAttachment.cs:47
 msgid "Mail attachment"
 msgstr "Поштенски приврзок"
 
-#: ../search/Tiles/MailMessage.cs:53
+#: ../search/Tiles/MailMessage.cs:55
 msgid "Send in Mail"
 msgstr "Испрати во пошта"
 
-#: ../search/Tiles/MailMessage.cs:83
+#: ../search/Tiles/MailMessage.cs:87
 msgid "Subject:"
 msgstr "Наслов:"
 
-#: ../search/Tiles/MailMessage.cs:86
+#: ../search/Tiles/MailMessage.cs:91
+msgid "To:"
+msgstr "До:"
+
+#: ../search/Tiles/MailMessage.cs:91
 msgid "From:"
 msgstr "Од:"
+
+#: ../search/Tiles/MailMessage.cs:96
+msgid "Date Sent:"
+msgstr "Датум на испраќање:"
 
 #: ../search/Tiles/Presentation.cs:33
 #, csharp-format
@@ -270,60 +283,69 @@ msgid "Open"
 msgstr "Отвори"
 
 #: ../search/Tiles/Utils.cs:24
-msgid "Application"
-msgstr "Апликација"
+msgid "Applications"
+msgstr "Апликации"
 
 #: ../search/Tiles/Utils.cs:26
-msgid "Contact"
-msgstr "Контакт"
+msgid "Contacts"
+msgstr "Контакти"
 
 #: ../search/Tiles/Utils.cs:28
-msgid "Folder"
-msgstr "Папка"
+msgid "Calendar Events"
+msgstr "Настани во календарот"
 
 #: ../search/Tiles/Utils.cs:30
-msgid "Image"
-msgstr "Слика"
+msgid "Folders"
+msgstr "Папки"
 
 #: ../search/Tiles/Utils.cs:32
+msgid "Images"
+msgstr "Слики"
+
+#: ../search/Tiles/Utils.cs:34
 msgid "Audio"
 msgstr "Аудио"
 
-#: ../search/Tiles/Utils.cs:34
+#: ../search/Tiles/Utils.cs:36
 msgid "Video"
 msgstr "Видео"
 
-#: ../search/Tiles/Utils.cs:36
+#: ../search/Tiles/Utils.cs:38
 msgid "Documents"
 msgstr "Документи"
 
-#: ../search/Tiles/Utils.cs:38
+#: ../search/Tiles/Utils.cs:40
 msgid "Conversations"
 msgstr "Разговори"
 
-#: ../search/Tiles/Utils.cs:40
-msgid "Website"
-msgstr "Веб сајт"
-
 #: ../search/Tiles/Utils.cs:42
-msgid "News Feed"
-msgstr "Вести"
+msgid "Websites"
+msgstr "Веб сајтови"
 
 #: ../search/Tiles/Utils.cs:44
-msgid "Archive"
-msgstr "Архива"
+msgid "News Feeds"
+msgstr "Вести"
 
-#: ../search/Tiles/Utils.cs:88 ../search/Tiles/Utils.cs:122
-#: ../search/Tiles/Utils.cs:156 ../Util/StringFu.cs:77
+#: ../search/Tiles/Utils.cs:46
+msgid "Archives"
+msgstr "Архиви"
+
+#: ../search/Tiles/Utils.cs:100 ../search/Tiles/Utils.cs:146
+#: ../search/Tiles/Utils.cs:192 ../Util/StringFu.cs:77
 msgid "Today"
 msgstr "Денес"
 
-#: ../search/Tiles/Utils.cs:90 ../search/Tiles/Utils.cs:124
-#: ../search/Tiles/Utils.cs:158 ../Util/StringFu.cs:79
+#: ../search/Tiles/Utils.cs:102 ../search/Tiles/Utils.cs:148
+#: ../search/Tiles/Utils.cs:194 ../Util/StringFu.cs:79
 msgid "Yesterday"
 msgstr "Вчера"
 
-#: ../search/Tiles/Utils.cs:162
+#: ../search/Tiles/Utils.cs:104 ../search/Tiles/Utils.cs:150
+#: ../search/Tiles/Utils.cs:196
+msgid "Tomorrow"
+msgstr "Утре"
+
+#: ../search/Tiles/Utils.cs:200
 #, csharp-format
 msgid "{0} week ago"
 msgid_plural "{0} weeks ago"
@@ -331,8 +353,16 @@ msgstr[0] "пред {0} седмица"
 msgstr[1] "пред {0} седмици"
 msgstr[2] "пред {0} седмици"
 
+#: ../search/Tiles/Utils.cs:202
+#, csharp-format
+msgid "In {0} week"
+msgid_plural "In {0} weeks"
+msgstr[0] "за {0} седмица"
+msgstr[1] "за {0} седмици"
+msgstr[2] "за {0} седмици"
+
 #. Let's say a year and a half to stop saying months
-#: ../search/Tiles/Utils.cs:164
+#: ../search/Tiles/Utils.cs:204
 #, csharp-format
 msgid "{0} month ago"
 msgid_plural "{0} months ago"
@@ -340,13 +370,29 @@ msgstr[0] "пред {0} месец"
 msgstr[1] "пред {0} месеци"
 msgstr[2] "пред {0} месеци"
 
-#: ../search/Tiles/Utils.cs:166
+#: ../search/Tiles/Utils.cs:206
+#, csharp-format
+msgid "In {0} month"
+msgid_plural "In {0} months"
+msgstr[0] "за {0} месец"
+msgstr[1] "за {0} месеци"
+msgstr[2] "за {0} месеци"
+
+#: ../search/Tiles/Utils.cs:208
 #, csharp-format
 msgid "{0} year ago"
 msgid_plural "{0} years ago"
 msgstr[0] "пред {0}година "
 msgstr[1] "пред {0} години"
 msgstr[2] "пред {0} години"
+
+#: ../search/Tiles/Utils.cs:210
+#, csharp-format
+msgid "In {0} year"
+msgid_plural "In {0} years"
+msgstr[0] "за {0} година "
+msgstr[1] "за {0} години"
+msgstr[2] "за {0} години"
 
 #. FIXME: We need filters for video in Beagle.
 #. They should land soon when entagged-sharp gets video support.
@@ -556,115 +602,127 @@ msgstr ""
 "личност\n"
 "луѓе"
 
-#: ../search/UIManager.cs:35
-msgid "_Search"
-msgstr "_Барај"
+#: ../search/UIManager.cs:42
+msgid "Close Desktop Search"
+msgstr "Затвори го пребарувањето на десктопот"
 
-#: ../search/UIManager.cs:38
-msgid "_Actions"
-msgstr "_Дејствија"
-
-#: ../search/UIManager.cs:41
-msgid "Sor_t"
-msgstr "Подре_ди"
-
-#: ../search/UIManager.cs:44
-msgid "_Help"
-msgstr "_Помош"
-
-#: ../search/UIManager.cs:49 ../search/UIManager.cs:53
+#: ../search/UIManager.cs:47 ../search/UIManager.cs:69
 msgid "Exit Desktop Search"
 msgstr "Излези"
 
-#: ../search/UIManager.cs:56
+#: ../search/UIManager.cs:54
+msgid "_Search"
+msgstr "_Барај"
+
+#: ../search/UIManager.cs:57
+msgid "_Actions"
+msgstr "_Дејствија"
+
+#: ../search/UIManager.cs:60
+msgid "Sor_t"
+msgstr "Подре_ди"
+
+#: ../search/UIManager.cs:63
+msgid "_Help"
+msgstr "_Помош"
+
+#: ../search/UIManager.cs:72
 msgid "_Contents"
 msgstr "_Содржина"
 
-#: ../search/UIManager.cs:58
+#: ../search/UIManager.cs:74
 msgid "Help - Table of Contents"
 msgstr "Помош - Табела со содржина"
 
-#: ../search/UIManager.cs:62
+#: ../search/UIManager.cs:78
 msgid "About Desktop Search"
 msgstr "За алатката за пребарување"
 
-#: ../search/UIManager.cs:78
+#: ../search/UIManager.cs:100
 msgid "_Everywhere"
 msgstr "_Секаде"
 
-#: ../search/UIManager.cs:80
+#: ../search/UIManager.cs:102
 msgid "Search everywhere"
 msgstr "Пребарај секаде"
 
-#: ../search/UIManager.cs:83
+#: ../search/UIManager.cs:105
 msgid "_Applications"
 msgstr "_Апликации"
 
-#: ../search/UIManager.cs:85
+#: ../search/UIManager.cs:107
 msgid "Search applications"
 msgstr "Пребарувај апликации"
 
-#: ../search/UIManager.cs:88
+#: ../search/UIManager.cs:110
 msgid "_Contacts"
 msgstr "_Контакти"
 
-#: ../search/UIManager.cs:90
+#: ../search/UIManager.cs:112
 msgid "Search contacts"
 msgstr "Пребарувај контакти"
 
-#: ../search/UIManager.cs:93
+#: ../search/UIManager.cs:115
+msgid "Ca_lendar events"
+msgstr "Настани во ка_лендарот"
+
+#: ../search/UIManager.cs:117
+msgid "Search calendar events"
+msgstr "Пребарувај настани во календарот"
+
+#: ../search/UIManager.cs:120
 msgid "_Documents"
 msgstr "_Документи"
 
-#: ../search/UIManager.cs:95
+#: ../search/UIManager.cs:122
 msgid "Search documents"
 msgstr "Пребарувај документи"
 
-#: ../search/UIManager.cs:98
+#: ../search/UIManager.cs:125
 msgid "Conve_rsations"
 msgstr "_Разговори"
 
-#: ../search/UIManager.cs:100
+#: ../search/UIManager.cs:127
 msgid "Search E-Mail and Instant Messaging logs"
 msgstr "Барај е-пошта и IM логови"
 
-#: ../search/UIManager.cs:103
-msgid "Images"
-msgstr "Слики"
+#: ../search/UIManager.cs:130
+msgid "_Images"
+msgstr "_Слики"
 
-#: ../search/UIManager.cs:105
+#: ../search/UIManager.cs:132
 msgid "Search images"
 msgstr "Пребарувај слики"
 
-#: ../search/UIManager.cs:108
-msgid "Media"
-msgstr "Медиуми"
+#: ../search/UIManager.cs:135
+msgid "_Media"
+msgstr "_Медиуми"
 
-#: ../search/UIManager.cs:110
+#: ../search/UIManager.cs:137
 msgid "Search sound and video files"
 msgstr "Барај звук и видео датотеки"
 
-#: ../search/UIManager.cs:117
+#: ../search/UIManager.cs:144
 msgid "Date _Modified"
 msgstr "Датум на из_мена"
 
-#: ../search/UIManager.cs:118
+#: ../search/UIManager.cs:145
 msgid "Sort the most-recently-modified matches first"
 msgstr "Подреди скоро променети совпаѓања прво"
 
-#: ../search/UIManager.cs:121
+#: ../search/UIManager.cs:148
 msgid "_Name"
 msgstr "_Име"
 
-#: ../search/UIManager.cs:122
+#: ../search/UIManager.cs:149
 msgid "Sort matches by name"
 msgstr "Подреди одговори по име"
 
-#: ../search/UIManager.cs:125
+#: ../search/UIManager.cs:152
 msgid "_Relevance"
 msgstr "_Релевантност"
 
-#: ../search/UIManager.cs:126
+#: ../search/UIManager.cs:153
 msgid "Sort the best matches first"
 msgstr "Подреди ги прво најдобрите совпаѓања"
 
