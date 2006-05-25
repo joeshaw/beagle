@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: gl\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2006-04-30 23:20+0200\n"
-"PO-Revision-Date: 2006-04-30 23:24+0200\n"
+"POT-Creation-Date: 2006-05-25 11:22+0200\n"
+"PO-Revision-Date: 2006-05-25 11:23+0200\n"
 "Last-Translator: Ignacio Casal Quinteiro <nacho.resa@gmail.com>\n"
 "Language-Team: Galego <trasno@ceu.fi.udc.es>\n"
 "MIME-Version: 1.0\n"
@@ -174,21 +174,21 @@ msgstr "Correo-e"
 msgid "Move to Trash"
 msgstr "Mover ao lixo"
 
-#: ../search/Tiles/File.cs:125 ../search/Tiles/Note.cs:56
+#: ../search/Tiles/File.cs:122 ../search/Tiles/Note.cs:57
 #: ../search/Tiles/RSSFeed.cs:45 ../search/Tiles/WebHistory.cs:50
 msgid "Title:"
 msgstr "Título:"
 
-#: ../search/Tiles/File.cs:128 ../search/Tiles/Folder.cs:51
-#: ../search/Tiles/Note.cs:59
+#: ../search/Tiles/File.cs:125 ../search/Tiles/Folder.cs:51
+#: ../search/Tiles/Note.cs:60
 msgid "Last Edited:"
 msgstr "Editado por última vez:"
 
-#: ../search/Tiles/File.cs:132
+#: ../search/Tiles/File.cs:129
 msgid "Author:"
 msgstr "Autor:"
 
-#: ../search/Tiles/File.cs:136 ../search/Tiles/Folder.cs:54
+#: ../search/Tiles/File.cs:133 ../search/Tiles/Folder.cs:54
 #: ../search/Tiles/Image.cs:81
 msgid "Full Path:"
 msgstr "Ruta completa:"
@@ -221,31 +221,31 @@ msgstr "Conversación MI"
 msgid "Name:"
 msgstr "Nome:"
 
-#: ../search/Tiles/IMLog.cs:82 ../search/Tiles/MailMessage.cs:95
+#: ../search/Tiles/IMLog.cs:82 ../search/Tiles/MailMessage.cs:96
 msgid "Date Received:"
 msgstr "Data de recepción:"
 
-#: ../search/Tiles/MailAttachment.cs:46
+#: ../search/Tiles/MailAttachment.cs:47
 msgid "Mail attachment"
 msgstr "Adxunto de correo"
 
-#: ../search/Tiles/MailMessage.cs:54
+#: ../search/Tiles/MailMessage.cs:55
 msgid "Send in Mail"
 msgstr "Enviar por correo"
 
-#: ../search/Tiles/MailMessage.cs:86
+#: ../search/Tiles/MailMessage.cs:87
 msgid "Subject:"
 msgstr "Asunto:"
 
-#: ../search/Tiles/MailMessage.cs:90
+#: ../search/Tiles/MailMessage.cs:91
 msgid "To:"
 msgstr "A:"
 
-#: ../search/Tiles/MailMessage.cs:90
+#: ../search/Tiles/MailMessage.cs:91
 msgid "From:"
 msgstr "De:"
 
-#: ../search/Tiles/MailMessage.cs:95
+#: ../search/Tiles/MailMessage.cs:96
 msgid "Date Sent:"
 msgstr "Data de envío:"
 
@@ -276,24 +276,24 @@ msgid "Open"
 msgstr "Abrir"
 
 #: ../search/Tiles/Utils.cs:24
-msgid "Application"
-msgstr "Aplicación"
+msgid "Applications"
+msgstr "Aplicacións"
 
 #: ../search/Tiles/Utils.cs:26
-msgid "Contact"
-msgstr "Contacto"
+msgid "Contacts"
+msgstr "Contactos"
 
 #: ../search/Tiles/Utils.cs:28
 msgid "Calendar Events"
 msgstr "Eventos de calendario"
 
 #: ../search/Tiles/Utils.cs:30
-msgid "Folder"
-msgstr "Cartafol"
+msgid "Folders"
+msgstr "Cartafoles"
 
 #: ../search/Tiles/Utils.cs:32
-msgid "Image"
-msgstr "Imaxe"
+msgid "Images"
+msgstr "Imaxes"
 
 #: ../search/Tiles/Utils.cs:34
 msgid "Audio"
@@ -312,16 +312,16 @@ msgid "Conversations"
 msgstr "Conversacións"
 
 #: ../search/Tiles/Utils.cs:42
-msgid "Website"
-msgstr "Sitio web"
+msgid "Websites"
+msgstr "Sitios web"
 
 #: ../search/Tiles/Utils.cs:44
-msgid "News Feed"
-msgstr "Proveedor de noticias"
+msgid "News Feeds"
+msgstr "Proveedores de noticias"
 
 #: ../search/Tiles/Utils.cs:46
-msgid "Archive"
-msgstr "Arquivo"
+msgid "Archives"
+msgstr "Arquivos"
 
 #: ../search/Tiles/Utils.cs:100 ../search/Tiles/Utils.cs:146
 #: ../search/Tiles/Utils.cs:192 ../Util/StringFu.cs:77
