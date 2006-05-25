@@ -6,352 +6,414 @@ msgid ""
 ""
 msgstr "Project-Id-Version: beagle Gnome HEAD\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2006-03-30 02:05+0200\n"
-"PO-Revision-Date: 2006-03-30 16:21+1030\n"
+"POT-Creation-Date: 2006-05-25 02:09+0200\n"
+"PO-Revision-Date: 2006-05-25 16:47+0930\n"
 "Last-Translator: Clytie Siddall <clytie@riverland.net.au>\n"
 "Language-Team: Vietnamese <gnomevi-list@lists.sourceforge.net>\n"
 "MIME-Version: 1.0\n"
-"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0\n"
 "X-Generator: LocFactoryEditor 1.6b36\n"
 
-#:../glue/eggtrayicon.c:127
+#: ../glue/eggtrayicon.c:127
 msgid "Orientation"
 msgstr "Hướng"
 
-#:../glue/eggtrayicon.c:128
+#: ../glue/eggtrayicon.c:128
 msgid "The orientation of the tray."
 msgstr "Hướng khay"
 
-#:../ImLogViewer/ImLogViewer.glade.h:1
+#: ../ImLogViewer/ImLogViewer.glade.h:1
 msgid "<b>Conversations History</b>"
 msgstr "<b>Lược sử cuộc đối thoại</b>"
 
-#:../ImLogViewer/ImLogViewer.glade.h:2
+#: ../ImLogViewer/ImLogViewer.glade.h:2
 msgid "IM Viewer"
 msgstr "Bộ xem tin nhắn tức khắc"
 
-#:../ImLogViewer/ImLogWindow.cs:102
-#,csharp-format
+#: ../ImLogViewer/ImLogWindow.cs:102
+#, csharp-format
 msgid "Conversations in {0}"
 msgstr "Cuộc đối thoại trong {0}"
 
-#:../ImLogViewer/ImLogWindow.cs:109
-#,csharp-format
+#: ../ImLogViewer/ImLogWindow.cs:109
+#, csharp-format
 msgid "Conversations with {0}"
 msgstr "Cuộc đối thoại với {0}"
 
-#:../search/beagle-search.desktop.in.h:1 ../tools/settings.glade.h:27
+#: ../search/beagle-search.desktop.in.h:1
+#: ../tools/settings.glade.h:27
 msgid "Search"
 msgstr "Tìm kiếm"
 
-#:../search/beagle-search.desktop.in.h:2
+#: ../search/beagle-search.desktop.in.h:2
 msgid "Search for data on your desktop"
 msgstr "Tìm kiếm dữ liệu trong môi trường bạn"
 
-#:../search/Category.cs:108
-#,csharp-format
+#: ../search/Category.cs:108
+#, csharp-format
 msgid "{0}-{1} of {2}"
 msgstr "{0}-{1} trên {2}"
 
-#:../search/Pages/NoMatch.cs:19
+#: ../search/Pages/NoMatch.cs:19
 msgid "No results were found."
 msgstr "Chưa tìm kết quả."
 
-#:../search/Pages/NoMatch.cs:20
-#,csharp-format
+#: ../search/Pages/NoMatch.cs:20
+#, csharp-format
 msgid "Your search for \"{0}\" did not match any files on your computer."
 msgstr "Việc tìm kiếm « {0} » không khớp với tập tin nào trên máy tính của bạn."
 
-#:../search/Pages/NoMatch.cs:24
+#: ../search/Pages/NoMatch.cs:24
 msgid ""
 "You can change the scope of your search using the \"Search\" menu. A broader "
 "search scope might produce more results."
 msgstr "Bạn có thể sửa đổi phạm vị tìm kiếm bằng mục trình đơn « Tìm kiếm ». Phạm vị "
 "tìm kiếm rộng hơn có thể được nhiều kết quả hơn."
 
-#:../search/Pages/NoMatch.cs:26
+#: ../search/Pages/NoMatch.cs:26
 msgid ""
 "You should check the spelling of your search words to see if you "
 "accidentally misspelled any words."
 msgstr "Bạn nên kiểm trả chính tả chuỗi tìm kiếm, để tìm lỗi chính tả nào."
 
-#:../search/Pages/QuickTips.cs:10
+#: ../search/Pages/QuickTips.cs:10
 msgid "You can use upper and lower case; search is case-insensitive."
 msgstr "Bạn có thể sử dụng chữ cả hoa lẫn thường đều; việc tìm kiếm không phân biệt "
 "chữ hoa/thường."
 
-#:../search/Pages/QuickTips.cs:11
+#: ../search/Pages/QuickTips.cs:11
 msgid "To search for optional terms, use OR.  ex: <b>George OR Ringo</b>"
 msgstr "Để tìm kiếm chuỗi có phần tùy chọn, hãy sử dụng toán tử « OR » (hoặc), v.d. "
 "« phở OR pho »."
 
-#:../search/Pages/QuickTips.cs:12
+#: ../search/Pages/QuickTips.cs:12
 msgid ""
 "To exclude search terms, use the minus symbol in front, such as <b>-cats</b>"
 msgstr "Để loại trừ phần chuỗi tìm kiếm, phụ thêm dấu trừ, v.d. « phở -gà »."
 
-#:../search/Pages/QuickTips.cs:13
+#: ../search/Pages/QuickTips.cs:13
 msgid ""
 "When searching for a phrase, add quotes. ex: <b>\"There be dragons\"</b>"
 msgstr "Khi tìm kiếm cụm từ (hơn một từ), hãy thêm dấu trích dẫn, v.d. « \"Việt Nam"
 "\" OR Vietnam »"
 
-#:../search/Pages/QuickTips.cs:19 ../search/UIManager.cs:65
+#: ../search/Pages/QuickTips.cs:19
+#: ../search/UIManager.cs:81
 msgid "Quick Tips"
 msgstr "Mẹo Nhanh"
 
-#:../search/Pages/RootUser.cs:12
+#: ../search/Pages/RootUser.cs:12
 msgid "Beagle cannot be run as root"
 msgstr "Không cho phép chạy Beagle với tư cách người chủ"
 
-#:../search/Pages/RootUser.cs:13
+#: ../search/Pages/RootUser.cs:13
 msgid ""
 "For security reasons, Beagle cannot be run as root.  You should restart as a "
 "regular user."
 msgstr "Vì lý do bảo mật, trình Beagle không có khả năng chạy với tư cách người chủ "
 "(root). Bạn nên khởi chạy lại với tư cách người dùng chuẩn."
 
-#:../search/Pages/StartDaemon.cs:19
+#: ../search/Pages/StartDaemon.cs:19
 msgid "Search service not running"
 msgstr "Dịch vụ tìm kiếm không đang chạy"
 
-#:../search/Pages/StartDaemon.cs:21
+#: ../search/Pages/StartDaemon.cs:21
 msgid "Start search service"
 msgstr "Khởi chạy dịch vụ tìm kiếm"
 
-#:../search/Search.cs:149
+#: ../search/Search.cs:149
 msgid "_Find:"
 msgstr "_Tìm:"
 
-#:../search/Search.cs:163
+#: ../search/Search.cs:163
 msgid "Find Now"
 msgstr "Tìm ngay bây giờ"
 
-#:../search/Search.cs:209
+#: ../search/Search.cs:209
 msgid "Type in search terms"
 msgstr "Gõ chuỗi tìm kiếm"
 
-#:../search/Search.cs:210
+#: ../search/Search.cs:210
 msgid "Start searching"
 msgstr "Bắt đầu tìm kiếm"
 
-#:../search/Tiles/Contact.cs:53
+#: ../search/Tiles/Contact.cs:30
+msgid "Send Mail"
+msgstr "Gởi thư"
+
+#: ../search/Tiles/Contact.cs:69
 msgid "E-Mail:"
 msgstr "Thư điện tử :"
 
-#:../search/Tiles/Contact.cs:56
+#: ../search/Tiles/Contact.cs:71
 msgid "Mobile Phone:"
 msgstr "Điện thoại di động:"
 
-#:../search/Tiles/Contact.cs:60
+#: ../search/Tiles/Contact.cs:73
 msgid "Work Phone:"
 msgstr "Điện thoại chỗ làm:"
 
-#:../search/Tiles/Contact.cs:64
+#: ../search/Tiles/Contact.cs:75
 msgid "Home Phone:"
 msgstr "Điện thoại ở nhà:"
 
-#:../search/Tiles/File.cs:33
+#: ../search/Tiles/File.cs:34
 msgid "Reveal in Folder"
 msgstr "Hiện trong thư mục"
 
-#:../search/Tiles/File.cs:34
+#: ../search/Tiles/File.cs:35
 msgid "E-Mail"
 msgstr "Thư điện tử"
 
 #.AddAction (new TileAction (Catalog.GetString ("Instant-Message"), InstantMessage));
 #.FIXME: s/"gtk-info"/Gtk.Stock.Info/ when we can depend on gtk# 2.8
 #.AddAction (new TileAction (Catalog.GetString ("Show Information"), "gtk-info", ShowInformation));
-#:../search/Tiles/File.cs:36 ../search/Tiles/Folder.cs:38
+#: ../search/Tiles/File.cs:37
+#: ../search/Tiles/Folder.cs:38
 msgid "Move to Trash"
 msgstr "Chuyển vào Rác"
 
-#:../search/Tiles/File.cs:132 ../search/Tiles/Note.cs:57
-#:../search/Tiles/RSSFeed.cs:45 ../search/Tiles/WebHistory.cs:50
+#: ../search/Tiles/File.cs:122
+#: ../search/Tiles/Note.cs:57
+#: ../search/Tiles/RSSFeed.cs:45
+#: ../search/Tiles/WebHistory.cs:50
 msgid "Title:"
 msgstr "Tiêu đề :"
 
-#:../search/Tiles/File.cs:135 ../search/Tiles/Folder.cs:51
-#:../search/Tiles/Note.cs:60
+#: ../search/Tiles/File.cs:125
+#: ../search/Tiles/Folder.cs:51
+#: ../search/Tiles/Note.cs:60
 msgid "Last Edited:"
 msgstr "Sửa đổi cuối cùng:"
 
-#:../search/Tiles/File.cs:139
+#: ../search/Tiles/File.cs:129
 msgid "Author:"
 msgstr "Tác giả:"
 
-#:../search/Tiles/File.cs:143 ../search/Tiles/Folder.cs:54
-#:../search/Tiles/Image.cs:79
+#: ../search/Tiles/File.cs:133
+#: ../search/Tiles/Folder.cs:54
+#: ../search/Tiles/Image.cs:81
 msgid "Full Path:"
 msgstr "Đường dẫn đầy đủ:"
 
-#:../search/Tiles/Folder.cs:31
+#: ../search/Tiles/Folder.cs:31
 msgid "Empty"
 msgstr "Rỗng"
 
-#:../search/Tiles/Folder.cs:33
-#,csharp-format
+#: ../search/Tiles/Folder.cs:33
+#, csharp-format
 msgid "Contains {0} Item"
 msgid_plural "Contains {0} Items"
 msgstr[0] "Chứa {0} mục"
 
 #.AddAction (new TileAction (Catalog.GetString ("Add to Library"), Gtk.Stock.Add, AddToLibrary));
-#:../search/Tiles/Image.cs:39
+#: ../search/Tiles/Image.cs:39
 msgid "Set as Wallpaper"
 msgstr "Đặt làm ảnh nền"
 
-#:../search/Tiles/Image.cs:76
+#: ../search/Tiles/Image.cs:78
 msgid "Modified:"
 msgstr "Ssửa đổi:"
 
-#:../search/Tiles/IMLog.cs:29
+#: ../search/Tiles/IMLog.cs:30
 msgid "IM Conversation"
 msgstr "Trò chuyện IM"
 
-#:../search/Tiles/IMLog.cs:89
+#: ../search/Tiles/IMLog.cs:81
 msgid "Name:"
 msgstr "Tên:"
 
-#:../search/Tiles/IMLog.cs:90 ../search/Tiles/MailMessage.cs:69
+#: ../search/Tiles/IMLog.cs:82
+#: ../search/Tiles/MailMessage.cs:96
 msgid "Date Received:"
 msgstr "Ngày nhận:"
 
-#:../search/Tiles/MailAttachment.cs:45
+#: ../search/Tiles/MailAttachment.cs:47
 msgid "Mail attachment"
 msgstr "Đính kèm thư"
 
-#:../search/Tiles/MailMessage.cs:33
+#: ../search/Tiles/MailMessage.cs:55
 msgid "Send in Mail"
 msgstr "Gởi trong thư"
 
-#:../search/Tiles/MailMessage.cs:63
+#: ../search/Tiles/MailMessage.cs:87
 msgid "Subject:"
 msgstr "Chủ đề:"
 
-#:../search/Tiles/MailMessage.cs:66
+#: ../search/Tiles/MailMessage.cs:91
+msgid "To:"
+msgstr "Cho :"
+
+#: ../search/Tiles/MailMessage.cs:91
 msgid "From:"
 msgstr "Từ :"
 
-#:../search/Tiles/Presentation.cs:33
-#,csharp-format
+#: ../search/Tiles/MailMessage.cs:96
+msgid "Date Sent:"
+msgstr "Ngày gởi:"
+
+#: ../search/Tiles/Presentation.cs:33
+#, csharp-format
 msgid "{0} slide"
 msgid_plural "{0} slides"
 msgstr[0] "{0} ảnh trượt"
 
-#:../search/Tiles/RSSFeed.cs:48
+#: ../search/Tiles/RSSFeed.cs:48
 msgid "Site:"
 msgstr "Chỗ :"
 
-#:../search/Tiles/RSSFeed.cs:51
+#: ../search/Tiles/RSSFeed.cs:51
 msgid "Date Viewed:"
 msgstr "Ngày xem:"
 
-#:../search/Tiles/TextDocument.cs:37
-#,csharp-format
+#: ../search/Tiles/TextDocument.cs:37
+#, csharp-format
 msgid "{0} page"
 msgid_plural "{0} pages"
 msgstr[0] "{0} trangn"
 
-#:../search/Tiles/Tile.cs:179
+#: ../search/Tiles/Tile.cs:179
 msgid "Open"
 msgstr "Mở"
 
-#:../search/Tiles/Utils.cs:23
-msgid "Application"
+#: ../search/Tiles/Utils.cs:24
+msgid "Applications"
 msgstr "Ứng dụng"
 
-#:../search/Tiles/Utils.cs:25
-msgid "Contact"
+#: ../search/Tiles/Utils.cs:26
+msgid "Contacts"
 msgstr "Liên lạc"
 
-#:../search/Tiles/Utils.cs:27
-msgid "Folder"
+#: ../search/Tiles/Utils.cs:28
+msgid "Calendar Events"
+msgstr "Sự kiện lịch"
+
+#: ../search/Tiles/Utils.cs:30
+msgid "Folders"
 msgstr "Thư mục"
 
-#:../search/Tiles/Utils.cs:29
-msgid "Image"
+#: ../search/Tiles/Utils.cs:32
+msgid "Images"
 msgstr "Ảnh"
 
-#:../search/Tiles/Utils.cs:31
+#: ../search/Tiles/Utils.cs:34
 msgid "Audio"
 msgstr "Âm thanh"
 
-#:../search/Tiles/Utils.cs:33
+#: ../search/Tiles/Utils.cs:36
 msgid "Video"
 msgstr "Ảnh động"
 
-#:../search/Tiles/Utils.cs:35
+#: ../search/Tiles/Utils.cs:38
 msgid "Documents"
 msgstr "Tài liệu"
 
-#:../search/Tiles/Utils.cs:37
+#: ../search/Tiles/Utils.cs:40
 msgid "Conversations"
 msgstr "Cuộc đối thoại"
 
-#:../search/Tiles/Utils.cs:39
-msgid "Website"
+#: ../search/Tiles/Utils.cs:42
+msgid "Websites"
 msgstr "Chỗ Mạng"
 
-#:../search/Tiles/Utils.cs:41
-msgid "News Feed"
-msgstr "Dòng tin tức"
+#: ../search/Tiles/Utils.cs:44
+msgid "News Feeds"
+msgstr "Nguồn tin tức"
 
-#:../search/Tiles/Utils.cs:43
-msgid "Archive"
+#: ../search/Tiles/Utils.cs:46
+msgid "Archives"
 msgstr "Kho"
 
-#:../search/Tiles/Utils.cs:155
-#,csharp-format
+#: ../search/Tiles/Utils.cs:100
+#: ../search/Tiles/Utils.cs:146
+#: ../search/Tiles/Utils.cs:192
+#: ../Util/StringFu.cs:77
+msgid "Today"
+msgstr "Hôm nay"
+
+#: ../search/Tiles/Utils.cs:102
+#: ../search/Tiles/Utils.cs:148
+#: ../search/Tiles/Utils.cs:194
+#: ../Util/StringFu.cs:79
+msgid "Yesterday"
+msgstr "Hôm qua"
+
+#: ../search/Tiles/Utils.cs:104
+#: ../search/Tiles/Utils.cs:150
+#: ../search/Tiles/Utils.cs:196
+msgid "Tomorrow"
+msgstr "Ngày mai"
+
+#: ../search/Tiles/Utils.cs:200
+#, csharp-format
 msgid "{0} week ago"
 msgid_plural "{0} weeks ago"
 msgstr[0] "{0} tuần trước"
 
-#.Lets say a year and a half to stop saying months
-#:../search/Tiles/Utils.cs:157
-#,csharp-format
+#: ../search/Tiles/Utils.cs:202
+#, csharp-format
+msgid "In {0} week"
+msgid_plural "In {0} weeks"
+msgstr[0] "Trong {0} tuần"
+
+#.Let's say a year and a half to stop saying months
+#: ../search/Tiles/Utils.cs:204
+#, csharp-format
 msgid "{0} month ago"
 msgid_plural "{0} months ago"
 msgstr[0] "{0} tháng trước"
 
-#:../search/Tiles/Utils.cs:159
-#,csharp-format
+#: ../search/Tiles/Utils.cs:206
+#, csharp-format
+msgid "In {0} month"
+msgid_plural "In {0} months"
+msgstr[0] "Trong {0} tháng"
+
+#: ../search/Tiles/Utils.cs:208
+#, csharp-format
 msgid "{0} year ago"
 msgid_plural "{0} years ago"
 msgstr[0] "{0} năm trước"
 
+#: ../search/Tiles/Utils.cs:210
+#, csharp-format
+msgid "In {0} year"
+msgid_plural "In {0} years"
+msgstr[0] "Trong {0} năm"
+
 #.FIXME: We need filters for video in Beagle.
 #.They should land soon when entagged-sharp gets video support.
-#:../search/Tiles/Video.cs:27
+#: ../search/Tiles/Video.cs:27
 msgid "Unknown duration"
 msgstr "Không biết thời lượng"
 
-#:../search/Tiles/WebHistory.cs:53
+#: ../search/Tiles/WebHistory.cs:53
 msgid "URL:"
 msgstr "Địa chỉ Mạng:"
 
-#:../search/Tiles/WebHistory.cs:56
+#: ../search/Tiles/WebHistory.cs:56
 msgid "Accessed:"
 msgstr "Truy cập:"
 
-#:../search/Tray/TrayIcon.cs:32
+#: ../search/Tray/TrayIcon.cs:32
 msgid "Desktop Search"
 msgstr "Tìm kiếm trong màn hình nền"
 
-#:../search/Tray/TrayIcon.cs:57
+#: ../search/Tray/TrayIcon.cs:57
 msgid "No Recent Searches"
 msgstr "Không có việc tìm kiếm gần đây"
 
-#:../search/Tray/TrayIcon.cs:62
+#: ../search/Tray/TrayIcon.cs:62
 msgid "Recent Searches"
 msgstr "Việc tìm kiếm gần đây"
 
-#:../search/Tray/TrayIcon.cs:78
+#: ../search/Tray/TrayIcon.cs:78
 msgid "Clear"
 msgstr "Xóa"
 
-#:../search/Tray/TrayIcon.cs:86
+#: ../search/Tray/TrayIcon.cs:86
 msgid "Quit"
 msgstr "Thoát"
 
@@ -361,14 +423,14 @@ msgstr "Thoát"
 #.* words. Just provide a list of likely words the user might use
 #.* after the "type:" keyword to refer to each type of match.
 #.
-#:../search/TypeFilter.cs:36
+#: ../search/TypeFilter.cs:36
 msgid ""
 "file\n"
 "files"
 msgstr "tập tin\n"
 "tệp"
 
-#:../search/TypeFilter.cs:37
+#: ../search/TypeFilter.cs:37
 msgid ""
 "mail\n"
 "email\n"
@@ -378,7 +440,7 @@ msgstr "thư\n"
 "địa chỉ thư\n"
 "địa chỉ thư điện tử"
 
-#:../search/TypeFilter.cs:38
+#: ../search/TypeFilter.cs:38
 msgid ""
 "im\n"
 "ims\n"
@@ -399,7 +461,7 @@ msgstr "im\n"
 "trò chuyện\n"
 "nói chuyện"
 
-#:../search/TypeFilter.cs:39
+#: ../search/TypeFilter.cs:39
 msgid ""
 "presentation\n"
 "presentations\n"
@@ -413,7 +475,7 @@ msgstr "trình diễn\n"
 "phim đèn trượt\n"
 "bản trình bày"
 
-#:../search/TypeFilter.cs:41
+#: ../search/TypeFilter.cs:41
 msgid ""
 "application\n"
 "applications\n"
@@ -426,7 +488,7 @@ msgstr "ứng dụng\n"
 "apps\n"
 "ứng dụng khách"
 
-#:../search/TypeFilter.cs:42
+#: ../search/TypeFilter.cs:42
 msgid ""
 "contact\n"
 "contacts\n"
@@ -440,14 +502,14 @@ msgstr "liên lạc\n"
 "tiếp xúc\n"
 "giao thiệp"
 
-#:../search/TypeFilter.cs:43
+#: ../search/TypeFilter.cs:43
 msgid ""
 "folder\n"
 "folders"
 msgstr "thư mục\n"
 "danh mục"
 
-#:../search/TypeFilter.cs:44
+#: ../search/TypeFilter.cs:44
 msgid ""
 "image\n"
 "images\n"
@@ -459,19 +521,19 @@ msgstr "ảnh\n"
 "hình chụp\n"
 "img"
 
-#:../search/TypeFilter.cs:45
+#: ../search/TypeFilter.cs:45
 msgid "audio"
 msgstr "âm thanh\n"
 "âm nhạc\n"
 "nhạc\n"
 "bài hát"
 
-#:../search/TypeFilter.cs:46
+#: ../search/TypeFilter.cs:46
 msgid "video"
 msgstr "phím\n"
 "ảnh động"
 
-#:../search/TypeFilter.cs:47
+#: ../search/TypeFilter.cs:47
 msgid "media"
 msgstr "vật chứa\n"
 "phương tiện\n"
@@ -480,7 +542,7 @@ msgstr "vật chứa\n"
 "đĩa\n"
 "băng"
 
-#:../search/TypeFilter.cs:48
+#: ../search/TypeFilter.cs:48
 msgid ""
 "document\n"
 "documents\n"
@@ -489,7 +551,7 @@ msgid ""
 msgstr "tài liệu\n"
 "tài liệu văn phòng"
 
-#:../search/TypeFilter.cs:49
+#: ../search/TypeFilter.cs:49
 msgid ""
 "conversation\n"
 "conversations"
@@ -503,7 +565,7 @@ msgstr "đối thoại\n"
 "cuộc đàm luận\n"
 "đàm luận"
 
-#:../search/TypeFilter.cs:50
+#: ../search/TypeFilter.cs:50
 msgid ""
 "web\n"
 "www\n"
@@ -517,7 +579,7 @@ msgstr "web\n"
 "trang chủ\n"
 "http"
 
-#:../search/TypeFilter.cs:51
+#: ../search/TypeFilter.cs:51
 msgid ""
 "feed\n"
 "news\n"
@@ -532,167 +594,181 @@ msgstr "feed\n"
 "nhật ký\n"
 "luồng tin tức"
 
-#:../search/TypeFilter.cs:52
+#: ../search/TypeFilter.cs:52
 msgid ""
 "archive\n"
 "archives"
 msgstr "kho\n"
 "kho lưu"
 
-#:../search/TypeFilter.cs:53
+#: ../search/TypeFilter.cs:53
 msgid ""
 "person\n"
 "people"
 msgstr "người\n"
 "người bạn"
 
-#:../search/UIManager.cs:35
-msgid "_Search"
-msgstr "Tìm _kiếm"
+#: ../search/UIManager.cs:42
+msgid "Close Desktop Search"
+msgstr "Đóng việc tìm kiếm trong màn hình nền"
 
-#:../search/UIManager.cs:38
-msgid "_Actions"
-msgstr "_Hành động"
-
-#:../search/UIManager.cs:41
-msgid "Sor_t"
-msgstr "_Sắp xếp"
-
-#:../search/UIManager.cs:44
-msgid "_Help"
-msgstr "Trợ _giúp"
-
-#:../search/UIManager.cs:49 ../search/UIManager.cs:53
+#: ../search/UIManager.cs:47
+#: ../search/UIManager.cs:69
 msgid "Exit Desktop Search"
 msgstr "Thoát Tìm kiếm Môi trường"
 
-#:../search/UIManager.cs:56
+#: ../search/UIManager.cs:54
+msgid "_Search"
+msgstr "Tìm _kiếm"
+
+#: ../search/UIManager.cs:57
+msgid "_Actions"
+msgstr "_Hành động"
+
+#: ../search/UIManager.cs:60
+msgid "Sor_t"
+msgstr "_Sắp xếp"
+
+#: ../search/UIManager.cs:63
+msgid "_Help"
+msgstr "Trợ _giúp"
+
+#: ../search/UIManager.cs:72
 msgid "_Contents"
 msgstr "_Nội dung"
 
-#:../search/UIManager.cs:58
+#: ../search/UIManager.cs:74
 msgid "Help - Table of Contents"
 msgstr "Trợ giúp: Mục lục"
 
-#:../search/UIManager.cs:62
+#: ../search/UIManager.cs:78
 msgid "About Desktop Search"
 msgstr "Giới thiệu về Tìm kiếm Môi trường"
 
-#:../search/UIManager.cs:75
+#: ../search/UIManager.cs:100
 msgid "_Everywhere"
 msgstr "Khắp _nơi"
 
-#:../search/UIManager.cs:77
+#: ../search/UIManager.cs:102
 msgid "Search everywhere"
 msgstr "Tìm kiếm trong khắp nơi"
 
-#:../search/UIManager.cs:80
+#: ../search/UIManager.cs:105
 msgid "_Applications"
 msgstr "Ứng _dụng"
 
-#:../search/UIManager.cs:82
+#: ../search/UIManager.cs:107
 msgid "Search applications"
 msgstr "Tìm kiếm trong ứng dụng"
 
-#:../search/UIManager.cs:85
+#: ../search/UIManager.cs:110
 msgid "_Contacts"
 msgstr "_Liên lạc"
 
-#:../search/UIManager.cs:87
+#: ../search/UIManager.cs:112
 msgid "Search contacts"
 msgstr "Tìm kiếm trong liên lạc"
 
-#:../search/UIManager.cs:90
+#: ../search/UIManager.cs:115
+msgid "Ca_lendar events"
+msgstr "Sự kiện _lịch"
+
+#: ../search/UIManager.cs:117
+msgid "Search calendar events"
+msgstr "Tìm kiếm trong các sự kiện lịch"
+
+#: ../search/UIManager.cs:120
 msgid "_Documents"
 msgstr "_Tài liệu"
 
-#:../search/UIManager.cs:92
+#: ../search/UIManager.cs:122
 msgid "Search documents"
 msgstr "Tìm kiếm trong tài liệu"
 
-#:../search/UIManager.cs:95
+#: ../search/UIManager.cs:125
 msgid "Conve_rsations"
 msgstr "Cuộc _đối thoại"
 
-#:../search/UIManager.cs:97
+#: ../search/UIManager.cs:127
 msgid "Search E-Mail and Instant Messaging logs"
 msgstr "Tìm kiếm trong các bản ghi Thư và Tin nhắn"
 
-#:../search/UIManager.cs:100
-msgid "Images"
-msgstr "Ảnh"
+#: ../search/UIManager.cs:130
+msgid "_Images"
+msgstr "_Ảnh"
 
-#:../search/UIManager.cs:102
+#: ../search/UIManager.cs:132
 msgid "Search images"
 msgstr "Tìm kiếm trong ảnh"
 
-#:../search/UIManager.cs:105
-msgid "Media"
-msgstr "Vật chứa"
+#: ../search/UIManager.cs:135
+msgid "_Media"
+msgstr "_Vật chứa"
 
-#:../search/UIManager.cs:107
+#: ../search/UIManager.cs:137
 msgid "Search sound and video files"
 msgstr "Tìm kiếm trong các tập tin âm thanh và ảnh động"
 
-#:../search/UIManager.cs:114
+#: ../search/UIManager.cs:144
 msgid "Date _Modified"
 msgstr "Ngày _sửa đổi"
 
-#:../search/UIManager.cs:115
+#: ../search/UIManager.cs:145
 msgid "Sort the most-recently-modified matches first"
 msgstr "Sắp xếp điều khớp đã sửa đổi gần nhất trước hết"
 
-#:../search/UIManager.cs:118
+#: ../search/UIManager.cs:148
 msgid "_Name"
 msgstr "T_ên"
 
-#:../search/UIManager.cs:119
+#: ../search/UIManager.cs:149
 msgid "Sort matches by name"
 msgstr "Sắp xếp điều khớp theo tên"
 
-#:../search/UIManager.cs:122
+#: ../search/UIManager.cs:152
 msgid "_Relevance"
 msgstr "Độ _thích đáng"
 
-#:../search/UIManager.cs:123
+#: ../search/UIManager.cs:153
 msgid "Sort the best matches first"
 msgstr "Sắp xếp điều khớp tốt nhất trước hết"
 
-#:../tools/Settings.cs:223
+#: ../tools/Settings.cs:223
 msgid "Reload configuration"
 msgstr "Tải lại cấu hình"
 
-#:../tools/Settings.cs:224
+#: ../tools/Settings.cs:224
 msgid ""
 "The configuration file has been modified by another application. Do you wish "
 "to discard the currently displayed values and reload configuration from disk?"
 msgstr "Một ứng dụng khác đã sửa đổi tập tin cấu hình. Bạn có muốn hủy những giá trị "
 "đang xem, rồi tải lại cấu hình từ đĩa không?"
 
-#:../tools/Settings.cs:262
+#: ../tools/Settings.cs:262
 msgid "Select Path"
 msgstr "Chọn đường dẫn"
 
-#:../tools/Settings.cs:281
+#: ../tools/Settings.cs:281
 msgid "The selected path is already selected for indexing and wasn't added."
 msgstr "Chưa thêm đường dẫn đã chọn, vì nó đã chọn để chỉ mục."
 
-#:../tools/Settings.cs:284
+#: ../tools/Settings.cs:284
 msgid ""
 "The selected path wasn't added. The list contains items that supercedes it "
 "and the data is already being indexed."
 msgstr "Chưa thêm đường dẫn đã chọn, vì danh sách chứa mục thay thế nó và đang chỉ "
 "mục dữ liệu đó."
 
-#:../tools/Settings.cs:295 ../tools/Settings.cs:487
+#: ../tools/Settings.cs:295
+#: ../tools/Settings.cs:487
 msgid "Path not added"
 msgstr "Chưa thêm đường"
 
-#:../tools/Settings.cs:304
+#: ../tools/Settings.cs:304
 msgid "Remove obsolete paths"
 msgstr "Gỡ bỏ các đường dẫn quá thời"
 
-#:../tools/Settings.cs:305
+#: ../tools/Settings.cs:305
 msgid ""
 "Adding this path will obsolete some of the existing include paths. This will "
 "result in the removal of the old obsolete paths. Do you still wish to add it?"
@@ -700,389 +776,386 @@ msgstr "Thêm đường dẫn này sẽ làm cho một số đường dẫn gồ
 "vậy việc thêm sẽ gây ra các đường dẫn quá thời này bị gỡ bỏ. Bạn vẫn còn "
 "muốn thêm nó không?"
 
-#:../tools/Settings.cs:331
+#: ../tools/Settings.cs:331
 msgid "Remove path"
 msgstr "Gỡ bỏ đường dẫn"
 
-#:../tools/Settings.cs:332
+#: ../tools/Settings.cs:332
 msgid ""
 "Are you sure you wish to remove this path from the list of directories to be "
 "included for indexing?"
 msgstr "Bạn có chắc muốn gỡ bỏ đường dẫn này ra danh sách thư mục cần gồm để chỉ mục "
 "không?"
 
-#:../tools/Settings.cs:361
+#: ../tools/Settings.cs:361
 msgid "Remove item"
 msgstr "Gỡ bỏ mục"
 
-#:../tools/Settings.cs:362
+#: ../tools/Settings.cs:362
 msgid ""
 "Are you sure you wish to remove this item from the list of data to be "
 "excluded from indexing?"
 msgstr "Bạn có chắc muốn gỡ bỏ mục này ra danh sách dữ liệu cần bị loại trừ ra việc "
 "chỉ mục không?"
 
-#:../tools/Settings.cs:405
+#: ../tools/Settings.cs:405
 msgid "Invalid host entry"
 msgstr "Mục nhập máy không hợp lệ"
 
-#:../tools/Settings.cs:412
+#: ../tools/Settings.cs:412
 msgid "Remote host already present in the list."
 msgstr "Máy ở xa đã có trong danh sách."
 
-#:../tools/Settings.cs:421
+#: ../tools/Settings.cs:421
 msgid "Netbeagle Node not added"
 msgstr "Chưa thêm nút thông tin NetBeagle"
 
-#:../tools/Settings.cs:437
+#: ../tools/Settings.cs:437
 msgid "Remove host"
 msgstr "Gỡ bỏ máy"
 
-#:../tools/Settings.cs:438
+#: ../tools/Settings.cs:438
 msgid "Are you sure you wish to remove this host from the list?"
 msgstr "Bạn có chắc muốn gỡ bỏ máy này ra danh sách không?"
 
-#:../tools/Settings.cs:459
+#: ../tools/Settings.cs:459
 msgid "Select path"
 msgstr "Chọn đường dẫn"
 
-#:../tools/Settings.cs:478
+#: ../tools/Settings.cs:478
 msgid "The selected path is already configured for external access."
 msgstr "Đã cấu hình đường dẫn đã chọn cho truy cập bên ngoài."
 
-#:../tools/Settings.cs:502
+#: ../tools/Settings.cs:502
 msgid "Remove public path"
 msgstr "Gỡ bỏ đường dẫn công"
 
-#:../tools/Settings.cs:503
+#: ../tools/Settings.cs:503
 msgid ""
 "Are you sure you wish to remove this entry from the list of public paths?"
 msgstr "Bạn có chắc chắn là bạn muốn xóa bỏ vĩnh viễn « %s » trong sọt rác không?"
 
-#:../tools/Settings.cs:548 ../tools/Settings.cs:637 ../tools/Settings.cs:715
-#:../tools/Settings.cs:791 ../tools/Settings.cs:1130
+#: ../tools/Settings.cs:548
+#: ../tools/Settings.cs:637
+#: ../tools/Settings.cs:715
+#: ../tools/Settings.cs:791
+#: ../tools/Settings.cs:1130
 msgid "Name"
 msgstr "Tên"
 
-#:../tools/Settings.cs:631
+#: ../tools/Settings.cs:631
 msgid "Type"
 msgstr "Kiểu"
 
-#:../tools/Settings.cs:684
+#: ../tools/Settings.cs:684
 msgid "Path:"
 msgstr "Đường dẫn:"
 
-#:../tools/Settings.cs:687
+#: ../tools/Settings.cs:687
 msgid "Pattern:"
 msgstr "Mẫu :"
 
-#:../tools/Settings.cs:690
+#: ../tools/Settings.cs:690
 msgid "Mail folder:"
 msgstr "Thư mục Thư :"
 
-#:../tools/Settings.cs:1038
+#: ../tools/Settings.cs:1038
 msgid "Select Folder"
 msgstr "Chọn thư mục"
 
-#:../tools/Settings.cs:1064 ../tools/settings.glade.h:24
+#: ../tools/Settings.cs:1064
+#: ../tools/settings.glade.h:24
 msgid "P_ath:"
 msgstr "Đường _dẫn:"
 
-#:../tools/Settings.cs:1069
+#: ../tools/Settings.cs:1069
 msgid "M_ail folder:"
 msgstr "Thư mục _Thư :"
 
-#:../tools/Settings.cs:1074
+#: ../tools/Settings.cs:1074
 msgid "P_attern:"
 msgstr "_Mẫu :"
 
-#:../tools/Settings.cs:1098
+#: ../tools/Settings.cs:1098
 msgid "Error adding path"
 msgstr "Gặp lỗi khi thêm đường dẫn"
 
-#:../tools/Settings.cs:1099
+#: ../tools/Settings.cs:1099
 msgid ""
 "The specified path could not be found and therefore it could not be added to "
 "the list of resources excluded for indexing."
 msgstr "Không tìm thấy đường dẫn đã xác định, thì không thể thêm nó vào danh sách "
 "tài nguyên cần loại trừ ra việc chỉ mục."
 
-#:../tools/Settings.cs:1129
+#: ../tools/Settings.cs:1129
 msgid "Show"
 msgstr "Hiện"
 
-#:../tools/settings.glade.h:1
+#: ../tools/settings.glade.h:1
 msgid "<b>Add Remote Host</b>"
 msgstr "<b>Thêm máy ở xa</b>"
 
-#:../tools/settings.glade.h:2
+#: ../tools/settings.glade.h:2
 msgid "<b>Administration</b>"
 msgstr "<b>Quản lý</b>"
 
-#:../tools/settings.glade.h:3
+#: ../tools/settings.glade.h:3
 msgid "<b>Display</b>"
 msgstr "<b>Trình bày</b>"
 
-#:../tools/settings.glade.h:4
+#: ../tools/settings.glade.h:4
 msgid "<b>Exclude Resource</b>"
 msgstr "<b>Loại trừ tài nguyên</b>"
 
-#:../tools/settings.glade.h:5
+#: ../tools/settings.glade.h:5
 msgid "<b>General</b>"
 msgstr "<b>Chung</b>"
 
-#:../tools/settings.glade.h:6
+#: ../tools/settings.glade.h:6
 msgid "<b>Networking</b>"
 msgstr "<b>Chạy mạng</b>"
 
-#:../tools/settings.glade.h:7
+#: ../tools/settings.glade.h:7
 msgid "<b>Privacy</b>"
 msgstr "<b>Riêng tư</b>"
 
-#:../tools/settings.glade.h:8
+#: ../tools/settings.glade.h:8
 msgid "<b>Select Mail Folder</b>"
 msgstr "<b>Chọn thư mục Thư</b>"
 
-#:../tools/settings.glade.h:9
+#: ../tools/settings.glade.h:9
 msgid "Add Remote Host"
 msgstr "Thêm máy ở xa"
 
-#:../tools/settings.glade.h:10
+#: ../tools/settings.glade.h:10
 msgid ""
 "Add a remote search-enabled host you wish \n"
 "to network with."
 msgstr "Thêm máy ở xa có khả năng tìm kiếm\n"
 "với đó bạn muốn chạy mạng."
 
-#:../tools/settings.glade.h:12
+#: ../tools/settings.glade.h:12
 msgid "Add any additional paths to be included for indexing."
 msgstr "Thêm đường dẫn thêm nào cần gồm để chỉ mục."
 
-#:../tools/settings.glade.h:13
+#: ../tools/settings.glade.h:13
 msgid "Add any remote search-enabled hosts you wish to network with."
 msgstr "Thêm máy ở xa có khả năng tìm kiếm với đó bạn muốn chạy mạng."
 
-#:../tools/settings.glade.h:14
+#: ../tools/settings.glade.h:14
 msgid ""
 "Adjust which types of results should be visible, and in what order they "
 "should be presented when grouped by type."
 msgstr "Điều chỉnh kết quả kiểu nào nên hiển thị, và khi nhóm lại kết quả theo kiểu, "
 "nên hiển thị theo thứ tự nào."
 
-#:../tools/settings.glade.h:15
+#: ../tools/settings.glade.h:15
 msgid "Allow _external access to local search services"
 msgstr "Cho phép truy cập bên _ngoài vào dịch vụ tìm kiếm cục bộ"
 
-#:../tools/settings.glade.h:16
+#: ../tools/settings.glade.h:16
 msgid "Alt"
 msgstr "Alt"
 
-#:../tools/settings.glade.h:17
+#: ../tools/settings.glade.h:17
 msgid "Ctrl"
 msgstr "Ctrl"
 
-#:../tools/settings.glade.h:18
+#: ../tools/settings.glade.h:18
 msgid "Display the search window by pressing:"
 msgstr "Hiển thị cửa sổ tìm kiếm bằng cách bấm phím:"
 
-#:../tools/settings.glade.h:19
+#: ../tools/settings.glade.h:19
 msgid "Exclude Resource"
 msgstr "Loại trừ tài nguyên"
 
-#:../tools/settings.glade.h:20
+#: ../tools/settings.glade.h:20
 msgid "Filename _pattern"
 msgstr "_Mẫu tên tập tin"
 
-#:../tools/settings.glade.h:21
+#: ../tools/settings.glade.h:21
 msgid "I_ndex my home directory"
 msgstr "_Chỉ mục thư mục chính của tôi"
 
-#:../tools/settings.glade.h:22
+#: ../tools/settings.glade.h:22
 msgid "Indexing"
 msgstr "Đang chỉ mục"
 
-#:../tools/settings.glade.h:23
+#: ../tools/settings.glade.h:23
 msgid "Networking"
 msgstr "Chạy mạng"
 
-#:../tools/settings.glade.h:25
+#: ../tools/settings.glade.h:25
 msgid "Please select a resource you wish to exclude from indexing."
 msgstr "Hãy chọn tài nguyên bạn muốn loại trừ ra việc chỉ mục."
 
-#:../tools/settings.glade.h:26
+#: ../tools/settings.glade.h:26
 msgid "Please select the mail folder you wish to exclude from indexing. "
 msgstr "Hãy chọn thư mục thư bạn muốn loại trừ ra việc chỉ mục. "
 
-#:../tools/settings.glade.h:28
+#: ../tools/settings.glade.h:28
 msgid "Search Preferences"
 msgstr "Tùy thích Tìm kiếm"
 
-#:../tools/settings.glade.h:29
+#: ../tools/settings.glade.h:29
 msgid "Select Mail Folder"
 msgstr "Chọn thư mục Thư"
 
-#:../tools/settings.glade.h:30
+#: ../tools/settings.glade.h:30
 msgid ""
 "Specify any resources, such as paths, patterns, mail folders or type of "
 "objects you wish to exclude from indexing."
 msgstr "Hãy xác định tài nguyên nào, như đường dẫn, mẫu, thư mục thư hoặc kiểu đối "
 "tượng mà bạn muốn loại trừ ra việc chỉ mục."
 
-#:../tools/settings.glade.h:31
+#: ../tools/settings.glade.h:31
 msgid "Specify paths that should be available for external access."
 msgstr "Hãy xác định đường dẫn nào nên cho phép truy cập bên ngoài."
 
-#:../tools/settings.glade.h:32
+#: ../tools/settings.glade.h:32
 msgid "Type:"
 msgstr "Kiểu :"
 
-#:../tools/settings.glade.h:33
+#: ../tools/settings.glade.h:33
 msgid "_Address:"
 msgstr "_Địa chỉ :"
 
-#:../tools/settings.glade.h:34
+#: ../tools/settings.glade.h:34
 msgid "_Allow Beagle to be run as root"
 msgstr "Cho _phép chạy Beagle với tư cách người chủ"
 
-#:../tools/settings.glade.h:35
+#: ../tools/settings.glade.h:35
 msgid "_Folder path"
 msgstr "Đường dẫn th_ư mục"
 
-#:../tools/settings.glade.h:36
+#: ../tools/settings.glade.h:36
 msgid "_Mail folder"
 msgstr "Thư mục _Thư"
 
-#:../tools/settings.glade.h:37
+#: ../tools/settings.glade.h:37
 msgid "_Maximum number of results displayed:"
 msgstr "_Số tối đa kết quả đã hiển thị :"
 
-#:../tools/settings.glade.h:38
+#: ../tools/settings.glade.h:38
 msgid "_Start search & indexing services automatically "
 msgstr "Tự động khởi chạ_y dịch vụ tìm kiếm và chỉ mục "
 
-#:../tools/beagle-settings.desktop.in.h:1
+#: ../tools/beagle-settings.desktop.in.h:1
 msgid "Configure Desktop Search & Indexing"
 msgstr "Cấu hình tìm kiếm và chỉ mục màn hình nền"
 
-#:../tools/beagle-settings.desktop.in.h:2
+#: ../tools/beagle-settings.desktop.in.h:2
 msgid "Configure search & indexing properties"
 msgstr "Cấu hình thuộc tính tìm kiếm và chỉ mục"
 
-#:../tools/beagle-settings.desktop.in.h:3
+#: ../tools/beagle-settings.desktop.in.h:3
 msgid "Search & Indexing"
 msgstr "Tìm kiếm và Chỉ mục"
 
-#:../Util/Evolution.cs:45 ../Util/Evolution.cs:163
+#: ../Util/Evolution.cs:45
+#: ../Util/Evolution.cs:163
 msgid "On This Computer"
 msgstr "Trên máy này"
 
-#:../Util/ExifData.cs:226
+#: ../Util/ExifData.cs:226
 msgid "Image Directory"
 msgstr "Thư mục ảnh"
 
-#:../Util/ExifData.cs:228
+#: ../Util/ExifData.cs:228
 msgid "Thumbnail Directory"
 msgstr "Thư mục hình thu nhỏ"
 
-#:../Util/ExifData.cs:230
+#: ../Util/ExifData.cs:230
 msgid "Exif Directory"
 msgstr "Thư mục Exif"
 
-#:../Util/ExifData.cs:232
+#: ../Util/ExifData.cs:232
 msgid "GPS Directory"
 msgstr "Thư mục GPS"
 
-#:../Util/ExifData.cs:234
+#: ../Util/ExifData.cs:234
 msgid "InterOperability Directory"
 msgstr "Thư mục thao tác với nhau"
 
-#:../Util/ExifData.cs:236
+#: ../Util/ExifData.cs:236
 msgid "Unknown Directory"
 msgstr "Không biết thư mục này"
 
-#:../Util/StringFu.cs:77
-msgid "Today"
-msgstr "Hôm nay"
-
-#:../Util/StringFu.cs:79
-msgid "Yesterday"
-msgstr "Hôm qua"
-
 #.Translators: Example output: Aug 9
-#:../Util/StringFu.cs:82
+#: ../Util/StringFu.cs:82
 msgid "MMM d"
 msgstr "n Thg"
 
 #.Translators: Example output: Aug 9, 2000
-#:../Util/StringFu.cs:85
+#: ../Util/StringFu.cs:85
 msgid "MMM d, yyyy"
 msgstr "n Thg, năm"
 
 #.Translators: Example output: 11:05 AM  (note h = 12-hour time)
-#:../Util/StringFu.cs:88
+#: ../Util/StringFu.cs:88
 msgid "h:mm tt"
 msgstr "g:ph tg"
 
 #.Translators: {0} is a date (e.g. 'Today' or 'Apr 23'), {1} is the time
-#:../Util/StringFu.cs:94
-#,csharp-format
+#: ../Util/StringFu.cs:94
+#, csharp-format
 msgid "{0}, {1}"
 msgstr "{0}, {1}"
 
 #.To translators: {0} is the time of the day, eg. 13:45
-#:../Util/StringFu.cs:111
-#,csharp-format
+#: ../Util/StringFu.cs:111
+#, csharp-format
 msgid "Today, {0}"
 msgstr "Hôm nay, {0}"
 
 #.To translators: {0} is the time of the day, eg. 13:45
-#:../Util/StringFu.cs:114
-#,csharp-format
+#: ../Util/StringFu.cs:114
+#, csharp-format
 msgid "Yesterday, {0}"
 msgstr "Hôm qua, {0}"
 
 #.To translators: {0} is the number of days that have passed, {1} is the time of the day, eg. 13:45
-#:../Util/StringFu.cs:117
-#,csharp-format
+#: ../Util/StringFu.cs:117
+#, csharp-format
 msgid "{0} days ago, {1}"
 msgstr "{0} ngày trước, {1}"
 
 #.Translators: Example output: January 3, 3:45 PM
-#:../Util/StringFu.cs:122
+#: ../Util/StringFu.cs:122
 msgid "MMMM d, h:mm tt"
 msgstr "n thng, g:ph tg"
 
 #.Translators: Example output: March 23 2001, 10:04 AM
-#:../Util/StringFu.cs:127
+#: ../Util/StringFu.cs:127
 msgid "MMMM d yyyy, h:mm tt"
 msgstr "n thng nam, g:ph tg"
 
-#:../Util/StringFu.cs:137
-#,csharp-format
+#: ../Util/StringFu.cs:137
+#, csharp-format
 msgid "{0} hour"
 msgid_plural "{0} hours"
 msgstr[0] "{0} giờ"
 
-#:../Util/StringFu.cs:144
-#,csharp-format
+#: ../Util/StringFu.cs:144
+#, csharp-format
 msgid "{0} minute"
 msgid_plural "{0} minutes"
 msgstr[0] "{0} phút"
 
 #.Translators: {0} is a file size in bytes
-#:../Util/StringFu.cs:160
-#,csharp-format
+#: ../Util/StringFu.cs:160
+#, csharp-format
 msgid "{0} bytes"
 msgstr "{0} byte"
 
 #.Translators: {0} is a file size in kilobytes
-#:../Util/StringFu.cs:164
-#,csharp-format
+#: ../Util/StringFu.cs:164
+#, csharp-format
 msgid "{0:0.0} KB"
 msgstr "{0:0.0} KB"
 
 #.Translators: {0} is a file size in megabytes
-#:../Util/StringFu.cs:167
-#,csharp-format
+#: ../Util/StringFu.cs:167
+#, csharp-format
 msgid "{0:0.0} MB"
 msgstr "{0:0.0} MB"
