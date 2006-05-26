@@ -47,9 +47,8 @@ namespace Search.Tiles {
 		protected override DetailsPane GetDetails ()
 		{
 			DetailsPane details = new DetailsPane ();
-			uint i = 0;
 				
-			details.AddTitleLabel (Title, i++, 1);
+			details.AddTitleLabel (Title);
 			
 			string org = Hit.GetFirstProperty ("fixme:Org");
 			string title = Hit.GetFirstProperty ("fixme:Title");
@@ -59,22 +58,22 @@ namespace Search.Tiles {
 			string home_phone = Hit.GetFirstProperty ("fixme:HomePhone");
 			
 			if (org != null && org != "")
-				details.AddLabel (org, i++, 1);
+				details.AddTextLabel (org);
 			if (title != null && title != "")
-				details.AddLabel (title, i++, 1);
+				details.AddTextLabel (title);
 
-			details.AddNewLine (i++, 1);
+			details.AddNewLine ();
 
 			if (email != null && email != "")
-				details.AddLabelPair (Catalog.GetString ("E-Mail:"), email, i++, 1);			
+				details.AddLabelPair (Catalog.GetString ("E-Mail:"), email);
 			if (mobile_phone != null && mobile_phone != "")
-				details.AddLabelPair (Catalog.GetString ("Mobile Phone:"), mobile_phone, i++, 1);	
+				details.AddLabelPair (Catalog.GetString ("Mobile Phone:"), mobile_phone);
 			if (work_phone != null && work_phone != "")
-				details.AddLabelPair (Catalog.GetString ("Work Phone:"), work_phone, i++, 1);
+				details.AddLabelPair (Catalog.GetString ("Work Phone:"), work_phone);
 			if (home_phone != null && home_phone != "")
-				details.AddLabelPair (Catalog.GetString ("Home Phone:"), home_phone, i++, 1);
+				details.AddLabelPair (Catalog.GetString ("Home Phone:"), home_phone);
 			
-			details.AddFinalLine (i++, 1);
+			details.AddFinalLine ();
 
 			return details;
 		}

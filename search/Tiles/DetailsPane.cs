@@ -80,10 +80,12 @@ namespace Search.Tiles {
 			maximized = true;
 		}
 
-		const Gtk.AttachOptions expand = Gtk.AttachOptions.Expand | Gtk.AttachOptions.Fill;
-		const Gtk.AttachOptions fill = Gtk.AttachOptions.Fill;
+		private const Gtk.AttachOptions expand = Gtk.AttachOptions.Expand | Gtk.AttachOptions.Fill;
+		private const Gtk.AttachOptions fill = Gtk.AttachOptions.Fill;
 
-		public Gtk.Label AddGrayLabel (string text, uint row, uint column)
+		private uint current_row = 0;
+
+		private Gtk.Label AddGrayLabel (string text, uint row, uint column)
 		{
 			Gtk.Label label = WidgetFu.NewGrayLabel (text);
 			label.Show ();
@@ -92,7 +94,7 @@ namespace Search.Tiles {
 			return label;
 		}
 
-		public Gtk.Label AddLabel (string text, uint row, uint column)
+		private Gtk.Label AddLabel (string text, uint row, uint column)
 		{
 			Gtk.Label label = WidgetFu.NewLabel (text);
 			label.Selectable = true;
@@ -103,7 +105,7 @@ namespace Search.Tiles {
 			return label;
 		}
 
-		public Gtk.Label AddBoldLabel (string text, uint row, uint column)
+		private Gtk.Label AddBoldLabel (string text, uint row, uint column)
 		{
 			Gtk.Label label = WidgetFu.NewBoldLabel (text);
 			WidgetFu.EllipsizeLabel (label);
@@ -113,44 +115,50 @@ namespace Search.Tiles {
 			return label;
 		}
 
-		public Gtk.Label AddTitleLabel (string text, uint row, uint column)
+		public Gtk.Label AddTitleLabel (string text)
 		{
-			Gtk.Label label = AddBoldLabel (text, row, column);
+			Gtk.Label label = AddBoldLabel (text, current_row++, 1);
 			label.Selectable = true;
 			return label;
 		}
 
-		public void AddLabelPair (string label, string text, uint row, uint column)
+		public Gtk.Label AddTextLabel (string text)
 		{
-			AddGrayLabel (label, row, column);
-			AddLabel (text, row, column + 1);
+			Gtk.Label label = AddLabel (text, current_row++, 1);
+			return label;
 		}
 
-		public Gtk.Label AddSnippet (uint row, uint column)
+		public void AddLabelPair (string label, string text)
+		{
+			AddGrayLabel (label, current_row, 1);
+			AddLabel (text, current_row++, 2);
+		}
+
+		public Gtk.Label AddSnippet ()
 		{
 			snippet = WidgetFu.NewLabel ();
 			snippet.Selectable = true;
 			WidgetFu.EllipsizeLabel (snippet);
 			snippet.Show ();
-			Attach (snippet, column, column + 1, row, row + 1, expand, fill, 48, 0);
+			Attach (snippet, 1, 2, current_row, ++current_row, expand, fill, 48, 0);
 			maximized = false;
 
 			return snippet;
 		}
 
-		public Gtk.Label AddNewLine (uint row, uint column)
+		public Gtk.Label AddNewLine ()
 		{
 			Gtk.Label label = WidgetFu.NewLabel ("");
 			label.Show ();
-			Attach (label, column, column + 1, row, row + 1, fill, fill, 0, 0);
+			Attach (label, 1, 2, current_row, ++current_row, fill, fill, 0, 0);
 			return label;
 		}
 
-		public Gtk.Label AddFinalLine (uint row, uint column)
+		public Gtk.Label AddFinalLine ()
 		{
 			Gtk.Label label = WidgetFu.NewLabel ("");
 			label.Show ();
-			Attach (label, column, column + 1, row, row + 1, expand, expand, 0, 0);
+			Attach (label, 1, 2, current_row, ++current_row, expand, expand, 0, 0);
 			return label;
 		}
 

@@ -54,14 +54,9 @@ namespace Search.Tiles {
 		{
 			DetailsPane details = new DetailsPane ();
 
-			details.AddLabelPair (Catalog.GetString ("Title:"),
-					      Title,
-					      0, 1);
-			details.AddLabelPair (Catalog.GetString ("Last Edited:"),
-					      Utils.NiceLongDate (Timestamp),
-					      1, 1);
-			
-			details.AddSnippet (2, 1);
+			details.AddLabelPair (Catalog.GetString ("Title:"), Title);
+			details.AddLabelPair (Catalog.GetString ("Last Edited:"), Utils.NiceLongDate (Timestamp));
+			details.AddSnippet ();
 
 			return details;
 		}

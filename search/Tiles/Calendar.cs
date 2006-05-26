@@ -48,32 +48,19 @@ namespace Search.Tiles {
 		{
 			DetailsPane details = new DetailsPane ();
 
-			details.AddLabelPair (Catalog.GetString ("Title:"),
-					      Title,
-					      0, 1);
+			details.AddLabelPair (Catalog.GetString ("Title:"), Title);
 
-			string description = Catalog.GetString ("None");
 			if (Description != null && Description != "")
-				description = Description;
-
-			details.AddLabelPair (Catalog.GetString ("Description:"),
-					      description,
-					      1, 1);
+				details.AddLabelPair (Catalog.GetString ("Description:"), Description);
 			
-			if (Hit.GetFirstProperty ("fixme:location") != null) {
-				details.AddLabelPair (Catalog.GetString ("Location:"),
-						      Hit.GetFirstProperty ("fixme:location"),
-						      2, 1);
-			}
+			if (Hit.GetFirstProperty ("fixme:location") != null)
+				details.AddLabelPair (Catalog.GetString ("Location:"), Hit.GetFirstProperty ("fixme:location"));
 
 			string[] attendees = Hit.GetProperties ("fixme:attendee");
-			if (attendees != null && attendees.Length > 0) {
-				details.AddLabelPair (Catalog.GetString ("Attendees:"),
-						      String.Join (", ", attendees),
-						      3, 1);
-			}
+			if (attendees != null && attendees.Length > 0)
+				details.AddLabelPair (Catalog.GetString ("Attendees:"), String.Join (", ", attendees));
 
-			details.AddFinalLine (4, 1);
+			details.AddFinalLine ();
 
 			return details;
 		}

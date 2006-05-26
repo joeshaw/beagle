@@ -71,20 +71,16 @@ namespace Search.Tiles {
 
 			// FIXME: The icon needs a nice frame as in the spec (?)
 
-			details.AddTitleLabel (Title, 0, 1);
-			details.AddLabel (Description, 1, 1);
-			details.AddLabel ("", 2, 1);
+			details.AddTitleLabel (Title);
+			details.AddTextLabel (Description);
+			details.AddNewLine ();
 
-			details.AddLabelPair (Catalog.GetString ("Modified:"),
-					      Utils.NiceVeryLongDate (Hit.FileInfo.LastWriteTime),
-					      3, 1);
-			details.AddLabelPair (Catalog.GetString ("Full Path:"),
-					      Hit.Uri.LocalPath,
-					      4, 1);
+			details.AddLabelPair (Catalog.GetString ("Modified:"), Utils.NiceVeryLongDate (Hit.FileInfo.LastWriteTime));
+			details.AddLabelPair (Catalog.GetString ("Full Path:"), Hit.Uri.LocalPath);
 
 			if (Hit ["fspot:Description"] != null && Hit ["fspot:Description"] != "") {
-				details.AddLabel ("", 5, 1);
-				details.AddLabel (Hit ["fspot:Description"], 6, 1);
+				details.AddNewLine ();
+				details.AddTextLabel (Hit ["fspot:Description"]);
 			}
 
 			return details;

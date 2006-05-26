@@ -41,6 +41,8 @@ namespace Search.Tiles {
 
 		protected override void LoadIcon (Gtk.Image image, int size)
 		{
+			// The File tile doesn't respect the icon size because
+			// 48 is too small for thumbnails
 			if (!thumbnailer.SetThumbnailIcon (image, Hit, size))
 				base.LoadIcon (image, size);
 		}
@@ -119,21 +121,14 @@ namespace Search.Tiles {
 		{
 			DetailsPane details = new DetailsPane ();
 
-			details.AddLabelPair (Catalog.GetString ("Title:"),
-					      GetTitle (),
-					      0, 1);
-			details.AddLabelPair (Catalog.GetString ("Last Edited:"),
-					      Utils.NiceLongDate (Timestamp),
-					      1, 1);
-			if (Hit ["dc:author"] != null) {
-				details.AddLabelPair (Catalog.GetString ("Author:"),
-						      Hit ["dc:author"],
-						      1, 3);
-			}
-			details.AddLabelPair (Catalog.GetString ("Full Path:"),
-					      Hit.Uri.LocalPath,
-					      2, 1);
-			details.AddSnippet (3, 1);
+			details.AddLabelPair (Catalog.GetString ("Title:"), GetTitle ());
+			details.AddLabelPair (Catalog.GetString ("Last Edited:"), Utils.NiceLongDate (Timestamp));
+
+			if (Hit ["dc:author"] != null)
+				details.AddLabelPair (Catalog.GetString ("Author:"), Hit ["dc:author"]);
+
+			details.AddLabelPair (Catalog.GetString ("Full Path:"), Hit.Uri.LocalPath);
+			details.AddSnippet ();
 
 			return details;
 		}

@@ -47,17 +47,10 @@ namespace Search.Tiles {
 		{
 			DetailsPane details = new DetailsPane ();
 
-			details.AddLabelPair (Catalog.GetString ("Title:"),
-					      Title,
-					      0, 1);
-			details.AddLabelPair (Catalog.GetString ("URL:"),
-					      Hit.Uri.ToString (),
-					      1, 1);
-			details.AddLabelPair (Catalog.GetString ("Accessed:"),
-					      Utils.NiceLongDate (Timestamp),
-					      2, 1);
-
-			details.AddSnippet (3, 1);
+			details.AddLabelPair (Catalog.GetString ("Title:"), Title);
+			details.AddLabelPair (Catalog.GetString ("URL:"), Hit.UriAsString);
+			details.AddLabelPair (Catalog.GetString ("Accessed:"), Utils.NiceLongDate (Timestamp));
+			details.AddSnippet ();
 
 			return details;
 		}

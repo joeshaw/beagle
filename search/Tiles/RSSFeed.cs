@@ -42,17 +42,10 @@ namespace Search.Tiles {
 		{
 			DetailsPane details = new DetailsPane ();
 
-			details.AddLabelPair (Catalog.GetString ("Title:"),
-					      Hit ["dc:title"],
-					      0, 1);
-			details.AddLabelPair (Catalog.GetString ("Site:"),
-					      Hit ["dc:identifier"], // FIXME: Blog name
-					      1, 1);
-			details.AddLabelPair (Catalog.GetString ("Date Viewed:"),
-					      Utils.NiceLongDate (Timestamp),
-					      2, 1);
-
-			details.AddSnippet (3, 1);
+			details.AddLabelPair (Catalog.GetString ("Title:"), Hit ["dc:title"]);
+			details.AddLabelPair (Catalog.GetString ("Site:"), Hit ["dc:identifier"]);
+			details.AddLabelPair (Catalog.GetString ("Date Viewed:"), Utils.NiceLongDate (Timestamp));
+			details.AddSnippet ();
 
 			return details;
 		}

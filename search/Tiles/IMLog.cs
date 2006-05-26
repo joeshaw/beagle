@@ -78,11 +78,11 @@ namespace Search.Tiles {
 			DetailsPane details = new DetailsPane ();
 
 			details.Icon.Pixbuf = LoadBuddyIcon ();			
-			details.AddLabelPair (Catalog.GetString ("Name:"), FromLabel.Text, 0, 1);
-			details.AddLabelPair (Catalog.GetString ("Date Received:"), Utils.NiceLongDate (Timestamp), 1, 1);
+			details.AddLabelPair (Catalog.GetString ("Name:"), FromLabel.Text);
+			details.AddLabelPair (Catalog.GetString ("Date Received:"), Utils.NiceLongDate (Timestamp));
+			details.AddSnippet ();
 
 			GotSnippet += SetSubject;
-			details.AddSnippet (2, 1);
 
 			return details;
 		}
