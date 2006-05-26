@@ -49,7 +49,7 @@ namespace Search.Tiles {
 			DetailsPane details = new DetailsPane ();
 			uint i = 0;
 				
-			details.AddBoldLabel (Title, i++, 1);
+			details.AddTitleLabel (Title, i++, 1);
 			
 			string org = Hit.GetFirstProperty ("fixme:Org");
 			string title = Hit.GetFirstProperty ("fixme:Title");
@@ -63,7 +63,7 @@ namespace Search.Tiles {
 			if (title != null && title != "")
 				details.AddLabel (title, i++, 1);
 
-			details.AddLabel ("", i++, 1);
+			details.AddNewLine (i++, 1);
 
 			if (email != null && email != "")
 				details.AddLabelPair (Catalog.GetString ("E-Mail:"), email, i++, 1);			

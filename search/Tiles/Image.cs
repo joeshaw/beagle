@@ -71,7 +71,7 @@ namespace Search.Tiles {
 
 			// FIXME: The icon needs a nice frame as in the spec (?)
 
-			details.AddBoldLabel (Title, 0, 1);
+			details.AddTitleLabel (Title, 0, 1);
 			details.AddLabel (Description, 1, 1);
 			details.AddLabel ("", 2, 1);
 

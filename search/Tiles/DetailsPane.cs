@@ -95,6 +95,7 @@ namespace Search.Tiles {
 		public Gtk.Label AddLabel (string text, uint row, uint column)
 		{
 			Gtk.Label label = WidgetFu.NewLabel (text);
+			label.Selectable = true;
 			WidgetFu.EllipsizeLabel (label);
 			label.Show ();
 			Attach (label, column, column + 1, row, row + 1, expand, fill, 0, 0);
@@ -112,6 +113,13 @@ namespace Search.Tiles {
 			return label;
 		}
 
+		public Gtk.Label AddTitleLabel (string text, uint row, uint column)
+		{
+			Gtk.Label label = AddBoldLabel (text, row, column);
+			label.Selectable = true;
+			return label;
+		}
+
 		public void AddLabelPair (string label, string text, uint row, uint column)
 		{
 			AddGrayLabel (label, row, column);
@@ -121,12 +129,21 @@ namespace Search.Tiles {
 		public Gtk.Label AddSnippet (uint row, uint column)
 		{
 			snippet = WidgetFu.NewLabel ();
+			snippet.Selectable = true;
 			WidgetFu.EllipsizeLabel (snippet);
 			snippet.Show ();
 			Attach (snippet, column, column + 1, row, row + 1, expand, fill, 48, 0);
 			maximized = false;
 
 			return snippet;
+		}
+
+		public Gtk.Label AddNewLine (uint row, uint column)
+		{
+			Gtk.Label label = WidgetFu.NewLabel ("");
+			label.Show ();
+			Attach (label, column, column + 1, row, row + 1, fill, fill, 0, 0);
+			return label;
 		}
 
 		public void GotSnippet (string text)
