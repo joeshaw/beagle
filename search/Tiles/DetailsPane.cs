@@ -146,6 +146,14 @@ namespace Search.Tiles {
 			return label;
 		}
 
+		public Gtk.Label AddFinalLine (uint row, uint column)
+		{
+			Gtk.Label label = WidgetFu.NewLabel ("");
+			label.Show ();
+			Attach (label, column, column + 1, row, row + 1, expand, expand, 0, 0);
+			return label;
+		}
+
 		public void GotSnippet (string text)
 		{
 			snippet.Markup = text;

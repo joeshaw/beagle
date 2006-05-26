@@ -21,9 +21,6 @@ namespace Search.Tiles {
 
 		public Calendar (Beagle.Hit hit, Beagle.Query query) : base (hit, query)
 		{
-			string description;
-			int newline;
-
 			Group = TileGroup.Calendar;
 
 			string summary = hit.GetFirstProperty ("fixme:summary");
@@ -31,12 +28,15 @@ namespace Search.Tiles {
 
 			Title = (time == "") ? summary : time + ": " + summary;
 
-			description = hit.GetFirstProperty ("fixme:description");
-			newline = description.IndexOf ('\n');
-			if (newline == -1)
-				Description = description;
-			else
-				Description = description.Substring (0, newline);
+			string description = hit.GetFirstProperty ("fixme:description");
+
+			if (description != null && description != "") {
+				int newline = description.IndexOf ('\n');
+				if (newline == -1)
+					Description = description;
+				else
+					Description = description.Substring (0, newline);
+			}
 		}
 
 		protected override void LoadIcon (Gtk.Image image, int size)
@@ -51,8 +51,13 @@ namespace Search.Tiles {
 			details.AddLabelPair (Catalog.GetString ("Title:"),
 					      Title,
 					      0, 1);
+
+			string description = Catalog.GetString ("None");
+			if (Description != null && Description != "")
+				description = Description;
+
 			details.AddLabelPair (Catalog.GetString ("Description:"),
-					      Description,
+					      description,
 					      1, 1);
 			
 			if (Hit.GetFirstProperty ("fixme:location") != null) {
@@ -67,6 +72,8 @@ namespace Search.Tiles {
 						      String.Join (", ", attendees),
 						      3, 1);
 			}
+
+			details.AddFinalLine (4, 1);
 
 			return details;
 		}
