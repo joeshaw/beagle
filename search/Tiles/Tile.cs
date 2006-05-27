@@ -243,6 +243,11 @@ namespace Search.Tiles {
 
 		protected virtual void LoadIcon (Gtk.Image image, int size)
 		{
+			// This is a hack to prevent large mime icons when we
+			// dont have a thumbnail.
+			if (size > 48)
+				size = 48;
+
 			image.Pixbuf = WidgetFu.LoadMimeIcon (hit.MimeType, size);
 		}
 
