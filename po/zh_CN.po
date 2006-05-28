@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: beagle HEAD\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2006-05-26 10:10+0200\n"
-"PO-Revision-Date: 2006-05-26 20:38+0800\n"
+"PO-Revision-Date: 2006-05-28 15:23+0800\n"
 "Last-Translator: Funda Wang <fundawang@linux.net.cn>\n"
 "Language-Team: zh_CN <i18n-translation@lists.linux.net.cn>\n"
 "MIME-Version: 1.0\n"
@@ -53,7 +53,7 @@ msgstr "在您的桌面上搜索数据"
 #: ../search/Category.cs:108
 #, csharp-format
 msgid "{0}-{1} of {2}"
-msgstr ""
+msgstr "{0}-{1}，共{2}个"
 
 #: ../search/Pages/NoMatch.cs:19
 msgid "No results were found."
@@ -62,37 +62,37 @@ msgstr "未找到结果。"
 #: ../search/Pages/NoMatch.cs:20
 #, csharp-format
 msgid "Your search for \"{0}\" did not match any files on your computer."
-msgstr ""
+msgstr "您对“{0}”的搜索不与计算机上的任何文件匹配。"
 
 #: ../search/Pages/NoMatch.cs:24
 msgid ""
 "You can change the scope of your search using the \"Search\" menu. A broader "
 "search scope might produce more results."
-msgstr ""
+msgstr "您可以使用“搜索”菜单更改搜索的范围。扩大搜索范围可产生更多的结果。"
 
 #: ../search/Pages/NoMatch.cs:26
 msgid ""
 "You should check the spelling of your search words to see if you "
 "accidentally misspelled any words."
-msgstr ""
+msgstr "您应当检查搜索单词的拼写，以确定是否无意间拼错了单词。"
 
 #: ../search/Pages/QuickTips.cs:10
 msgid "You can use upper and lower case; search is case-insensitive."
-msgstr ""
+msgstr "您可以使用大写和小写字符；搜索是不区分大小写的。"
 
 #: ../search/Pages/QuickTips.cs:11
 msgid "To search for optional terms, use OR.  ex: <b>George OR Ringo</b>"
-msgstr ""
+msgstr "要搜索可选的项，请使用 OR。例如：<b>George OR Ringo</b>"
 
 #: ../search/Pages/QuickTips.cs:12
 msgid ""
 "To exclude search terms, use the minus symbol in front, such as <b>-cats</b>"
-msgstr ""
+msgstr "要排除搜索项，请在前面加上减号，例如 <b>-cats</b>"
 
 #: ../search/Pages/QuickTips.cs:13
 msgid ""
 "When searching for a phrase, add quotes. ex: <b>\"There be dragons\"</b>"
-msgstr ""
+msgstr "当搜索短语时，请加上引号，例如：<b>\"There be dragons\"</b>"
 
 #: ../search/Pages/QuickTips.cs:19 ../search/UIManager.cs:81
 msgid "Quick Tips"
@@ -727,7 +727,7 @@ msgstr "删除过期路径"
 msgid ""
 "Adding this path will obsolete some of the existing include paths. This will "
 "result in the removal of the old obsolete paths. Do you still wish to add it?"
-msgstr ""
+msgstr "添加此路经将使得现有的包含路径失效。这将导致删除旧的过期路径被删除。您是否仍然想要添加？"
 
 #: ../tools/Settings.cs:331
 msgid "Remove path"
@@ -737,7 +737,7 @@ msgstr "删除路径"
 msgid ""
 "Are you sure you wish to remove this path from the list of directories to be "
 "included for indexing?"
-msgstr ""
+msgstr "您确定想要将路径从要进行索引的目录列表中删除吗？"
 
 #: ../tools/Settings.cs:361
 msgid "Remove item"
@@ -747,7 +747,7 @@ msgstr "删除项目"
 msgid ""
 "Are you sure you wish to remove this item from the list of data to be "
 "excluded from indexing?"
-msgstr ""
+msgstr "您确定想要将路径从要进行在索引时排除的目录列表中删除吗？"
 
 #: ../tools/Settings.cs:405
 msgid "Invalid host entry"
@@ -831,7 +831,7 @@ msgstr "添加路径出错"
 msgid ""
 "The specified path could not be found and therefore it could not be added to "
 "the list of resources excluded for indexing."
-msgstr ""
+msgstr "找不到指定路径，所以未将此路径添加到要在索引时排除的资源列表中。"
 
 #: ../tools/Settings.cs:1129
 msgid "Show"
@@ -877,21 +877,21 @@ msgstr "添加远程主机"
 msgid ""
 "Add a remote search-enabled host you wish \n"
 "to network with."
-msgstr ""
+msgstr "添加网络上启用了远程搜索的主机。"
 
 #: ../tools/settings.glade.h:12
 msgid "Add any additional paths to be included for indexing."
-msgstr ""
+msgstr "添加要在索引时包含的额外路径。"
 
 #: ../tools/settings.glade.h:13
 msgid "Add any remote search-enabled hosts you wish to network with."
-msgstr ""
+msgstr "添加网络上启用了远程搜索的主机。"
 
 #: ../tools/settings.glade.h:14
 msgid ""
 "Adjust which types of results should be visible, and in what order they "
 "should be presented when grouped by type."
-msgstr ""
+msgstr "调整哪种类型的结果可见，以及按类型分组时的顺序。"
 
 #: ../tools/settings.glade.h:15
 msgid "Allow _external access to local search services"
@@ -949,7 +949,7 @@ msgstr "选择邮件文件夹"
 msgid ""
 "Specify any resources, such as paths, patterns, mail folders or type of "
 "objects you wish to exclude from indexing."
-msgstr ""
+msgstr "指定您希望在建立索引时排除的资源，例如文件夹或模式。"
 
 #: ../tools/settings.glade.h:31
 msgid "Specify paths that should be available for external access."
@@ -1026,17 +1026,17 @@ msgstr "未知目录"
 #. Translators: Example output: Aug 9
 #: ../Util/StringFu.cs:82
 msgid "MMM d"
-msgstr ""
+msgstr "M月d日"
 
 #. Translators: Example output: Aug 9, 2000
 #: ../Util/StringFu.cs:85
 msgid "MMM d, yyyy"
-msgstr ""
+msgstr "yyyy年M月d日"
 
 #. Translators: Example output: 11:05 AM  (note h = 12-hour time)
 #: ../Util/StringFu.cs:88
 msgid "h:mm tt"
-msgstr ""
+msgstr "H:mm"
 
 #. Translators: {0} is a date (e.g. 'Today' or 'Apr 23'), {1} is the time
 #: ../Util/StringFu.cs:94
@@ -1065,12 +1065,12 @@ msgstr "{0} 天前 {1}"
 #. Translators: Example output: January 3, 3:45 PM
 #: ../Util/StringFu.cs:122
 msgid "MMMM d, h:mm tt"
-msgstr ""
+msgstr "M月d日H:mm"
 
 #. Translators: Example output: March 23 2001, 10:04 AM
 #: ../Util/StringFu.cs:127
 msgid "MMMM d yyyy, h:mm tt"
-msgstr ""
+msgstr "yyyy年M月d日H:mm"
 
 #: ../Util/StringFu.cs:137
 #, csharp-format
