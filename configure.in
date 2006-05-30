@@ -97,6 +97,9 @@ esac
 AM_CONDITIONAL(OS_LINUX, test "x$os" = "xlinux")
 AM_CONDITIONAL(OS_FREEBSD, test "x$os" = "xfreebsd")
 
+# xdgmime really wants to have HAVE_MMAP defined
+AC_FUNC_MMAP()
+
 # check for desktop-launch
 
 AC_PATH_PROG(DESKTOP_LAUNCH, desktop-launch, no)
