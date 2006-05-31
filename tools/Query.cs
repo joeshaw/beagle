@@ -87,7 +87,7 @@ class QueryTool {
 					Console.WriteLine (" Time: {0}", hit.Timestamp.ToLocalTime ());
 				
 				foreach (Property prop in hit.Properties)
-					Console.WriteLine ("    {0} = {1}", prop.Key, prop.Value);
+					Console.WriteLine ("    {0} = '{1}'", prop.Key, prop.Value);
 				
 				Console.WriteLine ();
 			}
