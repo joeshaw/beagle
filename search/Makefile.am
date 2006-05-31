@@ -5,6 +5,10 @@ if ENABLE_DESKTOP_LAUNCH
 CSFLAGS += -define:ENABLE_DESKTOP_LAUNCH
 endif
 
+if ENABLE_OPEN_WITH
+CSFLAGS += -define:ENABLE_OPEN_WITH
+endif
+
 pkglib_DATA = Search.exe Search.exe.mdb
 
 BIN_WRAPPERS = beagle-search
@@ -56,8 +60,11 @@ TILES = 					\
 	$(srcdir)/Tiles/Utils.cs		\
 	$(srcdir)/Tiles/Video.cs		\
 	$(srcdir)/Tiles/WebHistory.cs		\
-	$(srcdir)/Tiles/WidgetFu.cs
+	$(srcdir)/Tiles/WidgetFu.cs		
 
+if ENABLE_OPEN_WITH
+TILES += $(srcdir)/Tiles/OpenWithMenu.cs
+endif
 
 PAGES =						\
 	$(srcdir)/Pages/Base.cs			\
