@@ -87,13 +87,10 @@ namespace Lucene.Net.Store
 				    + Mono.Unix.Native.Stdlib.strerror (
 					    Mono.Unix.Native.Stdlib.GetLastError ()
 				    ));
-		    int ret = Mono.Unix.Native.Syscall.close (fd);
-		    if (ret == -1)
-			    throw new System.IO.IOException ("Could not close lock file: "
-				    + Mono.Unix.Native.Stdlib.strerror (
-					    Mono.Unix.Native.Stdlib.GetLastError ()
-				    ));
-		    // FIXME: Should the file be cleaned up if we can open it but not close it ?
+
+		    System.IO.StreamWriter w = new System.IO.StreamWriter (new Mono.Unix.UnixStream (fd, false));
+		    w.WriteLine (System.Diagnostics.Process.GetCurrentProcess ().Id);
+		    w.Close ();
 
 		    Log ("Obtained lock " + lockFile.FullName);
                     return true;

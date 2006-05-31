@@ -1,14 +1,15 @@
 From: Debajyoti Bera <dbera.web@gmail.com>
 
-Lucene uses lockfiles for sharing index files across multiple processes. Stock lucene.net implementation creates the lockfile incorrectly. 01_obtain-lock-fix.patch fixes that but leaves a small race window. This patch removes the race window. It uses native open() syscall instead of System.IO File operations as the mono implementations for File.Open() turned out to be buggy (giving wrong sharing violation errors).
+Lucene uses lockfiles for sharing index files across multiple processes.  Stock
+lucene.net implementation creates the lockfile incorrectly. 
+01_obtain-lock-fix.patch fixes that but leaves a small race window. This 
+patch removes the race window. It uses native open() syscall instead of 
+System.IO File operations as the mono implementations for File.Open() turned 
+out to be buggy (giving wrong sharing violation errors).
 
-Index: Store/FSDirectory.cs
-===================================================================
-RCS file: /cvs/gnome/beagle/beagled/Lucene.Net/Store/FSDirectory.cs,v
-retrieving revision 1.15
-diff -u -3 -p -r1.15 FSDirectory.cs
---- Store/FSDirectory.cs	13 Mar 2006 21:45:34 -0000	1.15
-+++ Store/FSDirectory.cs	23 Mar 2006 13:50:28 -0000
+diff -u Store/FSDirectory.cs Store/FSDirectory.cs
+--- Store/FSDirectory.cs	23 Mar 2006 13:50:28 -0000
++++ Store/FSDirectory.cs	31 May 2006 18:37:11 -0000
 @@ -14,6 +14,7 @@
   * limitations under the License.
   */
@@ -17,7 +18,7 @@ diff -u -3 -p -r1.15 FSDirectory.cs
  using Constants = Lucene.Net.Util.Constants;
  namespace Lucene.Net.Store
  {
-@@ -52,6 +53,7 @@ namespace Lucene.Net.Store
+@@ -52,6 +53,7 @@
  			}
  			public override bool Obtain()
  			{
@@ -25,7 +26,7 @@ diff -u -3 -p -r1.15 FSDirectory.cs
  				if (Lucene.Net.Store.FSDirectory.DISABLE_LOCKS || Enclosing_Instance.DisableLocks)
  					return true;
  				
-@@ -62,36 +64,45 @@ namespace Lucene.Net.Store
+@@ -62,36 +64,42 @@
  					tmpBool = System.IO.Directory.Exists(Enclosing_Instance.lockDir.FullName);
  				if (!tmpBool)
  				{
@@ -45,7 +46,20 @@ diff -u -3 -p -r1.15 FSDirectory.cs
  				}
  
 -				bool obtainedLock = false;
--
++                try
++                {
++		    int fd = Mono.Unix.Native.Syscall.open (
++				lockFile.FullName,
++				Mono.Unix.Native.OpenFlags.O_RDWR | 
++				Mono.Unix.Native.OpenFlags.O_CREAT |
++				Mono.Unix.Native.OpenFlags.O_EXCL,
++				Mono.Unix.Native.FilePermissions.S_IRUSR);
++		    if (fd == -1)
++			    throw new System.IO.IOException ("Could not create lock file: "
++				    + Mono.Unix.Native.Stdlib.strerror (
++					    Mono.Unix.Native.Stdlib.GetLastError ()
++				    ));
+ 
 -				if (! System.IO.File.Exists(lockFile.FullName)) {
 -                	try
 -	                {
@@ -61,26 +75,9 @@ diff -u -3 -p -r1.15 FSDirectory.cs
 -                	    // Fall through
 -	                }
 -				}
-+                try
-+                {
-+		    int fd = Mono.Unix.Native.Syscall.open (
-+				lockFile.FullName,
-+				Mono.Unix.Native.OpenFlags.O_RDWR | 
-+				Mono.Unix.Native.OpenFlags.O_CREAT |
-+				Mono.Unix.Native.OpenFlags.O_EXCL,
-+				Mono.Unix.Native.FilePermissions.S_IRUSR);
-+		    if (fd == -1)
-+			    throw new System.IO.IOException ("Could not create lock file: "
-+				    + Mono.Unix.Native.Stdlib.strerror (
-+					    Mono.Unix.Native.Stdlib.GetLastError ()
-+				    ));
-+		    int ret = Mono.Unix.Native.Syscall.close (fd);
-+		    if (ret == -1)
-+			    throw new System.IO.IOException ("Could not close lock file: "
-+				    + Mono.Unix.Native.Stdlib.strerror (
-+					    Mono.Unix.Native.Stdlib.GetLastError ()
-+				    ));
-+		    // FIXME: Should the file be cleaned up if we can open it but not close it ?
++		    System.IO.StreamWriter w = new System.IO.StreamWriter (new Mono.Unix.UnixStream (fd, false));
++		    w.WriteLine (System.Diagnostics.Process.GetCurrentProcess ().Id);
++		    w.Close ();
  
 -				Log ("{0} lock {1}", obtainedLock ? "Obtained" : "Could not obtain", lockFile.FullName);
 -				return obtainedLock;
@@ -95,7 +92,7 @@ diff -u -3 -p -r1.15 FSDirectory.cs
  			}
  			public override void  Release()
  			{
-@@ -110,6 +121,10 @@ namespace Lucene.Net.Store
+@@ -110,6 +118,10 @@
  				}
  				else
  					tmpBool = false;
