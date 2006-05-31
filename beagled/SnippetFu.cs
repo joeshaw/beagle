@@ -157,8 +157,7 @@ namespace Beagle.Daemon {
 
 		const int soft_snippet_limit = 400;
 
-		static public string GetSnippet (string[]     query_terms,
-						 StringSource string_source)
+		static public string GetSnippet (string[] query_terms, StringSource string_source)
 		{
 			// FIXME: If the query doesn't have search text (or is null), we should
 			// generate a 'summary snippet'.
@@ -192,18 +191,22 @@ namespace Beagle.Daemon {
 		
 		}
 		
-		static public string GetSnippet (string[]   query_terms,
-						 TextReader reader)
+		static public string GetSnippet (string[] query_terms, TextReader reader)
 		{
 			return GetSnippet (query_terms, new StringSource (reader.ReadLine));
 		}
 
-		static public string GetSnippetFromFile (string[] query_terms,
-							 string   filename)
+		static public string GetSnippetFromFile (string[] query_terms, string filename)
 		{
 			FileStream stream = new FileStream (filename, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
 
 			return GetSnippet (query_terms, new StreamReader (stream));
+		}
+
+		static public string GetSnippetFromTextCache (string[] query_terms, string filename)
+		{
+			TextReader reader = TextCache.UserCache.GetReader (filename);
+			return GetSnippet (query_terms, reader);
 		}
 	}
 

@@ -31,6 +31,7 @@ using System.IO;
 using System.Threading;
 
 using Mono.Data.SqliteClient;
+using ICSharpCode.SharpZipLib.GZip;
 
 using Beagle.Util;
 
@@ -290,12 +291,15 @@ namespace Beagle.Daemon {
 			// FIXME: Uri remapping?
 			string path = LookupPath (uri, true);
 
-			FileStream stream;
-			stream = new FileStream (path, FileMode.Create, FileAccess.Write, FileShare.ReadWrite);
+			FileStream fs;
+			fs = new FileStream (path, FileMode.Create, FileAccess.Write, FileShare.ReadWrite);
 
 			// We don't expect to need this again in the near future.
-			FileAdvise.FlushCache (stream);
+			FileAdvise.FlushCache (fs);
 			
+			GZipOutputStream stream;
+			stream = new GZipOutputStream (fs);
+
 			if (! world_readable) {
 				// Make files only readable by the owner.
 				Mono.Unix.Native.Syscall.chmod (path, (Mono.Unix.Native.FilePermissions) 384);
@@ -336,15 +340,33 @@ namespace Beagle.Daemon {
 			if (path == null)
 				return null;
 
-			FileStream stream;
+			return GetReader (path);
+		}
+
+		public TextReader GetReader (string path)
+		{
+			FileStream file_stream;
 			try {
-				stream = new FileStream (path, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
+				file_stream = new FileStream (path, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
 			} catch (FileNotFoundException ex) {
 				return null;
 			}
-			
-			StreamReader reader;
-			reader = new StreamReader (stream);
+
+			StreamReader reader = null;
+			try {
+				Stream stream = new GZipInputStream (file_stream);
+				reader = new StreamReader (stream);
+
+				// This throws an exception if the file isn't compressed as follows:
+				// 1.) IOException on older versions of SharpZipLib
+				// 2.) GZipException on newer versions of SharpZipLib
+				// FIXME: Change this to GZipException when we depend
+				// on a higer version of SharpZipLib
+				reader.Peek ();
+			} catch (Exception ex) {
+				reader = new StreamReader (file_stream);
+			}
+
 			return reader;
 		}
 

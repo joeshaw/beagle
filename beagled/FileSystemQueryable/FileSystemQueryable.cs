@@ -1381,20 +1381,18 @@ namespace Beagle.Daemon.FileSystemQueryable {
 		{
 			// Uri remapping from a hit is easy: the internal uri
 			// is stored in a property.
-			Uri uri;
-			uri = UriFu.UriStringToUri (hit ["beagle:InternalUri"]);
+			Uri uri = UriFu.UriStringToUri (hit ["beagle:InternalUri"]);
 
-			string path;
-			path = TextCache.UserCache.LookupPathRaw (uri);
+			string path = TextCache.UserCache.LookupPathRaw (uri);
 
 			if (path == null)
 				return null;
 
 			// If this is self-cached, use the remapped Uri
 			if (path == TextCache.SELF_CACHE_TAG)
-				path = hit.Uri.LocalPath;
+				return SnippetFu.GetSnippetFromFile (query_terms, hit.Uri.LocalPath);
 
-			return SnippetFu.GetSnippetFromFile (query_terms, path);
+			return SnippetFu.GetSnippetFromTextCache (query_terms, path);
 		}
 
 		override public void Start ()
