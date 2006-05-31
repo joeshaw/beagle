@@ -169,6 +169,16 @@ namespace Beagle.Daemon {
 				return false;
 			}
 
+			
+			if (pid == null) {
+				// Looks like the lock file was empty, which really
+				// shouldn't happen.  It should contain the PID of
+				// the process which locked it.  Lets be on the safe
+				// side and assume it's a dangling lock.
+				Log.Warn ("Found an empty lock file, that shouldn't happen: {0}", info.FullName);
+				return true;
+			}
+
 			string cmdline_file;
 			cmdline_file = String.Format ("/proc/{0}/cmdline", pid);
 			
