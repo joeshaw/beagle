@@ -536,5 +536,11 @@ namespace Beagle.Filters {
 			if ((WalkContentNodes (style_reader)) && (WalkContentNodes (content_reader)))
 				Finished ();
 		}
+
+		override protected void DoClose ()
+		{
+			if (zip != null)
+				zip.Close ();
+		}
 	}
 }
