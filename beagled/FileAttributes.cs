@@ -59,7 +59,11 @@ namespace Beagle.Daemon {
 
 		public string Path {
 			get { return path; }
-			set { path = value != null ? System.IO.Path.GetFullPath (value) : null; }
+			set { 
+				path = value != null ? System.IO.Path.GetFullPath (value) : null;
+				if (path != null && path != "/" && path.EndsWith ("/"))
+					path = path.TrimEnd ('/');
+			}
 		}
 
 		public DateTime LastWriteTime {

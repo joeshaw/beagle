@@ -436,6 +436,7 @@ namespace Beagle.Daemon.FileSystemQueryable {
 			if (filter.Ignore (parent, name, true))
 				return;
 
+			// FIXME: ! parent.HasChildWithName (name)
 			if (parent != null && parent.HasChildWithName (name))
 				return;
 

@@ -288,6 +288,10 @@ namespace Beagle.Daemon {
 
 		public FileAttributes Read (string path)
 		{
+			// Sanitize the path; remove the last '/'
+			if (path != null && path != "/" && path.EndsWith ("/"))
+				path = path.TrimEnd ('/');
+
 			SqliteCommand command;
 			SqliteDataReader reader;
 
@@ -361,6 +365,10 @@ namespace Beagle.Daemon {
 
 		public void Drop (string path)
 		{
+			// Sanitize the path; remove the last '/'
+			if (path != null && path != "/" && path.EndsWith ("/"))
+				path = path.TrimEnd ('/');
+
 			// We don't want to "UnSetPathFlag" here, since we have no way of knowing
 			// if another path hashes to the same value as this one.
 

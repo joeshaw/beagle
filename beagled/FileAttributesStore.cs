@@ -59,6 +59,10 @@ namespace Beagle.Daemon {
 					attr = new FileAttributes ();
 					attr.UniqueId = unique_id;
 					attr.Path = path;
+					// First drop the old attribute
+					if (attr != null)
+						ifas.Drop (path);
+					// Now add the new attribute
 					ifas.Write (attr);
 					created = true;
 				}

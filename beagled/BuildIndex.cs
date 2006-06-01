@@ -34,6 +34,10 @@ using System.Threading;
 using System.Xml;
 using System.Xml.Serialization;
 
+using Lucene.Net.Documents;
+using Lucene.Net.Index;
+using LNS = Lucene.Net.Search;
+
 using Beagle;
 using Beagle.Util;
 using FSQ = Beagle.Daemon.FileSystemQueryable.FileSystemQueryable;
@@ -44,7 +48,7 @@ namespace Beagle.Daemon
 	{
 		static string [] argv;
 
-		static bool arg_recursive = false, arg_debug = false, arg_cache_text = false, arg_disable_filtering = false, arg_disable_restart = false;
+		static bool arg_recursive = false, arg_delete = false, arg_debug = false, arg_cache_text = false, arg_disable_filtering = false, arg_disable_restart = false;
 
 		static Hashtable remap_table = new Hashtable ();
 
@@ -128,11 +132,16 @@ namespace Beagle.Daemon
 				case "--recursive":
 					arg_recursive = true;
 					break;
+
+				case "--enable-deletion":
+					arg_delete = true;
+					break;
 					
 				case "--enable-text-cache":
 					arg_cache_text = true;
 					break;
 
+				/*
 				case "--remap":
 					if (next_arg == null) 
 						break;
@@ -148,7 +157,7 @@ namespace Beagle.Daemon
 
 					++i;
 					break;
-
+				*/
 				case "--target":
 					if (next_arg != null)
 						arg_output = Path.IsPathRooted (next_arg) ? next_arg : Path.GetFullPath (next_arg);
@@ -203,6 +212,8 @@ namespace Beagle.Daemon
 
 				default:
 					string path = Path.IsPathRooted (arg) ? arg : Path.GetFullPath (arg);
+					if (path != "/" && path.EndsWith ("/"))
+						path = path.TrimEnd ('/');
 					
 					if (Directory.Exists (path))
 						pending_directories.Enqueue (new DirectoryInfo (path));
@@ -320,10 +331,12 @@ namespace Beagle.Daemon
 			
 			try {
 				int count_dirs = 0;
+				int count_files = 0;
 			
 				while (pending_directories.Count > 0) {
 					DirectoryInfo dir = (DirectoryInfo) pending_directories.Dequeue ();
-				
+					pending_files.Enqueue (dir);
+
 					try {
 						if (arg_recursive)
 							foreach (DirectoryInfo subdir in DirectoryWalker.GetDirectoryInfos (dir))
@@ -333,8 +346,10 @@ namespace Beagle.Daemon
 					
 						foreach (FileInfo file in DirectoryWalker.GetFileInfos (dir))
 							if (!Ignore (file)
-							    && !FileSystem.IsSpecialFile (file.FullName))
+							    && !FileSystem.IsSpecialFile (file.FullName)) {
 								pending_files.Enqueue (file);
+								count_files ++;
+							}
 					
 					} catch (DirectoryNotFoundException e) {}
 				
@@ -344,7 +359,7 @@ namespace Beagle.Daemon
 					count_dirs++;
 				}
 
-				Logger.Log.Debug ("Scanned {0} files in {1} directories", pending_files.Count, count_dirs);
+				Logger.Log.Debug ("Scanned {0} files and directories in {1} directories", count_dirs + count_files, count_dirs);
 			} finally {
 				Logger.Log.Debug ("CrawlWorker Done");
 
@@ -405,7 +420,17 @@ namespace Beagle.Daemon
 					attr.FilterVersion = r.FilterVersion;
 
 					fa_store.Write (attr);
-					
+
+				} else if (raw_r is IndexerRemovedReceipt) {
+					// Update the file attributes 
+					IndexerRemovedReceipt r = (IndexerRemovedReceipt) raw_r;
+
+					Indexable indexable = request.GetByUri (r.Uri);
+
+					string path = r.Uri.LocalPath;
+					Logger.Log.Debug ("Removing: '{0}'", path);
+					fa_store.Drop (path);
+
 				} else if (raw_r is IndexerChildIndexablesReceipt) {
 					// Add any child indexables back into our indexer
 					IndexerChildIndexablesReceipt r = (IndexerChildIndexablesReceipt) raw_r;
@@ -419,10 +444,64 @@ namespace Beagle.Daemon
 			
 			return receipts;
 		}
+
+		static Indexable FileToIndexable (FileInfo file)
+		{
+			if (!file.Exists || Ignore (file) || fa_store.IsUpToDate (file.FullName))
+				return null;
+
+			// Create the indexable and add the standard properties we
+			// use in the FileSystemQueryable.
+			Uri uri = UriFu.PathToFileUri (file.FullName);
+			Indexable indexable = new Indexable (uri);
+			indexable.Timestamp = file.LastWriteTimeUtc;
+			FSQ.AddStandardPropertiesToIndexable (indexable, file.Name, Guid.Empty, false);
+
+			// Store directory name in the index
+			string dirname = file.DirectoryName;
+			indexable.AddProperty (Property.NewUnsearched (ParentDirUriPropKey, UriFu.PathToFileUri (dirname)));
+
+			return indexable;
+		}
+
+		static Indexable DirectoryToIndexable (DirectoryInfo dir, Queue modified_directories)
+		{
+			if (!dir.Exists)
+				return null;
+
+			// Check if the directory information is stored in attributes store
+			// And if the mtime of the directory is same as that in the attributes store
+			FileAttributes attr = fa_store.Read (dir.FullName);
+
+			// If the directory exists in the fa store, then it is already indexed
+			if (attr != null) {
+				if (arg_delete && dir.LastWriteTimeUtc > attr.LastWriteTime)
+					modified_directories.Enqueue (dir);
+				return null;
+			}
+
+			// Create the indexable and add the standard properties we
+			// use in the FileSystemQueryable.
+			Uri uri = UriFu.PathToFileUri (dir.FullName);
+			Indexable indexable = new Indexable (uri);
+			indexable.MimeType = "inode/directory";
+			indexable.NoContent = true;
+			indexable.Timestamp = dir.LastWriteTimeUtc;
+			FSQ.AddStandardPropertiesToIndexable (indexable, dir.Name, Guid.Empty, false);
+
+			// Add directory name property
+			string dirname = dir.Parent.FullName;
+			indexable.AddProperty (Property.NewUnsearched (ParentDirUriPropKey, UriFu.PathToFileUri (dirname)));
+
+			indexable.AddProperty (Property.NewBool (IsDirectoryPropKey, true));
+
+			return indexable;
+		}
 		
 		static void IndexWorker ()
 		{
 			Logger.Log.Debug ("Starting IndexWorker");
+			Queue modified_directories = new Queue ();
 			
 			try {
 				Indexable indexable;
@@ -431,18 +510,15 @@ namespace Beagle.Daemon
 			
 				while (!shutdown) {
 					if (pending_files.Count > 0) {
-						FileInfo file = (FileInfo) pending_files.Dequeue ();
-						Uri uri = UriFu.PathToFileUri (file.FullName);
-					
-						// Check that we really should be indexing the file
-						if (!file.Exists || Ignore (file) || fa_store.IsUpToDate (file.FullName))
-							continue;
+						Object file_or_dir_info = pending_files.Dequeue ();
 
-						// Create the indexable and add the standard properties we
-						// use in the FileSystemQueryable.
-						indexable = new Indexable (uri);
-						indexable.Timestamp = file.LastWriteTimeUtc;
-						FSQ.AddStandardPropertiesToIndexable (indexable, file.Name, Guid.Empty, false);
+						if (file_or_dir_info is DirectoryInfo)
+							indexable = DirectoryToIndexable ((DirectoryInfo) file_or_dir_info, modified_directories);
+						else
+							indexable = FileToIndexable ((FileInfo) file_or_dir_info);
+							
+						if (indexable == null)
+							continue;
 					
 						AddToRequest (pending_request, indexable);
 					
@@ -460,6 +536,30 @@ namespace Beagle.Daemon
 					}
 				}
 
+				// Time to remove deleted directories from the index and attributes store
+				while (modified_directories.Count > 0) {
+					DirectoryInfo subdir = (DirectoryInfo) modified_directories.Dequeue ();
+					Logger.Log.Debug ("Checking {0} for deleted files and directories", subdir.FullName);
+
+					// Get a list of all documents from lucene index with ParentDirUriPropKey set as that of subdir
+					ICollection all_dirent = GetAllItemsInDirectory (subdir);
+					foreach (Dirent info in all_dirent) {
+						// check if the item exists
+						if (File.Exists (info.FullName) || 
+						    (info.IsDirectory && Directory.Exists (info.FullName)))
+							continue;
+
+						if (info.IsDirectory)
+							// Recursively remove deleted subdirectories
+							modified_directories.Enqueue (new DirectoryInfo (info.FullName));
+						
+						// remove
+						Uri uri = UriFu.PathToFileUri (info.FullName);
+						indexable = new Indexable (IndexableType.Remove, uri);
+						AddToRequest (pending_request, indexable);
+					}
+				}
+				
 				// Call Flush until our request is empty.  We have to do this in a loop
 				// because children can get added back to the pending request in a flush.
 				while (pending_request.Count > 0)
@@ -467,12 +567,126 @@ namespace Beagle.Daemon
 
 				backing_fa_store.Flush ();
 
+				Logger.Log.Debug ("Optimizing index");
 				driver.OptimizeNow ();
 			} finally {
 				Logger.Log.Debug ("IndexWorker Done");
 
 				indexing = false;
 			}
+		}
+
+		class Dirent {
+			private bool is_directory;
+			private string path;
+
+			public Dirent (string path, bool is_dir)
+			{
+				this.path = path;
+				this.is_directory = is_dir;
+			}
+
+			public bool IsDirectory {
+				get { return is_directory; }
+			}
+
+			public string Path {
+				get { return path; }
+			}
+
+			public string FullName {
+				get { return path.Substring (7); }
+			}
+		}
+		
+		private class BitArrayHitCollector : LNS.HitCollector {
+
+			private BetterBitArray matches;
+			
+			public BitArrayHitCollector (BetterBitArray matches)
+			{
+				this.matches = matches;
+			}
+
+			public override void Collect (int id, float score)
+			{
+				matches [id] = true;
+			}
+		}
+
+		private const string ParentDirUriPropKey = "beagle:ParentDirUri";
+		private const string IsDirectoryPropKey = "beagle:IsDirectory";
+
+		// Returns a list of all files and directories in dir
+		static ICollection GetAllItemsInDirectory (DirectoryInfo dir)
+		{
+			// form the query
+			string parent_uri_str = UriFu.PathToFileUri (dir.FullName).ToString ();
+			// Instead of taking the painfull way of using BeagleAnalyzer, lets just add the prefix manually
+			//parent_uri_str = "_:" + parent_uri_str;
+			// LuceneCommon thinks exposing secret property type encoding is bad, I think so too... except for now
+			string key = "prop:k:" + ParentDirUriPropKey;
+			//Logger.Log.Debug ("Querying for {0}={1}", parent_uri_str, key);
+			LNS.Query query = new LNS.TermQuery (new Term (key, parent_uri_str));
+
+			// do the search
+			LNS.IndexSearcher searcher;
+			searcher = LuceneCommon.GetSearcher (driver.PrimaryStore);
+
+			BetterBitArray matches;
+			matches = new BetterBitArray (searcher.MaxDoc ());
+
+			BitArrayHitCollector collector;
+			collector = new BitArrayHitCollector (matches);
+
+			searcher.Search (query, null, collector);
+			
+			// Finally we pull all of the matching documents,
+			// convert them to Dirent, and store them in a list.
+
+			ArrayList match_list = new ArrayList ();
+			int i = 0;
+			while (i < matches.Count) {
+				
+				i = matches.GetNextTrueIndex (i);
+				if (i >= matches.Count)
+					break;
+
+				Document doc;
+				doc = searcher.Doc (i);
+
+				Dirent info;
+				info = DocumentToDirent (doc);
+
+				match_list.Add (info);
+
+				++i;
+			}
+
+			LuceneCommon.ReleaseSearcher (searcher);
+			//Logger.Log.Debug ("Found {0} items in {1}", match_list.Count, dir.FullName);
+
+			return match_list;
+		}
+
+		static private Dirent DocumentToDirent (Document doc)
+		{
+			string path;
+			bool is_dir = false;
+
+			path = doc.Get ("Uri");
+
+			string prop_key = "prop:k:" + IsDirectoryPropKey;
+			foreach (Field f in doc.Fields ()) {
+				if (f.Name () != prop_key)
+					continue;
+
+				is_dir = (f.StringValue ().Substring (2) == "true");
+				break;
+			}
+
+			//Logger.Log.Debug ("Found: " + path + " (" + is_dir + ")");
+			return new Dirent (path, is_dir);
 		}
 
 		/////////////////////////////////////////////////////////////////
@@ -549,9 +763,12 @@ namespace Beagle.Daemon
 
 				"Options:\n" +
 				"  --source [name]\t\tThe index's source name.  Defaults to the target directory name\n" +
-				"  --remap [path1:path2]\t\tRemap data paths to fit target. \n" +
+				// FIXME: remap doesnt seem to be implemented !
+				// Implementing remap might some fixes to --enable-deletion, see IndexWorker
+				//"  --remap [path1:path2]\t\tRemap data paths to fit target. \n" +
 				"  --tag [tag]\t\t\tTag index data for identification.\n" + 
 				"  --recursive\t\t\tCrawl source path recursivly.\n" + 
+				"  --enable-deletion\t\tRemove deleted files and directories from index.\n" +
 				"  --enable-text-cache\t\tBuild text-cache of documents used for snippets.\n" + 
 				"  --disable-filtering\t\tDisable all filtering of files. Only index attributes.\n" + 
 				"  --allow-pattern [pattern]\tOnly allow files that match the pattern to be indexed.\n" + 
