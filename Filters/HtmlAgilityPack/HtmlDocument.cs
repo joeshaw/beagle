@@ -1808,8 +1808,16 @@ namespace HtmlAgilityPack
 					     (node.Name != "head" && node.Name != "script" &&
 					      node.Name != "style" && node.Name != "title" &&
 					      node.Name != "head" && node.Name != "link" &&
-					      node.Name != "html" && node.Name != "meta"))
-				    throw new EncodingFoundException (null);
+					      node.Name != "html" && node.Name != "meta")) {
+					    _declaredencoding = null;
+					    if (_onlyDetectEncoding)
+						    throw new EncodingFoundException (null);
+					    else
+						    return;
+					    // FIXME: Should also handle declaredencoding mismatch with detected
+					    // encoding, as done below. None of the current filters run in error
+					    // detection mode currently, so its not needed now.
+				}
 				else if (node.Name == "meta") // all nodes names are lowercase
 				{
 					HtmlAttribute att = node.Attributes["http-equiv"];
