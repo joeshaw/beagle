@@ -1,26 +1,25 @@
 # translation of es.po to
-# translation of beagle.HEAD.es.ultimo.po to Spanish
-# translation of beagle.HEAD.po to Spanish
 # translation of es.po to Spanish
 # Traducción española de beagle.
 # Copyright (C) 2005 The GNOME Foundation
 # This file is distributed under the same license as the beagle package.
+#
 # Antonio Ognio <gnrfan@gnrfan.org>, 2005.
 # Francisco Javier F. Serrador <serrador@cvs.gnome.org>, 2005, 2006.
-#
+# Francisco Javier F. Serrador <serrador@tecknolabs.com>, 2006.
 msgid ""
 msgstr ""
 "Project-Id-Version: es\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2006-05-25 21:06+0200\n"
-"PO-Revision-Date: 2006-03-31 22:44+0200\n"
-"Last-Translator: Francisco Javier F. Serrador <serrador@cvs.gnome.org>\n"
-"Language-Team:  <traductores@es.gnome.org>\n"
+"POT-Creation-Date: 2006-06-01 13:30+0200\n"
+"PO-Revision-Date: 2006-06-01 13:37+0200\n"
+"Last-Translator: Francisco Javier F. Serrador <serrador@tecknolabs.com>\n"
+"Language-Team: Spanish <traductores@es.gnome.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms:  nplurals=2; plural=(n != 1);\n"
-"X-Generator: KBabel 1.10.2\n"
+"X-Generator: KBabel 1.11.2\n"
 
 #: ../glue/eggtrayicon.c:127
 msgid "Orientation"
@@ -97,20 +96,18 @@ msgid "To search for optional terms, use OR.  ex: <b>George OR Ringo</b>"
 msgstr "Para buscar términos opcionales, use OR. ej: <b>George or Ringo</b>"
 
 #: ../search/Pages/QuickTips.cs:12
-msgid ""
-"To exclude search terms, use the minus symbol in front, such as <b>-cats</b>"
+msgid "To exclude search terms, use the minus symbol in front, such as <b>-cats</b>"
 msgstr ""
 "Para excluir términos de búsqueda, use el símbolo menos como prefijo, como "
 "<b>-gatos</b>"
 
 #: ../search/Pages/QuickTips.cs:13
-msgid ""
-"When searching for a phrase, add quotes. ex: <b>\"There be dragons\"</b>"
+msgid "When searching for a phrase, add quotes. ex: <b>\"There be dragons\"</b>"
 msgstr ""
 "Cuando busque una frase, añada comillas. Ej: <b>\"En un lugar de La Mancha</"
 "b>"
 
-#: ../search/Pages/QuickTips.cs:19 ../search/UIManager.cs:65
+#: ../search/Pages/QuickTips.cs:19 ../search/UIManager.cs:81
 msgid "Quick Tips"
 msgstr "Consejos rápidos"
 
@@ -150,53 +147,57 @@ msgstr "Teclee los términos de búsqueda"
 msgid "Start searching"
 msgstr "Empezar a buscar"
 
-#: ../search/Tiles/Contact.cs:53
+#: ../search/Tiles/Contact.cs:30
+msgid "Send Mail"
+msgstr "Enviar correo"
+
+#: ../search/Tiles/Contact.cs:68
 msgid "E-Mail:"
 msgstr "Correo-e:"
 
-#: ../search/Tiles/Contact.cs:56
+#: ../search/Tiles/Contact.cs:70
 msgid "Mobile Phone:"
 msgstr "Tlf móvil:"
 
-#: ../search/Tiles/Contact.cs:60
+#: ../search/Tiles/Contact.cs:72
 msgid "Work Phone:"
 msgstr "Tlf. trabajo:"
 
-#: ../search/Tiles/Contact.cs:64
+#: ../search/Tiles/Contact.cs:74
 msgid "Home Phone:"
 msgstr "Tlf. casa:"
 
-#: ../search/Tiles/File.cs:33
+#: ../search/Tiles/File.cs:34
 msgid "Reveal in Folder"
 msgstr "Revelar en la carpeta"
 
-#: ../search/Tiles/File.cs:34
+#: ../search/Tiles/File.cs:35
 msgid "E-Mail"
 msgstr "Correo-e"
 
 #. AddAction (new TileAction (Catalog.GetString ("Instant-Message"), InstantMessage));
 #. FIXME: s/"gtk-info"/Gtk.Stock.Info/ when we can depend on gtk# 2.8
 #. AddAction (new TileAction (Catalog.GetString ("Show Information"), "gtk-info", ShowInformation));
-#: ../search/Tiles/File.cs:36 ../search/Tiles/Folder.cs:38
+#: ../search/Tiles/File.cs:37 ../search/Tiles/Folder.cs:38
 msgid "Move to Trash"
 msgstr "Mover a la papelera"
 
-#: ../search/Tiles/File.cs:132 ../search/Tiles/Note.cs:57
+#: ../search/Tiles/File.cs:124 ../search/Tiles/Note.cs:57
 #: ../search/Tiles/RSSFeed.cs:45 ../search/Tiles/WebHistory.cs:50
 msgid "Title:"
 msgstr "Título:"
 
-#: ../search/Tiles/File.cs:135 ../search/Tiles/Folder.cs:51
-#: ../search/Tiles/Note.cs:60
+#: ../search/Tiles/File.cs:125 ../search/Tiles/Folder.cs:51
+#: ../search/Tiles/Note.cs:58
 msgid "Last Edited:"
 msgstr "Modificado por última vez:"
 
-#: ../search/Tiles/File.cs:139
+#: ../search/Tiles/File.cs:128
 msgid "Author:"
 msgstr "Autor:"
 
-#: ../search/Tiles/File.cs:143 ../search/Tiles/Folder.cs:54
-#: ../search/Tiles/Image.cs:81
+#: ../search/Tiles/File.cs:130 ../search/Tiles/Folder.cs:52
+#: ../search/Tiles/Image.cs:79
 msgid "Full Path:"
 msgstr "Ruta completa:"
 
@@ -220,33 +221,41 @@ msgstr "Poner como tapiz"
 msgid "Modified:"
 msgstr "Modificado:"
 
-#: ../search/Tiles/IMLog.cs:29
+#: ../search/Tiles/IMLog.cs:30
 msgid "IM Conversation"
 msgstr "Conversación MI"
 
-#: ../search/Tiles/IMLog.cs:89
+#: ../search/Tiles/IMLog.cs:81
 msgid "Name:"
 msgstr "Nombre:"
 
-#: ../search/Tiles/IMLog.cs:90 ../search/Tiles/MailMessage.cs:89
+#: ../search/Tiles/IMLog.cs:82 ../search/Tiles/MailMessage.cs:92
 msgid "Date Received:"
 msgstr "Fecha de recepción:"
 
-#: ../search/Tiles/MailAttachment.cs:45
+#: ../search/Tiles/MailAttachment.cs:47
 msgid "Mail attachment"
 msgstr "Adjunto de correo"
 
-#: ../search/Tiles/MailMessage.cs:53
+#: ../search/Tiles/MailMessage.cs:55
 msgid "Send in Mail"
 msgstr "Enviar por correo"
 
-#: ../search/Tiles/MailMessage.cs:83
+#: ../search/Tiles/MailMessage.cs:87
 msgid "Subject:"
 msgstr "Asunto:"
 
-#: ../search/Tiles/MailMessage.cs:86
+#: ../search/Tiles/MailMessage.cs:89
+msgid "To:"
+msgstr "Para:"
+
+#: ../search/Tiles/MailMessage.cs:89
 msgid "From:"
 msgstr "De:"
+
+#: ../search/Tiles/MailMessage.cs:92
+msgid "Date Sent:"
+msgstr "Fecha de envío:"
 
 #: ../search/Tiles/Presentation.cs:33
 #, csharp-format
@@ -255,11 +264,11 @@ msgid_plural "{0} slides"
 msgstr[0] "{0} diapositiva"
 msgstr[1] "{0} diapositivas"
 
-#: ../search/Tiles/RSSFeed.cs:48
+#: ../search/Tiles/RSSFeed.cs:46
 msgid "Site:"
 msgstr "Sitio:"
 
-#: ../search/Tiles/RSSFeed.cs:51
+#: ../search/Tiles/RSSFeed.cs:47
 msgid "Date Viewed:"
 msgstr "Visto por última vez:"
 
@@ -275,80 +284,110 @@ msgid "Open"
 msgstr "Abrir"
 
 #: ../search/Tiles/Utils.cs:24
-msgid "Application"
-msgstr "Aplicación"
+msgid "Applications"
+msgstr "Aplicaciones"
 
 #: ../search/Tiles/Utils.cs:26
-msgid "Contact"
-msgstr "Contacto"
+msgid "Contacts"
+msgstr "Contactos"
 
 #: ../search/Tiles/Utils.cs:28
-msgid "Folder"
-msgstr "Carpeta"
+msgid "Calendar Events"
+msgstr "Acontecimientos de calendario"
 
 #: ../search/Tiles/Utils.cs:30
-msgid "Image"
-msgstr "Imagen"
+msgid "Folders"
+msgstr "Carpetas"
 
 #: ../search/Tiles/Utils.cs:32
+msgid "Images"
+msgstr "Imágenes:"
+
+#: ../search/Tiles/Utils.cs:34
 msgid "Audio"
 msgstr "Sonido"
 
-#: ../search/Tiles/Utils.cs:34
+#: ../search/Tiles/Utils.cs:36
 msgid "Video"
 msgstr "Vídeo"
 
-#: ../search/Tiles/Utils.cs:36
+#: ../search/Tiles/Utils.cs:38
 msgid "Documents"
 msgstr "Documentos"
 
-#: ../search/Tiles/Utils.cs:38
+#: ../search/Tiles/Utils.cs:40
 msgid "Conversations"
 msgstr "Conversaciones"
 
-#: ../search/Tiles/Utils.cs:40
-msgid "Website"
-msgstr "Sitio web"
-
 #: ../search/Tiles/Utils.cs:42
-msgid "News Feed"
-msgstr "Proveedor de noticias"
+msgid "Websites"
+msgstr "Sitios web"
 
 #: ../search/Tiles/Utils.cs:44
-msgid "Archive"
-msgstr "Archivador"
+msgid "News Feeds"
+msgstr "Proveedores de noticias"
 
-#: ../search/Tiles/Utils.cs:88 ../search/Tiles/Utils.cs:122
-#: ../search/Tiles/Utils.cs:156 ../Util/StringFu.cs:77
+#: ../search/Tiles/Utils.cs:46
+msgid "Archives"
+msgstr "Archivadores"
+
+#: ../search/Tiles/Utils.cs:100 ../search/Tiles/Utils.cs:146
+#: ../search/Tiles/Utils.cs:192 ../Util/StringFu.cs:77
 msgid "Today"
 msgstr "Hoy"
 
-#: ../search/Tiles/Utils.cs:90 ../search/Tiles/Utils.cs:124
-#: ../search/Tiles/Utils.cs:158 ../Util/StringFu.cs:79
+#: ../search/Tiles/Utils.cs:102 ../search/Tiles/Utils.cs:148
+#: ../search/Tiles/Utils.cs:194 ../Util/StringFu.cs:79
 msgid "Yesterday"
 msgstr "Ayer"
 
-#: ../search/Tiles/Utils.cs:162
+#: ../search/Tiles/Utils.cs:104 ../search/Tiles/Utils.cs:150
+#: ../search/Tiles/Utils.cs:196
+msgid "Tomorrow"
+msgstr "Mañana"
+
+#: ../search/Tiles/Utils.cs:200
 #, csharp-format
 msgid "{0} week ago"
 msgid_plural "{0} weeks ago"
 msgstr[0] "hace {0} semana"
 msgstr[1] "hace {0} semanas"
 
+#: ../search/Tiles/Utils.cs:202
+#, csharp-format
+msgid "In {0} week"
+msgid_plural "In {0} weeks"
+msgstr[0] "En {0} semana"
+msgstr[1] "En {0} semanas"
+
 #. Let's say a year and a half to stop saying months
-#: ../search/Tiles/Utils.cs:164
+#: ../search/Tiles/Utils.cs:204
 #, csharp-format
 msgid "{0} month ago"
 msgid_plural "{0} months ago"
 msgstr[0] "hace {0} mes"
 msgstr[1] "hace {0} meses"
 
-#: ../search/Tiles/Utils.cs:166
+#: ../search/Tiles/Utils.cs:206
+#, csharp-format
+msgid "In {0} month"
+msgid_plural "In {0} months"
+msgstr[0] "En {0} mes"
+msgstr[1] "En {0} meses"
+
+#: ../search/Tiles/Utils.cs:208
 #, csharp-format
 msgid "{0} year ago"
 msgid_plural "{0} years ago"
 msgstr[0] "Hace {0} año"
 msgstr[1] "Hace {0} años"
+
+#: ../search/Tiles/Utils.cs:210
+#, csharp-format
+msgid "In {0} year"
+msgid_plural "In {0} years"
+msgstr[0] "En {0} año"
+msgstr[1] "En {0} años"
 
 #. FIXME: We need filters for video in Beagle.
 #. They should land soon when entagged-sharp gets video support.
@@ -356,11 +395,11 @@ msgstr[1] "Hace {0} años"
 msgid "Unknown duration"
 msgstr "Duración desconocida"
 
-#: ../search/Tiles/WebHistory.cs:53
+#: ../search/Tiles/WebHistory.cs:51
 msgid "URL:"
 msgstr "URL:"
 
-#: ../search/Tiles/WebHistory.cs:56
+#: ../search/Tiles/WebHistory.cs:52
 msgid "Accessed:"
 msgstr "Accedido:"
 
@@ -558,115 +597,127 @@ msgstr ""
 "persona\n"
 "personas"
 
-#: ../search/UIManager.cs:35
-msgid "_Search"
-msgstr "_Búsqueda"
+#: ../search/UIManager.cs:42
+msgid "Close Desktop Search"
+msgstr "Cerrar búsqueda de Escritorio"
 
-#: ../search/UIManager.cs:38
-msgid "_Actions"
-msgstr "_Acciones"
-
-#: ../search/UIManager.cs:41
-msgid "Sor_t"
-msgstr "_Ordenar"
-
-#: ../search/UIManager.cs:44
-msgid "_Help"
-msgstr "A_yuda"
-
-#: ../search/UIManager.cs:49 ../search/UIManager.cs:53
+#: ../search/UIManager.cs:47 ../search/UIManager.cs:69
 msgid "Exit Desktop Search"
 msgstr "Salir de la búsqueda de Escritorio"
 
-#: ../search/UIManager.cs:56
+#: ../search/UIManager.cs:54
+msgid "_Search"
+msgstr "_Búsqueda"
+
+#: ../search/UIManager.cs:57
+msgid "_Actions"
+msgstr "_Acciones"
+
+#: ../search/UIManager.cs:60
+msgid "Sor_t"
+msgstr "_Ordenar"
+
+#: ../search/UIManager.cs:63
+msgid "_Help"
+msgstr "Ay_uda"
+
+#: ../search/UIManager.cs:72
 msgid "_Contents"
 msgstr "_Contenido"
 
-#: ../search/UIManager.cs:58
+#: ../search/UIManager.cs:74
 msgid "Help - Table of Contents"
 msgstr "Ayuda - Tabla de contenido"
 
-#: ../search/UIManager.cs:62
+#: ../search/UIManager.cs:78
 msgid "About Desktop Search"
 msgstr "Acerca de la búsquedas de Escritorio"
 
-#: ../search/UIManager.cs:75
+#: ../search/UIManager.cs:100
 msgid "_Everywhere"
 msgstr "_En todos los lugares"
 
-#: ../search/UIManager.cs:77
+#: ../search/UIManager.cs:102
 msgid "Search everywhere"
 msgstr "Buscar en todos los lugares"
 
-#: ../search/UIManager.cs:80
+#: ../search/UIManager.cs:105
 msgid "_Applications"
 msgstr "_Aplicaciones"
 
-#: ../search/UIManager.cs:82
+#: ../search/UIManager.cs:107
 msgid "Search applications"
 msgstr "Buscar aplicaciones"
 
-#: ../search/UIManager.cs:85
+#: ../search/UIManager.cs:110
 msgid "_Contacts"
 msgstr "_Contactos"
 
-#: ../search/UIManager.cs:87
+#: ../search/UIManager.cs:112
 msgid "Search contacts"
 msgstr "Buscar contactos"
 
-#: ../search/UIManager.cs:90
+#: ../search/UIManager.cs:115
+msgid "Ca_lendar events"
+msgstr "Acontecimientos de ca_lendario"
+
+#: ../search/UIManager.cs:117
+msgid "Search calendar events"
+msgstr "Buscar acontecimientos de calendario"
+
+#: ../search/UIManager.cs:120
 msgid "_Documents"
 msgstr "_Documentos"
 
-#: ../search/UIManager.cs:92
+#: ../search/UIManager.cs:122
 msgid "Search documents"
 msgstr "Buscar documentos"
 
-#: ../search/UIManager.cs:95
+#: ../search/UIManager.cs:125
 msgid "Conve_rsations"
 msgstr "Con_versaciones"
 
-#: ../search/UIManager.cs:97
+#: ../search/UIManager.cs:127
 msgid "Search E-Mail and Instant Messaging logs"
 msgstr "Buscar registros de MI y correos electrónicos"
 
-#: ../search/UIManager.cs:100
-msgid "Images"
-msgstr "Imágenes:"
+#: ../search/UIManager.cs:130
+msgid "_Images"
+msgstr "_Imágenes"
 
-#: ../search/UIManager.cs:102
+#: ../search/UIManager.cs:132
 msgid "Search images"
 msgstr "Buscar imágenes"
 
-#: ../search/UIManager.cs:105
-msgid "Media"
-msgstr "Media"
+#: ../search/UIManager.cs:135
+msgid "_Media"
+msgstr "_Medios"
 
-#: ../search/UIManager.cs:107
+#: ../search/UIManager.cs:137
 msgid "Search sound and video files"
 msgstr "Buscar archivos de vídeo y sonido"
 
-#: ../search/UIManager.cs:114
+#: ../search/UIManager.cs:144
 msgid "Date _Modified"
-msgstr "Fecha de _modificación"
+msgstr "_Fecha de modificación"
 
-#: ../search/UIManager.cs:115
+#: ../search/UIManager.cs:145
 msgid "Sort the most-recently-modified matches first"
 msgstr "Ordenar con el más recientemente modificado primero"
 
-#: ../search/UIManager.cs:118
+#: ../search/UIManager.cs:148
 msgid "_Name"
 msgstr "_Nombre"
 
-#: ../search/UIManager.cs:119
+#: ../search/UIManager.cs:149
 msgid "Sort matches by name"
 msgstr "Ordenar coincidencias por nombre"
 
-#: ../search/UIManager.cs:122
+#: ../search/UIManager.cs:152
 msgid "_Relevance"
 msgstr "_Relevancia"
 
-#: ../search/UIManager.cs:123
+#: ../search/UIManager.cs:153
 msgid "Sort the best matches first"
 msgstr "Ordenar las mejores coincidencias primero"
 
@@ -689,8 +740,7 @@ msgstr "Seleccione una ruta"
 
 #: ../tools/Settings.cs:281
 msgid "The selected path is already selected for indexing and wasn't added."
-msgstr ""
-"La ruta seleccionada ya está considerada en la indexación y no se añadió."
+msgstr "La ruta seleccionada ya está considerada en la indexación y no se añadió."
 
 #: ../tools/Settings.cs:284
 msgid ""
@@ -714,7 +764,7 @@ msgid ""
 "result in the removal of the old obsolete paths. Do you still wish to add it?"
 msgstr ""
 "Añadir esta ruta volverá obsoletas algunas de las rutas de inclusión "
-"existentes. Esto causará que las rutas obsoletas sean eliminadas. ¿Aún desea "
+"existentes. Esto causará que las rutas obsoletas se eliminen. ¿Aún desea "
 "añadir esta ruta?"
 
 #: ../tools/Settings.cs:331
@@ -774,8 +824,7 @@ msgid "Remove public path"
 msgstr "Quitar ruta pública"
 
 #: ../tools/Settings.cs:503
-msgid ""
-"Are you sure you wish to remove this entry from the list of public paths?"
+msgid "Are you sure you wish to remove this entry from the list of public paths?"
 msgstr "¿Seguro que quiere quitar este elemento de la lista de rutas públicas?"
 
 #: ../tools/Settings.cs:548 ../tools/Settings.cs:637 ../tools/Settings.cs:715
@@ -1103,3 +1152,4 @@ msgstr "{0:0.0} Kib"
 #, csharp-format
 msgid "{0:0.0} MB"
 msgstr "{0:0.0} Mib"
+
