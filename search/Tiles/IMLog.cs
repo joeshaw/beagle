@@ -28,13 +28,19 @@ namespace Search.Tiles {
 			Group = TileGroup.Conversations;
 
 			Subject.LabelProp = Catalog.GetString ("IM Conversation");
-			From.LabelProp = "<b>" + hit.GetFirstProperty ("fixme:speakingto") + "</b>";
+			string alias = hit["fixme:speakingto_alias"];
+			if ( alias != null && alias != "" )
+				From.LabelProp = "<b>" + alias + "</b>";
+			else
+				From.LabelProp = "<b>" + hit.GetFirstProperty ("fixme:speakingto") + "</b>";
 
 			try {
 				Timestamp = Utils.ParseTimestamp (hit.GetFirstProperty ("fixme:starttime"));
 				Date.LabelProp = Utils.NiceShortDate (Timestamp);
 			} catch {}
+
 		}
+
 
 		private Hashtable IconsForSize (int size)
 		{
