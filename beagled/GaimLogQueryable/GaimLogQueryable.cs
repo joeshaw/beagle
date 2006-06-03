@@ -261,10 +261,11 @@ namespace Beagle.Daemon.GaimLogQueryable {
 			
 			if (buddy != null) {
 				if (buddy.Alias != "")
-					hit ["fixme:speakingto_alias"] = buddy.Alias;
+					hit.AddProperty( Beagle.Property.NewKeyword ("fixme:speakingto_alias", buddy.Alias));
 				
 				if (buddy.BuddyIconLocation != "")
-					hit ["fixme:speakingto_icon"] = Path.Combine (icons_dir, buddy.BuddyIconLocation);
+					hit.AddProperty( Beagle.Property.NewUnsearched ("fixme:speakingto_icon", 
+						Path.Combine (icons_dir, buddy.BuddyIconLocation)));
 			}
 			
 			return true;
