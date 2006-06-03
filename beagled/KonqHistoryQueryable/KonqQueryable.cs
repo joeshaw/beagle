@@ -51,7 +51,14 @@ namespace Beagle.Daemon.KonqQueryable {
 			/* How to determine kio-http cache location ?
 			 * From KDE web-page it looks like /var/tmp/kdecache-$USERNAME/http
 			 */
-			konq_cache_dir = "/var/tmp/kdecache-" + System.Environment.UserName + "/http";
+			//Now we use the $KDEVARTMP env variable
+			//FIXME: Can GetEnvironmentVarable throw an exception? If so, should we have a fallback?
+			string kde_var_tmp = System.Environment.GetEnvironmentVariable("$KDEVARTMP");
+			if ( kde_var_tmp != null && kde_var_tmp != "")
+				konq_cache_dir = kde_var_tmp +"/kdecache-"+ System.Environment.UserName + "/http";
+			else
+				konq_cache_dir = "/var/tmp/kdecache-"+ System.Environment.UserName + "/http";
+			//Console.WriteLine ("KonqCacheDir: " + konq_cache_dir);
 		}
 
 		/////////////////////////////////////////////////
