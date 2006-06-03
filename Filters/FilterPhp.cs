@@ -51,6 +51,7 @@ namespace Beagle.Filters {
 		public FilterPhp ()
 		{
 			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("text/x-php"));
+			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("application/x-php"));
 		}
 
 		override protected void DoOpen (FileInfo info)
