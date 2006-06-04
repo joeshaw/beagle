@@ -165,7 +165,6 @@ namespace ImLogViewer {
 
 		private void IndexLogs ()
 		{
-			int count = 0;
 			foreach (string file in Directory.GetFiles (log_path)) {
 				ImLog log = null;
 				StreamReader reader = new StreamReader (file);
@@ -185,9 +184,6 @@ namespace ImLogViewer {
 				if (speaking_to == null)
 					SetWindowTitle (log.SpeakingTo);
 					timeline.Add (log, log.StartTime);
-				count ++;
-				if ( count % 5 == 0 )
-					index_thread_notify.WakeupMain ();
 			}
 
 			index_thread_notify.WakeupMain ();

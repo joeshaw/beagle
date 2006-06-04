@@ -259,14 +259,15 @@ namespace Beagle.Daemon.GaimLogQueryable {
 		{
 			ImBuddy buddy = list.Search (hit ["fixme:speakingto"]);
 			
-			if (buddy != null) {
-				if (buddy.Alias != "")
-					hit.AddProperty( Beagle.Property.NewKeyword ("fixme:speakingto_alias", buddy.Alias));
+			if (buddy == null) 
+				return false;
 				
-				if (buddy.BuddyIconLocation != "")
-					hit.AddProperty( Beagle.Property.NewUnsearched ("fixme:speakingto_icon", 
-						Path.Combine (icons_dir, buddy.BuddyIconLocation)));
-			}
+			if (buddy.Alias != "")
+				hit.AddProperty (Beagle.Property.NewKeyword ("fixme:speakingto_alias", buddy.Alias));
+				
+			if (buddy.BuddyIconLocation != "")
+				hit.AddProperty (Beagle.Property.NewUnsearched ("fixme:speakingto_icon", Path.Combine (icons_dir, buddy.BuddyIconLocation)));
+			
 			
 			return true;
 		}

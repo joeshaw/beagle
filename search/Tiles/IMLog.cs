@@ -28,7 +28,7 @@ namespace Search.Tiles {
 			Group = TileGroup.Conversations;
 
 			Subject.LabelProp = Catalog.GetString ("IM Conversation");
-			string alias = hit["fixme:speakingto_alias"];
+			string alias = hit.GetFirstProperty ("fixme:speakingto_alias");
 			if ( alias != null && alias != "" )
 				From.LabelProp = "<b>" + alias + "</b>";
 			else
