@@ -21,6 +21,7 @@ namespace Search {
 			Pack1 (mainSW, true, false);
 
 			vp = new Gtk.Viewport (null, null);
+			vp.ResizeMode = Gtk.ResizeMode.Parent;
 			vp.ShadowType = ShadowType.None;
 			mainSW.Add (vp);
 			vp.Show ();
