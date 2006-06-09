@@ -1,0 +1,170 @@
+From: Joe Shaw  <joeshaw@novell.com>
+
+Fix for http://bugzilla.gnome.org/show_bug.cgi?id=339815.  If the
+mime data was reloaded (either because of a change or because, if
+we don't have mmap(), a poll), data being iterated over would no
+longer be valid.  This patch makes it so we don't reload that
+data while iterating over it.
+
+Index: xdgmime.c
+===================================================================
+RCS file: /cvs/gnome/beagle/glue/xdgmime/xdgmime.c,v
+retrieving revision 1.1
+diff -u -p -u -r1.1 xdgmime.c
+--- xdgmime.c	13 Jan 2006 20:19:41 -0000	1.1
++++ xdgmime.c	9 Jun 2006 20:55:03 -0000
+@@ -601,13 +601,11 @@ xdg_mime_get_max_buffer_extents (void)
+   return _xdg_mime_magic_get_buffer_extents (global_magic);
+ }
+ 
+-const char *
+-xdg_mime_unalias_mime_type (const char *mime_type)
++static const char *
++_xdg_mime_unalias_mime_type (const char *mime_type)
+ {
+   const char *lookup;
+ 
+-  xdg_mime_init ();
+-
+   if (_caches)
+     return _xdg_mime_cache_unalias_mime_type (mime_type);
+ 
+@@ -617,16 +615,22 @@ xdg_mime_unalias_mime_type (const char *
+   return mime_type;
+ }
+ 
++const char *
++xdg_mime_unalias_mime_type (const char *mime_type)
++{
++  xdg_mime_init ();
++
++  return _xdg_mime_unalias_mime_type (mime_type);
++}
++
+ int
+-xdg_mime_mime_type_equal (const char *mime_a,
+-			  const char *mime_b)
++_xdg_mime_mime_type_equal (const char *mime_a,
++			   const char *mime_b)
+ {
+   const char *unalias_a, *unalias_b;
+ 
+-  xdg_mime_init ();
+-
+-  unalias_a = xdg_mime_unalias_mime_type (mime_a);
+-  unalias_b = xdg_mime_unalias_mime_type (mime_b);
++  unalias_a = _xdg_mime_unalias_mime_type (mime_a);
++  unalias_b = _xdg_mime_unalias_mime_type (mime_b);
+ 
+   if (strcmp (unalias_a, unalias_b) == 0)
+     return 1;
+@@ -635,6 +639,15 @@ xdg_mime_mime_type_equal (const char *mi
+ }
+ 
+ int
++xdg_mime_mime_type_equal (const char *mime_a,
++			  const char *mime_b)
++{
++  xdg_mime_init ();
++
++  return _xdg_mime_mime_type_equal (mime_a, mime_b);
++}
++
++int
+ xdg_mime_media_type_equal (const char *mime_a,
+ 			   const char *mime_b)
+ {
+@@ -668,19 +681,17 @@ xdg_mime_is_super_type (const char *mime
+ #endif
+ 
+ int
+-xdg_mime_mime_type_subclass (const char *mime,
+-			     const char *base)
++_xdg_mime_mime_type_subclass (const char *mime,
++			      const char *base)
+ {
+   const char *umime, *ubase;
+   const char **parents;
+ 
+-  xdg_mime_init ();
+-
+   if (_caches)
+     return _xdg_mime_cache_mime_type_subclass (mime, base);
+ 
+-  umime = xdg_mime_unalias_mime_type (mime);
+-  ubase = xdg_mime_unalias_mime_type (base);
++  umime = _xdg_mime_unalias_mime_type (mime);
++  ubase = _xdg_mime_unalias_mime_type (base);
+ 
+   if (strcmp (umime, ubase) == 0)
+     return 1;
+@@ -710,6 +721,15 @@ xdg_mime_mime_type_subclass (const char 
+   return 0;
+ }
+ 
++int
++xdg_mime_mime_type_subclass (const char *mime,
++			     const char *base)
++{
++  xdg_mime_init ();
++
++  return _xdg_mime_mime_type_subclass (mime, base);
++}
++
+ char **
+ xdg_mime_list_mime_parents (const char *mime)
+ {
+@@ -741,7 +761,7 @@ xdg_mime_get_mime_parents (const char *m
+ 
+   xdg_mime_init ();
+ 
+-  umime = xdg_mime_unalias_mime_type (mime);
++  umime = _xdg_mime_unalias_mime_type (mime);
+ 
+   return _xdg_mime_parent_list_lookup (parent_list, umime);
+ }
+Index: xdgmime.h
+===================================================================
+RCS file: /cvs/gnome/beagle/glue/xdgmime/xdgmime.h,v
+retrieving revision 1.1
+diff -u -p -u -r1.1 xdgmime.h
+--- xdgmime.h	13 Jan 2006 20:19:41 -0000	1.1
++++ xdgmime.h	9 Jun 2006 20:55:03 -0000
+@@ -95,6 +95,12 @@ int          xdg_mime_register_reload_ca
+ 						    XdgMimeDestroy   destroy);
+ void         xdg_mime_remove_callback              (int              callback_id);
+ 
++  /* Private versions of functions that don't call xdg_mime_init () */
++int          _xdg_mime_mime_type_equal             (const char *mime_a,
++						    const char *mime_b);
++int          _xdg_mime_mime_type_subclass          (const char *mime,
++						    const char *base);
++
+ #ifdef __cplusplus
+ }
+ #endif /* __cplusplus */
+Index: xdgmimemagic.c
+===================================================================
+RCS file: /cvs/gnome/beagle/glue/xdgmime/xdgmimemagic.c,v
+retrieving revision 1.2
+diff -u -p -u -r1.2 xdgmimemagic.c
+--- xdgmimemagic.c	29 Mar 2006 21:46:06 -0000	1.2
++++ xdgmimemagic.c	9 Jun 2006 20:55:03 -0000
+@@ -671,7 +671,7 @@ _xdg_mime_magic_lookup_data (XdgMimeMagi
+       if (_xdg_mime_magic_match_compare_to_data (match, data, len))
+ 	{
+ 	  if (!had_match || match->priority > priority ||
+-	      (mime_type != NULL && xdg_mime_mime_type_subclass (match->mime_type, mime_type)))
++	      (mime_type != NULL && _xdg_mime_mime_type_subclass (match->mime_type, mime_type)))
+ 	    {
+ 	      mime_type = match->mime_type;
+ 	      priority = match->priority;
+@@ -688,7 +688,7 @@ _xdg_mime_magic_lookup_data (XdgMimeMagi
+ 	  for (n = 0; n < n_mime_types; n++)
+ 	    {
+ 	      if (mime_types[n] && 
+-		  xdg_mime_mime_type_equal (mime_types[n], match->mime_type))
++		  _xdg_mime_mime_type_equal (mime_types[n], match->mime_type))
+ 		mime_types[n] = NULL;
+ 	    }
+ 	}
