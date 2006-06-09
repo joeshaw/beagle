@@ -263,17 +263,11 @@ namespace Beagle.Daemon.GaimLogQueryable {
 			if (buddy == null) 
 				return true;
 			
-			//Now lets check and make sure that none of this has changed since indexing
-			//and if it has, lets fix it
-			if (buddy.Alias != "" && hit["fixme:speakingto_alias"] != buddy.Alias ){
-				hit["fixme:speakingto_alias"]= buddy.Alias ;
-				log.Debug (" Re-Indexing " + buddy.BuddyAccountName + "'s alias as: " + buddy.Alias);
-			}
-			string current_icon_loc = Path.Combine (icons_dir, buddy.BuddyIconLocation);
-			if (buddy.BuddyIconLocation != "" && current_icon_loc != hit["fixme:speakingto_icon"] ){
-				hit["fixme:speakingto_icon"] = Path.Combine (icons_dir, buddy.BuddyIconLocation);
-				log.Debug (" Re-Indexing " + buddy.BuddyAccountName + "'s icon at: " + buddy.BuddyIconLocation);
-			}
+			if (buddy.Alias != "")
+ 				hit.AddProperty (Beagle.Property.NewKeyword ("fixme:speakingto_alias", buddy.Alias));
+ 				
+ 			if (buddy.BuddyIconLocation != "")
+ 				hit.AddProperty (Beagle.Property.NewUnsearched ("fixme:speakingto_icon", Path.Combine (icons_dir, buddy.BuddyIconLocation)));
 			
 			return true;
 		}

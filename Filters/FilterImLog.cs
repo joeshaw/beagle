@@ -65,23 +65,6 @@ namespace Beagle.Filters {
 			AddProperty (Beagle.Property.NewKeyword ("fixme:speakingto", log.SpeakingTo));
 			AddProperty (Beagle.Property.NewUnsearched ("fixme:identity", log.Identity));
 			
-			//Ok, lets check the buddy list
-			//FIXME: We should probably make a static class for this so
-			//we aren't constantly reloading the buddy list.
-			GaimBuddyListReader list = new GaimBuddyListReader();
-			//Find our buddy
-			ImBuddy buddy = list.Search (log.SpeakingTo);
-			//If the buddy isn't on the list, were are done.
-			if (buddy == null)
-				return;
-			//Otherwise, lets Index their alias and icon
-			if (buddy.Alias != "")
-				AddProperty (Beagle.Property.NewKeyword ("fixme:speakingto_alias", buddy.Alias));
-			
-			string icon_dir = Path.Combine (PathFinder.HomeDir ,".gaim");
-			icon_dir = Path.Combine (icon_dir, "icons");
-			if (buddy.BuddyIconLocation != "")
-				AddProperty (Beagle.Property.NewUnsearched ("fixme:speakingto_icon", Path.Combine (icon_dir,  buddy.BuddyIconLocation)));
 	
 		}
 
