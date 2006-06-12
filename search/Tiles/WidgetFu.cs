@@ -117,8 +117,12 @@ namespace Search.Tiles {
 
 			if (icon_info == null)
 				return null;
-
-			return icon_info.LoadIcon ();
+			try {
+				return icon_info.LoadIcon ();
+			} catch (System.Exception e) {
+				System.Console.Write (e.ToString ());
+			}
+			return null;
 		}
 
 		[DllImport ("libbeagleuiglue.so")]
