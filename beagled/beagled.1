@@ -1,73 +1,93 @@
 .\" beagled(1) manpage
-.\"
-.\" Copyright (C) 2005 Novell, Inc.
-.\"
-.TH BEAGLE "1" "Feb 2005" "beagle" "Linux User's Manual"
-.SH NAME
-beagled \- the Beagle daemon
-.SH SYNOPSIS
+.\" 
+.\" Copyright (C) 2005-2006 Novell, Inc.
+.\" 
+.TH "BEAGLE" "1" "June 2006" "beagle" "Linux User's Manual"
+.SH "NAME"
+beagled \- the Beagle desktop search daemon
+.SH "SYNOPSIS"
 .B beagled
 [\fIoptions\fR]
-.SH DESCRIPTION
-.PP
+.SH "DESCRIPTION"
+.PP 
 .BR beagled ,
 the Beagle daemon, is the heart of Beagle, a system for searching and managing
 your personal information space.  The Beagle daemon should normally be started
 as part of your system's boot process: For example, by an initscript.
-.PP
+.PP 
 Running
 .BR beagled
 by hand is of use for those wishing to customize the Beagle daemon's execution
-via command-line options, developers testing Beagle, or those who use Beagle
+via command\-line options, developers testing Beagle, or those who use Beagle
 only infrequently.
-.SH OPTIONS
+.SH "OPTIONS"
 .BR beagled
-has many options, although most are for debugging and fine-tuning execution and
+has many options, although most are for debugging and fine\-tuning execution and
 are thus not required for standard use.
-.TP
-.B --foreground|--fg
+.TP 
+.B \-\-foreground|\-\-fg
 If specified, execute the Beagle daemon in the foreground.
-.TP
-.B --background|--bg
+.TP 
+.B \-\-background|\-\-bg
 If specified, execute the Beagle daemon in the background (default).
-.TP
-.B --replace
+.TP 
+.B \-\-replace
 If specified, the daemon tries to shutdown and replace any other Beagle daemon
 already running.
-.TP
-.B --debug
+.TP 
+.B \-\-debug
 Enable extensive logging suited for general debugging purposes.
-.TP
-.B --debug-memory
+.TP 
+.B \-\-debug\-memory
 Enable extensive logging suited for memory debugging purposes.
-.TP
-.B --allow-backend \flbackend\fP
-Constrain the Beagle daemon to only use specified backends. This argument can
+.TP 
+.B \-\-indexing\-test\-mode
+ Run in foreground, and exit when fully indexed.
+.TP 
+.B \-\-indexing\-delay 
+Time to wait before indexing.  (Default 60 seconds)
+.TP 
+.B \-\-backend           
+Configure which backends to use.  
+.TP 
+.B 	\-\-backend <name>    
+	Only start backend 'name'
+.TP 
+.B 	\-\-backend +<name>
+	Additionally start backend 'name'	
+.TP 
+.B 	\-\-backend \-<name>
+	Disable backend 'name'	
+.TP 
+.B \-\-allow\-backend \flbackend
+(DEPRECIATED) Constrain the Beagle daemon to only use specified backends. This argument can
 be used multiple times.
-.TP
-.B --deny-backend \flbackend\fP
-Constrain the Beagle daemon by disabling specified backends. This argument can
+.TP 
+.B \-\-deny\-backend \flbackend
+(DEPRECIATED) Constrain the Beagle daemon by disabling specified backends. This argument can
 be used multiple times.
-.TP
-.B --list-backends
+.TP 
+.B \-\-list\-backends
 Retrieve a list of all known backends. This list of backends can then be
-used with with the --allow/deny-backend options. Using this argument will
+used with with the \-\-allow/deny\-backend options. Using this argument will
 print out the list of backends and then exit.
-.TP
-.B --disable-scheduler
+.TP 
+.B \-\-add\-static\-backend
+Add a static backend by path.
+.TP 
+.B \-\-disable\-scheduler
 Disable the internal scheduler and thus refrain the Beagle daemon from
 performing any crawling or indexing. Search facilities will remain enabled.
-.SH AUTHOR
+.SH "AUTHOR"
 Novell, Inc.
 .SH "REPORTING BUGS"
-Report bugs to <dashboard-hackers@gnome.org>.
-.SH COPYRIGHT
-Copyright \(co 2005 Novell, Inc.
+Report bugs to bugs.gnome.org
+.SH "COPYRIGHT"
+Copyright \(co 2005-2006 Novell, Inc.
 .sp
 This is free software; see the source for copying conditions.  There is NO
 warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 .SH "SEE ALSO"
-.BR beagle-query (1),
-.BR beagle-status (1),
-.BR beagle-shutdown (1),
-.BR best (1)
+.BR beagle\-query (1),
+.BR beagle\-status (1),
+.BR beagle\-shutdown (1),
