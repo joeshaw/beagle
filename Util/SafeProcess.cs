@@ -37,6 +37,7 @@ namespace Beagle.Util {
 		private bool redirect_stdin, redirect_stdout, redirect_stderr;
 		private string[] args;
 		private UnixStream stdin_stream, stdout_stream, stderr_stream;
+		private int pid;
 
 		public string[] Arguments {
 			get { return args; }
@@ -70,6 +71,10 @@ namespace Beagle.Util {
 			get { return stderr_stream; }
 		}
 
+		public int Id {
+			get { return pid; }
+		}
+
 		[DllImport ("libglib-2.0.so.0")]
 		static extern bool g_spawn_async_with_pipes (string working_directory,
 							     string[] argv,
@@ -77,7 +82,7 @@ namespace Beagle.Util {
 							     int flags,
 							     IntPtr child_setup,
 							     IntPtr child_data,
-							     IntPtr pid,
+							     out int pid,
 							     [In,Out] IntPtr standard_input,
 							     [In,Out] IntPtr standard_output,
 							     [In,Out] IntPtr standard_error,
@@ -111,7 +116,7 @@ namespace Beagle.Util {
 
 				g_spawn_async_with_pipes (null, args, null,
 							  1 << 2, // G_SPAWN_SEARCH_PATH
-							  IntPtr.Zero, IntPtr.Zero, IntPtr.Zero,
+							  IntPtr.Zero, IntPtr.Zero, out pid,
 							  in_ptr, out_ptr, err_ptr, out error);
 
 				if (error != IntPtr.Zero)

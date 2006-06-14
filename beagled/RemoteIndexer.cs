@@ -220,9 +220,8 @@ namespace Beagle.Daemon {
 				
 				Logger.Log.Debug ("Launching helper process");
 
-				Process p = new Process ();
-				p.StartInfo.UseShellExecute = false;
-				p.StartInfo.FileName = helper_path;
+				SafeProcess p = new SafeProcess ();
+				p.Arguments = new string [] { helper_path };
 				p.Start ();
 
 				Logger.Log.Debug ("IndexHelper PID is {0}", p.Id);
