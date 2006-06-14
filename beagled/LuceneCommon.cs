@@ -152,6 +152,8 @@ namespace Beagle.Daemon {
 
 		private bool IsDanglingLock (FileInfo info)
 		{
+			Log.Debug ("Checking for dangling locks...");
+
 			// It isn't even a lock file
 			if (! info.Name.EndsWith (".lock"))
 				return false;
@@ -216,13 +218,6 @@ namespace Beagle.Daemon {
 			return false;
 		}
 		
-
-		// Return true if there are dangling locks
-		protected bool HaveDanglingLocks ()
-		{
-			return false;
-		}
-
 		protected bool Exists ()
 		{
 			if (! (Directory.Exists (top_dir)
@@ -235,7 +230,6 @@ namespace Beagle.Daemon {
 			       && Directory.Exists (LockDirectory)))
 				return false;
 
-			return true;
 			// Check the index's version number.  If it is wrong,
 			// declare the index non-existent.
 
