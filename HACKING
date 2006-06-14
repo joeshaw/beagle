@@ -202,6 +202,15 @@ HACKING file.
 			bad:
 				for (int i=0;i<100;i++)
 
+		* Please also use spaces and clear language (capitalization,
+                  punctuation) in comments:
+
+			good:
+				// It's going to crash if we're not careful.
+
+			bad:
+				//its going to crash if were not careful
+
                 * For any new files, please use a descriptive introduction, like
                   this:
 
@@ -210,6 +219,10 @@ HACKING file.
                         //
                         // Copyright (C) 2002 Address, Inc. (http://www.address.com)
                         //
+
+		* Also remember to include the license in comments at the top of
+                  the file.  Cut-and-paste this out of other source files in the
+                  tree.
 
                 * Switch statements have the case at the same indentation as the
                   switch:
@@ -241,6 +254,12 @@ HACKING file.
 		* Private variable members of a class and function
 		  local variable names should be under_scored (no
 		  camelCase please).
+
+		* C# is a pretty verbose and heavily-nested language.  Don't
+                  worry about trying to fit everything into 80 columns.
+                  However, don't be afraid to use multiple lines, especially
+                  with function arguments when it may be easier to read or
+                  more aesthetic to do so.
 
 If you are using Emacs, you might want to put something like this
 in your .emacs file:
