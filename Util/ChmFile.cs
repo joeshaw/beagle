@@ -1,8 +1,8 @@
 //
 // CHMFile.cs: Basic chmlib Wrapper, CHM file format reader.
 //
-// Author:
-//   Miguel Fernando Cabrera <mfcabrer@unalmed.edu.co>
+// 
+// Copyright (C) 2005,2006  Miguel Fernando Cabrera <mfcabrera@gmail.com>
 //   
 // Based on Razvan Cojocaru's X-CHM::CHMFile. 
 // Uses Jed Wing's CHMLib.
@@ -100,7 +100,8 @@ namespace Beagle.Util {
 			public UInt64             start;
 			public UInt64             length;
 			public int                space;
-			[MarshalAs (UnmanagedType.ByValTStr, SizeConst=257)]
+			public int                flags;
+			[MarshalAs (UnmanagedType.ByValTStr, SizeConst=512)]
 			public string path;
 			/*[MarshalAs (UnmanagedType.ByValArray, SizeConst=257)]
 			  public char[] path;*/
@@ -232,7 +233,7 @@ namespace Beagle.Util {
 		public ChmFile() 
 		{
 			
-		//this.tocStrings = new ArrayList();
+			//this.tocStrings = new ArrayList();
 			this.htmlFiles = new ArrayList();
 			
 			
@@ -297,38 +298,39 @@ namespace Beagle.Util {
 			
 			
 			if(res == ChmResolve.Failure)
-			return false;
+				return false;
 			
-			size  =  chm_retrieve_object (this.chmfile, ui,buf,4,(ulong)bufSize);
+			size  =  chm_retrieve_object (this.chmfile, ui,buf, 4, (ulong)bufSize);
 			
 			int index = 0;
 			ushort value = 0;
-			long tol = (long)size-2;
+			long tol = (long)size - 2;
 			
 			while(index < tol) {
 				
 				
-				value =  (ushort)Marshal.ReadInt16(buf,index);
+				value =  (ushort)Marshal.ReadInt16 (buf, index);
 				
 				if(value == 3) {
 					
-					//Console.WriteLine ("We got it");
-				index += 2;
-				ushort len = (ushort)Marshal.ReadInt16 (buf,(int)index);
-				
-				if(this.title == "") 
-					this.title = ChmGetString (buf,index+2,(int)len);
-				gottitle = true;
-				break;
 					
-				
+					index += 2;
+					ushort len = (ushort)Marshal.ReadInt16 (buf, (int)index);
+					
+					if(this.title == "") 
+						this.title = ChmGetString (buf,index+2, (int)len);
+					gottitle = true;
+					break;
+					
+					
 				}
 				else 
 					index += 2;
 				
+				
 				value = (ushort) Marshal.ReadInt16(buf,(int)index);
 				
-				index += (int)value +2;
+				index += (int)value + 2;
 				
 			}
 			
@@ -413,21 +415,21 @@ namespace Beagle.Util {
 			
 			//Console.WriteLine ("entries -> {0}\nsize = {1}",entries,entrySize);
 			
-			windowsData  = Marshal.AllocCoTaskMem(entries*entrySize);
+			windowsData  = Marshal.AllocCoTaskMem(entries * entrySize);
 			
 		
 			size = (long)chm_retrieve_object (chmfile,
 							  ui,
 							  windowsData,
 							  headerLen,
-							  (ulong)( entries * entrySize ) );
+							  (ulong)(entries * entrySize));
 			if(size == 0)
 				return false;
-		
+			
 			size = 0;
 			
 			
-			if(chm_resolve_object (chmfile,"/#STRINGS",ui) == ChmResolve.Failure )
+			if(chm_resolve_object (chmfile,"/#STRINGS",ui) == ChmResolve.Failure)
 				return false;
 			
 			
@@ -447,12 +449,12 @@ namespace Beagle.Util {
 				
 				
 				uint offTitle  = (uint)Marshal.ReadInt32(windowsData,
-								 offset + 0x14);
+									 offset + 0x14);
 				
 				uint offTocFile = (uint)Marshal.ReadInt32(windowsData,
-									  offset + 0x60 );
+									  offset + 0x60);
 				uint offDefaultFile = (uint)Marshal.ReadInt32(windowsData,
-									      offset + 0x68 );
+									      offset + 0x68);
 				
 								
 				//Console.WriteLine("offTocFile = {0}",offTocFile);
@@ -544,7 +546,7 @@ namespace Beagle.Util {
 		public void ParseContents(ChmHtmlParseFunc Parse)
 		{
 			
-			
+						
 			if(this.loaded)
 				foreach(string fileName in htmlFiles) {
 					chmUnitInfo ui = new chmUnitInfo();
@@ -552,7 +554,7 @@ namespace Beagle.Util {
 					chm_resolve_object(this.chmfile,
 							   fileName,
 							   ui) ;
-				    
+					
 					
 					//Console.WriteLine("Parsing....{0}",ui.path);
 					///Logger.Log.Debug("CHMFile: Parsing {0}....",ui.path);
@@ -561,68 +563,18 @@ namespace Beagle.Util {
 					
 				}
 			
-	
+			
 			
 		}
 		
-#if false
-		public static void ParseTest(TextReader text)
-		{
-			Console.WriteLine("in ParseText");
-			Console.WriteLine(text.ReadLine());
-			
-		}
-
-#endif
-
-
-#if false
-	static void Main()
-	{
-
-		ChmFile reader = new ChmFile();
-
-		bool res = reader.Load("olib.chm");
-		//reader.GetArchiveInfo();
-		Console.WriteLine("The response {0}",res);
-		//reader.Dispose();
-		Console.WriteLine("El titulo es " + reader.Title);
-		
-		TextReader r = reader.GetTopicsFile();
-				
-		/*while((line = r.ReadLine()) != null)
-		  Console.WriteLine(line);*/
-
-		Console.WriteLine("Waza???");
-
-		//Console.WriteLine(r.ReadToEnd());
-				
-		ParseTest t = new ParseTest(r);
-
-		r.Close();
-		
-		//reader.ParseContents(new ChmHtmlParseFunc(CHMFile.ParseTest));
-		
-		/*
-		reader.Load("/home/ceruno/Documentacion/Biblioteca/WebDev/JavaScript/Java Script Pocket Reference 2nd Edition.chm");
-		
-		//reader.GetArchiveInfo();
-		
-		Console.WriteLine("El titulo es " + reader.Title);*/
 		
 		
-
 	}
-
-#endif
+	
+	
+	
 
 	
-}
-
-
-
-
-
 #if true
 }
 #endif

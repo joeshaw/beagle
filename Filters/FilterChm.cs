@@ -1,10 +1,7 @@
 //
 // FilterChm.cs : Trivial implementation of a CHM filter.
 //
-// Author :
-//      Miguel Cabrera <mfcabrer@unalmed.edu.co>
-//
-// Copyright (C) 2005 Miguel Cabrera
+// Copyright (C) 2005,2006 Miguel Cabrera <mfcabrera@gmail.com>
 //
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -37,136 +34,23 @@ using Beagle.Daemon;
 
 namespace Beagle.Filters {
 
-	public class FilterChm : FilterHtml {
+	public class FilterChm : FilterHtml  {
 		
 		ChmFile chmFile;
-		
-		public FilterChm ()
+	
+		public FilterChm () : base()
 		{
-			RegisterSupportedTypes();
-			SnippetMode= true;
-			
-		}
 		
-
-		new protected  void WalkHeadNodes (HtmlNode node)
-		{
-			foreach (HtmlNode subnode in node.ChildNodes) {
-				if (subnode.NodeType == HtmlNodeType.Element
-				    && subnode.Name == "title") {
-					String title = WalkChildNodesForText (subnode);
-					title = HtmlEntity.DeEntitize (title);
-					//AddProperty (Beagle.Property.New ("dc:title", title));
-					AppendText (title);
-				}
-				if (subnode.NodeType == HtmlNodeType.Element
-				    && subnode.Name == "meta") {
-	   				string name = subnode.GetAttributeValue ("name", "");
-           				string content = subnode.GetAttributeValue ("content", "");
-					if (name != "" && content != "")
-						AddProperty (Beagle.Property.New (name, content));
-				}
-			}
-		}
-		
-
-		public void WalkTocFile(HtmlNode node) 
-		{
-			
-			
-			
-			foreach (HtmlNode subnode in node.ChildNodes) {
-				if (subnode.NodeType == HtmlNodeType.Element) {
-					switch (subnode.Name) {
-					case "html":
-				case "head":
-					WalkTocFile (subnode);
-					break;
-				case "body":
-					default:
-						WalkToc (subnode);
-						break;
-					}
-				}
-			}
-			
-		}
-
-		
-		
-		public void WalkToc(HtmlNode node)
-		{
-			
-			switch (node.NodeType) {
-				
-			case HtmlNodeType.Document:
-			case HtmlNodeType.Element:
-				
-				if(node.Name == "li")
-					foreach(HtmlNode subnode in node.ChildNodes)
-						HandleTocEntry(subnode);
-				
-				foreach(HtmlNode subnode in node.ChildNodes)
-					WalkToc(subnode);
-				break;
-				
-				
-				
-			}
-			
-		}	
-		
-		
-		public void HandleTocEntry(HtmlNode node)
-		{
-			
-			if(node.Name == "object") {
-				
-			string attr = node.GetAttributeValue ("type", "");
-			
-			if(String.Compare(attr,"text/sitemap",true) == 0) 
-				foreach(HtmlNode subnode in node.ChildNodes) 
-					if(String.Compare(subnode.Name,"param",true) == 0 &&
-					   subnode.GetAttributeValue("name","") == "Name" ){
-						HotUp();
-						AppendText(subnode.GetAttributeValue("value",""));
-						HotDown();
-						
-					}
-			
-			
-			
-			}
-			
-		}		
-		
-
-		void ReadHtml(TextReader reader) 
-		{
-
-			HtmlDocument doc = new HtmlDocument ();
-
-			try {
-				doc.Load (reader);
-			} catch (ArgumentNullException e) {
-				/*Weird should not happend*/
-				//¿What should do here?
-				Logger.Log.Warn (e.Message);
-				return;
-				
-			}
-
-			if (doc != null)
-				WalkNodes (doc.DocumentNode);
-
-						
+			RegisterSupportedTypes ();
+			SnippetMode = true;
 			
 		}
 		
 		override protected void DoOpen (FileInfo info) 
 		{
-
-			chmFile = new ChmFile();
+					
+			chmFile = new ChmFile ();
+			
 
 			try {
 				
@@ -175,18 +59,37 @@ namespace Beagle.Filters {
 			}
 			catch (Exception e) {
 				
-				Logger.Log.Warn ("Could not parse {0}: {1}",info.Name,e.Message);
+				Logger.Log.Warn ("Could not load {0}: {1}", info.Name, e.Message);
 				Finished ();
 				return;
 
 			}
-			
-			
-			
 
+						
+			chmFile.ParseContents (FilterFileContents);
+					
+			
+			
 		}
 
-		
+		public void FilterFileContents(TextReader text) {
+			
+			HtmlDocument doc = new HtmlDocument ();
+			doc.StreamMode = true;
+			doc.ReportNode += HandleNodeEvent;
+			
+			try {
+				doc.Load (text);
+				
+			} 
+			catch (Exception e) {
+				Logger.Log.Warn ("Error parsing file contents: {0}",e.Message);
+				//Console.WriteLine (e.Message);
+				//Console.WriteLine (e.StackTrace);
+			}
+					
+
+		}
 
 		override protected void DoPullProperties() 
 		{
@@ -194,35 +97,21 @@ namespace Beagle.Filters {
 			if(chmFile.Title != "") 
 				AddProperty (Beagle.Property.New ("dc:title", chmFile.Title));
 			
-					
-		
+						
 		}
 
 		override protected void DoPull()
 		{
-			//Logger.Log.Debug("FilterCHM: Parsing:" + chmFile.Title);
-			//chmFile.ParseContents(ReadHtml);
 			
-
-			/*
-			  We only read the default file and the topic file
-			**/
-			ReadHtml(chmFile.GetDefaultFile());
 			
-			HtmlDocument doc = new HtmlDocument();
-
-			doc.Load(chmFile.GetTopicsFile());
-			
-			WalkTocFile(doc.DocumentNode);
-			
-			Finished();
+			Finished ();
 			
 			
 		}
 
 		override protected void  DoClose() 
 		{
-			chmFile.Dispose();
+			chmFile.Dispose ();
 		
 		}
 		
