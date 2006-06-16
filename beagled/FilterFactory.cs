@@ -142,6 +142,8 @@ namespace Beagle.Daemon {
 		{
 			if (mime_type == null)
 				mime_type = XdgMime.GetMimeType (path);
+			else 
+				mime_type = mime_type.ToLower ();
 
 			if (mime_type == null)
 				return null;
