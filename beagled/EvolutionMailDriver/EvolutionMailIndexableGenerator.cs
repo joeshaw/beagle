@@ -421,6 +421,8 @@ namespace Beagle.Daemon.EvolutionMailDriver {
 		private string folder_cache_name;
 		private Hashtable mapping;
 		private ArrayList deleted_list;
+		private bool delete_mode;
+		private int delete_count;
 
 		public EvolutionMailIndexableGeneratorImap (EvolutionMailQueryable queryable, FileInfo summary_info) : base (queryable)
 		{
@@ -650,26 +652,20 @@ namespace Beagle.Daemon.EvolutionMailDriver {
 			if (this.summary_enumerator.MoveNext ())
 				return true;
 
-			Logger.Log.Debug ("Queuing up {0} removals for deleted messages in ", this.deleted_list.Count, this.folder_name);
-			foreach (string uid in this.deleted_list) {
-				Uri uri = EvolutionMailQueryable.EmailUri (this.account_name, this.folder_name, uid);
+			this.delete_mode = true;
 
-				// FIXME: This is kind of a hack, but it's the only way
-				// with the IndexableGenerator to handle our removals.
-				Scheduler.Task task = this.queryable.NewRemoveTask (uri);
-				task.Priority = Scheduler.Priority.Immediate;
-				this.queryable.ThisScheduler.Add (task);
-			}
+			if (this.deleted_list.Count > 0)
+				return true;
 
 			string progress = "";
 			if (this.count > 0 && this.summary.header.count > 0) {
-				progress = String.Format (" ({0}/{1} {2:###.0}%)",
+				progress = String.Format ("({0}/{1} {2:###.0}%)",
 							  this.count,
 							  this.summary.header.count,
 							  100.0 * this.count / this.summary.header.count);
 			}
 
-			Logger.Log.Debug ("{0}: Finished indexing {1} messages{2}", this.folder_name, this.indexed_count, progress);
+			Logger.Log.Debug ("{0}: Finished indexing {1} messages {2}, {3} messages deleted", this.folder_name, this.indexed_count, progress, this.delete_count);
 
 			this.SaveCache ();
 			this.CrawlFinished ();
@@ -687,6 +683,21 @@ namespace Beagle.Daemon.EvolutionMailDriver {
 		public override Indexable GetNextIndexable ()
 		{
 			Indexable indexable = null;
+
+			// No more new messages to index, so start on the removals.
+			if (this.delete_mode) {
+				string uid = (string) this.deleted_list [0];
+				Uri uri = EvolutionMailQueryable.EmailUri (this.account_name, this.folder_name, uid);
+				
+				indexable = new Indexable (IndexableType.Remove, uri);
+
+				this.deleted_list.RemoveAt (0);
+				this.mapping.Remove (uid);
+
+				this.delete_count++;
+
+				return indexable;
+			}
 
 			Camel.MessageInfo mi = (Camel.MessageInfo) this.summary_enumerator.Current;
 
