@@ -62,7 +62,6 @@ namespace Beagle {
 		private double score = 0.0;
 
 		private ArrayList properties = new ArrayList ();
-		private bool sorted = true;
 
 		private enum SpecialType {
 			Unknown,
@@ -245,28 +244,31 @@ namespace Beagle {
 
 		public void AddProperty (Property prop)
 		{
-			if (sorted && properties.Count > 0) {
-				Property last_prop;
-				last_prop = properties [properties.Count - 1] as Property;
-				if (last_prop.CompareTo (prop) > 0) // i.e. last_prop > prop
-					sorted = false;
-			}
+			int loc = properties.BinarySearch (prop);
 
-			properties.Add (prop);
+			// If the value is not in the array we get its position
+			// by taking bitwise complement.
+			if (loc < 0)
+				loc = ~loc;
+
+			properties.Insert (loc, prop);
 		}
+
+		public void AddProperty (ICollection props)
+		{
+			properties.AddRange (props);
+			properties.Sort ();
+		}
+
 
 		private bool FindProperty (string key, out int first, out int top)
 		{
-			if (! sorted) {
-				properties.Sort ();
-				sorted = true;
-			}
 			
 			first = 0;
 			top = 0;
 			int range = properties.Count - 1;
 			Property prop;
-
+			
 			// O(log n + |range|)-time algorithm for 1-d range query
 			while (range > 1) {
 				// find middle index
