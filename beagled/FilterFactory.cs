@@ -142,8 +142,16 @@ namespace Beagle.Daemon {
 		{
 			if (mime_type == null)
 				mime_type = XdgMime.GetMimeType (path);
-			else 
+			else {
+				// Mime types are all lower-case by convention
+				// and all the filters expect them that way,
+				// but we can't trust that they already are
+				// when we get it from somewhere other than
+				// xdgmime.  They are often capitalized in
+				// emails, for example.
+
 				mime_type = mime_type.ToLower ();
+			}
 
 			if (mime_type == null)
 				return null;
