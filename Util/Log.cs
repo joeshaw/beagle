@@ -115,7 +115,13 @@ namespace Beagle.Util {
 
 				// Clean up old symlinks
 				if (file.Name.StartsWith (current_str) && FileSystem.IsSymLink (file.FullName)) {
-					file.Delete ();
+					// Work around a Mono bug in which FileInfo.Delete()
+					// doesn't delete dangling symlinks.  See
+					// http://bugzilla.ximian.com/show_bug.cgi?id=78664
+
+					//file.Delete ();
+					File.Delete (file.FullName);
+
 					continue;
 				}
 				
