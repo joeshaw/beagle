@@ -9,8 +9,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: beagle\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2006-05-01 18:10+0200\n"
-"PO-Revision-Date: 2006-05-02 00:23+0100\n"
+"POT-Creation-Date: 2006-06-17 10:08+0200\n"
+"PO-Revision-Date: 2006-06-17 11:48+0100\n"
 "Last-Translator: Daniel Nylander <po@danielnylander.se>\n"
 "Language-Team: Swedish <tp-sv@listor.tp-sv.se>\n"
 "MIME-Version: 1.0\n"
@@ -133,19 +133,19 @@ msgstr "Påbörja sökning"
 msgid "Send Mail"
 msgstr "Skicka e-post"
 
-#: ../search/Tiles/Contact.cs:69
+#: ../search/Tiles/Contact.cs:68
 msgid "E-Mail:"
 msgstr "E-post:"
 
-#: ../search/Tiles/Contact.cs:71
+#: ../search/Tiles/Contact.cs:70
 msgid "Mobile Phone:"
 msgstr "Mobiltelefon:"
 
-#: ../search/Tiles/Contact.cs:73
+#: ../search/Tiles/Contact.cs:72
 msgid "Work Phone:"
 msgstr "Arbetstelefon:"
 
-#: ../search/Tiles/Contact.cs:75
+#: ../search/Tiles/Contact.cs:74
 msgid "Home Phone:"
 msgstr "Hemtelefon:"
 
@@ -165,26 +165,26 @@ msgstr "E-post"
 msgid "Move to Trash"
 msgstr "Flytta till papperskorg"
 
-#: ../search/Tiles/File.cs:125
-#: ../search/Tiles/Note.cs:56
+#: ../search/Tiles/File.cs:124
+#: ../search/Tiles/Note.cs:57
 #: ../search/Tiles/RSSFeed.cs:45
 #: ../search/Tiles/WebHistory.cs:50
 msgid "Title:"
 msgstr "Titel:"
 
-#: ../search/Tiles/File.cs:128
+#: ../search/Tiles/File.cs:125
 #: ../search/Tiles/Folder.cs:51
-#: ../search/Tiles/Note.cs:59
+#: ../search/Tiles/Note.cs:58
 msgid "Last Edited:"
 msgstr "Senast redigerad:"
 
-#: ../search/Tiles/File.cs:132
+#: ../search/Tiles/File.cs:128
 msgid "Author:"
 msgstr "Författare:"
 
-#: ../search/Tiles/File.cs:136
-#: ../search/Tiles/Folder.cs:54
-#: ../search/Tiles/Image.cs:81
+#: ../search/Tiles/File.cs:130
+#: ../search/Tiles/Folder.cs:52
+#: ../search/Tiles/Image.cs:79
 msgid "Full Path:"
 msgstr "Fullständig sökväg:"
 
@@ -212,36 +212,36 @@ msgstr "Ändrad:"
 msgid "IM Conversation"
 msgstr "IM-konversation"
 
-#: ../search/Tiles/IMLog.cs:81
+#: ../search/Tiles/IMLog.cs:87
 msgid "Name:"
 msgstr "Namn:"
 
-#: ../search/Tiles/IMLog.cs:82
-#: ../search/Tiles/MailMessage.cs:95
+#: ../search/Tiles/IMLog.cs:88
+#: ../search/Tiles/MailMessage.cs:92
 msgid "Date Received:"
 msgstr "Mottagningsdatum:"
 
-#: ../search/Tiles/MailAttachment.cs:46
+#: ../search/Tiles/MailAttachment.cs:47
 msgid "Mail attachment"
 msgstr "E-postbilaga"
 
-#: ../search/Tiles/MailMessage.cs:54
+#: ../search/Tiles/MailMessage.cs:55
 msgid "Send in Mail"
 msgstr "Skicka i e-post"
 
-#: ../search/Tiles/MailMessage.cs:86
+#: ../search/Tiles/MailMessage.cs:87
 msgid "Subject:"
 msgstr "Ämne:"
 
-#: ../search/Tiles/MailMessage.cs:90
+#: ../search/Tiles/MailMessage.cs:89
 msgid "To:"
 msgstr "Till:"
 
-#: ../search/Tiles/MailMessage.cs:90
+#: ../search/Tiles/MailMessage.cs:89
 msgid "From:"
 msgstr "Från:"
 
-#: ../search/Tiles/MailMessage.cs:95
+#: ../search/Tiles/MailMessage.cs:92
 msgid "Date Sent:"
 msgstr "Datum skickat:"
 
@@ -253,11 +253,11 @@ msgid_plural "{0} slides"
 msgstr[0] "{0} diabild"
 msgstr[1] "{0} diabilder"
 
-#: ../search/Tiles/RSSFeed.cs:48
+#: ../search/Tiles/RSSFeed.cs:46
 msgid "Site:"
 msgstr "Plats:"
 
-#: ../search/Tiles/RSSFeed.cs:51
+#: ../search/Tiles/RSSFeed.cs:47
 msgid "Date Viewed:"
 msgstr "Visningsdatum:"
 
@@ -273,24 +273,24 @@ msgid "Open"
 msgstr "Öppna"
 
 #: ../search/Tiles/Utils.cs:24
-msgid "Application"
+msgid "Applications"
 msgstr "Program"
 
 #: ../search/Tiles/Utils.cs:26
-msgid "Contact"
-msgstr "Kontakt"
+msgid "Contacts"
+msgstr "Kontakter"
 
 #: ../search/Tiles/Utils.cs:28
 msgid "Calendar Events"
 msgstr "Kalenderhändelser"
 
 #: ../search/Tiles/Utils.cs:30
-msgid "Folder"
-msgstr "Mapp"
+msgid "Folders"
+msgstr "Mappar"
 
 #: ../search/Tiles/Utils.cs:32
-msgid "Image"
-msgstr "Bild"
+msgid "Images"
+msgstr "Bilder"
 
 #: ../search/Tiles/Utils.cs:34
 msgid "Audio"
@@ -309,15 +309,15 @@ msgid "Conversations"
 msgstr "Konversationer"
 
 #: ../search/Tiles/Utils.cs:42
-msgid "Website"
-msgstr "Webbsida"
+msgid "Websites"
+msgstr "Webbsidor"
 
 #: ../search/Tiles/Utils.cs:44
-msgid "News Feed"
-msgstr "Nyhetskanal"
+msgid "News Feeds"
+msgstr "Nyhetskanaler"
 
 #: ../search/Tiles/Utils.cs:46
-msgid "Archive"
+msgid "Archives"
 msgstr "Arkiv"
 
 #: ../search/Tiles/Utils.cs:100
@@ -389,12 +389,12 @@ msgstr[1] "Om {0} år"
 msgid "Unknown duration"
 msgstr "Okänd speltid"
 
-#: ../search/Tiles/WebHistory.cs:53
+#: ../search/Tiles/WebHistory.cs:51
 msgid "URL:"
 msgstr "Url:"
 
 # Hmm
-#: ../search/Tiles/WebHistory.cs:56
+#: ../search/Tiles/WebHistory.cs:52
 msgid "Accessed:"
 msgstr "Kom åt:"
 
@@ -1146,6 +1146,12 @@ msgstr "{0:0.0} KB"
 msgid "{0:0.0} MB"
 msgstr "{0:0.0} MB"
 
+#~ msgid "Application"
+#~ msgstr "Program"
+#~ msgid "Contact"
+#~ msgstr "Kontakt"
+#~ msgid "Image"
+#~ msgstr "Bild"
 #~ msgid ""
 #~ "If you're wondering whether Best is working check your notification area "
 #~ "(system tray)"
