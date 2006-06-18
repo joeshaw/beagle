@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: beagle\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2006-04-23 18:05+0200\n"
-"PO-Revision-Date: 2006-04-23 18:55+0200\n"
+"POT-Creation-Date: 2006-06-17 10:08+0200\n"
+"PO-Revision-Date: 2006-06-17 17:43+0200\n"
 "Last-Translator: Tino Meinen <a.t.meinen@chello.nl>\n"
 "Language-Team: Dutch <vertaling@vrijschrift.org>\n"
 "MIME-Version: 1.0\n"
@@ -110,7 +110,7 @@ msgstr ""
 "\"There be dragons\"</b>"
 
 # handige tips/snelle tips/aanwijzingen/handwijzingen/tips
-#: ../search/Pages/QuickTips.cs:19 ../search/UIManager.cs:80
+#: ../search/Pages/QuickTips.cs:19 ../search/UIManager.cs:81
 msgid "Quick Tips"
 msgstr "Snelle tips"
 
@@ -152,19 +152,24 @@ msgstr "Zoektermen opgeven"
 msgid "Start searching"
 msgstr "Beginnen met zoeken"
 
-#: ../search/Tiles/Contact.cs:53
+# met/in/via e-mail verzenden
+#: ../search/Tiles/Contact.cs:30
+msgid "Send Mail"
+msgstr "Verstuur e-mail"
+
+#: ../search/Tiles/Contact.cs:68
 msgid "E-Mail:"
 msgstr "E-Mail:"
 
-#: ../search/Tiles/Contact.cs:56
+#: ../search/Tiles/Contact.cs:70
 msgid "Mobile Phone:"
 msgstr "Mobiele telefoon:"
 
-#: ../search/Tiles/Contact.cs:60
+#: ../search/Tiles/Contact.cs:72
 msgid "Work Phone:"
 msgstr "Telefoon werk:"
 
-#: ../search/Tiles/Contact.cs:64
+#: ../search/Tiles/Contact.cs:74
 msgid "Home Phone:"
 msgstr "Telefoon thuis:"
 
@@ -184,23 +189,23 @@ msgid "Move to Trash"
 msgstr "Naar prullenbak verplaatsen"
 
 # naam/titel
-#: ../search/Tiles/File.cs:125 ../search/Tiles/Note.cs:56
+#: ../search/Tiles/File.cs:124 ../search/Tiles/Note.cs:57
 #: ../search/Tiles/RSSFeed.cs:45 ../search/Tiles/WebHistory.cs:50
 msgid "Title:"
 msgstr "Titel:"
 
 # laatst bekeken
-#: ../search/Tiles/File.cs:128 ../search/Tiles/Folder.cs:51
-#: ../search/Tiles/Note.cs:59
+#: ../search/Tiles/File.cs:125 ../search/Tiles/Folder.cs:51
+#: ../search/Tiles/Note.cs:58
 msgid "Last Edited:"
 msgstr "Laatst bewerkt:"
 
-#: ../search/Tiles/File.cs:132
+#: ../search/Tiles/File.cs:128
 msgid "Author:"
 msgstr "Auteur:"
 
-#: ../search/Tiles/File.cs:136 ../search/Tiles/Folder.cs:54
-#: ../search/Tiles/Image.cs:81
+#: ../search/Tiles/File.cs:130 ../search/Tiles/Folder.cs:52
+#: ../search/Tiles/Image.cs:79
 msgid "Full Path:"
 msgstr "Volledig pad:"
 
@@ -228,30 +233,39 @@ msgstr "Laatste wijziging:"
 msgid "IM Conversation"
 msgstr "On-line gesprekken"
 
-#: ../search/Tiles/IMLog.cs:90
+#: ../search/Tiles/IMLog.cs:87
 msgid "Name:"
 msgstr "Naam:"
 
-#: ../search/Tiles/IMLog.cs:91 ../search/Tiles/MailMessage.cs:90
+#: ../search/Tiles/IMLog.cs:88 ../search/Tiles/MailMessage.cs:92
 msgid "Date Received:"
 msgstr "Ontvangen op:"
 
-#: ../search/Tiles/MailAttachment.cs:46
+#: ../search/Tiles/MailAttachment.cs:47
 msgid "Mail attachment"
 msgstr "Mailbijlage"
 
 # met/in/via e-mail verzenden
-#: ../search/Tiles/MailMessage.cs:54
+#: ../search/Tiles/MailMessage.cs:55
 msgid "Send in Mail"
 msgstr "Via e-mail verzenden"
 
-#: ../search/Tiles/MailMessage.cs:84
+#: ../search/Tiles/MailMessage.cs:87
 msgid "Subject:"
 msgstr "Onderwerp:"
 
-#: ../search/Tiles/MailMessage.cs:87
+#: ../search/Tiles/MailMessage.cs:89
+msgid "To:"
+msgstr "Aan:"
+
+#: ../search/Tiles/MailMessage.cs:89
 msgid "From:"
 msgstr "Van:"
+
+# laatst bekeken/bezocht
+#: ../search/Tiles/MailMessage.cs:92
+msgid "Date Sent:"
+msgstr "Datum verstuurd:"
 
 #: ../search/Tiles/Presentation.cs:33
 #, csharp-format
@@ -260,12 +274,12 @@ msgid_plural "{0} slides"
 msgstr[0] "{0} dia"
 msgstr[1] "{0} dia's"
 
-#: ../search/Tiles/RSSFeed.cs:48
+#: ../search/Tiles/RSSFeed.cs:46
 msgid "Site:"
 msgstr "Site:"
 
 # laatst bekeken/bezocht
-#: ../search/Tiles/RSSFeed.cs:51
+#: ../search/Tiles/RSSFeed.cs:47
 msgid "Date Viewed:"
 msgstr "Laatste bekeken:"
 
@@ -280,88 +294,115 @@ msgstr[1] "{0} pagina's"
 msgid "Open"
 msgstr "Openen"
 
-# meervoud is hier beter
 #: ../search/Tiles/Utils.cs:24
-msgid "Application"
+msgid "Applications"
 msgstr "Toepassingen"
 
-# meervoud is hier beter
 #: ../search/Tiles/Utils.cs:26
-msgid "Contact"
+msgid "Contacts"
 msgstr "Contacten"
+
+#: ../search/Tiles/Utils.cs:28
+msgid "Calendar Events"
+msgstr "Agenda gebeurtenissen"
 
 #
 # Common stuff for the templates
 #
-#: ../search/Tiles/Utils.cs:28
-msgid "Folder"
+#: ../search/Tiles/Utils.cs:30
+msgid "Folders"
 msgstr "Mappen"
 
-# meervoud is hier beter
-#: ../search/Tiles/Utils.cs:30
-msgid "Image"
+#: ../search/Tiles/Utils.cs:32
+msgid "Images"
 msgstr "Afbeeldingen"
 
 # geluid/audio
-#: ../search/Tiles/Utils.cs:32
+#: ../search/Tiles/Utils.cs:34
 msgid "Audio"
 msgstr "Audio"
 
 # beeld/video
-#: ../search/Tiles/Utils.cs:34
+#: ../search/Tiles/Utils.cs:36
 msgid "Video"
 msgstr "Video"
 
-#: ../search/Tiles/Utils.cs:36
+#: ../search/Tiles/Utils.cs:38
 msgid "Documents"
 msgstr "Documenten"
 
-#: ../search/Tiles/Utils.cs:38
+#: ../search/Tiles/Utils.cs:40
 msgid "Conversations"
 msgstr "Gesprekken"
 
-#: ../search/Tiles/Utils.cs:40
-msgid "Website"
+#: ../search/Tiles/Utils.cs:42
+msgid "Websites"
 msgstr "Websites"
 
-#: ../search/Tiles/Utils.cs:42
-msgid "News Feed"
-msgstr "Nieuws-feed"
+#: ../search/Tiles/Utils.cs:44
+msgid "News Feeds"
+msgstr "Nieuws-stroom"
 
 # Meervoud is hier beter
-#: ../search/Tiles/Utils.cs:44
-msgid "Archive"
+#: ../search/Tiles/Utils.cs:46
+msgid "Archives"
 msgstr "Archieven"
 
-#: ../search/Tiles/Utils.cs:88 ../search/Tiles/Utils.cs:122
-#: ../search/Tiles/Utils.cs:156 ../Util/StringFu.cs:77
+#: ../search/Tiles/Utils.cs:100 ../search/Tiles/Utils.cs:146
+#: ../search/Tiles/Utils.cs:192 ../Util/StringFu.cs:77
 msgid "Today"
 msgstr "Vandaag"
 
-#: ../search/Tiles/Utils.cs:90 ../search/Tiles/Utils.cs:124
-#: ../search/Tiles/Utils.cs:158 ../Util/StringFu.cs:79
+#: ../search/Tiles/Utils.cs:102 ../search/Tiles/Utils.cs:148
+#: ../search/Tiles/Utils.cs:194 ../Util/StringFu.cs:79
 msgid "Yesterday"
 msgstr "Gisteren"
 
-#: ../search/Tiles/Utils.cs:162
+#: ../search/Tiles/Utils.cs:104 ../search/Tiles/Utils.cs:150
+#: ../search/Tiles/Utils.cs:196
+msgid "Tomorrow"
+msgstr "Morgen"
+
+#: ../search/Tiles/Utils.cs:200
 #, csharp-format
 msgid "{0} week ago"
 msgid_plural "{0} weeks ago"
 msgstr[0] "{0} week geleden"
 msgstr[1] "{0} weken geleden"
 
+#: ../search/Tiles/Utils.cs:202
+#, csharp-format
+msgid "In {0} week"
+msgid_plural "In {0} weeks"
+msgstr[0] "{0} week geleden"
+msgstr[1] "{0} weken geleden"
+
 #. Let's say a year and a half to stop saying months
-#: ../search/Tiles/Utils.cs:164
+#: ../search/Tiles/Utils.cs:204
 #, csharp-format
 msgid "{0} month ago"
 msgid_plural "{0} months ago"
 msgstr[0] "{0} maand geleden"
 msgstr[1] "{0} maanden geleden"
 
-#: ../search/Tiles/Utils.cs:166
+#: ../search/Tiles/Utils.cs:206
+#, csharp-format
+msgid "In {0} month"
+msgid_plural "In {0} months"
+msgstr[0] "{0} maand"
+msgstr[1] "{0} maanden"
+
+#: ../search/Tiles/Utils.cs:208
 #, csharp-format
 msgid "{0} year ago"
 msgid_plural "{0} years ago"
+msgstr[0] "{0} jaar geleden"
+msgstr[1] "{0} jaar geleden"
+
+#: ../search/Tiles/Utils.cs:210
+#, fuzzy, csharp-format
+msgid "In {0} year"
+msgid_plural "In {0} years"
 msgstr[0] "{0} jaar geleden"
 msgstr[1] "{0} jaar geleden"
 
@@ -372,11 +413,11 @@ msgstr[1] "{0} jaar geleden"
 msgid "Unknown duration"
 msgstr "Onbekende lengte"
 
-#: ../search/Tiles/WebHistory.cs:53
+#: ../search/Tiles/WebHistory.cs:51
 msgid "URL:"
 msgstr "URL:"
 
-#: ../search/Tiles/WebHistory.cs:56
+#: ../search/Tiles/WebHistory.cs:52
 msgid "Accessed:"
 msgstr "Benaderd:"
 
@@ -602,127 +643,135 @@ msgstr ""
 "vrienden"
 
 # Bureuablad doorzoeken/desktop doorzoeken/desktop zoekprogramma/zoekhulp
-#: ../search/UIManager.cs:41
+#: ../search/UIManager.cs:42
 msgid "Close Desktop Search"
 msgstr "Desktop doorzoeking sluiten"
 
 # Bureuablad doorzoeken/desktop doorzoeken/desktop zoekprogramma/zoekhulp
-#: ../search/UIManager.cs:46 ../search/UIManager.cs:68
+#: ../search/UIManager.cs:47 ../search/UIManager.cs:69
 msgid "Exit Desktop Search"
 msgstr "Desktop doorzoeking afsluiten"
 
-#: ../search/UIManager.cs:53
+#: ../search/UIManager.cs:54
 msgid "_Search"
 msgstr "_Zoeken"
 
-#: ../search/UIManager.cs:56
+#: ../search/UIManager.cs:57
 msgid "_Actions"
 msgstr "_Acties"
 
-#: ../search/UIManager.cs:59
+#: ../search/UIManager.cs:60
 msgid "Sor_t"
 msgstr "_Sorteren"
 
-#: ../search/UIManager.cs:62
+#: ../search/UIManager.cs:63
 msgid "_Help"
 msgstr "_Hulp"
 
-#: ../search/UIManager.cs:71
+#: ../search/UIManager.cs:72
 msgid "_Contents"
 msgstr "In_houd"
 
-#: ../search/UIManager.cs:73
+#: ../search/UIManager.cs:74
 msgid "Help - Table of Contents"
 msgstr "Hulp - Inhoud"
 
 # Bureuablad doorzoeken/desktop doorzoeken/desktop zoekprogramma/zoekhulp
-#: ../search/UIManager.cs:77
+#: ../search/UIManager.cs:78
 msgid "About Desktop Search"
 msgstr "Over 'Desktop doorzoeking'"
 
 # alles/overal (doorzoeken)
-#: ../search/UIManager.cs:99
+#: ../search/UIManager.cs:100
 msgid "_Everywhere"
 msgstr "_Overal"
 
-#: ../search/UIManager.cs:101
+#: ../search/UIManager.cs:102
 msgid "Search everywhere"
 msgstr "Alles doorzoeken"
 
-#: ../search/UIManager.cs:104
+#: ../search/UIManager.cs:105
 msgid "_Applications"
 msgstr "_Toepassingen"
 
 # in toepassingen zoeken/toepassingen doorzoeken
-#: ../search/UIManager.cs:106
+#: ../search/UIManager.cs:107
 msgid "Search applications"
 msgstr "In toepassingen zoeken"
 
-#: ../search/UIManager.cs:109
+#: ../search/UIManager.cs:110
 msgid "_Contacts"
 msgstr "_Contacten"
 
-#: ../search/UIManager.cs:111
+#: ../search/UIManager.cs:112
 msgid "Search contacts"
 msgstr "In contacten zoeken"
 
-#: ../search/UIManager.cs:114
+#: ../search/UIManager.cs:115
+msgid "Ca_lendar events"
+msgstr "_Agenda gebeurtenissen"
+
+#: ../search/UIManager.cs:117
+msgid "Search calendar events"
+msgstr "In agenda zoeken"
+
+#: ../search/UIManager.cs:120
 msgid "_Documents"
 msgstr "_Documenten"
 
-#: ../search/UIManager.cs:116
+#: ../search/UIManager.cs:122
 msgid "Search documents"
 msgstr "In documenten zoeken"
 
-#: ../search/UIManager.cs:119
+#: ../search/UIManager.cs:125
 msgid "Conve_rsations"
 msgstr "_Gesprekken"
 
 # logboeken van expresberichten/
-#: ../search/UIManager.cs:121
+#: ../search/UIManager.cs:127
 msgid "Search E-Mail and Instant Messaging logs"
 msgstr "In e-mail en expresberichten zoeken"
 
-#: ../search/UIManager.cs:124
-msgid "Images"
-msgstr "Afbeeldingen"
+#: ../search/UIManager.cs:130
+msgid "_Images"
+msgstr "_Afbeeldingen"
 
-#: ../search/UIManager.cs:126
+#: ../search/UIManager.cs:132
 msgid "Search images"
 msgstr "In afbeeldingen zoeken"
 
-#: ../search/UIManager.cs:129
-msgid "Media"
-msgstr "Media"
+#: ../search/UIManager.cs:135
+msgid "_Media"
+msgstr "_Media"
 
 # in audio en videobestanden/beeld en geluidbestanden
-#: ../search/UIManager.cs:131
+#: ../search/UIManager.cs:137
 msgid "Search sound and video files"
 msgstr "In beeld- en geluidbestanden zoeken"
 
-#: ../search/UIManager.cs:138
+#: ../search/UIManager.cs:144
 msgid "Date _Modified"
 msgstr "_Laatste wijziging"
 
 # meest recentelijk gewijzigde bestanden
-#: ../search/UIManager.cs:139
+#: ../search/UIManager.cs:145
 msgid "Sort the most-recently-modified matches first"
 msgstr "Meest recente resultaten eerst"
 
-#: ../search/UIManager.cs:142
+#: ../search/UIManager.cs:148
 msgid "_Name"
 msgstr "_Naam"
 
-#: ../search/UIManager.cs:143
+#: ../search/UIManager.cs:149
 msgid "Sort matches by name"
 msgstr "Resultaten sorteren op naam"
 
-#: ../search/UIManager.cs:146
+#: ../search/UIManager.cs:152
 msgid "_Relevance"
 msgstr "_Relevantie"
 
 # eerst/bovenaan
-#: ../search/UIManager.cs:147
+#: ../search/UIManager.cs:153
 msgid "Sort the best matches first"
 msgstr "De beste resultaten eerst"
 
@@ -1173,6 +1222,18 @@ msgstr "{0:0.0} KB"
 #, csharp-format
 msgid "{0:0.0} MB"
 msgstr "{0:0.0} MB"
+
+# meervoud is hier beter
+#~ msgid "Application"
+#~ msgstr "Toepassingen"
+
+# meervoud is hier beter
+#~ msgid "Contact"
+#~ msgstr "Contacten"
+
+# meervoud is hier beter
+#~ msgid "Image"
+#~ msgstr "Afbeeldingen"
 
 #~ msgid "Edited:"
 #~ msgstr "Bewerkt:"
