@@ -31,6 +31,7 @@ using System.Globalization;
 using System.Reflection;
 using System.Threading;
 using System.Text;
+using System.Text.RegularExpressions;
 
 using Gtk;
 
@@ -329,12 +330,23 @@ class QueryTool {
 				break;
 
 			default:
+				
+				// We have to do some nastiness here to deal with shell quoting.
+				// See beagled/QueryStringParser.cs for an idea of how this works.
+				string Pattern = "(?<pm>[+-]?) (?<key>\\w+:)? (?<expr>.*)";
+				Regex r = new Regex (Pattern, RegexOptions.IgnorePatternWhitespace);
+				Match m = r.Match (args [i]);
+				
+				string quoted_query = m.Groups ["pm"].ToString () +
+					m.Groups ["key"].ToString () +
+					"\"" + m.Groups ["expr"].ToString () + "\"";
+				
 				if (query_str.Length > 0)
 					query_str.Append (' ');
-				query_str.Append ('"');
-				query_str.Append (args [i]);
-				query_str.Append ('"');
+				query_str.Append (quoted_query);
+				
 				break;
+				
 			}
 
 			++i;
