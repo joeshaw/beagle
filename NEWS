@@ -1,4 +1,107 @@
 
+Version 0.2.7
+June 19, 2006
+
+Daemon/Infrastructure:
+* Fix bugs in the query parser by using a regular expression-based
+  system.  (Max Wiehle, Keving Kubasik)
+* Compress items in the text cache, greatly reducing disk usage.
+  (Kevin, Lukas Lipka)
+* Fix a bug in which the sqlite database could get cluttered with
+  older files.  (Debajyoti Bera, Joe Shaw)
+* Again write out the PID of the locking process, or else we cannot
+  effectively detect dangling locks.  (Joe)
+* If we see a lockfile with no PID, assume it's a dangling lock.
+  (Joe)
+* No longer handle SIGQUIT to shut down the daemon; it's used very
+  valuably by Mono for debugging purposes.  (Joe)
+* Add a BEAGLE_DISABLE_XATTR environment variable to disable extended
+  attribute support for testing purposes.  (Joe)
+* Only print out the inotify "Maximum watch limit hit" warning once.
+  (Joe)
+* Convert HTML entities when creating snippets.  (Lukas, Kevin)
+* Patch our xdgmime installation to not crash if the data is reloaded
+  while it is processing it.  (Joe)
+* Fix an issue with newer Mono installations where the index helper
+  process would become a zombie after it finished and was never
+  cleaned up.  (Joe)
+* Fix a bug in which properties weren't being sorted and couldn't be
+  found.  (Max, Kevin, Bera)
+* Work around a Mono bug so that dangling symlinks in ~/.beagle/Log
+  are cleaned up at startup.  (Joe)
+
+Backends:
+* Generate mail delete events using the indexable generator rather
+  than creating many individual indexables by hand, which could flood
+  the scheduler and slow the system down.  (Joe)
+* Check for exceptions when calling GetChanges() on Evolution
+  calendars and addressbooks.  (Joe)
+
+Filters:
+* Added an SVG filter.  (Alexander Macdonald)
+* Re-enable the CHM filter.  (Miguel Cabrera)
+* Close the OpenOffice zip file when we're finished.  (Joe)
+* Index additional info from ebuild files, including installation info
+  and desktop file entries.  (Pat Double)
+* Add duration and bitrate properties to the music filter.  (Lukas)
+* Add a filter for Boo.  (Paul Betts)
+* Don't throw EncodingFoundException in the HTML parser unless asked
+  to.  (Bera)
+* Add application/x-php as a valid mime type for the PHP filter.
+  (Kevin)
+* Make sure the mime type is lower case before matching on it.
+  (Kevin, Joe)
+
+UI:
+* Catch exceptions if we can't load an application's icons.  (Joe,
+  Pierre Poissinger)
+* Include the date in note tiles.  (Lukas)
+* Only display the first line of a calendar item's description.  (Dan
+  Winship)
+* Use mailto URIs rather than invoking Evolution directly when
+  possible.  (Lukas)
+* Use desktop-launch to open file tiles when applicable.  (Lukas)
+* Make the text in the details pane selectable.  (Lukas)
+* If the calendar's description is empty, still display the item.
+  (Lukas)
+* Simplify the code for the details pane significantly.  (Lukas)
+* Scale down very large mime icons for display.  (Lukas)
+* Enable the "Open With" menu if GTK+ 2.8 is available at build-time.
+  (Kevin)
+* Force the window to get wider if the tiles get wider rather than
+  creating a horizontal scrollbar.  (Dan)
+
+
+Tools:
+* Add --enable-deletion to beagle-build-index, which removes deleted
+  files from the index.  (Bera)
+* Add $sharedir/gtk-doc/html and $sharedir/gnome/html to the
+  documentation crawl rules.  (Joe)
+* Fix a typo in the beagled manpage.  (Kevin Lamontagne)
+* Fix bugs dealing with shell quoting in beagle-query.  (Max)
+
+Translations:
+* Updated Brazilian Portuguese translation.  (Raphael Higino)
+* Updated Czech translation.  (Jakub Friedl)
+* Updated Dutch translation.  (Vincent van Adrighem)
+* Updated Finnish translation.  (Ilkka Tuohela)
+* Updated Galician translation.  (Ignacio Casal Quinteiro)
+* Updated Greek translation.  (Kostas Papadimas)
+* Updated Japanese translation.  (Takeshi Aihana)
+* Updated Norwegian bokmål translation.  (Øivind Hoel)
+* Updated Simplified Chinese translation.  (Funda Wang)
+* Updated Spanish translation.  (Francisco Javier F. Serrador)
+* Updated Swedish translation.  (Daniel Nylander)
+* Updated Vietnamese translation.  (Clytie Siddall)
+
+Everything Else:
+* Make the Firefox extension work with Bon Echo (2.0 Alpha).  (Joe)
+* Check for mmap() in configure.in, to optimize xdgmime.  (Joe)
+* Add a pkg-config file for the UiUtil.dll assembly.  (Luis Medinas)
+* Getting Dashboard building again.  (Luis)
+
+------------------------------------------------------
+
 Version 0.2.6
 April 29, 2006
 
