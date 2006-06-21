@@ -1,0 +1,1166 @@
+# translation of beagle.HEAD.po to Latvian
+# This file is distributed under the same license as the PACKAGE package.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER.
+# Raivis Dejus <orvils@gmail.com>, 2006.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: beagle.HEAD\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2006-06-21 15:24+0300\n"
+"PO-Revision-Date: 2006-06-20 15:25+0300\n"
+"Last-Translator: Raivis Dejus <orvils@gmail.com>\n"
+"Language-Team: Latvian <locale@laka.lv>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms:  nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n != 0 ? 1 : "
+"2);\n"
+"X-Generator: KBabel 1.10.2\n"
+
+#: ../glue/eggtrayicon.c:127
+msgid "Orientation"
+msgstr "Novietojums"
+
+#: ../glue/eggtrayicon.c:128
+msgid "The orientation of the tray."
+msgstr "Paplātes novietojums."
+
+#: ../ImLogViewer/ImLogViewer.glade.h:1
+msgid "<b>Conversations History</b>"
+msgstr "<b>Sarunu vēsture</b>"
+
+#: ../ImLogViewer/ImLogViewer.glade.h:2
+msgid "IM Viewer"
+msgstr "IM Skatītājs"
+
+#: ../ImLogViewer/ImLogWindow.cs:102
+#, csharp-format
+msgid "Conversations in {0}"
+msgstr "Sarunas iekš {0}"
+
+#: ../ImLogViewer/ImLogWindow.cs:109
+#, csharp-format
+msgid "Conversations with {0}"
+msgstr "Sarunas ar {0}"
+
+#: ../search/beagle-search.desktop.in.h:1 ../tools/settings.glade.h:27
+msgid "Search"
+msgstr "Meklēt"
+
+#: ../search/beagle-search.desktop.in.h:2
+msgid "Search for data on your desktop"
+msgstr "Meklēt datus jūsu datorā"
+
+#: ../search/Category.cs:108
+#, csharp-format
+msgid "{0}-{1} of {2}"
+msgstr "{0}-{1} no {2}"
+
+#: ../search/Pages/NoMatch.cs:19
+msgid "No results were found."
+msgstr "Nekas nav atrasts."
+
+#: ../search/Pages/NoMatch.cs:20
+#, csharp-format
+msgid "Your search for \"{0}\" did not match any files on your computer."
+msgstr "Meklējot \"{0}\" netika atrasti nekādi faili uz jūsu datora."
+
+#: ../search/Pages/NoMatch.cs:24
+msgid ""
+"You can change the scope of your search using the \"Search\" menu. A broader "
+"search scope might produce more results."
+msgstr ""
+"Jūs varat izmainīt meklēšanas apgabalu izmantojot \"Meklēt\" izvēlni. "
+"Plašāks meklēšanas apgabals var sniegt plašākus rezultātus."
+
+#: ../search/Pages/NoMatch.cs:26
+msgid ""
+"You should check the spelling of your search words to see if you "
+"accidentally misspelled any words."
+msgstr ""
+"Jums vajadzētu pārbaudīt meklējamās frāzes pareizrakstību un pārliecināties, "
+"ka esat ierakstījis to pareizi."
+
+#: ../search/Pages/QuickTips.cs:10
+msgid "You can use upper and lower case; search is case-insensitive."
+msgstr ""
+"Jūs varat izmantot lielos un mazos burtus; meklēšana nav rakstzmju jūtīga."
+
+#: ../search/Pages/QuickTips.cs:11
+msgid "To search for optional terms, use OR.  ex: <b>George OR Ringo</b>"
+msgstr ""
+"Lai meklētu vienu no vairākiem variantiem izmantojiet OR.  piem: <b>Džordžs "
+"OR Ringo</b>"
+
+#: ../search/Pages/QuickTips.cs:12
+msgid ""
+"To exclude search terms, use the minus symbol in front, such as <b>-cats</b>"
+msgstr ""
+"Lai izslēgtu no meklēsanas rezultātiem kādu vārdu lieciet tā prieksā "
+"mīnuszīmi, piem <b>-kaķi</b>"
+
+#: ../search/Pages/QuickTips.cs:13
+msgid ""
+"When searching for a phrase, add quotes. ex: <b>\"There be dragons\"</b>"
+msgstr ""
+"Ja gribat meklēt kādu frāzi lietojiet pēdiņas. piem: <b>\"Tur ir drakoni\"</"
+"b>"
+
+#: ../search/Pages/QuickTips.cs:19 ../search/UIManager.cs:81
+msgid "Quick Tips"
+msgstr "Ātrie padomi"
+
+#: ../search/Pages/RootUser.cs:12
+msgid "Beagle cannot be run as root"
+msgstr "Beagle nevar tikt palaistīta kā root"
+
+#: ../search/Pages/RootUser.cs:13
+msgid ""
+"For security reasons, Beagle cannot be run as root.  You should restart as a "
+"regular user."
+msgstr ""
+"Drošības deļ, Beagle nevar but palaistīta kā root. Jums jālogojas kā "
+"parastam lietotajam."
+
+#: ../search/Pages/StartDaemon.cs:19
+msgid "Search service not running"
+msgstr "Meklēšanas serviss nav palaists"
+
+#: ../search/Pages/StartDaemon.cs:21
+msgid "Start search service"
+msgstr "Palaist meklēšanas servisu"
+
+#: ../search/Search.cs:149
+msgid "_Find:"
+msgstr "_Meklēt:"
+
+#: ../search/Search.cs:163
+msgid "Find Now"
+msgstr "Meklēt tagad"
+
+#: ../search/Search.cs:209
+msgid "Type in search terms"
+msgstr "Ierakstiet meklēšanas nosacījumu"
+
+#: ../search/Search.cs:210
+msgid "Start searching"
+msgstr "Sākt meklēt"
+
+#: ../search/Tiles/Contact.cs:30
+msgid "Send Mail"
+msgstr "Sūtīt pastu"
+
+#: ../search/Tiles/Contact.cs:68
+msgid "E-Mail:"
+msgstr "E-pasts:"
+
+#: ../search/Tiles/Contact.cs:70
+msgid "Mobile Phone:"
+msgstr "Mobilais telefons:"
+
+#: ../search/Tiles/Contact.cs:72
+msgid "Work Phone:"
+msgstr "Darba telefons:"
+
+#: ../search/Tiles/Contact.cs:74
+msgid "Home Phone:"
+msgstr "Mājas telefons:"
+
+#: ../search/Tiles/File.cs:34
+msgid "Reveal in Folder"
+msgstr "Atklāt mapē"
+
+#: ../search/Tiles/File.cs:35
+msgid "E-Mail"
+msgstr "E-pasts"
+
+#. AddAction (new TileAction (Catalog.GetString ("Instant-Message"), InstantMessage));
+#. FIXME: s/"gtk-info"/Gtk.Stock.Info/ when we can depend on gtk# 2.8
+#. AddAction (new TileAction (Catalog.GetString ("Show Information"), "gtk-info", ShowInformation));
+#: ../search/Tiles/File.cs:37 ../search/Tiles/Folder.cs:38
+msgid "Move to Trash"
+msgstr "Pārvietot uz Miskasti"
+
+#: ../search/Tiles/File.cs:124 ../search/Tiles/Note.cs:57
+#: ../search/Tiles/RSSFeed.cs:45 ../search/Tiles/WebHistory.cs:50
+msgid "Title:"
+msgstr "Virsraksts:"
+
+#: ../search/Tiles/File.cs:125 ../search/Tiles/Folder.cs:51
+#: ../search/Tiles/Note.cs:58
+msgid "Last Edited:"
+msgstr "Pēdējo reizi rediģēts:"
+
+#: ../search/Tiles/File.cs:128
+msgid "Author:"
+msgstr "Autors:"
+
+#: ../search/Tiles/File.cs:130 ../search/Tiles/Folder.cs:52
+#: ../search/Tiles/Image.cs:79
+msgid "Full Path:"
+msgstr "Pilnais ceļš:"
+
+#: ../search/Tiles/Folder.cs:31
+msgid "Empty"
+msgstr "Tukšs"
+
+#: ../search/Tiles/Folder.cs:33
+#, csharp-format
+msgid "Contains {0} Item"
+msgid_plural "Contains {0} Items"
+msgstr[0] "Satur {0} elementu"
+msgstr[1] "Satur {0} elementus"
+msgstr[2] "Satur {0} elementu"
+
+#. AddAction (new TileAction (Catalog.GetString ("Add to Library"), Gtk.Stock.Add, AddToLibrary));
+#: ../search/Tiles/Image.cs:39
+msgid "Set as Wallpaper"
+msgstr "Uzstādīt kā fona attēlu"
+
+#: ../search/Tiles/Image.cs:78
+msgid "Modified:"
+msgstr "Modificēts:"
+
+#: ../search/Tiles/IMLog.cs:30
+msgid "IM Conversation"
+msgstr "IM saruna"
+
+#: ../search/Tiles/IMLog.cs:87
+msgid "Name:"
+msgstr "Vārds:"
+
+#: ../search/Tiles/IMLog.cs:88 ../search/Tiles/MailMessage.cs:92
+msgid "Date Received:"
+msgstr "Saņemšanas datums:"
+
+#: ../search/Tiles/MailAttachment.cs:47
+msgid "Mail attachment"
+msgstr "Pasta pielikums"
+
+#: ../search/Tiles/MailMessage.cs:55
+msgid "Send in Mail"
+msgstr "Nosūtīt uz pastu"
+
+#: ../search/Tiles/MailMessage.cs:87
+msgid "Subject:"
+msgstr "Temats:"
+
+#: ../search/Tiles/MailMessage.cs:89
+msgid "To:"
+msgstr "Kam:"
+
+#: ../search/Tiles/MailMessage.cs:89
+msgid "From:"
+msgstr "No:"
+
+#: ../search/Tiles/MailMessage.cs:92
+msgid "Date Sent:"
+msgstr "Sūtīšanas datums:"
+
+#: ../search/Tiles/Presentation.cs:33
+#, csharp-format
+msgid "{0} slide"
+msgid_plural "{0} slides"
+msgstr[0] "{0} mala"
+msgstr[1] "{0} malas"
+msgstr[2] "{0} malu"
+
+#: ../search/Tiles/RSSFeed.cs:46
+msgid "Site:"
+msgstr "Vietne:"
+
+#: ../search/Tiles/RSSFeed.cs:47
+msgid "Date Viewed:"
+msgstr "Skatītšanas datums:"
+
+#: ../search/Tiles/TextDocument.cs:37
+#, csharp-format
+msgid "{0} page"
+msgid_plural "{0} pages"
+msgstr[0] "{0} lapa"
+msgstr[1] "{0} lapas"
+msgstr[2] "{0} lapu"
+
+#: ../search/Tiles/Tile.cs:179
+msgid "Open"
+msgstr "Atvērt"
+
+#: ../search/Tiles/Utils.cs:24
+msgid "Applications"
+msgstr "Aplikācijas"
+
+#: ../search/Tiles/Utils.cs:26
+msgid "Contacts"
+msgstr "Kontakti"
+
+#: ../search/Tiles/Utils.cs:28
+msgid "Calendar Events"
+msgstr "Kalendāra notikumi"
+
+#: ../search/Tiles/Utils.cs:30
+msgid "Folders"
+msgstr "Mapes"
+
+#: ../search/Tiles/Utils.cs:32
+msgid "Images"
+msgstr "Attēli"
+
+#: ../search/Tiles/Utils.cs:34
+msgid "Audio"
+msgstr "Audio"
+
+#: ../search/Tiles/Utils.cs:36
+msgid "Video"
+msgstr "Video"
+
+#: ../search/Tiles/Utils.cs:38
+msgid "Documents"
+msgstr "Dokumenti"
+
+#: ../search/Tiles/Utils.cs:40
+msgid "Conversations"
+msgstr "Sarunas"
+
+#: ../search/Tiles/Utils.cs:42
+msgid "Websites"
+msgstr "Mājas lapas"
+
+#: ../search/Tiles/Utils.cs:44
+msgid "News Feeds"
+msgstr "Ziņu barotnes"
+
+#: ../search/Tiles/Utils.cs:46
+msgid "Archives"
+msgstr "Arhīvi"
+
+#: ../search/Tiles/Utils.cs:100 ../search/Tiles/Utils.cs:146
+#: ../search/Tiles/Utils.cs:192 ../Util/StringFu.cs:77
+msgid "Today"
+msgstr "Šodien"
+
+#: ../search/Tiles/Utils.cs:102 ../search/Tiles/Utils.cs:148
+#: ../search/Tiles/Utils.cs:194 ../Util/StringFu.cs:79
+msgid "Yesterday"
+msgstr "Vakar"
+
+#: ../search/Tiles/Utils.cs:104 ../search/Tiles/Utils.cs:150
+#: ../search/Tiles/Utils.cs:196
+msgid "Tomorrow"
+msgstr "Rīt"
+
+#: ../search/Tiles/Utils.cs:200
+#, csharp-format
+msgid "{0} week ago"
+msgid_plural "{0} weeks ago"
+msgstr[0] "{0} nedēļu atpakaļ"
+msgstr[1] "{0} nedēļas atpakaļ"
+msgstr[2] "{0} nedēļu atpakaļ"
+
+#: ../search/Tiles/Utils.cs:202
+#, csharp-format
+msgid "In {0} week"
+msgid_plural "In {0} weeks"
+msgstr[0] "Pēc {0} nedēļas"
+msgstr[1] "Pēc {0} nedēļām"
+msgstr[2] "Pēc {0} nedēļām"
+
+#. Let's say a year and a half to stop saying months
+#: ../search/Tiles/Utils.cs:204
+#, csharp-format
+msgid "{0} month ago"
+msgid_plural "{0} months ago"
+msgstr[0] "{0} mēnesi atpakaļ"
+msgstr[1] "{0} mēnešus atpakaļ"
+msgstr[2] "{0} mēnešus atpakaļ"
+
+#: ../search/Tiles/Utils.cs:206
+#, csharp-format
+msgid "In {0} month"
+msgid_plural "In {0} months"
+msgstr[0] "Pēc {0} mēneša"
+msgstr[1] "Pēc {0} mēnešiem"
+msgstr[2] "Pēc {0} mēnešiem"
+
+#: ../search/Tiles/Utils.cs:208
+#, csharp-format
+msgid "{0} year ago"
+msgid_plural "{0} years ago"
+msgstr[0] "{0} gadu atpakaļ"
+msgstr[1] "{0} gadus atpakaļ"
+msgstr[2] "{0} gadus atpakaļ"
+
+#: ../search/Tiles/Utils.cs:210
+#, csharp-format
+msgid "In {0} year"
+msgid_plural "In {0} years"
+msgstr[0] "Pēc {0} gada"
+msgstr[1] "Pēc {0} gadiem"
+msgstr[2] "Pēc {0} gadiem"
+
+#. FIXME: We need filters for video in Beagle.
+#. They should land soon when entagged-sharp gets video support.
+#: ../search/Tiles/Video.cs:27
+msgid "Unknown duration"
+msgstr "Nezināms ilgums"
+
+#: ../search/Tiles/WebHistory.cs:51
+msgid "URL:"
+msgstr "URL:"
+
+#: ../search/Tiles/WebHistory.cs:52
+msgid "Accessed:"
+msgstr "Piekļūts:"
+
+#: ../search/Tray/TrayIcon.cs:32
+msgid "Desktop Search"
+msgstr "Meklēšanas rīks"
+
+#: ../search/Tray/TrayIcon.cs:57
+msgid "No Recent Searches"
+msgstr "Nav nesēnu meklēšanu"
+
+#: ../search/Tray/TrayIcon.cs:62
+msgid "Recent Searches"
+msgstr "Nesēnās meklēšanas"
+
+#: ../search/Tray/TrayIcon.cs:78
+msgid "Clear"
+msgstr "Attīrīt"
+
+#: ../search/Tray/TrayIcon.cs:86
+msgid "Quit"
+msgstr "Iziet"
+
+#. Translators: the strings in TypeFilter.cs are for when the user
+#. * wants to limit search results to a specific type. You don't need
+#. * to give an exact translation of the exact same set of English
+#. * words. Just provide a list of likely words the user might use
+#. * after the "type:" keyword to refer to each type of match.
+#.
+#: ../search/TypeFilter.cs:36
+msgid ""
+"file\n"
+"files"
+msgstr ""
+"fails\n"
+"faili"
+
+#: ../search/TypeFilter.cs:37
+msgid ""
+"mail\n"
+"email\n"
+"e-mail"
+msgstr ""
+"pasts\n"
+"epasts\n"
+"e-pasts"
+
+#: ../search/TypeFilter.cs:38
+msgid ""
+"im\n"
+"ims\n"
+"instant message\n"
+"instant messages\n"
+"instant-message\n"
+"instant-messages\n"
+"chat\n"
+"chats"
+msgstr ""
+"im\n"
+"ims\n"
+"instant message\n"
+"instant messages\n"
+"instant-message\n"
+"instant-messages\n"
+"chat\n"
+"chats"
+
+#: ../search/TypeFilter.cs:39
+msgid ""
+"presentation\n"
+"presentations\n"
+"slideshow\n"
+"slideshows\n"
+"slide\n"
+"slides"
+msgstr ""
+"prezentācija\n"
+"prezentācijas\n"
+"slaidrāde\n"
+"slaidrādes\n"
+"slaids\n"
+"slaidi"
+
+#: ../search/TypeFilter.cs:41
+msgid ""
+"application\n"
+"applications\n"
+"app\n"
+"apps"
+msgstr ""
+"application\n"
+"applications\n"
+"app\n"
+"apps"
+
+#: ../search/TypeFilter.cs:42
+msgid ""
+"contact\n"
+"contacts\n"
+"vcard\n"
+"vcards"
+msgstr ""
+"saskare\n"
+"saskares\n"
+"vcard\n"
+"vcards"
+
+#: ../search/TypeFilter.cs:43
+msgid ""
+"folder\n"
+"folders"
+msgstr ""
+"mape\n"
+"mapes"
+
+#: ../search/TypeFilter.cs:44
+msgid ""
+"image\n"
+"images\n"
+"img"
+msgstr ""
+"image\n"
+"images\n"
+"img"
+
+#: ../search/TypeFilter.cs:45
+msgid "audio"
+msgstr "audio"
+
+#: ../search/TypeFilter.cs:46
+msgid "video"
+msgstr "video"
+
+#: ../search/TypeFilter.cs:47
+msgid "media"
+msgstr "media"
+
+#: ../search/TypeFilter.cs:48
+msgid ""
+"document\n"
+"documents\n"
+"office document\n"
+"office documents"
+msgstr ""
+"dokuments\n"
+"documenti\n"
+"biroja documents\n"
+"biroja documenti"
+
+#: ../search/TypeFilter.cs:49
+msgid ""
+"conversation\n"
+"conversations"
+msgstr ""
+"saruna\n"
+"sarunas"
+
+#: ../search/TypeFilter.cs:50
+msgid ""
+"web\n"
+"www\n"
+"website\n"
+"websites"
+msgstr ""
+"web\n"
+"www\n"
+"website\n"
+"websites"
+
+#: ../search/TypeFilter.cs:51
+msgid ""
+"feed\n"
+"news\n"
+"blog\n"
+"rss"
+msgstr ""
+"feed\n"
+"news\n"
+"blog\n"
+"rss"
+
+#: ../search/TypeFilter.cs:52
+msgid ""
+"archive\n"
+"archives"
+msgstr ""
+"arhīvs\n"
+"arhīvi"
+
+#: ../search/TypeFilter.cs:53
+msgid ""
+"person\n"
+"people"
+msgstr ""
+"persona\n"
+"cilvēks"
+
+#: ../search/UIManager.cs:42
+msgid "Close Desktop Search"
+msgstr "Aizvērt meklēšanas rīku"
+
+#: ../search/UIManager.cs:47 ../search/UIManager.cs:69
+msgid "Exit Desktop Search"
+msgstr "Iziet no meklēšanas rīka"
+
+#: ../search/UIManager.cs:54
+msgid "_Search"
+msgstr "_Meklēt"
+
+#: ../search/UIManager.cs:57
+msgid "_Actions"
+msgstr "_Darbības"
+
+#: ../search/UIManager.cs:60
+msgid "Sor_t"
+msgstr "Šķiro_t"
+
+#: ../search/UIManager.cs:63
+msgid "_Help"
+msgstr "_Palīdzība"
+
+#: ../search/UIManager.cs:72
+msgid "_Contents"
+msgstr "_Saturs"
+
+#: ../search/UIManager.cs:74
+msgid "Help - Table of Contents"
+msgstr "Palīdzība - satura rādītājs"
+
+#: ../search/UIManager.cs:78
+msgid "About Desktop Search"
+msgstr "Par meklēšanas rīku"
+
+#: ../search/UIManager.cs:100
+msgid "_Everywhere"
+msgstr "_Visur"
+
+#: ../search/UIManager.cs:102
+msgid "Search everywhere"
+msgstr "Meklēt visur"
+
+#: ../search/UIManager.cs:105
+msgid "_Applications"
+msgstr "_Aplikācijas"
+
+#: ../search/UIManager.cs:107
+msgid "Search applications"
+msgstr "Meklēt aplikācijas"
+
+#: ../search/UIManager.cs:110
+msgid "_Contacts"
+msgstr "_Kontakti"
+
+#: ../search/UIManager.cs:112
+msgid "Search contacts"
+msgstr "Kontaktu meklēšana"
+
+#: ../search/UIManager.cs:115
+msgid "Ca_lendar events"
+msgstr "Ka_lendāra notikumi"
+
+#: ../search/UIManager.cs:117
+msgid "Search calendar events"
+msgstr "Kalendāra notikumu meklēšana"
+
+#: ../search/UIManager.cs:120
+msgid "_Documents"
+msgstr "_Dokumenti"
+
+#: ../search/UIManager.cs:122
+msgid "Search documents"
+msgstr "Dokumentu meklēšana"
+
+#: ../search/UIManager.cs:125
+msgid "Conve_rsations"
+msgstr "Sa_runas"
+
+#: ../search/UIManager.cs:127
+msgid "Search E-Mail and Instant Messaging logs"
+msgstr "E-pasta un tūlītējās ziņojumapmaiņas žurnālu meklēšana"
+
+#: ../search/UIManager.cs:130
+msgid "_Images"
+msgstr "Attēl_i"
+
+#: ../search/UIManager.cs:132
+msgid "Search images"
+msgstr "Attēlu meklēšana"
+
+#: ../search/UIManager.cs:135
+msgid "_Media"
+msgstr "_Media"
+
+#: ../search/UIManager.cs:137
+msgid "Search sound and video files"
+msgstr "Skaņas un video failu meklēšāna"
+
+#: ../search/UIManager.cs:144
+msgid "Date _Modified"
+msgstr "_Modificēšanas Datums"
+
+#: ../search/UIManager.cs:145
+msgid "Sort the most-recently-modified matches first"
+msgstr "Atlasīt vispirms nesenāk modificētos rezultātus"
+
+#: ../search/UIManager.cs:148
+msgid "_Name"
+msgstr "_Vārds"
+
+#: ../search/UIManager.cs:149
+msgid "Sort matches by name"
+msgstr "Kārtot rezultātus pēc nosaukuma"
+
+#: ../search/UIManager.cs:152
+msgid "_Relevance"
+msgstr "_Atbilstība"
+
+#: ../search/UIManager.cs:153
+msgid "Sort the best matches first"
+msgstr "Atlasīt vispirms labak atbilstošos rezultātus"
+
+#: ../tools/Settings.cs:223
+msgid "Reload configuration"
+msgstr "Pārlādēt konfigurāciju"
+
+#: ../tools/Settings.cs:224
+msgid ""
+"The configuration file has been modified by another application. Do you wish "
+"to discard the currently displayed values and reload configuration from disk?"
+msgstr ""
+"Konfiguracijas failu ir izmainījusi kāda cita aplikācija.Vai Jūs gribat "
+"atcelt pašreizejās vertības un parlādēt konfiguraciju no diska?"
+
+#: ../tools/Settings.cs:262
+msgid "Select Path"
+msgstr "Atlasīt ceļu"
+
+#: ../tools/Settings.cs:281
+msgid "The selected path is already selected for indexing and wasn't added."
+msgstr "Atlaisīta ceļa jau atlaisīta uz indeksēšanu un nebija pievienota."
+
+#: ../tools/Settings.cs:284
+msgid ""
+"The selected path wasn't added. The list contains items that supercedes it "
+"and the data is already being indexed."
+msgstr ""
+"Izvēlētais ceļš netika pievienots. Sarakts satur augstākus elementus un dati "
+"jau tiek indeksēti."
+
+#: ../tools/Settings.cs:295 ../tools/Settings.cs:487
+msgid "Path not added"
+msgstr "Ceļš nav pievienots"
+
+#: ../tools/Settings.cs:304
+msgid "Remove obsolete paths"
+msgstr "Izvākt liekos ceļus"
+
+#: ../tools/Settings.cs:305
+msgid ""
+"Adding this path will obsolete some of the existing include paths. This will "
+"result in the removal of the old obsolete paths. Do you still wish to add it?"
+msgstr ""
+"Šī ceļa pievienošana dažus citus jau pievienotos iekļaušanas ceļus padarīs "
+"nevajadzīgus. Tā rezultātā vecais nederīgais ceļš tiks izņemts. Vai joprojām "
+"vēlaties pievienot jauno ceļu?"
+
+#: ../tools/Settings.cs:331
+msgid "Remove path"
+msgstr "Izvākt ceļu"
+
+#: ../tools/Settings.cs:332
+msgid ""
+"Are you sure you wish to remove this path from the list of directories to be "
+"included for indexing?"
+msgstr ""
+"Vai tiešām vēlaties izņemt šo ceļu no indeksējamo direktoriju saraksta?"
+
+#: ../tools/Settings.cs:361
+msgid "Remove item"
+msgstr "Izvākt elementu"
+
+#: ../tools/Settings.cs:362
+msgid ""
+"Are you sure you wish to remove this item from the list of data to be "
+"excluded from indexing?"
+msgstr ""
+"Vai tiešām vēlaties izņemt šo elementu no saraksta, kurā glabājas visi tie "
+"dati, kas netiek iekļauti indeksēšanā?"
+
+#: ../tools/Settings.cs:405
+msgid "Invalid host entry"
+msgstr "Nederīga saimnieka ieeja"
+
+#: ../tools/Settings.cs:412
+msgid "Remote host already present in the list."
+msgstr "Attālināts saimnieks jau ir sarakstā."
+
+#: ../tools/Settings.cs:421
+msgid "Netbeagle Node not added"
+msgstr "Netbeagle zars nav pievienots"
+
+#: ../tools/Settings.cs:437
+msgid "Remove host"
+msgstr "Izvākt saimnieku"
+
+#: ../tools/Settings.cs:438
+msgid "Are you sure you wish to remove this host from the list?"
+msgstr "Vai tiešam gribat izvākt šo saimnieku no saraksta?"
+
+#: ../tools/Settings.cs:459
+msgid "Select path"
+msgstr "Atlasīt ceļu"
+
+#: ../tools/Settings.cs:478
+msgid "The selected path is already configured for external access."
+msgstr "Atlasītais ceļš jau ir nokonfigurēts ārējai piekļuvei."
+
+#: ../tools/Settings.cs:502
+msgid "Remove public path"
+msgstr "Izvākt publisko ceļu"
+
+#: ../tools/Settings.cs:503
+msgid ""
+"Are you sure you wish to remove this entry from the list of public paths?"
+msgstr "Vai Jūs tiešam gribat izdzēst šo ieeju no publisko ceļu saraksta?"
+
+#: ../tools/Settings.cs:548 ../tools/Settings.cs:637 ../tools/Settings.cs:715
+#: ../tools/Settings.cs:791 ../tools/Settings.cs:1130
+msgid "Name"
+msgstr "Vārds"
+
+#: ../tools/Settings.cs:631
+msgid "Type"
+msgstr "Tips"
+
+#: ../tools/Settings.cs:684
+msgid "Path:"
+msgstr "Ceļš:"
+
+#: ../tools/Settings.cs:687
+msgid "Pattern:"
+msgstr "Šablons:"
+
+#: ../tools/Settings.cs:690
+msgid "Mail folder:"
+msgstr "Pasta mape:"
+
+#: ../tools/Settings.cs:1038
+msgid "Select Folder"
+msgstr "Izvēlēties mape"
+
+#: ../tools/Settings.cs:1064 ../tools/settings.glade.h:24
+msgid "P_ath:"
+msgstr "C_eļš:"
+
+#: ../tools/Settings.cs:1069
+msgid "M_ail folder:"
+msgstr "P_asta mape:"
+
+#: ../tools/Settings.cs:1074
+msgid "P_attern:"
+msgstr "Š_ablons:"
+
+#: ../tools/Settings.cs:1098
+msgid "Error adding path"
+msgstr "Kļūda pievienojot ceļu"
+
+#: ../tools/Settings.cs:1099
+msgid ""
+"The specified path could not be found and therefore it could not be added to "
+"the list of resources excluded for indexing."
+msgstr ""
+"Norādītais ceļš netika atrasts un tāpēc tas netika pievienots no "
+"indeksēšanas izkļauto resursu sarakstam."
+
+#: ../tools/Settings.cs:1129
+msgid "Show"
+msgstr "Parādīt"
+
+#: ../tools/settings.glade.h:1
+msgid "<b>Add Remote Host</b>"
+msgstr "<b>Pievienot attālinātu saimnieku</b>"
+
+#: ../tools/settings.glade.h:2
+msgid "<b>Administration</b>"
+msgstr "<b>Administrācija</b>"
+
+#: ../tools/settings.glade.h:3
+msgid "<b>Display</b>"
+msgstr "<b>Ekrāns</b>"
+
+#: ../tools/settings.glade.h:4
+msgid "<b>Exclude Resource</b>"
+msgstr "<b>Izkļautie resursi</b>"
+
+#: ../tools/settings.glade.h:5
+msgid "<b>General</b>"
+msgstr "<b>Vispārējs</b>"
+
+#: ../tools/settings.glade.h:6
+msgid "<b>Networking</b>"
+msgstr "<b>Tīklošana</b>"
+
+#: ../tools/settings.glade.h:7
+msgid "<b>Privacy</b>"
+msgstr "<b>Privātums</b>"
+
+#: ../tools/settings.glade.h:8
+msgid "<b>Select Mail Folder</b>"
+msgstr "<b>Izvēlēties pasta mapi</b>"
+
+#: ../tools/settings.glade.h:9
+msgid "Add Remote Host"
+msgstr "Pievienot attālinātu saimnieku"
+
+#: ../tools/settings.glade.h:10
+msgid ""
+"Add a remote search-enabled host you wish \n"
+"to network with."
+msgstr ""
+"Pievienot attālinātu meklēšanu atbalstošu resursdatoru \n"
+"kuram gribat pieslēgties."
+
+#: ../tools/settings.glade.h:12
+msgid "Add any additional paths to be included for indexing."
+msgstr "Pievienot papildus ceļus, kurus gribat iekļaut indeksēšanai."
+
+#: ../tools/settings.glade.h:13
+msgid "Add any remote search-enabled hosts you wish to network with."
+msgstr ""
+"Pievienot kādu attālinātu meklēšanu atbalstošu resursdatoru, ar kuru jūs "
+"gribētu saslēgties."
+
+#: ../tools/settings.glade.h:14
+msgid ""
+"Adjust which types of results should be visible, and in what order they "
+"should be presented when grouped by type."
+msgstr ""
+"Pielāgot kādu tipu rezultāti būs redzami un kādā secībā tie tiks rādīti, kad "
+"grupēšana notiks pēc to tipiem."
+
+#: ../tools/settings.glade.h:15
+msgid "Allow _external access to local search services"
+msgstr "Laut piekļuvi lokālajai meklēšanai no ārpuses"
+
+#: ../tools/settings.glade.h:16
+msgid "Alt"
+msgstr "Alt"
+
+#: ../tools/settings.glade.h:17
+msgid "Ctrl"
+msgstr "Ctrl"
+
+#: ../tools/settings.glade.h:18
+msgid "Display the search window by pressing:"
+msgstr "Rādīt meklēšanas logu pec spiešanu:"
+
+#: ../tools/settings.glade.h:19
+msgid "Exclude Resource"
+msgstr "Izkļaut resursu"
+
+#: ../tools/settings.glade.h:20
+msgid "Filename _pattern"
+msgstr "Faila nosaukums _paraugs"
+
+#: ../tools/settings.glade.h:21
+msgid "I_ndex my home directory"
+msgstr "I_ndekēt manu mājas mapi"
+
+#: ../tools/settings.glade.h:22
+msgid "Indexing"
+msgstr "Indeksēju"
+
+#: ../tools/settings.glade.h:23
+msgid "Networking"
+msgstr "Tīklošana"
+
+#: ../tools/settings.glade.h:25
+msgid "Please select a resource you wish to exclude from indexing."
+msgstr "Lūdzu izvelēties resurss, kuru Jūs velēties  izslēgt no indeksēšanai."
+
+#: ../tools/settings.glade.h:26
+msgid "Please select the mail folder you wish to exclude from indexing. "
+msgstr "Lūdzu izvelēties pasta mapi, kuru velaties izslēgt no indeksēšanas."
+
+#: ../tools/settings.glade.h:28
+msgid "Search Preferences"
+msgstr "Meklēšanas preferences"
+
+#: ../tools/settings.glade.h:29
+msgid "Select Mail Folder"
+msgstr "Izvēlēties pasta mapi"
+
+#: ../tools/settings.glade.h:30
+msgid ""
+"Specify any resources, such as paths, patterns, mail folders or type of "
+"objects you wish to exclude from indexing."
+msgstr ""
+"Norādīt resursu, piem, ceļu, šablonu, pasta mapei vai kāda cita tipa objektu "
+"kuru jūs vēlaties izslēgt no indeksēšanas."
+
+#: ../tools/settings.glade.h:31
+msgid "Specify paths that should be available for external access."
+msgstr "Norādiet ceļu, kas būtu pieejamais ārējai piekļuvei."
+
+#: ../tools/settings.glade.h:32
+msgid "Type:"
+msgstr "Tips:"
+
+#: ../tools/settings.glade.h:33
+msgid "_Address:"
+msgstr "_Adrese:"
+
+#: ../tools/settings.glade.h:34
+msgid "_Allow Beagle to be run as root"
+msgstr "Ļ_aut Beagle palaisties kā root lietotājam"
+
+#: ../tools/settings.glade.h:35
+msgid "_Folder path"
+msgstr "_Mapes ceļš"
+
+#: ../tools/settings.glade.h:36
+msgid "_Mail folder"
+msgstr "Pasta _mape"
+
+#: ../tools/settings.glade.h:37
+msgid "_Maximum number of results displayed:"
+msgstr "_Maksimālais rādāmo rezultātu skaits:"
+
+#: ../tools/settings.glade.h:38
+msgid "_Start search & indexing services automatically "
+msgstr "_Sakt meklēšanas & indeksēšanas pakalpojumus automātiski "
+
+#: ../tools/beagle-settings.desktop.in.h:1
+msgid "Configure Desktop Search & Indexing"
+msgstr "Konfugurēt meklēšanas rīku & indeksēšanu"
+
+#: ../tools/beagle-settings.desktop.in.h:2
+msgid "Configure search & indexing properties"
+msgstr "Konfigurēt meklēšanas & indeksēšanas parametrus"
+
+#: ../tools/beagle-settings.desktop.in.h:3
+msgid "Search & Indexing"
+msgstr "Meklēšana & Indeksēšana"
+
+#: ../Util/Evolution.cs:45 ../Util/Evolution.cs:163
+msgid "On This Computer"
+msgstr "Uz ši datora"
+
+#: ../Util/ExifData.cs:226
+msgid "Image Directory"
+msgstr "Attēlau direktorija"
+
+#: ../Util/ExifData.cs:228
+msgid "Thumbnail Directory"
+msgstr "Sīktēlu direktorija"
+
+#: ../Util/ExifData.cs:230
+msgid "Exif Directory"
+msgstr "Exif direktorija"
+
+#: ../Util/ExifData.cs:232
+msgid "GPS Directory"
+msgstr "GPS direktorija"
+
+#: ../Util/ExifData.cs:234
+msgid "InterOperability Directory"
+msgstr "Sadarbspējas direktorija"
+
+#: ../Util/ExifData.cs:236
+msgid "Unknown Directory"
+msgstr "Nezināma direktorija"
+
+#. Translators: Example output: Aug 9
+#: ../Util/StringFu.cs:82
+msgid "MMM d"
+msgstr "MMM d"
+
+#. Translators: Example output: Aug 9, 2000
+#: ../Util/StringFu.cs:85
+msgid "MMM d, yyyy"
+msgstr "MMM d, gggg"
+
+#. Translators: Example output: 11:05 AM  (note h = 12-hour time)
+#: ../Util/StringFu.cs:88
+msgid "h:mm tt"
+msgstr "h:mm tt"
+
+#. Translators: {0} is a date (e.g. 'Today' or 'Apr 23'), {1} is the time
+#: ../Util/StringFu.cs:94
+#, csharp-format
+msgid "{0}, {1}"
+msgstr "{0}, {1}"
+
+#. To translators: {0} is the time of the day, eg. 13:45
+#: ../Util/StringFu.cs:111
+#, csharp-format
+msgid "Today, {0}"
+msgstr "Šodien, {0}"
+
+#. To translators: {0} is the time of the day, eg. 13:45
+#: ../Util/StringFu.cs:114
+#, csharp-format
+msgid "Yesterday, {0}"
+msgstr "Vakar, {0}"
+
+#. To translators: {0} is the number of days that have passed, {1} is the time of the day, eg. 13:45
+#: ../Util/StringFu.cs:117
+#, csharp-format
+msgid "{0} days ago, {1}"
+msgstr "{0} dienas atpakaļ, {1}"
+
+#. Translators: Example output: January 3, 3:45 PM
+#: ../Util/StringFu.cs:122
+msgid "MMMM d, h:mm tt"
+msgstr "MMMM d, h:mm tt"
+
+#. Translators: Example output: March 23 2001, 10:04 AM
+#: ../Util/StringFu.cs:127
+msgid "MMMM d yyyy, h:mm tt"
+msgstr "MMMM d yyyy, h:mm tt"
+
+#: ../Util/StringFu.cs:137
+#, csharp-format
+msgid "{0} hour"
+msgid_plural "{0} hours"
+msgstr[0] "{0} stunda"
+msgstr[1] "{0} stundas"
+msgstr[2] "{0} stundu"
+
+#: ../Util/StringFu.cs:144
+#, csharp-format
+msgid "{0} minute"
+msgid_plural "{0} minutes"
+msgstr[0] "{0} minūte"
+msgstr[1] "{0} minūtes"
+msgstr[2] "{0} minūšu"
+
+#. Translators: {0} is a file size in bytes
+#: ../Util/StringFu.cs:160
+#, csharp-format
+msgid "{0} bytes"
+msgstr "{0} biti"
+
+#. Translators: {0} is a file size in kilobytes
+#: ../Util/StringFu.cs:164
+#, csharp-format
+msgid "{0:0.0} KB"
+msgstr "{0:0.0} KB"
+
+#. Translators: {0} is a file size in megabytes
+#: ../Util/StringFu.cs:167
+#, csharp-format
+msgid "{0:0.0} MB"
+msgstr "{0:0.0} MB"
