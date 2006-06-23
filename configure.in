@@ -472,7 +472,7 @@ dnl ----------------------------------------------
 
 dnl Galago
 
-PKG_CHECK_MODULES(GALAGO, galago-sharp, enable_galago=yes, enable_galago=no)
+PKG_CHECK_MODULES(GALAGO, galago-sharp <= 0.3.4 , enable_galago=yes, enable_galago=no)
 AM_CONDITIONAL(ENABLE_GALAGO, test "x$enable_galago" = "xyes")
 AC_SUBST(GALAGO_LIBS)
 
