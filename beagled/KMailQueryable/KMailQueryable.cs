@@ -309,17 +309,21 @@ namespace Beagle.Daemon.KMailQueryable {
 				StreamReader reader = new StreamReader (kmailrc);
 				string section = "";
 				string line;
-				while ((line = reader.ReadLine ()) != null) {
-					if (line.StartsWith ("[") && line.EndsWith ("]")) {
-						section = line;
-					}
-					if (section == "[General]") {
-						if (line.StartsWith ("folders=") && line.Length > 8) {
-							return StringFu.ExpandEnvVariables (line.Substring(8));
+
+				try {
+					while ((line = reader.ReadLine ()) != null) {
+						if (line.StartsWith ("[") && line.EndsWith ("]")) {
+							section = line;
+						}
+						if (section == "[General]") {
+							if (line.StartsWith ("folders=") && line.Length > 8) {
+								return StringFu.ExpandEnvVariables (line.Substring(8));
+							}
 						}
 					}
+				} finally {
+					reader.Close ();
 				}
-				reader.Close ();
 			}
 
 			return null;
