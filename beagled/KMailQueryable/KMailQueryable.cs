@@ -319,6 +319,7 @@ namespace Beagle.Daemon.KMailQueryable {
 						}
 					}
 				}
+				reader.Close ();
 			}
 
 			return null;
