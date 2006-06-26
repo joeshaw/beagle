@@ -1,23 +1,23 @@
 # Hungarian translation of beagle.
 # Copyright (C) 2005 THE beagle'S COPYRIGHT HOLDER
 # This file is distributed under the same license as the beagle package.
-#
-#
 # Imre Kálomista <ikalomista@gmail.com>, 2005.
 # Gabor Kelemen <kelemeng@gnome.hu>, 2005, 2006.
+#
+#
 msgid ""
 msgstr ""
-"Project-Id-Version: beagle.HEAD.hu\n"
+"Project-Id-Version: beagle.HEAD\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2006-04-11 00:40+0200\n"
-"PO-Revision-Date: 2006-01-25 17:34+0100\n"
+"POT-Creation-Date: 2006-06-23 00:40+0200\n"
+"PO-Revision-Date: 2006-06-24 23:20+0200\n"
 "Last-Translator: Gabor Kelemen <kelemeng@gnome.hu>\n"
 "Language-Team: Hungarian <gnome@gnome.hu>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=1; plural=0;\n"
-"X-Generator: KBabel 1.11.1\n"
+"Plural-Forms:  nplurals=1; plural=0;\n"
+"X-Generator: KBabel 1.10.2\n"
 
 #: ../glue/eggtrayicon.c:127
 msgid "Orientation"
@@ -105,7 +105,7 @@ msgstr ""
 "Mondatok keresésénél használjon idézőjeleket, például: <b>\"A gép forog, az "
 "alkotó pihen\"</b>"
 
-#: ../search/Pages/QuickTips.cs:19 ../search/UIManager.cs:65
+#: ../search/Pages/QuickTips.cs:19 ../search/UIManager.cs:81
 msgid "Quick Tips"
 msgstr "Gyorstippek"
 
@@ -117,7 +117,9 @@ msgstr "A Beagle nem futtatható rootként"
 msgid ""
 "For security reasons, Beagle cannot be run as root.  You should restart as a "
 "regular user."
-msgstr "Biztonsági okokból a Beagle nem futtatható rootként. Indítsa újra szabályos felhasználóként."
+msgstr ""
+"Biztonsági okokból a Beagle nem futtatható rootként. Indítsa újra szabályos "
+"felhasználóként."
 
 #: ../search/Pages/StartDaemon.cs:19
 msgid "Search service not running"
@@ -143,53 +145,57 @@ msgstr "Írja be a keresendő kifejezéseket"
 msgid "Start searching"
 msgstr "A keresés megkezdése"
 
-#: ../search/Tiles/Contact.cs:53
+#: ../search/Tiles/Contact.cs:30
+msgid "Send Mail"
+msgstr "Levél küldése"
+
+#: ../search/Tiles/Contact.cs:68
 msgid "E-Mail:"
 msgstr "E-mail:"
 
-#: ../search/Tiles/Contact.cs:56
+#: ../search/Tiles/Contact.cs:70
 msgid "Mobile Phone:"
 msgstr "Mobiltelefon:"
 
-#: ../search/Tiles/Contact.cs:60
+#: ../search/Tiles/Contact.cs:72
 msgid "Work Phone:"
 msgstr "Munkahelyi telefon:"
 
-#: ../search/Tiles/Contact.cs:64
+#: ../search/Tiles/Contact.cs:74
 msgid "Home Phone:"
 msgstr "Otthoni telefon:"
 
-#: ../search/Tiles/File.cs:33
+#: ../search/Tiles/File.cs:34
 msgid "Reveal in Folder"
 msgstr "Megjelenítés mappában"
 
-#: ../search/Tiles/File.cs:34
+#: ../search/Tiles/File.cs:35
 msgid "E-Mail"
 msgstr "E-mail"
 
 #. AddAction (new TileAction (Catalog.GetString ("Instant-Message"), InstantMessage));
 #. FIXME: s/"gtk-info"/Gtk.Stock.Info/ when we can depend on gtk# 2.8
 #. AddAction (new TileAction (Catalog.GetString ("Show Information"), "gtk-info", ShowInformation));
-#: ../search/Tiles/File.cs:36 ../search/Tiles/Folder.cs:38
+#: ../search/Tiles/File.cs:37 ../search/Tiles/Folder.cs:38
 msgid "Move to Trash"
 msgstr "Áthelyezés a Kukába"
 
-#: ../search/Tiles/File.cs:132 ../search/Tiles/Note.cs:57
+#: ../search/Tiles/File.cs:124 ../search/Tiles/Note.cs:57
 #: ../search/Tiles/RSSFeed.cs:45 ../search/Tiles/WebHistory.cs:50
 msgid "Title:"
 msgstr "Cím:"
 
-#: ../search/Tiles/File.cs:135 ../search/Tiles/Folder.cs:51
-#: ../search/Tiles/Note.cs:60
+#: ../search/Tiles/File.cs:125 ../search/Tiles/Folder.cs:51
+#: ../search/Tiles/Note.cs:58
 msgid "Last Edited:"
 msgstr "Utoljára szerkesztve:"
 
-#: ../search/Tiles/File.cs:139
+#: ../search/Tiles/File.cs:128
 msgid "Author:"
 msgstr "Szerző:"
 
-#: ../search/Tiles/File.cs:143 ../search/Tiles/Folder.cs:54
-#: ../search/Tiles/Image.cs:81
+#: ../search/Tiles/File.cs:130 ../search/Tiles/Folder.cs:52
+#: ../search/Tiles/Image.cs:79
 msgid "Full Path:"
 msgstr "Teljes útvonal:"
 
@@ -213,33 +219,41 @@ msgstr "Beállítás háttérképként"
 msgid "Modified:"
 msgstr "Módosítva:"
 
-#: ../search/Tiles/IMLog.cs:29
+#: ../search/Tiles/IMLog.cs:30
 msgid "IM Conversation"
 msgstr "Azonnali üzenő társalgás"
 
-#: ../search/Tiles/IMLog.cs:89
+#: ../search/Tiles/IMLog.cs:87
 msgid "Name:"
 msgstr "Név:"
 
-#: ../search/Tiles/IMLog.cs:90 ../search/Tiles/MailMessage.cs:89
+#: ../search/Tiles/IMLog.cs:88 ../search/Tiles/MailMessage.cs:92
 msgid "Date Received:"
 msgstr "Fogadás dátuma:"
 
-#: ../search/Tiles/MailAttachment.cs:45
+#: ../search/Tiles/MailAttachment.cs:47
 msgid "Mail attachment"
 msgstr "E-mail melléklet"
 
-#: ../search/Tiles/MailMessage.cs:53
+#: ../search/Tiles/MailMessage.cs:55
 msgid "Send in Mail"
 msgstr "Küldés levélben"
 
-#: ../search/Tiles/MailMessage.cs:83
+#: ../search/Tiles/MailMessage.cs:87
 msgid "Subject:"
 msgstr "Tárgy:"
 
-#: ../search/Tiles/MailMessage.cs:86
+#: ../search/Tiles/MailMessage.cs:89
+msgid "To:"
+msgstr "Címzett:"
+
+#: ../search/Tiles/MailMessage.cs:89
 msgid "From:"
 msgstr "Feladó:"
+
+#: ../search/Tiles/MailMessage.cs:92
+msgid "Date Sent:"
+msgstr "Küldés dátuma:"
 
 #: ../search/Tiles/Presentation.cs:33
 #, csharp-format
@@ -248,11 +262,11 @@ msgid_plural "{0} slides"
 msgstr[0] "{0} fólia"
 msgstr[1] "{0} fólia"
 
-#: ../search/Tiles/RSSFeed.cs:48
+#: ../search/Tiles/RSSFeed.cs:46
 msgid "Site:"
 msgstr "Hely:"
 
-#: ../search/Tiles/RSSFeed.cs:51
+#: ../search/Tiles/RSSFeed.cs:47
 msgid "Date Viewed:"
 msgstr "Megtekintés dátuma:"
 
@@ -268,80 +282,110 @@ msgid "Open"
 msgstr "Megnyitás"
 
 #: ../search/Tiles/Utils.cs:24
-msgid "Application"
-msgstr "Alkalmazás"
+msgid "Applications"
+msgstr "Alkalmazások"
 
 #: ../search/Tiles/Utils.cs:26
-msgid "Contact"
-msgstr "Névjegy"
+msgid "Contacts"
+msgstr "Névjegyek"
 
 #: ../search/Tiles/Utils.cs:28
-msgid "Folder"
-msgstr "Mappa"
+msgid "Calendar Events"
+msgstr "Naptáresemények"
 
 #: ../search/Tiles/Utils.cs:30
-msgid "Image"
-msgstr "Kép"
+msgid "Folders"
+msgstr "Mappák"
 
 #: ../search/Tiles/Utils.cs:32
+msgid "Images"
+msgstr "Képek"
+
+#: ../search/Tiles/Utils.cs:34
 msgid "Audio"
 msgstr "Hang"
 
-#: ../search/Tiles/Utils.cs:34
+#: ../search/Tiles/Utils.cs:36
 msgid "Video"
 msgstr "Videó"
 
-#: ../search/Tiles/Utils.cs:36
+#: ../search/Tiles/Utils.cs:38
 msgid "Documents"
 msgstr "Dokumentumok"
 
-#: ../search/Tiles/Utils.cs:38
+#: ../search/Tiles/Utils.cs:40
 msgid "Conversations"
 msgstr "Társalgások"
 
-#: ../search/Tiles/Utils.cs:40
-msgid "Website"
-msgstr "Webhely"
-
 #: ../search/Tiles/Utils.cs:42
-msgid "News Feed"
-msgstr "Hírfolyam"
+msgid "Websites"
+msgstr "Webhelyek"
 
 #: ../search/Tiles/Utils.cs:44
-msgid "Archive"
-msgstr "Archívum"
+msgid "News Feeds"
+msgstr "Hírfolyamok"
 
-#: ../search/Tiles/Utils.cs:88 ../search/Tiles/Utils.cs:122
-#: ../search/Tiles/Utils.cs:156 ../Util/StringFu.cs:77
+#: ../search/Tiles/Utils.cs:46
+msgid "Archives"
+msgstr "Archívumok"
+
+#: ../search/Tiles/Utils.cs:100 ../search/Tiles/Utils.cs:146
+#: ../search/Tiles/Utils.cs:192 ../Util/StringFu.cs:77
 msgid "Today"
 msgstr "Ma"
 
-#: ../search/Tiles/Utils.cs:90 ../search/Tiles/Utils.cs:124
-#: ../search/Tiles/Utils.cs:158 ../Util/StringFu.cs:79
+#: ../search/Tiles/Utils.cs:102 ../search/Tiles/Utils.cs:148
+#: ../search/Tiles/Utils.cs:194 ../Util/StringFu.cs:79
 msgid "Yesterday"
 msgstr "Tegnap"
 
-#: ../search/Tiles/Utils.cs:162
+#: ../search/Tiles/Utils.cs:104 ../search/Tiles/Utils.cs:150
+#: ../search/Tiles/Utils.cs:196
+msgid "Tomorrow"
+msgstr "Holnap"
+
+#: ../search/Tiles/Utils.cs:200
 #, csharp-format
 msgid "{0} week ago"
 msgid_plural "{0} weeks ago"
 msgstr[0] "{0} héttel ezelőtt"
 msgstr[1] "{0} héttel ezelőtt"
 
+#: ../search/Tiles/Utils.cs:202
+#, csharp-format
+msgid "In {0} week"
+msgid_plural "In {0} weeks"
+msgstr[0] "{0} héten belül"
+msgstr[1] "{0} héten belül"
+
 #. Let's say a year and a half to stop saying months
-#: ../search/Tiles/Utils.cs:164
+#: ../search/Tiles/Utils.cs:204
 #, csharp-format
 msgid "{0} month ago"
 msgid_plural "{0} months ago"
 msgstr[0] "{0} hónappal ezelőtt"
 msgstr[1] "{0} hónappal ezelőtt"
 
-#: ../search/Tiles/Utils.cs:166
+#: ../search/Tiles/Utils.cs:206
+#, csharp-format
+msgid "In {0} month"
+msgid_plural "In {0} months"
+msgstr[0] "{0} hónapon belül"
+msgstr[1] "{0} hónapon belül"
+
+#: ../search/Tiles/Utils.cs:208
 #, csharp-format
 msgid "{0} year ago"
 msgid_plural "{0} years ago"
 msgstr[0] "{0} évvel ezelőtt"
 msgstr[1] "{0} évvel ezelőtt"
+
+#: ../search/Tiles/Utils.cs:210
+#, csharp-format
+msgid "In {0} year"
+msgid_plural "In {0} years"
+msgstr[0] "{0} éven belül"
+msgstr[1] "{0} éven belül"
 
 #. FIXME: We need filters for video in Beagle.
 #. They should land soon when entagged-sharp gets video support.
@@ -349,11 +393,11 @@ msgstr[1] "{0} évvel ezelőtt"
 msgid "Unknown duration"
 msgstr "Ismeretlen időtartam"
 
-#: ../search/Tiles/WebHistory.cs:53
+#: ../search/Tiles/WebHistory.cs:51
 msgid "URL:"
 msgstr "URL:"
 
-#: ../search/Tiles/WebHistory.cs:56
+#: ../search/Tiles/WebHistory.cs:52
 msgid "Accessed:"
 msgstr "Utolsó hozzáférés:"
 
@@ -563,115 +607,127 @@ msgstr ""
 "ember\n"
 "emberek"
 
-#: ../search/UIManager.cs:35
-msgid "_Search"
-msgstr "_Keresés"
+#: ../search/UIManager.cs:42
+msgid "Close Desktop Search"
+msgstr "Asztali keresés bezárása"
 
-#: ../search/UIManager.cs:38
-msgid "_Actions"
-msgstr "_Műveletek"
-
-#: ../search/UIManager.cs:41
-msgid "Sor_t"
-msgstr "_Rendezés"
-
-#: ../search/UIManager.cs:44
-msgid "_Help"
-msgstr "_Súgó"
-
-#: ../search/UIManager.cs:49 ../search/UIManager.cs:53
+#: ../search/UIManager.cs:47 ../search/UIManager.cs:69
 msgid "Exit Desktop Search"
 msgstr "Kilépés az asztali keresőből"
 
-#: ../search/UIManager.cs:56
+#: ../search/UIManager.cs:54
+msgid "_Search"
+msgstr "_Keresés"
+
+#: ../search/UIManager.cs:57
+msgid "_Actions"
+msgstr "_Műveletek"
+
+#: ../search/UIManager.cs:60
+msgid "Sor_t"
+msgstr "_Rendezés"
+
+#: ../search/UIManager.cs:63
+msgid "_Help"
+msgstr "_Súgó"
+
+#: ../search/UIManager.cs:72
 msgid "_Contents"
 msgstr "_Tartalom"
 
-#: ../search/UIManager.cs:58
+#: ../search/UIManager.cs:74
 msgid "Help - Table of Contents"
 msgstr "Súgó - Tartalom"
 
-#: ../search/UIManager.cs:62
+#: ../search/UIManager.cs:78
 msgid "About Desktop Search"
 msgstr "Az Asztali kereső névjegye"
 
-#: ../search/UIManager.cs:78
+#: ../search/UIManager.cs:100
 msgid "_Everywhere"
 msgstr "_Mindenütt"
 
-#: ../search/UIManager.cs:80
+#: ../search/UIManager.cs:102
 msgid "Search everywhere"
 msgstr "Keresés mindenütt"
 
-#: ../search/UIManager.cs:83
+#: ../search/UIManager.cs:105
 msgid "_Applications"
 msgstr "_Alkalmazások"
 
-#: ../search/UIManager.cs:85
+#: ../search/UIManager.cs:107
 msgid "Search applications"
 msgstr "Alkalmazások keresése"
 
-#: ../search/UIManager.cs:88
+#: ../search/UIManager.cs:110
 msgid "_Contacts"
 msgstr "_Névjegyek"
 
-#: ../search/UIManager.cs:90
+#: ../search/UIManager.cs:112
 msgid "Search contacts"
 msgstr "Névjegyek keresése"
 
-#: ../search/UIManager.cs:93
+#: ../search/UIManager.cs:115
+msgid "Ca_lendar events"
+msgstr "Na_ptáresemények"
+
+#: ../search/UIManager.cs:117
+msgid "Search calendar events"
+msgstr "Naptáresemények keresése"
+
+#: ../search/UIManager.cs:120
 msgid "_Documents"
 msgstr "_Dokumentumok"
 
-#: ../search/UIManager.cs:95
+#: ../search/UIManager.cs:122
 msgid "Search documents"
 msgstr "Dokumentumok keresése"
 
-#: ../search/UIManager.cs:98
+#: ../search/UIManager.cs:125
 msgid "Conve_rsations"
 msgstr "_Társalgások"
 
-#: ../search/UIManager.cs:100
+#: ../search/UIManager.cs:127
 msgid "Search E-Mail and Instant Messaging logs"
 msgstr "E-mailek és azonnaliüzenő-naplók keresése"
 
-#: ../search/UIManager.cs:103
-msgid "Images"
-msgstr "Képek"
+#: ../search/UIManager.cs:130
+msgid "_Images"
+msgstr "Ké_pek"
 
-#: ../search/UIManager.cs:105
+#: ../search/UIManager.cs:132
 msgid "Search images"
 msgstr "Képek keresése"
 
-#: ../search/UIManager.cs:108
-msgid "Media"
-msgstr "Média"
+#: ../search/UIManager.cs:135
+msgid "_Media"
+msgstr "_Média"
 
-#: ../search/UIManager.cs:110
+#: ../search/UIManager.cs:137
 msgid "Search sound and video files"
 msgstr "Hang- és videofájlok keresése"
 
-#: ../search/UIManager.cs:117
+#: ../search/UIManager.cs:144
 msgid "Date _Modified"
 msgstr "Módosítás _dátuma"
 
-#: ../search/UIManager.cs:118
+#: ../search/UIManager.cs:145
 msgid "Sort the most-recently-modified matches first"
 msgstr "A legutóbb módosított találatok előre"
 
-#: ../search/UIManager.cs:121
+#: ../search/UIManager.cs:148
 msgid "_Name"
 msgstr "_Név"
 
-#: ../search/UIManager.cs:122
+#: ../search/UIManager.cs:149
 msgid "Sort matches by name"
 msgstr "Találatok rendezése név szerint"
 
-#: ../search/UIManager.cs:125
+#: ../search/UIManager.cs:152
 msgid "_Relevance"
 msgstr "_Fontosság"
 
-#: ../search/UIManager.cs:126
+#: ../search/UIManager.cs:153
 msgid "Sort the best matches first"
 msgstr "A pontosabb találatok előre"
 
