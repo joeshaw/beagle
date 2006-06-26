@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: beagle HEAD\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2006-03-31 17:09+0300\n"
-"PO-Revision-Date: 2006-03-31 17:16+0300\n"
+"POT-Creation-Date: 2006-06-26 14:55+0300\n"
+"PO-Revision-Date: 2006-06-26 14:58+0300\n"
 "Last-Translator: Žygimantas Beručka <zygis@gnome.org>\n"
 "Language-Team: Lithuanian <komp_lt@konferencijos.lt>\n"
 "MIME-Version: 1.0\n"
@@ -105,7 +105,7 @@ msgid ""
 "When searching for a phrase, add quotes. ex: <b>\"There be dragons\"</b>"
 msgstr "Kai ieškote frazės, pridėkite kabutes, pvz.: <b>„Rokenrolo naktys“</b>"
 
-#: ../search/Pages/QuickTips.cs:19 ../search/UIManager.cs:65
+#: ../search/Pages/QuickTips.cs:19 ../search/UIManager.cs:81
 msgid "Quick Tips"
 msgstr "Greiti patarimai"
 
@@ -145,53 +145,57 @@ msgstr "Įveskite paieškos žodžius"
 msgid "Start searching"
 msgstr "Pradėti paiešką"
 
-#: ../search/Tiles/Contact.cs:53
+#: ../search/Tiles/Contact.cs:30
+msgid "Send Mail"
+msgstr "Išsiųsti paštu"
+
+#: ../search/Tiles/Contact.cs:68
 msgid "E-Mail:"
 msgstr "El. paštas:"
 
-#: ../search/Tiles/Contact.cs:56
+#: ../search/Tiles/Contact.cs:70
 msgid "Mobile Phone:"
 msgstr "Mobilusis telefonas:"
 
-#: ../search/Tiles/Contact.cs:60
+#: ../search/Tiles/Contact.cs:72
 msgid "Work Phone:"
 msgstr "Darbo telefonas:"
 
-#: ../search/Tiles/Contact.cs:64
+#: ../search/Tiles/Contact.cs:74
 msgid "Home Phone:"
 msgstr "Namų telefonas:"
 
-#: ../search/Tiles/File.cs:33
+#: ../search/Tiles/File.cs:34
 msgid "Reveal in Folder"
 msgstr "Parodyti aplanke"
 
-#: ../search/Tiles/File.cs:34
+#: ../search/Tiles/File.cs:35
 msgid "E-Mail"
 msgstr "El. paštas"
 
 #. AddAction (new TileAction (Catalog.GetString ("Instant-Message"), InstantMessage));
 #. FIXME: s/"gtk-info"/Gtk.Stock.Info/ when we can depend on gtk# 2.8
 #. AddAction (new TileAction (Catalog.GetString ("Show Information"), "gtk-info", ShowInformation));
-#: ../search/Tiles/File.cs:36 ../search/Tiles/Folder.cs:38
+#: ../search/Tiles/File.cs:37 ../search/Tiles/Folder.cs:38
 msgid "Move to Trash"
 msgstr "Perkelti į šiukšlinę"
 
-#: ../search/Tiles/File.cs:132 ../search/Tiles/Note.cs:57
+#: ../search/Tiles/File.cs:124 ../search/Tiles/Note.cs:57
 #: ../search/Tiles/RSSFeed.cs:45 ../search/Tiles/WebHistory.cs:50
 msgid "Title:"
 msgstr "Pavadinimas:"
 
-#: ../search/Tiles/File.cs:135 ../search/Tiles/Folder.cs:51
-#: ../search/Tiles/Note.cs:60
+#: ../search/Tiles/File.cs:125 ../search/Tiles/Folder.cs:51
+#: ../search/Tiles/Note.cs:58
 msgid "Last Edited:"
 msgstr "Vėliausiai redaguota:"
 
-#: ../search/Tiles/File.cs:139
+#: ../search/Tiles/File.cs:128
 msgid "Author:"
 msgstr "Autorius:"
 
-#: ../search/Tiles/File.cs:143 ../search/Tiles/Folder.cs:54
-#: ../search/Tiles/Image.cs:81
+#: ../search/Tiles/File.cs:130 ../search/Tiles/Folder.cs:52
+#: ../search/Tiles/Image.cs:79
 msgid "Full Path:"
 msgstr "Visas kelias:"
 
@@ -216,33 +220,41 @@ msgstr "Padaryti darbastalio fonu"
 msgid "Modified:"
 msgstr "Modifikuota:"
 
-#: ../search/Tiles/IMLog.cs:29
+#: ../search/Tiles/IMLog.cs:30
 msgid "IM Conversation"
 msgstr "IM pokalbiai"
 
-#: ../search/Tiles/IMLog.cs:89
+#: ../search/Tiles/IMLog.cs:87
 msgid "Name:"
 msgstr "Pavadinimas:"
 
-#: ../search/Tiles/IMLog.cs:90 ../search/Tiles/MailMessage.cs:69
+#: ../search/Tiles/IMLog.cs:88 ../search/Tiles/MailMessage.cs:92
 msgid "Date Received:"
 msgstr "Gavimo data:"
 
-#: ../search/Tiles/MailAttachment.cs:45
+#: ../search/Tiles/MailAttachment.cs:47
 msgid "Mail attachment"
 msgstr "Laiško priedas"
 
-#: ../search/Tiles/MailMessage.cs:33
+#: ../search/Tiles/MailMessage.cs:55
 msgid "Send in Mail"
 msgstr "Išsiųsti paštu"
 
-#: ../search/Tiles/MailMessage.cs:63
+#: ../search/Tiles/MailMessage.cs:87
 msgid "Subject:"
 msgstr "Tema:"
 
-#: ../search/Tiles/MailMessage.cs:66
+#: ../search/Tiles/MailMessage.cs:89
+msgid "To:"
+msgstr "Kam:"
+
+#: ../search/Tiles/MailMessage.cs:89
 msgid "From:"
 msgstr "Nuo:"
+
+#: ../search/Tiles/MailMessage.cs:92
+msgid "Date Sent:"
+msgstr "Išsiuntimo data:"
 
 #: ../search/Tiles/Presentation.cs:33
 #, csharp-format
@@ -252,11 +264,11 @@ msgstr[0] "{0} skaidrė"
 msgstr[1] "{0} skaidrės"
 msgstr[2] "{0} skaidrių"
 
-#: ../search/Tiles/RSSFeed.cs:48
+#: ../search/Tiles/RSSFeed.cs:46
 msgid "Site:"
 msgstr "Svetainė:"
 
-#: ../search/Tiles/RSSFeed.cs:51
+#: ../search/Tiles/RSSFeed.cs:47
 msgid "Date Viewed:"
 msgstr "Žiūrėjimo data:"
 
@@ -272,51 +284,70 @@ msgstr[2] "{0} puslapių"
 msgid "Open"
 msgstr "Atverti"
 
-#: ../search/Tiles/Utils.cs:23
-msgid "Application"
-msgstr "Programa"
+#: ../search/Tiles/Utils.cs:24
+msgid "Applications"
+msgstr "Programos"
 
-#: ../search/Tiles/Utils.cs:25
-msgid "Contact"
-msgstr "Kontaktas"
+#: ../search/Tiles/Utils.cs:26
+msgid "Contacts"
+msgstr "Kontaktai"
 
-#: ../search/Tiles/Utils.cs:27
-msgid "Folder"
-msgstr "Aplankas"
+#: ../search/Tiles/Utils.cs:28
+msgid "Calendar Events"
+msgstr "Įvykiai kalendoriuje"
 
-#: ../search/Tiles/Utils.cs:29
-msgid "Image"
-msgstr "Paveikslėlis"
+#: ../search/Tiles/Utils.cs:30
+msgid "Folders"
+msgstr "Aplankai"
 
-#: ../search/Tiles/Utils.cs:31
+#: ../search/Tiles/Utils.cs:32
+msgid "Images"
+msgstr "Paveikslėliai"
+
+#: ../search/Tiles/Utils.cs:34
 msgid "Audio"
 msgstr "Garsas"
 
-#: ../search/Tiles/Utils.cs:33
+#: ../search/Tiles/Utils.cs:36
 msgid "Video"
 msgstr "Vaizdas"
 
-#: ../search/Tiles/Utils.cs:35
+#: ../search/Tiles/Utils.cs:38
 msgid "Documents"
 msgstr "Dokumentai"
 
-#: ../search/Tiles/Utils.cs:37
+#: ../search/Tiles/Utils.cs:40
 msgid "Conversations"
 msgstr "Pokalbiai"
 
-#: ../search/Tiles/Utils.cs:39
-msgid "Website"
-msgstr "Svetainė"
+#: ../search/Tiles/Utils.cs:42
+msgid "Websites"
+msgstr "Svetainės"
 
-#: ../search/Tiles/Utils.cs:41
-msgid "News Feed"
-msgstr "Naujienų kanalas"
+#: ../search/Tiles/Utils.cs:44
+msgid "News Feeds"
+msgstr "Naujienų kanalai"
 
-#: ../search/Tiles/Utils.cs:43
-msgid "Archive"
-msgstr "Archyvas"
+#: ../search/Tiles/Utils.cs:46
+msgid "Archives"
+msgstr "Archyvai"
 
-#: ../search/Tiles/Utils.cs:155
+#: ../search/Tiles/Utils.cs:100 ../search/Tiles/Utils.cs:146
+#: ../search/Tiles/Utils.cs:192 ../Util/StringFu.cs:77
+msgid "Today"
+msgstr "Šiandien"
+
+#: ../search/Tiles/Utils.cs:102 ../search/Tiles/Utils.cs:148
+#: ../search/Tiles/Utils.cs:194 ../Util/StringFu.cs:79
+msgid "Yesterday"
+msgstr "Vakar"
+
+#: ../search/Tiles/Utils.cs:104 ../search/Tiles/Utils.cs:150
+#: ../search/Tiles/Utils.cs:196
+msgid "Tomorrow"
+msgstr "Rytoj"
+
+#: ../search/Tiles/Utils.cs:200
 #, csharp-format
 msgid "{0} week ago"
 msgid_plural "{0} weeks ago"
@@ -324,8 +355,16 @@ msgstr[0] "prieš {0} savaitę"
 msgstr[1] "prieš {0} savaites"
 msgstr[2] "prieš {0} savaičių"
 
-#. Lets say a year and a half to stop saying months
-#: ../search/Tiles/Utils.cs:157
+#: ../search/Tiles/Utils.cs:202
+#, csharp-format
+msgid "In {0} week"
+msgid_plural "In {0} weeks"
+msgstr[0] "Per {0} savaitę"
+msgstr[1] "Per {0} savaites"
+msgstr[2] "Per {0} savaičių"
+
+#. Let's say a year and a half to stop saying months
+#: ../search/Tiles/Utils.cs:204
 #, csharp-format
 msgid "{0} month ago"
 msgid_plural "{0} months ago"
@@ -333,7 +372,15 @@ msgstr[0] "prieš {0} mėnesį"
 msgstr[1] "prieš {0} mėnesius"
 msgstr[2] "prieš {0} mėnesių"
 
-#: ../search/Tiles/Utils.cs:159
+#: ../search/Tiles/Utils.cs:206
+#, csharp-format
+msgid "In {0} month"
+msgid_plural "In {0} months"
+msgstr[0] "Per {0} mėnesį"
+msgstr[1] "Per {0} mėnesius"
+msgstr[2] "Per {0} mėnesių"
+
+#: ../search/Tiles/Utils.cs:208
 #, csharp-format
 msgid "{0} year ago"
 msgid_plural "{0} years ago"
@@ -341,17 +388,25 @@ msgstr[0] "prieš {0} metus"
 msgstr[1] "prieš {0} metus"
 msgstr[2] "prieš {0} metų"
 
+#: ../search/Tiles/Utils.cs:210
+#, csharp-format
+msgid "In {0} year"
+msgid_plural "In {0} years"
+msgstr[0] "Per {0} metus"
+msgstr[1] "Per {0} metus"
+msgstr[2] "Per {0} metų"
+
 #. FIXME: We need filters for video in Beagle.
 #. They should land soon when entagged-sharp gets video support.
 #: ../search/Tiles/Video.cs:27
 msgid "Unknown duration"
 msgstr "Nežinoma trukmė"
 
-#: ../search/Tiles/WebHistory.cs:53
+#: ../search/Tiles/WebHistory.cs:51
 msgid "URL:"
 msgstr "URL:"
 
-#: ../search/Tiles/WebHistory.cs:56
+#: ../search/Tiles/WebHistory.cs:52
 msgid "Accessed:"
 msgstr "Žiūrėta:"
 
@@ -555,115 +610,127 @@ msgstr ""
 "žmogus\n"
 "žmonės"
 
-#: ../search/UIManager.cs:35
-msgid "_Search"
-msgstr "_Paieška"
+#: ../search/UIManager.cs:42
+msgid "Close Desktop Search"
+msgstr "Užverti darbo aplinkos paiešką"
 
-#: ../search/UIManager.cs:38
-msgid "_Actions"
-msgstr "_Veiksmai"
-
-#: ../search/UIManager.cs:41
-msgid "Sor_t"
-msgstr "Rūšiuo_ti"
-
-#: ../search/UIManager.cs:44
-msgid "_Help"
-msgstr "_Žinynas"
-
-#: ../search/UIManager.cs:49 ../search/UIManager.cs:53
+#: ../search/UIManager.cs:47 ../search/UIManager.cs:69
 msgid "Exit Desktop Search"
 msgstr "Uždaryti darbo aplinkos paiešką"
 
-#: ../search/UIManager.cs:56
+#: ../search/UIManager.cs:54
+msgid "_Search"
+msgstr "_Paieška"
+
+#: ../search/UIManager.cs:57
+msgid "_Actions"
+msgstr "_Veiksmai"
+
+#: ../search/UIManager.cs:60
+msgid "Sor_t"
+msgstr "Rūšiuo_ti"
+
+#: ../search/UIManager.cs:63
+msgid "_Help"
+msgstr "_Žinynas"
+
+#: ../search/UIManager.cs:72
 msgid "_Contents"
 msgstr "_Turinys"
 
-#: ../search/UIManager.cs:58
+#: ../search/UIManager.cs:74
 msgid "Help - Table of Contents"
 msgstr "Žinynas - Turinys"
 
-#: ../search/UIManager.cs:62
+#: ../search/UIManager.cs:78
 msgid "About Desktop Search"
 msgstr "Apie darbo aplinkos paiešką"
 
-#: ../search/UIManager.cs:75
+#: ../search/UIManager.cs:100
 msgid "_Everywhere"
 msgstr "_Visur"
 
-#: ../search/UIManager.cs:77
+#: ../search/UIManager.cs:102
 msgid "Search everywhere"
 msgstr "Ieškoti visur"
 
-#: ../search/UIManager.cs:80
+#: ../search/UIManager.cs:105
 msgid "_Applications"
 msgstr "_Programos"
 
-#: ../search/UIManager.cs:82
+#: ../search/UIManager.cs:107
 msgid "Search applications"
 msgstr "Ieškoti programose"
 
-#: ../search/UIManager.cs:85
+#: ../search/UIManager.cs:110
 msgid "_Contacts"
 msgstr "_Kontaktai"
 
-#: ../search/UIManager.cs:87
+#: ../search/UIManager.cs:112
 msgid "Search contacts"
 msgstr "Ieškoti kontaktuose"
 
-#: ../search/UIManager.cs:90
+#: ../search/UIManager.cs:115
+msgid "Ca_lendar events"
+msgstr "Įvykiai ka_lendoriuje"
+
+#: ../search/UIManager.cs:117
+msgid "Search calendar events"
+msgstr "Ieškoti įvykių kalendoriuje"
+
+#: ../search/UIManager.cs:120
 msgid "_Documents"
 msgstr "_Dokumentai"
 
-#: ../search/UIManager.cs:92
+#: ../search/UIManager.cs:122
 msgid "Search documents"
 msgstr "Ieškoti dokumentuose"
 
-#: ../search/UIManager.cs:95
+#: ../search/UIManager.cs:125
 msgid "Conve_rsations"
 msgstr "P_okalbiai"
 
-#: ../search/UIManager.cs:97
+#: ../search/UIManager.cs:127
 msgid "Search E-Mail and Instant Messaging logs"
 msgstr "Ieškoti el. laiškų ir greitų žinučių žurnalų"
 
-#: ../search/UIManager.cs:100
-msgid "Images"
-msgstr "Paveikslėliai"
+#: ../search/UIManager.cs:130
+msgid "_Images"
+msgstr "_Paveikslėliai"
 
-#: ../search/UIManager.cs:102
+#: ../search/UIManager.cs:132
 msgid "Search images"
 msgstr "Ieškoti paveikslėlių"
 
-#: ../search/UIManager.cs:105
-msgid "Media"
-msgstr "Multimedija"
+#: ../search/UIManager.cs:135
+msgid "_Media"
+msgstr "_Multimedija"
 
-#: ../search/UIManager.cs:107
+#: ../search/UIManager.cs:137
 msgid "Search sound and video files"
 msgstr "Ieškoti garso ir vaizdo rinkmenų"
 
-#: ../search/UIManager.cs:114
+#: ../search/UIManager.cs:144
 msgid "Date _Modified"
 msgstr "_Modifikavimo data"
 
-#: ../search/UIManager.cs:115
+#: ../search/UIManager.cs:145
 msgid "Sort the most-recently-modified matches first"
 msgstr "Rūšiuoti pagal vėliausiai modifikuotus atitikmenis"
 
-#: ../search/UIManager.cs:118
+#: ../search/UIManager.cs:148
 msgid "_Name"
 msgstr "_Pavadinimas"
 
-#: ../search/UIManager.cs:119
+#: ../search/UIManager.cs:149
 msgid "Sort matches by name"
 msgstr "Rūšiuoti atitikmenis pagal pavadinimą"
 
-#: ../search/UIManager.cs:122
+#: ../search/UIManager.cs:152
 msgid "_Relevance"
 msgstr "_Tinkamumas"
 
-#: ../search/UIManager.cs:123
+#: ../search/UIManager.cs:153
 msgid "Sort the best matches first"
 msgstr "Rūšiuoti pagal atitikmens tikslumą"
 
@@ -1017,14 +1084,6 @@ msgstr "Suderinamumo aplankas"
 msgid "Unknown Directory"
 msgstr "Nežinomas aplankas"
 
-#: ../Util/StringFu.cs:77
-msgid "Today"
-msgstr "Šiandien"
-
-#: ../Util/StringFu.cs:79
-msgid "Yesterday"
-msgstr "Vakar"
-
 #. Translators: Example output: Aug 9
 #: ../Util/StringFu.cs:82
 msgid "MMM d"
@@ -1107,6 +1166,15 @@ msgstr "{0:0.0} KB"
 #, csharp-format
 msgid "{0:0.0} MB"
 msgstr "{0:0.0} MB"
+
+#~ msgid "Application"
+#~ msgstr "Programa"
+
+#~ msgid "Contact"
+#~ msgstr "Kontaktas"
+
+#~ msgid "Image"
+#~ msgstr "Paveikslėlis"
 
 #~ msgid "Edited:"
 #~ msgstr "Redaguota:"
