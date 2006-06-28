@@ -9,8 +9,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: beagle\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2006-05-14 17:58+0200\n"
-"PO-Revision-Date: 2006-05-14 18:06+0100\n"
+"POT-Creation-Date: 2006-06-28 13:37+0200\n"
+"PO-Revision-Date: 2006-06-28 13:38+0200\n"
 "Last-Translator: Øivind Hoel <oivind.hoel@gmail.com>\n"
 "Language-Team: Norwegian Bokmal <i18n-nb@lister.ping.uio.no>\n"
 "MIME-Version: 1.0\n"
@@ -44,8 +44,7 @@ msgstr "Samtaler i {0}"
 msgid "Conversations with {0}"
 msgstr "Samtaler med {0}"
 
-#: ../search/beagle-search.desktop.in.h:1
-#: ../tools/settings.glade.h:27
+#: ../search/beagle-search.desktop.in.h:1 ../tools/settings.glade.h:27
 msgid "Search"
 msgstr "Søk"
 
@@ -65,34 +64,47 @@ msgstr "Ingen treff."
 #: ../search/Pages/NoMatch.cs:20
 #, csharp-format
 msgid "Your search for \"{0}\" did not match any files on your computer."
-msgstr "Ditt søk etter \"{0}\" samsvarte ikke med noen filer på din datamaskin."
+msgstr ""
+"Ditt søk etter \"{0}\" samsvarte ikke med noen filer på din datamaskin."
 
 #: ../search/Pages/NoMatch.cs:24
-msgid "You can change the scope of your search using the \"Search\" menu. A broader search scope might produce more results."
-msgstr "Du kan endre omfanget av søket ved å bruke menyen «Søk». Et større omfang kan gi flere resultater."
+msgid ""
+"You can change the scope of your search using the \"Search\" menu. A broader "
+"search scope might produce more results."
+msgstr ""
+"Du kan endre omfanget av søket ved å bruke menyen «Søk». Et større omfang "
+"kan gi flere resultater."
 
 #: ../search/Pages/NoMatch.cs:26
-msgid "You should check the spelling of your search words to see if you accidentally misspelled any words."
+msgid ""
+"You should check the spelling of your search words to see if you "
+"accidentally misspelled any words."
 msgstr "Sjekk om du har skrevet noen av ordene feil."
 
 #: ../search/Pages/QuickTips.cs:10
 msgid "You can use upper and lower case; search is case-insensitive."
-msgstr "Du kan bruke både store og små bokstaver; søket vil ikke påvirkes av dette."
+msgstr ""
+"Du kan bruke både store og små bokstaver; søket vil ikke påvirkes av dette."
 
 #: ../search/Pages/QuickTips.cs:11
 msgid "To search for optional terms, use OR.  ex: <b>George OR Ringo</b>"
 msgstr "For å søke etter valgfrie ord, bruker du OR. F.eks: <b>Tor OR Odin</b>"
 
 #: ../search/Pages/QuickTips.cs:12
-msgid "To exclude search terms, use the minus symbol in front, such as <b>-cats</b>"
-msgstr "For å ekskludere ord fra søket, bruker du minustegnet foran ordet, som her: <b>-unyttig</b>"
+msgid ""
+"To exclude search terms, use the minus symbol in front, such as <b>-cats</b>"
+msgstr ""
+"For å ekskludere ord fra søket, bruker du minustegnet foran ordet, som her: "
+"<b>-unyttig</b>"
 
 #: ../search/Pages/QuickTips.cs:13
-msgid "When searching for a phrase, add quotes. ex: <b>\"There be dragons\"</b>"
-msgstr "Ved søk etter en frase må du legge til sitattegn. F.eks <b>\"There be dragons\"</b>"
+msgid ""
+"When searching for a phrase, add quotes. ex: <b>\"There be dragons\"</b>"
+msgstr ""
+"Ved søk etter en frase må du legge til sitattegn. F.eks <b>\"There be dragons"
+"\"</b>"
 
-#: ../search/Pages/QuickTips.cs:19
-#: ../search/UIManager.cs:81
+#: ../search/Pages/QuickTips.cs:19 ../search/UIManager.cs:81
 msgid "Quick Tips"
 msgstr "Nyttige tips"
 
@@ -101,8 +113,12 @@ msgid "Beagle cannot be run as root"
 msgstr "Beagle kan ikke kjøres som root"
 
 #: ../search/Pages/RootUser.cs:13
-msgid "For security reasons, Beagle cannot be run as root.  You should restart as a regular user."
-msgstr "Av sikkerhetsårsaker kan ikke Beagle kjøre som root. Du bør starte på nytt som en vanlig bruker."
+msgid ""
+"For security reasons, Beagle cannot be run as root.  You should restart as a "
+"regular user."
+msgstr ""
+"Av sikkerhetsårsaker kan ikke Beagle kjøre som root. Du bør starte på nytt "
+"som en vanlig bruker."
 
 #: ../search/Pages/StartDaemon.cs:19
 msgid "Search service not running"
@@ -132,19 +148,19 @@ msgstr "Start søk"
 msgid "Send Mail"
 msgstr "Send e-post"
 
-#: ../search/Tiles/Contact.cs:69
+#: ../search/Tiles/Contact.cs:68
 msgid "E-Mail:"
 msgstr "E-post:"
 
-#: ../search/Tiles/Contact.cs:71
+#: ../search/Tiles/Contact.cs:70
 msgid "Mobile Phone:"
 msgstr "Mobiltelefon:"
 
-#: ../search/Tiles/Contact.cs:73
+#: ../search/Tiles/Contact.cs:72
 msgid "Work Phone:"
 msgstr "Telefon, arbeid:"
 
-#: ../search/Tiles/Contact.cs:75
+#: ../search/Tiles/Contact.cs:74
 msgid "Home Phone:"
 msgstr "Telefon, privat:"
 
@@ -159,31 +175,26 @@ msgstr "E-post"
 #. AddAction (new TileAction (Catalog.GetString ("Instant-Message"), InstantMessage));
 #. FIXME: s/"gtk-info"/Gtk.Stock.Info/ when we can depend on gtk# 2.8
 #. AddAction (new TileAction (Catalog.GetString ("Show Information"), "gtk-info", ShowInformation));
-#: ../search/Tiles/File.cs:37
-#: ../search/Tiles/Folder.cs:38
+#: ../search/Tiles/File.cs:37 ../search/Tiles/Folder.cs:38
 msgid "Move to Trash"
 msgstr "Flytt til papirkurv"
 
-#: ../search/Tiles/File.cs:125
-#: ../search/Tiles/Note.cs:57
-#: ../search/Tiles/RSSFeed.cs:45
-#: ../search/Tiles/WebHistory.cs:50
+#: ../search/Tiles/File.cs:124 ../search/Tiles/Note.cs:57
+#: ../search/Tiles/RSSFeed.cs:45 ../search/Tiles/WebHistory.cs:50
 msgid "Title:"
 msgstr "Tittel"
 
-#: ../search/Tiles/File.cs:128
-#: ../search/Tiles/Folder.cs:51
-#: ../search/Tiles/Note.cs:60
+#: ../search/Tiles/File.cs:125 ../search/Tiles/Folder.cs:51
+#: ../search/Tiles/Note.cs:58
 msgid "Last Edited:"
 msgstr "Sist endret:"
 
-#: ../search/Tiles/File.cs:132
+#: ../search/Tiles/File.cs:128
 msgid "Author:"
 msgstr "Forfatter:"
 
-#: ../search/Tiles/File.cs:136
-#: ../search/Tiles/Folder.cs:54
-#: ../search/Tiles/Image.cs:81
+#: ../search/Tiles/File.cs:130 ../search/Tiles/Folder.cs:52
+#: ../search/Tiles/Image.cs:79
 msgid "Full Path:"
 msgstr "Full sti:"
 
@@ -211,36 +222,35 @@ msgstr "Endret:"
 msgid "IM Conversation"
 msgstr "IM-samtale"
 
-#: ../search/Tiles/IMLog.cs:81
+#: ../search/Tiles/IMLog.cs:87
 msgid "Name:"
 msgstr "Navn:"
 
-#: ../search/Tiles/IMLog.cs:82
-#: ../search/Tiles/MailMessage.cs:95
+#: ../search/Tiles/IMLog.cs:88 ../search/Tiles/MailMessage.cs:92
 msgid "Date Received:"
 msgstr "Motatt:"
 
-#: ../search/Tiles/MailAttachment.cs:46
+#: ../search/Tiles/MailAttachment.cs:47
 msgid "Mail attachment"
 msgstr "Epostvedlegg"
 
-#: ../search/Tiles/MailMessage.cs:54
+#: ../search/Tiles/MailMessage.cs:55
 msgid "Send in Mail"
 msgstr "Send i e-post"
 
-#: ../search/Tiles/MailMessage.cs:86
+#: ../search/Tiles/MailMessage.cs:87
 msgid "Subject:"
 msgstr "Emne:"
 
-#: ../search/Tiles/MailMessage.cs:90
+#: ../search/Tiles/MailMessage.cs:89
 msgid "To:"
 msgstr "Til:"
 
-#: ../search/Tiles/MailMessage.cs:90
+#: ../search/Tiles/MailMessage.cs:89
 msgid "From:"
 msgstr "Fra:"
 
-#: ../search/Tiles/MailMessage.cs:95
+#: ../search/Tiles/MailMessage.cs:92
 msgid "Date Sent:"
 msgstr "Dato sendt:"
 
@@ -251,11 +261,11 @@ msgid_plural "{0} slides"
 msgstr[0] "{0} lysbilde"
 msgstr[1] "{0} lysbilder"
 
-#: ../search/Tiles/RSSFeed.cs:48
+#: ../search/Tiles/RSSFeed.cs:46
 msgid "Site:"
 msgstr "Sted:"
 
-#: ../search/Tiles/RSSFeed.cs:51
+#: ../search/Tiles/RSSFeed.cs:47
 msgid "Date Viewed:"
 msgstr "Visningsdato:"
 
@@ -271,24 +281,24 @@ msgid "Open"
 msgstr "Åpne"
 
 #: ../search/Tiles/Utils.cs:24
-msgid "Application"
-msgstr "Program"
+msgid "Applications"
+msgstr "Programmer"
 
 #: ../search/Tiles/Utils.cs:26
-msgid "Contact"
-msgstr "Kontakt"
+msgid "Contacts"
+msgstr "Kontakter"
 
 #: ../search/Tiles/Utils.cs:28
 msgid "Calendar Events"
 msgstr "Kalenderhendelser"
 
 #: ../search/Tiles/Utils.cs:30
-msgid "Folder"
-msgstr "Mappe"
+msgid "Folders"
+msgstr "Mapper"
 
 #: ../search/Tiles/Utils.cs:32
-msgid "Image"
-msgstr "Bilde"
+msgid "Images"
+msgstr "Bilder"
 
 #: ../search/Tiles/Utils.cs:34
 msgid "Audio"
@@ -307,33 +317,28 @@ msgid "Conversations"
 msgstr "Samtaler"
 
 #: ../search/Tiles/Utils.cs:42
-msgid "Website"
-msgstr "Nettsted"
+msgid "Websites"
+msgstr "Nettsteder"
 
 #: ../search/Tiles/Utils.cs:44
-msgid "News Feed"
-msgstr "Nyhetsstrøm"
+msgid "News Feeds"
+msgstr "Nyhetsstrømmer"
 
 #: ../search/Tiles/Utils.cs:46
-msgid "Archive"
-msgstr "Arkiv"
+msgid "Archives"
+msgstr "Arkiver"
 
-#: ../search/Tiles/Utils.cs:100
-#: ../search/Tiles/Utils.cs:146
-#: ../search/Tiles/Utils.cs:192
-#: ../Util/StringFu.cs:77
+#: ../search/Tiles/Utils.cs:100 ../search/Tiles/Utils.cs:146
+#: ../search/Tiles/Utils.cs:192 ../Util/StringFu.cs:77
 msgid "Today"
 msgstr "I dag"
 
-#: ../search/Tiles/Utils.cs:102
-#: ../search/Tiles/Utils.cs:148
-#: ../search/Tiles/Utils.cs:194
-#: ../Util/StringFu.cs:79
+#: ../search/Tiles/Utils.cs:102 ../search/Tiles/Utils.cs:148
+#: ../search/Tiles/Utils.cs:194 ../Util/StringFu.cs:79
 msgid "Yesterday"
 msgstr "I går"
 
-#: ../search/Tiles/Utils.cs:104
-#: ../search/Tiles/Utils.cs:150
+#: ../search/Tiles/Utils.cs:104 ../search/Tiles/Utils.cs:150
 #: ../search/Tiles/Utils.cs:196
 msgid "Tomorrow"
 msgstr "I morgen"
@@ -387,11 +392,11 @@ msgstr[1] "Om {0} år"
 msgid "Unknown duration"
 msgstr "Ukjent lengde"
 
-#: ../search/Tiles/WebHistory.cs:53
+#: ../search/Tiles/WebHistory.cs:51
 msgid "URL:"
 msgstr "URL:"
 
-#: ../search/Tiles/WebHistory.cs:56
+#: ../search/Tiles/WebHistory.cs:52
 msgid "Accessed:"
 msgstr "Aksessert:"
 
@@ -593,8 +598,7 @@ msgstr ""
 msgid "Close Desktop Search"
 msgstr "Lukk søk for skrivebordet"
 
-#: ../search/UIManager.cs:47
-#: ../search/UIManager.cs:69
+#: ../search/UIManager.cs:47 ../search/UIManager.cs:69
 msgid "Exit Desktop Search"
 msgstr "Avslutt skrivebordssøk"
 
@@ -719,8 +723,12 @@ msgid "Reload configuration"
 msgstr "Last om konfigurasjon"
 
 #: ../tools/Settings.cs:224
-msgid "The configuration file has been modified by another application. Do you wish to discard the currently displayed values and reload configuration from disk?"
-msgstr "Konfigurasjonsfilen har blitt endret av et annet program. Vil du avvise de viste verdiene og laste om konfigrasjonen fra disk?"
+msgid ""
+"The configuration file has been modified by another application. Do you wish "
+"to discard the currently displayed values and reload configuration from disk?"
+msgstr ""
+"Konfigurasjonsfilen har blitt endret av et annet program. Vil du avvise de "
+"viste verdiene og laste om konfigrasjonen fra disk?"
 
 #: ../tools/Settings.cs:262
 msgid "Select Path"
@@ -728,14 +736,18 @@ msgstr "Velg sti"
 
 #: ../tools/Settings.cs:281
 msgid "The selected path is already selected for indexing and wasn't added."
-msgstr "Den valgte stien er allerede valgt for indeksering og ble ikke lagt til."
+msgstr ""
+"Den valgte stien er allerede valgt for indeksering og ble ikke lagt til."
 
 #: ../tools/Settings.cs:284
-msgid "The selected path wasn't added. The list contains items that supercedes it and the data is already being indexed."
-msgstr "Den valgte stien ble ikke lagt til fordi den blir allerede indeksert av en sti som inneholder den."
+msgid ""
+"The selected path wasn't added. The list contains items that supercedes it "
+"and the data is already being indexed."
+msgstr ""
+"Den valgte stien ble ikke lagt til fordi den blir allerede indeksert av en "
+"sti som inneholder den."
 
-#: ../tools/Settings.cs:295
-#: ../tools/Settings.cs:487
+#: ../tools/Settings.cs:295 ../tools/Settings.cs:487
 msgid "Path not added"
 msgstr "Sti ble ikke lagt til"
 
@@ -744,24 +756,37 @@ msgid "Remove obsolete paths"
 msgstr "Fjern overflødige stier"
 
 #: ../tools/Settings.cs:305
-msgid "Adding this path will obsolete some of the existing include paths. This will result in the removal of the old obsolete paths. Do you still wish to add it?"
-msgstr "Hvis du legger til denne stien vil det gjøre noen andre stier overflødige. Dette vil medføre at de overflødige stiene blir fjernet. Vil du fremdeles legge den til?"
+msgid ""
+"Adding this path will obsolete some of the existing include paths. This will "
+"result in the removal of the old obsolete paths. Do you still wish to add it?"
+msgstr ""
+"Hvis du legger til denne stien vil det gjøre noen andre stier overflødige. "
+"Dette vil medføre at de overflødige stiene blir fjernet. Vil du fremdeles "
+"legge den til?"
 
 #: ../tools/Settings.cs:331
 msgid "Remove path"
 msgstr "Fjern sti"
 
 #: ../tools/Settings.cs:332
-msgid "Are you sure you wish to remove this path from the list of directories to be included for indexing?"
-msgstr "Vil du fjerne denne stien fra listen av mapper som skal bli inkludert for indeksering?"
+msgid ""
+"Are you sure you wish to remove this path from the list of directories to be "
+"included for indexing?"
+msgstr ""
+"Vil du fjerne denne stien fra listen av mapper som skal bli inkludert for "
+"indeksering?"
 
 #: ../tools/Settings.cs:361
 msgid "Remove item"
 msgstr "Fjern element"
 
 #: ../tools/Settings.cs:362
-msgid "Are you sure you wish to remove this item from the list of data to be excluded from indexing?"
-msgstr "Vil du fjerne dette elementet fra listen over data som skal bli ekskludert fra indeksering?"
+msgid ""
+"Are you sure you wish to remove this item from the list of data to be "
+"excluded from indexing?"
+msgstr ""
+"Vil du fjerne dette elementet fra listen over data som skal bli ekskludert "
+"fra indeksering?"
 
 #: ../tools/Settings.cs:405
 msgid "Invalid host entry"
@@ -796,14 +821,12 @@ msgid "Remove public path"
 msgstr "Fjern offentlig sti"
 
 #: ../tools/Settings.cs:503
-msgid "Are you sure you wish to remove this entry from the list of public paths?"
+msgid ""
+"Are you sure you wish to remove this entry from the list of public paths?"
 msgstr "Vil du fjerne denne oppføringen fra listen over offentlige stier?"
 
-#: ../tools/Settings.cs:548
-#: ../tools/Settings.cs:637
-#: ../tools/Settings.cs:715
-#: ../tools/Settings.cs:791
-#: ../tools/Settings.cs:1130
+#: ../tools/Settings.cs:548 ../tools/Settings.cs:637 ../tools/Settings.cs:715
+#: ../tools/Settings.cs:791 ../tools/Settings.cs:1130
 msgid "Name"
 msgstr "Navn"
 
@@ -827,8 +850,7 @@ msgstr "E-postmappe:"
 msgid "Select Folder"
 msgstr "Velg mappe"
 
-#: ../tools/Settings.cs:1064
-#: ../tools/settings.glade.h:24
+#: ../tools/Settings.cs:1064 ../tools/settings.glade.h:24
 msgid "P_ath:"
 msgstr "_Sti:"
 
@@ -845,8 +867,12 @@ msgid "Error adding path"
 msgstr "Feil ved tilføying av sti"
 
 #: ../tools/Settings.cs:1099
-msgid "The specified path could not be found and therefore it could not be added to the list of resources excluded for indexing."
-msgstr "Stien ble ikke funnet og kan derfor ikke legges til listen over stier som skal bli ekskluderes fra indeksering."
+msgid ""
+"The specified path could not be found and therefore it could not be added to "
+"the list of resources excluded for indexing."
+msgstr ""
+"Stien ble ikke funnet og kan derfor ikke legges til listen over stier som "
+"skal bli ekskluderes fra indeksering."
 
 #: ../tools/Settings.cs:1129
 msgid "Show"
@@ -905,8 +931,12 @@ msgid "Add any remote search-enabled hosts you wish to network with."
 msgstr "Legg til eksterne søkbare verter du vil koble til."
 
 #: ../tools/settings.glade.h:14
-msgid "Adjust which types of results should be visible, and in what order they should be presented when grouped by type."
-msgstr "Tilpass hvilke typer treff som skal bli vist og i hvilken rekkefølge de skal bli presentert når gruppert etter type."
+msgid ""
+"Adjust which types of results should be visible, and in what order they "
+"should be presented when grouped by type."
+msgstr ""
+"Tilpass hvilke typer treff som skal bli vist og i hvilken rekkefølge de skal "
+"bli presentert når gruppert etter type."
 
 #: ../tools/settings.glade.h:15
 msgid "Allow _external access to local search services"
@@ -961,8 +991,12 @@ msgid "Select Mail Folder"
 msgstr "Velg e-postmappe"
 
 #: ../tools/settings.glade.h:30
-msgid "Specify any resources, such as paths, patterns, mail folders or type of objects you wish to exclude from indexing."
-msgstr "Angi ressurser som f.eks. mapper, filnavnmønster, e-postmapper eller type objekter du vil ekskludere fra indeksering."
+msgid ""
+"Specify any resources, such as paths, patterns, mail folders or type of "
+"objects you wish to exclude from indexing."
+msgstr ""
+"Angi ressurser som f.eks. mapper, filnavnmønster, e-postmapper eller type "
+"objekter du vil ekskludere fra indeksering."
 
 #: ../tools/settings.glade.h:31
 msgid "Specify paths that should be available for external access."
@@ -1008,8 +1042,7 @@ msgstr "Konfigurer egenskaper for søk og indeksering"
 msgid "Search & Indexing"
 msgstr "Søk og indeksering"
 
-#: ../Util/Evolution.cs:45
-#: ../Util/Evolution.cs:163
+#: ../Util/Evolution.cs:45 ../Util/Evolution.cs:163
 msgid "On This Computer"
 msgstr "På denne datamaskinen"
 
@@ -1117,4 +1150,3 @@ msgstr "{0:0.0} KB"
 #, csharp-format
 msgid "{0:0.0} MB"
 msgstr "{0:0.0} MB"
-
