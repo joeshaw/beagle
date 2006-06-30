@@ -364,7 +364,10 @@ namespace Beagle {
 
 				resp = wrapper.Message;
 			} catch (Exception e) {
-				throw_me = new ResponseMessageException (e);
+				this.buffer_stream.Seek (0, SeekOrigin.Begin);
+				StreamReader r = new StreamReader (this.buffer_stream);
+				throw_me = new ResponseMessageException (e, String.Format ("Deserialization exception for message:{0}", r.ReadToEnd ()));
+				this.buffer_stream.Seek (0, SeekOrigin.Begin);
 			}
 
 			this.buffer_stream.Close ();

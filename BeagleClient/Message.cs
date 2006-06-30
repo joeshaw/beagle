@@ -166,11 +166,8 @@ namespace Beagle {
 		public ResponseMessage Send ()
 		{
 			Client client = new Client (this.client_name);
-			//Logger.Log.Debug ("Sending message");
 			ResponseMessage resp = client.Send (this);
-			//Logger.Log.Debug ("Got reply");
 			client.Close ();
-			//Logger.Log.Debug ("Closed client");
 
 			// Add some nice syntactic sugar by throwing an
 			// exception if the response is an error.
@@ -273,6 +270,11 @@ namespace Beagle {
 		}
 
 		internal ResponseMessageException (Exception e) : base (e.Message, e) { }
+
+		internal ResponseMessageException (Exception e, string details) : base (e.Message, e)
+		{
+			this.details = details;
+		}
 
 		public override string ToString ()
 		{
