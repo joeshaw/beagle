@@ -69,7 +69,7 @@ msgstr "Việc tìm kiếm « {0} » không khớp với tập tin nào trên m�
 msgid ""
 "You can change the scope of your search using the \"Search\" menu. A broader "
 "search scope might produce more results."
-msgstr "Bạn có thể sửa đổi phạm vị tìm kiếm bằng mục trình đơn « Tìm kiếm ». Phạm vị "
+msgstr "Bạn có thể sửa đổi phạm vi tìm kiếm bằng mục trình đơn « Tìm kiếm ». Phạm vi "
 "tìm kiếm rộng hơn có thể được nhiều kết quả hơn."
 
 #: ../search/Pages/NoMatch.cs:26
