@@ -765,7 +765,7 @@ namespace Beagle.Daemon {
 			// indexed a ton of dat
 			TimeSpan span = DateTime.Now - last_optimize_time;
 			if (span.TotalDays > 1.0)
-				optimize_delay = 1.0; // minutes;
+				optimize_delay = 10.0; // minutes;
 			else
 				optimize_delay = (new TimeSpan (TimeSpan.TicksPerDay) - span).TotalMinutes;
 
