@@ -715,6 +715,13 @@ namespace Beagle.Daemon {
 		//////////////////////////////////////////////////////////////////////////////////
 
 		// Optimize the index
+
+		private DateTime last_optimize_time = DateTime.MinValue;
+
+		public DateTime LastOptimizeTime {
+			get { return last_optimize_time; }
+			set { last_optimize_time = value; }
+		}
 		
 		private class OptimizeTask : Scheduler.Task {
 			LuceneQueryable queryable;
@@ -727,6 +734,7 @@ namespace Beagle.Daemon {
 			override protected void DoTaskReal ()
 			{
 				queryable.Optimize ();
+				queryable.LastOptimizeTime = DateTime.Now;
 			}
 		}
 
@@ -752,7 +760,14 @@ namespace Beagle.Daemon {
 		private void ScheduleOptimize ()
 		{
 			double optimize_delay;
-			optimize_delay = 10.0; // minutes
+
+			// Really we only want to optimize at most once a day, even if we have
+			// indexed a ton of dat
+			TimeSpan span = DateTime.Now - last_optimize_time;
+			if (span.TotalDays > 1.0)
+				optimize_delay = 1.0; // minutes;
+			else
+				optimize_delay = (new TimeSpan (TimeSpan.TicksPerDay) - span).TotalMinutes;
 
 			if (our_optimize_task == null)
 				our_optimize_task = NewOptimizeTask ();

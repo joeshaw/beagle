@@ -28,7 +28,6 @@ if [ -n "$BEAGLE_DEBUG_FLAG_IS_SET" ]; then
    MONO_EXTRA_ARGS="--debug $MONO_EXTRA_ARGS"
 fi
 
-export MONO_GAC_PREFIX="@gacprefix@${MONO_GAC_PREFIX+:$MONO_GAC_PREFIX}"
 export MONO_PATH="$THIS_PATH${MONO_PATH+:$MONO_PATH}"
 
 CMDLINE="mono --debug $MONO_EXTRA_ARGS $THIS_EXE $@"
