@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: beagle HEAD\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2006-04-30 13:10+0900\n"
-"PO-Revision-Date: 2006-04-30 13:03+0900\n"
+"POT-Creation-Date: 2006-07-09 12:40+0900\n"
+"PO-Revision-Date: 2006-07-09 12:34+0900\n"
 "Last-Translator: Takeshi AIHANA <aihana@gnome.gr.jp>\n"
 "Language-Team: Japanese <gnome-translation@gnome.gr.jp>\n"
 "MIME-Version: 1.0\n"
@@ -148,19 +148,19 @@ msgstr "検索を始めます"
 msgid "Send Mail"
 msgstr "メールの送信"
 
-#: ../search/Tiles/Contact.cs:69
+#: ../search/Tiles/Contact.cs:68
 msgid "E-Mail:"
 msgstr "E-メール:"
 
-#: ../search/Tiles/Contact.cs:71
+#: ../search/Tiles/Contact.cs:70
 msgid "Mobile Phone:"
 msgstr "携帯電話:"
 
-#: ../search/Tiles/Contact.cs:73
+#: ../search/Tiles/Contact.cs:72
 msgid "Work Phone:"
 msgstr "会社の電話番号:"
 
-#: ../search/Tiles/Contact.cs:75
+#: ../search/Tiles/Contact.cs:74
 msgid "Home Phone:"
 msgstr "自宅の電話番号:"
 
@@ -179,22 +179,22 @@ msgstr "E-メールを送信する"
 msgid "Move to Trash"
 msgstr "ゴミ箱へ移動する"
 
-#: ../search/Tiles/File.cs:125 ../search/Tiles/Note.cs:56
+#: ../search/Tiles/File.cs:124 ../search/Tiles/Note.cs:57
 #: ../search/Tiles/RSSFeed.cs:45 ../search/Tiles/WebHistory.cs:50
 msgid "Title:"
 msgstr "タイトル:"
 
-#: ../search/Tiles/File.cs:128 ../search/Tiles/Folder.cs:51
-#: ../search/Tiles/Note.cs:59
+#: ../search/Tiles/File.cs:125 ../search/Tiles/Folder.cs:51
+#: ../search/Tiles/Note.cs:58
 msgid "Last Edited:"
 msgstr "最終変更日時:"
 
-#: ../search/Tiles/File.cs:132
+#: ../search/Tiles/File.cs:128
 msgid "Author:"
 msgstr "作者:"
 
-#: ../search/Tiles/File.cs:136 ../search/Tiles/Folder.cs:54
-#: ../search/Tiles/Image.cs:81
+#: ../search/Tiles/File.cs:130 ../search/Tiles/Folder.cs:52
+#: ../search/Tiles/Image.cs:79
 msgid "Full Path:"
 msgstr "パス名:"
 
@@ -222,35 +222,35 @@ msgstr "変更日時:"
 msgid "IM Conversation"
 msgstr "IM 上での会話"
 
-#: ../search/Tiles/IMLog.cs:81
+#: ../search/Tiles/IMLog.cs:87
 msgid "Name:"
 msgstr "名前:"
 
-#: ../search/Tiles/IMLog.cs:82 ../search/Tiles/MailMessage.cs:95
+#: ../search/Tiles/IMLog.cs:88 ../search/Tiles/MailMessage.cs:92
 msgid "Date Received:"
 msgstr "受信した日付:"
 
-#: ../search/Tiles/MailAttachment.cs:46
+#: ../search/Tiles/MailAttachment.cs:47
 msgid "Mail attachment"
 msgstr "添付ファイル"
 
-#: ../search/Tiles/MailMessage.cs:54
+#: ../search/Tiles/MailMessage.cs:55
 msgid "Send in Mail"
 msgstr "メールの送信"
 
-#: ../search/Tiles/MailMessage.cs:86
+#: ../search/Tiles/MailMessage.cs:87
 msgid "Subject:"
 msgstr "件名:"
 
-#: ../search/Tiles/MailMessage.cs:90
+#: ../search/Tiles/MailMessage.cs:89
 msgid "To:"
 msgstr "宛先:"
 
-#: ../search/Tiles/MailMessage.cs:90
+#: ../search/Tiles/MailMessage.cs:89
 msgid "From:"
 msgstr "差出人:"
 
-#: ../search/Tiles/MailMessage.cs:95
+#: ../search/Tiles/MailMessage.cs:92
 msgid "Date Sent:"
 msgstr "送信した日付:"
 
@@ -261,11 +261,11 @@ msgid_plural "{0} slides"
 msgstr[0] "{0}個のスライド"
 msgstr[1] "{0}個のスライド"
 
-#: ../search/Tiles/RSSFeed.cs:48
+#: ../search/Tiles/RSSFeed.cs:46
 msgid "Site:"
 msgstr "サイト:"
 
-#: ../search/Tiles/RSSFeed.cs:51
+#: ../search/Tiles/RSSFeed.cs:47
 msgid "Date Viewed:"
 msgstr "訪問した日:"
 
@@ -281,11 +281,11 @@ msgid "Open"
 msgstr "開く"
 
 #: ../search/Tiles/Utils.cs:24
-msgid "Application"
+msgid "Applications"
 msgstr "アプリケーション"
 
 #: ../search/Tiles/Utils.cs:26
-msgid "Contact"
+msgid "Contacts"
 msgstr "連絡先"
 
 #: ../search/Tiles/Utils.cs:28
@@ -293,11 +293,11 @@ msgid "Calendar Events"
 msgstr "予定"
 
 #: ../search/Tiles/Utils.cs:30
-msgid "Folder"
+msgid "Folders"
 msgstr "フォルダ"
 
 #: ../search/Tiles/Utils.cs:32
-msgid "Image"
+msgid "Images"
 msgstr "画像"
 
 #: ../search/Tiles/Utils.cs:34
@@ -317,15 +317,15 @@ msgid "Conversations"
 msgstr "会話"
 
 #: ../search/Tiles/Utils.cs:42
-msgid "Website"
+msgid "Websites"
 msgstr "ウェブサイト"
 
 #: ../search/Tiles/Utils.cs:44
-msgid "News Feed"
+msgid "News Feeds"
 msgstr "ニュース"
 
 #: ../search/Tiles/Utils.cs:46
-msgid "Archive"
+msgid "Archives"
 msgstr "書庫"
 
 #: ../search/Tiles/Utils.cs:100 ../search/Tiles/Utils.cs:146
@@ -392,11 +392,11 @@ msgstr[1] "{0}年以内"
 msgid "Unknown duration"
 msgstr "不明"
 
-#: ../search/Tiles/WebHistory.cs:53
+#: ../search/Tiles/WebHistory.cs:51
 msgid "URL:"
 msgstr "URL:"
 
-#: ../search/Tiles/WebHistory.cs:56
+#: ../search/Tiles/WebHistory.cs:52
 msgid "Accessed:"
 msgstr "アクセスした日付:"
 
