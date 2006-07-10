@@ -57,28 +57,79 @@ beagle_util_is_path_on_block_device (const char *path)
 	return (st.st_dev >> 8 != 0);
 }
 
-gboolean
-beagle_util_daemon_is_running (void)
+char *
+beagle_util_get_socket_path (const char *client_name)
 {
 	const gchar *beagle_home;
 	gchar *socket_dir;
 	gchar *socket_path;
-	int sockfd;
-	struct sockaddr_un sun;
+	struct stat buf;
+	
+	if (!client_name) 
+		client_name = "socket";
 
 	beagle_home = g_getenv ("BEAGLE_HOME");
 	if (beagle_home == NULL)
 		beagle_home = g_get_home_dir ();
-	
-	socket_dir = g_build_filename (beagle_home, ".beagle", NULL);
-	socket_path = g_build_filename (socket_dir, "socket", NULL);
+
+	if (! beagle_util_is_path_on_block_device (beagle_home) ||
+	    getenv ("BEAGLE_SYNCHRONIZE_LOCALLY") != NULL) {
+		gchar *remote_storage_dir = g_build_filename (beagle_home, ".beagle", "remote_storage_dir", NULL);
+		gchar *tmp;
+
+		if (! g_file_test (remote_storage_dir, G_FILE_TEST_EXISTS)) {
+			g_free (remote_storage_dir);
+			return NULL;
+		}
+
+		if (! g_file_get_contents (remote_storage_dir, &socket_dir, NULL, NULL)) {
+			g_free (remote_storage_dir);
+			return NULL;
+		}
+
+		g_free (remote_storage_dir);
+
+		/* There's a newline at the end that we want to strip off */
+		tmp = strrchr (socket_dir, '\n');
+		if (tmp != NULL)
+			*tmp = '\0';
+
+		if (! g_file_test (socket_dir, G_FILE_TEST_EXISTS | G_FILE_TEST_IS_DIR)) {
+			g_free (socket_dir);
+			return NULL;
+		}
+	} else {
+		socket_dir = g_build_filename (beagle_home, ".beagle", NULL);
+	}
+
+	socket_path = g_build_filename (socket_dir, client_name, NULL);
+	g_free (socket_dir);
+	if (stat (socket_path, &buf) == -1 || !S_ISSOCK (buf.st_mode)) {
+		g_free (socket_path);
+		return NULL;
+	}
+
+	return socket_path;
+
+}
+
+gboolean
+beagle_util_daemon_is_running (void)
+{
+	gchar *socket_path;
+	int sockfd;
+	struct sockaddr_un sun;
+
+	socket_path = beagle_util_get_socket_path (NULL);
+
+	if (socket_path == NULL)
+		return FALSE;
 
 	bzero (&sun, sizeof (sun));
 	sun.sun_family = AF_UNIX;
 	snprintf (sun.sun_path, sizeof (sun.sun_path), socket_path);
 
 	g_free (socket_path);
-	g_free (socket_dir);
 
 	sockfd = socket (AF_UNIX, SOCK_STREAM, 0);
 	if (sockfd < 0) {

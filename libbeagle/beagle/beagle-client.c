@@ -86,54 +86,12 @@ beagle_client_new (const char *client_name)
 {
 	BeagleClient *client;
 	BeagleClientPrivate *priv;
-	const gchar *beagle_home;
-	gchar *socket_dir;
 	gchar *socket_path;
-	struct stat buf;
-	
-	if (!client_name) 
-		client_name = "socket";
 
-	beagle_home = g_getenv ("BEAGLE_HOME");
-	if (beagle_home == NULL)
-		beagle_home = g_get_home_dir ();
+	socket_path = beagle_util_get_socket_path (client_name);
 
-	if (! beagle_util_is_path_on_block_device (beagle_home) ||
-	    getenv ("BEAGLE_SYNCHRONIZE_LOCALLY") != NULL) {
-		gchar *remote_storage_dir = g_build_filename (beagle_home, ".beagle", "remote_storage_dir", NULL);
-		gchar *tmp;
-
-		if (! g_file_test (remote_storage_dir, G_FILE_TEST_EXISTS)) {
-			g_free (remote_storage_dir);
-			return NULL;
-		}
-
-		if (! g_file_get_contents (remote_storage_dir, &socket_dir, NULL, NULL)) {
-			g_free (remote_storage_dir);
-			return NULL;
-		}
-
-		g_free (remote_storage_dir);
-
-		/* There's a newline at the end that we want to strip off */
-		tmp = strrchr (socket_dir, '\n');
-		if (tmp != NULL)
-			*tmp = '\0';
-
-		if (! g_file_test (socket_dir, G_FILE_TEST_EXISTS | G_FILE_TEST_IS_DIR)) {
-			g_free (socket_dir);
-			return NULL;
-		}
-	} else {
-		socket_dir = g_build_filename (beagle_home, ".beagle", NULL);
-	}
-
-	socket_path = g_build_filename (socket_dir, client_name, NULL);
-	g_free (socket_dir);
-	if (stat (socket_path, &buf) == -1 || !S_ISSOCK (buf.st_mode)) {
-		g_free (socket_path);
+	if (socket_path == NULL)
 		return NULL;
-	}
 
 	client = g_object_new (BEAGLE_TYPE_CLIENT, 0);
 	priv = BEAGLE_CLIENT_GET_PRIVATE (client);
