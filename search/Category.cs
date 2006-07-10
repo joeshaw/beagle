@@ -104,9 +104,12 @@ namespace Search {
 			prev.Sensitive = (page != 0);
 			next.Sensitive = (tiles.Count > LastVisible + 1);
 
-			if (tiles.Count > 0)
-				position.LabelProp = String.Format (Catalog.GetString ("{0}-{1} of {2}"), FirstVisible + 1, LastVisible + 1, tiles.Count);
-			else
+			if (tiles.Count > 0) {
+				if (FirstVisible == 0 && LastVisible + 1 == tiles.Count)
+					position.LabelProp = String.Format (Catalog.GetPluralString ("{0} result", "{0} results", tiles.Count), tiles.Count);
+				else
+					position.LabelProp = String.Format (Catalog.GetString ("{0}-{1} of {2}"), FirstVisible + 1, LastVisible + 1, tiles.Count);
+			} else
 				position.LabelProp = "";
 		}
 
