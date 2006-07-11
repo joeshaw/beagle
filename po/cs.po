@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: cs\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2006-05-23 12:20+0200\n"
-"PO-Revision-Date: 2006-05-23 13:38+0200\n"
+"POT-Creation-Date: 2006-07-11 13:43+0200\n"
+"PO-Revision-Date: 2006-07-11 13:44+0200\n"
 "Last-Translator: Jakub Friedl <jfriedl@suse.cz>\n"
 "Language-Team:  <cs@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -51,7 +51,15 @@ msgstr "Vyhledávání"
 msgid "Search for data on your desktop"
 msgstr "Vyhledávání dat ve vašem počítači"
 
-#: ../search/Category.cs:108
+#: ../search/Category.cs:109
+#, csharp-format
+msgid "{0} result"
+msgid_plural "{0} results"
+msgstr[0] "{0} výsledek"
+msgstr[1] "{0} výsledky"
+msgstr[2] "{0} výsledků"
+
+#: ../search/Category.cs:111
 #, csharp-format
 msgid "{0}-{1} of {2}"
 msgstr "{0}-{1} z {2}"
@@ -147,19 +155,19 @@ msgstr "Začít hledání"
 msgid "Send Mail"
 msgstr "Poslat e-mail"
 
-#: ../search/Tiles/Contact.cs:69
+#: ../search/Tiles/Contact.cs:68
 msgid "E-Mail:"
 msgstr "E-mail:"
 
-#: ../search/Tiles/Contact.cs:71
+#: ../search/Tiles/Contact.cs:70
 msgid "Mobile Phone:"
 msgstr "Mobilní telefon:"
 
-#: ../search/Tiles/Contact.cs:73
+#: ../search/Tiles/Contact.cs:72
 msgid "Work Phone:"
 msgstr "Pracovní telefon:"
 
-#: ../search/Tiles/Contact.cs:75
+#: ../search/Tiles/Contact.cs:74
 msgid "Home Phone:"
 msgstr "Domácí telefon:"
 
@@ -178,22 +186,22 @@ msgstr "E-mail"
 msgid "Move to Trash"
 msgstr "Přesunout do koše"
 
-#: ../search/Tiles/File.cs:122 ../search/Tiles/Note.cs:57
+#: ../search/Tiles/File.cs:124 ../search/Tiles/Note.cs:57
 #: ../search/Tiles/RSSFeed.cs:45 ../search/Tiles/WebHistory.cs:50
 msgid "Title:"
 msgstr "Název:"
 
 #: ../search/Tiles/File.cs:125 ../search/Tiles/Folder.cs:51
-#: ../search/Tiles/Note.cs:60
+#: ../search/Tiles/Note.cs:58
 msgid "Last Edited:"
 msgstr "Naposledy změněno"
 
-#: ../search/Tiles/File.cs:129
+#: ../search/Tiles/File.cs:128
 msgid "Author:"
 msgstr "Autor:"
 
-#: ../search/Tiles/File.cs:133 ../search/Tiles/Folder.cs:54
-#: ../search/Tiles/Image.cs:81
+#: ../search/Tiles/File.cs:130 ../search/Tiles/Folder.cs:52
+#: ../search/Tiles/Image.cs:79
 msgid "Full Path:"
 msgstr "Plná cesta:"
 
@@ -222,11 +230,11 @@ msgstr "Změněno:"
 msgid "IM Conversation"
 msgstr "IM konverzace"
 
-#: ../search/Tiles/IMLog.cs:81
+#: ../search/Tiles/IMLog.cs:87
 msgid "Name:"
 msgstr "Jméno:"
 
-#: ../search/Tiles/IMLog.cs:82 ../search/Tiles/MailMessage.cs:96
+#: ../search/Tiles/IMLog.cs:88 ../search/Tiles/MailMessage.cs:92
 msgid "Date Received:"
 msgstr "Přijato:"
 
@@ -242,15 +250,15 @@ msgstr "Poslat e-mailem"
 msgid "Subject:"
 msgstr "Předmět:"
 
-#: ../search/Tiles/MailMessage.cs:91
+#: ../search/Tiles/MailMessage.cs:89
 msgid "To:"
 msgstr "Komu:"
 
-#: ../search/Tiles/MailMessage.cs:91
+#: ../search/Tiles/MailMessage.cs:89
 msgid "From:"
 msgstr "Od:"
 
-#: ../search/Tiles/MailMessage.cs:96
+#: ../search/Tiles/MailMessage.cs:92
 msgid "Date Sent:"
 msgstr "Datum odeslání:"
 
@@ -262,11 +270,11 @@ msgstr[0] "{0} snímek"
 msgstr[1] "{0} snímky"
 msgstr[2] "{0} snímků"
 
-#: ../search/Tiles/RSSFeed.cs:48
+#: ../search/Tiles/RSSFeed.cs:46
 msgid "Site:"
 msgstr "Web:"
 
-#: ../search/Tiles/RSSFeed.cs:51
+#: ../search/Tiles/RSSFeed.cs:47
 msgid "Date Viewed:"
 msgstr "Prohlíženo:"
 
@@ -400,11 +408,11 @@ msgstr[2] "Za {0} let"
 msgid "Unknown duration"
 msgstr "Neznámá délka"
 
-#: ../search/Tiles/WebHistory.cs:53
+#: ../search/Tiles/WebHistory.cs:51
 msgid "URL:"
 msgstr "URL:"
 
-#: ../search/Tiles/WebHistory.cs:56
+#: ../search/Tiles/WebHistory.cs:52
 msgid "Accessed:"
 msgstr "Přistoupeno:"
 
@@ -940,8 +948,8 @@ msgstr "Přidejte další umístění, která mají být zahrnuta do indexován�
 #: ../tools/settings.glade.h:13
 msgid "Add any remote search-enabled hosts you wish to network with."
 msgstr ""
-"Přidejte další vzdálené počítače pro vyhledávání, "
-"se kterými se chcete spojit po síti."
+"Přidejte další vzdálené počítače pro vyhledávání, se kterými se chcete "
+"spojit po síti."
 
 #: ../tools/settings.glade.h:14
 msgid ""
