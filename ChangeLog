@@ -1,3 +1,7 @@
+2006-07-12  Guntupalli Karunakar  <karunakar@randomink.org>
+
+	* configure.in: Added 'hi' to ALL_LINGUAS.
+
 2006-06-21  Raivis Dejus  <orvils@gmail.com>
 
 	* configure.in: Added 'lv' to ALL_LINGUAS
