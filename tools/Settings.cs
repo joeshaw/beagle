@@ -52,6 +52,7 @@ public class SettingsDialog
 	[Widget] CheckButton allow_root_toggle;
 
 	[Widget] CheckButton autostart_toggle;
+	[Widget] CheckButton battery_toggle;
 
 	[Widget] CheckButton press_ctrl_toggle;
  	[Widget] CheckButton press_alt_toggle;
@@ -163,6 +164,7 @@ public class SettingsDialog
 	{	
 		allow_root_toggle.Active = Conf.Daemon.AllowRoot;
 		autostart_toggle.Active = Conf.Searching.Autostart;
+		battery_toggle.Active = Conf.Indexing.IndexOnBattery;
 
 		KeyBinding show_binding = Conf.Searching.ShowSearchWindowBinding;
 		press_ctrl_toggle.Active = show_binding.Ctrl;
@@ -195,6 +197,7 @@ public class SettingsDialog
 	{
 		Conf.Daemon.AllowRoot = allow_root_toggle.Active;
 		Conf.Searching.Autostart = autostart_toggle.Active;
+		Conf.Indexing.IndexOnBattery = battery_toggle.Active;
 		
 		Conf.Searching.ShowSearchWindowBinding = new KeyBinding (show_search_window_entry.Text, 
 									 press_ctrl_toggle.Active, 

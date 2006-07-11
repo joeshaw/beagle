@@ -172,11 +172,23 @@ namespace Beagle.Daemon {
 			Logger.Log.Debug ("Starting QueryDriver");
 			QueryDriver.Start ();
 
+			bool initially_on_battery = SystemInformation.UsingBattery && ! Conf.Indexing.IndexOnBattery;
+
 			// Start the Global Scheduler thread
 			if (! arg_disable_scheduler) {
-				Logger.Log.Debug ("Starting Scheduler thread");
-				Scheduler.Global.Start ();
+				if (! initially_on_battery) {
+					Logger.Log.Debug ("Starting Scheduler thread");
+					Scheduler.Global.Start ();
+				} else
+					Log.Debug ("Beagle started on battery, not starting scheduler thread");
 			}
+
+			// Poll the battery status so we can shut down the
+			// scheduler if needed.  Ideally at some point this
+			// will become some sort of D-BUS signal, probably from
+			// something like gnome-power-manager.
+			prev_on_battery = initially_on_battery;
+			GLib.Timeout.Add (5000, CheckBatteryStatus);
 
 			// Start our Inotify threads
 			Inotify.Start ();
@@ -476,6 +488,26 @@ namespace Beagle.Daemon {
 				Thread.Sleep (500);
 				ExceptionHandlingThread.SpewLiveThreads ();
 			}
+		}
+
+		/////////////////////////////////////////////////////////////////////////////
+
+		private static bool prev_on_battery = false;
+
+		private static bool CheckBatteryStatus ()
+		{
+			if (prev_on_battery && (! SystemInformation.UsingBattery || Conf.Indexing.IndexOnBattery)) {
+				if (! SystemInformation.UsingBattery)
+					Log.Info ("Deletected a switch from battery to AC power.  Restarting scheduler.");
+				Scheduler.Global.Start ();
+				prev_on_battery = false;
+			} else if (! prev_on_battery && SystemInformation.UsingBattery && ! Conf.Indexing.IndexOnBattery) {
+				Log.Info ("Detected a switch from AC power to battery.  Stopping scheduler.");
+				Scheduler.Global.Stop ();
+				prev_on_battery = true;
+			}
+
+			return true;
 		}
 
 		/////////////////////////////////////////////////////////////////////////////

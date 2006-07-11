@@ -637,6 +637,8 @@ namespace Beagle.Util {
 			lock (big_lock) {
 				if (running) {
 					running = false;
+					thread = null;
+					status_str = "Stopped";
 					Monitor.Pulse (big_lock);
 				}
 			}

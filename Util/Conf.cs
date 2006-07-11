@@ -494,6 +494,12 @@ namespace Beagle.Util {
 				set { index_home_dir = value; }
 			}
 
+			private bool index_on_battery = true;
+			public bool IndexOnBattery {
+				get { return index_on_battery; }
+				set { index_on_battery = value; }
+			}
+
 			private ArrayList excludes = new ArrayList ();
 			[XmlArray]
 			[XmlArrayItem (ElementName="ExcludeItem", Type=typeof(ExcludeItem))]
@@ -522,6 +528,17 @@ namespace Beagle.Util {
 				else
 					output = "Your home directory will be indexed.";
 				index_home_dir = !index_home_dir;
+				return true;
+			}
+
+			[ConfigOption (Description="Toggles whether any data should be indexed if the system is on battery")]
+			internal bool IndexWhileOnBattery (out string output, string [] args)
+			{
+				if (index_on_battery)
+					output = "Data will not be indexed while on battery.";
+				else
+					output = "Data will be indexed while on battery.";
+				index_on_battery = !index_on_battery;
 				return true;
 			}
 
