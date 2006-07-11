@@ -144,7 +144,8 @@ namespace Beagle.Filters {
 
 		static bool NodeBreaksTextAfter (String nodeName)
 		{
-			return  nodeName == "text:s"
+			return  nodeName == "text:line-break"
+				|| nodeName == "text:s"
 				|| nodeName == "text:tab-stop"
 				|| nodeName == "table:table-cell";
 		}
