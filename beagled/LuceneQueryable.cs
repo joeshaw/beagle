@@ -529,11 +529,6 @@ namespace Beagle.Daemon {
 			LuceneQueryable queryable;
 			IIndexableGenerator generator;
 
-			// Hook to be invoked after the IIndexableGenerator
-			// has finished processing a batch of Indexables,
-			// just prior to flushing the driver.
-			Scheduler.Hook pre_flush_hook;
-
 			public AddGeneratorTask (LuceneQueryable     queryable,
 						 IIndexableGenerator generator)
 			{
@@ -558,7 +553,7 @@ namespace Beagle.Daemon {
 
 				do {
 					if (! generator.HasNextIndexable ()) {
-						// ...except if there is no more work to do, of course.
+						// Of course, don't reschedule if there is no more work to do.
 						Reschedule = false;
 						break;
 					}

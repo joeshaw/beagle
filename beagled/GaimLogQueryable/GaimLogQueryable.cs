@@ -37,7 +37,7 @@ namespace Beagle.Daemon.GaimLogQueryable {
 
 	// FIXME: This should be rather renamed to Gaim to be compliant with other backend names
 	[QueryableFlavor (Name="GaimLog", Domain=QueryDomain.Local, RequireInotify=false)]
-	public class GaimLogQueryable : LuceneFileQueryable {
+	public class GaimLogQueryable : LuceneFileQueryable, IIndexableGenerator {
 
 		private static Logger log = Logger.Get ("GaimLogQueryable");
 
@@ -68,16 +68,22 @@ namespace Beagle.Daemon.GaimLogQueryable {
 			Stopwatch stopwatch = new Stopwatch ();
 			stopwatch.Start ();
 
-			State = QueryableState.Crawling;
-			Crawl ();
-			State = QueryableState.Idle;
+			if (Inotify.Enabled) {
+				Log.Info ("Setting up inotify watches on gaim log directories");
+				Crawl (false);
+			}
+
+			Scheduler.Task task;
+			task = NewAddTask (this);
+			task.Tag = "Crawling Gaim logs";
+			task.Source = this;
 
 			if (!Inotify.Enabled) {
-				Scheduler.Task task = Scheduler.TaskFromHook (new Scheduler.TaskHook (CrawlHook));
-				task.Tag = "Crawling ~/.gaim/logs to find new logfiles";
-				task.Source = this;
-				ThisScheduler.Add (task);
+				Scheduler.TaskGroup group = Scheduler.NewTaskGroup ("Repeating gaim log crawler", null, AddCrawlTask);
+				task.AddTaskGroup (group);
 			}
+
+			ThisScheduler.Add (task);
 
 			stopwatch.Stop ();
 
@@ -93,49 +99,96 @@ namespace Beagle.Daemon.GaimLogQueryable {
 
 		/////////////////////////////////////////////////
 
+		private void AddCrawlTask ()
+		{
+			Scheduler.Task task = Scheduler.TaskFromHook (new Scheduler.TaskHook (CrawlHook));
+			task.Tag = "Crawling ~/.gaim/logs to find new logfiles";
+			task.Source = this;
+			ThisScheduler.Add (task);
+		}
+
 		private void CrawlHook (Scheduler.Task task)
 		{
-			Crawl ();
+			Crawl (true);
 			task.Reschedule = true;
 			task.TriggerTime = DateTime.Now.AddSeconds (polling_interval_in_seconds);
 		}
 
-		private void Crawl ()
+		private void Crawl (bool index)
 		{
-			Inotify.Subscribe (log_dir, OnInotifyNewProtocol, Inotify.EventType.Create);
+			if (Inotify.Enabled)
+				Inotify.Subscribe (log_dir, OnInotifyNewProtocol, Inotify.EventType.Create);
 
 			// Walk through protocol subdirs
 			foreach (string proto_dir in DirectoryWalker.GetDirectories (log_dir))
-				CrawlProtocolDirectory (proto_dir);
+				CrawlProtocolDirectory (proto_dir, index);
 		}
 
-		private void CrawlProtocolDirectory (string proto_dir)
+		private void CrawlProtocolDirectory (string proto_dir, bool index)
 		{
-			Inotify.Subscribe (proto_dir, OnInotifyNewAccount, Inotify.EventType.Create);
+			if (Inotify.Enabled)
+				Inotify.Subscribe (proto_dir, OnInotifyNewAccount, Inotify.EventType.Create);
 
 			// Walk through accounts
 			foreach (string account_dir in DirectoryWalker.GetDirectories (proto_dir))
-				CrawlAccountDirectory (account_dir);
+				CrawlAccountDirectory (account_dir, index);
 		}
 
-		private void CrawlAccountDirectory (string account_dir)
+		private void CrawlAccountDirectory (string account_dir, bool index)
 		{
-			Inotify.Subscribe (account_dir, OnInotifyNewRemote, Inotify.EventType.Create);
+			if (Inotify.Enabled)
+				Inotify.Subscribe (account_dir, OnInotifyNewRemote, Inotify.EventType.Create);
 
 			// Walk through remote user conversations
 			foreach (string remote_dir in DirectoryWalker.GetDirectories (account_dir)) {
 				if (remote_dir.IndexOf (".system") < 0)
-					CrawlRemoteDirectory (remote_dir);
+					CrawlRemoteDirectory (remote_dir, index);
 			}
 		}
 
-		private void CrawlRemoteDirectory (string remote_dir)
+		private void CrawlRemoteDirectory (string remote_dir, bool index)
 		{
-			Inotify.Subscribe (remote_dir, OnInotifyNewConversation, Inotify.EventType.CloseWrite | Inotify.EventType.Modify);
+			if (Inotify.Enabled)
+				Inotify.Subscribe (remote_dir, OnInotifyNewConversation, Inotify.EventType.CloseWrite | Inotify.EventType.Modify);
 
-			foreach (FileInfo file in DirectoryWalker.GetFileInfos (remote_dir))
-				if (FileIsInteresting (file.Name))
-					IndexLog (file.FullName, Scheduler.Priority.Delayed);
+			if (index) {
+				foreach (FileInfo file in DirectoryWalker.GetFileInfos (remote_dir))
+					if (FileIsInteresting (file.Name))
+						IndexLog (file.FullName, Scheduler.Priority.Delayed);
+			}
+		}
+
+		/////////////////////////////////////////////////
+
+		public string StatusName {
+			get { return "GaimLogQueryable"; }
+		}
+
+		private IEnumerator log_files = null;
+
+		public void PostFlushHook () { }
+
+		public bool HasNextIndexable ()
+		{
+			if (log_files == null)
+				log_files = DirectoryWalker.GetFileInfosRecursive (log_dir).GetEnumerator ();
+
+			return log_files.MoveNext ();
+		}
+
+		public Indexable GetNextIndexable ()
+		{
+			FileInfo file = (FileInfo) log_files.Current;
+
+			if (! file.Exists)
+				return null;
+
+			if (IsUpToDate (file.FullName))
+				return null;
+
+			Indexable indexable = ImLogToIndexable (file.FullName);
+			
+			return indexable;
 		}
 
 		/////////////////////////////////////////////////
@@ -186,7 +239,7 @@ namespace Beagle.Daemon.GaimLogQueryable {
 			if (subitem.Length == 0 || (type & Inotify.EventType.IsDirectory) == 0)
 				return;
 
-			CrawlProtocolDirectory (Path.Combine (path, subitem));
+			CrawlProtocolDirectory (Path.Combine (path, subitem), true);
 		}
 
 		private void OnInotifyNewAccount (Inotify.Watch watch,
@@ -196,7 +249,7 @@ namespace Beagle.Daemon.GaimLogQueryable {
 			if (subitem.Length == 0 || (type & Inotify.EventType.IsDirectory) == 0)
 				return;
 
-			CrawlAccountDirectory (Path.Combine (path, subitem));
+			CrawlAccountDirectory (Path.Combine (path, subitem), true);
 		}
 
 		private void OnInotifyNewRemote (Inotify.Watch watch,
@@ -206,7 +259,7 @@ namespace Beagle.Daemon.GaimLogQueryable {
 			if (subitem.Length == 0 || (type & Inotify.EventType.IsDirectory) == 0)
 				return;
 
-			CrawlRemoteDirectory (Path.Combine (path, subitem));
+			CrawlRemoteDirectory (Path.Combine (path, subitem), true);
 		}
 
 		private void OnInotifyNewConversation (Inotify.Watch watch,

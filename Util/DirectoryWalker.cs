@@ -269,5 +269,23 @@ namespace Beagle.Util {
 		{
 			return new FileEnumerable (path, filter, null);
 		}
+
+		static public IEnumerable GetFileInfosRecursive (string path)
+		{
+			foreach (FileInfo i in DirectoryWalker.GetFileInfos (path))
+				yield return i;
+
+			foreach (string dir in DirectoryWalker.GetDirectories (path)) {
+				foreach (FileInfo i in GetFileInfosRecursive (dir))
+					yield return i;
+			}
+
+			yield break;
+		}
+
+		static public IEnumerable GetFileInfosRecursive (DirectoryInfo dirinfo)
+		{
+			return GetFileInfosRecursive (dirinfo.FullName);
+		}
 	}
 }
