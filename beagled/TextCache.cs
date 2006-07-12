@@ -116,7 +116,7 @@ namespace Beagle.Daemon {
 					"SELECT filename FROM uri_index WHERE uri='blah'";
 
 				try {
-					reader = ExecuteReaderOrWait (command);
+					reader = SqliteUtils.ExecuteReaderOrWait (command);
 				} catch (ApplicationException ex) {
 					Logger.Log.Warn ("Likely sqlite database version mismatch trying to read from {0}.  Purging.", db_filename);
 					create_new_db = true;
@@ -140,10 +140,11 @@ namespace Beagle.Daemon {
 				}catch (Exception e){
 					Logger.Log.Debug ( e.Message);
 				}
-				DoNonQuery ("CREATE TABLE uri_index (            " +
-					    "  uri      STRING UNIQUE NOT NULL,  " +
-					    "  filename STRING NOT NULL          " +
-					    ")");
+				SqliteUtils.DoNonQuery (connection,
+							"CREATE TABLE uri_index (            " +
+							"  uri      STRING UNIQUE NOT NULL,  " +
+							"  filename STRING NOT NULL          " +
+							")");
 			}
 		}
 
@@ -170,53 +171,13 @@ namespace Beagle.Daemon {
 			return command;
 		}
 
-		private void DoNonQuery (string format, params object [] args)
-		{
-			if (Debug)
-				Logger.Log.Debug ("Executing command '{0}'", String.Format (format, args));
-			SqliteCommand command = NewCommand (format, args);
-			while (true) {
-				try {
-					command.ExecuteNonQuery ();
-					break;
-				} catch (SqliteBusyException ex) {
-					// FIXME: should we eventually time out?
-					Thread.Sleep (50);
-				}
-			}
-			command.Dispose ();
-		}
-
-		private SqliteDataReader ExecuteReaderOrWait (SqliteCommand command)
-		{
-			SqliteDataReader reader = null;
-			while (reader == null) {
-				try {
-					reader = command.ExecuteReader ();
-				} catch (SqliteBusyException ex) {
-					Thread.Sleep (50);
-				}
-			}
-			return reader;
-		}
-
-		private bool ReadOrWait (SqliteDataReader reader)
-		{
-			while (true) {
-				try {
-					return reader.Read ();
-				} catch (SqliteBusyException ex) {
-					Thread.Sleep (50);
-				}
-			}
-		}
-
 		private void Insert (Uri uri, string filename)
 		{
 			lock (connection) {
 				MaybeStartTransaction_Unlocked ();
-				DoNonQuery ("INSERT OR REPLACE INTO uri_index (uri, filename) VALUES ('{0}', '{1}')",
-					    UriToString (uri), filename);
+				SqliteUtils.DoNonQuery (connection,
+							"INSERT OR REPLACE INTO uri_index (uri, filename) VALUES ('{0}', '{1}')",
+							UriToString (uri), filename);
 			}
 		}
 
@@ -228,8 +189,8 @@ namespace Beagle.Daemon {
 
 			command = NewCommand ("SELECT filename FROM uri_index WHERE uri='{0}'", 
 			                      UriToString (uri));
-			reader = ExecuteReaderOrWait (command);
-			if (ReadOrWait (reader))
+			reader = SqliteUtils.ExecuteReaderOrWait (command);
+			if (SqliteUtils.ReadOrWait (reader))
 				path = reader.GetString (0);
 			reader.Close ();
 			command.Dispose ();
@@ -379,8 +340,9 @@ namespace Beagle.Daemon {
 				string path = LookupPathRawUnlocked (uri, false);
 				if (path != null) {
 					MaybeStartTransaction_Unlocked ();
-					DoNonQuery ("DELETE FROM uri_index WHERE uri='{0}' AND filename='{1}'", 
-					            UriToString (uri), path);
+					SqliteUtils.DoNonQuery (connection,
+								"DELETE FROM uri_index WHERE uri='{0}' AND filename='{1}'", 
+								UriToString (uri), path);
 					if (path != SELF_CACHE_TAG)
 						File.Delete (path);
 				}
@@ -390,7 +352,7 @@ namespace Beagle.Daemon {
 		private void MaybeStartTransaction_Unlocked ()
 		{
 			if (transaction_state == TransactionState.Requested)
-				DoNonQuery ("BEGIN");
+				SqliteUtils.DoNonQuery (connection, "BEGIN");
 			transaction_state = TransactionState.Started;
 		}
 
@@ -406,7 +368,7 @@ namespace Beagle.Daemon {
 		{
 			lock (connection) {
 				if (transaction_state == TransactionState.Started)
-					DoNonQuery ("COMMIT");
+					SqliteUtils.DoNonQuery (connection, "COMMIT");
 				transaction_state = TransactionState.None;
 			}
 		}
