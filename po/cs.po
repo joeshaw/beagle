@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: cs\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2006-07-11 13:43+0200\n"
-"PO-Revision-Date: 2006-07-11 13:44+0200\n"
+"POT-Creation-Date: 2006-07-14 10:29+0200\n"
+"PO-Revision-Date: 2006-07-14 10:30+0200\n"
 "Last-Translator: Jakub Friedl <jfriedl@suse.cz>\n"
 "Language-Team:  <cs@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -43,7 +43,7 @@ msgstr "Konverzace v {0}"
 msgid "Conversations with {0}"
 msgstr "Konverzace s {0}"
 
-#: ../search/beagle-search.desktop.in.h:1 ../tools/settings.glade.h:27
+#: ../search/beagle-search.desktop.in.h:1 ../tools/settings.glade.h:28
 msgid "Search"
 msgstr "Vyhledávání"
 
@@ -742,11 +742,11 @@ msgstr "_Relevance"
 msgid "Sort the best matches first"
 msgstr "Na začátek řadit nejlépe odpovídající výsledky"
 
-#: ../tools/Settings.cs:223
+#: ../tools/Settings.cs:226
 msgid "Reload configuration"
 msgstr "Znovu načíst konfiguraci"
 
-#: ../tools/Settings.cs:224
+#: ../tools/Settings.cs:227
 msgid ""
 "The configuration file has been modified by another application. Do you wish "
 "to discard the currently displayed values and reload configuration from disk?"
@@ -754,15 +754,15 @@ msgstr ""
 "Konfigurační soubor byl změn jinou aplikací. Chcete zahodit právě zobrazené "
 "hodnoty a načíst konfiguraci znovu z disku?"
 
-#: ../tools/Settings.cs:262
+#: ../tools/Settings.cs:265
 msgid "Select Path"
 msgstr "Vyberte cestu"
 
-#: ../tools/Settings.cs:281
+#: ../tools/Settings.cs:284
 msgid "The selected path is already selected for indexing and wasn't added."
 msgstr "Vybraná cesta je již nastavena pro indexaci a nebyla tedy znovu přidána."
 
-#: ../tools/Settings.cs:284
+#: ../tools/Settings.cs:287
 msgid ""
 "The selected path wasn't added. The list contains items that supercedes it "
 "and the data is already being indexed."
@@ -770,15 +770,15 @@ msgstr ""
 "Vybraná cesta nebyla přidána. Seznam obsahuje položky, které ji zahrnují a "
 "data jsou tedy již indexována."
 
-#: ../tools/Settings.cs:295 ../tools/Settings.cs:487
+#: ../tools/Settings.cs:298 ../tools/Settings.cs:490
 msgid "Path not added"
 msgstr "Cesta nebyla přidána"
 
-#: ../tools/Settings.cs:304
+#: ../tools/Settings.cs:307
 msgid "Remove obsolete paths"
 msgstr "Odstranit neplatné cesty"
 
-#: ../tools/Settings.cs:305
+#: ../tools/Settings.cs:308
 msgid ""
 "Adding this path will obsolete some of the existing include paths. This will "
 "result in the removal of the old obsolete paths. Do you still wish to add it?"
@@ -786,21 +786,21 @@ msgstr ""
 "Přidáním této cesty nahradíte jednu z existujících cest. Toto odstraní "
 "původní cestu. Opravdu ji chcete přidat?"
 
-#: ../tools/Settings.cs:331
+#: ../tools/Settings.cs:334
 msgid "Remove path"
 msgstr "Odstranit cestu"
 
-#: ../tools/Settings.cs:332
+#: ../tools/Settings.cs:335
 msgid ""
 "Are you sure you wish to remove this path from the list of directories to be "
 "included for indexing?"
 msgstr "Opravdu chcete odstranit cestu ze seznamu adresářů zahrnutých do indexace?"
 
-#: ../tools/Settings.cs:361
+#: ../tools/Settings.cs:364
 msgid "Remove item"
 msgstr "Odstranit položku"
 
-#: ../tools/Settings.cs:362
+#: ../tools/Settings.cs:365
 msgid ""
 "Are you sure you wish to remove this item from the list of data to be "
 "excluded from indexing?"
@@ -808,84 +808,84 @@ msgstr ""
 "Opravdu chcete odstranit tuto položku ze seznamu dat, která nemají být "
 "indexována?"
 
-#: ../tools/Settings.cs:405
+#: ../tools/Settings.cs:408
 msgid "Invalid host entry"
 msgstr "Neplatný název počítače"
 
-#: ../tools/Settings.cs:412
+#: ../tools/Settings.cs:415
 msgid "Remote host already present in the list."
 msgstr "Vzdálený počítač je již v seznamu."
 
-#: ../tools/Settings.cs:421
+#: ../tools/Settings.cs:424
 msgid "Netbeagle Node not added"
 msgstr "Uzel Netbeagle nebyl přidán"
 
-#: ../tools/Settings.cs:437
+#: ../tools/Settings.cs:440
 msgid "Remove host"
 msgstr "Odstranit počítač"
 
-#: ../tools/Settings.cs:438
+#: ../tools/Settings.cs:441
 msgid "Are you sure you wish to remove this host from the list?"
 msgstr "Opravdu chcete odstranit tento počítač ze seznamu?"
 
-#: ../tools/Settings.cs:459
+#: ../tools/Settings.cs:462
 msgid "Select path"
 msgstr "Vyberte cestu"
 
-#: ../tools/Settings.cs:478
+#: ../tools/Settings.cs:481
 msgid "The selected path is already configured for external access."
 msgstr "Vybraná cesta je již nastavena pro vzdálený přístup."
 
-#: ../tools/Settings.cs:502
+#: ../tools/Settings.cs:505
 msgid "Remove public path"
 msgstr "Odstranit veřejnou cestu"
 
-#: ../tools/Settings.cs:503
+#: ../tools/Settings.cs:506
 msgid "Are you sure you wish to remove this entry from the list of public paths?"
 msgstr "Opravdu chcete odstranit tuto položku ze seznamu veřejných cest?"
 
-#: ../tools/Settings.cs:548 ../tools/Settings.cs:637 ../tools/Settings.cs:715
-#: ../tools/Settings.cs:791 ../tools/Settings.cs:1130
+#: ../tools/Settings.cs:551 ../tools/Settings.cs:640 ../tools/Settings.cs:718
+#: ../tools/Settings.cs:794 ../tools/Settings.cs:1133
 msgid "Name"
 msgstr "Jméno"
 
-#: ../tools/Settings.cs:631
+#: ../tools/Settings.cs:634
 msgid "Type"
 msgstr "Typ"
 
-#: ../tools/Settings.cs:684
+#: ../tools/Settings.cs:687
 msgid "Path:"
 msgstr "Cesta:"
 
-#: ../tools/Settings.cs:687
+#: ../tools/Settings.cs:690
 msgid "Pattern:"
 msgstr "Vzor:"
 
-#: ../tools/Settings.cs:690
+#: ../tools/Settings.cs:693
 msgid "Mail folder:"
 msgstr "Poštovní složka:"
 
-#: ../tools/Settings.cs:1038
+#: ../tools/Settings.cs:1041
 msgid "Select Folder"
 msgstr "Vyberte složku"
 
-#: ../tools/Settings.cs:1064 ../tools/settings.glade.h:24
+#: ../tools/Settings.cs:1067 ../tools/settings.glade.h:25
 msgid "P_ath:"
 msgstr "_Cesta"
 
-#: ../tools/Settings.cs:1069
+#: ../tools/Settings.cs:1072
 msgid "M_ail folder:"
 msgstr "_Poštovní složka:"
 
-#: ../tools/Settings.cs:1074
+#: ../tools/Settings.cs:1077
 msgid "P_attern:"
 msgstr "_Vzor:"
 
-#: ../tools/Settings.cs:1098
+#: ../tools/Settings.cs:1101
 msgid "Error adding path"
 msgstr "Chyba při přidávání cesty"
 
-#: ../tools/Settings.cs:1099
+#: ../tools/Settings.cs:1102
 msgid ""
 "The specified path could not be found and therefore it could not be added to "
 "the list of resources excluded for indexing."
@@ -893,7 +893,7 @@ msgstr ""
 "Zadaná cesta nemůže být nalezena a proto nemůže být přidána mezi zdroje "
 "vyjmuté z indexace."
 
-#: ../tools/Settings.cs:1129
+#: ../tools/Settings.cs:1132
 msgid "Show"
 msgstr "Zobrazit"
 
@@ -988,30 +988,34 @@ msgid "I_ndex my home directory"
 msgstr "_Indexovat můj domovský adresář"
 
 #: ../tools/settings.glade.h:22
+msgid "Index data while on battery power"
+msgstr "Provádět indexaci během napájení z baterie"
+
+#: ../tools/settings.glade.h:23
 msgid "Indexing"
 msgstr "Indexace"
 
-#: ../tools/settings.glade.h:23
+#: ../tools/settings.glade.h:24
 msgid "Networking"
 msgstr "Síť"
 
-#: ../tools/settings.glade.h:25
+#: ../tools/settings.glade.h:26
 msgid "Please select a resource you wish to exclude from indexing."
 msgstr "Vyberte prosím zdroj, který chcete vyjmout z indexace."
 
-#: ../tools/settings.glade.h:26
+#: ../tools/settings.glade.h:27
 msgid "Please select the mail folder you wish to exclude from indexing. "
 msgstr "Prosím vyberte poštovní složku, kterou chcete vyjmout z indexace."
 
-#: ../tools/settings.glade.h:28
+#: ../tools/settings.glade.h:29
 msgid "Search Preferences"
 msgstr "Nastavení vyhledávání"
 
-#: ../tools/settings.glade.h:29
+#: ../tools/settings.glade.h:30
 msgid "Select Mail Folder"
 msgstr "Vybrat poštovní složku"
 
-#: ../tools/settings.glade.h:30
+#: ../tools/settings.glade.h:31
 msgid ""
 "Specify any resources, such as paths, patterns, mail folders or type of "
 "objects you wish to exclude from indexing."
@@ -1019,35 +1023,35 @@ msgstr ""
 "Zadejte prosím libovolné zdroje jako jsou cesty, vzory cest, poštovní složky "
 "nebo typy objektů, které chcete vyjmout z indexace."
 
-#: ../tools/settings.glade.h:31
+#: ../tools/settings.glade.h:32
 msgid "Specify paths that should be available for external access."
 msgstr "Zadejte cesty, které mají být dostupné pro vzdálený přístup."
 
-#: ../tools/settings.glade.h:32
+#: ../tools/settings.glade.h:33
 msgid "Type:"
 msgstr "Typ:"
 
-#: ../tools/settings.glade.h:33
+#: ../tools/settings.glade.h:34
 msgid "_Address:"
 msgstr "_Adresa:"
 
-#: ../tools/settings.glade.h:34
+#: ../tools/settings.glade.h:35
 msgid "_Allow Beagle to be run as root"
 msgstr "_Povolit běh Beagle pod rootem"
 
-#: ../tools/settings.glade.h:35
+#: ../tools/settings.glade.h:36
 msgid "_Folder path"
 msgstr "_Cesta ke složce"
 
-#: ../tools/settings.glade.h:36
+#: ../tools/settings.glade.h:37
 msgid "_Mail folder"
 msgstr "_Poštovní složka"
 
-#: ../tools/settings.glade.h:37
+#: ../tools/settings.glade.h:38
 msgid "_Maximum number of results displayed:"
 msgstr "_Maximální počet zobrazených výsledků"
 
-#: ../tools/settings.glade.h:38
+#: ../tools/settings.glade.h:39
 msgid "_Start search & indexing services automatically "
 msgstr "_Spustit vyhledávací a indexovací služby automaticky"
 
