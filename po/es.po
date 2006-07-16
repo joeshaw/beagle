@@ -1,25 +1,23 @@
-# translation of es.po to
 # translation of es.po to Spanish
 # Traducción española de beagle.
 # Copyright (C) 2005 The GNOME Foundation
 # This file is distributed under the same license as the beagle package.
-#
 # Antonio Ognio <gnrfan@gnrfan.org>, 2005.
-# Francisco Javier F. Serrador <serrador@cvs.gnome.org>, 2005, 2006.
 # Francisco Javier F. Serrador <serrador@tecknolabs.com>, 2006.
+# Francisco Javier F. Serrador <serrador@cvs.gnome.org>, 2006.
 msgid ""
 msgstr ""
 "Project-Id-Version: es\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2006-06-01 13:30+0200\n"
-"PO-Revision-Date: 2006-06-01 13:37+0200\n"
-"Last-Translator: Francisco Javier F. Serrador <serrador@tecknolabs.com>\n"
+"POT-Creation-Date: 2006-07-16 20:29+0200\n"
+"PO-Revision-Date: 2006-07-16 20:44+0200\n"
+"Last-Translator: Francisco Javier F. Serrador <serrador@cvs.gnome.org>\n"
 "Language-Team: Spanish <traductores@es.gnome.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms:  nplurals=2; plural=(n != 1);\n"
-"X-Generator: KBabel 1.11.2\n"
+"X-Generator: KBabel 1.9.1\n"
 
 #: ../glue/eggtrayicon.c:127
 msgid "Orientation"
@@ -47,7 +45,7 @@ msgstr "Conversaciones en {0}"
 msgid "Conversations with {0}"
 msgstr "Conversaciones con {0}"
 
-#: ../search/beagle-search.desktop.in.h:1 ../tools/settings.glade.h:27
+#: ../search/beagle-search.desktop.in.h:1 ../tools/settings.glade.h:28
 msgid "Search"
 msgstr "Búsqueda"
 
@@ -55,7 +53,14 @@ msgstr "Búsqueda"
 msgid "Search for data on your desktop"
 msgstr "Buscar datos en el escritorio"
 
-#: ../search/Category.cs:108
+#: ../search/Category.cs:109
+#, csharp-format
+msgid "{0} result"
+msgid_plural "{0} results"
+msgstr[0] "{0} resultado"
+msgstr[1] "{0} resultados"
+
+#: ../search/Category.cs:111
 #, csharp-format
 msgid "{0}-{1} of {2}"
 msgstr "{0}-{1} de {2}"
@@ -93,7 +98,7 @@ msgstr ""
 
 #: ../search/Pages/QuickTips.cs:11
 msgid "To search for optional terms, use OR.  ex: <b>George OR Ringo</b>"
-msgstr "Para buscar términos opcionales, use OR. ej: <b>George or Ringo</b>"
+msgstr "Para buscar términos opcionales, use OR. ej: <b>Jorge or Esteban</b>"
 
 #: ../search/Pages/QuickTips.cs:12
 msgid "To exclude search terms, use the minus symbol in front, such as <b>-cats</b>"
@@ -225,11 +230,11 @@ msgstr "Modificado:"
 msgid "IM Conversation"
 msgstr "Conversación MI"
 
-#: ../search/Tiles/IMLog.cs:81
+#: ../search/Tiles/IMLog.cs:87
 msgid "Name:"
 msgstr "Nombre:"
 
-#: ../search/Tiles/IMLog.cs:82 ../search/Tiles/MailMessage.cs:92
+#: ../search/Tiles/IMLog.cs:88 ../search/Tiles/MailMessage.cs:92
 msgid "Date Received:"
 msgstr "Fecha de recepción:"
 
@@ -444,7 +449,7 @@ msgid ""
 "e-mail"
 msgstr ""
 "correo\n"
-"e-mail\n"
+"email\n"
 "correo-e"
 
 #: ../search/TypeFilter.cs:38
@@ -631,7 +636,7 @@ msgstr "Ayuda - Tabla de contenido"
 
 #: ../search/UIManager.cs:78
 msgid "About Desktop Search"
-msgstr "Acerca de la búsquedas de Escritorio"
+msgstr "Acerca de la búsqueda de Escritorio"
 
 #: ../search/UIManager.cs:100
 msgid "_Everywhere"
@@ -721,44 +726,44 @@ msgstr "_Relevancia"
 msgid "Sort the best matches first"
 msgstr "Ordenar las mejores coincidencias primero"
 
-#: ../tools/Settings.cs:223
+#: ../tools/Settings.cs:226
 msgid "Reload configuration"
 msgstr "Recargar la configuración"
 
-#: ../tools/Settings.cs:224
+#: ../tools/Settings.cs:227
 msgid ""
 "The configuration file has been modified by another application. Do you wish "
 "to discard the currently displayed values and reload configuration from disk?"
 msgstr ""
-"El archivo de configuración ha sido modificado por otra aplicación. ¿Desea "
-"descartar los valores mostrados actualmente y volver a leer la configuración "
+"El archivo de configuración lo ha modificado otra aplicación. ¿Desea "
+"descartar los valores mostrados actualmente y recargar la configuración "
 "desde el disco?"
 
-#: ../tools/Settings.cs:262
+#: ../tools/Settings.cs:265
 msgid "Select Path"
 msgstr "Seleccione una ruta"
 
-#: ../tools/Settings.cs:281
-msgid "The selected path is already selected for indexing and wasn't added."
-msgstr "La ruta seleccionada ya está considerada en la indexación y no se añadió."
-
 #: ../tools/Settings.cs:284
+msgid "The selected path is already selected for indexing and wasn't added."
+msgstr "La ruta seleccionada ya está seleccionada para la indexación y no se añadió."
+
+#: ../tools/Settings.cs:287
 msgid ""
 "The selected path wasn't added. The list contains items that supercedes it "
 "and the data is already being indexed."
 msgstr ""
-"La ruta seleccionada no fue añadida. Esta lista contiene elementos que la "
+"La ruta seleccionada no se ha añadido. Esta lista contiene elementos que la "
 "incluyen y los datos ya están siendo indexados."
 
-#: ../tools/Settings.cs:295 ../tools/Settings.cs:487
+#: ../tools/Settings.cs:298 ../tools/Settings.cs:490
 msgid "Path not added"
-msgstr "La ruta no fue añadida"
+msgstr "La ruta no se ha añadido"
 
-#: ../tools/Settings.cs:304
+#: ../tools/Settings.cs:307
 msgid "Remove obsolete paths"
 msgstr "Quitar rutas obsoletas"
 
-#: ../tools/Settings.cs:305
+#: ../tools/Settings.cs:308
 msgid ""
 "Adding this path will obsolete some of the existing include paths. This will "
 "result in the removal of the old obsolete paths. Do you still wish to add it?"
@@ -767,108 +772,104 @@ msgstr ""
 "existentes. Esto causará que las rutas obsoletas se eliminen. ¿Aún desea "
 "añadir esta ruta?"
 
-#: ../tools/Settings.cs:331
+#: ../tools/Settings.cs:334
 msgid "Remove path"
 msgstr "Quitar ruta"
 
-#: ../tools/Settings.cs:332
+#: ../tools/Settings.cs:335
 msgid ""
 "Are you sure you wish to remove this path from the list of directories to be "
 "included for indexing?"
-msgstr ""
-"¿Seguro que quiere quitar esta ruta de la lista de directorios que serán "
-"excluidos de la indexación?"
+msgstr "¿Seguro que quiere quitar esta ruta de la lista de directorios que se excluirán de la indexación?"
 
-#: ../tools/Settings.cs:361
+#: ../tools/Settings.cs:364
 msgid "Remove item"
 msgstr "Quitar elemento"
 
-#: ../tools/Settings.cs:362
+#: ../tools/Settings.cs:365
 msgid ""
 "Are you sure you wish to remove this item from the list of data to be "
 "excluded from indexing?"
-msgstr ""
-"¿Seguro que quiere quitar este elemento de la lista de recursos a ser "
-"excluidos de la indexación?"
+msgstr "¿Seguro que quiere quitar este elemento de la lista de datos que se van a excluir de la indexación?"
 
-#: ../tools/Settings.cs:405
+#: ../tools/Settings.cs:408
 msgid "Invalid host entry"
 msgstr "La entrada del equipo no es válida"
 
-#: ../tools/Settings.cs:412
+#: ../tools/Settings.cs:415
 msgid "Remote host already present in the list."
 msgstr "El equipo remoto ya está presente en la lista."
 
-#: ../tools/Settings.cs:421
+#: ../tools/Settings.cs:424
 msgid "Netbeagle Node not added"
-msgstr "El nodo de Netbeagle no fue añadido"
+msgstr "El nodo de Netbeagle no se ha añadido"
 
-#: ../tools/Settings.cs:437
+#: ../tools/Settings.cs:440
 msgid "Remove host"
-msgstr "Quitar equipo"
+msgstr "Quitar equipo remoto"
 
-#: ../tools/Settings.cs:438
+#: ../tools/Settings.cs:441
 msgid "Are you sure you wish to remove this host from the list?"
-msgstr "¿Seguro que quiere quitar este equipo de la lista?"
+msgstr "¿Seguro que quiere quitar este equipo remoto de la lista?"
 
-#: ../tools/Settings.cs:459
+#: ../tools/Settings.cs:462
 msgid "Select path"
 msgstr "Seleccione una ruta"
 
-#: ../tools/Settings.cs:478
+#: ../tools/Settings.cs:481
 msgid "The selected path is already configured for external access."
-msgstr "La ruta seleccionada ya está configurada para acceso externo"
+msgstr "La ruta seleccionada ya está configurada para acceso externo."
 
-#: ../tools/Settings.cs:502
+#: ../tools/Settings.cs:505
 msgid "Remove public path"
 msgstr "Quitar ruta pública"
 
-#: ../tools/Settings.cs:503
+#: ../tools/Settings.cs:506
 msgid "Are you sure you wish to remove this entry from the list of public paths?"
 msgstr "¿Seguro que quiere quitar este elemento de la lista de rutas públicas?"
 
-#: ../tools/Settings.cs:548 ../tools/Settings.cs:637 ../tools/Settings.cs:715
-#: ../tools/Settings.cs:791 ../tools/Settings.cs:1130
+#: ../tools/Settings.cs:551 ../tools/Settings.cs:640 ../tools/Settings.cs:718
+#: ../tools/Settings.cs:794 ../tools/Settings.cs:1133
 msgid "Name"
 msgstr "Nombre"
 
-#: ../tools/Settings.cs:631
+#: ../tools/Settings.cs:634
 msgid "Type"
 msgstr "Tipo"
 
-#: ../tools/Settings.cs:684
+#: ../tools/Settings.cs:687
 msgid "Path:"
 msgstr "Ruta:"
 
-#: ../tools/Settings.cs:687
+#: ../tools/Settings.cs:690
 msgid "Pattern:"
 msgstr "Patrón:"
 
-#: ../tools/Settings.cs:690
+#: ../tools/Settings.cs:693
 msgid "Mail folder:"
 msgstr "Carpeta de correo:"
 
-#: ../tools/Settings.cs:1038
+#: ../tools/Settings.cs:1041
 msgid "Select Folder"
-msgstr "Seleccione carpeta"
+msgstr "Seleccione la carpeta"
 
-#: ../tools/Settings.cs:1064 ../tools/settings.glade.h:24
+#: ../tools/Settings.cs:1067 ../tools/settings.glade.h:25
 msgid "P_ath:"
 msgstr "_Ruta:"
 
-#: ../tools/Settings.cs:1069
+#: ../tools/Settings.cs:1072
 msgid "M_ail folder:"
 msgstr "_Carpeta de correo:"
 
-#: ../tools/Settings.cs:1074
+#: ../tools/Settings.cs:1077
 msgid "P_attern:"
 msgstr "_Patrón:"
 
-#: ../tools/Settings.cs:1098
+#: ../tools/Settings.cs:1101
 msgid "Error adding path"
 msgstr "Se produjo un error al añadir la ruta"
 
-#: ../tools/Settings.cs:1099
+#: ../tools/Settings.cs:1102
 msgid ""
 "The specified path could not be found and therefore it could not be added to "
 "the list of resources excluded for indexing."
@@ -876,7 +877,7 @@ msgstr ""
 "La ruta especificada no se pudo encontrar y por lo tanto se añadió a la "
 "lista de recursos excluidos de la indexación."
 
-#: ../tools/Settings.cs:1129
+#: ../tools/Settings.cs:1132
 msgid "Show"
 msgstr "Mostrar"
 
@@ -920,7 +921,9 @@ msgstr "Añadir equipo remoto"
 msgid ""
 "Add a remote search-enabled host you wish \n"
 "to network with."
-msgstr "Añade un equipo con búsqueda por red activada."
+msgstr ""
+"Añade un host remoto con búsqueda por red activada\n"
+"con el que conectarse."
 
 #: ../tools/settings.glade.h:12
 msgid "Add any additional paths to be included for indexing."
@@ -929,7 +932,7 @@ msgstr "Añadir cualquier ruta adicional para incluirla en la indexación."
 #: ../tools/settings.glade.h:13
 msgid "Add any remote search-enabled hosts you wish to network with."
 msgstr ""
-"Añade cualquier equipo con búsqueda remota activada con el que desee "
+"Añade cualquier host con búsqueda remota activada con el que desee "
 "conectarse."
 
 #: ../tools/settings.glade.h:14
@@ -937,8 +940,8 @@ msgid ""
 "Adjust which types of results should be visible, and in what order they "
 "should be presented when grouped by type."
 msgstr ""
-"Configurar que tipos de resultados deberían ser visibles, y en que orden "
-"deberían ser presentados cuando son agrupados por tipo."
+"Configurar qué tipos de resultados deberían ser visibles, y en qué orden "
+"deberían presentarse al agruparlos por tipo."
 
 #: ../tools/settings.glade.h:15
 msgid "Allow _external access to local search services"
@@ -969,66 +972,70 @@ msgid "I_ndex my home directory"
 msgstr "_Indexar mi directorio personal"
 
 #: ../tools/settings.glade.h:22
+msgid "Index data while on battery power"
+msgstr "Indexar datos cuando se esté funcionando con baterías"
+
+#: ../tools/settings.glade.h:23
 msgid "Indexing"
 msgstr "Indexación"
 
-#: ../tools/settings.glade.h:23
+#: ../tools/settings.glade.h:24
 msgid "Networking"
 msgstr "Redes"
 
-#: ../tools/settings.glade.h:25
+#: ../tools/settings.glade.h:26
 msgid "Please select a resource you wish to exclude from indexing."
 msgstr "Seleccione un recurso que desee excluir de la indexación."
 
-#: ../tools/settings.glade.h:26
+#: ../tools/settings.glade.h:27
 msgid "Please select the mail folder you wish to exclude from indexing. "
-msgstr "Seleccione la carpeta de correo que desee excluir de la indexación."
+msgstr "Seleccione la carpeta de correo que desee excluir de la indexación. "
 
-#: ../tools/settings.glade.h:28
+#: ../tools/settings.glade.h:29
 msgid "Search Preferences"
 msgstr "Preferencias de búsqueda"
 
-#: ../tools/settings.glade.h:29
+#: ../tools/settings.glade.h:30
 msgid "Select Mail Folder"
 msgstr "Seleccione la carpeta de correo"
 
-#: ../tools/settings.glade.h:30
+#: ../tools/settings.glade.h:31
 msgid ""
 "Specify any resources, such as paths, patterns, mail folders or type of "
 "objects you wish to exclude from indexing."
 msgstr ""
 "Especifique cualquier recurso, como rutas, patrones, carpetas de correo ó "
-"tipos de objetos que desea que no sea indexado."
+"tipos de objetos que desea excluir del índice."
 
-#: ../tools/settings.glade.h:31
+#: ../tools/settings.glade.h:32
 msgid "Specify paths that should be available for external access."
 msgstr "Especificar rutas que deberían estar disponibles para acceso externo."
 
-#: ../tools/settings.glade.h:32
+#: ../tools/settings.glade.h:33
 msgid "Type:"
 msgstr "Tipo:"
 
-#: ../tools/settings.glade.h:33
+#: ../tools/settings.glade.h:34
 msgid "_Address:"
 msgstr "_Dirección:"
 
-#: ../tools/settings.glade.h:34
+#: ../tools/settings.glade.h:35
 msgid "_Allow Beagle to be run as root"
 msgstr "_Permitir a Beagle ejecutarse como root"
 
-#: ../tools/settings.glade.h:35
+#: ../tools/settings.glade.h:36
 msgid "_Folder path"
 msgstr "_Ruta a la carpeta"
 
-#: ../tools/settings.glade.h:36
+#: ../tools/settings.glade.h:37
 msgid "_Mail folder"
 msgstr "Carpeta de _correo"
 
-#: ../tools/settings.glade.h:37
+#: ../tools/settings.glade.h:38
 msgid "_Maximum number of results displayed:"
 msgstr "Número _máximo de resultados mostrados:"
 
-#: ../tools/settings.glade.h:38
+#: ../tools/settings.glade.h:39
 msgid "_Start search & indexing services automatically "
 msgstr "_Iniciar los servicios de búsqueda e indexación automáticamente"
 
@@ -1085,7 +1092,7 @@ msgstr "d MMM, yyyy"
 #. Translators: Example output: 11:05 AM  (note h = 12-hour time)
 #: ../Util/StringFu.cs:88
 msgid "h:mm tt"
-msgstr "HH:mm"
+msgstr "HH:MM"
 
 #. Translators: {0} is a date (e.g. 'Today' or 'Apr 23'), {1} is the time
 #: ../Util/StringFu.cs:94
