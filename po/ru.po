@@ -30,7 +30,7 @@ msgstr "<b>История бесед</b>"
 
 #: ../ImLogViewer/ImLogViewer.glade.h:2
 msgid "IM Viewer"
-msgstr "Просмотр сообщений IM"
+msgstr "Просмотр мгновенных сообщений"
 
 #: ../ImLogViewer/ImLogWindow.cs:102
 #, csharp-format
