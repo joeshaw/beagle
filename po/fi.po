@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: beagle\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2006-05-22 19:16+0300\n"
-"PO-Revision-Date: 2006-05-22 19:16+0300\n"
+"POT-Creation-Date: 2006-07-17 09:25+0300\n"
+"PO-Revision-Date: 2006-07-17 09:26+0300\n"
 "Last-Translator: Ilkka Tuohela <hile@iki.fi>\n"
 "Language-Team: Finnish <gnome-fi-laatu@lists.sourceforge.net>\n"
 "MIME-Version: 1.0\n"
@@ -42,7 +42,7 @@ msgstr "Keskustelut ohjelmassa <{0}"
 msgid "Conversations with {0}"
 msgstr "Keskustelut {0} kanssa"
 
-#: ../search/beagle-search.desktop.in.h:1 ../tools/settings.glade.h:27
+#: ../search/beagle-search.desktop.in.h:1 ../tools/settings.glade.h:28
 msgid "Search"
 msgstr "Haku"
 
@@ -50,7 +50,14 @@ msgstr "Haku"
 msgid "Search for data on your desktop"
 msgstr "Etsi tietoja työpöydältäsi"
 
-#: ../search/Category.cs:108
+#: ../search/Category.cs:109
+#, csharp-format
+msgid "{0} result"
+msgid_plural "{0} results"
+msgstr[0] "{0} tulos"
+msgstr[1] "{0} tulosta"
+
+#: ../search/Category.cs:111
 #, csharp-format
 msgid "{0}-{1} of {2}"
 msgstr "{0}-{1} / {2}"
@@ -148,19 +155,19 @@ msgstr "Aloita haku"
 msgid "Send Mail"
 msgstr "Lähetä sähköpostia"
 
-#: ../search/Tiles/Contact.cs:69
+#: ../search/Tiles/Contact.cs:68
 msgid "E-Mail:"
 msgstr "Sähköposti:"
 
-#: ../search/Tiles/Contact.cs:71
+#: ../search/Tiles/Contact.cs:70
 msgid "Mobile Phone:"
 msgstr "Matkapuhelin:"
 
-#: ../search/Tiles/Contact.cs:73
+#: ../search/Tiles/Contact.cs:72
 msgid "Work Phone:"
 msgstr "Työpuhelin:"
 
-#: ../search/Tiles/Contact.cs:75
+#: ../search/Tiles/Contact.cs:74
 msgid "Home Phone:"
 msgstr "Kotipuhelin:"
 
@@ -179,22 +186,22 @@ msgstr "Sähköposti"
 msgid "Move to Trash"
 msgstr "Siirrä roskakoriin"
 
-#: ../search/Tiles/File.cs:122 ../search/Tiles/Note.cs:57
+#: ../search/Tiles/File.cs:124 ../search/Tiles/Note.cs:57
 #: ../search/Tiles/RSSFeed.cs:45 ../search/Tiles/WebHistory.cs:50
 msgid "Title:"
 msgstr "Otsikko:"
 
 #: ../search/Tiles/File.cs:125 ../search/Tiles/Folder.cs:51
-#: ../search/Tiles/Note.cs:60
+#: ../search/Tiles/Note.cs:58
 msgid "Last Edited:"
 msgstr "Viimeksi muokattu:"
 
-#: ../search/Tiles/File.cs:129
+#: ../search/Tiles/File.cs:128
 msgid "Author:"
 msgstr "Kirjoittanut:"
 
-#: ../search/Tiles/File.cs:133 ../search/Tiles/Folder.cs:54
-#: ../search/Tiles/Image.cs:81
+#: ../search/Tiles/File.cs:130 ../search/Tiles/Folder.cs:52
+#: ../search/Tiles/Image.cs:79
 msgid "Full Path:"
 msgstr "Koko polku:"
 
@@ -222,11 +229,11 @@ msgstr "Muokattu:"
 msgid "IM Conversation"
 msgstr "IM-keskustelut"
 
-#: ../search/Tiles/IMLog.cs:81
+#: ../search/Tiles/IMLog.cs:87
 msgid "Name:"
 msgstr "Nimi:"
 
-#: ../search/Tiles/IMLog.cs:82 ../search/Tiles/MailMessage.cs:96
+#: ../search/Tiles/IMLog.cs:88 ../search/Tiles/MailMessage.cs:92
 msgid "Date Received:"
 msgstr "Vastaanottopäivä:"
 
@@ -242,15 +249,15 @@ msgstr "Lähetä sähköpostissa"
 msgid "Subject:"
 msgstr "Aihe:"
 
-#: ../search/Tiles/MailMessage.cs:91
+#: ../search/Tiles/MailMessage.cs:89
 msgid "To:"
 msgstr "Vastaanottaja:"
 
-#: ../search/Tiles/MailMessage.cs:91
+#: ../search/Tiles/MailMessage.cs:89
 msgid "From:"
 msgstr "Lähettäjä:"
 
-#: ../search/Tiles/MailMessage.cs:96
+#: ../search/Tiles/MailMessage.cs:92
 msgid "Date Sent:"
 msgstr "Lähetyspäivä:"
 
@@ -261,11 +268,11 @@ msgid_plural "{0} slides"
 msgstr[0] "{0} kalvo"
 msgstr[1] "{0} kalvoa"
 
-#: ../search/Tiles/RSSFeed.cs:48
+#: ../search/Tiles/RSSFeed.cs:46
 msgid "Site:"
 msgstr "Sivusto:"
 
-#: ../search/Tiles/RSSFeed.cs:51
+#: ../search/Tiles/RSSFeed.cs:47
 msgid "Date Viewed:"
 msgstr "Viimeksi katsottu:"
 
@@ -392,11 +399,11 @@ msgstr[1] "{0} vuoden aikana"
 msgid "Unknown duration"
 msgstr "Tuntematon kesto"
 
-#: ../search/Tiles/WebHistory.cs:53
+#: ../search/Tiles/WebHistory.cs:51
 msgid "URL:"
 msgstr "URL:"
 
-#: ../search/Tiles/WebHistory.cs:56
+#: ../search/Tiles/WebHistory.cs:52
 msgid "Accessed:"
 msgstr "Avattu:"
 
@@ -719,11 +726,11 @@ msgstr "_Asiaankuuluvuus"
 msgid "Sort the best matches first"
 msgstr "Järjestä parhaat tulokset ensin"
 
-#: ../tools/Settings.cs:223
+#: ../tools/Settings.cs:226
 msgid "Reload configuration"
 msgstr "Lataa asetukset uudestaan"
 
-#: ../tools/Settings.cs:224
+#: ../tools/Settings.cs:227
 msgid ""
 "The configuration file has been modified by another application. Do you wish "
 "to discard the currently displayed values and reload configuration from disk?"
@@ -731,15 +738,15 @@ msgstr ""
 "Asetustiedostoa on muokatto toisesta ohjelmasta. Haluatko unohtaa nyt "
 "näkyvät asetukset ja ladata asetustiedoston uudestan levyltä?"
 
-#: ../tools/Settings.cs:262
+#: ../tools/Settings.cs:265
 msgid "Select Path"
 msgstr "Valitse polku"
 
-#: ../tools/Settings.cs:281
+#: ../tools/Settings.cs:284
 msgid "The selected path is already selected for indexing and wasn't added."
 msgstr "Valittu polku on jo indeksoitavien listalla eikä sitä lisätty."
 
-#: ../tools/Settings.cs:284
+#: ../tools/Settings.cs:287
 msgid ""
 "The selected path wasn't added. The list contains items that supercedes it "
 "and the data is already being indexed."
@@ -747,15 +754,15 @@ msgstr ""
 "Valittua polkua lisätty. Olemassaolevassa listassa on kohteita, jotka jo "
 "määrittelevät myös tämän polun ja tieto on jo indeksoitu."
 
-#: ../tools/Settings.cs:295 ../tools/Settings.cs:487
+#: ../tools/Settings.cs:298 ../tools/Settings.cs:490
 msgid "Path not added"
 msgstr "Polkua ei lisätty"
 
-#: ../tools/Settings.cs:304
+#: ../tools/Settings.cs:307
 msgid "Remove obsolete paths"
 msgstr "Poista turhat polut"
 
-#: ../tools/Settings.cs:305
+#: ../tools/Settings.cs:308
 msgid ""
 "Adding this path will obsolete some of the existing include paths. This will "
 "result in the removal of the old obsolete paths. Do you still wish to add it?"
@@ -764,11 +771,11 @@ msgstr ""
 "Tämän takia aiemmin määritellyt, nyt turhiksi muuttuvat polut, poistetaan. "
 "Haluatko todella lisätä tämän polun?"
 
-#: ../tools/Settings.cs:331
+#: ../tools/Settings.cs:334
 msgid "Remove path"
 msgstr "Poista hakupolku"
 
-#: ../tools/Settings.cs:332
+#: ../tools/Settings.cs:335
 msgid ""
 "Are you sure you wish to remove this path from the list of directories to be "
 "included for indexing?"
@@ -776,11 +783,11 @@ msgstr ""
 "Oletko varma että haluat poistaa tämän hakupolun indeksoitavien kansioiden "
 "listalta?"
 
-#: ../tools/Settings.cs:361
+#: ../tools/Settings.cs:364
 msgid "Remove item"
 msgstr "Poista kohta"
 
-#: ../tools/Settings.cs:362
+#: ../tools/Settings.cs:365
 msgid ""
 "Are you sure you wish to remove this item from the list of data to be "
 "excluded from indexing?"
@@ -788,86 +795,86 @@ msgstr ""
 "Haluatko poistaa tämän kohdan listalta, joka sisältää ne tiedot, joiden "
 "indeksointi on estetty?"
 
-#: ../tools/Settings.cs:405
+#: ../tools/Settings.cs:408
 msgid "Invalid host entry"
 msgstr "Virheellinen isäntänimi"
 
-#: ../tools/Settings.cs:412
+#: ../tools/Settings.cs:415
 msgid "Remote host already present in the list."
 msgstr "Poista jo listalla oleva isäntänimi."
 
-#: ../tools/Settings.cs:421
+#: ../tools/Settings.cs:424
 msgid "Netbeagle Node not added"
 msgstr "Verkkobeagle solmua ei lisätty"
 
-#: ../tools/Settings.cs:437
+#: ../tools/Settings.cs:440
 msgid "Remove host"
 msgstr "Poista isäntä"
 
-#: ../tools/Settings.cs:438
+#: ../tools/Settings.cs:441
 msgid "Are you sure you wish to remove this host from the list?"
 msgstr "Haluatko varmasti poistaa tämän isännän listalta?"
 
-#: ../tools/Settings.cs:459
+#: ../tools/Settings.cs:462
 msgid "Select path"
 msgstr "Hakupolku"
 
-#: ../tools/Settings.cs:478
+#: ../tools/Settings.cs:481
 msgid "The selected path is already configured for external access."
 msgstr "Valittu polku on jo määritelty etäkäyttöä varten."
 
-#: ../tools/Settings.cs:502
+#: ../tools/Settings.cs:505
 msgid "Remove public path"
 msgstr "Poista julkinen polku"
 
-#: ../tools/Settings.cs:503
+#: ../tools/Settings.cs:506
 msgid ""
 "Are you sure you wish to remove this entry from the list of public paths?"
 msgstr ""
 "Haluatko varmasti poistaa tämän kohdan julkisten hakupolkujen listalta?"
 
-#: ../tools/Settings.cs:548 ../tools/Settings.cs:637 ../tools/Settings.cs:715
-#: ../tools/Settings.cs:791 ../tools/Settings.cs:1130
+#: ../tools/Settings.cs:551 ../tools/Settings.cs:640 ../tools/Settings.cs:718
+#: ../tools/Settings.cs:794 ../tools/Settings.cs:1133
 msgid "Name"
 msgstr "Nimi"
 
-#: ../tools/Settings.cs:631
+#: ../tools/Settings.cs:634
 msgid "Type"
 msgstr "Tyyppi"
 
-#: ../tools/Settings.cs:684
+#: ../tools/Settings.cs:687
 msgid "Path:"
 msgstr "Polku:"
 
-#: ../tools/Settings.cs:687
+#: ../tools/Settings.cs:690
 msgid "Pattern:"
 msgstr "Malli:"
 
-#: ../tools/Settings.cs:690
+#: ../tools/Settings.cs:693
 msgid "Mail folder:"
 msgstr "Sähköpostikansio:"
 
-#: ../tools/Settings.cs:1038
+#: ../tools/Settings.cs:1041
 msgid "Select Folder"
 msgstr "Valitse kansio"
 
-#: ../tools/Settings.cs:1064 ../tools/settings.glade.h:24
+#: ../tools/Settings.cs:1067 ../tools/settings.glade.h:25
 msgid "P_ath:"
 msgstr "P_olku_"
 
-#: ../tools/Settings.cs:1069
+#: ../tools/Settings.cs:1072
 msgid "M_ail folder:"
 msgstr "Sähköposti_kansio:"
 
-#: ../tools/Settings.cs:1074
+#: ../tools/Settings.cs:1077
 msgid "P_attern:"
 msgstr "M_alli:"
 
-#: ../tools/Settings.cs:1098
+#: ../tools/Settings.cs:1101
 msgid "Error adding path"
 msgstr "Virhe lisättäessä polkua"
 
-#: ../tools/Settings.cs:1099
+#: ../tools/Settings.cs:1102
 msgid ""
 "The specified path could not be found and therefore it could not be added to "
 "the list of resources excluded for indexing."
@@ -875,7 +882,7 @@ msgstr ""
 "Annettua polkua ei löytynyt eikä sitä voida lisätä indeksoitavien "
 "hakupolkujen listalle."
 
-#: ../tools/Settings.cs:1129
+#: ../tools/Settings.cs:1132
 msgid "Show"
 msgstr "Näytä"
 
@@ -968,30 +975,34 @@ msgid "I_ndex my home directory"
 msgstr "I_ndeksoi kotihakemistoni"
 
 #: ../tools/settings.glade.h:22
+msgid "Index data while on battery power"
+msgstr "Indeksoidaanko tietoja käytettäessä akkuvirtaa"
+
+#: ../tools/settings.glade.h:23
 msgid "Indexing"
 msgstr "Indeksointi"
 
-#: ../tools/settings.glade.h:23
+#: ../tools/settings.glade.h:24
 msgid "Networking"
 msgstr "Verkkohaut"
 
-#: ../tools/settings.glade.h:25
+#: ../tools/settings.glade.h:26
 msgid "Please select a resource you wish to exclude from indexing."
 msgstr "Valitse kohde, jonka indeksoinnin haluat estää."
 
-#: ../tools/settings.glade.h:26
+#: ../tools/settings.glade.h:27
 msgid "Please select the mail folder you wish to exclude from indexing. "
 msgstr "Valitse sähköpostikansio, jonka indeksoinnin haluat estää."
 
-#: ../tools/settings.glade.h:28
+#: ../tools/settings.glade.h:29
 msgid "Search Preferences"
 msgstr "Haun asetukset"
 
-#: ../tools/settings.glade.h:29
+#: ../tools/settings.glade.h:30
 msgid "Select Mail Folder"
 msgstr "Valitse sähköpostikansio"
 
-#: ../tools/settings.glade.h:30
+#: ../tools/settings.glade.h:31
 msgid ""
 "Specify any resources, such as paths, patterns, mail folders or type of "
 "objects you wish to exclude from indexing."
@@ -999,35 +1010,35 @@ msgstr ""
 "Anna kaikki resurssit, esimerkiksi polut, tiedostonimen malli, "
 "sähköpostikansiot tai tiedostotyypi, joita et halua indeksoida."
 
-#: ../tools/settings.glade.h:31
+#: ../tools/settings.glade.h:32
 msgid "Specify paths that should be available for external access."
 msgstr "Määrittele polut, jotka ovat käytettävissä etähauissa."
 
-#: ../tools/settings.glade.h:32
+#: ../tools/settings.glade.h:33
 msgid "Type:"
 msgstr "Tyyppi:"
 
-#: ../tools/settings.glade.h:33
+#: ../tools/settings.glade.h:34
 msgid "_Address:"
 msgstr "_Osoite:"
 
-#: ../tools/settings.glade.h:34
+#: ../tools/settings.glade.h:35
 msgid "_Allow Beagle to be run as root"
 msgstr "S_alli Beaglen suoritus pääkäyttäjänä"
 
-#: ../tools/settings.glade.h:35
+#: ../tools/settings.glade.h:36
 msgid "_Folder path"
 msgstr "_Kansion polku"
 
-#: ../tools/settings.glade.h:36
+#: ../tools/settings.glade.h:37
 msgid "_Mail folder"
 msgstr "_Sähköpostikansio"
 
-#: ../tools/settings.glade.h:37
+#: ../tools/settings.glade.h:38
 msgid "_Maximum number of results displayed:"
 msgstr "_Näytettävien tulosten enimmäislukumäärä: "
 
-#: ../tools/settings.glade.h:38
+#: ../tools/settings.glade.h:39
 msgid "_Start search & indexing services automatically "
 msgstr "_Käynnistä haku- ja indeksointipalvelu automaattisesti "
 
@@ -1169,11 +1180,6 @@ msgstr "{0:0.0} Mt"
 
 #~ msgid "Directory Path"
 #~ msgstr "Kansion polku"
-
-#~ msgid "Top {0} Result"
-#~ msgid_plural "Top {0} Results"
-#~ msgstr[0] "Paras {0} tulos"
-#~ msgstr[1] "Parhaat {0} tulosta"
 
 #~ msgid "Previous {0}"
 #~ msgid_plural "Previous {0}"
