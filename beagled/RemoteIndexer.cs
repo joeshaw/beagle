@@ -38,6 +38,7 @@ namespace Beagle.Daemon {
 	public class RemoteIndexer : IIndexer {
 
 		static string helper_path;
+		static int helper_pid = -1;
 
 		string remote_index_name;
 		int remote_index_minor_version = 0;
@@ -246,7 +247,19 @@ namespace Beagle.Daemon {
 					throw new Exception (String.Format ("Couldn't launch helper process {0}", p.Id));
 
 				Logger.Log.Debug ("Found IndexHelper ({0}) in {1}", p.Id, watch);
+				helper_pid = p.Id;
 			}
+		}
+
+		static public void SignalRemoteIndexer ()
+		{
+			// No helper running right now
+			if (helper_pid == -1 || ! CheckHelper ()) {
+				helper_pid = -1;
+				return;
+			}
+
+			Mono.Unix.Native.Syscall.kill (helper_pid, Mono.Unix.Native.Signum.SIGUSR1);
 		}
 	}
 }

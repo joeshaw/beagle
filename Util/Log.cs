@@ -55,6 +55,11 @@ namespace Beagle.Util {
 		static private TextWriter exception_writer;
 		static private TextWriter foreground_echo_writer;
 
+		static public LogLevel Level {
+			get { return cutoff_level; }
+			set { cutoff_level = value; }
+		}
+
 		static public void Initialize (string   log_directory,
 					       string   program_identifier,
 					       LogLevel cutoff_level,

@@ -542,6 +542,7 @@ namespace Beagle.Daemon {
 			// Set up our signal handler
 			Mono.Unix.Native.Stdlib.signal (Mono.Unix.Native.Signum.SIGINT, OurSignalHandler);
 			Mono.Unix.Native.Stdlib.signal (Mono.Unix.Native.Signum.SIGTERM, OurSignalHandler);
+			Mono.Unix.Native.Stdlib.signal (Mono.Unix.Native.Signum.SIGUSR1, OurSignalHandler);
 
 			// Ignore SIGPIPE
 			Mono.Unix.Native.Stdlib.signal (Mono.Unix.Native.Signum.SIGPIPE, Mono.Unix.Native.Stdlib.SIG_IGN);
@@ -561,6 +562,19 @@ namespace Beagle.Daemon {
 				return;
 
 			Logger.Log.Debug ("Handling signal {0} ({1})", signal, (Mono.Unix.Native.Signum) signal);
+
+			// If we get SIGUSR1, turn the debugging level up.
+			if ((Mono.Unix.Native.Signum) signal == Mono.Unix.Native.Signum.SIGUSR1) {
+				LogLevel old_level = Log.Level;
+
+				Log.Level = LogLevel.Debug;
+
+				Log.Debug ("Moving from log level {0} to Debug", old_level);
+
+				GLib.Idle.Add (new GLib.IdleHandler (delegate () { RemoteIndexer.SignalRemoteIndexer (); return false; }));
+
+				return;
+			}
 
 			bool first_signal = false;
 			if (signal_time == DateTime.MinValue) {
