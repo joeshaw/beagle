@@ -551,7 +551,14 @@ namespace Beagle.Filters {
 					   ((dualStorTemp = file.ChildByName ("PowerPoint Document")) == null)) {
 					Logger.Log.Error ("{0} is a PPT 95/4.0 file.  Beagle does not support PPT 95 files. Skipping...", FileName);
 					Error ();
+					return;
 				}
+
+				if (file.ChildByName ("EncryptedSummary") != null) {
+					Log.Warn ("{0} is a password-protected PowerPoint file.  Skipping.", FileName);
+					Error ();
+				}
+
 			} catch (Exception e) {
 				
 				Logger.Log.Error ("Unable to open OleFile stream of "+info.FullName);
