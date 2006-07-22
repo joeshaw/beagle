@@ -242,7 +242,7 @@ public class SettingsDialog
 	{
 		switch (args.ResponseId) {
 		case ResponseType.Help:
-			Gnome.Url.Show ("http://www.beagle-project.org/Configuration_Help");
+			Gnome.Url.Show ("http://beagle-project.org/Configuring");
 			break;
 		case ResponseType.Ok:
 			SaveConfiguration ();
