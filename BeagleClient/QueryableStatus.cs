@@ -25,6 +25,7 @@
 //
 
 using System;
+using System.Xml.Serialization;
 
 namespace Beagle {
 
@@ -44,26 +45,31 @@ namespace Beagle {
 		private int progress_percent = -1;
 		private bool is_indexing = false;
 
+		[XmlAttribute]
 		public string Name {
 			get { return this.name; }
 			set { this.name = value; }
 		}
 
+		[XmlAttribute]
 		public int ItemCount {
 			get { return this.item_count; }
 			set { this.item_count = value; }
 		}
 
+		[XmlAttribute]
 		public QueryableState State {
 			get { return this.state; }
 			set { this.state = value; }
 		}
 
+		[XmlAttribute]
 		public int ProgressPercent {
 			get { return this.progress_percent; }
 			set { this.progress_percent = value; }
 		}
 
+		[XmlAttribute]
 		public bool IsIndexing {
 			get { return this.is_indexing; }
 			set { this.is_indexing = value; }

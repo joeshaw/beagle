@@ -206,6 +206,17 @@
   )
 )
 
+(define-enum QueryableState
+  (in-module "Beagle")
+  (c-name "BeagleQueryableState")
+  (values
+    '("NotApplicable" "BEAGLE_QUERYABLE_STATE_NA")
+    '("Idle" "BEAGLE_QUERYABLE_STATE_IDLE")
+    '("Crawling" "BEAGLE_QUERYABLE_STATE_CRAWLING")
+    '("Indexing" "BEAGLE_QUERYABLE_STATE_INDEXING")
+    '("Flushing" "BEAGLE_QUERYABLE_STATE_FLUSHING")
+  )
+)
 
 ;; From ../../libbeagle/beagle/beagle-client.h
 
@@ -261,12 +272,16 @@
 )
 
 (define-function beagle_daemon_information_request_new
-  (c-name "beagle_daemon_information_request_new")
+  (c-name "beagle_daemon_information_request_new_specific")
   (is-constructor-of "BeagleDaemonInformationRequest")
   (return-type "BeagleDaemonInformationRequest*")
+  (parameters
+    '("gboolean" "get_version" (default "TRUE"))
+    '("gboolean" "get_sched_info" (default "TRUE"))
+    '("gboolean" "get_index_status" (default "TRUE"))
+    '("gboolean" "get_is_indexing" (default "TRUE"))
+  )
 )
-
-
 
 ;; From ../../libbeagle/beagle/beagle-daemon-information-response.h
 
@@ -281,10 +296,22 @@
   (return-type "const-char*")
 )
 
+(define-method ger_scheduler_information
+  (of-object "BeagleDaemonInformationResponse")
+  (c-name "beagle_daemon_information_response_get_scheduler_information")
+  (return-type "BeagleSchedulerInformation*")
+)
+
 (define-method get_human_readable_status
   (of-object "BeagleDaemonInformationResponse")
   (c-name "beagle_daemon_information_response_get_human_readable_status")
   (return-type "const-char*")
+)
+
+(define-method get_index_status
+  (of-object "BeagleDaemonInformationResponse")
+  (c-name "beagle_daemon_information_response_get_index_status")
+  (return-type "GSList*")
 )
 
 (define-method get_index_information
@@ -1118,7 +1145,99 @@
   )
 )
 
+;; From ../../libbeagle/beagle/beagle-scheduler-information.h
 
+(define-method ref
+  (of-object "BeagleSchedulerInformation")
+  (c-name "beagle_scheduler_information_ref")
+  (return-type "BeagleSchedulerInformation*")
+)
+
+(define-method unref
+  (of-object "BeagleSchedulerInformation")
+  (c-name "beagle_scheduler_information_unref")
+  (return-type "none")
+)
+
+(define-method get_total_task_count
+  (of-object "BeagleSchedulerInformation")
+  (c-name "beagle_scheduler_information_get_total_task_count")
+  (return-type "int")
+)
+
+(define-method get_status_string
+  (of-object "BeagleSchedulerInformation")
+  (c-name "beagle_scheduler_information_get_status_string")
+  (return-type "const-char*")
+)
+
+(define-method get_pending_tasks
+  (of-object "BeagleSchedulerInformation")
+  (c-name "beagle_scheduler_information_get_pending_tasks")
+  (return-type "GSList*")
+)
+
+(define-method get_future_tasks
+  (of-object "BeagleSchedulerInformation")
+  (c-name "beagle_scheduler_information_get_future_tasks")
+  (return-type "GSList*")
+)
+
+(define-method get_blocked_tasks
+  (of-object "BeagleSchedulerInformation")
+  (c-name "beagle_scheduler_information_get_blocked_tasks")
+  (return-type "GSList*")
+)
+
+(define-method to_human_readable_string
+  (of-object "BeagleSchedulerInformation")
+  (c-name "beagle_scheduler_information_to_human_readable_string")
+  (return-type "const-char*")
+)
+
+;; From ../../libbeagle/beagle/beagle-queryable-status.h
+
+(define-method ref
+  (of-object "BeagleQueryableStatus")
+  (c-name "beagle_queryable_status_ref")
+  (return-type "BeagleQueryableStatus*")
+)
+
+(define-method unref
+  (of-object "BeagleQueryableStatus")
+  (c-name "beagle_queryable_status_unref")
+  (return-type "none")
+)
+
+(define-method get_name
+  (of-object "BeagleQueryableStatus")
+  (c-name "beagle_queryable_status_get_name")
+  (return-type "const-char*")
+)
+
+(define-method get_item_count
+  (of-object "BeagleQueryableStatus")
+  (c-name "beagle_queryable_status_get_item_count")
+  (return-type "int")
+)
+
+(define-method get_state
+  (of-object "BeagleQueryableStatus")
+  (c-name "beagle_queryable_status_get_state")
+  (return-type "BeagleQueryableState")
+)
+
+(define-method get_progress_percent
+  (of-object "BeagleQueryableStatus")
+  (c-name "beagle_queryable_status_get_progress_percent")
+  (return-type "int")
+)
+
+(define-method get_is_indexing
+  (of-object "BeagleQueryableStatus")
+  (c-name "beagle_queryable_status_get_is_indexing")
+  (return-type "gboolean")
+)
 
 ;; From ../../libbeagle/beagle/beagle-request.h
 
@@ -1285,3 +1404,16 @@
   (c-name "BeagleTimestamp")
   (gtype-id "BEAGLE_TYPE_TIMESTAMP")    
 )
+
+(define-pointer QueryableStatus
+  (in-module "Beagle")
+  (c-name "BeagleQueryableStatus")
+  (gtype-id "BEAGLE_TYPE_QUERYABLE_STATUS")
+)
+
+(define-pointer SchedulerInformation
+  (in-module "Beagle")
+  (c-name "BeagleSchedulerInformation")
+  (gtype-id "BEAGLE_TYPE_SCHEDULER_INFORMATION")
+)
+

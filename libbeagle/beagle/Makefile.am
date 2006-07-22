@@ -34,6 +34,8 @@ libbeagle_la_SOURCES = 				\
 	beagle-query-part-or.c			\
 	beagle-query-part-property.c		\
 	beagle-query-part-text.c		\
+	beagle-queryable-status.c		\
+	beagle-scheduler-information.c		\
 	beagle-request.c			\
 	beagle-response.c			\
 	beagle-search-term-response.c		\
@@ -72,6 +74,8 @@ libbeagleinclude_HEADERS = 			\
 	beagle-query-part-or.h			\
 	beagle-query-part-property.h		\
 	beagle-query-part-text.h		\
+	beagle-queryable-status.h		\
+	beagle-scheduler-information.h		\
 	beagle-request.h			\
 	beagle-response.h			\
 	beagle-search-term-response.h		\

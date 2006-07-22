@@ -24,11 +24,36 @@
 // DEALINGS IN THE SOFTWARE.
 //
 
+using System.Collections;
+using System.Text;
+using System.Xml;
+using System.Xml.Serialization;
+
+using Beagle.Util;
+
 namespace Beagle {
 
-	// These requests have no interesting client-side state
-	public class DaemonInformationRequest : RequestMessage { }
+	public class DaemonInformationRequest : RequestMessage {
+		/* User can request one or more of the four information. */
+		public bool GetVersion, GetSchedInfo, GetIndexStatus, GetIsIndexing;
 
+		// For backward compatibility
+		public DaemonInformationRequest () : this (true, false, true, false) { }
+
+		public DaemonInformationRequest (
+			bool get_version,
+			bool get_scheduler_info,
+			bool get_index_status,
+			bool get_is_indexing)
+		{
+			this.GetVersion = get_version;
+			this.GetSchedInfo = get_scheduler_info;
+			this.GetIndexStatus = get_index_status;
+			this.GetIsIndexing = get_is_indexing;
+		}
+	}
+
+	// These requests have no interesting client-side state
 	public class ShutdownRequest : RequestMessage { }
 
 	public class ReloadConfigRequest : RequestMessage { }
@@ -36,9 +61,48 @@ namespace Beagle {
 	public class OptimizeIndexesRequest : RequestMessage { }
 
 	public class DaemonInformationResponse : ResponseMessage {
-		public string Version;
-		public string HumanReadableStatus;
-		public string IndexInformation;
-		public bool IsIndexing;
+		public string Version = null;
+
+		public SchedulerInformation SchedulerInformation = null;
+
+		[XmlArray]
+		[XmlArrayItem (ElementName = "QueryableStatus", Type = typeof (QueryableStatus))]
+		public ArrayList IndexStatus = null;
+
+		public bool IsIndexing = false;
+
+		// Methods and properties for backward compatibility and general utility
+		// The names of the properties dont match the corresponding method names,
+		// this is to not break clients out there.
+
+		[XmlIgnore]
+		public string HumanReadableStatus {
+			get {
+				if (SchedulerInformation == null)
+					return null;
+
+				return SchedulerInformation.ToHumanReadableString ();
+			}
+		}
+		
+		[XmlIgnore]
+		public string IndexInformation {
+			get {
+				if (IndexStatus == null)
+					return null;
+
+				StringBuilder builder = new StringBuilder ('\n');
+
+				foreach (QueryableStatus status in IndexStatus) {
+					builder.Append ("Name: ").Append (status.Name).Append ('\n');
+					builder.Append ("Count: ").Append (status.ItemCount).Append ('\n');
+					builder.Append ("Indexing: ").Append (status.IsIndexing).Append ('\n');
+					builder.Append ('\n');
+				}
+
+				return builder.ToString ();
+			}
+		}
+
 	}
 }

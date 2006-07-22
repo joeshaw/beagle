@@ -36,13 +36,25 @@ namespace Beagle.Daemon {
 	[RequestMessage (typeof (DaemonInformationRequest))]
 	public class DaemonInformationExecutor : RequestMessageExecutor {
 
-		public override ResponseMessage Execute (RequestMessage req)
+		public override ResponseMessage Execute (RequestMessage request)
 		{
 			DaemonInformationResponse response = new DaemonInformationResponse ();
-			response.Version = ExternalStringsHack.Version;
-			response.HumanReadableStatus = Scheduler.Global.GetHumanReadableStatus ();
-			response.IndexInformation = QueryDriver.GetIndexInformation ();
-			response.IsIndexing = QueryDriver.IsIndexing;
+			DaemonInformationRequest req = (DaemonInformationRequest) request;
+
+			if (req.GetVersion)
+				response.Version = ExternalStringsHack.Version;
+
+			if (req.GetSchedInfo)
+				response.SchedulerInformation = Scheduler.Global.GetCurrentStatus ();
+
+			if (req.GetIndexStatus) {
+				response.IndexStatus = new ArrayList ();
+				foreach (QueryableStatus status in QueryDriver.GetIndexInformation ())
+					response.IndexStatus.Add (status);
+			}
+
+			if (req.GetIsIndexing)
+				response.IsIndexing = QueryDriver.IsIndexing;
 
 			return response;
 		}

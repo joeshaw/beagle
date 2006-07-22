@@ -51,7 +51,11 @@ struct _BeagleDaemonInformationRequestClass {
 };
 
 GType        beagle_daemon_information_request_get_type     (void);
-BeagleDaemonInformationRequest *beagle_daemon_information_request_new          (void);
+BeagleDaemonInformationRequest *beagle_daemon_information_request_new		(void);
+BeagleDaemonInformationRequest *beagle_daemon_information_request_new_specific	(gboolean get_version,
+										 gboolean get_sched_info,
+										 gboolean get_index_status,
+										 gboolean get_is_indexing);
 
 #endif /* __BEAGLE_DAEMON_INFORMATION_REQUEST_H */
 

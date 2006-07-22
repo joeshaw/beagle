@@ -35,6 +35,7 @@ using SemWeb;
 
 namespace Beagle.Filters {
 	
+	[PropertyKeywordMapping (Keyword="imagemodel",     PropertyName="exif:Model",    IsKeyword=true)]
 	public class FilterJpeg : FilterImage {
 
 		public FilterJpeg () : base ()

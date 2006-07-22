@@ -39,6 +39,7 @@
 #include <beagle/beagle-indexable.h>
 #include <beagle/beagle-indexing-service-request.h>
 #include <beagle/beagle-property.h>
+#include <beagle/beagle-scheduler-information.h>
 #include <beagle/beagle-query.h>
 #include <beagle/beagle-query-part.h>
 #include <beagle/beagle-query-part-date.h>
@@ -46,6 +47,7 @@
 #include <beagle/beagle-query-part-or.h>
 #include <beagle/beagle-query-part-property.h>
 #include <beagle/beagle-query-part-text.h>
+#include <beagle/beagle-queryable-status.h>
 #include <beagle/beagle-request.h>
 #include <beagle/beagle-response.h>
 #include <beagle/beagle-search-term-response.h>

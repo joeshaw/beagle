@@ -30,6 +30,8 @@
 #define __BEAGLE_PRIVATE_H
 
 #include "beagle-hit.h"
+#include "beagle-queryable-status.h"
+#include "beagle-scheduler-information.h"
 #include "beagle-parser.h"
 #include "beagle-query-part.h"
 #include "beagle-indexable.h"
@@ -63,7 +65,31 @@ struct _BeagleProperty {
 	gboolean is_stored;
 };
 
+struct _BeagleQueryableStatus {
+	int ref_count;
+
+	char *name;
+	int item_count;
+	BeagleQueryableState state;
+	int progress_percent;
+	gboolean is_indexing;
+};
+
+struct _BeagleSchedulerInformation {
+	int ref_count;
+
+	int total_task_count;
+	char *status_string;
+	GSList *pending_task; /* Of string */
+	GSList *future_task;  /* Of string */
+	GSList *blocked_task; /* Of string */
+};
+
 BeagleHit *_beagle_hit_new (void);
+
+BeagleQueryableStatus *_beagle_queryable_status_new (void);
+
+BeagleSchedulerInformation *_beagle_scheduler_information_new (void);
 
 void _beagle_hit_set_property (BeagleHit *hit, const char *name, const char *value);
 
@@ -79,6 +105,10 @@ void _beagle_hit_add_property (BeagleHit *hit, BeagleProperty *prop);
 void _beagle_hit_list_free    (GSList *list);
 
 void _beagle_hit_to_xml (BeagleHit *hit, GString *data);
+
+void _beagle_queryable_status_to_xml (BeagleQueryableStatus *status, GString *data);
+
+void _beagle_scheduler_information_to_xml (BeagleSchedulerInformation *status, GString *data);
 
 void _beagle_properties_to_xml (GSList *properties, GString *data);
 

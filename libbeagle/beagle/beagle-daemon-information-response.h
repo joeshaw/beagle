@@ -31,6 +31,7 @@
 #include <glib-object.h>
 
 #include "beagle-response.h"
+#include "beagle-scheduler-information.h"
 
 #define BEAGLE_TYPE_DAEMON_INFORMATION_RESPONSE            (beagle_daemon_information_response_get_type ())
 #define BEAGLE_DAEMON_INFORMATION_RESPONSE(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), BEAGLE_TYPE_DAEMON_INFORMATION_RESPONSE, BeagleDaemonInformationResponse))
@@ -55,8 +56,15 @@ GType        beagle_daemon_information_response_get_type     (void);
 G_CONST_RETURN char *
 beagle_daemon_information_response_get_version (BeagleDaemonInformationResponse *response);
 
+BeagleSchedulerInformation *
+beagle_daemon_information_response_get_scheduler_information (BeagleDaemonInformationResponse *response);
+
+// Kept for backward compatibility
 G_CONST_RETURN char *
 beagle_daemon_information_response_get_human_readable_status (BeagleDaemonInformationResponse *response);
+
+GSList *
+beagle_daemon_information_response_get_index_status (BeagleDaemonInformationResponse *response);
 
 G_CONST_RETURN char *
 beagle_daemon_information_response_get_index_information (BeagleDaemonInformationResponse *response);

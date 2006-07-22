@@ -35,7 +35,10 @@
 #include "beagle-daemon-information-response.h"
 
 typedef struct {
-	gint foo;
+	gboolean get_version : 1;
+	gboolean get_sched_info : 1;
+	gboolean get_index_status : 1;
+	gboolean get_is_indexing : 1;
 } BeagleDaemonInformationRequestPrivate;
 
 #define BEAGLE_DAEMON_INFORMATION_REQUEST_GET_PRIVATE(o) (G_TYPE_INSTANCE_GET_PRIVATE ((o), BEAGLE_TYPE_DAEMON_INFORMATION_REQUEST, BeagleDaemonInformationRequestPrivate))
@@ -45,10 +48,32 @@ static GObjectClass *parent_class = NULL;
 static GString *
 beagle_daemon_information_request_to_xml (BeagleRequest *request, GError **err)
 {
+	BeagleDaemonInformationRequestPrivate *priv = BEAGLE_DAEMON_INFORMATION_REQUEST_GET_PRIVATE (request);
 	GString *data = g_string_new (NULL);
 
 	_beagle_request_append_standard_header (data, 
 						"DaemonInformationRequest");
+
+	if (priv->get_version)
+		g_string_append (data, "<GetVersion>true</GetVersion>");
+	else
+		g_string_append (data, "<GetVersion>false</GetVersion>");
+
+	if (priv->get_sched_info)
+		g_string_append (data, "<GetSchedInfo>true</GetSchedInfo>");
+	else
+		g_string_append (data, "<GetSchedInfo>false</GetSchedInfo>");
+
+	if (priv->get_index_status)
+		g_string_append (data, "<GetIndexStatus>true</GetIndexStatus>");
+	else
+		g_string_append (data, "<GetIndexStatus>false</GetIndexStatus>");
+
+	if (priv->get_is_indexing)
+		g_string_append (data, "<GetIsIndexing>true</GetIsIndexing>");
+	else
+		g_string_append (data, "<GetIsIndexing>false</GetIsIndexing>");
+
 	_beagle_request_append_standard_footer (data);
 
 	return data;
@@ -88,17 +113,41 @@ beagle_daemon_information_request_init (BeagleDaemonInformationRequest *daemon_i
 {
 }
 
-/**
+/*
  * beagle_daemon_information_request_new:
  *
- * Creates a new #BeagleDaemonInformationRequest.
+ * Creates a new #BeagleDaemonInformationRequest requesting all fields.
  *
  * Return value: a newly created #BeagleDaemonInformationRequest.
  **/
 BeagleDaemonInformationRequest *
 beagle_daemon_information_request_new (void)
 {
+	return beagle_daemon_information_request_new_specific (TRUE, TRUE, TRUE, TRUE);
+}
+
+/*
+ * beagle_daemon_information_request_new_specific:
+ *
+ * Creates a new #BeagleDaemonInformationRequest allowing retrieval of specific fields.
+ *
+ * Return value: a newly created #BeagleDaemonInformationRequest.
+ **/
+BeagleDaemonInformationRequest *
+beagle_daemon_information_request_new_specific (gboolean get_version,
+						gboolean get_sched_info,
+						gboolean get_index_status,
+						gboolean get_is_indexing)
+{
 	BeagleDaemonInformationRequest *daemon_information_request = g_object_new (BEAGLE_TYPE_DAEMON_INFORMATION_REQUEST, 0);
+
+	BeagleDaemonInformationRequestPrivate *priv
+		= BEAGLE_DAEMON_INFORMATION_REQUEST_GET_PRIVATE (daemon_information_request);
+
+	priv->get_version = get_version;
+	priv->get_sched_info = get_sched_info;
+	priv->get_index_status = get_index_status;
+	priv->get_is_indexing = get_is_indexing;
 
 	return daemon_information_request;
 }

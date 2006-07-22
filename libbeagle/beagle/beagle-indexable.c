@@ -610,7 +610,7 @@ _beagle_indexable_to_xml (BeagleIndexable *indexable, GString *data)
 	case BEAGLE_INDEXABLE_TYPE_ADD:
 		tmp = "Add";
 		break;
-	    case BEAGLE_INDEXABLE_TYPE_REMOVE:
+	case BEAGLE_INDEXABLE_TYPE_REMOVE:
 		tmp = "Remove";
 		break;
 	case BEAGLE_INDEXABLE_TYPE_PROPERTY_CHANGE:
@@ -626,7 +626,7 @@ _beagle_indexable_to_xml (BeagleIndexable *indexable, GString *data)
 	case BEAGLE_INDEXABLE_FILTERING_ALWAYS:
 		tmp = "Always";
 		break;
-	    case BEAGLE_INDEXABLE_FILTERING_ALREADY_FILTERED:
+	case BEAGLE_INDEXABLE_FILTERING_ALREADY_FILTERED:
 		tmp = "AlreadyFiltered";
 		break;
 	case BEAGLE_INDEXABLE_FILTERING_AUTOMATIC:

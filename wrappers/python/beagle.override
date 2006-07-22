@@ -12,6 +12,8 @@ headers
 #define BEAGLE_TYPE_HIT       (beagle_hit_get_gtype ())
 #define BEAGLE_TYPE_PROPERTY  (beagle_property_get_gtype ())
 #define BEAGLE_TYPE_TIMESTAMP (beagle_timestamp_get_gtype ())
+#define BEAGLE_TYPE_QUERYABLE_STATUS	(beagle_queryable_status_get_gtype ())
+#define BEAGLE_TYPE_SCHEDULER_INFORMATION   (beagle_scheduler_information_get_gtype ())
 
 GType
 beagle_hit_get_gtype (void)
@@ -37,6 +39,24 @@ beagle_property_get_gtype (void)
 	static GType our_type = 0;
 	if (!our_type)
 		our_type = g_pointer_type_register_static ("BeagleProperty");
+	return our_type;
+}
+
+GType
+beagle_queryable_status_get_gtype (void)
+{
+	static GType our_type = 0;
+	if (!our_type)
+		our_type = g_pointer_type_register_static ("BeagleQueryableStatus");
+	return our_type;
+}
+
+GType
+beagle_scheduler_information_get_gtype (void)
+{
+	static GType our_type = 0;
+	if (!our_type)
+		our_type = g_pointer_type_register_static ("BeagleSchedulerInformation");
 	return our_type;
 }
 
@@ -225,4 +245,48 @@ _wrap_beagle_timestamp_to_unix_time (PyGObject *self)
     }
 
     return PyInt_FromLong (t);
+}
+%%
+override beagle_scheduler_information_get_pending_tasks noargs
+static PyObject *
+_wrap_beagle_scheduler_information_get_pending_tasks (PyGObject *self)
+{
+    GSList *list;
+
+    list = beagle_scheduler_information_get_pending_tasks ((BeagleSchedulerInformation *) self->obj);
+
+    return _helper_wrap_string_gslist (list);
+}
+%%
+override beagle_scheduler_information_get_future_tasks noargs
+static PyObject *
+_wrap_beagle_scheduler_information_get_future_tasks (PyGObject *self)
+{
+    GSList *list;
+
+    list = beagle_scheduler_information_get_future_tasks ((BeagleSchedulerInformation *) self->obj);
+
+    return _helper_wrap_string_gslist (list);
+}
+%%
+override beagle_scheduler_information_get_blocked_tasks noargs
+static PyObject *
+_wrap_beagle_scheduler_information_get_blocked_tasks (PyGObject *self)
+{
+    GSList *list;
+
+    list = beagle_scheduler_information_get_blocked_tasks ((BeagleSchedulerInformation *) self->obj);
+
+    return _helper_wrap_string_gslist (list);
+}
+%%
+override beagle_daemon_information_response_get_index_status
+static PyObject *
+_wrap_beagle_daemon_information_response_get_index_status (PyGObject *self)
+{
+    GSList *list;
+
+    list = beagle_daemon_information_response_get_index_status ((BeagleDaemonInformationResponse *) self->obj);
+
+    return _helper_wrap_pointer_gslist (BEAGLE_TYPE_QUERYABLE_STATUS, list);
 }

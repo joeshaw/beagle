@@ -28,6 +28,8 @@ using System;
 using System.Collections;
 using System.Text;
 using System.Threading;
+using System.Xml;
+using System.Xml.Serialization;
 
 namespace Beagle.Util {
 
@@ -1010,10 +1012,12 @@ namespace Beagle.Util {
 		
 		//////////////////////////////////////////////////////////////////////////////
 
-		public string GetHumanReadableStatus ()
+		private static StringBuilder cached_sb = new StringBuilder ();
+		
+		public SchedulerInformation GetCurrentStatus ()
 		{
-			StringBuilder sb = new StringBuilder ();
-
+		    SchedulerInformation current_status = new SchedulerInformation ();
+			
 			lock (big_lock) {
 				
 				ArrayList blocked_tasks = new ArrayList ();
@@ -1039,43 +1043,89 @@ namespace Beagle.Util {
 				pending_tasks.Sort ();
 				pending_tasks.Reverse ();
 
-				sb.Append ("Scheduler:\n");
-				sb.Append ("Count: ").Append (total_executed_task_count);
-				sb.Append ('\n');
-
-				if (status_str != null)
-					sb.Append ("Status: ").Append (status_str).Append ('\n');
-
-				int pos = 1;
-				sb.Append ("\nPending Tasks:\n");
 				foreach (Task task in pending_tasks) {
-					sb.Append (pos).Append (' ');
-					task.AppendToStringBuilder (sb);
-					sb.Append ('\n');
-					++pos;
-				}
-				if (pos == 1)
-					sb.Append ("Scheduler queue is empty.\n");
-
-
-				if (future_tasks.Count > 0) {
-					sb.Append ("\nFuture Tasks:\n");
-					foreach (Task task in future_tasks) {
-						task.AppendToStringBuilder (sb);
-						sb.Append ('\n');
-					}
+					cached_sb.Length = 0;
+					task.AppendToStringBuilder (cached_sb);
+					current_status.PendingTasks.Add (cached_sb.ToString ());
 				}
 
-				if (blocked_tasks.Count > 0) {
-					sb.Append ("\nBlocked Tasks:\n");
-					foreach (Task task in blocked_tasks) {
-						task.AppendToStringBuilder (sb);
-						sb.Append ('\n');
-					}
+				foreach (Task task in future_tasks) {
+					cached_sb.Length = 0;
+					task.AppendToStringBuilder (cached_sb);
+					current_status.FutureTasks.Add (cached_sb.ToString ());
 				}
+
+				foreach (Task task in blocked_tasks) {
+					cached_sb.Length = 0;
+					task.AppendToStringBuilder (cached_sb);
+					current_status.BlockedTasks.Add (cached_sb.ToString ());
+				}
+
+				current_status.TotalTaskCount = total_executed_task_count;
+				current_status.StatusString = status_str;
+
 			}
 
+			return current_status;
+		}
+
+	}
+
+	public class SchedulerInformation {
+		[XmlAttribute]
+		public int TotalTaskCount = -1;
+
+		[XmlAttribute]
+		public string StatusString;
+
+		[XmlArray]
+		[XmlArrayItem (ElementName="PendingTask", Type=typeof (string))]
+		public ArrayList PendingTasks = new ArrayList ();
+
+		[XmlArray]
+		[XmlArrayItem (ElementName="FutureTask", Type=typeof (string))]
+		public ArrayList FutureTasks = new ArrayList ();
+
+		[XmlArray]
+		[XmlArrayItem (ElementName="BlockedTask", Type=typeof (string))]
+		public ArrayList BlockedTasks = new ArrayList ();
+
+		private static StringBuilder sb = new StringBuilder ();
+
+		public string ToHumanReadableString ()
+		{
+			sb.Length = 0;
+
+			sb.Append ("Scheduler:\n");
+			sb.Append ("Count: ").Append (TotalTaskCount);
 			sb.Append ('\n');
+
+			if (StatusString != null)
+				sb.Append ("Status: ").Append (StatusString).Append ('\n');
+
+			int pos = 1;
+			sb.Append ("\nPending Tasks:\n");
+			if (PendingTasks != null && PendingTasks.Count > 0) {
+				foreach (string task in PendingTasks) {
+					sb.Append (pos).Append (' ').Append (task).Append ('\n');
+					++pos;
+				}
+			} else
+				sb.Append ("Scheduler queue is empty.\n");
+
+
+			if (FutureTasks != null && FutureTasks.Count > 0) {
+				sb.Append ("\nFuture Tasks:\n");
+				foreach (string task in FutureTasks)
+					sb.Append (task).Append ('\n');
+			}
+
+			if (BlockedTasks != null && BlockedTasks.Count > 0) {
+				sb.Append ("\nBlocked Tasks:\n");
+				foreach (string task in BlockedTasks)
+					sb.Append (task).Append ('\n');
+			}
+
 			return sb.ToString ();
 		}
 	}

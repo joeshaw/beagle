@@ -613,20 +613,10 @@ namespace Beagle.Daemon {
 
 		////////////////////////////////////////////////////////
 
-		static public string GetIndexInformation ()
+		static public IEnumerable GetIndexInformation ()
 		{
-			StringBuilder builder = new StringBuilder ('\n');
-
-			foreach (Queryable q in queryables) {
-				QueryableStatus status = q.GetQueryableStatus ();
-
-				builder.Append ("Name: ").Append (status.Name).Append ('\n');
-				builder.Append ("Count: ").Append (status.ItemCount).Append ('\n');
-				builder.Append ("Indexing: ").Append (status.IsIndexing).Append ('\n');
-				builder.Append ('\n');
-			}
-
-			return builder.ToString ();
+			foreach (Queryable q in queryables)
+				yield return q.GetQueryableStatus ();
 		}
 
 		////////////////////////////////////////////////////////

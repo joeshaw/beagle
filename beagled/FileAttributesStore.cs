@@ -56,12 +56,15 @@ namespace Beagle.Daemon {
 				// the attributes, clobber the old attributes and the old unique Guid.
 				if (attr == null
 				    || (unique_id != Guid.Empty && unique_id != attr.UniqueId)) {
+					// First drop the old attribute, if there is one.
+					if (attr != null)
+						ifas.Drop (path);
+
+					// Now create the new attribute
 					attr = new FileAttributes ();
 					attr.UniqueId = unique_id;
 					attr.Path = path;
 					
-					// First drop the old attribute, if there is one.
-					ifas.Drop (path);
 					// Now add the new attribute
 					ifas.Write (attr);
 					created = true;
