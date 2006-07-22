@@ -168,7 +168,7 @@ namespace Beagle.Daemon {
 			}
 
 			if (! FileAttributesStore.Write (attr))
-				Logger.Log.Error ("Couldn't write attributes for {0}", info.Path);
+				Logger.Log.Warn ("Couldn't write attributes for {0}", info.Path);
 
 			file_info_cache.Remove (info.Uri);
 		}
