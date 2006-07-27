@@ -50,6 +50,7 @@ for i in $BEAGLED_ARGS; do
     --bg | --background ) fg_user=0 ;;
     --monogrind ) monogrind=1 ;;
     --heap-buddy ) heap_buddy=1 ;;
+    --mdb ) mdb=1 ;;
     --debug ) debug=1 ;;
     esac
 done
@@ -96,6 +97,8 @@ fi
 if [ $monogrind -eq 1 ]; then
     export GC_DONT_GC=1
     CMDLINE="monogrind $TARGET_EXE $MONO_EXTRA_ARGS $BEAGLED_ARGS $FGBG_ARG"
+elif [ $mdb -eq 1 ]; then
+    CMDLINE="mdb $TARGET_EXE -args $BEAGLED_ARGS $FGBG_ARG"
 else
     CMDLINE="$BEAGLE_MONO_RUNTIME --debug $MONO_EXTRA_ARGS $TARGET_EXE $BEAGLED_ARGS $FGBG_ARG"
 fi

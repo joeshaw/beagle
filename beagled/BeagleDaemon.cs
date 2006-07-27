@@ -260,6 +260,7 @@ namespace Beagle.Daemon {
 					break;
 
 				case "--heap-buddy":
+				case "--mdb":
 					// Silently ignore the --heap-buddy argument: it gets handled
 					// in the wrapper script.
 					break;
