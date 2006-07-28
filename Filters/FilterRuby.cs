@@ -46,7 +46,7 @@ namespace Beagle.Filters {
 
 		public FilterRuby ()
 		{
-			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("text/x-ruby"));
+			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("application/x-ruby"));
 
 		}
 
