@@ -44,6 +44,7 @@ namespace Beagle.Filters {
 
 		public FilterMPlayerVideo ()
 		{
+			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("application/x-matroska"));
 			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("video/dl"));
 			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("video/dv"));
 			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("video/fli"));
@@ -69,6 +70,7 @@ namespace Beagle.Filters {
 			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("video/x-ms-wmx"));
 			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("video/x-ms-wvx"));
 			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("video/x-msvideo"));
+			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("video/x-ogm+ogg"));
 			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("video/x-sgi-movie"));
 			
 			PreLoad = false;
