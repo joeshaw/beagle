@@ -40,9 +40,24 @@ namespace Beagle.Filters {
     
 	public class FilterOpenOffice : Beagle.Daemon.Filter {
 
-		Hashtable hotStyles;
-		bool odtFormat;
-		
+		private Hashtable hotStyles;
+		private bool odtFormat;
+
+		private Hashtable attr_to_index = null;
+		private Hashtable InterestingAttribute {
+			get {
+				if (attr_to_index != null)
+					return attr_to_index;
+
+				attr_to_index = new Hashtable (1 /* Number of attributes */);
+				// Add interesting node-attribute pairs to this hashtable
+				// attr_to_index [node_name] = attribute_name
+				attr_to_index ["table:table"] = "table:name";
+
+				return attr_to_index;
+			}
+		}
+
 		public FilterOpenOffice () 
 		{
 			// OO 1.0 mime types
@@ -139,6 +154,7 @@ namespace Beagle.Filters {
 			return nodeName == "text:footnote"
 				|| nodeName == "text:endnote"
 				|| nodeName == "office:annotation"
+				|| nodeName == "table:table"
 				|| nodeName == "text:note";       // "ODT format"
 		}
 
@@ -223,6 +239,15 @@ namespace Beagle.Filters {
 				bPartHotStyle = false;
 		}
 
+		void IndexAttribute (string node_name, string attr_name, string attr_value)
+		{
+			if (attr_value == null || attr_value.Length == 0)
+				return;
+
+			if ((string)InterestingAttribute [node_name] == attr_name)
+				AppendText (attr_value);	
+		}
+
 		void FlushPartialText () 
 		{
 			if (strPartText.Length > 0) {
@@ -282,13 +307,16 @@ namespace Beagle.Filters {
 						AppendWhiteSpace ();
 						isHot = false;
 					} else {
+						string node_name = reader.Name;
 						bool has_attr = reader.MoveToFirstAttribute ();
 						while (has_attr) {
 							if (reader.Name.EndsWith(":style-name")) {
 								if (hotStyles.Contains (reader.Value))
 									isHot = true;
 								break;
-							}
+							} else
+								IndexAttribute (node_name, reader.Name, reader.Value);
+
 							has_attr = reader.MoveToNextAttribute ();
 						}
 						reader.MoveToElement();
