@@ -1,0 +1,29 @@
+From: Debajyoti Bera <dbera.web@gmail.com>
+
+Fix for http://bugzilla.gnome.org/show_bug.cgi?id=337431
+Patch from https://bugs.freedesktop.org/show_bug.cgi?id=5241 attachment-1
+The patch doesn't add null mimetypes to its internal buffer.
+
+Index: xdgmimeglob.c
+===================================================================
+RCS file: /cvs/gnome/beagle/glue/xdgmime/xdgmimeglob.c,v
+retrieving revision 1.2
+diff -u -3 -p -r1.2 xdgmimeglob.c
+--- xdgmimeglob.c	29 Mar 2006 21:46:06 -0000	1.2
++++ xdgmimeglob.c	28 Jul 2006 05:42:18 -0000
+@@ -308,11 +308,13 @@ _xdg_glob_hash_node_lookup_file_name (Xd
+ 	  if (*file_name == '\000')
+ 	    {
+ 	      n = 0;
+-	      mime_types[n++] = node->mime_type;
++	      if (node->mime_type)
++	        mime_types[n++] = node->mime_type;
+ 	      node = node->child;
+ 	      while (n < n_mime_types && node && node->character == 0)
+ 		{
+-		  mime_types[n++] = node->mime_type;
++		  if (node->mime_type)
++		    mime_types[n++] = node->mime_type;
+ 		  node = node->next;
+ 		}
+ 	    }
