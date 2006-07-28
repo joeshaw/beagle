@@ -285,7 +285,10 @@ namespace Beagle.Filters {
 						continue;
 					}
 
-					if (reader.Name == "style:style") {
+					// FIXME: Allow adding more style nodes
+					if (reader.Name == "style:style"
+					    || reader.Name == "number:date-style"
+					    || reader.Name == "style:font-decl") {
 						StudyStyleNode (reader); 
 						continue;
 					}
