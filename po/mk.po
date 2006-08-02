@@ -1,4 +1,4 @@
-# translation of beagle.HEAD.mk.po to Macedonian
+# translation of mk.po to Macedonian
 # translation of beagle.HEAD.mk.po to
 # This file is distributed under the same license as the PACKAGE package.
 # Copyright (C) 2006 THE PACKAGE'S COPYRIGHT HOLDER.
@@ -9,11 +9,11 @@
 # Jovan Naumovski <jovan@lugola.net>, 2006.
 msgid ""
 msgstr ""
-"Project-Id-Version: beagle.HEAD.mk\n"
+"Project-Id-Version: mk\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2006-05-24 10:10+0200\n"
-"PO-Revision-Date: 2006-05-24 18:29+0200\n"
-"Last-Translator: Jovan Naumovski <jovan@lugola.net>\n"
+"POT-Creation-Date: 2006-08-02 18:08+0200\n"
+"PO-Revision-Date: 2006-08-02 22:01+0200\n"
+"Last-Translator: Arangel Angov <ufo@linux.net.mk>\n"
 "Language-Team: Macedonian <ossm-members@hedona.on.net.mk>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -47,7 +47,7 @@ msgstr "Разговори во {0}"
 msgid "Conversations with {0}"
 msgstr "Разговори со {0}"
 
-#: ../search/beagle-search.desktop.in.h:1 ../tools/settings.glade.h:27
+#: ../search/beagle-search.desktop.in.h:1 ../tools/settings.glade.h:28
 msgid "Search"
 msgstr "Барај"
 
@@ -55,7 +55,15 @@ msgstr "Барај"
 msgid "Search for data on your desktop"
 msgstr "Пребарување податоци на вашата работна површина"
 
-#: ../search/Category.cs:108
+#: ../search/Category.cs:109
+#, csharp-format
+msgid "{0} result"
+msgid_plural "{0} results"
+msgstr[0] "{0} резултат"
+msgstr[1] "{0} резултати"
+msgstr[2] "{0} резултати"
+
+#: ../search/Category.cs:111
 #, csharp-format
 msgid "{0}-{1} of {2}"
 msgstr "{0}-{1} од {2}"
@@ -147,19 +155,19 @@ msgstr "Почни пребарување"
 msgid "Send Mail"
 msgstr "Испрати пошта"
 
-#: ../search/Tiles/Contact.cs:69
+#: ../search/Tiles/Contact.cs:68
 msgid "E-Mail:"
 msgstr "Е-пошта:"
 
-#: ../search/Tiles/Contact.cs:71
+#: ../search/Tiles/Contact.cs:70
 msgid "Mobile Phone:"
 msgstr "Мобилен телефон:"
 
-#: ../search/Tiles/Contact.cs:73
+#: ../search/Tiles/Contact.cs:72
 msgid "Work Phone:"
 msgstr "Телефон на работа:"
 
-#: ../search/Tiles/Contact.cs:75
+#: ../search/Tiles/Contact.cs:74
 msgid "Home Phone:"
 msgstr "Домашен телефон:"
 
@@ -178,22 +186,22 @@ msgstr "Е-пошта"
 msgid "Move to Trash"
 msgstr "Премести во ѓубре"
 
-#: ../search/Tiles/File.cs:122 ../search/Tiles/Note.cs:57
+#: ../search/Tiles/File.cs:124 ../search/Tiles/Note.cs:57
 #: ../search/Tiles/RSSFeed.cs:45 ../search/Tiles/WebHistory.cs:50
 msgid "Title:"
 msgstr "Наслов:"
 
 #: ../search/Tiles/File.cs:125 ../search/Tiles/Folder.cs:51
-#: ../search/Tiles/Note.cs:60
+#: ../search/Tiles/Note.cs:58
 msgid "Last Edited:"
 msgstr "Последен пат уредено:"
 
-#: ../search/Tiles/File.cs:129
+#: ../search/Tiles/File.cs:128
 msgid "Author:"
 msgstr "Автор:"
 
-#: ../search/Tiles/File.cs:133 ../search/Tiles/Folder.cs:54
-#: ../search/Tiles/Image.cs:81
+#: ../search/Tiles/File.cs:130 ../search/Tiles/Folder.cs:52
+#: ../search/Tiles/Image.cs:79
 msgid "Full Path:"
 msgstr "Цела патека:"
 
@@ -222,11 +230,11 @@ msgstr "Променето:"
 msgid "IM Conversation"
 msgstr "IM разговор"
 
-#: ../search/Tiles/IMLog.cs:81
+#: ../search/Tiles/IMLog.cs:87
 msgid "Name:"
 msgstr "Име:"
 
-#: ../search/Tiles/IMLog.cs:82 ../search/Tiles/MailMessage.cs:96
+#: ../search/Tiles/IMLog.cs:88 ../search/Tiles/MailMessage.cs:92
 msgid "Date Received:"
 msgstr "Датум на примање:"
 
@@ -242,15 +250,15 @@ msgstr "Испрати во пошта"
 msgid "Subject:"
 msgstr "Наслов:"
 
-#: ../search/Tiles/MailMessage.cs:91
+#: ../search/Tiles/MailMessage.cs:89
 msgid "To:"
 msgstr "До:"
 
-#: ../search/Tiles/MailMessage.cs:91
+#: ../search/Tiles/MailMessage.cs:89
 msgid "From:"
 msgstr "Од:"
 
-#: ../search/Tiles/MailMessage.cs:96
+#: ../search/Tiles/MailMessage.cs:92
 msgid "Date Sent:"
 msgstr "Датум на испраќање:"
 
@@ -262,11 +270,11 @@ msgstr[0] "{0} слајд"
 msgstr[1] "{0} слајдови"
 msgstr[2] "{0} слајдови"
 
-#: ../search/Tiles/RSSFeed.cs:48
+#: ../search/Tiles/RSSFeed.cs:46
 msgid "Site:"
 msgstr "Сајт:"
 
-#: ../search/Tiles/RSSFeed.cs:51
+#: ../search/Tiles/RSSFeed.cs:47
 msgid "Date Viewed:"
 msgstr "Видено на датум:"
 
@@ -400,11 +408,11 @@ msgstr[2] "за {0} години"
 msgid "Unknown duration"
 msgstr "Непознато траење"
 
-#: ../search/Tiles/WebHistory.cs:53
+#: ../search/Tiles/WebHistory.cs:51
 msgid "URL:"
 msgstr "URL:"
 
-#: ../search/Tiles/WebHistory.cs:56
+#: ../search/Tiles/WebHistory.cs:52
 msgid "Accessed:"
 msgstr "Пристапено:"
 
@@ -726,11 +734,11 @@ msgstr "_Релевантност"
 msgid "Sort the best matches first"
 msgstr "Подреди ги прво најдобрите совпаѓања"
 
-#: ../tools/Settings.cs:223
+#: ../tools/Settings.cs:226
 msgid "Reload configuration"
 msgstr "Освежи конфигурација"
 
-#: ../tools/Settings.cs:224
+#: ../tools/Settings.cs:227
 msgid ""
 "The configuration file has been modified by another application. Do you wish "
 "to discard the currently displayed values and reload configuration from disk?"
@@ -739,29 +747,29 @@ msgstr ""
 "ги откажете тековно прикажаните вредности и повторно ја вчитате "
 "конфигурацијата од диск?"
 
-#: ../tools/Settings.cs:262
+#: ../tools/Settings.cs:265
 msgid "Select Path"
 msgstr "Изберете патека"
 
-#: ../tools/Settings.cs:281
+#: ../tools/Settings.cs:284
 msgid "The selected path is already selected for indexing and wasn't added."
 msgstr "Избраната патека е веќе избрана за индексирање и не е додадена."
 
-#: ../tools/Settings.cs:284
+#: ../tools/Settings.cs:287
 msgid ""
 "The selected path wasn't added. The list contains items that supercedes it "
 "and the data is already being indexed."
 msgstr "Избраната патека не е додадена. Листата на податоци е веќе индексирана."
 
-#: ../tools/Settings.cs:295 ../tools/Settings.cs:487
+#: ../tools/Settings.cs:298 ../tools/Settings.cs:490
 msgid "Path not added"
 msgstr "Патеката не е додадена"
 
-#: ../tools/Settings.cs:304
+#: ../tools/Settings.cs:307
 msgid "Remove obsolete paths"
 msgstr "Отстрани застарени патеки"
 
-#: ../tools/Settings.cs:305
+#: ../tools/Settings.cs:308
 msgid ""
 "Adding this path will obsolete some of the existing include paths. This will "
 "result in the removal of the old obsolete paths. Do you still wish to add it?"
@@ -770,11 +778,11 @@ msgstr ""
 "Ова ќе резултира со отстранување на застарените патеки. Дали сеуште сакате "
 "да ја додадете?"
 
-#: ../tools/Settings.cs:331
+#: ../tools/Settings.cs:334
 msgid "Remove path"
 msgstr "Отстрани патека"
 
-#: ../tools/Settings.cs:332
+#: ../tools/Settings.cs:335
 msgid ""
 "Are you sure you wish to remove this path from the list of directories to be "
 "included for indexing?"
@@ -782,11 +790,11 @@ msgstr ""
 "Дали сте сигурни дека сакате да ја отстраните патеката од листата на "
 "директориуми да биде вметната за индексирање?"
 
-#: ../tools/Settings.cs:361
+#: ../tools/Settings.cs:364
 msgid "Remove item"
 msgstr "Отстрани предмет"
 
-#: ../tools/Settings.cs:362
+#: ../tools/Settings.cs:365
 msgid ""
 "Are you sure you wish to remove this item from the list of data to be "
 "excluded from indexing?"
@@ -794,86 +802,86 @@ msgstr ""
 "Дали сте сигурни да го отстраните објектот од листата на податоци да биде "
 "исфрлена од индексирање?"
 
-#: ../tools/Settings.cs:405
+#: ../tools/Settings.cs:408
 msgid "Invalid host entry"
 msgstr "Невалиден запис за хост"
 
-#: ../tools/Settings.cs:412
+#: ../tools/Settings.cs:415
 msgid "Remote host already present in the list."
 msgstr "Далечниот хост е веќе присутен во листата."
 
-#: ../tools/Settings.cs:421
+#: ../tools/Settings.cs:424
 msgid "Netbeagle Node not added"
 msgstr "Netbeagle точката не е додадена"
 
-#: ../tools/Settings.cs:437
+#: ../tools/Settings.cs:440
 msgid "Remove host"
 msgstr "Отстрани хост"
 
-#: ../tools/Settings.cs:438
+#: ../tools/Settings.cs:441
 msgid "Are you sure you wish to remove this host from the list?"
 msgstr "Дали сте сигурни дека сакате да го отстраните хостот од листата?"
 
-#: ../tools/Settings.cs:459
+#: ../tools/Settings.cs:462
 msgid "Select path"
 msgstr "Изберете патека"
 
-#: ../tools/Settings.cs:478
+#: ../tools/Settings.cs:481
 msgid "The selected path is already configured for external access."
 msgstr "Избраната патека е веќе конфигурирана за надворешен пристап."
 
-#: ../tools/Settings.cs:502
+#: ../tools/Settings.cs:505
 msgid "Remove public path"
 msgstr "Отстрани јавна патека"
 
-#: ../tools/Settings.cs:503
+#: ../tools/Settings.cs:506
 msgid "Are you sure you wish to remove this entry from the list of public paths?"
 msgstr ""
 "Дали сте сигурни дека сакате да го отстраните овој запис од листата на јавни "
 "патеки?"
 
-#: ../tools/Settings.cs:548 ../tools/Settings.cs:637 ../tools/Settings.cs:715
-#: ../tools/Settings.cs:791 ../tools/Settings.cs:1130
+#: ../tools/Settings.cs:551 ../tools/Settings.cs:640 ../tools/Settings.cs:718
+#: ../tools/Settings.cs:794 ../tools/Settings.cs:1133
 msgid "Name"
 msgstr "Име"
 
-#: ../tools/Settings.cs:631
+#: ../tools/Settings.cs:634
 msgid "Type"
 msgstr "Тип"
 
-#: ../tools/Settings.cs:684
+#: ../tools/Settings.cs:687
 msgid "Path:"
 msgstr "Патека:"
 
-#: ../tools/Settings.cs:687
+#: ../tools/Settings.cs:690
 msgid "Pattern:"
 msgstr "Шема:"
 
-#: ../tools/Settings.cs:690
+#: ../tools/Settings.cs:693
 msgid "Mail folder:"
 msgstr "Папка за пошта:"
 
-#: ../tools/Settings.cs:1038
+#: ../tools/Settings.cs:1041
 msgid "Select Folder"
 msgstr "Изберете папка"
 
-#: ../tools/Settings.cs:1064 ../tools/settings.glade.h:24
+#: ../tools/Settings.cs:1067 ../tools/settings.glade.h:25
 msgid "P_ath:"
 msgstr "П_атека:"
 
-#: ../tools/Settings.cs:1069
+#: ../tools/Settings.cs:1072
 msgid "M_ail folder:"
 msgstr "П_апка за пошта:"
 
-#: ../tools/Settings.cs:1074
+#: ../tools/Settings.cs:1077
 msgid "P_attern:"
 msgstr "Ш_ема:"
 
-#: ../tools/Settings.cs:1098
+#: ../tools/Settings.cs:1101
 msgid "Error adding path"
 msgstr "Грешка при додавање на патеката"
 
-#: ../tools/Settings.cs:1099
+#: ../tools/Settings.cs:1102
 msgid ""
 "The specified path could not be found and therefore it could not be added to "
 "the list of resources excluded for indexing."
@@ -881,7 +889,7 @@ msgstr ""
 "Одредената патека не можам да ја пронајдам така што не можам да ја додадам "
 "во листата со ресурси иземени за индексирање."
 
-#: ../tools/Settings.cs:1129
+#: ../tools/Settings.cs:1132
 msgid "Show"
 msgstr "Покажи"
 
@@ -976,32 +984,36 @@ msgid "I_ndex my home directory"
 msgstr "И_ндексирај го домашниот директориум"
 
 #: ../tools/settings.glade.h:22
+msgid "Index data while on battery power"
+msgstr "Индексирај податоци додека се работи на батерија"
+
+#: ../tools/settings.glade.h:23
 msgid "Indexing"
 msgstr "Индексирам"
 
-#: ../tools/settings.glade.h:23
+#: ../tools/settings.glade.h:24
 msgid "Networking"
 msgstr "Мрежа"
 
-#: ../tools/settings.glade.h:25
+#: ../tools/settings.glade.h:26
 msgid "Please select a resource you wish to exclude from indexing."
 msgstr "Ве молам одберете ресурс кој што сакате да го иземете при индексирањето."
 
-#: ../tools/settings.glade.h:26
+#: ../tools/settings.glade.h:27
 msgid "Please select the mail folder you wish to exclude from indexing. "
 msgstr ""
 "Ве молам одберете папка со пошта која што сакате да ја иземете при "
 "индексирањето. "
 
-#: ../tools/settings.glade.h:28
+#: ../tools/settings.glade.h:29
 msgid "Search Preferences"
 msgstr "Параметри за пребарување"
 
-#: ../tools/settings.glade.h:29
+#: ../tools/settings.glade.h:30
 msgid "Select Mail Folder"
 msgstr "Изберете папка за пошта"
 
-#: ../tools/settings.glade.h:30
+#: ../tools/settings.glade.h:31
 msgid ""
 "Specify any resources, such as paths, patterns, mail folders or type of "
 "objects you wish to exclude from indexing."
@@ -1009,35 +1021,35 @@ msgstr ""
 "Означете некои ресурси, како патеки, шеми, поштенски папки или типови на "
 "објекти кои сакате да ги отфрлите од индексирање."
 
-#: ../tools/settings.glade.h:31
+#: ../tools/settings.glade.h:32
 msgid "Specify paths that should be available for external access."
 msgstr "Одредете патеки кои што ќе бидат достапни за надворешен пристап."
 
-#: ../tools/settings.glade.h:32
+#: ../tools/settings.glade.h:33
 msgid "Type:"
 msgstr "Тип:"
 
-#: ../tools/settings.glade.h:33
+#: ../tools/settings.glade.h:34
 msgid "_Address:"
 msgstr "_Адреса:"
 
-#: ../tools/settings.glade.h:34
+#: ../tools/settings.glade.h:35
 msgid "_Allow Beagle to be run as root"
 msgstr "_Дозволи Бигл да работи со root"
 
-#: ../tools/settings.glade.h:35
+#: ../tools/settings.glade.h:36
 msgid "_Folder path"
 msgstr "_Патека на папката"
 
-#: ../tools/settings.glade.h:36
+#: ../tools/settings.glade.h:37
 msgid "_Mail folder"
 msgstr "_Папка за пошта"
 
-#: ../tools/settings.glade.h:37
+#: ../tools/settings.glade.h:38
 msgid "_Maximum number of results displayed:"
 msgstr "_Максимален број на прикажани резултати:"
 
-#: ../tools/settings.glade.h:38
+#: ../tools/settings.glade.h:39
 msgid "_Start search & indexing services automatically "
 msgstr "_Автоматски започни пребарување и индексирање."
 
