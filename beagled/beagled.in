@@ -42,6 +42,7 @@ fi
 monogrind=0
 heap_buddy=0
 debug=0
+mdb=0
 
 BEAGLED_ARGS="$*"
 for i in $BEAGLED_ARGS; do
