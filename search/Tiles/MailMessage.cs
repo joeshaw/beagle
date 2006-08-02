@@ -10,6 +10,13 @@ namespace Search.Tiles {
 		public MailMessageActivator () : base ()
 		{
 			AddSupportedFlavor (new HitFlavor (null, null, "message/rfc822"));
+
+			// This one allows us to handle HTML child indexables
+			// that contain the actual body of the message as real
+			// mail tiles.  We don't have to worry about them also
+			// appearing as mail attachments because they aren't
+			// considered attachments during indexing.
+			AddSupportedFlavor (new HitFlavor (null, "MailMessage", "text/html"));
 		}
 
 		public override bool Validate (Beagle.Hit hit)
@@ -17,10 +24,11 @@ namespace Search.Tiles {
 			if (! base.Validate (hit))
 				return false;
 			
-			// This handles a case when a file with the message/rfc822
-			// mimetype is indexed without gmime. Thus we fail to extract
-			// any info and this tile is useless.
 			if (hit ["beagle:HitType"] == "File") {
+				// This handles a case when a file with the
+				// message/rfc822 mimetype is indexed without
+				// gmime. Thus we fail to extract any info and
+				// this tile is useless.
 				string subject = hit.GetFirstProperty ("dc:title");
 				
 				if (subject != null && subject != "")
@@ -40,26 +48,39 @@ namespace Search.Tiles {
 
 	public class MailMessage : TileFlat {
 
+		// Wrapper around Hit.GetFirstProperty() that deals with child indexables
+		private static string GetFirstProperty (Beagle.Hit hit, string prop)
+		{
+			if (hit.ParentUri == null)
+				return hit.GetFirstProperty (prop);
+			else
+				return hit.GetFirstProperty ("parent:" + prop);
+		}
+
 		public MailMessage (Beagle.Hit hit, Beagle.Query query) : base (hit, query)
 		{
 			Group = TileGroup.Conversations;
 
-			Subject.LabelProp = Title = hit.GetFirstProperty ("dc:title");
+			string title = GetFirstProperty (hit, "dc:title");
+			if (title == null || title == String.Empty)
+				title = Catalog.GetString ("(untitled)");
+			Subject.LabelProp = Title = title;
+
 			From.LabelProp = "<b>" + GetAddress (hit) + "</b>";
 			try {
-				Timestamp = Utils.ParseTimestamp (hit.GetFirstProperty ("fixme:date"));
+				Timestamp = Utils.ParseTimestamp (GetFirstProperty (hit, "fixme:date"));
 				Date.LabelProp = Utils.NiceShortDate (Timestamp);
 			} catch {}
 
-			if (Hit.GetFirstProperty ("fixme:client") == "evolution")
+			if (GetFirstProperty (Hit, "fixme:client") == "evolution")
 				AddAction (new TileAction (Catalog.GetString ("Send in Mail"), SendInMail));
 		}
 
 		protected override void LoadIcon (Gtk.Image image, int size)
 		{
-			if (Hit.GetFirstProperty ("fixme:isAnswered") != null)
+			if (GetFirstProperty (Hit, "fixme:isAnswered") != null)
 				image.Pixbuf = WidgetFu.LoadThemeIcon ("stock_mail-replied", size);
-			else if (Hit.GetFirstProperty ("fixme:isSeen") != null)
+			else if (GetFirstProperty (Hit, "fixme:isSeen") != null)
 				image.Pixbuf = WidgetFu.LoadThemeIcon ("stock_mail-open", size);
 			else
 				image.Pixbuf = WidgetFu.LoadThemeIcon ("stock_mail", size);
@@ -67,8 +88,8 @@ namespace Search.Tiles {
 
 		private static string GetAddress (Beagle.Hit hit)
 		{
-			bool sent = (hit.GetFirstProperty ("fixme:isSent") != null);
-			string address = sent ? hit.GetFirstProperty ("fixme:to") : hit.GetFirstProperty ("fixme:from");
+			bool sent = (GetFirstProperty (hit, "fixme:isSent") != null);
+			string address = sent ? GetFirstProperty (hit, "fixme:to") : GetFirstProperty (hit, "fixme:from");
 
 			if (address == null)
 				return "";
@@ -82,7 +103,7 @@ namespace Search.Tiles {
 		{
 			DetailsPane details = new DetailsPane ();
 
-			bool sent = (Hit.GetFirstProperty ("fixme:isSent") != null);
+			bool sent = (GetFirstProperty (Hit, "fixme:isSent") != null);
 
 			details.AddLabelPair (Catalog.GetString ("Subject:"), SubjectLabel.Text);
 
@@ -99,7 +120,7 @@ namespace Search.Tiles {
 
 		public override void Open ()
 		{
-			if (Hit.GetFirstProperty ("fixme:client") != "evolution") {
+			if (GetFirstProperty (Hit, "fixme:client") != "evolution") {
 				OpenFromMime (Hit);
 				return;
 			}
@@ -123,7 +144,14 @@ namespace Search.Tiles {
 		public void SendInMail ()
 		{
 			SafeProcess p = new SafeProcess ();
-			p.Arguments = new string [] { "evolution", String.Format ("{0};forward=attached", Hit.Uri) };
+
+			string uri;
+			if (Hit.ParentUriAsString != null)
+				uri = Hit.ParentUriAsString;
+			else
+				uri = Hit.UriAsString;
+
+			p.Arguments = new string [] { "evolution", String.Format ("{0};forward=attached", uri) };
 
 			try {
 				p.Start () ;
