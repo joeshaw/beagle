@@ -347,7 +347,6 @@ DAEMON_DLL_CSFILES = 						\
 	$(srcdir)/LuceneQueryingDriver.cs			\
 	$(srcdir)/LuceneFileQueryable.cs			\
 	$(srcdir)/LuceneQueryable.cs				\
-	$(srcdir)/MetadataStore.cs				\
 	$(srcdir)/NoiseFilter.cs				\
 	$(srcdir)/PropertyKeywordFu.cs				\
 	$(srcdir)/QueryDriver.cs				\

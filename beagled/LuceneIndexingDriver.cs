@@ -210,15 +210,10 @@ namespace Beagle.Daemon {
 
 			if (text_cache != null)
 				text_cache.BeginTransaction ();
-
+				
 			IndexWriter primary_writer, secondary_writer;
 			primary_writer = new IndexWriter (PrimaryStore, IndexingAnalyzer, false);
 			secondary_writer = null;
-
-			Stopwatch w = new Stopwatch ();
-			w.Start ();
-			Log.Debug ("Starting metadata sqlite transaction");
-			MetadataStore.BeginTransaction ();
 
 			foreach (Indexable indexable in request.Indexables) {
 				
@@ -265,12 +260,6 @@ namespace Beagle.Daemon {
 					Logger.Log.Error ("Unable to filter {0} (mimetype={1})", indexable.DisplayUri, indexable.MimeType);
 					Logger.Log.Error (e);
 					indexable.NoContent = true;
-				}
-
-				// Add items to our metadata store
-				foreach (Property p in indexable.Properties) {
-					if (p.IsStored)
-						MetadataStore.Add (indexable.Uri.ToString (), p.Key, p.Value);
 				}
 					
 				Document primary_doc = null, secondary_doc = null;
@@ -327,10 +316,6 @@ namespace Beagle.Daemon {
 				// Clean up any temporary files associated with filtering this indexable.
 				indexable.Cleanup ();
 			}
-
-			MetadataStore.CommitTransaction ();
-			w.Stop ();
-			Log.Debug ("Committed metadata sqlite transaction in {0}", w);
 
 			if (text_cache != null)
 				text_cache.CommitTransaction ();

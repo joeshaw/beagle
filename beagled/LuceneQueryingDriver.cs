@@ -47,7 +47,7 @@ namespace Beagle.Daemon {
 
 	public class LuceneQueryingDriver : LuceneCommon {
 
-		static public bool Debug = true;
+		static public bool Debug = false;
 
 		public const string PrivateNamespace = "_private:";
 

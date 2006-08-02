@@ -91,8 +91,6 @@ namespace Beagle.Daemon {
 		// expect to have change.  Canonical example: file names.
 		private Lucene.Net.Store.Directory secondary_store = null;
 
-		private MetadataStore metadata_store = null;
-
 		//////////////////////////////////////////////////////////////////////////////
 
 		protected LuceneCommon (string index_name, int minor_version)
@@ -110,8 +108,6 @@ namespace Beagle.Daemon {
 		public Lucene.Net.Store.Directory PrimaryStore { get { return primary_store; } }
 
 		public Lucene.Net.Store.Directory SecondaryStore { get { return secondary_store; } }
-
-		public MetadataStore MetadataStore { get { return metadata_store; } }
 
 		public string Fingerprint { get { return fingerprint; } }
 
@@ -144,10 +140,6 @@ namespace Beagle.Daemon {
 		// Shouldn't really be public
 		public string SecondaryIndexDirectory {
 			get { return Path.Combine (top_dir, "SecondaryIndex"); }
-		}
-
-		public string MetadataStoreDirectory {
-			get { return top_dir; }
 		}
 
 		public string LockDirectory {
@@ -330,8 +322,6 @@ namespace Beagle.Daemon {
 			writer = new StreamWriter (VersionFile, false);
 			writer.WriteLine ("{0}.{1}", MAJOR_VERSION, minor_version);
 			writer.Close ();
-
-			metadata_store = new MetadataStore (MetadataStoreDirectory, fingerprint);
 		}
 
 		protected void Open ()
@@ -350,8 +340,6 @@ namespace Beagle.Daemon {
 			// Create stores for our indexes.
 			primary_store = Lucene.Net.Store.FSDirectory.GetDirectory (PrimaryIndexDirectory, LockDirectory, false, read_only_mode);
 			secondary_store = Lucene.Net.Store.FSDirectory.GetDirectory (SecondaryIndexDirectory, LockDirectory, false, read_only_mode);
-
-			metadata_store = new MetadataStore (MetadataStoreDirectory, fingerprint);
 		}
 
 		////////////////////////////////////////////////////////////////
