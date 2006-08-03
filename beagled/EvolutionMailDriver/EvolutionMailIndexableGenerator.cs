@@ -216,6 +216,12 @@ namespace Beagle.Daemon.EvolutionMailDriver {
 				}
 
 				this.mbox_fd = Mono.Unix.Native.Syscall.open (this.mbox_info.FullName, Mono.Unix.Native.OpenFlags.O_RDONLY);
+
+				if (this.mbox_fd < 0) {
+					Log.Error ("Unable to open {0}: {1}", this.mbox_info.FullName, Mono.Unix.Native.Stdlib.strerror (Mono.Unix.Native.Stdlib.GetLastError ()));
+					return false;
+				}
+
 				this.mbox_stream = new GMime.StreamFs (this.mbox_fd);
 				this.mbox_stream.Seek ((int) this.MboxLastOffset);
 				this.mbox_parser = new GMime.Parser (this.mbox_stream);

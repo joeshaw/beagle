@@ -56,6 +56,9 @@ namespace Beagle.Daemon.EvolutionMailDriver {
 
 		private bool FileIsInteresting (FileInfo file)
 		{
+			if (! file.Exists)
+				return false;
+
 			DateTime cached_time = new DateTime ();
 			if (last_write_time_cache.Contains (file.FullName))
 				cached_time = (DateTime) last_write_time_cache [file.FullName];
@@ -89,15 +92,17 @@ namespace Beagle.Daemon.EvolutionMailDriver {
 			if ((type & Inotify.EventType.MovedTo) != 0) {
 				if (subitem == "summary") {
 					// IMAP summary
-					Logger.Log.Info ("Reindexing updated IMAP summary: {0}", full_path);
-					if (SummaryAddedEvent != null)
+					if (SummaryAddedEvent != null && File.Exists (full_path)) {
+						Logger.Log.Info ("Reindexing updated IMAP summary: {0}", full_path);
 						SummaryAddedEvent (new FileInfo (full_path));
+					}
 				} else if (Path.GetExtension (full_path) == ".ev-summary") {
 					// mbox summary
 					string mbox_file = Path.ChangeExtension (full_path, null);
-					Logger.Log.Info ("Reindexing updated mbox: {0}", mbox_file);
-					if (MboxAddedEvent != null)
+					if (MboxAddedEvent != null && File.Exists (mbox_file)) {
+						Logger.Log.Info ("Reindexing updated mbox: {0}", mbox_file);
 						MboxAddedEvent (new FileInfo (mbox_file));
+					}
 				}
 			}
 		}
