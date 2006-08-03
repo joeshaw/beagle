@@ -1,3 +1,4 @@
+# translation of cs.po to Czech
 # translation of cs.po to
 # This file is distributed under the same license as the PACKAGE package.
 # Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER.
@@ -7,10 +8,10 @@ msgid ""
 msgstr ""
 "Project-Id-Version: cs\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2006-07-14 10:29+0200\n"
-"PO-Revision-Date: 2006-07-14 10:30+0200\n"
+"POT-Creation-Date: 2006-08-03 11:35+0200\n"
+"PO-Revision-Date: 2006-08-03 11:41+0200\n"
 "Last-Translator: Jakub Friedl <jfriedl@suse.cz>\n"
-"Language-Team:  <cs@li.org>\n"
+"Language-Team: Czech <gnome-cs-list@gnome.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -234,7 +235,7 @@ msgstr "IM konverzace"
 msgid "Name:"
 msgstr "Jméno:"
 
-#: ../search/Tiles/IMLog.cs:88 ../search/Tiles/MailMessage.cs:92
+#: ../search/Tiles/IMLog.cs:88 ../search/Tiles/MailMessage.cs:113
 msgid "Date Received:"
 msgstr "Přijato:"
 
@@ -242,23 +243,27 @@ msgstr "Přijato:"
 msgid "Mail attachment"
 msgstr "Příloha e-mailu"
 
-#: ../search/Tiles/MailMessage.cs:55
+#: ../search/Tiles/MailMessage.cs:66
+msgid "(untitled)"
+msgstr "(beze jména)"
+
+#: ../search/Tiles/MailMessage.cs:76
 msgid "Send in Mail"
 msgstr "Poslat e-mailem"
 
-#: ../search/Tiles/MailMessage.cs:87
+#: ../search/Tiles/MailMessage.cs:108
 msgid "Subject:"
 msgstr "Předmět:"
 
-#: ../search/Tiles/MailMessage.cs:89
+#: ../search/Tiles/MailMessage.cs:110
 msgid "To:"
 msgstr "Komu:"
 
-#: ../search/Tiles/MailMessage.cs:89
+#: ../search/Tiles/MailMessage.cs:110
 msgid "From:"
 msgstr "Od:"
 
-#: ../search/Tiles/MailMessage.cs:92
+#: ../search/Tiles/MailMessage.cs:113
 msgid "Date Sent:"
 msgstr "Datum odeslání:"
 
