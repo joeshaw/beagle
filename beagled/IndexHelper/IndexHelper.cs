@@ -61,6 +61,9 @@ namespace Beagle.IndexHelper {
 			}
 		}
 
+		[DllImport("libgobject-2.0-0.dll")]
+		static extern void g_type_init ();
+
 		private static void DoMain (string [] args)
 		{
 			SystemInformation.SetProcessName ("beagled-helper");
@@ -88,6 +91,9 @@ namespace Beagle.IndexHelper {
 			//unsetenv ("DISPLAY");
 
 			SystemInformation.XssInit (false);
+
+			// Initialize GObject type system
+			g_type_init ();
 
 			SetupSignalHandlers ();
 

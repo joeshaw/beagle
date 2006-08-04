@@ -237,6 +237,9 @@ namespace Beagle.Daemon {
 			}
 		}
 
+		[DllImport("libgobject-2.0-0.dll")]
+		static extern void g_type_init ();
+
 		public static void DoMain (string[] args)
 		{
 			SystemInformation.SetProcessName ("beagled");
@@ -459,6 +462,9 @@ namespace Beagle.Daemon {
 			// Do BEAGLE_EXERCISE_THE_DOG_HARDER-related processing.
 			ExerciseTheDogHarder ();
 
+			// Initialize GObject type system
+			g_type_init ();
+			
 			if (SystemInformation.XssInit ())
 				Logger.Log.Debug ("Established a connection to the X server");
 			else
