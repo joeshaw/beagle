@@ -484,6 +484,15 @@ namespace Beagle.Daemon.FileSystemQueryable {
 			cmp = this.state - other.state;
 			if (cmp != 0)
 				return cmp;
+
+			// Special case: index all directories at depth 1
+			// before any others.
+			if (this.Depth <= 1 || other.Depth <= 1) {
+				cmp = other.Depth - this.Depth;
+
+				if (cmp != 0)
+					return cmp;
+			}
 			
 			cmp = DateTime.Compare (other.last_crawl_time,
 						this.last_crawl_time);
