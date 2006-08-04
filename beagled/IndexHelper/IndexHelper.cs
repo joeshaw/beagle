@@ -61,7 +61,7 @@ namespace Beagle.IndexHelper {
 			}
 		}
 
-		[DllImport("libgobject-2.0-0.dll")]
+		[DllImport("libgobject-2.0.so")]
 		static extern void g_type_init ();
 
 		private static void DoMain (string [] args)

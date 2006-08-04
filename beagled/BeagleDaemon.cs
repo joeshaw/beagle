@@ -237,7 +237,7 @@ namespace Beagle.Daemon {
 			}
 		}
 
-		[DllImport("libgobject-2.0-0.dll")]
+		[DllImport("libgobject-2.0.so")]
 		static extern void g_type_init ();
 
 		public static void DoMain (string[] args)
