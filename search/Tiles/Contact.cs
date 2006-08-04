@@ -78,10 +78,30 @@ namespace Search.Tiles {
 			return details;
 		}
 
+		public static SafeProcess GetClientProcess (string client)
+		{
+			SafeProcess p = null;
+
+   			if (client == "evolution") {
+				p = new SafeProcess ();
+				p.Arguments = new string [2];
+				p.Arguments [0] = "evolution";
+			} else if (client == "thunderbird") {
+				p = new SafeProcess ();
+				p.Arguments = new string [4];
+				p.Arguments [0] = "beagle-contactviewer";
+				p.Arguments [1] = "--manager";
+				p.Arguments [2] = "Thunderbird";
+			}
+
+			return p;
+                }
+
+
 		public override void Open ()
 		{
-			SafeProcess p = new SafeProcess ();
-			p.Arguments = new string [] { "evolution", Hit.UriAsString };
+			SafeProcess p = GetClientProcess (Hit.GetFirstProperty ("fixme:client"));
+			p.Arguments [p.Arguments.Length-1] = Hit.UriAsString;
 
 			try {
 				p.Start ();

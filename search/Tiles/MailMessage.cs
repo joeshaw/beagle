@@ -1,5 +1,6 @@
 using System;
 using System.Diagnostics;
+using System.IO;
 using Mono.Unix;
 using Beagle.Util;
 
@@ -114,30 +115,55 @@ namespace Search.Tiles {
 			details.AddLabelPair (label, Utils.NiceLongDate (Timestamp));
 
 			details.AddSnippet ();
+			//Console.WriteLine ( details.snippet_text );
 
 			return details;
 		}
 
+		public static SafeProcess GetClientProcess (string client)
+		{
+			SafeProcess p = null;
+
+			if (client == "evolution") {
+				p = new SafeProcess ();
+				p.Arguments = new string [2];
+				p.Arguments [0] = "evolution";
+			} else if (client == "thunderbird") {
+				
+
+				p = new SafeProcess ();
+				p.Arguments = new string [3];
+				p.Arguments [0] = "thunderbird";
+				p.Arguments [1] = "-mail";
+			}
+
+			return p;
+		}
+
 		public override void Open ()
 		{
-			if (GetFirstProperty (Hit, "fixme:client") != "evolution") {
+			SafeProcess p = GetClientProcess (Hit.GetFirstProperty ("fixme:client"));
+
+			if (p == null) {
 				OpenFromMime (Hit);
 				return;
 			}
 
-			SafeProcess p = new SafeProcess ();
-			p.Arguments = new string [2];
-			p.Arguments [0] = "evolution";
-
 			if (Hit.ParentUriAsString != null)
-				p.Arguments [1] = Hit.ParentUriAsString;
+				p.Arguments [p.Arguments.Length-1] = Hit.ParentUriAsString;
 			else
-				p.Arguments [1] = Hit.UriAsString;
+				p.Arguments [p.Arguments.Length-1] = Hit.UriAsString;
 
 			try {
 				p.Start ();
 			} catch (SafeProcessException e) {
 				Console.WriteLine ("Unable to run {0}: {1}", p.Arguments [0], e.Message);
+				p.Arguments [0] = "mozilla-thunderbird";
+				try {
+					p.Start();
+				} catch (SafeProcessException e2) {
+					Console.WriteLine ("Unable to run {0}: {1}", p.Arguments [0], e2.Message);
+				}
 			}
 		}
 

@@ -22,13 +22,13 @@ namespace Search.Tiles {
 			if (! base.Validate (hit))
 				return false;
 
-			string str = hit ["parent:fixme:hasAttachments"];
-
+			string str = hit.GetFirstProperty ("parent:fixme:hasAttachments");
+			//Console.WriteLine (str);
 			if (hit.ParentUri == null || str == null || str == "false")
 				return false;
 
-			str = hit ["fixme:attachment_title"];
-
+			str = hit.GetFirstProperty ("fixme:attachment_title");
+			//Console.WriteLine (str);
 			if (str == null || str == "")
 				return false;
 
@@ -69,25 +69,24 @@ namespace Search.Tiles {
 
 		public override void Open ()
 		{
-			if (GetHitProperty (Hit, "fixme:client") != "evolution") {
+			SafeProcess p = MailMessage.GetClientProcess (GetHitProperty (Hit, "fixme:client"));
+
+			if (p == null) {
 				OpenFromMime (Hit);
 				return;
 			}
 
-			SafeProcess p = new SafeProcess ();
-			p.Arguments = new string [2];
-			p.Arguments [0] = "evolution";
-
 			if (Hit.ParentUriAsString != null)
-				p.Arguments [1] = Hit.ParentUriAsString;
+				p.Arguments [p.Arguments.Length-1] = Hit.ParentUriAsString;
 			else
-				p.Arguments [1] = Hit.UriAsString;
+				p.Arguments [p.Arguments.Length-1] = Hit.UriAsString;
 
 			try {
 				p.Start ();
 			} catch (SafeProcessException e) {
 				Console.WriteLine ("Unable to run {0}: {1}", p.Arguments [0], e.Message);
 			}
-		}	
+		}
+		
 	}
 }
