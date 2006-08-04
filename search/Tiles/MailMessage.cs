@@ -115,12 +115,11 @@ namespace Search.Tiles {
 			details.AddLabelPair (label, Utils.NiceLongDate (Timestamp));
 
 			details.AddSnippet ();
-			//Console.WriteLine ( details.snippet_text );
 
 			return details;
 		}
 
-		public static SafeProcess GetClientProcess (string client)
+		public static SafeProcess GetClientProcess (string client, string uri)
 		{
 			SafeProcess p = null;
 
@@ -128,6 +127,7 @@ namespace Search.Tiles {
 				p = new SafeProcess ();
 				p.Arguments = new string [2];
 				p.Arguments [0] = "evolution";
+				p.Arguments [1] = uri;
 			} else if (client == "thunderbird") {
 				
 
@@ -135,6 +135,7 @@ namespace Search.Tiles {
 				p.Arguments = new string [3];
 				p.Arguments [0] = "thunderbird";
 				p.Arguments [1] = "-mail";
+				p.Arguments [2] = uri;
 			}
 
 			return p;
@@ -142,28 +143,21 @@ namespace Search.Tiles {
 
 		public override void Open ()
 		{
-			SafeProcess p = GetClientProcess (Hit.GetFirstProperty ("fixme:client"));
-
+			SafeProcess p;
+			if (Hit.ParentUriAsString != null) 
+				p = GetClientProcess (Hit.GetFirstProperty ("fixme:client"), Hit.ParentUriAsString );
+			else
+				p = GetClientProcess (Hit.GetFirstProperty ("fixme:client"), Hit.UriAsString );
+			
 			if (p == null) {
 				OpenFromMime (Hit);
 				return;
 			}
 
-			if (Hit.ParentUriAsString != null)
-				p.Arguments [p.Arguments.Length-1] = Hit.ParentUriAsString;
-			else
-				p.Arguments [p.Arguments.Length-1] = Hit.UriAsString;
-
 			try {
 				p.Start ();
 			} catch (SafeProcessException e) {
 				Console.WriteLine ("Unable to run {0}: {1}", p.Arguments [0], e.Message);
-				p.Arguments [0] = "mozilla-thunderbird";
-				try {
-					p.Start();
-				} catch (SafeProcessException e2) {
-					Console.WriteLine ("Unable to run {0}: {1}", p.Arguments [0], e2.Message);
-				}
 			}
 		}
 

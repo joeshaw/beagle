@@ -23,12 +23,10 @@ namespace Search.Tiles {
 				return false;
 
 			string str = hit.GetFirstProperty ("parent:fixme:hasAttachments");
-			//Console.WriteLine (str);
 			if (hit.ParentUri == null || str == null || str == "false")
 				return false;
 
 			str = hit.GetFirstProperty ("fixme:attachment_title");
-			//Console.WriteLine (str);
 			if (str == null || str == "")
 				return false;
 
@@ -69,17 +67,16 @@ namespace Search.Tiles {
 
 		public override void Open ()
 		{
-			SafeProcess p = MailMessage.GetClientProcess (GetHitProperty (Hit, "fixme:client"));
-
+			SafeProcess p;
+			
+			if (Hit.ParentUriAsString != null)
+				p = MailMessage.GetClientProcess (GetHitProperty (Hit, "fixme:client"), Hit.ParentUriAsString);
+			else
+				p = MailMessage.GetClientProcess (GetHitProperty (Hit, "fixme:client"), Hit.UriAsString);
 			if (p == null) {
 				OpenFromMime (Hit);
 				return;
 			}
-
-			if (Hit.ParentUriAsString != null)
-				p.Arguments [p.Arguments.Length-1] = Hit.ParentUriAsString;
-			else
-				p.Arguments [p.Arguments.Length-1] = Hit.UriAsString;
 
 			try {
 				p.Start ();
