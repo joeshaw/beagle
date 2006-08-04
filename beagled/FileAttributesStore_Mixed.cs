@@ -25,6 +25,7 @@
 //
 
 using System;
+using Beagle.Util;
 
 namespace Beagle.Daemon {
 	
@@ -43,16 +44,29 @@ namespace Beagle.Daemon {
 		// EA nightmare scenario: a file whose permissions or ownership get
 		// changed after the EAs have been attached.  Thus attributes in
 		// the database always trump those found in EAs.
-		//
-		// FIXME: If we have write access to the path but it has attributes
-		// stored in the sqlite file attributes db, we should attach them
-		// to the file with EAs and delete the record from the db.
 
 		public FileAttributes Read (string path)
 		{
 			FileAttributes attr;
 			attr = store_sqlite.Read (path);
-			if (attr == null)
+
+			if (attr!= null) {
+				// If we have write access to the path but it has attributes
+				// stored in the sqlite file attributes db, we should attach them
+				// to the file with EAs and delete the record from the db.
+				// Check if we have write access ?
+				if (! FileSystem.IsWritable (path))
+					return attr;
+
+				// What are the other cases when writing an xattr would fail ?
+				// FIXME: Should also check if extended attributes is supported ?
+				// Can that be done without incurring much cost, in which case
+				// we may try to write it anyway ?
+
+				bool success = store_ea.Write (attr);
+				if (success)
+					store_sqlite.Drop (path);
+			} else
 				attr = store_ea.Read (path);
 			return attr;
 		}

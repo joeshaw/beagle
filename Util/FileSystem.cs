@@ -82,6 +82,21 @@ namespace Beagle.Util {
 			return false;
 		}
 
+		public static bool IsWritable (string path)
+		{
+			Mono.Unix.Native.Stat stat;
+			Mono.Unix.Native.Syscall.lstat (path, out stat);
+
+			Mono.Unix.Native.FilePermissions type = (stat.st_mode & Mono.Unix.Native.FilePermissions.S_IFMT);
+
+			if (type == Mono.Unix.Native.FilePermissions.S_IWUSR
+			    || type == Mono.Unix.Native.FilePermissions.S_IWGRP
+			    || type == Mono.Unix.Native.FilePermissions.S_IWOTH)
+				return true;
+
+			return false;
+		}
+
 		// Special version of this function which handles the root directory.
 		static public string GetDirectoryNameRootOk (string path)
 		{

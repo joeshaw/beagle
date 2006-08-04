@@ -26,8 +26,8 @@
 
 //
 // This queryable just takes the LuceneQueryable and adds some sane
-// default behavior for indexing files.
-//
+// default behavior for indexing files containing multiple indexables.
+// Suitable for feedfiles or mbox style mail files.
 
 using System;
 using System.Collections;
