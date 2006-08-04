@@ -592,6 +592,41 @@ endif
 $(DAEMON_TARGET): $(DAEMON_CSFILES) $(DAEMON_LOCAL_ASSEMBLIES)
 	$(CSC) -out:$@ $(DAEMON_CSFLAGS) $(DAEMON_CSFILES) $(DAEMON_ASSEMBLIES)
 
+if ENABLE_THUNDERBIRD	
+THUNDERBIRD_DIR = ./ThunderbirdQueryable
+
+THUNDERBIRD_TARGET = $(THUNDERBIRD_DIR)/ThunderbirdBackends.dll
+
+THUNDERBIRD_CSFLAGS = -target:library
+
+
+THUNDERBIRD_CSFILES =						\
+	$(THUNDERBIRD_DIR)/LuceneAccess.cs			\
+	$(THUNDERBIRD_DIR)/ThunderbirdIndexer.cs   		\
+	$(THUNDERBIRD_DIR)/ThunderbirdIndexableGenerator.cs	\
+	$(THUNDERBIRD_DIR)/ThunderbirdQueryable.cs		\
+	$(THUNDERBIRD_DIR)/ThunderbirdInotify.cs		\
+	$(THUNDERBIRD_DIR)/Mail.cs				\
+	$(THUNDERBIRD_DIR)/Contact.cs				\
+	$(THUNDERBIRD_DIR)/Rss.cs				\
+	$(THUNDERBIRD_DIR)/Nntp.cs				\
+	$(THUNDERBIRD_DIR)/MoveMail.cs
+
+THUNDERBIRD_LOCAL_ASSEMBLIES =		\
+	../Util/Util.dll		\
+	../BeagleClient/Beagle.dll	\
+	BeagleDaemonLib.dll
+
+THUNDERBIRD_ASSEMBLIES =				\
+	-r:Mono.Posix				\
+	$(BEAGLED_LIBS)                 	\
+	$(THUNDERBIRD_LOCAL_ASSEMBLIES:%=-r:%)
+
+
+$(THUNDERBIRD_TARGET): $(THUNDERBIRD_CSFILES) $(THUNDERBIRD_LOCAL_ASSEMBLIES)
+	$(CSC) -out:$@ $(THUNDERBIRD_CSFLAGS) $(THUNDERBIRD_CSFILES) $(THUNDERBIRD_ASSEMBLIES)
+endif
+
 ############################################################
 ############################################################
 ############################################################
@@ -976,6 +1011,10 @@ ALL_TARGETS = 				\
 	$(BUILD_INDEX_TARGET)		\
 	$(BUILD_INDEX_WRAPPER)
 
+if ENABLE_THUNDERBIRD
+ALL_TARGETS += $(THUNDERBIRD_TARGET)
+endif
+
 if ENABLE_WEBSERVICES
 ALL_TARGETS += 				\
 	$(XSP_TARGET)			\
@@ -1051,12 +1090,19 @@ if ENABLE_WEBSERVICES
 #	$(INSTALL_DATA) ../Util/Util.dll ../images/Images.dll ../BeagleClient/Beagle.dll ../Tiles/Tiles.dll BeagleDaemonPlugins.dll BeagleDaemonLib.dll $(DESTDIR)$(XSPBIN_DIR)
 
 endif
-
+if ENABLE_THUNDERBIRD
+	$(INSTALL_DATA) $(THUNDERBIRD_TARGET)                 $(DESTDIR)/$(BACKENDDIR)
+	$(INSTALL_DATA) $(THUNDERBIRD_TARGET).mdb             $(DESTDIR)/$(BACKENDDIR)
+endif
 uninstall-local:
 if ENABLE_WEBSERVICES
 	rm -f $(DESTDIR)$(pkglibdir)/$(WEBSERVICES_BACKEND_TARGET)
 	rm -f $(DESTDIR)$(pkglibdir)/$(WEBSERVICES_XSP_TARGET)
 	rm -rf $(DESTDIR)$(XSP_DIR)
+endif
+if ENABLE_THUNDERBIRD
+	$(INSTALL_DATA) $(THUNDERBIRD_TARGET)                 $(DESTDIR)/$(BACKENDDIR)
+	$(INSTALL_DATA) $(THUNDERBIRD_TARGET).mdb             $(DESTDIR)/$(BACKENDDIR)
 endif
 if ENABLE_EVOLUTION
 	rm -f $(DESTDIR)$(BACKENDDIR)/$(EVO_DLL_TARGET)
@@ -1186,5 +1232,6 @@ CLEANFILES = \
 	$(WEBSERVICES_FRONTEND_TARGET)		\
 	$(WEBSERVICES_FRONTEND_TARGET).mdb	\
 	$(WEBSERVICES_XSP_TARGET)		\
-	$(WEBSERVICES_XSP_TARGET).mdb		
-
+	$(WEBSERVICES_XSP_TARGET).mdb		\
+	$(THUNDERBIRD_TARGET)			\
+	$(THUNDERBIRD_TARGET).mdb

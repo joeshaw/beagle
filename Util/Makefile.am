@@ -114,6 +114,11 @@ UTIL_CSFILES = 			        	\
 	$(srcdir)/SemWeb/XPathSemWebNavigator.cs	\
 	$(srcdir)/PropertyKeywordAttribute.cs
 
+if ENABLE_THUNDERBIRD
+UTIL_CSFILES +=				\
+	$(srcdir)/Mork.cs		\
+	$(srcdir)/Thunderbird.cs
+endif
 
 if HAS_LIBCHM 
 UTIL_CSFILES +=					\
