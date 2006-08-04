@@ -1,0 +1,5 @@
+*.dll
+*.mdb
+Makefile
+Makefile.in
+beagle-contactviewer
