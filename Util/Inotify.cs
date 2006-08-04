@@ -75,13 +75,13 @@ namespace Beagle.Util {
 		}
 
 		// Events that we want internally, even if the handlers do not
-		static private EventType base_mask =  EventType.MovedFrom | EventType.MovedTo;
+		private static EventType base_mask =  EventType.MovedFrom | EventType.MovedTo;
 
 		/////////////////////////////////////////////////////////////////////////////////////
 
-		static private Logger log;
+		private static Logger log;
 
-		static public Logger Log { 
+		public static Logger Log { 
 			get { return log; }
 		}
 
@@ -114,8 +114,8 @@ namespace Beagle.Util {
 
 		/////////////////////////////////////////////////////////////////////////////////////
 
-		static public bool Verbose = false;
-		static private int inotify_fd = -1;
+		public static bool Verbose = false;
+		private static int inotify_fd = -1;
 
 		static Inotify ()
 		{
@@ -140,7 +140,7 @@ namespace Beagle.Util {
 				Logger.Log.Warn ("Could not initialize inotify");
 		}
 
-		static public bool Enabled {
+		public static bool Enabled {
 			get { return inotify_fd >= 0; }
 		}
 
@@ -150,17 +150,17 @@ namespace Beagle.Util {
 
 		// Stubs for systems where inotify is unavailable
 
-		static public Watch Subscribe (string path, InotifyCallback callback, EventType mask)
+		public static Watch Subscribe (string path, InotifyCallback callback, EventType mask)
 		{
 			return null;
 		}
 
-		static public void Start ()
+		public static void Start ()
 		{
 			return;
 		}
 
-		static public void Stop ()
+		public static void Stop ()
 		{
 			return;
 		}
@@ -168,7 +168,7 @@ namespace Beagle.Util {
 #else // ENABLE_INOTIFY
 
 		/////////////////////////////////////////////////////////////////////////////////////
-		static private ArrayList event_queue = new ArrayList ();
+		private static ArrayList event_queue = new ArrayList ();
 
 		private class QueuedEvent {
 			public int       Wd;
@@ -266,9 +266,9 @@ namespace Beagle.Util {
 			public ArrayList Subscribers;
 		}
 
-		static Hashtable watched_by_wd = new Hashtable ();
-		static Hashtable watched_by_path = new Hashtable ();
-		static WatchInfo last_watched = null;
+		private static Hashtable watched_by_wd = new Hashtable ();
+		private static Hashtable watched_by_path = new Hashtable ();
+		private static WatchInfo last_watched = null;
 
 		private class PendingMove {
 			public WatchInfo Watch;
@@ -284,11 +284,11 @@ namespace Beagle.Util {
 			}
 		}
 
-		static public int WatchCount {
+		public static int WatchCount {
 			get { return watched_by_wd.Count; }
 		}
 
-		static public bool IsWatching (string path)
+		public static bool IsWatching (string path)
 		{
 			path = Path.GetFullPath (path);
 			return watched_by_path.Contains (path);
@@ -297,7 +297,7 @@ namespace Beagle.Util {
 		// Filter WatchInfo items when we do the Lookup.
 		// We do the filtering here to avoid having to acquire
 		// the watched_by_wd lock yet again.
-		static private WatchInfo Lookup (int wd, EventType event_type)
+		private static WatchInfo Lookup (int wd, EventType event_type)
 		{
 			lock (watched_by_wd) {
 				WatchInfo watched;
@@ -319,7 +319,7 @@ namespace Beagle.Util {
 		}
 
 		// The caller has to handle all locking itself
-		static private void Forget (WatchInfo watched)
+		private static void Forget (WatchInfo watched)
 		{
 			if (last_watched == watched)
 				last_watched = null;
@@ -329,7 +329,7 @@ namespace Beagle.Util {
 			watched_by_path.Remove (watched.Path);
 		}
 
-		static public Watch Subscribe (string path, InotifyCallback callback, EventType mask, EventType initial_filter)
+		public static Watch Subscribe (string path, InotifyCallback callback, EventType mask, EventType initial_filter)
 		{
 			WatchInternal watch;
 			WatchInfo watched;
@@ -375,12 +375,12 @@ namespace Beagle.Util {
 			return watch;
 		}
 		
-		static public Watch Subscribe (string path, InotifyCallback callback, EventType mask)
+		public static Watch Subscribe (string path, InotifyCallback callback, EventType mask)
 		{
 			return Subscribe (path, callback, mask, 0);
 		}
 
-		static public EventType Filter (string path, EventType mask)
+		public static EventType Filter (string path, EventType mask)
 		{
 			EventType seen = 0;
 
@@ -398,7 +398,7 @@ namespace Beagle.Util {
 			return seen;
 		}
 
-		static private void Unsubscribe (WatchInfo watched, WatchInternal watch)
+		private static void Unsubscribe (WatchInfo watched, WatchInternal watch)
 		{
 			watched.Subscribers.Remove (watch);
 
@@ -421,7 +421,7 @@ namespace Beagle.Util {
 
 		// Ensure our watch exists, meets all the subscribers requirements,
 		// and isn't matching any other events that we don't care about.
-		static private void CreateOrModifyWatch (WatchInfo watched)
+		private static void CreateOrModifyWatch (WatchInfo watched)
 		{
 			EventType new_mask = base_mask;
 			foreach (WatchInternal watch in watched.Subscribers)
@@ -451,10 +451,17 @@ namespace Beagle.Util {
 
 		/////////////////////////////////////////////////////////////////////////////////////
 
-		static Thread snarf_thread = null;
-		static bool   running = false;
+		private static Thread snarf_thread = null;
+		private static bool   running = false;
+		private static bool shutdown_requested = false;
 
-		static public void Start ()
+		public static void ShutdownRequested () {
+			lock (event_queue) {
+			    shutdown_requested = true;
+			}
+		}
+
+		public static void Start ()
 		{
 			if (! Enabled)
 				return;
@@ -462,7 +469,7 @@ namespace Beagle.Util {
 			Logger.Log.Debug("Starting Inotify threads");
 
 			lock (event_queue) {
-				if (snarf_thread != null)
+				if (shutdown_requested || snarf_thread != null)
 					return;
 
 				running = true;
@@ -472,12 +479,19 @@ namespace Beagle.Util {
 			}
 		}
 
-		static public void Stop ()
+		public static void Stop ()
 		{
 			if (! Enabled)
 				return;
 
+			Log.Debug ("Stopping inotify threads");
+
 			lock (event_queue) {
+				shutdown_requested = true;
+
+				if (! running)
+					return;
+
 				running = false;
 				Monitor.Pulse (event_queue);
 			}
@@ -485,7 +499,7 @@ namespace Beagle.Util {
 			inotify_snarf_cancel ();
 		}
 
-		static unsafe void SnarfWorker ()
+		private static unsafe void SnarfWorker ()
 		{
 			Encoding filename_encoding = Encoding.UTF8;
 			int event_size = Marshal.SizeOf (typeof (inotify_event));
@@ -558,7 +572,7 @@ namespace Beagle.Util {
 
 		// Update the watched_by_path hash and the path stored inside the watch
 		// in response to a move event.
-		static private void MoveWatch (WatchInfo watch, string name)		
+		private static void MoveWatch (WatchInfo watch, string name)		
 		{
 			lock (watched_by_wd) {
 
@@ -573,7 +587,7 @@ namespace Beagle.Util {
 
 		// A directory we are watching has moved.  We need to fix up its path, and the path of
 		// all of its subdirectories, their subdirectories, and so on.
-		static private void HandleMove (string srcpath, string dstparent, string dstname)
+		private static void HandleMove (string srcpath, string dstparent, string dstname)
 		{
 			string dstpath = Path.Combine (dstparent, dstname);
 			lock (watched_by_wd) {
@@ -610,7 +624,7 @@ namespace Beagle.Util {
 			}
 		}
 
-		static private void SendEvent (WatchInfo watched, string filename, string srcpath, EventType mask)
+		private static void SendEvent (WatchInfo watched, string filename, string srcpath, EventType mask)
 		{
 			// Does the watch care about this event?
 			if ((watched.Mask & mask) == 0)
@@ -645,11 +659,11 @@ namespace Beagle.Util {
 
 		// Dispatch-time operations on the event queue
 	       
-		static Hashtable pending_move_cookies = new Hashtable ();
+		private static Hashtable pending_move_cookies = new Hashtable ();
 
 		// Clean up the queue, removing dispatched objects.
 		// We assume that the called holds the event_queue lock.
-		static void CleanQueue_Unlocked ()
+		private static void CleanQueue_Unlocked ()
 		{
 			int first_undispatched = 0;
 			while (first_undispatched < event_queue.Count) {
@@ -671,7 +685,7 @@ namespace Beagle.Util {
 		// Apply high-level processing to the queue.  Pair moves,
 		// coalesce events, etc.
 		// We assume that the caller holds the event_queue lock.
-		static void AnalyzeQueue_Unlocked ()
+		private static void AnalyzeQueue_Unlocked ()
 		{
 			int first_unanalyzed = event_queue.Count;
 			while (first_unanalyzed > 0) {
@@ -711,7 +725,7 @@ namespace Beagle.Util {
 			}
 		}
 
-		static void DispatchWorker ()
+		private static void DispatchWorker ()
 		{
 			while (running) {
 				QueuedEvent next_event = null;
@@ -805,7 +819,7 @@ namespace Beagle.Util {
 		/////////////////////////////////////////////////////////////////////////////////
 
 #if INOTIFY_TEST
-		static void Main (string [] args)
+		private static void Main (string [] args)
 		{
 			Queue to_watch = new Queue ();
 			bool recursive = false;

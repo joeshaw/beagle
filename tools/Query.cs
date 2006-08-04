@@ -33,7 +33,7 @@ using System.Threading;
 using System.Text;
 using System.Text.RegularExpressions;
 
-using Gtk;
+using GLib;
 
 using Beagle;
 using Beagle.Util;
@@ -41,21 +41,22 @@ using Beagle.Daemon;
 
 class QueryTool {
 
-	static int count = 0;
-	static Query query = null;
-	static DateTime queryStartTime;
-	static DateTime lastQueryTime = DateTime.Now;
+	private static int count = 0;
+	private static Query query = null;
+	private static DateTime queryStartTime;
+	private static DateTime lastQueryTime = DateTime.Now;
 
+	private static MainLoop main_loop = null;
 	// CLI args
-	static bool keep_running = false;
-	static bool verbose = false;
-	static bool display_hits = true;
-	static bool flood = false;
-	static bool listener = false;
-	static DateTime start_date = DateTime.MinValue;
-	static DateTime end_date = DateTime.MinValue;
+	private static bool keep_running = false;
+	private static bool verbose = false;
+	private static bool display_hits = true;
+	private static bool flood = false;
+	private static bool listener = false;
+	private static DateTime start_date = DateTime.MinValue;
+	private static DateTime end_date = DateTime.MinValue;
 
-	static void OnHitsAdded (HitsAddedResponse response)
+	private static void OnHitsAdded (HitsAddedResponse response)
 	{
 		lastQueryTime = DateTime.Now;
 
@@ -97,7 +98,7 @@ class QueryTool {
 		}
 	}
 
-	static void OnHitsSubtracted (HitsSubtractedResponse response)
+	private static void OnHitsSubtracted (HitsSubtractedResponse response)
 	{
 		lastQueryTime = DateTime.Now;
 
@@ -112,7 +113,7 @@ class QueryTool {
 		}
 	}
 
-	static void OnFinished (FinishedResponse response)
+	private static void OnFinished (FinishedResponse response)
 	{
 		if (verbose) {
 			Console.WriteLine ("Elapsed time: {0:0.000}s",
@@ -123,7 +124,8 @@ class QueryTool {
 		if (flood)
 			SendQuery ();
 		else
-			Gtk.Application.Quit ();
+			main_loop.Quit ();
+			//Gtk.Application.Quit ();
 	}
 
 	public static void PrintUsageAndExit () 
@@ -163,7 +165,7 @@ class QueryTool {
 		System.Environment.Exit (0);
 	}
 
-	static void ReadBackendMappings ()
+	private static void ReadBackendMappings ()
 	{
 		ArrayList assemblies = ReflectionFu.ScanEnvironmentForAssemblies ("BEAGLE_BACKEND_PATH", PathFinder.BackendDir);
 
@@ -203,16 +205,17 @@ class QueryTool {
 		}
 	}
 
-	static void OnClosed ()
+	private static void OnClosed ()
 	{
 		if (flood)
 			SendQuery ();
 		else
-			Gtk.Application.Quit ();
+			main_loop.Quit ();
+			//Gtk.Application.Quit ();
 	}
 
-	static int query_counter = 0;
-	static void SendQuery ()
+	private static int query_counter = 0;
+	private static void SendQuery ()
 	{
 		++query_counter;
 		if (flood) {
@@ -231,9 +234,9 @@ class QueryTool {
 		}
 	}
 	
-	static void Main (string[] args) 
+	public static void Main (string[] args) 
 	{
-		Gtk.Application.InitCheck ("beagle-query", ref args);
+		main_loop = new MainLoop ();
 
 		if (args.Length == 0 || Array.IndexOf (args, "--help") > -1 || Array.IndexOf (args, "--usage") > -1)
 			PrintUsageAndExit ();
@@ -385,7 +388,7 @@ class QueryTool {
 
 		SendQuery ();
 
-		Gtk.Application.Run ();
+		main_loop.Quit ();
 	}
 
 

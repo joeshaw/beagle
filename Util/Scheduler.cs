@@ -39,7 +39,7 @@ namespace Beagle.Util {
 		public delegate void EmptyQueueDelegate ();
 		public event EmptyQueueDelegate EmptyQueueEvent;
 
-		static public bool Debug = false;
+		public static bool Debug = false;
 
 		public enum Priority {
 
@@ -515,7 +515,7 @@ namespace Beagle.Util {
 
 		//////////////////////////////////////////////////////////////////////////////
 
-		static private double global_delay = -1.0;
+		private static double global_delay = -1.0;
 
 		static Scheduler ()
 		{
@@ -532,9 +532,9 @@ namespace Beagle.Util {
 
 		//////////////////////////////////////////////////////////////////////////////
 
-		static private Scheduler global = new Scheduler ();
+		private static Scheduler global = new Scheduler ();
 
-		static public Scheduler Global {
+		public static Scheduler Global {
 			get { return global; }
 		}
 
@@ -621,22 +621,25 @@ namespace Beagle.Util {
 
 		//////////////////////////////////////////////////////////////////////////////
 
-		Thread thread = null;
+		private Thread thread = null;
 		public bool running = false;
+		private static bool shutdown_requested = false;
 
 		public void Start ()
 		{
 			lock (this) {
-				if (thread != null)
+				if (shutdown_requested || thread != null)
 					return;
 				running = true;
 				thread = ExceptionHandlingThread.Start (new ThreadStart (Worker));
 			}
 		}
 
-		public void Stop ()
+		public void Stop (bool to_shutdown)
 		{
 			lock (big_lock) {
+				shutdown_requested = to_shutdown;
+
 				if (running) {
 					running = false;
 					thread = null;
@@ -644,6 +647,11 @@ namespace Beagle.Util {
 					Monitor.Pulse (big_lock);
 				}
 			}
+		}
+
+		public void Stop ()
+		{
+			Stop (false);
 		}
 
 		//
@@ -1164,17 +1172,17 @@ namespace Beagle.Util {
 				Reschedule = true;
 		}
 
-		static void BeginTaskGroup ()
+		private static void BeginTaskGroup ()
 		{
 			Console.WriteLine ("--- Begin Task Group!");
 		}
 
-		static void EndTaskGroup ()
+		private static void EndTaskGroup ()
 		{
 			Console.WriteLine ("--- End Task Group!");
 		}
 
-		static void Main ()
+		public static void Main ()
 		{
 			Scheduler sched = Scheduler.Global;
 

@@ -66,6 +66,15 @@ namespace Beagle.Daemon.EvolutionDataServerQueryable {
 		{
 			base.Start ();
 
+			// Defer the actual startup till main_loop starts.
+			// This will improve kill beagle while starting up.
+			// EDS requires StartWorker to run in mainloop,
+			// hence it is not started in a separate thread.
+			GLib.Idle.Add (new GLib.IdleHandler (StartWorker));
+		}
+
+		private void StartWorker ()
+		{
 			Logger.Log.Info ("Scanning addressbooks and calendars");
 			Stopwatch timer = new Stopwatch ();
 			timer.Start ();

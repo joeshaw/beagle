@@ -40,7 +40,9 @@ namespace Beagle.Daemon {
 	class ConnectionHandler {
 
 		private static int connection_count = 0;
-		public static XmlSerializer serializer = null;
+		private static XmlSerializer serializer = null;
+		private static XmlSerializer req_serializer = null;
+
 
 		private object client_lock = new object ();
 		private object blocking_read_lock = new object ();
@@ -53,6 +55,13 @@ namespace Beagle.Daemon {
 		public ConnectionHandler (UnixClient client)
 		{
 			this.client = client;
+		}
+
+		// Perform expensive serialization all at once. Do this before signal handler is setup.
+		public static void Init ()
+		{
+			serializer = new XmlSerializer (typeof (ResponseWrapper), ResponseMessage.Types);
+			req_serializer = new XmlSerializer (typeof (RequestWrapper), RequestMessage.Types);
 		}
 
 		public bool SendResponse (ResponseMessage response)
@@ -151,8 +160,6 @@ namespace Beagle.Daemon {
 			if (!SendResponse (response))
 				Close ();
 		}
-
-		static XmlSerializer req_serializer = new XmlSerializer (typeof (RequestWrapper), RequestMessage.Types);
 
 		public void HandleConnection ()
 		{
@@ -318,11 +325,12 @@ namespace Beagle.Daemon {
 
 		}
 
-		static Server ()
+		// Perform expensive serialization all at once. Do this before signal handler is setup.
+		public static void Init ()
 		{
 			ScanAssemblyForExecutors (Assembly.GetExecutingAssembly ());
-
 			Shutdown.ShutdownEvent += OnShutdown;
+			ConnectionHandler.Init ();
 		}
 
 		static internal void MarkHandlerAsKilled (ConnectionHandler handler)
@@ -347,9 +355,8 @@ namespace Beagle.Daemon {
 			this.listener.Start ();
 			this.running = true;
 
-			Shutdown.WorkerStart (this, String.Format ("server '{0}'", socket_path));
-			if (ConnectionHandler.serializer == null)
-				ConnectionHandler.serializer = new XmlSerializer (typeof (ResponseWrapper), ResponseMessage.Types);
+			if (! Shutdown.WorkerStart (this, String.Format ("server '{0}'", socket_path)))
+				return;
 
 			while (this.running) {
 				UnixClient client;

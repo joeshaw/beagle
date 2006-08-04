@@ -248,10 +248,12 @@ class ExtractContentTool {
 		if (writer != null)
 			writer.Close ();
 
+		GLib.MainLoop main_loop = new GLib.MainLoop ();
+
 		if (Environment.GetEnvironmentVariable ("BEAGLE_TEST_MEMORY") != null) {
 			GC.Collect ();
-			GLib.Timeout.Add (1000, delegate() { Gtk.Application.Quit (); return false; });
-			Gtk.Application.Run ();
+			GLib.Timeout.Add (1000, delegate() { main_loop.Quit (); return false; });
+			main_loop.Run ();
 		}
 
 		return 0;

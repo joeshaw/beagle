@@ -27,11 +27,29 @@
  * DEALINGS IN THE SOFTWARE.
  */
 
-#include <gdk/gdk.h>
-#include <gdk/gdkx.h>
+#include <config.h>
+#include <stdlib.h>
+
+#if HAVE_LIBXSS == 1
 #include <X11/Xlib.h>
 #include <X11/extensions/scrnsaver.h>
 
+// Once an X-connection is eshtablished, if it breaks, the program terminates.
+// So, we can safely store the DISPLAY once it is set and re-use it.
+static Display *dsp = NULL;
+#endif
+
+int
+screensaver_glue_init ()
+{
+#if HAVE_LIBXSS == 1
+    // screensaver_info is called only from the Scheduler thread; thus we dont need to enable XInitThreads()
+    dsp = XOpenDisplay(getenv("DISPLAY"));
+    return (dsp == NULL ? 0 : 1);
+#else
+    return 0;
+#endif
+}
 
 int 
 screensaver_info (int *state, int *kind, unsigned long *til_or_since, unsigned long *idle)
@@ -42,22 +60,15 @@ screensaver_info (int *state, int *kind, unsigned long *til_or_since, unsigned l
     static int inited = 0;
     int event_base, error_base;
 
-    if (GDK_DISPLAY () == NULL)
-        return 0;
-	
-    /* FIXME: This should be called somewhere else. */
-    if (! inited) {
-        gdk_threads_init ();
-        inited = 1;
+    if(dsp == NULL) {
+    	return 0;
     }
-
-    gdk_threads_enter ();
-    if (XScreenSaverQueryExtension (GDK_DISPLAY (), &event_base, &error_base))
-        retval = XScreenSaverQueryInfo (GDK_DISPLAY (), DefaultRootWindow (GDK_DISPLAY ()), &ss_info);
+    
+    if (XScreenSaverQueryExtension (dsp, &event_base, &error_base))
+        retval = XScreenSaverQueryInfo (dsp, RootWindow(dsp, XDefaultScreen(dsp)), &ss_info);
     else
         retval = 0;
-    gdk_threads_leave ();
-
+    
     if (retval != 0) {
         *state = ss_info.state;
         *kind = ss_info.kind;

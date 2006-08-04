@@ -103,7 +103,7 @@ namespace Bludgeon {
 		{
 			if (version == null) {
 				Log.Info ("Could not contact daemon -- giving up!");
-				Gtk.Application.Quit ();
+				main_loop.Quit ();
 			}
 
 			Daemon.WaitUntilIdle (OnDaemonIdle);
@@ -125,15 +125,15 @@ namespace Bludgeon {
 		{
 			Daemon.Shutdown ();
 			Log.Spew ("Test home directory was '{0}'", PathFinder.HomeDir);
-			Gtk.Application.Quit ();
+			main_loop.Quit ();
 		}
 
 		/////////////////////////////////////////////////////////////////
 
+		private static GLib.MainLoop main_loop = null;
+
 		static void Main (string [] args)
 		{
-			Gtk.Application.InitCheck ("bludgeon", ref args);
-			
 			args = CommandLine.Process (typeof (BludgeonMain), args);
 
 			// BU.CommandLine.Process returns null if --help was passed
@@ -185,7 +185,8 @@ namespace Bludgeon {
 			abuse.MaxPause = max_pause;
 
 			GLib.Idle.Add (new GLib.IdleHandler (Startup));
-			Gtk.Application.Run ();
+			main_loop = new GLib.MainLoop ();
+			main_loop.Run ();
 		}
 	}
 }

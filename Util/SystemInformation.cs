@@ -42,12 +42,12 @@ namespace Beagle.Util {
 		static extern int getloadavg (double[] loadavg, int nelem);
 
 		const double loadavg_poll_delay = 3;
-		static DateTime proc_loadavg_time  = DateTime.MinValue;
-		static double cached_loadavg_1min  = -1;
-		static double cached_loadavg_5min  = -1;
-		static double cached_loadavg_15min = -1;
+		private static DateTime proc_loadavg_time  = DateTime.MinValue;
+		private static double cached_loadavg_1min  = -1;
+		private static double cached_loadavg_5min  = -1;
+		private static double cached_loadavg_15min = -1;
 
-		static private void CheckLoadAverage ()
+		private static void CheckLoadAverage ()
 		{
 			// Only call getloadavg() at most once every 10 seconds
 			if ((DateTime.Now - proc_loadavg_time).TotalSeconds < loadavg_poll_delay)
@@ -68,21 +68,21 @@ namespace Beagle.Util {
 			proc_loadavg_time = DateTime.Now;
 		}
 
-		static public double LoadAverageOneMinute {
+		public static double LoadAverageOneMinute {
 			get {
 				CheckLoadAverage ();
 				return cached_loadavg_1min;
 			}
 		}
 		
-		static public double LoadAverageFiveMinute {
+		public static double LoadAverageFiveMinute {
 			get {
 				CheckLoadAverage ();
 				return cached_loadavg_5min;
 			}
 		}
 
-		static public double LoadAverageFifteenMinute {
+		public static double LoadAverageFifteenMinute {
 			get {
 				CheckLoadAverage ();
 				return cached_loadavg_15min;
@@ -91,10 +91,11 @@ namespace Beagle.Util {
 
 		///////////////////////////////////////////////////////////////
 
+		private static bool use_screensaver = false;
 		const double screensaver_poll_delay = 1;
-		static DateTime screensaver_time = DateTime.MinValue;
-		static bool cached_screensaver_running = false;
-		static double cached_screensaver_idle_time = 0;
+		private static DateTime screensaver_time = DateTime.MinValue;
+		private static bool cached_screensaver_running = false;
+		private static double cached_screensaver_idle_time = 0;
 
 		private enum ScreenSaverState {
 			Off      = 0,
@@ -110,13 +111,31 @@ namespace Beagle.Util {
 		}
 
 		[DllImport ("libbeagleglue.so")]
+		extern static unsafe int screensaver_glue_init ();
+
+		public static bool XssInit ()
+		{
+			return XssInit (false);
+		}
+
+		public static bool XssInit (bool actually_init_xss)
+		{
+			int has_xss = screensaver_glue_init ();
+			use_screensaver = (has_xss == 1);
+			return use_screensaver;
+		}
+
+		[DllImport ("libbeagleglue.so")]
 		extern static unsafe int screensaver_info (ScreenSaverState *state,
 							   ScreenSaverKind *kind,
 							   ulong *til_or_since,
 							   ulong *idle);
 
-		static private void CheckScreenSaver ()
+		private static void CheckScreenSaver ()
 		{
+			if (! use_screensaver)
+				return;
+
 			if ((DateTime.Now - screensaver_time).TotalSeconds < screensaver_poll_delay)
 				return;
 
@@ -140,7 +159,7 @@ namespace Beagle.Util {
 			screensaver_time = DateTime.Now;
 		}
 
-		static public bool ScreenSaverRunning {
+		public static bool ScreenSaverRunning {
 			get {
 				CheckScreenSaver ();
 				return cached_screensaver_running;
@@ -149,7 +168,7 @@ namespace Beagle.Util {
 
 		// returns number of seconds since input was received
 		// from the user on any input device
-		static public double InputIdleTime {
+		public static double InputIdleTime {
 			get {
 				CheckScreenSaver ();
 				return cached_screensaver_idle_time;
@@ -161,11 +180,11 @@ namespace Beagle.Util {
 		const double acpi_poll_delay = 30;
 		const string proc_ac_state_filename = "/proc/acpi/ac_adapter/AC/state";
 		const string ac_present_string = "on-line";
-		static bool proc_ac_state_exists = true;
-		static DateTime using_battery_time = DateTime.MinValue;
-		static bool using_battery;
+		private static bool proc_ac_state_exists = true;
+		private static DateTime using_battery_time = DateTime.MinValue;
+		private static bool using_battery;
 
-		static public void CheckAcpi ()
+		public static void CheckAcpi ()
 		{
 			if (! proc_ac_state_exists)
 				return;
@@ -194,7 +213,7 @@ namespace Beagle.Util {
 			using_battery_time = DateTime.Now;
 		}
 
-		static public bool UsingBattery {
+		public static bool UsingBattery {
 			get { 
 				CheckAcpi ();
 				return using_battery;
@@ -209,28 +228,28 @@ namespace Beagle.Util {
 		[DllImport ("libbeagleglue")]
 		extern static int get_vmrss ();
 
-		static public int VmSize {
+		public static int VmSize {
 			get { return get_vmsize (); }
 		}
 
-		static public int VmRss {
+		public static int VmRss {
 			get { return get_vmrss (); }
 		}
 
 		///////////////////////////////////////////////////////////////
 
-		static private int disk_stats_read_reqs;
-		static private int disk_stats_write_reqs;
-		static private int disk_stats_read_bytes;
-		static private int disk_stats_write_bytes;
+		private static int disk_stats_read_reqs;
+		private static int disk_stats_write_reqs;
+		private static int disk_stats_read_bytes;
+		private static int disk_stats_write_bytes;
 
-		static private DateTime disk_stats_time = DateTime.MinValue;
-		static private double disk_stats_delay = 1.0;
+		private static DateTime disk_stats_time = DateTime.MinValue;
+		private static double disk_stats_delay = 1.0;
 
-		static private uint major, minor;
+		private static uint major, minor;
 
 		// Update the disk statistics with data for block device on the (major,minor) pair.
-		static private void UpdateDiskStats ()
+		private static void UpdateDiskStats ()
 		{
 			string buffer;
 
@@ -260,7 +279,7 @@ namespace Beagle.Util {
 		}
 
 		// Get the (major,minor) pair for the block device from which the index is mounted.
-		static private void GetIndexDev ()
+		private static void GetIndexDev ()
 		{
 			Mono.Unix.Native.Stat stat;
 			if (Mono.Unix.Native.Syscall.stat (PathFinder.StorageDir, out stat) != 0)
@@ -270,7 +289,7 @@ namespace Beagle.Util {
 			minor = (uint) stat.st_dev & 0xff;
 		}
 
-		static public int DiskStatsReadReqs {
+		public static int DiskStatsReadReqs {
 			get {
 				if (major == 0)
 					 GetIndexDev ();
@@ -279,7 +298,7 @@ namespace Beagle.Util {
 			}
 		}
 
-		static public int DiskStatsReadBytes {
+		public static int DiskStatsReadBytes {
 			get {
 				if (major == 0)
 					 GetIndexDev ();
@@ -288,7 +307,7 @@ namespace Beagle.Util {
 			}
 		}
 
-		static public int DiskStatsWriteReqs {
+		public static int DiskStatsWriteReqs {
 			get {
 				if (major == 0)
 					 GetIndexDev ();
@@ -297,7 +316,7 @@ namespace Beagle.Util {
 			}
 		}
 
-		static public int DiskStatsWriteBytes {
+		public static int DiskStatsWriteBytes {
 			get {
 				if (major == 0)
 					 GetIndexDev ();
@@ -306,7 +325,7 @@ namespace Beagle.Util {
 			}
 		}
 
-		static public bool IsPathOnBlockDevice (string path)
+		public static bool IsPathOnBlockDevice (string path)
 		{
 			Mono.Unix.Native.Stat stat;
 			if (Mono.Unix.Native.Syscall.stat (path, out stat) != 0)
@@ -354,9 +373,8 @@ namespace Beagle.Util {
 		///////////////////////////////////////////////////////////////
 
 #if false
-		static void Main ()
+		public static void Main ()
 		{
-			Gtk.Application.Init ();
 			while (true) {
 				Console.WriteLine ("{0} {1} {2} {3} {4} {5} {6} {7}",
 						   LoadAverageOneMinute,

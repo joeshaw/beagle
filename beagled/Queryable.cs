@@ -47,7 +47,8 @@ namespace Beagle.Daemon {
 		
 		public void Start ()
 		{
-			iqueryable.Start ();
+			if (! Shutdown.ShutdownRequested)
+				iqueryable.Start ();
 		}
 
 		public string Name {

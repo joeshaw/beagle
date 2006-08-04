@@ -1,3 +1,18 @@
+2006-08-04 Debajyoti Bera <dbera.web@gmail.com>
+
+	* ContactViewer, beagled/ThunderbirdQueryable: Added .cvsignore files.
+	* configure.in: Build ContactViewer only if
+	gui building is enabled.
+	* configure.in, beagled/BeagleDaemon.cs, IndexHelper.cs, Config.cs,
+	  glue/screensaver-glue.c, SystemInformation.cs etc.: Move from Gtk to Glib.
+	* BeagleDaemon.cs, Shutdown.cs, QueryDriver.cs, Inotify.cs,
+	Scheduler.cs etc.: Fix signal handling and starting threads to handle
+	termination signals properly, even during startup.
+	* EDS/EvolutionDataServerQueryable.cs,
+	IndexingServiceQueryable/IndexingServiceQueryable.cs: Start the actual
+	work in a separate thread or little later, without blocking
+	QueryDriver.
+	
 2006-07-12  Guntupalli Karunakar  <karunakar@randomink.org>
 
 	* configure.in: Added 'hi' to ALL_LINGUAS.

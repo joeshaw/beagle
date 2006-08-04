@@ -329,12 +329,18 @@ namespace Beagle.Daemon {
 
 		////////////////////////////////////////////////////////
 
-		static public void Start ()
+		private static ArrayList assemblies = null;
+
+		// Perform expensive initialization steps all at once.
+		// Should be done before SignalHandler comes into play.
+		static public void Init ()
 		{
 			ReadBackendsFromConf ();
+			assemblies = ReflectionFu.ScanEnvironmentForAssemblies ("BEAGLE_BACKEND_PATH", PathFinder.BackendDir);
+		}
 
-			ArrayList assemblies = ReflectionFu.ScanEnvironmentForAssemblies ("BEAGLE_BACKEND_PATH", PathFinder.BackendDir);
-
+		static public void Start ()
+		{
 			// Only add the executing assembly if we haven't already loaded it.
 			if (assemblies.IndexOf (Assembly.GetExecutingAssembly ()) == -1)
 				assemblies.Add (Assembly.GetExecutingAssembly ());

@@ -34,7 +34,8 @@ using System.Reflection;
 using Beagle;
 using Beagle.Util;
 
-using Gtk;
+//using Gtk;
+using GLib;
 
 public static class ConfigTool {
 
@@ -100,8 +101,6 @@ public static class ConfigTool {
 		
 	public static void Main (string [] args)
 	{
-		Application.InitCheck ("beagle-config", ref args);
-
 		if (args.Length == 0)
 			PrintUsageAndExit ();
 

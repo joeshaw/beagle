@@ -30,10 +30,11 @@ using System.IO;
 using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Threading;
-
-using Gtk;
+using Thread = System.Threading.Thread;
+using GLib;
 
 using Beagle.Util;
+using Log = Beagle.Util.Log;
 
 #if ENABLE_WEBSERVICES
 using Beagle.WebService;
@@ -43,6 +44,7 @@ namespace Beagle.Daemon {
 	class BeagleDaemon {
 
 		public static Thread MainLoopThread = null;
+		private static MainLoop main_loop = null;
 
 		private static Server server = null;
 
@@ -53,6 +55,7 @@ namespace Beagle.Daemon {
 		public static bool StartServer ()
 		{
 			Logger.Log.Debug ("Starting messaging server");
+
 			try {
 				server = new Server ("socket");
 				server.Start ();
@@ -135,11 +138,11 @@ namespace Beagle.Daemon {
 
 		public static bool StartupProcess ()
 		{
+			Log.Debug ("Beginning main loop");
+
 			// Profile our initialization
 			Stopwatch stopwatch = new Stopwatch ();
 			stopwatch.Start ();
-
-			SetupSignalHandlers ();
 
 			// Fire up our server
 			if (! StartServer ()) {
@@ -201,8 +204,6 @@ namespace Beagle.Daemon {
 			//Beagle Web, WebService access initialization code:
 			WebServiceBackEnd.Start();
 #endif
-			Shutdown.ShutdownEvent += OnShutdown;
-
 			Conf.WatchForUpdates ();
 
 			stopwatch.Stop ();
@@ -218,7 +219,7 @@ namespace Beagle.Daemon {
 			return false;
 		}
 
-		static void OnEmptySchedulerQueue ()
+		private static void OnEmptySchedulerQueue ()
 		{
 			Logger.Log.Debug ("Scheduler queue is empty: terminating immediately");
 			Shutdown.BeginShutdown ();
@@ -458,12 +459,20 @@ namespace Beagle.Daemon {
 			// Do BEAGLE_EXERCISE_THE_DOG_HARDER-related processing.
 			ExerciseTheDogHarder ();
 
-			if (Application.InitCheck ("beagled", ref args))
+			if (SystemInformation.XssInit ())
 				Logger.Log.Debug ("Established a connection to the X server");
 			else
 				Logger.Log.Debug ("Unable to establish a connection to the X server");
-
 			XSetIOErrorHandler (BeagleXIOErrorHandler);
+
+			QueryDriver.Init ();
+			Server.Init ();
+
+			SetupSignalHandlers ();
+			Shutdown.ShutdownEvent += OnShutdown;
+
+			main_loop = new MainLoop ();
+			Shutdown.RegisterMainLoop (main_loop);
 
 			// Defer all actual startup until the main loop is
 			// running.  That way shutdowns during the startup
@@ -472,8 +481,7 @@ namespace Beagle.Daemon {
 
 			// Start our event loop.
 			Logger.Log.Debug ("Starting main loop");
-
-			Application.Run ();
+			main_loop.Run ();
 
 			// If we placed our sockets in a temp directory, try to clean it up
 			// Note: this may fail because the helper is still running
@@ -511,6 +519,7 @@ namespace Beagle.Daemon {
 			return true;
 		}
 
+
 		/////////////////////////////////////////////////////////////////////////////
 
 		private delegate int XIOErrorHandler (IntPtr display);
@@ -535,7 +544,7 @@ namespace Beagle.Daemon {
 
 		/////////////////////////////////////////////////////////////////////////////
 
-		static void SetupSignalHandlers ()
+		private static void SetupSignalHandlers ()
 		{
 			// Force OurSignalHandler to be JITed
 			OurSignalHandler (-1);
@@ -549,60 +558,38 @@ namespace Beagle.Daemon {
 			Mono.Unix.Native.Stdlib.signal (Mono.Unix.Native.Signum.SIGPIPE, Mono.Unix.Native.Stdlib.SIG_IGN);
 		}
 
-		// Our handler triggers an orderly shutdown when it receives a signal.
-		// However, this can be annoying if the process gets wedged during
-		// shutdown.  To deal with that case, we make a note of the time when
-		// the first signal comes in, and we allow signals to unconditionally
-		// kill the process after 5 seconds have passed.
-		static DateTime signal_time = DateTime.MinValue;
-		static void OurSignalHandler (int signal)
+		// Mono signal handler allows setting of global variables;
+		// anything else e.g. function calls, even reentrant native methods are risky
+		private static void OurSignalHandler (int signal)
 		{
 			// This allows us to call OurSignalHandler w/o doing anything.
 			// We want to call it once to ensure that it is pre-JITed.
 			if (signal < 0)
 				return;
 
+			// Set shutdown flag to true so that other threads can stop initializing
+			if ((Mono.Unix.Native.Signum) signal != Mono.Unix.Native.Signum.SIGUSR1)
+				Shutdown.ShutdownRequested = true;
+
+			// Do all signal handling work in the main loop and not in the signal handler.
+			GLib.Idle.Add (new GLib.IdleHandler (delegate () { HandleSignal (signal); return false; }));
+		}
+
+		private static void HandleSignal (int signal)
+		{
 			Logger.Log.Debug ("Handling signal {0} ({1})", signal, (Mono.Unix.Native.Signum) signal);
 
 			// If we get SIGUSR1, turn the debugging level up.
 			if ((Mono.Unix.Native.Signum) signal == Mono.Unix.Native.Signum.SIGUSR1) {
 				LogLevel old_level = Log.Level;
-
 				Log.Level = LogLevel.Debug;
-
 				Log.Debug ("Moving from log level {0} to Debug", old_level);
-
 				GLib.Idle.Add (new GLib.IdleHandler (delegate () { RemoteIndexer.SignalRemoteIndexer (); return false; }));
-
 				return;
 			}
 
-			bool first_signal = false;
-			if (signal_time == DateTime.MinValue) {
-				signal_time = DateTime.Now;
-				first_signal = true;
-			}
-
-			if (Shutdown.ShutdownRequested) {
-				
-				if (first_signal) {
-					Logger.Log.Debug ("Shutdown already in progress.");
-				} else {
-					double t = (DateTime.Now - signal_time).TotalSeconds;
-					const double min_t = 5;
-
-					if (t < min_t) {
-						Logger.Log.Debug ("Signals can force an immediate shutdown in {0:0.00}s", min_t-t);
-					} else {
-						Logger.Log.Debug ("Forcing immediate shutdown.");
-						Environment.Exit (0);
-					}
-				}
-
-			} else {
-				Logger.Log.Debug ("Initiating shutdown in response to signal.");
-				Shutdown.BeginShutdown ();
-			}
+			Logger.Log.Debug ("Initiating shutdown in response to signal.");
+			Shutdown.BeginShutdown ();
 		}
 
 		/////////////////////////////////////////////////////////////////////////////
@@ -615,11 +602,12 @@ namespace Beagle.Daemon {
 			// Stop our Inotify threads
 			Inotify.Stop ();
 
-			// Shut down the global scheduler
-			Scheduler.Global.Stop ();
+			// Stop the global scheduler and ask it to shutdown
+			Scheduler.Global.Stop (true);
 
 			// Stop the messaging server
-			server.Stop ();
+			if (server != null)
+				server.Stop ();
 		}
 
 		/////////////////////////////////////////////////////////////////////////////
@@ -679,4 +667,5 @@ namespace Beagle.Daemon {
 			}
 		}
 	}
+
 }

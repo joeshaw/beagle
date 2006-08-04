@@ -94,21 +94,57 @@ namespace Beagle.Daemon {
 
 		static public bool ShutdownRequested {
 			get { return shutdownRequested; }
+			set {
+				lock (shutdownLock)
+					shutdownRequested = value;
+			}
 		}
 
-		static public void BeginShutdown ()
-		{
-			if (Debug)
-				Logger.Log.Debug ("Calling BeginShutdown");
+		private static GLib.MainLoop main_loop = null;
 
+		public static void RegisterMainLoop (GLib.MainLoop loop)
+		{
+			main_loop = loop;
+		}
+
+		// Our handler triggers an orderly shutdown when it receives a signal.
+		// However, this can be annoying if the process gets wedged during
+		// shutdown.  To deal with that case, we make a note of the time when
+		// the first signal comes in, and we allow signals to unconditionally
+		// kill the process after 5 seconds have passed.
+
+		static DateTime signal_time = DateTime.MinValue;
+
+		public static void BeginShutdown ()
+		{
 			lock (shutdownLock) {
-				if (shutdownRequested)
-					return;
 				shutdownRequested = true;
 			}
-			
-			if (Debug)
-				Logger.Log.Debug ("Beginning shutdown event");
+
+			// FIXME: This whole "unconditional killing after 5 seconds because
+			// beagled can hang while shutting down" thing should not occur. Any such
+			// incident should be immediately investigated and fixed. Hint: Sending
+			// kill -quit `pidof beagled` will probably reveal that beagled got locked
+			// when signal handler was called and some thread was executing some native
+			// method.
+			bool first_signal = false;
+			if (signal_time == DateTime.MinValue) {
+				signal_time = DateTime.Now;
+				first_signal = true;
+			}
+
+			if (! first_signal) {
+				double t = (DateTime.Now - signal_time).TotalSeconds;
+				const double min_t = 5;
+
+				if (t < min_t) {
+					Logger.Log.Debug ("Signals can force an immediate shutdown in {0:0.00}s", min_t-t);
+					return;
+				} else {
+					Logger.Log.Debug ("Forcing immediate shutdown.");
+					Environment.Exit (0);
+				}
+			}
 
 			if (ShutdownEvent != null) {
 				try {
@@ -118,9 +154,6 @@ namespace Beagle.Daemon {
 					Logger.Log.Warn (ex);
 				}
 			}
-
-			if (Debug)
-				Logger.Log.Debug ("Done with shutdown event"); 
 
 			int count = 0;
 			
@@ -138,7 +171,7 @@ namespace Beagle.Daemon {
 			}
 
 			Logger.Log.Info ("Exiting");
-			Gtk.Application.Quit ();
+			main_loop.Quit ();
 		}
 	}
 }

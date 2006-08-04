@@ -149,6 +149,11 @@ fi
 
 AC_SUBST(SQLITE_MAJ_VER)
 
+AC_ARG_ENABLE([xss],
+	      AC_HELP_STRING([--disable-xss], [Disable monitoring xscreensaver to speed up indexing when user is idle]),
+	      enable_xss=$enableval,
+	      enable_xss=yes)
+
 AC_PATH_XTRA
 
 # Needed by glue/screensaver-glue.c
@@ -160,9 +165,9 @@ CFLAGS="$CFLAGS $X_CFLAGS"
 LDFLAGS="$LDFLAGS $X_LIBS"
 AC_CHECK_HEADER(X11/extensions/scrnsaver.h, enable_scrnsaver=yes, enable_scrnsaver=no)
 AC_CHECK_LIB(Xss,XScreenSaverQueryExtension, enable_libxss=yes, enable_libxss=no)
-AM_CONDITIONAL(HAS_LIBXSS, test "x$enable_scrnsaver$enable_libxss" = "xyesyes")
-if test "x$enable_scrnsaver$enable_libxss" = "xyesyes"; then
+if test "x$enable_xss$enable_scrnsaver$enable_libxss" = "xyesyesyes"; then
 	XSS_LIBS="-lXss"
+	AC_DEFINE(HAVE_LIBXSS,1,[Define to 1 if libXss is installed])
 fi
 CFLAGS="$OLD_CFLAGS"
 LDFLAGS="$OLD_LDFLAGS"
@@ -341,7 +346,7 @@ PKG_CHECK_MODULES(BEAGLED,
 [
 	shared-mime-info
 	gmime-sharp >= $GMIME_SHARP_REQUIRED
-	gtk-sharp-2.0 >= $GTK_SHARP_REQUIRED
+	glib-sharp-2.0 >= $GTK_SHARP_REQUIRED
 ])
 	BEAGLED_LIBS="$BEAGLED_LIBS $GSF_SHARP_LIBS"
 AC_SUBST(BEAGLED_LIBS)
@@ -491,7 +496,6 @@ AC_SUBST(GTK_BINARY_VERSION)
 
 dnl For the systeminfo glue
 
-PKG_CHECK_MODULES(SYSTEMINFO_GLUE, gdk-2.0)
 SYSTEMINFO_GLUE_X_LIBS="$X_PRE_LIBS $X_LIBS -lX11 $XSS_LIBS $X_EXTRA_LIBS"
 AC_SUBST(SYSTEMINFO_GLUE_X_LIBS)
 
@@ -697,6 +701,7 @@ echo "
 	Enable WebServices	  no (WebServices are deprecated)
 	Enable libbeagle	  ${enable_libbeagle}
 	Enable python bindings	  ${have_python}
+	Monitor xscreensaver      `test "$XSS_LIBS" = "-lXss" && echo yes || echo no`
 
 	Enable beagle-search GUI  ${enable_gui}
 	Enable \"Open With\" menu   ${OPEN_WITH}

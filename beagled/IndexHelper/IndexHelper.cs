@@ -32,22 +32,25 @@ using SNS = System.Net.Sockets;
 using System.Runtime.InteropServices;
 using System.Threading;
 
-using Gtk;
+using GLib;
 
 using Beagle.Daemon;
 using Beagle.Util;
+using Log = Beagle.Util.Log;
+using Thread = System.Threading.Thread;
 
 namespace Beagle.IndexHelper {
 	
 	class IndexHelperTool {
+		private static MainLoop main_loop;
 
-		static DateTime last_activity;
-		static Server server;
+		private static DateTime last_activity;
+		private static Server server;
 
 		[DllImport ("libc")]
 		extern static private int unsetenv (string name);
 
-		static void Main (string [] args)
+		public static void Main (string [] args)
 		{
 			try {
 				DoMain (args);
@@ -58,7 +61,7 @@ namespace Beagle.IndexHelper {
 			}
 		}
 
-		static void DoMain (string [] args)
+		private static void DoMain (string [] args)
 		{
 			SystemInformation.SetProcessName ("beagled-helper");
 
@@ -82,13 +85,16 @@ namespace Beagle.IndexHelper {
 			// goes away.  It's important to do this before
 			// Application.InitCheck(), since that's what makes the
 			// connection.
-			unsetenv ("DISPLAY");
+			//unsetenv ("DISPLAY");
 
-			Application.InitCheck ("IndexHelper", ref args);
+			SystemInformation.XssInit (false);
 
 			SetupSignalHandlers ();
 
 			Shutdown.ShutdownEvent += OnShutdown;
+
+			main_loop = new MainLoop ();
+			Shutdown.RegisterMainLoop (main_loop);
 
 			// Start the server
 			Logger.Log.Debug ("Starting messaging server");
@@ -116,7 +122,8 @@ namespace Beagle.IndexHelper {
 				// if it terminates.
 				ExceptionHandlingThread.Start (new ThreadStart (DaemonMonitorWorker));
 
-				Application.Run ();
+				//Application.Run ();
+				main_loop.Run ();
 
 				// If we palced our sockets in a temp directory, try to clean it up
 				// Note: this may fail because the daemon is still running
@@ -128,12 +135,12 @@ namespace Beagle.IndexHelper {
 			}
 		}
 
-		static public void ReportActivity ()
+		public static void ReportActivity ()
 		{
 			last_activity = DateTime.Now;
 		}
 
-		static void MemoryAndIdleMonitorWorker ()
+		private static void MemoryAndIdleMonitorWorker ()
 		{
 			int vmrss_original = SystemInformation.VmRss;
 
@@ -177,7 +184,7 @@ namespace Beagle.IndexHelper {
 			}
 		}
 		
-		static void DaemonMonitorWorker ()
+		private static void DaemonMonitorWorker ()
 		{
 			string storage_dir = PathFinder.GetRemoteStorageDir (false);
 
@@ -217,7 +224,7 @@ namespace Beagle.IndexHelper {
 
 		/////////////////////////////////////////////////////////////////////////////
 
-		static void SetupSignalHandlers ()
+		private static void SetupSignalHandlers ()
 		{
 			// Force OurSignalHandler to be JITed
 			OurSignalHandler (-1);
@@ -236,57 +243,39 @@ namespace Beagle.IndexHelper {
 		// shutdown.  To deal with that case, we make a note of the time when
 		// the first signal comes in, and we allow signals to unconditionally
 		// kill the process after 5 seconds have passed.
-		static DateTime signal_time = DateTime.MinValue;
-		static void OurSignalHandler (int signal)
+		private static DateTime signal_time = DateTime.MinValue;
+		private static void OurSignalHandler (int signal)
 		{
 			// This allows us to call OurSignalHandler w/o doing anything.
 			// We want to call it once to ensure that it is pre-JITed.
 			if (signal < 0)
 				return;
 
+			// Set shutdown flag to true so that other threads can stop initializing
+			if ((Mono.Unix.Native.Signum) signal != Mono.Unix.Native.Signum.SIGUSR1)
+				Shutdown.ShutdownRequested = true;
+
+			// Do all signal handling work in the main loop and not in the signal handler.
+			GLib.Idle.Add (new GLib.IdleHandler (delegate () { HandleSignal (signal); return false; }));
+		}
+
+		private static void HandleSignal (int signal)
+		{
 			Logger.Log.Debug ("Handling signal {0} ({1})", signal, (Mono.Unix.Native.Signum) signal);
 
 			// If we get SIGUSR1, turn the debugging level up.
 			if ((Mono.Unix.Native.Signum) signal == Mono.Unix.Native.Signum.SIGUSR1) {
 				LogLevel old_level = Log.Level;
-
 				Log.Level = LogLevel.Debug;
-
 				Log.Debug ("Moving from log level {0} to Debug", old_level);
-
 				return;
 			}
 
-
-			bool first_signal = false;
-			if (signal_time == DateTime.MinValue) {
-				signal_time = DateTime.Now;
-				first_signal = true;
-			}
-
-			if (Shutdown.ShutdownRequested) {
-				
-				if (first_signal) {
-					Logger.Log.Debug ("Shutdown already in progress.");
-				} else {
-					double t = (DateTime.Now - signal_time).TotalSeconds;
-					const double min_t = 5;
-
-					if (t < min_t) {
-						Logger.Log.Debug ("Signals can force an immediate shutdown in {0:0.00}s", min_t-t);
-					} else {
-						Logger.Log.Debug ("Forcing immediate shutdown.");
-						Environment.Exit (0);
-					}
-				}
-
-			} else {
-				Logger.Log.Debug ("Initiating shutdown in response to signal.");
-				Shutdown.BeginShutdown ();
-			}
+			Logger.Log.Debug ("Initiating shutdown in response to signal.");
+			Shutdown.BeginShutdown ();
 		}
 
-		static void OnShutdown ()
+		private static void OnShutdown ()
 		{
 			if (server != null)
 				server.Stop ();

@@ -45,6 +45,7 @@
 using System;
 using System.Collections;
 using System.IO;
+using System.Threading;
 
 using Beagle.Daemon;
 using Beagle.Util;
@@ -60,6 +61,13 @@ namespace Beagle.Daemon.IndexingServiceQueryable {
 		}
 
 		public override void Start ()
+		{
+			base.Start ();
+
+			ExceptionHandlingThread.Start (new ThreadStart (StartWorker));
+		}
+
+		private void StartWorker ()
 		{
 			string index_path = Path.Combine (PathFinder.StorageDir, "ToIndex");
 
