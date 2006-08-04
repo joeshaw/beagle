@@ -1,0 +1,12 @@
+<ui>
+ <menubar name="MainMenu">
+  <menu name="FileMenu" action="FileMenuAction">
+   <menuitem name="Open" action="OpenAction" />
+   <separator />
+   <menuitem name="Quit" action="QuitAction" />
+  </menu>
+  <menu name="HelpMenu" action="HelpMenuAction">
+   <menuitem name="About" action="AboutAction" />
+  </menu>
+ </menubar>
+</ui>
