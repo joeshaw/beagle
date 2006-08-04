@@ -36,6 +36,15 @@ namespace Beagle.Util {
 
 		public static void SerializeUtf8 (XmlSerializer serializer, Stream stream, object o)
 		{
+			if (serializer == null)
+				throw new ArgumentNullException ("serializer");
+
+			if (stream == null)
+				throw new ArgumentNullException ("stream");
+
+			if (o == null)
+				throw new ArgumentNullException ("o");
+
 			XmlTextWriter xml_writer = new XmlTextWriter (stream, Encoding.UTF8);
 			xml_writer.Formatting = Formatting.Indented;
 			serializer.Serialize (xml_writer, o);

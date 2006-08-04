@@ -266,27 +266,36 @@ namespace Beagle {
 
 		internal ResponseMessageException (ErrorResponse response) : base (response.Message)
 		{ 
+			Log.Debug ("Creating a ResponseMessageException from an ErrorResponse");
 			details = response.Details;
 		}
 
 		internal ResponseMessageException (Exception e) : base (e.Message, e) { }
 
-		internal ResponseMessageException (Exception e, string details) : base (e.Message, e)
+		internal ResponseMessageException (Exception e, string message) : base (message, e) { }
+
+		internal ResponseMessageException (Exception e, string message, string details) : base (message, e)
 		{
 			this.details = details;
 		}
 
+		internal ResponseMessageException (string message) : base (message) { }
+
 		public override string ToString ()
 		{
-			if (details != null) {
-				StringBuilder sb = new StringBuilder ();
+			StringBuilder sb = new StringBuilder ();
 
-				sb.AppendFormat ("{0}: {1}\n", this.GetType (), this.Message);
-				sb.Append (this.details);
+			sb.AppendFormat ("{0}: {1}", this.GetType (), this.Message);
 
-				return sb.ToString ();
-			} else
-				return base.ToString ();
+			if (this.details != null)
+				sb.AppendFormat ("\n  Details: {0}", this.details);
+
+			if (this.InnerException != null) {
+				sb.Append ("\n  Inner exception: ");
+				sb.Append (this.InnerException.ToString ());
+			}
+
+			return sb.ToString ();
 		}
 	}
 }

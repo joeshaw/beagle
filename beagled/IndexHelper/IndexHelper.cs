@@ -95,6 +95,8 @@ namespace Beagle.IndexHelper {
 			// Initialize GObject type system
 			g_type_init ();
 
+			Server.Init ();
+
 			SetupSignalHandlers ();
 
 			Shutdown.ShutdownEvent += OnShutdown;

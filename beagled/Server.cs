@@ -40,9 +40,8 @@ namespace Beagle.Daemon {
 	class ConnectionHandler {
 
 		private static int connection_count = 0;
-		private static XmlSerializer serializer = null;
+		private static XmlSerializer resp_serializer = null;
 		private static XmlSerializer req_serializer = null;
-
 
 		private object client_lock = new object ();
 		private object blocking_read_lock = new object ();
@@ -60,7 +59,7 @@ namespace Beagle.Daemon {
 		// Perform expensive serialization all at once. Do this before signal handler is setup.
 		public static void Init ()
 		{
-			serializer = new XmlSerializer (typeof (ResponseWrapper), ResponseMessage.Types);
+			resp_serializer = new XmlSerializer (typeof (ResponseWrapper), ResponseMessage.Types);
 			req_serializer = new XmlSerializer (typeof (RequestWrapper), RequestMessage.Types);
 		}
 
@@ -73,7 +72,7 @@ namespace Beagle.Daemon {
 				try {
 #if ENABLE_XML_DUMP
 					MemoryStream mem_stream = new MemoryStream ();
-					XmlFu.SerializeUtf8 (serializer, mem_stream, new ResponseWrapper (response));
+					XmlFu.SerializeUtf8 (resp_serializer, mem_stream, new ResponseWrapper (response));
 					mem_stream.Seek (0, SeekOrigin.Begin);
 					StreamReader r = new StreamReader (mem_stream);
 					Logger.Log.Debug ("Sending response:\n{0}\n", r.ReadToEnd ());
@@ -81,13 +80,14 @@ namespace Beagle.Daemon {
 					mem_stream.WriteTo (this.client.GetStream ());
 					mem_stream.Close ();
 #else
-					XmlFu.SerializeUtf8 (serializer, this.client.GetStream (), new ResponseWrapper (response));
+					XmlFu.SerializeUtf8 (resp_serializer, this.client.GetStream (), new ResponseWrapper (response));
 #endif
 					// Send an end of message marker
 					this.client.GetStream ().WriteByte (0xff);
 					this.client.GetStream ().Flush ();
 				} catch (Exception e) {
-					Logger.Log.Debug ("Caught an exception sending response; socket shut down: {0}", e.Message);
+					Logger.Log.Debug ("Caught an exception sending response.  Shutting down socket.");
+					Logger.Log.Debug (e);
 					return false;
 				}
 
@@ -303,6 +303,8 @@ namespace Beagle.Daemon {
 
 	public class Server {
 
+		private static bool initialized = false;
+
 		private string socket_path;
 		private UnixListener listener;
 		private static Hashtable live_handlers = new Hashtable ();
@@ -331,6 +333,7 @@ namespace Beagle.Daemon {
 			ScanAssemblyForExecutors (Assembly.GetExecutingAssembly ());
 			Shutdown.ShutdownEvent += OnShutdown;
 			ConnectionHandler.Init ();
+			initialized = true;
 		}
 
 		static internal void MarkHandlerAsKilled (ConnectionHandler handler)
@@ -396,6 +399,9 @@ namespace Beagle.Daemon {
 
 		public void Start ()
 		{
+			if (!initialized)
+				throw new Exception ("Server must be initialized before starting");
+
 			if (!Shutdown.ShutdownRequested)
 				ExceptionHandlingThread.Start (new ThreadStart (this.Run));
 		}

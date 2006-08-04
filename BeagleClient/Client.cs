@@ -354,6 +354,15 @@ namespace Beagle {
 				}
 			} while (bytes_read > 0 && end_index == -1);
 
+			// It's possible that the server side shut down the
+			// connection before we had a chance to read any data.
+			// If this is the case, throw a rather descriptive
+			// exception.
+			if (this.buffer_stream.Length == 0) {
+				this.buffer_stream.Close ();
+				throw new ResponseMessageException ("Socket was closed before any data could be read");
+			}
+
 			this.buffer_stream.Seek (0, SeekOrigin.Begin);
 			
 			ResponseMessage resp = null;
@@ -366,7 +375,7 @@ namespace Beagle {
 			} catch (Exception e) {
 				this.buffer_stream.Seek (0, SeekOrigin.Begin);
 				StreamReader r = new StreamReader (this.buffer_stream);
-				throw_me = new ResponseMessageException (e, String.Format ("Deserialization exception for message:{0}", r.ReadToEnd ()));
+				throw_me = new ResponseMessageException (e, "Exception while deserializing response", String.Format ("Message contents: '{0}'", r.ReadToEnd ()));
 				this.buffer_stream.Seek (0, SeekOrigin.Begin);
 			}
 
