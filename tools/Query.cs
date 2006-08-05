@@ -32,6 +32,7 @@ using System.Reflection;
 using System.Threading;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Runtime.InteropServices;
 
 using GLib;
 
@@ -125,7 +126,6 @@ class QueryTool {
 			SendQuery ();
 		else
 			main_loop.Quit ();
-			//Gtk.Application.Quit ();
 	}
 
 	public static void PrintUsageAndExit () 
@@ -211,7 +211,6 @@ class QueryTool {
 			SendQuery ();
 		else
 			main_loop.Quit ();
-			//Gtk.Application.Quit ();
 	}
 
 	private static int query_counter = 0;
@@ -234,8 +233,14 @@ class QueryTool {
 		}
 	}
 	
+	[DllImport("libgobject-2.0.so")]
+	static extern void g_type_init ();
+
 	public static void Main (string[] args) 
 	{
+		// Initialize GObject type system
+		g_type_init ();
+
 		main_loop = new MainLoop ();
 
 		if (args.Length == 0 || Array.IndexOf (args, "--help") > -1 || Array.IndexOf (args, "--usage") > -1)
@@ -388,7 +393,7 @@ class QueryTool {
 
 		SendQuery ();
 
-		main_loop.Quit ();
+		main_loop.Run ();
 	}
 
 
