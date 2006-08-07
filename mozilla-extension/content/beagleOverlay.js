@@ -36,9 +36,9 @@ function beagleInit()
 {
   dump ("beagleInit started!\n");
 
-  gBeagleBestPath = beagleFindFileInPath("best");
+  gBeagleBestPath = beagleFindFileInPath("beagle-search");
 
-  dump ("beagleInit: Found best: " + gBeagleBestPath + "\n");
+  dump ("beagleInit: Found beagle-search: " + gBeagleBestPath + "\n");
 
   // Create eventlistener to trigger when context menu is invoked.
   if (gBeagleBestPath) {
@@ -161,7 +161,7 @@ function beagleShouldIndex(page)
     fPref = gPref.getCharPref('beagle.security.filters');
     var filtered = fPref.split(';');
     for (j = 0; j < filtered.length; j++){
-      if (filtered[j] == page.location.host){
+      if (page.location.host.search("/"+filtered[j]+"/i") != -1){
         dump("beagleShouldIndex: filtered host: " + page.location.host + '\n');
         gBeagleRunStatus = -2;
         beagleUpdateStatus ();
