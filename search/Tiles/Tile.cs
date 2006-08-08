@@ -322,7 +322,7 @@ namespace Search.Tiles {
 		private void OpenWith (Gnome.Vfs.MimeApplication mime_application)
 		{
 			GLib.List uri_list = new GLib.List (typeof (string));
-			uri_list.Append (Hit.UriAsString);
+			uri_list.Append (Hit.Uri.ToString ());
 			mime_application.Launch (uri_list);
 		}
 #endif
@@ -352,9 +352,13 @@ namespace Search.Tiles {
 				Console.WriteLine ("Can't open MimeType '{0}'", hit.MimeType);
 				return;
 			}
+			
+			Console.WriteLine ("Uri: {0}", hit.Uri);
+			Console.WriteLine ("Serializable string: {0}", UriFu.UriToSerializableString (hit.Uri));
+
 
 			if (expects_uris)
-				item = UriFu.UriToSerializableString (hit.Uri);
+				item = hit.Uri.ToString ();
 			else
 				item = hit.Path;
 

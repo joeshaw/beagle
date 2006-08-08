@@ -40,7 +40,7 @@ namespace Search.Tiles {
 			// terms that match.  Tomboy doesn't seem to have a way
 			// to specify more than one thing to highlight.
 			p.Arguments = new string [] { "tomboy",
-						      "--open-note", Hit.UriAsString,
+						      "--open-note", Hit.Uri.ToString (),
 						      "--highlight-search", Query.QuotedText };
 
 			try {

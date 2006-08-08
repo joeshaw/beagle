@@ -69,10 +69,10 @@ namespace Search.Tiles {
 		{
 			SafeProcess p;
 			
-			if (Hit.ParentUriAsString != null)
-				p = MailMessage.GetClientProcess (GetHitProperty (Hit, "fixme:client"), Hit.ParentUriAsString);
+			if (Hit.ParentUri != null)
+				p = MailMessage.GetClientProcess (GetHitProperty (Hit, "fixme:client"), Hit.ParentUri.ToString ());
 			else
-				p = MailMessage.GetClientProcess (GetHitProperty (Hit, "fixme:client"), Hit.UriAsString);
+				p = MailMessage.GetClientProcess (GetHitProperty (Hit, "fixme:client"), Hit.Uri.ToString ());
 			if (p == null) {
 				OpenFromMime (Hit);
 				return;

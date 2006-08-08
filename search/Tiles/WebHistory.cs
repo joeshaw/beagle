@@ -48,7 +48,7 @@ namespace Search.Tiles {
 			DetailsPane details = new DetailsPane ();
 
 			details.AddLabelPair (Catalog.GetString ("Title:"), Title);
-			details.AddLabelPair (Catalog.GetString ("URL:"), Hit.UriAsString);
+			details.AddLabelPair (Catalog.GetString ("URL:"), Hit.Uri.ToString ());
 			details.AddLabelPair (Catalog.GetString ("Accessed:"), Utils.NiceLongDate (Timestamp));
 			details.AddSnippet ();
 

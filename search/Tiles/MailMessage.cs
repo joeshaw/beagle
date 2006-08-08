@@ -144,10 +144,10 @@ namespace Search.Tiles {
 		public override void Open ()
 		{
 			SafeProcess p;
-			if (Hit.ParentUriAsString != null) 
-				p = GetClientProcess (Hit.GetFirstProperty ("fixme:client"), Hit.ParentUriAsString );
+			if (Hit.ParentUri != null) 
+				p = GetClientProcess (Hit.GetFirstProperty ("fixme:client"), Hit.ParentUri.ToString () );
 			else
-				p = GetClientProcess (Hit.GetFirstProperty ("fixme:client"), Hit.UriAsString );
+				p = GetClientProcess (Hit.GetFirstProperty ("fixme:client"), Hit.Uri.ToString () );
 			
 			if (p == null) {
 				OpenFromMime (Hit);
@@ -166,10 +166,10 @@ namespace Search.Tiles {
 			SafeProcess p = new SafeProcess ();
 
 			string uri;
-			if (Hit.ParentUriAsString != null)
-				uri = Hit.ParentUriAsString;
+			if (Hit.ParentUri != null)
+				uri = Hit.ParentUri.ToString ();
 			else
-				uri = Hit.UriAsString;
+				uri = Hit.Uri.ToString ();
 
 			p.Arguments = new string [] { "evolution", String.Format ("{0};forward=attached", uri) };
 

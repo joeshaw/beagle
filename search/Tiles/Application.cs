@@ -42,7 +42,7 @@ namespace Search.Tiles {
 			if (!base.Validate (hit))
 				return false;
 
-			ditem = gnome_desktop_item_new_from_uri (hit.UriAsString, 0, IntPtr.Zero);
+			ditem = gnome_desktop_item_new_from_uri (hit.Uri.ToString (), 0, IntPtr.Zero);
 			if (ditem == IntPtr.Zero)
 				return false;
 			

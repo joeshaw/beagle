@@ -86,7 +86,7 @@ namespace Beagle {
 		}
 
 		[XmlAttribute ("Uri")]
-		public string UriAsString {
+		public string SerializedUri {
 			get {
 				return UriFu.UriToSerializableString (uri);
 			}
@@ -103,7 +103,7 @@ namespace Beagle {
 		}
 
 		[XmlAttribute ("ParentUri")]
-		public string ParentUriAsString {
+		public string SerializedParentUri {
 			get {
 				if (parent_uri == null)
 					return null;

@@ -190,7 +190,7 @@ namespace Beagle.Daemon.KMailQueryable {
 			string body = message.GetBody (true, out html);
 			// FIXME: Also handle snippets from html message parts - involves invoking html filter
 			if (html) {
-				Logger.Log.Debug ("No text/plain message part in " + hit.UriAsString);
+				Logger.Log.Debug ("No text/plain message part in " + hit.Uri);
 				message.Dispose ();
 				return null;
 			}
