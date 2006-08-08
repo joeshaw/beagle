@@ -353,10 +353,6 @@ namespace Search.Tiles {
 				return;
 			}
 			
-			Console.WriteLine ("Uri: {0}", hit.Uri);
-			Console.WriteLine ("Serializable string: {0}", UriFu.UriToSerializableString (hit.Uri));
-
-
 			if (expects_uris)
 				item = hit.Uri.ToString ();
 			else
