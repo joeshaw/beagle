@@ -114,6 +114,11 @@ namespace Search.Tiles {
 			label = sent ? Catalog.GetString ("Date Sent:") : Catalog.GetString ("Date Received:");
 			details.AddLabelPair (label, Utils.NiceLongDate (Timestamp));
 
+			string folder = Hit.GetFirstProperty ("fixme:folder");
+
+			if (folder != null)
+				details.AddLabelPair (Catalog.GetString ("Folder:"), folder);
+
 			details.AddSnippet ();
 
 			return details;
