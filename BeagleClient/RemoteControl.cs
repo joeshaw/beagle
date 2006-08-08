@@ -38,7 +38,7 @@ namespace Beagle {
 		public bool GetVersion, GetSchedInfo, GetIndexStatus, GetIsIndexing;
 
 		// For backward compatibility
-		public DaemonInformationRequest () : this (true, false, true, false) { }
+		public DaemonInformationRequest () : this (true, true, true, true) { }
 
 		public DaemonInformationRequest (
 			bool get_version,
