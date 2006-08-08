@@ -4,7 +4,7 @@ using Mono.Unix;
 
 namespace Search.Pages {
 
-	public class Base : Fixed {
+	public class Base : EventBox {
 
 		static Gdk.Pixbuf arrow;
 
@@ -13,13 +13,16 @@ namespace Search.Pages {
 			arrow = Beagle.Images.GetPixbuf ("tip-arrow.png");
 		}
 
+		Gtk.Fixed fixed_widget;
 		Gtk.Table table;
 		Gtk.Image headerIcon;
 		Gtk.Label header;
 
 		public Base ()
 		{
-			HasWindow = true;
+			fixed_widget = new Fixed ();
+			fixed_widget.HasWindow = true;
+			Add (fixed_widget);
 
 			table = new Gtk.Table (1, 2, false);
 			table.RowSpacing = table.ColumnSpacing = 12;
@@ -37,8 +40,8 @@ namespace Search.Pages {
 				      Gtk.AttachOptions.Fill,
 				      0, 0);
 
-			table.ShowAll ();
-			Add (table);
+			fixed_widget.Add (table);
+			fixed_widget.ShowAll ();
 		}
 
 		protected override void OnRealized ()
