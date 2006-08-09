@@ -615,7 +615,7 @@ THUNDERBIRD_CSFILES =						\
 THUNDERBIRD_LOCAL_ASSEMBLIES =		\
 	../Util/Util.dll		\
 	../BeagleClient/Beagle.dll	\
-	BeagleDaemonLib.dll
+	./BeagleDaemonLib.dll
 
 THUNDERBIRD_ASSEMBLIES =				\
 	-r:Mono.Posix				\
