@@ -49,6 +49,13 @@
   (gtype-id "BEAGLE_TYPE_QUERY_PART_TEXT")
 )
 
+(define-object QueryPartWildcard
+  (in-module "Beagle")
+  (parent "BeagleQueryPart")
+  (c-name "BeagleQueryPartWildcard")
+  (gtype-id "BEAGLE_TYPE_QUERY_PART_WILDCARD")
+)
+
 (define-object Request
   (in-module "Beagle")
   (parent "GObject")
@@ -160,9 +167,9 @@
   (in-module "Beagle")
   (c-name "BeagleIndexableType")
   (values
-    '("always" "BEAGLE_INDEXABLE_TYPE_ADD")
-    '("already-filtered" "BEAGLE_INDEXABLE_TYPE_REMOVE")
-    '("automatic" "BEAGLE_INDEXABLE_TYPE_PROPERTY_CHANGE")
+    '("add" "BEAGLE_INDEXABLE_TYPE_ADD")
+    '("remove" "BEAGLE_INDEXABLE_TYPE_REMOVE")
+    '("property-change" "BEAGLE_INDEXABLE_TYPE_PROPERTY_CHANGE")
   )
 )
 
@@ -189,6 +196,29 @@
   )
 )
 
+(define-enum QueryableState
+  (in-module "Beagle")
+  (c-name "BeagleQueryableState")
+  (values
+    '("na" "BEAGLE_QUERYABLE_STATE_NA")
+    '("idle" "BEAGLE_QUERYABLE_STATE_IDLE")
+    '("crawling" "BEAGLE_QUERYABLE_STATE_CRAWLING")
+    '("indexing" "BEAGLE_QUERYABLE_STATE_INDEXING")
+    '("flushing" "BEAGLE_QUERYABLE_STATE_FLUSHING")
+  )
+)
+
+(define-enum QueryDomain
+  (in-module "Beagle")
+  (c-name "BeagleQueryDomain")
+  (values
+    '("local" "BEAGLE_QUERY_DOMAIN_LOCAL")
+    '("system" "BEAGLE_QUERY_DOMAIN_SYSTEM")
+    '("neighborhood" "BEAGLE_QUERY_DOMAIN_NEIGHBORHOOD")
+    '("global" "BEAGLE_QUERY_DOMAIN_GLOBAL")
+  )
+)
+
 (define-enum QueryPartLogic
   (in-module "Beagle")
   (c-name "BeagleQueryPartLogic")
@@ -206,17 +236,6 @@
   )
 )
 
-(define-enum QueryableState
-  (in-module "Beagle")
-  (c-name "BeagleQueryableState")
-  (values
-    '("NotApplicable" "BEAGLE_QUERYABLE_STATE_NA")
-    '("Idle" "BEAGLE_QUERYABLE_STATE_IDLE")
-    '("Crawling" "BEAGLE_QUERYABLE_STATE_CRAWLING")
-    '("Indexing" "BEAGLE_QUERYABLE_STATE_INDEXING")
-    '("Flushing" "BEAGLE_QUERYABLE_STATE_FLUSHING")
-  )
-)
 
 ;; From ../../libbeagle/beagle/beagle-client.h
 
@@ -272,16 +291,23 @@
 )
 
 (define-function beagle_daemon_information_request_new
-  (c-name "beagle_daemon_information_request_new_specific")
+  (c-name "beagle_daemon_information_request_new")
   (is-constructor-of "BeagleDaemonInformationRequest")
   (return-type "BeagleDaemonInformationRequest*")
+)
+
+(define-function beagle_daemon_information_request_new_specific
+  (c-name "beagle_daemon_information_request_new_specific")
+  (return-type "BeagleDaemonInformationRequest*")
   (parameters
-    '("gboolean" "get_version" (default "TRUE"))
-    '("gboolean" "get_sched_info" (default "TRUE"))
-    '("gboolean" "get_index_status" (default "TRUE"))
-    '("gboolean" "get_is_indexing" (default "TRUE"))
+    '("gboolean" "get_version")
+    '("gboolean" "get_sched_info")
+    '("gboolean" "get_index_status")
+    '("gboolean" "get_is_indexing")
   )
 )
+
+
 
 ;; From ../../libbeagle/beagle/beagle-daemon-information-response.h
 
@@ -296,16 +322,10 @@
   (return-type "const-char*")
 )
 
-(define-method ger_scheduler_information
+(define-method get_scheduler_information
   (of-object "BeagleDaemonInformationResponse")
   (c-name "beagle_daemon_information_response_get_scheduler_information")
   (return-type "BeagleSchedulerInformation*")
-)
-
-(define-method get_human_readable_status
-  (of-object "BeagleDaemonInformationResponse")
-  (c-name "beagle_daemon_information_response_get_human_readable_status")
-  (return-type "const-char*")
 )
 
 (define-method get_index_status
@@ -436,7 +456,7 @@
     '("const-char**" "value")
   )
 )
- 
+
 (define-method get_properties
   (of-object "BeagleHit")
   (c-name "beagle_hit_get_properties")
@@ -451,6 +471,7 @@
   (c-name "beagle_hit_get_all_properties")
   (return-type "GSList*")
 )
+
 
 
 ;; From ../../libbeagle/beagle/beagle-hits-added-response.h
@@ -506,6 +527,21 @@
   (return-type "none")
   (parameters
     '("BeagleProperty*" "prop")
+  )
+)
+
+(define-method get_type
+  (of-object "BeagleIndexable")
+  (c-name "beagle_indexable_get_type")
+  (return-type "BeagleIndexableType")
+)
+
+(define-method set_type
+  (of-object "BeagleIndexable")
+  (c-name "beagle_indexable_set_type")
+  (return-type "none")
+  (parameters
+    '("BeagleIndexableType" "type")
   )
 )
 
@@ -569,6 +605,21 @@
   )
 )
 
+(define-method get_timestamp
+  (of-object "BeagleIndexable")
+  (c-name "beagle_indexable_get_timestamp")
+  (return-type "BeagleTimestamp*")
+)
+
+(define-method set_timestamp
+  (of-object "BeagleIndexable")
+  (c-name "beagle_indexable_set_timestamp")
+  (return-type "none")
+  (parameters
+    '("BeagleTimestamp*" "timestamp")
+  )
+)
+
 (define-method get_delete_content
   (of-object "BeagleIndexable")
   (c-name "beagle_indexable_get_delete_content")
@@ -626,21 +677,6 @@
   (return-type "none")
   (parameters
     '("gboolean" "cache_content")
-  )
-)
-
-(define-method get_type
-  (of-object "BeagleIndexable")
-  (c-name "beagle_indexable_get_type")
-  (return-type "BeagleIndexableType")
-)
-
-(define-method set_type
-  (of-object "BeagleIndexable")
-  (c-name "beagle_indexable_set_type")
-  (return-type "none")
-  (parameters
-    '("BeagleIndexableType" "type")
   )
 )
 
@@ -704,21 +740,6 @@
   )
 )
 
-(define-method get_timestamp
-  (of-object "BeagleIndexable")
-  (c-name "beagle_indexable_get_timestamp")
-  (return-type "BeagleTimestamp*")
-)
-
-(define-method set_timestamp
-  (of-object "BeagleIndexable")
-  (c-name "beagle_indexable_set_timestamp")
-  (return-type "none")
-  (parameters
-    '("BeagleTimestamp*" "timestamp")
-  )
-)
-
 
 
 ;; From ../../libbeagle/beagle/beagle-indexing-service-request.h
@@ -732,6 +753,14 @@
   (c-name "beagle_indexing_service_request_new")
   (is-constructor-of "BeagleIndexingServiceRequest")
   (return-type "BeagleIndexingServiceRequest*")
+)
+
+(define-function beagle_indexing_service_request_new_for_service
+  (c-name "beagle_indexing_service_request_new_for_service")
+  (return-type "BeagleIndexingServiceRequest*")
+  (parameters
+    '("const-char*" "name")
+  )
 )
 
 (define-method add
@@ -877,6 +906,52 @@
 
 
 
+;; From ../../libbeagle/beagle/beagle-queryable-status.h
+
+(define-method ref
+  (of-object "BeagleQueryableStatus")
+  (c-name "beagle_queryable_status_ref")
+  (return-type "BeagleQueryableStatus*")
+)
+
+(define-method unref
+  (of-object "BeagleQueryableStatus")
+  (c-name "beagle_queryable_status_unref")
+  (return-type "none")
+)
+
+(define-method get_name
+  (of-object "BeagleQueryableStatus")
+  (c-name "beagle_queryable_status_get_name")
+  (return-type "const-char*")
+)
+
+(define-method get_item_count
+  (of-object "BeagleQueryableStatus")
+  (c-name "beagle_queryable_status_get_item_count")
+  (return-type "int")
+)
+
+(define-method get_state
+  (of-object "BeagleQueryableStatus")
+  (c-name "beagle_queryable_status_get_state")
+  (return-type "BeagleQueryableState")
+)
+
+(define-method get_progress_percent
+  (of-object "BeagleQueryableStatus")
+  (c-name "beagle_queryable_status_get_progress_percent")
+  (return-type "int")
+)
+
+(define-method get_is_indexing
+  (of-object "BeagleQueryableStatus")
+  (c-name "beagle_queryable_status_get_is_indexing")
+  (return-type "gboolean")
+)
+
+
+
 ;; From ../../libbeagle/beagle/beagle-query.h
 
 (define-function beagle_query_get_type
@@ -932,6 +1007,33 @@
   (return-type "none")
   (parameters
     '("const-char*" "source")
+  )
+)
+
+(define-method set_domain
+  (of-object "BeagleQuery")
+  (c-name "beagle_query_set_domain")
+  (return-type "none")
+  (parameters
+    '("BeagleQueryDomain" "domain")
+  )
+)
+
+(define-method add_domain
+  (of-object "BeagleQuery")
+  (c-name "beagle_query_add_domain")
+  (return-type "none")
+  (parameters
+    '("BeagleQueryDomain" "domain")
+  )
+)
+
+(define-method remove_domain
+  (of-object "BeagleQuery")
+  (c-name "beagle_query_remove_domain")
+  (return-type "none")
+  (parameters
+    '("BeagleQueryDomain" "domain")
   )
 )
 
@@ -1145,6 +1247,50 @@
   )
 )
 
+
+
+;; From ../../libbeagle/beagle/beagle-query-part-wildcard.h
+
+(define-function beagle_query_part_wildcard_get_type
+  (c-name "beagle_query_part_wildcard_get_type")
+  (return-type "GType")
+)
+
+(define-function beagle_query_part_wildcard_new
+  (c-name "beagle_query_part_wildcard_new")
+  (is-constructor-of "BeagleQueryPartWildcard")
+  (return-type "BeagleQueryPartWildcard*")
+)
+
+(define-method set_query_string
+  (of-object "BeagleQueryPartWildcard")
+  (c-name "beagle_query_part_wildcard_set_query_string")
+  (return-type "none")
+  (parameters
+    '("const-char*" "query_string")
+  )
+)
+
+
+
+;; From ../../libbeagle/beagle/beagle-request.h
+
+(define-function beagle_request_get_type
+  (c-name "beagle_request_get_type")
+  (return-type "GType")
+)
+
+
+
+;; From ../../libbeagle/beagle/beagle-response.h
+
+(define-function beagle_response_get_type
+  (c-name "beagle_response_get_type")
+  (return-type "GType")
+)
+
+
+
 ;; From ../../libbeagle/beagle/beagle-scheduler-information.h
 
 (define-method ref
@@ -1193,66 +1339,6 @@
   (of-object "BeagleSchedulerInformation")
   (c-name "beagle_scheduler_information_to_human_readable_string")
   (return-type "const-char*")
-)
-
-;; From ../../libbeagle/beagle/beagle-queryable-status.h
-
-(define-method ref
-  (of-object "BeagleQueryableStatus")
-  (c-name "beagle_queryable_status_ref")
-  (return-type "BeagleQueryableStatus*")
-)
-
-(define-method unref
-  (of-object "BeagleQueryableStatus")
-  (c-name "beagle_queryable_status_unref")
-  (return-type "none")
-)
-
-(define-method get_name
-  (of-object "BeagleQueryableStatus")
-  (c-name "beagle_queryable_status_get_name")
-  (return-type "const-char*")
-)
-
-(define-method get_item_count
-  (of-object "BeagleQueryableStatus")
-  (c-name "beagle_queryable_status_get_item_count")
-  (return-type "int")
-)
-
-(define-method get_state
-  (of-object "BeagleQueryableStatus")
-  (c-name "beagle_queryable_status_get_state")
-  (return-type "BeagleQueryableState")
-)
-
-(define-method get_progress_percent
-  (of-object "BeagleQueryableStatus")
-  (c-name "beagle_queryable_status_get_progress_percent")
-  (return-type "int")
-)
-
-(define-method get_is_indexing
-  (of-object "BeagleQueryableStatus")
-  (c-name "beagle_queryable_status_get_is_indexing")
-  (return-type "gboolean")
-)
-
-;; From ../../libbeagle/beagle/beagle-request.h
-
-(define-function beagle_request_get_type
-  (c-name "beagle_request_get_type")
-  (return-type "GType")
-)
-
-
-
-;; From ../../libbeagle/beagle/beagle-response.h
-
-(define-function beagle_response_get_type
-  (c-name "beagle_response_get_type")
-  (return-type "GType")
 )
 
 
@@ -1379,6 +1465,14 @@
   )
 )
 
+(define-function beagle_util_get_socket_path
+  (c-name "beagle_util_get_socket_path")
+  (return-type "gchar*")
+  (parameters
+    '("const-char*" "client_name")
+  )
+)
+
 (define-function beagle_util_daemon_is_running
   (c-name "beagle_util_daemon_is_running")
   (return-type "gboolean")
@@ -1404,16 +1498,3 @@
   (c-name "BeagleTimestamp")
   (gtype-id "BEAGLE_TYPE_TIMESTAMP")    
 )
-
-(define-pointer QueryableStatus
-  (in-module "Beagle")
-  (c-name "BeagleQueryableStatus")
-  (gtype-id "BEAGLE_TYPE_QUERYABLE_STATUS")
-)
-
-(define-pointer SchedulerInformation
-  (in-module "Beagle")
-  (c-name "BeagleSchedulerInformation")
-  (gtype-id "BEAGLE_TYPE_SCHEDULER_INFORMATION")
-)
-

@@ -47,6 +47,7 @@
 #include <beagle/beagle-query-part-or.h>
 #include <beagle/beagle-query-part-property.h>
 #include <beagle/beagle-query-part-text.h>
+#include <beagle/beagle-query-part-wildcard.h>
 #include <beagle/beagle-queryable-status.h>
 #include <beagle/beagle-request.h>
 #include <beagle/beagle-response.h>
