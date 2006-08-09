@@ -30,7 +30,7 @@
 #include <config.h>
 #include <stdlib.h>
 
-#if HAVE_LIBXSS == 1
+#ifdef HAVE_LIBXSS
 #include <X11/Xlib.h>
 #include <X11/extensions/scrnsaver.h>
 
@@ -42,7 +42,7 @@ static Display *dsp = NULL;
 int
 screensaver_glue_init ()
 {
-#if HAVE_LIBXSS == 1
+#ifdef HAVE_LIBXSS
     // screensaver_info is called only from the Scheduler thread; thus we dont need to enable XInitThreads()
     dsp = XOpenDisplay(getenv("DISPLAY"));
     return (dsp == NULL ? 0 : 1);
@@ -54,7 +54,7 @@ screensaver_glue_init ()
 int 
 screensaver_info (int *state, int *kind, unsigned long *til_or_since, unsigned long *idle)
 {
-#if HAVE_LIBXSS == 1
+#ifdef HAVE_LIBXSS
     XScreenSaverInfo ss_info;
     int retval;
     static int inited = 0;

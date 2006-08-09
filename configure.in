@@ -165,10 +165,13 @@ CFLAGS="$CFLAGS $X_CFLAGS"
 LDFLAGS="$LDFLAGS $X_LIBS"
 AC_CHECK_HEADER(X11/extensions/scrnsaver.h, enable_scrnsaver=yes, enable_scrnsaver=no)
 AC_CHECK_LIB(Xss,XScreenSaverQueryExtension, enable_libxss=yes, enable_libxss=no)
+have_xss=no
 if test "x$enable_xss$enable_scrnsaver$enable_libxss" = "xyesyesyes"; then
 	XSS_LIBS="-lXss"
+	have_xss=yes
 	AC_DEFINE(HAVE_LIBXSS,1,[Define to 1 if libXss is installed])
 fi
+AM_CONDITIONAL(ENABLE_LIBXSS, test "x$have_xss" = "xyes")
 CFLAGS="$OLD_CFLAGS"
 LDFLAGS="$OLD_LDFLAGS"
 LIBS="$OLD_LIBS"
@@ -701,7 +704,7 @@ echo "
 	Enable WebServices	  no (WebServices are deprecated)
 	Enable libbeagle	  ${enable_libbeagle}
 	Enable python bindings	  ${have_python}
-	Monitor xscreensaver      `test "$XSS_LIBS" = "-lXss" && echo yes || echo no`
+	Monitor screensaver       ${have_xss}
 
 	Enable beagle-search GUI  ${enable_gui}
 	Enable \"Open With\" menu   ${OPEN_WITH}

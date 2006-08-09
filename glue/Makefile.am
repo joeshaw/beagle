@@ -1,4 +1,4 @@
-INCLUDES = $(SYSTEMINFO_GLUE_CFLAGS)
+INCLUDES =
 
 if ENABLE_GUI
 INCLUDES += 				\
@@ -26,7 +26,10 @@ SYSINFO_GLUE_SOURCES =		\
 	screensaver-glue.c	\
 	thread-glue.c		\
 	vmsize-glue.c
-SYSINFO_GLUE_LIBADD = $(SYSTEMINFO_GLUE_LIBS) $(SYSTEMINFO_GLUE_X_LIBS)
+
+if ENABLE_LIBXSS
+SYSINFO_GLUE_LIBADD = $(SYSTEMINFO_GLUE_X_LIBS)
+endif
 
 KEY_GLUE_SOURCES =	 	\
 	tomboykeybinder.c	\
