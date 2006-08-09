@@ -28,6 +28,7 @@
 using System;
 using System.IO;
 using System.Collections;
+using System.Text;
 using System.Xml.Serialization;
 
 using BU = Beagle.Util;
@@ -43,6 +44,7 @@ namespace Beagle {
 	 XmlInclude (typeof (QueryPart_Property)),
 	 XmlInclude (typeof (QueryPart_DateRange)),
 	 XmlInclude (typeof (QueryPart_Human)),
+	 XmlInclude (typeof (QueryPart_Wildcard)),
 	 XmlInclude (typeof (QueryPart_Or))]
 	abstract public class QueryPart {
 
@@ -54,6 +56,11 @@ namespace Beagle {
 		public QueryPartLogic Logic {
 			get { return logic; }
 			set { logic = value; }
+		}
+
+		public override string ToString ()
+		{
+			return String.Format ("{0}:\n  Logic: {1}\n", this.GetType (), Logic);
 		}
 	}
 
@@ -79,6 +86,16 @@ namespace Beagle {
 		public bool SearchTextProperties {
 			get { return search_properties; }
 			set { search_properties = value; }
+		}
+
+		public override string ToString ()
+		{
+			return String.Format (
+				base.ToString () +
+				"  Text: {0}\n" +
+				"  Search full text: {1}\n" +
+				"  Search text properties: {2}",
+				Text, SearchFullText, SearchTextProperties);
 		}
 	}
 
@@ -108,6 +125,16 @@ namespace Beagle {
 			get { return value; }
 			set { this.value = value; } // ugh
 		}
+
+		public override string ToString ()
+		{
+			return String.Format (
+				base.ToString () +
+				"  Type: {0}\n" +
+				"  Key: {1}\n" +
+				"  Value: {2}",
+				Type, Key, Value);
+		}
 	}
 
 	public class QueryPart_DateRange : QueryPart {
@@ -136,6 +163,16 @@ namespace Beagle {
 			get { return end_date; }
 			set { end_date = value; }
 		}
+
+		public override string ToString ()
+		{
+			return String.Format (
+				base.ToString () +
+				"  Key: {0}\n" +
+				"  Start date: {1}\n" +
+				"  End date: {2}",
+				Key, StartDate, EndDate);
+		}
 	}
 
 	public class QueryPart_Human : QueryPart {
@@ -148,6 +185,35 @@ namespace Beagle {
 		public string QueryString {
 			get { return query_string; }
 			set { query_string = value; }
+		}
+
+		public override string ToString ()
+		{
+			return String.Format (
+				base.ToString () + 
+				"  QueryString: {0}",
+				QueryString);
+		}
+	}
+
+	public class QueryPart_Wildcard : QueryPart {
+		
+		private string query_string;
+
+		public QueryPart_Wildcard ()
+		{ }
+
+		public string QueryString {
+			get { return query_string; }
+			set { query_string = value; }
+		}
+
+		public override string ToString ()
+		{
+			return String.Format (
+				base.ToString () +
+				"  QueryString: {0}",
+				QueryString);
 		}
 	}
 
@@ -176,6 +242,16 @@ namespace Beagle {
 		public void Add (QueryPart part)
 		{
 			sub_parts.Add (part);
+		}
+
+		public override string ToString ()
+		{
+			StringBuilder sb = new StringBuilder (base.ToString ());
+
+			foreach (QueryPart p in sub_parts)
+				sb.Append ("  " + p.ToString () + "\n");
+
+			return sb.ToString ();
 		}
 	}
 }

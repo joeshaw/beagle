@@ -383,5 +383,15 @@ namespace Beagle {
 				      && mimeTypes.Count == 0
 				      && searchSources.Count == 0; }
 		}
+
+		public override string ToString ()
+		{
+			StringBuilder sb = new StringBuilder ();
+
+			foreach (QueryPart p in parts)
+				sb.Append (p.ToString () + "\n");
+
+			return sb.ToString ();
+		}
 	}
 }

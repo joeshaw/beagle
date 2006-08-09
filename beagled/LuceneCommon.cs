@@ -1231,6 +1231,46 @@ namespace Beagle.Daemon {
 				return;
 			}
 
+			if (abstract_part is QueryPart_Wildcard) {
+				QueryPart_Wildcard part = (QueryPart_Wildcard) abstract_part;
+
+				LNS.BooleanQuery p_query = new LNS.BooleanQuery ();
+				LNS.BooleanQuery s_query = new LNS.BooleanQuery ();
+				
+				Term term;
+				LNS.Query subquery;
+
+				// Search text content
+				term = new Term ("text", part.QueryString);
+				subquery = new LNS.WildcardQuery (term);
+				p_query.Add (subquery, false, false);
+				term_list.Add (term);
+
+				// Search text properties
+				term = new Term ("PropertyText", part.QueryString);
+				subquery = new LNS.WildcardQuery (term);
+				p_query.Add (subquery, false, false);
+				// Properties can live in either index
+				if (! only_build_primary_query)
+					s_query.Add (subquery.Clone () as LNS.Query, false, false);
+				term_list.Add (term);
+
+				// Search property keywords
+				term = new Term ("PropertyKeyword", part.QueryString);
+				term_list.Add (term);
+				subquery = new LNS.WildcardQuery (term);
+				p_query.Add (subquery, false, false);
+				// Properties can live in either index
+				if (! only_build_primary_query)
+					s_query.Add (subquery.Clone () as LNS.Query, false, false);
+
+				primary_query = p_query;
+				if (! only_build_primary_query)
+					secondary_query = s_query;
+
+				return;
+			}
+
 			if (abstract_part is QueryPart_Property) {
 				QueryPart_Property part = (QueryPart_Property) abstract_part;
 

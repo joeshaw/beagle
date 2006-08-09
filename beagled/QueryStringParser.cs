@@ -130,9 +130,23 @@ namespace Beagle.Daemon {
 			return parts;
 		}
 
+		static private QueryPart StringToQueryPart (string text, bool is_prohibited)
+		{
+			QueryPart part;
 
+			if (text.IndexOf ('*') != -1) {
+				part = new QueryPart_Wildcard ();
+				((QueryPart_Wildcard) part).QueryString = text;
+			} else {
+				part = new QueryPart_Text ();
+				((QueryPart_Text) part).Text = text;
+			}
 
-		static private QueryPart MatchToQueryPart(Match m) 
+			part.Logic = (is_prohibited ? QueryPartLogic.Prohibited : QueryPartLogic.Required);
+			return part;
+		}
+
+		static private QueryPart MatchToQueryPart (Match m) 
 		{
 			// Looping over all Matches we have got:
 			// m.Groups["pm"]	plus or minus sign 
@@ -149,18 +163,22 @@ namespace Beagle.Daemon {
 				
 
 			// check for file extensions
-			// if match starts with . and only contains letters we assume it's a file extension
-			Regex extension_re = new Regex (@"^\.\w*$");
+			// if match starts with *. or . and only contains letters we assume it's a file extension
+			Regex extension_re = new Regex (@"^\**\.\w*$");
 
-			if (extension_re.Match (unquote).Success || key.ToLower () == "ext") {
+			if (extension_re.Match (text).Success || key.ToLower () == "ext") {
 				
 				QueryPart_Property query_part = new QueryPart_Property ();
 
 				query_part.Key = FSQ.FileSystemQueryable.FilenameExtensionPropKey;
-				if (!text.StartsWith ("."))
-					query_part.Value = "." + text.ToLower ();
+
+				if (text.StartsWith ("*."))
+					query_part.Value = text.Substring (1).ToLower ();
+				else if (text.StartsWith ("."))
+					query_part.Value = text.ToLower ();
 				else
-					query_part.Value = text.ToLower (); // the whole .abc part
+					query_part.Value = "." + text.ToLower ();
+
 				query_part.Type = PropertyType.Keyword;
 				query_part.Logic = (IsProhibited ? QueryPartLogic.Prohibited : QueryPartLogic.Required);
 				
@@ -170,14 +188,10 @@ namespace Beagle.Daemon {
 			}
 
 			if (key == "") {
-				
-				QueryPart_Text query_part = new QueryPart_Text ();
-				query_part.Text = text;
-				query_part.Logic = (IsProhibited ? QueryPartLogic.Prohibited : QueryPartLogic.Required);
-				
+
 				Logger.Log.Debug ("Parsed query '{0}' as text_query", text);
-				
-				return query_part; 
+
+				return StringToQueryPart (text, IsProhibited);
 			}
 
 			string prop_string = null;
@@ -193,13 +207,9 @@ namespace Beagle.Daemon {
 
 			if (!is_present) {
 
-				QueryPart_Text query_part = new QueryPart_Text ();
-				query_part.Text = query;
-				query_part.Logic = (IsProhibited ? QueryPartLogic.Prohibited : QueryPartLogic.Required);
-
 				Logger.Log.Debug ("Could not find property, parsed query '{0}' as text_query", query);
 
-				return query_part;
+				return StringToQueryPart (query, IsProhibited);
 			}
 
 			QueryPart_Property query_part_prop = new QueryPart_Property ();
