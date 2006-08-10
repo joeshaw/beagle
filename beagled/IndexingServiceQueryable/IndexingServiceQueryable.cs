@@ -77,50 +77,32 @@ namespace Beagle.Daemon.IndexingServiceQueryable {
 			if (Inotify.Enabled)
 				Inotify.Subscribe (index_path, OnInotifyEvent, Inotify.EventType.CloseWrite);
 
-			Logger.Log.Info ("Scanning for files in the IndexingService directory...");
-			Stopwatch stopwatch = new Stopwatch ();
-			stopwatch.Start ();
-			int count = 0;
+			Logger.Log.Info ("Setting up an initial crawl of the IndexingService directory");
 
 			State = QueryableState.Crawling;
-			foreach (FileInfo file in DirectoryWalker.GetFileInfos (index_path)) {
-				if (file.Name[0] == '.')
+
+			IndexableGenerator generator = new IndexableGenerator (GetIndexables (index_path));
+			Scheduler.Task task = NewAddTask (generator);
+			task.Tag = "IndexingService initial crawl";
+			ThisScheduler.Add (task);
+
+			State = QueryableState.Idle;
+		}
+
+		private IEnumerable GetIndexables (string path)
+		{
+			foreach (FileInfo file in DirectoryWalker.GetFileInfos (path)) {
+				if (file.Name [0] == '.')
 					continue;
 
-				if (File.Exists (Path.Combine (file.DirectoryName, "." + file.Name))) {
-					IndexFile (file, Scheduler.Priority.Delayed);
-					count++;
-				}
+				if (File.Exists (Path.Combine (file.DirectoryName, "." + file.Name)))
+					yield return FileToIndexable (file);
 			}
-			State = QueryableState.Idle;
 
-			stopwatch.Stop ();
-			Logger.Log.Info ("Indexed {0} Indexing Service items in {1}", count, stopwatch);
+			yield break;
 		}
 
-		private void OnInotifyEvent (Inotify.Watch watch,
-					     string path,
-					     string subitem,
-					     string srcpath,
-					     Inotify.EventType type)
-		{
-			if (subitem == "")
-				return;
-			
-			if (subitem[0] == '.') {
-				string data_file = Path.Combine (path, subitem.Substring (1));
-
-				if (File.Exists (data_file))
-					IndexFile (new FileInfo (data_file), Scheduler.Priority.Immediate);
-			} else {
-				string meta_file = Path.Combine (path, "." + subitem);
-
-				if (File.Exists (meta_file))
-					IndexFile (new FileInfo (Path.Combine (path, subitem)), Scheduler.Priority.Immediate);
-			}
-		}
-
-		private void IndexFile (FileInfo data_file, Scheduler.Priority priority)
+		private Indexable FileToIndexable (FileInfo data_file)
 		{
 			FileInfo meta_file = new FileInfo (Path.Combine (data_file.DirectoryName, "." + data_file.Name));
 			FileStream meta_stream;
@@ -130,7 +112,7 @@ namespace Beagle.Daemon.IndexingServiceQueryable {
 			} catch (FileNotFoundException) {
 				// The meta file disappeared before we could
 				// open it.
-				return;
+				return null;
 			}
 
 			StreamReader reader = new StreamReader (meta_stream);
@@ -142,10 +124,9 @@ namespace Beagle.Daemon.IndexingServiceQueryable {
 			try {
 				uri = new Uri (line);
 			} catch (Exception e) {
-				Logger.Log.Warn ("IndexingService: Unable to parse URI in {0}: {1}",
-						 meta_file.FullName, e.Message);
+				Logger.Log.Warn (e, "IndexingService: Unable to parse URI in {0}:", meta_file.FullName);
 				meta_stream.Close ();
-				return;
+				return null;
 			}
 
 			Indexable indexable = new Indexable (uri);
@@ -159,7 +140,7 @@ namespace Beagle.Daemon.IndexingServiceQueryable {
 				Logger.Log.Warn ("IndexingService: EOF reached trying to read hit type from {0}",
 						 meta_file.FullName);
 				meta_stream.Close ();
-				return;
+				return null;
 			} else if (line != String.Empty)
 				indexable.HitType = line;
 
@@ -169,7 +150,7 @@ namespace Beagle.Daemon.IndexingServiceQueryable {
 				Logger.Log.Warn ("IndexingService: EOF reached trying to read mime type from {0}",
 						 meta_file.FullName);
 				meta_stream.Close ();
-				return;
+				return null;
 			} else if (line != String.Empty)
 				indexable.MimeType = line;
 
@@ -205,23 +186,82 @@ namespace Beagle.Daemon.IndexingServiceQueryable {
 				}
 			} while (line != null);
 
-			// Ok, we're finished with the meta file.  We can close and delete it.
+			indexable.LocalState ["MetaFile"] = meta_file;
+			
+			// Ok, we're finished with the meta file.  It will be
+			// deleted in PostAddHook ().
 			meta_stream.Close ();
-			meta_file.Delete ();
+
+			return indexable;
+		}
+
+		// Bleh, we need to keep around a list of pending items to be
+		// indexed so that we don't actually index it twice because
+		// the order of the creation of the data file and meta file
+		// isn't defined.
+		private ArrayList pending_files = new ArrayList ();
+
+		private void OnInotifyEvent (Inotify.Watch watch,
+					     string path,
+					     string subitem,
+					     string srcpath,
+					     Inotify.EventType type)
+		{
+			if (subitem == "")
+				return;
+			
+			if (subitem[0] == '.') {
+				string data_file = Path.Combine (path, subitem.Substring (1));
+
+				lock (pending_files) {
+					if (File.Exists (data_file) && ! pending_files.Contains (data_file)) {
+						pending_files.Add (data_file);
+						IndexFile (new FileInfo (data_file));
+					}
+				}
+			} else {
+				string meta_file = Path.Combine (path, "." + subitem);
+				string data_file = Path.Combine (path, subitem);
+
+				lock (pending_files) {
+					if (File.Exists (meta_file) && ! pending_files.Contains (data_file)) {
+						pending_files.Add (data_file);
+						IndexFile (new FileInfo (data_file));
+					}
+				}
+			}
+		}
+
+		private void IndexFile (FileInfo data_file)
+		{
+			Indexable indexable = FileToIndexable (data_file);
 
 			Scheduler.Task task = NewAddTask (indexable);
-			task.Priority = priority;
+			task.Priority = Scheduler.Priority.Immediate;
 			ThisScheduler.Add (task);
+		}
+
+		protected override void PostAddHook (Indexable indexable, IndexerAddedReceipt receipt)
+		{
+			FileInfo meta_file = (FileInfo) indexable.LocalState ["MetaFile"];
+			meta_file.Delete ();
+
+			lock (pending_files)
+				pending_files.Remove (indexable.ContentUri.LocalPath);
 		}
 
 		private class IndexableGenerator : IIndexableGenerator {
 			private IEnumerator to_add_enumerator;
-			private int count, done_count = 0;
+			private int count = -1, done_count = 0;
 
-			public IndexableGenerator (ICollection to_add)
+			public IndexableGenerator (IEnumerable to_add)
+			{
+				this.to_add_enumerator = to_add.GetEnumerator ();
+			}
+
+			public IndexableGenerator (ICollection to_add) : this ((IEnumerable) to_add)
 			{
 				this.count = to_add.Count;
-				this.to_add_enumerator = to_add.GetEnumerator ();
 			}
 
 			public Indexable GetNextIndexable ()
@@ -236,7 +276,12 @@ namespace Beagle.Daemon.IndexingServiceQueryable {
 			}
 
 			public string StatusName {
-				get { return String.Format ("IndexingService: {0} of {1}", done_count, count); }
+				get { 
+					if (count == -1)
+						return String.Format ("IndexingService: {0}", done_count);
+					else
+						return String.Format ("IndexingService: {0} of {1}", done_count, count);
+				}
 			}
 
 			public void PostFlushHook ()
