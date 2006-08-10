@@ -226,14 +226,25 @@ namespace Beagle.Util {
 			}
 
 			line = line.Substring (j+2);
-						
+
 			// Extract the alias
-			// FIXME: This will break if there is a ':' in the nickname
-			int i = line.IndexOf (':');
-			if (i == -1)
-				return;
-			string alias = line.Substring (0, i);
-			string text = line.Substring (i+2);
+			string alias, text;
+			int i;
+
+			if (line.StartsWith ("***")) {
+				i = line.IndexOf (' ');
+
+				alias = line.Substring (3, i);
+				text = line.Substring (i + 1);
+			} else {
+				// FIXME: This will break if there is a ':' in the nickname
+				i = line.IndexOf (':');
+				if (i == -1)
+					return;
+
+				alias = line.Substring (0, i);
+				text = line.Substring (i + 2);
+			}
 
 			AddUtterance (timestamp, alias, text);
 

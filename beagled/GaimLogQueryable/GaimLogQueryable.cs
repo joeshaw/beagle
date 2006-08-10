@@ -310,9 +310,17 @@ namespace Beagle.Daemon.GaimLogQueryable {
 
 		override protected bool HitFilter (Hit hit) 
 		{
-			ImBuddy buddy = list.Search (hit ["fixme:speakingto"]);
+			string speakingto = hit ["fixme:speakingto"];
+
+			// We have no idea who we're speaking to.  Bad, but we
+			// still want to present it.
+			if (speakingto == null || speakingto == String.Empty)
+				return true;
+
+			ImBuddy buddy = list.Search (speakingto);
 			
-			//We might still want to see a chat even if someones not on our buddy list
+			// We might still want to see a chat even if someone's
+			// not on our buddy list.
 			if (buddy == null) 
 				return true;
 			

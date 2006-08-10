@@ -536,7 +536,7 @@ namespace Beagle.Daemon {
 				if (HasError)
 					return false;				
 			} catch (Exception e) {
-				Logger.Log.Warn ("Unable to filter {0}: {1}", info.FullName, e.Message);
+				Log.Warn (e, "Unable to filter {0}:", info.FullName);
 				Cleanup (); // clean up temporary files on an exception
 				return false;
 			}

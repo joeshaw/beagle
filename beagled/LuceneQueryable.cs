@@ -297,12 +297,35 @@ namespace Beagle.Daemon {
 				if (query.IsIndexListener) {
 					ArrayList synthetic_hits = new ArrayList ();
 					foreach (Uri uri in added_uris) {
-						if (our_uri_filter != null && ! our_uri_filter (uri))
-							continue;
+						if (our_uri_filter != null) {
+							bool accept = false;
+
+							try {
+								accept = our_uri_filter (uri);
+							} catch (Exception e) {
+								Log.Warn (e, "Caught an exception in HitIsValid for {0}", uri);
+							}
+
+							if (! accept)
+								continue;
+						}
+
 						Hit hit = new Hit ();
 						hit.Uri = uri;
-						if (our_hit_filter != null && ! our_hit_filter (hit))
-							continue;
+
+						if (our_hit_filter != null) {
+							bool accept = false;
+
+							try {
+								accept = our_hit_filter (hit);
+							} catch (Exception e) {
+								Log.Warn (e, "Caught an exception in HitFilter for {0}", hit.Uri);
+							}
+
+							if (! accept)
+								continue;
+						}
+
 						synthetic_hits.Add (hit);
 					}
 					if (synthetic_hits.Count > 0)

@@ -73,7 +73,11 @@ namespace Beagle.Util {
 			PruneOldLogs ();
 
 			log_name_prefix = String.Format ("{0:yyyy-MM-dd-HH-mm-ss}-", DateTime.Now);
-			program_identifier_truncated = program_identifier.Substring (0, 6);
+
+			if (program_identifier.Length > 6)
+				program_identifier_truncated = program_identifier.Substring (0, 6);
+			else
+				program_identifier_truncated = program_identifier;
 
 			log_writer = NewLogWriter (program_identifier);
 			exception_writer = NewDelayedLogWriter (program_identifier + "Exceptions");

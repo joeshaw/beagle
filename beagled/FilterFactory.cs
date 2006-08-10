@@ -133,52 +133,6 @@ namespace Beagle.Daemon {
 
 		/////////////////////////////////////////////////////////////////////////
 
-		static public TextReader FilterFile (string path)
-		{
-			return FilterFile (path, null);
-		}
-		
-		static public TextReader FilterFile (string path, string mime_type)
-		{
-			if (mime_type == null)
-				mime_type = XdgMime.GetMimeType (path);
-			else {
-				// Mime types are all lower-case by convention
-				// and all the filters expect them that way,
-				// but we can't trust that they already are
-				// when we get it from somewhere other than
-				// xdgmime.  They are often capitalized in
-				// emails, for example.
-
-				mime_type = mime_type.ToLower ();
-			}
-
-			if (mime_type == null)
-				return null;
-
-			ICollection filters = CreateFilters (UriFu.PathToFileUri (path), Path.GetExtension (path), mime_type);
-			TextReader reader;
-			
-			foreach (Filter candidate_filter in filters) {
-				if (Debug)
-					Logger.Log.Debug ("Testing filter: {0}", candidate_filter);
-						
-				// Open the filter, and hook up the TextReader.
-				if (candidate_filter.Open (path)) {
-					reader = candidate_filter.GetTextReader ();
-					
-					if (Debug)
-						Logger.Log.Debug ("Successfully filtered {0} with {1}", path, candidate_filter);
-					
-					return reader;
-				} else if (Debug) {
-					Logger.Log.Debug ("Unsuccessfully filtered {0} with {1}, falling back", path, candidate_filter);
-				}
-			}		
-
-			return null;
-		} 
-
 		static private bool ShouldWeFilterThis (Indexable indexable)
 		{
 			if (indexable.Filtering == IndexableFiltering.Never

@@ -28,11 +28,16 @@ namespace Search.Tiles {
 			Group = TileGroup.Conversations;
 
 			Subject.LabelProp = Catalog.GetString ("IM Conversation");
+
 			string alias = hit.GetFirstProperty ("fixme:speakingto_alias");
-			if ( alias != null && alias != "" )
+			string name = hit.GetFirstProperty ("fixme:speakingto");
+
+			if (alias != null && alias != "")
 				From.LabelProp = "<b>" + alias + "</b>";
+			else if (name != null && name != "")
+				From.LabelProp = "<b>" + name + "</b>";
 			else
-				From.LabelProp = "<b>" + hit.GetFirstProperty ("fixme:speakingto") + "</b>";
+				From.LabelProp = "(unknown)";
 
 			try {
 				Timestamp = Utils.ParseTimestamp (hit.GetFirstProperty ("fixme:starttime"));
