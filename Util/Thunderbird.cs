@@ -718,7 +718,7 @@ namespace Beagle.Util {
 				reader = new StreamReader (Path.Combine (profile_dir, "prefs.js"));
 			} catch (Exception e) {
 				if (Debug)
-					Logger.Log.Debug ("Failed to open file {0}: {1}", Path.Combine (profile_dir , "prefs.js"), e.Message);
+					Logger.Log.Debug (e, "Failed to open file {0}:", Path.Combine (profile_dir , "prefs.js"));
 
 				return account_list;
 			}
@@ -740,7 +740,7 @@ namespace Beagle.Util {
 					tbl [key] = reg.Match (line).Result ("${value}");
 				} catch (Exception e) { 
 					if (Debug)
-						Logger.Log.Debug ("ReadAccounts 1: {0}", e.Message);				
+						Logger.Log.Debug (e, "ReadAccounts 1:");
 				}
 			}
 			
@@ -765,7 +765,7 @@ namespace Beagle.Util {
 						(string) tbl [id + ".directory"], Convert.ToInt32 ((string) tbl [id + ".port"]), type, delimiter));
 				} catch (Exception e) {
 					if (Debug)
-						Logger.Log.Debug ("ReadAccounts 3: {0}", e.Message);
+						Logger.Log.Debug (e, "ReadAccounts 3:");
 					continue;
 				}
 			}

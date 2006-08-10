@@ -193,8 +193,7 @@ namespace Beagle.Filters {
 
 				PullMetaData (sum_stream, doc_stream);
 			} catch (Exception e) {
-				Logger.Log.Error ("Exception occurred duing DoPullProperties.");
-				Logger.Log.Error (e);
+				Logger.Log.Error (e, "Exception occurred duing DoPullProperties.");
 				Error ();
 			}
 		}

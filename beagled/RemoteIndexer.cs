@@ -154,8 +154,7 @@ namespace Beagle.Daemon {
 						Logger.Log.Debug ("InnerException is IOException -- we probably need to launch a helper");
 						need_helper = true;
 					} else {
-						Logger.Log.Debug ("Exception was unexpected.");
-						Logger.Log.Debug (ex);
+						Logger.Log.Debug (ex, "Exception was unexpected.");
 					}
 				}
 

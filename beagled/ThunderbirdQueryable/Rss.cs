@@ -83,7 +83,7 @@ namespace Beagle.Daemon.ThunderbirdQueryable {
 				feed_url = tbl ["feedUrl"] as string;
 				folder_name = tbl ["folderName"] as string;
 			} catch (Exception e) {
-				Logger.Log.Debug ("Failed to load {0}: {1}", DbFile, e.Message);
+				Logger.Log.Warn (e, "Failed to load {0}:", DbFile);
 				return;
 			}
 			

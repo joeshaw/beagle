@@ -174,8 +174,7 @@ namespace Beagle.Daemon {
 					try {
 						iq = Activator.CreateInstance (type) as IQueryable;
 					} catch (Exception e) {
-						Logger.Log.Error ("Caught exception while instantiating {0} backend", flavor.Name);
-						Logger.Log.Error (e);
+						Logger.Log.Error (e, "Caught exception while instantiating {0} backend", flavor.Name);
 					}
 
 					if (iq != null) {
@@ -306,8 +305,7 @@ namespace Beagle.Daemon {
 				Logger.Log.Warn ("Unable to create read-only index (likely due to index version mismatch): {0}", index_dir.FullName);
 				return false;
 			} catch (Exception e) {
-				Logger.Log.Error ("Caught exception while instantiating static queryable: {0}", index_dir.Name);
-				Logger.Log.Error (e);					
+				Logger.Log.Error (e, "Caught exception while instantiating static queryable: {0}", index_dir.Name);
 				return false;
 			}
 			

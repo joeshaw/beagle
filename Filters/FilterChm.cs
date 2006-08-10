@@ -53,23 +53,14 @@ namespace Beagle.Filters {
 			
 
 			try {
-				
 				chmFile.Load(info.FullName);
-				
-			}
-			catch (Exception e) {
-				
-				Logger.Log.Warn ("Could not load {0}: {1}", info.Name, e.Message);
+			} catch (Exception e) {
+				Logger.Log.Warn (e, "Could not load {0}:", info.Name);
 				Finished ();
 				return;
-
 			}
 
-						
 			chmFile.ParseContents (FilterFileContents);
-					
-			
-			
 		}
 
 		public void FilterFileContents(TextReader text) {
@@ -83,7 +74,7 @@ namespace Beagle.Filters {
 				
 			} 
 			catch (Exception e) {
-				Logger.Log.Warn ("Error parsing file contents: {0}",e.Message);
+				Logger.Log.Warn (e, "Error parsing file contents");
 				//Console.WriteLine (e.Message);
 				//Console.WriteLine (e.StackTrace);
 			}

@@ -150,8 +150,7 @@ namespace Beagle.Daemon {
 				try {
 					ShutdownEvent ();
 				} catch (Exception ex) {
-					Logger.Log.Warn ("Caught unhandled exception during shutdown event");
-					Logger.Log.Warn (ex);
+					Logger.Log.Warn (ex, "Caught unhandled exception during shutdown event");
 				}
 			}
 

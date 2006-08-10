@@ -257,8 +257,7 @@ namespace Beagle.Daemon {
 				try {
 					FilterFactory.FilterIndexable (indexable, text_cache, out filter);
 				} catch (Exception e) {
-					Logger.Log.Error ("Unable to filter {0} (mimetype={1})", indexable.DisplayUri, indexable.MimeType);
-					Logger.Log.Error (e);
+					Logger.Log.Error (e, "Unable to filter {0} (mimetype={1})", indexable.DisplayUri, indexable.MimeType);
 					indexable.NoContent = true;
 				}
 					
@@ -274,8 +273,7 @@ namespace Beagle.Daemon {
 					// and try again -- that way it will at least end up in the index,
 					// even if we don't manage to extract the fulltext.
 
-					Logger.Log.Debug ("First attempt to index {0} failed", indexable.DisplayUri);
-					Logger.Log.Debug (ex);
+					Logger.Log.Debug (ex, "First attempt to index {0} failed", indexable.DisplayUri);
 					
 					indexable.NoContent = true;
 						
@@ -283,8 +281,7 @@ namespace Beagle.Daemon {
 						BuildDocuments (indexable, out primary_doc, out secondary_doc);
 						primary_writer.AddDocument (primary_doc);
 					} catch (Exception ex2) {
-						Logger.Log.Debug ("Second attempt to index {0} failed, giving up...", indexable.DisplayUri);
-						Logger.Log.Debug (ex2);
+						Logger.Log.Debug (ex2, "Second attempt to index {0} failed, giving up...", indexable.DisplayUri);
 					}
 				}
 				

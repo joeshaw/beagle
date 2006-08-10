@@ -55,8 +55,7 @@ namespace Beagle.IndexHelper {
 			try {
 				DoMain (args);
 			} catch (Exception ex) {
-				Logger.Log.Error ("Unhandled exception thrown.  Exiting immediately.");
-				Logger.Log.Error (ex);
+				Logger.Log.Error (ex, "Unhandled exception thrown.  Exiting immediately.");
 				Environment.Exit (1);
 			}
 		}
@@ -112,8 +111,7 @@ namespace Beagle.IndexHelper {
 				server.Start ();
 				server_has_been_started = true;
 			} catch (InvalidOperationException ex) {
-				Logger.Log.Error ("Couldn't start server:");
-				Logger.Log.Error (ex);
+				Logger.Log.Error (ex, "Couldn't start server:");
 			}
 
 			if (server_has_been_started) {

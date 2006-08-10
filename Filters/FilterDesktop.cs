@@ -53,7 +53,7 @@ namespace Beagle.Filters {
 			try {
 				reader = new StreamReader (file.FullName);
 			} catch (Exception e) {
-				Logger.Log.Error ("Could not open '{0}': {1}", file.FullName, e.Message);
+				Logger.Log.Error (e, "Could not open '{0}':", file.FullName);
 				Error ();
 				return;
 			}

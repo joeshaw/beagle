@@ -215,9 +215,7 @@ namespace Beagle {
 					BeginRead ();
 
 			} catch (Exception e) {
-				Logger.Log.Error ("Got an exception while trying to read data:");
-				Logger.Log.Error (e);
-
+				Logger.Log.Error (e, "Got an exception while trying to read data:");
 			}
 		}
 

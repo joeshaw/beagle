@@ -83,11 +83,11 @@ namespace Beagle.Filters {
 
 			} catch (InvalidOperationException ex) {
 				// Something wrong with the XML
-				Logger.Log.Error ("Unable to parse {0}: {1}", path, ex.Message);
+				Logger.Log.Error (ex, "Unable to parse {0}", path);
 
 			} catch (XmlException ex) {
 				// Something else wrong with the XML
-				Logger.Log.Error ("Unable to parse {0}: {1}", path, ex.Message);
+				Logger.Log.Error (ex, "Unable to parse {0}", path);
 			}
 
 			if (this.filters == null)

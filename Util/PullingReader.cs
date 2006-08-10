@@ -59,8 +59,7 @@ namespace Beagle.Util {
 				try { 
 					done = ! pull (pullBuffer);
 				} catch (Exception e) {
-					Logger.Log.Debug ("Caught exception pulling text from {0}", pull);
-					Logger.Log.Debug (e);
+					Logger.Log.Debug (e, "Caught exception pulling text from {0}", pull);
 				}
 			}
 		}

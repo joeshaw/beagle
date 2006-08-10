@@ -257,7 +257,7 @@ namespace Beagle.Daemon.LifereaQueryable {
 					}
 				} while (!reader.EOF && reader.NodeType == XmlNodeType.Element);
 			} catch (XmlException ex) {
-				Logger.Log.Debug ("Invalid feed file: " + ex.Message);
+				Logger.Log.Warn (ex, "Caught exception parsing feed file:");
 				is_valid_file = false;
 				reader.Close ();
 			}

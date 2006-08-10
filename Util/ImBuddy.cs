@@ -142,7 +142,7 @@ namespace Beagle.Util {
 					AddBuddy (buddy);
 				}
 			} catch (Exception ex) {
-				Logger.Log.Error ("Caught exception while trying to parse Gaim contact list: {0}", ex.Message);
+				Logger.Log.Error (ex, "Caught exception while trying to parse Gaim contact list:");
 			}
 		}
 
@@ -349,7 +349,7 @@ namespace Beagle.Util {
 				foreach (XmlNode contact in accounts.SelectNodes ("//meta-contact"))
 					AddContact (contact);
 			} catch (Exception ex) {
-				Logger.Log.Error ("Caught exception while trying to parse Kopete contact list: {0}", ex.Message);
+				Logger.Log.Error (ex, "Caught exception while trying to parse Kopete contact list:");
 			}
 		}
 

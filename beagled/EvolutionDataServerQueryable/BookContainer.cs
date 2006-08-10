@@ -54,7 +54,7 @@ namespace Beagle.Daemon.EvolutionDataServerQueryable {
 				this.book = new Book (this.source);
 				this.book.Open (true);
 			} catch (Exception e) {
-				Logger.Log.Warn ("Unable to open addressbook {0}: {1}", this.source.Uri, e.Message);
+				Logger.Log.Warn (e, "Unable to open addressbook {0}:", this.source.Uri);
 				return false;
 			}
 
@@ -97,7 +97,7 @@ namespace Beagle.Daemon.EvolutionDataServerQueryable {
 			try {
 				this.book.GetChanges ("beagle-" + this.fingerprint, out added, out changed, out removed);
 			} catch (Exception e) {
-				Logger.Log.Warn ("Unable to get changes for {0}: {1}", this.source.Uri, e.Message);
+				Logger.Log.Warn (e, "Unable to get changes for {0}:", this.source.Uri);
 				return;
 			}
 

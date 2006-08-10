@@ -143,8 +143,7 @@ namespace Beagle.Daemon {
 				//Logger.Log.Debug (e);
 				return false;
 			} catch (Exception e) {
-				Logger.Log.Debug ("Caught exception writing EAs to {0}", attr.Path);
-				Logger.Log.Debug (e);
+				Logger.Log.Debug (e, "Caught exception writing EAs to {0}", attr.Path);
 				// FIXME: Do something smarter with the exception.
 				return false;
 			}

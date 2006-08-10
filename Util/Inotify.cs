@@ -650,8 +650,7 @@ namespace Beagle.Util {
 					if (watch.Callback != null && (watch.Mask & mask) != 0)
 						watch.Callback (watch, watched.Path, filename, srcpath, mask);
 				} catch (Exception e) {
-					Logger.Log.Error ("Caught exception executing Inotify callbacks");
-					Logger.Log.Error (e); 
+					Logger.Log.Error (e, "Caught exception executing Inotify callbacks");
 				}
 		}
 

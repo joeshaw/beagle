@@ -210,8 +210,7 @@ namespace Beagle.Daemon.EvolutionMailDriver {
 				try {
 					InitializeGMime ();
 				} catch (Exception e) {
-					Logger.Log.Warn ("Caught exception trying to initalize gmime:");
-					Logger.Log.Warn (e);
+					Logger.Log.Warn (e, "Caught exception trying to initalize gmime:");
 					return false;
 				}
 
@@ -645,8 +644,7 @@ namespace Beagle.Daemon.EvolutionMailDriver {
 					else
 						this.summary = Camel.Summary.LoadImap4Summary (this.summary_info.FullName);
 				} catch (Exception e) {
-					Logger.Log.Warn ("Unable to index {0}: {1}", this.folder_name,
-									 e.Message);
+					Logger.Log.Warn (e, "Unable to index {0}:", this.folder_name);
 					this.queryable.RemoveGeneratorProgress (this);
 					return false;
 				}

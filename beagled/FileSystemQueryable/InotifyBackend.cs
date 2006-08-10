@@ -60,8 +60,7 @@ namespace Beagle.Daemon.FileSystemQueryable {
 			try {
 				((Inotify.Watch) watch_handle).Unsubscribe ();
 			} catch (Exception ex) {
-				Logger.Log.Error ("Caught exception while doing ForgetWatch");
-				Logger.Log.Error (ex);
+				Logger.Log.Error (ex, "Caught exception while doing ForgetWatch");
 				return false;
 			}
 			return true;

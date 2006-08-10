@@ -195,8 +195,7 @@ namespace Beagle.Daemon {
 				try {
 					worker.DoWork ();
 				} catch (Exception e) {
-					Logger.Log.Error ("QueryWorker '{0}' threw an exception", worker);
-					Logger.Log.Error (e);
+					Logger.Log.Error (e, "QueryWorker '{0}' threw an exception", worker);
 				}
 				try {
 					result.WorkerFinished (worker);

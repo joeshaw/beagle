@@ -135,11 +135,13 @@ namespace Beagle.Daemon {
 					throw new UnauthorizedAccessException (String.Format ("Unable to create read only text cache {0}", db_filename));
 
 				File.Delete (db_filename);
-				try{
+
+				try {
 					connection = Open (db_filename);
-				}catch (Exception e){
-					Logger.Log.Debug ( e.Message);
+				} catch (Exception e) {
+					Log.Debug (e, "Exception opening text cache {0}", db_filename);
 				}
+
 				SqliteUtils.DoNonQuery (connection,
 							"CREATE TABLE uri_index (            " +
 							"  uri      STRING UNIQUE NOT NULL,  " +

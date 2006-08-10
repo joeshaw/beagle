@@ -119,8 +119,7 @@ class InfoTool {
 			try {
 				filter = (Filter) Activator.CreateInstance (t);
 			} catch (Exception ex) {
-				Logger.Log.Error ("Caught exception while instantiating {0}", t);
-				Logger.Log.Error (ex);
+				Logger.Log.Error (ex, "Caught exception while instantiating {0}", t);
 			}
 
 			if (filter == null)

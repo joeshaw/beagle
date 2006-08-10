@@ -102,8 +102,7 @@ namespace Beagle.Util
 							       this);
 				bindings.Add (binding);
 			} catch (Exception e) {
-				Logger.Log.Error ("Error Adding global keybinding:");
-				Logger.Log.Error (e);
+				Logger.Log.Error (e, "Error Adding global keybinding:");
 			}
 		}
 
@@ -113,8 +112,7 @@ namespace Beagle.Util
 				bindings.Clear ();
 				base.UnbindAll ();
 			} catch (Exception e) {
-				Logger.Log.Error ("Error Removing global keybinding:");
-				Logger.Log.Error (e);
+				Logger.Log.Error (e, "Error Removing global keybinding:");
 			}
 		}
 

@@ -267,12 +267,13 @@ namespace Beagle.Util {
 					try {
 						DoTaskReal ();
 					} catch (Exception ex) {
-						Logger.Log.Warn ("Caught exception in DoTaskReal");
-						Logger.Log.Warn ("        Tag: {0}", Tag);
-						Logger.Log.Warn ("    Creator: {0}", Creator);
-						Logger.Log.Warn ("Description: {0}", Description);
-						Logger.Log.Warn ("   Priority: {0} ({1})", Priority, SubPriority);
-						Logger.Log.Warn (ex);
+						Logger.Log.Warn (ex,
+								 "Caught exception in DoTaskReal\n" +
+								 "        Tag: {0}\n" +
+								 "    Creator: {0}\n" +
+								 "Description: {0}\n" +
+								 "   Priority: {0} ({1})", 
+								 Tag, Creator, Description, Priority, SubPriority);
 					}
 					sw.Stop ();
 					if (Debug)
@@ -302,8 +303,7 @@ namespace Beagle.Util {
 				try {
 					DoCleanup ();
 				} catch (Exception ex) {
-					Logger.Log.Warn ("Caught exception cleaning up task '{0}'", Tag);
-					Logger.Log.Warn (ex);
+					Logger.Log.Warn (ex, "Caught exception cleaning up task '{0}'", Tag);
 				}
 			}
 
@@ -465,8 +465,7 @@ namespace Beagle.Util {
 						try {
 							pre_hook ();
 						} catch (Exception ex) {
-							Logger.Log.Warn ("Caught exception in pre_hook of task group '{0}'", Name);
-							Logger.Log.Warn (ex);
+							Logger.Log.Warn (ex, "Caught exception in pre_hook of task group '{0}'", Name);
 						}
 					}
 					touched = true;
@@ -487,8 +486,7 @@ namespace Beagle.Util {
 						try {
 							post_hook ();
 						} catch (Exception ex) {
-							Logger.Log.Warn ("Caught exception in post_hook of task group '{0}'", Name);
-							Logger.Log.Warn (ex);
+							Logger.Log.Warn (ex, "Caught exception in post_hook of task group '{0}'", Name);
 						}
 					}
 					finished = true;
@@ -983,8 +981,7 @@ namespace Beagle.Util {
 					try {
 						pre_hook ();
 					} catch (Exception ex) {
-						Logger.Log.Error ("Caught exception in pre_hook '{0}'", pre_hook);
-						Logger.Log.Error (ex);
+						Logger.Log.Error (ex, "Caught exception in pre_hook '{0}'", pre_hook);
 					}
 				}
 				foreach (Task task in to_be_executed) {
@@ -996,8 +993,7 @@ namespace Beagle.Util {
 					try {
 						post_hook ();
 					} catch (Exception ex) {
-						Logger.Log.Error ("Caught exception in post_hook '{0}'", post_hook);
-						Logger.Log.Error (ex);
+						Logger.Log.Error (ex, "Caught exception in post_hook '{0}'", post_hook);
 					}
 				}
 

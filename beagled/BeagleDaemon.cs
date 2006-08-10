@@ -231,8 +231,7 @@ namespace Beagle.Daemon {
 			try {
 				DoMain (args);
 			} catch (Exception ex) {
-				Logger.Log.Error ("Unhandled exception thrown.  Exiting immediately.");
-				Logger.Log.Error (ex);
+				Logger.Log.Error (ex, "Unhandled exception thrown.  Exiting immediately.");
 				Environment.Exit (1);
 			}
 		}

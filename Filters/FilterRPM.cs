@@ -87,7 +87,7 @@ namespace Beagle.Filters {
 			try {
 				ParseRpmTags (reader);
 			} catch (XmlException e) {
-				Logger.Log.Warn ("FilterRPM: Error parsing output of rpmquery: {0}", e.Message);
+				Logger.Log.Warn (e, "FilterRPM: Error parsing output of rpmquery");
 				Error ();
 			} finally {
 				reader.Close ();

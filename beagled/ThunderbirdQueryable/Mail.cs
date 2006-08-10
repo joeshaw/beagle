@@ -79,7 +79,7 @@ namespace Beagle.Daemon.ThunderbirdQueryable {
 				db = new TB.Database (account, DbFile);
 				db.Load ();
 			} catch (Exception e) {
-				Logger.Log.Warn ("Failed to load {0}: {1}", DbFile, e.Message);
+				Logger.Log.Warn (e, "Failed to load {0}:", DbFile);
 				return;
 			}
 			

@@ -105,8 +105,7 @@ namespace Beagle.Daemon {
 			try {
 				Synchronize (SynchronizationTarget.Remote);
 			} catch (Exception ex) {
-				Logger.Log.Error ("Caught exception while synchronizing");
-				Logger.Log.Error (ex);
+				Logger.Log.Error (ex, "Caught exception while synchronizing");
 			}
 
                         task.Reschedule = true;
@@ -122,8 +121,7 @@ namespace Beagle.Daemon {
 				Logger.Log.Debug ("Purging locally synchronized indexes");
 				Directory.Delete (PathFinder.IndexDir, true);
 			} catch (Exception ex) {
-				Logger.Log.Error ("Caught exception while doing shutdown synchronization");
-				Logger.Log.Error (ex);
+				Logger.Log.Error (ex, "Caught exception while doing shutdown synchronization");
 			}
 		}
 
@@ -158,8 +156,7 @@ namespace Beagle.Daemon {
 				
 				target_directory_trash.Delete (true);
 			} catch (Exception ex) {
-				Logger.Log.Error ("Caught error while synchronizing directory");
-				Logger.Log.Error (ex);
+				Logger.Log.Error (ex, "Caught error while synchronizing directory");
 				return false;
 			}
 

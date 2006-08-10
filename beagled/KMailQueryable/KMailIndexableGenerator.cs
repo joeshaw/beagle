@@ -208,8 +208,7 @@ namespace Beagle.Daemon.KMailQueryable {
 				try {
 					KMailQueryable.InitializeGMime ();
 				} catch (Exception e) {
-					Logger.Log.Warn ("Caught exception trying to initalize gmime:");
-					Logger.Log.Warn (e);
+					Logger.Log.Warn (e, "Caught exception trying to initalize gmime:");
 					return false;
 				}
 

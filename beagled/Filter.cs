@@ -652,8 +652,7 @@ namespace Beagle.Daemon {
 			try {
 				pulled = PullFromArray (array, sb);
 			} catch (Exception ex) {
-				Logger.Log.Debug ("Caught exception while pulling text in filter '{0}'", Name);
-				Logger.Log.Debug (ex);
+				Logger.Log.Debug (ex, "Caught exception while pulling text in filter '{0}'", Name);
 			}
 
 			return pulled;

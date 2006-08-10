@@ -54,9 +54,8 @@ namespace Beagle.Util {
 			} catch (ThreadAbortException e) {
 				Logger.Log.Debug ("{0}:\n{1}\n", this.thread.Name, e.StackTrace);
 			} catch (Exception e) {
-				Logger.Log.Warn ("Exception caught while executing {0}:{1}",
+				Logger.Log.Warn (e, "Exception caught while executing {0}:{1}",
 						 this.method.Target, this.method.Method);
-				Logger.Log.Warn (e);
 			}
 
 			lock (live_threads)

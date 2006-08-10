@@ -158,8 +158,7 @@ namespace Beagle.Daemon {
 			try {
 				ShutdownHook ();
 			} catch (Exception ex) {
-				Logger.Log.Warn ("Caught exception in shutdown hook");
-				Logger.Log.Warn (ex);
+				Logger.Log.Warn (ex, "Caught exception in shutdown hook");
 			}
 		}
 
@@ -933,9 +932,8 @@ namespace Beagle.Daemon {
 						// Map from internal->external Uris in the PostAddHook
 						PostAddHook (flushed_request.GetByUri (r.Uri), r);
 					} catch (Exception ex) {
-						Logger.Log.Warn ("Caught exception in PostAddHook '{0}' '{1}' '{2}'",
+						Logger.Log.Warn (ex, "Caught exception in PostAddHook '{0}' '{1}' '{2}'",
 								 r.Uri, r.FilterName, r.FilterVersion);
-						Logger.Log.Warn (ex);
 					}
 
 					// Every added Uri also needs to be listed as removed,
@@ -958,9 +956,8 @@ namespace Beagle.Daemon {
 					try {
 						PostRemoveHook (flushed_request.GetByUri (r.Uri), r);
 					} catch (Exception ex) {
-						Logger.Log.Warn ("Caught exception in PostRemoveHook '{0}'",
+						Logger.Log.Warn (ex, "Caught exception in PostRemoveHook '{0}'",
 								 r.Uri);
-						Logger.Log.Warn (ex);
 					}
 
 					// Add the removed Uri to the list for our
@@ -981,8 +978,7 @@ namespace Beagle.Daemon {
 						} catch (InvalidOperationException ex) {
 							// Queryable does not support adding children
 						} catch (Exception ex) {
-							Logger.Log.Warn ("Caught exception in PreChildAddHook '{0}'", child.DisplayUri);
-							Logger.Log.Warn (ex);
+							Logger.Log.Warn (ex, "Caught exception in PreChildAddHook '{0}'", child.DisplayUri);
 						}
 
 						if (please_add_a_new_task) {

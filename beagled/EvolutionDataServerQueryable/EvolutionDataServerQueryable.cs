@@ -93,7 +93,7 @@ namespace Beagle.Daemon.EvolutionDataServerQueryable {
 				new SourcesHandler ("/apps/evolution/calendar/sources", typeof (CalContainer), this, Driver.Fingerprint);
 				success = true;
 			} catch (DllNotFoundException ex) {
-				Logger.Log.Error ("Unable to start EvolutionDataServer backend: Unable to find or open {0}", ex.Message);
+				Logger.Log.Error (ex, "Unable to start EvolutionDataServer backend: Unable to find or open libraries:");
 			} finally {
 				State = QueryableState.Idle;
 				timer.Stop ();

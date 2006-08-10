@@ -53,7 +53,7 @@ namespace Beagle.Daemon.EvolutionDataServerQueryable {
 				this.cal = new Cal (this.source, CalSourceType.Event);
 				this.cal.Open (true);
 			} catch (Exception e) {
-				Logger.Log.Warn ("Unable to open calendar {0}: {1}", this.source.Uri, e.Message);
+				Logger.Log.Warn (e, "Unable to open calendar {0}:", this.source.Uri);
 				return false;
 			}
 
@@ -92,7 +92,7 @@ namespace Beagle.Daemon.EvolutionDataServerQueryable {
 			try { 
 				this.cal.GetChanges ("beagle-" + this.fingerprint, out added, out changed, out removed);
 			} catch (Exception e) {
-				Logger.Log.Warn ("Unable to get changes for {0}: {1}", this.source.Uri, e.Message);
+				Logger.Log.Warn (e, "Unable to get changes for {0}:", this.source.Uri);
 				return;
 			}
 

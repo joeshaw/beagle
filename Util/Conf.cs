@@ -202,7 +202,7 @@ namespace Beagle.Util {
 				XmlSerializer serializer = new XmlSerializer (type);
 				section = (Section) serializer.Deserialize (fs);
 			} catch (Exception e) {
-				Logger.Log.Error ("Could not load configuration from {0}: {1}", filename, e.Message);
+				Logger.Log.Error (e, "Could not load configuration from {0}:", filename);
 				if (fs != null)
 					fs.Close ();
 				if (current == null)
