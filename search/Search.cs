@@ -218,7 +218,7 @@ namespace Search {
 			}
 
 			if (IconEnabled) {
-				tray = new TrayIcon ();
+				tray = new Search.Tray.TrayIcon ();
 				tray.Clicked += OnTrayActivated;
 				tray.Search += OnTraySearch;
 
