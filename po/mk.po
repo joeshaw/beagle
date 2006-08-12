@@ -11,8 +11,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: mk\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2006-08-04 18:08+0200\n"
-"PO-Revision-Date: 2006-08-05 00:18+0200\n"
+"POT-Creation-Date: 2006-08-12 10:12+0200\n"
+"PO-Revision-Date: 2006-08-12 12:48+0200\n"
 "Last-Translator: Arangel Angov <ufo@linux.net.mk>\n"
 "Language-Team: Macedonian <ossm-members@hedona.on.net.mk>\n"
 "MIME-Version: 1.0\n"
@@ -230,11 +230,11 @@ msgstr "Променето:"
 msgid "IM Conversation"
 msgstr "IM разговор"
 
-#: ../search/Tiles/IMLog.cs:87
+#: ../search/Tiles/IMLog.cs:92
 msgid "Name:"
 msgstr "Име:"
 
-#: ../search/Tiles/IMLog.cs:88 ../search/Tiles/MailMessage.cs:114
+#: ../search/Tiles/IMLog.cs:93 ../search/Tiles/MailMessage.cs:114
 msgid "Date Received:"
 msgstr "Датум на примање:"
 
@@ -265,6 +265,10 @@ msgstr "Од:"
 #: ../search/Tiles/MailMessage.cs:114
 msgid "Date Sent:"
 msgstr "Датум на испраќање:"
+
+#: ../search/Tiles/MailMessage.cs:120
+msgid "Folder:"
+msgstr "Папка:"
 
 #: ../search/Tiles/Presentation.cs:33
 #, csharp-format
