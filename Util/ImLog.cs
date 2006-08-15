@@ -290,14 +290,24 @@ namespace Beagle.Util {
 			// FIXME: Artificially split logs into conversations depending on the
 			// amount of time elapsed betweet messages?
 			
-			// Figure out the protocol from the parent.parent foldername
-			Protocol = file.Directory.Parent.Name.Substring (0, file.Directory.Parent.Name.Length - 8).ToLower ().ToLower ();
+			// Figure out the protocol from the parent.parent or parent foldername
+			if (file.Directory.Parent.Name.EndsWith ("Protocol"))
+				Protocol = file.Directory.Parent.Name.Substring (0, file.Directory.Parent.Name.Length - 8).ToLower ();
+			else if (file.Directory.Name.EndsWith ("Protocol"))
+				Protocol = file.Directory.Name.Substring (0, file.Directory.Name.Length - 8).ToLower ();
+			else
+				Protocol = file.Directory.Name;
 			Identity = file.Directory.Name;
 
 			// FIXME: This is not safe for all kinds of file/screennames
 			string filename = Path.GetFileNameWithoutExtension (file.Name);
-			SpeakingTo = filename.Substring (0, filename.LastIndexOf ('.'));
-
+			if (filename.LastIndexOf ('.') > 0)
+				SpeakingTo = filename.Substring (0, filename.LastIndexOf ('.'));
+			else if (filename.LastIndexOf ('_') > 0)
+				SpeakingTo = filename.Substring (0, filename.LastIndexOf ('_'));
+			else
+				SpeakingTo = filename;
+			Logger.Log.Debug ("Speakingto for " + file.Name + " is " + SpeakingTo + ", protocol is " + Protocol);
 			Load ();
 		}
 		
@@ -338,6 +348,12 @@ namespace Beagle.Util {
 									  base_date.Year,
 									  base_date.Month,
 									  reader.GetAttribute ("time"));
+					int time_separator_count = 0;
+					foreach (int the_char in timestamp)
+						if (the_char == ':')
+							time_separator_count++;
+					if (time_separator_count < 2)
+						timestamp = timestamp + ":00";
 
 					DateTime msg_date = DateTime.MinValue;
 
