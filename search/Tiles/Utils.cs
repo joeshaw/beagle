@@ -64,6 +64,37 @@ namespace Search.Tiles {
 		private static string MonthDayPattern = DateTimeFormat.MonthDayPattern;
 		private static string LongDatePattern = DateTimeFormat.LongDatePattern.Replace ("dddd, ", "").Replace ("dddd ", "").Replace (" dddd", "");
 
+		private static string NiceDatePattern (DateTime dt, string month_day_pattern, string year_month_pattern)
+		{
+			if (dt.Year <= 1970)
+				return "-";
+
+			dt = dt.ToLocalTime ().Date;
+			DateTime today = DateTime.Today;
+			TimeSpan one_day = new TimeSpan (TimeSpan.TicksPerDay);
+
+			if (dt == today - one_day)
+				return Catalog.GetString ("Yesterday");
+			else if (dt == today)
+				return Catalog.GetString ("Today");
+			else if (dt == today + one_day)
+				return Catalog.GetString ("Tomorrow");
+
+			TimeSpan span;
+
+			if (today > dt)
+				span = today - dt;
+			else
+				span = dt - today;
+
+			if (span.TotalDays < 7)
+				return dt.ToString ("dddd"); // "Tuesday"
+			else if (dt.Year == today.Year || span.TotalDays < 180)
+				return dt.ToString (month_day_pattern);
+			else
+				return dt.ToString (year_month_pattern);
+		}
+
 		public static string NiceShortDate (string timestamp)
 		{
 			DateTime dt;
@@ -79,35 +110,8 @@ namespace Search.Tiles {
 
 		public static string NiceShortDate (DateTime dt)
 		{
-			if (dt.Year <= 1970)
-				return "-";
-
-			dt = dt.ToLocalTime ();
-			DateTime today = DateTime.Today;
-
-			TimeSpan span;
-			bool future;
-
-			if (today > dt) {
-				span = today - dt;
-				future = false;
-			} else {
-				span = dt - today;
-				future = true;
-			}
-
-			if (span.TotalDays < 1)
-				return Catalog.GetString ("Today");
-			else if (span.TotalDays < 2 && ! future)
-				return Catalog.GetString ("Yesterday");
-			else if (span.TotalDays < 2 && future)
-				return Catalog.GetString ("Tomorrow");
-			else if (span.TotalDays < 7)
-				return dt.ToString ("dddd"); // "Tuesday"
-			else if (dt.Year == today.Year || span.TotalDays < 180)
-				return dt.ToString (ShortMonthDayPattern); // "Jul 4"
-			else
-				return dt.ToString (ShortYearMonthPattern); // "Jan 2001"
+			// "Jul 4" and "Jan 2001", respectively.
+			return NiceDatePattern (dt, ShortMonthDayPattern, ShortYearMonthPattern);
 		}
 
 		public static string NiceLongDate (string timestamp)
@@ -125,35 +129,8 @@ namespace Search.Tiles {
 
 		public static string NiceLongDate (DateTime dt)
 		{
-			if (dt.Year <= 1970)
-				return "-";
-
-			dt = dt.ToLocalTime ();
-			DateTime today = DateTime.Today;
-
-			TimeSpan span;
-			bool future;
-
-			if (today > dt) {
-				span = today - dt;
-				future = false;
-			} else {
-				span = dt - today;
-				future = true;
-			}
-
-			if (span.TotalDays < 1)
-				return Catalog.GetString ("Today");
-			else if (span.TotalDays < 2 && ! future)
-				return Catalog.GetString ("Yesterday");
-			else if (span.TotalDays < 2 && future)
-				return Catalog.GetString ("Tomorrow");
-			else if (span.TotalDays < 7)
-				return dt.ToString ("dddd"); // "Tuesday"
-			else if (dt.Year == today.Year || span.TotalDays < 180)
-				return dt.ToString (MonthDayPattern); // "July 4"
-			else
-				return dt.ToString (LongDatePattern); // January 7, 2001
+			// "July 4" and "January 7, 2001", respectively.
+			return NiceDatePattern (dt, MonthDayPattern, LongDatePattern);
 		}
 
 		public static string NiceVeryLongDate (string timestamp)
@@ -174,8 +151,16 @@ namespace Search.Tiles {
 			if (dt.Year <= 1970)
 				return "-";
 
-			dt = dt.ToLocalTime ();
+			dt = dt.ToLocalTime ().Date;
 			DateTime today = DateTime.Today;
+			TimeSpan one_day = new TimeSpan (TimeSpan.TicksPerDay);
+
+			if (dt == today - one_day)
+				return Catalog.GetString ("Yesterday");
+			else if (dt == today)
+				return Catalog.GetString ("Today");
+			else if (dt == today + one_day)
+				return Catalog.GetString ("Tomorrow");
 
 			TimeSpan span;
 			bool future;
@@ -188,13 +173,7 @@ namespace Search.Tiles {
 				future = true;
 			}
 
-			if (span.TotalDays < 1)
-				return Catalog.GetString ("Today");
-			else if (span.TotalDays < 2 && ! future)
-				return Catalog.GetString ("Yesterday");
-			else if (span.TotalDays < 2 && future)
-				return Catalog.GetString ("Tomorrow");
-			else if (span.TotalDays < 7)
+			if (span.TotalDays < 7)
 				return dt.ToString ("dddd"); // "Tuesday"
 			else if (span.TotalDays < 30 && ! future)
 				return String.Format (Catalog.GetPluralString ("{0} week ago", "{0} weeks ago", span.Days / 7) + " ({1:MMMM d, yyyy})", span.Days / 7, dt);

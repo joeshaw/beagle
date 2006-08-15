@@ -48,7 +48,7 @@ namespace Search.Tiles {
 			DetailsPane details = new DetailsPane ();
 
 			details.AddTitleLabel (Title);
-			details.AddLabelPair (Catalog.GetString ("Last Edited:"), Utils.NiceLongDate (Hit.DirectoryInfo.LastWriteTime));
+			details.AddLabelPair (Catalog.GetString ("Last Edited:"), Utils.NiceLongDate (Hit.DirectoryInfo.LastWriteTimeUtc));
 			details.AddLabelPair (Catalog.GetString ("Full Path:"), Hit.Uri.LocalPath);
 			details.AddTextLabel (Description);
 

@@ -27,7 +27,7 @@ namespace Search.Tiles {
 			EnableOpenWith = true;
 			
 			if (Hit.FileInfo != null) {
-				Timestamp = Hit.FileInfo.LastWriteTime;
+				Timestamp = Hit.FileInfo.LastWriteTimeUtc;
 				Description = Utils.NiceShortDate (Timestamp);
 			}
 
