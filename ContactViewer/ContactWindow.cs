@@ -75,7 +75,7 @@ namespace ContactViewer {
 				new ActionEntry ("QuitAction", Gtk.Stock.Quit,
 					"_Quit", "<control>Q", Catalog.GetString ("Quit"), new EventHandler (OnQuit)),
 				new ActionEntry ("HelpMenuAction", null, "_Help", null, null, null),
-				new ActionEntry ("AboutAction", Gtk.Stock.About,
+				new ActionEntry ("AboutAction", Gnome.Stock.About,
 					"_About", null, Catalog.GetString ("About"), new EventHandler (OnAbout))
 			};
 			
@@ -259,16 +259,16 @@ namespace ContactViewer {
 		
 		protected virtual void OnAbout (object o, EventArgs args)
 		{
-			AboutDialog about = new AboutDialog();
-			about.Authors = (new string[] { "Pierre \u00D6stlund" });
-			about.Name = "Contact Viewer";
-			about.Version = "0.1";
-			about.Website = "http://www.beagle-project.org";
-			about.Logo = Beagle.Images.GetPixbuf ("system-search.png");
-			about.Icon = Beagle.Images.GetPixbuf ("icon-search.png");
+#pragma warning disable 612 // don't warn that Gnome.About is deprecated.
+			Gnome.About about = new Gnome.About ("Contact Viewer",
+							     ExternalStringsHack.Version,
+							     "Copyright (C) 2006 Pierre \u00D6stlund",
+							     null, new string [] { "Pierre \u00D6stlund" },
+							     null, null, Beagle.Images.GetPixbuf ("system-search.png"));
 			
-			about.Run();
-			about.Destroy();
+			about.Run ();
+			about.Dispose ();
+#pragma warning restore 612
 		}
 		
 		protected virtual void OnQuit (object o, EventArgs args)
