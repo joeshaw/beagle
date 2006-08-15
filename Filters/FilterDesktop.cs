@@ -97,6 +97,8 @@ namespace Beagle.Filters {
 							AddProperty (Property.New ("fixme:" + sline [0], c));
 				} else if (sline [0].StartsWith ("Type")) {
 					AddProperty (Property.NewKeyword ("fixme:" + sline [0], sline [1]));
+				} else if (sline [0].StartsWith ("Keywords") || sline [0].StartsWith ("X-KDE-Keywords")) {
+					AddProperty (Property.New ("fixme:" + sline [0], sline [1]));
 				}
 			}
 			
