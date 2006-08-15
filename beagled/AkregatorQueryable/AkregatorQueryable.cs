@@ -364,7 +364,7 @@ namespace Beagle.Daemon.AkregatorQueryable {
 			if (current_item == null)
 				return null;
 
-			Logger.Log.Debug ("Indexing " + channel_link + ":" + current_item.Link);
+			//Logger.Log.Debug ("Indexing " + channel_link + ":" + current_item.Link);
 			Indexable indexable = new Indexable (new Uri (String.Format ("feed:{0};item={1}", channel_link, current_item.Link)));
 			indexable.ParentUri = UriFu.PathToFileUri (feed_file);
 			indexable.MimeType = "text/html";
