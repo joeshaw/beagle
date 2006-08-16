@@ -166,7 +166,7 @@ namespace Beagle.Daemon {
 			// if match starts with *. or . and only contains letters we assume it's a file extension
 			Regex extension_re = new Regex (@"^\**\.\w*$");
 
-			if (extension_re.Match (text).Success || key.ToLower () == "ext") {
+			if (extension_re.Match (text).Success || key.ToLower () == "ext" || key.ToLower () == "extension") {
 				
 				QueryPart_Property query_part = new QueryPart_Property ();
 
@@ -213,18 +213,8 @@ namespace Beagle.Daemon {
 			}
 
 			QueryPart_Property query_part_prop = new QueryPart_Property ();
-			query_part_prop.Key = key;
+			query_part_prop.Key = prop_string;
 			query_part_prop.Value = text;
-
-			// if query was of type ext:mp3 or extension:mp3
-			// change value to .mp3
-			// if query was of type ext:
-			// change value to ""
-			// Change extension query value to lowercase - thats how they are stored on disk
-			if (query_part_prop.Key == FSQ.FileSystemQueryable.FilenameExtensionPropKey &&
-	 				query_part_prop.Value != String.Empty)
-				query_part_prop.Value = "." + query_part_prop.Value.ToLower ();
-
 			query_part_prop.Type = prop_type;
 			query_part_prop.Logic = (IsProhibited ? QueryPartLogic.Prohibited : QueryPartLogic.Required);
 

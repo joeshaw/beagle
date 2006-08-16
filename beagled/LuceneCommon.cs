@@ -74,7 +74,9 @@ namespace Beagle.Daemon {
 		//     date properties
 		// 13: moved source into a property
 		// 14: allow wildcard queries to also match keywords
-		private const int MAJOR_VERSION = 14;
+		// 15: analyze PropertyKeyword field, and store all properties as
+		//     lower case so that we're truly case insensitive.
+		private const int MAJOR_VERSION = 15;
 		private int minor_version = 0;
 
 		private string index_name;
@@ -405,8 +407,9 @@ namespace Beagle.Daemon {
 					// containing the entire string.  We do this to avoid
 					// tokenizing keywords.
 					if (! is_text_prop)
-						return new SingletonTokenStream (reader.ReadToEnd ());
-				}
+						return new LowerCaseFilter (new SingletonTokenStream (reader.ReadToEnd ()));
+				} else if (fieldName == "PropertyKeyword")
+					return new LowerCaseFilter (new SingletonTokenStream (reader.ReadToEnd ()));
 
 				TokenStream outstream;
 				outstream = base.TokenStream (fieldName, reader);
@@ -508,13 +511,12 @@ namespace Beagle.Daemon {
 
 			if (prop.IsSearched) {
 				string wildcard_field = TypeToWildcardField (prop.Type);
-				bool tokenize = (prop.Type == PropertyType.Text);
 				if (wildcard_field != null) {
 					f = new Field (wildcard_field,
 						       prop.Value,
 						       false, // never stored
 						       true,  // always indexed
-						       tokenize);
+						       true); // always tokenize (just lowercases for keywords; full analysis for text)
 					doc.Add (f);
 
 					if (prop.Type == PropertyType.Date)
@@ -533,7 +535,7 @@ namespace Beagle.Daemon {
 				       coded_value,
 				       prop.IsStored,
 				       true,        // always index
-				       true);       // always tokenize (just strips off type code for keywords)
+				       true);       // always tokenize (strips off type code for keywords and lowercases)
 			doc.Add (f);
 
 			if (prop.Type == PropertyType.Date)
@@ -1211,7 +1213,7 @@ namespace Beagle.Daemon {
 					}
 
 					Term term;
-					term = new Term ("PropertyKeyword", part.Text);
+					term = new Term ("PropertyKeyword", part.Text.ToLower ()); // make sure text is lowercased
 					// FIXME: terms are already added in term_list. But they may have been tokenized
 					// The term here is non-tokenized version. Should this be added to term_list ?
 					// term_list is used to calculate scores
@@ -1240,14 +1242,17 @@ namespace Beagle.Daemon {
 				Term term;
 				LNS.Query subquery;
 
+				// Lower case the terms for searching
+				string query_string_lower = part.QueryString.ToLower ();
+
 				// Search text content
-				term = new Term ("text", part.QueryString);
+				term = new Term ("Text", query_string_lower);
 				subquery = new LNS.WildcardQuery (term);
 				p_query.Add (subquery, false, false);
 				term_list.Add (term);
 
 				// Search text properties
-				term = new Term ("PropertyText", part.QueryString);
+				term = new Term ("PropertyText", query_string_lower);
 				subquery = new LNS.WildcardQuery (term);
 				p_query.Add (subquery, false, false);
 				// Properties can live in either index
@@ -1256,7 +1261,7 @@ namespace Beagle.Daemon {
 				term_list.Add (term);
 
 				// Search property keywords
-				term = new Term ("PropertyKeyword", part.QueryString);
+				term = new Term ("PropertyKeyword", query_string_lower);
 				term_list.Add (term);
 				subquery = new LNS.WildcardQuery (term);
 				p_query.Add (subquery, false, false);
@@ -1287,7 +1292,7 @@ namespace Beagle.Daemon {
 					primary_query = StringToQuery (field_name, part.Value, term_list);
 				else {
 					Term term;
-					term = new Term (field_name, part.Value);
+					term = new Term (field_name, part.Value.ToLower ());
 					if (term_list != null)
 						term_list.Add (term);
 					primary_query = new LNS.TermQuery (term);

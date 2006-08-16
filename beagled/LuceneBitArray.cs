@@ -50,6 +50,8 @@ namespace Beagle.Daemon {
 			}
 		}
 
+		private static bool Debug = false;
+
 		LNS.IndexSearcher searcher;
 		BitArrayHitCollector collector;
 		BetterBitArray scratch;
@@ -96,6 +98,8 @@ namespace Beagle.Daemon {
 		{
 			UseScratch ();
 			searcher.Search (query, null, collector);
+			if (Debug)
+				Explain (query);
 			this.And (scratch);
 			return this;
 		}
@@ -104,6 +108,8 @@ namespace Beagle.Daemon {
 		{
 			UseScratch ();
 			searcher.Search (query, null, collector);
+			if (Debug)
+				Explain (query);
 			this.AndNot (scratch);
 			return this;
 		}
@@ -112,6 +118,8 @@ namespace Beagle.Daemon {
 		{
 			collector.Array = this;
 			searcher.Search (query, null, collector);
+			if (Debug)
+				Explain (query);
 			return this;
 		}
 		
@@ -119,8 +127,29 @@ namespace Beagle.Daemon {
 		{
 			UseScratch ();
 			searcher.Search (query, null, collector);
+			if (Debug)
+				Explain (query);
 			this.Xor (scratch);
 			return this;
+		}
+
+		private void Explain (LNS.Query query)
+		{
+			int j = 0;
+			while (j < collector.Array.Count) {
+				int i;
+				i = collector.Array.GetNextTrueIndex (j);
+				if (i >= collector.Array.Count)
+					break;
+				j = i + 1;
+
+				Document doc = searcher.Doc (i);
+				LNS.Explanation exp = searcher.Explain (query, i);
+
+				Log.Debug ("Query: [{0}]", query);
+				Log.Debug ("Matching URI: {0}", doc.Get ("Uri"));
+				Log.Debug ("Explanation: {0}", exp);
+			}
 		}
 
 		////////////////////////////////////////////////////////////

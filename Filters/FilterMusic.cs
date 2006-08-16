@@ -33,6 +33,7 @@ namespace Beagle.Filters {
 
 	[PropertyKeywordMapping (Keyword="album", PropertyName="fixme:album", IsKeyword=false)]
 	[PropertyKeywordMapping (Keyword="artist", PropertyName="fixme:artist", IsKeyword=false)]
+	[PropertyKeywordMapping (Keyword="genre", PropertyName="fixme:genre", IsKeyword=true)]
 	public class FilterMusic : Beagle.Daemon.Filter {
 	
 		public FilterMusic ()
