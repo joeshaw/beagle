@@ -9,8 +9,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: es\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2006-07-16 20:29+0200\n"
-"PO-Revision-Date: 2006-07-16 20:44+0200\n"
+"POT-Creation-Date: 2006-08-16 23:11+0200\n"
+"PO-Revision-Date: 2006-08-16 23:11+0200\n"
 "Last-Translator: Francisco Javier F. Serrador <serrador@cvs.gnome.org>\n"
 "Language-Team: Spanish <traductores@es.gnome.org>\n"
 "MIME-Version: 1.0\n"
@@ -101,13 +101,15 @@ msgid "To search for optional terms, use OR.  ex: <b>George OR Ringo</b>"
 msgstr "Para buscar términos opcionales, use OR. ej: <b>Jorge or Esteban</b>"
 
 #: ../search/Pages/QuickTips.cs:12
-msgid "To exclude search terms, use the minus symbol in front, such as <b>-cats</b>"
+msgid ""
+"To exclude search terms, use the minus symbol in front, such as <b>-cats</b>"
 msgstr ""
 "Para excluir términos de búsqueda, use el símbolo menos como prefijo, como "
 "<b>-gatos</b>"
 
 #: ../search/Pages/QuickTips.cs:13
-msgid "When searching for a phrase, add quotes. ex: <b>\"There be dragons\"</b>"
+msgid ""
+"When searching for a phrase, add quotes. ex: <b>\"There be dragons\"</b>"
 msgstr ""
 "Cuando busque una frase, añada comillas. Ej: <b>\"En un lugar de La Mancha</"
 "b>"
@@ -230,37 +232,45 @@ msgstr "Modificado:"
 msgid "IM Conversation"
 msgstr "Conversación MI"
 
-#: ../search/Tiles/IMLog.cs:87
+#: ../search/Tiles/IMLog.cs:92
 msgid "Name:"
 msgstr "Nombre:"
 
-#: ../search/Tiles/IMLog.cs:88 ../search/Tiles/MailMessage.cs:92
+#: ../search/Tiles/IMLog.cs:93 ../search/Tiles/MailMessage.cs:114
 msgid "Date Received:"
 msgstr "Fecha de recepción:"
 
-#: ../search/Tiles/MailAttachment.cs:47
+#: ../search/Tiles/MailAttachment.cs:45
 msgid "Mail attachment"
 msgstr "Adjunto de correo"
 
-#: ../search/Tiles/MailMessage.cs:55
+#: ../search/Tiles/MailMessage.cs:67
+msgid "(untitled)"
+msgstr "(sin título)"
+
+#: ../search/Tiles/MailMessage.cs:77
 msgid "Send in Mail"
 msgstr "Enviar por correo"
 
-#: ../search/Tiles/MailMessage.cs:87
+#: ../search/Tiles/MailMessage.cs:109
 msgid "Subject:"
 msgstr "Asunto:"
 
-#: ../search/Tiles/MailMessage.cs:89
+#: ../search/Tiles/MailMessage.cs:111
 msgid "To:"
 msgstr "Para:"
 
-#: ../search/Tiles/MailMessage.cs:89
+#: ../search/Tiles/MailMessage.cs:111
 msgid "From:"
 msgstr "De:"
 
-#: ../search/Tiles/MailMessage.cs:92
+#: ../search/Tiles/MailMessage.cs:114
 msgid "Date Sent:"
 msgstr "Fecha de envío:"
+
+#: ../search/Tiles/MailMessage.cs:120
+msgid "Folder:"
+msgstr "Carpeta:"
 
 #: ../search/Tiles/Presentation.cs:33
 #, csharp-format
@@ -336,29 +346,28 @@ msgstr "Proveedores de noticias"
 msgid "Archives"
 msgstr "Archivadores"
 
-#: ../search/Tiles/Utils.cs:100 ../search/Tiles/Utils.cs:146
-#: ../search/Tiles/Utils.cs:192 ../Util/StringFu.cs:77
-msgid "Today"
-msgstr "Hoy"
-
-#: ../search/Tiles/Utils.cs:102 ../search/Tiles/Utils.cs:148
-#: ../search/Tiles/Utils.cs:194 ../Util/StringFu.cs:79
+#: ../search/Tiles/Utils.cs:77 ../search/Tiles/Utils.cs:159
+#: ../Util/StringFu.cs:79
 msgid "Yesterday"
 msgstr "Ayer"
 
-#: ../search/Tiles/Utils.cs:104 ../search/Tiles/Utils.cs:150
-#: ../search/Tiles/Utils.cs:196
+#: ../search/Tiles/Utils.cs:79 ../search/Tiles/Utils.cs:161
+#: ../Util/StringFu.cs:77
+msgid "Today"
+msgstr "Hoy"
+
+#: ../search/Tiles/Utils.cs:81 ../search/Tiles/Utils.cs:163
 msgid "Tomorrow"
 msgstr "Mañana"
 
-#: ../search/Tiles/Utils.cs:200
+#: ../search/Tiles/Utils.cs:179
 #, csharp-format
 msgid "{0} week ago"
 msgid_plural "{0} weeks ago"
 msgstr[0] "hace {0} semana"
 msgstr[1] "hace {0} semanas"
 
-#: ../search/Tiles/Utils.cs:202
+#: ../search/Tiles/Utils.cs:181
 #, csharp-format
 msgid "In {0} week"
 msgid_plural "In {0} weeks"
@@ -366,28 +375,28 @@ msgstr[0] "En {0} semana"
 msgstr[1] "En {0} semanas"
 
 #. Let's say a year and a half to stop saying months
-#: ../search/Tiles/Utils.cs:204
+#: ../search/Tiles/Utils.cs:183
 #, csharp-format
 msgid "{0} month ago"
 msgid_plural "{0} months ago"
 msgstr[0] "hace {0} mes"
 msgstr[1] "hace {0} meses"
 
-#: ../search/Tiles/Utils.cs:206
+#: ../search/Tiles/Utils.cs:185
 #, csharp-format
 msgid "In {0} month"
 msgid_plural "In {0} months"
 msgstr[0] "En {0} mes"
 msgstr[1] "En {0} meses"
 
-#: ../search/Tiles/Utils.cs:208
+#: ../search/Tiles/Utils.cs:187
 #, csharp-format
 msgid "{0} year ago"
 msgid_plural "{0} years ago"
 msgstr[0] "Hace {0} año"
 msgstr[1] "Hace {0} años"
 
-#: ../search/Tiles/Utils.cs:210
+#: ../search/Tiles/Utils.cs:189
 #, csharp-format
 msgid "In {0} year"
 msgid_plural "In {0} years"
@@ -745,7 +754,8 @@ msgstr "Seleccione una ruta"
 
 #: ../tools/Settings.cs:284
 msgid "The selected path is already selected for indexing and wasn't added."
-msgstr "La ruta seleccionada ya está seleccionada para la indexación y no se añadió."
+msgstr ""
+"La ruta seleccionada ya está seleccionada para la indexación y no se añadió."
 
 #: ../tools/Settings.cs:287
 msgid ""
@@ -780,7 +790,9 @@ msgstr "Quitar ruta"
 msgid ""
 "Are you sure you wish to remove this path from the list of directories to be "
 "included for indexing?"
-msgstr "¿Seguro que quiere quitar esta ruta de la lista de directorios que se excluirán de la indexación?"
+msgstr ""
+"¿Seguro que quiere quitar esta ruta de la lista de directorios que se "
+"excluirán de la indexación?"
 
 #: ../tools/Settings.cs:364
 msgid "Remove item"
@@ -790,7 +802,9 @@ msgstr "Quitar elemento"
 msgid ""
 "Are you sure you wish to remove this item from the list of data to be "
 "excluded from indexing?"
-msgstr "¿Seguro que quiere quitar este elemento de la lista de datos que se van a excluir de la indexación?"
+msgstr ""
+"¿Seguro que quiere quitar este elemento de la lista de datos que se van a "
+"excluir de la indexación?"
 
 #: ../tools/Settings.cs:408
 msgid "Invalid host entry"
@@ -825,7 +839,8 @@ msgid "Remove public path"
 msgstr "Quitar ruta pública"
 
 #: ../tools/Settings.cs:506
-msgid "Are you sure you wish to remove this entry from the list of public paths?"
+msgid ""
+"Are you sure you wish to remove this entry from the list of public paths?"
 msgstr "¿Seguro que quiere quitar este elemento de la lista de rutas públicas?"
 
 #: ../tools/Settings.cs:551 ../tools/Settings.cs:640 ../tools/Settings.cs:718
@@ -1159,4 +1174,3 @@ msgstr "{0:0.0} Kib"
 #, csharp-format
 msgid "{0:0.0} MB"
 msgstr "{0:0.0} Mib"
-
