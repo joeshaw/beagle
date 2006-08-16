@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: beagle\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2006-07-17 09:25+0300\n"
-"PO-Revision-Date: 2006-07-17 09:26+0300\n"
+"POT-Creation-Date: 2006-08-16 13:39+0300\n"
+"PO-Revision-Date: 2006-08-16 13:39+0300\n"
 "Last-Translator: Ilkka Tuohela <hile@iki.fi>\n"
 "Language-Team: Finnish <gnome-fi-laatu@lists.sourceforge.net>\n"
 "MIME-Version: 1.0\n"
@@ -229,37 +229,45 @@ msgstr "Muokattu:"
 msgid "IM Conversation"
 msgstr "IM-keskustelut"
 
-#: ../search/Tiles/IMLog.cs:87
+#: ../search/Tiles/IMLog.cs:92
 msgid "Name:"
 msgstr "Nimi:"
 
-#: ../search/Tiles/IMLog.cs:88 ../search/Tiles/MailMessage.cs:92
+#: ../search/Tiles/IMLog.cs:93 ../search/Tiles/MailMessage.cs:114
 msgid "Date Received:"
 msgstr "Vastaanottopäivä:"
 
-#: ../search/Tiles/MailAttachment.cs:47
+#: ../search/Tiles/MailAttachment.cs:45
 msgid "Mail attachment"
 msgstr "Sähköpostiliite"
 
-#: ../search/Tiles/MailMessage.cs:55
+#: ../search/Tiles/MailMessage.cs:67
+msgid "(untitled)"
+msgstr "(nimeämätön)"
+
+#: ../search/Tiles/MailMessage.cs:77
 msgid "Send in Mail"
 msgstr "Lähetä sähköpostissa"
 
-#: ../search/Tiles/MailMessage.cs:87
+#: ../search/Tiles/MailMessage.cs:109
 msgid "Subject:"
 msgstr "Aihe:"
 
-#: ../search/Tiles/MailMessage.cs:89
+#: ../search/Tiles/MailMessage.cs:111
 msgid "To:"
 msgstr "Vastaanottaja:"
 
-#: ../search/Tiles/MailMessage.cs:89
+#: ../search/Tiles/MailMessage.cs:111
 msgid "From:"
 msgstr "Lähettäjä:"
 
-#: ../search/Tiles/MailMessage.cs:92
+#: ../search/Tiles/MailMessage.cs:114
 msgid "Date Sent:"
 msgstr "Lähetyspäivä:"
+
+#: ../search/Tiles/MailMessage.cs:120
+msgid "Folder:"
+msgstr "Kansio:"
 
 #: ../search/Tiles/Presentation.cs:33
 #, csharp-format
@@ -335,29 +343,28 @@ msgstr "Uutisvirrat"
 msgid "Archives"
 msgstr "Arkistot"
 
-#: ../search/Tiles/Utils.cs:100 ../search/Tiles/Utils.cs:146
-#: ../search/Tiles/Utils.cs:192 ../Util/StringFu.cs:77
-msgid "Today"
-msgstr "Tänään"
-
-#: ../search/Tiles/Utils.cs:102 ../search/Tiles/Utils.cs:148
-#: ../search/Tiles/Utils.cs:194 ../Util/StringFu.cs:79
+#: ../search/Tiles/Utils.cs:77 ../search/Tiles/Utils.cs:159
+#: ../Util/StringFu.cs:79
 msgid "Yesterday"
 msgstr "Eilen"
 
-#: ../search/Tiles/Utils.cs:104 ../search/Tiles/Utils.cs:150
-#: ../search/Tiles/Utils.cs:196
+#: ../search/Tiles/Utils.cs:79 ../search/Tiles/Utils.cs:161
+#: ../Util/StringFu.cs:77
+msgid "Today"
+msgstr "Tänään"
+
+#: ../search/Tiles/Utils.cs:81 ../search/Tiles/Utils.cs:163
 msgid "Tomorrow"
 msgstr "Huomenna"
 
-#: ../search/Tiles/Utils.cs:200
+#: ../search/Tiles/Utils.cs:179
 #, csharp-format
 msgid "{0} week ago"
 msgid_plural "{0} weeks ago"
 msgstr[0] "{0} viikko sitten"
 msgstr[1] "{0} viikkoa sitten"
 
-#: ../search/Tiles/Utils.cs:202
+#: ../search/Tiles/Utils.cs:181
 #, csharp-format
 msgid "In {0} week"
 msgid_plural "In {0} weeks"
@@ -365,28 +372,28 @@ msgstr[0] "{0} viikon aikana"
 msgstr[1] "{0} viikon aikana"
 
 #. Let's say a year and a half to stop saying months
-#: ../search/Tiles/Utils.cs:204
+#: ../search/Tiles/Utils.cs:183
 #, csharp-format
 msgid "{0} month ago"
 msgid_plural "{0} months ago"
 msgstr[0] "{0} kuukausi sitten"
 msgstr[1] "{0} kuukautta sitten"
 
-#: ../search/Tiles/Utils.cs:206
+#: ../search/Tiles/Utils.cs:185
 #, csharp-format
 msgid "In {0} month"
 msgid_plural "In {0} months"
 msgstr[0] "{0} kuukauden aikana"
 msgstr[1] "{0} kuukauden aikana"
 
-#: ../search/Tiles/Utils.cs:208
+#: ../search/Tiles/Utils.cs:187
 #, csharp-format
 msgid "{0} year ago"
 msgid_plural "{0} years ago"
 msgstr[0] "{0} vuosi sitten"
 msgstr[1] "{0} vuotta sitten"
 
-#: ../search/Tiles/Utils.cs:210
+#: ../search/Tiles/Utils.cs:189
 #, csharp-format
 msgid "In {0} year"
 msgid_plural "In {0} years"
