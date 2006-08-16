@@ -518,8 +518,9 @@ namespace Beagle.Filters {
 					// And certain PPTs do have some slides in after
 					// "Document" container.
 					//Console.WriteLine ("Length of stream = {0}", stream.Size);
-					while (!stream.Eof) {
-						ParseElement (stream);
+					int ret = -1;
+					while (!stream.Eof && ret != 0) {
+						ret = ParseElement (stream);
 						//Console.WriteLine ("Position of the ptr in the stream: {0}", stream.Position);
 					}
 				} else {
