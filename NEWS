@@ -1,4 +1,111 @@
 
+Version 0.2.8
+August 17, 2006
+
+Daemon/Infrastructure:
+* No longer require gtk-sharp for the core parts of the daemon and
+  tools, only glib-sharp.  (Debajyoti Bera)
+* Add support for wildcard searches.  (Joe Shaw)
+* Monitor the battery status and stop the scheduler if the config
+  option is set.  (Joe)
+* Optimize an index no more often than once a day.  (Joe)
+* Fix various case-sensitivity issues when searching against
+  properties.  (Joe)
+* If file attributes were previously stored in the Sqlite database but
+  can now be set using extended attributes, do that and remove the old
+  one.  (Bera)
+* Add messages to retrieve specific daemon information rather than
+  getting it all at once.  (Bera)
+* Fix a crash in xdgmime in which null mime types were being added to
+  the database.  (Bera)
+* Better handle errors when hits are filtered by backends.  (Joe)
+* Greatly improve error reporting throughout the code.  (Joe, Bera)
+* Improve signal handling, especially immediately after daemon
+  startup.  (Bera)
+* Add a handler for SIGUSR1 to turn on the highest level of debugging
+  while the daemon is running.  (Joe)
+
+Backends:
+* Added a Thunderbird backend (Pierre Östlund, Kevin Kubasik)
+* When crawling the file system, index directories only one level down
+  from the root before all others.  (Joe)
+* Use more efficient indexable generators for the Gaim and indexing
+  service backends, making startup much faster for people with
+  thousands of IM logs or viewed web pages.  (Joe)
+* Fix various bugs in parsing the Kopete buddy list.  (Pat Double)
+* Add some sanity checks to the Evolution mail backend, checking for
+  non-existent summary files.  (Joe)
+* Fix a file descriptor leak in the KMail backend.  (Joe)
+
+Filters:
+* Correctly handle "emotes" in Gaim log files.  (Joe)
+* Soft line breaks are correctly treated as whitespace in the
+  OpenOffice filter.  (Bera)
+* Index the name of individual sheets in an OpenOffice spreadsheet.
+  (Bera)
+* Don't index style nodes in OpenOffice filter.  (Bera)
+* Don't try to index password-protected PowerPoint documents.  (Joe)
+* Fix a 100% CPU issue with certain broken PowerPoint documents. (Joe)
+* Index keywords from KDE .desktop files.  (Stephan Kulow, Joe)
+* Added mime types for Matroska and OGM video files.  (Mario Manno)
+* Added "camera-model" as a searchable property for JPEG files. (Bera)
+* Added "genre" as a searchable property for music files.  (Joe)
+* Fix the mime type for Ruby files.  (Wade Menard)
+
+UI:
+* Handle text/html message parts using the mail tile.  (Joe, Paddy
+  Spencer, Rafał Próchniak)
+* Fix a URI encoding issue that prevented files containing Unicode
+  characters from being opened correctly.  (Joe)
+* Fix presentation of number of results when there is only one page,
+  so you don't see dumb things like "1-1 of 1".  (Joe)
+* Fix UTC date issues and calculating spans of time so that the dates
+  displayed are more accurate.  (Joe)
+* Fix amusing bug where you could use the scroll wheel to scroll
+  through the different pages at startup.  (Joe)
+* Display the message's folder in the mail tile.  (Joe)
+* Display "(unknown)" if we can't figure out who we're speaking to in
+  the IM log tile.  (Joe)
+
+Bindings:
+* Fix an issue where beagle_util_daemon_is_running() wouldn't work
+  with NFS home directories.  (Joe)
+
+Tools:
+* Make the help button in beagle-settings point to the right Wiki
+  page.  (Kevin)
+
+Translations:
+* Added Hindi translation.  (Guntupalli Karunakar)
+* Added Latvian translation.  (Raivis Dejus)
+* Added Traditional Chinese (Hong Kong) translation.  (Chao-Hsiung
+  Liao)
+* Updated Catalan translation.  (Jordi Mas)
+* Updated Czech translation.  (Jakub Friedl)
+* Updated Dutch translation.  (Tino Meinen)
+* Updated Finnish translation.  (Ilkka Tuohela)
+* Updated French translation.  (Guillaume Ayoub)
+* Updated Hungarian translation.  (Gabor Kelemen)
+* Updated Italian translation.  (Luca Ferretti)
+* Updated Japanese translation.  (Takeshi Aihana)
+* Updated Korean translation.  (Young-Ho Cha)
+* Updated Lithuanian translation.  (Žygimantas Beručka)
+* Updated Norwegian bokmål translation.  (Kjartan Maraas)
+* Updated Russian translation.  (Valek Filippov)
+* Updated Spanish translation.  (Francisco Javier F. Serrador)
+* Updated Swedish translation.  (Daniel Nylander)
+* Updated Traditional Chinese (Taiwan) translation.  (Chao-Hsiung Liao)
+
+Everything Else:
+* Fix Firefox extension to not match only partial subdomains.  (Kevin)
+* Fix references to Best in the Firefox extension.  (Kevin)
+* Fix compile errors with newer gtk-sharp versions.  (Kevin)
+* Don't set MONO_GAC_PREFIX in any wrapper scripts; this is now the
+  responsibility of the user.  (Joe)
+* Various other fixes (Lukas Lipka, Kevin, Bera, Joe)
+
+------------------------------------------------------
+
 Version 0.2.7
 June 19, 2006
 
