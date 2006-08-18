@@ -88,9 +88,39 @@ namespace Lucene.Net.Store
 					    Mono.Unix.Native.Stdlib.GetLastError ()
 				    ));
 
-		    System.IO.StreamWriter w = new System.IO.StreamWriter (new Mono.Unix.UnixStream (fd, false));
-		    w.WriteLine (System.Diagnostics.Process.GetCurrentProcess ().Id);
-		    w.Close ();
+		    // This code replaces the commented-out code below because
+		    // it ends up being much faster.  The reason for this is
+		    // that closing a UnixStream causes Syscall.fsync() to be
+		    // called, and that apparently is extremely slow!
+		    //
+		    // Time(ms) Count   P/call(ms) Method name
+		    // 1563.926      68   22.999   Mono.Unix.Native.Syscall::fsync(int)
+		    //
+		    // Since the lock file is written out very often, this time
+		    // adds up and noticably slows down indexing.
+		    IntPtr ptr = IntPtr.Zero;
+		    long ret;
+
+		    try {
+			    string s = System.Diagnostics.Process.GetCurrentProcess ().Id.ToString () + "\n";
+			    ptr = Mono.Unix.UnixMarshal.StringToHeap (s);
+
+			    do {
+				    ret = Mono.Unix.Native.Syscall.write (fd, ptr, (ulong) s.Length);
+			    } while (Mono.Unix.UnixMarshal.ShouldRetrySyscall ((int) ret));
+			    Mono.Unix.UnixMarshal.ThrowExceptionForLastErrorIf ((int) ret);
+		    } finally {
+			    Mono.Unix.UnixMarshal.FreeHeap (ptr);
+
+			    do {
+				    ret = Mono.Unix.Native.Syscall.close (fd);
+			    } while (Mono.Unix.UnixMarshal.ShouldRetrySyscall ((int) ret));
+			    Mono.Unix.UnixMarshal.ThrowExceptionForLastErrorIf ((int) ret);
+		    }
+
+		    //System.IO.StreamWriter w = new System.IO.StreamWriter (new Mono.Unix.UnixStream (fd, true));
+		    //w.WriteLine (System.Diagnostics.Process.GetCurrentProcess ().Id);
+		    //w.Close ();
 
 		    Log ("Obtained lock " + lockFile.FullName);
                     return true;
