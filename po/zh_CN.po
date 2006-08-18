@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: beagle HEAD\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2006-05-26 10:10+0200\n"
-"PO-Revision-Date: 2006-05-28 15:23+0800\n"
+"POT-Creation-Date: 2006-08-18 10:09+0200\n"
+"PO-Revision-Date: 2006-08-18 21:03+0800\n"
 "Last-Translator: Funda Wang <fundawang@linux.net.cn>\n"
 "Language-Team: zh_CN <i18n-translation@lists.linux.net.cn>\n"
 "MIME-Version: 1.0\n"
@@ -42,7 +42,7 @@ msgstr "{0} 中的对话"
 msgid "Conversations with {0}"
 msgstr "与 {0} 的对话"
 
-#: ../search/beagle-search.desktop.in.h:1 ../tools/settings.glade.h:27
+#: ../search/beagle-search.desktop.in.h:1 ../tools/settings.glade.h:28
 msgid "Search"
 msgstr "搜索"
 
@@ -50,7 +50,13 @@ msgstr "搜索"
 msgid "Search for data on your desktop"
 msgstr "在您的桌面上搜索数据"
 
-#: ../search/Category.cs:108
+#: ../search/Category.cs:109
+#, csharp-format
+msgid "{0} result"
+msgid_plural "{0} results"
+msgstr[0] "{0} 个结果"
+
+#: ../search/Category.cs:111
 #, csharp-format
 msgid "{0}-{1} of {2}"
 msgstr "{0}-{1}，共{2}个"
@@ -136,19 +142,19 @@ msgstr "开始搜索"
 msgid "Send Mail"
 msgstr "发送邮件"
 
-#: ../search/Tiles/Contact.cs:69
+#: ../search/Tiles/Contact.cs:68
 msgid "E-Mail:"
 msgstr "电子邮件："
 
-#: ../search/Tiles/Contact.cs:71
+#: ../search/Tiles/Contact.cs:70
 msgid "Mobile Phone:"
 msgstr "移动电话："
 
-#: ../search/Tiles/Contact.cs:73
+#: ../search/Tiles/Contact.cs:72
 msgid "Work Phone:"
 msgstr "工作电话："
 
-#: ../search/Tiles/Contact.cs:75
+#: ../search/Tiles/Contact.cs:74
 msgid "Home Phone:"
 msgstr "宅电："
 
@@ -167,22 +173,22 @@ msgstr "电子邮件"
 msgid "Move to Trash"
 msgstr "移至回收站"
 
-#: ../search/Tiles/File.cs:122 ../search/Tiles/Note.cs:57
+#: ../search/Tiles/File.cs:124 ../search/Tiles/Note.cs:57
 #: ../search/Tiles/RSSFeed.cs:45 ../search/Tiles/WebHistory.cs:50
 msgid "Title:"
 msgstr "标题："
 
 #: ../search/Tiles/File.cs:125 ../search/Tiles/Folder.cs:51
-#: ../search/Tiles/Note.cs:60
+#: ../search/Tiles/Note.cs:58
 msgid "Last Edited:"
 msgstr "上次编辑："
 
-#: ../search/Tiles/File.cs:129
+#: ../search/Tiles/File.cs:128
 msgid "Author:"
 msgstr "作者："
 
-#: ../search/Tiles/File.cs:133 ../search/Tiles/Folder.cs:54
-#: ../search/Tiles/Image.cs:81
+#: ../search/Tiles/File.cs:130 ../search/Tiles/Folder.cs:52
+#: ../search/Tiles/Image.cs:79
 msgid "Full Path:"
 msgstr "完整路径："
 
@@ -209,37 +215,45 @@ msgstr "修改时间："
 msgid "IM Conversation"
 msgstr "即时消息对话"
 
-#: ../search/Tiles/IMLog.cs:81
+#: ../search/Tiles/IMLog.cs:92
 msgid "Name:"
 msgstr "名称："
 
-#: ../search/Tiles/IMLog.cs:82 ../search/Tiles/MailMessage.cs:96
+#: ../search/Tiles/IMLog.cs:93 ../search/Tiles/MailMessage.cs:114
 msgid "Date Received:"
 msgstr "接收日期："
 
-#: ../search/Tiles/MailAttachment.cs:47
+#: ../search/Tiles/MailAttachment.cs:45
 msgid "Mail attachment"
 msgstr "电子邮件附件"
 
-#: ../search/Tiles/MailMessage.cs:55
+#: ../search/Tiles/MailMessage.cs:67
+msgid "(untitled)"
+msgstr "(无标题)"
+
+#: ../search/Tiles/MailMessage.cs:77
 msgid "Send in Mail"
 msgstr "以邮件发送"
 
-#: ../search/Tiles/MailMessage.cs:87
+#: ../search/Tiles/MailMessage.cs:109
 msgid "Subject:"
 msgstr "主题："
 
-#: ../search/Tiles/MailMessage.cs:91
+#: ../search/Tiles/MailMessage.cs:111
 msgid "To:"
 msgstr "寄给："
 
-#: ../search/Tiles/MailMessage.cs:91
+#: ../search/Tiles/MailMessage.cs:111
 msgid "From:"
 msgstr "来自："
 
-#: ../search/Tiles/MailMessage.cs:96
+#: ../search/Tiles/MailMessage.cs:114
 msgid "Date Sent:"
 msgstr "发送日期："
+
+#: ../search/Tiles/MailMessage.cs:120
+msgid "Folder:"
+msgstr "文件夹："
 
 #: ../search/Tiles/Presentation.cs:33
 #, csharp-format
@@ -247,11 +261,11 @@ msgid "{0} slide"
 msgid_plural "{0} slides"
 msgstr[0] "{0} 张幻灯片"
 
-#: ../search/Tiles/RSSFeed.cs:48
+#: ../search/Tiles/RSSFeed.cs:46
 msgid "Site:"
 msgstr "网站："
 
-#: ../search/Tiles/RSSFeed.cs:51
+#: ../search/Tiles/RSSFeed.cs:47
 msgid "Date Viewed:"
 msgstr "查看的日期："
 
@@ -313,53 +327,52 @@ msgstr "新闻推送"
 msgid "Archives"
 msgstr "压缩包"
 
-#: ../search/Tiles/Utils.cs:100 ../search/Tiles/Utils.cs:146
-#: ../search/Tiles/Utils.cs:192 ../Util/StringFu.cs:77
-msgid "Today"
-msgstr "今天"
-
-#: ../search/Tiles/Utils.cs:102 ../search/Tiles/Utils.cs:148
-#: ../search/Tiles/Utils.cs:194 ../Util/StringFu.cs:79
+#: ../search/Tiles/Utils.cs:77 ../search/Tiles/Utils.cs:159
+#: ../Util/StringFu.cs:79
 msgid "Yesterday"
 msgstr "昨天"
 
-#: ../search/Tiles/Utils.cs:104 ../search/Tiles/Utils.cs:150
-#: ../search/Tiles/Utils.cs:196
+#: ../search/Tiles/Utils.cs:79 ../search/Tiles/Utils.cs:161
+#: ../Util/StringFu.cs:77
+msgid "Today"
+msgstr "今天"
+
+#: ../search/Tiles/Utils.cs:81 ../search/Tiles/Utils.cs:163
 msgid "Tomorrow"
 msgstr "明天"
 
-#: ../search/Tiles/Utils.cs:200
+#: ../search/Tiles/Utils.cs:179
 #, csharp-format
 msgid "{0} week ago"
 msgid_plural "{0} weeks ago"
 msgstr[0] "{0} 周前"
 
-#: ../search/Tiles/Utils.cs:202
+#: ../search/Tiles/Utils.cs:181
 #, csharp-format
 msgid "In {0} week"
 msgid_plural "In {0} weeks"
 msgstr[0] "{0} 周内"
 
 #. Let's say a year and a half to stop saying months
-#: ../search/Tiles/Utils.cs:204
+#: ../search/Tiles/Utils.cs:183
 #, csharp-format
 msgid "{0} month ago"
 msgid_plural "{0} months ago"
 msgstr[0] "{0} 个月前"
 
-#: ../search/Tiles/Utils.cs:206
+#: ../search/Tiles/Utils.cs:185
 #, csharp-format
 msgid "In {0} month"
 msgid_plural "In {0} months"
 msgstr[0] "{0} 个月内"
 
-#: ../search/Tiles/Utils.cs:208
+#: ../search/Tiles/Utils.cs:187
 #, csharp-format
 msgid "{0} year ago"
 msgid_plural "{0} years ago"
 msgstr[0] "{0} 年前"
 
-#: ../search/Tiles/Utils.cs:210
+#: ../search/Tiles/Utils.cs:189
 #, csharp-format
 msgid "In {0} year"
 msgid_plural "In {0} years"
@@ -371,11 +384,11 @@ msgstr[0] "{0} 年内"
 msgid "Unknown duration"
 msgstr "未知时长"
 
-#: ../search/Tiles/WebHistory.cs:53
+#: ../search/Tiles/WebHistory.cs:51
 msgid "URL:"
 msgstr "URL："
 
-#: ../search/Tiles/WebHistory.cs:56
+#: ../search/Tiles/WebHistory.cs:52
 msgid "Accessed:"
 msgstr "访问时间："
 
@@ -689,151 +702,153 @@ msgstr "相关度(_R)"
 msgid "Sort the best matches first"
 msgstr "将最佳的匹配放在前面"
 
-#: ../tools/Settings.cs:223
+#: ../tools/Settings.cs:226
 msgid "Reload configuration"
 msgstr "重新装入配置"
 
-#: ../tools/Settings.cs:224
+#: ../tools/Settings.cs:227
 msgid ""
 "The configuration file has been modified by another application. Do you wish "
 "to discard the currently displayed values and reload configuration from disk?"
 msgstr ""
-"配置文件已经被其它应用程序修改。您是否像要丢弃目前显示的值，然后从磁盘重新装"
+"配置文件已经被其它应用程序修改。您是否想要丢弃目前显示的值，然后从磁盘重新装"
 "入配置？"
 
-#: ../tools/Settings.cs:262
+#: ../tools/Settings.cs:265
 msgid "Select Path"
 msgstr "选择路径"
 
-#: ../tools/Settings.cs:281
+#: ../tools/Settings.cs:284
 msgid "The selected path is already selected for indexing and wasn't added."
 msgstr "选中的路径早已经选择进行索引了，因此没有添加。"
 
-#: ../tools/Settings.cs:284
+#: ../tools/Settings.cs:287
 msgid ""
 "The selected path wasn't added. The list contains items that supercedes it "
 "and the data is already being indexed."
 msgstr "选中的路径未添加。列表中包含与其类似的项目，而数据已经加入索引了。"
 
-#: ../tools/Settings.cs:295 ../tools/Settings.cs:487
+#: ../tools/Settings.cs:298 ../tools/Settings.cs:490
 msgid "Path not added"
 msgstr "路径未添加"
 
-#: ../tools/Settings.cs:304
+#: ../tools/Settings.cs:307
 msgid "Remove obsolete paths"
 msgstr "删除过期路径"
 
-#: ../tools/Settings.cs:305
+#: ../tools/Settings.cs:308
 msgid ""
 "Adding this path will obsolete some of the existing include paths. This will "
 "result in the removal of the old obsolete paths. Do you still wish to add it?"
-msgstr "添加此路经将使得现有的包含路径失效。这将导致删除旧的过期路径被删除。您是否仍然想要添加？"
+msgstr ""
+"添加此路经将使得现有的包含路径失效。这将导致删除旧的过期路径被删除。您是否仍"
+"然想要添加？"
 
-#: ../tools/Settings.cs:331
+#: ../tools/Settings.cs:334
 msgid "Remove path"
 msgstr "删除路径"
 
-#: ../tools/Settings.cs:332
+#: ../tools/Settings.cs:335
 msgid ""
 "Are you sure you wish to remove this path from the list of directories to be "
 "included for indexing?"
 msgstr "您确定想要将路径从要进行索引的目录列表中删除吗？"
 
-#: ../tools/Settings.cs:361
+#: ../tools/Settings.cs:364
 msgid "Remove item"
 msgstr "删除项目"
 
-#: ../tools/Settings.cs:362
+#: ../tools/Settings.cs:365
 msgid ""
 "Are you sure you wish to remove this item from the list of data to be "
 "excluded from indexing?"
-msgstr "您确定想要将路径从要进行在索引时排除的目录列表中删除吗？"
+msgstr "您确定想要将此路径从要进行在索引时排除的目录列表中删除吗？"
 
-#: ../tools/Settings.cs:405
+#: ../tools/Settings.cs:408
 msgid "Invalid host entry"
 msgstr "无效的主机项"
 
-#: ../tools/Settings.cs:412
+#: ../tools/Settings.cs:415
 msgid "Remote host already present in the list."
 msgstr "远程主机已经位于列表中。"
 
-#: ../tools/Settings.cs:421
+#: ../tools/Settings.cs:424
 msgid "Netbeagle Node not added"
 msgstr "Netbeagle 节点未添加"
 
-#: ../tools/Settings.cs:437
+#: ../tools/Settings.cs:440
 msgid "Remove host"
 msgstr "删除主机"
 
-#: ../tools/Settings.cs:438
+#: ../tools/Settings.cs:441
 msgid "Are you sure you wish to remove this host from the list?"
 msgstr "您是否像要从列表中删除此主机？"
 
-#: ../tools/Settings.cs:459
+#: ../tools/Settings.cs:462
 msgid "Select path"
 msgstr "选择路径"
 
-#: ../tools/Settings.cs:478
+#: ../tools/Settings.cs:481
 msgid "The selected path is already configured for external access."
 msgstr "选中的路径已经配置为外部访问。"
 
-#: ../tools/Settings.cs:502
+#: ../tools/Settings.cs:505
 msgid "Remove public path"
 msgstr "删除公开路径"
 
-#: ../tools/Settings.cs:503
+#: ../tools/Settings.cs:506
 msgid ""
 "Are you sure you wish to remove this entry from the list of public paths?"
 msgstr "您确定想要从公开路径列表中删除此项吗？"
 
-#: ../tools/Settings.cs:548 ../tools/Settings.cs:637 ../tools/Settings.cs:715
-#: ../tools/Settings.cs:791 ../tools/Settings.cs:1130
+#: ../tools/Settings.cs:551 ../tools/Settings.cs:640 ../tools/Settings.cs:718
+#: ../tools/Settings.cs:794 ../tools/Settings.cs:1133
 msgid "Name"
 msgstr "名称"
 
-#: ../tools/Settings.cs:631
+#: ../tools/Settings.cs:634
 msgid "Type"
 msgstr "类型"
 
-#: ../tools/Settings.cs:684
+#: ../tools/Settings.cs:687
 msgid "Path:"
 msgstr "路径："
 
-#: ../tools/Settings.cs:687
+#: ../tools/Settings.cs:690
 msgid "Pattern:"
 msgstr "通配符："
 
-#: ../tools/Settings.cs:690
+#: ../tools/Settings.cs:693
 msgid "Mail folder:"
 msgstr "邮件文件夹："
 
-#: ../tools/Settings.cs:1038
+#: ../tools/Settings.cs:1041
 msgid "Select Folder"
 msgstr "选择文件夹"
 
-#: ../tools/Settings.cs:1064 ../tools/settings.glade.h:24
+#: ../tools/Settings.cs:1067 ../tools/settings.glade.h:25
 msgid "P_ath:"
 msgstr "路径(_A)："
 
-#: ../tools/Settings.cs:1069
+#: ../tools/Settings.cs:1072
 msgid "M_ail folder:"
 msgstr "邮件文件夹(_A)："
 
-#: ../tools/Settings.cs:1074
+#: ../tools/Settings.cs:1077
 msgid "P_attern:"
 msgstr "通配符(_A)："
 
-#: ../tools/Settings.cs:1098
+#: ../tools/Settings.cs:1101
 msgid "Error adding path"
 msgstr "添加路径出错"
 
-#: ../tools/Settings.cs:1099
+#: ../tools/Settings.cs:1102
 msgid ""
 "The specified path could not be found and therefore it could not be added to "
 "the list of resources excluded for indexing."
 msgstr "找不到指定路径，所以未将此路径添加到要在索引时排除的资源列表中。"
 
-#: ../tools/Settings.cs:1129
+#: ../tools/Settings.cs:1132
 msgid "Show"
 msgstr "显示"
 
@@ -922,64 +937,68 @@ msgid "I_ndex my home directory"
 msgstr "对我的主目录进行索引(_N)"
 
 #: ../tools/settings.glade.h:22
+msgid "Index data while on battery power"
+msgstr "在电池电量低时对数据进行索引"
+
+#: ../tools/settings.glade.h:23
 msgid "Indexing"
 msgstr "索引"
 
-#: ../tools/settings.glade.h:23
+#: ../tools/settings.glade.h:24
 msgid "Networking"
 msgstr "联网"
 
-#: ../tools/settings.glade.h:25
+#: ../tools/settings.glade.h:26
 msgid "Please select a resource you wish to exclude from indexing."
 msgstr "请选择您想要从索引中排除的资源。"
 
-#: ../tools/settings.glade.h:26
+#: ../tools/settings.glade.h:27
 msgid "Please select the mail folder you wish to exclude from indexing. "
 msgstr "请选择您想要从索引中排除的邮件文件夹。"
 
-#: ../tools/settings.glade.h:28
+#: ../tools/settings.glade.h:29
 msgid "Search Preferences"
 msgstr "搜索首选项"
 
-#: ../tools/settings.glade.h:29
+#: ../tools/settings.glade.h:30
 msgid "Select Mail Folder"
 msgstr "选择邮件文件夹"
 
-#: ../tools/settings.glade.h:30
+#: ../tools/settings.glade.h:31
 msgid ""
 "Specify any resources, such as paths, patterns, mail folders or type of "
 "objects you wish to exclude from indexing."
 msgstr "指定您希望在建立索引时排除的资源，例如文件夹或模式。"
 
-#: ../tools/settings.glade.h:31
+#: ../tools/settings.glade.h:32
 msgid "Specify paths that should be available for external access."
 msgstr "指定外部访问可用的路径。"
 
-#: ../tools/settings.glade.h:32
+#: ../tools/settings.glade.h:33
 msgid "Type:"
 msgstr "类型："
 
-#: ../tools/settings.glade.h:33
+#: ../tools/settings.glade.h:34
 msgid "_Address:"
 msgstr "地址(_A)："
 
-#: ../tools/settings.glade.h:34
+#: ../tools/settings.glade.h:35
 msgid "_Allow Beagle to be run as root"
 msgstr "允许以 root 身份运行 Beagle"
 
-#: ../tools/settings.glade.h:35
+#: ../tools/settings.glade.h:36
 msgid "_Folder path"
 msgstr "文件夹路径(_F)"
 
-#: ../tools/settings.glade.h:36
+#: ../tools/settings.glade.h:37
 msgid "_Mail folder"
 msgstr "邮件文件夹(_M)"
 
-#: ../tools/settings.glade.h:37
+#: ../tools/settings.glade.h:38
 msgid "_Maximum number of results displayed:"
 msgstr "显示的最大结果数(_M)："
 
-#: ../tools/settings.glade.h:38
+#: ../tools/settings.glade.h:39
 msgid "_Start search & indexing services automatically "
 msgstr "自动启动搜索和索引服务(_S)"
 
@@ -1101,4 +1120,3 @@ msgstr "{0:0.0} KB"
 #, csharp-format
 msgid "{0:0.0} MB"
 msgstr "{0:0.0} MB"
-
