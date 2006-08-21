@@ -233,7 +233,7 @@ class QueryTool {
 		}
 	}
 	
-	[DllImport("libgobject-2.0.so")]
+	[DllImport("libgobject-2.0.so.0")]
 	static extern void g_type_init ();
 
 	public static void Main (string[] args) 
