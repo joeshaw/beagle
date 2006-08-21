@@ -114,15 +114,15 @@ namespace Beagle.Util {
 						      IntPtr context);
 		
 	
-		[ DllImportAttribute("libchm") ]
+		[DllImport ("libchm.so.0")]
 		private static extern IntPtr  chm_open(string filename);
 		
-		[ DllImportAttribute("libchm") ]
+		[DllImport ("libchm.so.0")]
 		private static extern ChmResolve chm_resolve_object(IntPtr raw,
 								    string  objPath,
 								    [Out] chmUnitInfo ui);
 		
-		[ DllImportAttribute("libchm") ]
+		[DllImport ("libchm.so.0")]
 		private static extern UInt64 chm_retrieve_object(IntPtr raw,
 								 [In, Out] chmUnitInfo ui,
 								 IntPtr buf,
@@ -132,7 +132,7 @@ namespace Beagle.Util {
 		
 		
 
-		[ DllImportAttribute("libchm") ]
+		[DllImport ("libchm.so.0")]
 		private static extern int chm_enumerate(IntPtr raw,
 							ChmEnumerate what,
 							ChmEnumerator e,
