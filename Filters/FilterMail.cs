@@ -191,10 +191,12 @@ namespace Beagle.Filters {
 
 			string l = handler.Reader.ReadLine ();
 
-			if (l != null)
-				AppendText (l);
-			else
+			if (l == null)
 				Finished ();
+			else if (l.Length > 0) {
+				AppendText (l);
+				AppendStructuralBreak ();
+			}
 		}
 
 		protected override void DoClose ()
