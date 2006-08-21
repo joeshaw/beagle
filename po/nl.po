@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: beagle\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2006-06-17 10:08+0200\n"
-"PO-Revision-Date: 2006-06-17 17:43+0200\n"
+"POT-Creation-Date: 2006-08-20 18:18+0200\n"
+"PO-Revision-Date: 2006-08-20 22:17+0200\n"
 "Last-Translator: Tino Meinen <a.t.meinen@chello.nl>\n"
 "Language-Team: Dutch <vertaling@vrijschrift.org>\n"
 "MIME-Version: 1.0\n"
@@ -29,6 +29,7 @@ msgstr "Richting van het mededelingengebied"
 msgid "<b>Conversations History</b>"
 msgstr "<b>Gespreksgeschiedenis</b>"
 
+# expresberichten-viewer
 #: ../ImLogViewer/ImLogViewer.glade.h:2
 msgid "IM Viewer"
 msgstr "IM-viewer"
@@ -43,19 +44,29 @@ msgstr "Gesprekken in {0}"
 msgid "Conversations with {0}"
 msgstr "Gesprekken met {0}"
 
-#: ../search/beagle-search.desktop.in.h:1 ../tools/settings.glade.h:27
+#: ../search/beagle-search.desktop.in.h:1 ../tools/settings.glade.h:28
 msgid "Search"
 msgstr "Zoeken"
 
+# het is niet het bureaublad dat doorzocht wordt, maar de desktopcomputer
+# (tino)
 #: ../search/beagle-search.desktop.in.h:2
 msgid "Search for data on your desktop"
-msgstr "Zoeken naar informatie op uw bureaublad"
+msgstr "Zoeken naar gegevens op uw computer"
 
-#: ../search/Category.cs:108
+#: ../search/Category.cs:109
+#, csharp-format
+msgid "{0} result"
+msgid_plural "{0} results"
+msgstr[0] "{0} resultaat "
+msgstr[1] "{0} resultaten"
+
+#: ../search/Category.cs:111
 #, csharp-format
 msgid "{0}-{1} of {2}"
 msgstr "{0}-{1} van {2}"
 
+# geen zoekresultaten
 #: ../search/Pages/NoMatch.cs:19
 msgid "No results were found."
 msgstr "Niets gevonden."
@@ -63,7 +74,7 @@ msgstr "Niets gevonden."
 #: ../search/Pages/NoMatch.cs:20
 #, csharp-format
 msgid "Your search for \"{0}\" did not match any files on your computer."
-msgstr "Uw zoekopdracht voor \"{0}\" vond geen bestanden op uw computer."
+msgstr "Uw zoekopdracht naar \"{0}\" heeft geen resultaten opgeleverd."
 
 # levert op/produceert
 #: ../search/Pages/NoMatch.cs:24
@@ -74,45 +85,38 @@ msgstr ""
 "U kunt de zoekopdracht aanpassen via het menu \"Zoeken\". Een meer algemene "
 "zoekopdracht levert mogelijk meer resultaten op."
 
+# misschien heeft u per ongeluk een zoekwoord verkeerd gespeld
 #: ../search/Pages/NoMatch.cs:26
 msgid ""
 "You should check the spelling of your search words to see if you "
 "accidentally misspelled any words."
-msgstr ""
-"U zou eens kunnen controleren of u misschien een woord verkeerd gespeld "
-"heeft."
+msgstr "U zou eens kunnen controleren of u misschien een zoekwoord verkeerd gespeld heeft."
 
 # het zoeken is niet gevoelig voor het gebruik van hoofletters en kleine letters.
 #: ../search/Pages/QuickTips.cs:10
 msgid "You can use upper and lower case; search is case-insensitive."
-msgstr ""
-"U mag hoofdletters en kleine letters gebruiken, dat maakt voor het zoeken "
-"niets uit."
+msgstr "U mag hoofdletters of kleine letters gebruiken, dat maakt voor het zoeken niets uit."
 
+# Nederlandse variant?
 #: ../search/Pages/QuickTips.cs:11
 msgid "To search for optional terms, use OR.  ex: <b>George OR Ringo</b>"
-msgstr ""
-"Om naar verschillende termen tegelijk te zoeken gebruikt u OR. Bijvoorbeeld: "
-"<b>George OR Ringo</b>"
+msgstr "Om naar verschillende termen tegelijk te zoeken gebruikt u ‘OR’, bijvoorbeeld: <b>George OR Ringo</b>"
 
 #: ../search/Pages/QuickTips.cs:12
 msgid ""
 "To exclude search terms, use the minus symbol in front, such as <b>-cats</b>"
-msgstr ""
-"Om zoektermen uit te sluiten zet u er een minteken voor, bijvoorbeeld <b>-"
-"cats</b>"
+msgstr "Om zoektermen uit te sluiten zet u er een minteken voor, bijvoorbeeld: <b>-katten</b>"
 
+# wat zou een goede zin zijn in het Nederlands?
 #: ../search/Pages/QuickTips.cs:13
 msgid ""
 "When searching for a phrase, add quotes. ex: <b>\"There be dragons\"</b>"
-msgstr ""
-"Bij het zoeken naar een zin, voegt u aanhalingstekens toe, bijvoorbeeld <b>"
-"\"There be dragons\"</b>"
+msgstr "Bij het zoeken naar een zin, voegt u aanhalingstekens toe, bijvoorbeeld: <b>\"There be dragons\"</b>"
 
 # handige tips/snelle tips/aanwijzingen/handwijzingen/tips
 #: ../search/Pages/QuickTips.cs:19 ../search/UIManager.cs:81
 msgid "Quick Tips"
-msgstr "Snelle tips"
+msgstr "Enkele tips"
 
 #: ../search/Pages/RootUser.cs:12
 msgid "Beagle cannot be run as root"
@@ -122,40 +126,42 @@ msgstr "Beagle kan niet worden uitgevoerd als 'root'"
 msgid ""
 "For security reasons, Beagle cannot be run as root.  You should restart as a "
 "regular user."
-msgstr ""
-"Voor beveilingsredenen kan Beagle niet worden uitgevoerd als 'root'. U moet "
-"het opstarten als normale gebruiker."
+msgstr "Voor beveilingsredenen kan Beagle niet worden uitgevoerd als 'root'. U moet het opstarten als normale gebruiker."
 
 #: ../search/Pages/StartDaemon.cs:19
 msgid "Search service not running"
-msgstr "Zoekdienst draait niet"
+msgstr "De zoekdienst draait niet"
 
-# Beginnen met zoeken/beginnen met zoeken
+# d.i. labeltekst
 #: ../search/Pages/StartDaemon.cs:21
 msgid "Start search service"
 msgstr "De zoekdienst opstarten"
 
+# dit staat voor het invoerveld:
+# Find [                             ] Find now
+# dus niet vertalen met Vind oid (tino)
 #: ../search/Search.cs:149
 msgid "_Find:"
-msgstr "_Zoeken:"
+msgstr "_Zoeken naar:"
 
 #: ../search/Search.cs:163
 msgid "Find Now"
 msgstr "Nu zoeken"
 
+# (Dit is een tooltip)
 # intoetsen/typen/
 #: ../search/Search.cs:209
 msgid "Type in search terms"
-msgstr "Zoektermen opgeven"
+msgstr "Typ hier de de zoektermen"
 
 #: ../search/Search.cs:210
 msgid "Start searching"
 msgstr "Beginnen met zoeken"
 
-# met/in/via e-mail verzenden
+# verschijnt in contextmenu na rechtsklikken op contact
 #: ../search/Tiles/Contact.cs:30
 msgid "Send Mail"
-msgstr "Verstuur e-mail"
+msgstr "Stuur een e-mail"
 
 #: ../search/Tiles/Contact.cs:68
 msgid "E-Mail:"
@@ -233,39 +239,50 @@ msgstr "Laatste wijziging:"
 msgid "IM Conversation"
 msgstr "On-line gesprekken"
 
-#: ../search/Tiles/IMLog.cs:87
+#: ../search/Tiles/IMLog.cs:92
 msgid "Name:"
 msgstr "Naam:"
 
-#: ../search/Tiles/IMLog.cs:88 ../search/Tiles/MailMessage.cs:92
+#: ../search/Tiles/IMLog.cs:93 ../search/Tiles/MailMessage.cs:114
 msgid "Date Received:"
 msgstr "Ontvangen op:"
 
-#: ../search/Tiles/MailAttachment.cs:47
+#: ../search/Tiles/MailAttachment.cs:45
 msgid "Mail attachment"
 msgstr "Mailbijlage"
 
+# zonder naam/titel/naamloos
+#: ../search/Tiles/MailMessage.cs:67
+msgid "(untitled)"
+msgstr "(zonder titel)"
+
 # met/in/via e-mail verzenden
-#: ../search/Tiles/MailMessage.cs:55
+#: ../search/Tiles/MailMessage.cs:77
 msgid "Send in Mail"
 msgstr "Via e-mail verzenden"
 
-#: ../search/Tiles/MailMessage.cs:87
+#: ../search/Tiles/MailMessage.cs:109
 msgid "Subject:"
 msgstr "Onderwerp:"
 
-#: ../search/Tiles/MailMessage.cs:89
+#: ../search/Tiles/MailMessage.cs:111
 msgid "To:"
 msgstr "Aan:"
 
-#: ../search/Tiles/MailMessage.cs:89
+#: ../search/Tiles/MailMessage.cs:111
 msgid "From:"
 msgstr "Van:"
 
-# laatst bekeken/bezocht
-#: ../search/Tiles/MailMessage.cs:92
+#: ../search/Tiles/MailMessage.cs:114
 msgid "Date Sent:"
-msgstr "Datum verstuurd:"
+msgstr "Verstuurd op:"
+
+#
+# Common stuff for the templates
+#
+#: ../search/Tiles/MailMessage.cs:120
+msgid "Folder:"
+msgstr "Map:"
 
 #: ../search/Tiles/Presentation.cs:33
 #, csharp-format
@@ -304,7 +321,7 @@ msgstr "Contacten"
 
 #: ../search/Tiles/Utils.cs:28
 msgid "Calendar Events"
-msgstr "Agenda gebeurtenissen"
+msgstr "Agendanotities"
 
 #
 # Common stuff for the templates
@@ -341,70 +358,70 @@ msgstr "Websites"
 
 #: ../search/Tiles/Utils.cs:44
 msgid "News Feeds"
-msgstr "Nieuws-stroom"
+msgstr "Nieuws-stromen"
 
 # Meervoud is hier beter
 #: ../search/Tiles/Utils.cs:46
 msgid "Archives"
 msgstr "Archieven"
 
-#: ../search/Tiles/Utils.cs:100 ../search/Tiles/Utils.cs:146
-#: ../search/Tiles/Utils.cs:192 ../Util/StringFu.cs:77
-msgid "Today"
-msgstr "Vandaag"
-
-#: ../search/Tiles/Utils.cs:102 ../search/Tiles/Utils.cs:148
-#: ../search/Tiles/Utils.cs:194 ../Util/StringFu.cs:79
+#: ../search/Tiles/Utils.cs:77 ../search/Tiles/Utils.cs:159
+#: ../Util/StringFu.cs:79
 msgid "Yesterday"
 msgstr "Gisteren"
 
-#: ../search/Tiles/Utils.cs:104 ../search/Tiles/Utils.cs:150
-#: ../search/Tiles/Utils.cs:196
+#: ../search/Tiles/Utils.cs:79 ../search/Tiles/Utils.cs:161
+#: ../Util/StringFu.cs:77
+msgid "Today"
+msgstr "Vandaag"
+
+#: ../search/Tiles/Utils.cs:81 ../search/Tiles/Utils.cs:163
 msgid "Tomorrow"
 msgstr "Morgen"
 
-#: ../search/Tiles/Utils.cs:200
+#: ../search/Tiles/Utils.cs:179
 #, csharp-format
 msgid "{0} week ago"
 msgid_plural "{0} weeks ago"
 msgstr[0] "{0} week geleden"
 msgstr[1] "{0} weken geleden"
 
-#: ../search/Tiles/Utils.cs:202
+#: ../search/Tiles/Utils.cs:181
 #, csharp-format
 msgid "In {0} week"
 msgid_plural "In {0} weeks"
-msgstr[0] "{0} week geleden"
-msgstr[1] "{0} weken geleden"
+msgstr[0] "In {0} week"
+msgstr[1] "In {0} weken"
 
 #. Let's say a year and a half to stop saying months
-#: ../search/Tiles/Utils.cs:204
+#: ../search/Tiles/Utils.cs:183
 #, csharp-format
 msgid "{0} month ago"
 msgid_plural "{0} months ago"
 msgstr[0] "{0} maand geleden"
 msgstr[1] "{0} maanden geleden"
 
-#: ../search/Tiles/Utils.cs:206
+#: ../search/Tiles/Utils.cs:185
 #, csharp-format
 msgid "In {0} month"
 msgid_plural "In {0} months"
-msgstr[0] "{0} maand"
-msgstr[1] "{0} maanden"
+msgstr[0] "In {0} maand"
+msgstr[1] "In {0} maanden"
 
-#: ../search/Tiles/Utils.cs:208
+#: ../search/Tiles/Utils.cs:187
 #, csharp-format
 msgid "{0} year ago"
 msgid_plural "{0} years ago"
 msgstr[0] "{0} jaar geleden"
 msgstr[1] "{0} jaar geleden"
 
-#: ../search/Tiles/Utils.cs:210
-#, fuzzy, csharp-format
+# hier wel jaren ipv jaar in meervoud
+#: ../search/Tiles/Utils.cs:189
+#, csharp-format
 msgid "In {0} year"
 msgid_plural "In {0} years"
-msgstr[0] "{0} jaar geleden"
-msgstr[1] "{0} jaar geleden"
+msgstr[0] "In {0} jaar"
+msgstr[1] "In {0} jaren"
 
 # duur/lengte
 #. FIXME: We need filters for video in Beagle.
@@ -424,7 +441,7 @@ msgstr "Benaderd:"
 # Bureuablad doorzoeken/desktop doorzoeken/desktop zoekprogramma/zoekhulp
 #: ../search/Tray/TrayIcon.cs:32
 msgid "Desktop Search"
-msgstr "Desktop doorzoeking"
+msgstr "Desktop doorzoeken"
 
 #: ../search/Tray/TrayIcon.cs:57
 msgid "No Recent Searches"
@@ -515,6 +532,8 @@ msgid ""
 "app\n"
 "apps"
 msgstr ""
+"applicatie\n"
+"applicaties\n"
 "toepassing\n"
 "toepassingen\n"
 "programma\n"
@@ -609,7 +628,9 @@ msgstr ""
 "www\n"
 "website\n"
 "websites\n"
-"homepages"
+"homepages\n"
+"webstek\n"
+"webstekken"
 
 #: ../search/TypeFilter.cs:51
 msgid ""
@@ -620,6 +641,7 @@ msgid ""
 msgstr ""
 "feed\n"
 "news\n"
+"nieuws\n"
 "blog\n"
 "rss"
 
@@ -679,7 +701,7 @@ msgstr "Hulp - Inhoud"
 # Bureuablad doorzoeken/desktop doorzoeken/desktop zoekprogramma/zoekhulp
 #: ../search/UIManager.cs:78
 msgid "About Desktop Search"
-msgstr "Over 'Desktop doorzoeking'"
+msgstr "Over 'Desktop doorzoeken'"
 
 # alles/overal (doorzoeken)
 #: ../search/UIManager.cs:100
@@ -690,6 +712,7 @@ msgstr "_Overal"
 msgid "Search everywhere"
 msgstr "Alles doorzoeken"
 
+# Menu: Zoeken -> In/naar Toepassingen
 #: ../search/UIManager.cs:105
 msgid "_Applications"
 msgstr "_Toepassingen"
@@ -709,11 +732,11 @@ msgstr "In contacten zoeken"
 
 #: ../search/UIManager.cs:115
 msgid "Ca_lendar events"
-msgstr "_Agenda gebeurtenissen"
+msgstr "_Agendanotities"
 
 #: ../search/UIManager.cs:117
 msgid "Search calendar events"
-msgstr "In agenda zoeken"
+msgstr "In agendanotities zoeken"
 
 #: ../search/UIManager.cs:120
 msgid "_Documents"
@@ -775,11 +798,11 @@ msgstr "_Relevantie"
 msgid "Sort the best matches first"
 msgstr "De beste resultaten eerst"
 
-#: ../tools/Settings.cs:223
+#: ../tools/Settings.cs:226
 msgid "Reload configuration"
 msgstr "Configuratie opnieuw laden"
 
-#: ../tools/Settings.cs:224
+#: ../tools/Settings.cs:227
 msgid ""
 "The configuration file has been modified by another application. Do you wish "
 "to discard the currently displayed values and reload configuration from disk?"
@@ -787,15 +810,15 @@ msgstr ""
 "Het configuratiebestand is door een andere toepassing gewijzigd. Wilt u de "
 "nu weergegeven waardes vervangen door de nieuwe waardes uit dit bestand?"
 
-#: ../tools/Settings.cs:262
+#: ../tools/Settings.cs:265
 msgid "Select Path"
 msgstr "Pad selecteren"
 
-#: ../tools/Settings.cs:281
+#: ../tools/Settings.cs:284
 msgid "The selected path is already selected for indexing and wasn't added."
 msgstr "Het geselecteerde pad is niet toegevoegd, omdat het al aanwezig was."
 
-#: ../tools/Settings.cs:284
+#: ../tools/Settings.cs:287
 msgid ""
 "The selected path wasn't added. The list contains items that supercedes it "
 "and the data is already being indexed."
@@ -803,15 +826,15 @@ msgstr ""
 "Het geselecteerde pad is niet toegevoegd, omdat het onderdeel is van een "
 "ander in de lijst aanwezig pad en de gegevens dus al geïndexeerd worden."
 
-#: ../tools/Settings.cs:295 ../tools/Settings.cs:487
+#: ../tools/Settings.cs:298 ../tools/Settings.cs:490
 msgid "Path not added"
 msgstr "Pad niet toegevoegd"
 
-#: ../tools/Settings.cs:304
+#: ../tools/Settings.cs:307
 msgid "Remove obsolete paths"
 msgstr "Overbodige paden verwijderen"
 
-#: ../tools/Settings.cs:305
+#: ../tools/Settings.cs:308
 msgid ""
 "Adding this path will obsolete some of the existing include paths. This will "
 "result in the removal of the old obsolete paths. Do you still wish to add it?"
@@ -820,11 +843,11 @@ msgstr ""
 "zullen na toevoeging verwijderd worden. Weet u zeker dat u dit pad wilt "
 "toevoegen?"
 
-#: ../tools/Settings.cs:331
+#: ../tools/Settings.cs:334
 msgid "Remove path"
 msgstr "Pad verwijderen"
 
-#: ../tools/Settings.cs:332
+#: ../tools/Settings.cs:335
 msgid ""
 "Are you sure you wish to remove this path from the list of directories to be "
 "included for indexing?"
@@ -832,11 +855,11 @@ msgstr ""
 "Weet u zeker dat u dit pad uit de lijst met paden die geïndexeerd worden "
 "wilt verwijderen?"
 
-#: ../tools/Settings.cs:361
+#: ../tools/Settings.cs:364
 msgid "Remove item"
 msgstr "Item verwijderen"
 
-#: ../tools/Settings.cs:362
+#: ../tools/Settings.cs:365
 msgid ""
 "Are you sure you wish to remove this item from the list of data to be "
 "excluded from indexing?"
@@ -844,97 +867,96 @@ msgstr ""
 "Weet u zeker dat u dit item wilt verwijderen van de lijst met gegevens die "
 "geïndexeerd moeten worden?"
 
-#: ../tools/Settings.cs:405
+#: ../tools/Settings.cs:408
 msgid "Invalid host entry"
 msgstr "Ongeldige host"
 
-#: ../tools/Settings.cs:412
+# deze externe host staat al in de lijst
+#: ../tools/Settings.cs:415
 msgid "Remote host already present in the list."
 msgstr "Externe host reeds aanwezig in de lijst."
 
-#: ../tools/Settings.cs:421
+#: ../tools/Settings.cs:424
 msgid "Netbeagle Node not added"
 msgstr "Netbeagle node niet toegevoegd"
 
-#: ../tools/Settings.cs:437
+#: ../tools/Settings.cs:440
 msgid "Remove host"
 msgstr "Host verwijderen"
 
-#: ../tools/Settings.cs:438
+#: ../tools/Settings.cs:441
 msgid "Are you sure you wish to remove this host from the list?"
 msgstr "Weet u zeker dat u deze host uit de lijst wilt verwijderen?"
 
-#: ../tools/Settings.cs:459
+#: ../tools/Settings.cs:462
 msgid "Select path"
 msgstr "Selecteer pad"
 
-#: ../tools/Settings.cs:478
+#: ../tools/Settings.cs:481
 msgid "The selected path is already configured for external access."
 msgstr "Het geselecteerde pad is al geconfigureerd voor toegang op afstand."
 
-#: ../tools/Settings.cs:502
+#: ../tools/Settings.cs:505
 msgid "Remove public path"
 msgstr "Publiek pad verwijderen"
 
-#: ../tools/Settings.cs:503
+#: ../tools/Settings.cs:506
 msgid ""
 "Are you sure you wish to remove this entry from the list of public paths?"
 msgstr ""
 "Weet u zeker dat u dit item uit de lijst van publieke paden wilt verwijdern?"
 
-#: ../tools/Settings.cs:548 ../tools/Settings.cs:637 ../tools/Settings.cs:715
-#: ../tools/Settings.cs:791 ../tools/Settings.cs:1130
+#: ../tools/Settings.cs:551 ../tools/Settings.cs:640 ../tools/Settings.cs:718
+#: ../tools/Settings.cs:794 ../tools/Settings.cs:1133
 msgid "Name"
 msgstr "Naam"
 
-#: ../tools/Settings.cs:631
+#: ../tools/Settings.cs:634
 msgid "Type"
 msgstr "Type"
 
-#: ../tools/Settings.cs:684
+#: ../tools/Settings.cs:687
 msgid "Path:"
 msgstr "Pad:"
 
-#: ../tools/Settings.cs:687
+#: ../tools/Settings.cs:690
 msgid "Pattern:"
 msgstr "Patroon:"
 
-#: ../tools/Settings.cs:690
+#: ../tools/Settings.cs:693
 msgid "Mail folder:"
 msgstr "E-mailmap:"
 
-#
-# Common stuff for the templates
-#
-#: ../tools/Settings.cs:1038
+#: ../tools/Settings.cs:1041
 msgid "Select Folder"
 msgstr "Map selecteren"
 
-#: ../tools/Settings.cs:1064 ../tools/settings.glade.h:24
+# Map is hier veel duidelijker dan pad (tino) 
+# (je moet ook een map kiezen met de bestandsverkenner)
+#: ../tools/Settings.cs:1067 ../tools/settings.glade.h:25
 msgid "P_ath:"
-msgstr "_Pad:"
+msgstr "M_ap:"
 
-#: ../tools/Settings.cs:1069
+#: ../tools/Settings.cs:1072
 msgid "M_ail folder:"
 msgstr "_E-mailmap:"
 
-#: ../tools/Settings.cs:1074
+#: ../tools/Settings.cs:1077
 msgid "P_attern:"
 msgstr "P_atroon:"
 
-#: ../tools/Settings.cs:1098
+#: ../tools/Settings.cs:1101
 msgid "Error adding path"
 msgstr "Fout bij toevoegen van pad"
 
-#: ../tools/Settings.cs:1099
+# map hier veel duidelijker dan pad (tino)
+#: ../tools/Settings.cs:1102
 msgid ""
 "The specified path could not be found and therefore it could not be added to "
 "the list of resources excluded for indexing."
-msgstr ""
-"Het opgegeven pad kon niet gevonden worden en is daarom niet toegevoegd aan "
-"de lijst met bronnen die niet geïndexeerd zullen worden."
+msgstr "De opgegeven map kon niet gevonden worden en is daarom niet toegevoegd aan de lijst met bronnen die niet geïndexeerd zullen worden."
 
-#: ../tools/Settings.cs:1129
+#: ../tools/Settings.cs:1132
 msgid "Show"
 msgstr "Tonen"
 
@@ -981,10 +1003,10 @@ msgid ""
 "to network with."
 msgstr "Voeg een op afstand doorzoekbare host toe."
 
+# mappen ipv paden (je kiest een map met de bestandsverkenner) (tino)
 #: ../tools/settings.glade.h:12
 msgid "Add any additional paths to be included for indexing."
-msgstr ""
-"Voeg hier een willekeurig aantal paden toe dat ook geïndexeerd zal worden."
+msgstr "Voeg hier de overige mappen toe die u geïndexeerd wilt hebben."
 
 #: ../tools/settings.glade.h:13
 msgid "Add any remote search-enabled hosts you wish to network with."
@@ -1021,86 +1043,83 @@ msgstr "Bron uitsluiten"
 
 #: ../tools/settings.glade.h:20
 msgid "Filename _pattern"
-msgstr "Bestandsnaam_patroon"
+msgstr "Be_standsnaampatroon"
 
 #: ../tools/settings.glade.h:21
 msgid "I_ndex my home directory"
 msgstr "_Mijn persoonlijke map indexeren"
 
 #: ../tools/settings.glade.h:22
+msgid "Index data while on battery power"
+msgstr "Ook bij accustroom data indexeren"
+
+#: ../tools/settings.glade.h:23
 msgid "Indexing"
 msgstr "Indexeren"
 
-#: ../tools/settings.glade.h:23
+#: ../tools/settings.glade.h:24
 msgid "Networking"
 msgstr "Netwerk"
 
-#: ../tools/settings.glade.h:25
-msgid "Please select a resource you wish to exclude from indexing."
-msgstr "Selecteer een bron die niet geïndexeerd moet worden."
-
 #: ../tools/settings.glade.h:26
-msgid "Please select the mail folder you wish to exclude from indexing. "
-msgstr "Selecteer de E-mailmap die niet geïndexeerd moet worden."
+msgid "Please select a resource you wish to exclude from indexing."
+msgstr "Selecteer een bron die u niet geïndexeerd wilt hebben."
 
-#: ../tools/settings.glade.h:28
+#: ../tools/settings.glade.h:27
+msgid "Please select the mail folder you wish to exclude from indexing. "
+msgstr "Selecteer de E-mailmap die u niet geïndexeerd wilt hebben."
+
+#: ../tools/settings.glade.h:29
 msgid "Search Preferences"
 msgstr "Zoekvoorkeuren"
 
-#
-# Common stuff for the templates
-#
-#: ../tools/settings.glade.h:29
+#: ../tools/settings.glade.h:30
 msgid "Select Mail Folder"
 msgstr "E-mailmap selecteren"
 
-#: ../tools/settings.glade.h:30
+#: ../tools/settings.glade.h:31
 msgid ""
 "Specify any resources, such as paths, patterns, mail folders or type of "
 "objects you wish to exclude from indexing."
-msgstr ""
-"Geef alle bronnen op zoals paden, patronen, e-mailmappen, of soort objecten, "
-"die niet geïndexeerd moeten worden."
+msgstr "Geef alle bronnen, waaronder paden, patronen, e-mailmappen, of soort objecten, die u niet geïndexeerd wilt hebben."
 
-#: ../tools/settings.glade.h:31
+#: ../tools/settings.glade.h:32
 msgid "Specify paths that should be available for external access."
 msgstr "Geef de paden op die extern toegankelijk moeten zijn."
 
-#: ../tools/settings.glade.h:32
+#: ../tools/settings.glade.h:33
 msgid "Type:"
 msgstr "Type:"
 
-#: ../tools/settings.glade.h:33
+#: ../tools/settings.glade.h:34
 msgid "_Address:"
 msgstr "_Adres:"
 
-#: ../tools/settings.glade.h:34
+#: ../tools/settings.glade.h:35
 msgid "_Allow Beagle to be run as root"
 msgstr "_Beagle uit kunnen laten voeren als 'root'"
 
-#
-# Common stuff for the templates
-#
-#: ../tools/settings.glade.h:35
-msgid "_Folder path"
-msgstr "_Mappenpad"
-
+# Map is hier veel duidelijker dan Mappenpad of pad. (tino)
 #: ../tools/settings.glade.h:36
+msgid "_Folder path"
+msgstr "_Map"
+
+#: ../tools/settings.glade.h:37
 msgid "_Mail folder"
 msgstr "_E-mailmap"
 
 # weergegeven/getoonde
-#: ../tools/settings.glade.h:37
+#: ../tools/settings.glade.h:38
 msgid "_Maximum number of results displayed:"
 msgstr "_Maximum aantal getoonde resultaten:"
 
-#: ../tools/settings.glade.h:38
+#: ../tools/settings.glade.h:39
 msgid "_Start search & indexing services automatically "
 msgstr "A_utomatisch de zoek- en indexeerdiensten starten"
 
 #: ../tools/beagle-settings.desktop.in.h:1
 msgid "Configure Desktop Search & Indexing"
-msgstr "Desktop doorzoeking en indexeren configureren"
+msgstr "Desktop doorzoeken en indexeren configureren"
 
 #: ../tools/beagle-settings.desktop.in.h:2
 msgid "Configure search & indexing properties"
@@ -1120,7 +1139,7 @@ msgstr "Afbeeldingenmap"
 
 #: ../Util/ExifData.cs:228
 msgid "Thumbnail Directory"
-msgstr "Miniatuurvoorbeeldmap"
+msgstr "Miniaturenmap"
 
 #: ../Util/ExifData.cs:230
 msgid "Exif Directory"
@@ -1252,11 +1271,6 @@ msgstr "{0:0.0} MB"
 
 #~ msgid "Instant-Message"
 #~ msgstr "Expresbericht"
-
-#~ msgid "Top {0} Result"
-#~ msgid_plural "Top {0} Results"
-#~ msgstr[0] "Resultaat top-{0}"
-#~ msgstr[1] "Resultaten top-{0}"
 
 #~ msgid "Previous {0}"
 #~ msgid_plural "Previous {0}"
