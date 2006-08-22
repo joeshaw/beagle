@@ -374,7 +374,7 @@ namespace ContactViewer {
 			
 			process = new SafeProcess ();
 			process.Arguments = new string [2];
-			process.Arguments [0] = "thunderbird";
+			process.Arguments [0] = Thunderbird.ExecutableName;
 			process.Arguments [1] = String.Format ("mailto:{0}", mail);
 			process.Start ();
 		}

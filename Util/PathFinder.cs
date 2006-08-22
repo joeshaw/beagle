@@ -34,6 +34,13 @@ namespace Beagle.Util {
 
 		private PathFinder () { }
 
+		static public string[] Paths {
+			get {
+				string env_var = Environment.GetEnvironmentVariable ("PATH");
+				return env_var.Split (':');
+			}
+		}
+
 		static public string PkgLibDir {
 			get { return ExternalStringsHack.PkgLibDir; }
 		}

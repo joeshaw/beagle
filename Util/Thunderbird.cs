@@ -527,6 +527,24 @@ namespace Beagle.Util {
 		
 		/////////////////////////////////////////////////////////////////////////////////////
 
+		public static string ExecutableName {
+			get {
+				bool is_mt = false;
+				string exec_name = "thunderbird";
+
+				foreach (string s in PathFinder.Paths) {
+					if (File.Exists (Path.Combine (s, "mozilla-thunderbird"))) {
+						exec_name = "mozilla-thunderbird";
+						break;
+					}
+				}
+
+				return exec_name;
+			}
+		}
+		
+		/////////////////////////////////////////////////////////////////////////////////////
+
 		public static string HexDateToString (string hex)
 		{
 			DateTime time = new DateTime (1970,1,1,0,0,0);
