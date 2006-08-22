@@ -45,7 +45,13 @@ uninstall-local:
 	rm -f $(DESTDIR)$(bindir)/$(WRAPPER)
 
 $(WRAPPER): $(srcdir)/$(WRAPPER).in
-	sed -e "s|\@prefix\@|$(prefix)|g" -e "s|\@pkglibdir\@|$(pkglibdir)|g" -e "s|\@target\@|$(TARGET)|g" -e "s|\@gacprefix\@|$(GAC_PREFIX)|g" < $^ > $@
+	sed 					\
+	-e "s|\@prefix\@|$(prefix)|g" 		\
+	-e "s|\@pkglibdir\@|$(pkglibdir)|g"	\
+	-e "s|\@target\@|$(TARGET)|g" 		\
+	-e "s|\@gacprefix\@|$(GAC_PREFIX)|g" 	\
+	-e "s|\@bash\@|$(BASH)|"		\
+	< $^ > $@
 	chmod +x $(WRAPPER)
 
 EXTRA_DIST =			\

@@ -14,7 +14,10 @@ pkglib_DATA = Search.exe Search.exe.mdb
 BIN_WRAPPERS = beagle-search
 
 beagle-search: beagle-search.in
-	sed -e "s:@pkglibdir@:${pkglibdir}:" < $(srcdir)/beagle-search.in > beagle-search
+	sed 					\
+	-e "s:@pkglibdir@:${pkglibdir}:" 	\
+	-e "s:@bash@:$(BASH):"			\
+	< $(srcdir)/beagle-search.in > beagle-search
 	chmod a+x beagle-search
 
 CSFILES =					\

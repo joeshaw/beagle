@@ -1,4 +1,4 @@
-#!/bin/sh
+#!@bash@
 
 # This line will be automatically uncommented when you "make install"
 #installed=1
