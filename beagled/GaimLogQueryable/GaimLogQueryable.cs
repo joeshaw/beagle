@@ -310,6 +310,14 @@ namespace Beagle.Daemon.GaimLogQueryable {
 
 		override protected bool HitFilter (Hit hit) 
 		{
+			// If the protocol isn't set (because maybe we got an
+			// exception while we were indexing), this isn't a
+			// valid hit.
+			if (hit ["fixme:protocol"] == null) {
+				Log.Warn ("Discarding IM log hit with missing protocol info: {0}", hit.Uri);
+				return false;
+			}
+
 			string speakingto = hit ["fixme:speakingto"];
 
 			// We have no idea who we're speaking to.  Bad, but we

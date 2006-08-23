@@ -46,12 +46,15 @@ namespace Beagle.Filters {
 
 		override protected void DoOpen (FileInfo file)
 		{
-			if (MimeType == GaimLog.MimeType)
-				log = new GaimLog (FileInfo, new StreamReader (Stream));
-			else if (MimeType == KopeteLog.MimeType)
-				log = new KopeteLog (FileInfo, new StreamReader (Stream));
-			else
+			try {
+				if (MimeType == GaimLog.MimeType)
+					log = new GaimLog (FileInfo, new StreamReader (Stream));
+				else if (MimeType == KopeteLog.MimeType)
+					log = new KopeteLog (FileInfo, new StreamReader (Stream));
+			} catch (Exception e) {
+				Log.Warn (e, "Unable to index IM log {0}", file.FullName);
 				Error ();
+			}
 		}
 
 		protected override void DoPullProperties ()

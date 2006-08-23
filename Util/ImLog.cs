@@ -234,7 +234,7 @@ namespace Beagle.Util {
 			if (line.StartsWith ("***")) {
 				i = line.IndexOf (' ');
 
-				alias = line.Substring (3, i);
+				alias = line.Substring (3, i - 3);
 				text = line.Substring (i + 1);
 			} else {
 				// FIXME: This will break if there is a ':' in the nickname
