@@ -288,6 +288,14 @@ namespace ImLogViewer {
 					break;
 				tree_store.Remove (ref iter);
 			}
+
+			// Remove all the categories that dont have any matches
+			tree_store.GetIterFirst (out iter);
+
+			do {
+				if (tree_store.IterNChildren (iter) < 1)
+					tree_store.Remove (ref iter);
+			} while (tree_store.IterNext (ref iter));
 			
 			ScrollToLog (selected);
 			RenderConversation (selected);
