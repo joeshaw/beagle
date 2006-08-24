@@ -256,7 +256,18 @@ namespace Search {
 
 		private void Help (object obj, EventArgs args)
 		{
-			Gnome.Url.Show ("http://www.beagle-project.org/Getting_Started");
+			string address = "http://www.beagle-project.org/Getting_Started";
+
+			try {
+				Gnome.Url.Show (address);
+			} catch {
+				MessageDialog md = new MessageDialog (main_window, Gtk.DialogFlags.DestroyWithParent,
+								      Gtk.MessageType.Error, Gtk.ButtonsType.Close, null);
+				md.Text = Catalog.GetString ("Couldn't launch web browser");
+				md.SecondaryText = Catalog.GetString (String.Format ("Please point your web browser to '{0}' manually", address));
+				md.Run ();
+				md.Destroy ();
+			}
 		}
 
 		private void About (object obj, EventArgs args)
