@@ -35,7 +35,7 @@ namespace Search.Tiles {
 				if (newline == -1)
 					Description = description;
 				else
-					Description = description.Substring (0, newline);
+					Description = String.Format ("{0}...", description.Substring (0, newline));
 			}
 		}
 
