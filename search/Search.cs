@@ -418,7 +418,8 @@ namespace Search {
 		private void OnTrayActivated (object o, EventArgs args)
 		{
 			if (! Visible) {
-				ShowAll ();
+				base.ShowAll ();
+				base.Present ();
 				entry.GrabFocus ();
 			} else {
 				base.Hide ();
