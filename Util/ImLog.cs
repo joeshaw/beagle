@@ -239,7 +239,7 @@ namespace Beagle.Util {
 			} else {
 				// FIXME: This will break if there is a ':' in the nickname
 				i = line.IndexOf (':');
-				if (i == -1)
+				if (i == -1 || line.Length < i + 2)
 					return;
 
 				alias = line.Substring (0, i);
@@ -271,7 +271,12 @@ namespace Beagle.Util {
 				if (isHtml)
 					line = StringFu.StripTags (line, builder);
 			
-				ProcessLine (line);
+				try {
+					ProcessLine (line);
+				} catch (Exception e) {
+					Logger.Log.Warn ("Could not parse line in '{0}'", File.FullName);
+					Logger.Log.Warn (e);
+				}
 			}
 		}
 	}
