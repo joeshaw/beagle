@@ -6,8 +6,8 @@ msgid ""
 ""
 msgstr "Project-Id-Version: beagle Gnome HEAD\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2006-08-21 10:13+0200\n"
-"PO-Revision-Date: 2006-08-21 18:19+0930\n"
+"POT-Creation-Date: 2006-08-27 02:06+0200\n"
+"PO-Revision-Date: 2006-08-27 16:27+0930\n"
 "Last-Translator: Clytie Siddall <clytie@riverland.net.au>\n"
 "Language-Team: Vietnamese <gnomevi-list@lists.sourceforge.net>\n"
 "MIME-Version: 1.0\n"
@@ -75,7 +75,8 @@ msgstr "Việc tìm kiếm « {0} » không khớp với tập tin nào nằm tr
 msgid ""
 "You can change the scope of your search using the \"Search\" menu. A broader "
 "search scope might produce more results."
-msgstr "Bạn có thể sửa đổi phạm vị tìm kiếm bằng mục trình đơn « Tìm kiếm ». Phạm vị tìm kiếm rộng hơn có thể được nhiều kết quả hơn."
+msgstr "Bạn có thể sửa đổi phạm vị tìm kiếm bằng mục trình đơn « Tìm kiếm ». Phạm vị "
+"tìm kiếm rộng hơn có thể được nhiều kết quả hơn."
 
 #: ../search/Pages/NoMatch.cs:26
 msgid ""
@@ -85,11 +86,13 @@ msgstr "Bạn nên kiểm trả chính tả chuỗi tìm kiếm, để tìm lỗ
 
 #: ../search/Pages/QuickTips.cs:10
 msgid "You can use upper and lower case; search is case-insensitive."
-msgstr "Bạn có khả năng sử dụng chữ hoa/thường cũng được; việc tìm kiếm không phân biệt chữ hoa/thường."
+msgstr "Bạn có khả năng sử dụng chữ hoa/thường cũng được; việc tìm kiếm không phân "
+"biệt chữ hoa/thường."
 
 #: ../search/Pages/QuickTips.cs:11
 msgid "To search for optional terms, use OR.  ex: <b>George OR Ringo</b>"
-msgstr "Để tìm kiếm chuỗi có phần tùy chọn, hãy sử dụng toán tử « OR » (hoặc), v.d. « phở OR phố »."
+msgstr "Để tìm kiếm chuỗi có phần tùy chọn, hãy sử dụng toán tử « OR » (hoặc), v.d. "
+"« phở OR phố »."
 
 #: ../search/Pages/QuickTips.cs:12
 msgid ""
@@ -99,8 +102,8 @@ msgstr "Để loại trừ phần chuỗi tìm kiếm, phụ thêm dấu trừ, 
 #: ../search/Pages/QuickTips.cs:13
 msgid ""
 "When searching for a phrase, add quotes. ex: <b>\"There be dragons\"</b>"
-msgstr "Khi tìm kiếm cụm từ (nhiều từ), hãy thêm dấu trích dẫn, v.d. « \"Việt Nam"
-"\" OR Vietnam »"
+msgstr "Khi tìm kiếm cụm từ (nhiều từ), hãy thêm dấu trích dẫn, v.d. « \"Việt Nam\" "
+"OR Vietnam »"
 
 #: ../search/Pages/QuickTips.cs:19
 #: ../search/UIManager.cs:81
@@ -115,7 +118,8 @@ msgstr "Không cho phép chạy Beagle với tư cách người chủ"
 msgid ""
 "For security reasons, Beagle cannot be run as root.  You should restart as a "
 "regular user."
-msgstr "Vì lý do bảo mật, trình Beagle không có khả năng chạy với tư cách người chủ (root). Bạn nên khởi chạy lại với tư cách người dùng chuẩn."
+msgstr "Vì lý do bảo mật, trình Beagle không có khả năng chạy với tư cách người chủ "
+"(root). Bạn nên khởi chạy lại với tư cách người dùng chuẩn."
 
 #: ../search/Pages/StartDaemon.cs:19
 msgid "Search service not running"
@@ -540,7 +544,7 @@ msgstr "âm thanh\n"
 #: ../search/TypeFilter.cs:46
 msgid "video"
 msgstr "phím\n"
-"ảnh động"
+"ảnh động\n"
 "phim tập"
 
 #: ../search/TypeFilter.cs:47
@@ -559,9 +563,7 @@ msgid ""
 "office document\n"
 "office documents"
 msgstr "tài liệu\n"
-"tài liệu văn phòng"
-"bảng tính"
-"co sở dữ liệu"
+"tài liệu văn phòngbảng tínhco sở dữ liệu"
 
 #: ../search/TypeFilter.cs:49
 msgid ""
@@ -748,6 +750,10 @@ msgstr "Độ thích đán_g"
 msgid "Sort the best matches first"
 msgstr "Sắp xếp kết quả tốt nhất trước hết"
 
+#: ../search/UIManager.cs:266
+msgid "Couldn't launch web browser"
+msgstr "Không thể khởi chạy bộ duyệt Mạng"
+
 #: ../tools/Settings.cs:226
 msgid "Reload configuration"
 msgstr "Tải lại cấu hình"
@@ -756,7 +762,8 @@ msgstr "Tải lại cấu hình"
 msgid ""
 "The configuration file has been modified by another application. Do you wish "
 "to discard the currently displayed values and reload configuration from disk?"
-msgstr "Một ứng dụng khác đã sửa đổi tập tin cấu hình. Bạn có muốn hủy những giá trị đang xem, rồi tải lại cấu hình từ đĩa không?"
+msgstr "Một ứng dụng khác đã sửa đổi tập tin cấu hình. Bạn có muốn hủy những giá trị "
+"đang xem, rồi tải lại cấu hình từ đĩa không?"
 
 #: ../tools/Settings.cs:265
 msgid "Select Path"
@@ -770,7 +777,8 @@ msgstr "Chưa thêm đường dẫn đã chọn, vì nó đã chọn để chỉ
 msgid ""
 "The selected path wasn't added. The list contains items that supercedes it "
 "and the data is already being indexed."
-msgstr "Chưa thêm đường dẫn đã chọn, vì danh sách chứa mục thay thế nó và dữ liệu đang được chỉ mục."
+msgstr "Chưa thêm đường dẫn đã chọn, vì danh sách chứa mục thay thế nó và dữ liệu "
+"đang được chỉ mục."
 
 #: ../tools/Settings.cs:298
 #: ../tools/Settings.cs:490
@@ -785,7 +793,9 @@ msgstr "Gỡ bỏ các đường dẫn quá thời"
 msgid ""
 "Adding this path will obsolete some of the existing include paths. This will "
 "result in the removal of the old obsolete paths. Do you still wish to add it?"
-msgstr "Việc thêm đường dẫn này sẽ làm cho một số đường dẫn gồm tồn tại là quá thời. Kết quả là các đường dẫn quá thời trước bị gỡ bỏ. Bạn vẫn còn muốn thêm nó không?"
+msgstr "Việc thêm đường dẫn này sẽ làm cho một số đường dẫn gồm tồn tại là quá thời. "
+"Kết quả là các đường dẫn quá thời trước bị gỡ bỏ. Bạn vẫn còn muốn thêm nó "
+"không?"
 
 #: ../tools/Settings.cs:334
 msgid "Remove path"
@@ -795,7 +805,8 @@ msgstr "Gỡ bỏ đường dẫn"
 msgid ""
 "Are you sure you wish to remove this path from the list of directories to be "
 "included for indexing?"
-msgstr "Bạn có chắc muốn gỡ bỏ đường dẫn này ra danh sách các thư mục cần gồm để chỉ mục không?"
+msgstr "Bạn có chắc muốn gỡ bỏ đường dẫn này ra danh sách các thư mục cần gồm để chỉ "
+"mục không?"
 
 #: ../tools/Settings.cs:364
 msgid "Remove item"
@@ -805,7 +816,8 @@ msgstr "Gỡ bỏ mục"
 msgid ""
 "Are you sure you wish to remove this item from the list of data to be "
 "excluded from indexing?"
-msgstr "Bạn có chắc muốn gỡ bỏ mục này ra danh sách dữ liệu cần bị loại trừ ra việc chỉ mục không?"
+msgstr "Bạn có chắc muốn gỡ bỏ mục này ra danh sách dữ liệu cần bị loại trừ ra việc "
+"chỉ mục không?"
 
 #: ../tools/Settings.cs:408
 msgid "Invalid host entry"
@@ -893,7 +905,8 @@ msgstr "Gặp lỗi khi thêm đường dẫn"
 msgid ""
 "The specified path could not be found and therefore it could not be added to "
 "the list of resources excluded for indexing."
-msgstr "Không tìm thấy đường dẫn đã xác định nên không thể thêm nó vào danh sách các tài nguyên cần loại trừ ra việc chỉ mục."
+msgstr "Không tìm thấy đường dẫn đã xác định nên không thể thêm nó vào danh sách các "
+"tài nguyên cần loại trừ ra việc chỉ mục."
 
 #: ../tools/Settings.cs:1132
 msgid "Show"
@@ -954,7 +967,8 @@ msgstr "Thêm máy ở xa có khả năng tìm kiếm với đó bạn muốn ch
 msgid ""
 "Adjust which types of results should be visible, and in what order they "
 "should be presented when grouped by type."
-msgstr "Điều chỉnh kiểu kết quả nào nên hiển thị, và khi nhóm lại kết quả theo kiểu, nên hiển thị theo thứ tự nào."
+msgstr "Điều chỉnh kiểu kết quả nào nên hiển thị, và khi nhóm lại kết quả theo kiểu, "
+"nên hiển thị theo thứ tự nào."
 
 #: ../tools/settings.glade.h:15
 msgid "Allow _external access to local search services"
@@ -1016,7 +1030,8 @@ msgstr "Chọn thư mục Thư"
 msgid ""
 "Specify any resources, such as paths, patterns, mail folders or type of "
 "objects you wish to exclude from indexing."
-msgstr "Hãy xác định tài nguyên nào, như đường dẫn, mẫu, thư mục thư hoặc kiểu đối tượng, bạn muốn loại trừ ra việc chỉ mục."
+msgstr "Hãy xác định tài nguyên nào, như đường dẫn, mẫu, thư mục thư hoặc kiểu đối "
+"tượng, bạn muốn loại trừ ra việc chỉ mục."
 
 #: ../tools/settings.glade.h:32
 msgid "Specify paths that should be available for external access."
