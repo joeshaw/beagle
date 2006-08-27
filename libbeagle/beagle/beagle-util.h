@@ -33,7 +33,7 @@
 #define BEAGLE_ERROR (beagle_error_quark ())
 
 typedef enum {
-	BEAGLE_ERROR_DAEMON_ERROR,
+	BEAGLE_ERROR_DAEMON_ERROR
 } BeagleError;
 
 GQuark beagle_error_quark (void);

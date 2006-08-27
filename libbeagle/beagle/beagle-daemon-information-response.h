@@ -59,7 +59,7 @@ beagle_daemon_information_response_get_version (BeagleDaemonInformationResponse 
 BeagleSchedulerInformation *
 beagle_daemon_information_response_get_scheduler_information (BeagleDaemonInformationResponse *response);
 
-// Kept for backward compatibility
+/* Kept for backward compatibility */
 G_CONST_RETURN char *
 beagle_daemon_information_response_get_human_readable_status (BeagleDaemonInformationResponse *response);
 
