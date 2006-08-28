@@ -6,14 +6,16 @@
 # Guillaume Ayoub <lize@invox.org>, 2006.
 # Jonathan Ernst <jonathan@ernstfamily.ch>, 2006.
 # Christophe Merlet (RedFox) <redfox@redfoxcenter.org>, 2006.
+# Damien Durand <splinux@fedoraproject.org>, 2006.
+# Robert-André Mauchin <zebob.m@gmail.com>, 2006.
 # 
 msgid ""
 msgstr ""
-"Project-Id-Version: beagle 0.2.7\n"
+"Project-Id-Version: beagle 0.2.8\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2006-07-22 22:15+0200\n"
-"PO-Revision-Date: 2006-07-22 20:47+0200\n"
-"Last-Translator: Guillaume Ayoub <lize@invox.org>\n"
+"POT-Creation-Date: 2006-08-28 14:21+0200\n"
+"PO-Revision-Date: 2006-08-28 14:15+0200\n"
+"Last-Translator: Robert-André Mauchin <zebob.m@gmail.com>\n"
 "Language-Team: GNOME French Team <gnomefr@traduc.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -238,37 +240,45 @@ msgstr "Modifié :"
 msgid "IM Conversation"
 msgstr "Conversation instantanée"
 
-#: ../search/Tiles/IMLog.cs:87
+#: ../search/Tiles/IMLog.cs:92
 msgid "Name:"
 msgstr "Nom :"
 
-#: ../search/Tiles/IMLog.cs:88 ../search/Tiles/MailMessage.cs:92
+#: ../search/Tiles/IMLog.cs:93 ../search/Tiles/MailMessage.cs:114
 msgid "Date Received:"
 msgstr "Date de réception :"
 
-#: ../search/Tiles/MailAttachment.cs:47
+#: ../search/Tiles/MailAttachment.cs:45
 msgid "Mail attachment"
 msgstr "Pièce jointe"
 
-#: ../search/Tiles/MailMessage.cs:55
+#: ../search/Tiles/MailMessage.cs:67
+msgid "(untitled)"
+msgstr "(sans titre)"
+
+#: ../search/Tiles/MailMessage.cs:77
 msgid "Send in Mail"
 msgstr "Envoyer dans un courriel"
 
-#: ../search/Tiles/MailMessage.cs:87
+#: ../search/Tiles/MailMessage.cs:109
 msgid "Subject:"
 msgstr "Sujet :"
 
-#: ../search/Tiles/MailMessage.cs:89
+#: ../search/Tiles/MailMessage.cs:111
 msgid "To:"
 msgstr "À :"
 
-#: ../search/Tiles/MailMessage.cs:89
+#: ../search/Tiles/MailMessage.cs:111
 msgid "From:"
 msgstr "De :"
 
-#: ../search/Tiles/MailMessage.cs:92
+#: ../search/Tiles/MailMessage.cs:114
 msgid "Date Sent:"
 msgstr "Date d'envoi :"
+
+#: ../search/Tiles/MailMessage.cs:120
+msgid "Folder:"
+msgstr "Dossiers :"
 
 #: ../search/Tiles/Presentation.cs:33
 #, csharp-format
@@ -338,35 +348,34 @@ msgstr "Sites Web"
 
 #: ../search/Tiles/Utils.cs:44
 msgid "News Feeds"
-msgstr "Fils RSS"
+msgstr "Flux RSS"
 
 #: ../search/Tiles/Utils.cs:46
 msgid "Archives"
 msgstr "Archives"
 
-#: ../search/Tiles/Utils.cs:100 ../search/Tiles/Utils.cs:146
-#: ../search/Tiles/Utils.cs:192 ../Util/StringFu.cs:77
-msgid "Today"
-msgstr "Aujourd'hui"
-
-#: ../search/Tiles/Utils.cs:102 ../search/Tiles/Utils.cs:148
-#: ../search/Tiles/Utils.cs:194 ../Util/StringFu.cs:79
+#: ../search/Tiles/Utils.cs:77 ../search/Tiles/Utils.cs:159
+#: ../Util/StringFu.cs:79
 msgid "Yesterday"
 msgstr "Hier"
 
-#: ../search/Tiles/Utils.cs:104 ../search/Tiles/Utils.cs:150
-#: ../search/Tiles/Utils.cs:196
+#: ../search/Tiles/Utils.cs:79 ../search/Tiles/Utils.cs:161
+#: ../Util/StringFu.cs:77
+msgid "Today"
+msgstr "Aujourd'hui"
+
+#: ../search/Tiles/Utils.cs:81 ../search/Tiles/Utils.cs:163
 msgid "Tomorrow"
 msgstr "Demain"
 
-#: ../search/Tiles/Utils.cs:200
+#: ../search/Tiles/Utils.cs:179
 #, csharp-format
 msgid "{0} week ago"
 msgid_plural "{0} weeks ago"
 msgstr[0] "Il y a {0} semaine"
 msgstr[1] "Il y a {0} semaines"
 
-#: ../search/Tiles/Utils.cs:202
+#: ../search/Tiles/Utils.cs:181
 #, csharp-format
 msgid "In {0} week"
 msgid_plural "In {0} weeks"
@@ -374,28 +383,28 @@ msgstr[0] "Dans {0} semaine"
 msgstr[1] "Dans {0} semaines"
 
 #. Let's say a year and a half to stop saying months
-#: ../search/Tiles/Utils.cs:204
+#: ../search/Tiles/Utils.cs:183
 #, csharp-format
 msgid "{0} month ago"
 msgid_plural "{0} months ago"
 msgstr[0] "Il y a {0} mois"
 msgstr[1] "Il y a {0} mois"
 
-#: ../search/Tiles/Utils.cs:206
+#: ../search/Tiles/Utils.cs:185
 #, csharp-format
 msgid "In {0} month"
 msgid_plural "In {0} months"
 msgstr[0] "Dans {0} mois"
 msgstr[1] "Dans {0} mois"
 
-#: ../search/Tiles/Utils.cs:208
+#: ../search/Tiles/Utils.cs:187
 #, csharp-format
 msgid "{0} year ago"
 msgid_plural "{0} years ago"
 msgstr[0] "Il y a {0} an"
 msgstr[1] "Il y a {0} ans"
 
-#: ../search/Tiles/Utils.cs:210
+#: ../search/Tiles/Utils.cs:189
 #, csharp-format
 msgid "In {0} year"
 msgid_plural "In {0} years"
@@ -618,6 +627,7 @@ msgid ""
 "rss"
 msgstr ""
 "feed\n"
+"flux\n"
 "news\n"
 "info\n"
 "infos\n"
@@ -767,6 +777,10 @@ msgstr "Pe_rtinence"
 msgid "Sort the best matches first"
 msgstr "Trier en premier les recherches les plus pertinentes"
 
+#: ../search/UIManager.cs:266
+msgid "Couldn't launch web browser"
+msgstr "Impossible de lancer le navigateur Web"
+
 #: ../tools/Settings.cs:226
 msgid "Reload configuration"
 msgstr "Recharger la configuration"
@@ -836,8 +850,8 @@ msgid ""
 "Are you sure you wish to remove this item from the list of data to be "
 "excluded from indexing?"
 msgstr ""
-"Êtes-vous sûr de vouloir enlever cette élément de la liste des données "
-"exclues de l'indexation ?"
+"Êtes-vous sûr de vouloir enlever cet élément de la liste des données exclues "
+"de l'indexation ?"
 
 #: ../tools/Settings.cs:408
 msgid "Invalid host entry"
@@ -897,11 +911,11 @@ msgstr "Modèle :"
 
 #: ../tools/Settings.cs:693
 msgid "Mail folder:"
-msgstr "Dossier de courriels"
+msgstr "Dossier de courriels :"
 
 #: ../tools/Settings.cs:1041
 msgid "Select Folder"
-msgstr "Choisir un dossier"
+msgstr "Sélectionner un dossier"
 
 #: ../tools/Settings.cs:1067 ../tools/settings.glade.h:25
 msgid "P_ath:"
@@ -1021,7 +1035,7 @@ msgstr "I_ndexer mon dossier personnel"
 
 #: ../tools/settings.glade.h:22
 msgid "Index data while on battery power"
-msgstr "Indexer les données lorsqu'on est sur la batterie"
+msgstr "Indexer les données lorsque l'on fonctionne sur batterie"
 
 #: ../tools/settings.glade.h:23
 msgid "Indexing"
@@ -1055,7 +1069,7 @@ msgid ""
 "Specify any resources, such as paths, patterns, mail folders or type of "
 "objects you wish to exclude from indexing."
 msgstr ""
-"Indiquez les ressources, tels que les dossiers, les modèles, les dossiers de "
+"Indiquez les ressources, tels que les dossiers, les motifs, les dossiers de "
 "courriel et les types d'objets que vous voulez exclure de l'indexation."
 
 #: ../tools/settings.glade.h:32
