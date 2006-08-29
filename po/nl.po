@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: beagle\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2006-08-20 18:18+0200\n"
-"PO-Revision-Date: 2006-08-20 22:17+0200\n"
+"POT-Creation-Date: 2006-08-29 02:10+0200\n"
+"PO-Revision-Date: 2006-08-29 09:06+0200\n"
 "Last-Translator: Tino Meinen <a.t.meinen@chello.nl>\n"
 "Language-Team: Dutch <vertaling@vrijschrift.org>\n"
 "MIME-Version: 1.0\n"
@@ -74,44 +74,52 @@ msgstr "Niets gevonden."
 #: ../search/Pages/NoMatch.cs:20
 #, csharp-format
 msgid "Your search for \"{0}\" did not match any files on your computer."
-msgstr "Uw zoekopdracht naar \"{0}\" heeft geen resultaten opgeleverd."
+msgstr "Uw zoekopdracht naar ‘{0}’ heeft geen resultaten opgeleverd."
 
 # levert op/produceert
 #: ../search/Pages/NoMatch.cs:24
 msgid ""
 "You can change the scope of your search using the \"Search\" menu. A broader "
 "search scope might produce more results."
-msgstr ""
-"U kunt de zoekopdracht aanpassen via het menu \"Zoeken\". Een meer algemene "
-"zoekopdracht levert mogelijk meer resultaten op."
+msgstr "U kunt de zoekopdracht aanpassen via het menu ‘Zoeken’. Een meer algemene zoekopdracht levert mogelijk meer resultaten op."
 
 # misschien heeft u per ongeluk een zoekwoord verkeerd gespeld
 #: ../search/Pages/NoMatch.cs:26
 msgid ""
 "You should check the spelling of your search words to see if you "
 "accidentally misspelled any words."
-msgstr "U zou eens kunnen controleren of u misschien een zoekwoord verkeerd gespeld heeft."
+msgstr ""
+"U zou eens kunnen controleren of u misschien een zoekwoord verkeerd gespeld "
+"heeft."
 
 # het zoeken is niet gevoelig voor het gebruik van hoofletters en kleine letters.
 #: ../search/Pages/QuickTips.cs:10
 msgid "You can use upper and lower case; search is case-insensitive."
-msgstr "U mag hoofdletters of kleine letters gebruiken, dat maakt voor het zoeken niets uit."
+msgstr ""
+"U mag hoofdletters of kleine letters gebruiken, dat maakt voor het zoeken "
+"niets uit."
 
 # Nederlandse variant?
 #: ../search/Pages/QuickTips.cs:11
 msgid "To search for optional terms, use OR.  ex: <b>George OR Ringo</b>"
-msgstr "Om naar verschillende termen tegelijk te zoeken gebruikt u ‘OR’, bijvoorbeeld: <b>George OR Ringo</b>"
+msgstr ""
+"Om naar verschillende termen tegelijk te zoeken gebruikt u ‘OR’, "
+"bijvoorbeeld: <b>George OR Ringo</b>"
 
 #: ../search/Pages/QuickTips.cs:12
 msgid ""
 "To exclude search terms, use the minus symbol in front, such as <b>-cats</b>"
-msgstr "Om zoektermen uit te sluiten zet u er een minteken voor, bijvoorbeeld: <b>-katten</b>"
+msgstr ""
+"Om zoektermen uit te sluiten zet u er een minteken voor, bijvoorbeeld: <b>-"
+"katten</b>"
 
 # wat zou een goede zin zijn in het Nederlands?
 #: ../search/Pages/QuickTips.cs:13
 msgid ""
 "When searching for a phrase, add quotes. ex: <b>\"There be dragons\"</b>"
-msgstr "Bij het zoeken naar een zin, voegt u aanhalingstekens toe, bijvoorbeeld: <b>\"There be dragons\"</b>"
+msgstr ""
+"Bij het zoeken naar een zin, voegt u aanhalingstekens toe, bijvoorbeeld: <b>"
+"\"There be dragons\"</b>"
 
 # handige tips/snelle tips/aanwijzingen/handwijzingen/tips
 #: ../search/Pages/QuickTips.cs:19 ../search/UIManager.cs:81
@@ -126,7 +134,9 @@ msgstr "Beagle kan niet worden uitgevoerd als 'root'"
 msgid ""
 "For security reasons, Beagle cannot be run as root.  You should restart as a "
 "regular user."
-msgstr "Voor beveilingsredenen kan Beagle niet worden uitgevoerd als 'root'. U moet het opstarten als normale gebruiker."
+msgstr ""
+"Voor beveilingsredenen kan Beagle niet worden uitgevoerd als 'root'. U moet "
+"het opstarten als normale gebruiker."
 
 #: ../search/Pages/StartDaemon.cs:19
 msgid "Search service not running"
@@ -152,7 +162,7 @@ msgstr "Nu zoeken"
 # intoetsen/typen/
 #: ../search/Search.cs:209
 msgid "Type in search terms"
-msgstr "Typ hier de de zoektermen"
+msgstr "Typ hier de zoektermen"
 
 #: ../search/Search.cs:210
 msgid "Start searching"
@@ -798,6 +808,10 @@ msgstr "_Relevantie"
 msgid "Sort the best matches first"
 msgstr "De beste resultaten eerst"
 
+#: ../search/UIManager.cs:266
+msgid "Couldn't launch web browser"
+msgstr "Kon de webbrowser niet opstarten"
+
 #: ../tools/Settings.cs:226
 msgid "Reload configuration"
 msgstr "Configuratie opnieuw laden"
@@ -954,7 +968,9 @@ msgstr "Fout bij toevoegen van pad"
 msgid ""
 "The specified path could not be found and therefore it could not be added to "
 "the list of resources excluded for indexing."
-msgstr "De opgegeven map kon niet gevonden worden en is daarom niet toegevoegd aan de lijst met bronnen die niet geïndexeerd zullen worden."
+msgstr ""
+"De opgegeven map kon niet gevonden worden en is daarom niet toegevoegd aan "
+"de lijst met bronnen die niet geïndexeerd zullen worden."
 
 #: ../tools/Settings.cs:1132
 msgid "Show"
@@ -1081,7 +1097,9 @@ msgstr "E-mailmap selecteren"
 msgid ""
 "Specify any resources, such as paths, patterns, mail folders or type of "
 "objects you wish to exclude from indexing."
-msgstr "Geef alle bronnen, waaronder paden, patronen, e-mailmappen, of soort objecten, die u niet geïndexeerd wilt hebben."
+msgstr ""
+"Geef alle bronnen, waaronder paden, patronen, e-mailmappen, of soort "
+"objecten, die u niet geïndexeerd wilt hebben."
 
 #: ../tools/settings.glade.h:32
 msgid "Specify paths that should be available for external access."
