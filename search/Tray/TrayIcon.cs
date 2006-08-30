@@ -153,6 +153,9 @@ namespace Search.Tray
 
 		private void OnClick (object o, ButtonPressEventArgs args)
 		{
+			if (args.Event.Type != EventType.ButtonPress)
+				return;
+
 			switch (args.Event.Button) {
 			case 1:
 				if (Clicked != null)

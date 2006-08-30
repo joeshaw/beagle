@@ -25,6 +25,7 @@ namespace Search {
 		Search.Pages.NoMatch nomatch;
 		Search.Panes panes;
 		Search.Tray.TrayIcon tray;
+		ArrayList suggestions;
 
 		uint timeout;
 
@@ -128,7 +129,6 @@ namespace Search {
 			Title = "Desktop Search";
 			Icon = Beagle.Images.GetPixbuf ("system-search.png");
 
-			BorderWidth = 3;
 			DefaultWidth = 700;
 			DefaultHeight = 550;
 			DeleteEvent += OnWindowDelete;
@@ -267,8 +267,11 @@ namespace Search {
 				if (currentQuery != null) {
 					currentQuery.HitsAddedEvent -= OnHitsAdded;
 					currentQuery.HitsSubtractedEvent -= OnHitsSubtracted;
+					currentQuery.SuggestionsAddedEvent -= OnSuggestionsAdded;
 					currentQuery.Close ();
 				}
+
+				suggestions = new ArrayList ();
 
 				currentQuery = new Query ();
 				currentQuery.AddDomain (QueryDomain.Neighborhood);
@@ -284,6 +287,7 @@ namespace Search {
 				currentQuery.AddText (query);
 				currentQuery.HitsAddedEvent += OnHitsAdded;
 				currentQuery.HitsSubtractedEvent += OnHitsSubtracted;
+				currentQuery.SuggestionsAddedEvent += OnSuggestionsAdded;
 				currentQuery.FinishedEvent += OnFinished;
 
 				currentQuery.SendAsync ();
@@ -397,6 +401,14 @@ namespace Search {
 			CheckNoMatch ();
 		}
 
+		private void OnSuggestionsAdded (SuggestionsAddedResponse response)
+		{
+			foreach (string suggestion in response.Suggestions) {
+				if (!suggestions.Contains (suggestion))
+					suggestions.Add (suggestion);
+			}
+		}
+
 		private void CheckNoMatch ()
 		{
 			MatchType matches = view.MatchState;
@@ -407,7 +419,7 @@ namespace Search {
 
 			if (nomatch != null)
 				nomatch.Destroy ();
-			nomatch = new Pages.NoMatch (queryText, matches == MatchType.NoneInScope);
+			nomatch = new Pages.NoMatch (queryText, matches == MatchType.NoneInScope, suggestions);
 			nomatch.Show ();
 			pages.Add (nomatch);
 			pages.CurrentPage = pages.PageNum (nomatch);
