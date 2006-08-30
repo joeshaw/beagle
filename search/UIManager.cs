@@ -3,6 +3,8 @@ using Mono.Unix;
 using System;
 using System.Diagnostics;
 
+using Beagle.Util;
+
 namespace Search {
 
 	public enum ScopeType {
@@ -261,10 +263,10 @@ namespace Search {
 			try {
 				Gnome.Url.Show (address);
 			} catch {
-				MessageDialog md = new MessageDialog (main_window, Gtk.DialogFlags.DestroyWithParent,
-								      Gtk.MessageType.Error, Gtk.ButtonsType.Close, null);
-				md.Text = Catalog.GetString ("Couldn't launch web browser");
-				md.SecondaryText = Catalog.GetString (String.Format ("Please point your web browser to '{0}' manually", address));
+				HigMessageDialog md = new HigMessageDialog (main_window, Gtk.DialogFlags.DestroyWithParent,
+									    Gtk.MessageType.Error, Gtk.ButtonsType.Close,
+									    Catalog.GetString ("Couldn't launch web browser"),
+									    Catalog.GetString (String.Format ("Please point your web browser to '{0}' manually", address)));
 				md.Run ();
 				md.Destroy ();
 			}

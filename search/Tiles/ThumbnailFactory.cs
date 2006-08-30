@@ -27,13 +27,15 @@ namespace Search.Tiles {
 
 		private class ThumbnailRequest {
 			public Gtk.Image Image;
+			public string ThumbnailFile;
 			public Beagle.Hit Hit;
 			public int Size;
 			public bool Succeeded;
 
-			public ThumbnailRequest (Gtk.Image image, Beagle.Hit hit, int size)
+			public ThumbnailRequest (Gtk.Image image, string thumbnail_file, Beagle.Hit hit, int size)
 			{
 				Image = image;
+				ThumbnailFile = thumbnail_file;
 				Hit = hit;
 				Size = size;
 			}
@@ -78,7 +80,7 @@ namespace Search.Tiles {
 
 			if (! File.Exists (thumbnail) && ! failed_thumb) {
 				lock (in_queue) {
-					in_queue.Add (new ThumbnailRequest (image, hit, size));
+					in_queue.Add (new ThumbnailRequest (image, thumbnail, hit, size));
 					if (thread == null) {
 						thread = new Thread (GenerateThumbnails);
 						thread.Start ();
@@ -135,7 +137,9 @@ namespace Search.Tiles {
 						factory.CreateFailedThumbnail (req.Hit.SerializedUri, req.Hit.FileInfo.LastWriteTime);
 				} else {
 					factory.SaveThumbnail (icon, req.Hit.SerializedUri, DateTime.Now);
-					req.Succeeded = true;
+
+					if (File.Exists (req.ThumbnailFile))
+						req.Succeeded = true;
 				}
 
 				lock (out_queue)
