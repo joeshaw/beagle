@@ -1,4 +1,55 @@
 
+Version 0.2.9
+August 31, 2006
+
+Daemon/Infrastructure:
+* Fix a performance bottleneck which slowed down indexing noticably.
+  (Joe Shaw)
+* Fix some DllImports so that development packages aren't needed on
+  many distributions.  (Frederic Crozat)
+
+Backends:
+* Add sanity checks to the Gaim backend to deal with logs that
+  couldn't be parsed.  (Joe)
+
+Filters:
+* Fix a bug in parsing emote lines from IM logs that was introduced in
+  0.2.8.  (Joe)
+* Be more bulletproof when processing lines in IM logs.  (Arif Lukito,
+  Lukas Lipka)
+* Handle linebreaks correctly as whitespace in plain text emails.
+  (Joe)
+
+UI:
+* Don't crash if we can't launch the web browser.  (Lukas)
+* Fix an infinite loop when saving thumbnails failed in GNOME
+  libraries.  (Joe, Lukas)
+* Execute either "thunderbird" or "mozilla-thunderbird" depending on
+  which is available.  (Kevin Kubasik, Joe)
+* Display an ellipsis in calendar descriptions that linewrap.  (Lukas)
+* Present the window in tray icon mode to ensure that the window is
+  displayed on top.  (Lukas)
+* Hide and unhide the window properly.  (Arif)
+
+Bindings:
+* Fix some C++ style comments in libbeagle's header files.  (Lukas)
+* Fix a warning in libbeagle about a dangling comma.  (Lukas)
+
+Tools:
+* Don't display timeline categories that don't have any logs in the IM
+  viewer.  (Lukas)
+* Fix a few places where we assumed that /bin/sh was bash.  (Joe)
+
+Translations:
+* Updated Catalan translation.  (Jordi Mas)
+* Updated Dutch translation.  (Tino Meinen, Karel Demeyer)
+* Updated French translation.  (Damien Durand)
+* Updated Macedonian translation.  (Jovan Naumovski)
+* Updated Simplified Chinese translation.  (Funda Wang)
+* Updated Vietnamese translation.  (Clytie Siddall)
+
+------------------------------------------------------
+
 Version 0.2.8
 August 17, 2006
 
