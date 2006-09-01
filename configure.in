@@ -4,7 +4,7 @@
 
 AC_INIT(beagled/BeagleDaemon.cs)
 AC_CANONICAL_SYSTEM
-AM_INIT_AUTOMAKE(beagle, 0.2.8)
+AM_INIT_AUTOMAKE(beagle, 0.2.9)
 
 ########################################################################
 

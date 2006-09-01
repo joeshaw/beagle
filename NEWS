@@ -1,6 +1,6 @@
 
 Version 0.2.9
-August 31, 2006
+1 September 2006
 
 Daemon/Infrastructure:
 * Fix a performance bottleneck which slowed down indexing noticably.
