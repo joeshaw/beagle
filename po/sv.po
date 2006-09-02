@@ -1,7 +1,7 @@
 # Swedish messages for beagle.
 # Copyright (C) 2005, Novell Inc.
-# Fredrik Hedberg <fredrik@avafan.com>, 2005
 # Daniel Nylander <po@danielnylander.se>, 2006.
+# Fredrik Hedberg <fredrik@avafan.com>, 2005.
 #
 # $Id$
 #
@@ -9,8 +9,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: beagle\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2006-07-16 10:11+0200\n"
-"PO-Revision-Date: 2006-07-16 11:32+0100\n"
+"POT-Creation-Date: 2006-09-02 02:52+0200\n"
+"PO-Revision-Date: 2006-09-02 10:12+0100\n"
 "Last-Translator: Daniel Nylander <po@danielnylander.se>\n"
 "Language-Team: Swedish <tp-sv@listor.tp-sv.se>\n"
 "MIME-Version: 1.0\n"
@@ -100,7 +100,7 @@ msgid "When searching for a phrase, add quotes. ex: <b>\"There be dragons\"</b>"
 msgstr "Vid sökning efter en fras, lägg till citattecken. exempelvis: <b>\"Det finns drakar\"</b>"
 
 #: ../search/Pages/QuickTips.cs:19
-#: ../search/UIManager.cs:81
+#: ../search/UIManager.cs:83
 msgid "Quick Tips"
 msgstr "Snabbtips"
 
@@ -219,38 +219,46 @@ msgstr "Ändrad:"
 msgid "IM Conversation"
 msgstr "IM-konversation"
 
-#: ../search/Tiles/IMLog.cs:87
+#: ../search/Tiles/IMLog.cs:92
 msgid "Name:"
 msgstr "Namn:"
 
-#: ../search/Tiles/IMLog.cs:88
-#: ../search/Tiles/MailMessage.cs:92
+#: ../search/Tiles/IMLog.cs:93
+#: ../search/Tiles/MailMessage.cs:114
 msgid "Date Received:"
 msgstr "Mottagningsdatum:"
 
-#: ../search/Tiles/MailAttachment.cs:47
+#: ../search/Tiles/MailAttachment.cs:45
 msgid "Mail attachment"
 msgstr "E-postbilaga"
 
-#: ../search/Tiles/MailMessage.cs:55
+#: ../search/Tiles/MailMessage.cs:67
+msgid "(untitled)"
+msgstr "(namnlös)"
+
+#: ../search/Tiles/MailMessage.cs:77
 msgid "Send in Mail"
 msgstr "Skicka i e-post"
 
-#: ../search/Tiles/MailMessage.cs:87
+#: ../search/Tiles/MailMessage.cs:109
 msgid "Subject:"
 msgstr "Ämne:"
 
-#: ../search/Tiles/MailMessage.cs:89
+#: ../search/Tiles/MailMessage.cs:111
 msgid "To:"
 msgstr "Till:"
 
-#: ../search/Tiles/MailMessage.cs:89
+#: ../search/Tiles/MailMessage.cs:111
 msgid "From:"
 msgstr "Från:"
 
-#: ../search/Tiles/MailMessage.cs:92
+#: ../search/Tiles/MailMessage.cs:114
 msgid "Date Sent:"
 msgstr "Datum skickat:"
+
+#: ../search/Tiles/MailMessage.cs:120
+msgid "Folder:"
+msgstr "Mapp:"
 
 # Enligt openoffice
 #: ../search/Tiles/Presentation.cs:33
@@ -327,34 +335,31 @@ msgstr "Nyhetskanaler"
 msgid "Archives"
 msgstr "Arkiv"
 
-#: ../search/Tiles/Utils.cs:100
-#: ../search/Tiles/Utils.cs:146
-#: ../search/Tiles/Utils.cs:192
-#: ../Util/StringFu.cs:77
-msgid "Today"
-msgstr "Idag"
-
-#: ../search/Tiles/Utils.cs:102
-#: ../search/Tiles/Utils.cs:148
-#: ../search/Tiles/Utils.cs:194
+#: ../search/Tiles/Utils.cs:77
+#: ../search/Tiles/Utils.cs:159
 #: ../Util/StringFu.cs:79
 msgid "Yesterday"
 msgstr "Igår"
 
-#: ../search/Tiles/Utils.cs:104
-#: ../search/Tiles/Utils.cs:150
-#: ../search/Tiles/Utils.cs:196
+#: ../search/Tiles/Utils.cs:79
+#: ../search/Tiles/Utils.cs:161
+#: ../Util/StringFu.cs:77
+msgid "Today"
+msgstr "Idag"
+
+#: ../search/Tiles/Utils.cs:81
+#: ../search/Tiles/Utils.cs:163
 msgid "Tomorrow"
 msgstr "Imorgon"
 
-#: ../search/Tiles/Utils.cs:200
+#: ../search/Tiles/Utils.cs:179
 #, csharp-format
 msgid "{0} week ago"
 msgid_plural "{0} weeks ago"
 msgstr[0] "{0} vecka sedan"
 msgstr[1] "{0} veckor sedan"
 
-#: ../search/Tiles/Utils.cs:202
+#: ../search/Tiles/Utils.cs:181
 #, csharp-format
 msgid "In {0} week"
 msgid_plural "In {0} weeks"
@@ -362,28 +367,28 @@ msgstr[0] "Om {0} vecka"
 msgstr[1] "Om {0} veckor"
 
 #. Let's say a year and a half to stop saying months
-#: ../search/Tiles/Utils.cs:204
+#: ../search/Tiles/Utils.cs:183
 #, csharp-format
 msgid "{0} month ago"
 msgid_plural "{0} months ago"
 msgstr[0] "{0} månad sedan"
 msgstr[1] "{0} månader sedan"
 
-#: ../search/Tiles/Utils.cs:206
+#: ../search/Tiles/Utils.cs:185
 #, csharp-format
 msgid "In {0} month"
 msgid_plural "In {0} months"
 msgstr[0] "Om {0} månad"
 msgstr[1] "Om {0} månader"
 
-#: ../search/Tiles/Utils.cs:208
+#: ../search/Tiles/Utils.cs:187
 #, csharp-format
 msgid "{0} year ago"
 msgid_plural "{0} years ago"
 msgstr[0] "{0} år sedan"
 msgstr[1] "{0} år sedan"
 
-#: ../search/Tiles/Utils.cs:210
+#: ../search/Tiles/Utils.cs:189
 #, csharp-format
 msgid "In {0} year"
 msgid_plural "In {0} years"
@@ -624,130 +629,134 @@ msgstr ""
 "person\n"
 "folk"
 
-#: ../search/UIManager.cs:42
+#: ../search/UIManager.cs:44
 msgid "Close Desktop Search"
 msgstr "Stäng skrivbordssökning"
 
-#: ../search/UIManager.cs:47
-#: ../search/UIManager.cs:69
+#: ../search/UIManager.cs:49
+#: ../search/UIManager.cs:71
 msgid "Exit Desktop Search"
 msgstr "Avsluta skrivbordssökning"
 
-#: ../search/UIManager.cs:54
+#: ../search/UIManager.cs:56
 msgid "_Search"
 msgstr "_Sök"
 
-#: ../search/UIManager.cs:57
+#: ../search/UIManager.cs:59
 msgid "_Actions"
 msgstr "_Åtgärder"
 
-#: ../search/UIManager.cs:60
+#: ../search/UIManager.cs:62
 msgid "Sor_t"
 msgstr "Sor_tera"
 
-#: ../search/UIManager.cs:63
+#: ../search/UIManager.cs:65
 msgid "_Help"
 msgstr "_Hjälp"
 
-#: ../search/UIManager.cs:72
+#: ../search/UIManager.cs:74
 msgid "_Contents"
 msgstr "_Innehåll"
 
-#: ../search/UIManager.cs:74
+#: ../search/UIManager.cs:76
 msgid "Help - Table of Contents"
 msgstr "Hjälp - Innehållsförteckning"
 
-#: ../search/UIManager.cs:78
+#: ../search/UIManager.cs:80
 msgid "About Desktop Search"
 msgstr "Om skrivbordssökning"
 
-#: ../search/UIManager.cs:100
+#: ../search/UIManager.cs:102
 msgid "_Everywhere"
 msgstr "_Överallt"
 
-#: ../search/UIManager.cs:102
+#: ../search/UIManager.cs:104
 msgid "Search everywhere"
 msgstr "Sök överallt"
 
-#: ../search/UIManager.cs:105
+#: ../search/UIManager.cs:107
 msgid "_Applications"
 msgstr "_Program"
 
-#: ../search/UIManager.cs:107
+#: ../search/UIManager.cs:109
 msgid "Search applications"
 msgstr "Sök program"
 
-#: ../search/UIManager.cs:110
+#: ../search/UIManager.cs:112
 msgid "_Contacts"
 msgstr "_Kontakter"
 
-#: ../search/UIManager.cs:112
+#: ../search/UIManager.cs:114
 msgid "Search contacts"
 msgstr "Sök kontakter"
 
-#: ../search/UIManager.cs:115
+#: ../search/UIManager.cs:117
 msgid "Ca_lendar events"
 msgstr "Ka_lenderhändelser"
 
-#: ../search/UIManager.cs:117
+#: ../search/UIManager.cs:119
 msgid "Search calendar events"
 msgstr "Sök kalenderhändelser"
 
-#: ../search/UIManager.cs:120
+#: ../search/UIManager.cs:122
 msgid "_Documents"
 msgstr "_Dokument"
 
-#: ../search/UIManager.cs:122
+#: ../search/UIManager.cs:124
 msgid "Search documents"
 msgstr "Sök dokument"
 
-#: ../search/UIManager.cs:125
+#: ../search/UIManager.cs:127
 msgid "Conve_rsations"
 msgstr "Konve_rsationer"
 
-#: ../search/UIManager.cs:127
+#: ../search/UIManager.cs:129
 msgid "Search E-Mail and Instant Messaging logs"
 msgstr "Sök e-post- och snabbmeddelandeloggar"
 
-#: ../search/UIManager.cs:130
+#: ../search/UIManager.cs:132
 msgid "_Images"
 msgstr "_Bilder"
 
-#: ../search/UIManager.cs:132
+#: ../search/UIManager.cs:134
 msgid "Search images"
 msgstr "Sök bilder"
 
-#: ../search/UIManager.cs:135
+#: ../search/UIManager.cs:137
 msgid "_Media"
 msgstr "_Media"
 
-#: ../search/UIManager.cs:137
+#: ../search/UIManager.cs:139
 msgid "Search sound and video files"
 msgstr "Sök ljud- och videofiler"
 
-#: ../search/UIManager.cs:144
+#: ../search/UIManager.cs:146
 msgid "Date _Modified"
 msgstr "Ändringsdatu_m"
 
-#: ../search/UIManager.cs:145
+#: ../search/UIManager.cs:147
 msgid "Sort the most-recently-modified matches first"
 msgstr "Sortera de senast ändrade träffarna först"
 
-#: ../search/UIManager.cs:148
+#: ../search/UIManager.cs:150
 msgid "_Name"
 msgstr "_Namn"
 
-#: ../search/UIManager.cs:149
+#: ../search/UIManager.cs:151
 msgid "Sort matches by name"
 msgstr "Sortera träffar efter namn"
 
-#: ../search/UIManager.cs:152
+#: ../search/UIManager.cs:154
 msgid "_Relevance"
 msgstr "_Relevans"
 
-#: ../search/UIManager.cs:153
+#: ../search/UIManager.cs:155
 msgid "Sort the best matches first"
 msgstr "Sortera de bästa träffarna först"
+
+#: ../search/UIManager.cs:268
+msgid "Couldn't launch web browser"
+msgstr "Kunde inte starta webbläsare"
 
 #: ../tools/Settings.cs:226
 msgid "Reload configuration"
