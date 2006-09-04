@@ -3,7 +3,7 @@ Version 0.2.9
 1 September 2006
 
 Daemon/Infrastructure:
-* Fix a performance bottleneck which slowed down indexing noticably.
+* Fix a performance bottleneck which slowed down indexing noticeably.
   (Joe Shaw)
 * Fix some DllImports so that development packages aren't needed on
   many distributions.  (Frederic Crozat)
