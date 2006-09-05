@@ -29,6 +29,9 @@ namespace Search.Tiles {
 		{
 			list = GetApplications (mime);
 
+			if (list == null)
+				return;
+
 			foreach (MimeApplication app in list) {
 				ApplicationMenuItem i = new ApplicationMenuItem (this, app);
 				i.Activated += HandleItemActivated;
