@@ -2,6 +2,9 @@
 # Please keep this file in alphabetical order.
 [encoding: UTF-8]
 glue/eggtrayicon.c
+ContactViewer/ContactViewer.cs
+ContactViewer/ContactWindow.cs
+ContactViewer/contactviewer.glade
 ImLogViewer/ImLogViewer.cs
 ImLogViewer/ImLogViewer.glade
 ImLogViewer/ImLogWindow.cs
@@ -23,6 +26,7 @@ search/TileCategory.cs
 search/Tiles/ActionMenuItem.cs
 search/Tiles/Application.cs
 search/Tiles/Audio.cs
+search/Tiles/Calendar.cs
 search/Tiles/CApplet.cs
 search/Tiles/Contact.cs
 search/Tiles/File.cs
@@ -33,6 +37,7 @@ search/Tiles/IMLog.cs
 search/Tiles/MailAttachment.cs
 search/Tiles/MailMessage.cs
 search/Tiles/Note.cs
+search/Tiles/OpenWithMenu.cs
 search/Tiles/Presentation.cs
 search/Tiles/RSSFeed.cs
 search/Tiles/Spreadsheet.cs
