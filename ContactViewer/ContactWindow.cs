@@ -177,7 +177,7 @@ namespace ContactViewer {
 				}
 			}
 			
-			SetStatusMessage (String.Format (Catalog.GetString ("Added {0} contacts"), count));
+			SetStatusMessage (String.Format (Catalog.GetPluralString ("Added {0} contact", "Added {0} contacts", count), count));
 		}
 		
 		public void ShowContact (string id)
