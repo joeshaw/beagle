@@ -108,6 +108,14 @@ namespace Beagle.Util {
 				bool skip_file = false;
 
 				do {
+					// FIXME?  I think this might be a bug in mono, but the
+					// capacity of the StringBuilder can apparently shrink
+					// from underneath us.  This leads to truncated filenames,
+					// and the DirectoryWalker drops them because the file
+					// doesn't exist.  Adding an EnsureCapacity() here fixes
+					// this.
+					name_buffer.EnsureCapacity (256);
+
 					current = readdir (dir_handle, name_buffer);
 					if (current == null)
 						break;
