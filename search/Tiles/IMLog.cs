@@ -91,13 +91,47 @@ namespace Search.Tiles {
 			details.Icon.Pixbuf = LoadBuddyIcon ();			
 			details.AddLabelPair (Catalog.GetString ("Name:"), FromLabel.Text);
 			details.AddLabelPair (Catalog.GetString ("Date Received:"), Utils.NiceLongDate (Timestamp));
+#if ENABLE_GALAGO
+			string status = GetBuddyStatus();
+			if (status != null && status != "")
+				details.AddLabelPair (Catalog.GetString ("Status:"), GetBuddyStatus());
+#endif		
 			details.AddSnippet ();
-
+			
 			GotSnippet += SetSubject;
 
 			return details;
 		}
-
+#if ENABLE_GALAGO		
+		private string GetBuddyStatus ()
+		{
+			
+			GalagoTools.Status stat = Beagle.Util.GalagoTools.GetPresence (Hit.GetFirstProperty ("fixme:protocol"), Hit.GetFirstProperty ("fixme:speakingto"));
+			string str = null;
+			if (stat == GalagoTools.Status.Idle){
+				str = String.Format ("{0} for {1}" , Catalog.GetString ("Idle"),
+				 	Beagle.Util.GalagoTools.GetIdleTime (Hit.GetFirstProperty ("fixme:protocol"), 
+				 	Hit.GetFirstProperty ("fixme:speakingto"))); 
+			}
+			else {
+				switch (stat) {
+					case GalagoTools.Status.Away : 
+						str = Catalog.GetString ("Away");
+						break;
+					case GalagoTools.Status.Offline :
+						str = Catalog.GetString ("Offline");
+						break;
+					case GalagoTools.Status.Available:
+						str = Catalog.GetString ("Available");
+						break;
+					case GalagoTools.Status.NoStatus:
+						str = null;
+						break;
+				}
+			}
+			return str;
+		}
+#endif
 		private void SetSubject (string snippet)
 		{
 			Subject.Markup = snippet;

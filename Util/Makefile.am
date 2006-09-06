@@ -134,13 +134,7 @@ UTIL_ASSEMBLIES =				\
 	-r:System.Web				\
 	-r:ICSharpCode.SharpZipLib
 
-if ENABLE_GALAGO
-UTIL_CSFILES +=					\
-	$(srcdir)/Galago.cs
 
-UTIL_ASSEMBLIES += 				\
-	$(GALAGO_LIBS)
-endif
 
 if ENABLE_INOTIFY
 INOTIFY_EXE = Inotify.exe
@@ -175,6 +169,14 @@ UI_UTIL_CSFILES =				\
 UI_UTIL_ASSEMBLIES =				\
 	$(BEAGLE_UI_LIBS)			\
 	-r:Util.dll
+
+if ENABLE_GALAGO
+UI_UTIL_CSFILES +=					\
+	$(srcdir)/Galago.cs
+
+UI_UTIL_ASSEMBLIES += 				\
+	$(GALAGO_LIBS)
+endif
 
 $(UI_UTIL_TARGET): $(UI_UTIL_CSFILES) $(UTIL_TARGET)
 	$(CSC) -unsafe -out:$@ $(CSFLAGS) $(UI_UTIL_CSFILES) $(UI_UTIL_ASSEMBLIES)

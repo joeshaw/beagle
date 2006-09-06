@@ -32,14 +32,64 @@ namespace Beagle.Util {
 	public class GalagoTools {
 
 		private GalagoTools () {} // This class is static
-
-		public static string GetPresence (string service_id, string username)
+		private static Galago.Service service;
+	
+		public enum Status {
+			Available = 0,
+			Offline = 1,
+			Away = 2,
+			Idle = 3,
+			NoStatus = -1,
+		};
+		
+		public static Status GetPresence (string service_id, string username)
 		{
-			if (! Galago.Core.Init ("beagle-galago-presence"))
+			if (! Galago.Global.Init ("beagle-galago-presence"))
+				return Status.NoStatus;
+			service = Galago.Global.GetService (service_id, Galago.Origin.Remote, true);
+			if (service == null)
+				return Status.NoStatus;
+
+			Galago.Account account = service.GetAccount (username, true);
+
+			if (account == null)
+				return Status.NoStatus;
+
+			Galago.Presence presence = account.Presence;
+
+			if (presence == null)
+				return Status.NoStatus;
+
+			Status user_status = Status.NoStatus;
+			StatusType active_status;
+			if (presence.IsIdle) {
+				user_status = Status.Idle; 
+			// FIXME: We should try to find a way to display the actual away message (if relivent)
+			}
+			else {
+				active_status = presence.ActiveStatus.Primitive;
+				switch (active_status) {
+					case StatusType.Away : 
+						user_status = Status.Away;
+						break;
+					case StatusType.Offline :
+						user_status = Status.Offline;
+						break;
+					case StatusType.Available:
+						user_status = Status.Available;
+						break;
+				}
+			}
+			Galago.Global.Uninit();
+
+			return user_status;
+		}
+		public static string GetIdleTime (string service_id, string username)
+		{
+			if (! Galago.Global.Init ("beagle-galago-presence"))
 				return null;
 
-			Galago.Service service = Galago.Core.GetService (service_id, false, true);
-
+			service = Galago.Global.GetService (service_id, Galago.Origin.Remote, true);
 			if (service == null)
 				return null;
 
@@ -47,25 +97,16 @@ namespace Beagle.Util {
 
 			if (account == null)
 				return null;
-
-			//Galago.Person person = account.Person;
+	
 			Galago.Presence presence = account.Presence;
 
 			if (presence == null)
 				return null;
-
-			string user_status = null;
-
-			if (presence.Idle == true) 
-				// FIXME: We need to translate this
-				user_status = String.Format ("Idle {0}",
-							     StringFu.DurationToPrettyString (DateTime.Now.AddSeconds (presence.IdleTime), DateTime.Now));
-			else
-				user_status = presence.ActiveStatus.Name;
-
-			Galago.Core.Uninit();
-
-			return user_status;
+			
+			string str =  StringFu.DurationToPrettyString  ( DateTime.Now, presence.IdleStartTime);
+			
+			Galago.Global.Uninit();
+			return str;
 		}
 	}
 }

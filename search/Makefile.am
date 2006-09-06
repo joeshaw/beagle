@@ -9,6 +9,10 @@ if ENABLE_OPEN_WITH
 CSFLAGS += -define:ENABLE_OPEN_WITH
 endif
 
+if ENABLE_GALAGO
+CSFLAGS += -define:ENABLE_GALAGO
+endif
+
 pkglib_DATA = Search.exe Search.exe.mdb
 
 BIN_WRAPPERS = beagle-search
