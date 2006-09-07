@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: cs\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2006-08-03 11:35+0200\n"
-"PO-Revision-Date: 2006-08-03 11:41+0200\n"
+"POT-Creation-Date: 2006-09-07 14:13+0200\n"
+"PO-Revision-Date: 2006-09-07 14:21+0200\n"
 "Last-Translator: Jakub Friedl <jfriedl@suse.cz>\n"
 "Language-Team: Czech <gnome-cs-list@gnome.org>\n"
 "MIME-Version: 1.0\n"
@@ -25,6 +25,309 @@ msgstr "Orientace"
 #: ../glue/eggtrayicon.c:128
 msgid "The orientation of the tray."
 msgstr "Orientace v panelu."
+
+#: ../ContactViewer/ContactWindow.cs:74
+msgid "Open..."
+msgstr "Otevřít..."
+
+#: ../ContactViewer/ContactWindow.cs:76 ../search/Tray/TrayIcon.cs:86
+msgid "Quit"
+msgstr "Ukončit"
+
+#: ../ContactViewer/ContactWindow.cs:79
+msgid "About"
+msgstr "O aplikaci"
+
+#: ../ContactViewer/ContactWindow.cs:95 ../search/Tiles/Utils.cs:26
+msgid "Contacts"
+msgstr "Kontakty"
+
+#: ../ContactViewer/ContactWindow.cs:100
+msgid "Display name"
+msgstr ""
+
+#: ../ContactViewer/ContactWindow.cs:101
+msgid "Primary E-mail"
+msgstr "Primární e-mail"
+
+#: ../ContactViewer/ContactWindow.cs:102
+msgid "Secondary E-mail"
+msgstr "Sekundární e-mail"
+
+#: ../ContactViewer/ContactWindow.cs:103
+msgid "Nickname"
+msgstr "Přezdívka"
+
+#: ../ContactViewer/ContactWindow.cs:133
+#, csharp-format
+msgid ""
+"Unable to open mork database:\n"
+"\n"
+" {0}"
+msgstr ""
+
+#: ../ContactViewer/ContactWindow.cs:153
+msgid "The specified ID does not exist in this database!"
+msgstr ""
+
+#: ../ContactViewer/ContactWindow.cs:180
+#, csharp-format
+msgid "Added {0} contact"
+msgid_plural "Added {0} contacts"
+msgstr[0] ""
+msgstr[1] ""
+msgstr[2] ""
+
+#: ../ContactViewer/ContactWindow.cs:204
+#, csharp-format
+msgid "Viewing {0}"
+msgstr ""
+
+#: ../ContactViewer/ContactWindow.cs:205
+msgid "DisplayName"
+msgstr ""
+
+#: ../ContactViewer/ContactWindow.cs:244
+msgid "Select a mork database file"
+msgstr ""
+
+#: ../ContactViewer/ContactWindow.cs:303
+#, fuzzy
+msgid "FirstName"
+msgstr "Jméno"
+
+#: ../ContactViewer/ContactWindow.cs:303
+#, fuzzy
+msgid "NickName"
+msgstr "Jméno"
+
+#: ../ContactViewer/ContactWindow.cs:303
+#, fuzzy
+msgid "LastName"
+msgstr "Jméno"
+
+#: ../ContactViewer/ContactWindow.cs:311
+msgid "Primary E-Mail:"
+msgstr "Primární e-mail:"
+
+#: ../ContactViewer/ContactWindow.cs:313
+msgid "PrimaryEmail"
+msgstr ""
+
+#: ../ContactViewer/ContactWindow.cs:315
+#: ../ContactViewer/contactviewer.glade.h:33
+msgid "Screen name:"
+msgstr ""
+
+#: ../ContactViewer/ContactWindow.cs:317
+msgid "_AimScreenName"
+msgstr ""
+
+#: ../ContactViewer/ContactWindow.cs:319
+msgid "Home phone:"
+msgstr "Domácí telefon:"
+
+#: ../ContactViewer/ContactWindow.cs:321
+#, fuzzy
+msgid "HomePhone"
+msgstr "Domácí telefon:"
+
+#: ../ContactViewer/ContactWindow.cs:323
+msgid "Mobile phone:"
+msgstr "Mobilní telefon:"
+
+#: ../ContactViewer/ContactWindow.cs:325
+msgid "CellularNumber"
+msgstr ""
+
+#: ../ContactViewer/ContactWindow.cs:327
+msgid "Web page:"
+msgstr "Webová stránka:"
+
+#: ../ContactViewer/ContactWindow.cs:329
+msgid "WebPage2"
+msgstr ""
+
+#: ../ContactViewer/ContactWindow.cs:336
+msgid "Send E-Mail"
+msgstr "Poslat e-mail"
+
+#: ../ContactViewer/ContactWindow.cs:340
+msgid "Details..."
+msgstr "Podrobnosti..."
+
+#: ../ContactViewer/ContactWindow.cs:368
+msgid "Could not find a valid E-mail address!"
+msgstr "Nelze nalézt platnou e-mailovou adresu!"
+
+#: ../ContactViewer/contactviewer.glade.h:1
+msgid "<b>Custom fields</b>"
+msgstr ""
+
+#: ../ContactViewer/contactviewer.glade.h:2
+#, fuzzy
+msgid "<b>Home</b>"
+msgstr "<b>Obecné</b>"
+
+#: ../ContactViewer/contactviewer.glade.h:3
+msgid "<b>Internet</b>"
+msgstr "<b>Internet</b>"
+
+#: ../ContactViewer/contactviewer.glade.h:4
+msgid "<b>Name</b>"
+msgstr "<b>Jméno</b>"
+
+#: ../ContactViewer/contactviewer.glade.h:5
+msgid "<b>Notes</b>"
+msgstr "<b>Poznámky</b>"
+
+#: ../ContactViewer/contactviewer.glade.h:6
+msgid "<b>Phones</b>"
+msgstr "<b>Telefony</b>"
+
+#: ../ContactViewer/contactviewer.glade.h:7
+msgid "<b>Work</b>"
+msgstr "<b>Práce</b>"
+
+#: ../ContactViewer/contactviewer.glade.h:8
+msgid "Additional E-Mail:"
+msgstr "Další e-mail:"
+
+#: ../ContactViewer/contactviewer.glade.h:9
+msgid "Address"
+msgstr "Adresa"
+
+#: ../ContactViewer/contactviewer.glade.h:10
+msgid "Address:"
+msgstr "Adresa:"
+
+#: ../ContactViewer/contactviewer.glade.h:11
+msgid "City:"
+msgstr "Město:"
+
+#: ../ContactViewer/contactviewer.glade.h:12
+msgid "Contact"
+msgstr "Kontakt"
+
+#: ../ContactViewer/contactviewer.glade.h:13
+msgid "Contact Viewer"
+msgstr "Prohlížeč kontaktů"
+
+#: ../ContactViewer/contactviewer.glade.h:14
+msgid "Country:"
+msgstr "Země:"
+
+#: ../ContactViewer/contactviewer.glade.h:15
+msgid "Custom 1:"
+msgstr ""
+
+#: ../ContactViewer/contactviewer.glade.h:16
+msgid "Custom 2:"
+msgstr ""
+
+#: ../ContactViewer/contactviewer.glade.h:17
+msgid "Custom 3:"
+msgstr ""
+
+#: ../ContactViewer/contactviewer.glade.h:18
+msgid "Custom 4:"
+msgstr ""
+
+#: ../ContactViewer/contactviewer.glade.h:19
+msgid "Department:"
+msgstr "Oddělení:"
+
+#: ../ContactViewer/contactviewer.glade.h:20
+msgid "Detailed view"
+msgstr "Podrobný pohled"
+
+#: ../ContactViewer/contactviewer.glade.h:21
+#, fuzzy
+msgid "Display:"
+msgstr "<b>Zobrazit</b>"
+
+#: ../ContactViewer/contactviewer.glade.h:22 ../search/Tiles/Contact.cs:68
+msgid "E-Mail:"
+msgstr "E-mail:"
+
+#: ../ContactViewer/contactviewer.glade.h:23
+msgid "Fax:"
+msgstr "Fax:"
+
+#: ../ContactViewer/contactviewer.glade.h:24
+msgid "First:"
+msgstr ""
+
+#: ../ContactViewer/contactviewer.glade.h:25
+#, fuzzy
+msgid "Home:"
+msgstr "Domácí telefon:"
+
+#: ../ContactViewer/contactviewer.glade.h:26
+#, fuzzy
+msgid "Last:"
+msgstr "Cesta:"
+
+#: ../ContactViewer/contactviewer.glade.h:27
+msgid "Mobile:"
+msgstr "Mobilní telefon:"
+
+#: ../ContactViewer/contactviewer.glade.h:28
+msgid "Nickname:"
+msgstr "Přezdívka:"
+
+#: ../ContactViewer/contactviewer.glade.h:29
+msgid "Organization:"
+msgstr "Organizace:"
+
+#: ../ContactViewer/contactviewer.glade.h:30
+msgid "Other"
+msgstr ""
+
+#: ../ContactViewer/contactviewer.glade.h:31
+msgid "Pager:"
+msgstr "Pager:"
+
+#: ../ContactViewer/contactviewer.glade.h:32
+msgid "Preferred format:"
+msgstr "Preferovaný formát:"
+
+#: ../ContactViewer/contactviewer.glade.h:34
+msgid "State/Province"
+msgstr ""
+
+#: ../ContactViewer/contactviewer.glade.h:35
+msgid "State/Province:"
+msgstr ""
+
+#: ../ContactViewer/contactviewer.glade.h:36 ../search/Tiles/Calendar.cs:51
+#: ../search/Tiles/File.cs:124 ../search/Tiles/Note.cs:57
+#: ../search/Tiles/RSSFeed.cs:45 ../search/Tiles/WebHistory.cs:50
+msgid "Title:"
+msgstr "Název:"
+
+#: ../ContactViewer/contactviewer.glade.h:37
+msgid ""
+"Unknown\n"
+"Plain text\n"
+"HTML"
+msgstr ""
+
+#: ../ContactViewer/contactviewer.glade.h:40
+msgid "Web Page:"
+msgstr "Webová stránka:"
+
+#: ../ContactViewer/contactviewer.glade.h:41
+msgid "Work:"
+msgstr "Práce:"
+
+#: ../ContactViewer/contactviewer.glade.h:42
+msgid "ZIP/Postal Code"
+msgstr "PSČ"
+
+#: ../ContactViewer/contactviewer.glade.h:43
+msgid "ZIP/Postal Code:"
+msgstr "PSČ:"
 
 #: ../ImLogViewer/ImLogViewer.glade.h:1
 msgid "<b>Conversations History</b>"
@@ -112,7 +415,7 @@ msgstr ""
 msgid "When searching for a phrase, add quotes. ex: <b>\"There be dragons\"</b>"
 msgstr "Hledáte-li přesnou frázi, přidejte uvozovky, např: <b>\"Draci tu nejsou\"</b>"
 
-#: ../search/Pages/QuickTips.cs:19 ../search/UIManager.cs:81
+#: ../search/Pages/QuickTips.cs:19 ../search/UIManager.cs:83
 msgid "Quick Tips"
 msgstr "Rychlé rady"
 
@@ -152,13 +455,21 @@ msgstr "Zadejte hledané termíny"
 msgid "Start searching"
 msgstr "Začít hledání"
 
+#: ../search/Tiles/Calendar.cs:54
+msgid "Description:"
+msgstr "Popis:"
+
+#: ../search/Tiles/Calendar.cs:57
+msgid "Location:"
+msgstr ""
+
+#: ../search/Tiles/Calendar.cs:61
+msgid "Attendees:"
+msgstr ""
+
 #: ../search/Tiles/Contact.cs:30
 msgid "Send Mail"
 msgstr "Poslat e-mail"
-
-#: ../search/Tiles/Contact.cs:68
-msgid "E-Mail:"
-msgstr "E-mail:"
 
 #: ../search/Tiles/Contact.cs:70
 msgid "Mobile Phone:"
@@ -186,11 +497,6 @@ msgstr "E-mail"
 #: ../search/Tiles/File.cs:37 ../search/Tiles/Folder.cs:38
 msgid "Move to Trash"
 msgstr "Přesunout do koše"
-
-#: ../search/Tiles/File.cs:124 ../search/Tiles/Note.cs:57
-#: ../search/Tiles/RSSFeed.cs:45 ../search/Tiles/WebHistory.cs:50
-msgid "Title:"
-msgstr "Název:"
 
 #: ../search/Tiles/File.cs:125 ../search/Tiles/Folder.cs:51
 #: ../search/Tiles/Note.cs:58
@@ -231,41 +537,71 @@ msgstr "Změněno:"
 msgid "IM Conversation"
 msgstr "IM konverzace"
 
-#: ../search/Tiles/IMLog.cs:87
+#: ../search/Tiles/IMLog.cs:92
 msgid "Name:"
 msgstr "Jméno:"
 
-#: ../search/Tiles/IMLog.cs:88 ../search/Tiles/MailMessage.cs:113
+#: ../search/Tiles/IMLog.cs:93 ../search/Tiles/MailMessage.cs:114
 msgid "Date Received:"
 msgstr "Přijato:"
 
-#: ../search/Tiles/MailAttachment.cs:47
+#: ../search/Tiles/IMLog.cs:97
+msgid "Status:"
+msgstr "Stav:"
+
+#: ../search/Tiles/IMLog.cs:112
+msgid "Idle"
+msgstr ""
+
+#: ../search/Tiles/IMLog.cs:119
+msgid "Away"
+msgstr ""
+
+#: ../search/Tiles/IMLog.cs:122
+msgid "Offline"
+msgstr ""
+
+#: ../search/Tiles/IMLog.cs:125
+msgid "Available"
+msgstr ""
+
+#: ../search/Tiles/MailAttachment.cs:45
 msgid "Mail attachment"
 msgstr "Příloha e-mailu"
 
-#: ../search/Tiles/MailMessage.cs:66
+#: ../search/Tiles/MailMessage.cs:67
 msgid "(untitled)"
 msgstr "(beze jména)"
 
-#: ../search/Tiles/MailMessage.cs:76
+#: ../search/Tiles/MailMessage.cs:77
 msgid "Send in Mail"
 msgstr "Poslat e-mailem"
 
-#: ../search/Tiles/MailMessage.cs:108
+#: ../search/Tiles/MailMessage.cs:109
 msgid "Subject:"
 msgstr "Předmět:"
 
-#: ../search/Tiles/MailMessage.cs:110
+#: ../search/Tiles/MailMessage.cs:111
 msgid "To:"
 msgstr "Komu:"
 
-#: ../search/Tiles/MailMessage.cs:110
+#: ../search/Tiles/MailMessage.cs:111
 msgid "From:"
 msgstr "Od:"
 
-#: ../search/Tiles/MailMessage.cs:113
+#: ../search/Tiles/MailMessage.cs:114
 msgid "Date Sent:"
 msgstr "Datum odeslání:"
+
+#: ../search/Tiles/MailMessage.cs:120
+#, fuzzy
+msgid "Folder:"
+msgstr "Složky"
+
+#: ../search/Tiles/OpenWithMenu.cs:47
+#, fuzzy
+msgid "Open With"
+msgstr "Otevřít"
 
 #: ../search/Tiles/Presentation.cs:33
 #, csharp-format
@@ -298,10 +634,6 @@ msgstr "Otevřít"
 #: ../search/Tiles/Utils.cs:24
 msgid "Applications"
 msgstr "Aplikace"
-
-#: ../search/Tiles/Utils.cs:26
-msgid "Contacts"
-msgstr "Kontakty"
 
 #: ../search/Tiles/Utils.cs:28
 msgid "Calendar Events"
@@ -343,22 +675,21 @@ msgstr "Kanály zpráv"
 msgid "Archives"
 msgstr "Archívy"
 
-#: ../search/Tiles/Utils.cs:100 ../search/Tiles/Utils.cs:146
-#: ../search/Tiles/Utils.cs:192 ../Util/StringFu.cs:77
-msgid "Today"
-msgstr "Dnes"
-
-#: ../search/Tiles/Utils.cs:102 ../search/Tiles/Utils.cs:148
-#: ../search/Tiles/Utils.cs:194 ../Util/StringFu.cs:79
+#: ../search/Tiles/Utils.cs:77 ../search/Tiles/Utils.cs:159
+#: ../Util/StringFu.cs:79
 msgid "Yesterday"
 msgstr "Včera"
 
-#: ../search/Tiles/Utils.cs:104 ../search/Tiles/Utils.cs:150
-#: ../search/Tiles/Utils.cs:196
+#: ../search/Tiles/Utils.cs:79 ../search/Tiles/Utils.cs:161
+#: ../Util/StringFu.cs:77
+msgid "Today"
+msgstr "Dnes"
+
+#: ../search/Tiles/Utils.cs:81 ../search/Tiles/Utils.cs:163
 msgid "Tomorrow"
 msgstr "Zítra"
 
-#: ../search/Tiles/Utils.cs:200
+#: ../search/Tiles/Utils.cs:179
 #, csharp-format
 msgid "{0} week ago"
 msgid_plural "{0} weeks ago"
@@ -366,7 +697,7 @@ msgstr[0] "Před týdnem"
 msgstr[1] "Před {0} týdny"
 msgstr[2] "Před {0} týdny"
 
-#: ../search/Tiles/Utils.cs:202
+#: ../search/Tiles/Utils.cs:181
 #, csharp-format
 msgid "In {0} week"
 msgid_plural "In {0} weeks"
@@ -375,7 +706,7 @@ msgstr[1] "Za {0} týdny"
 msgstr[2] "Za {0} týdnů"
 
 #. Let's say a year and a half to stop saying months
-#: ../search/Tiles/Utils.cs:204
+#: ../search/Tiles/Utils.cs:183
 #, csharp-format
 msgid "{0} month ago"
 msgid_plural "{0} months ago"
@@ -383,7 +714,7 @@ msgstr[0] "Před měsícem"
 msgstr[1] "Před {0} měsíci"
 msgstr[2] "Před {0} měsíci"
 
-#: ../search/Tiles/Utils.cs:206
+#: ../search/Tiles/Utils.cs:185
 #, csharp-format
 msgid "In {0} month"
 msgid_plural "In {0} months"
@@ -391,7 +722,7 @@ msgstr[0] "Za měsíc"
 msgstr[1] "Za {0} měsíce"
 msgstr[2] "Za {0} měsíců"
 
-#: ../search/Tiles/Utils.cs:208
+#: ../search/Tiles/Utils.cs:187
 #, csharp-format
 msgid "{0} year ago"
 msgid_plural "{0} years ago"
@@ -399,7 +730,7 @@ msgstr[0] "Před rokem"
 msgstr[1] "Před {0} lety"
 msgstr[2] "Před {0} lety"
 
-#: ../search/Tiles/Utils.cs:210
+#: ../search/Tiles/Utils.cs:189
 #, csharp-format
 msgid "In {0} year"
 msgid_plural "In {0} years"
@@ -436,10 +767,6 @@ msgstr "Nedávná hledání"
 #: ../search/Tray/TrayIcon.cs:78
 msgid "Clear"
 msgstr "Vymazat"
-
-#: ../search/Tray/TrayIcon.cs:86
-msgid "Quit"
-msgstr "Ukončit"
 
 #. Translators: the strings in TypeFilter.cs are for when the user
 #. * wants to limit search results to a specific type. You don't need
@@ -623,129 +950,133 @@ msgstr ""
 "člověk\n"
 "lidé"
 
-#: ../search/UIManager.cs:42
+#: ../search/UIManager.cs:44
 msgid "Close Desktop Search"
 msgstr "Zavřít vyhledávání"
 
-#: ../search/UIManager.cs:47 ../search/UIManager.cs:69
+#: ../search/UIManager.cs:49 ../search/UIManager.cs:71
 msgid "Exit Desktop Search"
 msgstr "Ukončit vyhledávání"
 
-#: ../search/UIManager.cs:54
+#: ../search/UIManager.cs:56
 msgid "_Search"
 msgstr "_Vyhledávání"
 
-#: ../search/UIManager.cs:57
+#: ../search/UIManager.cs:59
 msgid "_Actions"
 msgstr "_Akce"
 
-#: ../search/UIManager.cs:60
+#: ../search/UIManager.cs:62
 msgid "Sor_t"
 msgstr "_Třídění"
 
-#: ../search/UIManager.cs:63
+#: ../search/UIManager.cs:65
 msgid "_Help"
 msgstr "_Nápověda"
 
-#: ../search/UIManager.cs:72
+#: ../search/UIManager.cs:74
 msgid "_Contents"
 msgstr "_Obsah"
 
-#: ../search/UIManager.cs:74
+#: ../search/UIManager.cs:76
 msgid "Help - Table of Contents"
 msgstr "Nápověda - Obsah"
 
-#: ../search/UIManager.cs:78
+#: ../search/UIManager.cs:80
 msgid "About Desktop Search"
 msgstr "O Vyhledávání"
 
-#: ../search/UIManager.cs:100
+#: ../search/UIManager.cs:102
 msgid "_Everywhere"
 msgstr "_Všude"
 
-#: ../search/UIManager.cs:102
+#: ../search/UIManager.cs:104
 msgid "Search everywhere"
 msgstr "Hledat všude"
 
-#: ../search/UIManager.cs:105
+#: ../search/UIManager.cs:107
 msgid "_Applications"
 msgstr "_Aplikace"
 
-#: ../search/UIManager.cs:107
+#: ../search/UIManager.cs:109
 msgid "Search applications"
 msgstr "Hledat aplikace"
 
-#: ../search/UIManager.cs:110
+#: ../search/UIManager.cs:112
 msgid "_Contacts"
 msgstr "_Kontakty"
 
-#: ../search/UIManager.cs:112
+#: ../search/UIManager.cs:114
 msgid "Search contacts"
 msgstr "Hledat kontakty"
 
-#: ../search/UIManager.cs:115
+#: ../search/UIManager.cs:117
 msgid "Ca_lendar events"
 msgstr "_Kalendářové události"
 
-#: ../search/UIManager.cs:117
+#: ../search/UIManager.cs:119
 msgid "Search calendar events"
 msgstr "Hledat kalendářové události"
 
-#: ../search/UIManager.cs:120
+#: ../search/UIManager.cs:122
 msgid "_Documents"
 msgstr "_Dokumenty"
 
-#: ../search/UIManager.cs:122
+#: ../search/UIManager.cs:124
 msgid "Search documents"
 msgstr "Hledat dokumenty"
 
-#: ../search/UIManager.cs:125
+#: ../search/UIManager.cs:127
 msgid "Conve_rsations"
 msgstr "Konve_rzace"
 
-#: ../search/UIManager.cs:127
+#: ../search/UIManager.cs:129
 msgid "Search E-Mail and Instant Messaging logs"
 msgstr "Hledat poštu a záznamy konverzací"
 
-#: ../search/UIManager.cs:130
+#: ../search/UIManager.cs:132
 msgid "_Images"
 msgstr "_Obrázky"
 
-#: ../search/UIManager.cs:132
+#: ../search/UIManager.cs:134
 msgid "Search images"
 msgstr "Hledat obrázky"
 
-#: ../search/UIManager.cs:135
+#: ../search/UIManager.cs:137
 msgid "_Media"
 msgstr "_Média"
 
-#: ../search/UIManager.cs:137
+#: ../search/UIManager.cs:139
 msgid "Search sound and video files"
 msgstr "Hledat zvukové a video soubory"
 
-#: ../search/UIManager.cs:144
+#: ../search/UIManager.cs:146
 msgid "Date _Modified"
 msgstr "Datum z_měny"
 
-#: ../search/UIManager.cs:145
+#: ../search/UIManager.cs:147
 msgid "Sort the most-recently-modified matches first"
 msgstr "Na začátek řadit naposledy změněné výsledky"
 
-#: ../search/UIManager.cs:148
+#: ../search/UIManager.cs:150
 msgid "_Name"
 msgstr "_Jméno"
 
-#: ../search/UIManager.cs:149
+#: ../search/UIManager.cs:151
 msgid "Sort matches by name"
 msgstr "Řadit výsledky podle jména"
 
-#: ../search/UIManager.cs:152
+#: ../search/UIManager.cs:154
 msgid "_Relevance"
 msgstr "_Relevance"
 
-#: ../search/UIManager.cs:153
+#: ../search/UIManager.cs:155
 msgid "Sort the best matches first"
 msgstr "Na začátek řadit nejlépe odpovídající výsledky"
+
+#: ../search/UIManager.cs:268
+msgid "Couldn't launch web browser"
+msgstr ""
 
 #: ../tools/Settings.cs:226
 msgid "Reload configuration"
