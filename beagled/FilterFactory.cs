@@ -335,11 +335,11 @@ namespace Beagle.Daemon {
 		[XmlAttribute ("Uri")]
 		public string UriAsString {
 			get {
-				return UriFu.UriToSerializableString (uri);
+				return UriFu.UriToEscapedString (uri);
 			}
 
 			set {
-				uri = UriFu.UriStringToUri (value);
+				uri = UriFu.EscapedStringToUri (value);
 			}
 		}
 

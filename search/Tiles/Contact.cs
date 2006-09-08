@@ -102,7 +102,7 @@ namespace Search.Tiles {
 
 		public override void Open ()
 		{
-			SafeProcess p = GetClientProcess (Hit.GetFirstProperty ("fixme:client"), Hit.Uri.ToString ());
+			SafeProcess p = GetClientProcess (Hit.GetFirstProperty ("fixme:client"), Hit.EscapedUri);
 
 			try {
 				p.Start ();

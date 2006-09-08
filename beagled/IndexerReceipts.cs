@@ -67,8 +67,8 @@ namespace Beagle.Daemon {
 		
 		[XmlAttribute ("Uri")]
 		public string UriString {
-			get { return UriFu.UriToSerializableString (Uri); }
-			set { Uri = UriFu.UriStringToUri (value); }
+			get { return UriFu.UriToEscapedString (Uri); }
+			set { Uri = UriFu.EscapedStringToUri (value); }
 		}
 	}
 	
@@ -86,8 +86,8 @@ namespace Beagle.Daemon {
 		
 		[XmlAttribute ("Uri")]
 		public string UriString {
-			get { return UriFu.UriToSerializableString (Uri); }
-			set { Uri = UriFu.UriStringToUri (value); }
+			get { return UriFu.UriToEscapedString (Uri); }
+			set { Uri = UriFu.EscapedStringToUri (value); }
 		}
 	}
 			     

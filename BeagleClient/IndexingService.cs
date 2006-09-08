@@ -56,7 +56,7 @@ namespace Beagle {
 				
 				int i = 0;
 				foreach (Uri uri in to_remove) {
-					uris [i] = UriFu.UriToSerializableString (uri);
+					uris [i] = UriFu.UriToEscapedString (uri);
 					i++;
 				}
 
@@ -68,7 +68,7 @@ namespace Beagle {
 
 				to_remove.Clear ();
 				for (int i = 0; i < N; i++) 
-					to_remove.Add (UriFu.UriStringToUri (value [i]));
+					to_remove.Add (UriFu.EscapedStringToUri (value [i]));
 			}
 		}
 

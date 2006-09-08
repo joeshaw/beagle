@@ -26,6 +26,7 @@
 
 using System;
 using System.Collections;
+using System.IO;
 using System.Text;
 
 namespace Beagle.Util {
@@ -36,11 +37,16 @@ namespace Beagle.Util {
 
 		static public Uri PathToFileUri (string path)
 		{
-			string uriStr = StringFu.PathToQuotedFileUri (path);
-			return new Uri (uriStr, true);
+			return new Uri (PathToFileUriString (path), true);
 		}
 
-		static public Uri UriStringToUri (string path)
+		static public string PathToFileUriString (string path)
+		{
+			return Uri.UriSchemeFile + Uri.SchemeDelimiter 
+				+ StringFu.HexEscape (Path.GetFullPath (path));
+		}
+
+		static public Uri EscapedStringToUri (string path)
 		{
 			// Our current hackery attempts to serialize Uri strings in
 			// escaped and constructable form, so we don't require any
@@ -48,42 +54,33 @@ namespace Beagle.Util {
 			return new Uri (path, true);
 		}
 
-		static public String UriToSerializableString (Uri uri)
+		// UriBuilder is a piece of shit so we have to do this ourselves.
+		static public string UriToEscapedString (Uri uri)
 		{
-			int i;
-			string path;
 			StringBuilder builder = new StringBuilder ();
 
-			if (uri.IsFile)
-				path = Uri.UriSchemeFile + Uri.SchemeDelimiter
-					+ StringFu.HexEscape (uri.LocalPath);
+			builder.Append (uri.Scheme);
+
+			if (uri.ToString ().IndexOf (Uri.SchemeDelimiter) == uri.Scheme.Length)
+				builder.Append (Uri.SchemeDelimiter);
 			else
-				path = uri.ToString ();
+				builder.Append (':');
 
-			// XmlSerializer is happy to serialize 'odd' characters, but doesn't
-			// like to deserialize them. So we encode all 'odd' characters now.
-			for (i = 0; i < path.Length; i++)
-				if ((path [i] < '!') || (path [i] > '~' && path [i] < 256))
-					builder.Append (Uri.HexEscape (path [i]));
-				else
-					builder.Append (path [i]);
+			if (uri.Host != String.Empty) {
+				if (uri.UserInfo != String.Empty)
+					builder.Append (uri.UserInfo + "@");
 
-			if (uri.IsFile)
-				builder.Append (uri.Fragment);
-			
+				builder.Append (uri.Host);
+			}
+
+			if (! uri.IsDefaultPort)
+				builder.Append (":" + uri.Port);
+
+			// Both PathAndQuery and Fragment are escaped for us
+			builder.Append (uri.PathAndQuery);
+			builder.Append (uri.Fragment);
+
 			return builder.ToString ();
-		}
-
-		static public String LocalPathFromUri (Uri uri)
-		{
-			if (uri == null)
-				return "";
-			// FIXME: Can we assume "a directory", if it is not a file?
-			// If so, return the path of that directory.
-			if (uri.IsFile) 
-				return uri.LocalPath;
-			else
-				return "";
 		}
 
 		//////////////////////////////////
@@ -124,41 +121,6 @@ namespace Beagle.Util {
 		static public Hashtable NewHashtable ()
 		{
 			return new Hashtable (the_hasher, the_comparer);
-		}
-
-		//////////////////////////////////
-
-		static public string UrisToString (ICollection list_of_uris)
-		{
-			StringBuilder sb = new StringBuilder ("!@#");
-
-			foreach (Uri uri in list_of_uris) {
-				sb.Append (" ");
-				sb.Append (UriToSerializableString (uri).Replace (" ", "%20"));
-			}
-
-			return sb.ToString ();
-		}
-
-		static public ICollection StringToUris (string list_of_uris_as_string)
-		{
-			string [] parts = list_of_uris_as_string.Split (' ');
-
-			if (parts.Length == 0 || parts [0] != "!@#")
-				return null;
-
-			ArrayList uri_array = new ArrayList ();
-			for (int i = 1; i < parts.Length; ++i) {
-				try {
-					Uri uri = UriStringToUri (parts [i]);
-					uri_array.Add (uri);
-				} catch (Exception ex) {
-					Logger.Log.Debug ("Caught exception converting '{0}' to a Uri", parts [i]);
-				}
-			}
-			
-			return uri_array;
-				
 		}
 
 	}

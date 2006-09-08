@@ -1288,7 +1288,7 @@ namespace Beagle.Daemon.FileSystemQueryable {
 			// Store the hit's internal uri in a property
 			Property prop;
 			prop = Property.NewUnsearched ("beagle:InternalUri",
-						    UriFu.UriToSerializableString (hit.Uri));
+						       UriFu.UriToEscapedString (hit.Uri));
 			hit.AddProperty (prop);
 
 			// Now assemble the path by looking at the parent and name
@@ -1381,7 +1381,7 @@ namespace Beagle.Daemon.FileSystemQueryable {
 		{
 			// Uri remapping from a hit is easy: the internal uri
 			// is stored in a property.
-			Uri uri = UriFu.UriStringToUri (hit ["beagle:InternalUri"]);
+			Uri uri = UriFu.EscapedStringToUri (hit ["beagle:InternalUri"]);
 
 			string path = TextCache.UserCache.LookupPathRaw (uri);
 

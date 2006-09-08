@@ -161,7 +161,7 @@ namespace Beagle.Daemon {
 
 		private static string UriToString (Uri uri)
 		{
-			return UriFu.UriToSerializableString (uri).Replace ("'", "''");
+			return UriFu.UriToEscapedString (uri).Replace ("'", "''");
 		}
 
 		private SqliteCommand NewCommand (string format, params object [] args)

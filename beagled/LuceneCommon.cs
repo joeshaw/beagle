@@ -588,11 +588,11 @@ namespace Beagle.Daemon {
 
 			Field f;
 
-			f = Field.Keyword ("Uri", UriFu.UriToSerializableString (indexable.Uri));
+			f = Field.Keyword ("Uri", UriFu.UriToEscapedString (indexable.Uri));
 			primary_doc.Add (f);
 
 			if (indexable.ParentUri != null) {
-				f = Field.Keyword ("ParentUri", UriFu.UriToSerializableString (indexable.ParentUri));
+				f = Field.Keyword ("ParentUri", UriFu.UriToEscapedString (indexable.ParentUri));
 				primary_doc.Add (f);
 			}
 			
@@ -677,7 +677,7 @@ namespace Beagle.Daemon {
 				if (prop.IsMutable) {
 					if (secondary_doc == null) {
 						secondary_doc = new Document ();
-						f = Field.Keyword ("Uri", UriFu.UriToSerializableString (indexable.Uri));
+						f = Field.Keyword ("Uri", UriFu.UriToEscapedString (indexable.Uri));
 						secondary_doc.Add (f);
 					}
 					target_doc = secondary_doc;
@@ -697,7 +697,7 @@ namespace Beagle.Daemon {
 			new_doc = new Document ();
 
 			Field uri_f;
-			uri_f = Field.Keyword ("Uri", UriFu.UriToSerializableString (prop_only_indexable.Uri));
+			uri_f = Field.Keyword ("Uri", UriFu.UriToEscapedString (prop_only_indexable.Uri));
 			new_doc.Add (uri_f);
 
 			Logger.Log.Debug ("Rewriting {0}", prop_only_indexable.DisplayUri);
@@ -736,7 +736,7 @@ namespace Beagle.Daemon {
 			uri = doc.Get ("Uri");
 			if (uri == null)
 				throw new Exception ("Got document from Lucene w/o a URI!");
-			return UriFu.UriStringToUri (uri);
+			return UriFu.EscapedStringToUri (uri);
 		}
 
 		static protected Hit DocumentToHit (Document doc)
@@ -749,7 +749,7 @@ namespace Beagle.Daemon {
 			string str;
 			str = doc.Get ("ParentUri");
 			if (str != null)
-				hit.ParentUri = UriFu.UriStringToUri (str);
+				hit.ParentUri = UriFu.EscapedStringToUri (str);
 			
 			hit.Timestamp = StringFu.StringToDateTime (doc.Get ("Timestamp"));
 
@@ -1371,7 +1371,7 @@ namespace Beagle.Daemon {
 
 		static protected LNS.Query UriQuery (string field_name, Uri uri)
 		{
-			return new LNS.TermQuery (new Term (field_name, UriFu.UriToSerializableString (uri)));
+			return new LNS.TermQuery (new Term (field_name, UriFu.UriToEscapedString (uri)));
 		}
 
 		static protected LNS.Query UriQuery (string field_name, ICollection uri_list)

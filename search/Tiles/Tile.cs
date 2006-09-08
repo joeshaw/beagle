@@ -104,7 +104,7 @@ namespace Search.Tiles {
 						       Gtk.SelectionData selectionData,
 						       uint info, uint time)
 		{
-			byte[] data = System.Text.Encoding.UTF8.GetBytes (Hit.Uri + "\r\n");
+			byte[] data = System.Text.Encoding.UTF8.GetBytes (Hit.EscapedUri + "\r\n");
 			selectionData.Set (selectionData.Target, 8, data);
 		}
 
@@ -322,7 +322,7 @@ namespace Search.Tiles {
 		private void OpenWith (Gnome.Vfs.MimeApplication mime_application)
 		{
 			GLib.List uri_list = new GLib.List (typeof (string));
-			uri_list.Append (Hit.Uri.ToString ());
+			uri_list.Append (Hit.EscapedUri);
 			mime_application.Launch (uri_list);
 		}
 #endif
@@ -354,7 +354,7 @@ namespace Search.Tiles {
 			}
 			
 			if (expects_uris)
-				item = hit.Uri.ToString ();
+				item = hit.EscapedUri;
 			else
 				item = hit.Path;
 
@@ -404,7 +404,7 @@ namespace Search.Tiles {
 
 		public void OpenFromUri (Uri uri)
 		{
-			OpenFromUri (uri.ToString ());
+			OpenFromUri (UriFu.UriToEscapedString (uri));
 		}
 
 		public void OpenFromUri (string uri)

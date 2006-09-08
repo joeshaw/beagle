@@ -72,11 +72,11 @@ namespace Search.Tiles {
 			DateTime mtime = (hit.FileInfo != null) ? hit.FileInfo.LastWriteTime : DateTime.Now;
 
 			if (hit.MimeType == null ||
-			    !factory.CanThumbnail (hit.SerializedUri, hit.MimeType, mtime))
+			    !factory.CanThumbnail (hit.EscapedUri, hit.MimeType, mtime))
 				return false;
 
-			string thumbnail = Gnome.Thumbnail.PathForUri (hit.SerializedUri, Gnome.ThumbnailSize.Normal);
-			bool failed_thumb = factory.HasValidFailedThumbnail (hit.SerializedUri, mtime);
+			string thumbnail = Gnome.Thumbnail.PathForUri (hit.EscapedUri, Gnome.ThumbnailSize.Normal);
+			bool failed_thumb = factory.HasValidFailedThumbnail (hit.EscapedUri, mtime);
 
 			if (! File.Exists (thumbnail) && ! failed_thumb) {
 				lock (in_queue) {
@@ -130,13 +130,13 @@ namespace Search.Tiles {
 					in_queue.Remove (req);
 				}
 
-				Gdk.Pixbuf icon = factory.GenerateThumbnail (req.Hit.SerializedUri, req.Hit.MimeType);
+				Gdk.Pixbuf icon = factory.GenerateThumbnail (req.Hit.EscapedUri, req.Hit.MimeType);
 
 				if (icon == null) {
 					if (req.Hit.FileInfo != null)
-						factory.CreateFailedThumbnail (req.Hit.SerializedUri, req.Hit.FileInfo.LastWriteTime);
+						factory.CreateFailedThumbnail (req.Hit.EscapedUri, req.Hit.FileInfo.LastWriteTime);
 				} else {
-					factory.SaveThumbnail (icon, req.Hit.SerializedUri, DateTime.Now);
+					factory.SaveThumbnail (icon, req.Hit.EscapedUri, DateTime.Now);
 
 					if (File.Exists (req.ThumbnailFile))
 						req.Succeeded = true;

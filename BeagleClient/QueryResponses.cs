@@ -70,7 +70,7 @@ namespace Beagle {
 				
 				int i = 0;
 				foreach (Uri uri in this.uris) {
-					uris [i] = UriFu.UriToSerializableString (uri);
+					uris [i] = UriFu.UriToEscapedString (uri);
 					i++;
 				}
 
@@ -82,7 +82,7 @@ namespace Beagle {
 				Uri[] uris = new Uri [N];
 
 				for (int i = 0; i < N; i++)
-					uris [i] = UriFu.UriStringToUri (value [i]);
+					uris [i] = UriFu.EscapedStringToUri (value [i]);
 
 				this.uris = uris;
 			}

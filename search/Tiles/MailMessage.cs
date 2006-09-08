@@ -148,9 +148,9 @@ namespace Search.Tiles {
 		{
 			SafeProcess p;
 			if (Hit.ParentUri != null) 
-				p = GetClientProcess (Hit.GetFirstProperty ("fixme:client"), Hit.ParentUri.ToString () );
+				p = GetClientProcess (Hit.GetFirstProperty ("fixme:client"), Hit.EscapedParentUri);
 			else
-				p = GetClientProcess (Hit.GetFirstProperty ("fixme:client"), Hit.Uri.ToString () );
+				p = GetClientProcess (Hit.GetFirstProperty ("fixme:client"), Hit.EscapedUri);
 			
 			if (p == null) {
 				OpenFromMime (Hit);
@@ -170,9 +170,9 @@ namespace Search.Tiles {
 
 			string uri;
 			if (Hit.ParentUri != null)
-				uri = Hit.ParentUri.ToString ();
+				uri = Hit.EscapedParentUri;
 			else
-				uri = Hit.Uri.ToString ();
+				uri = Hit.EscapedUri;
 
 			p.Arguments = new string [] { "evolution", String.Format ("{0};forward=attached", uri) };
 

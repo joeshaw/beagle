@@ -116,7 +116,7 @@ namespace Beagle.Daemon {
 				case IndexableType.Remove:
 
 					string uri_str;
-					uri_str = UriFu.UriToSerializableString (indexable.Uri);
+					uri_str = UriFu.UriToEscapedString (indexable.Uri);
 
 					Logger.Log.Debug ("-{0}", indexable.DisplayUri);
 					
@@ -183,7 +183,7 @@ namespace Beagle.Daemon {
 					uri_str = doc.Get ("Uri");
 
 					Uri uri;
-					uri = UriFu.UriStringToUri (uri_str);
+					uri = UriFu.EscapedStringToUri (uri_str);
 					prop_change_docs [uri] = doc;
 						
 					Term term;

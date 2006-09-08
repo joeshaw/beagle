@@ -156,7 +156,7 @@ namespace Beagle.Daemon {
 
 		public void AddUri (Uri uri)
 		{
-			AddUri (UriFu.UriToSerializableString (uri));
+			AddUri (UriFu.UriToEscapedString (uri));
 		}
 
 		public void AddUri (string str)

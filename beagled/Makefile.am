@@ -5,12 +5,13 @@
 #
 # 0162 = Unreachable code detected
 # 0164 = This label has not been referenced
+# 0168 = The variable 'foo' is declared but never used
 # 0169 = The private method/field 'foo' is never used
 # 0219 = Variable is assigned but never used
 # 0436 = Ignore imported type (local SqliteClient)
 
 # unsafe arg for Mono.Data.SqliteClient fork
-CSC = mcs -debug -nowarn:0162,0164,0169,0219,0436 -unsafe
+CSC = mcs -debug -nowarn:0162,0164,0168,0169,0219,0436 -unsafe
 
 BACKENDDIR = $(pkglibdir)/Backends
 

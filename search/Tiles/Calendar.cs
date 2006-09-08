@@ -68,7 +68,7 @@ namespace Search.Tiles {
 		public override void Open ()
 		{
 			SafeProcess p = new SafeProcess ();
-			p.Arguments = new string [] { "evolution", Hit.Uri.ToString () };
+			p.Arguments = new string [] { "evolution", Hit.EscapedUri };
 
 			try {
 				p.Start ();

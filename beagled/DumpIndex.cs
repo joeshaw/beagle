@@ -256,7 +256,7 @@ class DumpIndexTool {
 			return;
 		
 		// else query by path - this is for static indexes
-		path = StringFu.PathToQuotedFileUri (path);
+		path = UriFu.PathToFileUriString (path);
 		Console.WriteLine ("Querying by:[" + path + "]");
 		query = new TermQuery(new Term("Uri", path));
 		DoQuery (driver, query);

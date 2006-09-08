@@ -37,7 +37,7 @@ namespace Search.Tiles {
 
 		public bool IsMatch (Hit hit)
 		{
-			return (uri == null || StringFu.GlobMatch (uri, hit.Uri.ToString ()))
+			return (uri == null || StringFu.GlobMatch (uri, hit.EscapedUri))
 				&& (type == null || StringFu.GlobMatch (type, hit.Type))
 				&& (mimetype == null || StringFu.GlobMatch (mimetype, hit.MimeType));
 		}

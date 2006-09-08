@@ -86,13 +86,13 @@ namespace Beagle {
 		}
 
 		[XmlAttribute ("Uri")]
-		public string SerializedUri {
+		public string EscapedUri {
 			get {
-				return UriFu.UriToSerializableString (uri);
+				return UriFu.UriToEscapedString (uri);
 			}
 
 			set {
-				uri = UriFu.UriStringToUri (value);
+				uri = UriFu.EscapedStringToUri (value);
 			}
 		}
 
@@ -103,19 +103,19 @@ namespace Beagle {
 		}
 
 		[XmlAttribute ("ParentUri")]
-		public string SerializedParentUri {
+		public string EscapedParentUri {
 			get {
 				if (parent_uri == null)
 					return null;
 
-				return UriFu.UriToSerializableString (parent_uri);
+				return UriFu.UriToEscapedString (parent_uri);
 			}
 
 			set {
 				if (value == null)
 					parent_uri = null;
 				else
-					parent_uri = UriFu.UriStringToUri (value);
+					parent_uri = UriFu.EscapedStringToUri (value);
 			}
 		}
 

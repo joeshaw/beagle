@@ -161,8 +161,8 @@ namespace Beagle {
 
 		[XmlAttribute ("Uri")]
 		public string UriString {
-			get { return UriFu.UriToSerializableString (uri); }
-			set { uri = UriFu.UriStringToUri (value); }
+			get { return UriFu.UriToEscapedString (uri); }
+			set { uri = UriFu.EscapedStringToUri (value); }
 		}
 
 		[XmlIgnore]
@@ -177,14 +177,14 @@ namespace Beagle {
 				if (parent_uri == null)
 					return null;
 
-				return UriFu.UriToSerializableString (parent_uri);
+				return UriFu.UriToEscapedString (parent_uri);
 			}
 
 			set {
 				if (value == null)
 					parent_uri = null;
 				else
-					parent_uri = UriFu.UriStringToUri (value);
+					parent_uri = UriFu.EscapedStringToUri (value);
 			}
 		}
 
@@ -196,8 +196,8 @@ namespace Beagle {
 
 		[XmlAttribute ("ContentUri")]
 		public string ContentUriString {
-			get { return UriFu.UriToSerializableString (ContentUri); }
-			set { contentUri = UriFu.UriStringToUri (value); } 
+			get { return UriFu.UriToEscapedString (ContentUri); }
+			set { contentUri = UriFu.EscapedStringToUri (value); } 
 		}
 
 		[XmlIgnore]
@@ -208,8 +208,8 @@ namespace Beagle {
 		
 		[XmlAttribute ("HotContentUri")]
 		public string HotContentUriString {
-			get { return HotContentUri != null ? UriFu.UriToSerializableString (HotContentUri) : ""; }
-			set { hotContentUri = (value != "") ? new Uri (value) : null; }
+			get { return HotContentUri != null ? UriFu.UriToEscapedString (HotContentUri) : ""; }
+			set { hotContentUri = (value != "") ? UriFu.EscapedStringToUri (value) : null; }
 		}
 
 		[XmlIgnore]

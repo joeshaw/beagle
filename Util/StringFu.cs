@@ -302,15 +302,22 @@ namespace Beagle.Util {
 		static public string HexEscape (string str)
 		{
 			StringBuilder builder = new StringBuilder ();
-			int i;
 
-			while ((i = str.IndexOfAny (CharsToQuote)) != -1) {
-				if (i > 0)
-					builder.Append (str.Substring (0, i));
-				builder.Append (Uri.HexEscape (str [i]));
-				str = str.Substring (i+1);
+			foreach (char c in str) {
+
+				if (Array.IndexOf (CharsToQuote, c) != -1)
+					builder.Append (Uri.HexEscape (c));
+				else if (c < 128)
+					builder.Append (c);
+				else {
+					byte[] utf8_bytes;
+
+					utf8_bytes = Encoding.UTF8.GetBytes (new char [] { c });
+
+					foreach (byte b in utf8_bytes)
+						builder.AppendFormat ("%{0:X}", b);
+				}
 			}
-			builder.Append (str);
 
 			return builder.ToString ();
 		}
@@ -318,21 +325,23 @@ namespace Beagle.Util {
 		// Translate all %xx codes into real characters
 		static public string HexUnescape (string str)
 		{
-			int i = 0, pos = 0;
-			while ((i = str.IndexOf ('%', pos)) != -1) {
-				pos = i;
-				char unescaped = Uri.HexUnescape (str, ref pos);
-				str = str.Remove (i, 3);
-				str = str.Insert (i, new String(unescaped, 1));
-				pos -= 2;
-			}
-			return str;
-		}
+			ArrayList bytes = new ArrayList ();
+                        byte[] sub_bytes;
+                        int i, pos = 0;
 
-		static public string PathToQuotedFileUri (string path)
-		{
-			path = Path.GetFullPath (path);
-			return Uri.UriSchemeFile + Uri.SchemeDelimiter + HexEscape (path);
+                        while ((i = str.IndexOf ('%', pos)) != -1) {
+                                sub_bytes = Encoding.UTF8.GetBytes (str.Substring (pos, i - pos));
+                                bytes.AddRange (sub_bytes);
+				
+				pos = i;
+                                char unescaped = Uri.HexUnescape (str, ref pos);
+				bytes.Add ((byte) unescaped);
+                        }
+
+                        sub_bytes = Encoding.UTF8.GetBytes (str.Substring (pos, str.Length - pos));
+                        bytes.AddRange (sub_bytes);
+
+                        return Encoding.UTF8.GetString ((byte[]) bytes.ToArray (typeof (byte)));
 		}
 
 		// These strings should never be exposed to the user.
