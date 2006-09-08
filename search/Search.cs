@@ -154,6 +154,7 @@ namespace Search {
 			uim.FocusSearchEntry += delegate () { entry.GrabFocus (); };
 			entry.Activated += OnEntryActivated;
 			entry.Changed += OnEntryChanged;
+			entry.MoveCursor += OnEntryMoveCursor;
 			hbox.PackStart (entry, true, true, 0);
 
 			button = new Gtk.Button ();
@@ -229,14 +230,15 @@ namespace Search {
 			}
 		}
 
-		Gtk.Widget oldFocus;
-
 		private void SetWindowTitle (string query)
 		{
 			Title = String.Format ("Desktop Search: {0}", query);
 		}
 
-		private void Search (bool grabFocus)
+		// Whether we should grab focus from the text entry
+		private bool grab_focus;
+
+		private void Search (bool grab_focus)
 		{
 			if (timeout != 0) {
 				GLib.Source.Remove (timeout);
@@ -261,7 +263,7 @@ namespace Search {
 			view.Sort = sort;
 			pages.CurrentPage = pages.PageNum (panes);
 
-			oldFocus = grabFocus ? Focus : null;
+			this.grab_focus = grab_focus;
 
 			try {
 				if (currentQuery != null) {
@@ -306,6 +308,13 @@ namespace Search {
 		}
 
 		private void OnEntryChanged (object obj, EventArgs args)
+		{
+			if (timeout != 0)
+				GLib.Source.Remove (timeout);
+			timeout = GLib.Timeout.Add (1000, OnEntryTimeout);
+		}
+
+		private void OnEntryMoveCursor (object obj, EventArgs args)
 		{
 			if (timeout != 0)
 				GLib.Source.Remove (timeout);
@@ -368,7 +377,8 @@ namespace Search {
 		private void OnFinished (FinishedResponse response)
 		{
 			spinner.Stop ();
-			view.Finished (oldFocus == Focus);
+			view.Finished (grab_focus);
+			grab_focus = false;
 
 			CheckNoMatch ();
 		}
