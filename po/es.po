@@ -1,23 +1,23 @@
 # translation of es.po to Spanish
-# Traducción española de beagle.
-# Copyright (C) 2005 The GNOME Foundation
-# This file is distributed under the same license as the beagle package.
 # Antonio Ognio <gnrfan@gnrfan.org>, 2005.
 # Francisco Javier F. Serrador <serrador@tecknolabs.com>, 2006.
 # Francisco Javier F. Serrador <serrador@cvs.gnome.org>, 2006.
+# Traducción española de beagle.
+# Copyright (C) 2005 The GNOME Foundation
+# This file is distributed under the same license as the beagle package.
 msgid ""
 msgstr ""
 "Project-Id-Version: es\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2006-08-16 23:11+0200\n"
-"PO-Revision-Date: 2006-08-16 23:11+0200\n"
+"POT-Creation-Date: 2006-09-10 15:52+0200\n"
+"PO-Revision-Date: 2006-09-10 16:03+0200\n"
 "Last-Translator: Francisco Javier F. Serrador <serrador@cvs.gnome.org>\n"
 "Language-Team: Spanish <traductores@es.gnome.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms:  nplurals=2; plural=(n != 1);\n"
-"X-Generator: KBabel 1.9.1\n"
+"X-Generator: KBabel 1.11.4\n"
 
 #: ../glue/eggtrayicon.c:127
 msgid "Orientation"
@@ -26,6 +26,306 @@ msgstr "Orientación"
 #: ../glue/eggtrayicon.c:128
 msgid "The orientation of the tray."
 msgstr "La orientación de la bandeja."
+
+#: ../ContactViewer/ContactWindow.cs:74
+msgid "Open..."
+msgstr "Abrir..."
+
+#: ../ContactViewer/ContactWindow.cs:76 ../search/Tray/TrayIcon.cs:86
+msgid "Quit"
+msgstr "Salir"
+
+#: ../ContactViewer/ContactWindow.cs:79
+msgid "About"
+msgstr "Acerca de"
+
+#: ../ContactViewer/ContactWindow.cs:95 ../search/Tiles/Utils.cs:26
+msgid "Contacts"
+msgstr "Contactos"
+
+#: ../ContactViewer/ContactWindow.cs:100
+msgid "Display name"
+msgstr "Nombre que mostrar"
+
+#: ../ContactViewer/ContactWindow.cs:101
+msgid "Primary E-mail"
+msgstr "Correo-e primario"
+
+#: ../ContactViewer/ContactWindow.cs:102
+msgid "Secondary E-mail"
+msgstr "Correo-e secundario"
+
+#: ../ContactViewer/ContactWindow.cs:103
+msgid "Nickname"
+msgstr "Apodo"
+
+#: ../ContactViewer/ContactWindow.cs:133
+#, csharp-format
+msgid ""
+"Unable to open mork database:\n"
+"\n"
+" {0}"
+msgstr ""
+"No es posible abrir la base de datos mork:\n"
+"\n"
+" {0}"
+
+#: ../ContactViewer/ContactWindow.cs:153
+msgid "The specified ID does not exist in this database!"
+msgstr "El ID especificado no existe en esta base de datos"
+
+#: ../ContactViewer/ContactWindow.cs:180
+#, csharp-format
+msgid "Added {0} contact"
+msgid_plural "Added {0} contacts"
+msgstr[0] "Añadido {0} contacto"
+msgstr[1] "Añadidos {0} contactos"
+
+#: ../ContactViewer/ContactWindow.cs:204
+#, csharp-format
+msgid "Viewing {0}"
+msgstr "Viendo {0}"
+
+#: ../ContactViewer/ContactWindow.cs:205
+msgid "DisplayName"
+msgstr "NombreMostrado"
+
+#: ../ContactViewer/ContactWindow.cs:244
+msgid "Select a mork database file"
+msgstr "Seleccione un archivo de base de datos mork"
+
+#: ../ContactViewer/ContactWindow.cs:303
+msgid "FirstName"
+msgstr "Nombre"
+
+#: ../ContactViewer/ContactWindow.cs:303
+msgid "NickName"
+msgstr "Apodo"
+
+#: ../ContactViewer/ContactWindow.cs:303
+msgid "LastName"
+msgstr "Apellidos"
+
+#: ../ContactViewer/ContactWindow.cs:311
+msgid "Primary E-Mail:"
+msgstr "Correo-e primario:"
+
+#: ../ContactViewer/ContactWindow.cs:313
+msgid "PrimaryEmail"
+msgstr "CorreoPrimario"
+
+#: ../ContactViewer/ContactWindow.cs:315
+#: ../ContactViewer/contactviewer.glade.h:33
+msgid "Screen name:"
+msgstr "Nombre en pantalla:"
+
+#: ../ContactViewer/ContactWindow.cs:317
+msgid "_AimScreenName"
+msgstr "NombrePantalla_Aim"
+
+#: ../ContactViewer/ContactWindow.cs:319
+msgid "Home phone:"
+msgstr "Tlf. casa:"
+
+#: ../ContactViewer/ContactWindow.cs:321
+msgid "HomePhone"
+msgstr "TlfCasa"
+
+#: ../ContactViewer/ContactWindow.cs:323
+msgid "Mobile phone:"
+msgstr "Tlf. móvil:"
+
+#: ../ContactViewer/ContactWindow.cs:325
+msgid "CellularNumber"
+msgstr "TelefMovil"
+
+#: ../ContactViewer/ContactWindow.cs:327
+msgid "Web page:"
+msgstr "Página web:"
+
+#: ../ContactViewer/ContactWindow.cs:329
+msgid "WebPage2"
+msgstr "WebPage2"
+
+#: ../ContactViewer/ContactWindow.cs:336
+msgid "Send E-Mail"
+msgstr "Enviar correo"
+
+#: ../ContactViewer/ContactWindow.cs:340
+msgid "Details..."
+msgstr "Detalles..."
+
+#: ../ContactViewer/ContactWindow.cs:368
+msgid "Could not find a valid E-mail address!"
+msgstr "No se pudo encontrar una dirección de correo-e válida"
+
+#: ../ContactViewer/contactviewer.glade.h:1
+msgid "<b>Custom fields</b>"
+msgstr "<b>Campos personalizados</b>"
+
+#: ../ContactViewer/contactviewer.glade.h:2
+msgid "<b>Home</b>"
+msgstr "<b>Domicilio</b>"
+
+#: ../ContactViewer/contactviewer.glade.h:3
+msgid "<b>Internet</b>"
+msgstr "<b>Internet</b>"
+
+#: ../ContactViewer/contactviewer.glade.h:4
+msgid "<b>Name</b>"
+msgstr "<b>Nombre</b>"
+
+#: ../ContactViewer/contactviewer.glade.h:5
+msgid "<b>Notes</b>"
+msgstr "<b>Notas</b>"
+
+#: ../ContactViewer/contactviewer.glade.h:6
+msgid "<b>Phones</b>"
+msgstr "<b>Teléfonos</b>"
+
+#: ../ContactViewer/contactviewer.glade.h:7
+msgid "<b>Work</b>"
+msgstr "<b>Trabajo</b>"
+
+#: ../ContactViewer/contactviewer.glade.h:8
+msgid "Additional E-Mail:"
+msgstr "Correo-e adicional:"
+
+#: ../ContactViewer/contactviewer.glade.h:9
+msgid "Address"
+msgstr "Dirección"
+
+#: ../ContactViewer/contactviewer.glade.h:10
+msgid "Address:"
+msgstr "Dirección:"
+
+#: ../ContactViewer/contactviewer.glade.h:11
+msgid "City:"
+msgstr "Ciudad:"
+
+#: ../ContactViewer/contactviewer.glade.h:12
+msgid "Contact"
+msgstr "Contacto"
+
+#: ../ContactViewer/contactviewer.glade.h:13
+msgid "Contact Viewer"
+msgstr "Visor de contactos"
+
+#: ../ContactViewer/contactviewer.glade.h:14
+msgid "Country:"
+msgstr "País:"
+
+#: ../ContactViewer/contactviewer.glade.h:15
+msgid "Custom 1:"
+msgstr "Personalizado 1:"
+
+#: ../ContactViewer/contactviewer.glade.h:16
+msgid "Custom 2:"
+msgstr "Personalizado 2:"
+
+#: ../ContactViewer/contactviewer.glade.h:17
+msgid "Custom 3:"
+msgstr "Personalizado 3:"
+
+#: ../ContactViewer/contactviewer.glade.h:18
+msgid "Custom 4:"
+msgstr "Personalizado 4:"
+
+#: ../ContactViewer/contactviewer.glade.h:19
+msgid "Department:"
+msgstr "Departamento:"
+
+#: ../ContactViewer/contactviewer.glade.h:20
+msgid "Detailed view"
+msgstr "Vista detallada"
+
+#: ../ContactViewer/contactviewer.glade.h:21
+msgid "Display:"
+msgstr "Pantalla:"
+
+#: ../ContactViewer/contactviewer.glade.h:22 ../search/Tiles/Contact.cs:68
+msgid "E-Mail:"
+msgstr "Correo-e:"
+
+#: ../ContactViewer/contactviewer.glade.h:23
+msgid "Fax:"
+msgstr "Fax:"
+
+#: ../ContactViewer/contactviewer.glade.h:24
+msgid "First:"
+msgstr "Nombre:"
+
+#: ../ContactViewer/contactviewer.glade.h:25
+msgid "Home:"
+msgstr "Domicilio:"
+
+#: ../ContactViewer/contactviewer.glade.h:26
+msgid "Last:"
+msgstr "Apellidos:"
+
+#: ../ContactViewer/contactviewer.glade.h:27
+msgid "Mobile:"
+msgstr "Móvil:"
+
+#: ../ContactViewer/contactviewer.glade.h:28
+msgid "Nickname:"
+msgstr "Apodo:"
+
+#: ../ContactViewer/contactviewer.glade.h:29
+msgid "Organization:"
+msgstr "Organización:"
+
+#: ../ContactViewer/contactviewer.glade.h:30
+msgid "Other"
+msgstr "Otro"
+
+#: ../ContactViewer/contactviewer.glade.h:31
+msgid "Pager:"
+msgstr "Buscapersonas:"
+
+#: ../ContactViewer/contactviewer.glade.h:32
+msgid "Preferred format:"
+msgstr "Formato preferido:"
+
+#: ../ContactViewer/contactviewer.glade.h:34
+msgid "State/Province"
+msgstr "Estado/Provincia"
+
+#: ../ContactViewer/contactviewer.glade.h:35
+msgid "State/Province:"
+msgstr "Estado/Provincia:"
+
+#: ../ContactViewer/contactviewer.glade.h:36 ../search/Tiles/Calendar.cs:51
+#: ../search/Tiles/File.cs:124 ../search/Tiles/Note.cs:57
+#: ../search/Tiles/RSSFeed.cs:45 ../search/Tiles/WebHistory.cs:50
+msgid "Title:"
+msgstr "Título:"
+
+#: ../ContactViewer/contactviewer.glade.h:37
+msgid ""
+"Unknown\n"
+"Plain text\n"
+"HTML"
+msgstr ""
+"Desconocido\n"
+"Texto sin formato\n"
+"HTML"
+
+#: ../ContactViewer/contactviewer.glade.h:40
+msgid "Web Page:"
+msgstr "Página web:"
+
+#: ../ContactViewer/contactviewer.glade.h:41
+msgid "Work:"
+msgstr "Trabajo:"
+
+#: ../ContactViewer/contactviewer.glade.h:42
+msgid "ZIP/Postal Code"
+msgstr "Código Postal/ZIP"
+
+#: ../ContactViewer/contactviewer.glade.h:43
+msgid "ZIP/Postal Code:"
+msgstr "Código postal/ZIP:"
 
 #: ../ImLogViewer/ImLogViewer.glade.h:1
 msgid "<b>Conversations History</b>"
@@ -101,20 +401,18 @@ msgid "To search for optional terms, use OR.  ex: <b>George OR Ringo</b>"
 msgstr "Para buscar términos opcionales, use OR. ej: <b>Jorge or Esteban</b>"
 
 #: ../search/Pages/QuickTips.cs:12
-msgid ""
-"To exclude search terms, use the minus symbol in front, such as <b>-cats</b>"
+msgid "To exclude search terms, use the minus symbol in front, such as <b>-cats</b>"
 msgstr ""
 "Para excluir términos de búsqueda, use el símbolo menos como prefijo, como "
 "<b>-gatos</b>"
 
 #: ../search/Pages/QuickTips.cs:13
-msgid ""
-"When searching for a phrase, add quotes. ex: <b>\"There be dragons\"</b>"
+msgid "When searching for a phrase, add quotes. ex: <b>\"There be dragons\"</b>"
 msgstr ""
 "Cuando busque una frase, añada comillas. Ej: <b>\"En un lugar de La Mancha</"
 "b>"
 
-#: ../search/Pages/QuickTips.cs:19 ../search/UIManager.cs:81
+#: ../search/Pages/QuickTips.cs:19 ../search/UIManager.cs:83
 msgid "Quick Tips"
 msgstr "Consejos rápidos"
 
@@ -142,25 +440,33 @@ msgstr "Iniciar el servicio de búsqueda"
 msgid "_Find:"
 msgstr "_Buscar:"
 
-#: ../search/Search.cs:163
+#: ../search/Search.cs:164
 msgid "Find Now"
 msgstr "Buscar ahora"
 
-#: ../search/Search.cs:209
+#: ../search/Search.cs:210
 msgid "Type in search terms"
 msgstr "Teclee los términos de búsqueda"
 
-#: ../search/Search.cs:210
+#: ../search/Search.cs:211
 msgid "Start searching"
 msgstr "Empezar a buscar"
+
+#: ../search/Tiles/Calendar.cs:54
+msgid "Description:"
+msgstr "Descripción:"
+
+#: ../search/Tiles/Calendar.cs:57
+msgid "Location:"
+msgstr "Lugar:"
+
+#: ../search/Tiles/Calendar.cs:61
+msgid "Attendees:"
+msgstr "Asistentes:"
 
 #: ../search/Tiles/Contact.cs:30
 msgid "Send Mail"
 msgstr "Enviar correo"
-
-#: ../search/Tiles/Contact.cs:68
-msgid "E-Mail:"
-msgstr "Correo-e:"
 
 #: ../search/Tiles/Contact.cs:70
 msgid "Mobile Phone:"
@@ -188,11 +494,6 @@ msgstr "Correo-e"
 #: ../search/Tiles/File.cs:37 ../search/Tiles/Folder.cs:38
 msgid "Move to Trash"
 msgstr "Mover a la papelera"
-
-#: ../search/Tiles/File.cs:124 ../search/Tiles/Note.cs:57
-#: ../search/Tiles/RSSFeed.cs:45 ../search/Tiles/WebHistory.cs:50
-msgid "Title:"
-msgstr "Título:"
 
 #: ../search/Tiles/File.cs:125 ../search/Tiles/Folder.cs:51
 #: ../search/Tiles/Note.cs:58
@@ -240,6 +541,26 @@ msgstr "Nombre:"
 msgid "Date Received:"
 msgstr "Fecha de recepción:"
 
+#: ../search/Tiles/IMLog.cs:97
+msgid "Status:"
+msgstr "Estado:"
+
+#: ../search/Tiles/IMLog.cs:112
+msgid "Idle"
+msgstr "Inactivo"
+
+#: ../search/Tiles/IMLog.cs:119
+msgid "Away"
+msgstr "Fuera"
+
+#: ../search/Tiles/IMLog.cs:122
+msgid "Offline"
+msgstr "Desconectado"
+
+#: ../search/Tiles/IMLog.cs:125
+msgid "Available"
+msgstr "Disponible"
+
 #: ../search/Tiles/MailAttachment.cs:45
 msgid "Mail attachment"
 msgstr "Adjunto de correo"
@@ -272,6 +593,10 @@ msgstr "Fecha de envío:"
 msgid "Folder:"
 msgstr "Carpeta:"
 
+#: ../search/Tiles/OpenWithMenu.cs:47
+msgid "Open With"
+msgstr "Abrir con"
+
 #: ../search/Tiles/Presentation.cs:33
 #, csharp-format
 msgid "{0} slide"
@@ -301,10 +626,6 @@ msgstr "Abrir"
 #: ../search/Tiles/Utils.cs:24
 msgid "Applications"
 msgstr "Aplicaciones"
-
-#: ../search/Tiles/Utils.cs:26
-msgid "Contacts"
-msgstr "Contactos"
 
 #: ../search/Tiles/Utils.cs:28
 msgid "Calendar Events"
@@ -432,10 +753,6 @@ msgstr "Búsquedas recientes"
 #: ../search/Tray/TrayIcon.cs:78
 msgid "Clear"
 msgstr "Limpiar"
-
-#: ../search/Tray/TrayIcon.cs:86
-msgid "Quit"
-msgstr "Salir"
 
 #. Translators: the strings in TypeFilter.cs are for when the user
 #. * wants to limit search results to a specific type. You don't need
@@ -611,129 +928,133 @@ msgstr ""
 "persona\n"
 "personas"
 
-#: ../search/UIManager.cs:42
+#: ../search/UIManager.cs:44
 msgid "Close Desktop Search"
 msgstr "Cerrar búsqueda de Escritorio"
 
-#: ../search/UIManager.cs:47 ../search/UIManager.cs:69
+#: ../search/UIManager.cs:49 ../search/UIManager.cs:71
 msgid "Exit Desktop Search"
 msgstr "Salir de la búsqueda de Escritorio"
 
-#: ../search/UIManager.cs:54
+#: ../search/UIManager.cs:56
 msgid "_Search"
 msgstr "_Búsqueda"
 
-#: ../search/UIManager.cs:57
+#: ../search/UIManager.cs:59
 msgid "_Actions"
 msgstr "_Acciones"
 
-#: ../search/UIManager.cs:60
+#: ../search/UIManager.cs:62
 msgid "Sor_t"
 msgstr "_Ordenar"
 
-#: ../search/UIManager.cs:63
+#: ../search/UIManager.cs:65
 msgid "_Help"
 msgstr "Ay_uda"
 
-#: ../search/UIManager.cs:72
+#: ../search/UIManager.cs:74
 msgid "_Contents"
 msgstr "_Contenido"
 
-#: ../search/UIManager.cs:74
+#: ../search/UIManager.cs:76
 msgid "Help - Table of Contents"
 msgstr "Ayuda - Tabla de contenido"
 
-#: ../search/UIManager.cs:78
+#: ../search/UIManager.cs:80
 msgid "About Desktop Search"
 msgstr "Acerca de la búsqueda de Escritorio"
 
-#: ../search/UIManager.cs:100
+#: ../search/UIManager.cs:102
 msgid "_Everywhere"
 msgstr "_En todos los lugares"
 
-#: ../search/UIManager.cs:102
+#: ../search/UIManager.cs:104
 msgid "Search everywhere"
 msgstr "Buscar en todos los lugares"
 
-#: ../search/UIManager.cs:105
+#: ../search/UIManager.cs:107
 msgid "_Applications"
 msgstr "_Aplicaciones"
 
-#: ../search/UIManager.cs:107
+#: ../search/UIManager.cs:109
 msgid "Search applications"
 msgstr "Buscar aplicaciones"
 
-#: ../search/UIManager.cs:110
+#: ../search/UIManager.cs:112
 msgid "_Contacts"
 msgstr "_Contactos"
 
-#: ../search/UIManager.cs:112
+#: ../search/UIManager.cs:114
 msgid "Search contacts"
 msgstr "Buscar contactos"
 
-#: ../search/UIManager.cs:115
+#: ../search/UIManager.cs:117
 msgid "Ca_lendar events"
 msgstr "Acontecimientos de ca_lendario"
 
-#: ../search/UIManager.cs:117
+#: ../search/UIManager.cs:119
 msgid "Search calendar events"
 msgstr "Buscar acontecimientos de calendario"
 
-#: ../search/UIManager.cs:120
+#: ../search/UIManager.cs:122
 msgid "_Documents"
 msgstr "_Documentos"
 
-#: ../search/UIManager.cs:122
+#: ../search/UIManager.cs:124
 msgid "Search documents"
 msgstr "Buscar documentos"
 
-#: ../search/UIManager.cs:125
+#: ../search/UIManager.cs:127
 msgid "Conve_rsations"
 msgstr "Con_versaciones"
 
-#: ../search/UIManager.cs:127
+#: ../search/UIManager.cs:129
 msgid "Search E-Mail and Instant Messaging logs"
 msgstr "Buscar registros de MI y correos electrónicos"
 
-#: ../search/UIManager.cs:130
+#: ../search/UIManager.cs:132
 msgid "_Images"
 msgstr "_Imágenes"
 
-#: ../search/UIManager.cs:132
+#: ../search/UIManager.cs:134
 msgid "Search images"
 msgstr "Buscar imágenes"
 
-#: ../search/UIManager.cs:135
+#: ../search/UIManager.cs:137
 msgid "_Media"
 msgstr "_Medios"
 
-#: ../search/UIManager.cs:137
+#: ../search/UIManager.cs:139
 msgid "Search sound and video files"
 msgstr "Buscar archivos de vídeo y sonido"
 
-#: ../search/UIManager.cs:144
+#: ../search/UIManager.cs:146
 msgid "Date _Modified"
 msgstr "_Fecha de modificación"
 
-#: ../search/UIManager.cs:145
+#: ../search/UIManager.cs:147
 msgid "Sort the most-recently-modified matches first"
 msgstr "Ordenar con el más recientemente modificado primero"
 
-#: ../search/UIManager.cs:148
+#: ../search/UIManager.cs:150
 msgid "_Name"
 msgstr "_Nombre"
 
-#: ../search/UIManager.cs:149
+#: ../search/UIManager.cs:151
 msgid "Sort matches by name"
 msgstr "Ordenar coincidencias por nombre"
 
-#: ../search/UIManager.cs:152
+#: ../search/UIManager.cs:154
 msgid "_Relevance"
 msgstr "_Relevancia"
 
-#: ../search/UIManager.cs:153
+#: ../search/UIManager.cs:155
 msgid "Sort the best matches first"
 msgstr "Ordenar las mejores coincidencias primero"
+
+#: ../search/UIManager.cs:268
+msgid "Couldn't launch web browser"
+msgstr "No se puede lanzar el navegador web"
 
 #: ../tools/Settings.cs:226
 msgid "Reload configuration"
@@ -754,8 +1075,7 @@ msgstr "Seleccione una ruta"
 
 #: ../tools/Settings.cs:284
 msgid "The selected path is already selected for indexing and wasn't added."
-msgstr ""
-"La ruta seleccionada ya está seleccionada para la indexación y no se añadió."
+msgstr "La ruta seleccionada ya está seleccionada para la indexación y no se añadió."
 
 #: ../tools/Settings.cs:287
 msgid ""
@@ -839,8 +1159,7 @@ msgid "Remove public path"
 msgstr "Quitar ruta pública"
 
 #: ../tools/Settings.cs:506
-msgid ""
-"Are you sure you wish to remove this entry from the list of public paths?"
+msgid "Are you sure you wish to remove this entry from the list of public paths?"
 msgstr "¿Seguro que quiere quitar este elemento de la lista de rutas públicas?"
 
 #: ../tools/Settings.cs:551 ../tools/Settings.cs:640 ../tools/Settings.cs:718
@@ -1174,3 +1493,4 @@ msgstr "{0:0.0} Kib"
 #, csharp-format
 msgid "{0:0.0} MB"
 msgstr "{0:0.0} Mib"
+
