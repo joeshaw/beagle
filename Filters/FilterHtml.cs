@@ -145,37 +145,41 @@ namespace Beagle.Filters {
 					bool isHot = NodeIsHot (node.Name);
 					bool breaksText = NodeBreaksText (node.Name);
 					bool breaksStructure = NodeBreaksStructure (node.Name);
-					if (isHot && node.StartTag) {
-						if (hot_stack.Count == 0)
-							HotUp ();
-						hot_stack.Push (node.Name);
-					}
+
 					if (breaksText)
 						AppendWhiteSpace ();
-					if (node.Name == "img" && node.StartTag) {
-						string attr = node.GetAttributeValue ("alt", "");
-						if (attr != "") {
-							AppendText (HtmlEntity.DeEntitize (attr));
-							AppendWhiteSpace ();
+
+					if (node.StartTag) {
+						if (isHot) {
+							if (hot_stack.Count == 0)
+								HotUp ();
+							hot_stack.Push (node.Name);
 						}
-					}
-					if (node.Name == "a" && node.StartTag) {
-						string attr = node.GetAttributeValue ("href", "");
-						if (attr != "") {
-							AppendText (HtmlEntity.DeEntitize (SW.HttpUtility.UrlDecode (attr)));
-							AppendWhiteSpace ();
+						if (node.Name == "img") {
+							string attr = node.GetAttributeValue ("alt", "");
+							if (attr != "") {
+								AppendText (HtmlEntity.DeEntitize (attr));
+								AppendWhiteSpace ();
+							}
+						} else if (node.Name == "a") {
+							string attr = node.GetAttributeValue ("href", "");
+							if (attr != "") {
+								AppendText (HtmlEntity.DeEntitize (SW.HttpUtility.UrlDecode (attr)));
+								AppendWhiteSpace ();
+							}
 						}
-					}
-					if (breaksText)
-						AppendWhiteSpace ();
-					if (breaksStructure && !node.StartTag)
-						AppendStructuralBreak ();
-					if (isHot && !node.StartTag) {
-						if (hot_stack.Count != 0)
+					} else { // (! node.StartTag)
+						if (isHot) {
 							SafePop (hot_stack);
-						if (hot_stack.Count == 0)
-							HotDown ();
-					}	
+							if (hot_stack.Count == 0)
+								HotDown ();
+						}	
+						if (breaksStructure)
+							AppendStructuralBreak ();
+					}
+
+					if (breaksText)
+						AppendWhiteSpace ();
 				} else {
 					// so node is a content-free node
 					// ignore contents of such node
