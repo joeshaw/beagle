@@ -150,21 +150,23 @@ namespace Beagle.Filters {
 							HotUp ();
 						hot_stack.Push (node.Name);
 					}
-					if (breaksText && node.StartTag)
+					if (breaksText)
 						AppendWhiteSpace ();
 					if (node.Name == "img" && node.StartTag) {
 						string attr = node.GetAttributeValue ("alt", "");
 						if (attr != "") {
 							AppendText (HtmlEntity.DeEntitize (attr));
+							AppendWhiteSpace ();
 						}
 					}
 					if (node.Name == "a" && node.StartTag) {
 						string attr = node.GetAttributeValue ("href", "");
 						if (attr != "") {
 							AppendText (HtmlEntity.DeEntitize (SW.HttpUtility.UrlDecode (attr)));
+							AppendWhiteSpace ();
 						}
 					}
-					if (breaksText && !node.StartTag)
+					if (breaksText)
 						AppendWhiteSpace ();
 					if (breaksStructure && !node.StartTag)
 						AppendStructuralBreak ();
