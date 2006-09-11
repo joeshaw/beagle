@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Beagle\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2006-09-03 10:21+0200\n"
+"POT-Creation-Date: 2006-09-11 12:35+0200\n"
 "PO-Revision-Date: 2006-09-03 10:31+0200\n"
 "Last-Translator: <Jordi Mas> jmas@softcatala.org\n"
 "Language-Team: tradgnome@softcatala.net\n"
@@ -22,6 +22,341 @@ msgstr "Orientació"
 #: ../glue/eggtrayicon.c:128
 msgid "The orientation of the tray."
 msgstr "Orientació de la safata."
+
+#
+#: ../ContactViewer/ContactWindow.cs:74
+msgid "Open..."
+msgstr "Obre..."
+
+#: ../ContactViewer/ContactWindow.cs:76 ../search/Tray/TrayIcon.cs:86
+msgid "Quit"
+msgstr "Surt"
+
+#: ../ContactViewer/ContactWindow.cs:79
+msgid "About"
+msgstr "Quant a"
+
+#: ../ContactViewer/ContactWindow.cs:95 ../search/Tiles/Utils.cs:26
+msgid "Contacts"
+msgstr "Contactes"
+
+#: ../ContactViewer/ContactWindow.cs:100
+msgid "Display name"
+msgstr "Nom a mostrar"
+
+#: ../ContactViewer/ContactWindow.cs:101
+msgid "Primary E-mail"
+msgstr "Adreça electrònica primària"
+
+#
+#: ../ContactViewer/ContactWindow.cs:102
+msgid "Secondary E-mail"
+msgstr "Adreça electrònica secundària"
+
+#
+#: ../ContactViewer/ContactWindow.cs:103
+msgid "Nickname"
+msgstr "Sobrenom"
+
+#: ../ContactViewer/ContactWindow.cs:133
+#, csharp-format
+msgid ""
+"Unable to open mork database:\n"
+"\n"
+" {0}"
+msgstr ""
+"No es pot obrir la base de dades mork:\n"
+"\n"
+" {0}"
+
+#: ../ContactViewer/ContactWindow.cs:153
+msgid "The specified ID does not exist in this database!"
+msgstr "L'identificador especificat no existeix a la base de dades"
+
+#: ../ContactViewer/ContactWindow.cs:180
+#, csharp-format
+msgid "Added {0} contact"
+msgid_plural "Added {0} contacts"
+msgstr[0] "S'ha afegit {0} contacte"
+msgstr[1] "S'han afegit {0} contactes"
+
+#: ../ContactViewer/ContactWindow.cs:204
+#, csharp-format
+msgid "Viewing {0}"
+msgstr "S'està visualitzant {0}"
+
+#: ../ContactViewer/ContactWindow.cs:205
+msgid "DisplayName"
+msgstr "Nom a mostrar"
+
+#: ../ContactViewer/ContactWindow.cs:244
+msgid "Select a mork database file"
+msgstr "Seleccioneu un fitxer de base de dades mork"
+
+#
+#: ../ContactViewer/ContactWindow.cs:303
+msgid "FirstName"
+msgstr "Nom"
+
+#
+#: ../ContactViewer/ContactWindow.cs:303
+msgid "NickName"
+msgstr "Sobrenom"
+
+#
+#: ../ContactViewer/ContactWindow.cs:303
+msgid "LastName"
+msgstr "Cognom"
+
+#
+#: ../ContactViewer/ContactWindow.cs:311
+msgid "Primary E-Mail:"
+msgstr "Adreça electrònica primària:"
+
+#: ../ContactViewer/ContactWindow.cs:313
+msgid "PrimaryEmail"
+msgstr "Adreça electrònica primària"
+
+#: ../ContactViewer/ContactWindow.cs:315
+#: ../ContactViewer/contactviewer.glade.h:33
+msgid "Screen name:"
+msgstr "Nom en pantalla:"
+
+#: ../ContactViewer/ContactWindow.cs:317
+msgid "_AimScreenName"
+msgstr "Nom a _mostrar per a AIM"
+
+#
+#: ../ContactViewer/ContactWindow.cs:319
+msgid "Home phone:"
+msgstr "Telèfon particular:"
+
+#
+#: ../ContactViewer/ContactWindow.cs:321
+msgid "HomePhone"
+msgstr "Telèfon particular"
+
+#
+#: ../ContactViewer/ContactWindow.cs:323
+msgid "Mobile phone:"
+msgstr "Telèfon mòbil:"
+
+#: ../ContactViewer/ContactWindow.cs:325
+msgid "CellularNumber"
+msgstr "Telèfon mòbil"
+
+#
+#: ../ContactViewer/ContactWindow.cs:327
+msgid "Web page:"
+msgstr "Pàgina web:"
+
+#
+#: ../ContactViewer/ContactWindow.cs:329
+msgid "WebPage2"
+msgstr "Pàgina web secundària"
+
+#
+#: ../ContactViewer/ContactWindow.cs:336
+msgid "Send E-Mail"
+msgstr "Envia per correu"
+
+#: ../ContactViewer/ContactWindow.cs:340
+msgid "Details..."
+msgstr "Detalls..."
+
+#: ../ContactViewer/ContactWindow.cs:368
+msgid "Could not find a valid E-mail address!"
+msgstr "No s'ha pogut trobar una adreça electrònica vàlida"
+
+#: ../ContactViewer/contactviewer.glade.h:1
+msgid "<b>Custom fields</b>"
+msgstr "<b>Camps personalitzats</b>"
+
+#
+#: ../ContactViewer/contactviewer.glade.h:2
+msgid "<b>Home</b>"
+msgstr "<b>Inici</b>"
+
+#
+#: ../ContactViewer/contactviewer.glade.h:3
+msgid "<b>Internet</b>"
+msgstr "<b>Internet</b>"
+
+#
+#: ../ContactViewer/contactviewer.glade.h:4
+msgid "<b>Name</b>"
+msgstr "<b>Xarxa</b>"
+
+#
+#
+#: ../ContactViewer/contactviewer.glade.h:5
+msgid "<b>Notes</b>"
+msgstr "<b>Notes</b>"
+
+#
+#: ../ContactViewer/contactviewer.glade.h:6
+msgid "<b>Phones</b>"
+msgstr "<b>Telèfons</b>"
+
+#
+#: ../ContactViewer/contactviewer.glade.h:7
+msgid "<b>Work</b>"
+msgstr "<b>Feina</b>"
+
+#: ../ContactViewer/contactviewer.glade.h:8
+msgid "Additional E-Mail:"
+msgstr "Adreça electrònica addicional:"
+
+#
+#: ../ContactViewer/contactviewer.glade.h:9
+msgid "Address"
+msgstr "Adreça"
+
+#
+#: ../ContactViewer/contactviewer.glade.h:10
+msgid "Address:"
+msgstr "_Adreça:"
+
+#
+#: ../ContactViewer/contactviewer.glade.h:11
+msgid "City:"
+msgstr "Ciutat:"
+
+#: ../ContactViewer/contactviewer.glade.h:12
+msgid "Contact"
+msgstr "Contacte"
+
+#
+#: ../ContactViewer/contactviewer.glade.h:13
+msgid "Contact Viewer"
+msgstr "Visualitzador de contactes"
+
+#: ../ContactViewer/contactviewer.glade.h:14
+msgid "Country:"
+msgstr "País:"
+
+#: ../ContactViewer/contactviewer.glade.h:15
+msgid "Custom 1:"
+msgstr "Personalitzat 1:"
+
+#: ../ContactViewer/contactviewer.glade.h:16
+msgid "Custom 2:"
+msgstr "Personalitzat 2:"
+
+#: ../ContactViewer/contactviewer.glade.h:17
+msgid "Custom 3:"
+msgstr "Personalitzat 3:"
+
+#: ../ContactViewer/contactviewer.glade.h:18
+msgid "Custom 4:"
+msgstr "Personalitzat 4:"
+
+#
+#: ../ContactViewer/contactviewer.glade.h:19
+msgid "Department:"
+msgstr "Departament:"
+
+#: ../ContactViewer/contactviewer.glade.h:20
+msgid "Detailed view"
+msgstr "Mostra detallada"
+
+#
+#: ../ContactViewer/contactviewer.glade.h:21
+msgid "Display:"
+msgstr "Mostra:"
+
+#: ../ContactViewer/contactviewer.glade.h:22 ../search/Tiles/Contact.cs:68
+msgid "E-Mail:"
+msgstr "Adreça electrònica:"
+
+#: ../ContactViewer/contactviewer.glade.h:23
+msgid "Fax:"
+msgstr "Fax."
+
+#: ../ContactViewer/contactviewer.glade.h:24
+msgid "First:"
+msgstr "Primer:"
+
+#
+#: ../ContactViewer/contactviewer.glade.h:25
+msgid "Home:"
+msgstr "Inici:"
+
+#
+#
+#: ../ContactViewer/contactviewer.glade.h:26
+msgid "Last:"
+msgstr "Últim:"
+
+#
+#: ../ContactViewer/contactviewer.glade.h:27
+msgid "Mobile:"
+msgstr "Telèfon mòbil:"
+
+#
+#: ../ContactViewer/contactviewer.glade.h:28
+msgid "Nickname:"
+msgstr "Sobrenom:"
+
+#
+#: ../ContactViewer/contactviewer.glade.h:29
+msgid "Organization:"
+msgstr "Organització:"
+
+#: ../ContactViewer/contactviewer.glade.h:30
+msgid "Other"
+msgstr "Altres"
+
+#
+#: ../ContactViewer/contactviewer.glade.h:31
+msgid "Pager:"
+msgstr "Paginador:"
+
+#: ../ContactViewer/contactviewer.glade.h:32
+msgid "Preferred format:"
+msgstr "Format preferit:"
+
+#: ../ContactViewer/contactviewer.glade.h:34
+msgid "State/Province"
+msgstr "Estat/Comarca"
+
+#: ../ContactViewer/contactviewer.glade.h:35
+msgid "State/Province:"
+msgstr "Estat/Comarca:"
+
+#: ../ContactViewer/contactviewer.glade.h:36 ../search/Tiles/Calendar.cs:51
+#: ../search/Tiles/File.cs:124 ../search/Tiles/Note.cs:57
+#: ../search/Tiles/RSSFeed.cs:45 ../search/Tiles/WebHistory.cs:50
+msgid "Title:"
+msgstr "Títol:"
+
+#: ../ContactViewer/contactviewer.glade.h:37
+msgid ""
+"Unknown\n"
+"Plain text\n"
+"HTML"
+msgstr ""
+"Desconegut\n"
+"Text pla\n"
+"HTML"
+
+#
+#: ../ContactViewer/contactviewer.glade.h:40
+msgid "Web Page:"
+msgstr "Pàgina web:"
+
+#
+#: ../ContactViewer/contactviewer.glade.h:41
+msgid "Work:"
+msgstr "Feina:"
+
+#: ../ContactViewer/contactviewer.glade.h:42
+msgid "ZIP/Postal Code"
+msgstr "Codi postal"
+
+#: ../ContactViewer/contactviewer.glade.h:43
+msgid "ZIP/Postal Code:"
+msgstr "Codi postal:"
 
 #: ../ImLogViewer/ImLogViewer.glade.h:1
 msgid "<b>Conversations History</b>"
@@ -144,25 +479,35 @@ msgstr "Inicia el servei de cerca"
 msgid "_Find:"
 msgstr "_Cerca:"
 
-#: ../search/Search.cs:163
+#: ../search/Search.cs:164
 msgid "Find Now"
 msgstr "Cerca ara"
 
-#: ../search/Search.cs:209
+#: ../search/Search.cs:210
 msgid "Type in search terms"
 msgstr "Introduïu els termes de la cerca"
 
-#: ../search/Search.cs:210
+#: ../search/Search.cs:211
 msgid "Start searching"
 msgstr "Inicia la cerca"
+
+#: ../search/Tiles/Calendar.cs:54
+msgid "Description:"
+msgstr "Descripció:"
+
+#
+#
+#: ../search/Tiles/Calendar.cs:57
+msgid "Location:"
+msgstr "Ubicació:"
+
+#: ../search/Tiles/Calendar.cs:61
+msgid "Attendees:"
+msgstr "Assistents:"
 
 #: ../search/Tiles/Contact.cs:30
 msgid "Send Mail"
 msgstr "Envia per correu"
-
-#: ../search/Tiles/Contact.cs:68
-msgid "E-Mail:"
-msgstr "Adreça electrònica:"
 
 #: ../search/Tiles/Contact.cs:70
 msgid "Mobile Phone:"
@@ -192,11 +537,6 @@ msgstr "Correu electrònic"
 #: ../search/Tiles/File.cs:37 ../search/Tiles/Folder.cs:38
 msgid "Move to Trash"
 msgstr "Mou a la paperera"
-
-#: ../search/Tiles/File.cs:124 ../search/Tiles/Note.cs:57
-#: ../search/Tiles/RSSFeed.cs:45 ../search/Tiles/WebHistory.cs:50
-msgid "Title:"
-msgstr "Títol:"
 
 #
 #: ../search/Tiles/File.cs:125 ../search/Tiles/Folder.cs:51
@@ -245,6 +585,26 @@ msgstr "Nom:"
 msgid "Date Received:"
 msgstr "Data de rebuda:"
 
+#: ../search/Tiles/IMLog.cs:97
+msgid "Status:"
+msgstr "Estat:"
+
+#: ../search/Tiles/IMLog.cs:112
+msgid "Idle"
+msgstr "Desocupat"
+
+#: ../search/Tiles/IMLog.cs:119
+msgid "Away"
+msgstr "Absent"
+
+#: ../search/Tiles/IMLog.cs:122
+msgid "Offline"
+msgstr "Desconnectat"
+
+#: ../search/Tiles/IMLog.cs:125
+msgid "Available"
+msgstr "Disponible"
+
 #: ../search/Tiles/MailAttachment.cs:45
 msgid "Mail attachment"
 msgstr "Adjunció del correu"
@@ -277,6 +637,11 @@ msgstr "Data d'enviament:"
 msgid "Folder:"
 msgstr "Carpeta:"
 
+#
+#: ../search/Tiles/OpenWithMenu.cs:47
+msgid "Open With"
+msgstr "Obre amb"
+
 #: ../search/Tiles/Presentation.cs:33
 #, csharp-format
 msgid "{0} slide"
@@ -307,10 +672,6 @@ msgstr "Obre"
 #: ../search/Tiles/Utils.cs:24
 msgid "Applications"
 msgstr "Aplicacions"
-
-#: ../search/Tiles/Utils.cs:26
-msgid "Contacts"
-msgstr "Contactes"
 
 # FIXME
 #: ../search/Tiles/Utils.cs:28
@@ -443,10 +804,6 @@ msgstr "Cerques recents"
 #: ../search/Tray/TrayIcon.cs:78
 msgid "Clear"
 msgstr "Neteja"
-
-#: ../search/Tray/TrayIcon.cs:86
-msgid "Quit"
-msgstr "Surt"
 
 #. Translators: the strings in TypeFilter.cs are for when the user
 #. * wants to limit search results to a specific type. You don't need
@@ -900,7 +1257,7 @@ msgstr "_Camí:"
 
 #: ../tools/Settings.cs:1072
 msgid "M_ail folder:"
-msgstr "Ca_rpeta de correu"
+msgstr "Ca_rpeta de correu:"
 
 #: ../tools/Settings.cs:1077
 msgid "P_attern:"
@@ -969,7 +1326,7 @@ msgstr ""
 
 #: ../tools/settings.glade.h:12
 msgid "Add any additional paths to be included for indexing."
-msgstr "Afegeiu els camins addicionals a incloure a la indexació."
+msgstr "Afegiu els camins addicionals a incloure a la indexació."
 
 #: ../tools/settings.glade.h:13
 msgid "Add any remote search-enabled hosts you wish to network with."
@@ -1204,13 +1561,6 @@ msgstr "{0:0.0} kB"
 msgid "{0:0.0} MB"
 msgstr "{0:0.0} MB"
 
-#
-#~ msgid "Application"
-#~ msgstr "Aplicació"
-
-#~ msgid "Contact"
-#~ msgstr "Contacte"
-
 #~ msgid "Image"
 #~ msgstr "Imatge"
 
@@ -1232,10 +1582,6 @@ msgstr "{0:0.0} MB"
 
 #~ msgid "Add to Library"
 #~ msgstr "Afegeix a la biblioteca"
-
-#
-#~ msgid "Open With"
-#~ msgstr "Obre amb"
 
 #~ msgid "Instant-Message"
 #~ msgstr "Missatgeria instantània"
@@ -1308,9 +1654,6 @@ msgstr "{0:0.0} MB"
 #~ msgid "in Addressbook"
 #~ msgstr "en la llibreta d'adreces"
 
-#~ msgid "in Web Pages"
-#~ msgstr "en les pàgines web"
-
 #~ msgid "in Chats"
 #~ msgstr "en els xats"
 
@@ -1335,9 +1678,6 @@ msgstr "{0:0.0} MB"
 
 #~ msgid "The query for <i>{0}</i> failed with error:<br>{1}<br>"
 #~ msgstr "La consulta per a <i>{0}</i> ha fallat amb l'error:<br>{1}<br>"
-
-#~ msgid "Words:"
-#~ msgstr "Paraules:"
 
 #~ msgid "Send IM"
 #~ msgstr "Envia un IM"
@@ -1380,13 +1720,6 @@ msgstr "{0:0.0} MB"
 
 #~ msgid "Enqueue"
 #~ msgstr "Posa a la cua"
-
-#
-#~ msgid "Tags:"
-#~ msgstr "Etiquetes:"
-
-#~ msgid "Description:"
-#~ msgstr "Descripció:"
 
 #~ msgid "Slides:"
 #~ msgstr "Diapositives:"
