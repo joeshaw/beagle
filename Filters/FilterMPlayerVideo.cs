@@ -27,6 +27,7 @@
 using System;
 using System.IO;
 using System.Diagnostics;
+using System.Globalization;
 
 using Beagle.Util;
 using Beagle.Daemon;
@@ -164,11 +165,11 @@ namespace Beagle.Filters {
 						break;
 
 					case "ID_VIDEO_ASPECT":
-						aspect = Convert.ToSingle (tokens [1]);
+						aspect = Convert.ToSingle (tokens [1], CultureInfo.InvariantCulture);
 						break;
 
 					case "ID_VIDEO_FPS":
-						fps = Convert.ToSingle (tokens [1]);
+						fps = Convert.ToSingle (tokens [1], CultureInfo.InvariantCulture);
 						break;
 
 					case "ID_VIDEO_FORMAT":
@@ -176,7 +177,7 @@ namespace Beagle.Filters {
 						break;
 
 					case "ID_LENGTH":
-						length_seconds = (int) Convert.ToSingle (tokens [1]);
+						length_seconds = (int) Convert.ToSingle (tokens [1], CultureInfo.InvariantCulture);
 						break;
 
 					case "ID_AUDIO_NCH":
