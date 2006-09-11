@@ -223,6 +223,17 @@ namespace Beagle.Filters {
 			private ArrayList child_indexables = new ArrayList ();
 			private TextReader reader;
 
+			// Blacklist a handful of common MIME types that are
+			// either pointless on their own or ones that we don't
+			// have filters for.
+			static private string[] blacklisted_mime_types = new string[] {
+				"application/pgp-signature",
+				"application/x-pkcs7-signature",
+				"application/ms-tnef",
+				"text/x-vcalendar",
+				"text/vcard"
+			};
+
 			public PartHandler (Beagle.Daemon.Filter filter)
 			{
 				this.filter = filter;
@@ -303,8 +314,10 @@ namespace Beagle.Filters {
 					// creating a child indexable for it.
 					bool no_child_needed = false;
 
+					string mime_type = part.ContentType.ToString ().ToLower ();
+
 					if (this.depth == 1 && this.count == 0) {
-						if (part.ContentType.ToString ().ToLower () == "text/plain") {
+						if (mime_type == "text/plain") {
 							no_child_needed = true;
 
 							this.reader = new StreamReader (stream);
@@ -312,21 +325,31 @@ namespace Beagle.Filters {
 					}
 
 					if (!no_child_needed) {
-						string sub_uri = this.filter.Uri.ToString () + "#" + this.count;
-						Indexable child = new Indexable (new Uri (sub_uri));
+						// Check the mime type against the blacklist and don't index any
+						// parts that are contained within.  That way the user doesn't
+						// get flooded with pointless signatures and vcard and ical
+						// attachments along with (real) attachments.
 
-						child.HitType = "MailMessage";
-						child.MimeType = part.ContentType.ToString ();
-						child.CacheContent = false;
+						if (Array.IndexOf (blacklisted_mime_types, mime_type) == -1) {
+							string sub_uri = this.filter.Uri.ToString () + "#" + this.count;
+							Indexable child = new Indexable (new Uri (sub_uri));
 
-						child.AddProperty (Property.NewKeyword ("fixme:attachment_title", ((GMime.Part)part).Filename));
+							child.HitType = "MailMessage";
+							child.MimeType = mime_type;
+							child.CacheContent = false;
 
-						if (part.ContentType.Type.ToLower () == "text")
-							child.SetTextReader (new StreamReader (stream));
-						else
-							child.SetBinaryStream (stream);
+							child.AddProperty (Property.NewKeyword ("fixme:attachment_title", ((GMime.Part)part).Filename));
 
-						this.child_indexables.Add (child);
+							if (part.ContentType.Type.ToLower () == "text")
+								child.SetTextReader (new StreamReader (stream));
+							else
+								child.SetBinaryStream (stream);
+
+							this.child_indexables.Add (child);
+						} else {
+							Log.Debug ("Skipping attachment {0}#{1} with blacklisted mime type {2}",
+								   this.filter.Uri, this.count, mime_type);
+						}
 					}
 
 					this.count++;

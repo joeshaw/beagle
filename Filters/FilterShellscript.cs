@@ -48,8 +48,8 @@ namespace Beagle.Filters {
 			
 		public FilterShellscript ()
 		{
-			// FIXME: Add other shell mime-types, if they are different
 			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("application/x-shellscript"));
+			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("application/x-sh"));
 		}
 
 		override protected void DoOpen (FileInfo info)

@@ -49,6 +49,7 @@ namespace Beagle.Filters {
 		public FilterCpp ()
 		{
 			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("text/x-c++src"));
+			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("text/x-c++"));
 		}
 
 		override protected void DoOpen (FileInfo info)

@@ -47,6 +47,10 @@ namespace Beagle.Filters {
 		{
 			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("text/x-csrc"));
 			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("text/x-chdr"));
+			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("text/x-c"));
+			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("text/x-c-header"));
+			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("text/x-sun-c-file"));
+			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("text/x-sun-h-file"));
 		}
 
 		override protected void DoOpen (FileInfo info)
