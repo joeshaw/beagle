@@ -231,7 +231,7 @@ namespace Beagle.Filters {
 				"application/x-pkcs7-signature",
 				"application/ms-tnef",
 				"text/x-vcalendar",
-				"text/vcard"
+				"text/x-vcard"
 			};
 
 			public PartHandler (Beagle.Daemon.Filter filter)
