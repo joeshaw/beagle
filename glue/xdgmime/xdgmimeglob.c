@@ -263,7 +263,7 @@ _xdg_glob_hash_insert_text (XdgGlobHashNode *glob_hash_node,
 		{
 		  child = _xdg_glob_hash_node_new ();
 		  child->character = '\000';
-		  child->mime_type = strdup (mime_type);
+		  child->mime_type = mime_type;
 		  child->child = NULL;
 		  child->next = node->child;
 		  node->child = child;
@@ -272,7 +272,7 @@ _xdg_glob_hash_insert_text (XdgGlobHashNode *glob_hash_node,
 	}
       else
 	{
-	  node->mime_type = strdup (mime_type);
+	  node->mime_type = mime_type;
 	}
     }
   else
@@ -308,12 +308,12 @@ _xdg_glob_hash_node_lookup_file_name (XdgGlobHashNode *glob_hash_node,
 	  if (*file_name == '\000')
 	    {
 	      n = 0;
-	      if (node->mime_type)
+              if (node->mime_type)
 	        mime_types[n++] = node->mime_type;
 	      node = node->child;
 	      while (n < n_mime_types && node && node->character == 0)
 		{
-		  if (node->mime_type)
+                  if (node->mime_type)
 		    mime_types[n++] = node->mime_type;
 		  node = node->next;
 		}
@@ -477,7 +477,7 @@ _xdg_glob_hash_append_glob (XdgGlobHash *glob_hash,
       glob_hash->literal_list = _xdg_glob_list_append (glob_hash->literal_list, strdup (glob), strdup (mime_type));
       break;
     case XDG_GLOB_SIMPLE:
-      glob_hash->simple_node = _xdg_glob_hash_insert_text (glob_hash->simple_node, glob + 1, mime_type);
+      glob_hash->simple_node = _xdg_glob_hash_insert_text (glob_hash->simple_node, glob + 1, strdup (mime_type));
       break;
     case XDG_GLOB_FULL:
       glob_hash->full_list = _xdg_glob_list_append (glob_hash->full_list, strdup (glob), strdup (mime_type));

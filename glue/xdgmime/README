@@ -1,0 +1,21 @@
+This xdgmime implementation is copied out of GTK+ rather than being the
+upstream repository.  The upstream version appears to be unmaintained,
+and the GTK+ version contains a number of bug fixes that are currently
+in the freedesktop.org bugzilla but ignored.
+
+If you find bugs or want to make changes here, please first check to
+see if it's been fixed in the GTK+ version instead:
+
+    http://cvs.gnome.org/viewcvs/gtk%2B/gtk/xdgmime/ChangeLog?view=annotate
+
+If it's out of date, please feel free to update it.  Moreover, the list
+of upstream xdgmime bugs is here:
+
+    https://bugs.freedesktop.org/buglist.cgi?query_format=specific&bug_status=__all__&product=xdgmime&content=&order=bugs.delta_ts&query_based_on=
+
+At the time of this writing, we've hit the following three bugs in Beagle,
+all of which are fixed in the GTK+ copy and none of which are fixed in the
+upstream copy: #5241, #6824, #7496.
+
+Joe Shaw  <joeshaw@novell.com>
+12 Septermber 2006
