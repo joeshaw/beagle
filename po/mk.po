@@ -11,8 +11,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: beagle.HEAD.mk\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2006-08-27 18:10+0200\n"
-"PO-Revision-Date: 2006-08-28 01:29+0200\n"
+"POT-Creation-Date: 2006-09-12 10:08+0200\n"
+"PO-Revision-Date: 2006-09-12 13:26+0200\n"
 "Last-Translator: Jovan Naumovski <jovan@lugola.net>\n"
 "Language-Team: Macedonian <ossm-members@hedona.on.net.mk>\n"
 "MIME-Version: 1.0\n"
@@ -28,6 +28,307 @@ msgstr "Ориентација"
 #: ../glue/eggtrayicon.c:128
 msgid "The orientation of the tray."
 msgstr "Ориентацијата на просторот за спуштање на програми."
+
+#: ../ContactViewer/ContactWindow.cs:74
+msgid "Open..."
+msgstr "Отвори..."
+
+#: ../ContactViewer/ContactWindow.cs:76 ../search/Tray/TrayIcon.cs:86
+msgid "Quit"
+msgstr "Излез"
+
+#: ../ContactViewer/ContactWindow.cs:79
+msgid "About"
+msgstr "За"
+
+#: ../ContactViewer/ContactWindow.cs:95 ../search/Tiles/Utils.cs:26
+msgid "Contacts"
+msgstr "Контакти"
+
+#: ../ContactViewer/ContactWindow.cs:100
+msgid "Display name"
+msgstr "Корисничко име"
+
+#: ../ContactViewer/ContactWindow.cs:101
+msgid "Primary E-mail"
+msgstr "Примарна е-пошта"
+
+#: ../ContactViewer/ContactWindow.cs:102
+msgid "Secondary E-mail"
+msgstr "Секундарна е-пошта"
+
+#: ../ContactViewer/ContactWindow.cs:103
+msgid "Nickname"
+msgstr "Прекар"
+
+#: ../ContactViewer/ContactWindow.cs:133
+#, csharp-format
+msgid ""
+"Unable to open mork database:\n"
+"\n"
+" {0}"
+msgstr ""
+"Не можам да ја отворам mork базата со податоци:\n"
+"\n"
+" {0}"
+
+#: ../ContactViewer/ContactWindow.cs:153
+msgid "The specified ID does not exist in this database!"
+msgstr "Дадениот Ид. не постои во базата со податоци!"
+
+#: ../ContactViewer/ContactWindow.cs:180
+#, csharp-format
+msgid "Added {0} contact"
+msgid_plural "Added {0} contacts"
+msgstr[0] "Додаден е {0} контакт"
+msgstr[1] "Додадени се {0} контакти"
+msgstr[2] "Додадени се {0} контакти"
+
+#: ../ContactViewer/ContactWindow.cs:204
+#, csharp-format
+msgid "Viewing {0}"
+msgstr "Го прегледувам {0}"
+
+#: ../ContactViewer/ContactWindow.cs:205
+msgid "DisplayName"
+msgstr "Корисничко име"
+
+#: ../ContactViewer/ContactWindow.cs:244
+msgid "Select a mork database file"
+msgstr "Одберете датотека за mork база на податоци"
+
+#: ../ContactViewer/ContactWindow.cs:303
+msgid "FirstName"
+msgstr "Име"
+
+#: ../ContactViewer/ContactWindow.cs:303
+msgid "NickName"
+msgstr "Прекар"
+
+#: ../ContactViewer/ContactWindow.cs:303
+msgid "LastName"
+msgstr "Презиме"
+
+#: ../ContactViewer/ContactWindow.cs:311
+msgid "Primary E-Mail:"
+msgstr "Примарна адреса за е-пошта:"
+
+#: ../ContactViewer/ContactWindow.cs:313
+msgid "PrimaryEmail"
+msgstr "ПримарнаЕпошта"
+
+#: ../ContactViewer/ContactWindow.cs:315
+#: ../ContactViewer/contactviewer.glade.h:33
+msgid "Screen name:"
+msgstr "Корисничко име:"
+
+#: ../ContactViewer/ContactWindow.cs:317
+msgid "_AimScreenName"
+msgstr "_КорисничкоИмеЗаAim"
+
+#: ../ContactViewer/ContactWindow.cs:319
+msgid "Home phone:"
+msgstr "Домашен телефон:"
+
+#: ../ContactViewer/ContactWindow.cs:321
+msgid "HomePhone"
+msgstr "ДомашенТелефон"
+
+#: ../ContactViewer/ContactWindow.cs:323
+msgid "Mobile phone:"
+msgstr "МобиленТелефон"
+
+#: ../ContactViewer/ContactWindow.cs:325
+msgid "CellularNumber"
+msgstr "БројНаМобилен"
+
+#: ../ContactViewer/ContactWindow.cs:327
+msgid "Web page:"
+msgstr "Веб страница:"
+
+#: ../ContactViewer/ContactWindow.cs:329
+msgid "WebPage2"
+msgstr "ВебСтраница2"
+
+#: ../ContactViewer/ContactWindow.cs:336
+msgid "Send E-Mail"
+msgstr "Испрати е-пошта"
+
+#: ../ContactViewer/ContactWindow.cs:340
+msgid "Details..."
+msgstr "Детали..."
+
+#: ../ContactViewer/ContactWindow.cs:368
+msgid "Could not find a valid E-mail address!"
+msgstr "Не можам да најдам валидна адреса за е-пошта!"
+
+#: ../ContactViewer/contactviewer.glade.h:1
+msgid "<b>Custom fields</b>"
+msgstr "<b>Посебни полиња</b>"
+
+#: ../ContactViewer/contactviewer.glade.h:2
+msgid "<b>Home</b>"
+msgstr "<b>Дома</b>"
+
+#: ../ContactViewer/contactviewer.glade.h:3
+msgid "<b>Internet</b>"
+msgstr "<b>Интернет</b>"
+
+#: ../ContactViewer/contactviewer.glade.h:4
+msgid "<b>Name</b>"
+msgstr "<b>Име</b>"
+
+#: ../ContactViewer/contactviewer.glade.h:5
+msgid "<b>Notes</b>"
+msgstr "<b>Белешки</b>"
+
+#: ../ContactViewer/contactviewer.glade.h:6
+msgid "<b>Phones</b>"
+msgstr "<b>Телефони</b>"
+
+#: ../ContactViewer/contactviewer.glade.h:7
+msgid "<b>Work</b>"
+msgstr "<b>Работа</b>"
+
+#: ../ContactViewer/contactviewer.glade.h:8
+msgid "Additional E-Mail:"
+msgstr "Додатна адреса за е-пошта"
+
+#: ../ContactViewer/contactviewer.glade.h:9
+msgid "Address"
+msgstr "Адреса"
+
+#: ../ContactViewer/contactviewer.glade.h:10
+msgid "Address:"
+msgstr "Адреса:"
+
+#: ../ContactViewer/contactviewer.glade.h:11
+msgid "City:"
+msgstr "Град:"
+
+#: ../ContactViewer/contactviewer.glade.h:12
+msgid "Contact"
+msgstr "Контакт"
+
+#: ../ContactViewer/contactviewer.glade.h:13
+msgid "Contact Viewer"
+msgstr "Прегледувач на контакти"
+
+#: ../ContactViewer/contactviewer.glade.h:14
+msgid "Country:"
+msgstr "Држава:"
+
+#: ../ContactViewer/contactviewer.glade.h:15
+msgid "Custom 1:"
+msgstr "Прилагодено 1:"
+
+#: ../ContactViewer/contactviewer.glade.h:16
+msgid "Custom 2:"
+msgstr "Прилагодено 2:"
+
+#: ../ContactViewer/contactviewer.glade.h:17
+msgid "Custom 3:"
+msgstr "Прилагодено 3:"
+
+#: ../ContactViewer/contactviewer.glade.h:18
+msgid "Custom 4:"
+msgstr "Прилагодено 4:"
+
+#: ../ContactViewer/contactviewer.glade.h:19
+msgid "Department:"
+msgstr "Оддел:"
+
+#: ../ContactViewer/contactviewer.glade.h:20
+msgid "Detailed view"
+msgstr "Детален преглед:"
+
+#: ../ContactViewer/contactviewer.glade.h:21
+msgid "Display:"
+msgstr "Приказ"
+
+#: ../ContactViewer/contactviewer.glade.h:22 ../search/Tiles/Contact.cs:68
+msgid "E-Mail:"
+msgstr "Е-пошта:"
+
+#: ../ContactViewer/contactviewer.glade.h:23
+msgid "Fax:"
+msgstr "Факс:"
+
+#: ../ContactViewer/contactviewer.glade.h:24
+msgid "First:"
+msgstr "Име:"
+
+#: ../ContactViewer/contactviewer.glade.h:25
+msgid "Home:"
+msgstr "Домашен телефон:"
+
+#: ../ContactViewer/contactviewer.glade.h:26
+msgid "Last:"
+msgstr "Презиме:"
+
+#: ../ContactViewer/contactviewer.glade.h:27
+msgid "Mobile:"
+msgstr "Мобилен телефон:"
+
+#: ../ContactViewer/contactviewer.glade.h:28
+msgid "Nickname:"
+msgstr "Прекар:"
+
+#: ../ContactViewer/contactviewer.glade.h:29
+msgid "Organization:"
+msgstr "Организација:"
+
+#: ../ContactViewer/contactviewer.glade.h:30
+msgid "Other"
+msgstr "Друго"
+
+#: ../ContactViewer/contactviewer.glade.h:31
+msgid "Pager:"
+msgstr "Пејџер:"
+
+#: ../ContactViewer/contactviewer.glade.h:32
+msgid "Preferred format:"
+msgstr "Претпочитан формат:"
+
+#: ../ContactViewer/contactviewer.glade.h:34
+msgid "State/Province"
+msgstr "Држава/Провинција"
+
+#: ../ContactViewer/contactviewer.glade.h:35
+msgid "State/Province:"
+msgstr "Држава/Провинција:"
+
+#: ../ContactViewer/contactviewer.glade.h:36 ../search/Tiles/Calendar.cs:51
+#: ../search/Tiles/File.cs:124 ../search/Tiles/Note.cs:57
+#: ../search/Tiles/RSSFeed.cs:45 ../search/Tiles/WebHistory.cs:50
+msgid "Title:"
+msgstr "Наслов:"
+
+#: ../ContactViewer/contactviewer.glade.h:37
+msgid ""
+"Unknown\n"
+"Plain text\n"
+"HTML"
+msgstr ""
+"Непознато\n"
+"Чист текст\n"
+"HTML"
+
+#: ../ContactViewer/contactviewer.glade.h:40
+msgid "Web Page:"
+msgstr "Веб страница:"
+
+#: ../ContactViewer/contactviewer.glade.h:41
+msgid "Work:"
+msgstr "Телефон на работа:"
+
+#: ../ContactViewer/contactviewer.glade.h:42
+msgid "ZIP/Postal Code"
+msgstr "Поштенски код"
+
+#: ../ContactViewer/contactviewer.glade.h:43
+msgid "ZIP/Postal Code:"
+msgstr "Поштенски код:"
 
 #: ../ImLogViewer/ImLogViewer.glade.h:1
 msgid "<b>Conversations History</b>"
@@ -111,7 +412,7 @@ msgstr ""
 msgid "When searching for a phrase, add quotes. ex: <b>\"There be dragons\"</b>"
 msgstr "Кога пребарувате за фраза додадете наводници. пр: <b>\"There be dragons\"</b>"
 
-#: ../search/Pages/QuickTips.cs:19 ../search/UIManager.cs:81
+#: ../search/Pages/QuickTips.cs:19 ../search/UIManager.cs:83
 msgid "Quick Tips"
 msgstr "Кратки совети"
 
@@ -139,25 +440,33 @@ msgstr "Пушти го сервисот за пребарување"
 msgid "_Find:"
 msgstr "_Најди:"
 
-#: ../search/Search.cs:163
+#: ../search/Search.cs:164
 msgid "Find Now"
 msgstr "Најди веднаш"
 
-#: ../search/Search.cs:209
+#: ../search/Search.cs:210
 msgid "Type in search terms"
 msgstr "Внесете пребарувачки термини"
 
-#: ../search/Search.cs:210
+#: ../search/Search.cs:211
 msgid "Start searching"
 msgstr "Почни со пребарување"
+
+#: ../search/Tiles/Calendar.cs:54
+msgid "Description:"
+msgstr "Опис:"
+
+#: ../search/Tiles/Calendar.cs:57
+msgid "Location:"
+msgstr "Локација:"
+
+#: ../search/Tiles/Calendar.cs:61
+msgid "Attendees:"
+msgstr "Присутни:"
 
 #: ../search/Tiles/Contact.cs:30
 msgid "Send Mail"
 msgstr "Испрати пошта"
-
-#: ../search/Tiles/Contact.cs:68
-msgid "E-Mail:"
-msgstr "Е-пошта:"
 
 #: ../search/Tiles/Contact.cs:70
 msgid "Mobile Phone:"
@@ -185,11 +494,6 @@ msgstr "Е-пошта"
 #: ../search/Tiles/File.cs:37 ../search/Tiles/Folder.cs:38
 msgid "Move to Trash"
 msgstr "Премести во ѓубре"
-
-#: ../search/Tiles/File.cs:124 ../search/Tiles/Note.cs:57
-#: ../search/Tiles/RSSFeed.cs:45 ../search/Tiles/WebHistory.cs:50
-msgid "Title:"
-msgstr "Наслов:"
 
 #: ../search/Tiles/File.cs:125 ../search/Tiles/Folder.cs:51
 #: ../search/Tiles/Note.cs:58
@@ -238,6 +542,26 @@ msgstr "Име:"
 msgid "Date Received:"
 msgstr "Датум на примање:"
 
+#: ../search/Tiles/IMLog.cs:97
+msgid "Status:"
+msgstr "Статус:"
+
+#: ../search/Tiles/IMLog.cs:112
+msgid "Idle"
+msgstr "Неактивен"
+
+#: ../search/Tiles/IMLog.cs:119
+msgid "Away"
+msgstr "Недостапен"
+
+#: ../search/Tiles/IMLog.cs:122
+msgid "Offline"
+msgstr "Офлајн"
+
+#: ../search/Tiles/IMLog.cs:125
+msgid "Available"
+msgstr "Достапен"
+
 #: ../search/Tiles/MailAttachment.cs:45
 msgid "Mail attachment"
 msgstr "Поштенски приврзок"
@@ -270,6 +594,10 @@ msgstr "Датум на испраќање:"
 msgid "Folder:"
 msgstr "Папка:"
 
+#: ../search/Tiles/OpenWithMenu.cs:47
+msgid "Open With"
+msgstr "Отвори со"
+
 #: ../search/Tiles/Presentation.cs:33
 #, csharp-format
 msgid "{0} slide"
@@ -301,10 +629,6 @@ msgstr "Отвори"
 #: ../search/Tiles/Utils.cs:24
 msgid "Applications"
 msgstr "Апликации"
-
-#: ../search/Tiles/Utils.cs:26
-msgid "Contacts"
-msgstr "Контакти"
 
 #: ../search/Tiles/Utils.cs:28
 msgid "Calendar Events"
@@ -438,10 +762,6 @@ msgstr "Скорешни пребарувања"
 #: ../search/Tray/TrayIcon.cs:78
 msgid "Clear"
 msgstr "Исчисти"
-
-#: ../search/Tray/TrayIcon.cs:86
-msgid "Quit"
-msgstr "Излез"
 
 #. Translators: the strings in TypeFilter.cs are for when the user
 #. * wants to limit search results to a specific type. You don't need
@@ -617,131 +937,131 @@ msgstr ""
 "личност\n"
 "луѓе"
 
-#: ../search/UIManager.cs:42
+#: ../search/UIManager.cs:44
 msgid "Close Desktop Search"
 msgstr "Затвори го пребарувањето на десктопот"
 
-#: ../search/UIManager.cs:47 ../search/UIManager.cs:69
+#: ../search/UIManager.cs:49 ../search/UIManager.cs:71
 msgid "Exit Desktop Search"
 msgstr "Излези"
 
-#: ../search/UIManager.cs:54
+#: ../search/UIManager.cs:56
 msgid "_Search"
 msgstr "_Барај"
 
-#: ../search/UIManager.cs:57
+#: ../search/UIManager.cs:59
 msgid "_Actions"
 msgstr "_Дејствија"
 
-#: ../search/UIManager.cs:60
+#: ../search/UIManager.cs:62
 msgid "Sor_t"
 msgstr "Подре_ди"
 
-#: ../search/UIManager.cs:63
+#: ../search/UIManager.cs:65
 msgid "_Help"
 msgstr "_Помош"
 
-#: ../search/UIManager.cs:72
+#: ../search/UIManager.cs:74
 msgid "_Contents"
 msgstr "_Содржина"
 
-#: ../search/UIManager.cs:74
+#: ../search/UIManager.cs:76
 msgid "Help - Table of Contents"
 msgstr "Помош - Табела со содржина"
 
-#: ../search/UIManager.cs:78
+#: ../search/UIManager.cs:80
 msgid "About Desktop Search"
 msgstr "За алатката за пребарување"
 
-#: ../search/UIManager.cs:100
+#: ../search/UIManager.cs:102
 msgid "_Everywhere"
 msgstr "_Секаде"
 
-#: ../search/UIManager.cs:102
+#: ../search/UIManager.cs:104
 msgid "Search everywhere"
 msgstr "Пребарај секаде"
 
-#: ../search/UIManager.cs:105
+#: ../search/UIManager.cs:107
 msgid "_Applications"
 msgstr "_Апликации"
 
-#: ../search/UIManager.cs:107
+#: ../search/UIManager.cs:109
 msgid "Search applications"
 msgstr "Пребарувај апликации"
 
-#: ../search/UIManager.cs:110
+#: ../search/UIManager.cs:112
 msgid "_Contacts"
 msgstr "_Контакти"
 
-#: ../search/UIManager.cs:112
+#: ../search/UIManager.cs:114
 msgid "Search contacts"
 msgstr "Пребарувај контакти"
 
-#: ../search/UIManager.cs:115
+#: ../search/UIManager.cs:117
 msgid "Ca_lendar events"
 msgstr "Настани во ка_лендарот"
 
-#: ../search/UIManager.cs:117
+#: ../search/UIManager.cs:119
 msgid "Search calendar events"
 msgstr "Пребарувај настани во календарот"
 
-#: ../search/UIManager.cs:120
+#: ../search/UIManager.cs:122
 msgid "_Documents"
 msgstr "_Документи"
 
-#: ../search/UIManager.cs:122
+#: ../search/UIManager.cs:124
 msgid "Search documents"
 msgstr "Пребарувај документи"
 
-#: ../search/UIManager.cs:125
+#: ../search/UIManager.cs:127
 msgid "Conve_rsations"
 msgstr "_Разговори"
 
-#: ../search/UIManager.cs:127
+#: ../search/UIManager.cs:129
 msgid "Search E-Mail and Instant Messaging logs"
 msgstr "Барај е-пошта и логови на инстант пораки"
 
-#: ../search/UIManager.cs:130
+#: ../search/UIManager.cs:132
 msgid "_Images"
 msgstr "_Слики"
 
-#: ../search/UIManager.cs:132
+#: ../search/UIManager.cs:134
 msgid "Search images"
 msgstr "Пребарувај слики"
 
-#: ../search/UIManager.cs:135
+#: ../search/UIManager.cs:137
 msgid "_Media"
 msgstr "_Медиуми"
 
-#: ../search/UIManager.cs:137
+#: ../search/UIManager.cs:139
 msgid "Search sound and video files"
 msgstr "Барај звук и видео датотеки"
 
-#: ../search/UIManager.cs:144
+#: ../search/UIManager.cs:146
 msgid "Date _Modified"
 msgstr "Датум на из_мена"
 
-#: ../search/UIManager.cs:145
+#: ../search/UIManager.cs:147
 msgid "Sort the most-recently-modified matches first"
 msgstr "Подреди скоро променети совпаѓања прво"
 
-#: ../search/UIManager.cs:148
+#: ../search/UIManager.cs:150
 msgid "_Name"
 msgstr "_Име"
 
-#: ../search/UIManager.cs:149
+#: ../search/UIManager.cs:151
 msgid "Sort matches by name"
 msgstr "Подреди одговори по име"
 
-#: ../search/UIManager.cs:152
+#: ../search/UIManager.cs:154
 msgid "_Relevance"
 msgstr "_Релевантност"
 
-#: ../search/UIManager.cs:153
+#: ../search/UIManager.cs:155
 msgid "Sort the best matches first"
 msgstr "Подреди ги прво најдобрите совпаѓања"
 
-#: ../search/UIManager.cs:266
+#: ../search/UIManager.cs:268
 msgid "Couldn't launch web browser"
 msgstr "Не можам да пуштам веб прелистувач"
 
