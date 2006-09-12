@@ -55,6 +55,7 @@ UTIL_CSFILES = 			        	\
 	$(srcdir)/FrequencyStatistics.cs	\
 	$(srcdir)/FSpotTools.cs         	\
 	$(srcdir)/GuidFu.cs			\
+	$(srcdir)/ICalParser.cs              	\
 	$(srcdir)/ImBuddy.cs              	\
 	$(srcdir)/ImLog.cs              	\
 	$(srcdir)/Inotify.cs			\
