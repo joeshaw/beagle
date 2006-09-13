@@ -148,9 +148,9 @@ namespace Search.Tiles {
 		{
 			SafeProcess p;
 			if (Hit.ParentUri != null) 
-				p = GetClientProcess (Hit.GetFirstProperty ("fixme:client"), Hit.EscapedParentUri);
+				p = GetClientProcess (GetFirstProperty ( Hit, "fixme:client"), Hit.EscapedParentUri);
 			else
-				p = GetClientProcess (Hit.GetFirstProperty ("fixme:client"), Hit.EscapedUri);
+				p = GetClientProcess (GetFirstProperty ( Hit, "fixme:client"), Hit.EscapedUri);
 			
 			if (p == null) {
 				OpenFromMime (Hit);
