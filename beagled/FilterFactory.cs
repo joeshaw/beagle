@@ -203,7 +203,7 @@ namespace Beagle.Daemon {
 				if (! indexable.NoContent) {
 					indexable.NoContent = true;
 
-					Logger.Log.Debug ("No filter for {0} ({1})", path != null ? path : indexable.Uri.ToString (), indexable.MimeType);
+					Logger.Log.Debug ("No filter for {0} ({1}) [{2}]", indexable.Uri, path, indexable.MimeType);
 					return false;
 				}
 				
