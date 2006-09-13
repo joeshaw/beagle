@@ -33,6 +33,7 @@ namespace Beagle.Filters {
 			SafeProcess pc = new SafeProcess ();
 			pc.Arguments = new string [] { "pdfinfo", FileInfo.FullName };
 			pc.RedirectStandardOutput = true;
+			pc.RedirectStandardError = true;
 
 			try {
 				pc.Start ();
@@ -84,6 +85,13 @@ namespace Beagle.Filters {
 				}
 			}
 			pout.Close ();
+
+			// Log any errors or warnings from stderr
+			pout = new StreamReader (pc.StandardError);
+			while ((str = pout.ReadLine ()) != null)
+				Log.Warn ("pdfinfo [{0}]: {1}", Uri, str);
+
+			pout.Close ();
 			pc.Close ();
 		}
 		
@@ -93,6 +101,7 @@ namespace Beagle.Filters {
 			SafeProcess pc = new SafeProcess ();
 			pc.Arguments = new string [] { "pdftotext", "-q", "-nopgbrk", "-enc", "UTF-8", FileInfo.FullName, "-" };
 			pc.RedirectStandardOutput = true;
+			pc.RedirectStandardError = true;
 
 			try {
 				pc.Start ();
@@ -115,6 +124,12 @@ namespace Beagle.Filters {
 				if (! AllowMoreWords ())
 					break;
 			}
+			pout.Close ();
+
+			pout = new StreamReader (pc.StandardError);
+			while ((str = pout.ReadLine ()) != null)
+				Log.Warn ("pdftotext [{0}]: {1}", Uri, str);
+
 			pout.Close ();
 			pc.Close ();
 			Finished ();
