@@ -122,7 +122,7 @@ namespace Beagle.Daemon.EvolutionMailDriver {
 						return;
 
 					if (Inotify.Enabled) {
-						Inotify.Subscribe (dir, OnInotifyEvent,
+						Inotify.Subscribe (subdir, OnInotifyEvent,
 								   Inotify.EventType.Create
 								   | Inotify.EventType.Delete
 								   | Inotify.EventType.MovedTo);
