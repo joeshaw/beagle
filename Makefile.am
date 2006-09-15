@@ -1,6 +1,6 @@
 
 pkgconfigdir = $(libdir)/pkgconfig
-pkgconfig_DATA = beagle-0.0.pc beagle-ui-0.0.pc beagle-daemon.pc
+pkgconfig_DATA = beagle-0.0.pc beagle-daemon.pc
 
 SUBDIRS = 			\
 	po
@@ -19,6 +19,7 @@ SUBDIRS +=			\
 	tools
 
 if ENABLE_GUI
+pkgconfig_DATA += beagle-ui-0.0.pc
 SUBDIRS +=			\
 	images			\
 	search			\
