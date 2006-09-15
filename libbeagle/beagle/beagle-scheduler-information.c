@@ -57,7 +57,7 @@ _beagle_scheduler_information_new ()
 BeagleSchedulerInformation *
 beagle_scheduler_information_ref (BeagleSchedulerInformation *sched_info)
 {
-	g_return_if_fail (sched_info != NULL);
+	g_return_val_if_fail (sched_info != NULL, NULL);
 
 	sched_info->ref_count ++;
 

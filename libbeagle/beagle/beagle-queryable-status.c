@@ -57,7 +57,7 @@ _beagle_queryable_status_new (void)
 BeagleQueryableStatus *
 beagle_queryable_status_ref (BeagleQueryableStatus *status)
 {
-	g_return_if_fail (status != NULL);
+	g_return_val_if_fail (status != NULL, NULL);
 
 	status->ref_count ++;
 
