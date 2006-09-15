@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: beagle\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2006-08-16 13:39+0300\n"
-"PO-Revision-Date: 2006-08-16 13:39+0300\n"
+"POT-Creation-Date: 2006-09-15 10:54+0300\n"
+"PO-Revision-Date: 2006-09-15 11:04+0300\n"
 "Last-Translator: Ilkka Tuohela <hile@iki.fi>\n"
 "Language-Team: Finnish <gnome-fi-laatu@lists.sourceforge.net>\n"
 "MIME-Version: 1.0\n"
@@ -23,6 +23,306 @@ msgstr "Suunta"
 #: ../glue/eggtrayicon.c:128
 msgid "The orientation of the tray."
 msgstr "Ilmoitusalueen suunta."
+
+#: ../ContactViewer/ContactWindow.cs:74
+msgid "Open..."
+msgstr "Avaa..."
+
+#: ../ContactViewer/ContactWindow.cs:76 ../search/Tray/TrayIcon.cs:86
+msgid "Quit"
+msgstr "Lopeta"
+
+#: ../ContactViewer/ContactWindow.cs:79
+msgid "About"
+msgstr "Tietoja"
+
+#: ../ContactViewer/ContactWindow.cs:95 ../search/Tiles/Utils.cs:26
+msgid "Contacts"
+msgstr "Yhteystiedot"
+
+#: ../ContactViewer/ContactWindow.cs:100
+msgid "Display name"
+msgstr "Näytettävä nimi"
+
+#: ../ContactViewer/ContactWindow.cs:101
+msgid "Primary E-mail"
+msgstr "Ensisijainen sähköposti"
+
+#: ../ContactViewer/ContactWindow.cs:102
+msgid "Secondary E-mail"
+msgstr "Toissijainen sähköposti"
+
+#: ../ContactViewer/ContactWindow.cs:103
+msgid "Nickname"
+msgstr "Lempinimi"
+
+#: ../ContactViewer/ContactWindow.cs:133
+#, csharp-format
+msgid ""
+"Unable to open mork database:\n"
+"\n"
+" {0}"
+msgstr ""
+"Mork-tietokantaa ei voi avata:\n"
+"\n"
+"{0}"
+
+#: ../ContactViewer/ContactWindow.cs:153
+msgid "The specified ID does not exist in this database!"
+msgstr "Annettua tunnistetta ei ole tässä tietokannassa!"
+
+#: ../ContactViewer/ContactWindow.cs:180
+#, csharp-format
+msgid "Added {0} contact"
+msgid_plural "Added {0} contacts"
+msgstr[0] "Lisättiin {0} yhteystieto"
+msgstr[1] "Lisättiin {0} yhteystietoa"
+
+#: ../ContactViewer/ContactWindow.cs:204
+#, csharp-format
+msgid "Viewing {0}"
+msgstr "Näytetään {0}"
+
+#: ../ContactViewer/ContactWindow.cs:205
+msgid "DisplayName"
+msgstr "Näyttönimi"
+
+#: ../ContactViewer/ContactWindow.cs:244
+msgid "Select a mork database file"
+msgstr "Valitse mork-tietokannan tiedosto"
+
+#: ../ContactViewer/ContactWindow.cs:303
+msgid "FirstName"
+msgstr "Etunimi"
+
+#: ../ContactViewer/ContactWindow.cs:303
+msgid "NickName"
+msgstr "Lempinimi"
+
+#: ../ContactViewer/ContactWindow.cs:303
+msgid "LastName"
+msgstr "Sukunimi"
+
+#: ../ContactViewer/ContactWindow.cs:311
+msgid "Primary E-Mail:"
+msgstr "Ensisijainen sähköposti:"
+
+#: ../ContactViewer/ContactWindow.cs:313
+msgid "PrimaryEmail"
+msgstr "EnsisijainenSähköposti"
+
+#: ../ContactViewer/ContactWindow.cs:315
+#: ../ContactViewer/contactviewer.glade.h:33
+msgid "Screen name:"
+msgstr "Näyttönimi:"
+
+#: ../ContactViewer/ContactWindow.cs:317
+msgid "_AimScreenName"
+msgstr "_AIM-näyttönimi"
+
+#: ../ContactViewer/ContactWindow.cs:319
+msgid "Home phone:"
+msgstr "Kotipuhelin:"
+
+#: ../ContactViewer/ContactWindow.cs:321
+msgid "HomePhone"
+msgstr "Kotipuhelin"
+
+#: ../ContactViewer/ContactWindow.cs:323
+msgid "Mobile phone:"
+msgstr "Matkapuhelin:"
+
+#: ../ContactViewer/ContactWindow.cs:325
+msgid "CellularNumber"
+msgstr "Matkapuhelin"
+
+#: ../ContactViewer/ContactWindow.cs:327
+msgid "Web page:"
+msgstr "WWW-sivu:"
+
+#: ../ContactViewer/ContactWindow.cs:329
+msgid "WebPage2"
+msgstr "WWWSivu2"
+
+#: ../ContactViewer/ContactWindow.cs:336
+msgid "Send E-Mail"
+msgstr "Lähetä sähköpostia"
+
+#: ../ContactViewer/ContactWindow.cs:340
+msgid "Details..."
+msgstr "Yksityiskohdat..."
+
+#: ../ContactViewer/ContactWindow.cs:368
+msgid "Could not find a valid E-mail address!"
+msgstr "Kelvollista sähköpostiosoitetta ei löydy!"
+
+#: ../ContactViewer/contactviewer.glade.h:1
+msgid "<b>Custom fields</b>"
+msgstr "<b>Omat kentät</b>"
+
+#: ../ContactViewer/contactviewer.glade.h:2
+msgid "<b>Home</b>"
+msgstr "<b>Koti</b>"
+
+#: ../ContactViewer/contactviewer.glade.h:3
+msgid "<b>Internet</b>"
+msgstr "<b>Internet</b>"
+
+#: ../ContactViewer/contactviewer.glade.h:4
+msgid "<b>Name</b>"
+msgstr "<b>Nimi</b>"
+
+#: ../ContactViewer/contactviewer.glade.h:5
+msgid "<b>Notes</b>"
+msgstr "<b>Muistiinpanot</b>"
+
+#: ../ContactViewer/contactviewer.glade.h:6
+msgid "<b>Phones</b>"
+msgstr "<b>Puhelinnumerot</b>"
+
+#: ../ContactViewer/contactviewer.glade.h:7
+msgid "<b>Work</b>"
+msgstr "<b>Työ</b>"
+
+#: ../ContactViewer/contactviewer.glade.h:8
+msgid "Additional E-Mail:"
+msgstr "Muu sähköpostiosoite:"
+
+#: ../ContactViewer/contactviewer.glade.h:9
+msgid "Address"
+msgstr "Osoite"
+
+#: ../ContactViewer/contactviewer.glade.h:10
+msgid "Address:"
+msgstr "Osoite:"
+
+#: ../ContactViewer/contactviewer.glade.h:11
+msgid "City:"
+msgstr "Kaupunki:"
+
+#: ../ContactViewer/contactviewer.glade.h:12
+msgid "Contact"
+msgstr "Yhteystieto"
+
+#: ../ContactViewer/contactviewer.glade.h:13
+msgid "Contact Viewer"
+msgstr "Yhteystiedon katselin"
+
+#: ../ContactViewer/contactviewer.glade.h:14
+msgid "Country:"
+msgstr "Maa:"
+
+#: ../ContactViewer/contactviewer.glade.h:15
+msgid "Custom 1:"
+msgstr "Oma 1:"
+
+#: ../ContactViewer/contactviewer.glade.h:16
+msgid "Custom 2:"
+msgstr "Oma 2:"
+
+#: ../ContactViewer/contactviewer.glade.h:17
+msgid "Custom 3:"
+msgstr "Oma 3:"
+
+#: ../ContactViewer/contactviewer.glade.h:18
+msgid "Custom 4:"
+msgstr "Oma 4:"
+
+#: ../ContactViewer/contactviewer.glade.h:19
+msgid "Department:"
+msgstr "Osasto:"
+
+#: ../ContactViewer/contactviewer.glade.h:20
+msgid "Detailed view"
+msgstr "Yksityiskohtainen näkymä"
+
+#: ../ContactViewer/contactviewer.glade.h:21
+msgid "Display:"
+msgstr "Näyttö:"
+
+#: ../ContactViewer/contactviewer.glade.h:22 ../search/Tiles/Contact.cs:68
+msgid "E-Mail:"
+msgstr "Sähköposti:"
+
+#: ../ContactViewer/contactviewer.glade.h:23
+msgid "Fax:"
+msgstr "Faksi:"
+
+#: ../ContactViewer/contactviewer.glade.h:24
+msgid "First:"
+msgstr "Ensimmäinen:"
+
+#: ../ContactViewer/contactviewer.glade.h:25
+msgid "Home:"
+msgstr "Koti:"
+
+#: ../ContactViewer/contactviewer.glade.h:26
+msgid "Last:"
+msgstr "Viimeinen:"
+
+#: ../ContactViewer/contactviewer.glade.h:27
+msgid "Mobile:"
+msgstr "Matkapuhelin:"
+
+#: ../ContactViewer/contactviewer.glade.h:28
+msgid "Nickname:"
+msgstr "Lempinimi:"
+
+#: ../ContactViewer/contactviewer.glade.h:29
+msgid "Organization:"
+msgstr "Organisaatio:"
+
+#: ../ContactViewer/contactviewer.glade.h:30
+msgid "Other"
+msgstr "Muu"
+
+#: ../ContactViewer/contactviewer.glade.h:31
+msgid "Pager:"
+msgstr "Piippari:"
+
+#: ../ContactViewer/contactviewer.glade.h:32
+msgid "Preferred format:"
+msgstr "Haluttu muoto:"
+
+#: ../ContactViewer/contactviewer.glade.h:34
+msgid "State/Province"
+msgstr "Osavaltio tai lääni"
+
+#: ../ContactViewer/contactviewer.glade.h:35
+msgid "State/Province:"
+msgstr "Osavaltio tai lääni:"
+
+#: ../ContactViewer/contactviewer.glade.h:36 ../search/Tiles/Calendar.cs:51
+#: ../search/Tiles/File.cs:124 ../search/Tiles/Note.cs:57
+#: ../search/Tiles/RSSFeed.cs:45 ../search/Tiles/WebHistory.cs:50
+msgid "Title:"
+msgstr "Otsikko:"
+
+#: ../ContactViewer/contactviewer.glade.h:37
+msgid ""
+"Unknown\n"
+"Plain text\n"
+"HTML"
+msgstr ""
+"Tuntematon\n"
+"Pelkkä teksti\n"
+"HTML"
+
+#: ../ContactViewer/contactviewer.glade.h:40
+msgid "Web Page:"
+msgstr "WWW-sivu:"
+
+#: ../ContactViewer/contactviewer.glade.h:41
+msgid "Work:"
+msgstr "Työ:"
+
+#: ../ContactViewer/contactviewer.glade.h:42
+msgid "ZIP/Postal Code"
+msgstr "Postinumero"
+
+#: ../ContactViewer/contactviewer.glade.h:43
+msgid "ZIP/Postal Code:"
+msgstr "Postinumero:"
 
 #: ../ImLogViewer/ImLogViewer.glade.h:1
 msgid "<b>Conversations History</b>"
@@ -111,7 +411,7 @@ msgstr ""
 "Hae lauseita lisäämällä lainausmerkit, esimerkiksi <b>\"ollako  vai eikö olla"
 "\"</b>"
 
-#: ../search/Pages/QuickTips.cs:19 ../search/UIManager.cs:81
+#: ../search/Pages/QuickTips.cs:19 ../search/UIManager.cs:83
 msgid "Quick Tips"
 msgstr "Pikavinkit"
 
@@ -139,25 +439,33 @@ msgstr "Käynnistä hakupalvelu"
 msgid "_Find:"
 msgstr "_Etsi:"
 
-#: ../search/Search.cs:163
+#: ../search/Search.cs:164
 msgid "Find Now"
 msgstr "Etsi heti"
 
-#: ../search/Search.cs:209
+#: ../search/Search.cs:210
 msgid "Type in search terms"
 msgstr "Syötä hakuehdot"
 
-#: ../search/Search.cs:210
+#: ../search/Search.cs:211
 msgid "Start searching"
 msgstr "Aloita haku"
+
+#: ../search/Tiles/Calendar.cs:54
+msgid "Description:"
+msgstr "Kuvaus:"
+
+#: ../search/Tiles/Calendar.cs:57
+msgid "Location:"
+msgstr "Sijainti:"
+
+#: ../search/Tiles/Calendar.cs:61
+msgid "Attendees:"
+msgstr "Läsnäolijat:"
 
 #: ../search/Tiles/Contact.cs:30
 msgid "Send Mail"
 msgstr "Lähetä sähköpostia"
-
-#: ../search/Tiles/Contact.cs:68
-msgid "E-Mail:"
-msgstr "Sähköposti:"
 
 #: ../search/Tiles/Contact.cs:70
 msgid "Mobile Phone:"
@@ -185,11 +493,6 @@ msgstr "Sähköposti"
 #: ../search/Tiles/File.cs:37 ../search/Tiles/Folder.cs:38
 msgid "Move to Trash"
 msgstr "Siirrä roskakoriin"
-
-#: ../search/Tiles/File.cs:124 ../search/Tiles/Note.cs:57
-#: ../search/Tiles/RSSFeed.cs:45 ../search/Tiles/WebHistory.cs:50
-msgid "Title:"
-msgstr "Otsikko:"
 
 #: ../search/Tiles/File.cs:125 ../search/Tiles/Folder.cs:51
 #: ../search/Tiles/Note.cs:58
@@ -237,6 +540,26 @@ msgstr "Nimi:"
 msgid "Date Received:"
 msgstr "Vastaanottopäivä:"
 
+#: ../search/Tiles/IMLog.cs:97
+msgid "Status:"
+msgstr "Tila:"
+
+#: ../search/Tiles/IMLog.cs:112
+msgid "Idle"
+msgstr "Ei tavoitettavissa"
+
+#: ../search/Tiles/IMLog.cs:119
+msgid "Away"
+msgstr "Poissa"
+
+#: ../search/Tiles/IMLog.cs:122
+msgid "Offline"
+msgstr "Ei linjoilla"
+
+#: ../search/Tiles/IMLog.cs:125
+msgid "Available"
+msgstr "Tavoitettavissa"
+
 #: ../search/Tiles/MailAttachment.cs:45
 msgid "Mail attachment"
 msgstr "Sähköpostiliite"
@@ -269,6 +592,10 @@ msgstr "Lähetyspäivä:"
 msgid "Folder:"
 msgstr "Kansio:"
 
+#: ../search/Tiles/OpenWithMenu.cs:47
+msgid "Open With"
+msgstr "Avaa ohjelmalla"
+
 #: ../search/Tiles/Presentation.cs:33
 #, csharp-format
 msgid "{0} slide"
@@ -298,10 +625,6 @@ msgstr "Avaa"
 #: ../search/Tiles/Utils.cs:24
 msgid "Applications"
 msgstr "Sovellukset"
-
-#: ../search/Tiles/Utils.cs:26
-msgid "Contacts"
-msgstr "Yhteystiedot"
 
 #: ../search/Tiles/Utils.cs:28
 msgid "Calendar Events"
@@ -429,10 +752,6 @@ msgstr "Viimeaikaiset haut"
 #: ../search/Tray/TrayIcon.cs:78
 msgid "Clear"
 msgstr "Tyhjennä"
-
-#: ../search/Tray/TrayIcon.cs:86
-msgid "Quit"
-msgstr "Lopeta"
 
 #. Translators: the strings in TypeFilter.cs are for when the user
 #. * wants to limit search results to a specific type. You don't need
@@ -609,129 +928,133 @@ msgstr ""
 "henkilö\n"
 "henkilöt"
 
-#: ../search/UIManager.cs:42
+#: ../search/UIManager.cs:44
 msgid "Close Desktop Search"
 msgstr "Sulje työpöytähaku"
 
-#: ../search/UIManager.cs:47 ../search/UIManager.cs:69
+#: ../search/UIManager.cs:49 ../search/UIManager.cs:71
 msgid "Exit Desktop Search"
 msgstr "Sulje työpöytähaku"
 
-#: ../search/UIManager.cs:54
+#: ../search/UIManager.cs:56
 msgid "_Search"
 msgstr "_Haku"
 
-#: ../search/UIManager.cs:57
+#: ../search/UIManager.cs:59
 msgid "_Actions"
 msgstr "_Toiminnot"
 
-#: ../search/UIManager.cs:60
+#: ../search/UIManager.cs:62
 msgid "Sor_t"
 msgstr "Jä_rjestä"
 
-#: ../search/UIManager.cs:63
+#: ../search/UIManager.cs:65
 msgid "_Help"
 msgstr "O_hje"
 
-#: ../search/UIManager.cs:72
+#: ../search/UIManager.cs:74
 msgid "_Contents"
 msgstr "_Sisältö"
 
-#: ../search/UIManager.cs:74
+#: ../search/UIManager.cs:76
 msgid "Help - Table of Contents"
 msgstr "Ohje - sisällysluettelo"
 
-#: ../search/UIManager.cs:78
+#: ../search/UIManager.cs:80
 msgid "About Desktop Search"
 msgstr "Tietoja työpöytähausta"
 
-#: ../search/UIManager.cs:100
+#: ../search/UIManager.cs:102
 msgid "_Everywhere"
 msgstr "_Mistä tahansa"
 
-#: ../search/UIManager.cs:102
+#: ../search/UIManager.cs:104
 msgid "Search everywhere"
 msgstr "Hae kaikkialta"
 
-#: ../search/UIManager.cs:105
+#: ../search/UIManager.cs:107
 msgid "_Applications"
 msgstr "_Sovellukset"
 
-#: ../search/UIManager.cs:107
+#: ../search/UIManager.cs:109
 msgid "Search applications"
 msgstr "Etsi sovelluksia"
 
-#: ../search/UIManager.cs:110
+#: ../search/UIManager.cs:112
 msgid "_Contacts"
 msgstr "_Yhteystiedot"
 
-#: ../search/UIManager.cs:112
+#: ../search/UIManager.cs:114
 msgid "Search contacts"
 msgstr "Etsi yhteystietoja"
 
-#: ../search/UIManager.cs:115
+#: ../search/UIManager.cs:117
 msgid "Ca_lendar events"
 msgstr "Ka_lenteritapahtumat"
 
-#: ../search/UIManager.cs:117
+#: ../search/UIManager.cs:119
 msgid "Search calendar events"
 msgstr "Etsi kalenteritapahtumia"
 
-#: ../search/UIManager.cs:120
+#: ../search/UIManager.cs:122
 msgid "_Documents"
 msgstr "_Asiakirjat"
 
-#: ../search/UIManager.cs:122
+#: ../search/UIManager.cs:124
 msgid "Search documents"
 msgstr "Etsi asiakirjoja"
 
-#: ../search/UIManager.cs:125
+#: ../search/UIManager.cs:127
 msgid "Conve_rsations"
 msgstr "Kes_kustelut"
 
-#: ../search/UIManager.cs:127
+#: ../search/UIManager.cs:129
 msgid "Search E-Mail and Instant Messaging logs"
 msgstr "Etsi sähköposti- ja pikaviestinlokeja"
 
-#: ../search/UIManager.cs:130
+#: ../search/UIManager.cs:132
 msgid "_Images"
 msgstr "_Kuvat"
 
-#: ../search/UIManager.cs:132
+#: ../search/UIManager.cs:134
 msgid "Search images"
 msgstr "Etsi kuvia"
 
-#: ../search/UIManager.cs:135
+#: ../search/UIManager.cs:137
 msgid "_Media"
 msgstr "_Media"
 
-#: ../search/UIManager.cs:137
+#: ../search/UIManager.cs:139
 msgid "Search sound and video files"
 msgstr "Etsi ääni- ja videotiedostoja"
 
-#: ../search/UIManager.cs:144
+#: ../search/UIManager.cs:146
 msgid "Date _Modified"
 msgstr "Viimeksi _muokattu"
 
-#: ../search/UIManager.cs:145
+#: ../search/UIManager.cs:147
 msgid "Sort the most-recently-modified matches first"
 msgstr "Järjestä äskettäin muokatut ensimmäiseksi"
 
-#: ../search/UIManager.cs:148
+#: ../search/UIManager.cs:150
 msgid "_Name"
 msgstr "_Nimi"
 
-#: ../search/UIManager.cs:149
+#: ../search/UIManager.cs:151
 msgid "Sort matches by name"
 msgstr "Järjestä nimen mukaan"
 
-#: ../search/UIManager.cs:152
+#: ../search/UIManager.cs:154
 msgid "_Relevance"
 msgstr "_Asiaankuuluvuus"
 
-#: ../search/UIManager.cs:153
+#: ../search/UIManager.cs:155
 msgid "Sort the best matches first"
 msgstr "Järjestä parhaat tulokset ensin"
+
+#: ../search/UIManager.cs:268
+msgid "Couldn't launch web browser"
+msgstr "WWW-selainta ei voitu käynnistää"
 
 #: ../tools/Settings.cs:226
 msgid "Reload configuration"
@@ -1170,12 +1493,6 @@ msgstr "{0:0.0} kt"
 msgid "{0:0.0} MB"
 msgstr "{0:0.0} Mt"
 
-#~ msgid "Application"
-#~ msgstr "Sovellus"
-
-#~ msgid "Contact"
-#~ msgstr "Yhteystieto"
-
 #~ msgid "Image"
 #~ msgstr "Kuva"
 
@@ -1240,9 +1557,6 @@ msgstr "{0:0.0} Mt"
 #~ msgid "More archive results..."
 #~ msgstr "Lisää arkistoja..."
 
-#~ msgid "Open With"
-#~ msgstr "Avaa ohjelmalla"
-
 #~ msgid "Show Information"
 #~ msgstr "Näytä tiedot"
 
@@ -1265,9 +1579,6 @@ msgstr "{0:0.0} Mt"
 
 #~ msgid "in Addressbook"
 #~ msgstr "Osoitekirjassa"
-
-#~ msgid "in Web Pages"
-#~ msgstr "WWW-sivuilla"
 
 #~ msgid "in Chats"
 #~ msgstr "Keskusteluissa"
@@ -1296,9 +1607,6 @@ msgstr "{0:0.0} Mt"
 
 #~ msgid "Beagle Search"
 #~ msgstr "Beagle-haku"
-
-#~ msgid "Words:"
-#~ msgstr "Sanat:"
 
 #~ msgid "Send IM"
 #~ msgstr "Lähetä pikaviesti"
@@ -1341,12 +1649,6 @@ msgstr "{0:0.0} Mt"
 
 #~ msgid "Enqueue"
 #~ msgstr "Laita jonoon"
-
-#~ msgid "Tags:"
-#~ msgstr "Tagit:"
-
-#~ msgid "Description:"
-#~ msgstr "Kuvaus:"
 
 #~ msgid "Slides:"
 #~ msgstr "Kalvot:"
