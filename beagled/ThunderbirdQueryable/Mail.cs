@@ -41,6 +41,7 @@ namespace Beagle.Daemon.ThunderbirdQueryable {
 	[ThunderbirdIndexableGenerator (TB.AccountType.Pop3, "POP3 Support", true)]
 	[ThunderbirdIndexableGenerator (TB.AccountType.Imap, "IMAP Support", true)]
 	public class MailIndexableGenerator : ThunderbirdIndexableGenerator {
+		private string mailbox_name = null;
 
 		public MailIndexableGenerator (ThunderbirdIndexer indexer, TB.Account account, string mork_file)
 			: base (indexer, account, mork_file)
@@ -78,13 +79,18 @@ namespace Beagle.Daemon.ThunderbirdQueryable {
 			try {
 				db = new TB.Database (account, DbFile);
 				db.Load ();
+				
+				Hashtable tbl = db.Db.Compile ("1", "ns:msg:db:row:scope:dbfolderinfo:all");
+				mailbox_name = (string) tbl ["mailboxName"];
 			} catch (Exception e) {
 				Logger.Log.Warn (e, "Failed to load {0}:", DbFile);
 				return;
 			}
 			
-			if (db.Count <= 0)
+			if (db.Count <= 0) {
+				Logger.Log.Debug ("Empty file {0}; skipping", DbFile);
 				return;
+			}
 			
 			FullIndex = (Thunderbird.IsFullyIndexable (DbFile) ? true : false);
 			Logger.Log.Info ("Indexing {0} containing {1} mails ({2})", RelativePath, db.Count, (FullIndex ? "Full" : "Partial"));
@@ -95,11 +101,12 @@ namespace Beagle.Daemon.ThunderbirdQueryable {
 			Indexable indexable;
 			GMime.Message message = mail.Message;
 			FullIndex = mail.GetBool ("FullIndex"); // Make sure this is up to date
+			string mailbox = (MailboxName != null ? MailboxName : (string) mail.GetString ("mailbox"));
 			
 			indexable = NewIndexable (mail.Uri, message.Date.ToUniversalTime (), "MailMessage");
 			indexable.MimeType = "message/rfc822";
 			indexable.CacheContent = true;
-			indexable.AddProperty (Property.NewKeyword ("fixme:folder", mail.GetString ("mailbox")));
+			indexable.AddProperty (Property.NewKeyword ("fixme:folder", mailbox));
 			indexable.SetBinaryStream (message.Stream);
 			
 			if (mail.GetBool ("FullIndex"))
@@ -108,6 +115,16 @@ namespace Beagle.Daemon.ThunderbirdQueryable {
 			message.Dispose ();			
 
 			return indexable;
+		}
+		
+		private string MailboxName {
+			get {
+				if (mailbox_name == null)
+					return null;
+				
+				int dot = mailbox_name.LastIndexOf (".");
+				return (dot > 0 ? mailbox_name.Substring (dot+1) : mailbox_name);
+			}
 		}
 	}
 }

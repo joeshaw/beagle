@@ -68,7 +68,11 @@ namespace Beagle.Daemon.ThunderbirdQueryable {
 
 			// Fetch all already stored uris in the index. This way we can remove one uri at the time
 			// while we are indexing and thus in the end now which mails that doesn't exist anymore.
-			stored_cache = indexer.Lucene.GetStoredUriStrings (account.Server, relative_path);
+			if (relative_path != null)
+				stored_cache = indexer.Lucene.GetStoredUriStrings (account.Server, relative_path);
+			else
+				Logger.Log.Debug ("Relative path could not be determined for: {0}. Indexing speed will suffer.",
+					db_file);
 		}
 		
 		public abstract bool HasNextIndexable ();

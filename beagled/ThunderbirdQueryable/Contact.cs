@@ -76,8 +76,10 @@ namespace Beagle.Daemon.ThunderbirdQueryable {
 				return;
 			}
 			
-			if (db.Count <= 0)
+			if (db.Count <= 0) {
+				Logger.Log.Debug ("Empty file {0}; skipping", DbFile);
 				return;
+			}
 			
 			Logger.Log.Info ("Indexing address book containing {0} contact(s) ({1})", db.Count, RelativePath);
 		}

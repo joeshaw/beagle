@@ -189,6 +189,8 @@ namespace Beagle.Util
 		
 		public string ParseNamespace (string ns)
 		{
+			if (ns == null || ns == string.Empty)
+				return string.Empty;
 			if (ns.StartsWith ("^"))
 				return ns;
 			else {

@@ -526,6 +526,88 @@ namespace Beagle.Util {
 		}
 		
 		/////////////////////////////////////////////////////////////////////////////////////
+		
+		public class AccountReader {
+			private string profile_dir;
+			private ArrayList accounts;
+			private Hashtable content;
+			private bool success = false;
+			
+			public AccountReader (string profile_dir)
+			{
+				this.profile_dir = profile_dir;
+				this.accounts = new ArrayList ();
+				this.content = new Hashtable ();
+				
+				Read ();
+				
+				// In case the address book file exists, add it as well
+				if (File.Exists (Path.Combine (profile_dir, "abook.mab"))) {
+					accounts.Add (new Account (
+						"abook.mab",
+						Path.GetFullPath (Path.Combine (profile_dir, "abook.mab")), 
+						0, 
+						AccountType.AddressBook, 
+						' '));
+				}
+			}
+		
+			public void Read ()
+			{
+				StreamReader reader = new StreamReader (Path.Combine (profile_dir, "prefs.js"));
+				Regex reg = new Regex (@"user_pref\(""mail\.(?<key>.*)""\s*,\s*(""(?<value>.*)"" | (?<value>.*))\);",
+					RegexOptions.Compiled | RegexOptions.IgnorePatternWhitespace);
+				
+				foreach (Match m in reg.Matches (reader.ReadToEnd ()))
+					content [m.Result ("${key}")] = m.Result ("${value}");
+				
+				foreach (string key in content.Keys) {
+					Match m = Regex.Match (key, @"account.account(?<id>\d).server");
+					
+					if (!m.Success)
+						continue;
+					
+					try {
+						AddAccount (m.Result ("${id}"));
+					} catch (Exception e) {
+						Console.WriteLine ("Failed to add: {0}", e);
+					}
+				}
+			}
+			
+			private void AddAccount (string id)
+			{
+				char delimiter;
+				AccountType type = ParseAccountType (GetValue (id, "type"));
+				
+				if (type == AccountType.Invalid)
+					return;
+				
+				delimiter = GetDelimiter (
+					GetValue(id, "namespace.personal"), 
+					GetValue (id, "namespace.public"), 
+					GetValue (id, "namespace.other_users"));
+			
+				accounts.Add (new Account (
+					String.Format ("{0}@{1}", GetValue (id, "userName"), GetValue (id, "hostname")),
+					GetValue (id, "directory"),
+					Convert.ToInt32 (GetValue (id, "port")),
+					type,
+					delimiter));
+			}
+
+			private string GetValue (string id, string key)
+			{
+				return (string) content [String.Format ("server.server{0}.{1}", id, key)];
+			}
+			
+			public IEnumerator GetEnumerator ()
+			{
+				return accounts.GetEnumerator ();
+			}
+		}
+		
+		/////////////////////////////////////////////////////////////////////////////////////
 
 		public static string ExecutableName {
 			get {
@@ -710,91 +792,26 @@ namespace Beagle.Util {
 		public static string GetRelativePath (string mork_file)
 		{
 			string path = null;
+			AccountReader reader = null;
+			
 			foreach (string root in Thunderbird.GetProfilePaths (Thunderbird.GetRootPath ())) {
-				if (!mork_file.StartsWith (root))
+				try { 
+					reader = new AccountReader (root);
+					
+					foreach (Account account in reader) {
+						if (!mork_file.StartsWith (account.Path))
+							continue;
+						
+						path = String.Format ("{0}/{1}",
+							account.Server, mork_file.Substring (account.Path.Length+1));
+						break;
+					}
+				} catch {
 					continue;
-
-				path = mork_file.Substring (root.Length+1);
-				break;
+				}
 			}
 			
 			return path;
-		}
-		
-		public static ArrayList ReadAccounts (string profile_dir)
-		{
-			string line = null;
-			Queue accounts = new Queue();
-			Hashtable tbl = new Hashtable ();
-			ArrayList account_list = new ArrayList ();
-			StreamReader reader;
-			Regex id_reg = new Regex (@"account.account(?<id>\d).server");
-			Regex reg = new Regex (@"user_pref\(""mail\.(?<key>.*)""\s*,\s*(""(?<value>.*)"" | (?<value>.*))\);",
-				RegexOptions.Compiled | RegexOptions.IgnorePatternWhitespace);
-
-			try {
-				reader = new StreamReader (Path.Combine (profile_dir, "prefs.js"));
-			} catch (Exception e) {
-				if (Debug)
-					Logger.Log.Debug (e, "Failed to open file {0}:", Path.Combine (profile_dir , "prefs.js"));
-
-				return account_list;
-			}
-
-			while ((line = reader.ReadLine()) != null) {
-				if (!line.StartsWith ("user_pref(\"mail."))
-					continue;
-
-				try {
-					string key = reg.Match (line).Result ("${key}");
-
-					if (key.StartsWith ("account.account")) {
-						if (Debug)
-							Logger.Log.Debug ("account.account: {0}", id_reg.Match (key).Result ("${id}"));
-
-						accounts.Enqueue (id_reg.Match (key).Result ("${id}"));
-					}
-
-					tbl [key] = reg.Match (line).Result ("${value}");
-				} catch (Exception e) { 
-					if (Debug)
-						Logger.Log.Debug (e, "ReadAccounts 1:");
-				}
-			}
-			
-			if (Debug)
-				Logger.Log.Info ("ReadAccounts: {0} accounts", accounts.Count);
-
-			while (accounts.Count > 0) {
-				string id = "server.server" + (accounts.Dequeue() as string);
-				AccountType type = ParseAccountType ((string) tbl [id + ".type"]);
-				char delimiter = GetDelimiter ((string) tbl [id + ".namespace.personal"], 
-					(string) tbl [id + ".namespace.public"], (string) tbl [id + ".namespace.other_users"]);
-				
-				if (type == AccountType.Invalid)
-					continue;
-				
-				if (Debug)
-					Logger.Log.Debug ("ReadAccounts 2: {0}", id);
-
-				try {
-					account_list.Add (new Account (
-						String.Format ("{0}@{1}", (string) tbl [id + ".userName"], (string) tbl [id + ".hostname"]), 
-						(string) tbl [id + ".directory"], Convert.ToInt32 ((string) tbl [id + ".port"]), type, delimiter));
-				} catch (Exception e) {
-					if (Debug)
-						Logger.Log.Debug (e, "ReadAccounts 3:");
-					continue;
-				}
-			}
-			
-			// In case the address book file exists, add it as well
-			if (File.Exists (Path.Combine (profile_dir, "abook.mab"))) {
-				account_list.Add (new Account (Path.GetFileName (profile_dir), 
-					Path.Combine (profile_dir, "abook.mab"), 0, AccountType.AddressBook, ' '));
-			}
-
-			return account_list;
 		}
 		
 		public static bool IsMorkFile (string path, string filename)

@@ -87,8 +87,10 @@ namespace Beagle.Daemon.ThunderbirdQueryable {
 				return;
 			}
 			
-			if (db.Count <= 0)
+			if (db.Count <= 0) {
+				Logger.Log.Debug ("Empty file {0}; skipping", DbFile);
 				return;
+			}
 			
 			Logger.Log.Info ("Indexing \"{0}\" RSS feed containing {1} entries ({2})", folder_name, db.Count, RelativePath);
 		}

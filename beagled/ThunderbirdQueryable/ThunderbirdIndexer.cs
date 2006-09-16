@@ -103,9 +103,17 @@ namespace Beagle.Daemon.ThunderbirdQueryable {
 		public void Crawl ()
 		{
 			int launched = 0;
+			TB.AccountReader reader = null;
 			
 			foreach (string path in root_paths) {
-				foreach (TB.Account account in Thunderbird.ReadAccounts (path)) {
+				try {
+					reader = new TB.AccountReader (path);
+				} catch (Exception e) {
+					Logger.Log.Warn (e, "Failed to load accounts: {0}", e.Message);
+					continue;
+				}
+				
+				foreach (TB.Account account in reader) {
 					if (Shutdown.ShutdownRequested)
 						return;
 					
@@ -165,7 +173,7 @@ namespace Beagle.Daemon.ThunderbirdQueryable {
 		public void IndexFile (string file)
 		{
 			TB.Account account = GetParentAccount (file);
-						
+			
 			if (account == null || supported_types [account.Type] == null || Thunderbird.GetFileSize (file) < 1)
 				return;
 			
@@ -262,10 +270,10 @@ namespace Beagle.Daemon.ThunderbirdQueryable {
 		
 		public void UpdateAccounts (string root_path)
 		{
-			ArrayList new_accounts;
+			TB.AccountReader new_accounts = null;
 
 			try {
-				new_accounts = Thunderbird.ReadAccounts (root_path);
+				new_accounts = new TB.AccountReader (root_path);
 			} catch (Exception e) {
 				Logger.Log.Warn ("Failed when reading Thunderbird accounts: {0}, account may have been added or removed", e);
 				return;

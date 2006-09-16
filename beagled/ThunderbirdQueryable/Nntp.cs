@@ -82,8 +82,10 @@ namespace Beagle.Daemon.ThunderbirdQueryable {
 				return;
 			}
 			
-			if (db.Count <= 0)
+			if (db.Count <= 0) {
+				Logger.Log.Debug ("Empty file {0}; skipping", DbFile);
 				return;
+			}
 			
 			FullIndex = (Thunderbird.IsFullyIndexable (DbFile) ? true : false);
 			Logger.Log.Info ("Indexing {0} NNTP messages", db.Count);
