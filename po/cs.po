@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: cs\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2006-09-07 14:13+0200\n"
-"PO-Revision-Date: 2006-09-07 14:21+0200\n"
+"POT-Creation-Date: 2006-09-18 13:35+0200\n"
+"PO-Revision-Date: 2006-09-18 13:57+0200\n"
 "Last-Translator: Jakub Friedl <jfriedl@suse.cz>\n"
 "Language-Team: Czech <gnome-cs-list@gnome.org>\n"
 "MIME-Version: 1.0\n"
@@ -44,7 +44,7 @@ msgstr "Kontakty"
 
 #: ../ContactViewer/ContactWindow.cs:100
 msgid "Display name"
-msgstr ""
+msgstr "Zobrazované jméno"
 
 #: ../ContactViewer/ContactWindow.cs:101
 msgid "Primary E-mail"
@@ -65,46 +65,46 @@ msgid ""
 "\n"
 " {0}"
 msgstr ""
+"Nelze otevřít mork databázi:\n"
+"\n"
+" {0}"
 
 #: ../ContactViewer/ContactWindow.cs:153
 msgid "The specified ID does not exist in this database!"
-msgstr ""
+msgstr "Zadané ID v této databázi neexistuje!"
 
 #: ../ContactViewer/ContactWindow.cs:180
 #, csharp-format
 msgid "Added {0} contact"
 msgid_plural "Added {0} contacts"
-msgstr[0] ""
-msgstr[1] ""
-msgstr[2] ""
+msgstr[0] "Přidán {0} kontakt"
+msgstr[1] "Přidány {0} kontakty"
+msgstr[2] "Přidáno {0} kontaktů"
 
 #: ../ContactViewer/ContactWindow.cs:204
 #, csharp-format
 msgid "Viewing {0}"
-msgstr ""
+msgstr "Zobrazuje se {0}"
 
 #: ../ContactViewer/ContactWindow.cs:205
 msgid "DisplayName"
-msgstr ""
+msgstr "Zobrazované jméno"
 
 #: ../ContactViewer/ContactWindow.cs:244
 msgid "Select a mork database file"
-msgstr ""
+msgstr "Vyberte soubor mork databáze"
 
 #: ../ContactViewer/ContactWindow.cs:303
-#, fuzzy
 msgid "FirstName"
-msgstr "Jméno"
+msgstr "Křestní jméno"
 
 #: ../ContactViewer/ContactWindow.cs:303
-#, fuzzy
 msgid "NickName"
-msgstr "Jméno"
+msgstr "Přezdívka"
 
 #: ../ContactViewer/ContactWindow.cs:303
-#, fuzzy
 msgid "LastName"
-msgstr "Jméno"
+msgstr "Příjmení"
 
 #: ../ContactViewer/ContactWindow.cs:311
 msgid "Primary E-Mail:"
@@ -112,23 +112,22 @@ msgstr "Primární e-mail:"
 
 #: ../ContactViewer/ContactWindow.cs:313
 msgid "PrimaryEmail"
-msgstr ""
+msgstr "Primární e-mail"
 
 #: ../ContactViewer/ContactWindow.cs:315
 #: ../ContactViewer/contactviewer.glade.h:33
 msgid "Screen name:"
-msgstr ""
+msgstr "Screen name:"
 
 #: ../ContactViewer/ContactWindow.cs:317
 msgid "_AimScreenName"
-msgstr ""
+msgstr "_AimScreenName"
 
 #: ../ContactViewer/ContactWindow.cs:319
 msgid "Home phone:"
 msgstr "Domácí telefon:"
 
 #: ../ContactViewer/ContactWindow.cs:321
-#, fuzzy
 msgid "HomePhone"
 msgstr "Domácí telefon:"
 
@@ -138,7 +137,7 @@ msgstr "Mobilní telefon:"
 
 #: ../ContactViewer/ContactWindow.cs:325
 msgid "CellularNumber"
-msgstr ""
+msgstr "Mobilní číslo:"
 
 #: ../ContactViewer/ContactWindow.cs:327
 msgid "Web page:"
@@ -146,7 +145,7 @@ msgstr "Webová stránka:"
 
 #: ../ContactViewer/ContactWindow.cs:329
 msgid "WebPage2"
-msgstr ""
+msgstr "Web 2:"
 
 #: ../ContactViewer/ContactWindow.cs:336
 msgid "Send E-Mail"
@@ -162,12 +161,11 @@ msgstr "Nelze nalézt platnou e-mailovou adresu!"
 
 #: ../ContactViewer/contactviewer.glade.h:1
 msgid "<b>Custom fields</b>"
-msgstr ""
+msgstr "<b>Vlastní pole</b>"
 
 #: ../ContactViewer/contactviewer.glade.h:2
-#, fuzzy
 msgid "<b>Home</b>"
-msgstr "<b>Obecné</b>"
+msgstr "<b>Domů</b>"
 
 #: ../ContactViewer/contactviewer.glade.h:3
 msgid "<b>Internet</b>"
@@ -219,19 +217,19 @@ msgstr "Země:"
 
 #: ../ContactViewer/contactviewer.glade.h:15
 msgid "Custom 1:"
-msgstr ""
+msgstr "Vlastní 1:"
 
 #: ../ContactViewer/contactviewer.glade.h:16
 msgid "Custom 2:"
-msgstr ""
+msgstr "Vlastní 2:"
 
 #: ../ContactViewer/contactviewer.glade.h:17
 msgid "Custom 3:"
-msgstr ""
+msgstr "Vlastní 3:"
 
 #: ../ContactViewer/contactviewer.glade.h:18
 msgid "Custom 4:"
-msgstr ""
+msgstr "Vlastní 4:"
 
 #: ../ContactViewer/contactviewer.glade.h:19
 msgid "Department:"
@@ -242,9 +240,8 @@ msgid "Detailed view"
 msgstr "Podrobný pohled"
 
 #: ../ContactViewer/contactviewer.glade.h:21
-#, fuzzy
 msgid "Display:"
-msgstr "<b>Zobrazit</b>"
+msgstr "Zobrazit"
 
 #: ../ContactViewer/contactviewer.glade.h:22 ../search/Tiles/Contact.cs:68
 msgid "E-Mail:"
@@ -256,17 +253,15 @@ msgstr "Fax:"
 
 #: ../ContactViewer/contactviewer.glade.h:24
 msgid "First:"
-msgstr ""
+msgstr "První:"
 
 #: ../ContactViewer/contactviewer.glade.h:25
-#, fuzzy
 msgid "Home:"
-msgstr "Domácí telefon:"
+msgstr "Domů:"
 
 #: ../ContactViewer/contactviewer.glade.h:26
-#, fuzzy
 msgid "Last:"
-msgstr "Cesta:"
+msgstr "Poslední:"
 
 #: ../ContactViewer/contactviewer.glade.h:27
 msgid "Mobile:"
@@ -282,7 +277,7 @@ msgstr "Organizace:"
 
 #: ../ContactViewer/contactviewer.glade.h:30
 msgid "Other"
-msgstr ""
+msgstr "Jiný"
 
 #: ../ContactViewer/contactviewer.glade.h:31
 msgid "Pager:"
@@ -294,11 +289,11 @@ msgstr "Preferovaný formát:"
 
 #: ../ContactViewer/contactviewer.glade.h:34
 msgid "State/Province"
-msgstr ""
+msgstr "Stát/provincie"
 
 #: ../ContactViewer/contactviewer.glade.h:35
 msgid "State/Province:"
-msgstr ""
+msgstr "Stát/provincie:"
 
 #: ../ContactViewer/contactviewer.glade.h:36 ../search/Tiles/Calendar.cs:51
 #: ../search/Tiles/File.cs:124 ../search/Tiles/Note.cs:57
@@ -312,6 +307,9 @@ msgid ""
 "Plain text\n"
 "HTML"
 msgstr ""
+"Neznámý\n"
+"Prostý textn"
+"HTML"
 
 #: ../ContactViewer/contactviewer.glade.h:40
 msgid "Web Page:"
@@ -443,15 +441,15 @@ msgstr "Spustit vyhledávací službu"
 msgid "_Find:"
 msgstr "_Hledat:"
 
-#: ../search/Search.cs:163
+#: ../search/Search.cs:164
 msgid "Find Now"
 msgstr "Najít"
 
-#: ../search/Search.cs:209
+#: ../search/Search.cs:210
 msgid "Type in search terms"
 msgstr "Zadejte hledané termíny"
 
-#: ../search/Search.cs:210
+#: ../search/Search.cs:211
 msgid "Start searching"
 msgstr "Začít hledání"
 
@@ -461,11 +459,11 @@ msgstr "Popis:"
 
 #: ../search/Tiles/Calendar.cs:57
 msgid "Location:"
-msgstr ""
+msgstr "Místo:"
 
 #: ../search/Tiles/Calendar.cs:61
 msgid "Attendees:"
-msgstr ""
+msgstr "Účastníci:"
 
 #: ../search/Tiles/Contact.cs:30
 msgid "Send Mail"
@@ -551,19 +549,19 @@ msgstr "Stav:"
 
 #: ../search/Tiles/IMLog.cs:112
 msgid "Idle"
-msgstr ""
+msgstr "Nečinný"
 
 #: ../search/Tiles/IMLog.cs:119
 msgid "Away"
-msgstr ""
+msgstr "Pryč"
 
 #: ../search/Tiles/IMLog.cs:122
 msgid "Offline"
-msgstr ""
+msgstr "Offline"
 
 #: ../search/Tiles/IMLog.cs:125
 msgid "Available"
-msgstr ""
+msgstr "Dostupný"
 
 #: ../search/Tiles/MailAttachment.cs:45
 msgid "Mail attachment"
@@ -594,14 +592,12 @@ msgid "Date Sent:"
 msgstr "Datum odeslání:"
 
 #: ../search/Tiles/MailMessage.cs:120
-#, fuzzy
 msgid "Folder:"
-msgstr "Složky"
+msgstr "Složka:"
 
 #: ../search/Tiles/OpenWithMenu.cs:47
-#, fuzzy
 msgid "Open With"
-msgstr "Otevřít"
+msgstr "Otevřít pomocí"
 
 #: ../search/Tiles/Presentation.cs:33
 #, csharp-format
@@ -1076,7 +1072,7 @@ msgstr "Na začátek řadit nejlépe odpovídající výsledky"
 
 #: ../search/UIManager.cs:268
 msgid "Couldn't launch web browser"
-msgstr ""
+msgstr "Nelze spustit webový prohlížeč"
 
 #: ../tools/Settings.cs:226
 msgid "Reload configuration"
