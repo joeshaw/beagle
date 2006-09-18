@@ -406,8 +406,17 @@ namespace Beagle.Daemon {
 					// If this is non-text property, just return one token
 					// containing the entire string.  We do this to avoid
 					// tokenizing keywords.
-					if (! is_text_prop)
-						return new LowerCaseFilter (new SingletonTokenStream (reader.ReadToEnd ()));
+					if (! is_text_prop) {
+						// We don't want to lower case the token if it's
+						// not in the private namespace.
+							
+						TokenStream singleton_stream = new SingletonTokenStream (reader.ReadToEnd ());
+						
+						if (fieldName.StartsWith ("prop:k:" + LuceneQueryingDriver.PrivateNamespace))
+							return singleton_stream;
+						else
+							return new LowerCaseFilter (singleton_stream);
+					}
 				} else if (fieldName == "PropertyKeyword")
 					return new LowerCaseFilter (new SingletonTokenStream (reader.ReadToEnd ()));
 

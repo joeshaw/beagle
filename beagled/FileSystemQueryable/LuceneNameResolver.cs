@@ -163,12 +163,12 @@ namespace Beagle.Daemon.FileSystemQueryable {
 
 			string key2;
 			key2 = PropertyToFieldName (PropertyType.Keyword, FileSystemQueryable.ExactFilenamePropKey);
-						    
+
 			LNS.Query q1;
 			q1 = new LNS.TermQuery (new Term (key1, parent_uri_str));
 			
 			LNS.Query q2;
-			q2 = new LNS.TermQuery (new Term (key2, name));
+			q2 = new LNS.TermQuery (new Term (key2, name.ToLower ()));
 
 			LNS.BooleanQuery query;
 			query = new LNS.BooleanQuery ();
