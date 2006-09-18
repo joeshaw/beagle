@@ -57,7 +57,9 @@ namespace Beagle.Daemon.FileSystemQueryable {
 		// 3: Switched to UTC for all times, changed the properties a bit.
 		// 4: Changed the key of TextFilenamePropKey to beagle:Filename - it might be useful in clients.
 		//    Make SplitFilenamePropKey unstored
-		const int MINOR_VERSION = 4;
+		// 5: Keyword properies in the private namespace are no longer lower cased; this is required to
+		//    offset the change in LuceneCommon.cs
+		const int MINOR_VERSION = 5;
 
 		private object big_lock = new object ();
 
