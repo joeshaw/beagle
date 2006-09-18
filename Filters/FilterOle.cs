@@ -58,11 +58,16 @@ namespace Beagle.Filters {
 		{
 			try {
 				Gsf.Global.Init ();
+
 				Input input = new InputStdio (info.FullName);
+				
 				if (input != null) {
-					input = input.Uncompress();
-					file = new InfileMSOle (input);
+					Input uncompressed_input = input.Uncompress();
+					input.Dispose ();
+					file = new InfileMSOle (uncompressed_input);
+					uncompressed_input.Dispose ();
 				}
+				
 				if (input == null || file == null) {
 					Logger.Log.Error ("Unable to open [{0}] ",info.FullName);
 					Console.WriteLine ("input/file is null");
@@ -172,6 +177,12 @@ namespace Beagle.Filters {
 			}
 
 			ExtractMetaData (sum_stream, doc_stream);
+			
+			if (sumMeta != null)
+				sumMeta.Dispose ();
+			
+			if (docSumMeta != null)
+				docSumMeta.Dispose ();
 		}
 
 		override protected void DoPullProperties ()
@@ -195,17 +206,24 @@ namespace Beagle.Filters {
 			} catch (Exception e) {
 				Logger.Log.Error (e, "Exception occurred duing DoPullProperties.");
 				Error ();
+			} finally {
+				if (sum_stream != null)
+					sum_stream.Dispose ();
+				if (doc_stream != null)
+					doc_stream.Dispose ();
 			}
 		}
 
-		/*
-		  FIXME: Uncomment this when Shutdown() is 
-		  available in gsf#.
 		override protected void DoClose ()
 		{
-			Gsf.Global.Shutdown ();
+			if (file != null)
+				file.Dispose ();
+			
+			Log.Debug ("File should be closed now or very shortly.");
+			
+			// FIXME: Uncomment this when Shutdown() is available in gsf#
+			// Gsf.Global.Shutdown ();
 		}
-		*/
 
 		// FIXME: These are utility functions and can be useful 
 		// outside this filter as well.

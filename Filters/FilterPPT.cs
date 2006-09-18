@@ -523,6 +523,8 @@ namespace Beagle.Filters {
 						ret = ParseElement (stream);
 						//Console.WriteLine ("Position of the ptr in the stream: {0}", stream.Position);
 					}
+					
+					stream.Dispose ();
 				} else {
 					Logger.Log.Error ("Ole stream not found in {0}.  Content extraction skipped.", FileName);
 				}
@@ -541,23 +543,34 @@ namespace Beagle.Filters {
 			// PPT 95/97-2000 format contains a "PP97_DUALSTORAGE", which is required
 			// to index PPT 97-2000 files.
 			// We don't support PPT 95 files, however, we happily accept patches ;-)
-
-			Input dualStorTemp = null;
+			
+			Input temp_input = null;
 			try {
-				if ((dualStorTemp = file.ChildByName ("PP97_DUALSTORAGE")) != null) {
+				temp_input = file.ChildByName ("PP97_DUALSTORAGE");
+				
+				if (temp_input != null) {
 					// "PP97_DUALSTORAGE" is a storage containing some streams
-					if (dualStorTemp.Handle != IntPtr.Zero)
-						file = (Gsf.Infile) GLib.Object.GetObject (dualStorTemp.Handle);
-				} else if (((dualStorTemp = file.ChildByName ("Header")) != null) ||
-					   ((dualStorTemp = file.ChildByName ("PowerPoint Document")) == null)) {
-					Logger.Log.Error ("{0} is a PPT 95/4.0 file.  Beagle does not support PPT 95 files. Skipping...", FileName);
-					Error ();
-					return;
-				}
-
-				if (file.ChildByName ("EncryptedSummary") != null) {
-					Log.Warn ("{0} is a password-protected PowerPoint file.  Skipping.", FileName);
-					Error ();
+					if (temp_input.Handle != IntPtr.Zero) {
+						file.Dispose ();
+						file = (Gsf.Infile) GLib.Object.GetObject (temp_input.Handle);
+					}
+				} else {
+					using (temp_input = file.ChildByName ("Header")) {
+						using (Input temp_input2 = file.ChildByName ("PowerPoint Document")) {
+							if (temp_input != null || temp_input2 == null) {
+								Log.Error ("{0} is an unsupported PPT 95/4.0 file.  Skipping", FileName);
+								Error ();
+								return;
+							}
+						}
+					}
+				}	
+				
+				using (temp_input = file.ChildByName ("EncryptedSummary")) {
+					if (temp_input != null) {
+						Log.Warn ("{0} is a password-protected PowerPoint file.  Skipping.", FileName);
+						Error ();
+					}
 				}
 
 			} catch (Exception e) {
