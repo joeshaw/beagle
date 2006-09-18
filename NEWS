@@ -1,4 +1,83 @@
 
+Version 0.2.10
+18 September 2006
+
+Daemon/Infrastructure:
+* Fix the way we escape URIs throughout the codebase to conform more
+  to the RFC and so less-accepting apps work with UTF-8 filenames.
+  (Joe Shaw)
+* Use the GTK+ version of xdgmime instead of the upstream version as
+  it appears to be the canonical one.  Fixes the ever-increasing time
+  to filter certain files (particularly Java archives (jar),
+  Javascript and Matlab files).  (Joe, Bera)
+* Improve logging when we are unable to filter a file.  (Joe)
+
+Backends:
+* Fix a bug in which file removals weren't being handled correctly.
+  (Joe)
+* Fix a problem in which directories with hundreds of files with long
+  filenames weren't being completely indexed.  (Joe, Kent Borg)
+* Fix a bug in the Evolution mail backend in which subfolders weren't
+  getting updated in a timely manner.  (Joe)
+* Indexing account data in non-standard places in the Thunderbird
+  backend should now work better.  (Pierre Östlund)
+* Fix bugs when parsing Thunderbird accounts.  (Pierre)
+* Read the Thunderbird mailbox name from the Mork file for prettier
+  output.  (Pierre)
+
+Filters:
+* Add whitespace after attributes in the HTML filter.   (Debajyoti
+  Bera)
+* Fix a problem where the MPlayer filter was failing in locales which
+  use commas instead of periods for decimal points.  (Joe)
+* Blacklist signature, MS TNEF, vCard and iCal attachments from mails
+  because they (currently) have no indexing value.  (Joe)
+* Fix a bug in which mail attachments with capitalized MIME types
+  weren't being recognized and indexed correctly.  (Joe)
+* Add a bunch of additional MIME types to the C, C++ and shell script
+  filters.  (Joe)
+* Capture warnings and errors from the PDF commands and log them as
+  warnings.  (Joe)
+* Fix lifecycle issues in the OLE-based filters (PowerPoint and Word)
+  that were causing files to never be closed.  You also need gsf-sharp
+  0.8.1 for this to work correctly.  (Joe)
+
+UI:
+* Add support for Galago 0.5 and put some presence info in the UI.
+  (Kevin Kubasik)
+* Fix the dreaded focus stealing bug once and for all.  (Joe)
+* Don't crash when we get an empty list for "Open With..." handlers.
+  (Lukas)
+* Fix a problem in which the mail client wasn't opening correctly for
+  mail attachments.  (Kevin)
+
+Bindings:
+* Fix some compile warnings in libbeagle.  (Joe Hargadon)
+
+Tools:
+* Fix a plural string in the contact viewer for i18n.  (Joe)
+
+Translations:
+* Updated British English translation.  (David Lodge)
+* Updated Catalan translation.  (Jordi Mas)
+* Updated Czech translation.  (Jakub Friedl)
+* Updated Dutch translation.  (Tino Meinen)
+* Updated Macedonian translation.  (Jovan Naumovski)
+* Updated Finnish translation.  (Ilkka Tuohela)
+* Updated Norwegian bokmål translation.  (Kjartan Maraas)
+* Updated Russian translation.  (Alexander Sigachov)
+* Updated Spanish translation.  (Francisco Javier F. Serrador)
+* Updated Swedish translation.  (Daniel Nylander)
+
+Everything else:
+* Add support for Epiphany 2.16.  (Joe)
+* Require stable versions of gtk-sharp (2.4.0) and gmime-sharp
+  (2.2.0).  (Joe)
+* Install the beagle-ui.pc pkg-config file only if the UI is built.
+  (Bera)
+
+------------------------------------------------------
+
 Version 0.2.9
 1 September 2006
 
