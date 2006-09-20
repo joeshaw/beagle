@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: beagle HEAD\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2006-06-26 14:55+0300\n"
-"PO-Revision-Date: 2006-06-26 14:58+0300\n"
+"POT-Creation-Date: 2006-09-20 12:34+0300\n"
+"PO-Revision-Date: 2006-09-20 12:35+0300\n"
 "Last-Translator: Žygimantas Beručka <zygis@gnome.org>\n"
 "Language-Team: Lithuanian <komp_lt@konferencijos.lt>\n"
 "MIME-Version: 1.0\n"
@@ -24,6 +24,307 @@ msgstr "Orientacija"
 #: ../glue/eggtrayicon.c:128
 msgid "The orientation of the tray."
 msgstr "Skydelio orientacija."
+
+#: ../ContactViewer/ContactWindow.cs:74
+msgid "Open..."
+msgstr "Atverti..."
+
+#: ../ContactViewer/ContactWindow.cs:76 ../search/Tray/TrayIcon.cs:86
+msgid "Quit"
+msgstr "Išeiti"
+
+#: ../ContactViewer/ContactWindow.cs:79
+msgid "About"
+msgstr "Apie"
+
+#: ../ContactViewer/ContactWindow.cs:95 ../search/Tiles/Utils.cs:26
+msgid "Contacts"
+msgstr "Kontaktai"
+
+#: ../ContactViewer/ContactWindow.cs:100
+msgid "Display name"
+msgstr "Vardas ekrane"
+
+#: ../ContactViewer/ContactWindow.cs:101
+msgid "Primary E-mail"
+msgstr "Pirminis el. pašto adresas"
+
+#: ../ContactViewer/ContactWindow.cs:102
+msgid "Secondary E-mail"
+msgstr "Antrinis el. pašto adresas"
+
+#: ../ContactViewer/ContactWindow.cs:103
+msgid "Nickname"
+msgstr "Slapyvardis"
+
+#: ../ContactViewer/ContactWindow.cs:133
+#, csharp-format
+msgid ""
+"Unable to open mork database:\n"
+"\n"
+" {0}"
+msgstr ""
+"Nepavyko atverti mork duomenų bazės:\n"
+"\n"
+" {0}"
+
+#: ../ContactViewer/ContactWindow.cs:153
+msgid "The specified ID does not exist in this database!"
+msgstr "Nurodytas ID šioje duomenų bazėje neegzistuoja!"
+
+#: ../ContactViewer/ContactWindow.cs:180
+#, csharp-format
+msgid "Added {0} contact"
+msgid_plural "Added {0} contacts"
+msgstr[0] "Pridėtas {0} kontaktas"
+msgstr[1] "Pridėti {0} kontaktai"
+msgstr[2] "Pridėta {0} kontaktų"
+
+#: ../ContactViewer/ContactWindow.cs:204
+#, csharp-format
+msgid "Viewing {0}"
+msgstr "Žiūrima {0}"
+
+#: ../ContactViewer/ContactWindow.cs:205
+msgid "DisplayName"
+msgstr "VardasEkrane"
+
+#: ../ContactViewer/ContactWindow.cs:244
+msgid "Select a mork database file"
+msgstr "Pasirinkite mork duomenų bazės rinkmeną"
+
+#: ../ContactViewer/ContactWindow.cs:303
+msgid "FirstName"
+msgstr "Vardas"
+
+#: ../ContactViewer/ContactWindow.cs:303
+msgid "NickName"
+msgstr "Slapyvardis"
+
+#: ../ContactViewer/ContactWindow.cs:303
+msgid "LastName"
+msgstr "Pavardė"
+
+#: ../ContactViewer/ContactWindow.cs:311
+msgid "Primary E-Mail:"
+msgstr "Pirminis el. paštas:"
+
+#: ../ContactViewer/ContactWindow.cs:313
+msgid "PrimaryEmail"
+msgstr "PirminisElPaštas"
+
+#: ../ContactViewer/ContactWindow.cs:315
+#: ../ContactViewer/contactviewer.glade.h:33
+msgid "Screen name:"
+msgstr "Vardas ekrane:"
+
+#: ../ContactViewer/ContactWindow.cs:317
+msgid "_AimScreenName"
+msgstr "_AimVardasEkrane"
+
+#: ../ContactViewer/ContactWindow.cs:319
+msgid "Home phone:"
+msgstr "Namų telefonas:"
+
+#: ../ContactViewer/ContactWindow.cs:321
+msgid "HomePhone"
+msgstr "NamųTelefonas"
+
+#: ../ContactViewer/ContactWindow.cs:323
+msgid "Mobile phone:"
+msgstr "Mobilusis telefonas:"
+
+#: ../ContactViewer/ContactWindow.cs:325
+msgid "CellularNumber"
+msgstr "MobilusisTelefonas"
+
+#: ../ContactViewer/ContactWindow.cs:327
+msgid "Web page:"
+msgstr "Tinklalapis:"
+
+#: ../ContactViewer/ContactWindow.cs:329
+msgid "WebPage2"
+msgstr "Tinklalapis2"
+
+#: ../ContactViewer/ContactWindow.cs:336
+msgid "Send E-Mail"
+msgstr "Siųsti el.laišką"
+
+#: ../ContactViewer/ContactWindow.cs:340
+msgid "Details..."
+msgstr "Detaliau..."
+
+#: ../ContactViewer/ContactWindow.cs:368
+msgid "Could not find a valid E-mail address!"
+msgstr "Nepavyko rasti tinkamo el.pašto adreso!"
+
+#: ../ContactViewer/contactviewer.glade.h:1
+msgid "<b>Custom fields</b>"
+msgstr "<b>Kiti laukeliai</b>"
+
+#: ../ContactViewer/contactviewer.glade.h:2
+msgid "<b>Home</b>"
+msgstr "<b>Namai</b>"
+
+#: ../ContactViewer/contactviewer.glade.h:3
+msgid "<b>Internet</b>"
+msgstr "<b>Internetas</b>"
+
+#: ../ContactViewer/contactviewer.glade.h:4
+msgid "<b>Name</b>"
+msgstr "<b>Vardas</b>"
+
+#: ../ContactViewer/contactviewer.glade.h:5
+msgid "<b>Notes</b>"
+msgstr "<b>Pastabos</b>"
+
+#: ../ContactViewer/contactviewer.glade.h:6
+msgid "<b>Phones</b>"
+msgstr "<b>Telefonai</b>"
+
+#: ../ContactViewer/contactviewer.glade.h:7
+msgid "<b>Work</b>"
+msgstr "<b>Darbas</b>"
+
+#: ../ContactViewer/contactviewer.glade.h:8
+msgid "Additional E-Mail:"
+msgstr "Papildomas el.paštas:"
+
+#: ../ContactViewer/contactviewer.glade.h:9
+msgid "Address"
+msgstr "Adresas"
+
+#: ../ContactViewer/contactviewer.glade.h:10
+msgid "Address:"
+msgstr "Adresas:"
+
+#: ../ContactViewer/contactviewer.glade.h:11
+msgid "City:"
+msgstr "Miestas:"
+
+#: ../ContactViewer/contactviewer.glade.h:12
+msgid "Contact"
+msgstr "Kontaktas"
+
+#: ../ContactViewer/contactviewer.glade.h:13
+msgid "Contact Viewer"
+msgstr "Kontaktų peržiūros programa"
+
+#: ../ContactViewer/contactviewer.glade.h:14
+msgid "Country:"
+msgstr "Šalis:"
+
+#: ../ContactViewer/contactviewer.glade.h:15
+msgid "Custom 1:"
+msgstr "Kitas 1:"
+
+#: ../ContactViewer/contactviewer.glade.h:16
+msgid "Custom 2:"
+msgstr "Kitas 2:"
+
+#: ../ContactViewer/contactviewer.glade.h:17
+msgid "Custom 3:"
+msgstr "Kitas 3:"
+
+#: ../ContactViewer/contactviewer.glade.h:18
+msgid "Custom 4:"
+msgstr "Kitas 4:"
+
+#: ../ContactViewer/contactviewer.glade.h:19
+msgid "Department:"
+msgstr "Padalinys:"
+
+#: ../ContactViewer/contactviewer.glade.h:20
+msgid "Detailed view"
+msgstr "Detalesnis vaizdas"
+
+#: ../ContactViewer/contactviewer.glade.h:21
+msgid "Display:"
+msgstr "Rodyti:"
+
+#: ../ContactViewer/contactviewer.glade.h:22 ../search/Tiles/Contact.cs:68
+msgid "E-Mail:"
+msgstr "El. paštas:"
+
+#: ../ContactViewer/contactviewer.glade.h:23
+msgid "Fax:"
+msgstr "Faksas:"
+
+#: ../ContactViewer/contactviewer.glade.h:24
+msgid "First:"
+msgstr "Pirmas:"
+
+#: ../ContactViewer/contactviewer.glade.h:25
+msgid "Home:"
+msgstr "Namai:"
+
+#: ../ContactViewer/contactviewer.glade.h:26
+msgid "Last:"
+msgstr "Paskutinis:"
+
+#: ../ContactViewer/contactviewer.glade.h:27
+msgid "Mobile:"
+msgstr "Mobilusis telefonas:"
+
+#: ../ContactViewer/contactviewer.glade.h:28
+msgid "Nickname:"
+msgstr "Slapyvardis:"
+
+#: ../ContactViewer/contactviewer.glade.h:29
+msgid "Organization:"
+msgstr "Organizacija:"
+
+#: ../ContactViewer/contactviewer.glade.h:30
+msgid "Other"
+msgstr "Kita"
+
+#: ../ContactViewer/contactviewer.glade.h:31
+msgid "Pager:"
+msgstr "Pranešimų gaviklis:"
+
+#: ../ContactViewer/contactviewer.glade.h:32
+msgid "Preferred format:"
+msgstr "Pageidaujamas formatas:"
+
+#: ../ContactViewer/contactviewer.glade.h:34
+msgid "State/Province"
+msgstr "Vietovė"
+
+#: ../ContactViewer/contactviewer.glade.h:35
+msgid "State/Province:"
+msgstr "Vietovė:"
+
+#: ../ContactViewer/contactviewer.glade.h:36 ../search/Tiles/Calendar.cs:51
+#: ../search/Tiles/File.cs:124 ../search/Tiles/Note.cs:57
+#: ../search/Tiles/RSSFeed.cs:45 ../search/Tiles/WebHistory.cs:50
+msgid "Title:"
+msgstr "Pavadinimas:"
+
+#: ../ContactViewer/contactviewer.glade.h:37
+msgid ""
+"Unknown\n"
+"Plain text\n"
+"HTML"
+msgstr ""
+"Nežinoma\n"
+"Paprastas tekstas\n"
+"HTML"
+
+#: ../ContactViewer/contactviewer.glade.h:40
+msgid "Web Page:"
+msgstr "Tinklalapis:"
+
+#: ../ContactViewer/contactviewer.glade.h:41
+msgid "Work:"
+msgstr "Darbas:"
+
+#: ../ContactViewer/contactviewer.glade.h:42
+msgid "ZIP/Postal Code"
+msgstr "Pašto kodas"
+
+#: ../ContactViewer/contactviewer.glade.h:43
+msgid "ZIP/Postal Code:"
+msgstr "Pašto kodas:"
 
 #: ../ImLogViewer/ImLogViewer.glade.h:1
 msgid "<b>Conversations History</b>"
@@ -43,7 +344,7 @@ msgstr "Pokalbiai esantys {0}"
 msgid "Conversations with {0}"
 msgstr "Pokalbiai su {0}"
 
-#: ../search/beagle-search.desktop.in.h:1 ../tools/settings.glade.h:27
+#: ../search/beagle-search.desktop.in.h:1 ../tools/settings.glade.h:28
 msgid "Search"
 msgstr "Paieška"
 
@@ -51,7 +352,15 @@ msgstr "Paieška"
 msgid "Search for data on your desktop"
 msgstr "Ieškoti duomenų Jūsų darbo aplinkoje"
 
-#: ../search/Category.cs:108
+#: ../search/Category.cs:109
+#, csharp-format
+msgid "{0} result"
+msgid_plural "{0} results"
+msgstr[0] "{0} rezultatas"
+msgstr[1] "{0} rezultatai"
+msgstr[2] "{0} rezultatų"
+
+#: ../search/Category.cs:111
 #, csharp-format
 msgid "{0}-{1} of {2}"
 msgstr "{0}-{1} iš {2}"
@@ -105,7 +414,7 @@ msgid ""
 "When searching for a phrase, add quotes. ex: <b>\"There be dragons\"</b>"
 msgstr "Kai ieškote frazės, pridėkite kabutes, pvz.: <b>„Rokenrolo naktys“</b>"
 
-#: ../search/Pages/QuickTips.cs:19 ../search/UIManager.cs:81
+#: ../search/Pages/QuickTips.cs:19 ../search/UIManager.cs:83
 msgid "Quick Tips"
 msgstr "Greiti patarimai"
 
@@ -133,25 +442,33 @@ msgstr "Paleisti paieškos paslaugą"
 msgid "_Find:"
 msgstr "_Rasti:"
 
-#: ../search/Search.cs:163
+#: ../search/Search.cs:164
 msgid "Find Now"
 msgstr "Rasti dabar"
 
-#: ../search/Search.cs:209
+#: ../search/Search.cs:210
 msgid "Type in search terms"
 msgstr "Įveskite paieškos žodžius"
 
-#: ../search/Search.cs:210
+#: ../search/Search.cs:211
 msgid "Start searching"
 msgstr "Pradėti paiešką"
+
+#: ../search/Tiles/Calendar.cs:54
+msgid "Description:"
+msgstr "Aprašymas"
+
+#: ../search/Tiles/Calendar.cs:57
+msgid "Location:"
+msgstr "Vieta:"
+
+#: ../search/Tiles/Calendar.cs:61
+msgid "Attendees:"
+msgstr "Dalyviai:"
 
 #: ../search/Tiles/Contact.cs:30
 msgid "Send Mail"
 msgstr "Išsiųsti paštu"
-
-#: ../search/Tiles/Contact.cs:68
-msgid "E-Mail:"
-msgstr "El. paštas:"
 
 #: ../search/Tiles/Contact.cs:70
 msgid "Mobile Phone:"
@@ -179,11 +496,6 @@ msgstr "El. paštas"
 #: ../search/Tiles/File.cs:37 ../search/Tiles/Folder.cs:38
 msgid "Move to Trash"
 msgstr "Perkelti į šiukšlinę"
-
-#: ../search/Tiles/File.cs:124 ../search/Tiles/Note.cs:57
-#: ../search/Tiles/RSSFeed.cs:45 ../search/Tiles/WebHistory.cs:50
-msgid "Title:"
-msgstr "Pavadinimas:"
 
 #: ../search/Tiles/File.cs:125 ../search/Tiles/Folder.cs:51
 #: ../search/Tiles/Note.cs:58
@@ -224,37 +536,69 @@ msgstr "Modifikuota:"
 msgid "IM Conversation"
 msgstr "IM pokalbiai"
 
-#: ../search/Tiles/IMLog.cs:87
+#: ../search/Tiles/IMLog.cs:92
 msgid "Name:"
 msgstr "Pavadinimas:"
 
-#: ../search/Tiles/IMLog.cs:88 ../search/Tiles/MailMessage.cs:92
+#: ../search/Tiles/IMLog.cs:93 ../search/Tiles/MailMessage.cs:114
 msgid "Date Received:"
 msgstr "Gavimo data:"
 
-#: ../search/Tiles/MailAttachment.cs:47
+#: ../search/Tiles/IMLog.cs:97
+msgid "Status:"
+msgstr "Būsena:"
+
+#: ../search/Tiles/IMLog.cs:112
+msgid "Idle"
+msgstr "Neveiklus"
+
+#: ../search/Tiles/IMLog.cs:119
+msgid "Away"
+msgstr "Išėjęs"
+
+#: ../search/Tiles/IMLog.cs:122
+msgid "Offline"
+msgstr "Atsijungęs"
+
+#: ../search/Tiles/IMLog.cs:125
+msgid "Available"
+msgstr "Prisijungęs"
+
+#: ../search/Tiles/MailAttachment.cs:45
 msgid "Mail attachment"
 msgstr "Laiško priedas"
 
-#: ../search/Tiles/MailMessage.cs:55
+#: ../search/Tiles/MailMessage.cs:67
+msgid "(untitled)"
+msgstr "(be pavadinimo)"
+
+#: ../search/Tiles/MailMessage.cs:77
 msgid "Send in Mail"
 msgstr "Išsiųsti paštu"
 
-#: ../search/Tiles/MailMessage.cs:87
+#: ../search/Tiles/MailMessage.cs:109
 msgid "Subject:"
 msgstr "Tema:"
 
-#: ../search/Tiles/MailMessage.cs:89
+#: ../search/Tiles/MailMessage.cs:111
 msgid "To:"
 msgstr "Kam:"
 
-#: ../search/Tiles/MailMessage.cs:89
+#: ../search/Tiles/MailMessage.cs:111
 msgid "From:"
 msgstr "Nuo:"
 
-#: ../search/Tiles/MailMessage.cs:92
+#: ../search/Tiles/MailMessage.cs:114
 msgid "Date Sent:"
 msgstr "Išsiuntimo data:"
+
+#: ../search/Tiles/MailMessage.cs:120
+msgid "Folder:"
+msgstr "Aplankas:"
+
+#: ../search/Tiles/OpenWithMenu.cs:47
+msgid "Open With"
+msgstr "Atverti su"
 
 #: ../search/Tiles/Presentation.cs:33
 #, csharp-format
@@ -287,10 +631,6 @@ msgstr "Atverti"
 #: ../search/Tiles/Utils.cs:24
 msgid "Applications"
 msgstr "Programos"
-
-#: ../search/Tiles/Utils.cs:26
-msgid "Contacts"
-msgstr "Kontaktai"
 
 #: ../search/Tiles/Utils.cs:28
 msgid "Calendar Events"
@@ -332,22 +672,21 @@ msgstr "Naujienų kanalai"
 msgid "Archives"
 msgstr "Archyvai"
 
-#: ../search/Tiles/Utils.cs:100 ../search/Tiles/Utils.cs:146
-#: ../search/Tiles/Utils.cs:192 ../Util/StringFu.cs:77
-msgid "Today"
-msgstr "Šiandien"
-
-#: ../search/Tiles/Utils.cs:102 ../search/Tiles/Utils.cs:148
-#: ../search/Tiles/Utils.cs:194 ../Util/StringFu.cs:79
+#: ../search/Tiles/Utils.cs:77 ../search/Tiles/Utils.cs:159
+#: ../Util/StringFu.cs:79
 msgid "Yesterday"
 msgstr "Vakar"
 
-#: ../search/Tiles/Utils.cs:104 ../search/Tiles/Utils.cs:150
-#: ../search/Tiles/Utils.cs:196
+#: ../search/Tiles/Utils.cs:79 ../search/Tiles/Utils.cs:161
+#: ../Util/StringFu.cs:77
+msgid "Today"
+msgstr "Šiandien"
+
+#: ../search/Tiles/Utils.cs:81 ../search/Tiles/Utils.cs:163
 msgid "Tomorrow"
 msgstr "Rytoj"
 
-#: ../search/Tiles/Utils.cs:200
+#: ../search/Tiles/Utils.cs:179
 #, csharp-format
 msgid "{0} week ago"
 msgid_plural "{0} weeks ago"
@@ -355,7 +694,7 @@ msgstr[0] "prieš {0} savaitę"
 msgstr[1] "prieš {0} savaites"
 msgstr[2] "prieš {0} savaičių"
 
-#: ../search/Tiles/Utils.cs:202
+#: ../search/Tiles/Utils.cs:181
 #, csharp-format
 msgid "In {0} week"
 msgid_plural "In {0} weeks"
@@ -364,7 +703,7 @@ msgstr[1] "Per {0} savaites"
 msgstr[2] "Per {0} savaičių"
 
 #. Let's say a year and a half to stop saying months
-#: ../search/Tiles/Utils.cs:204
+#: ../search/Tiles/Utils.cs:183
 #, csharp-format
 msgid "{0} month ago"
 msgid_plural "{0} months ago"
@@ -372,7 +711,7 @@ msgstr[0] "prieš {0} mėnesį"
 msgstr[1] "prieš {0} mėnesius"
 msgstr[2] "prieš {0} mėnesių"
 
-#: ../search/Tiles/Utils.cs:206
+#: ../search/Tiles/Utils.cs:185
 #, csharp-format
 msgid "In {0} month"
 msgid_plural "In {0} months"
@@ -380,7 +719,7 @@ msgstr[0] "Per {0} mėnesį"
 msgstr[1] "Per {0} mėnesius"
 msgstr[2] "Per {0} mėnesių"
 
-#: ../search/Tiles/Utils.cs:208
+#: ../search/Tiles/Utils.cs:187
 #, csharp-format
 msgid "{0} year ago"
 msgid_plural "{0} years ago"
@@ -388,7 +727,7 @@ msgstr[0] "prieš {0} metus"
 msgstr[1] "prieš {0} metus"
 msgstr[2] "prieš {0} metų"
 
-#: ../search/Tiles/Utils.cs:210
+#: ../search/Tiles/Utils.cs:189
 #, csharp-format
 msgid "In {0} year"
 msgid_plural "In {0} years"
@@ -425,10 +764,6 @@ msgstr "Paskutiniosios paieškos"
 #: ../search/Tray/TrayIcon.cs:78
 msgid "Clear"
 msgstr "Išvalyti"
-
-#: ../search/Tray/TrayIcon.cs:86
-msgid "Quit"
-msgstr "Išeiti"
 
 #. Translators: the strings in TypeFilter.cs are for when the user
 #. * wants to limit search results to a specific type. You don't need
@@ -610,135 +945,139 @@ msgstr ""
 "žmogus\n"
 "žmonės"
 
-#: ../search/UIManager.cs:42
+#: ../search/UIManager.cs:44
 msgid "Close Desktop Search"
 msgstr "Užverti darbo aplinkos paiešką"
 
-#: ../search/UIManager.cs:47 ../search/UIManager.cs:69
+#: ../search/UIManager.cs:49 ../search/UIManager.cs:71
 msgid "Exit Desktop Search"
 msgstr "Uždaryti darbo aplinkos paiešką"
 
-#: ../search/UIManager.cs:54
+#: ../search/UIManager.cs:56
 msgid "_Search"
 msgstr "_Paieška"
 
-#: ../search/UIManager.cs:57
+#: ../search/UIManager.cs:59
 msgid "_Actions"
 msgstr "_Veiksmai"
 
-#: ../search/UIManager.cs:60
+#: ../search/UIManager.cs:62
 msgid "Sor_t"
 msgstr "Rūšiuo_ti"
 
-#: ../search/UIManager.cs:63
+#: ../search/UIManager.cs:65
 msgid "_Help"
 msgstr "_Žinynas"
 
-#: ../search/UIManager.cs:72
+#: ../search/UIManager.cs:74
 msgid "_Contents"
 msgstr "_Turinys"
 
-#: ../search/UIManager.cs:74
+#: ../search/UIManager.cs:76
 msgid "Help - Table of Contents"
 msgstr "Žinynas - Turinys"
 
-#: ../search/UIManager.cs:78
+#: ../search/UIManager.cs:80
 msgid "About Desktop Search"
 msgstr "Apie darbo aplinkos paiešką"
 
-#: ../search/UIManager.cs:100
+#: ../search/UIManager.cs:102
 msgid "_Everywhere"
 msgstr "_Visur"
 
-#: ../search/UIManager.cs:102
+#: ../search/UIManager.cs:104
 msgid "Search everywhere"
 msgstr "Ieškoti visur"
 
-#: ../search/UIManager.cs:105
+#: ../search/UIManager.cs:107
 msgid "_Applications"
 msgstr "_Programos"
 
-#: ../search/UIManager.cs:107
+#: ../search/UIManager.cs:109
 msgid "Search applications"
 msgstr "Ieškoti programose"
 
-#: ../search/UIManager.cs:110
+#: ../search/UIManager.cs:112
 msgid "_Contacts"
 msgstr "_Kontaktai"
 
-#: ../search/UIManager.cs:112
+#: ../search/UIManager.cs:114
 msgid "Search contacts"
 msgstr "Ieškoti kontaktuose"
 
-#: ../search/UIManager.cs:115
+#: ../search/UIManager.cs:117
 msgid "Ca_lendar events"
 msgstr "Įvykiai ka_lendoriuje"
 
-#: ../search/UIManager.cs:117
+#: ../search/UIManager.cs:119
 msgid "Search calendar events"
 msgstr "Ieškoti įvykių kalendoriuje"
 
-#: ../search/UIManager.cs:120
+#: ../search/UIManager.cs:122
 msgid "_Documents"
 msgstr "_Dokumentai"
 
-#: ../search/UIManager.cs:122
+#: ../search/UIManager.cs:124
 msgid "Search documents"
 msgstr "Ieškoti dokumentuose"
 
-#: ../search/UIManager.cs:125
+#: ../search/UIManager.cs:127
 msgid "Conve_rsations"
 msgstr "P_okalbiai"
 
-#: ../search/UIManager.cs:127
+#: ../search/UIManager.cs:129
 msgid "Search E-Mail and Instant Messaging logs"
 msgstr "Ieškoti el. laiškų ir greitų žinučių žurnalų"
 
-#: ../search/UIManager.cs:130
+#: ../search/UIManager.cs:132
 msgid "_Images"
 msgstr "_Paveikslėliai"
 
-#: ../search/UIManager.cs:132
+#: ../search/UIManager.cs:134
 msgid "Search images"
 msgstr "Ieškoti paveikslėlių"
 
-#: ../search/UIManager.cs:135
+#: ../search/UIManager.cs:137
 msgid "_Media"
 msgstr "_Multimedija"
 
-#: ../search/UIManager.cs:137
+#: ../search/UIManager.cs:139
 msgid "Search sound and video files"
 msgstr "Ieškoti garso ir vaizdo rinkmenų"
 
-#: ../search/UIManager.cs:144
+#: ../search/UIManager.cs:146
 msgid "Date _Modified"
 msgstr "_Modifikavimo data"
 
-#: ../search/UIManager.cs:145
+#: ../search/UIManager.cs:147
 msgid "Sort the most-recently-modified matches first"
 msgstr "Rūšiuoti pagal vėliausiai modifikuotus atitikmenis"
 
-#: ../search/UIManager.cs:148
+#: ../search/UIManager.cs:150
 msgid "_Name"
 msgstr "_Pavadinimas"
 
-#: ../search/UIManager.cs:149
+#: ../search/UIManager.cs:151
 msgid "Sort matches by name"
 msgstr "Rūšiuoti atitikmenis pagal pavadinimą"
 
-#: ../search/UIManager.cs:152
+#: ../search/UIManager.cs:154
 msgid "_Relevance"
 msgstr "_Tinkamumas"
 
-#: ../search/UIManager.cs:153
+#: ../search/UIManager.cs:155
 msgid "Sort the best matches first"
 msgstr "Rūšiuoti pagal atitikmens tikslumą"
 
-#: ../tools/Settings.cs:223
+#: ../search/UIManager.cs:268
+msgid "Couldn't launch web browser"
+msgstr "Nepavyko paleisti žiniatinklio naršyklės"
+
+#: ../tools/Settings.cs:226
 msgid "Reload configuration"
 msgstr "Perkrauti konfigūraciją"
 
-#: ../tools/Settings.cs:224
+#: ../tools/Settings.cs:227
 msgid ""
 "The configuration file has been modified by another application. Do you wish "
 "to discard the currently displayed values and reload configuration from disk?"
@@ -746,15 +1085,15 @@ msgstr ""
 "Konfigūracijos rinkmena buvo modifikuota kitos programos. Ar norite "
 "atsisakyti dabar rodomų reikšmių ir iš naujo įkelti konfigūraciją iš disko?"
 
-#: ../tools/Settings.cs:262
+#: ../tools/Settings.cs:265
 msgid "Select Path"
 msgstr "Pasirinkite kelią"
 
-#: ../tools/Settings.cs:281
+#: ../tools/Settings.cs:284
 msgid "The selected path is already selected for indexing and wasn't added."
 msgstr "Pasirinktas kelias jau pasirinktas indeksavimui bet nebuvo pridėtas."
 
-#: ../tools/Settings.cs:284
+#: ../tools/Settings.cs:287
 msgid ""
 "The selected path wasn't added. The list contains items that supercedes it "
 "and the data is already being indexed."
@@ -762,15 +1101,15 @@ msgstr ""
 "Pasirinktas kelias nebuvo pridėtas. Sąraše yra elementai, kurie jį pakeičia "
 "ir duomenys jau yra indeksuojami."
 
-#: ../tools/Settings.cs:295 ../tools/Settings.cs:487
+#: ../tools/Settings.cs:298 ../tools/Settings.cs:490
 msgid "Path not added"
 msgstr "Kelias nepridėtas"
 
-#: ../tools/Settings.cs:304
+#: ../tools/Settings.cs:307
 msgid "Remove obsolete paths"
 msgstr "Pašalinti nebenaudojamus kelius"
 
-#: ../tools/Settings.cs:305
+#: ../tools/Settings.cs:308
 msgid ""
 "Adding this path will obsolete some of the existing include paths. This will "
 "result in the removal of the old obsolete paths. Do you still wish to add it?"
@@ -778,106 +1117,106 @@ msgstr ""
 "Pridėjus šį kelią, kai kurie egzistuojantys keliai taps pasenusiais. Šie "
 "seni ir nebenaudojami keliai bus ištrinti. Vis dar norite jį pridėti?"
 
-#: ../tools/Settings.cs:331
+#: ../tools/Settings.cs:334
 msgid "Remove path"
 msgstr "Pašalinti kelią"
 
-#: ../tools/Settings.cs:332
+#: ../tools/Settings.cs:335
 msgid ""
 "Are you sure you wish to remove this path from the list of directories to be "
 "included for indexing?"
 msgstr "Ar tikrai norite pašalinti šį kelią iš indeksuojamų aplankų sąrašo?"
 
-#: ../tools/Settings.cs:361
+#: ../tools/Settings.cs:364
 msgid "Remove item"
 msgstr "Pašalinti elementą"
 
-#: ../tools/Settings.cs:362
+#: ../tools/Settings.cs:365
 msgid ""
 "Are you sure you wish to remove this item from the list of data to be "
 "excluded from indexing?"
 msgstr ""
 "Ar tikrai norite pašalinti šį elementą iš neindeksuojamų duomenų sąrašo?"
 
-#: ../tools/Settings.cs:405
+#: ../tools/Settings.cs:408
 msgid "Invalid host entry"
 msgstr "Netinkamas kompiuterio įrašas"
 
-#: ../tools/Settings.cs:412
+#: ../tools/Settings.cs:415
 msgid "Remote host already present in the list."
 msgstr "Nutolęs kompiuteris jau sąraše yra."
 
-#: ../tools/Settings.cs:421
+#: ../tools/Settings.cs:424
 msgid "Netbeagle Node not added"
 msgstr "Netbeagle mazgas nepridėtas"
 
-#: ../tools/Settings.cs:437
+#: ../tools/Settings.cs:440
 msgid "Remove host"
 msgstr "Pašalinti kompiuterį"
 
-#: ../tools/Settings.cs:438
+#: ../tools/Settings.cs:441
 msgid "Are you sure you wish to remove this host from the list?"
 msgstr "Ar tikrai norite pašalinti šį kompiuterį iš sąrašo?"
 
-#: ../tools/Settings.cs:459
+#: ../tools/Settings.cs:462
 msgid "Select path"
 msgstr "Pasirinkite kelią"
 
-#: ../tools/Settings.cs:478
+#: ../tools/Settings.cs:481
 msgid "The selected path is already configured for external access."
 msgstr "Pasirinktas kelias jau sukonfigūruotas išoriniam priėjimui."
 
-#: ../tools/Settings.cs:502
+#: ../tools/Settings.cs:505
 msgid "Remove public path"
 msgstr "Pašalinti viešą kelią"
 
-#: ../tools/Settings.cs:503
+#: ../tools/Settings.cs:506
 msgid ""
 "Are you sure you wish to remove this entry from the list of public paths?"
 msgstr "Ar tikrai norite pašalinti šį įrašą iš viešų kelių sąrašo?"
 
-#: ../tools/Settings.cs:548 ../tools/Settings.cs:637 ../tools/Settings.cs:715
-#: ../tools/Settings.cs:791 ../tools/Settings.cs:1130
+#: ../tools/Settings.cs:551 ../tools/Settings.cs:640 ../tools/Settings.cs:718
+#: ../tools/Settings.cs:794 ../tools/Settings.cs:1133
 msgid "Name"
 msgstr "Vardas"
 
-#: ../tools/Settings.cs:631
+#: ../tools/Settings.cs:634
 msgid "Type"
 msgstr "Tipas"
 
-#: ../tools/Settings.cs:684
+#: ../tools/Settings.cs:687
 msgid "Path:"
 msgstr "Kelias:"
 
-#: ../tools/Settings.cs:687
+#: ../tools/Settings.cs:690
 msgid "Pattern:"
 msgstr "Šablonas:"
 
-#: ../tools/Settings.cs:690
+#: ../tools/Settings.cs:693
 msgid "Mail folder:"
 msgstr "Pašto aplankas:"
 
-#: ../tools/Settings.cs:1038
+#: ../tools/Settings.cs:1041
 msgid "Select Folder"
 msgstr "Pasirinkite aplanką"
 
-#: ../tools/Settings.cs:1064 ../tools/settings.glade.h:24
+#: ../tools/Settings.cs:1067 ../tools/settings.glade.h:25
 msgid "P_ath:"
 msgstr "K_elias:"
 
-#: ../tools/Settings.cs:1069
+#: ../tools/Settings.cs:1072
 msgid "M_ail folder:"
 msgstr "P_ašto aplankas:"
 
-#: ../tools/Settings.cs:1074
+#: ../tools/Settings.cs:1077
 msgid "P_attern:"
 msgstr "Š_ablonas:"
 
-#: ../tools/Settings.cs:1098
+#: ../tools/Settings.cs:1101
 msgid "Error adding path"
 msgstr "Klaida pridedant kelią"
 
-#: ../tools/Settings.cs:1099
+#: ../tools/Settings.cs:1102
 msgid ""
 "The specified path could not be found and therefore it could not be added to "
 "the list of resources excluded for indexing."
@@ -885,7 +1224,7 @@ msgstr ""
 "Nurodytas kelias nerastas, todėl jis nebuvo įtrauktas į neindeksuojamų "
 "resursų sąrašą."
 
-#: ../tools/Settings.cs:1129
+#: ../tools/Settings.cs:1132
 msgid "Show"
 msgstr "Rodyti"
 
@@ -981,30 +1320,34 @@ msgid "I_ndex my home directory"
 msgstr "I_ndeksuoti mano namų aplanką"
 
 #: ../tools/settings.glade.h:22
+msgid "Index data while on battery power"
+msgstr "Indeksuoti duomenis, kai naudojama baterijos energija"
+
+#: ../tools/settings.glade.h:23
 msgid "Indexing"
 msgstr "Indeksavimas"
 
-#: ../tools/settings.glade.h:23
+#: ../tools/settings.glade.h:24
 msgid "Networking"
 msgstr "Tinklas"
 
-#: ../tools/settings.glade.h:25
+#: ../tools/settings.glade.h:26
 msgid "Please select a resource you wish to exclude from indexing."
 msgstr "Pasirinkite resursą, kurio indeksuoti nenorite."
 
-#: ../tools/settings.glade.h:26
+#: ../tools/settings.glade.h:27
 msgid "Please select the mail folder you wish to exclude from indexing. "
 msgstr "Pasirinkite pašto aplanką, kurio indeksuoti nenorite."
 
-#: ../tools/settings.glade.h:28
+#: ../tools/settings.glade.h:29
 msgid "Search Preferences"
 msgstr "Paieškos nustatymai"
 
-#: ../tools/settings.glade.h:29
+#: ../tools/settings.glade.h:30
 msgid "Select Mail Folder"
 msgstr "Pasirinkite pašto aplanką"
 
-#: ../tools/settings.glade.h:30
+#: ../tools/settings.glade.h:31
 msgid ""
 "Specify any resources, such as paths, patterns, mail folders or type of "
 "objects you wish to exclude from indexing."
@@ -1012,35 +1355,35 @@ msgstr ""
 "Nurodykite bet kokius resursus, tokius kaip kelius, šablonus, pašto aplankus "
 "arba objektų tipus, kurių indeksuoti nenorite."
 
-#: ../tools/settings.glade.h:31
+#: ../tools/settings.glade.h:32
 msgid "Specify paths that should be available for external access."
 msgstr "Nurodykite kelius, kuriuos galima pasiekti iš išorės"
 
-#: ../tools/settings.glade.h:32
+#: ../tools/settings.glade.h:33
 msgid "Type:"
 msgstr "Tipas:"
 
-#: ../tools/settings.glade.h:33
+#: ../tools/settings.glade.h:34
 msgid "_Address:"
 msgstr "_Adresas:"
 
-#: ../tools/settings.glade.h:34
+#: ../tools/settings.glade.h:35
 msgid "_Allow Beagle to be run as root"
 msgstr "_Leisti Beagle veikti kaip root"
 
-#: ../tools/settings.glade.h:35
+#: ../tools/settings.glade.h:36
 msgid "_Folder path"
 msgstr "_Aplanko kelias"
 
-#: ../tools/settings.glade.h:36
+#: ../tools/settings.glade.h:37
 msgid "_Mail folder"
 msgstr "_Pašto aplankas"
 
-#: ../tools/settings.glade.h:37
+#: ../tools/settings.glade.h:38
 msgid "_Maximum number of results displayed:"
 msgstr "_Maksimalus rodomų rezultatų skaičius:"
 
-#: ../tools/settings.glade.h:38
+#: ../tools/settings.glade.h:39
 msgid "_Start search & indexing services automatically "
 msgstr "_Paleisti paieškos ir indeksavimo paslaugas automatiškai"
 
@@ -1166,12 +1509,6 @@ msgstr "{0:0.0} KB"
 #, csharp-format
 msgid "{0:0.0} MB"
 msgstr "{0:0.0} MB"
-
-#~ msgid "Application"
-#~ msgstr "Programa"
-
-#~ msgid "Contact"
-#~ msgstr "Kontaktas"
 
 #~ msgid "Image"
 #~ msgstr "Paveikslėlis"
