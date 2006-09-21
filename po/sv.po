@@ -9,8 +9,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: beagle\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2006-09-02 02:52+0200\n"
-"PO-Revision-Date: 2006-09-02 10:12+0100\n"
+"POT-Creation-Date: 2006-09-12 18:09+0200\n"
+"PO-Revision-Date: 2006-09-21 21:03+0100\n"
 "Last-Translator: Daniel Nylander <po@danielnylander.se>\n"
 "Language-Team: Swedish <tp-sv@listor.tp-sv.se>\n"
 "MIME-Version: 1.0\n"
@@ -25,6 +25,312 @@ msgstr "Orientering"
 #: ../glue/eggtrayicon.c:128
 msgid "The orientation of the tray."
 msgstr "Lådans orientering."
+
+#: ../ContactViewer/ContactWindow.cs:74
+msgid "Open..."
+msgstr "Öppna..."
+
+#: ../ContactViewer/ContactWindow.cs:76
+#: ../search/Tray/TrayIcon.cs:86
+msgid "Quit"
+msgstr "Avsluta"
+
+#: ../ContactViewer/ContactWindow.cs:79
+msgid "About"
+msgstr "Om"
+
+#: ../ContactViewer/ContactWindow.cs:95
+#: ../search/Tiles/Utils.cs:26
+msgid "Contacts"
+msgstr "Kontakter"
+
+#: ../ContactViewer/ContactWindow.cs:100
+msgid "Display name"
+msgstr "Visningsnamn"
+
+#: ../ContactViewer/ContactWindow.cs:101
+msgid "Primary E-mail"
+msgstr "Primär e-postadress"
+
+#: ../ContactViewer/ContactWindow.cs:102
+msgid "Secondary E-mail"
+msgstr "Sekundär e-postadress"
+
+#: ../ContactViewer/ContactWindow.cs:103
+msgid "Nickname"
+msgstr "Smeknamn"
+
+#: ../ContactViewer/ContactWindow.cs:133
+#, csharp-format
+msgid ""
+"Unable to open mork database:\n"
+"\n"
+" {0}"
+msgstr ""
+"Kunde inte öppna mork-databas:\n"
+"\n"
+" {0}"
+
+#: ../ContactViewer/ContactWindow.cs:153
+msgid "The specified ID does not exist in this database!"
+msgstr "Det angivna id-numret finns inte i den här databasen!"
+
+#: ../ContactViewer/ContactWindow.cs:180
+#, csharp-format
+msgid "Added {0} contact"
+msgid_plural "Added {0} contacts"
+msgstr[0] "Lade till {0} kontakt"
+msgstr[1] "Lade till {0} kontakter"
+
+#: ../ContactViewer/ContactWindow.cs:204
+#, csharp-format
+msgid "Viewing {0}"
+msgstr "Visar {0}"
+
+#: ../ContactViewer/ContactWindow.cs:205
+msgid "DisplayName"
+msgstr "Visningsnamn"
+
+#: ../ContactViewer/ContactWindow.cs:244
+msgid "Select a mork database file"
+msgstr "Välj en mork-databasfil"
+
+#: ../ContactViewer/ContactWindow.cs:303
+msgid "FirstName"
+msgstr "Förnamn"
+
+#: ../ContactViewer/ContactWindow.cs:303
+msgid "NickName"
+msgstr "Smeknamn"
+
+#: ../ContactViewer/ContactWindow.cs:303
+msgid "LastName"
+msgstr "Efternamn"
+
+#: ../ContactViewer/ContactWindow.cs:311
+msgid "Primary E-Mail:"
+msgstr "Primär e-post:"
+
+#: ../ContactViewer/ContactWindow.cs:313
+msgid "PrimaryEmail"
+msgstr "Primär e-postadress"
+
+#: ../ContactViewer/ContactWindow.cs:315
+#: ../ContactViewer/contactviewer.glade.h:33
+msgid "Screen name:"
+msgstr "Skärmnamn:"
+
+#: ../ContactViewer/ContactWindow.cs:317
+msgid "_AimScreenName"
+msgstr "_Skärmnamn för AIM"
+
+#: ../ContactViewer/ContactWindow.cs:319
+msgid "Home phone:"
+msgstr "Hemtelefon:"
+
+#: ../ContactViewer/ContactWindow.cs:321
+msgid "HomePhone"
+msgstr "Hemtelefon"
+
+#: ../ContactViewer/ContactWindow.cs:323
+msgid "Mobile phone:"
+msgstr "Mobiltelefon:"
+
+#: ../ContactViewer/ContactWindow.cs:325
+msgid "CellularNumber"
+msgstr "Mobilnummer"
+
+#: ../ContactViewer/ContactWindow.cs:327
+msgid "Web page:"
+msgstr "Webbsida:"
+
+#: ../ContactViewer/ContactWindow.cs:329
+msgid "WebPage2"
+msgstr "Webbsida2"
+
+#: ../ContactViewer/ContactWindow.cs:336
+msgid "Send E-Mail"
+msgstr "Skicka e-post"
+
+#: ../ContactViewer/ContactWindow.cs:340
+msgid "Details..."
+msgstr "Detaljer..."
+
+#: ../ContactViewer/ContactWindow.cs:368
+msgid "Could not find a valid E-mail address!"
+msgstr "Kunde inte hitta en giltig e-postadress!"
+
+#: ../ContactViewer/contactviewer.glade.h:1
+msgid "<b>Custom fields</b>"
+msgstr "<b>Anpassade fält</b>"
+
+#: ../ContactViewer/contactviewer.glade.h:2
+msgid "<b>Home</b>"
+msgstr "<b>Hem</b>"
+
+#: ../ContactViewer/contactviewer.glade.h:3
+msgid "<b>Internet</b>"
+msgstr "<b>Internet</b>"
+
+#: ../ContactViewer/contactviewer.glade.h:4
+msgid "<b>Name</b>"
+msgstr "<b>Namn</b>"
+
+#: ../ContactViewer/contactviewer.glade.h:5
+msgid "<b>Notes</b>"
+msgstr "<b>Anteckningar</b>"
+
+#: ../ContactViewer/contactviewer.glade.h:6
+msgid "<b>Phones</b>"
+msgstr "<b>Telefoner</b>"
+
+#: ../ContactViewer/contactviewer.glade.h:7
+msgid "<b>Work</b>"
+msgstr "<b>Arbete</b>"
+
+#: ../ContactViewer/contactviewer.glade.h:8
+msgid "Additional E-Mail:"
+msgstr "Ytterligare e-post:"
+
+#: ../ContactViewer/contactviewer.glade.h:9
+msgid "Address"
+msgstr "Adress"
+
+#: ../ContactViewer/contactviewer.glade.h:10
+msgid "Address:"
+msgstr "Adress:"
+
+#: ../ContactViewer/contactviewer.glade.h:11
+msgid "City:"
+msgstr "Stad:"
+
+#: ../ContactViewer/contactviewer.glade.h:12
+msgid "Contact"
+msgstr "Kontakt"
+
+#: ../ContactViewer/contactviewer.glade.h:13
+msgid "Contact Viewer"
+msgstr "Kontaktvisare"
+
+#: ../ContactViewer/contactviewer.glade.h:14
+msgid "Country:"
+msgstr "Land:"
+
+#: ../ContactViewer/contactviewer.glade.h:15
+msgid "Custom 1:"
+msgstr "Anpassad 1:"
+
+#: ../ContactViewer/contactviewer.glade.h:16
+msgid "Custom 2:"
+msgstr "Anpassad 2:"
+
+#: ../ContactViewer/contactviewer.glade.h:17
+msgid "Custom 3:"
+msgstr "Anpassad 3:"
+
+#: ../ContactViewer/contactviewer.glade.h:18
+msgid "Custom 4:"
+msgstr "Anpassad 4:"
+
+#: ../ContactViewer/contactviewer.glade.h:19
+msgid "Department:"
+msgstr "Avdelning:"
+
+#: ../ContactViewer/contactviewer.glade.h:20
+msgid "Detailed view"
+msgstr "Detaljerad vy"
+
+#: ../ContactViewer/contactviewer.glade.h:21
+msgid "Display:"
+msgstr "Visa:"
+
+#: ../ContactViewer/contactviewer.glade.h:22
+#: ../search/Tiles/Contact.cs:68
+msgid "E-Mail:"
+msgstr "E-post:"
+
+#: ../ContactViewer/contactviewer.glade.h:23
+msgid "Fax:"
+msgstr "Fax:"
+
+#: ../ContactViewer/contactviewer.glade.h:24
+msgid "First:"
+msgstr "Förnamn:"
+
+#: ../ContactViewer/contactviewer.glade.h:25
+msgid "Home:"
+msgstr "Hem:"
+
+#: ../ContactViewer/contactviewer.glade.h:26
+msgid "Last:"
+msgstr "Efternamn:"
+
+#: ../ContactViewer/contactviewer.glade.h:27
+msgid "Mobile:"
+msgstr "Mobil:"
+
+#: ../ContactViewer/contactviewer.glade.h:28
+msgid "Nickname:"
+msgstr "Smeknamn:"
+
+#: ../ContactViewer/contactviewer.glade.h:29
+msgid "Organization:"
+msgstr "Organisation:"
+
+#: ../ContactViewer/contactviewer.glade.h:30
+msgid "Other"
+msgstr "Övrigt"
+
+#: ../ContactViewer/contactviewer.glade.h:31
+msgid "Pager:"
+msgstr "Personsökare:"
+
+#: ../ContactViewer/contactviewer.glade.h:32
+msgid "Preferred format:"
+msgstr "Föredraget format:"
+
+#: ../ContactViewer/contactviewer.glade.h:34
+msgid "State/Province"
+msgstr "Län/Region"
+
+#: ../ContactViewer/contactviewer.glade.h:35
+msgid "State/Province:"
+msgstr "Län/Region:"
+
+#: ../ContactViewer/contactviewer.glade.h:36
+#: ../search/Tiles/Calendar.cs:51
+#: ../search/Tiles/File.cs:124
+#: ../search/Tiles/Note.cs:57
+#: ../search/Tiles/RSSFeed.cs:45
+#: ../search/Tiles/WebHistory.cs:50
+msgid "Title:"
+msgstr "Titel:"
+
+#: ../ContactViewer/contactviewer.glade.h:37
+msgid ""
+"Unknown\n"
+"Plain text\n"
+"HTML"
+msgstr ""
+"Okänd\n"
+"Ren text\n"
+"HTML"
+
+#: ../ContactViewer/contactviewer.glade.h:40
+msgid "Web Page:"
+msgstr "Webbsida:"
+
+#: ../ContactViewer/contactviewer.glade.h:41
+msgid "Work:"
+msgstr "Arbete:"
+
+#: ../ContactViewer/contactviewer.glade.h:42
+msgid "ZIP/Postal Code"
+msgstr "ZIP/Postnummer"
+
+#: ../ContactViewer/contactviewer.glade.h:43
+msgid "ZIP/Postal Code:"
+msgstr "ZIP/Postnummer:"
 
 #: ../ImLogViewer/ImLogViewer.glade.h:1
 msgid "<b>Conversations History</b>"
@@ -124,25 +430,33 @@ msgstr "Starta söktjänst"
 msgid "_Find:"
 msgstr "_Sök:"
 
-#: ../search/Search.cs:163
+#: ../search/Search.cs:164
 msgid "Find Now"
 msgstr "Sök nu"
 
-#: ../search/Search.cs:209
+#: ../search/Search.cs:210
 msgid "Type in search terms"
 msgstr "Skriv in söktermer"
 
-#: ../search/Search.cs:210
+#: ../search/Search.cs:211
 msgid "Start searching"
 msgstr "Påbörja sökning"
+
+#: ../search/Tiles/Calendar.cs:54
+msgid "Description:"
+msgstr "Beskrivning:"
+
+#: ../search/Tiles/Calendar.cs:57
+msgid "Location:"
+msgstr "Plats:"
+
+#: ../search/Tiles/Calendar.cs:61
+msgid "Attendees:"
+msgstr "Deltagare:"
 
 #: ../search/Tiles/Contact.cs:30
 msgid "Send Mail"
 msgstr "Skicka e-post"
-
-#: ../search/Tiles/Contact.cs:68
-msgid "E-Mail:"
-msgstr "E-post:"
 
 #: ../search/Tiles/Contact.cs:70
 msgid "Mobile Phone:"
@@ -171,13 +485,6 @@ msgstr "E-post"
 #: ../search/Tiles/Folder.cs:38
 msgid "Move to Trash"
 msgstr "Flytta till papperskorg"
-
-#: ../search/Tiles/File.cs:124
-#: ../search/Tiles/Note.cs:57
-#: ../search/Tiles/RSSFeed.cs:45
-#: ../search/Tiles/WebHistory.cs:50
-msgid "Title:"
-msgstr "Titel:"
 
 #: ../search/Tiles/File.cs:125
 #: ../search/Tiles/Folder.cs:51
@@ -228,6 +535,26 @@ msgstr "Namn:"
 msgid "Date Received:"
 msgstr "Mottagningsdatum:"
 
+#: ../search/Tiles/IMLog.cs:97
+msgid "Status:"
+msgstr "Status:"
+
+#: ../search/Tiles/IMLog.cs:112
+msgid "Idle"
+msgstr "Overksam"
+
+#: ../search/Tiles/IMLog.cs:119
+msgid "Away"
+msgstr "Frånvarande"
+
+#: ../search/Tiles/IMLog.cs:122
+msgid "Offline"
+msgstr "Frånkopplad"
+
+#: ../search/Tiles/IMLog.cs:125
+msgid "Available"
+msgstr "Tillgänglig"
+
 #: ../search/Tiles/MailAttachment.cs:45
 msgid "Mail attachment"
 msgstr "E-postbilaga"
@@ -260,6 +587,10 @@ msgstr "Datum skickat:"
 msgid "Folder:"
 msgstr "Mapp:"
 
+#: ../search/Tiles/OpenWithMenu.cs:47
+msgid "Open With"
+msgstr "Öppna med"
+
 # Enligt openoffice
 #: ../search/Tiles/Presentation.cs:33
 #, csharp-format
@@ -290,10 +621,6 @@ msgstr "Öppna"
 #: ../search/Tiles/Utils.cs:24
 msgid "Applications"
 msgstr "Program"
-
-#: ../search/Tiles/Utils.cs:26
-msgid "Contacts"
-msgstr "Kontakter"
 
 #: ../search/Tiles/Utils.cs:28
 msgid "Calendar Events"
@@ -425,10 +752,6 @@ msgstr "Tidigare sökningar"
 #: ../search/Tray/TrayIcon.cs:78
 msgid "Clear"
 msgstr "Töm"
-
-#: ../search/Tray/TrayIcon.cs:86
-msgid "Quit"
-msgstr "Avsluta"
 
 #. Translators: the strings in TypeFilter.cs are for when the user
 #. * wants to limit search results to a specific type. You don't need
@@ -1166,10 +1489,6 @@ msgstr "{0:0.0} KB"
 msgid "{0:0.0} MB"
 msgstr "{0:0.0} MB"
 
-#~ msgid "Application"
-#~ msgstr "Program"
-#~ msgid "Contact"
-#~ msgstr "Kontakt"
 #~ msgid "Image"
 #~ msgstr "Bild"
 #~ msgid ""
@@ -1180,8 +1499,6 @@ msgstr "{0:0.0} MB"
 #~ "(system tray)"
 #~ msgid "in Files"
 #~ msgstr "i filer"
-#~ msgid "in Web Pages"
-#~ msgstr "i websidor"
 #~ msgid "in Chats"
 #~ msgstr "i snabbmeddelanden"
 #~ msgid "Show More Results"
@@ -1200,8 +1517,6 @@ msgstr "{0:0.0} MB"
 #~ "startad."
 #~ msgid "The query for <i>{0}</i> failed with error:<br>{1}<br>"
 #~ msgstr "Sökningen efter <i>{0}</i> gick ej att genomföra:<br>{1}"
-#~ msgid "Words:"
-#~ msgstr "Ord:"
 #~ msgid "Send IM"
 #~ msgstr "Skicka snabbmeddelande"
 #~ msgid "Conversation with {0}"
