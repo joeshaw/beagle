@@ -1,3 +1,7 @@
+2006-09-22  Danilo Šegan  <danilo@gnome.org>
+
+	* configure.in: Added sr, sr@Latn to ALL_LINGUAS.
+
 2006-08-04 Debajyoti Bera <dbera.web@gmail.com>
 
 	* ContactViewer, beagled/ThunderbirdQueryable: Added .cvsignore files.
