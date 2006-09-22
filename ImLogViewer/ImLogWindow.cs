@@ -183,7 +183,7 @@ namespace ImLogViewer {
 				
 				if (speaking_to == null)
 					SetWindowTitle (log.SpeakingTo);
-					timeline.Add (log, log.StartTime);
+				timeline.Add (log, log.StartTime);
 			}
 
 			index_thread_notify.WakeupMain ();
