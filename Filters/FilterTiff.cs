@@ -123,6 +123,8 @@ namespace Beagle.Filters {
 				filter.AddProperty (Beagle.Property.NewDate (name, time));
 			} catch (ArgumentOutOfRangeException e) {
 				Logger.Log.Debug ("{0} = '{1}' is invalid.", name, value);
+			} catch (FormatException fe) {
+				Logger.Log.Debug ("{0} = '{1}' is invalid.", name, value);
 			}
 		}
 	}
