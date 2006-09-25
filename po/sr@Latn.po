@@ -4,10 +4,10 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: beagle 0.2.9\n"
+"Project-Id-Version: beagle 0.2.10\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2006-09-22 18:11+0200\n"
-"PO-Revision-Date: 2006-09-16 14:37+0200\n"
+"POT-Creation-Date: 2006-09-25 10:40+0200\n"
+"PO-Revision-Date: 2006-09-22 18:28+0200\n"
 "Last-Translator: Filip Miletić <filmil at gmail dot com>\n"
 "Language-Team: Serbian (sr) <serbiangnome-lista@nongnu.org>\n"
 "MIME-Version: 1.0\n"
@@ -25,9 +25,8 @@ msgid "The orientation of the tray."
 msgstr "Usmerenje alatne trake."
 
 #: ../ContactViewer/ContactWindow.cs:74
-#, fuzzy
 msgid "Open..."
-msgstr "Otvori"
+msgstr "Otvori..."
 
 #: ../ContactViewer/ContactWindow.cs:76 ../search/Tray/TrayIcon.cs:86
 msgid "Quit"
@@ -35,7 +34,7 @@ msgstr "Kraj"
 
 #: ../ContactViewer/ContactWindow.cs:79
 msgid "About"
-msgstr ""
+msgstr "O programu"
 
 #: ../ContactViewer/ContactWindow.cs:95 ../search/Tiles/Utils.cs:26
 msgid "Contacts"
@@ -43,21 +42,19 @@ msgstr "Kontakti"
 
 #: ../ContactViewer/ContactWindow.cs:100
 msgid "Display name"
-msgstr ""
+msgstr "Prikazano ime"
 
 #: ../ContactViewer/ContactWindow.cs:101
 msgid "Primary E-mail"
-msgstr ""
+msgstr "Glavna el. adresa"
 
 #: ../ContactViewer/ContactWindow.cs:102
-#, fuzzy
 msgid "Secondary E-mail"
-msgstr "Slanje pošte"
+msgstr "Druga el. adresa"
 
 #: ../ContactViewer/ContactWindow.cs:103
-#, fuzzy
 msgid "Nickname"
-msgstr "Ime"
+msgstr "Nadimak"
 
 #: ../ContactViewer/ContactWindow.cs:133
 #, csharp-format
@@ -66,201 +63,183 @@ msgid ""
 "\n"
 " {0}"
 msgstr ""
+"Nije moguće otvoriti radnu bazu podataka:\n"
+"\n"
+" {0}"
 
 #: ../ContactViewer/ContactWindow.cs:153
 msgid "The specified ID does not exist in this database!"
-msgstr ""
+msgstr "Zadati identifikator ne postoji u ovoj bazi podataka!"
 
 #: ../ContactViewer/ContactWindow.cs:180
 #, csharp-format
 msgid "Added {0} contact"
 msgid_plural "Added {0} contacts"
-msgstr[0] ""
-msgstr[1] ""
-msgstr[2] ""
+msgstr[0] "Dodat {0} kontakt"
+msgstr[1] "Dodata {0} kontakta"
+msgstr[2] "Dodato {0} kontakata "
 
 #: ../ContactViewer/ContactWindow.cs:204
 #, csharp-format
 msgid "Viewing {0}"
-msgstr ""
+msgstr "Pregled: {0}"
 
 #: ../ContactViewer/ContactWindow.cs:205
 msgid "DisplayName"
-msgstr ""
+msgstr "PrikazanoIme"
 
 #: ../ContactViewer/ContactWindow.cs:244
 msgid "Select a mork database file"
-msgstr ""
+msgstr "Izaberite ime radne baze podataka"
 
 #: ../ContactViewer/ContactWindow.cs:303
-#, fuzzy
 msgid "FirstName"
 msgstr "Ime"
 
 #: ../ContactViewer/ContactWindow.cs:303
-#, fuzzy
 msgid "NickName"
-msgstr "Ime"
+msgstr "Nadimak"
 
 #: ../ContactViewer/ContactWindow.cs:303
-#, fuzzy
 msgid "LastName"
-msgstr "Ime"
+msgstr "Prezime"
 
 #: ../ContactViewer/ContactWindow.cs:311
-#, fuzzy
 msgid "Primary E-Mail:"
-msgstr "El. pošta:"
+msgstr "Glavna el. adresa:"
 
 #: ../ContactViewer/ContactWindow.cs:313
 msgid "PrimaryEmail"
-msgstr ""
+msgstr "GlavnaElAdresa"
 
 #: ../ContactViewer/ContactWindow.cs:315
 #: ../ContactViewer/contactviewer.glade.h:33
 msgid "Screen name:"
-msgstr ""
+msgstr "Ekransko ime:"
 
 #: ../ContactViewer/ContactWindow.cs:317
 msgid "_AimScreenName"
-msgstr ""
+msgstr "Ime na _AIMu"
 
 #: ../ContactViewer/ContactWindow.cs:319
-#, fuzzy
 msgid "Home phone:"
 msgstr "Kućni tel.:"
 
 #: ../ContactViewer/ContactWindow.cs:321
-#, fuzzy
 msgid "HomePhone"
-msgstr "Kućni tel.:"
+msgstr "KućniTel"
 
 #: ../ContactViewer/ContactWindow.cs:323
-#, fuzzy
 msgid "Mobile phone:"
 msgstr "Mobilni tel.:"
 
 #: ../ContactViewer/ContactWindow.cs:325
 msgid "CellularNumber"
-msgstr ""
+msgstr "MobilniTel"
 
 #: ../ContactViewer/ContactWindow.cs:327
 msgid "Web page:"
-msgstr ""
+msgstr "Mrežna strana:"
 
 #: ../ContactViewer/ContactWindow.cs:329
 msgid "WebPage2"
-msgstr ""
+msgstr "DrugaStrana"
 
 #: ../ContactViewer/ContactWindow.cs:336
-#, fuzzy
 msgid "Send E-Mail"
-msgstr "Slanje pošte"
+msgstr "Slanje el. pošte"
 
 #: ../ContactViewer/ContactWindow.cs:340
 msgid "Details..."
-msgstr ""
+msgstr "Detalji..."
 
 #: ../ContactViewer/ContactWindow.cs:368
 msgid "Could not find a valid E-mail address!"
-msgstr ""
+msgstr "Nije moguće pronaći ispravnu el. adresu!"
 
 #: ../ContactViewer/contactviewer.glade.h:1
 msgid "<b>Custom fields</b>"
-msgstr ""
+msgstr "<b>Proizvoljna polja</b>"
 
 #: ../ContactViewer/contactviewer.glade.h:2
-#, fuzzy
 msgid "<b>Home</b>"
-msgstr "<b>Opšte</b>"
+msgstr "<b>Dom</b>"
 
 #: ../ContactViewer/contactviewer.glade.h:3
-#, fuzzy
 msgid "<b>Internet</b>"
-msgstr "<b>Opšte</b>"
+msgstr "<b>Internet</b>"
 
 #: ../ContactViewer/contactviewer.glade.h:4
-#, fuzzy
 msgid "<b>Name</b>"
-msgstr "<b>Mreža</b>"
+msgstr "<b>Ime</b>"
 
 #: ../ContactViewer/contactviewer.glade.h:5
-#, fuzzy
 msgid "<b>Notes</b>"
-msgstr "<b>Add Remote Host</b>"
+msgstr "<b>Beleške</b>"
 
 #: ../ContactViewer/contactviewer.glade.h:6
-#, fuzzy
 msgid "<b>Phones</b>"
-msgstr "<b>Opšte</b>"
+msgstr "<b>Telefoni</b>"
 
 #: ../ContactViewer/contactviewer.glade.h:7
-#, fuzzy
 msgid "<b>Work</b>"
-msgstr "<b>Mreža</b>"
+msgstr "<b>Posao</b>"
 
 #: ../ContactViewer/contactviewer.glade.h:8
 msgid "Additional E-Mail:"
-msgstr ""
+msgstr "Dodatna el. adresa:"
 
 #: ../ContactViewer/contactviewer.glade.h:9
-#, fuzzy
 msgid "Address"
-msgstr "_Adresa:"
+msgstr "Adresa"
 
 #: ../ContactViewer/contactviewer.glade.h:10
-#, fuzzy
 msgid "Address:"
-msgstr "_Adresa:"
+msgstr "Adresa:"
 
 #: ../ContactViewer/contactviewer.glade.h:11
-#, fuzzy
 msgid "City:"
 msgstr "Mesto:"
 
 #: ../ContactViewer/contactviewer.glade.h:12
-#, fuzzy
 msgid "Contact"
-msgstr "Kontakti"
+msgstr "Kontakt"
 
 #: ../ContactViewer/contactviewer.glade.h:13
-#, fuzzy
 msgid "Contact Viewer"
-msgstr "Kontakti"
+msgstr "Pregled kontakata"
 
 #: ../ContactViewer/contactviewer.glade.h:14
 msgid "Country:"
-msgstr ""
+msgstr "Država:"
 
 #: ../ContactViewer/contactviewer.glade.h:15
 msgid "Custom 1:"
-msgstr ""
+msgstr "Proizvoljno 1:"
 
 #: ../ContactViewer/contactviewer.glade.h:16
 msgid "Custom 2:"
-msgstr ""
+msgstr "Proizvoljno 2:"
 
 #: ../ContactViewer/contactviewer.glade.h:17
 msgid "Custom 3:"
-msgstr ""
+msgstr "Proizvoljno 3:"
 
 #: ../ContactViewer/contactviewer.glade.h:18
 msgid "Custom 4:"
-msgstr ""
+msgstr "Proizvoljno 4:"
 
 #: ../ContactViewer/contactviewer.glade.h:19
-#, fuzzy
 msgid "Department:"
-msgstr "Datum slanja:"
+msgstr "Odeljenje:"
 
 #: ../ContactViewer/contactviewer.glade.h:20
 msgid "Detailed view"
-msgstr ""
+msgstr "Detaljan pregled"
 
 #: ../ContactViewer/contactviewer.glade.h:21
-#, fuzzy
 msgid "Display:"
-msgstr "<b>Prikaz</b>"
+msgstr "Prikaz:"
 
 #: ../ContactViewer/contactviewer.glade.h:22 ../search/Tiles/Contact.cs:68
 msgid "E-Mail:"
@@ -268,57 +247,51 @@ msgstr "El. pošta:"
 
 #: ../ContactViewer/contactviewer.glade.h:23
 msgid "Fax:"
-msgstr ""
+msgstr "Faks:"
 
 #: ../ContactViewer/contactviewer.glade.h:24
 msgid "First:"
-msgstr ""
+msgstr "Prvi:"
 
 #: ../ContactViewer/contactviewer.glade.h:25
-#, fuzzy
 msgid "Home:"
-msgstr "Kućni tel.:"
+msgstr "Kuća:"
 
 #: ../ContactViewer/contactviewer.glade.h:26
-#, fuzzy
 msgid "Last:"
-msgstr "Staza:"
+msgstr "Poslednji:"
 
 #: ../ContactViewer/contactviewer.glade.h:27
-#, fuzzy
 msgid "Mobile:"
-msgstr "Mobilni tel.:"
+msgstr "Mobilni:"
 
 #: ../ContactViewer/contactviewer.glade.h:28
-#, fuzzy
 msgid "Nickname:"
-msgstr "Ime:"
+msgstr "Nadimak:"
 
 #: ../ContactViewer/contactviewer.glade.h:29
-#, fuzzy
 msgid "Organization:"
-msgstr "Usmerenje"
+msgstr "Ustanova:"
 
 #: ../ContactViewer/contactviewer.glade.h:30
 msgid "Other"
-msgstr ""
+msgstr "Ostalo"
 
 #: ../ContactViewer/contactviewer.glade.h:31
-#, fuzzy
 msgid "Pager:"
-msgstr "Obrazac:"
+msgstr "Pejdžer:"
 
 #: ../ContactViewer/contactviewer.glade.h:32
 msgid "Preferred format:"
-msgstr ""
+msgstr "Željeni format:"
 
 #: ../ContactViewer/contactviewer.glade.h:34
 msgid "State/Province"
-msgstr ""
+msgstr "Država/pokrajina"
 
 #: ../ContactViewer/contactviewer.glade.h:35
 msgid "State/Province:"
-msgstr ""
+msgstr "Država/pokrajina:"
 
 #: ../ContactViewer/contactviewer.glade.h:36 ../search/Tiles/Calendar.cs:51
 #: ../search/Tiles/File.cs:124 ../search/Tiles/Note.cs:57
@@ -332,23 +305,25 @@ msgid ""
 "Plain text\n"
 "HTML"
 msgstr ""
+"Nepoznato\n"
+"tekst\n"
+"html"
 
 #: ../ContactViewer/contactviewer.glade.h:40
 msgid "Web Page:"
-msgstr ""
+msgstr "Mrežna strana:"
 
 #: ../ContactViewer/contactviewer.glade.h:41
-#, fuzzy
 msgid "Work:"
-msgstr "Tel. na poslu:"
+msgstr "Posao:"
 
 #: ../ContactViewer/contactviewer.glade.h:42
 msgid "ZIP/Postal Code"
-msgstr ""
+msgstr "Poštanski broj"
 
 #: ../ContactViewer/contactviewer.glade.h:43
 msgid "ZIP/Postal Code:"
-msgstr ""
+msgstr "Poštanski broj:"
 
 #: ../ImLogViewer/ImLogViewer.glade.h:1
 msgid "<b>Conversations History</b>"
@@ -480,15 +455,15 @@ msgstr "Traži"
 
 #: ../search/Tiles/Calendar.cs:54
 msgid "Description:"
-msgstr ""
+msgstr "Opis:"
 
 #: ../search/Tiles/Calendar.cs:57
 msgid "Location:"
-msgstr ""
+msgstr "Mesto:"
 
 #: ../search/Tiles/Calendar.cs:61
 msgid "Attendees:"
-msgstr ""
+msgstr "Prisutni:"
 
 #: ../search/Tiles/Contact.cs:30
 msgid "Send Mail"
@@ -570,23 +545,23 @@ msgstr "Datum prijema:"
 
 #: ../search/Tiles/IMLog.cs:97
 msgid "Status:"
-msgstr ""
+msgstr "Stanje:"
 
 #: ../search/Tiles/IMLog.cs:112
 msgid "Idle"
-msgstr ""
+msgstr "Besposlen"
 
 #: ../search/Tiles/IMLog.cs:119
 msgid "Away"
-msgstr ""
+msgstr "Odsutan"
 
 #: ../search/Tiles/IMLog.cs:122
 msgid "Offline"
-msgstr ""
+msgstr "Isključen"
 
 #: ../search/Tiles/IMLog.cs:125
 msgid "Available"
-msgstr ""
+msgstr "Dostupan"
 
 #: ../search/Tiles/MailAttachment.cs:45
 msgid "Mail attachment"
@@ -621,9 +596,8 @@ msgid "Folder:"
 msgstr "Direktorijum:"
 
 #: ../search/Tiles/OpenWithMenu.cs:47
-#, fuzzy
 msgid "Open With"
-msgstr "Otvori"
+msgstr "Otvori pomoću"
 
 #: ../search/Tiles/Presentation.cs:33
 #, csharp-format
@@ -1496,9 +1470,9 @@ msgstr "Juče, {0}"
 
 #. To translators: {0} is the number of days that have passed, {1} is the time of the day, eg. 13:45
 #: ../Util/StringFu.cs:117
-#, fuzzy, csharp-format
+#, csharp-format
 msgid "{0} days ago, {1}"
-msgstr "pre {0} dan, {1}"
+msgstr "pre dana: {0}, {1}"
 
 #. Translators: Example output: January 3, 3:45 PM
 #: ../Util/StringFu.cs:122
@@ -1528,9 +1502,9 @@ msgstr[2] "{0} minuta"
 
 #. Translators: {0} is a file size in bytes
 #: ../Util/StringFu.cs:160
-#, fuzzy, csharp-format
+#, csharp-format
 msgid "{0} bytes"
-msgstr "{0} bajt"
+msgstr "bajtova: {0}"
 
 #. Translators: {0} is a file size in kilobytes
 #: ../Util/StringFu.cs:164
