@@ -135,16 +135,39 @@ AC_DEFINE_UNQUOTED(GETTEXT_PACKAGE, "$GETTEXT_PACKAGE", [Name of the package for
 # mono-data-sqlite packages, and the mono build process itself
 # doesn't require it.  But we do, so check for it here.
 SQLITE_MAJ_VER="0"
-PKG_CHECK_MODULES(SQLITE, sqlite, SQLITE_MAJ_VER="2", do_nothing="1")
-# Note we really need 3.3.1, but the pkgconfig file from upstream only
-# reports 3.3 for all releases in the 3.3 line.
-PKG_CHECK_MODULES(SQLITE3, sqlite3 >= 3.3, SQLITE_MAJ_VER="3", do_nothing="1")
+AC_ARG_ENABLE([sqlite2],
+	      AC_HELP_STRING([--enable-sqlite2], [Force the use of sqlite2, even if 3 is available.]),
+	      enable_sqlite2=$enableval,
+	      enable_sqlite2=auto)
+if test "x$enable_sqlite2" = "xyes"; then
+	PKG_CHECK_MODULES(SQLITE, sqlite, SQLITE_MAJ_VER="2", do_nothing="1")
+	if test "x$SQLITE_MAJ_VER" = "x0"; then
+	AC_MSG_ERROR([You need to install sqlite 2])
+	fi
+fi
 
+AC_ARG_ENABLE([sqlite3],
+	      AC_HELP_STRING([--enable-sqlite3], [Force the use of sqlite3, even if 3 is available.]),
+	      enable_sqlite3=$enableval,
+	      enable_sqlite3=auto)
+if test "x$enable_sqlite3" = "xyes"; then
+	PKG_CHECK_MODULES(SQLITE, sqlite3, SQLITE_MAJ_VER="3", do_nothing="1")
+	if test "x$SQLITE_MAJ_VER" = "x0"; then
+	AC_MSG_ERROR([You need to install sqlite 3])
+	fi
+fi
 if test "x$SQLITE_MAJ_VER" = "x0"; then
+	PKG_CHECK_MODULES(SQLITE, sqlite, SQLITE_MAJ_VER="2", do_nothing="1")
 	# Note we really need 3.3.1, but the pkgconfig file from upstream only
-	# reports 3.3 for all releases in the 3.3 line.  Make sure we error out
-	# with the correct 3.3.1 version requirement, though.
-	AC_MSG_ERROR([You need to install sqlite 2.x or >= 3.3.1])
+	# reports 3.3 for all releases in the 3.3 line.
+	PKG_CHECK_MODULES(SQLITE3, sqlite3 >= 3.3, SQLITE_MAJ_VER="3", do_nothing="1")
+
+	if test "x$SQLITE_MAJ_VER" = "x0"; then
+		# Note we really need 3.3.1, but the pkgconfig file from upstream only
+		# reports 3.3 for all releases in the 3.3 line.  Make sure we error out
+		# with the correct 3.3.1 version requirement, though.
+		AC_MSG_ERROR([You need to install sqlite 2.x or >= 3.3.1])
+	fi
 fi
 
 AC_SUBST(SQLITE_MAJ_VER)
