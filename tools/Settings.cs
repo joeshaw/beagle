@@ -109,6 +109,7 @@ public class SettingsDialog
 		Glade.XML glade = new Glade.XML (null, "settings.glade", "settings_dialog", "beagle");
 		glade.Autoconnect (this);
 
+		settings_dialog.Icon = Beagle.Images.GetPixbuf ("system-search.png");
 		administration_frame.Visible = (Environment.UserName == "root");
 
 #if false

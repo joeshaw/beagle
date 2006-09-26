@@ -111,7 +111,7 @@ SETTINGS_WRAPPER   = beagle-settings
 SETTINGS_CSFILES   = $(srcdir)/Settings.cs
 SETTINGS_RESOURCES = $(srcdir)/settings.glade
 SETTINGS_RESOURCES_BUILD = $(foreach res,$(SETTINGS_RESOURCES), $(addprefix -resource:,$(srcdir)/$(res)),$(notdir $(res)))
-SETTINGS_ASSEMBLIES = $(BEAGLE_UI_LIBS) -r:../Util/UiUtil.dll
+SETTINGS_ASSEMBLIES = $(BEAGLE_UI_LIBS) -r:../Util/UiUtil.dll -r:../images/Images.dll
 
 $(SETTINGS_TARGET): $(SETTINGS_CSFILES) $(SETTINGS_RESOURCES) $(LOCAL_ASSEMBLIES)
 	$(CSC) -out:$@ $(SETTINGS_RESOURCES_BUILD) $(CSFLAGS) $(SETTINGS_CSFLAGS) $(SETTINGS_CSFILES) $(ASSEMBLIES) $(SETTINGS_ASSEMBLIES)
