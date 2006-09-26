@@ -216,8 +216,9 @@ EXTRA_DIST =				\
 	beagle-index-info		\
 	beagle-ping			\
 	beagle-status			\
-	boot.inotify.init		
-
+	boot.inotify.init		\
+	beagle-settings.desktop.in.in
+	
 CLEANFILES = 				\
 	$(TARGETS)			\
 	$(TARGETS_MDB)			\

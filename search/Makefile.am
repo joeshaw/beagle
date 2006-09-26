@@ -127,7 +127,8 @@ EXTRA_DIST =			\
 	$(PAGES)		\
 	$(TRAY)			\
 	$(desktop_DATA).in	\
-	beagle-search.in
+	beagle-search.in	\
+	beagle-search.desktop.in.in
 
 CLEANFILES =			\
 	Search.exe		\

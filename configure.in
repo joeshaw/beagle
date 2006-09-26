@@ -683,7 +683,9 @@ BeagleClient/Makefile
 beagled/Makefile
 Filters/Makefile
 tools/Makefile
+tools/beagle-settings.desktop.in
 search/Makefile
+search/beagle-search.desktop.in
 ImLogViewer/Makefile
 ContactViewer/Makefile
 libbeagle/Makefile

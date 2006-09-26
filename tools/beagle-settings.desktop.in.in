@@ -8,3 +8,7 @@ Exec=beagle-settings
 Icon=gnome-searchtool
 Type=Application
 Categories=Application;Settings;AdvancedSettings;Utility;Filesystem;X-Ximian-Settings;
+X-GNOME-Bugzilla-Bugzilla=GNOME
+X-GNOME-Bugzilla-Product=beagle
+X-GNOME-Bugzilla-Component=General
+X-GNOME-Bugzilla-Version=@VERSION@
