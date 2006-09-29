@@ -31,7 +31,8 @@ using Beagle.Util;
 using Beagle.Daemon;
 
 namespace Beagle.Filters {
-
+	
+	[PropertyKeywordMapping (Keyword="speakingto",     PropertyName="fixme:speakingto",    IsKeyword=true)]
 	public class FilterImLog : Beagle.Daemon.Filter {
 
 		private ImLog log;
