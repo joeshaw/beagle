@@ -69,12 +69,17 @@ namespace Search {
 			set {
 				if (details.Child != null)
 					details.Remove (details.Child);
-				if (value != null) {
+				if (value != null)
 					details.Add (value);
-					detailsSW.Show ();
-				} else
-					detailsSW.Hide ();
 			}
+		}
+
+		public void ToggleDetails (bool visible)
+		{
+			if (visible)
+				detailsSW.Show ();
+			else
+				detailsSW.Hide ();
 		}
 
 		private void MainResized (object obj, Gtk.SizeAllocatedArgs args)

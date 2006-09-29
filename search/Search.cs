@@ -33,6 +33,7 @@ namespace Search {
 		Search.ScopeType scope = ScopeType.Everywhere;
 		Search.SortType sort = SortType.Modified;
 		Search.TypeFilter filter = null;
+		bool showDetails = true;
 
 		XKeybinder keybinder = new XKeybinder ();
 
@@ -139,6 +140,7 @@ namespace Search {
 			UIManager uim = new UIManager (this);
 			uim.ScopeChanged += OnScopeChanged;
 			uim.SortChanged += OnSortChanged;
+			uim.ToggleDetails += OnToggleDetails;
 			uim.ShowQuickTips += OnShowQuickTips;
 			vbox.PackStart (uim.MenuBar, false, false, 0);
 
@@ -354,6 +356,15 @@ namespace Search {
 			view.Sort = sort = newSort;
 		}
 
+		private void OnToggleDetails (bool active)
+		{
+			showDetails = active;
+			if (panes.Details != null)
+				panes.ToggleDetails (showDetails);
+			else
+				panes.ToggleDetails (false);
+		}
+
 		private void OnShowQuickTips ()
 		{
 			if (currentQuery != null) {
@@ -368,10 +379,16 @@ namespace Search {
 
 		private void ShowInformation (Tiles.Tile tile)
 		{
-			if (tile != null)
+			if (tile != null) {
 				panes.Details = tile.Details;
-			else
+				if (tile.Details != null)
+					panes.ToggleDetails (showDetails);
+				else
+					panes.ToggleDetails (false);
+			} else {
 				panes.Details = null;
+				panes.ToggleDetails (false);
+			}
 		}
 
 		private void OnFinished (FinishedResponse response)

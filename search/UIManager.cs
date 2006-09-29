@@ -30,6 +30,7 @@ namespace Search {
 		
 		private Gtk.ActionGroup actions;
 		private Gtk.RadioActionEntry[] scope_entries, sort_entries;
+		private Gtk.ToggleActionEntry[] view_entries;
 
 		public UIManager (MainWindow main_window)
 		{
@@ -58,8 +59,8 @@ namespace Search {
 				new ActionEntry ("Actions", null,
 						 Catalog.GetString ("_Actions"),
 						 null, null, null),
-				new ActionEntry ("SortBy", null,
-						 Catalog.GetString ("Sor_t"),
+				new ActionEntry ("View", null,
+						 Catalog.GetString ("_View"),
 						 null, null, null),
 				new ActionEntry ("Help", null,
 						 Catalog.GetString ("_Help"),
@@ -142,20 +143,27 @@ namespace Search {
 			actions.Add (scope_entries, (int)ScopeType.Everywhere, OnScopeChanged);
 
 			sort_entries = new RadioActionEntry[] {
-				new RadioActionEntry ("Modified", null,
-						      Catalog.GetString ("Date _Modified"), null,
+				new RadioActionEntry ("SortModified", null,
+						      Catalog.GetString ("Sort by Date _Modified"), null,
 						      Catalog.GetString ("Sort the most-recently-modified matches first"),
 						      (int)SortType.Modified),
-				new RadioActionEntry ("Name", null,
-						      Catalog.GetString ("_Name"), null,
+				new RadioActionEntry ("SortName", null,
+						      Catalog.GetString ("Sort by _Name"), null,
 						      Catalog.GetString ("Sort matches by name"),
 						      (int)SortType.Name),
-				new RadioActionEntry ("Relevance", null,
-						      Catalog.GetString ("_Relevance"), null,
+				new RadioActionEntry ("SortRelevance", null,
+						      Catalog.GetString ("Sort by _Relevance"), null,
 						      Catalog.GetString ("Sort the best matches first"),
 						      (int)SortType.Relevance),
 			};
 			actions.Add (sort_entries, (int)SortType.Modified, OnSortChanged);
+
+			view_entries = new ToggleActionEntry[] {
+				new ToggleActionEntry ("ShowDetails", null,
+						       Catalog.GetString ("Show Details"), null, null,
+						       OnToggleDetails, true)
+			};
+			actions.Add (view_entries);
 
 			InsertActionGroup (actions, 0);
 			main_window.AddAccelGroup (AccelGroup);
@@ -202,10 +210,12 @@ namespace Search {
 		"    </menu>" +
 		"    <menu action='Actions'>" +
 		"    </menu>" +
-		"    <menu action='SortBy'>" +
-		"      <menuitem action='Modified'/>" +
-		"      <menuitem action='Name'/>" +
-		"      <menuitem action='Relevance'/>" +
+		"    <menu action='View'>" +
+		"      <menuitem action='SortModified'/>" +
+		"      <menuitem action='SortName'/>" +
+		"      <menuitem action='SortRelevance'/>" +
+		"      <separator/>" +
+		"      <menuitem action='ShowDetails'/>" +
 		"    </menu>" +
 		"    <menu action='Help'>" +
 		"      <menuitem action='Contents'/>" +
@@ -230,6 +240,15 @@ namespace Search {
 			} catch (Exception e) {
 				Console.WriteLine ("Could not start beagle-settings: {0}", e);
 			}
+		}
+
+		public delegate void ToggleDetailsDelegate (bool active);
+		public event ToggleDetailsDelegate ToggleDetails;
+
+		private void OnToggleDetails (object obj, EventArgs args)
+		{
+			if (ToggleDetails != null)
+				ToggleDetails ((obj as ToggleAction).Active);
 		}
 
 		public delegate void ShowQuickTipsDelegate ();
