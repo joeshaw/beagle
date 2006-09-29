@@ -12,24 +12,31 @@ namespace Search {
 		int page;
 
 		protected Gtk.HBox header;
-		Gtk.Label headerLabel, position;
+		Gtk.Label position;
 		Gtk.Button prev, next;
+		Gtk.Expander headerExpander;
 		int fewRows, manyRows, columns;
 		int few, many;
-		bool expanded;
+		bool extended, expanded;
+		ScopeType scope;
 
-		public Category (string name, int rows, int columns)
+		public Category (Tiles.TileGroupInfo info, int columns)
 		{
 			WidgetFlags |= WidgetFlags.NoWindow;
 
 			header = new Gtk.HBox (false, 0);
 
-			headerLabel = new Gtk.Label ();
-			headerLabel.Markup = "<big><b>" + GLib.Markup.EscapeText (name) + "</b></big>";
-			headerLabel.SetAlignment (0.0f, 0.5f);
-			headerLabel.Show ();
-			header.PackStart (headerLabel, true, true, 0);
+			headerExpander = new Gtk.Expander ("<big><b>" + GLib.Markup.EscapeText (info.Name) + "</b></big>");
+			((Gtk.Label) headerExpander.LabelWidget).SetAlignment (0.0f, 0.5f);
+			headerExpander.UseMarkup = true;
+			headerExpander.UseUnderline = true;
+			headerExpander.Show ();
+			header.PackStart (headerExpander, true, true, 0);
 
+			headerExpander.Activated += OnActivated;
+			
+			scope = Tiles.Utils.TileGroupToScopeType(info.Group);
+			
 			position = new Gtk.Label ();
 			position.ModifyFg (Gtk.StateType.Normal, position.Style.Base (Gtk.StateType.Selected));
 			header.PackStart (position, false, false, 0);
@@ -45,11 +52,13 @@ namespace Search {
 			tiles = new SortedTileList (SortType.Relevance);
 			page = 0;
 
-			fewRows = rows;
-			manyRows = rows * 2;
+			fewRows = info.Rows;
+			manyRows = info.Rows * 2;
 			Columns = columns;
 
 			UpdateButtons ();
+			//headerExpander.Expanded = true;
+			Expanded = true;	
 		}
 
 		private Gtk.Button MakeButton (Gtk.HBox header, string icon, EventHandler handler)
@@ -64,6 +73,20 @@ namespace Search {
 			button.ShowAll ();
 
 			return button;
+		}
+
+		public bool Expanded {
+			get {
+				return expanded;
+			}
+			set {
+				expanded = value;
+				if (expanded)
+					ShowTiles (false);
+				else
+					HideTiles ();
+				headerExpander.Expanded = expanded;
+			}
 		}
 
 		protected int Columns {
@@ -82,7 +105,7 @@ namespace Search {
 		void HeaderSizeRequested (object obj, Gtk.SizeRequestedArgs args)
 		{
 			Gtk.Requisition req = args.Requisition;
-			Gtk.Requisition labelReq = headerLabel.ChildRequisition;
+			Gtk.Requisition labelReq = headerExpander.ChildRequisition;
 
 			req.Height = (int) (labelReq.Height * 1.5);
 
@@ -119,7 +142,8 @@ namespace Search {
 			widget.ChildVisible = false;
 			tiles.Add ((Tiles.Tile)widget);
 			widget.Parent = this;
-			ShowTiles (true);
+			if (Expanded)
+				ShowTiles (true);
 		}
 
 		protected override void OnRemoved (Gtk.Widget widget)
@@ -127,7 +151,8 @@ namespace Search {
 			HideTiles ();
 			tiles.Remove ((Tiles.Tile)widget);
 			widget.Unparent ();
-			ShowTiles (true);
+			if (Expanded)
+				ShowTiles (true);
 		}
 
 		private Tiles.Tile lastTarget;
@@ -153,7 +178,7 @@ namespace Search {
 				if (hadFocus || page > 0) {
 					if (index < few)
 						page = 0;
-					else if (expanded)
+					else if (extended)
 						page = index / (manyRows * columns);
 					else
 						page = ((index - few) / (manyRows * columns)) + 1;
@@ -175,7 +200,7 @@ namespace Search {
 				// Show extra tiles on every page after the first, unless
 				// there are only two pages and the second one only has
 				// enough tiles to fit the "fewer" size.
-				return (page > 0 && tiles.Count > 2 * few) || expanded;
+				return (page > 0 && tiles.Count > 2 * few) || extended;
 			}
 		}
 
@@ -183,15 +208,30 @@ namespace Search {
 		{
 			HideTiles ();
 			page--;
-			ShowTiles (false);
+			if (!Expanded)
+				OnActivated (obj, args);
+			else
+				ShowTiles (false);
 		}
 
 		void OnNext (object obj, EventArgs args)
 		{
 			HideTiles ();
 			page++;
-			ShowTiles (false);
+			if (!Expanded)
+				OnActivated (obj, args);
+			else
+				ShowTiles (false);
 		}
+
+		protected void OnActivated (object obj, EventArgs args)
+		{
+			Expanded = !Expanded;
+			CategoryToggle (scope);
+		}
+
+		public delegate void CategoryToggleDelegate (ScopeType scope);
+		public event CategoryToggleDelegate CategoryToggle;
 
 		protected int PageSize {
 			get {
@@ -203,7 +243,7 @@ namespace Search {
 			get {
 				if (page == 0)
 					return 0;
-				else if (expanded)
+				else if (extended)
 					return page * many;
 				else
 					return few + (page - 1) * many;
@@ -289,11 +329,11 @@ namespace Search {
 			}
 		}
 
-		public void Select (bool focus, bool expanded)
+		public void Select (bool focus, bool extended)
 		{
-			if (expanded) {
+			if (extended) {
 				HideTiles ();
-				this.expanded = expanded;
+				this.extended = extended;
 				ShowTiles (false);
 			}
 			if (focus && !Empty)

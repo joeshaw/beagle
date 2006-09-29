@@ -46,6 +46,55 @@ namespace Search.Tiles {
 					   Catalog.GetString ("Archives"), 2),
 		};
 
+		public static ScopeType TileGroupToScopeType (TileGroup group)
+		{
+			switch (group) {
+
+			case TileGroup.Application:
+				return ScopeType.Applications;
+
+			case TileGroup.Calendar:
+				return ScopeType.Calendar;
+
+			case TileGroup.Contact:
+				return ScopeType.Contacts;
+
+			// This TileGroup exists but does not seem to be used
+			// case TileGroup.Folder:
+			case TileGroup.Documents:
+				return ScopeType.Documents;
+
+			case TileGroup.Conversations:
+				return ScopeType.Conversations;
+
+			case TileGroup.Image:
+				return ScopeType.Images;
+
+			case TileGroup.Audio:
+				return ScopeType.Media;
+				
+			case TileGroup.Video:
+				return ScopeType.Media;
+
+			case TileGroup.Folder:
+				return ScopeType.Folders;
+				
+			case TileGroup.Website:
+				return ScopeType.Websites;
+
+			case TileGroup.Feed:
+				return ScopeType.Feeds;
+
+			case TileGroup.Archive:
+				return ScopeType.Archives;
+				
+			}
+
+			Console.WriteLine ("Error: Could not find ScopeType for Group: {0}",group);
+			return ScopeType.Nothing;
+		}
+
+
 		public static DateTime ParseTimestamp (string timestamp)
 		{
 			DateTime dt;

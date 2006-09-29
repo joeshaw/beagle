@@ -9,7 +9,7 @@ namespace Search {
 
 		Gtk.SizeGroup sizeGroup;
 
-		public TileCategory (string name, int rows, Gtk.SizeGroup sizeGroup) : base (name, rows, 2)
+		public TileCategory (Tiles.TileGroupInfo info, Gtk.SizeGroup sizeGroup) : base (info, 2)
 		{
 			this.sizeGroup = sizeGroup;
 		}
@@ -50,8 +50,12 @@ namespace Search {
 			req.Width += 2 * headerReq.Height;
 			req.Height *= (PageSize + Columns - 1) / Columns;
 
+			if (!Expanded)
+				req.Height = 2;  //keep a thin line of background.
+			
 			// Add height for the header, and update the width if the header
 			// is wider than the tile area
+
 			req.Height += headerReq.Height;
 			req.Width = Math.Max (req.Width, headerReq.Width + headerReq.Height);
 

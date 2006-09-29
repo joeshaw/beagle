@@ -6,16 +6,21 @@ using System.Diagnostics;
 using Beagle.Util;
 
 namespace Search {
-
-	public enum ScopeType {
-		Everywhere,
-		Applications,
-		Calendar,
-		Contacts,
-		Documents,
-		Conversations,
-		Images,
-		Media
+	[Flags]
+	public enum ScopeType : ushort {
+		Nothing       = 0,
+		Applications  = 1 << 0,
+		Calendar      = 1 << 1,
+		Contacts      = 1 << 2,
+		Documents     = 1 << 3,
+		Conversations = 1 << 4,
+		Images        = 1 << 5,
+		Media         = 1 << 6,
+		Folders       = 1 << 7,
+		Websites      = 1 << 8,
+		Feeds         = 1 << 9,
+		Archives      = 1 << 10,
+		Everything    = UInt16.MaxValue // Lame but there's no way to do ~0 in a ushort way.
 	}
 
 	public enum SortType {
@@ -29,8 +34,8 @@ namespace Search {
 		private MainWindow main_window;
 		
 		private Gtk.ActionGroup actions;
-		private Gtk.RadioActionEntry[] scope_entries, sort_entries;
-		private Gtk.ToggleActionEntry[] view_entries;
+		private Gtk.RadioActionEntry[] sort_entries;
+		private Gtk.ToggleActionEntry[] scope_entries, view_entries;
 
 		public UIManager (MainWindow main_window)
 		{
@@ -55,6 +60,9 @@ namespace Search {
 			Gtk.ActionEntry[] entries = new ActionEntry[] {
 				new ActionEntry ("Search", null,
 						 Catalog.GetString ("_Search"),
+						 null, null, null),
+				new ActionEntry ("Scope", null,
+						 Catalog.GetString ("Show _Categories"),
 						 null, null, null),
 				new ActionEntry ("Actions", null,
 						 Catalog.GetString ("_Actions"),
@@ -98,49 +106,99 @@ namespace Search {
 			};
 			actions.Add (entries);
 
-			scope_entries = new RadioActionEntry[] {
-				new RadioActionEntry ("Everywhere", null,
-						      Catalog.GetString ("_Everywhere"),
-						      "<control>E",
-						      Catalog.GetString ("Search everywhere"),
-						      (int)ScopeType.Everywhere),
-				new RadioActionEntry ("Applications", null,
-						      Catalog.GetString ("_Applications"),
+			Gtk.ActionEntry[] multiscope_entries = new ActionEntry[] {
+				new ActionEntry ("All", null,
+						 Catalog.GetString ("_All"),
+						 null, null,
+						 delegate {
+							 if (ScopeChanged != null)
+								 ScopeChanged (ScopeType.Everything, true);
+
+							 foreach (ToggleActionEntry t in scope_entries)
+								 ((ToggleAction) actions [t.name]).Active = true;
+						 }),
+				new ActionEntry ("None", null,
+						 Catalog.GetString ("_None"),
+						 null, null,
+						 delegate {
+							 if (ScopeChanged != null)
+								 ScopeChanged (ScopeType.Nothing, true);
+
+							 foreach (ToggleActionEntry t in scope_entries)
+								 ((ToggleAction) actions [t.name]).Active = false;
+						 })
+			};
+			actions.Add (multiscope_entries);
+
+			scope_entries = new ToggleActionEntry[] {
+				new ToggleActionEntry ("Applications", null,
+						      Catalog.GetString ("A_pplications"),
 						      null,
 						      Catalog.GetString ("Search applications"),
-						      (int)ScopeType.Applications),
-				new RadioActionEntry ("Contacts", null,
+						      OnScopeChanged,
+						      true),
+				new ToggleActionEntry ("Contacts", null,
 						      Catalog.GetString ("_Contacts"),
 						      null,
 						      Catalog.GetString ("Search contacts"),
-						      (int)ScopeType.Contacts),
-				new RadioActionEntry ("Calendar", null,
+						      OnScopeChanged,
+						      true),
+				new ToggleActionEntry ("Calendar", null,
 						      Catalog.GetString ("Ca_lendar events"),
 						      null,
 						      Catalog.GetString ("Search calendar events"),
-						      (int)ScopeType.Contacts),
-				new RadioActionEntry ("Documents", null,
+						      OnScopeChanged,
+						      true),
+				new ToggleActionEntry ("Documents", null,
 						      Catalog.GetString ("_Documents"),
 						      null,
 						      Catalog.GetString ("Search documents"),
-						      (int)ScopeType.Documents),
-				new RadioActionEntry ("Conversations", null,
+						      OnScopeChanged,
+						      true),
+				new ToggleActionEntry ("Conversations", null,
 						      Catalog.GetString ("Conve_rsations"),
 						      null,
 						      Catalog.GetString ("Search E-Mail and Instant Messaging logs"),
-						      (int)ScopeType.Conversations),
-				new RadioActionEntry ("Images", null,
+						      OnScopeChanged,
+						      true),
+				new ToggleActionEntry ("Images", null,
 						      Catalog.GetString ("_Images"),
 						      null,
 						      Catalog.GetString ("Search images"),
-						      (int)ScopeType.Images),
-				new RadioActionEntry ("Media", null,
+						      OnScopeChanged,
+						      true),
+				new ToggleActionEntry ("Media", null,
 						      Catalog.GetString ("_Media"),
 						      null,
 						      Catalog.GetString ("Search sound and video files"),
-						      (int)ScopeType.Media),
+						      OnScopeChanged,
+						      true),
+				new ToggleActionEntry ("Folders", null,
+						      Catalog.GetString ("_Folders"),
+						      null,
+						      Catalog.GetString ("Search for folder names"),
+						      OnScopeChanged,
+						      true),
+				new ToggleActionEntry ("Websites", null,
+						      Catalog.GetString ("_Websites"),
+						      null,
+						      Catalog.GetString ("Search website history"),
+						      OnScopeChanged,
+						      true),
+				new ToggleActionEntry ("Feeds", null,
+						      Catalog.GetString ("_News Feeds"),
+						      null,
+						      Catalog.GetString ("Search news feeds"),
+						      OnScopeChanged,
+						      true),
+				new ToggleActionEntry ("Archives", null,
+						      Catalog.GetString ("A_rchives"),
+						      null,
+						      Catalog.GetString ("Search files in Archives"),
+						      OnScopeChanged,
+						      true)
 			};
-			actions.Add (scope_entries, (int)ScopeType.Everywhere, OnScopeChanged);
+			actions.Add (scope_entries);
 
 			sort_entries = new RadioActionEntry[] {
 				new RadioActionEntry ("SortModified", null,
@@ -184,7 +242,7 @@ namespace Search {
 
 				actions ["QuickTips"].Sensitive = value;
 
-				foreach (Gtk.RadioActionEntry rae in scope_entries)
+				foreach (Gtk.ToggleActionEntry rae in scope_entries)
 					actions [rae.name].Sensitive = value;
 
 				foreach (Gtk.RadioActionEntry rae in sort_entries)
@@ -196,14 +254,23 @@ namespace Search {
 		"<ui>" +
 		"  <menubar name='MenuBar'>" +
 		"    <menu action='Search'>" +
-		"      <menuitem action='Everywhere'/>" +
-		"      <menuitem action='Applications'/>" +
-		"      <menuitem action='Contacts'/>" +
-		"      <menuitem action='Calendar'/>" +
-		"      <menuitem action='Documents'/>" +
-		"      <menuitem action='Conversations'/>" +
-		"      <menuitem action='Images'/>" +
-		"      <menuitem action='Media'/>" +
+		"      <menu action='Scope'>" +
+		"        <menuitem action='All'/>" +
+		"        <menuitem action='None'/>" +
+		"        <separator/>" +
+		"        <menuitem action='Applications'/>" +
+		"        <menuitem action='Contacts'/>" +
+		"        <menuitem action='Calendar'/>" +
+		"        <menuitem action='Documents'/>" +
+		"        <menuitem action='Conversations'/>" +
+		"        <menuitem action='Images'/>" +
+		"        <menuitem action='Media'/>" +
+		"        <menuitem action='Folders'/>" +
+		"        <menuitem action='Websites'/>" +
+		"        <menuitem action='Feeds'/>" +
+		// You can't search inside archives, so turn this off for now
+		//"        <menuitem action='Archives'/>" +
+		"      </menu>" +
 		"      <separator/>" +
 		"      <menuitem action='Preferences'/>" +
 		"      <menuitem action='Quit'/>" +
@@ -248,7 +315,7 @@ namespace Search {
 		private void OnToggleDetails (object obj, EventArgs args)
 		{
 			if (ToggleDetails != null)
-				ToggleDetails ((obj as ToggleAction).Active);
+				ToggleDetails (((ToggleAction) obj).Active);
 		}
 
 		public delegate void ShowQuickTipsDelegate ();
@@ -322,13 +389,17 @@ namespace Search {
 		public delegate void FocusSearchEntryDelegate ();
 		public event FocusSearchEntryDelegate FocusSearchEntry;
 
-		private void OnScopeChanged (object obj, Gtk.ChangedArgs args)
+		private void OnScopeChanged (object obj, EventArgs args)
 		{
-			if (ScopeChanged != null)
-				ScopeChanged ((ScopeType)args.Current.CurrentValue);
+			if (ScopeChanged == null)
+				return;
+
+			ScopeType scope = (ScopeType) System.Enum.Parse (typeof (ScopeType), ((Action) obj).Name);
+			
+			ScopeChanged (scope, ((ToggleAction) obj).Active);
 		}
 
-		public delegate void ScopeChangedDelegate (ScopeType scope);
+		public delegate void ScopeChangedDelegate (ScopeType scope, bool active);
 		public event ScopeChangedDelegate ScopeChanged;
 
 		private void OnSortChanged (object obj, Gtk.ChangedArgs args)

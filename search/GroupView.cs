@@ -32,12 +32,13 @@ namespace Search {
 			foreach (Tiles.TileGroupInfo info in Tiles.Utils.GroupInfo) {
 								
 				if (info.Group == Tiles.TileGroup.Conversations)
-					box = new ConversationCategory (info.Name, info.Rows);
+					box = new ConversationCategory (info);
 				else
-					box = new TileCategory (info.Name, info.Rows, tileSizeGroup);
+					box = new TileCategory (info, tileSizeGroup);
 
 				PackStart (box, false, false, 0);
 				box.NoShowAll = true;
+				box.CategoryToggle += OnCategoryToggle;
 				categories [info.Group] = box;
 			}
 
@@ -126,42 +127,18 @@ namespace Search {
 				foreach (TileGroup group in categories.Keys) {
 					Category category = (Category)categories[group];
 					if (!GroupInScope (group))
-						category.Hide ();
+						category.Expanded = false;
 					else if (!category.Empty)
-						category.Show ();
+						category.Expanded = true;
 				}
 			}
 		}
 
 		private bool GroupInScope (TileGroup group)
 		{
-			switch (scope) {
-			case ScopeType.Everywhere:
-				return true;
+			ScopeType scopetype = Utils.TileGroupToScopeType (group);
 
-			case ScopeType.Applications:
-				return group == TileGroup.Application;
-
-			case ScopeType.Calendar:
-				return group == TileGroup.Calendar;
-
-			case ScopeType.Contacts:
-				return group == TileGroup.Contact;
-
-			case ScopeType.Documents:
-				return group == TileGroup.Documents;
-
-			case ScopeType.Conversations:
-				return group == TileGroup.Conversations;
-
-			case ScopeType.Images:
-				return group == TileGroup.Image;
-
-			case ScopeType.Media:
-				return group == TileGroup.Audio || group == TileGroup.Video;
-			}
-
-			return false;
+			return (scope & scopetype) == scopetype;
 		}
 
 		public SortType Sort {
@@ -178,5 +155,19 @@ namespace Search {
 				box.Hide ();
 			}
 		}
+
+		private void OnCategoryToggle (ScopeType catScope)
+		{
+			// we're not using the set function cause we directly
+			// close/open the expander in Category.cs
+			scope = scope ^ catScope;
+			CategoryToggled (catScope);
+		}
+
+		public delegate void CategoryToggledDelegate (ScopeType catScope);
+		public event CategoryToggledDelegate CategoryToggled;
+
+		
+		
 	}
 }

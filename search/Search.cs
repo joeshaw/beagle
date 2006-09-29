@@ -13,6 +13,7 @@ namespace Search {
 
 	public class MainWindow : Window {
 
+		UIManager uim;
 		Search.GroupView view;
 		Search.Entry entry;
 		Gtk.Button button;
@@ -30,7 +31,7 @@ namespace Search {
 
 		string queryText;
 		Beagle.Query currentQuery;
-		Search.ScopeType scope = ScopeType.Everywhere;
+		Search.ScopeType scope = ScopeType.Everything;
 		Search.SortType sort = SortType.Modified;
 		Search.TypeFilter filter = null;
 		bool showDetails = true;
@@ -137,7 +138,7 @@ namespace Search {
 			VBox vbox = new VBox ();
 			vbox.Spacing = 3;
 
-			UIManager uim = new UIManager (this);
+			uim = new UIManager (this);
 			uim.ScopeChanged += OnScopeChanged;
 			uim.SortChanged += OnSortChanged;
 			uim.ToggleDetails += OnToggleDetails;
@@ -204,6 +205,7 @@ namespace Search {
 
 			view = new GroupView ();
 			view.TileSelected += ShowInformation;
+			view.CategoryToggled += OnCategoryToggled;
 			panes.MainContents = view;
 			
 			Add (vbox);
@@ -345,11 +347,30 @@ namespace Search {
 			}
 		}
 
-		private void OnScopeChanged (Search.ScopeType newScope)
+		private void OnScopeChanged (Search.ScopeType toggled, bool active)
 		{
-			view.Scope = scope = newScope;
+			if (active)
+				view.Scope = scope = scope | toggled;
+			else
+				view.Scope = scope = scope ^ toggled;
+			
 			CheckNoMatch ();
 		}
+		
+		private void OnCategoryToggled (ScopeType toggled)
+		{
+			string name =  ScopeType.GetName (typeof (ScopeType), toggled);
+			try {
+				ToggleAction act = (ToggleAction) uim.GetAction ("/ui/MenuBar/Search/Scope/" +  name);
+				act.Active = ! act.Active;
+			}
+			catch (Exception ex) {
+				Console.WriteLine("Exception caught when trying to deactivate menu entry {0}:",name);
+				Console.WriteLine(ex);
+				return;
+			}
+		}
+		
 
 		private void OnSortChanged (Search.SortType newSort)
 		{

@@ -9,7 +9,7 @@ namespace Search {
 
 		Gtk.SizeGroup col1, col2, col3;
 
-		public ConversationCategory (string name, int rows) : base (name, rows, 1)
+		public ConversationCategory (Tiles.TileGroupInfo info) : base (info, 1)
 		{
 			col1 = new Gtk.SizeGroup (Gtk.SizeGroupMode.Horizontal);
 			col2 = new Gtk.SizeGroup (Gtk.SizeGroupMode.Horizontal);
@@ -41,7 +41,10 @@ namespace Search {
 				req.Height = Math.Max (req.Height, tileReq.Height);
 			}
 
-			req.Height = headerReq.Height + PageSize * tileReq.Height;
+			req.Height = (Expanded) ?
+			       	headerReq.Height + PageSize * tileReq.Height :
+				headerReq.Height + 2;
+
 			req.Width = Math.Max (headerReq.Width + headerReq.Height,
 					      tileReq.Width + 2 * headerReq.Height);
 
