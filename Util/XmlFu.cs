@@ -34,6 +34,8 @@ namespace Beagle.Util {
 
 	public class XmlFu {
 
+		public static bool Debug = false;
+
 		public static void SerializeUtf8 (XmlSerializer serializer, Stream stream, object o)
 		{
 			if (serializer == null)
@@ -45,9 +47,15 @@ namespace Beagle.Util {
 			if (o == null)
 				throw new ArgumentNullException ("o");
 
+			Stopwatch w = new Stopwatch ();
+			w.Start ();
 			XmlTextWriter xml_writer = new XmlTextWriter (stream, Encoding.UTF8);
 			xml_writer.Formatting = Formatting.Indented;
 			serializer.Serialize (xml_writer, o);
+			w.Stop ();
+
+			if (Debug)
+				Log.Debug (">>> Serialization of {0}: {1}", o.GetType (), w);
 		}
 	}
 }

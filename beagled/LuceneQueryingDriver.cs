@@ -120,6 +120,9 @@ namespace Beagle.Daemon {
 				     UriFilter           uri_filter,
 				     HitFilter           hit_filter)
 		{
+			if (Debug)
+				Logger.Log.Debug ("###### {0}: Starting low-level queries", IndexName);
+
 			Stopwatch sw;
 			sw = new Stopwatch ();
 			sw.Start ();
@@ -298,7 +301,7 @@ namespace Beagle.Daemon {
 
 			sw.Stop ();
 			if (Debug)
-				Logger.Log.Debug ("###### Finished low-level queries in {0}", sw);
+				Logger.Log.Debug ("###### {0}: Finished low-level queries in {1}", IndexName, sw);
 			sw.Reset ();
 			sw.Start ();
 
@@ -312,7 +315,8 @@ namespace Beagle.Daemon {
 						      term_list,
 						      query.MaxHits,
 						      uri_filter,
-						      new HitFilter (all_hit_filters.HitFilter));
+						      new HitFilter (all_hit_filters.HitFilter),
+						      IndexName);
 			}
 
 			//
@@ -329,7 +333,7 @@ namespace Beagle.Daemon {
 
 			sw.Stop ();
 			if (Debug)
-				Logger.Log.Debug ("###### Processed query in {0}", sw);
+				Logger.Log.Debug ("###### {0}: Processed query in {1}", IndexName, sw);
 
 		}
 
@@ -513,6 +517,33 @@ namespace Beagle.Daemon {
 
 		////////////////////////////////////////////////////////////////
 
+		// Lame iterator methods because we use two different ones
+		// depending on which algorithm we use.
+		private static IEnumerable IterateMatches (BetterBitArray primary_matches)
+		{
+			int j = primary_matches.Count;
+
+			// Walk across the matches backwards, since newer
+			// documents are more likely to be at the end of
+			// the index.
+			while (true) {
+				int i = primary_matches.GetPreviousTrueIndex (j);
+				if (i < 0)
+					yield break;
+				j = i-1; // This way we can't forget to adjust i
+
+				yield return i;
+			}
+		}
+
+		private static IEnumerable IterateOrderedMatches (int[] ordered_matches)
+		{
+			int i;
+
+			for (i = 0; i < ordered_matches.Length; i++)
+				yield return ordered_matches [i];
+		}
+
 		private class DocAndId {
 			public Document Doc;
 			public int Id;
@@ -531,44 +562,122 @@ namespace Beagle.Daemon {
 							  ICollection       query_term_list,
 							  int               max_results,
 							  UriFilter         uri_filter,
-							  HitFilter         hit_filter)
+							  HitFilter         hit_filter,
+							  string            index_name)
 		{
 			TopScores top_docs = null;
 			ArrayList all_docs = null;
 
 			if (Debug)
-				Logger.Log.Debug (">>> Initially handed {0} matches", primary_matches.TrueCount);
+				Logger.Log.Debug (">>> {0}: Initially handed {1} matches", index_name, primary_matches.TrueCount);
 
 			if (primary_matches.TrueCount <= max_results) {
 				if (Debug)
-					Logger.Log.Debug (">>> Initial count is within our limit of {0}", max_results);
+					Logger.Log.Debug (">>> {0}: Initial count is within our limit of {1}", index_name, max_results);
 				all_docs = new ArrayList ();
 			} else {
 				if (Debug)
-					Logger.Log.Debug (">>> Number of hits is capped at {0}", max_results);
+					Logger.Log.Debug (">>> {0}: Number of hits is capped at {1}", index_name, max_results);
 				top_docs = new TopScores (max_results);
 			}
 
-			Stopwatch total, a, b, c;
+			Stopwatch total, a, b, c, d;
 			total = new Stopwatch ();
-			a = new Stopwatch ();
+			a = null;
 			b = new Stopwatch ();
 			c = new Stopwatch ();
+			d = new Stopwatch ();
 
 			total.Start ();
-			a.Start ();
 
-			// Pull in the primary documents.
-			// We walk across them backwards, since newer 
-			// documents are more likely to be at the end of
-			// the index.
-			int j = primary_matches.Count;
-			while (true) {
-				int i;
-				i = primary_matches.GetPreviousTrueIndex (j);
-				if (i < 0)
-					break;
-				j = i-1; // This way we can't forget to adjust i
+			// There are two ways we can determine the max_results
+			// most recent items:  
+			//
+			// One is to instantiate Lucene documents for each of
+			// the document IDs in primary_matches.  This is a
+			// fairly expensive operation.
+			//
+			// The other is to walk through the list of all
+			// document IDs in descending time order.  This is
+			// a less expensive operation, but adds up over time
+			// on large data sets.
+			//
+			// We can walk about 2.5 docs for every Document we
+			// instantiate.  So what we'll do, if we have more
+			// matches than available hits, is walk (m * 1.25)
+			// docs to see if we can fill out the top 100 hits.
+			// If not, we'll fall back to creating documents
+			// for all of them.
+
+			int[] ordered_matches = null;
+			if (primary_matches.TrueCount > max_results) {
+				a = new Stopwatch ();
+				a.Start ();
+
+				TermDocs docs = primary_reader.TermDocs ();
+				TermEnum enumerator = primary_reader.Terms (new Term ("InvertedTimestamp", ""));
+				ordered_matches = new int [max_results];
+				int docs_found = 0;
+				int docs_walked = 0;
+				int max_docs = (int) (primary_matches.TrueCount * 1.25);
+
+				do {
+					Term term = enumerator.Term ();
+				
+					if (term.Field () != "InvertedTimestamp")
+						break;
+
+					docs.Seek (enumerator);
+
+					while (docs.Next ()
+					       && docs_found < ordered_matches.Length
+					       && docs_walked < max_docs) {
+						int doc_id = docs.Doc ();
+
+						if (doc_id == 8)
+							Log.Debug (">>> {0}: GOT DOC ID 8!!!  Matches: {1}  deleted: {2}", index_name, primary_matches.Get (doc_id), primary_reader.IsDeleted (doc_id));
+
+						if (primary_matches.Get (doc_id)) {
+							ordered_matches [docs_found] = docs.Doc ();
+							docs_found++;
+						}
+				
+						docs_walked++;
+					}
+				} while (enumerator.Next ()
+					 && docs_found < ordered_matches.Length
+					 && docs_walked < max_docs);
+
+				docs.Close ();
+
+				// We've found all the docs we can return in a subset!
+				// Fantastic, we've probably short circuited a slow search.
+				if (docs_found == max_results) {
+					all_docs = new ArrayList ();
+					top_docs = null;
+				}
+
+				a.Stop ();
+				if (Debug) {
+					Log.Debug (">>> {0}: Walked {1} items, populated an enum with {2} items", index_name, docs_walked, docs_found, a);
+					
+					if (docs_found == max_results)
+						Log.Debug (">>> {0}: Successfully short circuited timestamp ordering!", index_name);
+				}
+			}
+
+			b.Start ();
+			
+			int count = 0;
+			IEnumerable enumerable;
+
+			if (ordered_matches != null) {
+				enumerable = IterateOrderedMatches (ordered_matches);
+		       } else
+				enumerable = IterateMatches (primary_matches);
+
+			foreach (int i in enumerable) {
+				count++;
 
 				Document doc;
 				doc = primary_searcher.Doc (i);
@@ -608,9 +717,12 @@ namespace Beagle.Daemon {
 					top_docs.Add (timestamp_num, doc_and_id);
 			}
 
-			a.Stop ();
+			if (Debug)
+				Log.Debug (">>> {0}: Processed roughly {1} documents", index_name, count);
 
-			b.Start ();
+			b.Stop ();
+
+			c.Start ();
 
 			ICollection final_list_of_docs;
 			if (all_docs != null)
@@ -639,7 +751,7 @@ namespace Beagle.Daemon {
 			} else {
 
 				if (Debug)
-					Logger.Log.Debug (">>> Performing cross-index Hit reunification");
+					Logger.Log.Debug (">>> {0}: Performing cross-index Hit reunification", index_name);
 
 				Hashtable hits_by_uri;
 				hits_by_uri = UriFu.NewHashtable ();
@@ -659,10 +771,9 @@ namespace Beagle.Daemon {
 				
 				// Attach all of our secondary properties
 				// to the hits
-				j = 0;
+				int j = 0;
 				while (true) {
-					int i;
-					i = secondary_matches.GetNextTrueIndex (j);
+					int i = secondary_matches.GetNextTrueIndex (j);
 					if (i >= secondary_matches.Count)
 						break;
 					j = i+1;
@@ -684,7 +795,7 @@ namespace Beagle.Daemon {
 
 			ScoreHits (hits_by_id, primary_reader, query_term_list);
 
-			b.Stop ();
+			c.Stop ();
 
 			// If we used the TopScores object, we got our original
 			// list of documents sorted for us.  If not, sort the
@@ -692,7 +803,7 @@ namespace Beagle.Daemon {
 			if (top_docs == null)
 				final_list_of_hits.Sort ();
 
-			c.Start ();
+			d.Start ();
 
 			// If we have a hit_filter, use it now.
 			if (hit_filter != null) {
@@ -728,15 +839,16 @@ namespace Beagle.Daemon {
 
 			result.Add (final_list_of_hits);
 
-			c.Stop ();
+			d.Stop ();
 			total.Stop ();
 
 			if (Debug) {
-				Logger.Log.Debug (">>> GenerateQueryResults time statistics:");
-				Logger.Log.Debug (">>>   First pass {0} ({1:0.0}%)", a, 100 * a.ElapsedTime / total.ElapsedTime);
-				Logger.Log.Debug (">>> Hit assembly {0} ({1:0.0}%)", b, 100 * b.ElapsedTime / total.ElapsedTime);
-				Logger.Log.Debug (">>>   Final pass {0} ({1:0.0}%)", c, 100 * c.ElapsedTime / total.ElapsedTime);
-				Logger.Log.Debug (">>>        TOTAL {0}", total);
+				Logger.Log.Debug (">>> {0}: GenerateQueryResults time statistics:", index_name);
+				Logger.Log.Debug (">>> {0}: Short circuit {1,6} ({2:0.0}%)", index_name, a == null ? "N/A" : a.ToString (), a == null ? 0.0 : 100 * a.ElapsedTime / total.ElapsedTime);
+				Logger.Log.Debug (">>> {0}:    First pass {1,6} ({2:0.0}%)", index_name, b, 100 * b.ElapsedTime / total.ElapsedTime);
+				Logger.Log.Debug (">>> {0}:  Hit assembly {1,6} ({2:0.0}%)", index_name, c, 100 * c.ElapsedTime / total.ElapsedTime);
+				Logger.Log.Debug (">>> {0}:    Final pass {1,6} ({2:0.0}%)", index_name, d, 100 * d.ElapsedTime / total.ElapsedTime);
+				Logger.Log.Debug (">>> {0}:         TOTAL {1,6}", index_name, total);
 			}
 		}
 

@@ -76,7 +76,8 @@ namespace Beagle.Daemon {
 		// 14: allow wildcard queries to also match keywords
 		// 15: analyze PropertyKeyword field, and store all properties as
 		//     lower case so that we're truly case insensitive.
-		private const int MAJOR_VERSION = 15;
+		// 16: add inverted timestamp to make querying substantially faster
+		private const int MAJOR_VERSION = 16;
 		private int minor_version = 0;
 
 		private string index_name;
@@ -617,6 +618,12 @@ namespace Beagle.Daemon {
 				f = Field.Keyword ("Timestamp", str);
 				primary_doc.Add (f);
 				f = Field.UnStored (wildcard_field, str);
+				primary_doc.Add (f);
+
+				// Create an inverted timestamp so that we can
+				// sort by timestamp at search-time.
+				long timeval = Convert.ToInt64 (str);
+				f = Field.UnStored ("InvertedTimestamp", (Int64.MaxValue - timeval).ToString ());
 				primary_doc.Add (f);
 
 				str = StringFu.DateTimeToYearMonthString (indexable.Timestamp);
