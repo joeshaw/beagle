@@ -15,8 +15,7 @@ SUBDIRS +=			\
 	glue			\
 	BeagleClient            \
 	beagled                 \
-	Filters 		\
-	tools
+	Filters
 
 if ENABLE_GUI
 pkgconfig_DATA += beagle-ui-0.0.pc
@@ -27,8 +26,9 @@ SUBDIRS +=			\
 endif
 
 SUBDIRS +=			\
-	mozilla-extension	
-	
+	mozilla-extension	\
+	tools
+
 if ENABLE_EPIPHANY_EXTENSION
 SUBDIRS += epiphany-extension
 endif
