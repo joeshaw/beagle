@@ -634,9 +634,6 @@ namespace Beagle.Daemon {
 					       && docs_walked < max_docs) {
 						int doc_id = docs.Doc ();
 
-						if (doc_id == 8)
-							Log.Debug (">>> {0}: GOT DOC ID 8!!!  Matches: {1}  deleted: {2}", index_name, primary_matches.Get (doc_id), primary_reader.IsDeleted (doc_id));
-
 						if (primary_matches.Get (doc_id)) {
 							ordered_matches [docs_found] = docs.Doc ();
 							docs_found++;
