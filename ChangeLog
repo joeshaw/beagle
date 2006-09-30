@@ -1,3 +1,7 @@
+2006-09-30  Theppitak Karoonboonyanan  <thep@linux.thai.net>
+
+	* configure.in: Added th (Thai) to ALL_LINGUAS.
+
 2006-09-22  Danilo Šegan  <danilo@gnome.org>
 
 	* configure.in: Added sr, sr@Latn to ALL_LINGUAS.
