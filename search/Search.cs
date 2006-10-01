@@ -130,7 +130,6 @@ namespace Search {
 			Title = "Desktop Search";
 			Icon = Beagle.Images.GetPixbuf ("system-search.png");
 
-			BorderWidth = 3;
 			DefaultWidth = 700;
 			DefaultHeight = 550;
 			DeleteEvent += OnWindowDelete;
@@ -184,6 +183,7 @@ namespace Search {
 			pages = new Gtk.Notebook ();
 			pages.ShowTabs = false;
 			pages.ShowBorder = false;
+			pages.BorderWidth = 3;
 			vbox.PackStart (pages, true, true, 0);
 
 			quicktips = new Pages.QuickTips ();
