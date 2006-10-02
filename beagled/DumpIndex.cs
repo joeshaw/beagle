@@ -33,6 +33,7 @@ using System.Net;
 using Beagle;
 using Beagle.Util;
 using Beagle.Daemon;
+using Hit = Beagle.Hit;
 
 using Lucene.Net.Index;
 using Lucene.Net.Search;
