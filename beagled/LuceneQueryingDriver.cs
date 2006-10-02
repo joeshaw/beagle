@@ -489,7 +489,7 @@ namespace Beagle.Daemon {
 			foreach (Term term in term_list) {
 
 				double idf;
-				idf = similarity.Idf (reader.DocFreq (term), reader.MaxDoc ());
+				idf = similarity.Ldf (reader.DocFreq (term), reader.MaxDoc ());
 
 				int hit_count;
 				hit_count = hits_by_id.Count;
