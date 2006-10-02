@@ -2,141 +2,67 @@ From: Daniel Drake <dsd@gentoo.org>
 
 Exception handling is expensive, lets avoid it where possible.
 
-Index: Document/Field.cs
-===================================================================
-RCS file: /cvs/gnome/beagle/beagled/Lucene.Net/Document/Field.cs,v
-retrieving revision 1.3
-diff -u -B -p -r1.3 Field.cs
---- Document/Field.cs	6 Oct 2005 19:29:55 -0000	1.3
-+++ Document/Field.cs	16 Oct 2005 19:51:18 -0000
-@@ -299,14 +299,7 @@ namespace Lucene.Net.Documents
-         /// </summary>
-         public System.String StringValue()
-         {
--            try
--            {
--                return (System.String) fieldsData;
--            }
--            catch (System.InvalidCastException ignore)
--            {
--                return null;
--            }
-+			return fieldsData as System.String;
-         }
- 		
-         /// <summary>The value of the field as a Reader, or null.  If null, the String value
-@@ -315,14 +308,7 @@ namespace Lucene.Net.Documents
-         /// </summary>
-         public System.IO.TextReader ReaderValue()
-         {
--            try
--            {
--                return (System.IO.TextReader) fieldsData;
--            }
--            catch (System.InvalidCastException ignore)
--            {
--                return null;
--            }
-+			return fieldsData as System.IO.TextReader;
-         }
- 		
-         /// <summary>The value of the field in Binary, or null.  If null, the Reader or
-@@ -331,14 +317,7 @@ namespace Lucene.Net.Documents
-         /// </summary>
-         public byte[] BinaryValue()
-         {
--            try
--            {
--                return (byte[]) fieldsData;
--            }
--            catch (System.InvalidCastException ignore)
--            {
--                return null;
--            }
-+			return fieldsData as byte[];
-         }
- 		
-         /// <summary> Create a field by specifying its name, value and how it will
-@@ -740,4 +719,4 @@ namespace Lucene.Net.Documents
-             return result.ToString();
-         }
-     }
--}
-\ No newline at end of file
-+}
 Index: Index/FieldInfos.cs
 ===================================================================
 RCS file: /cvs/gnome/beagle/beagled/Lucene.Net/Index/FieldInfos.cs,v
-retrieving revision 1.4
-diff -u -B -p -r1.4 FieldInfos.cs
---- Index/FieldInfos.cs	6 Oct 2005 19:29:55 -0000	1.4
-+++ Index/FieldInfos.cs	16 Oct 2005 19:51:18 -0000
-@@ -196,16 +196,9 @@ namespace Lucene.Net.Index
+retrieving revision 1.5.4.6
+diff -u -3 -p -r1.5.4.6 FieldInfos.cs
+--- Index/FieldInfos.cs	30 Sep 2006 01:38:28 -0000	1.5.4.6
++++ Index/FieldInfos.cs	30 Sep 2006 02:08:58 -0000
+@@ -227,16 +227,9 @@ namespace Lucene.Net.Index
  		
  		public int FieldNumber(System.String fieldName)
  		{
--            try
--            {
--                FieldInfo fi = FieldInfo(fieldName);
--                if (fi != null)
--                    return fi.number;
--            }
--            catch (System.IndexOutOfRangeException ioobe)
--            {
--                return - 1;
--            }
+-			try
+-			{
+-				FieldInfo fi = FieldInfo(fieldName);
+-				if (fi != null)
+-					return fi.number;
+-			}
+-			catch (System.IndexOutOfRangeException ioobe)
+-			{
+-				return - 1;
+-			}
 +			FieldInfo fi = FieldInfo(fieldName);
-+            if (fi != null)
-+                return fi.number;
-             return - 1;
-         }
++			if (fi != null)
++				return fi.number;
+ 			return - 1;
+ 		}
  		
-@@ -224,14 +217,11 @@ namespace Lucene.Net.Index
-         /// </returns>
-         public System.String FieldName(int fieldNumber)
-         {
--            try
--            {
--                return FieldInfo(fieldNumber).name;
--            }
--            catch (System.NullReferenceException npe)
--            {
--                return "";
--            }
+@@ -255,14 +248,11 @@ namespace Lucene.Net.Index
+ 		/// </returns>
+ 		public System.String FieldName(int fieldNumber)
+ 		{
+-			try
+-			{
+-				return FieldInfo(fieldNumber).name;
+-			}
+-			catch (System.NullReferenceException)
+-			{
 +			FieldInfo info = FieldInfo(fieldNumber);
 +			if (info == null)
-+				return "";
+ 				return "";
+-			}
 +			else
-+                return info.name;
-         }
++				return info.name;
+ 		}
  		
-         /// <summary> Return the fieldinfo object referenced by the fieldNumber.</summary>
-@@ -242,19 +232,12 @@ namespace Lucene.Net.Index
-         /// </returns>
-         public FieldInfo FieldInfo(int fieldNumber)
+ 		/// <summary> Return the fieldinfo object referenced by the fieldNumber.</summary>
+@@ -273,14 +263,11 @@ namespace Lucene.Net.Index
+ 		/// </returns>
+ 		public FieldInfo FieldInfo(int fieldNumber)
  		{
--            if (fieldNumber < 0)
-+            if (fieldNumber < 0 || fieldNumber >= byNumber.Count)
-             {
-                 return null;
-             }
- 
--            try
--            {
--                return (FieldInfo) byNumber[fieldNumber];
--            }
--            catch (System.IndexOutOfRangeException ioobe)
--            {
--                return null;
--            }
-+            return (FieldInfo) byNumber[fieldNumber];
-         }
+-			try
+-			{
+-				return (FieldInfo) byNumber[fieldNumber];
+-			}
+-			catch (System.ArgumentOutOfRangeException) // (System.IndexOutOfRangeException)
++			if (fieldNumber < 0 || fieldNumber >= byNumber.Count)
+ 			{
+-				return null;
++			    return null;
+ 			}
++	                return (FieldInfo) byNumber[fieldNumber];
+ 		}
  		
  		public int Size()
-@@ -324,4 +307,4 @@ namespace Lucene.Net.Index
- 			}
- 		}
- 	}
--}
-\ No newline at end of file
-+}

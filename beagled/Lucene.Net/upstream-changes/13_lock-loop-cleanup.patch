@@ -8,14 +8,14 @@ Also simplify the sleep call - no need to allocate a TimeSpan here...
 Index: Store/Lock.cs
 ===================================================================
 RCS file: /cvs/gnome/beagle/beagled/Lucene.Net/Store/Lock.cs,v
-retrieving revision 1.3
-diff -u -p -r1.3 Lock.cs
---- Store/Lock.cs	6 Oct 2005 19:29:58 -0000	1.3
-+++ Store/Lock.cs	27 Oct 2005 10:45:10 -0000
+retrieving revision 1.6.4.10
+diff -u -3 -p -r1.6.4.10 Lock.cs
+--- Store/Lock.cs	30 Sep 2006 02:22:49 -0000	1.6.4.10
++++ Store/Lock.cs	30 Sep 2006 02:40:28 -0000
 @@ -69,14 +69,7 @@ namespace Lucene.Net.Store
+ 				{
+ 					throw new System.IO.IOException("Lock obtain timed out: " + this.ToString());
  				}
- 				++sleepCount;
- 
 -				try
 -				{
 -					System.Threading.Thread.Sleep(new System.TimeSpan((System.Int64) 10000 * LOCK_POLL_INTERVAL));

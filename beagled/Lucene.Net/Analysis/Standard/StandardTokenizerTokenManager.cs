@@ -25,21 +25,11 @@ namespace Lucene.Net.Analysis.Standard
         /// <summary>By default, closes the input Reader. </summary>
         public void Close()
         { 
-            debugStream.Close(); 
             input_stream.Done(); 
         }
 
 		private void  InitBlock()
 		{
-			System.IO.StreamWriter temp_writer;
-			temp_writer = new System.IO.StreamWriter(System.Console.OpenStandardOutput(), System.Console.Out.Encoding);
-			temp_writer.AutoFlush = true;
-			debugStream = temp_writer;
-		}
-		public System.IO.StreamWriter debugStream;
-		public virtual void  SetDebugStream(System.IO.StreamWriter ds)
-		{
-			debugStream = ds;
 		}
 		private int JjMoveStringLiteralDfa0_0()
 		{
@@ -1180,14 +1170,11 @@ MatchLoop1:
 				++curPos;
 				if ((i = jjnewStateCnt) == (startsAt = 75 - (jjnewStateCnt = startsAt)))
 					return curPos;
-				try
-				{
-					curChar = input_stream.ReadChar();
-				}
-				catch (System.IO.IOException)
-				{
+				int ret = input_stream.ReadChar();
+				if (ret != -1)
+					curChar = (char) ret;
+				else
 					return curPos;
-				}
 			}
 		}
 		internal static readonly int[] jjnextStates = new int[]{30, 31, 32, 34, 38, 39, 41, 42, 46, 47, 53, 54, 5, 6, 10, 11, 19, 20, 3, 4, 8, 9, 17, 18, 31, 32, 34, 32, 33, 34, 65, 66, 68, 69, 72, 73, 5, 6, 19, 20, 25, 26, 50, 51, 70, 71, 12, 13, 14, 15, 23, 24, 43, 44, 48, 49, 55, 56, 59, 60, 61, 62};
@@ -1366,11 +1353,11 @@ MatchLoop1:
 			
 			for (; ; )
 			{
-				try
-				{
-					curChar = input_stream.BeginToken();
-				}
-				catch (System.IO.IOException)
+				
+				int ret = input_stream.BeginToken();
+				if (ret != -1)
+					curChar = (char) ret;
+				else
 				{
 					jjmatchedKind = 0;
 					matchedToken = JjFillToken();
@@ -1402,11 +1389,7 @@ MatchLoop1:
 				int error_column = input_stream.GetEndColumn();
 				System.String error_after = null;
 				bool EOFSeen = false;
-				try
-				{
-					input_stream.ReadChar(); input_stream.Backup(1);
-				}
-				catch (System.IO.IOException)
+				if (input_stream.ReadChar() == -1)
 				{
 					EOFSeen = true;
 					error_after = curPos <= 1?"":input_stream.GetImage();
@@ -1418,6 +1401,9 @@ MatchLoop1:
 					else
 						error_column++;
 				}
+				else
+					input_stream.Backup(1);
+
 				if (!EOFSeen)
 				{
 					input_stream.Backup(1);

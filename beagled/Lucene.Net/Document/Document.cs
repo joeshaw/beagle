@@ -169,9 +169,9 @@ namespace Lucene.Net.Documents
 		}
 		
 		/// <summary>Returns an Enumeration of all the fields in a document. </summary>
-		public System.Collections.IEnumerator Fields()
+		public System.Collections.IEnumerable Fields()
 		{
-			return ((System.Collections.ArrayList) fields).GetEnumerator();
+	return fields;
 		}
 		
 		/// <summary> Returns an array of {@link Field}s with the given name.

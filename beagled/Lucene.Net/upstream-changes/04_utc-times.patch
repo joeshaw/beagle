@@ -2,9 +2,14 @@ From: Joe Shaw <joeshaw@novell.com>
 
 Use UTC times
 
---- Lucene.Net/Store/FSDirectory.cs.orig	2005-10-02 09:56:40.000000000 +0100
-+++ Lucene.Net/Store/FSDirectory.cs	2005-10-02 09:58:05.000000000 +0100
-@@ -405,21 +405,21 @@ namespace Lucene.Net.Store
+Index: Store/FSDirectory.cs
+===================================================================
+RCS file: /cvs/gnome/beagle/beagled/Lucene.Net/Store/FSDirectory.cs,v
+retrieving revision 1.19.2.15
+diff -u -3 -p -r1.19.2.15 FSDirectory.cs
+--- Store/FSDirectory.cs	25 Sep 2006 23:02:03 -0000	1.19.2.15
++++ Store/FSDirectory.cs	30 Sep 2006 01:51:20 -0000
+@@ -506,21 +506,21 @@ namespace Lucene.Net.Store
  		public override long FileModified(System.String name)
  		{
  			System.IO.FileInfo file = new System.IO.FileInfo(System.IO.Path.Combine(directory.FullName, name));
@@ -29,9 +34,14 @@ Use UTC times
  		}
  		
  		/// <summary>Returns the length in bytes of a file in the directory. </summary>
---- Lucene.Net/Store/RAMDirectory.cs.orig	2005-10-02 11:13:09.000000000 +0100
-+++ Lucene.Net/Store/RAMDirectory.cs	2005-10-02 11:13:26.000000000 +0100
-@@ -161,7 +161,7 @@ namespace Lucene.Net.Store
+Index: Store/RAMDirectory.cs
+===================================================================
+RCS file: /cvs/gnome/beagle/beagled/Lucene.Net/Store/RAMDirectory.cs,v
+retrieving revision 1.4.4.6
+diff -u -3 -p -r1.4.4.6 RAMDirectory.cs
+--- Store/RAMDirectory.cs	25 Sep 2006 22:54:07 -0000	1.4.4.6
++++ Store/RAMDirectory.cs	30 Sep 2006 01:51:20 -0000
+@@ -170,7 +170,7 @@ namespace Lucene.Net.Store
  			//     final boolean MONITOR = false;
  			
  			RAMFile file = (RAMFile) files[name];
@@ -40,7 +50,7 @@ Use UTC times
  			do 
  			{
  				try
-@@ -171,7 +171,7 @@ namespace Lucene.Net.Store
+@@ -180,7 +180,7 @@ namespace Lucene.Net.Store
  				catch (System.Threading.ThreadInterruptedException)
  				{
  				}
@@ -49,16 +59,21 @@ Use UTC times
  				//       if (MONITOR) {
  				//         count++;
  				//       }
-@@ -235,4 +235,4 @@ namespace Lucene.Net.Store
+@@ -244,4 +244,4 @@ namespace Lucene.Net.Store
  		{
  		}
  	}
 -}
 \ No newline at end of file
 +}
---- Lucene.Net/Store/RAMFile.cs.orig	2005-10-02 11:14:25.000000000 +0100
-+++ Lucene.Net/Store/RAMFile.cs	2005-10-02 11:14:27.000000000 +0100
-@@ -21,6 +21,6 @@ namespace Lucene.Net.Store
+Index: Store/RAMFile.cs
+===================================================================
+RCS file: /cvs/gnome/beagle/beagled/Lucene.Net/Store/RAMFile.cs,v
+retrieving revision 1.3.4.5
+diff -u -3 -p -r1.3.4.5 RAMFile.cs
+--- Store/RAMFile.cs	25 Sep 2006 22:36:32 -0000	1.3.4.5
++++ Store/RAMFile.cs	30 Sep 2006 01:51:20 -0000
+@@ -23,6 +23,6 @@ namespace Lucene.Net.Store
  	{
  		internal System.Collections.ArrayList buffers = System.Collections.ArrayList.Synchronized(new System.Collections.ArrayList(10));
  		internal long length;
@@ -68,18 +83,23 @@ Use UTC times
 -}
 \ No newline at end of file
 +}
---- Lucene.Net/Store/RAMOutputStream.cs.orig	2005-10-02 11:15:25.000000000 +0100
-+++ Lucene.Net/Store/RAMOutputStream.cs	2005-10-02 11:15:35.000000000 +0100
-@@ -103,7 +103,7 @@ namespace Lucene.Net.Store
- 			if (pointer > file.length)
- 				file.length = pointer;
+Index: Store/RAMOutputStream.cs
+===================================================================
+RCS file: /cvs/gnome/beagle/beagled/Lucene.Net/Store/RAMOutputStream.cs,v
+retrieving revision 1.3.4.6
+diff -u -3 -p -r1.3.4.6 RAMOutputStream.cs
+--- Store/RAMOutputStream.cs	25 Sep 2006 22:54:07 -0000	1.3.4.6
++++ Store/RAMOutputStream.cs	30 Sep 2006 01:51:20 -0000
+@@ -107,7 +107,7 @@ namespace Lucene.Net.Store
+             if (pointer > file.length)
+                 file.length = pointer;
  			
--			file.lastModified = System.DateTime.Now.Ticks;
-+			file.lastModified = System.DateTime.UtcNow.Ticks;
+-            file.lastModified = System.DateTime.Now.Ticks;
++            file.lastModified = System.DateTime.UtcNow.Ticks;
  		}
  		
  		public override void  Close()
-@@ -121,4 +121,4 @@ namespace Lucene.Net.Store
+@@ -125,4 +125,4 @@ namespace Lucene.Net.Store
  			return file.length;
  		}
  	}

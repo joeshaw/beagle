@@ -5,14 +5,18 @@ times when indexing a small amount of files.
 
 Reduce overhead by removing exceptions from handling of this particular error.
 
+Note: During migration to 1.9.1 there was an error in porting this patch.
+As a result after applying this patch, Analysis/Standard/StandardTokenizerTokenManager.cs
+won't compile. Apply patch# 21 which fixes this issue.
+
 Index: Analysis/Standard/CharStream.cs
 ===================================================================
 RCS file: /cvs/gnome/beagle/beagled/Lucene.Net/Analysis/Standard/CharStream.cs,v
-retrieving revision 1.2
-diff -u -B -p -r1.2 CharStream.cs
---- Analysis/Standard/CharStream.cs	17 Jan 2005 19:54:28 -0000	1.2
-+++ Analysis/Standard/CharStream.cs	16 Oct 2005 20:09:02 -0000
-@@ -25,7 +25,7 @@ namespace Lucene.Net.Analysis.Standard
+retrieving revision 1.3.4.5
+diff -u -3 -p -r1.3.4.5 CharStream.cs
+--- Analysis/Standard/CharStream.cs	25 Sep 2006 22:36:28 -0000	1.3.4.5
++++ Analysis/Standard/CharStream.cs	30 Sep 2006 02:39:59 -0000
+@@ -40,7 +40,7 @@ namespace Lucene.Net.Analysis.Standard
  		/// of selecting the input is the responsibility of the class
  		/// implementing this interface.  Can throw any java.io.IOException.
  		/// </summary>
@@ -21,7 +25,7 @@ diff -u -B -p -r1.2 CharStream.cs
  		
  		/// <summary> Returns the column position of the character last read.</summary>
  		/// <deprecated> 
-@@ -72,7 +72,7 @@ namespace Lucene.Net.Analysis.Standard
+@@ -87,7 +87,7 @@ namespace Lucene.Net.Analysis.Standard
  		/// All characters must remain in the buffer between two successive calls
  		/// to this method to implement backup correctly.
  		/// </summary>
@@ -30,7 +34,7 @@ diff -u -B -p -r1.2 CharStream.cs
  		
  		/// <summary> Returns a string made up of characters from the marked token beginning 
  		/// to the current buffer position. Implementations have the choice of returning
-@@ -100,4 +100,4 @@ namespace Lucene.Net.Analysis.Standard
+@@ -115,4 +115,4 @@ namespace Lucene.Net.Analysis.Standard
  		/// </summary>
  		void  Done();
  	}
@@ -40,11 +44,11 @@ diff -u -B -p -r1.2 CharStream.cs
 Index: Analysis/Standard/FastCharStream.cs
 ===================================================================
 RCS file: /cvs/gnome/beagle/beagled/Lucene.Net/Analysis/Standard/FastCharStream.cs,v
-retrieving revision 1.2
-diff -u -B -p -r1.2 FastCharStream.cs
---- Analysis/Standard/FastCharStream.cs	17 Jan 2005 19:54:28 -0000	1.2
-+++ Analysis/Standard/FastCharStream.cs	16 Oct 2005 20:09:02 -0000
-@@ -40,14 +40,15 @@ namespace Lucene.Net.Analysis.Standard
+retrieving revision 1.3.4.5
+diff -u -3 -p -r1.3.4.5 FastCharStream.cs
+--- Analysis/Standard/FastCharStream.cs	25 Sep 2006 22:36:28 -0000	1.3.4.5
++++ Analysis/Standard/FastCharStream.cs	30 Sep 2006 02:39:59 -0000
+@@ -41,14 +41,15 @@ namespace Lucene.Net.Analysis.Standard
  			input = r;
  		}
  		
@@ -64,7 +68,7 @@ diff -u -B -p -r1.2 FastCharStream.cs
  			int newPosition = bufferLength - tokenStart;
  			
 @@ -81,12 +82,13 @@ namespace Lucene.Net.Analysis.Standard
- 
+ 			
  			int charsRead = input.Read(buffer, newPosition, buffer.Length - newPosition);
  			if (charsRead <= 0)
 -				throw new System.IO.IOException("read past eof");
@@ -91,13 +95,13 @@ diff -u -B -p -r1.2 FastCharStream.cs
 Index: Analysis/Standard/StandardTokenizerTokenManager.cs
 ===================================================================
 RCS file: /cvs/gnome/beagle/beagled/Lucene.Net/Analysis/Standard/StandardTokenizerTokenManager.cs,v
-retrieving revision 1.3
-diff -u -B -p -r1.3 StandardTokenizerTokenManager.cs
---- Analysis/Standard/StandardTokenizerTokenManager.cs	6 Oct 2005 19:29:55 -0000	1.3
-+++ Analysis/Standard/StandardTokenizerTokenManager.cs	16 Oct 2005 20:09:04 -0000
-@@ -1133,14 +1133,11 @@ namespace Lucene.Net.Analysis.Standard
+retrieving revision 1.7.4.7
+diff -u -3 -p -r1.7.4.7 StandardTokenizerTokenManager.cs
+--- Analysis/Standard/StandardTokenizerTokenManager.cs	25 Sep 2006 22:36:28 -0000	1.7.4.7
++++ Analysis/Standard/StandardTokenizerTokenManager.cs	30 Sep 2006 02:40:00 -0000
+@@ -1180,14 +1180,11 @@ MatchLoop1: 
  				++curPos;
- 				if ((ii = jjnewStateCnt) == (startsAt = 73 - (jjnewStateCnt = startsAt)))
+ 				if ((i = jjnewStateCnt) == (startsAt = 75 - (jjnewStateCnt = startsAt)))
  					return curPos;
 -				try
 -				{
@@ -113,8 +117,8 @@ diff -u -B -p -r1.3 StandardTokenizerTokenManager.cs
 -				}
  			}
  		}
- 		internal static readonly int[] jjnextStates = new int[]{22, 23, 24, 26, 30, 31, 33, 34, 38, 39, 40, 41, 47, 48, 49, 50, 60, 61, 2, 3, 5, 6, 12, 13, 23, 24, 26, 24, 25, 26, 63, 64, 66, 67, 70, 71, 2, 3, 12, 13, 18, 19, 44, 45, 68, 69, 7, 8, 9, 10, 16, 17, 35, 36, 42, 43, 51, 52, 55, 56, 57, 58};
-@@ -1284,11 +1281,11 @@ namespace Lucene.Net.Analysis.Standard
+ 		internal static readonly int[] jjnextStates = new int[]{30, 31, 32, 34, 38, 39, 41, 42, 46, 47, 53, 54, 5, 6, 10, 11, 19, 20, 3, 4, 8, 9, 17, 18, 31, 32, 34, 32, 33, 34, 65, 66, 68, 69, 72, 73, 5, 6, 19, 20, 25, 26, 50, 51, 70, 71, 12, 13, 14, 15, 23, 24, 43, 44, 48, 49, 55, 56, 59, 60, 61, 62};
+@@ -1366,11 +1363,11 @@ MatchLoop1: 
  			
  			for (; ; )
  			{
@@ -131,7 +135,7 @@ diff -u -B -p -r1.3 StandardTokenizerTokenManager.cs
  				{
  					jjmatchedKind = 0;
  					matchedToken = JjFillToken();
-@@ -1320,11 +1317,7 @@ namespace Lucene.Net.Analysis.Standard
+@@ -1402,11 +1399,7 @@ MatchLoop1: 
  				int error_column = input_stream.GetEndColumn();
  				System.String error_after = null;
  				bool EOFSeen = false;
@@ -144,7 +148,7 @@ diff -u -B -p -r1.3 StandardTokenizerTokenManager.cs
  				{
  					EOFSeen = true;
  					error_after = curPos <= 1?"":input_stream.GetImage();
-@@ -1336,6 +1329,9 @@ namespace Lucene.Net.Analysis.Standard
+@@ -1418,6 +1411,9 @@ MatchLoop1: 
  					else
  						error_column++;
  				}
@@ -154,7 +158,7 @@ diff -u -B -p -r1.3 StandardTokenizerTokenManager.cs
  				if (!EOFSeen)
  				{
  					input_stream.Backup(1);
-@@ -1347,4 +1343,4 @@ EOFLoop: ;
+@@ -1429,4 +1425,4 @@ EOFLoop: ;
  			}
  		}
  	}

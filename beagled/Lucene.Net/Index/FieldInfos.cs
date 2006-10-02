@@ -70,10 +70,8 @@ namespace Lucene.Net.Index
 		/// <summary>Adds field info for a Document. </summary>
 		public void  Add(Document doc)
 		{
-			System.Collections.IEnumerator fields = doc.Fields();
-			while (fields.MoveNext())
-			{
-				Field field = (Field) fields.Current;
+	foreach(Field field in doc.Fields())
+	{
 				Add(field.Name(), field.IsIndexed(), field.IsTermVectorStored(), field.IsStorePositionWithTermVector(), field.IsStoreOffsetWithTermVector(), field.GetOmitNorms());
 			}
 		}
@@ -229,16 +227,9 @@ namespace Lucene.Net.Index
 		
 		public int FieldNumber(System.String fieldName)
 		{
-			try
-			{
-				FieldInfo fi = FieldInfo(fieldName);
-				if (fi != null)
-					return fi.number;
-			}
-			catch (System.IndexOutOfRangeException ioobe)
-			{
-				return - 1;
-			}
+			FieldInfo fi = FieldInfo(fieldName);
+			if (fi != null)
+				return fi.number;
 			return - 1;
 		}
 		
@@ -257,14 +248,11 @@ namespace Lucene.Net.Index
 		/// </returns>
 		public System.String FieldName(int fieldNumber)
 		{
-			try
-			{
-				return FieldInfo(fieldNumber).name;
-			}
-			catch (System.NullReferenceException)
-			{
+			FieldInfo info = FieldInfo(fieldNumber);
+			if (info == null)
 				return "";
-			}
+			else
+				return info.name;
 		}
 		
 		/// <summary> Return the fieldinfo object referenced by the fieldNumber.</summary>
@@ -275,14 +263,11 @@ namespace Lucene.Net.Index
 		/// </returns>
 		public FieldInfo FieldInfo(int fieldNumber)
 		{
-			try
+			if (fieldNumber < 0 || fieldNumber >= byNumber.Count)
 			{
-				return (FieldInfo) byNumber[fieldNumber];
+			    return null;
 			}
-			catch (System.ArgumentOutOfRangeException) // (System.IndexOutOfRangeException)
-			{
-				return null;
-			}
+	                return (FieldInfo) byNumber[fieldNumber];
 		}
 		
 		public int Size()

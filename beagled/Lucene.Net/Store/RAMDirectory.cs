@@ -170,7 +170,7 @@ namespace Lucene.Net.Store
 			//     final boolean MONITOR = false;
 			
 			RAMFile file = (RAMFile) files[name];
-			long ts2, ts1 = System.DateTime.Now.Ticks;
+			long ts2, ts1 = System.DateTime.UtcNow.Ticks;
 			do 
 			{
 				try
@@ -180,7 +180,7 @@ namespace Lucene.Net.Store
 				catch (System.Threading.ThreadInterruptedException)
 				{
 				}
-				ts2 = System.DateTime.Now.Ticks;
+				ts2 = System.DateTime.UtcNow.Ticks;
 				//       if (MONITOR) {
 				//         count++;
 				//       }

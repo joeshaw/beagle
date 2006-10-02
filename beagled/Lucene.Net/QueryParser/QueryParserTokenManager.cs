@@ -31,15 +31,6 @@ namespace Lucene.Net.QueryParsers
 	{
 		private void  InitBlock()
 		{
-			System.IO.StreamWriter temp_writer;
-			temp_writer = new System.IO.StreamWriter(System.Console.OpenStandardOutput(), System.Console.Out.Encoding);
-			temp_writer.AutoFlush = true;
-			debugStream = temp_writer;
-		}
-		public System.IO.StreamWriter debugStream;
-		public virtual void  SetDebugStream(System.IO.StreamWriter ds)
-		{
-			debugStream = ds;
 		}
 		private int JjStopStringLiteralDfa_3(int pos, long active0)
 		{

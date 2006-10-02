@@ -41,14 +41,15 @@ namespace Lucene.Net.Analysis.Standard
 			input = r;
 		}
 		
-		public char ReadChar()
+		public int ReadChar()
 		{
 			if (bufferPosition >= bufferLength)
-				Refill();
+				if (!Refill())
+					return -1;
 			return buffer[bufferPosition++];
 		}
 		
-		private void  Refill()
+		private bool  Refill()
 		{
 			int newPosition = bufferLength - tokenStart;
 			
@@ -81,12 +82,13 @@ namespace Lucene.Net.Analysis.Standard
 			
 			int charsRead = input.Read(buffer, newPosition, buffer.Length - newPosition);
 			if (charsRead <= 0)
-				throw new System.IO.IOException("read past eof");
-			else
-				bufferLength += charsRead;
+				return false;
+
+			bufferLength += charsRead;
+			return true;
 		}
 		
-		public char BeginToken()
+		public int BeginToken()
 		{
 			tokenStart = bufferPosition;
 			return ReadChar();

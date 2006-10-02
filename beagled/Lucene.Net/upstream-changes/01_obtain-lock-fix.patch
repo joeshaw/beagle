@@ -1,27 +1,169 @@
-From: Daniel Drake <dsd@gentoo.org>
+From: Debajyoti Bera <dbera.web@gmail.com>
 
-Two threads could obtain the same lock as Obtain() does not check if the file
-it is creating already exists.
+Lucene uses lockfiles for sharing index files across multiple processes.  Stock
+lucene.net implementation creates the lockfile incorrectly. 
+01_obtain-lock-fix.patch fixes that but leaves a small race window. This 
+patch removes the race window. It uses native open() syscall instead of 
+System.IO File operations as the mono implementations for File.Open() turned 
+out to be buggy (giving wrong sharing violation errors).
 
-This is most likely the result of a porting thinko, the corresponding java
-method fails if the file it wants to create already exists, whereas the C#
-version silently overwrites the existing file.
+Updated by: Joe Shaw <joeshaw@novell.com>
 
---- Lucene.Net.Orig/Store/FSDirectory.cs	2005-10-03 21:01:30.000000000 +0100
-+++ Lucene.Net/Store/FSDirectory.cs	2005-10-03 21:02:32.000000000 +0100
-@@ -71,7 +71,10 @@ namespace Lucene.Net.Store
+My update to this patch redoes the way the locking PID was being written out
+to disk.  We were doing it previously using a UnixStream and StreamWriter,
+but that turned out to be very slow and put a noticable dent in indexing
+performance.  This new version uses POSIX I/O calls directly to write out
+the PID and it resolves the performance issue.
+
+From: Joe Shaw <joeshaw@novell.com>
+
+FileExists() gets called a *lot*.  We can avoid a bunch of string
+allocations inherent in creating a FileInfo object by just using
+File.Exists() rather than FileInfo.Exists().  Unfortunately we can't
+seem to avoid the allocation of the Path.Combine().
+
+Index: Store/FSDirectory.cs
+===================================================================
+RCS file: /cvs/gnome/beagle/beagled/Lucene.Net/Store/FSDirectory.cs,v
+retrieving revision 1.19.2.13
+diff -u -3 -p -r1.19.2.13 FSDirectory.cs
+--- Store/FSDirectory.cs	25 Sep 2006 22:54:07 -0000	1.19.2.13
++++ Store/FSDirectory.cs	25 Sep 2006 22:55:51 -0000
+@@ -16,6 +16,7 @@
+ 
+ using System;
+ using IndexFileNameFilter = Lucene.Net.Index.IndexFileNameFilter;
++using Mono.Unix.Native;
+ 
+ namespace Lucene.Net.Store
+ {
+@@ -52,6 +53,7 @@ namespace Lucene.Net.Store
+ 			}
+ 			public override bool Obtain()
+ 			{
++				Log ("Trying to obtain lock " + lockFile.FullName);
+ 				if (Lucene.Net.Store.FSDirectory.disableLocks)
+ 					return true;
+ 				
+@@ -71,15 +73,61 @@ namespace Lucene.Net.Store
  						throw new System.IO.IOException("Cannot create lock directory: " + Enclosing_Instance.lockDir);
  					}
  				}
 -				
 +
-+				if (System.IO.File.Exists(lockFile.FullName))
-+					return false;
-+
                  try
                  {
++		    int fd = Mono.Unix.Native.Syscall.open (
++				lockFile.FullName,
++				Mono.Unix.Native.OpenFlags.O_RDWR | 
++				Mono.Unix.Native.OpenFlags.O_CREAT |
++				Mono.Unix.Native.OpenFlags.O_EXCL,
++				Mono.Unix.Native.FilePermissions.S_IRUSR);
++		    if (fd == -1)
++			    throw new System.IO.IOException ("Could not create lock file: "
++				    + Mono.Unix.Native.Stdlib.strerror (
++					    Mono.Unix.Native.Stdlib.GetLastError ()
++				    ));
++
++		    // This code replaces the commented-out code below because
++		    // it ends up being much faster.  The reason for this is
++		    // that closing a UnixStream causes Syscall.fsync() to be
++		    // called, and that apparently is extremely slow!
++		    //
++		    // Time(ms) Count   P/call(ms) Method name
++		    // 1563.926      68   22.999   Mono.Unix.Native.Syscall::fsync(int)
++		    //
++		    // Since the lock file is written out very often, this time
++		    // adds up and noticably slows down indexing.
++		    IntPtr ptr = IntPtr.Zero;
++		    long ret;
++
++		    try {
++			    string s = System.Diagnostics.Process.GetCurrentProcess ().Id.ToString () + "\n";
++			    ptr = Mono.Unix.UnixMarshal.StringToHeap (s);
++
++			    do {
++				    ret = Mono.Unix.Native.Syscall.write (fd, ptr, (ulong) s.Length);
++			    } while (Mono.Unix.UnixMarshal.ShouldRetrySyscall ((int) ret));
++			    Mono.Unix.UnixMarshal.ThrowExceptionForLastErrorIf ((int) ret);
++		    } finally {
++			    Mono.Unix.UnixMarshal.FreeHeap (ptr);
++
++			    do {
++				    ret = Mono.Unix.Native.Syscall.close (fd);
++			    } while (Mono.Unix.UnixMarshal.ShouldRetrySyscall ((int) ret));
++			    Mono.Unix.UnixMarshal.ThrowExceptionForLastErrorIf ((int) ret);
++		    }
++
++		    //System.IO.StreamWriter w = new System.IO.StreamWriter (new Mono.Unix.UnixStream (fd, true));
++		    //w.WriteLine (System.Diagnostics.Process.GetCurrentProcess ().Id);
++		    //w.Close ();
                      System.IO.FileStream createdFile = lockFile.Create();
-@@ -761,4 +764,4 @@ namespace Lucene.Net.Store
+                     createdFile.Close();
+                     return true;
+                 }
+-                catch (Exception)
++                catch (Exception e)
+                 {
++		    Log ("Exception in CreateNew for file:" + lockFile.FullName + ":" + e);
+                     return false;
+                 }
+             }
+@@ -100,7 +148,15 @@ namespace Lucene.Net.Store
+ 				}
+ 				else
+ 					tmpBool = false;
++				if (System.IO.File.Exists(lockFile.FullName)) {
++					Log ("Release didnt delete lockfile {0}.", lockFile.FullName);
++					tmpBool = false;
++				}
+ 				bool generatedAux = tmpBool;
++				if (tmpBool)
++					Log ("Released lock {0}", lockFile.FullName);
++				else
++					Log ("Failed to release lock {0}", lockFile.FullName);
+ 			}
+ 			public override bool IsLocked()
+ 			{
+@@ -365,13 +421,9 @@ namespace Lucene.Net.Store
+ 		/// <summary>Returns true iff a file with the given name exists. </summary>
+ 		public override bool FileExists(System.String name)
+ 		{
+-			System.IO.FileInfo file = new System.IO.FileInfo(System.IO.Path.Combine(directory.FullName, name));
+-			bool tmpBool;
+-			if (System.IO.File.Exists(file.FullName))
+-				tmpBool = true;
+-			else
+-				tmpBool = System.IO.Directory.Exists(file.FullName);
+-			return tmpBool;
++			string path = System.IO.Path.Combine (directory.FullName, name);
++
++			return System.IO.File.Exists (path) || System.IO.Directory.Exists (path);
+ 		}
+ 		
+ 		/// <summary>Returns the time the named file was last modified. </summary>
+@@ -571,6 +623,20 @@ namespace Lucene.Net.Store
+ 			return new FSIndexInput(new System.IO.FileInfo(System.IO.Path.Combine(directory.FullName, name)));
+ 		}
+ 		
++		static public Beagle.Util.Logger Logger = null;
++		//static public Beagle.Util.Logger Logger = Beagle.Util.Logger.Log;
++		static public void Log (string format, params object[] args)
++		{
++			if (Logger != null)
++				Logger.Debug (format, args);
++		}
++
++		static public void Log (Exception e)
++		{
++			if (Logger != null)
++				Logger.Debug (e);
++		}
++		
+ 		/// <summary> So we can do some byte-to-hexchar conversion below</summary>
+ 		private static readonly char[] HEX_DIGITS = new char[]{'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f'};
+ 		
+@@ -828,4 +894,4 @@ namespace Lucene.Net.Store
  			file.Close(); // close the file
  		}
  	}

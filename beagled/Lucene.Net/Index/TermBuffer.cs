@@ -85,13 +85,7 @@ namespace Lucene.Net.Index
 			
 			// copy text into the buffer
 			SetTextLength(term.Text().Length);
-
-            System.String sourceString = term.Text();
-            int sourceEnd = term.Text().Length;
-            for (int i = 0; i < sourceEnd; i++)
-            {
-                text[i] = (char) sourceString[i];
-            }
+			text = term.Text().ToCharArray();
 			
 			this.field = term.Field();
 			this.term = term;

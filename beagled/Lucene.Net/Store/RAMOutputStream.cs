@@ -107,7 +107,7 @@ namespace Lucene.Net.Store
             if (pointer > file.length)
                 file.length = pointer;
 			
-            file.lastModified = System.DateTime.Now.Ticks;
+            file.lastModified = System.DateTime.UtcNow.Ticks;
 		}
 		
 		public override void  Close()

@@ -1,0 +1,148 @@
+From: Debajyoti Bera <dbera.web@gmail.com>
+
+Patch lucene.net from upstream. Make Fields() return IEnumerable to make iteration easier.
+This was introduced in 1.9 and 1.9.1 but later reverted in 0.2-alpha.
+
+Index: Document/Document.cs
+===================================================================
+RCS file: /cvs/gnome/beagle/beagled/Lucene.Net/Document/Document.cs,v
+retrieving revision 1.3.4.4
+diff -u -3 -p -r1.3.4.4 Document.cs
+--- Document/Document.cs	25 Sep 2006 22:36:28 -0000	1.3.4.4
++++ Document/Document.cs	30 Sep 2006 01:34:09 -0000
+@@ -169,9 +169,9 @@ namespace Lucene.Net.Documents
+ 		}
+ 		
+ 		/// <summary>Returns an Enumeration of all the fields in a document. </summary>
+-		public System.Collections.IEnumerator Fields()
++		public System.Collections.IEnumerable Fields()
+ 		{
+-			return ((System.Collections.ArrayList) fields).GetEnumerator();
++	return fields;
+ 		}
+ 		
+ 		/// <summary> Returns an array of {@link Field}s with the given name.
+@@ -309,4 +309,4 @@ namespace Lucene.Net.Documents
+ 			return buffer.ToString();
+ 		}
+ 	}
+-}
+\ No newline at end of file
++}
+Index: Index/DocumentWriter.cs
+===================================================================
+RCS file: /cvs/gnome/beagle/beagled/Lucene.Net/Index/DocumentWriter.cs,v
+retrieving revision 1.3.4.4
+diff -u -3 -p -r1.3.4.4 DocumentWriter.cs
+--- Index/DocumentWriter.cs	25 Sep 2006 22:36:29 -0000	1.3.4.4
++++ Index/DocumentWriter.cs	30 Sep 2006 01:34:13 -0000
+@@ -138,10 +138,8 @@ namespace Lucene.Net.Index
+ 		// Tokenizes the fields of a document into Postings.
+ 		private void  InvertDocument(Document doc)
+ 		{
+-			System.Collections.IEnumerator fields = doc.Fields();
+-			while (fields.MoveNext())
++			foreach(Field field in doc.Fields())
+ 			{
+-				Field field = (Field) fields.Current;
+ 				System.String fieldName = field.Name();
+ 				int fieldNumber = fieldInfos.FieldNumber(fieldName);
+ 				
+@@ -513,4 +511,4 @@ namespace Lucene.Net.Index
+ 				offsets = null;
+ 		}
+ 	}
+-}
+\ No newline at end of file
++}
+Index: Index/FieldInfos.cs
+===================================================================
+RCS file: /cvs/gnome/beagle/beagled/Lucene.Net/Index/FieldInfos.cs,v
+retrieving revision 1.5.4.5
+diff -u -3 -p -r1.5.4.5 FieldInfos.cs
+--- Index/FieldInfos.cs	25 Sep 2006 22:36:29 -0000	1.5.4.5
++++ Index/FieldInfos.cs	30 Sep 2006 01:34:13 -0000
+@@ -70,10 +70,8 @@ namespace Lucene.Net.Index
+ 		/// <summary>Adds field info for a Document. </summary>
+ 		public void  Add(Document doc)
+ 		{
+-			System.Collections.IEnumerator fields = doc.Fields();
+-			while (fields.MoveNext())
+-			{
+-				Field field = (Field) fields.Current;
++	foreach(Field field in doc.Fields())
++	{
+ 				Add(field.Name(), field.IsIndexed(), field.IsTermVectorStored(), field.IsStorePositionWithTermVector(), field.IsStoreOffsetWithTermVector(), field.GetOmitNorms());
+ 			}
+ 		}
+@@ -356,4 +354,4 @@ namespace Lucene.Net.Index
+ 			}
+ 		}
+ 	}
+-}
+\ No newline at end of file
++}
+Index: Index/FieldsWriter.cs
+===================================================================
+RCS file: /cvs/gnome/beagle/beagled/Lucene.Net/Index/FieldsWriter.cs,v
+retrieving revision 1.3.4.4
+diff -u -3 -p -r1.3.4.4 FieldsWriter.cs
+--- Index/FieldsWriter.cs	25 Sep 2006 22:36:29 -0000	1.3.4.4
++++ Index/FieldsWriter.cs	30 Sep 2006 01:34:13 -0000
+@@ -53,19 +53,15 @@ namespace Lucene.Net.Index
+ 			indexStream.WriteLong(fieldsStream.GetFilePointer());
+ 			
+ 			int storedCount = 0;
+-			System.Collections.IEnumerator fields = doc.Fields();
+-			while (fields.MoveNext())
+-			{
+-				Field field = (Field) fields.Current;
++	foreach(Field field in doc.Fields())
++	{
+ 				if (field.IsStored())
+ 					storedCount++;
+ 			}
+ 			fieldsStream.WriteVInt(storedCount);
+ 			
+-			fields = doc.Fields();
+-			while (fields.MoveNext())
++			foreach(Field field in doc.Fields())
+ 			{
+-				Field field = (Field) fields.Current;
+ 				if (field.IsStored())
+ 				{
+ 					fieldsStream.WriteVInt(fieldInfos.FieldNumber(field.Name()));
+@@ -121,4 +117,4 @@ namespace Lucene.Net.Index
+             return SupportClass.CompressionSupport.Compress(input);
+ 		}
+ 	}
+-}
+\ No newline at end of file
++}
+Index: Index/ParallelReader.cs
+===================================================================
+RCS file: /cvs/gnome/beagle/beagled/Lucene.Net/Index/Attic/ParallelReader.cs,v
+retrieving revision 1.1.2.4
+diff -u -3 -p -r1.1.2.4 ParallelReader.cs
+--- Index/ParallelReader.cs	25 Sep 2006 22:36:29 -0000	1.1.2.4
++++ Index/ParallelReader.cs	30 Sep 2006 01:34:13 -0000
+@@ -152,10 +152,9 @@ namespace Lucene.Net.Index
+ 			for (int i = 0; i < storedFieldReaders.Count; i++)
+ 			{
+ 				IndexReader reader = (IndexReader) storedFieldReaders[i];
+-				System.Collections.IEnumerator fields = reader.Document(n).Fields();
+-				while (fields.MoveNext())
++		foreach(Field field in reader.Document(n).Fields())
+ 				{
+-					result.Add((Field) fields.Current);
++					result.Add(field);
+ 				}
+ 			}
+ 			return result;
+@@ -500,4 +499,4 @@ namespace Lucene.Net.Index
+ 			}
+ 		}
+ 	}
+-}
+\ No newline at end of file
++}

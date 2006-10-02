@@ -8,17 +8,17 @@ never actually used.
 Index: Analysis/Standard/StandardTokenizerTokenManager.cs
 ===================================================================
 RCS file: /cvs/gnome/beagle/beagled/Lucene.Net/Analysis/Standard/StandardTokenizerTokenManager.cs,v
-retrieving revision 1.6
-diff -u -p -u -r1.6 StandardTokenizerTokenManager.cs
---- Analysis/Standard/StandardTokenizerTokenManager.cs	26 Jan 2006 19:13:38 -0000	1.6
-+++ Analysis/Standard/StandardTokenizerTokenManager.cs	1 Feb 2006 19:03:24 -0000
-@@ -24,21 +24,11 @@ namespace Lucene.Net.Analysis.Standard
- 		/// <summary>By default, closes the input Reader.</summary>
- 		public void Close()
- 		{
--			debugStream.Close();
- 			input_stream.Done();
- 		}
+retrieving revision 1.7.4.9
+diff -u -3 -p -r1.7.4.9 StandardTokenizerTokenManager.cs
+--- Analysis/Standard/StandardTokenizerTokenManager.cs	30 Sep 2006 02:52:26 -0000	1.7.4.9
++++ Analysis/Standard/StandardTokenizerTokenManager.cs	30 Sep 2006 02:54:26 -0000
+@@ -25,22 +25,11 @@ namespace Lucene.Net.Analysis.Standard
+         /// <summary>By default, closes the input Reader. </summary>
+         public void Close()
+         { 
+-            debugStream.Close(); 
+             input_stream.Done(); 
+         }
  
  		private void  InitBlock()
  		{
@@ -31,25 +31,26 @@ diff -u -p -u -r1.6 StandardTokenizerTokenManager.cs
 -		public virtual void  SetDebugStream(System.IO.StreamWriter ds)
 -		{
 -			debugStream = ds;
- 		}
+-		}
  		private int JjMoveStringLiteralDfa0_0()
  		{
+ 			return JjMoveNfa_0(0, 0);
 Index: QueryParser/QueryParserTokenManager.cs
 ===================================================================
 RCS file: /cvs/gnome/beagle/beagled/Lucene.Net/QueryParser/QueryParserTokenManager.cs,v
-retrieving revision 1.4
-diff -u -p -u -r1.4 QueryParserTokenManager.cs
---- QueryParser/QueryParserTokenManager.cs	6 Oct 2005 19:29:56 -0000	1.4
-+++ QueryParser/QueryParserTokenManager.cs	1 Feb 2006 19:03:24 -0000
-@@ -27,15 +27,6 @@ namespace Lucene.Net.QueryParsers
+retrieving revision 1.5.4.6
+diff -u -3 -p -r1.5.4.6 QueryParserTokenManager.cs
+--- QueryParser/QueryParserTokenManager.cs	25 Sep 2006 22:36:30 -0000	1.5.4.6
++++ QueryParser/QueryParserTokenManager.cs	30 Sep 2006 02:54:26 -0000
+@@ -31,15 +31,6 @@ namespace Lucene.Net.QueryParsers
  	{
  		private void  InitBlock()
  		{
--            System.IO.StreamWriter temp_writer;
--            temp_writer = new System.IO.StreamWriter(System.Console.OpenStandardOutput(), System.Console.Out.Encoding);
--            temp_writer.AutoFlush = true;
--            debugStream = temp_writer;
--        }
+-			System.IO.StreamWriter temp_writer;
+-			temp_writer = new System.IO.StreamWriter(System.Console.OpenStandardOutput(), System.Console.Out.Encoding);
+-			temp_writer.AutoFlush = true;
+-			debugStream = temp_writer;
+-		}
 -		public System.IO.StreamWriter debugStream;
 -		public virtual void  SetDebugStream(System.IO.StreamWriter ds)
 -		{
@@ -57,26 +58,10 @@ diff -u -p -u -r1.4 QueryParserTokenManager.cs
  		}
  		private int JjStopStringLiteralDfa_3(int pos, long active0)
  		{
-Index: QueryParser/Precedence/PrecedenceQueryParserTokenManager.cs
-===================================================================
-RCS file: /cvs/gnome/beagle/beagled/Lucene.Net/QueryParser/Precedence/PrecedenceQueryParserTokenManager.cs,v
-retrieving revision 1.1
-diff -u -p -u -r1.1 PrecedenceQueryParserTokenManager.cs
---- QueryParser/Precedence/PrecedenceQueryParserTokenManager.cs	6 Oct 2005 19:29:56 -0000	1.1
-+++ QueryParser/Precedence/PrecedenceQueryParserTokenManager.cs	1 Feb 2006 19:03:24 -0000
-@@ -22,15 +22,6 @@ namespace Lucene.Net.QueryParsers.Preced
-     {
-         private void  InitBlock()
-         {
--            System.IO.StreamWriter temp_writer;
--            temp_writer = new System.IO.StreamWriter(System.Console.OpenStandardOutput(), System.Console.Out.Encoding);
--            temp_writer.AutoFlush = true;
--            debugStream = temp_writer;
--        }
--        public System.IO.StreamWriter debugStream;
--        public virtual void  SetDebugStream(System.IO.StreamWriter ds)
--        {
--            debugStream = ds;
-         }
-         private int JjStopStringLiteralDfa_3(int pos, long active0)
-         {
+@@ -1273,4 +1264,4 @@ EOFLoop: ;
+ 			}
+ 		}
+ 	}
+-}
+\ No newline at end of file
++}
