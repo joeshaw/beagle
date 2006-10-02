@@ -13,13 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 using System;
 using TermDocs = Lucene.Net.Index.TermDocs;
+
 namespace Lucene.Net.Search
 {
 	
-    /// <summary>Expert: A <code>Scorer</code> for documents matching a <code>Term</code>.</summary>
-    sealed class TermScorer : Scorer
+	/// <summary>Expert: A <code>Scorer</code> for documents matching a <code>Term</code>.</summary>
+	sealed class TermScorer : Scorer
 	{
 		private Weight weight;
 		private TermDocs termDocs;
@@ -35,16 +37,16 @@ namespace Lucene.Net.Search
 		private const int SCORE_CACHE_SIZE = 32;
 		private float[] scoreCache = new float[SCORE_CACHE_SIZE];
 		
-        /// <summary>Construct a <code>TermScorer</code>.</summary>
-        /// <param name="weight">The weight of the <code>Term</code> in the query.
-        /// </param>
-        /// <param name="td">An iterator over the documents matching the <code>Term</code>.
-        /// </param>
-        /// <param name="similarity">The </code>Similarity</code> implementation to be used for score computations.
-        /// </param>
-        /// <param name="norms">The field norms of the document fields for the <code>Term</code>.
-        /// </param>
-        internal TermScorer(Weight weight, TermDocs td, Similarity similarity, byte[] norms) : base(similarity)
+		/// <summary>Construct a <code>TermScorer</code>.</summary>
+		/// <param name="weight">The weight of the <code>Term</code> in the query.
+		/// </param>
+		/// <param name="td">An iterator over the documents matching the <code>Term</code>.
+		/// </param>
+		/// <param name="similarity">The </code>Similarity</code> implementation to be used for score computations.
+		/// </param>
+		/// <param name="norms">The field norms of the document fields for the <code>Term</code>.
+		/// </param>
+		internal TermScorer(Weight weight, TermDocs td, Similarity similarity, byte[] norms) : base(similarity)
 		{
 			this.weight = weight;
 			this.termDocs = td;
@@ -55,60 +57,60 @@ namespace Lucene.Net.Search
 				scoreCache[i] = GetSimilarity().Tf(i) * weightValue;
 		}
 		
-        public override void  Score(HitCollector hc)
-        {
-            Next();
-            Score(hc, System.Int32.MaxValue);
-        }
+		public override void  Score(HitCollector hc)
+		{
+			Next();
+			Score(hc, System.Int32.MaxValue);
+		}
 		
-        protected internal override bool Score(HitCollector c, int end)
-        {
-            Similarity similarity = GetSimilarity(); // cache sim in local
-            float[] normDecoder = Similarity.GetNormDecoder();
-            while (doc < end)
-            {
-                // for docs in window
-                int f = freqs[pointer];
-                float score = f < SCORE_CACHE_SIZE?scoreCache[f]:similarity.Tf(f) * weightValue; // cache miss
+		protected internal override bool Score(HitCollector c, int end)
+		{
+			Similarity similarity = GetSimilarity(); // cache sim in local
+			float[] normDecoder = Similarity.GetNormDecoder();
+			while (doc < end)
+			{
+				// for docs in window
+				int f = freqs[pointer];
+				float score = f < SCORE_CACHE_SIZE?scoreCache[f]:similarity.Tf(f) * weightValue; // cache miss
 				
-                score *= normDecoder[norms[doc] & 0xFF]; // normalize for field
+				score *= normDecoder[norms[doc] & 0xFF]; // normalize for field
 				
-                c.Collect(doc, score); // collect score
+				c.Collect(doc, score); // collect score
 				
-                if (++pointer >= pointerMax)
-                {
-                    pointerMax = termDocs.Read(docs, freqs); // refill buffers
-                    if (pointerMax != 0)
-                    {
-                        pointer = 0;
-                    }
-                    else
-                    {
-                        termDocs.Close(); // close stream
-                        doc = System.Int32.MaxValue; // set to sentinel value
-                        return false;
-                    }
-                }
-                doc = docs[pointer];
-            }
-            return true;
-        }
+				if (++pointer >= pointerMax)
+				{
+					pointerMax = termDocs.Read(docs, freqs); // refill buffers
+					if (pointerMax != 0)
+					{
+						pointer = 0;
+					}
+					else
+					{
+						termDocs.Close(); // close stream
+						doc = System.Int32.MaxValue; // set to sentinel value
+						return false;
+					}
+				}
+				doc = docs[pointer];
+			}
+			return true;
+		}
 		
-        /// <summary>Returns the current document number matching the query.
-        /// Initially invalid, until {@link #next()} is called the first time.
-        /// </summary>
-        public override int Doc()
+		/// <summary>Returns the current document number matching the query.
+		/// Initially invalid, until {@link #Next()} is called the first time.
+		/// </summary>
+		public override int Doc()
 		{
 			return doc;
 		}
 		
-        /// <summary>Advances to the next document matching the query.
-        /// <br>The iterator over the matching documents is buffered using
-        /// {@link TermDocs#Read(int[],int[])}.
-        /// </summary>
-        /// <returns> true iff there is another document matching the query.
-        /// </returns>
-        public override bool Next()
+		/// <summary>Advances to the next document matching the query.
+		/// <br>The iterator over the matching documents is buffered using
+		/// {@link TermDocs#Read(int[],int[])}.
+		/// </summary>
+		/// <returns> true iff there is another document matching the query.
+		/// </returns>
+		public override bool Next()
 		{
 			pointer++;
 			if (pointer >= pointerMax)
@@ -134,18 +136,18 @@ namespace Lucene.Net.Search
 			int f = freqs[pointer];
 			float raw = f < SCORE_CACHE_SIZE ? scoreCache[f] : GetSimilarity().Tf(f) * weightValue; // cache miss
 			
-			return raw * Similarity.DecodeNorm(norms[doc ]); // normalize for Field
+			return raw * Similarity.DecodeNorm(norms[doc]); // normalize for field
 		}
 		
-        /// <summary>Skips to the first match beyond the current whose document number is
-        /// greater than or equal to a given target. 
-        /// <br>The implementation uses {@link TermDocs#SkipTo(int)}.
-        /// </summary>
-        /// <param name="target">The target document number.
-        /// </param>
-        /// <returns> true iff there is such a match.
-        /// </returns>
-        public override bool SkipTo(int target)
+		/// <summary>Skips to the first match beyond the current whose document number is
+		/// greater than or equal to a given target. 
+		/// <br>The implementation uses {@link TermDocs#SkipTo(int)}.
+		/// </summary>
+		/// <param name="target">The target document number.
+		/// </param>
+		/// <returns> true iff there is such a match.
+		/// </returns>
+		public override bool SkipTo(int target)
 		{
 			// first scan in cache
 			for (pointer++; pointer < pointerMax; pointer++)
@@ -173,14 +175,14 @@ namespace Lucene.Net.Search
 			return result;
 		}
 		
-        /// <summary>Returns an explanation of the score for a document.
-        /// <br>When this method is used, the {@link #next()} method
-        /// and the {@link #Score(HitCollector)} method should not be used.
-        /// </summary>
-        /// <param name="doc">The document number for the explanation.
-        /// </param>
-        /// <todo>  Modify to make use of {@link TermDocs#SkipTo(int)}. </todo>
-        public override Explanation Explain(int doc)
+		/// <summary>Returns an explanation of the score for a document.
+		/// <br>When this method is used, the {@link #Next()} method
+		/// and the {@link #Score(HitCollector)} method should not be used.
+		/// </summary>
+		/// <param name="doc">The document number for the explanation.
+		/// </param>
+		/// <todo>  Modify to make use of {@link TermDocs#SkipTo(int)}. </todo>
+		public override Explanation Explain(int doc)
 		{
 			TermQuery query = (TermQuery) weight.GetQuery();
 			Explanation tfExplanation = new Explanation();
@@ -208,6 +210,7 @@ namespace Lucene.Net.Search
 			return tfExplanation;
 		}
 		
+		/// <summary>Returns a string representation of this <code>TermScorer</code>. </summary>
 		public override System.String ToString()
 		{
 			return "scorer(" + weight + ")";

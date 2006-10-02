@@ -13,27 +13,26 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 using System;
-namespace Lucene.Net.Analysis.DE
+
+namespace Lucene.Net.Analysis
 {
 	
-    /// <summary> Loader for text files that represent a list of stopwords.
-    /// 
-    /// </summary>
-    /// <deprecated> Use {@link Lucene.Net.analysis.WordlistLoader} instead
-    /// 
-    /// </deprecated>
-    /// <author>  Gerhard Schwarz
-    /// </author>
-    /// <version>  $Id$
-    /// </version>
-    public class WordlistLoader
+	/// <summary> Loader for text files that represent a list of stopwords.
+	/// 
+	/// </summary>
+	/// <author>  Gerhard Schwarz
+	/// </author>
+	/// <version>  $Id$
+	/// </version>
+	public class WordlistLoader
 	{
 		
 		/// <summary> Loads a text file and adds every line as an entry to a HashSet (omitting
-		/// leading and trailing whitespace). Every line of the file should contain only 
+		/// leading and trailing whitespace). Every line of the file should contain only
 		/// one word. The words need to be in lowercase if you make use of an
-		/// Analyzer which uses LowerCaseFilter (like GermanAnalyzer).
+		/// Analyzer which uses LowerCaseFilter (like StandardAnalyzer).
 		/// 
 		/// </summary>
 		/// <param name="wordfile">File containing the wordlist
@@ -43,25 +42,48 @@ namespace Lucene.Net.Analysis.DE
 		public static System.Collections.Hashtable GetWordSet(System.IO.FileInfo wordfile)
 		{
 			System.Collections.Hashtable result = new System.Collections.Hashtable();
-			System.IO.StreamReader freader = null;
-			System.IO.StreamReader lnr = null;
+			System.IO.TextReader reader = null;
 			try
 			{
-				freader = new System.IO.StreamReader(wordfile.FullName, System.Text.Encoding.Default);
-				lnr = new System.IO.StreamReader(freader.BaseStream, freader.CurrentEncoding);
+				reader = new System.IO.StreamReader(wordfile.FullName, System.Text.Encoding.Default);
+				result = GetWordSet(reader);
+			}
+			finally
+			{
+				if (reader != null)
+					reader.Close();
+			}
+			return result;
+		}
+		
+		/// <summary> Reads lines from a Reader and adds every line as an entry to a HashSet (omitting
+		/// leading and trailing whitespace). Every line of the Reader should contain only
+		/// one word. The words need to be in lowercase if you make use of an
+		/// Analyzer which uses LowerCaseFilter (like StandardAnalyzer).
+		/// 
+		/// </summary>
+		/// <param name="reader">Reader containing the wordlist
+		/// </param>
+		/// <returns> A HashSet with the reader's words
+		/// </returns>
+		public static System.Collections.Hashtable GetWordSet(System.IO.TextReader reader)
+		{
+			System.Collections.Hashtable result = new System.Collections.Hashtable();
+			System.IO.TextReader br = null;
+			try
+			{
+				br = (System.IO.TextReader) reader;
 				System.String word = null;
-				while ((word = lnr.ReadLine()) != null)
+				while ((word = br.ReadLine()) != null)
 				{
-                    System.String trimedWord = word.Trim();
-					result.Add(trimedWord, trimedWord);
+                    System.String tmp = word.Trim();
+					result.Add(tmp, tmp);
 				}
 			}
 			finally
 			{
-				if (lnr != null)
-					lnr.Close();
-				if (freader != null)
-					freader.Close();
+				if (br != null)
+					br.Close();
 			}
 			return result;
 		}
@@ -71,7 +93,7 @@ namespace Lucene.Net.Analysis.DE
 		/// <param name="wordfile"> Name of the wordlist
 		/// 
 		/// </param>
-		/// <deprecated> Use {@link #GetWordSet(File)} getWordSet(File)} instead
+		/// <deprecated> Use {@link #GetWordSet(File)} instead
 		/// </deprecated>
 		public static System.Collections.Hashtable GetWordtable(System.String path, System.String wordfile)
 		{
@@ -81,7 +103,7 @@ namespace Lucene.Net.Analysis.DE
 		/// <param name="wordfile"> Complete path to the wordlist
 		/// 
 		/// </param>
-		/// <deprecated> Use {@link #GetWordSet(File)} getWordSet(File)} instead
+		/// <deprecated> Use {@link #GetWordSet(File)} instead
 		/// </deprecated>
 		public static System.Collections.Hashtable GetWordtable(System.String wordfile)
 		{
@@ -91,7 +113,7 @@ namespace Lucene.Net.Analysis.DE
 		/// <param name="wordfile"> File object that points to the wordlist
 		/// 
 		/// </param>
-		/// <deprecated> Use {@link #GetWordSet(File)} getWordSet(File)} instead
+		/// <deprecated> Use {@link #GetWordSet(File)} instead
 		/// </deprecated>
 		public static System.Collections.Hashtable GetWordtable(System.IO.FileInfo wordfile)
 		{

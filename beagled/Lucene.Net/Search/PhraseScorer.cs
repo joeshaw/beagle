@@ -13,12 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 using System;
 using Lucene.Net.Index;
+
 namespace Lucene.Net.Search
 {
 	
-	abstract class PhraseScorer:Scorer
+	abstract class PhraseScorer : Scorer
 	{
 		private Weight weight;
 		protected internal byte[] norms;

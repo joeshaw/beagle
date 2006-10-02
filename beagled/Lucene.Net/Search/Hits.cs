@@ -13,16 +13,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 using System;
 using Document = Lucene.Net.Documents.Document;
+
 namespace Lucene.Net.Search
 {
 	
 	/// <summary>A ranked list of documents, used to hold search results. </summary>
 	public sealed class Hits
 	{
-        private Weight weight;
-        private Searcher searcher;
+		private Weight weight;
+		private Searcher searcher;
 		private Filter filter = null;
 		private Sort sort = null;
 		
@@ -62,14 +64,15 @@ namespace Lucene.Net.Search
 			}
 			
 			int n = min * 2; // double # retrieved
-			TopDocs topDocs = (sort == null) ? searcher.Search(weight, filter, n):searcher.Search(weight, filter, n, sort);
+			TopDocs topDocs = (sort == null) ? searcher.Search(weight, filter, n) : searcher.Search(weight, filter, n, sort);
 			length = topDocs.totalHits;
 			ScoreDoc[] scoreDocs = topDocs.scoreDocs;
 			
 			float scoreNorm = 1.0f;
-			if (length > 0 && scoreDocs[0].score > 1.0f)
+			
+			if (length > 0 && topDocs.GetMaxScore() > 1.0f)
 			{
-				scoreNorm = 1.0f / scoreDocs[0].score;
+				scoreNorm = 1.0f / topDocs.GetMaxScore();
 			}
 			
 			int end = scoreDocs.Length < length?scoreDocs.Length:length;
@@ -124,6 +127,18 @@ namespace Lucene.Net.Search
 			return HitDoc(n).id;
 		}
 		
+		/// <summary> Returns a {@link HitIterator} to navigate the Hits.  Each item returned
+		/// from {@link Iterator#next()} is a {@link Hit}.
+		/// <p>
+		/// <b>Caution:</b> Iterate only over the hits needed.  Iterating over all
+		/// hits is generally not desirable and may be the source of
+		/// performance issues.
+		/// </p>
+		/// </summary>
+		public System.Collections.IEnumerator Iterator()
+		{
+			return new HitIterator(this);
+		}
 		
 		private HitDoc HitDoc(int n)
 		{

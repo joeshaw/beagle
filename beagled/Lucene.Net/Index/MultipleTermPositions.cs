@@ -13,11 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 using System;
 using PriorityQueue = Lucene.Net.Util.PriorityQueue;
+
 namespace Lucene.Net.Index
 {
-	
 	
 	/// <summary> Describe class <code>MultipleTermPositions</code> here.
 	/// 
@@ -28,6 +29,7 @@ namespace Lucene.Net.Index
 	/// </version>
 	public class MultipleTermPositions : TermPositions
 	{
+		
 		private sealed class TermPositionsQueue:PriorityQueue
 		{
 			internal TermPositionsQueue(System.Collections.IList termPositions)
@@ -65,10 +67,8 @@ namespace Lucene.Net.Index
 				_array = new int[_arraySize];
 			}
 			private int _arraySize = 16;
-			
 			private int _index = 0;
 			private int _lastIndex = 0;
-			
 			private int[] _array;
 			
 			internal void  Add(int i)
@@ -111,18 +111,13 @@ namespace Lucene.Net.Index
 		
 		private int _doc;
 		private int _freq;
-		
 		private TermPositionsQueue _termPositionsQueue;
 		private IntQueue _posList;
 		
 		/// <summary> Creates a new <code>MultipleTermPositions</code> instance.
 		/// 
 		/// </summary>
-		/// <param name="indexReader">an <code>IndexReader</code> value
-		/// </param>
-		/// <param name="terms">a <code>Term[]</code> value
-		/// </param>
-		/// <exception cref=""> IOException if an error occurs
+		/// <exception cref="IOException">
 		/// </exception>
 		public MultipleTermPositions(IndexReader indexReader, Term[] terms)
 		{
@@ -174,16 +169,14 @@ namespace Lucene.Net.Index
 		
 		public bool SkipTo(int target)
 		{
-			while (target > _termPositionsQueue.Peek().Doc())
+			while (_termPositionsQueue.Peek() != null && target > _termPositionsQueue.Peek().Doc())
 			{
 				TermPositions tp = (TermPositions) _termPositionsQueue.Pop();
-				
 				if (tp.SkipTo(target))
 					_termPositionsQueue.Put(tp);
 				else
 					tp.Close();
 			}
-			
 			return Next();
 		}
 		
@@ -203,23 +196,23 @@ namespace Lucene.Net.Index
 				((TermPositions) _termPositionsQueue.Pop()).Close();
 		}
 		
-        /// <summary>Not implemented.</summary>
-        /// <throws>  UnsupportedOperationException </throws>
-        public virtual void  Seek(Term arg0)
+		/// <summary> Not implemented.</summary>
+		/// <throws>  UnsupportedOperationException </throws>
+		public virtual void  Seek(Term arg0)
 		{
 			throw new System.NotSupportedException();
 		}
 		
-        /// <summary>Not implemented.</summary>
-        /// <throws>  UnsupportedOperationException </throws>
-        public virtual void  Seek(TermEnum termEnum)
+		/// <summary> Not implemented.</summary>
+		/// <throws>  UnsupportedOperationException </throws>
+		public virtual void  Seek(TermEnum termEnum)
 		{
 			throw new System.NotSupportedException();
 		}
 		
-        /// <summary>Not implemented.</summary>
-        /// <throws>  UnsupportedOperationException </throws>
-        public virtual int Read(int[] arg0, int[] arg1)
+		/// <summary> Not implemented.</summary>
+		/// <throws>  UnsupportedOperationException </throws>
+		public virtual int Read(int[] arg0, int[] arg1)
 		{
 			throw new System.NotSupportedException();
 		}

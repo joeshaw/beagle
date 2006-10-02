@@ -13,13 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 using System;
 using IndexInput = Lucene.Net.Store.IndexInput;
 using BitVector = Lucene.Net.Util.BitVector;
+
 namespace Lucene.Net.Index
 {
 	
-	/*public*/ class SegmentTermDocs : TermDocs
+	public class SegmentTermDocs : TermDocs
 	{
 		protected internal SegmentReader parent;
 		protected internal IndexInput freqStream;
@@ -39,7 +41,7 @@ namespace Lucene.Net.Index
 		private long skipPointer;
 		private bool haveSkipped;
 		
-		protected internal SegmentTermDocs(SegmentReader parent)
+		public SegmentTermDocs(SegmentReader parent)
 		{
 			this.parent = parent;
 			this.freqStream = (IndexInput) parent.freqStream.Clone();

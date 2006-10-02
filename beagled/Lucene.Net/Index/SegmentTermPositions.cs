@@ -13,8 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 using System;
 using IndexInput = Lucene.Net.Store.IndexInput;
+
 namespace Lucene.Net.Index
 {
 	
@@ -78,7 +80,7 @@ namespace Lucene.Net.Index
 		}
 		
 		
-		/// <summary>Called by base.SkipTo(). </summary>
+		/// <summary>Called by super.skipTo(). </summary>
 		protected internal override void  SkipProx(long proxPointer)
 		{
 			proxStream.Seek(proxPointer);

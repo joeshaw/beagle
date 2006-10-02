@@ -13,8 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 using System;
 using IndexReader = Lucene.Net.Index.IndexReader;
+using ToStringUtils = Lucene.Net.Util.ToStringUtils;
+
 namespace Lucene.Net.Search
 {
 	
@@ -37,16 +40,16 @@ namespace Lucene.Net.Search
 	/// <seealso cref="CachingWrapperFilter">
 	/// </seealso>
 	[Serializable]
-	public class FilteredQuery : Query
+	public class FilteredQuery:Query
 	{
 		[Serializable]
 		private class AnonymousClassWeight : Weight
 		{
-            public AnonymousClassWeight(Lucene.Net.Search.Weight weight, Lucene.Net.Search.Similarity similarity, FilteredQuery enclosingInstance)
-            {
-                InitBlock(weight, similarity, enclosingInstance);
-            }
-            private class AnonymousClassScorer : Scorer
+			public AnonymousClassWeight(Lucene.Net.Search.Weight weight, Lucene.Net.Search.Similarity similarity, FilteredQuery enclosingInstance)
+			{
+				InitBlock(weight, similarity, enclosingInstance);
+			}
+			private class AnonymousClassScorer : Scorer
 			{
 				private void  InitBlock(Lucene.Net.Search.Scorer scorer, System.Collections.BitArray bitset, AnonymousClassWeight enclosingInstance)
 				{
@@ -65,7 +68,7 @@ namespace Lucene.Net.Search
 					}
 					
 				}
-				internal AnonymousClassScorer(Lucene.Net.Search.Scorer scorer, System.Collections.BitArray bitset, AnonymousClassWeight enclosingInstance, Lucene.Net.Search.Similarity Param1) : base(Param1)
+				internal AnonymousClassScorer(Lucene.Net.Search.Scorer scorer, System.Collections.BitArray bitset, AnonymousClassWeight enclosingInstance, Lucene.Net.Search.Similarity Param1):base(Param1)
 				{
 					InitBlock(scorer, bitset, enclosingInstance);
 				}
@@ -101,20 +104,16 @@ namespace Lucene.Net.Search
 					return exp;
 				}
 			}
-            private void  InitBlock(Lucene.Net.Search.Weight weight, Lucene.Net.Search.Similarity similarity, FilteredQuery enclosingInstance)
-            {
-                this.weight = weight;
-                this.similarity = similarity;
-                this.enclosingInstance = enclosingInstance;
-            }
-            private Lucene.Net.Search.Weight weight;
+			private void  InitBlock(Lucene.Net.Search.Weight weight, Lucene.Net.Search.Similarity similarity, FilteredQuery enclosingInstance)
+			{
+				this.weight = weight;
+				this.similarity = similarity;
+				this.enclosingInstance = enclosingInstance;
+			}
+			private Lucene.Net.Search.Weight weight;
 			private Lucene.Net.Search.Similarity similarity;
 			private FilteredQuery enclosingInstance;
-            virtual public Query GetQuery()
-            {
-                return Enclosing_Instance;
-            }
-            public FilteredQuery Enclosing_Instance
+			public FilteredQuery Enclosing_Instance
 			{
 				get
 				{
@@ -123,23 +122,29 @@ namespace Lucene.Net.Search
 				
 			}
 			
-            // pass these methods through to enclosed query's weight
-            public virtual float GetValue()
-            {
-                return weight.GetValue();
-            }
-            public virtual float SumOfSquaredWeights()
-            {
-                return weight.SumOfSquaredWeights();
-            }
-            public virtual void  Normalize(float v)
-            {
-                weight.Normalize(v);
-            }
-            public virtual Explanation Explain(IndexReader ir, int i)
-            {
-                return weight.Explain(ir, i);
-            }
+			// pass these methods through to enclosed query's weight
+			public virtual float GetValue()
+			{
+				return weight.GetValue();
+			}
+			public virtual float SumOfSquaredWeights()
+			{
+				return weight.SumOfSquaredWeights();
+			}
+			public virtual void  Normalize(float v)
+			{
+				weight.Normalize(v);
+			}
+			public virtual Explanation Explain(IndexReader ir, int i)
+			{
+				return weight.Explain(ir, i);
+			}
+			
+			// return this query
+			public virtual Query GetQuery()
+			{
+				return Enclosing_Instance;
+			}
 			
 			// return a scorer that overrides the enclosed query's score if
 			// the given hit has been filtered out.
@@ -167,14 +172,16 @@ namespace Lucene.Net.Search
 			this.filter = filter;
 		}
 		
+		
+		
 		/// <summary> Returns a Weight that applies the filter to the enclosed query's Weight.
 		/// This is accomplished by overriding the Scorer returned by the Weight.
 		/// </summary>
 		protected internal override Weight CreateWeight(Searcher searcher)
 		{
 			Weight weight = query.CreateWeight(searcher);
-            Similarity similarity = query.GetSimilarity(searcher);
-            return new AnonymousClassWeight(weight, similarity, this);
+			Similarity similarity = query.GetSimilarity(searcher);
+			return new AnonymousClassWeight(weight, similarity, this);
 		}
 		
 		/// <summary>Rewrites the wrapped query. </summary>
@@ -198,16 +205,27 @@ namespace Lucene.Net.Search
 			return query;
 		}
 		
-        // inherit javadoc
-        public override void  ExtractTerms(System.Collections.Hashtable terms)
-        {
-            GetQuery().ExtractTerms(terms);
-        }
+		public virtual Filter GetFilter()
+		{
+			return filter;
+		}
 		
-        /// <summary>Prints a user-readable version of this query. </summary>
+		// inherit javadoc
+		public override void  ExtractTerms(System.Collections.Hashtable terms)
+		{
+			GetQuery().ExtractTerms(terms);
+		}
+		
+		/// <summary>Prints a user-readable version of this query. </summary>
 		public override System.String ToString(System.String s)
 		{
-			return "filtered(" + query.ToString(s) + ")->" + filter;
+			System.Text.StringBuilder buffer = new System.Text.StringBuilder();
+			buffer.Append("filtered(");
+			buffer.Append(query.ToString(s));
+			buffer.Append(")->");
+			buffer.Append(filter);
+			buffer.Append(ToStringUtils.Boost(GetBoost()));
+			return buffer.ToString();
 		}
 		
 		/// <summary>Returns true iff <code>o</code> is equal to this. </summary>

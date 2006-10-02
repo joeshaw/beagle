@@ -13,9 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 using System;
 using Document = Lucene.Net.Documents.Document;
 using Field = Lucene.Net.Documents.Field;
+
 namespace Lucene.Net.Index
 {
 	
@@ -76,7 +78,7 @@ namespace Lucene.Net.Index
 		}
 		
 		/// <summary>Base class for filtering {@link TermPositions} implementations. </summary>
-		public class FilterTermPositions:FilterTermDocs, TermPositions
+		public class FilterTermPositions : FilterTermDocs, TermPositions
 		{
 			
 			public FilterTermPositions(TermPositions in_Renamed) : base(in_Renamed)
@@ -168,6 +170,11 @@ namespace Lucene.Net.Index
 			in_Renamed.UndeleteAll();
 		}
 		
+		public override bool HasNorms(System.String field)
+		{
+			return in_Renamed.HasNorms(field);
+		}
+		
 		public override byte[] Norms(System.String f)
 		{
 			return in_Renamed.Norms(f);
@@ -223,19 +230,19 @@ namespace Lucene.Net.Index
 			return in_Renamed.GetFieldNames();
 		}
 		
-        public override System.Collections.ICollection GetFieldNames(bool indexed)
-        {
-            return in_Renamed.GetFieldNames(indexed);
-        }
+		public override System.Collections.ICollection GetFieldNames(bool indexed)
+		{
+			return in_Renamed.GetFieldNames(indexed);
+		}
 		
-        public override System.Collections.ICollection GetIndexedFieldNames(Field.TermVector tvSpec)
-        {
-            return in_Renamed.GetIndexedFieldNames(tvSpec);
-        }
+		public override System.Collections.ICollection GetIndexedFieldNames(Field.TermVector tvSpec)
+		{
+			return in_Renamed.GetIndexedFieldNames(tvSpec);
+		}
 		
-        public override System.Collections.ICollection GetFieldNames(IndexReader.FieldOption fieldNames)
-        {
-            return in_Renamed.GetFieldNames(fieldNames);
-        }
-    }
+		public override System.Collections.ICollection GetFieldNames(IndexReader.FieldOption fieldNames)
+		{
+			return in_Renamed.GetFieldNames(fieldNames);
+		}
+	}
 }

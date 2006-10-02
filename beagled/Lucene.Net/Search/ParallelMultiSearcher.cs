@@ -13,9 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 using System;
 using Term = Lucene.Net.Index.Term;
 using PriorityQueue = Lucene.Net.Util.PriorityQueue;
+
 namespace Lucene.Net.Search
 {
 	
@@ -24,7 +26,7 @@ namespace Lucene.Net.Search
 	/// <p>Applications usually need only call the inherited {@link #Search(Query)}
 	/// or {@link #Search(Query,Filter)} methods.
 	/// </summary>
-	public class ParallelMultiSearcher:MultiSearcher
+	public class ParallelMultiSearcher : MultiSearcher
 	{
 		private class AnonymousClassHitCollector1 : HitCollector
 		{
@@ -68,8 +70,8 @@ namespace Lucene.Net.Search
 		/// <summary> TODO: parallelize this one too</summary>
 		public override int DocFreq(Term term)
 		{
-            return base.DocFreq(term);
-        }
+			return base.DocFreq(term);
+		}
 		
 		/// <summary> A search implementation which spans a new thread for each
 		/// Searchable, waits for each search to complete and merge
@@ -94,11 +96,11 @@ namespace Lucene.Net.Search
 				{
 					msta[i].Join();
 				}
-				catch (System.Threading.ThreadInterruptedException ie)
+				catch (System.Threading.ThreadInterruptedException)
 				{
 					; // TODO: what should we do with this???
 				}
-				System.IO.IOException ioe = msta[i].IOException;
+				System.IO.IOException ioe = msta[i].GetIOException();
 				if (ioe == null)
 				{
 					totalHits += msta[i].Hits();
@@ -115,7 +117,9 @@ namespace Lucene.Net.Search
 			// put docs in array
 				scoreDocs[i] = (ScoreDoc) hq.Pop();
 			
-			return new TopDocs(totalHits, scoreDocs);
+			float maxScore = (totalHits == 0) ? System.Single.NegativeInfinity : scoreDocs[0].score;
+			
+			return new TopDocs(totalHits, scoreDocs, maxScore);
 		}
 		
 		/// <summary> A search implementation allowing sorting which spans a new thread for each
@@ -136,20 +140,23 @@ namespace Lucene.Net.Search
 				msta[i].Start();
 			}
 			
+			float maxScore = System.Single.NegativeInfinity;
+			
 			for (int i = 0; i < searchables.Length; i++)
 			{
 				try
 				{
 					msta[i].Join();
 				}
-				catch (System.Threading.ThreadInterruptedException ie)
+				catch (System.Threading.ThreadInterruptedException)
 				{
 					; // TODO: what should we do with this???
 				}
-				System.IO.IOException ioe = msta[i].IOException;
+				System.IO.IOException ioe = msta[i].GetIOException();
 				if (ioe == null)
 				{
 					totalHits += msta[i].Hits();
+					maxScore = System.Math.Max(maxScore, msta[i].GetMaxScore());
 				}
 				else
 				{
@@ -163,7 +170,7 @@ namespace Lucene.Net.Search
 			// put docs in array
 				scoreDocs[i] = (ScoreDoc) hq.Pop();
 			
-			return new TopFieldDocs(totalHits, scoreDocs, hq.GetFields());
+			return new TopFieldDocs(totalHits, scoreDocs, hq.GetFields(), maxScore);
 		}
 		
 		/// <summary>Lower-level search API.
@@ -177,50 +184,42 @@ namespace Lucene.Net.Search
 		/// non-high-scoring hits.
 		/// 
 		/// </summary>
-		/// <param name="query">to match documents
+		/// <param name="weight">to match documents
 		/// </param>
 		/// <param name="filter">if non-null, a bitset used to eliminate some documents
 		/// </param>
 		/// <param name="results">to receive hits
 		/// 
-		/// TODO: parallelize this one too
 		/// </param>
-		public override void  Search(Query query, Filter filter, HitCollector results)
+		/// <todo>  parallelize this one too </todo>
+		public override void  Search(Weight weight, Filter filter, HitCollector results)
 		{
 			for (int i = 0; i < searchables.Length; i++)
 			{
 				
 				int start = starts[i];
 				
-				searchables[i].Search(query, filter, new AnonymousClassHitCollector1(results, start, this));
+				searchables[i].Search(weight, filter, new AnonymousClassHitCollector1(results, start, this));
 			}
 		}
 		
 		/*
 		* TODO: this one could be parallelized too
-		* @see Lucene.Net.Search.Searchable#rewrite(Lucene.Net.Search.Query)
+		* @see Lucene.Net.search.Searchable#rewrite(Lucene.Net.search.Query)
 		*/
 		public override Query Rewrite(Query original)
 		{
-            return base.Rewrite(original);
-        }
+			return base.Rewrite(original);
+		}
 	}
 	
 	/// <summary> A thread subclass for searching a single searchable </summary>
 	class MultiSearcherThread : SupportClass.ThreadClass
 	{
-        virtual public System.IO.IOException IOException
-        {
-            get
-            {
-                return ioe;
-            }
-			
-        }
 		
-        private Lucene.Net.Search.Searchable searchable;
-        private Weight weight;
-        private Filter filter;
+		private Lucene.Net.Search.Searchable searchable;
+		private Weight weight;
+		private Filter filter;
 		private int nDocs;
 		private TopDocs docs;
 		private int i;
@@ -240,11 +239,11 @@ namespace Lucene.Net.Search
 			this.starts = starts;
 		}
 		
-		public MultiSearcherThread(Lucene.Net.Search.Searchable searchable, Weight weight, Filter filter, int nDocs, FieldDocSortedHitQueue hq, Sort sort, int i, int[] starts, System.String name) : base(name)
+		public MultiSearcherThread(Lucene.Net.Search.Searchable searchable, Weight weight, Filter filter, int nDocs, FieldDocSortedHitQueue hq, Sort sort, int i, int[] starts, System.String name):base(name)
 		{
 			this.searchable = searchable;
-            this.weight = weight;
-            this.filter = filter;
+			this.weight = weight;
+			this.filter = filter;
 			this.nDocs = nDocs;
 			this.hq = hq;
 			this.i = i;
@@ -265,7 +264,7 @@ namespace Lucene.Net.Search
 			}
 			if (this.ioe == null)
 			{
-				// if we are sorting by fields, we need to tell the Field sorted hit queue
+				// if we are sorting by fields, we need to tell the field sorted hit queue
 				// the actual type of fields, in case the original list contained AUTO.
 				// if the searchable returns null for fields, we'll have problems.
 				if (sort != null)
@@ -291,6 +290,16 @@ namespace Lucene.Net.Search
 		public virtual int Hits()
 		{
 			return docs.totalHits;
+		}
+		
+		public virtual float GetMaxScore()
+		{
+			return docs.GetMaxScore();
+		}
+		
+		public virtual System.IO.IOException GetIOException()
+		{
+			return ioe;
 		}
 	}
 }

@@ -13,20 +13,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 using System;
+
 namespace Lucene.Net.Store
 {
 	
-    /// <deprecated> Use {@link IndexInput} or {@link BufferedIndexInput} instead.
-    /// </deprecated>
-    public abstract class InputStream : BufferedIndexInput
-    {
+	/// <deprecated> Use {@link IndexInput} or {@link BufferedIndexInput} instead.
+	/// </deprecated>
+	public abstract class InputStream : BufferedIndexInput
+	{
 		
-        protected internal long length; // set by subclasses
+		protected internal long length; // set by subclasses
 		
-        public override long Length()
-        {
-            return length;
-        }
-    }
+		public override long Length()
+		{
+			return length;
+		}
+	}
 }

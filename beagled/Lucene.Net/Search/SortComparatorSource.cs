@@ -13,8 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 using System;
 using IndexReader = Lucene.Net.Index.IndexReader;
+
 namespace Lucene.Net.Search
 {
 	
@@ -32,7 +34,7 @@ namespace Lucene.Net.Search
 	public interface SortComparatorSource
 	{
 		
-		/// <summary> Creates a comparator for the Field in the given index.</summary>
+		/// <summary> Creates a comparator for the field in the given index.</summary>
 		/// <param name="reader">Index to create comparator for.
 		/// </param>
 		/// <param name="fieldname"> Field to create comparator for.

@@ -13,8 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 using System;
 using Directory = Lucene.Net.Store.Directory;
+
 namespace Lucene.Net.Index
 {
 	
@@ -23,7 +25,7 @@ namespace Lucene.Net.Index
 	/// set.  
 	/// </summary>
 	
-	sealed public class TermInfosReader
+	public sealed class TermInfosReader
 	{
 		private Directory directory;
 		private System.String segment;
@@ -33,13 +35,13 @@ namespace Lucene.Net.Index
 		private SegmentTermEnum origEnum;
 		private long size;
 		
-        private Term[] indexTerms = null;
-        private TermInfo[] indexInfos;
-        private long[] indexPointers;
+		private Term[] indexTerms = null;
+		private TermInfo[] indexInfos;
+		private long[] indexPointers;
 		
-        private SegmentTermEnum indexEnum;
-
-        public /*internal*/ TermInfosReader(Directory dir, System.String seg, FieldInfos fis)
+		private SegmentTermEnum indexEnum;
+		
+		public /*internal*/ TermInfosReader(Directory dir, System.String seg, FieldInfos fis)
 		{
 			directory = dir;
 			segment = seg;
@@ -48,23 +50,18 @@ namespace Lucene.Net.Index
 			origEnum = new SegmentTermEnum(directory.OpenInput(segment + ".tis"), fieldInfos, false);
 			size = origEnum.size;
 			
-            indexEnum = new SegmentTermEnum(directory.OpenInput(segment + ".tii"), fieldInfos, true);
+			indexEnum = new SegmentTermEnum(directory.OpenInput(segment + ".tii"), fieldInfos, true);
 		}
 		
+        /*  Leaving this here will cause a memory leak under .NET 1.1
         ~TermInfosReader()
-        {
+		{
             // patch for pre-1.4.2 JVMs, whose ThreadLocals leak
-            try
-            {
-                System.Threading.Thread.SetData(enumerators, null);     // {{Aroush-1.9}} is this required for .NET ?!
-            }
-            catch (Exception ex)
-            {
-                System.Console.WriteLine(ex.Message);
-            }
-        }
+            //System.Threading.Thread.SetData(enumerators, null);
+		}
+        */
 		
-        public int GetSkipInterval()
+		public int GetSkipInterval()
 		{
 			return origEnum.skipInterval;
 		}
@@ -73,9 +70,9 @@ namespace Lucene.Net.Index
 		{
 			if (origEnum != null)
 				origEnum.Close();
-            if (indexEnum != null)
-                indexEnum.Close();
-        }
+			if (indexEnum != null)
+				indexEnum.Close();
+		}
 		
 		/// <summary>Returns the number of term/value pairs in the set. </summary>
 		internal long Size()
@@ -94,35 +91,35 @@ namespace Lucene.Net.Index
 			return termEnum;
 		}
 		
-        private void  EnsureIndexIsRead()
-        {
-            lock (this)
-            {
-                if (indexTerms != null)
-                // index already read
-                    return ; // do nothing
-                try
-                {
-                    int indexSize = (int) indexEnum.size; // otherwise read index
+		private void  EnsureIndexIsRead()
+		{
+			lock (this)
+			{
+				if (indexTerms != null)
+				// index already read
+					return ; // do nothing
+				try
+				{
+					int indexSize = (int) indexEnum.size; // otherwise read index
 					
-                    indexTerms = new Term[indexSize];
-                    indexInfos = new TermInfo[indexSize];
-                    indexPointers = new long[indexSize];
+					indexTerms = new Term[indexSize];
+					indexInfos = new TermInfo[indexSize];
+					indexPointers = new long[indexSize];
 					
-                    for (int i = 0; indexEnum.Next(); i++)
-                    {
-                        indexTerms[i] = indexEnum.Term();
-                        indexInfos[i] = indexEnum.TermInfo();
-                        indexPointers[i] = indexEnum.indexPointer;
-                    }
-                }
-                finally
-                {
-                    indexEnum.Close();
-                    indexEnum = null;
-                }
-            }
-        }
+					for (int i = 0; indexEnum.Next(); i++)
+					{
+						indexTerms[i] = indexEnum.Term();
+						indexInfos[i] = indexEnum.TermInfo();
+						indexPointers[i] = indexEnum.indexPointer;
+					}
+				}
+				finally
+				{
+					indexEnum.Close();
+					indexEnum = null;
+				}
+			}
+		}
 		
 		/// <summary>Returns the offset of the greatest index entry which is less than or equal to term.</summary>
 		private int GetIndexOffset(Term term)
@@ -155,9 +152,9 @@ namespace Lucene.Net.Index
 			if (size == 0)
 				return null;
 			
-            EnsureIndexIsRead();
+			EnsureIndexIsRead();
 			
-            // optimize sequential access: first try scanning cached enum w/o seeking
+			// optimize sequential access: first try scanning cached enum w/o seeking
 			SegmentTermEnum enumerator = GetEnum();
 			if (enumerator.Term() != null && ((enumerator.Prev() != null && term.CompareTo(enumerator.Prev()) > 0) || term.CompareTo(enumerator.Term()) >= 0))
 			{
@@ -174,13 +171,13 @@ namespace Lucene.Net.Index
 		/// <summary>Scans within block for matching term. </summary>
 		private TermInfo ScanEnum(Term term)
 		{
-            SegmentTermEnum enumerator = GetEnum();
-            enumerator.ScanTo(term);
-            if (enumerator.Term() != null && term.CompareTo(enumerator.Term()) == 0)
-                return enumerator.TermInfo();
-            else
-                return null;
-        }
+			SegmentTermEnum enumerator = GetEnum();
+			enumerator.ScanTo(term);
+			if (enumerator.Term() != null && term.CompareTo(enumerator.Term()) == 0)
+				return enumerator.TermInfo();
+			else
+				return null;
+		}
 		
 		/// <summary>Returns the nth term in the set. </summary>
 		internal Term Get(int position)
@@ -212,8 +209,8 @@ namespace Lucene.Net.Index
 			if (size == 0)
 				return - 1;
 			
-            EnsureIndexIsRead();
-            int indexOffset = GetIndexOffset(term);
+			EnsureIndexIsRead();
+			int indexOffset = GetIndexOffset(term);
 			SeekEnum(indexOffset);
 			
 			SegmentTermEnum enumerator = GetEnum();

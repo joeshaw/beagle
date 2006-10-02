@@ -13,16 +13,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 using System;
 using IndexReader = Lucene.Net.Index.IndexReader;
 using Term = Lucene.Net.Index.Term;
 using TermEnum = Lucene.Net.Index.TermEnum;
+using ToStringUtils = Lucene.Net.Util.ToStringUtils;
+
 namespace Lucene.Net.Search
 {
 	
-	/// <summary>A Query that matches documents containing terms with a specified prefix. </summary>
+	/// <summary>A Query that matches documents containing terms with a specified prefix. A PrefixQuery
+	/// is built by QueryParser for input like <code>app*</code>. 
+	/// </summary>
 	[Serializable]
-	public class PrefixQuery:Query
+	public class PrefixQuery : Query
 	{
 		private Term prefix;
 		
@@ -49,7 +54,7 @@ namespace Lucene.Net.Search
 				do 
 				{
 					Term term = enumerator.Term();
-					if (term != null && term.Text().StartsWith(prefixText) && (System.Object) term.Field() == (System.Object) prefixField)
+					if (term != null && term.Text().StartsWith(prefixText) && term.Field() == prefixField)
 					{
 						TermQuery tq = new TermQuery(term); // found a match
 						tq.SetBoost(GetBoost()); // set the boost
@@ -70,11 +75,6 @@ namespace Lucene.Net.Search
 			return query;
 		}
 		
-		public override Query Combine(Query[] queries)
-		{
-			return Query.MergeBooleanQueries(queries);
-		}
-		
 		/// <summary>Prints a user-readable version of this query. </summary>
 		public override System.String ToString(System.String field)
 		{
@@ -86,17 +86,26 @@ namespace Lucene.Net.Search
 			}
 			buffer.Append(prefix.Text());
 			buffer.Append('*');
-			if (GetBoost() != 1.0f)
-			{
-                System.Globalization.NumberFormatInfo nfi = new System.Globalization.CultureInfo("en-US", false).NumberFormat;
-                nfi.NumberDecimalDigits = 1;
-
-				buffer.Append("^");
-				buffer.Append(GetBoost().ToString("N", nfi));
-			}
+			buffer.Append(ToStringUtils.Boost(GetBoost()));
 			return buffer.ToString();
 		}
-		override public System.Object Clone()
+		
+		/// <summary>Returns true iff <code>o</code> is equal to this. </summary>
+		public  override bool Equals(System.Object o)
+		{
+			if (!(o is PrefixQuery))
+				return false;
+			PrefixQuery other = (PrefixQuery) o;
+			return (this.GetBoost() == other.GetBoost()) && this.prefix.Equals(other.prefix);
+		}
+		
+		/// <summary>Returns a hash code value for this object.</summary>
+		public override int GetHashCode()
+		{
+			return BitConverter.ToInt32(BitConverter.GetBytes(GetBoost()), 0) ^ prefix.GetHashCode();
+		}
+        // {{Aroush-1.9}} Do we need this?!
+        override public System.Object Clone()
 		{
 			return null;
 		}

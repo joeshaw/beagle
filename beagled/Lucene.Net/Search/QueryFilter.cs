@@ -13,9 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 using System;
 using System.Runtime.InteropServices;
 using IndexReader = Lucene.Net.Index.IndexReader;
+
 namespace Lucene.Net.Search
 {
 	
@@ -24,7 +26,7 @@ namespace Lucene.Net.Search
 	/// index using this filter are much faster.
 	/// 
 	/// <p> This could be used, for example, with a {@link RangeQuery} on a suitably
-	/// formatted date Field to implement date filtering.  One could re-use a single
+	/// formatted date field to implement date filtering.  One could re-use a single
 	/// QueryFilter that matches, e.g., only documents modified within the last
 	/// week.  The QueryFilter and RangeQuery would only need to be reconstructed
 	/// once per day.
@@ -33,9 +35,9 @@ namespace Lucene.Net.Search
 	/// <version>  $Id$
 	/// </version>
 	[Serializable]
-	public class QueryFilter:Filter
+	public class QueryFilter : Filter
 	{
-		private class AnonymousClassHitCollector:HitCollector
+		private class AnonymousClassHitCollector : HitCollector
 		{
 			public AnonymousClassHitCollector(System.Collections.BitArray bits, QueryFilter enclosingInstance)
 			{
@@ -107,6 +109,18 @@ namespace Lucene.Net.Search
 		public override System.String ToString()
 		{
 			return "QueryFilter(" + query + ")";
+		}
+		
+		public  override bool Equals(System.Object o)
+		{
+			if (!(o is QueryFilter))
+				return false;
+			return this.query.Equals(((QueryFilter) o).query);
+		}
+		
+		public override int GetHashCode()
+		{
+			return query.GetHashCode() ^ (unchecked((int) 0x923F64B9L));     // {{Aroush-1.9}} Is this OK?!
 		}
 	}
 }

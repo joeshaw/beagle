@@ -13,10 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 using System;
+
 namespace Lucene.Net.Store
 {
-	/// <summary> A memory-resident {@link InputStream} implementation.
+	
+	/// <summary> A memory-resident {@link IndexInput} implementation.
 	/// 
 	/// </summary>
 	/// <version>  $Id$
@@ -26,7 +29,7 @@ namespace Lucene.Net.Store
 	{
 		private RAMFile file;
 		private int pointer = 0;
-        private long length;
+		private long length;
 		
 		public RAMInputStream(RAMFile f)
 		{
@@ -62,9 +65,26 @@ namespace Lucene.Net.Store
 			pointer = (int) pos;
 		}
 		
-        public override long Length()
-        {
-            return length;
+		public override long Length()
+		{
+			return length;
+		}
+
+        /*
+        // {{Aroush-1.9}} Do we need this Clone()?!
+		public override System.Object Clone()
+		{
+            SegmentTermEnum clone = null;
+            try
+            {
+                clone = (SegmentTermEnum) base.MemberwiseClone();
+            }
+            catch (System.Exception)
+            {
+            }
+
+            return clone;
         }
-    }
+        */
+	}
 }

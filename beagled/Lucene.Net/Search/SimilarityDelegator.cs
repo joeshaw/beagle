@@ -13,54 +13,60 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 using System;
+
 namespace Lucene.Net.Search
 {
 	
-    [Serializable]
-    public class SimilarityDelegator : Similarity
-    {
+	/// <summary>Expert: Delegating scoring implementation.  Useful in {@link
+	/// Query#GetSimilarity(Searcher)} implementations, to override only certain
+	/// methods of a Searcher's Similiarty implementation.. 
+	/// </summary>
+	[Serializable]
+	public class SimilarityDelegator : Similarity
+	{
 		
-        private Similarity delegee;
+		private Similarity delegee;
 		
-        /// <summary>Construct a {@link Similarity} that delegates all methods to another.
-        /// 
-        /// </summary>
-        /// <param name="delegee">the Similarity implementation to delegate to
-        /// </param>
-        public SimilarityDelegator(Similarity delegee)
-        {
-            this.delegee = delegee;
-        }
+		/// <summary>Construct a {@link Similarity} that delegates all methods to another.
+		/// 
+		/// </summary>
+		/// <param name="delegee">the Similarity implementation to delegate to
+		/// </param>
+		public SimilarityDelegator(Similarity delegee)
+		{
+			this.delegee = delegee;
+		}
 		
-        public override float LengthNorm(System.String fieldName, int numTerms)
-        {
-            return delegee.LengthNorm(fieldName, numTerms);
-        }
+		public override float LengthNorm(System.String fieldName, int numTerms)
+		{
+			return delegee.LengthNorm(fieldName, numTerms);
+		}
 		
-        public override float QueryNorm(float sumOfSquaredWeights)
-        {
-            return delegee.QueryNorm(sumOfSquaredWeights);
-        }
+		public override float QueryNorm(float sumOfSquaredWeights)
+		{
+			return delegee.QueryNorm(sumOfSquaredWeights);
+		}
 		
-        public override float Tf(float freq)
-        {
-            return delegee.Tf(freq);
-        }
+		public override float Tf(float freq)
+		{
+			return delegee.Tf(freq);
+		}
 		
-        public override float SloppyFreq(int distance)
-        {
-            return delegee.SloppyFreq(distance);
-        }
+		public override float SloppyFreq(int distance)
+		{
+			return delegee.SloppyFreq(distance);
+		}
 		
-        public override float Idf(int docFreq, int numDocs)
-        {
-            return delegee.Idf(docFreq, numDocs);
-        }
+		public override float Ldf(int docFreq, int numDocs)
+		{
+			return delegee.Ldf(docFreq, numDocs);
+		}
 		
-        public override float Coord(int overlap, int maxOverlap)
-        {
-            return delegee.Coord(overlap, maxOverlap);
-        }
-    }
+		public override float Coord(int overlap, int maxOverlap)
+		{
+			return delegee.Coord(overlap, maxOverlap);
+		}
+	}
 }

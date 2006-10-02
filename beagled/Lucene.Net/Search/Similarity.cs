@@ -13,77 +13,79 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 using System;
 using Field = Lucene.Net.Documents.Field;
 using IndexReader = Lucene.Net.Index.IndexReader;
 using IndexWriter = Lucene.Net.Index.IndexWriter;
 using Term = Lucene.Net.Index.Term;
+using SmallFloat = Lucene.Net.Util.SmallFloat;
+
 namespace Lucene.Net.Search
 {
 	
-	
-    /// <summary>Expert: Scoring API.
-    /// <p>Subclasses implement search scoring.
-    /// 
-    /// <p>The score of query <code>q</code> for document <code>d</code> is defined
-    /// in terms of these methods as follows:
-    /// 
-    /// <table cellpadding="0" cellspacing="0" border="0">
-    /// <tr>
-    /// <td valign="middle" align="right" rowspan="2">score(q,d) =<br></td>
-    /// <td valign="middle" align="center">
-    /// <big><big><big><big><big>&Sigma;</big></big></big></big></big></td>
-    /// <td valign="middle"><small>
-    /// ( {@link #Tf(int) tf}(t in d) *
-    /// {@link #Idf(Term,Searcher) idf}(t)^2 *
-    /// {@link Query#getBoost getBoost}(t in q) *
-    /// {@link Field#getBoost getBoost}(t.field in d) *
-    /// {@link #LengthNorm(String,int) lengthNorm}(t.field in d) )
-    /// </small></td>
-    /// <td valign="middle" rowspan="2">&nbsp;*
-    /// {@link #Coord(int,int) coord}(q,d) *
-    /// {@link #QueryNorm(float) queryNorm}(sumOfSqaredWeights)
-    /// </td>
-    /// </tr>
-    /// <tr>
-    /// <td valign="top" align="right">
-    /// <small>t in q</small>
-    /// </td>
-    /// </tr>
-    /// </table>
-    /// 
-    /// <p> where
-    /// 
-    /// <table cellpadding="0" cellspacing="0" border="0">
-    /// <tr>
-    /// <td valign="middle" align="right" rowspan="2">sumOfSqaredWeights =<br></td>
-    /// <td valign="middle" align="center">
-    /// <big><big><big><big><big>&Sigma;</big></big></big></big></big></td>
-    /// <td valign="middle"><small>
-    /// ( {@link #Idf(Term,Searcher) idf}(t) *
-    /// {@link Query#getBoost getBoost}(t in q) )^2
-    /// </small></td>
-    /// </tr>
-    /// <tr>
-    /// <td valign="top" align="right">
-    /// <small>t in q</small>
-    /// </td>
-    /// </tr>
-    /// </table>
-    /// 
-    /// <p> Note that the above formula is motivated by the cosine-distance or dot-product
-    /// between document and query vector, which is implemented by {@link DefaultSimilarity}.
-    /// 
-    /// </summary>
-    /// <seealso cref="#SetDefault(Similarity)">
-    /// </seealso>
-    /// <seealso cref="IndexWriter#SetSimilarity(Similarity)">
-    /// </seealso>
-    /// <seealso cref="Searcher#SetSimilarity(Similarity)">
-    /// </seealso>
-    [Serializable]
-    public abstract class Similarity
-    {
+	/// <summary>Expert: Scoring API.
+	/// <p>Subclasses implement search scoring.
+	/// 
+	/// <p>The score of query <code>q</code> for document <code>d</code> is defined
+	/// in terms of these methods as follows:
+	/// 
+	/// <table cellpadding="0" cellspacing="0" border="0">
+	/// <tr>
+	/// <td valign="middle" align="right" rowspan="2">score(q,d) =<br></td>
+	/// <td valign="middle" align="center">
+	/// <big><big><big><big><big>&Sigma;</big></big></big></big></big></td>
+	/// <td valign="middle"><small>
+	/// ( {@link #Tf(int) tf}(t in d) *
+	/// {@link #Idf(Term,Searcher) idf}(t)^2 *
+	/// {@link Query#getBoost getBoost}(t in q) *
+	/// {@link Field#getBoost getBoost}(t.field in d) *
+	/// {@link #LengthNorm(String,int) lengthNorm}(t.field in d) )
+	/// </small></td>
+	/// <td valign="middle" rowspan="2">&nbsp;*
+	/// {@link #Coord(int,int) coord}(q,d) *
+	/// {@link #QueryNorm(float) queryNorm}(sumOfSqaredWeights)
+	/// </td>
+	/// </tr>
+	/// <tr>
+	/// <td valign="top" align="right">
+	/// <small>t in q</small>
+	/// </td>
+	/// </tr>
+	/// </table>
+	/// 
+	/// <p> where
+	/// 
+	/// <table cellpadding="0" cellspacing="0" border="0">
+	/// <tr>
+	/// <td valign="middle" align="right" rowspan="2">sumOfSqaredWeights =<br></td>
+	/// <td valign="middle" align="center">
+	/// <big><big><big><big><big>&Sigma;</big></big></big></big></big></td>
+	/// <td valign="middle"><small>
+	/// ( {@link #Idf(Term,Searcher) idf}(t) *
+	/// {@link Query#getBoost getBoost}(t in q) )^2
+	/// </small></td>
+	/// </tr>
+	/// <tr>
+	/// <td valign="top" align="right">
+	/// <small>t in q</small>
+	/// </td>
+	/// </tr>
+	/// </table>
+	/// 
+	/// <p> Note that the above formula is motivated by the cosine-distance or dot-product
+	/// between document and query vector, which is implemented by {@link DefaultSimilarity}.
+	/// 
+	/// </summary>
+	/// <seealso cref="SetDefault(Similarity)">
+	/// </seealso>
+	/// <seealso cref="IndexWriter.SetSimilarity(Similarity)">
+	/// </seealso>
+	/// <seealso cref="Searcher.SetSimilarity(Similarity)">
+	/// </seealso>
+	[Serializable]
+	public abstract class Similarity
+	{
 		/// <summary>The Similarity implementation used by default. </summary>
 		private static Similarity defaultImpl = new DefaultSimilarity();
 		
@@ -91,9 +93,9 @@ namespace Lucene.Net.Search
 		/// code.
 		/// 
 		/// </summary>
-		/// <seealso cref="Searcher#SetSimilarity(Similarity)">
+		/// <seealso cref="Searcher.SetSimilarity(Similarity)">
 		/// </seealso>
-		/// <seealso cref="IndexWriter#SetSimilarity(Similarity)">
+		/// <seealso cref="IndexWriter.SetSimilarity(Similarity)">
 		/// </seealso>
 		public static void  SetDefault(Similarity similarity)
 		{
@@ -106,9 +108,9 @@ namespace Lucene.Net.Search
 		/// <p>This is initially an instance of {@link DefaultSimilarity}.
 		/// 
 		/// </summary>
-		/// <seealso cref="Searcher#SetSimilarity(Similarity)">
+		/// <seealso cref="Searcher.SetSimilarity(Similarity)">
 		/// </seealso>
-		/// <seealso cref="IndexWriter#SetSimilarity(Similarity)">
+		/// <seealso cref="IndexWriter.SetSimilarity(Similarity)">
 		/// </seealso>
 		public static Similarity GetDefault()
 		{
@@ -119,47 +121,47 @@ namespace Lucene.Net.Search
 		private static readonly float[] NORM_TABLE = new float[256];
 		
 		/// <summary>Decodes a normalization factor stored in an index.</summary>
-		/// <seealso cref="#EncodeNorm(float)">
+		/// <seealso cref="EncodeNorm(float)">
 		/// </seealso>
 		public static float DecodeNorm(byte b)
 		{
 			return NORM_TABLE[b & 0xFF]; // & 0xFF maps negative bytes to positive above 127
 		}
 		
-        /// <summary>Returns a table for decoding normalization bytes.</summary>
-        /// <seealso cref="#EncodeNorm(float)">
-        /// </seealso>
-        public static float[] GetNormDecoder()
-        {
-            return NORM_TABLE;
-        }
+		/// <summary>Returns a table for decoding normalization bytes.</summary>
+		/// <seealso cref="EncodeNorm(float)">
+		/// </seealso>
+		public static float[] GetNormDecoder()
+		{
+			return NORM_TABLE;
+		}
 		
-        /// <summary>Computes the normalization value for a field given the total number of
-        /// terms contained in a field.  These values, together with field boosts, are
-        /// stored in an index and multipled into scores for hits on each field by the
-        /// search code.
-        /// 
-        /// <p>Matches in longer fields are less precise, so implementations of this
-        /// method usually return smaller values when <code>numTokens</code> is large,
-        /// and larger values when <code>numTokens</code> is small.
-        /// 
-        /// <p>That these values are computed under {@link
-        /// IndexWriter#AddDocument(Lucene.Net.document.Document)} and stored then using
-        /// {@link #EncodeNorm(float)}.  Thus they have limited precision, and documents
-        /// must be re-indexed if this method is altered.
-        /// 
-        /// </summary>
-        /// <param name="fieldName">the name of the field
-        /// </param>
-        /// <param name="numTokens">the total number of tokens contained in fields named
-        /// <i>fieldName</i> of <i>doc</i>.
-        /// </param>
-        /// <returns> a normalization factor for hits on this field of this document
-        /// 
-        /// </returns>
-        /// <seealso cref="Field#SetBoost(float)">
-        /// </seealso>
-        public abstract float LengthNorm(System.String fieldName, int numTokens);
+		/// <summary>Computes the normalization value for a field given the total number of
+		/// terms contained in a field.  These values, together with field boosts, are
+		/// stored in an index and multipled into scores for hits on each field by the
+		/// search code.
+		/// 
+		/// <p>Matches in longer fields are less precise, so implementations of this
+		/// method usually return smaller values when <code>numTokens</code> is large,
+		/// and larger values when <code>numTokens</code> is small.
+		/// 
+		/// <p>That these values are computed under {@link
+		/// IndexWriter#AddDocument(Lucene.Net.document.Document)} and stored then using
+		/// {@link #EncodeNorm(float)}.  Thus they have limited precision, and documents
+		/// must be re-indexed if this method is altered.
+		/// 
+		/// </summary>
+		/// <param name="fieldName">the name of the field
+		/// </param>
+		/// <param name="numTokens">the total number of tokens contained in fields named
+		/// <i>fieldName</i> of <i>doc</i>.
+		/// </param>
+		/// <returns> a normalization factor for hits on this field of this document
+		/// 
+		/// </returns>
+		/// <seealso cref="Field.SetBoost(float)">
+		/// </seealso>
+		public abstract float LengthNorm(System.String fieldName, int numTokens);
 		
 		/// <summary>Computes the normalization value for a query given the sum of the squared
 		/// weights of each of the query terms.  This value is then multipled into the
@@ -177,7 +179,8 @@ namespace Lucene.Net.Search
 		
 		/// <summary>Encodes a normalization factor for storage in an index.
 		/// 
-		/// <p>The encoding uses a five-bit exponent and three-bit mantissa, thus
+		/// <p>The encoding uses a three-bit mantissa, a five-bit exponent, and
+		/// the zero-exponent point at 15, thus
 		/// representing values from around 7x10^9 to 2x10^-9 with about one
 		/// significant decimal digit of accuracy.  Zero is also represented.
 		/// Negative numbers are rounded up to zero.  Values too large to represent
@@ -186,53 +189,13 @@ namespace Lucene.Net.Search
 		/// value.
 		/// 
 		/// </summary>
-		/// <seealso cref="Field#SetBoost(float)">
+		/// <seealso cref="Field.SetBoost(float)">
+		/// </seealso>
+		/// <seealso cref="SmallFloat">
 		/// </seealso>
 		public static byte EncodeNorm(float f)
 		{
-			return FloatToByte(f);
-		}
-		
-		private static float ByteToFloat(byte b)
-		{
-			if (b == 0)
-			// zero is a special case
-				return 0.0f;
-			int mantissa = b & 7;
-			int exponent = (b >> 3) & 31;
-			int bits = ((exponent + (63 - 15)) << 24) | (mantissa << 21);
-            return BitConverter.ToSingle(BitConverter.GetBytes(bits), 0);
-		}
-		
-		private static byte FloatToByte(float f)
-		{
-			if (f < 0.0f)
-			// round negatives up to zero
-				f = 0.0f;
-			
-			if (f == 0.0f)
-			// zero is a special case
-				return 0;
-			
-			int bits = BitConverter.ToInt32(BitConverter.GetBytes(f), 0); // parse float into parts
-			int mantissa = (bits & 0xffffff) >> 21;
-			int exponent = (((bits >> 24) & 0x7f) - 63) + 15;
-			
-			if (exponent > 31)
-			{
-				// overflow: use max value
-				exponent = 31;
-				mantissa = 7;
-			}
-			
-			if (exponent < 0)
-			{
-				// underflow: use min value
-				exponent = 0;
-				mantissa = 1;
-			}
-			
-			return (byte) ((exponent << 3) | mantissa); // pack into a byte
+			return (byte) SmallFloat.FloatToByte315(f);
 		}
 		
 		
@@ -268,7 +231,7 @@ namespace Lucene.Net.Search
 		/// when it is large.
 		/// 
 		/// </summary>
-		/// <seealso cref="PhraseQuery#SetSlop(int)">
+		/// <seealso cref="PhraseQuery.SetSlop(int)">
 		/// </seealso>
 		/// <param name="distance">the edit distance of this sloppy phrase match
 		/// </param>
@@ -313,7 +276,7 @@ namespace Lucene.Net.Search
 		/// </returns>
 		public virtual float Idf(Term term, Searcher searcher)
 		{
-			return Idf(searcher.DocFreq(term), searcher.MaxDoc());
+			return Ldf(searcher.DocFreq(term), searcher.MaxDoc());
 		}
 		
 		/// <summary>Computes a score factor for a phrase.
@@ -355,7 +318,7 @@ namespace Lucene.Net.Search
 		/// </param>
 		/// <returns> a score factor based on the term's document frequency
 		/// </returns>
-		public abstract float Idf(int docFreq, int numDocs);
+		public abstract float Ldf(int docFreq, int numDocs);
 		
 		/// <summary>Computes a score factor based on the fraction of all query terms that a
 		/// document contains.  This value is multiplied into scores.
@@ -377,7 +340,7 @@ namespace Lucene.Net.Search
 		{
 			{
 				for (int i = 0; i < 256; i++)
-					NORM_TABLE[i] = ByteToFloat((byte) i);
+					NORM_TABLE[i] = SmallFloat.Byte315ToFloat((byte) i);
 			}
 		}
 	}

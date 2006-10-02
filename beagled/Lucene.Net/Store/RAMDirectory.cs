@@ -13,7 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 using System;
+
 namespace Lucene.Net.Store
 {
 	
@@ -24,7 +26,7 @@ namespace Lucene.Net.Store
 	/// </version>
 	public sealed class RAMDirectory : Directory
 	{
-		private class AnonymousClassLock:Lock
+		private class AnonymousClassLock : Lock
 		{
 			public AnonymousClassLock(System.String name, RAMDirectory enclosingInstance)
 			{
@@ -82,26 +84,33 @@ namespace Lucene.Net.Store
 		/// </summary>
 		/// <param name="dir">a <code>Directory</code> value
 		/// </param>
-		/// <exception cref=""> IOException if an error occurs
+		/// <exception cref="IOException">if an error occurs
 		/// </exception>
-		public RAMDirectory(Directory dir) : this(dir, false)
+		public RAMDirectory(Directory dir):this(dir, false)
 		{
 		}
 		
 		private RAMDirectory(Directory dir, bool closeDir)
 		{
 			System.String[] files = dir.List();
+			byte[] buf = new byte[BufferedIndexOutput.BUFFER_SIZE];
 			for (int i = 0; i < files.Length; i++)
 			{
 				// make place on ram disk
-				IndexOutput os = CreateOutput(files[i]);
+				IndexOutput os = CreateOutput(System.IO.Path.GetFileName(files[i]));
 				// read current file
 				IndexInput is_Renamed = dir.OpenInput(files[i]);
 				// and copy to ram disk
 				int len = (int) is_Renamed.Length();
-				byte[] buf = new byte[len];
-				is_Renamed.ReadBytes(buf, 0, len);
-				os.WriteBytes(buf, len);
+				int readCount = 0;
+				while (readCount < len)
+				{
+					int toRead = readCount + BufferedIndexOutput.BUFFER_SIZE > len?len - readCount : BufferedIndexOutput.BUFFER_SIZE;
+					is_Renamed.ReadBytes(buf, 0, toRead);
+					os.WriteBytes(buf, toRead);
+					readCount += toRead;
+				}
+				
 				// graceful cleanup
 				is_Renamed.Close();
 				os.Close();
@@ -161,7 +170,7 @@ namespace Lucene.Net.Store
 			//     final boolean MONITOR = false;
 			
 			RAMFile file = (RAMFile) files[name];
-			long ts2, ts1 = System.DateTime.UtcNow.Ticks;
+			long ts2, ts1 = System.DateTime.Now.Ticks;
 			do 
 			{
 				try
@@ -171,7 +180,7 @@ namespace Lucene.Net.Store
 				catch (System.Threading.ThreadInterruptedException)
 				{
 				}
-				ts2 = System.DateTime.UtcNow.Ticks;
+				ts2 = System.DateTime.Now.Ticks;
 				//       if (MONITOR) {
 				//         count++;
 				//       }

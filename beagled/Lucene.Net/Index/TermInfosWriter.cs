@@ -13,10 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 using System;
 using Directory = Lucene.Net.Store.Directory;
 using IndexOutput = Lucene.Net.Store.IndexOutput;
 using StringHelper = Lucene.Net.Util.StringHelper;
+
 namespace Lucene.Net.Index
 {
 	
@@ -24,7 +26,7 @@ namespace Lucene.Net.Index
 	/// Directory.  A TermInfos can be written once, in order.  
 	/// </summary>
 	
-	sealed public class TermInfosWriter
+	public sealed class TermInfosWriter
 	{
 		/// <summary>The file format version, a negative number. </summary>
 		public const int FORMAT = - 2;
@@ -77,8 +79,8 @@ namespace Lucene.Net.Index
 		
 		private void  Initialize(Directory directory, System.String segment, FieldInfos fis, int interval, bool isi)
 		{
-            indexInterval = interval;
-            fieldInfos = fis;
+			indexInterval = interval;
+			fieldInfos = fis;
 			isIndex = isi;
 			output = directory.CreateOutput(segment + (isIndex ? ".tii" : ".tis"));
 			output.WriteInt(FORMAT); // write format
@@ -132,7 +134,7 @@ namespace Lucene.Net.Index
 			output.WriteVInt(length); // write delta length
 			output.WriteChars(term.text, start, length); // write delta chars
 			
-			output.WriteVInt(fieldInfos.FieldNumber(term.field)); // write Field num
+			output.WriteVInt(fieldInfos.FieldNumber(term.field)); // write field num
 			
 			lastTerm = term;
 		}

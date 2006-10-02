@@ -13,9 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 using System;
 using IndexReader = Lucene.Net.Index.IndexReader;
 using Term = Lucene.Net.Index.Term;
+
 namespace Lucene.Net.Search
 {
 	
@@ -38,13 +40,13 @@ namespace Lucene.Net.Search
 		internal bool endEnum = false;
 		
 		/// <summary> Creates a new <code>WildcardTermEnum</code>.  Passing in a
-		/// {@link Lucene.Net.Index.Term Term} that does not contain a
+		/// {@link Lucene.Net.index.Term Term} that does not contain a
 		/// <code>WILDCARD_CHAR</code> will cause an exception to be thrown.
-        /// <p>
-        /// After calling the constructor the enumeration is already pointing to the first 
-        /// valid term if such a term exists.
-        /// </summary>
-        public WildcardTermEnum(IndexReader reader, Term term):base()
+		/// <p>
+		/// After calling the constructor the enumeration is already pointing to the first 
+		/// valid term if such a term exists.
+		/// </summary>
+		public WildcardTermEnum(IndexReader reader, Term term):base()
 		{
 			searchTerm = term;
 			field = searchTerm.Field();
@@ -70,7 +72,7 @@ namespace Lucene.Net.Search
 		
 		protected internal override bool TermCompare(Term term)
 		{
-			if ((System.Object) field == (System.Object) term.Field())
+			if (field == term.Field())
 			{
 				System.String searchText = term.Text();
 				if (searchText.StartsWith(pre))
@@ -106,86 +108,92 @@ namespace Lucene.Net.Search
 		/// </summary>
 		public static bool WildcardEquals(System.String pattern, int patternIdx, System.String string_Renamed, int stringIdx)
 		{
-            int p = patternIdx;
+			int p = patternIdx;
 			
-            for (int s = stringIdx; ; ++p, ++s)
-            {
-                // End of string yet?
-                bool sEnd = (s >= string_Renamed.Length);
-                // End of pattern yet?
-                bool pEnd = (p >= pattern.Length);
+			for (int s = stringIdx; ; ++p, ++s)
+			{
+				// End of string yet?
+				bool sEnd = (s >= string_Renamed.Length);
+				// End of pattern yet?
+				bool pEnd = (p >= pattern.Length);
 				
-                // If we're looking at the end of the string...
-                if (sEnd)
-                {
-                    // Assume the only thing left on the pattern is/are wildcards
-                    bool justWildcardsLeft = true;
+				// If we're looking at the end of the string...
+				if (sEnd)
+				{
+					// Assume the only thing left on the pattern is/are wildcards
+					bool justWildcardsLeft = true;
 					
-                    // Current wildcard position
-                    int wildcardSearchPos = p;
-                    // While we haven't found the end of the pattern,
-                    // and haven't encountered any non-wildcard characters
-                    while (wildcardSearchPos < pattern.Length && justWildcardsLeft)
-                    {
-                        // Check the character at the current position
-                        char wildchar = pattern[wildcardSearchPos];
-                        // If it's not a wildcard character, then there is more
-                        // pattern information after this/these wildcards.
+					// Current wildcard position
+					int wildcardSearchPos = p;
+					// While we haven't found the end of the pattern,
+					// and haven't encountered any non-wildcard characters
+					while (wildcardSearchPos < pattern.Length && justWildcardsLeft)
+					{
+						// Check the character at the current position
+						char wildchar = pattern[wildcardSearchPos];
 						
-                        if (wildchar != WILDCARD_CHAR && wildchar != WILDCARD_STRING)
-                        {
-                            justWildcardsLeft = false;
-                        }
-                        else
-                        {
-                            // Look at the next character
-                            wildcardSearchPos++;
-                        }
-                    }
+						// If it's not a wildcard character, then there is more
+						// pattern information after this/these wildcards.
+						if (wildchar != WILDCARD_CHAR && wildchar != WILDCARD_STRING)
+						{
+							justWildcardsLeft = false;
+						}
+						else
+						{
+							// to prevent "cat" matches "ca??"
+							if (wildchar == WILDCARD_CHAR)
+							{
+								return false;
+							}
+							
+							// Look at the next character
+							wildcardSearchPos++;
+						}
+					}
 					
-                    // This was a prefix wildcard search, and we've matched, so
-                    // return true.
-                    if (justWildcardsLeft)
-                    {
-                        return true;
-                    }
-                }
+					// This was a prefix wildcard search, and we've matched, so
+					// return true.
+					if (justWildcardsLeft)
+					{
+						return true;
+					}
+				}
 				
-                // If we've gone past the end of the string, or the pattern,
-                // return false.
-                if (sEnd || pEnd)
-                {
-                    break;
-                }
+				// If we've gone past the end of the string, or the pattern,
+				// return false.
+				if (sEnd || pEnd)
+				{
+					break;
+				}
 				
-                // Match a single character, so continue.
-                if (pattern[p] == WILDCARD_CHAR)
-                {
-                    continue;
-                }
+				// Match a single character, so continue.
+				if (pattern[p] == WILDCARD_CHAR)
+				{
+					continue;
+				}
 				
-                //
-                if (pattern[p] == WILDCARD_STRING)
-                {
-                    // Look at the character beyond the '*'.
-                    ++p;
-                    // Examine the string, starting at the last character.
-                    for (int i = string_Renamed.Length; i >= s; --i)
-                    {
-                        if (WildcardEquals(pattern, p, string_Renamed, i))
-                        {
-                            return true;
-                        }
-                    }
-                    break;
-                }
-                if (pattern[p] != string_Renamed[s])
-                {
-                    break;
-                }
-            }
-            return false;
-        }
+				//
+				if (pattern[p] == WILDCARD_STRING)
+				{
+					// Look at the character beyond the '*'.
+					++p;
+					// Examine the string, starting at the last character.
+					for (int i = string_Renamed.Length; i >= s; --i)
+					{
+						if (WildcardEquals(pattern, p, string_Renamed, i))
+						{
+							return true;
+						}
+					}
+					break;
+				}
+				if (pattern[p] != string_Renamed[s])
+				{
+					break;
+				}
+			}
+			return false;
+		}
 		
 		public override void  Close()
 		{

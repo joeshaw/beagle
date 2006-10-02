@@ -13,11 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 using System;
 using Document = Lucene.Net.Documents.Document;
 using Field = Lucene.Net.Documents.Field;
 using Directory = Lucene.Net.Store.Directory;
 using IndexInput = Lucene.Net.Store.IndexInput;
+
 namespace Lucene.Net.Index
 {
 	
@@ -28,7 +30,7 @@ namespace Lucene.Net.Index
 	/// </summary>
 	/// <version>  $Id$
 	/// </version>
-	sealed public class FieldsReader
+	public sealed class FieldsReader
 	{
 		private FieldInfos fieldInfos;
 		private IndexInput fieldsStream;
@@ -71,93 +73,82 @@ namespace Lucene.Net.Index
 				
 				byte bits = fieldsStream.ReadByte();
 				
-                bool compressed = (bits & FieldsWriter.FIELD_IS_COMPRESSED) != 0;
-                bool tokenize = (bits & FieldsWriter.FIELD_IS_TOKENIZED) != 0;
+				bool compressed = (bits & FieldsWriter.FIELD_IS_COMPRESSED) != 0;
+				bool tokenize = (bits & FieldsWriter.FIELD_IS_TOKENIZED) != 0;
 				
-                if ((bits & FieldsWriter.FIELD_IS_BINARY) != 0)
-                {
-                    byte[] b = new byte[fieldsStream.ReadVInt()];
-                    fieldsStream.ReadBytes(b, 0, b.Length);
-                    if (compressed)
-                        doc.Add(new Field(fi.name, Uncompress(b), Field.Store.COMPRESS));
-                    else
-                        doc.Add(new Field(fi.name, b, Field.Store.YES));
-                }
-                else
-                {
-                    Field.Index index;
-                    Field.Store store = Field.Store.YES;
+				if ((bits & FieldsWriter.FIELD_IS_BINARY) != 0)
+				{
+					byte[] b = new byte[fieldsStream.ReadVInt()];
+					fieldsStream.ReadBytes(b, 0, b.Length);
+					if (compressed)
+						doc.Add(new Field(fi.name, Uncompress(b), Field.Store.COMPRESS));
+					else
+						doc.Add(new Field(fi.name, b, Field.Store.YES));
+				}
+				else
+				{
+					Field.Index index;
+					Field.Store store = Field.Store.YES;
 					
-                    if (fi.isIndexed && tokenize)
-                        index = Field.Index.TOKENIZED;
-                    else if (fi.isIndexed && !tokenize)
-                        index = Field.Index.UN_TOKENIZED;
-                    else
-                        index = Field.Index.NO;
+					if (fi.isIndexed && tokenize)
+						index = Field.Index.TOKENIZED;
+					else if (fi.isIndexed && !tokenize)
+						index = Field.Index.UN_TOKENIZED;
+					else
+						index = Field.Index.NO;
 					
-                    if (compressed)
-                    {
-                        store = Field.Store.COMPRESS;
-                        byte[] b = new byte[fieldsStream.ReadVInt()];
-                        fieldsStream.ReadBytes(b, 0, b.Length);
-
-	                    byte[] fromByteArray = Uncompress(b);
-		                byte[] byteArray = null;
-
-			            byteArray = new byte[fromByteArray.Length];
-			            for (int ii = 0; ii < fromByteArray.Length; ii++)
-				            byteArray[ii] = (byte) fromByteArray[ii];
-
-                        doc.Add(new Field(fi.name, System.Text.Encoding.GetEncoding("UTF-8").GetString(byteArray), store, index, fi.storeTermVector ? Field.TermVector.YES : Field.TermVector.NO));
-                    }
-                    else
-                        doc.Add(new Field(fi.name, fieldsStream.ReadString(), store, index, fi.storeTermVector?Field.TermVector.YES:Field.TermVector.NO));
-                }
+					Field.TermVector termVector = null;
+					if (fi.storeTermVector)
+					{
+						if (fi.storeOffsetWithTermVector)
+						{
+							if (fi.storePositionWithTermVector)
+							{
+								termVector = Field.TermVector.WITH_POSITIONS_OFFSETS;
+							}
+							else
+							{
+								termVector = Field.TermVector.WITH_OFFSETS;
+							}
+						}
+						else if (fi.storePositionWithTermVector)
+						{
+							termVector = Field.TermVector.WITH_POSITIONS;
+						}
+						else
+						{
+							termVector = Field.TermVector.YES;
+						}
+					}
+					else
+					{
+						termVector = Field.TermVector.NO;
+					}
+					
+					if (compressed)
+					{
+						store = Field.Store.COMPRESS;
+						byte[] b = new byte[fieldsStream.ReadVInt()];
+						fieldsStream.ReadBytes(b, 0, b.Length);
+						Field f = new Field(fi.name, System.Text.Encoding.GetEncoding("UTF-8").GetString(Uncompress(b)), store, index, termVector);
+						f.SetOmitNorms(fi.omitNorms);
+						doc.Add(f);
+					}
+					else
+					{
+						Field f = new Field(fi.name, fieldsStream.ReadString(), store, index, termVector);
+						f.SetOmitNorms(fi.omitNorms);
+						doc.Add(f);
+					}
+				}
 			}
 			
 			return doc;
 		}
 		
-        private byte[] Uncompress(byte[] input)
-        {
-            // {{Aroush-1.9}} how can we do this in .NET?
-            return input;
-			
-            /*
-            //UPGRADE_ISSUE: Class 'java.util.zip.Inflater' was not converted. 'ms-help://MS.VSCC.2003/commoner/redir/redirect.htm?keyword="jlca1000_javautilzipInflater_3"'
-            //UPGRADE_ISSUE: Constructor 'java.util.zip.Inflater.Inflater' was not converted. 'ms-help://MS.VSCC.2003/commoner/redir/redirect.htm?keyword="jlca1000_javautilzipInflater_3"'
-            Inflater decompressor = new Inflater();
-            //UPGRADE_ISSUE: Method 'java.util.zip.Inflater.setInput' was not converted. 'ms-help://MS.VSCC.2003/commoner/redir/redirect.htm?keyword="jlca1000_javautilzipInflater_3"'
-            decompressor.setInput(input);
-			
-            // Create an expandable byte array to hold the decompressed data
-            System.IO.MemoryStream bos = new System.IO.MemoryStream(input.Length);
-			
-            // Decompress the data
-            byte[] buf = new byte[1024];
-            //UPGRADE_ISSUE: Method 'java.util.zip.Inflater.finished' was not converted. 'ms-help://MS.VSCC.2003/commoner/redir/redirect.htm?keyword="jlca1000_javautilzipInflater_3"'
-            while (!decompressor.finished())
-            {
-                try
-                {
-                    //UPGRADE_ISSUE: Method 'java.util.zip.Inflater.inflate' was not converted. 'ms-help://MS.VSCC.2003/commoner/redir/redirect.htm?keyword="jlca1000_javautilzipInflater_3"'
-                    int count = decompressor.inflate(buf);
-                    bos.Write(SupportClass.ToByteArray(buf), 0, count);
-                }
-                    //UPGRADE_ISSUE: Class 'java.util.zip.DataFormatException' was not converted. 'ms-help://MS.VSCC.2003/commoner/redir/redirect.htm?keyword="jlca1000_javautilzipDataFormatException_3"'
-                catch (DataFormatException e)
-                {
-                    // this will happen if the field is not compressed
-                    throw new System.IO.IOException("field data are in wrong format: " + e.ToString());
-                }
-            }
-			
-            //UPGRADE_ISSUE: Method 'java.util.zip.Inflater.end' was not converted. 'ms-help://MS.VSCC.2003/commoner/redir/redirect.htm?keyword="jlca1000_javautilzipInflater_3"'
-            decompressor.end();
-			
-            // Get the decompressed data
-            return SupportClass.ToSByteArray(bos.ToArray());
-            */
-        }
-    }
+		private byte[] Uncompress(byte[] input)
+		{
+            return SupportClass.CompressionSupport.Uncompress(input);
+		}
+	}
 }

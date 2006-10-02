@@ -13,22 +13,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 using System;
 using Document = Lucene.Net.Documents.Document;
 using Field = Lucene.Net.Documents.Field;
+using DefaultSimilarity = Lucene.Net.Search.DefaultSimilarity;
 using Directory = Lucene.Net.Store.Directory;
 using IndexInput = Lucene.Net.Store.IndexInput;
 using IndexOutput = Lucene.Net.Store.IndexOutput;
 using BitVector = Lucene.Net.Util.BitVector;
+
 namespace Lucene.Net.Index
 {
 	
-	/// <summary> FIXME: Describe class <code>SegmentReader</code> here.
-	/// 
-	/// </summary>
 	/// <version>  $Id$
 	/// </version>
-	class SegmentReader : IndexReader
+	public class SegmentReader : IndexReader
 	{
 		private System.String segment;
 		
@@ -36,8 +36,8 @@ namespace Lucene.Net.Index
 		private FieldsReader fieldsReader;
 		
 		internal TermInfosReader tis;
-        internal TermVectorsReader termVectorsReaderOrig = null;
-        internal System.LocalDataStoreSlot termVectorsLocal = System.Threading.Thread.AllocateDataSlot();
+		internal TermVectorsReader termVectorsReaderOrig = null;
+		internal System.LocalDataStoreSlot termVectorsLocal = System.Threading.Thread.AllocateDataSlot();
 		
 		internal BitVector deletedDocs = null;
 		private bool deletedDocsDirty = false;
@@ -50,6 +50,11 @@ namespace Lucene.Net.Index
 		// Compound File Reader when based on a compound file segment
 		internal CompoundFileReader cfsReader = null;
 		
+        public FieldInfos FieldInfos
+        {
+            get {   return fieldInfos;  }
+        }
+
 		private class Norm
 		{
 			private void  InitBlock(SegmentReader enclosingInstance)
@@ -72,12 +77,12 @@ namespace Lucene.Net.Index
 				this.number = number;
 			}
 			
-			public IndexInput in_Renamed;   // private -> public
-			public byte[] bytes;            // private -> public
-			public bool dirty;              // private -> public
-			public int number;              // private -> public
+			public IndexInput in_Renamed;
+			public byte[] bytes;
+			public bool dirty;
+			public int number;
 			
-			public void  ReWrite()          // private -> public
+			public void  ReWrite()
 			{
 				// NOTE: norms are re-written in regular directory, not cfs
 				IndexOutput out_Renamed = Enclosing_Instance.Directory().CreateOutput(Enclosing_Instance.segment + ".tmp");
@@ -90,52 +95,52 @@ namespace Lucene.Net.Index
 					out_Renamed.Close();
 				}
 				System.String fileName;
-                if (Enclosing_Instance.cfsReader == null)
-                    fileName = Enclosing_Instance.segment + ".f" + number;
-                else
-                {
-                    // use a different file name if we have compound format
-                    fileName = Enclosing_Instance.segment + ".s" + number;
-                }
-                Enclosing_Instance.Directory().RenameFile(Enclosing_Instance.segment + ".tmp", fileName);
-                this.dirty = false;
+				if (Enclosing_Instance.cfsReader == null)
+					fileName = Enclosing_Instance.segment + ".f" + number;
+				else
+				{
+					// use a different file name if we have compound format
+					fileName = Enclosing_Instance.segment + ".s" + number;
+				}
+				Enclosing_Instance.Directory().RenameFile(Enclosing_Instance.segment + ".tmp", fileName);
+				this.dirty = false;
 			}
 		}
 		
 		private System.Collections.Hashtable norms = System.Collections.Hashtable.Synchronized(new System.Collections.Hashtable());
 		
-        /// <summary>The class which implements SegmentReader. </summary>
-        private static System.Type IMPL;
-
-        public SegmentReader() : base(null)
-        {
-        }
-
-        public static SegmentReader Get(SegmentInfo si)
-        {
-            return Get(si.dir, si, null, false, false);
-        }
-
-        public static SegmentReader Get(SegmentInfos sis, SegmentInfo si, bool closeDir)
-        {
-            return Get(si.dir, si, sis, closeDir, true);
-        }
-
-        public static SegmentReader Get(Directory dir, SegmentInfo si, SegmentInfos sis, bool closeDir, bool ownDir)
-        {
-            SegmentReader instance;
-            try
-            {
-                instance = (SegmentReader) System.Activator.CreateInstance(IMPL);
-            }
-            catch (System.Exception e)
-            {
-                throw new System.SystemException("cannot load SegmentReader class: " + e.ToString());
-            }
-            instance.Init(dir, sis, closeDir, ownDir);
-            instance.Initialize(si);
-            return instance;
-        }
+		/// <summary>The class which implements SegmentReader. </summary>
+		private static System.Type IMPL;
+		
+		public SegmentReader() : base(null)
+		{
+		}
+		
+		public static SegmentReader Get(SegmentInfo si)
+		{
+			return Get(si.dir, si, null, false, false);
+		}
+		
+		public static SegmentReader Get(SegmentInfos sis, SegmentInfo si, bool closeDir)
+		{
+			return Get(si.dir, si, sis, closeDir, true);
+		}
+		
+		public static SegmentReader Get(Directory dir, SegmentInfo si, SegmentInfos sis, bool closeDir, bool ownDir)
+		{
+			SegmentReader instance;
+			try
+			{
+				instance = (SegmentReader) System.Activator.CreateInstance(IMPL);
+			}
+			catch (System.Exception e)
+			{
+				throw new System.SystemException("cannot load SegmentReader class: " + e);
+			}
+			instance.Init(dir, sis, closeDir, ownDir);
+			instance.Initialize(si);
+			return instance;
+		}
 		
 		private void  Initialize(SegmentInfo si)
 		{
@@ -172,24 +177,19 @@ namespace Lucene.Net.Index
 			}
 		}
 		
+        /*  Leaving this here will cause a memory leak under .NET 1.1
         ~SegmentReader()
-        {
-            // patch for pre-1.4.2 JVMs, whose ThreadLocals leak
-            try
-            {            
-                System.Threading.Thread.SetData(termVectorsLocal, null);     // {{Aroush-1.9}} is this required for .NET ?!
-            }
-            catch (Exception ex)
-            {
-                // System.Console.WriteLine(ex.Message);
-            }
-        }
+		{
+			// patch for pre-1.4.2 JVMs, whose ThreadLocals leak
+			//System.Threading.Thread.SetData(termVectorsLocal, null);
+		}
+		*/
 		
 		protected internal override void  DoCommit()
 		{
 			if (deletedDocsDirty)
 			{
-				// re-write deleted 
+				// re-write deleted
 				deletedDocs.Write(Directory(), segment + ".tmp");
 				Directory().RenameFile(segment + ".tmp", segment + ".del");
 			}
@@ -199,7 +199,7 @@ namespace Lucene.Net.Index
 			}
 			if (normsDirty)
 			{
-				// re-write norms 
+				// re-write norms
 				System.Collections.IEnumerator values = norms.Values.GetEnumerator();
 				while (values.MoveNext())
 				{
@@ -227,8 +227,8 @@ namespace Lucene.Net.Index
 			
 			CloseNorms();
 			
-            if (termVectorsReaderOrig != null)
-                termVectorsReaderOrig.Close();
+			if (termVectorsReaderOrig != null)
+				termVectorsReaderOrig.Close();
 			
 			if (cfsReader != null)
 				cfsReader.Close();
@@ -253,7 +253,7 @@ namespace Lucene.Net.Index
 		internal static bool HasSeparateNorms(SegmentInfo si)
 		{
 			System.String[] result = si.dir.List();
-			System.String pattern = si.name + ".f";
+			System.String pattern = si.name + ".s";
 			int patternLength = pattern.Length;
 			for (int i = 0; i < result.Length; i++)
 			{
@@ -282,11 +282,10 @@ namespace Lucene.Net.Index
 		internal virtual System.Collections.ArrayList Files()
 		{
 			System.Collections.ArrayList files = System.Collections.ArrayList.Synchronized(new System.Collections.ArrayList(16));
-			System.String[] ext = new System.String[]{"cfs", "fnm", "fdx", "fdt", "tii", "tis", "frq", "prx", "del", "tvx", "tvd", "tvf", "tvp"};
 			
-			for (int i = 0; i < ext.Length; i++)
+			for (int i = 0; i < IndexFileNames.INDEX_EXTENSIONS.Length; i++)
 			{
-				System.String name = segment + "." + ext[i];
+				System.String name = segment + "." + IndexFileNames.INDEX_EXTENSIONS[i];
 				if (Directory().FileExists(name))
 					files.Add(name);
 			}
@@ -294,17 +293,17 @@ namespace Lucene.Net.Index
 			for (int i = 0; i < fieldInfos.Size(); i++)
 			{
 				FieldInfo fi = fieldInfos.FieldInfo(i);
-				if (fi.isIndexed)
-                {
-                    System.String name;
-                    if (cfsReader == null)
-                        name = segment + ".f" + i;
-                    else
-                        name = segment + ".s" + i;
-                    if (Directory().FileExists(name))
-                        files.Add(name);
-                }
-            }
+				if (fi.isIndexed && !fi.omitNorms)
+				{
+					System.String name;
+					if (cfsReader == null)
+						name = segment + ".f" + i;
+					else
+						name = segment + ".s" + i;
+					if (Directory().FileExists(name))
+						files.Add(name);
+				}
+			}
 			return files;
 		}
 		
@@ -368,13 +367,13 @@ namespace Lucene.Net.Index
 			return fieldsReader.Size();
 		}
 		
-		/// <seealso cref="IndexReader#GetFieldNames()">
+		/// <seealso cref="IndexReader.GetFieldNames()">
 		/// </seealso>
-        /// <deprecated>  Replaced by {@link #GetFieldNames (IndexReader.FieldOption fldOption)}
-        /// </deprecated>
-        public override System.Collections.ICollection GetFieldNames()
+		/// <deprecated>  Replaced by {@link #GetFieldNames (IndexReader.FieldOption fldOption)}
+		/// </deprecated>
+		public override System.Collections.ICollection GetFieldNames()
 		{
-			// maintain a unique set of Field names
+			// maintain a unique set of field names
 			System.Collections.Hashtable fieldSet = new System.Collections.Hashtable();
 			for (int i = 0; i < fieldInfos.Size(); i++)
 			{
@@ -384,13 +383,13 @@ namespace Lucene.Net.Index
 			return fieldSet;
 		}
 		
-		/// <seealso cref="IndexReader#GetFieldNames(boolean)">
+		/// <seealso cref="IndexReader.GetFieldNames(boolean)">
 		/// </seealso>
-        /// <deprecated>  Replaced by {@link #GetFieldNames (IndexReader.FieldOption fldOption)}
-        /// </deprecated>
-        public override System.Collections.ICollection GetFieldNames(bool indexed)
+		/// <deprecated>  Replaced by {@link #GetFieldNames (IndexReader.FieldOption fldOption)}
+		/// </deprecated>
+		public override System.Collections.ICollection GetFieldNames(bool indexed)
 		{
-			// maintain a unique set of Field names
+			// maintain a unique set of field names
 			System.Collections.Hashtable fieldSet = new System.Collections.Hashtable();
 			for (int i = 0; i < fieldInfos.Size(); i++)
 			{
@@ -401,52 +400,52 @@ namespace Lucene.Net.Index
 			return fieldSet;
 		}
 		
-        /// <seealso cref="tvSpec)">
-        /// </seealso>
-        /// <deprecated>  Replaced by {@link #GetFieldNames (IndexReader.FieldOption fldOption)}
-        /// </deprecated>
-        public override System.Collections.ICollection GetIndexedFieldNames(Field.TermVector tvSpec)
+		/// <seealso cref="IndexReader.GetIndexedFieldNames(Field.TermVector tvSpec)">
+		/// </seealso>
+		/// <deprecated>  Replaced by {@link #GetFieldNames (IndexReader.FieldOption fldOption)}
+		/// </deprecated>
+		public override System.Collections.ICollection GetIndexedFieldNames(Field.TermVector tvSpec)
 		{
-            bool storedTermVector;
-            bool storePositionWithTermVector;
-            bool storeOffsetWithTermVector;
+			bool storedTermVector;
+			bool storePositionWithTermVector;
+			bool storeOffsetWithTermVector;
 			
-            if (tvSpec == Field.TermVector.NO)
-            {
-                storedTermVector = false;
-                storePositionWithTermVector = false;
-                storeOffsetWithTermVector = false;
-            }
-            else if (tvSpec == Field.TermVector.YES)
-            {
-                storedTermVector = true;
-                storePositionWithTermVector = false;
-                storeOffsetWithTermVector = false;
-            }
-            else if (tvSpec == Field.TermVector.WITH_POSITIONS)
-            {
-                storedTermVector = true;
-                storePositionWithTermVector = true;
-                storeOffsetWithTermVector = false;
-            }
-            else if (tvSpec == Field.TermVector.WITH_OFFSETS)
-            {
-                storedTermVector = true;
-                storePositionWithTermVector = false;
-                storeOffsetWithTermVector = true;
-            }
-            else if (tvSpec == Field.TermVector.WITH_POSITIONS_OFFSETS)
-            {
-                storedTermVector = true;
-                storePositionWithTermVector = true;
-                storeOffsetWithTermVector = true;
-            }
-            else
-            {
-                throw new System.ArgumentException("unknown termVector parameter " + tvSpec);
-            }
-            
-            // maintain a unique set of Field names
+			if (tvSpec == Field.TermVector.NO)
+			{
+				storedTermVector = false;
+				storePositionWithTermVector = false;
+				storeOffsetWithTermVector = false;
+			}
+			else if (tvSpec == Field.TermVector.YES)
+			{
+				storedTermVector = true;
+				storePositionWithTermVector = false;
+				storeOffsetWithTermVector = false;
+			}
+			else if (tvSpec == Field.TermVector.WITH_POSITIONS)
+			{
+				storedTermVector = true;
+				storePositionWithTermVector = true;
+				storeOffsetWithTermVector = false;
+			}
+			else if (tvSpec == Field.TermVector.WITH_OFFSETS)
+			{                                                                           
+				storedTermVector = true;
+				storePositionWithTermVector = false;
+				storeOffsetWithTermVector = true;
+			}
+			else if (tvSpec == Field.TermVector.WITH_POSITIONS_OFFSETS)
+			{
+				storedTermVector = true;
+				storePositionWithTermVector = true;
+				storeOffsetWithTermVector = true;
+			}
+			else
+			{
+				throw new System.ArgumentException("unknown termVector parameter " + tvSpec);
+			}
+			
+			// maintain a unique set of field names
 			System.Collections.Hashtable fieldSet = new System.Collections.Hashtable();
 			for (int i = 0; i < fieldInfos.Size(); i++)
 			{
@@ -459,64 +458,90 @@ namespace Lucene.Net.Index
 			return fieldSet;
 		}
 		
-        /// <seealso cref="fldOption)">
-        /// </seealso>
-        public override System.Collections.ICollection GetFieldNames(IndexReader.FieldOption fieldOption)
-        {
+		/// <seealso cref="IndexReader.GetFieldNames(IndexReader.FieldOption fldOption)">
+		/// </seealso>
+		public override System.Collections.ICollection GetFieldNames(IndexReader.FieldOption fieldOption)
+		{
 			System.Collections.Hashtable fieldSet = new System.Collections.Hashtable();
-            for (int i = 0; i < fieldInfos.Size(); i++)
-            {
-                FieldInfo fi = fieldInfos.FieldInfo(i);
-                if (fieldOption == IndexReader.FieldOption.ALL)
-                {
-                    fieldSet.Add(fi.name, fi.name);
-                }
-                else if (!fi.isIndexed && fieldOption == IndexReader.FieldOption.UNINDEXED)
-                {
-                    fieldSet.Add(fi.name, fi.name);
-                }
-                else if (fi.isIndexed && fieldOption == IndexReader.FieldOption.INDEXED)
-                {
-                    fieldSet.Add(fi.name, fi.name);
-                }
-                else if (fi.isIndexed && fi.storeTermVector == false && fieldOption == IndexReader.FieldOption.INDEXED_NO_TERMVECTOR)
-                {
-                    fieldSet.Add(fi.name, fi.name);
-                }
-                else if (fi.storeTermVector == true && fi.storePositionWithTermVector == false && fi.storeOffsetWithTermVector == false && fieldOption == IndexReader.FieldOption.TERMVECTOR)
-                {
-                    fieldSet.Add(fi.name, fi.name);
-                }
-                else if (fi.isIndexed && fi.storeTermVector && fieldOption == IndexReader.FieldOption.INDEXED_WITH_TERMVECTOR)
-                {
-                    fieldSet.Add(fi.name, fi.name);
-                }
-                else if (fi.storePositionWithTermVector && fi.storeOffsetWithTermVector == false && fieldOption == IndexReader.FieldOption.TERMVECTOR_WITH_POSITION)
-                {
-                    fieldSet.Add(fi.name, fi.name);
-                }
-                else if (fi.storeOffsetWithTermVector && fi.storePositionWithTermVector == false && fieldOption == IndexReader.FieldOption.TERMVECTOR_WITH_OFFSET)
-                {
-                    fieldSet.Add(fi.name, fi.name);
-                }
-                else if ((fi.storeOffsetWithTermVector && fi.storePositionWithTermVector) && fieldOption == IndexReader.FieldOption.TERMVECTOR_WITH_POSITION_OFFSET)
-                {
-                    fieldSet.Add(fi.name, fi.name);
-                }
-            }
-            return fieldSet;
-        }
+			for (int i = 0; i < fieldInfos.Size(); i++)
+			{
+				FieldInfo fi = fieldInfos.FieldInfo(i);
+				if (fieldOption == IndexReader.FieldOption.ALL)
+				{
+					fieldSet.Add(fi.name, fi.name);
+				}
+				else if (!fi.isIndexed && fieldOption == IndexReader.FieldOption.UNINDEXED)
+				{
+					fieldSet.Add(fi.name, fi.name);
+				}
+				else if (fi.isIndexed && fieldOption == IndexReader.FieldOption.INDEXED)
+				{
+					fieldSet.Add(fi.name, fi.name);
+				}
+				else if (fi.isIndexed && fi.storeTermVector == false && fieldOption == IndexReader.FieldOption.INDEXED_NO_TERMVECTOR)
+				{
+					fieldSet.Add(fi.name, fi.name);
+				}
+				else if (fi.storeTermVector == true && fi.storePositionWithTermVector == false && fi.storeOffsetWithTermVector == false && fieldOption == IndexReader.FieldOption.TERMVECTOR)
+				{
+					fieldSet.Add(fi.name, fi.name);
+				}
+				else if (fi.isIndexed && fi.storeTermVector && fieldOption == IndexReader.FieldOption.INDEXED_WITH_TERMVECTOR)
+				{
+					fieldSet.Add(fi.name, fi.name);
+				}
+				else if (fi.storePositionWithTermVector && fi.storeOffsetWithTermVector == false && fieldOption == IndexReader.FieldOption.TERMVECTOR_WITH_POSITION)
+				{
+					fieldSet.Add(fi.name, fi.name);
+				}
+				else if (fi.storeOffsetWithTermVector && fi.storePositionWithTermVector == false && fieldOption == IndexReader.FieldOption.TERMVECTOR_WITH_OFFSET)
+				{
+					fieldSet.Add(fi.name, fi.name);
+				}
+				else if ((fi.storeOffsetWithTermVector && fi.storePositionWithTermVector) && fieldOption == IndexReader.FieldOption.TERMVECTOR_WITH_POSITION_OFFSET)
+				{
+					fieldSet.Add(fi.name, fi.name);
+				}
+			}
+			return fieldSet;
+		}
 		
-        /// <seealso cref="fldOption)">
-        /// </seealso>
-        public override byte[] Norms(System.String field)
+		
+		public override bool HasNorms(System.String field)
+		{
+			lock (this)
+			{
+				return norms.ContainsKey(field);
+			}
+		}
+		
+		internal static byte[] CreateFakeNorms(int size)
+		{
+            byte[] ones = new byte[size];
+            byte val = DefaultSimilarity.EncodeNorm(1.0f);
+            for (int index = 0; index < size; index++)
+                ones.SetValue(val, index);
+
+            return ones;
+		}
+		
+		private byte[] ones;
+		private byte[] FakeNorms()
+		{
+			if (ones == null)
+				ones = CreateFakeNorms(MaxDoc());
+			return ones;
+		}
+		
+		// can return null if norms aren't stored
+		protected internal virtual byte[] GetNorms(System.String field)
 		{
 			lock (this)
 			{
 				Norm norm = (Norm) norms[field];
 				if (norm == null)
-				// not an indexed Field
-					return null;
+					return null; // not indexed, or norms not stored
+				
 				if (norm.bytes == null)
 				{
 					// value not yet read
@@ -528,11 +553,23 @@ namespace Lucene.Net.Index
 			}
 		}
 		
+		// returns fake norms if norms aren't available
+		public override byte[] Norms(System.String field)
+		{
+			lock (this)
+			{
+				byte[] bytes = GetNorms(field);
+				if (bytes == null)
+					bytes = FakeNorms();
+				return bytes;
+			}
+		}
+		
 		protected internal override void  DoSetNorm(int doc, System.String field, byte value_Renamed)
 		{
 			Norm norm = (Norm) norms[field];
 			if (norm == null)
-			// not an indexed Field
+			// not an indexed field
 				return ;
 			norm.dirty = true; // mark it dirty
 			normsDirty = true;
@@ -548,7 +585,10 @@ namespace Lucene.Net.Index
 				
 				Norm norm = (Norm) norms[field];
 				if (norm == null)
-					return ; // use zeros in array
+				{
+					Array.Copy(FakeNorms(), 0, bytes, offset, MaxDoc());
+					return ;
+				}
 				
 				if (norm.bytes != null)
 				{
@@ -571,23 +611,24 @@ namespace Lucene.Net.Index
 			}
 		}
 		
+		
 		private void  OpenNorms(Directory cfsDir)
 		{
 			for (int i = 0; i < fieldInfos.Size(); i++)
 			{
 				FieldInfo fi = fieldInfos.FieldInfo(i);
-				if (fi.isIndexed)
+				if (fi.isIndexed && !fi.omitNorms)
 				{
-                    // look first if there are separate norms in compound format
+					// look first if there are separate norms in compound format
 					System.String fileName = segment + ".s" + fi.number;
 					Directory d = Directory();
-                    if (!d.FileExists(fileName))
-                    {
-                        fileName = segment + ".f" + fi.number;
-                        d = cfsDir;
-                    }
-                    norms[fi.name] = new Norm(this, d.OpenInput(fileName), fi.number);
-                }
+					if (!d.FileExists(fileName))
+					{
+						fileName = segment + ".f" + fi.number;
+						d = cfsDir;
+					}
+					norms[fi.name] = new Norm(this, d.OpenInput(fileName), fi.number);
+				}
 			}
 		}
 		
@@ -604,73 +645,84 @@ namespace Lucene.Net.Index
 			}
 		}
 		
-        /// <summary> Create a clone from the initial TermVectorsReader and store it in the ThreadLocal.</summary>
-        /// <returns> TermVectorsReader
-        /// </returns>
-        private TermVectorsReader GetTermVectorsReader()
-        {
-            TermVectorsReader tvReader = (TermVectorsReader) System.Threading.Thread.GetData(termVectorsLocal);
-            if (tvReader == null)
-            {
-                tvReader = (TermVectorsReader) termVectorsReaderOrig.Clone();
-                System.Threading.Thread.SetData(termVectorsLocal, tvReader);
-            }
-            return tvReader;
-        }
+		/// <summary> Create a clone from the initial TermVectorsReader and store it in the ThreadLocal.</summary>
+		/// <returns> TermVectorsReader
+		/// </returns>
+		private TermVectorsReader GetTermVectorsReader()
+		{
+			TermVectorsReader tvReader = (TermVectorsReader) System.Threading.Thread.GetData(termVectorsLocal);
+			if (tvReader == null)
+			{
+				tvReader = (TermVectorsReader) termVectorsReaderOrig.Clone();
+				System.Threading.Thread.SetData(termVectorsLocal, tvReader);
+			}
+			return tvReader;
+		}
 		
-        /// <summary>Return a term frequency vector for the specified document and Field. The
+		/// <summary>Return a term frequency vector for the specified document and field. The
 		/// vector returned contains term numbers and frequencies for all terms in
-		/// the specified Field of this document, if the Field had storeTermVector
+		/// the specified field of this document, if the field had storeTermVector
 		/// flag set.  If the flag was not set, the method returns null.
 		/// </summary>
-        /// <throws>  IOException </throws>
-        public override TermFreqVector GetTermFreqVector(int docNumber, System.String field)
+		/// <throws>  IOException </throws>
+		public override TermFreqVector GetTermFreqVector(int docNumber, System.String field)
 		{
-			// Check if this Field is invalid or has no stored term vector
+			// Check if this field is invalid or has no stored term vector
 			FieldInfo fi = fieldInfos.FieldInfo(field);
 			if (fi == null || !fi.storeTermVector || termVectorsReaderOrig == null)
 				return null;
 			
-            TermVectorsReader termVectorsReader = GetTermVectorsReader();
-            if (termVectorsReader == null)
-                return null;
+			TermVectorsReader termVectorsReader = GetTermVectorsReader();
+			if (termVectorsReader == null)
+				return null;
 			
-            return termVectorsReader.Get(docNumber, field);
+			return termVectorsReader.Get(docNumber, field);
 		}
 		
 		
 		/// <summary>Return an array of term frequency vectors for the specified document.
-		/// The array contains a vector for each vectorized Field in the document.
+		/// The array contains a vector for each vectorized field in the document.
 		/// Each vector vector contains term numbers and frequencies for all terms
-		/// in a given vectorized Field.
+		/// in a given vectorized field.
 		/// If no such fields existed, the method returns null.
 		/// </summary>
-        /// <throws>  IOException </throws>
-        public override TermFreqVector[] GetTermFreqVectors(int docNumber)
+		/// <throws>  IOException </throws>
+		public override TermFreqVector[] GetTermFreqVectors(int docNumber)
 		{
-            if (termVectorsReaderOrig == null)
-                return null;
+			if (termVectorsReaderOrig == null)
+				return null;
 			
-            TermVectorsReader termVectorsReader = GetTermVectorsReader();
-            if (termVectorsReader == null)
-                return null;
+			TermVectorsReader termVectorsReader = GetTermVectorsReader();
+			if (termVectorsReader == null)
+				return null;
 			
-            return termVectorsReader.Get(docNumber);
-        }
+			return termVectorsReader.Get(docNumber);
+		}
 
-		static SegmentReader()
+        static SegmentReader()
 		{
 			{
 				try
 				{
-					System.String name = SupportClass.AppSettings.Get("Lucene.Net.SegmentReader.class", typeof(SegmentReader).FullName);
+                    System.String name = SupportClass.AppSettings.Get("Lucene.Net.SegmentReader.class", typeof(SegmentReader).FullName);
 					IMPL = System.Type.GetType(name);
 				}
-				catch (System.Exception e)
+				catch (System.Security.SecurityException)
 				{
-					throw new System.SystemException("cannot load SegmentReader class: " + e.ToString());
+					try
+					{
+						IMPL = System.Type.GetType(typeof(SegmentReader).FullName);
+					}
+					catch (System.Exception e)
+					{
+						throw new System.SystemException("cannot load default SegmentReader class: " + e);
+					}
 				}
-			}
+                catch (System.Exception e)
+                {
+                    throw new System.SystemException("cannot load SegmentReader class: " + e);
+                }
+            }
 		}
 	}
 }

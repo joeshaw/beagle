@@ -13,27 +13,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 using System;
+
 namespace Lucene.Net
 {
-    /// <summary>
-    /// Lucene's package information, including version. *
-    /// </summary>
-    public sealed class LucenePackage
-    {
-        private LucenePackage()
-        {
-        } // can't construct
+	
+	/// <summary>Lucene's package information, including version. *</summary>
+	public sealed class LucenePackage
+	{
 		
-        /// <summary>
-        /// Return Lucene's package, including version information.
-        /// </summary>
-        // {{Aroush-1.9 how do we do this in C#
-        //public static java.lang.Package Get()
-        //{
-        //    //UPGRADE_ISSUE: Method 'java.lang.Class.getPackage' was not converted. 'ms-help://MS.VSCC.2003/commoner/redir/redirect.htm?keyword="jlca1000_javalangClassgetPackage_3"'
-        //    return typeof(LucenePackage).getPackage();
-        //}
-        // Aroush-1.9}}
-    }
+		private LucenePackage()
+		{
+		} // can't construct
+		
+		/// <summary>Return Lucene's package, including version information. </summary>
+		// {{Aroush-1.9}}
+		//// public static Package Get()
+		//// {
+		//// 	return typeof(LucenePackage).getPackage();
+		//// }
+	}
 }

@@ -13,10 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 using System;
 using Directory = Lucene.Net.Store.Directory;
 using IndexOutput = Lucene.Net.Store.IndexOutput;
 using RAMOutputStream = Lucene.Net.Store.RAMOutputStream;
+
 namespace Lucene.Net.Index
 {
 	
@@ -28,51 +30,47 @@ namespace Lucene.Net.Index
 	/// 
 	/// 
 	/// </summary>
-	/// <seealso cref="#merge">
+	/// <seealso cref="merge">
 	/// </seealso>
-	/// <seealso cref="#add">
+	/// <seealso cref="add">
 	/// </seealso>
-	sealed public class SegmentMerger
+	public sealed class SegmentMerger
 	{
-        private void  InitBlock()
-        {
-            termIndexInterval = IndexWriter.DEFAULT_TERM_INDEX_INTERVAL;
-        }
+		private void  InitBlock()
+		{
+			termIndexInterval = IndexWriter.DEFAULT_TERM_INDEX_INTERVAL;
+		}
 		private Directory directory;
 		private System.String segment;
-        private int termIndexInterval;
+		private int termIndexInterval;
 		
 		private System.Collections.ArrayList readers = System.Collections.ArrayList.Synchronized(new System.Collections.ArrayList(10));
 		private FieldInfos fieldInfos;
 		
-		// File extensions of old-style index files
-		private static readonly System.String[] COMPOUND_EXTENSIONS = new System.String[]{"fnm", "frq", "prx", "fdx", "fdt", "tii", "tis"};
-		private static readonly System.String[] VECTOR_EXTENSIONS = new System.String[]{"tvx", "tvd", "tvf"};
-		
-        /// <summary>This ctor used only by test code.
-        /// 
-        /// </summary>
-        /// <param name="dir">The Directory to merge the other segments into
-        /// </param>
-        /// <param name="name">The name of the new segment
-        /// </param>
-        public /*internal*/ SegmentMerger(Directory dir, System.String name)
+		/// <summary>This ctor used only by test code.
+		/// 
+		/// </summary>
+		/// <param name="dir">The Directory to merge the other segments into
+		/// </param>
+		/// <param name="name">The name of the new segment
+		/// </param>
+		public /*internal*/ SegmentMerger(Directory dir, System.String name)
 		{
-            InitBlock();
-            directory = dir;
-            segment = name;
-        }
+			InitBlock();
+			directory = dir;
+			segment = name;
+		}
 		
-        internal SegmentMerger(IndexWriter writer, System.String name)
-        {
-            InitBlock();
-            directory = writer.GetDirectory();
-            segment = name;
-            termIndexInterval = writer.GetTermIndexInterval();
-        }
+		internal SegmentMerger(IndexWriter writer, System.String name)
+		{
+			InitBlock();
+			directory = writer.GetDirectory();
+			segment = name;
+			termIndexInterval = writer.GetTermIndexInterval();
+		}
 		
-        /// <summary> Add an IndexReader to the collection of readers that are to be merged</summary>
-		/// <param name="">reader
+		/// <summary> Add an IndexReader to the collection of readers that are to be merged</summary>
+		/// <param name="reader">
 		/// </param>
 		public /*internal*/ void  Add(IndexReader reader)
 		{
@@ -121,23 +119,23 @@ namespace Lucene.Net.Index
 			}
 		}
 		
-		internal System.Collections.ArrayList CreateCompoundFile(System.String fileName)
+		public System.Collections.ArrayList CreateCompoundFile(System.String fileName)
 		{
 			CompoundFileWriter cfsWriter = new CompoundFileWriter(directory, fileName);
 			
-			System.Collections.ArrayList files = System.Collections.ArrayList.Synchronized(new System.Collections.ArrayList(COMPOUND_EXTENSIONS.Length + fieldInfos.Size()));
+			System.Collections.ArrayList files = System.Collections.ArrayList.Synchronized(new System.Collections.ArrayList(IndexFileNames.COMPOUND_EXTENSIONS.Length + fieldInfos.Size()));
 			
 			// Basic files
-			for (int i = 0; i < COMPOUND_EXTENSIONS.Length; i++)
+			for (int i = 0; i < IndexFileNames.COMPOUND_EXTENSIONS.Length; i++)
 			{
-				files.Add(segment + "." + COMPOUND_EXTENSIONS[i]);
+				files.Add(segment + "." + IndexFileNames.COMPOUND_EXTENSIONS[i]);
 			}
 			
 			// Field norm files
 			for (int i = 0; i < fieldInfos.Size(); i++)
 			{
 				FieldInfo fi = fieldInfos.FieldInfo(i);
-				if (fi.isIndexed)
+				if (fi.isIndexed && !fi.omitNorms)
 				{
 					files.Add(segment + ".f" + i);
 				}
@@ -146,9 +144,9 @@ namespace Lucene.Net.Index
 			// Vector files
 			if (fieldInfos.HasVectors())
 			{
-				for (int i = 0; i < VECTOR_EXTENSIONS.Length; i++)
+				for (int i = 0; i < IndexFileNames.VECTOR_EXTENSIONS.Length; i++)
 				{
-					files.Add(segment + "." + VECTOR_EXTENSIONS[i]);
+					files.Add(segment + "." + IndexFileNames.VECTOR_EXTENSIONS[i]);
 				}
 			}
 			
@@ -161,9 +159,20 @@ namespace Lucene.Net.Index
 			
 			// Perform the merge
 			cfsWriter.Close();
-
-            return files;
-        }
+			
+			return files;
+		}
+		
+		private void  AddIndexed(IndexReader reader, FieldInfos fieldInfos, System.Collections.ICollection names, bool storeTermVectors, bool storePositionWithTermVector, bool storeOffsetWithTermVector)
+		{
+			System.Collections.IEnumerator i = names.GetEnumerator();
+			while (i.MoveNext())
+			{
+                System.Collections.DictionaryEntry e = (System.Collections.DictionaryEntry) i.Current;
+                System.String field = (System.String) e.Key;
+				fieldInfos.Add(field, true, storeTermVectors, storePositionWithTermVector, storeOffsetWithTermVector, !reader.HasNorms(field));
+			}
+		}
 		
 		/// <summary> </summary>
 		/// <returns> The number of documents in all of the readers
@@ -171,18 +180,18 @@ namespace Lucene.Net.Index
 		/// <throws>  IOException </throws>
 		private int MergeFields()
 		{
-			fieldInfos = new FieldInfos(); // merge Field names
+			fieldInfos = new FieldInfos(); // merge field names
 			int docCount = 0;
 			for (int i = 0; i < readers.Count; i++)
 			{
-                IndexReader reader = (IndexReader) readers[i];
-                fieldInfos.AddIndexed(reader.GetFieldNames(IndexReader.FieldOption.TERMVECTOR_WITH_POSITION_OFFSET), true, true, true);
-                fieldInfos.AddIndexed(reader.GetFieldNames(IndexReader.FieldOption.TERMVECTOR_WITH_POSITION), true, true, false);
-                fieldInfos.AddIndexed(reader.GetFieldNames(IndexReader.FieldOption.TERMVECTOR_WITH_OFFSET), true, false, true);
-                fieldInfos.AddIndexed(reader.GetFieldNames(IndexReader.FieldOption.TERMVECTOR), true, false, false);
-                fieldInfos.AddIndexed(reader.GetFieldNames(IndexReader.FieldOption.INDEXED), false, false, false);
-                fieldInfos.Add(reader.GetFieldNames(IndexReader.FieldOption.UNINDEXED), false);
-            }
+				IndexReader reader = (IndexReader) readers[i];
+				AddIndexed(reader, fieldInfos, reader.GetFieldNames(IndexReader.FieldOption.TERMVECTOR_WITH_POSITION_OFFSET), true, true, true);
+				AddIndexed(reader, fieldInfos, reader.GetFieldNames(IndexReader.FieldOption.TERMVECTOR_WITH_POSITION), true, true, false);
+				AddIndexed(reader, fieldInfos, reader.GetFieldNames(IndexReader.FieldOption.TERMVECTOR_WITH_OFFSET), true, false, true);
+				AddIndexed(reader, fieldInfos, reader.GetFieldNames(IndexReader.FieldOption.TERMVECTOR), true, false, false);
+				AddIndexed(reader, fieldInfos, reader.GetFieldNames(IndexReader.FieldOption.INDEXED), false, false, false);
+				fieldInfos.Add(reader.GetFieldNames(IndexReader.FieldOption.UNINDEXED), false);
+			}
 			fieldInfos.Write(directory, segment + ".fnm");
 			
 			FieldsWriter fieldsWriter = new FieldsWriter(directory, segment, fieldInfos);
@@ -225,7 +234,7 @@ namespace Lucene.Net.Index
 						// skip deleted docs
 						if (reader.IsDeleted(docNum))
 							continue;
-                        termVectorsWriter.AddAllDocVectors(reader.GetTermFreqVectors(docNum));
+						termVectorsWriter.AddAllDocVectors(reader.GetTermFreqVectors(docNum));
 					}
 				}
 			}
@@ -235,9 +244,9 @@ namespace Lucene.Net.Index
 			}
 		}
 		
-        private IndexOutput freqOutput = null;
-        private IndexOutput proxOutput = null;
-        private TermInfosWriter termInfosWriter = null;
+		private IndexOutput freqOutput = null;
+		private IndexOutput proxOutput = null;
+		private TermInfosWriter termInfosWriter = null;
 		private int skipInterval;
 		private SegmentMergeQueue queue = null;
 		
@@ -358,9 +367,9 @@ namespace Lucene.Net.Index
 			for (int i = 0; i < n; i++)
 			{
 				SegmentMergeInfo smi = smis[i];
-				TermPositions postings = smi.postings;
+				TermPositions postings = smi.GetPositions();
 				int base_Renamed = smi.base_Renamed;
-				int[] docMap = smi.docMap;
+				int[] docMap = smi.GetDocMap();
 				postings.Seek(smi.termEnum);
 				while (postings.Next())
 				{
@@ -444,7 +453,7 @@ namespace Lucene.Net.Index
 			for (int i = 0; i < fieldInfos.Size(); i++)
 			{
 				FieldInfo fi = fieldInfos.FieldInfo(i);
-				if (fi.isIndexed)
+				if (fi.isIndexed && !fi.omitNorms)
 				{
 					IndexOutput output = directory.CreateOutput(segment + ".f" + i);
 					try
@@ -452,16 +461,16 @@ namespace Lucene.Net.Index
 						for (int j = 0; j < readers.Count; j++)
 						{
 							IndexReader reader = (IndexReader) readers[j];
-                            int maxDoc = reader.MaxDoc();
-                            byte[] input = new byte[maxDoc];
-                            reader.Norms(fi.name, input, 0);
-                            for (int k = 0; k < maxDoc; k++)
+							int maxDoc = reader.MaxDoc();
+							byte[] input = new byte[maxDoc];
+							reader.Norms(fi.name, input, 0);
+							for (int k = 0; k < maxDoc; k++)
 							{
-                                if (!reader.IsDeleted(k))
-                                {
-                                    output.WriteByte(input[k]);
-                                }
-                            }
+								if (!reader.IsDeleted(k))
+								{
+									output.WriteByte(input[k]);
+								}
+							}
 						}
 					}
 					finally

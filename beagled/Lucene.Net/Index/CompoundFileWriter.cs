@@ -13,10 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 using System;
 using Directory = Lucene.Net.Store.Directory;
 using IndexInput = Lucene.Net.Store.IndexInput;
 using IndexOutput = Lucene.Net.Store.IndexOutput;
+
 namespace Lucene.Net.Index
 {
 	
@@ -29,7 +31,7 @@ namespace Lucene.Net.Index
 	/// fileCount entries with the following structure:</li>
 	/// <ul>
 	/// <li>long dataOffset</li>
-	/// <li>UTFString extension</li>
+	/// <li>String fileName</li>
 	/// </ul>
 	/// <li>{File Data}
 	/// fileCount entries with the raw data of the corresponding file</li>
@@ -37,8 +39,8 @@ namespace Lucene.Net.Index
 	/// 
 	/// The fileCount integer indicates how many files are contained in this compound
 	/// file. The {directory} that follows has that many entries. Each directory entry
-	/// contains an encoding identifier, a long pointer to the start of this file's
-	/// data section, and a UTF String with that file's extension.
+	/// contains a long pointer to the start of this file's data section, and a String
+	/// with that file's name.
 	/// 
 	/// </summary>
 	/// <author>  Dmitry Serebrennikov
@@ -71,8 +73,8 @@ namespace Lucene.Net.Index
 		/// <summary>Create the compound stream in the specified file. The file name is the
 		/// entire name (no extensions are added).
 		/// </summary>
-        /// <throws>  NullPointerException if <code>dir</code> or <code>name</code> is null </throws>
-        public CompoundFileWriter(Directory dir, System.String name)
+		/// <throws>  NullPointerException if <code>dir</code> or <code>name</code> is null </throws>
+		public CompoundFileWriter(Directory dir, System.String name)
 		{
 			if (dir == null)
 				throw new System.NullReferenceException("directory cannot be null");
@@ -97,16 +99,16 @@ namespace Lucene.Net.Index
 			return fileName;
 		}
 		
-        /// <summary>Add a source stream. <code>file</code> is the string by which the 
-        /// sub-stream will be known in the compound stream.
-        /// 
-        /// </summary>
-        /// <throws>  IllegalStateException if this writer is closed </throws>
-        /// <throws>  NullPointerException if <code>file</code> is null </throws>
-        /// <throws>  IllegalArgumentException if a file with the same name </throws>
-        /// <summary>   has been added already
-        /// </summary>
-        public void  AddFile(System.String file)
+		/// <summary>Add a source stream. <code>file</code> is the string by which the 
+		/// sub-stream will be known in the compound stream.
+		/// 
+		/// </summary>
+		/// <throws>  IllegalStateException if this writer is closed </throws>
+		/// <throws>  NullPointerException if <code>file</code> is null </throws>
+		/// <throws>  IllegalArgumentException if a file with the same name </throws>
+		/// <summary>   has been added already
+		/// </summary>
+		public void  AddFile(System.String file)
 		{
 			if (merged)
 				throw new System.SystemException("Can't add extensions after merge has been called");
@@ -128,15 +130,15 @@ namespace Lucene.Net.Index
 			entries.Add(entry);
 		}
 		
-        /// <summary>Merge files with the extensions added up to now.
-        /// All files with these extensions are combined sequentially into the
-        /// compound stream. After successful merge, the source files
-        /// are deleted.
-        /// </summary>
-        /// <throws>  IllegalStateException if close() had been called before or </throws>
-        /// <summary>   if no file has been added to this object
-        /// </summary>
-        public void  Close()
+		/// <summary>Merge files with the extensions added up to now.
+		/// All files with these extensions are combined sequentially into the
+		/// compound stream. After successful merge, the source files
+		/// are deleted.
+		/// </summary>
+		/// <throws>  IllegalStateException if close() had been called before or </throws>
+		/// <summary>   if no file has been added to this object
+		/// </summary>
+		public void  Close()
 		{
 			if (merged)
 				throw new System.SystemException("Merge already performed");

@@ -13,23 +13,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 using System;
 using Document = Lucene.Net.Documents.Document;
 using IndexReader = Lucene.Net.Index.IndexReader;
 using Term = Lucene.Net.Index.Term;
+
 namespace Lucene.Net.Search
 {
 	
-    /// <summary>The interface for search implementations.
-    /// 
-    /// <p>Searchable is the abstract network protocol for searching. 
-    /// Implementations provide search over a single index, over multiple
-    /// indices, and over indices on remote servers.
-    /// 
-    /// <p>Queries, filters and sort criteria are designed to be compact so that
-    /// they may be efficiently passed to a remote index, with only the top-scoring
-    /// hits being returned, rather than every non-zero scoring hit.
-    /// </summary>
+	/// <summary>The interface for search implementations.
+	/// 
+	/// <p>Searchable is the abstract network protocol for searching. 
+	/// Implementations provide search over a single index, over multiple
+	/// indices, and over indices on remote servers.
+	/// 
+	/// <p>Queries, filters and sort criteria are designed to be compact so that
+	/// they may be efficiently passed to a remote index, with only the top-scoring
+	/// hits being returned, rather than every non-zero scoring hit.
+	/// </summary>
 	
     public interface Searchable
     {
@@ -159,5 +161,4 @@ namespace Lucene.Net.Search
         /// </summary>
         TopFieldDocs Search(Weight weight, Filter filter, int n, Sort sort);
     }
-	
 }

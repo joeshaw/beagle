@@ -13,42 +13,44 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 using System;
+
 namespace Lucene.Net.Search
 {
 	
-    /// <summary>A scorer that matches no document at all. </summary>
-    class NonMatchingScorer : Scorer
-    {
-        public NonMatchingScorer():base(null)
-        {
-        } // no similarity used
+	/// <summary>A scorer that matches no document at all. </summary>
+	class NonMatchingScorer : Scorer
+	{
+		public NonMatchingScorer() : base(null)
+		{
+		} // no similarity used
 		
-        public override int Doc()
-        {
-            throw new System.NotSupportedException();
-        }
+		public override int Doc()
+		{
+			throw new System.NotSupportedException();
+		}
 		
-        public override bool Next()
-        {
-            return false;
-        }
+		public override bool Next()
+		{
+			return false;
+		}
 		
-        public override float Score()
-        {
-            throw new System.NotSupportedException();
-        }
+		public override float Score()
+		{
+			throw new System.NotSupportedException();
+		}
 		
-        public override bool SkipTo(int target)
-        {
-            return false;
-        }
+		public override bool SkipTo(int target)
+		{
+			return false;
+		}
 		
-        public override Explanation Explain(int doc)
-        {
-            Explanation e = new Explanation();
-            e.SetDescription("No document matches.");
-            return e;
-        }
-    }
+		public override Explanation Explain(int doc)
+		{
+			Explanation e = new Explanation();
+			e.SetDescription("No document matches.");
+			return e;
+		}
+	}
 }

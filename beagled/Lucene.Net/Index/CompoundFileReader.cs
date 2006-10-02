@@ -13,12 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 using System;
 using BufferedIndexInput = Lucene.Net.Store.BufferedIndexInput;
 using Directory = Lucene.Net.Store.Directory;
 using IndexInput = Lucene.Net.Store.IndexInput;
 using IndexOutput = Lucene.Net.Store.IndexOutput;
 using Lock = Lucene.Net.Store.Lock;
+
 namespace Lucene.Net.Index
 {
 	
@@ -30,8 +32,8 @@ namespace Lucene.Net.Index
 	/// </summary>
 	/// <author>  Dmitry Serebrennikov
 	/// </author>
-    /// <version>  $Id$
-    /// </version>
+	/// <version>  $Id$
+	/// </version>
 	public class CompoundFileReader : Directory
 	{
 		
@@ -45,7 +47,6 @@ namespace Lucene.Net.Index
 		// Base info
 		private Directory directory;
 		private System.String fileName;
-		
 		
 		private IndexInput stream;
 		private System.Collections.Hashtable entries = new System.Collections.Hashtable();
@@ -97,7 +98,7 @@ namespace Lucene.Net.Index
 					{
 						stream.Close();
 					}
-					catch (System.IO.IOException e)
+					catch (System.IO.IOException)
 					{
 					}
 				}
@@ -147,7 +148,7 @@ namespace Lucene.Net.Index
 		{
 			System.String[] res = new System.String[entries.Count];
             entries.Keys.CopyTo(res, 0);
-            return res;
+			return res;
 		}
 		
 		/// <summary>Returns true iff a file with the given name exists. </summary>
@@ -156,35 +157,35 @@ namespace Lucene.Net.Index
 			return entries.ContainsKey(name);
 		}
 		
-		/// <summary>Returns the time the named file was last modified. </summary>
+		/// <summary>Returns the time the compound file was last modified. </summary>
 		public override long FileModified(System.String name)
 		{
 			return directory.FileModified(fileName);
 		}
 		
-		/// <summary>Set the modified time of an existing file to now. </summary>
+		/// <summary>Set the modified time of the compound file to now. </summary>
 		public override void  TouchFile(System.String name)
 		{
 			directory.TouchFile(fileName);
 		}
 		
-        /// <summary>Not implemented</summary>
-        /// <throws>  UnsupportedOperationException  </throws>
-        public override void  DeleteFile(System.String name)
+		/// <summary>Not implemented</summary>
+		/// <throws>  UnsupportedOperationException  </throws>
+		public override void  DeleteFile(System.String name)
 		{
 			throw new System.NotSupportedException();
 		}
 		
-        /// <summary>Not implemented</summary>
-        /// <throws>  UnsupportedOperationException  </throws>
-        public override void  RenameFile(System.String from, System.String to)
+		/// <summary>Not implemented</summary>
+		/// <throws>  UnsupportedOperationException  </throws>
+		public override void  RenameFile(System.String from, System.String to)
 		{
 			throw new System.NotSupportedException();
 		}
 		
-        /// <summary>Returns the length of a file in the directory.</summary>
-        /// <throws>  IOException if the file does not exist  </throws>
-        public override long FileLength(System.String name)
+		/// <summary>Returns the length of a file in the directory.</summary>
+		/// <throws>  IOException if the file does not exist  </throws>
+		public override long FileLength(System.String name)
 		{
 			FileEntry e = (FileEntry) entries[name];
 			if (e == null)
@@ -192,31 +193,31 @@ namespace Lucene.Net.Index
 			return e.length;
 		}
 		
-        /// <summary>Not implemented</summary>
-        /// <throws>  UnsupportedOperationException  </throws>
-        public override IndexOutput CreateOutput(System.String name)
-        {
-            throw new System.NotSupportedException();
-        }
+		/// <summary>Not implemented</summary>
+		/// <throws>  UnsupportedOperationException  </throws>
+		public override IndexOutput CreateOutput(System.String name)
+		{
+			throw new System.NotSupportedException();
+		}
 		
-        /// <summary>Not implemented</summary>
-        /// <throws>  UnsupportedOperationException  </throws>
-        public override Lock MakeLock(System.String name)
-        {
-            throw new System.NotSupportedException();
-        }
+		/// <summary>Not implemented</summary>
+		/// <throws>  UnsupportedOperationException  </throws>
+		public override Lock MakeLock(System.String name)
+		{
+			throw new System.NotSupportedException();
+		}
 		
-        /// <summary>Implementation of an IndexInput that reads from a portion of the
-        /// compound file. The visibility is left as "package" *only* because
-        /// this helps with testing since JUnit test cases in a different class
-        /// can then access package fields of this class.
-        /// </summary>
-        public /*internal*/ sealed class CSIndexInput : BufferedIndexInput
+		/// <summary>Implementation of an IndexInput that reads from a portion of the
+		/// compound file. The visibility is left as "package" *only* because
+		/// this helps with testing since JUnit test cases in a different class
+		/// can then access package fields of this class.
+		/// </summary>
+		public /*internal*/ sealed class CSIndexInput : BufferedIndexInput
 		{
 			
 			public /*internal*/ IndexInput base_Renamed;
 			internal long fileOffset;
-            internal long length;
+			internal long length;
 			
 			internal CSIndexInput(IndexInput base_Renamed, long fileOffset, long length)
 			{
@@ -249,7 +250,7 @@ namespace Lucene.Net.Index
 			/// <summary>Expert: implements seek.  Sets current position in this file, where
 			/// the next {@link #ReadInternal(byte[],int,int)} will occur.
 			/// </summary>
-			/// <seealso cref="#ReadInternal(byte[],int,int)">
+			/// <seealso cref="ReadInternal(byte[],int,int)">
 			/// </seealso>
 			public override void  SeekInternal(long pos)
 			{
@@ -260,10 +261,10 @@ namespace Lucene.Net.Index
 			{
 			}
 			
-            public override long Length()
-            {
-                return length;
-            }
-        }
+			public override long Length()
+			{
+				return length;
+			}
+		}
 	}
 }

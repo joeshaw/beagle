@@ -13,7 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 using System;
+
 namespace Lucene.Net.Search
 {
 	
@@ -30,7 +32,7 @@ namespace Lucene.Net.Search
 	/// <version>  $Id$
 	/// </version>
 	public struct ScoreDocComparator_Fields
-    {
+	{
 		/// <summary>Special comparator for sorting hits according to computed relevance (document score). </summary>
 		public readonly static ScoreDocComparator RELEVANCE;
 		/// <summary>Special comparator for sorting hits according to index order (document number). </summary>

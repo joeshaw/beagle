@@ -13,7 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 using System;
+
 namespace Lucene.Net.Search
 {
 	
@@ -102,21 +104,21 @@ namespace Lucene.Net.Search
 		
 		public override bool SkipTo(int target)
 		{
-            if (firstTime)
-            {
-                Init(false);
-            }
+			if (firstTime)
+			{
+				Init(false);
+			}
 			
-            System.Collections.IEnumerator i = scorers.GetEnumerator();
+			System.Collections.IEnumerator i = scorers.GetEnumerator();
 			while (more && i.MoveNext())
 			{
 				more = ((Scorer) i.Current).SkipTo(target);
 			}
 			
-            if (more)
+			if (more)
 				SortScorers(); // re-sort scorers
 			
-            return DoNext();
+			return DoNext();
 		}
 		
 		public override float Score()
@@ -133,30 +135,30 @@ namespace Lucene.Net.Search
 		
 		private void  Init(bool initScorers)
 		{
-            //  compute coord factor
-            coord = GetSimilarity().Coord(scorers.Count, scorers.Count);
+			//  compute coord factor
+			coord = GetSimilarity().Coord(scorers.Count, scorers.Count);
 			
-            more = scorers.Count > 0;
+			more = scorers.Count > 0;
 			
-            if (initScorers)
-            {
-                // move each scorer to its first entry
-                System.Collections.IEnumerator i = scorers.GetEnumerator();
-                while (more && i.MoveNext())
-                {
-                    more = ((Scorer) i.Current).Next();
-                }
-                if (more)
-                    SortScorers(); // initial sort of list
-            }
+			if (initScorers)
+			{
+				// move each scorer to its first entry
+				System.Collections.IEnumerator i = scorers.GetEnumerator();
+				while (more && i.MoveNext())
+				{
+					more = ((Scorer) i.Current).Next();
+				}
+				if (more)
+					SortScorers(); // initial sort of list
+			}
 			
-            firstTime = false;
-        }
+			firstTime = false;
+		}
 		
 		private void  SortScorers()
 		{
 			// move scorers to an array
-            Scorer[] array = (Scorer[]) scorers.ToArray(typeof(Scorer));
+			Scorer[] array = (Scorer[]) scorers.ToArray(typeof(Scorer));
 			scorers.Clear(); // empty the list
 			
 			// note that this comparator is not consistent with equals!

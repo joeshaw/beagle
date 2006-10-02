@@ -13,13 +13,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 using System;
 using Document = Lucene.Net.Documents.Document;
 using Term = Lucene.Net.Index.Term;
+
 namespace Lucene.Net.Search
 {
 	
-	/// <summary>A remote searchable implementation. </summary>
+	/// <summary> A remote searchable implementation.
+	/// 
+	/// </summary>
+	/// <version>  $Id$
+	/// </version>
 	[Serializable]
 	public class RemoteSearchable : System.MarshalByRefObject, Lucene.Net.Search.Searchable
 	{
@@ -32,17 +38,19 @@ namespace Lucene.Net.Search
 			this.local = local;
 		}
 		
+		// this implementation should be removed when the deprecated
+		// Searchable#search(Query,Filter,HitCollector) is removed
 		public virtual void  Search(Query query, Filter filter, HitCollector results)
 		{
 			local.Search(query, filter, results);
 		}
 		
-        public virtual void  Search(Weight weight, Filter filter, HitCollector results)
-        {
-            local.Search(weight, filter, results);
-        }
+		public virtual void  Search(Weight weight, Filter filter, HitCollector results)
+		{
+			local.Search(weight, filter, results);
+		}
 		
-        public virtual void  Close()
+		public virtual void  Close()
 		{
 			local.Close();
 		}
@@ -53,16 +61,18 @@ namespace Lucene.Net.Search
 		}
 		
 		
-        public virtual int[] DocFreqs(Term[] terms)
-        {
-            return local.DocFreqs(terms);
-        }
+		public virtual int[] DocFreqs(Term[] terms)
+		{
+			return local.DocFreqs(terms);
+		}
 		
-        public virtual int MaxDoc()
+		public virtual int MaxDoc()
 		{
 			return local.MaxDoc();
 		}
 		
+		// this implementation should be removed when the deprecated
+		// Searchable#search(Query,Filter,int) is removed
 		public virtual TopDocs Search(Query query, Filter filter, int n)
 		{
 			return local.Search(query, filter, n);
@@ -73,17 +83,19 @@ namespace Lucene.Net.Search
 			return local.Search(weight, filter, n);
 		}
 		
-        public virtual TopFieldDocs Search(Query query, Filter filter, int n, Sort sort)
-        {
-            return local.Search(query, filter, n, sort);
-        }
+		// this implementation should be removed when the deprecated
+		// Searchable#search(Query,Filter,int,Sort) is removed
+		public virtual TopFieldDocs Search(Query query, Filter filter, int n, Sort sort)
+		{
+			return local.Search(query, filter, n, sort);
+		}
 		
-        public virtual TopFieldDocs Search(Weight weight, Filter filter, int n, Sort sort)
-        {
-            return local.Search(weight, filter, n, sort);
-        }
+		public virtual TopFieldDocs Search(Weight weight, Filter filter, int n, Sort sort)
+		{
+			return local.Search(weight, filter, n, sort);
+		}
 		
-        public virtual Document Doc(int i)
+		public virtual Document Doc(int i)
 		{
 			return local.Doc(i);
 		}
@@ -93,31 +105,70 @@ namespace Lucene.Net.Search
 			return local.Rewrite(original);
 		}
 		
+		// this implementation should be removed when the deprecated
+		// Searchable#explain(Query,int) is removed
 		public virtual Explanation Explain(Query query, int doc)
 		{
 			return local.Explain(query, doc);
 		}
 		
-        public virtual Explanation Explain(Weight weight, int doc)
-        {
-            return local.Explain(weight, doc);
-        }
+		public virtual Explanation Explain(Weight weight, int doc)
+		{
+			return local.Explain(weight, doc);
+		}
 		
-        /// <summary>Exports a searcher for the index in args[0] named
-        /// "//localhost/Searchable". 
-        /// </summary>
-        [STAThread]
-        public static void  Main(System.String[] args)
+        public override System.Object InitializeLifetimeService()
         {
-            System.Runtime.Remoting.RemotingConfiguration.Configure("Lucene.Net.Search.RemoteSearchable.config");
-            System.Runtime.Remoting.Channels.ChannelServices.RegisterChannel(new System.Runtime.Remoting.Channels.Http.HttpChannel(1099));
-			// create and install a security manager
-			if (false) //{{}}// if (System.getSecurityManager() == null)    // {{Aroush-1.4.3}} >> 'java.lang.System.getSecurityManager()'
+            long initialLeaseTime, sponsorshipTimeout, renewOnCallTime;
+
+            initialLeaseTime = SupportClass.AppSettings.Get("Lucene.Net.Remoting.Lifetime.initialLeaseTime", -1);
+            sponsorshipTimeout = SupportClass.AppSettings.Get("Lucene.Net.Remoting.Lifetime.sponsorshipTimeout", -1);
+            renewOnCallTime = SupportClass.AppSettings.Get("Lucene.Net.Remoting.Lifetime.renewOnCallTime", -1);
+
+            if ((initialLeaseTime == -1) || (sponsorshipTimeout == -1) || (renewOnCallTime == -1))
+            {
+                return null;
+            }
+            else
+            {
+                System.Runtime.Remoting.Lifetime.ILease lease = 
+                    (System.Runtime.Remoting.Lifetime.ILease) base.InitializeLifetimeService();
+                if (lease.CurrentState == System.Runtime.Remoting.Lifetime.LeaseState.Initial)
+                {
+                    lease.InitialLeaseTime = System.TimeSpan.FromMinutes(initialLeaseTime);
+                    lease.SponsorshipTimeout = System.TimeSpan.FromMinutes(sponsorshipTimeout);
+                    lease.RenewOnCallTime = System.TimeSpan.FromSeconds(renewOnCallTime);
+                }
+                return lease;
+            }
+        }
+
+		/// <summary>Exports a searcher for the index in args[0] named
+		/// "//localhost/Searchable". 
+		/// </summary>
+		[STAThread]
+		public static void  Main(System.String[] args)
+		{
+			System.Runtime.Remoting.RemotingConfiguration.Configure("Lucene.Net.Search.RemoteSearchable.config");
+			System.Runtime.Remoting.Channels.ChannelServices.RegisterChannel(new System.Runtime.Remoting.Channels.Http.HttpChannel(1099));
+			System.String indexName = null;
+			
+			if (args != null && args.Length == 1)
+				indexName = args[0];
+			
+			if (indexName == null)
 			{
-				//{{}}// System.setSecurityManager(new RMISecurityManager());   // {{Aroush-1.4.3}} >> 'java.lang.System.setSecurityManager()' and 'java.rmi.RMISecurityManager.RMISecurityManager()'
+				System.Console.Out.WriteLine("Usage: Lucene.Net.search.RemoteSearchable <index>");
+				return ;
 			}
 			
-			Lucene.Net.Search.Searchable local = new IndexSearcher(args[0]);
+			// create and install a security manager
+			if (true)  // if (System_Renamed.getSecurityManager() == null) // {{Aroush-1.4.3}} Do we need this line?!
+			{
+				// System_Renamed.setSecurityManager(new RMISecurityManager());     // {{Aroush-1.4.3}} Do we need this line?!
+			}
+			
+			Lucene.Net.Search.Searchable local = new IndexSearcher(indexName);
 			RemoteSearchable impl = new RemoteSearchable(local);
 			
 			// bind the implementation to "Searchable"

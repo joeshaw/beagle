@@ -13,15 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 using System;
-using Mono.Unix.Native;
-using Constants = Lucene.Net.Util.Constants;
+using IndexFileNameFilter = Lucene.Net.Index.IndexFileNameFilter;
+
 namespace Lucene.Net.Store
 {
 	
 	/// <summary> Straightforward implementation of {@link Directory} as a directory of files.
-	/// <p>If the system property 'disableLuceneLocks' has the String value of
-	/// "true", lock creation will be disabled.
 	/// 
 	/// </summary>
 	/// <seealso cref="Directory">
@@ -53,8 +52,7 @@ namespace Lucene.Net.Store
 			}
 			public override bool Obtain()
 			{
-				Log ("Trying to obtain lock " + lockFile.FullName);
-				if (Lucene.Net.Store.FSDirectory.DISABLE_LOCKS || Enclosing_Instance.DisableLocks)
+				if (Lucene.Net.Store.FSDirectory.disableLocks)
 					return true;
 				
 				bool tmpBool;
@@ -64,76 +62,30 @@ namespace Lucene.Net.Store
 					tmpBool = System.IO.Directory.Exists(Enclosing_Instance.lockDir.FullName);
 				if (!tmpBool)
 				{
-					try
-                    			{
-						System.IO.Directory.CreateDirectory(Enclosing_Instance.lockDir.FullName);
-                    			}
-                    			catch (Exception)
+                    try
+                    {
+					    System.IO.Directory.CreateDirectory(Enclosing_Instance.lockDir.FullName);
+                    }
+                    catch (Exception)
 					{
 						throw new System.IO.IOException("Cannot create lock directory: " + Enclosing_Instance.lockDir);
 					}
 				}
-
+				
                 try
                 {
-		    int fd = Mono.Unix.Native.Syscall.open (
-				lockFile.FullName,
-				Mono.Unix.Native.OpenFlags.O_RDWR | 
-				Mono.Unix.Native.OpenFlags.O_CREAT |
-				Mono.Unix.Native.OpenFlags.O_EXCL,
-				Mono.Unix.Native.FilePermissions.S_IRUSR);
-		    if (fd == -1)
-			    throw new System.IO.IOException ("Could not create lock file: "
-				    + Mono.Unix.Native.Stdlib.strerror (
-					    Mono.Unix.Native.Stdlib.GetLastError ()
-				    ));
-
-		    // This code replaces the commented-out code below because
-		    // it ends up being much faster.  The reason for this is
-		    // that closing a UnixStream causes Syscall.fsync() to be
-		    // called, and that apparently is extremely slow!
-		    //
-		    // Time(ms) Count   P/call(ms) Method name
-		    // 1563.926      68   22.999   Mono.Unix.Native.Syscall::fsync(int)
-		    //
-		    // Since the lock file is written out very often, this time
-		    // adds up and noticably slows down indexing.
-		    IntPtr ptr = IntPtr.Zero;
-		    long ret;
-
-		    try {
-			    string s = System.Diagnostics.Process.GetCurrentProcess ().Id.ToString () + "\n";
-			    ptr = Mono.Unix.UnixMarshal.StringToHeap (s);
-
-			    do {
-				    ret = Mono.Unix.Native.Syscall.write (fd, ptr, (ulong) s.Length);
-			    } while (Mono.Unix.UnixMarshal.ShouldRetrySyscall ((int) ret));
-			    Mono.Unix.UnixMarshal.ThrowExceptionForLastErrorIf ((int) ret);
-		    } finally {
-			    Mono.Unix.UnixMarshal.FreeHeap (ptr);
-
-			    do {
-				    ret = Mono.Unix.Native.Syscall.close (fd);
-			    } while (Mono.Unix.UnixMarshal.ShouldRetrySyscall ((int) ret));
-			    Mono.Unix.UnixMarshal.ThrowExceptionForLastErrorIf ((int) ret);
-		    }
-
-		    //System.IO.StreamWriter w = new System.IO.StreamWriter (new Mono.Unix.UnixStream (fd, true));
-		    //w.WriteLine (System.Diagnostics.Process.GetCurrentProcess ().Id);
-		    //w.Close ();
-
-		    Log ("Obtained lock " + lockFile.FullName);
+                    System.IO.FileStream createdFile = lockFile.Create();
+                    createdFile.Close();
                     return true;
                 }
-                catch (Exception e)
+                catch (Exception)
                 {
-		    Log ("Exception in CreateNew for file:" + lockFile.FullName + ":" + e);
                     return false;
                 }
-			}
+            }
 			public override void  Release()
 			{
-				if (Lucene.Net.Store.FSDirectory.DISABLE_LOCKS || Enclosing_Instance.DisableLocks)
+				if (Lucene.Net.Store.FSDirectory.disableLocks)
 					return ;
 				bool tmpBool;
 				if (System.IO.File.Exists(lockFile.FullName))
@@ -148,19 +100,11 @@ namespace Lucene.Net.Store
 				}
 				else
 					tmpBool = false;
-				if (System.IO.File.Exists(lockFile.FullName)) {
-					Log ("Release didnt delete lockfile {0}.", lockFile.FullName);
-					tmpBool = false;
-				}
 				bool generatedAux = tmpBool;
-				if (tmpBool)
-					Log ("Released lock {0}", lockFile.FullName);
-				else
-					Log ("Failed to release lock {0}", lockFile.FullName);
 			}
 			public override bool IsLocked()
 			{
-				if (Lucene.Net.Store.FSDirectory.DISABLE_LOCKS || Enclosing_Instance.DisableLocks)
+				if (Lucene.Net.Store.FSDirectory.disableLocks)
 					return false;
 				bool tmpBool;
 				if (System.IO.File.Exists(lockFile.FullName))
@@ -172,9 +116,10 @@ namespace Lucene.Net.Store
 			
 			public override System.String ToString()
 			{
-				return lockFile.FullName;
+				return "Lock@" + lockFile;
 			}
 		}
+		
 		/// <summary>This cache of directories ensures that there is a unique Directory
 		/// instance per path, so that synchronization on the Directory can be used to
 		/// synchronize access between readers and writers.
@@ -184,23 +129,34 @@ namespace Lucene.Net.Store
 		/// </summary>
 		private static readonly System.Collections.Hashtable DIRECTORIES = System.Collections.Hashtable.Synchronized(new System.Collections.Hashtable());
 		
-		private static readonly bool DISABLE_LOCKS;
+		private static bool disableLocks = false;
 		
-		/// <summary> Directory specified by <code>Lucene.Net.lockdir</code>
+		/// <summary> Set whether Lucene's use of lock files is disabled. By default, 
+		/// lock files are enabled. They should only be disabled if the index
+		/// is on a read-only medium like a CD-ROM.
+		/// </summary>
+		public static void  SetDisableLocks(bool doDisableLocks)
+		{
+			FSDirectory.disableLocks = doDisableLocks;
+		}
+		
+		/// <summary> Returns whether Lucene's use of lock files is disabled.</summary>
+		/// <returns> true if locks are disabled, false if locks are enabled.
+		/// </returns>
+		public static bool GetDisableLocks()
+		{
+			return FSDirectory.disableLocks;
+		}
+		
+		/// <summary> Directory specified by <code>Lucene.Net.lockDir</code>
 		/// or <code>java.io.tmpdir</code> system property
 		/// </summary>
-		public static readonly System.String LOCK_DIR = SupportClass.AppSettings.Get("Lucene.Net.lockdir", System.IO.Path.GetTempPath());
+		public static readonly System.String LOCK_DIR = SupportClass.AppSettings.Get("Lucene.Net.lockDir", System.IO.Path.GetTempPath());
 		
-        /// <summary>The default class which implements filesystem-based directories. </summary>
-        private static System.Type IMPL;
+		/// <summary>The default class which implements filesystem-based directories. </summary>
+		private static System.Type IMPL;
 		
-        private static System.Security.Cryptography.MD5 DIGESTER;
-
-		private bool disable_locks = false;
-		public bool DisableLocks {
-			get { return disable_locks; }
-			set { disable_locks = value; }
-		}
+		private static System.Security.Cryptography.MD5 DIGESTER;
 		
 		/// <summary>A buffer optionally used in renameTo method </summary>
 		private byte[] buffer = null;
@@ -220,9 +176,9 @@ namespace Lucene.Net.Store
 		/// </returns>
 		public static FSDirectory GetDirectory(System.String path, bool create)
 		{
-			return GetDirectory(new System.IO.FileInfo(path), null, create, false);
+			return GetDirectory(new System.IO.FileInfo(path), create);
 		}
-
+		
 		/// <summary>Returns the directory instance for the named location.
 		/// 
 		/// <p>Directories are cached, so that, for a given canonical path, the same
@@ -238,93 +194,29 @@ namespace Lucene.Net.Store
 		/// </returns>
 		public static FSDirectory GetDirectory(System.IO.FileInfo file, bool create)
 		{
-			return GetDirectory(file, null, create, false);
-		}
-
-		/// <summary>Returns the directory instance for the named location.
-		/// 
-		/// <p>Directories are cached, so that, for a given canonical path, the same
-		/// FSDirectory instance will always be returned.  This permits
-		/// synchronization on directories.
-		/// 
-		/// </summary>
-		/// <param name="path">the path to the directory.
-		/// </param>
-		/// <param name="tmpDir">the path to use as lock directory.
-		/// </param>
-		/// <param name="create">if true, create, or erase any existing contents.
-		/// </param>
-		/// <returns> the FSDirectory for the named file.  
-		/// </returns>
-		public static FSDirectory GetDirectory(System.String path, System.String tmpDir, bool create)
-		{
-			return GetDirectory(new System.IO.FileInfo(path), tmpDir, create, false);
-		}
-
-		/// <summary>Returns the directory instance for the named location.
-		/// 
-		/// <p>Directories are cached, so that, for a given canonical path, the same
-		/// FSDirectory instance will always be returned.  This permits
-		/// synchronization on directories.
-		/// 
-		/// </summary>
-		/// <param name="path">the path to the directory.
-		/// </param>
-		/// <param name="tmpDir">the path to use as lock directory.
-		/// </param>
-		/// <param name="create">if true, create, or erase any existing contents.
-		/// </param>
-		/// <param name="disable_locks">if true, disable internal locking
-		/// </param>
-		/// <returns> the FSDirectory for the named file.  
-		/// </returns>
-		public static FSDirectory GetDirectory(System.String path, System.String tmpDir, bool create, bool disable_locks)
-		{
-			return GetDirectory(new System.IO.FileInfo(path), tmpDir, create, disable_locks);
-		}
-
-		/// <summary>Returns the directory instance for the named location.
-		/// 
-		/// <p>Directories are cached, so that, for a given canonical path, the same
-		/// FSDirectory instance will always be returned.  This permits
-		/// synchronization on directories.
-		/// 
-		/// </summary>
-		/// <param name="file">the path to the directory.
-		/// </param>
-		/// <param name="tmpDir">the path to use as lock directory.
-		/// </param>
-		/// <param name="create">if true, create, or erase any existing contents.
-		/// </param>
-		/// <param name="disable_locks">if true, disable internal locking
-		/// </param>
-		/// <returns> the FSDirectory for the named file.  
-		/// </returns>
-		public static FSDirectory GetDirectory(System.IO.FileInfo file, System.String tmpdir, bool create, bool disable_locks)
-		{
 			file = new System.IO.FileInfo(file.FullName);
 			FSDirectory dir;
 			lock (DIRECTORIES.SyncRoot)
 			{
 				dir = (FSDirectory) DIRECTORIES[file];
-                if (dir == null)
-                {
-                    try
-                    {
-                        dir = (FSDirectory) System.Activator.CreateInstance(IMPL);
-                    }
-                    catch (System.Exception e)
-                    {
-                        throw new System.SystemException("cannot load FSDirectory class: " + e.ToString());
-                    }
-                    dir.Init(file, tmpdir, create, disable_locks);
-                    DIRECTORIES[file] = dir;
-                }
-                else if (create)
-                {
-                    dir.Create();
-                }
-            }
+				if (dir == null)
+				{
+					try
+					{
+						dir = (FSDirectory) System.Activator.CreateInstance(IMPL);
+					}
+					catch (System.Exception e)
+					{
+						throw new System.SystemException("cannot load FSDirectory class: " + e.ToString());
+					}
+					dir.Init(file, create);
+					DIRECTORIES[file] = dir;
+				}
+				else if (create)
+				{
+					dir.Create();
+				}
+			}
 			lock (dir)
 			{
 				dir.refCount++;
@@ -336,37 +228,53 @@ namespace Lucene.Net.Store
 		private int refCount;
 		private System.IO.FileInfo lockDir;
 		
-        public FSDirectory()
-        {
-        }
+		public FSDirectory() // protected internal FSDirectory() // {{Aroush}} this shouldn't be 'public' but if it's not the line 'System.Activator.CreateInstance(IMPL);' in function GetDirectory() will fail.
+		{
+		}
 		
-        // permit subclassing
+		// permit subclassing
 		
-        private void  Init(System.IO.FileInfo path, System.String tmpDir, bool create, bool disable_locks)
-        {
-            directory = path;
-			this.disable_locks = disable_locks;
+		private void  Init(System.IO.FileInfo path, bool create)
+		{
+			directory = path;
 			
-			if (tmpDir != null)
+			if (LOCK_DIR == null)
 			{
-				lockDir = new System.IO.FileInfo(tmpDir);
+				lockDir = directory;
 			}
-			else if (LOCK_DIR == null)
-            {
-                lockDir = directory;
-            }
-            else
-            {
-                lockDir = new System.IO.FileInfo(LOCK_DIR);
-            }
-            if (create)
-            {
-                Create();
-            }
+			else
+			{
+				lockDir = new System.IO.FileInfo(LOCK_DIR);
+			}
+			// Ensure that lockDir exists and is a directory.
+			bool tmpBool;
+			if (System.IO.File.Exists(lockDir.FullName))
+				tmpBool = true;
+			else
+				tmpBool = System.IO.Directory.Exists(lockDir.FullName);
+			if (!tmpBool)
+			{
+                try
+                {
+                    System.IO.Directory.CreateDirectory(lockDir.FullName);
+                }
+                catch (Exception)
+                {
+                    throw new System.IO.IOException("Cannot create directory: " + lockDir);
+                }
+			}
+			else if (!System.IO.Directory.Exists(lockDir.FullName))
+			{
+				throw new System.IO.IOException("Found regular file where directory expected: " + lockDir);
+			}
+			if (create)
+			{
+				Create();
+			}
 			
-            if (!System.IO.Directory.Exists(directory.FullName))
-                throw new System.IO.IOException(path + " not a directory");
-        }
+			if (!System.IO.Directory.Exists(directory.FullName))
+				throw new System.IO.IOException(path + " not a directory");
+		}
 		
 		private void  Create()
 		{
@@ -389,7 +297,17 @@ namespace Lucene.Net.Store
                     }
 				}
 				
-				System.String[] files = System.IO.Directory.GetFileSystemEntries(directory.FullName); // clear old files
+                try
+                {
+                    System.IO.Directory.Exists(directory.FullName);
+                }
+                catch (Exception)
+                {
+                    throw new System.IO.IOException(directory + " not a directory");
+                }
+				
+                System.String[] files = System.IO.Directory.GetFileSystemEntries(directory.FullName); // clear old files    // {{Aroush-1.9}} we want the line below, not this one; how do we make the line below work in C#?!
+                //// System.String[] files = System.IO.Directory.GetFileSystemEntries(new IndexFileNameFilter()); // clear old files 
 				for (int i = 0; i < files.Length; i++)
 				{
 					System.IO.FileInfo file = new System.IO.FileInfo(System.IO.Path.Combine(directory.FullName, files[i]));
@@ -412,6 +330,8 @@ namespace Lucene.Net.Store
 				
 				System.String lockPrefix = GetLockPrefix().ToString(); // clear old locks
 				files = System.IO.Directory.GetFileSystemEntries(lockDir.FullName);
+				if (files == null)
+					throw new System.IO.IOException("Cannot read lock directory " + lockDir.FullName);
 				for (int i = 0; i < files.Length; i++)
 				{
 					if (!files[i].StartsWith(lockPrefix))
@@ -445,37 +365,41 @@ namespace Lucene.Net.Store
 		/// <summary>Returns true iff a file with the given name exists. </summary>
 		public override bool FileExists(System.String name)
 		{
-			string path = System.IO.Path.Combine (directory.FullName, name);
-
-			return System.IO.File.Exists (path) || System.IO.Directory.Exists (path);
+			System.IO.FileInfo file = new System.IO.FileInfo(System.IO.Path.Combine(directory.FullName, name));
+			bool tmpBool;
+			if (System.IO.File.Exists(file.FullName))
+				tmpBool = true;
+			else
+				tmpBool = System.IO.Directory.Exists(file.FullName);
+			return tmpBool;
 		}
 		
 		/// <summary>Returns the time the named file was last modified. </summary>
 		public override long FileModified(System.String name)
 		{
 			System.IO.FileInfo file = new System.IO.FileInfo(System.IO.Path.Combine(directory.FullName, name));
-			return (file.LastWriteTimeUtc.Ticks);
+			return (file.LastWriteTime.Ticks);
 		}
 		
 		/// <summary>Returns the time the named file was last modified. </summary>
 		public static long FileModified(System.IO.FileInfo directory, System.String name)
 		{
 			System.IO.FileInfo file = new System.IO.FileInfo(System.IO.Path.Combine(directory.FullName, name));
-			return (file.LastWriteTimeUtc.Ticks);
+			return (file.LastWriteTime.Ticks);
 		}
 		
 		/// <summary>Set the modified time of an existing file to now. </summary>
 		public override void  TouchFile(System.String name)
 		{
 			System.IO.FileInfo file = new System.IO.FileInfo(System.IO.Path.Combine(directory.FullName, name));
-            file.LastWriteTime = System.DateTime.UtcNow;
+            file.LastWriteTime = System.DateTime.Now;
 		}
 		
 		/// <summary>Returns the length in bytes of a file in the directory. </summary>
 		public override long FileLength(System.String name)
 		{
 			System.IO.FileInfo file = new System.IO.FileInfo(System.IO.Path.Combine(directory.FullName, name));
-            return file.Exists ? file.Length : 0;
+			return file.Exists ? file.Length : 0;
 		}
 		
 		/// <summary>Removes an existing file in the directory. </summary>
@@ -496,7 +420,7 @@ namespace Lucene.Net.Store
 			else
 				tmpBool = false;
 			if (!tmpBool)
-				throw new System.IO.IOException("Cannot delete " + name);
+				throw new System.IO.IOException("Cannot delete " + file);
 		}
 		
 		/// <summary>Renames an existing file in the directory. </summary>
@@ -532,7 +456,7 @@ namespace Lucene.Net.Store
 					else
 						tmpBool2 = false;
 					if (!tmpBool2)
-						throw new System.IO.IOException("Cannot delete " + to);
+						throw new System.IO.IOException("Cannot delete " + nu);
 				}
 				
 				// Rename the old file to the new one. Unfortunately, the renameTo()
@@ -542,112 +466,118 @@ namespace Lucene.Net.Store
                 {
                     old.MoveTo(nu.FullName);
                 }
-                catch (System.Exception ex)
-                {
-                    System.IO.BinaryReader in_Renamed = null;
-                    System.IO.Stream out_Renamed = null;
-                    try
-                    {
-                        in_Renamed = new System.IO.BinaryReader(System.IO.File.Open(old.FullName, System.IO.FileMode.Open, System.IO.FileAccess.Read));
-                        out_Renamed = new System.IO.FileStream(nu.FullName, System.IO.FileMode.Create, System.IO.FileAccess.Write, System.IO.FileShare.ReadWrite);
-                        // see if the buffer needs to be initialized. Initialization is
-                        // only done on-demand since many VM's will never run into the renameTo
-                        // bug and hence shouldn't waste 1K of mem for no reason.
-                        if (buffer == null)
-                        {
-                            buffer = new byte[1024];
+                catch (System.Exception)
+				{
+					System.IO.Stream in_Renamed = null;
+					System.IO.Stream out_Renamed = null;
+					try
+					{
+						in_Renamed = new System.IO.FileStream(old.FullName, System.IO.FileMode.Open, System.IO.FileAccess.Read);
+						out_Renamed = new System.IO.FileStream(nu.FullName, System.IO.FileMode.Create);
+						// see if the buffer needs to be initialized. Initialization is
+						// only done on-demand since many VM's will never run into the renameTo
+						// bug and hence shouldn't waste 1K of mem for no reason.
+						if (buffer == null)
+						{
+							buffer = new byte[1024];
+						}
+                        int len; 
+                        while ((len = in_Renamed.Read(buffer, 0, buffer.Length)) > 0) 
+                        { 
+                            out_Renamed.Write(buffer, 0, len); 
                         }
-                        int len;
-                        len = in_Renamed.Read(buffer, 0, buffer.Length);
-                        out_Renamed.Write(buffer, 0, len);
 						
                         // delete the old file.
-                        bool tmpBool3;
-                        if (System.IO.File.Exists(old.FullName))
-                        {
-                            System.IO.File.Delete(old.FullName);
-                            tmpBool3 = true;
-                        }
-                        else if (System.IO.Directory.Exists(old.FullName))
-                        {
-                            System.IO.Directory.Delete(old.FullName);
-                            tmpBool3 = true;
-                        }
-                        else
-                            tmpBool3 = false;
-                        bool generatedAux = tmpBool3;
-                    }
-                    catch (System.IO.IOException e)
-                    {
-                        throw new System.IO.IOException("Cannot rename " + from + " to " + to);
-                    }
-                    finally
-                    {
-                        if (in_Renamed != null)
-                        {
-                            try
-                            {
-                                in_Renamed.Close();
-                            }
-                            catch (System.IO.IOException e)
-                            {
-                                throw new System.SystemException("Cannot close input stream: " + e.ToString());
-                            }
-                        }
-                        if (out_Renamed != null)
-                        {
-                            try
-                            {
-                                out_Renamed.Close();
-                            }
-                            catch (System.IO.IOException e)
-                            {
-                                throw new System.SystemException("Cannot close output stream: " + e.ToString());
-                            }
-                        }
-                    }
-                }
+						bool tmpBool3;
+						if (System.IO.File.Exists(old.FullName))
+						{
+							System.IO.File.Delete(old.FullName);
+							tmpBool3 = true;
+						}
+						else if (System.IO.Directory.Exists(old.FullName))
+						{
+							System.IO.Directory.Delete(old.FullName);
+							tmpBool3 = true;
+						}
+						else
+							tmpBool3 = false;
+						bool generatedAux = tmpBool3;
+					}
+					catch (System.IO.IOException ioe)
+					{
+						throw new System.IO.IOException("Cannot rename " + old + " to " + nu);
+					}
+					finally
+					{
+						if (in_Renamed != null)
+						{
+							try
+							{
+								in_Renamed.Close();
+							}
+							catch (System.IO.IOException e)
+							{
+								throw new System.SystemException("Cannot close input stream: " + e.ToString());
+							}
+						}
+						if (out_Renamed != null)
+						{
+							try
+							{
+								out_Renamed.Close();
+							}
+							catch (System.IO.IOException e)
+							{
+								throw new System.SystemException("Cannot close output stream: " + e.ToString());
+							}
+						}
+					}
+				}
 			}
 		}
 		
 		/// <summary>Creates a new, empty file in the directory with the given name.
 		/// Returns a stream writing this file. 
 		/// </summary>
-        public override IndexOutput CreateOutput(System.String name)
-        {
-            return new FSIndexOutput(new System.IO.FileInfo(System.IO.Path.Combine(directory.FullName, name)));
-        }
+		public override IndexOutput CreateOutput(System.String name)
+		{
+			System.IO.FileInfo file = new System.IO.FileInfo(System.IO.Path.Combine(directory.FullName, name));
+			bool tmpBool;
+			if (System.IO.File.Exists(file.FullName))
+				tmpBool = true;
+			else
+				tmpBool = System.IO.Directory.Exists(file.FullName);
+			bool tmpBool2;
+			if (System.IO.File.Exists(file.FullName))
+			{
+				System.IO.File.Delete(file.FullName);
+				tmpBool2 = true;
+			}
+			else if (System.IO.Directory.Exists(file.FullName))
+			{
+				System.IO.Directory.Delete(file.FullName);
+				tmpBool2 = true;
+			}
+			else
+				tmpBool2 = false;
+			if (tmpBool && !tmpBool2)
+			// delete existing, if any
+				throw new System.IO.IOException("Cannot overwrite: " + file);
+			
+			return new FSIndexOutput(file);
+		}
 		
 		/// <summary>Returns a stream reading an existing file. </summary>
-        public override IndexInput OpenInput(System.String name)
-        {
-            return new FSIndexInput(new System.IO.FileInfo(System.IO.Path.Combine(directory.FullName, name)));
-        }
-
-		static public Beagle.Util.Logger Logger = null;
-		//static public Beagle.Util.Logger Logger = Beagle.Util.Logger.Log;
-		static public void Log (string format, params object[] args)
+		public override IndexInput OpenInput(System.String name)
 		{
-			if (Logger != null)
-				Logger.Debug (format, args);
-		}
-
-		static public void Log (Exception e)
-		{
-			if (Logger != null)
-				Logger.Debug (e);
+			return new FSIndexInput(new System.IO.FileInfo(System.IO.Path.Combine(directory.FullName, name)));
 		}
 		
 		/// <summary> So we can do some byte-to-hexchar conversion below</summary>
 		private static readonly char[] HEX_DIGITS = new char[]{'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f'};
 		
 		/// <summary>Constructs a {@link Lock} with the specified name.  Locks are implemented
-		/// with {@link File#createNewFile() }.
-		/// 
-		/// <p>In JDK 1.1 or if system property <I>disableLuceneLocks</I> is the
-		/// string "true", locks are disabled.  Assigning this property any other
-		/// string will <B>not</B> prevent creation of lock files.  This is useful for
-		/// using Lucene on read-only medium, such as CD-ROM.
+		/// with {@link File#createNewFile()}.
 		/// 
 		/// </summary>
 		/// <param name="name">the name of the lock file
@@ -720,31 +650,42 @@ namespace Lucene.Net.Store
 		{
 			return this.GetType().FullName + "@" + directory;
 		}
+
 		static FSDirectory()
 		{
-			DISABLE_LOCKS = System.Configuration.ConfigurationSettings.AppSettings.Get("disableLuceneLocks") != null;
 			{
 				try
 				{
-                    System.String name = SupportClass.AppSettings.Get("Lucene.Net.FSDirectory.class", typeof(FSDirectory).FullName);
-                    IMPL = System.Type.GetType(name);
+					System.String name = SupportClass.AppSettings.Get("Lucene.Net.FSDirectory.class", typeof(FSDirectory).FullName);
+					IMPL = System.Type.GetType(name);
+				}
+				catch (System.Security.SecurityException)
+				{
+					try
+					{
+						IMPL = System.Type.GetType(typeof(FSDirectory).FullName);
+					}
+					catch (System.Exception e)
+					{
+						throw new System.SystemException("cannot load default FSDirectory class: " + e.ToString());
+					}
+				}
+                catch (System.Exception e)
+                {
+                    throw new System.SystemException("cannot load FSDirectory class: " + e.ToString());
+                }
+            }
+			{
+				try
+				{
+					DIGESTER = System.Security.Cryptography.MD5.Create();
 				}
 				catch (System.Exception e)
 				{
-					throw new System.SystemException("cannot load FSDirectory class: " + e.ToString());
+					throw new System.SystemException(e.ToString());
 				}
 			}
-            {
-                try
-                {
-                    DIGESTER = System.Security.Cryptography.MD5.Create();
-                }
-                catch (System.Exception e)
-                {
-                    throw new System.SystemException(e.ToString());
-                }
-            }
-        }
+		}
 	}
 	
 	
@@ -766,43 +707,29 @@ namespace Lucene.Net.Store
 				
 			}
 			public long position;
-            // {{Aroush-1.4.3 is this right?
-            public Descriptor(FSIndexInput enclosingInstance, System.IO.FileInfo file, System.IO.FileAccess fileAccess) 
-                : base(new System.IO.FileStream(file.FullName, System.IO.FileMode.Open, fileAccess, System.IO.FileShare.ReadWrite))
-            {
-                InitBlock(enclosingInstance);
-            }
-            // Aroush-1.4.3}}
-			
-			/* DEBUG */
-			//public void close() throws IOException {
-			//  debug_printInfo("CLOSE");
-			//    super.close();
-			//}
-			//
-			//private void debug_printInfo(String op) {
-			//  try { throw new Exception(op + " <" + name + ">");
-			//  } catch (Exception e) {
-			//    java.io.StringWriter sw = new java.io.StringWriter();
-			//    java.io.PrintWriter pw = new java.io.PrintWriter(sw);
-			//    e.printStackTrace(pw);
-			//    System.out.println(sw.getBuffer().ToString());
-			//  }
-			//}
-			/* DEBUG */
+			public Descriptor(FSIndexInput enclosingInstance, System.IO.FileInfo file, System.IO.FileAccess mode) 
+                : base(new System.IO.FileStream(file.FullName, System.IO.FileMode.Open, mode, System.IO.FileShare.ReadWrite))
+			{
+				InitBlock(enclosingInstance);
+			}
 		}
 		
-        private Descriptor file = null;
-        internal bool isClone;
-        private long length;
+		private Descriptor file = null;
+		internal bool isClone;
+		private long length;
 		
+        public bool IsClone
+        {
+            get { return (isClone); }
+        }
+
 		public FSIndexInput(System.IO.FileInfo path)
 		{
 			file = new Descriptor(this, path, System.IO.FileAccess.Read);
 			length = file.BaseStream.Length;
 		}
 		
-		/// <summary>InputStream methods </summary>
+		/// <summary>IndexInput methods </summary>
 		public override void  ReadInternal(byte[] b, int offset, int len)
 		{
 			lock (file)
@@ -816,7 +743,7 @@ namespace Lucene.Net.Store
 				int total = 0;
 				do 
 				{
-                    int i = file.Read(b, offset + total, len - total);
+					int i = file.Read(b, offset + total, len - total);
 					if (i <= 0)
 						throw new System.IO.IOException("read past EOF");
 					file.position += i;
@@ -830,20 +757,19 @@ namespace Lucene.Net.Store
 		{
 			if (!isClone && file != null)
 				file.Close();
-			System.GC.SuppressFinalize(this);
+            System.GC.SuppressFinalize(this);
 		}
 		
-		/// <summary>Random-access methods </summary>
 		public override void  SeekInternal(long position)
 		{
 		}
 		
-        public override long Length()
-        {
-            return length;
-        }
+		public override long Length()
+		{
+			return length;
+		}
 		
-        ~FSIndexInput()
+		~FSIndexInput()
 		{
 			Close(); // close the file
 		}
@@ -860,6 +786,8 @@ namespace Lucene.Net.Store
 		/// </summary>
 		public /*internal*/ virtual bool IsFDValid()
 		{
+            if (file.BaseStream == null)
+                return false;
 			return file.BaseStream.CanRead;
 		}
 	}
@@ -877,7 +805,7 @@ namespace Lucene.Net.Store
 		/// <summary>output methods: </summary>
 		public override void  FlushBuffer(byte[] b, int size)
 		{
-            file.Write(b, 0, size);
+			file.Write(b, 0, size);
 		}
 		public override void  Close()
 		{

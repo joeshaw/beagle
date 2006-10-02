@@ -13,8 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 using System;
 using IndexWriter = Lucene.Net.Index.IndexWriter;
+
 namespace Lucene.Net.Store
 {
 	
@@ -32,7 +34,7 @@ namespace Lucene.Net.Store
 	/// </author>
 	/// <version>  $Id$
 	/// </version>
-	/// <seealso cref="Directory#MakeLock(String)">
+	/// <seealso cref="Directory.MakeLock(String)">
 	/// </seealso>
 	public abstract class Lock
 	{
@@ -56,41 +58,23 @@ namespace Lucene.Net.Store
 		/// <throws>  IOException if lock wait times out or obtain() throws an IOException </throws>
 		public virtual bool Obtain(long lockWaitTimeout)
 		{
+			bool locked = Obtain();
 			int maxSleepCount = (int) (lockWaitTimeout / LOCK_POLL_INTERVAL);
 			int sleepCount = 0;
-			maxSleepCount = System.Math.Max (maxSleepCount, 1);
-			FSDirectory.Log ("Lock.Obtain timeout={0} maxsleepcount={1}", lockWaitTimeout, maxSleepCount);
-			bool locked = Obtain();
-
 			while (!locked)
 			{
-				if (sleepCount == maxSleepCount)
+				if (sleepCount++ == maxSleepCount)
 				{
-					// Try and be a little more verbose on failure
-					string lockpath = this.ToString ();
-					System.Text.StringBuilder ex = new System.Text.StringBuilder();
-					ex.Append ("Lock obain timed out: ");
-					ex.Append (lockpath);
-					if (System.IO.File.Exists (lockpath)) {
-						System.IO.FileStream fs = System.IO.File.Open (lockpath, System.IO.FileMode.Open, System.IO.FileAccess.Read, System.IO.FileShare.Read);
-						System.IO.StreamReader sr = new System.IO.StreamReader (fs);
-						string pid = sr.ReadToEnd ().Trim ();
-						sr.Close ();
-						fs.Close ();
-						ex.Append (" -- pid ").Append (pid);
-
-						if (System.IO.Directory.Exists ("/proc/" + pid))
-							ex.Append (" -- process exists");
-						else
-							ex.Append (" -- process does not exist, stale lockfile?");
-					} else {
-						ex.Append (" -- lock file doesn't exist!?");
-					}
-					throw new System.IO.IOException(ex.ToString ());
+					throw new System.IO.IOException("Lock obtain timed out: " + this.ToString());
 				}
-				++sleepCount;
-
-				System.Threading.Thread.Sleep((int) LOCK_POLL_INTERVAL);
+				try
+				{
+					System.Threading.Thread.Sleep(new System.TimeSpan((System.Int64) 10000 * LOCK_POLL_INTERVAL));
+				}
+				catch (System.Threading.ThreadInterruptedException e)
+				{
+					throw new System.IO.IOException(e.ToString());
+				}
 				locked = Obtain();
 			}
 			return locked;
@@ -116,7 +100,7 @@ namespace Lucene.Net.Store
 			/// </summary>
 			/// <deprecated> Kept only to avoid breaking existing code.
 			/// </deprecated>
-			public With(Lock lock_Renamed):this(lock_Renamed, IndexWriter.COMMIT_LOCK_TIMEOUT)
+			public With(Lock lock_Renamed) : this(lock_Renamed, IndexWriter.COMMIT_LOCK_TIMEOUT)
 			{
 			}
 			

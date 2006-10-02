@@ -13,8 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 using System;
 using Lucene.Net.Analysis;
+
 namespace Lucene.Net.Analysis.Standard
 {
 	
@@ -46,11 +48,11 @@ namespace Lucene.Net.Analysis.Standard
 			System.String text = t.TermText();
 			System.String type = t.Type();
 			
-			if ((System.Object) type == (System.Object) APOSTROPHE_TYPE && (text.EndsWith("'s") || text.EndsWith("'S")))
+			if (type == APOSTROPHE_TYPE && (text.EndsWith("'s") || text.EndsWith("'S")))
 			{
 				return new Lucene.Net.Analysis.Token(text.Substring(0, (text.Length - 2) - (0)), t.StartOffset(), t.EndOffset(), type);
 			}
-			else if ((System.Object) type == (System.Object) ACRONYM_TYPE)
+			else if (type == ACRONYM_TYPE)
 			{
 				// remove dots
 				System.Text.StringBuilder trimmed = new System.Text.StringBuilder();
