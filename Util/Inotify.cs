@@ -64,6 +64,9 @@ namespace Beagle.Util {
 			QueueOverflow  = 0x00004000, // Event queue overflowed
 			Ignored        = 0x00008000, // File is no longer being watched
 
+			OnlyDir        = 0x01000000, // Only watch a path if it is a directory
+			DoNotFollow    = 0x02000000, // Do not follow symbolic links
+			MaskAdd        = 0x20000000, // Add, do not replace, mask on the inode if it exists
 			IsDirectory    = 0x40000000, // Event is against a directory
 			OneShot        = 0x80000000, // Watch is one-shot
 
