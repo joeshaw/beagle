@@ -401,22 +401,6 @@ else
 DAEMON_DLL_ASSEMBLIES += -r:Mono.Data.SqliteClient
 endif
 
-#if ENABLE_MOZILLA_BACKEND
-#mozillaqueryable = $(srcdir)/MozillaQueryable
-#MOZILLA_QUERYABLE_CSFILES =				\
-#	$(mozillaqueryable)/MozillaQueryable.cs
-#DAEMON_DLL_CSFILES +=					\
-#	$(MOZILLA_QUERYABLE_CSFILES)
-#endif
-
-if ENABLE_WEBSERVICES
-DAEMON_DLL_CSFILES += \
-	$(webservicesdir)/WebServiceProxy.cs	\
-	$(webservicesdir)/NetBeagleHandler.cs	\
-	$(webservicesdir)/NetBeagleQueryable.cs	
-DAEMON_DLL_ASSEMBLIES += -r:System.Web.Services	
-endif
-
 if ENABLE_GOOGLEDRIVER
 DAEMON_DLL_CSFILES +=                  \
        $(srcdir)/GoogleDriver.cs
@@ -471,97 +455,6 @@ $(EVO_DLL_TARGET): $(EVO_DLL_CSFILES) $(DAEMON_DLL_LOCAL_ASSEMBLIES) $(DAEMON_DL
 
 ############################################################
 
-###
-### Web Services
-###
-
-webservicesdir = $(srcdir)/WebServices
-xspdir = $(srcdir)/WebServices/WebServer
-
-WEBSERVICES_XSP_TARGET = BeagleXsp.dll
-
-WEBSERVICES_XSP_CSFLAGS = -target:library 
-
-WEBSERVICES_XSP_ASSEMBLIES = 			\
-	-r:System 				\
-	-r:System.Web 				\
-	-r:System.Runtime.Remoting	
-
-WEBSERVICES_XSP_CSFILES =  			\
-	$(xspdir)/IApplicationHost.cs		\
-	$(xspdir)/MonoWorkerRequest.cs		\
-	$(xspdir)/Tracing.cs			\
-	$(xspdir)/ApplicationServer.cs		\
-	$(xspdir)/LingeringNetworkStream.cs	\
-	$(xspdir)/BaseApplicationHost.cs	\
-	$(xspdir)/BaseRequestBroker.cs		\
-	$(xspdir)/IWebSource.cs			\
-	$(xspdir)/server.cs			\
-	$(xspdir)/InitialWorkerRequest.cs	\
-	$(xspdir)/XSPApplicationHost.cs		\
-	$(xspdir)/XSPWorkerRequest.cs		\
-	$(xspdir)/AssemblyInfo.cs
-
-$(WEBSERVICES_XSP_TARGET): $(WEBSERVICES_XSP_CSFILES) 
-	$(CSC) -out:$@ $(WEBSERVICES_XSP_CSFLAGS) $(WEBSERVICES_XSP_CSFILES) $(WEBSERVICES_XSP_ASSEMBLIES)
-
-
-WEBSERVICES_BACKEND_TARGET = BeagleWebServicesBackEnd.dll
-
-WEBSERVICES_BACKEND_LOCAL_ASSEMBLIES =	\
-	../Util/Util.dll		\
-	../images/Images.dll		\
-	../BeagleClient/Beagle.dll      \
-	../Tiles/Tiles.dll		\
-	BeagleDaemonPlugins.dll 	\
-	BeagleDaemonLib.dll			\
-	$(WEBSERVICES_XSP_TARGET)
-
-WEBSERVICES_BACKEND_ASSEMBLIES = \
-	$(WEBSERVICES_BACKEND_LOCAL_ASSEMBLIES:%=-r:%)	\
-	-r:System					\
-	-r:System.Web 				\
-	-r:System.Runtime.Remoting	\
-	$(BEAGLED_LIBS)
-
-WEBSERVICES_BACKEND_CSFILES = \
-	$(webservicesdir)/ExternalAccessFilter.cs	\
-	$(webservicesdir)/WebBackEnd.cs 	\
-	$(webservicesdir)/WebServiceBackEnd.cs
-
-WEBSERVICES_CSFLAGS = -target:library -noconfig
-
-$(WEBSERVICES_BACKEND_TARGET): $(WEBSERVICES_BACKEND_CSFILES) $(WEBSERVICES_BACKEND_LOCAL_ASSEMBLIES)
-	$(CSC) -out:$@ $(WEBSERVICES_CSFLAGS) $(WEBSERVICES_BACKEND_CSFILES) $(WEBSERVICES_BACKEND_ASSEMBLIES)
-
-WEBSERVICES_FRONTEND_TARGET = BeagleWebServicesFrontEnd.dll
-WEBSERVICES_FRONTEND_CSFILES = \
-	$(webservicesdir)/WebFrontEnd.cs	\
-	$(webservicesdir)/WebServiceFrontEnd.cs
-
-WEBSERVICES_FRONTEND_ASSEMBLIES = 	\
-	$(WEBSERVICES_BACKEND_ASSEMBLIES) 	\
-	-r:$(WEBSERVICES_BACKEND_TARGET) 	\
-	-r:System.Web.Services
-
-$(WEBSERVICES_FRONTEND_TARGET): $(WEBSERVICES_FRONTEND_CSFILES) $(WEBSERVICES_BACKEND_TARGET) 
-	$(CSC) -out:$@ $(WEBSERVICES_CSFLAGS) $(WEBSERVICES_FRONTEND_CSFILES) $(WEBSERVICES_FRONTEND_ASSEMBLIES)
-
-WEBSERVICES_RESOURCES = 			\
-	$(webservicesdir)/search.aspx	\
-	$(webservicesdir)/search.asmx	\
-	$(webservicesdir)/web.config
-
-WEBSERVICES_RESOURCES_DIST = 		\
-	$(webservicesdir)/search.aspx	\
-	$(webservicesdir)/search.asmx	\
-	$(webservicesdir)/web.config
-
-XSP_DIR = $(pkgdatadir)/xsp
-XSPBIN_DIR = $(XSP_DIR)/bin
-
-############################################################
-
 DAEMON_WRAPPER = beagled
 DAEMON_WRAPPER_IN = beagled.in
 DAEMON_TARGET = BeagleDaemon.exe
@@ -589,19 +482,6 @@ DAEMON_ASSEMBLIES =				\
 	$(SHARPZIPLIB_LIBS)			\
 	$(DAEMON_LOCAL_ASSEMBLIES:%=-r:%)	\
 	-r:Mono.Posix
-
-if ENABLE_WEBSERVICES
-DAEMON_CSFLAGS += -define:ENABLE_WEBSERVICES
-
-DAEMON_LOCAL_ASSEMBLIES += 		\
-	BeagleDaemonPlugins.dll		\
-	../images/Images.dll		\
-	../Tiles/Tiles.dll		\
-	$(WEBSERVICES_BACKEND_TARGET) 	\
-	$(WEBSERVICES_FRONTEND_TARGET)	
-
-DAEMON_ASSEMBLIES += -r:System.Runtime.Remoting
-endif
 
 $(DAEMON_TARGET): $(DAEMON_CSFILES) $(DAEMON_LOCAL_ASSEMBLIES)
 	$(CSC) -out:$@ $(DAEMON_CSFLAGS) $(DAEMON_CSFILES) $(DAEMON_ASSEMBLIES)
@@ -1029,13 +909,6 @@ if ENABLE_THUNDERBIRD
 ALL_TARGETS += $(THUNDERBIRD_TARGET)
 endif
 
-if ENABLE_WEBSERVICES
-ALL_TARGETS += 				\
-	$(XSP_TARGET)			\
-	$(WEBSERVICES_FRONTEND_TARGET)	\
-	$(WEBSERVICES_BACKEND_TARGET)	
-endif
-
 if ENABLE_EVOLUTION
 ALL_TARGETS +=				\
 	$(EVO_DLL_TARGET)
@@ -1054,10 +927,6 @@ install-data-local: $(ALL_TARGETS)
 	$(mkinstalldirs) $(DESTDIR)$(pkglibdir)
 	$(mkinstalldirs) $(DESTDIR)$(pkgdatadir)
 	$(mkinstalldirs) $(DESTDIR)$(BACKENDDIR)
-if ENABLE_WEBSERVICES
-	$(mkinstalldirs) $(DESTDIR)$(XSP_DIR)
-	$(mkinstalldirs) $(DESTDIR)$(XSPBIN_DIR)
-endif
 if ENABLE_EVOLUTION
 	$(INSTALL_DATA) $(EVO_DLL_TARGET) $(EVO_DLL_TARGET).mdb $(DESTDIR)$(BACKENDDIR)
 endif
@@ -1095,26 +964,12 @@ endif
 	$(INSTALL_DATA) $(BUILD_INDEX_TARGET).mdb        $(DESTDIR)$(pkglibdir)
 	$(INSTALL_DATA) $(MANAGE_INDEX_TARGET)           $(DESTDIR)$(pkglibdir)
 	$(INSTALL_DATA) $(MANAGE_INDEX_TARGET).mdb       $(DESTDIR)$(pkglibdir)
-if ENABLE_WEBSERVICES
-	$(INSTALL_DATA) $(WEBSERVICES_XSP_TARGET) $(DESTDIR)$(pkglibdir)
-	$(INSTALL_DATA) $(WEBSERVICES_BACKEND_TARGET) $(DESTDIR)$(pkglibdir)
-	$(INSTALL_DATA) $(WEBSERVICES_FRONTEND_TARGET) $(DESTDIR)$(XSPBIN_DIR)
-	$(INSTALL_DATA) $(WEBSERVICES_BACKEND_TARGET) $(DESTDIR)$(XSPBIN_DIR)
-	$(INSTALL_DATA)  $(WEBSERVICES_RESOURCES) $(DESTDIR)$(XSP_DIR)
-#	$(INSTALL_DATA) ../Util/Util.dll ../images/Images.dll ../BeagleClient/Beagle.dll ../Tiles/Tiles.dll BeagleDaemonPlugins.dll BeagleDaemonLib.dll $(DESTDIR)$(XSPBIN_DIR)
-
-endif
 if ENABLE_THUNDERBIRD
 	$(INSTALL_DATA) $(THUNDERBIRD_TARGET)                 $(DESTDIR)$(BACKENDDIR)
 	$(INSTALL_DATA) $(THUNDERBIRD_TARGET).mdb             $(DESTDIR)$(BACKENDDIR)
 endif
 
 uninstall-local:
-if ENABLE_WEBSERVICES
-	rm -f $(DESTDIR)$(pkglibdir)/$(WEBSERVICES_BACKEND_TARGET)
-	rm -f $(DESTDIR)$(pkglibdir)/$(WEBSERVICES_XSP_TARGET)
-	rm -rf $(DESTDIR)$(XSP_DIR)
-endif
 if ENABLE_THUNDERBIRD
 	rm -f $(DESTDIR)$(BACKENDDIR)/$(THUNDERBIRD_TARGET)
 	rm -f $(DESTDIR)$(BACKENDDIR)/$(THUNDERBIRD_TARGET).mdb
@@ -1191,14 +1046,7 @@ EXTRA_DIST = \
 	$(NAME_INDEX_CSFILES)			\
 	$(FS_SANITY_CHECK_CSFILES)		\
 	$(MANAGE_INDEX_CSFILES)			\
-	$(BUILD_INDEX_CSFILES)			\
-	$(WEBSERVICES_XSP_CSFILES)		\
-	$(WEBSERVICES_BACKEND_CSFILES)		\
-	$(WEBSERVICES_FRONTEND_CSFILES)		\
-	$(WEBSERVICES_RESOURCES_DIST)		\
-	$(webservicesdir)/WebServiceProxy.cs	\
-	$(webservicesdir)/NetBeagleHandler.cs	\
-	$(webservicesdir)/NetBeagleQueryable.cs
+	$(BUILD_INDEX_CSFILES)
 
 CLEANFILES = \
 	$(PLUGIN_TARGET)       			\
@@ -1243,11 +1091,5 @@ CLEANFILES = \
 	$(BUILD_INDEX_TARGET)			\
 	$(BUILD_INDEX_TARGET).mdb		\
 	$(BUILD_INDEX_WRAPPER)			\
-	$(WEBSERVICES_BACKEND_TARGET)		\
-	$(WEBSERVICES_BACKEND_TARGET).mdb	\
-	$(WEBSERVICES_FRONTEND_TARGET)		\
-	$(WEBSERVICES_FRONTEND_TARGET).mdb	\
-	$(WEBSERVICES_XSP_TARGET)		\
-	$(WEBSERVICES_XSP_TARGET).mdb		\
 	$(THUNDERBIRD_TARGET)			\
 	$(THUNDERBIRD_TARGET).mdb

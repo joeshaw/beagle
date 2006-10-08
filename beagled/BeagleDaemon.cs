@@ -36,10 +36,6 @@ using GLib;
 using Beagle.Util;
 using Log = Beagle.Util.Log;
 
-#if ENABLE_WEBSERVICES
-using Beagle.WebService;
-#endif
-
 namespace Beagle.Daemon {
 	class BeagleDaemon {
 
@@ -125,14 +121,6 @@ namespace Beagle.Daemon {
 				"  --disable-scheduler\tDisable the use of the scheduler.\n" +
 				"  --help\t\tPrint this usage message.\n";
 
-#if ENABLE_WEBSERVICES
-			usage += "\n" +
-				"  --web-global\t\tAllow global access to the Web & WebService interfaces.\n" +
-				"  --web-port\t\tPort to use for the internal web server.\n" +
-				"  --web-root\t\tRoot directory to use for the internal web server.\n" +
-				"  --web-disable\t\tDisable Web & WebServices functionality.\n";			
-#endif 
-
 			Console.WriteLine (usage);
 		}
 
@@ -148,9 +136,6 @@ namespace Beagle.Daemon {
 			if (! StartServer ()) {
 				if (arg_replace)
 				{
-#if ENABLE_WEBSERVICES
-					WebServiceBackEnd.Stop();
-#endif			
 					ReplaceExisting ();
 				}		
 				else {
@@ -200,10 +185,6 @@ namespace Beagle.Daemon {
 			// warning if not.  The actual advice calls will fail silently.
 			FileAdvise.TestAdvise ();
 
-#if ENABLE_WEBSERVICES		
-			//Beagle Web, WebService access initialization code:
-			WebServiceBackEnd.Start();
-#endif
 			Conf.WatchForUpdates ();
 
 			stopwatch.Stop ();
@@ -372,28 +353,7 @@ namespace Beagle.Daemon {
 						Environment.Exit (0);
 					}
 					break;
-#if ENABLE_WEBSERVICES
-				case "--web-global":
-					WebServiceBackEnd.web_global = true;
-					WebServiceBackEnd.web_start = true;					
-					break;
 
-				case "--web-port":
-					WebServiceBackEnd.web_port = next_arg;
-					++i; 
-					WebServiceBackEnd.web_start = true;
-					break;
-
-				case "--web-root":
-					WebServiceBackEnd.web_rootDir = next_arg;
-					++i; 
-					WebServiceBackEnd.web_start = true;
-					break;
-					
-				case "--web-disable":
-					WebServiceBackEnd.web_start = false;
-					break;				
-#endif 
 				default:
 					Console.WriteLine ("Unknown argument '{0}'", arg);
 					Environment.Exit (1);
@@ -601,9 +561,6 @@ namespace Beagle.Daemon {
 
 		private static void OnShutdown ()
 		{
-#if ENABLE_WEBSERVICES
-			WebServiceBackEnd.Stop();
-#endif
 			// Stop our Inotify threads
 			Inotify.Stop ();
 

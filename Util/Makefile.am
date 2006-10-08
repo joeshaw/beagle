@@ -18,10 +18,6 @@ if OS_FREEBSD
 CSFLAGS += -define:OS_FREEBSD
 endif
 
-if ENABLE_WEBSERVICES
-CSFLAGS += -define:ENABLE_WEBSERVICES
-endif
-
 EXTSTR = ExternalStringsHack.cs
 EXTSTR_IN = $(srcdir)/$(EXTSTR).in
 $(EXTSTR): $(EXTSTR_IN)

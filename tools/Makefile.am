@@ -102,10 +102,6 @@ $(CONFIG_WRAPPER): $(WRAPPER_IN)
 	$(WRAPPER_SED) -e "s|\@target\@|$(CONFIG_TARGET)|g" < $(srcdir)/$(WRAPPER_IN) > $@
 	chmod +x $(CONFIG_WRAPPER)
 
-if ENABLE_WEBSERVICES
-SETTINGS_CSFLAGS = -define:ENABLE_WEBSERVICES
-endif
-
 SETTINGS_TARGET    = Settings.exe
 SETTINGS_WRAPPER   = beagle-settings
 SETTINGS_CSFILES   = $(srcdir)/Settings.cs

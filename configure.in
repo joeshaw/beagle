@@ -550,18 +550,6 @@ AC_SUBST(KDE_PREFIX)
 
 dnl ----------------------------------------------
 
-dnl Beagle webservices
-
-dnl AC_ARG_ENABLE([webservices],
-dnl        AC_HELP_STRING([--enable-webservices], [Enable WebServices (default disabled)]),
-dnl        enable_webservices=$enableval,
-dnl        enable_webservices=no)
-
-enable_webservices=no
-AM_CONDITIONAL(ENABLE_WEBSERVICES, test "x$enable_webservices" = "xyes")
-
-dnl ----------------------------------------------
-
 dnl Prefixes for helper scripts
 GAC_PREFIX="$EVO_SHARP_PREFIX:$GSF_SHARP_PREFIX:$GMIME_SHARP_PREFIX"
 dnl Remove duplicate prefixes
@@ -729,7 +717,6 @@ echo "
 	Local SqliteClient?	  ${use_local_sqlite}
 	Sqlite version:		  ${SQLITE_MAJ_VER}.x
 
-	Enable WebServices	  no (WebServices are deprecated)
 	Enable libbeagle	  ${enable_libbeagle}
 	Enable python bindings	  ${have_python}
 	Monitor screensaver       ${have_xss}

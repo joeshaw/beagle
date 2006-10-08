@@ -25,10 +25,6 @@ CSFILES = 					\
 	$(srcdir)/Snippet.cs			\
 	$(srcdir)/Versioned.cs
 
-if ENABLE_WEBSERVICES
-CSFILES +=	$(srcdir)/NetworkHit.cs
-endif
-
 LOCAL_ASSEMBLIES =			\
 	../Util/Util.dll
 
@@ -54,8 +50,7 @@ uninstall-local:
 	rm -f $(DESTDIR)$(pkglibdir)/$(TARGET) $(DESTDIR)$(pkglibdir)/$(TARGET).mdb
 
 EXTRA_DIST =			\
-	$(CSFILES)		\
-	$(srcdir)/NetworkHit.cs
+	$(CSFILES)
 
 CLEANFILES =		\
 	$(TARGET)	\
