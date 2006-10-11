@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Beagle\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2006-09-11 12:35+0200\n"
-"PO-Revision-Date: 2006-09-03 10:31+0200\n"
+"POT-Creation-Date: 2006-10-11 15:47+0200\n"
+"PO-Revision-Date: 2006-10-11 18:31+0200\n"
 "Last-Translator: <Jordi Mas> jmas@softcatala.org\n"
 "Language-Team: tradgnome@softcatala.net\n"
 "MIME-Version: 1.0\n"
@@ -386,14 +386,14 @@ msgstr "Cerca"
 msgid "Search for data on your desktop"
 msgstr "Cerca dades al vostre escriptori"
 
-#: ../search/Category.cs:109
+#: ../search/Category.cs:132
 #, csharp-format
 msgid "{0} result"
 msgid_plural "{0} results"
 msgstr[0] "{0} resultat"
 msgstr[1] "{0} resultats"
 
-#: ../search/Category.cs:111
+#: ../search/Category.cs:134
 #, csharp-format
 msgid "{0}-{1} of {2}"
 msgstr "{0}-{1} de {2}"
@@ -447,7 +447,7 @@ msgid ""
 msgstr ""
 "Quan cerqueu una frase, useu les cometes. P. ex: <b>\"Hi ha dragons\"</b> "
 
-#: ../search/Pages/QuickTips.cs:19 ../search/UIManager.cs:83
+#: ../search/Pages/QuickTips.cs:19 ../search/UIManager.cs:92
 msgid "Quick Tips"
 msgstr "Consells ràpids"
 
@@ -475,19 +475,19 @@ msgid "Start search service"
 msgstr "Inicia el servei de cerca"
 
 #
-#: ../search/Search.cs:149
+#: ../search/Search.cs:151
 msgid "_Find:"
 msgstr "_Cerca:"
 
-#: ../search/Search.cs:164
+#: ../search/Search.cs:166
 msgid "Find Now"
 msgstr "Cerca ara"
 
-#: ../search/Search.cs:210
+#: ../search/Search.cs:214
 msgid "Type in search terms"
 msgstr "Introduïu els termes de la cerca"
 
-#: ../search/Search.cs:211
+#: ../search/Search.cs:215
 msgid "Start searching"
 msgstr "Inicia la cerca"
 
@@ -715,28 +715,28 @@ msgstr "Canals de notícies"
 msgid "Archives"
 msgstr "Arxius"
 
-#: ../search/Tiles/Utils.cs:77 ../search/Tiles/Utils.cs:159
+#: ../search/Tiles/Utils.cs:126 ../search/Tiles/Utils.cs:208
 #: ../Util/StringFu.cs:79
 msgid "Yesterday"
 msgstr "Ahir"
 
-#: ../search/Tiles/Utils.cs:79 ../search/Tiles/Utils.cs:161
+#: ../search/Tiles/Utils.cs:128 ../search/Tiles/Utils.cs:210
 #: ../Util/StringFu.cs:77
 msgid "Today"
 msgstr "Avui"
 
-#: ../search/Tiles/Utils.cs:81 ../search/Tiles/Utils.cs:163
+#: ../search/Tiles/Utils.cs:130 ../search/Tiles/Utils.cs:212
 msgid "Tomorrow"
 msgstr "Demà"
 
-#: ../search/Tiles/Utils.cs:179
+#: ../search/Tiles/Utils.cs:228
 #, csharp-format
 msgid "{0} week ago"
 msgid_plural "{0} weeks ago"
 msgstr[0] "Fa {0} setmana"
 msgstr[1] "Fa {0} setmanes"
 
-#: ../search/Tiles/Utils.cs:181
+#: ../search/Tiles/Utils.cs:230
 #, csharp-format
 msgid "In {0} week"
 msgid_plural "In {0} weeks"
@@ -745,7 +745,7 @@ msgstr[1] "En {0} setmanes"
 
 # csharp-format
 #. Let's say a year and a half to stop saying months
-#: ../search/Tiles/Utils.cs:183
+#: ../search/Tiles/Utils.cs:232
 #, csharp-format
 msgid "{0} month ago"
 msgid_plural "{0} months ago"
@@ -753,21 +753,21 @@ msgstr[0] "Fa {0} mes"
 msgstr[1] "Fa {0} mesos"
 
 # csharp-format
-#: ../search/Tiles/Utils.cs:185
+#: ../search/Tiles/Utils.cs:234
 #, csharp-format
 msgid "In {0} month"
 msgid_plural "In {0} months"
 msgstr[0] "En {0} mes"
 msgstr[1] "En {0} mesos"
 
-#: ../search/Tiles/Utils.cs:187
+#: ../search/Tiles/Utils.cs:236
 #, csharp-format
 msgid "{0} year ago"
 msgid_plural "{0} years ago"
 msgstr[0] "Fa {0} any"
 msgstr[1] "Fa {0} anys"
 
-#: ../search/Tiles/Utils.cs:189
+#: ../search/Tiles/Utils.cs:238
 #, csharp-format
 msgid "In {0} year"
 msgid_plural "In {0} years"
@@ -982,146 +982,199 @@ msgstr ""
 "persones\n"
 "gent"
 
-#: ../search/UIManager.cs:44
+#: ../search/UIManager.cs:50
 msgid "Close Desktop Search"
 msgstr "Tanca la cerca a l'escriptori"
 
-#: ../search/UIManager.cs:49 ../search/UIManager.cs:71
+#: ../search/UIManager.cs:55 ../search/UIManager.cs:80
 msgid "Exit Desktop Search"
 msgstr "Surt de la cerca a l'escriptori"
 
-#: ../search/UIManager.cs:56
+#: ../search/UIManager.cs:62
 msgid "_Search"
 msgstr "_Cerca"
 
-#: ../search/UIManager.cs:59
+#: ../search/UIManager.cs:65
+msgid "Show _Categories"
+msgstr "Mostra les _categories"
+
+#: ../search/UIManager.cs:68
 msgid "_Actions"
 msgstr "_Accions"
 
-#: ../search/UIManager.cs:62
-msgid "Sor_t"
-msgstr "_Ordena"
-
-#: ../search/UIManager.cs:65
-msgid "_Help"
-msgstr "A_juda"
+#: ../search/UIManager.cs:71
+#
+msgid "_View"
+msgstr "_Visualitza"
 
 #: ../search/UIManager.cs:74
+msgid "_Help"
+msgstr "Aj_uda"
+
+#: ../search/UIManager.cs:83
 msgid "_Contents"
 msgstr "_Continguts"
 
-#: ../search/UIManager.cs:76
+#: ../search/UIManager.cs:85
 msgid "Help - Table of Contents"
 msgstr "Ajuda - Taula de continguts"
 
-#: ../search/UIManager.cs:80
+#: ../search/UIManager.cs:89
 msgid "About Desktop Search"
 msgstr "Quant a la cerca a l'escriptori"
 
+#: ../search/UIManager.cs:111
+msgid "_All"
+msgstr "_Tot"
+
+#: ../search/UIManager.cs:121
 #
-#: ../search/UIManager.cs:102
-msgid "_Everywhere"
-msgstr "_A tots els llocs"
+msgid "_None"
+msgstr "_Cap"
 
 #
+#: ../search/UIManager.cs:135
 #
-#: ../search/UIManager.cs:104
-msgid "Search everywhere"
-msgstr "Cerca a tots els llocs"
+msgid "A_pplications"
+msgstr "Ap_licacions"
 
 #
-#: ../search/UIManager.cs:107
-msgid "_Applications"
-msgstr "A_plicacions"
-
-#
-#: ../search/UIManager.cs:109
+#: ../search/UIManager.cs:137
 msgid "Search applications"
 msgstr "Cerca aplicacions"
 
-#: ../search/UIManager.cs:112
+#: ../search/UIManager.cs:141
 msgid "_Contacts"
 msgstr "_Contactes"
 
 #
-#: ../search/UIManager.cs:114
+#: ../search/UIManager.cs:143
 msgid "Search contacts"
 msgstr "Cerca contactes"
 
-#: ../search/UIManager.cs:117
+#: ../search/UIManager.cs:147
 msgid "Ca_lendar events"
 msgstr "Esdeveniment_s del calendari"
 
-#: ../search/UIManager.cs:119
+#: ../search/UIManager.cs:149
 msgid "Search calendar events"
 msgstr "Cerca esdeveniments al calendari"
 
-#: ../search/UIManager.cs:122
+#: ../search/UIManager.cs:153
 msgid "_Documents"
 msgstr "_Documents"
 
-#: ../search/UIManager.cs:124
+#: ../search/UIManager.cs:155
 msgid "Search documents"
 msgstr "Cerca documents"
 
 # # Conversació és correcte, però en català "conversa" és més estès (josep)
-#: ../search/UIManager.cs:127
+#: ../search/UIManager.cs:159
 msgid "Conve_rsations"
 msgstr "Conve_rses"
 
-#: ../search/UIManager.cs:129
+#: ../search/UIManager.cs:161
 msgid "Search E-Mail and Instant Messaging logs"
 msgstr "Cerca al correu electrònic i al registre de la missatgeria instantània"
 
-#: ../search/UIManager.cs:132
+#: ../search/UIManager.cs:165
 msgid "_Images"
 msgstr "_Imatges"
 
-#: ../search/UIManager.cs:134
+#: ../search/UIManager.cs:167
 msgid "Search images"
 msgstr "Cerca imatges"
 
-#: ../search/UIManager.cs:137
+#: ../search/UIManager.cs:171
 msgid "_Media"
 msgstr "_Medis"
 
-#: ../search/UIManager.cs:139
+#: ../search/UIManager.cs:173
 msgid "Search sound and video files"
 msgstr "Cerca als fitxers de so i vídeo"
 
-#: ../search/UIManager.cs:146
-msgid "Date _Modified"
-msgstr "_Darrera modificació"
+#: ../search/UIManager.cs:177
+#
+msgid "_Folders"
+msgstr "_Carpetes"
 
-#: ../search/UIManager.cs:147
+#
+#: ../search/UIManager.cs:179
+#
+msgid "Search for folder names"
+msgstr "Cerca per noms de carpetes"
+
+#: ../search/UIManager.cs:183
+#
+msgid "_Websites"
+msgstr "_Llocs web"
+
+#: ../search/UIManager.cs:185
+msgid "Search website history"
+msgstr "Cerca a l'historial de llocs webs"
+
+#: ../search/UIManager.cs:189
+#
+msgid "_News Feeds"
+msgstr "_Canals de notícies"
+
+#
+#: ../search/UIManager.cs:191
+#
+msgid "Search news feeds"
+msgstr "Cerca als canals de notícies"
+
+#: ../search/UIManager.cs:195
+#
+msgid "A_rchives"
+msgstr "A_rxius"
+
+#: ../search/UIManager.cs:197
+#
+msgid "Search files in Archives"
+msgstr "Cerca fitxers en arxius"
+
+#: ../search/UIManager.cs:205
+#
+msgid "Sort by Date _Modified"
+msgstr "_Ordena per data de modificació"
+
+#: ../search/UIManager.cs:206
 msgid "Sort the most-recently-modified matches first"
 msgstr "Ordena primer els resultats modificats recentment"
 
-#: ../search/UIManager.cs:150
-msgid "_Name"
-msgstr "_Nom"
+#: ../search/UIManager.cs:209
+#
+msgid "Sort by _Name"
+msgstr "Orde_na per nom"
 
-#: ../search/UIManager.cs:151
+#: ../search/UIManager.cs:210
 msgid "Sort matches by name"
 msgstr "Ordena els resultats per nom"
 
-#: ../search/UIManager.cs:154
-msgid "_Relevance"
-msgstr "_Rellevància"
+#: ../search/UIManager.cs:213
+#
+msgid "Sort by _Relevance"
+msgstr "Ordena per _rellevància"
 
-#: ../search/UIManager.cs:155
+#: ../search/UIManager.cs:214
 msgid "Sort the best matches first"
 msgstr "Ordena els millors resultats primer"
 
-#: ../search/UIManager.cs:268
+#: ../search/UIManager.cs:221
+#
+msgid "Show Details"
+msgstr "Mostra els detalls"
+
+#: ../search/UIManager.cs:354
 msgid "Couldn't launch web browser"
 msgstr "No s'ha pogut iniciar el navegador web"
 
-#: ../tools/Settings.cs:226
+#: ../tools/Settings.cs:227
 msgid "Reload configuration"
 msgstr "Actualitza la configuració"
 
-#: ../tools/Settings.cs:227
+#: ../tools/Settings.cs:228
 msgid ""
 "The configuration file has been modified by another application. Do you wish "
 "to discard the currently displayed values and reload configuration from disk?"
@@ -1129,16 +1182,16 @@ msgstr ""
 "El fitxer de configuració ha estat modificat per una altra aplicació. Voleu "
 "descartar els valors actuals i llegir la configuració del disc?"
 
-#: ../tools/Settings.cs:265
+#: ../tools/Settings.cs:266
 msgid "Select Path"
 msgstr "Seleccioneu un camí"
 
-#: ../tools/Settings.cs:284
+#: ../tools/Settings.cs:285
 msgid "The selected path is already selected for indexing and wasn't added."
 msgstr ""
 "El camí seleccionat ja està seleccionat per a ser indexat i no s'ha afegit."
 
-#: ../tools/Settings.cs:287
+#: ../tools/Settings.cs:288
 msgid ""
 "The selected path wasn't added. The list contains items that supercedes it "
 "and the data is already being indexed."
@@ -1146,15 +1199,15 @@ msgstr ""
 "El camí seleccionat no s'ha afegit. La llista conté elements que excedeixen "
 "la seva capacitat i les dades ja s'estan indexant."
 
-#: ../tools/Settings.cs:298 ../tools/Settings.cs:490
+#: ../tools/Settings.cs:299 ../tools/Settings.cs:491
 msgid "Path not added"
 msgstr "El camí no s'ha afegit"
 
-#: ../tools/Settings.cs:307
+#: ../tools/Settings.cs:308
 msgid "Remove obsolete paths"
 msgstr "Elimina els camins obsolets"
 
-#: ../tools/Settings.cs:308
+#: ../tools/Settings.cs:309
 msgid ""
 "Adding this path will obsolete some of the existing include paths. This will "
 "result in the removal of the old obsolete paths. Do you still wish to add it?"
@@ -1163,11 +1216,11 @@ msgstr ""
 "obsolets, i això causarà l'eliminació dels antics camins obsolets. Esteu "
 "segur que el voleu afegir?"
 
-#: ../tools/Settings.cs:334
+#: ../tools/Settings.cs:335
 msgid "Remove path"
 msgstr "Elimina el camí"
 
-#: ../tools/Settings.cs:335
+#: ../tools/Settings.cs:336
 msgid ""
 "Are you sure you wish to remove this path from the list of directories to be "
 "included for indexing?"
@@ -1175,11 +1228,11 @@ msgstr ""
 "Esteu segur que voleu eliminar aquest camí de la llista de directoris que "
 "s'inclouran a la indexació?"
 
-#: ../tools/Settings.cs:364
+#: ../tools/Settings.cs:365
 msgid "Remove item"
 msgstr "Elimina l'element"
 
-#: ../tools/Settings.cs:365
+#: ../tools/Settings.cs:366
 msgid ""
 "Are you sure you wish to remove this item from the list of data to be "
 "excluded from indexing?"
@@ -1187,87 +1240,87 @@ msgstr ""
 "Esteu segur que voleu eliminar aquest element de la llista de dades que "
 "s'exclouran de la indexació?"
 
-#: ../tools/Settings.cs:408
+#: ../tools/Settings.cs:409
 msgid "Invalid host entry"
 msgstr "Entrada d'ordinador no vàlida"
 
-#: ../tools/Settings.cs:415
+#: ../tools/Settings.cs:416
 msgid "Remote host already present in the list."
 msgstr "L'ordinador remot ja és a la llista."
 
-#: ../tools/Settings.cs:424
+#: ../tools/Settings.cs:425
 msgid "Netbeagle Node not added"
 msgstr "El node Netbeagle no s'ha afegit"
 
-#: ../tools/Settings.cs:440
+#: ../tools/Settings.cs:441
 msgid "Remove host"
 msgstr "Elimina l'ordinador"
 
-#: ../tools/Settings.cs:441
+#: ../tools/Settings.cs:442
 msgid "Are you sure you wish to remove this host from the list?"
 msgstr "Esteu segur que voleu eliminar aquest ordinador de la llista?"
 
-#: ../tools/Settings.cs:462
+#: ../tools/Settings.cs:463
 msgid "Select path"
 msgstr "Seleccioneu el camí"
 
-#: ../tools/Settings.cs:481
+#: ../tools/Settings.cs:482
 msgid "The selected path is already configured for external access."
 msgstr "El camí seleccionat ja està configurat per a accés extern."
 
-#: ../tools/Settings.cs:505
+#: ../tools/Settings.cs:506
 msgid "Remove public path"
 msgstr "Elimina el camí públic"
 
-#: ../tools/Settings.cs:506
+#: ../tools/Settings.cs:507
 msgid ""
 "Are you sure you wish to remove this entry from the list of public paths?"
 msgstr ""
 "Esteu segur que voleu eliminar aquesta entrada de la llista de camins "
 "públics?"
 
-#: ../tools/Settings.cs:551 ../tools/Settings.cs:640 ../tools/Settings.cs:718
-#: ../tools/Settings.cs:794 ../tools/Settings.cs:1133
+#: ../tools/Settings.cs:552 ../tools/Settings.cs:641 ../tools/Settings.cs:719
+#: ../tools/Settings.cs:795 ../tools/Settings.cs:1134
 msgid "Name"
 msgstr "Nom"
 
-#: ../tools/Settings.cs:634
+#: ../tools/Settings.cs:635
 msgid "Type"
 msgstr "Tipus"
 
-#: ../tools/Settings.cs:687
+#: ../tools/Settings.cs:688
 msgid "Path:"
 msgstr "Camí:"
 
-#: ../tools/Settings.cs:690
+#: ../tools/Settings.cs:691
 msgid "Pattern:"
 msgstr "Patró:"
 
-#: ../tools/Settings.cs:693
+#: ../tools/Settings.cs:694
 msgid "Mail folder:"
 msgstr "Carpeta de correu:"
 
-#: ../tools/Settings.cs:1041
+#: ../tools/Settings.cs:1042
 msgid "Select Folder"
 msgstr "Seleccioneu una carpeta"
 
-#: ../tools/Settings.cs:1067 ../tools/settings.glade.h:25
+#: ../tools/Settings.cs:1068 ../tools/settings.glade.h:25
 msgid "P_ath:"
 msgstr "_Camí:"
 
-#: ../tools/Settings.cs:1072
+#: ../tools/Settings.cs:1073
 msgid "M_ail folder:"
 msgstr "Ca_rpeta de correu:"
 
-#: ../tools/Settings.cs:1077
+#: ../tools/Settings.cs:1078
 msgid "P_attern:"
 msgstr "P_atró:"
 
-#: ../tools/Settings.cs:1101
+#: ../tools/Settings.cs:1102
 msgid "Error adding path"
 msgstr "S'ha produït un error en afegir el camí"
 
-#: ../tools/Settings.cs:1102
+#: ../tools/Settings.cs:1103
 msgid ""
 "The specified path could not be found and therefore it could not be added to "
 "the list of resources excluded for indexing."
@@ -1275,7 +1328,7 @@ msgstr ""
 "El camí indicat no s'ha pogut trobar i per tant no s'ha pogut afegir a la "
 "llista de recursos exclosos de la indexació."
 
-#: ../tools/Settings.cs:1132
+#: ../tools/Settings.cs:1133
 msgid "Show"
 msgstr "Mostra"
 
@@ -1561,6 +1614,22 @@ msgstr "{0:0.0} kB"
 msgid "{0:0.0} MB"
 msgstr "{0:0.0} MB"
 
+#~ msgid "Sor_t"
+#~ msgstr "_Ordena"
+
+#
+#~ msgid "_Everywhere"
+#~ msgstr "_A tots els llocs"
+
+#
+#
+#~ msgid "Search everywhere"
+#~ msgstr "Cerca a tots els llocs"
+
+#
+#~ msgid "_Applications"
+#~ msgstr "A_plicacions"
+
 #~ msgid "Image"
 #~ msgstr "Imatge"
 
@@ -1711,7 +1780,7 @@ msgstr "{0:0.0} MB"
 
 #~ msgid "Email subject:"
 #~ msgstr "Assumpte del correu"
-
+	
 #~ msgid "Track"
 #~ msgstr "Pista"
 
