@@ -325,6 +325,10 @@ KOPETE_QUERYABLE_CSFILES =				\
 	$(kopetequeryable)/KopeteQueryable.cs 	 	\
 	$(kopetequeryable)/KopeteCrawler.cs
 
+knotesqueryable = $(srcdir)/KNotesQueryable
+KNOTES_QUERYABLE_CSFILES =				\
+	$(knotesqueryable)/KNotesQueryable.cs
+
 indexingservicequeryable = $(srcdir)/IndexingServiceQueryable
 INDEXING_SERVICE_QUERYABLE_CSFILES =			\
 	$(indexingservicequeryable)/IndexingServiceQueryable.cs
@@ -339,7 +343,8 @@ DAEMON_DLL_CSFILES = 						\
 	$(BLAM_QUERYABLE_CSFILES)				\
 	$(LIFEREA_QUERYABLE_CSFILES)				\
 	$(AKREGATOR_QUERYABLE_CSFILES)				\
-	$(KONQHISTORY_QUERYABLE_CSFILES)				\
+	$(KONQHISTORY_QUERYABLE_CSFILES)			\
+	$(KNOTES_QUERYABLE_CSFILES)				\
 	$(KOPETE_QUERYABLE_CSFILES)				\
 	$(srcdir)/FileAttributes.cs				\
 	$(srcdir)/FileAttributesStore.cs			\

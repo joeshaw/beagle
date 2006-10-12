@@ -66,7 +66,7 @@ namespace Beagle.Util {
 		private const string tags_sql_string = @"SELECT images.caption, tags.name, tags.pid
 FROM albums, images, imagetags, tags 
 WHERE images.id=imagetags.imageid AND imagetags.tagid=tags.id AND 
-albums.url LIKE '{0}' and images.name LIKE '{1}'";
+albums.url=@AlbumsUrl AND images.name=@ImagesName";
 		private const string tags_parenttags_sql_string = @"SELECT t1.name, t2.name 
 FROM tags t1, tags t2 
 WHERE t1.pid=t2.id";
@@ -170,8 +170,9 @@ WHERE t1.pid=t2.id";
 
 			SqliteCommand command = new SqliteCommand ();
 			command.Connection = Connection;
-			command.CommandText = String.Format (tags_sql_string, relative_path, filename);
-			//Console.WriteLine ("SQL string: " + command.CommandText);
+			command.CommandText = tags_sql_string;
+			command.Parameters.Add ("@AlbumsUrl", relative_path);
+			command.Parameters.Add ("@ImagesName", filename);
 			
 			SqliteDataReader reader = command.ExecuteReader ();
 			DigikamData imagedata = null;

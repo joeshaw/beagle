@@ -51,18 +51,43 @@ namespace Beagle.Filters {
 		private bool building_text;
 		private StringBuilder builder;
 
-		public FilterHtml ()
+		// delegate types
+		public delegate int AppendTextCallback (string s);
+		public delegate void AddPropertyCallback (Beagle.Property p);
+		public delegate void AppendSpaceCallback ();
+		public delegate void HotCallback ();
+
+		// delegates
+		private new AppendTextCallback AppendText;
+		private new AddPropertyCallback AddProperty;
+		private new AppendSpaceCallback AppendWhiteSpace;
+		private new AppendSpaceCallback AppendStructuralBreak;
+		private new HotCallback HotUp;
+		private new HotCallback HotDown;
+
+		public FilterHtml (bool register_filter)
 		{
-			// 1: Add meta keyword fields as meta:key
-			SetVersion (1);
-			
-			RegisterSupportedTypes ();
-			SnippetMode = true;
+			if (register_filter) {
+				// 1: Add meta keyword fields as meta:key
+				SetVersion (1);
+				RegisterSupportedTypes ();
+				SnippetMode = true;
+
+				AppendText = new AppendTextCallback (base.AppendText);
+				AddProperty = new AddPropertyCallback (base.AddProperty);
+				AppendWhiteSpace = new AppendSpaceCallback (base.AppendWhiteSpace);
+				AppendStructuralBreak = new AppendSpaceCallback (base.AppendStructuralBreak);
+				HotUp = new HotCallback (base.HotUp);
+				HotDown = new HotCallback (base.HotDown);
+			}
+
 			hot_stack = new Stack ();
 			ignore_stack = new Stack ();
 			building_text = false;
 			builder = new StringBuilder ();
 		}
+
+		public FilterHtml () : this (true) {}
 
 		// Safeguard against spurious stack pop ups...
 		// caused by mismatched tags in bad html files
@@ -251,13 +276,38 @@ namespace Beagle.Filters {
 			} catch (NotSupportedException e) {
 				doc.Load (Stream, Encoding.ASCII);
 			} catch (Exception e) {
-				Console.WriteLine (e.Message);
-				Console.WriteLine (e.StackTrace);
+				Log.Debug (e, "Exception while filtering HTML file");
 			}
 
 			Finished ();
 		}
 
+		public void ExtractText (string html_string,
+					 AppendTextCallback append_text_cb,
+					 AddPropertyCallback add_prop_cb,
+					 AppendSpaceCallback append_white_cb,
+					 AppendSpaceCallback append_break_cb,
+					 HotCallback hot_up_cb,
+					 HotCallback hot_down_cb)
+		{
+			AppendText = append_text_cb;
+			AddProperty = add_prop_cb;
+			AppendWhiteSpace = append_white_cb;
+			AppendStructuralBreak = append_break_cb;
+			HotUp = hot_up_cb;
+			HotDown = hot_down_cb;
+
+			HtmlDocument doc = new HtmlDocument ();
+			doc.ReportNode += HandleNodeEvent;
+			doc.StreamMode = true;
+	
+			try {
+				doc.LoadHtml (html_string);
+			} catch (Exception e) {
+				Log.Debug (e, "Exception while filtering html string [{0}]", html_string);
+			}
+
+		}
 
 		virtual protected void RegisterSupportedTypes () 
 		{
