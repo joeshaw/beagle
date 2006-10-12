@@ -49,6 +49,8 @@ class InfoTool {
 			"  --daemon-version\t\tPrint the version of the running daemon.\n" +
 			"  --status\t\t\tDisplay status of the running daemon.\n" +
 			"  --index-info\t\t\tDisplay statistics of the Beagle indexes.\n" +
+			"  --is-indexing\t\t\tDisplay whether the indexer is currently active.\n" +
+			"  --all-info\t\t\tAll of the above information.\n" +
 			"  --list-backends\t\tList the currently available backends.\n" +
 			"  --list-filters\t\tList the currently available filters.\n" +
 			"  --list-static-indexes\t\tList the available static indexes.\n" +
@@ -81,6 +83,19 @@ class InfoTool {
 		DaemonInformationRequest request = new DaemonInformationRequest ();
 		DaemonInformationResponse response;
 
+		bool get_version = false;
+		bool get_sched_info = false;
+		bool get_index_status = false;
+		bool get_is_indexing = false;
+
+		get_version = (Array.IndexOf (args, "--daemon-version") > -1);
+		get_sched_info = (Array.IndexOf (args, "--status") > -1);
+		get_index_status = (Array.IndexOf (args, "--index-info") > -1);
+		get_is_indexing = (Array.IndexOf (args, "--is-indexing") > -1);
+
+		if (Array.IndexOf (args, "--all-info") > -1)
+			get_version = get_sched_info = get_index_status = get_is_indexing = true;
+
 		try {
 			response = (DaemonInformationResponse) request.Send ();
 		} catch (Beagle.ResponseMessageException) {
@@ -88,18 +103,18 @@ class InfoTool {
 			return 1;
 		}
 
-		if (Array.IndexOf (args, "--daemon-version") > -1)
+		if (get_version)
 			Console.WriteLine ("Daemon version: {0}", response.Version);
 
-		if (Array.IndexOf (args, "--status") > -1)
+		if (get_sched_info)
 			Console.Write (response.HumanReadableStatus);
 
-		if (Array.IndexOf (args, "--index-info") > -1) {
+		if (get_index_status) {
 			Console.WriteLine ("Index information:");
 			Console.WriteLine (response.IndexInformation);
 		}
 
-		if (Array.IndexOf (args, "--is-indexing") > -1)
+		if (get_is_indexing)
 			Console.WriteLine ("Daemon indexing: {0}", response.IsIndexing);
 
 		return 0;

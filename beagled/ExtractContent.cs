@@ -95,18 +95,14 @@ class ExtractContentTool {
 		ArrayList prop_array = new ArrayList (indexable.Properties);
 		prop_array.Sort ();
 
-		bool first;
-		first = true;
+		bool first = true;
 
+		Console.WriteLine ("Properties:");
+		Console.WriteLine ("  Timestamp = {0}", indexable.Timestamp);
 		foreach (Beagle.Property prop in prop_array) {
-			if (first) {
-				Console.WriteLine ("Properties:");
-				first = false;
-			}
 			Console.WriteLine ("  {0} = {1}", prop.Key, prop.Value);
 		}
-		if (! first)
-			Console.WriteLine ();
+		Console.WriteLine ();
 
 		if (indexable.NoContent)
 			return;

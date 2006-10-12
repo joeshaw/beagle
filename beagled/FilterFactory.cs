@@ -248,6 +248,8 @@ namespace Beagle.Daemon {
 					succesful_open = candidate_filter.Open (binary_stream);
 					
 				if (succesful_open) {
+					if (candidate_filter.Timestamp != DateTime.MinValue)
+						indexable.Timestamp = candidate_filter.Timestamp;
 					foreach (Property prop in candidate_filter.Properties)
 						indexable.AddProperty (prop);
 					indexable.SetTextReader (candidate_filter.GetTextReader ());

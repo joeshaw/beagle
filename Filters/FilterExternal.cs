@@ -95,13 +95,21 @@ namespace Beagle.Filters {
 
 			foreach (ExternalFilterInfo efi in this.filters) {
 				if (efi.MimeTypes != null) {
-					foreach (string s in efi.MimeTypes)
-						AddSupportedFlavor (FilterFlavor.NewFromMimeType (s));
+					foreach (string s in efi.MimeTypes) {
+						FilterFlavor flavor = FilterFlavor.NewFromMimeType (s);
+						// External filters have higher priority than default ones
+						// This allows users to override default filters by something they want
+						flavor.Priority = 1;
+						AddSupportedFlavor (flavor);
+					}
 				}
 
 				if (efi.Extensions != null) {
-					foreach (string s in efi.Extensions)
-						AddSupportedFlavor (FilterFlavor.NewFromExtension (s));
+					foreach (string s in efi.Extensions) {
+						FilterFlavor flavor = FilterFlavor.NewFromExtension (s);
+						flavor.Priority = 1;
+						AddSupportedFlavor (flavor);
+					}
 				}
 			}
 		}
