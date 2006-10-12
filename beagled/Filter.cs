@@ -108,6 +108,7 @@ namespace Beagle.Daemon {
 		private string this_mime_type = null;
 		private string this_extension = null;
 		private ArrayList indexable_properties = null;
+		private DateTime timestamp = DateTime.MinValue;
 
 		public string MimeType {
 			get { return this_mime_type; }
@@ -119,11 +120,18 @@ namespace Beagle.Daemon {
 			set { this_extension = value; }
 		}
 
-		// allow the filter to access the properties
+		// Allow the filter to access the properties
 		// set by indexable
 		public ArrayList IndexableProperties {
 			get { return indexable_properties; }
 			set { indexable_properties = value; }
+		}
+
+		// Allow the filter to access the timestamp,
+		// sometime filters know better
+		public DateTime Timestamp {
+			get { return timestamp; }
+			set { timestamp = value; }
 		}
 		
 		//////////////////////////
@@ -522,10 +530,11 @@ namespace Beagle.Daemon {
 				else if (HasError)
 					return false;
 				
-				// Close and reset our TextReader
+				// Reset our TextReader
+				// Dont close the streamreader as
+				// that will also close the stream
 				if (currentReader != null) {
-					currentReader.Close ();
-					currentReader = null;
+					currentReader.DiscardBufferedData ();
 				}
 				
 				// Seek back to the beginning of our stream
