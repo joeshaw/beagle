@@ -59,6 +59,8 @@ namespace Beagle.Filters {
 			vCard_property_mapping ["DESCRIPTION"] = new KCalProperty (KCalType.Special);
 			vCard_property_mapping ["CLASS"] = new KCalProperty ("fixme:class", false, true, KCalType.Text);
 			vCard_property_mapping ["LAST-MODIFIED"] = new KCalProperty (KCalType.Special);
+			// Open KNotes notes by
+			// dcop knotes KNotesIface text <UID>
 			vCard_property_mapping ["UID"] = new KCalProperty ("fixme:uid", false, true, KCalType.Text);
 			vCard_property_mapping ["X-KDE-KNotes-RichText"] = new KCalProperty (KCalType.Special);
 		}
