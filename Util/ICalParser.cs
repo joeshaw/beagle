@@ -33,6 +33,9 @@ namespace Beagle.Util
 {
 	public class ICalParser : IEnumerator
 	{
+		public static string KabcMimeType = "text/x-kabc-directory";
+		public static string KnotesMimeType = "text/x-knotes-calendar";
+
 		private ParserState state = ParserState.ParsingProperty;
 		private StringBuilder buffer = new StringBuilder ();
 		
@@ -73,7 +76,7 @@ namespace Beagle.Util
 				current = new Token (TokenType.Property, data.Trim ());
 				break;
 			case ParserState.ParsingPropertyValue:
-				data = Read (new char[] { '\n', ',' }, out stop);
+				data = Read (new char[] { '\n'}, out stop);
 				
 				if (data == null)
 					return false;
