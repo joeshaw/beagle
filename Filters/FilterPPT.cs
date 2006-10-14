@@ -408,7 +408,9 @@ namespace Beagle.Filters {
 				return 0;
 
 			RecordType.TypeCode opcode = (RecordType.TypeCode) GetInt16(data, 2);
-			int length = GetInt32(data, 4);
+			int length = (int)GetInt32(data, 4);
+			// Protect against garbage length
+			length = (length > 0 ? length : 0);
 			RecordType type = RecordType.Find (opcode);
 
 			// Process the container tree

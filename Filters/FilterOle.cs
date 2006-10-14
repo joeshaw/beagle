@@ -227,11 +227,11 @@ namespace Beagle.Filters {
 
 		// FIXME: These are utility functions and can be useful 
 		// outside this filter as well.
-		public static int GetInt32 (byte [] data, int offset) {
-			return data[offset] + (data[offset + 1] << 8) + (data[offset + 2] << 16) + (data[offset + 3] << 24);
+		public static uint GetInt32 (byte [] data, int offset) {
+			return (uint)(data[offset] + (data[offset + 1] << 8) + (data[offset + 2] << 16) + (data[offset + 3] << 24));
 		}
-		public static int GetInt16 (byte [] data, int offset) {
-			return data[offset] + (data[offset + 1] << 8);
+		public static ushort GetInt16 (byte [] data, int offset) {
+			return (ushort)(data[offset] + (data[offset + 1] << 8));
 		}
 
 	}
