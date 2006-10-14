@@ -297,7 +297,11 @@ GAIM_LOG_QUERYABLE_CSFILES =				\
 tomboyqueryable = $(srcdir)/TomboyQueryable
 TOMBOY_QUERYABLE_CSFILES =				\
 	$(tomboyqueryable)/TomboyQueryable.cs
-
+	
+labyrinthqueryable = $(srcdir)/LabyrinthQueryable
+LABYRINTH_QUERYABLE_CSFILES =				\
+	$(labyrinthqueryable)/LabyrinthQueryable.cs
+	
 kmailqueryable = $(srcdir)/KMailQueryable
 KMAIL_QUERYABLE_CSFILES =				\
 	$(kmailqueryable)/KMailQueryable.cs		\
@@ -340,6 +344,7 @@ DAEMON_DLL_CSFILES = 						\
 	$(GAIM_LOG_QUERYABLE_CSFILES)				\
 	$(INDEXING_SERVICE_QUERYABLE_CSFILES)			\
 	$(TOMBOY_QUERYABLE_CSFILES)				\
+	$(LABYRINTH_QUERYABLE_CSFILES)				\
 	$(BLAM_QUERYABLE_CSFILES)				\
 	$(LIFEREA_QUERYABLE_CSFILES)				\
 	$(AKREGATOR_QUERYABLE_CSFILES)				\

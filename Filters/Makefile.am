@@ -71,7 +71,8 @@ CSFILES = 				\
 	$(srcdir)/FilterBoo.cs		\
 	$(srcdir)/FilterSvg.cs		\
 	$(srcdir)/FilterKCal.cs		\
-	$(srcdir)/FilterKNotes.cs
+	$(srcdir)/FilterKNotes.cs	\
+	$(srcdir)/FilterLabyrinth.cs
 
 if ENABLE_GSF_SHARP
 CSFILES += 				\
