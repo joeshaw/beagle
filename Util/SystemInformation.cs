@@ -260,6 +260,18 @@ namespace Beagle.Util {
 			}
 		}
 
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
+		public extern static int GetObjectPointerIcall (object o);
+
+		public static long GetObjectPointer (object o)
+		{
+			try {
+				return GetObjectPointerIcall (o);
+			} catch (MissingMethodException) {
+				return -1;
+			}
+		}
+
 		///////////////////////////////////////////////////////////////
 
 		private static int disk_stats_read_reqs;
