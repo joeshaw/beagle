@@ -30,6 +30,7 @@ using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Reflection;
+using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -234,6 +235,29 @@ namespace Beagle.Util {
 
 		public static int VmRss {
 			get { return get_vmrss (); }
+		}
+
+		///////////////////////////////////////////////////////////////
+
+		// Internal calls have to be installed before mono accesses the
+		// class that uses them.  That's why we have this retarded extra
+		// class and initializer function.  Paolo says this is a *HUGE*
+		// unsupported hack and not to be surprised if it doesn't work.
+		public class InternalCallInitializer {
+			[DllImport ("libbeagleglue", EntryPoint="mono_glue_install_icall")]
+			public extern static void Init ();
+		}
+
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
+		public extern static int GetObjectSizeIcall (object o);
+
+		public static int GetObjectSize (object o)
+		{
+			try {
+				return GetObjectSizeIcall (o);
+			} catch (MissingMethodException) {
+				return -1;
+			}
 		}
 
 		///////////////////////////////////////////////////////////////

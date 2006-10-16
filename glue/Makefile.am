@@ -1,4 +1,4 @@
-INCLUDES =
+INCLUDES = $(MONO_CFLAGS)
 
 if ENABLE_GUI
 INCLUDES += 				\
@@ -23,12 +23,15 @@ IOPRIO_GLUE_SOURCES =	\
 	ioprio-glue.c
 
 SYSINFO_GLUE_SOURCES =		\
+	mono-glue.c		\
 	screensaver-glue.c	\
 	thread-glue.c		\
 	vmsize-glue.c
 
+SYSINFO_GLUE_LIBADD = $(MONO_LIBS)
+
 if ENABLE_LIBXSS
-SYSINFO_GLUE_LIBADD = $(SYSTEMINFO_GLUE_X_LIBS)
+SYSINFO_GLUE_LIBADD += $(SYSTEMINFO_GLUE_X_LIBS)
 endif
 
 KEY_GLUE_SOURCES =	 	\

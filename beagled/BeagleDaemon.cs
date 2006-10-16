@@ -222,6 +222,7 @@ namespace Beagle.Daemon {
 
 		public static void DoMain (string[] args)
 		{
+			SystemInformation.InternalCallInitializer.Init ();
 			SystemInformation.SetProcessName ("beagled");
 
 			// Process the command-line arguments
