@@ -39,9 +39,14 @@ namespace Search.Tiles {
 			// This doesn't work very well if you have multiple
 			// terms that match.  Tomboy doesn't seem to have a way
 			// to specify more than one thing to highlight.
-			p.Arguments = new string [] { "tomboy",
+			if (Hit.GetFirstProperty ("fixme:application") == "tomboy"){
+				p.Arguments = new string [] { "tomboy",
 						      "--open-note", Hit.EscapedUri,
 						      "--highlight-search", Query.QuotedText };
+			} else if (Hit.GetFirstProperty ("fixme:application") == "labyrinth"){
+				p.Arguments = new string [] { "labyrinth",
+						      "-m", Hit.FileInfo.Name };
+			}
 
 			try {
 				p.Start ();
