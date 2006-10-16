@@ -261,6 +261,12 @@ HACKING file.
                   with function arguments when it may be easier to read or
                   more aesthetic to do so.
 
+* Best practices
+
+	* Use String.Empty instead of "" for any comparisons.  This is
+	  because using "" will cause a new string to be allocated,
+	  whereas String.Empty is an interned reference.
+
 If you are using Emacs, you might want to put something like this
 in your .emacs file:
 
