@@ -60,6 +60,7 @@ CSFILES = 				\
 	$(srcdir)/FilterShellscript.cs	\
 	$(srcdir)/FilterRuby.cs		\
 	$(srcdir)/FilterMPlayerVideo.cs	\
+	$(srcdir)/FilterTotem.cs	\
 	$(srcdir)/FilterBmp.cs		\
 	$(srcdir)/FilterExternal.cs	\
 	$(srcdir)/FilterEbuild.cs	\

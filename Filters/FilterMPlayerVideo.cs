@@ -43,37 +43,45 @@ namespace Beagle.Filters {
 		private int length_seconds = -1;
 		private int audio_channels = 0;
 
+		private static string[] mime_types = {
+			"application/x-matroska",
+			"video/dl",
+			"video/dv",
+			"video/fli",
+			"video/gl",
+			"video/mpeg",
+			"video/mp4",
+			"video/quicktime",
+			"video/mp4v-es",
+			"video/parityfec",
+			"video/pointer",
+			"video/vnd.fvt",
+			"video/vnd.motorola.video",
+			"video/vnd.motorola.videop",
+			"video/vnd.mpegurl",
+			"video/vnd.mts",
+			"video/vnd.nokia.interleaved-multimedia",
+			"video/vnd.vivo",
+			"video/x-la-asf",
+			"video/x-mng",
+			"video/x-ms-asf",
+			"video/x-ms-wm",
+			"video/x-ms-wmv",
+			"video/x-ms-vmx",
+			"video/x-msvideo",
+			"video/x-ogm+ogg",
+			"video/x-sgi-movie"
+		};
+
 		public FilterMPlayerVideo ()
 		{
-			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("application/x-matroska"));
-			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("video/dl"));
-			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("video/dv"));
-			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("video/fli"));
-			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("video/gl"));
-			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("video/mpeg"));
-			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("video/mp4"));
-			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("video/quicktime"));
-			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("video/mp4v-es"));
-			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("video/parityfec"));
-			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("video/pointer"));
-			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("video/vnd.fvt"));
-			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("video/vnd.motorola.video"));
-			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("video/vnd.motorola.videop"));
-			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("video/vnd.mpegurl"));
-			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("video/vnd.mts"));
-			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("video/vnd.nokia.interleaved-multimedia"));
-			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("video/vnd.vivo"));
-			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("video/x-la-asf"));
-			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("video/x-mng"));
-			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("video/x-ms-asf"));
-			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("video/x-ms-wm"));
-			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("video/x-ms-wmv"));
-			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("video/x-ms-wmx"));
-			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("video/x-ms-wvx"));
-			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("video/x-msvideo"));
-			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("video/x-ogm+ogg"));
-			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("video/x-sgi-movie"));
-			
+			foreach (string s in mime_types) {
+				FilterFlavor flavor = FilterFlavor.NewFromMimeType (s);
+				flavor.Priority = -1; // Prefer Totem over this one
+
+				AddSupportedFlavor (flavor);
+			}
+
 			PreLoad = false;
 		}
 		
