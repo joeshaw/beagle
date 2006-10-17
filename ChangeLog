@@ -1,3 +1,12 @@
+2006-10-16  dbera
+
+	* KNotesQueryable.cs: Dont re-index all the notes when the notes file
+	  changes. Since the backend has to retrieve and pass each line
+	  anyway, find uid and date information and process them in the
+	  backend itself. These are simple properties and dont need extensive
+	  string processing unlike other lines of the notes file - hence we
+	  still do the bulk of the processing in a filter.
+
 2006-10-14  dbera
 
 	* Filters/FilterOle.cs, Filters/FilterPPT.cs: Fix #362058. Check

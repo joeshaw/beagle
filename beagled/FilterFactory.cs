@@ -76,12 +76,13 @@ namespace Beagle.Daemon {
 				}
 			}
 
-			foreach (DictionaryEntry entry in matched_filters_by_flavor) {
-				FilterFlavor flav = (FilterFlavor) entry.Key;
-				Filter filter = (Filter) entry.Value;
-				
-				if (Debug)
+			if (Debug) {
+				foreach (DictionaryEntry entry in matched_filters_by_flavor) {
+					FilterFlavor flav = (FilterFlavor) entry.Key;
+					Filter filter = (Filter) entry.Value;
+					
 					Logger.Log.Debug ("Found matching filter: {0}, Weight: {1}", filter, flav.Weight);
+				}
 			}
 
 			return matched_filters_by_flavor.Values;
