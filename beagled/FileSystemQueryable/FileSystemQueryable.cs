@@ -216,6 +216,9 @@ namespace Beagle.Daemon.FileSystemQueryable {
 				indexable = new Indexable (IndexableType.Add, GuidFu.ToUri (id));
 				indexable.MimeType = "inode/directory";
 				indexable.NoContent = true;
+				// Set the ContentUri anyway so that we get
+				// nice URIs in the logs.
+				indexable.ContentUri = UriFu.PathToFileUri (path);
 				indexable.Timestamp = Directory.GetLastWriteTimeUtc (path);
 			} catch (IOException) {
 				// Looks like the directory was deleted.
