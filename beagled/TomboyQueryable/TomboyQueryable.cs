@@ -2,7 +2,7 @@
 // TomboyQueryable.cs
 //
 // Copyright (C) 2004 Christopher Orr
-// Copyright (C) 2004 Novell, Inc.
+// Copyright (C) 2004-2006 Novell, Inc.
 //
 
 //
@@ -36,7 +36,7 @@ using Beagle.Util;
 namespace Beagle.Daemon.TomboyQueryable {
 
 	[QueryableFlavor (Name="Tomboy", Domain=QueryDomain.Local, RequireInotify=false)]
-	public class TomboyQueryable : LuceneFileQueryable {
+	public class TomboyQueryable : LuceneFileQueryable, IIndexableGenerator  {
 
 		string tomboy_dir;
 		Hashtable note_text_cache = UriFu.NewHashtable ();
@@ -78,26 +78,15 @@ namespace Beagle.Daemon.TomboyQueryable {
 				fsw.EnableRaisingEvents = true;
 			}
 
-			// Crawl all of our existing notes to make sure that
-			// everything is up-to-date.
-			Logger.Log.Info ("Scanning Tomboy notes...");
+			// Start our crawler process
+			Scheduler.Task task;
+			task = NewAddTask (this);
+			task.Tag = "Crawling Tomboy Notes";
+			task.Source = this;
 
-			Stopwatch stopwatch = new Stopwatch ();
-			int count = 0;
-			stopwatch.Start ();
-			DirectoryInfo dir = new DirectoryInfo (tomboy_dir);
+			ThisScheduler.Add (task);
 
-			State = QueryableState.Crawling;
-			foreach (FileInfo file in dir.GetFiles ()) {
-				if (file.Extension == ".note") {
-					IndexNote (file, Scheduler.Priority.Delayed);
-					++count;
-				}
-			}
-			State = QueryableState.Idle;
-
-			stopwatch.Stop ();
-			Logger.Log.Info ("Scanned {0} notes in {1}", count, stopwatch);
+			Logger.Log.Info ("Tomboy backend started");
 		}
 
 		private bool CheckForExistence ()
@@ -148,7 +137,7 @@ namespace Beagle.Daemon.TomboyQueryable {
 		}
 
 		/////////////////////////////////////////////////
-
+		
 		private Indexable NoteToIndexable (FileInfo file, Note note)
 		{
 			Indexable indexable = new Indexable (note.Uri);
@@ -160,6 +149,7 @@ namespace Beagle.Daemon.TomboyQueryable {
 			indexable.Filtering = IndexableFiltering.AlreadyFiltered;
 
 			indexable.AddProperty (Property.New ("dc:title", note.subject));
+			indexable.AddProperty (Property.NewUnsearched ("fixme:application","tomboy"));
 
 			// We remember the note's text so that we can stuff it in
 			// the TextCache later.
@@ -190,7 +180,6 @@ namespace Beagle.Daemon.TomboyQueryable {
 			ThisScheduler.Add (task);
 		}
 
-		
 		private void RemoveNote (string file)
 		{
 			Uri uri = Note.BuildNoteUri (file, "tomboy");
@@ -225,5 +214,38 @@ namespace Beagle.Daemon.TomboyQueryable {
 
 			return false;
 		}
+
+		// IIndexableGenerator implementation
+		public string StatusName {
+			get { return "TomboyQueryable"; }
+		}
+		
+		private IEnumerator note_files = null;
+		
+		public void PostFlushHook () { }
+
+		public bool HasNextIndexable ()
+		{
+			if (note_files == null)
+				note_files = DirectoryWalker.GetFileInfos (tomboy_dir).GetEnumerator ();
+
+			return note_files.MoveNext ();
+		}
+
+		public Indexable GetNextIndexable ()
+		{
+			FileInfo file = (FileInfo) note_files.Current;
+
+			if (! file.Exists)
+				return null;
+
+			if (IsUpToDate (file.FullName))
+				return null;
+
+			Indexable indexable = NoteToIndexable (file, TomboyNote.ParseNote (file));
+			
+			return indexable;
+		}
+
 	}
 }
