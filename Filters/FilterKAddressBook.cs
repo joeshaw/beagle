@@ -40,6 +40,7 @@ namespace Beagle.Filters {
 		public FilterKAddressBook ()
 		{
 			AddSupportedFlavor (FilterFlavor.NewFromMimeType (ICalParser.KabcMimeType));
+			SnippetMode = false;
 			if (vCard_property_mapping == null)
 				SetupPropertyMapping ();
 		}
@@ -51,6 +52,7 @@ namespace Beagle.Filters {
 
 		private void SetupPropertyMapping () {
 			vCard_property_mapping = new Hashtable ();
+			// KCalProperty (name, comma_sep, keyword, text_or_date)
 			vCard_property_mapping ["FN"] = new KCalProperty ("vCard:FN", false, false, KCalType.Text);
 			vCard_property_mapping ["NICKNAME"] = new KCalProperty ("vCard:NICKNAME", true, false,KCalType.Text);
 			vCard_property_mapping ["BDAY"] = new KCalProperty ("vCard:BDAY", true, false, KCalType.Date);
@@ -62,6 +64,7 @@ namespace Beagle.Filters {
 			vCard_property_mapping ["REV"] = new KCalProperty ("dc:date", true, false, KCalType.Date);
 			vCard_property_mapping ["CLASS"] = new KCalProperty ("vCard:CLASS", false, true, KCalType.Text);
 			vCard_property_mapping ["UID"] = new KCalProperty ("vCard:UID", false, true, KCalType.Text);
+			vCard_property_mapping ["EMAIL"] = new KCalProperty ("vCard:EMAIL", false, true, KCalType.Special);
 			vCard_property_mapping ["TEL"] = new KCalProperty ("vCard:TEL", false, true, KCalType.Text);
 			vCard_property_mapping ["URL"] = new KCalProperty ("vCard:URL", false, true,KCalType.Text);
 		}
@@ -86,6 +89,22 @@ namespace Beagle.Filters {
 
 			return mapped_prop_name;
 		}
-	}
 
+		override protected void ProcessPropertySpecial (string prop_name,
+								ArrayList paramlist,
+								string prop_value)
+		{
+			if (prop_name == "EMAIL") {
+				foreach (KCalPropertyParameter vcpp in paramlist) {
+					if (vcpp.param_name == "TYPE" &&
+					    vcpp.param_value == "PREF")
+						// Default email
+						AddProperty (Beagle.Property.NewKeyword (
+							     "vCard:PREFEMAIL",
+							     prop_value));
+				}
+				AddProperty (Beagle.Property.NewKeyword ("vCard:EMAIL", prop_value));
+			}
+		}
+	}
 }

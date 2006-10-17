@@ -6,6 +6,8 @@
 	  backend itself. These are simple properties and dont need extensive
 	  string processing unlike other lines of the notes file - hence we
 	  still do the bulk of the processing in a filter.
+	* beagled/KAddressBookQueryable.cs, Filters/FilterKAddressBook.cs:
+	  Add files for KAddressBook backend.
 
 2006-10-14  dbera
 

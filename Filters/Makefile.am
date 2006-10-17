@@ -70,6 +70,7 @@ CSFILES = 				\
 	$(srcdir)/FilterDeb.cs		\
 	$(srcdir)/FilterBoo.cs		\
 	$(srcdir)/FilterSvg.cs		\
+	$(srcdir)/FilterKAddressBook.cs \
 	$(srcdir)/FilterKCal.cs		\
 	$(srcdir)/FilterKNotes.cs	\
 	$(srcdir)/FilterLabyrinth.cs

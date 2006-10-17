@@ -146,12 +146,21 @@ namespace Beagle.Filters {
 				prop_value = prop_value.Replace ("\\n", "\n");
 
 				if (vcp.is_comma_sep) {
-					foreach (string sub_value in prop_value.Split (','))
-						AddProperty (Beagle.Property.New (
-							beagle_prop_name,
-							sub_value));
+					foreach (string sub_value in prop_value.Split (',')) {
+						if (vcp.is_keyword)
+							AddProperty (Beagle.Property.NewKeyword (
+								beagle_prop_name,
+								sub_value));
+						else
+							AddProperty (Beagle.Property.New (
+								beagle_prop_name,
+								sub_value));
+					}
 				} else {
-					AddProperty (Beagle.Property.New (beagle_prop_name, prop_value));
+					if (vcp.is_keyword)
+						AddProperty (Beagle.Property.NewKeyword (beagle_prop_name, prop_value));
+					else
+						AddProperty (Beagle.Property.New (beagle_prop_name, prop_value));
 				}
 			}
 
