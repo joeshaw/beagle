@@ -37,6 +37,8 @@ namespace Beagle.Filters {
 
 	public class FilterTotem : Beagle.Daemon.Filter {
 
+		static bool Debug = false;
+
 		public FilterTotem ()
 		{
 			// Get the list of mime-types from the totem-video-indexer
@@ -49,8 +51,9 @@ namespace Beagle.Filters {
 			try {
 				pc.Start ();
 			} catch (SafeProcessException e) {
-				Log.Warn (e.Message);
-				Error ();
+				if (Debug)
+					Log.Debug (e.Message);
+
 				return;
 			}
 
@@ -59,6 +62,9 @@ namespace Beagle.Filters {
 
 			while ((str = pout.ReadLine ()) != null) {
 				AddSupportedFlavor (FilterFlavor.NewFromMimeType (str));
+
+				if (Debug)
+					Log.Debug ("Added {0} as a supported mime type for Totem video filter", str);
 			}
 
 			pout.Close ();
