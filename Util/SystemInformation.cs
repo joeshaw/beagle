@@ -179,8 +179,15 @@ namespace Beagle.Util {
 		///////////////////////////////////////////////////////////////
 
 		const double acpi_poll_delay = 30;
-		const string proc_ac_state_filename = "/proc/acpi/ac_adapter/AC/state";
 		const string ac_present_string = "on-line";
+
+		private static readonly string[] proc_ac_state_filenames = new string[] {
+			"/proc/acpi/ac_adapter/AC/state",
+			"/proc/acpi/ac_adapter/AC0/state",
+			"/proc/acpi/ac_adapter/ADp1/state"
+		};
+
+		private static string proc_ac_state_filename = null;
 		private static bool proc_ac_state_exists = true;
 		private static DateTime using_battery_time = DateTime.MinValue;
 		private static bool using_battery;
@@ -193,7 +200,16 @@ namespace Beagle.Util {
 			if ((DateTime.Now - using_battery_time).TotalSeconds < acpi_poll_delay)
 				return;
 
-			if (! File.Exists (proc_ac_state_filename)) {
+			if (proc_ac_state_filename == null) {
+				foreach (string s in proc_ac_state_filenames) {
+					if (File.Exists (s)) {
+						proc_ac_state_filename = s;
+						break;
+					}
+				}
+			}
+					
+			if (proc_ac_state_filename == null || ! File.Exists (proc_ac_state_filename)) {
 				proc_ac_state_exists = false;
 				using_battery = false;
 				return;
@@ -235,6 +251,15 @@ namespace Beagle.Util {
 
 		public static int VmRss {
 			get { return get_vmrss (); }
+		}
+
+		public static void LogMemoryUsage ()
+		{
+			int vm_size = VmSize;
+			int vm_rss = VmRss;
+
+			Logger.Log.Debug ("Memory usage: VmSize={0:.0} MB, VmRSS={1:.0} MB,  GC.GetTotalMemory={2}",
+					  vm_size/1024.0, vm_rss/1024.0, GC.GetTotalMemory (false));
 		}
 
 		///////////////////////////////////////////////////////////////

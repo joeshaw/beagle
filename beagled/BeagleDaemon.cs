@@ -78,14 +78,12 @@ namespace Beagle.Daemon {
 		private static void LogMemoryUsage ()
 		{
 			while (! Shutdown.ShutdownRequested) {
-				int vm_size = SystemInformation.VmSize;
 				int vm_rss = SystemInformation.VmRss;
 
-				Logger.Log.Debug ("Memory usage: VmSize={0:.0} MB, VmRSS={1:.0} MB,  GC.GetTotalMemory={2}",
-						  vm_size/1024.0, vm_rss/1024.0, GC.GetTotalMemory (false));
+				SystemInformation.LogMemoryUsage ();
 
-				if (vm_size > 300 * 1024) {
-					Logger.Log.Debug ("VmSize too large --- shutting down");
+				if (vm_rss > 300 * 1024) {
+					Logger.Log.Debug ("VmRss too large --- shutting down");
 					Shutdown.BeginShutdown ();
 				}
 
@@ -147,8 +145,7 @@ namespace Beagle.Daemon {
 			}
 			
 			// Set up out-of-process indexing
-			if (Environment.GetEnvironmentVariable ("BEAGLE_ENABLE_IN_PROCESS_INDEXING") == null)
-				LuceneQueryable.IndexerHook = new LuceneQueryable.IndexerCreator (RemoteIndexer.NewRemoteIndexer);
+			LuceneQueryable.IndexerHook = new LuceneQueryable.IndexerCreator (RemoteIndexer.NewRemoteIndexer);
 
 			// Initialize synchronization to keep the indexes local if PathFinder.HomeDir
 			// is on a non-block device, or if BEAGLE_SYNCHRONIZE_LOCALLY is set
