@@ -1,4 +1,65 @@
 
+Version 0.2.11
+18 October 2006
+
+Daemon/Infrastructure:
+* Update our internal Lucene.Net copy to 1.9.1 (Debajyoti Bera, Joe
+  Shaw)
+* Greatly optimize search times for queries that match a large number
+  of documents.  (Joe)
+* Backport optimizations from the Java Lucene development branch to
+  improve search times.  (Joe)
+* Allow filters to set the timestamp of a document.  (Bera)
+* Update the inotify code from the kernel tree.  (Robert Love)
+* Remove remnants of the old web services code.  (Fredrik Hedberg)
+
+Backends:
+* Added KNotes backend.  (Bera)
+* Added KAddressbook backend.  (Bera)
+* Added Labyrinth backend.  (Kevin Kubasik)
+* Optimize the Tomboy backend when users have many notes.  (Kevin)
+* Display nicer file URIs for folders instead of UIDs when indexing.
+  (Joe)
+
+Filters:
+* Added Totem filter.  (Bastien Nocera, Joe)
+* Give the external filter priority over other filters, so that users
+  can override existing filters if they want.  (Bera)
+* Add "speakingto" as a search property.  (Kevin)
+* Fix a crasher on TIFF files with bad datetime strings.  (Kevin)
+* Check for illegal lengths in the PowerPoint filter.  (Bera)
+
+UI:
+* Make the scopes toggles rather than radio buttons, allowing the user
+  to turn them on and off from the UI.  (Max Wiehle, Joe)
+* Add a details pane toggle, and move the Sort items into a new View
+  menu.  (Ryan Probasco)
+* Add bug-buddy support to the search and settings .desktop files.
+  (Kevin)
+* Use the looking glass icon for the beagle-settings window.
+  (Fredrik)
+* Small formatting fix in the IM log viewer.  (Kevin)
+* Fix a UI glitch with border widths.  (Fredrik)
+
+Tools:
+* Allow the user to request multiple pieces of information with the
+  beagle-info tool.  (Bera)
+* Print the timestamp in the beagle-extract-content tool.  (bera)
+
+Translations:
+* Added Serbian translation.  (Filip Miletić)
+* Added Thai translation.  (Supranee Thirawatthanasuk)
+* Updated Catalan translation.  (Jordi Mas)
+* Updated Lithuanian translation.  (Žygimantas Beručka)
+* Updated Polish translation.  (Krzysztof Rosiński)
+* Updated Swedish translation.  (Daniel Nylander)
+
+Everything else:
+* Allow compile-time selection of the sqlite version to be used.
+  (Kevin)
+
+------------------------------------------------------
+
 Version 0.2.10
 18 September 2006
 
