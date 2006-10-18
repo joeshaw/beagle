@@ -122,8 +122,6 @@ GetObjectPointer (MonoObject *this)
 void
 mono_glue_install_icall (void)
 {
-	printf ("Beagle Native: Installing iCall\n");
 	mono_add_internal_call ("Beagle.Util.SystemInformation::GetObjectSizeIcall", GetObjectSize);
 	mono_add_internal_call ("Beagle.Util.SystemInformation::GetObjectPointerIcall", GetObjectPointer);
-	printf ("Beagle Native: iCall was installed successfully!\n");
 }
