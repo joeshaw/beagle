@@ -174,7 +174,7 @@ namespace Beagle.Daemon.KNotesQueryable {
 
 		private void RemoveNote (string uid)
 		{
-			Uri uri = new Uri (String.Format ("knotes://{0}", uid));
+			Uri uri = new Uri (String.Format ("knotes:///{0}", uid));
 			Logger.Log.Debug ("Removing note {0}", uri);
 			Scheduler.Task task = NewRemoveTask (uri);
 			task.Priority = Scheduler.Priority.Immediate;
@@ -351,7 +351,7 @@ VERSION:2.0
 			// Open knotes notes as
 			//dcop knotes KNotesIface text <UID>
 			// where the uri is given as knotes://uid
-			Uri uri = new Uri (String.Format ("knotes://{0}", uid));
+			Uri uri = new Uri (String.Format ("knotes:///{0}", uid));
 			Indexable indexable = new Indexable (uri);
 			indexable.ParentUri = UriFu.PathToFileUri (knotes_file);
 			indexable.MimeType = ICalParser.KnotesMimeType;

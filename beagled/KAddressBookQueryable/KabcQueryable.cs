@@ -175,7 +175,7 @@ namespace Beagle.Daemon.KabcQueryable {
 
 		private void RemoveContact (string uid)
 		{
-			Uri uri = new Uri (String.Format ("kabc://{0}", uid));
+			Uri uri = new Uri (String.Format ("kabc:///{0}", uid));
 			Logger.Log.Debug ("Removing contact {0}", uri);
 			Scheduler.Task task = NewRemoveTask (uri);
 			task.Priority = Scheduler.Priority.Immediate;
@@ -346,7 +346,7 @@ namespace Beagle.Daemon.KabcQueryable {
 			if (initial_scan)
 				return null;
 			
-			Uri uri = new Uri (String.Format ("kabc://{0}", current_uid));
+			Uri uri = new Uri (String.Format ("kabc:///{0}", current_uid));
 			Indexable indexable = new Indexable (uri);
 			indexable.ParentUri = UriFu.PathToFileUri (kabc_file);
 			indexable.MimeType = ICalParser.KabcMimeType;
