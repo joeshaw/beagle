@@ -117,6 +117,7 @@ TOKEN : {					  // token patterns
   >
 | < KOREAN:                                          // Korean
       [
+       "\u1100"-"\u11f9",
        "\uac00"-"\ud7af"
       ]
   >
