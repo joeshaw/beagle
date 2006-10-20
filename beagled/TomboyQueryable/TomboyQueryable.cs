@@ -242,7 +242,12 @@ namespace Beagle.Daemon.TomboyQueryable {
 			if (IsUpToDate (file.FullName))
 				return null;
 
-			Indexable indexable = NoteToIndexable (file, TomboyNote.ParseNote (file));
+			Note note = TomboyNote.ParseNote (file);
+
+			if (note == null)
+				return null;
+
+			Indexable indexable = NoteToIndexable (file, note);
 			
 			return indexable;
 		}
