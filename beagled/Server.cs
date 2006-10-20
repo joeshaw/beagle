@@ -269,8 +269,14 @@ namespace Beagle.Daemon {
 					exec.AsyncResponseEvent += OnAsyncResponse;
 				}
 
-				if (exec != null)
-					resp = exec.Execute (req);
+				if (exec != null) {
+					try {
+						resp = exec.Execute (req);
+					} catch (Exception e) {
+						Log.Warn (e, "Caught exception trying to execute {0}.  Sending error response", exec.GetType ());
+						resp = new ErrorResponse (e);
+					}
+				}
 			}
 
 			// It's okay if the response is null; this means
