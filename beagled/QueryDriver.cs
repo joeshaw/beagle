@@ -334,6 +334,7 @@ namespace Beagle.Daemon {
 		static public void Init ()
 		{
 			ReadBackendsFromConf ();
+			SystemInformation.LogMemoryUsage ();
 			assemblies = ReflectionFu.ScanEnvironmentForAssemblies ("BEAGLE_BACKEND_PATH", PathFinder.BackendDir);
 		}
 
@@ -350,6 +351,11 @@ namespace Beagle.Daemon {
 				// own executors.
 				Server.ScanAssemblyForExecutors (assembly);
 			}
+			
+			assemblies = null;
+
+
+			SystemInformation.LogMemoryUsage ();
 
 			ReadKeywordMappings ();
 
@@ -629,6 +635,9 @@ namespace Beagle.Daemon {
 			get {
 				foreach (Queryable q in queryables) {
 					QueryableStatus status = q.GetQueryableStatus ();
+
+					if (status == null)
+						return false;
 
 					if (status.IsIndexing)
 						return true;
