@@ -1,5 +1,5 @@
 
-CSC = mcs -debug
+CSC = $(MCS) -debug
 
 LOCAL_ASSEMBLIES =			\
 	../Util/Util.dll		\

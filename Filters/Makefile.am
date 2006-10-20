@@ -1,6 +1,6 @@
 
 FILTERDIR = $(pkglibdir)/Filters
-CSC = mcs -debug
+CSC = $(MCS) -debug
 
 TARGET = Filters.dll
 

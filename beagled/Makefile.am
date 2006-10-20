@@ -11,7 +11,7 @@
 # 0436 = Ignore imported type (local SqliteClient)
 
 # unsafe arg for Mono.Data.SqliteClient fork
-CSC = mcs -debug -nowarn:0162,0164,0168,0169,0219,0436 -unsafe
+CSC = $(MCS) -debug -nowarn:0162,0164,0168,0169,0219,0436 -unsafe
 
 BACKENDDIR = $(pkglibdir)/Backends
 
@@ -297,11 +297,11 @@ GAIM_LOG_QUERYABLE_CSFILES =				\
 tomboyqueryable = $(srcdir)/TomboyQueryable
 TOMBOY_QUERYABLE_CSFILES =				\
 	$(tomboyqueryable)/TomboyQueryable.cs
-	
+
 labyrinthqueryable = $(srcdir)/LabyrinthQueryable
 LABYRINTH_QUERYABLE_CSFILES =				\
 	$(labyrinthqueryable)/LabyrinthQueryable.cs
-	
+
 kmailqueryable = $(srcdir)/KMailQueryable
 KMAIL_QUERYABLE_CSFILES =				\
 	$(kmailqueryable)/KMailQueryable.cs		\

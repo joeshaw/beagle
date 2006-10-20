@@ -1,4 +1,4 @@
-CSC = mcs -debug
+CSC = $(MCS) -debug
 CSFLAGS = -target:exe
 
 if ENABLE_DESKTOP_LAUNCH

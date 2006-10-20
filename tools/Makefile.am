@@ -1,7 +1,7 @@
 # Warnings we don't want to see
 # 0169 = The private field is never used
 
-CSC = mcs -debug -nowarn:0169
+CSC = $(MCS) -debug -nowarn:0169
 
 LOCAL_ASSEMBLIES =			\
 	../Util/Util.dll		\
@@ -214,7 +214,7 @@ EXTRA_DIST =				\
 	beagle-status			\
 	boot.inotify.init		\
 	beagle-settings.desktop.in.in
-	
+
 CLEANFILES = 				\
 	$(TARGETS)			\
 	$(TARGETS_MDB)			\

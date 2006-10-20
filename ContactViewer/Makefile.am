@@ -1,5 +1,5 @@
 
-CSC = mcs -debug
+CSC = $(MCS) -debug
 
 TARGET = ContactViewer.exe
 WRAPPER = beagle-contactviewer

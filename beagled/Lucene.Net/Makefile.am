@@ -1,5 +1,5 @@
 
-CSC = mcs -g
+CSC = $(MCS) -debug
 
 TARGET = Lucene.Net.dll
 

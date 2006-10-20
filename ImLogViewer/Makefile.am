@@ -1,5 +1,5 @@
 
-CSC = mcs -debug
+CSC = $(MCS) -debug
 
 TARGET = ImLogViewer.exe
 WRAPPER = beagle-imlogviewer
