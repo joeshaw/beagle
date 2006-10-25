@@ -1,7 +1,7 @@
 //
-// IQueryable.cs
+// TypeCacheAttribute.cs
 //
-// Copyright (C) 2004 Novell, Inc.
+// Copyright (C) 2006 Novell, Inc.
 //
 
 //
@@ -26,32 +26,20 @@
 
 using System;
 using System.Collections;
+using System.Reflection;
 
-using Beagle.Util;
+namespace Beagle.Util {
 
-namespace Beagle.Daemon {
+	public abstract class TypeCacheAttribute : Attribute {
+		private Type[] types;
 
-	public interface IQueryable {
+		public TypeCacheAttribute (params Type[] types)
+		{
+			this.types = types;
+		}
 
-		void Start ();
-
-		bool AcceptQuery (Query query);
-
-		void DoQuery (Query query,
-			      IQueryResult result,
-			      IQueryableChangeData data);
-
-		string GetSnippet (string[] query_terms, Hit hit);
-
-		QueryableStatus GetQueryableStatus ();
-	}
-
-	public interface IQueryableChangeData { 
-	
-	}
-
-	[AttributeUsage (AttributeTargets.Assembly)]
-	public class IQueryableTypesAttribute : TypeCacheAttribute {
-		public IQueryableTypesAttribute (params Type[] queryable_types) : base (queryable_types) { }
+		public ICollection Types {
+			get { return this.types; }
+		}
 	}
 }

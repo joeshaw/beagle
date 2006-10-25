@@ -33,8 +33,6 @@ using System.Threading;
 using Beagle.Util;
 using Camel = Beagle.Util.Camel;
 
-using LNI = Lucene.Net.Index;
-
 namespace Beagle.Daemon.EvolutionMailDriver {
 
 	[QueryableFlavor (Name="EvolutionMail", Domain=QueryDomain.Local, RequireInotify=false)]

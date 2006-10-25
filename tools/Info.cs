@@ -42,7 +42,7 @@ class InfoTool {
 		string usage =
 			"beagle-info: Statistics from the Beagle daemon.\n" +
 			"Web page: http://www.gnome.org/projects/beagle\n" +
-			"Copyright (C) 2004-2005 Novell, Inc.\n\n";
+			"Copyright (C) 2004-2006 Novell, Inc.\n\n";
 		usage +=
 			"Usage: beagle-info <OPTIONS>\n\n" +
 			"Options:\n" +
@@ -128,7 +128,7 @@ class InfoTool {
 	static void PrintFilterDetails (Assembly assembly)
 	{
 		StringBuilder sb = new StringBuilder ();
-		foreach (Type t in ReflectionFu.ScanAssemblyForClass (assembly, typeof (Filter))) {
+		foreach (Type t in ReflectionFu.GetTypesFromAssemblyAttribute (assembly, typeof (FilterTypesAttribute))) {
 			Filter filter = null;
 
 			try {
@@ -190,7 +190,7 @@ class InfoTool {
 		}
 
 		foreach (Assembly assembly in assemblies) {
-			foreach (Type type in ReflectionFu.ScanAssemblyForInterface (assembly, typeof (Beagle.Daemon.IQueryable))) {
+			foreach (Type type in ReflectionFu.GetTypesFromAssemblyAttribute (assembly, typeof (IQueryableTypesAttribute))) {
 				foreach (Beagle.Daemon.QueryableFlavor flavor in ReflectionFu.ScanTypeForAttribute (type, typeof (Beagle.Daemon.QueryableFlavor))) {
 					Console.WriteLine ("{0,-20} (" + assembly.Location + ")", flavor.Name);
 				}

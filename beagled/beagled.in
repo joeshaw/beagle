@@ -41,7 +41,7 @@ fi
 
 monogrind=0
 heap_buddy=0
-debug=0
+mono_debug=0
 mdb=0
 
 BEAGLED_ARGS="$*"
@@ -52,7 +52,7 @@ for i in $BEAGLED_ARGS; do
     --monogrind ) monogrind=1 ;;
     --heap-buddy ) heap_buddy=1 ;;
     --mdb ) mdb=1 ;;
-    --debug ) debug=1 ;;
+    --mono-debug ) mono_debug=1 ;;
     esac
 done
 
@@ -82,8 +82,8 @@ if [ $heap_buddy -eq 1 ]; then
    rm -f $BEAGLE_HEAP_BUDDY_DIR/outfile.beagled $BEAGLE_HEAP_BUDDY_DIR/outfile.helper.*
 fi
 
-if [ $debug -eq 1 ]; then
-   export BEAGLE_DEBUG_FLAG_IS_SET=1
+if [ $mono_debug -eq 1 ]; then
+   export BEAGLE_MONO_DEBUG_FLAG_IS_SET=1
    MONO_EXTRA_ARGS="--debug $MONO_EXTRA_ARGS"
 fi
 
@@ -101,7 +101,7 @@ if [ $monogrind -eq 1 ]; then
 elif [ $mdb -eq 1 ]; then
     CMDLINE="mdb $TARGET_EXE -args $BEAGLED_ARGS $FGBG_ARG"
 else
-    CMDLINE="$BEAGLE_MONO_RUNTIME --debug $MONO_EXTRA_ARGS $TARGET_EXE $BEAGLED_ARGS $FGBG_ARG"
+    CMDLINE="$BEAGLE_MONO_RUNTIME $MONO_EXTRA_ARGS $TARGET_EXE $BEAGLED_ARGS $FGBG_ARG"
 fi
 
 PROCESS_NAME="beagled"

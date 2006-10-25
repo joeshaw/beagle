@@ -82,6 +82,7 @@ UTIL_CSFILES = 			        	\
 	$(srcdir)/Tiff.cs			\
 	$(srcdir)/Timeline.cs			\
 	$(srcdir)/TopScores.cs			\
+	$(srcdir)/TypeCacheAttribute.cs		\
 	$(srcdir)/UnclosableStream.cs		\
 	$(srcdir)/UriFu.cs			\
 	$(srcdir)/XdgMime.cs			\

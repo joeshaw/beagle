@@ -35,12 +35,12 @@ using Beagle.Util;
 namespace Beagle {
 
 	public abstract class Message {
-		protected static Type[] GetTypes (Type parent_type)
+		protected static Type[] GetTypes (Type parent_type, Type attr_type)
 		{
 			ArrayList types = new ArrayList ();
-			
+
 			foreach (Assembly ass in AppDomain.CurrentDomain.GetAssemblies ())
-				types.AddRange (ReflectionFu.ScanAssemblyForClass (ass, parent_type));
+				types.AddRange (ReflectionFu.GetTypesFromAssemblyAttribute (ass, attr_type));
 
 			return (Type[]) types.ToArray (typeof (Type));
 		}
@@ -101,7 +101,7 @@ namespace Beagle {
 			get {
 				lock (type_lock) {
 					if (request_types == null)
-						request_types = GetTypes (typeof (RequestMessage));
+						request_types = GetTypes (typeof (RequestMessage), typeof (RequestMessageTypesAttribute));
 				}
 
 				return request_types;
@@ -231,7 +231,7 @@ namespace Beagle {
 			get {
 				lock (type_lock) {
 					if (response_types == null)
-						response_types = GetTypes (typeof (ResponseMessage));
+						response_types = GetTypes (typeof (ResponseMessage), typeof (ResponseMessageTypesAttribute));
 				}
 
 				return response_types;
@@ -297,5 +297,20 @@ namespace Beagle {
 
 			return sb.ToString ();
 		}
+	}
+
+	[AttributeUsage (AttributeTargets.Assembly)]
+	public class RequestMessageTypesAttribute : TypeCacheAttribute {
+		public RequestMessageTypesAttribute (params Type[] message_types) : base (message_types) { }
+	}
+
+	[AttributeUsage (AttributeTargets.Assembly)]
+	public class ResponseMessageTypesAttribute : TypeCacheAttribute {
+		public ResponseMessageTypesAttribute (params Type[] message_types) : base (message_types) { }
+	}
+
+	[AttributeUsage (AttributeTargets.Assembly)]
+	public class RequestMessageExecutorTypesAttribute : TypeCacheAttribute {
+		public RequestMessageExecutorTypesAttribute (params Type[] executor_types) : base (executor_types) { }
 	}
 }

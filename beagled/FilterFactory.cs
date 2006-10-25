@@ -294,7 +294,7 @@ namespace Beagle.Daemon {
 		{
 			int count = 0;
 
-			foreach (Type t in ReflectionFu.ScanAssemblyForClass (assembly, typeof (Filter))) {
+			foreach (Type t in ReflectionFu.GetTypesFromAssemblyAttribute (assembly, typeof (FilterTypesAttribute))) {
 				Filter filter = null;
 
 				try {

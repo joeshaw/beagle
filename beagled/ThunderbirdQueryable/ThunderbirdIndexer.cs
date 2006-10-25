@@ -31,7 +31,16 @@ using System.Reflection;
 
 using Beagle.Util;
 using Beagle.Daemon;
+using Beagle.Daemon.ThunderbirdQueryable;
 using TB = Beagle.Util.Thunderbird;
+
+[assembly: ThunderbirdDefinedGenerators (
+	 typeof (ContactIndexableGenerator),
+	 typeof (MailIndexableGenerator),
+	 typeof (MoveMailIndexableGenerator),
+	 typeof (NntpIndexableGenerator),
+	 typeof (RssIndexableGenerator)
+)]
 
 namespace Beagle.Daemon.ThunderbirdQueryable {
 
@@ -73,8 +82,8 @@ namespace Beagle.Daemon.ThunderbirdQueryable {
 		private void LoadSupportedTypes ()
 		{
 			Assembly assembly = Assembly.GetCallingAssembly ();
-			
-			foreach (Type type in ReflectionFu.ScanAssemblyForInterface (assembly, typeof (IIndexableGenerator))) {
+
+			foreach (Type type in ReflectionFu.GetTypesFromAssemblyAttribute (assembly, typeof (ThunderbirdDefinedGeneratorsAttribute))) {
 			
 				foreach (ThunderbirdIndexableGeneratorAttribute attr in 
 					ReflectionFu.ScanTypeForAttribute (type, typeof (ThunderbirdIndexableGeneratorAttribute))) {
@@ -431,6 +440,13 @@ namespace Beagle.Daemon.ThunderbirdQueryable {
 		}
 	}
 	
+	/////////////////////////////////////////////////////////////////////////////////////
+
+	[AttributeUsage (AttributeTargets.Assembly)]
+	public class ThunderbirdDefinedGeneratorsAttribute : TypeCacheAttribute {
+		public ThunderbirdDefinedGeneratorsAttribute (params Type[] types) : base (types) { }
+	}
+
 	/////////////////////////////////////////////////////////////////////////////////////
 	
 	public enum NotificationType {

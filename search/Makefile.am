@@ -40,6 +40,7 @@ CSFILES =					\
 TILES = 					\
 	$(srcdir)/Tiles/ActionMenuItem.cs	\
 	$(srcdir)/Tiles/Application.cs		\
+	$(srcdir)/Tiles/AssemblyInfo.cs		\
 	$(srcdir)/Tiles/Audio.cs		\
 	$(srcdir)/Tiles/CApplet.cs		\
 	$(srcdir)/Tiles/Calendar.cs		\

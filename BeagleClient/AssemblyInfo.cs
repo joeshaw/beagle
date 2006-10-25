@@ -1,7 +1,7 @@
 //
-// IQueryable.cs
+// AssemblyInfo.cs
 //
-// Copyright (C) 2004 Novell, Inc.
+// Copyright (C) 2006 Novell, Inc.
 //
 
 //
@@ -24,34 +24,28 @@
 // DEALINGS IN THE SOFTWARE.
 //
 
-using System;
-using System.Collections;
+using System.Reflection;
 
-using Beagle.Util;
+using Beagle;
 
-namespace Beagle.Daemon {
-
-	public interface IQueryable {
-
-		void Start ();
-
-		bool AcceptQuery (Query query);
-
-		void DoQuery (Query query,
-			      IQueryResult result,
-			      IQueryableChangeData data);
-
-		string GetSnippet (string[] query_terms, Hit hit);
-
-		QueryableStatus GetQueryableStatus ();
-	}
-
-	public interface IQueryableChangeData { 
-	
-	}
-
-	[AttributeUsage (AttributeTargets.Assembly)]
-	public class IQueryableTypesAttribute : TypeCacheAttribute {
-		public IQueryableTypesAttribute (params Type[] queryable_types) : base (queryable_types) { }
-	}
-}
+// Any request message types in the Beagle.dll file must be registered here.
+[assembly: RequestMessageTypes (
+	 typeof (IndexingServiceRequest),
+	 typeof (Query),
+	 typeof (DaemonInformationRequest),
+	 typeof (ShutdownRequest),
+	 typeof (ReloadConfigRequest),
+	 typeof (OptimizeIndexesRequest),
+	 typeof (SnippetRequest)
+)]
+	 
+[assembly: ResponseMessageTypes (
+	 typeof (EmptyResponse),
+	 typeof (ErrorResponse),
+	 typeof (HitsAddedResponse),
+	 typeof (HitsSubtractedResponse),
+	 typeof (FinishedResponse),
+	 typeof (SearchTermResponse),
+	 typeof (DaemonInformationResponse),
+	 typeof (SnippetResponse)
+)]

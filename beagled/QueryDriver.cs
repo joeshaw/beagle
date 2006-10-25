@@ -146,15 +146,15 @@ namespace Beagle.Daemon {
 			return impls.Length > 0;
 		}
 
-		// For every type in the assembly that
-		// (1) implements IQueryable
-		// (2) Has a QueryableFlavor attribute attached
+		// Find the types in the assembly that
+		// (1) register themselves in AssemblyInfo.cs:IQueryableTypes and
+		// (2) has a QueryableFlavor attribute attached
 		// assemble a Queryable object and stick it into our list of queryables.
-		static void ScanAssembly (Assembly assembly)
+		static void ScanAssemblyForQueryables (Assembly assembly)
 		{
 			int count = 0;
 
-			foreach (Type type in ReflectionFu.ScanAssemblyForInterface (assembly, typeof (IQueryable))) {
+			foreach (Type type in ReflectionFu.GetTypesFromAssemblyAttribute (assembly, typeof (IQueryableTypesAttribute))) {
 				bool type_accepted = false;
 				foreach (QueryableFlavor flavor in ReflectionFu.ScanTypeForAttribute (type, typeof (QueryableFlavor))) {
 					if (! UseQueryable (flavor.Name))
@@ -215,29 +215,21 @@ namespace Beagle.Daemon {
 			ArrayList assemblies = ReflectionFu.ScanEnvironmentForAssemblies ("BEAGLE_FILTER_PATH", PathFinder.FilterDir);
 
 			foreach (Assembly assembly in assemblies) {
-				foreach (Type type in assembly.GetTypes ())
-					if (type.FullName.StartsWith ("Beagle.Filters")) {
-
-						if (type.IsNestedPrivate ||
-						    type.IsNestedPublic ||
-						    type.IsNestedAssembly ||
-						    type.IsNestedFamily)
+				foreach (Type type in ReflectionFu.GetTypesFromAssemblyAttribute (assembly, typeof (FilterTypesAttribute))) {
+					object[] attributes = type.GetCustomAttributes (false);
+					foreach (object attribute in attributes) {
+						
+						PropertyKeywordMapping mapping = attribute as PropertyKeywordMapping;
+						if (mapping == null)
 							continue;
-
-						object[] attributes = type.GetCustomAttributes (false);
-						foreach (object attribute in attributes) {
-
-							PropertyKeywordMapping mapping = attribute as PropertyKeywordMapping;
-							if (mapping == null)
-								continue;
-							//Logger.Log.Debug (mapping.Keyword + " => " 
-							//		+ mapping.PropertyName
-							//		+ " is-keyword=" + mapping.IsKeyword + " (" 
-							//		+ mapping.Description + ") "
-							//		+ "(" + type.FullName + ")");
-							PropertyKeywordFu.RegisterMapping (mapping);
-						}
+						//Logger.Log.Debug (mapping.Keyword + " => " 
+						//		+ mapping.PropertyName
+						//		+ " is-keyword=" + mapping.IsKeyword + " (" 
+						//		+ mapping.Description + ") "
+						//		+ "(" + type.FullName + ")");
+						PropertyKeywordFu.RegisterMapping (mapping);
 					}
+				}
 			}
 		}
 
@@ -334,7 +326,6 @@ namespace Beagle.Daemon {
 		static public void Init ()
 		{
 			ReadBackendsFromConf ();
-			SystemInformation.LogMemoryUsage ();
 			assemblies = ReflectionFu.ScanEnvironmentForAssemblies ("BEAGLE_BACKEND_PATH", PathFinder.BackendDir);
 		}
 
@@ -345,7 +336,7 @@ namespace Beagle.Daemon {
 				assemblies.Add (Assembly.GetExecutingAssembly ());
 
 			foreach (Assembly assembly in assemblies) {
-				ScanAssembly (assembly);
+				ScanAssemblyForQueryables (assembly);
 
 				// This allows backends to define their
 				// own executors.
@@ -353,9 +344,6 @@ namespace Beagle.Daemon {
 			}
 			
 			assemblies = null;
-
-
-			SystemInformation.LogMemoryUsage ();
 
 			ReadKeywordMappings ();
 
@@ -393,7 +381,7 @@ namespace Beagle.Daemon {
 			string ret = "User:\n";
 
 			foreach (Assembly assembly in assemblies) {
-				foreach (Type type in ReflectionFu.ScanAssemblyForInterface (assembly, typeof (IQueryable))) {
+				foreach (Type type in ReflectionFu.GetTypesFromAssemblyAttribute (assembly, typeof (IQueryableTypesAttribute))) {
 					foreach (QueryableFlavor flavor in ReflectionFu.ScanTypeForAttribute (type, typeof (QueryableFlavor)))
 						ret += String.Format (" - {0}\n", flavor.Name);
 				}

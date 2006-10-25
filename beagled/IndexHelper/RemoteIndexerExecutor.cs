@@ -28,8 +28,12 @@ using System;
 using System.Collections;
 using System.Xml.Serialization;
 
+using Beagle;
 using Beagle.Util;
 using Beagle.Daemon;
+
+// Register the executor class
+[assembly: RequestMessageExecutorTypes (typeof (Beagle.IndexHelper.RemoteIndexerExecutor))]
 
 namespace Beagle.IndexHelper {
 

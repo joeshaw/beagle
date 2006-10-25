@@ -315,10 +315,16 @@ namespace Beagle.Daemon {
 		private static Hashtable live_handlers = new Hashtable ();
 		private bool running = false;
 
+		static Server ()
+		{
+			Log.Debug (new System.Diagnostics.StackTrace (true).ToString ());
+			
+			foreach (Assembly assembly in AppDomain.CurrentDomain.GetAssemblies ())
+				ScanAssemblyForExecutors (assembly);
+		}
+
 		public Server (string name)
 		{
-			ScanAssemblyForExecutors (Assembly.GetCallingAssembly ());
-
 			// Use the default name when passed null
 			if (name == null)
 				name = "socket";
@@ -335,7 +341,6 @@ namespace Beagle.Daemon {
 		// Perform expensive serialization all at once. Do this before signal handler is setup.
 		public static void Init ()
 		{
-			ScanAssemblyForExecutors (Assembly.GetExecutingAssembly ());
 			Shutdown.ShutdownEvent += OnShutdown;
 			ConnectionHandler.Init ();
 			initialized = true;
@@ -460,14 +465,7 @@ namespace Beagle.Daemon {
 				return;
 			scanned_assemblies [assembly] = assembly;
 
-			foreach (Type t in assembly.GetTypes ()) {
-
-				if (!t.IsSubclassOf (typeof (RequestMessageExecutor)))
-					continue;
-
-				// Yes, we know it doesn't have a RequestMessageAttribute
-				if (t == typeof (SimpleRequestMessageExecutor))
-					continue;
+			foreach (Type t in ReflectionFu.GetTypesFromAssemblyAttribute (assembly, typeof (RequestMessageExecutorTypesAttribute))) {
 
 				Attribute attr = Attribute.GetCustomAttribute (t, typeof (RequestMessageAttribute));
 

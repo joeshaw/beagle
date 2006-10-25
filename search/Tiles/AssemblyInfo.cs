@@ -1,7 +1,7 @@
 //
-// IQueryable.cs
+// AssemblyInfo.cs
 //
-// Copyright (C) 2004 Novell, Inc.
+// Copyright (C) 2006 Novell, Inc.
 //
 
 //
@@ -25,33 +25,26 @@
 //
 
 using System;
-using System.Collections;
 
-using Beagle.Util;
+using Search.Tiles;
 
-namespace Beagle.Daemon {
-
-	public interface IQueryable {
-
-		void Start ();
-
-		bool AcceptQuery (Query query);
-
-		void DoQuery (Query query,
-			      IQueryResult result,
-			      IQueryableChangeData data);
-
-		string GetSnippet (string[] query_terms, Hit hit);
-
-		QueryableStatus GetQueryableStatus ();
-	}
-
-	public interface IQueryableChangeData { 
-	
-	}
-
-	[AttributeUsage (AttributeTargets.Assembly)]
-	public class IQueryableTypesAttribute : TypeCacheAttribute {
-		public IQueryableTypesAttribute (params Type[] queryable_types) : base (queryable_types) { }
-	}
-}
+[assembly: TileActivatorTypes (
+	 typeof (ApplicationActivator),
+	 typeof (AudioActivator),
+	 typeof (CalendarActivator),
+	 typeof (CAppletActivator),
+	 typeof (ContactActivator),
+	 typeof (FileActivator),
+	 typeof (FolderActivator),
+	 typeof (ImageActivator),
+	 typeof (IMLogActivator),
+	 typeof (MailAttachmentActivator),
+	 typeof (MailMessageActivator),
+	 typeof (NoteActivator),
+	 typeof (PresentationActivator),
+	 typeof (RSSFeedActivator),
+	 typeof (SpreadsheetActivator),
+	 typeof (TextDocumentActivator),
+	 typeof (VideoActivator),
+	 typeof (WebHistoryActivator)
+)]

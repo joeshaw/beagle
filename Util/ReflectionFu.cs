@@ -92,28 +92,16 @@ namespace Beagle.Util {
 			return assemblies;
 		}
 
-		static public ArrayList ScanAssemblyForClass (Assembly assembly, Type supertype)
+		static public ArrayList GetTypesFromAssemblyAttribute (Assembly assembly, Type attr_type)
 		{
-			ArrayList subclasses = new ArrayList ();
+			ArrayList types = new ArrayList ();
 
-			foreach (Type t in assembly.GetTypes ()) {
-				if (t.IsSubclassOf (supertype) && ! t.IsAbstract)
-					subclasses.Add (t);
-			}
+			TypeCacheAttribute attr = (TypeCacheAttribute) Attribute.GetCustomAttribute (assembly, attr_type);
 
-			return subclasses;
-		}
+			if (attr != null)
+				types.AddRange (attr.Types);
 
-		static public ArrayList ScanAssemblyForInterface (Assembly assembly, Type iface)
-		{
-			ArrayList implementors = new ArrayList ();
-
-			foreach (Type t in assembly.GetTypes ()) {
-				if (t.GetInterface (iface.ToString ()) != null)
-					implementors.Add (t);
-			}
-
-			return implementors;
+			return types;
 		}
 
 		static public ArrayList ScanTypeForAttribute (Type type, Type attribute_type)

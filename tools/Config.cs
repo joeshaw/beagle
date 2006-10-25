@@ -32,6 +32,7 @@ using System.Collections.Specialized;
 using System.Reflection;
 
 using Beagle;
+using Beagle.Daemon;
 using Beagle.Util;
 
 //using Gtk;
@@ -44,7 +45,7 @@ public static class ConfigTool {
 		string usage =
 			"beagle-config: Command-line interface to the Beagle config file.\n" +
 			"Web page: http://www.gnome.org/projects/beagle\n" +
-			"Copyright (C) 2005 Novell, Inc.\n\n";
+			"Copyright (C) 2005-2006 Novell, Inc.\n\n";
 		usage +=
 			"Usage: beagle-config [OPTIONS]\n" +
 			"   or: beagle-config <SECTION>\n" +
@@ -217,7 +218,7 @@ public static class ConfigTool {
 		}
 
 		foreach (Assembly assembly in assemblies) {
-			foreach (Type type in ReflectionFu.ScanAssemblyForInterface (assembly, typeof (Beagle.Daemon.IQueryable))) {
+			foreach (Type type in ReflectionFu.GetTypesFromAssemblyAttribute (assembly, typeof (IQueryableTypesAttribute))) {
 				foreach (Beagle.Daemon.QueryableFlavor flavor in ReflectionFu.ScanTypeForAttribute (type, typeof (Beagle.Daemon.QueryableFlavor)))
 					backends.Add (flavor.Name);
 			}

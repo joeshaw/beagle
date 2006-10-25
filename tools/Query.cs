@@ -1,7 +1,7 @@
 //
 // Query.cs
 //
-// Copyright (C) 2004-2005 Novell, Inc.
+// Copyright (C) 2004-2006 Novell, Inc.
 //
 
 //
@@ -133,7 +133,7 @@ class QueryTool {
 		string usage =
 			"beagle-query: Command-line interface to the Beagle search system.\n" +
 			"Web page: http://www.gnome.org/projects/beagle\n" +
-			"Copyright (C) 2004 Novell, Inc.\n\n";
+			"Copyright (C) 2004-2006 Novell, Inc.\n\n";
 		usage +=
 			"Usage: beagle-query [OPTIONS] <query string>\n\n" +
 			"Options:\n" +
@@ -188,7 +188,7 @@ class QueryTool {
 		}
 
 		foreach (Assembly assembly in assemblies) {
-			foreach (Type type in ReflectionFu.ScanAssemblyForInterface (assembly, typeof (Beagle.Daemon.IQueryable))) {
+			foreach (Type type in ReflectionFu.GetTypesFromAssemblyAttribute (assembly, typeof (IQueryableTypesAttribute))) {
 				object[] attributes = type.GetCustomAttributes (false);
 				foreach (object attribute in attributes) {
 					PropertyKeywordMapping mapping = attribute as PropertyKeywordMapping;

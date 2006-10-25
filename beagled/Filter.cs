@@ -724,4 +724,9 @@ namespace Beagle.Daemon {
 			get { return this.child_indexables; }
 		}
 	}
+
+	[AttributeUsage (AttributeTargets.Assembly)]
+	public class FilterTypesAttribute : TypeCacheAttribute {
+		public FilterTypesAttribute (params Type[] filter_types) : base (filter_types) { }
+	}
 }

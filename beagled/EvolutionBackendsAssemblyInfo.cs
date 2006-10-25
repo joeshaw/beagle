@@ -1,9 +1,8 @@
 //
-// IQueryable.cs
+// EvolutionBackendsAssemblyInfo.cs
 //
-// Copyright (C) 2004 Novell, Inc.
+// Copyright (C) 2006 Novell, Inc.
 //
-
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
 // copy of this software and associated documentation files (the "Software"),
@@ -25,33 +24,12 @@
 //
 
 using System;
-using System.Collections;
 
-using Beagle.Util;
+using Beagle.Daemon;
+using Beagle.Daemon.EvolutionMailDriver;
+using Beagle.Daemon.EvolutionDataServerQueryable;
 
-namespace Beagle.Daemon {
-
-	public interface IQueryable {
-
-		void Start ();
-
-		bool AcceptQuery (Query query);
-
-		void DoQuery (Query query,
-			      IQueryResult result,
-			      IQueryableChangeData data);
-
-		string GetSnippet (string[] query_terms, Hit hit);
-
-		QueryableStatus GetQueryableStatus ();
-	}
-
-	public interface IQueryableChangeData { 
-	
-	}
-
-	[AttributeUsage (AttributeTargets.Assembly)]
-	public class IQueryableTypesAttribute : TypeCacheAttribute {
-		public IQueryableTypesAttribute (params Type[] queryable_types) : base (queryable_types) { }
-	}
-}
+[assembly: IQueryableTypes (
+	 typeof (EvolutionMailQueryable),
+	 typeof (EvolutionDataServerQueryable)
+)]

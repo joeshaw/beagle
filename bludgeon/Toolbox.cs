@@ -123,7 +123,10 @@ namespace Bludgeon {
 
 		static private void LoadAllPairs (Assembly assembly)
 		{
-			foreach (Type type in ReflectionFu.ScanAssemblyForInterface (assembly, typeof (IHammer))) {
+			foreach (Type type in assembly.GetTypes ()) { // assembly.GetTypes() is very bad.
+				if (type.GetInterface (typeof (IHammer).ToString ()) == null)
+					continue;
+
 				foreach (HammerAttribute attr in ReflectionFu.ScanTypeForAttribute (type, typeof (HammerAttribute))) {
 					Pair pair;
 					pair = new Pair ();

@@ -10,6 +10,7 @@ CSFLAGS = 					\
 	$(BEAGLE_DEFINES)
 
 CSFILES = 					\
+	$(srcdir)/AssemblyInfo.cs		\
 	$(srcdir)/Client.cs			\
 	$(srcdir)/Hit.cs                	\
 	$(srcdir)/IIndexableGenerator.cs       	\

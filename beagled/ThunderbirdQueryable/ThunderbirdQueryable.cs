@@ -33,6 +33,9 @@ using System.Text.RegularExpressions;
 using Beagle;
 using Beagle.Util;
 
+// Register the Thunderbird backend for this assembly.
+[assembly: Beagle.Daemon.IQueryableTypes (typeof (Beagle.Daemon.ThunderbirdQueryable.ThunderbirdQueryable))]
+
 namespace Beagle.Daemon.ThunderbirdQueryable {
 
 	[QueryableFlavor (Name = "Thunderbird", Domain = QueryDomain.Local, RequireInotify = false)]
