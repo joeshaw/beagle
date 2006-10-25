@@ -317,8 +317,6 @@ namespace Beagle.Daemon {
 
 		static Server ()
 		{
-			Log.Debug (new System.Diagnostics.StackTrace (true).ToString ());
-			
 			foreach (Assembly assembly in AppDomain.CurrentDomain.GetAssemblies ())
 				ScanAssemblyForExecutors (assembly);
 		}
