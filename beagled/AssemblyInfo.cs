@@ -32,36 +32,36 @@ using Beagle.Daemon;
 // Any request message types in the BeagleDaemonLib.dll file must be registered
 // in these two attributes.
 [assembly: RequestMessageTypes (
-	 typeof (RemoteIndexerRequest)
+	typeof (RemoteIndexerRequest)
 )]
 	 
 [assembly: ResponseMessageTypes (
-	 typeof (RemoteIndexerResponse)
+	typeof (RemoteIndexerResponse)
 )]
 
 // Executors go in here.
 [assembly: RequestMessageExecutorTypes (
-	 typeof (DaemonInformationExecutor),
-	 typeof (OptimizeIndexesExecutor),
-	 typeof (ReloadConfigExecutor),
-	 typeof (ShutdownExecutor),
-	 typeof (SnippetExecutor)
+	typeof (DaemonInformationExecutor),
+	typeof (OptimizeIndexesExecutor),
+	typeof (ReloadConfigExecutor),
+	typeof (ShutdownExecutor),
+	typeof (SnippetExecutor)
 )]
 
 // All backends in this assembly must be registered here.
 [assembly: IQueryableTypes (
-	 typeof (Beagle.Daemon.KMailQueryable.KMailQueryable),
-	 typeof (Beagle.Daemon.FileSystemQueryable.FileSystemQueryable),
-	 typeof (Beagle.Daemon.GaimLogQueryable.GaimLogQueryable),
-	 typeof (Beagle.Daemon.IndexingServiceQueryable.IndexingServiceQueryable),
-	 typeof (Beagle.Daemon.TomboyQueryable.TomboyQueryable),
-	 typeof (Beagle.Daemon.LabyrinthQueryable.LabyrinthQueryable),
-	 typeof (Beagle.Daemon.BlamQueryable.BlamQueryable),
-	 typeof (Beagle.Daemon.LifereaQueryable.LifereaQueryable),
-	 typeof (Beagle.Daemon.AkregatorQueryable.AkregatorQueryable),
-	 typeof (Beagle.Daemon.KonqQueryable.KonqQueryable),
-	 typeof (Beagle.Daemon.KNotesQueryable.KNotesQueryable),
-	 typeof (Beagle.Daemon.KabcQueryable.KabcQueryable),
-	 typeof (Beagle.Daemon.KopeteQueryable.KopeteQueryable),
-	 typeof (Beagle.Daemon.StaticQueryable)
+	typeof (Beagle.Daemon.KMailQueryable.KMailQueryable),
+	typeof (Beagle.Daemon.FileSystemQueryable.FileSystemQueryable),
+	typeof (Beagle.Daemon.GaimLogQueryable.GaimLogQueryable),
+	typeof (Beagle.Daemon.IndexingServiceQueryable.IndexingServiceQueryable),
+	typeof (Beagle.Daemon.TomboyQueryable.TomboyQueryable),
+	typeof (Beagle.Daemon.LabyrinthQueryable.LabyrinthQueryable),
+	typeof (Beagle.Daemon.BlamQueryable.BlamQueryable),
+	typeof (Beagle.Daemon.LifereaQueryable.LifereaQueryable),
+	typeof (Beagle.Daemon.AkregatorQueryable.AkregatorQueryable),
+	typeof (Beagle.Daemon.KonqQueryable.KonqQueryable),
+	typeof (Beagle.Daemon.KNotesQueryable.KNotesQueryable),
+	typeof (Beagle.Daemon.KabcQueryable.KabcQueryable),
+	typeof (Beagle.Daemon.KopeteQueryable.KopeteQueryable),
+	typeof (Beagle.Daemon.StaticQueryable)
 )]

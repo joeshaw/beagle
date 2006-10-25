@@ -1,6 +1,7 @@
 //
 // NoiseFilter.cs
 //
+// Copyright (C) 2006 Debajyoti Bera <dbera.web@gmail.com>
 // Copyright (C) 2004-2005 Novell, Inc.
 //
 
@@ -25,20 +26,25 @@
 //
 
 using System;
+using System.Collections;
 
 using Lucene.Net.Analysis;
 using LNSA = Lucene.Net.Analysis.Standard;
 
 namespace Beagle.Daemon {
 
-	class NoiseFilter : TokenFilter {
+	// TokenFilter which does several fancy things
+	// 1. Removes words which are potential noise like dhyhy8ju7q9
+	// 2. Splits email addresses into meaningful tokens
+	// 3. Splits hostnames into subparts
+	class NoiseEmailHostFilter : TokenFilter {
 			
 		static int total_count = 0;
 		static int noise_count = 0;
 
 		TokenStream token_stream;
 
-		public NoiseFilter (TokenStream input) : base (input)
+		public NoiseEmailHostFilter (TokenStream input) : base (input)
 		{
 			token_stream = input;
 		}
@@ -129,32 +135,53 @@ namespace Beagle.Daemon {
 		private static readonly string tokentype_number 
 			= LNSA.StandardTokenizerConstants.tokenImage [LNSA.StandardTokenizerConstants.NUM];
 
-		private bool IgnoreNoise (Lucene.Net.Analysis.Token token)
+		private bool ProcessToken (Lucene.Net.Analysis.Token token)
 		{
 			string type = token.Type ();
 
-			if (type == tokentype_email ||
-			    type == tokentype_host)
+			if (type == tokentype_email) {
+				ProcessEmailToken (token);
 				return true;
-
-			if (type == tokentype_number)
+			} else if (type == tokentype_host) {
+				ProcessURLToken (token);
+				return true;
+			} else if (type == tokentype_number)
 				// nobody will remember more than 10 digits
 				return (token.TermText ().Length <= 10);
-
-			return false;
+			else
+				return false;
 		}
+
+		private Queue parts = new Queue ();
+		private Lucene.Net.Analysis.Token token;
 
 		public override Lucene.Net.Analysis.Token Next ()
 		{
-			Lucene.Net.Analysis.Token token;
+			if (parts.Count != 0) {
+				string part = (string) parts.Dequeue ();
+				Lucene.Net.Analysis.Token part_token;
+				// FIXME: Searching for google.com will not match www.google.com.
+				// If we decide to allow google-style "abcd.1234" which means
+				// "abcd 1234" as a consequtive phrase, then adjusting
+				// the startOffset and endOffset would enable matching
+				// google.com to www.google.com
+				part_token = new Lucene.Net.Analysis.Token (part,
+								       token.StartOffset (),
+								       token.EndOffset (),
+								       token.Type ());
+				part_token.SetPositionIncrement (0);
+				return part_token;
+			}
+
 			while ( (token = token_stream.Next ()) != null) {
+				//Console.WriteLine ("Found token: [{0}]", token.TermText ());
 #if false
 				if (total_count > 0 && total_count % 5000 == 0)
 					Logger.Log.Debug ("BeagleNoiseFilter filtered {0} of {1} ({2:0.0}%)",
 							  noise_count, total_count, 100.0 * noise_count / total_count);
 #endif
 				++total_count;
-				if (IgnoreNoise (token))
+				if (ProcessToken (token))
 					return token;
 				if (IsNoise (token.TermText ())) {
 					++noise_count;
@@ -163,6 +190,44 @@ namespace Beagle.Daemon {
 				return token;
 			}
 			return null;
+		}
+
+		char[] replace_array = { '@', '.', '-', '_', '+' };
+		private void ProcessEmailToken (Lucene.Net.Analysis.Token token)
+		{
+			string email = token.TermText ();
+			string[] tmp = email.Split (replace_array);
+			int l = tmp.Length;
+
+			// store username part as a large token
+			int index_at = email.IndexOf ('@');
+			tmp [l-1] = email.Substring (0, index_at);
+
+			foreach (string s in tmp)
+				parts.Enqueue (s);
+			
+		}
+
+		private void ProcessURLToken (Lucene.Net.Analysis.Token token)
+		{
+			string hostname = token.TermText ();
+			string[] host_parts = hostname.Split ('.');
+
+			// remove initial www
+			int begin_index = (host_parts [0] == "www" ? 1 : 0);
+			// remove final tld
+			// FIXME: any string of form "<alnum> '.')+<alnum>" has type HOST
+			// Removing last token might remove important words from non-host
+			// string of that form. To fix that, we need match against the
+			// huge list of TLDs.
+			int end_index = host_parts.Length - 1;
+
+			if (! Char.IsDigit (host_parts [end_index][0]))
+				end_index --;
+
+			for (int i = begin_index; i <= end_index; ++i)
+				parts.Enqueue (host_parts [i]);
+
 		}
 	}
 

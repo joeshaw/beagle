@@ -61,6 +61,8 @@ fi
 # check that we have the require version of mono
 PKG_CHECK_MODULES(MONO, mono >= $MONO_REQUIRED) 
 
+BEAGLE_DEFINES=""
+
 # SharpZipLib broke API in 1.1.11.  Route around the damage.
 if `$PKG_CONFIG --atleast-version=1.1.11 mono`; then
   SHARPZIPLIB_LIBS="-r:`$PKG_CONFIG --variable=prefix mono`/lib/mono/compat-1.0/ICSharpCode.SharpZipLib.dll"
@@ -349,6 +351,9 @@ dnl beagled
 
 PKG_CHECK_MODULES(GSF_SHARP, gsf-sharp >= 0.5, enable_gsf_sharp=yes, enable_gsf_sharp=no)
 AM_CONDITIONAL(ENABLE_GSF_SHARP, test "x$enable_gsf_sharp" = "xyes")
+if test "x$enable_gsf_sharp" = "xyes"; then
+	BEAGLE_DEFINES = "$BEAGLE_DEFINES -define:ENABLE_GSF_SHARP"
+fi
 
 dnl ----------------------------------------------
 
@@ -534,6 +539,9 @@ dnl For the wv1 glue
 
 PKG_CHECK_MODULES(WV1, wv-1.0, enable_wv1=yes, enable_wv1=no)
 AM_CONDITIONAL(ENABLE_WV1, test "x$enable_wv1" = "xyes")
+if test "x$enable_wv1" = "xyes"; then
+	BEAGLE_DEFINES = "$BEAGLE_DEFINES -define:ENABLE_WV1"
+fi
 AC_SUBST(WV1_LIBS)
 
 dnl ----------------------------------------------
@@ -568,12 +576,13 @@ dnl Check if the system has libchm, used by the CHMFilter
 # Check for libchm for CHM filter
 AC_CHECK_LIB(chm,chm_open,has_libchm=yes,has_libchm=no)
 AM_CONDITIONAL(HAS_LIBCHM, test "x$has_libchm" = "xyes")
+if test "x$has_libchm" = "xyes"; then
+	BEAGLE_DEFINES = "$BEAGLE_DEFINES -define:HAVE_LIBCHM"
+fi
 
 dnl ----------------------------------------------
 
 dnl Conditional for debugging XML messages.
-
-BEAGLE_DEFINES=""
 
 AC_ARG_ENABLE([xml-dump],
 	AC_HELP_STRING([--enable-xml-dump], [Enables printing of the XML messages sent between components (default no)]),
@@ -582,7 +591,7 @@ AC_ARG_ENABLE([xml-dump],
 
 if test "x$enable_xml_dump" = "xyes"; then
 	AC_DEFINE_UNQUOTED(ENABLE_XML_DUMP, 1, [Dump XML messages for debugging])
-	BEAGLE_DEFINES="-define:ENABLE_XML_DUMP"
+	BEAGLE_DEFINES="$BEAGLE_DEFINES -define:ENABLE_XML_DUMP"
 fi
 
 AC_SUBST(BEAGLE_DEFINES)

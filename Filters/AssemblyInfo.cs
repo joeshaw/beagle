@@ -34,13 +34,17 @@ using Beagle.Filters;
 	 typeof(FilterBMP),
 	 typeof(FilterBoo),
 	 typeof(FilterC),
+#if HAVE_LIBCHM
 	 typeof(FilterChm),
+#endif
 	 typeof(FilterCpp),
 	 typeof(FilterCSharp),
 	 typeof(FilterDeb),
 	 typeof(FilterDesktop),
 	 typeof(FilterDirectory),
+#if ENABLE_WV1
 	 typeof(FilterDOC),
+#endif
 	 typeof(FilterDocbook),
 	 typeof(FilterEbuild),
 	 typeof(FilterExternal),
@@ -67,7 +71,9 @@ using Beagle.Filters;
 	 typeof(FilterPerl),
 	 typeof(FilterPhp),
 	 typeof(FilterPng),
+#if ENABLE_GSF_SHARP
 	 typeof(FilterPPT),
+#endif
 	 typeof(FilterPython),
 	 typeof(FilterRPM),
 	 typeof(FilterRTF),

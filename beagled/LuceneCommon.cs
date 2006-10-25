@@ -428,7 +428,7 @@ namespace Beagle.Daemon {
 				    || fieldName == "HotText"
 				    || fieldName == "PropertyText"
 				    || is_text_prop) {
-					outstream = new NoiseFilter (outstream);
+					outstream = new NoiseEmailHostFilter (outstream);
 					outstream = new PorterStemFilter (outstream);
 				}
 
