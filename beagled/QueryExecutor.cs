@@ -32,7 +32,7 @@ using Beagle.Util;
 
 namespace Beagle.Daemon {
 
-	[RequestMessage (typeof (Query))]
+	[RequestMessage (typeof (Beagle.Query))]
 	public class QueryExecutor : RequestMessageExecutor {
 
 		private Query query;
