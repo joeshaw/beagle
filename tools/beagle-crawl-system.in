@@ -47,6 +47,9 @@ for crawl_file in @sysconfdir@/beagle/crawl-*; do
 	    OPTIONS="`test -n "$CRAWL_DISABLE_FILTERING" -a "$CRAWL_DISABLE_FILTERING" = "yes" && \
                      echo --disable-filtering`"
 
+	    OPTIONS="`test -n "$CRAWL_DISABLE_DIRECTORIES" -a "$CRAWL_DISABLE_DIRECTORIES" = "yes" && \
+                     echo --disable-directories`"
+
 	    OPTIONS="$OPTIONS `test -n "$CRAWL_RECURSIVE" -a "$CRAWL_RECURSIVE" = "yes" && \
                      echo --recursive`"
 

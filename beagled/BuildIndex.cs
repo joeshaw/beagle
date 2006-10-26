@@ -48,7 +48,7 @@ namespace Beagle.Daemon
 	{
 		static string [] argv;
 
-		static bool arg_recursive = false, arg_delete = false, arg_debug = false, arg_cache_text = false, arg_disable_filtering = false, arg_disable_restart = false;
+		static bool arg_recursive = false, arg_delete = false, arg_debug = false, arg_cache_text = false, arg_disable_filtering = false, arg_disable_restart = false, arg_disable_directories = false;
 
 		static Hashtable remap_table = new Hashtable ();
 
@@ -134,6 +134,10 @@ namespace Beagle.Daemon
 
 				case "--enable-deletion":
 					arg_delete = true;
+					break;
+
+				case "--disable-directories":
+					arg_disable_directories = true;
 					break;
 					
 				case "--enable-text-cache":
@@ -334,7 +338,9 @@ namespace Beagle.Daemon
 			
 				while (pending_directories.Count > 0) {
 					DirectoryInfo dir = (DirectoryInfo) pending_directories.Dequeue ();
-					pending_files.Enqueue (dir);
+
+					if (! arg_disable_directories)
+						pending_files.Enqueue (dir);
 
 					try {
 						if (arg_recursive)
@@ -768,7 +774,8 @@ namespace Beagle.Daemon
 				"  --tag [tag]\t\t\tTag index data for identification.\n" + 
 				"  --recursive\t\t\tCrawl source path recursivly.\n" + 
 				"  --enable-deletion\t\tRemove deleted files and directories from index.\n" +
-				"  --enable-text-cache\t\tBuild text-cache of documents used for snippets.\n" + 
+				"  --enable-text-cache\t\tBuild text-cache of documents used for snippets.\n" +
+				"  --disable-directories\t\tDon't add directories to the index.\n" +
 				"  --disable-filtering\t\tDisable all filtering of files. Only index attributes.\n" + 
 				"  --allow-pattern [pattern]\tOnly allow files that match the pattern to be indexed.\n" + 
 				"  --deny-pattern [pattern]\tKeep any files that match the pattern from being indexed.\n" + 
