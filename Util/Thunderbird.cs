@@ -673,7 +673,10 @@ namespace Beagle.Util {
 			try {
 				type = (AccountType) Enum.Parse (typeof (AccountType), type_str, true);
 			} catch {
-				type = AccountType.Invalid;
+				if (type_str.ToLower ().Equals ("none"))
+					type = AccountType.Pop3;
+				else
+					type = AccountType.Invalid;
 			}
 			
 			return type;
